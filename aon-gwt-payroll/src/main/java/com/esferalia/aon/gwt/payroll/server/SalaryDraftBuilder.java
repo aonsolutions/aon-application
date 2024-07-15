@@ -198,6 +198,8 @@ public class SalaryDraftBuilder
 		String description ; 
 		if ( item.getType() == Deduction.Type.IRPF )
 		    description = calcDescription;
+		else if (isSSPEC(item) )
+		    description = calcDescription;
 		else 
 		    description = formatItemDescription(item, draftStart, draftEnd);
 	
@@ -802,7 +804,7 @@ public class SalaryDraftBuilder
 		draftCost.setStartDate(startDate);
 		draftCost.setDescription(getDescription(draftCost,description));
 
-		CompositeDeduction compositeCost = getCost(contractCost);
+		CompositeDeduction compositeCost = getCost(draftCost);
 
 		if (compositeCost != null) {
 			compositeCost.addChild(draftCost);
@@ -1495,11 +1497,20 @@ public class SalaryDraftBuilder
 		for (int i = 0; i < deductions.size(); i++) {
 			Deduction deduction = deductions.get(i);
 			if ((deduction.getId().equals(d.getId()))
-			    ||( "IRPF".equals(deduction.getName()) 
+			    
+				||( "IRPF".equals(deduction.getName()) 
 				    && "IRPF".equals(d.getName()))
+			    
 			    || ( AonStringUtils.isNotBlank(d.getName()) 
 		    			&& AonStringUtils.equals(d.getName(), deduction.getName()))
-			    ) {
+			    
+			    || (
+			    	// RED.CUOTA SS-PORCENT ( C.COMUN.)
+			    	d.getAmount() < 0.00 
+			    	&& d.getType() == Deduction.Type.COMMON_CONTINGENCY 
+			    	&& deduction.getType() == Deduction.Type.COMMON_CONTINGENCY)
+			    ) 
+			{
 				if (deduction instanceof CompositeDeduction)
 					return (CompositeDeduction) deduction;
 
@@ -1511,16 +1522,23 @@ public class SalaryDraftBuilder
 
 			}
 		}
+		
+		
 		return null;
 	}
 
-	private CompositeDeduction getCost(IContractDeduction contractCost) {
+	private CompositeDeduction getCost(Deduction c) {
 		List<Deduction> costs = salaryDraft.getCosts();
 		for (int i = 0; i < costs.size(); i++) {
 			Deduction cost = costs.get(i);
-			if (Objects.equals(contractCost.getId(), cost.getId()) 
-		    		|| ( AonStringUtils.isNotBlank(contractCost.getName()) 
-		    			&& AonStringUtils.equals(contractCost.getName(), cost.getName()))
+			if (	Objects.equals(c.getId(), cost.getId()) 
+		    		|| ( 
+		    		AonStringUtils.isNotBlank(c.getName()) 
+		    		&& AonStringUtils.equals(c.getName(), cost.getName()))
+				    || ( // RED.CUOTA SS-PORCENT ( C.COMUN.)
+			    	c.getAmount() < 0.00 
+			    	&& c.getType() == Deduction.Type.COMMON_CONTINGENCY 
+			    	&& cost.getType() == Deduction.Type.COMMON_CONTINGENCY)
 		    		
 				) {
 				if (cost instanceof CompositeDeduction)
@@ -1898,28 +1916,32 @@ public class SalaryDraftBuilder
 		;
 	}
 	
-	private boolean isExtra(IPayment payment) {
+	private static boolean isExtra(IPayment payment) {
 		return (( payment instanceof IContractPayment) && (((IContractPayment)payment).getSalaryType() == SalaryType.EXTRA ));
 	}
 
-	private boolean isDelay(IPayment payment) {
+	private static boolean isDelay(IPayment payment) {
 		return (( payment instanceof IContractPayment) && (((IContractPayment)payment).getSalaryType() == SalaryType.DELAY ));
 	}
 
-	private boolean isDelay(Payment payment) {
+	private static boolean isDelay(Payment payment) {
 		return payment.getSalaryType() == Salary.Type.DELAY;
 	}
 
-	private boolean isUnpaid(IPayment payment) {
+	private static  boolean isUnpaid(IPayment payment) {
 		return AonStringUtils.equals(payment.getName(),UNPAID.getName());
 	}
 
-	private boolean isNotZero(Double amount) {
+	private static boolean isNotZero(Double amount) {
 		return AonNumberUtils.zeroIfNull(amount) != 0.00;
 	}
 	
-	private boolean isNotZero(Payment payment) {
+	private static boolean isNotZero(Payment payment) {
 		return isNotZero(payment.getAmount()) || isNotZero(payment.getQuote()) || isNotZero(payment.getIrpf()) ;
+	}
+
+	private static boolean isSSPEC(Item<?> item) {
+		return AonStringUtils.startsWith(item.getExpression(), "/*epoch");
 	}
 
 	private void checkIrpfOutcome(IrpfOutcome irpfOutcome) {

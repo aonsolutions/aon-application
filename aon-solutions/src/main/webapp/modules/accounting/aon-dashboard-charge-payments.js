@@ -50,12 +50,7 @@ export class AonDashboardChargePayments extends AonElement {
 
     let titleDiv = this.createElement(TAG.SPAN);
     titleDiv.innerHTML = 'Resumen: ' + this.getTitlePeriod(this.filter.period);
-    if(LS.isDarkTheme())
-      titleDiv.style.color = "white";
-    else
-      titleDiv.style.color = "grey";
-    titleDiv.style.fontWeight = "500";
-    titleDiv.style.textAlign = "center";
+    titleDiv.className = "graphicsDashBoardSummary";
     contentDiv.appendChild(titleDiv);
 
     let canvasDiv = this.createElement(TAG.DIV);

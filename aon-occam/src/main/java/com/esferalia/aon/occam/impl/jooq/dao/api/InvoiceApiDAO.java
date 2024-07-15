@@ -47,6 +47,7 @@ import com.esferalia.aon.occam.api.model.type.WithholdingType;
 import com.esferalia.aon.occam.impl.jooq.dao.AccountingInvoiceDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.Filler;
 import com.esferalia.aon.occam.impl.jooq.dao.FinanceDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.InvoiceDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.InvoicePropertiesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.PropertyOrdersDAO.InvoicePropertyOrdersDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.invoice.InvoiceInfoDAO.InvoiceInfoFiller;
@@ -266,7 +267,7 @@ public class InvoiceApiDAO {
 				invoice.setFinances(FinanceDAO.getFinanceStream(ctx, f -> f.getInvoiceProperty().eq(invoice.getId()))
 					.collect(Collectors.toCollection(LinkedList::new)));
 			
-				AccountingInvoiceDAO.fillBreakdown(ctx, invoice);
+				InvoiceDAO.fillBreakdown(ctx, invoice);
 			} 
 			return invoice;
 		}

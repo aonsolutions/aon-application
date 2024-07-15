@@ -151,6 +151,72 @@ export const MAIN_CONTRATA = {
   entryPoint: 'MainContrata'
 };
 
+export const MAIN_IT = {
+  title: 'IT',
+  module: GWT_PAYROLL,
+  entryPoint: 'MainIT'
+};
+
+export const MAIN_CALCULATOR = {
+  title: 'Calculator',
+  module: GWT_PAYROLL,
+  entryPoint: 'MainCalculator'
+};
+
+export const MAIN_CRETA = {
+  title: 'Creta',
+  module: GWT_PAYROLL,
+  entryPoint: 'MainCreta'
+};
+
+export const MAIN_CRA = {
+  title: 'CRA',
+  module: GWT_PAYROLL,
+  entryPoint: 'MainCRA'
+};
+
+export const MAIN_AFI = {
+  title: 'AFI',
+  module: GWT_PAYROLL,
+  entryPoint: 'MainAFI'
+};
+
+export const PENSION_PLAN_AFI = {
+  title: 'Pension Plan Afi',
+  module: GWT_PAYROLL,
+  entryPoint: 'PensionPlanAFIModule'
+};
+
+export const MAIN_SALARY_PRINT = {
+  title: 'Main Salary print',
+  module: GWT_PAYROLL,
+  entryPoint: 'MainSalaryPrint'
+};
+
+export const ACTIVITY_SUMMARY = {
+  title: 'Activity Summary',
+  module: GWT_PAYROLL,
+  entryPoint: 'AcitivitySummary'
+};
+
+export const MASSIVE_FIE = {
+  title: 'Massive Fie',
+  module: GWT_PAYROLL,
+  entryPoint: 'MainMassiveFie'
+};
+
+export const MASSIVE_CONTRACTS = {
+  title: 'Massive Contracts',
+  module: GWT_PAYROLL,
+  entryPoint: 'MainMassiveContracts'
+};
+
+export const CONTRACT_VARIABLES = {
+  title: 'Contract Variables',
+  module: GWT_PAYROLL,
+  entryPoint: 'ContractVariablesModule'
+};
+
 export const MAIN_DIGITAL_CERTIFICATES = {
   module: GWT_PAYROLL,
   entryPoint: 'MainCertificates'

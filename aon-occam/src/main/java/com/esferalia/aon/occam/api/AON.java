@@ -89,7 +89,6 @@ import com.esferalia.aon.occam.api.model.Filter.InventoryDetailFilter;
 import com.esferalia.aon.occam.api.model.Filter.InvestAssetFilter;
 import com.esferalia.aon.occam.api.model.Filter.InvoiceCommunicationTrackingFilter;
 import com.esferalia.aon.occam.api.model.Filter.InvoiceDetailCommissionFilter;
-import com.esferalia.aon.occam.api.model.Filter.InvoiceDetailFilter;
 import com.esferalia.aon.occam.api.model.Filter.InvoiceInfoFilter;
 import com.esferalia.aon.occam.api.model.Filter.ItemAddInfoFilter;
 import com.esferalia.aon.occam.api.model.Filter.ItemCompositionFilter;
@@ -181,6 +180,7 @@ import com.esferalia.aon.occam.api.model.RegistryParams;
 import com.esferalia.aon.occam.api.model.Salary;
 import com.esferalia.aon.occam.api.model.SalaryFilter;
 import com.esferalia.aon.occam.api.model.SellerParams;
+import com.esferalia.aon.occam.api.model.Series;
 import com.esferalia.aon.occam.api.model.Signature;
 import com.esferalia.aon.occam.api.model.Survey;
 import com.esferalia.aon.occam.api.model.Workgroup;
@@ -210,7 +210,6 @@ import com.esferalia.aon.occam.api.model.finance.InvoiceCommunicationTracking;
 import com.esferalia.aon.occam.api.model.finance.InvoiceDetail;
 import com.esferalia.aon.occam.api.model.finance.InvoiceFilter;
 import com.esferalia.aon.occam.api.model.finance.InvoiceInfo;
-import com.esferalia.aon.occam.api.model.finance.InvoiceSeries;
 import com.esferalia.aon.occam.api.model.finance.InvoiceTax;
 import com.esferalia.aon.occam.api.model.finance.InvoicingGroup;
 import com.esferalia.aon.occam.api.model.finance.InvoicingGroupFilter;
@@ -304,7 +303,6 @@ import com.esferalia.aon.occam.api.model.warehouse.InventoryDetail;
 import com.esferalia.aon.occam.api.model.warehouse.Packaging;
 import com.esferalia.aon.occam.api.model.warehouse.PackagingDelivery;
 import com.esferalia.aon.occam.api.model.warehouse.PaturpatQuality;
-import com.esferalia.aon.occam.api.model.Series;
 import com.esferalia.aon.occam.api.model.warehouse.Stock;
 import com.esferalia.aon.occam.api.model.warehouse.UdapaQuality;
 import com.esferalia.aon.occam.api.model.warehouse.Warehouse;
@@ -343,7 +341,7 @@ import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class AON {
-
+	
 	private AON() {
 		throw new IllegalStateException("Utility class");
 	}
@@ -1826,11 +1824,22 @@ public class AON {
 	// ********************************************
 	// ********************************* FINANCE **
 	// ********************************************
+	public static Stream<Invoice> getInvoiceHeaders(Occam occam, InvoiceFilter filter, int offset, int limit) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(occam)) {
+			return getInvoiceHeaders(ctx, filter, offset, limit);
+		}
+	}
+	public static Stream<Invoice> getInvoiceHeaders(AONContext ctx, InvoiceFilter filter, int offset, int limit) {
+		return getFinance().getInvoiceHeaders(ctx, filter, offset, limit);
+	}
 	
 	public static Stream<Invoice> getInvoiceHeaders(Occam occam, AccountingReportParams params, int offset, int limit) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(occam)) {
-			return getFinance().getInvoiceHeaders(ctx, params, offset, limit);
+			return getInvoiceHeaders(ctx, params, offset, limit);
 		}
+	}
+	public static Stream<Invoice> getInvoiceHeaders(AONContext ctx, AccountingReportParams params, int offset, int limit) {
+		return getFinance().getInvoiceHeaders(ctx, params, offset, limit);
 	}
 
 	public static Stream<Invoice> getInvoiceStream(Occam occam, InvoiceFilter filter){
@@ -1840,13 +1849,8 @@ public class AON {
 	}
 	
 	public static Stream<Invoice> getInvoiceStream(String domainName, Integer domainId, String login, InvoiceFilter filter){
-		CloseableAONContext ctx = null;
-		try {
-			ctx = AONContext.getAONContext(domainName, domainId, login);
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)) {
 			return getFinance().getInvoiceStream(ctx, filter);
-		} finally {
-			if (ctx != null)
-				ctx.close();
 		}
 	}
 	
@@ -1866,9 +1870,13 @@ public class AON {
 
 	public static Invoice acceptInvoice(String domainName, Integer domainId, String login, Invoice invoice, Integer rawdocId){
 		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
-			return getFinance().acceptInvoice(ctx, invoice, rawdocId);
+			return acceptInvoice(ctx, invoice, rawdocId);
 		}
 	}
+	public static Invoice acceptInvoice(AONContext ctx, Invoice invoice, Integer rawdocId){
+		return getFinance().acceptInvoice(ctx, invoice, rawdocId);
+	}
+	
 
 	public static Invoice insertInvoice(Occam occam, Invoice invoice){
 		return insertInvoice( occam.getDomainName(), occam.getDomain(), occam.getUser(), invoice);
@@ -1941,6 +1949,10 @@ public class AON {
 		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)) {
 			return getFinance().getInvoice(ctx, id);
 		}
+	}
+	
+	public static Optional<Item> getLastItem( AONContext ctx, Integer registry) {
+		return getFinance().getLastItem(ctx, registry);
 	}
 	
 	public static Invoice getLastSaleInvoice(Occam occam, String serie){
@@ -2129,8 +2141,11 @@ public class AON {
 
 	public static Integer getInvoiceNextNumber(String domainName, Integer domainId, String login, Byte[] types, String series) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)) {
-			return getFinance().getInvoiceNextNumber(ctx, types,series);
+			return getInvoiceNextNumber(ctx, types,series);
 		}
+	}
+	public static Integer getInvoiceNextNumber(AONContext ctx, Byte[] types, String series) {
+			return getFinance().getInvoiceNextNumber(ctx, types,series);
 	}
 	
 	public static Integer getInvoiceMinNumber(String domainName, Integer domainId, String login, InvoiceType type, String series) {

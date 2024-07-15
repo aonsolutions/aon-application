@@ -21,9 +21,9 @@ import java.io.InputStream;
 import java.net.URL;
 import java.net.URLConnection;
 import java.sql.Timestamp;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.LinkedList;
+import java.util.Objects;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -51,7 +51,6 @@ import com.esferalia.aon.occam.api.model.attachment.AttachType;
 import com.esferalia.aon.occam.api.model.attachment.InvoiceAttachmentType;
 import com.esferalia.aon.occam.api.model.finance.Finance;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
-import com.esferalia.aon.occam.api.model.finance.InvoiceBreakdown;
 import com.esferalia.aon.occam.api.model.finance.InvoiceDetail;
 import com.esferalia.aon.occam.api.model.finance.InvoiceRecorder;
 import com.esferalia.aon.occam.api.model.finance.InvoiceRectificationData;
@@ -69,6 +68,7 @@ import com.esferalia.aon.occam.api.model.security.Scope;
 import com.esferalia.aon.occam.api.model.type.FinanceStatus;
 import com.esferalia.aon.occam.api.model.type.FinanceTrackingType;
 import com.esferalia.aon.occam.api.model.type.InvoiceSource;
+import com.esferalia.aon.occam.api.model.type.InvoiceTransactionType;
 import com.esferalia.aon.occam.api.model.type.InvoiceType;
 import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.occam.api.model.type.RectificationType;
@@ -189,7 +189,7 @@ public class AccountingInvoiceDAO {
 							;
 						ai.getInvoice().getDetails().add( invoiceDetail );
 						ai.setAccountSource(ai.isAccountSource() || (source == InvoiceSource.ACCOUNT));
-						// ¿Más de uno? --> No se soporta
+						// ï¿½Mï¿½s de uno? --> No se soporta
 						ai.setWorkplace(det.getValue(INVOICE_DETAIL.WORKPLACE));
 						// -----------------
 						
@@ -231,7 +231,7 @@ public class AccountingInvoiceDAO {
 				}
 				
 				if ( !ai.isAccountSource() ) {
-					fillBreakdown(ctx, ai.getInvoice());
+					InvoiceDAO.fillBreakdown(ctx, ai.getInvoice());
 				}
 				ai.getInvoice().setFinances(FinanceDAO.getInvoiceFinances(ctx, invoiceId));
 				
@@ -260,10 +260,10 @@ public class AccountingInvoiceDAO {
 	
 	private static void fillInvoiceTax(AONContext ctx, Integer invoideDetailId, Record accDet, Record det, AccountingInvoice ai, AonConfiguration config) {
 		// *********************
-		// Al no guardar el porcentaje de imposición directa en BD, se "supone" su activación en función
+		// Al no guardar el porcentaje de imposiciï¿½n directa en BD, se "supone" su activaciï¿½n en funciï¿½n
 		// de la existencia de la cuenta en apuntes.
-		// Si la cuenta ha cambiad, el apunte fallará....
-		// Si el porcentaje de invest_asset ha cambiado, el apunte fallará-
+		// Si la cuenta ha cambiad, el apunte fallarï¿½....
+		// Si el porcentaje de invest_asset ha cambiado, el apunte fallarï¿½-
 		boolean directTaxEnabledPre = false;
 		Account directTaxAccount = config.accounting().getDirectTaxAdjustAccount();
 		if (directTaxAccount != null && ai.getAccountEntry() != null) {
@@ -524,7 +524,7 @@ public class AccountingInvoiceDAO {
 		ai.setSuggestedAccounts(getSuggestedAccounts(ctx , ai.getRegistry().getId(), reg.getType().getInvoiceType()));
 		InvoiceVAT vat = createNewInvoiceVAT(ai, config);
 		ai.addVat(vat);
-		/// RETENCIÓN
+		/// RETENCIï¿½N
 		if (ai.isWithholding()) {
 			ai.setWithholdingData(new InvoiceWithholding());
 			Account withholdingAccount = null;
@@ -755,7 +755,7 @@ public class AccountingInvoiceDAO {
 			}
 			accInvoice.getInvoice().getDetails().addAll(details);
 			
-			// Si sólo tiene un vencimiento y está pendiente, se actualiza el importe para que sea igual al total factura 
+			// Si sï¿½lo tiene un vencimiento y estï¿½ pendiente, se actualiza el importe para que sea igual al total factura 
 			if (accInvoice.getInvoice().getFinances() != null && accInvoice.getInvoice().getFinances().size() == 1) {
 				Finance finance = accInvoice.getInvoice().getFinances().get(0);
 				if (finance.isPending() && !AonNumberUtils.equals(accInvoice.getInvoice().getTotal(),finance.getAmount())) {
@@ -886,7 +886,7 @@ public class AccountingInvoiceDAO {
 			}
 		} else {
 			String data = new String(attach.getData());
-			// Si se cambia este método de sitio, se debería tener en cuenta  
+			// Si se cambia este mï¿½todo de sitio, se deberï¿½a tener en cuenta  
 			// que attach.data puede ser ya binario y no necesite unserialize.
 			if ( !accInvoice.isFromRawdoc()) {
 				DataUrlSerializer serializer = new DataUrlSerializer();
@@ -1250,7 +1250,7 @@ public class AccountingInvoiceDAO {
 						.setDeductibleQuota(vat.getDeductibleQuota())
 						// Se deben grabar las dos cuentas!!
 						// Issue: #2414
-						// "Guardar cuenta iva repercutido o soportado al modificar facturas de venta o gasto desde el menú Gestión"  
+						// "Guardar cuenta iva repercutido o soportado al modificar facturas de venta o gasto desde el menï¿½ Gestiï¿½n"  
 						// https://github.com/aonsolutions/aon-application/issues/2414
 						.setAccount(accInvoice.isSales() ? vat.getOutputAccountId() : vat.getInputAccountId())
 					);
@@ -1606,5 +1606,53 @@ public class AccountingInvoiceDAO {
 		}
 	}
 	
+	public static LinkedList<AccountingInvoice> getPendingImportAccountingInvoices(AONContext ctx, String query) {
+		final String filter = decorateQueryString( query );
+		return InvoiceDAO.getInvoiceHeaders(ctx, p ->
+				p.getDomainProperty().eq(ctx.getDomainId())
+				 .and(p.getRegistryDocumentProperty().like(filter)
+				  .or(p.getRegistryNameProperty().like(filter))
+				  .or(p.getReferenceCodeProperty().like(filter))
+				  )
+				 .and(p.getTransactionProperty().eq(InvoiceTransactionType.EXTRACOMMUNITY.value())
+				  .or(p.getTransactionProperty().eq(InvoiceTransactionType.CAN_CEU_MEL.value()))
+				  )
+			,0,50)
+			.filter( inv -> isPresentInInvoiceDUA(ctx, inv.getId()) )
+			.map( inv -> getAccountingInvoiceFromInvoice(ctx, inv.getId()) )
+			.filter( Objects::nonNull )
+			.filter( ai -> ai.getDuaInvoice() == null )
+			.collect(Collectors.toCollection(LinkedList::new));
+	}
+
+	public static LinkedList<AccountingInvoice> getRegistryNotRectifiedAccountingInvoices(AONContext ctx, Integer registry, String query) {
+		final String filter = decorateQueryString( query );
+		return InvoiceDAO.getInvoiceHeaders(ctx, p ->
+				p.getDomainProperty().eq(ctx.getDomainId())
+				 .and(p.getRegistryProperty().eq(registry))
+				 .and(p.getRectificationTypeProperty().isNull())
+				 .and(p.getReferenceCodeProperty().like(filter))
+			,0,50)
+			.filter( inv -> isPresentInInvoiceDUA(ctx, inv.getId()) )
+			.map( inv -> getAccountingInvoiceFromInvoice(ctx, inv.getId()) )
+			.filter( Objects::nonNull )
+			.filter( ai -> ai.getDuaInvoice() == null )
+			.collect(Collectors.toCollection(LinkedList::new));
+	}
+
+	private static String decorateQueryString( String query) {
+		String q = null; 
+		if (!AonStringUtils.contains(query, AonStringUtils.PERCENT)) {
+			if (AonStringUtils.isNumeric(query)) {
+				q = AonStringUtils.EMPTY;
+			} else {
+				q = AonStringUtils.PERCENT; 
+			}
+			q = q + query  + AonStringUtils.PERCENT;
+		} else {
+			q = query;
+		}
+		return q;
+	}
 }
 

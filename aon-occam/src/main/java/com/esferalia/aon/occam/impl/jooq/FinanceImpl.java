@@ -4,6 +4,7 @@ import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -18,7 +19,6 @@ import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.Customer;
 import com.esferalia.aon.occam.api.model.Filter.FeeFilter;
 import com.esferalia.aon.occam.api.model.Filter.InvoiceCommunicationTrackingFilter;
-import com.esferalia.aon.occam.api.model.Filter.InvoiceDetailFilter;
 import com.esferalia.aon.occam.api.model.Filter.InvoiceInfoFilter;
 import com.esferalia.aon.occam.api.model.Filter.ItemFilter;
 import com.esferalia.aon.occam.api.model.Filter.PayMethodFilter;
@@ -55,6 +55,7 @@ import com.esferalia.aon.occam.api.model.finance.TbaiConfiguration;
 import com.esferalia.aon.occam.api.model.finance.utilities.FinanceUtilitiesParams;
 import com.esferalia.aon.occam.api.model.finance.utilities.FinanceUtilitiesResult;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceDetailExtended;
+import com.esferalia.aon.occam.api.model.product.Item;
 import com.esferalia.aon.occam.api.model.product.OldItem;
 import com.esferalia.aon.occam.api.model.product.OldProduct;
 import com.esferalia.aon.occam.api.model.registry.CustomerFeeParams;
@@ -73,7 +74,6 @@ import com.esferalia.aon.occam.impl.jooq.dao.FinanceTrackingDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.FinanceUtilitiesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.InvofoxConfigurationDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.InvoiceDAO;
-import com.esferalia.aon.occam.impl.jooq.dao.InvoiceDetailDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.InvoiceFiscalDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.InvoiceOLDDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.InvoiceSIIDAO;
@@ -90,6 +90,11 @@ import com.esferalia.aon.occam.impl.jooq.dao.invoice.InvoiceInfoDAO;
 public class FinanceImpl implements IFinance {
 
 	// ------------------------------------- INVOICE
+	@Override
+	public Optional<Item> getLastItem(AONContext ctx, Integer registry) {
+		return ctx.getDslContext().transactionResult(
+			configuration -> InvoiceDAO.getLastItem(ctx, registry));
+	}
 	
 	@Override
 	public Invoice getLastSaleInvoice(AONContext ctx, String serie) {
@@ -127,6 +132,11 @@ public class FinanceImpl implements IFinance {
 				configuration -> InvoiceDAO.validate(ctx, invoice, rawdocId));
 	}
 	
+	@Override
+	public Stream<Invoice> getInvoiceHeaders(AONContext ctx, InvoiceFilter filter, int offset, int limit) {
+		return ctx.getDslContext().transactionResult(
+			configuration -> InvoiceDAO.getInvoiceHeaders(ctx, filter, offset, limit));
+	}
 	@Override
 	public Stream<Invoice> getInvoiceHeaders(AONContext ctx, AccountingReportParams params, int offset, int limit) {
 		return ctx.getDslContext().transactionResult(

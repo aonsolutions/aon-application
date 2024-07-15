@@ -50,7 +50,7 @@ public class InvoiceDetailDAO {
     }
 	
 	private static final InvoiceDetailPropertiesDAO INVOICE_DETAIL_PROPERTIES = new InvoiceDetailPropertiesDAO();
-	public static class InvoiceDetailPropertiesDAO implements InvoiceDetailProperties {
+	private static class InvoiceDetailPropertiesDAO implements InvoiceDetailProperties {
 		
 		public Condition[] getConditions(InvoiceDetailFilter filter) {
 			FilterDAO filterDAO = (FilterDAO) filter.filter(this);
@@ -85,7 +85,7 @@ public class InvoiceDetailDAO {
 	
 	
 	
-	public static SelectSeekStep1<Record, Short> select(AONContext ctx, InvoiceDetailFilter filter){	
+	private static SelectSeekStep1<Record, Short> select(AONContext ctx, InvoiceDetailFilter filter){	
 		return ctx.getDslContext()
 				.select()
 				.from(INVOICE_DETAIL)
@@ -93,7 +93,7 @@ public class InvoiceDetailDAO {
 				.orderBy(INVOICE_DETAIL.LINE);
 	}
 	
-	public static SelectSeekStep1<Record, Short> selectFull(AONContext ctx, InvoiceDetailFilter filter){  
+	private static SelectSeekStep1<Record, Short> selectFull(AONContext ctx, InvoiceDetailFilter filter){  
         return ctx.getDslContext()
                 .select()
                 .from(INVOICE_DETAIL)
@@ -110,42 +110,12 @@ public class InvoiceDetailDAO {
                 .orderBy(INVOICE_DETAIL.LINE);
     }
 	
-	public static Stream<InvoiceDetail> getStream(AONContext ctx, InvoiceDetailFilter filter){	
-		return select(ctx, filter).fetch().stream().map(new InvoiceDetailFiller());
-	}
-	
-	public static Stream<InvoiceDetail> getFullStream(AONContext ctx, InvoiceDetailFilter filter){ 
+	private static Stream<InvoiceDetail> getFullStream(AONContext ctx, InvoiceDetailFilter filter){ 
         return selectFull(ctx, filter).fetch().stream().map(new InvoiceDetailFiller());
     }
 	
-	public static Stream<InvoiceDetail> getStream(AONContext ctx, InvoiceDetailFilter filter, Integer page, Integer perPage){	
-		return select(ctx, filter)
-			.limit(perPage)
-			.offset(perPage * (page -1))
-			.fetch().stream().map(new InvoiceDetailFiller());
-	}
-	
-	public static Stream<InvoiceDetail> getFullStream(AONContext ctx, InvoiceDetailFilter filter, Integer page, Integer perPage){   
-	    return selectFull(ctx, filter)
-	        .limit(perPage)
-	        .offset(perPage * (page -1))
-	        .fetch().stream().map(new InvoiceDetailFiller());
-	}
-	
-	public static List<InvoiceDetail> getList(AONContext ctx, InvoiceDetailFilter filter){	
-		return getStream(ctx, filter).collect(Collectors.toCollection(LinkedList::new));
-	}
-	
-	public static List<InvoiceDetail> getList(AONContext ctx, InvoiceDetailFilter filter, Integer page, Integer perPage){	
-		return getStream(ctx, filter, page, perPage).collect(Collectors.toCollection(LinkedList::new));
-	}
-	
-	public static List<InvoiceDetail> getFullList(AONContext ctx, InvoiceDetailFilter filter) {  
+	static List<InvoiceDetail> getFullList(AONContext ctx, InvoiceDetailFilter filter) {  
         return getFullStream(ctx, filter).collect(Collectors.toCollection(LinkedList::new));
-    }
-	
-	public static List<InvoiceDetail> getFullList(AONContext ctx, InvoiceDetailFilter filter, Integer page, Integer perPage){  
-        return getFullStream(ctx, filter, page, perPage).collect(Collectors.toCollection(LinkedList::new));
     }
 	
 	public static InvoiceDetail get(AONContext ctx, InvoiceDetailFilter filter) {
@@ -154,16 +124,14 @@ public class InvoiceDetailDAO {
 			.findFirst().orElse(new InvoiceDetail());
 	}
 	
-	
-	public static List<InvoiceDetail> save(AONContext ctx, List<InvoiceDetail> invoiceDetails) {
+	static List<InvoiceDetail> save(AONContext ctx, List<InvoiceDetail> invoiceDetails) {
 		LinkedList<InvoiceDetail> list = new LinkedList<>();
 		invoiceDetails.stream().forEach(invoiceDetail -> 
 			list.add(save(ctx, invoiceDetail)));
 		return list;
 	}
 	
-	public static InvoiceDetail save(AONContext ctx, InvoiceDetail invoiceDetail) {
-		// TODO AUTOCOMPLETE && VALIDATE.
+	static InvoiceDetail save(AONContext ctx, InvoiceDetail invoiceDetail) {
 		invoiceDetail = invoiceDetail.getId() != null 
 			? update(ctx, invoiceDetail)
 			: insert(ctx, invoiceDetail);
@@ -177,12 +145,7 @@ public class InvoiceDetailDAO {
 		return invoiceDetail;
 	}
 	
-	public static List<InvoiceDetail> update(AONContext ctx, List<InvoiceDetail> invoiceDetails) {
-		invoiceDetails.stream().forEach(invoiceDetail -> update(ctx, invoiceDetail));
-		return invoiceDetails;
-	}
-	
-	public static InvoiceDetail update(AONContext ctx, InvoiceDetail invoiceDetail) {
+	private static InvoiceDetail update(AONContext ctx, InvoiceDetail invoiceDetail) {
 		ctx.getDslContext().update(INVOICE_DETAIL)
 		.set(INVOICE_DETAIL.DOMAIN, invoiceDetail.getDomain())
 		.set(INVOICE_DETAIL.INVOICE, invoiceDetail.getInvoice().getId())
@@ -209,7 +172,7 @@ public class InvoiceDetailDAO {
 		return invoiceDetail;
 	}
 	
-	public static InvoiceDetail insert(AONContext ctx, InvoiceDetail invoiceDetail) {
+	private static InvoiceDetail insert(AONContext ctx, InvoiceDetail invoiceDetail) {
 		Integer id = ctx.getDslContext().insertInto(INVOICE_DETAIL)
 			.set(INVOICE_DETAIL.DOMAIN, invoiceDetail.getDomain())
 			.set(INVOICE_DETAIL.INVOICE, invoiceDetail.getInvoice().getId())
@@ -237,16 +200,6 @@ public class InvoiceDetailDAO {
 		return invoiceDetail.setId(id);
 	}	
 
-	public static void delete(AONContext ctx, Integer id){
-		delete(ctx, f -> f.getDomainProperty().eq(ctx.getDomainId()).and(f.getIdProperty().eq(id)));
-	}
-	
-	public static void delete(AONContext ctx, InvoiceDetailFilter filter){
-		ctx.getDslContext().delete(INVOICE_DETAIL)
-		.where(INVOICE_DETAIL_PROPERTIES.getConditions(filter))
-		.execute();
-	}
-	
 	public static class InvoiceDetailFiller extends Filler implements Function<Record, InvoiceDetail> {
 
 		@Override
