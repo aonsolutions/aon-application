@@ -2,6 +2,8 @@ import { AonElement } from 'aonsolutions/components/AonElement.js';
 import { AonAvatar } from 'aonsolutions/components/aon-avatar.js';
 import { MSG, CONSTANT, CSS, EVENT, MATERIAL_ICONS, TAG } from "aonsolutions/environments/environments.js";
 import {closeSession, getAuth, getUser } from  'aonsolutions/services/service.js';
+import { AonConfiguration } from 'aonsolutions/modules/configuration/aon-configuration.js';
+
 import * as LS from 'aonsolutions/services/localStorageService.js';
 
 export class AonLoginPanel extends AonElement {
@@ -45,7 +47,7 @@ export class AonLoginPanel extends AonElement {
 		let rightPanel = this.getElement("aonRightPanel");
 		rightPanel.style.boxShadow="0 24px 54px rgba(0,0,0,.15),0 4.5px 13.5px rgba(0,0,0,.08)";
 		rightPanel.style.marginTop = '0px';
-		rightPanel.style.height = '200px';
+		rightPanel.style.height = '220px';
 
 		let divGeneral = this.createDiv();
 		divGeneral.style.display = "flex";
@@ -69,18 +71,33 @@ export class AonLoginPanel extends AonElement {
 				divUserInfo.appendChild(this.buildName(auth.name));
 			else
 				divUserInfo.appendChild(this.buildName(MSG.NO_DATA))
+			
 			if(auth.email)
 				divUserInfo.appendChild(this.buildInfo(MATERIAL_ICONS.MAIL,auth.email));
 			else
 				divUserInfo.appendChild(this.buildInfo(MATERIAL_ICONS.MAIL,MSG.NO_DATA))
+			
 			if(auth.phone)
 				divUserInfo.appendChild(this.buildInfo(MATERIAL_ICONS.PHONE,auth.phone));
 			else
 				divUserInfo.appendChild(this.buildInfo(MATERIAL_ICONS.PHONE,MSG.NO_DATA));
+			
 			if(auth.document)
 				divUserInfo.appendChild(this.buildInfo(MATERIAL_ICONS.ASSIGNMENT_IND,auth.document))
 			else
 				divUserInfo.appendChild(this.buildInfo(MATERIAL_ICONS.ASSIGNMENT_IND,MSG.NO_DATA));
+		}
+		
+		if(auth.name) {
+			let divConfiguration = this.createDiv();
+			divConfiguration.className = 'aonUserConfigLink';
+			divConfiguration.innerText = MSG.CONFIGURATION;
+			divConfiguration.addEventListener(EVENT.CLICK, () => {
+				let aonConfiguration = new AonConfiguration();
+				aonConfiguration.user = auth.name;
+				this.rootPanel(aonConfiguration);
+			});
+			divUserInfo.appendChild(divConfiguration);
 		}
 		
 	

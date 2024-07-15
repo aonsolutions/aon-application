@@ -8,11 +8,11 @@ import * as LS from 'aonsolutions/services/localStorageService.js';
 
 export class AonConfig extends AonElement {
 
-	TOP_SWITCH;
-	LEFT_SWITCH;
+	TOP_NAV_SWITCH;
+	SIDE_NAV_SWITCH;
 	APPS_SWITCH;
 	DARK_SWITCH;
-	WHITE_BRAND_SWITCH;
+	BRAND_SWITCH;
 	LANG_CARD;
 	TYPE_CARD;
 
@@ -31,123 +31,116 @@ export class AonConfig extends AonElement {
 
 	initialize() {
 		this.id = this.id || 'aonConfig';
-		this.TOP_SWITCH = this.id + 'SwitchTop';
-		this.LEFT_SWITCH = this.id + 'SwitchLeft';
-		this.APPS_SWITCH = this.id + 'SwitchApps';
+		this.TOP_NAV_SWITCH = this.id + 'TopSwitch';
+		this.SIDE_NAV_SWITCH = this.id + 'SideSwitch';
+		this.APPS_SWITCH = this.id + 'AppsSwitch';
 		this.DARK_SWITCH = this.id + 'DarkSwitch';
-		this.WHITE_BRAND_SWITCH = this.id + 'WhiteBrandSwitch';
+		this.BRAND_SWITCH = this.id + 'BrandSwitch';
 		this.LANG_CARD = this.id + 'HelpLangCard';
 		this.TYPE_CARD = this.id + 'TypeCard';
 	}
 
 	build() {
 
-		let div = this.createDiv();
-		div.innerHTML = MSG.SUITE_MENU;
-		div.style.marginLeft = '10px';
-		div.style.position = "relative";
-		div.style.top = "-15px";
-		this.appendChild(div);
+		let topNavDiv = this.createDiv();
+		topNavDiv.className = CSS.AON_CONFIG_TOP_NAV;
+		
+		let topNavTitle = this.createSpan(); 
+		topNavTitle.className =  `${CSS.AON_CONFIG_TOP_NAV}Title`;
+		topNavTitle.innerHTML = MSG.SUITE_MENU;
+		topNavDiv.appendChild(topNavTitle);
+		
+		let topNavSwitch = new AonSwitch();
+		topNavSwitch.id = this.TOP_NAV_SWITCH;
+		topNavSwitch.checked = LS.isTopMenu();
+		topNavDiv.appendChild(topNavSwitch);
 
-		let rightPanelSwitchTopButton = new AonSwitch();
-		rightPanelSwitchTopButton.id = this.TOP_SWITCH;
-		rightPanelSwitchTopButton.style.marginLeft = '10px';
-		rightPanelSwitchTopButton.style.right = '30px';
-		rightPanelSwitchTopButton.style.position = 'absolute';
-		rightPanelSwitchTopButton.style.top = "-1px";
-		rightPanelSwitchTopButton.checked = LS.isTopMenu();
-		div.appendChild(rightPanelSwitchTopButton);
+		this.appendChild(topNavDiv);
 
-		let span2= this.createSpan();
-		span2.innerHTML = MSG.PORTAL_MENU;
-		span2.style.marginLeft = '10px';
-		span2.style.position = "relative";
-		span2.style.top = '0px';
-		this.appendChild(span2);
 
-		let rightPanelSwitchLeftButton = new AonSwitch();
-		rightPanelSwitchLeftButton.id = this.LEFT_SWITCH;
-		rightPanelSwitchLeftButton.style.marginLeft = '10px';
-		rightPanelSwitchLeftButton.style.right = '30px';
-		rightPanelSwitchLeftButton.style.position = 'absolute';
-		rightPanelSwitchLeftButton.style.top = "90px";
-		rightPanelSwitchLeftButton.checked =  LS.isLeftMenu();
-		this.appendChild(rightPanelSwitchLeftButton);
+		let sideNavDiv= this.createDiv();
+		sideNavDiv.className = CSS.AON_CONFIG_SIDE_NAV;
 
-		let span3 = this.createSpan();
-		span3.innerHTML = "Mostrar todas las apps";
-		span3.style.left = '-81px';
-		span3.style.position = "relative";
-		span3.style.top = '35px';
-		this.appendChild(span3);
+		let sideNavTitle = this.createSpan(); 
+		sideNavTitle.className =  `${CSS.AON_CONFIG_SIDE_NAV}Title`;
+		sideNavTitle.innerHTML = MSG.PORTAL_MENU;
+		sideNavDiv.appendChild(sideNavTitle);
 
-		let rightPanelAppsButton = new AonSwitch();
-		rightPanelAppsButton.id = this.APPS_SWITCH;
-		rightPanelAppsButton.style.marginLeft = '10px';
-		rightPanelAppsButton.style.right = '30px';
-		rightPanelAppsButton.style.position = "absolute";
-		rightPanelAppsButton.style.top = '122px';
-		rightPanelAppsButton.checked = LS.isAppMenu();
-		this.appendChild(rightPanelAppsButton);
+		let sideNavSwitch = new AonSwitch();
+		sideNavSwitch.id = this.SIDE_NAV_SWITCH;
+		sideNavSwitch.checked =  LS.isLeftMenu();
+		sideNavDiv.appendChild(sideNavSwitch);
 
-		let span4 = this.createSpan();
-		span4.innerHTML = "Modo oscuro";
-		span4.style.left = '11px';
-		span4.style.position  = "relative";
-		span4.style.top = '50px';
-		span4.style.display = "flex";
-		this.appendChild(span4);
+		this.appendChild(sideNavDiv);
 
-		let rightPanelDarkButton = new AonSwitch();
-		rightPanelDarkButton.id = this.DARK_SWITCH;
-		rightPanelDarkButton.style.marginLeft = '10px';
-		rightPanelDarkButton.style.right = '30px';
-		rightPanelDarkButton.style.position = "absolute";
-		rightPanelDarkButton.style.top = '155px';
-		rightPanelDarkButton.checked = LS.isDarkTheme();
-		this.appendChild(rightPanelDarkButton);
+		let appsDiv = this.createDiv();
+		appsDiv.className = CSS.AON_CONFIG_APPS;
 
-		let span5 = this.createSpan();
-		span5.innerHTML = "Marca blanca";
-		span5.style.left = "11px";
-		span5.style.position = "relative";
-		span5.style.top = "65px";
-		span5.style.display = "flex";
-		this.appendChild(span5);
+		let appsTitle = this.createSpan(); 
+		appsTitle.className =  `${CSS.AON_CONFIG_APPS}Title`;
+		appsTitle.innerHTML = "Mostrar todas las apps";
+		appsDiv.appendChild(appsTitle);
 
-		let rightPanelWhiteBrandButton = new AonSwitch();
-		rightPanelWhiteBrandButton.id = this.WHITE_BRAND_SWITCH;
-		rightPanelWhiteBrandButton.style.marginLeft = '10px';
-		rightPanelWhiteBrandButton.style.right = '30px';
-		rightPanelWhiteBrandButton.style.position = "absolute";
-		rightPanelWhiteBrandButton.style.top = '190';
-		rightPanelWhiteBrandButton.checked = LS.isWhiteBrand();
-		this.appendChild(rightPanelWhiteBrandButton);
+		let appsSwitch = new AonSwitch();
+		appsSwitch.id = this.APPS_SWITCH;
+		appsSwitch.checked = LS.isAppMenu();
+		appsDiv.appendChild(appsSwitch);
 
-		let rightPanelLangCard = new AonCard();
-		rightPanelLangCard.id = this.LANG_CARD;
-		rightPanelLangCard.title = MSG.SELECT_LANGUAGE;
-		rightPanelLangCard.className = "rightPanelLangCard";
-		this.appendChild(rightPanelLangCard);
+		this.appendChild(appsDiv);
 
-		let cardDivv = this.getElement(rightPanelLangCard.CARD);
-		cardDivv.style.boxShadow = '0 2px 4px rgba(0,0,0,.1)';
-		cardDivv.style.backgroundColor = "var(--aonCardColor)"
-		cardDivv.style.borderRadius = '2px';
-		cardDivv.style.marginTop = '60px';
+		let darkDiv = this.createDiv();
+		darkDiv.className = CSS.AON_CONFIG_DARK;
 
-		let divGenerall = this.createDiv();
-		divGenerall.appendChild(this.buildLanguageData(MSG.SPANISH , Language.SPANISH));
-		divGenerall.appendChild(this.buildLanguageData(MSG.ENGLISH , Language.ENGLISH));
-		divGenerall.appendChild(this.buildLanguageData(MSG.FRENCH , Language.FRENCH));
-		divGenerall.appendChild(this.buildLanguageData(MSG.DEUTSCH , Language.DEUTSCH));
-		divGenerall.appendChild(this.buildLanguageData(MSG.BASQUE , Language.BASQUE));
-		divGenerall.appendChild(this.buildLanguageData(MSG.CATALAN , Language.CATALAN));
-		divGenerall.appendChild(this.buildLanguageData(MSG.GALICIAN , Language.GALICIAN));
-		rightPanelLangCard.setContent(divGenerall);
+		let darkTitle = this.createSpan(); 
+		darkTitle.className =  `${CSS.AON_CONFIG_DARK}Title`;
+		darkTitle.innerHTML = "Modo oscuro";
+		darkDiv.appendChild(darkTitle);
 
-		rightPanelSwitchTopButton.addEventListener(EVENT.CHANGE, () => {
-			LS.setTopMenu(rightPanelSwitchTopButton.checked);
+		let darkSwitch = new AonSwitch();
+		darkSwitch.id = this.DARK_SWITCH;
+		darkSwitch.checked = LS.isDarkTheme();
+		darkDiv.appendChild(darkSwitch);
+
+		this.appendChild(darkDiv);
+
+		let brandDiv = this.createDiv();
+		brandDiv.className = CSS.AON_CONFIG_BRAND;
+
+		let brandTitle = this.createSpan(); 
+		brandTitle.className =  `${CSS.AON_CONFIG_DARK}Title`;
+		brandTitle.innerHTML = "Marca blanca";
+		brandDiv.appendChild(brandTitle);
+
+		let brandSwitch = new AonSwitch();
+		brandSwitch.id = this.BRAND_SWITCH;
+		brandSwitch.checked = LS.isWhiteBrand();
+		brandDiv.appendChild(brandSwitch);
+
+		this.appendChild(brandDiv);
+
+		let langCard = new AonCard();
+		langCard.id = this.LANG_CARD;
+		langCard.title = MSG.SELECT_LANGUAGE;
+		langCard.className = "rightPanelLangCard";
+		this.appendChild(langCard);
+
+		let langCardDiv = this.getElement(langCard.CARD);
+		langCardDiv.style.boxShadow = '0 2px 4px rgba(0,0,0,.1)';
+		langCardDiv.style.backgroundColor = "var(--aonCardColor)"
+		langCardDiv.style.borderRadius = '2px';
+
+		let langsDiv = this.createDiv();
+		langsDiv.appendChild(this.buildLanguageData(MSG.SPANISH , Language.SPANISH));
+		langsDiv.appendChild(this.buildLanguageData(MSG.ENGLISH , Language.ENGLISH));
+		langsDiv.appendChild(this.buildLanguageData(MSG.FRENCH , Language.FRENCH));
+		langsDiv.appendChild(this.buildLanguageData(MSG.DEUTSCH , Language.DEUTSCH));
+		langsDiv.appendChild(this.buildLanguageData(MSG.BASQUE , Language.BASQUE));
+		langsDiv.appendChild(this.buildLanguageData(MSG.CATALAN , Language.CATALAN));
+		langsDiv.appendChild(this.buildLanguageData(MSG.GALICIAN , Language.GALICIAN));
+		langCard.setContent(langsDiv);
+
+		topNavSwitch.addEventListener(EVENT.CHANGE, () => {
+			LS.setTopMenu(topNavSwitch.checked);
 			if(LS.isTopMenu()) {
 				aonMenu.showTopNav();
             } else {
@@ -156,8 +149,8 @@ export class AonConfig extends AonElement {
 			
 	    });
 
-		rightPanelSwitchLeftButton.addEventListener(EVENT.CHANGE, () => {
-			LS.setLeftMenu(rightPanelSwitchLeftButton.checked);
+		sideNavSwitch.addEventListener(EVENT.CHANGE, () => {
+			LS.setLeftMenu(sideNavSwitch.checked);
 			if(LS.isLeftMenu()) {
 				aonMenu.showSideNav();
             } else {
@@ -166,25 +159,27 @@ export class AonConfig extends AonElement {
 			
 	    });
 
-		rightPanelAppsButton.addEventListener(EVENT.CHANGE, () => {
-			LS.setAppMenu(rightPanelAppsButton.checked);
+		appsSwitch.addEventListener(EVENT.CHANGE, () => {
+			LS.setAppMenu(appsSwitch.checked);
 			aonMenu.buildMenuTopnav();
 			aonMenu.reloadTopNav();
 		});
 
-		rightPanelDarkButton.addEventListener(EVENT.CHANGE, () => {
-			LS.setDarkTheme(rightPanelDarkButton.checked);
-			if (rightPanelDarkButton.checked) {
+		darkSwitch.addEventListener(EVENT.CHANGE, () => {
+			LS.setDarkTheme(darkSwitch.checked);
+			if (darkSwitch.checked) {
 				loadTheme("dark");
-			} else if (!rightPanelDarkButton.checked){
+			} else if (!darkSwitch.checked){
 				loadTheme("aon");
 			}
 			location.reload();
 		});
 
-		rightPanelWhiteBrandButton.addEventListener(EVENT.CHANGE, () => {
-			LS.setWhiteBrand(rightPanelWhiteBrandButton.checked);
+		brandSwitch.addEventListener(EVENT.CHANGE, () => {
+			LS.setWhiteBrand(brandSwitch.checked);
 		})
+
+		
 	}
 
 	buildLanguageData(value,language) {
@@ -220,11 +215,11 @@ export class AonConfig extends AonElement {
 	}
 
 	getTopButton() {
-		return this.getElement(this.TOP_SWITCH);
+		return this.getElement(this.TOP_NAV_SWITCH);
 	}
 
 	getLeftButton() {
-		return this.getElement(this.LEFT_SWITCH);
+		return this.getElement(this.SIDE_NAV_SWITCH);
 	}
 
 
