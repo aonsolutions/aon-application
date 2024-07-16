@@ -176,6 +176,9 @@ export class AonMobilePackaging extends AonElement {
 		table.addRow();	
 
 		let quantity = this.createQuantity(this.PACKAGING_QUANTITY, MSG.QUANTITY);
+		quantity.addEventListener(EVENT.CHANGE, () => {
+			quantity.setQuantityFormat(quantity.value);
+		});
 		table.addCell(quantity, 2);
 		
 		table.addRow();

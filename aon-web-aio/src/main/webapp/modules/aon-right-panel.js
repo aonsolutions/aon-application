@@ -136,14 +136,25 @@ export class AonRightPanel extends AonElement {
     open(height,marginTop,boxShadow){
         let welcome = this.getElement("aonCompanyTabFilter");
         this.getRightPanel().style.visibility = "visible";
-        if(height) this.getRightPanel().style.height = height;
-        else this.getRightPanel().style.height = "";
-        if (marginTop) this.getRightPanel().style.marginTop = marginTop;
-        else this.getRightPanel().style.marginTop = "65px";
-        if (boxShadow) this.getRightPanel().style.boxShadow = boxShadow;
-        else this.getRightPanel().style.boxShadow = "";
-        if(welcome) this.getRightPanel().style.marginTop = "0px";
-        else this.getRightPanel().style.marginTop = "65px";
+		
+        if(height) 
+			this.getRightPanel().style.height = height;
+        else 
+		this.getRightPanel().style.height = "";
+        if (marginTop) 
+			this.getRightPanel().style.marginTop = marginTop;
+        else 
+			this.getRightPanel().style.marginTop = this.getDefaultMarginTop(); //"65px";
+        
+		if (boxShadow) 
+			this.getRightPanel().style.boxShadow = boxShadow;
+        else 
+		this.getRightPanel().style.boxShadow = "";
+        
+		if(welcome) 
+			this.getRightPanel().style.marginTop = "0px";
+        else 
+			this.getRightPanel().style.marginTop = this.getDefaultMarginTop(); //"65px";
     }
 
     toogle() {
@@ -202,6 +213,12 @@ export class AonRightPanel extends AonElement {
     getTitle(){
         return this.getElement(this.TITLE);
     }
+	
+	getDefaultMarginTop(){
+		return this.getRootPanel().style.marginTop;
+	}
+	
+	
 }
 if (!window.customElements.get(TAG.AON_RIGHT_PANEL)) {
 	window.customElements.define(TAG.AON_RIGHT_PANEL, AonRightPanel);

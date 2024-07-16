@@ -32,6 +32,8 @@
   --sab: env(safe-area-inset-bottom); /* THIS ONE GETS US THE HOME BAR HEIGHT */
   --sal: env(safe-area-inset-left);
 
+  --aonLink: #0078d6;
+
   --aonNewColor: red;
   --aonRightPanelColor: rgb(250, 249, 248);
   --aonCardColor: white;
@@ -420,16 +422,15 @@
 }
 
 .rightPanel {
-  width: 320px;
-  top: 51px;
-  background-color: var(--aonRightPanelColor);
-  right: 0;
-  position: fixed;
-  z-index: 1000000;
-  height: calc(100vh - 49px);
-  overflow: hidden;
-  border: 1px solid rgba(0,0,0,0.1);
-  visibility: hidden;
+    width: 320px;
+    background-color: var(--aonRightPanelColor);
+    top: 47px;
+    right: 0;
+    position: fixed;
+    z-index: 1000000;
+    height: calc(100vh - 49px);
+    overflow: hidden;
+    border: 1px solid rgba(0,0,0,0.1);
 }
 
 h1 {
@@ -2307,7 +2308,7 @@ label.rating:hover {
 /* Large devices (laptops/desktops, 992px and up) */
 @media only screen and (min-width: 854px) {
   #messengerCard{
-    min-width: 42.2rem;
+    /*min-width: 42.2rem;*/
   }
 
   .aonDashboardCard{
@@ -2317,7 +2318,7 @@ label.rating:hover {
 
 
   .aonMessengerCardRow > .aonFlex > .aonFlexColumn > .aonEllipsis{
-    max-width: 26rem;
+    max-width: 14rem;
   }
 
   .aonDocumentalCardRow > .aonFlex > .aonDocumentalEllipsis{
@@ -3775,3 +3776,41 @@ label.rating:hover {
 	border-radius: 5px;
 	display: block;
 }
+
+.aonUserConfigLink {
+  font-size: 12px;
+  cursor: pointer;
+  text-decoration: underline;
+  color: var(--aonLink,--aonBlue);
+}
+
+.aonConfigApps,
+.aonConfigDark,
+.aonConfigBrand,
+.aonConfigTopNav,
+.aonConfigSideNav {
+	height: 38px;
+	display: flex;
+	margin-left: 10px;
+	margin-right: 20px;
+}
+
+.aonConfigApps,
+.aonConfigBrand,
+.aonConfigTopNav {
+	display: none;
+}
+
+.aonConfigAppsTitle,
+.aonConfigDarkTitle,
+.aonConfigBrandTitle,
+.aonConfigTopNavTitle,
+.aonConfigSideNavTitle {
+	flex-grow: 2;
+}
+
+.aonCardsPanel {
+	display: grid !important;
+	grid-template-columns: repeat(3, minmax(0px, 1fr));
+} 
+

@@ -36,9 +36,6 @@ export class AonHome extends AonElement {
 	}
 
 	build() {
-		if(LS.isNewTheme()){
-			
-		}
 
 		let gradiantHeader = this.createElement(TAG.DIV);
 		gradiantHeader.className = 'aonRootGradiantHeader';
@@ -96,32 +93,10 @@ export class AonHome extends AonElement {
 				//aonHeader.setBackgroundColor("var(--aonHeaderBackgroundColor)");
 			}
 			
-			/*
-			let div = this.getElement(app.app);
-			if(appColor == "grey"){
-				div.addEventListener(EVENT.CLICK, () =>{
-					let header = this.getElement("aonHeaderWeb");
-					header.style.backgroundColor = "green";
-		
-					let apps = this.getElement("aonMenuListAppImg-applications");
-					apps.style.color = "rgb(95, 99, 104)";
-		
-					let headerapp = this.getElement("aonHeaderApp");
-					headerapp.style.display = "none";
-		
-					let logo = this.getElement("aonLogo");
-					logo.style.display = "block";
-					logo.style.filter = "none";
-				})
-			}else{
-			*/
-				//aonHeader.setColor(appColor && '#fff', appColor);
-				//aonHeader.setBackgroundColor(appColor);
-				aonHeader.setColor();
-				aonHeader.setBackgroundColor();
-				let appName = app.app[0].toUpperCase() + app.app.slice(1);
-				aonHeader.setClassName(`${CSS.AON_HEADER} ${CSS.AON_HEADER}${appName}`); 
-			//}
+			aonHeader.setColor();
+			aonHeader.setBackgroundColor();
+			let appName = app.app[0].toUpperCase() + app.app.slice(1);
+			aonHeader.setClassName(`${CSS.AON_HEADER} ${CSS.AON_HEADER}${appName}`); 
 			
 		});
 

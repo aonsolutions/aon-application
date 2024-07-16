@@ -120,7 +120,7 @@ export class AonStatistics extends AonElement {
         width:"100%"
       });
 
-      await charts(this, newData);
+      await charts(this, newData, { width: this.offsetWidth });
     } catch (error) {
       console.log(error);
     }

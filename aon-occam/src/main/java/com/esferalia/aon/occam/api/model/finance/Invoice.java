@@ -1,9 +1,11 @@
 package com.esferalia.aon.occam.api.model.finance;
 
 import java.io.Serializable;
+import java.util.Collections;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Optional;
 
 import com.esferalia.aon.occam.api.model.Account;
 import com.esferalia.aon.occam.api.model.EnterpriseActivity;
@@ -88,9 +90,12 @@ public class Invoice implements Serializable, HasAudit {
 	private String siiStatus;
 
 	private List<InvoiceDetail> details;
+	@Deprecated
 	private List<InvoiceBreakdown> breakdown;
 	private List<Finance> finances;
-
+	
+	private TaxBreakdown taxBreakdown;
+	
 	private InvoiceFiscal fiscal;
 	
 	private String tediCategory;
@@ -543,12 +548,22 @@ public class Invoice implements Serializable, HasAudit {
 		
 	}
 
+	/**
+	 * @deprecated This method will be removed 
+	 * use getTaxBreakdown(), getVats() or getWithHolding()
+	 */
+	@Deprecated
 	public List<InvoiceBreakdown> getBreakdown() {
 		if(breakdown == null) {
 			this.breakdown = new LinkedList<>();
 		}
 		return breakdown;
 	}
+	/**
+	 * @deprecated This method will be removed 
+	 * use setTaxBreakdown()
+	 */
+	@Deprecated
 	public Invoice setBreakdown(List<InvoiceBreakdown> breakdown) {
 		this.breakdown = breakdown;
 		return this;
@@ -778,6 +793,33 @@ public class Invoice implements Serializable, HasAudit {
 		return this;
 	}
 	
-	
+	public Optional<TaxBreakdown> getTaxBreakdown() {
+		return Optional.ofNullable(taxBreakdown);
+	}
+	public Invoice setTaxBreakdown(TaxBreakdown taxBreakdown) {
+		this.taxBreakdown = taxBreakdown;
+		return this;
+	}
+	private TaxBreakdown ensureTaxBreakdown() {
+		if (this.taxBreakdown == null) {
+			setTaxBreakdown( new TaxBreakdown());
+		}
+		return this.taxBreakdown;
+	}
+	public Invoice addTax(InvoiceTax it) {
+		ensureTaxBreakdown().add(it);
+		return this;
+	}
+	public Invoice addBreakdown(InvoiceBreakdown ib) {
+		ensureTaxBreakdown().add(ib);
+		return this;
+	}
+	public List<InvoiceBreakdown> getVats() {
+		return this.getTaxBreakdown().map(itb -> itb.getVats() ).orElse(Collections.emptyList());
+	}
+	public Optional<InvoiceWithholding> getWithholding() {
+		return this.getTaxBreakdown().flatMap( itb -> itb.getInvoiceWithholding() );
+	}
+	 
 }
 

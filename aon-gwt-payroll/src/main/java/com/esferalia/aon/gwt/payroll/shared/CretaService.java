@@ -43,7 +43,8 @@ public interface CretaService {
 		I54,
 		SOLICITUD_RECEPCION_RNT,
 		USER,
-		DOMAIN
+		DOMAIN,
+		WITH_IDC
 	}
 
 	public static enum File {

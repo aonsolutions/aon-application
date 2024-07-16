@@ -277,7 +277,7 @@ export class AonNewMenu extends AonElement {
 		this.getRootPanel().style.marginTop = '1px'; //'69px';
 		this.buildMenuTopnav();
 
-		if(LS.isTopMenu()){
+		if(LS.isTopMenu() && false ){
 			this.showTopNav();
 		}
 
@@ -821,7 +821,6 @@ export class AonNewMenu extends AonElement {
 		if (MARKETING_MENU.app === app.app)
 			return this.getDur().isMarketing();
 		
-		return true;
 		if (MenuApps.ACCOUNTING.app === app.app)
 			return this.getDur().isAccounting();
 		else if (MenuApps.FISCAL.app === app.app)
@@ -840,6 +839,8 @@ export class AonNewMenu extends AonElement {
 			return this.getDur().isInvoice();
 		else if (MenuApps.MESSENGER.app === app.app)
 			return this.getDur().isMessenger();
+		else if (HOME.app === app.app)
+			return true;
 		else if (MenuApps.NOTES.app === app.app)
 			return true;
 		else if (MenuApps.TOOLS.app === app.app)

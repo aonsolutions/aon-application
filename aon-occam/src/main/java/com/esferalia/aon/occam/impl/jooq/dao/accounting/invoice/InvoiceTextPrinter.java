@@ -190,74 +190,74 @@ public class InvoiceTextPrinter {
 		return buf.toString();
 	}
 
-//	private InvoiceTextPrinter vatBreakdown(Invoice invoice, PrintStream out) {
-//		StringBuilder buf = new StringBuilder();
-//		buf.append(AonStringUtils.spaces(40));
-//		buf.append(TOP_LEFT_CORNER);
-//		buf.append(AonStringUtils.repeat(HORIZONTAL_BAR, getLineSize() - buf.length()));
-//		buf.append(TOP_RIGHT_CORNER);
-//		out.println(buf.toString());
-//
-//		AonCollectionUtils.stream(invoice.getVats()).forEach(tax -> vatInvoiceBreakdown(tax, out));
-//
-//		buf = new StringBuilder();
-//		buf.append(AonStringUtils.spaces(40));
-//		buf.append(LOWER_LEFT_CORNER);
-//		buf.append(AonStringUtils.repeat(HORIZONTAL_BAR, getLineSize() - buf.length()));
-//		buf.append(LOWER_RIGHT_CORNER);
-//		out.println(buf.toString());
-//		return this;
-//	}
+	private InvoiceTextPrinter vatBreakdown(Invoice invoice, PrintStream out) {
+		StringBuilder buf = new StringBuilder();
+		buf.append(AonStringUtils.spaces(40));
+		buf.append(TOP_LEFT_CORNER);
+		buf.append(AonStringUtils.repeat(HORIZONTAL_BAR, getLineSize() - buf.length()));
+		buf.append(TOP_RIGHT_CORNER);
+		out.println(buf.toString());
 
-//	private InvoiceTextPrinter withholding(Invoice invoice, PrintStream out) {
-//		Optional<InvoiceWithholding> iw = invoice.getWithholding();
-//		if (iw.isPresent()) {
-//			StringBuilder buf = new StringBuilder();
-//			buf.append(AonStringUtils.spaces(40));
-//			buf.append(TOP_LEFT_CORNER);
-//			buf.append(AonStringUtils.repeat(HORIZONTAL_BAR, getLineSize() - buf.length()));
-//			buf.append(TOP_RIGHT_CORNER);
-//			out.println(buf.toString());
-//
-//			buf = new StringBuilder();
-//			buf.append(AonStringUtils.spaces(40));
-//			buf.append(VERTICAL_BAR);
-//			buf.append(AonStringUtils.spaces(1));
-//			buf.append(AonStringUtils.rightPad(TaxType.RETENTION.getName2(), 5));
-//			buf.append(AonStringUtils.leftPad(FMT1.format(iw.get().getBase()), 16));
-//			buf.append(AonStringUtils.leftPad(FMT.format(iw.get().getPercentage()), 12));
-//			buf.append(AonStringUtils.PERCENT);
-//			buf.append(AonStringUtils.leftPad(FMT.format(iw.get().getQuota()), 17));
-//			buf.append(AonStringUtils.repeat(" ", 10));
-//			buf.append(AonStringUtils.leftPad(" ", getLineSize() - buf.length()));
-//			buf.append(VERTICAL_BAR);
-//			out.println(buf.toString());
-//
-//			buf = new StringBuilder();
-//			buf.append(AonStringUtils.spaces(40));
-//			buf.append(LOWER_LEFT_CORNER);
-//			buf.append(AonStringUtils.repeat(HORIZONTAL_BAR, getLineSize() - buf.length()));
-//			buf.append(LOWER_RIGHT_CORNER);
-//			out.println(buf.toString());
-//		}
-//		return this;
-//	}
+		AonCollectionUtils.stream(invoice.getVats()).forEach(tax -> vatInvoiceBreakdown(tax, out));
 
-//	private void vatInvoiceBreakdown(InvoiceBreakdown tax, PrintStream out) {
-//		StringBuilder buf = new StringBuilder();
-//		buf.append(AonStringUtils.spaces(40));
-//		buf.append(VERTICAL_BAR);
-//		buf.append(AonStringUtils.spaces(1));
-//		buf.append(AonStringUtils.rightPad(tax.getTaxType().getName2(), 5));
-//		buf.append(AonStringUtils.leftPad(FMT1.format(tax.getBase()), 16));
-//		buf.append(AonStringUtils.leftPad(FMT.format(tax.getPercentage()), 12));
-//		buf.append(AonStringUtils.PERCENT);
-//		buf.append(AonStringUtils.leftPad(FMT.format(tax.getQuota()), 17));
-//		buf.append(AonStringUtils.repeat(" ", 10));
-//		buf.append(AonStringUtils.leftPad(" ", getLineSize() - buf.length()));
-//		buf.append(VERTICAL_BAR);
-//		out.println(buf.toString());
-//	}
+		buf = new StringBuilder();
+		buf.append(AonStringUtils.spaces(40));
+		buf.append(LOWER_LEFT_CORNER);
+		buf.append(AonStringUtils.repeat(HORIZONTAL_BAR, getLineSize() - buf.length()));
+		buf.append(LOWER_RIGHT_CORNER);
+		out.println(buf.toString());
+		return this;
+	}
+
+	private InvoiceTextPrinter withholding(Invoice invoice, PrintStream out) {
+		Optional<InvoiceWithholding> iw = invoice.getWithholding();
+		if (iw.isPresent()) {
+			StringBuilder buf = new StringBuilder();
+			buf.append(AonStringUtils.spaces(40));
+			buf.append(TOP_LEFT_CORNER);
+			buf.append(AonStringUtils.repeat(HORIZONTAL_BAR, getLineSize() - buf.length()));
+			buf.append(TOP_RIGHT_CORNER);
+			out.println(buf.toString());
+
+			buf = new StringBuilder();
+			buf.append(AonStringUtils.spaces(40));
+			buf.append(VERTICAL_BAR);
+			buf.append(AonStringUtils.spaces(1));
+			buf.append(AonStringUtils.rightPad(TaxType.RETENTION.getName2(), 5));
+			buf.append(AonStringUtils.leftPad(FMT1.format(iw.get().getBase()), 16));
+			buf.append(AonStringUtils.leftPad(FMT.format(iw.get().getPercentage()), 12));
+			buf.append(AonStringUtils.PERCENT);
+			buf.append(AonStringUtils.leftPad(FMT.format(iw.get().getQuota()), 17));
+			buf.append(AonStringUtils.repeat(" ", 10));
+			buf.append(AonStringUtils.leftPad(" ", getLineSize() - buf.length()));
+			buf.append(VERTICAL_BAR);
+			out.println(buf.toString());
+
+			buf = new StringBuilder();
+			buf.append(AonStringUtils.spaces(40));
+			buf.append(LOWER_LEFT_CORNER);
+			buf.append(AonStringUtils.repeat(HORIZONTAL_BAR, getLineSize() - buf.length()));
+			buf.append(LOWER_RIGHT_CORNER);
+			out.println(buf.toString());
+		}
+		return this;
+	}
+
+	private void vatInvoiceBreakdown(InvoiceBreakdown tax, PrintStream out) {
+		StringBuilder buf = new StringBuilder();
+		buf.append(AonStringUtils.spaces(40));
+		buf.append(VERTICAL_BAR);
+		buf.append(AonStringUtils.spaces(1));
+		buf.append(AonStringUtils.rightPad(tax.getTaxType().getName2(), 5));
+		buf.append(AonStringUtils.leftPad(FMT1.format(tax.getBase()), 16));
+		buf.append(AonStringUtils.leftPad(FMT.format(tax.getPercentage()), 12));
+		buf.append(AonStringUtils.PERCENT);
+		buf.append(AonStringUtils.leftPad(FMT.format(tax.getQuota()), 17));
+		buf.append(AonStringUtils.repeat(" ", 10));
+		buf.append(AonStringUtils.leftPad(" ", getLineSize() - buf.length()));
+		buf.append(VERTICAL_BAR);
+		out.println(buf.toString());
+	}
 
 	private InvoiceTextPrinter totals(Invoice invoice, PrintStream out) {
 		StringBuilder buf = new StringBuilder();
@@ -522,8 +522,8 @@ public class InvoiceTextPrinter {
 		new InvoiceTextPrinter(abbrv)
 			.header(invoice, out)
 			.details(invoice, out)
-//			.vatBreakdown(invoice, out)
-//			.withholding(invoice, out)
+			.vatBreakdown(invoice, out)
+			.withholding(invoice, out)
 			.totals(invoice, out)
 			.fiscal(invoice, out);
 		out.flush();
