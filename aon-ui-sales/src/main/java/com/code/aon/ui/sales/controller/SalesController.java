@@ -125,6 +125,7 @@ public class SalesController extends HeaderObjectController implements ISalesCon
 	private boolean showDeliveryWindow;
 	private boolean showElaborationWindow;
 	private boolean showPrepareSaleWindow;
+	private boolean showInPreparationWindow;
 	private String deliverySeries;
 	private int deliveryNumber;
 	private Date deliveryDate;
@@ -226,6 +227,14 @@ public class SalesController extends HeaderObjectController implements ISalesCon
 	
 	public void setShowElaborationWindow(boolean value) {
 		this.showElaborationWindow = value;
+	}
+	
+	public boolean isShowInPreparationWindow() {
+		return showInPreparationWindow;
+	}
+	
+	public void setShowInPreparationWindow(boolean value) {
+		this.showInPreparationWindow = value;
 	}
 	
 	public boolean isShowPrepareSaleWindow() {
@@ -1276,6 +1285,45 @@ public class SalesController extends HeaderObjectController implements ISalesCon
 		
 		return list;
 	}
-
+	
+	// In Preparation Modal
+	
+	public List<com.esferalia.aon.occam.api.model.warehouse.Delivery> getInPreparationDeliveries() {
+		String domainName = AonUtil.getDomainName();
+		String login = UserUtils.getInstance().getLoggedUser().getLogin();
+		Sales sales = (Sales)this.getTo();
+		Integer[] ids = sales.getDetailList().stream()
+				.map(to -> (SalesDetail) to)
+				.mapToInt(r -> r.getDelivery() != null ? r.getDelivery().getId() : -1)
+				.boxed().toArray(Integer[]::new);		
+		return AON.getDeliveryStream(new Domain().setName(domainName).setId(sales.getDomain()), login, f -> 
+			f.getDomainProperty().eq(sales.getDomain())
+			.and(f.getIdProperty().in(ids)))
+			.toList();
+	}
+	
+	public List<com.esferalia.aon.occam.api.model.management.SalesDetail> getDeliverySalesDetail(Integer delivery) {
+		String domainName = AonUtil.getDomainName();
+		String login = UserUtils.getInstance().getLoggedUser().getLogin();
+		Sales sales = (Sales)this.getTo();
+		
+		return AON.getSalesDetailStream(domainName, sales.getDomain(), login, f -> 
+			f.getSalesProperty().eq(sales.getId())
+			.and(f.getDomainProperty().eq(sales.getDomain()))
+			.and(f.getDeliveryProperty().eq(delivery)))
+			.toList();
+	}
+	
+	public String getDeliveryDownloadURL(Integer delivery) {
+		Sales sales = (Sales) getTo();
+		com.esferalia.aon.occam.api.model.Domain domain = AON.getDomain(AonUtil.getDomainName(), DomainManager.getCurrentDomain(), "");
+		JSONObject json = new JSONObject()
+				.put(IJsonNames.SALES, sales.getId())
+				.put(IJsonNames.DELIVERY, delivery)
+				.put("domain_id", domain.getId())
+				.put("domain_name", domain.getName())
+				.put(IJsonNames.LOGIN, UserUtils.getInstance().getLoggedUser().getLogin());		
+		return "/ms/api/download_packaging_sales_pdf?json=" + Base64.getEncoder().encodeToString(json.toString().getBytes(StandardCharsets.UTF_8));
+	}
 }
 

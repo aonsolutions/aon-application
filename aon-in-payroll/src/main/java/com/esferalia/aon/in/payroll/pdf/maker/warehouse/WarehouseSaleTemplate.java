@@ -226,7 +226,7 @@ public class WarehouseSaleTemplate implements AutoCloseable {
 		
 		try {
 			this.y -= 200f;
-			String deliveryId = this.sales.getDetails().get(0).getDelivery().toString();
+			String deliveryId = this.delivery.getId().toString();
 			byte[] qrCode = createQR(deliveryId, 300, 300);
 			drawImage(document, contents, qrCode, 140f, y, 150, 150);
 		} catch (WriterException | IOException e) {
