@@ -661,7 +661,8 @@ public class StatDAO {
 		.where(whereConditions)
 		.and(condition)
 		.groupBy(year, month, INVOICE.TYPE)
-		.orderBy(year, DSL.decode()
+		.orderBy(year.asc(), month.asc(), 
+                DSL.decode()
 				   .when(INVOICE.TYPE.equal((byte) 1), 0)
 				   .when(INVOICE.TYPE.equal((byte) 0), 1)
 				   .when(INVOICE.TYPE.equal((byte) 2), 2)

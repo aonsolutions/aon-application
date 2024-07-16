@@ -44,6 +44,8 @@ import java.util.stream.Stream;
 
 import org.jooq.*;
 import org.jooq.Record;
+import org.jooq.conf.Settings;
+import org.jooq.conf.StatementType;
 import org.jooq.impl.*;
 
 import com.esferalia.aon.jooq.tables.Auth;
@@ -102,13 +104,19 @@ public class ContractDAO {
 	
 	public static Stream<ContractExtendedData> getContractSimplifiedData(AONContext ctx, ContractExtendedDataFilter filter,  Integer page, Integer perPage){
 		ctx.checkRead();
-		return ctx.getDslContext()
+		DSLContext dslContext = ctx.getDslContext();
+		dslContext.settings().withRenderGroupConcatMaxLenSessionVariable(false);
+		return dslContext
 				.select(CONTRACT.ID)
+				.select(CONTRACT.PERSON)
+				.select(REGISTRY.ID)
 				.select(REGISTRY.NAME.as(PERSON_FULL_NAME))
 				.select(REGISTRY.DOCUMENT)
+				.select(DSL.groupConcat(CONTRACT.ID).as("contract_ids"))
 				.from(CONTRACT)
 				.join(REGISTRY).on(REGISTRY.ID.eq(CONTRACT.PERSON))
 				.where(CONTRACT_EXTENDED_DATA_PROPERTIES.getConditions(filter))
+				.groupBy(CONTRACT.PERSON)
 				.orderBy(REGISTRY.NAME.asc())
 				.limit(perPage).offset(perPage * (page -1))
 				.fetch()

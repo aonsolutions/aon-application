@@ -27,6 +27,7 @@ public class ContractExtendedDataJSON {
 		json.put(IJsonNames.ID, data.getId());
 		json.put(IJsonNames.NAME, data.getPersonName());
 		json.put(IJsonNames.DOCUMENT, data.getPersonDocument());
+		json.put("contract_ids", data.getIdLists());
 		return json;
 	}
 	

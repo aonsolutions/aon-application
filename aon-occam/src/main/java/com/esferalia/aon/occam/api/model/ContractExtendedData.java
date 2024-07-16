@@ -1,6 +1,7 @@
 package com.esferalia.aon.occam.api.model;
 
 import java.util.Date;
+import java.util.List;
 
 import com.esferalia.aon.occam.api.model.payroll.Contract;
 
@@ -12,11 +13,21 @@ public class ContractExtendedData extends Contract {
 	String personDocument;
 	String contractType;
 	String workplaceName;
-	
+	List<String> idLists;
+
 	public ContractExtendedData(){
 		super();
 	}
 	
+	public List<String> getIdLists() {
+		return idLists;
+	}
+
+	public ContractExtendedData setIdLists(List<String> value) {
+		this.idLists = value;
+		return this;
+	}
+
 	public String getPersonDocument() {
 		return personDocument;
 	}
