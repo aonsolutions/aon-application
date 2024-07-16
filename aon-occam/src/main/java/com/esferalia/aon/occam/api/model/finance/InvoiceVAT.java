@@ -2,7 +2,9 @@ package com.esferalia.aon.occam.api.model.finance;
 
 import java.io.Serializable;
 
+import com.esferalia.aon.occam.api.model.type.InvoiceSource;
 import com.esferalia.aon.occam.api.model.type.VatDeductionType;
+import com.esferalia.aon.watson.util.AonCollectionUtils;
 import com.esferalia.aon.watson.util.AonMathUtils;
 
 public class InvoiceVAT implements Serializable {
@@ -347,10 +349,16 @@ public class InvoiceVAT implements Serializable {
 	public InvoiceDetail getInvoiceDetail() {
 		return invoiceDetail;
 	}
-	
 	public InvoiceVAT setInvoiceDetail(InvoiceDetail invoiceDetail) {
 		this.invoiceDetail = invoiceDetail;
 		return this;
+	}
+	public boolean isInvoiceDetailPresent() {
+		return this.invoiceDetail != null;
+	}
+	public boolean isAccountingSource() {
+		return this.invoiceDetail == null
+		   || this.invoiceDetail.getSource() == InvoiceSource.ACCOUNT;
 	}
 	
 	public InvoiceVAT clone() {
@@ -388,5 +396,20 @@ public class InvoiceVAT implements Serializable {
 			.setExpAccountId(this.expAccountId)
 			.setExpAccountCode(this.expAccountCode)
 			.setExpAccountDescription(this.expAccountDescription);
+	}
+	
+	public void syncChangesToWrappedDetail() {
+		if ( this.isInvoiceDetailPresent() ) {
+			this.getInvoiceDetail().setInvestAsset( this.getInvestAsset() );
+			InvoiceTax it = AonCollectionUtils
+				.stream(this.getInvoiceDetail().getInvoiceTaxes())
+					.filter( i -> i.isVatType() )
+					.findAny()
+					.orElse(null);
+			if ( it != null ) {
+				it.setDeductiblePercent( this.getDeductiblePercent() );
+				it.setDeductibleQuota( this.getDeductibleQuota() );
+			}
+		}
 	}
 }
