@@ -48,7 +48,10 @@ import org.jooq.conf.Settings;
 import org.jooq.conf.StatementType;
 import org.jooq.impl.*;
 
+import com.esferalia.aon.jooq.tables.Auth;
+import com.esferalia.aon.jooq.tables.TaskHolder;
 import com.esferalia.aon.jooq.tables.Timecontrol;
+import com.esferalia.aon.jooq.tables.User;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.AuxSalaryInfo;
 import com.esferalia.aon.occam.api.model.ContractExtendedData;
@@ -125,6 +128,7 @@ public class ContractDAO {
 		return ctx.getDslContext()
 				.select(CONTRACT.ID)
 				.from(CONTRACT)
+				.join(WORKPLACE).onKey()
 				.join(REGISTRY).on(REGISTRY.ID.eq(CONTRACT.PERSON))
 				.where(CONTRACT_EXTENDED_DATA_PROPERTIES.getConditions(filter))
 				.fetch()
@@ -231,8 +235,7 @@ public class ContractDAO {
 			.from(CONTRACT)
 			.join(WORKPLACE).onKey()
 			.join(REGISTRY).on(REGISTRY.ID.eq(CONTRACT.PERSON))
-			.groupBy(CONTRACT.ID)
-			.having(CONTRACT_EXTENDED_DATA_PROPERTIES.getConditions(filter))
+			.where(CONTRACT_EXTENDED_DATA_PROPERTIES.getConditions(filter))
 			.orderBy(REGISTRY.NAME.asc())
 			.limit(perPage).offset(perPage * (page -1))
 			.fetch().stream().forEach( (r) -> {
@@ -241,6 +244,7 @@ public class ContractDAO {
 				documents.add(r.get(REGISTRY.DOCUMENT));
 			});
 			
+		
 		CommonTableExpression<Record> cteSalary = DSL.name("cte").as(DSL.select(SALARY.CONTRACT.as(idSalary))
 				.select(SALARY.TOTAL_PAYMENT.as(salaryAmount))
 				.select(DSL.rowNumber().over(DSL.partitionBy(SALARY.CONTRACT).orderBy(SALARY.END_DATE.desc())).as(rnSalary))
@@ -265,7 +269,7 @@ public class ContractDAO {
 		ctx.getDslContext().with(cteType)
 			.select(cteType.field(expressionCD), cteType.field(rnContractData), cteType.field(idContractData))
 			.from(cteType)
-			.where(cteType.field(idContractData).in(ids).and(cteType.field(rnContractData).eq(1)))
+			.where(cteType.field(rnContractData).eq(1))
 			.fetch().stream().forEach(r -> {
 				arrayContracts.forEach(e -> {
 					if(r.getValue(cteType.field(idContractData)).intValue() == e.getId().intValue()) {
@@ -273,24 +277,26 @@ public class ContractDAO {
 					}
 				});				
 			});;
-		
+			
 		ctx.getDslContext().select(
 				DSL.coalesce(
 						DSL.sum(DSL.if_(Timecontrol.TIMECONTROL.STATUS.eq((byte) 0), dateMiliseconds.neg(), dateMiliseconds)
 								).cast(Long.class), 0).cast(Long.class).as(totalTime)
 				)
-		.select(REGISTRY.DOCUMENT)
+		.select(Auth.AUTH.DOCUMENT)
 		.from(Timecontrol.TIMECONTROL)
-		.join(REGISTRY).on(REGISTRY.ID.eq(Timecontrol.TIMECONTROL.TASK_HOLDER))
+		.join(TaskHolder.TASK_HOLDER).on(TaskHolder.TASK_HOLDER.REGISTRY.eq(Timecontrol.TIMECONTROL.TASK_HOLDER))
+		.join(User.USER).on(User.USER.ID.eq(TaskHolder.TASK_HOLDER.USER_ID))
+		.join(Auth.AUTH).on(Auth.AUTH.ID.eq(User.USER.AUTH))
 		.where(
 				Timecontrol.TIMECONTROL.DOMAIN.eq(ctx.getDomainId())
 				.and(Timecontrol.TIMECONTROL.MODIFICATED_TIMECONTROL.isNull())
 				.and(DSL.sql("date >= DATE_FORMAT(NOW() ,'%Y-%m-01') AND date < DATE(NOW())"))
-				.and(REGISTRY.DOCUMENT.in(documents))
+				.and(Auth.AUTH.DOCUMENT.in(documents))
 				)
-		.groupBy(REGISTRY.DOCUMENT).fetch().stream().forEach(r -> {
+		.groupBy(Auth.AUTH.DOCUMENT).fetch().stream().forEach(r -> {
 			arrayContracts.forEach(e -> {
-				if(r.getValue(REGISTRY.DOCUMENT).equals(e.getPersonDocument())) {
+				if(r.getValue(Auth.AUTH.DOCUMENT).equals(e.getPersonDocument())) {
 					e.setTotalMarksLastMonth(r.getValue(totalTime).doubleValue());
 				}				
 			});
