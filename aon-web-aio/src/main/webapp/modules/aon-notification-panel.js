@@ -52,11 +52,12 @@ export class AonNotificationPanel extends AonElement {
 	build() {
 		let divGeneral = this.createDiv();
         divGeneral.id = this.DIV_GENERAL;
-        divGeneral.className = "notificationPanelGeneralDiv";
+        divGeneral.classList.add("notificationPanelGeneralDiv");
 
         let divTodas = this.createDiv();
         divTodas.innerHTML = MSG.SEE_ALL.toUpperCase();
-        divTodas.className = "notificationPanelAllDiv";
+        divTodas.classList.add("notificationPanelAllDiv");
+
         divGeneral.appendChild(divTodas);
 		divTodas.addEventListener(EVENT.CLICK, () => this.goAonNotification());
 
@@ -67,44 +68,58 @@ export class AonNotificationPanel extends AonElement {
 
     buildRow(res){
         let divPrincipal = this.createDiv();
+        divPrincipal.classList.add("notificationPanelRowPrincipalDiv");
 
         let divGeneral = this.createDiv();
-        divGeneral.style.className = 'aonAppLi notifcationPanelRowGeneralDiv';
+        divGeneral.classList.add("notifcationPanelRowGeneralDiv");
 
         let icon = new AonIcon();
         icon.icon = "aon_new_messenger";
-        icon.className= 'notificationPanelRowIcon';
+        icon.color = "#1fd8b9";
+        icon.title = "Solicitudes";
+        icon.size = "50px";
+        icon.classList.add("notificationPanelRowIcon");
+        
         divGeneral.appendChild(icon);
 
         let div = this.createDiv();
-        div.className = 'notificationPanelRowDiv';
+        div.classList.add("notificationPanelRowDiv");
 
         let subDiv1 = this.createDiv();
-        subDiv1.className = 'notificationPanelRowSubDiv1';
+        subDiv1.classList.add("notificationPanelRowSubDiv1");
+        subDiv1.title = res.title;
         subDiv1.innerHTML = res.title;
         div.appendChild(subDiv1);
 
         let subDiv2 = this.createDiv();
-        subDiv2.className = 'notificationPanelRowSubDiv2';
+        subDiv2.classList.add("notificationPanelRowSubDiv2");
+        subDiv2.title = res.body;
         subDiv2.innerHTML = res.body;
         div.appendChild(subDiv2);
 
         let subDiv3 = this.createDiv();
-        subDiv3.className = 'notificationPanelRowSubDiv3';
+        subDiv3.classList.add("notificationPanelRowSubDiv3");
         subDiv3.innerHTML = firstLetters(AonDateUtils.setFullDate(res.date)) + " " + AonDateUtils.setTime(res.date);
         div.appendChild(subDiv3);
 
         divGeneral.appendChild(div);
 
         let span = this.createElement(TAG.SPAN);
-        span.className = "material-icons notificationPanelRowSpan";
+        span.className = "material-icons";
+        span.classList.add("notificationPanelRowSpan");
         span.innerHTML = "delete";
 
         divGeneral.appendChild(span);
 
         divPrincipal.appendChild(divGeneral);
 
-        divPrincipal.className = 'notificationPanelRowPrincipalDiv';
+        divPrincipal.addEventListener(EVENT.MOUSEOVER, () => {
+			divPrincipal.style.backgroundColor = 'rgba(225, 225, 227, 1)';
+		});
+
+        divPrincipal.addEventListener(EVENT.MOUSELEAVE, () => {
+			divPrincipal.style.backgroundColor = 'transparent';
+		});
 
         return divPrincipal;
     }

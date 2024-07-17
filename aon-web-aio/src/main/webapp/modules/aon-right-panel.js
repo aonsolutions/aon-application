@@ -112,6 +112,7 @@ export class AonRightPanel extends AonElement {
 		rightPanel.appendChild(title);
 
         let content = this.createDiv(this.CONTENT);
+    
         rightPanel.appendChild(content);
 
     }
