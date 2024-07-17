@@ -42,6 +42,7 @@ export class AonConfig extends AonElement {
 
 	build() {
 
+
 		let topNavDiv = this.createDiv();
 		topNavDiv.className = CSS.AON_CONFIG_TOP_NAV;
 		
@@ -141,7 +142,9 @@ export class AonConfig extends AonElement {
 
 		topNavSwitch.addEventListener(EVENT.CHANGE, () => {
 			LS.setTopMenu(topNavSwitch.checked);
-			if(LS.isTopMenu()) {
+
+      
+      if(LS.isTopMenu()) {
 				aonMenu.showTopNav();
             } else {
 				aonMenu.hideTopNav();
@@ -184,14 +187,11 @@ export class AonConfig extends AonElement {
 
 	buildLanguageData(value,language) {
 		let div = this.createDiv();
-		div.style.marginTop = '5px';
 		div.style.title = "Idioma";
-		div.style.cursor = "pointer";
+		div.className = "configPanelLanguageDiv";
 
 		let i = this.createElement(TAG.I);
-		i.className = CSS.MATERIAL_ICONS;
-		i.style.marginRight = '5px';
-		i.style.verticalAlign = "middle";
+		i.className = CSS.MATERIAL_ICONS + " configPanelLanguageI";
 		div.appendChild(i);
 		
 		let span = this.createElement(TAG.SPAN);
