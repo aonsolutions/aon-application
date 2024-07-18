@@ -2,6 +2,8 @@ package com.esferalia.aon.occam.api.model.type;
 
 import java.io.Serializable;
 
+import com.esferalia.aon.watson.util.AonStringUtils;
+
 public enum VatDeductionType implements Serializable {
 
 	 WITH_RIGHT		("Con Drcho. Deduc.","CON Dcho.")
@@ -42,4 +44,14 @@ public enum VatDeductionType implements Serializable {
 		return VatDeductionType.values()[i];
 	}
 	
+	public static VatDeductionType safeValueOf(String str) {
+		if(AonStringUtils.isBlank(str)) return WITH_RIGHT;
+		for (VatDeductionType rs : values()) {
+			if(rs.name().equalsIgnoreCase(str) 
+				|| rs.getAbbr().equalsIgnoreCase(str)
+				|| rs.getName().equalsIgnoreCase(str))
+				return rs;
+		}
+		return WITH_RIGHT;
+	}
 }

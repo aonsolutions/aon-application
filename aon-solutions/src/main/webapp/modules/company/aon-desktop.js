@@ -390,18 +390,22 @@ export class AonDesktop extends AonElement {
 		upload.className = CSS.AON_UPLOAD_PANEL;
 		upload.id = "uploads";
 		dashboard.appendChild(upload);
+		
+		if ( this.getDur().isDocumental() ){
+			let uploadDoc = new AonNewUpload();
+			uploadDoc.id = "docUpload";
+			uploadDoc.setMessage("Subir documentación");
+			uploadDoc.setType("Documental");
+			upload.appendChild(uploadDoc);
+		}
 
-		let uploadDoc = new AonNewUpload();
-		uploadDoc.id = "docUpload";
-		uploadDoc.setMessage("Subir documentación");
-		uploadDoc.setType("Documental");
-		upload.appendChild(uploadDoc);
-
-		let uploadInv = new AonNewUpload();
-		uploadInv.id = "factUpload";
-		uploadInv.setMessage("Subir factura");
-		uploadInv.setType("Invoice");
-		upload.appendChild(uploadInv);
+		if (this.getDur().isInvoice()){
+			let uploadInv = new AonNewUpload();
+			uploadInv.id = "factUpload";
+			uploadInv.setMessage("Subir factura");
+			uploadInv.setType("Invoice");
+			upload.appendChild(uploadInv);
+		}
 
 		// Fast Access Buttons Panel
 		let fastAccessButtons = this.createElement(TAG.DIV);
@@ -428,16 +432,18 @@ export class AonDesktop extends AonElement {
 			fastAccessButtons.appendChild(newDocument);
 		}
 
-		let newRequest = new AonDashboardButton();
-		newRequest.setId('newRequest');
-		newRequest.setIcon('add_comment');
-		newRequest.setMessage('CREAR CONSULTA');
-		newRequest.addEventListener(EVENT.CLICK, () => {
-			let aonMessengerChat = new AonMessenger();	
-			aonMessengerChat.data = {source:TASK_SOURCE.QUERY};
-			this.rootPanel(aonMessengerChat);
-		});
-		fastAccessButtons.appendChild(newRequest);
+		if(this.getDur().isMessenger()){
+			let newRequest = new AonDashboardButton();
+			newRequest.setId('newRequest');
+			newRequest.setIcon('add_comment');
+			newRequest.setMessage('CREAR CONSULTA');
+			newRequest.addEventListener(EVENT.CLICK, () => {
+				let aonMessengerChat = new AonMessenger();	
+				aonMessengerChat.data = {source:TASK_SOURCE.QUERY};
+				this.rootPanel(aonMessengerChat);
+			});
+			fastAccessButtons.appendChild(newRequest);
+		}
 
 		if(this.getDur().isAon()){
 			let newEmployee = new AonDashboardButton();
@@ -467,7 +473,7 @@ export class AonDesktop extends AonElement {
 
 		// Cards Panel
 		let cardsPanel = this.createElement(TAG.DIV);
-		cardsPanel.className = CSS.FLEX_ROW;
+		cardsPanel.className = CSS.AON_CARDS_PANEL;
 		cardsPanel.style.gap = '1rem';
 		cardsPanel.style.flexWrap = 'wrap';
 		cardsPanel.id = "cardsPanel";

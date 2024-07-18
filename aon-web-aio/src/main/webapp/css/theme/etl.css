@@ -1,0 +1,140 @@
+:root{
+	--etlRed : #e62a25;
+	--aonTopMenuAvailable: white;
+	
+	--aonPayroll : var(--etlRed);
+	--aonDocumental: var(--etlRed);
+	--aonAccounting: var(--etlRed);
+	
+	--aonTopMenuSpecial : var(--etlRed);
+	--aonTopMenuAvailable : var(--etlRed);
+	
+	--aonHeaderBackgroundAvailable:var(--etlRed);
+}
+
+.aonHeader {
+	overflow: hidden;
+	background-color: var(--etlRed);
+}
+
+#aonHeaderCompanyName,
+.aonHeader .material-icons {
+	color: white;
+}
+
+.aonNewLogo {
+    width: 139px;
+    height: 65px;
+    cursor: pointer;
+    margin-top: 25px;
+    padding: 0 0 0 68px;
+    background-size: contain;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-image: url("https://etl.es/wp-content/uploads/2018/12/etlglobalnew.png");
+}
+
+.aonMenuLeftop {
+	--aonTopMenuAvailable: white;
+	background-color: var(--etlRed);
+	
+}
+
+.aonMenuTopnav,
+.aonMenuSidenav {
+	background-color: var(--aonWhite, white);
+}
+
+
+.aonFavicon {
+	background-image: url("https://etl.es/wp-content/uploads/2020/07/cropped-cropped-cropped-0-1-32x32.png");
+}
+
+.aonTabItemTextSelected {
+    border-bottom: 2px solid var(--etlRed);
+}
+
+.aonSwitch > input:checked + span::before {
+    background-color: #e39896;
+}
+.aonSwitch > input:checked + span::after {
+    background-color: var(--etlRed);
+}
+
+/*
+ *
+ */
+.aonRootGradiantHeaderTop,
+.aonRootGradiantHeaderBottom {
+    background: radial-gradient(circle,var(--etlRed) 0,hsla(240,9%,96%,0) 68%);
+} 
+
+#aonMenuListAppImgTop-home {
+	color: var(--etlRed);
+}
+
+
+/*
+ * Login screen
+*/
+.aonLink {
+	color: var(--etlRed) !important;
+}
+
+.aonToolbar2{
+	border-bottom: none;
+}
+
+.aonLoginLogo{
+  width: 139px;
+  height: 65px;
+  cursor: pointer;
+  background-size: contain;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-image: url("https://etl.es/wp-content/uploads/2018/12/etlglobalnew.png");
+}
+
+.aonLoginTitle {
+	color: var(--etlRed);
+}
+
+.aonMagicButton,
+.aonMagicButton:hover {
+	border-color: var(--etlRed);
+	background-color: var(--etlRed);
+}
+
+.aonLink:after {
+	content: 'ETL SOLUTIONS';
+}
+
+.aonTrademark:after {
+	content: 'es una marca registrada de ETL GLOBAL.';
+}
+
+.aonWeekSchedule:after{
+	content: 'Lunes a jueves de 8:00 a 20:00';
+}
+
+.aonWeekFridaySchedule:after{
+	content: 'Viernes de 8:00 a 15:00';
+}
+
+.aonSupportTelephone:after {
+	content: '(+34) 900 649 344';	
+}
+
+.aonSupportUsersEmail:after {
+	content: 'info@etl.es';	
+}
+
+.aonSupportSalesEmail:after {
+	content: 'comercial@etl.es';	
+}
+
+.aonSupportAdminEmail:after {
+	content: 'comunicacion@etl.es';	
+}
+
+

@@ -187,18 +187,12 @@ export class AonFiscalCard extends AonElement {
         leftContent2.appendChild(description);
 
         let info = this.createElement(TAG.SPAN);
-        info.style.color = "rgb(120, 120, 133)";
-        info.style.fontSize = ".7rem";
-        info.style.minWidth = "7.5rem";
-        if(LS.isDarkTheme())
-          info.style.color = "white";
+        info.className = "fiscalCardInfo";
         info.innerHTML = this.getModelDescription(modelData.newModel);
         leftContent2.appendChild(info);
 
         let territory = this.createElement(TAG.SPAN);
-        territory.style.color = "rgb(120, 120, 133)";
-        if(LS.isDarkTheme())
-          territory.style.color = "white";
+        territory.className = "fiscalCardTerritory";
         territory.style.fontSize = modelDatas.length > 5 ? ".8rem" : "1rem";
         territory.innerHTML = this.getModelTerritory(modelData.administration);
         leftContent.appendChild(territory);
@@ -259,18 +253,12 @@ export class AonFiscalCard extends AonElement {
         leftContent2.appendChild(description);
 
         let info = this.createElement(TAG.SPAN);
-        info.style.color = "rgb(120, 120, 133)";
-        if(LS.isDarkTheme())
-          info.style.color = "white";
-        info.style.fontSize = ".7rem";
-        info.style.minWidth = "7.5rem";
+        info.className = "fiscalCardInfo";
         info.innerHTML = this.getModelDescription(modelData.newModel);
         leftContent2.appendChild(info);
 
         let territory = this.createElement(TAG.SPAN);
-        territory.style.color = "rgb(120, 120, 133)";
-        if(LS.isDarkTheme())
-          territory.style.color = "white";
+        territory.className = "fiscalCardTerritory";
         territory.style.fontSize = modelDatas.length > 5 ? ".8rem" : "1rem";
         territory.innerHTML = this.getModelTerritory(modelData.administration);
         leftContent.appendChild(territory);

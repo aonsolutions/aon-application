@@ -150,6 +150,7 @@ export const AON_COMPANY_TITLE_DIV = 'aonCompanyTitleDiv';
 // aon-figma.css
 
 export const AON_LOGIN = 'aonLogin';
+export const AON_LOGIN_LOGO = 'aonLoginLogo';
 export const AON_LOGIN_TITLE = 'aonLoginTitle';
 export const AON_LOGIN_SUB_TITLE = 'aonLoginSubTitle';
 export const AON_LOGIN_FORM = 'aonLoginForm';
@@ -447,3 +448,25 @@ export const AON_TAB = 'aonTab';
 export const AON_TAB_ITEM = 'aonTabItem';
 export const AON_TAB_ITEM_TEXT = 'aonTabItemText';
 export const AON_TAB_ITEM_TEXT_SELECTED = 'aonTabItemTextSelected';
+
+// Support
+export const AON_WEEK_SCHEDULE = 'aonWeekSchedule';
+export const AON_WEEK_FRIDAY_SCHEDULE ='aonWeekFridaySchedule';
+
+export const AON_SUPPORT_TELEPHONE = 'aonSupportTelephone';
+export const AON_SUPPORT_USERS_EMAIL = 'aonSupportUsersEmail';
+export const AON_SUPPORT_SALES_EMAIL = 'aonSupportSalesEmail';
+export const AON_SUPPORT_ADMIN_EMAIL = 'aonSupportAdminEmail';
+
+
+export const AON_CARDS_PANEL = 'aonCardsPanel';
+
+// Config
+
+export const AON_CONFIG_APPS = 'aonConfigApps';
+export const AON_CONFIG_DARK = 'aonConfigDark';
+export const AON_CONFIG_BRAND = 'aonConfigBrand';
+export const AON_CONFIG_TOP_NAV = 'aonConfigTopNav';
+export const AON_CONFIG_SIDE_NAV = 'aonConfigSideNav';
+
+

@@ -103,6 +103,7 @@ import com.esferalia.aon.occam.api.model.security.Scope;
 import com.esferalia.aon.occam.api.model.type.DeliveryStatus;
 import com.esferalia.aon.occam.api.model.warehouse.CarrierPacking;
 import com.esferalia.aon.occam.api.model.warehouse.CarrierPackingStatus;
+import com.esferalia.aon.occam.api.model.warehouse.CarrierPackingType;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.server.io.AonIOUtils;
 
@@ -146,18 +147,7 @@ public class SalesController extends HeaderObjectController implements ISalesCon
 	private boolean showPurchaseReferenceWindow;
 	private RegistryAddressFilter addressesFilter;
 	
-	private Date chargeDate;
-	private String numberPlate;
-	private String driverName;
-	private String driverDocument;
-	private Integer delivery;
-	private boolean newDelivery;
-	private Carrier carrier;
-
-	private boolean includePackingList;
-	private Integer packingList;
-	private boolean newPackingList;
-
+	private PrepareSaleProcess prepareSaleProcess;
 
 	private EdiSalesImporterHandler ediImporter;
 	@Deprecated
@@ -167,7 +157,7 @@ public class SalesController extends HeaderObjectController implements ISalesCon
 	private SalesIngenetHandler ingenetHandler;
 	
 	private SalesElaborationProcess elaborationProcess;
-	
+
     public SalesController() {
     	this.emailUtil = new SalesEmailUtil();
     	this.accountHelper = new BankAccountHelper(this);
@@ -390,85 +380,6 @@ public class SalesController extends HeaderObjectController implements ISalesCon
 		this.savedCarrier = savedCarrier;
 	}
 	
-	public Date getChargeDate() {
-		return chargeDate;
-	}
-	
-	public void setChargeDate(Date chargeDate) {
-		this.chargeDate = chargeDate;
-	}
-	
-	public String getNumberPlate() {
-		return numberPlate;
-	}
-	
-	public void setNumberPlate(String numberPlate) {
-		this.numberPlate = numberPlate;
-	}
-	
-	public String getDriverName() {
-		return driverName;
-	}
-	
-	public void setDriverName(String driverName) {
-		this.driverName = driverName;
-	}
-	
-	public String getDriverDocument() {
-		return driverDocument;
-	}
-	
-	public void setDriverDocument(String driverDocument) {
-		this.driverDocument = driverDocument;
-	}
-	
-	public Integer getDelivery() {
-		return delivery;
-	}
-	
-	public void setDelivery(Integer delivery) {
-		this.delivery = delivery;
-	}
-	
-	public boolean isNewDelivery() {
-		return newDelivery;
-	}
-	
-	public void setNewDelivery(boolean newDelivery) {
-		this.newDelivery = newDelivery;
-	}
-	
-	public Integer getPackingList() {
-		return packingList;
-	}
-	
-	public void setPackingList(Integer packingList) {
-		this.packingList = packingList;
-	}
-	
-	public boolean isNewPackingList() {
-		return newPackingList;
-	}
-	
-	public void setNewPackingList(boolean newPackingList) {
-		this.newPackingList = newPackingList;
-	}
-	
-	public boolean isIncludePackingList() {
-		return includePackingList;
-	}
-	
-	public void setIncludePackingList(boolean includePackingList) {
-		this.includePackingList = includePackingList;
-	}
-	
-	public Carrier getCarrier() {
-		return carrier;
-	}
-	
-	public void setCarrier(Carrier carrier) {
-		this.carrier = carrier;
-	}
 	
 	public boolean isShowPurchaseReferenceWindow() {
 		return showPurchaseReferenceWindow;
@@ -529,6 +440,13 @@ public class SalesController extends HeaderObjectController implements ISalesCon
 		return elaborationProcess;
 	}
 
+	public PrepareSaleProcess getPrepareSaleProcess() {
+		if(prepareSaleProcess==null){
+			prepareSaleProcess = new PrepareSaleProcess(this);
+		}
+		return prepareSaleProcess;
+	}
+	
 	public boolean isCustomerReadOnly() throws ManagerBeanException {
 		Sales sales = (Sales)this.getTo();
 		if (sales.getProject() != null && sales.getProject().getId() != null) {
@@ -609,6 +527,14 @@ public class SalesController extends HeaderObjectController implements ISalesCon
 	public boolean isInPreparation(){
 		Sales sales = (Sales)this.getTo();
 		return sales.getStatus() == SalesStatus.IN_PREPARATION;
+	}
+	
+	public boolean isShowPrepareSale() {
+		Sales sales = (Sales)this.getTo();
+		String domainName = AonUtil.getDomainName();
+		String login = UserUtils.getInstance().getLoggedUser().getLogin();
+		
+		return AON.getSalesDetailStream(domainName, sales.getDomain(), login, f -> f.getSalesProperty().eq(sales.getId()).and(f.getDeliveryProperty().isNull())).count() > 0;
 	}
 
 	public Invoice getInvoice() throws ManagerBeanException {
@@ -1235,11 +1161,34 @@ public class SalesController extends HeaderObjectController implements ISalesCon
 		String login = UserUtils.getInstance().getLoggedUser().getLogin();
 		String series = Integer.toString(AonDateUtils.getYear(new Date()));
 		Sales to = (Sales)this.getTo();
-		to.setCarrier(getCarrier());
+		to.setCarrier(getPrepareSaleProcess().getCarrier());
 		to.setStatus(SalesStatus.IN_PREPARATION);
-
-		Integer deliveryId = getDelivery();
-		if(isNewDelivery() || deliveryId == null) {
+		Integer packingListId = null;
+		if(getPrepareSaleProcess().isIncludePackingList()) {
+			packingListId = getPrepareSaleProcess().getPackingList();
+			if(getPrepareSaleProcess().isNewPackingList() || packingListId == null) {
+				CarrierPacking cp = new CarrierPacking()
+						.setDomain(to.getDomain())
+						.setCarrier(to.getCarrier().getId())
+						.setCarrierName(to.getCarrier().getRegistry().getName())
+						.setCarrierDocument(to.getCarrier().getRegistry().getDocument())
+						.setSeries(series)
+						.setType(CarrierPackingType.WAYBILL)
+						.setStatus(CarrierPackingStatus.PENDING)
+						.setIssueDate(getPrepareSaleProcess().getChargeDate())
+						.setDeliveryDate(to.getDeliveryDate())
+						.setCarrierReference("")
+						.setNumberPlate(getPrepareSaleProcess().getNumberPlate())
+						.setDriverName(getPrepareSaleProcess().getDriverName())
+						.setDriverDocument(getPrepareSaleProcess().getDriverDocument())						
+						;
+				packingListId = AON.insertCarrierPacking(domainName, to.getDomain(), login, cp);				
+			}
+			to.setCarrierPacking(packingListId);
+		}
+		
+		Integer deliveryId = getPrepareSaleProcess().getDelivery();
+		if(getPrepareSaleProcess().isNewDelivery() || deliveryId == null) {
 			com.esferalia.aon.occam.api.model.warehouse.Delivery d = new com.esferalia.aon.occam.api.model.warehouse.Delivery()
 				.setDomain(to.getDomain())
 				.setCustomer(new com.esferalia.aon.occam.api.model.Customer().setId(to.getCustomer().getId()))
@@ -1250,24 +1199,32 @@ public class SalesController extends HeaderObjectController implements ISalesCon
 				.setWorkplace(new Workplace().setId(to.getWorkPlace().getId()))
 				.setScope(new Scope().setId(to.getScope().getId()))
 				.setCarrier(to.getCarrier().getId())
-				.setNumberPlate(getNumberPlate())
-				.setDriver(getDriverName())
-				.setDriverDocument(getDriverDocument())
-				.setStatusModificationDate(getChargeDate());
+				.setNumberPlate(getPrepareSaleProcess().getNumberPlate())
+				.setDriver(getPrepareSaleProcess().getDriverName())
+				.setDriverDocument(getPrepareSaleProcess().getDriverDocument())
+				.setStatusModificationDate(getPrepareSaleProcess().getChargeDate())
+				.setCarrierPacking(packingListId);
 			d = AON.saveDelivery(domainName, to.getDomain(), login, d);
 			deliveryId = d.getId();
 		}
 		Integer deliveryIdAux = deliveryId;
+		
 		AON.getSalesDetailStream(domainName, to.getDomain(), login, f -> f.getSalesProperty().eq(to.getId()))
 		.forEach(detail -> {
-			detail.setDelivery(deliveryIdAux);
-			AON.updateSalesDetail(domainName, to.getDomain(), login, detail);
+			if(!getPrepareSaleProcess().isPartialPreparation() || (getPrepareSaleProcess().isPartialPreparation() && getPrepareSaleProcess().getSalesDetailsChecks().contains(detail.getId()))) {
+				detail.setDelivery(deliveryIdAux);
+				AON.updateSalesDetail(domainName, to.getDomain(), login, detail);
+			}
 		});
-		
-		accept(event);
-	
+		prepareSaleProcess = null;
+
+		accept(event);		
 	}
 	
+	public void onCancelPrepareSale(ActionEvent event) {
+		prepareSaleProcess = null;
+	}
+
 	public String getPackagingSalesDownloadURL() {
 		Sales sales = (Sales) getTo();
 		com.esferalia.aon.occam.api.model.Domain domain = AON.getDomain(AonUtil.getDomainName(), DomainManager.getCurrentDomain(), "");
@@ -1307,8 +1264,9 @@ public class SalesController extends HeaderObjectController implements ISalesCon
 		List<CarrierPacking> packingListList = 
 			AON.getCarrierPackingList(new Domain().setId(to.getDomain()).setName(domainName),
 				login, f -> f.getDomainProperty().eq(to.getDomain())
-				.and(f.getStatusProperty().eq(CarrierPackingStatus.PENDING.value())
-				.and(f.getCarrierProperty().eq(getCarrier().getId())))
+				.and(f.getStatusProperty().eq(CarrierPackingStatus.PENDING.value()))
+						
+//				.and(f.getCarrierProperty().eq(getCarrier().getId()))
 			);
 		LinkedList<SelectItem> list = new LinkedList<>();
 		for (CarrierPacking cp : packingListList) {

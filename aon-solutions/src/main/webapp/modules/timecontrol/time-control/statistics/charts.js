@@ -2,7 +2,7 @@ import { MSG } from "../../../../environments/environments";
 import { waitEl } from "../../../../services/utils";
 
 // #9e9e9e
-export const charts = (div, data) => new Promise(async(resolve) => {
+export const charts = (div, data, opts) => new Promise(async(resolve) => {
     await waitEl("script[src*='jsapi']");
     const drawBasic = () => {
       const chart = new google.visualization.ComboChart(div);
@@ -20,7 +20,7 @@ export const charts = (div, data) => new Promise(async(resolve) => {
         theme: "material",
         legend: "none",
         lineWidth: 5,
-        width: 260,
+        width: opts.width || 260,
         vAxis: {
           textStyle: {
             bold: true,

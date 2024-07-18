@@ -155,7 +155,7 @@ public class CarrierPackingDAO {
 					.setStatus(CarrierPackingStatus.safeValueOf(r.getValue(CARRIER_PACKING.STATUS)))
 					.setType(CarrierPackingType.safeValueOf(r.getValue(CARRIER_PACKING.TYPE)))
 					
-					.setCarrierName(r.getValue(REGISTRY.NAME))
+					.setCarrierName(checkField(r, REGISTRY.NAME) ? r.getValue(REGISTRY.NAME): "")
 					.setComments(r.getValue(CARRIER_PACKING.COMMENTS))
 					
 					.setGross(r.getValue(CARRIER_PACKING.GROSS))

@@ -562,6 +562,7 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 		salaryBuilder.setTotalDeduction(totalDeduction + totalEmbargos);
 
 		Double totalCost = fillCosts(contractSalaryCalculatorContext);
+		totalCost += fillSSPECCosts(contractSalaryCalculatorContext);
 //		expressionContext.setVariable(ENTERPRISE_QUOTA, totalCost, start, end);
 		Double totalBonus = fillBonus(contractSalaryCalculatorContext);
 
@@ -994,7 +995,8 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 	}
 
 	protected Double fillSSDeductions(IContractSalaryCalculatorContext ctx) throws SalaryException {
-		return fillDeductions(ctx, d -> d.getType().isSsDeduction() );
+		return fillDeductions(ctx, d -> d.getType().isSsDeduction() && !isSSPEC(d) )
+				+ fillDeductions(ctx, d -> d.getType().isSsDeduction() && isSSPEC(d));
 	}
 
 	protected Double fillOtherDeductions(IContractSalaryCalculatorContext ctx) throws SalaryException {
@@ -1002,6 +1004,7 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 										&& !d.getType().isSsDeduction()   
 										&& !GenericContractSalaryCalculator.isAdvance(d));
 	}
+
 
 	protected Double fillDeductions(IContractSalaryCalculatorContext ctx, Predicate<IContractDeduction> predicate) throws SalaryException {
 		try {
@@ -1231,7 +1234,11 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 	}
 
 	protected Double fillCosts(IContractSalaryCalculatorContext ctx) throws SalaryException {
-		return fillCosts(ctx, GenericContractSalaryCalculator::notITCompesation );
+		return fillCosts(ctx, cost -> !isITCompesation(cost) &&  !isSSPEC(cost) );
+	}
+
+	protected Double fillSSPECCosts(IContractSalaryCalculatorContext ctx) throws SalaryException {
+		return fillCosts(ctx, GenericContractSalaryCalculator::isSSPEC);
 	}
 
 	protected Double fillItCompensations(IContractSalaryCalculatorContext ctx) throws SalaryException {
@@ -1255,7 +1262,7 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 					continue;
 				
 
-			    	Date costStart = Period.max(contractCost.getStartDate(), start);
+			    Date costStart = Period.max(contractCost.getStartDate(), start);
 				Date costEnd = Period.min(contractCost.getEndDate(), end);
 
 				try {
@@ -2581,10 +2588,9 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 	private static boolean isITCompesation(IContractCost cost) {
 		return cost.getType() == DeductionType.IN_KIND;
 	}
-
-	private static boolean notITCompesation(IContractCost cost) {
-		return !isITCompesation(cost);
-	}
 	
+	private static boolean isSSPEC(IContractDeduction deduction) {
+		return AonStringUtils.startsWith(deduction.getExpression(), "/*epoch");
+	}
 }
 

@@ -36,9 +36,6 @@ export class AonHome extends AonElement {
 	}
 
 	build() {
-		if(LS.isNewTheme()){
-			
-		}
 
 		let gradiantHeader = this.createElement(TAG.DIV);
 		gradiantHeader.className = 'aonRootGradiantHeader';
@@ -83,39 +80,23 @@ export class AonHome extends AonElement {
 				aonHeader.buildApp(app,sidenav);
 				aonHeader.setVisibleLogo(!appEl);
 				aonHeader.setVisibleApp(appEl);
-				aonHeader.setColor(appColor && '#fff', appColor);
+				/*aonHeader.setColor(appColor && '#fff', appColor);
 				if(appColor == "var(--aonTopMenuAvailable)")
 					aonHeader.setBackgroundColor("var(--aonHeaderBackgroundAvailable)")
 				else
 					aonHeader.setBackgroundColor(appColor);
+				*/
 			} else {
 				aonHeader.setVisibleApp(false);
 				aonHeader.setVisibleLogo(true);
-				aonHeader.setColor("var(--aonGrayHeaderButtonsColor)","red");
-				aonHeader.setBackgroundColor("var(--aonHeaderBackgroundColor)");
+				//aonHeader.setColor("var(--aonGrayHeaderButtonsColor)","red");
+				//aonHeader.setBackgroundColor("var(--aonHeaderBackgroundColor)");
 			}
 			
-			/*
-			let div = this.getElement(app.app);
-			if(appColor == "grey"){
-				div.addEventListener(EVENT.CLICK, () =>{
-					let header = this.getElement("aonHeaderWeb");
-					header.style.backgroundColor = "green";
-		
-					let apps = this.getElement("aonMenuListAppImg-applications");
-					apps.style.color = "rgb(95, 99, 104)";
-		
-					let headerapp = this.getElement("aonHeaderApp");
-					headerapp.style.display = "none";
-		
-					let logo = this.getElement("aonLogo");
-					logo.style.display = "block";
-					logo.style.filter = "none";
-				})
-			}else{
-			*/
-				
-			//}
+			aonHeader.setColor();
+			aonHeader.setBackgroundColor();
+			let appName = app.app[0].toUpperCase() + app.app.slice(1);
+			aonHeader.setClassName(`${CSS.AON_HEADER} ${CSS.AON_HEADER}${appName}`); 
 			
 		});
 
@@ -264,7 +245,7 @@ export class AonHome extends AonElement {
 		aonSearchDiv.style.height = '32px';
 		aonSearchDiv.style.border = 'none';
 		aonSearchDiv.style.borderRadius = '4px';
-		aonSearchDiv.style.backgroundColor = '#ffffff';
+		aonSearchDiv.style.backgroundColor = "var(--aonSearchBar)";
 		aonSearchDiv.style.boxShadow = '0 2px 4px rgba(0,0,0,.14),0 0 2px rgba(0,0,0,.12)';
 		aonSearchDiv.style.alignItems = 'center';
 	}

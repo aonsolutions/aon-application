@@ -61,53 +61,31 @@ export class AonSuiteMenu extends AonElement {
         newButton.id = this.NEW_BUTTON;
         newButton.icon = "add";
         newButton.title = this.new;
-        newButton.style.display = "block";
+        newButton.className = "suiteMenuNewButton";
         newButton.color = "transparent";
-        newButton.style.width = "157px";
-        newButton.style.borderTopLeftRadius = "5px";
-        newButton.style.borderBottomLeftRadius = "5px";
-        newButton.style.marginLeft = "14px";
-        newButton.style.marginTop = "20px";
-        newButton.style.borderTopWidth = "1px";
-        newButton.style.borderTopStyle = "Solid";
-        newButton.style.borderTopColor = "var(--aonSuiteMenuNewButtonBorder";
-        newButton.style.borderBottomWidth = "1px";
-        newButton.style.borderBottomStyle = "Solid";
-        newButton.style.borderBottomColor = "var(--aonSuiteMenuNewButtonBorder";
-        newButton.style.borderLeftWidth = "1px";
-        newButton.style.borderLeftStyle = "Solid";
-        newButton.style.borderLeftColor = "var(--aonSuiteMenuNewButtonBorder";
         divNewButton.appendChild(newButton);  
         let newBtText = this.getElement(newButton.TEXT);
         let newBtIcon = this.getElement(newButton.ICON);
         let newBtBt = this.getElement(newButton.BUTTON);
-        newBtText.style.color = "var(--aonSuiteMenuNewButtonBorder";
-        newBtIcon.style.color = "var(--aonSuiteMenuNewButtonBorder";
-        newBtText.style.fontWeight = "normal";
+        newBtText.classList.add("suiteMenuNewButtonText");
+        newBtIcon.classList.add("suiteMenuNewButtonIcon");
         newBtText.innerHTML = MSG.ADD_NEW;
-        newBtBt.style.boxShadow = "none";
+        newBtBt.classList.add("suiteMenuNewButtonButton");
         this.setButtonHover(newButton);
 
         let dropdownButton = new AonButton();
         dropdownButton.id = this.DROPDOWN_BUTTON;
         dropdownButton.icon = "keyboard_arrow_down";
         dropdownButton.title = "Ver opciones";
-        dropdownButton.style.display = "block";
         dropdownButton.color = "transparent";
-        dropdownButton.style.width = "50px";
-        dropdownButton.style.borderTopRightRadius = "5px";
-        dropdownButton.style.borderBottomRightRadius = "5px";
-        dropdownButton.style.border = "1px solid var(--aonSuiteMenuNewButtonBorder)";
-        dropdownButton.style.marginTop = "20px";
-        dropdownButton.style.justifyContent = "center";
+        dropdownButton.classList.add("aonSuiteMenuDropdownButton");
         divNewButton.appendChild(dropdownButton);
         let dropBtIcon = this.getElement(dropdownButton.ICON);
         let dropBtBT = this.getElement(dropdownButton.BUTTON);
         let dropBtText = this.getElement(dropdownButton.TEXT);
-        dropBtIcon.style.color = "var(--aonSuiteMenuNewButtonBorder";
-        dropBtIcon.style.marginLeft = "-7px";
+        dropBtIcon.classList.add("suiteMenuDropdownButtonIcon");
         dropBtText.innerHTML = "";
-        dropBtBT.style.boxShadow = "none";
+        dropBtBT.classList.add("suiteMenuDropdownButtonButton");
         this.setButtonHover(dropdownButton);
 
         let options = this.createElement(TAG.DIV);
@@ -119,9 +97,8 @@ export class AonSuiteMenu extends AonElement {
         });
 
         let sideNavTitle = this.createDiv();
-        sideNavTitle.className = "aonSidenavTitleBeta";
+        sideNavTitle.className = "aonSidenavTitleBeta suiteMenuSidenavTitle";
         sideNavTitle.innerHTML = MSG.QUICK_ACCESS;
-        sideNavTitle.style.color = "var(--aonSuiteMenuNewButtonText)";
         sideMenu.appendChild(sideNavTitle);
 
         sideMenu.appendChild(this.buildSideNavRow(MSG.ALL1,"stacks"));
@@ -132,9 +109,8 @@ export class AonSuiteMenu extends AonElement {
             this.buildSideNavCard(sideMenu,"1");
 
         let utilidades = this.createDiv();
-        utilidades.className = "aonSidenavTitleBeta";
+        utilidades.className = "aonSidenavTitleBeta suiteMenuSide";
         utilidades.innerHTML = MSG.UTILITIES;
-        utilidades.style.color = "var(--aonSuiteMenuNewButtonText)";
         
             
         sideMenu.appendChild(utilidades);
@@ -147,53 +123,34 @@ export class AonSuiteMenu extends AonElement {
             uploadButton.icon = "publish";
             uploadButton.title = "Cargar archivo";
             uploadButton.color = "transparent";
-            uploadButton.style.display = "block";
-            uploadButton.style.width = "222px";
-            uploadButton.style.border = "2px dashed var(--aonSuiteMenuUploadButtonBorder)";
-            uploadButton.style.borderRadius = "5px";
-            uploadButton.style.marginLeft = "12px";
-            uploadButton.style.marginTop = "20px";
+            uploadButton.classList.add("aonSuiteMenuUploadButton");
             sideMenu.appendChild(uploadButton);
             let text = this.getElement(uploadButton.TEXT);
             let icon = this.getElement(uploadButton.ICON);
             let button = this.getElement(uploadButton.BUTTON);
             text.className= CSS.AON_CARD_TEXT;
-            text.style.fontWeight = "normal";
-            icon.style.color = "var(--aonSuiteMenuNewButtonBorder";
-            button.style.boxShadow = "none";
+            text.classList.add("suiteMenuUploadButtonText");
+            icon.classList.add("suiteMenuUploadButtonIcon");
+            button.classList.add("suiteMenuUploadButtonButton");
             this.setButtonHover(uploadButton);
         }
       
         let content = this.createDiv();
         content.id = this.CONTENT;
-        content.style.height = "calc(-61px + 100vh)";
-        content.style.width = "100%";
-        content.style.overflowY = "auto";
-        content.style.backgroundColor = "var(--aonContentBeta)";
+        content.classList.add("suiteMenuContent");
         divFlex.appendChild(content);
 
         let div = this.createDiv();
-        div.style.marginTop = "15px";
-        div.style.width = "100%"
-        div.style.justifyContent = "left";
-        div.style.display = "flex";
+        div.classList.add("suiteMenuDiv");
         content.appendChild(div);
 
         let title = this.createDiv();
         title.id = this.TITLE;
         title.className = "aonSidenavTitleBeta";
-        title.style.color = "var(--aonSuiteMenuTitle)";
         div.appendChild(title);
 
         let div2 = this.createDiv();
-        div2.style.width = "100%";
-        div2.style.display = "flex";
-        div2.style.gap = "1rem";
-        div2.style.flexWrap = "wrap";
-        div2.style.position = "relative";
-        div2.style.justifyContent = "center";
-        div2.style.paddingRight = "20px";
-        div2.style.paddingBottom = "70px";
+        div2.classList.add("suiteMenuDiv2");
         content.appendChild(div2);
 
         this.options.forEach((opt, i) => {
@@ -213,29 +170,21 @@ export class AonSuiteMenu extends AonElement {
         let card = new AonCard();
         card.id = id;
 		card.title = this.cardData.title;
-		card.style.minWidth = "230px";
+		card.classList.add("suiteMenuSideNavCardCard");
         sideMenu.appendChild(card);
 
         let cardTitle = this.getElement(card.TITLE_SECTION1);
-        cardTitle.style.marginLeft = "24px";
+        cardTitle.classList.add("suiteMenuSideNavCardTitle");
 
         let icon = new AonIconButton();
         icon.icon = "info";
         icon.color = "var(--aonSuiteMenuNewButtonText)";
-        icon.style.height = "fit-content";
-        icon.style.position = "relative";
-        icon.style.top = "15px";
-        icon.style.left = "-231px";
+        icon.classList.add("suiteMenuSideNavCardIcon");
         card.appendChild(icon);
 
-        card.style.display = "flex";
-        card.style.minHeight = "20px";
-        card.style.marginTop = "10px";
   
         let cardDiv = this.getElement(card.CARD);
-		cardDiv.style.boxShadow = '0 2px 4px rgba(0,0,0,.1)';
-		cardDiv.style.borderRadius = '2px';
-        cardDiv.style.minWidth = "230px";
+		cardDiv.classList.add("suiteMenuSideNavCardDiv");
         
         let divGeneral = this.createDiv();
         this.cardData.info.forEach((info)=>{
@@ -246,23 +195,15 @@ export class AonSuiteMenu extends AonElement {
     }
 
     buildCard(opt, i,div){
-        if(opt.visible!=undefined && opt.visible == true){
+        // if(opt.visible!=undefined && opt.visible == true){
             let card = new AonCard();
             card.id = "card" + i;
             card.title = opt.title;
-            card.style.minWidth = "375px";
-            card.style.maxWidth = "375px";      
-
-            card.style.display = "flex";
-            card.style.maxHeight = "375px";
-            card.style.marginLeft = "10px";
-            //card.style.marginTop = "20px";
+            card.classList.add("suiteMenuCardCard");
             div.appendChild(card);
             
             let cardDiv = this.getElement(card.CARD);
-            cardDiv.style.boxShadow = '0 2px 4px rgba(0,0,0,.1)';
-            cardDiv.style.borderRadius = '2px';
-            cardDiv.style.minWidth = "375px";
+            cardDiv.classList.add("suiteMenuCardDiv");
             
             let divGeneral = this.createDiv();
             opt.options.forEach((v) =>{
@@ -270,70 +211,58 @@ export class AonSuiteMenu extends AonElement {
             })
         
             card.setContent(divGeneral); 
-        }else if(opt.visible == undefined){
-            let card = new AonCard();
-            card.id = "card" + i;
-            card.title = opt.title;
-            card.style.minWidth = "375px";
-            card.style.maxWidth = "375px";      
-
-            card.style.display = "flex";
-            card.style.maxHeight = "375px";
-            card.style.marginLeft = "10px";
-            //card.style.marginTop = "20px";
-            div.appendChild(card);
+        // }else if(opt.visible == undefined){
+        //     let card = new AonCard();
+        //     card.id = "card" + i;
+        //     card.title = opt.title;
+        //     card.classList.add("suiteMenuCardCard")
+        //     div.appendChild(card);
             
-            let cardDiv = this.getElement(card.CARD);
-            cardDiv.style.boxShadow = '0 2px 4px rgba(0,0,0,.1)';
-            cardDiv.style.borderRadius = '2px';
-            cardDiv.style.minWidth = "375px";
+        //     let cardDiv = this.getElement(card.CARD);
+        //     cardDiv.classList.add("suiteMenuCardDiv");
             
-            let divGeneral = this.createDiv();
-            opt.options.forEach((v) =>{
-                divGeneral.appendChild(this.buildCardData(v));
-            })
+        //     let divGeneral = this.createDiv();
+        //     opt.options.forEach((v) =>{
+        //         divGeneral.appendChild(this.buildCardData(v));
+        //     })
         
-            card.setContent(divGeneral); 
-        }else if (this.allFalse){
-            let card = new AonCard();
-            card.id = "card" + i;
-            card.title = opt.title;
-            card.style.minWidth = "375px";
-            card.style.maxWidth = "375px";      
+        //     card.setContent(divGeneral); 
+        // }else if (this.allFalse){
+        //     let card = new AonCard();
+        //     card.id = "card" + i;
+        //     card.title = opt.title;
+        //     card.style.minWidth = "375px";
+        //     card.style.maxWidth = "375px";      
 
-            card.style.display = "flex";
-            card.style.maxHeight = "375px";
-            card.style.marginLeft = "10px";
-            //card.style.marginTop = "20px";
-            div.appendChild(card);
+        //     card.style.display = "flex";
+        //     card.style.maxHeight = "375px";
+        //     card.style.marginLeft = "10px";
+        //     //card.style.marginTop = "20px";
+        //     div.appendChild(card);
             
-            let cardDiv = this.getElement(card.CARD);
-            cardDiv.style.boxShadow = '0 2px 4px rgba(0,0,0,.1)';
-            cardDiv.style.borderRadius = '2px';
-            cardDiv.style.minWidth = "375px";
+        //     let cardDiv = this.getElement(card.CARD);
+        //     cardDiv.style.boxShadow = '0 2px 4px rgba(0,0,0,.1)';
+        //     cardDiv.style.borderRadius = '2px';
+        //     cardDiv.style.minWidth = "375px";
             
-            let divGeneral = this.createDiv();
-            opt.options.forEach((v) =>{
-                divGeneral.appendChild(this.buildCardData(v));
-            })
+        //     let divGeneral = this.createDiv();
+        //     opt.options.forEach((v) =>{
+        //         divGeneral.appendChild(this.buildCardData(v));
+        //     })
 
             
-            card.setContent(divGeneral); 
-        }
+        //     card.setContent(divGeneral); 
+        // }
     }
 
     buildCardData(value) {
 		let div = this.createDiv();
-		div.style.marginTop = '10px';
-		div.style.display = "block";
-        div.style.padding = "2px";
+		div.classList.add("suiteMenuCardDataDiv");
 
 		let span = this.createDiv();
 		span.className = CSS.AON_CARD_TEXT;
 		span.innerHTML = value.description;
-        span.title = value.title;
-        span.style.cursor = "pointer";
-        span.style.color = "var(--aonSuiteMenuCardText)"
+        span.classList.add("suiteMenuCardDataSpan");
 		div.appendChild(span);
 
         if(value.description2){
@@ -341,19 +270,9 @@ export class AonSuiteMenu extends AonElement {
             let span2 = this.createSpan();
             span2.className = CSS.AON_CARD_TEXT;
             span2.innerHTML = value.description2
-            span2.style.marginLeft = "5px";
-            span2.style.color = "var(--aonSuiteMenuCardText2)";
+            span2.classList.add("suiteMenuCardDataSpan2");
             div.appendChild(span2);
         }
-
-        span.addEventListener('mouseover', function() {
-            span.style.color ="var(--aonSuiteMenuCardText)";
-            span.style.textDecoration = 'underline';
-        });
-        span.addEventListener('mouseout', function() {
-            span.style.color ="var(--aonSuiteMenuCardText)";
-            span.style.textDecoration = '';
-        });
 
         let rootPanel = this.getElement("rootPanel");
         span.addEventListener(EVENT.CLICK, value.action);
@@ -366,10 +285,7 @@ export class AonSuiteMenu extends AonElement {
 
     buildSideNavCardData(value,number) {
 		let div = this.createDiv();
-		div.style.marginTop = '10px';
-		div.title = value;
-        div.style.padding = "2px";
-        div.style.position = "relative";
+		div.classList.add("suiteMenuSideNavCardDataDiv");
 
 		let span = this.createSpan();
 		span.className = CSS.AON_CARD_TEXT;
@@ -379,21 +295,14 @@ export class AonSuiteMenu extends AonElement {
         let span2 = this.createSpan();
         span2.className = CSS.AON_CARD_TEXT;
         span2.innerHTML = number;
-        span2.style.right = "0px";
-        span2.style.position = "absolute";
+        span2.classList.add("suiteMenuSideNavCardDataSpan2");
         div.appendChild(span2);
 
 		return div;
 	}
 
     setButtonHover(button){
-        button.addEventListener("mouseover", () => {
-            button.style.backgroundColor = "rgba(72,70,68,0.1)";
-        });
-           
-        button.addEventListener("mouseleave", () => {
-            button.style.backgroundColor = "transparent";
-        });
+        button.classList.add("suiteMenuSideNavCardDataButton");
     }
     
 
@@ -402,13 +311,9 @@ export class AonSuiteMenu extends AonElement {
 
         if(options.length === 0) return null;
 
-        let div = this.getElement(this.OPTIONS);
+        let div = this.getElement(this.OPTIONS); 
         div.classList.add('is-visible');
-        div.style.width = "209px";
-        div.style.marginLeft = "13px";
-        div.style.marginTop = "5px";
-        div.style.borderRadius = "5px";
-        div.style.boxShadow= "rgba(0, 0, 0, 0.15) 0px 24px 54px, rgba(0, 0, 0, 0.08) 0px 4.5px 13.5px";
+        div.classList.add("suiteMenuOptionsDiv");
 
         div.addEventListener("mouseleave", () => {
            div.classList.remove('is-visible');
@@ -416,11 +321,7 @@ export class AonSuiteMenu extends AonElement {
 
         let ul = this.createElement(TAG.UL);
         ul.classList.add(CSS.AON_UL);
-        ul.style.width = "221px";
-        ul.style.paddingTop = "0px";
-        ul.style.paddingRight = "15px";
-        ul.style.paddingBottom = "0px";
-        ul.style.paddingLeft = "0px";
+        ul.classList.add("suiteMenuOptionsUl");
         ul.classList.add(CSS.AON_INPUT_LIST_OPTIONS_UL);
         ul.setAttribute('for', this.getAttribute(CONSTANT.ID) + 'Icon');
         div.appendChild(ul);
@@ -433,37 +334,20 @@ export class AonSuiteMenu extends AonElement {
 
     buildSideNavRow(value, icon) {
 		let div = this.createSpan();
-		div.style.paddingTop = '5px';
-		div.style.title = value;
-        div.style.paddingLeft = "30px";
-        div.style.borderRadius = "5px";
-        div.style.paddingBottom = "5px";
-        div.style.cursor = "pointer"
-		div.style.display = "flex";
-        div.style.transition = "background-color 0.2s"
+		div.classList.add("suiteMenuSideNavRowDiv");
 
 		let i = this.createElement(TAG.I);
 		i.className = CSS.MATERIAL_ICONS;
-		i.style.marginRight = '5px';
-		i.style.verticalAlign = "middle";
+		i.classList.add("suiteMenuSideNavRowI");
 		i.innerHTML= icon;
 		div.appendChild(i);
-        i.style.color = "var(--aonCardText)";
+        
 
 		let span = this.createDiv();
 		span.className = CSS.AON_CARD_TEXT;
-        span.style.marginTop = "2px";
+        span.classList.add("suiteMenuSideNavRowSpan");
 		span.innerHTML = value;
 		div.appendChild(span);
-
-        div.addEventListener("mouseover", () => {
-            div.style.backgroundColor = "var(--aonSideNavRowHoverColor)";
-        });
-            
-        div.addEventListener("mouseleave", () => {
-            div.style.backgroundColor = "transparent";
-        });
-
         
 		return div;
 	}
@@ -472,8 +356,7 @@ export class AonSuiteMenu extends AonElement {
         let li = this.createElement(TAG.LI);
         li.className = 'aonInputListOptionsItem';
         li.innerHTML = option.title;
-        li.style.padding = "5px";
-        li.style.paddiingLeft = "25px";
+        li.classList.add("suiteMenuLi");
         ul.appendChild(li);
     
         li.addEventListener(EVENT.CLICK, () => {

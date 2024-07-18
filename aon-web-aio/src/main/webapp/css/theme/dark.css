@@ -124,6 +124,13 @@
   
 	--aonSwitchButtonCircleOn: white;
 
+	--aonHomeMouseOverImg: black; 
+
+	--aonHomeImg: white;
+
+	--aonSearchBar: var(--aonContentBeta);
+
+	--aonSearchButton: white;
 
   
   }
@@ -160,6 +167,10 @@
 	'wght' 400,
 	'GRAD' 0,
 	'opsz' 24
+  }
+
+  #aon-search-buttonIcon {
+	color: white;
   }
   
   .material-symbols-outlined {
@@ -234,6 +245,121 @@
   .aonAppLi:hover {
 	/* background-color: var(--aonLightGray); */
 	background-color: var(--aonLightBlue);
+  }
+
+  .aonSideNavHomeButton {
+
+
+  }
+  
+  .aonApplicationsButton {
+  
+  
+  }
+  
+  .aonSideNavInvoiceButton {
+  
+  
+  }
+  
+  .aonSideNavDocumentalButton {
+  
+  
+  }
+  
+  .aonSideNavAccountingButton {
+  
+  
+  }
+  
+  .aonSideNavFiscalButton {
+  
+  
+  }
+  
+  .aonSideNavPayrollButton {
+  
+  
+  }
+  
+  .aonSideNavTimeControlButton {
+  
+  
+  }
+  
+  .aonSideNavNotesButton {
+  
+  
+  }
+  
+  .aonSideNavRequestsButton {
+  
+  
+  }
+  
+  .aonTopNavOfficeButton {
+  
+  
+  }
+  
+  .aonTopNavGarageButton {
+  
+  
+  }
+  
+  .aonTopNavAcademyButton {
+  
+  
+  }
+  
+  .aonTopNavOfficeButton {
+  
+  
+  }
+  
+  .aonTopNavCommercialButton {
+  
+  
+  }
+  
+  .aonTopNavManagementButton {
+  
+  
+  }
+  
+  .aonTopNavWarehouseButton {
+  
+  
+  }
+  
+  .aonTopNavTreasuryButton {
+  
+  
+  }
+  
+  .aonTopNavGroupwareButton {
+  
+  
+  }
+  
+  .aonTopNavAccoutningButton {
+  
+  
+  }
+
+  .aonTopNavFiscalButton {
+	
+	
+  }
+  
+  .aonTopNavPayrollButton {
+  
+  
+  }
+  
+  .aonTopNavMarketingButton {
+  
+  
   }
   
   .aonListGroup {
@@ -358,7 +484,7 @@
   
   [placeholder]:empty::before {
 	content: attr(placeholder);
-	color: #555; 
+	color: white; 
 	opacity: 0.6;
   }
   
@@ -419,9 +545,10 @@
 	  z-index: 1000000;
 	  height: calc(100vh - 49px);
 	  overflow: hidden;
-  }
-  
-  .rootMobilePanel {
+	  border: 1px solid rgba(255,255,255,0.1);
+ }
+ 
+ .rootMobilePanel {
 	position: relative;
 	margin-right: 100px;
 	height: calc(100vh - 122px);
@@ -1237,6 +1364,8 @@
 	-webkit-appearance: none;
 	outline: 0px;
 	font-size: 14px;
+	color: var(--aonSearchButton);
+  	background-color: var(--aonSearchBar);
   }
   
   .aonFormCenter {
