@@ -45,9 +45,14 @@
 												value="Hoja Almacen"/>
 					    				</aon:outputLink>						
 									</aon:div>
-									<ui:repeat value="#{sales.getDeliverySalesDetail(delivery.id)}" var="salesDetail">
+									<ui:repeat value="#{sales.getDeliverySalesDetail(delivery.id)}" var="salesDetail1">
 										<aon:div>
-											<aon:outputText value="#{salesDetail.description}" />
+											<aon:outputText value="#{salesDetail1.description}" />
+											<aon:commandButton id="removeSalesDetailDelivery" 
+												value="&#160;" title="" 
+												styleClass="aon-icon-commandButton aon-icon-delete"
+												actionListener="#{sales.removeSalesDetailDelivery(salesDetail1)}" 
+												reRender="showInPreparationWindow" />							
 										</aon:div>
 									</ui:repeat>
 									

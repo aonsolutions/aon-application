@@ -1314,6 +1314,38 @@ public class SalesController extends HeaderObjectController implements ISalesCon
 			.toList();
 	}
 	
+	public void removeSalesDetailDelivery(com.esferalia.aon.occam.api.model.management.SalesDetail salesDetail) { //ActionEvent.¿?
+		String domainName = AonUtil.getDomainName();
+		String login = UserUtils.getInstance().getLoggedUser().getLogin();
+		Sales sales = (Sales)this.getTo();
+		Integer delivery = salesDetail.getDelivery();
+		salesDetail.setDelivery(null);
+		AON.updateSalesDetail(domainName, sales.getDomain(), login, salesDetail);
+		
+		List<com.esferalia.aon.occam.api.model.management.SalesDetail> list = AON.getSalesDetailStream(domainName, sales.getDomain(), login, f -> 
+			f.getSalesProperty().eq(sales.getId())
+			.and(f.getDomainProperty().eq(sales.getDomain()))
+			.and(f.getDeliveryProperty().isNotNull()))
+			.toList();
+		
+		if(list.isEmpty()) {
+			sales.setStatus(SalesStatus.PENDING);
+			com.esferalia.aon.occam.api.model.management.Sales s = AON.getSales(domainName, sales.getDomain(), login, f-> f.getIdProperty().eq(sales.getId()));
+			s.setStatus(com.esferalia.aon.occam.api.model.type.SalesStatus.PENDING);
+			AON.saveSales(domainName, sales.getDomain(), login, s);
+		}
+		
+		List<com.esferalia.aon.occam.api.model.management.SalesDetail> list2 = AON.getSalesDetailStream(domainName, sales.getDomain(), login, f -> 
+				f.getDomainProperty().eq(sales.getDomain())
+				.and(f.getDeliveryProperty().eq(delivery)))
+				.toList();
+		List<com.esferalia.aon.occam.api.model.warehouse.DeliveryDetail> list3 = AON.getDeliveryDetailList(domainName, sales.getDomain(), login, f -> f.getDelivery().eq(delivery));
+		if(list2.isEmpty() && list3.isEmpty()) {
+			AON.deleteDelivery(domainName, sales.getDomain(), login, delivery);
+		}
+		
+	}
+	
 	public String getDeliveryDownloadURL(Integer delivery) {
 		Sales sales = (Sales) getTo();
 		com.esferalia.aon.occam.api.model.Domain domain = AON.getDomain(AonUtil.getDomainName(), DomainManager.getCurrentDomain(), "");
