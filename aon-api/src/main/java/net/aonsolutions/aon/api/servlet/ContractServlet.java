@@ -11,14 +11,17 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.PAYROLL;
 import com.esferalia.aon.occam.api.json.ContractExtendedDataJSON;
 import com.esferalia.aon.occam.api.json.JsonUtils;
+import com.esferalia.aon.occam.api.json.WorkplaceJSON;
 import com.esferalia.aon.occam.api.model.AuxSalaryInfo;
 import com.esferalia.aon.occam.api.model.Filter;
 import com.esferalia.aon.occam.api.model.IJsonNames;
 import com.esferalia.aon.occam.api.model.Properties.ContractExtendedDataProperties;
 import com.esferalia.aon.occam.api.model.Properties.SalaryNewPortalProperties;
+import com.esferalia.aon.occam.api.model.type.CCCType;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
@@ -36,6 +39,9 @@ public class ContractServlet extends AonApiHttpServlet {
 	public static final String CONTRACT_COUNT = "/count";
 	public static final String EMPLOYEE_SALARY = "/salary";
 	public static final String EMPLOYEE_SALARY_COUNT = "/salary_count";
+	public static final String WORKPLACE = "/workplace";
+	public static final String CCC = "/CCC";
+	
 	
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) {
@@ -58,12 +64,43 @@ public class ContractServlet extends AonApiHttpServlet {
 				.addRoute(CONTRACT_COUNT, ContractServlet::getContractCount)
 				.addRoute(EMPLOYEE_SALARY,ContractServlet::getEmployeeSalaries)
 				.addRoute(EMPLOYEE_SALARY_COUNT, ContractServlet::getEmployeeSalariesCount)
+				.addRoute(WORKPLACE,ContractServlet::getWorkplaceList)
+				.addRoute(CCC, ContractServlet::getCccList)
 				.apply();
 			
 			response(req, resp, object);
 		} catch (Exception e) {
 			error(req, resp, e);
 		}
+	}
+	
+	private static JSONArray getWorkplaceList(AonApiData api) {
+		JSONArray array = new JSONArray();
+		AON.getWorkplaceList(
+				api.getDomain().getName(), 
+				api.getDomain().getId(), 
+				api.getUser().getLogin(), 
+				f -> f.getDomainProperty().eq(api.getDomain().getId())
+				).forEach(e -> {
+					array.put(WorkplaceJSON.toJSON(e));
+				});;
+		return array;
+	}
+	
+	private static JSONArray getCccList(AonApiData api) {
+		JSONArray array = new JSONArray();
+		AON.getEnterpriseCCCStream(
+				api.getDomain(), 
+				api.getUser().getLogin(), 
+				f -> f.getDomainProperty().eq(api.getDomain().getId())
+				).forEach(e -> {
+					JSONObject json = new JSONObject();
+					json.put(IJsonNames.ID, e.getId());
+					json.put(IJsonNames.CODE, e.getCcc());
+					json.put(IJsonNames.DESCRIPTION, CCCType.values()[e.getType()]);
+					array.put(json);
+				});
+		return array;
 	}
 	
 	private static JSONArray getContractList(AonApiData api) {
