@@ -1,4 +1,4 @@
-import {getCustomers, getCustomer, getScopes} from '../../../services/service.js';
+import {getCustomers, getCustomer, getScopes, getTarget} from '../../../services/service.js';
 import { EVENT, TAG} from '../../../environments/environments.js';
 import { AonRegistryList } from '../aon-registry-list.js';
 import { AonCustomer } from './aon-customer.js';
@@ -9,6 +9,13 @@ import { OfficeEnums } from '../../office/OfficeEnums.js';
 
 export class AonCustomerList extends AonRegistryList {
 
+	parent;
+
+	constructor(parent) {
+		super();
+		this.parent = parent;
+	}
+
 	build(){
 		this.filter = this.filter || { page: 1, perPage: 50 }
 		super.build();
@@ -16,7 +23,6 @@ export class AonCustomerList extends AonRegistryList {
 
 	async getRegistries() {
 		let customers = await getCustomers(this.filter);
-
 		return customers;
 	}
 
@@ -26,7 +32,7 @@ export class AonCustomerList extends AonRegistryList {
 				id: registry.id,
 				additional_info: ['ADDRESSES', 'MEDIA', 'BANKS', 'PAYMETHOD', 'RSEGMENT']
 			};
-			return getCustomer(data);
+			return this.filter.potential ? getTarget(data) : getCustomer(data);
 		}
 		
 		return null;
@@ -51,7 +57,7 @@ export class AonCustomerList extends AonRegistryList {
 	buildSearch(){
 		let timeOut = null;
 
-		let btnSearch = this.getApplication().addSearchOption();
+		let btnSearch = this.getApplication().addSearchOption(true);
 		
 		btnSearch.addEventListener(EVENT.SEARCH_NEW, ({detail}) => {
 			clearTimeout(timeOut);
@@ -63,14 +69,18 @@ export class AonCustomerList extends AonRegistryList {
 					projectType: detail.projectType,
 					rrelationship: detail.rrelationship,
 					status: OfficeUtils.getCustomerStatus(detail),
+					potential : OfficeUtils.getCustomerPotential(detail),
 					page:1
 				}
 				this.setFilter(this.filter);
+				this.parent.setFilterCustomers(this.filter);
+				let filterCount = this.getElement("aonOfficePanelToolbarHeaderToolSectionSearchCountFilter");
+				filterCount.style.display = 'none';
 			}, 300);
 		});
 
 		btnSearch.buildOptionsFilter(OfficeEnums.CustomerFilter);//INPUTS
-		this.setSearchValues();
+		this.setSearchValues();	
     }
 
     setSearchValues(){
@@ -116,6 +126,9 @@ export class AonCustomerList extends AonRegistryList {
 
         let blocked = this.getElement("blocked");
         blocked.value = (this.filter.status ||  []).includes("BLOCKED");
+
+		let potential = this.getElement("potential");
+        potential.value = this.filter.potential == "true" ? "true" : "false";
 	}
 }
 

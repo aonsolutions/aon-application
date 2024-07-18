@@ -575,6 +575,12 @@ public class RegistryImpl implements IRegistry{
 	}
 	
 	@Override
+	public Stream<Target> getTargetStream(AONContext ctx, TargetFilter filter, int ofs, int limit) {
+		return ctx.getDslContext().transactionResult(
+				configuration -> TargetDAO.getStream(ctx, filter, ofs, limit));
+	}
+	
+	@Override
 	public Target save(AONContext ctx, Target target) {
 		return 	ctx.getDslContext().transactionResult(
 				configuration -> TargetDAO.save(ctx, target));

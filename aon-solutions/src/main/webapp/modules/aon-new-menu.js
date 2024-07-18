@@ -31,7 +31,6 @@ const ID = 'id';
 const OPENED = 'opened';
 const APP = 'app';
 
-
 export class AonNewMenu extends AonElement {
 
 	dur;
@@ -161,19 +160,12 @@ export class AonNewMenu extends AonElement {
 				this.rootPanel(new AonDocumental());
 				break;
 			case Apps.ACCOUNTING.app:
-				// this.buildAppMenu(Apps.ACCOUNTING);
 				this.rootPanel(new AonAccounting());
 				break;
 			case Apps.FISCAL.app:
-				// if(this.getDur().isFiscalManager()) {
-				// 	this.buildAppMenu(Apps.FISCAL);
-				// } else 
 				this.rootPanel(new AonFiscal());
 				break;
 			case Apps.PAYROLL.app:
-				// if(this.getDur().isPayrollManager()) {
-				// 	this.buildAppMenu(Apps.PAYROLL);
-				// } else 
 				this.rootPanel(new AonLaboral());
 				break;
 			case Apps.COMUNICA.app:
@@ -197,9 +189,6 @@ export class AonNewMenu extends AonElement {
 			case Apps.NOTES.app:
 				this.rootPanel(new AonNotes());
 				break;
-			// case Apps.NOTES.app:
-			// 	this.buildNoteMenu(Apps.NOTES);
-			// 	break;
 			case Apps.OFFICE.app:
 				this.rootPanel(new AonOfficePanel());
 				break;
@@ -247,23 +236,6 @@ export class AonNewMenu extends AonElement {
 		aonMenuSidenav.style.zIndex = '0';
 		this.appendChild(aonMenuSidenav);
 
-		// aonMenuSidenav.addEventListener(EVENT.MOUSELEAVE, () => {
-		// 	if(this.CLOSE){
-		// 		aonMenuSidenav.style.transitionDuration = '500ms';
-		// 		if(this.getAttribute('opened')) {
-		// 			aonMenuSidenav.style.width = '70px';
-		// 			this.getRootPanel().style.marginLeft = '70px';
-		// 		} else {
-		// 			aonMenuSidenav.style.width = '0px';
-		// 			this.getRootPanel().style.marginLeft = '0px';
-		// 		}
-		// 		document.querySelectorAll("[id^='aonMenuListApp-']").forEach((item, i) => {
-		// 			item.style.display = 'none';
-		// 		});
-		// 		this.buildMenu();
-		// 	}
-		// });
-
 		if(this.getAttribute('opened')) {
 			aonMenuSidenav.style.width = '70px';
 			this.getRootPanel().style.marginLeft = '70px';
@@ -291,11 +263,6 @@ export class AonNewMenu extends AonElement {
 		li.style.fontWeight = 'bold';
 		li.style.backgroundColor = 'transparent';
 		li.style.cursor = 'pointer';
-		// TODO APP MENU
-		// li.addEventListener(EVENT.MOUSEOVER, (e) => {
-		// 	let appOptions = this.getElement(this.AON_MENU_APP_OPTIONS);
-		// 	appOptions.style.display = 'none';
-		// });
 		li.addEventListener(EVENT.CLICK, () => {
 			let expandButtonDiv = this.getElement("aonExpandButtonDiv");
 			let expandButton = expandButtonDiv.firstChild;
@@ -314,7 +281,6 @@ export class AonNewMenu extends AonElement {
 		li.innerHTML ='MENU';
 
 		if(localStorage.getItem('aon_domain_id') && localStorage.getItem('company')){
-			// let company = JSON.parse(localStorage.getItem('company'));
 			for (let item in MenuApps){
 				if(this.isApp(MenuApps[item])){
 					ul.appendChild(this.buildApp(MenuApps[item]));
@@ -322,12 +288,7 @@ export class AonNewMenu extends AonElement {
 			}
 
 			let li2 = this.createElement(TAG.LI);
-			li2.style.height = '10px'
-			// TODO APP MENU
-			// li2.addEventListener(EVENT.MOUSEOVER, (e) => {
-			// 	let appOptions = this.getElement(this.AON_MENU_APP_OPTIONS);
-			// 	appOptions.style.display = 'none';
-			// });
+			li2.style.height = '10px';
 			ul.appendChild(li2);
 	
 			aonMenuSidenav.innerHTML = '';
@@ -361,32 +322,10 @@ export class AonNewMenu extends AonElement {
 		div.style.borderRadius = '5px';
 		li.addEventListener(EVENT.MOUSEOVER, () => {
 			div.style.backgroundColor = app.backgroundColor || '#f1f1f1';
-			// TODO MENU APP
-			// let appOptions = this.getElement(this.AON_MENU_APP_OPTIONS);
-			// if(appOptions) appOptions.style.display = 'none';
-			// this.buildAppMenuOptions(app);
-
-
-			// appOptions.addEventListener(EVENT.MOUSELEAVE, () => {
-			// 	appOptions.style.display = 'none';
-			// });
-			// appOptions.addEventListener(EVENT.MOUSEOVER, (e) => {
-			// 	let isClickInside = 
-			// 		li.contains(e.target)		
-			// 		|| li === e.target
-			// 		|| appOptions.contains(e.target) 
-			// 		|| appOptions === e.target;
-			// 	if (!isClickInside) appOptions.style.display = 'none';
-			// })
 		});
 
 	    li.addEventListener(EVENT.MOUSELEAVE, (e) => {
 			div.style.backgroundColor = 'transparent';
-			// TODO APP MENU
-			// let appOptions = this.getElement(this.AON_MENU_APP_OPTIONS);
-			// let isClickInside = li.contains(e.target) 
-			// 	|| li === e.target 
-			// if (!isClickInside) appOptions.style.display = 'none';
 	    });
 
 
