@@ -1,5 +1,5 @@
 import { AonElement } from 'aonsolutions/components/AonElement.js';
-import { Apps, HomeApps, MenuApps, AuxApps, MENU_APPS, TOP_MENU_APPS, AON_APPS, HOME, APPS } from '../services/app.js';
+import { Apps, HomeApps, MenuApps, AuxApps, MENU_APPS, TOP_MENU_APPS, AON_APPS, HOME, APPS, APPLICATIONS} from '../services/app.js';
 import {COMMERCE, OFFICE, GARAGE, ACADEMY} from  "aonsolutions/services/app.js";
 import {ACCOUNTING_MENU, COMMERCIAL_MENU, GROUPWARE_MENU, MANAGEMENT_MENU, TREASURY_MENU, WAREHOUSE_MENU, FISCAL_MENU, PAYROLL_MENU, MARKETING_MENU} from "../services/app.js"
 import { MSG, CONSTANT, AON_ICONS, CSS, EVENT, MATERIAL_ICONS, TAG } from 'aonsolutions/environments/environments.js';
@@ -451,8 +451,9 @@ export class AonNewMenu extends AonElement {
 		sidenav.style.width = '0px';
 		sidenav.style.display = "none";
 		aonlogo.style.position = "relative";
-		//icon.style.visibility = "hidden";
+		// icon.style.visibility = "hidden";
 		aonlogo.style.left = '52px';
+	
 		rootPanel.style.marginLeft = '0px';
 		//menulist.style.visibility = "hidden";
 	}
@@ -492,6 +493,7 @@ export class AonNewMenu extends AonElement {
 		div.style.height = style?.height || '56px';
 		div.style.flexDirection = style?.flexDirection || 'column';
 		div.style.transition = 'background-color 0.2s';
+		div.style.cursor = "pointer";
 		div.title = app.title;
 		let header = this.getElement("aonHeaderWeb");
 		let welcome = this.getElement("aonCompanyTabFilter");
@@ -725,6 +727,7 @@ export class AonNewMenu extends AonElement {
 		return li
 	}
 
+	
 	getAppToolbarBackgroundColor(app) {
 		let company;
 		if (this.getAttribute('company')) {
@@ -840,6 +843,10 @@ export class AonNewMenu extends AonElement {
 		else if (MenuApps.MESSENGER.app === app.app)
 			return this.getDur().isMessenger();
 		else if (HOME.app === app.app)
+			return true;
+		else if (APPS.app === app.app)
+			return true;
+		else if (APPLICATIONS.app === app.app)
 			return true;
 		else if (MenuApps.NOTES.app === app.app)
 			return true;
