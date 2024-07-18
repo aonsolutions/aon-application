@@ -75,6 +75,9 @@ public class Mod131AEAT2024Declaration extends Mod131Declaration {
 		,AC1_NUE ( Mod131Key.AC1_NUE
 			,(mod,key) -> mod.putAmount(key,ensureActivity(mod,0).getNue())
 			,(mod,key) -> ensureActivity(mod,0).setNue((int) mod.getAmount(key)))
+		,AC1_DIS ( Mod131Key.AC1_DIS
+			,(mod,key) -> mod.putAmount(key,ensureActivity(mod,0).isDis()?1:0)
+			,(mod,key) -> ensureActivity(mod,0).setDis(mod.getAmount(key)==1))
 		,AC1_CEU ( Mod131Key.AC1_CEU
 			,(mod,key) -> mod.putAmount(key,ensureActivity(mod,0).isCeu()?1:0)
 			,(mod,key) -> ensureActivity(mod,0).setCeu(mod.getAmount(key)==1))
@@ -344,6 +347,9 @@ public class Mod131AEAT2024Declaration extends Mod131Declaration {
 		,AC2_NUE ( Mod131Key.AC2_NUE
 			,(mod,key) -> mod.putAmount(key,ensureActivity(mod,1).getNue())
 			,(mod,key) -> ensureActivity(mod,1).setTem((int) mod.getAmount(key)))
+		,AC2_DIS ( Mod131Key.AC2_DIS
+			,(mod,key) -> mod.putAmount(key,ensureActivity(mod,1).isDis()?1:0)
+			,(mod,key) -> ensureActivity(mod,1).setDis(mod.getAmount(key)==1))
 		,AC2_CEU ( Mod131Key.AC2_CEU
 			,(mod,key) -> mod.putAmount(key,ensureActivity(mod,1).isCeu()?1:0)
 			,(mod,key) -> ensureActivity(mod,1).setCeu(mod.getAmount(key)==0))
@@ -612,6 +618,9 @@ public class Mod131AEAT2024Declaration extends Mod131Declaration {
 		,AC3_NUE ( Mod131Key.AC3_NUE
 			,(mod,key) -> mod.putAmount(key,ensureActivity(mod,2).getNue())
 			,(mod,key) -> ensureActivity(mod,2).setTem((int) mod.getAmount(key)))
+		,AC3_DIS ( Mod131Key.AC3_DIS
+			,(mod,key) -> mod.putAmount(key,ensureActivity(mod,2).isDis()?1:0)
+			,(mod,key) -> ensureActivity(mod,2).setDis(mod.getAmount(key)==1))
 		,AC3_CEU ( Mod131Key.AC3_CEU
 			,(mod,key) -> mod.putAmount(key,ensureActivity(mod,2).isCeu()?1:0)
 			,(mod,key) -> ensureActivity(mod,2).setCeu(mod.getAmount(key)==1))
@@ -880,6 +889,9 @@ public class Mod131AEAT2024Declaration extends Mod131Declaration {
 		,AC4_NUE ( Mod131Key.AC4_NUE
 			,(mod,key) -> mod.putAmount(key,ensureActivity(mod,3).getNue())
 			,(mod,key) -> ensureActivity(mod,3).setTem((int) mod.getAmount(key)))
+		,AC4_DIS ( Mod131Key.AC4_DIS
+			,(mod,key) -> mod.putAmount(key,ensureActivity(mod,3).isDis()?1:0)
+			,(mod,key) -> ensureActivity(mod,3).setDis(mod.getAmount(key)==1))
 		,AC4_CEU ( Mod131Key.AC4_CEU
 			,(mod,key) -> mod.putAmount(key,ensureActivity(mod,3).isCeu()?1:0)
 			,(mod,key) -> ensureActivity(mod,3).setCeu(mod.getAmount(key)==1))
@@ -1148,6 +1160,9 @@ public class Mod131AEAT2024Declaration extends Mod131Declaration {
 		,AC5_NUE ( Mod131Key.AC5_NUE
 			,(mod,key) -> mod.putAmount(key,ensureActivity(mod,4).getNue())
 			,(mod,key) -> ensureActivity(mod,4).setTem((int) mod.getAmount(key)))
+		,AC5_DIS ( Mod131Key.AC5_DIS
+			,(mod,key) -> mod.putAmount(key,ensureActivity(mod,4).isDis()?1:0)
+			,(mod,key) -> ensureActivity(mod,4).setDis(mod.getAmount(key)==1))
 		,AC5_CEU ( Mod131Key.AC5_CEU
 			,(mod,key) -> mod.putAmount(key,ensureActivity(mod,4).isCeu()?1:0)
 			,(mod,key) -> ensureActivity(mod,4).setCeu(mod.getAmount(key)==1))
