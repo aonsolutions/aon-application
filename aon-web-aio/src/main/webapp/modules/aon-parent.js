@@ -160,7 +160,6 @@ export class AonParent extends AonElement {
 	}
 
 	build() {
-		
 		let parentDiv = this.createDiv();
 		parentDiv.className = CSS.AON_PARENT_DIV;
 		this.appendChild(parentDiv);

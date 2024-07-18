@@ -137,9 +137,8 @@ public class Rawdoc2AccountingInvoice {
 						.orElse(new InvoiceTax());
 					base = detailTax.getBase();
 				}
-
 				InvoiceVAT vat = new InvoiceVAT()
-					//.setInvoiceDetail(detail)
+					.setInvoiceDetail(detail)
 					.setPrepayment(detail.isPrepayment())
 					.setVatDeductionType(VatDeductionType.WITH_RIGHT)
 					.setBase(base)
@@ -147,7 +146,7 @@ public class Rawdoc2AccountingInvoice {
 					.setQuota(detailTax.getQuota())
 					.setSurcharge(detailTax.getSurcharge())
 					.setSurchargeQuota(detailTax.getSurchargeQuota())
-					// .setInvestAsset(ivs.get(j).getInvestAsset())
+					.setInvestAsset( detail.getInvestAsset() )
 					.setDeductiblePercent(detailTax.getDeductiblePercent())
 					.setDeductibleQuota(detailTax.getDeductibleQuota())
 					.setWithholding(invoice.isWithholding() && !detail.isPrepayment())

@@ -113,7 +113,7 @@ export class AonIconButton extends AonElement {
         "false" == this.getAttribute(CONSTANT.VISIBLE)
       ) {
         this.style.width = "0px";
-        this.style.display = "none";
+        this.display = "none";
       } else {
         this.style.width = null;
         this.style.display = "block";
@@ -141,7 +141,7 @@ export class AonIconButton extends AonElement {
     if ("background" === name) {
       let button = this.getElement(this.BUTTON);
       if (button)
-        button.style.backgroundColor = this.hasAttribute("background")
+        button.backgroundColor = this.hasAttribute("background")
           ? this.getAttribute("background")
           : "transparent";
     }
