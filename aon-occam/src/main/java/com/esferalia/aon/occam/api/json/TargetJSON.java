@@ -30,6 +30,7 @@ public class TargetJSON {
 	public static Target fromJSON(JSONObject json) {
 		return new Target()
 			.copy(RegistryJSON.fromJSON(json))
+			.setRegistry(JsonUtils.getInteger(json, IJsonNames.ID))
 			.setTariff(TariffJSON.fromJSON(json.optJSONObject(IJsonNames.TARIFF)))
 			.setAdvertising(Advertising.safeValueOf(JsonUtils.getString(json, IJsonNames.ADVERTISING)))
 			.setSurcharge(JsonUtils.getboolean(json, IJsonNames.SURCHARGE))
@@ -52,6 +53,7 @@ public class TargetJSON {
 	
 	public static JSONObject toJSON(Target target) {
 		return RegistryJSON.toJSON(target)
+			.put(IJsonNames.REGISTRY, target.getId())
 			.put(IJsonNames.TARIFF, target.getTariff().getId()!=null ? TariffJSON.toJSON(target.getTariff()) : null)
 			.put(IJsonNames.ADVERTISING, target.getAdvertising() != null ? target.getAdvertising().name() : null)
 			.put(IJsonNames.SURCHARGE, target.isSurcharge())

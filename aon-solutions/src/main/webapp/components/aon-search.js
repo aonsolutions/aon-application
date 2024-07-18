@@ -96,7 +96,7 @@ export class AonSearch extends AonElement {
 		let advancedButton = new AonIconButton();
 		advancedButton.style.display = 'none';
 		advancedButton.id = this.ADVANCED_BUTTON;
-		advancedButton.icon = MATERIAL_ICONS.ARROW_DROP_DOWN;
+		advancedButton.icon = MATERIAL_ICONS.FILTER_LIST;
 		span.appendChild(advancedButton);
 
 		advancedButton.addEventListener(EVENT.CLICK, () => {

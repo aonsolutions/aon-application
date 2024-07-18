@@ -29,6 +29,7 @@ export const getCompanies = () => {
           } else {
             let result = JSON.parse(r);
             if (result) {
+              result.sort(sortCompanies);
               companies = result;
             }
             resolve(companies ? companies : []);
@@ -38,6 +39,31 @@ export const getCompanies = () => {
     }
   });
 };
+
+const typePriority = {
+  OFFICE: 1,
+  CONSULTANCY: 2,
+  ENTERPRISE: 3,
+  GARAGE: 4,
+  ACADEMY: 5,
+  HOTEL: 6,
+  ADMIN: 7,
+  GENERIC: 8,
+  COMMERCE: 9,
+  KIT_DIGITAL: 10
+};
+
+export const sortCompanies = (a, b) => {
+  // Primero compara por prioridad de tipo
+  if (typePriority[a.type] < typePriority[b.type]) {
+    return -1;
+  }
+  if (typePriority[a.type] > typePriority[b.type]) {
+    return 1;
+  }
+  // Si el tipo es el mismo, compara alfabéticamente por nombre
+  return a.name.localeCompare(b.name);
+}
 
 export const getCompaniesBySchemas = (filter) => get(API.COMPANY_SCHEMAS, filter);
 
