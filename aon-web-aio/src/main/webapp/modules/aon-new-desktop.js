@@ -29,21 +29,17 @@ export class AonNewDesktop extends AonElement {
 	build() {
 		
 		let headerDiv = this.createElement(TAG.DIV);
-		headerDiv.style.height = '48px';
+		headerDiv.classList.add("aonNewDesktopHeaderDiv");
 		this.appendChild(headerDiv);		
 
 
 		let desktopDiv = this.createElement(TAG.DIV);
-		desktopDiv.style.display='grid';
-		desktopDiv.style.paddingLeft = '64px';
-		desktopDiv.style.paddingRight = '64px';
+		desktopDiv.classList.add("aonNewDesktopDesktopDiv");
 		
 		let bannerAppsDiv = this.createElement(TAG.DIV);
 		let titleH1 = this.createElement(TAG.H1);
 		titleH1.innerHTML = MSG.APPLICATIONS;
-		titleH1.style.fontSize = '20px';
-		titleH1.style.fontWeight = '500';
-		titleH1.style.paddingBottom = '32px';
+		titleH1.classList.add("aonNewDesktopTitleH1");
 		bannerAppsDiv.appendChild(titleH1);
 		desktopDiv.appendChild(bannerAppsDiv);
 		
@@ -62,10 +58,7 @@ export class AonNewDesktop extends AonElement {
 		let bannerAonAppsDiv = this.createElement(TAG.DIV);
 		let titleAonH1 = this.createElement(TAG.H1);
 		titleAonH1.innerHTML = 'Más de AON Solutions';
-		titleAonH1.style.marginTop = '32px';
-		titleAonH1.style.fontSize = '16px';
-		titleAonH1.style.fontWeight = '500';
-		titleAonH1.style.paddingBottom = '32px';
+		titleAonH1.classList.add("aonNewDesktopTitleAonH1");
 		bannerAonAppsDiv.appendChild(titleAonH1);
 		desktopDiv.appendChild(bannerAonAppsDiv);
 
@@ -85,28 +78,19 @@ export class AonNewDesktop extends AonElement {
 		let cardDiv  = this.createElement(TAG.DIV);
 		cardDiv.id = `aonDesktop-${app.app}`;
 		cardDiv.classList.add(CSS.AON_CARD);
-		cardDiv.style.position = 'relative';
+		cardDiv.classList.add("aonNewDesktopCardDiv");
 
 		let cardButton = this.createElement(TAG.SPAN);
 		cardButton.classList.add(CSS.MATERIAL_SYMBOLS_OUTLINED);
-		cardButton.innerHTML = 'more_horiz';
-		cardButton.style.position = 'absolute';
-		cardButton.style.right = '5px';
-		cardButton.style.top = "5px";
 		cardButton.classList.add('aonAppMoreBtn');
-		cardButton.style.visibility = 'hidden';
+		cardButton.classList.add("aonNewDesktopCardButton");
+		
 
 		let optionsDiv = this.createElement(TAG.DIV);
-		optionsDiv.style.display = 'none';
-		optionsDiv.style.backgroundColor = 'white';
-		optionsDiv.style.padding = '5px';
-		optionsDiv.style.borderRadius = '10px';
-		optionsDiv.style.boxShadow = '0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19)';
+		optionsDiv.classList.add("aonNewDesktopOptionsDiv");
 
 		let optionsList = this.createElement(TAG.UL);
-		optionsList.style.listStyleType = 'none';
-		optionsList.style.padding = 0;
-		optionsList.style.margin = 0;
+		optionsList.classList.add("aonNewDesktopOptionsList");
 		
 		let optionsItem1 = this.createElement(TAG.LI);
 		optionsItem1.classList.add('aonAppMoreListItem');
@@ -199,12 +183,7 @@ export class AonNewDesktop extends AonElement {
 		});
 
 		let appDiv = this.createElement(TAG.DIV);
-		appDiv.style.height = '56px';
-		appDiv.style.padding = '1px';
-		appDiv.style.display = 'flex';
-		appDiv.style.alignItems = 'center';
-		appDiv.style.flexDirection = 'column';
-		appDiv.style.justifyContent = 'center';
+		appDiv.classList.add("aonNewDesktopAppDiv");
 
 		if (app.symbol) {
 			let icon = this.createElement(TAG.SPAN);
@@ -231,14 +210,14 @@ export class AonNewDesktop extends AonElement {
 
 		let titleSpan = this.createElement(TAG.SPAN);
 		titleSpan.id = `aonDesktopAppTitle-${app.app}`;
-		titleSpan.style.textAlign = 'center';
+		titleSpan.classList.add("aonNewDesktopAppDiv");
 		titleSpan.innerHTML = app.title;
 		appDiv.appendChild(titleSpan);
 
 		appA.appendChild(appDiv);
 
-		if(LS.isDarkTheme() && (app.app == "accounting"|| app.app == "fiscal" || app.app == "payroll"))
-			appDiv.style.color = "white";
+		if(app.app == "accounting"|| app.app == "fiscal" || app.app == "payroll")
+			appDiv.className = "appDiv";
 
 		cardDiv.appendChild(appA);
 
@@ -250,28 +229,20 @@ export class AonNewDesktop extends AonElement {
 		let cardDiv = this.createElement(TAG.DIV);
 		cardDiv.id = `aonDesktop-${app.app}`;
 		cardDiv.classList.add(CSS.AON_CARD);
-		cardDiv.style.position = 'relative';
+		cardDiv.classList.add("aonDesktopCardDiv");
 
 		let cardButton = this.createElement(TAG.SPAN);
 		cardButton.classList.add(CSS.MATERIAL_SYMBOLS_OUTLINED);
 		cardButton.innerHTML = 'more_horiz';
-		cardButton.style.position = 'absolute';
-		cardButton.style.right = '10px';
-		cardButton.style.top = "10px";
 		cardButton.classList.add('aonAppMoreBtn');
-		cardButton.style.visibility = 'hidden';
+		cardButton.classList.add("aonNewDesktopCardButton2");
+		
 
 		let optionsDiv = this.createElement(TAG.DIV);
-		optionsDiv.style.display = 'none';
-		optionsDiv.style.backgroundColor = 'white';
-		optionsDiv.style.padding = '5px';
-		optionsDiv.style.borderRadius = '5px';
-		optionsDiv.style.boxShadow = '0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19)';
+		optionsDiv.classList.add("aonNewDesktopOptionsDiv2")
 
 		let optionsList = this.createElement(TAG.UL);
-		optionsList.style.listStyleType = 'none';
-		optionsList.style.padding = 0;
-		optionsList.style.margin = 0;
+		optionsList.classList.add("aonNewDesktopOptionsList");
 		
 		let optionsItem1 = this.createElement(TAG.LI);
 		optionsItem1.classList.add('aonAppMoreListItem');
@@ -359,26 +330,17 @@ export class AonNewDesktop extends AonElement {
 		cardDiv.append(cardButton);
 
 		let appA = this.createElement(TAG.A);
-		appA.style.width = '100%';
-		appA.style.height = '100%';
+		appA.classList.add("aonNewDesktopAppA");
 
 		appA.addEventListener(EVENT.CLICK, () => {
 			this.appSelection(app);
 		});
 
 		let appDiv = this.createElement(TAG.DIV);
-		appDiv.style.height = '56px';
-		appDiv.style.padding = '1px';
-		appDiv.style.display = 'flex';
-		appDiv.style.alignItems = 'flex-start';
-		appDiv.style.flexDirection = 'column';
-		appDiv.style.justifyContent = 'center';
+		appDiv.classList.add("aonNewDesktopAppDiv");
 
 		let mainDiv = this.createElement(TAG.DIV);
-		mainDiv.style.display = 'flex';
-		mainDiv.style.alignItems = 'center';
-		mainDiv.style.flexDirection = 'row';
-		mainDiv.style.width = '100%';
+		mainDiv.classList.add("aonNewDesktopMainDiv");
 
 		appDiv.append(mainDiv);
 
@@ -407,19 +369,16 @@ export class AonNewDesktop extends AonElement {
 
 		let titleSpan = this.createElement(TAG.SPAN);
 		titleSpan.id = `aonDesktopAppTitle-${app.app}`;
-		titleSpan.style.textAlign = 'center';
 		titleSpan.innerHTML = app.title;
-		titleSpan.style.marginLeft = '10px';
+		titleSpan.classList.add("aonNewDekstopTitleSpan");
 		mainDiv.appendChild(titleSpan);
 
 		let descriptionDiv = this.createElement(TAG.DIV);
-		descriptionDiv.style.textAlign = 'left';
-		descriptionDiv.style.marginTop = '10px';
+		descriptionDiv.classList.add("aonNewDesktopDescriptionDiv");
 
 		let descriptionSpan = this.createElement(TAG.SPAN);
 		descriptionSpan.innerHTML = app.description;
-		descriptionSpan.style.overflow = 'hidden';
-		descriptionSpan.style.fontSize = '11px';
+		descriptionSpan.classList.add("aonNewDesktopDescriptionSpan");
 
 		descriptionDiv.appendChild(descriptionSpan);
 

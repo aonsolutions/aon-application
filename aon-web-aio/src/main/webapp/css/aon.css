@@ -32,10 +32,14 @@
   --sab: env(safe-area-inset-bottom); /* THIS ONE GETS US THE HOME BAR HEIGHT */
   --sal: env(safe-area-inset-left);
 
+  --aonLink: #0078d6;
+
   --aonNewColor: red;
   --aonRightPanelColor: rgb(250, 249, 248);
   --aonCardColor: white;
 
+  --aonSearchBar: white;
+  --aonSearchButton: rgb(95, 99, 104);
 
   --aonTopMenuAvailable : var(--aonBlue);
   --aonTopMenuNotAvailable : var(--aonGray);
@@ -418,18 +422,17 @@
 }
 
 .rightPanel {
-    top: 51px;
+    width: 320px; 
+    background-color: var(--aonRightPanelColor);
+    top: 47px;
     right: 0;
     position: fixed;
     z-index: 1000000;
     height: calc(100vh - 49px);
     overflow: hidden;
     border: 1px solid rgba(0,0,0,0.1);
+    visibility: hidden;
 }
-
-.rightPanel .aonIconButton {
-  color: red;
-} 
 
 h1 {
   color:rgb(66,66,66);
@@ -884,6 +887,7 @@ h1 {
     font-size: 10px;
     border-right: none;
     background-color: transparent;
+    cursor: pointer;
 }
 
 .aonMenuSidenav::-webkit-scrollbar {
@@ -999,6 +1003,7 @@ h1 {
   margin-bottom: 10px;
   font-weight: bold;
   margin-left: 15px;
+  color: var(--aonSuiteMenuTitle);
 }
 
 .aonSidenavTitleBeta span {
@@ -1166,17 +1171,15 @@ h1 {
 
 .aonSuiteMenuDropdownButton {
   display: block;
-  color: transparent;
   width: 50px;
   border-top-right-radius: 5px;
   border-bottom-right-radius: 5px;
-  border: 1px solid var(--aonSuiteNewButtonBorder);
+  border: 1px solid var(--aonSuiteMenuNewButtonBorder);
   margin-top: 20px;
   justify-content: center;
 }
 
 .aonSuiteMenuUploadButton {
-	color: transparent;
 	display: block;
 	width: 222px;
 	border: 2px dashed var(--aonSuiteMenuUploadButtonBorder);
@@ -1226,6 +1229,12 @@ h1 {
   -webkit-appearance: none;
   outline: 0px;
   font-size: 14px;
+  background-color: var(--aonSearchBar);
+}
+
+
+.aonSearchButton {
+  color: var(--aonSearchButton);
 }
 
 .aonFormCenter {
@@ -2040,8 +2049,10 @@ label.rating:hover {
 }
 
 .aonHeaderApp {
-    margin-left: 49px;
-}
+  margin-left: 49px;
+  /* min-width: 120px;
+  display: none; */
+}       
 
 /*
 ********************************************
@@ -2299,7 +2310,7 @@ label.rating:hover {
 /* Large devices (laptops/desktops, 992px and up) */
 @media only screen and (min-width: 854px) {
   #messengerCard{
-    min-width: 42.2rem;
+    /*min-width: 42.2rem;*/
   }
 
   .aonDashboardCard{
@@ -2309,7 +2320,7 @@ label.rating:hover {
 
 
   .aonMessengerCardRow > .aonFlex > .aonFlexColumn > .aonEllipsis{
-    max-width: 26rem;
+    max-width: 14rem;
   }
 
   .aonDocumentalCardRow > .aonFlex > .aonDocumentalEllipsis{
@@ -2844,6 +2855,30 @@ label.rating:hover {
 	color: var(--aonWhite);
 }
 
+.aonHeaderNote #aon-search-buttonIcon,
+.aonHeaderFiscal #aon-search-buttonIcon,
+.aonHeaderPayroll #aon-search-buttonIcon,
+.aonHeaderInvoice  #aon-search-buttonIcon,
+.aonHeaderMessenger #aon-search-buttonIcon,
+.aonHeaderAccounting #aon-search-buttonIcon,
+.aonHeaderDocumental #aon-search-buttonIcon,
+.aonHeaderTimecontrol #aon-search-buttonIcon,
+.aonHeaderOffice #aon-search-buttonIcon,
+.aonHeaderGarage #aon-search-buttonIcon,
+.aonHeaderAcademy #aon-search-buttonIcon,
+.aonHeaderComerce #aon-search-buttonIcon,
+.aonHeaderComercialMenu #aon-search-buttonIcon,
+.aonHeaderManagementMenu #aon-search-buttonIcon,
+.aonHeaderTreasuryMenu #aon-search-buttonIcon,
+.aonHeaderWarehouseMenu #aon-search-buttonIcon,
+.aonHeaderGroupwareMenu #aon-search-buttonIcon,
+.aonHeaderAccountingMenu #aon-search-buttonIcon,
+.aonHeaderFiscalMenu #aon-search-buttonIcon,
+.aonHeaderPayrollMenu #aon-search-buttonIcon,
+.aonHeaderMarketingMenu #aon-search-buttonIcon{
+  color: var(--aonSearchButton);
+}
+
 .aonHeaderHome .material-icons,
 .aonHeaderStart .material-icons,
 .aonHeaderApplications .material-icons {
@@ -3018,3 +3053,758 @@ label.rating:hover {
   height: fit-content;
   margin-left: 10px;
 }
+
+.rightPanelEditButton{
+  cursor: pointer;
+  position: fixed;
+  visibility: hidden;
+  right: 280px;
+  top: 60px;
+}
+
+.rightPanelButtons{
+  cursor: pointer;
+  position: fixed;
+  visibility: hidden;
+  right: 280px;
+  margin-top: 8px;
+}
+
+.rightPanelCloseButton{
+  cursor: pointer;
+  position: fixed;
+  right: 10px;
+  margin-top: 8px;
+}
+
+.aonHelpSpan{
+  margin-left: 10px;
+}
+
+.aonHelpI{
+  margin-right: 5px;
+  vertical-align: middle;
+}
+
+.aonHelpSpan2{
+  margin-top: 2px;
+}
+
+.rightPanelSwitchSupportButton{
+  margin-left: 10px;
+  right: 30px;
+  position: absolute;
+  top: 70px;
+}
+
+.rightPanelAboutContactCard{
+  width: 90%;
+  height: fit-content;
+  margin-left: 10px;
+}
+
+.rightPanelCardDiv{
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  border-radius: 2px;
+  background-color: var(--aonCardColor);
+}
+
+.rightPanelAboutScheduleCard{
+  width: 90%;
+  height: fit-content;
+  margin-left: 10px;
+}
+
+.configPanelSuiteDiv{
+  margin-left: 10px;
+  position: relative;
+  top: -15px;
+}
+
+.configPanelSuiteButton{
+  margin-left: 10px;
+  right: 30px;
+  position: absolute;
+  top: -1px;
+}
+
+.configPanelPortalDiv{
+  margin-left: 10px;
+  position: relative;
+  top: 0px;
+}
+
+.configPanelPortalButton{
+  margin-left: 10px;
+  right: 30px;
+  position: absolute;
+  top: 90px;
+}
+
+.configPanelAppsDiv{
+  left: -81px;
+  position: relative;
+  top: 35px;
+}
+
+.configPanelAppsButton{
+  margin-left: 10px;
+  right: 30px;
+  position: absolute;
+  top: 122px;
+}
+
+.configPanelDarkDiv{
+  left: 11px;
+  position: relative;
+  top: 50px;
+  display: flex;
+}
+
+.configPanelDarkButton{
+  margin-left: 10px;
+  right: 30px;
+  position: absolute;
+  top: 155px;
+}
+
+.configPanelWhiteDiv{
+  left: 11px;
+  position: relative;
+  top: 65px;
+  display: flex;
+}
+
+.configPanelWhiteButton{
+  margin-left: 10px;
+  right: 30px;
+  position: absolute;
+  top: 190;
+}
+
+.configPanelCardDiv{
+  box-shadow: 0 2px 4px rgba(0,0,0,.1);
+  background-color: var(--aonCardColor);
+  border-radius: 2px;
+  margin-top: 60px;
+}
+
+.configPanelLanguageDiv{
+  margin-top: 5px;
+  cursor: pointer;
+}
+
+.configPanelLanguageI{
+  margin-right: 5px;
+  vertical-align: middle;
+}
+
+.userPanelDivUserInfo{
+  margin-left: 34px;
+  margin-top: -22px;
+  max-width: 205px;
+  margin-bottom: 12px;
+}
+
+.userPanelNameInfoDiv{
+  margin-top: 5px;
+  display: flex;
+}
+
+.userPanelNameSpan{
+  font-weight: bold;
+  font-size: 16px;
+}
+
+.userPanelInfoI{
+  margin-right: 5px;
+  vertical-align: middle;
+  margin-top: 0px;
+  font-size: 18px;
+}
+
+.userPanelInfoSpan{
+  font-size: 12px;
+}
+
+.userPanelInfoLinkDiv{
+  margin-top: 8px;
+  display: flex;
+  margin-left: 15px;
+}
+
+.userPanelInfoLinkI{
+  margin-right: 5px;
+  vertical-align: middle;
+  margin-top: 0px;
+  font-size: 24px;
+}
+
+.userPanelInfoLinkSpan{
+  font-size: 12px;
+  margin-top: 3px;
+}
+
+.userPanelImage{
+  scale: 2.6;
+  margin-left: 40px;
+  margin-top: 15px;
+  border: none;
+  background-color: var(--aonBlue);
+  color: white;
+}
+
+.notificationPanelGeneralDiv{
+  margin-top: -40px;
+}
+
+.notificationPanelAllDiv{
+  cursor: pointer;
+  position: relative;
+  padding: 9px;
+  width: 97px;
+  top: -20px;
+  left: 172px;
+}
+
+.notificationPanelAllDiv:hover{
+  background-color: rgba(225,225,227,1);
+}
+
+.notifcationPanelRowGeneralDiv{
+  margin: 0.3rem 0.6rem;
+  display: flex;
+  justify-content: space-between;
+  cursor: pointer;
+  border-bottom: 1px solid rgba(225,225,227,1);
+}
+
+.notificationPanelRowIcon{
+  margin-top: 5px;
+}
+
+.notificationPanelRowDiv{
+  width: 70%;
+  font-size: 0.8rem;
+  display: flex;
+  flex-direction: column;
+  row-gap: 4px;
+}
+
+.notificationPanelRowSubDiv1{
+  font-weight: 700;
+}
+
+.notificationPanelRowSubDiv2{
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.notificationPanelRowSubDiv3{
+  font-size: 0.8rem;
+  color: rgba (0,0,0,0.61);
+}
+
+.notificationPanelRowSpan{
+  font-size: 20px;
+  cursor: pointer;
+  position: relative;
+  top: 18px;
+}
+
+.notificationPanelRowPrincipalDiv:hover{
+  background-color: rgba(225, 225, 227, 1);
+}
+
+.suiteMenuNewButton{
+  display: block;
+  width: 157px;
+  border-top-left-radius: 5px;
+  border-bottom-left-radius: 5px;
+  margin-left: 14px;
+  margin-top: 20px;
+  border-top-width: 1px;
+  border-top-style: solid;
+  border-top-color: var(--aonSuiteMenuNewButtonBorder);
+  border-bottom-width: 1px;
+  border-bottom-style: solid;
+  border-bottom-color: var(--aonSuiteMenuNewButtonBorder);
+  border-left-width: 1px;
+  border-left-style: solid;
+  border-left-color: var(--aonSuiteMenuNewButtonBorder);
+}
+
+.suiteMenuNewButtonText{
+  color: var(--aonSuiteMenuNewButtonBorder);
+  font-weight: normal;
+}
+
+.suiteMenuNewButtonIcon{
+  color: var(--aonSuiteMenuNewButtonBorder);
+}
+
+.suitteMenuNewButtonButton{
+  box-shadow: none;
+}
+
+.suiteMenuDropdownButtonIcon{
+  color: var(--aonSuiteMenuNewButtonBorder);
+  margin-left: -7px;
+}
+
+.suiteMenuDropdownButtonButton{
+  box-shadow: none;
+}
+
+.suiteMenuSidenavTitle{
+  color: var(--aonSuiteMenuNewButtonText);
+}
+
+.suiteMenuSidenavUtilities{
+  color: var(--aonSuiteMenUNewButtonText);
+}
+
+.suiteMenuUploadButtonText{
+  font-weight: normal;
+}
+
+.suiteMenuUploadButtonIcon{
+  color: var(--aonSuiteMenuNewButtonBorder);
+}
+
+.suiteMenuUploadButtonButton{
+  box-shadow: none;
+}
+
+.suiteMenuContent{
+  height: calc(-61px + 100vh);
+  width: 100%;
+  overflow-y: auto;
+  background-color: var(--aonContentBeta);
+}
+
+.suiteMenuDiv{
+  margin-top: 15px;
+  width: 100%;
+  justify-content: left;
+  display: flex;
+}
+
+.suiteMenuDiv2{
+  width: 100%;
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+  position: relative;
+  justify-content: center;
+  padding-right: 20px;
+  padding-bottom: 70px;
+}
+
+.suiteMenuSideNavCardCard{
+  min-width: 230px;
+  display: flex;
+  min-height: 20px;
+  margin-top: 10px;
+}
+
+.suiteMenuSideNavCardTitle{
+  margin-left: 24px;
+}
+
+.suiteMenuSideNavCardIcon{
+  height: fit-content;
+  position: relative;
+  top: 15px;
+  left: -231px;
+}
+
+.suiteMenuSideNavCardDiv{
+  box-shadow: 0 2px 4px rgba(0,0,0,.1);
+  border-radius: 2px;
+  min-width: 230px;
+}
+
+.suiteMenuCardCard{
+  min-width: 375px;
+  max-width: 375px;
+  display: flex;
+  max-height: 375px;
+  margin-left: 10px;
+}
+
+.suiteMenuCardDiv{
+  box-shadow: 0 2px 4px rgba(0,0,0,.1);
+  border-radius: 2px;
+  min-width: 375px;
+}
+
+.suiteMenuCardDataDiv{
+  margin-top: 10px;
+  display: block;
+  padding: 2px;
+}
+
+.suiteMenuCardDataSpan{
+  cursor: pointer;
+  color: var(--aonSuiteMenuCardText);
+}
+
+.suiteMenuCardDataSpan:hover{
+  color: var(--aonSuiteMenuCardText);
+  text-decoration: underline;
+}
+
+.suiteMenuCardDataSpan2{
+  margin-left: 5px;
+  color: var(--aonSuiteMenuCardText2);
+}
+
+.suiteMenuSideNavCardDataDiv{
+  margin-top: 10px;
+  padding: 2px;
+  position: relative;
+}
+
+.suiteMenuSideNavCardDataSpan2{
+  right: 0px;
+  position: absolute;
+}
+
+.suiteMenuSideNavCardDataButton:hover{
+  background-color: rgba(72,70,68,0.1);
+}
+
+.suiteMenuOptionsDiv{
+  width: 209px;
+  margin-left: 13px;
+  margin-top: 5px;
+  border-radius: 5px;
+  box-shadow: rgba(0, 0, 0, 0.15) 0px 24px 54px, rgba(0, 0, 0, 0.08) 0px 4.5px 13.5px;
+}
+
+.suiteMenuOptionsUl{
+  width: 221px;
+  padding-top: 0px;
+  padding-right: 15px;
+  padding-bottom: 0px;
+  padding-left: 0px;
+}
+
+.suiteMenuSideNavRowDiv{
+  padding-top: 5px;
+  padding-left: 30px;
+  border-radius: 5px;
+  padding-bottom: 5px;
+  cursor: pointer;
+  display: flex;
+  transition: background-color 0.2s;
+}
+
+.suiteMenuSideNavRowDiv:hover{
+  background-color: var(--aonSideNavRowHoverColor);
+}
+
+.suiteMenuSideNavRowI{
+  margin-right: 5px;
+  vertical-align: middle;
+  color: var(--aonCardText);
+}
+
+.suiteMenuSideNavRowSpan{
+  margin-top: 2px;
+}
+
+.suiteMenuLi{
+  padding: 5px;
+  padding-left: 25px;
+}
+
+
+  .appDiv{
+    color: black;
+  }
+
+.aonHeaderSearch{
+  display: flex;
+  align-items: center;
+  width: 100%;
+  min-width: 150px;
+  max-width: 500px;
+}
+
+.aonHeaderCompany{
+  display: none;
+  height: 14px;
+  color: var(--aonGrayHeaderButtonsColor);
+}
+
+.aonHeaderCompanyList{
+  display: none;
+}
+
+.aonNewDesktopHeaderDiv{
+  height: 48px;
+}
+
+.aonNewDesktopDesktopDiv{
+  display: grid;
+  padding-left: 64px;
+  padding-right: 64px;
+}
+
+.aonNewDesktopTitleH1{
+  font-size: 20px;
+  font-weight: 500;
+  padding-bottom: 32px;
+}
+
+.aonNewDesktopTitleAonH1{
+  margin-top: 32px;
+  font-size: 16px;
+  font-weight: 500;
+  padding-bottom: 32px;
+}
+
+.aonNewDesktopCardDiv{
+  position: relative;
+}
+
+.aonNewDesktopCardButton{
+  position: absolute;
+  right: 5px;
+  top: 5px;
+  visibility: hidden;
+}
+
+.aonNewDesktopCardButton2{
+  position: absolute;
+  right: 10px;
+  top: 10px;
+  visibility: hidden;
+}
+
+.aonNewDesktopOptionsDiv{
+  display: none;
+  background-color: white;
+  padding: 5px;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2),0 6px 20px 0 rgba(0,0,0,0.19);
+}
+
+.aonNewDesktopOptionsDiv2{
+  display: none;
+  background-color: white;
+  padding: 5px;
+  border-radius: 5px;
+  box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2),0 6px 20px 0 rgba(0,0,0,0.19);
+}
+
+.aonNewDesktopOptionsList{
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+}
+
+.aonNewDesktopAppDiv{
+  height: 56px;
+  padding: 1px;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.aonNewDekstopAppDiv{
+  text-align: center;
+}
+
+.aonNewDesktopMainDiv{
+  display: flex;
+  align-items: cener;
+  flex-direction: row;
+  width: 100%;
+}
+
+.aonNewDesktopAppA{
+  width: 100%;
+  height: 100%;
+}
+
+.aonNewDesktopTitleSpan{
+  text-align: center;
+  margin-left: 10px;
+}
+
+.aonNewDesktopDescriptionDiv{
+  text-align: left;
+  margin-top: 10px;
+}
+
+.aonNewDesktopDescriptionSpan{
+  overflow: hidden;
+  font-size: 11px;
+}
+
+.aonNewMenuAppSelectionLogo{
+  display: block;
+  filter: none;
+}
+
+.aonNewMenuLeftTop{
+  width: 68px;
+  visibility: hidden;
+}
+
+.aonNewMenuSideNav{
+  width: 0px;
+}
+
+.aonNewMenuTopNav{
+  height: 0px;
+}
+
+.aonNewMenuLeftTopDiv{
+  display: flex;
+	flex-direction: row;
+	align-items: center;
+  justify-content: center;
+}
+
+.aonNewMenuLeftTopAppDiv{
+  width: 68px;
+	background-color: transparent;
+	cursor: pointer;
+}
+
+.aonNewMenuSideNavUl{
+  margin: 0px;
+  padding: 0px;
+  list-style: none;
+}
+
+.aonNewMenuSideNavLi{
+  background-color: transparent;
+  cursor: pointer;
+}
+
+.aonNewMenuSideNavLi2{
+  height: 10px;
+}
+
+.aonNewMenuTopNavDiv{
+  display: flex;
+	flex-direction: row;
+	align-items: center;
+	justify-content: center;
+	height: 100%;
+}
+
+.aonNewMenuTopNavAppElement{
+  color: var(--aonTopMenuNotAvailable);
+}
+
+.aonNewMenuTopAppDivApp{
+  width: 68px;
+	cursor: pointer;
+	background-color: transparent;
+  color: var(--aonTopAppTextColor);
+  transition: background-color 0.2s;
+  background-color: transparent;
+}
+
+.aonNewMenuAppDiv{
+  padding: 1px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+  height: 56px;
+	flex-direction: column;
+  transition: background-color 0.2s;
+}
+
+.aonNewMenuAppIcon{
+  padding: 4px;
+	font-size: 24px;
+}
+
+.aonNewMenuAppImg{
+  width: 24px;
+}
+
+.aonNewMenuAppSpan{
+  text-align: center;
+  min-height: 26px;
+}
+
+.aonNewMenuAppMenuSideNav{
+  width: 250;
+}
+
+.aonNewMenuNoteMenuSideNav{
+  width: 250px;
+}
+
+.aonNewMenuSubAppMenuLi{
+  background-color: transparent;
+}
+
+.aonNewMenuSubAppMenuLi:hover{
+  background-color: #f1f1f1;
+}
+
+.aonNewMenuSubAppMenuSpan{
+  font-size: 12px;
+	font-weight: 400;
+}
+
+.aonNewMenuAppMenuOptionsDiv{
+  position: absolute;
+	background-color: #f1f1f1;
+	height: 500px;
+	width: 250px;
+	z-index: 999;
+	left: 60px;
+	top: 20px;
+	border-radius: 5px;
+	display: block;
+}
+
+.aonUserConfigLink {
+  font-size: 12px;
+  cursor: pointer;
+  text-decoration: underline;
+  color: var(--aonLink,--aonBlue);
+}
+
+.aonConfigApps,
+.aonConfigDark,
+.aonConfigBrand,
+.aonConfigTopNav,
+.aonConfigSideNav {
+	height: 38px;
+	display: flex;
+	margin-left: 10px;
+	margin-right: 20px;
+}
+
+.aonConfigApps,
+.aonConfigBrand,
+.aonConfigTopNav {
+	display: none;
+}
+
+.aonConfigAppsTitle,
+.aonConfigDarkTitle,
+.aonConfigBrandTitle,
+.aonConfigTopNavTitle,
+.aonConfigSideNavTitle {
+	flex-grow: 2;
+}
+
+.aonCardsPanel {
+	display: grid !important;
+	grid-template-columns: repeat(3, minmax(0px, 1fr));
+} 
+

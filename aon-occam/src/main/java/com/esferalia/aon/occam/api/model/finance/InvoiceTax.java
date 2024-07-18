@@ -152,4 +152,9 @@ public class InvoiceTax implements Serializable {
 		this.account = account;
 		return this;
 	}
+	
+	public boolean isVatType() {
+		return this.getTaxType() == TaxType.VAT;
+	}
+
 }

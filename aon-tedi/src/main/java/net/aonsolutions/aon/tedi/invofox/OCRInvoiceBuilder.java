@@ -402,7 +402,11 @@ public class OCRInvoiceBuilder {
 			} else {
 				Pair<String,Integer> seriesNumber = guessSeriesNumber(reference);
 				invoice.setSeries( seriesNumber.getLeft());
-				invoice.setNumber( seriesNumber.getRight());
+				if (seriesNumber.getRight() != null) {
+					invoice.setNumber( seriesNumber.getRight());
+				} else {
+					invoice.setNumber( 0 );
+				}
 			}
 		} else { 
 			invoice.setNumber(0);
@@ -814,6 +818,7 @@ public class OCRInvoiceBuilder {
 	private static void fillFinancePayMethod(AONContext aonContext, OCRInvoice ocrInvoice, Finance finance) {
 		String iban = ocrInvoice.getIBAN().flatMap( d -> d.getValue() ).orElse(null);
 		String paymethodDesc = ocrInvoice.getPaymentMethod().flatMap( d -> d.getValue() ).orElse(null);
+		paymethodDesc = AonStringUtils.substring(paymethodDesc, 32 );
 		if (AonStringUtils.isNotBlank( paymethodDesc )) {
 		    PayMethod paymethod = PayMethodDAO.get(aonContext, paymethodDesc);
 		    if (paymethod == null) {

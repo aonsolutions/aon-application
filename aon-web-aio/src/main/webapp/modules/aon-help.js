@@ -35,7 +35,7 @@ export class AonHelp extends AonElement {
 
 		let span = this.createSpan();
 		span.innerHTML = MSG.SUPPORT;
-		span.style.marginLeft = '10px';
+		span.classList.add("aonHelpSpan");
 		this.appendChild(span);
 
 		let div = this.createSpan();
@@ -43,24 +43,20 @@ export class AonHelp extends AonElement {
 
 		let i = this.createElement(TAG.I);
 		i.className = CSS.MATERIAL_ICONS;
-		i.style.marginRight = '5px';
-		i.style.verticalAlign = "middle";
+		i.classList.add("aonHelpI");
 		i.innerHTML= "school";
 		div.appendChild(i);
 
 		let span2 = this.createDiv();
 		span2.className = CSS.AON_CARD_TEXT;
-        span2.style.marginTop = "2px";
+        span2.classList.add("aonHelpSpan2");
 		span2.innerHTML = "Índice contenidos";
 		div.appendChild(span2);
 		this.appendChild(div);
 
 		let rightPanelSwitchSupportButton = new AonSwitch();
 		rightPanelSwitchSupportButton.id = this.SUPPORT_SWITCH;
-		rightPanelSwitchSupportButton.style.marginLeft = '10px';
-		rightPanelSwitchSupportButton.style.right = '30px';
-		rightPanelSwitchSupportButton.style.position = 'absolute';
-		rightPanelSwitchSupportButton.style.top = "70px";
+		rightPanelSwitchSupportButton.className = "rightPanelSwitchSupportButton";
 		
 		this.appendChild(rightPanelSwitchSupportButton);
 
@@ -77,15 +73,11 @@ export class AonHelp extends AonElement {
 		let rightPanelAboutContactCard = new AonCard();
 		rightPanelAboutContactCard.id = this.ABOUT_CONTACT_CARD;
 		rightPanelAboutContactCard.title = MSG.CONTACT_DATA2;
-		rightPanelAboutContactCard.style.width = "90%";
-		rightPanelAboutContactCard.style.height = "fit-content";
-		rightPanelAboutContactCard.style.marginLeft = "10px";
+		rightPanelAboutContactCard.className = "rightPanelAboutContactCard";
 		this.appendChild(rightPanelAboutContactCard);
 
 		let cardDiv = this.getElement(rightPanelAboutContactCard.CARD);
-		cardDiv.style.boxShadow = '0 2px 4px rgba(0,0,0,.1)';
-		cardDiv.style.borderRadius = '2px';
-		cardDiv.style.backgroundColor = "var(--aonCardColor)";
+		cardDiv.className = "aonCard rightPanelcardDiv";
 
 		let divGeneral = this.createDiv();
 		divGeneral.appendChild(this.buildSupportData("(+34) 900 831 205", MSG.PHONE, MATERIAL_ICONS.PHONE, CSS.AON_SUPPORT_TELEPHONE));
@@ -97,16 +89,11 @@ export class AonHelp extends AonElement {
 		let rightPanelAboutScheduleCard = new AonCard();
 		rightPanelAboutScheduleCard.id = this.SCHEDULE_CONTACT_CARD;
 		rightPanelAboutScheduleCard.title = MSG.SCHEDULE;
-
-		rightPanelAboutScheduleCard.style.width = "90%";
-		rightPanelAboutScheduleCard.style.height = "fit-content";
-		rightPanelAboutScheduleCard.style.marginLeft = "10px";
+		rightPanelAboutScheduleCard.className = "rightPanelAboutScheduleCard";
 		this.appendChild(rightPanelAboutScheduleCard);
 
 		let cardDiv2 = this.getElement(rightPanelAboutScheduleCard.CARD);
-		cardDiv2.style.boxShadow = '0 2px 4px rgba(0,0,0,.1)';
-		cardDiv2.style.borderRadius = '2px';
-		cardDiv2.style.backgroundColor = "var(--aonCardColor)";
+		cardDiv.className = "aonCard rightPanelCardDiv";
 
 		let divGeneral2 = this.createDiv();
 		divGeneral2.appendChild(this.buildSupportData(MSG.WEEK_SCHEDULE,MSG.WEEK_SCHEDULE, MATERIAL_ICONS.SCHEDULE, CSS.AON_WEEK_SCHEDULE));
