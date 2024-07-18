@@ -1,0 +1,69 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:c="http://java.sun.com/jstl/core">
+
+	<aon:panelGroup id="showInPreparationWindow">
+		<aon:if test="#{sales.showInPreparationWindow}">
+			<rich:modalPanel id="inPreparationPanel" minHeight="400"
+				minWidth="800" rendered="#{sales.showInPreparationWindow}"
+				showWhenRendered="true" zindex="90" style="overflow-y:auto">
+				<f:facet name="header">
+					<aon:div styleClass="aon-popupWindow-title">
+						<aon:outputText value="En Preparacion" />
+					</aon:div>
+				</f:facet>
+				<f:facet name="controls">
+					<aon:form>
+						<aon:commandButton type="button"
+							styleClass="aon-popupWindow-close"
+							reRender="showInPreparationWindow, salesForm" immediate="true">
+							<aon:actionHotKey key="esc" />
+							<f:setPropertyActionListener
+								target="#{sales.showInPreparationWindow}"
+								value="#{false}" />
+						</aon:commandButton>
+					</aon:form>
+				</f:facet>
+				<aon:form id="inPreparationForm">
+				<aon:div styleClass="aon-popupWindow-content">
+					<aon:div style="width:100%">
+						<aon:div styleClass="aon-popupWindow-content-internal">
+							<aon:div style="width:99%">
+								<ui:repeat value="#{sales.inPreparationDeliveries}" var="delivery">
+									<aon:div styleClass="aon-toolbar" style="margin-top:1em">
+										<aon:outputText value="Albarán #{delivery.referenceCode}" />			
+										<aon:outputLink id="deliveryInPreparation-downloadPdf"
+											target="_blank" value="#{sales.getDeliveryDownloadURL(delivery.id)}"
+											styleClass="aon-finding-toolbar-item aon-icon-pdf">
+											<aon:outputText styleClass="aon-margin-right"
+												value="Hoja Almacen"/>
+					    				</aon:outputLink>						
+									</aon:div>
+									<ui:repeat value="#{sales.getDeliverySalesDetail(delivery.id)}" var="salesDetail1">
+										<aon:div>
+											<aon:outputText value="#{salesDetail1.description}" />
+											<aon:commandButton id="removeSalesDetailDelivery" 
+												value="&#160;" title="" 
+												styleClass="aon-icon-commandButton aon-icon-delete"
+												actionListener="#{sales.removeSalesDetailDelivery(salesDetail1)}" 
+												reRender="showInPreparationWindow" />							
+										</aon:div>
+									</ui:repeat>
+									
+								</ui:repeat>
+							</aon:div>
+						</aon:div>
+					</aon:div>
+				</aon:div>
+				</aon:form>
+			</rich:modalPanel>
+		</aon:if>
+	</aon:panelGroup>
+
+</ui:composition>

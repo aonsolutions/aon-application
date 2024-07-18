@@ -40,9 +40,10 @@ public class PackagingSalesPdfServlet extends AonApiHttpServlet {
 			
 			Domain domain = new Domain().setName(domainName).setId(domainId);
 		
-			
 			Sales sales = AON.getSales(domain, login, f -> f.getIdProperty().eq(salesId), new Options().setFull(true));
-			Integer deliveryId = sales.getDetails().get(0).getDelivery();
+			Integer deliveryId = JsonUtils.has(json, IJsonNames.DELIVERY)
+				? JsonUtils.getInteger(json, IJsonNames.DELIVERY) 
+				: sales.getDetails().get(0).getDelivery();
 			Delivery delivery = AON.getDelivery(domain, login, f -> f.getIdProperty().eq(deliveryId));
 			PdfMaker.printSalesPackaging(resp.getOutputStream(), sales, delivery);
 
