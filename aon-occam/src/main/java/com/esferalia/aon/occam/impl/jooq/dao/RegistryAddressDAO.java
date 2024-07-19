@@ -1,5 +1,6 @@
 package com.esferalia.aon.occam.impl.jooq.dao;
 
+import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
 import static com.esferalia.aon.jooq.tables.Geotree.GEOTREE;
 import static com.esferalia.aon.jooq.tables.Geozone.GEOZONE;
 import static com.esferalia.aon.jooq.tables.Raddress.RADDRESS;
@@ -195,8 +196,9 @@ public class RegistryAddressDAO {
 
 		return ctx.getDslContext().select()
 				.from(RADDRESS)
+				.join(DOMAIN).on(DOMAIN.ID.eq(RADDRESS.DOMAIN))
 				.leftOuterJoin(child).on(child.ID.eq(RADDRESS.GEOZONE))
-				.leftOuterJoin(GEOTREE).on(GEOTREE.CHILD.eq(RADDRESS.GEOZONE))
+				.leftOuterJoin(GEOTREE).on(GEOTREE.CHILD.eq(RADDRESS.GEOZONE).and(GEOTREE.DOMAIN.eq(DOMAIN.ID).or(GEOTREE.DOMAIN.eq(DOMAIN.PARENT))))
 				.leftOuterJoin(parent).on(parent.ID.eq(GEOTREE.PARENT))
 				.where(RADDRESS_PROPERTIES.getConditions(filter));
 	}
@@ -225,6 +227,11 @@ public class RegistryAddressDAO {
 	}
 	
 	public static Stream<RegistryAddress> getStream(AONContext ctx, RegistryAddressFilter filter) {
+		
+		System.out.println("ADDRESSES getStream");
+		System.out.println(select(ctx,filter)
+				.getSQL().toString());
+		
 		return select(ctx,filter)
 			.fetch()
 			.stream()

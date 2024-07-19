@@ -4462,6 +4462,12 @@ public class AON {
 		}
 	}
 	
+	public static Stream<Target> getTargetStream(String domainName, Integer domainId, String login, TargetFilter filter, int ofs, int limit){
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)) {
+			return getRegistry().getTargetStream(ctx, filter, ofs, limit);
+		} 
+	}
+	
 	public static Optional<Target> getTarget(String domainName, Integer domainId, String login, TargetFilter filter) {
 		return getTargetStream(domainName, domainId, login, filter)
 				.findFirst();

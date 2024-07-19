@@ -176,6 +176,7 @@ public interface IRegistry {
 
 	// ------------------- TARGET
 	public Stream<Target> getTargetStream(AONContext ctx, TargetFilter filter);
+	public Stream<Target> getTargetStream(AONContext ctx, TargetFilter filter, int ofs, int limit);
 	public Target save(AONContext ctx, Target target);
 
 
