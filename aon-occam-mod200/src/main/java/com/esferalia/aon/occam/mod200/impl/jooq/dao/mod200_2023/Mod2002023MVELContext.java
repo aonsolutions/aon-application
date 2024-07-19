@@ -532,7 +532,7 @@ public class Mod2002023MVELContext implements Map<String, Object> {
 			 isChecked(C0049) )
 			return roundKey(LQ558);
 		
-		if ( isChecked(C0088) ) return 23.0;
+		if ( isChecked(C0088) && !(isChecked(C0017) || isChecked(C0018)) ) return 23.0;
 		if ( isChecked(C0083) ) return 15.0;
 		if ( isChecked(C0063) ) return 15.0;
 		if ( isChecked(C0066) ) return 25.0;
@@ -735,8 +735,11 @@ public class Mod2002023MVELContext implements Map<String, Object> {
 			if (isChecked(C0083)) {
 				return round(lq552*15/100);
 			}
+			if (isChecked(C0088)) {
+				return round((lq553 * lq558 / 100) + (lq554 * 23 / 100));
+			}
 			if (lq558 == 20 || lq558 == 25) {
-				return round( (lq553 * lq558 / 100) + (lq554 * 25 / 100));
+				return round((lq553 * lq558 / 100) + (lq554 * 25 / 100));
 			}
 		} else if (isChecked(C0019) ) {
 			if (isChecked(C0088)) {
