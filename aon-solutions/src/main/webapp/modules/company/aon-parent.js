@@ -159,18 +159,22 @@ export class AonParent extends AonElement {
 	}
 
 	noResults(){
-		let aonCompanyTitle = this.getElement('aonCompanyDialogOptionTitle'); 
-		let ulCompanies = this.getElement('UlCompanies');
+		let aonCompanyTitle = this.getElement('aonCompanyDialogOptionTitle');
+		if ( aonCompanyTitle ) {
+			aonCompanyTitle.innerHTML = "No hay resultados";
+		}
 
-		aonCompanyTitle.innerHTML = "No hay resultados";
+		let ulCompanies = this.getElement('UlCompanies');
 		ulCompanies.style.display = "none";
 	}
 
 	showCompanyList(){
-		let aonCompanyTitle = this.getElement('aonCompanyDialogOptionTitle'); 
-		let ulCompanies = this.getElement('UlCompanies');
+		let aonCompanyTitle = this.getElement('aonCompanyDialogOptionTitle');
+		if ( aonCompanyTitle ) {
+			aonCompanyTitle.innerHTML = MSG.COMPANY_SELECTION;
+		}
 
-		aonCompanyTitle.innerHTML = MSG.COMPANY_SELECTION;
+		let ulCompanies = this.getElement('UlCompanies');
 		ulCompanies.style.display = "block";
 	}
 
