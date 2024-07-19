@@ -44,11 +44,10 @@ import java.util.stream.Stream;
 
 import org.jooq.*;
 import org.jooq.Record;
-import org.jooq.conf.Settings;
-import org.jooq.conf.StatementType;
 import org.jooq.impl.*;
 
 import com.esferalia.aon.jooq.tables.Auth;
+import com.esferalia.aon.jooq.tables.Cno;
 import com.esferalia.aon.jooq.tables.TaskHolder;
 import com.esferalia.aon.jooq.tables.Timecontrol;
 import com.esferalia.aon.jooq.tables.User;
@@ -63,6 +62,7 @@ import com.esferalia.aon.occam.api.model.Filter.SalaryNewPortalFilter;
 import com.esferalia.aon.occam.api.model.fiscal.IrpfData;
 import com.esferalia.aon.occam.api.model.payroll.AgreementLevelCategory;
 import com.esferalia.aon.occam.api.model.payroll.Contract;
+import com.esferalia.aon.occam.api.model.type.RLCE;
 import com.esferalia.aon.occam.impl.jooq.dao.FillerDAO.AgreementLevelCategoryFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.FillerDAO.ContractExtendedDataFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.FillerDAO.ContractFiller;
@@ -258,7 +258,7 @@ public class ContractDAO {
 					if(r.getValue(cteSalary.field(idSalary)).intValue() == e.getId().intValue())
 						e.setGrossSalaryLastMonth(r.getValue(cteSalary.field(salaryAmount)));
 				});
-			});;
+			});
 		
 		CommonTableExpression<Record> cteType = DSL.name("cte").as(DSL.select(CONTRACT_DATA.CONTRACT.as(idContractData))
 				.select(CONTRACT_DATA.EXPRESSION.as(expressionCD))
@@ -276,7 +276,7 @@ public class ContractDAO {
 						e.setContractType(r.getValue(cteType.field(expressionCD)));
 					}
 				});				
-			});;
+			});
 			
 		ctx.getDslContext().select(
 				DSL.coalesce(
@@ -384,7 +384,99 @@ public class ContractDAO {
 				dslContext.delete(CONTRACT).where(CONTRACT.ID.in(contractIds))
 		).execute();
 	}
-}
+	
+	
+	public static ContractExtendedData getContractById(AONContext ctx, ContractExtendedDataFilter filter, Integer contractId) {
+	    
+	   ContractExtendedData contract = new ContractExtendedData();
+	   Result<Record> mainResult = ctx.getDslContext()
+			   .select().from(CONTRACT)
+			   .join(CONTRACT_DATA)
+			   .on(CONTRACT.ID.eq(CONTRACT_DATA.CONTRACT))
+			   .join(PERSON)
+			   .on(CONTRACT.PERSON.eq(PERSON.REGISTRY))
+			   .join(REGISTRY)
+			   .on(CONTRACT.PERSON.eq(REGISTRY.ID))
+			   .where(CONTRACT.DOMAIN.eq(ctx.getDomainId()).and(CONTRACT.ID.eq(contractId))).groupBy(CONTRACT.ID).fetch();
+	   
+	   //El limite es dos porque el tipo de contrato y el grupo de cotizacion van siempre uno detras del otro 
+	    Result<Record1<String>> expressionFieldresult = ctx.getDslContext()
+	    		.select(CONTRACT_DATA.EXPRESSION)
+	    		.from(CONTRACT_DATA)
+	    		.where(CONTRACT_DATA.DOMAIN.eq(ctx.getDomainId())
+	    		.and(CONTRACT_DATA.CONTRACT.eq(contractId))).limit(2).fetch();
+	    
+	    Result<Record> cnoResult = ctx.getDslContext()
+	    		.select(CONTRACT_DATA.NAME)
+	    		.select(CONTRACT_DATA.EXPRESSION)
+	    		.from(CONTRACT_DATA)
+	    		.where(CONTRACT_DATA.DOMAIN.eq(ctx.getDomainId())
+	    		.and(CONTRACT_DATA.NAME.eq("CNO"))
+	    		.and(CONTRACT_DATA.CONTRACT.eq(contractId))).fetch();	   
+	    
+	    Result<Record> rlceResult = ctx.getDslContext()
+	    		.select(CONTRACT_DATA.NAME)
+	    		.select(CONTRACT_DATA.EXPRESSION)
+	    		.from(CONTRACT_DATA)
+	    		.where(CONTRACT_DATA.DOMAIN.eq(ctx.getDomainId())
+	    		.and(CONTRACT_DATA.NAME.eq("RLCE"))
+	    		.and(CONTRACT_DATA.CONTRACT.eq(contractId))).fetch();
+			   
+	   
+	   if (mainResult.isNotEmpty()) {
+	        Record mainRecord = mainResult.get(0);
+	        contract.setPersonDocument(mainRecord.getValue(REGISTRY.DOCUMENT));
+	        contract.setPersonName(mainRecord.getValue(PERSON.NAME));
+	        contract.setPersonFirstName(mainRecord.getValue(PERSON.FIRST_SURNAME));
+	        contract.setPersonSecondName(mainRecord.getValue(PERSON.SECOND_SURNAME));
+	        contract.setPersonSsNumber(mainRecord.getValue(PERSON.SOCIAL_SECURITY_NUM));
+	        contract.setWorkplace(mainRecord.getValue(CONTRACT.WORKPLACE));
+	        contract.setEnterpriseCCC(Integer.toString(mainRecord.getValue(CONTRACT.ENTERPRISE_CCC)));
+	        contract.setStartDate(mainRecord.getValue(CONTRACT.START_DATE));
+	        contract.setEndDate(mainRecord.getValue(CONTRACT.END_DATE));
+	        contract.setCategoryDescription((mainRecord.getValue(CONTRACT.CATEGORY_DESCRIPTION)));
+	    }
+	   
+	   	if(expressionFieldresult.isNotEmpty()) {
+		   for (Record expressionRecord : expressionFieldresult) {
+	           String expression = expressionRecord.getValue(CONTRACT_DATA.EXPRESSION);
+	           if (expression != null) {
+	               if (expression.length() == 5) {
+	                   contract.setContractType(expression);
+	               } else if (expression.length() ==4) {
+	                   contract.setQuoteGroup(expression);
+	               }
+	           	}
+	       	}
+	   	}
+	  
+	   if(cnoResult.isNotEmpty()) {
+		   Record cnoRecord = cnoResult.get(0);
+		   String name = cnoRecord.getValue(CONTRACT_DATA.NAME);
+		   String expression = cnoRecord.getValue(CONTRACT_DATA.EXPRESSION).replace("\"", "");
+		   if (name.equals("CNO")) {
+		   			Result<Record1<String>> resultCNO = ctx.getDslContext()
+		   					.select(Cno.CNO.TITLE)
+		   					.from(Cno.CNO)
+		   					.where(Cno.CNO.CODE.eq(expression))
+		   					.fetch();
+		   				if (resultCNO.isNotEmpty()) {
+		   					contract.setCno(resultCNO.get(0).getValue(Cno.CNO.TITLE));
+		   				}	
+		   			}
+	   			}
+	   
+	   if(rlceResult.isNotEmpty()) {
+		   Record rlceRecord = rlceResult.get(0);
+		   String name = rlceRecord.getValue(CONTRACT_DATA.NAME);
+		   String expression = rlceRecord.getValue(CONTRACT_DATA.EXPRESSION).replace("\"", "");
+		   if(name.equals("RLCE")) {
+	   					contract.setRlce(RLCE.getEntryByCode(expression));
+	   				}
+	   			}
+	    	return contract;
+		}
+	}
 
 
 

@@ -15,6 +15,7 @@ import com.esferalia.aon.occam.api.PAYROLL;
 import com.esferalia.aon.occam.api.json.ContractExtendedDataJSON;
 import com.esferalia.aon.occam.api.json.JsonUtils;
 import com.esferalia.aon.occam.api.model.AuxSalaryInfo;
+import com.esferalia.aon.occam.api.model.ContractExtendedData;
 import com.esferalia.aon.occam.api.model.Filter;
 import com.esferalia.aon.occam.api.model.IJsonNames;
 import com.esferalia.aon.occam.api.model.Properties.ContractExtendedDataProperties;
@@ -31,7 +32,7 @@ public class ContractServlet extends AonApiHttpServlet {
 	private static final Logger LOGGER  = Logger.getLogger(ContractServlet.class.getName());
 	
 	public static final String CONTRACT_LIST = "/";
-	public static final String CONTRACT_BY_ID = "/one/:id";
+	public static final String CONTRACT_BY_ID = "/one/";
 	public static final String CONTRACT_LIST_SIMPLIFIED = "/simple";
 	public static final String CONTRACT_COUNT = "/count";
 	public static final String EMPLOYEE_SALARY = "/salary";
@@ -200,7 +201,12 @@ public class ContractServlet extends AonApiHttpServlet {
 	
 	private static JSONObject getContractById(AonApiData api) {
 		LOGGER.info("GET BY ID METHOD");
-		return new JSONObject();
+//		   Integer contractId = 29037;
+		   Integer contractId = api.getData().optInt("contractId");
+		ContractExtendedData contract = PAYROLL.getContractByid(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(),
+				f -> buildFilter(f, api) ,contractId);
+
+		return toJSONContractId(contract);
 	}
 	
 	private static JSONObject toJSONSalaryInfo(AuxSalaryInfo salaryInfo) {
@@ -221,4 +227,23 @@ public class ContractServlet extends AonApiHttpServlet {
 	        .put("issue_date", salaryInfo.getIssueDate());
 	}
 	
+	private static JSONObject toJSONContractId(ContractExtendedData data) {
+		return new JSONObject()
+		.put(IJsonNames.ID, data.getId())
+		.put(IJsonNames.START_DATE, data.getStartDate())
+		.put(IJsonNames.END_DATE, data.getEndDate())
+		.put(IJsonNames.WORKPLACE, data.getWorkplace())
+		.put(IJsonNames.NAME, data.getPersonName())
+		.put("first_surname", data.getPersonFirstName())
+		.put("second_surname", data.getPersonSecondName())
+		.put(IJsonNames.TYPE, data.getContractType() != null ? data.getContractType().replace("\"", "") : "")
+		.put(IJsonNames.DOCUMENT, data.getPersonDocument())
+		.put("time", data.getTotalMarksLastMonth() != null ? data.getTotalMarksLastMonth().longValue() : 0)
+		.put("quote_group", data.getQuoteGroup() != null ? data.getQuoteGroup().replace("\"", "") : "")
+		.put("enterprise_ccc", data.getEnterpriseCCC())
+		.put("social_security_number", data.getPersonSsNumber())
+		.put("category", data.getCategoryDescription())
+		.put("cno", data.getCno())
+		.put("RLCE", data.getRlce());
+	}
 }

@@ -14,11 +14,71 @@ public class ContractExtendedData extends Contract {
 	String contractType;
 	String workplaceName;
 	List<String> idLists;
+	String personFirstName;
+	String personSecondName;
+	String quoteGroup;
+	String occupation;
+	String cno;
+	String rlce;
 
 	public ContractExtendedData(){
 		super();
 	}
 	
+	public String getCno() {
+		return cno;
+	}
+
+	public ContractExtendedData setCno(String value) {
+		this.cno = value;
+		return this;
+	}
+
+	public String getRlce() {
+		return rlce;
+	}
+
+	public ContractExtendedData setRlce(String value) {
+		this.rlce = value;
+		return this;
+	}
+
+	public String getOccupation() {
+		return occupation;
+	}
+
+	public ContractExtendedData setOccupation(String value) {
+		this.occupation = value;
+		return this;
+	}
+
+	public String getQuoteGroup() {
+		return quoteGroup;
+	}
+
+	public ContractExtendedData setQuoteGroup(String value) {
+		this.quoteGroup = value;
+		return this;
+	}
+
+	public String getPersonFirstName() {
+		return personFirstName;
+	}
+
+	public ContractExtendedData setPersonFirstName(String value) {
+		this.personFirstName = value;
+		return this;
+	}
+
+	public String getPersonSecondName() {
+		return personSecondName;
+	}
+
+	public ContractExtendedData setPersonSecondName(String value) {
+		this.personSecondName = value;
+		return this;
+	}
+
 	public List<String> getIdLists() {
 		return idLists;
 	}
