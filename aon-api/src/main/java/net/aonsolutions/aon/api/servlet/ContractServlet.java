@@ -160,6 +160,7 @@ public class ContractServlet extends AonApiHttpServlet {
 		Filter filter = properties.getDomainProperty().eq(api.getDomain().getId());
 		Boolean status = JsonUtils.getBoolean(params, IJsonNames.STATUS);
 		Integer workplace = JsonUtils.getInteger(params, IJsonNames.WORKPLACE);
+		Integer ccc = JsonUtils.getInteger(params, IJsonNames.CODE);
 		Integer contractId = JsonUtils.getInteger(params, "contract");
 		byte salaryType = JsonUtils.getByte(params, "salary_type");
 		Integer auxSalaryType = (int) salaryType;
@@ -172,6 +173,10 @@ public class ContractServlet extends AonApiHttpServlet {
 		if(!AonStringUtils.isEmpty(api.getData().optString("global"))) {
 			filter = filter.and(properties.getNameProperty().like("%"+api.getData().optString("global")+"%"));
 //					.or(properties.getDateStringProperty().like("%"+api.getData().optString("global")+"%")));
+		}
+		
+		if(ccc != null) {
+			filter = filter.and(properties.getEnterpriseCCCProperty().eq(ccc));
 		}
 		
 		if(workplace != null) {
