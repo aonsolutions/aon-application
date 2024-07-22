@@ -1,5 +1,5 @@
 import { AonElement } from 'aonsolutions/components/AonElement.js';
-import { Apps, HomeApps, MenuApps, AuxApps, MENU_APPS, TOP_MENU_APPS, AON_APPS, HOME, APPS } from '../services/app.js';
+import { Apps, HomeApps, MenuApps, AuxApps, MENU_APPS, TOP_MENU_APPS, AON_APPS, NEW, HOME, APPS } from '../services/app.js';
 import {COMMERCE, OFFICE, GARAGE, ACADEMY} from  "aonsolutions/services/app.js";
 import {ACCOUNTING_MENU, COMMERCIAL_MENU, GROUPWARE_MENU, MANAGEMENT_MENU, TREASURY_MENU, WAREHOUSE_MENU, FISCAL_MENU, PAYROLL_MENU, MARKETING_MENU} from "../services/app.js"
 import { MSG, CONSTANT, AON_ICONS, CSS, EVENT, MATERIAL_ICONS, TAG } from 'aonsolutions/environments/environments.js';
@@ -9,6 +9,7 @@ import * as GWT from 'aonsolutions/gwt/gwt.js';
 import * as LS from 'aonsolutions/services/localStorageService.js';
 import { AonMessenger } from 'aonsolutions/modules/messenger/aon-messenger.js';
 import { AonIconButton } from 'aonsolutions/components/aon-icon-button.js';
+import { AonDialogMenu } from 'aonsolutions/components/aon-dialog-menu.js';
 import { AonFiscal } from 'aonsolutions/modules/fiscal/aon-fiscal.js';
 import { AonTimecontrol } from 'aonsolutions/modules/timecontrol/aon-timecontrol.js';
 import { AonLaboral } from 'aonsolutions/modules/laboral/aon-laboral.js';
@@ -24,6 +25,10 @@ import { AonNotes } from 'aonsolutions/modules/note/aon-notes.js';
 import { AonDesktop } from 'aonsolutions/modules/company/aon-desktop.js';
 import { AonWarehouse } from 'aonsolutions/modules/warehouse/aon-warehouse.js';
 //import { AonMarketing } from 'aonsolutions/modules/marketing/aon-marketing.js';
+import * as OPTION from 'aonsolutions/modules/invoice/InvoiceOptions.js';
+import { TASK_SOURCE } from 'aonsolutions/modules/messenger/MessengerEnums.js';
+import { uploadDocuments } from "aonsolutions/modules/documental/DocumentalUtils.js";
+
 
 import { AonNewDesktop } from './aon-new-desktop.js';
 import { AonAccountingMenu } from './accounting/aon-accounting-menu.js';
@@ -38,6 +43,7 @@ import { AonMarketingMenu } from './marketing/aon-marketing-menu.js';
 import { AonAcademyMenu } from './academy/aon-academy-menu.js';
 import { AonCommerceMenu } from './commerce/aon-commerce-menu.js';
 import { AonGarageMenu } from './garage/aon-garage-menu.js';
+
 
 //	Falla la compilación por esta línea que no se usa. REVISAR!!
 // import { FISCAL } from '../../../../target/aon-aio/environments/msg-es.js';
@@ -145,6 +151,9 @@ export class AonNewMenu extends AonElement {
 
 		} else {
 			switch (app.app) {
+				case NEW.app:
+					this.showNewDialogMenu(this.getElement(app.app));
+					break;
 				case HOME.app:
 					this.rootPanel(new AonDesktop());
 					break;
@@ -839,6 +848,11 @@ export class AonNewMenu extends AonElement {
 			return this.getDur().isInvoice();
 		else if (MenuApps.MESSENGER.app === app.app)
 			return this.getDur().isMessenger();
+		else if (NEW.app === app.app)
+			return this.getDur().isAon()
+				|| this.getDur().isInvoice()
+				|| this.getDur().isMessenger()
+				|| this.getDur().isDocumental();
 		else if (HOME.app === app.app)
 			return true;
 		else if (MenuApps.NOTES.app === app.app)
@@ -885,7 +899,113 @@ export class AonNewMenu extends AonElement {
 		
 		return element && element.id == this.AON_MENU_TOPNAV;
 	}
+	
+	showNewDialogMenu(el){
 		
+		let newDialogMenu =  this.getApplication().getOptionDialog();
+
+		let newMenuOptions = [];
+		if(this.getDur().isInvoice()){
+			newMenuOptions.push({
+				fn: () => {},
+				icon: 'note_add',
+				name: MSG.NEW_INVOICE,
+				options : [
+					{
+						name: 'Emitidas',
+						icon: MATERIAL_ICONS.UNARCHIVE,
+						fn: () => {
+							let invoicePanel = new AonInvoicePanel();
+							invoicePanel.option = OPTION.CREATE_INVOICE_ISSUED;
+							this.rootPanel(invoicePanel);
+						}
+					}, {
+						name: 'Recibidas',
+						icon: MATERIAL_ICONS.ARCHIVE,
+						fn: () => {
+							let invoicePanel = new AonInvoicePanel();
+							invoicePanel.option = OPTION.CREATE_INVOICE_RECEIVED;
+							this.rootPanel(invoicePanel);
+						}
+					}, {
+						name: 'Tickets/Justificantes',
+						icon: MATERIAL_ICONS.RECEIPT,
+						fn: () => {
+							let invoicePanel = new AonInvoicePanel();
+							invoicePanel.option = OPTION.CREATE_INVOICE_TICKET;
+							this.rootPanel(invoicePanel);
+						}
+					}
+				]
+			});
+		}
+		if(this.getDur().isDocumental()){
+			newMenuOptions.push({
+				icon: 'post_add',
+				name: MSG.NEW_DOCUMENT,
+				fn: () => {
+					let input = this.createElement(TAG.INPUT);
+					input.type = CONSTANT.FILE;
+					input.accept = this.accept;
+					input.className = CSS.AON_NONE;
+					input.addEventListener(EVENT.CHANGE, ({target}) => uploadDocuments(input, target.files, this.getDur() ) );
+					input.click();
+				}
+			});
+		}
+		if(this.getDur().isMessenger()){
+			newMenuOptions.push({
+				icon: 'add_comment',
+				name: 'CREAR CONSULTA',
+				fn: () => {
+					let aonMessengerChat = new AonMessenger();	
+					aonMessengerChat.data = {source:TASK_SOURCE.QUERY};
+					this.rootPanel(aonMessengerChat);
+				}
+			});
+		}
+		if(this.getDur().isAon()){
+			newMenuOptions.push({
+				icon: 'person_add',
+				name: MSG.NEW_EMPLOYEE,
+				fn: () => {
+					let aonMessengerChat = new AonMessenger();	
+					aonMessengerChat.data = {source:TASK_SOURCE.REQUEST};
+					this.rootPanel(aonMessengerChat);
+	
+					this.isElementLoaded("#sourceTask").then(sourceTaskSelect => {
+						console.log(sourceTaskSelect);
+						sourceTaskSelect.value = "request";
+						this.isElementLoaded("#processType").then(processTypeSelect => {
+							console.log(processTypeSelect);
+							processTypeSelect.value = "2";
+							this.isElementLoaded("#aonMessengerToolbarHeaderTitleSectionMenuIconButton").then(sidenavBtn => {
+								console.log(sidenavBtn);
+								sidenavBtn.click();
+							});
+						});
+					});
+				}
+			});
+		}
+
+		
+		const top  = el.getBoundingClientRect().top ;
+		const left = el.getBoundingClientRect().right;
+		
+		newDialogMenu.setMenuOptions(newMenuOptions, top, left);
+		
+		newDialogMenu.open();
+		
+	}
+	
+	async isElementLoaded(selector){
+		while ( document.querySelector(selector) === null) {
+		  await new Promise( resolve =>  requestAnimationFrame(resolve) )
+		}
+		return document.querySelector(selector);
+	};
+	
 
 }
 if (!window.customElements.get(TAG.AON_NEW_MENU)) {

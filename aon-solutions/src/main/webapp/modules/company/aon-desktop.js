@@ -407,6 +407,7 @@ export class AonDesktop extends AonElement {
 			upload.appendChild(uploadInv);
 		}
 
+		/*
 		// Fast Access Buttons Panel
 		let fastAccessButtons = this.createElement(TAG.DIV);
 		fastAccessButtons.className = CSS.AON_FAST_ACCESS;
@@ -471,6 +472,7 @@ export class AonDesktop extends AonElement {
 			fastAccessButtons.appendChild(newEmployee);
 		}
 
+		*/
 		// Cards Panel
 		let cardsPanel = this.createElement(TAG.DIV);
 		cardsPanel.className = CSS.AON_CARDS_PANEL;
