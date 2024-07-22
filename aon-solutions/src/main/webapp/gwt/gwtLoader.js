@@ -61,10 +61,10 @@
 		startModule(gwtOption.module, gwtOption.entryPoint, rootPanel);
 	}
 
-	export const __load = (gwtOption, rootPanel) => {
+	export const iLoad = (gwtOption, rootPanel) => {
 		if(gwtOption.subEntryPoint) loadEntryPointsFunctions(gwtOption);
 		window.drawChartsCallback = () => {};
-		__startModule(gwtOption.module, gwtOption.entryPoint, rootPanel);
+		iStartModule(gwtOption.module, gwtOption.entryPoint, rootPanel);
 	}
 	
 	const loadEntryPointsFunctions = (gwtOption) => {
@@ -107,7 +107,7 @@
 		}
 	}
 
-	export const __startModule = (module, entrypoint, rootPanel) => {
+	export const iStartModule = (module, entrypoint, rootPanel) => {
 		let panel = rootPanel || 'rootPanel';
 		if(rootPanel) {
 			localStorage.setItem('rootPanel', rootPanel);
