@@ -209,7 +209,13 @@ const getCustomerStatus = (detail) => {
     return status.length > 0 ? status : ["ACTIVE", "BLOCKED"];
 }
 
-
+const getCustomerPotential = (detail) => {
+    let isPotential = false;
+    if(detail){
+        isPotential = detail.potential == "true";
+    }
+    return isPotential;
+}
 
 /**
  * 
@@ -238,5 +244,6 @@ export const OfficeUtils = {
     buildDialogProducts,
     buildDialogProductsUpdate,
     getCustomerStatus,
+    getCustomerPotential,
     builDialogRelationship
 }

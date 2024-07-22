@@ -137,11 +137,18 @@ export class AonParent extends AonElement {
 			getCompanies()
 			.then( companies => {
 				aonParent.stopLoader();
-				if(companies.length === 1){
+
+				let filteredCompanies = companies.filter(f => this.companyFilter(f, filter));
+
+				if(!filteredCompanies || filteredCompanies.length === 0){
+					this.noResults();
+				} else if(companies.length === 1){
+					this.showCompanyList();
 					this.companySelection(companies[0], true);
 				} else {
 					this.page = 1;
-					this.buildCompanies(companies.filter(f => this.companyFilter(f, filter)).slice(0, 30));
+					this.showCompanyList();
+					this.buildCompanies(filteredCompanies.slice(0, 30));
 				}
 			}, () => closeSession());
 		}
@@ -149,6 +156,26 @@ export class AonParent extends AonElement {
 		if(filter){
 			this.setFilter(filter);
 		}
+	}
+
+	noResults(){
+		let aonCompanyTitle = this.getElement('aonCompanyDialogOptionTitle');
+		if ( aonCompanyTitle ) {
+			aonCompanyTitle.innerHTML = "No hay resultados";
+		}
+
+		let ulCompanies = this.getElement('UlCompanies');
+		ulCompanies.style.display = "none";
+	}
+
+	showCompanyList(){
+		let aonCompanyTitle = this.getElement('aonCompanyDialogOptionTitle');
+		if ( aonCompanyTitle ) {
+			aonCompanyTitle.innerHTML = MSG.COMPANY_SELECTION;
+		}
+
+		let ulCompanies = this.getElement('UlCompanies');
+		ulCompanies.style.display = "block";
 	}
 
 	companyFilter(f, q) {
@@ -247,6 +274,7 @@ export class AonParent extends AonElement {
 			this.appendChild(userOption);
 
 			let span = this.createSpan();
+			span.id = 'aonCompanyDialogOptionTitle';
 			span.innerHTML = MSG.COMPANY_SELECTION;
 			span.style.fontSize = '20px';
 			span.style.fontWeight = '500';
@@ -363,7 +391,6 @@ export class AonParent extends AonElement {
 		let span = this.createElement(TAG.SPAN);
 		span.className = 'aonLiSpan';
 
-
 		let icon = "business";
 		if(company.type === 'OFFICE') icon = 'work';
 		else if(company.parent) icon = MATERIAL_ICONS.APARTMENT;
@@ -379,7 +406,7 @@ export class AonParent extends AonElement {
 
 		let span3 = this.createElement(TAG.SPAN);
 		span3.className = 'aonLiSpanSubtitle';
-		span3.innerHTML = company.document;
+		span3.innerHTML = company.document || '';
 
 		span.appendChild(i);
 		span.appendChild(span2);

@@ -1,5 +1,6 @@
 package com.esferalia.aon.occam.impl.jooq.dao;
 
+import static com.esferalia.aon.jooq.tables.Customer.CUSTOMER;
 import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
 import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
 import static com.esferalia.aon.jooq.tables.Scope.SCOPE;
@@ -23,6 +24,7 @@ import com.esferalia.aon.occam.api.model.registry.Target;
 import com.esferalia.aon.occam.api.model.security.Scope;
 import com.esferalia.aon.occam.api.model.type.InvoiceTransactionType;
 import com.esferalia.aon.occam.api.model.type.TargetStatus;
+import com.esferalia.aon.occam.impl.jooq.dao.CustomerDAO.CustomerFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.TargetPropertiesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.RegistryDAO.RegistryFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.SecurityDAO.ScopeFiller;
@@ -58,7 +60,36 @@ public class TargetDAO {
 		return select(ctx, filter)
 			.orderBy(TARGET_ALIAS.NAME)
 			.fetch().stream().map(new TargetFiller());
-	}	
+	}
+	
+	public static Stream<Target> getStream(AONContext ctx, TargetFilter filter, int ofs, int limit){
+		Stream<Target> targets = ctx.getDslContext().select()
+			.from(TARGET)
+			.join(TARGET_ALIAS).on(TARGET_ALIAS.ID.eq(TARGET.REGISTRY))
+			.join(DOMAIN).on(DOMAIN.ID.eq(TARGET_ALIAS.DOMAIN))
+			.join(SCOPE).on(SCOPE.ID.eq(TARGET.SCOPE))
+			.where(TARGET_PROPERTIES.getConditions(filter))
+			.and(TARGET.REGISTRY.notIn(ctx.getDslContext().select(CUSTOMER.REGISTRY).from(CUSTOMER).where(CUSTOMER.REGISTRY.eq(TARGET.REGISTRY))))
+			.orderBy(TARGET_ALIAS.NAME)
+			.offset(ofs)
+			.limit(limit)				
+			.fetch()
+			.stream()
+			.map(new TargetFiller());
+		
+		System.out.println(ctx.getDslContext().select()
+			.from(TARGET)
+			.join(TARGET_ALIAS).on(TARGET_ALIAS.ID.eq(TARGET.REGISTRY))
+			.join(DOMAIN).on(DOMAIN.ID.eq(TARGET_ALIAS.DOMAIN))
+			.join(SCOPE).on(SCOPE.ID.eq(TARGET.SCOPE))
+			.where(TARGET_PROPERTIES.getConditions(filter))
+			.and(TARGET.REGISTRY.notIn(ctx.getDslContext().select(CUSTOMER.REGISTRY).from(CUSTOMER).where(CUSTOMER.REGISTRY.eq(TARGET.REGISTRY))))
+			.orderBy(TARGET_ALIAS.NAME)
+			.offset(ofs)
+			.limit(limit).getSQL().toString());
+		
+		return targets;
+	}
 	
 	public static Target save(AONContext ctx, Target target) {
 		ctx.checkWrite();
