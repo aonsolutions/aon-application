@@ -175,7 +175,9 @@ export class AonParent extends AonElement {
 		}
 
 		let ulCompanies = this.getElement('UlCompanies');
-		ulCompanies.style.display = "block";
+		if ( ulCompanies ) {
+			ulCompanies.style.display = "block";
+		}
 	}
 
 	companyFilter(f, q) {

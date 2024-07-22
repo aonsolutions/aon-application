@@ -9,39 +9,89 @@ import { AonSelect } from '../../../components/aon-select.js';
 import { getWorkgroups } from '../../../services/workgroupService.js';
 import { AonIconButton } from '../../../components/aon-icon-button.js';
 import { Workgroup } from '../../../models/project/Workgroup.js';
+import { AonInput } from '../../../components/aon-input.js';
 
 export class AonTaskHolder extends AonReg {
 
 	saveBool;
 	workgroups;
+
 	connectedCallback () {
 		this.taskHolderInitialize();
 		this.initialize();
 		this.build();
-
+		this.buildTaskHolderData();
   	}
 	
 	taskHolderInitialize() {
 		this.type = "taskholder";
 		this.saveBool = true;
 		this.options = [ 
-			{ title: MSG.GENERAL_DATA, fn: () => this.buildGeneralData()},
-			{ title: MSG.ADDITIONAL_INFORMATION, fn: () => this.buildDataAdditional()}
+			{ title: MSG.GENERAL_DATA, fn: () => this.buildTaskHolderData()},
+			{ title: MSG.WORKGROUP, fn: () => this.buildDataAdditional()}
 		];
 		this.workgroups = [];
 	}
 
+	buildTaskHolderData(){
+		let parent = this.getElement(this.DIV);
+		this.clearElement(parent);
+		this.buildTaskHolderInfo(parent);
+	}
+
+	buildTaskHolderInfo(parent) {
+		let card = new AonCard();
+		card.id = this.GENERAL_CARD;
+		card.title = MSG.GENERAL_INFORMATION;
+		card.style.width = '50%';
+		parent.appendChild(card);
+		card.firstChild.firstChild.style.marginBottom = "5px";
+
+		if(this.registry.id && this.registry.status){
+			this.buildStatusRegistry();
+		}
+
+		let div = this.createElement(TAG.DIV);
+		card.setContent(div);
+
+		let table = new AonBasicTable();
+		table.id = this.GENERAL_TABLE;
+		div.appendChild(table);
+
+		table.addRow();
+
+		let nameInput = new AonInput();
+		nameInput.id = 'aonConfigurationGeneralName';
+		nameInput.description = MSG.NAME;
+		nameInput.value = this.registry.getName();
+		nameInput.addEventListener(EVENT.CHANGE, () => this.registry.setName(nameInput.value));
+		table.addCell(nameInput);
+
+		let documentInput = new AonInput();
+		documentInput.id = 'aonConfigurationGeneralNif';
+		documentInput.description = MSG.NIF;
+		documentInput.value = this.registry.getDocument();
+		documentInput.addEventListener(EVENT.CHANGE, () => this.registry.setDocument(documentInput.value));
+
+		let td = table.addCell(documentInput);
+		td.style.width = '30%';
+
+		table.addRow();
+
+		this.buildEmails(table);
+		this.buildPhones(table);
+	}	
+
 	buildDataAdditional(){
 		let parent = this.getElement(this.DIV);
 		this.clearElement(parent);
-
 		this.buildGeneralInformation(parent);
 	}
 
 	buildGeneralInformation(parent) {
 		let card = new AonCard();
 		card.id = "cardAdditionalInformation";
-		card.title = MSG.ADDITIONAL_INFORMATION;
+		card.title = MSG.WORKGROUP;
 		card.style.width = '50%';
 		parent.appendChild(card);
 
