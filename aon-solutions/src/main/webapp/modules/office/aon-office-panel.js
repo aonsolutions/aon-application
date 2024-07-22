@@ -23,6 +23,7 @@ import { AonLinkDomains } from "../domains/aon-link-domains.js";
 
 import * as GWT from "../../gwt/gwt.js";
 import { AonTarget } from "../registry/target/aon-target.js";
+import { AonWorkgroup } from "../configuration/groups/aon-workgroup.js";
 
 export class AonOfficePanel extends AonElement {
   projectTypes;
@@ -121,6 +122,10 @@ export class AonOfficePanel extends AonElement {
     let taskHolder = OfficeOptions.AON_TASK_HOLDER;
     taskHolder.fn = () => this.showView(OfficeViews.AON_TASK_HOLDER_LIST);
     options.push(taskHolder);
+
+    let workgroups = OfficeOptions.AON_WORKGROUP_LIST
+    workgroups.fn = () => this.showView(OfficeViews.AON_WORKGROUP_LIST);
+    options.push(workgroups);
 
     // Hide for 03/07 OPENGES meet
     // if(this.isSig()){
@@ -555,6 +560,9 @@ export class AonOfficePanel extends AonElement {
           break;
         case officeViews.AON_TASK_HOLDER_LIST:
           aonView = new AonTaskHolderList();
+          break;
+        case officeViews.AON_WORKGROUP_LIST:
+          aonView = new AonWorkgroup();
           break;
       }
       if (aonView) {

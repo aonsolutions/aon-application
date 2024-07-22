@@ -1,4 +1,5 @@
 import { AonCheckbox } from "../../components/aon-checkbox.js";
+import { AON_WORKGROUP } from "../../environments/aonTag.js";
 import { CONSTANT, MATERIAL_ICONS, MSG } from "../../environments/environments.js";
 
 
@@ -14,6 +15,12 @@ const AON_TASK_HOLDER = {
     icon: MATERIAL_ICONS.PEOPLE
 }
 
+const AON_WORKGROUP_LIST = {
+    id: 'sideNavWorkgroup',
+    name: "Grupos de Trabajo",
+    icon: MATERIAL_ICONS.GROUPS
+}
+
 
 const OfficeViews = {
     AON_CUSTOMER: "aonCustomerOffice",
@@ -21,6 +28,7 @@ const OfficeViews = {
     AON_OFFICE_PANEL: "aonOfficePanel",
     AON_TASK_HOLDER: "aonTaskHolder",
     AON_TASK_HOLDER_LIST: "aonTaskHolderList",
+    AON_WORKGROUP_LIST : "aonWorkgroupList"
 }
 
 const OfficeSidenav = {
@@ -39,7 +47,8 @@ const OfficeSidenav = {
 
 const OfficeOptions = {
     AON_CUSTOMER,
-    AON_TASK_HOLDER
+    AON_TASK_HOLDER,
+    AON_WORKGROUP_LIST
 };
 
 
