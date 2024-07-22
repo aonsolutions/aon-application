@@ -63,6 +63,9 @@ public class TimeControlServlet extends AonApiHttpServlet{
 			case "/list":
 				response(req, resp, getTimeControlList(api));
 				break;
+			case "/listEmployee":
+				response(req, resp, getTimeControlListEmployee(api));
+				break;
 			case "/historic":
 				response(req, resp, getTimeControlHistoric(api));
 				break;
@@ -215,6 +218,22 @@ public class TimeControlServlet extends AonApiHttpServlet{
 		.filter(f-> f.getTaskHolder()!=null && f.getTaskHolder().isActive().equals(active))
 		.forEach(tc -> 	array.put(tc.toJSON()));
 		
+		return array;
+	}
+	
+	private JSONArray getTimeControlListEmployee(AonApiData api) {
+		Date startDate = AonDateUtils.getDateWithoutTime(new Date());
+		Date endDate = AonDateUtils.addDays(startDate, 1);
+		endDate = AonDateUtils.addSeconds(endDate, -1);
+		Integer page = api.getData().has(IJsonNames.PAGE) ? api.getData().optInt(IJsonNames.PAGE) : null;
+		Integer perPage = api.getData().has(IJsonNames.PER_PAGE) ? api.getData().optInt(IJsonNames.PER_PAGE) : null;
+		if(!api.getData().optString(START_DATE).isEmpty()) 
+			startDate =  AonDateUtils.parse(api.getData().optString(START_DATE), FORMAT_DATE);
+		if(!api.getData().optString(END_DATE).isEmpty()) 
+			endDate = AonDateUtils.parse(api.getData().optString(END_DATE), FORMAT_DATE);
+		JSONArray array = new JSONArray();
+		AON_SOLUTIONS.getTimeControlEmployeeStream(api.getDomain(), "", startDate, endDate, page, perPage)
+		.forEach(tc -> 	array.put(tc.toJSON()));
 		return array;
 	}
 	

@@ -15,6 +15,7 @@ import com.esferalia.aon.occam.api.model.aonsolutions.TimeControlGroup;
 public interface ITimeControl {
 
 	public Stream<TimeControl> getTimeControlStream(AONContext ctx, Date startDate, Date endDate);
+	public Stream<TimeControl> getTimeControlEmployeeStream(AONContext ctx, Date startDate, Date endDate, Integer page, Integer perPage);
 	public Stream<TimeControl> getTaskHolderTimeControlStream(AONContext ctx, Integer taskHolderId, Date startDate, Date endDate, TimeControlGroup group);
 	public TimeControl getTaskHolderTimeControl(AONContext ctx, Integer taskHolderId, Date startDate, Date endDate);
 	
