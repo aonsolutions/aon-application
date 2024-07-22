@@ -17,6 +17,7 @@ import com.esferalia.aon.occam.api.model.AccountingInvoice;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.Customer;
 import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.occam.api.model.EnterpriseActivity;
 import com.esferalia.aon.occam.api.model.IJsonNames;
 import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.Rawdoc;
@@ -169,7 +170,16 @@ public class Rawdoc2AccountingInvoice {
 			}
 						
 			ai.setAccountEntry(InvoiceRecorderDAO.getEntryBase(ctx, aonConfig, ai.getInvoice()));
-
+			
+			if (invoice.getActivity() == null || invoice.getActivity().isEmpty()) {
+				ai.getAccountEntry().setActivity(null);
+				ai.getAccountEntry().setActivityDescription(null);
+			} else {
+				ai.getAccountEntry().setActivity(invoice.getActivity().getId());
+				ai.getAccountEntry().setActivityDescription(invoice.getActivity().getDescription());
+			}
+			
+			
 			fillAttach( ctx, ai, ti);
 			return ai;
 		}

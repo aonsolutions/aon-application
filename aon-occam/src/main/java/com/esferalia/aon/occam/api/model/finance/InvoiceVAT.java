@@ -400,6 +400,12 @@ public class InvoiceVAT implements Serializable {
 	
 	public void syncChangesToWrappedDetail() {
 		if ( this.isInvoiceDetailPresent() ) {
+			// ACCOUNT
+			this.getInvoiceDetail().setAccount(this.getExpAccountId());
+			this.getInvoiceDetail().setAccountCode(this.getExpAccountCode());
+			this.getInvoiceDetail().setAccountDescription(this.getExpAccountDescription());
+			
+			// INVEST ASSET
 			this.getInvoiceDetail().setInvestAsset( this.getInvestAsset() );
 			InvoiceTax it = AonCollectionUtils
 				.stream(this.getInvoiceDetail().getInvoiceTaxes())
