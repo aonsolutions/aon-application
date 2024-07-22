@@ -159,7 +159,8 @@ public class Page21 extends PageAbs {
 		payPanel1.addStyleName(AON.CSS.aonMarginTop());		
 		
 		payTypeI = new RadioButton("devTypeButton");
-		payTypeI.setText(AON.MSG.payInAccount());
+//		payTypeI.setText(AON.MSG.payInAccount());
+		payTypeI.setText("Adeudo en cuenta (Ingreso)");		
 		payTypeI.addClickHandler(event -> {
 			callback.getMod200Object().getMod200().setPayType("I");
 			callback.markAsDirty();				
@@ -168,7 +169,8 @@ public class Page21 extends PageAbs {
 		
 		payTypeH = new RadioButton("devTypeButton");
 		payTypeH.addStyleName(AON.CSS.aonMarginLeft());
-		payTypeH.setText(AON.MSG.cash());
+//		payTypeH.setText(AON.MSG.cash());
+		payTypeH.setText("En efectivo (obsoleto)");
 		payTypeH.addClickHandler(event -> {
 			callback.getMod200Object().getMod200().setPayType("H");
 			callback.markAsDirty();				
