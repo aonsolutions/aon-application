@@ -577,6 +577,12 @@ public class AON_SOLUTIONS {
 		}
 	}
 	
+	public static Stream<TimeControl> getTimeControlEmployeeStream(Domain domain, String login, Date startDate, Date endDate, Integer page, Integer perPage) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domain.getName(), domain.getId(), login)){
+			return getTimeControl().getTimeControlEmployeeStream(ctx, startDate, endDate, page, perPage);
+		}
+	}
+	
 	public static Stream<TimeControlDetail> getTimeControlHistoric(Domain domain, String login, TimeControlFilter filter) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(domain.getName(), domain.getId(), login)){
 			return getTimeControl().getTimeControlHistoric(ctx, filter);

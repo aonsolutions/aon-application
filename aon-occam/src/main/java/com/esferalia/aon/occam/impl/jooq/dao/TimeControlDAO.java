@@ -137,6 +137,28 @@ public class TimeControlDAO {
 		return tcList.stream();
 	}
 	
+	public static Stream<TimeControl> getTimeControlEmployeeStream(AONContext ctx, Date startDate, Date endDate, Integer page, Integer perPage) {
+		startDate = AonDateUtils.getDateWithoutTime(startDate);
+		endDate = AonDateUtils.getDateWithoutTime(endDate);
+		endDate = AonDateUtils.addDays(endDate, 1);
+		endDate = AonDateUtils.addSeconds(endDate, -1);
+		Timestamp startTimestamp = new Timestamp(startDate.getTime());
+		Timestamp endTimestamp = new Timestamp(endDate.getTime());
+		
+		LinkedList<TimeControl> tcList = new LinkedList<>();
+		LinkedList<TimeControlDetail> list = getTimeControlDetailList(ctx, f -> 
+			f.getDomainProperty().eq(ctx.getDomainId())
+			.and(f.getDateProperty().ge(startTimestamp))
+			.and(f.getDateProperty().le(endTimestamp)));
+		
+		TaskOldDAO.getTaskHolderEmployee(ctx, f -> f.getDomainProperty().eq(ctx.getDomainId())
+			.and(f.getUserIdProperty().isNotNull()), page, perPage).forEach(th -> {
+				TimeControl tc = buildTimeControl(ctx, th.getId(), list.stream().filter(f -> f.getTaskHolder().getId().equals(th.getId())), null, null, null);
+				tcList.add(tc);
+			});
+		return tcList.stream();
+	}
+	
 	public static Stream<TimeControl> getTaskHolderTimeControlStream(AONContext ctx, Integer taskHolderId, Date startDate, Date endDate, TimeControlGroup group) {
 		startDate = AonDateUtils.getDateWithoutTime(startDate);
 		endDate = AonDateUtils.getDateWithoutTime(endDate);
