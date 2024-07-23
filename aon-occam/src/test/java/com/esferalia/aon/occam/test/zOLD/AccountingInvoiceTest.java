@@ -144,18 +144,45 @@ public class AccountingInvoiceTest {
 			System.out.println("deductiblePercent ...: " + vat.getDeductiblePercent());
 			System.out.println("deductibleQuota ...: " + vat.getDeductibleQuota());
 			System.out.println("withholding ...: " + vat.isWithholding());
-			System.out.println("outputAccountId ...: " + vat.getOutputAccountId());
-			System.out.println("outputAccountCode ...: " + vat.getOutputAccountCode());
-			System.out.println("outputAccountDescription ...: " + vat.getOutputAccountDescription());
-			System.out.println("inputAccountId ...: " + vat.getInputAccountId());
-			System.out.println("inputAccountCode ...: " + vat.getInputAccountCode());
-			System.out.println("inputAccountDescription ...: " + vat.getInputAccountDescription());
-			System.out.println("adjAccountId ...: " + vat.getAdjAccountId());
-			System.out.println("adjAccountCode ...: " + vat.getAdjAccountCode());
-			System.out.println("adjAccountDescription ...: " + vat.getAdjAccountDescription());
-			System.out.println("expAccountId ...: " + vat.getExpAccountId());
-			System.out.println("expAccountCode ...: " + vat.getExpAccountCode());
-			System.out.println("expAccountDescription ...: " + vat.getExpAccountDescription());
+			if (vat.getOutputAccount() == null) {
+				System.out.println("outputAccount ...: NULL " );
+			} else {
+				System.out.println("outputAccount - Id ...: " + vat.getOutputAccount().getId());
+				System.out.println("outputAccount - Code ...: " + vat.getOutputAccount().getCode());
+				System.out.println("outputAccount - Description ...: " + vat.getOutputAccount().getDescription());
+			}
+
+			if (vat.getInputAccount() == null) {
+				System.out.println("inputAccount ...: NULL " );
+			} else {
+				System.out.println("inputAccount - Id ...: " + vat.getInputAccount().getId());
+				System.out.println("inputAccount - Code ...: " + vat.getInputAccount().getCode());
+				System.out.println("inputAccount - Description ...: " + vat.getInputAccount().getDescription());
+			}
+
+			if (vat.getAdjAccount() == null) {
+				System.out.println("adjAccount ...: NULL " );
+			} else {
+				System.out.println("adjAccount - Id ...: " + vat.getAdjAccount().getId());
+				System.out.println("adjAccount - Code ...: " + vat.getAdjAccount().getCode());
+				System.out.println("adjAccount - Description ...: " + vat.getAdjAccount().getDescription());
+			}
+
+			if (vat.getAdjDirectTaxAccount() == null) {
+				System.out.println("adjDirectTaxAccount ...: NULL " );
+			} else {
+				System.out.println("adjDirectTaxAccount - Id ...: " + vat.getAdjDirectTaxAccount().getId());
+				System.out.println("adjDirectTaxAccount - Code ...: " + vat.getAdjDirectTaxAccount().getCode());
+				System.out.println("adjDirectTaxAccount - Description ...: " + vat.getAdjDirectTaxAccount().getDescription());
+			}
+
+			if (vat.getExpAccount() == null) {
+				System.out.println("expAccount ...: NULL " );
+			} else {
+				System.out.println("expAccount - Id ...: " + vat.getExpAccount().getId());
+				System.out.println("expAccount - Code ...: " + vat.getExpAccount().getCode());
+				System.out.println("expAccount - Description ...: " + vat.getExpAccount().getDescription());
+			}
 			
 		}
 		System.out.println("...............................................");

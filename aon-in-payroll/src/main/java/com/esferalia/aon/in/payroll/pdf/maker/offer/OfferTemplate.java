@@ -1837,9 +1837,7 @@ public class OfferTemplate {
 		newInvoiceDetail.setWarehouse(original.getWarehouse());
 		newInvoiceDetail.setWarehouseName(original.getWarehouseName());
 		newInvoiceDetail.setWorkplace(original.getWorkplace());
-		newInvoiceDetail.setAccount(original.getAccount());
-		newInvoiceDetail.setAccountCode(original.getAccountCode());
-		newInvoiceDetail.setAccountDescription(original.getAccountDescription());
+		newInvoiceDetail.setExpAccount(original.getExpAccount());
 		newInvoiceDetail.setInvoiceTaxes(original.getInvoiceTaxes());
 		newInvoiceDetail.setSource(original.getSource());
 		newInvoiceDetail.setSourceId(original.getSourceId());

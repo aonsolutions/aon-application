@@ -3,6 +3,7 @@ package com.esferalia.aon.occam.api.model.finance;
 import java.io.Serializable;
 import java.util.LinkedList;
 
+import com.esferalia.aon.occam.api.model.Account;
 import com.esferalia.aon.occam.api.model.DiscountExpression;
 import com.esferalia.aon.occam.api.model.InvestAsset;
 import com.esferalia.aon.occam.api.model.Workplace;
@@ -12,6 +13,7 @@ import com.esferalia.aon.occam.api.model.management.SalesDetail;
 import com.esferalia.aon.occam.api.model.product.Item;
 import com.esferalia.aon.occam.api.model.registry.Seller;
 import com.esferalia.aon.occam.api.model.type.InvoiceSource;
+import com.esferalia.aon.occam.api.model.type.InvoiceType;
 import com.esferalia.aon.occam.api.model.warehouse.DeliveryDetail;
 import com.esferalia.aon.occam.api.model.warehouse.IncomeDetail;
 public class InvoiceDetail implements Serializable {
@@ -46,9 +48,7 @@ public class InvoiceDetail implements Serializable {
 	private Workplace workplace;
 	
 	// ACCOUNT
-	private Integer account;
-	private String accountCode;
-	private String accountDescription;
+	private Account expAccount;
 	
 	private LinkedList<InvoiceTax> invoiceTaxes;
 	
@@ -260,29 +260,33 @@ public class InvoiceDetail implements Serializable {
 		getInvoiceTaxes().add(invoiceTax);
 		return this;
 	}
-	
-	public Integer getAccount() {
-		return account;
+	public Account getExpAccount() {
+		if (expAccount == null) expAccount = new Account();
+		return expAccount;
+	}
+	public InvoiceDetail setExpAccount(Account expAccount) {
+		this.expAccount = expAccount;
+		return this;
 	}
 	public InvoiceDetail setAccount(Integer account) {
-		this.account = account;
+		getExpAccount().setId(account);
 		return this;
 	}
 	
 	public String getAccountCode() {
-		return accountCode;
+		return getExpAccount().getCode();
 	}
 	public InvoiceDetail setAccountCode(String accountCode) {
-		this.accountCode = accountCode;
+		getExpAccount().setCode (accountCode );
 		return this;
 	}
 	
 	public String getAccountDescription() {
-		return accountDescription;
+		return getExpAccount().getDescription();
 	}
 	
 	public InvoiceDetail setAccountDescription(String accountDescription) {
-		this.accountDescription = accountDescription;
+		getExpAccount().setDescription (accountDescription );
 		return this;
 	}
 
@@ -328,6 +332,12 @@ public class InvoiceDetail implements Serializable {
 	
 	public void setOfferDetail(OfferDetail offerDetail) {
 		this.offerDetail = offerDetail;
+	}
+	
+	public boolean areTaxesEnabled(Invoice invoice) {
+		return (invoice != null
+		 && invoice.getType() != InvoiceType.UNDEDUCTIBLE 
+		 && !isPrepayment());
 	}
 
 }

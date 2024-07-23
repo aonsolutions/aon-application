@@ -17,7 +17,6 @@ import com.esferalia.aon.occam.api.model.AccountingInvoice;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.Customer;
 import com.esferalia.aon.occam.api.model.Domain;
-import com.esferalia.aon.occam.api.model.EnterpriseActivity;
 import com.esferalia.aon.occam.api.model.IJsonNames;
 import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.Rawdoc;
@@ -115,6 +114,7 @@ public class Rawdoc2AccountingInvoice {
 			Account inputAccount = Optional.ofNullable( aonConfig.accounting().getDefaultPaidVatAccount() )
 				.orElse( AccountDAO.ensureInputVATAccount(ctx, domain.getId()) );
 			Account adjAccount = aonConfig.accounting().getVatNegativeAdjustAccount();
+			Account adjDirectTaxAccount = aonConfig.accounting().getDirectTaxAdjustAccount();
 
 			String category = ti.optString("category");
 			ai.setInvoice(invoice);
@@ -152,19 +152,12 @@ public class Rawdoc2AccountingInvoice {
 					.setDeductibleQuota(detailTax.getDeductibleQuota())
 					.setWithholding(invoice.isWithholding() && !detail.isPrepayment())
 					
-					.setExpAccountId(expAccount.getId())
-					.setExpAccountCode(expAccount.getCode())
-					.setExpAccountDescription(expAccount.getDescription())
-
-					.setOutputAccountCode(outputAccount.getCode())
-					.setOutputAccountDescription(outputAccount.getDescription())
-					.setOutputAccountId(outputAccount.getId())
-
-					.setInputAccountCode(inputAccount.getCode())
-					.setInputAccountDescription(inputAccount.getDescription()).setInputAccountId(inputAccount.getId())
-					.setAdjAccountCode(adjAccount != null ? adjAccount.getCode() : null)
-					.setAdjAccountDescription(adjAccount != null ? adjAccount.getDescription() : null)
-					.setAdjAccountId(adjAccount != null ? adjAccount.getId() : null);
+					.setExpAccount(expAccount)
+					.setOutputAccount(outputAccount)
+					.setInputAccount(inputAccount)
+					.setAdjAccount(adjAccount)
+					.setAdjDirectTaxAccount( adjDirectTaxAccount )
+				;
 				ai.setPrepayments( ai.hasPrepayments() ||  vat.isPrepayment() );
 				ai.addVat(vat);
 			}
@@ -209,8 +202,8 @@ public class Rawdoc2AccountingInvoice {
 	private static Account getExpAccount(AONContext ctx, String category, InvoiceDetail detail) {
 		Account expAccount = null;
 		if (AonStringUtils.isNotBlank(category)) {
-			expAccount = detail.getAccount() != null
-				? ACCOUNTING.getAccount(ctx, detail.getAccount())
+			expAccount = (detail.getExpAccount() != null && detail.getExpAccount().getId() != null)
+				? ACCOUNTING.getAccount(ctx, detail.getExpAccount().getId())
 				: ACCOUNTING.getAccount(ctx, category);
 		}
 		if (expAccount == null) {

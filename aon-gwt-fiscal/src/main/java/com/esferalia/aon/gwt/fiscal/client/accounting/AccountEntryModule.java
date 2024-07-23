@@ -55,6 +55,7 @@ import com.esferalia.aon.occam.api.model.finance.InvoiceVAT;
 import com.esferalia.aon.occam.api.model.type.AccountEntryType;
 import com.esferalia.aon.occam.api.model.type.AccountEntryUpdate;
 import com.esferalia.aon.watson.mutable.MutableInt;
+import com.esferalia.aon.watson.util.AonCollectionUtils;
 import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
@@ -1803,28 +1804,23 @@ public class AccountEntryModule extends MainEntryPoint {
 					if (wrapper instanceof AccountingInvoice) {
 						AccountingInvoice ai = (AccountingInvoice) wrapper; 
 						AonAccountBox account = new AonAccountBox(getOptions().getDomainName(),getOptions().getDomain(),getOptions().getUser());
-						final LinkedList<Account> suggestedAccounts = new LinkedList<Account>();
-						if (ai.getVats() != null && ai.getVats().size() > 0) {
+						final LinkedList<Account> suggestedAccounts = new LinkedList<>();
+						if (AonCollectionUtils.isNotEmpty(ai.getVats())) {
 							InvoiceVAT vat = ai.getVats().get(0);
-							account.setValue(vat.getExpAccountId(), vat.getExpAccountCode(), vat.getExpAccountDescription());
-							Account oldAccount = new Account();
-							oldAccount.setId(vat.getExpAccountId());
-							oldAccount.setCode( vat.getExpAccountCode() );
-							oldAccount.setDescription(vat.getExpAccountDescription());
-							suggestedAccounts.add(oldAccount);	
+							account.setAccount(vat.getExpAccount());
+							Account oldAccount = vat.getExpAccount();
+							if (oldAccount != null) {
+								suggestedAccounts.add(oldAccount);	
+							}
 						}
-						account.addSelectionHandler(new SelectionHandler<Account>() {
-					
-							@Override
-							public void onSelection(SelectionEvent<Account> event) {
-								if (event.getSelectedItem() != null) {
-									if (suggestedAccounts .size() > 1) {
-										suggestedAccounts.set(1,  event.getSelectedItem());
-									} else {
-										suggestedAccounts.add(event.getSelectedItem());
-									}
-									ai.setSuggestedAccounts(suggestedAccounts);
+						account.addSelectionHandler(event -> {
+							if (event.getSelectedItem() != null) {
+								if (suggestedAccounts .size() > 1) {
+									suggestedAccounts.set(1,  event.getSelectedItem());
+								} else {
+									suggestedAccounts.add(event.getSelectedItem());
 								}
+								ai.setSuggestedAccounts(suggestedAccounts);
 							}
 						});
 						updatePanel.addCell(account);

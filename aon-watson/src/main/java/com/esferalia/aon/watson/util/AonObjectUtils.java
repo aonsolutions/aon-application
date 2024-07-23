@@ -17,6 +17,8 @@
 package com.esferalia.aon.watson.util;
 
 import java.util.function.Function;
+import java.util.function.Supplier;
+import java.util.function.UnaryOperator;
 
 /**
  * <p>Operations on {@code Object}.</p>
@@ -77,11 +79,15 @@ public class AonObjectUtils {
      * @return {@code false} if the values of both objects are the same
      */
     public static boolean notEqual(final Object object1, final Object object2) {
-        return AonObjectUtils.equals(object1, object2) == false;
+        return !AonObjectUtils.equals(object1, object2);
     }
     
 	public static <T, R> R ifNotNullGet(final T object, Function<T, R> value) {
 		return object == null ? null : value.apply(object);
+	}
+	
+	public static <T> T ifNotNullOrElse(final T object, Supplier<T> value) {
+		return object != null ? object : value.get();
 	}
 
 }

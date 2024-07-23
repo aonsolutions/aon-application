@@ -83,6 +83,7 @@ import com.esferalia.aon.watson.AonError;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.server.AonEnumUtils;
+import com.esferalia.aon.watson.util.AonCollectionUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 
 public class AccountEntryDAO {
@@ -1106,34 +1107,35 @@ public class AccountEntryDAO {
 
 			@Override
 			public IAccountEntryWrapper visitOperatingAccount(IAccountEntryWrapper wrapper) {
-				if (wrapper instanceof AccountingInvoice) {
-					AccountingInvoice ai = (AccountingInvoice) wrapper;
-					Integer oldAccountId = null;
-					if (ai.getVats() != null && ai.getVats().size() > 0) {
-						oldAccountId = ai.getVats().get(0).getExpAccountId();
+				if (wrapper instanceof AccountingInvoice ai) {
+					com.esferalia.aon.occam.api.model.Account oldAccount = null;
+					if (AonCollectionUtils.isNotEmpty( ai.getVats()) ) {
+						oldAccount = ai.getVats().get(0).getExpAccount();
 					}
-					Integer newAccountId = null;
-					String description = null;
+					com.esferalia.aon.occam.api.model.Account _newAccount = null;
 					if (ai.getSuggestedAccounts() != null && ai.getSuggestedAccounts().size() > 1) {
-						newAccountId = ai.getSuggestedAccounts().get(1).getId();
-						description = ai.getSuggestedAccounts().get(1).getDescription();
+						_newAccount = ai.getSuggestedAccounts().get(1);
 					}
-					final String newAccountDescription = description;
-					if (oldAccountId != null && newAccountId != null) {
+					com.esferalia.aon.occam.api.model.Account newAccount = _newAccount;
+					if (oldAccount != null
+						&& oldAccount.getId() != null 
+						&& newAccount != null
+						&& newAccount.getId() != null
+						) {
 						AccountEntry ae = wrapper.getAccountEntry();
 						for (AccountEntryDetail detail : ae.getDetails()) {
-							if (AonNumberUtils.equals( detail.getAccount(), oldAccountId)) {
+							if (AonNumberUtils.equals( detail.getAccount(), oldAccount.getId())) {
 								int i = ctx.getDslContext()
 									.update(ACCOUNT_ENTRY_DETAIL)
-									.set(ACCOUNT_ENTRY_DETAIL.ACCOUNT, newAccountId)
+									.set(ACCOUNT_ENTRY_DETAIL.ACCOUNT, newAccount.getId())
 									.where(ACCOUNT_ENTRY_DETAIL.ID.equal( detail.getId()))
 									.execute();
 								ctx.log().debug("UPDATE ACCOUNT ENTRY DETAIL ACCOUNT id: {0} count({1})",detail.getId(),i);
 							}
-							if (AonNumberUtils.equals( detail.getBalancingAccount(), oldAccountId)) {
+							if (AonNumberUtils.equals( detail.getBalancingAccount(), oldAccount.getId())) {
 								int i = ctx.getDslContext()
 									.update(ACCOUNT_ENTRY_DETAIL)
-									.set(ACCOUNT_ENTRY_DETAIL.BALANCING_ACCOUNT, newAccountId)
+									.set(ACCOUNT_ENTRY_DETAIL.BALANCING_ACCOUNT, newAccount.getId())
 									.where(ACCOUNT_ENTRY_DETAIL.ID.equal( detail.getId()))
 									.execute();
 								ctx.log().debug("UPDATE ACCOUNT ENTRY DETAIL BALANCING ACCOUNT id: {0} count({1})",detail.getId(),i);
@@ -1153,8 +1155,8 @@ public class AccountEntryDAO {
 								.filter( s -> (s == InvoiceSource.ACCOUNT) )
 								.forEach( source -> {
 									int i = ctx.getDslContext()
-											.update(INVOICE_DETAIL)
-											.set(INVOICE_DETAIL.DESCRIPTION, newAccountDescription)
+										.update(INVOICE_DETAIL)
+											.set(INVOICE_DETAIL.DESCRIPTION, newAccount.getDescription())
 											.where(INVOICE_DETAIL.ID.equal( vat.getInvoiceDetailId()))
 											.execute();
 										ctx.log().debug("UPDATE INVOICE DETAIL DESCRIPTION id: {0} count({1})",vat.getInvoiceDetailId(),i);
@@ -1169,7 +1171,7 @@ public class AccountEntryDAO {
 							ctx.getDslContext().insertInto(INVOICE_DETAIL_ACCOUNT)
 								.set(INVOICE_DETAIL_ACCOUNT.DOMAIN, ae.getDomain())
 								.set(INVOICE_DETAIL_ACCOUNT.INVOICE_DETAIL, vat.getInvoiceDetailId())
-								.set(INVOICE_DETAIL_ACCOUNT.ACCOUNT, newAccountId)
+								.set(INVOICE_DETAIL_ACCOUNT.ACCOUNT, newAccount.getId())
 								.execute();
 							ctx.log().debug("INSERT INVOICE_DETAIL_ACCOUNT");
 						}
@@ -1312,18 +1314,18 @@ public class AccountEntryDAO {
 
 			@Override
 			public IAccountEntryWrapper visitOperatingAccount(IAccountEntryWrapper wrapper) {
-				if (wrapper instanceof AccountingInvoice) {
-					AccountingInvoice ai = (AccountingInvoice) wrapper; 
+				if (wrapper instanceof AccountingInvoice ai) {
 					AccountEntry ae = wrapper.getAccountEntry();
-					if (ae != null && ae.getPeriod() != null && (!ae.isPeriodActive() || !hasPendingFinances(ai.getInvoice()))) {
+					if (ae != null && ae.getPeriod() != null 
+						&& (!ae.isPeriodActive() || !hasPendingFinances(ai.getInvoice()))) {
 						boolean add = false;
 						Integer account = null;
 						for (InvoiceVAT vat : ai.getVats() ) {
 							if ( account == null) {
-								account = vat.getExpAccountId();
+								account = vat.getExpAccount().getId();
 								add = true;
 							}
-							if ( !AonNumberUtils.equals(account,vat.getExpAccountId())) {
+							if ( !AonNumberUtils.equals(account,vat.getExpAccount().getId())) {
 								add = false;
 								break;
 							}

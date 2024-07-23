@@ -458,7 +458,6 @@ public class InvoiceAutoComplete {
 							.setPercentage(ret.getPercentage())
 							.setQuota(b.getBase() * ret.getPercentage() / 100)
 							.setTaxType(TaxType.RETENTION)
-							.setWithholding(true)
 							.setWithholdingType(b.getWithholdingType());
 					invoiceTax.add(it1);
 				}
@@ -527,7 +526,9 @@ public class InvoiceAutoComplete {
 				detail.setWorkplace(ctx.getConfiguration().getWorkplaces().get(0));
 			}
 			
-			if(detail.getAccount() == null && detail.getAccountCode() != null) {
+			if(detail.getExpAccount() != null 
+				&& detail.getExpAccount().getId() == null
+				&& detail.getExpAccount().getCode() != null) {
 				Domain domain = DomainDAO.getDomain(ctx.getContext(), inv.getDomain());
 				Account acc = null;
 				if(domain.isEnableHeredity() && domain.getParentId() != null) {

@@ -73,7 +73,6 @@ public class InvoiceDetailJSON {
 					.setBase(JsonUtils.getdouble(json, IJsonNames.AMOUNT))
 					.setPercentage(JsonUtils.getdouble(json, IJsonNames.WITHHOLDING_PERCENTAGE))
 					.setQuota(JsonUtils.getdouble(json, IJsonNames.WITHHOLDING_QUOTA))
-					.setWithholding(true)
 					.setWithholdingType(WithholdingType.safeValueOf(json.optString(IJsonNames.WITHHOLDING_TYPE)));
 			detail.getInvoiceTaxes().add(tax);
 		}

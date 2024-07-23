@@ -457,20 +457,17 @@ public class InvoiceVATPanel extends FlowPanel implements HasValueChangeHandlers
 		addButton.addClickHandler(event -> {
 			int lastIdx = callback.getInvoice().getVats().size() - 1;
 			final InvoiceVAT last = callback.getVat(lastIdx);
-			final InvoiceVAT vat = new InvoiceVAT().setExpAccountId(last.getExpAccountId())
-					.setExpAccountCode(last.getExpAccountCode())
-					.setExpAccountDescription(last.getExpAccountDescription()).setPercentage(last.getPercentage())
-					.setSurcharge(last.getSurcharge()).setWithholding(last.isWithholding())
-					.setInputAccountId(last.getInputAccountId()).setInputAccountCode(last.getInputAccountCode())
-					.setInputAccountDescription(last.getInputAccountDescription())
-					.setOutputAccountId(last.getOutputAccountId()).setOutputAccountCode(last.getOutputAccountCode())
-					.setOutputAccountDescription(last.getOutputAccountDescription())
-					.setAdjAccountId(last.getAdjAccountId()).setAdjAccountCode(last.getAdjAccountCode())
-					.setAdjAccountDescription(last.getAdjAccountDescription())
+			final InvoiceVAT vat = new InvoiceVAT()
+					.setExpAccount(last.getExpAccount())
+					.setPercentage(last.getPercentage())
+					.setSurcharge(last.getSurcharge())
+					.setWithholding(last.isWithholding())
 					.setDirectTaxPercent(last.getDirectTaxPercent())
-					.setAdjDirectTaxAccountId(last.getAdjDirectTaxAccountId())
-					.setAdjDirectTaxAccountCode(last.getAdjDirectTaxAccountCode())
-					.setAdjDirectTaxAccountDescription(last.getAdjDirectTaxAccountDescription());
+					.setInputAccount(last.getInputAccount())
+					.setOutputAccount(last.getOutputAccount())
+					.setAdjAccount(last.getAdjAccount())
+					.setAdjDirectTaxAccount(last.getAdjDirectTaxAccount())
+					;
 			callback.getInvoice().addVat(vat);
 			int insertedIdx = callback.getInvoice().getVats().size() - 1;
 			addRow(callback, insertedIdx, true);
@@ -483,9 +480,7 @@ public class InvoiceVATPanel extends FlowPanel implements HasValueChangeHandlers
 		LinkedList<Account> suggestedAccounts = callback.getInvoice().getSuggestedAccounts();
 		if (suggestedAccounts != null && !suggestedAccounts.isEmpty() && suggestedAccounts.size() > rows.size()) {
 			Account a = suggestedAccounts.get(rows.size());
-			callback.getInvoice().getVats().get(vatIdx).setExpAccountId(a.getId());
-			callback.getInvoice().getVats().get(vatIdx).setExpAccountCode(a.getCode());
-			callback.getInvoice().getVats().get(vatIdx).setExpAccountDescription(a.getDescription());
+			callback.getInvoice().getVats().get(vatIdx).setExpAccount(a);
 		}
 		InvoiceVATPanelRow invoiceRow = new InvoiceVATPanelRow(this, grid.getRowCount(), callback, vatIdx, focus);
 		invoiceRow.addSelectionHandler(e -> SelectionEvent.fire(this, e.getSelectedItem()));

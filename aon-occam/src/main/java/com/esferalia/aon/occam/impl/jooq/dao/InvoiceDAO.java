@@ -125,9 +125,11 @@ import com.esferalia.aon.watson.AonError;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.mutable.MutableInt;
 import com.esferalia.aon.watson.server.AonDateUtils;
+import com.esferalia.aon.watson.util.AonCollectionUtils;
 import com.esferalia.aon.watson.util.AonEnumUtils;
 import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
+import com.esferalia.aon.watson.util.AonObjectUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class InvoiceDAO {
@@ -1420,59 +1422,53 @@ public class InvoiceDAO {
 			
 			private static final long serialVersionUID = -9008741708561768671L;
 
-			@Override public void visitSales(InvoiceDetail detail) {}
-			@Override public void visitReservation(InvoiceDetail detail) {}
-			@Override public void visitPurchase(InvoiceDetail detail) {}
-			@Override public void visitOffer(InvoiceDetail detail) {}
-			@Override public void visitIncome(InvoiceDetail detail) {}
-			@Override public void visitFee(InvoiceDetail detail) {}
-			@Override public void visitDirectInvoice(InvoiceDetail detail) {}
-			@Override public void visitDirectExpense(InvoiceDetail detail) {}
-			@Override public void visitDelivery(InvoiceDetail detail) {}
+			@Override public void visitSales(InvoiceDetail detail) {/* nothing */ }
+			@Override public void visitReservation(InvoiceDetail detail) {/* nothing */ }
+			@Override public void visitPurchase(InvoiceDetail detail) {/* nothing */ }
+			@Override public void visitOffer(InvoiceDetail detail) {/* nothing */ }
+			@Override public void visitIncome(InvoiceDetail detail) {/* nothing */ }
+			@Override public void visitFee(InvoiceDetail detail) {/* nothing */ }
+			@Override public void visitDirectInvoice(InvoiceDetail detail) {/* nothing */ }
+			@Override public void visitDirectExpense(InvoiceDetail detail) {/* nothing */ }
+			@Override public void visitDelivery(InvoiceDetail detail) {/* nothing */ }
 			
-			@Override public void visitAccount(InvoiceDetail detail) {
-				if (detail.getAccount() == null) 
-					throw new AonCoreException(AonError.ACCOUNT_ENTRY_NO_EXP_ACCOUNT.getMessage());
+			private void saveAcountingTables(InvoiceDetail detail) {
 				ctx.getDslContext().insertInto(INVOICE_DETAIL_ACCOUNT)
 					.set(INVOICE_DETAIL_ACCOUNT.DOMAIN, detail.getDomain())
 					.set(INVOICE_DETAIL_ACCOUNT.INVOICE_DETAIL, detail.getId())
-					.set(INVOICE_DETAIL_ACCOUNT.ACCOUNT, detail.getAccount())
+					.set(INVOICE_DETAIL_ACCOUNT.ACCOUNT, detail.getExpAccount().getId())
 					.execute();
-				if (detail.getInvoice().getType() != InvoiceType.UNDEDUCTIBLE && !detail.isPrepayment()) {
+				if (detail.areTaxesEnabled( detail.getInvoice() )) {
 					ctx.log().debug("\tINSERT INVOICE_DETAIL_ACCOUNT");
-					for (InvoiceTax tax : detail.getInvoiceTaxes() ) {
-						ctx.getDslContext().insertInto(INVOICE_TAX_ACCOUNT)
-						.set(INVOICE_TAX_ACCOUNT.DOMAIN,detail.getDomain())
-						.set(INVOICE_TAX_ACCOUNT.INVOICE_TAX, tax.getId())
-						.set(INVOICE_TAX_ACCOUNT.ACCOUNT, tax.getAccount()!=null?tax.getAccount():detail.getAccount())
-						.execute();
-						ctx.log().debug("\t\tINSERT INVOICE_TAX_ACCOUNT");
-					}
+					AonCollectionUtils.stream( detail.getInvoiceTaxes() )
+						.forEach( tax -> {
+							ctx.getDslContext().insertInto(INVOICE_TAX_ACCOUNT)
+							.set(INVOICE_TAX_ACCOUNT.DOMAIN,detail.getDomain())
+							.set(INVOICE_TAX_ACCOUNT.INVOICE_TAX, tax.getId())
+							.set(INVOICE_TAX_ACCOUNT.ACCOUNT,
+									AonObjectUtils.ifNotNullOrElse( tax.getAccount(), () -> detail.getExpAccount().getId())
+								)
+							.execute();
+							ctx.log().debug("\t\tINSERT INVOICE_TAX_ACCOUNT");
+						});
 				} else {
-					ctx.log().debug("\t\tSKIPPING INVOICE TAX ACCOUNT CREATION ({0})",(detail.isPrepayment()?"PREPAYMENT":"UNDEDUCTIBLE INVOICE"));
+					ctx.log().debug("\t\tSKIPPING INVOICE TAX ACCOUNT CREATION ({0})",
+						(detail.isPrepayment()?"PREPAYMENT":"UNDEDUCTIBLE INVOICE"));
 				}
 			}
 			
-			@Override public void visitTedi(InvoiceDetail detail) {
-				if (detail.getAccount() != null) { 
-					ctx.getDslContext().insertInto(INVOICE_DETAIL_ACCOUNT)
-						.set(INVOICE_DETAIL_ACCOUNT.DOMAIN, detail.getDomain())
-						.set(INVOICE_DETAIL_ACCOUNT.INVOICE_DETAIL, detail.getId())
-						.set(INVOICE_DETAIL_ACCOUNT.ACCOUNT, detail.getAccount())
-						.execute();
-					if (detail.getInvoice().getType() != InvoiceType.UNDEDUCTIBLE && !detail.isPrepayment()) {
-						ctx.log().debug("\tINSERT INVOICE_DETAIL_ACCOUNT");
-						for (InvoiceTax tax : detail.getInvoiceTaxes() ) {
-						ctx.getDslContext().insertInto(INVOICE_TAX_ACCOUNT)
-							.set(INVOICE_TAX_ACCOUNT.DOMAIN,detail.getDomain())
-							.set(INVOICE_TAX_ACCOUNT.INVOICE_TAX, tax.getId())
-							.set(INVOICE_TAX_ACCOUNT.ACCOUNT, tax.getAccount()!=null?tax.getAccount():detail.getAccount())
-							.execute();
-						ctx.log().debug("\t\tINSERT INVOICE_TAX_ACCOUNT");
-						}
-					} else {
-						ctx.log().debug("\t\tSKIPPING INVOICE TAX ACCOUNT CREATION ({0})",(detail.isPrepayment()?"PREPAYMENT":"UNDEDUCTIBLE INVOICE"));
-					}
+			@Override 
+			public void visitAccount(InvoiceDetail detail) {
+				if (detail.getExpAccount() == null || detail.getExpAccount().getId() == null) {
+					throw new AonCoreException(AonError.ACCOUNT_ENTRY_NO_EXP_ACCOUNT.getMessage());
+				}
+				saveAcountingTables(detail);
+			}
+			
+			@Override 
+			public void visitTedi(InvoiceDetail detail) {
+				if (detail.getExpAccount() != null && detail.getExpAccount().getId() != null) { 
+					saveAcountingTables(detail);
 				}
 			}
 		});

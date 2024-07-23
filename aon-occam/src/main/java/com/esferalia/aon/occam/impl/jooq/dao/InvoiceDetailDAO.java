@@ -118,10 +118,18 @@ public class InvoiceDetailDAO {
         return getFullStream(ctx, filter).collect(Collectors.toCollection(LinkedList::new));
     }
 	
+	static Stream<InvoiceDetail> getDetails(AONContext ctx, Integer invoiceId) {  
+        return getFullStream(ctx, p -> p.getInvoiceProperty().eq(invoiceId));
+    }
+
 	public static InvoiceDetail get(AONContext ctx, InvoiceDetailFilter filter) {
-		return select(ctx, filter).limit(1)
-			.fetch().stream().map(new InvoiceDetailFiller())
-			.findFirst().orElse(new InvoiceDetail());
+		return select(ctx, filter)
+				.limit(1)
+				.fetch()
+				.stream()
+				.map(new InvoiceDetailFiller())
+				.findFirst()
+				.orElse(new InvoiceDetail());
 	}
 	
 	static List<InvoiceDetail> save(AONContext ctx, List<InvoiceDetail> invoiceDetails) {

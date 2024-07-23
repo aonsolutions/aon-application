@@ -693,20 +693,11 @@ public class InvoiceImport extends ImportUtils{
 							? ivs.get(j).getQuota() : 0.0)
 					.setWithholding(ivs.get(j).getRetentionQuota() != null
 							&& ivs.get(j).getRetentionQuota() != 0)
-					.setExpAccountId(expAccount.getId())
-					.setExpAccountCode(expAccount.getCode())
-					.setExpAccountDescription(expAccount.getDescription())
+					.setExpAccount(expAccount)
 						
-					.setOutputAccountCode(outputAccount.getCode())
-					.setOutputAccountDescription(outputAccount.getDescription())
-					.setOutputAccountId(outputAccount.getId())
-						
-					.setInputAccountCode(inputAccount.getCode())
-					.setInputAccountDescription(inputAccount.getDescription())
-					.setInputAccountId(inputAccount.getId())
-					.setAdjAccountCode(adjAccount != null ? adjAccount.getCode(): null)
-					.setAdjAccountDescription(adjAccount != null ? adjAccount.getDescription(): null)
-					.setAdjAccountId(adjAccount != null ? adjAccount.getId() : null);
+					.setOutputAccount(outputAccount)
+					.setInputAccount(inputAccount)
+					.setAdjAccount(adjAccount);
 				if(invoice.isUndeductible()) {
 					vat.setBase(ivs.get(j).getTotal());
 					vat.setPercentage(0.0);
@@ -1056,20 +1047,11 @@ public class InvoiceImport extends ImportUtils{
 							? aux.getQuota() : 0.0)
 					.setWithholding(aux.getRetentionQuota() != null
 							&& aux.getRetentionQuota() != 0)
-					.setExpAccountId(expAccount.getId())
-					.setExpAccountCode(expAccount.getCode())
-					.setExpAccountDescription(expAccount.getDescription())
+					.setExpAccount(expAccount)
 						
-					.setOutputAccountCode(outputAccount.getCode())
-					.setOutputAccountDescription(outputAccount.getDescription())
-					.setOutputAccountId(outputAccount.getId())
-						
-					.setInputAccountCode(inputAccount.getCode())
-					.setInputAccountDescription(inputAccount.getDescription())
-					.setInputAccountId(inputAccount.getId())
-					.setAdjAccountCode(adjAccount != null ? adjAccount.getCode(): null)
-					.setAdjAccountDescription(adjAccount != null ? adjAccount.getDescription(): null)
-					.setAdjAccountId(adjAccount != null ? adjAccount.getId() : null);
+					.setOutputAccount(outputAccount)
+					.setInputAccount(inputAccount)
+					.setAdjAccount(adjAccount);
 				if(invoice.isUndeductible()) {
 					vat.setBase(aux.getTotal());
 					vat.setPercentage(0.0);

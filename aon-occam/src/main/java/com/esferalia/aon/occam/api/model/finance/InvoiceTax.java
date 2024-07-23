@@ -5,6 +5,7 @@ import java.io.Serializable;
 import com.esferalia.aon.occam.api.model.type.TaxType;
 import com.esferalia.aon.occam.api.model.type.VatDeductionType;
 import com.esferalia.aon.occam.api.model.type.WithholdingType;
+import com.esferalia.aon.watson.util.AonMathUtils;
 
 public class InvoiceTax implements Serializable {
 
@@ -19,10 +20,9 @@ public class InvoiceTax implements Serializable {
 	private double surcharge;
 	private double surchargeQuota;
 	private VatDeductionType vatDeductionType;
-	private Integer investAsset;
 	private double deductiblePercent;
 	private double deductibleQuota;
-	private boolean withholding;
+	private double directTaxPercent;
 	private WithholdingType withholdingType;
 	
 	private Integer account;
@@ -34,6 +34,7 @@ public class InvoiceTax implements Serializable {
 		this.id = id;
 		return this;
 	}
+	
 	public Integer getDomain() {
 		return domain;
 	}
@@ -41,6 +42,7 @@ public class InvoiceTax implements Serializable {
 		this.domain = domain;
 		return this;
 	}
+	
 	public TaxType getTaxType() {
 		return taxType;
 	}
@@ -48,6 +50,7 @@ public class InvoiceTax implements Serializable {
 		this.taxType = taxType;
 		return this;
 	}
+	
 	public VatDeductionType getVatDeductionType() {
 		return vatDeductionType;
 	}
@@ -60,7 +63,6 @@ public class InvoiceTax implements Serializable {
 	public double getBase() {
 		return base;
 	}
-
 	public InvoiceTax setBase(double base) {
 		this.base = base;
 		return this;
@@ -69,7 +71,6 @@ public class InvoiceTax implements Serializable {
 	public double getPercentage() {
 		return percentage;
 	}
-
 	public InvoiceTax setPercentage(double percentage) {
 		this.percentage = percentage;
 		return this;
@@ -78,7 +79,6 @@ public class InvoiceTax implements Serializable {
 	public double getQuota() {
 		return quota;
 	}
-
 	public InvoiceTax setQuota(double quota) {
 		this.quota = quota;
 		return this;
@@ -87,7 +87,6 @@ public class InvoiceTax implements Serializable {
 	public double getSurcharge() {
 		return surcharge;
 	}
-
 	public InvoiceTax setSurcharge(double surcharge) {
 		this.surcharge = surcharge;
 		return this;
@@ -96,7 +95,6 @@ public class InvoiceTax implements Serializable {
 	public double getSurchargeQuota() {
 		return surchargeQuota;
 	}
-
 	public InvoiceTax setSurchargeQuota(double surchargeQuota) {
 		this.surchargeQuota = surchargeQuota;
 		return this;
@@ -105,38 +103,34 @@ public class InvoiceTax implements Serializable {
 	public double getDeductibleQuota() {
 		return deductibleQuota;
 	}
-
 	public InvoiceTax setDeductibleQuota(double deductibleQuota) {
 		this.deductibleQuota = deductibleQuota;
-		return this;
-	}
-	
-	public boolean isWithholding() {
-		return withholding;
-	}
-	public InvoiceTax setWithholding(boolean withholding) {
-		this.withholding = withholding;
-		return this;
-	}
-	
-	public Integer getInvestAsset() {
-		return investAsset;
-	}
-	
-	public InvoiceTax setInvestAsset(Integer investAsset) {
-		this.investAsset = investAsset;
 		return this;
 	}
 	
 	public double getDeductiblePercent() {
 		return deductiblePercent;
 	}
-
 	public InvoiceTax setDeductiblePercent(double deductiblePercent) {
 		this.deductiblePercent = deductiblePercent;
 		return this;
 	}
 	
+	public double getDirectTaxPercent() {
+		return directTaxPercent;
+	}
+	public void setDirectTaxPercent(double directTaxPercent) {
+		this.directTaxPercent = directTaxPercent;
+	}
+	
+	public double getDirectTaxNoDedExpenses() {
+		double percent = AonMathUtils.round(100 - this.directTaxPercent);
+		return AonMathUtils.round( this.base *  percent / 100);		
+	}
+	public double getDirectTaxDedExpenses() {
+		return AonMathUtils.round( getBase() - getDirectTaxNoDedExpenses() );
+	}
+
 	public WithholdingType getWithholdingType() {
 		return withholdingType;
 	}

@@ -145,7 +145,6 @@ public class BidoqRequest {
 	}
 	
 	public static AccountingInvoice selfconta2Aon(Domain domain, User user, JSONObject selfInvoice) {
-		System.out.println(selfInvoice.toString());
 		AccountingInvoice ai = new AccountingInvoice();
 		try {
 			AonConfiguration aonCtx = AON.getConfiguration(domain.getName(), domain.getId(), user.getLogin());
@@ -276,20 +275,11 @@ public class BidoqRequest {
 					.setDeductibleQuota(detail.getDouble("quotaVat"))
 					.setWithholding(detail.optJSONObject("irpf") != null)
 
-					.setExpAccountId(expAccount.getId())
-					.setExpAccountCode(expAccount.getCode())
-					.setExpAccountDescription(expAccount.getDescription())
+					.setExpAccount(expAccount)
 							
-					.setOutputAccountCode(outputAccount.getCode())
-					.setOutputAccountDescription(outputAccount.getDescription())
-					.setOutputAccountId(outputAccount.getId())
-							
-					.setInputAccountCode(inputAccount.getCode())
-					.setInputAccountDescription(inputAccount.getDescription())
-					.setInputAccountId(inputAccount.getId())
-					.setAdjAccountCode(adjAccount != null ? adjAccount.getCode(): null)
-					.setAdjAccountDescription(adjAccount != null ? adjAccount.getDescription(): null)
-					.setAdjAccountId(adjAccount != null ? adjAccount.getId() : null);
+					.setOutputAccount(outputAccount)
+					.setInputAccount(inputAccount)
+					.setAdjAccount(adjAccount);
 				
 				ai.addVat(vat);
 				
@@ -1344,7 +1334,6 @@ public class BidoqRequest {
 		
 
 		for (InvoiceDetail detail : invoice.getDetails()) {
-			detail.getAccount();
 
 			Account outputAccount = aonCtx.accounting().getDefaultChargedVatAccount();
 			if (outputAccount == null || outputAccount.getId() == null) {
@@ -1357,13 +1346,14 @@ public class BidoqRequest {
 			Account adjAccount = aonCtx.accounting().getVatNegativeAdjustAccount();
 
 			
-			Account expAccount = detail.getAccount() != null
-				? ACCOUNTING.getAccount(domain.getName(), domain.getId(), user.getLogin(), detail.getAccount())
-				: ACCOUNTING.getAccount(domain.getName(), domain.getId(), user.getLogin(), category);
+			Account expAccount = detail.getExpAccount();
+			if (expAccount == null) {
+				expAccount = ACCOUNTING.getAccount(domain.getName(), domain.getId(), user.getLogin(), category);
+			}
 			if (expAccount == null) {
 				expAccount = new Account().setCode(category)
-						.setDescription("SIN DESCRIPCIÓN (CREADO DESDE TEDI INVOICE)").setAlias("SIN DESCRIPCIÓN")
-						.setDomain(domain.getId()).setActive(true);
+					.setDescription("SIN DESCRIPCIÓN (CREADO DESDE TEDI INVOICE)").setAlias("SIN DESCRIPCIÓN")
+					.setDomain(domain.getId()).setActive(true);
 				checkNivelInferior(domain, user, category);
 				expAccount = ACCOUNTING.save(domain.getName(), domain.getId(), user.getLogin(), expAccount);
 			}
@@ -1382,21 +1372,13 @@ public class BidoqRequest {
 					// .setInvestAsset(ivs.get(j).getInvestAsset())
 					.setDeductiblePercent(detailTax.getDeductiblePercent())
 					.setDeductibleQuota(detailTax.getDeductibleQuota())
-					.setWithholding(detailTax.isWithholding())
+					.setWithholding(invoice.isWithholding())
 					
-					.setExpAccountId(expAccount.getId())
-					.setExpAccountCode(expAccount.getCode())
-					.setExpAccountDescription(expAccount.getDescription())
+					.setExpAccount(expAccount)
 
-					.setOutputAccountCode(outputAccount.getCode())
-					.setOutputAccountDescription(outputAccount.getDescription())
-					.setOutputAccountId(outputAccount.getId())
-
-					.setInputAccountCode(inputAccount.getCode())
-					.setInputAccountDescription(inputAccount.getDescription()).setInputAccountId(inputAccount.getId())
-					.setAdjAccountCode(adjAccount != null ? adjAccount.getCode() : null)
-					.setAdjAccountDescription(adjAccount != null ? adjAccount.getDescription() : null)
-					.setAdjAccountId(adjAccount != null ? adjAccount.getId() : null);
+					.setOutputAccount(outputAccount)
+					.setInputAccount(inputAccount)
+					.setAdjAccount(adjAccount);
 
 			ai.addVat(vat);
 		}

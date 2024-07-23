@@ -243,6 +243,7 @@ public class TediParser {
 			Account outputAccount = aonCtx.accounting().getDefaultChargedVatAccount();
 			Account inputAccount = aonCtx.accounting().getDefaultPaidVatAccount();
 			Account adjAccount = aonCtx.accounting().getVatNegativeAdjustAccount();
+			Account adjDirectTaxAccount = aonCtx.accounting().getDirectTaxAdjustAccount();
 			Account expAccount = null;
 			if (invoice.isSales() ) {
 				expAccount = getSalesAccount( ctx,aonCtx,result);
@@ -259,11 +260,11 @@ public class TediParser {
 					if (detail.getInvoiceTaxes() != null && detail.getInvoiceTaxes().size() > 0) {
 						for (InvoiceTax tax : detail.getInvoiceTaxes()) {
 							if (tax.getTaxType() == TaxType.VAT) {
-								vat = getInvoiceVAT( detail, tax,outputAccount,inputAccount,adjAccount,expAccount, withholding);					
+								vat = getInvoiceVAT( detail, tax,outputAccount,inputAccount,adjAccount,adjDirectTaxAccount,expAccount, withholding);					
 							}
 						}
 					} else {
-						vat = getInvoiceVAT( detail, new InvoiceTax(),outputAccount,inputAccount,adjAccount,expAccount, withholding);
+						vat = getInvoiceVAT( detail, new InvoiceTax(),outputAccount,inputAccount,adjAccount,adjDirectTaxAccount,expAccount, withholding);
 					}
 					ai.addVat(vat);
 				}
@@ -271,7 +272,7 @@ public class TediParser {
 		}
 	}
 	
-	private static InvoiceVAT getInvoiceVAT( InvoiceDetail detail, InvoiceTax tax,Account outputAccount,Account inputAccount,Account adjAccount,Account expAccount, boolean withholding) {
+	private static InvoiceVAT getInvoiceVAT( InvoiceDetail detail, InvoiceTax tax,Account outputAccount,Account inputAccount,Account adjAccount,Account adjDirectTaxAccount, Account expAccount, boolean withholding) {
 		return new InvoiceVAT()
 				.setVatDeductionType(VatDeductionType.WITH_RIGHT)
 				.setBase(detail.getTaxableBase())
@@ -279,25 +280,17 @@ public class TediParser {
 				.setQuota(tax.getQuota())
 				.setSurcharge(tax.getSurcharge())
 				.setSurchargeQuota(tax.getSurchargeQuota())
-				.setInvestAsset(tax.getInvestAsset())
+				.setInvestAsset(detail.getInvestAsset())
 				.setDeductiblePercent(tax.getDeductiblePercent())
 				.setDeductibleQuota(tax.getDeductibleQuota()).setWithholding(withholding)
 
-				.setOutputAccountId(outputAccount == null ? null : outputAccount.getId())
-				.setOutputAccountCode(outputAccount == null ? null : outputAccount.getCode())
-				.setOutputAccountDescription(outputAccount == null ? null : outputAccount.getDescription())
+				.setOutputAccount(outputAccount)
+				.setInputAccount(inputAccount)
+				.setAdjAccount(adjAccount)
+				.setAdjDirectTaxAccount( adjDirectTaxAccount )
 
-				.setInputAccountId(inputAccount == null ? null : inputAccount.getId())
-				.setInputAccountCode(inputAccount == null ? null : inputAccount.getCode())
-				.setInputAccountDescription(inputAccount == null ? null : inputAccount.getDescription())
-
-				.setAdjAccountId(adjAccount == null ? null : adjAccount.getId())
-				.setAdjAccountCode(adjAccount == null ? null : adjAccount.getCode())
-				.setAdjAccountDescription(adjAccount == null ? null : adjAccount.getDescription())
-
-				.setExpAccountId(expAccount == null ? null : expAccount.getId())
-				.setExpAccountCode(expAccount == null ? null : expAccount.getCode())
-				.setExpAccountDescription(expAccount == null ? null : expAccount.getDescription());
+				.setExpAccount(expAccount)
+				;
 	}
 	
 	private static Account getSalesAccount(AONContext ctx, AonConfiguration aonCtx, TediResult result) {
