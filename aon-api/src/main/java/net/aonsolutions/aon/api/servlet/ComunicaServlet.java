@@ -254,8 +254,7 @@ public class ComunicaServlet extends AonApiHttpServlet{
 			defaultSet.add(ctaCti);
 			
 			map.put(regime, defaultSet);
-        });	
-			    
+        });
 	    return ServicioREDEmployee.getTotalEmployees(certificate.getData(), certificate.getPassword(), certificate.getType(), map);
 	}
 	
@@ -307,8 +306,13 @@ public class ComunicaServlet extends AonApiHttpServlet{
 	
 	private JSONArray getContractType() {
 		 JSONArray arr = new JSONArray();
-		for( Entry<Integer, ContractTypeRecord> contractType : new ContractType().getContractTypes().entrySet()) 
-			arr.put(new JSONObject().put(IJsonNames.VALUE, contractType.getKey()).put(IJsonNames.NAME, contractType.getValue()));
+		for( Entry<Integer, ContractTypeRecord> contractType : new ContractType().getContractTypes().entrySet())
+			arr.put(
+					new JSONObject()
+					.put(IJsonNames.VALUE, contractType.getKey())
+					.put(IJsonNames.NAME, contractType.getValue().getContractTypeDescription())
+					.put("shortValue", contractType.getValue().getContractTypeShortDescription())
+					);
 		return arr;
 	}
 	

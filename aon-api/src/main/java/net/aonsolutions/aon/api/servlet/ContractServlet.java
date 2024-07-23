@@ -40,7 +40,7 @@ public class ContractServlet extends AonApiHttpServlet {
 	public static final String EMPLOYEE_SALARY = "/salary";
 	public static final String EMPLOYEE_SALARY_COUNT = "/salary_count";
 	public static final String WORKPLACE = "/workplace";
-	public static final String CCC = "/CCC";
+	public static final String CCC = "/ccc";
 	
 	
 	@Override
