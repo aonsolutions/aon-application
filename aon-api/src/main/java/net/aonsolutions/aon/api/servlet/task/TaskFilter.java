@@ -63,7 +63,7 @@ public class TaskFilter {
 			}
 		}
 		
-		if(source_id != null) {
+		if(source_id != null && source_id != 0) {
 			filter = filter.and(f.getSourceIdProperty().eq(source_id));
 		}
 		
