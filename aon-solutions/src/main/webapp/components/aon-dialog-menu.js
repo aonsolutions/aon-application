@@ -15,6 +15,8 @@ export class AonDialogMenu extends AonElement {
 	INITIAL_DRAG_Y;
 	START_TOP;
 	Y_DRAG;
+	
+	dialog;
 
 	get id() {
 		return this.getAttribute(CONSTANT.ID);
@@ -33,8 +35,9 @@ export class AonDialogMenu extends AonElement {
 	}
 
 
-	constructor () {
+	constructor (dialog) {
 		super();
+		this.dialog = dialog;
 	}
 
 	connectedCallback () {
@@ -66,12 +69,15 @@ export class AonDialogMenu extends AonElement {
 	}
 
 	buildDesktop() {
-		let dialog = this.createElement(TAG.DIV);
-		dialog.id = this.DIALOG;
-		dialog.className = `aonDialog`;
-		dialog.style.backgroundColor = 'transparent';
-		dialog.style.paddingTop = '0px';
-		this.appendChild(dialog);
+		let dialog = this.getDialog();
+		if (  dialog == null ) { 
+			dialog = this.createElement(TAG.DIV);
+			dialog.id = this.DIALOG;
+			dialog.className = `aonDialog`;
+			dialog.style.backgroundColor = 'transparent';
+			dialog.style.paddingTop = '0px';
+			this.appendChild(dialog);
+		}
 
 		let content = this.createElement(TAG.DIV);
 		content.id = this.CONTENT;
@@ -164,6 +170,7 @@ export class AonDialogMenu extends AonElement {
 			}, 1);
 		} else {
 			dialog.style.display = 'block';
+			this.getContent().style.display = 'block';
 		}
 	}
 
@@ -173,6 +180,7 @@ export class AonDialogMenu extends AonElement {
 			if(this.getBody()) this.getBody().innerHTML = '';
 		} else {
 			this.getContent().innerHTML = '';
+			this.getContent().style.display = 'none';
 		}
 	}
 
@@ -190,7 +198,7 @@ export class AonDialogMenu extends AonElement {
 			this.clear();
 		}
 	}
-
+	
 	setContentHTML(html) {
 		let content = this.isMobile() ? this.getBody() : this.getContent();
 		content.innerHTML = html;
@@ -201,7 +209,7 @@ export class AonDialogMenu extends AonElement {
 		content.innerHTML = "";
 		if(!this.isMobile() && top && left) {
 			content.style.top = top + 'px' || '90px';
-			content.style.left = (left > (this.getDialog().offsetWidth/2) ? left - 180 : left)+'px' ;	
+			content.style.left = (left > (window.innerWidth/2) ? left - 180 : left)+'px' ;	
 		}
 		if(element){
 			content.appendChild(element);
@@ -217,7 +225,7 @@ export class AonDialogMenu extends AonElement {
 	}
 
 	getDialog() {
-		return this.getElement(this.DIALOG);
+		return this.dialog ?? this.getElement(this.DIALOG);
 	}
 
 	getHeader(){
@@ -282,7 +290,7 @@ export class AonDialogMenu extends AonElement {
 			let content = this.getContent();
 
   			content.style.top = top + 'px' || '90px';
-			content.style.left = (left > (dialog.offsetWidth/2) ? left - 180 : left)+'px' ;
+			content.style.left = (left > (window.innerWidth/2) ? left - 180 : left)+'px' ;
 
 			content.innerHTML = '';
 			let ul = document.createElement(TAG.UL);
@@ -297,25 +305,27 @@ export class AonDialogMenu extends AonElement {
 				ul.appendChild(li);
 
 				if(item.options) {
-					let d = new AonDialogMenu();
+					let d = new AonDialogMenu(dialog);
 					d.id = 'newDialog';
-					this.getElement('rootPanel').appendChild(d);
+					this.appendChild(d);
 					li.addEventListener(EVENT.MOUSEOVER, () => {
 						const rect = li.getBoundingClientRect();
-						d.setMenuOptions(item.options, rect.top, rect.left - 12);
-						d.getContent().addEventListener(EVENT.MOUSELEAVE, () => {
-							d.close();
+						d.setMenuOptions(item.options, rect.top, rect.right);
+						d.getContent().addEventListener(EVENT.MOUSELEAVE, (e) => {
+							// out of submenu but inside option
+							if ( !this.isElementAt(e, li) ){
+								d.clear();
+								
+							}
 						});
-						d.getDialog().addEventListener(EVENT.MOUSEOVER, (e) => {
-							let isClickInside = d.getContent().contains(e.target) || d.getContent() === e.target;
-					   	 	if (!isClickInside) d.close();
-						})
 						d.open();
 					});
 
 					li.addEventListener(EVENT.MOUSELEAVE, (e) => {
-						let isClickInside = li.contains(e.target) || li === e.target || d.contains(e.target) || d === e.target;
-					    if (!isClickInside) d.close();
+						// out of option but inside submenu 
+						if ( !this.isElementAt(e, d.getContent() ) ){
+							d.clear();
+						}
 					});
 
 				}
@@ -401,6 +411,20 @@ export class AonDialogMenu extends AonElement {
 		span.style.textAlign = 'center';
 		span.innerHTML = button.title; 
 		icon.appendChild(span);
+	}
+	
+	isElementAt(ev, el){
+		const viewportX = ev.clientX;
+		const viewportY = ev.clientY;
+		let elements = document.elementsFromPoint(viewportX, viewportY);
+		for ( let element of elements ){
+			console.log(element.tagName + ": "  + (element === el));
+			if ( element === el ){
+				return true;
+			}
+				
+		}		
+		return false;
 	}
 
 }
