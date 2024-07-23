@@ -52,6 +52,9 @@ public class TaskHolderServlet extends AonApiHttpServlet{
 			case "/list":
 				response(req, resp, getTaskHolders(api));
 				break;
+			case "/employee":
+				response(req, resp, getTaskHolderEmployee(api));
+				break;
 			case "/enterprise":
 				response(req, resp, getTaskHoldersEnterprise(api));
 				break;
@@ -123,6 +126,27 @@ public class TaskHolderServlet extends AonApiHttpServlet{
 			json.put("domain_id", th.getDomain().getId());
 			json.put("domain_name", th.getDomain().getName());
 			array.put(json);
+		});
+		return array;
+	}
+	
+	private JSONArray getTaskHolderEmployee(AonApiData api) {
+		Domain domain = api.getDomain();
+		JSONArray array = new JSONArray();
+		Integer page = api.getData().has(IJsonNames.PAGE) ? api.getData().optInt(IJsonNames.PAGE) : null;
+		Integer perPage = api.getData().has(IJsonNames.PER_PAGE) ? api.getData().optInt(IJsonNames.PER_PAGE) : null;
+		AON.getTaskHolderEmployee(domain.getName(), domain.getId(), api.getUser().getLogin(), 
+				f -> f.getDomainProperty().eq(domain.getId()), page, perPage)
+			.forEach(th->{
+				JSONObject json = new JSONObject();
+				json.put("id", th.getId());
+				json.put("name", th.getName());
+				json.put("alias", th.getAlias());
+				json.put("document", th.getDocument());
+				json.put("company", th.getDomain().getDescription());
+				json.put("domain_id", th.getDomain().getId());
+				json.put("domain_name", th.getDomain().getName());
+				array.put(json);
 		});
 		return array;
 	}

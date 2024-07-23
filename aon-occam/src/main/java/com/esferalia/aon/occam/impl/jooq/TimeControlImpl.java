@@ -23,6 +23,12 @@ public class TimeControlImpl implements ITimeControl {
 		return ctx.getDslContext().transactionResult(
 				configuration -> TimeControlDAO.getTimeControlStream(ctx, startDate, endDate));
 	}
+	
+	@Override
+	public Stream<TimeControl> getTimeControlEmployeeStream(AONContext ctx, Date startDate, Date endDate, Integer page, Integer perPage) {
+		return ctx.getDslContext().transactionResult(
+				configuration -> TimeControlDAO.getTimeControlEmployeeStream(ctx, startDate, endDate, page, perPage));
+	}
 
 	@Override
 	public Stream<TimeControl> getTaskHolderTimeControlStream(AONContext ctx, Integer taskHolderId, Date startDate, Date endDate, TimeControlGroup group) {

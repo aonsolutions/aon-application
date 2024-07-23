@@ -48,6 +48,7 @@ public class TaskFilter {
 		String source      = params.optString(IJsonNames.SOURCE);
 		Integer taskHolder = params.optInt(IJsonNames.TASK_HOLDER);
 		Integer tag        = params.optInt(IJsonNames.TAG);
+		Integer source_id  = params.optInt(IJsonNames.SOURCE_ID);
 
 		Filter filter = f.getDomainProperty().eq(domain.getId());
 		
@@ -60,6 +61,10 @@ public class TaskFilter {
 			} else {				
 				filter = filter.and(f.getStatusProperty().in(PENDING));
 			}
+		}
+		
+		if(source_id != null) {
+			filter = filter.and(f.getSourceIdProperty().eq(source_id));
 		}
 		
 		if(!params.optString(START_DATE).isEmpty() && !params.optString(END_DATE).isEmpty()) {

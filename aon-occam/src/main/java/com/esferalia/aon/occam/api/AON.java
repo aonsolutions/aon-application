@@ -6675,6 +6675,16 @@ public class AON {
 		}
 	}
 	
+	public static Stream<TaskHolder> getTaskHolderEmployee(String domainName, Integer domainId, String login, TaskHolderFilter filter, Integer page, Integer perPage){
+		CloseableAONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			return getTask().getTaskHolderEmployee(ctx, filter, page, perPage);
+		} finally {
+			if (ctx != null) ctx.close();
+		}
+	}
+	
 	public static Stream<TaskHolder> getTaskHolderWorkgroupStream(Domain domain, User user, TaskHolderFilter filter, Integer workgroupId){
 		try (CloseableAONContext ctx = AONContext.getAONContext(domain, user)){
 			return getTask().getTaskHolderWorkgroupStream(ctx, filter, workgroupId);

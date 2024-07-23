@@ -25,11 +25,13 @@ import org.jooq.Condition;
 import org.jooq.Record;
 import org.jooq.Record4;
 import org.jooq.Select;
+import org.jooq.SelectConditionStep;
 import org.jooq.SelectJoinStep;
 import org.jooq.SortField;
 import org.jooq.TableField;
 import org.jooq.impl.DSL;
 
+import com.esferalia.aon.jooq.tables.UserAppRole;
 import com.esferalia.aon.jooq.tables.records.TagRecord;
 import com.esferalia.aon.jooq.tables.records.TaskCommentRecord;
 import com.esferalia.aon.jooq.tables.records.TaskEventRecord;
@@ -53,6 +55,7 @@ import com.esferalia.aon.occam.api.model.Properties.TaskHolderWorkgroupPropertie
 import com.esferalia.aon.occam.api.model.Properties.TaskProperties;
 import com.esferalia.aon.occam.api.model.Properties.TaskTagProperties;
 import com.esferalia.aon.occam.api.model.Workgroup;
+import com.esferalia.aon.occam.api.model.aonsolutions.AonRole;
 import com.esferalia.aon.occam.api.model.office.Tag;
 import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.security.User;
@@ -780,6 +783,18 @@ public class TaskOldDAO {
 				.join(DOMAIN).on(DOMAIN.ID.eq(TASK_HOLDER.DOMAIN))
 				.where(TASK_HOLDER_PROPERTIES.getConditions(filter))
 				.fetch().stream().map(new TaskHolderFiller());
+	}
+	
+	public static Stream<TaskHolder> getTaskHolderEmployee(AONContext ctx, TaskHolderFilter filter, Integer page, Integer perPage){
+		SelectConditionStep<Record> query = ctx.getDslContext().select()
+				.from(TASK_HOLDER).join(REGISTRY).on(REGISTRY.ID.eq(TASK_HOLDER.REGISTRY))
+				.join(UserAppRole.USER_APP_ROLE).on(UserAppRole.USER_APP_ROLE.USER_ID.eq(TASK_HOLDER.USER_ID))
+				.join(DOMAIN).on(DOMAIN.ID.eq(TASK_HOLDER.DOMAIN))
+				.where(TASK_HOLDER_PROPERTIES.getConditions(filter))
+				.and(UserAppRole.USER_APP_ROLE.ROLE.eq(AonRole.EMPLOYEE.value()));
+		if(page != null && perPage != null)
+			query.limit(perPage).offset(perPage * (page -1));
+		return query.fetch().stream().map(new TaskHolderFiller());
 	}
 	
 	@Deprecated
