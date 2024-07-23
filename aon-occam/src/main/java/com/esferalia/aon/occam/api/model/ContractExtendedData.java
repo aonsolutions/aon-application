@@ -20,6 +20,16 @@ public class ContractExtendedData extends Contract {
 	String occupation;
 	String cno;
 	String rlce;
+	String workerCollective;
+
+	public String getWorkerCollective() {
+		return workerCollective;
+	}
+
+	public ContractExtendedData setWorkerCollective(String workerCollective) {
+		this.workerCollective = workerCollective;
+		return this;
+	}
 
 	public ContractExtendedData(){
 		super();

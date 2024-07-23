@@ -201,11 +201,9 @@ public class ContractServlet extends AonApiHttpServlet {
 	
 	private static JSONObject getContractById(AonApiData api) {
 		LOGGER.info("GET BY ID METHOD");
-//		   Integer contractId = 29037;
-		   Integer contractId = api.getData().optInt("contractId");
+		Integer contractId = api.getData().optInt("contractId");   
 		ContractExtendedData contract = PAYROLL.getContractByid(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(),
 				f -> buildFilter(f, api) ,contractId);
-
 		return toJSONContractId(contract);
 	}
 	
@@ -234,16 +232,17 @@ public class ContractServlet extends AonApiHttpServlet {
 		.put(IJsonNames.END_DATE, data.getEndDate())
 		.put(IJsonNames.WORKPLACE, data.getWorkplace())
 		.put(IJsonNames.NAME, data.getPersonName())
+		.put(IJsonNames.DOCUMENT, data.getPersonDocument())
 		.put("first_surname", data.getPersonFirstName())
 		.put("second_surname", data.getPersonSecondName())
-		.put(IJsonNames.TYPE, data.getContractType() != null ? data.getContractType().replace("\"", "") : "")
-		.put(IJsonNames.DOCUMENT, data.getPersonDocument())
-		.put("time", data.getTotalMarksLastMonth() != null ? data.getTotalMarksLastMonth().longValue() : 0)
-		.put("quote_group", data.getQuoteGroup() != null ? data.getQuoteGroup().replace("\"", "") : "")
 		.put("enterprise_ccc", data.getEnterpriseCCC())
-		.put("social_security_number", data.getPersonSsNumber())
+		.put("nss", data.getPersonSsNumber())
 		.put("category", data.getCategoryDescription())
-		.put("cno", data.getCno())
-		.put("RLCE", data.getRlce());
+		.put(IJsonNames.TYPE, data.getContractType() != null ? data.getContractType().replaceAll("\"", "") : null)
+		.put("occupation", data.getOccupation() != null ? data.getOccupation().replaceAll("\"", "") : null)
+		.put("quote_group", data.getQuoteGroup() != null ? data.getQuoteGroup().replaceAll("\"", "") : null)
+		.put("cno", data.getCno() != null ? data.getCno().replaceAll("\"", "") : null)
+		.put("rlce", data.getRlce() != null ? data.getRlce().replaceAll("\"", "") : null)
+		.put("worker_collective", data.getWorkerCollective() != null ? data.getWorkerCollective().replaceAll("\"", "") : null);
 	}
 }
