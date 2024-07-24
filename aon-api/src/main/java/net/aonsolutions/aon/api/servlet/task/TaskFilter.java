@@ -51,7 +51,6 @@ public class TaskFilter {
 		Integer source_id  = params.optInt(IJsonNames.SOURCE_ID);
 
 		Filter filter = f.getDomainProperty().eq(domain.getId());
-		
 		if(!status.isEmpty() && !TaskStatus.safeValueOf(status).equals(TaskStatus.PENDING) ) {
 			filter = filter.and(f.getStatusProperty().eq(TaskStatus.safeValueOf(status).value()));
 		} else {	
@@ -72,7 +71,6 @@ public class TaskFilter {
 			Timestamp endDate = new Timestamp(getEndOfDay(AonDateUtils.parse(params.optString(END_DATE), FORMAT_DATE)));
 			filter = filter.and(f.getStartDateProperty().ge(startDate).and(f.getStartDateProperty().le(endDate)));
 		}
-		
 		if(isParent) {
 			filter = filter.and(f.getParentProperty().isNull());
 			return filter;
@@ -110,6 +108,7 @@ public class TaskFilter {
 			} else {
 
 				if(taskHolder!=0 && sender!=0) {
+					filter = filter.and(f.getSenderProperty().eq(sender).or(f.getTaskHolderProperty().eq(taskHolder)));
 				} else if(taskHolder!=0) { //----------RECIBIDAS
 					filter = filter.and( f.getSenderProperty().isNotNull());
 				} else if(sender!=0) {//----------ENVIADAS

@@ -149,13 +149,11 @@ public class TaskDAO {
 	}
 	
 
-	public static Stream<Task> getStream(AONContext ctx, TaskFilter filter){	
-		System.out.println("getStream");
+	public static Stream<Task> getStream(AONContext ctx, TaskFilter filter){
 		return getStream(ctx, filter, Optional.empty(), Optional.empty());
 	}
 	
-	public static Stream<Task> getStream(AONContext ctx, TaskFilter filter, Integer page, Integer perPage){	
-		System.out.println("getStream page perPage");
+	public static Stream<Task> getStream(AONContext ctx, TaskFilter filter, Integer page, Integer perPage){
 		return getStream(ctx, filter, Optional.of(page), Optional.of(perPage));
 	}
 	
@@ -168,7 +166,6 @@ public class TaskDAO {
 	}
 	
 	public static Task getTaskAndChilds(AONContext ctx, TaskFilter filter) {
-		System.out.println("getTaskAndChilds");
 		ctx.checkRead();
 
 		Task task = getTaskAndChildsStream(ctx, filter).findFirst().orElse(new Task());
@@ -179,7 +176,6 @@ public class TaskDAO {
 	}
 	
 	public static Stream<Task> getTaskAndChildsStream(AONContext ctx, TaskFilter filter, Integer page, Integer perPage) {
-		System.out.println("getTaskAndChildsStream page perPage");
 		ctx.checkRead();
 		return getTaskAndChildsStream(ctx, filter, Optional.of(page), Optional.of(perPage));
 	}
@@ -219,6 +215,17 @@ public class TaskDAO {
 		}
 		
 		return tasks.stream();
+	}
+	
+	public static Stream<Task> getTaskListStream(AONContext ctx, TaskFilter filter, Integer page, Integer perPage) {
+		SelectHavingStep<Record> query = selects(getFields(ctx.getDslContext())) 
+				.where(new TaskPropertiesDAO().getConditions(filter))
+		.groupBy(TASK.ID, TAG.ID, DOMAIN.ID);
+		if(page != 0 && perPage != 0)
+			query.limit(perPage).offset(perPage * (page -1));
+	    Map<Task, List<Tag>> taskMaps = query.fetchGroups(new TaskFiller()::apply, new TagFiller()::apply);
+		taskMaps.forEach((task, tags) -> tags.forEach(task::addTag) );
+		return taskMaps.keySet().stream();
 	}
 
 	public static Task save(AONContext ctx, Task task) {
@@ -359,8 +366,6 @@ public class TaskDAO {
 			)
 		)
 		.groupBy(TASK.ID, TAG.ID, DOMAIN.ID);
-	
-		System.out.println("getStream "+page+" "+perPage);
 			
 	    Map<Task, List<Tag>> taskMaps = query.fetchGroups(new TaskFiller()::apply, new TagFiller()::apply);
 		
@@ -377,10 +382,6 @@ public class TaskDAO {
 			)
 		)
 		.groupBy(TASK.ID, TAG.ID, DOMAIN.ID);
-	   
-		System.out.println("getParentOrChildStream "+page+" "+perPage);
-		
-		System.out.println(query.getSQL());
 		
 		Map<Task, List<Tag>> taskMaps = query.fetchGroups(new TaskFiller()::apply, new TagFiller()::apply);
 		
@@ -637,7 +638,6 @@ public class TaskDAO {
 		SelectConditionStep<Record1<Integer>> query = 
 		selects(ctx.getDslContext().select(TASK.ID))
 		.where(condition);
-	
 		if(page.isPresent() && perPage.isPresent()) {
 			Integer per = perPage.get();
 			Integer p = page.get();

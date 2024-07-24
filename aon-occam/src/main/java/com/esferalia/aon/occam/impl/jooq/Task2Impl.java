@@ -50,6 +50,12 @@ public class Task2Impl implements ITask2 {
 		return ctx.getDslContext().transactionResult(configuration -> 
 			TaskDAO.getStream(ctx, filter, page, perPage));	
 	}
+	
+	@Override
+	public Stream<Task> getTaskListStream(AONContext ctx, TaskFilter filter, Integer page, Integer perPage) {
+		return ctx.getDslContext().transactionResult(configuration -> 
+			TaskDAO.getTaskListStream(ctx, filter, page, perPage));	
+	}
 
 	@Override
 	public Stream<Task> getTaskParentOrChildStream(AONContext ctx, TaskFilter filter) {
