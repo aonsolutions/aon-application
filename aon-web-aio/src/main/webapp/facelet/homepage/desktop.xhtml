@@ -181,7 +181,9 @@
 		id="refreshCount" 
 		name="refreshCount"
 		reRender="summaryControlPortlet"
-		actionListener="#{domainSwitcher.refreshCount}"  
+		data="#{domainSwitcher.summaryCount}"
+		action="#{domainSwitcher.refreshSummaryCount}"
+		oncomplete="if ( data > 0 ) expandMenuPortlet(#{rich:element('summaryControlPortletButton')});"  
 		>
 		</a4j:jsFunction>
 
