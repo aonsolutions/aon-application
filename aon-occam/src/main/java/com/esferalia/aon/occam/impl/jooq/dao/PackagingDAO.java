@@ -50,7 +50,6 @@ public class PackagingDAO {
 	
 	}
 	
-
 	public static DeliveryPackaging getDeliveryPackaging(AONContext ctx, String sscc, Integer delivery, Integer product){
 		Item container = ItemDAO.getFull(ctx, f -> 
 			f.getDomainProperty().eq(ctx.getDomainId())
@@ -246,9 +245,9 @@ public class PackagingDAO {
 					.setItem(container));
 		}
 		
+		List<ItemComposition> list = new LinkedList<>();
 		for (PackagingDeliveryContent content : packaging.getContent()) {
 			if(content.getSource() != null) {
-				List<ItemComposition> list = new LinkedList<>();
 				Integer containerId = container.getId();
 				content.getComposition().stream().forEach(c -> {
 					Item item = ItemDAO.get(ctx, c.getCompositionItemId());
@@ -273,10 +272,10 @@ public class PackagingDAO {
 						// update itemcomposition
 						ItemCompositionDAO.save(ctx, ic.setQuantity(q));
 					}
-				});
-				container.setItemComposition(list);		
+				});		
 			}
 		}
+		container.setItemComposition(list);
 
 
 		// RESTAR STOCK!

@@ -483,7 +483,6 @@ export class AonMobileDelivery extends AonElement {
 		}
 	}
 
-
 	sourceDialog(detail) {
 		let id = this.id + 'SourceDialog';
 		let dialog = this.getElement(id);
@@ -505,13 +504,22 @@ export class AonMobileDelivery extends AonElement {
 		let product = this.createInput(this.PACKAGING_SOURCE_PRODUCT, "Envase Origen");
 		product.id = id + 'Envase';
 		table.addCell(product);
-		product.addIconButton(MATERIAL_ICONS.QR_CODE_SCANNER, () => this.openBarcode(product));
+		product.addIcon(MATERIAL_ICONS.QR_CODE_SCANNER, undefined,() => this.openBarcode(product));
 	
 		let source;
 		let quantity = 0;
 		let composition = [];
-		product.addEventListener(EVENT.CHANGE, () => {
-			product.setDisabled(true);
+
+		let magicButton = new AonIconButton();
+		magicButton.id = this.id + 'MagicButton';
+		magicButton.title = "magia";
+		magicButton.icon = MATERIAL_ICONS.AUTO_FIX_HIGH;
+		magicButton.addEventListener(EVENT.CLICK, () => {
+			alert("MAGIA")
+		});
+		table.addCell(magicButton);
+
+		dialog.addAcceptAction(() => {
 			let data = { 
 				sscc: product.value,
 				product: detail.item.product.id
@@ -537,53 +545,42 @@ export class AonMobileDelivery extends AonElement {
 					}
 				});
 				source = r.item.id;
+				
+				if(!this.packaging.content || this.packaging.content.filter(f => f.source === source).length == 0) {
+					let contentObject = {
+						source,
+						composition
+					};
+					composition.forEach(c => {
+						// alert(JSON.stringify(c));
+						let table2 = this.getElement(this.id + 'Envasesss22');
+						table2.addRow();
+						let span = this.createSpan();
+						span.innerHTML = detail.item.product.code + ' #' + c.composition.serialNumber;
+						table2.addCell(span);
+						let span2 = this.createSpan();
+						span2.innerHTML = c.quantity;
+						table2.addCell(span2);
+					});
+	
+					if(this.packaging.content) {
+						this.packaging.content.push(contentObject);
+					} else this.packaging.content = [contentObject];
+		
+					// alert(JSON.stringify(this.packaging.content));
+					for(let j = 0; j < this.salesDetails.length; j++) {
+						if(this.salesDetails[j].id === detail.id) {
+							this.salesDetails[j].delivered = this.salesDetails[j].delivered + quantity;
+						}
+					}		
+	
+					this.buildPendingTable(this.getElement(this.id + 'PendingTable'));
+				} else this.showError("El palet ya etá añadido.");
 			}).catch(e => {
 				product.value = "";
 				product.setDisabled(false);
 				this.showError(e);
 			});
-		});
-
-		let magicButton = new AonIconButton();
-		magicButton.id = this.id + 'MagicButton';
-		magicButton.title = "magia";
-		magicButton.icon = MATERIAL_ICONS.AUTO_FIX_HIGH;
-		magicButton.addEventListener(EVENT.CLICK, () => {
-			alert("MAGIA")
-		});
-		table.addCell(magicButton);
-
-		dialog.addAcceptAction(() => {
-			if(source) {
-				let contentObject = {
-					source,
-					composition
-				};
-				composition.forEach(c => {
-					// alert(JSON.stringify(c));
-					let table2 = this.getElement(this.id + 'Envasesss22');
-					table2.addRow();
-					let span = this.createSpan();
-					span.innerHTML = detail.item.product.code + ' #' + c.composition.serialNumber;
-					table2.addCell(span);
-					let span2 = this.createSpan();
-					span2.innerHTML = c.quantity;
-					table2.addCell(span2);
-				});
-
-				if(this.packaging.content) {
-					this.packaging.content.push(contentObject);
-				} else this.packaging.content = [contentObject];
-	
-				// alert(JSON.stringify(this.packaging.content));
-				for(let j = 0; j < this.salesDetails.length; j++) {
-					if(this.salesDetails[j].id === detail.id) {
-						this.salesDetails[j].delivered = this.salesDetails[j].delivered + quantity;
-					}
-				}		
-
-				this.buildPendingTable(this.getElement(this.id + 'PendingTable'));
-			}
 		});
 		dialog.open();
 	}
