@@ -298,7 +298,7 @@ export class AonComunicaUtils extends AonElement {
 
     application.startLoader();
 
-    GWT.load(module, application.CONTENT);
+    GWT.iLoad(module, application.CONTENT);
 
     waitEl(`#${application.CONTENT} .aon_toolbar`).finally(() => {
       application.stopLoader();

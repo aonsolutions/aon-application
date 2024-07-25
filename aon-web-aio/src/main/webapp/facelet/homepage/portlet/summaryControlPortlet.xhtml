@@ -10,9 +10,6 @@
 	<style>
 	</style>
 
-	<script type='text/javascript' >
-	</script>
-	
 	
 	<aon:div id="summaryControlPortlet" styleClass="aon-portlet">
 		<aon:div 
@@ -25,30 +22,34 @@
 			<aon:outputText value="RESUMEN DE ACTIVIDADES" />
 		</aon:div>
 		
-		<aon:div styleClass="aon-portlet-body aon-box-outstanding2" style="display:none">
+		<aon:div styleClass="aon-portlet-body aon-box-outstanding2" >
 			<aon:div 
 				id="summaryMenuPortlet" >
 				<aon:div styleClass="aon-direct-access-list">
-					<aon:div styleClass="aon-direct-access-list-element aon-align-left ">
+					<aon:div styleClass="aon-direct-access-list-element aon-align-left #{domainSwitcher.showPending ? 'selected':''}">
 						
 						<aon:commandLink id="pendingInvoiceDomainEnterprise"
-							styleClass="aon-width-all aon-black "
+							styleClass="aon-width-all aon-black"
 							actionListener="#{domainSwitcher.showPending}"
 						>
 							<aon:outputText styleClass="material-icons  aon-vertical-middle" value="inbox" />
 							<aon:outputText value=" Facturas Pendientes" />
+							<aon:outputText id="pendingInvoiceDomainEnterpriseCount" styleClass="aon-bold aon-float-right" value="#{domainSwitcher.pending}" />
+							
 						</aon:commandLink> 	
 						
 					</aon:div>
-					<aon:div styleClass="aon-direct-access-list-element aon-align-left ">
+					<aon:div styleClass="aon-direct-access-list-element aon-align-left #{domainSwitcher.showReject ? 'selected':''}">
 						<aon:commandLink id="rejectInvoiceDomainEnterprise"
 							styleClass="aon-width-all aon-black"
 							actionListener="#{domainSwitcher.showReject}"
 						>
 							<aon:outputText styleClass="material-icons  aon-vertical-middle aon-black" value="report" />
 							<aon:outputText value=" Facturas Rechazadas" />
+							<aon:outputText styleClass="aon-float-right" value="#{domainSwitcher.reject}"/>
 						</aon:commandLink> 	
 					</aon:div>
+					<!-- 
 					<aon:div styleClass="aon-direct-access-list-element aon-align-left">
 						<aon:commandLink id="inboxNoticeDomainEnterprise"
 							styleClass="aon-width-all aon-black"
@@ -67,7 +68,7 @@
 							<aon:outputText value=" Solicitudes Enviadas" />
 						</aon:commandLink> 	
 					</aon:div>
-					
+					-->
 				</aon:div>
 			</aon:div>		
 		</aon:div>		
