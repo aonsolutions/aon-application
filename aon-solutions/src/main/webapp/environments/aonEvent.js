@@ -24,6 +24,7 @@ export const MOUSEMOVE = 'mousemove';
 export const MOUSEDOWN = 'mousedown';
 export const RECEIVED_NOTIFICATION = 'receivedNotification';
 export const RESUME_APP = 'resumeApp';
+export const RESET_FILTER = 'resetFilter';
 export const SEARCH = 'search';
 export const SEARCH_NEW = 'searchNew';
 export const SEND_MAIL = 'sendMail';

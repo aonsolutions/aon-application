@@ -272,6 +272,7 @@ import com.esferalia.aon.occam.api.model.registry.Target;
 import com.esferalia.aon.occam.api.model.security.Booking;
 import com.esferalia.aon.occam.api.model.security.CertificateNotFoundException;
 import com.esferalia.aon.occam.api.model.security.Scope;
+import com.esferalia.aon.occam.api.model.security.TaskHolderWorkgroup;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.security.UserScope;
 import com.esferalia.aon.occam.api.model.security.UserWorkgroup;
@@ -6628,6 +6629,16 @@ public class AON {
 		}
 	}
 	
+	public static List<TaskHolder> getTaskHolderFullList(String domainName, Integer domainId, String login, TaskHolderFilter filter){
+		CloseableAONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			return getTask().getTaskHolderFullList(ctx, filter);
+		} finally {
+			if (ctx != null) ctx.close();
+		}
+	}
+	
 	public static Stream<TaskHolder> getTaskHolderWorkgroupStream(Domain domain, User user, TaskHolderFilter filter, Integer workgroupId){
 		try (CloseableAONContext ctx = AONContext.getAONContext(domain, user)){
 			return getTask().getTaskHolderWorkgroupStream(ctx, filter, workgroupId);
@@ -6734,6 +6745,25 @@ public class AON {
 		return getTaskHolderWorkgroupStream(domainName, domainId, login, filter)
 				.collect(Collectors.toCollection(LinkedList::new));
 	}
+	
+	public static void saveTaskHolderWorkgroups(Domain domain, User user, TaskHolder taskHolder) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domain.getName(), domain.getId(), user.getLogin())){
+			getTask().saveTaskHolderWorkgroups(ctx, taskHolder);
+		} 
+	}
+	
+	public static List<TaskHolderWorkgroup> getTaskHolderWorkgroupsList(Domain domain, User user, TaskHolderWorkgroupFilter filter) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domain.getName(), domain.getId(), user.getLogin())){
+			return getTask().getTaskHolderWorkgroupsList(ctx, filter);
+		} 
+	}
+	
+	public static TaskHolderWorkgroup saveTaskHolderWorkgroup(Domain domain, User user, TaskHolderWorkgroup taskHolderWorkgroup) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domain.getName(), domain.getId(), user.getLogin())){
+			return getTask().saveTaskHolderWorkgroup(ctx, taskHolderWorkgroup);
+		} 
+	}
+	
 	// ------------------- USER WORKGROUP
 	
 	public static Stream<UserWorkgroup> getUserWorkgroupStream(String domainName, Integer domainId, String login, UserWorkgroupFilter filter) {

@@ -111,7 +111,7 @@ public class CustomersServlet extends AonApiHttpServlet {
 		System.out.println("getCustomers");
 		System.out.println(api.getData());
 		
-		if(isPotential(api)) {
+		if(isTarget(api)) {
 			return TargetJSON.toJSON(AON.getTargetStream(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), 
 					f -> targetFilter(api, f), perPage * (page -1), perPage));
 		} else
@@ -119,8 +119,8 @@ public class CustomersServlet extends AonApiHttpServlet {
 				f -> customerFilter(api, f), perPage * (page -1), perPage));
 	}
 	
-	private static boolean isPotential(AonApiData api) {
-		return api.getData().opt("potential") != null && api.getData().optBoolean("potential");
+	private static boolean isTarget(AonApiData api) {
+		return api.getData().opt("type") != null && !api.getData().optBoolean("type");
 	}
 
 	private static Filter customerFilter(AonApiData api, CustomerProperties f) {
