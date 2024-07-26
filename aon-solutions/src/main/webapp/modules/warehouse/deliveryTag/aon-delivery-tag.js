@@ -7,7 +7,7 @@ import { AonToolbar } from '../../../components/aon-toolbar.js';
 import {AonElement} from '../../../components/AonElement.js';
 import { CONSTANT, EVENT, MATERIAL_ICONS, MSG, TAG } from '../../../environments/environments.js';
 import { ToolbarType } from '../../../models/enums.js';
-import { printDeliveryTagHttp, printDeliveryTagHttps, sendDeliveryTag } from '../../../services/bartenderService.js';
+import { printDeliveryTag } from '../../../services/bartenderService.js';
 import { AonCustomerSuggestion } from '../../registry/customer/aon-customer-suggestion.js';
 export class AonDeliveryTag extends AonElement {
 
@@ -22,6 +22,7 @@ export class AonDeliveryTag extends AonElement {
 	TRANSPORTE;
 	DELIVERY;
 	PRINTER;
+	URL;
 	TAG;
 
 	printer;
@@ -47,9 +48,11 @@ export class AonDeliveryTag extends AonElement {
 		this.DELIVERY = this.id + 'Delivery';
 		this.TAG = this.id + 'Tag';
 		this.PRINTER = this.id + 'Printer';
+		this.URL = this.id + 'Url';
 		this.data = {};
 		this.printer = 'ZEBRA 93';
 		this.tag = 'C:\\Bartender\\Formatos\\FormatoMercadona.btw';
+		this.url = 'https://192.168.1.189/Integration/IntegracionWebService/Execute';
 	}
 
 	build() {
@@ -67,34 +70,10 @@ export class AonDeliveryTag extends AonElement {
 			title: MSG.PRINT + " HTTP",
 			icon: MATERIAL_ICONS.PRINT
 		}, () => this.printHttp());	
-		toolbar.addButton2({
-			id: CONSTANT.PRINT_SECURE.initCap(),
-			name: MSG.PRINT + " HTTPS",
-			title: MSG.PRINT + " HTTPS",
-			icon:  MATERIAL_ICONS.PRINT
-		}, () => this.printHttps());	
-	}
-
-	printHttps() {
-		let json = {
-			printer: this.printer,
-			tag: this.tag,
-			content: this.data
-		};
-		// sendDeliveryTag(json);
-		printDeliveryTagHttps(this.printer, this.tag, this.data);
-		
 	}
 
 	printHttp() {
-		let json = {
-			printer: this.printer,
-			tag: this.tag,
-			content: this.data
-		};
-		// sendDeliveryTag(json);
-		printDeliveryTagHttp(this.printer, this.tag, this.data);
-		
+		printDeliveryTag(this.url, this.printer, this.tag, this.data);
 	}
 
 	buildContent() {
@@ -122,6 +101,13 @@ export class AonDeliveryTag extends AonElement {
 
 		let table = this.createAonElement(new AonBasicTable(), this.DATA_TABLE);
 		div.appendChild(table);
+
+		table.addRow();
+
+		let url = this.createAonElement(new AonInput(), this.URL, MSG.LINK)
+		url.value = this.url;
+		url.addEventListener(EVENT.CHANGE, () => this.url = url.value);
+		table.addCell(url, 2);
 
 		table.addRow();
 

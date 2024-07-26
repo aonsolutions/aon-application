@@ -2973,6 +2973,7 @@ label.rating:hover {
   color: rgb(95, 99, 104);
 }
 
+#new:hover,
 #home:hover,
 #invoice:hover,
 #documental:hover,

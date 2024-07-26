@@ -17,6 +17,7 @@ import com.esferalia.aon.occam.api.model.AccountingInvoice;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.Customer;
 import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.occam.api.model.EnterpriseActivity;
 import com.esferalia.aon.occam.api.model.IJsonNames;
 import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.Rawdoc;
@@ -137,9 +138,8 @@ public class Rawdoc2AccountingInvoice {
 						.orElse(new InvoiceTax());
 					base = detailTax.getBase();
 				}
-
 				InvoiceVAT vat = new InvoiceVAT()
-					//.setInvoiceDetail(detail)
+					.setInvoiceDetail(detail)
 					.setPrepayment(detail.isPrepayment())
 					.setVatDeductionType(VatDeductionType.WITH_RIGHT)
 					.setBase(base)
@@ -147,7 +147,7 @@ public class Rawdoc2AccountingInvoice {
 					.setQuota(detailTax.getQuota())
 					.setSurcharge(detailTax.getSurcharge())
 					.setSurchargeQuota(detailTax.getSurchargeQuota())
-					// .setInvestAsset(ivs.get(j).getInvestAsset())
+					.setInvestAsset( detail.getInvestAsset() )
 					.setDeductiblePercent(detailTax.getDeductiblePercent())
 					.setDeductibleQuota(detailTax.getDeductibleQuota())
 					.setWithholding(invoice.isWithholding() && !detail.isPrepayment())
@@ -170,7 +170,16 @@ public class Rawdoc2AccountingInvoice {
 			}
 						
 			ai.setAccountEntry(InvoiceRecorderDAO.getEntryBase(ctx, aonConfig, ai.getInvoice()));
-
+			
+			if (invoice.getActivity() == null || invoice.getActivity().isEmpty()) {
+				ai.getAccountEntry().setActivity(null);
+				ai.getAccountEntry().setActivityDescription(null);
+			} else {
+				ai.getAccountEntry().setActivity(invoice.getActivity().getId());
+				ai.getAccountEntry().setActivityDescription(invoice.getActivity().getDescription());
+			}
+			
+			
 			fillAttach( ctx, ai, ti);
 			return ai;
 		}

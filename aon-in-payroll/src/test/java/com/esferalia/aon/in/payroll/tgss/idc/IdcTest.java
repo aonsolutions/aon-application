@@ -5672,6 +5672,70 @@ public class IdcTest extends AbstractSQLTestCase {
 	}
 
 	@Test
+	public void testIdcXXXVINoEscl() throws com.esferalia.aon.in.payroll.pdf.UnknownPDFException, IOException,
+			ExpressionException, SalaryException, SQLException {
+
+		try (InputStream is = IdcTest.class.getResourceAsStream("idcXXXVI.pdf")) {
+			Collection<PEC> ssPecs = Idc.getSSPECs(is);
+
+			ssPecs.forEach(pec -> System.out.println("[" + pec.getName() + "] " + pec.getDescription() + " = "
+				+ pec.getFormula() + ", " + pec.getStartDate() + ".." + pec.getEndDate()));
+			
+			Assert.assertEquals(0, ssPecs.size());
+
+			Calendar calendar = Calendar.getInstance();
+			calendar.set(Calendar.HOUR_OF_DAY, 0);
+			calendar.set(Calendar.MINUTE, 0);
+			calendar.set(Calendar.SECOND, 0);
+			calendar.set(Calendar.MILLISECOND, 0);
+
+			calendar.set(Calendar.YEAR, 2024);
+			calendar.set(Calendar.DAY_OF_MONTH, 1);
+			calendar.set(Calendar.MONTH, Calendar.JUNE);
+			Date june012024 = calendar.getTime();
+			
+			Salary salary = calculate(ssPecs, Collections.emptyList(), june012024, new  SalaryBuilder(), new GenericContractSalaryCalculator.Listener());
+			double cgcBase = salary.getCommonBase();
+			
+			double cgcPercent = 4.70;
+			double cgcEPercent = 23.60;
+			double meiPercent = 0.10;
+			double meiEPercent = 0.50;
+			double fpPercent = 0.10;
+			double fpEPercent = 0.60;
+			double desmplPercent = 1.55;
+			double desmplEPercent = 5.50;
+			double fogasaPercent = 0.20;
+
+
+			assertEquals(salary.getSalaryBonus().size(), 0);
+
+			salary.getSalaryDeductions().forEach( d -> System.out.println(d.getDescription() + " = " + d.getExpression() + " , " + d.getAmount() ));
+			
+			
+			double deductions = salary.getSalaryDeductions().stream().collect(Collectors.summingDouble(d -> d.getAmount()));
+			
+			assertEquals(cgcBase *  cgcPercent / 100.00 
+						+ cgcBase *  meiPercent / 100.00 
+						+ cgcBase *  fpPercent / 100.00 
+						+ cgcBase *  desmplPercent / 100.00 
+						, deductions  
+						, DELTA);
+
+			
+
+
+			double costs = salary.getSalaryCosts().stream().collect(Collectors.summingDouble(d -> d.getAmount()));
+			
+			double itPercent = 1.40;
+			double imsEPercent = 2.20;
+
+			assertEquals(cgcBase * ( cgcEPercent + itPercent + imsEPercent + meiEPercent + fpEPercent + desmplEPercent+ fogasaPercent ) / 100.00 , costs , DELTA);
+			
+		}
+	}
+
+	@Test
 	public void testIdc986Bonus() throws com.esferalia.aon.in.payroll.pdf.UnknownPDFException, IOException,
 			ExpressionException, SalaryException, SQLException {
 

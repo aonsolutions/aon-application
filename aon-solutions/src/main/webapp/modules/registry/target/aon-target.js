@@ -18,20 +18,21 @@ import {
   getRelationShip,
   saveRelationShip,
   removeRelationShip,
-  saveCustomer
+  saveTarget,
 } from "../../../services/registryService.js";
-import { AonCustomerList } from "./aon-customer-list.js";
+import { AonCustomerList } from "../customer/aon-customer-list.js";
 import { getScopes } from "../../../services/documentalService.js";
 import {
   getDomainCompanies,
   saveCompany,
 } from "../../../services/companyService.js";
 import { AonProjectList } from "../../project/aon-project-list.js";
-import { AonBookingItemList } from "../target/item/aon-booking-item-list.js";
-import { AonItemList } from "../target/item/aon-item-list.js";
+import { AonBookingItemList } from "./item/aon-booking-item-list.js";
+import { AonItemList } from "./item/aon-item-list.js";
 import { AonSellerList } from "../seller/aon-seller-list.js";
+import { Target } from "../../../models/registry/Target.js";
 
-export class AonCustomer extends AonReg {
+export class AonTarget extends AonReg {
   saveBool;
   ENTERPRISE_LINKED;
 
@@ -49,17 +50,17 @@ export class AonCustomer extends AonReg {
       { title: MSG.GENERAL_DATA, fn: () => this.buildGeneralData() },
       { title: MSG.BANK_DATA, fn: () => this.buildBankData() },
       { title: MSG.ADDITIONAL_DATA, fn: () => this.buildDataAdditional() },
-      { title: "Expedientes", fn: () => this.buildExpedienteData() },
-      { title: MSG.BOOKING, fn: () => this.buildBookingData() },
-      { title: MSG.COMMERCIAL, fn: () => this.buildSellerData() },
+      // { title: "Expedientes", fn: () => this.buildExpedienteData() },
+      // { title: MSG.BOOKING, fn: () => this.buildBookingData() },
+      // { title: MSG.COMMERCIAL, fn: () => this.buildSellerData() },
     ];
 
-    if (this.isBeta()) {
-      this.options.push({
-        title: MSG.PRODUCTS,
-        fn: () => this.buildItemData(),
-      });
-    }
+    // if (this.isBeta()) {
+    //   this.options.push({
+    //     title: MSG.PRODUCTS,
+    //     fn: () => this.buildItemData(),
+    //   });
+    // }
   }
 
   buildDataAdditional() {
@@ -526,7 +527,8 @@ export class AonCustomer extends AonReg {
       this.registry.setMedia(medias);
       this.saveBool = false;
 
-      saveCustomer(this.registry)
+      this.registry.registry = this.registry.id;
+      saveTarget(this.registry)
         .then((registry) => {
           this.registry.id = registry.id;
           this.saveBool = true;
@@ -543,10 +545,10 @@ export class AonCustomer extends AonReg {
   }
 
   setCustomer(customer) {
-    this.registry = new Customer(customer);
+    this.registry = new Target(customer);
   }
 }
 
-if (!window.customElements.get(TAG.AON_CUSTOMER)) {
-  window.customElements.define(TAG.AON_CUSTOMER, AonCustomer);
+if (!window.customElements.get(TAG.AON_TARGET)) {
+  window.customElements.define(TAG.AON_TARGET, AonTarget);
 }
