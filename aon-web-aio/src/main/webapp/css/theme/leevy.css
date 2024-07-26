@@ -2,13 +2,17 @@
 	--aonAccounting: var(--aonWhite);
 
 	--aonBlack: black;
-	
+
+	--aonLightBlue: #eaf1fb;
 	
 	--aonNewColor: red;
 
 	--leevyColor: #e5ff04;
 
 	--leevyBackground: #06022e;
+
+	--aonIcon: #06022e;
+
 
 	--aonCardColor:var(--aonWhite);
 
@@ -24,10 +28,11 @@
 
 
 }
+
 .aonHeader {
 	--aonAccounting: var(--leevyBackground);
 	--aonHome: var(--leevyBackground);
-	background-color:var(--leevyBackground);
+	background-color:var(--leevyColor);
 }
 
 .aonCardTitle {
@@ -68,7 +73,7 @@
 .aonMenuLeftop,
 .aonMenuTopnav,
 .aonMenuSidenav {
-	color:var(--leevyColor);
+	color: white;
 	background-color: var(--leevyBackground);
 	
 }
@@ -77,5 +82,94 @@
 	background-image: url("https://leevy.es/favicon.svg");
 }
 
+.aonHeaderNote .material-icons,
+.aonHeaderFiscal .material-icons,
+.aonHeaderPayroll .material-icons,
+.aonHeaderInvoice  .material-icons,
+.aonHeaderMessenger .material-icons,
+.aonHeaderAccounting .material-icons,
+.aonHeaderDocumental .material-icons,
+.aonHeaderTimecontrol .material-icons,
+.aonHeaderOffice .material-icons,
+.aonHeaderGarage .material-icons,
+.aonHeaderAcademy .material-icons,
+.aonHeaderComerce .material-icons,
+.aonHeaderComercialMenu .material-icons,
+.aonHeaderManagementMenu .material-icons,
+.aonHeaderTreasuryMenu .material-icons,
+.aonHeaderWarehouseMenu .material-icons,
+.aonHeaderGroupwareMenu .material-icons,
+.aonHeaderAccountingMenu .material-icons,
+.aonHeaderFiscalMenu .material-icons,
+.aonHeaderPayrollMenu .material-icons,
+.aonHeaderMarketingMenu .material-icons {
+	color: var(--leevyBackground);
+}
+
+.aonMenuLeftopNote .material-symbols-outlined,
+.aonMenuLeftopFiscal .material-symbols-outlined,
+.aonMenuLeftopPayroll .material-symbols-outlined,
+.aonMenuLeftopInvoice  .material-symbols-outlined,
+.aonMenuLeftopMessenger .material-symbols-outlined,
+.aonMenuLeftopAccounting .material-symbols-outlined,
+.aonMenuLeftopDocumental .material-symbols-outlined,
+.aonMenuLeftopTimecontrol .material-symbols-outlined,
+.aonMenuLeftopOffice .material-symbols-outlined,
+.aonMenuLeftopGarage .material-symbols-outlined,
+.aonMenuLeftopAcademy .material-symbols-outlined,
+.aonMenuLeftopComerce .material-symbols-outlined,
+.aonMenuLeftopFiscalMenu .material-symbols-outlined,
+.aonMenuLeftopPayrollMenu .material-symbols-outlined,
+.aonMenuLeftopTreasuryMenu .material-symbols-outlined,
+.aonMenuLeftopMarketingMenu .material-symbols-outlined,
+.aonMenuLeftopComercialMenu .material-symbols-outlined,
+.aonMenuLeftopWarehouseMenu .material-symbols-outlined,
+.aonMenuLeftopGroupwareMenu .material-symbols-outlined,
+.aonMenuLeftopManagementMenu .material-symbols-outlined,
+.aonMenuLeftopAccountingMenu .material-symbols-outlined,
+.aonMenuLeftopHome .material-symbols-outlined,
+.aonMenuLeftopStart .material-symbols-outlined,
+.aonMenuLeftopApplications .material-symbols-outlined  {
+	color: var(--leevyBackground);
+}
 
 
+
+.aonHeaderNote #aonHeaderCompanyName,
+.aonHeaderFiscal #aonHeaderCompanyName,
+.aonHeaderPayroll #aonHeaderCompanyName,
+.aonHeaderInvoice  #aonHeaderCompanyName,
+.aonHeaderMessenger #aonHeaderCompanyName,
+.aonHeaderAccounting #aonHeaderCompanyName,
+.aonHeaderDocumental #aonHeaderCompanyName,
+.aonHeaderTimecontrol #aonHeaderCompanyName,
+.aonHeaderOffice #aonHeaderCompanyName,
+.aonHeaderGarage #aonHeaderCompanyName,
+.aonHeaderAcademy #aonHeaderCompanyName,
+.aonHeaderComerce #aonHeaderCompanyName,
+.aonHeaderComercialMenu #aonHeaderCompanyName,
+.aonHeaderManagementMenu #aonHeaderCompanyName,
+.aonHeaderTreasuryMenu #aonHeaderCompanyName,
+.aonHeaderWarehouseMenu #aonHeaderCompanyName,
+.aonHeaderGroupwareMenu #aonHeaderCompanyName,
+.aonHeaderAccountingMenu #aonHeaderCompanyName,
+.aonHeaderFiscalMenu #aonHeaderCompanyName,
+.aonHeaderPayrollMenu #aonHeaderCompanyName,
+.aonHeaderMarketingMenu #aonHeaderCompanyName,
+.aonHeaderHome  #aonHeaderCompanyName,
+.aonHeaderApplications  #aonHeaderCompanyName,
+.aonHeaderStart #aonHeaderCompanyName {
+	color: var(--leevyBackground);
+}
+
+.aonHeaderAppIcon{
+	color: var(--leevyBackground);
+	padding: 4px;
+	font-size: 24px;
+}
+  
+.aonHeaderAppSpan{
+	text-align: center;
+	min-height: 21px;
+	color: var(--leevyBackground);
+}

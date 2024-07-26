@@ -10,6 +10,7 @@ export class AonHelp extends AonElement {
 	SUPPORT_SWITCH;
 	ABOUT_CONTACT_CARD;
 	SCHEDULE_CONTACT_CARD;
+	cont;
 
 	get id() {
 		return this.getAttribute(CONSTANT.ID);
@@ -29,6 +30,7 @@ export class AonHelp extends AonElement {
 		this.SUPPORT_SWITCH = this.id + 'SwitchSupport';
 		this.ABOUT_CONTACT_CARD = this.id + 'AboutContactCard';
 		this.SCHEDULE_CONTACT_CARD = this.id + 'ScheduleContactCard';
+		this.cont = 1;
 	}
 
 	build() {
@@ -122,13 +124,17 @@ export class AonHelp extends AonElement {
 	}
 
 	buildSupportData(value, title, icon, className) {
+
+		
+
 		let div = this.createDiv();
 		div.style.marginTop = '10px';
 		div.style.title = title;
 		div.style.display = "flex";
 
 		let i = this.createElement(TAG.I);
-		i.className = CSS.MATERIAL_ICONS;
+		i.className = CSS.MATERIAL_ICONS + " mailIcon";
+		i.id = "aonContactIcon" + this.cont;
 		i.style.marginRight = '5px';
 		i.style.verticalAlign = "middle";
 		i.innerHTML= icon;
@@ -139,6 +145,7 @@ export class AonHelp extends AonElement {
 		//span.innerHTML = value;
 		div.appendChild(span);
 
+		this.cont = this.cont + 1;
 		return div;
 	}
 
