@@ -41,7 +41,9 @@ public enum DataResponseSource implements IResourceable {
 	MOD347,
 	MOD349,
 	MOD200,
-	LROE_TEST;
+	LROE_TEST,
+	PACKAGING_DELIVERY
+	;
 	
     /** Message key prefix. */
     private static final String MSG_KEY_PREFIX = "aon_enum_data_response_source_";

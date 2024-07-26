@@ -11,8 +11,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import org.json.JSONObject;
+
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.json.PackagingDeliveryJSON;
 import com.esferalia.aon.occam.api.model.ApplicationParameter;
+import com.esferalia.aon.occam.api.model.DataResponse;
+import com.esferalia.aon.occam.api.model.DataResponseDetail;
 import com.esferalia.aon.occam.api.model.Elaboration;
 import com.esferalia.aon.occam.api.model.ElaborationDetail;
 import com.esferalia.aon.occam.api.model.ElaborationDetailComposition;
@@ -24,6 +29,7 @@ import com.esferalia.aon.occam.api.model.product.Item;
 import com.esferalia.aon.occam.api.model.product.ItemComposition;
 import com.esferalia.aon.occam.api.model.product.ProductStatus;
 import com.esferalia.aon.occam.api.model.type.AppParam;
+import com.esferalia.aon.occam.api.model.type.DataResponseSource;
 import com.esferalia.aon.occam.api.model.type.DeliveryStatus;
 import com.esferalia.aon.occam.api.model.type.ElaborationStatus;
 import com.esferalia.aon.occam.api.model.type.SalesDetailStatus;
@@ -237,6 +243,9 @@ public class PackagingDAO {
 			container = ItemDAO.save(ctx, containerBase.copy()
 					.setSerialNumber(generateSSCC(ctx))
 					.setSerialDate(new Date()));
+			
+			packaging.getContainer().setItem(container.getId());
+			
 			// CREAR ITEM DEL ENVASADO.
 			// AÑADIR DELIVERY PACKAGING
 			DeliveryPackagingDAO.save(ctx, new DeliveryPackaging()
@@ -275,7 +284,7 @@ public class PackagingDAO {
 				});		
 			}
 		}
-		container.setItemComposition(list);
+		container.addItemComposition(list);
 
 
 		// RESTAR STOCK!
@@ -340,8 +349,115 @@ public class PackagingDAO {
 				.setLine(line.shortValue());
 			DeliveryDetailDAO.save(ctx, dd);
 		}
+		
+		DataResponse dr = new DataResponse()
+				.setDomain(ctx.getDomainId())
+				.setCode("")
+				.setResponseDate(new Date())
+				.setSource(DataResponseSource.PACKAGING_DELIVERY)
+				.setSourceId(deliveryId);
+		dr = DataResponseDAO.insertDataResponse(ctx, dr);			
+		
+		DataResponseDetail drd = new DataResponseDetail()
+				.setDomain(ctx.getDomainId())
+				.setDataResponse(dr.getId())
+				.setDataVariable("json")
+				.setDataValue(PackagingDeliveryJSON.toJSON(packaging).toString());
+		DataResponseDAO.insertDataResponseDetail(ctx, drd);
 	
 		return packaging;
+	}
+	
+	private void deleteDeliveryPackaging(AONContext ctx, Delivery delivery) {
+		DataResponseDAO.getStream(ctx, f -> f.getSourceProperty().eq(DataResponseSource.PACKAGING_DELIVERY.value())
+			.and(f.getSourceIdProperty().eq(delivery.getId()))).forEach(dr -> {
+				DataResponseDetail drd = DataResponseDAO.getDataResponseDetailStream(ctx, g -> g.getDataResponseProperty().eq(dr.getId()))
+						.findFirst().orElse(null);
+				if(drd != null) {
+					PackagingDelivery packaging = PackagingDeliveryJSON.fromJSON(new JSONObject(drd.getDataValue()));
+				
+					// BORRANDO EL VINCULO DEL PALET (CON SSCC) CON EL ALBARÁN
+					DeliveryPackagingDAO.delete(ctx, h -> h.getDomainProperty().eq(ctx.getDomainId())
+							.and(h.getDeliveryProperty().eq(delivery.getId()))
+							.and(h.getItemProperty().eq(packaging.getContainer().getItem())));
+					
+					// DEVOLVER EL CONTENIDO A SU PALET ORIGINAL
+					for (PackagingDeliveryContent content : packaging.getContent()) {
+						if(content.getSource() != null) {
+							content.getComposition().stream().forEach(c -> {
+								ItemComposition itemComposition = ItemCompositionDAO.get(ctx, k -> k.getItemProperty().eq(packaging.getContainer().getItem())
+										.and(k.getCompositionItemProperty().eq(c.getCompositionItemId()))
+										.and(k.getDomainProperty().eq(ctx.getDomainId())));
+								
+								double q = itemComposition.getQuantity() - c.getQuantity();
+								if(q == 0) {
+									// delete itemcomposition
+									ItemCompositionDAO.delete(ctx, itemComposition.getId());
+								} else {
+									// update itemcomposition
+									ItemCompositionDAO.save(ctx, itemComposition.setQuantity(q));
+								}
+								
+								ItemComposition ic = ItemCompositionDAO.get(ctx, f -> f.getDomainProperty().eq(ctx.getDomainId())
+										.and(f.getItemProperty().eq(content.getSource()))
+										.and(f.getCompositionItemProperty().eq(c.getCompositionItemId())));
+								if(ic.getId() == null) {
+									ic = ItemCompositionDAO.save(ctx, new ItemComposition()
+										.setItemId(content.getSource())
+										.setCompositionItemId(c.getCompositionItemId())
+										.setDescription(itemComposition.getDescription())
+										.setDomain(ctx.getDomainId())
+										.setQuantity(c.getQuantity()));
+								} else {
+									ItemCompositionDAO.save(ctx, ic.setQuantity(ic.getQuantity() + c.getQuantity()));
+								}
+							
+								// SUMAR STOCK Y ACTUALIZAR PEDIDO
+								
+								Integer productId = ic.getComposition().getProduct().getId();
+								DeliveryDetail dd = DeliveryDetailDAO.get(ctx, f -> f.getDelivery().eq(delivery.getId())
+										.and(f.getItem().eq(itemComposition.getCompositionItemId())));
+								
+								SalesDetail sd = SalesDetailDAO.get(ctx, f -> f.getIdProperty().eq(dd.getSalesDetail()));
+								sd.setDelivered(sd.getDelivered() - c.getQuantity());
+								sd.setStatus(sd.getDelivered() > 0 ? SalesDetailStatus.PARTIAL_SETTLED : SalesDetailStatus.PENDING);
+								SalesDetailDAO.save(ctx, sd);
+								
+								// TODO FALTA REVISAR PEDIDO!!!
+								
+								Stock stock = WarehouseDAO.getStock(ctx, f -> f.getDomainProperty().eq(ctx.getDomainId())
+										.and(f.getItemProperty().eq(itemComposition.getCompositionItemId())));
+								if(stock.getId() != null) {
+									stock.setQuantity(stock.getQuantity() + c.getQuantity());
+									WarehouseDAO.saveStock(ctx, stock);
+								}
+								
+								deleteItemBox(ctx, delivery, productId, c.getQuantity());
+							});		
+						}
+					}
+				
+					// QUITAR envase en delivery detail.
+					Item containerItem = ItemDAO.get(ctx, packaging.getContainer().getItem());
+					Item containerBase = ItemDAO.get(ctx,  f -> f.getDomainProperty().eq(ctx.getDomainId())
+							.and(f.getProductProperty().eq(containerItem.getProduct().getId()))
+							.and(f.getSerialNumberProperty().isNull()));
+					
+					DeliveryDetail dd = DeliveryDetailDAO.get(ctx, f -> f.getDelivery().eq(delivery.getId())
+							.and(f.getItem().eq(containerBase.getId())));
+					if(dd.getId() != null) {
+						double bq = dd.getQuantity() - 1;
+						if(bq > 0) {
+							dd.setQuantity(bq);
+							DeliveryDetailDAO.save(ctx, dd);
+						} else DeliveryDetailDAO.delete(ctx, dd.getId());
+					}
+					
+					// BORRAR DATA RESPONSE DETAIL Y DATA RESPONSE
+					DataResponseDAO.deleteDataResponseDetail(ctx, f -> f.getIdProperty().eq(drd.getId()));
+					DataResponseDAO.deleteDataResponse(ctx, f -> f.getIdProperty().eq(dr.getId()));
+				}
+			});
 	}
 	
 	private static void processItemBox(AONContext ctx, Delivery delivery, Integer productId, double quantity) {
@@ -350,7 +466,7 @@ public class PackagingDAO {
 				.and(f.getSerialNumberProperty().isNull()));
 		
 		ItemComposition ic = ItemCompositionDAO.get(ctx, f -> f.getItemProperty().eq(base.getId()));
-		if(ic != null) {
+		if(ic != null && ic.getId() != null) {
 			Double boxQuantity = quantity;
 			if(base.getStockUnitTag().getId().equals(base.getPackMeasurementTag().getId())) {
 				boxQuantity = quantity / base.getPackMeasurement();
@@ -380,6 +496,38 @@ public class PackagingDAO {
 					.setItem(box)
 					.setLine(line.shortValue());
 				DeliveryDetailDAO.save(ctx, dd);
+			}
+			
+			// TODO STOCK DE CAJAS... 
+		}
+	}
+	
+	private static void deleteItemBox(AONContext ctx, Delivery delivery, Integer productId, double quantity) {
+		Item base = ItemDAO.get(ctx,  f -> f.getDomainProperty().eq(ctx.getDomainId())
+				.and(f.getProductProperty().eq(productId))
+				.and(f.getSerialNumberProperty().isNull()));
+		
+		ItemComposition ic = ItemCompositionDAO.get(ctx, f -> f.getItemProperty().eq(base.getId()));
+		if(ic != null && ic.getId() != null) {
+			Double boxQuantity = quantity;
+			if(base.getStockUnitTag().getId().equals(base.getPackMeasurementTag().getId())) {
+				boxQuantity = quantity / base.getPackMeasurement();
+				boxQuantity = boxQuantity / base.getPackUnits().doubleValue();	
+			} else if(base.getStockUnitTag().getId().equals(base.getPackUnitsTag().getId())) {
+				boxQuantity = quantity / base.getPackUnits().doubleValue();	
+			}    
+			boxQuantity = AonMathUtils.round(boxQuantity);
+			
+			Item box = ic.getComposition();
+		
+			DeliveryDetail dd = DeliveryDetailDAO.get(ctx, f -> f.getDelivery().eq(delivery.getId())
+					.and(f.getItem().eq(box.getId())));
+			if(dd.getId() != null) {
+				double bq = dd.getQuantity() - boxQuantity;
+				if(bq > 0) {
+					dd.setQuantity(bq);
+					DeliveryDetailDAO.save(ctx, dd);
+				} else DeliveryDetailDAO.delete(ctx, dd.getId());
 			}
 			
 			// TODO STOCK DE CAJAS... 
