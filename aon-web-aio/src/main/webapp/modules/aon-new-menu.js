@@ -922,27 +922,15 @@ export class AonNewMenu extends AonElement {
 					{
 						name: 'Emitidas',
 						icon: MATERIAL_ICONS.UNARCHIVE,
-						fn: () => {
-							let invoicePanel = new AonInvoicePanel();
-							invoicePanel.option = OPTION.CREATE_INVOICE_ISSUED;
-							this.rootPanel(invoicePanel);
-						}
+						fn: () => this.newInvoice('emitida')
 					}, {
 						name: 'Recibidas',
 						icon: MATERIAL_ICONS.ARCHIVE,
-						fn: () => {
-							let invoicePanel = new AonInvoicePanel();
-							invoicePanel.option = OPTION.CREATE_INVOICE_RECEIVED;
-							this.rootPanel(invoicePanel);
-						}
+						fn: () => this.newInvoice('recibida')
 					}, {
 						name: 'Tickets/Justificantes',
 						icon: MATERIAL_ICONS.RECEIPT,
-						fn: () => {
-							let invoicePanel = new AonInvoicePanel();
-							invoicePanel.option = OPTION.CREATE_INVOICE_TICKET;
-							this.rootPanel(invoicePanel);
-						}
+						fn: () => this.newInvoice('ticket')
 					}
 				]
 			});
@@ -1013,6 +1001,22 @@ export class AonNewMenu extends AonElement {
 		}
 		return document.querySelector(selector);
 	};
+	
+	setAppClassName(app){
+		let appsDiv = this.getElement("aonMenuLeftop-applications");
+		appsDiv.style.removeProperty('background-color'); 
+		let appName = app.app[0].toUpperCase() + app.app.slice(1);
+		appsDiv.className = `${CSS.AON_MENU_LEFTOP} ${CSS.AON_MENU_LEFTOP}${appName}`		
+	}	
+	
+	newInvoice(invoice) {
+		let invoicePanel = new AonInvoicePanel();
+		invoicePanel.option = OPTION.CREATE_INVOICE_ISSUED;
+		invoicePanel.addEventListener(EVENT.BUILD, () => invoicePanel.aonInvoice(invoice) );
+		this.rootPanel(invoicePanel);
+		this.setAppClassName(Apps.INVOICE);
+		this.dispatchEvent(new CustomEvent(EVENT.AON_APPLICATION_SELECT, { detail : { app: Apps.INVOICE } }));		
+	}
 	
 
 }
