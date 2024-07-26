@@ -383,7 +383,6 @@ export class AonHeader extends AonElement {
 			let rootPanel = this.getElement("rootPanel");
 			rootPanel.style.backgroundColor = "transparent";
 			let enterprise = this.getElement("aonHeaderCompanyName");
-			enterprise.style.color = "rgb(95, 99, 104)";
 			let appss = this.getElement("applications");
 			let welcome = this.getElement("aonCompanyTabFilter");
 
