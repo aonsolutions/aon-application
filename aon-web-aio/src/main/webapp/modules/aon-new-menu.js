@@ -917,6 +917,7 @@ export class AonNewMenu extends AonElement {
 						fn: () => {
 							let invoicePanel = new AonInvoicePanel();
 							invoicePanel.option = OPTION.CREATE_INVOICE_ISSUED;
+							invoicePanel.addEventListener(EVENT.BUILD, () => invoicePanel.aonInvoice('emitida') );
 							this.rootPanel(invoicePanel);
 						}
 					}, {
@@ -925,6 +926,7 @@ export class AonNewMenu extends AonElement {
 						fn: () => {
 							let invoicePanel = new AonInvoicePanel();
 							invoicePanel.option = OPTION.CREATE_INVOICE_RECEIVED;
+							invoicePanel.addEventListener(EVENT.BUILD, () => invoicePanel.aonInvoice('recibida') );
 							this.rootPanel(invoicePanel);
 						}
 					}, {
@@ -933,7 +935,9 @@ export class AonNewMenu extends AonElement {
 						fn: () => {
 							let invoicePanel = new AonInvoicePanel();
 							invoicePanel.option = OPTION.CREATE_INVOICE_TICKET;
+							invoicePanel.addEventListener(EVENT.BUILD, () => invoicePanel.aonInvoice('ticket') );
 							this.rootPanel(invoicePanel);
+							;
 						}
 					}
 				]
