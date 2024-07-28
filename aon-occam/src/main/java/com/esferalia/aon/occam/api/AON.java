@@ -2619,6 +2619,14 @@ public class AON {
 		}
 	}
 	
+	public static void deleteDelivery(Domain domain, User user, Integer id) {
+		deleteDelivery(domain.getName(), domain.getId(), user.getLogin(), id);
+	}
+	
+	public static void deleteDelivery(Domain domain, String login, Integer id) {
+		deleteDelivery(domain.getName(), domain.getId(), login, id);
+	}
+	
 	public static void deleteDelivery(String domainName, Integer domainId, String login, Integer id) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
 			getManagement().deleteDelivery(ctx, id);

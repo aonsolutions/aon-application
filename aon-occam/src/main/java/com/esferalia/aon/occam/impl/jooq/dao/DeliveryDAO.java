@@ -426,8 +426,9 @@ public class DeliveryDAO {
 	}
 	
 	public static void delete(AONContext ctx, Integer id) {
+		PackagingDAO.deleteDeliveryPackaging(ctx, id);
 		deleteDeliveryDetail(ctx, f -> f.getDelivery().eq(id));
-		deleteDelivery(ctx, f -> f.getIdProperty().eq(id));
+		delete(ctx, f -> f.getIdProperty().eq(id));
 	}
 	
 	public static void delete(AONContext ctx, DeliveryFilter filter) {
@@ -540,7 +541,10 @@ public class DeliveryDAO {
 	}
 	
 	public static void deleteDeliveryDetail(AONContext ctx, DeliveryDetailFilter filter) {
-		ctx.getDslContext().delete(DELIVERY_DETAIL).where(DELIVERY_DETAIL_PROPERTIES.getConditions(filter));
+		ctx.getDslContext()
+		.delete(DELIVERY_DETAIL)
+		.where(DELIVERY_DETAIL_PROPERTIES.getConditions(filter))
+		.execute();
 	}
 
 	private static Result<Record> getFullDeliveries(AONContext ctx, DeliveryFilter filter) {
