@@ -368,9 +368,9 @@ public class PackagingDAO {
 		return packaging;
 	}
 	
-	private void deleteDeliveryPackaging(AONContext ctx, Delivery delivery) {
+	public static void deleteDeliveryPackaging(AONContext ctx, Integer delivery) {
 		DataResponseDAO.getStream(ctx, f -> f.getSourceProperty().eq(DataResponseSource.PACKAGING_DELIVERY.value())
-			.and(f.getSourceIdProperty().eq(delivery.getId()))).forEach(dr -> {
+			.and(f.getSourceIdProperty().eq(delivery))).forEach(dr -> {
 				DataResponseDetail drd = DataResponseDAO.getDataResponseDetailStream(ctx, g -> g.getDataResponseProperty().eq(dr.getId()))
 						.findFirst().orElse(null);
 				if(drd != null) {
@@ -378,7 +378,7 @@ public class PackagingDAO {
 				
 					// BORRANDO EL VINCULO DEL PALET (CON SSCC) CON EL ALBARÁN
 					DeliveryPackagingDAO.delete(ctx, h -> h.getDomainProperty().eq(ctx.getDomainId())
-							.and(h.getDeliveryProperty().eq(delivery.getId()))
+							.and(h.getDeliveryProperty().eq(delivery))
 							.and(h.getItemProperty().eq(packaging.getContainer().getItem())));
 					
 					// DEVOLVER EL CONTENIDO A SU PALET ORIGINAL
@@ -414,16 +414,27 @@ public class PackagingDAO {
 							
 								// SUMAR STOCK Y ACTUALIZAR PEDIDO
 								
-								Integer productId = ic.getComposition().getProduct().getId();
-								DeliveryDetail dd = DeliveryDetailDAO.get(ctx, f -> f.getDelivery().eq(delivery.getId())
+								Integer productId = itemComposition.getComposition().getProduct().getId();
+								DeliveryDetail dd = DeliveryDetailDAO.get(ctx, f -> f.getDelivery().eq(delivery)
 										.and(f.getItem().eq(itemComposition.getCompositionItemId())));
 								
 								SalesDetail sd = SalesDetailDAO.get(ctx, f -> f.getIdProperty().eq(dd.getSalesDetail()));
 								sd.setDelivered(sd.getDelivered() - c.getQuantity());
+								if(sd.getDelivery().equals(delivery)) sd.setDelivery(null);
 								sd.setStatus(sd.getDelivered() > 0 ? SalesDetailStatus.PARTIAL_SETTLED : SalesDetailStatus.PENDING);
 								SalesDetailDAO.save(ctx, sd);
 								
 								// TODO FALTA REVISAR PEDIDO!!!
+								List<SalesDetail> list = SalesDetailDAO.getStream(ctx, f -> 
+									f.getSalesProperty().eq(sd.getSales().getId())
+									.and(f.getDomainProperty().eq(sd.getDomain()))
+									.and(f.getDeliveryProperty().isNotNull()))
+									.toList();
+								if(list.isEmpty()) {
+									Sales sales = SalesDAO.get(ctx, sd.getSales().getId());
+									sales.setStatus(SalesStatus.PENDING);
+									SalesDAO.save(ctx, sales);
+								}
 								
 								Stock stock = WarehouseDAO.getStock(ctx, f -> f.getDomainProperty().eq(ctx.getDomainId())
 										.and(f.getItemProperty().eq(itemComposition.getCompositionItemId())));
@@ -443,7 +454,7 @@ public class PackagingDAO {
 							.and(f.getProductProperty().eq(containerItem.getProduct().getId()))
 							.and(f.getSerialNumberProperty().isNull()));
 					
-					DeliveryDetail dd = DeliveryDetailDAO.get(ctx, f -> f.getDelivery().eq(delivery.getId())
+					DeliveryDetail dd = DeliveryDetailDAO.get(ctx, f -> f.getDelivery().eq(delivery)
 							.and(f.getItem().eq(containerBase.getId())));
 					if(dd.getId() != null) {
 						double bq = dd.getQuantity() - 1;
@@ -502,7 +513,7 @@ public class PackagingDAO {
 		}
 	}
 	
-	private static void deleteItemBox(AONContext ctx, Delivery delivery, Integer productId, double quantity) {
+	private static void deleteItemBox(AONContext ctx, Integer delivery, Integer productId, double quantity) {
 		Item base = ItemDAO.get(ctx,  f -> f.getDomainProperty().eq(ctx.getDomainId())
 				.and(f.getProductProperty().eq(productId))
 				.and(f.getSerialNumberProperty().isNull()));
@@ -520,7 +531,7 @@ public class PackagingDAO {
 			
 			Item box = ic.getComposition();
 		
-			DeliveryDetail dd = DeliveryDetailDAO.get(ctx, f -> f.getDelivery().eq(delivery.getId())
+			DeliveryDetail dd = DeliveryDetailDAO.get(ctx, f -> f.getDelivery().eq(delivery)
 					.and(f.getItem().eq(box.getId())));
 			if(dd.getId() != null) {
 				double bq = dd.getQuantity() - boxQuantity;

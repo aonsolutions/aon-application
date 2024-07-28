@@ -13,7 +13,7 @@ import { AonBasicTable } from '../../components/aon-basic-table.js';
 import { AonIconButton } from '../../components/aon-icon-button.js';
 import { AonTabs } from '../../components/aon-tabs.js';
 import { getDeliveries, getDelivery } from '../../services/warehouseService.js';
-import { acceptDeliveryPackaging, getDeliveryPackaging, getItem, getPackaging, getProducts, saveDeliveryPackaging } from '../../services/productService.js';
+import { acceptDeliveryPackaging, deleteDelivery, getDeliveryPackaging, getItem, getPackaging, getProducts, saveDeliveryPackaging } from '../../services/productService.js';
 import { AonDialog } from '../../components/aon-dialog.js';
 import { getSalesDetails } from '../../services/salesService.js';
 import { A } from '../../environments/aonTag.js';
@@ -89,6 +89,7 @@ export class AonMobileDelivery extends AonElement {
 		toolbar.title = this.delivery.reference; 
 		this.appendChild(toolbar);
 		// toolbar.addButton2(ACTION.SAVE, () => this.save());
+		toolbar.addButton2(ACTION.DELETE, () => this.delete());
 		toolbar.addButton2(ACTION.ACCEPT, () => this.accept());
 		toolbar.addButton2(ACTION.BACK, () => this.back());
 		this.getApplication().addFloatOption(ACTION.ADD, () => this.addPackaging())
@@ -175,6 +176,18 @@ export class AonMobileDelivery extends AonElement {
 
 	// ACTIONS
 
+	delete() {
+		let d = this.getApplication().getDialog();
+   	 	d.clear();
+    	if(!this.isMobile()) d.width = '400px';
+    	d.setTitle(MSG.ACCEPT);
+   	 	d.setContentHTML(`Estás seguro de eliminar el albarán.`);
+    	d.addAcceptAction(() => {
+			deleteDelivery({id:this.delivery.id}).then(() => this.back());
+    	});
+    	d.open();	
+	}
+
 	accept() {
 		let d = this.getApplication().getDialog();
    	 	d.clear();
@@ -182,7 +195,7 @@ export class AonMobileDelivery extends AonElement {
     	d.setTitle(MSG.ACCEPT);
    	 	d.setContentHTML(`Estás seguro de finalizar el proceso.`);
     	d.addAcceptAction(() => {
-			acceptDeliveryPackaging({id:this.delivery.id}).then(this.back());
+			acceptDeliveryPackaging({id:this.delivery.id}).then(()=> this.back());
     	});
     	d.open();
 	}
