@@ -81,23 +81,6 @@ const getButtonsStatus = () => {
     return div;
 }
 
-const getPontentialButton = () => {
-    const id = "htmlElementCustomPotential";
-    let div = document.getElementById(id) || document.createElement("div");
-    div.id = id;
-    div.style.display = "flex";
-    div.style.columnGap = "10px";
-    div.innerHTML ="";
-
-    let pontential =  new AonCheckbox();
-    pontential.id = "potential";
-    pontential.name = "potential";
-    pontential.description = "Potenciales";
-    div.appendChild(pontential);
-
-    return div;
-}
-
 const CustomerFilter = [
     {
         type: CONSTANT.SELECT,
@@ -122,6 +105,16 @@ const CustomerFilter = [
         id: "rrelationship",
         name: "rrelationship",
         title: "Vinculo",
+        autocomplete: true,
+        default:true,
+        emptyclear:true
+    },
+    {
+        type: CONSTANT.SELECT,
+        id: "type",
+        name: "type",
+        title: MSG.TYPE,
+        autocomplete: true,
         default:true,
         emptyclear:true
     },
@@ -129,11 +122,6 @@ const CustomerFilter = [
         type: CONSTANT.HTML_ELEMENT,
         id: CONSTANT.HTML_ELEMENT,
         element: getButtonsStatus()
-    },
-    {
-        type: CONSTANT.HTML_ELEMENT,
-        id: CONSTANT.HTML_ELEMENT + "Potential",
-        element: getPontentialButton()
     }
 ];
 

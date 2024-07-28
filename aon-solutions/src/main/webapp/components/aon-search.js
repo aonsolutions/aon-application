@@ -152,6 +152,16 @@ export class AonSearch extends AonElement {
 		this.buildBadge();
 	}
 
+	dispatchCleanEventSearch(value, event=undefined){
+		this.dispatchEvent(new CustomEvent(EVENT.RESET_FILTER,{
+			detail:{
+				event,
+				search: value,
+				...this.getValues()
+			}
+		}));
+	}
+
 	buildBadge(){
 		let count = Object.values(this.getValues()).length;
 
@@ -191,8 +201,12 @@ export class AonSearch extends AonElement {
 		if(divOpts.innerHTML.length){
 			divOpts.style.width = this.clientWidth;
 			if(divOpts.classList.contains('is-visible')){
+				let advanceButton  = this.getElement(this.ADVANCED_BUTTON);
+				advanceButton.icon =  MATERIAL_ICONS.FILTER_LIST;
 				this.closeOptions();
 			} else {
+				let advanceButton  = this.getElement(this.ADVANCED_BUTTON);
+				advanceButton.icon =  MATERIAL_ICONS.CLOSE;
 				divOpts.style.display = "block";
 				divOpts.classList.add('is-visible');
 			}
@@ -292,6 +306,25 @@ export class AonSearch extends AonElement {
 			if(el) divOpts.appendChild(el);
 		});
 
+		let buttonsPanel = this.createElement(TAG.DIV);
+		buttonsPanel.style.display = "flex";
+		buttonsPanel.style.justifyContent = "center";
+		buttonsPanel.style.alignItems = "center";
+
+		let reset = this.createElement(TAG.BUTTON);
+		reset.textContent = "Limpiar";
+		reset.classList.add(CSS.AON_BUTTON, CSS.AON_FLEX);
+		reset.style.padding = "0.5rem 1rem"; 
+		reset.style.margin = "9px auto 0 auto";
+		reset.style.background = "transparent";
+		reset.style.border = "1px solid var(--aonBlue)";
+		reset.style.color = "black";
+		reset.addEventListener(EVENT.CLICK, ()=>{
+			this.dispatchCleanEventSearch(input.value, EVENT.CLICK)
+			this.openOrClose();
+		});
+		buttonsPanel.appendChild(reset);
+
 		let button = this.createElement(TAG.BUTTON);
 		button.textContent = MSG.ACCEPT;
 		button.classList.add(CSS.AON_BUTTON, CSS.AON_FLEX);
@@ -301,7 +334,9 @@ export class AonSearch extends AonElement {
 			this.dispatchEventSearch(input.value, EVENT.CLICK)
 			this.openOrClose();
 		});
-		divOpts.appendChild(button);
+		buttonsPanel.appendChild(button);
+
+		divOpts.appendChild(buttonsPanel);
 	}
 
 	setContent(el){

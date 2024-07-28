@@ -34,6 +34,8 @@
 
   --aonLink: #0078d6;
 
+  --aonIcon:  white;
+
   --aonNewColor: red;
   --aonRightPanelColor: rgb(250, 249, 248);
   --aonCardColor: white;
@@ -2054,6 +2056,32 @@ label.rating:hover {
   display: none; */
 }       
 
+.aonHeaderAppDiv{
+  padding: 1px;
+	display: flex;
+	align-items: center;
+  height: 32px;
+	flex-direction: row;
+	background-color: transparent;
+}
+
+.aonHeaderAppIcon{
+  color: white;
+	padding: 4px;
+	font-size: 24px;
+}
+
+.aonHeaderAppSpan{
+  text-align: center;
+	min-height: 21px;
+  color: white;
+}
+
+.aonHeaderAppAonIcon{
+  color: white;
+	size: 32px;
+}
+
 /*
 ********************************************
             RESPONSIVE DASHBOARD
@@ -3685,7 +3713,7 @@ label.rating:hover {
   list-style: none;
 }
 
-.aonNewMenuSideNavLi{
+.SideNavLi{
   background-color: transparent;
   cursor: pointer;
 }

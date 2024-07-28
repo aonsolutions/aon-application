@@ -3,6 +3,7 @@ package com.code.aon.ui.config.controller;
 import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
 import static com.esferalia.aon.jooq.tables.Enterprise.ENTERPRISE;
 import static com.esferalia.aon.jooq.tables.EnterpriseCcc.ENTERPRISE_CCC;
+import static com.esferalia.aon.jooq.tables.Invoice.INVOICE;
 import static com.esferalia.aon.jooq.tables.Rawdoc.RAWDOC;
 import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
 import static com.esferalia.aon.jooq.tables.UserScope.USER_SCOPE;
@@ -65,8 +66,10 @@ import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.esferalia.aon.occam.api.SECURITY;
 import com.esferalia.aon.occam.api.model.aonsolutions.DomainUserRoles;
+import com.esferalia.aon.occam.api.model.finance.InvoiceStatus;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.type.RawdocStatus;
+import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class DomainSwitcher extends AbstractDomainSwitcher implements
@@ -105,9 +108,11 @@ public class DomainSwitcher extends AbstractDomainSwitcher implements
 	// By it's invoices state
 	private boolean showReject;
 	private boolean showPending;
+	private boolean showUnaccount;
 	
 	private Integer reject;
 	private Integer pending;
+	private Integer unaccount;
 
 	public DomainSwitcher() {
 		try {
@@ -296,6 +301,9 @@ public class DomainSwitcher extends AbstractDomainSwitcher implements
 		if ( isShowReject() ) {
 			selectJoinStep = filterByInvoiceStatus(selectJoinStep, RawdocStatus.REJECTED);
 		}
+		if ( isShowUnaccount() ) {
+			selectJoinStep = filterByInvoiceStatus(selectJoinStep, InvoiceStatus.PENDING);
+		}
 		return selectJoinStep;		
 	}
 
@@ -310,7 +318,19 @@ public class DomainSwitcher extends AbstractDomainSwitcher implements
 		.asTable(rawdocStatus.name());
 		
 		return (T) selectJoinStep.innerJoin(subTable).on(subTable.field(0, Integer.class).eq(DOMAIN.ID));
+	}
+
+	private <T extends SelectJoinStep<?>> T filterByInvoiceStatus(T selectJoinStep, InvoiceStatus invoiceStatus) {
 		
+		Table<Record1<Integer>> subTable = 
+		DSL
+		.select(INVOICE.DOMAIN)
+		.from(INVOICE)
+		.where(INVOICE.STATUS.eq((byte)invoiceStatus.ordinal()))
+		.groupBy(INVOICE.DOMAIN)
+		.asTable(invoiceStatus.name());
+		
+		return (T) selectJoinStep.innerJoin(subTable).on(subTable.field(0, Integer.class).eq(DOMAIN.ID));
 	}
 
 	private Condition getDomainCondition() {
@@ -752,6 +772,14 @@ public class DomainSwitcher extends AbstractDomainSwitcher implements
 	public boolean isShowPending() {
 		return showPending;
 	}
+	
+	public void setShowUnaccount(boolean showUnaccount) {
+		this.showUnaccount = showUnaccount;
+	}
+	
+	public boolean isShowUnaccount() {
+		return showUnaccount;
+	}
 
 	public void onChangeShowInactive(ActionEvent event) {
 		setModel(null);
@@ -803,6 +831,7 @@ public class DomainSwitcher extends AbstractDomainSwitcher implements
 
 		setShowPending(false);
 		setShowReject(false);
+		setShowUnaccount(false);
 
 		setShowActive(true);
 		setModel(null);
@@ -815,6 +844,7 @@ public class DomainSwitcher extends AbstractDomainSwitcher implements
 
 		setShowPending(false);
 		setShowReject(false);
+		setShowUnaccount(false);
 
 		setShowOffice(true);
 		setModel(null);
@@ -827,6 +857,7 @@ public class DomainSwitcher extends AbstractDomainSwitcher implements
 
 		setShowPending(false);
 		setShowReject(false);
+		setShowUnaccount(false);
 
 		setShowShared(true);
 		setModel(null);
@@ -834,11 +865,7 @@ public class DomainSwitcher extends AbstractDomainSwitcher implements
 	
 	public void showPending(ActionEvent event) {
 		setShowReject(false);
-
-//		setShowOffice(false);
-//		setShowInactive(false);
-//		setShowActive(false);
-//		setShowShared(false);
+		setShowUnaccount(false);
 
 		setShowPending(true);
 		setModel(null);
@@ -846,18 +873,27 @@ public class DomainSwitcher extends AbstractDomainSwitcher implements
 
 	public void showReject(ActionEvent event) {
 		setShowPending(false);
-
-//		setShowOffice(false);
-//		setShowInactive(false);
-//		setShowActive(false);
-//		setShowShared(false);
+		setShowUnaccount(false);
 
 		setShowReject(true);
 		setModel(null);
 	}
 	
-	public void refreshCount(ActionEvent event) {
+	public void showUnaccount(ActionEvent event) {
+		setShowPending(false);
+		setShowReject(false);
 
+		setShowUnaccount(true);
+		setModel(null);
+	}
+	
+	public int getSummaryCount() {
+		return AonNumberUtils.zeroIfNull(this.pending) 
+				+ AonNumberUtils.zeroIfNull(this.reject) 
+				+ AonNumberUtils.zeroIfNull(this.unaccount);
+	}
+	
+	public int refreshSummaryCount() {
 		try (CloseableAONContext ctx = AONContext.getAONContext(getDomainNameURL(),domainId,getCurrentUser())) {
 			
 			this.pending = 
@@ -869,20 +905,32 @@ public class DomainSwitcher extends AbstractDomainSwitcher implements
 					ctx.getDslContext().select(DOMAIN.ID)
 					.from(DOMAIN).innerJoin(RAWDOC).on(DOMAIN.ID.eq(RAWDOC.DOMAIN))
 					.where(getDomainCondition().and(RAWDOC.STATUS.eq((byte)RawdocStatus.REJECTED.ordinal()))).limit(COUNT_LIMIT+1).fetch(DOMAIN.ID).size();
-		}
 
+			this.unaccount = 
+					ctx.getDslContext().select(DOMAIN.ID)
+					.from(DOMAIN).innerJoin(INVOICE).on(DOMAIN.ID.eq(INVOICE.DOMAIN))
+					.where(getDomainCondition().and(INVOICE.STATUS.eq((byte)InvoiceStatus.PENDING.ordinal()))).limit(COUNT_LIMIT+1).fetch(DOMAIN.ID).size();
+			return this.pending + this.reject  + this.unaccount;
+		}
 	}
+	
 
 	public String getPending() {
-		if ( pending == null )
+		if ( pending == null || pending == 0 )
 			return "";
 		return pending > COUNT_LIMIT ? "+" + COUNT_LIMIT.toString() : Integer.toString(pending);
 	}
 
 	public String getReject() {
-		if ( reject == null )
+		if ( reject == null || reject == 0 )
 			return "";
 		return reject > COUNT_LIMIT  ? "+" + COUNT_LIMIT.toString() : Integer.toString(reject);
+	}
+	
+	public String getUnaccount() {
+		if ( unaccount == null || unaccount == 0 )
+			return "";
+		return unaccount > COUNT_LIMIT  ? "+" + COUNT_LIMIT.toString() : Integer.toString(unaccount);
 	}
 
 	public String getTrace() {

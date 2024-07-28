@@ -32,7 +32,8 @@ export class AonCustomerList extends AonRegistryList {
 				id: registry.id,
 				additional_info: ['ADDRESSES', 'MEDIA', 'BANKS', 'PAYMETHOD', 'RSEGMENT']
 			};
-			return this.filter.potential ? getTarget(data) : getCustomer(data);
+
+			return this.filter.type == "false" ? getTarget(data) : getCustomer(data);
 		}
 		
 		return null;
@@ -69,7 +70,7 @@ export class AonCustomerList extends AonRegistryList {
 					projectType: detail.projectType,
 					rrelationship: detail.rrelationship,
 					status: OfficeUtils.getCustomerStatus(detail),
-					potential : OfficeUtils.getCustomerPotential(detail),
+					type : detail.type,
 					page:1
 				}
 				this.setFilter(this.filter);
@@ -79,19 +80,39 @@ export class AonCustomerList extends AonRegistryList {
 			}, 300);
 		});
 
+		btnSearch.addEventListener(EVENT.RESET_FILTER, ({detail}) => {
+			clearTimeout(timeOut);
+			timeOut = setTimeout(() => {
+				this.filter = {
+					page: 1,
+					perPage: 50,
+					status: ["ACTIVE", "BLOCKED"]
+				}
+				this.setFilter(this.filter);
+				this.parent.setFilterCustomers(this.filter);
+				this.setSearchValues();	
+			}, 300);
+		});
+
+		let searchInput = this.getElement("aonOfficePanelToolbarHeaderToolSectionSearchSearchInput");
+		searchInput.placeholder = "Buscar por nombre, documento o alias";
+		searchInput.focus();
+
 		btnSearch.buildOptionsFilter(OfficeEnums.CustomerFilter);//INPUTS
 		this.setSearchValues();	
     }
 
     setSearchValues(){
+		let searchInput = this.getElement("aonOfficePanelToolbarHeaderToolSectionSearchSearchInput");
+		let searchValue = this.filter.value;
+		searchInput.value = searchValue ? searchValue : '';
+		
 		let scopeEl = this.getElement("scope");
         getScopes().then(scopes=>{
             scopeEl.setOptions(scopes.map(c=> ({...c, value: c.id})) );
 
             const value = this.filter.scope;
-            if(value){
-                scopeEl.value = value;
-            }
+			scopeEl.setValue(value);
         })
 
         let projectTypeEl = this.getElement("projectType");
@@ -102,9 +123,7 @@ export class AonCustomerList extends AonRegistryList {
             projectTypeEl.setOptions(types);
 
             const value = this.filter.projectType;
-            if(value){
-                projectTypeEl.value = value;
-            }
+			projectTypeEl.setValue(value);
         })
 
         const rrelationshipEl = this.getElement("rrelationship");
@@ -114,21 +133,50 @@ export class AonCustomerList extends AonRegistryList {
 		]);
 
 		const rrelationship = this.filter.rrelationship;
-		if(rrelationship!=null){
-			rrelationshipEl.value = rrelationship;
+		let input = rrelationshipEl.getInput();
+		if(rrelationship){
+			input.value = rrelationship == "false" ? "Sin empresa" : "Con empresa";
+			rrelationshipEl.setValue("'" + rrelationship + "'");
+		} else {
+			input.value = '';
+			rrelationshipEl.setValue('');
 		}
 
         let active = this.getElement("active");
-        active.value = (this.filter.status ||  []).includes("ACTIVE");
-        
-        let inactive = this.getElement("inactive");
-        inactive.value = (this.filter.status ||  []).includes("INACTIVE");
+		if((this.filter.status ||  []).includes("ACTIVE")){
+			active.value = true;
+		} else {
+			active.clear();
+		}
 
-        let blocked = this.getElement("blocked");
-        blocked.value = (this.filter.status ||  []).includes("BLOCKED");
+		let inactive = this.getElement("inactive");
+		if((this.filter.status ||  []).includes("INACTIVE")){
+			inactive.value = true;
+		} else {
+			inactive.clear();
+		}
 
-		let potential = this.getElement("potential");
-        potential.value = this.filter.potential == "true" ? "true" : "false";
+		let blocked = this.getElement("blocked");
+        if((this.filter.status ||  []).includes("BLOCKED")){
+			blocked.value = true;
+		} else {
+			blocked.clear();
+		}
+
+		const typeEl = this.getElement("type");
+        typeEl.setOptions([
+			{name:'Cliente', value:true},
+			{name:'Cliente Potencial', value:false}
+		]);
+		const type = this.filter.type;
+		let typeInput = typeEl.getInput();
+		if(type){
+			typeInput.value = type == "false" ? "Cliente Potencial" : "Cliente";
+			typeEl.setValue(type);
+		}else {
+			typeInput.value = '';
+			typeEl.setValue('');
+		}
 	}
 }
 

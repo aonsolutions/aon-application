@@ -24,6 +24,7 @@ import net.aonsolutions.db.up2date.fiscal.AlterFsMod2002023;
 import net.aonsolutions.db.up2date.fiscal.AlterFsMod200Registry2023;
 import net.aonsolutions.db.up2date.marketing.AddColumnMarketingActionTag;
 import net.aonsolutions.db.up2date.payroll.CleanDuplicatesPayrollWorkplace;
+import net.aonsolutions.db.up2date.task.AddColumnTaskHolderWorkgroupDatesType;
 import net.aonsolutions.db.up2date.tgss.MEIFellows2024Remove;
 import net.aonsolutions.db.up2date.warehouse.ElaborationSerialNumberUpdate;
 
@@ -461,11 +462,13 @@ public class Up2Date {
 		
         CleanDuplicatesPayrollWorkplace.CLEAN_DUPLICATE_PAYROLL_WORKPLACE, 
         AnnuledInvoiceCreation.ANNULED_INVOICE_CREATION,
-        AddColumnMarketingActionTag.ADD_COLUMN_MARKETING_ACTION_TAG,
+       // AddColumnMarketingActionTag.ADD_COLUMN_MARKETING_ACTION_TAG,
         
         AlterFsMod2002023.ALTER_FS_MODEL200_2023,
         AlterFsMod200Registry2023.ALTER_FS_MODEL200_REGISTRY_2023,
-        ElaborationSerialNumberUpdate.ELABORATION_SERIAL_NUMBER_UPDATE
+        ElaborationSerialNumberUpdate.ELABORATION_SERIAL_NUMBER_UPDATE,
+        
+        AddColumnTaskHolderWorkgroupDatesType.ADD_COLUMN_TASK_HOLDER_WORKGROUP_DATES_TYPE
 	};
 
     // ------------------------------------------------------------------------
