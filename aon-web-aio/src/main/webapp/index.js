@@ -44,7 +44,7 @@ const load = () => {
 }
 
 export const loadTheme = () => {
-    let themeUrl = getCookie("theme") || getParam("theme") || LS.getTheme() || LS.AON_THEME; 
+    let themeUrl = getParam("theme") || LS.getTheme() || getCookie("theme") || LS.AON_THEME; 
     return loadLink(themeUrl, 'stylesheet', 'text/css');
 }
 
