@@ -69,7 +69,7 @@ public interface ITask {
 	public Workgroup deleteWorkgroup(AONContext ctx, Integer wId); 
 	public Stream<TaskHolder> getTaskMemberWStream(AONContext ctx, String filter, Integer workgroupId);
 	
-	public Stream<TaskHolder> getTaskHolderStream(AONContext ctx, TaskHolderFilter filter);
+	public Stream<TaskHolder> getTaskHolderStream(AONContext ctx, TaskHolderFilter filter, int ofs, int limit);
 	public List<TaskHolder> getTaskHolderFullList(AONContext ctx, TaskHolderFilter filter);
 	public Stream<TaskHolder> getTaskHolderStream(AONContext ctx, byte[] auth);
 	public TaskHolder getTaskHolder(AONContext ctx, TaskHolderFilter filter);
@@ -83,7 +83,7 @@ public interface ITask {
 	public void insertTaskHolderWorkgroup(AONContext ctx, Integer taskHolder, Integer workgroup);
 	public void deleteTaskHolderWorkgroup(AONContext ctx, TaskHolderWorkgroupFilter filter);
 	
-	public Stream<TaskHolder> getTaskHolderWorkgroupStream(AONContext ctx, TaskHolderFilter filter, Integer workgroupId);
+	public Stream<TaskHolder> getTaskHolderWorkgroupStream(AONContext ctx, TaskHolderFilter filter, Integer workgroupId, int ofs, int limit);
 	public List<TaskHolder> getAviableSellerTaskHolders(AONContext ctx);
 	void saveTaskHolderWorkgroups(AONContext ctx, TaskHolder taskHolder);
 	

@@ -185,8 +185,8 @@ export class AonProjectList extends AonElement {
 
 		let holderBack = new AonIconButton();
         holderBack.id =  'holderBack';
-		holderBack.title = MSG.BACK;
-        holderBack.icon = MATERIAL_ICONS.ARROW_BACK;
+		holderBack.title = MSG.CLOSE;
+        holderBack.icon = MATERIAL_ICONS.CLOSE;
         holderBack.style.top = '10px';
 		holderBack.style.position = 'relative';
 		holderBack.style.right = '4px';

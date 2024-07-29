@@ -6615,15 +6615,15 @@ public class AON {
 	}
 	
 	// ------------------- TASK HOLDER
-	public static Stream<TaskHolder> getTaskHolderStream(Domain domain, User user, TaskHolderFilter filter){
-		return getTaskHolderStream(domain.getName(), domain.getId(), user.getLogin(), filter);
+	public static Stream<TaskHolder> getTaskHolderStream(Domain domain, User user, TaskHolderFilter filter, int ofs, int limit){
+		return getTaskHolderStream(domain.getName(), domain.getId(), user.getLogin(), filter, ofs, limit);
 	}
 
-	public static Stream<TaskHolder> getTaskHolderStream(String domainName, Integer domainId, String login, TaskHolderFilter filter){
+	public static Stream<TaskHolder> getTaskHolderStream(String domainName, Integer domainId, String login, TaskHolderFilter filter, int ofs, int limit){
 		CloseableAONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domainName, domainId, login);
-			return getTask().getTaskHolderStream(ctx, filter);
+			return getTask().getTaskHolderStream(ctx, filter, ofs, limit);
 		} finally {
 			if (ctx != null) ctx.close();
 		}
@@ -6639,9 +6639,9 @@ public class AON {
 		}
 	}
 	
-	public static Stream<TaskHolder> getTaskHolderWorkgroupStream(Domain domain, User user, TaskHolderFilter filter, Integer workgroupId){
+	public static Stream<TaskHolder> getTaskHolderWorkgroupStream(Domain domain, User user, TaskHolderFilter filter, Integer workgroupId, int ofs, int limit){
 		try (CloseableAONContext ctx = AONContext.getAONContext(domain, user)){
-			return getTask().getTaskHolderWorkgroupStream(ctx, filter, workgroupId);
+			return getTask().getTaskHolderWorkgroupStream(ctx, filter, workgroupId, ofs, limit);
 		}
 	}
 	
@@ -6659,7 +6659,7 @@ public class AON {
 		CloseableAONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domainName, domainId, login);
-			return getTask().getTaskHolderStream(ctx, filter).findFirst().orElse(new TaskHolder());
+			return getTask().getTaskHolderStream(ctx, filter, 0, Integer.MAX_VALUE).findFirst().orElse(new TaskHolder());
 		} finally {
 			if (ctx != null) ctx.close();
 		}

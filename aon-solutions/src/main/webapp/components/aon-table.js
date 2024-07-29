@@ -236,6 +236,7 @@ export class AonTable extends AonElement {
       let td = this.createElement(TAG.TD);
       td.style.width = item.width;
       td.style.textAlign = item.textAlign;
+      if(value.color) td.style.color = value.color;
 
       let id = item.id;
       if ("option" === id && value[id]) {
