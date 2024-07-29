@@ -44,7 +44,7 @@ const load = () => {
 }
 
 export const loadTheme = () => {
-    let themeUrl = getParam("theme") || LS.getTheme() || LS.AON_THEME; 
+    let themeUrl = getCookie("theme") || getParam("theme") || LS.getTheme() || LS.AON_THEME; 
     return loadLink(themeUrl, 'stylesheet', 'text/css');
 }
 
@@ -131,6 +131,15 @@ const getParam = (paramName) => {
 	return searchParams.get(paramName);
 }
 
-  
+const getCookie = (cookieName) => {
+	const cookieValue = decodeURIComponent(document.cookie)
+    .split(';')
+	.map((row) => row.trimStart() )
+    .find((row) => row.startsWith(`${cookieName}=`))
+    ?.split('=')[1];
+	
+	return cookieValue;  
+} 
+ 
 load();
 

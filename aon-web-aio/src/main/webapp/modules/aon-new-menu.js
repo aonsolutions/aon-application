@@ -138,7 +138,8 @@ export class AonNewMenu extends AonElement {
 		apps.className = '';
 		const excludedApps = ['commerce', 'garage', 'academy', 'office'];
 		if (!this.isApp(app) && !excludedApps.includes(app.app)) {
-			this.rootPanel(new AonNewDesktop(MENU_APPS, AON_APPS));
+			this.rootPanel(new AonDesktop());
+/*			this.rootPanel(new AonNewDesktop(DESKTOP_APPS, AON_APPS));
 			let headerapp = this.getElement("aonHeaderApp");
 			headerapp.style.display = "none";
 			let logo = this.getElement("aonLogo");
@@ -148,7 +149,7 @@ export class AonNewMenu extends AonElement {
 			header2.className = 'aonHeader aonHeaderStart';
 			let applications = this.getElement('applications');
 			applications.className = 'aonMenuLeftopStart';
-
+*/
 		} else {
 			switch (app.app) {
 				case NEW.app:
@@ -239,7 +240,8 @@ export class AonNewMenu extends AonElement {
 					this.rootPanel(new AonGarageMenu());
 					break;
 				default/*Apps.HOME*/:
-					this.rootPanel(new AonNewDesktop(MENU_APPS, AON_APPS));
+					//this.rootPanel(new AonNewDesktop(MENU_APPS, AON_APPS));
+					this.rootPanel(new AonDesktop());
 					break;
 		}
 		
@@ -952,7 +954,7 @@ export class AonNewMenu extends AonElement {
 		if(this.getDur().isMessenger()){
 			newMenuOptions.push({
 				icon: 'add_comment',
-				name: 'CREAR CONSULTA',
+				name: 'Crear Consulta',
 				fn: () => {
 					let aonMessengerChat = new AonMessenger();	
 					aonMessengerChat.data = {source:TASK_SOURCE.QUERY};
