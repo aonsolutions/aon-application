@@ -682,7 +682,8 @@ class Mod303WriterAEAT2024 implements IMod303Writer{
 			}
 		}
 		private static String getFinanceIban(Mod303 mod) {
-			if (mod.getDeclarationResultType() == FiscalModelDeclarationType.DEPOSIT) {
+			// No pongo el IBAN cuando es aplazamiento, porque si no, no valida la declaración al sacar el borrador
+			if (mod.getDeclarationResultType() == FiscalModelDeclarationType.DEPOSIT || mod.getDeclarationResultType() == FiscalModelDeclarationType.DEFERRAL) {
 				return null;
 			}
 			return mod.getFinanceIban();
