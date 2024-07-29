@@ -368,6 +368,10 @@ public class PropertiesDAO {
 	}
 	
 	public static class TargetPropertiesDAO implements TargetProperties {
+		
+		private static final com.esferalia.aon.jooq.tables.Registry TARGET_ALIAS = REGISTRY.as("registry_target");
+		
+		
 		protected Select<Record> build(SelectJoinStep<Record> select, TargetFilter filter) {
 			FilterDAO filterDAO = (FilterDAO) filter.filter(this);
 			return filterDAO.build(select);
@@ -384,14 +388,14 @@ public class PropertiesDAO {
 		@Override public Property<Byte> getStatusProperty() {return new FilterDAO.PropertyDAO<>(TARGET.STATUS);}
 		@Override public Property<Integer> getScopeProperty() {return new FilterDAO.PropertyDAO<>(TARGET.SCOPE);}
 		@Override public Property<Integer> getIdProperty() {return new FilterDAO.PropertyDAO<>(TARGET.REGISTRY);}
-		@Override public Property<String> getDocumentProperty() {return new FilterDAO.PropertyDAO<>(REGISTRY.DOCUMENT);}
-		@Override public Property<Byte> getDocumentTypeProperty() {return new FilterDAO.PropertyDAO<>(REGISTRY.DOCUMENT_TYPE);}
-		@Override public Property<String> getDocumentCountryProperty() {return new FilterDAO.PropertyDAO<>(REGISTRY.DOCUMENT_COUNTRY);}
-		@Override public Property<String> getNameProperty() {return new FilterDAO.PropertyDAO<>(REGISTRY.NAME);}
-		@Override public Property<String> getAliasProperty() {return new FilterDAO.PropertyDAO<>(REGISTRY.ALIAS);}
-		@Override public Property<Byte> getTypeProperty() {return new FilterDAO.PropertyDAO<>(REGISTRY.TYPE);}
-		@Override public Property<String> getNationalityProperty() {return new FilterDAO.PropertyDAO<>(REGISTRY.NATIONALITY);}
-		@Override public Property<Byte> getSecurityLevelProperty() {return new FilterDAO.PropertyDAO<>(REGISTRY.SECURITY_LEVEL);}
+		@Override public Property<String> getDocumentProperty() {return new FilterDAO.PropertyDAO<>(TARGET_ALIAS.DOCUMENT);}
+		@Override public Property<Byte> getDocumentTypeProperty() {return new FilterDAO.PropertyDAO<>(TARGET_ALIAS.DOCUMENT_TYPE);}
+		@Override public Property<String> getDocumentCountryProperty() {return new FilterDAO.PropertyDAO<>(TARGET_ALIAS.DOCUMENT_COUNTRY);}
+		@Override public Property<String> getNameProperty() {return new FilterDAO.PropertyDAO<>(TARGET_ALIAS.NAME);}
+		@Override public Property<String> getAliasProperty() {return new FilterDAO.PropertyDAO<>(TARGET_ALIAS.ALIAS);}
+		@Override public Property<Byte> getTypeProperty() {return new FilterDAO.PropertyDAO<>(TARGET_ALIAS.TYPE);}
+		@Override public Property<String> getNationalityProperty() {return new FilterDAO.PropertyDAO<>(TARGET_ALIAS.NATIONALITY);}
+		@Override public Property<Byte> getSecurityLevelProperty() {return new FilterDAO.PropertyDAO<>(TARGET_ALIAS.SECURITY_LEVEL);}
 		@Override public Property<String> getCreationUserProperty() {return new FilterDAO.PropertyDAO<>(TARGET.CREATION_USER);}
 		@Override public Property<Timestamp> getCreationDateProperty() {return new FilterDAO.PropertyDAO<>(TARGET.CREATION_DATE);}
 		@Override public Property<String> getModificationUserProperty() {return new FilterDAO.PropertyDAO<>(TARGET.MODIFICATION_USER);}

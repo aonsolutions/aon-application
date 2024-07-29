@@ -64,7 +64,6 @@ export class AonQuantity extends AonNewInput {
             this.toStockUnit();
             this.getElement(this.TAG_SPAN).innerHTML = this.stockUnitTag; 
         }
-
     }
 
     toFormat() {
@@ -87,6 +86,18 @@ export class AonQuantity extends AonNewInput {
         this.value = value;
         let input = this.getElement(this.INPUT);
         input.value = this.value;
+    }
+
+    setQuantityFormat(value) {
+        if(this.format === 'stockUnit' && this.packFormatTag != '') {
+          this.setQuantity(value);
+        } else if(this.format === 'format' && this.stockUnitTag != '') {   
+            if(this.stockUnitTag === this.packMeasurementTag) {
+                this.setQuantity(value * this.packMeasurement * this.packUnits);	
+            } else if(this.stockUnitTag === this.packUnitsTag) {
+                this.setQuantity(value * this.packUnits);	
+            }    
+        }
     }
 
     getQuantity() {

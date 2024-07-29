@@ -93,32 +93,25 @@ export class AonHeader extends AonElement {
 
 		let aonLogo = this.createElement(TAG.DIV);
 		aonLogo.id = "aonLogo";
-		//aonLogo.style.paddingLeft = '0px';
-		//aonLogo.style.width = '123px';
 		aonLogo.className = (LS.isNewTheme() || this.newTheme) ? "aonNewLogo" : "aonLogo";
 		div.appendChild(aonLogo);
-
-        let aonHeaderApp = this.createElement(TAG.DIV);
+		
+		let aonHeaderApp = this.createElement(TAG.DIV);
 		aonHeaderApp.id = "aonHeaderApp";
 		aonHeaderApp.className = "aonHeaderApp";
 		aonHeaderApp.style.minWidth = '120px';
 		aonHeaderApp.style.display = "none";
 		aonHeaderApp.appendChild(this.createElement(TAG.SPAN));
 		div.appendChild(aonHeaderApp);
-
+		
 		let aonHeaderSearch = this.createElement(TAG.SPAN);
 		aonHeaderSearch.id = this.AON_HEADER_SEARCH;
-		aonHeaderSearch.style.display = "flex";
-		aonHeaderSearch.style.alignItems = "center";
-		aonHeaderSearch.style.width = "100%";
-		aonHeaderSearch.style.minWidth = '150px';
-		aonHeaderSearch.style.maxWidth = '500px';
+		aonHeaderSearch.classList.add("aonHeaderSearch");
 		
 		let aonHeaderSearchBox = new AonSearchBox();
 		aonHeaderSearchBox.id = this.AON_HEADER_SEARCH_BOX;
 		aonHeaderSearchBox.newTheme = this.newTheme;
 		aonHeaderSearch.appendChild(aonHeaderSearchBox);
-
 		div.appendChild(aonHeaderSearch);
 
 		let aonHeaderButtons = this.createElement(TAG.DIV);
@@ -131,9 +124,7 @@ export class AonHeader extends AonElement {
 		
 		let aonHeaderCompany = this.createElement(TAG.SPAN);
 		aonHeaderCompany.id = this.AON_HEADER_COMPANY;
-		aonHeaderCompany.style.display = "none";
-		aonHeaderCompany.style.height = "14px";
-		aonHeaderCompany.style.color = "var(--aonGrayHeaderButtonsColor)"
+		aonHeaderCompany.classList.add("aonHeaderCompany");
 
 		let aonHeaderCompanyName = this.createElement(TAG.SPAN);
 		aonHeaderCompanyName.id = this.AON_HEADER_COMPANY_NAME;
@@ -155,7 +146,7 @@ export class AonHeader extends AonElement {
 
 		let aonHeaderCompanyList = this.createElement(TAG.SPAN);
 		aonHeaderCompanyList.id = this.AON_HEADER_COMPANY_LIST;
-		aonHeaderCompanyList.style.display = "none";
+		aonHeaderCompanyList.classList.add("aonHeaderCompanyList");
 		aonHeaderCompanyList.title = "Listado de empresas";
 
 		let aonHeaderHomeCompanyListButton = new AonIconButton();
@@ -385,18 +376,6 @@ export class AonHeader extends AonElement {
 			let headerapp = this.getElement("aonHeaderApp");
 			headerapp.style.display = "none";
 
-			// if (!LS.isDarkTheme()) {
-			// 	header.style.backgroundColor = "rgb(240, 240, 240)";
-			// 	apps.style.color = "rgb(95, 99, 104)";
-			// 	apps.style.backgroundColor = "rgb(240,240,240)";
-			// 	headerapp.style.display = "none";
-			// } else {
-			// 	header.style.backgroundColor = "black";
-			// 	apps.style.color = "white";
-			// 	apps.style.backgroundColor = "black";
-			// 	headerapp.style.display = "none";
-			// }
-
 			let logo = this.getElement("aonLogo");
 			logo.style.display = "block";
 			logo.style.filter = "none";
@@ -404,7 +383,6 @@ export class AonHeader extends AonElement {
 			let rootPanel = this.getElement("rootPanel");
 			rootPanel.style.backgroundColor = "transparent";
 			let enterprise = this.getElement("aonHeaderCompanyName");
-			enterprise.style.color = "rgb(95, 99, 104)";
 			let appss = this.getElement("applications");
 			let welcome = this.getElement("aonCompanyTabFilter");
 
@@ -495,16 +473,7 @@ export class AonHeader extends AonElement {
 					}
 			});
 		}
-		// if(LS.isDarkTheme()){
-		// 	aonHeaderCompanyName.style.color = "var(--aonWhite)";
-		// 	aonHeaderCompanyListButton.style.color = "var(--aonWhite)";
-		// 	let help = this.getElement("aonHeaderHelpButtonIconButton");
-		// 	help.style.color = "var(--aonWhite)";
-		// 	let config = this.getElement("aonHeaderConfigButtonIconButton");
-		// 	config.style.color = "var(--aonWhite)";
-
-
-		// }
+		
 
 		let header1 = this.getElement("aonHeaderCompanyName")
 		header1.style.color = "var--(aonGrayHeaderButtonsColor)";
@@ -562,13 +531,7 @@ export class AonHeader extends AonElement {
 	}
 
 	buildLogo() {
-/*
-		let aonLogo = this.getElement('aonLogo');
-		if(LS.isDarkTheme())
-			aonLogo.src = '../assets/aon-white-logo.svg';
-		else if(!LS.isDarkTheme())
-			aonLogo.src = '../assets/aon-black-logo.svg';
-*/
+
 		aonLogo.addEventListener('click', () => {
 			if(LS.getDomainId()){
 				this.rootPanelHtml(this.isMobile()
@@ -740,28 +703,20 @@ export class AonHeader extends AonElement {
 		a.classList.add('aonMenuApp');
 
 		let div = this.createElement(TAG.DIV);
-		div.style.padding = '1px';
-		div.style.display = 'flex';
-		div.style.alignItems = 'center';
-		// div.style.justifyContent = 'center';
-		div.style.height =  '32px';
-		div.style.flexDirection =  'row';
-		div.style.backgroundColor = 'transparent';
+		div.classList.add("aonHeaderAppDiv");
 
 		if ((!sidenav && app.symbol) || (sidenav && !app.icon && app.symbol)) {
 			let icon = this.createElement(TAG.SPAN);
 			icon.classList.add(CSS.MATERIAL_SYMBOLS_OUTLINED);
 			icon.id = `aonMenuListAppImg-${app.app}`;
 			icon.innerHTML = app.symbol;
-			if(app.color) icon.style.color = "white";
-			icon.style.padding = "4px";
-			icon.style.fontSize = "24px";
+			icon.classList.add("aonHeaderAppIcon");
 			div.appendChild(icon);
 		} else if (app.icon) {
 			let aonIcon = new AonIcon();
 			aonIcon.id = `aonMenuListAppImg-${app.app}`;
 			aonIcon.icon = app.icon;
-			aonIcon.color = "white";
+			aonIcon.color = "var(--aonIcon)";
 			aonIcon.size = "32px";
 			div.appendChild(aonIcon);
 		} else if (app.logo) {
@@ -778,9 +733,7 @@ export class AonHeader extends AonElement {
 			// for (let i = 0; i < 2; i++) {
 				let span = this.createElement(TAG.SPAN);
 				span.id = `aonMenuListAppTitle-${app.app}`;//-${i}`;
-				span.style.textAlign = 'center';
-				span.style.minHeight = '21px';
-				span.style.color = "white";
+				span.classList.add("aonHeaderAppSpan");
 				span.innerHTML = app.title; // titles.length > i ? titles[i] : '&nbsp;';
 				div.appendChild(span);
 			// }

@@ -1,4 +1,4 @@
-import {getCustomers, getCustomer, getScopes} from '../../../services/service.js';
+import {getCustomers, getCustomer, getScopes, getTarget} from '../../../services/service.js';
 import { EVENT, TAG} from '../../../environments/environments.js';
 import { AonRegistryList } from '../aon-registry-list.js';
 import { AonCustomer } from './aon-customer.js';
@@ -9,6 +9,13 @@ import { OfficeEnums } from '../../office/OfficeEnums.js';
 
 export class AonCustomerList extends AonRegistryList {
 
+	parent;
+
+	constructor(parent) {
+		super();
+		this.parent = parent;
+	}
+
 	build(){
 		this.filter = this.filter || { page: 1, perPage: 50 }
 		super.build();
@@ -16,7 +23,6 @@ export class AonCustomerList extends AonRegistryList {
 
 	async getRegistries() {
 		let customers = await getCustomers(this.filter);
-
 		return customers;
 	}
 
@@ -26,7 +32,8 @@ export class AonCustomerList extends AonRegistryList {
 				id: registry.id,
 				additional_info: ['ADDRESSES', 'MEDIA', 'BANKS', 'PAYMETHOD', 'RSEGMENT']
 			};
-			return getCustomer(data);
+
+			return this.filter.type == "false" ? getTarget(data) : getCustomer(data);
 		}
 		
 		return null;
@@ -51,7 +58,7 @@ export class AonCustomerList extends AonRegistryList {
 	buildSearch(){
 		let timeOut = null;
 
-		let btnSearch = this.getApplication().addSearchOption();
+		let btnSearch = this.getApplication().addSearchOption(true);
 		
 		btnSearch.addEventListener(EVENT.SEARCH_NEW, ({detail}) => {
 			clearTimeout(timeOut);
@@ -63,25 +70,49 @@ export class AonCustomerList extends AonRegistryList {
 					projectType: detail.projectType,
 					rrelationship: detail.rrelationship,
 					status: OfficeUtils.getCustomerStatus(detail),
+					type : detail.type,
 					page:1
 				}
 				this.setFilter(this.filter);
+				this.parent.setFilterCustomers(this.filter);
+				let filterCount = this.getElement("aonOfficePanelToolbarHeaderToolSectionSearchCountFilter");
+				filterCount.style.display = 'none';
 			}, 300);
 		});
 
+		btnSearch.addEventListener(EVENT.RESET_FILTER, ({detail}) => {
+			clearTimeout(timeOut);
+			timeOut = setTimeout(() => {
+				this.filter = {
+					page: 1,
+					perPage: 50,
+					status: ["ACTIVE", "BLOCKED"]
+				}
+				this.setFilter(this.filter);
+				this.parent.setFilterCustomers(this.filter);
+				this.setSearchValues();	
+			}, 300);
+		});
+
+		let searchInput = this.getElement("aonOfficePanelToolbarHeaderToolSectionSearchSearchInput");
+		searchInput.placeholder = "Buscar por nombre, documento o alias";
+		searchInput.focus();
+
 		btnSearch.buildOptionsFilter(OfficeEnums.CustomerFilter);//INPUTS
-		this.setSearchValues();
+		this.setSearchValues();	
     }
 
     setSearchValues(){
+		let searchInput = this.getElement("aonOfficePanelToolbarHeaderToolSectionSearchSearchInput");
+		let searchValue = this.filter.value;
+		searchInput.value = searchValue ? searchValue : '';
+		
 		let scopeEl = this.getElement("scope");
         getScopes().then(scopes=>{
             scopeEl.setOptions(scopes.map(c=> ({...c, value: c.id})) );
 
             const value = this.filter.scope;
-            if(value){
-                scopeEl.value = value;
-            }
+			scopeEl.setValue(value);
         })
 
         let projectTypeEl = this.getElement("projectType");
@@ -92,9 +123,7 @@ export class AonCustomerList extends AonRegistryList {
             projectTypeEl.setOptions(types);
 
             const value = this.filter.projectType;
-            if(value){
-                projectTypeEl.value = value;
-            }
+			projectTypeEl.setValue(value);
         })
 
         const rrelationshipEl = this.getElement("rrelationship");
@@ -104,18 +133,50 @@ export class AonCustomerList extends AonRegistryList {
 		]);
 
 		const rrelationship = this.filter.rrelationship;
-		if(rrelationship!=null){
-			rrelationshipEl.value = rrelationship;
+		let input = rrelationshipEl.getInput();
+		if(rrelationship){
+			input.value = rrelationship == "false" ? "Sin empresa" : "Con empresa";
+			rrelationshipEl.setValue("'" + rrelationship + "'");
+		} else {
+			input.value = '';
+			rrelationshipEl.setValue('');
 		}
 
         let active = this.getElement("active");
-        active.value = (this.filter.status ||  []).includes("ACTIVE");
-        
-        let inactive = this.getElement("inactive");
-        inactive.value = (this.filter.status ||  []).includes("INACTIVE");
+		if((this.filter.status ||  []).includes("ACTIVE")){
+			active.value = true;
+		} else {
+			active.clear();
+		}
 
-        let blocked = this.getElement("blocked");
-        blocked.value = (this.filter.status ||  []).includes("BLOCKED");
+		let inactive = this.getElement("inactive");
+		if((this.filter.status ||  []).includes("INACTIVE")){
+			inactive.value = true;
+		} else {
+			inactive.clear();
+		}
+
+		let blocked = this.getElement("blocked");
+        if((this.filter.status ||  []).includes("BLOCKED")){
+			blocked.value = true;
+		} else {
+			blocked.clear();
+		}
+
+		const typeEl = this.getElement("type");
+        typeEl.setOptions([
+			{name:'Cliente', value:true},
+			{name:'Cliente Potencial', value:false}
+		]);
+		const type = this.filter.type;
+		let typeInput = typeEl.getInput();
+		if(type){
+			typeInput.value = type == "false" ? "Cliente Potencial" : "Cliente";
+			typeEl.setValue(type);
+		}else {
+			typeInput.value = '';
+			typeEl.setValue('');
+		}
 	}
 }
 

@@ -2,6 +2,13 @@ import * as APP from  "aonsolutions/services/app.js";
 import { MATERIAL_ICONS, MSG, CONSTANT, AON_ICONS } from "aonsolutions/environments/environments.js";
 
 
+export const NEW = {
+	home : true,
+	title: MSG.NEW,
+	app: CONSTANT.NEW,
+	symbol: MATERIAL_ICONS.ADD_CIRCLE_OUTLINE,
+};
+
 export const HOME = {
 	home : true,
 	title: MSG.HOME,
@@ -31,6 +38,7 @@ export const AON_APPS = [
 
 export const MENU_APPS = [
   HOME,
+  NEW,
   APP.INVOICE,
   APP.DOCUMENTAL,
   APP.ACCOUNTING,
@@ -61,6 +69,7 @@ export const COMMERCIAL_MENU = {
 	title: MSG.COMMERCIAL,
 	subtitle: "Comercial",
 	color: "var(--aonTopMenuAvailable)",
+	style: "aonTopNavCommercialButton",
 	apps: [],
 	price: " ",
 };
@@ -72,6 +81,7 @@ export const MANAGEMENT_MENU = {
 	title: MSG.MANAGEMENT,
 	subtitle: "Management",
 	color: "var(--aonTopMenuAvailable)",
+	style: "aonTopNavManagementButton",
 	apps: [],
 	price: " ",
 };
@@ -83,6 +93,7 @@ export const TREASURY_MENU = {
 	title: MSG.TREASURY,
 	subtitle: "Treasury",
 	color: "var(--aonTopMenuAvailable)",
+	style: "aonTopNavTreasuryButton",
 	apps: [],
 	price: " ",
 };
@@ -94,6 +105,7 @@ export const WAREHOUSE_MENU = {
 	title: MSG.WAREHOUSE,
 	subtitle: "Warehouse",
 	color: "var(--aonTopMenuAvailable)",
+	style: "aonTopNavWarehouseButton",
 	apps: [],
 	price: " ",
 };
@@ -105,6 +117,7 @@ export const GROUPWARE_MENU = {
 	title: MSG.GROUPWARE,
 	subtitle: "Groupware",
 	color: "var(--aonTopMenuAvailable)",
+	style: "aonTopNavGroupwareButton",
 	apps: [],
 	price: " ",
 };
@@ -116,6 +129,7 @@ export const ACCOUNTING_MENU = {
 	title: MSG.ACCOUNTING,
 	subtitle: "Accounting",
 	color: "var(--aonTopMenuAvailable)",
+	style: "aonTopNavAccountingButton",
 	apps: [],
 	price: " ",
 };
@@ -127,6 +141,7 @@ export const FISCAL_MENU = {
 	title: MSG.FISCAL,
 	subtitle: "Fiscal",
 	color: "var(--aonTopMenuAvailable)",
+	style: "aonTopNavFiscalButton",
 	apps: [],
 	price: " ",
 };
@@ -138,6 +153,7 @@ export const PAYROLL_MENU = {
 	title: MSG.PAYROLL,
 	subtitle: "Payroll",
 	color: "var(--aonTopMenuAvailable)",
+	style: "aonTopNavPayrollButton",
 	apps: [],
 	price: " ",
 };
@@ -149,6 +165,7 @@ export const MARKETING_MENU = {
 	title: MSG.MARKETING,
 	subtitle: "Marketing",
 	color: "var(--aonTopMenuAvailable)",
+	style: "aonTopNavMarketingButton",
 	apps: [],
 	price: " ",
 };

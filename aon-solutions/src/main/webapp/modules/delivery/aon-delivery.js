@@ -493,8 +493,7 @@ export class AonDelivery extends AonElement {
 		let product = this.createInput(this.PACKAGING_SOURCE_PRODUCT, "Envase Origen");
 		product.id = id + 'Envase';
 		table.addCell(product);
-		product.addIconButton(MATERIAL_ICONS.QR_CODE_SCANNER, () => this.openBarcode(product));
-	
+		product.addIcon(MATERIAL_ICONS.QR_CODE_SCANNER, undefined,() => this.openBarcode(product));
 		let source;
 		let quantity = 0;
 		let composition = [];

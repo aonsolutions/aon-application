@@ -402,7 +402,11 @@ public class OCRInvoiceBuilder {
 			} else {
 				Pair<String,Integer> seriesNumber = guessSeriesNumber(reference);
 				invoice.setSeries( seriesNumber.getLeft());
-				invoice.setNumber( seriesNumber.getRight());
+				if (seriesNumber.getRight() != null) {
+					invoice.setNumber( seriesNumber.getRight());
+				} else {
+					invoice.setNumber( 0 );
+				}
 			}
 		} else { 
 			invoice.setNumber(0);
