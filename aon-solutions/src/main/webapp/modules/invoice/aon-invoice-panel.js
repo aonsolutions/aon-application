@@ -137,6 +137,10 @@ export class AonInvoicePanel extends AonElement {
 			this.aonInvoiceById(this.value);
 		} else this.aonInvoiceHome();
 		// else this.selectOption(this.option);
+		
+		const buildEvent = new CustomEvent(EVENT.BUILD, { panel: this });
+		this.dispatchEvent(buildEvent);
+
 	}
 
 	buildToolbarOptions(){

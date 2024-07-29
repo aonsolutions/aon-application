@@ -45,3 +45,4 @@ export const PASTE = 'paste';
 export const PRINT_IMAGE = 'printImage';
 export const PRINT_PDF_PAGE = 'printPdfPage';
 export const AON_APPLICATION_SELECT = "apSelect";
+export const BUILD = "build";
