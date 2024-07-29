@@ -94,9 +94,9 @@ public class TaskHolderWorkgroupDAO {
 				.set(TASK_HOLDER_WORKGROUP.DOMAIN, taskHolderWorkgroup.getDomain())
 				.set(TASK_HOLDER_WORKGROUP.TASK_HOLDER, taskHolderWorkgroup.getTaskHolder())
 				.set(TASK_HOLDER_WORKGROUP.WORKGROUP, taskHolderWorkgroup.getWorkgroup().getId())
-				.set(TASK_HOLDER_WORKGROUP.TASK_HOLDER_WORKGROUP_TYPE, (byte) taskHolderWorkgroup.getTaskHolderWorkgroupType().ordinal())
-				.set(TASK_HOLDER_WORKGROUP.START_DATE, new Timestamp(taskHolderWorkgroup.getStartDate().getTime()))
-				.set(TASK_HOLDER_WORKGROUP.END_DATE, new Timestamp(taskHolderWorkgroup.getEndDate().getTime()))
+				.set(TASK_HOLDER_WORKGROUP.TASK_HOLDER_WORKGROUP_TYPE, null == taskHolderWorkgroup.getTaskHolderWorkgroupType() ? (byte) 0 : (byte) taskHolderWorkgroup.getTaskHolderWorkgroupType().ordinal())
+				.set(TASK_HOLDER_WORKGROUP.START_DATE, null == taskHolderWorkgroup.getStartDate() ? null : new Timestamp(taskHolderWorkgroup.getStartDate().getTime()))
+				.set(TASK_HOLDER_WORKGROUP.END_DATE, null == taskHolderWorkgroup.getEndDate() ? null : new Timestamp(taskHolderWorkgroup.getEndDate().getTime()))
 				.returning(TASK_HOLDER_WORKGROUP.ID).fetchOne().getValue(TASK_HOLDER_WORKGROUP.ID);
 		return taskHolderWorkgroup.setId(id);
 	}
@@ -113,9 +113,9 @@ public class TaskHolderWorkgroupDAO {
 	private static TaskHolderWorkgroup update(AONContext ctx, Integer updateId, TaskHolderWorkgroup taskHolderWorkgroup) {
 		 ctx.getDslContext().update(TASK_HOLDER_WORKGROUP)
 			.set(TASK_HOLDER_WORKGROUP.WORKGROUP, taskHolderWorkgroup.getWorkgroup().getId())
-			.set(TASK_HOLDER_WORKGROUP.TASK_HOLDER_WORKGROUP_TYPE, (byte) taskHolderWorkgroup.getTaskHolderWorkgroupType().ordinal())
-			.set(TASK_HOLDER_WORKGROUP.START_DATE, new Timestamp(taskHolderWorkgroup.getStartDate().getTime()))
-			.set(TASK_HOLDER_WORKGROUP.END_DATE, new Timestamp(taskHolderWorkgroup.getEndDate().getTime()))
+			.set(TASK_HOLDER_WORKGROUP.TASK_HOLDER_WORKGROUP_TYPE, null == taskHolderWorkgroup.getTaskHolderWorkgroupType() ? (byte) 0 : (byte) taskHolderWorkgroup.getTaskHolderWorkgroupType().ordinal())
+			.set(TASK_HOLDER_WORKGROUP.START_DATE, null == taskHolderWorkgroup.getStartDate() ? null : new Timestamp(taskHolderWorkgroup.getStartDate().getTime()))
+			.set(TASK_HOLDER_WORKGROUP.END_DATE, null == taskHolderWorkgroup.getEndDate() ? null :  new Timestamp(taskHolderWorkgroup.getEndDate().getTime()))
 			.where(TASK_HOLDER_WORKGROUP.ID.eq(updateId))
 			.execute();
 		 return taskHolderWorkgroup;

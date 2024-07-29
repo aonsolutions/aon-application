@@ -130,7 +130,7 @@ public class TimeControlDAO {
 			.and(f.getDateProperty().le(endTimestamp)));
 		
 		TaskOldDAO.getTaskHolderStream(ctx, f -> f.getDomainProperty().eq(ctx.getDomainId())
-			.and(f.getUserIdProperty().isNotNull())).forEach(th -> {
+			.and(f.getUserIdProperty().isNotNull()), 0, Integer.MAX_VALUE).forEach(th -> {
 				TimeControl tc = buildTimeControl(ctx, th.getId(), list.stream().filter(f -> f.getTaskHolder().getId().equals(th.getId())), null, null, null);
 				tcList.add(tc);
 			});
@@ -385,7 +385,7 @@ public class TimeControlDAO {
 		tc.setLastCoordinates(tcd.getCoordinates());
 		tc.setLastDate(tcd.getDate());
 		tc.setLastLocation(tcd.getLocation());
-		tc.setTaskHolder(TaskOldDAO.getTaskHolderStream(ctx, f -> f.getIdProperty().eq(taskHolderId)).findFirst().orElse(new TaskHolder()));
+		tc.setTaskHolder(TaskOldDAO.getTaskHolderStream(ctx, f -> f.getIdProperty().eq(taskHolderId), 0, Integer.MAX_VALUE).findFirst().orElse(new TaskHolder()));
 
 		tc.setStartDate(startDate);
 		tc.setEndDate(endDate);

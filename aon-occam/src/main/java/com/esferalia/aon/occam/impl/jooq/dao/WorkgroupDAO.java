@@ -44,7 +44,7 @@ public class WorkgroupDAO {
 	}
 	
 	public static Stream<Workgroup> getStream(AONContext ctx, WorkgroupFilter filter){
-		return select(ctx, filter).fetch().stream().map(new WorkgroupFiller());
+		return select(ctx, filter).orderBy(WORKGROUP.DESCRIPTION).fetch().stream().map(new WorkgroupFiller());
 	}
 
 	public static List<Workgroup> getList(AONContext ctx, WorkgroupFilter filter) {

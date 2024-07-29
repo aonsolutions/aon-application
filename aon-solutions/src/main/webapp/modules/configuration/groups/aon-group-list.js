@@ -56,6 +56,7 @@ export class AonGroupList extends AonElement {
   paintView() {
     let aonTable = this.isMobile() ? new AonMobileList() : new AonTable();
     aonTable.id = this.TABLE_ID;
+    aonTable.selectedColor = true;
     this.appendChild(aonTable);
   }
 
@@ -169,8 +170,6 @@ export class AonGroupList extends AonElement {
   }
 
   save(data) {
-    console.log("Save Workgroup");
-    console.log(data);
     saveWorkgroup(data)
     .then(() => {
       this.showMessage();      

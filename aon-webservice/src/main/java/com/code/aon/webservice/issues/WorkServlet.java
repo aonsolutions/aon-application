@@ -132,7 +132,7 @@ public class WorkServlet extends HttpServlet{
 	private JSONArray getOperatorsJSON(Domain domain, String userName) {
 		JSONArray array = new JSONArray();			
 		
-		Stream<User> userList = AON.getTaskHolderStream(domain.getName(), domain.getId(), userName, f -> f.getDomainProperty().eq(domain.getId()))
+		Stream<User> userList = AON.getTaskHolderStream(domain.getName(), domain.getId(), userName, f -> f.getDomainProperty().eq(domain.getId()), 0, Integer.MAX_VALUE)
 				.sorted((e1, e2) -> e1.getName().compareTo(e2.getName()))
 				.map(new RegistryToUserFiller());
 		

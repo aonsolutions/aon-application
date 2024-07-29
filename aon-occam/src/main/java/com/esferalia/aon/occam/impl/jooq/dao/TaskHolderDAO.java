@@ -198,7 +198,7 @@ public class TaskHolderDAO {
 		return taskHolder;
 	}
 	
-	public static Stream<TaskHolder> getTaskHolderWorkgroup(AONContext ctx, TaskHolderFilter filter, Integer workgroupId){
+	public static Stream<TaskHolder> getTaskHolderWorkgroup(AONContext ctx, TaskHolderFilter filter, Integer workgroupId, int ofs, int limit){
 		SelectConditionStep<Record> r = ctx.getDslContext().select()
 				.from(TASK_HOLDER)
 				.join(REGISTRY).on(REGISTRY.ID.eq(TASK_HOLDER.REGISTRY))
@@ -207,7 +207,8 @@ public class TaskHolderDAO {
 		if(workgroupId != null && workgroupId>0)
 			r.and(TASK_HOLDER_WORKGROUP.WORKGROUP.eq(workgroupId));
 	
-		return r.orderBy(REGISTRY.NAME).fetch().stream().map(new TaskHolderFiller());
+		return r.orderBy(REGISTRY.NAME).offset(ofs)
+				.limit(limit).fetch().stream().map(new TaskHolderFiller());
 	}
 
 	public static List<TaskHolder> getAviableSellerTaskHolders(AONContext ctx) {
