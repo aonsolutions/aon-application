@@ -1,6 +1,7 @@
 package com.esferalia.aon.occam.impl.jooq.dao;
 
 import static com.esferalia.aon.jooq.tables.TaskHolderWorkgroup.TASK_HOLDER_WORKGROUP;
+import static com.esferalia.aon.jooq.tables.UserWorkgroup.USER_WORKGROUP;
 import static com.esferalia.aon.jooq.tables.Workgroup.WORKGROUP;
 
 import java.util.LinkedList;
@@ -90,6 +91,8 @@ public class WorkgroupDAO {
 	}
 
 	public static void delete(AONContext ctx, Integer id) {
+		ctx.getDslContext().delete(USER_WORKGROUP).where(USER_WORKGROUP.WORKGROUP.eq(id)).execute();
+		ctx.getDslContext().delete(TASK_HOLDER_WORKGROUP).where(TASK_HOLDER_WORKGROUP.WORKGROUP.eq(id)).execute();
 		ctx.getDslContext().delete(WORKGROUP).where(WORKGROUP.ID.eq(id)).execute();
 		ctx.log().debug("DELETE WORKGROUP id:" + id);
 	}

@@ -155,6 +155,7 @@ export class AonTable extends AonElement {
     th.innerHTML = name;
     th.style.width = width;
     this.columns.push({ name, type, id, width, textAlign });
+
     header.appendChild(th);
   }
 

@@ -1,4 +1,5 @@
 import { AonCheckbox } from "../../components/aon-checkbox.js";
+import { AON_WORKGROUP } from "../../environments/aonTag.js";
 import { CONSTANT, MATERIAL_ICONS, MSG } from "../../environments/environments.js";
 
 
@@ -14,6 +15,12 @@ const AON_TASK_HOLDER = {
     icon: MATERIAL_ICONS.PEOPLE
 }
 
+const AON_WORKGROUP_LIST = {
+    id: 'sideNavWorkgroup',
+    name: "Grupos de Trabajo",
+    icon: MATERIAL_ICONS.GROUPS
+}
+
 
 const OfficeViews = {
     AON_CUSTOMER: "aonCustomerOffice",
@@ -21,6 +28,7 @@ const OfficeViews = {
     AON_OFFICE_PANEL: "aonOfficePanel",
     AON_TASK_HOLDER: "aonTaskHolder",
     AON_TASK_HOLDER_LIST: "aonTaskHolderList",
+    AON_WORKGROUP_LIST : "aonWorkgroupList"
 }
 
 const OfficeSidenav = {
@@ -39,7 +47,8 @@ const OfficeSidenav = {
 
 const OfficeOptions = {
     AON_CUSTOMER,
-    AON_TASK_HOLDER
+    AON_TASK_HOLDER,
+    AON_WORKGROUP_LIST
 };
 
 
@@ -72,23 +81,6 @@ const getButtonsStatus = () => {
     return div;
 }
 
-const getPontentialButton = () => {
-    const id = "htmlElementCustomPotential";
-    let div = document.getElementById(id) || document.createElement("div");
-    div.id = id;
-    div.style.display = "flex";
-    div.style.columnGap = "10px";
-    div.innerHTML ="";
-
-    let pontential =  new AonCheckbox();
-    pontential.id = "potential";
-    pontential.name = "potential";
-    pontential.description = "Potenciales";
-    div.appendChild(pontential);
-
-    return div;
-}
-
 const CustomerFilter = [
     {
         type: CONSTANT.SELECT,
@@ -113,6 +105,16 @@ const CustomerFilter = [
         id: "rrelationship",
         name: "rrelationship",
         title: "Vinculo",
+        autocomplete: true,
+        default:true,
+        emptyclear:true
+    },
+    {
+        type: CONSTANT.SELECT,
+        id: "type",
+        name: "type",
+        title: MSG.TYPE,
+        autocomplete: true,
         default:true,
         emptyclear:true
     },
@@ -120,11 +122,6 @@ const CustomerFilter = [
         type: CONSTANT.HTML_ELEMENT,
         id: CONSTANT.HTML_ELEMENT,
         element: getButtonsStatus()
-    },
-    {
-        type: CONSTANT.HTML_ELEMENT,
-        id: CONSTANT.HTML_ELEMENT + "Potential",
-        element: getPontentialButton()
     }
 ];
 
