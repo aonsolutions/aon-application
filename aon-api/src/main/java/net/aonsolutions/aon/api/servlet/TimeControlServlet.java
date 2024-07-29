@@ -22,7 +22,9 @@ import com.esferalia.aon.occam.api.AON_SOLUTIONS;
 import com.esferalia.aon.occam.api.SECURITY;
 import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.occam.api.model.Filter;
 import com.esferalia.aon.occam.api.model.IJsonNames;
+import com.esferalia.aon.occam.api.model.Properties.TaskHolderProperties;
 import com.esferalia.aon.occam.api.model.aonsolutions.AonToken;
 import com.esferalia.aon.occam.api.model.aonsolutions.Coordinates;
 import com.esferalia.aon.occam.api.model.aonsolutions.Location;
@@ -232,7 +234,7 @@ public class TimeControlServlet extends AonApiHttpServlet{
 		if(!api.getData().optString(END_DATE).isEmpty()) 
 			endDate = AonDateUtils.parse(api.getData().optString(END_DATE), FORMAT_DATE);
 		JSONArray array = new JSONArray();
-		AON_SOLUTIONS.getTimeControlEmployeeStream(api.getDomain(), "", startDate, endDate, page, perPage)
+		AON_SOLUTIONS.getTimeControlEmployeeStream(api.getDomain(), "", startDate, endDate, f-> taskHolderFilter(api, f), page, perPage)
 		.forEach(tc -> 	array.put(tc.toJSON()));
 		return array;
 	}
@@ -420,4 +422,31 @@ public class TimeControlServlet extends AonApiHttpServlet{
 			throw new AonApiException("Empleado requerido");
 		}
 	}
+	
+	public static Filter taskHolderFilter(AonApiData api, TaskHolderProperties f) {
+		JSONObject params  = api.getData();
+
+		Integer id = params.optInt(IJsonNames.ID);
+		String search = params.optString(IJsonNames.SEARCH);
+		
+		
+		Filter filter  = f.getDomainProperty().eq(api.getDomain().getId());
+		
+		if(id!=0) {
+			filter = filter.and(f.getIdProperty().eq(id));
+		} 
+		
+		if(params.opt(IJsonNames.ACTIVE)!=null) {
+			filter = filter.and(f.getActiveProperty().eq( (byte)(params.optBoolean(IJsonNames.ACTIVE) ? 1 : 0)) );
+		}
+		
+		if(!search.isEmpty()) {
+			Filter searchFilter = f.getNameProperty().like("%" + search + "%")
+					.or(f.getDocumentProperty().like("%" + search + "%"))
+					.or(f.getAliasProperty().like("%" + search + "%"));
+			filter = filter.and(searchFilter);
+		}
+		
+		return filter;
+	}	
 }

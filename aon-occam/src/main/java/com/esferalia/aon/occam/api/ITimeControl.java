@@ -5,6 +5,7 @@ import java.util.LinkedList;
 import java.util.stream.Stream;
 
 import com.esferalia.aon.occam.api.model.Filter.LocationFilter;
+import com.esferalia.aon.occam.api.model.Filter.TaskHolderFilter;
 import com.esferalia.aon.occam.api.model.Filter.TimeControlFilter;
 import com.esferalia.aon.occam.api.model.aonsolutions.Coordinates;
 import com.esferalia.aon.occam.api.model.aonsolutions.Location;
@@ -15,7 +16,7 @@ import com.esferalia.aon.occam.api.model.aonsolutions.TimeControlGroup;
 public interface ITimeControl {
 
 	public Stream<TimeControl> getTimeControlStream(AONContext ctx, Date startDate, Date endDate);
-	public Stream<TimeControl> getTimeControlEmployeeStream(AONContext ctx, Date startDate, Date endDate, Integer page, Integer perPage);
+	public Stream<TimeControl> getTimeControlEmployeeStream(AONContext ctx, Date startDate, Date endDate, TaskHolderFilter filter, Integer page, Integer perPage);
 	public Stream<TimeControl> getTaskHolderTimeControlStream(AONContext ctx, Integer taskHolderId, Date startDate, Date endDate, TimeControlGroup group);
 	public TimeControl getTaskHolderTimeControl(AONContext ctx, Integer taskHolderId, Date startDate, Date endDate);
 	

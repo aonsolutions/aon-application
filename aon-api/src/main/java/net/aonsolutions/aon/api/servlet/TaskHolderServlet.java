@@ -52,6 +52,9 @@ public class TaskHolderServlet extends AonApiHttpServlet{
 			case "/list":
 				response(req, resp, getTaskHolders(api));
 				break;
+			case "/employee/count":
+				response(req, resp, getTaskHoldersCount(api));
+				break;
 			case "/employee":
 				response(req, resp, getTaskHolderEmployee(api));
 				break;
@@ -136,7 +139,7 @@ public class TaskHolderServlet extends AonApiHttpServlet{
 		Integer page = api.getData().has(IJsonNames.PAGE) ? api.getData().optInt(IJsonNames.PAGE) : null;
 		Integer perPage = api.getData().has(IJsonNames.PER_PAGE) ? api.getData().optInt(IJsonNames.PER_PAGE) : null;
 		AON.getTaskHolderEmployee(domain.getName(), domain.getId(), api.getUser().getLogin(), 
-				f -> f.getDomainProperty().eq(domain.getId()), page, perPage)
+				f-> filter(api, f), page, perPage)
 			.forEach(th->{
 				JSONObject json = new JSONObject();
 				json.put("id", th.getId());
@@ -156,6 +159,10 @@ public class TaskHolderServlet extends AonApiHttpServlet{
 		return TaskHolderJSON.toJSON(AON.getTaskHolderStream(domain.getName(), domain.getId(), api.getUser().getLogin(), 
 				f-> filter(api, f)
 		));
+	}
+	
+	private long getTaskHoldersCount(AonApiData api) {
+		return AON.getTaskHolderCount(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), f-> filter(api, f));
 	}
 	
 	private JSONObject getTaskHolder(AonApiData api) {

@@ -7,6 +7,7 @@ import java.util.stream.Stream;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.ITimeControl;
 import com.esferalia.aon.occam.api.model.Filter.LocationFilter;
+import com.esferalia.aon.occam.api.model.Filter.TaskHolderFilter;
 import com.esferalia.aon.occam.api.model.Filter.TimeControlFilter;
 import com.esferalia.aon.occam.api.model.aonsolutions.Coordinates;
 import com.esferalia.aon.occam.api.model.aonsolutions.Location;
@@ -25,9 +26,9 @@ public class TimeControlImpl implements ITimeControl {
 	}
 	
 	@Override
-	public Stream<TimeControl> getTimeControlEmployeeStream(AONContext ctx, Date startDate, Date endDate, Integer page, Integer perPage) {
+	public Stream<TimeControl> getTimeControlEmployeeStream(AONContext ctx, Date startDate, Date endDate, TaskHolderFilter filter, Integer page, Integer perPage) {
 		return ctx.getDslContext().transactionResult(
-				configuration -> TimeControlDAO.getTimeControlEmployeeStream(ctx, startDate, endDate, page, perPage));
+				configuration -> TimeControlDAO.getTimeControlEmployeeStream(ctx, startDate, endDate, filter, page, perPage));
 	}
 
 	@Override

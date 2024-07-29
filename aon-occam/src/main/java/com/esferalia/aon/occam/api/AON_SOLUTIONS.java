@@ -36,6 +36,7 @@ import com.esferalia.aon.occam.api.model.Filter.RRelationshipFilter;
 import com.esferalia.aon.occam.api.model.Filter.RegistryFilter;
 import com.esferalia.aon.occam.api.model.Filter.TaskAttachFilter;
 import com.esferalia.aon.occam.api.model.Filter.TaskFilter;
+import com.esferalia.aon.occam.api.model.Filter.TaskHolderFilter;
 import com.esferalia.aon.occam.api.model.Filter.TaskWorkflowFilter;
 import com.esferalia.aon.occam.api.model.Filter.TimeControlFilter;
 import com.esferalia.aon.occam.api.model.Filter.UserAppRoleFilter;
@@ -577,9 +578,9 @@ public class AON_SOLUTIONS {
 		}
 	}
 	
-	public static Stream<TimeControl> getTimeControlEmployeeStream(Domain domain, String login, Date startDate, Date endDate, Integer page, Integer perPage) {
+	public static Stream<TimeControl> getTimeControlEmployeeStream(Domain domain, String login, Date startDate, Date endDate, TaskHolderFilter filter, Integer page, Integer perPage) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(domain.getName(), domain.getId(), login)){
-			return getTimeControl().getTimeControlEmployeeStream(ctx, startDate, endDate, page, perPage);
+			return getTimeControl().getTimeControlEmployeeStream(ctx, startDate, endDate, filter, page, perPage);
 		}
 	}
 	

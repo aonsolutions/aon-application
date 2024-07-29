@@ -26,6 +26,7 @@ import org.jooq.impl.DSL;
 import com.esferalia.aon.jooq.tables.records.TimecontrolRecord;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.occam.api.model.Filter.TaskHolderFilter;
 import com.esferalia.aon.occam.api.model.Filter.TimeControlFilter;
 import com.esferalia.aon.occam.api.model.aonsolutions.Coordinates;
 import com.esferalia.aon.occam.api.model.aonsolutions.Location;
@@ -137,7 +138,7 @@ public class TimeControlDAO {
 		return tcList.stream();
 	}
 	
-	public static Stream<TimeControl> getTimeControlEmployeeStream(AONContext ctx, Date startDate, Date endDate, Integer page, Integer perPage) {
+	public static Stream<TimeControl> getTimeControlEmployeeStream(AONContext ctx, Date startDate, Date endDate, TaskHolderFilter filter, Integer page, Integer perPage) {
 		startDate = AonDateUtils.getDateWithoutTime(startDate);
 		endDate = AonDateUtils.getDateWithoutTime(endDate);
 		endDate = AonDateUtils.addDays(endDate, 1);
@@ -151,8 +152,7 @@ public class TimeControlDAO {
 			.and(f.getDateProperty().ge(startTimestamp))
 			.and(f.getDateProperty().le(endTimestamp)));
 		
-		TaskOldDAO.getTaskHolderEmployee(ctx, f -> f.getDomainProperty().eq(ctx.getDomainId())
-			.and(f.getUserIdProperty().isNotNull()), page, perPage).forEach(th -> {
+		TaskOldDAO.getTaskHolderEmployee(ctx, filter, page, perPage).forEach(th -> {
 				TimeControl tc = buildTimeControl(ctx, th.getId(), list.stream().filter(f -> f.getTaskHolder().getId().equals(th.getId())), null, null, null);
 				tcList.add(tc);
 			});

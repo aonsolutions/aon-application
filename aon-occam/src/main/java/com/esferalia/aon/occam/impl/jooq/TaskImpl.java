@@ -293,6 +293,12 @@ public class TaskImpl implements ITask {
 	}
 	
 	@Override
+	public long getTaskHolderCount(AONContext ctx, TaskHolderFilter filter) {
+		return ctx.getDslContext().transactionResult(
+				configuration -> TaskOldDAO.getTaskHolderCount(ctx, filter));
+	}
+	
+	@Override
 	public Stream<TaskHolder> getTaskHolderEmployee(AONContext ctx, TaskHolderFilter filter, Integer page, Integer perPage) {
 		return ctx.getDslContext().transactionResult(
 				configuration -> TaskOldDAO.getTaskHolderEmployee(ctx, filter, page, perPage));

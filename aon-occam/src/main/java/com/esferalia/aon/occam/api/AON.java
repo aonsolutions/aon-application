@@ -6675,6 +6675,16 @@ public class AON {
 		}
 	}
 	
+	public static long getTaskHolderCount(String domainName, Integer domainId, String login, TaskHolderFilter filter){
+		CloseableAONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			return getTask().getTaskHolderCount(ctx, filter);
+		} finally {
+			if (ctx != null) ctx.close();
+		}
+	}
+	
 	public static Stream<TaskHolder> getTaskHolderEmployee(String domainName, Integer domainId, String login, TaskHolderFilter filter, Integer page, Integer perPage){
 		CloseableAONContext ctx = null;
 		try {
