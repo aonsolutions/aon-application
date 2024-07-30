@@ -3841,3 +3841,13 @@ label.rating:hover {
 	grid-template-columns: repeat(3, minmax(0px, 1fr));
 } 
 
+.messageContent * {
+	font-size: 11px;
+}
+
+#aonLoginLanguageSpanToolbar{
+  font-size: 12px;
+  color: var(--gray-50);
+}
+
+

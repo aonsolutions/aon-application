@@ -2183,3 +2183,12 @@ label.rating:hover {
 	content: 'administración@aonSolutions.es';	
 }
 
+.messageContent * {
+	font-size: 11px;
+}
+
+#aonLoginLanguageSpanToolbar{
+  font-size: 12px;
+  color: var(--gray-50);
+}
+
