@@ -51,6 +51,7 @@ public interface IPayroll {
 	public Stream<Contract> getContractStream(AONContext ctx, ContractFilter filter);
 	public Stream<ContractExtendedData> getContractExtendedDataStream(AONContext ctx, ContractExtendedDataFilter filter, Integer page, Integer perPage);
 	public Stream<ContractExtendedData> getContractSimplifiedDataStream(AONContext ctx, ContractExtendedDataFilter filter, Integer page, Integer perPage);
+	public ContractExtendedData getContractById(AONContext ctx, ContractExtendedDataFilter filter, Integer id);
 	public void deleteContracts(AONContext ctx, Integer ...contractsId);
 	public long getContractCount(AONContext ctx, ContractExtendedDataFilter filter);
 	public List<AuxSalaryInfo> getEmployeeSalary(AONContext ctx, SalaryNewPortalFilter filter, Integer page, Integer perPage);
