@@ -356,30 +356,25 @@ public class TaskHolderServlet extends AonApiHttpServlet{
 	
 	public static Filter filter(AonApiData api, TaskHolderProperties f) {
 		JSONObject params  = api.getData();
-		
-		System.out.println(params);
-
 		Integer id = params.optInt(IJsonNames.ID);
 		String search = params.optString(IJsonNames.SEARCH);
-		
-		
+		Integer user = params.optInt(IJsonNames.USER);
 		Filter filter  = f.getDomainProperty().eq(api.getDomain().getId());
-		
-		if(id!=0) {
+		if(id != 0) {
 			filter = filter.and(f.getIdProperty().eq(id));
-		} 
-		
+		}
+		if(user != 0) {
+			filter = filter.and(f.getUserIdProperty().eq(user));
+		}
 		if(params.opt(IJsonNames.ACTIVE)!=null && !AonStringUtils.equalsIgnoreCase(params.optString(IJsonNames.ACTIVE), "undefined")) {
 			filter = filter.and(f.getActiveProperty().eq( (byte)(params.optBoolean(IJsonNames.ACTIVE) ? 1 : 0)) );
 		}
-		
 		if(!search.isEmpty()) {
 			Filter searchFilter = f.getNameProperty().like("%" + search + "%")
 					.or(f.getDocumentProperty().like("%" + search + "%"))
 					.or(f.getAliasProperty().like("%" + search + "%"));
 			filter = filter.and(searchFilter);
 		}
-		
 		return filter;
 	}	
 }
