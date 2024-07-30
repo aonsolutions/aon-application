@@ -239,8 +239,8 @@ export class AonNewMenu extends AonElement {
 				case GARAGE.app:
 					this.rootPanel(new AonGarageMenu());
 					break;
-				default/*Apps.HOME*/:
-					//this.rootPanel(new AonNewDesktop(MENU_APPS, AON_APPS));
+				default /*APPS.HOME*/:
+				// 	this.rootPanel(new AonNewDesktop(MENU_APPS, AON_APPS));
 					this.rootPanel(new AonDesktop());
 					break;
 		}
@@ -424,6 +424,7 @@ export class AonNewMenu extends AonElement {
 			rightPanel.style.height = `calc(100vh - 49px)`;
 		}
 		rootPanel.style.marginTop = "1px";
+	
 		rootPanel.style.height = `calc(100vh - 50px)`;
 	}
 

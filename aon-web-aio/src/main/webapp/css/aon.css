@@ -48,27 +48,28 @@
   --aonTopMenuSpecial: var(--aonBlack);
 
   --aonNote: rgb(255, 192, 0);
-
-  --aonInvoice: var(--aonClearBlue);
-  --aonInvoiceBackground: #ebf2ff;
-
-  --aonDocumental: #EF6292;
-  --aonDocumentalBackground: #fdedf2;
-
-  --aonPayroll: #33A9A9;
-  --aonPayrollBackground: #e8f5f5;
-
-  --aonFiscal: #FB982E;
-  --aonFiscalBackground: #fef3e7;
-
-  --aonMessenger: #f6655a;
-  --aonMessengerBackground: #feedec;
-
-  --aonTimecontrol: #D1C36D;
-  --aonTimecontrolBackground: rgba(209, 195, 109, .2);
-
-  --aonAccounting: var(--aonBlue);
-  --aonAccountingBackground: rgba(0, 36, 105, .2);
+  
+	--aonInvoice: var(--aonClearBlue);
+	--aonInvoiceBackground: #ebf2ff;
+  
+	--aonDocumental: #EF6292;
+	--aonDocumentalBackground: #fdedf2;
+  
+	--aonPayroll: #33A9A9;
+	--aonPayrollBackground: #e8f5f5;
+  
+	--aonFiscal: #FB982E;
+	--aonFiscalBackground: #fef3e7;
+  
+	--aonMessenger: #f6655a;
+	--aonMessengerBackground: #feedec;
+  
+	--aonTimecontrol: #D1C36D;
+	--aonTimecontrolBackground: rgba(209, 195, 109, .2);
+  
+	--aonAccounting: var(--aonBlue);
+	--aonAccountingColor: var(--aonBlue);
+	--aonAccountingBackground: rgba(0, 36, 105, .2);
   
   --aonHeaderBackgroundColor: var(--aonWhiteGray);
 
@@ -426,7 +427,7 @@
 .rightPanel {
     width: 320px; 
     background-color: var(--aonRightPanelColor);
-    top: 47px;
+    top: 48px;
     right: 0;
     position: fixed;
     z-index: 1000000;
@@ -633,7 +634,7 @@ h1 {
 }
 
 .aonAvatar {
-  color: #5f6368;
+	color: #5f6368;
   margin-top: 5px;
   font-size: 24px;
   margin-right: 20px;
@@ -723,7 +724,10 @@ h1 {
   position: relative;
   font-size: 14px;
   font-weight: 400;
+  color: rgba(0,0,0,.54);
 }
+
+
 
 .aonLiSpanSubtitle {
   font-size: 12px;
@@ -2500,7 +2504,7 @@ label.rating:hover {
 }
 
 .aonTabItemText {
-    color: #605E5C;
+	  color: #605E5C;
     font-size: 16px;
     font-weight: 400;
     white-space: nowrap;
@@ -2783,7 +2787,7 @@ label.rating:hover {
 
 .aonHeaderAccounting,
 .aonMenuLeftopAccounting {
-	background-color: var(--aonAccounting);
+	background-color: var(--aonAccountingColor);
 }
 
 .aonHeaderTimecontrol,
