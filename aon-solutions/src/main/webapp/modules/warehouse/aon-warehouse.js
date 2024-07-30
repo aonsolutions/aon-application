@@ -244,8 +244,8 @@ export class AonWarehouse extends AonElement {
 				this.getApplication().setContent(aonDelivery);
 			});
 		} else this.getApplication().setContent(
-			// new AonMobileDeliveryList());
-			this.isMobile() ? new AonMobileDeliveryList() : new AonDeliveryList());
+			new AonMobileDeliveryList());
+			// this.isMobile() ? new AonMobileDeliveryList() : new AonDeliveryList());
 	}
 
 	aonDeliveryTag() {
