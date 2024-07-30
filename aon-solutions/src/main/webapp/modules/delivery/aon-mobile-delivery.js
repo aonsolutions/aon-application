@@ -601,7 +601,10 @@ export class AonMobileDelivery extends AonElement {
 	barcodeId;
 	openBarcode(element) {
 		this.barcodeId = element.id;
-		mobileAction({ action: MOBILE_ACTION.BARCODE, selector: TAG.AON_MOBILE_DELIVERY });
+		let ionicData = { action: MOBILE_ACTION.BARCODE, selector: TAG.AON_MOBILE_DELIVERY };
+		if(UA.isAndroidApp()) {
+			openBarcode(ionicData, (result) => element.value = result.code);
+		} else mobileAction(ionicData);
 	}
 
 	setBarcodeData(barcodeStr) {
