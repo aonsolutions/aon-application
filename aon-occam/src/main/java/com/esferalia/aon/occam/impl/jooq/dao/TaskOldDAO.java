@@ -797,9 +797,10 @@ public class TaskOldDAO {
 	public static Stream<TaskHolder> getTaskHolderEmployee(AONContext ctx, TaskHolderFilter filter, Integer page, Integer perPage){
 		SelectConditionStep<Record> query = ctx.getDslContext().select()
 				.from(TASK_HOLDER).join(REGISTRY).on(REGISTRY.ID.eq(TASK_HOLDER.REGISTRY))
-				.join(UserAppRole.USER_APP_ROLE).on(UserAppRole.USER_APP_ROLE.USER_ID.eq(TASK_HOLDER.USER_ID))
 				.join(DOMAIN).on(DOMAIN.ID.eq(TASK_HOLDER.DOMAIN))
+				.join(UserAppRole.USER_APP_ROLE).on(UserAppRole.USER_APP_ROLE.USER_ID.eq(TASK_HOLDER.USER_ID))
 				.where(TASK_HOLDER_PROPERTIES.getConditions(filter))
+				.and(UserAppRole.USER_APP_ROLE.DOMAIN.eq(ctx.getDomainId()))
 				.and(UserAppRole.USER_APP_ROLE.ROLE.eq(AonRole.EMPLOYEE.value()));
 		if(page != null && perPage != null)
 			query.limit(perPage).offset(perPage * (page -1));
