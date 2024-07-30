@@ -82,6 +82,9 @@ public class InvoiceCalculator {
 			vat.setDeductibleQuota( vat.getQuota() );
 			vat.setDirectTaxPercent(0.0);
 		}
+		
+		vat.syncChangesToWrappedDetail();
+		
 	}
 	
 	public static void reverseCalculate(AccountingInvoice ai, double total) {

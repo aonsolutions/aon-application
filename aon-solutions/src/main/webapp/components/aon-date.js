@@ -162,6 +162,7 @@ export class AonDate extends AonElement {
       const input = target.value;
       const values = input ? input.split('/').map((v)  => v.replace(/\D/g, '')) : [];
       let output = '';
+
       if (values.length === 3) {
         let year = parseInt(values[2]);
         if(values[2].length === 2) {
@@ -185,6 +186,10 @@ export class AonDate extends AonElement {
         }
       }
       target.value = output.replaceAll(" ", "");
+      
+      this.date = date.value;
+      this.value = date.value;
+      this.setDate(date.value);
     });
   }
 
@@ -448,7 +453,8 @@ export class AonDate extends AonElement {
       this.value = this.year + '-' + (this.addZero(this.month + 1)) + '-' + this.addZero(this.day);
       input.value = this.addZero(this.day) + '/' + (this.addZero(this.month + 1)) + '/' + this.year;
       this.buildCalendar();
-    }
+    } else this.date = date;
+
     this.dispatchEvent(new CustomEvent(EVENT.CHANGE, {detail: this.date}));
   }
 

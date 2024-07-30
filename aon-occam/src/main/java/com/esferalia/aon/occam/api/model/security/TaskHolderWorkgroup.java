@@ -1,9 +1,11 @@
 package com.esferalia.aon.occam.api.model.security;
 
 import java.io.Serializable;
+import java.util.Date;
 
 import com.esferalia.aon.occam.api.model.Workgroup;
 import com.esferalia.aon.occam.api.model.task.TaskHolder;
+import com.esferalia.aon.occam.api.model.task.TaskHolderWorkgroupType;
 
 @SuppressWarnings("serial")
 public class TaskHolderWorkgroup implements Serializable {
@@ -13,6 +15,10 @@ public class TaskHolderWorkgroup implements Serializable {
 	Integer taskHolder;
 	TaskHolder taskholder;
 	Workgroup workgroup;
+	
+	TaskHolderWorkgroupType taskHolderWorkgroupType;
+	Date startDate;
+	Date endDate;
 	
 	private boolean removed;
 
@@ -64,6 +70,33 @@ public class TaskHolderWorkgroup implements Serializable {
 		return this;
 	}
 	
+	public TaskHolderWorkgroupType getTaskHolderWorkgroupType() {
+		return taskHolderWorkgroupType;
+	}
+
+	public TaskHolderWorkgroup setTaskHolderWorkgroupType(TaskHolderWorkgroupType taskHolderWorkgroupType) {
+		this.taskHolderWorkgroupType = taskHolderWorkgroupType;
+		return this;
+	}
+
+	public Date getStartDate() {
+		return startDate;
+	}
+
+	public TaskHolderWorkgroup setStartDate(Date startDate) {
+		this.startDate = startDate;
+		return this;
+	}
+
+	public Date getEndDate() {
+		return endDate;
+	}
+
+	public TaskHolderWorkgroup setEndDate(Date endDate) {
+		this.endDate = endDate;
+		return this;
+	}
+
 	public boolean isRemoved() {
 		return removed;
 	}
@@ -72,7 +105,6 @@ public class TaskHolderWorkgroup implements Serializable {
 		this.removed = removed;
 		return this;
 	}
-	
 	
 	public boolean isEmpty() {
 		return getId() == null && getDomain() == null

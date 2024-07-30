@@ -400,7 +400,7 @@ public class InvoiceTextPrinter {
 			buf.append(VERTICAL_BAR);
 			buf.append(AonStringUtils.spaces(5));
 			buf.append(AonStringUtils.rightPad("Fecha expedición (fiscal) .: " 
-				+ (invoiceFiscal.getIssueDate() == null
+				+ (invoiceFiscal.getExpDate() == null
 					?"<sin asignar>"
 					:DATE_FORMAT.format(invoiceFiscal.getExpDate()))
 				,87));

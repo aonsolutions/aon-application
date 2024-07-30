@@ -168,7 +168,7 @@ export class AonProjectList extends AonElement {
         const taskHolderName = holder.taskHolder && holder.taskHolder.name ? holder.taskHolder.name : undefined;
         const workgroupName  = holder.workgroup && holder.workgroup.description ? holder.workgroup.description : undefined;
         holder.name = taskHolderName || workgroupName;
-		holder.icon = taskHolderName ? MATERIAL_ICONS.PEOPLE : MATERIAL_ICONS.PERSON;
+		holder.icon = taskHolderName ? MATERIAL_ICONS.PERSON : MATERIAL_ICONS.PEOPLE;
         return holder;
     }
 
@@ -185,8 +185,8 @@ export class AonProjectList extends AonElement {
 
 		let holderBack = new AonIconButton();
         holderBack.id =  'holderBack';
-		holderBack.title = MSG.BACK;
-        holderBack.icon = MATERIAL_ICONS.ARROW_BACK;
+		holderBack.title = MSG.CLOSE;
+        holderBack.icon = MATERIAL_ICONS.CLOSE;
         holderBack.style.top = '10px';
 		holderBack.style.position = 'relative';
 		holderBack.style.right = '4px';

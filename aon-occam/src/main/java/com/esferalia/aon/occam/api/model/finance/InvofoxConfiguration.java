@@ -19,7 +19,7 @@ public class InvofoxConfiguration implements Serializable{
 	private static final String DEMO_API_KEY = "$2b$10$ntU8dI5/uFHV6sDjd1q9UO1JwZWBPVWKPDP50IVy5m9EMr71s7PCy";
 	private static final String DEMO_ENVIRONMENT = "65491eee49f881000dd14c72";
 	
-	private static final String DEFAULT_USER = "app@aonsolutions.es";	
+	private static final String DEFAULT_USER = "aibanez@aonsolutions.es";	
 	private static final String DEFAULT_PASS = "U%4LjF~ai$5ZW[Z";	
 	public static final String DEFAULT_API_URL = "https://api.invofox.com";
 	private static final String DEFAULT_API_KEY = "$2b$10$ZyMOXKSmPwl4VUFk76wFWuK9aCDsXRiaxytOwpqk3gK.epVl6Mfwi";

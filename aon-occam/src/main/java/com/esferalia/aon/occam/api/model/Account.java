@@ -8,26 +8,6 @@ public class Account implements Serializable {
 
 	private static final long serialVersionUID = 3940903705871158256L;
 
-	public Account() {
-		
-	}
-
-	public Account(Integer id, Integer domain,
-			String code, String description, String alias,
-			boolean entryEnabled, byte level,
-			boolean active, String costCenter, boolean hasRegistry) {
-		setId(id);
-		setDomain(domain);
-		setCode(code);
-		setDescription(description);
-		setAlias(alias);
-		setEntryEnabled(entryEnabled);
-		setLevel(level);
-		setActive(active);
-		setCostCenter(costCenter);
-		setHasRegistry(hasRegistry);
-	}	
-	
 	private Integer id;
 	private Integer domain;
 	private String code;

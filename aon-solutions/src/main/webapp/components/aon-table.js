@@ -155,6 +155,7 @@ export class AonTable extends AonElement {
     th.innerHTML = name;
     th.style.width = width;
     this.columns.push({ name, type, id, width, textAlign });
+
     header.appendChild(th);
   }
 
@@ -235,6 +236,7 @@ export class AonTable extends AonElement {
       let td = this.createElement(TAG.TD);
       td.style.width = item.width;
       td.style.textAlign = item.textAlign;
+      if(value.color) td.style.color = value.color;
 
       let id = item.id;
       if ("option" === id && value[id]) {

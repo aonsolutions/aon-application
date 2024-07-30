@@ -13,10 +13,12 @@ import org.json.JSONObject;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.json.CustomerJSON;
 import com.esferalia.aon.occam.api.json.JsonUtils;
+import com.esferalia.aon.occam.api.json.TargetJSON;
 import com.esferalia.aon.occam.api.model.Customer;
 import com.esferalia.aon.occam.api.model.Filter;
 import com.esferalia.aon.occam.api.model.IJsonNames;
 import com.esferalia.aon.occam.api.model.Properties.CustomerProperties;
+import com.esferalia.aon.occam.api.model.Properties.TargetProperties;
 import com.esferalia.aon.occam.api.model.type.MediaType;
 import com.esferalia.aon.occam.api.model.type.RegistryStatus;
 
@@ -105,11 +107,22 @@ public class CustomersServlet extends AonApiHttpServlet {
 			? api.getData().optInt(IJsonNames.PAGE) : 1;
 		Integer perPage = api.getData().opt(IJsonNames.PER_PAGE) != null
 			? api.getData().optInt(IJsonNames.PER_PAGE) : 50;
-
-		return CustomerJSON.toJSON(AON.getCustomerStream(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), 
-			f -> customerFilter(api, f), perPage * (page -1), perPage));
+		
+		System.out.println("getCustomers");
+		System.out.println(api.getData());
+		
+		if(isTarget(api)) {
+			return TargetJSON.toJSON(AON.getTargetStream(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), 
+					f -> targetFilter(api, f), perPage * (page -1), perPage));
+		} else
+			return CustomerJSON.toJSON(AON.getCustomerStream(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), 
+				f -> customerFilter(api, f), perPage * (page -1), perPage));
 	}
 	
+	private static boolean isTarget(AonApiData api) {
+		return api.getData().opt("type") != null && !api.getData().optBoolean("type");
+	}
+
 	private static Filter customerFilter(AonApiData api, CustomerProperties f) {
 		Filter filter = f.getDomainProperty().eq(api.getDomain().getId()) ;
 				//.and(f.getStatusProperty().eq(RegistryStatus.ACTIVE.value()));
@@ -155,6 +168,49 @@ public class CustomersServlet extends AonApiHttpServlet {
 				f.getRegistryRelationProperty().isNotNull() : 
 				f.getRegistryRelationProperty().isNull()
 			);
+		}
+		
+		if(api.getData().opt(IJsonNames.VALUE) != null) {
+			String value = api.getData().optString(IJsonNames.VALUE);
+			Filter valueFilter = f.getNameProperty().like("%" + value + "%")
+					.or(f.getDocumentProperty().like("%" + value + "%"))
+					.or(f.getAliasProperty().like("%" + value + "%"));
+			filter = filter.and(valueFilter);
+		}
+		return filter;
+	}
+	
+	private static Filter targetFilter(AonApiData api, TargetProperties f) {
+		Filter filter = f.getDomainProperty().eq(api.getDomain().getId()) ;
+				//.and(f.getStatusProperty().eq(RegistryStatus.ACTIVE.value()));
+		
+		if(api.getData().opt(IJsonNames.REGISTRY) != null) {
+			filter = filter.and(f.getIdProperty().eq(JsonUtils.getInteger(api.getData(), IJsonNames.REGISTRY)));
+		} else if(api.getData().opt(IJsonNames.ID) != null) {
+			filter = filter.and(f.getIdProperty().eq(JsonUtils.getInteger(api.getData(), IJsonNames.ID)));
+		}
+		
+		if(api.getData().opt(IJsonNames.DOCUMENT) != null) {
+			filter = filter.and(f.getDocumentProperty().eq(JsonUtils.getString(api.getData(), IJsonNames.DOCUMENT)));
+		}
+		
+		if(api.getData().opt(IJsonNames.SCOPE) != null) {
+			filter = filter.and(f.getScopeProperty().eq(JsonUtils.getInt(api.getData(), IJsonNames.SCOPE)));
+		}
+		
+		if(api.getData().opt(IJsonNames.STATUS) != null) {
+			ArrayList<String> list = new ArrayList<>();
+			
+			api.getData().optJSONArray(IJsonNames.STATUS)
+			.forEach(str -> list.add(str.toString()));
+				
+			 Byte[] status = RegistryStatus.safeValueOf(list)
+				.stream()
+				.map(RegistryStatus::value)
+				.toArray(Byte[]::new)
+			;
+			
+			filter = filter.and(f.getStatusProperty().in(status));
 		}
 		
 		if(api.getData().opt(IJsonNames.VALUE) != null) {

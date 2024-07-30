@@ -146,7 +146,7 @@ public class DownloadTaskStatExcelServlet extends HttpServlet {
     	cont = 1;
     	
     	// TASK HOLDER MAP
-    	Map<Integer, String> taskHolderMap = AON.getTaskHolderStream(domain.getName(), domain.getId(), userName, f -> f.getDomainProperty().eq(domain.getId()))
+    	Map<Integer, String> taskHolderMap = AON.getTaskHolderStream(domain.getName(), domain.getId(), userName, f -> f.getDomainProperty().eq(domain.getId()), 0, Integer.MAX_VALUE)
     			.collect(Collectors.toMap(TaskHolder::getId, TaskHolder::getName));
     	StatParams statParams = new StatParams().setIssueFilter(Utils.getFilter(parameters));
     	statParams.setFrom(statParams.getIssueFilter().getFrom());

@@ -774,11 +774,14 @@ public class TaskOldDAO {
 
 	
 	@Deprecated
-	public static Stream<TaskHolder> getTaskHolderStream(AONContext ctx, TaskHolderFilter filter){
+	public static Stream<TaskHolder> getTaskHolderStream(AONContext ctx, TaskHolderFilter filter, int ofs, int limit){
 		return ctx.getDslContext().select()
 				.from(TASK_HOLDER).join(REGISTRY).on(REGISTRY.ID.eq(TASK_HOLDER.REGISTRY))
 				.join(DOMAIN).on(DOMAIN.ID.eq(TASK_HOLDER.DOMAIN))
 				.where(TASK_HOLDER_PROPERTIES.getConditions(filter))
+				.orderBy(REGISTRY.NAME)
+				.offset(ofs)
+				.limit(limit)
 				.fetch().stream().map(new TaskHolderFiller());
 	}
 	

@@ -15,6 +15,7 @@ import com.esferalia.aon.occam.api.model.Filter.TaskTagFilter;
 import com.esferalia.aon.occam.api.model.OldTask;
 import com.esferalia.aon.occam.api.model.Workgroup;
 import com.esferalia.aon.occam.api.model.office.Tag;
+import com.esferalia.aon.occam.api.model.security.TaskHolderWorkgroup;
 import com.esferalia.aon.occam.api.model.task.IssueFilter;
 import com.esferalia.aon.occam.api.model.task.TaskComment;
 import com.esferalia.aon.occam.api.model.task.TaskEvent;
@@ -22,6 +23,7 @@ import com.esferalia.aon.occam.api.model.task.TaskHolder;
 import com.esferalia.aon.occam.api.model.task.TaskTag;
 import com.esferalia.aon.occam.api.model.type.TagType;
 import com.esferalia.aon.occam.impl.jooq.dao.TaskHolderDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.TaskHolderWorkgroupDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.TaskOldDAO;
 
 public class TaskImpl implements ITask {
@@ -164,11 +166,29 @@ public class TaskImpl implements ITask {
 	}
 	
 	@Override
-	public Stream<TaskHolder> getTaskHolderWorkgroupStream(AONContext ctx, TaskHolderFilter filter, Integer workgroupId){
+	public Stream<TaskHolder> getTaskHolderWorkgroupStream(AONContext ctx, TaskHolderFilter filter, Integer workgroupId, int ofs, int limit){
 		return ctx.getDslContext().transactionResult(
-				configuration -> TaskHolderDAO.getTaskHolderWorkgroup(ctx, filter, workgroupId));	
+				configuration -> TaskHolderDAO.getTaskHolderWorkgroup(ctx, filter, workgroupId, ofs, limit));	
 	}
 
+	@Override
+	public void saveTaskHolderWorkgroups(AONContext ctx, TaskHolder taskHolder){
+		ctx.getDslContext().transaction(
+				configuration -> TaskHolderDAO.saveTaskHolderWorkgroups(ctx, taskHolder));	
+	}
+
+	@Override
+	public List<TaskHolderWorkgroup> getTaskHolderWorkgroupsList(AONContext ctx, TaskHolderWorkgroupFilter filter) {
+		return ctx.getDslContext().transactionResult(
+				configuration -> TaskHolderWorkgroupDAO.getList(ctx, filter));	
+	}
+	
+	@Override
+	public TaskHolderWorkgroup saveTaskHolderWorkgroup(AONContext ctx, TaskHolderWorkgroup taskHolderWorkgroup) {
+		return ctx.getDslContext().transactionResult(
+				configuration -> TaskHolderWorkgroupDAO.saveTaskHolderWorkgroup(ctx, taskHolderWorkgroup));	
+	}
+	
 	@Override
 	public void deleteTaskTag(AONContext ctx, Integer taskId, TagType tagType) {
 		 ctx.getDslContext().transaction(configuration -> TaskOldDAO.deleteTaskTag(ctx, taskId, tagType));		
@@ -287,9 +307,15 @@ public class TaskImpl implements ITask {
 	}
 
 	@Override
-	public Stream<TaskHolder> getTaskHolderStream(AONContext ctx, TaskHolderFilter filter) {
+	public Stream<TaskHolder> getTaskHolderStream(AONContext ctx, TaskHolderFilter filter, int ofs, int limit) {
 		return ctx.getDslContext().transactionResult(
-				configuration -> TaskOldDAO.getTaskHolderStream(ctx, filter));
+				configuration -> TaskOldDAO.getTaskHolderStream(ctx, filter, ofs, limit));
+	}
+	
+	@Override
+	public List<TaskHolder> getTaskHolderFullList(AONContext ctx, TaskHolderFilter filter) {
+		return ctx.getDslContext().transactionResult(
+				configuration -> TaskHolderDAO.getTaskHolderFullList(ctx, filter));
 	}
 	
 	@Override

@@ -65,10 +65,18 @@ public class PackagingDeliveryJSON {
 	}
 	
 	private static JSONObject containerToJSON(PackagingDeliveryContainer container) {
-		return new JSONObject();
+		return new JSONObject()
+				.put(IJsonNames.PRODUCT, container.getProduct())
+				.put(IJsonNames.ITEM, container.getItem());
 	}
 	
 	private static JSONArray contentToJSON(List<PackagingDeliveryContent> content) {
-		return new JSONArray();
+		JSONArray arr = new JSONArray();
+		content.stream().forEach(c -> {
+			arr.put(new JSONObject()
+				.put(IJsonNames.SOURCE, c.getSource())
+				.put(IJsonNames.COMPOSITION, ItemCompositionJSON.toJSON(c.getComposition())));
+		});
+		return arr;
 	}
 }
