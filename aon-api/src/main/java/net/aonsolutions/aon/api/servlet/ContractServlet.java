@@ -217,16 +217,21 @@ public class ContractServlet extends AonApiHttpServlet {
 		byte salaryType = JsonUtils.getByte(params, "salary_type");
 		Integer auxSalaryType = (int) salaryType;
 		String contractIds = JsonUtils.getString(params, "contract_ids");
-
+		String document = JsonUtils.getString(params, IJsonNames.DOCUMENT);
+		
 		if(!AonStringUtils.isEmpty(api.getData().optString("global"))) {
 			filter = filter.and(properties.getNameProperty().like("%"+api.getData().optString("global")+"%")
 					.or(properties.getDateStringProperty().like("%"+api.getData().optString("global")+"%")));
 		}
 		
+		if(!AonStringUtils.isEmpty(document)) {
+			filter = filter.and(properties.getEmployeeDocumentProperty().eq(document));
+		}
+		
 		if(auxSalaryType != null) {
 			filter = filter.and(properties.getSalaryType().eq(salaryType));
 		}
-				
+			
 		if(contractIds != null) {
 			String [] stringIdArray = contractIds.split(",");
 			Integer [] intIdArray = new Integer[stringIdArray.length];

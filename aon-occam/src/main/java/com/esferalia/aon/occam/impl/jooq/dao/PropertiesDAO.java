@@ -974,6 +974,11 @@ public class PropertiesDAO {
 			return new FilterDAO.PropertyDAO<>(SALARY.EMPLOYEE_NAME);
 		}
 		
+		@Override
+		public Property<String> getEmployeeDocumentProperty(){
+			return new FilterDAO.PropertyDAO<>(SALARY.EMPLOYEE_DOCUMENT);
+		}
+		
 	}
 	
 	protected static class ContractDocPropertiesDAO implements ContractDocProperties{

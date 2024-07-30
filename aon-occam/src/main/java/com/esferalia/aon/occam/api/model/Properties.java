@@ -1366,6 +1366,7 @@ public interface Properties {
 		Property<String> getDateStringProperty();
 		Property <Byte> getSalaryType();
 		Property<String> getNameProperty();
+		Property<String> getEmployeeDocumentProperty();
 	}
 	
 	public interface DocProperties{
