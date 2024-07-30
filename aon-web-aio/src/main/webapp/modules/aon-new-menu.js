@@ -413,6 +413,7 @@ export class AonNewMenu extends AonElement {
 			rightPanel.style.height = `calc(100vh - 49px)`;
 		}
 		rootPanel.style.marginTop = "1px";
+	
 		rootPanel.style.height = `calc(100vh - 50px)`;
 	}
 
