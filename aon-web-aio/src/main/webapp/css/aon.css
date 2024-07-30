@@ -634,7 +634,7 @@ h1 {
 }
 
 .aonAvatar {
-  color: #5f6368;
+	color: #5f6368;
   margin-top: 5px;
   font-size: 24px;
   margin-right: 20px;
@@ -724,7 +724,10 @@ h1 {
   position: relative;
   font-size: 14px;
   font-weight: 400;
+  color: rgba(0,0,0,.54);
 }
+
+
 
 .aonLiSpanSubtitle {
   font-size: 12px;
@@ -2501,7 +2504,7 @@ label.rating:hover {
 }
 
 .aonTabItemText {
-    color: #605E5C;
+	  color: #605E5C;
     font-size: 16px;
     font-weight: 400;
     white-space: nowrap;
