@@ -411,6 +411,10 @@ export class AonNewDesktop extends AonElement {
 		return cardDiv;		
 	}
 	
+	appSelection(app) {
+		document.querySelector(TAG.AON_NEW_MENU).appSelection(app);
+	}
+	
 }
 
 
