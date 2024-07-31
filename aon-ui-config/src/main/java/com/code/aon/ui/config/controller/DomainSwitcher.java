@@ -324,14 +324,23 @@ public class DomainSwitcher extends AbstractDomainSwitcher implements
 	}
 
 	private <T extends SelectJoinStep<?>> T filterByInvoiceStatus(T selectJoinStep, InvoiceStatus invoiceStatus) {
-		
+		Condition condition =  INVOICE.STATUS.eq((byte)invoiceStatus.ordinal());
+		if (!isAdminDomain()) {
+			Condition scopeCondition = INVOICE.SCOPE.isNull();
+			List<Integer> scopes = getUserScopes();
+			if (scopes != null && !scopes.isEmpty()) {
+				scopeCondition = scopeCondition.or(INVOICE.SCOPE.in(scopes));
+			}
+			condition = condition.and(scopeCondition);
+		}
+
 		Table<?> subTable = 
 		DSL
 		.select(
 		INVOICE.DOMAIN
 		,DSL.count(INVOICE.ID).as(invoiceStatus.name()))
 		.from(INVOICE)
-		.where(INVOICE.STATUS.eq((byte)invoiceStatus.ordinal()))
+		.where(condition)
 		.groupBy(INVOICE.DOMAIN)
 		.asTable(invoiceStatus.name());
 		
@@ -837,6 +846,7 @@ public class DomainSwitcher extends AbstractDomainSwitcher implements
 		
 		setShowPending(false);
 		setShowReject(false);
+		setShowUnaccount(false);
 
 		setShowInactive(true);
 		setModel(null);
