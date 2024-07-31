@@ -40,19 +40,19 @@ export class AonHome extends AonElement {
 		let gradiantHeader = this.createElement(TAG.DIV);
 		gradiantHeader.className = 'aonRootGradiantHeader';
 		gradiantHeader.id = 'aonRootGradiantHeader';
-		this.appendChild(gradiantHeader);
+		//this.appendChild(gradiantHeader);
 		let gradiantHeaderTop = this.createElement(TAG.DIV);
 		gradiantHeaderTop.className = 'aonRootGradiantHeaderTop';
 		gradiantHeaderTop.id = 'aonRootGradiantHeaderTop';
-		this.appendChild(gradiantHeaderTop);
+		//this.appendChild(gradiantHeaderTop);
 		let gradiantHeaderBottom = this.createElement(TAG.DIV);
 		gradiantHeaderBottom.className = 'aonRootGradiantHeaderBottom';
 		gradiantHeaderBottom.id = 'aonRootGradiantHeaderBottom';
-		this.appendChild(gradiantHeaderBottom);
+		//this.appendChild(gradiantHeaderBottom);
 		let gradiantHeaderBlur = this.createElement(TAG.DIV);
 		gradiantHeaderBlur.className = 'aonRootGradiantHeaderBlur';
 		gradiantHeaderBlur.id = 'aonRootGradiantHeaderBlur';
-		this.appendChild(gradiantHeaderBlur);
+		//this.appendChild(gradiantHeaderBlur);
 
 		let aonHeader = new AonHeader();
 		aonHeader.id = this.AON_HEADER;
@@ -80,17 +80,9 @@ export class AonHome extends AonElement {
 				aonHeader.buildApp(app,sidenav);
 				aonHeader.setVisibleLogo(!appEl);
 				aonHeader.setVisibleApp(appEl);
-				/*aonHeader.setColor(appColor && '#fff', appColor);
-				if(appColor == "var(--aonTopMenuAvailable)")
-					aonHeader.setBackgroundColor("var(--aonHeaderBackgroundAvailable)")
-				else
-					aonHeader.setBackgroundColor(appColor);
-				*/
 			} else {
 				aonHeader.setVisibleApp(false);
 				aonHeader.setVisibleLogo(true);
-				//aonHeader.setColor("var(--aonGrayHeaderButtonsColor)","red");
-				//aonHeader.setBackgroundColor("var(--aonHeaderBackgroundColor)");
 			}
 			
 			aonHeader.setColor();

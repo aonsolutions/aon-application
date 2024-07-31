@@ -1,15 +1,16 @@
+@import url(https://db.onlinewebfonts.com/c/64c2e8d1ee862c5c12f9c8d54f7c2ba2?family=Gotcha+Standup); 
+
 :root{
 	--etlRed : #e62a25;
 	--aonTopMenuAvailable: white;
 	
-	--aonPayroll : var(--etlRed);
-	--aonDocumental: var(--etlRed);
-	--aonAccounting: var(--etlRed);
 	
 	--aonTopMenuSpecial : var(--etlRed);
 	--aonTopMenuAvailable : var(--etlRed);
 	
 	--aonHeaderBackgroundAvailable:var(--etlRed);
+
+	--aonHeaderBackgroundColor : var(--etlRed);
 }
 
 .aonHeader {
@@ -82,6 +83,7 @@
 }
 
 .aonToolbar2{
+	padding-top: 64px;
 	border-bottom: none;
 }
 
@@ -93,6 +95,11 @@
   background-position: center;
   background-repeat: no-repeat;
   background-image: url("https://etl.es/wp-content/uploads/2018/12/etlglobalnew.png");
+}
+
+#aonLoginLanguageSpanToolbar{
+  font-size: 12px;
+  color: var(--etlRed);
 }
 
 .aonLoginTitle {
@@ -110,6 +117,7 @@
 }
 
 .aonTrademark:after {
+	color: var(--aonWhite);
 	content: 'es una marca registrada de ETL GLOBAL.';
 }
 
@@ -137,4 +145,297 @@
 	content: 'comunicacion@etl.es';	
 }
 
+.aonHeaderStart,
+.aonMenuLeftopStart{
+	background-color: var(--etlRed);
+}
 
+.aonHeaderHome,
+.aonMenuLeftopHome{
+	background-color: var(--etlRed);
+}
+
+.aonHeaderApplications,
+.aonMenuLeftopApplications{
+	background-color: var(--etlRed);
+}
+
+.aonHeaderNote,
+.aonMenuLeftopNote {
+	background-color: var(--etlRed);
+}
+
+.aonHeaderFiscal,
+.aonMenuLeftopFiscal{
+	background-color: var(--etlRed);
+}
+
+.aonHeaderPayroll,
+.aonMenuLeftopPayroll {
+	background-color: var(--etlRed);
+}
+
+.aonHeaderInvoice,
+.aonMenuLeftopInvoice {
+	background-color: var(--etlRed);
+}
+
+.aonHeaderDocumental,
+.onMenuLeftopDocumental {
+	background-color: var(--etlRed);
+}
+
+.aonHeaderAccounting,
+.aonMenuLeftopAccounting {
+	background-color: var(--etlRed);
+}
+
+.aonHeaderTimecontrol,
+.aonMenuLeftopTimecontrol {
+	background-color: var(--etlRed);
+}
+
+.aonHeaderMessenger,
+.aonMenuLeftopMessenger {
+	background-color: var(--etlRed);
+}
+
+.aonHeaderOffice,
+.aonMenuLeftopOffice {
+  background-color: var(--etlRed);
+}
+
+.aonHeaderGarage,
+.aonMenuLeftopGarage {
+  background-color: var(--etlRed);
+}
+
+.aonHeaderAcademy,
+.aonMenuLeftopAcademy {
+  background-color: var(--etlRed);
+}
+
+.aonHeaderComerce,
+.aonMenuLeftopComerce {
+  background-color: var(--etlRed);
+}
+
+.aonHeaderComercialMenu,
+.aonMenuLeftopComercialMenu {
+  background-color: var(--etlRed);
+}
+
+.aonHeaderManagementMenu,
+.aonMenuLeftopManagementMenu {
+  background-color: var(--etlRed);
+}
+
+.aonHeaderTreasuryMenu,
+.aonMenuLeftopTreasuryMenu {
+  background-color: var(--etlRed);
+}
+
+.aonHeaderWarehouseMenu,
+.aonMenuLeftopWarehouseMenu {
+  background-color: var(--etlRed);
+}
+
+.aonHeaderGroupwareMenu,
+.aonMenuLeftopGroupwareMenu {
+  background-color: var(--etlRed);
+}
+
+.aonHeaderAccountingMenu,
+.aonMenuLeftopAccountingMenu {
+  background-color: var(--etlRed);
+}
+
+.aonHeaderFiscalMenu,
+.aonMenuLeftopFiscalMenu {
+  background-color: var(--etlRed);
+}
+.aonHeaderPayrollMenu,
+.aonMenuLeftopPayrollMenu {
+  background-color: var(--etlRed);
+}
+.aonHeaderMarketingMenu,
+.aonMenuLeftopMarketingMenu {
+  background-color: var(--etlRed);
+}
+
+.aonHeaderNote .material-icons,
+.aonHeaderFiscal .material-icons,
+.aonHeaderPayroll .material-icons,
+.aonHeaderInvoice  .material-icons,
+.aonHeaderMessenger .material-icons,
+.aonHeaderAccounting .material-icons,
+.aonHeaderDocumental .material-icons,
+.aonHeaderTimecontrol .material-icons,
+.aonHeaderOffice .material-icons,
+.aonHeaderGarage .material-icons,
+.aonHeaderAcademy .material-icons,
+.aonHeaderComerce .material-icons,
+.aonHeaderComercialMenu .material-icons,
+.aonHeaderManagementMenu .material-icons,
+.aonHeaderTreasuryMenu .material-icons,
+.aonHeaderWarehouseMenu .material-icons,
+.aonHeaderGroupwareMenu .material-icons,
+.aonHeaderAccountingMenu .material-icons,
+.aonHeaderFiscalMenu .material-icons,
+.aonHeaderPayrollMenu .material-icons,
+.aonHeaderMarketingMenu .material-icons,
+.aonHeaderHome .material-icons,
+.aonHeaderApplications .material-icons,
+.aonHeaderStart .material-icons{
+	color: var(--aonWhite);
+}
+
+.aonMenuLeftopNote .material-symbols-outlined,
+.aonMenuLeftopFiscal .material-symbols-outlined,
+.aonMenuLeftopPayroll .material-symbols-outlined,
+.aonMenuLeftopInvoice  .material-symbols-outlined,
+.aonMenuLeftopMessenger .material-symbols-outlined,
+.aonMenuLeftopAccounting .material-symbols-outlined,
+.aonMenuLeftopDocumental .material-symbols-outlined,
+.aonMenuLeftopTimecontrol .material-symbols-outlined,
+.aonMenuLeftopOffice .material-symbols-outlined,
+.aonMenuLeftopGarage .material-symbols-outlined,
+.aonMenuLeftopAcademy .material-symbols-outlined,
+.aonMenuLeftopComerce .material-symbols-outlined,
+.aonMenuLeftopFiscalMenu .material-symbols-outlined,
+.aonMenuLeftopPayrollMenu .material-symbols-outlined,
+.aonMenuLeftopTreasuryMenu .material-symbols-outlined,
+.aonMenuLeftopMarketingMenu .material-symbols-outlined,
+.aonMenuLeftopComercialMenu .material-symbols-outlined,
+.aonMenuLeftopWarehouseMenu .material-symbols-outlined,
+.aonMenuLeftopGroupwareMenu .material-symbols-outlined,
+.aonMenuLeftopManagementMenu .material-symbols-outlined,
+.aonMenuLeftopAccountingMenu .material-symbols-outlined,
+.aonMenuLeftopHome .material-symbols-outlined,
+.aonMenuLeftopApplications .material-symbols-outlined,
+.aonMenuLeftopStart .material-symbols-outlined{
+	color: var(--aonWhite);
+}
+
+.aonHeaderNote #aonHeaderCompanyName,
+.aonHeaderFiscal #aonHeaderCompanyName,
+.aonHeaderPayroll #aonHeaderCompanyName,
+.aonHeaderInvoice  #aonHeaderCompanyName,
+.aonHeaderMessenger #aonHeaderCompanyName,
+.aonHeaderAccounting #aonHeaderCompanyName,
+.aonHeaderDocumental #aonHeaderCompanyName,
+.aonHeaderTimecontrol #aonHeaderCompanyName,
+.aonHeaderOffice #aonHeaderCompanyName,
+.aonHeaderGarage #aonHeaderCompanyName,
+.aonHeaderAcademy #aonHeaderCompanyName,
+.aonHeaderComerce #aonHeaderCompanyName,
+.aonHeaderComercialMenu #aonHeaderCompanyName,
+.aonHeaderManagementMenu #aonHeaderCompanyName,
+.aonHeaderTreasuryMenu #aonHeaderCompanyName,
+.aonHeaderWarehouseMenu #aonHeaderCompanyName,
+.aonHeaderGroupwareMenu #aonHeaderCompanyName,
+.aonHeaderAccountingMenu #aonHeaderCompanyName,
+.aonHeaderFiscalMenu #aonHeaderCompanyName,
+.aonHeaderPayrollMenu #aonHeaderCompanyName,
+.aonHeaderMarketingMenu #aonHeaderCompanyName,
+.aonHeaderHome  #aonHeaderCompanyName,
+.aonHeaderApplications  #aonHeaderCompanyName,
+.aonHeaderStart #aonHeaderCompanyName{
+	color: var(--aonWhite);
+}
+
+#home:hover,
+#invoice:hover,
+#documental:hover,
+#accounting:hover,
+#fiscal:hover,
+#payroll:hover,
+#timecontrol:hover,
+#note:hover,
+#messenger:hover,
+#office:hover,
+#garage:hover,
+#academy:hover,
+#comerce:hover,
+#comercialMenu:hover,
+#managementMenu:hover,
+#treasuryMenu:hover,
+#warehouseMenu:hover,
+#groupwareMenu:hover,
+#accountingMenu:hover,
+#fiscalMenu:hover,
+#payrollMenu:hover,
+#marketingMenu:hover{
+  background-color: #f1f1f1;
+  transition: background-color 0.2s;
+}
+
+#aonHeaderCompanyList:hover,
+#aonHeaderHelp:hover,
+#aonHeaderConfig:hover,
+#aonHeaderNotification:hover,
+#aonHeaderUser:hover{
+  background-color: rgba(0,0,0,0.1);
+  border-radius: 100px;
+  transition: background-color 0.2s;
+}
+
+#applications:hover{
+  background-color:rgba(0,0,0,0.1);
+  transition: background-color 0.2s;
+}
+
+.aonLogin {
+	background-image: url(/images/theme/etl-background.jpg);
+}
+
+.aonLogin::after{
+	content: '';
+	height: 210px;
+	transform: scale(1,-1);
+	background-size: cover;
+	background-repeat: no-repeat;
+	background-image: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDBweCIgdmlld0JveD0iMCAwIDEyODAgMTQwIiBwcmVzZXJ2ZUFzcGVjdFJhdGlvPSJub25lIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPjxnIGZpbGw9IiNlZGVkZWQiPjxwYXRoIGQ9Ik0xMjgwIDE0MFYwSDBsMTI4MCAxNDB6Ii8+PC9nPjwvc3ZnPg==);
+}
+
+.aonLoginFormContent{
+	border:none;
+}
+
+.aonLoginButton,
+.aonLoginFormContent .aonMagicButton, 
+.aonLoginFormContent .aonInputBoxLabel > input {
+	border: none;
+	border-radius: 0px;
+}
+
+#aonLoginUserTitle,
+#aonLoginPasswordTitle {
+	display:none;
+}
+
+.aonLoginSubTitle::after {
+	color: var(--aonWhite);
+	font-size: 50px;
+	content: 'Accede a tu cuenta de ETL';
+	font-family: 'Gotcha Standup', Helvetica;
+}
+.aonDividerSpan {
+	color: var(--aonWhite);
+	background-color: transparent;
+}
+
+.aonDividerButtons{
+	border:none;	
+}
+
+#divCompanyLogoForm {
+	display: none;
+}
+.aonDividerSpan {
+	font-family: 'Gotcha Standup', Helvetica;
+}
+
+.aonLoginInfo {
+	display:none;
+}

@@ -147,11 +147,7 @@ export class AonNewLogin extends AonElement {
 
     // Form Aon Version
     let divInfo = this.createElement(TAG.DIV);
-    divInfo.style.color = '#666';
-    divInfo.style.fontSize = '9px';
-    divInfo.style.borderTop = '1px solid #ddd';
-    divInfo.style.marginTop = '10px';
-    divInfo.style.padding = '15px';
+	divInfo.className = CSS.AON_LOGIN_INFO;
     divInfo.innerHTML = `
       <span>
         <a target="_blank" class="aonLink" href="http://www.aonsolutions.es">
