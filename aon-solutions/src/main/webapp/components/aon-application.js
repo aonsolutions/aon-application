@@ -631,7 +631,7 @@ export class AonApplication extends AonElement {
     select = select || this.getElement(sidenavId + data.id + "Select");
 
     let optYear = this.createElement('option');
-    optYear.value = JSON.stringify(option.name);
+    optYear.value = JSON.stringify(option.value ? option.value : option.name);
     optYear.innerHTML = option.name;
     select.appendChild(optYear);
   }
@@ -944,7 +944,7 @@ export class AonApplication extends AonElement {
         select.addEventListener('change', () => {
           let yearSelected = JSON.parse(select.value);
           // options.forEach(option =>  console.log(option.name + " == " + yearSelected));
-          let filteredYears = options.filter(option => option.name == yearSelected);
+          let filteredYears = options.filter(option => option.name == yearSelected || (option.value && option.value == yearSelected));
           let optionFiltered = filteredYears[0];
           optionFiltered.fn();
          

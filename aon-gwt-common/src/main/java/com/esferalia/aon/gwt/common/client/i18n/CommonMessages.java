@@ -2642,6 +2642,9 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("N\u00BA de factura")
 	String invoiceNumber();
 
+	@DefaultMessage("Serie/Orden")
+	String seriesNumber();
+
 	@DefaultMessage("N\u00BA fact.")
 	String invoiceNumberAbbr();
 

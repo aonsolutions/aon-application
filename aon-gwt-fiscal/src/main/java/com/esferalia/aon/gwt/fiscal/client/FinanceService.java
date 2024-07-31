@@ -5,6 +5,7 @@ import java.util.LinkedList;
 
 import com.esferalia.aon.occam.api.model.FBatchParams;
 import com.esferalia.aon.occam.api.model.FinanceParams;
+import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.finance.FBatch;
 import com.esferalia.aon.occam.api.model.finance.Finance;
 import com.esferalia.aon.occam.api.model.finance.FinanceTracking;
@@ -19,6 +20,7 @@ public interface FinanceService extends RemoteService {
 	
 	// --------------------------------------------------------------- INVOICE SERIES
 	Integer getInvoiceNextNumber(String domainName, Integer domainId, String  user, Byte[] types, String series) throws AonCoreException;
+	Integer getInvoiceNextNumber(Occam occam, Byte[] types, String series) throws AonCoreException;
 	
 	// --------------------------------------------------------------- REGISTRY BANKS
 	LinkedList<RegistryBank> getCompanyBanks(String domainName, int domainId, String  user) throws AonCoreException;

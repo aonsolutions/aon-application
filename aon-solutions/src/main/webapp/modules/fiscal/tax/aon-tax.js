@@ -214,7 +214,7 @@ export class AonTax extends AonElement {
     let filter = applicationParent._filter;
     let datos = await applicationParent.getModelsFiscal();
 
-    if (filter.period && filter.period.includes("future")) {
+    if (filter.estimationFilter) {
       const estimationModels = await getEstimationModelsFiscal(filter.estimationFilter);
       let estimationModelDatos = estimationModels.filter((estimationModel) => estimationModel.amount && estimationModel.amount > 0).map((estimationModel) => this.formatEstimationModel(estimationModel, filter.estimationFilter))
       return estimationModelDatos;

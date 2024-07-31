@@ -166,9 +166,9 @@ public class TaskImpl implements ITask {
 	}
 	
 	@Override
-	public Stream<TaskHolder> getTaskHolderWorkgroupStream(AONContext ctx, TaskHolderFilter filter, Integer workgroupId){
+	public Stream<TaskHolder> getTaskHolderWorkgroupStream(AONContext ctx, TaskHolderFilter filter, Integer workgroupId, int ofs, int limit){
 		return ctx.getDslContext().transactionResult(
-				configuration -> TaskHolderDAO.getTaskHolderWorkgroup(ctx, filter, workgroupId));	
+				configuration -> TaskHolderDAO.getTaskHolderWorkgroup(ctx, filter, workgroupId, ofs, limit));	
 	}
 
 	@Override
@@ -307,9 +307,9 @@ public class TaskImpl implements ITask {
 	}
 
 	@Override
-	public Stream<TaskHolder> getTaskHolderStream(AONContext ctx, TaskHolderFilter filter) {
+	public Stream<TaskHolder> getTaskHolderStream(AONContext ctx, TaskHolderFilter filter, int ofs, int limit) {
 		return ctx.getDslContext().transactionResult(
-				configuration -> TaskOldDAO.getTaskHolderStream(ctx, filter));
+				configuration -> TaskOldDAO.getTaskHolderStream(ctx, filter, ofs, limit));
 	}
 	
 	@Override

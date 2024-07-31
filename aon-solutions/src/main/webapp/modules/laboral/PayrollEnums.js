@@ -151,7 +151,8 @@ export const PayrollOptions = {
 export const PAYROLL_VIEWS = {
   AON_LABORAL: "aonLaboral",
   AON_PAYROLL_LIST: "aonPayrollList",
-  AON_SEPA_FILES_LIST: "aonSepaFilesList",
+  AON_SEPA_LIST: "aonSepaList",
+  AON_SEPA: "aonSepa",
   AON_CONTRACT_LIST: "aonContractList",
   AON_MOVEMENTS_LIST: "aonMovementsList",
   AON_CERT: "aonCert",

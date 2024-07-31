@@ -31,8 +31,8 @@ import com.esferalia.aon.gwt.fiscal.shared.invoice.ICResponse;
 import com.esferalia.aon.gwt.fiscal.shared.invoice.InvoiceParams;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceCommunicationStatus;
-import com.esferalia.aon.occam.api.model.finance.InvoiceCommunicationType;
 import com.esferalia.aon.occam.api.model.finance.InvoiceCommunicationTracking;
+import com.esferalia.aon.occam.api.model.finance.InvoiceCommunicationType;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModel;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModelType;
 import com.esferalia.aon.occam.api.model.fiscal.aeat.AEATParams;
@@ -73,16 +73,6 @@ public class LroeModel240 extends DockLayoutPanel {
 			.setTitle("1. Ingresos y facturas emitidas")
 			.addItem(new AonMenuItem().setTitle("1.1 Con software garante")
 					.setHandler(chapter1_1Handler()))
-			.addItem(new AonMenuItem().setTitle("1.2 Sin software garante")
-					.setHandler(emptyHandler())
-					.setDisabled(true));
-	
-	private final AonMenuItem chapter1TbaiDeleted = new AonMenuItem()
-			.setTitle("1. Ingresos y facturas emitidas")
-			.addItem(new AonMenuItem().setTitle("1.1 Con software garante")
-					.setHandler(chapter1_1Handler()))
-			.addItem(new AonMenuItem().setTitle("1.1 Borradas Con software garante")
-					.setHandler(chapter1_1TbaiDeletedHandler()))
 			.addItem(new AonMenuItem().setTitle("1.2 Sin software garante")
 					.setHandler(emptyHandler())
 					.setDisabled(true));
@@ -230,18 +220,13 @@ public class LroeModel240 extends DockLayoutPanel {
 			public void select(LinkedList<Invoice> selFiles) {
 				selectedInvoices = selFiles;
 				boolean visible = !selFiles.isEmpty();
-				if(getFilterParams().isTbaiDeleted()) {
-					bajaButton.setVisible(visible);
-					bajaButton.setEnabled(true);
-				} else {
-					sendButton.setVisible(visible);
-					bajaButton.setVisible(visible);
-					bajaButton.setEnabled(false);
-					
-					refreshButton.setVisible(selFiles.size() == 1
-							&& !selFiles.getFirst().getInvoiceInfo().isAccepted()
-							&& !selFiles.getFirst().getInvoiceInfo().isAcceptedWithErrors());
-				}
+				sendButton.setVisible(visible);
+				bajaButton.setVisible(visible);
+				bajaButton.setEnabled(false);
+				
+				refreshButton.setVisible(selFiles.size() == 1
+						&& !selFiles.getFirst().getInvoiceInfo().isAccepted()
+						&& !selFiles.getFirst().getInvoiceInfo().isAcceptedWithErrors());
 			}
 		};
 		add(invoiceGrid);
@@ -258,9 +243,7 @@ public class LroeModel240 extends DockLayoutPanel {
 	
 	private AonMenu getMenu() {
 		AonMenu aonMenu = new AonMenu();
-		if(getOptions().getDomainName().contains("serval.aonsolutions.net") && getOptions().getDomain() == 5749)
-			aonMenu.addItem(chapter1TbaiDeleted);
-		else aonMenu.addItem(chapter1);
+		aonMenu.addItem(chapter1);
 		aonMenu.addItem(chapter2);
 		aonMenu.addItem(chapter3);
 		aonMenu.addItem(chapter4);
@@ -268,17 +251,6 @@ public class LroeModel240 extends DockLayoutPanel {
 		aonMenu.addItem(chapter6);
 //		aonMenu.addItem(utilities);
 		return aonMenu;
-	}
-
-	private ClickHandler chapter1_1TbaiDeletedHandler() {
-		return new ClickHandler() {
-			
-			@Override
-			public void onClick(ClickEvent event) {
-				getFilterParams().setTbaiDeleted(true);
-				invoiceGrid.setFilterParams(getFilterParams());
-			}
-		};
 	}
 	
 	private ClickHandler chapter1_1Handler() {
@@ -288,8 +260,7 @@ public class LroeModel240 extends DockLayoutPanel {
 			public void onClick(ClickEvent event) {
 				getFilterParams()
 				.setCommunicationType(InvoiceCommunicationType.LROE)
-				.setType(InvoiceType.SALES)
-				.setTbaiDeleted(false);
+				.setType(InvoiceType.SALES);
 				invoiceGrid.setFilterParams(getFilterParams());
 			}
 		};
@@ -303,8 +274,7 @@ public class LroeModel240 extends DockLayoutPanel {
 				getFilterParams()
 				.setCommunicationType(InvoiceCommunicationType.LROE)
 				.setType(InvoiceType.PURCHASE)
-				.addType(InvoiceType.EXPENSES)
-				.setTbaiDeleted(false);
+				.addType(InvoiceType.EXPENSES);
 				invoiceGrid.setFilterParams(getFilterParams());
 			}
 		};
@@ -644,10 +614,10 @@ public class LroeModel240 extends DockLayoutPanel {
 						});
 					} else {
 						selectedInvoices.stream().forEach(invoice -> {
-							if(!getFilterParams().isTbaiDeleted() && !invoice.getInvoiceInfo().getStatus().isAccepted()) {
+							if(!invoice.getInvoiceInfo().getStatus().isAccepted()) {
 								String message = "La factura " + invoice.getReferenceCode() + " no est\u00e1 enviada. No se puede anular.";
 								vp.add(getErrorMessage(message));
-							} else if (!getFilterParams().isTbaiDeleted() && invoice.getInvoiceInfo().getStatus().isAnnulled()) {
+							} else if(invoice.getInvoiceInfo().getStatus().isAnnulled()) {
 								String message = "La factura " + invoice.getReferenceCode() + " ya est\u00e1 anulada.";
 								vp.add(getErrorMessage(message));
 							} else {

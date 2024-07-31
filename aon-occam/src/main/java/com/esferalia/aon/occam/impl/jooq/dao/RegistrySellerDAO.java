@@ -94,9 +94,10 @@ public class RegistrySellerDAO {
 	public static RegistrySeller save(AONContext ctx, RegistrySeller registrySeller) {
 		ctx.checkWrite();
 		// TODO AUTOCOMPLETE && VALIDATION
-		boolean nullId = (registrySeller.getId() == null); 
-		return nullId || get(ctx, registrySeller.getId()).getId() == null
-			? insert(ctx, registrySeller) : update(ctx, registrySeller);
+		boolean nullId = (registrySeller.getId() == null || registrySeller.getId() == 0); 
+		return nullId ? insert(ctx, registrySeller) : update(ctx, registrySeller);
+//		return nullId || get(ctx, registrySeller.getId()).getId() == null
+//			? insert(ctx, registrySeller) : update(ctx, registrySeller);
 	}
 
 	private static RegistrySeller insert(AONContext ctx, RegistrySeller registrySeller) {
@@ -107,7 +108,7 @@ public class RegistrySellerDAO {
 			.set(RSELLER.REGISTRY, registrySeller.getRegistry())
 			.set(RSELLER.START_DATE, AonDateUtils.toSql(registrySeller.getStartDate()))
 			.set(RSELLER.END_DATE, AonDateUtils.toSql(registrySeller.getEndDate()))
-			.set(RSELLER.STATUS, registrySeller.getStatus().value())
+			.set(RSELLER.STATUS, (byte)  registrySeller.getStatus().ordinal())
 			.set(RSELLER.TYPE, registrySeller.getType() != null ? registrySeller.getType().value() : null)
 			.returning(RSELLER.ID, RSELLER.TYPE)
 			.fetchOne();
@@ -120,14 +121,13 @@ public class RegistrySellerDAO {
 	private static RegistrySeller update(AONContext ctx, RegistrySeller registrySeller){
 		ctx.checkWrite();
 		int count = ctx.getDslContext().update(RSELLER)
-			.set(RSELLER.DOMAIN, registrySeller.getDomain().getId())
 			.set(RSELLER.SELLER, registrySeller.getSeller().getId())
 			.set(RSELLER.REGISTRY, registrySeller.getRegistry())
 			.set(RSELLER.START_DATE, AonDateUtils.toSql(registrySeller.getStartDate()))
 			.set(RSELLER.END_DATE, AonDateUtils.toSql(registrySeller.getEndDate()))
-			.set(RSELLER.STATUS, registrySeller.getStatus().value())
+			.set(RSELLER.STATUS, (byte) registrySeller.getStatus().ordinal())
 			.set(RSELLER.TYPE, registrySeller.getType() != null ? registrySeller.getType().value() : null)
-			.where(RSELLER.REGISTRY.eq(registrySeller.getId()))
+			.where(RSELLER.ID.eq(registrySeller.getId()))
 			.execute();
 		ctx.log().info("UPDATE RSELLER id: " + registrySeller.getId() + ". (" + count + " rows)");		
 		return registrySeller;
