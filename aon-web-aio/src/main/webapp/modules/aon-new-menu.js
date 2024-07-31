@@ -1,5 +1,5 @@
 import { AonElement } from 'aonsolutions/components/AonElement.js';
-import { Apps, HomeApps, MenuApps, AuxApps, MENU_APPS, TOP_MENU_APPS, AON_APPS, NEW, HOME, APPS, APPLICATIONS} from '../services/app.js';
+import { Apps, HomeApps, MenuApps, AuxApps, DESKTOP_APPS, MENU_APPS, TOP_MENU_APPS, AON_APPS, NEW, HOME, APPS, APPLICATIONS } from '../services/app.js';
 import {COMMERCE, OFFICE, GARAGE, ACADEMY} from  "aonsolutions/services/app.js";
 import {ACCOUNTING_MENU, COMMERCIAL_MENU, GROUPWARE_MENU, MANAGEMENT_MENU, TREASURY_MENU, WAREHOUSE_MENU, FISCAL_MENU, PAYROLL_MENU, MARKETING_MENU} from "../services/app.js"
 import { MSG, CONSTANT, AON_ICONS, CSS, EVENT, MATERIAL_ICONS, TAG } from 'aonsolutions/environments/environments.js';
@@ -138,8 +138,7 @@ export class AonNewMenu extends AonElement {
 		apps.className = '';
 		const excludedApps = ['commerce', 'garage', 'academy', 'office'];
 		if (!this.isApp(app) && !excludedApps.includes(app.app)) {
-			this.rootPanel(new AonDesktop());
-/*			this.rootPanel(new AonNewDesktop(DESKTOP_APPS, AON_APPS));
+			this.rootPanel(new AonNewDesktop(DESKTOP_APPS, AON_APPS));
 			let headerapp = this.getElement("aonHeaderApp");
 			headerapp.style.display = "none";
 			let logo = this.getElement("aonLogo");
@@ -149,7 +148,7 @@ export class AonNewMenu extends AonElement {
 			header2.className = 'aonHeader aonHeaderStart';
 			let applications = this.getElement('applications');
 			applications.className = 'aonMenuLeftopStart';
-*/
+
 		} else {
 			switch (app.app) {
 				case NEW.app:
@@ -239,9 +238,8 @@ export class AonNewMenu extends AonElement {
 				case GARAGE.app:
 					this.rootPanel(new AonGarageMenu());
 					break;
-				default /*APPS.HOME*/:
-				// 	this.rootPanel(new AonNewDesktop(MENU_APPS, AON_APPS));
-					this.rootPanel(new AonDesktop());
+				default/*Apps.HOME*/:
+					this.rootPanel(new AonNewDesktop(DESKTOP_APPS, AON_APPS));
 					break;
 		}
 		
@@ -484,7 +482,10 @@ export class AonNewMenu extends AonElement {
 		a.addEventListener(EVENT.CLICK, () => {
 			this.appSelection(app, sidenav);
 		});
-		a.classList.add('aonMenuApp');
+/*		a.addEventListener(EVENT.MOUSEOVER, () => {
+			this.appMouseOver(app, sidenav);
+		});
+*/		a.classList.add('aonMenuApp');
 
 		let hoverDiv = this.createElement(TAG.DIV);
 		hoverDiv.innerHTML = app.title;

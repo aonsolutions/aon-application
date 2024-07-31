@@ -3850,4 +3850,11 @@ label.rating:hover {
   color: var(--gray-50);
 }
 
+.aonLoginInfo {
+    color: #666;
+    padding: 15px;
+    font-size: 9px;
+    margin-top :10px;
+    border-top: 1px solid #ddd;
+}
 
