@@ -154,10 +154,11 @@ public class ContractDAO {
 	
 	public static List<AuxSalaryInfo> getEmployeeSalary(AONContext ctx , SalaryNewPortalFilter filter, Integer page, Integer perPage) {
 		List<AuxSalaryInfo> salaryList = new ArrayList<>();
-		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd"); 
+		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 		Result<Record> results = ctx.getDslContext().select()
 		        .from(SALARY)
 		        .where(SALARY_NEW_PORTAL_PROPERTIES.getConditions(filter))
+		        .orderBy(SALARY.START_DATE.desc(), SALARY.ID.desc())
 		        .limit(perPage)
 				.offset(perPage * (page -1))
 		        .fetch();

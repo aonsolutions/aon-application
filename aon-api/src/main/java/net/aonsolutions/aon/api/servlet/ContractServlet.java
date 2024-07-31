@@ -219,6 +219,16 @@ public class ContractServlet extends AonApiHttpServlet {
 		Integer auxSalaryType = (int) salaryType;
 		String contractIds = JsonUtils.getString(params, "contract_ids");
 		String document = JsonUtils.getString(params, IJsonNames.DOCUMENT);
+		Date to = JsonUtils.getDate(params, IJsonNames.TO);
+		Date from = JsonUtils.getDate(params, IJsonNames.FROM);
+		
+		if(to != null) {
+			filter = filter.and(properties.getStartDateProperty().le(to).or(properties.getEndDateProperty().le(to)));
+		}
+		
+		if(from != null) {
+			filter = filter.and(properties.getStartDateProperty().ge(from).or(properties.getEndDateProperty().ge(from)));
+		}
 		
 		if(!AonStringUtils.isEmpty(api.getData().optString("global"))) {
 			filter = filter.and(properties.getNameProperty().like("%"+api.getData().optString("global")+"%")
