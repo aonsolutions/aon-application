@@ -2,6 +2,13 @@ import * as APP from  "aonsolutions/services/app.js";
 import { MATERIAL_ICONS, MSG, CONSTANT, AON_ICONS } from "aonsolutions/environments/environments.js";
 
 
+export const NEW = {
+	home : true,
+	title: MSG.NEW,
+	app: CONSTANT.NEW,
+	symbol: MATERIAL_ICONS.ADD_CIRCLE_OUTLINE,
+};
+
 export const HOME = {
 	home : true,
 	title: MSG.HOME,
@@ -31,6 +38,7 @@ export const AON_APPS = [
 
 export const MENU_APPS = [
   HOME,
+  NEW,
   APP.INVOICE,
   APP.DOCUMENTAL,
   APP.ACCOUNTING,

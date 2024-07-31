@@ -44,11 +44,11 @@ export class AonPayrollMenu extends AonSuiteMenu {
             options: [ {
                 description: "Integral de Nominas",
                 title: "Integral de Nominas",
-                action: () => GWT.__load(GWT.EMPLOYEES)
+                action: () => GWT.iLoad(GWT.EMPLOYEES)
             },{
                 description: "Contratos",
                 title: "Contratos",
-                action: () => GWT.__load(GWT.MAIN_CONTRATA)
+                action: () => GWT.iLoad(GWT.MAIN_CONTRATA)
             },{
                 description: "Partes IT",
                 title: "Partes IT",

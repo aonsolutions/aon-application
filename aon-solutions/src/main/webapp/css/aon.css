@@ -52,6 +52,14 @@
   --aonAccounting: #002469;
   --aonAccountingBackground: rgba(0, 36, 105, .2);
 
+  --aonSwitchButtonBarOn: #5f749f;
+
+  --aonSwitchButtonBarOff:#989797;
+
+  --aonSwitchButtonCircleOff:white;
+
+  --aonSwitchButtonCircleOn: var(--aonBlue);
+
 }
 
 /* Estilos para ocultar la barra de desplazamiento en todos los elementos */
@@ -481,6 +489,7 @@
   display: flex;
   justify-content: space-between;
   padding: 0 1rem;
+  align-items: center;
 }
 
 .aonHeaderBeta {
@@ -491,6 +500,7 @@
   display: flex;
   /*justify-content: space-between;*/
   padding: 0 1rem;
+  align-items: center;
 }
 
 .aonHeaderButton {
@@ -786,6 +796,7 @@
   height: 100%;
   justify-content: center;
   align-items: center;
+  padding: 1rem;
 }
 
 .aonCompanyTitleDiv{
@@ -2170,5 +2181,14 @@ label.rating:hover {
 
 .aonSupportAdminEmail:after {
 	content: 'administración@aonSolutions.es';	
+}
+
+.messageContent * {
+	font-size: 11px;
+}
+
+#aonLoginLanguageSpanToolbar{
+  font-size: 12px;
+  color: var(--gray-50);
 }
 

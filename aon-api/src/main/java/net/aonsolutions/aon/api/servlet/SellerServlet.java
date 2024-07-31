@@ -25,7 +25,6 @@ import com.esferalia.aon.occam.api.model.registry.Seller;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.type.RegistrySellerStatus;
 import com.esferalia.aon.occam.api.model.type.RegistrySellerType;
-import com.esferalia.aon.watson.util.AonNumberUtils;
 
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -239,30 +238,32 @@ public class SellerServlet extends AonApiHttpServlet {
 	private static JSONObject updateRegistrySeller(AonApiData api) {
 		Domain domain = api.getDomain();
 		User user = api.getUser();
-		JSONObject rsellerJson = api.getData().optJSONObject("rseller");		//NOT NULL
+		
+		System.out.println("updateRegistrySeller");
+		System.out.println(api.getData());
+		
 		Integer sellerId = api.getData().optInt(IJsonNames.SELLER);				//NOT NULL
+		Integer customerId = api.getData().optInt(IJsonNames.CUSTOMER);			//NOT NULL
+		Integer rsellerId = api.getData().optInt(IJsonNames.ID);		
 		RegistrySellerType type = RegistrySellerType.safeValueOf(api.getData().optString(IJsonNames.TYPE));
 		RegistrySellerStatus status = RegistrySellerStatus.safeValueOf(api.getData().optString(IJsonNames.STATUS));
 		
 		Date startDate = JsonUtils.getDate(api.getData(), IJsonNames.START_DATE);	//NULLABLE
 		Date endDate = JsonUtils.getDate(api.getData(), IJsonNames.END_DATE);		//NULLABLE
-		if (rsellerJson != null && sellerId > 0 && status != null) {
-			RegistrySeller rseller = RegistrySellerJSON.fromJSON(rsellerJson);
-			Seller seller = new Seller().setId(sellerId);
-			if (AonNumberUtils.zeroIfNull(rseller.getId()) > 0) {
-				AON.deleteRItem(domain, user, f -> f.getIdProperty().eq(rseller.getId()));
-				
-				rseller
-				.setSeller(seller)
+		if (sellerId > 0 && status != null) {
+			RegistrySeller rseller = new RegistrySeller()
+				.setId(rsellerId)
+				.setDomain(api.getDomain())
+				.setRegistry(customerId)
+				.setSeller(new Seller().setId(sellerId))
 				.setStartDate(startDate)
 				.setEndDate(endDate)
 				.setStatus(status)
 				.setType(type);
 				
-				RegistrySeller updatedRSellers = AON.saveRegistrySeller(domain, user.getLogin(), rseller);
-				if (updatedRSellers != null) {
-					return RegistrySellerJSON.toJSON(updatedRSellers);
-				}
+			RegistrySeller updatedRSellers = AON.saveRegistrySeller(domain, user.getLogin(), rseller);
+			if (updatedRSellers != null) {
+				return RegistrySellerJSON.toJSON(updatedRSellers);
 			}
 			
 		}

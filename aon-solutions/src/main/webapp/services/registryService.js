@@ -2,6 +2,7 @@ import { get, post, put, remove } from "./request.js";
 import { API_URL } from "../environments/environments.js";
 
 const CUSTOMERS = `${API_URL}/customers`;
+const TARGETS = `${API_URL}/target`;
 const CARRIERS = `${API_URL}/carriers`;
 const CREDITORS = `${API_URL}/creditors`;
 const SUPPLIERS = `${API_URL}/suppliers`;
@@ -19,6 +20,9 @@ export const getCustomers = (data) => post(CUSTOMERS, data);
 export const getCustomer = (data) => post(`${CUSTOMERS}/${data.id}`, data);
 export const getCustomerEmails = (data) => post(`${CUSTOMERS}/${data.id}/${EMAILS}`, data);
 export const saveCustomer = (data) => put(`${CUSTOMERS}/${data.id}`, data);
+
+export const getTarget = (data) => get(`${TARGETS}/${data.id}`, data);
+export const saveTarget = (data) => post(`${TARGETS}`, data);
 
 export const getSegments = (data) => get(SEGMENTS, data);
 

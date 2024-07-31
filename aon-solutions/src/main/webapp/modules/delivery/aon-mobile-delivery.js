@@ -13,7 +13,7 @@ import { AonBasicTable } from '../../components/aon-basic-table.js';
 import { AonIconButton } from '../../components/aon-icon-button.js';
 import { AonTabs } from '../../components/aon-tabs.js';
 import { getDeliveries, getDelivery } from '../../services/warehouseService.js';
-import { acceptDeliveryPackaging, getDeliveryPackaging, getItem, getPackaging, getProducts, saveDeliveryPackaging } from '../../services/productService.js';
+import { acceptDeliveryPackaging, deleteDelivery, getDeliveryPackaging, getItem, getPackaging, getProducts, saveDeliveryPackaging } from '../../services/productService.js';
 import { AonDialog } from '../../components/aon-dialog.js';
 import { getSalesDetails } from '../../services/salesService.js';
 import { A } from '../../environments/aonTag.js';
@@ -89,6 +89,7 @@ export class AonMobileDelivery extends AonElement {
 		toolbar.title = this.delivery.reference; 
 		this.appendChild(toolbar);
 		// toolbar.addButton2(ACTION.SAVE, () => this.save());
+		toolbar.addButton2(ACTION.DELETE, () => this.delete());
 		toolbar.addButton2(ACTION.ACCEPT, () => this.accept());
 		toolbar.addButton2(ACTION.BACK, () => this.back());
 		this.getApplication().addFloatOption(ACTION.ADD, () => this.addPackaging())
@@ -175,6 +176,18 @@ export class AonMobileDelivery extends AonElement {
 
 	// ACTIONS
 
+	delete() {
+		let d = this.getApplication().getDialog();
+   	 	d.clear();
+    	if(!this.isMobile()) d.width = '400px';
+    	d.setTitle(MSG.ACCEPT);
+   	 	d.setContentHTML(`Estás seguro de eliminar el albarán.`);
+    	d.addAcceptAction(() => {
+			deleteDelivery({id:this.delivery.id}).then(() => this.back());
+    	});
+    	d.open();	
+	}
+
 	accept() {
 		let d = this.getApplication().getDialog();
    	 	d.clear();
@@ -182,7 +195,7 @@ export class AonMobileDelivery extends AonElement {
     	d.setTitle(MSG.ACCEPT);
    	 	d.setContentHTML(`Estás seguro de finalizar el proceso.`);
     	d.addAcceptAction(() => {
-			acceptDeliveryPackaging({id:this.delivery.id}).then(this.back());
+			acceptDeliveryPackaging({id:this.delivery.id}).then(()=> this.back());
     	});
     	d.open();
 	}
@@ -483,7 +496,6 @@ export class AonMobileDelivery extends AonElement {
 		}
 	}
 
-
 	sourceDialog(detail) {
 		let id = this.id + 'SourceDialog';
 		let dialog = this.getElement(id);
@@ -505,13 +517,22 @@ export class AonMobileDelivery extends AonElement {
 		let product = this.createInput(this.PACKAGING_SOURCE_PRODUCT, "Envase Origen");
 		product.id = id + 'Envase';
 		table.addCell(product);
-		product.addIconButton(MATERIAL_ICONS.QR_CODE_SCANNER, () => this.openBarcode(product));
+		product.addIcon(MATERIAL_ICONS.QR_CODE_SCANNER, undefined,() => this.openBarcode(product));
 	
 		let source;
 		let quantity = 0;
 		let composition = [];
-		product.addEventListener(EVENT.CHANGE, () => {
-			product.setDisabled(true);
+
+		let magicButton = new AonIconButton();
+		magicButton.id = this.id + 'MagicButton';
+		magicButton.title = "magia";
+		magicButton.icon = MATERIAL_ICONS.AUTO_FIX_HIGH;
+		magicButton.addEventListener(EVENT.CLICK, () => {
+			alert("MAGIA")
+		});
+		table.addCell(magicButton);
+
+		dialog.addAcceptAction(() => {
 			let data = { 
 				sscc: product.value,
 				product: detail.item.product.id
@@ -537,53 +558,42 @@ export class AonMobileDelivery extends AonElement {
 					}
 				});
 				source = r.item.id;
+				
+				if(!this.packaging.content || this.packaging.content.filter(f => f.source === source).length == 0) {
+					let contentObject = {
+						source,
+						composition
+					};
+					composition.forEach(c => {
+						// alert(JSON.stringify(c));
+						let table2 = this.getElement(this.id + 'Envasesss22');
+						table2.addRow();
+						let span = this.createSpan();
+						span.innerHTML = detail.item.product.code + ' #' + c.composition.serialNumber;
+						table2.addCell(span);
+						let span2 = this.createSpan();
+						span2.innerHTML = c.quantity;
+						table2.addCell(span2);
+					});
+	
+					if(this.packaging.content) {
+						this.packaging.content.push(contentObject);
+					} else this.packaging.content = [contentObject];
+		
+					// alert(JSON.stringify(this.packaging.content));
+					for(let j = 0; j < this.salesDetails.length; j++) {
+						if(this.salesDetails[j].id === detail.id) {
+							this.salesDetails[j].delivered = this.salesDetails[j].delivered + quantity;
+						}
+					}		
+	
+					this.buildPendingTable(this.getElement(this.id + 'PendingTable'));
+				} else this.showError("El palet ya etá añadido.");
 			}).catch(e => {
 				product.value = "";
 				product.setDisabled(false);
 				this.showError(e);
 			});
-		});
-
-		let magicButton = new AonIconButton();
-		magicButton.id = this.id + 'MagicButton';
-		magicButton.title = "magia";
-		magicButton.icon = MATERIAL_ICONS.AUTO_FIX_HIGH;
-		magicButton.addEventListener(EVENT.CLICK, () => {
-			alert("MAGIA")
-		});
-		table.addCell(magicButton);
-
-		dialog.addAcceptAction(() => {
-			if(source) {
-				let contentObject = {
-					source,
-					composition
-				};
-				composition.forEach(c => {
-					// alert(JSON.stringify(c));
-					let table2 = this.getElement(this.id + 'Envasesss22');
-					table2.addRow();
-					let span = this.createSpan();
-					span.innerHTML = detail.item.product.code + ' #' + c.composition.serialNumber;
-					table2.addCell(span);
-					let span2 = this.createSpan();
-					span2.innerHTML = c.quantity;
-					table2.addCell(span2);
-				});
-
-				if(this.packaging.content) {
-					this.packaging.content.push(contentObject);
-				} else this.packaging.content = [contentObject];
-	
-				// alert(JSON.stringify(this.packaging.content));
-				for(let j = 0; j < this.salesDetails.length; j++) {
-					if(this.salesDetails[j].id === detail.id) {
-						this.salesDetails[j].delivered = this.salesDetails[j].delivered + quantity;
-					}
-				}		
-
-				this.buildPendingTable(this.getElement(this.id + 'PendingTable'));
-			}
 		});
 		dialog.open();
 	}
@@ -591,7 +601,10 @@ export class AonMobileDelivery extends AonElement {
 	barcodeId;
 	openBarcode(element) {
 		this.barcodeId = element.id;
-		mobileAction({ action: MOBILE_ACTION.BARCODE, selector: TAG.AON_MOBILE_DELIVERY });
+		let ionicData = { action: MOBILE_ACTION.BARCODE, selector: TAG.AON_MOBILE_DELIVERY };
+		if(UA.isAndroidApp()) {
+			openBarcode(ionicData, (result) => element.value = result.code);
+		} else mobileAction(ionicData);
 	}
 
 	setBarcodeData(barcodeStr) {

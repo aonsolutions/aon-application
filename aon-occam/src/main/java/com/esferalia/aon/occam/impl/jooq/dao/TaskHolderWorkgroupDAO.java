@@ -5,6 +5,7 @@ import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
 import static com.esferalia.aon.jooq.tables.TaskHolder.TASK_HOLDER;
 import static com.esferalia.aon.jooq.tables.Workgroup.WORKGROUP;
 
+import java.sql.Timestamp;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.function.Function;
@@ -23,6 +24,7 @@ import com.esferalia.aon.occam.api.model.Filter.TaskHolderWorkgroupFilter;
 import com.esferalia.aon.occam.api.model.Properties.TaskHolderWorkgroupProperties;
 import com.esferalia.aon.occam.api.model.security.TaskHolderWorkgroup;
 import com.esferalia.aon.occam.api.model.task.TaskHolder;
+import com.esferalia.aon.occam.api.model.task.TaskHolderWorkgroupType;
 import com.esferalia.aon.occam.impl.jooq.dao.TaskHolderDAO.TaskHolderFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.TaskOldDAO.WorkgroupFiller;
 import com.esferalia.aon.occam.impl.jooq.validation.TaskHolderWorkgroupValidation;
@@ -92,10 +94,33 @@ public class TaskHolderWorkgroupDAO {
 				.set(TASK_HOLDER_WORKGROUP.DOMAIN, taskHolderWorkgroup.getDomain())
 				.set(TASK_HOLDER_WORKGROUP.TASK_HOLDER, taskHolderWorkgroup.getTaskHolder())
 				.set(TASK_HOLDER_WORKGROUP.WORKGROUP, taskHolderWorkgroup.getWorkgroup().getId())
+				.set(TASK_HOLDER_WORKGROUP.TASK_HOLDER_WORKGROUP_TYPE, null == taskHolderWorkgroup.getTaskHolderWorkgroupType() ? (byte) 0 : (byte) taskHolderWorkgroup.getTaskHolderWorkgroupType().ordinal())
+				.set(TASK_HOLDER_WORKGROUP.START_DATE, null == taskHolderWorkgroup.getStartDate() ? null : new Timestamp(taskHolderWorkgroup.getStartDate().getTime()))
+				.set(TASK_HOLDER_WORKGROUP.END_DATE, null == taskHolderWorkgroup.getEndDate() ? null : new Timestamp(taskHolderWorkgroup.getEndDate().getTime()))
 				.returning(TASK_HOLDER_WORKGROUP.ID).fetchOne().getValue(TASK_HOLDER_WORKGROUP.ID);
 		return taskHolderWorkgroup.setId(id);
 	}
 	
+	public static TaskHolderWorkgroup saveTaskHolderWorkgroup(AONContext ctx, TaskHolderWorkgroup taskHolderWorkgroup) {
+		TaskHolderWorkgroupValidation.validate(ctx, taskHolderWorkgroup);
+		
+		TaskHolderWorkgroup taskHolderWorkgroupRecord = TaskHolderWorkgroupDAO.get(ctx, f -> f.getTaskHolderProperty().eq(taskHolderWorkgroup.getTaskHolder())
+				.and(f.getWorkgroupProperty().eq(taskHolderWorkgroup.getWorkgroup().getId())));
+		
+		return taskHolderWorkgroupRecord.isEmpty() ? insert(ctx, taskHolderWorkgroup): update(ctx, taskHolderWorkgroupRecord.getId(), taskHolderWorkgroup);
+	}
+	
+	private static TaskHolderWorkgroup update(AONContext ctx, Integer updateId, TaskHolderWorkgroup taskHolderWorkgroup) {
+		 ctx.getDslContext().update(TASK_HOLDER_WORKGROUP)
+			.set(TASK_HOLDER_WORKGROUP.WORKGROUP, taskHolderWorkgroup.getWorkgroup().getId())
+			.set(TASK_HOLDER_WORKGROUP.TASK_HOLDER_WORKGROUP_TYPE, null == taskHolderWorkgroup.getTaskHolderWorkgroupType() ? (byte) 0 : (byte) taskHolderWorkgroup.getTaskHolderWorkgroupType().ordinal())
+			.set(TASK_HOLDER_WORKGROUP.START_DATE, null == taskHolderWorkgroup.getStartDate() ? null : new Timestamp(taskHolderWorkgroup.getStartDate().getTime()))
+			.set(TASK_HOLDER_WORKGROUP.END_DATE, null == taskHolderWorkgroup.getEndDate() ? null :  new Timestamp(taskHolderWorkgroup.getEndDate().getTime()))
+			.where(TASK_HOLDER_WORKGROUP.ID.eq(updateId))
+			.execute();
+		 return taskHolderWorkgroup;
+	}
+
 	protected static void delete(AONContext ctx, TaskHolder taskHolder) {
 		delete(ctx, f -> f.getTaskHolderProperty().eq(taskHolder.getId()));
 	}
@@ -117,7 +142,11 @@ public class TaskHolderWorkgroupDAO {
 					.setId(r.getValue(TASK_HOLDER_WORKGROUP.ID))
 					.setDomain(r.getValue(TASK_HOLDER_WORKGROUP.DOMAIN))
 					.setTaskHolder(TaskHolderFiller.build(r, REGISTRY))
-					.setWorkgroup(WorkgroupFiller.buildWorkgroup(r));
+					.setWorkgroup(WorkgroupFiller.buildWorkgroup(r))
+					.setStartDate(r.getValue(TASK_HOLDER_WORKGROUP.START_DATE))
+					.setEndDate(r.getValue(TASK_HOLDER_WORKGROUP.END_DATE))
+					.setTaskHolderWorkgroupType(TaskHolderWorkgroupType.safeValueOf(r.getValue(TASK_HOLDER_WORKGROUP.TASK_HOLDER_WORKGROUP_TYPE)))
+					;
 		}
 	}
 

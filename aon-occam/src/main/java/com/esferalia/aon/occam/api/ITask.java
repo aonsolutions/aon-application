@@ -14,6 +14,7 @@ import com.esferalia.aon.occam.api.model.Filter.TaskTagFilter;
 import com.esferalia.aon.occam.api.model.OldTask;
 import com.esferalia.aon.occam.api.model.Workgroup;
 import com.esferalia.aon.occam.api.model.office.Tag;
+import com.esferalia.aon.occam.api.model.security.TaskHolderWorkgroup;
 import com.esferalia.aon.occam.api.model.task.IssueFilter;
 import com.esferalia.aon.occam.api.model.task.TaskComment;
 import com.esferalia.aon.occam.api.model.task.TaskEvent;
@@ -68,7 +69,8 @@ public interface ITask {
 	public Workgroup deleteWorkgroup(AONContext ctx, Integer wId); 
 	public Stream<TaskHolder> getTaskMemberWStream(AONContext ctx, String filter, Integer workgroupId);
 	
-	public Stream<TaskHolder> getTaskHolderStream(AONContext ctx, TaskHolderFilter filter);
+	public Stream<TaskHolder> getTaskHolderStream(AONContext ctx, TaskHolderFilter filter, int ofs, int limit);
+	public List<TaskHolder> getTaskHolderFullList(AONContext ctx, TaskHolderFilter filter);
 	public Stream<TaskHolder> getTaskHolderStream(AONContext ctx, byte[] auth);
 	public TaskHolder getTaskHolder(AONContext ctx, TaskHolderFilter filter);
 	public TaskHolder save(AONContext ctx, TaskHolder taskHolder);
@@ -81,7 +83,11 @@ public interface ITask {
 	public void insertTaskHolderWorkgroup(AONContext ctx, Integer taskHolder, Integer workgroup);
 	public void deleteTaskHolderWorkgroup(AONContext ctx, TaskHolderWorkgroupFilter filter);
 	
-	public Stream<TaskHolder> getTaskHolderWorkgroupStream(AONContext ctx, TaskHolderFilter filter, Integer workgroupId);
+	public Stream<TaskHolder> getTaskHolderWorkgroupStream(AONContext ctx, TaskHolderFilter filter, Integer workgroupId, int ofs, int limit);
 	public List<TaskHolder> getAviableSellerTaskHolders(AONContext ctx);
+	void saveTaskHolderWorkgroups(AONContext ctx, TaskHolder taskHolder);
+	
+	public List<TaskHolderWorkgroup> getTaskHolderWorkgroupsList(AONContext ctx, TaskHolderWorkgroupFilter filter);
+	public TaskHolderWorkgroup saveTaskHolderWorkgroup(AONContext ctx, TaskHolderWorkgroup taskHolderWorkgroup);
 
 }

@@ -1,5 +1,5 @@
 import { AonElement } from 'aonsolutions/components/AonElement.js';
-import { Apps, HomeApps, MenuApps, AuxApps, MENU_APPS, TOP_MENU_APPS, AON_APPS, HOME, APPS, APPLICATIONS} from '../services/app.js';
+import { Apps, HomeApps, MenuApps, AuxApps, MENU_APPS, TOP_MENU_APPS, AON_APPS, NEW, HOME, APPS, APPLICATIONS} from '../services/app.js';
 import {COMMERCE, OFFICE, GARAGE, ACADEMY} from  "aonsolutions/services/app.js";
 import {ACCOUNTING_MENU, COMMERCIAL_MENU, GROUPWARE_MENU, MANAGEMENT_MENU, TREASURY_MENU, WAREHOUSE_MENU, FISCAL_MENU, PAYROLL_MENU, MARKETING_MENU} from "../services/app.js"
 import { MSG, CONSTANT, AON_ICONS, CSS, EVENT, MATERIAL_ICONS, TAG } from 'aonsolutions/environments/environments.js';
@@ -9,6 +9,7 @@ import * as GWT from 'aonsolutions/gwt/gwt.js';
 import * as LS from 'aonsolutions/services/localStorageService.js';
 import { AonMessenger } from 'aonsolutions/modules/messenger/aon-messenger.js';
 import { AonIconButton } from 'aonsolutions/components/aon-icon-button.js';
+import { AonDialogMenu } from 'aonsolutions/components/aon-dialog-menu.js';
 import { AonFiscal } from 'aonsolutions/modules/fiscal/aon-fiscal.js';
 import { AonTimecontrol } from 'aonsolutions/modules/timecontrol/aon-timecontrol.js';
 import { AonLaboral } from 'aonsolutions/modules/laboral/aon-laboral.js';
@@ -24,6 +25,10 @@ import { AonNotes } from 'aonsolutions/modules/note/aon-notes.js';
 import { AonDesktop } from 'aonsolutions/modules/company/aon-desktop.js';
 import { AonWarehouse } from 'aonsolutions/modules/warehouse/aon-warehouse.js';
 //import { AonMarketing } from 'aonsolutions/modules/marketing/aon-marketing.js';
+import * as OPTION from 'aonsolutions/modules/invoice/InvoiceOptions.js';
+import { TASK_SOURCE } from 'aonsolutions/modules/messenger/MessengerEnums.js';
+import { uploadDocuments } from "aonsolutions/modules/documental/DocumentalUtils.js";
+
 
 import { AonNewDesktop } from './aon-new-desktop.js';
 import { AonAccountingMenu } from './accounting/aon-accounting-menu.js';
@@ -38,6 +43,7 @@ import { AonMarketingMenu } from './marketing/aon-marketing-menu.js';
 import { AonAcademyMenu } from './academy/aon-academy-menu.js';
 import { AonCommerceMenu } from './commerce/aon-commerce-menu.js';
 import { AonGarageMenu } from './garage/aon-garage-menu.js';
+
 
 //	Falla la compilación por esta línea que no se usa. REVISAR!!
 // import { FISCAL } from '../../../../target/aon-aio/environments/msg-es.js';
@@ -132,7 +138,8 @@ export class AonNewMenu extends AonElement {
 		apps.className = '';
 		const excludedApps = ['commerce', 'garage', 'academy', 'office'];
 		if (!this.isApp(app) && !excludedApps.includes(app.app)) {
-			this.rootPanel(new AonNewDesktop(MENU_APPS, AON_APPS));
+			this.rootPanel(new AonDesktop());
+/*			this.rootPanel(new AonNewDesktop(DESKTOP_APPS, AON_APPS));
 			let headerapp = this.getElement("aonHeaderApp");
 			headerapp.style.display = "none";
 			let logo = this.getElement("aonLogo");
@@ -142,9 +149,12 @@ export class AonNewMenu extends AonElement {
 			header2.className = 'aonHeader aonHeaderStart';
 			let applications = this.getElement('applications');
 			applications.className = 'aonMenuLeftopStart';
-
+*/
 		} else {
 			switch (app.app) {
+				case NEW.app:
+					this.showNewDialogMenu(this.getElement(app.app));
+					break;
 				case HOME.app:
 					this.rootPanel(new AonDesktop());
 					break;
@@ -229,8 +239,9 @@ export class AonNewMenu extends AonElement {
 				case GARAGE.app:
 					this.rootPanel(new AonGarageMenu());
 					break;
-				default/*Apps.HOME*/:
-					this.rootPanel(new AonNewDesktop(MENU_APPS, AON_APPS));
+				default /*APPS.HOME*/:
+				// 	this.rootPanel(new AonNewDesktop(MENU_APPS, AON_APPS));
+					this.rootPanel(new AonDesktop());
 					break;
 		}
 		
@@ -413,6 +424,7 @@ export class AonNewMenu extends AonElement {
 			rightPanel.style.height = `calc(100vh - 49px)`;
 		}
 		rootPanel.style.marginTop = "1px";
+	
 		rootPanel.style.height = `calc(100vh - 50px)`;
 	}
 
@@ -494,6 +506,7 @@ export class AonNewMenu extends AonElement {
 		div.style.flexDirection = style?.flexDirection || 'column';
 		div.style.transition = 'background-color 0.2s';
 		div.style.cursor = "pointer";
+		// div.style.backgroundColor =  
 		div.title = app.title;
 		let header = this.getElement("aonHeaderWeb");
 		let welcome = this.getElement("aonCompanyTabFilter");
@@ -842,6 +855,11 @@ export class AonNewMenu extends AonElement {
 			return this.getDur().isInvoice();
 		else if (MenuApps.MESSENGER.app === app.app)
 			return this.getDur().isMessenger();
+		else if (NEW.app === app.app)
+			return this.getDur().isAon()
+				|| this.getDur().isInvoice()
+				|| this.getDur().isMessenger()
+				|| this.getDur().isDocumental();
 		else if (HOME.app === app.app)
 			return true;
 		else if (APPS.app === app.app)
@@ -892,7 +910,117 @@ export class AonNewMenu extends AonElement {
 		
 		return element && element.id == this.AON_MENU_TOPNAV;
 	}
+	
+	showNewDialogMenu(el){
 		
+		let newDialogMenu =  this.getApplication().getOptionDialog();
+
+		let newMenuOptions = [];
+		if(this.getDur().isInvoice()){
+			newMenuOptions.push({
+				fn: () => {},
+				icon: 'note_add',
+				name: MSG.NEW_INVOICE,
+				options : [
+					{
+						name: 'Emitidas',
+						icon: MATERIAL_ICONS.UNARCHIVE,
+						fn: () => this.newInvoice('emitida')
+					}, {
+						name: 'Recibidas',
+						icon: MATERIAL_ICONS.ARCHIVE,
+						fn: () => this.newInvoice('recibida')
+					}, {
+						name: 'Tickets/Justificantes',
+						icon: MATERIAL_ICONS.RECEIPT,
+						fn: () => this.newInvoice('ticket')
+					}
+				]
+			});
+		}
+		if(this.getDur().isDocumental()){
+			newMenuOptions.push({
+				icon: 'post_add',
+				name: MSG.NEW_DOCUMENT,
+				fn: () => {
+					let input = this.createElement(TAG.INPUT);
+					input.type = CONSTANT.FILE;
+					input.accept = this.accept;
+					input.className = CSS.AON_NONE;
+					input.addEventListener(EVENT.CHANGE, ({target}) => uploadDocuments(input, target.files, this.getDur() ) );
+					input.click();
+				}
+			});
+		}
+		if(this.getDur().isMessenger()){
+			newMenuOptions.push({
+				icon: 'add_comment',
+				name: 'Crear Consulta',
+				fn: () => {
+					let aonMessengerChat = new AonMessenger();	
+					aonMessengerChat.data = {source:TASK_SOURCE.QUERY};
+					this.rootPanel(aonMessengerChat);
+				}
+			});
+		}
+		if(this.getDur().isAon()){
+			newMenuOptions.push({
+				icon: 'person_add',
+				name: MSG.NEW_EMPLOYEE,
+				fn: () => {
+					let aonMessengerChat = new AonMessenger();	
+					aonMessengerChat.data = {source:TASK_SOURCE.REQUEST};
+					this.rootPanel(aonMessengerChat);
+	
+					this.isElementLoaded("#sourceTask").then(sourceTaskSelect => {
+						console.log(sourceTaskSelect);
+						sourceTaskSelect.value = "request";
+						this.isElementLoaded("#processType").then(processTypeSelect => {
+							console.log(processTypeSelect);
+							processTypeSelect.value = "2";
+							this.isElementLoaded("#aonMessengerToolbarHeaderTitleSectionMenuIconButton").then(sidenavBtn => {
+								console.log(sidenavBtn);
+								sidenavBtn.click();
+							});
+						});
+					});
+				}
+			});
+		}
+
+		
+		const top  = el.getBoundingClientRect().top ;
+		const left = el.getBoundingClientRect().right;
+		
+		newDialogMenu.setMenuOptions(newMenuOptions, top, left);
+		
+		newDialogMenu.open();
+		
+	}
+	
+	async isElementLoaded(selector){
+		while ( document.querySelector(selector) === null) {
+		  await new Promise( resolve =>  requestAnimationFrame(resolve) )
+		}
+		return document.querySelector(selector);
+	};
+	
+	setAppClassName(app){
+		let appsDiv = this.getElement("aonMenuLeftop-applications");
+		appsDiv.style.removeProperty('background-color'); 
+		let appName = app.app[0].toUpperCase() + app.app.slice(1);
+		appsDiv.className = `${CSS.AON_MENU_LEFTOP} ${CSS.AON_MENU_LEFTOP}${appName}`		
+	}	
+	
+	newInvoice(invoice) {
+		let invoicePanel = new AonInvoicePanel();
+		invoicePanel.option = OPTION.CREATE_INVOICE_ISSUED;
+		invoicePanel.addEventListener(EVENT.BUILD, () => invoicePanel.aonInvoice(invoice) );
+		this.rootPanel(invoicePanel);
+		this.setAppClassName(Apps.INVOICE);
+		this.dispatchEvent(new CustomEvent(EVENT.AON_APPLICATION_SELECT, { detail : { app: Apps.INVOICE } }));		
+	}
+	
 
 }
 if (!window.customElements.get(TAG.AON_NEW_MENU)) {

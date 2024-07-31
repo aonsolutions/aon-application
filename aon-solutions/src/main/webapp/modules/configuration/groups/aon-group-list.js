@@ -1,8 +1,8 @@
 import { AonElement } from "../../../components/AonElement.js";
-import { CONSTANT, EVENT, MSG, TAG } from "../../../environments/environments.js";
+import { CONSTANT, EVENT, MATERIAL_ICONS, MSG, TAG } from "../../../environments/environments.js";
 import { AonMobileList } from "../../../components/aon-mobile-list.js";
 import { AonTable } from "../../../components/aon-table.js";
-import {getWorkgroups, saveWorkgroup} from '../../../services/workgroupService.js';
+import {deleteWorkgroup, getWorkgroups, saveWorkgroup} from '../../../services/workgroupService.js';
 import * as ACTION from '../../actions.js';
 import { AonInput } from "../../../components/aon-input.js";
 import { Workgroup } from "../../../models/project/Workgroup.js";
@@ -56,6 +56,7 @@ export class AonGroupList extends AonElement {
   paintView() {
     let aonTable = this.isMobile() ? new AonMobileList() : new AonTable();
     aonTable.id = this.TABLE_ID;
+    aonTable.selectedColor = true;
     this.appendChild(aonTable);
   }
 
@@ -90,12 +91,14 @@ export class AonGroupList extends AonElement {
     const aonTable = this.getElement(this.TABLE_ID);
     if (aonTable) {
       aonTable.removeColumns();
-      aonTable.addColumn(MSG.NAME, "string", "description", "70%");
+      aonTable.addColumn(MSG.NAME, "string", "description", "68%");
       aonTable.addColumn(MSG.STATUS, "number", "statusText", "30%");
+      aonTable.addColumn("Opción", "fn", "option", "2%");
       try {
         const resp = await this.getData();
         aonTable.removeRows();
         resp.map((res) => {
+          res.option  = this.getOptions(res);
           aonTable.addRow({ ...res }, () => this.dispatchEvent(new CustomEvent(EVENT.SELECT, {detail: res})));
         });
       } catch (e) {
@@ -174,6 +177,42 @@ export class AonGroupList extends AonElement {
 		})
     .catch(e => this.showError(e));
   }
+
+  delete(wg) {
+    console.log("Delete Workgroup");
+    console.log(wg);
+    deleteWorkgroup({id: wg.id})
+    .then(() => {
+      this.showMessage();      
+      this.getTable();
+		})
+    .catch(e => this.showError(e));
+  }
+
+  getOptions(wg) {
+		let option = [
+			{
+				...ACTION.EDIT,
+				fn: () => this.add(wg)
+			},
+			{
+				...ACTION.EDIT,
+				icon: MATERIAL_ICONS.PEOPLE,
+				name:"Operarios",
+				fn: () => {
+          console.log("Show Operarios");
+					this.dispatchEvent(new CustomEvent(EVENT.SELECT, {detail: wg}))
+				}
+			},
+			{
+				...ACTION.DELETE,
+				fn: () => this.delete(wg)
+			}
+		];
+
+		return option;
+	}
+
 }
 if(!window.customElements.get(TAG.AON_GROUP_LIST)){
   window.customElements.define(TAG.AON_GROUP_LIST, AonGroupList);

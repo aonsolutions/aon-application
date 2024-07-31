@@ -205,6 +205,8 @@ public class FiscalServlet extends AonApiHttpServlet{
 							.put("presModelAuto", model.getAdministration() == Administration.COMMON_TERRITORY ? presModelAutoEnabled : 0) // Presentación automática del modelo (solo modelos de la Agencia Tributaria)							
 							.put("testEnvironment", testEnvironment)  // Entorno de pruebas de la AEAT
 							.put("nrc", model.getNrc())
+							.put("plazos", model.getPlazos())							
+							.put("fechaPlazo", AonDateUtils.format(AonDateUtils.parse(model.getFechaPlazo()), "yyyy-MM-dd"))							
 							);
 					
 				}
@@ -478,8 +480,11 @@ public class FiscalServlet extends AonApiHttpServlet{
 				boolean reject = !reasonReject.isEmpty();
 				String nrc = JsonUtils.optString(params, "nrc");  
 				Integer certi = JsonUtils.getInteger(params, "certi");  				
-				int presModelAuto = reject ? 0 : JsonUtils.getInt(params, "presModelAuto");  // Presentación automática del modelo				
+				int presModelAuto = reject || declarationType == FiscalModelDeclarationType.DEFERRAL ? 0 : JsonUtils.getInt(params, "presModelAuto");  // Presentación automática del modelo (solo si no ha sido Rechazado por el Cliente y No es aplazamiento)				
 				boolean test = JsonUtils.getboolean(params, "testEnvironment");  // Entorno de pruebas
+				
+				int plazos = AonNumberUtils.toint(JsonUtils.getInteger(params, "plazos"));
+				Date fechaPlazo = JsonUtils.getDate(params, "fechaPlazo");
 				
 				FiscalModelType modelType = FiscalModelType.safeValueOf(JsonUtils.getString(params , IJsonNames.MODEL));
 				
@@ -526,7 +531,14 @@ public class FiscalServlet extends AonApiHttpServlet{
 				} else {
 					// Finalizar el modelo
 					model.setNrc(nrc);
+					model.setPlazos(plazos);
+					model.setFechaPlazo(AonDateUtils.simpleFormat(fechaPlazo));
+					// FALTA - Aplazamiento, ponemos por ahora la fecha de vencimiento la fecha de aplazamiento 
+					if (declarationType == FiscalModelDeclarationType.DEFERRAL && model.getFinance() != null && fechaPlazo != null) {
+						model.getFinance().setDueDate(fechaPlazo);
+					}
 					markModelAsFinished(ctx, model);
+					
 					// Presentación automática del modelo 
 					if (presModelAuto == 1) {
 						send(aeatParams, model);

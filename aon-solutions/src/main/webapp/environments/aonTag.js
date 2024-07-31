@@ -123,6 +123,8 @@ export const AON_CUSTOMER_LIST = 'aon-customer-list';
 export const AON_MOBILE_CUSTOMER = 'aon-mobile-customer';
 export const AON_MOBILE_CUSTOMER_LIST = 'aon-mobile-customer-list';
 
+export const AON_TARGET = 'aon-target';
+
 export const AON_SUPPLIER = 'aon-supplier';
 export const AON_SUPPLIER_LIST = 'aon-supplier-list';
 export const AON_MOBILE_SUPPLIER = 'aon-mobile-supplier';

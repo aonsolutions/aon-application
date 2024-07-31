@@ -202,6 +202,7 @@ export const MSG = 'msg';
 
 export const NAME = 'name';
 export const NEXT = 'next';
+export const NEW = 'new';
 export const NEW_DATE = 'newDate';
 export const NOTES = 'notes';
 export const NUMBER = 'number';

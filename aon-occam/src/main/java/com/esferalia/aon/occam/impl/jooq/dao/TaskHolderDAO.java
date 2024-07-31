@@ -21,6 +21,8 @@ import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Filter.Property;
 import com.esferalia.aon.occam.api.model.Filter.TaskHolderFilter;
 import com.esferalia.aon.occam.api.model.Properties.TaskHolderProperties;
+import com.esferalia.aon.occam.api.model.Workgroup;
+import com.esferalia.aon.occam.api.model.security.TaskHolderWorkgroup;
 import com.esferalia.aon.occam.api.model.task.TaskHolder;
 import com.esferalia.aon.occam.api.model.task.TaskHolderType;
 import com.esferalia.aon.occam.impl.jooq.dao.RegistryDAO.RegistryFiller;
@@ -83,6 +85,27 @@ public class TaskHolderDAO {
 		}
 	}
 	
+	public static List<TaskHolder> getTaskHolderFullList(AONContext ctx, TaskHolderFilter filter) {
+		List<TaskHolder> taskHolderList = ctx.getDslContext().select()
+			.from(TASK_HOLDER)
+			.join(REGISTRY).on(REGISTRY.ID.eq(TASK_HOLDER.REGISTRY))
+			.where(TASK_HOLDER_PROPERTIES.getConditions(filter))
+			.orderBy(REGISTRY.NAME)
+			.fetch()
+			.stream()
+			.map(new TaskHolderFiller())
+			.collect(Collectors.toList());
+		
+		taskHolderList.forEach(taskHolder -> {
+			List<Workgroup> workgroups = WorkgroupDAO.getWorkgroupByTaskHolderStream(ctx, f -> f.getDomainProperty().eq(taskHolder.getDomain().getId()), taskHolder.getId()).collect(Collectors.toList());
+			taskHolder.setWorkgroups(workgroups);
+		});
+		
+		taskHolderList.sort((o1, o2) -> o1.getName().compareTo(o2.getName()));
+		
+		return taskHolderList;
+	}
+	
 	private static SelectConditionStep<Record> select(AONContext ctx, TaskHolderFilter filter) {
 		return ctx.getDslContext().select()
 				.from(TASK_HOLDER)
@@ -93,6 +116,7 @@ public class TaskHolderDAO {
 
 	public static Stream<TaskHolder> getStream(AONContext ctx, TaskHolderFilter filter){
 		return select(ctx,filter)
+			.orderBy(REGISTRY.NAME)
 			.fetch()
 			.stream()
 			.map(new TaskHolderFiller());
@@ -133,7 +157,6 @@ public class TaskHolderDAO {
 		TaskHolderValidation.validate(ctx, taskHolder);
 		
 		boolean nullId = (taskHolder.getId() == null); 
-//		if(nullId) 
 		taskHolder = RegistryDAO.save(ctx, taskHolder);
 		return nullId || get(ctx, taskHolder.getId()).isEmpty() 
 			? insert(ctx, taskHolder) : update(ctx, taskHolder);
@@ -175,7 +198,7 @@ public class TaskHolderDAO {
 		return taskHolder;
 	}
 	
-	public static Stream<TaskHolder> getTaskHolderWorkgroup(AONContext ctx, TaskHolderFilter filter, Integer workgroupId){
+	public static Stream<TaskHolder> getTaskHolderWorkgroup(AONContext ctx, TaskHolderFilter filter, Integer workgroupId, int ofs, int limit){
 		SelectConditionStep<Record> r = ctx.getDslContext().select()
 				.from(TASK_HOLDER)
 				.join(REGISTRY).on(REGISTRY.ID.eq(TASK_HOLDER.REGISTRY))
@@ -184,7 +207,8 @@ public class TaskHolderDAO {
 		if(workgroupId != null && workgroupId>0)
 			r.and(TASK_HOLDER_WORKGROUP.WORKGROUP.eq(workgroupId));
 	
-		return r.orderBy(REGISTRY.NAME).fetch().stream().map(new TaskHolderFiller());
+		return r.orderBy(REGISTRY.NAME).offset(ofs)
+				.limit(limit).fetch().stream().map(new TaskHolderFiller());
 	}
 
 	public static List<TaskHolder> getAviableSellerTaskHolders(AONContext ctx) {
@@ -196,6 +220,22 @@ public class TaskHolderDAO {
 		Stream<TaskHolder> taskHolders = getStream(ctx, f -> f.getDomainProperty().eq(ctx.getDomainId()));
 		
 		return taskHolders.filter(taskHolder -> !sellerTaskHolders.contains(taskHolder.getId())).collect(Collectors.toList());
+	}
+	
+	public static void saveTaskHolderWorkgroups(AONContext ctx, TaskHolder taskHolder){
+		taskHolder.getWorkgroups().stream()
+		.forEach(workgroup -> {
+			if(workgroup.isRemoved()) {
+				TaskHolderWorkgroupDAO.delete(ctx, f -> f.getTaskHolderProperty().eq(taskHolder.getId()).and(f.getWorkgroupProperty().eq(workgroup.getId())));
+			} else {
+				TaskHolderWorkgroupDAO.save(ctx, 
+						new TaskHolderWorkgroup()
+						.setDomain(workgroup.getDomain())
+						.setTaskHolder(taskHolder.getId())
+						.setWorkgroup(workgroup));
+
+			}
+		});
 	}
 
 	// *************************************************
