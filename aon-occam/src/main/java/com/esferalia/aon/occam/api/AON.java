@@ -2141,6 +2141,11 @@ public class AON {
 			return getInvoiceNextNumber(ctx, types,series);
 		}
 	}
+	public static Integer getInvoiceNextNumber(Occam occam, Byte[] types, String series) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(occam)) {
+			return getInvoiceNextNumber(ctx, types,series);
+		}
+	}
 	public static Integer getInvoiceNextNumber(AONContext ctx, Byte[] types, String series) {
 			return getFinance().getInvoiceNextNumber(ctx, types,series);
 	}
