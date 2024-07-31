@@ -469,6 +469,31 @@ public class PackagingDAO {
 					DataResponseDAO.deleteDataResponse(ctx, f -> f.getIdProperty().eq(dr.getId()));
 				}
 			});
+		
+		DeliveryPackagingDAO.delete(ctx, f -> f.getDeliveryProperty().eq(delivery));
+		
+		List<SalesDetail> details =  SalesDetailDAO.getList(ctx, f -> f.getDeliveryProperty().eq(delivery));
+		
+		Integer sdDelivery = null;
+		
+		ctx.getDslContext()
+		.update(SALES_DETAIL)
+		.set(SALES_DETAIL.DELIVERY, sdDelivery)
+		.where(SALES_DETAIL.DELIVERY.eq(delivery))
+		.execute();
+
+		details.stream().map(e -> e.getSales().getId()).distinct().forEach(salesId -> {
+			List<SalesDetail> list = SalesDetailDAO.getStream(ctx, f -> 
+				f.getSalesProperty().eq(salesId)
+				.and(f.getDomainProperty().eq(ctx.getDomainId()))
+				.and(f.getDeliveryProperty().isNotNull()))
+				.toList();
+			if(list.isEmpty()) {
+				Sales sales = SalesDAO.get(ctx, salesId);
+				sales.setStatus(SalesStatus.PENDING);
+				SalesDAO.save(ctx, sales);
+			}
+		});
 	}
 	
 	private static void processItemBox(AONContext ctx, Delivery delivery, Integer productId, double quantity) {

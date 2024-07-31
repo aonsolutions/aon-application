@@ -137,4 +137,22 @@ public interface IFiscalModel extends Serializable {
 		return this;
 	}
 	
+	// PARA LOS APLAZAMIENTOS
+	
+	public default int getPlazos() {
+		return 0;
+	}
+	public default IFiscalModel setPlazos(int p) {
+		return this;
+	}
+	
+	// Lo pongo como String, para que sea más fácil su manejo, pues en fs_model_detail, realmente se graba como un string
+	
+	public default String getFechaPlazo() {
+		return "";
+	}
+	public default IFiscalModel setFechaPlazo(String d) {
+		return this;
+	}
+	
 }

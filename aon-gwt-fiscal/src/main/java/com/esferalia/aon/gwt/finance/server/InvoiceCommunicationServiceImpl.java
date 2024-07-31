@@ -29,9 +29,9 @@ import com.esferalia.aon.occam.api.model.attachment.DataAttachSource;
 import com.esferalia.aon.occam.api.model.attachment.DataAttachType;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceCommunicationOperation;
+import com.esferalia.aon.occam.api.model.finance.InvoiceCommunicationTracking;
 import com.esferalia.aon.occam.api.model.finance.InvoiceCommunicationType;
 import com.esferalia.aon.occam.api.model.finance.InvoiceProperties;
-import com.esferalia.aon.occam.api.model.finance.InvoiceCommunicationTracking;
 import com.esferalia.aon.occam.api.model.finance.SiiConfiguration;
 import com.esferalia.aon.occam.api.model.finance.TbaiConfiguration;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModelType;
@@ -62,17 +62,10 @@ public class InvoiceCommunicationServiceImpl extends AonStatelessRemoteServiceSe
 
 	@Override
 	public List<Invoice> getInvoices(String domainName, int domainId, String user, InvoiceParams params) {
-		if(params.isTbaiDeleted()) return getTbaiDeletedInvoices(domainName, domainId, user);
-		else return AON_SOLUTIONS.getInvoices(domainName, domainId, user, f -> getFilter(f, params))
+		return AON_SOLUTIONS.getInvoices(domainName, domainId, user, f -> getFilter(f, params))
 				.collect(Collectors.toCollection(LinkedList::new));
 	}
-	
-	
-	public List<Invoice> getTbaiDeletedInvoices(String domainName, int domainId, String user) {
-		List<Invoice> invoices = AON_SOLUTIONS.getTbaiDeletedInvoices(domainName, domainId, user);
-		return invoices;
-	}
-	
+		
 	public Filter getFilter(InvoiceProperties f, InvoiceParams params) {
 		Filter filter =  f.getDomainProperty().eq(params.getDomain())
 				.and(f.getNumberProperty().gt(0));
