@@ -166,8 +166,8 @@ export class AonFiscal extends AonElement {
 
       let data4 = {
         id: "panels",
-        title: "Borrador",
-        name: "Borrador",
+        title: "Precálculo",
+        name: "Precálculo",
         app: FISCAL,
         options: [futurePeriod],
         // options: [VAT_PANEL, RETENTION_PANEL],
