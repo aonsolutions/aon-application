@@ -247,7 +247,10 @@ export class AonMobilePackaging extends AonElement {
 	}
 
 	openBarcode() {
-		mobileAction({ action: MOBILE_ACTION.BARCODE, selector: 'aon-mobile-packaging' });
+		let ionicData = { action: MOBILE_ACTION.BARCODE, selector: 'aon-mobile-packaging' };
+		if(UA.isAndroidApp()) {
+			openBarcode(ionicData, (result) => console.log("aon mobile packaging - openbarcode - " + result.code));
+		} else mobileAction(ionicData);
 	}
 
 	setBarcodeData(barcodeStr) {
