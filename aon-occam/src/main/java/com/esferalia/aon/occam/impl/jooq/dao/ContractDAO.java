@@ -292,7 +292,7 @@ public class ContractDAO {
 		.where(
 				Timecontrol.TIMECONTROL.DOMAIN.eq(ctx.getDomainId())
 				.and(Timecontrol.TIMECONTROL.MODIFICATED_TIMECONTROL.isNull())
-				.and(DSL.sql("date >= DATE_FORMAT(NOW() ,'%Y-%m-01') AND date < DATE(NOW())"))
+				.and(DSL.sql("date >= DATE_FORMAT(NOW() ,'%Y-%m-01') AND date <= DATE(NOW())"))
 				.and(Auth.AUTH.DOCUMENT.in(documents))
 				)
 		.groupBy(Auth.AUTH.DOCUMENT).fetch().stream().forEach(r -> {
@@ -302,24 +302,6 @@ public class ContractDAO {
 				}				
 			});
 		});
-		
-		System.out.println(ctx.getDslContext().select(
-				DSL.coalesce(
-						DSL.sum(DSL.if_(Timecontrol.TIMECONTROL.STATUS.eq((byte) 0), dateMiliseconds.neg(), dateMiliseconds)
-								).cast(Long.class), 0).cast(Long.class).as(totalTime)
-				)
-		.select(Auth.AUTH.DOCUMENT)
-		.from(Timecontrol.TIMECONTROL)
-		.join(TaskHolder.TASK_HOLDER).on(TaskHolder.TASK_HOLDER.REGISTRY.eq(Timecontrol.TIMECONTROL.TASK_HOLDER))
-		.join(User.USER).on(User.USER.ID.eq(TaskHolder.TASK_HOLDER.USER_ID))
-		.join(Auth.AUTH).on(Auth.AUTH.ID.eq(User.USER.AUTH))
-		.where(
-				Timecontrol.TIMECONTROL.DOMAIN.eq(ctx.getDomainId())
-				.and(Timecontrol.TIMECONTROL.MODIFICATED_TIMECONTROL.isNull())
-				.and(DSL.sql("date >= DATE_FORMAT(NOW() ,'%Y-%m-01') AND date <= DATE(NOW())"))
-				.and(Auth.AUTH.DOCUMENT.in(documents))
-				)
-		.groupBy(Auth.AUTH.DOCUMENT).getSQL());
 		
 		return arrayContracts.stream();
 	}
