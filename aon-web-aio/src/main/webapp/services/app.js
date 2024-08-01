@@ -9,6 +9,13 @@ export const NEW = {
 	symbol: MATERIAL_ICONS.ADD_CIRCLE_OUTLINE,
 };
 
+export const NOTIFICATION = {
+	app: "notification",
+	symbol: MATERIAL_ICONS.NOTIFICATIONS,
+	title: MSG.NOTIFICATIONS,
+	subtitle: "Notification",
+}
+
 export const HOME = {
 	home : true,
 	title: MSG.HOME,

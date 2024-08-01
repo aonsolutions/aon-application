@@ -3,6 +3,7 @@ import { AonIcon } from 'aonsolutions/components/aon-icon.js';
 import { AonNotification } from 'aonsolutions/modules/notification/aon-notification.js';
 import { CreateComponent } from 'aonsolutions/components/CreateComponent.js';
 import { CONSTANT, EVENT, MSG, TAG, MATERIAL_ICONS } from 'aonsolutions/environments/environments.js';
+import { NOTIFICATION } from  "../services/app.js";
 import { getApp } from 'aonsolutions/services/app.js';
 import { getTotalNotification, saveAuthDevice, deleteAuthDevice, getNotification, markReadNotification } from 'aonsolutions/services/service.js';
 import { AonDateUtils } from "aonsolutions/modules/utils/AonDateUtils.js";
@@ -13,16 +14,16 @@ export const firstLetters = (l) => l.replace(/^.{1}/g, l[0].toUpperCase());
 
 export class AonNotificationPanel extends AonElement {
 
-	DIV_GENERAL;
+    DIV_GENERAL;
     AON_NOTIFICATION_PANEL;
 
-	get id() {
-		return this.getAttribute(CONSTANT.ID);
-	}
+    get id() {
+        return this.getAttribute(CONSTANT.ID);
+    }
 
-	set id(id) {
-		this.setAttribute(CONSTANT.ID, id);
-	}
+    set id(id) {
+        this.setAttribute(CONSTANT.ID, id);
+    }
 
     disconnectedCallback() {
         if(this.WINDOW_LISTENER){
@@ -30,12 +31,12 @@ export class AonNotificationPanel extends AonElement {
         }
     }
 
-	connectedCallback () {
+    connectedCallback () {
         this.initialize();
         this.build();   
-	}
+    }
 
-	goAonNotification(){
+    goAonNotification(){
         try {
             this.rootPanel(new AonNotification());
         } catch(e){
@@ -43,14 +44,18 @@ export class AonNotificationPanel extends AonElement {
         }
     }
 
-	initialize() {
-		this.id = this.id || 'aonNotificationPanel';
-		this.DIV_GENERAL = this.id+'DivGeneral';
+    initialize() {
+        this.id = this.id || 'aonNotificationPanel';
+        this.DIV_GENERAL = this.id+'DivGeneral';
         this.AON_NOTIFICATION_PANEL = this.id + 'Application';
-	}
+    }
 
-	build() {
-		let divGeneral = this.createDiv();
+    build() {
+        let header = this.getElement("aonHeaderWeb");
+        let apps = this.getElement("aonMenuLeftop-applications");
+        let aonHeader = this.getElement("aonHeader");
+
+        let divGeneral = this.createDiv();
         divGeneral.id = this.DIV_GENERAL;
         divGeneral.classList.add("notificationPanelGeneralDiv");
 
@@ -59,12 +64,17 @@ export class AonNotificationPanel extends AonElement {
         divTodas.classList.add("notificationPanelAllDiv");
 
         divGeneral.appendChild(divTodas);
-		divTodas.addEventListener(EVENT.CLICK, () => this.goAonNotification());
+        divTodas.addEventListener(EVENT.CLICK, () =>  {
+            this.goAonNotification()
+            header.className = "aonHeader aonHeaderNotification";
+            apps.className = "aonHeader aonMenuLeftopNotification";
+            aonHeader.buildApp(NOTIFICATION);
+        });
 
         this.loadMore(true);
         
-		this.appendChild(divGeneral);
-	}
+        this.appendChild(divGeneral);
+    }
 
     buildRow(res){
         let divPrincipal = this.createDiv();
@@ -114,12 +124,12 @@ export class AonNotificationPanel extends AonElement {
         divPrincipal.appendChild(divGeneral);
 
         divPrincipal.addEventListener(EVENT.MOUSEOVER, () => {
-			divPrincipal.style.backgroundColor = 'rgba(225, 225, 227, 1)';
-		});
+            divPrincipal.style.backgroundColor = 'rgba(225, 225, 227, 1)';
+        });
 
         divPrincipal.addEventListener(EVENT.MOUSELEAVE, () => {
-			divPrincipal.style.backgroundColor = 'transparent';
-		});
+            divPrincipal.style.backgroundColor = 'transparent';
+        });
 
         return divPrincipal;
     }
@@ -146,7 +156,7 @@ export class AonNotificationPanel extends AonElement {
     }
 
  
-	getData() {
+    getData() {
         return getNotification({page:1, perPage:10, status:"read"});
     }
 
@@ -158,5 +168,5 @@ export class AonNotificationPanel extends AonElement {
 
 }
 if(!window.customElements.get(TAG.AON_NOTIFICATION_PANEL)){
-	window.customElements.define(TAG.AON_NOTIFICATION_PANEL, AonNotificationPanel);
+    window.customElements.define(TAG.AON_NOTIFICATION_PANEL, AonNotificationPanel);
 }
