@@ -3,6 +3,7 @@ import { AonIcon } from 'aonsolutions/components/aon-icon.js';
 import { AonNotification } from 'aonsolutions/modules/notification/aon-notification.js';
 import { CreateComponent } from 'aonsolutions/components/CreateComponent.js';
 import { CONSTANT, EVENT, MSG, TAG, MATERIAL_ICONS } from 'aonsolutions/environments/environments.js';
+import { NOTIFICATION } from  "../services/app.js";
 import { getApp } from 'aonsolutions/services/app.js';
 import { getTotalNotification, saveAuthDevice, deleteAuthDevice, getNotification, markReadNotification } from 'aonsolutions/services/service.js';
 import { AonDateUtils } from "aonsolutions/modules/utils/AonDateUtils.js";
@@ -50,6 +51,10 @@ export class AonNotificationPanel extends AonElement {
 	}
 
 	build() {
+        let header = this.getElement("aonHeaderWeb");
+        let apps = this.getElement("aonMenuLeftop-applications");
+        let aonHeader = this.getElement("aonHeader");
+
 		let divGeneral = this.createDiv();
         divGeneral.id = this.DIV_GENERAL;
         divGeneral.classList.add("notificationPanelGeneralDiv");
@@ -59,7 +64,12 @@ export class AonNotificationPanel extends AonElement {
         divTodas.classList.add("notificationPanelAllDiv");
 
         divGeneral.appendChild(divTodas);
-		divTodas.addEventListener(EVENT.CLICK, () => this.goAonNotification());
+		divTodas.addEventListener(EVENT.CLICK, () =>  {
+            this.goAonNotification()
+            header.className = "aonHeader aonHeaderNotification";
+            apps.className = "aonHeader aonMenuLeftopNotification";
+            aonHeader.buildApp(NOTIFICATION);
+        });
 
         this.loadMore(true);
         

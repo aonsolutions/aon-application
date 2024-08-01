@@ -2820,6 +2820,11 @@ label.rating:hover {
   background-color: black;
 }
 
+.aonHeaderNotification,
+.aonMenuLeftopNotification {
+  background-color: var(--aonBlue);
+}
+
 .aonHeaderComercialMenu,
 .aonMenuLeftopComercialMenu {
   background-color: var(--aonBlue);
@@ -2883,7 +2888,8 @@ label.rating:hover {
 .aonHeaderAccountingMenu .material-icons,
 .aonHeaderFiscalMenu .material-icons,
 .aonHeaderPayrollMenu .material-icons,
-.aonHeaderMarketingMenu .material-icons {
+.aonHeaderMarketingMenu .material-icons,
+.aonHeaderNotification .material-icons {
 	color: var(--aonWhite);
 }
 
@@ -2907,7 +2913,8 @@ label.rating:hover {
 .aonHeaderAccountingMenu #aon-search-buttonIcon,
 .aonHeaderFiscalMenu #aon-search-buttonIcon,
 .aonHeaderPayrollMenu #aon-search-buttonIcon,
-.aonHeaderMarketingMenu #aon-search-buttonIcon{
+.aonHeaderMarketingMenu #aon-search-buttonIcon,
+.aonHeaderNotification #aon-search-buttonIcon{
   color: var(--aonSearchButton);
 }
 
@@ -2937,7 +2944,8 @@ label.rating:hover {
 .aonMenuLeftopWarehouseMenu .material-symbols-outlined,
 .aonMenuLeftopGroupwareMenu .material-symbols-outlined,
 .aonMenuLeftopManagementMenu .material-symbols-outlined,
-.aonMenuLeftopAccountingMenu .material-symbols-outlined {
+.aonMenuLeftopAccountingMenu .material-symbols-outlined,
+.aonMenuLeftopNotification .material-symbols-outlined {
 	color: var(--aonWhite);
 }
 
@@ -2967,7 +2975,8 @@ label.rating:hover {
 .aonHeaderAccountingMenu #aonHeaderCompanyName,
 .aonHeaderFiscalMenu #aonHeaderCompanyName,
 .aonHeaderPayrollMenu #aonHeaderCompanyName,
-.aonHeaderMarketingMenu #aonHeaderCompanyName {
+.aonHeaderMarketingMenu #aonHeaderCompanyName,
+.aonHeaderNotification #aonHeaderCompanyName {
 	color: var(--aonWhite);
 }
 
