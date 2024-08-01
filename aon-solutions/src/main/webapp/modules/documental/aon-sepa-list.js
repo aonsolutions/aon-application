@@ -1,13 +1,7 @@
 import { AonElement } from "../../components/AonElement.js";
 import {
   getSepaDocuments,
-  getDocuments,
-  downloadDocuments,
-  sendDocumentMail,
-  updateFiles,
-  deleteFile,
   getDomainUserRoles,
-  downloadSepaDocument,
   downloadDocument,
 } from "../../services/service.js";
 import { DomainUserRoles } from "../../models/DomainUserRoles.js";
@@ -19,9 +13,8 @@ import {
   MATERIAL_ICONS,
   MSG,
 } from "../../environments/environments.js";
-import * as ACTION from "../actions.js";
 import * as LS from "../../services/localStorageService.js";
-import { DOCUMENTAL } from "../../services/app.js";
+import { PAYROLL } from "../../services/app.js";
 import { AonTable } from "../../components/aon-table.js";
 import { formatNumber } from "../../services/utils.js";
 import { AonSepa } from "./aon-sepa.js";
@@ -68,7 +61,7 @@ export class AonSepaList extends AonElement {
   build() {
     let aonDocumentalSepaTable = new AonTable();
     aonDocumentalSepaTable.id = this.TABLE;
-    aonDocumentalSepaTable.setApp(DOCUMENTAL);
+    aonDocumentalSepaTable.setApp(PAYROLL);
     this.appendChild(aonDocumentalSepaTable);
 
     aonDocumentalSepaTable.addColumn(MSG.DATE, "date", "issueDate", "20%");

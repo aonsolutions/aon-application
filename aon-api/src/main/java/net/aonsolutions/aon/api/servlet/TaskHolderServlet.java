@@ -314,7 +314,7 @@ public class TaskHolderServlet extends AonApiHttpServlet{
 		
 		RegistryServlet.saveRegistryAdditionalInfo(api, taskHolder.getId(), taskHolder.getDomain().getId());
 		
-		saveTaskHolderWorkgroup(api, taskHolder);
+//		saveTaskHolderWorkgroup(api, taskHolder);
 		
 		return TaskHolderJSON.toJSON(taskHolder);
 	}

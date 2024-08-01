@@ -2,7 +2,7 @@ import { AonElement } from "../../../components/AonElement.js";
 import { CONSTANT, EVENT, MATERIAL_ICONS, MSG, TAG } from "../../../environments/environments.js";
 import { AonMobileList } from "../../../components/aon-mobile-list.js";
 import { AonTable } from "../../../components/aon-table.js";
-import {deleteWorkgroup, getWorkgroups, saveWorkgroup} from '../../../services/workgroupService.js';
+import {deleteWorkgroup, getWorkgroups, saveWorkgroup, getWorkgroupProjectsHolders, getWorkgroupTasks} from '../../../services/workgroupService.js';
 import * as ACTION from '../../actions.js';
 import { AonInput } from "../../../components/aon-input.js";
 import { Workgroup } from "../../../models/project/Workgroup.js";
@@ -178,15 +178,46 @@ export class AonGroupList extends AonElement {
     .catch(e => this.showError(e));
   }
 
-  delete(wg) {
-    console.log("Delete Workgroup");
-    console.log(wg);
-    deleteWorkgroup({id: wg.id})
-    .then(() => {
-      this.showMessage();      
-      this.getTable();
-		})
-    .catch(e => this.showError(e));
+  async delete(wg) {
+    let projectHolders = await getWorkgroupProjectsHolders({workgroup : wg.id});
+    let tasks = await getWorkgroupTasks({workgroup : wg.id});
+
+    console.log("ProjectHolders");
+    console.log(projectHolders);
+
+    console.log("Tasks");
+    console.log(tasks);
+
+    if((!projectHolders || projectHolders.length === 0) && (!tasks || tasks.length === 0)){
+      this.getApplication().confirmDialog(
+        MSG.DELETE,
+        MSG.DELETE_CONFIRM + " grupo de trabajo " + wg.description,
+        async () => {
+          this.getApplication().startLoading();
+  
+          deleteWorkgroup({id: wg.id})
+          .then(() => {
+            this.showMessage();      
+            this.getTable();
+          })
+          .catch(e => this.showError(e));
+  
+          this.getApplication().stopLoading();
+        }
+      );
+    } else if(projectHolders && projectHolders.length > 0) {
+      this.getApplication().confirmDialog(
+        MSG.INFORMATION,
+        `No se puede eliminar el grupo de trabajo ${wg.description} por que está asociado al menos a un expediente`,
+        async () => {}
+      );
+    } else if(tasks && tasks.length > 0) {
+      this.getApplication().confirmDialog(
+        MSG.INFORMATION,
+        `No se puede eliminar el grupo de trabajo ${wg.description} por que está asociado al menos a una tarea`,
+        async () => {}
+      );
+    }
   }
 
   getOptions(wg) {

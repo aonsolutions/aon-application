@@ -14,7 +14,7 @@ import {
 } from "../../environments/environments.js";
 import * as ACTION from "../actions.js";
 import * as LS from "../../services/localStorageService.js";
-import { DOCUMENTAL } from "../../services/app.js";
+import { PAYROLL } from "../../services/app.js";
 import { AonTable } from "../../components/aon-table.js";
 import { formatNumber } from "../../services/utils.js";
 import { AonToolbar } from "../../components/aon-toolbar.js";
@@ -75,7 +75,7 @@ export class AonSepa extends AonElement {
 
     let aonDocumentalSepa = new AonTable();
     aonDocumentalSepa.id = this.TABLE;
-    aonDocumentalSepa.setApp(DOCUMENTAL);
+    aonDocumentalSepa.setApp(PAYROLL);
     this.appendChild(aonDocumentalSepa);
 
 	let aonDocumentalSepaBody = aonDocumentalSepa.getElementsByTagName('tbody')[0];
