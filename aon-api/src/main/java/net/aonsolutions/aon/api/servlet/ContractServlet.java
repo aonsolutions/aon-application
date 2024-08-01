@@ -139,8 +139,8 @@ public class ContractServlet extends AonApiHttpServlet {
 	
 	private static JSONArray getEmployeeSalaries(AonApiData api) {
 		 JSONArray array = new JSONArray();
-		 	Integer page = api.getData().optInt("page");
-		 	Integer perPage = api.getData().optInt("per_page");
+		 	Integer page = api.getData().has("page") ? api.getData().optInt("page") : null;
+		 	Integer perPage = api.getData().has("per_page") ? api.getData().optInt("per_page") : null;
 		    List<AuxSalaryInfo> salaryList = PAYROLL.getEmployeeSalary(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(),
 		            f -> buildFilterSalariesNewPortal(f, api) , page, perPage);
 		    for (AuxSalaryInfo s : salaryList) {

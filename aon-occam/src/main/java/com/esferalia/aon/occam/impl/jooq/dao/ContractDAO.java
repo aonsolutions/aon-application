@@ -155,15 +155,17 @@ public class ContractDAO {
 	public static List<AuxSalaryInfo> getEmployeeSalary(AONContext ctx , SalaryNewPortalFilter filter, Integer page, Integer perPage) {
 		List<AuxSalaryInfo> salaryList = new ArrayList<>();
 		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-		Result<Record> results = ctx.getDslContext().select()
+		SelectSeekStep2<Record, java.sql.Date, Integer> results = ctx.getDslContext().select()
 		        .from(SALARY)
 		        .where(SALARY_NEW_PORTAL_PROPERTIES.getConditions(filter))
-		        .orderBy(SALARY.START_DATE.desc(), SALARY.ID.desc())
-		        .limit(perPage)
-				.offset(perPage * (page -1))
-		        .fetch();
+		        .orderBy(SALARY.START_DATE.desc(), SALARY.ID.desc());
+		
+		if(page != null && perPage != null)
+			results.limit(perPage)
+			.offset(perPage * (page -1));
+		results.fetch();
 		 
-		 for (Record salaryRecord : results) {
+		for (Record salaryRecord : results) {
 		        AuxSalaryInfo salaryInfo = new AuxSalaryInfo();
 		        salaryInfo.setId(salaryRecord.get(SALARY.ID));
 				salaryInfo.setDomain(salaryRecord.get(SALARY.DOMAIN));
