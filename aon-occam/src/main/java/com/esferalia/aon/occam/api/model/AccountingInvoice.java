@@ -29,7 +29,6 @@ public class AccountingInvoice implements Serializable, IAccountEntryWrapper {
 	private Integer workplace;
 	private boolean accountSource;
 	
-	private Attach attach;
 	private String manualConcept;
 
 	private InvoiceWithholding privWithholdingData;
@@ -118,14 +117,14 @@ public class AccountingInvoice implements Serializable, IAccountEntryWrapper {
 	}
 	
 	public boolean isDocumentAttached() {
-		return this.attach != null;
+		return this.invoice.getAttach().isPresent();
 	}
 	
 	public Attach getAttach() {
-		return attach;
+		return this.invoice.getAttach().orElse(null);
 	}
 	public AccountingInvoice setAttach(Attach attach) {
-		this.attach = attach;
+		this.invoice.setAttach(attach);
 		return this;
 	}
 	

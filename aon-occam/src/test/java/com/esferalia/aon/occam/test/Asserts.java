@@ -35,6 +35,8 @@ import com.esferalia.aon.occam.api.model.Question;
 import com.esferalia.aon.occam.api.model.Series;
 import com.esferalia.aon.occam.api.model.Workgroup;
 import com.esferalia.aon.occam.api.model.Workplace;
+import com.esferalia.aon.occam.api.model.attachment.Attach;
+import com.esferalia.aon.occam.api.model.attachment.AttachType;
 import com.esferalia.aon.occam.api.model.finance.BankAccount;
 import com.esferalia.aon.occam.api.model.finance.Finance;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
@@ -76,6 +78,7 @@ import com.esferalia.aon.occam.api.model.product.Tariff;
 import com.esferalia.aon.occam.api.model.project.ProjectHolder;
 import com.esferalia.aon.occam.api.model.project.ProjectType;
 import com.esferalia.aon.occam.api.model.registry.Carrier;
+import com.esferalia.aon.occam.api.model.registry.Category;
 import com.esferalia.aon.occam.api.model.registry.Creditor;
 import com.esferalia.aon.occam.api.model.registry.CreditorFull;
 import com.esferalia.aon.occam.api.model.registry.CustomerFull;
@@ -97,6 +100,7 @@ import com.esferalia.aon.occam.api.model.type.DocumentType;
 import com.esferalia.aon.occam.api.model.type.FinanceStatus;
 import com.esferalia.aon.occam.api.model.type.InvoiceTransactionType;
 import com.esferalia.aon.occam.api.model.type.InvoiceType;
+import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.occam.api.model.type.PayMethodType;
 import com.esferalia.aon.occam.api.model.type.RectificationType;
 import com.esferalia.aon.occam.api.model.type.SecurityLevel;
@@ -895,7 +899,6 @@ public class Asserts {
 		assertEquals("SIIStatus", expected.getSiiStatus(), actual.getSiiStatus());
 		
 		assertEqualsInvoiceDetails(expected.getDetails(), actual.getDetails());
-//		assertEqualsInvoiceBreakdowns(expected.getBreakdown(), actual.getBreakdown());
 		assertEqualsFinances(expected.getFinances(), actual.getFinances());
 		assertEqualsInvoiceFiscal(expected.getFiscal(), actual.getFiscal());
 		assertEquals("TediCategory", expected.getTediCategory(), actual.getTediCategory());
@@ -905,10 +908,58 @@ public class Asserts {
 		assertEquals("Recordable", expected.isRecordable(), actual.isRecordable());
 		assertEquals("Selected", expected.isSelected(), actual.isSelected());
 		
-		// assertEqualsTaxBreakdown(expected.getTaxBreakdown().orElse(null), actual.getTaxBreakdown().orElse(null));
+		assertEquals("Attach", expected.getAttach(), actual.getAttach());
+		
+		//assertEqualsInvoiceBreakdowns(expected.getBreakdown(), actual.getBreakdown());
+		//assertEqualsTaxBreakdown(expected.getTaxBreakdown().orElse(null), actual.getTaxBreakdown().orElse(null));
 		//assertEqualsRegistry(expected.getRegistryData(), actual.getRegistryData());
 	}
 	
+	public static void assertEqualsAttach(Attach expected, Attach actual) {
+		assertEquals("AttachType", expected.getAttachType(), actual.getAttachType());
+		assertEquals("AttachModule", expected.getAttachModule(), actual.getAttachModule());
+		assertEquals("AttachURL", expected.getAttachURL(), actual.getAttachURL());
+		assertEquals("Id", expected.getId(), actual.getId());
+		assertEqualsDomain(expected.getDomain(), actual.getDomain());
+		assertEquals("MimeType", expected.getMimeType(), actual.getMimeType());
+		assertEquals("Description", expected.getDescription(), actual.getDescription());
+		// private byte[] data;
+		assertEquals("Date", expected.getDate(), actual.getDate());
+		assertEquals("Type", expected.getType(), actual.getType());
+		assertEquals("DriveId", expected.getDriveId(), actual.getDriveId());
+		assertEquals("Scope", expected.getScope(), actual.getScope()); 
+		assertEquals("Confidential", expected.getConfidential(), actual.getConfidential());
+		assertEquals("Category", expected.getCategory(), actual.getCategory());
+		assertEquals("DparentId", expected.getDparentId(), actual.getDparentId());
+		assertEquals("SourceBatch", expected.getSourceBatch(), actual.getSourceBatch());
+		assertEquals("SourceType", expected.getSourceType(), actual.getSourceType());
+		assertEquals("Icon", expected.getIcon(), actual.getIcon());				
+		assertEquals("Md5", expected.getMd5(), actual.getMd5());
+		assertEquals("IsDrive", expected.getIsDrive(), actual.getIsDrive());
+		assertEqualsScope(expected.getFullScope(), actual.getFullScope());
+		assertEquals("Category",expected.getCategory(), actual.getCategory());
+		assertEqualsTags(expected.getTagList(), actual.getTagList());
+	}
+	
+	public static void assertEqualsTags(List<Tag> expected, List<Tag> actual) {
+		assertEqualsCollection("InvoiceErrors", expected, actual);
+		IntStream.range(0, expected.size())
+	    	.forEach( i -> assertEqualsTag(expected.get(i),actual.get(i)));
+	}
+
+	public static void assertEqualsCategory(Category expected, Category actual) {
+		assertEqualsNulls( "Category", expected, actual);
+		assertEquals("Description", expected.getDescription(), actual.getDescription());
+		assertEquals("Domain", expected.getDomain(), actual.getDomain());
+		assertEquals("Id", expected.getId(), actual.getId());
+		assertEquals("Rattach", expected.getRattach(), actual.getRattach());
+		assertEquals("Name", expected.getName(), actual.getName());
+		assertEquals("Scope", expected.getScope(), actual.getScope()); 
+		assertEquals("Type", expected.getType(), actual.getType());
+		assertEquals("Url", expected.getUrl(), actual.getUrl());
+		
+	}
+
 	public static void assertEqualsInvoiceErrors(List<InvoiceError> expected, List<InvoiceError> actual) {
 		assertEqualsCollection("InvoiceErrors", expected, actual);
 		IntStream.range(0, expected.size())

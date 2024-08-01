@@ -175,19 +175,35 @@ public class InvoiceTextPrinter {
 		buf.append(AonStringUtils.SPACE);
 		buf.append(AonStringUtils.leftPad(FMT1.format(detail.getTaxableBase()), 17));
 		buf.append(AonStringUtils.SPACE);
-		AonCollectionUtils.stream(detail.getInvoiceTaxes()).forEach(tax -> invoiceTax(tax, buf));
 		buf.append(AonStringUtils.leftPad(" ", getLineSize() - buf.length()));
 		buf.append(VERTICAL_BAR);
 		out.println(buf.toString());
-
+		AonCollectionUtils.stream(detail.getInvoiceTaxes()).forEach(tax -> invoiceTax(tax, out));
 	}
 
-	private String invoiceTax(InvoiceTax tax, StringBuilder buf) {
+	private void invoiceTax(InvoiceTax tax, PrintStream out) {
+		StringBuilder buf = new StringBuilder();
 		buf.append(AonStringUtils.SPACE);
+		buf.append(VERTICAL_BAR);
+		buf.append(">>>>");
 		buf.append(AonStringUtils.leftPad(tax.getTaxType().getName2(), 5));
 		buf.append(AonStringUtils.leftPad(FMT.format(tax.getPercentage()), 6));
 		buf.append(AonStringUtils.PERCENT);
-		return buf.toString();
+		buf.append(" [Base:");
+		buf.append(AonStringUtils.leftPad(FMT1.format(tax.getBase()), 17));
+		buf.append("] ");
+		buf.append("[Cuota:");
+		buf.append(AonStringUtils.leftPad(FMT.format(tax.getQuota()), 13));
+		buf.append("] ");
+		buf.append("[% Ded:");
+		buf.append(AonStringUtils.leftPad(FMT.format(tax.getDeductiblePercent()), 6));
+		buf.append("] ");
+		buf.append("[Cuota Ded.:");
+		buf.append(AonStringUtils.leftPad(FMT.format(tax.getDeductibleQuota()), 13));
+		buf.append("] ");
+		buf.append(AonStringUtils.leftPad(" ", getLineSize() - buf.length()));
+		buf.append(VERTICAL_BAR);
+		out.println(buf.toString());
 	}
 
 	private InvoiceTextPrinter vatBreakdown(Invoice invoice, PrintStream out) {

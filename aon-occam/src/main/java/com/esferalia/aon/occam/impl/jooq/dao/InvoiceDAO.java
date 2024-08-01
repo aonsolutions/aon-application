@@ -47,7 +47,6 @@ import org.jooq.Record1;
 import org.jooq.Record14;
 import org.jooq.Result;
 import org.jooq.SelectConditionStep;
-import org.jooq.conf.ParamType;
 import org.jooq.impl.DSL;
 import org.json.JSONObject;
 
@@ -420,6 +419,7 @@ public class InvoiceDAO {
 				.collect(Collectors.toCollection(LinkedList::new));
 				
 				invoice.getDetails().get(i).setInvoiceTaxes(taxes);
+				
 
 				Account acc = AccountingInvoiceDAO.getInvoiceDetailAccount(ctx, invoice.getDetails().get(i).getId()).orElse(new Account());
 				invoice.getDetails().get(i).setExpAccount(acc);
@@ -428,7 +428,7 @@ public class InvoiceDAO {
 			invoice.setFinances( FinanceDAO.getFinanceStream(ctx, prop -> prop.getInvoiceProperty().eq(id))
 					.collect(Collectors.toCollection(LinkedList::new))
 					);
-			fillBreakdown(ctx, invoice, true);
+			fillBreakdown(ctx, invoice);
 		
 			if(invoice.isRectifier()) {
 				Invoice rectify = getInvoice(ctx, invoice.getRectificationInvoice());
@@ -703,10 +703,6 @@ public class InvoiceDAO {
 				.orderBy(INVOICE.NUMBER.desc())
 				.limit(1)
 				.fetch().stream().map(new InvoiceFiller()).findFirst().orElse(new Invoice());
-	}
-	
-	private static int getNextNumber(AONContext ctx, InvoiceType type, String series ) {
-		return getNextNumber(ctx, new Byte[]{type.value()} , series);
 	}
 	
 	private static SelectConditionStep<Record1<Integer>> selectMaxInvoice(AONContext ctx, Byte[] types, String series) {
@@ -1727,67 +1723,8 @@ public class InvoiceDAO {
 	}
 
 	public static void fillBreakdown(AONContext ctx, Invoice invoice) {
-		fillBreakdown(ctx, invoice, false);
-	}
-	
-	private static void fillBreakdown(AONContext ctx, Invoice invoice, boolean skipVatExempt) {
-		if (invoice.getBreakdown() == null) {
-			invoice.setBreakdown(new LinkedList<>());
-		}
-		
-		boolean vatExempt = 
-				invoice.isSales()  && !invoice.isNational() && !skipVatExempt		// VENTA NO NACIONAL
-			;
-
-		ctx.getDslContext()
-			.select( 
-				INVOICE_TAX.TAX_TYPE,
-				INVOICE_TAX.BASE,
-				INVOICE_TAX.PERCENTAGE,
-				INVOICE_TAX.QUOTA,
-				INVOICE_TAX.SURCHARGE,
-				INVOICE_TAX.SURCHARGE_QUOTA,
-				INVOICE_TAX.WITHHOLDING_TYPE
-					) 
-		.from( INVOICE_DETAIL )
-		.innerJoin( INVOICE_TAX ).on( INVOICE_TAX.INVOICE_DETAIL.eq(INVOICE_DETAIL.ID))
-		.where(INVOICE_DETAIL.INVOICE.eq(invoice.getId()))
-		.and( !vatExempt ? DSL.trueCondition(): INVOICE_TAX.TAX_TYPE.ne(TaxType.VAT.value()) )
-		.fetch()
-		.stream()
-		.map( tax -> new InvoiceBreakdown()
-			.setTaxType( TaxType.safeValueOf(tax.getValue(INVOICE_TAX.TAX_TYPE) ))
-			.setBase(tax.getValue(INVOICE_TAX.BASE))
-			.setPercentage(tax.getValue(INVOICE_TAX.PERCENTAGE))
-			.setQuota(tax.getValue(INVOICE_TAX.QUOTA))
-			.setSurcharge(tax.getValue(INVOICE_TAX.SURCHARGE))
-			.setSurchargeQuota(tax.getValue(INVOICE_TAX.SURCHARGE_QUOTA))
-			.setWithholdingType(WithholdingType.safeValueOf(tax.getValue(INVOICE_TAX.WITHHOLDING_TYPE) )))
-		.forEach( br -> {
-			boolean added = false;
-			for (InvoiceBreakdown invBr : invoice.getBreakdown()) {
-				if ( invBr.getTaxType() == br.getTaxType() && AonNumberUtils.equals(invBr.getPercentage(), br.getPercentage())) {
-					invBr.setBase(AonMathUtils.round( invBr.getBase() + br.getBase(), 4));
-					invBr.setQuota(AonMathUtils.round( invBr.getQuota() + br.getQuota(), 4));
-					added = true;
-				} 
-			}
-			if (!added) {
-				invoice.getBreakdown().add(br);		
-			}
-		});
-		for (InvoiceBreakdown br : invoice.getBreakdown()) {
-			if (AonMathUtils.isZero( br.getQuota() )) {
-				br.setQuota( AonMathUtils.round( br.getBase() * br.getPercentage() / 100 ) );
-			}
-			if (AonMathUtils.isNotZero(br.getSurcharge()) && AonMathUtils.isZero( br.getSurchargeQuota() )) {
-				br.setSurchargeQuota( AonMathUtils.round( br.getBase() * br.getSurcharge() / 100 ) );
-			}
-		}
-		invoice.getBreakdown().sort((b1, b2) -> Comparator
-			.comparing(InvoiceBreakdown::getTaxType)
-			.thenComparing(InvoiceBreakdown::getPercentage)		
-			.compare(b1, b2));
+		InvoiceTaxDAO.getInvoiceTaxes(ctx, invoice.getId())
+			.forEach( invoice::addTax );
 	}
 	
 	// ************************************************************
@@ -1964,8 +1901,8 @@ public class InvoiceDAO {
 		BUILD_ADDRESS
 			.andThen(BUILD_DETAILS)
 			.andThen(BUILD_TAX_BREAKDOWN)
-			.andThen(BUILD_BREAKDOWN)
 			.andThen(BUILD_FINANCES)
+			.andThen(BUILD_ATTACH)
 			.andThen(BUILD_RECTIFICATION_INVOICE_DATA)
 			.accept(ctx,invoice);
 		return invoice;
@@ -1980,26 +1917,32 @@ public class InvoiceDAO {
 		for (InvoiceDetail detail : invoice.getDetails() ) {
 			detail.getSource().visit(detail, new InvoiceDetailSourceVisitor(ctx,invoice));
 			detail.setExpAccount( AccountingInvoiceDAO.getInvoiceDetailAccount(ctx, detail.getId()).orElse(new Account()));
-			detail.setInvoiceTaxes(InvoiceTaxDAO.getInvoiceTaxes( ctx, detail.getId()));
+			detail.setInvoiceTaxes(InvoiceTaxDAO.getInvoiceDetailTaxes( ctx, detail.getId()));
 		}
 	};
+	
 	private static final BiConsumer<AONContext, Invoice> BUILD_TAX_BREAKDOWN = (ctx, invoice) -> {
-		TaxBreakdown taxBreakdown = new TaxBreakdown(); 
 		AonCollectionUtils.stream(invoice.getDetails())
 			.flatMap(detail -> AonCollectionUtils.stream(detail.getInvoiceTaxes()))
-			.forEach(invoiceTax -> taxBreakdown.add(invoiceTax) );
-		invoice.setTaxBreakdown(taxBreakdown);
+			.forEach( invoice::addTax );
 	};
 	
-	private static final BiConsumer<AONContext, Invoice> BUILD_BREAKDOWN = (ctx, invoice) -> {
-		AonCollectionUtils.stream(invoice.getDetails())
-			.forEach(detail -> detail.setInvoiceTaxes(InvoiceTaxDAO.getInvoiceTaxes(ctx, detail.getId()) ));
-	};
 	
 	private static final BiConsumer<AONContext, Invoice> BUILD_FINANCES = (ctx, invoice) -> {
 		invoice.setFinances(FinanceDAO.getInvoiceFinances(ctx, invoice.getId()));
 	};
 	
+	private static final BiConsumer<AONContext, Invoice> BUILD_ATTACH = (ctx, invoice) -> {
+		invoice.setAttach(
+			AttachmentDAO.getInvoiceAttachStream(ctx
+				, f -> f.getAttachModuleProperty().eq(invoice.getId())
+					.and(f.getTypeProperty().eq( InvoiceAttachmentType.INVOICE.value() ) )
+				, false)
+				.findFirst()
+				.orElse(null)
+		);
+	};
+
 	private static final BiConsumer<AONContext, Invoice> BUILD_RECTIFICATION_INVOICE_DATA = (ctx, invoice) -> {
 		if(invoice.isRectifier()) {
 			Invoice rectify = getInvoice(ctx, invoice.getRectificationInvoice());

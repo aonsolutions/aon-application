@@ -62,6 +62,11 @@ public class TaxBreakdown implements Serializable {
 			.findFirst();
 	}
 	
+	public TaxBreakdown calculate() {
+		AonCollectionUtils.stream( getVats() ).forEach(ib -> ib.calculate());
+		return this;
+	}
+	
 	public double getVatBase() {
 		return AonMathUtils.round( AonCollectionUtils.stream( getVats() ).mapToDouble( t -> t.getBase() ).sum() , 4); 
 	}

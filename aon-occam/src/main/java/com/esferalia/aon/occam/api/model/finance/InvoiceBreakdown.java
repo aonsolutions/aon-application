@@ -162,11 +162,40 @@ public class InvoiceBreakdown implements Serializable {
 			.setTaxType(it.getTaxType())
 			.setBase(it.getBase())
 			.setPercentage(it.getPercentage())
-			.setQuota(it.getQuota())
+			.setQuota(ensureQuota(it))
 			.setSurcharge(it.getSurcharge())
-			.setSurchargeQuota(it.getSurchargeQuota())
-			.setDeductibleQuota(it.getDeductibleQuota())
+			.setSurchargeQuota(ensureSurchargeQuota(it))
+			.setDeductibleQuota(ensureDeductibleQuota(it))
 			.setWithholdingType(it.getWithholdingType())
 			.setVatDeductionType(it.getVatDeductionType());
+	}
+	
+	private static double ensureQuota(InvoiceTax it) {
+		if (!it.isQuotaEdited() && AonMathUtils.isZero(it.getQuota())) {
+			it.calculateQuota();
+		}
+		return it.getQuota();
+	}
+	private static double ensureSurchargeQuota(InvoiceTax it) {
+		if (!it.isSurchargeQuotaEdited() && AonMathUtils.isZero(it.getSurchargeQuota())) {
+			it.calculateSurchargeQuota();
+		}
+		return it.getSurchargeQuota();
+	}
+	private static double ensureDeductibleQuota(InvoiceTax it) {
+		if (!it.isDeductibleQuotaEdited() 
+		  && AonMathUtils.isNotZero(it.getDeductiblePercent())
+		  && AonMathUtils.isZero(it.getDeductibleQuota())) {
+			it.calculateDeductibleQuota();
+		}
+		return it.getDeductibleQuota();
+	}
+
+	public InvoiceBreakdown calculate() {
+		return 
+			 setQuota( AonMathUtils.round( getBase() * getPercentage() / 100 , 2))
+			.setSurchargeQuota( AonMathUtils.round(getBase() * getSurcharge() / 100 ) )
+			;
+		
 	}
 }

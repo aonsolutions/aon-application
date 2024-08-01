@@ -1,5 +1,6 @@
 package com.esferalia.aon.occam.impl.jooq.dao;
 
+import static com.esferalia.aon.jooq.tables.InvoiceDetail.INVOICE_DETAIL;
 import static com.esferalia.aon.jooq.tables.InvoiceTax.INVOICE_TAX;
 
 import java.util.LinkedList;
@@ -9,6 +10,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.jooq.Record;
+import org.jooq.SelectOnConditionStep;
 
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.InvoiceCalculator;
@@ -20,17 +22,31 @@ import com.esferalia.aon.occam.api.model.type.WithholdingType;
 import com.esferalia.aon.watson.util.AonMathUtils;
 
 public class InvoiceTaxDAO {
-	
-	private static Stream<InvoiceTax> getTaxesStream(AONContext ctx, Integer invoiceDetailId){	
+
+	private static SelectOnConditionStep<Record> getTaxesSelect(AONContext ctx){
 		return ctx.getDslContext()
 			.select()
 			.from(INVOICE_TAX)
+			.innerJoin(INVOICE_DETAIL).on(INVOICE_DETAIL.ID.eq(INVOICE_TAX.INVOICE_DETAIL));
+	}
+
+			
+	private static Stream<InvoiceTax> getInvoiceDetailTaxesStream(AONContext ctx, Integer invoiceDetailId){	
+		return getTaxesSelect(ctx)
 			.where(INVOICE_TAX.INVOICE_DETAIL.eq(invoiceDetailId))
 			.fetch()
 			.stream()
 			.map(new InvoiceTaxFiller());
 	}	
 	
+	private static Stream<InvoiceTax> getInvoiceTaxesStream(AONContext ctx, Integer invoiceId){	
+		return getTaxesSelect(ctx)
+			.where(INVOICE_DETAIL.INVOICE.eq(invoiceId))
+			.fetch()
+			.stream()
+			.map(new InvoiceTaxFiller());
+	}	
+
 	static List<InvoiceTax> save(AONContext ctx, List<InvoiceTax> invoiceTaxes, InvoiceDetail detail) {
 		return invoiceTaxes
 			.stream()
@@ -112,16 +128,21 @@ public class InvoiceTaxDAO {
 				.setDeductiblePercent(getDouble(r, INVOICE_TAX.DEDUCTIBLE_PERCENT))
 				.setDeductibleQuota(getDouble(r, INVOICE_TAX.DEDUCTIBLE_QUOTA));
 			tax
-				.setQuotaEdited( AonMathUtils.isNotZero(InvoiceCalculator.getQuotaGap(tax, tax.getQuota())))
-				.setSurchargeQuotaEdited( AonMathUtils.isNotZero(InvoiceCalculator.getSurchargeQuotaGap(tax, tax.getSurchargeQuota())))
-				.setDeductibleQuotaEdited( AonMathUtils.isNotZero(InvoiceCalculator.getDeductibleQuotaGap(tax, tax.getDeductibleQuota())));
+				.setQuotaEdited( InvoiceCalculator.isQuotaEdited(tax))
+				.setSurchargeQuotaEdited( InvoiceCalculator.isSurchargeQuotaEdited(tax))
+				.setDeductibleQuotaEdited( InvoiceCalculator.isDeductibleQuotaEdited(tax));
 			return tax;
 
 		}
 	}
 
-	static LinkedList<InvoiceTax> getInvoiceTaxes(AONContext ctx, Integer invoiceDetailId){
-		return getTaxesStream(ctx, invoiceDetailId)
+	static LinkedList<InvoiceTax> getInvoiceTaxes(AONContext ctx, Integer invoiceId){
+		return getInvoiceTaxesStream(ctx, invoiceId)
+			.collect(Collectors.toCollection(LinkedList::new));
+	}
+
+	static LinkedList<InvoiceTax> getInvoiceDetailTaxes(AONContext ctx, Integer invoiceDetailId){
+		return getInvoiceDetailTaxesStream(ctx, invoiceDetailId)
 			.collect(Collectors.toCollection(LinkedList::new));
 	}
 }

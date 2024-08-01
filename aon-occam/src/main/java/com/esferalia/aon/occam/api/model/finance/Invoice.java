@@ -10,6 +10,7 @@ import java.util.Optional;
 import com.esferalia.aon.occam.api.model.Account;
 import com.esferalia.aon.occam.api.model.EnterpriseActivity;
 import com.esferalia.aon.occam.api.model.HasAudit;
+import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceError;
 import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.registry.RegistryAddress;
@@ -25,16 +26,21 @@ import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class Invoice implements Serializable, HasAudit {
-	public static final double REG_IMPORT_MAX_VALUE  = 150.0;
 	
 	private static final long serialVersionUID = 8897444490096530091L;
+	private static final double REG_IMPORT_MAX_VALUE  = 150.0;
 	
+	
+	private boolean selected;
+
+	private List<InvoiceError> messages;
+
 	private Integer id;
 	private Integer domain;
 	private EnterpriseActivity activity;
 	private String epigraph;
-	private Integer investAsset;			//**
-	private Integer project;				//**
+	private Integer investAsset;
+	private Integer project;
 	private String series;
 	private int number;
 	private String referenceCode;
@@ -88,32 +94,23 @@ public class Invoice implements Serializable, HasAudit {
 	private String modificationUser;
 	private Date modificationDate;
 
-	private String siiStatus;
 
 	private List<InvoiceDetail> details;
-	@Deprecated
-	private List<InvoiceBreakdown> breakdown;
-	private List<Finance> finances;
-	
 	private TaxBreakdown taxBreakdown;
-	
+	private List<Finance> finances;
 	private InvoiceFiscal fiscal;
-	
-	private String tediCategory;
-	private String fileUrl;
-	
+	private InvoiceInfo invoiceInfo;
+	private Attach attach;
+
 	// ***************************
 	// ATRIBUTOS CON DUDOSO FUTURO
 	// ***************************
 	private Registry registryData;
-	// ***************************
-
-	private InvoiceInfo invoiceInfo;
-		
-	private List<InvoiceError> messages;
-	
 	private boolean recordable;
-	private boolean selected;
+	private String fileUrl;
+	private String tediCategory;
+	private String siiStatus;
+	// ***************************
 
 	public Integer getId() {
 		return id;
@@ -258,14 +255,6 @@ public class Invoice implements Serializable, HasAudit {
 	}
 	public Invoice setRegistry(Integer registry) {
 		this.registry = registry;
-		return this;
-	}
-	
-	public Registry getRegistryData() {
-		return registryData;
-	}
-	public Invoice setRegistryData(Registry registryData) {
-		this.registryData = registryData;
 		return this;
 	}
 	
@@ -550,23 +539,20 @@ public class Invoice implements Serializable, HasAudit {
 	}
 
 	/**
-	 * @deprecated This method will be removed 
-	 * use getTaxBreakdown(), getVats() or getWithHolding()
+	 * @deprecated This method will be removed use getBreakdowns(), getVats() or getWithHolding()
 	 */
 	@Deprecated
 	public List<InvoiceBreakdown> getBreakdown() {
-		if(breakdown == null) {
-			this.breakdown = new LinkedList<>();
-		}
-		return breakdown;
+		return getBreakdowns();
 	}
 	/**
-	 * @deprecated This method will be removed 
-	 * use setTaxBreakdown()
+	 * @deprecated This method will be removed use setTaxBreakdown()
 	 */
 	@Deprecated
 	public Invoice setBreakdown(List<InvoiceBreakdown> breakdown) {
-		this.breakdown = breakdown;
+		this.taxBreakdown = new TaxBreakdown();
+		AonCollectionUtils.stream(breakdown)
+			.forEach(ib -> this.taxBreakdown.add(ib));
 		return this;
 	}
 
@@ -603,28 +589,58 @@ public class Invoice implements Serializable, HasAudit {
 		return this;
 	}
 	
+	public Optional<Attach> getAttach() {
+		return Optional.ofNullable( attach );
+	}
+	public Invoice setAttach(Attach attach) {
+		this.attach = attach;
+		return this;
+	}
+
 	public Account getRegistryAccount() {
 		if(registryAccount == null) {
 			registryAccount = new Account();
 		}
 		return registryAccount;
 	}
-	
 	public Invoice setRegistryAccount(Account registryAccount) {
 		this.registryAccount = registryAccount;
 		return this;
 	}
 	
-	// TEDI CATEGORY - ACCOUNT CODE
-	
+	// ***************************
+	// ATRIBUTOS CON DUDOSO FUTURO
+	// ***************************
+	public Registry getRegistryData() {
+		return registryData;
+	}
+	public Invoice setRegistryData(Registry registryData) {
+		this.registryData = registryData;
+		return this;
+	}
+	public boolean isRecordable() {
+		return recordable;
+	}
+	public String getFileUrl() {
+		return fileUrl;
+	}
+	public Invoice setFileUrl(String fileUrl) {
+		this.fileUrl = fileUrl;
+		return this;
+	}
+	public Invoice setRecordable(boolean recordable) {
+		this.recordable = recordable;
+		return this;
+	}
 	public String getTediCategory() {
 		return tediCategory;
 	}
-	
 	public Invoice setTediCategory(String category) {
 		this.tediCategory = category;
 		return this;
 	}
+	// ***************************
+	// ***************************
 	
 	// ---------------------------------------------------------- UTIL
 	public boolean isNational() {
@@ -691,6 +707,7 @@ public class Invoice implements Serializable, HasAudit {
 			;
 	}
 	
+	@Deprecated
 	public boolean _isInputVatEnabled() {
 		return !isUndeductible() && (
 			  (isPurchase() && isNational())						// Compra nacional 
@@ -738,14 +755,6 @@ public class Invoice implements Serializable, HasAudit {
 		return this;
 	}
 	
-	public String getFileUrl() {
-		return fileUrl;
-	}
-	
-	public Invoice setFileUrl(String fileUrl) {
-		this.fileUrl = fileUrl;
-		return this;
-	}
 	
 	// ----------- VAT REGIMES
 	
@@ -802,14 +811,6 @@ public class Invoice implements Serializable, HasAudit {
 		this.messages = new LinkedList<>();		
 	}
 	
-	public boolean isRecordable() {
-		return recordable;
-	}
-	public Invoice setRecordable(boolean recordable) {
-		this.recordable = recordable;
-		return this;
-	}
-	
 	public boolean isSelected() {
 		return selected;
 	}
@@ -838,6 +839,10 @@ public class Invoice implements Serializable, HasAudit {
 	public Invoice addBreakdown(InvoiceBreakdown ib) {
 		ensureTaxBreakdown().add(ib);
 		return this;
+	}
+	
+	public List<InvoiceBreakdown> getBreakdowns() {
+		return this.getTaxBreakdown().map(itb -> itb.getBreakdown() ).orElse(Collections.emptyList());
 	}
 	public List<InvoiceBreakdown> getVats() {
 		return this.getTaxBreakdown().map(itb -> itb.getVats() ).orElse(Collections.emptyList());

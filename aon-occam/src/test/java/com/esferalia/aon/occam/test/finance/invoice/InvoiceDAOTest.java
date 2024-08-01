@@ -20,7 +20,7 @@ import com.esferalia.aon.watson.server.AonDateUtils;
 public class InvoiceDAOTest extends AbstractOccamTest {
 
 	@Test
-	public void testInvoiceFullInvoices() {
+	public void testQithFullPreviousMethod() {
 		Occam occam = new Occam()
 			.setDomain( 5 )
 			.setDomainName( "sig.ecastellano.org" )

@@ -184,5 +184,18 @@ public class InvoiceTax implements Serializable {
 	public boolean isVatType() {
 		return this.getTaxType() == TaxType.VAT;
 	}
-
+	
+	public InvoiceTax calculateQuota() {
+		return setQuota( AonMathUtils.round( getBase() * getPercentage() / 100 , 2));
+	}
+	public InvoiceTax calculateSurchargeQuota() {
+		return setSurchargeQuota( AonMathUtils.round(getBase() * getSurcharge() / 100 ) );
+	}
+	public InvoiceTax calculateDeductibleQuota() {
+		double dedQuota = AonMathUtils.isNotZero(getDeductiblePercent())
+			? AonMathUtils.round( (getBase() * getPercentage() / 100) * getDeductiblePercent() / 100)
+			: getQuota();
+		return setDeductibleQuota( dedQuota );
+	}
+	
 }

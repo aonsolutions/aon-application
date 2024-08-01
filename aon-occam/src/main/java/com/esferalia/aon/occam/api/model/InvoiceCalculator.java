@@ -288,6 +288,10 @@ public class InvoiceCalculator {
 	}
 
 
+	public static boolean isQuotaEdited(InvoiceTax tax) {
+		return (AonMathUtils.isNotZero(tax.getQuota()) 
+			&& AonMathUtils.isNotZero(getQuotaGap(tax, tax.getQuota())));
+	}
 	public static double getQuota(InvoiceTax vat) {
 		return AonMathUtils.round(vat.getBase() * vat.getPercentage() / 100 );		
 	}
@@ -295,12 +299,20 @@ public class InvoiceCalculator {
 		if (quota == null) quota = 0.0;
 		return AonMathUtils.round(quota - getQuota(tax)); 		
 	}
+	public static boolean isSurchargeQuotaEdited(InvoiceTax tax) {
+		return (AonMathUtils.isNotZero(tax.getSurchargeQuota()) 
+			&& AonMathUtils.isNotZero(getSurchargeQuotaGap(tax, tax.getSurchargeQuota())));
+	}
 	public static double getSurchargeQuota(InvoiceTax tax) {
 		return AonMathUtils.round(tax.getBase() * tax.getSurcharge() / 100 );		
 	}
 	public static double getSurchargeQuotaGap(InvoiceTax tax, Double surchargeQuota) {
 		if (surchargeQuota == null) surchargeQuota = 0.0;
 		return AonMathUtils.round(surchargeQuota - getSurchargeQuota(tax));
+	}
+	public static boolean isDeductibleQuotaEdited(InvoiceTax tax) {
+		return (AonMathUtils.isNotZero(tax.getDeductibleQuota()) 
+			&& AonMathUtils.isNotZero(getDeductibleQuotaGap(tax, tax.getDeductibleQuota())));
 	}
 	public static double getDeductibleQuota(InvoiceTax tax) {
 		return AonMathUtils.round( (tax.getBase() * tax.getPercentage() / 100) * tax.getDeductiblePercent() / 100);		
