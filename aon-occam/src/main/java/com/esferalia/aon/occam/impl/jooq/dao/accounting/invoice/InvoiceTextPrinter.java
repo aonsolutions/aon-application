@@ -58,7 +58,7 @@ public class InvoiceTextPrinter {
 		buf.append(TOP_LEFT_CORNER);
 		buf.append(AonStringUtils.repeat(HORIZONTAL_BAR, 8));
 		buf.append(HORIZONTAL_DOWN_BAR);
-		buf.append(AonStringUtils.repeat(HORIZONTAL_BAR, 21));
+		buf.append(AonStringUtils.repeat(HORIZONTAL_BAR, 25));
 		buf.append(HORIZONTAL_DOWN_BAR);
 		buf.append(AonStringUtils.repeat(HORIZONTAL_BAR, 19));
 		buf.append(HORIZONTAL_DOWN_BAR);
@@ -72,7 +72,7 @@ public class InvoiceTextPrinter {
 		buf.append(AonStringUtils.center(invoice.getType().getAbbrDescription(), 8));
 		buf.append(VERTICAL_BAR);
 		buf.append(" N\u00BA Fra: ");
-		buf.append(AonStringUtils.rightPad(invoice.getDocumentNumber(), 12));
+		buf.append(AonStringUtils.rightPad(invoice.getDocumentNumber(), 16));
 		buf.append(VERTICAL_BAR);
 		buf.append(" Fecha: ");
 		buf.append(DATE_FORMAT.format(invoice.getIssueDate()));
@@ -94,7 +94,7 @@ public class InvoiceTextPrinter {
 		buf.append(AonStringUtils.spaces(8));
 		buf.append(VERTICAL_BAR);
 		buf.append(" Total : ");
-		buf.append(AonStringUtils.rightPad(FMT.format(invoice.getTotal()), 12));
+		buf.append(AonStringUtils.rightPad(FMT.format(invoice.getTotal()), 16));
 		buf.append(VERTICAL_BAR);
 		buf.append(AonStringUtils.spaces(19));
 		buf.append(VERTICAL_BAR);
@@ -109,7 +109,7 @@ public class InvoiceTextPrinter {
 		buf.append(LOWER_LEFT_CORNER);
 		buf.append(AonStringUtils.repeat(HORIZONTAL_BAR, 8));
 		buf.append(HORIZONTAL_UP_BAR);
-		buf.append(AonStringUtils.repeat(HORIZONTAL_BAR, 21));
+		buf.append(AonStringUtils.repeat(HORIZONTAL_BAR, 25));
 		buf.append(HORIZONTAL_UP_BAR);
 		buf.append(AonStringUtils.repeat(HORIZONTAL_BAR, 19));
 		buf.append(HORIZONTAL_UP_BAR);
@@ -483,7 +483,8 @@ public class InvoiceTextPrinter {
 					b.append(AonStringUtils.spaces(10));
 					b.append(VERTICAL_BAR);
 					b.append(AonStringUtils.spaces(5));
-					b.append(AonStringUtils.rightPad(checkLabel(k.getName(), invoiceFiscal.getVatRegimes().get(k) ) ,87));
+					String name = AonStringUtils.abbreviateMiddle(k.getName(), " (..) ", 75); 
+					b.append(AonStringUtils.rightPad(checkLabel(name, invoiceFiscal.getVatRegimes().get(k) ) ,87));
 					b.append(VERTICAL_BAR);
 					b.append(AonStringUtils.spaces(getLineSize() - b.length()));			
 					out.println(b.toString());

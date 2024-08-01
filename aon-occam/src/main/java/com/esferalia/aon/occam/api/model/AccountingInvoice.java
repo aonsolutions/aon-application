@@ -80,6 +80,11 @@ public class AccountingInvoice implements Serializable, IAccountEntryWrapper {
 		this.accountEntry = accountEntry;
 	}
 	
+	public AccountingInvoice fillAccountEntry(AccountEntry accountEntry) {
+		setAccountEntry(accountEntry);
+		return this;
+	}
+
 	public Invoice getInvoice() {
 		return invoice;
 	}
@@ -149,6 +154,7 @@ public class AccountingInvoice implements Serializable, IAccountEntryWrapper {
 		return this;
 	}
 	
+	@Override
 	public LinkedList<AccountEntry> getAccountEntries() {
 		return accountEntries;
 	}
@@ -242,32 +248,13 @@ public class AccountingInvoice implements Serializable, IAccountEntryWrapper {
 		return invoice != null && invoice.isRectifier();
 	}
 
-	/*
-	 * ----------------------------------------------
-	 * Este método debería delegar directamenten en invoice.isInputVatEnabled
-	*/
 	public boolean isInputVatEnabled() {
-		return invoice != null 
-			&& !invoice.isUndeductible() 
-			&& ((invoice.isPurchase() && invoice.isNational())						// Compra nacional 
-			|| (invoice.isExpenses() && invoice.isNational())						// Gasto nacional
-			|| (invoice.isVatImportationAvailable() && invoice.isVatImportation()	// Regimen importacioon
-				&& isVatImportationAmountValid())
-//				&& AonMathUtils.isLessThan(getTotal(), REG_IMPORT_MAX_VALUE0 ))	
-			|| invoice.mustApplyISP());										// Aplicar la inversión de sujeto pasivo.	
+		return invoice != null && invoice.isInputVatEnabled();
 	}
-	private boolean isVatImportationAmountValid() {
-		return getVats() == null 
-			|| getVats().isEmpty()
-			|| AonMathUtils.isLessThan( getVats().stream().mapToDouble( InvoiceVAT::getBase ).sum() , Invoice.REG_IMPORT_MAX_VALUE );
-	}
-	/*
-	 * ----------------------------------------------
-	 */
-	
 	public boolean isOutputVatEnabled() {
 		return invoice != null && invoice.isOutputVatEnabled();
 	}
+	
 	public void setWithholdingAccount(Account acc) {
 		getWithholdingData().setAccountId(acc.getId())
 			.setAccountCode(acc.getCode())

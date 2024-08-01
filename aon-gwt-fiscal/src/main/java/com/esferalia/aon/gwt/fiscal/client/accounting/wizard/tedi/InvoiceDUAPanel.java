@@ -416,7 +416,7 @@ public class InvoiceDUAPanel extends AonDisplayTable implements HasSelectionHand
 			);
 			LinkedList<InvoiceVAT> duaVats = new LinkedList<InvoiceVAT>();
 			for (InvoiceVAT ori : duaInvoice.getAccountingInvoice().getVats()) {
-				duaVats.add(ori.clone());
+				duaVats.add(ori.copy());
 			}
 			duaInvoice.getInfo().setDuaVats(duaVats);
 			callback.getInvoice().setDuaInvoice(duaInvoice);

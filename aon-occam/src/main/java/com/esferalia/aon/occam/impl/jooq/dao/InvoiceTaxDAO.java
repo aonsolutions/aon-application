@@ -8,14 +8,10 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import org.jooq.Condition;
 import org.jooq.Record;
-import org.jooq.SelectConditionStep;
 
 import com.esferalia.aon.occam.api.AONContext;
-import com.esferalia.aon.occam.api.model.Filter.InvoiceTaxFilter;
-import com.esferalia.aon.occam.api.model.Filter.Property;
-import com.esferalia.aon.occam.api.model.Properties.InvoiceTaxProperties;
+import com.esferalia.aon.occam.api.model.InvoiceCalculator;
 import com.esferalia.aon.occam.api.model.finance.InvoiceDetail;
 import com.esferalia.aon.occam.api.model.finance.InvoiceTax;
 import com.esferalia.aon.occam.api.model.type.TaxType;
@@ -25,105 +21,54 @@ import com.esferalia.aon.watson.util.AonMathUtils;
 
 public class InvoiceTaxDAO {
 	
-	private static final InvoiceTaxPropertiesDAO INVOICE_TAX_PROPERTIES = new InvoiceTaxPropertiesDAO();
-	public static class InvoiceTaxPropertiesDAO implements InvoiceTaxProperties {
-		
-		public Condition[] getConditions(InvoiceTaxFilter filter) {
-			FilterDAO filterDAO = (FilterDAO) filter.filter(this);
-			if (filterDAO == null)
-				return new Condition[0];
-
-			return new Condition[] { filterDAO.getCondition() };
-		}
-		@Override public Property<Integer> getIdProperty() {return new FilterDAO.PropertyDAO<>(INVOICE_TAX.ID);}
-		@Override public Property<Integer> getDomainProperty(){return new FilterDAO.PropertyDAO<>(INVOICE_TAX.DOMAIN);}
-		@Override public Property<Integer> getInvoiceDetailProperty() {return new FilterDAO.PropertyDAO<>(INVOICE_TAX.INVOICE_DETAIL);}
-		@Override public Property<Byte> getTaxTypeProperty() {return new FilterDAO.PropertyDAO<>(INVOICE_TAX.TAX_TYPE);}
-		@Override public Property<Double> getBaseProperty() {return new FilterDAO.PropertyDAO<>(INVOICE_TAX.BASE);}
-		@Override public Property<Double> getPercentageProperty() {return new FilterDAO.PropertyDAO<>(INVOICE_TAX.PERCENTAGE);}
-		@Override public Property<Double> getSurchargeProperty() {return new FilterDAO.PropertyDAO<>(INVOICE_TAX.SURCHARGE);}
-		@Override public Property<Double> getQuotaProperty() {return new FilterDAO.PropertyDAO<>(INVOICE_TAX.QUOTA);}
-		@Override public Property<Double> getSurchargeQuotaProperty() {return new FilterDAO.PropertyDAO<>(INVOICE_TAX.SURCHARGE_QUOTA);}
-		@Override public Property<Byte> getVatDedcutionTypeProperty() {return new FilterDAO.PropertyDAO<>(INVOICE_TAX.VAT_DEDUCTION_TYPE);}
-		@Override public Property<Byte> getWithholdingTypeProperty() {return new FilterDAO.PropertyDAO<>(INVOICE_TAX.WITHHOLDING_TYPE);}
-		@Override public Property<Double> getDeductiblePercentProperty() {return new FilterDAO.PropertyDAO<>(INVOICE_TAX.DEDUCTIBLE_PERCENT);}
-		@Override public Property<Double> getDeductibleQuotaProperty() {return new FilterDAO.PropertyDAO<>(INVOICE_TAX.DEDUCTIBLE_QUOTA);}
-	}
-	
-	
-	public static SelectConditionStep<Record> select(AONContext ctx, InvoiceTaxFilter filter){	
+	private static Stream<InvoiceTax> getTaxesStream(AONContext ctx, Integer invoiceDetailId){	
 		return ctx.getDslContext()
-				.select()
-				.from(INVOICE_TAX)
-				.where(INVOICE_TAX_PROPERTIES.getConditions(filter));
+			.select()
+			.from(INVOICE_TAX)
+			.where(INVOICE_TAX.INVOICE_DETAIL.eq(invoiceDetailId))
+			.fetch()
+			.stream()
+			.map(new InvoiceTaxFiller());
+	}	
+	
+	static List<InvoiceTax> save(AONContext ctx, List<InvoiceTax> invoiceTaxes, InvoiceDetail detail) {
+		return invoiceTaxes
+			.stream()
+			.map(invoiceTax -> save(ctx, invoiceTax, detail))
+			.collect(Collectors.toCollection(LinkedList::new));
 	}
 	
-	public static Stream<InvoiceTax> getStream(AONContext ctx, InvoiceTaxFilter filter){	
-		return select(ctx, filter).fetch().stream().map(new InvoiceTaxFiller());
-	}
-	
-	public static Stream<InvoiceTax> getStream(AONContext ctx, InvoiceTaxFilter filter, Integer page, Integer perPage){	
-		return select(ctx, filter)
-			.limit(perPage)
-			.offset(perPage * (page -1))
-			.fetch().stream().map(new InvoiceTaxFiller());
-	}
-	
-	public static LinkedList<InvoiceTax> getList(AONContext ctx, InvoiceTaxFilter filter){	
-		return getStream(ctx, filter).collect(Collectors.toCollection(LinkedList::new));
-	}
-	
-	public static LinkedList<InvoiceTax> getList(AONContext ctx, InvoiceTaxFilter filter, Integer page, Integer perPage){	
-		return getStream(ctx, filter, page, perPage).collect(Collectors.toCollection(LinkedList::new));
-	}
-	
-	public static InvoiceTax get(AONContext ctx, InvoiceTaxFilter filter) {
-		return select(ctx, filter).limit(1)
-			.fetch().stream().map(new InvoiceTaxFiller())
-			.findFirst().orElse(new InvoiceTax());
-	}
-	
-	
-	public static List<InvoiceTax> save(AONContext ctx, List<InvoiceTax> invoiceTaxes, InvoiceDetail detail) {
-		LinkedList<InvoiceTax> list = new LinkedList<>();
-		invoiceTaxes.stream().forEach(invoiceTax -> {
-			list.add(save(ctx, invoiceTax, detail));
-		});
-		return list;
-	}
-	
-	public static InvoiceTax save(AONContext ctx, InvoiceTax invoiceTax, InvoiceDetail detail) {
-		// TODO AUTOCOMPLETE && VALIDATE.
+	private static InvoiceTax save(AONContext ctx, InvoiceTax invoiceTax, InvoiceDetail detail) {
 		invoiceTax = invoiceTax.getId() != null 
 			? update(ctx, invoiceTax, detail)
 			: insert(ctx, invoiceTax, detail);
 		return invoiceTax;
 	}
 	
-	public static InvoiceTax update(AONContext ctx, InvoiceTax invoiceTax, InvoiceDetail detail) {
+	private static InvoiceTax update(AONContext ctx, InvoiceTax invoiceTax, InvoiceDetail detail) {
 		ctx.getDslContext().update(INVOICE_TAX)
-		.set(INVOICE_TAX.DOMAIN, detail.getDomain())
-		.set(INVOICE_TAX.INVOICE_DETAIL, detail.getId())
-		.set(INVOICE_TAX.TAX_TYPE, invoiceTax.getTaxType().value())
-		.set(INVOICE_TAX.BASE,invoiceTax.getBase())
-		.set(INVOICE_TAX.PERCENTAGE,invoiceTax.getPercentage())
-		.set(INVOICE_TAX.QUOTA,invoiceTax.getQuota())
-		.set(INVOICE_TAX.SURCHARGE,invoiceTax.getSurcharge())
-		.set(INVOICE_TAX.SURCHARGE_QUOTA,invoiceTax.getSurchargeQuota())
-		.set(INVOICE_TAX.VAT_DEDUCTION_TYPE,invoiceTax.getVatDeductionType() == null
-				? VatDeductionType.WITH_RIGHT.value() 
-				: invoiceTax.getVatDeductionType().value())
-		.set(INVOICE_TAX.WITHHOLDING_TYPE,invoiceTax.getWithholdingType() == null 
-				? WithholdingType.PROFESSIONAL.value() 
-				: invoiceTax.getWithholdingType().value())
-		.set(INVOICE_TAX.DEDUCTIBLE_PERCENT,invoiceTax.getDeductiblePercent())
-		.set(INVOICE_TAX.DEDUCTIBLE_QUOTA ,invoiceTax.getDeductibleQuota())
-		.where(INVOICE_TAX.ID.eq(invoiceTax.getId()))
-		.execute();
+			.set(INVOICE_TAX.DOMAIN, detail.getDomain())
+			.set(INVOICE_TAX.INVOICE_DETAIL, detail.getId())
+			.set(INVOICE_TAX.TAX_TYPE, invoiceTax.getTaxType().value())
+			.set(INVOICE_TAX.BASE,invoiceTax.getBase())
+			.set(INVOICE_TAX.PERCENTAGE,invoiceTax.getPercentage())
+			.set(INVOICE_TAX.QUOTA,invoiceTax.getQuota())
+			.set(INVOICE_TAX.SURCHARGE,invoiceTax.getSurcharge())
+			.set(INVOICE_TAX.SURCHARGE_QUOTA,invoiceTax.getSurchargeQuota())
+			.set(INVOICE_TAX.VAT_DEDUCTION_TYPE,invoiceTax.getVatDeductionType() == null
+					? VatDeductionType.WITH_RIGHT.value() 
+					: invoiceTax.getVatDeductionType().value())
+			.set(INVOICE_TAX.WITHHOLDING_TYPE,invoiceTax.getWithholdingType() == null 
+					? WithholdingType.PROFESSIONAL.value() 
+					: invoiceTax.getWithholdingType().value())
+			.set(INVOICE_TAX.DEDUCTIBLE_PERCENT,invoiceTax.getDeductiblePercent())
+			.set(INVOICE_TAX.DEDUCTIBLE_QUOTA ,invoiceTax.getDeductibleQuota())
+			.where(INVOICE_TAX.ID.eq(invoiceTax.getId()))
+			.execute();
 		return invoiceTax;
 	}
 	
-	public static InvoiceTax insert(AONContext ctx, InvoiceTax invoiceTax, InvoiceDetail detail) {
+	private static InvoiceTax insert(AONContext ctx, InvoiceTax invoiceTax, InvoiceDetail detail) {
 		Integer id = ctx.getDslContext().insertInto(INVOICE_TAX)
 			.set(INVOICE_TAX.DOMAIN, detail.getDomain())
 			.set(INVOICE_TAX.INVOICE_DETAIL, detail.getId())
@@ -145,17 +90,7 @@ public class InvoiceTaxDAO {
 		return invoiceTax.setId(id);
 	}	
 
-	public static void delete(AONContext ctx, Integer id){
-		delete(ctx, f -> f.getDomainProperty().eq(ctx.getDomainId()).and(f.getIdProperty().eq(id)));
-	}
-	
-	public static void delete(AONContext ctx, InvoiceTaxFilter filter){
-		ctx.getDslContext().delete(INVOICE_TAX)
-		.where(INVOICE_TAX_PROPERTIES.getConditions(filter))
-		.execute();
-	}
-	
-	public static class InvoiceTaxFiller extends Filler implements Function<Record, InvoiceTax> {
+	private static class InvoiceTaxFiller extends Filler implements Function<Record, InvoiceTax> {
 
 		@Override
 		public InvoiceTax apply(Record r) {
@@ -176,15 +111,17 @@ public class InvoiceTaxDAO {
 				.setWithholdingType(WithholdingType.safeValueOf(getValue(r, INVOICE_TAX.WITHHOLDING_TYPE)))
 				.setDeductiblePercent(getDouble(r, INVOICE_TAX.DEDUCTIBLE_PERCENT))
 				.setDeductibleQuota(getDouble(r, INVOICE_TAX.DEDUCTIBLE_QUOTA));
-
-			if(tax.getPercentage() > 0 && tax.getQuota() == 0.0) {
-				tax.setQuota(AonMathUtils.round(tax.getBase() * tax.getPercentage() / 100));
-			}
-			if(tax.getSurcharge() > 0 && tax.getSurchargeQuota() == 0.0) {
-				tax.setSurchargeQuota(AonMathUtils.round(tax.getBase() * tax.getSurcharge() / 100));
-			}
+			tax
+				.setQuotaEdited( AonMathUtils.isNotZero(InvoiceCalculator.getQuotaGap(tax, tax.getQuota())))
+				.setSurchargeQuotaEdited( AonMathUtils.isNotZero(InvoiceCalculator.getSurchargeQuotaGap(tax, tax.getSurchargeQuota())))
+				.setDeductibleQuotaEdited( AonMathUtils.isNotZero(InvoiceCalculator.getDeductibleQuotaGap(tax, tax.getDeductibleQuota())));
 			return tax;
 
 		}
+	}
+
+	static LinkedList<InvoiceTax> getInvoiceTaxes(AONContext ctx, Integer invoiceDetailId){
+		return getTaxesStream(ctx, invoiceDetailId)
+			.collect(Collectors.toCollection(LinkedList::new));
 	}
 }

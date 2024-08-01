@@ -155,7 +155,7 @@ public class FinanceDAO {
 	public static LinkedList<Finance> getInvoiceFinances(AONContext ctx,Integer invoice) {
 		return fetch(ctx,p -> 
 				p.getDomainProperty().eq(ctx.getDomainId())
-				.and(p.getInvoiceProperty().eq(invoice)), 0, 100)
+				.and(p.getInvoiceProperty().eq(invoice)), 0, 100, FinanceOrder.CREATION_DATE)
 		.collect(Collectors.toCollection(LinkedList::new));
 	}
 	

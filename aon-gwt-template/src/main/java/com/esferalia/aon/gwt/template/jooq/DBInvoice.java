@@ -50,16 +50,19 @@ import com.esferalia.aon.occam.api.model.type.InvoiceTransactionType;
 import com.esferalia.aon.occam.api.model.type.InvoiceType;
 import com.esferalia.aon.occam.api.model.type.RectificationType;
 import com.esferalia.aon.occam.api.model.type.SecurityLevel;
+import com.esferalia.aon.occam.api.model.type.TaxType;
+import com.esferalia.aon.occam.api.model.type.VatDeductionType;
+import com.esferalia.aon.occam.api.model.type.WithholdingType;
 import com.esferalia.aon.occam.impl.jooq.dao.AccountDAO.FullAccountFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.CompanyDAO.EnterpriseActivityFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.Filler;
 import com.esferalia.aon.occam.impl.jooq.dao.InvoiceDetailDAO.InvoiceDetailFiller;
-import com.esferalia.aon.occam.impl.jooq.dao.InvoiceTaxDAO.InvoiceTaxFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.InvoicePropertiesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.RegistryAddressDAO.RegistryAddressFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.SecurityDAO.ScopeFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.invoice.InvoiceAddressDAO.InvoiceAddressFiller;
 import com.esferalia.aon.watson.util.AonEnumUtils;
+import com.esferalia.aon.watson.util.AonMathUtils;
 
 public class DBInvoice {
 	
@@ -226,6 +229,39 @@ public class DBInvoice {
 				.setCreationUser(r.getValue(INVOICE.CREATION_USER))
 				.setModificationDate(r.getValue(INVOICE.MODIFICATION_DATE))
 				.setModificationUser(r.getValue(INVOICE.MODIFICATION_USER));
+		}
+	}
+	
+	private static class InvoiceTaxFiller extends Filler implements Function<Record, InvoiceTax> {
+
+		@Override
+		public InvoiceTax apply(Record r) {
+			return build(r);
+		}
+		
+		public static InvoiceTax build(Record r) {
+			InvoiceTax tax = new InvoiceTax()
+				.setId(getValue(r, INVOICE_TAX.ID))
+				.setDomain(getValue(r, INVOICE_TAX.DOMAIN))
+				.setTaxType(TaxType.safeValueOf(getValue(r, INVOICE_TAX.TAX_TYPE)))
+				.setPercentage(getDouble(r, INVOICE_TAX.PERCENTAGE))
+				.setBase(getDouble(r, INVOICE_TAX.BASE))
+				.setSurcharge(getDouble(r, INVOICE_TAX.SURCHARGE))
+				.setQuota(getDouble(r, INVOICE_TAX.QUOTA))
+				.setSurchargeQuota(getDouble(r, INVOICE_TAX.SURCHARGE_QUOTA))
+				.setVatDeductionType(VatDeductionType.safeValueOf(getValue(r, INVOICE_TAX.VAT_DEDUCTION_TYPE)))
+				.setWithholdingType(WithholdingType.safeValueOf(getValue(r, INVOICE_TAX.WITHHOLDING_TYPE)))
+				.setDeductiblePercent(getDouble(r, INVOICE_TAX.DEDUCTIBLE_PERCENT))
+				.setDeductibleQuota(getDouble(r, INVOICE_TAX.DEDUCTIBLE_QUOTA));
+
+			if(tax.getPercentage() > 0 && tax.getQuota() == 0.0) {
+				tax.setQuota(AonMathUtils.round(tax.getBase() * tax.getPercentage() / 100));
+			}
+			if(tax.getSurcharge() > 0 && tax.getSurchargeQuota() == 0.0) {
+				tax.setSurchargeQuota(AonMathUtils.round(tax.getBase() * tax.getSurcharge() / 100));
+			}
+			return tax;
+
 		}
 	}
 	

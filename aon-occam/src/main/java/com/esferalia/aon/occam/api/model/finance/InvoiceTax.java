@@ -27,6 +27,10 @@ public class InvoiceTax implements Serializable {
 	
 	private Integer account;
 	
+	private boolean quotaEdited;
+	private boolean surchargeQuotaEdited;
+	private boolean deductibleQuotaEdited;
+	
 	public Integer getId() {
 		return id;
 	}
@@ -147,6 +151,36 @@ public class InvoiceTax implements Serializable {
 		return this;
 	}
 	
+	public boolean isAnyQuotaEdited() {
+		return isQuotaEdited() 
+			|| isSurchargeQuotaEdited() 
+			|| isDeductibleQuotaEdited();
+	}
+	
+	public boolean isQuotaEdited() {
+		return quotaEdited;
+	}
+	public InvoiceTax setQuotaEdited(boolean quotaEdited) {
+		this.quotaEdited = quotaEdited;
+		return this;
+	}
+	
+	public boolean isSurchargeQuotaEdited() {
+		return surchargeQuotaEdited;
+	}
+	public InvoiceTax setSurchargeQuotaEdited(boolean surchargeQuotaEdited) {
+		this.surchargeQuotaEdited = surchargeQuotaEdited;
+		return this;
+	}
+	
+	public boolean isDeductibleQuotaEdited() {
+		return deductibleQuotaEdited;
+	}
+	public InvoiceTax setDeductibleQuotaEdited(boolean deductibleQuotaEdited) {
+		this.deductibleQuotaEdited = deductibleQuotaEdited;
+		return this;
+	}
+
 	public boolean isVatType() {
 		return this.getTaxType() == TaxType.VAT;
 	}

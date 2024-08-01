@@ -20,6 +20,7 @@ import com.esferalia.aon.occam.api.model.type.InvoiceTransactionType;
 import com.esferalia.aon.occam.api.model.type.InvoiceType;
 import com.esferalia.aon.occam.api.model.type.RectificationType;
 import com.esferalia.aon.occam.api.model.type.SecurityLevel;
+import com.esferalia.aon.watson.util.AonCollectionUtils;
 import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
@@ -690,7 +691,7 @@ public class Invoice implements Serializable, HasAudit {
 			;
 	}
 	
-	public boolean isInputVatEnabled() {
+	public boolean _isInputVatEnabled() {
 		return !isUndeductible() && (
 			  (isPurchase() && isNational())						// Compra nacional 
 			|| (isExpenses() && isNational())						// Gasto nacional
@@ -699,11 +700,35 @@ public class Invoice implements Serializable, HasAudit {
 //				&& AonMathUtils.isLessThan(getTotal(), REG_IMPORT_MAX_VALUE0 ))	
 			|| mustApplyISP());										// Aplicar la inversión de sujeto pasivo.	
 	}
+	
+	
+	
+	public boolean isInputVatEnabled() {
+		return !isUndeductible() 
+			&& ((isPurchase() && isNational())						// Compra nacional 
+			|| (isExpenses() && isNational())						// Gasto nacional
+			|| (isVatImportationAvailable() && isVatImportation()	// Regimen importacioon
+				&& isVatImportationAmountValid())
+			|| mustApplyISP());										// Aplicar la inversión de sujeto pasivo.	
+	}
+	
 	public boolean isVatImportationAmountValid() {
+		if (this.getTaxBreakdown().isPresent() 
+			&& AonCollectionUtils.isNotEmpty( this.getTaxBreakdown().get().getVats())) {
+			 return AonMathUtils.isLessThan( 
+				  AonCollectionUtils.stream(getVats()).mapToDouble( InvoiceBreakdown::getBase ).sum() 
+				 ,Invoice.REG_IMPORT_MAX_VALUE );
+		}
 		return getDetails() == null 
 			|| getDetails().isEmpty()
-			|| AonMathUtils.isLessThan( getDetails().stream().mapToDouble( InvoiceDetail::getTaxableBase ).sum() , REG_IMPORT_MAX_VALUE );
+			|| AonMathUtils.isLessThan( getDetails()
+					.stream()
+					.filter( d -> !d.isPrepayment() )
+					.mapToDouble( InvoiceDetail::getTaxableBase )
+					.sum() 
+				, REG_IMPORT_MAX_VALUE );
 	}
+	
 	public String getSiiStatus() {
 		if(siiStatus == null) siiStatus = "Pendiente";
 		return siiStatus;

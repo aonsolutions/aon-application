@@ -1,6 +1,5 @@
 package com.esferalia.aon.occam.impl.jooq.dao;
 
-import static com.esferalia.aon.jooq.tables.Account.ACCOUNT;
 import static com.esferalia.aon.jooq.tables.Brand.BRAND;
 import static com.esferalia.aon.jooq.tables.EnterpriseActivity.ENTERPRISE_ACTIVITY;
 import static com.esferalia.aon.jooq.tables.Geozone.GEOZONE;
@@ -35,6 +34,7 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.Optional;
+import java.util.function.BiConsumer;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -47,6 +47,7 @@ import org.jooq.Record1;
 import org.jooq.Record14;
 import org.jooq.Result;
 import org.jooq.SelectConditionStep;
+import org.jooq.conf.ParamType;
 import org.jooq.impl.DSL;
 import org.json.JSONObject;
 
@@ -84,6 +85,7 @@ import com.esferalia.aon.occam.api.model.finance.InvoiceTax;
 import com.esferalia.aon.occam.api.model.finance.InvoiceTrackingStatus;
 import com.esferalia.aon.occam.api.model.finance.InvoicingGroup;
 import com.esferalia.aon.occam.api.model.finance.InvoicingGroupFilter;
+import com.esferalia.aon.occam.api.model.finance.TaxBreakdown;
 import com.esferalia.aon.occam.api.model.finance.TbaiConfiguration;
 import com.esferalia.aon.occam.api.model.fiscal.VatSummaryType;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceDetailExtended;
@@ -105,9 +107,9 @@ import com.esferalia.aon.occam.api.model.type.InvoiceType;
 import com.esferalia.aon.occam.api.model.type.RectificationType;
 import com.esferalia.aon.occam.api.model.type.SecurityLevel;
 import com.esferalia.aon.occam.api.model.type.TaxType;
+import com.esferalia.aon.occam.api.model.type.VatDeductionType;
 import com.esferalia.aon.occam.api.model.type.WithholdingType;
 import com.esferalia.aon.occam.api.model.warehouse.IncomeDetail;
-import com.esferalia.aon.occam.impl.jooq.dao.AccountDAO.FullAccountFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.CompanyDAO.EnterpriseActivityFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.ItemDAO.ItemFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.ProductOldDAO.ItemPropertiesDAO;
@@ -115,6 +117,7 @@ import com.esferalia.aon.occam.impl.jooq.dao.ProductOldDAO.ProductPropertiesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.InvoicePropertiesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.RegistryDAO.RegistryFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.SecurityDAO.ScopeFiller;
+import com.esferalia.aon.occam.impl.jooq.dao.accounting.AccountingInvoiceDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.invoice.InvoiceAddressDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.invoice.InvoiceBatchDetailDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.invoice.InvoiceInfoDAO;
@@ -139,7 +142,7 @@ public class InvoiceDAO {
 	}
 	
 	private static final String DETAIL_MSG = "Fra. n\u00AA: {0} del {1,date,dd/MM/yyyy}. ";
-	static final Date VAT_ACCRUAL_START_DATE = AonDateUtils.getDate(2014, 0, 1);
+	public static final Date VAT_ACCRUAL_START_DATE = AonDateUtils.getDate(2014, 0, 1);
 	
 	private static final ProductPropertiesDAO PRODUCT_PROPERTIES = new ProductPropertiesDAO();
 	private static final ItemPropertiesDAO ITEM_PROPERTIES = new ItemPropertiesDAO();
@@ -211,23 +214,6 @@ public class InvoiceDAO {
 			.fetch().stream().map(new InvoiceDetailFiller());
 	}
 	
-	public static Invoice getInvoice(AONContext ctx, Integer id) {
-		ctx.checkRead();
-		return ctx.getDslContext()
-				.select()
-				.from(INVOICE)
-				.join(SCOPE).on(SCOPE.ID.equal(INVOICE.SCOPE))
-				.leftOuterJoin(INVOICE_FISCAL).on(INVOICE_FISCAL.INVOICE.equal(INVOICE.ID))
-				.leftOuterJoin(ENTERPRISE_ACTIVITY).on(INVOICE.ACTIVITY.eq(ENTERPRISE_ACTIVITY.ID))
-				.leftOuterJoin(IAE).on(IAE.ID.equal(ENTERPRISE_ACTIVITY.IAE))
-				.where(INVOICE.DOMAIN.eq(ctx.getDomainId()).and(INVOICE.ID.eq(id)))
-				.fetch()
-				.stream()
-				.map( new InvoiceFiller() )
-				.findFirst()
-				.orElse(null);
-	}
-
 	private static Result<Record14<Integer, java.sql.Date, Integer, String, Integer, Integer, String, String, Short, String, Double, Double, String, Double>> getBoughtProductInvoices(AONContext ctx, InvoiceFilter filter) {
 		ctx.checkRead();
 		return  ctx.getDslContext()
@@ -428,50 +414,15 @@ public class InvoiceDAO {
 //			.collect(Collectors.toCollection(LinkedList::new)));
 			for(Integer i = 0; i < invoice.getDetails().size(); i++) {
 				InvoiceDetail detail = invoice.getDetails().get(i);
-				detail.getSource().visit(detail, new IInvoiceSourceVisitor() {
-					
-					private static final long serialVersionUID = 1L;
-					@Override public void visitTedi(InvoiceDetail detail) {}
-					@Override public void visitSales(InvoiceDetail detail) {
-						detail.setSalesDetail(SalesDetailDAO.get(ctx, detail.getSourceId()));						
-					}
-					
-					@Override public void visitReservation(InvoiceDetail detail) {}
-					
-					@Override public void visitPurchase(InvoiceDetail detail) {
-					    // TODO PurchaseDetailDAO.get(ctx, detail.getSourceId());
-						PurchaseDetail d = PurchaseDAO.getPurchaseDetailStream(ctx, f -> f.getDomainProperty().eq(invoice.getDomain())
-							.and(f.getIdProperty().eq(detail.getSourceId()))).findFirst().orElse(new PurchaseDetail());
-						detail.setPurchaseDetail(d);						
-					}
-					
-					@Override public void visitOffer(InvoiceDetail detail) {
-						detail.setOfferDetail(OfferDetailDAO.get(ctx, detail.getSourceId()));						
-					}
-					@Override public void visitIncome(InvoiceDetail detail) {
-						 // TODO IncomeDetailDAO.get(ctx, detail.getSourceId());
-						IncomeDetail d = IncomeDAO.getIncomeDetailStream(ctx, f -> f.getDomainProperty().eq(invoice.getDomain())
-								.and(f.getIdProperty().eq(detail.getSourceId()))).findFirst().orElse(new IncomeDetail());	
-						detail.setIncomeDetail(d);						
-					}
-					@Override public void visitFee(InvoiceDetail detail) {}
-					@Override public void visitDirectInvoice(InvoiceDetail detail) {}
-					@Override public void visitDirectExpense(InvoiceDetail detail) {}
-					@Override public void visitDelivery(InvoiceDetail detail) {
-						detail.setDeliveryDetail(DeliveryDetailDAO.getFull(ctx, detail.getSourceId()));						
-					}
-					@Override public void visitAccount(InvoiceDetail detail) {}
-				});
+				detail.getSource().visit(detail, new InvoiceDetailSourceVisitor(ctx,invoice));
 				
 				LinkedList<InvoiceTax> taxes = getInvoiceTaxStreamFromDetail(ctx, detail.getId())
 				.collect(Collectors.toCollection(LinkedList::new));
 				
 				invoice.getDetails().get(i).setInvoiceTaxes(taxes);
 
-				Account acc = getInvoiceDetailAccount(ctx, invoice.getDetails().get(i).getId());
-				invoice.getDetails().get(i).setAccount(acc.getId());
-				invoice.getDetails().get(i).setAccountCode(acc.getCode());
-				invoice.getDetails().get(i).setAccountDescription(acc.getDescription());
+				Account acc = AccountingInvoiceDAO.getInvoiceDetailAccount(ctx, invoice.getDetails().get(i).getId()).orElse(new Account());
+				invoice.getDetails().get(i).setExpAccount(acc);
 			}
 			
 			invoice.setFinances( FinanceDAO.getFinanceStream(ctx, prop -> prop.getInvoiceProperty().eq(id))
@@ -494,13 +445,6 @@ public class InvoiceDAO {
 		return invoice;
 	}
 	
-	private static Account getInvoiceDetailAccount(AONContext ctx, Integer invoiceDetailId) {
-		return ctx.getDslContext().select().from(ACCOUNT)
-		.join(INVOICE_DETAIL_ACCOUNT).on(INVOICE_DETAIL_ACCOUNT.ACCOUNT.eq(ACCOUNT.ID))
-		.where(INVOICE_DETAIL_ACCOUNT.INVOICE_DETAIL.eq(invoiceDetailId)).limit(1)
-		.fetch().stream().map(new FullAccountFiller()).findFirst().orElse(new Account());
-	}
-	
 	public static Stream<InvoiceTax> getInvoiceTaxStream(AONContext ctx, Integer invoiceId) {
 		return ctx.getDslContext().select(INVOICE_TAX.TAX_TYPE, INVOICE_TAX.DOMAIN, INVOICE_TAX.PERCENTAGE, DSL.sum(INVOICE_TAX.BASE),
 					DSL.sum(INVOICE_TAX.SURCHARGE), DSL.sum(INVOICE_TAX.QUOTA), DSL.sum(INVOICE_TAX.SURCHARGE_QUOTA))
@@ -518,7 +462,7 @@ public class InvoiceDAO {
 			.fetch().stream().map(new InvoiceTaxFiller());
 	}
 
-	private static class InvoiceTaxFiller  implements Function<Record, InvoiceTax> {
+	private static class InvoiceTaxFiller extends Filler implements Function<Record, InvoiceTax> {
 
 		@Override
 		public InvoiceTax apply(Record record) {
@@ -533,7 +477,9 @@ public class InvoiceDAO {
 					.setSurchargeQuota(record.getValue(INVOICE_TAX.SURCHARGE_QUOTA))
 					.setWithholdingType(WithholdingType.safeValueOf(record.getValue(INVOICE_TAX.WITHHOLDING_TYPE)))
 					.setDeductiblePercent(record.getValue(INVOICE_TAX.DEDUCTIBLE_PERCENT))
-					.setDeductibleQuota(record.getValue(INVOICE_TAX.DEDUCTIBLE_QUOTA));	
+					.setDeductibleQuota(record.getValue(INVOICE_TAX.DEDUCTIBLE_QUOTA))
+					.setVatDeductionType(VatDeductionType.safeValueOf(getValue(record, INVOICE_TAX.VAT_DEDUCTION_TYPE)))					
+					;	
 		}
 		
 	}
@@ -578,66 +524,6 @@ public class InvoiceDAO {
 				;
 		}
 		
-	}
-	
-	
-	static class InvoiceFiller extends Filler implements Function<Record,Invoice> {
-
-		@Override
-		public Invoice apply(Record r) {
-			return buildInvoice(r);
-		}
-		
-		static Invoice buildInvoice(Record r) {
-			return new Invoice()
-				.setId(r.getValue(INVOICE.ID))
-				.setDomain(r.getValue(INVOICE.DOMAIN))
-				.setType(AonEnumUtils.enumValue(InvoiceType.class, r.getValue(INVOICE.TYPE)))
-				.setSeries(r.getValue(INVOICE.SERIES))
-				.setNumber(r.getValue(INVOICE.NUMBER))
-				.setReferenceCode(r.getValue(INVOICE.REFERENCE_CODE))
-				.setIssueDate(r.getValue(INVOICE.ISSUE_DATE))
-				.setTaxDate(r.getValue(INVOICE.TAX_DATE))
-				.setSecurityLevel(AonEnumUtils.enumValue(SecurityLevel.class, r.getValue(INVOICE.SECURITY_LEVEL)))
-				.setRegistry( r.getValue(INVOICE.REGISTRY))
-				.setRegistryDocument(r.getValue(INVOICE.RDOCUMENT))
-				.setRegistryDocumentType(AonEnumUtils.enumValue(DocumentType.class,r.getValue(INVOICE.RDOCUMENT_TYPE)))
-				.setRegistryDocumentCountry(Country.safeValueOf(r.getValue(INVOICE.RDOCUMENT_COUNTRY)))
-				.setRegistryName(r.getValue(INVOICE.RNAME))
-				.setRegistryAddress(r.getValue(INVOICE.RADDRESS))
-				.setScope(checkField(r, SCOPE.ID)
-						? ScopeFiller.buildScope(r)
-						: new Scope().setId(r.getValue(INVOICE.SCOPE)))
-				.setActivity(checkField(r, ENTERPRISE_ACTIVITY.ID)
-						? EnterpriseActivityFiller.build(r)
-						: new EnterpriseActivity().setId(r.getValue(INVOICE.ACTIVITY)))	
-				.setInvestAsset(r.getValue(INVOICE.INVEST_ASSET))
-				.setProject(r.getValue(INVOICE.PROJECT))
-				.setRectificationType(AonEnumUtils.enumValue(RectificationType.class, r.getValue(INVOICE.RECTIFICATION_TYPE)))	
-				.setRectificationInvoice(r.getValue(INVOICE.RECTIFICATION_INVOICE))	
-				.setTransaction(InvoiceTransactionType.safeValueOf(r.getValue(INVOICE.TRANSACTION)))
-				.setRecorded(r.getValue(INVOICE.STATUS) != null && r.getValue(INVOICE.STATUS) == 1 )	
-				.setSurcharge(r.getValue(INVOICE.SURCHARGE) == 1 )	
-				.setWithholding(r.getValue(INVOICE.WITHHOLDING) == 1 )	
-				.setWithholdingFarmer(r.getValue(INVOICE.WITHHOLDING_FARMER) == 1 )	
-				.setVatAccrualPayment(r.getValue(INVOICE.VAT_ACCRUAL_PAYMENT) == 1 )	
-				.setInvestment(r.getValue(INVOICE.INVESTMENT) == 1 )	
-				.setService(r.getValue(INVOICE.SERVICE) == 1 )	
-				.setAdvance(r.getValue(INVOICE.ADVANCE) == 1 )	
-				.setTaxableBase(r.getValue(INVOICE.TAXABLE_BASE))	
-				.setVatQuota(r.getValue(INVOICE.VAT_QUOTA))	
-				.setRetentionQuota(r.getValue(INVOICE.RETENTION_QUOTA))	
-				.setTotal(r.getValue(INVOICE.TOTAL))	
-				.setComments(r.getValue(INVOICE.COMMENTS))
-				.setFiscal(checkField(r, INVOICE_FISCAL.INVOICE)
-						? InvoiceFiscalDAO.InvoiceFiscalFiller.buildInvoiceFiscal(r)
-						: new InvoiceFiscal())
-				.setSeller(getValue(r, INVOICE.SELLER))
-				.setCreationDate(r.getValue(INVOICE.CREATION_DATE))
-				.setCreationUser(r.getValue(INVOICE.CREATION_USER))
-				.setModificationDate(r.getValue(INVOICE.MODIFICATION_DATE))
-				.setModificationUser(r.getValue(INVOICE.MODIFICATION_USER));
-		}
 	}
 	
 	private static class FullInvoiceDetailFiller extends Filler implements Function<Record,InvoiceDetail> {
@@ -1903,4 +1789,230 @@ public class InvoiceDAO {
 			.thenComparing(InvoiceBreakdown::getPercentage)		
 			.compare(b1, b2));
 	}
+	
+	// ************************************************************
+	// ************************************************************
+	// ************************************************************
+	// ************************************************************
+	// ****************************************************** [NEW]
+	// ************************************************************
+	// ************************************************************
+	// ************************************************************
+	// ************************************************************
+
+	
+	// ------------------------------------------------------------
+	// ------------------------------------------------------------
+	// ------------------------------------------- [PUBLIC METHODS]
+	// ------------------------------------------------------------
+	// ------------------------------------------------------------
+	
+	public static Optional<Invoice> get(AONContext ctx, Integer id) {
+		ctx.checkRead();
+		return getInvoiceSelect(ctx, id)
+			.fetch()
+			.stream()
+			.map( new InvoiceFiller() )
+			.findFirst();
+	}
+
+	public static Invoice getInvoice(AONContext ctx, Integer id) {
+		return get(ctx, id).orElse(null);
+	}
+
+	public static Optional<Invoice> getFull(AONContext ctx, Integer id) {
+		return  get(ctx, id)
+			.map( i -> fullInvoiceBuilder(ctx, i) );
+	}
+	
+	// ------------------------------------------------------------
+	// ------------------------------------------------------------
+	// ---------------------------------------- [PROTECTED METHODS]
+	// ------------------------------------------------------------
+	// ------------------------------------------------------------
+	
+	protected static class InvoiceFiller extends Filler implements Function<Record,Invoice> {
+
+		@Override
+		public Invoice apply(Record r) {
+			return buildInvoice(r);
+		}
+		
+		static Invoice buildInvoice(Record r) {
+			return new Invoice()
+				.setId(r.getValue(INVOICE.ID))
+				.setDomain(r.getValue(INVOICE.DOMAIN))
+				.setType(AonEnumUtils.enumValue(InvoiceType.class, r.getValue(INVOICE.TYPE)))
+				.setSeries(r.getValue(INVOICE.SERIES))
+				.setNumber(r.getValue(INVOICE.NUMBER))
+				.setReferenceCode(r.getValue(INVOICE.REFERENCE_CODE))
+				.setIssueDate(r.getValue(INVOICE.ISSUE_DATE))
+				.setTaxDate(r.getValue(INVOICE.TAX_DATE))
+				.setSecurityLevel(AonEnumUtils.enumValue(SecurityLevel.class, r.getValue(INVOICE.SECURITY_LEVEL)))
+				.setRegistry( r.getValue(INVOICE.REGISTRY))
+				.setRegistryDocument(r.getValue(INVOICE.RDOCUMENT))
+				.setRegistryDocumentType(AonEnumUtils.enumValue(DocumentType.class,r.getValue(INVOICE.RDOCUMENT_TYPE)))
+				.setRegistryDocumentCountry(Country.safeValueOf(r.getValue(INVOICE.RDOCUMENT_COUNTRY)))
+				.setRegistryName(r.getValue(INVOICE.RNAME))
+				.setRegistryAddress(r.getValue(INVOICE.RADDRESS))
+				.setScope(checkField(r, SCOPE.ID)
+						? ScopeFiller.buildScope(r)
+						: new Scope().setId(r.getValue(INVOICE.SCOPE)))
+				.setActivity(checkField(r, ENTERPRISE_ACTIVITY.ID)
+						? EnterpriseActivityFiller.build(r)
+						: new EnterpriseActivity().setId(r.getValue(INVOICE.ACTIVITY)))	
+				.setInvestAsset(r.getValue(INVOICE.INVEST_ASSET))
+				.setProject(r.getValue(INVOICE.PROJECT))
+				.setRectificationType(AonEnumUtils.enumValue(RectificationType.class, r.getValue(INVOICE.RECTIFICATION_TYPE)))	
+				.setRectificationInvoice(r.getValue(INVOICE.RECTIFICATION_INVOICE))	
+				.setTransaction(InvoiceTransactionType.safeValueOf(r.getValue(INVOICE.TRANSACTION)))
+				.setRecorded(r.getValue(INVOICE.STATUS) != null && r.getValue(INVOICE.STATUS) == 1 )	
+				.setSurcharge(r.getValue(INVOICE.SURCHARGE) == 1 )	
+				.setWithholding(r.getValue(INVOICE.WITHHOLDING) == 1 )	
+				.setWithholdingFarmer(r.getValue(INVOICE.WITHHOLDING_FARMER) == 1 )	
+				.setVatAccrualPayment(r.getValue(INVOICE.VAT_ACCRUAL_PAYMENT) == 1 )	
+				.setInvestment(r.getValue(INVOICE.INVESTMENT) == 1 )	
+				.setService(r.getValue(INVOICE.SERVICE) == 1 )	
+				.setAdvance(r.getValue(INVOICE.ADVANCE) == 1 )	
+				.setTaxableBase(r.getValue(INVOICE.TAXABLE_BASE))	
+				.setVatQuota(r.getValue(INVOICE.VAT_QUOTA))	
+				.setRetentionQuota(r.getValue(INVOICE.RETENTION_QUOTA))	
+				.setTotal(r.getValue(INVOICE.TOTAL))	
+				.setComments(r.getValue(INVOICE.COMMENTS))
+				.setFiscal(checkField(r, INVOICE_FISCAL.INVOICE)
+						? InvoiceFiscalDAO.InvoiceFiscalFiller.buildInvoiceFiscal(r)
+						: new InvoiceFiscal())
+				.setSeller(getValue(r, INVOICE.SELLER))
+				.setCreationDate(r.getValue(INVOICE.CREATION_DATE))
+				.setCreationUser(r.getValue(INVOICE.CREATION_USER))
+				.setModificationDate(r.getValue(INVOICE.MODIFICATION_DATE))
+				.setModificationUser(r.getValue(INVOICE.MODIFICATION_USER));
+		}
+	}
+
+	// ------------------------------------------------------------
+	// ------------------------------------------------------------
+	// ------------------------------------------ [PRIVATE METHODS]
+	// ------------------------------------------------------------
+	// ------------------------------------------------------------
+
+	private static SelectConditionStep<Record> getInvoiceSelect(AONContext ctx, Integer id) {
+		return ctx.getDslContext()
+				.select()
+				.from(INVOICE)
+				.join(SCOPE).on(SCOPE.ID.equal(INVOICE.SCOPE))
+				.leftOuterJoin(INVOICE_FISCAL).on(INVOICE_FISCAL.INVOICE.equal(INVOICE.ID))
+				.leftOuterJoin(ENTERPRISE_ACTIVITY).on(INVOICE.ACTIVITY.eq(ENTERPRISE_ACTIVITY.ID))
+				.leftOuterJoin(IAE).on(IAE.ID.equal(ENTERPRISE_ACTIVITY.IAE))
+				.where(INVOICE.DOMAIN.eq(ctx.getDomainId()).and(INVOICE.ID.eq(id)));
+		
+	}
+
+	private static class InvoiceDetailSourceVisitor implements IInvoiceSourceVisitor {
+
+		private static final long serialVersionUID = 1891794805038724206L;
+		
+		private AONContext ctx;
+		private Invoice invoice;
+		
+		private InvoiceDetailSourceVisitor(AONContext ctx, Invoice invoice) {
+			this.ctx = ctx;
+			this.invoice = invoice;
+		}
+	
+		@Override 
+		public void visitSales(InvoiceDetail detail) {
+			detail.setSalesDetail(SalesDetailDAO.get(ctx, detail.getSourceId()));						
+		}
+		
+		@Override 
+		public void visitPurchase(InvoiceDetail detail) {
+			PurchaseDetail d = PurchaseDAO.getPurchaseDetailStream(ctx
+					, f -> f.getDomainProperty().eq(invoice.getDomain()).and(f.getIdProperty().eq(detail.getSourceId())))
+				.findFirst()
+				.orElse(new PurchaseDetail());
+			detail.setPurchaseDetail(d);						
+		}
+		
+		@Override 
+		public void visitOffer(InvoiceDetail detail) {
+			detail.setOfferDetail(OfferDetailDAO.get(ctx, detail.getSourceId()));						
+		}
+		@Override 
+		public void visitIncome(InvoiceDetail detail) {
+			IncomeDetail d = IncomeDAO.getIncomeDetailStream(ctx
+					, f -> f.getDomainProperty().eq(invoice.getDomain()).and(f.getIdProperty().eq(detail.getSourceId())))
+				.findFirst()
+				.orElse(new IncomeDetail());	
+			detail.setIncomeDetail(d);						
+		}
+		@Override 
+		public void visitDelivery(InvoiceDetail detail) {
+			detail.setDeliveryDetail(DeliveryDetailDAO.getFull(ctx, detail.getSourceId()));						
+		}
+		
+		@Override public void visitReservation(InvoiceDetail detail) { /* Nothing*/}
+		@Override public void visitFee(InvoiceDetail detail) { /* Nothing*/}
+		@Override public void visitDirectInvoice(InvoiceDetail detail) { /* Nothing*/}
+		@Override public void visitDirectExpense(InvoiceDetail detail) { /* Nothing*/}
+		@Override public void visitAccount(InvoiceDetail detail) { /* Nothing*/}
+		@Override public void visitTedi(InvoiceDetail detail) { /* Nothing*/}
+	}
+	
+	private static Invoice fullInvoiceBuilder(AONContext ctx, Invoice invoice) {
+		if (invoice == null) return null;
+		BUILD_ADDRESS
+			.andThen(BUILD_DETAILS)
+			.andThen(BUILD_TAX_BREAKDOWN)
+			.andThen(BUILD_BREAKDOWN)
+			.andThen(BUILD_FINANCES)
+			.andThen(BUILD_RECTIFICATION_INVOICE_DATA)
+			.accept(ctx,invoice);
+		return invoice;
+	}
+	
+	private static final BiConsumer<AONContext, Invoice> BUILD_ADDRESS = (ctx, invoice) -> {
+		invoice.setAddress(InvoiceAddressDAO.get(ctx, invoice));
+	};
+	
+	private static final BiConsumer<AONContext, Invoice> BUILD_DETAILS = (ctx, invoice) -> {
+		invoice.setDetails(InvoiceDetailDAO.getFullList(ctx, f -> f.getInvoiceProperty().eq(invoice.getId())));
+		for (InvoiceDetail detail : invoice.getDetails() ) {
+			detail.getSource().visit(detail, new InvoiceDetailSourceVisitor(ctx,invoice));
+			detail.setExpAccount( AccountingInvoiceDAO.getInvoiceDetailAccount(ctx, detail.getId()).orElse(new Account()));
+			detail.setInvoiceTaxes(InvoiceTaxDAO.getInvoiceTaxes( ctx, detail.getId()));
+		}
+	};
+	private static final BiConsumer<AONContext, Invoice> BUILD_TAX_BREAKDOWN = (ctx, invoice) -> {
+		TaxBreakdown taxBreakdown = new TaxBreakdown(); 
+		AonCollectionUtils.stream(invoice.getDetails())
+			.flatMap(detail -> AonCollectionUtils.stream(detail.getInvoiceTaxes()))
+			.forEach(invoiceTax -> taxBreakdown.add(invoiceTax) );
+		invoice.setTaxBreakdown(taxBreakdown);
+	};
+	
+	private static final BiConsumer<AONContext, Invoice> BUILD_BREAKDOWN = (ctx, invoice) -> {
+		AonCollectionUtils.stream(invoice.getDetails())
+			.forEach(detail -> detail.setInvoiceTaxes(InvoiceTaxDAO.getInvoiceTaxes(ctx, detail.getId()) ));
+	};
+	
+	private static final BiConsumer<AONContext, Invoice> BUILD_FINANCES = (ctx, invoice) -> {
+		invoice.setFinances(FinanceDAO.getInvoiceFinances(ctx, invoice.getId()));
+	};
+	
+	private static final BiConsumer<AONContext, Invoice> BUILD_RECTIFICATION_INVOICE_DATA = (ctx, invoice) -> {
+		if(invoice.isRectifier()) {
+			Invoice rectify = getInvoice(ctx, invoice.getRectificationInvoice());
+			if(rectify != null) {
+				invoice.setRectificationInvoiceSeries(rectify.getSeries());
+				invoice.setRectificationInvoiceDate(rectify.getFiscal().getExpDate() != null 
+						? rectify.getFiscal().getExpDate() 
+						: rectify.getIssueDate());
+				invoice.setRectificationInvoiceNumber(rectify.getNumber());
+				invoice.setRectificationInvoiceReference(rectify.getReferenceCode());
+			}
+		}
+	};
+	
+		
 }
