@@ -10,7 +10,7 @@ import org.junit.BeforeClass;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.esferalia.aon.occam.api.model.security.User;
-import com.esferalia.aon.occam.api.model.type.AonRole;
+import com.esferalia.aon.occam.api.model.type.OldAonRole;
 import com.esferalia.aon.occam.impl.jooq.dao.SecurityDAO;
 import com.mysql.jdbc.Driver;
 
@@ -36,7 +36,7 @@ public class SecurityTest {
 		System.out.println();
 		System.out.println("User mac");
 		System.out.println("------------");
-		for (AonRole role : AonRole.values()) {
+		for (OldAonRole role : OldAonRole.values()) {
 			System.out.println(role.getValue() + " ...: " + user.hasRole(role));	
 		}
 		System.out.println("hasAdminRole...:" +user.hasAdminRole());

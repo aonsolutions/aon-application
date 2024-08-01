@@ -1,5 +1,8 @@
 package com.esferalia.aon.occam.api.model;
 
+import com.esferalia.aon.occam.api.model.aonsolutions.AonApp;
+import com.esferalia.aon.watson.util.AonStringUtils;
+
 public enum Module {
 
 	MARKETING( "marketing" ),
@@ -51,11 +54,24 @@ public enum Module {
     	return null;
 	}
    
+	public static Module safeValueOf( Byte i ) {
+		if (i == null) return null;
+		return safeValueOf( i.intValue() ); 
+	}
+	
 	public static Module safeValueOf( Integer i ) {
 		if (i == null) return null;
 		if (i < 0 || i >= Module.values().length) return null;
 		return Module.values()[i];
 	}
 	
+	public static Module safeValueOf( String i ) {
+		if(AonStringUtils.isBlank(i)) return null;
+		for (Module rs : values()) {
+			if(i.equalsIgnoreCase(rs.name()) || i.equalsIgnoreCase(rs.getName()))
+				return rs;
+		}
+		return null;
+	}
 	
 }
