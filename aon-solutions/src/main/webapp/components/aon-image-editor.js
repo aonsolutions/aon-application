@@ -1,7 +1,7 @@
 import { AonElement } from './AonElement.js';
 import { CONSTANT, TAG } from "../environments/environments.js";
 import Cropper from 'cropperjs';
-import 'cropperjs/dist/cropper.min.css';
+// import 'cropperjs/dist/cropper.min.css';
 
 export class AonImageEditor extends AonElement {
     IMAGE;

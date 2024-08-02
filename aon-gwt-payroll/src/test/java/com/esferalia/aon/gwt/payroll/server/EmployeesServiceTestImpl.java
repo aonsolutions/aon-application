@@ -667,7 +667,7 @@ public class EmployeesServiceTestImpl extends RemoteServiceServlet implements
 	}
 
 	@Override
-	public List<SalaryInfo> getSalaries(String currentDomainName, SalaryInfoFilter filter) {
+	public List<SalaryInfo> getSalaries(String currentDomainName, String userLogin, SalaryInfoFilter filter) {
 		// TODO Auto-generated method stub
 		System.out.println("Auto-generated method stub");
 		return null;
@@ -680,14 +680,14 @@ public class EmployeesServiceTestImpl extends RemoteServiceServlet implements
 	}
 
 	@Override
-	public WorkplaceEmployees getWorkplaceActiveEmployees(String currentDomainName, Integer workplaceId) {
+	public WorkplaceEmployees getWorkplaceActiveEmployees(String currentDomainName, String userLogin, Integer workplaceId) {
 		// TODO Auto-generated method stub
 		System.out.println("Auto-generated method stub");
 		return null;
 	}
 
 	@Override
-	public List<EmployeeInfo> getEnterpriseActiveEmployees(String currentDomainName, Integer enterpriseId) {
+	public List<EmployeeInfo> getEnterpriseActiveEmployees(String currentDomainName, String userLogin, Integer enterpriseId) {
 		// TODO Auto-generated method stub
 		System.out.println("Auto-generated method stub");
 		return null;
@@ -996,7 +996,7 @@ public class EmployeesServiceTestImpl extends RemoteServiceServlet implements
 	}
 
 	@Override
-	public Period getSalariesDates(String currentDomainName, SalaryInfoFilter filter) {
+	public Period getSalariesDates(String currentDomainName, String userLogin, SalaryInfoFilter filter) {
 		// TODO Auto-generated method stub
 		return null;
 	}

@@ -12,11 +12,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.logging.Logger;
 
-import jakarta.servlet.annotation.MultipartConfig;
-import jakarta.servlet.annotation.WebServlet;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -56,9 +51,12 @@ import com.esferalia.aon.occam.api.model.security.Auth;
 import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.salary.enumeration.SalaryType;
 import com.esferalia.aon.watson.server.AonDateUtils;
-import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
+import jakarta.servlet.annotation.MultipartConfig;
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import net.aonsolutions.aon.api.error.AonApiError;
 import net.aonsolutions.aon.api.error.AonApiException;
 import net.aonsolutions.aon.api.ewok.AonApiData;
@@ -303,7 +301,7 @@ public class ContractServlet extends AonApiHttpServlet {
 			filter.setEnterpriseId(companyId.get().intValue());
 		}
 
-		return JooqPayrollSalaries.getSalaries(conn, api.getDomain().getId(), filter);
+		return JooqPayrollSalaries.getSalaries(conn, api.getDomain().getId(), api.getUser().getId(), filter);
 	}
 	
 	private File getSalaryPdf(AonApiData api) throws Exception {
@@ -368,7 +366,7 @@ public class ContractServlet extends AonApiHttpServlet {
 		try(Connection conn = AonServletUtils.getConnection(api.getDomain().getName())){
 			SalaryInfoFilter filter = getFilter(api.getData());
 			if(companyId.isPresent()) filter.setEnterpriseId(companyId.get().intValue());
-			SalaryInfo salaryInfo = JooqPayrollSalaries.getSalariesDateEnd(conn,  api.getDomain().getId(), filter);
+			SalaryInfo salaryInfo = JooqPayrollSalaries.getSalariesDateEnd(conn,  api.getDomain().getId(), api.getUser().getId(), filter);
 			date = salaryInfo.getEndDate();
 			if(date == null) date = new Date();
 		}

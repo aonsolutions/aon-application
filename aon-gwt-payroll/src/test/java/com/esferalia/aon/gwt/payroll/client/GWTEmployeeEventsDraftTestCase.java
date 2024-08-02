@@ -17,6 +17,7 @@ import com.esferalia.aon.gwt.common.shared.EvalException;
 import com.esferalia.aon.gwt.payroll.client.AbstractEventsDraft.DateField;
 import com.esferalia.aon.gwt.payroll.client.AbstractEventsDraftObject.EventMetaData;
 import com.esferalia.aon.gwt.payroll.client.EmployeeEventsDraftObject_COPIA.Callback;
+import com.esferalia.aon.gwt.payroll.shared.CalendarDraft.DayType;
 import com.esferalia.aon.gwt.payroll.shared.Certifica2Info;
 import com.esferalia.aon.gwt.payroll.shared.ContextDescriptor;
 import com.esferalia.aon.gwt.payroll.shared.ContractConceptCalc;
@@ -42,7 +43,6 @@ import com.esferalia.aon.gwt.payroll.shared.SalaryInfo;
 import com.esferalia.aon.gwt.payroll.shared.SalaryInfoFilter;
 import com.esferalia.aon.gwt.payroll.shared.Workplace;
 import com.esferalia.aon.gwt.payroll.shared.WorkplaceEmployees;
-import com.esferalia.aon.gwt.payroll.shared.CalendarDraft.DayType;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.junit.client.GWTTestCase;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -204,7 +204,7 @@ public class GWTEmployeeEventsDraftTestCase extends GWTTestCase {
 
 
 			@Override
-			public void getSalaries(String currentDomainName, SalaryInfoFilter filter,
+			public void getSalaries(String currentDomainName, String userLogin, SalaryInfoFilter filter,
 					AsyncCallback<List<SalaryInfo>> callback) {
 				// TODO Auto-generated method stub
 				
@@ -222,7 +222,7 @@ public class GWTEmployeeEventsDraftTestCase extends GWTTestCase {
 
 
 			@Override
-			public void getWorkplaceActiveEmployees(String currentDomainName, Integer workplaceId,
+			public void getWorkplaceActiveEmployees(String currentDomainName, String userLogin, Integer workplaceId,
 					AsyncCallback<WorkplaceEmployees> callback) {
 				// TODO Auto-generated method stub
 				
@@ -231,7 +231,7 @@ public class GWTEmployeeEventsDraftTestCase extends GWTTestCase {
 
 
 			@Override
-			public void getEnterpriseActiveEmployees(String currentDomainName, Integer enterpriseId,
+			public void getEnterpriseActiveEmployees(String currentDomainName, String userLogin, Integer enterpriseId,
 					AsyncCallback<List<EmployeeInfo>> callback) {
 				// TODO Auto-generated method stub
 				
@@ -584,7 +584,7 @@ public class GWTEmployeeEventsDraftTestCase extends GWTTestCase {
 
 
 			@Override
-			public void getSalariesDates(String currentDomainName, SalaryInfoFilter filter,
+			public void getSalariesDates(String currentDomainName, String userLogin, SalaryInfoFilter filter,
 					AsyncCallback<Period> callback) {
 				// TODO Auto-generated method stub
 				
