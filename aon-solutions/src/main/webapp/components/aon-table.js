@@ -191,15 +191,15 @@ export class AonTable extends AonElement {
       tr.style.border = '1px solid #ddd';
       tr.style.borderRadius = '5px';
     }  
-    if(this.getApp() && LS.isNewTheme()) {
-      tr.addEventListener(EVENT.MOUSEOVER, () => {
-        tr.style.backgroundColor = this.getApp().backgroundColor || '#eaf1fb'; 
-      });
+    // if(this.getApp() && LS.isNewTheme()) {
+    //   tr.addEventListener(EVENT.MOUSEOVER, () => {
+    //     tr.style.backgroundColor = this.getApp().backgroundColor || '#eaf1fb'; 
+    //   });
 
-      tr.addEventListener(EVENT.MOUSELEAVE, () => {
-        tr.style.backgroundColor = 'transparent'; 
-      });
-    }
+    //   tr.addEventListener(EVENT.MOUSELEAVE, () => {
+    //     tr.style.backgroundColor = 'transparent'; 
+    //   });
+    // }
 
     
     if(this.selectedColor){
@@ -217,7 +217,7 @@ export class AonTable extends AonElement {
         if (aonCheckbox.isChecked()) {
           if(!this.selected.includes(value))
             this.selected.push(value);
-          tr.style.backgroundColor = "aliceblue";
+          tr.className = "aonTableTr aonTableTrChecked";
         } else {
           this.selected.forEach((item, i) => {
             if (item == value) {

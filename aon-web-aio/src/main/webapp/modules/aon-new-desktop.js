@@ -47,10 +47,7 @@ export class AonNewDesktop extends AonElement {
 		desktopAppsDiv.classList.add('aonDesktopAppsContainer');		
 		
 		for ( const app in this.apps ) {
-			let titulo = this.apps[app].title;
-			if (titulo!=null && titulo!="Inicio" && titulo!="Aplicaciones") {
-				desktopAppsDiv.appendChild(this.buildApp(this.apps[app]));
-			}
+			desktopAppsDiv.appendChild(this.buildApp(this.apps[app]));
 		}
 		
 		desktopDiv.appendChild(desktopAppsDiv);
@@ -412,6 +409,10 @@ export class AonNewDesktop extends AonElement {
 		}
 
 		return cardDiv;		
+	}
+	
+	appSelection(app) {
+		document.querySelector(TAG.AON_NEW_MENU).appSelection(app);
 	}
 	
 }

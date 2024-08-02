@@ -496,8 +496,11 @@ export class AonMobileMenu extends AonElement {
 
 	async openCamera(type) {
     this.SELECTED = type;
-		const isApp = await mobileAction({ action: MOBILE_ACTION.CAMERA, id: this.INPUT_CAMERA, selector: 'aon-new-mobile-menu' });
-		if (!isApp) this.getElement(this.INPUT_CAMERA).click();
+    if(this.isBeta()) this.getElement(this.INPUT_CAMERA).click();
+    else {
+      const isApp = await mobileAction({ action: MOBILE_ACTION.CAMERA, id: this.INPUT_CAMERA, selector: 'aon-new-mobile-menu' });
+		  if (!isApp) this.getElement(this.INPUT_CAMERA).click();
+    }
 	}
 
   receiveAppImage(file) {

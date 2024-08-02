@@ -56,6 +56,16 @@ export const MENU_APPS = [
   APP.MESSENGER
 ];
 
+export const DESKTOP_APPS = [
+  APP.INVOICE,
+  APP.DOCUMENTAL,
+  APP.ACCOUNTING,
+  APP.FISCAL,
+  APP.PAYROLL,
+  APP.TIMECONTROL,
+  APP.NOTES,
+  APP.MESSENGER
+];
 
 
 export const Apps = APP.Apps;

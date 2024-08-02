@@ -99,4 +99,5 @@ export const downloadDocuments = (data) => open(`${API_URL}/multiple_download/do
 export const sendDocumentMail = (data) => post(`${API_URL}/send_mail/document`, data);
 
 export const getSepaDocuments = (data) => get(`${API_URL}/documental/files/sepa`, data);
+export const getSepaDocument = (data) => get(`${API_URL}/documental/file/sepa`, data);
 export const downloadDocument = (data) => open(`${API_URL}/download?json=${data}`);

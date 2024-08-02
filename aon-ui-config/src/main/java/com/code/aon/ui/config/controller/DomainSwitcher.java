@@ -10,12 +10,14 @@ import static com.esferalia.aon.jooq.tables.UserScope.USER_SCOPE;
 
 import java.io.Serializable;
 import java.net.IDN;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
@@ -28,8 +30,8 @@ import org.hibernate.Hibernate;
 import org.hibernate.Query;
 import org.hibernate.SQLQuery;
 import org.jooq.Condition;
+import org.jooq.Field;
 import org.jooq.Record;
-import org.jooq.Record1;
 import org.jooq.SelectJoinStep;
 import org.jooq.SelectOnConditionStep;
 import org.jooq.Table;
@@ -309,9 +311,10 @@ public class DomainSwitcher extends AbstractDomainSwitcher implements
 
 	private <T extends SelectJoinStep<?>> T filterByInvoiceStatus(T selectJoinStep, RawdocStatus rawdocStatus) {
 		
-		Table<Record1<Integer>> subTable = 
+		Table<?> subTable = 
 		DSL
-		.select(RAWDOC.DOMAIN)
+		.select(RAWDOC.DOMAIN
+		,DSL.count(RAWDOC.ID).as(rawdocStatus.name()))
 		.from(RAWDOC)
 		.where(RAWDOC.STATUS.eq((byte)rawdocStatus.ordinal()))
 		.groupBy(RAWDOC.DOMAIN)
@@ -321,12 +324,23 @@ public class DomainSwitcher extends AbstractDomainSwitcher implements
 	}
 
 	private <T extends SelectJoinStep<?>> T filterByInvoiceStatus(T selectJoinStep, InvoiceStatus invoiceStatus) {
-		
-		Table<Record1<Integer>> subTable = 
+		Condition condition =  INVOICE.STATUS.eq((byte)invoiceStatus.ordinal());
+		if (!isAdminDomain()) {
+			Condition scopeCondition = INVOICE.SCOPE.isNull();
+			List<Integer> scopes = getUserScopes();
+			if (scopes != null && !scopes.isEmpty()) {
+				scopeCondition = scopeCondition.or(INVOICE.SCOPE.in(scopes));
+			}
+			condition = condition.and(scopeCondition);
+		}
+
+		Table<?> subTable = 
 		DSL
-		.select(INVOICE.DOMAIN)
+		.select(
+		INVOICE.DOMAIN
+		,DSL.count(INVOICE.ID).as(invoiceStatus.name()))
 		.from(INVOICE)
-		.where(INVOICE.STATUS.eq((byte)invoiceStatus.ordinal()))
+		.where(condition)
 		.groupBy(INVOICE.DOMAIN)
 		.asTable(invoiceStatus.name());
 		
@@ -419,6 +433,7 @@ public class DomainSwitcher extends AbstractDomainSwitcher implements
 					
 					
 					domainData.setLogo(TOOLBAR_LOGO_DEFAULT);
+
 //							byte logo [] = r.get(RATTACH.DATA);
 //							if ( logo == null || ArrayUtils.isEmpty(logo) ) {
 //								domainData.setLogo(TOOLBAR_LOGO_DEFAULT);
@@ -429,6 +444,18 @@ public class DomainSwitcher extends AbstractDomainSwitcher implements
 //								domainData.setLogo(String.format("data:%s;base64,%s", mimeType.getName(),
 //										Base64.getEncoder().encodeToString(logo)));
 //							}
+					for ( RawdocStatus status: RawdocStatus.values() ) {
+						Field<Integer> statusField = r.field(status.name(), Integer.class);
+						if ( statusField != null ) {
+							domainData.setRawdocCount(status, r.get(statusField));
+						}
+					}
+					for ( InvoiceStatus status: InvoiceStatus.values() ) {
+						Field<Integer> statusField = r.field(status.name(), Integer.class);
+						if ( statusField != null ) {
+							domainData.setInvoiceCount(status, r.get(status.name(), Integer.class));
+						}
+					}
 					
 					domains.add(domainData);
 					
@@ -819,6 +846,7 @@ public class DomainSwitcher extends AbstractDomainSwitcher implements
 		
 		setShowPending(false);
 		setShowReject(false);
+		setShowUnaccount(false);
 
 		setShowInactive(true);
 		setModel(null);

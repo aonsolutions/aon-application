@@ -60,6 +60,9 @@ public class DocumentalServlet extends AonApiHttpServlet{
 			case "/files/sepa":
 				response(req, resp, getSepaFiles(api));
 				break;
+			case "/file/sepa":
+				response(req, resp, getSepaFile(api));
+				break;
 			default:
 				throw new AonApiException(AonApiError.ROUTE_ERROR.getMessage());
 			}
@@ -143,10 +146,16 @@ public class DocumentalServlet extends AonApiHttpServlet{
 				.setDomain(api.getDomain().getId())
 				.setType((byte)10);
 		
-		AON.getFBatches(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), params, page, perPage)
+		AON.getFBatches(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), params, perPage * (page -1), perPage)
 			.forEach(a -> array.put(fbatchToJSON(a)));
 
 		return array;
+	}
+	
+	private JSONObject getSepaFile(AonApiData api) {
+		Integer fbatch = JsonUtils.getInteger(api.getData(), "fbatch");
+		FBatch fbatchObj = AON.getFBatch(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), fbatch);
+		return fbatchToJSON(fbatchObj);
 	}
 
 	private Filter attachFilter(AonApiData api, AttachProperties f) {

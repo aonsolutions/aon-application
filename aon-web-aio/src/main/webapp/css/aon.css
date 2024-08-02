@@ -855,6 +855,10 @@ h1 {
   border-bottom: 1px solid #ddd;
 }
 
+.aonTableTrChecked {
+	background-color: aliceblue;
+  }
+
 .aonTable tbody tr:hover {
   /* background-color: var(--aonLightGray); */
   background-color: var(--aonLightBlue);
@@ -2868,6 +2872,12 @@ label.rating:hover {
   background-color: var(--aonBlue);
 }
 
+.aonHeaderNotification,
+.aonMenuLeftopNotification {
+  background-color: var(--aonBlue);
+}
+
+
 .aonHeaderNote .material-icons,
 .aonHeaderFiscal .material-icons,
 .aonHeaderPayroll .material-icons,
@@ -3859,4 +3869,11 @@ label.rating:hover {
   color: var(--gray-50);
 }
 
+.aonLoginInfo {
+    color: #666;
+    padding: 15px;
+    font-size: 9px;
+    margin-top :10px;
+    border-top: 1px solid #ddd;
+}
 

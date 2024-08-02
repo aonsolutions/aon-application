@@ -156,6 +156,7 @@ export const AON_LOGIN_SUB_TITLE = 'aonLoginSubTitle';
 export const AON_LOGIN_FORM = 'aonLoginForm';
 export const AON_LOGIN_FORM_CONTENT = 'aonLoginFormContent';
 export const AON_LOGIN_BUTTON = "aonLoginButton";
+export const AON_LOGIN_INFO = 'aonLoginInfo';
 export const AON_DIVIDER_BUTTONS = "aonDividerButtons";
 export const AON_DIVIDER_SPAN = "aonDividerSpan";
 export const AON_MAGIC_BUTTON = "aonMagicButton";
