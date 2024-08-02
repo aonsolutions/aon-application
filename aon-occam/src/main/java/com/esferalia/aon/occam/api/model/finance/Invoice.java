@@ -826,6 +826,10 @@ public class Invoice implements Serializable, HasAudit {
 		this.taxBreakdown = taxBreakdown;
 		return this;
 	}
+	public Invoice calculateTaxBreakdown() {
+		ensureTaxBreakdown().calculate();
+		return this;
+	}
 	private TaxBreakdown ensureTaxBreakdown() {
 		if (this.taxBreakdown == null) {
 			setTaxBreakdown( new TaxBreakdown());

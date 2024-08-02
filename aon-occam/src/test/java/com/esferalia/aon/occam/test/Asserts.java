@@ -908,7 +908,7 @@ public class Asserts {
 		assertEquals("Recordable", expected.isRecordable(), actual.isRecordable());
 		assertEquals("Selected", expected.isSelected(), actual.isSelected());
 		
-		assertEquals("Attach", expected.getAttach(), actual.getAttach());
+		assertEqualsAttach(expected.getAttach().orElse(null), actual.getAttach().orElse(null));
 		
 		//assertEqualsInvoiceBreakdowns(expected.getBreakdown(), actual.getBreakdown());
 		//assertEqualsTaxBreakdown(expected.getTaxBreakdown().orElse(null), actual.getTaxBreakdown().orElse(null));
@@ -916,29 +916,33 @@ public class Asserts {
 	}
 	
 	public static void assertEqualsAttach(Attach expected, Attach actual) {
-		assertEquals("AttachType", expected.getAttachType(), actual.getAttachType());
-		assertEquals("AttachModule", expected.getAttachModule(), actual.getAttachModule());
-		assertEquals("AttachURL", expected.getAttachURL(), actual.getAttachURL());
-		assertEquals("Id", expected.getId(), actual.getId());
-		assertEqualsDomain(expected.getDomain(), actual.getDomain());
-		assertEquals("MimeType", expected.getMimeType(), actual.getMimeType());
-		assertEquals("Description", expected.getDescription(), actual.getDescription());
-		// private byte[] data;
-		assertEquals("Date", expected.getDate(), actual.getDate());
-		assertEquals("Type", expected.getType(), actual.getType());
-		assertEquals("DriveId", expected.getDriveId(), actual.getDriveId());
-		assertEquals("Scope", expected.getScope(), actual.getScope()); 
-		assertEquals("Confidential", expected.getConfidential(), actual.getConfidential());
-		assertEquals("Category", expected.getCategory(), actual.getCategory());
-		assertEquals("DparentId", expected.getDparentId(), actual.getDparentId());
-		assertEquals("SourceBatch", expected.getSourceBatch(), actual.getSourceBatch());
-		assertEquals("SourceType", expected.getSourceType(), actual.getSourceType());
-		assertEquals("Icon", expected.getIcon(), actual.getIcon());				
-		assertEquals("Md5", expected.getMd5(), actual.getMd5());
-		assertEquals("IsDrive", expected.getIsDrive(), actual.getIsDrive());
-		assertEqualsScope(expected.getFullScope(), actual.getFullScope());
-		assertEquals("Category",expected.getCategory(), actual.getCategory());
-		assertEqualsTags(expected.getTagList(), actual.getTagList());
+		assertEqualsNulls( "Attach", expected, actual);
+		if (expected != null) {
+			assertEquals("AttachType", expected.getAttachType(), actual.getAttachType());
+			assertEquals("AttachModule", expected.getAttachModule(), actual.getAttachModule());
+			assertEquals("AttachURL", expected.getAttachURL(), actual.getAttachURL());
+			assertEquals("Id", expected.getId(), actual.getId());
+			assertEqualsDomain(expected.getDomain(), actual.getDomain());
+			assertEquals("MimeType", expected.getMimeType(), actual.getMimeType());
+			assertEquals("Description", expected.getDescription(), actual.getDescription());
+			// private byte[] data;
+			assertEquals("Date", expected.getDate(), actual.getDate());
+			assertEquals("Type", expected.getType(), actual.getType());
+			assertEquals("DriveId", expected.getDriveId(), actual.getDriveId());
+			assertEquals("Scope", expected.getScope(), actual.getScope()); 
+			assertEquals("Confidential", expected.getConfidential(), actual.getConfidential());
+			assertEquals("Category", expected.getCategory(), actual.getCategory());
+			assertEquals("DparentId", expected.getDparentId(), actual.getDparentId());
+			assertEquals("SourceBatch", expected.getSourceBatch(), actual.getSourceBatch());
+			assertEquals("SourceType", expected.getSourceType(), actual.getSourceType());
+			assertEquals("Icon", expected.getIcon(), actual.getIcon());				
+			assertEquals("Md5", expected.getMd5(), actual.getMd5());
+			assertEquals("IsDrive", expected.getIsDrive(), actual.getIsDrive());
+			assertEqualsScope(expected.getFullScope(), actual.getFullScope());
+			assertEquals("Category",expected.getCategory(), actual.getCategory());
+			assertEqualsTags(expected.getTagList(), actual.getTagList());
+		}
+		
 	}
 	
 	public static void assertEqualsTags(List<Tag> expected, List<Tag> actual) {

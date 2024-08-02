@@ -441,6 +441,16 @@ public class InvoiceDAO {
 					invoice.setRectificationInvoiceReference(rectify.getReferenceCode());
 				}
 			}
+			
+			invoice.setAttach(
+					AttachmentDAO.getInvoiceAttachStream(ctx
+						, f -> f.getAttachModuleProperty().eq(invoice.getId())
+							.and(f.getTypeProperty().eq( InvoiceAttachmentType.INVOICE.value() ) )
+						, false)
+						.findFirst()
+						.orElse(null)
+				);
+			
 		}
 		return invoice;
 	}
@@ -1725,6 +1735,7 @@ public class InvoiceDAO {
 	public static void fillBreakdown(AONContext ctx, Invoice invoice) {
 		InvoiceTaxDAO.getInvoiceTaxes(ctx, invoice.getId())
 			.forEach( invoice::addTax );
+		invoice.calculateTaxBreakdown();
 	}
 	
 	// ************************************************************
@@ -1905,7 +1916,7 @@ public class InvoiceDAO {
 			.andThen(BUILD_ATTACH)
 			.andThen(BUILD_RECTIFICATION_INVOICE_DATA)
 			.accept(ctx,invoice);
-		return invoice;
+		return invoice.calculateTaxBreakdown();
 	}
 	
 	private static final BiConsumer<AONContext, Invoice> BUILD_ADDRESS = (ctx, invoice) -> {

@@ -13,6 +13,7 @@ import com.esferalia.aon.occam.impl.jooq.dao.InvoiceDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.accounting.invoice.InvoiceTextPrinter;
 import com.esferalia.aon.occam.test.AbstractOccamTest;
 import com.esferalia.aon.occam.test.Asserts;
+import com.esferalia.aon.occam.test.faker.AonRandom;
 import com.esferalia.aon.watson.mutable.MutableInt;
 import com.esferalia.aon.watson.server.AonDateUtils;
 
@@ -26,10 +27,13 @@ public class InvoiceDAOTest extends AbstractOccamTest {
 			.setDomainName( "sig.ecastellano.org" )
 			.setUser( "jgarcia" );
 		try (CloseableAONContext ctx =  AONContext.getAONContext(occam)){
-			Date date = AonDateUtils.getYearFirstDay(2022);
+			Date dateFrom = AonDateUtils.getYearFirstDay(2020);
+			Date dateTo = AonDateUtils.getYearFirstDay(2023);
+			Date date = AonRandom.getRangeDate(dateFrom, dateTo);
 			MutableInt x = new MutableInt(0);
 			InvoiceDAO.getInvoiceStream( ctx, p -> p.getIdProperty().ge(0)
 					.and( p.getDomainProperty().eq(occam.getDomain()))
+					.and( p.getWithholdingProperty().eq((byte) 1))
 					.and( p.getEndIssueDateProperty().ge(date))
 				)
 				.limit( 10 )
