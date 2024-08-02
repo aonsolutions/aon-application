@@ -2824,6 +2824,11 @@ label.rating:hover {
   background-color: black;
 }
 
+.aonHeaderNotification,
+.aonMenuLeftopNotification {
+  background-color: var(--aonBlue);
+}
+
 .aonHeaderComercialMenu,
 .aonMenuLeftopComercialMenu {
   background-color: var(--aonBlue);

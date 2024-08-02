@@ -187,7 +187,6 @@ export const MARKETING_MENU = {
 	price: " ",
 };
 
-
 export const TOP_MENU_APPS = [
 	APP.OFFICE,
 	APP.GARAGE,
