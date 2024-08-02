@@ -430,6 +430,8 @@ export class AonDate extends AonElement {
   }
 
   isSameDate(date) {
+    if(!this.date) this.date = new Date(Date.now());
+    
     return date.getDate() === this.date.getDate()
       && date.getMonth() === this.date.getMonth()
       && date.getFullYear() === this.date.getFullYear();
