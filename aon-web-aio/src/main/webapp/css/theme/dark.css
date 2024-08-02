@@ -40,8 +40,8 @@
 	--aonRightPanelColor: rgb(250, 249, 248);
 	--aonCardColor: white;
   
-	--aonSearchBar: white;
-    --aonSearchButton: rgb(95, 99, 104);
+	--aonSearchBar: var(--aonCardColor);
+    --aonSearchButton: white;
   
 	--aonTopMenuAvailable : var(--aonWhite);
 	--aonTopMenuNotAvailable : var(--aonGray);
@@ -138,12 +138,6 @@
 	--aonHomeMouseOverImg: black; 
 
 	--aonHomeImg: white;
-
-	--aonSearchBar: var(--aonCardColor);
-
-	--aonSearchButton: white;
-
-  
   }
   
   /* Estilos para ocultar la barra de desplazamiento en todos los elementos */
@@ -182,7 +176,7 @@
   }
 
   #aon-search-buttonIcon {
-	color: white;
+	color: var(--aonSearchButton);
   }
   
   .material-symbols-outlined {
@@ -196,6 +190,7 @@
   
   *, ::after, ::before {
 	box-sizing: border-box;
+	/* color: white; */
   }
   
   
@@ -232,6 +227,7 @@
 	font-weight: 400 !important;
 	font-style: normal;
 	font-variation-settings: "wdth" 100;
+	background-color: var(--aonContentBeta);
   }
   
   .aonBodyBeta {
@@ -368,11 +364,11 @@
   }
   
   .aonDashboardButton:hover{
-	background-color: #f0f0f1;
+	background-color: black;
   }
   
   .aonDashboardButton:hover i{
-	background-color: #fff;
+	background-color: black;
   }
   
   .aonColorIcon {
@@ -802,7 +798,8 @@
   
   .aonToolbarSectionEnd {
 	justify-content: flex-end;
-  }
+	color: white;
+   }
   
   .aonSecondaryToolbar {
 	display: flex;
@@ -816,7 +813,7 @@
 	font-weight: bold;
 	text-transform: uppercase;
 	font-size: 1.2em;
-	color: #5f6368;
+	color: white;
 	text-overflow: ellipsis;
 	white-space: nowrap;
 	overflow: hidden;
@@ -3628,6 +3625,7 @@
   align-items: center;
   flex-direction: column;
   justify-content: center;
+  color: white;
 }
 
 .aonNewDekstopAppDiv{

@@ -38,10 +38,11 @@ export class AonNewDesktop extends AonElement {
 		
 		let bannerAppsDiv = this.createElement(TAG.DIV);
 		let titleH1 = this.createElement(TAG.H1);
-		titleH1.innerHTML = MSG.APPLICATIONS;
+		titleH1.innerHTML = MSG.APPLICATIONS +  " Portal";
 		titleH1.classList.add("aonNewDesktopTitleH1");
 		bannerAppsDiv.appendChild(titleH1);
 		desktopDiv.appendChild(bannerAppsDiv);
+
 		
 		let desktopAppsDiv =  this.createElement(TAG.DIV);
 		desktopAppsDiv.classList.add('aonDesktopAppsContainer');		
@@ -181,29 +182,30 @@ export class AonNewDesktop extends AonElement {
 
 		let appDiv = this.createElement(TAG.DIV);
 		appDiv.classList.add("aonNewDesktopAppDiv");
-
-		if (app.symbol) {
-			let icon = this.createElement(TAG.SPAN);
-			icon.classList.add(CSS.MATERIAL_SYMBOLS_OUTLINED);
-			icon.id = `aonDesktopAppImg-${app.app}`;
-			icon.innerHTML = app.symbol;
-			icon.style.fontSize = "24px";
-			appDiv.appendChild(icon);
-		} else if (app.icon) {
+		
+		if (app.icon) {
 			let aonIcon = new AonIcon();
 			aonIcon.id = `aonDesktopAppImg-${app.app}`;
 			aonIcon.icon = app.newIcon || app.icon;
 			aonIcon.color = app.newColor || app.color;
 			aonIcon.size = "32px";
 			appDiv.appendChild(aonIcon);
-		} else if (app.logo) {
-			let img = this.createElement(TAG.IMG);
-			img.id = `aonDesktopAppImg-${app.app}`;
-			img.style.width = '24px';
-			img.src = app.logo;
-			img.title = app.title;
-			appDiv.appendChild(img);
-		}
+		} 
+		// else if (app.symbol) {
+		// 	let icon = this.createElement(TAG.SPAN);
+		// 	icon.classList.add(CSS.MATERIAL_SYMBOLS_OUTLINED);
+		// 	icon.id = `aonDesktopAppImg-${app.app}`;
+		// 	icon.innerHTML = app.symbol;
+		// 	icon.style.fontSize = "24px";
+		// 	appDiv.appendChild(icon);
+		// } else if (app.logo) {
+		// 	let img = this.createElement(TAG.IMG);
+		// 	img.id = `aonDesktopAppImg-${app.app}`;
+		// 	img.style.width = '24px';
+		// 	img.src = app.logo;
+		// 	img.title = app.title;
+		// 	appDiv.appendChild(img);
+		// }
 
 		let titleSpan = this.createElement(TAG.SPAN);
 		titleSpan.id = `aonDesktopAppTitle-${app.app}`;
@@ -213,8 +215,8 @@ export class AonNewDesktop extends AonElement {
 
 		appA.appendChild(appDiv);
 
-		if(app.app == "accounting"|| app.app == "fiscal" || app.app == "payroll")
-			appDiv.className = "appDiv";
+		// if(app.app == "accounting"|| app.app == "fiscal" || app.app == "payroll")
+		// 	appDiv.className = "appDiv";
 
 		cardDiv.appendChild(appA);
 
