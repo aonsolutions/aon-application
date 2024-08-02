@@ -10,6 +10,7 @@ import org.json.JSONObject;
 import com.esferalia.aon.occam.api.model.IJsonNames;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.security.UserType;
+import com.esferalia.aon.occam.api.model.type.OldAonRole;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class UserJSON {
@@ -36,8 +37,9 @@ public class UserJSON {
 		if(json.optJSONArray("taskHolders") != null) user.setTaskHolders(TaskHolderJSON.fromJSON(json.optJSONArray("taskHolders")));
 		else user.setTaskHolders(null);
 		user.setRegistry(RegistryJSON.fromJSON(json.optJSONObject(IJsonNames.REGISTRY)));
-		
-		user.setRoles(OldAonRoleJSON.fromJSON(JsonUtils.getJSONArray(json, IJsonNames.ROLES)));
+
+		List<OldAonRole> roles = OldAonRoleJSON.fromJSON(JsonUtils.getJSONArray(json, IJsonNames.ROLES));
+		user.setRoles(roles.toArray(OldAonRole[]::new));
 		return user;
 	}
 	

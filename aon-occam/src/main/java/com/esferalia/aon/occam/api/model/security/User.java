@@ -106,10 +106,6 @@ public class User implements Serializable {
 		this.userRoles = userRoles;
 		return this;
 	}
-	public User setRoles(List<OldAonRole> roles) {
-		this.userRoles = roles.toArray(OldAonRole[]::new);
-		return this;
-	}
 
 	public Registry getRegistry() {
 	    if(registry == null) {
