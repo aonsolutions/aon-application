@@ -54,6 +54,8 @@ export class AonNotificationPanel extends AonElement {
         let header = this.getElement("aonHeaderWeb");
         let apps = this.getElement("aonMenuLeftop-applications");
         let aonHeader = this.getElement("aonHeader");
+        let applications = this.getElement("applications");
+        applications.className = "";
 
 		let divGeneral = this.createDiv();
         divGeneral.id = this.DIV_GENERAL;
@@ -64,12 +66,22 @@ export class AonNotificationPanel extends AonElement {
         divTodas.classList.add("notificationPanelAllDiv");
 
         divGeneral.appendChild(divTodas);
-		divTodas.addEventListener(EVENT.CLICK, () =>  {
-            this.goAonNotification()
-            header.className = "aonHeader aonHeaderNotification";
-            apps.className = "aonHeader aonMenuLeftopNotification";
-            aonHeader.buildApp(NOTIFICATION);
-        });
+        let welcome = this.getElement("aonCompanyTabFilter");
+        if(!welcome){
+            divTodas.addEventListener(EVENT.CLICK, () =>  {
+                this.goAonNotification()
+                header.className = "aonHeader aonHeaderNotification";
+                apps.className = "aonHeader aonMenuLeftopNotification";
+                aonHeader.buildApp(NOTIFICATION);
+                aonHeader.setVisibleLogo(false);
+                aonHeader.setVisibleApp(true);
+            });
+        }
+
+        let enterprise = this.getElement("aonHeaderCompanyListButton");
+        enterprise.addEventListener(EVENT.CLICK, () => {
+            apps.classList.remove("aonMenuLeftopNotification");
+        })
 
         this.loadMore(true);
         

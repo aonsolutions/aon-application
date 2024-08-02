@@ -1,5 +1,5 @@
-import { AonElement } from 'aonsolutions/components/AonElement.js';
-import { CONSTANT, TAG } from "aonsolutions/environments/environments.js";
+import { AonElement } from './AonElement.js';
+import { CONSTANT, TAG } from "../environments/environments.js";
 import Cropper from 'cropperjs';
 import 'cropperjs/dist/cropper.min.css';
 
@@ -69,7 +69,7 @@ export class AonImageEditor extends AonElement {
 
                 #controls {
                     position: absolute;
-                    bottom: 10px;
+                    bottom: 5x  0px;
                     left: 0;
                     right: 0;
                     display: flex;
