@@ -135,9 +135,9 @@
 
   --aonSwitchButtonCircleOn: var(--aonBlue);
 
+  --aonHomeMouseOverImg: white; 
 
-
-
+	--aonHomeImg: black;
 }
 
 /* Estilos para ocultar la barra de desplazamiento en todos los elementos */
@@ -172,6 +172,10 @@
   'wght' 400,
   'GRAD' 0,
   'opsz' 24
+}
+
+#aon-search-buttonIcon {
+	color: var(--aonSearchButton);
 }
 
 .material-symbols-outlined {
