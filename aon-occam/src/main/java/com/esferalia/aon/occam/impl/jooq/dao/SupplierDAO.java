@@ -17,20 +17,16 @@ import org.jooq.impl.DSL;
 
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Account;
-import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Filter.Property;
 import com.esferalia.aon.occam.api.model.Filter.SupplierFilter;
 import com.esferalia.aon.occam.api.model.Properties.SupplierProperties;
-import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.registry.Supplier;
 import com.esferalia.aon.occam.api.model.registry.SupplierFull;
 import com.esferalia.aon.occam.api.model.security.Scope;
-import com.esferalia.aon.occam.api.model.type.Country;
-import com.esferalia.aon.occam.api.model.type.DocumentType;
 import com.esferalia.aon.occam.api.model.type.InvoiceTransactionType;
 import com.esferalia.aon.occam.api.model.type.RegistryStatus;
-import com.esferalia.aon.occam.api.model.type.SecurityLevel;
 import com.esferalia.aon.occam.impl.jooq.dao.AccountDAO.FullAccountFiller;
+import com.esferalia.aon.occam.impl.jooq.dao.RegistryDAO.RegistryFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.RegistryDAO.RegistryPropertiesDAO;
 import com.esferalia.aon.occam.impl.jooq.validation.SupplierAutoComplete;
 import com.esferalia.aon.occam.impl.jooq.validation.SupplierValidation;
@@ -81,17 +77,7 @@ public class SupplierDAO {
 		public static Supplier buildSupplier(Record r, com.esferalia.aon.jooq.tables.Registry registry) {
 			if(registry == null) registry = REGISTRY;
 			return new Supplier()
-					.copy( new Registry() 
-						.setId(r.getValue(registry.ID))
-						.setDomain(new Domain().setId(r.getValue(SUPPLIER.DOMAIN)))
-						.setDocument(r.getValue(registry.DOCUMENT))
-						.setDocumentType(DocumentType.safeValueOf(r.getValue(registry.DOCUMENT_TYPE)))
-						.setDocumentCountry(Country.safeValueOf(r.getValue(registry.DOCUMENT_COUNTRY)) )
-						.setName(r.getValue(registry.NAME))
-						.setAlias(r.getValue(registry.ALIAS))
-						.setLegalPerson(AonEnumUtils.getBoolean(r.getValue(registry.TYPE)))
-						.setNationality(Country.safeValueOf(r.getValue(registry.NATIONALITY)) )
-						.setSecurityLevel(SecurityLevel.safeValueOf(r.getValue(registry.SECURITY_LEVEL))))
+					.copy(RegistryFiller.build(r, registry))
 					.setTariff(r.getValue(SUPPLIER.TARIFF))
 					.setWithholding(r.getValue(SUPPLIER.WITHHOLDING)==1)
 					.setWithholdingFarmer(r.getValue(SUPPLIER.WITHHOLDING_FARMER)==1)

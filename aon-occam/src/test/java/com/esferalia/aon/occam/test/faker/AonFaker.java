@@ -84,6 +84,7 @@ import com.esferalia.aon.occam.api.model.warehouse.Warehouse;
 import com.esferalia.aon.occam.impl.jooq.dao.CarrierDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.CompanyDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.CustomerDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.DomainDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.ItemDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.OfferDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.ProductDAO;
@@ -114,7 +115,7 @@ public class AonFaker {
 	
 	public static Registry getRegistry( AONContext ctx ) {
 		return  new Registry()
-			.setDomain(new Domain().setId(ctx.getDomainId()))
+			.setDomain(DomainDAO.getDomain(ctx, ctx.getDomainId()))
 			.setDocument(faker.regexify(documentRegexp))
 			.setDocumentType( AonRandom.getRandomDocumentType() )
 			.setDocumentCountry( AonRandom.gt(5) ? Country.ES: AonRandom.getRandomCountry())

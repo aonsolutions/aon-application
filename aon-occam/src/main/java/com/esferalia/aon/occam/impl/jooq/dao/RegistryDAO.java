@@ -96,6 +96,7 @@ public class RegistryDAO {
 		return ctx.getDslContext()
 				.select()
 				.from(REGISTRY)
+				.innerJoin(DOMAIN).on(REGISTRY.DOMAIN.eq(DOMAIN.ID))
 				.where(REGISTRY_PROPERTIES.getConditions(filter));
 	}
 

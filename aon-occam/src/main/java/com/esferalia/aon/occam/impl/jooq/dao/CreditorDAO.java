@@ -19,20 +19,16 @@ import org.jooq.impl.DSL;
 
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Account;
-import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Filter.CreditorFilter;
 import com.esferalia.aon.occam.api.model.Filter.Property;
 import com.esferalia.aon.occam.api.model.Properties.CreditorProperties;
 import com.esferalia.aon.occam.api.model.registry.Creditor;
 import com.esferalia.aon.occam.api.model.registry.CreditorFull;
-import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.security.Scope;
-import com.esferalia.aon.occam.api.model.type.Country;
-import com.esferalia.aon.occam.api.model.type.DocumentType;
 import com.esferalia.aon.occam.api.model.type.InvoiceTransactionType;
 import com.esferalia.aon.occam.api.model.type.RegistryStatus;
-import com.esferalia.aon.occam.api.model.type.SecurityLevel;
 import com.esferalia.aon.occam.impl.jooq.dao.AccountDAO.FullAccountFiller;
+import com.esferalia.aon.occam.impl.jooq.dao.RegistryDAO.RegistryFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.RegistryDAO.RegistryPropertiesDAO;
 import com.esferalia.aon.occam.impl.jooq.validation.CreditorAutoComplete;
 import com.esferalia.aon.occam.impl.jooq.validation.CreditorValidation;
@@ -81,17 +77,7 @@ public class CreditorDAO {
 		public static Creditor buildCreditor(Record r, com.esferalia.aon.jooq.tables.Registry registry) {
 			if(registry == null) registry = REGISTRY;
 			return new Creditor()
-					.copy( new Registry() 
-						.setId(r.getValue(registry.ID))
-						.setDomain(new Domain().setId(r.getValue(CREDITOR.DOMAIN)))
-						.setDocument(r.getValue(registry.DOCUMENT))
-						.setDocumentType(DocumentType.safeValueOf(r.getValue(registry.DOCUMENT_TYPE)))
-						.setDocumentCountry(Country.safeValueOf(r.getValue(registry.DOCUMENT_COUNTRY)) )
-						.setName(r.getValue(registry.NAME))
-						.setAlias(r.getValue(registry.ALIAS))
-						.setLegalPerson(AonEnumUtils.getBoolean(r.getValue(registry.TYPE)))
-						.setNationality(Country.safeValueOf(r.getValue(registry.NATIONALITY)) )
-						.setSecurityLevel(SecurityLevel.safeValueOf(r.getValue(registry.SECURITY_LEVEL))))
+					.copy(RegistryFiller.build(r, registry))
 					.setWithholding(r.getValue(CREDITOR.WITHHOLDING)==1)
 					.setVatAccrualPayment(r.getValue(CREDITOR.VAT_ACCRUAL_PAYMENT)==1)
 					.setTransaction(InvoiceTransactionType.safeValueOf( r.getValue(CREDITOR.TRANSACTION)))
