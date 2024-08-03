@@ -10,14 +10,12 @@ import static com.esferalia.aon.jooq.tables.UserScope.USER_SCOPE;
 
 import java.io.Serializable;
 import java.net.IDN;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
@@ -296,6 +294,7 @@ public class DomainSwitcher extends AbstractDomainSwitcher implements
 		return scopes;
 	}
 	
+	
 	private <T extends SelectJoinStep<?>> T filterByInvoiceStatus(T selectJoinStep ) {
 		if ( isShowPending() ) {
 			selectJoinStep = filterByInvoiceStatus(selectJoinStep, RawdocStatus.INBOX);
@@ -316,7 +315,8 @@ public class DomainSwitcher extends AbstractDomainSwitcher implements
 		.select(RAWDOC.DOMAIN
 		,DSL.count(RAWDOC.ID).as(rawdocStatus.name()))
 		.from(RAWDOC)
-		.where(RAWDOC.STATUS.eq((byte)rawdocStatus.ordinal()))
+		.innerJoin(DOMAIN).on(RAWDOC.DOMAIN.eq(DOMAIN.ID))
+		.where(RAWDOC.STATUS.eq((byte)rawdocStatus.ordinal()).and(getDomainCondition()))
 		.groupBy(RAWDOC.DOMAIN)
 		.asTable(rawdocStatus.name());
 		
@@ -324,15 +324,6 @@ public class DomainSwitcher extends AbstractDomainSwitcher implements
 	}
 
 	private <T extends SelectJoinStep<?>> T filterByInvoiceStatus(T selectJoinStep, InvoiceStatus invoiceStatus) {
-		Condition condition =  INVOICE.STATUS.eq((byte)invoiceStatus.ordinal());
-		if (!isAdminDomain()) {
-			Condition scopeCondition = INVOICE.SCOPE.isNull();
-			List<Integer> scopes = getUserScopes();
-			if (scopes != null && !scopes.isEmpty()) {
-				scopeCondition = scopeCondition.or(INVOICE.SCOPE.in(scopes));
-			}
-			condition = condition.and(scopeCondition);
-		}
 
 		Table<?> subTable = 
 		DSL
@@ -340,7 +331,8 @@ public class DomainSwitcher extends AbstractDomainSwitcher implements
 		INVOICE.DOMAIN
 		,DSL.count(INVOICE.ID).as(invoiceStatus.name()))
 		.from(INVOICE)
-		.where(condition)
+		.innerJoin(DOMAIN).on(INVOICE.DOMAIN.eq(DOMAIN.ID))
+		.where(INVOICE.STATUS.eq((byte)InvoiceStatus.PENDING.ordinal()).and(getDomainCondition()))
 		.groupBy(INVOICE.DOMAIN)
 		.asTable(invoiceStatus.name());
 		
@@ -926,17 +918,20 @@ public class DomainSwitcher extends AbstractDomainSwitcher implements
 			
 			this.pending = 
 					ctx.getDslContext().select(DOMAIN.ID)
-					.from(DOMAIN).innerJoin(RAWDOC).on(DOMAIN.ID.eq(RAWDOC.DOMAIN))
+					.from(DOMAIN)
+					.innerJoin(RAWDOC).on(DOMAIN.ID.eq(RAWDOC.DOMAIN))
 					.where(getDomainCondition().and(RAWDOC.STATUS.eq((byte)RawdocStatus.INBOX.ordinal()))).limit(COUNT_LIMIT+1).fetch(DOMAIN.ID).size();
 			
 			this.reject = 
 					ctx.getDslContext().select(DOMAIN.ID)
-					.from(DOMAIN).innerJoin(RAWDOC).on(DOMAIN.ID.eq(RAWDOC.DOMAIN))
+					.from(DOMAIN)
+					.innerJoin(RAWDOC).on(DOMAIN.ID.eq(RAWDOC.DOMAIN))
 					.where(getDomainCondition().and(RAWDOC.STATUS.eq((byte)RawdocStatus.REJECTED.ordinal()))).limit(COUNT_LIMIT+1).fetch(DOMAIN.ID).size();
 
 			this.unaccount = 
 					ctx.getDslContext().select(DOMAIN.ID)
-					.from(DOMAIN).innerJoin(INVOICE).on(DOMAIN.ID.eq(INVOICE.DOMAIN))
+					.from(DOMAIN)
+					.innerJoin(INVOICE).on(DOMAIN.ID.eq(INVOICE.DOMAIN))
 					.where(getDomainCondition().and(INVOICE.STATUS.eq((byte)InvoiceStatus.PENDING.ordinal()))).limit(COUNT_LIMIT+1).fetch(DOMAIN.ID).size();
 			return this.pending + this.reject  + this.unaccount;
 		}

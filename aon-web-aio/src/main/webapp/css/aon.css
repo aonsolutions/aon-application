@@ -3846,6 +3846,7 @@ label.rating:hover {
 }
 
 .aonConfigApps,
+.aonConfigDark,
 .aonConfigBrand,
 .aonConfigTopNav {
 	display: none;

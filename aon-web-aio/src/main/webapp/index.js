@@ -34,25 +34,56 @@ const load = () => {
     LS.setAonSolutions(true);
     // TODO: Skip reload
 	LS.set(LS.NEW_THEME, true);
-    // TODO: loadScriptFirebase();
-    document.body.appendChild(new AonModule());
-    loadScripts(); 
+
+	loadScripts(); 
+	loadTheme().then(
+	() => { 
+		favicon(); 
+		document.body.appendChild(new AonModule());
+	},
+	(err) => {
+		document.body.appendChild(new AonModule());
+	}  
+	);  
+
+	// TODO: loadScriptFirebase();
     window.loadScripts = () => loadScripts();
-    loadTheme().then(() => favicon() );  
 
 	console.debug("Fantastic aonSolutions loaded :-).")
 }
 
 export const loadTheme = () => {
     let themeUrl = getParam("theme") || LS.getTheme() || getCookie("theme") || LS.AON_THEME; 
-    return loadLink(themeUrl, 'stylesheet', 'text/css');
+	return new Promise((resolve, reject) => {
+		try {
+			const aonThemeSpan = document.createElement(TAG.SPAN);
+			aonThemeSpan.className = 'aonTheme';
+			aonThemeSpan.style.display = 'none';
+			document.body.appendChild(aonThemeSpan);
+			
+			loadLink(themeUrl, 'stylesheet', 'text/css');
+			let tries = 0;
+			let interval = setInterval(() => {
+				const aonThemeStyle = getComputedStyle(aonThemeSpan);
+				const aonThemeProperty = aonThemeStyle.getPropertyValue('--aon-theme');
+				if ( ( tries++ > 5 ) || aonThemeProperty ) {
+					resolve();
+					aonThemeSpan.remove();
+					clearInterval(interval);
+				}
+			}, 200);
+			
+		} catch ( err ) {
+			reject(new Error(`Something was wrong with theme '${themeUrl}'`));
+		}
+	});
 }
 
 
 const favicon = () => {
 	loadLink('', 'icon', 'image/x-icon')
 	.then( faviconLink  => {
-		const aonFavicon = document.createElement('span');
+		const aonFavicon = document.createElement(TAG.SPAN);
 		aonFavicon.className = 'aonFavicon';
 		aonFavicon.style.display = 'none';
 		document.body.appendChild(aonFavicon);
