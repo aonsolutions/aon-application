@@ -129,6 +129,9 @@ public class JooqPayrollSalaries {
 		Date salaryMinDate = salaryMinDateRecord.value1();
 		
 		Record1<Date> salaryMaxDateRecord = dslContext.select(DSL.max(SALARY.END_DATE)).from(SALARY)
+				.join(CONTRACT).on(CONTRACT.ID.eq(SALARY.CONTRACT))
+				.join(WORKPLACE).on(WORKPLACE.ID.eq(CONTRACT.WORKPLACE))
+				.join(ENTERPRISE).on(ENTERPRISE.REGISTRY.eq(WORKPLACE.ENTERPRISE))
 				.where(contractsCondition)
 				.and(salaryTypeCondition)
 				.fetchOne();
