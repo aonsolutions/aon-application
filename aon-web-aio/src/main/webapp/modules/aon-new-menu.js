@@ -330,7 +330,7 @@ export class AonNewMenu extends AonElement {
 				let li = this.createElement(TAG.LI);
 				li.id = `aonMenuList-${app.app}`;
 				li.classList.add("aonNewMenuSideNavLi");
-				li.appendChild(this.buildApp(app,undefined,true));
+				li.appendChild(this.buildApp(app,{color: `var(--aonSidenavIconColor, ${app.newColor || app.color})`},true));
 
 				ul.appendChild(li);
 			}
