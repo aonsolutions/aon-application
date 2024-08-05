@@ -1260,8 +1260,10 @@ public class JooqPayrollBuilder {
 			return 3;
 		case 8:
 			return 4;
-		default:
+		case 10: 		// EMBARGO
 			return 5;
+		default:		// OTHER
+			return 6;
 		}
 	}
 
@@ -1287,8 +1289,10 @@ public class JooqPayrollBuilder {
 			return 3;
 		case 8:
 			return 4;
-		default:
+		case 10: 		// EMBARGO
 			return 5;
+		default:		// OTHER
+			return 6;
 		}
 	}
 
