@@ -226,6 +226,18 @@ public class PAYROLL {
 
 	}
 	
+	public static AuxSalaryInfo getEmployeeSalaryById(String domainName, Integer domainId, String login, Integer id) {
+		CloseableAONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			return getPayroll().getEmployeeSalaryById(ctx, id);
+		}finally {
+			if(ctx != null) {
+				ctx.close();
+			}
+		}
+	}
+	
 	public static LinkedList<Contract> getContractList(String domainName, Integer domainId, String login, ContractFilter filter) {
 		CloseableAONContext ctx = null;
 		try {

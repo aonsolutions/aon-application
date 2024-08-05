@@ -153,6 +153,11 @@ public class PayrollImpl implements IPayroll {
 		return ctx.getDslContext().transactionResult(configuration ->
 		ContractDAO.getEmployeeSalaryCount(ctx, filter));
 	}
+	
+	public AuxSalaryInfo getEmployeeSalaryById(AONContext ctx, Integer id) {
+		return ctx.getDslContext().transactionResult(configuration ->
+		ContractDAO.getEmployeeSalaryById(ctx, id));
+	}
 
 	public void deleteContracts(AONContext ctx, Integer ...contractIds) {
 		ctx.getDslContext().transaction(configuration -> ContractDAO.delete(ctx, contractIds));

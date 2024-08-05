@@ -209,6 +209,41 @@ public class ContractDAO {
 		        .fetch().stream().count();
 	}
 	
+	public static AuxSalaryInfo getEmployeeSalaryById(AONContext ctx, Integer id) {
+		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+		Record salaryRecord = ctx.getDslContext().select()
+		        .from(SALARY)
+		        .where(SALARY.DOMAIN.eq(ctx.getDomainId()))
+		        .and(SALARY.ID.eq(id)).fetch().getFirst();
+		
+		AuxSalaryInfo salaryInfo = new AuxSalaryInfo();
+        salaryInfo.setId(salaryRecord.get(SALARY.ID));
+		salaryInfo.setDomain(salaryRecord.get(SALARY.DOMAIN));
+		salaryInfo.setContract(salaryRecord.get(SALARY.CONTRACT));
+		Date startDate = salaryRecord.get(SALARY.START_DATE);
+        Date endDate = salaryRecord.get(SALARY.END_DATE);
+        Date issueDate = salaryRecord.get(SALARY.ISSUE_DATE);
+        salaryInfo.setStartDate(dateFormat.format(startDate));
+        salaryInfo.setEndDate(dateFormat.format(endDate));
+        salaryInfo.setIssueDate(dateFormat.format(issueDate));
+		salaryInfo.setType(salaryRecord.get(SALARY.TYPE));
+		salaryInfo.setEnterpriseName(salaryRecord.get(SALARY.ENTERPRISE_NAME));
+		salaryInfo.setEmployeeName(salaryRecord.get(SALARY.EMPLOYEE_NAME));
+		salaryInfo.setTotalPayment(salaryRecord.get(SALARY.TOTAL_PAYMENT));
+		salaryInfo.setTotalDeduction(salaryRecord.get(SALARY.TOTAL_DEDUCTION));
+		salaryInfo.setTotalLiquid(salaryRecord.get(SALARY.TOTAL_LIQUID));
+		Integer contractId = salaryRecord.get(SALARY.CONTRACT);
+		Integer enterpriseId = getEnterpriseId(ctx.getDslContext(), contractId);
+		Record workplaceRecord = getWorkplaceRecord(ctx.getDslContext(), contractId);
+		String workplaceName = workplaceRecord.get(WORKPLACE.DESCRIPTION);
+		Integer workplaceId =  workplaceRecord.get(WORKPLACE.ID);
+		salaryInfo.setWorkplaceName(workplaceName);
+		salaryInfo.setWorkplaceId(workplaceId);
+		salaryInfo.setEnterpriseId(enterpriseId);
+		
+		return salaryInfo;
+	}
+	
 	public static Stream<ContractExtendedData> getContractExtendedDataStream(AONContext ctx, ContractExtendedDataFilter filter, Integer page, Integer perPage){
 		ctx.checkRead();
 		Field<Integer> dateMiliseconds = DSL.field("UNIX_TIMESTAMP(date)", Integer.class);

@@ -40,6 +40,7 @@ public class ContractServlet extends AonApiHttpServlet {
 	public static final String CONTRACT_COUNT = "/count";
 	public static final String EMPLOYEE_SALARY = "/salary";
 	public static final String EMPLOYEE_SALARY_COUNT = "/salary_count";
+	public static final String EMPLOYEE_SALARY_BY_ID = "/salary_id";
 	public static final String WORKPLACE = "/workplace";
 	public static final String CCC = "/ccc";
 	
@@ -64,6 +65,7 @@ public class ContractServlet extends AonApiHttpServlet {
 				.addRoute(CONTRACT_LIST_SIMPLIFIED, ContractServlet::getContractSimplifiedList)
 				.addRoute(CONTRACT_COUNT, ContractServlet::getContractCount)
 				.addRoute(EMPLOYEE_SALARY,ContractServlet::getEmployeeSalaries)
+				.addRoute(EMPLOYEE_SALARY_BY_ID,ContractServlet::getEmployeeSalary)
 				.addRoute(EMPLOYEE_SALARY_COUNT, ContractServlet::getEmployeeSalariesCount)
 				.addRoute(WORKPLACE,ContractServlet::getWorkplaceList)
 				.addRoute(CCC, ContractServlet::getCccList)
@@ -138,15 +140,22 @@ public class ContractServlet extends AonApiHttpServlet {
 	}
 	
 	private static JSONArray getEmployeeSalaries(AonApiData api) {
-		 JSONArray array = new JSONArray();
-		 	Integer page = api.getData().has("page") ? api.getData().optInt("page") : null;
-		 	Integer perPage = api.getData().has("per_page") ? api.getData().optInt("per_page") : null;
-		    List<AuxSalaryInfo> salaryList = PAYROLL.getEmployeeSalary(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(),
-		            f -> buildFilterSalariesNewPortal(f, api) , page, perPage);
-		    for (AuxSalaryInfo s : salaryList) {
-		        array.put(toJSONSalaryInfo(s));
-		    }
-		    return array;
+		JSONArray array = new JSONArray();
+	 	Integer page = api.getData().has("page") ? api.getData().optInt("page") : null;
+	 	Integer perPage = api.getData().has("per_page") ? api.getData().optInt("per_page") : null;
+	    List<AuxSalaryInfo> salaryList = PAYROLL.getEmployeeSalary(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(),
+	            f -> buildFilterSalariesNewPortal(f, api) , page, perPage);
+	    for (AuxSalaryInfo s : salaryList) {
+	        array.put(toJSONSalaryInfo(s));
+	    }
+	    return array;
+	}
+	
+	private static JSONObject getEmployeeSalary(AonApiData api) {
+		JSONObject json = new JSONObject();
+	    AuxSalaryInfo salary = PAYROLL.getEmployeeSalaryById(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), api.getData().optInt(IJsonNames.ID));
+	    json = toJSONSalaryInfo(salary);
+	    return json;
 	}
 	
 	private static long getEmployeeSalariesCount(AonApiData api) {

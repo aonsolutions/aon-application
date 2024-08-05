@@ -55,6 +55,7 @@ public interface IPayroll {
 	public void deleteContracts(AONContext ctx, Integer ...contractsId);
 	public long getContractCount(AONContext ctx, ContractExtendedDataFilter filter);
 	public List<AuxSalaryInfo> getEmployeeSalary(AONContext ctx, SalaryNewPortalFilter filter, Integer page, Integer perPage);
+	public AuxSalaryInfo getEmployeeSalaryById(AONContext ctx, Integer id);
 	public long getEmployeeSalaryCount(AONContext ctx, SalaryNewPortalFilter filter);
 	// -------------------- CONTRACT DATA
 	
