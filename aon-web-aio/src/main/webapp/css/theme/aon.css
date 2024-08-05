@@ -1,4 +1,7 @@
-
+:root{
+	  --aonNote: rgb(255, 248, 184);
+	  --aonSidenavIconColor: var(--aonBlack);
+}
 .aonToolbar2 { /* NUEVO LOGIN */
   background-color: var(--aonBlack);
 }
@@ -29,4 +32,28 @@
 
 .aonLoginSubTitle::after {
 	content: 'Accede a tu cuenta de AON';
+}
+
+/* Postit Notes */
+
+.aonHeaderNote {
+	--aonIcon: rgb(95, 99, 104);
+}
+
+#aon-notesSidenav {
+	--aonSidenavSelected: rgb(95, 99, 104);
+}
+
+#aon-notesSidenav .material-icons {
+	--aonNote: rgb(95, 99, 104);
+}
+
+.aonHeaderNote .aonHeaderAppSpan{
+  	color: rgb(95, 99, 104);
+}
+
+.aonHeaderNote .material-icons,
+.aonHeaderNote #aonHeaderCompanyName,
+.aonMenuLeftopNote .material-symbols-outlined {
+  color: rgb(95, 99, 104);
 }
