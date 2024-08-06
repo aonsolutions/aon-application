@@ -71,6 +71,9 @@ public class TimeControlServlet extends AonApiHttpServlet{
 			case "/historic":
 				response(req, resp, getTimeControlHistoric(api));
 				break;
+			case "/historic_new_portal":
+				response(req, resp, getTimeControlHistoricNewPortal(api));
+				break;
 			case "/list-holder":
 				response(req, resp, getTaskHolderTimeControlStream(api));
 				break;
@@ -252,6 +255,22 @@ public class TimeControlServlet extends AonApiHttpServlet{
 		);
 		return array;
 	}
+	
+	private JSONArray getTimeControlHistoricNewPortal(AonApiData api) {
+		Integer id = api.getData().optInt(IJsonNames.ID);
+		JSONArray array = new JSONArray();
+		
+		AON_SOLUTIONS.getTimeControlHistoricNewPortal(api.getDomain(), api.getUser().getLogin(), 
+				f->f.getDomainProperty().eq(api.getDomain().getId())
+				.and( f.getIdProperty().eq(id).or( f.getModificatedTimeControlProperty().eq(id)) )
+		)
+		.forEach(tc -> 
+			array.put(tc.toJSON())
+		);
+		return array;
+	}
+	
+	
 	
 	private JSONArray getTaskHolderTimeControlStream(AonApiData api) {		
 		Date startDate = AonDateUtils.getDateWithoutTime(new Date());
