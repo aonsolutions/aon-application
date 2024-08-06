@@ -13,6 +13,7 @@ import com.esferalia.aon.occam.api.model.aonsolutions.Coordinates;
 import com.esferalia.aon.occam.api.model.aonsolutions.Location;
 import com.esferalia.aon.occam.api.model.aonsolutions.TimeControl;
 import com.esferalia.aon.occam.api.model.aonsolutions.TimeControlDetail;
+import com.esferalia.aon.occam.api.model.aonsolutions.TimeControlDetailUserName;
 import com.esferalia.aon.occam.api.model.aonsolutions.TimeControlGroup;
 import com.esferalia.aon.occam.impl.jooq.dao.LocationDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.TimeControlDAO;
@@ -53,6 +54,11 @@ public class TimeControlImpl implements ITimeControl {
 	public Stream<TimeControlDetail> getTimeControlHistoric(AONContext ctx, TimeControlFilter filter) {
 		return ctx.getDslContext().transactionResult(
 				configuration -> TimeControlDAO.getTimeControlHistoric(ctx, filter));
+	}
+	@Override
+	public Stream<TimeControlDetailUserName> getTimeControlHistoricNewPortal(AONContext ctx, TimeControlFilter filter) {
+		return ctx.getDslContext().transactionResult(
+				configuration -> TimeControlDAO.getTimeControlHistoricNewPortal(ctx, filter));
 	}
 
 	@Override

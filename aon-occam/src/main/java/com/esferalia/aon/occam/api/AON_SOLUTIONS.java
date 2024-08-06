@@ -50,6 +50,7 @@ import com.esferalia.aon.occam.api.model.aonsolutions.Note;
 import com.esferalia.aon.occam.api.model.aonsolutions.Notification;
 import com.esferalia.aon.occam.api.model.aonsolutions.TimeControl;
 import com.esferalia.aon.occam.api.model.aonsolutions.TimeControlDetail;
+import com.esferalia.aon.occam.api.model.aonsolutions.TimeControlDetailUserName;
 import com.esferalia.aon.occam.api.model.aonsolutions.TimeControlGroup;
 import com.esferalia.aon.occam.api.model.aonsolutions.UserAppRole;
 import com.esferalia.aon.occam.api.model.finance.FinanceFilter;
@@ -587,6 +588,12 @@ public class AON_SOLUTIONS {
 	public static Stream<TimeControlDetail> getTimeControlHistoric(Domain domain, String login, TimeControlFilter filter) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(domain.getName(), domain.getId(), login)){
 			return getTimeControl().getTimeControlHistoric(ctx, filter);
+		}
+	}
+	
+	public static Stream<TimeControlDetailUserName> getTimeControlHistoricNewPortal(Domain domain, String login, TimeControlFilter filter) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domain.getName(), domain.getId(), login)){
+			return getTimeControl().getTimeControlHistoricNewPortal(ctx, filter);
 		}
 	}
 	

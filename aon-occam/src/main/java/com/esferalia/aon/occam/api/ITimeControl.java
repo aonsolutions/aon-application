@@ -11,6 +11,7 @@ import com.esferalia.aon.occam.api.model.aonsolutions.Coordinates;
 import com.esferalia.aon.occam.api.model.aonsolutions.Location;
 import com.esferalia.aon.occam.api.model.aonsolutions.TimeControl;
 import com.esferalia.aon.occam.api.model.aonsolutions.TimeControlDetail;
+import com.esferalia.aon.occam.api.model.aonsolutions.TimeControlDetailUserName;
 import com.esferalia.aon.occam.api.model.aonsolutions.TimeControlGroup;
 
 public interface ITimeControl {
@@ -22,6 +23,7 @@ public interface ITimeControl {
 	
 	public Stream<TimeControlDetail> getTimeControlDetailStream(AONContext ctx, TimeControlFilter filter);
 	public Stream<TimeControlDetail> getTimeControlHistoric(AONContext ctx, TimeControlFilter filter);
+	public Stream<TimeControlDetailUserName> getTimeControlHistoricNewPortal(AONContext ctx, TimeControlFilter filter);
 	public LinkedList<TimeControlDetail> getTimeControlDetailList(AONContext ctx, TimeControlFilter filter);
 	public TimeControlDetail saveTimeControlDetail(AONContext ctx, TimeControlDetail tcd);
 	public void deleteTimeControlDetail(AONContext ctx, Integer id);

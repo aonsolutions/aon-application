@@ -22,7 +22,9 @@ import org.jooq.Record;
 import org.jooq.SelectConditionStep;
 import org.jooq.UpdateSetMoreStep;
 import org.jooq.impl.DSL;
+import org.json.JSONObject;
 
+import com.esferalia.aon.jooq.tables.User;
 import com.esferalia.aon.jooq.tables.records.TimecontrolRecord;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Domain;
@@ -32,6 +34,7 @@ import com.esferalia.aon.occam.api.model.aonsolutions.Coordinates;
 import com.esferalia.aon.occam.api.model.aonsolutions.Location;
 import com.esferalia.aon.occam.api.model.aonsolutions.TimeControl;
 import com.esferalia.aon.occam.api.model.aonsolutions.TimeControlDetail;
+import com.esferalia.aon.occam.api.model.aonsolutions.TimeControlDetailUserName;
 import com.esferalia.aon.occam.api.model.aonsolutions.TimeControlGroup;
 import com.esferalia.aon.occam.api.model.aonsolutions.TimeControlStatus;
 import com.esferalia.aon.occam.api.model.task.TaskHolder;
@@ -67,6 +70,20 @@ public class TimeControlDAO {
 		return select(ctx, filter)
 			.orderBy(TIMECONTROL.ID.desc())
 			.fetch().stream().map(new TimeControlDetailFiller());
+	}
+	
+	public static Stream<TimeControlDetailUserName> getTimeControlHistoricNewPortal(AONContext ctx, TimeControlFilter filter){
+		ctx.checkRead();
+		return ctx.getDslContext()
+		            .select()
+		            .from(TIMECONTROL)
+		            .join(TASK_HOLDER).on(TASK_HOLDER.REGISTRY.eq(TIMECONTROL.TASK_HOLDER))
+		            .join(REGISTRY).on(REGISTRY.ID.eq(TASK_HOLDER.REGISTRY))
+		            .join(DOMAIN).on(TIMECONTROL.DOMAIN.eq(DOMAIN.ID))
+		            .join(User.USER).on(TIMECONTROL.CREATION_USER.eq(User.USER.LOGIN))
+		            .leftOuterJoin(LOCATION).on(LOCATION.ID.eq(TIMECONTROL.LOCATION))
+		            .where(TIMECONTROL_PROPERTIES.getConditions(filter)).orderBy(TIMECONTROL.ID.desc())
+		            .fetch().stream().map(new TimeControlDetailFillerNewPortal());
 	}
 	
 	
@@ -445,5 +462,33 @@ public class TimeControlDAO {
 					;	
 		}
 		
+	}
+	
+	public static class TimeControlDetailFillerNewPortal implements Function<Record, TimeControlDetailUserName> {
+
+	    private final TimeControlDetailFiller baseFiller = new TimeControlDetailFiller();
+
+	    @Override
+	    public TimeControlDetailUserName apply(Record r) {
+	        TimeControlDetail detail = baseFiller.apply(r);
+	        TimeControlDetailUserName detailUserName = new TimeControlDetailUserName();
+	      	        
+	        detailUserName.setId(detail.getId());
+	        detailUserName.setDomain(detail.getDomain());
+	        detailUserName.setDate(detail.getDate());
+	        detailUserName.setStatus(detail.getStatus());
+	        detailUserName.setTaskHolder(detail.getTaskHolder());
+	        detailUserName.setLocation(detail.getLocation());
+	        detailUserName.setComments(detail.getComments());
+	        detailUserName.setCoordinates(detail.getCoordinates());
+	        detailUserName.setCreationDate(detail.getCreationDate());
+	        detailUserName.setCreationUser(detail.getCreationUser());
+	        detailUserName.setModificationDate(detail.getModificationDate());
+	        detailUserName.setModificationUser(detail.getModificationUser());
+	        detailUserName.setModificatedTimeControl(detail.getModificatedTimeControl());
+	        detailUserName.setUserName(r.getValue(User.USER.NAME));
+
+	        return detailUserName;
+	    }
 	}
 }
