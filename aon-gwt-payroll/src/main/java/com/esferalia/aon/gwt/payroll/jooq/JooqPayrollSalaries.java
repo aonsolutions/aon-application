@@ -15,6 +15,7 @@ import static com.esferalia.aon.jooq.tables.SalaryDeduction.SALARY_DEDUCTION;
 import static com.esferalia.aon.jooq.tables.SalaryEmbargo.SALARY_EMBARGO;
 import static com.esferalia.aon.jooq.tables.SalaryPayment.SALARY_PAYMENT;
 import static com.esferalia.aon.jooq.tables.Scope.SCOPE;
+import static com.esferalia.aon.jooq.tables.User.USER;
 import static com.esferalia.aon.jooq.tables.UserScope.USER_SCOPE;
 import static com.esferalia.aon.jooq.tables.Workplace.WORKPLACE;
 
@@ -40,6 +41,8 @@ import com.esferalia.aon.gwt.payroll.shared.SalaryInfo.AlcatrazPeriod;
 import com.esferalia.aon.gwt.payroll.shared.SalaryInfo.AlcatrazTerritory;
 import com.esferalia.aon.gwt.payroll.shared.SalaryInfoFilter;
 import com.esferalia.aon.gwt.payroll.shared.WorkplaceEmployees;
+import com.esferalia.aon.jooq.tables.Scope;
+import com.esferalia.aon.jooq.tables.User;
 import com.esferalia.aon.jooq.tables.records.AlcatrazRecord;
 import com.esferalia.aon.jooq.tables.records.FsModelRecord;
 
@@ -371,7 +374,21 @@ public class JooqPayrollSalaries {
 	private static Condition getContractCondition(DSLContext dslContext, Integer domainId, Integer userId, SalaryInfoFilter filter) {
 		Condition condition = DSL.noCondition();
 		
-		List<Integer> userScopes = dslContext.select(USER_SCOPE.SCOPE).from(USER_SCOPE).where(USER_SCOPE.USER_ID.eq(userId)).fetch(USER_SCOPE.SCOPE);
+		List<Integer> userScopes = dslContext
+				.select(USER_SCOPE.SCOPE)
+				.from(USER_SCOPE)
+				.where(USER_SCOPE.USER_ID.eq(userId))
+				.fetch(USER_SCOPE.SCOPE);
+		
+		// Load scopes for domain. Only if it's a child of user's domain.
+		userScopes.addAll(
+			dslContext
+			.select(SCOPE.ID)
+			.from(SCOPE)
+			.innerJoin(DOMAIN).on(SCOPE.DOMAIN.eq(DOMAIN.ID))
+			.where(SCOPE.DOMAIN.eq(domainId))
+			.and(DOMAIN.PARENT.in( DSL.select(USER.DOMAIN).from(USER).where(USER.ID.eq(userId))))
+			.fetch(SCOPE.ID));
 		
 		if(isNumberValid(filter.getEnterpriseId())) {
 			condition = ENTERPRISE.REGISTRY.eq(filter.getEnterpriseId())
