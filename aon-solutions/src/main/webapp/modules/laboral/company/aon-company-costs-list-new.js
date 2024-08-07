@@ -54,6 +54,10 @@ export class AonCompanyCostsListNew extends AonElement {
   async build() {
     this.buildToolbar();
     await this.getTable();
+
+	const buildEvent = new CustomEvent(EVENT.BUILD, { panel: this });
+	this.dispatchEvent(buildEvent);
+
   }
 
   buildToolbar() {
