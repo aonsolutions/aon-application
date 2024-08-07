@@ -16,6 +16,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
@@ -376,7 +377,6 @@ public class DomainSwitcher extends AbstractDomainSwitcher implements
 		}
 		return condition;
 	}
-
 
 	private void initializeModel() {
 		
@@ -920,19 +920,19 @@ public class DomainSwitcher extends AbstractDomainSwitcher implements
 					ctx.getDslContext().select(DOMAIN.ID)
 					.from(DOMAIN)
 					.innerJoin(RAWDOC).on(DOMAIN.ID.eq(RAWDOC.DOMAIN))
-					.where(getDomainCondition().and(RAWDOC.STATUS.eq((byte)RawdocStatus.INBOX.ordinal()))).limit(COUNT_LIMIT+1).fetch(DOMAIN.ID).size();
+					.where(getCurrentDomainCondition().and(RAWDOC.STATUS.eq((byte)RawdocStatus.INBOX.ordinal()))).limit(COUNT_LIMIT+1).fetch(DOMAIN.ID).size();
 			
 			this.reject = 
 					ctx.getDslContext().select(DOMAIN.ID)
 					.from(DOMAIN)
 					.innerJoin(RAWDOC).on(DOMAIN.ID.eq(RAWDOC.DOMAIN))
-					.where(getDomainCondition().and(RAWDOC.STATUS.eq((byte)RawdocStatus.REJECTED.ordinal()))).limit(COUNT_LIMIT+1).fetch(DOMAIN.ID).size();
+					.where(getCurrentDomainCondition().and(RAWDOC.STATUS.eq((byte)RawdocStatus.REJECTED.ordinal()))).limit(COUNT_LIMIT+1).fetch(DOMAIN.ID).size();
 
 			this.unaccount = 
 					ctx.getDslContext().select(DOMAIN.ID)
 					.from(DOMAIN)
 					.innerJoin(INVOICE).on(DOMAIN.ID.eq(INVOICE.DOMAIN))
-					.where(getDomainCondition().and(INVOICE.STATUS.eq((byte)InvoiceStatus.PENDING.ordinal()))).limit(COUNT_LIMIT+1).fetch(DOMAIN.ID).size();
+					.where(getCurrentDomainCondition().and(INVOICE.STATUS.eq((byte)InvoiceStatus.PENDING.ordinal()))).limit(COUNT_LIMIT+1).fetch(DOMAIN.ID).size();
 			return this.pending + this.reject  + this.unaccount;
 		}
 	}
@@ -974,6 +974,10 @@ public class DomainSwitcher extends AbstractDomainSwitcher implements
 		return getDomainName();
 	}
 	
+
+	private Condition getCurrentDomainCondition() {
+		return Objects.equals(parentDomain, domainId) ? getDomainCondition() : DOMAIN.ID.eq(getDomainId());
+	}
 
 	private static DomainType getSafeDomainType( Byte b ) {
 		if (b == null) return null;
