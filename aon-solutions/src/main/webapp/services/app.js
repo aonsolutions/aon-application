@@ -9,7 +9,7 @@ import * as InvoiceOptions from  "../modules/invoice/InvoiceOptions.js";
 export const TIMECONTROL = {
   app: CONSTANT.TIMECONTROL,
   title: MSG.TIMECONTROL,
-  description: MSG.TIMECONTROL,
+  description: MSG.TIMECTRL,
   tag: MSG_ES.TIMECONTROL,
   icon: LS.isNewTheme() ? AON_ICONS.AON_NEW_TIMECONTROL : AON_ICONS.AON_TIMECONTROL,
   newIcon: AON_ICONS.AON_NEW_TIMECONTROL,
@@ -399,6 +399,7 @@ export const TOOLS = {
 export const NOTES = {
   app: "note",
   title: MSG.NOTES,
+  description: MSG.NOTES,
   icon: LS.isNewTheme() ? AON_ICONS.AON_NEW_NOTES : AON_ICONS.AON_NOTES,
   newIcon: AON_ICONS.AON_NEW_NOTES,
   color: "var(--aonNote)",

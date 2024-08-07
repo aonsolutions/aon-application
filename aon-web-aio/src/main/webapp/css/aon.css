@@ -61,7 +61,7 @@
 	--aonFiscal: #FB982E;
 	--aonFiscalBackground: #fef3e7;
   
-	--aonMessenger: #f6655a;
+	--aonMessenger: rgb(134, 211, 100);
 	--aonMessengerBackground: #feedec;
   
 	--aonTimecontrol: #D1C36D;
@@ -417,7 +417,10 @@
 }
 
 .rootPanel {
-  /* z-index: 3; */	
+  z-index: 3;	
+  padding-left: 2px;
+  background-color: #fafafa;
+
   position: relative;
   height: calc(100vh - 49px);
   overflow-y: auto;
@@ -757,6 +760,7 @@ h1 {
   align-items: center;
   justify-content: space-between;
   height: 4rem;
+  min-height: 4rem;
   border-bottom: solid 0.05rem #d2d2d6;
   padding: 0 2rem;
 }
@@ -2758,9 +2762,14 @@ label.rating:hover {
 	background-color: var(--aonLightGray);
 }
 
+
 .aonHeaderHome,
 .aonMenuLeftopHome{
 	background-color: var(--aonLightGray);
+}
+
+#aonMenuList-home.aonMenuSidenavLiSeleted {
+	border-left: 3px solid var(--aonBlue);
 }
 
 .aonHeaderApplications,
@@ -2773,9 +2782,18 @@ label.rating:hover {
 	background-color: var(--aonNote);
 }
 
+#aonMenuList-note.aonMenuSidenavLiSeleted {
+	border-left: 3px solid var(--aonNote);
+}
+
+
 .aonHeaderFiscal,
 .aonMenuLeftopFiscal{
 	background-color: var(--aonFiscal);
+}
+
+#aonMenuList-fiscal.aonMenuSidenavLiSeleted {
+	border-left: 3px solid var(--aonFiscal);
 }
 
 .aonHeaderPayroll,
@@ -2783,9 +2801,17 @@ label.rating:hover {
 	background-color: var(--aonPayroll);
 }
 
+#aonMenuList-payroll.aonMenuSidenavLiSeleted {
+	border-left: 3px solid var(--aonPayroll);
+}
+
 .aonHeaderInvoice,
 .aonMenuLeftopInvoice {
 	background-color: var(--aonInvoice);
+}
+
+#aonMenuList-invoice.aonMenuSidenavLiSeleted {
+	border-left: 3px solid var(--aonInvoice);
 }
 
 .aonHeaderDocumental,
@@ -2793,9 +2819,17 @@ label.rating:hover {
 	background-color: var(--aonDocumental);
 }
 
+#aonMenuList-documental.aonMenuSidenavLiSeleted {
+	border-left: 3px solid var(--aonDocumental);
+}
+
 .aonHeaderAccounting,
 .aonMenuLeftopAccounting {
 	background-color: var(--aonAccountingColor);
+}
+
+#aonMenuList-accounting.aonMenuSidenavLiSeleted {
+	border-left: 3px solid var(--aonAccounting);
 }
 
 .aonHeaderTimecontrol,
@@ -2803,9 +2837,17 @@ label.rating:hover {
 	background-color: var(--aonTimecontrol);
 }
 
+#aonMenuList-timecontrol.aonMenuSidenavLiSeleted {
+	border-left: 3px solid var(--aonTimecontrol);
+}
+
 .aonHeaderMessenger,
 .aonMenuLeftopMessenger {
 	background-color: var(--aonMessenger);
+}
+
+#aonMenuList-messenger.aonMenuSidenavLiSeleted {
+	border-left: 3px solid var(--aonMessenger);
 }
 
 .aonHeaderOffice,

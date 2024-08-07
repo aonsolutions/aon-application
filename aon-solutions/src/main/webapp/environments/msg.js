@@ -657,6 +657,7 @@ export const TICKET = MSG.TICKET;
 export const TICKETBAI = MSG.TICKETBAI;
 export const TICKETS = MSG.TICKETS;
 export const TIMECONTROL = MSG.TIMECONTROL;
+export const TIMECTRL = MSG.TIMECTRL;
 export const TITULAR_DATA = MSG.TITULAR_DATA;
 export const TO = MSG.TO;
 export const TO_TRASH = MSG.TO_TRASH;

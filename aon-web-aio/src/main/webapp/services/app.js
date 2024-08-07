@@ -5,6 +5,7 @@ import { MATERIAL_ICONS, MSG, CONSTANT, AON_ICONS } from "aonsolutions/environme
 export const NEW = {
 	home : true,
 	title: MSG.NEW,
+	description: MSG.NEW,
 	app: CONSTANT.NEW,
 	symbol: MATERIAL_ICONS.ADD_CIRCLE_OUTLINE,
 };
@@ -19,6 +20,7 @@ export const NOTIFICATION = {
 export const HOME = {
 	home : true,
 	title: MSG.HOME,
+	description: MSG.HOME,
 	app: CONSTANT.HOME,
 	symbol: MATERIAL_ICONS.HOME,
 };
@@ -27,11 +29,13 @@ export const APPS = {
 	home : true,
 	app: CONSTANT.APPS,
 	title: MSG.APPLICATIONS,
+	description: MSG.APPLICATIONS,
 	symbol: MATERIAL_ICONS.APPS,
 };
 
 export const APPLICATIONS = {
 	home : true,
+	title: MSG.APPLICATIONS,
 	app: CONSTANT.APPLICATIONS,
 	symbol: MATERIAL_ICONS.APPLICATIONS,
 };
