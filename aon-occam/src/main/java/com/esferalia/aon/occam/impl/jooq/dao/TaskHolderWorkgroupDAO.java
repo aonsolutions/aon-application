@@ -6,6 +6,7 @@ import static com.esferalia.aon.jooq.tables.TaskHolder.TASK_HOLDER;
 import static com.esferalia.aon.jooq.tables.Workgroup.WORKGROUP;
 
 import java.sql.Timestamp;
+import static com.esferalia.aon.occam.impl.jooq.dao.TaskHolderDAO.TASK_HOLDER_ALIAS;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.function.Function;
@@ -63,7 +64,7 @@ public class TaskHolderWorkgroupDAO {
 				.from(TASK_HOLDER_WORKGROUP)
 				.join(WORKGROUP).on(WORKGROUP.ID.eq(TASK_HOLDER_WORKGROUP.WORKGROUP))
 				.join(TASK_HOLDER).on(TASK_HOLDER.REGISTRY.eq(TASK_HOLDER_WORKGROUP.TASK_HOLDER))
-				.join(REGISTRY).on(REGISTRY.ID.eq(TASK_HOLDER.REGISTRY))
+				.join(TASK_HOLDER_ALIAS).on(TASK_HOLDER_ALIAS.ID.eq(TASK_HOLDER.REGISTRY))
 				.where(TASK_HOLDER_WORKGROUP_PROPERTIES.getConditions(filter));
 	}
 	
@@ -141,7 +142,7 @@ public class TaskHolderWorkgroupDAO {
 			return new TaskHolderWorkgroup()
 					.setId(r.getValue(TASK_HOLDER_WORKGROUP.ID))
 					.setDomain(r.getValue(TASK_HOLDER_WORKGROUP.DOMAIN))
-					.setTaskHolder(TaskHolderFiller.build(r, REGISTRY))
+					.setTaskHolder(TaskHolderFiller.build(r))
 					.setWorkgroup(WorkgroupFiller.buildWorkgroup(r))
 					.setStartDate(r.getValue(TASK_HOLDER_WORKGROUP.START_DATE))
 					.setEndDate(r.getValue(TASK_HOLDER_WORKGROUP.END_DATE))

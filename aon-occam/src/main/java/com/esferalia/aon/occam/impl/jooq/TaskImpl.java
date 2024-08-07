@@ -13,6 +13,7 @@ import com.esferalia.aon.occam.api.model.Filter.TaskHolderFilter;
 import com.esferalia.aon.occam.api.model.Filter.TaskHolderWorkgroupFilter;
 import com.esferalia.aon.occam.api.model.Filter.TaskTagFilter;
 import com.esferalia.aon.occam.api.model.OldTask;
+import com.esferalia.aon.occam.api.model.Options;
 import com.esferalia.aon.occam.api.model.Workgroup;
 import com.esferalia.aon.occam.api.model.office.Tag;
 import com.esferalia.aon.occam.api.model.security.TaskHolderWorkgroup;
@@ -241,9 +242,9 @@ public class TaskImpl implements ITask {
 	}
 
 	@Override
-	public TaskHolder getTaskHolder(AONContext ctx, TaskHolderFilter filter) {
+	public TaskHolder getTaskHolder(AONContext ctx, TaskHolderFilter filter, Options...options) {
 		return ctx.getDslContext().transactionResult(
-				configuration -> TaskOldDAO.getTaskHolder(ctx, filter));
+				configuration -> TaskHolderDAO.get(ctx, filter, options));
 	}
 
 	@Override
@@ -265,9 +266,9 @@ public class TaskImpl implements ITask {
 	}
 
 	@Override
-	public TaskHolder deleteTaskHolder(AONContext ctx, Integer taskHolder) {
-		return ctx.getDslContext().transactionResult(
-				configuration -> TaskOldDAO.deleteTaskHolder(ctx, taskHolder));
+	public void deleteTaskHolder(AONContext ctx, Integer taskHolder) {
+		ctx.getDslContext().transaction(
+				configuration -> TaskHolderDAO.delete(ctx, taskHolder));
 	}
 
 	@Override
@@ -307,17 +308,11 @@ public class TaskImpl implements ITask {
 	}
 
 	@Override
-	public Stream<TaskHolder> getTaskHolderStream(AONContext ctx, TaskHolderFilter filter, int ofs, int limit) {
+	public Stream<TaskHolder> getTaskHolderStream(AONContext ctx, TaskHolderFilter filter, Options...options) {
 		return ctx.getDslContext().transactionResult(
-				configuration -> TaskOldDAO.getTaskHolderStream(ctx, filter, ofs, limit));
+				configuration -> TaskHolderDAO.getStream(ctx, filter, options));
 	}
-	
-	@Override
-	public List<TaskHolder> getTaskHolderFullList(AONContext ctx, TaskHolderFilter filter) {
-		return ctx.getDslContext().transactionResult(
-				configuration -> TaskHolderDAO.getTaskHolderFullList(ctx, filter));
-	}
-	
+
 	@Override
 	public Stream<TaskHolder> getTaskHolderStream(AONContext ctx, byte[] auth) {
 		return ctx.getDslContext().transactionResult(

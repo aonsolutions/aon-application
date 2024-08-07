@@ -13,6 +13,7 @@ import static com.esferalia.aon.jooq.tables.TaskHolderWorkgroup.TASK_HOLDER_WORK
 import static com.esferalia.aon.jooq.tables.TaskTag.TASK_TAG;
 import static com.esferalia.aon.jooq.tables.User.USER;
 import static com.esferalia.aon.jooq.tables.Workgroup.WORKGROUP;
+import static com.esferalia.aon.occam.impl.jooq.dao.TaskHolderDAO.TASK_HOLDER_ALIAS;
 
 import java.sql.Timestamp;
 import java.util.Calendar;
@@ -288,7 +289,7 @@ public class TaskOldDAO {
 		// mine (for fast filter)
 		if(issueFilter.getMine() != null && !issueFilter.getMine().equals("")){
 			User user = SecurityDAO.getUser(ctx, issueFilter.getMine());
-			TaskHolder taskHolder = getTaskHolder(ctx, f -> f.getDomainProperty().eq(ctx.getDomainId()).and(f.getUserIdProperty().eq(user.getId())));
+			TaskHolder taskHolder = TaskHolderDAO.get(ctx, f -> f.getDomainProperty().eq(ctx.getDomainId()).and(f.getUserIdProperty().eq(user.getId())));
 			LinkedList<Integer> workgroups = getTaskHolderWorkgroupStream(ctx, f -> f.getTaskHolderProperty().eq(taskHolder.getId())).
 					map(r -> r.getId()).collect(Collectors.toCollection(LinkedList::new));
 			Condition m = TASK.CREATION_USER.eq(issueFilter.getMine())
@@ -708,12 +709,13 @@ public class TaskOldDAO {
 	}
 
 	public static Stream<TaskHolder> getTaskMemberWStream(AONContext ctx, String filter, Integer workgroupId){
-		return ctx.getDslContext().select().from(REGISTRY).join(TASK_HOLDER).on(TASK_HOLDER.REGISTRY.eq(REGISTRY.ID))
-				.join(TASK_HOLDER_WORKGROUP).on(TASK_HOLDER.REGISTRY.eq(TASK_HOLDER_WORKGROUP.TASK_HOLDER))
-				.join(DOMAIN).on(DOMAIN.ID.eq(TASK_HOLDER.DOMAIN))
-			.where(REGISTRY.DOMAIN.eq(ctx.getDomainId())).and(REGISTRY.NAME.like(filter))
-				.and(TASK_HOLDER_WORKGROUP.WORKGROUP.eq(workgroupId)).orderBy(REGISTRY.NAME)
-			.fetch().stream().map(new TaskHolderFiller());
+		return ctx.getDslContext().select().from(TASK_HOLDER)
+			.join(TASK_HOLDER_ALIAS).on(TASK_HOLDER_ALIAS.ID.eq(TASK_HOLDER.REGISTRY))
+			.join(DOMAIN).on(DOMAIN.ID.eq(TASK_HOLDER_ALIAS.DOMAIN))
+			.join(TASK_HOLDER_WORKGROUP).on(TASK_HOLDER.REGISTRY.eq(TASK_HOLDER_WORKGROUP.TASK_HOLDER))
+			.where(TASK_HOLDER_ALIAS.DOMAIN.eq(ctx.getDomainId())).and(TASK_HOLDER_ALIAS.NAME.like(filter))
+				.and(TASK_HOLDER_WORKGROUP.WORKGROUP.eq(workgroupId)).orderBy(TASK_HOLDER_ALIAS.NAME)
+			.fetch().stream().map(new com.esferalia.aon.occam.impl.jooq.dao.TaskHolderDAO.TaskHolderFiller());
 	}
 	
 	public static Stream<Customer> getFilterCustomerStream(AONContext ctx, String filter){
@@ -772,19 +774,6 @@ public class TaskOldDAO {
 			.returning().fetch().stream().map(new FullWorkgroupFiller()).findFirst().orElse(new Workgroup());	
 	}
 
-	
-	@Deprecated
-	public static Stream<TaskHolder> getTaskHolderStream(AONContext ctx, TaskHolderFilter filter, int ofs, int limit){
-		return ctx.getDslContext().select()
-				.from(TASK_HOLDER).join(REGISTRY).on(REGISTRY.ID.eq(TASK_HOLDER.REGISTRY))
-				.join(DOMAIN).on(DOMAIN.ID.eq(TASK_HOLDER.DOMAIN))
-				.where(TASK_HOLDER_PROPERTIES.getConditions(filter))
-				.orderBy(REGISTRY.NAME)
-				.offset(ofs)
-				.limit(limit)
-				.fetch().stream().map(new TaskHolderFiller());
-	}
-	
 	@Deprecated
 	public static Stream<TaskHolder> getTaskHolderStream(AONContext ctx, byte[] auth){
 		return ctx.getDslContext().select()
@@ -793,13 +782,6 @@ public class TaskOldDAO {
 				.join(USER).on(USER.ID.eq(TASK_HOLDER.USER_ID))
 				.where(USER.AUTH.eq(auth))
 				.fetch().stream().map(new TaskHolderFiller());
-	}
-
-	@Deprecated
-	public static TaskHolder getTaskHolder(AONContext ctx, TaskHolderFilter filter){
-		return ctx.getDslContext()
-				.select().from(TASK_HOLDER).where(TASK_HOLDER_PROPERTIES.getConditions(filter))
-				.fetchInto(TASK_HOLDER).stream().map(new TaskHolderFiller()).findFirst().orElse(new TaskHolder());
 	}
 	
 	@Deprecated
@@ -835,13 +817,6 @@ public class TaskOldDAO {
 					AonEnumUtils.getByte(taskHolder.isLegalPerson()), taskHolder.getUserId())
 			.returning().fetch().stream().map(new TaskHolderFiller()).findFirst().orElse(new TaskHolder());
 	}
-	
-	@Deprecated
-	public static TaskHolder deleteTaskHolder(AONContext ctx, Integer taskHolder){
-		return ctx.getDslContext().delete(TASK_HOLDER)
-				.where(TASK_HOLDER.REGISTRY.eq(taskHolder))
-			.returning().fetch().stream().map(new TaskHolderFiller()).findFirst().orElse(new TaskHolder());
-	}
 
 	public static Stream<Workgroup> getTaskHolderWorkgroupStream(AONContext ctx, TaskHolderWorkgroupFilter filter){
 		return ctx.getDslContext().select().from(TASK_HOLDER_WORKGROUP).join(WORKGROUP).on(WORKGROUP.ID.eq(TASK_HOLDER_WORKGROUP.WORKGROUP))
@@ -866,6 +841,7 @@ public class TaskOldDAO {
 				.execute();
 	}
 
+	@Deprecated
 	protected static class TaskHolderFiller implements Function<Record, TaskHolder> {
 		@Override
 		public TaskHolder apply(Record r) {
