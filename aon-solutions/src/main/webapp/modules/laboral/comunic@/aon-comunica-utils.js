@@ -1,5 +1,5 @@
 import { AonElement } from "../../../components/AonElement.js";
-import { CONSTANT, MSG } from "../../../environments/environments.js";
+import { CONSTANT, MSG, EVENT } from "../../../environments/environments.js";
 import * as GWT from "../../../gwt/gwt.js";
 import * as LS from "../../../services/localStorageService.js";
 import { DomainUserRoles } from "../../../models/DomainUserRoles.js";
@@ -241,6 +241,7 @@ export class AonComunicaUtils extends AonElement {
         case PAYROLL_VIEWS.AON_COMPANY_COSTS_LIST:
           if(LS.isNewTheme()){
             aonView = new AonCompanyCostsListNew();
+			aonView.addEventListener(EVENT.BUILD, paintCompanyCostPieChart );
           } else {
             aonView = new AonCompanyCostsList();
           }
@@ -253,7 +254,7 @@ export class AonComunicaUtils extends AonElement {
         this.getApplication().setContent(aonView);
         
         if(LS.isNewTheme() && view === PAYROLL_VIEWS.AON_COMPANY_COSTS_LIST){
-          await paintCompanyCostPieChart();
+          /*await paintCompanyCostPieChart();*/
         }
       }
       resolve(aonView);
