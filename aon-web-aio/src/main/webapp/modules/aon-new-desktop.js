@@ -52,6 +52,7 @@ export class AonNewDesktop extends AonElement {
 		
 		desktopDiv.appendChild(desktopAppsDiv);
 		
+		/*
 		let bannerAonAppsDiv = this.createElement(TAG.DIV);
 		let titleAonH1 = this.createElement(TAG.H1);
 		titleAonH1.innerHTML = 'Más de AON Solutions';
@@ -66,7 +67,8 @@ export class AonNewDesktop extends AonElement {
 			desktopAonAppsDiv.appendChild(this.buildMasApp(this.aonApps[app]));
 		}
 		desktopDiv.appendChild(desktopAonAppsDiv);
-
+		*/
+		
 		this.appendChild(desktopDiv);		
 	}
 	

@@ -1,7 +1,9 @@
-:root{
-	  --aonNote: rgb(255, 248, 184);
-	  --aonSidenavIconColor: var(--aonBlack);
+.rootPanel {
+  z-index: 3;	
+  padding-left: 2px;
+  background-color: #fafafa;
 }
+
 .aonToolbar2 { /* NUEVO LOGIN */
   background-color: var(--aonBlack);
 }
@@ -26,6 +28,10 @@
 	background-image: url('https://www.aonsolutions.es/favicon.svg');
 }
 
+#divCompanyLogoForm {
+	display:none;
+}
+
 #aonLoginLanguageSpanToolbar{
   color: var(--aonWhite);
 }
@@ -34,18 +40,24 @@
 	content: 'Accede a tu cuenta de AON';
 }
 
-/* Postit Notes */
+
+.aonMenuSidenav{
+	--aonNote: rgb(255, 228, 104);
+}
+
+.rootPanel,
+.aonHeader,
+.aonMenuLeftop {
+	--aonNote: rgb(255, 248, 184);
+}
 
 .aonHeaderNote {
 	--aonIcon: rgb(95, 99, 104);
 }
 
+
 #aon-notesSidenav {
 	--aonSidenavSelected: rgb(95, 99, 104);
-}
-
-#aon-notesSidenav .material-icons {
-	--aonNote: rgb(95, 99, 104);
 }
 
 .aonHeaderNote .aonHeaderAppSpan{
@@ -56,4 +68,64 @@
 .aonHeaderNote #aonHeaderCompanyName,
 .aonMenuLeftopNote .material-symbols-outlined {
   color: rgb(95, 99, 104);
+}
+
+#aon-notesSidenav .material-icons {
+	--aonNote: rgb(95, 99, 104);
+}
+
+#aonInvoiceSidenav .material-icons {
+	--aonInvoice: rgb(95, 99, 104);
+}
+
+#aonAccountingSidenav .material-icons {
+	--aonAccounting: rgb(95, 99, 104);
+}
+
+#aonFiscalSidenav img {
+	filter: grayscale(100%);
+}
+#aonFiscalSidenav .material-icons {
+	--aonFiscal: rgb(95, 99, 104);
+}
+
+#aonLaboralSidenav aon-icon,
+#aonLaboralSidenav .material-icons {
+	--aonPayroll: rgb(95, 99, 104);
+}
+
+#aonMessengerSidenav .material-icons {
+	--aonMessenger: rgb(95, 99, 104);
+}
+
+#aonDocumentalSidenav .material-icons {
+	--aonDocumental: rgb(95, 99, 104);
+}
+
+#aonSigninSidenav .material-icons {
+	--aonTimecontrol: rgb(95, 99, 104);
+}
+
+#applications:hover,
+.aonMenuLeftopNew #applications,
+.aonMenuLeftopHome #applications,
+.aonNewMenuLeftTopAppDiv #applications,
+.aonMenuLeftopApplications #applications{
+  background-size: cover ;
+  background-image: url("/images/theme/aon-background.webp");
+}
+
+#applications:hover #aonMenuListAppImgTop-applications,
+.aonMenuLeftopNew #aonMenuListAppImgTop-applications,
+.aonMenuLeftopHome #aonMenuListAppImgTop-applications,
+.aonNewMenuLeftTopAppDiv #aonMenuListAppImgTop-applications,
+.aonMenuLeftopApplications #aonMenuListAppImgTop-applications {
+  color: white;
+}
+
+/**
+Important. Keep this rule at the end of file 
+**/
+.aonTheme {
+	--aon-theme: 'AON';
 }

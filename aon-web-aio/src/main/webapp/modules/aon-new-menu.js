@@ -251,8 +251,8 @@ export class AonNewMenu extends AonElement {
 		};
 
         if(this.isApp(app) || excludedApps.includes(app.app)){
-//			if(!(!this.isApp(app) && !excludedApps.includes(app.app))){
 			this.dispatchEvent(new CustomEvent(EVENT.AON_APPLICATION_SELECT, { detail }));
+			this.setSelectedMenuSidenav(app);
 		}
 		
 		let appsDiv = this.getElement("aonMenuLeftop-applications");
@@ -331,7 +331,6 @@ export class AonNewMenu extends AonElement {
 				li.id = `aonMenuList-${app.app}`;
 				li.classList.add("aonNewMenuSideNavLi");
 				li.appendChild(this.buildApp(app,{color: `var(--aonSidenavIconColor, ${app.newColor || app.color})`},true));
-
 				ul.appendChild(li);
 			}
 		}
@@ -344,7 +343,7 @@ export class AonNewMenu extends AonElement {
 		aonMenuSidenav.appendChild(ul);
 
 	}
-
+	
 	buildMenuTopnav() {
 		const showAllApps = LS.isAppMenu();
 		let aonMenuTopnav = this.getElement(this.AON_MENU_TOPNAV);
@@ -482,10 +481,7 @@ export class AonNewMenu extends AonElement {
 		a.addEventListener(EVENT.CLICK, () => {
 			this.appSelection(app, sidenav);
 		});
-/*		a.addEventListener(EVENT.MOUSEOVER, () => {
-			this.appMouseOver(app, sidenav);
-		});
-*/		a.classList.add('aonMenuApp');
+		a.classList.add('aonMenuApp');
 
 		let hoverDiv = this.createElement(TAG.DIV);
 		hoverDiv.innerHTML = app.title;
@@ -540,18 +536,12 @@ export class AonNewMenu extends AonElement {
 			div.appendChild(img);
 		}
 
-		if (app.title) {
-			// let titles = app.title.match(/\b\w+\b/g);
-			// for (let i = 0; i < 2; i++) {
-				let span = this.createElement(TAG.SPAN);
-				span.id = `aonMenuListAppTitle-${app.app}`;//-${i}`;
-				span.classList.add("aonNewMenuAppSpan");
-				if (MenuApps.TIMECONTROL.app === app.app) {
-					app.title = 'Ctr. Horario'
-				}
-				span.innerHTML = app.title; // titles.length > i ? titles[i] : '&nbsp;';
-				div.appendChild(span);
-			// }
+		if (app.description) {
+			let span = this.createElement(TAG.SPAN);
+			span.id = `aonMenuListAppTitle-${app.app}`;//-${i}`;
+			span.classList.add("aonNewMenuAppSpan");
+			span.innerHTML = app.description; 
+			div.appendChild(span);
 		}
 		if(welcome && app.app == "applications"){
 			div.addEventListener("click", (event) => {
@@ -1019,10 +1009,21 @@ export class AonNewMenu extends AonElement {
 		invoicePanel.addEventListener(EVENT.BUILD, () => invoicePanel.aonInvoice(invoice) );
 		this.rootPanel(invoicePanel);
 		this.setAppClassName(Apps.INVOICE);
+		this.setSelectedMenuSidenav(Apps.INVOICE);
 		this.dispatchEvent(new CustomEvent(EVENT.AON_APPLICATION_SELECT, { detail : { app: Apps.INVOICE } }));		
 	}
 	
-
+	setSelectedMenuSidenav(app) {
+		const aonMenuSidenav = this.getElement(this.AON_MENU_SIDENAV);
+		const aonMenuSidenavLis = aonMenuSidenav.getElementsByTagName(TAG.LI);
+		for ( const aonMenuSidenavLi of aonMenuSidenavLis  ) {
+			if ( aonMenuSidenavLi.id === `aonMenuList-${app?.app}` ) {
+				aonMenuSidenavLi.classList.add("aonMenuSidenavLiSeleted");
+			} else {
+				aonMenuSidenavLi.classList.remove("aonMenuSidenavLiSeleted");
+			}
+		}
+	}
 }
 if (!window.customElements.get(TAG.AON_NEW_MENU)) {
 	window.customElements.define(TAG.AON_NEW_MENU, AonNewMenu);
