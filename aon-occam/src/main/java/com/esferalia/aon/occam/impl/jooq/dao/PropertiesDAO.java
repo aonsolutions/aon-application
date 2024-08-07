@@ -934,6 +934,11 @@ public class PropertiesDAO {
 		public Property<String> getNameProperty() {
 			return new FilterDAO.PropertyDAO<>(REGISTRY.NAME);
 		}
+		
+		@Override
+		public Property<String> getDocumentProperty() {
+			return new FilterDAO.PropertyDAO<>(REGISTRY.DOCUMENT);
+		}
 	}
 	
 	protected static class SalaryNewPortalPropertiesDAO extends SalaryPropertiesDAO implements SalaryNewPortalProperties{

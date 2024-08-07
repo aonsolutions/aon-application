@@ -176,13 +176,15 @@ public class ContractServlet extends AonApiHttpServlet {
 		Integer auxSalaryType = (int) salaryType;
 		Date to = JsonUtils.getDate(params, IJsonNames.TO);
 		Date from = JsonUtils.getDate(params, IJsonNames.FROM);
+		String global = JsonUtils.optString(params, IJsonNames.GLOBAL);
 		
 //		if(name != null) {
 //			filter = filter.and(properties.getPersonFullNameProperty().like("%"+name+"%"));
 //		}
-		if(!AonStringUtils.isEmpty(api.getData().optString("global"))) {
-			filter = filter.and(properties.getNameProperty().like("%"+api.getData().optString("global")+"%"));
-//					.or(properties.getDateStringProperty().like("%"+api.getData().optString("global")+"%")));
+		
+		if(!AonStringUtils.isEmpty(global)) {
+			filter = filter.and(properties.getNameProperty().like("%"+api.getData().optString("global")+"%")
+					.or(properties.getDocumentProperty().like("%"+api.getData().optString("global")+"%")));
 		}
 		
 		if(ccc != null) {
