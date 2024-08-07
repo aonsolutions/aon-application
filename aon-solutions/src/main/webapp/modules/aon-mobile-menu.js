@@ -20,6 +20,7 @@ import { TASK_SOURCE } from "./messenger/MessengerEnums.js";
 import { AonDocumental } from "./documental/aon-documental.js";
 import { AonWarehouse } from "./warehouse/aon-warehouse.js";
 import { openCamera, openBarcode } from "../services/actionService.js";
+import { AonImageEditor } from "../components/aon-image-editor.js";
 
 import * as WAREHOUSE_OPTION from './warehouse/WarehouseOptions.js';
 
@@ -319,7 +320,11 @@ export class AonMobileMenu extends AonElement {
           if(UA.isAndroidApp()) {
             this.SELECTED = "invoice";
             let ionicData = { action: MOBILE_ACTION.CAMERA, id: this.INPUT_CAMERA, selector: 'aon-new-mobile-menu' };
-            openCamera(ionicData, (result) => alert(JSON.stringify(result)));
+            openCamera(ionicData, (result) => {
+              let editor = new AonImageEditor();
+              editor.image = "data:image/jpeg;base64,"+result.photo;
+              this.rootPanel(editor);
+            });
           } else this.openCamera("invoice");
         }
       }
@@ -491,8 +496,11 @@ export class AonMobileMenu extends AonElement {
 
 	async openCamera(type) {
     this.SELECTED = type;
-		const isApp = await mobileAction({ action: MOBILE_ACTION.CAMERA, id: this.INPUT_CAMERA, selector: 'aon-new-mobile-menu' });
-		if (!isApp) this.getElement(this.INPUT_CAMERA).click();
+    if(this.isBeta()) this.getElement(this.INPUT_CAMERA).click();
+    else {
+      const isApp = await mobileAction({ action: MOBILE_ACTION.CAMERA, id: this.INPUT_CAMERA, selector: 'aon-new-mobile-menu' });
+		  if (!isApp) this.getElement(this.INPUT_CAMERA).click();
+    }
 	}
 
   receiveAppImage(file) {

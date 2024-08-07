@@ -63,7 +63,7 @@ export const openFile = (file) => {
 export const changeStatusBarColor = (ionicData, color) => {
     let data = {action: 'changeStatusBarColor', color};
     if(UA.isAndroidApp()) {
-        window.Android.openFile(JSON.stringify(data));
+        window.Android.changeStatusBarColor(JSON.stringify(data));
     } else if (UA.isIosApp()) {
         window.webkit.messageHandlers.doStuffMessageHandler.postMessage(data);
     } else if(UA.isAppMobile()) {

@@ -19,6 +19,7 @@ import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
+import net.aonsolutions.db.up2date.config.InsertIAE864;
 import net.aonsolutions.db.up2date.finance.AnnuledInvoiceCreation;
 import net.aonsolutions.db.up2date.fiscal.AlterFsMod2002023;
 import net.aonsolutions.db.up2date.fiscal.AlterFsMod200Registry2023;
@@ -468,7 +469,8 @@ public class Up2Date {
         AlterFsMod200Registry2023.ALTER_FS_MODEL200_REGISTRY_2023,
         ElaborationSerialNumberUpdate.ELABORATION_SERIAL_NUMBER_UPDATE,
         
-        AddColumnTaskHolderWorkgroupDatesType.ADD_COLUMN_TASK_HOLDER_WORKGROUP_DATES_TYPE
+        AddColumnTaskHolderWorkgroupDatesType.ADD_COLUMN_TASK_HOLDER_WORKGROUP_DATES_TYPE,
+        InsertIAE864.INSERT_IAE_864
 	};
 
     // ------------------------------------------------------------------------

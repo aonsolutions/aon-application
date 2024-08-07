@@ -3,6 +3,7 @@ package com.esferalia.aon.gwt.payroll.jooq;
 import static com.esferalia.aon.jooq.tables.Alcatraz.ALCATRAZ;
 import static com.esferalia.aon.jooq.tables.Contract.CONTRACT;
 import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
+import static com.esferalia.aon.jooq.tables.Enterprise.ENTERPRISE;
 import static com.esferalia.aon.jooq.tables.FsModel.FS_MODEL;
 import static com.esferalia.aon.jooq.tables.Person.PERSON;
 import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
@@ -13,6 +14,8 @@ import static com.esferalia.aon.jooq.tables.SalaryData.SALARY_DATA;
 import static com.esferalia.aon.jooq.tables.SalaryDeduction.SALARY_DEDUCTION;
 import static com.esferalia.aon.jooq.tables.SalaryEmbargo.SALARY_EMBARGO;
 import static com.esferalia.aon.jooq.tables.SalaryPayment.SALARY_PAYMENT;
+import static com.esferalia.aon.jooq.tables.Scope.SCOPE;
+import static com.esferalia.aon.jooq.tables.UserScope.USER_SCOPE;
 import static com.esferalia.aon.jooq.tables.Workplace.WORKPLACE;
 
 import java.sql.Connection;
@@ -60,16 +63,16 @@ public class JooqPayrollSalaries {
 	//									SALARY METHODS
 	// --------------------------------------------------------------------------------------------
 	
-	public static Period getSalariesDates(Connection connection, Integer domainId, SalaryInfoFilter filter) {
-		return getSalariesDatesDB(DSL.using(connection, getDefaultSettings()), domainId, filter);
+	public static Period getSalariesDates(Connection connection, Integer domainId, Integer userId, SalaryInfoFilter filter) {
+		return getSalariesDatesDB(DSL.using(connection, getDefaultSettings()), domainId, userId, filter);
 	}
 	
-	public static List<SalaryInfo> getSalaries(Connection connection, Integer domainId, SalaryInfoFilter filter) {
-		return getSalariesDB(DSL.using(connection, getDefaultSettings()), domainId, filter);
+	public static List<SalaryInfo> getSalaries(Connection connection, Integer domainId, Integer userId, SalaryInfoFilter filter) {
+		return getSalariesDB(DSL.using(connection, getDefaultSettings()), domainId, userId, filter);
 	}
 	
-	public static SalaryInfo getSalariesDateEnd(Connection connection, Integer domainId, SalaryInfoFilter filter) {
-		return getSalariesDateEnd(DSL.using(connection, getDefaultSettings()), domainId, filter);
+	public static SalaryInfo getSalariesDateEnd(Connection connection, Integer domainId, Integer userId, SalaryInfoFilter filter) {
+		return getSalariesDateEnd(DSL.using(connection, getDefaultSettings()), domainId, userId, filter);
 	}
 	
 	public static List<SalaryInfo> getSalariesByDocument(Connection connection, SalaryInfoFilter filter,  String document) {
@@ -80,16 +83,16 @@ public class JooqPayrollSalaries {
 	//									WORKPLACE METHODS
 	// --------------------------------------------------------------------------------------------
 	
-	public static WorkplaceEmployees getWorkplaceActiveEmployees(Connection connection, Integer workplaceId) {
-		return getWorkplaceActiveEmployeesDB(DSL.using(connection, getDefaultSettings()), workplaceId);
+	public static WorkplaceEmployees getWorkplaceActiveEmployees(Connection connection, Integer domainId, Integer userId, Integer workplaceId) {
+		return getWorkplaceActiveEmployeesDB(DSL.using(connection, getDefaultSettings()), domainId, userId, workplaceId);
 	}
 	
 	// --------------------------------------------------------------------------------------------
 	//									ENTERPRISE METHODS
 	// --------------------------------------------------------------------------------------------
 	
-	public static List<EmployeeInfo> getEnterpriseActiveEmployees(Connection connection, Integer enterpriseId) {
-		return getEnterpriseActiveEmployeesDB(DSL.using(connection, getDefaultSettings()), enterpriseId);
+	public static List<EmployeeInfo> getEnterpriseActiveEmployees(Connection connection, Integer domainId, Integer userId, Integer enterpriseId) {
+		return getEnterpriseActiveEmployeesDB(DSL.using(connection, getDefaultSettings()), domainId, userId, enterpriseId);
 	}
 	
 	// --------------------------------------------------------------------------------------------
@@ -108,14 +111,17 @@ public class JooqPayrollSalaries {
 	//									SALARY METHODS IMPL
 	// --------------------------------------------------------------------------------------------
 	
-	private static Period getSalariesDatesDB(DSLContext dslContext, Integer domainId, SalaryInfoFilter filter) {
+	private static Period getSalariesDatesDB(DSLContext dslContext, Integer domainId, Integer userId, SalaryInfoFilter filter) {
 		// SalaryType
 		Condition salaryTypeCondition = getSalaryTypeCondition(filter);
 		
 		// Contracts
-		Condition contractsCondition = getContractCondition(dslContext, domainId, filter);
+		Condition contractsCondition = getContractCondition(dslContext, domainId, userId, filter);
 		
 		Record1<Date> salaryMinDateRecord = dslContext.select(DSL.min(SALARY.END_DATE)).from(SALARY)
+				.join(CONTRACT).on(CONTRACT.ID.eq(SALARY.CONTRACT))
+				.join(WORKPLACE).on(WORKPLACE.ID.eq(CONTRACT.WORKPLACE))
+				.join(ENTERPRISE).on(ENTERPRISE.REGISTRY.eq(WORKPLACE.ENTERPRISE))
 				.where(contractsCondition)
 				.and(salaryTypeCondition)
 				.fetchOne();
@@ -123,6 +129,9 @@ public class JooqPayrollSalaries {
 		Date salaryMinDate = salaryMinDateRecord.value1();
 		
 		Record1<Date> salaryMaxDateRecord = dslContext.select(DSL.max(SALARY.END_DATE)).from(SALARY)
+				.join(CONTRACT).on(CONTRACT.ID.eq(SALARY.CONTRACT))
+				.join(WORKPLACE).on(WORKPLACE.ID.eq(CONTRACT.WORKPLACE))
+				.join(ENTERPRISE).on(ENTERPRISE.REGISTRY.eq(WORKPLACE.ENTERPRISE))
 				.where(contractsCondition)
 				.and(salaryTypeCondition)
 				.fetchOne();
@@ -140,20 +149,23 @@ public class JooqPayrollSalaries {
 		return null == sqlDate ? DateUtils.getLastDayOfYear(DateUtils.getFirstDayOfYear()) : new java.util.Date(sqlDate.getTime());
 	}
 
-	private static List<SalaryInfo> getSalariesDB(DSLContext dslContext, Integer domainId, SalaryInfoFilter filter) {
+	private static List<SalaryInfo> getSalariesDB(DSLContext dslContext, Integer domainId, Integer userId, SalaryInfoFilter filter) {
 		List<SalaryInfo> salaries = new ArrayList<>();
 		
 		// SalaryType
 		Condition salaryTypeCondition = getSalaryTypeCondition(filter);
 		
 		// Contracts
-		Condition contractsCondition = getContractCondition(dslContext, domainId, filter);
+		Condition contractsCondition = getContractCondition(dslContext, domainId, userId, filter);
 		
 		// Dates
 		Condition datesCondition = getDatesCondition(filter);
 		
 		// Get salaries
 		Result<Record> salaryRecords = dslContext.select().from(SALARY)
+				.join(CONTRACT).on(CONTRACT.ID.eq(SALARY.CONTRACT))
+				.join(WORKPLACE).on(WORKPLACE.ID.eq(CONTRACT.WORKPLACE))
+				.join(ENTERPRISE).on(ENTERPRISE.REGISTRY.eq(WORKPLACE.ENTERPRISE))
 				.where(contractsCondition)
 				.and(salaryTypeCondition)
 				.and(datesCondition)
@@ -211,20 +223,23 @@ public class JooqPayrollSalaries {
 		return salaries;
 	}
 	
-	private static SalaryInfo getSalariesDateEnd(DSLContext dslContext, Integer domainId, SalaryInfoFilter filter) {
+	private static SalaryInfo getSalariesDateEnd(DSLContext dslContext, Integer domainId, Integer userId, SalaryInfoFilter filter) {
 		
 		// SalaryType
 		Condition salaryTypeCondition = getSalaryTypeCondition(filter);
 		
 		// Contracts
-		Condition contractsCondition = getContractCondition(dslContext, domainId, filter);
+		Condition contractsCondition = getContractCondition(dslContext, domainId, userId, filter);
 		
 		// Dates
 		Condition datesCondition = getDatesCondition(filter);
 		SalaryInfo salaryInfo = new SalaryInfo();
 		// Get end salary
 		 Record salaryRecord = dslContext.select().from(SALARY)
-				.where(contractsCondition)
+				 .join(CONTRACT).on(CONTRACT.ID.eq(SALARY.CONTRACT))
+					.join(WORKPLACE).on(WORKPLACE.ID.eq(CONTRACT.WORKPLACE))
+					.join(ENTERPRISE).on(ENTERPRISE.REGISTRY.eq(WORKPLACE.ENTERPRISE))
+					.where(contractsCondition)
 				.and(salaryTypeCondition)
 				.and(datesCondition)
 				.orderBy(SALARY.END_DATE.desc())
@@ -353,27 +368,25 @@ public class JooqPayrollSalaries {
 		return condition;
 	}
 
-	private static Condition getContractCondition(DSLContext dslContext, Integer domainId, SalaryInfoFilter filter) {
+	private static Condition getContractCondition(DSLContext dslContext, Integer domainId, Integer userId, SalaryInfoFilter filter) {
 		Condition condition = DSL.noCondition();
 		
+		List<Integer> userScopes = dslContext.select(USER_SCOPE.SCOPE).from(USER_SCOPE).where(USER_SCOPE.USER_ID.eq(userId)).fetch(USER_SCOPE.SCOPE);
+		
 		if(isNumberValid(filter.getEnterpriseId())) {
-			condition = SALARY.CONTRACT.in(
-					dslContext.select(CONTRACT.ID).from(CONTRACT)
-					.where(CONTRACT.ID.ge(0))
-					.and(CONTRACT.WORKPLACE.in(
-							dslContext.select(WORKPLACE.ID).from(WORKPLACE)
-								.where(WORKPLACE.ID.gt(0))
-								.and(WORKPLACE.ENTERPRISE.eq(filter.getEnterpriseId()))
-					)));
+			condition = ENTERPRISE.REGISTRY.eq(filter.getEnterpriseId())
+					.and(ENTERPRISE.SCOPE.isNull().or(ENTERPRISE.SCOPE.in(userScopes)));
 		} else if(isNumberValid(filter.getWorkplaceId())) {
-			condition = SALARY.CONTRACT.in(
-					dslContext.select(CONTRACT.ID).from(CONTRACT)
-					.where(CONTRACT.ID.ge(0))
-					.and(CONTRACT.WORKPLACE.eq(filter.getWorkplaceId())));
+			condition = WORKPLACE.ID.eq(filter.getWorkplaceId())
+					.and(WORKPLACE.SCOPE.isNull().or(WORKPLACE.SCOPE.in(userScopes)));
 		} else if(isNumberValid(filter.getEmployeeId())) {
 			condition = SALARY.CONTRACT.eq(filter.getEmployeeId());
 		} else {
-			List<Integer> domainChilds = dslContext.select(DOMAIN.ID).from(DOMAIN).where(DOMAIN.PARENT.eq(domainId)).fetch(DOMAIN.ID);
+			List<Integer> domainChilds = dslContext.select(DOMAIN.ID).from(DOMAIN)
+					.join(SCOPE).on(SCOPE.ID.eq(DOMAIN.SCOPE))
+					.where(DOMAIN.PARENT.eq(domainId))
+					.and(DOMAIN.SCOPE.in(userScopes))
+					.fetch(DOMAIN.ID);
 			condition = SALARY.DOMAIN.in(domainChilds);
 		}
 		
@@ -418,12 +431,16 @@ public class JooqPayrollSalaries {
 	//									WORKPLACE METHODS IMPL
 	// --------------------------------------------------------------------------------------------
 	
-	private static WorkplaceEmployees getWorkplaceActiveEmployeesDB(DSLContext dslContext, Integer workplaceId) {
+	private static WorkplaceEmployees getWorkplaceActiveEmployeesDB(DSLContext dslContext, Integer domainId, Integer userId, Integer workplaceId) {
 		WorkplaceEmployees workplaceEmployees = new WorkplaceEmployees();
 		
+		List<Integer> userScopes = dslContext.select(USER_SCOPE.SCOPE).from(USER_SCOPE).where(USER_SCOPE.USER_ID.eq(userId)).fetch(USER_SCOPE.SCOPE);
+		
 		Result<Record> contractRecords = dslContext.select().from(CONTRACT)
+				.join(WORKPLACE).on(WORKPLACE.ID.eq(CONTRACT.WORKPLACE))
 				.where(CONTRACT.ID.gt(0))
 				.and(CONTRACT.WORKPLACE.eq(workplaceId))
+				.and(WORKPLACE.SCOPE.in(userScopes))
 				.fetch();
 		
 		for(Record contractRecord : contractRecords){
@@ -450,16 +467,19 @@ public class JooqPayrollSalaries {
 	//									ENTERPRISE METHODS IMPL
 	// --------------------------------------------------------------------------------------------
 	
-	private static List<EmployeeInfo> getEnterpriseActiveEmployeesDB(DSLContext dslContext, Integer enterpriseId) {
+	private static List<EmployeeInfo> getEnterpriseActiveEmployeesDB(DSLContext dslContext, Integer domainId, Integer userId, Integer enterpriseId) {
 		List<EmployeeInfo> enterpriseEmployees = new ArrayList<>();
 		
+		List<Integer> userScopes = dslContext.select(USER_SCOPE.SCOPE).from(USER_SCOPE).where(USER_SCOPE.USER_ID.eq(userId)).fetch(USER_SCOPE.SCOPE);
+		
 		Result<Record> contractRecords = dslContext.select().from(CONTRACT)
+				.join(WORKPLACE).on(WORKPLACE.ID.eq(CONTRACT.WORKPLACE))
+				.join(ENTERPRISE).on(ENTERPRISE.REGISTRY.eq(WORKPLACE.ENTERPRISE))
 				.where(CONTRACT.ID.gt(0))
-				.and(CONTRACT.WORKPLACE.in(
-						dslContext.select(WORKPLACE.ID).from(WORKPLACE)
-							.where(WORKPLACE.ID.gt(0))
-							.and(WORKPLACE.ENTERPRISE.eq(enterpriseId))
-				))
+				.and(WORKPLACE.ID.gt(0))
+				.and(WORKPLACE.SCOPE.isNull().or(WORKPLACE.SCOPE.in(userScopes)))
+				.and(ENTERPRISE.REGISTRY.eq(enterpriseId))
+				.and(ENTERPRISE.SCOPE.isNull().or(ENTERPRISE.SCOPE.in(userScopes)))
 				.fetch();
 		
 		for(Record contractRecord : contractRecords){

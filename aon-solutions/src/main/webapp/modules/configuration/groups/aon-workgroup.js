@@ -14,7 +14,6 @@ import {
   assignTaskHolderWorkgroup,
   removeTaskHolderWorkgroup,
   getTastHoldersList,
-  getTastHoldersWithWorkgroupsList,
   getTaskHolderWorkGroups,
 } from "../../../services/taskHolderService.js";
 import { AonTaskHolderSimpleList } from "../../registry/taskholder/aon-taskholder-simple-list.js";
@@ -181,7 +180,7 @@ export class AonWorkgroup extends AonElement {
     this.buildFormProject(div, workgroup);
 
     dialog.addSendAction(async () => {
-      if (!this.taskHolderAddList || this.taskHolderAddList.lenght == 0) {
+      if (!this.taskHolderAddList || this.taskHolderAddList.length == 0) {
         this.showMessageError("Debe elegir al menos un operario");
       } else {
         this.addTaskHolders(workgroup).then(() => {

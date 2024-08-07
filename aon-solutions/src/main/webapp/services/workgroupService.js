@@ -8,6 +8,10 @@ export const saveWorkgroup = (data) => post(`${API_URL}/workgroup`, data);
 
 export const deleteWorkgroup = (data) => remove(`${API_URL}/workgroup`, data);
 
+export const getWorkgroupProjectsHolders = (data) => get(`${API_URL}/workgroup/projectsHolder`, data);
+
+export const  getWorkgroupTasks = (data) => get(`${API_URL}/workgroup/task`, data);
+
 
 
 

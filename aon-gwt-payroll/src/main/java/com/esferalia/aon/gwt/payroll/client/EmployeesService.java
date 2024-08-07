@@ -207,15 +207,15 @@ public interface EmployeesService  extends RemoteService, CalendarService, Emplo
 
 	String resetCalendar(String currentDomainName, Integer employeeId);
 	
-	Period getSalariesDates(String currentDomainName, SalaryInfoFilter filter);
+	Period getSalariesDates(String currentDomainName, String user, SalaryInfoFilter filter);
 	
-	List<SalaryInfo> getSalaries(String currentDomainName, SalaryInfoFilter filter);
+	List<SalaryInfo> getSalaries(String currentDomainName, String user, SalaryInfoFilter filter);
 
 	void deleteSalaries(String currentDomainName, ArrayList<Integer> ids);
 
-	WorkplaceEmployees getWorkplaceActiveEmployees(String currentDomainName, Integer workplaceId);
+	WorkplaceEmployees getWorkplaceActiveEmployees(String currentDomainName, String user, Integer workplaceId);
 
-	List<EmployeeInfo> getEnterpriseActiveEmployees(String currentDomainName, Integer enterpriseId);
+	List<EmployeeInfo> getEnterpriseActiveEmployees(String currentDomainName, String user, Integer enterpriseId);
 
 	EmployeeCalendarInfo getEmployeeCalendarInfo(String currentDomainName, Integer contractId) throws IllegalArgumentException;
 

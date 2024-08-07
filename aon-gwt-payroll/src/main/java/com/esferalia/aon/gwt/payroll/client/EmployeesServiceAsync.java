@@ -229,15 +229,15 @@ public interface EmployeesServiceAsync extends AgreementServiceAsync, Statistics
 
 	void resetCalendar(String currentDomainName, Integer employeeId, AsyncCallback<String> callback);
 
-	void getSalariesDates(String currentDomainName, SalaryInfoFilter filter, AsyncCallback<Period> callback);
+	void getSalariesDates(String currentDomainName, String user, SalaryInfoFilter filter, AsyncCallback<Period> callback);
 	
-	void getSalaries(String currentDomainName, SalaryInfoFilter filter, AsyncCallback<List<SalaryInfo>> callback);
+	void getSalaries(String currentDomainName, String user, SalaryInfoFilter filter, AsyncCallback<List<SalaryInfo>> callback);
 
 	void deleteSalaries(String currentDomainName, ArrayList<Integer> ids, AsyncCallback<Void> callback);
 
-	void getWorkplaceActiveEmployees(String currentDomainName, Integer workplaceId, AsyncCallback<WorkplaceEmployees> callback);
+	void getWorkplaceActiveEmployees(String currentDomainName, String user, Integer workplaceId, AsyncCallback<WorkplaceEmployees> callback);
 
-	void getEnterpriseActiveEmployees(String currentDomainName, Integer enterpriseId, AsyncCallback<List<EmployeeInfo>> callback);
+	void getEnterpriseActiveEmployees(String currentDomainName, String user, Integer enterpriseId, AsyncCallback<List<EmployeeInfo>> callback);
 
 	void getEmployeeCalendarInfo(String currentDomainName, Integer contractId, AsyncCallback<EmployeeCalendarInfo> callback) throws IllegalArgumentException;
 

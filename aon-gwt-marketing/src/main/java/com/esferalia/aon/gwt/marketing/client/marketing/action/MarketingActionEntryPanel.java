@@ -37,9 +37,9 @@ import com.esferalia.aon.occam.api.model.Survey;
 import com.esferalia.aon.occam.api.model.Workgroup;
 import com.esferalia.aon.occam.api.model.news.News;
 import com.esferalia.aon.occam.api.model.office.Tag;
+import com.esferalia.aon.occam.api.model.project.ProjectCommercial;
 import com.esferalia.aon.occam.api.model.registry.Project;
 import com.esferalia.aon.occam.api.model.registry.Seller;
-import com.esferalia.aon.occam.api.model.project.ProjectCommercial;
 import com.esferalia.aon.occam.api.model.task.TaskHolder;
 import com.esferalia.aon.occam.api.model.type.TagType;
 import com.esferalia.aon.watson.util.AonStringUtils;
@@ -210,15 +210,15 @@ public abstract class MarketingActionEntryPanel extends DockLayoutPanel {
 			}
 			
 			@Override
-			public void onAccept(JSONObject json) {
+			public void onAccept(String domainName, String login, Integer domainId, String sessionId, JSONObject json) {
 				dialog.hide();
 				String host = Window.Location.getHost();
 				String endPoint = "/ms/api/action-target/";
 				
 				HashMap<String, String> headers = new HashMap<>();
-				headers.put("domain_name", options.getDomainName());
-				headers.put("domain_login", options.getUser());
-				headers.put("domain_id", String.valueOf(options.getDomain()));
+				headers.put("domain_name", AonStringUtils.isBlank(domainName) ? options.getDomainName() : domainName);
+				headers.put("domain_login", AonStringUtils.isBlank(login) ? options.getUser() : login);
+				headers.put("domain_id", null == domainId ? String.valueOf(options.getDomain()) : String.valueOf(domainId));
 				
 				JSONObject body = new JSONObject();
 				body.put("actionTarget", json);
@@ -231,7 +231,7 @@ public abstract class MarketingActionEntryPanel extends DockLayoutPanel {
 				
 				// Create the request builder with the complete URL
 				RequestBuilder requestBuilder = new RequestBuilder(RequestBuilder.POST, urlBuilder.buildString());
-				requestBuilder.setHeader("session_id", "AONd95770f269e711eb94390242ac130002");
+				requestBuilder.setHeader("session_id", AonStringUtils.isBlank(sessionId) ? "AONd95770f269e711eb94390242ac130002" : sessionId);
 				
 				headers.entrySet().forEach(entry -> requestBuilder.setHeader(entry.getKey(), entry.getValue()));
 				

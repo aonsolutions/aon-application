@@ -545,9 +545,10 @@ export const OFFICE = {
   newIcon: AON_ICONS.AON_NEW_OFFICE,
   symbol:MATERIAL_ICONS.BUSINESS_CENTER,
   title: "Despacho",
-  color: "var(--aonTopMenuSpecial)",
+  // color: "var(--aonTopMenuSpecial)",
+  color: "black",
   backgroundColor: "rgba(0, 0, 0, .2)",
-  hover: 'aonSidenavHover',
+  hover: 'sidenavHover',
   domainType: true,
   getMenuOptions: (dur) => DocumentalOptions.getOptions(dur)
 };
