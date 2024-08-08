@@ -108,7 +108,7 @@ import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.security.UserScope;
 import com.esferalia.aon.occam.api.model.security.UserWorkgroup;
 import com.esferalia.aon.occam.api.model.task.TaskHolder;
-import com.esferalia.aon.occam.api.model.type.AonRole;
+import com.esferalia.aon.occam.api.model.type.OldAonRole;
 import com.esferalia.aon.occam.api.model.type.AppParam;
 import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.occam.api.model.type.SecurityLevel;
@@ -658,8 +658,8 @@ public class SecurityDAO {
 			.execute();
 	}
 	
-	public static AonRole[] getUserRoles(AONContext ctx, Integer userId) {
-		final List<AonRole> list = new ArrayList<>();
+	public static OldAonRole[] getUserRoles(AONContext ctx, Integer userId) {
+		final List<OldAonRole> list = new ArrayList<>();
 		ctx.getDslContext()
 			.selectDistinct(ROLE.NAME)
 			.from(USER)
@@ -676,9 +676,9 @@ public class SecurityDAO {
 			.stream()
 			.forEach(rec -> {
 				String role = rec.getValue(ROLE.NAME);
-				list.add( AonRole.valueOfBDValue( role) );
+				list.add( OldAonRole.valueOfBDValue( role) );
 				} );
-		AonRole[] roles = new AonRole[list.size()];
+		OldAonRole[] roles = new OldAonRole[list.size()];
 		list.toArray(roles);
 		return roles;
 	}

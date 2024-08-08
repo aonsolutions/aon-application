@@ -14,13 +14,6 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.LinkedList;
 
-import jakarta.servlet.ServletException;
-import jakarta.servlet.ServletOutputStream;
-import jakarta.servlet.annotation.WebServlet;
-import jakarta.servlet.http.HttpServlet;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.hssf.util.HSSFColor.HSSFColorPredefined;
@@ -42,11 +35,17 @@ import com.esferalia.aon.occam.api.model.DomainGserviceaccount;
 import com.esferalia.aon.occam.api.model.product.ProductStatus;
 import com.esferalia.aon.occam.api.model.product.ProductTag;
 import com.esferalia.aon.occam.api.model.security.User;
-import com.esferalia.aon.occam.api.model.type.AonRole;
+import com.esferalia.aon.occam.api.model.type.OldAonRole;
 import com.esferalia.aon.occam.api.model.type.ProductType;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.google.api.services.drive.Drive;
 
+import jakarta.servlet.ServletException;
+import jakarta.servlet.ServletOutputStream;
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import net.aonsolutions.aon.google.apis.drive.AonDrive;
 
 @WebServlet(name = "DownloadTemplatesProduct", urlPatterns = { "/aon_gwt_template/gwt_download_product/*"
@@ -209,9 +208,9 @@ public class DownloadProductServlet extends HttpServlet {
         
         Boolean purchaseRole = false;
         Boolean saleRole = false;
-        for (AonRole role : user.getUserRoles()) {
-			if(role.equals(AonRole.PURCHASE)) purchaseRole = true;
-			if(role.equals(AonRole.SALE)) saleRole = true;
+        for (OldAonRole role : user.getUserRoles()) {
+			if(role.equals(OldAonRole.PURCHASE)) purchaseRole = true;
+			if(role.equals(OldAonRole.SALE)) saleRole = true;
 		}
         
         if(purchaseRole && !saleRole) {

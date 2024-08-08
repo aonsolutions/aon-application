@@ -183,13 +183,16 @@ public final class IJsonNames {
 	public static final String DOCUMENT_NUMBER = "documentNumber";
 	public static final String DOCUMENT_TYPE = "documentType";
 	public static final String DOMAIN = "domain";
+	public static final String DOMAIN_APPS = "domainApps";
 	public static final String DOMAIN_ID = "domainId";
 	public static final String DOMAIN_LOGIN = "domainLogin";
 	public static final String DOMAIN_MANAGEMENT = "domainManagement";
 	public static final String DOMAIN_NAME = "domainName";
+	public static final String DOMAIN_PAYER = "domainPayer";
 	public static final String DOMAIN_TYPE = "domainType";
 	public static final String DOMAIN_ACTIVE = "domainActive";
 	public static final String DOMAIN_LINKED = "domainLinked";
+	public static final String DOMAIN_USER_ROLES = "domainUserRoles";
 	public static final String DOMAINS = "domains";
 	public static final String DRIVE_ID = "driveId";
 	public static final String DRIVER = "driver";
@@ -375,6 +378,8 @@ public final class IJsonNames {
 	public static final String OFFER_STATUS_PENDING = "offerStatusPending";
 	public static final String OFFER_STATUS_REFUSED = "offerStatusRefused";
 	public static final String OFFSET = "offset";
+	public static final String OLD_DOMAIN_MODULES = "oldDomainModules";
+	public static final String OLD_PARENT_DOMAIN_MODULES = "oldParentDomainModules";
 	public static final String OLD_STATUS = "oldStatus";
 	public static final String OPENING_ENTRIES_EXCLUDED = "openingEntriesExcluded";
 	public static final String OPERATING_ENTRIES_EXCLUDED = "operatingEntriesExcluded";
@@ -404,6 +409,8 @@ public final class IJsonNames {
 	public static final String PARENT = "parent";
 	public static final String PARENT_APPS = "parentApps";
 	public static final String PARENT_DOMAIN = "parentDomain";
+	public static final String PARENT_DOMAIN_APPS = "parentDomainApps";
+	public static final String PARENT_DOMAIN_USER_ROLES = "parentDomainUserRoles";
 	public static final String PARENT_ID = "parentId";
 	public static final String PARTICIPATION_PERCENT = "participationPercent";
 	public static final String PARTICIPATION_QUOTA = "participationQuota";
