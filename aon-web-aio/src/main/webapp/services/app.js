@@ -40,6 +40,13 @@ export const APPLICATIONS = {
 	symbol: MATERIAL_ICONS.APPLICATIONS,
 };
 
+export const AON_CLASSIC = {
+	app: CONSTANT.AON_APPLICATION,
+	title: MSG.CLASSIC_VIEW,
+	description: MSG.CLASSIC_VIEW,
+	logo: "../assets/aon.png",
+};
+
 export const AON_APPS = [ 
 	APP.AON_SOLUTIONS, 
 	APP.BIDOQ, 
@@ -57,7 +64,8 @@ export const MENU_APPS = [
   APP.PAYROLL,
   APP.TIMECONTROL,
   APP.NOTES,
-  APP.MESSENGER
+  APP.MESSENGER,
+  AON_CLASSIC
 ];
 
 export const DESKTOP_APPS = [
@@ -68,7 +76,8 @@ export const DESKTOP_APPS = [
   APP.PAYROLL,
   APP.TIMECONTROL,
   APP.NOTES,
-  APP.MESSENGER
+  APP.MESSENGER,
+  AON_CLASSIC
 ];
 
 
@@ -190,6 +199,7 @@ export const MARKETING_MENU = {
 	apps: [],
 	price: " ",
 };
+
 
 export const TOP_MENU_APPS = [
 	APP.OFFICE,

@@ -1,5 +1,5 @@
 import { AonElement } from 'aonsolutions/components/AonElement.js';
-import { Apps, HomeApps, MenuApps, AuxApps, DESKTOP_APPS, MENU_APPS, TOP_MENU_APPS, AON_APPS, NEW, HOME, APPS, APPLICATIONS } from '../services/app.js';
+import { Apps, HomeApps, MenuApps, AuxApps, DESKTOP_APPS, MENU_APPS, TOP_MENU_APPS, AON_APPS, NEW, HOME, AON_CLASSIC, APPS, APPLICATIONS } from '../services/app.js';
 import {COMMERCE, OFFICE, GARAGE, ACADEMY} from  "aonsolutions/services/app.js";
 import {ACCOUNTING_MENU, COMMERCIAL_MENU, GROUPWARE_MENU, MANAGEMENT_MENU, TREASURY_MENU, WAREHOUSE_MENU, FISCAL_MENU, PAYROLL_MENU, MARKETING_MENU} from "../services/app.js"
 import { MSG, CONSTANT, AON_ICONS, CSS, EVENT, MATERIAL_ICONS, TAG } from 'aonsolutions/environments/environments.js';
@@ -137,8 +137,10 @@ export class AonNewMenu extends AonElement {
 		let apps = this.getElement("applications");
 		apps.className = '';
 		const excludedApps = ['commerce', 'garage', 'academy', 'office'];
+		const isApps = DESKTOP_APPS.filter( app => this.isApp(app) ); 
+		const notApps = DESKTOP_APPS.filter( app => !this.isApp(app) ); 
 		if (!this.isApp(app) && !excludedApps.includes(app.app)) {
-			this.rootPanel(new AonNewDesktop(DESKTOP_APPS, AON_APPS));
+			this.rootPanel(new AonNewDesktop(isApps, notApps));
 			let headerapp = this.getElement("aonHeaderApp");
 			headerapp.style.display = "none";
 			let logo = this.getElement("aonLogo");
@@ -157,6 +159,9 @@ export class AonNewMenu extends AonElement {
 				case HOME.app:
 					this.rootPanel(new AonDesktop());
 					break;
+				case AON_CLASSIC.app:
+					open('https://' + localStorage.getItem('aon_domain_name') + '/login?token=' + localStorage.getItem('aon_session_id'))
+					return;
 				case Apps.CONSOLE.app:
 					this.rootPanel(new AonConsole());
 					break;
@@ -239,7 +244,7 @@ export class AonNewMenu extends AonElement {
 					this.rootPanel(new AonGarageMenu());
 					break;
 				default/*Apps.HOME*/:
-					this.rootPanel(new AonNewDesktop(DESKTOP_APPS, AON_APPS));
+					this.rootPanel(new AonNewDesktop(isApps, notApps));
 					break;
 		}
 		
@@ -846,6 +851,8 @@ export class AonNewMenu extends AonElement {
 			return this.getDur().isInvoice();
 		else if (MenuApps.MESSENGER.app === app.app)
 			return this.getDur().isMessenger();
+		else if (AON_CLASSIC.app === app.app)
+			return this.getDur().isAon();
 		else if (NEW.app === app.app)
 			return this.getDur().isAon()
 				|| this.getDur().isInvoice()

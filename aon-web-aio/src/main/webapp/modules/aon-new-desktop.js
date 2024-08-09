@@ -53,8 +53,7 @@ export class AonNewDesktop extends AonElement {
 		
 		desktopDiv.appendChild(desktopAppsDiv);
 		
-		/*
-		let bannerAonAppsDiv = this.createElement(TAG.DIV);
+/*		let bannerAonAppsDiv = this.createElement(TAG.DIV);
 		let titleAonH1 = this.createElement(TAG.H1);
 		titleAonH1.innerHTML = 'Más de AON Solutions';
 		titleAonH1.classList.add("aonNewDesktopTitleAonH1");
@@ -68,8 +67,7 @@ export class AonNewDesktop extends AonElement {
 			desktopAonAppsDiv.appendChild(this.buildMasApp(this.aonApps[app]));
 		}
 		desktopDiv.appendChild(desktopAonAppsDiv);
-		*/
-		
+*/		
 		this.appendChild(desktopDiv);		
 	}
 	
@@ -200,14 +198,14 @@ export class AonNewDesktop extends AonElement {
 		// 	icon.innerHTML = app.symbol;
 		// 	icon.style.fontSize = "24px";
 		// 	appDiv.appendChild(icon);
-		// } else if (app.logo) {
-		// 	let img = this.createElement(TAG.IMG);
-		// 	img.id = `aonDesktopAppImg-${app.app}`;
-		// 	img.style.width = '24px';
-		// 	img.src = app.logo;
-		// 	img.title = app.title;
-		// 	appDiv.appendChild(img);
-		// }
+		else if (app.logo) {
+		 	let img = this.createElement(TAG.IMG);
+		 	img.id = `aonDesktopAppImg-${app.app}`;
+			img.classList.add("aonNewMenuAppImg");
+		 	img.src = app.logo;
+		 	img.title = app.title;
+		 	appDiv.appendChild(img);
+		}
 
 		let titleSpan = this.createElement(TAG.SPAN);
 		titleSpan.id = `aonDesktopAppTitle-${app.app}`;
