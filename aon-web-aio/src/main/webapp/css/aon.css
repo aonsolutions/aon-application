@@ -2768,8 +2768,14 @@ label.rating:hover {
 	background-color: var(--aonLightGray);
 }
 
+.aonNewMenuSideNavLi {
+	margin-left: 2px;
+	border-left: 2px solid transparent;
+}
+
 #aonMenuList-home.aonMenuSidenavLiSeleted {
-	border-left: 3px solid var(--aonBlue);
+	margin-left: 2px;
+	border-left: 2px solid var(--aonBlue);
 }
 
 .aonHeaderApplications,
@@ -2783,7 +2789,8 @@ label.rating:hover {
 }
 
 #aonMenuList-note.aonMenuSidenavLiSeleted {
-	border-left: 3px solid var(--aonNote);
+	margin-left: 2px;
+	border-left: 2px solid var(--aonNote);
 }
 
 
@@ -2793,7 +2800,8 @@ label.rating:hover {
 }
 
 #aonMenuList-fiscal.aonMenuSidenavLiSeleted {
-	border-left: 3px solid var(--aonFiscal);
+	margin-left: 2px;
+	border-left: 2px solid var(--aonFiscal);
 }
 
 .aonHeaderPayroll,
@@ -2802,7 +2810,8 @@ label.rating:hover {
 }
 
 #aonMenuList-payroll.aonMenuSidenavLiSeleted {
-	border-left: 3px solid var(--aonPayroll);
+	margin-left: 2px;
+	border-left: 2px solid var(--aonPayroll);
 }
 
 .aonHeaderInvoice,
@@ -2811,7 +2820,8 @@ label.rating:hover {
 }
 
 #aonMenuList-invoice.aonMenuSidenavLiSeleted {
-	border-left: 3px solid var(--aonInvoice);
+	margin-left: 2px;
+	border-left: 2px solid var(--aonInvoice);
 }
 
 .aonHeaderDocumental,
@@ -2820,7 +2830,8 @@ label.rating:hover {
 }
 
 #aonMenuList-documental.aonMenuSidenavLiSeleted {
-	border-left: 3px solid var(--aonDocumental);
+	margin-left: 2px;
+	border-left: 2px solid var(--aonDocumental);
 }
 
 .aonHeaderAccounting,
@@ -2829,7 +2840,8 @@ label.rating:hover {
 }
 
 #aonMenuList-accounting.aonMenuSidenavLiSeleted {
-	border-left: 3px solid var(--aonAccounting);
+	margin-left: 2px;
+	border-left: 2px solid var(--aonAccounting);
 }
 
 .aonHeaderTimecontrol,
@@ -2838,7 +2850,8 @@ label.rating:hover {
 }
 
 #aonMenuList-timecontrol.aonMenuSidenavLiSeleted {
-	border-left: 3px solid var(--aonTimecontrol);
+	margin-left: 2px;
+	border-left: 2px solid var(--aonTimecontrol);
 }
 
 .aonHeaderMessenger,
@@ -2847,7 +2860,8 @@ label.rating:hover {
 }
 
 #aonMenuList-messenger.aonMenuSidenavLiSeleted {
-	border-left: 3px solid var(--aonMessenger);
+	margin-left: 2px;
+	border-left: 2px solid var(--aonMessenger);
 }
 
 .aonHeaderOffice,
@@ -3064,7 +3078,8 @@ label.rating:hover {
 #accountingMenu:hover,
 #fiscalMenu:hover,
 #payrollMenu:hover,
-#marketingMenu:hover{
+#marketingMenu:hover,
+#aonApplication:hover {
   background-color: white;
   /*transition: background-color 0.2s;*/
 }
@@ -3828,7 +3843,8 @@ label.rating:hover {
 }
 
 .aonNewMenuAppImg{
-  width: 24px;
+	width: 28px;
+	margin: 4px 0px 4px 8px;
 }
 
 .aonNewMenuAppSpan{
