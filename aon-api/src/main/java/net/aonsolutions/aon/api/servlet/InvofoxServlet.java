@@ -567,9 +567,9 @@ public class InvofoxServlet extends AonApiHttpServlet {
 	}
 
 	private static Invoice fillReferenceCode(OCRInvoice ocrInvoice, Invoice invoice) {
-		try {
-			OCRInvoiceBuilder.fillReferenceCode(ocrInvoice, invoice);
-		} catch (OCRZeroValueException | OCRBlankValueException e) {
+		Optional<String> optReference = ocrInvoice.getReferenceCode();
+		if (optReference.isPresent()) {
+			invoice.setReferenceCode(optReference.orElse(null));		
 		}
 		return invoice;
 	}
