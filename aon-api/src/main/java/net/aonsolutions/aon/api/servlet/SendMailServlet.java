@@ -114,7 +114,7 @@ public class SendMailServlet extends AonApiHttpServlet{
 			if("proforma".equalsIgnoreCase(pathInfo[1])) {
 				subject = "Presupuesto";
 				body = rawdocContent(api, cp);
-				JSONObject rawdoc = JsonUtils.getJSONObject(api.getData(), "rawdoc");
+				JSONObject rawdoc = JsonUtils.getJSONObject(api.getData(), "invoice");
 				Integer id = JsonUtils.optInteger(rawdoc, IJsonNames.ID);
 				if(id != null) {
 					InvoiceInfo info = new InvoiceInfo()
@@ -199,7 +199,8 @@ public class SendMailServlet extends AonApiHttpServlet{
 	}
 	
 	private String rawdocContent(AonApiData api, CompanyFull company) {
-		JSONObject rawdoc = JsonUtils.getJSONObject(api.getData(), "rawdoc");
+		JSONObject rawdoc = JsonUtils.getJSONObject(api.getData(), "invoice");
+
 		VelocityEngine engine = new VelocityEngine();
 		engine.setProperty(RuntimeConstants.RESOURCE_LOADER, "classpath");
 		engine.setProperty("classpath.resource.loader.class", ClasspathResourceLoader.class.getName());
