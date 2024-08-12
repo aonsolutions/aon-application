@@ -106,8 +106,8 @@ public class InvoiceApiDAO {
 				        .fetch().stream().forEach(e ->{
 				        	invoiceArray.forEach(r ->{
 				        		if(e.getValue(INVOICE_DETAIL.INVOICE).equals(r.getId())) {
-				        			r.setSurchargeQuota(e.getValue(quotaSum).doubleValue());
-				        			r.setVatQuota(e.getValue(surchageSum).doubleValue());
+				        			r.setSurchargeQuota(e.getValue(surchageSum).doubleValue());
+				        			r.setVatQuota(e.getValue(quotaSum).doubleValue());
 				        		}
 				        	});
 				        });
