@@ -273,18 +273,17 @@ export class AonParent extends AonElement {
 		ul.id = "UlCompanies";
 		ul.classList.add(CSS.AON_UL);
 		ul.classList.add(CSS.NO_SCROLLBAR);
-		ul.style.overflowY = 'auto';
-		ul.style.maxHeight = '700px';
+		ul.style.overflowY = 'auto';		
 		ul.style.width = "100%";
 		
 		companyDiv.appendChild(ul);
 		ul.addEventListener("scroll", () => {
-			let scrollTop = ul.scrollTop;
-			let offsetHeight = ul.offsetHeight;
-			let physicalSize = ul.scrollHeight;
-			let maxScrollPosition = physicalSize - offsetHeight;
-
-			if (scrollTop >= maxScrollPosition) {
+			let scrollTop = ul.scrollTop;					
+			let offsetHeight = ul.offsetHeight; 					
+			let scrollHeight = ul.scrollHeight;	
+			
+			// load more before reach end 
+			if ( ( scrollTop +  offsetHeight ) >= ( 0.75 * scrollHeight) ) {
 				this.loadMore();
 			}
 		});
@@ -292,6 +291,14 @@ export class AonParent extends AonElement {
 		parentDiv.appendChild(welcomeDiv);
 		parentDiv.appendChild(companyDiv);		
 
+	    const interval = setInterval(() => {
+			let totalBottom = this.getTotalBottom(ul);
+			let totalOffsetTop = this.getTotalOffsetTop(ul);
+			if ( totalOffsetTop  ) {
+				clearInterval(interval);
+				ul.style.maxHeight = `calc(100vh - ${totalOffsetTop + totalBottom }px)`; 
+			}
+	    }, 100);
 		
 	}
 
@@ -423,6 +430,24 @@ export class AonParent extends AonElement {
 		.then(console.log);
 
 		return "Consultando...."
+	}
+	
+	getTotalOffsetTop(element) {
+		let totalOffsetTop = 0;
+		for ( let el = element; el; el = el.offsetParent ) {
+			totalOffsetTop += el.offsetTop;
+		}
+		return totalOffsetTop;
+	}
+
+	getTotalBottom(element) {
+		let totalBottom = 0;
+		for ( let el = element; el; el = el.parentElement ) {
+			let style = getComputedStyle(el);
+			totalBottom += parseFloat(style.paddingBottom) ;
+			totalBottom += parseFloat(style.marginBottom);
+		}
+		return totalBottom;
 	}
 }
 

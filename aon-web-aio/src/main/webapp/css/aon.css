@@ -972,7 +972,7 @@ h1 {
   margin: 0 auto;
 
   width: 84%;
-  padding-bottom: 48px;
+  /*padding-bottom: 48px;*/
   max-width: 1128px;
 }
 
@@ -1160,6 +1160,7 @@ h1 {
 }
 
 .aonSuiteMenuSideMenu {
+  display:none;
   min-width: 250px;
   background-color: var(--aonSuiteMenuSideMenu);
   border-right: 1px solid var(--aonSuiteMenuSideMenuBorder);
@@ -3939,4 +3940,5 @@ label.rating:hover {
     margin-top :10px;
     border-top: 1px solid #ddd;
 }
+
 
