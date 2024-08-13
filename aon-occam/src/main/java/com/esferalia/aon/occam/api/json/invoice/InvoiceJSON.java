@@ -145,11 +145,17 @@ public class InvoiceJSON {
 			.put(IJsonNames.FINANCES, FinanceJSON.toJSON(invoice.getFinances()))
 			.put(IJsonNames.ACTIVITY, EnterpriseActivityJSON.toJSON(invoice.getActivity()))
 			.put(IJsonNames.SCOPE, ScopeJSON.toJSON(invoice.getScope()))
-			.put(IJsonNames.REMARKS, new JSONArray(invoice.getRemarks()))
+//			.put(IJsonNames.REMARKS, new JSONArray(invoice.getRemarks()))
 			.put(IJsonNames.COMMENTS, invoice.getComments());
 		
 		if(invoice.getDetails() != null && !invoice.getDetails().isEmpty()) {
 			json.put(IJsonNames.CATEGORY, invoice.getDetails().get(0).getAccountCode());
+		}
+		
+		if(invoice.getRemarks() != null && !invoice.getRemarks().isEmpty()) {
+			json.put(IJsonNames.REMARKS, new JSONArray().put(invoice.getRemarks().replace("\n", " ")));
+		}else {
+			json.put(IJsonNames.REMARKS, new JSONArray());
 		}
 			
 		if(invoice.getAddress() != null) {
