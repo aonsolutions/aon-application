@@ -35,8 +35,6 @@ import com.esferalia.aon.occam.api.model.finance.Finance;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceBreakdown;
 import com.esferalia.aon.occam.api.model.finance.InvoiceDetail;
-import com.esferalia.aon.occam.api.model.finance.InvoiceTax;
-import com.esferalia.aon.occam.api.model.finance.InvoiceVAT;
 import com.esferalia.aon.occam.api.model.finance.InvoiceWithholding;
 import com.esferalia.aon.occam.api.model.finance.PayMethod;
 import com.esferalia.aon.occam.api.model.fiscal.d2_deposit.Provinces;
@@ -190,7 +188,6 @@ public class BidoqRequest {
 			Double retBase = 0.0;
 			Double retQuota = 0.0;
 			Double retPercentage = 0.0;
-			ai.setVats(new LinkedList<>());
 			Double totalService = 0.0;
 			Double totalNoService = 0.0;
 			for (String  key : details.keySet()) {
@@ -240,9 +237,7 @@ public class BidoqRequest {
 						.setDescription(detail.optString("description"))
 						.setDiscountExpression(detail.optString("discountPct"))
 						.setQuantity(detail.optDouble("quantity"))
-						.setAccount(expAccount.getId())
-						.setAccountCode(expAccount.getCode())
-						.setAccountDescription(expAccount.getDescription())
+						.setExpAccount(expAccount)
 						.setDomain(domain.getId())
 					//	.setInvestAsset(investAsset)
 						.setSource(InvoiceSource.ACCOUNT)
@@ -257,11 +252,11 @@ public class BidoqRequest {
 						.setWorkplace( new Workplace().setId(ai.getWorkplace()) )
 						.setPrepayment("5600".equals(account.substring(0, 4)) || "5660".equals(account.substring(0, 4)) || detail.optBoolean("suplidos"));
 				
-				InvoiceVAT vat = new InvoiceVAT()
-					.setInvoiceDetail(id)	
-					.setPrepayment("5600".equals(account.substring(0, 4)) || "5660".equals(account.substring(0, 4)) || detail.optBoolean("suplidos"))
+				double detBase = detail.optDouble("base");
+				id.ensureVatTax()
+					.setInvoiceDetail(id.getId())	
 					.setVatDeductionType(VatDeductionType.WITH_RIGHT)
-					.setBase(detail.optDouble("base"))
+					.setBase(detBase)
 					.setPercentage(detail.optDouble("vatPct"))
 					.setQuota(detail.optDouble("quotaVat"))
 					.setSurcharge(detail.optJSONObject("equivalenceSurcharge") != null
@@ -273,33 +268,38 @@ public class BidoqRequest {
 					//.setInvestAsset(ivs.get(j).getInvestAsset())
 					.setDeductiblePercent(100.0)
 					.setDeductibleQuota(detail.getDouble("quotaVat"))
-					.setWithholding(detail.optJSONObject("irpf") != null)
 
-					.setExpAccount(expAccount)
-							
 					.setOutputAccount(outputAccount)
 					.setInputAccount(inputAccount)
 					.setAdjAccount(adjAccount);
 				
-				ai.addVat(vat);
 				
-				if(vat.isWithholding()) { 
-					System.out.println(detail.toString());
-					invoice.setWithholding(true);
 					JSONObject irpf = detail.optJSONObject("irpf");
-
-					retBase = retBase + vat.getBase();
-					retPercentage = irpf.optDouble("percentage");
-					retQuota = retQuota + irpf.optDouble("quota");
-					ai.getInvoice().setWithholding(true);
-				}
+					if (irpf != null) {
+						invoice.setWithholding(true);
+						retBase = detBase;
+						retPercentage = irpf.optDouble("percentage");
+						retQuota = retQuota + irpf.optDouble("quota");
+						id.ensureWithholdingTax(invoice)
+							.setInvoiceDetail(id.getId())	
+							.setBase(retBase)
+							.setPercentage(retPercentage)
+							.setQuota(retQuota)
+							.setSurcharge(0.0)
+							.setSurchargeQuota(0.0) 
+							.setDeductiblePercent(100.0)
+							.setDeductibleQuota(retQuota)
+						;						
+						ai.getInvoice().setWithholding(true);
+					}						
+				
 			
-				if(vat.getSurcharge() > 0 ){ 	
+				if(id.ensureVatTax().getSurcharge() > 0 ){ 	
 					ai.getInvoice().setSurcharge(true);
 				}
 			
-				total = total + (invoice.mustApplyISP() ? vat.getBase() : detail.optDouble("total"));
-				base = base + vat.getBase();
+				total = total + (invoice.mustApplyISP() ? id.getTaxableBase() : detail.optDouble("total"));
+				base = base + id.getTaxableBase();
 		
 				if(ai.getInvoice().isWithholding()) {
 					Account retentionAccount = (invoice.isSales())
@@ -313,9 +313,8 @@ public class BidoqRequest {
 						.setBase(retBase)
 						.setPercentage(retPercentage)
 						.setQuota(retQuota)
-						.setAccountCode(retentionAccount.getCode())
-						.setAccountDescription(retentionAccount.getDescription())
-						.setAccountId(retentionAccount.getId());
+						.setAccount(retentionAccount)
+					;
 					ai.setWithholdingData(iw);
 				}
 			}
@@ -463,7 +462,6 @@ public class BidoqRequest {
 			@Override 
 			public Void visitUndeductible(Invoice invoice) {
 				accountEntry.setEntryType(AccountEntryType.EXPENSE_INVOICE);
-				accountEntry.setUndeductible(true);
 				return null;
 			}
 			@Override 
@@ -479,7 +477,6 @@ public class BidoqRequest {
 			@Override 
 			public Void visitExpenses(Invoice invoice) {
 				accountEntry.setEntryType(AccountEntryType.EXPENSE_INVOICE);
-				accountEntry.setUndeductible(false);
 				return null;
 			}
 		});
@@ -1324,15 +1321,11 @@ public class BidoqRequest {
 					.setBase(tax.getBase())
 					.setPercentage(tax.getPercentage())
 					.setQuota(tax.getQuota())
-					.setAccountCode(retentionAccount.getCode())
-					.setAccountDescription(retentionAccount.getDescription())
-					.setAccountId(retentionAccount.getId());
+					.setAccount(retentionAccount)
+				;
 			ai.setWithholdingData(iw); 
 		}
 			
-		ai.setVats(new LinkedList<>());
-		
-
 		for (InvoiceDetail detail : invoice.getDetails()) {
 
 			Account outputAccount = aonCtx.accounting().getDefaultChargedVatAccount();
@@ -1358,29 +1351,6 @@ public class BidoqRequest {
 				expAccount = ACCOUNTING.save(domain.getName(), domain.getId(), user.getLogin(), expAccount);
 			}
 
-			InvoiceTax detailTax = detail.getInvoiceTaxes().stream().filter(f -> f.getTaxType().equals(TaxType.VAT)).findFirst().orElse(new InvoiceTax());
-			
-			InvoiceVAT vat = new InvoiceVAT()
-					.setInvoiceDetail(detail)
-					.setPrepayment(detail.isPrepayment())
-					.setVatDeductionType(VatDeductionType.WITH_RIGHT)
-					.setBase(detailTax.getBase())
-					.setPercentage(detailTax.getPercentage())
-					.setQuota(detailTax.getQuota())
-					.setSurcharge(detailTax.getSurcharge())
-					.setSurchargeQuota(detailTax.getSurchargeQuota())
-					// .setInvestAsset(ivs.get(j).getInvestAsset())
-					.setDeductiblePercent(detailTax.getDeductiblePercent())
-					.setDeductibleQuota(detailTax.getDeductibleQuota())
-					.setWithholding(invoice.isWithholding())
-					
-					.setExpAccount(expAccount)
-
-					.setOutputAccount(outputAccount)
-					.setInputAccount(inputAccount)
-					.setAdjAccount(adjAccount);
-
-			ai.addVat(vat);
 		}
 
 		ai.setAccountEntry(getEntryBase(domain, user.getLogin(), aonCtx, ai));

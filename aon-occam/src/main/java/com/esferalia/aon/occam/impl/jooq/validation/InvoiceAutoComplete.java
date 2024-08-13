@@ -485,9 +485,7 @@ public class InvoiceAutoComplete {
 				double base = inv.isUndeductible() ?AonMathUtils.round(b.getBase() + b.getQuota()) : b.getBase();
 				
 				InvoiceDetail id = new InvoiceDetail()
-						.setAccount( acc != null ? acc.getId(): null)
-						.setAccountCode(acc != null ? acc.getCode() : null)
-						.setAccountDescription(acc != null ? acc.getDescription() : null)
+						.setExpAccount( acc )
 						.setDescription(acc == null || AonStringUtils.isBlank(acc.getDescription()) 
 								? "IVA " + b.getPercentage() : acc.getDescription())
 						.setDomain(inv.getDomain())
@@ -508,7 +506,7 @@ public class InvoiceAutoComplete {
 			
 			if(detail.getId() != null) {
 				InvoiceDetail d = InvoiceDetailDAO.get(ctx.getContext(), f-> f.getIdProperty().eq(detail.getId()));
-				if(d != null && d.getInvoice() != null && d.getInvoice().getId() != null && !d.getInvoice().getId().equals(inv.getId())) {
+				if(d != null && d.getInvoice() != null && !d.getInvoice().equals(inv.getId())) {
 					detail.setId(null);
 				}
 			}
@@ -537,8 +535,7 @@ public class InvoiceAutoComplete {
 				} else acc = AccountDAO.get(ctx.getContext(), ACCOUNT.DOMAIN.eq(domain.getId()).and(ACCOUNT.CODE.eq(inv.getTediCategory())));
 
 				if(acc != null && acc.getId() != null) {
-					detail.setAccount(acc.getId());
-					detail.setAccountDescription(acc.getDescription());
+					detail.setExpAccount(acc);
 				}
 			}
 			
@@ -561,17 +558,18 @@ public class InvoiceAutoComplete {
 						
 			if(!InvoiceSource.ACCOUNT.equals(detail.getSource()) 
 					&& (detail.getItem() == null || detail.getItem().getId() == null)
-					&& !AonStringUtils.isBlank(detail.getAccountCode())) {
+					&& (detail.getExpAccount() != null
+					&& !AonStringUtils.isBlank(detail.getExpAccount().getCode()))) {
 				
 				Item i = ItemDAO.get(ctx.getContext(), f -> f.getDomainProperty().eq(inv.getDomain()).and(
 						f.getDescriptionProperty().eq(detail.getDescription())
-						.or(f.getProductCodeProperty().eq(detail.getAccountCode()))
+						.or(f.getProductCodeProperty().eq(detail.getExpAccount().getCode()))
 						.or(f.getProductNameProperty().eq(detail.getDescription()))));
 				if(i.getId() == null) {
 					String name = detail.getDescription().length() > 63
 							? detail.getDescription().substring(0, 63) 
 							: detail.getDescription();
-					i = createProductItem(ctx.getContext(), detail.getAccountCode(), name, detail, it);
+					i = createProductItem(ctx.getContext(), detail.getExpAccount().getCode(), name, detail, it);
 				}
 				detail.setItem(new Item().setId(i.getId()));
 			}

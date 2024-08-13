@@ -478,14 +478,14 @@ public class InvoiceServlet extends HttpServlet{
 		invoice.setComments(inv.getComments());
 		invoice.setRectificationType(RectificationType.values()[inv.getRectificationType().ordinal()]);
 		
-		Invoice rInv = AON.getInvoice(domain.getName(), domain.getId(), login, 
-				f-> f.getIdProperty().eq(inv.getRectificationInvoice()));
-		
 		com.code.aon.finance.Invoice rectInv = new com.code.aon.finance.Invoice();
-		rectInv.setId(inv.getRectificationInvoice());
-		rectInv.setSeries(rInv.getSeries());
-		rectInv.setNumber(rInv.getNumber());
-		rectInv.setReferenceCode(rInv.getReferenceCode());
+		inv.getRectificationInvoice()
+			.ifPresent(rInv -> {
+				rectInv.setId(rInv.getId());
+				rectInv.setSeries(rInv.getSeries());
+				rectInv.setNumber(rInv.getNumber());
+				rectInv.setReferenceCode(rInv.getReferenceCode());
+			});
 		invoice.setRectificationInvoice(rectInv);
 		
 		Project project = new Project();
@@ -617,7 +617,7 @@ public class InvoiceServlet extends HttpServlet{
 			invoiceDetail.setId(id.getId());
 			
 			InvestAsset ia = new InvestAsset();
-			ia.setId(id.getInvestAsset());
+			ia.setId(id.getInvestAsset().map( ias -> ias.getId()).orElse(null));
 			invoiceDetail.setInvestAsset(ia);
 			
 			//invoiceDetail.setInvoice(invoice);

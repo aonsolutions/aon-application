@@ -20,6 +20,7 @@ import com.esferalia.aon.occam.api.model.type.InvoiceTransactionType;
 import com.esferalia.aon.occam.api.model.type.InvoiceType;
 import com.esferalia.aon.occam.api.model.type.RectificationType;
 import com.esferalia.aon.watson.server.AonDateUtils;
+import com.esferalia.aon.watson.util.AonCollectionUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
@@ -45,12 +46,6 @@ public class InvoiceJSON {
 		JSONObject addressJSON = JsonUtils.getJSONObject(registryJSON, IJsonNames.ADDRESS);
 		RegistryAddress raddress = RegistryAddressJSON.fromJSON(addressJSON);
 		if(raddress.getRegistry() == null) raddress.setRegistry(registry.getId());
-		JSONObject rectificationInvoiceJSON = JsonUtils.getJSONObject(json, IJsonNames.RECTIFICATION_INVOICE);
-		RectificationType rtype = getRectificationType(json);
-		Invoice rectificationInvoice = new Invoice();
-		if(RectificationType.NORMAL_RECTIFIER.equals(rtype) 
-			 || RectificationType.SPECIAL_RECTIFIER.equals(rtype))
-			rectificationInvoice = getRectificationInvoice(rectificationInvoiceJSON);
 		return new Invoice()
 				.setId(JsonUtils.getInteger(json, IJsonNames.ID))
 				.setDomain(JsonUtils.getInteger(json, IJsonNames.DOMAIN))
@@ -68,13 +63,10 @@ public class InvoiceJSON {
 				.setWithholdingFarmer(json.optBoolean(IJsonNames.WITHHOLDING_FARMER))
 				.setVatAccrualPayment(json.optBoolean(IJsonNames.VAT_ACCRUAL_PAYMENT))
 				.setSurcharge(json.optBoolean(IJsonNames.SURCHARGE))
-				.setRectificationType(rtype)
+				.setRectificationType(getRectificationType(json))
 				.setComments(json.optString(IJsonNames.COMMENTS))
 				.setRemarks(json.optString(IJsonNames.REMARKS))
-				.setRectificationInvoice(rectificationInvoice.getId())
-				.setRectificationInvoiceSeries(rectificationInvoice.getSeries())
-				.setRectificationInvoiceNumber(rectificationInvoice.getNumber())
-				.setRectificationInvoiceDate(rectificationInvoice.getIssueDate())
+				.setRectificationInvoice( fromJSON(JsonUtils.getJSONObject(json, IJsonNames.RECTIFICATION_INVOICE)))
 				.setTotal(JsonUtils.getdouble(json, IJsonNames.TOTAL))
 				.setRegistryData(registry)
 				.setRegistry(registry.getId())
@@ -99,14 +91,6 @@ public class InvoiceJSON {
 		} else return RectificationType.NONE;
 	}
 	
-	private static Invoice getRectificationInvoice(JSONObject json) {
-		return new Invoice()
-				.setId(JsonUtils.getInteger(json, IJsonNames.ID))
-				.setSeries(JsonUtils.getString(json, IJsonNames.SERIES))
-				.setNumber(JsonUtils.getInteger(json, IJsonNames.NUMBER))
-				.setIssueDate(JsonUtils.getDate(json, IJsonNames.DATE));
-	}
-	
 	public static JSONArray toJSON(List<Invoice> invoices) {
 		JSONArray array = new JSONArray();
 		invoices.stream().forEach(invoice -> array.put(toJSON(invoice)));
@@ -114,6 +98,7 @@ public class InvoiceJSON {
 	}
 	
 	public static JSONObject toJSON(Invoice invoice) {
+		if (invoice == null) return null;
 		String date = AonDateUtils.format(invoice.getIssueDate(), AonDateUtils.DATE_TIME_FORMAT_AUX);
 		
 		JSONObject json = new JSONObject()
@@ -137,6 +122,7 @@ public class InvoiceJSON {
 			.put(IJsonNames.SURCHARGE, invoice.isSurcharge())
 			.put(IJsonNames.RECTIFIED, invoice.isRectified())
 			.put(IJsonNames.RECTIFIER, invoice.isRectifier())
+			.put(IJsonNames.RECTIFICATION_INVOICE, toJSON(invoice.getRectificationInvoice().orElse(null)) )
 			//.put(IJsonNames.COMMENTS, invoice.getComments())
 			.put(IJsonNames.TOTAL, invoice.getTotal())
 			.put(IJsonNames.SENDER,RegistryJSON.toJSON(invoice.getRegistryData()))
@@ -147,8 +133,13 @@ public class InvoiceJSON {
 			.put(IJsonNames.ACTIVITY, EnterpriseActivityJSON.toJSON(invoice.getActivity()))
 			.put(IJsonNames.SCOPE, ScopeJSON.toJSON(invoice.getScope()));
 		
-		if(invoice.getDetails() != null && !invoice.getDetails().isEmpty()) {
-			json.put(IJsonNames.CATEGORY, invoice.getDetails().get(0).getAccountCode());
+		String category = AonCollectionUtils.stream(invoice.getDetails())
+			.filter( det -> det.getExpAccount() != null)
+			.map(det -> det.getExpAccount().getCode())
+			.findFirst()
+			.orElse(null);
+		if(AonStringUtils.isNotEmpty(category)) {
+			json.put(IJsonNames.CATEGORY, category );
 		}
 			
 		if(invoice.getAddress() != null) {

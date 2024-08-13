@@ -51,7 +51,7 @@ import com.esferalia.aon.occam.api.model.EnterpriseActivity;
 import com.esferalia.aon.occam.api.model.IAccountEntryWrapper;
 import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.finance.EnumVisitors.IAccountEntryUpdateVisitor;
-import com.esferalia.aon.occam.api.model.finance.InvoiceVAT;
+import com.esferalia.aon.occam.api.model.finance.InvoiceDetail;
 import com.esferalia.aon.occam.api.model.type.AccountEntryType;
 import com.esferalia.aon.occam.api.model.type.AccountEntryUpdate;
 import com.esferalia.aon.watson.mutable.MutableInt;
@@ -799,8 +799,7 @@ public class AccountEntryModule extends MainEntryPoint {
 
 	private void selectEntry(final Integer id) {
 		if (id != null) {
-			ACCOUNT_ENTRY_SERVICE.getAccountEntry(getOptions().getDomainName(),
-					getOptions().getDomain(),getOptions().getUser(), id ,
+			ACCOUNT_ENTRY_SERVICE.getAccountEntry(getOptions().getOccam(), id ,
 				new AsyncCallback<AccountEntry>() {
 					@Override
 					public void onSuccess(AccountEntry result) {
@@ -1805,8 +1804,8 @@ public class AccountEntryModule extends MainEntryPoint {
 						AccountingInvoice ai = (AccountingInvoice) wrapper; 
 						AonAccountBox account = new AonAccountBox(getOptions().getDomainName(),getOptions().getDomain(),getOptions().getUser());
 						final LinkedList<Account> suggestedAccounts = new LinkedList<>();
-						if (AonCollectionUtils.isNotEmpty(ai.getVats())) {
-							InvoiceVAT vat = ai.getVats().get(0);
+						if (AonCollectionUtils.isNotEmpty(ai.getInvoice().getDetails())) {
+							InvoiceDetail vat = ai.getInvoice().getDetails().get(0);
 							account.setAccount(vat.getExpAccount());
 							Account oldAccount = vat.getExpAccount();
 							if (oldAccount != null) {

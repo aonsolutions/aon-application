@@ -22,6 +22,7 @@ import com.esferalia.aon.occam.api.model.AccountTrialBalanceReport;
 import com.esferalia.aon.occam.api.model.AccountingAnalyticalReport;
 import com.esferalia.aon.occam.api.model.AccountingInvoice;
 import com.esferalia.aon.occam.api.model.AccountingReportParams;
+import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Filter.AccountEntryFilter;
 import com.esferalia.aon.occam.api.model.Filter.AccountingRegistryFilter;
@@ -41,6 +42,7 @@ import com.esferalia.aon.occam.api.model.accounting.utilities.AccUtilitiesAccoun
 import com.esferalia.aon.occam.api.model.accounting.utilities.AccUtilitiesParams;
 import com.esferalia.aon.occam.api.model.accounting.utilities.AccUtilitiesResult;
 import com.esferalia.aon.occam.api.model.finance.Finance;
+import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceRectificationData;
 import com.esferalia.aon.occam.api.model.fiscal.OperationBreakdown;
 import com.esferalia.aon.occam.api.model.fiscal.OperationParams;
@@ -52,6 +54,7 @@ import com.esferalia.aon.occam.api.model.type.AccountEntryUpdate;
 import com.esferalia.aon.occam.api.model.type.InvoiceType;
 import com.esferalia.aon.occam.impl.jooq.AccountingImpl;
 import com.esferalia.aon.occam.impl.jooq.dao.AccountStatementDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.accounting.InvoiceRecorder;
 import com.esferalia.aon.occam.impl.jooq.validation.AmortizationTypeValidation;
 import com.esferalia.aon.watson.error.AonCoreException;
 
@@ -274,12 +277,7 @@ public class ACCOUNTING {
 			if (list == null || list.isEmpty()) {
 				return null;
 			}
-			AccountEntry ae = list.getFirst();
-			ae.setUndeductible( 
-				ae.getEntryType() == AccountEntryType.EXPENSE_INVOICE 
-				&& getAccounting().isUndeductibleInvoice(ctx , id ) 
-			);
-			return ae;
+			return list.getFirst();
 		}
 	}
 			
@@ -403,6 +401,12 @@ public class ACCOUNTING {
 	public static AccountingInvoice addInvoiceAttach(String domainName, int domain, String user, AccountingInvoice ai) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domain, user)) {	
 			return getAccounting().addInvoiceAttach(ctx, ai);
+		}
+	}
+
+	public static AccountingInvoice getAccountingInvoice(Occam occam, Integer accountEntry) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(occam)) {
+			return getAccounting().getAccountingInvoice(ctx, accountEntry);
 		}
 	}
 
@@ -756,6 +760,17 @@ public class ACCOUNTING {
 		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domain, user)) {
 			AmortizationTypeValidation.validate(ctx, amortizationType);
 			getAccounting().saveAmortizationType(ctx, amortizationType);
+		}
+	}
+
+	public static AccountEntry getAccountEntry(Occam occam, Invoice invoice) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(occam)) {
+			return InvoiceRecorder.getInvoiceEntry(ctx, invoice);
+		}
+	}
+	public static AccountEntry getAccountEntry(Occam occam, AonConfiguration config, Invoice invoice) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(occam)) {
+			return InvoiceRecorder.getInvoiceEntry(ctx, config, invoice);
 		}
 	}
 

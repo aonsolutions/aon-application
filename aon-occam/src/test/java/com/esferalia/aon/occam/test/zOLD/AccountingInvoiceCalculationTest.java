@@ -1,8 +1,6 @@
 package com.esferalia.aon.occam.test.zOLD;
 
 
-import java.io.IOException;
-import java.sql.SQLException;
 import java.util.Date;
 
 import org.junit.AfterClass;
@@ -14,17 +12,16 @@ import com.esferalia.aon.occam.api.model.AccountEntry;
 import com.esferalia.aon.occam.api.model.AccountEntryDetail;
 import com.esferalia.aon.occam.api.model.AccountingInvoice;
 import com.esferalia.aon.occam.api.model.InvoiceCalculator;
-import com.esferalia.aon.occam.api.model.finance.InvoiceRecorder;
-import com.esferalia.aon.occam.api.model.finance.InvoiceVAT;
+import com.esferalia.aon.occam.api.model.finance.InvoiceDetail;
 import com.esferalia.aon.occam.api.model.type.InvoiceType;
 import com.esferalia.aon.occam.impl.jooq.dao.AccountingInvoiceDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.AccountingRegistryDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.accounting.InvoiceRecorder;
 import com.esferalia.aon.watson.server.AonRandomStringUtils;
+import com.esferalia.aon.watson.util.AonCollectionUtils;
 import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.mysql.jdbc.Driver;
-
-import net.aonsolutions.core.pool.AonConnectionException;
 
 
 public class AccountingInvoiceCalculationTest {
@@ -39,39 +36,43 @@ public class AccountingInvoiceCalculationTest {
 	private int tries = 10000;
 	
 	@BeforeClass
-	public static void beforeClass() throws ClassNotFoundException, SQLException, AonConnectionException {
+	public static void beforeClass() throws ClassNotFoundException {
 		Class.forName( Driver.class.getName() );
 		ctx = AONContext.getAONContext(DOMAIN_NAME, DOMAIN_ID,LOGIN);
 	}
 	
 	// @Test
-	public void test0() throws IOException {
+	public void test0() {
 		fail = 0;
 		registries = 0;
 		AccountingRegistryDAO.getAccountingRegistries(ctx, p -> p.getAccountCodeProperty().eq("430000001"))
 			.forEach( reg -> doTest0(reg.getId(), reg.getType().getInvoiceType() ));
-	}	
+	}
+	
 	private void doTest0(Integer registry, InvoiceType type)  {
 		AccountingInvoice ai = AccountingInvoiceDAO.initializeInvoice(ctx, type, registry, null, new Date());
-		InvoiceVAT vat = ai.getFirstVat();
-
+		InvoiceDetail vat = AonCollectionUtils.stream(ai.getInvoice().getDetails())
+			.findFirst()
+			.orElse(null);
 		
-		vat.setBase(31.75);
-		vat.setPercentage(10.00);
-		vat.setQuota(3.17);
-		double gap = InvoiceCalculator.getQuotaGap(vat, 3.17);
+		vat.setTaxableBase(31.75);
+		vat.setPrice(31.75);
+		vat.setQuantity(1.0);
+		vat.ensureVatTax().setPercentage(10.00);
+		vat.ensureVatTax().setQuota(3.17);
+		double gap = InvoiceCalculator.getQuotaGap(vat.ensureVatTax(), 3.17);
 		
-		System.out.println( "vat : " + vat.getQuota());
+		System.out.println( "vat : " + vat.ensureVatTax().getQuota());
 		System.out.println( "gap  : " + gap );
-		vat.setQuotaEdited(AonMathUtils.isNotZero(gap));
-		InvoiceCalculator.calculate(ai, vat);
-		System.out.println( "vat : " + vat.getQuota());
+		vat.ensureVatTax().setQuotaEdited(AonMathUtils.isNotZero(gap));
+		InvoiceCalculator.calculateDetail(ai.getInvoice(), vat);
+		System.out.println( "vat : " + vat.ensureVatTax().getQuota());
 		
 		
 	}	
 
 	//	// @Test
-	public void test1() throws IOException {
+	public void test1() {
 		fail = 0;
 		registries = 0;
 		
@@ -115,26 +116,24 @@ public class AccountingInvoiceCalculationTest {
 		for ( int i = 0 ; i < tries ; i++ ) {
 			double d = AonNumberUtils.todouble( AonRandomStringUtils.randomNumeric(7));
 			d = AonMathUtils.round(d / 100);
-			InvoiceCalculator.reverseCalculate(ai, d);
+			InvoiceCalculator.reverseCalculate(ai.getInvoice(), d);
 			boolean equals = AonNumberUtils.equals(ai.getTotalInvoice(), d);
 			if (!equals) {
 				fail++;
 				System.out.println("\t" + fail + " - ("+d+") "+ai.getTotalInvoice() + " --> " + equals);
 			} else {
-				AccountEntry[] entries = InvoiceRecorder.recordInvoice(ai);
-				for (AccountEntry ae : entries) {
-					double sumD = 0.0;
-					double sumC = 0.0;
-					for (AccountEntryDetail aed : ae.getDetails()) {
-						if (!aed.isDeleted()) {
-							sumD = AonMathUtils.sum(sumD, aed.getDebit());	
-							sumC = AonMathUtils.sum(sumC, aed.getCredit());
-						}
+				AccountEntry ae = InvoiceRecorder.getInvoiceEntry(ctx, ai.getInvoice());
+				double sumD = 0.0;
+				double sumC = 0.0;
+				for (AccountEntryDetail aed : ae.getDetails()) {
+					if (!aed.isDeleted()) {
+						sumD = AonMathUtils.sum(sumD, aed.getDebit());	
+						sumC = AonMathUtils.sum(sumC, aed.getCredit());
 					}
-					if (!AonMathUtils.isZero( AonMathUtils.round(sumD - sumC))) {
-						fail++;
-						System.out.println(fail + " - DESCUADRE ("+d+") "+ai.getTotalInvoice() +"  deb: "+ sumD + " hab: " + sumC );	
-					}
+				}
+				if (!AonMathUtils.isZero( AonMathUtils.round(sumD - sumC))) {
+					fail++;
+					System.out.println(fail + " - DESCUADRE ("+d+") "+ai.getTotalInvoice() +"  deb: "+ sumD + " hab: " + sumC );	
 				}
 			}
 		}

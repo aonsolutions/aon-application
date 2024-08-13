@@ -1181,9 +1181,7 @@ public class OCRInvoiceBuilder {
 					.findFirst()
 					.orElse(null);
 				if (account != null) {
-					invoiceDetail.setAccount( account.getId() );	
-					invoiceDetail.setAccountCode( account.getCode() );
-					invoiceDetail.setAccountDescription( account.getDescription() );
+					invoiceDetail.setExpAccount( account);	
 				}
 			}
 		}

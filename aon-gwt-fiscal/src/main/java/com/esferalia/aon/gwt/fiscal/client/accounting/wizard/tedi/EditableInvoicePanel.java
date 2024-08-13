@@ -40,8 +40,8 @@ import com.esferalia.aon.occam.api.model.InvoiceCalculator;
 import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.Workplace;
 import com.esferalia.aon.occam.api.model.finance.EnumVisitors.IInvoiceTransactionTypeVisitor;
+import com.esferalia.aon.occam.api.model.finance.InvoiceDetail;
 import com.esferalia.aon.occam.api.model.finance.InvoiceRectificationData;
-import com.esferalia.aon.occam.api.model.finance.InvoiceVAT;
 import com.esferalia.aon.occam.api.model.finance.InvoiceWithholding;
 import com.esferalia.aon.occam.api.model.registry.AccountingRegistry;
 import com.esferalia.aon.occam.api.model.registry.AccountingRegistryType;
@@ -158,7 +158,7 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 	
 	protected static interface IEditableInvoicePanelCallback extends IInvoicePanelCallback {
 		void enableInvoiceTotal(boolean b);
-		InvoiceVAT getVat(final int vatIdx);
+		InvoiceDetail getVat(final int vatIdx);
 	}
 	
 	protected class EditableInvoicePanelCallback implements IEditableInvoicePanelCallback {
@@ -225,8 +225,8 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 		}
 		
 		@Override
-		public InvoiceVAT getVat(final int vatIdx) {
-			return getInvoice().getVats().get(vatIdx);
+		public InvoiceDetail getVat(final int vatIdx) {
+			return getInvoice().getInvoice().getDetails().get(vatIdx);
 		}
 
 		@Override
@@ -418,7 +418,7 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 						ACCOUNT_ENTRY_SERVICE.getAccountingInvoiceFromInvoice(invoiceCallback.getCurrentDomainName()
 								,invoiceCallback.getCurrentDomainId()
 								,invoiceCallback.getCurrentUser()
-								,invoiceCallback.getInvoice().getInvoice().getRectificationInvoice()
+								,invoiceCallback.getInvoice().getInvoice().getRectificationInvoiceId()
 								,new AsyncCallback<AccountingInvoice>() {
 							
 							@Override
@@ -698,7 +698,6 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 			public void onSuccess(AccountingInvoice result) {
 				if (invoiceCallback.getInvoice().isDocumentAttached()) {
 					result.setAttach(invoiceCallback.getInvoice().getAttach());
-					result.setFromRawdoc(invoiceCallback.getInvoice().isFromRawdoc());
 				}
 				AccountEntry ae = invoiceCallback.getInvoice().getAccountEntry();
 				invoiceCallback.setInvoice(result);
@@ -1189,7 +1188,7 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 			@Override
 			public void onChange(ChangeEvent event) {
 				invoiceCallback.getInvoice().getInvoice().setTransaction(transactionBox.getValue());
-				InvoiceCalculator.calculate(invoiceCallback.getInvoice());
+				InvoiceCalculator.calculate(invoiceCallback.getInvoice().getInvoice());
 				enableChecks(invoiceCallback);
 				headerDataChanged(invoiceCallback);
 			}
@@ -1309,7 +1308,7 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 					invoiceCallback.getInvoice().getInvoice().setService( !invoiceCallback.getInvoice().isService() );
 					service.paint(invoiceCallback.getInvoice().isService());
 					decorateInvoiceTypeLabel( invoiceCallback.getInvoice());
-					InvoiceCalculator.calculate(invoiceCallback.getInvoice());
+					InvoiceCalculator.calculate(invoiceCallback.getInvoice().getInvoice());
 					enableChecks(invoiceCallback);
 					headerDataChanged(invoiceCallback);
 				}
@@ -1330,10 +1329,7 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 				withholding.paint(invoiceCallback.getInvoice().getInvoice().isWithholding());
 				decorateInvoiceTypeLabel( invoiceCallback.getInvoice());
 				vatPanel.withholdingChanged( invoiceCallback.getInvoice().getInvoice().isWithholding() );
-				for (InvoiceVAT vat : invoiceCallback.getInvoice().getVats()) {
-					vat.setWithholding(invoiceCallback.getInvoice().getInvoice().isWithholding());
-				}
-				InvoiceCalculator.calculate(invoiceCallback.getInvoice());
+				InvoiceCalculator.calculate(invoiceCallback.getInvoice().getInvoice());
 				headerDataChanged(invoiceCallback);
 			}
 		});
@@ -1369,7 +1365,7 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 				invoiceCallback.getInvoice().getInvoice().setSurcharge(!invoiceCallback.getInvoice().getInvoice().isSurcharge());
 				surcharge.paint(invoiceCallback.getInvoice().getInvoice().isSurcharge());
 				decorateInvoiceTypeLabel( invoiceCallback.getInvoice());
-				InvoiceCalculator.calculate(invoiceCallback.getInvoice());
+				InvoiceCalculator.calculate(invoiceCallback.getInvoice().getInvoice());
 				headerDataChanged(invoiceCallback);
 			}
 		});
@@ -1400,7 +1396,7 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 				invoiceCallback.getInvoice().getInvoice().setWithholdingFarmer(!invoiceCallback.getInvoice().getInvoice().isWithholdingFarmer());
 				withholdingFarmer.paint(invoiceCallback.getInvoice().getInvoice().isWithholdingFarmer());
 				decorateInvoiceTypeLabel( invoiceCallback.getInvoice());
-				InvoiceCalculator.calculate(invoiceCallback.getInvoice());
+				InvoiceCalculator.calculate(invoiceCallback.getInvoice().getInvoice());
 				headerDataChanged(invoiceCallback);
 			}
 		});
@@ -1455,10 +1451,10 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 					decorateInvoiceTypeLabel( invoiceCallback.getInvoice());
 					if (!invoiceCallback.getInvoice().hasPrepayments()) {
 						vatPanel.prepaymentChanged( invoiceCallback.getInvoice().hasPrepayments() );
-						for (InvoiceVAT vat : invoiceCallback.getInvoice().getVats()) {
+						for (InvoiceDetail vat : invoiceCallback.getInvoice().getInvoice().getDetails()) {
 							vat.setPrepayment( false );
 						}
-						InvoiceCalculator.calculate(invoiceCallback.getInvoice());
+						InvoiceCalculator.calculate(invoiceCallback.getInvoice().getInvoice());
 					}
 					headerDataChanged(invoiceCallback);
 				} else {
@@ -1679,12 +1675,12 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 			public void onValueChange(ValueChangeEvent<Double> event) {
 				if (AonNumberUtils.isNumber(invoiceTotal.getText())) {
 					if (invoiceTotal.getValue() == null) invoiceTotal.setValue(0.0, false);
-					if (invoiceCallback.getInvoice().getVats() != null &&  invoiceCallback.getInvoice().getVats().size() == 1) {
-						InvoiceCalculator.reverseCalculate(invoiceCallback.getInvoice(),invoiceTotal.getValue());
-						vatPanel.populateFirstVat( new EditableInvoicePanelCallback(invoiceCallback) );
-						withholdingPanel.setValue( invoiceCallback.getInvoice().getWithholdingData() );
-						financePanel.invoiceTotalChanged( invoiceCallback );
-					}
+					
+					InvoiceCalculator.reverseCalculate(invoiceCallback.getInvoice().getInvoice(),invoiceTotal.getValue());
+					vatPanel.populateFirstVat( new EditableInvoicePanelCallback(invoiceCallback) );
+					withholdingPanel.setValue( invoiceCallback.getInvoice().getWithholdingData() );
+					financePanel.invoiceTotalChanged( invoiceCallback );
+					
 					invoiceCallback.paintEntry();
 					invoiceCallback.getInvoice().getAccountEntry().setDirty(true);
 					invoiceCallback.getModule().refreshIdLabel();
@@ -1743,10 +1739,10 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 		vatDataTableRowDiv.add(vatScrollPanel);
 		invoicePanel.add(vatDataTableDiv);
 		
-		vatPanel.addValueChangeHandler(new ValueChangeHandler<InvoiceVAT>() {
+		vatPanel.addValueChangeHandler(new ValueChangeHandler<InvoiceDetail>() {
 			@Override
-			public void onValueChange(ValueChangeEvent<InvoiceVAT> event) {
-				InvoiceCalculator.calculate(invoiceCallback.getInvoice());
+			public void onValueChange(ValueChangeEvent<InvoiceDetail> event) {
+				InvoiceCalculator.calculate(invoiceCallback.getInvoice().getInvoice());
 				withholdingPanel.setValue(invoiceCallback.getInvoice().getWithholdingData());
 				invoiceTotal.setValue(invoiceCallback.getInvoice().getInvoice().getTotal(),false);
 				financePanel.invoiceTotalChanged(invoiceCallback);
@@ -1781,7 +1777,7 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 		withholdingPanel.addValueChangeHandler(new ValueChangeHandler<InvoiceWithholding>() {
 			@Override
 			public void onValueChange(ValueChangeEvent<InvoiceWithholding> event) {
-				InvoiceCalculator.calculate(invoiceCallback.getInvoice());
+				InvoiceCalculator.calculate(invoiceCallback.getInvoice().getInvoice());
 				withholdingPanel.setValue(invoiceCallback.getInvoice().getWithholdingData());
 				invoiceTotal.setValue(invoiceCallback.getInvoice().getInvoice().getTotal(),false);
 				invoiceCallback.paintEntry();
@@ -1961,7 +1957,7 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 		invoiceCallback.getInvoice().setPrepayments(invoiceCallback.getInvoice().getDuaInvoice() != null);
 		prepayment.paint(invoiceCallback.getInvoice().hasPrepayments());
 		vatPanel.paint( new EditableInvoicePanelCallback(invoiceCallback) );
-		InvoiceCalculator.calculate(invoiceCallback.getInvoice());
+		InvoiceCalculator.calculate(invoiceCallback.getInvoice().getInvoice());
 		headerDataChanged(invoiceCallback);
 	}
 

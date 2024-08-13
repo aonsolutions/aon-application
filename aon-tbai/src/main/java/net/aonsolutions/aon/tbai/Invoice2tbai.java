@@ -13,6 +13,7 @@ import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.occam.api.model.type.TaxType;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonMathUtils;
+import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 import net.aonsolutions.aon.tbai.lroe.IDType;
@@ -297,9 +298,11 @@ public class Invoice2tbai {
 			
 			FacturasRectificadasSustituidasType rectificadas = new FacturasRectificadasSustituidasType();
 			IDFacturaRectificadaSustituidaType rectificada = new IDFacturaRectificadaSustituidaType();
-			rectificada.setSerieFactura(invoice.getRectificationInvoiceSeries());
-			rectificada.setNumFactura(invoice.getRectificationInvoiceNumber().toString());
-			rectificada.setFechaExpedicionFactura(AonDateUtils.format(invoice.getRectificationInvoiceDate(), "dd-MM-yyyy"));
+			invoice.getRectificationInvoice().ifPresent( ri -> {
+				rectificada.setSerieFactura(ri.getSeries());
+				rectificada.setNumFactura(AonNumberUtils.toString(ri.getNumber()));
+				rectificada.setFechaExpedicionFactura(AonDateUtils.format(ri.getIssueDate(), "dd-MM-yyyy"));
+			});
 			rectificadas.getIDFacturaRectificadaSustituida().add(rectificada);
 			cabecera.setFacturasRectificadasSustituidas(rectificadas);
 		}

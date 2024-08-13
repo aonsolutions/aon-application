@@ -443,7 +443,7 @@ public class AccountStatementDAO {
 						.setName(ap.getName());
 				map.put(inter,params);
 			} else if (map.size() > 0 && params.getPreviousPeriods() >= map.size() ) {
-				AccountingReportParams cloned = params.clone();
+				AccountingReportParams cloned = params.copy();
 				cloned.setPeriod(ap.getId());
 				cloned.setFromDate( AonDateUtils.add(params.getFromDate(), Calendar.YEAR, (map.size() * (-1)) ));
 				cloned.setToDate( AonDateUtils.add(params.getToDate(), Calendar.YEAR,  (map.size() * (-1)) ));

@@ -73,6 +73,7 @@ import com.esferalia.aon.occam.impl.jooq.dao.FinanceTrackingDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.FinanceUtilitiesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.InvofoxConfigurationDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.InvoiceDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.InvoiceDetailDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.InvoiceFiscalDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.InvoiceOLDDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.InvoiceSIIDAO;
@@ -174,12 +175,12 @@ public class FinanceImpl implements IFinance {
 	
 	@Override
 	public Stream<InvoiceDetail> getInvoiceDetails(AONContext ctx, InvoiceFilter filter) {
-		return InvoiceDAO.getInvoiceDetails(ctx, filter);
+		return InvoiceDetailDAO.getInvoiceDetails(ctx, filter);
 	}
 	
 	@Override
 	public Stream<InvoiceDetailExtended> getInvoiceDetailsExtended(AONContext ctx, InvoiceFilter filter, IDAOCallback callback) {
-		return InvoiceDAO.getInvoiceDetailsExtended(ctx, filter, callback);
+		return InvoiceDetailDAO.getInvoiceDetailsExtended(ctx, filter, callback);
 	}
 
 	@Override

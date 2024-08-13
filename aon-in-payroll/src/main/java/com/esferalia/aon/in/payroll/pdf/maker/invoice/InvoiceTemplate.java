@@ -335,10 +335,11 @@ public class InvoiceTemplate {
 	
 	private void drawComment(PDDocument doc, CompanyFull company, Invoice invoice, String comment, PrintInvoiceThemeConfiguration theme) throws IOException {
 		float firstY = y;
-		if (invoice.isRectifier() && (invoice.getRectificationInvoiceNumber() != null || !AonStringUtils.isEmpty(invoice.getRectificationInvoiceSeries()))) {
-			String rn = AonStringUtils.trimToEmpty(AonNumberUtils.toString(invoice.getRectificationInvoiceNumber()));
+		if (invoice.isRectifier() && invoice.getRectificationInvoice().isPresent()) {
+			Invoice rectificationInvoice = invoice.getRectificationInvoice().get(); 
+			String rn = AonStringUtils.trimToEmpty(AonNumberUtils.toString(rectificationInvoice.getNumber()));
 			String rectNum = !AonStringUtils.isBlank(rn) ? AonStringUtils.leftPad(rn, 6, '0') : "";
-			String message = getMsg().rectifies() + " " + AonStringUtils.trimToEmpty(invoice.getRectificationInvoiceSeries()) + "/" + rectNum;
+			String message = getMsg().rectifies() + " " + AonStringUtils.trimToEmpty(rectificationInvoice.getSeries()) + "/" + rectNum;
 			drawText(contents, message, 50f, y, theme.getTitleTextColor(), boldFont, 10);
 			y-=20;
 		}
@@ -2188,8 +2189,7 @@ public class InvoiceTemplate {
 				.setId(original.getId())
 				.setDomain(original.getDomain())
 				.setInvoice(original.getInvoice());
-		newInvoiceDetail.setInvestAsset(original.getInvestAsset());
-		newInvoiceDetail.setInvestAssetData(original.getInvestAssetData());
+		newInvoiceDetail.setInvestAsset(original.getInvestAsset().orElse(null));
 		newInvoiceDetail.setProject(original.getProject());
 		newInvoiceDetail.setProjectName(original.getProjectName());
 		newInvoiceDetail.setSeller(original.getSeller());

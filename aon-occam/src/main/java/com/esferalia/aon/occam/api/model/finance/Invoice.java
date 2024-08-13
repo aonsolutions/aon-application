@@ -21,6 +21,8 @@ import com.esferalia.aon.occam.api.model.type.InvoiceTransactionType;
 import com.esferalia.aon.occam.api.model.type.InvoiceType;
 import com.esferalia.aon.occam.api.model.type.RectificationType;
 import com.esferalia.aon.occam.api.model.type.SecurityLevel;
+import com.esferalia.aon.occam.api.model.type.TaxType;
+import com.esferalia.aon.occam.api.model.type.WithholdingType;
 import com.esferalia.aon.watson.util.AonCollectionUtils;
 import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
@@ -30,9 +32,8 @@ public class Invoice implements Serializable, HasAudit {
 	private static final long serialVersionUID = 8897444490096530091L;
 	private static final double REG_IMPORT_MAX_VALUE  = 150.0;
 	
-	
 	private boolean selected;
-
+	
 	private List<InvoiceError> messages;
 
 	private Integer id;
@@ -46,18 +47,15 @@ public class Invoice implements Serializable, HasAudit {
 	private String referenceCode;
 	private Date issueDate;
 	private Date taxDate;
+	
 	private RectificationType rectificationType;
+	private Invoice rectificationInvoice;
+	
 	private SecurityLevel securityLevel;
 	
 	private Integer registryAddress;
 	private RegistryAddress address;
 	
-	private Integer rectificationInvoice;
-	private String rectificationInvoiceSeries;
-	private String rectificationInvoiceReference;
-	private Integer rectificationInvoiceNumber;
-	private Date rectificationInvoiceDate;
-
 	private Integer registry;
 	private String registryDocument;
 	private DocumentType registryDocumentType;
@@ -101,6 +99,8 @@ public class Invoice implements Serializable, HasAudit {
 	private InvoiceFiscal fiscal;
 	private InvoiceInfo invoiceInfo;
 	private Attach attach;
+	
+	private Integer rawdocId;
 
 	// ***************************
 	// ATRIBUTOS CON DUDOSO FUTURO
@@ -209,44 +209,15 @@ public class Invoice implements Serializable, HasAudit {
 	public void setNormalRectifier( boolean normalRectifier) {
 		setRectificationType(normalRectifier?RectificationType.NORMAL_RECTIFIER:null);
 	}
-	public Integer getRectificationInvoice() {
-		return rectificationInvoice;
+	
+	public Integer getRectificationInvoiceId() {
+		return getRectificationInvoice().map( Invoice::getId ).orElse(null);	
 	}
-	public Invoice setRectificationInvoice(Integer rectificationInvoice) {
+	public Optional<Invoice> getRectificationInvoice() {
+		return Optional.ofNullable( rectificationInvoice );
+	}
+	public Invoice setRectificationInvoice(Invoice rectificationInvoice) {
 		this.rectificationInvoice = rectificationInvoice;
-		return this;
-	}
-	
-	public String getRectificationInvoiceSeries() {
-		return rectificationInvoiceSeries;
-	}
-	public Invoice setRectificationInvoiceSeries(String rectificationInvoiceSeries) {
-		this.rectificationInvoiceSeries = rectificationInvoiceSeries;
-		return this;
-	}
-	
-	public String getRectificationInvoiceReference() {
-		return rectificationInvoiceReference;
-	}
-	
-	public Invoice setRectificationInvoiceReference(String rectificationInvoiceReference) {
-		this.rectificationInvoiceReference = rectificationInvoiceReference;
-		return this;
-	}
-	
-	public Integer getRectificationInvoiceNumber() {
-		return rectificationInvoiceNumber;
-	}
-	public Invoice setRectificationInvoiceNumber(Integer rectificationInvoiceNumber) {
-		this.rectificationInvoiceNumber = rectificationInvoiceNumber;
-		return this;
-	}
-	
-	public Date getRectificationInvoiceDate() {
-		return rectificationInvoiceDate;
-	}
-	public Invoice setRectificationInvoiceDate(Date rectificationInvoiceDate) {
-		this.rectificationInvoiceDate = rectificationInvoiceDate;
 		return this;
 	}
 	
@@ -526,17 +497,18 @@ public class Invoice implements Serializable, HasAudit {
 		}
 		return details;
 	}
-	
 	public Invoice setDetails(List<InvoiceDetail> details) {
 		this.details = details;
 		return this;
 	}
-	
 	public Invoice addDetail(InvoiceDetail detail) {
 		getDetails().add(detail);
 		return this;
-		
 	}
+	public Optional<InvoiceDetail> getFirstDetail() {
+		return getDetails().stream().findFirst();
+	}
+	
 
 	/**
 	 * @deprecated This method will be removed use getBreakdowns(), getVats() or getWithHolding()
@@ -674,6 +646,9 @@ public class Invoice implements Serializable, HasAudit {
 	public boolean isSales() {
 		return getType() == InvoiceType.SALES;
 	}
+	public boolean isNotSales() {
+		return !isSales();
+	}
 	public boolean isPurchase() {
 		return getType() == InvoiceType.PURCHASE;
 	}
@@ -719,6 +694,9 @@ public class Invoice implements Serializable, HasAudit {
 	}
 	
 	
+	public boolean isVatEnabled() {
+		return (isInputVatEnabled() != isOutputVatEnabled());
+	}
 	
 	public boolean isInputVatEnabled() {
 		return !isUndeductible() 
@@ -854,6 +832,30 @@ public class Invoice implements Serializable, HasAudit {
 	public Optional<InvoiceWithholding> getWithholding() {
 		return this.getTaxBreakdown().flatMap( itb -> itb.getInvoiceWithholding() );
 	}
-	 
+	public InvoiceWithholding ensureWithholdingData() {
+		return getWithholding()
+			.orElseGet( () -> {
+				addBreakdown(new InvoiceBreakdown()
+						.setTaxType(TaxType.RETENTION)
+						.setWithholdingType(WithholdingType.PROFESSIONAL)
+					)
+					.setWithholding(true);
+					AonCollectionUtils.stream(getDetails())
+						.forEach(d -> d.ensureWithholdingTax( Invoice.this ));
+				return getWithholding().orElse(null); 
+			});
+	}
+	
+	public Integer getRawdocId() {
+		return rawdocId;
+	}
+	public Invoice setRawdocId(Integer rawdocId) {
+		this.rawdocId = rawdocId;
+		return this;
+	}
+	public boolean isFromRawdoc() {
+		return this.rawdocId != null;
+	}
+	
 }
 

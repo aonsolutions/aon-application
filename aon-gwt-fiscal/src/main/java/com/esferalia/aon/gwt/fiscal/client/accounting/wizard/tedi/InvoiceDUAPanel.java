@@ -10,6 +10,7 @@ import com.esferalia.aon.gwt.fiscal.client.widget.AccountingImportInvoiceBox;
 import com.esferalia.aon.occam.api.model.AccountingDUAInfo;
 import com.esferalia.aon.occam.api.model.AccountingDUAInvoice;
 import com.esferalia.aon.occam.api.model.AccountingInvoice;
+import com.esferalia.aon.occam.api.model.finance.InvoiceDetail;
 import com.esferalia.aon.occam.api.model.finance.InvoiceVAT;
 import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
@@ -300,7 +301,7 @@ public class InvoiceDUAPanel extends AonDisplayTable implements HasSelectionHand
 		while (tab47.getRowCount() > row) {
 			tab47.removeRow(tab47.getRowCount()-1);
 		}
-		for( InvoiceVAT vat : callback.getInvoice().getDuaInvoice().getInfo().getDuaVats()) {
+		for( InvoiceDetail vat : callback.getInvoice().getDuaInvoice().getInfo().getDuaDetails()) {
 			int col=0;
 			Label label = new Label("[B00] " + AON.MSG.vat());
 			tab47.setWidget(row, col, label);
@@ -309,45 +310,34 @@ public class InvoiceDUAPanel extends AonDisplayTable implements HasSelectionHand
 			DoubleBox vatBase = new DoubleBox(10);
 			DoubleBox vatPercent = new DoubleBox(5);
 			DoubleBox vatTotal = new DoubleBox(10);
-			vatBase.setValue(vat.getBase());
-			vatPercent.setValue(vat.getPercentage());
-			vatTotal.setValue(vat.getQuota());
+			vatBase.setValue(vat.ensureVatTax().getBase());
+			vatPercent.setValue(vat.ensureVatTax().getPercentage());
+			vatTotal.setValue(vat.ensureVatTax().getQuota());
 
-			vatBase.addValueChangeHandler( new ValueChangeHandler<Double>() {
-				
-				@Override
-				public void onValueChange(ValueChangeEvent<Double> event) {
-					vat.setBase(vatBase.getValue()== null? 0 : vatBase.getValue());
-					SelectionEvent.fire(InvoiceDUAPanel.this, callback);
-				}
+			vatBase.addValueChangeHandler( event -> {
+				vat.ensureVatTax().setBase(vatBase.getValue()== null? 0 : vatBase.getValue());
+				SelectionEvent.fire(InvoiceDUAPanel.this, callback);
 			});
 			vatBase.addStyleName(AON.AON_CSS.aonMarginRight());
 			tab47.setWidget(row, col, vatBase);
 			++col;
 			
-			vatPercent.addValueChangeHandler( new ValueChangeHandler<Double>() {
-				
-				@Override
-				public void onValueChange(ValueChangeEvent<Double> event) {
-					vat.setPercentage(vatPercent.getValue() == null? 0 : vatPercent.getValue());
-					SelectionEvent.fire(InvoiceDUAPanel.this, callback);
-				}
+			vatPercent.addValueChangeHandler( event -> {
+				vat.ensureVatTax().setPercentage(vatPercent.getValue() == null? 0 : vatPercent.getValue());
+				SelectionEvent.fire(InvoiceDUAPanel.this, callback);
 			});
 			vatPercent.addStyleName(AON.AON_CSS.aonMarginRight());
 			tab47.setWidget(row, col, vatPercent);
 			++col;
 			
-			vatTotal.addValueChangeHandler( new ValueChangeHandler<Double>() {
-				@Override
-				public void onValueChange(ValueChangeEvent<Double> event) {
-					vat.setQuota(vatTotal.getValue() == null? 0 : vatTotal.getValue());
-					SelectionEvent.fire(InvoiceDUAPanel.this, callback);
-				}
+			vatTotal.addValueChangeHandler( event -> {
+				vat.ensureVatTax().setQuota(vatTotal.getValue() == null? 0 : vatTotal.getValue());
+				SelectionEvent.fire(InvoiceDUAPanel.this, callback);
 			});
 			vatTotal.addStyleName(AON.AON_CSS.aonMarginRight());
 			tab47.setWidget(row, col, vatTotal);
 			row++;
-			if ( AonMathUtils.isNotZero( vat.getSurcharge() ) ) {
+			if ( AonMathUtils.isNotZero( vat.ensureVatTax().getSurcharge() ) ) {
 				col=0;
 				
 				label = new Label("[B01] " + AON.MSG.re());
@@ -356,36 +346,22 @@ public class InvoiceDUAPanel extends AonDisplayTable implements HasSelectionHand
 				
 				DoubleBox rePercent = new DoubleBox(5);
 				DoubleBox reTotal = new DoubleBox(10);
-				rePercent.setValue(vat.getSurcharge());
-				reTotal.setValue(vat.getSurchargeQuota());
+				rePercent.setValue(vat.ensureVatTax().getSurcharge());
+				reTotal.setValue(vat.ensureVatTax().getSurchargeQuota());
 
 				++col;
 				
-				rePercent.addValueChangeHandler( new ValueChangeHandler<Double>() {
-					
-					@Override
-					public void onValueChange(ValueChangeEvent<Double> event) {
-						vat.setSurcharge(rePercent.getValue() == null? 0 : rePercent.getValue());
-						SelectionEvent.fire(InvoiceDUAPanel.this, callback);
-					}
+				rePercent.addValueChangeHandler( event -> {
+					vat.ensureVatTax().setSurcharge(rePercent.getValue() == null? 0 : rePercent.getValue());
+					SelectionEvent.fire(InvoiceDUAPanel.this, callback);
 				});
 				rePercent.addStyleName(AON.AON_CSS.aonMarginRight());
 				tab47.setWidget(row, col, rePercent);
 				++col;
 				
-				reTotal.addValueChangeHandler( new ValueChangeHandler<Double>() {
-					@Override
-					public void onValueChange(ValueChangeEvent<Double> event) {
-						vat.setSurchargeQuota(reTotal.getValue() == null? 0 : reTotal.getValue());
-						//				AccountingDUAInfo info = callback.getInvoice().getDuaInvoice().getInfo();
-						//				info.setVatTotalEdited( AonMathUtils.isNotZero(InvoiceCalculator.getVatTotalGap(info, q)) );
-						//				if (info.isVatTotalEdited()) {
-						//					vatTotal.setTitle("Importe aranceles modificada. Deber\u00EDa ser: " + InvoiceCalculator.getVatTotal(info));
-						//				} else {
-						//					vatTotal.setTitle(null);
-						//				}
-						SelectionEvent.fire(InvoiceDUAPanel.this, callback);
-					}
+				reTotal.addValueChangeHandler( event -> {
+					vat.ensureVatTax().setSurchargeQuota(reTotal.getValue() == null? 0 : reTotal.getValue());
+					SelectionEvent.fire(InvoiceDUAPanel.this, callback);
 				});
 				reTotal.addStyleName(AON.AON_CSS.aonMarginRight());
 				tab47.setWidget(row, col, reTotal);
@@ -407,18 +383,18 @@ public class InvoiceDUAPanel extends AonDisplayTable implements HasSelectionHand
 			AccountingDUAInvoice duaInvoice = new AccountingDUAInvoice();
 			duaInvoice.setAccountingInvoice(extInvoice);
 			duaInvoice.setInfo(new AccountingDUAInfo()
-					.setPrice(duaInvoice.getAccountingInvoice().getTotalInvoice())
-					.setStatisticalValue(duaInvoice.getAccountingInvoice().getTotalInvoice())
-					.setVatAccount(callback.getConfiguration().accounting().getDefaultDUAVatAccount() )
-					.setDutyAccount(callback.getConfiguration().accounting().getDefaultDUADutyAccount() )
-					.setDutyBase(duaInvoice.getAccountingInvoice().getTotalInvoice())
-					.setAuthCalcEnabled(true)
+				.setPrice(duaInvoice.getAccountingInvoice().getTotalInvoice())
+				.setStatisticalValue(duaInvoice.getAccountingInvoice().getTotalInvoice())
+				.setVatAccount(callback.getConfiguration().accounting().getDefaultDUAVatAccount() )
+				.setDutyAccount(callback.getConfiguration().accounting().getDefaultDUADutyAccount() )
+				.setDutyBase(duaInvoice.getAccountingInvoice().getTotalInvoice())
+				.setAuthCalcEnabled(true)
 			);
-			LinkedList<InvoiceVAT> duaVats = new LinkedList<InvoiceVAT>();
-			for (InvoiceVAT ori : duaInvoice.getAccountingInvoice().getVats()) {
+			LinkedList<InvoiceDetail> duaVats = new LinkedList<>();
+			for (InvoiceDetail ori : duaInvoice.getAccountingInvoice().getInvoice().getDetails()) {
 				duaVats.add(ori.copy());
 			}
-			duaInvoice.getInfo().setDuaVats(duaVats);
+			duaInvoice.getInfo().setDuaDetails(duaVats);
 			callback.getInvoice().setDuaInvoice(duaInvoice);
 		}
 	}
@@ -450,7 +426,8 @@ public class InvoiceDUAPanel extends AonDisplayTable implements HasSelectionHand
 		dutyTotal.setValue(info.getDutyTotal(),false, AonNumberUtils.notEquals(dutyTotal.getValue(), info.getDutyTotal()));
 		if (callback.getInvoice().getDuaInvoice() != null 
 			&& callback.getInvoice().getDuaInvoice().getAccountingInvoice() != null
-			&& callback.getInvoice().getDuaInvoice().getAccountingInvoice().getVats() != null) {
+			&& callback.getInvoice().getDuaInvoice().getAccountingInvoice().getInvoice() != null 
+			&& callback.getInvoice().getDuaInvoice().getAccountingInvoice().getInvoice().getDetails() != null) {
 			paintVats( callback);
 		}
 	}

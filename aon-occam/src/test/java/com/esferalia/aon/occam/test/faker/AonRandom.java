@@ -12,6 +12,7 @@ import java.util.stream.Collectors;
 
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Account;
+import com.esferalia.aon.occam.api.model.AccountFilter;
 import com.esferalia.aon.occam.api.model.AccountPeriod;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.Customer;
@@ -31,6 +32,9 @@ import com.esferalia.aon.occam.api.model.finance.InvoiceBreakdown;
 import com.esferalia.aon.occam.api.model.fiscal.VatSummaryType;
 import com.esferalia.aon.occam.api.model.product.ProductStatus;
 import com.esferalia.aon.occam.api.model.product.Tariff;
+import com.esferalia.aon.occam.api.model.registry.AccountingRegistry;
+import com.esferalia.aon.occam.api.model.registry.AccountingRegistryType;
+import com.esferalia.aon.occam.api.model.registry.AccountingRegistryType.AccountingRegistryTypeVisitor;
 import com.esferalia.aon.occam.api.model.registry.Creditor;
 import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.registry.RegistryAddress;
@@ -43,6 +47,7 @@ import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.occam.api.model.type.DocumentType;
 import com.esferalia.aon.occam.api.model.type.Gender;
 import com.esferalia.aon.occam.api.model.type.InvoiceTransactionType;
+import com.esferalia.aon.occam.api.model.type.InvoiceType;
 import com.esferalia.aon.occam.api.model.type.MediaType;
 import com.esferalia.aon.occam.api.model.type.PayMethodType;
 import com.esferalia.aon.occam.api.model.type.Period;
@@ -57,6 +62,7 @@ import com.esferalia.aon.occam.api.model.type.VatDeductionType;
 import com.esferalia.aon.occam.api.model.type.WithholdingType;
 import com.esferalia.aon.occam.impl.jooq.dao.AccountDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.AccountPeriodDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.AccountingRegistryDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.CompanyDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.CreditorDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.CustomerDAO;
@@ -68,6 +74,7 @@ import com.esferalia.aon.occam.impl.jooq.dao.SupplierDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.TariffDAO;
 import com.esferalia.aon.occam.server.fiscal.FiscalUtils;
 import com.esferalia.aon.occam.test.faker.InvoiceFaker.InvoiceFakerParams;
+import com.esferalia.aon.watson.mutable.MutableObject;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonCollectionUtils;
 import com.esferalia.aon.watson.util.AonMathUtils;
@@ -294,6 +301,11 @@ public class AonRandom {
 			?AccountDAO.getRandom(ctx, null )
 			:null;
 	}
+	public static Account getAccount(AONContext ctx, int nullThreshold, AccountFilter filter){
+		return gt(nullThreshold)
+			?AccountDAO.getRandom(ctx, filter )
+			:null;
+	}
 	public static AccountPeriod getAccountPeriod(AONContext ctx) {
 		return getAccountPeriod(ctx, 0);
 	}
@@ -455,7 +467,17 @@ public class AonRandom {
 		return gt(nullThreshold)
 			?InvoiceTransactionType.values()[faker.random().nextInt(InvoiceTransactionType.values().length)]
 			:null;
-	} 
+	}
+	
+	public static InvoiceType getRandomInvoiceType() {
+		return getRandomInvoiceType(-1);
+	}
+	public static InvoiceType getRandomInvoiceType(int nullThreshold) {
+		return gt(nullThreshold)
+			?InvoiceType.values()[faker.random().nextInt(InvoiceType.values().length)]
+			:null;
+	}
+	
 	public static MediaType getRandomMediaType() {
 		return getRandomMediaType (-1);
 	}
@@ -633,5 +655,44 @@ public class AonRandom {
 		;
 	}
 	
+	public static AccountingRegistry getAccountingRegistry(AONContext ctx) {
+		AccountingRegistryType i = AccountingRegistryType.values()[faker.random().nextInt(AccountingRegistryType.values().length)];
+		MutableObject<AccountingRegistry> ret = new MutableObject<>();
+		i.visit(new AccountingRegistryTypeVisitor() {
+			
+			@Override
+			public void visitUndedCreditor() {
+				visitCreditor();
+			}
+			
+			@Override
+			public void visitSupplier() {
+				Supplier c = AonRandom.getSupplier(ctx);
+				ret.setValue( 
+					AccountingRegistryDAO.getAccountingRegistries(ctx , p -> p.getIdProperty().eq(c.getId()) )
+						.findFirst()
+						.orElse(null));
+			}
+			
+			@Override
+			public void visitCustomer() {
+				Customer c = AonRandom.getCustomer(ctx);
+				ret.setValue( 
+					AccountingRegistryDAO.getAccountingRegistries(ctx , p -> p.getIdProperty().eq(c.getId()) )
+						.findFirst()
+						.orElse(null));
+			}
+			
+			@Override
+			public void visitCreditor() {
+				Creditor c = AonRandom.getCreditor(ctx);
+				ret.setValue( 
+					AccountingRegistryDAO.getAccountingRegistries(ctx , p -> p.getIdProperty().eq(c.getId()) )
+						.findFirst()
+						.orElse(null));
+			}
+		});
+		return ret.getValue();
+	}
 }
 

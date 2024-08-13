@@ -33,7 +33,6 @@ public class TediServiceImpl extends AonStatelessRemoteServiceServlet implements
 			String extension = AonStringUtils.substringAfterLast(fileName, ".");
 			TediResult result = TEDI.parse(new TediContext().setDomainName(domainName).setDomain(domain).setUser(user), input, MimeType.getByExtension(extension));
 			result.getAccountingInvoice()
-				.setFromRawdoc(false)
 				.setTediParsed(true);
 			return result;
 		} catch ( TediException t) {

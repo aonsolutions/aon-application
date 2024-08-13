@@ -18,10 +18,10 @@ import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.registry.AccountingRegistry;
 import com.esferalia.aon.occam.api.model.registry.AccountingRegistryParams;
 import com.esferalia.aon.occam.api.model.registry.AccountingRegistryType;
+import com.esferalia.aon.occam.api.model.registry.AccountingRegistryType.AccountingRegistryTypeVisitor;
 import com.esferalia.aon.occam.api.model.registry.Creditor;
 import com.esferalia.aon.occam.api.model.registry.CreditorFull;
 import com.esferalia.aon.occam.api.model.registry.CustomerFull;
-import com.esferalia.aon.occam.api.model.registry.IAccountingRegistryTypeVisitor;
 import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.registry.RegistryAddress;
 import com.esferalia.aon.occam.api.model.registry.RegistryFull;
@@ -226,9 +226,9 @@ public class AonAccountingRegistryFullPanel extends DockLayoutPanel implements F
 
 
 	private void populate(AonModuleOptions<?> options, final Integer id,AonAccountingRegistryFullPanelCallback callback) {
-		final IAccountingRegistryTypeVisitor visitor = new IAccountingRegistryTypeVisitor() {
+		final AccountingRegistryTypeVisitor visitor = new AccountingRegistryTypeVisitor() {
 			@Override
-			public void visitSupplier(AccountingRegistry reg) {
+			public void visitSupplier() {
 				if ( id == null) {
 					SupplierFull full = SupplierFull.initialize( options.getDomain() );
 					container.setWidget(new AonSupplierFullPanel(options, full, getSupplierVisitor(options,callback)));
@@ -249,7 +249,7 @@ public class AonAccountingRegistryFullPanel extends DockLayoutPanel implements F
 			}
 			
 			@Override
-			public void visitCustomer(AccountingRegistry reg) {
+			public void visitCustomer() {
 				if ( id == null) {
 					CustomerFull full = CustomerFull.initialize( options.getDomain() );
 					container.setWidget(new AonCustomerFullPanel(options, full, getCustomerVisitor(options, callback)));
@@ -270,7 +270,7 @@ public class AonAccountingRegistryFullPanel extends DockLayoutPanel implements F
 			}
 			
 			@Override
-			public void visitCreditor(AccountingRegistry reg) {
+			public void visitCreditor() {
 				if ( id == null) {
 					CreditorFull full = CreditorFull.initialize( options.getDomain() );
 					container.setWidget(new AonCreditorFullPanel(options, full, getCreditorVisitor(options, callback)));
@@ -291,17 +291,17 @@ public class AonAccountingRegistryFullPanel extends DockLayoutPanel implements F
 			}
 			
 			@Override
-			public void visitUndedCreditor(AccountingRegistry reg) {
-				visitCreditor(reg);
+			public void visitUndedCreditor() {
+				visitCreditor();
 			}
 		};
-		typeBox.getValue().visit(null, visitor );	
+		typeBox.getValue().visit( visitor );	
 		typeBox.addChangeHandler(new ChangeHandler() {
 			@Override
 			public void onChange(ChangeEvent event) {
 				documentWarningContainer.clear();
 				setWidgetSize(documentWarningContainer, 0);
-				typeBox.getValue().visit(null, visitor);	
+				typeBox.getValue().visit(visitor);	
 			}
 		});
 	}
@@ -406,12 +406,12 @@ public class AonAccountingRegistryFullPanel extends DockLayoutPanel implements F
 					
 					if(!sameType) {
 						// To avoid final error.
-						LinkedList<AccountingRegistry>  arList = new LinkedList<AccountingRegistry>();
-						accountingRegistryType.visit(null, new IAccountingRegistryTypeVisitor() {
-							@Override public void visitCustomer(AccountingRegistry reg) {arList.add(getFromCustomerFull((CustomerFull) rf));}
-							@Override public void visitCreditor(AccountingRegistry reg) {arList.add(getFromCreditorFull((CreditorFull) rf));}
-							@Override public void visitSupplier(AccountingRegistry reg) {arList.add(getFromSupplierFull((SupplierFull) rf));}
-							@Override public void visitUndedCreditor(AccountingRegistry reg) {arList.add(getFromCreditorFull((CreditorFull) rf));}
+						LinkedList<AccountingRegistry>  arList = new LinkedList<>();
+						accountingRegistryType.visit(new AccountingRegistryTypeVisitor() {
+							@Override public void visitCustomer() {arList.add(getFromCustomerFull((CustomerFull) rf));}
+							@Override public void visitCreditor() {arList.add(getFromCreditorFull((CreditorFull) rf));}
+							@Override public void visitSupplier() {arList.add(getFromSupplierFull((SupplierFull) rf));}
+							@Override public void visitUndedCreditor() {arList.add(getFromCreditorFull((CreditorFull) rf));}
 						});
 						AccountingRegistry ar = arList.get(0);
 						LOGGER.info("INITIALIZE" );	
@@ -422,21 +422,21 @@ public class AonAccountingRegistryFullPanel extends DockLayoutPanel implements F
 							public void onSuccess(AccountingRegistry result) {
 								LOGGER.info("INITIALIZE onSuccess " + (result==null?"NULL":result.getName()) );
 								if (result != null) {
-									accountingRegistryType.visit(result, new IAccountingRegistryTypeVisitor() {
-										@Override public void visitCustomer(AccountingRegistry reg) {
-											container.setWidget(new AonCustomerFullPanel(options, toCustomerFull(reg), getCustomerVisitor(options, callback)));
+									accountingRegistryType.visit(new AccountingRegistryTypeVisitor() {
+										@Override public void visitCustomer() {
+											container.setWidget(new AonCustomerFullPanel(options, toCustomerFull(result), getCustomerVisitor(options, callback)));
 										}
-										@Override public void visitCreditor(AccountingRegistry reg) {
-											LOGGER.info("INITIALIZE onSuccess visitCreditor 1 " + (reg==null?"NULL":reg.getName()) );
-											CreditorFull creditorFull = toCreditorFull(reg);
+										@Override public void visitCreditor() {
+											LOGGER.info("INITIALIZE onSuccess visitCreditor 1 " + (result==null?"NULL":result.getName()) );
+											CreditorFull creditorFull = toCreditorFull(result);
 											LOGGER.info("INITIALIZE onSuccess visitCreditor 2" + (creditorFull==null?"NULL":creditorFull.getRegistry().getName()) );
 											container.setWidget(new AonCreditorFullPanel(options, creditorFull, getCreditorVisitor(options, callback)));
 										}
-										@Override public void visitSupplier(AccountingRegistry reg) {
-											container.setWidget(new AonSupplierFullPanel(options, toSupplierFull(reg), getSupplierVisitor(options, callback)));
+										@Override public void visitSupplier() {
+											container.setWidget(new AonSupplierFullPanel(options, toSupplierFull(result), getSupplierVisitor(options, callback)));
 										}
-										@Override public void visitUndedCreditor(AccountingRegistry reg) {
-											container.setWidget(new AonCreditorFullPanel(options, toCreditorFull(reg), getCreditorVisitor(options, callback)));
+										@Override public void visitUndedCreditor() {
+											container.setWidget(new AonCreditorFullPanel(options, toCreditorFull(result), getCreditorVisitor(options, callback)));
 										}
 									});
 								}

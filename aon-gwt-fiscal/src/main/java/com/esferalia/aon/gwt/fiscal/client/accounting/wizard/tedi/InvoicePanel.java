@@ -11,15 +11,16 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonTableButton;
 import com.esferalia.aon.gwt.fiscal.client.AccountEntrySelectionEvent;
 import com.esferalia.aon.gwt.fiscal.client.AccountEntrySelectionHandler;
 import com.esferalia.aon.gwt.fiscal.client.HasAccountEntrySelectionHandlers;
-import com.esferalia.aon.gwt.fiscal.client.accounting.AccountEntryModuleOptions;
 import com.esferalia.aon.gwt.fiscal.client.accounting.AccountEntryModule;
 import com.esferalia.aon.gwt.fiscal.client.accounting.AccountEntryModule.IAccountEntryModuleCallback;
+import com.esferalia.aon.gwt.fiscal.client.accounting.AccountEntryModuleOptions;
 import com.esferalia.aon.gwt.fiscal.client.accounting.ISelectionCallback;
 import com.esferalia.aon.gwt.fiscal.client.accounting.wizard.tedi.TediProblems.ITediProblemsCallback;
 import com.esferalia.aon.gwt.fiscal.client.tedi.TediService;
 import com.esferalia.aon.gwt.fiscal.client.tedi.TediServiceAsync;
 import com.esferalia.aon.gwt.fiscal.client.tedi.TediServiceAsyncDecorator;
 import com.esferalia.aon.occam.api.model.AccountEntry;
+import com.esferalia.aon.occam.api.model.AccountEntryWrapper;
 import com.esferalia.aon.occam.api.model.AccountingInvoice;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.IAccountEntryWrapper;
@@ -28,14 +29,12 @@ import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.attachment.AttachType;
 import com.esferalia.aon.occam.api.model.finance.Finance;
 import com.esferalia.aon.occam.api.model.finance.InvoiceDetail;
-import com.esferalia.aon.occam.api.model.finance.InvoiceRecorder;
 import com.esferalia.aon.occam.api.model.registry.AccountingRegistry;
 import com.esferalia.aon.occam.api.model.tedi.TediResult;
 import com.esferalia.aon.occam.api.model.type.InvoiceSource;
 import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler;
-import com.google.gwt.core.client.Scheduler.ScheduledCommand;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.Style;
 import com.google.gwt.event.dom.client.ChangeEvent;
@@ -152,10 +151,7 @@ public class InvoicePanel extends WizardContentBase<AccountingInvoice> implement
 		});
 		focusableWidget = eip;
 		centerContainer.setWidget( eip );
-		Scheduler.get().scheduleDeferred(new ScheduledCommand() {
-			public void execute() {
-				eip.setFocus(true);
-			}});
+		Scheduler.get().scheduleDeferred(() -> eip.setFocus(true));
 	}
 
 	private void viewInvoice() {
@@ -200,7 +196,7 @@ public class InvoicePanel extends WizardContentBase<AccountingInvoice> implement
 		AccountingInvoice ai = new AccountingInvoice();
 		ai.setAccountEntry(new AccountEntry()
 			.setPeriod(base.getPeriod())
-			.setDomain(getCallback().getCurrentDomainId())
+			.setDomain(getCallback().getOccam().getDomain())
 			.setConfidential(base.isConfidential())
 			.setEntryDate(base.getEntryDate())
 			.setActivity(base.getActivity())
@@ -212,8 +208,8 @@ public class InvoicePanel extends WizardContentBase<AccountingInvoice> implement
 	public void select(final Integer id,final IAccountEntryWrapper wrp,final ISelectionCallback cbk) {
 		getCallback().getModule().onClearSessionLog();
 		if (id != null) {
-			getAccountEntryService().getAccountingInvoice(getCallback().getCurrentDomainName()
-				,getCallback().getCurrentDomainId(),getCallback().getCurrentUser(),id
+			getAccountEntryService().getAccountingInvoice(getCallback().getOccam()
+				,id
 				,new AsyncCallback<AccountingInvoice>() {
 						@Override
 						public void onSuccess(AccountingInvoice result) {
@@ -244,8 +240,20 @@ public class InvoicePanel extends WizardContentBase<AccountingInvoice> implement
 
 
 	private void _paintEntry() {
-		AccountEntry[] entries = InvoiceRecorder.recordInvoice(getWrapper());
-		getCallback().getModule().onPreview(AccountEntryModule.getWrapperArray (entries) );		
+		getAccountEntryService().getAccountEntry(getCallback().getOccam()
+			, getCallback().getConfiguration()
+			, getWrapper().getInvoice() , new AsyncCallback<AccountEntry>() {
+
+			@Override
+			public void onSuccess(AccountEntry result) {
+				getCallback().getModule().onPreview(new AccountEntryWrapper(result)); 
+			}
+
+			@Override
+			public void onFailure(Throwable caught) {
+				getCallback().getModule().onError(caught.getMessage());
+			}
+		});		
 	}
 	
 	private boolean isAccountSource() {
@@ -628,7 +636,8 @@ public class InvoicePanel extends WizardContentBase<AccountingInvoice> implement
 				attachPanelTableCell2.add(viewer);
 				paintButtons();
 				openAttach();
-			} if (mimeType.isImage()) {
+			} 
+			if (mimeType.isImage()) {
 				paintButtons();
 				double from = rootPanel.getWidgetSize(attachPanelTable) == null? 0 : rootPanel.getWidgetSize(attachPanelTable);
 				int to = Window.getClientWidth() - 900;
@@ -637,10 +646,7 @@ public class InvoicePanel extends WizardContentBase<AccountingInvoice> implement
 				}
 				AonScalableImage scalableImage = new AonScalableImage( );
 				attachPanelTableCell2.add(scalableImage);
-				Scheduler.get().scheduleDeferred(new ScheduledCommand() {
-					public void execute() {
-						scalableImage.setImage(doc);
-				}});
+				Scheduler.get().scheduleDeferred(() -> scalableImage.setImage(doc));
 			}
 			
 			if ( allowParse && invoiceCallback.getConfiguration().isOCRActive() ) {

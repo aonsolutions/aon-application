@@ -1,6 +1,5 @@
 package com.esferalia.aon.occam.server.accounting;
 
-import java.util.LinkedList;
 import java.util.Optional;
 
 import org.json.JSONObject;
@@ -25,8 +24,6 @@ import com.esferalia.aon.occam.api.model.attachment.AttachType;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceBreakdown;
 import com.esferalia.aon.occam.api.model.finance.InvoiceDetail;
-import com.esferalia.aon.occam.api.model.finance.InvoiceTax;
-import com.esferalia.aon.occam.api.model.finance.InvoiceVAT;
 import com.esferalia.aon.occam.api.model.finance.InvoiceWithholding;
 import com.esferalia.aon.occam.api.model.registry.AccountingRegistry;
 import com.esferalia.aon.occam.api.model.registry.AccountingRegistryType;
@@ -37,7 +34,6 @@ import com.esferalia.aon.occam.api.model.type.InvoiceSource;
 import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.occam.api.model.type.RawdocStatus;
 import com.esferalia.aon.occam.api.model.type.TaxType;
-import com.esferalia.aon.occam.api.model.type.VatDeductionType;
 import com.esferalia.aon.occam.impl.jooq.dao.AccountDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.InvoiceRecorderDAO;
 import com.esferalia.aon.watson.util.AonStringUtils;
@@ -82,7 +78,7 @@ public class Rawdoc2AccountingInvoice {
 			attach.setData(rawdoc.getData());
 			attach.setAttachURL("RAWDOC");
 			ai.setAttach(attach);
-			ai.setFromRawdoc(true);
+			ai.getInvoice().setRawdocId(rawdoc.getId());
 		}
 		return ai;
 	}
@@ -123,43 +119,17 @@ public class Rawdoc2AccountingInvoice {
 			
 			fillWithholding(ctx, aonConfig, ai);
 			
-			ai.setVats(new LinkedList<>());
-
 			for (InvoiceDetail detail : invoice.getDetails()) {
-				Account expAccount = getExpAccount(ctx, category , detail);
-				InvoiceTax detailTax = new InvoiceTax(); 
-				double base = 0.0;
-				if (ai.isUndeductible() || detail.isPrepayment()) {
-					base = detail.getTaxableBase();	
-				} else {
-					detailTax = detail.getInvoiceTaxes().stream()
-						.filter(f -> f.getTaxType().equals(TaxType.VAT))
-						.findFirst()
-						.orElse(new InvoiceTax());
-					base = detailTax.getBase();
+				detail.setExpAccount(getExpAccount(ctx, category , detail));
+				if (detail.getVatTax().isPresent()) {
+					detail.getVatTax().get()
+						.setOutputAccount(outputAccount)
+						.setInputAccount(inputAccount)
+						.setAdjAccount(adjAccount)
+						.setAdjDirectTaxAccount( adjDirectTaxAccount )
+					;
 				}
-				InvoiceVAT vat = new InvoiceVAT()
-					.setInvoiceDetail(detail)
-					.setPrepayment(detail.isPrepayment())
-					.setVatDeductionType(VatDeductionType.WITH_RIGHT)
-					.setBase(base)
-					.setPercentage(detailTax.getPercentage())
-					.setQuota(detailTax.getQuota())
-					.setSurcharge(detailTax.getSurcharge())
-					.setSurchargeQuota(detailTax.getSurchargeQuota())
-					.setInvestAsset( detail.getInvestAsset() )
-					.setDeductiblePercent(detailTax.getDeductiblePercent())
-					.setDeductibleQuota(detailTax.getDeductibleQuota())
-					.setWithholding(invoice.isWithholding() && !detail.isPrepayment())
-					
-					.setExpAccount(expAccount)
-					.setOutputAccount(outputAccount)
-					.setInputAccount(inputAccount)
-					.setAdjAccount(adjAccount)
-					.setAdjDirectTaxAccount( adjDirectTaxAccount )
-				;
-				ai.setPrepayments( ai.hasPrepayments() ||  vat.isPrepayment() );
-				ai.addVat(vat);
+				ai.setPrepayments( ai.hasPrepayments() ||  detail.isPrepayment() );
 			}
 						
 			ai.setAccountEntry(InvoiceRecorderDAO.getEntryBase(ctx, aonConfig, ai.getInvoice()));
@@ -205,9 +175,7 @@ public class Rawdoc2AccountingInvoice {
 			expAccount = (detail.getExpAccount() != null && detail.getExpAccount().getId() != null)
 				? ACCOUNTING.getAccount(ctx, detail.getExpAccount().getId())
 				: ACCOUNTING.getAccount(ctx, category);
-		}
-		if (expAccount == null) {
-			expAccount = new Account();
+			detail.setExpAccount(expAccount);
 		}
 		return expAccount;
 	}
@@ -225,9 +193,8 @@ public class Rawdoc2AccountingInvoice {
 				.setBase(tax.getBase())
 				.setPercentage(tax.getPercentage())
 				.setQuota(tax.getQuota())
-				.setAccountCode(retentionAccount.getCode())
-				.setAccountDescription(retentionAccount.getDescription())
-				.setAccountId(retentionAccount.getId());
+				.setAccount(retentionAccount)
+			;
 			ai.setWithholdingData(iw); 
 		}
 		return ai;

@@ -173,8 +173,8 @@ public class LROE240_4_2 extends LROE240 {
 	private List<AnulacionBienInversionType> buildAnulacionBienes(Invoice invoice) {
 		LinkedList<AnulacionBienInversionType> bienes = new LinkedList<>();
 		invoice.getDetails().stream().forEach(detail -> {
-			if(detail.getInvestAsset() != null && detail.getInvestAssetData() != null && detail.getInvestAssetData().getId() != null) {
-				bienes.add(buildAnulacionBien(invoice, detail.getInvestAssetData()));
+			if(detail.getInvestAsset().isPresent()) {
+				bienes.add(buildAnulacionBien(invoice, detail.getInvestAsset().get()));
 			}
 		});
 		return bienes;

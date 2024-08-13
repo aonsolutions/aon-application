@@ -36,6 +36,7 @@ import static com.esferalia.aon.jooq.tables.Ritem.RITEM;
 import static com.esferalia.aon.jooq.tables.User.USER;
 import static com.esferalia.aon.jooq.tables.Workplace.WORKPLACE;
 
+import java.util.Optional;
 import java.util.function.Function;
 
 import org.jooq.Record;
@@ -737,6 +738,10 @@ public class FillerDAO {
 		}
 	}
 	
+	/**
+	 *  @deprecated USE InvoiceDAO suitable FILLER
+	 */
+	@Deprecated 
 	public static class InvoiceDetailCommissionFiller implements Function<Record, InvoiceDetailCommission> {
 		
 		@Override
@@ -761,7 +766,9 @@ public class FillerDAO {
 				.setInvestAsset(r.getValue(INVOICE.INVEST_ASSET))
 				.setProject(r.getValue(INVOICE.PROJECT))
 				.setRectificationType(AonEnumUtils.enumValue(RectificationType.class,r.getValue(INVOICE.RECTIFICATION_TYPE)))	
-				.setRectificationInvoice(r.getValue(INVOICE.RECTIFICATION_INVOICE))	
+				.setRectificationInvoice(
+					Optional.ofNullable( r.getValue(INVOICE.RECTIFICATION_INVOICE) ).map( rid -> new Invoice().setId(rid)).orElse(null)
+				)	
 				.setTransaction(AonEnumUtils.enumValue(InvoiceTransactionType.class,r.getValue(INVOICE.TRANSACTION)))
 				.setRecorded(r.getValue(INVOICE.STATUS) == 1 )	
 				.setSurcharge(r.getValue(INVOICE.SURCHARGE) == 1 )	

@@ -21,9 +21,7 @@ import com.esferalia.aon.occam.api.model.finance.Finance;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceBreakdown;
 import com.esferalia.aon.occam.api.model.finance.InvoiceDetail;
-import com.esferalia.aon.occam.api.model.finance.InvoiceRecorder;
 import com.esferalia.aon.occam.api.model.finance.InvoiceTax;
-import com.esferalia.aon.occam.api.model.finance.InvoiceVAT;
 import com.esferalia.aon.occam.api.model.finance.InvoiceWithholding;
 import com.esferalia.aon.occam.api.model.finance.PayMethod;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceErrorKey;
@@ -44,9 +42,10 @@ import com.esferalia.aon.occam.api.model.type.WithholdingType;
 import com.esferalia.aon.occam.impl.jooq.dao.AccountDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.AccountPeriodDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.AccountingInvoiceDAO;
-import com.esferalia.aon.occam.impl.jooq.dao.AccountingInvoiceDAO.InvoiceRegistryInitializer;
 import com.esferalia.aon.occam.impl.jooq.dao.AccountingRegistryDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.PayMethodDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.accounting.InvoiceRecorder;
+import com.esferalia.aon.occam.impl.jooq.dao.accounting.InvoiceRegistryInitializer;
 import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
@@ -456,10 +455,10 @@ public class InvoiceBuilder {
 		}
 		ai.setAccountEntry(getEntryBase(ctx,aonCtx,ai));
 		if (result.isImportable()) {
-			ai.setAccountEntry(InvoiceRecorder.getInvoiceEntry(ai));
+			ai.setAccountEntry(InvoiceRecorder.getInvoiceEntry(ctx, ai.getInvoice()));
 		}
 		// ----------
-		InvoiceCalculator.calculate(ai);
+		InvoiceCalculator.calculate(ai.getInvoice());
 		// ----------
 		TediValidator.validateInvoice(ctx,result);
 		return result; 
@@ -599,7 +598,6 @@ public class InvoiceBuilder {
 			@Override 
 			public Void visitUndeductible(Invoice invoice) {
 				accountEntry.setEntryType(AccountEntryType.EXPENSE_INVOICE);
-				accountEntry.setUndeductible(true);
 				return null;
 			}
 			@Override 
@@ -615,7 +613,6 @@ public class InvoiceBuilder {
 			@Override 
 			public Void visitExpenses(Invoice invoice) {
 				accountEntry.setEntryType(AccountEntryType.EXPENSE_INVOICE);
-				accountEntry.setUndeductible(false);
 				return null;
 			}
 		});
@@ -626,10 +623,6 @@ public class InvoiceBuilder {
 	private static void fillVats(AONContext ctx, AonConfiguration aonCtx, TediResult result) {
 		AccountingInvoice ai = result.getAccountingInvoice();
 		Invoice invoice = result.getInvoice();
-				
-		if (ai.getVats() == null) {
-			ai.setVats( new LinkedList<InvoiceVAT>());
-		}
 
 		boolean withholding = false;
 		if (invoice.getBreakdown() != null) {
@@ -645,10 +638,8 @@ public class InvoiceBuilder {
 						.setBase( ib.getBase() )
 						.setPercentage( ib.getPercentage() )
 						.setQuota( ib.getQuota() )
-						.setAccountId( retentionAccount == null? null : retentionAccount.getId() )
-						.setAccountCode( retentionAccount == null? null : retentionAccount.getCode() )
-						.setAccountDescription( retentionAccount == null? null : retentionAccount.getDescription() )
-						;
+						.setAccount( retentionAccount )
+					;
 					ai.setWithholdingData(iw);
 					break;
 				}
@@ -672,40 +663,9 @@ public class InvoiceBuilder {
 		}
 		if (invoice.getDetails() != null) {
 			for (InvoiceDetail detail : invoice.getDetails()) {
-				InvoiceVAT vat = null;
-				if (detail.getInvoiceTaxes() != null && detail.getInvoiceTaxes().size() > 0) {
-					for (InvoiceTax tax : detail.getInvoiceTaxes()) {
-						if (tax.getTaxType() == TaxType.VAT) {
-							vat = getInvoiceVAT( detail, tax,outputAccount,inputAccount,adjAccount,adjDirectTaxAccount, expAccount, withholding);					
-						}
-					}
-				} else {
-					vat = getInvoiceVAT( detail, new InvoiceTax(),outputAccount,inputAccount,adjAccount,adjDirectTaxAccount, expAccount, withholding);
-				}
-				ai.addVat(vat);
+				detail.setExpAccount(expAccount);
 			}
 		}
-	}
-	
-	private static InvoiceVAT getInvoiceVAT( InvoiceDetail detail, InvoiceTax tax,Account outputAccount,Account inputAccount,Account adjAccount,Account adjDirectTaxAccount,Account expAccount, boolean withholding) {
-		return new InvoiceVAT()
-				.setVatDeductionType(VatDeductionType.WITH_RIGHT)
-				.setBase(detail.getTaxableBase())
-				.setPercentage(tax.getPercentage())
-				.setQuota(tax.getQuota())
-				.setSurcharge(tax.getSurcharge())
-				.setSurchargeQuota(tax.getSurchargeQuota())
-				.setInvestAsset(detail.getInvestAsset())
-				.setDeductiblePercent(tax.getDeductiblePercent())
-				.setDeductibleQuota(tax.getDeductibleQuota()).setWithholding(withholding)
-
-				.setOutputAccount(outputAccount)
-				.setInputAccount(inputAccount)
-				.setAdjAccount(adjAccount)
-				.setAdjDirectTaxAccount( adjDirectTaxAccount )
-
-				.setExpAccount(expAccount)
-				;
 	}
 	
 	public static void fillRegistry(AONContext ctx, AonConfiguration aonCtx, TediResult result) {
@@ -745,7 +705,7 @@ public class InvoiceBuilder {
 					ai.setSuggestedAccounts(AccountingInvoiceDAO.getSuggestedAccounts(ctx, ar.getId(), ar.getType().getInvoiceType()));
 					invoice.setRegistry(ar.getId())
 						.setTransaction(ar.getTransaction());
-					ar.getType().visit(ar, new InvoiceRegistryInitializer(ctx, ai.getInvoice(), aonCtx));
+					ar.getType().visit(new InvoiceRegistryInitializer(ctx, ai.getInvoice(), aonCtx, ar));
 					return true;
 				} else {
 					result.setPosibleRegistries(registries);
@@ -818,7 +778,7 @@ public class InvoiceBuilder {
 					invoice
 						.setRegistry(ar.getId())
 						.setTransaction(ar.getTransaction());
-					ar.getType().visit(ar, new InvoiceRegistryInitializer(ctx, ai.getInvoice(), aonCtx));
+					ar.getType().visit(new InvoiceRegistryInitializer(ctx, ai.getInvoice(), aonCtx, ar));
 					if (tedi.getSender() != null) {
 						invoice.setRegistryDocument(tedi.getSender().getDocument());
 						invoice.setRegistryName(tedi.getSender().getName());

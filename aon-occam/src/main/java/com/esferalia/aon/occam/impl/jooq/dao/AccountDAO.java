@@ -257,7 +257,7 @@ public class AccountDAO {
 		int lowerLevel = lowestLevel + 1;
 		List<Account> insertedLoweLevelAccounts = new LinkedList<>();
 		while (lowerLevel < level) {
-			Account lowerAccount = account.clone();
+			Account lowerAccount = account.copy();
 			String lowerCode = AonStringUtils.substring(account.getCode(),0, lowerLevel);
 			lowerAccount.setCode(lowerCode)
 				.setDescription("AUTOGENERADA: " + String.valueOf(lowerCode))

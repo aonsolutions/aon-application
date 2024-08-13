@@ -26,7 +26,7 @@ import com.esferalia.aon.occam.api.model.GeoZone;
 import com.esferalia.aon.occam.api.model.Properties.AccountingRegistryProperties;
 import com.esferalia.aon.occam.api.model.registry.AccountingRegistry;
 import com.esferalia.aon.occam.api.model.registry.AccountingRegistryType;
-import com.esferalia.aon.occam.api.model.registry.IAccountingRegistryTypeVisitor;
+import com.esferalia.aon.occam.api.model.registry.AccountingRegistryType.AccountingRegistryTypeVisitor;
 import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.registry.RegistryAddress;
 import com.esferalia.aon.occam.api.model.registry.RegistryMedia;
@@ -45,6 +45,9 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class AccountingRegistryDAO {
 	
+	private AccountingRegistryDAO() {
+	}
+
 	private static final Field<Integer> TYP_FIELD = DSL.field("typ", Integer.class);
 	private static final Field<Byte> STA_FIELD    = DSL.field("sta", Byte.class);
 	private static final Field<Integer> REG_FIELD = DSL.field("reg", REGISTRY.ID.getType() ); 
@@ -80,6 +83,7 @@ public class AccountingRegistryDAO {
 		@Override public Property<String> getDocumentCountryProperty() {return new FilterDAO.PropertyDAO<String>(REGISTRY.DOCUMENT_COUNTRY);}
 		@Override public Property<Byte> getStatusProperty() {return new FilterDAO.PropertyDAO<Byte>(STA_FIELD);}
 	}
+	
 	
 	public static Condition[] getConditions(AccountingRegistryFilter filter) {
 		return ACCOUNTING_REGISTRY_PROPERTIES.getConditions(filter);		
@@ -264,10 +268,10 @@ public class AccountingRegistryDAO {
 				.set(RMEDIA.TECHNICAL,AonEnumUtils.getByte(true))
 				.execute();
 		}
-		reg.getType().visit(reg, new IAccountingRegistryTypeVisitor() {
+		reg.getType().visit(new AccountingRegistryTypeVisitor() {
 			
 			@Override
-			public void visitSupplier(AccountingRegistry reg) {
+			public void visitSupplier() {
 				ctx.getDslContext().insertInto(SUPPLIER)
 					.set(SUPPLIER.REGISTRY, reg.getId())
 					.set(SUPPLIER.DOMAIN,reg.getDomain())
@@ -286,7 +290,7 @@ public class AccountingRegistryDAO {
 			}
 			
 			@Override
-			public void visitCustomer(AccountingRegistry reg) {
+			public void visitCustomer() {
 				ctx.getDslContext().insertInto(CUSTOMER)
 					.set(CUSTOMER.REGISTRY, reg.getId())
 					.set(CUSTOMER.DOMAIN,reg.getDomain())
@@ -304,7 +308,7 @@ public class AccountingRegistryDAO {
 			}
 			
 			@Override
-			public void visitCreditor(AccountingRegistry reg) {
+			public void visitCreditor() {
 				ctx.getDslContext().insertInto(CREDITOR)
 				.set(CREDITOR.REGISTRY, reg.getId())
 				.set(CREDITOR.DOMAIN,reg.getDomain())
@@ -322,8 +326,8 @@ public class AccountingRegistryDAO {
 			}
 			
 			@Override
-			public void visitUndedCreditor(AccountingRegistry reg) {
-				visitCreditor(reg);
+			public void visitUndedCreditor() {
+				visitCreditor();
 			}
 		}); 
 		return reg;
@@ -458,10 +462,10 @@ public class AccountingRegistryDAO {
 				}
 			}
 			
-			reg.getType().visit(reg, new IAccountingRegistryTypeVisitor() {
+			reg.getType().visit(new AccountingRegistryTypeVisitor() {
 				
 				@Override
-				public void visitSupplier(AccountingRegistry reg) {
+				public void visitSupplier() {
 					ctx.getDslContext().insertInto(SUPPLIER)
 						.set(SUPPLIER.REGISTRY, reg.getId())
 						.set(SUPPLIER.DOMAIN,reg.getDomain())
@@ -480,7 +484,7 @@ public class AccountingRegistryDAO {
 				}
 			
 				@Override
-				public void visitCustomer(AccountingRegistry reg) {
+				public void visitCustomer() {
 					ctx.getDslContext().insertInto(CUSTOMER)
 						.set(CUSTOMER.REGISTRY, reg.getId())
 						.set(CUSTOMER.DOMAIN,reg.getDomain())
@@ -498,7 +502,7 @@ public class AccountingRegistryDAO {
 				}
 			
 				@Override
-				public void visitCreditor(AccountingRegistry reg) {
+				public void visitCreditor() {
 					ctx.getDslContext().insertInto(CREDITOR)
 						.set(CREDITOR.REGISTRY, reg.getId())
 						.set(CREDITOR.DOMAIN,reg.getDomain())
@@ -516,8 +520,8 @@ public class AccountingRegistryDAO {
 				}
 			
 				@Override
-				public void visitUndedCreditor(AccountingRegistry reg) {
-					visitCreditor(reg);
+				public void visitUndedCreditor() {
+					visitCreditor();
 				}	
 			}); 
 		}

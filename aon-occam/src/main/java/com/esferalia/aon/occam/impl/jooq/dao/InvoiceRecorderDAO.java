@@ -46,7 +46,6 @@ public class InvoiceRecorderDAO {
 			@Override 
 			public Void visitUndeductible(Invoice invoice) {
 				accountEntry.setEntryType(AccountEntryType.EXPENSE_INVOICE);
-				accountEntry.setUndeductible(true);
 				return null;
 			}
 			@Override 
@@ -62,7 +61,6 @@ public class InvoiceRecorderDAO {
 			@Override 
 			public Void visitExpenses(Invoice invoice) {
 				accountEntry.setEntryType(AccountEntryType.EXPENSE_INVOICE);
-				accountEntry.setUndeductible(false);
 				return null;
 			}
 		});

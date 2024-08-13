@@ -223,7 +223,7 @@ public class TrialBalancePanel extends ScrollPanel implements HasSelectionHandle
 					
 					@Override
 					public void onClick(ClickEvent event) {
-						AccountingReportParams newParams = params.clone();
+						AccountingReportParams newParams = params.copy();
 						newParams.setAccount( new Account().setCode(bal.getCode()));
 						SelectionEvent.fire(TrialBalancePanel.this, newParams );						
 					}

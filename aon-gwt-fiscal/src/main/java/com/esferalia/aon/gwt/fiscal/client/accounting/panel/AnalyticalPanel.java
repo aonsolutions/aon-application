@@ -197,7 +197,7 @@ public class AnalyticalPanel extends ScrollPanel implements HasSelectionHandlers
 						
 						@Override
 						public void onClick(ClickEvent event) {
-							AccountingReportParams newParams = params.clone();
+							AccountingReportParams newParams = params.copy();
 							newParams.setAccount( new Account()
 									.setId(account.getId())
 									.setCode(account.getCode()));

@@ -6,7 +6,6 @@ import java.util.List;
 
 import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
-import com.esferalia.aon.occam.api.model.finance.InvoiceVAT;
 import com.esferalia.aon.occam.api.model.finance.InvoiceWithholding;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceError;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceErrorLevel;
@@ -21,7 +20,6 @@ public class AccountingInvoice implements Serializable, IAccountEntryWrapper {
 	private static final long serialVersionUID = -4435280253306756102L;
 	
 	private boolean tediParsed;
-	private boolean fromRawdoc;
 	
 	private AccountEntry accountEntry;
 	private Invoice invoice;
@@ -33,7 +31,7 @@ public class AccountingInvoice implements Serializable, IAccountEntryWrapper {
 
 	private InvoiceWithholding privWithholdingData;
 	private LinkedList<Account> suggestedAccounts;
-	private LinkedList<InvoiceVAT> vats;
+	
 	private LinkedList<AccountEntry> accountEntries;
 	private boolean prepayments;
 	
@@ -60,11 +58,7 @@ public class AccountingInvoice implements Serializable, IAccountEntryWrapper {
 		return this;
 	}
 	public boolean isFromRawdoc() {
-		return fromRawdoc;
-	}
-	public AccountingInvoice setFromRawdoc(boolean fromRawdoc) {
-		this.fromRawdoc = fromRawdoc;
-		return this;
+		return getInvoice().isFromRawdoc();
 	}
 	public boolean hasTotal() {
 		return getInvoice() != null && AonMathUtils.isNotZero( getTotalInvoice() ); 
@@ -117,11 +111,13 @@ public class AccountingInvoice implements Serializable, IAccountEntryWrapper {
 	}
 	
 	public boolean isDocumentAttached() {
-		return this.invoice.getAttach().isPresent();
+		return this.invoice != null && this.invoice.getAttach().isPresent();
 	}
 	
 	public Attach getAttach() {
-		return this.invoice.getAttach().orElse(null);
+		return this.invoice != null
+			?this.invoice.getAttach().orElse(null)
+			:null;
 	}
 	public AccountingInvoice setAttach(Attach attach) {
 		this.invoice.setAttach(attach);
@@ -169,25 +165,9 @@ public class AccountingInvoice implements Serializable, IAccountEntryWrapper {
 		this.suggestedAccounts = suggestedAccounts;
 		return this;
 	}
-	public LinkedList<InvoiceVAT> getVats() {
-		return vats;
-	}
-	public AccountingInvoice addVat(InvoiceVAT vat) {
-		if (getVats() == null) {
-			setVats(new LinkedList<>());
-		}
-		getVats().add(vat);
-		return this;
-	}
-	public AccountingInvoice setVats(LinkedList<InvoiceVAT> vats) {
-		this.vats = vats;
-		return this;
-	}
-	
 	public double getTotalInvoice() {
 		return getInvoice().getTotal();
 	}
-	
 	public boolean isNational() {
 		return invoice != null && invoice.isNational();
 	}
@@ -255,9 +235,7 @@ public class AccountingInvoice implements Serializable, IAccountEntryWrapper {
 	}
 	
 	public void setWithholdingAccount(Account acc) {
-		getWithholdingData().setAccountId(acc.getId())
-			.setAccountCode(acc.getCode())
-			.setAccountDescription(acc.getDescription());
+		getWithholdingData().setAccount(acc);
 	}	
 	public void setWithholdingBase(Double base) {
 		getWithholdingData().setBase(base);
@@ -278,9 +256,6 @@ public class AccountingInvoice implements Serializable, IAccountEntryWrapper {
 		getWithholdingData().setQuotaEdited(edited);
 	}
 
-	public InvoiceVAT getFirstVat() {
-		return getVats().get(0);
-	}
 	public boolean hasPrepayments() {
 		return prepayments;
 	}

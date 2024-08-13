@@ -42,8 +42,8 @@ public class LROE140_3_1 extends LROE140 {
 	private BienesAltaType buildBienes(Invoice invoice) {
 		BienesAltaType bienes = new BienesAltaType();
 		for (InvoiceDetail detail : invoice.getDetails()) {
-			if(detail.getInvestAsset() != null) {
-				bienes.getBienAlta().add(buildBien(invoice, detail.getInvestAssetData()));
+			if(detail.getInvestAsset().isPresent()) {
+				bienes.getBienAlta().add(buildBien(invoice, detail.getInvestAsset().get()));
 			}
 		}
 

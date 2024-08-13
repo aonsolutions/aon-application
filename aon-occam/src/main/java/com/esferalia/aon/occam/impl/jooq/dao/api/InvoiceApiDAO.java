@@ -11,6 +11,7 @@ import static com.esferalia.aon.jooq.tables.InvoiceAttach.INVOICE_ATTACH;
 
 import java.util.Date;
 import java.util.LinkedList;
+import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -42,6 +43,7 @@ import com.esferalia.aon.occam.impl.jooq.dao.AccountingInvoiceDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.Filler;
 import com.esferalia.aon.occam.impl.jooq.dao.FinanceDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.InvoiceDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.AccountDAO.FullAccountFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.InvoicePropertiesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.invoice.InvoiceInfoDAO.InvoiceInfoFiller;
 import com.esferalia.aon.watson.util.AonEnumUtils;
@@ -75,6 +77,10 @@ public class InvoiceApiDAO {
 			.fetch().stream().map(new InvoiceNewPortalFiller());
 	}
 	
+	/**
+	 *  @deprecated USE InvoiceDAO suitable method
+	 */
+	@Deprecated 
 	public static Stream<Invoice> getInvoices(AONContext ctx, InvoiceFilter filter) {
 		Integer page = INVOICE_PROPERTIES.getPage(filter);
 		Integer perPage = INVOICE_PROPERTIES.getPerPage(filter);
@@ -154,6 +160,10 @@ public class InvoiceApiDAO {
 		}
 	}
 
+	/**
+	 *  @deprecated USE InvoiceDAO suitable FILLER
+	 */
+	@Deprecated 
 	public static class InvoiceApiFiller extends Filler implements Function<Record,Invoice> {
 		AONContext aonCtx;
 		public InvoiceApiFiller(AONContext ctx) {
@@ -189,7 +199,9 @@ public class InvoiceApiDAO {
 				.setInvestAsset(r.getValue(INVOICE.INVEST_ASSET))
 				.setProject(r.getValue(INVOICE.PROJECT))
 				.setRectificationType(AonEnumUtils.enumValue(RectificationType.class,r.getValue(INVOICE.RECTIFICATION_TYPE)))	
-				.setRectificationInvoice(r.getValue(INVOICE.RECTIFICATION_INVOICE))	
+				.setRectificationInvoice(
+						Optional.ofNullable( r.getValue(INVOICE.RECTIFICATION_INVOICE) ).map( rid -> new Invoice().setId(rid)).orElse(null)
+				)	
 				.setTransaction(AonEnumUtils.enumValue(InvoiceTransactionType.class, r.getValue(INVOICE.TRANSACTION)))
 				.setRecorded(r.getValue(INVOICE.STATUS) != null && r.getValue(INVOICE.STATUS) == 1 )	
 				.setSurcharge(r.getValue(INVOICE.SURCHARGE) == 1 )	
@@ -226,7 +238,7 @@ public class InvoiceApiDAO {
 	
 	
 
-	private static class InvoiceDetailApiFiller  implements Function<Record,InvoiceDetail> {
+	private static class InvoiceDetailApiFiller extends Filler implements Function<Record,InvoiceDetail> {
 
 		AONContext aonCtx;
 		public InvoiceDetailApiFiller(AONContext ctx) {
@@ -249,9 +261,10 @@ public class InvoiceApiDAO {
 				.setSeller(new Seller().copy(new Registry().setId(record.getValue(INVOICE_DETAIL.SELLER))))
 				.setWorkplace( new Workplace().setId(record.getValue(INVOICE_DETAIL.WORKPLACE)))
 				.setWarehouse(record.getValue(INVOICE_DETAIL.WAREHOUSE))
-				.setAccount(record.getValue(ACCOUNT.ID))
-				.setAccountCode(record.getValue(ACCOUNT.CODE))
-				.setAccountDescription(record.getValue(ACCOUNT.DESCRIPTION));
+				.setExpAccount( checkField(record, ACCOUNT.ID)
+					? FullAccountFiller.build(record)
+					: null )
+				;
 		
 			try (CloseableAONContext ctx = AONContext.getAONContext(aonCtx.getDomainName(),aonCtx.getDomainId(), aonCtx.getUser())){
 

@@ -142,9 +142,9 @@ public class InvoiceExcelExport extends ExcelExport {
 				? invoice.getAddress().getCountry().getIso2()
 				: Country.ES.getIso2();
 		case "Cuenta Explotación":
-			return detail.getAccountCode();
+			return detail.getExpAccount() == null? "" : detail.getExpAccount().getCode();
 		case "Descripción Cuenta":
-			return detail.getAccountDescription();
+			return detail.getExpAccount() == null? "" : detail.getExpAccount().getDescription();
 		case "Suplido":
 			return detail.isPrepayment() ? "Si" : "No";
 		case "Base Imponible":

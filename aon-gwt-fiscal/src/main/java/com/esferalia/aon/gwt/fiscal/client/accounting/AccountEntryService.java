@@ -8,12 +8,14 @@ import com.esferalia.aon.occam.api.model.Account;
 import com.esferalia.aon.occam.api.model.AccountEntry;
 import com.esferalia.aon.occam.api.model.AccountEntryParams;
 import com.esferalia.aon.occam.api.model.AccountingInvoice;
+import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.FinanceEntry;
 import com.esferalia.aon.occam.api.model.IAccountEntryWrapper;
 import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.SalaryEntry;
 import com.esferalia.aon.occam.api.model.accounting.AmortizationType;
 import com.esferalia.aon.occam.api.model.accounting.AmortizationTypeParams;
+import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceRectificationData;
 import com.esferalia.aon.occam.api.model.registry.AccountingRegistry;
 import com.esferalia.aon.occam.api.model.type.AccountEntryUpdate;
@@ -31,7 +33,9 @@ public interface AccountEntryService extends RemoteService {
 	FinanceEntry save(Occam occam, FinanceEntry financeEntry) throws AonCoreException;
 	FinanceEntry getFinanceEntry(Occam occam, Integer accountEntry) throws AonCoreException;
 	AccountingInvoice rectifyInvoice(Occam occam, Integer invoiceId, InvoiceRectificationData data) throws AonCoreException;
+	AccountingInvoice getAccountingInvoice(Occam occam, Integer accountEntry) throws AonCoreException;
 
+	AccountEntry getAccountEntry(Occam occam, AonConfiguration config, Invoice invoice) throws AonCoreException; 	
 	//	-----------------------------------
 
 	LinkedList<AccountEntry> getAccountEntries(String domainName, int domain, String user, AccountEntryParams params, int offset, int limit) throws AonCoreException;

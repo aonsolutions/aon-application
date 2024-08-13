@@ -65,10 +65,9 @@ import com.esferalia.aon.occam.api.model.accounting.utilities.IAccUtilitiesItem.
 import com.esferalia.aon.occam.api.model.finance.EnumVisitors.IInvoiceTypeVisitor;
 import com.esferalia.aon.occam.api.model.finance.FinanceUtil;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
-import com.esferalia.aon.occam.api.model.registry.AccountingRegistry;
 import com.esferalia.aon.occam.api.model.registry.AccountingRegistryType;
+import com.esferalia.aon.occam.api.model.registry.AccountingRegistryType.AccountingRegistryTypeVisitor;
 import com.esferalia.aon.occam.api.model.registry.Creditor;
-import com.esferalia.aon.occam.api.model.registry.IAccountingRegistryTypeVisitor;
 import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.registry.Supplier;
 import com.esferalia.aon.occam.api.model.type.AccountEntryType;
@@ -767,11 +766,11 @@ public class AccountingUtilitiesDAO {
 		Registry registry = RegistryDAO.get(ctx, registryId);
 		if (registry == null || registry.getId() == null) throw new AonCoreException("Registro no encontrado");
 		AccountLinker accountLinker = new AccountLinker(ctx, registry, registryType);
-		registryType.visit( null,  accountLinker);
+		registryType.visit( accountLinker);
 		return accountLinker.getAccount();
 	}
 	
-	private static class AccountLinker implements IAccountingRegistryTypeVisitor {
+	private static class AccountLinker implements AccountingRegistryTypeVisitor {
 		
 		private AONContext ctx;
 		private Registry registry;
@@ -789,27 +788,26 @@ public class AccountingUtilitiesDAO {
 		}
 		
 		@Override
-		public void visitSupplier(AccountingRegistry nullReg) {
+		public void visitSupplier() {
 			account = createAccount(registry);
 			SupplierDAO.updateSupplierAccount(ctx, registry.getId(), account.getId());
 		}
 		
 		@Override
-		public void visitCustomer(AccountingRegistry nullReg) {
+		public void visitCustomer() {
 			account = createAccount(registry);
 			CustomerDAO.updateCustomerAccount(ctx,registry.getId(),account.getId());
 		}
 		
 		@Override
-		public void visitCreditor(AccountingRegistry nullReg) {
+		public void visitCreditor() {
 			account = createAccount(registry);
 			CreditorDAO.updateCreditorAccount(ctx,registry.getId(),account.getId());
 		}
 		
 		@Override
-		public void visitUndedCreditor(AccountingRegistry nullReg) {
-			account = createAccount(registry);
-			CreditorDAO.updateCreditorAccount(ctx,registry.getId(),account.getId());
+		public void visitUndedCreditor() {
+			visitCreditor();
 		}
 		
 		private Account createAccount(Registry reg) {

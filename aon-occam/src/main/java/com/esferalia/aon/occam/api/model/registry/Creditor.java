@@ -36,6 +36,7 @@ public class Creditor extends Registry implements Serializable, HasAudit, IScopa
 		return super.copy( registry, this);
 	}
 	
+	@Override
 	public Creditor setId(Integer id) {
 		super.setId(id);
 		return this;

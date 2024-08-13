@@ -42,7 +42,7 @@ import com.esferalia.aon.occam.api.model.finance.BankAccount;
 import com.esferalia.aon.occam.api.model.finance.EnumVisitors.IInvoiceTypeVisitor;
 import com.esferalia.aon.occam.api.model.finance.Finance;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
-import com.esferalia.aon.occam.api.model.finance.InvoiceVAT;
+import com.esferalia.aon.occam.api.model.finance.InvoiceDetail;
 import com.esferalia.aon.occam.api.model.finance.InvoiceWithholding;
 import com.esferalia.aon.occam.api.model.finance.PayMethod;
 import com.esferalia.aon.occam.api.model.fiscal.d2_deposit.Provinces;
@@ -674,40 +674,28 @@ public class InvoiceImport extends ImportUtils{
 				}
 				
 				
-				InvoiceVAT vat = new InvoiceVAT()
-					.setPrepayment("5600".equals(ivs.get(i).getAccount().substring(0, 4)) || "5660".equals(ivs.get(i).getAccount().substring(0, 4)))
-					.setVatDeductionType(VatDeductionType.WITH_RIGHT)
-					.setBase(ivs.get(j).getBase() != null 
-							? ivs.get(j).getBase() : 0.0)
-					.setPercentage(ivs.get(j).getPercentage() != null
-							? ivs.get(j).getPercentage() : 0.0)
-					.setQuota(ivs.get(j).getQuota() != null
-							? ivs.get(j).getQuota() : 0.0)
-					.setSurcharge(ivs.get(j).getRePercentage() != null
-							? ivs.get(j).getRePercentage() : 0.0)
-					.setSurchargeQuota(ivs.get(j).getReQuota() != null
-							? ivs.get(j).getReQuota() : 0.0)
-					//.setInvestAsset(ivs.get(j).getInvestAsset())
-					.setDeductiblePercent(100.0)
-					.setDeductibleQuota(ivs.get(j).getQuota() != null
-							? ivs.get(j).getQuota() : 0.0)
-					.setWithholding(ivs.get(j).getRetentionQuota() != null
-							&& ivs.get(j).getRetentionQuota() != 0)
-					.setExpAccount(expAccount)
+				InvoiceDetail vat = new InvoiceDetail();
+				double detBase = ivs.get(j).getBase() != null ? ivs.get(j).getBase() : 0.0;
+				vat.setQuantity(1.0)
+					.setPrice(detBase)
+					.setTaxableBase(detBase)
+					.setExpAccount(expAccount);
+				if(!invoice.isUndeductible()) {
+					vat.ensureVatTax()
+						.setVatDeductionType(VatDeductionType.WITH_RIGHT)
+						.setBase(detBase)
+						.setPercentage(ivs.get(j).getPercentage() != null? ivs.get(j).getPercentage() : 0.0)
+						.setQuota(ivs.get(j).getQuota() != null? ivs.get(j).getQuota() : 0.0)
+						.setSurcharge(ivs.get(j).getRePercentage() != null? ivs.get(j).getRePercentage() : 0.0)
+						.setSurchargeQuota(ivs.get(j).getReQuota() != null? ivs.get(j).getReQuota() : 0.0)
+						.setDeductiblePercent(100.0)
+						.setDeductibleQuota(ivs.get(j).getQuota() != null? ivs.get(j).getQuota() : 0.0)
 						
-					.setOutputAccount(outputAccount)
-					.setInputAccount(inputAccount)
-					.setAdjAccount(adjAccount);
-				if(invoice.isUndeductible()) {
-					vat.setBase(ivs.get(j).getTotal());
-					vat.setPercentage(0.0);
-					vat.setQuota(0.0);
-					vat.setDeductibleQuota(0.0);
-					vat.setSurcharge(0.0);
-					vat.setSurchargeQuota(0.0);
+						.setOutputAccount(outputAccount)
+						.setInputAccount(inputAccount)
+						.setAdjAccount(adjAccount);
 				}
-
-				ai.addVat(vat);
+				ai.getInvoice().addDetail(vat);
 				double retentionQuota = ivs.get(j).getRetentionQuota() != null ? ivs.get(j).getRetentionQuota() : 0.0;
 				total = total + (invoice.mustApplyISP() 
 						? ivs.get(j).getBase() - retentionQuota
@@ -734,9 +722,8 @@ public class InvoiceImport extends ImportUtils{
 					.setBase(retBase)
 					.setPercentage(retPercentage)
 					.setQuota(retQuota)
-					.setAccountCode(retentionAccount.getCode())
-					.setAccountDescription(retentionAccount.getDescription())
-					.setAccountId(retentionAccount.getId());
+					.setAccount(retentionAccount)
+				;
 				ai.setWithholdingData(iw);
 			}
 			ai.setAccountEntry(getEntryBase(domain, user.getLogin(), aonCtx, ai));
@@ -1028,8 +1015,14 @@ public class InvoiceImport extends ImportUtils{
 				
 				Account expAccount = getAccount(domain, user, aux.getAccount(), aux.getAccountDescription());
 				
-				InvoiceVAT vat = new InvoiceVAT()
-					.setPrepayment("5600".equals(aux.getAccount().substring(0, 4)) || "5660".equals(aux.getAccount().substring(0, 4)))
+				InvoiceDetail vat = new InvoiceDetail();
+				double detBase = aux.getBase() != null ? aux.getBase() : 0.0;
+				vat.setQuantity(1.0)
+					.setPrice(detBase)
+					.setTaxableBase(detBase)
+					.setExpAccount(expAccount);
+				if(!invoice.isUndeductible()) {
+					vat.ensureVatTax()
 					.setVatDeductionType(VatDeductionType.WITH_RIGHT)
 					.setBase(aux.getBase() != null 
 							? aux.getBase() : 0.0)
@@ -1045,22 +1038,11 @@ public class InvoiceImport extends ImportUtils{
 					.setDeductiblePercent(100.0)
 					.setDeductibleQuota(aux.getQuota() != null
 							? aux.getQuota() : 0.0)
-					.setWithholding(aux.getRetentionQuota() != null
-							&& aux.getRetentionQuota() != 0)
-					.setExpAccount(expAccount)
-						
 					.setOutputAccount(outputAccount)
 					.setInputAccount(inputAccount)
 					.setAdjAccount(adjAccount);
-				if(invoice.isUndeductible()) {
-					vat.setBase(aux.getTotal());
-					vat.setPercentage(0.0);
-					vat.setQuota(0.0);
-					vat.setDeductibleQuota(0.0);
-					vat.setSurcharge(0.0);
-					vat.setSurchargeQuota(0.0);
 				}
-				ai.addVat(vat);
+				ai.getInvoice().addDetail(vat);
 				double retentionQuota = aux.getRetentionQuota() != null ? aux.getRetentionQuota() : 0.0;
 	
 				total = total + (invoice.isIsp() 
@@ -1084,9 +1066,8 @@ public class InvoiceImport extends ImportUtils{
 					.setBase(retBase)
 					.setPercentage(retPercentage)
 					.setQuota(retQuota)
-					.setAccountCode(retentionAccount.getCode())
-					.setAccountDescription(retentionAccount.getDescription())
-					.setAccountId(retentionAccount.getId());
+					.setAccount(retentionAccount)
+				;
 				ai.setWithholdingData(iw);
 			}
 			ai.setAccountEntry(getEntryBase(domain, user.getLogin(), aonCtx, ai));
@@ -1461,7 +1442,6 @@ public class InvoiceImport extends ImportUtils{
 			@Override 
 			public Void visitUndeductible(Invoice invoice) {
 				accountEntry.setEntryType(AccountEntryType.EXPENSE_INVOICE);
-				accountEntry.setUndeductible(true);
 				return null;
 			}
 			@Override 
@@ -1477,14 +1457,13 @@ public class InvoiceImport extends ImportUtils{
 			@Override 
 			public Void visitExpenses(Invoice invoice) {
 				accountEntry.setEntryType(AccountEntryType.EXPENSE_INVOICE);
-				accountEntry.setUndeductible(false);
 				return null;
 			}
 		});
 		return accountEntry;
 	}
 
-	private static Boolean isSameReference(InvoiceImportClass ant, InvoiceImportClass iic) {
+	private static boolean isSameReference(InvoiceImportClass ant, InvoiceImportClass iic) {
 		if(!isSales(ant, iic) && !isSameRegistry(ant, iic)) return false;
 		
 		String reference = ant.getRef();

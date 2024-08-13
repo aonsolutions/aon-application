@@ -680,8 +680,7 @@ public class InvofoxServlet extends AonApiHttpServlet {
 		if (!accounts.isEmpty()) {
 			Account account = accounts.get(0);
 			invoice.setTediCategory(account.getCode());
-			invoice.getDetails().stream().forEach(d -> d.setAccount(account.getId()).setAccountCode(account.getCode())
-					.setAccountDescription(account.getDescription()));
+			invoice.getDetails().stream().forEach(d -> d.setExpAccount(account));
 		}
 		return invoice;
 	}

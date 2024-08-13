@@ -5,8 +5,8 @@ import static com.esferalia.aon.jooq.tables.AccountEntry.ACCOUNT_ENTRY;
 import static com.esferalia.aon.jooq.tables.AccountEntryDetail.ACCOUNT_ENTRY_DETAIL;
 import static com.esferalia.aon.jooq.tables.AccountEntryInvoice.ACCOUNT_ENTRY_INVOICE;
 import static com.esferalia.aon.jooq.tables.AccountPeriod.ACCOUNT_PERIOD;
-import static com.esferalia.aon.jooq.tables.AutoConcept.AUTO_CONCEPT;
 import static com.esferalia.aon.jooq.tables.AmortizationDetail.AMORTIZATION_DETAIL;
+import static com.esferalia.aon.jooq.tables.AutoConcept.AUTO_CONCEPT;
 import static com.esferalia.aon.jooq.tables.EnterpriseActivity.ENTERPRISE_ACTIVITY;
 import static com.esferalia.aon.jooq.tables.Iae.IAE;
 import static com.esferalia.aon.jooq.tables.Invoice.INVOICE;
@@ -21,6 +21,7 @@ import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.Map;
+import java.util.Objects;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -64,7 +65,6 @@ import com.esferalia.aon.occam.api.model.finance.Finance;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceDetail;
 import com.esferalia.aon.occam.api.model.finance.InvoiceTax;
-import com.esferalia.aon.occam.api.model.finance.InvoiceVAT;
 import com.esferalia.aon.occam.api.model.fiscal.AccountingBreakdown;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.type.AccountEntryType;
@@ -1109,9 +1109,13 @@ public class AccountEntryDAO {
 			public IAccountEntryWrapper visitOperatingAccount(IAccountEntryWrapper wrapper) {
 				if (wrapper instanceof AccountingInvoice ai) {
 					com.esferalia.aon.occam.api.model.Account oldAccount = null;
-					if (AonCollectionUtils.isNotEmpty( ai.getVats()) ) {
-						oldAccount = ai.getVats().get(0).getExpAccount();
-					}
+					oldAccount = AonCollectionUtils.stream( ai.getInvoice().getDetails() )
+						.filter( Objects::nonNull)
+						.map(det -> det.getExpAccount() )
+						.findFirst()
+						.orElse(null)
+					;
+
 					com.esferalia.aon.occam.api.model.Account _newAccount = null;
 					if (ai.getSuggestedAccounts() != null && ai.getSuggestedAccounts().size() > 1) {
 						_newAccount = ai.getSuggestedAccounts().get(1);
@@ -1141,13 +1145,13 @@ public class AccountEntryDAO {
 								ctx.log().debug("UPDATE ACCOUNT ENTRY DETAIL BALANCING ACCOUNT id: {0} count({1})",detail.getId(),i);
 							}
 						}
-						for (InvoiceVAT vat : ai.getVats() ) {
+						for (InvoiceDetail vat : ai.getInvoice().getDetails() ) {
 							
 							// Si el origen de la factura es contam también se cambia la description de la linea de factura,.
 							ctx.getDslContext()
 								.select(INVOICE_DETAIL.SOURCE)
 								.from(INVOICE_DETAIL)
-								.where(INVOICE_DETAIL.ID.eq(vat.getInvoiceDetailId()))
+								.where(INVOICE_DETAIL.ID.eq(vat.getId()))
 								.fetch()
 								.stream()
 								.map(rec -> rec.getValue(INVOICE_DETAIL.SOURCE))
@@ -1157,20 +1161,20 @@ public class AccountEntryDAO {
 									int i = ctx.getDslContext()
 										.update(INVOICE_DETAIL)
 											.set(INVOICE_DETAIL.DESCRIPTION, newAccount.getDescription())
-											.where(INVOICE_DETAIL.ID.equal( vat.getInvoiceDetailId()))
+											.where(INVOICE_DETAIL.ID.equal( vat.getId()))
 											.execute();
-										ctx.log().debug("UPDATE INVOICE DETAIL DESCRIPTION id: {0} count({1})",vat.getInvoiceDetailId(),i);
+										ctx.log().debug("UPDATE INVOICE DETAIL DESCRIPTION id: {0} count({1})",vat.getId(),i);
 								});
 							
 							int i = ctx.getDslContext()
 								.delete(INVOICE_DETAIL_ACCOUNT)
-								.where(INVOICE_DETAIL_ACCOUNT.INVOICE_DETAIL.equal( vat.getInvoiceDetailId()))
+								.where(INVOICE_DETAIL_ACCOUNT.INVOICE_DETAIL.equal( vat.getId()))
 								.and(INVOICE_DETAIL_ACCOUNT.DOMAIN.equal( ae.getDomain()))
 								.execute();
 							ctx.log().debug("DELETE INVOICE_DETAIL_ACCOUNT count({0})",i);
 							ctx.getDslContext().insertInto(INVOICE_DETAIL_ACCOUNT)
 								.set(INVOICE_DETAIL_ACCOUNT.DOMAIN, ae.getDomain())
-								.set(INVOICE_DETAIL_ACCOUNT.INVOICE_DETAIL, vat.getInvoiceDetailId())
+								.set(INVOICE_DETAIL_ACCOUNT.INVOICE_DETAIL, vat.getId())
 								.set(INVOICE_DETAIL_ACCOUNT.ACCOUNT, newAccount.getId())
 								.execute();
 							ctx.log().debug("INSERT INVOICE_DETAIL_ACCOUNT");
@@ -1320,8 +1324,9 @@ public class AccountEntryDAO {
 						&& (!ae.isPeriodActive() || !hasPendingFinances(ai.getInvoice()))) {
 						boolean add = false;
 						Integer account = null;
-						for (InvoiceVAT vat : ai.getVats() ) {
+						for (InvoiceDetail vat : ai.getInvoice().getDetails() ) {
 							if ( account == null) {
+								
 								account = vat.getExpAccount().getId();
 								add = true;
 							}

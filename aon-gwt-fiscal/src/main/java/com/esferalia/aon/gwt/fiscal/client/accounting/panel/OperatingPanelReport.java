@@ -602,7 +602,7 @@ public class OperatingPanelReport extends DockLayoutPanel implements Focusable, 
 						.setToDate( newParams.getToDate() )
 						.setActivity( newParams.getActivity() )
 						.setSecurityLevel( newParams.getSecurityLevel() )
-						.setAccount( newParams.getAccount().clone() )
+						.setAccount( newParams.getAccount().copy() )
 				;
 				StatementPanel statement = new StatementPanel(options, stmParams, true);
 				statement.addSelectionHandler(new AccountEntrySelectionHandler () {

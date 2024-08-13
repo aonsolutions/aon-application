@@ -6,7 +6,7 @@ import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonTableButton;
 import com.esferalia.aon.gwt.fiscal.client.accounting.wizard.tedi.EditableInvoicePanel.IEditableInvoicePanelCallback;
 import com.esferalia.aon.occam.api.model.Account;
-import com.esferalia.aon.occam.api.model.finance.InvoiceVAT;
+import com.esferalia.aon.occam.api.model.finance.InvoiceDetail;
 import com.esferalia.aon.watson.util.AonCollectionUtils;
 import com.google.gwt.event.logical.shared.HasSelectionHandlers;
 import com.google.gwt.event.logical.shared.HasValueChangeHandlers;
@@ -21,7 +21,7 @@ import com.google.gwt.user.client.ui.Focusable;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
 
-public class InvoiceVATPanel extends FlowPanel implements HasValueChangeHandlers<InvoiceVAT>, HasSelectionHandlers<Account>, Focusable {
+public class InvoiceVATPanel extends FlowPanel implements HasValueChangeHandlers<InvoiceDetail>, HasSelectionHandlers<Account>, Focusable {
 
 	private static final String WIDTH_100PX = "100px";
 	static final String INVEST_ASSET_DEF_BACKGROUND_COLOR = "inherit";
@@ -207,7 +207,8 @@ public class InvoiceVATPanel extends FlowPanel implements HasValueChangeHandlers
 
 			@Override
 			boolean isAdditionalDataEnabled(IEditableInvoicePanelCallback callback, final int vatIdx) {
-				return isInvestAssetsEnabled(callback, vatIdx) && callback.getVat(vatIdx).getInvestAsset() != null;
+				return isInvestAssetsEnabled(callback, vatIdx) 
+					&& callback.getVat(vatIdx).getInvestAsset().isPresent();
 			}
 
 			@Override
@@ -285,7 +286,8 @@ public class InvoiceVATPanel extends FlowPanel implements HasValueChangeHandlers
 
 			@Override
 			boolean isRowCellEnabled(IEditableInvoicePanelCallback callback, final int vatIdx) {
-				return callback.getInvoice().isWithholding() && !callback.getVat(vatIdx).isPrepayment();
+				return callback.getInvoice().isWithholding() 
+					&& !callback.getVat(vatIdx).isPrepayment();
 			}
 
 			@Override
@@ -353,7 +355,8 @@ public class InvoiceVATPanel extends FlowPanel implements HasValueChangeHandlers
 		abstract boolean isEnabled(IEditableInvoicePanelCallback callback, final int vatIdx);
 
 		boolean isAdditionalDataEnabled(IEditableInvoicePanelCallback callback, final int vatIdx) {
-			return callback.isInvestAssetsAvailable() && callback.getVat(vatIdx).getInvestAsset() != null;			
+			return callback.isInvestAssetsAvailable() 
+				&& callback.getVat(vatIdx).getInvestAsset().isPresent();			
 		}
 
 		boolean isVATEnabled(IEditableInvoicePanelCallback callback) {
@@ -373,7 +376,7 @@ public class InvoiceVATPanel extends FlowPanel implements HasValueChangeHandlers
 		}
 
 		boolean isAccountingSource(IEditableInvoicePanelCallback callback, final int vatIdx) {
-			return callback.getVat(vatIdx).isAccountingSource();
+			return callback.getVat(vatIdx).isAccountSource();
 		}
 
 		boolean isInputVATEnabled(IEditableInvoicePanelCallback callback) {
@@ -397,7 +400,8 @@ public class InvoiceVATPanel extends FlowPanel implements HasValueChangeHandlers
 		}
 
 		boolean isInvestAssetsEnabled(IEditableInvoicePanelCallback callback, final int vatIdx) {
-			return isInvestAssetsEnabled(callback) && !callback.getVat(vatIdx).isPrepayment();
+			return isInvestAssetsEnabled(callback) 
+				&& !callback.getVat(vatIdx).isPrepayment();
 		}
 	}
 
@@ -441,7 +445,7 @@ public class InvoiceVATPanel extends FlowPanel implements HasValueChangeHandlers
 		}
 		// ------------- VAT ROWS
 		rows = new LinkedList<>();
-		for ( int vatIdx = 0; vatIdx < callback.getInvoice().getVats().size(); vatIdx++) {
+		for ( int vatIdx = 0; vatIdx < callback.getInvoice().getInvoice().getDetails().size(); vatIdx++) {
 			addRow(callback, vatIdx, false);
 		}
 
@@ -455,21 +459,14 @@ public class InvoiceVATPanel extends FlowPanel implements HasValueChangeHandlers
 		addButton = new AonTableButton(AON.MSG.newAction(), AON.CSS.aonIconAdd());
 		addButton.setAccessKey('L');
 		addButton.addClickHandler(event -> {
-			int lastIdx = callback.getInvoice().getVats().size() - 1;
-			final InvoiceVAT last = callback.getVat(lastIdx);
-			final InvoiceVAT vat = new InvoiceVAT()
-					.setExpAccount(last.getExpAccount())
-					.setPercentage(last.getPercentage())
-					.setSurcharge(last.getSurcharge())
-					.setWithholding(last.isWithholding())
-					.setDirectTaxPercent(last.getDirectTaxPercent())
-					.setInputAccount(last.getInputAccount())
-					.setOutputAccount(last.getOutputAccount())
-					.setAdjAccount(last.getAdjAccount())
-					.setAdjDirectTaxAccount(last.getAdjDirectTaxAccount())
-					;
-			callback.getInvoice().addVat(vat);
-			int insertedIdx = callback.getInvoice().getVats().size() - 1;
+			int lastIdx = callback.getInvoice().getInvoice().getDetails().size() - 1;
+			final InvoiceDetail vat = callback.getVat(lastIdx)
+				.copy()
+				.setId(null);
+			AonCollectionUtils.stream(vat.getInvoiceTaxes()).forEach(it -> it.setId(null).setInvoiceDetail(null));
+			
+			callback.getInvoice().getInvoice().addDetail(vat);
+			int insertedIdx = callback.getInvoice().getInvoice().getDetails().size() - 1;
 			addRow(callback, insertedIdx, true);
 			addButtonsRow(callback);
 		});
@@ -480,7 +477,7 @@ public class InvoiceVATPanel extends FlowPanel implements HasValueChangeHandlers
 		LinkedList<Account> suggestedAccounts = callback.getInvoice().getSuggestedAccounts();
 		if (suggestedAccounts != null && !suggestedAccounts.isEmpty() && suggestedAccounts.size() > rows.size()) {
 			Account a = suggestedAccounts.get(rows.size());
-			callback.getInvoice().getVats().get(vatIdx).setExpAccount(a);
+			callback.getInvoice().getInvoice().getDetails().get(vatIdx).setExpAccount(a);
 		}
 		InvoiceVATPanelRow invoiceRow = new InvoiceVATPanelRow(this, grid.getRowCount(), callback, vatIdx, focus);
 		invoiceRow.addSelectionHandler(e -> SelectionEvent.fire(this, e.getSelectedItem()));
@@ -492,7 +489,7 @@ public class InvoiceVATPanel extends FlowPanel implements HasValueChangeHandlers
 	}
 
 	@Override
-	public HandlerRegistration addValueChangeHandler(ValueChangeHandler<InvoiceVAT> handler) {
+	public HandlerRegistration addValueChangeHandler(ValueChangeHandler<InvoiceDetail> handler) {
 		return super.addHandler(handler, ValueChangeEvent.getType());
 	}
 
@@ -554,7 +551,7 @@ public class InvoiceVATPanel extends FlowPanel implements HasValueChangeHandlers
 	}
 	
 	boolean isAnyInvestAssetsEnabled(IEditableInvoicePanelCallback callback) {
-		for ( int vatIdx = 0; vatIdx < callback.getInvoice().getVats().size(); vatIdx++) {
+		for ( int vatIdx = 0; vatIdx < callback.getInvoice().getInvoice().getDetails().size(); vatIdx++) {
 			if ( InvoiceVATGridColumns.INVEST_ASSET.isAdditionalDataEnabled(callback, vatIdx)) {
 				return true;
 			}

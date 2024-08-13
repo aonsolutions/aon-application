@@ -143,6 +143,18 @@ public class InvoiceBreakdown implements Serializable {
 			;
 	}
 	
+	public boolean isSameGroup(InvoiceTax it) {
+		return  (it != null) 
+			&& this.getTaxType() == it.getTaxType()
+			&& AonMathUtils.equals(this.getPercentage(),it.getPercentage())
+			&& AonMathUtils.equals(this.getSurcharge(),it.getSurcharge())
+			// La factura debería tener un único WithholdingType 
+			/* && this.getWithholdingType() == b.getWithholdingType() */
+			// La factura debería tener un único VatDeductionType
+			/* && this.getVatDeductionType() == b.getVatDeductionType() */
+			;
+	}
+
 	public InvoiceBreakdown add(InvoiceBreakdown ib) {
 		setBase( AonMathUtils.round(getBase() + ib.getBase(),4) );
 		if (AonMathUtils.isNotZero(ib.getQuota())) {

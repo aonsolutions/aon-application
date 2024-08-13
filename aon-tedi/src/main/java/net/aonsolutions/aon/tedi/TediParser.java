@@ -23,9 +23,7 @@ import com.esferalia.aon.occam.api.model.finance.Finance;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceBreakdown;
 import com.esferalia.aon.occam.api.model.finance.InvoiceDetail;
-import com.esferalia.aon.occam.api.model.finance.InvoiceRecorder;
 import com.esferalia.aon.occam.api.model.finance.InvoiceTax;
-import com.esferalia.aon.occam.api.model.finance.InvoiceVAT;
 import com.esferalia.aon.occam.api.model.finance.InvoiceWithholding;
 import com.esferalia.aon.occam.api.model.finance.PayMethod;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceErrorKey;
@@ -46,9 +44,12 @@ import com.esferalia.aon.occam.api.model.type.WithholdingType;
 import com.esferalia.aon.occam.impl.jooq.dao.AccountDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.AccountPeriodDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.AccountingInvoiceDAO;
-import com.esferalia.aon.occam.impl.jooq.dao.AccountingInvoiceDAO.InvoiceRegistryInitializer;
 import com.esferalia.aon.occam.impl.jooq.dao.AccountingRegistryDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.FinanceDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.accounting.InvoiceRecorder;
+import com.esferalia.aon.occam.impl.jooq.dao.accounting.InvoiceRegistryInitializer;
+import com.esferalia.aon.watson.mutable.MutableBoolean;
+import com.esferalia.aon.watson.util.AonCollectionUtils;
 import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
@@ -65,15 +66,15 @@ import net.aonsolutions.aon.tedi.visitors.InvoiceTypeVisitor;
 
 public class TediParser {
 	
-	@FunctionalInterface
-	private static interface ITediInvoiceToAonInvoice {
-		void to(AONContext ctx, AonConfiguration aonCtx, TediResult result);
-	}
+//	@FunctionalInterface
+//	private static interface ITediInvoiceToAonInvoice {
+//		void to(AONContext ctx, AonConfiguration aonCtx, TediResult result);
+//	}
 	
-	@FunctionalInterface
-	private static interface ITediInvoiceDetailToAonInvoiceDetail {
-		void to(TediResult result,TediInvoiceDetail tediDetail,InvoiceDetail aonDetail);
-	}
+//	@FunctionalInterface
+//	private static interface ITediInvoiceDetailToAonInvoiceDetail {
+//		void to(TediResult result,TediInvoiceDetail tediDetail,InvoiceDetail aonDetail);
+//	}
 	
 	@FunctionalInterface
 	private static interface ITediFinanceToAonFinance {
@@ -182,7 +183,6 @@ public class TediParser {
 				@Override 
 				public Void visitUndeductible(Invoice invoice) {
 					accountEntry.setEntryType(AccountEntryType.EXPENSE_INVOICE);
-					accountEntry.setUndeductible(true);
 					return null;
 				}
 				@Override 
@@ -198,7 +198,6 @@ public class TediParser {
 				@Override 
 				public Void visitExpenses(Invoice invoice) {
 					accountEntry.setEntryType(AccountEntryType.EXPENSE_INVOICE);
-					accountEntry.setUndeductible(false);
 					return null;
 				}
 			});
@@ -211,39 +210,29 @@ public class TediParser {
 		AccountingInvoice ai = result.getAccountingInvoice();
 		Invoice invoice = result.getInvoice();
 				
-		if (ai.getVats() == null) {
-			ai.setVats( new LinkedList<InvoiceVAT>());
-		}
-
-		boolean withholding = false;
-		if (invoice.getBreakdown() != null) {
-			for (InvoiceBreakdown ib : invoice.getBreakdown() ) {
-				if (ib.getTaxType() == TaxType.RETENTION) {
-					Account retentionAccount =(invoice.isSales() )
-						?(aonCtx!=null?aonCtx.accounting().getDefaultPaidRetAccount():null)
-						:(aonCtx!=null?aonCtx.accounting().getDefaultChargedRetAccount():null);
-					withholding = true;
-					invoice.setWithholding(true);
-					InvoiceWithholding iw = new InvoiceWithholding()
-						.setWithholdingType( WithholdingType.PROFESSIONAL )
-						.setBase( ib.getBase() )
-						.setPercentage( ib.getPercentage() )
-						.setQuota( ib.getQuota() )
-						.setAccountId( retentionAccount == null? null : retentionAccount.getId() )
-						.setAccountCode( retentionAccount == null? null : retentionAccount.getCode() )
-						.setAccountDescription( retentionAccount == null? null : retentionAccount.getDescription() )
-						;
-					ai.setWithholdingData(iw);
-					break;
+		MutableBoolean withholding = new MutableBoolean(false);
+		AonCollectionUtils.stream(invoice.getBreakdowns())
+			.filter( ib -> ib.getTaxType() == TaxType.RETENTION)
+			.findFirst()
+			.ifPresent(ib -> {
+				Account retentionAccount = null;
+				if (aonCtx != null) {
+					retentionAccount =invoice.isSales()
+						?aonCtx.accounting().getDefaultPaidRetAccount()
+						:aonCtx.accounting().getDefaultChargedRetAccount();
 				}
-			}
-		}
-		
+				withholding.setValue(true);
+				invoice.setWithholding(true);
+				InvoiceWithholding iw = new InvoiceWithholding()
+					.setWithholdingType( WithholdingType.PROFESSIONAL )
+					.setBase( ib.getBase() )
+					.setPercentage( ib.getPercentage() )
+					.setQuota( ib.getQuota() )
+					.setAccount( retentionAccount )
+					;
+				ai.setWithholdingData(iw);
+		});
 		if (aonCtx != null) {
-			Account outputAccount = aonCtx.accounting().getDefaultChargedVatAccount();
-			Account inputAccount = aonCtx.accounting().getDefaultPaidVatAccount();
-			Account adjAccount = aonCtx.accounting().getVatNegativeAdjustAccount();
-			Account adjDirectTaxAccount = aonCtx.accounting().getDirectTaxAdjustAccount();
 			Account expAccount = null;
 			if (invoice.isSales() ) {
 				expAccount = getSalesAccount( ctx,aonCtx,result);
@@ -256,41 +245,10 @@ public class TediParser {
 			}
 			if (invoice.getDetails() != null) {
 				for (InvoiceDetail detail : invoice.getDetails()) {
-					InvoiceVAT vat = null;
-					if (detail.getInvoiceTaxes() != null && detail.getInvoiceTaxes().size() > 0) {
-						for (InvoiceTax tax : detail.getInvoiceTaxes()) {
-							if (tax.getTaxType() == TaxType.VAT) {
-								vat = getInvoiceVAT( detail, tax,outputAccount,inputAccount,adjAccount,adjDirectTaxAccount,expAccount, withholding);					
-							}
-						}
-					} else {
-						vat = getInvoiceVAT( detail, new InvoiceTax(),outputAccount,inputAccount,adjAccount,adjDirectTaxAccount,expAccount, withholding);
-					}
-					ai.addVat(vat);
+					detail.setExpAccount(expAccount);
 				}
 			}
 		}
-	}
-	
-	private static InvoiceVAT getInvoiceVAT( InvoiceDetail detail, InvoiceTax tax,Account outputAccount,Account inputAccount,Account adjAccount,Account adjDirectTaxAccount, Account expAccount, boolean withholding) {
-		return new InvoiceVAT()
-				.setVatDeductionType(VatDeductionType.WITH_RIGHT)
-				.setBase(detail.getTaxableBase())
-				.setPercentage(tax.getPercentage())
-				.setQuota(tax.getQuota())
-				.setSurcharge(tax.getSurcharge())
-				.setSurchargeQuota(tax.getSurchargeQuota())
-				.setInvestAsset(detail.getInvestAsset())
-				.setDeductiblePercent(tax.getDeductiblePercent())
-				.setDeductibleQuota(tax.getDeductibleQuota()).setWithholding(withholding)
-
-				.setOutputAccount(outputAccount)
-				.setInputAccount(inputAccount)
-				.setAdjAccount(adjAccount)
-				.setAdjDirectTaxAccount( adjDirectTaxAccount )
-
-				.setExpAccount(expAccount)
-				;
 	}
 	
 	private static Account getSalesAccount(AONContext ctx, AonConfiguration aonCtx, TediResult result) {
@@ -482,7 +440,7 @@ public class TediParser {
 					ai.setSuggestedAccounts(AccountingInvoiceDAO.getSuggestedAccounts(ctx.getAONContext(), ar.getId(), ar.getType().getInvoiceType()));
 					invoice.setRegistry(ar.getId())
 					.setTransaction(ar.getTransaction());
-					ar.getType().visit(ar, new InvoiceRegistryInitializer(ctx.getAONContext(), ai.getInvoice(), ctx.getAonConfiguration()));
+					ar.getType().visit(new InvoiceRegistryInitializer(ctx.getAONContext(), ai.getInvoice(), ctx.getAonConfiguration(), ar));
 					return true;
 				} else {
 					result.setPosibleRegistries(registries);
@@ -639,9 +597,9 @@ public class TediParser {
 	private static Consumer<TediParserContext> INVOICE_VAT_BREAKDOWN = (ctx) -> {
 		TediResult result = ctx.getTediResult();
 		if ( result.getTedi().getTaxes() != null) {
-			if (result.getInvoice().getBreakdown() == null) {
-				result.getInvoice().setBreakdown( new LinkedList<InvoiceBreakdown>());
-			}
+//			if (result.getInvoice().getBreakdown() == null) {
+//				result.getInvoice().setBreakdown( new LinkedList<InvoiceBreakdown>());
+//			}
 			for ( TediInvoiceTax tediTax : result.getTedi().getTaxes()) {
 				if (tediTax.getTaxType() == TediTaxType.IVA) {
 					double base = result.getInvoice().isUndeductible()
@@ -660,7 +618,8 @@ public class TediParser {
 						.setQuota( quota )
 						.setSurcharge( result.getInvoice().isUndeductible()?0.0:AonNumberUtils.todouble( tediTax.getSurcharge()) )
 						.setSurchargeQuota( result.getInvoice().isUndeductible()?0.0:AonNumberUtils.todouble( tediTax.getSurchargeQuota()));
-					result.getInvoice().getBreakdown().add(ib);
+//					result.getInvoice().getBreakdown().add(ib);
+					result.getInvoice().addBreakdown(ib);
 				}
 			}
 		}
@@ -670,9 +629,9 @@ public class TediParser {
 		TediResult result = ctx.getTediResult();
 		if (!result.getInvoice().isUndeductible()) {
 			if ( result.getTedi().getTaxes() != null) {
-				if (result.getInvoice().getBreakdown() == null) {
-					result.getInvoice().setBreakdown( new LinkedList<InvoiceBreakdown>());
-				}
+//				if (result.getInvoice().getBreakdown() == null) {
+//					result.getInvoice().setBreakdown( new LinkedList<InvoiceBreakdown>());
+//				}
 				InvoiceBreakdown irpfTax = null;
 				for ( TediInvoiceTax tediTax : result.getTedi().getTaxes()) {
 					if (tediTax.getTaxType() == TediTaxType.IRPF) {
@@ -684,7 +643,8 @@ public class TediParser {
 							.setBase( base )
 							.setPercentage( percent )
 							.setQuota( quota );
-						result.getInvoice().getBreakdown().add(irpfTax);
+						//result.getInvoice().getBreakdown().add(irpfTax);
+						result.getInvoice().addBreakdown(irpfTax);
 						break; // TODO ¿¿¿En Tedi solo puede haber un IRPF???
 					}
 				}
@@ -864,7 +824,7 @@ public class TediParser {
 		fillVats(ctx, aonCtx, result);
 		ai.setAccountEntry(getEntryBase(ctx,aonCtx,ai));
 		if (result.isImportable()) {
-			ai.setAccountEntry(InvoiceRecorder.getInvoiceEntry(ai));
+			ai.setAccountEntry(InvoiceRecorder.getInvoiceEntry(ctx, ai.getInvoice()));
 		}
 		// ----------
 //		InvoiceCalculator.calculate(ai);

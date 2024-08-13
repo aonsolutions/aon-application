@@ -553,7 +553,7 @@ public class AnalyticalPanelReport extends DockLayoutPanel implements Focusable,
 						.setToDate( newParams.getToDate() )
 						.setActivity( newParams.getActivity() )
 						.setSecurityLevel( newParams.getSecurityLevel() )
-						.setAccount( newParams.getAccount().clone() )
+						.setAccount( newParams.getAccount().copy() )
 				;
 				StatementPanel statement = new StatementPanel(
 						new AccountingReportModuleOptions()

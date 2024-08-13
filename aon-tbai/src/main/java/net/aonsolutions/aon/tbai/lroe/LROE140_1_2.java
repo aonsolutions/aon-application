@@ -14,6 +14,7 @@ import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.occam.api.model.type.TaxType;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonMathUtils;
+import com.esferalia.aon.watson.util.AonNumberUtils;
 
 import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.batuz_enumerados.CausaExencionEnum;
 import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.batuz_enumerados.ClaveCodigoFacturaRectificativaEnum;
@@ -110,9 +111,11 @@ public class LROE140_1_2 extends LROE140 {
 				
 			FacturasRectificadasSustituidasType rectificadas = new FacturasRectificadasSustituidasType();
 			IDFacturaType rectificada = new IDFacturaType();
-			rectificada.setSerieFactura(invoice.getRectificationInvoiceSeries());
-			rectificada.setNumFactura(invoice.getRectificationInvoiceNumber().toString());
-			rectificada.setFechaExpedicionFactura(AonDateUtils.format(invoice.getRectificationInvoiceDate(), DATE_FORMAT));
+			invoice.getRectificationInvoice().ifPresent( ri -> {
+				rectificada.setSerieFactura(ri.getSeries());
+				rectificada.setNumFactura(AonNumberUtils.toString(ri.getNumber()));
+				rectificada.setFechaExpedicionFactura(AonDateUtils.format(ri.getIssueDate(), DATE_FORMAT));
+			});
 			rectificadas.getIDFacturaRectificadaSustituida().add(rectificada);
 			cabecera.setFacturasRectificadasSustituidas(rectificadas);
 		}

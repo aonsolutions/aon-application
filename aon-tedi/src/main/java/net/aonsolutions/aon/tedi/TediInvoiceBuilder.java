@@ -9,7 +9,7 @@ import java.util.stream.Collectors;
 
 import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.registry.AccountingRegistry;
-import com.esferalia.aon.occam.api.model.registry.IAccountingRegistryTypeVisitor;
+import com.esferalia.aon.occam.api.model.registry.AccountingRegistryType.AccountingRegistryTypeVisitor;
 import com.esferalia.aon.occam.api.model.registry.RAddress;
 import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.type.Country;
@@ -102,10 +102,10 @@ public class TediInvoiceBuilder extends TediInsightInvoiceBuilder {
 									.collect(Collectors.toCollection(LinkedList::new));
 							if (registries != null && registries.size() == 1) {
 								AccountingRegistry ar = registries.get(0);
-								IAccountingRegistryTypeVisitor visitor = new IAccountingRegistryTypeVisitor() {
+								AccountingRegistryTypeVisitor visitor = new AccountingRegistryTypeVisitor() {
 									
 									@Override
-									public void visitCustomer(AccountingRegistry reg) {
+									public void visitCustomer() {
 										inv.setType(TediInvoiceType.EMITIDA);	
 										fillCompanyData( ctx, inv , inv.ensureSender());
 										inv.ensureReceiver()
@@ -115,17 +115,17 @@ public class TediInvoiceBuilder extends TediInsightInvoiceBuilder {
 										
 									}
 									
-									@Override public void visitCreditor(AccountingRegistry reg) {visitRecibida( reg );}
-									@Override public void visitSupplier(AccountingRegistry reg) {visitRecibida( reg );}
-									@Override public void visitUndedCreditor(AccountingRegistry reg) {visitRecibida( reg );}
+									@Override public void visitCreditor() {visitRecibida( );}
+									@Override public void visitSupplier() {visitRecibida(  );}
+									@Override public void visitUndedCreditor() {visitRecibida( );}
 									
-									private void visitRecibida(AccountingRegistry reg) {
+									private void visitRecibida() {
 										inv.setType(TediInvoiceType.RECIBIDA);	
 										fillCompanyData( ctx, inv , inv.ensureReceiver());
 										inv.ensureSender().setDocument( nif.getStr() );
 									}
 								};
-								ar.getType().visit(ar, visitor);
+								ar.getType().visit(visitor);
 							}
 						}
 					}

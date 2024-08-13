@@ -140,8 +140,11 @@ public class InvoiceTest {
 		invoice.setSeries("2022");
 		invoice.setNumber(1);
 		
-		invoice.setRectificationInvoiceNumber(288);
-		invoice.setRectificationInvoiceSeries("NO LO SÉ XD");		
+		invoice.setRectificationInvoice(
+			new Invoice()
+				.setSeries("NO LO SÉ XD")
+				.setNumber(288)
+		);
 		invoice.setRectificationType(RectificationType.NORMAL_RECTIFIER);
 		invoice.setAddress(new RegistryAddress()
 				.setAddress(address)
@@ -269,7 +272,6 @@ public class InvoiceTest {
 		jump();
 		
 		InvoiceDetail detailOne = new InvoiceDetail();
-		detailOne.setAccountCode("0192831092");
 		detailOne.setDescription
 		(
 		    "Three Rings for the Elven-kings under the sky"
@@ -334,7 +336,6 @@ public class InvoiceTest {
 				
 		
 		InvoiceDetail detailTwo = new InvoiceDetail();
-		detailTwo.setAccountCode("0192831092");
 		detailTwo.setDescription("RTX 3080TI MAX PRO Founders edition");
 		detailTwo.setPrice(1239675601.12);
 		detailTwo.setDiscountExpression("1.19");
@@ -346,7 +347,6 @@ public class InvoiceTest {
 		detailTwo.setDeliveryDetail(deliveryDetail2);
 		
 		InvoiceDetail detailThree = new InvoiceDetail();
-		detailThree.setAccountCode("0192831010");
 		detailThree.setDescription
 		(
 		    "Volverán las oscuras golondrinas\n" + 
@@ -389,7 +389,6 @@ public class InvoiceTest {
 		
 		
 		InvoiceDetail detailThreeAndAHalf = new InvoiceDetail();
-		detailThreeAndAHalf.setAccountCode("0192831010");
 		detailThreeAndAHalf.setDescription
 		(
 				"Volverán las oscuras golondrinas\n" + 
@@ -428,7 +427,6 @@ public class InvoiceTest {
 		detailThreeAndAHalf.setTaxableBase(712382113);
 		
 		InvoiceDetail detailFour = new InvoiceDetail();
-		detailFour.setAccountCode("0192831010");
 		detailFour.setSource(InvoiceSource.DELIVERY);
 		detailFour.setDeliveryDetail(deliveryDetail);
 		detailFour.setDescription
@@ -570,7 +568,6 @@ public class InvoiceTest {
 		detailFour.setTaxableBase(288*2);
 		
 		InvoiceDetail detailFive= new InvoiceDetail();
-		detailFive.setAccountCode("0192831010");
 		
 		String largeDesc = "";
 		for (int i=1; i<=40; i++) {
@@ -587,7 +584,6 @@ public class InvoiceTest {
 		
 		
 		InvoiceDetail shortDetail1= new InvoiceDetail();
-		shortDetail1.setAccountCode("0192831010");
 		shortDetail1.setDescription("DETALLE 1");
 		shortDetail1.setPrice(0);
 		shortDetail1.setDiscountExpression("30");
@@ -595,7 +591,6 @@ public class InvoiceTest {
 		shortDetail1.setTaxableBase(0);
 		
 		InvoiceDetail shortDetail2= new InvoiceDetail();
-		shortDetail2.setAccountCode("0192831010");
 		shortDetail2.setDescription("DETALLE 2");
 		shortDetail2.setPrice(1);
 		shortDetail2.setDiscountExpression("30");
@@ -603,7 +598,6 @@ public class InvoiceTest {
 		shortDetail2.setTaxableBase(0);
 		
 		InvoiceDetail shortDetail3= new InvoiceDetail();
-		shortDetail3.setAccountCode("0192831010");
 		shortDetail3.setDescription("DETALLE 3");
 		shortDetail3.setPrice(1);
 		shortDetail3.setDiscountExpression("30");
@@ -611,7 +605,6 @@ public class InvoiceTest {
 		shortDetail3.setTaxableBase(1);
 		
 		InvoiceDetail shortDetail4= new InvoiceDetail();
-		shortDetail4.setAccountCode("0192831010");
 		shortDetail4.setDescription("DETALLE 4");
 		shortDetail4.setPrice(1);
 		shortDetail4.setDiscountExpression("0");
@@ -619,7 +612,6 @@ public class InvoiceTest {
 		shortDetail4.setTaxableBase(1);
 		
 		InvoiceDetail shortDetail5= new InvoiceDetail();
-		shortDetail5.setAccountCode("0192831010");
 		shortDetail5.setDescription("DETALLE 5");
 		shortDetail5.setPrice(1);
 //		shortDetail5.setDiscountExpression("NO");
@@ -628,7 +620,6 @@ public class InvoiceTest {
 		
 		
 		InvoiceDetail detailX= new InvoiceDetail();
-		detailX.setAccountCode("0192831010");
 		
 		String xdesc = "";
 		for (int i=1; i<=30; i++) {
@@ -647,7 +638,6 @@ public class InvoiceTest {
 		detailX.setTaxableBase(712382113);
 		
 		InvoiceDetail specialDetail = new InvoiceDetail();
-		specialDetail.setAccountCode("0192831010");
 		specialDetail.setDescription("ALTO SUPLIDO");
 		specialDetail.setPrice(10);
 		specialDetail.setDiscountExpression("0");
@@ -656,7 +646,6 @@ public class InvoiceTest {
 		specialDetail.setItem(new Item().setProduct(new Product().setType(ProductType.PREPAYMENT)));
 		
 		InvoiceDetail auxDetail = new InvoiceDetail();
-		auxDetail.setAccountCode("0123");
 		auxDetail.setDescription("ENTE");
 		auxDetail.setPrice(29);
 		auxDetail.setDiscountExpression("0");
@@ -665,7 +654,6 @@ public class InvoiceTest {
 		auxDetail.setItem(new Item().setProduct(new Product().setType(ProductType.AUXILIARY).setId(12)));
 
 		InvoiceDetail auxDetail2 = new InvoiceDetail();
-		auxDetail2.setAccountCode("213123");
 		auxDetail2.setDescription("WEA");
 		auxDetail2.setPrice(300);
 		auxDetail2.setDiscountExpression("0");
@@ -1073,8 +1061,11 @@ public class InvoiceTest {
 		invoice.setSeries("2022");
 		invoice.setNumber(1);
 		
-		invoice.setRectificationInvoiceNumber(288);
-		invoice.setRectificationInvoiceSeries("NO LO SÉ XD");		
+		invoice.setRectificationInvoice(
+				new Invoice()
+					.setSeries("NO LO SÉ XD")
+					.setNumber(288)
+			);
 		invoice.setRectificationType(RectificationType.NORMAL_RECTIFIER);
 		invoice.setAddress(new RegistryAddress()
 				.setAddress(address)
@@ -1086,8 +1077,11 @@ public class InvoiceTest {
 		invoice2.setSeries("2022");
 		invoice2.setNumber(1);
 		
-		invoice2.setRectificationInvoiceNumber(288);
-		invoice2.setRectificationInvoiceSeries("NO LO SÉ XD");		
+		invoice2.setRectificationInvoice(
+				new Invoice()
+					.setSeries("NO LO SÉ XD")
+					.setNumber(288)
+			);
 		invoice2.setRectificationType(RectificationType.NORMAL_RECTIFIER);
 		invoice2.setAddress(new RegistryAddress()
 				.setAddress(address)
@@ -1226,7 +1220,6 @@ public class InvoiceTest {
 		jump();
 		
 		InvoiceDetail detailOne = new InvoiceDetail();
-		detailOne.setAccountCode("0192831092");
 		detailOne.setDescription
 		(
 		    "Three Rings for the Elven-kings under the sky"
@@ -1249,7 +1242,6 @@ public class InvoiceTest {
 				
 		
 		InvoiceDetail detailTwo = new InvoiceDetail();
-		detailTwo.setAccountCode("0192831092");
 		detailTwo.setDescription("RTX 3080TI MAX PRO Founders edition");
 		detailTwo.setPrice(1239675601.12);
 		detailTwo.setDiscountExpression("1.19");
@@ -1261,7 +1253,6 @@ public class InvoiceTest {
 		detailTwo.setSalesDetail(deliveryDetailTwo);
 		
 		InvoiceDetail detailThree = new InvoiceDetail();
-		detailThree.setAccountCode("0192831010");
 		detailThree.setDescription
 		(
 		    "Volverán las oscuras golondrinas\n" + 
@@ -1300,7 +1291,6 @@ public class InvoiceTest {
 		detailThree.setTaxableBase(712382113);
 		
 		InvoiceDetail detailThreeAndAHalf = new InvoiceDetail();
-		detailThreeAndAHalf.setAccountCode("0192831010");
 		detailThreeAndAHalf.setDescription
 		(
 				"Volverán las oscuras golondrinas\n" + 
@@ -1339,7 +1329,6 @@ public class InvoiceTest {
 		detailThreeAndAHalf.setTaxableBase(712382113);
 		
 		InvoiceDetail detailFour = new InvoiceDetail();
-		detailFour.setAccountCode("0192831010");
 		detailFour.setDescription
 		(
 		    "Con diez cañones por banda,\n" + 
@@ -1479,7 +1468,6 @@ public class InvoiceTest {
 		detailFour.setTaxableBase(288*2);
 		
 		InvoiceDetail detailFive= new InvoiceDetail();
-		detailFive.setAccountCode("0192831010");
 		
 		String largeDesc = "";
 		for (int i=1; i<=200; i++) {
@@ -1496,7 +1484,6 @@ public class InvoiceTest {
 		
 		
 		InvoiceDetail shortDetail1= new InvoiceDetail();
-		shortDetail1.setAccountCode("0192831010");
 		shortDetail1.setDescription("DETALLE 1");
 		shortDetail1.setPrice(0);
 		shortDetail1.setDiscountExpression("30");
@@ -1504,7 +1491,6 @@ public class InvoiceTest {
 		shortDetail1.setTaxableBase(0);
 		
 		InvoiceDetail shortDetail2= new InvoiceDetail();
-		shortDetail2.setAccountCode("0192831010");
 		shortDetail2.setDescription("DETALLE 2");
 		shortDetail2.setPrice(1);
 		shortDetail2.setDiscountExpression("30");
@@ -1512,7 +1498,6 @@ public class InvoiceTest {
 		shortDetail2.setTaxableBase(0);
 		
 		InvoiceDetail shortDetail3= new InvoiceDetail();
-		shortDetail3.setAccountCode("0192831010");
 		shortDetail3.setDescription("DETALLE 3");
 		shortDetail3.setPrice(1);
 		shortDetail3.setDiscountExpression("30");
@@ -1520,7 +1505,6 @@ public class InvoiceTest {
 		shortDetail3.setTaxableBase(1);
 		
 		InvoiceDetail shortDetail4= new InvoiceDetail();
-		shortDetail4.setAccountCode("0192831010");
 		shortDetail4.setDescription("DETALLE 4");
 		shortDetail4.setPrice(1);
 		shortDetail4.setDiscountExpression("0");
@@ -1528,7 +1512,6 @@ public class InvoiceTest {
 		shortDetail4.setTaxableBase(1);
 		
 		InvoiceDetail shortDetail5= new InvoiceDetail();
-		shortDetail5.setAccountCode("0192831010");
 		shortDetail5.setDescription("DETALLE 5");
 		shortDetail5.setPrice(1);
 //		shortDetail5.setDiscountExpression("NO");
@@ -1537,7 +1520,6 @@ public class InvoiceTest {
 		
 		
 		InvoiceDetail detailX= new InvoiceDetail();
-		detailX.setAccountCode("0192831010");
 		
 		String xdesc = "";
 		for (int i=1; i<=46; i++) {
@@ -1556,7 +1538,6 @@ public class InvoiceTest {
 		detailX.setTaxableBase(712382113);
 		
 		InvoiceDetail specialDetail = new InvoiceDetail();
-		specialDetail.setAccountCode("0192831010");
 		specialDetail.setDescription("ALTO SUPLIDO");
 		specialDetail.setPrice(10);
 		specialDetail.setDiscountExpression("0");

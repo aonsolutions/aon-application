@@ -10,12 +10,14 @@ import com.esferalia.aon.occam.api.model.Account;
 import com.esferalia.aon.occam.api.model.AccountEntry;
 import com.esferalia.aon.occam.api.model.AccountEntryParams;
 import com.esferalia.aon.occam.api.model.AccountingInvoice;
+import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.FinanceEntry;
 import com.esferalia.aon.occam.api.model.IAccountEntryWrapper;
 import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.SalaryEntry;
 import com.esferalia.aon.occam.api.model.accounting.AmortizationType;
 import com.esferalia.aon.occam.api.model.accounting.AmortizationTypeParams;
+import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceRectificationData;
 import com.esferalia.aon.occam.api.model.registry.AccountingRegistry;
 import com.esferalia.aon.occam.api.model.type.AccountEntryUpdate;
@@ -73,6 +75,17 @@ public class AccountEntryServiceAsyncDecorator implements AccountEntryServiceAsy
 		fsa.rectifyInvoice(occam, invoiceId, data, new AsyncCallbackWrapper<>(callback));
 	}
 	
+	@Override
+	public void getAccountingInvoice(Occam occam, Integer accountEntry, AsyncCallback<AccountingInvoice> callback) {
+		AON.start();
+		fsa.getAccountingInvoice(occam, accountEntry, new AsyncCallbackWrapper<>(callback));
+	}
+	
+	@Override
+	public void getAccountEntry(Occam occam, AonConfiguration config, Invoice invoice, AsyncCallback<AccountEntry> callback) {
+		AON.start();
+		fsa.getAccountEntry(occam, config, invoice, new AsyncCallbackWrapper<>(callback));
+	}
 	// *************************************	
 	// *************************************	
 	// *************************************	

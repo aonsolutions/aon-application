@@ -557,7 +557,8 @@ public class AccountingReportParams implements IAccountParams, Cloneable {
 				.setFooterText(getFooterText())
 				;
 	}
-	public AccountingReportParams clone() {
+	
+	public AccountingReportParams copy() {
 		return new AccountingReportParams()
 			.setDomainName(getDomainName())
 			.setDomain(getDomain())
@@ -565,7 +566,7 @@ public class AccountingReportParams implements IAccountParams, Cloneable {
 			.setPeriod(getPeriod())
 			.setFromDate(getFromDate())
 			.setToDate(getToDate())
-			.setAccount(getAccount()==null?null:getAccount().clone())
+			.setAccount(getAccount()==null?null:getAccount().copy())
 			.setLevel(getLevel())
 			.setActivity(getActivity())
 			.setSecurityLevel(getSecurityLevel())

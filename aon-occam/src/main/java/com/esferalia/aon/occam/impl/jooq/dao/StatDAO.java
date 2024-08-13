@@ -300,18 +300,18 @@ public class StatDAO {
 		for (StatFilterItem item : params.getFilterItems() ) {
 			item.getType().visit(visitor,item);
 		}
-		Stream<InvoiceDetail> stream = InvoiceDAO.getInvoiceDetailsExtended(ctx, 
+		Stream<InvoiceDetail> stream = InvoiceDetailDAO.getInvoiceDetailsExtended(ctx, 
 				p -> p.getDomainProperty().eq(ctx.getDomainId())
 				.and(scopes==null?null:p.getScopeProperty().in(scopes))							
 				.and(params.getFrom()==null?null:p.getStartIssueDateProperty().ge(params.getFrom()))
 				.and(params.getTo()==null?null:p.getEndIssueDateProperty().le(params.getTo()))
 				.and(params.getRegistry()==null?null:p.getRegistryProperty().eq(params.getRegistry()))
 				.and(params.getProduct()==null?null:p.getProductProperty().eq(params.getProduct()))
-				.and((types==null||types.size()==0)?null:p.getTypeProperty().in(types.toArray(new Byte[types.size()])))
-				.and((categories==null||categories.size()==0)?null:p.getProductCategoryProperty().in(categories.toArray(new Integer[categories.size()])))
-				.and((brands==null||brands.size()==0)?null:p.getProductBrandProperty().in(brands.toArray(new Integer[brands.size()])))
-				.and((workplaces==null||workplaces.size()==0)?null:p.getWorkplaceProperty().in(workplaces.toArray(new Integer[workplaces.size()])))
-				.and((sellers==null||sellers.size()==0)?null:p.getSellerProperty().in(sellers.toArray(new Integer[sellers.size()])))
+				.and((types==null||types.isEmpty())?null:p.getTypeProperty().in(types.toArray(new Byte[types.size()])))
+				.and((categories==null||categories.isEmpty())?null:p.getProductCategoryProperty().in(categories.toArray(new Integer[categories.size()])))
+				.and((brands==null||brands.isEmpty())?null:p.getProductBrandProperty().in(brands.toArray(new Integer[brands.size()])))
+				.and((workplaces==null||workplaces.isEmpty())?null:p.getWorkplaceProperty().in(workplaces.toArray(new Integer[workplaces.size()])))
+				.and((sellers==null||sellers.isEmpty())?null:p.getSellerProperty().in(sellers.toArray(new Integer[sellers.size()])))
 				.and(p.getProductTypeProperty().ne(ProductType.PREPAYMENT.value()))
 			,callback)
 			.map( d -> d.getDetail() )

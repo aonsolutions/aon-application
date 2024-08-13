@@ -3,7 +3,7 @@ package com.esferalia.aon.occam.api.model;
 import java.io.Serializable;
 import java.util.LinkedList;
 
-import com.esferalia.aon.occam.api.model.finance.InvoiceVAT;
+import com.esferalia.aon.occam.api.model.finance.InvoiceDetail;
 
 public class AccountingDUAInfo implements Serializable {
 	
@@ -22,7 +22,7 @@ public class AccountingDUAInfo implements Serializable {
 	private double dutyTotal;
 
 	private Account vatAccount;
-	private LinkedList<InvoiceVAT> duaVats;
+	private LinkedList<InvoiceDetail> duaDetails;
 	
 	private boolean authCalcEnabled;
 	
@@ -122,11 +122,11 @@ public class AccountingDUAInfo implements Serializable {
 		this.authCalcEnabled = authCalcEnabled;
 		return this;
 	}
-	public LinkedList<InvoiceVAT> getDuaVats() {
-		return duaVats;
+	public LinkedList<InvoiceDetail> getDuaDetails() {
+		return duaDetails;
 	}
-	public AccountingDUAInfo setDuaVats(LinkedList<InvoiceVAT> duaVats) {
-		this.duaVats = duaVats;
+	public AccountingDUAInfo setDuaDetails(LinkedList<InvoiceDetail> duaDetails) {
+		this.duaDetails = duaDetails;
 		return this;
 	}
 }

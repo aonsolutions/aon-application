@@ -7,6 +7,7 @@ import static com.esferalia.aon.jooq.tables.Invoice.INVOICE;
 import static com.esferalia.aon.jooq.tables.InvoiceFiscal.INVOICE_FISCAL;
 import static com.esferalia.aon.jooq.tables.Scope.SCOPE;
 
+import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
@@ -75,6 +76,10 @@ public class InvoiceSIIDAO {
 		}
 	}
 
+	/**
+	 *  @deprecated USE InvoiceDAO suitable FILLER
+	 */
+	@Deprecated 
 	private static class SiiInvoiceFiller extends InvoiceFiller implements Function<Record,Invoice> {
 		Boolean pending;
 		private SiiInvoiceFiller(Boolean pending) {
@@ -121,7 +126,9 @@ public class InvoiceSIIDAO {
 				.setInvestAsset(r.getValue(INVOICE.INVEST_ASSET))
 				.setProject(r.getValue(INVOICE.PROJECT))
 				.setRectificationType(AonEnumUtils.enumValue(RectificationType.class, r.getValue(INVOICE.RECTIFICATION_TYPE)))	
-				.setRectificationInvoice(r.getValue(INVOICE.RECTIFICATION_INVOICE))	
+				.setRectificationInvoice(
+						Optional.ofNullable( r.getValue(INVOICE.RECTIFICATION_INVOICE) ).map( rid -> new Invoice().setId(rid)).orElse(null)
+					)	
 				.setTransaction(InvoiceTransactionType.safeValueOf(r.getValue(INVOICE.TRANSACTION)))
 				.setRecorded(r.getValue(INVOICE.STATUS) != null && r.getValue(INVOICE.STATUS) == 1 )	
 				.setSurcharge(r.getValue(INVOICE.SURCHARGE) == 1 )	

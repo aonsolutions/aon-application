@@ -151,9 +151,10 @@ public class LROE140_2_1 extends LROE140 {
 				
 			FacturasRectificadasSustituidasType rectificadas = new FacturasRectificadasSustituidasType();
 			IDFacturaType rectificada = new IDFacturaType();
-			// rectificada.setSerieFactura(invoice.getRectificationInvoiceSeries());
-			rectificada.setNumFactura(invoice.getRectificationInvoiceReference());
-			rectificada.setFechaExpedicionFactura(AonDateUtils.format(invoice.getRectificationInvoiceDate(), DATE_FORMAT));
+			invoice.getRectificationInvoice().ifPresent( ri -> {
+				rectificada.setNumFactura(ri.getReferenceCode());
+				rectificada.setFechaExpedicionFactura(AonDateUtils.format(ri.getIssueDate(), DATE_FORMAT));
+			});
 			rectificadas.getIDFacturaRectificadaSustituida().add(rectificada);
 			cabecera.setFacturasRectificadasSustituidas(rectificadas);
 		}
@@ -223,8 +224,9 @@ public class LROE140_2_1 extends LROE140 {
 
 			r.setCriterioCobrosYPagos(invoice.isVatAccrualPayment() ? SiNoEnum.S : SiNoEnum.N);
 
-			if(!AonStringUtils.isBlank(detail.getAccountCode()) && detail.getAccountCode().length() >= 3) {
-				r.setConcepto(detail.getAccountCode().substring(0,3));
+			if(detail.getExpAccount() != null 
+				&& AonStringUtils.length(detail.getExpAccount().getCode()) >= 3) {
+				r.setConcepto(AonStringUtils.substring(detail.getExpAccount().getCode(), 0,3));
 				double importeGastoIRPF = AonMathUtils.round(tax.getBase() * tax.getDeductiblePercent() / 100);
 				r.setImporteGastoIRPF(Double.toString(importeGastoIRPF));
 			}
@@ -238,9 +240,8 @@ public class LROE140_2_1 extends LROE140 {
 
 //			r.setPorcentajeCompensacionREAGYP("");
 //			r.setImporteCompensacionREAGYP("");
-			if(invoice.getInvestAsset() != null) {
-				Integer ia = detail.getInvestAssetData() != null && detail.getInvestAssetData().getId() != null 
-					? detail.getInvestAssetData().getId() : invoice.getInvestAsset();
+			if(detail.getInvestAsset().isPresent()) {
+				Integer ia = detail.getInvestAsset().get().getId();
 				r.setBienAfectoIRPFYOIVA(BienAfectoIRPFYOIVAEnum.I);
 				r.setReferenciaBien(Integer.toString(ia));
 			}

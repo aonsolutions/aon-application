@@ -183,9 +183,10 @@ public class LROE240_2 extends LROE240 {
 				
 			FacturasRectificadasSustituidasType rectificadas = new FacturasRectificadasSustituidasType();
 			IDFacturaType rectificada = new IDFacturaType();
-			// rectificada.setSerieFactura(invoice.getRectificationInvoiceSeries());
-			rectificada.setNumFactura(invoice.getRectificationInvoiceReference());
-			rectificada.setFechaExpedicionFactura(AonDateUtils.format(invoice.getRectificationInvoiceDate(), DATE_FORMAT));
+			invoice.getRectificationInvoice().ifPresent( ri -> {
+				rectificada.setNumFactura(ri.getReferenceCode());
+				rectificada.setFechaExpedicionFactura(AonDateUtils.format(ri.getIssueDate(), DATE_FORMAT));
+			});
 			rectificadas.getIDFacturaRectificadaSustituida().add(rectificada);
 			cabecera.setFacturasRectificadasSustituidas(rectificadas);
 		}

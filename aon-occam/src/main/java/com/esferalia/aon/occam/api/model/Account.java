@@ -120,7 +120,7 @@ public class Account implements Serializable {
 				);
 	}
 	
-	public Account clone() {
+	public Account copy() {
 		return new Account()
 			.setId( getId() )
 			.setDomain( getDomain())
@@ -134,4 +134,5 @@ public class Account implements Serializable {
 			.setHasRegistry( hasRegistry())
 			;
 	}
+	
 }

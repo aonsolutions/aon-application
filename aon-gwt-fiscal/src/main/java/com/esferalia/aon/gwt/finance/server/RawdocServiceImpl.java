@@ -84,9 +84,11 @@ public class RawdocServiceImpl extends AonStatelessRemoteServiceServlet implemen
 				.setUser(user);
 			TediResult result = TEDI.fromRawdoc(tctx, rawdocId );
 			result.getAccountingInvoice()
-				.setFromRawdoc(true)
+				.getInvoice().setRawdocId(rawdocId);
+			result.getAccountingInvoice()
 				.setTediParsed(true)
-				.getAttach().setAttachURL(url);
+				.getAttach()
+				.setAttachURL(url);
 			return result;
 		} catch ( TediException t) {
 			t.printStackTrace();

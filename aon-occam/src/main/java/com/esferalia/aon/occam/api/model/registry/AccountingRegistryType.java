@@ -7,53 +7,42 @@ import com.esferalia.aon.occam.api.model.type.InvoiceType;
 
 public enum AccountingRegistryType implements Serializable {
 	
-	CREDITOR ("Acreedor",InvoiceType.EXPENSES, AccountEntryType.EXPENSE_INVOICE, "4100"
-			, new IAccountingRegistryTypeVisitorWalker() {
-				@Override
-				public void visit(AccountingRegistry reg,IAccountingRegistryTypeVisitor visitor) {
-					visitor.visitCreditor(reg);
-				}
-			})
-	,SUPPLIER ("Proveedor",InvoiceType.PURCHASE, AccountEntryType.PURCHASE_INVOICE, "4000"
-		,new IAccountingRegistryTypeVisitorWalker() {
-			@Override
-			public void visit(AccountingRegistry reg,IAccountingRegistryTypeVisitor visitor) {
-				visitor.visitSupplier(reg);
-			}
-		})
-	,CUSTOMER ("Cliente",InvoiceType.SALES, AccountEntryType.SALES_INVOICE, "4300"
-		, new IAccountingRegistryTypeVisitorWalker() {
-			@Override
-			public void visit(AccountingRegistry reg,IAccountingRegistryTypeVisitor visitor) {
-				visitor.visitCustomer(reg);
-			}
-		})
-	,UNDED_CREDITOR ("Acreedor",InvoiceType.UNDEDUCTIBLE, AccountEntryType.EXPENSE_INVOICE, "4100"
-		, new IAccountingRegistryTypeVisitorWalker() {
-			@Override
-			public void visit(AccountingRegistry reg,IAccountingRegistryTypeVisitor visitor) {
-				visitor.visitUndedCreditor(reg);
-			}
-		})
-	;
-	
-	public interface IAccountingRegistryTypeVisitorWalker {
-		void visit( AccountingRegistry reg, IAccountingRegistryTypeVisitor visitor);
+	CREDITOR ("Acreedor",InvoiceType.EXPENSES, AccountEntryType.EXPENSE_INVOICE, "4100") {
+		@Override
+		public void visit(AccountingRegistryTypeVisitor visitor) {
+			visitor.visitCreditor();
+		}
 	}
+	,SUPPLIER ("Proveedor",InvoiceType.PURCHASE, AccountEntryType.PURCHASE_INVOICE, "4000") {
+		@Override
+		public void visit(AccountingRegistryTypeVisitor visitor) {
+			visitor.visitSupplier();
+		}
+	}
+	,CUSTOMER ("Cliente",InvoiceType.SALES, AccountEntryType.SALES_INVOICE, "4300") {
+		@Override
+		public void visit(AccountingRegistryTypeVisitor visitor) {
+			visitor.visitCustomer();
+		}
+	}
+	,UNDED_CREDITOR ("Acreedor",InvoiceType.UNDEDUCTIBLE, AccountEntryType.EXPENSE_INVOICE, "4100") {
+		@Override
+		public void visit(AccountingRegistryTypeVisitor visitor) {
+			visitor.visitUndedCreditor();
+		}
+	}
+	;
 	
 	private String description;
 	private InvoiceType invoiceType;
 	private AccountEntryType accountEntryType;
 	private String accountPrefix;
-	private IAccountingRegistryTypeVisitorWalker walker;
 	
-	private AccountingRegistryType(String description,InvoiceType invoiceType, AccountEntryType accountEntryType
-			, String accountPrefix,IAccountingRegistryTypeVisitorWalker walker) {
+	private AccountingRegistryType(String description,InvoiceType invoiceType, AccountEntryType accountEntryType, String accountPrefix) {
 		this.description = description;
 		this.invoiceType = invoiceType;
 		this.accountEntryType = accountEntryType;
 		this.accountPrefix = accountPrefix;  
-		this.walker = walker;
 	}
 	public String getDescription() {
 		return description;
@@ -67,9 +56,7 @@ public enum AccountingRegistryType implements Serializable {
 	public AccountEntryType getAccountEntryType() {
 		return accountEntryType;
 	}
-	public void visit(AccountingRegistry reg, IAccountingRegistryTypeVisitor visitor) {
-		walker.visit(reg,visitor);
-	}
+	
 	public static AccountingRegistryType getFor(InvoiceType type) {
 		if (type == null) return null;
 		if (type == InvoiceType.EXPENSES) return AccountingRegistryType.CREDITOR;
@@ -79,4 +66,12 @@ public enum AccountingRegistryType implements Serializable {
 		return null;
 	}
 		
+	public abstract void visit(AccountingRegistryTypeVisitor visitor);
+	
+	public interface AccountingRegistryTypeVisitor {
+		void visitCustomer();
+		void visitCreditor();
+		void visitSupplier();
+		void visitUndedCreditor();
+	}
 }

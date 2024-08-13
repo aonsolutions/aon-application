@@ -13,7 +13,7 @@ public class AccountEntryPrinter {
 	private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("dd/MM/yyyy");
 	private static final DecimalFormat FMT = new  DecimalFormat("#,##0.00");
 
-	static void print( PrintStream out, AccountEntry entry) {
+	public static void print( PrintStream out, AccountEntry entry) {
 		boolean abbrv = true; 
 		out.println(sep(abbrv));
 		out.println(toString(entry,abbrv));

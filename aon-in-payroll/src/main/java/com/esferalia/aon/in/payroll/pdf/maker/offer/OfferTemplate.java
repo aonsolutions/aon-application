@@ -1820,8 +1820,7 @@ public class OfferTemplate {
 				.setId(original.getId())
 				.setDomain(original.getDomain())
 				.setInvoice(original.getInvoice());
-		newInvoiceDetail.setInvestAsset(original.getInvestAsset());
-		newInvoiceDetail.setInvestAssetData(original.getInvestAssetData());
+		newInvoiceDetail.setInvestAsset(original.getInvestAsset().orElse(null));
 		newInvoiceDetail.setProject(original.getProject());
 		newInvoiceDetail.setProjectName(original.getProjectName());
 		newInvoiceDetail.setSeller(original.getSeller());

@@ -2,6 +2,7 @@ package com.esferalia.aon.occam.api.model.finance;
 
 import java.io.Serializable;
 
+import com.esferalia.aon.occam.api.model.Account;
 import com.esferalia.aon.occam.api.model.type.TaxType;
 import com.esferalia.aon.occam.api.model.type.VatDeductionType;
 import com.esferalia.aon.occam.api.model.type.WithholdingType;
@@ -13,6 +14,7 @@ public class InvoiceTax implements Serializable {
 
 	private Integer id;
 	private Integer domain;
+	private Integer invoiceDetail;
 	private TaxType taxType;
 	private double base;
 	private double percentage;
@@ -25,12 +27,18 @@ public class InvoiceTax implements Serializable {
 	private double directTaxPercent;
 	private WithholdingType withholdingType;
 	
-	private Integer account;
+	private Account outputAccount;
+	private Account inputAccount;
+	private Account adjAccount;
+	private Account adjDirectTaxAccount;
 	
 	private boolean quotaEdited;
 	private boolean surchargeQuotaEdited;
 	private boolean deductibleQuotaEdited;
 	
+	@Deprecated
+	private Account account;
+
 	public Integer getId() {
 		return id;
 	}
@@ -44,6 +52,14 @@ public class InvoiceTax implements Serializable {
 	}
 	public InvoiceTax setDomain(Integer domain) {
 		this.domain = domain;
+		return this;
+	}
+	
+	public Integer getInvoiceDetail() {
+		return invoiceDetail;
+	}
+	public InvoiceTax setInvoiceDetail(Integer invoiceDetail) {
+		this.invoiceDetail = invoiceDetail;
 		return this;
 	}
 	
@@ -111,6 +127,9 @@ public class InvoiceTax implements Serializable {
 		this.deductibleQuota = deductibleQuota;
 		return this;
 	}
+	public double getNoDeductibleQuota() {
+		return AonMathUtils.round( getQuota() - getDeductibleQuota() );
+	}
 	
 	public double getDeductiblePercent() {
 		return deductiblePercent;
@@ -143,11 +162,45 @@ public class InvoiceTax implements Serializable {
 		return this;
 	}
 	
-	public Integer getAccount() {
+	@Deprecated
+	public Account getAccount() {
 		return account;
 	}
-	public InvoiceTax setAccount(Integer account) {
+	@Deprecated
+	public InvoiceTax setAccount(Account account) {
 		this.account = account;
+		return this;
+	}
+	
+	public Account getOutputAccount() {
+		return outputAccount;
+	}
+	public InvoiceTax setOutputAccount(Account outputAccount) {
+		this.outputAccount = outputAccount;
+		return this;
+	}
+	
+	public Account getInputAccount() {
+		return inputAccount;
+	}
+	public InvoiceTax setInputAccount(Account inputAccount) {
+		this.inputAccount = inputAccount;
+		return this;
+	}
+	
+	public Account getAdjAccount() {
+		return adjAccount;
+	}
+	public InvoiceTax setAdjAccount(Account adjAccount) {
+		this.adjAccount = adjAccount;
+		return this;
+	}
+	
+	public Account getAdjDirectTaxAccount() {
+		return adjDirectTaxAccount;
+	}
+	public InvoiceTax setAdjDirectTaxAccount(Account adjDirectTaxAccount) {
+		this.adjDirectTaxAccount = adjDirectTaxAccount;
 		return this;
 	}
 	
@@ -184,5 +237,32 @@ public class InvoiceTax implements Serializable {
 	public boolean isVatType() {
 		return this.getTaxType() == TaxType.VAT;
 	}
+	public boolean isWithholdingType() {
+		return this.getTaxType() == TaxType.RETENTION;
+	}
 	
+	public InvoiceTax copy() {
+		return new InvoiceTax()
+			.setId ( getId() )
+			.setDomain ( getDomain() )
+			.setTaxType(taxType)
+			.setBase(base)
+			.setPercentage(percentage)
+			.setQuota(deductibleQuota)
+			.setSurcharge(surcharge)
+			.setSurchargeQuota(surchargeQuota)
+			.setVatDeductionType(vatDeductionType)
+			.setDeductiblePercent(deductiblePercent)
+			.setDeductibleQuota(deductibleQuota)
+			.setWithholdingType(withholdingType)
+			.setAccount(account)
+			.setOutputAccount(this.outputAccount)
+			.setInputAccount(this.inputAccount)
+			.setAdjAccount(this.adjAccount)
+			.setAdjDirectTaxAccount(this.adjDirectTaxAccount)
+			.setQuotaEdited(deductibleQuotaEdited)
+			.setSurchargeQuotaEdited(surchargeQuotaEdited)
+			.setDeductibleQuotaEdited(deductibleQuotaEdited)
+			;
+	}
 }

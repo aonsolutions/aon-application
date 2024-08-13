@@ -6,6 +6,7 @@ import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.occam.api.model.type.DocumentType;
 import com.esferalia.aon.occam.api.model.type.InvoiceTransactionType;
 import com.esferalia.aon.occam.api.model.type.StreetType;
+import com.esferalia.aon.occam.impl.jooq.dao.RegistryOldDAO.FullRegistryFiller;
 import com.esferalia.aon.watson.util.AonObjectUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
@@ -17,7 +18,7 @@ public class AccountingRegistry implements Serializable {
 	
 	private Integer id;
 	private int domain;
-
+	
 	private String document;
 	private Country documentCountry;
 	private DocumentType documentType;

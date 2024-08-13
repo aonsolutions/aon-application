@@ -93,9 +93,11 @@ public class AccountingImpl implements IAccounting {
 	public List<Account> getAccountsList(AONContext ctx, AccountParams params) {
 		return AccountDAO.getAccountsList(ctx, params);
 	}
+	@Override
 	public Stream<Account> getAccounts(AONContext ctx,AccountFilter filter) {
 		return AccountDAO.getAccounts(ctx, filter);
 	}
+	@Override
 	public Stream<Account> getAccounts(AONContext ctx,AccountFilter filter, int offset, int limit) {
 		return AccountDAO.getAccounts(ctx, filter, offset, limit);
 	}
@@ -242,7 +244,8 @@ public class AccountingImpl implements IAccounting {
 	
 	@Override
 	public AccountingInvoice getAccountingInvoice(AONContext ctx, Integer accountEntry) {
-		return AccountingInvoiceDAO.getAccountingInvoice(ctx, accountEntry);
+		return com.esferalia.aon.occam.impl.jooq.dao.accounting.AccountingInvoiceDAO.getFromAccountEntry(ctx, accountEntry)
+				.orElse(null);
 	}
 	@Override
 	public AccountingInvoice getAccountingInvoiceFromInvoice(AONContext ctx, Integer invoiceId) {
@@ -303,7 +306,7 @@ public class AccountingImpl implements IAccounting {
 	public AccountingInvoice save(final AONContext ctx, AccountingInvoice invoice) {
 		final Date atDate = (invoice.getInvoice() == null? null : invoice.getInvoice().getIssueDate());
 		return ctx.getDslContext().transactionResult(
-			configuration -> AccountingInvoiceDAO.save(ctx
+			configuration -> com.esferalia.aon.occam.impl.jooq.dao.accounting.AccountingInvoiceDAO.save(ctx
 				, ConfigurationDAO.getConfiguration(ctx, atDate)
 				, invoice)
 		 );		
@@ -391,9 +394,11 @@ public class AccountingImpl implements IAccounting {
 	}
 	
 	// 					      BALANCE
+	@Override
 	public LinkedHashMap<String, AccountBalance>  getAccountBalances(AONContext ctx,AccMiningParameters params) throws AonCoreException {
 		return AccountEntryDAO.fetchBalance(ctx, params);		
 	}
+	@Override
 	public LinkedHashMap<String, AccountBalance> getAccountBalances(AONContext ctx,AccMiningParameters params, boolean pyg) throws AonCoreException {
 		return AccountEntryDAO.fetchBalance(ctx, params,pyg);		
 	}
@@ -620,6 +625,7 @@ public class AccountingImpl implements IAccounting {
 	}
 	
 	// REPORT	
+	@Override
 	public Stream<OperationBreakdown> getOperationBreakdown(AONContext ctx, int domain, OperationParams params) {
 		return AccountingOperationDAO.getOperationBreakdown(ctx
 				,domain

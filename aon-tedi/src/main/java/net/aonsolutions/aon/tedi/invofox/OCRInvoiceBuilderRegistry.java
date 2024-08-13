@@ -14,9 +14,9 @@ import com.esferalia.aon.occam.api.model.registry.AccountingRegistryType;
 import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.registry.RegistryAddress;
 import com.esferalia.aon.occam.api.model.type.Country;
-import com.esferalia.aon.occam.impl.jooq.dao.AccountingInvoiceDAO.InvoiceRegistryInitializer;
 import com.esferalia.aon.occam.impl.jooq.dao.AccountingRegistryDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.RegistryAddressDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.accounting.InvoiceRegistryInitializer;
 
 import net.aonsolutions.aon.tedi.invofox.OCRInvoiceBuilder.OCRContext;
 
@@ -91,7 +91,7 @@ class OCRInvoiceBuilderRegistry {
 					ocr.getInvoice()
 						.setRegistry(ar.getId())
 						.setTransaction(ar.getTransaction());
-					ar.getType().visit(ar, new InvoiceRegistryInitializer(ocr.getCtx(), ocr.getInvoice(), ocr.getConfig()));
+					ar.getType().visit(new InvoiceRegistryInitializer(ocr.getCtx(), ocr.getInvoice(), ocr.getConfig(), ar));
 				}
 			};
 		}
@@ -125,7 +125,7 @@ class OCRInvoiceBuilderRegistry {
 						.setAlias(ar.getAlias())
 						.setNationality(ar.getNationality())
 					);
-				ar.getType().visit(ar, new InvoiceRegistryInitializer(aonCtx, invoice, config));
+				ar.getType().visit(new InvoiceRegistryInitializer(aonCtx, invoice, config, ar));
 				
 				if(invoice.getAddress() == null || invoice.getAddress().isEmpty()) {
 					RegistryAddress address = RegistryAddressDAO.getMain(aonCtx, ar.getId());

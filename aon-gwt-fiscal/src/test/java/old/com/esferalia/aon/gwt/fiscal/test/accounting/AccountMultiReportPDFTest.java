@@ -41,14 +41,14 @@ public class AccountMultiReportPDFTest {
 		
 		// Reports que se van a incluir
 		LinkedHashMap<IAccountReportPDF,AccountingReportParams> reports = new LinkedHashMap<>();
-		reports.put(new AccountMultiCoverPDF(), params.clone().setTitle("Listado Múltiple").setShowCover(true));  // Portada
-		reports.put(new AccountJournalReportPDF(), params.clone().setTitle("Listado diario de movimientos")); 	  // Listado diario de movimientos 
-		reports.put(new AccountLedgerReportPDF(), params.clone().setTitle("Mayor de cuentas"));  	              // Listado Mayor de Cuentas
-		reports.put(new AccountTrialBalanceReportPDF(), params.clone().setTitle("Balance de sumas y saldos").setLevel(9));  // Balance de Sumas y saldos
-		reports.put(new AccountOperatingReportPDF(), params.clone().setTitle("Cuenta de explotación").setLevel(4)); 	    // Listado PyG
-		reports.put(new AccountBalanceReportPDF(), params.clone().setTitle(BalanceType.BALANCE_ABBREVIATE.getName()).setBalanceType(BalanceType.BALANCE_ABBREVIATE));  // Balances oficiales (Balance Abreviado)
-		reports.put(new AccountBalanceReportPDF(), params.clone().setTitle(BalanceType.PYG_ABBREVIATE.getName()).setBalanceType(BalanceType.PYG_ABBREVIATE));          // Balances oficiales (Cuenta PyG Abreviada)
-		reports.put(new VatReportPDF(), params.clone().setTitle("Listado de IVA"));   // Listado de IVA
+		reports.put(new AccountMultiCoverPDF(), params.copy().setTitle("Listado Múltiple").setShowCover(true));  // Portada
+		reports.put(new AccountJournalReportPDF(), params.copy().setTitle("Listado diario de movimientos")); 	  // Listado diario de movimientos 
+		reports.put(new AccountLedgerReportPDF(), params.copy().setTitle("Mayor de cuentas"));  	              // Listado Mayor de Cuentas
+		reports.put(new AccountTrialBalanceReportPDF(), params.copy().setTitle("Balance de sumas y saldos").setLevel(9));  // Balance de Sumas y saldos
+		reports.put(new AccountOperatingReportPDF(), params.copy().setTitle("Cuenta de explotación").setLevel(4)); 	    // Listado PyG
+		reports.put(new AccountBalanceReportPDF(), params.copy().setTitle(BalanceType.BALANCE_ABBREVIATE.getName()).setBalanceType(BalanceType.BALANCE_ABBREVIATE));  // Balances oficiales (Balance Abreviado)
+		reports.put(new AccountBalanceReportPDF(), params.copy().setTitle(BalanceType.PYG_ABBREVIATE.getName()).setBalanceType(BalanceType.PYG_ABBREVIATE));          // Balances oficiales (Cuenta PyG Abreviada)
+		reports.put(new VatReportPDF(), params.copy().setTitle("Listado de IVA"));   // Listado de IVA
 				
 		File pdfFile = new File("c:\\tmp\\prueba.pdf");		
 		FileOutputStream pdfStream = new FileOutputStream(pdfFile);

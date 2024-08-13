@@ -3,6 +3,7 @@ package com.esferalia.aon.occam.api.model;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.LinkedList;
+import java.util.Optional;
 
 import com.esferalia.aon.occam.api.model.aonsolutions.DomainUserRoles;
 import com.esferalia.aon.occam.api.model.config.AccountingConfig;
@@ -15,6 +16,7 @@ import com.esferalia.aon.occam.api.model.registry.AccountingRegistry;
 import com.esferalia.aon.occam.api.model.registry.Segment;
 import com.esferalia.aon.occam.api.model.security.Scope;
 import com.esferalia.aon.occam.api.model.security.User;
+import com.esferalia.aon.watson.util.AonCollectionUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 
 public class AonConfiguration implements Serializable {
@@ -201,7 +203,10 @@ public class AonConfiguration implements Serializable {
 	public LinkedList<Workplace> getWorkplaces() {
 		return workplaces;
 	}
-
+	public Optional<Workplace> getFirstWorkplace() {
+		return AonCollectionUtils.stream(getWorkplaces() )
+			.findFirst();
+	}
 	public AonConfiguration setWorkplaces(LinkedList<Workplace> workplaces) {
 		this.workplaces = workplaces;
 		return this;

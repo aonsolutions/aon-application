@@ -121,15 +121,7 @@ public class InvoiceWithholdingPanel extends SimplePanel implements HasValueChan
 						}
 						ai.getWithholdingData().setPercentage(tax.getPercentage());
 						ai.getWithholdingData().setWithholdingType(tax.getWithholdingType());
-						if (taxAccount != null) {
-							ai.getWithholdingData().setAccountId(taxAccount.getId());
-							ai.getWithholdingData().setAccountCode(taxAccount.getCode());
-							ai.getWithholdingData().setAccountDescription(taxAccount.getDescription());
-						} else {
-							ai.getWithholdingData().setAccountId(null);
-							ai.getWithholdingData().setAccountCode(null);
-							ai.getWithholdingData().setAccountDescription(null);
-						}
+						ai.getWithholdingData().setAccount(taxAccount);
 						ValueChangeEvent.fire(InvoiceWithholdingPanel.this, ai.getWithholdingData() );
 					}
 				}
@@ -148,7 +140,7 @@ public class InvoiceWithholdingPanel extends SimplePanel implements HasValueChan
 		withholdingPercent.addStyleName(AON.AON_CSS.aonMarginLeft5());
 		withholdingPercent.addValueChangeHandler(event -> {
 			ai.setWithholdingPercent( event.getValue() );
-			InvoiceCalculator.calculate(ai);
+			InvoiceCalculator.calculate(ai.getInvoice());
 			setValue(ai.getWithholdingData());
 			ValueChangeEvent.fire(InvoiceWithholdingPanel.this, ai.getWithholdingData() );
 		});
@@ -167,13 +159,13 @@ public class InvoiceWithholdingPanel extends SimplePanel implements HasValueChan
 			}
 			ai.setWithholdingQuota(event.getValue() );
 			setValue(ai.getWithholdingData());
-			InvoiceCalculator.calculate(ai);
+			InvoiceCalculator.calculate(ai.getInvoice());
 			ValueChangeEvent.fire(InvoiceWithholdingPanel.this, ai.getWithholdingData() );
 		});
 
 		dataRow.add(getCell(withholdingQuota));
 		
-		withholdingAccount = new AonAccountBox(callback.getCurrentDomainName(), callback.getCurrentDomainId(), callback.getCurrentUser(), false);
+		withholdingAccount = new AonAccountBox(callback.getOccam(), false);
 		withholdingAccount.addSelectionHandler(event -> {
 			ai.setWithholdingAccount( event.getSelectedItem() );
 			SelectionEvent.<Account>fire(InvoiceWithholdingPanel.this, event.getSelectedItem());
@@ -212,9 +204,7 @@ public class InvoiceWithholdingPanel extends SimplePanel implements HasValueChan
 			withholdingPercent.setValue( data.getPercentage(),false);
 			withholdingQuota.setValue( data.getQuota(),false);
 			withholdingType.setValue(data.getWithholdingType());
-			withholdingAccount.setValue(data.getAccountId()
-					,data.getAccountCode()
-					,data.getAccountDescription(),false);
+			withholdingAccount.setAccount(data.getAccount());
 			decorateQuota(data);
 		}
 	}

@@ -120,5 +120,4 @@ public class EnterpriseActivity implements Serializable {
 			&& getIae().isEmpty()
 			&& getCnae() == null;
 	}
-
 }

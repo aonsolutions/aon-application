@@ -16,7 +16,7 @@ import com.esferalia.aon.occam.api.model.GeoZone;
 import com.esferalia.aon.occam.api.model.registry.AccountingRegistry;
 import com.esferalia.aon.occam.api.model.registry.AccountingRegistryParams;
 import com.esferalia.aon.occam.api.model.registry.AccountingRegistryType;
-import com.esferalia.aon.occam.api.model.registry.IAccountingRegistryTypeVisitor;
+import com.esferalia.aon.occam.api.model.registry.AccountingRegistryType.AccountingRegistryTypeVisitor;
 import com.esferalia.aon.occam.api.model.security.Scope;
 import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.occam.api.model.type.DocumentType;
@@ -254,10 +254,10 @@ public class AonAccountingRegistryPanel extends SimpleLayoutPanel implements Foc
 				documentWarningContainer.removeStyleName(AON.CSS.aonMargin());
 				documentWarningContainer.removeStyleName(AON.CSS.aonBorder());
 				documentWarningContainer.removeStyleName(AON.CSS.aonPaddingLeft());
-				type.getValue().visit(reg, new IAccountingRegistryTypeVisitor() {
+				type.getValue().visit(new AccountingRegistryTypeVisitor() {
 					
 					@Override
-					public void visitSupplier(AccountingRegistry reg) {
+					public void visitSupplier() {
 						reg.setType(AccountingRegistryType.SUPPLIER);
 						surcharge.setVisible(false);
 						vatAccualPayment.setVisible(true);
@@ -267,7 +267,7 @@ public class AonAccountingRegistryPanel extends SimpleLayoutPanel implements Foc
 					}
 					
 					@Override
-					public void visitCustomer(AccountingRegistry reg) {
+					public void visitCustomer() {
 						reg.setType(AccountingRegistryType.CUSTOMER);
 						surcharge.setVisible(true);
 						vatAccualPayment.setVisible(false);
@@ -277,7 +277,7 @@ public class AonAccountingRegistryPanel extends SimpleLayoutPanel implements Foc
 					}
 					
 					@Override
-					public void visitCreditor(AccountingRegistry reg) {
+					public void visitCreditor() {
 						reg.setType(AccountingRegistryType.CREDITOR);
 						surcharge.setVisible(false);
 						vatAccualPayment.setVisible(true);
@@ -287,7 +287,7 @@ public class AonAccountingRegistryPanel extends SimpleLayoutPanel implements Foc
 					}
 					
 					@Override
-					public void visitUndedCreditor(AccountingRegistry reg) {
+					public void visitUndedCreditor() {
 						reg.setType(AccountingRegistryType.UNDED_CREDITOR);
 						surcharge.setVisible(false);
 						vatAccualPayment.setVisible(false);

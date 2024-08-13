@@ -195,7 +195,7 @@ public class BalancePanel extends ScrollPanel implements HasSelectionHandlers<Ac
 						
 						@Override
 						public void onClick(ClickEvent event) {
-							AccountingReportParams newParams = params.clone();
+							AccountingReportParams newParams = params.copy();
 							newParams.setAccount( new Account().setCode(line.getAccounts()));
 							SelectionEvent.fire(BalancePanel.this, newParams );						
 						}
