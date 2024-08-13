@@ -592,10 +592,17 @@ public class InvoiceServlet extends AonApiHttpServlet{
 		Company company = AON.getCompanyForDomain(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin());
 		TbaiConfiguration tbaiConfiguration = AON.getTbaiConfiguration(api.getDomain(), api.getUser());
 		Invoice invoice = InvoiceJSON.fromJSON(api.getData());
+		if(invoice.isSales()) {
+			if (AonStringUtils.contains( invoice.getReferenceCode(), "undefined")) {
+				invoice.setReferenceCode(null);	
+			}
+		}
+				
 		if(invoice.isSales() && tbaiConfiguration.isActive()) {
 			tbaiConfiguration.setCertificate(checkCertificate(api));
 			tbaiValidation(invoice);
 		}
+		
 		invoice = AON_SOLUTIONS.acceptInvoice(api.getDomain(), api.getUser(), invoice);
 		processInvoiceFile(api, invoice);
 		acceptTbai(tbaiConfiguration, company, invoice);
