@@ -11,7 +11,6 @@ import com.esferalia.aon.occam.api.model.AccountingDUAInfo;
 import com.esferalia.aon.occam.api.model.AccountingDUAInvoice;
 import com.esferalia.aon.occam.api.model.AccountingInvoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceDetail;
-import com.esferalia.aon.occam.api.model.finance.InvoiceVAT;
 import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.google.gwt.dom.client.Style.BorderStyle;
