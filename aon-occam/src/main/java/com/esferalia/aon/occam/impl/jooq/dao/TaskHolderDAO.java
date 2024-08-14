@@ -87,6 +87,7 @@ public class TaskHolderDAO {
 			if(registry == null) registry = TASK_HOLDER_ALIAS;
 			return new TaskHolder()
 					.copy(RegistryFiller.build(r, registry))
+					.setRegistry(r.getValue(TASK_HOLDER.REGISTRY))
 					.setActive(getBoolean(r, TASK_HOLDER.ACTIVE))
 					.setCostProfile(r.getValue(TASK_HOLDER.COST_PROFILE))
 					.setType(TaskHolderType.safeValueOf(r.getValue(TASK_HOLDER.TYPE)))
