@@ -53,15 +53,20 @@ public class SupplierJSON {
 	}
 	
 	public static JSONObject toJSON(Supplier supplier) {
-		return RegistryJSON.toJSON(supplier)
-			.put(IJsonNames.WITHHOLDING, supplier.isWithholding())
-			.put(IJsonNames.WITHHOLDING_FARMER, supplier.isWithholdingFarmer())
-			.put(IJsonNames.VAT_ACCRUAL_PAYMENT, supplier.isVatAccrualPayment())
-			.put(IJsonNames.PURCHASE_VALUATED, supplier.isPurchaseValuated())
-			.put(IJsonNames.ACCOUNT, supplier.getAccount())
-			.put(IJsonNames.SCOPE, ScopeJSON.toJSON(supplier.getScope()))
-			.put(IJsonNames.TARIFF, supplier.getTariff())
-			.put(IJsonNames.TRANSACTION, supplier.getTransaction().getTediName())
-			.put(IJsonNames.STATUS, supplier.getStatus().name());
+		JSONObject json = RegistryJSON.toJSON(supplier)
+				.put(IJsonNames.WITHHOLDING, supplier.isWithholding())
+				.put(IJsonNames.WITHHOLDING_FARMER, supplier.isWithholdingFarmer())
+				.put(IJsonNames.VAT_ACCRUAL_PAYMENT, supplier.isVatAccrualPayment())
+				.put(IJsonNames.PURCHASE_VALUATED, supplier.isPurchaseValuated())
+				.put(IJsonNames.ACCOUNT, supplier.getAccount())
+				.put(IJsonNames.SCOPE, ScopeJSON.toJSON(supplier.getScope()))
+				.put(IJsonNames.TARIFF, supplier.getTariff())
+				.put(IJsonNames.TRANSACTION, supplier.getTransaction().getTediName());
+		
+		if(supplier.getStatus() != null && supplier.getStatus().name() != null) {
+			json.put(IJsonNames.STATUS, supplier.getStatus().name());
+		}
+		
+		return json;
 	}
 }
