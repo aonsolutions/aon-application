@@ -4,7 +4,7 @@ import java.io.Serializable;
 
 import com.esferalia.aon.watson.util.AonStringUtils;
 
-public enum AonRole implements Serializable {
+public enum OldAonRole implements Serializable {
 	
 	 GUEST( "Guest" )				// Invitado
 	,ADMIN( "Admin" )				// Administrador
@@ -34,7 +34,7 @@ public enum AonRole implements Serializable {
 	 
 	private String value;
 
-	private AonRole(String value) {
+	private OldAonRole(String value) {
 		this.value = value;
 	}
 
@@ -42,13 +42,21 @@ public enum AonRole implements Serializable {
 		return value;
 	}
 
-	public static AonRole valueOfBDValue(String value) {
-		for (AonRole role : AonRole.values()) {
+	public static OldAonRole valueOfBDValue(String value) {
+		for (OldAonRole role : OldAonRole.values()) {
 			if (AonStringUtils.equals( role.getValue(), value)) {
 				return role;
 			}
 		}
 		return null;
 	}
-	 
+
+	public static OldAonRole safeValueOf( String i ) {
+		if(AonStringUtils.isBlank(i)) return null;
+		for (OldAonRole rs : values()) {
+			if(i.equalsIgnoreCase(rs.name()) || i.equalsIgnoreCase(rs.getValue()))
+				return rs;
+		}
+		return null;
+	}
 }

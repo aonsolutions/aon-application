@@ -85,13 +85,15 @@ const TAX_TYPE = {
   TO_DEDUCE:"A deducir",  //  Nada
   COMPENSATE:"A compensar", //  Nada
   PAYBACK:"A devolver", // Banco
-  PAYBACK_CCT:"Devolución a anotar en CCT"  // Nada
+  PAYBACK_CCT:"Devolución a anotar en CCT",  // Nada
+  DEFERRAL: "Solicitud de aplazamiento"
 }
 
 export const CONST_FISCAL = {
   DEPOSIT: "DEPOSIT",
   BANK: "BANK",
-  PAYBACK: "PAYBACK"
+  PAYBACK: "PAYBACK",
+  DEFERRAL: "DEFERRAL"
 }
 
 

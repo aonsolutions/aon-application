@@ -682,15 +682,15 @@ public class EmployeesServiceAsyncDecorator extends AgreementServiceAsyncDecorat
 	// ----- Payroll Salaries
 	
 	@Override
-	public void getSalariesDates(String currentDomainName, SalaryInfoFilter filter, AsyncCallback<Period> callback) {
+	public void getSalariesDates(String currentDomainName, String user, SalaryInfoFilter filter, AsyncCallback<Period> callback) {
 		AON.start();
-		employeesServiceAsync.getSalariesDates(currentDomainName, filter, new AsyncCallbackWrapper<Period>(callback));
+		employeesServiceAsync.getSalariesDates(currentDomainName, user, filter, new AsyncCallbackWrapper<Period>(callback));
 	}
 
 	@Override
-	public void getSalaries(String currentDomainName, SalaryInfoFilter filter, AsyncCallback<List<SalaryInfo>> callback) {
+	public void getSalaries(String currentDomainName, String user, SalaryInfoFilter filter, AsyncCallback<List<SalaryInfo>> callback) {
 		AON.start();
-		employeesServiceAsync.getSalaries(currentDomainName, filter, new AsyncCallbackWrapper<List<SalaryInfo>>(callback));
+		employeesServiceAsync.getSalaries(currentDomainName, user, filter, new AsyncCallbackWrapper<List<SalaryInfo>>(callback));
 	}
 	
 
@@ -701,15 +701,15 @@ public class EmployeesServiceAsyncDecorator extends AgreementServiceAsyncDecorat
 	}
 
 	@Override
-	public void getWorkplaceActiveEmployees(String currentDomainName, Integer workplaceId, AsyncCallback<WorkplaceEmployees> callback) {
+	public void getWorkplaceActiveEmployees(String currentDomainName, String user, Integer workplaceId, AsyncCallback<WorkplaceEmployees> callback) {
 		AON.start();
-		employeesServiceAsync.getWorkplaceActiveEmployees(currentDomainName, workplaceId, new AsyncCallbackWrapper<WorkplaceEmployees>(callback));
+		employeesServiceAsync.getWorkplaceActiveEmployees(currentDomainName, user, workplaceId, new AsyncCallbackWrapper<WorkplaceEmployees>(callback));
 	}
 
 	@Override
-	public void getEnterpriseActiveEmployees(String currentDomainName, Integer enterpriseId, AsyncCallback<List<EmployeeInfo>> callback) {
+	public void getEnterpriseActiveEmployees(String currentDomainName, String user, Integer enterpriseId, AsyncCallback<List<EmployeeInfo>> callback) {
 		AON.start();
-		employeesServiceAsync.getEnterpriseActiveEmployees(currentDomainName, enterpriseId, new AsyncCallbackWrapper<List<EmployeeInfo>>(callback));
+		employeesServiceAsync.getEnterpriseActiveEmployees(currentDomainName, user, enterpriseId, new AsyncCallbackWrapper<List<EmployeeInfo>>(callback));
 	}
 
 	// ----- New employee calendar

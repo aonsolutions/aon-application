@@ -7,14 +7,11 @@
 	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:f="http://java.sun.com/jsf/core">
 
-	<style>
-	</style>
-
-	
 	<aon:div id="summaryControlPortlet" styleClass="aon-portlet">
 		<aon:div 
 		style="cursor:pointer;" 
 		styleClass="aon-portlet-title" 
+		id="summaryControlPortletButton"
 		onclick="javascript:expandMenuPortlet(this)">
 			<aon:outputText 
 			value="expand_more"
@@ -47,6 +44,16 @@
 							<aon:outputText styleClass="material-icons  aon-vertical-middle aon-black" value="report" />
 							<aon:outputText value=" Facturas Rechazadas" />
 							<aon:outputText styleClass="aon-float-right" value="#{domainSwitcher.reject}"/>
+						</aon:commandLink> 	
+					</aon:div>
+					<aon:div styleClass="aon-direct-access-list-element aon-align-left #{domainSwitcher.showUnaccount ? 'selected':''}">
+						<aon:commandLink id="unaccountInvoiceDomainEnterprise"
+							styleClass="aon-width-all aon-black"
+							actionListener="#{domainSwitcher.showUnaccount}"
+						>
+							<aon:outputText styleClass="material-icons  aon-vertical-middle aon-black" value="label_important" />
+							<aon:outputText value=" Facturas Sin Contabilizar" />
+							<aon:outputText styleClass="aon-float-right" value="#{domainSwitcher.unaccount}"/>
 						</aon:commandLink> 	
 					</aon:div>
 					<!-- 

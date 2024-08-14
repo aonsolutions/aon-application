@@ -83,7 +83,7 @@ export class AonHolderSimpleList extends AonSimpleList {
         this.addLi(liValue, i, () => {
             this.buildAdd(holder);
         },  
-        MATERIAL_ICONS.CLOSE, 
+        MATERIAL_ICONS.DELETE, 
         (ev) => {
             ev.preventDefault();
             ev.stopPropagation();
@@ -159,7 +159,7 @@ export class AonHolderSimpleList extends AonSimpleList {
     }
 
     async delete(holder) {
-        this.getApplication().confirmDialog(MSG.DELETE, MSG.DELETE_CONFIRM, async()=>{
+        this.getApplication().confirmDialog(MSG.DELETE, MSG.DELETE_CONFIRM + " " + holder.title, async()=>{
           this.getApplication().startLoading();
           try {
             await deleteProjectHolder(holder);

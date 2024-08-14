@@ -64,8 +64,6 @@ export class AonNewLogin extends AonElement {
 
       let spanLanguage = this.createElement(TAG.SPAN);
       spanLanguage.id = 'aonLoginLanguageSpanToolbar';
-      spanLanguage.style.color = 'var(--gray-50)';
-      spanLanguage.style.fontSize = '12px';
       spanLanguage.innerHTML = this.getLanguageText();
       spanLanguage.addEventListener(EVENT.MOUSEOVER, () => this.languageDialog());
       divLanguage.appendChild(spanLanguage);
@@ -97,7 +95,7 @@ export class AonNewLogin extends AonElement {
 
     let h2 = this.createElement(TAG.H1);
     h2.className = CSS.AON_LOGIN_SUB_TITLE;
-    h2.innerHTML = MSG.ACCESS_TO_YOUR_AON_ACCOUNT;
+    /*h2.innerHTML = MSG.ACCESS_TO_YOUR_AON_ACCOUNT;*/
     divTitleForm.appendChild(h2);
 
     // Form
@@ -149,11 +147,7 @@ export class AonNewLogin extends AonElement {
 
     // Form Aon Version
     let divInfo = this.createElement(TAG.DIV);
-    divInfo.style.color = '#666';
-    divInfo.style.fontSize = '9px';
-    divInfo.style.borderTop = '1px solid #ddd';
-    divInfo.style.marginTop = '10px';
-    divInfo.style.padding = '15px';
+	divInfo.className = CSS.AON_LOGIN_INFO;
     divInfo.innerHTML = `
       <span>
         <a target="_blank" class="aonLink" href="http://www.aonsolutions.es">

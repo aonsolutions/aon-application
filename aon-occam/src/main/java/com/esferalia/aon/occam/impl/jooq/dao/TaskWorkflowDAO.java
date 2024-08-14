@@ -1,8 +1,9 @@
 package com.esferalia.aon.occam.impl.jooq.dao;
 
-import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
 import static com.esferalia.aon.jooq.tables.TaskHolder.TASK_HOLDER;
 import static com.esferalia.aon.jooq.tables.TaskWorkflow.TASK_WORKFLOW;
+import static com.esferalia.aon.occam.impl.jooq.dao.TaskHolderDAO.TASK_HOLDER_ALIAS;
+
 import java.sql.Timestamp;
 import java.util.Date;
 import java.util.LinkedList;
@@ -10,11 +11,13 @@ import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
 import org.jooq.Condition;
 import org.jooq.Record;
 import org.jooq.Select;
 import org.jooq.SelectConditionStep;
 import org.jooq.SelectJoinStep;
+
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Filter.Property;
 import com.esferalia.aon.occam.api.model.Filter.TaskWorkflowFilter;
@@ -63,7 +66,7 @@ public class TaskWorkflowDAO {
 				.select()
 				.from(TASK_WORKFLOW)
 				.leftOuterJoin(TASK_HOLDER).on(TASK_HOLDER.REGISTRY.eq(TASK_WORKFLOW.TASK_HOLDER))
-				.leftOuterJoin(REGISTRY).on(REGISTRY.ID.eq(TASK_HOLDER.REGISTRY))
+				.leftOuterJoin(TASK_HOLDER_ALIAS).on(TASK_HOLDER_ALIAS.ID.eq(TASK_HOLDER.REGISTRY))
 				.where(TASK_WORKFLOW_PROPERTIES.getConditions(filter));
 	}
 	
@@ -155,24 +158,25 @@ public class TaskWorkflowDAO {
 		ctx.log().debug("DELETE TASK_WORKFLOW task:" + id);
 	}
 	
-	public static class TaskWorkflowFiller implements Function<Record, TaskWorkflow> {
+	public static class TaskWorkflowFiller extends Filler implements Function<Record, TaskWorkflow> {
 
 		@Override
 		public TaskWorkflow apply(Record r) {
 			return new TaskWorkflow()
-				.setId(r.getValue(TASK_WORKFLOW.ID))
-				.setDomain(r.getValue(TASK_WORKFLOW.DOMAIN))
-				.setTask(r.getValue(TASK_WORKFLOW.TASK))
-				.setTaskHolder( r.getValue(TASK_WORKFLOW.TASK_HOLDER)!=null ? TaskHolderFiller.build(r, REGISTRY) : new TaskHolder())
-				.setType(TaskWorkflowType.safeValueOf(r.getValue(TASK_WORKFLOW.TYPE)))
-				.setComment(r.getValue(TASK_WORKFLOW.COMMENT))
-				.setCreationDate(r.getValue(TASK_WORKFLOW.CREATION_DATE))
-				.setCreationUser(r.getValue(TASK_WORKFLOW.CREATION_USER))
-				.setEmail(r.getValue(TASK_WORKFLOW.EMAIL))
-				.setModificationDate(r.getValue(TASK_WORKFLOW.MODIFICATION_DATE))
-				.setModificationUser(r.getValue(TASK_WORKFLOW.MODIFICATION_USER))
-				.setNotificationDate(r.getValue(TASK_WORKFLOW.NOTIFICATION_DATE))
-				.setNotificationUser(r.getValue(TASK_WORKFLOW.NOTIFICATION_USER));
+				.setId(getValue(r, TASK_WORKFLOW.ID))
+				.setDomain(getValue(r, TASK_WORKFLOW.DOMAIN))
+				.setTask(getValue(r, TASK_WORKFLOW.TASK))
+				.setTaskHolder(checkField(r, TASK_HOLDER.REGISTRY)
+					? TaskHolderFiller.build(r) : new TaskHolder().setRegistry(getValue(r, TASK_WORKFLOW.TASK_HOLDER)))
+				.setType(TaskWorkflowType.safeValueOf(getValue(r, TASK_WORKFLOW.TYPE)))
+				.setComment(getValue(r, TASK_WORKFLOW.COMMENT))
+				.setCreationDate(getValue(r, TASK_WORKFLOW.CREATION_DATE))
+				.setCreationUser(getValue(r, TASK_WORKFLOW.CREATION_USER))
+				.setEmail(getValue(r, TASK_WORKFLOW.EMAIL))
+				.setModificationDate(getValue(r, TASK_WORKFLOW.MODIFICATION_DATE))
+				.setModificationUser(getValue(r, TASK_WORKFLOW.MODIFICATION_USER))
+				.setNotificationDate(getValue(r, TASK_WORKFLOW.NOTIFICATION_DATE))
+				.setNotificationUser(getValue(r, TASK_WORKFLOW.NOTIFICATION_USER));
 		}
 	}
 }

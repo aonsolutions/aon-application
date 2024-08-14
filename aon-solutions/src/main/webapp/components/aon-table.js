@@ -155,6 +155,7 @@ export class AonTable extends AonElement {
     th.innerHTML = name;
     th.style.width = width;
     this.columns.push({ name, type, id, width, textAlign });
+
     header.appendChild(th);
   }
 
@@ -190,15 +191,15 @@ export class AonTable extends AonElement {
       tr.style.border = '1px solid #ddd';
       tr.style.borderRadius = '5px';
     }  
-    if(this.getApp() && LS.isNewTheme()) {
-      tr.addEventListener(EVENT.MOUSEOVER, () => {
-        tr.style.backgroundColor = this.getApp().backgroundColor || '#eaf1fb'; 
-      });
+    // if(this.getApp() && LS.isNewTheme()) {
+    //   tr.addEventListener(EVENT.MOUSEOVER, () => {
+    //     tr.style.backgroundColor = this.getApp().backgroundColor || '#eaf1fb'; 
+    //   });
 
-      tr.addEventListener(EVENT.MOUSELEAVE, () => {
-        tr.style.backgroundColor = 'transparent'; 
-      });
-    }
+    //   tr.addEventListener(EVENT.MOUSELEAVE, () => {
+    //     tr.style.backgroundColor = 'transparent'; 
+    //   });
+    // }
 
     
     if(this.selectedColor){
@@ -216,7 +217,7 @@ export class AonTable extends AonElement {
         if (aonCheckbox.isChecked()) {
           if(!this.selected.includes(value))
             this.selected.push(value);
-          tr.style.backgroundColor = "aliceblue";
+          tr.className = "aonTableTr aonTableTrChecked";
         } else {
           this.selected.forEach((item, i) => {
             if (item == value) {
@@ -235,6 +236,7 @@ export class AonTable extends AonElement {
       let td = this.createElement(TAG.TD);
       td.style.width = item.width;
       td.style.textAlign = item.textAlign;
+      if(value.color) td.style.color = value.color;
 
       let id = item.id;
       if ("option" === id && value[id]) {

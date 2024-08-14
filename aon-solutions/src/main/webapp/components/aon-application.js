@@ -631,7 +631,7 @@ export class AonApplication extends AonElement {
     select = select || this.getElement(sidenavId + data.id + "Select");
 
     let optYear = this.createElement('option');
-    optYear.value = JSON.stringify(option.name);
+    optYear.value = JSON.stringify(option.value ? option.value : option.name);
     optYear.innerHTML = option.name;
     select.appendChild(optYear);
   }
@@ -818,12 +818,12 @@ export class AonApplication extends AonElement {
           if(!LS.isNewTheme())
             li.style.backgroundColor = "#d3e3fd";
           else if(data.app){
-            li.style.color = 'white';
+            li.style.color = 'var(--aonSidenavSelected, white)';
             li.style.backgroundColor = data.app.color;
             let icon = this.getElement(id + 'icon');
-            if(icon) icon.style.color = 'white';
+            if(icon) icon.style.color = 'var(--aonSidenavSelected, white)';
             let aonIcon = this.getElement(id + 'AonIcon');
-            if(aonIcon) aonIcon.color = 'white';
+            if(aonIcon) aonIcon.color = 'var(--aonSidenavSelected, white)';
           }
           this.selected = id;
           let toolbar = this.getElement(this.TOOLBAR);
@@ -944,7 +944,7 @@ export class AonApplication extends AonElement {
         select.addEventListener('change', () => {
           let yearSelected = JSON.parse(select.value);
           // options.forEach(option =>  console.log(option.name + " == " + yearSelected));
-          let filteredYears = options.filter(option => option.name == yearSelected);
+          let filteredYears = options.filter(option => option.name == yearSelected || (option.value && option.value == yearSelected));
           let optionFiltered = filteredYears[0];
           optionFiltered.fn();
          
@@ -993,12 +993,12 @@ export class AonApplication extends AonElement {
     const li =  this.getElement(sidenavId + id);
     if(li){
       if(LS.isNewTheme()) {
-        li.style.color = 'white';
+        li.style.color = 'var(--aonSidenavSelected, white)';
         li.style.backgroundColor = color && LS.isNewTheme() ? color : "#d3e3fd";
         let icon = this.getElement(li.id + 'icon');
-        if(icon) icon.style.color = 'white';
+        if(icon) icon.style.color = 'var(--aonSidenavSelected, white)';
         let aonIcon = this.getElement(li.id + 'AonIcon');
-        if(aonIcon) aonIcon.color = 'white';
+        if(aonIcon) aonIcon.color = 'var(--aonSidenavSelected, white)';
       } else li.style.backgroundColor = "#d3e3fd";
     }
   }

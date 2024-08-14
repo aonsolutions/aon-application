@@ -38,7 +38,7 @@ const getModelNew = (model)=> {
   const statusHtml = createStatusDot(model.status);
     
   if(["PENDING", "CUSTOMER_CHECK"].includes(model.status))  {
-    color = "fin";
+    color = "pause";
   } else if("FINISHED" === model.status) {
     color = "in";
   }

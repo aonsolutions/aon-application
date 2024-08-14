@@ -1,6 +1,7 @@
 import { AonElement } from 'aonsolutions/components/AonElement.js';
 import { CONSTANT, TAG, EVENT } from "aonsolutions/environments/environments.js";
 import { AonIconButton } from 'aonsolutions/components/aon-icon-button.js';
+import { AonImageEditor } from 'aonsolutions/components/aon-image-editor.js';
 import * as LS from 'aonsolutions/services/localStorageService.js';
 
 export class AonRightPanel extends AonElement {

@@ -1147,7 +1147,7 @@ export class AonInvoice extends AonElement {
 		div.className = CSS.AON_FLEX;
 		table.addCell(div, '4');
 		
-		if(this.invoice.isEmitida()) {
+		if(this.invoice.isEmitida() && !this.isInvofoxInvoice()) {
 			// ----- SERIE
 			let serieSpan = this.createTableSpan("20%", "2px");
 			div.appendChild(serieSpan);

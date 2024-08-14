@@ -13,8 +13,10 @@ import com.esferalia.aon.occam.api.model.Filter.TaskHolderFilter;
 import com.esferalia.aon.occam.api.model.Filter.TaskHolderWorkgroupFilter;
 import com.esferalia.aon.occam.api.model.Filter.TaskTagFilter;
 import com.esferalia.aon.occam.api.model.OldTask;
+import com.esferalia.aon.occam.api.model.Options;
 import com.esferalia.aon.occam.api.model.Workgroup;
 import com.esferalia.aon.occam.api.model.office.Tag;
+import com.esferalia.aon.occam.api.model.security.TaskHolderWorkgroup;
 import com.esferalia.aon.occam.api.model.task.IssueFilter;
 import com.esferalia.aon.occam.api.model.task.TaskComment;
 import com.esferalia.aon.occam.api.model.task.TaskEvent;
@@ -22,6 +24,7 @@ import com.esferalia.aon.occam.api.model.task.TaskHolder;
 import com.esferalia.aon.occam.api.model.task.TaskTag;
 import com.esferalia.aon.occam.api.model.type.TagType;
 import com.esferalia.aon.occam.impl.jooq.dao.TaskHolderDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.TaskHolderWorkgroupDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.TaskOldDAO;
 
 public class TaskImpl implements ITask {
@@ -164,11 +167,29 @@ public class TaskImpl implements ITask {
 	}
 	
 	@Override
-	public Stream<TaskHolder> getTaskHolderWorkgroupStream(AONContext ctx, TaskHolderFilter filter, Integer workgroupId){
+	public Stream<TaskHolder> getTaskHolderWorkgroupStream(AONContext ctx, TaskHolderFilter filter, Integer workgroupId, int ofs, int limit){
 		return ctx.getDslContext().transactionResult(
-				configuration -> TaskHolderDAO.getTaskHolderWorkgroup(ctx, filter, workgroupId));	
+				configuration -> TaskHolderDAO.getTaskHolderWorkgroup(ctx, filter, workgroupId, ofs, limit));	
 	}
 
+	@Override
+	public void saveTaskHolderWorkgroups(AONContext ctx, TaskHolder taskHolder){
+		ctx.getDslContext().transaction(
+				configuration -> TaskHolderDAO.saveTaskHolderWorkgroups(ctx, taskHolder));	
+	}
+
+	@Override
+	public List<TaskHolderWorkgroup> getTaskHolderWorkgroupsList(AONContext ctx, TaskHolderWorkgroupFilter filter) {
+		return ctx.getDslContext().transactionResult(
+				configuration -> TaskHolderWorkgroupDAO.getList(ctx, filter));	
+	}
+	
+	@Override
+	public TaskHolderWorkgroup saveTaskHolderWorkgroup(AONContext ctx, TaskHolderWorkgroup taskHolderWorkgroup) {
+		return ctx.getDslContext().transactionResult(
+				configuration -> TaskHolderWorkgroupDAO.saveTaskHolderWorkgroup(ctx, taskHolderWorkgroup));	
+	}
+	
 	@Override
 	public void deleteTaskTag(AONContext ctx, Integer taskId, TagType tagType) {
 		 ctx.getDslContext().transaction(configuration -> TaskOldDAO.deleteTaskTag(ctx, taskId, tagType));		
@@ -221,9 +242,9 @@ public class TaskImpl implements ITask {
 	}
 
 	@Override
-	public TaskHolder getTaskHolder(AONContext ctx, TaskHolderFilter filter) {
+	public TaskHolder getTaskHolder(AONContext ctx, TaskHolderFilter filter, Options...options) {
 		return ctx.getDslContext().transactionResult(
-				configuration -> TaskOldDAO.getTaskHolder(ctx, filter));
+				configuration -> TaskHolderDAO.get(ctx, filter, options));
 	}
 
 	@Override
@@ -245,9 +266,9 @@ public class TaskImpl implements ITask {
 	}
 
 	@Override
-	public TaskHolder deleteTaskHolder(AONContext ctx, Integer taskHolder) {
-		return ctx.getDslContext().transactionResult(
-				configuration -> TaskOldDAO.deleteTaskHolder(ctx, taskHolder));
+	public void deleteTaskHolder(AONContext ctx, Integer taskHolder) {
+		ctx.getDslContext().transaction(
+				configuration -> TaskHolderDAO.delete(ctx, taskHolder));
 	}
 
 	@Override
@@ -287,11 +308,11 @@ public class TaskImpl implements ITask {
 	}
 
 	@Override
-	public Stream<TaskHolder> getTaskHolderStream(AONContext ctx, TaskHolderFilter filter) {
+	public Stream<TaskHolder> getTaskHolderStream(AONContext ctx, TaskHolderFilter filter, Options...options) {
 		return ctx.getDslContext().transactionResult(
-				configuration -> TaskOldDAO.getTaskHolderStream(ctx, filter));
+				configuration -> TaskHolderDAO.getStream(ctx, filter, options));
 	}
-	
+
 	@Override
 	public Stream<TaskHolder> getTaskHolderStream(AONContext ctx, byte[] auth) {
 		return ctx.getDslContext().transactionResult(

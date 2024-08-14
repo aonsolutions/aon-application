@@ -25,6 +25,7 @@ export class AonFiscalCard extends AonElement {
 
   constructor(filter) {
     super();
+    this._filter = filter;
     this.defaultFilter = filter;
   }
 
@@ -79,6 +80,7 @@ export class AonFiscalCard extends AonElement {
     if (!this.MODELS.length) {
       try {
         const datos = await getModelsFiscal();
+
         if (datos) {
           this.MODELS = sortBy(datos, "year", "desc").map((model) =>
             FiscalUtils.getModelNew(model)
@@ -94,6 +96,7 @@ export class AonFiscalCard extends AonElement {
         let filterDatos = this.MODELS.filter((dato) => {
           return dato.year == filter.year && dato.period === filter.period;
         });
+
         return filterDatos;
       } catch (error) {
         console.error(error);
@@ -566,6 +569,8 @@ export class AonFiscalCard extends AonElement {
   }
 
   filterTable(filter) {
+    this._filter = filter;
+
     let section2 = this.getElement("fiscalCardTitleSection2");
     let titleSection2 = section2.firstChild;
 
@@ -580,13 +585,22 @@ export class AonFiscalCard extends AonElement {
   }
 
   async filterEstimationTable(filter) {
+    this._filter = filter;
+
     let section2 = this.getElement("fiscalCardTitleSection2");
     let titleSection2 = section2.firstChild;
     titleSection2.innerHTML = filter.title;
 
     const estimationModels = await getEstimationModelsFiscal(filter);
-    // console.log(estimationModels);
     this.getEstimationTable(estimationModels);
+  }
+
+  async getFilter(){
+    let __filter = await this._filter;
+    if(__filter.title && __filter.title.includes("Borrador")){
+      __filter.future = true;
+    }
+    return __filter;
   }
 }
 window.customElements.define("aon-fiscal-card", AonFiscalCard);

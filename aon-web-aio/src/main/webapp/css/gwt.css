@@ -2,6 +2,11 @@
  * The file contains styles for GWT widgets in the 365 theme.
  */
  
+@import url(/aonResource/aon-richCss.css); 
+@import url(/css/header.css);
+ 
+ 
+ /*
 .gwt-Selector {
   color: rgb(66, 66, 66);
   text-rendering: optimizeLegibility;
@@ -13,6 +18,7 @@
   font-style: normal;
   font-variation-settings: "wdth" 100;
 }
+*/
 
 .material-icons {
   font-family: 'Material Symbols Outlined';
@@ -49,7 +55,6 @@
 
 /*
  * DataGrid  
-*/
 
 .dataGridWidget table {
 	border-spacing: 0px 10px;
@@ -95,6 +100,8 @@
 	border-right: 1px solid rgb(221, 221, 221);
 	border-radius: 0px 5px 5px 0px ;
 }
+
+*/
 
 /*
  * Card

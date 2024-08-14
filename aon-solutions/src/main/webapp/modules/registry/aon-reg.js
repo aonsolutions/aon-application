@@ -79,6 +79,7 @@ export class AonReg extends AonElement {
 		
 		this.PHONE_TABLE = this.MEDIA_CARD + 'PhoneTable';
 		this.PHONE_INPUT = this.PHONE_TABLE + 'Input';
+		this.PHONE_COMMENT_INPUT = this.PHONE_TABLE + 'CommentInput';
 		this.PHONE_ADD= this.PHONE_TABLE + 'Add';
 
 		this.WEB_TABLE = this.MEDIA_CARD + 'WebTable';
@@ -443,7 +444,7 @@ export class AonReg extends AonElement {
 		let div = this.createElement(TAG.DIV);
 		card.setContent(div);
 
-		this.buildEmails(div);	
+		this.buildEmails(div);
 		this.buildPhones(div);
 		this.buildWebs(div);
 	}
@@ -882,6 +883,13 @@ export class AonReg extends AonElement {
 			aonInput.value = phone.getValue();
 	
 			aonInput.addEventListener(EVENT.CHANGE, () => this.phones[i].setValue(aonInput.value));
+
+			let aonCommentInput = new AonInput();
+			aonCommentInput.id = this.PHONE_COMMENT_INPUT + i;
+			aonCommentInput.description = MSG.COMMENT + ' ' + (this.phones.length > 1 ? i + 1 : '');
+			aonCommentInput.value = phone.getComment();
+	
+			aonCommentInput.addEventListener(EVENT.CHANGE, () => this.phones[i].setComment(aonCommentInput.value));
 	
 			let addPhone = new AonIconButton();
 			addPhone.id = this.PHONE_ADD + i;
@@ -897,12 +905,19 @@ export class AonReg extends AonElement {
 				addPhone.visible = false;
 				this.buildPhone(table, media, number);
 			});
+
 			let td = table.addCell(aonInput);
-			td.style.width = '100%';
+			let tdComment = table.addCell(aonCommentInput);
+
+			td.style.width = '40%';
+			tdComment.style.width = '60%';
+			
 			table.addCell(addPhone);
-			aonInput.addIconWithRemove(MATERIAL_ICONS.PHONE, undefined, () => {
+			
+			aonCommentInput.addIconWithRemove(MATERIAL_ICONS.PHONE, undefined, () => {
 				if(table.getRowsCount() === 1) {
 					aonInput.value = '';
+					aonCommentInput.value = '';
 					this.phones[i].setValue('');
 				} else {
 					let last = this.getElement(this.PHONE_ADD + i).isVisible();

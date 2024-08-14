@@ -7,6 +7,7 @@ import static com.esferalia.aon.watson.util.AonStringUtils.isBlank;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.function.Function;
@@ -18,6 +19,8 @@ import org.apache.commons.lang.StringEscapeUtils;
 import com.code.aon.AonVersion;
 import com.code.aon.config.enumeration.DomainType;
 import com.code.aon.ui.util.AonUtil;
+import com.esferalia.aon.occam.api.model.finance.InvoiceStatus;
+import com.esferalia.aon.occam.api.model.type.RawdocStatus;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class DomainData implements Serializable {
@@ -44,6 +47,9 @@ public class DomainData implements Serializable {
 	
 	private DomainType type;
 	
+	private int[] rawdocCount;
+	private int[] invoiceCount;
+	
 	public DomainData(Integer id, String name, String description, Date expirationDate, boolean active, boolean enableHeredity) {
 		this(id, name, description, expirationDate, active, enableHeredity, null);
 	}
@@ -57,6 +63,12 @@ public class DomainData implements Serializable {
 		this.enableHeredity = enableHeredity;
 		this.cccs = new ArrayList<String>();
 		this.type = type;
+
+		// A single-dimensional array is created of the specified length, 
+		// and each component of the array is initialized to its default value.
+		// For type int, the default value is zero, that is, 0.
+		this.rawdocCount = new int[RawdocStatus.values().length];
+		this.invoiceCount = new int[InvoiceStatus.values().length];
 	}
 
 	public Integer getId() {
@@ -176,6 +188,48 @@ public class DomainData implements Serializable {
 
 		return display.toString();
 	}
+	
+	public int getRawdocInboxCount() {
+		return getRawdocCount(RawdocStatus.INBOX);
+	}
+
+	public boolean hasRawdocInbox() {
+		return getRawdocInboxCount() > 0 ;
+	}
+
+	public int getRawdocRejectedCount() {
+		return getRawdocCount(RawdocStatus.REJECTED);
+	}
+
+	public boolean hasRawdocRejected() {
+		return getRawdocRejectedCount() > 0 ;
+	}
+
+	public int getRawdocCount(RawdocStatus status) {
+		return rawdocCount[status.ordinal()];
+	}
+	
+	public void setRawdocCount(RawdocStatus status, int count) {
+		rawdocCount[status.ordinal()] = count;
+	}
+
+	public int getInvoicePendingCount() {
+		return getInvoiceCount(InvoiceStatus.PENDING);
+	}
+
+	public boolean hasInvoicePending() {
+		return getInvoicePendingCount() > 0;
+	}
+
+	public int getInvoiceCount(InvoiceStatus status) {
+		return invoiceCount[status.ordinal()];
+	}
+
+	public void setInvoiceCount(InvoiceStatus status, int count) {
+		invoiceCount[status.ordinal()] = count;
+	}
+	
+	
 	
 	public static String replace(final String text, final String searchString,
 			UnaryOperator<String> replace) {

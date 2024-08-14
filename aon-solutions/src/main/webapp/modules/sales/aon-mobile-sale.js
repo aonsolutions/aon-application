@@ -18,6 +18,7 @@ import { AonDialog } from '../../components/aon-dialog.js';
 import { getDeliveries, getDelivery } from '../../services/warehouseService.js';
 import { getDeliveryPackaging, getItem, getPackaging, getProducts, saveDeliveryPackaging } from '../../services/productService.js';
 import { MOBILE_ACTION, mobileAction } from '../../services/mobileService.js';
+import { openBarcode } from '../../services/actionService.js';
 
 export class AonMobileSale extends AonElement {
 
@@ -429,7 +430,10 @@ export class AonMobileSale extends AonElement {
 
 
 	openBarcode() {
-		mobileAction({ action: MOBILE_ACTION.BARCODE, selector: 'aon-mobile-sale' });
+		let ionicData = { action: MOBILE_ACTION.BARCODE, selector: 'aon-mobile-sale' };
+		if(UA.isAndroidApp()) {
+			openBarcode(ionicData, (result) => this.setBarcodeAction(result.code));
+		} else mobileAction(ionicData);
 	}
 
 	setBarcodeData(barcodeStr) {
@@ -441,15 +445,18 @@ export class AonMobileSale extends AonElement {
 
 			const {text, format, cancelled} = barcodeStr;
 			if(!cancelled) {
-				const product = this.getElement(this.PACKAGING_PRODUCT);
-				product.value = text;
-				this.changeProduct();
+				this.setBarcodeAction(text);
 			}
 		} catch (error) {
 			this.showError(error);
 		}
 	}
 
+	setBarcodeAction(code) {
+		const product = this.getElement(this.PACKAGING_PRODUCT);
+		product.value = code;
+		this.changeProduct();
+	}
 	// Create Components
 
 	createCard(id, title) {

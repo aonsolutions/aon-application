@@ -644,7 +644,11 @@ export class AonDesktop extends AonElement {
 			// fiscalCard.title = "Impuestos";
 			fiscalCard.message = "Impuestos";
 			fiscalCard.setApp(Apps.FISCAL);
-			fiscalCard.addEventListener(EVENT.CLICK_TITLE, () => this.appSelection(Apps.FISCAL.app));
+			fiscalCard.addEventListener(EVENT.CLICK_TITLE, async () => {
+				// this.appSelection(Apps.FISCAL.app);
+				let fiscalFilter = await aonFiscalCard.getFilter();
+				this.appSelectionFilter(Apps.FISCAL.app, fiscalFilter);
+			});
 			cardsPanel.appendChild(fiscalCard);
 			fiscalCard.getCardTitle1().style.cursor = 'pointer';
 			fiscalCard.insertAdjacentHTML( 'beforeend', "<aon-dialog-menu id='aonCardFiscalOption'> </aon-dialog-menu>" );
@@ -1348,6 +1352,9 @@ export class AonDesktop extends AonElement {
 					const payroll = new AonLaboral(filter);
 					payroll.title = MSG.PAYROLL;
 					this.rootPanel(payroll);
+					break;
+				case Apps.FISCAL.app:
+					this.rootPanel(new AonFiscal(filter));
 					break;
 			}
 	}

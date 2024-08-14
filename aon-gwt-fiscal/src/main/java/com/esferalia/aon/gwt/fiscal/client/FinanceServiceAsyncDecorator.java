@@ -7,6 +7,7 @@ import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.AsyncCallbackWrapper;
 import com.esferalia.aon.occam.api.model.FBatchParams;
 import com.esferalia.aon.occam.api.model.FinanceParams;
+import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.finance.FBatch;
 import com.esferalia.aon.occam.api.model.finance.Finance;
 import com.esferalia.aon.occam.api.model.finance.FinanceTracking;
@@ -25,12 +26,17 @@ public class FinanceServiceAsyncDecorator implements FinanceServiceAsync {
 
 	// --------------------------------------------------------------- INVOICE SERIES
 	@Override
-	public void getInvoiceNextNumber(String domainName, Integer domainId, String  user, Byte[] types, String series,
-			AsyncCallback<Integer> callback) {
+	public void getInvoiceNextNumber(String domainName, Integer domainId, String  user, Byte[] types, String series, AsyncCallback<Integer> callback) {
 		AON.start();
 		fsa.getInvoiceNextNumber(domainName,domainId,user, types, series, new AsyncCallbackWrapper<Integer>(callback));
 	}
 	
+	@Override
+	public void getInvoiceNextNumber(Occam occam, Byte[] types, String series, AsyncCallback<Integer> callback) {
+		AON.start();
+		fsa.getInvoiceNextNumber(occam, types, series, new AsyncCallbackWrapper<Integer>(callback));
+	}
+
 	// --------------------------------------------------------------- REGISTRY BANKS
 	@Override
 	public void getCompanyBanks(String domainName, int domainId, String user,

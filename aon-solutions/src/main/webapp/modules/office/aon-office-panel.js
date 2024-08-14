@@ -35,6 +35,7 @@ export class AonOfficePanel extends AonElement {
   _customerSelectedAll;
 
   _filterCustomers;
+  _filterTaskHolders;
 
   setCustomerSelected(customerSelected) {
     this._customerSelected = customerSelected;
@@ -69,6 +70,18 @@ export class AonOfficePanel extends AonElement {
     return this._filterCustomers;
   }
 
+  addFilterTaskHolders(filter) {
+    this._filterTaskHolders = { ...this._filterTaskHolders, ...filter };
+  }
+
+  setFilterTaskHolders(filter) {
+    this._filterTaskHolders = filter;
+  }
+
+  getFilterTaskHolders() {
+    return this._filterTaskHolders;
+  }
+
   constructor() {
     super();
   }
@@ -87,11 +100,19 @@ export class AonOfficePanel extends AonElement {
 
     if(!this.getFilterCustomers()) {
         this.setFilterCustomers({
-        page: 1,
-        perPage: 50,
-        status: ["ACTIVE", "BLOCKED"]
+          page: 1,
+          perPage: 50,
+          status: ["ACTIVE", "BLOCKED"],
+          target: false
         });
     }
+
+    if(!this.getFilterTaskHolders()) {
+      this.setFilterTaskHolders({
+        page: 1,
+        perPage: 50
+      });
+  }
   }
 
   build() {
@@ -120,7 +141,10 @@ export class AonOfficePanel extends AonElement {
     options.push(customer);
 
     let taskHolder = OfficeOptions.AON_TASK_HOLDER;
-    taskHolder.fn = () => this.showView(OfficeViews.AON_TASK_HOLDER_LIST);
+    taskHolder.fn = () => this.showView(OfficeViews.AON_TASK_HOLDER_LIST, undefined, {
+      ...this.getFilterTaskHolders(),
+      page: 1,
+    });
     options.push(taskHolder);
 
     let workgroups = OfficeOptions.AON_WORKGROUP_LIST
@@ -488,8 +512,6 @@ export class AonOfficePanel extends AonElement {
     
     return new Promise(async (resolve) => {
       let aonView = undefined;
-      let potential = this.getElement("potential");
-
       switch (view) {
         case BOOKING_PANEL.id:
           GWT.load(GWT.BOOKING_PANEL, this.getApplication().CONTENT);
@@ -504,28 +526,16 @@ export class AonOfficePanel extends AonElement {
           let searchPanel = this.getElement("aonOfficePanelToolbarHeaderToolSectionSearch");
           searchPanel.style.display = "none";
 
-          if (potential) {
-            if (potential.value == "true") {
-              aonView = new AonTarget();
-              aonView.setCustomer();
-              aonView.back = () => {
-                searchPanel.style.display = "block";
-                this.showView(officeViews.AON_CUSTOMER_LIST, undefined, {
-                  ...this.getFilterCustomers(),
-                  page: 1,
-                }); // overwrite function
-              };
-            } else {
-              aonView = new AonCustomer();
-              aonView.setCustomer();
-              aonView.back = () => {
-                searchPanel.style.display = "block";
-                this.showView(officeViews.AON_CUSTOMER_LIST, undefined, {
-                  ...this.getFilterCustomers(),
-                  page: 1,
-                }); // overwrite function
-              };
-            }
+          if (this.getFilterCustomers().type == "false") {
+            aonView = new AonTarget();
+            aonView.setCustomer();
+            aonView.back = () => {
+              searchPanel.style.display = "block";
+              this.showView(officeViews.AON_CUSTOMER_LIST, undefined, {
+                ...this.getFilterCustomers(),
+                page: 1,
+              }); // overwrite function
+            };
           } else {
             aonView = new AonCustomer();
             aonView.setCustomer();
@@ -559,7 +569,7 @@ export class AonOfficePanel extends AonElement {
           aonView = new AonTaskHolder();
           break;
         case officeViews.AON_TASK_HOLDER_LIST:
-          aonView = new AonTaskHolderList();
+          aonView = new AonTaskHolderList(this);
           break;
         case officeViews.AON_WORKGROUP_LIST:
           aonView = new AonWorkgroup();

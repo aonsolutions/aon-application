@@ -201,11 +201,10 @@ public class SettleSalariesDAO {
 		// Check if has vencimientos
 		
 		Result<Record> fbatchDetails = ctx.getDslContext().select().from(FBATCH_DETAIL)
-			.innerJoin(FINANCE).on(FINANCE.ID.eq(FBATCH_DETAIL.FINANCE))
-			.innerJoin(RADDRESS).on(RADDRESS.REGISTRY.eq(FINANCE.REGISTRY))
-			.innerJoin(GEOZONE).on(GEOZONE.ID.eq(RADDRESS.GEOZONE))
+			.join(FINANCE).on(FINANCE.ID.eq(FBATCH_DETAIL.FINANCE))
+			.leftOuterJoin(RADDRESS).on(RADDRESS.REGISTRY.eq(FINANCE.REGISTRY).and(RADDRESS.TYPE.eq((byte)0)))
+			.leftOuterJoin(GEOZONE).on(GEOZONE.ID.eq(RADDRESS.GEOZONE))
 			.where(FBATCH_DETAIL.FBATCH.eq(fbatchId))
-			.and(RADDRESS.TYPE.eq((byte)0))
 			.fetch();
 		
 		if(null == fbatchDetails || fbatchDetails.isEmpty()) throw new AonCoreException("No existen vencimientos en la remesa sobre los que generar el fichero Sepa");
@@ -280,7 +279,13 @@ public class SettleSalariesDAO {
 		
 		xmlData += "<Ctry>ES</Ctry>";
 		
-		xmlData += "<AdrLine>" + removeSpecialCharacters(fbatchEnterprise.get(RADDRESS.STREET_TYPE)) + ". " + removeSpecialCharacters(fbatchEnterprise.get(RADDRESS.ADDRESS)) + " " + removeSpecialCharacters(fbatchEnterprise.get(RADDRESS.NUMBER)) + ", " + removeSpecialCharacters(fbatchEnterprise.get(RADDRESS.ADDRESS2)) + " " + fbatchEnterprise.get(RADDRESS.ZIP) + " " + removeSpecialCharacters(fbatchEnterprise.get(RADDRESS.CITY)) + " (" + removeSpecialCharacters(fbatchEnterprise.get(GEOZONE.NAME)) + ")</AdrLine>";
+		if(null != fbatchEnterprise.get(RADDRESS.ID)) {
+		
+			xmlData += "<AdrLine>" + removeSpecialCharacters(fbatchEnterprise.get(RADDRESS.STREET_TYPE)) + ". " + removeSpecialCharacters(fbatchEnterprise.get(RADDRESS.ADDRESS)) + " " + removeSpecialCharacters(fbatchEnterprise.get(RADDRESS.NUMBER)) + "</AdrLine>";
+			
+			xmlData += "<AdrLine>" + fbatchEnterprise.get(RADDRESS.ZIP) + " " + removeSpecialCharacters(fbatchEnterprise.get(RADDRESS.CITY)) + " (" + removeSpecialCharacters(fbatchEnterprise.get(GEOZONE.NAME)) + ")</AdrLine>";
+		
+		}
 		
 		xmlData += "</PstlAdr>";
 		
@@ -321,7 +326,13 @@ public class SettleSalariesDAO {
 			
 			xmlData += "<Ctry>ES</Ctry>";
 			
-			xmlData += "<AdrLine>" + removeSpecialCharacters(fbatchDetail.get(RADDRESS.STREET_TYPE)) + ". " + removeSpecialCharacters(fbatchDetail.get(RADDRESS.ADDRESS)) + " " + removeSpecialCharacters(fbatchDetail.get(RADDRESS.NUMBER)) + ", " + removeSpecialCharacters(fbatchDetail.get(RADDRESS.ADDRESS2)) + " " + fbatchDetail.get(RADDRESS.ZIP) + " " + removeSpecialCharacters(fbatchDetail.get(RADDRESS.CITY)) + " (" + removeSpecialCharacters(fbatchDetail.get(GEOZONE.NAME)) + ")</AdrLine>";
+			if(null != fbatchDetail.get(RADDRESS.ID)) {
+			
+				xmlData += "<AdrLine>" + removeSpecialCharacters(fbatchDetail.get(RADDRESS.STREET_TYPE)) + ". " + removeSpecialCharacters(fbatchDetail.get(RADDRESS.ADDRESS)) + " " + removeSpecialCharacters(fbatchDetail.get(RADDRESS.NUMBER)) + "</AdrLine>";
+				
+				xmlData += "<AdrLine>" + fbatchDetail.get(RADDRESS.ZIP) + " " + removeSpecialCharacters(fbatchDetail.get(RADDRESS.CITY)) + " (" + removeSpecialCharacters(fbatchDetail.get(GEOZONE.NAME)) + ")</AdrLine>";
+			
+			}
 			
 			xmlData += "</PstlAdr>";
 			

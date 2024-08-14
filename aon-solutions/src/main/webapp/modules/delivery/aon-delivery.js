@@ -26,6 +26,8 @@ import { AonNewSelect } from '../../components/aon-new-select.js';
 import { AonNewInput } from '../../components/aon-new-input.js';
 import { AonNewNumber } from '../../components/aon-new-number.js';
 import { CONTACT } from '../../environments/msg-en.js';
+import * as UA from '../../services/userAgentService.js';
+import { openBarcode } from '../../services/actionService.js';
 
 export class AonDelivery extends AonElement {
 
@@ -493,8 +495,7 @@ export class AonDelivery extends AonElement {
 		let product = this.createInput(this.PACKAGING_SOURCE_PRODUCT, "Envase Origen");
 		product.id = id + 'Envase';
 		table.addCell(product);
-		product.addIconButton(MATERIAL_ICONS.QR_CODE_SCANNER, () => this.openBarcode(product));
-	
+		product.addIcon(MATERIAL_ICONS.QR_CODE_SCANNER, undefined,() => this.openBarcode(product));
 		let source;
 		let quantity = 0;
 		let composition = [];
@@ -579,7 +580,10 @@ export class AonDelivery extends AonElement {
 	barcodeId;
 	openBarcode(element) {
 		this.barcodeId = element.id;
-		mobileAction({ action: MOBILE_ACTION.BARCODE, selector: TAG.AON_MOBILE_DELIVERY });
+		let ionicData = { action: MOBILE_ACTION.BARCODE, selector: TAG.AON_MOBILE_DELIVERY };
+		if(UA.isAndroidApp()) {
+			openBarcode(ionicData, (result) => element.value = result.code);
+		} else mobileAction(ionicData);
 	}
 
 	setBarcodeData(barcodeStr) {

@@ -443,7 +443,7 @@ public class AonNordigen  {
 			NordigenAccountBalance consolidado = AonNordigen.filterConsolidado(balances);
 			NordigenAccountBalance real = AonNordigen.filterReal(balances);
 			NordigenAccountBalance balance = consolidado != null ? consolidado : real;
-			Double remaining = balance.getBalanceAmount() != null ? balance.getBalanceAmount().getAmount() : 0;
+			Double remaining = (balance != null && balance.getBalanceAmount() != null) ? balance.getBalanceAmount().getAmount() : 0;
 			for(NordigenBankStatement bs : orderedList) {
 				bs.setCurrentBalance(remaining);
 				remaining += (bs.getAmount() * (bs.isPayment() ? 1 : -1));

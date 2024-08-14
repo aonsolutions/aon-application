@@ -3,6 +3,7 @@ package com.code.aon.ui.config.controller;
 import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
 import static com.esferalia.aon.jooq.tables.Enterprise.ENTERPRISE;
 import static com.esferalia.aon.jooq.tables.EnterpriseCcc.ENTERPRISE_CCC;
+import static com.esferalia.aon.jooq.tables.Invoice.INVOICE;
 import static com.esferalia.aon.jooq.tables.Rawdoc.RAWDOC;
 import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
 import static com.esferalia.aon.jooq.tables.UserScope.USER_SCOPE;
@@ -15,6 +16,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
@@ -27,8 +29,8 @@ import org.hibernate.Hibernate;
 import org.hibernate.Query;
 import org.hibernate.SQLQuery;
 import org.jooq.Condition;
+import org.jooq.Field;
 import org.jooq.Record;
-import org.jooq.Record1;
 import org.jooq.SelectJoinStep;
 import org.jooq.SelectOnConditionStep;
 import org.jooq.Table;
@@ -65,8 +67,10 @@ import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.esferalia.aon.occam.api.SECURITY;
 import com.esferalia.aon.occam.api.model.aonsolutions.DomainUserRoles;
+import com.esferalia.aon.occam.api.model.finance.InvoiceStatus;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.type.RawdocStatus;
+import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class DomainSwitcher extends AbstractDomainSwitcher implements
@@ -105,9 +109,11 @@ public class DomainSwitcher extends AbstractDomainSwitcher implements
 	// By it's invoices state
 	private boolean showReject;
 	private boolean showPending;
+	private boolean showUnaccount;
 	
 	private Integer reject;
 	private Integer pending;
+	private Integer unaccount;
 
 	public DomainSwitcher() {
 		try {
@@ -277,8 +283,7 @@ public class DomainSwitcher extends AbstractDomainSwitcher implements
 	private List<Integer> getUserScopes() {
 		List<Integer> scopes = null;
 		AuthPrincipal principal = AonUtil.getAuthPrincipal();
-		CloseableAONContext ctx = AONContext.getAONContext(getDomainNameURL(), domainId, getCurrentUser());
-		try {
+		try (CloseableAONContext ctx = AONContext.getAONContext(getDomainNameURL(), domainId, getCurrentUser())) {
 			scopes = ctx
 					.getDslContext()
 					.select(USER_SCOPE.SCOPE)
@@ -286,11 +291,10 @@ public class DomainSwitcher extends AbstractDomainSwitcher implements
 					.fetch().into(Integer.class);
 		} catch ( Throwable th ) {
 			LOGGER.error(th.getMessage(), th);
-		} finally {
-			ctx.close();	
 		}						
 		return scopes;
 	}
+	
 	
 	private <T extends SelectJoinStep<?>> T filterByInvoiceStatus(T selectJoinStep ) {
 		if ( isShowPending() ) {
@@ -299,21 +303,41 @@ public class DomainSwitcher extends AbstractDomainSwitcher implements
 		if ( isShowReject() ) {
 			selectJoinStep = filterByInvoiceStatus(selectJoinStep, RawdocStatus.REJECTED);
 		}
+		if ( isShowUnaccount() ) {
+			selectJoinStep = filterByInvoiceStatus(selectJoinStep, InvoiceStatus.PENDING);
+		}
 		return selectJoinStep;		
 	}
 
 	private <T extends SelectJoinStep<?>> T filterByInvoiceStatus(T selectJoinStep, RawdocStatus rawdocStatus) {
 		
-		Table<Record1<Integer>> subTable = 
+		Table<?> subTable = 
 		DSL
-		.select(RAWDOC.DOMAIN)
+		.select(RAWDOC.DOMAIN
+		,DSL.count(RAWDOC.ID).as(rawdocStatus.name()))
 		.from(RAWDOC)
-		.where(RAWDOC.STATUS.eq((byte)rawdocStatus.ordinal()))
+		.innerJoin(DOMAIN).on(RAWDOC.DOMAIN.eq(DOMAIN.ID))
+		.where(RAWDOC.STATUS.eq((byte)rawdocStatus.ordinal()).and(getDomainCondition()))
 		.groupBy(RAWDOC.DOMAIN)
 		.asTable(rawdocStatus.name());
 		
 		return (T) selectJoinStep.innerJoin(subTable).on(subTable.field(0, Integer.class).eq(DOMAIN.ID));
+	}
+
+	private <T extends SelectJoinStep<?>> T filterByInvoiceStatus(T selectJoinStep, InvoiceStatus invoiceStatus) {
+
+		Table<?> subTable = 
+		DSL
+		.select(
+		INVOICE.DOMAIN
+		,DSL.count(INVOICE.ID).as(invoiceStatus.name()))
+		.from(INVOICE)
+		.innerJoin(DOMAIN).on(INVOICE.DOMAIN.eq(DOMAIN.ID))
+		.where(INVOICE.STATUS.eq((byte)InvoiceStatus.PENDING.ordinal()).and(getDomainCondition()))
+		.groupBy(INVOICE.DOMAIN)
+		.asTable(invoiceStatus.name());
 		
+		return (T) selectJoinStep.innerJoin(subTable).on(subTable.field(0, Integer.class).eq(DOMAIN.ID));
 	}
 
 	private Condition getDomainCondition() {
@@ -354,72 +378,82 @@ public class DomainSwitcher extends AbstractDomainSwitcher implements
 		return condition;
 	}
 
-
 	private void initializeModel() {
 		
 		if (getParentDomain() != null) {
 			
-			CloseableAONContext ctx = AONContext.getAONContext(getDomainNameURL(),domainId,getCurrentUser());
 			LinkedList<DomainData> domains = new LinkedList<DomainData>();
-
-			SelectOnConditionStep<Record> domainsSelect = 
-			ctx
-			.getDslContext()
-			.select()
-			.from(DOMAIN)
-			.leftOuterJoin(ENTERPRISE).on(ENTERPRISE.DOMAIN.eq(DOMAIN.ID))
-			.leftOuterJoin(REGISTRY).on(ENTERPRISE.REGISTRY.eq(REGISTRY.ID))
-			.leftOuterJoin(ENTERPRISE_CCC).on(ENTERPRISE_CCC.DOMAIN.eq(DOMAIN.ID));
-			
-			domainsSelect = filterByInvoiceStatus(domainsSelect);
-			
-			domainsSelect
-			.where(getDomainCondition())
-			.orderBy(DOMAIN.DESCRIPTION)
-			.fetchStream()
-			.forEach( r -> {
-				DomainData last = domains.peekLast();
-				if ( last != null && last.getId().equals(r.get(DOMAIN.ID)) ) {
+			try ( CloseableAONContext ctx = AONContext.getAONContext(getDomainNameURL(),domainId,getCurrentUser())) {
+				SelectOnConditionStep<Record> domainsSelect = 
+						ctx
+						.getDslContext()
+						.select()
+						.from(DOMAIN)
+						.leftOuterJoin(ENTERPRISE).on(ENTERPRISE.DOMAIN.eq(DOMAIN.ID))
+						.leftOuterJoin(REGISTRY).on(ENTERPRISE.REGISTRY.eq(REGISTRY.ID))
+						.leftOuterJoin(ENTERPRISE_CCC).on(ENTERPRISE_CCC.DOMAIN.eq(DOMAIN.ID));
+						
+				domainsSelect = filterByInvoiceStatus(domainsSelect);
+				
+				domainsSelect
+				.where(getDomainCondition())
+				.orderBy(DOMAIN.DESCRIPTION)
+				.fetchStream()
+				.forEach( r -> {
+					DomainData last = domains.peekLast();
+					if ( last != null && last.getId().equals(r.get(DOMAIN.ID)) ) {
+						String ccc = r.get(ENTERPRISE_CCC.CCC);
+						if ( StringUtils.isNotBlank(ccc) ) 
+							last.addCCC(ccc);
+						return;
+					}
+					DomainData domainData = 
+							new DomainData(
+							r.get(DOMAIN.ID), 
+							r.get(DOMAIN.NAME), 
+							r.get(DOMAIN.DESCRIPTION), 
+							r.get(DOMAIN.EXPIRATIONDATE), 
+							r.get(DOMAIN.ACTIVE) == 1, 
+							r.get(DOMAIN.ENABLEHEREDITY) == 1,
+							getSafeDomainType(r.get(DOMAIN.TYPE)));
+					
 					String ccc = r.get(ENTERPRISE_CCC.CCC);
 					if ( StringUtils.isNotBlank(ccc) ) 
-						last.addCCC(ccc);
-					return;
-				}
-				DomainData domainData = 
-						new DomainData(
-						r.get(DOMAIN.ID), 
-						r.get(DOMAIN.NAME), 
-						r.get(DOMAIN.DESCRIPTION), 
-						r.get(DOMAIN.EXPIRATIONDATE), 
-						r.get(DOMAIN.ACTIVE) == 1, 
-						r.get(DOMAIN.ENABLEHEREDITY) == 1,
-						getSafeDomainType(r.get(DOMAIN.TYPE)));
-				
-				String ccc = r.get(ENTERPRISE_CCC.CCC);
-				if ( StringUtils.isNotBlank(ccc) ) 
-					domainData.addCCC(ccc);
-				
-				domainData.setDocument(r.get(REGISTRY.DOCUMENT));
-				
-				
-				domainData.setLogo(TOOLBAR_LOGO_DEFAULT);
-//				byte logo [] = r.get(RATTACH.DATA);
-//				if ( logo == null || ArrayUtils.isEmpty(logo) ) {
-//					domainData.setLogo(TOOLBAR_LOGO_DEFAULT);
-//				}
-//				else {
-//					MimeType mimeType = AonEnumUtils.enumValue(r.get(RATTACH.MIMETYPE),
-//							MimeType.MIME_PNG);
-//					domainData.setLogo(String.format("data:%s;base64,%s", mimeType.getName(),
-//							Base64.getEncoder().encodeToString(logo)));
-//				}
-				
-				domains.add(domainData);
-				
-			})				
-			;
+						domainData.addCCC(ccc);
+					
+					domainData.setDocument(r.get(REGISTRY.DOCUMENT));
+					
+					
+					domainData.setLogo(TOOLBAR_LOGO_DEFAULT);
 
-			ctx.close();
+//							byte logo [] = r.get(RATTACH.DATA);
+//							if ( logo == null || ArrayUtils.isEmpty(logo) ) {
+//								domainData.setLogo(TOOLBAR_LOGO_DEFAULT);
+//							}
+//							else {
+//								MimeType mimeType = AonEnumUtils.enumValue(r.get(RATTACH.MIMETYPE),
+//										MimeType.MIME_PNG);
+//								domainData.setLogo(String.format("data:%s;base64,%s", mimeType.getName(),
+//										Base64.getEncoder().encodeToString(logo)));
+//							}
+					for ( RawdocStatus status: RawdocStatus.values() ) {
+						Field<Integer> statusField = r.field(status.name(), Integer.class);
+						if ( statusField != null ) {
+							domainData.setRawdocCount(status, r.get(statusField));
+						}
+					}
+					for ( InvoiceStatus status: InvoiceStatus.values() ) {
+						Field<Integer> statusField = r.field(status.name(), Integer.class);
+						if ( statusField != null ) {
+							domainData.setInvoiceCount(status, r.get(status.name(), Integer.class));
+						}
+					}
+					
+					domains.add(domainData);
+					
+				})			
+				;
+			}
 			setModel(new SerializableListDataModel(domains));
 		} else {
 			setModel(new SerializableListDataModel(Collections.emptyList()));
@@ -433,10 +467,11 @@ public class DomainSwitcher extends AbstractDomainSwitcher implements
 
 	public int getDomainCount() {
 		if (getParentDomain() != null) {
-			CloseableAONContext ctx = AONContext.getAONContext(getDomainNameURL(),domainId,getCurrentUser());
-			int count = ctx.getDslContext().selectCount().from(DOMAIN)
-					.where(getDomainCondition()).fetchOne(0, int.class);
-			ctx.close();
+			int count = 0;
+			try ( CloseableAONContext ctx = AONContext.getAONContext(getDomainNameURL(),domainId,getCurrentUser())) {
+				count = ctx.getDslContext().selectCount().from(DOMAIN)
+						.where(getDomainCondition()).fetchOne(0, int.class);
+			}
 			return count;
 		}
 		return 0;
@@ -756,6 +791,14 @@ public class DomainSwitcher extends AbstractDomainSwitcher implements
 	public boolean isShowPending() {
 		return showPending;
 	}
+	
+	public void setShowUnaccount(boolean showUnaccount) {
+		this.showUnaccount = showUnaccount;
+	}
+	
+	public boolean isShowUnaccount() {
+		return showUnaccount;
+	}
 
 	public void onChangeShowInactive(ActionEvent event) {
 		setModel(null);
@@ -795,6 +838,7 @@ public class DomainSwitcher extends AbstractDomainSwitcher implements
 		
 		setShowPending(false);
 		setShowReject(false);
+		setShowUnaccount(false);
 
 		setShowInactive(true);
 		setModel(null);
@@ -807,6 +851,7 @@ public class DomainSwitcher extends AbstractDomainSwitcher implements
 
 		setShowPending(false);
 		setShowReject(false);
+		setShowUnaccount(false);
 
 		setShowActive(true);
 		setModel(null);
@@ -819,6 +864,7 @@ public class DomainSwitcher extends AbstractDomainSwitcher implements
 
 		setShowPending(false);
 		setShowReject(false);
+		setShowUnaccount(false);
 
 		setShowOffice(true);
 		setModel(null);
@@ -831,6 +877,7 @@ public class DomainSwitcher extends AbstractDomainSwitcher implements
 
 		setShowPending(false);
 		setShowReject(false);
+		setShowUnaccount(false);
 
 		setShowShared(true);
 		setModel(null);
@@ -838,11 +885,7 @@ public class DomainSwitcher extends AbstractDomainSwitcher implements
 	
 	public void showPending(ActionEvent event) {
 		setShowReject(false);
-
-//		setShowOffice(false);
-//		setShowInactive(false);
-//		setShowActive(false);
-//		setShowShared(false);
+		setShowUnaccount(false);
 
 		setShowPending(true);
 		setModel(null);
@@ -850,41 +893,67 @@ public class DomainSwitcher extends AbstractDomainSwitcher implements
 
 	public void showReject(ActionEvent event) {
 		setShowPending(false);
-
-//		setShowOffice(false);
-//		setShowInactive(false);
-//		setShowActive(false);
-//		setShowShared(false);
+		setShowUnaccount(false);
 
 		setShowReject(true);
 		setModel(null);
 	}
 	
-	public void refreshCount(ActionEvent event) {
+	public void showUnaccount(ActionEvent event) {
+		setShowPending(false);
+		setShowReject(false);
 
-		CloseableAONContext ctx = AONContext.getAONContext(getDomainNameURL(),domainId,getCurrentUser());
-
-		this.pending = 
-		ctx.getDslContext().select(DOMAIN.ID)
-		.from(DOMAIN).innerJoin(RAWDOC).on(DOMAIN.ID.eq(RAWDOC.DOMAIN))
-		.where(getDomainCondition().and(RAWDOC.STATUS.eq((byte)RawdocStatus.INBOX.ordinal()))).limit(COUNT_LIMIT+1).fetch(DOMAIN.ID).size();
-		
-		this.reject = 
-		ctx.getDslContext().select(DOMAIN.ID)
-		.from(DOMAIN).innerJoin(RAWDOC).on(DOMAIN.ID.eq(RAWDOC.DOMAIN))
-		.where(getDomainCondition().and(RAWDOC.STATUS.eq((byte)RawdocStatus.REJECTED.ordinal()))).limit(COUNT_LIMIT+1).fetch(DOMAIN.ID).size();
+		setShowUnaccount(true);
+		setModel(null);
 	}
+	
+	public int getSummaryCount() {
+		return AonNumberUtils.zeroIfNull(this.pending) 
+				+ AonNumberUtils.zeroIfNull(this.reject) 
+				+ AonNumberUtils.zeroIfNull(this.unaccount);
+	}
+	
+	public int refreshSummaryCount() {
+		try (CloseableAONContext ctx = AONContext.getAONContext(getDomainNameURL(),domainId,getCurrentUser())) {
+			
+			this.pending = 
+					ctx.getDslContext().select(DOMAIN.ID)
+					.from(DOMAIN)
+					.innerJoin(RAWDOC).on(DOMAIN.ID.eq(RAWDOC.DOMAIN))
+					.where(getCurrentDomainCondition().and(RAWDOC.STATUS.eq((byte)RawdocStatus.INBOX.ordinal()))).limit(COUNT_LIMIT+1).fetch(DOMAIN.ID).size();
+			
+			this.reject = 
+					ctx.getDslContext().select(DOMAIN.ID)
+					.from(DOMAIN)
+					.innerJoin(RAWDOC).on(DOMAIN.ID.eq(RAWDOC.DOMAIN))
+					.where(getCurrentDomainCondition().and(RAWDOC.STATUS.eq((byte)RawdocStatus.REJECTED.ordinal()))).limit(COUNT_LIMIT+1).fetch(DOMAIN.ID).size();
+
+			this.unaccount = 
+					ctx.getDslContext().select(DOMAIN.ID)
+					.from(DOMAIN)
+					.innerJoin(INVOICE).on(DOMAIN.ID.eq(INVOICE.DOMAIN))
+					.where(getCurrentDomainCondition().and(INVOICE.STATUS.eq((byte)InvoiceStatus.PENDING.ordinal()))).limit(COUNT_LIMIT+1).fetch(DOMAIN.ID).size();
+			return this.pending + this.reject  + this.unaccount;
+		}
+	}
+	
 
 	public String getPending() {
-		if ( pending == null )
+		if ( pending == null || pending == 0 )
 			return "";
 		return pending > COUNT_LIMIT ? "+" + COUNT_LIMIT.toString() : Integer.toString(pending);
 	}
 
 	public String getReject() {
-		if ( reject == null )
+		if ( reject == null || reject == 0 )
 			return "";
 		return reject > COUNT_LIMIT  ? "+" + COUNT_LIMIT.toString() : Integer.toString(reject);
+	}
+	
+	public String getUnaccount() {
+		if ( unaccount == null || unaccount == 0 )
+			return "";
+		return unaccount > COUNT_LIMIT  ? "+" + COUNT_LIMIT.toString() : Integer.toString(unaccount);
 	}
 
 	public String getTrace() {
@@ -905,6 +974,10 @@ public class DomainSwitcher extends AbstractDomainSwitcher implements
 		return getDomainName();
 	}
 	
+
+	private Condition getCurrentDomainCondition() {
+		return Objects.equals(parentDomain, domainId) ? getDomainCondition() : DOMAIN.ID.eq(getDomainId());
+	}
 
 	private static DomainType getSafeDomainType( Byte b ) {
 		if (b == null) return null;

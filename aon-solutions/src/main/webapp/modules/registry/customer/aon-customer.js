@@ -30,6 +30,10 @@ import { AonProjectList } from "../../project/aon-project-list.js";
 import { AonBookingItemList } from "../target/item/aon-booking-item-list.js";
 import { AonItemList } from "../target/item/aon-item-list.js";
 import { AonSellerList } from "../seller/aon-seller-list.js";
+import { AonToolbar } from "../../../components/aon-toolbar.js";
+import * as ACTION from '../../actions.js';
+import { ToolbarType } from "../../../models/enums.js";
+import { AonSellerSmallList } from "../seller/aon-seller-small-list.js";
 
 export class AonCustomer extends AonReg {
   saveBool;
@@ -47,18 +51,89 @@ export class AonCustomer extends AonReg {
     this.ENTERPRISE_LINKED = "enterpriseLinked";
     this.options = [
       { title: MSG.GENERAL_DATA, fn: () => this.buildGeneralData() },
-      { title: MSG.BANK_DATA, fn: () => this.buildBankData() },
-      { title: MSG.ADDITIONAL_DATA, fn: () => this.buildDataAdditional() },
+      // { title: MSG.BANK_DATA, fn: () => this.buildBankData() },
+      // { title: MSG.ADDITIONAL_DATA, fn: () => this.buildDataAdditional() },
       { title: "Expedientes", fn: () => this.buildExpedienteData() },
-      { title: MSG.BOOKING, fn: () => this.buildBookingData() },
-      { title: MSG.COMMERCIAL, fn: () => this.buildSellerData() },
+      // { title: MSG.BOOKING, fn: () => this.buildBookingData() },
+      { title: "Agentes", fn: () => this.buildSellerData() },
     ];
 
-    if (this.isBeta()) {
-      this.options.push({
-        title: MSG.PRODUCTS,
-        fn: () => this.buildItemData(),
-      });
+    // if (this.isBeta()) {
+    //   this.options.push({
+    //     title: MSG.PRODUCTS,
+    //     fn: () => this.buildItemData(),
+    //   });
+    // }
+  }
+
+  build = () => {
+		let toolbar = new AonToolbar();
+		toolbar.id = this.REGISTRY_TOOLBAR;
+		toolbar.type = ToolbarType.SECONDARY;
+		toolbar.title = this.registry.id ? this.registry.name : 'NUEVO REGISTRO';
+		
+		this.appendChild(toolbar);
+		toolbar.addButton2(ACTION.SAVE, () => this.save());
+		toolbar.addButton2(ACTION.BACK, () => this.back());
+		
+		if(this.registry.id && this.registry.getCreationUser){
+			toolbar.addButtonTitle(ACTION.AUDIT, () => this.audit());
+		}
+
+		this.buildTabs();
+
+		let div = this.createElement(TAG.DIV);
+		div.id = this.DIV;
+		div.style.display = "flex";
+		div.style.width = "100%";
+    div.style.flexWrap = "wrap";
+		this.appendChild(div);
+
+		this.buildGeneralData();
+	}
+  
+  buildGeneralData = () => {
+    let parent = this.getElement(this.DIV);
+    this.clearElement(parent);
+
+		this.buildGeneralCard(parent);
+		this.buildMediaCard(parent);
+		this.buildGeneralInformation(parent);
+    this.buildSellerCard(parent);
+  }
+
+  buildSellerCard(parent){
+    let card = new AonCard();
+    card.id = "cardSeller";
+    card.title = "Agentes";
+    card.style.width = "50%";
+    card.style.cursor = "pointer";
+    parent.appendChild(card);
+
+    card.addEventListener(EVENT.CLICK, () => {
+      let sellerTab = this.getElement("aonCustomerOfficeTabsSpan2");
+      if(sellerTab) sellerTab.click();
+
+      // Scroll to top
+      let aonOfficePanelContent = this.getElement("aonOfficePanelContent");
+      aonOfficePanelContent.scrollTop = 0;
+    });
+
+    let div = this.createElement(TAG.DIV);
+    card.setContent(div);
+
+    let registryId = this.registry.getId();
+
+    if (registryId) {
+      let aonSellerList = new AonSellerSmallList();
+      aonSellerList.style.width = "100%";
+      aonSellerList.registry = this.registry;
+      aonSellerList.filter = { page: 1, perPage: 200, registry: registryId };
+      aonSellerList.parent = card;
+      div.appendChild(aonSellerList);
+
+      let sellerTableBody = this.getElement("aonSellerListTableTableBody");
+      sellerTableBody.style.height = "auto";
     }
   }
 
