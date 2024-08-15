@@ -1049,15 +1049,27 @@ class SistemaREDMov {
 		HtmlOption option = (HtmlOption) form.querySelectorAll("select[name=cbo_ListaAltasBajas]>option").get(mov);
 		option.click();
 		form.getInputByName("txt_SDFPROAFI").setValue(nss.substring(0, 2));
+		form.getInputByName("txt_SDFPROAFI").setValueAttribute(nss.substring(0, 2));
+		
 		form.getInputByName("txt_SDFCODAFI").setValue(nss.substring(2));
+		form.getInputByName("txt_SDFCODAFI").setValueAttribute(nss.substring(2));
+		
 		form.getInputByName("txt_SDFREGAFI_ayuda").setValue(regimen);
+		form.getInputByName("txt_SDFREGAFI_ayuda").setValueAttribute(regimen);
+		
 		form.getInputByName("txt_SDFTIPPFI_ayuda").setValue(ident);
+		form.getInputByName("txt_SDFTIPPFI_ayuda").setValueAttribute(ident);
+		
 		form.getInputByName("txt_SDFNUMPFI").setValue(dni);
+		form.getInputByName("txt_SDFNUMPFI").setValueAttribute(dni);
+		
 		ctaCti.ifPresent(cta->{
 			form.getInputByName("txt_SDFTESCTACOT").setValue(cta.substring(0, 2));
 			form.getInputByName("txt_SDFCTACOT").setValue(cta.substring(2));
+			form.getInputByName("txt_SDFTESCTACOT").setValueAttribute(cta.substring(0, 2));
+			form.getInputByName("txt_SDFCTACOT").setValueAttribute(cta.substring(2));
 		});
-
+		
 		HtmlSubmitInput continueIn = form.querySelector("input[value=Continuar]");
 		htmlPage = continueIn.click();
 		

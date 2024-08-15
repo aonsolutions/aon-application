@@ -7513,7 +7513,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 		builder.setNss(employeeContractInfo.getEmployeeInfo().getSsNumber());
 		builder.setName(employeeContractInfo.getEmployeeInfo().getName());
 		builder.setBirthDate(employeeContractInfo.getEmployeeInfo().getBirthdate());
-		builder.setIpf(ipf);
+		builder.setIpf(AonStringUtils.isNotBlank(employeeContractInfo.getEmployeeInfo().getDocument()) ? employeeContractInfo.getEmployeeInfo().getDocument() : ipf);
 		builder.setFra(employeeContractInfo.getContractInfo().getStartDate());
 		
 		Date endDate = employeeContractInfo.getContractInfo().getEndDate();
