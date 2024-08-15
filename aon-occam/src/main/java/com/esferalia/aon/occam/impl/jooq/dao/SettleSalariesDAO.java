@@ -79,6 +79,7 @@ public class SettleSalariesDAO {
 				.where(SALARY.DOMAIN.eq(ctx.getDomainId()))
 				.and(SALARY.ISSUE_DATE.eq(parseToSQLDate(date)))
 				.and(SALARY.TYPE.lt((byte)4)) // Nomina, Extra, Finiquito, Atraso
+				.orderBy(SALARY.START_DATE, SALARY.CHARGE_DATE)
 				.fetch();
 		
 		if(salaries.isEmpty()) throw new AonCoreException("No existen n\u00f3minas sobre las que generar un vencimiento para el periodo " + formatDate(date));
@@ -96,14 +97,6 @@ public class SettleSalariesDAO {
 			.execute();
 		
 		for(Record record : salaries) {
-			// Delete finance for this registry which status == 0 (Pediente)
-//			ctx.getDslContext().deleteFrom(FINANCE)
-//				.where(FINANCE.DOMAIN.eq(ctx.getDomainId()))
-//				.and(FINANCE.DUE_DATE.eq(parseToSQLDate(date)))
-//				.and(FINANCE.REGISTRY.eq(record.get(REGISTRY.ID)))
-//				.and(FINANCE.PAYROLL.eq((byte)1))
-//				.and(FINANCE.STATUS.eq((byte)0))
-//				.execute();
 			
 			String concept = getSalaryType(record.get(SALARY.TYPE));
 			
@@ -130,7 +123,8 @@ public class SettleSalariesDAO {
 					.set(FINANCE.RNAME, record.get(REGISTRY.NAME))
 					.set(FINANCE.AMOUNT, record.get(SALARY.TOTAL_LIQUID))
 					.set(FINANCE.CONCEPT, concept + " - " + formatDate(date))
-					.set(FINANCE.DUE_DATE, parseToSQLDate(date))
+//					.set(FINANCE.DUE_DATE, parseToSQLDate(date))
+					.set(FINANCE.DUE_DATE,  record.get(SALARY.CHARGE_DATE))
 					.set(FINANCE.PAY_METHOD, record.get(RPAYMETHOD.PAY_METHOD))
 					.set(FINANCE.BANK_ACCOUNT, record.get(RBANK.BANK_ACCOUNT))
 					.set(FINANCE.BANK_ALIAS, record.get(RBANK.ALIAS))
@@ -161,7 +155,8 @@ public class SettleSalariesDAO {
 						.set(FINANCE.RNAME, record.get(REGISTRY.NAME))
 						.set(FINANCE.AMOUNT, amountDiff)
 						.set(FINANCE.CONCEPT, concept + " - " + formatDate(date))
-						.set(FINANCE.DUE_DATE, parseToSQLDate(date))
+//						.set(FINANCE.DUE_DATE, parseToSQLDate(date))
+						.set(FINANCE.DUE_DATE,  record.get(SALARY.CHARGE_DATE))
 						.set(FINANCE.PAY_METHOD, record.get(RPAYMETHOD.PAY_METHOD))
 						.set(FINANCE.BANK_ACCOUNT, record.get(RBANK.BANK_ACCOUNT))
 						.set(FINANCE.BANK_ALIAS, record.get(RBANK.ALIAS))
