@@ -71,7 +71,7 @@ export class AonNotificationPanel extends AonElement {
             divTodas.addEventListener(EVENT.CLICK, () =>  {
                 this.goAonNotification()
                 header.className = "aonHeader aonHeaderNotification";
-                apps.className = "aonHeader aonMenuLeftopNotification";
+                apps.className = "aonMenuLeftop aonMenuLeftopNotification";
                 aonHeader.buildApp(NOTIFICATION);
                 aonHeader.setVisibleLogo(false);
                 aonHeader.setVisibleApp(true);
