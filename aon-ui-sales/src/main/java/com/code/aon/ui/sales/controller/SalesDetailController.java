@@ -211,6 +211,7 @@ public class SalesDetailController extends LinesController implements ISalesCons
 	}
 
 	public boolean isPending() throws ManagerBeanException {
+		if(this.getModel().getRowIndex() < 0) return true;
 		if (getModel().isRowAvailable()) {
 			SalesDetail salesDetail = (SalesDetail)this.getModel().getRowData();
 			if (salesDetail.getStatus() != null) {
@@ -512,10 +513,12 @@ public class SalesDetailController extends LinesController implements ISalesCons
 	}
 
 	public double getModelAmount() throws ManagerBeanException {
+		if(this.getModel().getRowIndex() < 0) return 0.0;
 		return getPriceStrategy().getBasePrice((ICalculable)this.getModel().getRowData());
 	}
 
 	public String getLineSourceInfo() throws ManagerBeanException {
+		if(this.getModel().getRowIndex() < 0) return "";
 		StringBuffer info = new StringBuffer(64);
 
 		SalesDetail salesDetail = (SalesDetail)this.getModel().getRowData();
@@ -534,6 +537,7 @@ public class SalesDetailController extends LinesController implements ISalesCons
 	}
 
 	public String getLineStatusInfo() throws ManagerBeanException {
+		if(this.getModel().getRowIndex() < 0) return "";
 		StringBuffer info = new StringBuffer(64);
 		DecimalFormat formatter = new DecimalFormat(AonUtil.getMessage(ICommonMessages.QUANTITY_PATTERN));
 
@@ -567,6 +571,7 @@ public class SalesDetailController extends LinesController implements ISalesCons
 	}
 	
 	public String getLinePurchaseInfo() throws ManagerBeanException {
+		if(this.getModel().getRowIndex() < 0) return "";
 		StringBuffer info = new StringBuffer(64);
 		DecimalFormat formatter = new DecimalFormat(AonUtil.getMessage(ICommonMessages.QUANTITY_PATTERN));
 		
