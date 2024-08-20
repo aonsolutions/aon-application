@@ -2,7 +2,7 @@ import { AonElement } from "../components/AonElement.js";
 import { AonIconButton } from "../components/aon-icon-button.js";
 import {DomainUserRoles} from '../models/DomainUserRoles.js';
 import {AonDialogMenu} from "../components/aon-dialog-menu.js";
-import { waitEl } from "../services/utils.js";
+import { getReader, waitEl } from "../services/utils.js";
 import { MOBILE_ACTION, mobileAction, closeSession, getDomainUserRoles, uploadFileDocumental } from "../services/service.js";
 import { CONSTANT, EVENT, MATERIAL_ICONS, MSG, TAG } from '../environments/environments.js';
 import * as LS from '../services/localStorageService.js';
@@ -101,10 +101,18 @@ export class AonMobileMenu extends AonElement {
       if(this.SELECTED == "documental"){
         this.saveDocumentFile(files[0]);
       } else {
-        uploadInvoices(inputCamera, files).then(invoices => {
-          if(invoices && invoices.length>0) 
-            this.goInvoice(invoices[0]);
-        });
+        if(this.isBeta()) {
+          getReader(files[0]).then(file => {
+            let editor = new AonImageEditor();
+            editor.image = "data:image/jpeg;base64,"+ file.content;
+            this.rootPanel(editor);
+          }).catch(()=>null);
+        } else {
+          uploadInvoices(inputCamera, files).then(invoices => {
+            if(invoices && invoices.length>0) 
+              this.goInvoice(invoices[0]);
+          });
+        }
       }
     });
 
@@ -507,10 +515,16 @@ export class AonMobileMenu extends AonElement {
     if(this.SELECTED == "documental"){
       this.saveDocumentFile(file);
     } else {
-      uploadInvoice(file).then(f=>{
-        this.goInvoice(f);
-        this.showMessage("Factura registrada");
-      });
+        if(this.isBeta()) {
+          let editor = new AonImageEditor();
+          editor.image = "data:image/jpeg;base64,"+ file.content;
+          this.rootPanel(editor); 
+        } else {
+          uploadInvoice(file).then(f=>{
+            this.goInvoice(f);
+            this.showMessage("Factura registrada");
+            });
+        }
     }
 	}
 

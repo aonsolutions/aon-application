@@ -10,9 +10,13 @@ import { AonLoginPanel } from './aon-login-panel.js';
 import { AonNotificationPanel } from './aon-notification-panel.js';
 import { clearAuth } from 'aonsolutions/services/service.js';
 
+import { AonNewMobileHeader } from 'aonsolutions/modules/aon-new-mobile-header.js';
+import { AonMobileMenu } from 'aonsolutions/modules/aon-mobile-menu.js';
+
 export class AonHome extends AonElement {
 
 	AON_MENU;
+	AON_MOBILE_MENU;
 	AON_HEADER;
 	ROOT_PANEL;
 	RIGHT_PANEL;
@@ -24,15 +28,35 @@ export class AonHome extends AonElement {
 	connectedCallback () {
 		this.clear();
 		this.initialize();
-		this.build();
-		this.customize();
+		if(this.isMobile()) {
+			this.buildMobile();
+		} else {
+			this.build();
+			this.customize();
+		}
 	}
 
 	initialize() {
 		this.AON_MENU = 'aonMenu';
+		this.AON_MOBILE_MENU = 'aonMobileMenu';
 		this.AON_HEADER = 'aonHeader';
 		this.ROOT_PANEL = 'rootPanel';
 		this.RIGHT_PANEL = 'rightPanel';
+	}
+
+	buildMobile() {
+		let aonMobileHeader = new AonNewMobileHeader();
+		aonMobileHeader.id = this.AON_HEADER;
+		this.appendChild(aonMobileHeader);
+
+		let rootPanel = this.createElement(TAG.DIV);
+		rootPanel.id = this.ROOT_PANEL;
+		rootPanel.className = CSS.AON_MOBILE_ROOT_PANEL;
+		this.appendChild(rootPanel);
+
+		let aonMobileMenu = new AonMobileMenu();
+		aonMobileMenu.id = this.AON_MOBILE_MENU;
+		this.appendChild(aonMobileMenu);
 	}
 
 	build() {
