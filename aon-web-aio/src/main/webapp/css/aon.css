@@ -3369,7 +3369,7 @@ label.rating:hover {
 }
 
 .notificationPanelGeneralDiv{
-  margin-top: -40px;
+  margin-top: -55px;
 }
 
 .notificationPanelAllDiv{
@@ -3377,12 +3377,8 @@ label.rating:hover {
   position: relative;
   padding: 9px;
   width: 97px;
-  top: -20px;
-  left: 172px;
-}
-
-.notificationPanelAllDiv:hover{
-  background-color: rgba(225,225,227,1);
+  top: -8px;
+  left: 217px;
 }
 
 .notifcationPanelRowGeneralDiv{
@@ -3395,7 +3391,9 @@ label.rating:hover {
 
 .notificationPanelRowIcon{
   margin-top: 5px;
+  margin-right: 10px;
 }
+
 
 .notificationPanelRowDiv{
   width: 70%;
@@ -3403,6 +3401,7 @@ label.rating:hover {
   display: flex;
   flex-direction: column;
   row-gap: 4px;
+  margin-right: 25px;
 }
 
 .notificationPanelRowSubDiv1{
