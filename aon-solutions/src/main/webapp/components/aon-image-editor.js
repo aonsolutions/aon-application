@@ -1,13 +1,16 @@
 import { AonElement } from './AonElement.js';
-import { CONSTANT, TAG } from "../environments/environments.js";
+import { EVENT, CONSTANT, TAG } from "../environments/environments.js";
 import Cropper from 'cropperjs';
 import 'cropperjs/dist/cropper.min.css';
 import '../css/aon-image-editor.css';
 import { AonIconButton } from './aon-icon-button.js';
 
 export class AonImageEditor extends AonElement {
+    
     IMAGE;
     cropper;
+
+    image;
 
     get id() {
         return this.getAttribute(CONSTANT.ID);
@@ -15,14 +18,6 @@ export class AonImageEditor extends AonElement {
 
     set id(id) {
         this.setAttribute(CONSTANT.ID, id);
-    }
-
-    get image() {
-        return this.getAttribute(CONSTANT.IMAGE);
-    }
-
-    set image(image) {
-        this.setAttribute(CONSTANT.IMAGE, image);
     }
 
     connectedCallback() {
@@ -124,8 +119,11 @@ export class AonImageEditor extends AonElement {
             });
 
             const croppedImageUrl = canvas.toDataURL('image/jpeg');
-            this.querySelector('#cropped-image').src = croppedImageUrl;
-            this.querySelector('#result-container').style.display = 'block';
+            const base64 = croppedImageUrl.replace(/^data:image\/?[A-z]*;base64,/);
+            this.dispatchEvent(new CustomEvent(EVENT.CROPPER));
+
+            // this.querySelector('#cropped-image').src = croppedImageUrl;
+            // this.querySelector('#result-container').style.display = 'block';
             this.closeCropper();
         }
     }
@@ -136,6 +134,14 @@ export class AonImageEditor extends AonElement {
             this.cropper.destroy();
             this.cropper = null;
         }
+    }
+
+    getImage() {
+        return this.image;
+    }
+
+    setImage(image) {
+        this.image = image;
     }
 }
 

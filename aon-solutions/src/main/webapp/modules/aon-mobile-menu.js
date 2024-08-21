@@ -104,7 +104,11 @@ export class AonMobileMenu extends AonElement {
         if(this.isBeta()) {
           getReader(files[0]).then(file => {
             let editor = new AonImageEditor();
-            editor.image = "data:image/jpeg;base64,"+ file.content;
+            editor.setImage("data:image/jpeg;base64,"+ file.content);
+            editor.addEventListener(EVENT.CROPPER, (e) => {
+                alert("RECORTADA!!");
+               // SUBIR IMAGEN RECORTADA A S3;
+            });
             this.rootPanel(editor);
           }).catch(()=>null);
         } else {
@@ -330,7 +334,11 @@ export class AonMobileMenu extends AonElement {
             let ionicData = { action: MOBILE_ACTION.CAMERA, id: this.INPUT_CAMERA, selector: 'aon-new-mobile-menu' };
             openCamera(ionicData, (result) => {
               let editor = new AonImageEditor();
-              editor.image = "data:image/jpeg;base64,"+result.photo;
+              editor.setImage("data:image/jpeg;base64,"+ result.photo);
+              editor.addEventListener(EVENT.CROPPER, (e) => {
+                alert("RECORTADA!!");
+                // SUBIR IMAGEN RECORTADA A S3;
+              });
               this.rootPanel(editor);
             });
           } else this.openCamera("invoice");
@@ -517,7 +525,11 @@ export class AonMobileMenu extends AonElement {
     } else {
         if(this.isBeta()) {
           let editor = new AonImageEditor();
-          editor.image = "data:image/jpeg;base64,"+ file.content;
+          editor.setImage("data:image/jpeg;base64,"+ file.content);
+          editor.addEventListener(EVENT.CROPPER, (e) => {
+            alert("RECORTADA!!");
+            // SUBIR IMAGEN RECORTADA A S3;
+          });
           this.rootPanel(editor); 
         } else {
           uploadInvoice(file).then(f=>{
