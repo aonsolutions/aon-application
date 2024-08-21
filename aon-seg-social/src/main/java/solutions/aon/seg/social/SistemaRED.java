@@ -10,11 +10,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-import javax.xml.transform.TransformerException;
-
 import org.htmlunit.FailingHttpStatusCodeException;
 
-import solutions.aon.seg.social.Calculations.CalcCallback;
 import solutions.aon.seg.social.exception.ForbiddenException;
 import solutions.aon.seg.social.exception.InvalidCertificateException;
 import solutions.aon.seg.social.exception.SegSocialException;
@@ -729,6 +726,11 @@ public class SistemaRED {
 	public static Collection<SecondaryUser> getSecondaryUsers(final InputStream certificateInputStream,
 			final String certificatePassword, final String certificateType) throws SegSocialException {
 		return ServicioREDSecondaryUser.getSecondaryUsers(certificateInputStream, certificatePassword, certificateType);
+	}
+	
+	public static byte[] getSecondaryUsersPDF(final InputStream certificateInputStream,
+			final String certificatePassword, final String certificateType) throws SegSocialException, IOException {
+		return ServicioREDSecondaryUser.getSecondaryUsersPDF(certificateInputStream, certificatePassword, certificateType);
 	}
 
 	public static Collection<SecondaryUser> getSecondaryUsers(final byte[] certificateData,
