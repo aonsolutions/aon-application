@@ -3417,6 +3417,17 @@ label.rating:hover {
 .notificationPanelRowSubDiv3{
   font-size: 0.8rem;
   color: rgba (0,0,0,0.61);
+  margin-bottom: 3px;
+}
+
+.notificationPanelRowNoti {
+  font-size: 28px;
+  position: relative;
+  margin-top: 12px;
+  margin-right: 23px;
+  left: 6px;
+  font-family: 'Material Icons';
+  color: grey;
 }
 
 .notificationPanelRowSpan{
