@@ -477,6 +477,10 @@ public class DomainEnterprisesServiceAsync {
 		enterprisesServiceAsync.getSecondaryUsers(getCurrentDomainName(), getCurrentUser(), rattachId, asyncCallback);
 	}
 	
+	public void getSecondaryUsersPDF(Integer rattachId, AsyncCallback<String> asyncCallback) throws IllegalArgumentException {
+		enterprisesServiceAsync.getSecondaryUsersPDF(getCurrentDomainName(), getCurrentUser(), rattachId, asyncCallback);
+	}
+	
 	public void deleteSecondaryUser(Integer rattachId, String ipfType, String ipf, AsyncCallback<Void> asyncCallback) {
 		enterprisesServiceAsync.deleteSecondaryUser(getCurrentDomainName(), getCurrentUser(), rattachId, ipfType, ipf, asyncCallback);
 	}

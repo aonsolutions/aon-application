@@ -1,5 +1,7 @@
 package solutions.aon.seg.social;
 
+import static solutions.aon.seg.social.exception.StatusCodeException.HandleStatusCodeException;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -16,11 +18,24 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.ssl.SSLContexts;
+import org.htmlunit.FailingHttpStatusCodeException;
+import org.htmlunit.StringWebResponse;
+import org.htmlunit.UnexpectedPage;
+import org.htmlunit.WebClient;
+import org.htmlunit.WebRequest;
+import org.htmlunit.WebResponse;
+import org.htmlunit.html.HtmlAnchor;
+import org.htmlunit.html.HtmlElement;
+import org.htmlunit.html.HtmlInput;
+import org.htmlunit.html.HtmlPage;
+import org.htmlunit.html.HtmlSubmitInput;
+import org.htmlunit.xml.XmlPage;
 import org.xml.sax.SAXException;
 
 import solutions.aon.seg.social.exception.InvalidCertificateException;
 import solutions.aon.seg.social.exception.SegSocialException;
 import solutions.aon.seg.social.object.SecondaryUser;
+import solutions.aon.seg.social.toolkit.HtmlUnitToolkit;
 import solutions.aon.seg.social.toolkit.Toolkit;
 
 public class ServicioREDSecondaryUser extends ServicioREDRegeXML {
@@ -96,6 +111,82 @@ public class ServicioREDSecondaryUser extends ServicioREDRegeXML {
 			throw new SegSocialException(e.getMessage());
 		}
 		return list;
+	}
+	
+	public static byte[] getSecondaryUsersPDF(final InputStream certificateInputStream, final String certificatePassword, final String certificateType) throws SegSocialException, IOException{
+//		try (WebClient webClient = HtmlUnitToolkit.getWebClient(certificateInputStream, certificatePassword, certificateType)) {
+		
+		byte[] certificateData = certificateInputStream.readAllBytes();
+		
+		try (WebClient webClient = HtmlUnitToolkit.getWebClient(certificateData, certificatePassword, certificateType);
+				/*WebConnectionWrapper wrapper = HtmlUnitToolkit.transformXmlPage(webClient, certificateData, certificatePassword, certificateType, Collections.emptyMap(), ServicioREDSecondaryUser::skipDateFormatError)*/) {
+				
+			webClient.getOptions().setUseInsecureSSL(true);
+			webClient.getOptions().setRedirectEnabled(true);
+			webClient.getOptions().setJavaScriptEnabled(true);
+			
+			XmlPage xmlPage = webClient.getPage("https://w2.seg-social.es/ProsaInternet/OnlineAccess?ARQ.SPM.ACTION=LOGIN&ARQ.SPM.APPTYPE=SERVICE&ARQ.IDAPP=XV24P003");
+			HtmlPage document = HtmlUnitToolkit.transformXmlPage(xmlPage);
+			
+			HtmlInput sitUsuSec = document.querySelector("#sitUsuSec_1");
+			sitUsuSec.click();
+			webClient.waitForBackgroundJavaScript(10000);
+			
+			document = HtmlUnitToolkit.selectOption(document, "situacion", "T");
+			webClient.waitForBackgroundJavaScript(10000);
+			
+			// Al elegir la situacion se actualizan los valores de este input, pero no carga nada...
+			document = HtmlUnitToolkit.selectOption(document, "sitActUsuari", "T");
+			
+			document = HtmlUnitToolkit.selectOption(document, "tipImpresio", "O");
+			
+			HtmlSubmitInput continueButton = document.querySelector("#INFORME");
+
+			// Check if we have more than one CCC for this person
+			try {
+				document = continueButton.click();
+				
+				// Check table
+				HtmlAnchor docButton = document.querySelector("section#SECCION_1 a");
+				
+				if(docButton != null)
+					return getPDFDocument(docButton);
+				else
+					return null;
+				
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			
+		} catch (FailingHttpStatusCodeException e) {
+			HandleStatusCodeException(e);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
+	private static byte[] getPDFDocument(HtmlElement linkElement) throws IllegalArgumentException {
+		try {
+			UnexpectedPage docPage = linkElement.click();
+			return docPage.getWebResponse().getContentAsStream().readAllBytes();
+		} catch (IOException e) {
+			// Exception
+			throw new IllegalArgumentException(e.getMessage());
+		}
+	}
+	
+	private static WebResponse skipDateFormatError (WebRequest request, WebResponse response) {
+		
+		if ( request.getUrl().getFile().endsWith("prosa.min.js")) {
+			String content = response.getContentAsString();
+			//content = content.replaceAll("a\s*=\s*E\\(.*msgErrorFormaFecha.*dd/mm/aaaa\"\\)\\]\\)", "a=!0");
+			content = content.replaceAll("\"chrome\"", "\":-o\"");
+			return new StringWebResponse(content, request.getUrl());
+		}
+		
+		return response;
+		
 	}
 	
 	

@@ -19,6 +19,9 @@ public class AonDialog extends AonCustomDialog {
 	interface AonDialogUiBinder extends	UiBinder<Widget, AonDialog> {}
 	
 	@UiField
+	HTMLPanel toolbar;
+	
+	@UiField
 	ScrollPanel scrollPanel;
 	
 	@UiField
@@ -62,6 +65,10 @@ public class AonDialog extends AonCustomDialog {
  		this.cancelButton.setText(btnText);
  	}
 	
+ 	public void removeMaxWidth() {
+ 		toolbar.getElement().getStyle().setProperty("max-width", "max-content");
+ 	}
+ 	
 	private void showDialog() {
 		// Show center
 		Scheduler.get().scheduleDeferred(new ScheduledCommand() {

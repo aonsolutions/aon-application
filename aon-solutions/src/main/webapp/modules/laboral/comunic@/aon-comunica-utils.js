@@ -225,12 +225,14 @@ export class AonComunicaUtils extends AonElement {
           break;
         case PAYROLL_VIEWS.AON_CERT:
           this.loadGwt(GWT.MAIN_DIGITAL_CERTIFICATES);
+          this.getApplication().closeSidenav();
           break;
         case PAYROLL_VIEWS.AON_CTA_LIST:
           if (this.isMobile()) 
             aonView = new AonCtaList();
           else 
             this.loadGwt(GWT.MAIN_CCC);
+            this.getApplication().closeSidenav();
           break;
         case PAYROLL_VIEWS.AON_MOVEMENTS_LIST:
           aonView = new AonMovementsList();
@@ -302,10 +304,20 @@ export class AonComunicaUtils extends AonElement {
 
     GWT.iLoad(module, application.CONTENT);
 
+    waitEl(`#${application.CONTENT} iframe`).finally(() => {
+      this.fixBackgroundColor();
+    });
+
     waitEl(`#${application.CONTENT} .aon_toolbar`).finally(() => {
       application.stopLoader();
       this.fixSpacing();
     });
+  }
+
+  fixBackgroundColor(){
+    let application = this.getApplication();
+    let iframe = document.querySelector(`#${application.CONTENT} iframe`);
+    iframe.contentWindow.document.body.style.backgroundColor = "transparent";
   }
 
   fixSpacing() {

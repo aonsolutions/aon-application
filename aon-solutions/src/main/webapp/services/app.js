@@ -114,7 +114,7 @@ export const PAYROLL = {
   symbol: MATERIAL_ICONS.GROUP,
   color: "var(--aonPayroll)",
   // newColor: "var(--aonPayroll)",
-  backgroundColor: 'var(--aonPayroll)',
+  backgroundColor: 'var(--aonPayrollBackground)',
   hover: 'aonPayrollHover',
   access: [
     {
