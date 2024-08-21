@@ -13,6 +13,7 @@
   --aonGray: gray;
   --aonHeaderButtonColor: rgb(95, 99, 104);
   --aonLightGray: #f1f1f1;
+  --aonLightGray2: #f6f6f6;
   --aonDarkGray: #5F6368;
   --aonBlack: #212529;
   --aonWhite: #ffffff;
@@ -441,7 +442,7 @@
 }
 
 .sidenavHover:hover{
-  background-color: var(--aonLightBlue);
+  background-color: var(--aonLightGray2);
 }
 
 
@@ -725,8 +726,7 @@
 }
 
 .aonTable tbody tr:hover {
-  /* background-color: var(--aonLightGray); */
-  background-color: var(--aonLightBlue);
+  background-color: var(--aonLightGray);
 }
 
 .aonTable tbody tr:active {
@@ -948,8 +948,14 @@
   margin: 0;
   padding: 0 26px;
   cursor: pointer;
-  border-radius: 20px;
+  border-top-right-radius: 50px;
+  border-bottom-right-radius: 50px;
 }
+
+.aonAppMenuSidenavListSelected {
+	font-weight: bold;
+	background-color: #f6f6f6;
+}   
 
 .aonAppMenuSidenavListBeta {
   line-height: 30px;
