@@ -1,5 +1,5 @@
 import {AonElement} from '../components/AonElement.js';
-import {closeSession, getTimeControl, saveTimeControl, clearDurum, getDomainUserRoles} from  '../services/service.js';
+import {closeSession, getTimeControl, saveTimeControl, clearDurum, getDomainUserRoles, getOneNotification, getNotification} from  '../services/service.js';
 import {getPosition} from '../services/maps.js';
 
 import '../components/aon-dialog-menu.js';
@@ -184,14 +184,22 @@ export class AonHeader extends AonElement {
 		let aonHeaderNotiication = this.createElement(TAG.SPAN);
 		aonHeaderNotiication.id = this.AON_HEADER_NOTIFICATION;
 		aonHeaderNotiication.title = MSG.NOTIFICATIONS;
-		if(this.newTheme){
-			let aonHeaderNotificationButton = new AonIconButton();
-			aonHeaderNotificationButton.id = 'aonHeaderNotificationButton';
-			aonHeaderNotificationButton.icon = "notifications";
-			aonHeaderNotiication.appendChild(aonHeaderNotificationButton);
-		}else
-			aonHeaderNotiication.appendChild(new AonNotificationIcon());
 
+		let aonHeaderNotificationButton = new AonIconButton();
+		aonHeaderNotificationButton.id = 'aonHeaderNotificationButton';
+		aonHeaderNotificationButton.icon = "notifications";
+		aonHeaderNotiication.appendChild(aonHeaderNotificationButton);
+		this.getData().then(n => {
+			if(n.length > 0){
+				let aonUnread = this.createElement('div');
+				aonUnread.id = this.BASE_ID + 'Unread';
+				aonUnread.className = 'aonConnected';
+				aonUnread.style.backgroundColor = "red";
+
+				let aonHeaderNotificationButtonIconButton = this.getElement('aonHeaderNotificationButtonIconButton');
+				aonHeaderNotificationButtonIconButton.appendChild(aonUnread);
+			}
+		});
 		aonHeaderButtons.appendChild(aonHeaderNotiication);
 
 		let aonHeaderUser = this.createElement(TAG.SPAN)
@@ -772,6 +780,10 @@ export class AonHeader extends AonElement {
 		else 
 			this.getElement(elementId).style.display = 'none';
 	}
+
+	getData() {
+        return getNotification({page:1, perPage:1, status:"unread"});
+    }
 	
 
 }
