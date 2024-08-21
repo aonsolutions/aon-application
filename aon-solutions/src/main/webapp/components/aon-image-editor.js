@@ -1,11 +1,16 @@
 import { AonElement } from './AonElement.js';
-import { CONSTANT, TAG } from "../environments/environments.js";
+import { EVENT, CONSTANT, TAG } from "../environments/environments.js";
 import Cropper from 'cropperjs';
-// import 'cropperjs/dist/cropper.min.css';
+import 'cropperjs/dist/cropper.min.css';
+import '../css/aon-image-editor.css';
+import { AonIconButton } from './aon-icon-button.js';
 
 export class AonImageEditor extends AonElement {
+    
     IMAGE;
     cropper;
+
+    image;
 
     get id() {
         return this.getAttribute(CONSTANT.ID);
@@ -15,18 +20,9 @@ export class AonImageEditor extends AonElement {
         this.setAttribute(CONSTANT.ID, id);
     }
 
-    get image() {
-        return this.getAttribute(CONSTANT.IMAGE);
-    }
-
-    set image(image) {
-        this.setAttribute(CONSTANT.IMAGE, image);
-    }
-
     connectedCallback() {
         this.initialize();
         this.build();
-        this.addEventListeners();
 
         if (this.image) {
             this.loadImage(this.image);
@@ -38,95 +34,35 @@ export class AonImageEditor extends AonElement {
     }
 
     build() {
-        this.innerHTML = `
-            <style>
-                :host {
-                    display: block;
-                    font-family: Arial, sans-serif;
-                    text-align: center;
-                }
+        let imageContainer = this.createDiv("image-container", "aonImageEditorImageContainer");
+        this.appendChild(imageContainer);
 
-                #image-container {
-                    display: none;
-                    position: fixed;
-                    top: 0;
-                    left: 0;
-                    width: 100%;
-                    height: 100%;
-                    background: rgba(0, 0, 0, 0.8);
-                    justify-content: center;
-                    align-items: center;
-                    z-index: 1000;
-                }
+        let cropperContainer = this.createDiv("cropper-container", "aonImageEditorCropperContainer");
+        cropperContainer.innerHTML = '<img id="image" />'
+        imageContainer.appendChild(cropperContainer);
 
-                #cropper-container {
-                    position: relative;
-                    background: #fff;
-                    max-width: 90%;
-                    max-height: 80%;
-                    overflow: hidden;
-                }
+        let resultContainer = this.createDiv("result-container", "aonImageEditorResultContainer");
+        resultContainer.innerHTML = '<h2>Imagen Recortada</h2>';
+        this.appendChild(resultContainer);
 
-                #controls {
-                    position: absolute;
-                    bottom: 5x  0px;
-                    left: 0;
-                    right: 0;
-                    display: flex;
-                    justify-content: space-between;
-                    padding: 10px;
-                    background: rgba(255, 255, 255, 0.8);
-                    box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.2);
-                }
+        let img = this.createElement(TAG.IMG, "cropped-image", "aonImageEditorCroppedImage");
+        resultContainer.appendChild(img);    
 
-                #controls button {
-                    flex: 1;
-                    margin: 0 5px;
-                    padding: 10px;
-                    border: none;
-                    border-radius: 5px;
-                    background: #007bff;
-                    color: #fff;
-                    cursor: pointer;
-                    font-size: 16px;
-                    text-align: center;
-                }
+        let span = this.createSpan();
+        span.id = this.id + "FloatSpan";
+        span.style.position = "fixed";
+        span.style.right = "20px";
+        span.style.bottom = this.isSab() ? "80px" : "70px";
 
-                #controls button:hover {
-                    background: #0056b3;
-                }
-
-                #cropped-image {
-                    max-width: 100%;
-                    height: auto;
-                    display: block;
-                    margin: 20px auto;
-                }
-
-                #result-container {
-                    display: none;
-                    text-align: center;
-                }
-            </style>
-            <div id="image-container">
-                <div id="cropper-container">
-                    <img id="image" />
-                </div>
-                <div id="controls">
-                    <button id="crop-btn">Recortar</button>
-                    <button id="close-btn">Cancelar</button>
-                </div>
-            </div>
-            <div id="result-container">
-                <h2>Imagen Recortada</h2>
-                <img id="cropped-image" />
-            </div>
-        `;
-    }
-
-    addEventListeners() {
-        this.querySelector('#crop-btn').addEventListener('click', () => this.cropImage());
-        this.querySelector('#close-btn').addEventListener('click', () => this.closeCropper());
+        let aonIconButton = new AonIconButton();
+        aonIconButton.icon = "check";
+        aonIconButton.id = "crop-btn";
+        aonIconButton.title = "crop";
+        aonIconButton.background = "#f1f1f1";
+        span.appendChild(aonIconButton);
+        this.appendChild(span);
+        
+        aonIconButton.addEventListener("click", () => this.cropImage());
     }
 
     loadBase64Image() {
@@ -183,8 +119,11 @@ export class AonImageEditor extends AonElement {
             });
 
             const croppedImageUrl = canvas.toDataURL('image/jpeg');
-            this.querySelector('#cropped-image').src = croppedImageUrl;
-            this.querySelector('#result-container').style.display = 'block';
+            const base64 = croppedImageUrl.replace(/^data:image\/?[A-z]*;base64,/);
+            this.dispatchEvent(new CustomEvent(EVENT.CROPPER));
+
+            // this.querySelector('#cropped-image').src = croppedImageUrl;
+            // this.querySelector('#result-container').style.display = 'block';
             this.closeCropper();
         }
     }
@@ -195,6 +134,14 @@ export class AonImageEditor extends AonElement {
             this.cropper.destroy();
             this.cropper = null;
         }
+    }
+
+    getImage() {
+        return this.image;
+    }
+
+    setImage(image) {
+        this.image = image;
     }
 }
 
