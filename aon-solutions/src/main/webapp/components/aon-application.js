@@ -792,7 +792,7 @@ export class AonApplication extends AonElement {
           });
 
           li.classList.add(CSS.AON_APP_MENU_SIDENAV_LIST_SELECTED);
-          li.style.borderLeft = '2px solid ' + data.app.color
+          li.style.borderLeft = '2px solid ' + (data.app ? data.app.color : 'black');
 
           this.selected = id;
           let toolbar = this.getElement(this.TOOLBAR);
