@@ -42,6 +42,8 @@ export class AonConfig extends AonElement {
 
 	build() {
 
+		let noti = this.getElement("aonRightPanelNotificationButtonIcon");
+		noti.style.visibility = "hidden";
 
 		let topNavDiv = this.createDiv();
 		topNavDiv.className = CSS.AON_CONFIG_TOP_NAV;

@@ -129,7 +129,7 @@ export class AonNotificationPanel extends AonElement {
         }else{
             let noti = this.createElement(TAG.SPAN);
             noti.className = "material-icons notificationPanelRowNoti";
-            noti.innerHTML = "notifications";
+            noti.innerHTML = "volume_down";
             divGeneral.appendChild(noti);
         }
 
@@ -142,18 +142,18 @@ export class AonNotificationPanel extends AonElement {
         subDiv1.classList.add("notificationPanelRowSubDiv1");
         subDiv1.title = res.title;
         subDiv1.innerHTML = res.title;
-        div.appendChild(subDiv1);
 
         let subDiv2 = this.createDiv();
         subDiv2.classList.add("notificationPanelRowSubDiv2");
         subDiv2.title = res.body;
         subDiv2.innerHTML = res.body;
-        div.appendChild(subDiv2);
-
+        
         let subDiv3 = this.createDiv();
         subDiv3.classList.add("notificationPanelRowSubDiv3");
-        subDiv3.innerHTML = firstLetters(AonDateUtils.setFullDate(res.date)) + " " + AonDateUtils.setTime(res.date);
-        div.appendChild(subDiv3);   
+        subDiv3.innerHTML = firstLetters(this.formatDate(res));
+        div.appendChild(subDiv1);   
+        div.appendChild(subDiv3);
+        div.appendChild(subDiv2);
 
         divGeneral.appendChild(div);
 
@@ -189,6 +189,44 @@ export class AonNotificationPanel extends AonElement {
         return divPrincipal;
     }
 
+    formatDate(res) {
+        const inputDate = new Date(res.date);
+        const today = new Date();
+        const todayStart = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+        const yesterday = new Date(todayStart);
+        yesterday.setDate(todayStart.getDate() - 1);
+    
+        let dayMonth = AonDateUtils.getDayMonth(inputDate);
+        
+        dayMonth = dayMonth.split(' ');
+        const day = dayMonth[0];
+        const month = dayMonth[1].charAt(0).toUpperCase() + dayMonth[1].slice(1);
+        dayMonth = `${day} de ${month}`;
+    
+        const inputDateStartOfDay = new Date(inputDate.getFullYear(), inputDate.getMonth(), inputDate.getDate());
+    
+        const differenceInTime = todayStart - inputDateStartOfDay;
+        const differenceInDays = Math.ceil(differenceInTime / (1000 * 3600 * 24));
+    
+        if (differenceInDays < 7) {
+            if (differenceInDays === 0) {
+                return `${MSG.TODAY}, ${dayMonth}, ${AonDateUtils.setTime(inputDate)}`;
+            }
+            if (inputDateStartOfDay.toDateString() === yesterday.toDateString()) {
+                return `${MSG.YESTERDAY}, ${dayMonth}, ${AonDateUtils.setTime(inputDate)}`;
+            }
+            return `${AonDateUtils.getDayStr(inputDate)}, ${dayMonth}, ${AonDateUtils.setTime(inputDate)}`;
+        }
+    
+        if (inputDate.getFullYear() === today.getFullYear()) {
+            return `${dayMonth}, ${AonDateUtils.setTime(inputDate)}`;
+        }
+
+        return `${dayMonth} de ${inputDate.getFullYear()}`;
+    }
+    
+
+    
     async loadMore(reload) {
     
        // let application = this.getApplication();
@@ -212,7 +250,7 @@ export class AonNotificationPanel extends AonElement {
 
  
     getData() {
-        return getNotification({page:1, perPage:12, status:"unread"});
+        return getNotification({page:1, perPage:30, status:"unread"});
     }
 
     markReadNotification(res){

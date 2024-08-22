@@ -443,6 +443,7 @@
     overflow: hidden;
     border: 1px solid rgba(0,0,0,0.1);
     visibility: hidden;
+    overflow-y: auto;
 }
 
 h1 {
@@ -3396,7 +3397,7 @@ label.rating:hover {
 }
 
 .notificationPanelRowIcon{
-  margin-top: 5px;
+  margin-top: 12px;
   margin-right: 10px;
 }
 
@@ -3418,6 +3419,7 @@ label.rating:hover {
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
+  padding-bottom: 5px;
 }
 
 .notificationPanelRowSubDiv3{
@@ -3429,7 +3431,7 @@ label.rating:hover {
 .notificationPanelRowNoti {
   font-size: 28px;
   position: relative;
-  margin-top: 12px;
+  margin-top: 20px;
   margin-right: 23px;
   left: 6px;
   font-family: 'Material Icons';
@@ -3440,7 +3442,7 @@ label.rating:hover {
   font-size: 20px;
   cursor: pointer;
   position: relative;
-  top: 18px;
+  top: 25px;
 }
 
 .notificationPanelRowPrincipalDiv:hover{

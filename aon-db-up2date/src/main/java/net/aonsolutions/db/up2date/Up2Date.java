@@ -23,7 +23,7 @@ import net.aonsolutions.db.up2date.config.InsertIAE864;
 import net.aonsolutions.db.up2date.finance.AnnuledInvoiceCreation;
 import net.aonsolutions.db.up2date.fiscal.AlterFsMod2002023;
 import net.aonsolutions.db.up2date.fiscal.AlterFsMod200Registry2023;
-import net.aonsolutions.db.up2date.marketing.AddColumnMarketingActionTag;
+import net.aonsolutions.db.up2date.payroll.AgreementUpdateHideMessage;
 import net.aonsolutions.db.up2date.payroll.CleanDuplicatesPayrollWorkplace;
 import net.aonsolutions.db.up2date.task.AddColumnTaskHolderWorkgroupDatesType;
 import net.aonsolutions.db.up2date.tgss.MEIFellows2024Remove;
@@ -470,7 +470,9 @@ public class Up2Date {
         ElaborationSerialNumberUpdate.ELABORATION_SERIAL_NUMBER_UPDATE,
         
         AddColumnTaskHolderWorkgroupDatesType.ADD_COLUMN_TASK_HOLDER_WORKGROUP_DATES_TYPE,
-        InsertIAE864.INSERT_IAE_864
+        InsertIAE864.INSERT_IAE_864,
+        
+        AgreementUpdateHideMessage.AGREEMENTUPDATEHIDEMESSAGE
 	};
 
     // ------------------------------------------------------------------------
