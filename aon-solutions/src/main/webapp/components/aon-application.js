@@ -978,15 +978,13 @@ export class AonApplication extends AonElement {
       let span = li.querySelector("span");
       if(span){
         let name = span.title;
-        let fontWeight = "normal";
         let text = name;
         span.dataset.count = count;
         if(count) {
           text = name + " (" + count + ")";
-          fontWeight = "bold";
+          span.style.fontWeight = 'bold';
         } 
         span.innerHTML = text;
-        span.style.fontWeight = fontWeight;
       }
     }
   }

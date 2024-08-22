@@ -48,7 +48,8 @@
 	--aonTopMenuNotAvailable : var(--aonGray);
 	--aonTopMenuSpecial: var(--aonClearBlue);
 
-	--aonNote: rgb(255, 192, 0);
+	--aonNote: #ffc000;
+	
   
 	--aonInvoice: var(--aonClearBlue);
 	--aonInvoiceBackground: #ebf2ff;

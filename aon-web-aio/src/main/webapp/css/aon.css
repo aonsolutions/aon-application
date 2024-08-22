@@ -48,7 +48,7 @@
   --aonTopMenuNotAvailable : var(--aonGray);
   --aonTopMenuSpecial: var(--aonBlack);
 
-  --aonNote: rgb(255, 192, 0);
+  --aonNote: #ffc000;
   
 	--aonInvoice: var(--aonClearBlue);
 	--aonInvoiceBackground: #ebf2ff;
@@ -1149,7 +1149,7 @@ h1 {
 
 .aonAppMenuSidenavListSelected {
 	font-weight: bold;
-	background-color: #f6f6f6;
+	background-color: var(--aonLightGray);
 }   
 
 .aonAppMenuSidenavListBeta {
