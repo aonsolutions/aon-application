@@ -2767,7 +2767,7 @@ label.rating:hover {
 
 .aonHeaderStart,
 .aonMenuLeftopStart{
-	background-color: var(--aonLightGray);
+	background-color: var(--aonHeaderBackgroundColor);
 }
 
 
@@ -3088,7 +3088,7 @@ label.rating:hover {
 #payrollMenu:hover,
 #marketingMenu:hover,
 #aonApplication:hover {
-  background-color: white;
+  background-color: var(--aonCardColor);
   /*transition: background-color 0.2s;*/
 }
 
