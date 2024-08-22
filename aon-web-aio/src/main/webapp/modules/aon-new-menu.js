@@ -398,7 +398,7 @@ export class AonNewMenu extends AonElement {
 	
 		return appDiv;
 	}
-
+	
 	showTopNav() {	
 		let topnav = this.getElement(this.AON_MENU_TOPNAV);
 		let rootPanel = this.getElement("rootPanel");
@@ -430,6 +430,11 @@ export class AonNewMenu extends AonElement {
 		rootPanel.style.height = `calc(100vh - 50px)`;
 	}
 
+	isTopNavVisible() {
+		let topnav = this.getElement(this.AON_MENU_TOPNAV);
+		return topnav.style.height == '68px';
+	}
+
 	showSideNav() {
 		if(LS.isTopMenu())
 			this.reloadTopNav();
@@ -441,7 +446,6 @@ export class AonNewMenu extends AonElement {
 		let icon = this.getElement("aonMenuLeftop");
 
 		sidenav.style.width = '68px';
-		sidenav.style.marginTop = '7px';
 		sidenav.style.display = "";
 		
 		menulist.style.visibility = "visible";
