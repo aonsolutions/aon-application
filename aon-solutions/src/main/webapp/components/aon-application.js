@@ -792,7 +792,7 @@ export class AonApplication extends AonElement {
           });
 
           li.classList.add(CSS.AON_APP_MENU_SIDENAV_LIST_SELECTED);
-          li.style.borderLeft = '2px solid ' + data.app.color
+          li.style.borderLeft = '2px solid ' + (data.app ? data.app.color : 'black');
 
           this.selected = id;
           let toolbar = this.getElement(this.TOOLBAR);
@@ -978,15 +978,13 @@ export class AonApplication extends AonElement {
       let span = li.querySelector("span");
       if(span){
         let name = span.title;
-        let fontWeight = "normal";
         let text = name;
         span.dataset.count = count;
         if(count) {
           text = name + " (" + count + ")";
-          fontWeight = "bold";
+          span.style.fontWeight = 'bold';
         } 
         span.innerHTML = text;
-        span.style.fontWeight = fontWeight;
       }
     }
   }

@@ -40,7 +40,7 @@
 	content: 'Accede a tu cuenta de AON';
 }
 
-
+/*
 .aonMenuSidenav{
 	--aonNote: rgb(255, 228, 104);
 }
@@ -51,9 +51,9 @@
 	--aonNote: rgb(255, 248, 184);
 }
 
-.aonHeaderNote {
+ .aonHeaderNote {
 	--aonIcon: rgb(95, 99, 104);
-}
+} 
 
 
 #aon-notesSidenav {
@@ -69,6 +69,7 @@
 .aonMenuLeftopNote .material-symbols-outlined {
   color: rgb(95, 99, 104);
 }
+*/
 
 #aon-notesSidenav .material-icons {
 	--aonNote: rgb(95, 99, 104);
