@@ -441,11 +441,12 @@ export class AonNewMenu extends AonElement {
 		let icon = this.getElement("aonMenuLeftop");
 
 		sidenav.style.width = '68px';
+		sidenav.style.marginTop = '7px';
 		sidenav.style.display = "";
 		
 		menulist.style.visibility = "visible";
 		
-		aonlogo.style.left = '52px';
+		aonlogo.style.left = '60px';
 		aonlogo.style.position = 'relative';
 
 		icon.style.visibility = "visible";
@@ -466,7 +467,7 @@ export class AonNewMenu extends AonElement {
 		sidenav.style.display = "none";
 		aonlogo.style.position = "relative";
 		// icon.style.visibility = "hidden";
-		aonlogo.style.left = '52px';
+		aonlogo.style.left = '60px';
 	
 		rootPanel.style.marginLeft = '0px';
 		//menulist.style.visibility = "hidden";
