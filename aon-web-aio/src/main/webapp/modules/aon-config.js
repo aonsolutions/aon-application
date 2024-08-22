@@ -55,7 +55,7 @@ export class AonConfig extends AonElement {
 		
 		let topNavSwitch = new AonSwitch();
 		topNavSwitch.id = this.TOP_NAV_SWITCH;
-		topNavSwitch.checked = LS.isTopMenu();
+		topNavSwitch.checked = aonMenu.isTopNavVisible();
 		topNavDiv.appendChild(topNavSwitch);
 
 		this.appendChild(topNavDiv);
