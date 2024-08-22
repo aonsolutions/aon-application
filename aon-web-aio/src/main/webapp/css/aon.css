@@ -13,6 +13,7 @@
   --aonSelectedBlue: #d3e3fd;
   --aonGray: gray;
   --aonLightGray: #f1f1f1;
+  --aonLightGray2: #f6f6f6;
   --aonDarkGray: #5F6368;
   --aonBlack: #212529;
   --aonWhite: #ffffff;
@@ -591,7 +592,7 @@ h1 {
 }
 
 .sidenavHover:hover{
-  background-color: var(--aonLightBlue);
+  background-color: var(--aonLightGray2);
 }
 
 
@@ -864,12 +865,11 @@ h1 {
 }
 
 .aonTableTrChecked {
-	background-color: aliceblue;
+	background-color: var(--aonLightGray);
   }
 
 .aonTable tbody tr:hover {
-  /* background-color: var(--aonLightGray); */
-  background-color: var(--aonLightBlue);
+  background-color: var(--aonLightGray);
 }
 
 .aonTable tbody tr:active {
@@ -1143,8 +1143,14 @@ h1 {
   margin: 0;
   padding: 0 26px;
   cursor: pointer;
-  border-radius: 20px;
+  border-top-right-radius: 50px;
+  border-bottom-right-radius: 50px;
 }
+
+.aonAppMenuSidenavListSelected {
+	font-weight: bold;
+	background-color: #f6f6f6;
+}   
 
 .aonAppMenuSidenavListBeta {
   line-height: 30px;
@@ -3369,7 +3375,7 @@ label.rating:hover {
 }
 
 .notificationPanelGeneralDiv{
-  margin-top: -40px;
+  margin-top: -55px;
 }
 
 .notificationPanelAllDiv{
@@ -3377,12 +3383,8 @@ label.rating:hover {
   position: relative;
   padding: 9px;
   width: 97px;
-  top: -20px;
-  left: 172px;
-}
-
-.notificationPanelAllDiv:hover{
-  background-color: rgba(225,225,227,1);
+  top: -8px;
+  left: 217px;
 }
 
 .notifcationPanelRowGeneralDiv{
@@ -3395,7 +3397,9 @@ label.rating:hover {
 
 .notificationPanelRowIcon{
   margin-top: 5px;
+  margin-right: 10px;
 }
+
 
 .notificationPanelRowDiv{
   width: 70%;
@@ -3403,6 +3407,7 @@ label.rating:hover {
   display: flex;
   flex-direction: column;
   row-gap: 4px;
+  margin-right: 25px;
 }
 
 .notificationPanelRowSubDiv1{
@@ -3418,6 +3423,17 @@ label.rating:hover {
 .notificationPanelRowSubDiv3{
   font-size: 0.8rem;
   color: rgba (0,0,0,0.61);
+  margin-bottom: 3px;
+}
+
+.notificationPanelRowNoti {
+  font-size: 28px;
+  position: relative;
+  margin-top: 12px;
+  margin-right: 23px;
+  left: 6px;
+  font-family: 'Material Icons';
+  color: grey;
 }
 
 .notificationPanelRowSpan{

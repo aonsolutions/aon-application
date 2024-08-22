@@ -271,6 +271,8 @@ public interface EnterprisesService extends RemoteService {
 
 	List<SecondaryUserCertificate> getSecondaryUsers(String currentDomainName, String currentUser, Integer rattachId) throws IllegalArgumentException;
 
+	String getSecondaryUsersPDF(String currentDomainName, String currentUser, Integer rattachId) throws IllegalArgumentException;
+
 	void deleteSecondaryUser(String currentDomainName, String currentUser, Integer rattachId, String ipfType, String ipf);
 
 	void createSecondaryUser(String currentDomainName, String currentUser, Integer rattachId, String ipfType, String ipf, String naf);

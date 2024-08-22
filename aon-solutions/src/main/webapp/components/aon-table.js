@@ -219,6 +219,7 @@ export class AonTable extends AonElement {
             this.selected.push(value);
           tr.className = "aonTableTr aonTableTrChecked";
         } else {
+          tr.classList.remove("aonTableTrChecked");
           this.selected.forEach((item, i) => {
             if (item == value) {
               this.selected.splice(i, 1);

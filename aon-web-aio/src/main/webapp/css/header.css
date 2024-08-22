@@ -196,7 +196,8 @@ img[src*='LineSeparatorImage'] {
 	border-top: none;
 	border-left: none;
 	border-right: none;
-	border-bottom: 2px solid #fff;
+	/*border-bottom: 2px solid #fff;*/
+	border-bottom: 2px solid transparent;
 }
 .gwt-Selector .gwt-TabLayoutPanel .gwt-TabLayoutPanelTab-selected {
 	color : #000;
@@ -211,7 +212,8 @@ img[src*='LineSeparatorImage'] {
 
 .gwt-Selector .gwt-TabLayoutPanel .gwt-TabLayoutPanelTabs {
 	padding-top: 5px;
-	border-bottom: 2px solid #fff;
+	/*border-bottom: 2px solid #fff;*/
+	border-bottom: 2px solid transparent;
 }
 
 

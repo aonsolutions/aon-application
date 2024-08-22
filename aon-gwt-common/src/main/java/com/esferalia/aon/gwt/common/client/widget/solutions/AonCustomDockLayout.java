@@ -18,6 +18,7 @@ public class AonCustomDockLayout extends DockLayoutPanel {
 	// Toolbar
 	private HTMLPanel toolbarButtonsRight = new HTMLPanel(EMPTY_STRING);
 	private TextBox searchTextBox = new TextBox();
+	private HTMLPanel searchPanel = new HTMLPanel(EMPTY_STRING);
 	private AonToolbarButton filterButton = new AonToolbarButton("Filtros", AON.CSS.aonIconFilterList());
 	
 	// Right Menu
@@ -64,7 +65,6 @@ public class AonCustomDockLayout extends DockLayoutPanel {
 		HTMLPanel toolbarRight = new HTMLPanel(EMPTY_STRING);
 		toolbarRight.addStyleName(AON.CSS.aonItemFlex());
 		
-		HTMLPanel searchPanel = new HTMLPanel(EMPTY_STRING);
 		searchPanel.setStyleName(AON.CSS.aonCustomSearchBox());
 		
 		AonTableButton searchButton = new AonTableButton("Buscar", AON.CSS.aonIconSearch());
@@ -100,6 +100,14 @@ public class AonCustomDockLayout extends DockLayoutPanel {
 	
 	public TextBox getSearchTextBox() {
 		return searchTextBox;
+	}
+	
+	public void hideSearchWidget() {
+		searchPanel.setVisible(false);
+	}
+	
+	public void hideFilterWidget() {
+		filterButton.setVisible(false);
 	}
 	
 	// Right menu
