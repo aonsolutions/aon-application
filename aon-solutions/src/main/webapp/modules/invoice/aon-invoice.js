@@ -2711,6 +2711,7 @@ export class AonInvoice extends AonElement {
 	}
 
 	acceptInvoice() {
+		if(!this.isInvofoxInvoice() && this.getInvoice().isEmitida()) this.getInvoice().setReference(undefined);
 		if(this.invoice.isEmitida() && this.configuration.tbai.active) {
 			let d = this.getApplication().getDialog();
 			d.clear();

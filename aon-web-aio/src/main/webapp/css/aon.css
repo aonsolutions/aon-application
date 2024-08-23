@@ -13,6 +13,7 @@
   --aonSelectedBlue: #d3e3fd;
   --aonGray: gray;
   --aonLightGray: #f1f1f1;
+  --aonLightGray2: #f6f6f6;
   --aonDarkGray: #5F6368;
   --aonBlack: #212529;
   --aonWhite: #ffffff;
@@ -47,21 +48,21 @@
   --aonTopMenuNotAvailable : var(--aonGray);
   --aonTopMenuSpecial: var(--aonBlack);
 
-  --aonNote: rgb(255, 192, 0);
+  --aonNote: #ffc000;
   
 	--aonInvoice: var(--aonClearBlue);
 	--aonInvoiceBackground: #ebf2ff;
   
-	--aonDocumental: #EF6292;
+	--aonDocumental: #75163F; /* #EF6292;*/
 	--aonDocumentalBackground: #fdedf2;
   
-	--aonPayroll: #33A9A9;
+	--aonPayroll: #e2001a; /* #33A9A9;*/
 	--aonPayrollBackground: #e8f5f5;
   
 	--aonFiscal: #FB982E;
 	--aonFiscalBackground: #fef3e7;
   
-	--aonMessenger: rgb(134, 211, 100);
+  --aonMessenger: #33A9A9; /* #f6655a;	--aonMessenger: rgb(134, 211, 100); */
 	--aonMessengerBackground: #feedec;
   
 	--aonTimecontrol: #D1C36D;
@@ -442,6 +443,7 @@
     overflow: hidden;
     border: 1px solid rgba(0,0,0,0.1);
     visibility: hidden;
+    overflow-y: auto;
 }
 
 h1 {
@@ -591,7 +593,7 @@ h1 {
 }
 
 .sidenavHover:hover{
-  background-color: var(--aonLightBlue);
+  background-color: var(--aonLightGray2);
 }
 
 
@@ -864,12 +866,11 @@ h1 {
 }
 
 .aonTableTrChecked {
-	background-color: aliceblue;
+	background-color: var(--aonLightGray);
   }
 
 .aonTable tbody tr:hover {
-  /* background-color: var(--aonLightGray); */
-  background-color: var(--aonLightBlue);
+  background-color: var(--aonLightGray);
 }
 
 .aonTable tbody tr:active {
@@ -1143,8 +1144,14 @@ h1 {
   margin: 0;
   padding: 0 26px;
   cursor: pointer;
-  border-radius: 20px;
+  border-top-right-radius: 50px;
+  border-bottom-right-radius: 50px;
 }
+
+.aonAppMenuSidenavListSelected {
+	font-weight: bold;
+	background-color: var(--aonLightGray);
+}   
 
 .aonAppMenuSidenavListBeta {
   line-height: 30px;
@@ -2760,7 +2767,7 @@ label.rating:hover {
 
 .aonHeaderStart,
 .aonMenuLeftopStart{
-	background-color: var(--aonLightGray);
+	background-color: var(--aonHeaderBackgroundColor);
 }
 
 
@@ -3081,8 +3088,12 @@ label.rating:hover {
 #payrollMenu:hover,
 #marketingMenu:hover,
 #aonApplication:hover {
-  background-color: white;
+  background-color: var(--aonCardColor);
   /*transition: background-color 0.2s;*/
+}
+
+#home {
+  margin-top: 11px;
 }
 
 #aonHeaderCompanyList:hover,
@@ -3186,7 +3197,7 @@ label.rating:hover {
 
 .rightPanelCloseButton{
   cursor: pointer;
-  position: fixed;
+  position: absolute;
   right: 10px;
   margin-top: 8px;
 }
@@ -3369,7 +3380,7 @@ label.rating:hover {
 }
 
 .notificationPanelGeneralDiv{
-  margin-top: -40px;
+  margin-top: -55px;
 }
 
 .notificationPanelAllDiv{
@@ -3377,12 +3388,8 @@ label.rating:hover {
   position: relative;
   padding: 9px;
   width: 97px;
-  top: -20px;
-  left: 172px;
-}
-
-.notificationPanelAllDiv:hover{
-  background-color: rgba(225,225,227,1);
+  top: -8px;
+  left: 217px;
 }
 
 .notifcationPanelRowGeneralDiv{
@@ -3394,8 +3401,10 @@ label.rating:hover {
 }
 
 .notificationPanelRowIcon{
-  margin-top: 5px;
+  margin-top: 12px;
+  margin-right: 10px;
 }
+
 
 .notificationPanelRowDiv{
   width: 70%;
@@ -3403,6 +3412,7 @@ label.rating:hover {
   display: flex;
   flex-direction: column;
   row-gap: 4px;
+  margin-right: 25px;
 }
 
 .notificationPanelRowSubDiv1{
@@ -3413,18 +3423,30 @@ label.rating:hover {
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
+  padding-bottom: 5px;
 }
 
 .notificationPanelRowSubDiv3{
   font-size: 0.8rem;
   color: rgba (0,0,0,0.61);
+  margin-bottom: 3px;
+}
+
+.notificationPanelRowNoti {
+  font-size: 28px;
+  position: relative;
+  margin-top: 20px;
+  margin-right: 23px;
+  left: 6px;
+  font-family: 'Material Icons';
+  color: grey;
 }
 
 .notificationPanelRowSpan{
   font-size: 20px;
   cursor: pointer;
   position: relative;
-  top: 18px;
+  top: 25px;
 }
 
 .notificationPanelRowPrincipalDiv:hover{

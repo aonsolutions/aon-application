@@ -1,8 +1,9 @@
 import { AonElement } from 'aonsolutions/components/AonElement.js';
 import { AonIcon } from 'aonsolutions/components/aon-icon.js';
+import { AonIconButton } from 'aonsolutions/components/aon-icon-button.js';
 import { AonNotification } from 'aonsolutions/modules/notification/aon-notification.js';
 import { CreateComponent } from 'aonsolutions/components/CreateComponent.js';
-import { CONSTANT, EVENT, MSG, TAG, MATERIAL_ICONS } from 'aonsolutions/environments/environments.js';
+import { CONSTANT, EVENT, MSG, TAG, MATERIAL_ICONS, CSS } from 'aonsolutions/environments/environments.js';
 import { NOTIFICATION } from  "../services/app.js";
 import { getApp } from 'aonsolutions/services/app.js';
 import { getTotalNotification, saveAuthDevice, deleteAuthDevice, getNotification, markReadNotification } from 'aonsolutions/services/service.js';
@@ -48,6 +49,7 @@ export class AonNotificationPanel extends AonElement {
         this.id = this.id || 'aonNotificationPanel';
         this.DIV_GENERAL = this.id+'DivGeneral';
         this.AON_NOTIFICATION_PANEL = this.id + 'Application';
+        this.OPEN_BUTTON = this.id+ 'OpenButton';
     }
 
 	build() {
@@ -61,22 +63,29 @@ export class AonNotificationPanel extends AonElement {
         divGeneral.id = this.DIV_GENERAL;
         divGeneral.classList.add("notificationPanelGeneralDiv");
 
-        let divTodas = this.createDiv();
-        divTodas.innerHTML = MSG.SEE_ALL.toUpperCase();
-        divTodas.classList.add("notificationPanelAllDiv");
+        let openButton =new AonIconButton();
+        openButton.id = this.OPEN_BUTTON;
+        openButton.icon = "open_in_new";
+        openButton.title = "Ver en pantalla completa";
+        openButton.classList.add("notificationPanelAllDiv");
 
-        divGeneral.appendChild(divTodas);
+        divGeneral.appendChild(openButton);
         let welcome = this.getElement("aonCompanyTabFilter");
         if(!welcome){
-            divTodas.addEventListener(EVENT.CLICK, () =>  {
-                this.goAonNotification()
+            openButton.addEventListener(EVENT.CLICK, () =>  {
+                this.goAonNotification();
+                let rightPanel = document.querySelector('aon-right-panel'); 
+                if (rightPanel) {
+                    rightPanel.close(); 
+                }
                 header.className = "aonHeader aonHeaderNotification";
-                apps.className = "aonHeader aonMenuLeftopNotification";
+                apps.className = "aonMenuLeftop aonMenuLeftopNotification";
                 aonHeader.buildApp(NOTIFICATION);
                 aonHeader.setVisibleLogo(false);
                 aonHeader.setVisibleApp(true);
             });
-        }
+            
+        } 
 
         let enterprise = this.getElement("aonHeaderCompanyListButton");
         enterprise.addEventListener(EVENT.CLICK, () => {
@@ -84,6 +93,8 @@ export class AonNotificationPanel extends AonElement {
         })
 
         this.loadMore(true);
+
+
         
         this.appendChild(divGeneral);
     }
@@ -95,14 +106,31 @@ export class AonNotificationPanel extends AonElement {
         let divGeneral = this.createDiv();
         divGeneral.classList.add("notifcationPanelRowGeneralDiv");
 
-        let icon = new AonIcon();
-        icon.icon = "aon_new_messenger";
-        icon.color = "#1fd8b9";
-        icon.title = "Solicitudes";
-        icon.size = "50px";
-        icon.classList.add("notificationPanelRowIcon");
+        if(res.source){
+            let icon = new AonIcon();
+            icon.size = "40px";
+            icon.classList.add("notificationPanelRowIcon");
+            if(res.source == "DOCUMENTAL")
+                icon.icon = "aon_new_documental";
+            else if (res.source == "MESSENGER")
+                icon.icon = "aon_new_messenger";
+            else if (res.source == "COMUNICA")
+                icon.icon = "aon_new_payroll";
+            else if (res.source == "INVOICE")
+                icon.icon = "aon_new_invoice";
+            icon.color = "grey";
+            icon.title = "Solicitudes";
+            
+            divGeneral.appendChild(icon);
+
+        }else{
+            let noti = this.createElement(TAG.SPAN);
+            noti.className = "material-icons notificationPanelRowNoti";
+            noti.innerHTML = "campaign";
+            divGeneral.appendChild(noti);
+        }
+
         
-        divGeneral.appendChild(icon);
 
         let div = this.createDiv();
         div.classList.add("notificationPanelRowDiv");
@@ -111,25 +139,27 @@ export class AonNotificationPanel extends AonElement {
         subDiv1.classList.add("notificationPanelRowSubDiv1");
         subDiv1.title = res.title;
         subDiv1.innerHTML = res.title;
-        div.appendChild(subDiv1);
 
         let subDiv2 = this.createDiv();
         subDiv2.classList.add("notificationPanelRowSubDiv2");
-        subDiv2.title = res.body;
+        subDiv2.title = res.title;
         subDiv2.innerHTML = res.body;
-        div.appendChild(subDiv2);
-
+        
         let subDiv3 = this.createDiv();
         subDiv3.classList.add("notificationPanelRowSubDiv3");
-        subDiv3.innerHTML = firstLetters(AonDateUtils.setFullDate(res.date)) + " " + AonDateUtils.setTime(res.date);
+        subDiv3.innerHTML = "( "+firstLetters(this.formatDate(res))+" )";
+        div.appendChild(subDiv1);   
         div.appendChild(subDiv3);
+        div.appendChild(subDiv2);
 
         divGeneral.appendChild(div);
 
         let span = this.createElement(TAG.SPAN);
         span.className = "material-icons";
         span.classList.add("notificationPanelRowSpan");
-        span.innerHTML = "delete";
+        span.title = "Marcar como leído";
+        span.innerHTML = "visibility_off";
+        span.style.visibility = "hidden";
 
         divGeneral.appendChild(span);
 
@@ -137,15 +167,69 @@ export class AonNotificationPanel extends AonElement {
 
         divPrincipal.addEventListener(EVENT.MOUSEOVER, () => {
             divPrincipal.style.backgroundColor = 'rgba(225, 225, 227, 1)';
+            span.style.visibility = "visible";
         });
 
         divPrincipal.addEventListener(EVENT.MOUSELEAVE, () => {
             divPrincipal.style.backgroundColor = 'transparent';
+            span.style.visibility = "hidden";
+        });
+
+        divPrincipal.addEventListener(EVENT.CLICK, () => {
+
+        })
+        
+        span.addEventListener(EVENT.CLICK, () => {
+            this.markReadNotification(res);
+            divGeneral.style.display = "none";
         });
 
         return divPrincipal;
     }
 
+    formatDate(res) {
+        const inputDate = new Date(res.date);
+        const today = new Date();
+        const todayStart = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+        const yesterday = new Date(todayStart);
+        yesterday.setDate(todayStart.getDate() - 1);
+    
+        // Abreviaturas de los meses
+        const abbreviatedMonths = ["Ene.", "Feb.", "Mar.", "Abr.", "May.", "Jun.", "Jul.", "Ago.", "Sep.", "Oct.", "Nov.", "Dic."];
+    
+        // Obtén el día y el mes en formato abreviado
+        let dayMonth = AonDateUtils.getDayMonth(inputDate);
+        dayMonth = dayMonth.split(' ');
+        const day = dayMonth[0];
+        const monthIndex = new Date(inputDate).getMonth();
+        const month = abbreviatedMonths[monthIndex];
+        dayMonth = `${day} de ${month}`;
+    
+        const inputDateStartOfDay = new Date(inputDate.getFullYear(), inputDate.getMonth(), inputDate.getDate());
+    
+        const differenceInTime = todayStart - inputDateStartOfDay;
+        const differenceInDays = Math.ceil(differenceInTime / (1000 * 3600 * 24));
+    
+        if (differenceInDays < 7) {
+            if (differenceInDays === 0) {
+                return `${MSG.TODAY}, ${dayMonth}, ${AonDateUtils.setTime(inputDate)}`;
+            }
+            if (inputDateStartOfDay.toDateString() === yesterday.toDateString()) {
+                return `${MSG.YESTERDAY}, ${dayMonth}, ${AonDateUtils.setTime(inputDate)}`;
+            }
+            return `${AonDateUtils.getDayStr(inputDate)}, ${dayMonth}, ${AonDateUtils.setTime(inputDate)}`;
+        }
+    
+        if (inputDate.getFullYear() === today.getFullYear()) {
+            return `${dayMonth}, ${AonDateUtils.setTime(inputDate)}`;
+        }
+    
+        return `${dayMonth} de ${inputDate.getFullYear()}`;
+    }
+    
+    
+
+    
     async loadMore(reload) {
     
        // let application = this.getApplication();
@@ -169,12 +253,31 @@ export class AonNotificationPanel extends AonElement {
 
  
     getData() {
-        return getNotification({page:1, perPage:10, status:"read"});
+        return getNotification({page:1, perPage:30, status:"unread"});
     }
+
+    markReadNotification(res){
+        if(res.status ===0){
+          markReadNotification(res);
+          res.status=1;
+          let aonNotificationIcon = document.querySelector("aon-notification-icon");
+          if (aonNotificationIcon) { 
+            aonNotificationIcon.getTotalNotification();
+          }
+        }
+    }
+
+    // goNotification(data) {
+    //     const aonComponent = NotificationUtils.getNotificationComponent(data);
+    //     if(aonComponent){
+    //       this.rootPanel(aonComponent);
+    //     }
+    // }
+    
 
     getApplication() {
         return document.querySelector(TAG.AON_APPLICATION);
-      }
+    }
     
 
 

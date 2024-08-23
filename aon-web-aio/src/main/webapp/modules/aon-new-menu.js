@@ -398,7 +398,7 @@ export class AonNewMenu extends AonElement {
 	
 		return appDiv;
 	}
-
+	
 	showTopNav() {	
 		let topnav = this.getElement(this.AON_MENU_TOPNAV);
 		let rootPanel = this.getElement("rootPanel");
@@ -430,6 +430,11 @@ export class AonNewMenu extends AonElement {
 		rootPanel.style.height = `calc(100vh - 50px)`;
 	}
 
+	isTopNavVisible() {
+		let topnav = this.getElement(this.AON_MENU_TOPNAV);
+		return topnav.style.height == '68px';
+	}
+
 	showSideNav() {
 		if(LS.isTopMenu())
 			this.reloadTopNav();
@@ -445,7 +450,7 @@ export class AonNewMenu extends AonElement {
 		
 		menulist.style.visibility = "visible";
 		
-		aonlogo.style.left = '52px';
+		aonlogo.style.left = '60px';
 		aonlogo.style.position = 'relative';
 
 		icon.style.visibility = "visible";
@@ -466,7 +471,7 @@ export class AonNewMenu extends AonElement {
 		sidenav.style.display = "none";
 		aonlogo.style.position = "relative";
 		// icon.style.visibility = "hidden";
-		aonlogo.style.left = '52px';
+		aonlogo.style.left = '60px';
 	
 		rootPanel.style.marginLeft = '0px';
 		//menulist.style.visibility = "hidden";
@@ -508,7 +513,6 @@ export class AonNewMenu extends AonElement {
 		div.style.flexDirection = style?.flexDirection || 'column';
 		div.style.transition = 'background-color 0.2s';
 		div.style.cursor = "pointer";
-		// div.style.backgroundColor =  
 		div.title = app.title;
 		let header = this.getElement("aonHeaderWeb");
 		let welcome = this.getElement("aonCompanyTabFilter");

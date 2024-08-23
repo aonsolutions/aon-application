@@ -131,7 +131,7 @@ export class AonAddress extends AonElement {
     );
     streetTypeSelect.readonly = this.isReadonly();
     streetTypeSelect.value = this.address.getStreetType() && this.address.getStreetType() != 'undefined' 
-      ? this.address.getStreetType : '';
+      ? this.address.getStreetType() : '';
     streetTypeSelect.addEventListener(EVENT.SELECT, () => {
       this.address.setStreetType(streetTypeSelect.value);
       this.getElement(this.INPUT).value = this.address.getFullAddress();

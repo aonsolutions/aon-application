@@ -88,7 +88,7 @@ export const DELETE_FOREVER = {
     id: CONSTANT.DELETE_FOREVER.initCap(),
     name: MSG.DELETE_FOREVER,
     title: MSG.DELETE_FOREVER,
-    icon: MATERIAL_ICONS.DELETE_SWEEP
+    icon: MATERIAL_ICONS.DELETE_FOREVER
 };
 
 export const DELETE_TO_TRASH = {

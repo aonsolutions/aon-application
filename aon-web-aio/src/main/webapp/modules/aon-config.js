@@ -42,7 +42,6 @@ export class AonConfig extends AonElement {
 
 	build() {
 
-
 		let topNavDiv = this.createDiv();
 		topNavDiv.className = CSS.AON_CONFIG_TOP_NAV;
 		
@@ -53,7 +52,7 @@ export class AonConfig extends AonElement {
 		
 		let topNavSwitch = new AonSwitch();
 		topNavSwitch.id = this.TOP_NAV_SWITCH;
-		topNavSwitch.checked = LS.isTopMenu();
+		topNavSwitch.checked = aonMenu.isTopNavVisible();
 		topNavDiv.appendChild(topNavSwitch);
 
 		this.appendChild(topNavDiv);
@@ -132,12 +131,12 @@ export class AonConfig extends AonElement {
 
 		let langsDiv = this.createDiv();
 		langsDiv.appendChild(this.buildLanguageData(MSG.SPANISH , Language.SPANISH));
-		langsDiv.appendChild(this.buildLanguageData(MSG.ENGLISH , Language.ENGLISH));
-		langsDiv.appendChild(this.buildLanguageData(MSG.FRENCH , Language.FRENCH));
-		langsDiv.appendChild(this.buildLanguageData(MSG.DEUTSCH , Language.DEUTSCH));
-		langsDiv.appendChild(this.buildLanguageData(MSG.BASQUE , Language.BASQUE));
-		langsDiv.appendChild(this.buildLanguageData(MSG.CATALAN , Language.CATALAN));
-		langsDiv.appendChild(this.buildLanguageData(MSG.GALICIAN , Language.GALICIAN));
+		langsDiv.appendChild(this.buildLanguageData("English" , Language.ENGLISH));
+		langsDiv.appendChild(this.buildLanguageData("Français" , Language.FRENCH));
+		langsDiv.appendChild(this.buildLanguageData("Deutsch" , Language.DEUTSCH));
+		langsDiv.appendChild(this.buildLanguageData("Euskara" , Language.BASQUE));
+		langsDiv.appendChild(this.buildLanguageData("Català" , Language.CATALAN));
+		langsDiv.appendChild(this.buildLanguageData("Galego" , Language.GALICIAN));
 		langCard.setContent(langsDiv);
 
 		topNavSwitch.addEventListener(EVENT.CHANGE, () => {
