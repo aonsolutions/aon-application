@@ -399,15 +399,15 @@
 									<g:CheckBox debugId='eventsCheck' ui:field='eventsCheck'
 										styleName='aon-finding-toolbar-item aon-icon-warn {style.toolBar-checkBox}'
 										text="AVISOS" checked="false" />
+									<g:CheckBox debugId='disabledPaymentsCheck' ui:field='disabledPaymentsCheck'
+										styleName='aon-finding-toolbar-item {style.toolBar-checkBox}'
+										text="CONCEPTOS NO ACTIVOS" checked="false" />
 									<g:CheckBox debugId='costsCheck' ui:field='costsCheck'
 										styleName='aon-finding-toolbar-item {style.toolBar-checkBox}'
 										text="COSTES" checked="false" />
 									<g:CheckBox debugId='notDefinedVarsCheck' ui:field='notDefinedVarsCheck'
 										styleName='aon-finding-toolbar-item {style.toolBar-checkBox}'
 										text="VARIABLES NO DEFINIDAS" checked="false" />
-									<g:CheckBox debugId='disabledPaymentsCheck' ui:field='disabledPaymentsCheck'
-										styleName='aon-finding-toolbar-item {style.toolBar-checkBox}'
-										text="CONCEPTOS NO ACTIVOS" checked="false" />
 									<g:CheckBox debugId='dbSalaryCheck' ui:field='dbSalaryCheck'
 										styleName='aon-finding-toolbar-item {style.toolBar-checkBox}'
 										text="DIFERENCIAS" checked="false" />
