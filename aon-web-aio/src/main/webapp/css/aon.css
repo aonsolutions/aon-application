@@ -3092,6 +3092,10 @@ label.rating:hover {
   /*transition: background-color 0.2s;*/
 }
 
+#home {
+  margin-top: 11px;
+}
+
 #aonHeaderCompanyList:hover,
 #aonHeaderHelp:hover,
 #aonHeaderConfig:hover,
