@@ -204,27 +204,31 @@ export class AonNewLogin extends AonElement {
     d.getContent().addEventListener(EVENT.MOUSELEAVE, () => d.close());
 
     let options = [{
-      name: MSG.SPANISH,
+      name: "Español",
       image: '../assets/img/aonIconCastellano.png',
       fn: () => LS.setLanguage(Language.SPANISH)
     }, {
-      name: MSG.ENGLISH,
+      name: "English",
       image: '../assets/img/aonIconEnglish.png',
       fn: () => LS.setLanguage(Language.ENGLISH)
-    }, {
-      name: MSG.DEUTSCH,
+    },/* {
+      name: "Français",
+      image: '../assets/img/aonIconEnglish.png',
+      fn: () => LS.setLanguage(Language.FRENCH)
+    },*/ {
+      name: "Deutsch",
       image: '../assets/img/aonIconDeutsch.png',
       fn: () => LS.setLanguage(Language.DEUTSCH)
     }, {
-      name: MSG.BASQUE,
+      name: "Euskara",
       image: '../assets/img/aonIconEuskera.png',
       fn: () => LS.setLanguage(Language.BASQUE)
     }, {
-      name: MSG.CATALAN,
+      name: "Català",
       image: '../assets/img/aonIconCatala.png',
       fn: () => LS.setLanguage(Language.CATALAN)
     }, {
-      name: MSG.GALICIAN,
+      name: "Galego",
       image: '../assets/img/aonIconGalego.png',
       fn: () => LS.setLanguage(Language.GALICIAN)
     } ];
