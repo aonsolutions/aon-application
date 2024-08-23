@@ -85,8 +85,6 @@ export class AonRightPanel extends AonElement {
 
         rightPanelCloseButton.addEventListener(EVENT.CLICK, () => {
 			this.close();
-            let noti = this.getElement("aonRightPanelNotificationButtonIconButton");
-            noti.style.visibility = "hidden";
 		});
 
         /*

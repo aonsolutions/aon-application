@@ -44,9 +44,6 @@ export class AonLoginPanel extends AonElement {
 
 	create( auth ) {
 
-		let noti = this.getElement("aonRightPanelNotificationButtonIcon");
-		noti.style.visibility = "hidden";
-
 		let rightPanel = this.getElement("aonRightPanel");
 		rightPanel.style.boxShadow="0 24px 54px rgba(0,0,0,.15),0 4.5px 13.5px rgba(0,0,0,.08)";
 		rightPanel.style.marginTop = '0px';

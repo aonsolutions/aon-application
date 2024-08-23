@@ -53,8 +53,6 @@ export class AonNotificationPanel extends AonElement {
     }
 
 	build() {
-        let not = this.getElement("aonRightPanelNotificationButtonIconButton");
-        not.style.visibility = "visible";
         let header = this.getElement("aonHeaderWeb");
         let apps = this.getElement("aonMenuLeftop-applications");
         let aonHeader = this.getElement("aonHeader");
@@ -75,19 +73,18 @@ export class AonNotificationPanel extends AonElement {
         let welcome = this.getElement("aonCompanyTabFilter");
         if(!welcome){
             openButton.addEventListener(EVENT.CLICK, () =>  {
-                this.goAonNotification()
+                this.goAonNotification();
+                let rightPanel = document.querySelector('aon-right-panel'); 
+                if (rightPanel) {
+                    rightPanel.close(); 
+                }
                 header.className = "aonHeader aonHeaderNotification";
                 apps.className = "aonMenuLeftop aonMenuLeftopNotification";
                 aonHeader.buildApp(NOTIFICATION);
                 aonHeader.setVisibleLogo(false);
                 aonHeader.setVisibleApp(true);
-                let rootPanel = this.getElement("rootPanel");
-                rootPanel.style.marginRight = "0px";
-                let rightPanel = this.getElement("aonRightPanel");
-                rightPanel.style.visibility = "hidden";
-                let n = this.getElement("aonRightPanelNotificationButtonIconButton");
-                n.style.visibility = "hidden";
             });
+            
         } 
 
         let enterprise = this.getElement("aonHeaderCompanyListButton");
@@ -129,7 +126,7 @@ export class AonNotificationPanel extends AonElement {
         }else{
             let noti = this.createElement(TAG.SPAN);
             noti.className = "material-icons notificationPanelRowNoti";
-            noti.innerHTML = "volume_down";
+            noti.innerHTML = "campaign";
             divGeneral.appendChild(noti);
         }
 
@@ -145,12 +142,12 @@ export class AonNotificationPanel extends AonElement {
 
         let subDiv2 = this.createDiv();
         subDiv2.classList.add("notificationPanelRowSubDiv2");
-        subDiv2.title = res.body;
+        subDiv2.title = res.title;
         subDiv2.innerHTML = res.body;
         
         let subDiv3 = this.createDiv();
         subDiv3.classList.add("notificationPanelRowSubDiv3");
-        subDiv3.innerHTML = firstLetters(this.formatDate(res));
+        subDiv3.innerHTML = "( "+firstLetters(this.formatDate(res))+" )";
         div.appendChild(subDiv1);   
         div.appendChild(subDiv3);
         div.appendChild(subDiv2);
@@ -160,6 +157,7 @@ export class AonNotificationPanel extends AonElement {
         let span = this.createElement(TAG.SPAN);
         span.className = "material-icons";
         span.classList.add("notificationPanelRowSpan");
+        span.title = "Marcar como leído";
         span.innerHTML = "visibility_off";
         span.style.visibility = "hidden";
 
@@ -196,11 +194,15 @@ export class AonNotificationPanel extends AonElement {
         const yesterday = new Date(todayStart);
         yesterday.setDate(todayStart.getDate() - 1);
     
+        // Abreviaturas de los meses
+        const abbreviatedMonths = ["Ene.", "Feb.", "Mar.", "Abr.", "May.", "Jun.", "Jul.", "Ago.", "Sep.", "Oct.", "Nov.", "Dic."];
+    
+        // Obtén el día y el mes en formato abreviado
         let dayMonth = AonDateUtils.getDayMonth(inputDate);
-        
         dayMonth = dayMonth.split(' ');
         const day = dayMonth[0];
-        const month = dayMonth[1].charAt(0).toUpperCase() + dayMonth[1].slice(1);
+        const monthIndex = new Date(inputDate).getMonth();
+        const month = abbreviatedMonths[monthIndex];
         dayMonth = `${day} de ${month}`;
     
         const inputDateStartOfDay = new Date(inputDate.getFullYear(), inputDate.getMonth(), inputDate.getDate());
@@ -221,9 +223,10 @@ export class AonNotificationPanel extends AonElement {
         if (inputDate.getFullYear() === today.getFullYear()) {
             return `${dayMonth}, ${AonDateUtils.setTime(inputDate)}`;
         }
-
+    
         return `${dayMonth} de ${inputDate.getFullYear()}`;
     }
+    
     
 
     
