@@ -3759,9 +3759,6 @@ public class SalaryDraft extends ResizeComposite
 			visibleContext.addAll(partialVariables.stream().map( v -> DelegateVariable.getVariable(v, Scope.CONTRACT)).collect(Collectors.toList()));
 		}
 		
-		
-		
-		
 		//dumpContext(constants, Scope.CONTRACT, true, null);
 		
 		if (contextMenuShowed)
@@ -3786,8 +3783,18 @@ public class SalaryDraft extends ResizeComposite
 		eventsTableSpace.setVisible(eventsTable.isVisible()/*eventsTable.getRowCount() > 0*/);
 		showPaymentsEvents(eventsTable.isVisible());
 		
+		// disabledPaymentsCheck
+		disabledPaymentsCheck.setVisible(hasDisabledPayments());
 		
 		resizeContentPanel();
+	}
+
+	private boolean hasDisabledPayments() {
+		for(PaymentChangeHandler<?> paymentChangeHandler : paymentChangeHandlers) {
+			if(!isEnabled(paymentChangeHandler.item)) return true;
+		}
+		
+		return false;
 	}
 
 	public Stream<String> getValuesOf(String name) {

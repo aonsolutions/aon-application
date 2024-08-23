@@ -141,6 +141,10 @@
 			<g:DisclosurePanel ui:field="advancePanel">
 			   <g:header>Avanzado</g:header>
 			   <g:HTMLPanel styleName="{style.flexColumn}">
+					<g:HTMLPanel styleName="{style.element}">
+						<g:Label styleName="{style.title}">Tipo Nómina/Recibo</g:Label>
+						<g:ListBox ui:field="paymentSalaryTypeLB"/>
+					</g:HTMLPanel>
 			   		<g:HTMLPanel styleName="{style.flex}">
 			   			<g:HTMLPanel styleName="{style.element} {style.widthAll}" ui:field="paymentTaxedPanel">
 							<g:Label styleName="{style.title}">Tributa</g:Label>
