@@ -101,6 +101,9 @@ export class AonNotificationPanel extends AonElement {
     }
 
     buildRow(res){
+        let header = this.getElement("aonHeaderWeb");
+        let apps = this.getElement("aonMenuLeftop-applications");
+        let aonHeader = this.getElement("aonHeader");
         let divPrincipal = this.createDiv();
         divPrincipal.classList.add("notificationPanelRowPrincipalDiv");
 
@@ -175,6 +178,11 @@ export class AonNotificationPanel extends AonElement {
         });
 
         divPrincipal.addEventListener(EVENT.CLICK, () => {
+            header.className = "aonHeader aonHeaderNotification";
+            apps.className = "aonMenuLeftop aonMenuLeftopNotification";
+            aonHeader.buildApp(NOTIFICATION);
+            aonHeader.setVisibleLogo(false);
+            aonHeader.setVisibleApp(true);
             this.goNotification(res);
         })
         
