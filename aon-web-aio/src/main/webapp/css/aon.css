@@ -48,7 +48,7 @@
   --aonTopMenuNotAvailable : var(--aonGray);
   --aonTopMenuSpecial: var(--aonBlack);
 
-  --aonNote: #ffc000;
+  --aonNote: #FFC000;
   
 	--aonInvoice: var(--aonClearBlue);
 	--aonInvoiceBackground: #ebf2ff;
@@ -3093,7 +3093,11 @@ label.rating:hover {
 }
 
 #home {
-  margin-top: 11px;
+  margin-top: 6px;
+}
+
+#new {
+  margin-top: 6px;
 }
 
 #aonHeaderCompanyList:hover,
