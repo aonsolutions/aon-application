@@ -59,7 +59,7 @@
 	--aonPayroll: #e2001a; /* #33A9A9;*/
 	--aonPayrollBackground: #e8f5f5;
   
-	--aonFiscal: #FB982E;
+	--aonFiscal:#005eb5;
 	--aonFiscalBackground: #fef3e7;
   
   --aonMessenger: #33A9A9; /* #f6655a;	--aonMessenger: rgb(134, 211, 100); */
@@ -68,8 +68,8 @@
 	--aonTimecontrol: #D1C36D;
 	--aonTimecontrolBackground: rgba(209, 195, 109, .2);
   
-	--aonAccounting: var(--aonBlue);
-	--aonAccountingColor: var(--aonBlue);
+	--aonAccounting: #c1022d;
+	--aonAccountingColor: #c1022d;
 	--aonAccountingBackground: rgba(0, 36, 105, .2);
   
   --aonHeaderBackgroundColor: var(--aonWhiteGray);
@@ -3971,4 +3971,11 @@ label.rating:hover {
 #aonMenuListAppImgTop-fiscal {
   scale: 1.4;
   margin-bottom: 6px;
+}
+
+#aonMenuListAppImg-accounting {
+	width: 30px;
+	margin-right: 2px;
+	padding: 2px 0px 0px 2px;
+	background-color: var(--aonWhite);	
 }

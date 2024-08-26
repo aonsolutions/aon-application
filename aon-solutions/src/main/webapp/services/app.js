@@ -79,7 +79,7 @@ export const FISCAL = {
   description: MSG.FISCAL,
   tag: MSG_ES.FISCAL,
   // _icon: LS.isNewTheme() ? AON_ICONS.AON_NEW_FISCAL : AON_ICONS.AON_FISCAL,
-  // _newIcon: AON_ICONS.AON_NEW_FISCAL,
+  headerIcon: AON_ICONS.AON_NEW_FISCAL,
   // _symbol: MATERIAL_ICONS.EURO_SYMBOL,
   logo: '/images/apps/aeat.png',
   color: "var(--aonFiscal)",
