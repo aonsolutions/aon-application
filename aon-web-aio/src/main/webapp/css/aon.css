@@ -3871,7 +3871,8 @@ label.rating:hover {
 
 .aonNewMenuAppImg{
 	width: 28px;
-	margin: 4px 0px 4px 8px;
+  margin-bottom: 3px;
+	/* margin: 4px 0px 4px 8px; */
 }
 
 .aonNewMenuAppSpan{
@@ -3967,4 +3968,7 @@ label.rating:hover {
     border-top: 1px solid #ddd;
 }
 
-
+#aonMenuListAppImgTop-fiscal {
+  scale: 1.4;
+  margin-bottom: 6px;
+}

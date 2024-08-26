@@ -1,4 +1,5 @@
-:root{
+:root {
+	
 	--aonBlue: #002469;
 	--aonClearBlue: #4F91FF;
 	--aonOrange: #e6970a;
@@ -13,7 +14,6 @@
 	--aonSelectedBlue: #d3e3fd;
 	--aonGray: gray;
 	--aonLightGray: #f1f1f1;
-	--aonLightGray2: #f6f6f6;
 	--aonDarkGray: #5F6368;
 	--aonBlack: #212529;
 	--aonWhite: #ffffff;
@@ -38,45 +38,13 @@
   	--aonIcon:  white;
 
 	--aonNewColor: red;
-	--aonRightPanelColor: rgb(250, 249, 248);
-	--aonCardColor: white;
-  
-	--aonSearchBar: var(--aonCardColor);
-    --aonSearchButton: white;
-  
-	--aonTopMenuAvailable : var(--aonWhite);
-	--aonTopMenuNotAvailable : var(--aonGray);
-	--aonTopMenuSpecial: var(--aonClearBlue);
 
-	--aonNote: #ffc000;
-	
-  
-	--aonInvoice: var(--aonClearBlue);
-	--aonInvoiceBackground: #ebf2ff;
-  
-	--aonDocumental: #75163F; /* #EF6292;*/
-	--aonDocumentalBackground: #fdedf2;
-  
-	--aonPayroll: #e2001a; /* #33A9A9;*/
-	--aonPayrollBackground: #e8f5f5;
-  
-	--aonFiscal: #FB982E;
-	--aonFiscalBackground: #fef3e7;
-  
-	--aonMessenger: #33A9A9; /* #f6655a;*/
-	--aonMessengerBackground: #feedec;
-  
-	--aonTimecontrol: #D1C36D;
-	--aonTimecontrolBackground: rgba(209, 195, 109, .2);
-  
-	--aonAccounting: var(--aonWhite);
-	--aonAccountingColor: var(--aonBlue);
-	--aonAccountingBackground: rgba(0, 36, 105, .2);
+	--aonHeaderButtonColor: var(--aonWhite);
 	
 	--aonHeaderBackgroundColor: black;
-    
+
 	--aonHeaderBackgroundAvailable: black;
-  
+
 	--aonRightPanelColor: #212121;
 
 	--aonGrayHeaderButtonsColor:var(--aonWhite);
@@ -140,76 +108,45 @@
 	--aonHomeMouseOverImg: black; 
 
 	--aonHomeImg: white;
-  }
+
+	--aonSearchBar: var(--aonCardColor);
+    	--aonSearchButton: white;
+	
+	--aonAccounting: var(--aonWhite);
+	--aonTopMenuAvailable: var(--aonWhite);
+	--aonTopMenuSpecial: var(--aonClearBlue);
+
+	--aonNote: rgb(255, 192, 0);
   
-  /* Estilos para ocultar la barra de desplazamiento en todos los elementos */
-  * {
-	-ms-overflow-style: none; /* Internet Explorer 10+ */
-	scrollbar-width: none; /* Firefox */
-  }
+	--aonInvoice: var(--aonClearBlue);
+	--aonInvoiceBackground: #ebf2ff;
   
-  /* Ocultar la barra de desplazamiento en navegadores basados en WebKit (Chrome, Safari) */
-  *::-webkit-scrollbar {
-	width: 0;
-	height: 0;
-  }
+	--aonDocumental: #EF6292;
+	--aonDocumentalBackground: #fdedf2;
   
+	--aonPayroll: #33A9A9;
+	--aonPayrollBackground: #e8f5f5;
   
-  .material-icons {
-	font-family: 'Material Symbols Outlined';
-	font-weight: normal;
-	font-style: normal;
-	font-size: 24px;
-	line-height: 1;
-	letter-spacing: normal;
-	text-transform: none;
-	display: inline-block;
-	white-space: nowrap;
-	word-wrap: normal;
-	direction: ltr;
-	-moz-font-feature-settings: 'liga';
-	-moz-osx-font-smoothing: grayscale;
-	font-variation-settings:
-	'FILL' 0,
-	'wght' 400,
-	'GRAD' 0,
-	'opsz' 24;
-	color: white;
-  }
+	--aonFiscal: #FB982E;
+	--aonFiscalBackground: #fef3e7;
+  
+	--aonMessenger: #f6655a;
+	--aonMessengerBackground: #feedec;
+  
+	--aonTimecontrol: #D1C36D;
+	--aonTimecontrolBackground: rgba(209, 195, 109, .2);
+  
+	--aonAccounting: var(--aonWhite);
+	--aonAccountingColor: var(--aonBlue);
+	--aonAccountingBackground: rgba(0, 36, 105, .2);
+
+	
+
+}
+
 
   #aon-search-buttonIcon {
 	color: var(--aonSearchButton);
-  }
-  
-  .material-symbols-outlined {
-	font-variation-settings:
-	'FILL' 0,
-	'wght' 400,
-	'GRAD' 0,
-	'opsz' 24
-  }
-  
-  
-  *, ::after, ::before {
-	box-sizing: border-box;
-	/* color: white; */
-  }
-  
-  
-  .dragAndDrop {
-	border: 1px dashed #002469 !important;
-	opacity: 0.6;
-  }
-  
-  .dragAndDrop::after {
-	content: "Suelte los archivos aquí";
-	opacity:  1;
-	position: absolute;
-	color: #808080;
-	font-size: 20px;
-	top: 50%;
-	left: 50%;
-	transform: translate(-50%, -50%);
   }
   
   .aonBody {
@@ -249,7 +186,7 @@
   .aonUl {
 	margin: 0;
 	list-style: none;
-	padding: 0px 15px 15px 0px;
+	padding: 0px;
   }
   
   .aonAppLi:hover {
@@ -429,7 +366,7 @@
 	/* top | right | bottom | left */
 	margin: 0px 0px 0px 0px;
 	
-	/*background-color: #FAF9F8;*/
+	background-color: var(--aonContentBeta);
 	box-shadow: var(--shadow4,0 0 2px var(--colorNeutralShadowAmbient,rgba(0,0,0,.12)),0 0px 4px var(--colorNeutralShadowKey,rgba(0,0,0,.14)));
   }
   
@@ -593,7 +530,7 @@
   }
   
   .sidenavHover:hover{
-	background-color: #3b3a39;
+	background-color: var(--aonLightBlue);
   }
   
   
@@ -877,6 +814,7 @@
 	transition-property: background-color;
 	border-bottom: 1px solid #ddd;
 	color: white;
+	background-color: var(--aonContentBeta);
   }
 
   .aonTableTrChecked {
@@ -888,7 +826,7 @@
   }
   
   .aonTable tbody tr:active {
-	background-color: #bbb;
+	background-color: black;
   }
   
   .aonTable td {
@@ -1156,15 +1094,9 @@
 	margin: 0;
 	padding: 0 26px;
 	cursor: pointer;
-	border-top-right-radius: 50px;
-	border-bottom-right-radius: 50px;
+	border-radius: 20px;
   }
-
-  .aonAppMenuSidenavListSelected {
-	font-weight: bold;
-	background-color: #3b3a39;
-  }   
-
+  
   .aonAppMenuSidenavListBeta {
 	line-height: 30px;
 	margin: 0;
@@ -1581,7 +1513,7 @@
 	  border-radius: 50%;
 	  width: 40px;
 	  height: 40px;
-	  background-color: rgba(var(--pure-material-onsurface-rgb, 0, 0, 0), 0.6);
+ 	  background-color: rgba(var(--pure-material-onsurface-rgb, 0, 0, 0), 0.6);
 	  box-shadow: none;
 	  outline: none;
 	  opacity: 0;
@@ -1641,7 +1573,7 @@
   
   .aonCheckbox > input:checked + span::after,
   .aonCheckbox > input:indeterminate + span::after {
-	  border-color:black;
+	  border-color: black;
   }
   
   .aonCheckbox > input:indeterminate + span::after {
@@ -1670,11 +1602,11 @@
   }
   
   .aonCheckbox > input:active + span::before {
-	  border-color: var(--aonBlue);
+	  border-color: white;
   }
   
   .aonCheckbox > input:checked:active + span::before {
-	  border-color: transparent;
+	  border-color: white;
 	  background-color: rgba(var(--pure-material-onsurface-rgb, 0, 0, 0), 0.6);
   }
   
@@ -1909,7 +1841,9 @@
 	top: 4px;
   }
   
-  .aonTransitionLeft{ display: none;}
+ .aonTransitionLeft { 
+  	display: none;
+  }
   
   .aonTransitionLeft.active{
 	display: block;
@@ -2083,7 +2017,7 @@
   padding: 0px 0px 0px 68px;
   background-position: center;
   background-repeat: no-repeat;
-  background-image: url("../../assets/aon-white-logo.svg");
+  background-image: url("../image/aon-white-logo.svg");  
 }
 
   
@@ -2507,6 +2441,7 @@
 	  height: 100%;
 	  display: flex;
 	  flex-direction: column;
+	  background-color: var(--aonContentBeta);
   }
   
   .aonWelcomeDiv  {
@@ -2541,6 +2476,10 @@
 	  white-space: nowrap;
 	  padding-bottom: 5px;
   }
+
+  .aonTabItemText:hover{
+	  background-color: rgba(0, 0, 0, 0.2);
+	  border-radius: 5px;
   
   .aonTabItemTextSelected {
 	  color: white;
@@ -2739,7 +2678,17 @@
   cursor: pointer;
   background-position: center;
   background-repeat: no-repeat;
-  background-image: url("../assets/aon-logo.svg");
+  background-image: url("../image/aon-white-logo.svg");
+}
+	  
+.aonLoginTitle {
+  font-family: var(--roboto-34-sp-h4-font-family);
+  color: white;
+  font-size: 2rem;
+  margin-bottom: .5rem;
+  margin-top: 0;
+  font-weight: 600;
+  letter-spacing: 0.44px;
 }
 
 .aonLink:after {
@@ -2841,32 +2790,18 @@
 	background-color: black;
   }
   
+.aonHeader #aonHeaderCompanyName,
+.aonHeader .material-icons {
+	color: white;
+}
 
-.aonHeaderNote .material-icons,
-.aonHeaderFiscal .material-icons,
-.aonHeaderPayroll .material-icons,
-.aonHeaderInvoice  .material-icons,
-.aonHeaderMessenger .material-icons,
-.aonHeaderAccounting .material-icons,
-.aonHeaderDocumental .material-icons,
-.aonHeaderTimecontrol .material-icons,
-.aonHeaderOffice .material-icons,
-.aonHeaderGarage .material-icons,
-.aonHeaderAcademy .material-icons,
-.aonHeaderComerce .material-icons,
-.aonHeaderComercialMenu .material-icons,
-.aonHeaderManagementMenu .material-icons,
-.aonHeaderTreasuryMenu .material-icons,
-.aonHeaderWarehouseMenu .material-icons,
-.aonHeaderGroupwareMenu .material-icons,
-.aonHeaderAccountingMenu .material-icons,
-.aonHeaderFiscalMenu .material-icons,
-.aonHeaderPayrollMenu .material-icons,
-.aonHeaderMarketingMenu .material-icons,
-.aonHeaderHome .material-icons,
-.aonHeaderStart .material-icons,
-.aonHeaderApplications .material-icons  {
-	color: var(--aonWhite);
+#aonHeaderCompanyList:hover,
+#aonHeaderHelp:hover, 
+#aonHeaderConfig:hover, 
+#aonHeaderNotification:hover, 
+#aonHeaderUser:hover{
+	background-color: rgba(255,255,255,0.3);
+  	border-radius: 100px;
 }
 
 .aonHeaderNote #aon-search-buttonIcon,
@@ -2894,7 +2829,6 @@
 }
 
 
-
 .aonMenuLeftopNote .material-symbols-outlined,
 .aonMenuLeftopFiscal .material-symbols-outlined,
 .aonMenuLeftopPayroll .material-symbols-outlined,
@@ -2918,8 +2852,15 @@
 .aonMenuLeftopAccountingMenu .material-symbols-outlined,
 .aonMenuLeftopHome .material-symbols-outlined,
 .aonMenuLeftopStart .material-symbols-outlined,
-.aonMenuLeftopApplications .material-symbols-outlined {
-	color: var(--aonWhite);
+.aonMenuLeftopApplications .material-symbols-outlined,
+.aonMenuLeftop .material-symbols-outlined {
+	color: white;
+}
+
+.aonMenuLeftopHome .material-symbols-outlined, 
+.aonMenuLeftopStart .material-symbols-outlined, 
+.aonMenuLeftopApplications .material-symbols-outlined{
+	color: white;
 }
 
 
@@ -3829,6 +3770,5 @@
 	display: grid !important;
 	grid-template-columns: repeat(3, minmax(0px, 1fr));
 } 
+}
 
-
-  
