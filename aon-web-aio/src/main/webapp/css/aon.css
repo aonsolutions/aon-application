@@ -48,7 +48,7 @@
   --aonTopMenuNotAvailable : var(--aonGray);
   --aonTopMenuSpecial: var(--aonBlack);
 
-  --aonNote: #ffc000;
+  --aonNote: #FFC000;
   
 	--aonInvoice: var(--aonClearBlue);
 	--aonInvoiceBackground: #ebf2ff;
@@ -3093,7 +3093,11 @@ label.rating:hover {
 }
 
 #home {
-  margin-top: 11px;
+  margin-top: 6px;
+}
+
+#new {
+  margin-top: 6px;
 }
 
 #aonHeaderCompanyList:hover,
@@ -3867,7 +3871,8 @@ label.rating:hover {
 
 .aonNewMenuAppImg{
 	width: 28px;
-	margin: 4px 0px 4px 8px;
+  margin-bottom: 3px;
+	/* margin: 4px 0px 4px 8px; */
 }
 
 .aonNewMenuAppSpan{
@@ -3963,4 +3968,7 @@ label.rating:hover {
     border-top: 1px solid #ddd;
 }
 
-
+#aonMenuListAppImgTop-fiscal {
+  scale: 1.4;
+  margin-bottom: 6px;
+}

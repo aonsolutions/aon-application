@@ -513,6 +513,9 @@ export class AonNewMenu extends AonElement {
 		div.style.flexDirection = style?.flexDirection || 'column';
 		div.style.transition = 'background-color 0.2s';
 		div.style.cursor = "pointer";
+		if (!LS.isLeftMenu()) {
+			div.style.marginTop = "0px";
+		}
 		div.title = app.title;
 		let header = this.getElement("aonHeaderWeb");
 		let welcome = this.getElement("aonCompanyTabFilter");
