@@ -8,6 +8,7 @@ import { NOTIFICATION } from  "../services/app.js";
 import { getApp } from 'aonsolutions/services/app.js';
 import { getTotalNotification, saveAuthDevice, deleteAuthDevice, getNotification, markReadNotification } from 'aonsolutions/services/service.js';
 import { AonDateUtils } from "aonsolutions/modules/utils/AonDateUtils.js";
+import { NotificationUtils } from "aonsolutions/modules/notification/utils/NotificationUtils.js";
 import { AonApplication } from "aonsolutions/components/aon-application.js";
 
 
@@ -130,8 +131,6 @@ export class AonNotificationPanel extends AonElement {
             divGeneral.appendChild(noti);
         }
 
-        
-
         let div = this.createDiv();
         div.classList.add("notificationPanelRowDiv");
 
@@ -176,7 +175,7 @@ export class AonNotificationPanel extends AonElement {
         });
 
         divPrincipal.addEventListener(EVENT.CLICK, () => {
-
+            this.goNotification(res);
         })
         
         span.addEventListener(EVENT.CLICK, () => {
@@ -267,12 +266,12 @@ export class AonNotificationPanel extends AonElement {
         }
     }
 
-    // goNotification(data) {
-    //     const aonComponent = NotificationUtils.getNotificationComponent(data);
-    //     if(aonComponent){
-    //       this.rootPanel(aonComponent);
-    //     }
-    // }
+    goNotification(data) {
+        const aonComponent = NotificationUtils.getNotificationComponent(data);
+        if(aonComponent){
+          this.rootPanel(aonComponent);
+        }
+    }
     
 
     getApplication() {
