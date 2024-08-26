@@ -35,9 +35,6 @@ export class AonHelp extends AonElement {
 
 	build() {
 
-		let noti = this.getElement("aonRightPanelNotificationButtonIcon");
-		noti.style.visibility = "hidden";
-
 		let span = this.createSpan();
 		span.innerHTML = MSG.SUPPORT;
 		span.classList.add("aonHelpSpan");

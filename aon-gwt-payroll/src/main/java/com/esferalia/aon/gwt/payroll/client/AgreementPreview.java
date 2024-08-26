@@ -504,7 +504,7 @@ public abstract class AgreementPreview extends Composite {
 						? showHidePayment(updatedPayment.getDescription(), updatedPayment.getExpression())
 						: updatedPayment.getExpression());
 				selectedPayment.setScope(Scope.SALARY);
-				selectedPayment.setSalaryType(Type.SALARY);
+				selectedPayment.setSalaryType(updatedPayment.getSalaryType());
 			}
 
 			@Override

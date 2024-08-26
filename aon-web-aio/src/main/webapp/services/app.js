@@ -186,7 +186,7 @@ export const FISCAL_MENU = {
 export const PAYROLL_MENU = {
 	app: "payrollMenu",
 	icon: AON_ICONS.AON_KIT_DIGITAL,
-	symbol: MATERIAL_ICONS.GROUPS,
+	symbol: "group",
 	title: MSG.PAYROLL,
 	description: MSG.PAYROLL,
 	subtitle: "Payroll",
@@ -199,7 +199,7 @@ export const PAYROLL_MENU = {
 export const MARKETING_MENU = {
 	app: "marketingMenu",
 	icon: AON_ICONS.AON_KIT_DIGITAL,
-	symbol: MATERIAL_ICONS.CAMPAIGN,
+	symbol: "ads_click",
 	title: MSG.MARKETING,
 	description: MSG.MARKETING,
 	subtitle: "Marketing",

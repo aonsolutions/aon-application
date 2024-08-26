@@ -519,7 +519,7 @@ public class EmployeeContractPayments extends Composite {
 				selectedPayment.setEndDate(updatedPayment.getEndDate());
 				selectedPayment.setContractConceptCalcType(ContractConceptCalcType.PAYMENT);
 				selectedPayment.setScope(Scope.SALARY);
-				selectedPayment.setSalaryType(Type.SALARY);
+				selectedPayment.setSalaryType(updatedPayment.getSalaryType());
 				selectedPayment.setHasChange(true);
 				contractConceptCalcDG.redraw();
 				onSave();

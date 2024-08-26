@@ -3201,7 +3201,7 @@ label.rating:hover {
 
 .rightPanelCloseButton{
   cursor: pointer;
-  position: fixed;
+  position: absolute;
   right: 10px;
   margin-top: 8px;
 }
