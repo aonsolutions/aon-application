@@ -295,6 +295,7 @@ export class AonDialogMenu extends AonElement {
 			content.innerHTML = '';
 			let ul = document.createElement(TAG.UL);
 			ul.className = CSS.AON_UL;
+			ul.style.padding = '0px';
 			content.appendChild(ul);
 			options.forEach((item, i) => {
 				let li = document.createElement('li');
