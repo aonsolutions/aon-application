@@ -537,7 +537,7 @@ export class AonNewMenu extends AonElement {
 			aonIcon.id = `aonMenuListAppImgTop-${app.app}`;
 			aonIcon.icon = app.newIcon || app.icon;
 			aonIcon.color = style?.color || appColor;
-			aonIcon.size = "32px";
+			aonIcon.size = app.iconSize || "32px";
 			div.appendChild(aonIcon);
 		} else if (app.logo) {
 			let img = this.createElement(TAG.IMG);
