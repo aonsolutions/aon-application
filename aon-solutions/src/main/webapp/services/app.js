@@ -48,7 +48,7 @@ export const ACCOUNTING = {
   tag: MSG_ES.ACCOUNTING,
   _icon: LS.isNewTheme() ? AON_ICONS.AON_NEW_ACCOUNTING : AON_ICONS.AON_ACCOUNTING,
   _newIcon: AON_ICONS.AON_NEW_ACCOUNTING,
-  _symbol: MATERIAL_ICONS.CALCULATE,
+	_symbol: MATERIAL_ICONS.CALCULATE,
   logo: '/images/apps/aon-RRMM.png',
   color: "var(--aonAccounting)",
   backgroundColor: "rgba(0, 36, 105, .2)",

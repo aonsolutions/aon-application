@@ -1,3 +1,7 @@
+:root{
+	--favicon: 'https://www.aonsolutions.es/favicon.svg';
+}
+
 .rootPanel {
   z-index: 3;	
   padding-left: 2px;

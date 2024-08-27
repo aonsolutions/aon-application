@@ -322,6 +322,12 @@ export class AonNewMenu extends AonElement {
 		aonMenuLeftop.appendChild(div);
 	}
 
+	overrideDefault( app, suffix ){
+		app.logo = this.getCssVariable(`${app.app}SideNavLogo`) || app.logo;
+		app.icon = this.getCssVariable(`${app.app}SideNavIcon`) || app.icon;
+		app.symbol = this.getCssVariable(`${app.app}SideNavSymbol`) || app.symbol;
+	}
+
 	buildMenuSidenav() {
 		let aonMenuSidenav = this.getElement(this.AON_MENU_SIDENAV);
 		let ul = this.createElement(TAG.UL);
@@ -335,7 +341,12 @@ export class AonNewMenu extends AonElement {
 				let li = this.createElement(TAG.LI);
 				li.id = `aonMenuList-${app.app}`;
 				li.classList.add("aonNewMenuSideNavLi");
-				li.appendChild(this.buildApp(app,{color: `var(--aonSidenavIconColor, ${app.newColor || app.color})`},true));
+
+				app.logo = this.getCssVariable(`${app.app}SideNavLogo`) || app.logo;
+				app.icon = this.getCssVariable(`${app.app}SideNavIcon`) || app.icon;
+				app.symbol = this.getCssVariable(`${app.app}SideNavSymbol`) || app.symbol;
+				
+				li.appendChild(this.buildApp(app,{color: `var(--aonSidenavIconColor, ${app.newColor || app.color})`}));
 				ul.appendChild(li);
 			}
 		}
@@ -369,6 +380,9 @@ export class AonNewMenu extends AonElement {
 					continue;
 				} else {
 					let appElement = this.buildTopApp(app);
+					app.logo = this.getCssVariable(`${app.app}TopNavLogo`) || app.logo;
+					app.icon = this.getCssVariable(`${app.app}TopNavIcon`) || app.icon;
+					app.symbol = this.getCssVariable(`${app.app}TopNavSymbol`) || app.symbol;
 					appElement.classList.add("aonNewMenuTopNavAppElement");
 					app.color = "var(--aonTopMenuNotAvailable)";
 					div.appendChild(appElement);
@@ -394,7 +408,7 @@ export class AonNewMenu extends AonElement {
 		let appDiv = this.createElement(TAG.DIV);
 		appDiv.id = `aonMenuBar-${app.app}`;
 		appDiv.classList.add("aonNewMenuTopAppDivApp");
-		appDiv.appendChild(this.buildApp(app,undefined,false));
+		appDiv.appendChild(this.buildApp(app,undefined));
 	
 		return appDiv;
 	}
@@ -485,7 +499,7 @@ export class AonNewMenu extends AonElement {
 		}
 	}
 
-	buildApp(app, style, sidenav) {
+	buildApp(app, style) {
 
 		let a = this.createElement(TAG.A);
 		a.addEventListener(EVENT.CLICK, () => {
@@ -519,9 +533,17 @@ export class AonNewMenu extends AonElement {
 		div.title = app.title;
 		let header = this.getElement("aonHeaderWeb");
 		let welcome = this.getElement("aonCompanyTabFilter");
+
 		
-		
-		if ((!sidenav && app.symbol) || (sidenav && !app.icon && app.symbol)) {
+		if (app.icon) {
+			const appColor = app.newColor || app.color;
+			let aonIcon = new AonIcon();
+			aonIcon.id = `aonMenuListAppImgTop-${app.app}`;
+			aonIcon.icon = app.newIcon || app.icon;
+			aonIcon.color = style?.color || appColor;
+			aonIcon.size = "32px";
+			div.appendChild(aonIcon);
+		} else if (app.symbol) {
 			let icon = this.createElement(TAG.SPAN);
 			icon.id = `aonMenuListAppImgTop-${app.app}`;
 			icon.classList.add(CSS.MATERIAL_SYMBOLS_OUTLINED);
@@ -531,14 +553,6 @@ export class AonNewMenu extends AonElement {
 			}
 			icon.classList.add("aonNewMenuAppIcon");
 			div.appendChild(icon);
-		} else if (app.icon) {
-			const appColor = app.newColor || app.color;
-			let aonIcon = new AonIcon();
-			aonIcon.id = `aonMenuListAppImgTop-${app.app}`;
-			aonIcon.icon = app.newIcon || app.icon;
-			aonIcon.color = style?.color || appColor;
-			aonIcon.size = "32px";
-			div.appendChild(aonIcon);
 		} else if (app.logo) {
 			let img = this.createElement(TAG.IMG);
 			img.id = `aonMenuListAppImgTop-${app.app}`;
@@ -563,6 +577,10 @@ export class AonNewMenu extends AonElement {
 		}
 		a.appendChild(div);
 		return a;
+	}
+	
+	getCssVariable( variable ){
+		return getComputedStyle(document.body).getPropertyValue(`--${variable}`);		
 	}
 
 	buildAppMenu(app) {

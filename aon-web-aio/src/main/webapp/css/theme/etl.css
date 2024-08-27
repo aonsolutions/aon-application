@@ -11,6 +11,8 @@
 	--aonHeaderBackgroundAvailable:var(--etlRed);
 
 	--aonHeaderBackgroundColor : var(--etlRed);
+
+	--favicon : "https://etl.es/wp-content/uploads/2020/07/cropped-cropped-cropped-0-1-32x32.png";
 }
 
 .aonHeader {
@@ -47,9 +49,9 @@
 }
 
 
-.aonFavicon {
+/* .aonFavicon {
 	background-image: url("https://etl.es/wp-content/uploads/2020/07/cropped-cropped-cropped-0-1-32x32.png");
-}
+} */
 
 .aonTabItemTextSelected {
     border-bottom: 2px solid var(--etlRed);
