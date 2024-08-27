@@ -718,7 +718,7 @@ export class AonHeader extends AonElement {
 			aonIcon.id = `aonMenuListAppImg-${app.app}`;
 			aonIcon.icon = app.headerIcon;
 			aonIcon.color = "var(--aonIcon)";
-			aonIcon.size = "32px";
+			aonIcon.size = app.iconSize || "32px";
 			div.appendChild(aonIcon);
 		} else if ((!sidenav && app.symbol) || (sidenav && !app.icon && app.symbol)) {
 			let icon = this.createElement(TAG.SPAN);
@@ -732,7 +732,7 @@ export class AonHeader extends AonElement {
 			aonIcon.id = `aonMenuListAppImg-${app.app}`;
 			aonIcon.icon = app.icon;
 			aonIcon.color = "var(--aonIcon)";
-			aonIcon.size = "32px";
+			aonIcon.size = app.iconSize || "32px";
 			div.appendChild(aonIcon);
 		} else if (app.logo) {
 			let img = this.createElement(TAG.IMG);
