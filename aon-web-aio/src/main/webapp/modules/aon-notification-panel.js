@@ -8,6 +8,7 @@ import { NOTIFICATION } from  "../services/app.js";
 import { getApp } from 'aonsolutions/services/app.js';
 import { getTotalNotification, saveAuthDevice, deleteAuthDevice, getNotification, markReadNotification } from 'aonsolutions/services/service.js';
 import { AonDateUtils } from "aonsolutions/modules/utils/AonDateUtils.js";
+import { NotificationUtils } from "aonsolutions/modules/notification/utils/NotificationUtils.js";
 import { AonApplication } from "aonsolutions/components/aon-application.js";
 
 
@@ -100,6 +101,9 @@ export class AonNotificationPanel extends AonElement {
     }
 
     buildRow(res){
+        let header = this.getElement("aonHeaderWeb");
+        let apps = this.getElement("aonMenuLeftop-applications");
+        let aonHeader = this.getElement("aonHeader");
         let divPrincipal = this.createDiv();
         divPrincipal.classList.add("notificationPanelRowPrincipalDiv");
 
@@ -129,8 +133,6 @@ export class AonNotificationPanel extends AonElement {
             noti.innerHTML = "campaign";
             divGeneral.appendChild(noti);
         }
-
-        
 
         let div = this.createDiv();
         div.classList.add("notificationPanelRowDiv");
@@ -176,7 +178,12 @@ export class AonNotificationPanel extends AonElement {
         });
 
         divPrincipal.addEventListener(EVENT.CLICK, () => {
-
+            header.className = "aonHeader aonHeaderNotification";
+            apps.className = "aonMenuLeftop aonMenuLeftopNotification";
+            aonHeader.buildApp(NOTIFICATION);
+            aonHeader.setVisibleLogo(false);
+            aonHeader.setVisibleApp(true);
+            this.goNotification(res);
         })
         
         span.addEventListener(EVENT.CLICK, () => {
@@ -267,12 +274,12 @@ export class AonNotificationPanel extends AonElement {
         }
     }
 
-    // goNotification(data) {
-    //     const aonComponent = NotificationUtils.getNotificationComponent(data);
-    //     if(aonComponent){
-    //       this.rootPanel(aonComponent);
-    //     }
-    // }
+    goNotification(data) {
+        const aonComponent = NotificationUtils.getNotificationComponent(data);
+        if(aonComponent){
+          this.rootPanel(aonComponent);
+        }
+    }
     
 
     getApplication() {

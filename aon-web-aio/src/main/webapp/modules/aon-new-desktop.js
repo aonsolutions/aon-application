@@ -188,7 +188,7 @@ export class AonNewDesktop extends AonElement {
 			aonIcon.id = `aonDesktopAppImg-${app.app}`;
 			aonIcon.icon = app.newIcon || app.icon;
 			aonIcon.color = app.newColor || app.color;
-			aonIcon.size = "32px";
+			aonIcon.size = app.iconSize || "32px";
 			appDiv.appendChild(aonIcon);
 		} 
 		// else if (app.symbol) {
@@ -355,7 +355,7 @@ export class AonNewDesktop extends AonElement {
 			aonIcon.id = `aonDesktopAppImg-${app.app}`;
 			aonIcon.icon = app.newIcon || app.icon;
 			aonIcon.color = app.newColor || app.color;
-			aonIcon.size = "32px";
+			aonIcon.size = app.iconSize || "32px";
 			mainDiv.appendChild(aonIcon);
 		} else if (app.logo) {
 			let img = this.createElement(TAG.IMG);

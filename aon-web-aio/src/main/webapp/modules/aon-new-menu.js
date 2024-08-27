@@ -513,6 +513,9 @@ export class AonNewMenu extends AonElement {
 		div.style.flexDirection = style?.flexDirection || 'column';
 		div.style.transition = 'background-color 0.2s';
 		div.style.cursor = "pointer";
+		if (!LS.isLeftMenu()) {
+			div.style.marginTop = "0px";
+		}
 		div.title = app.title;
 		let header = this.getElement("aonHeaderWeb");
 		let welcome = this.getElement("aonCompanyTabFilter");
@@ -534,7 +537,7 @@ export class AonNewMenu extends AonElement {
 			aonIcon.id = `aonMenuListAppImgTop-${app.app}`;
 			aonIcon.icon = app.newIcon || app.icon;
 			aonIcon.color = style?.color || appColor;
-			aonIcon.size = "32px";
+			aonIcon.size = app.iconSize || "32px";
 			div.appendChild(aonIcon);
 		} else if (app.logo) {
 			let img = this.createElement(TAG.IMG);

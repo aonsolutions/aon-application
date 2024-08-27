@@ -712,8 +712,15 @@ export class AonHeader extends AonElement {
 
 		let div = this.createElement(TAG.DIV);
 		div.classList.add("aonHeaderAppDiv");
-
-		if ((!sidenav && app.symbol) || (sidenav && !app.icon && app.symbol)) {
+		
+		if (app.headerIcon) {
+			let aonIcon = new AonIcon();
+			aonIcon.id = `aonMenuListAppImg-${app.app}`;
+			aonIcon.icon = app.headerIcon;
+			aonIcon.color = "var(--aonIcon)";
+			aonIcon.size = app.iconSize || "32px";
+			div.appendChild(aonIcon);
+		} else if ((!sidenav && app.symbol) || (sidenav && !app.icon && app.symbol)) {
 			let icon = this.createElement(TAG.SPAN);
 			icon.classList.add(CSS.MATERIAL_SYMBOLS_OUTLINED);
 			icon.id = `aonMenuListAppImg-${app.app}`;
@@ -725,12 +732,12 @@ export class AonHeader extends AonElement {
 			aonIcon.id = `aonMenuListAppImg-${app.app}`;
 			aonIcon.icon = app.icon;
 			aonIcon.color = "var(--aonIcon)";
-			aonIcon.size = "32px";
+			aonIcon.size = app.iconSize || "32px";
 			div.appendChild(aonIcon);
 		} else if (app.logo) {
 			let img = this.createElement(TAG.IMG);
 			img.id = `aonMenuListAppImg-${app.app}`;
-			img.style.width = '24px';
+			//img.style.width = '24px';
 			img.src = app.logo;
 			img.title = app.title;
 			div.appendChild(img);
