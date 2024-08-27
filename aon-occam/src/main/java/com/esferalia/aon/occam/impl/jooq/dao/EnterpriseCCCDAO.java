@@ -89,7 +89,7 @@ public class EnterpriseCCCDAO {
 	}
 	
 	public static EnterpriseCCC save(AONContext ctx, EnterpriseCCC enterpriseCcc) {
-		return enterpriseCcc.getId() !=null ? update(ctx, enterpriseCcc) : insert(ctx, enterpriseCcc);
+		return enterpriseCcc.getId() != null ? update(ctx, enterpriseCcc) : insert(ctx, enterpriseCcc);
 	}
 	
 	private static EnterpriseCCC insert(AONContext ctx, EnterpriseCCC enterpriseCcc) {
