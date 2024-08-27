@@ -87,16 +87,14 @@ export class AonNotificationPanel extends AonElement {
             });
             
         } 
-
+        
         let enterprise = this.getElement("aonHeaderCompanyListButton");
         enterprise.addEventListener(EVENT.CLICK, () => {
             apps.classList.remove("aonMenuLeftopNotification");
-        })
-
+        });
+        
         this.loadMore(true);
 
-
-        
         this.appendChild(divGeneral);
     }
 
@@ -178,6 +176,8 @@ export class AonNotificationPanel extends AonElement {
         });
 
         divPrincipal.addEventListener(EVENT.CLICK, () => {
+            this.markReadNotification(res);
+            divGeneral.style.display = "none";
             header.className = "aonHeader aonHeaderNotification";
             apps.className = "aonMenuLeftop aonMenuLeftopNotification";
             aonHeader.buildApp(NOTIFICATION);

@@ -256,14 +256,18 @@ export class AonNewMenu extends AonElement {
 		};
 
         if(this.isApp(app) || excludedApps.includes(app.app)){
-			this.dispatchEvent(new CustomEvent(EVENT.AON_APPLICATION_SELECT, { detail }));
+			if(app.app != "new"){
+				this.dispatchEvent(new CustomEvent(EVENT.AON_APPLICATION_SELECT, { detail }));	
+			}
 			this.setSelectedMenuSidenav(app);
 		}
-		
-		let appsDiv = this.getElement("aonMenuLeftop-applications");
-		appsDiv.style.removeProperty('background-color'); 
-		let appName = app.app[0].toUpperCase() + app.app.slice(1);
-		appsDiv.className = `${CSS.AON_MENU_LEFTOP} ${CSS.AON_MENU_LEFTOP}${appName}`
+		if(app.app != "new"){
+			let appsDiv = this.getElement("aonMenuLeftop-applications");
+			appsDiv.style.removeProperty('background-color'); 
+			let appName = app.app[0].toUpperCase() + app.app.slice(1);
+			appsDiv.className = `${CSS.AON_MENU_LEFTOP} ${CSS.AON_MENU_LEFTOP}${appName}`	
+		}
+	
 	}
 	
 
