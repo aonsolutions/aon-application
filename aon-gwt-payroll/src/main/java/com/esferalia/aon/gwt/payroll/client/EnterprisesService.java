@@ -56,6 +56,7 @@ import com.esferalia.aon.gwt.payroll.shared.WorkplaceInfo;
 import com.esferalia.aon.occam.api.model.Certificate;
 import com.esferalia.aon.occam.api.model.CertificateInfo;
 import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.occam.api.model.EnterpriseCCC;
 import com.esferalia.aon.occam.api.model.MailAccount;
 import com.esferalia.aon.occam.api.model.aonsolutions.DomainUserRoles;
 import com.esferalia.aon.occam.api.model.mod145.Mod145;
@@ -416,6 +417,10 @@ public interface EnterprisesService extends RemoteService {
 	List<Activity> getActivities(String currentDomainName, String user) throws IllegalArgumentException;
 
 	void saveActivities(String currentDomainName, String user, List<Activity> activity) throws IllegalArgumentException;
+	
+	void deleteCCC(String currentDomainName, String user, Integer cccId) throws IllegalArgumentException;
+	
+	EnterpriseCCC saveCCC(String currentDomainName, String user, EnterpriseCCC ccc) throws IllegalArgumentException;
 
 	// --------------------------- Mod 145 (API)
 	

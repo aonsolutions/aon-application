@@ -4594,6 +4594,28 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 		}
 	}
 	
+	@Override
+	public void deleteCCC(String domainName, String userLogin, Integer cccId) throws IllegalArgumentException {
+		try(Connection connection = AonServletUtils.getConnection(domainName)) {
+			Integer domainId = AonServletUtils.getDomainID(domainName);
+			PAYROLL.deleteCCC(domainName, domainId, userLogin, cccId);
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw new IllegalArgumentException(e);
+		}
+	}
+	
+	@Override
+	public com.esferalia.aon.occam.api.model.EnterpriseCCC saveCCC(String domainName, String userLogin, com.esferalia.aon.occam.api.model.EnterpriseCCC ccc) throws IllegalArgumentException {
+		try(Connection connection = AonServletUtils.getConnection(domainName)) {
+			Integer domainId = AonServletUtils.getDomainID(domainName);
+			return PAYROLL.saveCCC(domainName, domainId, userLogin, ccc);
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw new IllegalArgumentException(e);
+		}
+	}
+	
 	// ------------------------------------------------ Mod145 (API)
 	
 	@Override
