@@ -267,7 +267,7 @@ export class AonTax extends AonElement {
       hacienda : model.hacienda, // Alava, AEAT...
       result : model.amount,
       statusHtml,
-      lettersHtml : `<div style="font-weight: bold; color: #FF9002;">Precálculo</div>`,
+      lettersHtml : `<div style="font-weight: bold;">Precálculo</div>`,
       statusText : "Borrardor",
       newModel
     };
