@@ -132,17 +132,17 @@ export class AonTax extends AonElement {
     const aonTable = this.getElement(this.TABLE_ID);
     if (aonTable) {
       aonTable.removeColumns();
-      aonTable.addColumn("", "string", "lettersHtml", "6%");
-      aonTable.addColumn("Modelo", "", "modelText", "20%");
+      aonTable.addColumn("", "string", "lettersHtml", "10%");
+      aonTable.addColumn("Modelo", "", "modelText", "auto");
       aonTable.addColumn("Hacienda", "", "hacienda", "10%");
       aonTable.addColumn("Ejercicio", "", "year", "10%");
       aonTable.addColumn("Periodo", "", "periodText", "10%");
       if (LS.isNewTheme()) {
-        aonTable.addColumn("Estado", "string", "statusHtml", "10%");
+        aonTable.addColumn("Estado", "string", "statusHtml", "12%");
       } else {
-        aonTable.addColumn("Estado", "", "statusText", "10%");
+        aonTable.addColumn("Estado", "", "statusText", "12%");
       }
-      aonTable.addColumn("Importe", "number", "resultFormat", "8%");
+      aonTable.addColumn("Importe", "number", "resultFormat", "15%");
       aonTable.addColumn("", "icon", "icon", "5%");
 
       try {
@@ -216,7 +216,9 @@ export class AonTax extends AonElement {
 
     if (filter.estimationFilter) {
       const estimationModels = await getEstimationModelsFiscal(filter.estimationFilter);
-      let estimationModelDatos = estimationModels.filter((estimationModel) => estimationModel.amount && estimationModel.amount > 0).map((estimationModel) => this.formatEstimationModel(estimationModel, filter.estimationFilter))
+      console.log("estimationModels");
+      console.log(estimationModels);
+      let estimationModelDatos = estimationModels.filter((estimationModel) => estimationModel.amount && estimationModel.amount != 0).map((estimationModel) => this.formatEstimationModel(estimationModel, filter.estimationFilter))
       return estimationModelDatos;
     } else {
       if (filter.year) {
@@ -228,9 +230,13 @@ export class AonTax extends AonElement {
       }
 
       if (filter.model) {
-        datos = datos.filter(({ model }) => model == filter.model);
+        datos = datos.filter(({ model, administration }) => FiscalUtils.getModelNumber(administration, model) == filter.model);
       }
     }
+
+    console.log("AON_TAX");
+    console.log("getFiscalModels");
+    console.log(datos);
 
     return datos;
   }
@@ -261,6 +267,7 @@ export class AonTax extends AonElement {
       hacienda : model.hacienda, // Alava, AEAT...
       result : model.amount,
       statusHtml,
+      lettersHtml : `<div style="font-weight: bold; color: #FF9002;">Precálculo</div>`,
       statusText : "Borrardor",
       newModel
     };

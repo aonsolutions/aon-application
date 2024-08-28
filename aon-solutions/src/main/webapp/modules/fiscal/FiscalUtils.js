@@ -30,6 +30,26 @@ const getPathImg = (administration)=>{
   return path+src;
 }
 
+const getModelNumberHtml = (administration, model)=>{
+  const newModel = TAX_ENUMS.TAX_MODEL_NUMBER[model];
+  let modelText = newModel;
+  if(newModel === "111" && administration === "ALAVA") {
+    modelText = "110";
+  } 
+
+  return /*html*/`<div style="width: 25px; height: 25px; font-size: 10px; line-height: 21px;border: 2px solid #949393;border-radius: 50%;display: flex;justify-content: center;color: #949393;">${modelText}</div>`;
+}
+
+const getModelNumber = (administration, model)=>{
+  const newModel = TAX_ENUMS.TAX_MODEL_NUMBER[model];
+  let modelText = newModel;
+  if(newModel === "111" && administration === "ALAVA") {
+    modelText = "110";
+  } 
+
+  return modelText;
+}
+
 const getModelNew = (model)=> {
   const newModel = TAX_ENUMS.TAX_MODEL_NUMBER[model.model];
   const statusText = TAX_ENUMS.TAX_STATUS[model.status];
@@ -163,6 +183,8 @@ const groupBy = (list, keyGetter) =>{
 export const FiscalUtils = {
     createImgAdmin,
     getPathImg,
+    getModelNumberHtml,
+    getModelNumber,
     getModelNew,
     groupBy
 }
