@@ -846,10 +846,8 @@ export class AonNewMenu extends AonElement {
 			return this.getDur().isFiscal();
 		else if (MenuApps.PAYROLL.app === app.app)
 			return this.getDur().isPayroll();
-		else if (MenuApps.COMUNICA.app === app.app)
-			return !this.getDur().isPayroll() && this.getDur().isComunica();
-		else if (MenuApps.AON_SALTRA.app === app.app)
-			return !this.getDur().isPayroll() && !this.getDur().isComunica() && this.getDur().isSaltra();
+		else if (MenuApps.COMUNICA.app === app.app) 
+			return !this.getDur().isPayroll() && (this.getDur().isComunica() || this.getDur().isSaltra());			
 		else if (MenuApps.DOCUMENTAL.app === app.app)
 			return this.getDur().isDocumental();
 		else if (MenuApps.TIMECONTROL.app === app.app)

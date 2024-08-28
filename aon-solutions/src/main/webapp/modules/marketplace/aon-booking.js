@@ -285,9 +285,18 @@ export class AonBooking extends AonElement {
 			let span = document.createElement('span');
 			span.style.margin = '20px';
 
+			let color = contratado || app.app.includes('pack') || app.domainType ? app.color : 'lightgray';
 			if(app.icon) {
-				let color = contratado || app.app.includes('pack') || app.domainType ? app.color : 'lightgray';
 				span.innerHTML = `<aon-icon id="${this.APP + app.app + 'Icon'}" icon="${app.icon}" color="${color}" size="30px"></aon-icon>`;
+			} else if(app.symbol) {
+				let icon = this.createSpan();
+				icon.id = this.APP + app.app + 'Icon';
+				icon.classList.add(CSS.MATERIAL_SYMBOLS_OUTLINED);
+				icon.innerHTML = app.symbol;
+				icon.style.color = color;
+				icon.style.paddingTop = '5px';
+				icon.style.paddingLeft = '4px';
+				span.appendChild(icon);
 			} else {
 				let img = document.createElement('img');
 				img.style.width = '30px';
@@ -397,8 +406,11 @@ export class AonBooking extends AonElement {
 
 	activate(app, contract, text){
 		let contractIcon = this.getElement(this.APP + app.app + 'Icon');
-		if(contractIcon)
+		if(contractIcon) {
 			contractIcon.color = contract || app.app.includes('pack') ? app.color : 'lightgray';
+			contractIcon.style.color = contract || app.app.includes('pack') ? app.color : 'lightgray';
+		}
+
 		let contractSwitch = this.getElement(this.APP + app.app + 'Contract');
 		if(contractSwitch) contractSwitch.checked = contract;
 
