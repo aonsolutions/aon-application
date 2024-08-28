@@ -3970,12 +3970,5 @@ label.rating:hover {
 }
 
 #aonMenuListAppImgTop-fiscal {
-  scale: 1.4;
-  margin-bottom: 6px;
-}
-
-#aonMenuListAppImg-accounting {
-	width: 30px;
-	margin-right: 2px;
-	padding: 2px 0px 0px 2px;
+  scale: 1.2;
 }

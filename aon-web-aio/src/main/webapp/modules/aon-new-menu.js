@@ -342,9 +342,9 @@ export class AonNewMenu extends AonElement {
 				li.id = `aonMenuList-${app.app}`;
 				li.classList.add("aonNewMenuSideNavLi");
 
-				app.logo = this.getCssVariable(`${app.app}SideNavLogo`) || app.logo;
-				app.icon = this.getCssVariable(`${app.app}SideNavIcon`) || app.icon;
-				app.symbol = this.getCssVariable(`${app.app}SideNavSymbol`) || app.symbol;
+				app.cssLogo = this.getCssVariable(`${app.app}SideNavLogo`) ;
+				app.cssIcon = this.getCssVariable(`${app.app}SideNavIcon`) ;
+				app.cssSymbol = this.getCssVariable(`${app.app}SideNavSymbol`);
 				
 				li.appendChild(this.buildApp(app,{color: `var(--aonSidenavIconColor, ${app.newColor || app.color})`}));
 				ul.appendChild(li);
@@ -380,9 +380,11 @@ export class AonNewMenu extends AonElement {
 					continue;
 				} else {
 					let appElement = this.buildTopApp(app);
-					app.logo = this.getCssVariable(`${app.app}TopNavLogo`) || app.logo;
-					app.icon = this.getCssVariable(`${app.app}TopNavIcon`) || app.icon;
-					app.symbol = this.getCssVariable(`${app.app}TopNavSymbol`) || app.symbol;
+
+					// app.cssLogo = this.getCssVariable(`${app.app}TopNavLogo`);
+					// app.cssIcon = this.getCssVariable(`${app.app}TopNavIcon`);
+					// app.cssSymbol = this.getCssVariable(`${app.app}TopNavSymbol`);
+
 					appElement.classList.add("aonNewMenuTopNavAppElement");
 					app.color = "var(--aonTopMenuNotAvailable)";
 					div.appendChild(appElement);
@@ -503,7 +505,7 @@ export class AonNewMenu extends AonElement {
 
 		let a = this.createElement(TAG.A);
 		a.addEventListener(EVENT.CLICK, () => {
-			this.appSelection(app, sidenav);
+			this.appSelection(app);
 		});
 		a.classList.add('aonMenuApp');
 
@@ -535,13 +537,46 @@ export class AonNewMenu extends AonElement {
 		let welcome = this.getElement("aonCompanyTabFilter");
 
 		
-		if (app.icon) {
+		if (app.cssIcon) {
+			const appColor = app.newColor || app.color;
+			let aonIcon = new AonIcon();
+			aonIcon.id = `aonMenuListAppImgTop-${app.app}`;
+			aonIcon.icon =  app.cssIcon;
+			aonIcon.color = style?.color || appColor;
+			if (app.app == "accounting"){
+				aonIcon.size = "26px";
+			}else {
+				aonIcon.size = "32px";
+			}
+			div.appendChild(aonIcon);
+		} else if (app.cssSymbol) {
+			let icon = this.createElement(TAG.SPAN);
+			icon.id = `aonMenuListAppImgTop-${app.app}`;
+			icon.classList.add(CSS.MATERIAL_SYMBOLS_OUTLINED);
+			icon.innerHTML = app.cssSymbol;
+			if(app.newColor || app.color) {
+				icon.style.color = app.newColor || app.color;
+			}
+			icon.classList.add("aonNewMenuAppIcon");
+			div.appendChild(icon);
+		} else if (app.cssLogo) {
+			let img = this.createElement(TAG.IMG);
+			img.id = `aonMenuListAppImgTop-${app.app}`;
+			img.classList.add("aonNewMenuAppImg");
+			img.src = app.cssLogo;
+			img.title = app.title;
+			div.appendChild(img);
+		} else if (app.icon) {
 			const appColor = app.newColor || app.color;
 			let aonIcon = new AonIcon();
 			aonIcon.id = `aonMenuListAppImgTop-${app.app}`;
 			aonIcon.icon = app.newIcon || app.icon;
 			aonIcon.color = style?.color || appColor;
-			aonIcon.size = "32px";
+			if (app.app == "accounting"){
+				aonIcon.size = "26px";
+			}else {
+				aonIcon.size = "32px";
+			}
 			div.appendChild(aonIcon);
 		} else if (app.symbol) {
 			let icon = this.createElement(TAG.SPAN);
