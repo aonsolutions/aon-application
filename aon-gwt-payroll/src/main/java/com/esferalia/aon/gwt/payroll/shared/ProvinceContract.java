@@ -64,7 +64,7 @@ public class ProvinceContract {
 	};
 	
 	public static String getName(String code)  {
-		return PROVINCES.get(code);
+		return PROVINCES.getOrDefault(code, "");
 	}
 	
 	public static Integer getProvinceIndex(String province) {
@@ -73,7 +73,6 @@ public class ProvinceContract {
 		
 		Integer index = 1;
 		for(String provinceStr : PROVINCES.keySet()) {
-//			Window.alert(provinceStr + " == " + province);
 			if(provinceStr.equalsIgnoreCase(province)) {
 				return index;
 			}

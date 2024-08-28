@@ -7,8 +7,10 @@ import java.util.Optional;
 import java.util.stream.Stream;
 
 import com.esferalia.aon.occam.api.model.Bonus;
+import com.esferalia.aon.occam.api.model.ContractExtendedData;
 import com.esferalia.aon.occam.api.model.Cost;
 import com.esferalia.aon.occam.api.model.Deduction;
+import com.esferalia.aon.occam.api.model.EnterpriseCCC;
 import com.esferalia.aon.occam.api.model.Filter.AgreementLevelCategoryFilter;
 import com.esferalia.aon.occam.api.model.Filter.ContractAttachFilter;
 import com.esferalia.aon.occam.api.model.Filter.ContractDataFilter;
@@ -29,7 +31,6 @@ import com.esferalia.aon.occam.api.model.payroll.ContractAttach;
 import com.esferalia.aon.occam.api.model.payroll.ContractData;
 import com.esferalia.aon.occam.api.model.payroll.Employee;
 import com.esferalia.aon.occam.api.model.payroll.Enterprise;
-import com.esferalia.aon.occam.api.model.ContractExtendedData;
 
 
 public interface IPayroll {
@@ -113,6 +114,10 @@ public interface IPayroll {
 	public List<Activity> getActivities(AONContext ctx, EnterpriseActivityFilter filter);
 
 	public void saveActivities(AONContext ctx, List<Activity> Activity);
+	
+	public void deleteCCC(AONContext ctx, Integer cccId);
+	
+	public EnterpriseCCC saveCCC(AONContext ctx, EnterpriseCCC ccc);
 	
 	// ----------MOD145
 	

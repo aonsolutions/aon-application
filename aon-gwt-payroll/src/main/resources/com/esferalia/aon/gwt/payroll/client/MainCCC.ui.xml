@@ -5,58 +5,11 @@
 	xmlns:aon='urn:import:com.esferalia.aon.gwt.common.client.widget.solutions'>
 
 	<ui:with field='res' type='com.esferalia.aon.gwt.common.client.css.AonResources' />
-
-	<ui:style type="com.esferalia.aon.gwt.payroll.client.MainCCC.MyStyle">
-		.container{
-			margin: 0 10px;
-		}
-		
-		.widthAll{
-			width: 100%;
-		}
-		
-		.flexColumn{
-			display: flex;
-			flex-direction: column;
-		}
-		
-		.mainPanel{
-			margin-top: 1rem;
-		}
-	</ui:style>
-
-	<g:DockLayoutPanel ui:field="dockLayoutPanel" unit="PX">
-		<g:north size="50">
-			<g:DeckPanel ui:field="toolbarDeckPanel">
-				<aon:AonToolbar ui:field="toolbar" />
-				<aon:AonToolbar ui:field="toolbarPDFViewer" />
-			</g:DeckPanel>
-		</g:north>
-		<g:center>
-			<g:HTMLPanel ui:field="mainHtmlPanel" styleName="{style.flexColumn}">
-				<g:HTMLPanel ui:field="messagePanel" />
-				<g:DeckPanel ui:field="mainDeckPanel">
-					<g:SimpleLayoutPanel ui:field="mainCCCPanel">
-						<g:TabLayoutPanel ui:field="cccTabLayoutPanel" barUnit='EM' barHeight='3' >
-							<g:tab >
-								<!--  g:customHeader size='7' ><g:InlineLabel styleName="aon-icon-logo" ></g:InlineLabel></g:customHeader-->
-								<g:header size="7">CCCs</g:header>
-								<g:HTMLPanel ui:field="activityCCCPanel" styleName="{style.mainPanel}"/>
-							</g:tab>
-							<g:tab>
-								<!--  g:customHeader size='7' ><g:InlineLabel styleName="aon-icon-segsocial-small" title="CCCs Asignados" ></g:InlineLabel></g:customHeader-->
-								<g:header size="7">CCCs Asignados</g:header>
-								<g:HTMLPanel ui:field="assignedCCCPanel" styleName="{style.mainPanel}"/>
-							</g:tab>
-						</g:TabLayoutPanel>
-					</g:SimpleLayoutPanel>
-					<g:SimpleLayoutPanel ui:field="scrolledPDFPanel">
-						<p:FullViewer styleName="reset" ui:field='pdfViewer' />
-					</g:SimpleLayoutPanel> 
-				</g:DeckPanel>
-			</g:HTMLPanel>
-		</g:center>
-	</g:DockLayoutPanel>
 	
+	<g:DeckPanel ui:field="deckPanel">
+		<aon:AonCustomDockLayout ui:field="dockLayoutPanel" />
+		<aon:AonCustomDockLayout ui:field="pdfDockLayoutPanel" />
+	</g:DeckPanel>
+	 
 </ui:UiBinder> 
 
