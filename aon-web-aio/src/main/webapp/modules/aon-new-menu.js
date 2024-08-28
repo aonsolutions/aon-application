@@ -921,7 +921,6 @@ export class AonNewMenu extends AonElement {
 	}
 	
 	showNewDialogMenu(el){
-		
 		let newDialogMenu =  this.getApplication().getOptionDialog();
 
 		let newMenuOptions = [];
