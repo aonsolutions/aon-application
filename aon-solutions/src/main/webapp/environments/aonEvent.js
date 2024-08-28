@@ -4,6 +4,7 @@ export const CHANGE = 'change';
 export const CLICK = 'click';
 export const CLICK_TITLE = 'clickTitle';
 export const CLOSE = 'close';
+export const CROPPER = 'cropper';
 export const CUSTOMER_CHANGE = 'customerChange';
 export const LOAD = 'load';
 export const DRAGOVER = 'dragover';

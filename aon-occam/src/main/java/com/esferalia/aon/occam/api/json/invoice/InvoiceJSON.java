@@ -59,7 +59,7 @@ public class InvoiceJSON {
 				.setNumber(JsonUtils.getInt(json, IJsonNames.NUMBER))
 				.setScope(ScopeJSON.fromJSON(JsonUtils.getJSONObject(json, IJsonNames.SCOPE)))
 				.setTransaction(InvoiceTransactionType.safeValueOf(json.optString(IJsonNames.TRANSACTION)))
-				.setReferenceCode(InvoiceType.SALES.equals(type) ? null : json.optString(IJsonNames.REFERENCE))
+				.setReferenceCode(JsonUtils.getString(json, IJsonNames.REFERENCE))
 				.setIssueDate(date) //JsonUtils.getDate(json, IJsonNames.DATE))
 				.setTaxDate(date)// JsonUtils.getDate(json, IJsonNames.DATE))
 				.setInvestment(json.optBoolean(IJsonNames.INVESTMENT))

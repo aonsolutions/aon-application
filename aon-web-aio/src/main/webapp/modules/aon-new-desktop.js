@@ -38,24 +38,22 @@ export class AonNewDesktop extends AonElement {
 		
 		let bannerAppsDiv = this.createElement(TAG.DIV);
 		let titleH1 = this.createElement(TAG.H1);
-		titleH1.innerHTML = MSG.APPLICATIONS;
+		titleH1.innerHTML = MSG.APPLICATIONS +  " Portal";
 		titleH1.classList.add("aonNewDesktopTitleH1");
 		bannerAppsDiv.appendChild(titleH1);
 		desktopDiv.appendChild(bannerAppsDiv);
+
 		
 		let desktopAppsDiv =  this.createElement(TAG.DIV);
 		desktopAppsDiv.classList.add('aonDesktopAppsContainer');		
 		
 		for ( const app in this.apps ) {
-			let titulo = this.apps[app].title;
-			if (titulo!=null && titulo!="Inicio" && titulo!="Aplicaciones") {
-				desktopAppsDiv.appendChild(this.buildApp(this.apps[app]));
-			}
+			desktopAppsDiv.appendChild(this.buildApp(this.apps[app]));
 		}
 		
 		desktopDiv.appendChild(desktopAppsDiv);
 		
-		let bannerAonAppsDiv = this.createElement(TAG.DIV);
+/*		let bannerAonAppsDiv = this.createElement(TAG.DIV);
 		let titleAonH1 = this.createElement(TAG.H1);
 		titleAonH1.innerHTML = 'Más de AON Solutions';
 		titleAonH1.classList.add("aonNewDesktopTitleAonH1");
@@ -69,7 +67,7 @@ export class AonNewDesktop extends AonElement {
 			desktopAonAppsDiv.appendChild(this.buildMasApp(this.aonApps[app]));
 		}
 		desktopDiv.appendChild(desktopAonAppsDiv);
-
+*/		
 		this.appendChild(desktopDiv);		
 	}
 	
@@ -184,28 +182,29 @@ export class AonNewDesktop extends AonElement {
 
 		let appDiv = this.createElement(TAG.DIV);
 		appDiv.classList.add("aonNewDesktopAppDiv");
-
-		if (app.symbol) {
-			let icon = this.createElement(TAG.SPAN);
-			icon.classList.add(CSS.MATERIAL_SYMBOLS_OUTLINED);
-			icon.id = `aonDesktopAppImg-${app.app}`;
-			icon.innerHTML = app.symbol;
-			icon.style.fontSize = "24px";
-			appDiv.appendChild(icon);
-		} else if (app.icon) {
+		
+		if (app.icon) {
 			let aonIcon = new AonIcon();
 			aonIcon.id = `aonDesktopAppImg-${app.app}`;
 			aonIcon.icon = app.newIcon || app.icon;
 			aonIcon.color = app.newColor || app.color;
-			aonIcon.size = "32px";
+			aonIcon.size = app.iconSize || "32px";
 			appDiv.appendChild(aonIcon);
-		} else if (app.logo) {
-			let img = this.createElement(TAG.IMG);
-			img.id = `aonDesktopAppImg-${app.app}`;
-			img.style.width = '24px';
-			img.src = app.logo;
-			img.title = app.title;
-			appDiv.appendChild(img);
+		} 
+		// else if (app.symbol) {
+		// 	let icon = this.createElement(TAG.SPAN);
+		// 	icon.classList.add(CSS.MATERIAL_SYMBOLS_OUTLINED);
+		// 	icon.id = `aonDesktopAppImg-${app.app}`;
+		// 	icon.innerHTML = app.symbol;
+		// 	icon.style.fontSize = "24px";
+		// 	appDiv.appendChild(icon);
+		else if (app.logo) {
+		 	let img = this.createElement(TAG.IMG);
+		 	img.id = `aonDesktopAppImg-${app.app}`;
+			img.classList.add("aonNewMenuAppImg");
+		 	img.src = app.logo;
+		 	img.title = app.title;
+		 	appDiv.appendChild(img);
 		}
 
 		let titleSpan = this.createElement(TAG.SPAN);
@@ -216,8 +215,8 @@ export class AonNewDesktop extends AonElement {
 
 		appA.appendChild(appDiv);
 
-		if(app.app == "accounting"|| app.app == "fiscal" || app.app == "payroll")
-			appDiv.className = "appDiv";
+		// if(app.app == "accounting"|| app.app == "fiscal" || app.app == "payroll")
+		// 	appDiv.className = "appDiv";
 
 		cardDiv.appendChild(appA);
 
@@ -356,7 +355,7 @@ export class AonNewDesktop extends AonElement {
 			aonIcon.id = `aonDesktopAppImg-${app.app}`;
 			aonIcon.icon = app.newIcon || app.icon;
 			aonIcon.color = app.newColor || app.color;
-			aonIcon.size = "32px";
+			aonIcon.size = app.iconSize || "32px";
 			mainDiv.appendChild(aonIcon);
 		} else if (app.logo) {
 			let img = this.createElement(TAG.IMG);
@@ -412,6 +411,10 @@ export class AonNewDesktop extends AonElement {
 		}
 
 		return cardDiv;		
+	}
+	
+	appSelection(app) {
+		document.querySelector(TAG.AON_NEW_MENU).appSelection(app);
 	}
 	
 }

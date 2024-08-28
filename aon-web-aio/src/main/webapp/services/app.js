@@ -5,13 +5,22 @@ import { MATERIAL_ICONS, MSG, CONSTANT, AON_ICONS } from "aonsolutions/environme
 export const NEW = {
 	home : true,
 	title: MSG.NEW,
+	description: MSG.NEW,
 	app: CONSTANT.NEW,
 	symbol: MATERIAL_ICONS.ADD_CIRCLE_OUTLINE,
 };
 
+export const NOTIFICATION = {
+	app: "notification",
+	symbol: MATERIAL_ICONS.NOTIFICATIONS,
+	title: MSG.NOTIFICATIONS,
+	subtitle: "Notification",
+}
+
 export const HOME = {
 	home : true,
 	title: MSG.HOME,
+	description: MSG.HOME,
 	app: CONSTANT.HOME,
 	symbol: MATERIAL_ICONS.HOME,
 };
@@ -20,13 +29,22 @@ export const APPS = {
 	home : true,
 	app: CONSTANT.APPS,
 	title: MSG.APPLICATIONS,
+	description: MSG.APPLICATIONS,
 	symbol: MATERIAL_ICONS.APPS,
 };
 
 export const APPLICATIONS = {
 	home : true,
+	title: MSG.APPLICATIONS,
 	app: CONSTANT.APPLICATIONS,
 	symbol: MATERIAL_ICONS.APPLICATIONS,
+};
+
+export const AON_CLASSIC = {
+	app: CONSTANT.AON_APPLICATION,
+	title: MSG.CLASSIC_VIEW,
+	description: MSG.CLASSIC_VIEW,
+	logo: "../assets/aon.png",
 };
 
 export const AON_APPS = [ 
@@ -46,9 +64,21 @@ export const MENU_APPS = [
   APP.PAYROLL,
   APP.TIMECONTROL,
   APP.NOTES,
-  APP.MESSENGER
+  APP.MESSENGER,
+  AON_CLASSIC
 ];
 
+export const DESKTOP_APPS = [
+  APP.INVOICE,
+  APP.DOCUMENTAL,
+  APP.ACCOUNTING,
+  APP.FISCAL,
+  APP.PAYROLL,
+  APP.TIMECONTROL,
+  APP.NOTES,
+  APP.MESSENGER,
+  AON_CLASSIC
+];
 
 
 export const Apps = APP.Apps;
@@ -67,6 +97,7 @@ export const COMMERCIAL_MENU = {
 	icon: AON_ICONS.AON_KIT_DIGITAL,
 	symbol: MATERIAL_ICONS.HANDSHAKE,
 	title: MSG.COMMERCIAL,
+	description: MSG.COMMERCIAL,
 	subtitle: "Comercial",
 	color: "var(--aonTopMenuAvailable)",
 	style: "aonTopNavCommercialButton",
@@ -79,6 +110,7 @@ export const MANAGEMENT_MENU = {
 	icon: AON_ICONS.AON_KIT_DIGITAL,
 	symbol: MATERIAL_ICONS.MONITORING,
 	title: MSG.MANAGEMENT,
+	description: MSG.MANAGEMENT,
 	subtitle: "Management",
 	color: "var(--aonTopMenuAvailable)",
 	style: "aonTopNavManagementButton",
@@ -91,6 +123,7 @@ export const TREASURY_MENU = {
 	icon: AON_ICONS.AON_KIT_DIGITAL,
 	symbol: MATERIAL_ICONS.ACCOUNT_BALANCE,
 	title: MSG.TREASURY,
+	description: MSG.TREASURY,
 	subtitle: "Treasury",
 	color: "var(--aonTopMenuAvailable)",
 	style: "aonTopNavTreasuryButton",
@@ -103,6 +136,7 @@ export const WAREHOUSE_MENU = {
 	icon: AON_ICONS.AON_KIT_DIGITAL,
 	symbol: MATERIAL_ICONS.TROLLEY,
 	title: MSG.WAREHOUSE,
+	description: MSG.WAREHOUSE,
 	subtitle: "Warehouse",
 	color: "var(--aonTopMenuAvailable)",
 	style: "aonTopNavWarehouseButton",
@@ -115,6 +149,7 @@ export const GROUPWARE_MENU = {
 	icon: AON_ICONS.AON_KIT_DIGITAL,
 	symbol: MATERIAL_ICONS.NOTE_STACK,
 	title: MSG.GROUPWARE,
+	description: MSG.GROUPWARE,
 	subtitle: "Groupware",
 	color: "var(--aonTopMenuAvailable)",
 	style: "aonTopNavGroupwareButton",
@@ -127,6 +162,7 @@ export const ACCOUNTING_MENU = {
 	icon: AON_ICONS.AON_KIT_DIGITAL,
 	symbol: MATERIAL_ICONS.CALCULATE,
 	title: MSG.ACCOUNTING,
+	description: MSG.ACCOUNTING,
 	subtitle: "Accounting",
 	color: "var(--aonTopMenuAvailable)",
 	style: "aonTopNavAccountingButton",
@@ -139,6 +175,7 @@ export const FISCAL_MENU = {
 	icon: AON_ICONS.AON_KIT_DIGITAL,
 	symbol: MATERIAL_ICONS.EURO_SYMBOL,
 	title: MSG.FISCAL,
+	description: MSG.FISCAL,
 	subtitle: "Fiscal",
 	color: "var(--aonTopMenuAvailable)",
 	style: "aonTopNavFiscalButton",
@@ -149,8 +186,9 @@ export const FISCAL_MENU = {
 export const PAYROLL_MENU = {
 	app: "payrollMenu",
 	icon: AON_ICONS.AON_KIT_DIGITAL,
-	symbol: MATERIAL_ICONS.GROUPS,
+	symbol: "group",
 	title: MSG.PAYROLL,
+	description: MSG.PAYROLL,
 	subtitle: "Payroll",
 	color: "var(--aonTopMenuAvailable)",
 	style: "aonTopNavPayrollButton",
@@ -161,8 +199,9 @@ export const PAYROLL_MENU = {
 export const MARKETING_MENU = {
 	app: "marketingMenu",
 	icon: AON_ICONS.AON_KIT_DIGITAL,
-	symbol: MATERIAL_ICONS.CAMPAIGN,
+	symbol: "ads_click",
 	title: MSG.MARKETING,
+	description: MSG.MARKETING,
 	subtitle: "Marketing",
 	color: "var(--aonTopMenuAvailable)",
 	style: "aonTopNavMarketingButton",

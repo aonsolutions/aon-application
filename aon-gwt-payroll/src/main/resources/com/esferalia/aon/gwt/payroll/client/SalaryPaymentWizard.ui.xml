@@ -185,6 +185,10 @@
 						<g:Label styleName="{style.title}">Descripción</g:Label>
 						<g:TextBox ui:field="paymentDescription"/>
 					</g:HTMLPanel>
+					<g:HTMLPanel styleName="{style.element} {style.w180}">
+						<g:Label styleName="{style.title}">Tipo Nómina/Recibo</g:Label>
+						<g:ListBox ui:field="salaryTypeLB"/>
+					</g:HTMLPanel>
 				</g:HTMLPanel>
 				
 				<g:HTMLPanel ui:field="paymentExpressionPanel" styleName="{style.element}">

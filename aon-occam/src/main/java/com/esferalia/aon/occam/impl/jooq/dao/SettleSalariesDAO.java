@@ -79,6 +79,7 @@ public class SettleSalariesDAO {
 				.where(SALARY.DOMAIN.eq(ctx.getDomainId()))
 				.and(SALARY.ISSUE_DATE.eq(parseToSQLDate(date)))
 				.and(SALARY.TYPE.lt((byte)4)) // Nomina, Extra, Finiquito, Atraso
+				.orderBy(SALARY.START_DATE, SALARY.CHARGE_DATE)
 				.fetch();
 		
 		if(salaries.isEmpty()) throw new AonCoreException("No existen n\u00f3minas sobre las que generar un vencimiento para el periodo " + formatDate(date));
@@ -96,14 +97,6 @@ public class SettleSalariesDAO {
 			.execute();
 		
 		for(Record record : salaries) {
-			// Delete finance for this registry which status == 0 (Pediente)
-//			ctx.getDslContext().deleteFrom(FINANCE)
-//				.where(FINANCE.DOMAIN.eq(ctx.getDomainId()))
-//				.and(FINANCE.DUE_DATE.eq(parseToSQLDate(date)))
-//				.and(FINANCE.REGISTRY.eq(record.get(REGISTRY.ID)))
-//				.and(FINANCE.PAYROLL.eq((byte)1))
-//				.and(FINANCE.STATUS.eq((byte)0))
-//				.execute();
 			
 			String concept = getSalaryType(record.get(SALARY.TYPE));
 			
@@ -130,7 +123,8 @@ public class SettleSalariesDAO {
 					.set(FINANCE.RNAME, record.get(REGISTRY.NAME))
 					.set(FINANCE.AMOUNT, record.get(SALARY.TOTAL_LIQUID))
 					.set(FINANCE.CONCEPT, concept + " - " + formatDate(date))
-					.set(FINANCE.DUE_DATE, parseToSQLDate(date))
+//					.set(FINANCE.DUE_DATE, parseToSQLDate(date))
+					.set(FINANCE.DUE_DATE,  record.get(SALARY.CHARGE_DATE))
 					.set(FINANCE.PAY_METHOD, record.get(RPAYMETHOD.PAY_METHOD))
 					.set(FINANCE.BANK_ACCOUNT, record.get(RBANK.BANK_ACCOUNT))
 					.set(FINANCE.BANK_ALIAS, record.get(RBANK.ALIAS))
@@ -161,7 +155,8 @@ public class SettleSalariesDAO {
 						.set(FINANCE.RNAME, record.get(REGISTRY.NAME))
 						.set(FINANCE.AMOUNT, amountDiff)
 						.set(FINANCE.CONCEPT, concept + " - " + formatDate(date))
-						.set(FINANCE.DUE_DATE, parseToSQLDate(date))
+//						.set(FINANCE.DUE_DATE, parseToSQLDate(date))
+						.set(FINANCE.DUE_DATE,  record.get(SALARY.CHARGE_DATE))
 						.set(FINANCE.PAY_METHOD, record.get(RPAYMETHOD.PAY_METHOD))
 						.set(FINANCE.BANK_ACCOUNT, record.get(RBANK.BANK_ACCOUNT))
 						.set(FINANCE.BANK_ALIAS, record.get(RBANK.ALIAS))
@@ -201,11 +196,10 @@ public class SettleSalariesDAO {
 		// Check if has vencimientos
 		
 		Result<Record> fbatchDetails = ctx.getDslContext().select().from(FBATCH_DETAIL)
-			.innerJoin(FINANCE).on(FINANCE.ID.eq(FBATCH_DETAIL.FINANCE))
-			.innerJoin(RADDRESS).on(RADDRESS.REGISTRY.eq(FINANCE.REGISTRY))
-			.innerJoin(GEOZONE).on(GEOZONE.ID.eq(RADDRESS.GEOZONE))
+			.join(FINANCE).on(FINANCE.ID.eq(FBATCH_DETAIL.FINANCE))
+			.leftOuterJoin(RADDRESS).on(RADDRESS.REGISTRY.eq(FINANCE.REGISTRY).and(RADDRESS.TYPE.eq((byte)0)))
+			.leftOuterJoin(GEOZONE).on(GEOZONE.ID.eq(RADDRESS.GEOZONE))
 			.where(FBATCH_DETAIL.FBATCH.eq(fbatchId))
-			.and(RADDRESS.TYPE.eq((byte)0))
 			.fetch();
 		
 		if(null == fbatchDetails || fbatchDetails.isEmpty()) throw new AonCoreException("No existen vencimientos en la remesa sobre los que generar el fichero Sepa");
@@ -280,7 +274,13 @@ public class SettleSalariesDAO {
 		
 		xmlData += "<Ctry>ES</Ctry>";
 		
-		xmlData += "<AdrLine>" + removeSpecialCharacters(fbatchEnterprise.get(RADDRESS.STREET_TYPE)) + ". " + removeSpecialCharacters(fbatchEnterprise.get(RADDRESS.ADDRESS)) + " " + removeSpecialCharacters(fbatchEnterprise.get(RADDRESS.NUMBER)) + ", " + removeSpecialCharacters(fbatchEnterprise.get(RADDRESS.ADDRESS2)) + " " + fbatchEnterprise.get(RADDRESS.ZIP) + " " + removeSpecialCharacters(fbatchEnterprise.get(RADDRESS.CITY)) + " (" + removeSpecialCharacters(fbatchEnterprise.get(GEOZONE.NAME)) + ")</AdrLine>";
+		if(null != fbatchEnterprise.get(RADDRESS.ID)) {
+		
+			xmlData += "<AdrLine>" + removeSpecialCharacters(fbatchEnterprise.get(RADDRESS.STREET_TYPE)) + ". " + removeSpecialCharacters(fbatchEnterprise.get(RADDRESS.ADDRESS)) + " " + removeSpecialCharacters(fbatchEnterprise.get(RADDRESS.NUMBER)) + "</AdrLine>";
+			
+			xmlData += "<AdrLine>" + fbatchEnterprise.get(RADDRESS.ZIP) + " " + removeSpecialCharacters(fbatchEnterprise.get(RADDRESS.CITY)) + " (" + removeSpecialCharacters(fbatchEnterprise.get(GEOZONE.NAME)) + ")</AdrLine>";
+		
+		}
 		
 		xmlData += "</PstlAdr>";
 		
@@ -321,7 +321,13 @@ public class SettleSalariesDAO {
 			
 			xmlData += "<Ctry>ES</Ctry>";
 			
-			xmlData += "<AdrLine>" + removeSpecialCharacters(fbatchDetail.get(RADDRESS.STREET_TYPE)) + ". " + removeSpecialCharacters(fbatchDetail.get(RADDRESS.ADDRESS)) + " " + removeSpecialCharacters(fbatchDetail.get(RADDRESS.NUMBER)) + ", " + removeSpecialCharacters(fbatchDetail.get(RADDRESS.ADDRESS2)) + " " + fbatchDetail.get(RADDRESS.ZIP) + " " + removeSpecialCharacters(fbatchDetail.get(RADDRESS.CITY)) + " (" + removeSpecialCharacters(fbatchDetail.get(GEOZONE.NAME)) + ")</AdrLine>";
+			if(null != fbatchDetail.get(RADDRESS.ID)) {
+			
+				xmlData += "<AdrLine>" + removeSpecialCharacters(fbatchDetail.get(RADDRESS.STREET_TYPE)) + ". " + removeSpecialCharacters(fbatchDetail.get(RADDRESS.ADDRESS)) + " " + removeSpecialCharacters(fbatchDetail.get(RADDRESS.NUMBER)) + "</AdrLine>";
+				
+				xmlData += "<AdrLine>" + fbatchDetail.get(RADDRESS.ZIP) + " " + removeSpecialCharacters(fbatchDetail.get(RADDRESS.CITY)) + " (" + removeSpecialCharacters(fbatchDetail.get(GEOZONE.NAME)) + ")</AdrLine>";
+			
+			}
 			
 			xmlData += "</PstlAdr>";
 			

@@ -1,0 +1,157 @@
+:root{
+   --tw-bg-opacity: 1;
+   --opengesGreen : rgb(82 217 160 / var(--tw-bg-opacity));
+
+  --aonTopMenuAvailable: white;
+	
+	
+	--aonTopMenuSpecial : black; /* var(--opengesGreen); */
+	--aonTopMenuAvailable : black; /*var(--opengesGreen);*/
+	
+	--aonHeaderBackgroundAvailable:black;
+
+}
+
+.aonHeader {
+	overflow: hidden;
+	background-color: black;
+}
+
+#aonHeaderCompanyName,
+.aonHeader .material-icons {
+	color: white;
+}
+
+.aonNewLogo {
+    width: 139px;
+    height: 48px;
+    cursor: pointer;
+    padding: 0 0 0 68px;
+    background-size: contain;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-image: url("https://www.openges.es/images/logo.svg");
+}
+
+.aonMenuLeftop {
+	--aonTopMenuAvailable: white;
+	background-color: black;
+	
+}
+
+.aonMenuTopnav,
+.aonMenuSidenav {
+	background-color: var(--aonWhite);
+}
+
+
+.aonFavicon {
+	background-image: url("https://www.openges.es//images/icons/icon32x32.png");
+}
+
+.aonTabItemTextSelected {
+    border-bottom: 2px solid var(--opengesGreen);
+}
+
+.aonSwitch > input:checked + span::before {
+    background-color: #e39896;
+}
+.aonSwitch > input:checked + span::after {
+    background-color: var(--opengesGreen);
+}
+
+/*
+ *
+ */
+.aonRootGradiantHeaderTop,
+.aonRootGradiantHeaderBottom {
+    background: radial-gradient(circle,var(--opengesGreen) 0,hsla(240,9%,96%,0) 68%);
+} 
+
+#aonMenuListAppImgTop-home {
+	color: var(--opengesGreen);
+}
+
+
+/*
+ * Login screen
+*/
+.aonLink {
+	color: var(--opengesGreen) !important;
+}
+
+.aonToolbar2{
+  border-bottom: none;
+  background-color: black;
+}
+
+
+.aonLogin {
+	background-position: left;	
+	background-repeat: no-repeat;
+	background-image: url("https://my.openges.es/img/OgLoginBackground2.jpg");
+}
+
+.aonLoginFormContent {
+	width: 60%;
+}
+
+.aonLogin #divForm {
+	padding-left: 50%;	
+}
+.aonLoginLogo{
+  width: 139px;
+  height: 65px;
+  cursor: pointer;
+  background-size: contain;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-image: url("https://www.openges.es/images/logo.svg");
+}
+
+.aonLoginTitle {
+	color: var(--opengesGreen);
+}
+
+.aonMagicButton,
+.aonMagicButton:hover {
+	color: black;
+	border-color: var(--opengesGreen);
+	background-color: var(--opengesGreen);
+}
+
+.aonLink:after {
+	content: 'OPENGES SOLUTIONS';
+}
+
+.aonTrademark:after {
+	content: 'es una marca registrada de OPENGES.';
+}
+
+.aonWeekSchedule:after{
+	content: 'Lunes a jueves de 9:00 a 18:00';
+}
+
+.aonWeekFridaySchedule:after{
+	content: 'Viernes de 9:00 a 14:00';
+}
+
+.aonSupportTelephone:after {
+	content: '(+34) 900 730 037';	
+}
+
+.aonSupportUsersEmail:after {
+	content: 'info@etl.es';	
+}
+
+.aonSupportSalesEmail:after {
+	content: 'comercial@etl.es';	
+}
+
+.aonSupportAdminEmail:after {
+	content: 'comunicacion@etl.es';	
+}
+
+#aonLoginLanguageSpanToolbar {
+	color: var(--aonWhite);
+}

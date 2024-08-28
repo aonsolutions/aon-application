@@ -803,6 +803,15 @@ public class InvoiceServlet extends AonApiHttpServlet{
 			f.getAttachModuleProperty().eq(invoiceId)
 			.and(f.getTypeProperty().eq(InvoiceAttachmentType.INVOICE.value()))
 			, AttachType.INVOICE, true);		
+
+		// ids to null
+		invoice.setId(null);
+		invoice.setDetails(invoice.getDetails().stream().map(r -> {
+			r.setId(null);
+			r.setInvoiceTaxes(r.getInvoiceTaxes().stream().map(tax -> tax.setId(null)).toList());
+			return r;
+		}).toList());
+		// ----------
 		
 		Rawdoc rawdoc = new Rawdoc()
 				.setData(attach.getData())
@@ -1138,10 +1147,17 @@ public class InvoiceServlet extends AonApiHttpServlet{
 		Company company = AON.getCompanyForDomain(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin());
 		TbaiConfiguration tbaiConfiguration = AON.getTbaiConfiguration(api.getDomain(), api.getUser());
 		Invoice invoice = InvoiceJSON.fromJSON(api.getData());
+		if(invoice.isSales()) {
+			if (AonStringUtils.contains( invoice.getReferenceCode(), "undefined")) {
+				invoice.setReferenceCode(null);	
+			}
+		}
+				
 		if(invoice.isSales() && tbaiConfiguration.isActive()) {
 			tbaiConfiguration.setCertificate(checkCertificate(api));
 			tbaiValidation(invoice);
 		}
+		
 		invoice = AON_SOLUTIONS.acceptInvoice(api.getDomain(), api.getUser(), invoice);
 		processInvoiceFile(api, invoice);
 		acceptTbai(tbaiConfiguration, company, invoice);

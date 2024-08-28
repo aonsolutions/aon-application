@@ -27,7 +27,7 @@ export class AonTaskHolderList extends AonRegistryList {
   }
 
   getRegistries() {
-    return getTastHoldersList(this.filter);
+   return getTastHoldersList(this.filter);
   }
 
   async buildRegistry(registry) {
@@ -63,6 +63,7 @@ export class AonTaskHolderList extends AonRegistryList {
       timeOut = setTimeout(() => {
         this.filter = {
           ...this.filter,
+          page: 1,
           search: detail.search,
           active: detail.status,
           workgroup: detail.workgroup,

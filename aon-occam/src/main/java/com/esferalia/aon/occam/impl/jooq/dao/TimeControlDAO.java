@@ -2,9 +2,9 @@ package com.esferalia.aon.occam.impl.jooq.dao;
 
 import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
 import static com.esferalia.aon.jooq.tables.Location.LOCATION;
-import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
 import static com.esferalia.aon.jooq.tables.TaskHolder.TASK_HOLDER;
 import static com.esferalia.aon.jooq.tables.Timecontrol.TIMECONTROL;
+import static com.esferalia.aon.occam.impl.jooq.dao.TaskHolderDAO.TASK_HOLDER_ALIAS;
 
 import java.math.BigDecimal;
 import java.sql.Timestamp;
@@ -37,7 +37,6 @@ import com.esferalia.aon.occam.api.model.aonsolutions.TimeControlDetail;
 import com.esferalia.aon.occam.api.model.aonsolutions.TimeControlDetailUserName;
 import com.esferalia.aon.occam.api.model.aonsolutions.TimeControlGroup;
 import com.esferalia.aon.occam.api.model.aonsolutions.TimeControlStatus;
-import com.esferalia.aon.occam.api.model.task.TaskHolder;
 import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.TimeControlPropertiesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.TaskHolderDAO.TaskHolderFiller;
 import com.esferalia.aon.watson.server.AonDateUtils;
@@ -51,7 +50,7 @@ public class TimeControlDAO {
 				.select()
 				.from(TIMECONTROL)
 				.join(TASK_HOLDER).on(TASK_HOLDER.REGISTRY.eq(TIMECONTROL.TASK_HOLDER))
-				.join(REGISTRY).on(REGISTRY.ID.eq(TASK_HOLDER.REGISTRY))
+				.join(TASK_HOLDER_ALIAS).on(TASK_HOLDER_ALIAS.ID.eq(TASK_HOLDER.REGISTRY))
 				.join(DOMAIN).on(TIMECONTROL.DOMAIN.eq(DOMAIN.ID))
 				.leftOuterJoin(LOCATION).on(LOCATION.ID.eq(TIMECONTROL.LOCATION))
 				.where(TIMECONTROL_PROPERTIES.getConditions(filter));
@@ -146,8 +145,8 @@ public class TimeControlDAO {
 			f.getDomainProperty().eq(ctx.getDomainId())
 			.and(f.getDateProperty().ge(startTimestamp))
 			.and(f.getDateProperty().le(endTimestamp)));
-		
-		TaskOldDAO.getTaskHolderStream(ctx, f -> f.getDomainProperty().eq(ctx.getDomainId())
+
+		TaskHolderDAO.getStream(ctx, f -> f.getDomainProperty().eq(ctx.getDomainId())
 			.and(f.getUserIdProperty().isNotNull())).forEach(th -> {
 				TimeControl tc = buildTimeControl(ctx, th.getId(), list.stream().filter(f -> f.getTaskHolder().getId().equals(th.getId())), null, null, null);
 				tcList.add(tc);
@@ -424,7 +423,7 @@ public class TimeControlDAO {
 		tc.setLastCoordinates(tcd.getCoordinates());
 		tc.setLastDate(tcd.getDate());
 		tc.setLastLocation(tcd.getLocation());
-		tc.setTaskHolder(TaskOldDAO.getTaskHolderStream(ctx, f -> f.getIdProperty().eq(taskHolderId)).findFirst().orElse(new TaskHolder()));
+		tc.setTaskHolder(TaskHolderDAO.get(ctx, f -> f.getIdProperty().eq(taskHolderId)));
 
 		tc.setStartDate(startDate);
 		tc.setEndDate(endDate);
@@ -449,7 +448,7 @@ public class TimeControlDAO {
 					.setDomain(new Domain().setId(record.getValue(TIMECONTROL.DOMAIN)))
 					.setDate(record.getValue(TIMECONTROL.DATE))
 					.setStatus(TimeControlStatus.safeValueOf(record.getValue(TIMECONTROL.STATUS)))
-					.setTaskHolder(TaskHolderFiller.build(record, null))
+					.setTaskHolder(TaskHolderFiller.build(record))
 					.setLocation(location)
 					.setComments(record.getValue(TIMECONTROL.COMMENTS))
 					.setCoordinates(new Coordinates(record.getValue(TIMECONTROL.LATITUDE),record.getValue(TIMECONTROL.LONGITUDE)))

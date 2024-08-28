@@ -504,7 +504,7 @@ public abstract class AgreementPreview extends Composite {
 						? showHidePayment(updatedPayment.getDescription(), updatedPayment.getExpression())
 						: updatedPayment.getExpression());
 				selectedPayment.setScope(Scope.SALARY);
-				selectedPayment.setSalaryType(Type.SALARY);
+				selectedPayment.setSalaryType(updatedPayment.getSalaryType());
 			}
 
 			@Override
@@ -535,9 +535,10 @@ public abstract class AgreementPreview extends Composite {
 				&& AonStringUtils.startsWithIgnoreCase(expression, "HIDE"))
 			expression = expression.replaceAll("HIDE\\(.*\\);\\s", "");
 		else
-			expression = "HIDE(\"<div>" + description
-					+ " oculto desde Convenio</div><div>&nbsp;</div><div class='aon-text-right'><span class='aon-icon aon-icon-logo'/>aon Solutions</div>\"); "
-					+ expression;
+			expression = "HIDE(); " + expression;
+//			expression = "HIDE(\"<div>" + description
+//					+ " oculto desde Convenio</div><div>&nbsp;</div><div class='aon-text-right'><span class='aon-icon aon-icon-logo'/>aon Solutions</div>\"); "
+//					+ expression;
 
 		return expression;
 	}
@@ -548,9 +549,10 @@ public abstract class AgreementPreview extends Composite {
 		expression = !AonStringUtils.isBlank(expression) && AonStringUtils.containsIgnoreCase(expression, "HIDE")
 				&& AonStringUtils.startsWithIgnoreCase(expression, "HIDE")
 						? expression.replaceAll("HIDE\\(.*\\);\\s", "")
-						: "HIDE(\"<div>" + payment.getDescription()
-								+ " oculto desde Convenio</div><div>&nbsp;</div><div class='aon-text-right'><span class='aon-icon aon-icon-logo'/>aon Solutions</div>\"); "
-								+ expression;
+						: "HIDE(); " + expression;
+//						: "HIDE(\"<div>" + payment.getDescription()
+//								+ " oculto desde Convenio</div><div>&nbsp;</div><div class='aon-text-right'><span class='aon-icon aon-icon-logo'/>aon Solutions</div>\"); "
+//								+ expression;
 
 		payment.setExpression(expression);
 	}

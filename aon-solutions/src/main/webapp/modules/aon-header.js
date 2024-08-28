@@ -1,5 +1,5 @@
 import {AonElement} from '../components/AonElement.js';
-import {closeSession, getTimeControl, saveTimeControl, clearDurum, getDomainUserRoles} from  '../services/service.js';
+import {closeSession, getTimeControl, saveTimeControl, clearDurum, getDomainUserRoles, getOneNotification, getNotification} from  '../services/service.js';
 import {getPosition} from '../services/maps.js';
 
 import '../components/aon-dialog-menu.js';
@@ -184,14 +184,22 @@ export class AonHeader extends AonElement {
 		let aonHeaderNotiication = this.createElement(TAG.SPAN);
 		aonHeaderNotiication.id = this.AON_HEADER_NOTIFICATION;
 		aonHeaderNotiication.title = MSG.NOTIFICATIONS;
-		if(this.newTheme){
-			let aonHeaderNotificationButton = new AonIconButton();
-			aonHeaderNotificationButton.id = 'aonHeaderNotificationButton';
-			aonHeaderNotificationButton.icon = "notifications";
-			aonHeaderNotiication.appendChild(aonHeaderNotificationButton);
-		}else
-			aonHeaderNotiication.appendChild(new AonNotificationIcon());
 
+		let aonHeaderNotificationButton = new AonIconButton();
+		aonHeaderNotificationButton.id = 'aonHeaderNotificationButton';
+		aonHeaderNotificationButton.icon = "notifications";
+		aonHeaderNotiication.appendChild(aonHeaderNotificationButton);
+		this.getData().then(n => {
+			if(n.length > 0){
+				let aonUnread = this.createElement('div');
+				aonUnread.id = this.BASE_ID + 'Unread';
+				aonUnread.className = 'aonConnected';
+				aonUnread.style.backgroundColor = "red";
+
+				let aonHeaderNotificationButtonIconButton = this.getElement('aonHeaderNotificationButtonIconButton');
+				aonHeaderNotificationButtonIconButton.appendChild(aonUnread);
+			}
+		});
 		aonHeaderButtons.appendChild(aonHeaderNotiication);
 
 		let aonHeaderUser = this.createElement(TAG.SPAN)
@@ -704,8 +712,15 @@ export class AonHeader extends AonElement {
 
 		let div = this.createElement(TAG.DIV);
 		div.classList.add("aonHeaderAppDiv");
-
-		if ((!sidenav && app.symbol) || (sidenav && !app.icon && app.symbol)) {
+		
+		if (app.headerIcon) {
+			let aonIcon = new AonIcon();
+			aonIcon.id = `aonMenuListAppImg-${app.app}`;
+			aonIcon.icon = app.headerIcon;
+			aonIcon.color = "var(--aonIcon)";
+			aonIcon.size = app.iconSize || "32px";
+			div.appendChild(aonIcon);
+		} else if ((!sidenav && app.symbol) || (sidenav && !app.icon && app.symbol)) {
 			let icon = this.createElement(TAG.SPAN);
 			icon.classList.add(CSS.MATERIAL_SYMBOLS_OUTLINED);
 			icon.id = `aonMenuListAppImg-${app.app}`;
@@ -717,12 +732,12 @@ export class AonHeader extends AonElement {
 			aonIcon.id = `aonMenuListAppImg-${app.app}`;
 			aonIcon.icon = app.icon;
 			aonIcon.color = "var(--aonIcon)";
-			aonIcon.size = "32px";
+			aonIcon.size = app.iconSize || "32px";
 			div.appendChild(aonIcon);
 		} else if (app.logo) {
 			let img = this.createElement(TAG.IMG);
 			img.id = `aonMenuListAppImg-${app.app}`;
-			img.style.width = '24px';
+			//img.style.width = '24px';
 			img.src = app.logo;
 			img.title = app.title;
 			div.appendChild(img);
@@ -772,6 +787,10 @@ export class AonHeader extends AonElement {
 		else 
 			this.getElement(elementId).style.display = 'none';
 	}
+
+	getData() {
+        return getNotification({page:1, perPage:1, status:"unread"});
+    }
 	
 
 }

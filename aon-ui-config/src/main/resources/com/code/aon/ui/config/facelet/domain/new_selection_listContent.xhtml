@@ -159,6 +159,27 @@
 
 				<aon:column styleClass="aon-width-30">
 					<aon:outputText 
+						title="Facturas Sin Contabilizar"
+						rendered="#{to.hasInvoicePending()}"
+						value="#{to.invoicePendingCount}" />
+				</aon:column>
+
+				<aon:column styleClass="aon-width-30">
+					<aon:outputText 
+						title="Facturas Pendientes"
+						rendered="#{to.hasRawdocInbox()}"
+						value="#{to.rawdocInboxCount}" />
+				</aon:column>
+
+				<aon:column styleClass="aon-width-30">
+					<aon:outputText 
+						title="Facturas Rechazadas"
+						rendered="#{to.hasRawdocRejected()}"
+						value="#{to.rawdocRejectedCount}" />
+				</aon:column>
+
+				<aon:column styleClass="aon-width-30">
+					<aon:outputText 
 						rendered="#{to.enableHeredity}"
 						title="#{bundle.aon_domian_enableHeredity}"
 						styleClass="material-icons  aon-vertical-middle aon-gray" value="arrow_upward" />

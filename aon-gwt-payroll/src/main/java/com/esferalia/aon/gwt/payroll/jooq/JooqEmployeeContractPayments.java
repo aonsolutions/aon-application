@@ -143,7 +143,7 @@ public class JooqEmployeeContractPayments {
 				contractPayment.setStartDate(contractPaymentRecord.get(CONTRACT_PAYMENT.START_DATE));
 				contractPayment.setEndDate(contractPaymentRecord.get(CONTRACT_PAYMENT.END_DATE));
 				
-				contractPayment.setSalaryType(Salary.Type.SALARY);
+				contractPayment.setSalaryType(Salary.Type.values()[contractPaymentRecord.get(CONTRACT_PAYMENT.SALARY_TYPE)]);
 				contractPayment.setContractConceptCalcType(ContractConceptCalcType.PAYMENT);
 				contractPayment.setHasChange(false);
 				contractPayments.add(contractPayment);
@@ -339,6 +339,7 @@ public class JooqEmployeeContractPayments {
 				.set(CONTRACT_PAYMENT.MONTH, null == contractConceptCalc.getMonth() ? null : contractConceptCalc.getMonth().byteValue())
 				.set(CONTRACT_PAYMENT.START_DATE, parseToSQLDate(contractConceptCalc.getStartDate()))
 				.set(CONTRACT_PAYMENT.END_DATE, parseToSQLDate(contractConceptCalc.getEndDate()))
+				.set(CONTRACT_PAYMENT.SALARY_TYPE, (byte) contractConceptCalc.getSalaryType().ordinal())
 				.where(CONTRACT_PAYMENT.ID.eq(contractConceptCalc.getId()))
 				.execute();
 	}
@@ -514,7 +515,7 @@ public class JooqEmployeeContractPayments {
 			.set(CONTRACT_PAYMENT.MONTH, null == contractConceptCalc.getMonth() ? null : contractConceptCalc.getMonth().byteValue())
 			.set(CONTRACT_PAYMENT.START_DATE, null == contractConceptCalc.getStartDate() ? getContractStartDate(dslContext, contractId) : parseToSQLDate(contractConceptCalc.getStartDate()))
 			.set(CONTRACT_PAYMENT.END_DATE, parseToSQLDate(contractConceptCalc.getEndDate()))
-			.set(CONTRACT_PAYMENT.SALARY_TYPE, (byte)0)
+			.set(CONTRACT_PAYMENT.SALARY_TYPE, (byte) contractConceptCalc.getSalaryType().ordinal())
 			.execute();
 	}
 

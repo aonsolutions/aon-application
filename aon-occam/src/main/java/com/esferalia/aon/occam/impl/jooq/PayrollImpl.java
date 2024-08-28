@@ -12,6 +12,7 @@ import com.esferalia.aon.occam.api.model.AuxSalaryInfo;
 import com.esferalia.aon.occam.api.model.Bonus;
 import com.esferalia.aon.occam.api.model.Cost;
 import com.esferalia.aon.occam.api.model.Deduction;
+import com.esferalia.aon.occam.api.model.EnterpriseCCC;
 import com.esferalia.aon.occam.api.model.Filter.AgreementLevelCategoryFilter;
 import com.esferalia.aon.occam.api.model.Filter.ContractAttachFilter;
 import com.esferalia.aon.occam.api.model.Filter.ContractDataFilter;
@@ -42,6 +43,7 @@ import com.esferalia.aon.occam.impl.jooq.dao.ContractDAO;
 import com.esferalia.aon.occam.api.model.ContractExtendedData;
 import com.esferalia.aon.occam.impl.jooq.dao.ContractDataDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.EmployeeDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.EnterpriseCCCDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.EnterpriseDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.mod145.Mod145DAO;
 
@@ -258,6 +260,16 @@ public class PayrollImpl implements IPayroll {
 	@Override
 	public void saveActivities(AONContext ctx, List<Activity> activities) {
 		ctx.getDslContext().transaction(configuration -> ActivityDAO.saveList(ctx, activities));
+	}
+	
+	@Override
+	public void deleteCCC(AONContext ctx, Integer cccId) {
+		ctx.getDslContext().transaction(configuration -> EnterpriseCCCDAO.delete(ctx, cccId));
+	}
+	
+	@Override
+	public EnterpriseCCC saveCCC(AONContext ctx, EnterpriseCCC ccc) {
+		return ctx.getDslContext().transactionResult(configuration -> EnterpriseCCCDAO.save(ctx, ccc));
 	}
 	
 	// -------------------- MOD 145

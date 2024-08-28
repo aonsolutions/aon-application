@@ -22,6 +22,7 @@ import com.esferalia.aon.gwt.payroll.shared.ContractConceptCalc.ContractConceptC
 import com.esferalia.aon.gwt.payroll.shared.ContractConcepts;
 import com.esferalia.aon.gwt.payroll.shared.Deduction;
 import com.esferalia.aon.gwt.payroll.shared.Payment;
+import com.esferalia.aon.gwt.payroll.shared.Salary;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.core.shared.GWT;
@@ -73,6 +74,9 @@ public abstract class EmployeeContractPaymentEditor extends AonCustomDialog {
 
 	@UiField
 	TextArea paymentExpressionTB;
+	
+	@UiField
+	ListBox paymentSalaryTypeLB;
 
 	@UiField
 	ListBox paymentTaxedTypeLB;
@@ -310,6 +314,14 @@ public abstract class EmployeeContractPaymentEditor extends AonCustomDialog {
 		}
 	}
 
+	private void initializeSalaryType(ListBox listBox) {
+		listBox.clear();
+		listBox.addItem("N\u00f3mina", Salary.Type.SALARY.ordinal() + "");
+		listBox.addItem("Extra", Salary.Type.EXTRA.ordinal() + "");
+		listBox.addItem("Finiquito", Salary.Type.SETTLE.ordinal() + "");
+		listBox.addItem("Atraso", Salary.Type.DELAY.ordinal() + "");
+	}
+
 	// ----------------------------------------- Provided Payment
 
 	private void providedPayment() {
@@ -318,6 +330,7 @@ public abstract class EmployeeContractPaymentEditor extends AonCustomDialog {
 		initializeTaxed();
 		initializeQuote();
 		initializeMonth(paymentMonthLB);
+		initializeSalaryType(paymentSalaryTypeLB);
 		paymentMonthPanel.setVisible(false);
 	}
 
@@ -604,6 +617,7 @@ public abstract class EmployeeContractPaymentEditor extends AonCustomDialog {
 		paymentConceptSB.setValue(this.payment.getName());
 		paymentDescriptionTB.setValue(this.payment.getDescription());
 		paymentExpressionTB.setValue(this.payment.getExpression());
+		setSelectedValueLB(paymentSalaryTypeLB, this.payment.getSalaryType().ordinal() + "");
 		setSelectedValueLB(paymentTaxedTypeLB, getTaxedQuoteType(this.payment.getIrpfExpression()));
 		paymentTaxedExpression.setValue(this.payment.getIrpfExpression());
 		setSelectedValueLB(paymentQuoteTypeLB, getTaxedQuoteType(this.payment.getQuoteExpression()));
@@ -765,6 +779,7 @@ public abstract class EmployeeContractPaymentEditor extends AonCustomDialog {
 		
 		payment.setDescription(paymentDescriptionTB.getValue());
 		payment.setExpression(paymentExpressionTB.getValue());
+		payment.setSalaryType(Salary.Type.values()[Integer.parseInt(paymentSalaryTypeLB.getSelectedValue())]);
 		payment.setIrpfExpression(paymentTaxedExpression.getValue());
 		payment.setQuoteExpression(paymentQuoteExpression.getValue());
 		payment.setMonth(AonStringUtils.isBlank(paymentMonthLB.getSelectedValue()) ? null

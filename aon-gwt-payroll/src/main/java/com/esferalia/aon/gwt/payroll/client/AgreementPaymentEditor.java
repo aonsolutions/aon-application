@@ -20,6 +20,7 @@ import com.esferalia.aon.gwt.payroll.shared.ContractConcepts;
 import com.esferalia.aon.gwt.payroll.shared.Payment;
 import com.esferalia.aon.gwt.payroll.shared.Payment.Type;
 import com.esferalia.aon.gwt.payroll.shared.Result;
+import com.esferalia.aon.gwt.payroll.shared.Salary;
 import com.esferalia.aon.gwt.payroll.shared.Variable;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.Scheduler;
@@ -96,6 +97,9 @@ public abstract class AgreementPaymentEditor extends AonCustomDialog {
 	
 	@UiField
 	DisclosurePanel advancePanel;
+	
+	@UiField
+	ListBox paymentSalaryTypeLB;
 	
 	@UiField
 	HTMLPanel paymentTaxedPanel;
@@ -230,6 +234,8 @@ public abstract class AgreementPaymentEditor extends AonCustomDialog {
 		
 		initializeExtraPanel();
 		
+		initializePaymentSalaryTypeLB();
+		
 		enterpriseService.getAllConcepts(new AsyncCallback<ContractConcepts>() {
 
 			@Override
@@ -252,6 +258,20 @@ public abstract class AgreementPaymentEditor extends AonCustomDialog {
 			}
 
 		});
+	}
+
+	private void initializePaymentSalaryTypeLB() {
+		paymentSalaryTypeLB.addStyleName("aon-selectOneMenu");
+		paymentSalaryTypeLB.getElement().getStyle().setWidth(100, Unit.PCT);
+		paymentSalaryTypeLB.setHeight("1.5rem");
+		paymentSalaryTypeLB.getElement().getStyle().setProperty("border", "1px solid rgb(137, 136, 136)");
+		
+		paymentSalaryTypeLB.clear();
+		paymentSalaryTypeLB.addItem("N\u00f3mina", Salary.Type.SALARY.ordinal() + "");
+		paymentSalaryTypeLB.addItem("Extra", Salary.Type.EXTRA.ordinal() + "");
+		paymentSalaryTypeLB.addItem("Finiquito", Salary.Type.SETTLE.ordinal() + "");
+		paymentSalaryTypeLB.addItem("Atraso", Salary.Type.DELAY.ordinal() + "");
+//		paymentSalaryTypeLB.addChangeHandler(e -> payment.setSalaryType(Salary.Type.values()[Integer.parseInt(paymentSalaryTypeLB.getSelectedValue())]));
 	}
 
 	private void checkDatesPanelShown() {
@@ -565,6 +585,8 @@ public abstract class AgreementPaymentEditor extends AonCustomDialog {
 			});
 		});
 		
+		setSelectedValueLB(paymentSalaryTypeLB, this.payment.getSalaryType().ordinal() + "");
+		
 		setSelectedValueLB(paymentTaxedTypeLB, getTaxedQuoteType(this.payment.getIrpfExpression()));
 		
 		String irpfExpression = this.payment.getIrpfExpression();
@@ -710,6 +732,8 @@ public abstract class AgreementPaymentEditor extends AonCustomDialog {
 		
 		payment.setStartDate(startDateBx.getValue());
 		payment.setEndDate(endDateBx.getValue());
+		
+		payment.setSalaryType(Salary.Type.values()[Integer.parseInt(paymentSalaryTypeLB.getSelectedValue())]);
 	}
 	
 	private void createExtra() {

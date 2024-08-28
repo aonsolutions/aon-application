@@ -8,6 +8,7 @@ import java.util.List;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Module;
 import com.esferalia.aon.occam.api.model.security.User;
+import com.esferalia.aon.occam.api.model.type.OldAonRole;
 
 public class DomainUserRoles implements Serializable {
 
@@ -170,12 +171,12 @@ public class DomainUserRoles implements Serializable {
 			|| (isParentUser() && getParentDomainUserRoles().contains(aonRole));
 	}
 	
-	private boolean hasOldRole(com.esferalia.aon.occam.api.model.type.AonRole role) {
+	private boolean hasOldRole(OldAonRole role) {
 		if ( getUser().getUserRoles() == null )
 			return false;
 
 		Boolean bool = false;
-		for (com.esferalia.aon.occam.api.model.type.AonRole ar : getUser().getUserRoles()) {
+		for (OldAonRole ar : getUser().getUserRoles()) {
 			if(ar.equals(role)) {
 				bool = true;
 			}
@@ -184,7 +185,7 @@ public class DomainUserRoles implements Serializable {
 	}
 	
 	public boolean isAdmin() {
-		return  hasRole(AonRole.ADMIN) || hasOldRole(com.esferalia.aon.occam.api.model.type.AonRole.ADMIN);
+		return  hasRole(AonRole.ADMIN) || hasOldRole(OldAonRole.ADMIN);
 	}
 	
 	public boolean isDev() {
@@ -208,14 +209,14 @@ public class DomainUserRoles implements Serializable {
 	public boolean isAccounting() {	
 		return (hasAccounting() || ((isParentUser() || isEnterpriseChild()) && hasParentAccounting()))
 			&& (isAdmin() || hasRole(AonRole.ACCOUNTING) 
-				|| hasOldRole(com.esferalia.aon.occam.api.model.type.AonRole.ACCOUNTING)
-				|| hasOldRole(com.esferalia.aon.occam.api.model.type.AonRole.ACCOUNTING_MANAGER));
+				|| hasOldRole(OldAonRole.ACCOUNTING)
+				|| hasOldRole(OldAonRole.ACCOUNTING_MANAGER));
 	}
 	
 	public boolean isAccountingManager() {
 		return (hasAccounting() || ((isParentUser() || isEnterpriseChild()) && hasParentAccounting()))
 			&& (isAdmin() || hasRole(AonRole.ACCOUNTING_MANAGER)
-				|| hasOldRole(com.esferalia.aon.occam.api.model.type.AonRole.ACCOUNTING_MANAGER));
+				|| hasOldRole(OldAonRole.ACCOUNTING_MANAGER));
 	}
 	
 	// FISCAL - FISCAL
@@ -231,13 +232,13 @@ public class DomainUserRoles implements Serializable {
 	public boolean isFiscal() {
 		return (hasFiscal() || ((isParentUser() || isEnterpriseChild()) && hasParentFiscal()))
 			&& (isAdmin() || hasRole(AonRole.FISCAL)
-				|| hasOldRole(com.esferalia.aon.occam.api.model.type.AonRole.FISCAL));
+				|| hasOldRole(OldAonRole.FISCAL));
 	}
 	
 	public boolean isFiscalManager() {
 		return (hasFiscal() || ((isParentUser() || isEnterpriseChild()) && hasParentFiscal()) )
 			&& (isAdmin() || hasRole(AonRole.FISCAL_MANAGER)
-				|| hasOldRole(com.esferalia.aon.occam.api.model.type.AonRole.FISCAL));
+				|| hasOldRole(OldAonRole.FISCAL));
 	}
 	
 	// PAYROLL - LABORAL
@@ -254,19 +255,19 @@ public class DomainUserRoles implements Serializable {
 	public boolean isPayroll() {
 		return (hasPayroll() || ((isParentUser() || isEnterpriseChild()) && hasParentPayroll()))
 			&& (isAdmin() || hasRole(AonRole.PAYROLL)
-				|| hasOldRole(com.esferalia.aon.occam.api.model.type.AonRole.PAYROLL));
+				|| hasOldRole(OldAonRole.PAYROLL));
 	}
 	
 	public boolean isPayrollPortal() {
 		return (hasPayroll() || ((isParentUser() || isEnterpriseChild()) && hasParentPayroll()))
 			&& (isAdmin() || hasRole(AonRole.PAYROLL_PORTAL)
-				|| hasOldRole(com.esferalia.aon.occam.api.model.type.AonRole.PAYROLL));
+				|| hasOldRole(OldAonRole.PAYROLL));
 	}
 	
 	public boolean isPayrollManager() {
 		return (hasPayroll() || ((isParentUser() || isEnterpriseChild()) && hasParentPayroll()))
 			&& (isAdmin() || hasRole(AonRole.PAYROLL_MANAGER)
-				|| hasOldRole(com.esferalia.aon.occam.api.model.type.AonRole.PAYROLL));
+				|| hasOldRole(OldAonRole.PAYROLL));
 	}
 	
 	// DOCUMENTAL - DOCUMENTAL
@@ -285,20 +286,20 @@ public class DomainUserRoles implements Serializable {
 	public boolean isDocumental() {
 		return (hasDocumental() || ((isParentUser() || isEnterpriseChild()) && hasParentDocumental()))
 			&& (isAdmin() || hasRole(AonRole.DOCUMENTAL)
-				|| hasOldRole(com.esferalia.aon.occam.api.model.type.AonRole.DOCUMENT)
-				|| hasOldRole(com.esferalia.aon.occam.api.model.type.AonRole.DOCUMENT_MANAGER));
+				|| hasOldRole(OldAonRole.DOCUMENT)
+				|| hasOldRole(OldAonRole.DOCUMENT_MANAGER));
 	}
 	
 	public boolean isDocumentalPortal() {
 		return (hasDocumental() || ((isParentUser() || isEnterpriseChild()) && hasParentDocumental()))
 			&& (isAdmin() || hasRole(AonRole.DOCUMENTAL_PORTAL)
-				|| hasOldRole(com.esferalia.aon.occam.api.model.type.AonRole.DOCUMENT));
+				|| hasOldRole(OldAonRole.DOCUMENT));
 	}
 	
 	public boolean isDocumentalManager() {
 		return (hasDocumental() || ((isParentUser() || isEnterpriseChild()) && hasParentDocumental()))
 			&& ( isAdmin() || hasRole(AonRole.DOCUMENTAL_MANAGER) 
-				|| hasOldRole(com.esferalia.aon.occam.api.model.type.AonRole.DOCUMENT_MANAGER));
+				|| hasOldRole(OldAonRole.DOCUMENT_MANAGER));
 	}
 	
 	// COMMERCIAL
@@ -314,7 +315,7 @@ public class DomainUserRoles implements Serializable {
 	public boolean isCommercial() {
 		return (hasCommercial() || ((isParentUser() || isEnterpriseChild()) && hasParentCommercial()))
 			&& (isAdmin() || hasRole(AonRole.COMMERCIAL) 
-				|| hasOldRole(com.esferalia.aon.occam.api.model.type.AonRole.COMMERCIAL));
+				|| hasOldRole(OldAonRole.COMMERCIAL));
 	}
 	
 	// WAREHOUSE
@@ -330,7 +331,7 @@ public class DomainUserRoles implements Serializable {
 	public boolean isWarehouse() {
 		return (hasWarehouse() || ((isParentUser() || isEnterpriseChild()) && hasParentWarehouse()))
 			&& (isAdmin() || hasRole(AonRole.WAREHOUSE) 
-				|| hasOldRole(com.esferalia.aon.occam.api.model.type.AonRole.WAREHOUSE));
+				|| hasOldRole(OldAonRole.WAREHOUSE));
 	}
 	
 	// COMUNIC@ - COMUNIC@
@@ -466,9 +467,9 @@ public class DomainUserRoles implements Serializable {
 	}
 	
 	private boolean isOldManagementRoles() {
-		return hasOldRole(com.esferalia.aon.occam.api.model.type.AonRole.SALE)
-		|| hasOldRole(com.esferalia.aon.occam.api.model.type.AonRole.PURCHASE)
-		|| hasOldRole(com.esferalia.aon.occam.api.model.type.AonRole.FINANCE);
+		return hasOldRole(OldAonRole.SALE)
+		|| hasOldRole(OldAonRole.PURCHASE)
+		|| hasOldRole(OldAonRole.FINANCE);
 	}
 	
 	public boolean hasManagement() {
@@ -609,7 +610,7 @@ public class DomainUserRoles implements Serializable {
 	}
 	
 	public boolean isConfidential() {
-		return hasRole(AonRole.CONFIDENTIALITY) || hasOldRole(com.esferalia.aon.occam.api.model.type.AonRole.CONFIDENTIALITY);
+		return hasRole(AonRole.CONFIDENTIALITY) || hasOldRole(OldAonRole.CONFIDENTIALITY);
 	}
 	
 	public boolean isAlpha() {
@@ -646,7 +647,7 @@ public class DomainUserRoles implements Serializable {
 
 	public boolean isTreasury() {
 		return (hasTreasury() || ((isParentUser() || isEnterpriseChild()) && hasParentTreasury()))
-			&& (isAdmin() || hasRole(AonRole.TREASURY) || hasOldRole(com.esferalia.aon.occam.api.model.type.AonRole.FINANCE));
+			&& (isAdmin() || hasRole(AonRole.TREASURY) || hasOldRole(OldAonRole.FINANCE));
 	}
 	
 	// MARKETING
@@ -677,7 +678,7 @@ public class DomainUserRoles implements Serializable {
 	public boolean isGroupware() {
 		return (hasGroupware() || ((isParentUser() || isEnterpriseChild()) && hasParentGroupware()))
 			 && (isAdmin() || hasRole(AonRole.GROUPWARE) 
-				 || hasOldRole(com.esferalia.aon.occam.api.model.type.AonRole.TASK_MONITORING));
+				 || hasOldRole(OldAonRole.TASK_MONITORING));
 	}
 	
 	public boolean hasCallCenter() {
@@ -687,7 +688,7 @@ public class DomainUserRoles implements Serializable {
 	public boolean isCallCenter() {
 		return hasCallCenter()
 			&& (isAdmin() 
-				||hasOldRole(com.esferalia.aon.occam.api.model.type.AonRole.CALL_CENTER)
-				|| hasOldRole(com.esferalia.aon.occam.api.model.type.AonRole.CALL_CENTER_MANAGER));
+				||hasOldRole(OldAonRole.CALL_CENTER)
+				|| hasOldRole(OldAonRole.CALL_CENTER_MANAGER));
 	}
 }

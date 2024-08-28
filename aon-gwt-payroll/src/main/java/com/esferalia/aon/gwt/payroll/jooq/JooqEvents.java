@@ -374,9 +374,11 @@ public class JooqEvents {
 							.where(RBANK.ID.eq(rpaymethodRecords.get(0).get(RPAYMETHOD.RBANK)))
 							.fetchOne();
 					
-					rbankId = rbankRecord.get(RBANK.ID);
-					account = rbankRecord.get(RBANK.BANK_ACCOUNT);
-					bic = rbankRecord.get(RBANK.BIC);
+					if(null != rbankRecord) {
+						rbankId = rbankRecord.get(RBANK.ID);
+						account = rbankRecord.get(RBANK.BANK_ACCOUNT);
+						bic = rbankRecord.get(RBANK.BIC);
+					}
 				}
 			}
 			

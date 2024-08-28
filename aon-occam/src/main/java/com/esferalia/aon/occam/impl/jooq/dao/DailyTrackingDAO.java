@@ -26,6 +26,7 @@ import com.esferalia.aon.occam.api.model.task.DailyTracking;
 import com.esferalia.aon.occam.impl.jooq.dao.FillerDAO.DomainFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.RegistryDAO.RegistryFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.TaskHolderDAO.TaskHolderFiller;
+import static com.esferalia.aon.occam.impl.jooq.dao.TaskHolderDAO.TASK_HOLDER_ALIAS;;
 
 public class DailyTrackingDAO {
 
@@ -63,6 +64,7 @@ public class DailyTrackingDAO {
 			.from(DAILY_TRACKING)
 			.innerJoin(DOMAIN).on(DOMAIN.ID.eq(DAILY_TRACKING.DOMAIN))
 			.innerJoin(TASK_HOLDER).on(TASK_HOLDER.REGISTRY.eq(DAILY_TRACKING.TASK_HOLDER))
+			.innerJoin(TASK_HOLDER_ALIAS).on(TASK_HOLDER_ALIAS.ID.eq(TASK_HOLDER.REGISTRY))
 			.innerJoin(JOB_TYPE).on(JOB_TYPE.ID.eq(DAILY_TRACKING.JOB_TYPE))
 			.leftOuterJoin(REGISTRY).on(REGISTRY.ID.eq(DAILY_TRACKING.REGISTRY))
 			.where(DAILY_TRACKING_PROPERTIES.getConditions(filter));
@@ -159,7 +161,7 @@ public class DailyTrackingDAO {
 			return new DailyTracking()
 				.setId(r.getValue(DAILY_TRACKING.ID))
 				.setDomain(DomainFiller.build(r))
-				.setTaskHolder(TaskHolderFiller.build(r, TASK_HOLDER, null))
+				.setTaskHolder(TaskHolderFiller.build(r, TASK_HOLDER_ALIAS))
 				.setTrackingDate(new Date(r.getValue(DAILY_TRACKING.TRACKING_DATE).getTime()))
 				.setTrackingDuration(r.getValue(DAILY_TRACKING.TRACKING_DURATION))
 				.setJobType(r.getValue(DAILY_TRACKING.JOB_TYPE))

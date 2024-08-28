@@ -2145,6 +2145,11 @@ public class AON {
 			return getInvoiceNextNumber(ctx, types,series);
 		}
 	}
+	public static Integer getInvoiceNextNumber(Occam occam, Byte[] types, String series) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(occam)) {
+			return getInvoiceNextNumber(ctx, types,series);
+		}
+	}
 	public static Integer getInvoiceNextNumber(AONContext ctx, Byte[] types, String series) {
 			return getFinance().getInvoiceNextNumber(ctx, types,series);
 	}
@@ -6676,17 +6681,36 @@ public class AON {
 	}
 	
 	// ------------------- TASK HOLDER
-	public static Stream<TaskHolder> getTaskHolderStream(Domain domain, User user, TaskHolderFilter filter){
+
+	// ----- Get Task Holder
+	
+	public static TaskHolder getTaskHolder(Domain domain, User user, TaskHolderFilter filter){
+	    return getTaskHolder(domain.getName(),  domain.getId(), user.getLogin(), filter);
+	}
+	
+	public static TaskHolder getTaskHolder(Domain domain, String login, TaskHolderFilter filter){
+	    return getTaskHolder(domain.getName(),  domain.getId(), login, filter);
+	}
+	
+	public static TaskHolder getTaskHolder(String domainName, Integer domainId, String login, TaskHolderFilter filter){
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)) {
+			return getTask().getTaskHolder(ctx, filter);
+		} 
+	}
+	
+	// ----- Get Task Holder Stream
+	
+	public static Stream<TaskHolder> getTaskHolderStream(Domain domain, User user, TaskHolderFilter filter, Options...options){
 		return getTaskHolderStream(domain.getName(), domain.getId(), user.getLogin(), filter);
 	}
+	
+	public static Stream<TaskHolder> getTaskHolderStream(Domain domain, String login, TaskHolderFilter filter, Options...options){
+		return getTaskHolderStream(domain.getName(), domain.getId(), login, filter);
+	}
 
-	public static Stream<TaskHolder> getTaskHolderStream(String domainName, Integer domainId, String login, TaskHolderFilter filter){
-		CloseableAONContext ctx = null;
-		try {
-			ctx = AONContext.getAONContext(domainName, domainId, login);
-			return getTask().getTaskHolderStream(ctx, filter);
-		} finally {
-			if (ctx != null) ctx.close();
+	public static Stream<TaskHolder> getTaskHolderStream(String domainName, Integer domainId, String login, TaskHolderFilter filter, Options...options){
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)) {
+			return getTask().getTaskHolderStream(ctx, filter, options);
 		}
 	}
 	
@@ -6720,29 +6744,15 @@ public class AON {
 		}
 	}
 	
-	public static Stream<TaskHolder> getTaskHolderWorkgroupStream(Domain domain, User user, TaskHolderFilter filter, Integer workgroupId){
+	public static Stream<TaskHolder> getTaskHolderWorkgroupStream(Domain domain, User user, TaskHolderFilter filter, Integer workgroupId, int ofs, int limit){
 		try (CloseableAONContext ctx = AONContext.getAONContext(domain, user)){
-			return getTask().getTaskHolderWorkgroupStream(ctx, filter, workgroupId);
+			return getTask().getTaskHolderWorkgroupStream(ctx, filter, workgroupId, ofs, limit);
 		}
 	}
 	
 	public static List<TaskHolder> getAviableSellerTaskHolders(String domainName, Integer domainId, String login){
 		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
 			return getTask().getAviableSellerTaskHolders(ctx);
-		}
-	}
-	
-	public static TaskHolder getTaskHolder(Domain domain, User user, TaskHolderFilter filter){
-	    return getTaskHolder(domain.getName(),  domain.getId(), user.getLogin(), filter);
-	}
-	
-	public static TaskHolder getTaskHolder(String domainName, Integer domainId, String login, TaskHolderFilter filter){
-		CloseableAONContext ctx = null;
-		try {
-			ctx = AONContext.getAONContext(domainName, domainId, login);
-			return getTask().getTaskHolderStream(ctx, filter).findFirst().orElse(new TaskHolder());
-		} finally {
-			if (ctx != null) ctx.close();
 		}
 	}
 	
@@ -6773,12 +6783,8 @@ public class AON {
 	}
 	
 	public static void deleteTaskHolder(String domainName, Integer domainId, String login, Integer taskHolder){
-		CloseableAONContext ctx = null;
-		try {
-			ctx = AONContext.getAONContext(domainName, domainId, login);
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)) {
 			getTask().deleteTaskHolder(ctx, taskHolder);
-		} finally {
-			if (ctx != null) ctx.close();
 		}
 	}
 	
@@ -6801,14 +6807,20 @@ public class AON {
 			if (ctx != null) ctx.close();
 		}
 	}
+
+	// ---------- Delete TaskHolderWorkgroup
+	
+	public static void deleteTaskHolderWorkgroup(Domain domain, User user, TaskHolderWorkgroupFilter filter){
+		deleteTaskHolderWorkgroup(domain.getName(), domain.getId(), user.getLogin(), filter);
+	}
+	
+	public static void deleteTaskHolderWorkgroup(Domain domain, String login, TaskHolderWorkgroupFilter filter){
+		deleteTaskHolderWorkgroup(domain.getName(), domain.getId(), login, filter);
+	}
 	
 	public static void deleteTaskHolderWorkgroup(String domainName, Integer domainId, String login, TaskHolderWorkgroupFilter filter){
-		CloseableAONContext ctx = null;
-		try {
-			ctx = AONContext.getAONContext(domainName, domainId, login);
+		try (CloseableAONContext ctx =  AONContext.getAONContext(domainName, domainId, login) ) {
 			getTask().deleteTaskHolderWorkgroup(ctx, filter);
-		} finally {
-			if (ctx != null) ctx.close();
 		}
 	}
 	
