@@ -398,7 +398,6 @@ export class AonHeader extends AonElement {
 				const welcomeClickListener = (event) => {
 					event.preventDefault();
 					event.stopPropagation();
-					// Remueve el listener después de ejecutarse
 					appss.removeEventListener("click", welcomeClickListener);
 				};
 				

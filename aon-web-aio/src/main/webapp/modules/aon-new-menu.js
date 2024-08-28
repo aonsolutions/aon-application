@@ -559,12 +559,14 @@ export class AonNewMenu extends AonElement {
 			span.innerHTML = app.description; 
 			div.appendChild(span);
 		}
+		/*
 		if(welcome && app.app == "applications"){
 			div.addEventListener("click", (event) => {
 				event.preventDefault(); 
 				event.stopPropagation();
 			});
 		}
+		*/
 		a.appendChild(div);
 		return a;
 	}
