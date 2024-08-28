@@ -613,20 +613,22 @@ public class InvoiceServlet extends AonApiHttpServlet{
 		JSONObject json = new JSONObject();
 		JSONObject jsonInvoice = new JSONObject(rawdoc.getJson());
 		JSONArray taxes = jsonInvoice.optJSONArray(IJsonNames.TAXES);
+		System.out.println(taxes);
 		Double taxableBase = 0.0;
 		Double retentionPercentage = 0.0;
 		Double surchargeQuota = 0.0;
 		Double vatQuota = 0.0;
 		if(taxes != null) {
 			for(int i = 0; i < taxes.length(); i++) {
-				if(taxes.optJSONObject(i).optString(IJsonNames.WITHHOLDING_TYPE).isEmpty()) {
-					taxableBase = taxes.optJSONObject(i).optDouble(IJsonNames.BASE);
+				if(taxes.optJSONObject(i).optString(IJsonNames.TYPE).equals("IRPF")) {
 					retentionPercentage = taxes.optJSONObject(i).optDouble(IJsonNames.PERCENTAGE);
 				} else {
-					Double a = taxes.optJSONObject(i).optDouble(IJsonNames.BASE);
+					Double a = taxes.optJSONObject(i).optDouble(IJsonNames.SURCHARGE_QUOTA);
 					surchargeQuota += a.isNaN() ? 0 : a;
-					Double b = taxes.optJSONObject(i).optDouble(IJsonNames.BASE);
+					Double b = taxes.optJSONObject(i).optDouble(IJsonNames.QUOTA);
 					vatQuota += b.isNaN() ? 0 : b;
+					Double c = taxes.optJSONObject(i).optDouble(IJsonNames.BASE);
+					taxableBase += c.isNaN() ? 0 : c;
 				}
 			}
 		}
