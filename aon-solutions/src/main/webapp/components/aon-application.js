@@ -745,6 +745,13 @@ export class AonApplication extends AonElement {
         } else img.style.width = '18px';
         img.src = option.img;
         li.appendChild(img);
+      } else if (option.html) {
+        let divHtml = this.createElement(TAG.DIV);
+        divHtml.innerHTML = option.html;
+        li.appendChild(divHtml.firstChild);
+
+        li.style.display = "flex";
+        li.style.alignItems = "center";
       } else {
         span.style.marginLeft = '28px';
       }
