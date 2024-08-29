@@ -1,5 +1,7 @@
 package com.esferalia.aon.gwt.payroll.client;
 
+import static com.esferalia.aon.gwt.payroll.shared.SistemaREDService.SISTEMA_RED_URL;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -19,6 +21,7 @@ import com.esferalia.aon.gwt.common.shared.HasStartAndEndDate;
 import com.esferalia.aon.gwt.common.shared.NumberUtils;
 import com.esferalia.aon.gwt.common.shared.StringUtils;
 import com.esferalia.aon.gwt.payroll.client.FxDialog.IContextProvider;
+import com.esferalia.aon.gwt.payroll.server.SistemaREDServlet;
 import com.esferalia.aon.gwt.payroll.shared.Bonus;
 import com.esferalia.aon.gwt.payroll.shared.CompositePayment;
 import com.esferalia.aon.gwt.payroll.shared.ContextDescriptor;
@@ -33,6 +36,7 @@ import com.esferalia.aon.gwt.payroll.shared.Salary;
 import com.esferalia.aon.gwt.payroll.shared.Salary.Type;
 import com.esferalia.aon.gwt.payroll.shared.SalaryDraft;
 import com.esferalia.aon.gwt.payroll.shared.SalaryDraft.Scope;
+import com.esferalia.aon.gwt.payroll.shared.SistemaREDService;
 import com.esferalia.aon.gwt.payroll.shared.StringTimeLineVariable;
 import com.esferalia.aon.gwt.payroll.shared.StringVariable;
 import com.esferalia.aon.gwt.payroll.shared.UndefinedPaymentVariable;
@@ -47,6 +51,8 @@ import com.google.gwt.regexp.shared.RegExp;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.datepicker.client.CalendarUtil;
+import com.google.gwt.xhr.client.ReadyStateChangeHandler;
+import com.google.gwt.xhr.client.XMLHttpRequest;
 
 public class SalaryDraftObject implements IContextProvider , Payroll{
 	
@@ -85,6 +91,17 @@ public class SalaryDraftObject implements IContextProvider , Payroll{
 		void onCalculateSucces(SalaryDraftObject object);
 
 		void onCalculateFailure(Throwable throwable);
+	}
+
+	interface SyncCalsCallback {
+		
+		void onSyncStart(SalaryDraftObject object);
+
+		void onSyncFinish(SalaryDraftObject object);
+
+		void onSyncProgress(SalaryDraftObject object);
+
+		void onSyncFailure(Throwable throwable);
 	}
 
 	abstract private class UndoableEdit<T> implements Undoable {
@@ -492,6 +509,48 @@ public class SalaryDraftObject implements IContextProvider , Payroll{
 		employeesServiceAsync.syncSalaryDraft(salaryDraft,
 				asyncCallback);
 	}
+
+	public void syncCalcs ( SyncCalsCallback callback) {
+		
+		Date startDate = getDraftStartDate();
+		int year = DateUtils.getYear(startDate);
+		int month = DateUtils.getMonth(startDate) +1 ;
+		
+		StringBuilder requestDataBuilder = new StringBuilder();
+		
+		requestDataBuilder
+		.append("&" + SistemaREDService.Parameter.USER.name() + "=" + Wnd.getCurrentUser());
+		requestDataBuilder
+		.append("&" + SistemaREDService.Parameter.DOMAIN.name() + "=" + Wnd.getCurrentDomainNameURL());
+		requestDataBuilder
+		.append("&" + SistemaREDService.Parameter.NAF.name() + "=" + getEmployeeSS() );
+		requestDataBuilder
+		.append("&" + SistemaREDService.Parameter.DATE.name() + "=" + "01" + "/" + AonStringUtils.leftPad(Integer.toString(month), 2 , "0") + "/" + year);
+
+		// Send request to server and catch any errors.
+		XMLHttpRequest xhr = XMLHttpRequest.create();
+		xhr.open("POST", SISTEMA_RED_URL + "/" + SistemaREDServlet.CALCS);
+		xhr.setRequestHeader("Content-type",
+				"application/x-www-form-urlencoded");
+		xhr.setOnReadyStateChange(new ReadyStateChangeHandler() {
+		
+			@Override
+			public void onReadyStateChange(XMLHttpRequest xhr) {
+				int state = xhr.getReadyState();
+				
+				if (state == XMLHttpRequest.DONE) {
+					callback.onSyncFinish(SalaryDraftObject.this);
+				} else if ( state == XMLHttpRequest.LOADING ) {
+					// TODO: Progress
+				} 
+	
+			}
+		});
+		
+		xhr.send(requestDataBuilder.toString());		
+		callback.onSyncStart(SalaryDraftObject.this);
+	}
+	
 	private boolean isUp2Future(SalaryDraft salaryDraft) {
 		Date lastDayOfCurrentMonth = DateUtils.getLastDayOfMonth(new Date());
 		return salaryDraft.getStartDate().after(lastDayOfCurrentMonth);
