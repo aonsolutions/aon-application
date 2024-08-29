@@ -187,9 +187,9 @@ export class AonDate extends AonElement {
       }
       target.value = output.replaceAll(" ", "");
       
-      this.date = date.value;
-      this.value = date.value;
-      this.setDate(date.value);
+      // this.date = date.value;
+      // this.value = date.value;
+      // this.setDate(date.value);
     });
   }
 
@@ -455,7 +455,8 @@ export class AonDate extends AonElement {
       this.value = this.year + '-' + (this.addZero(this.month + 1)) + '-' + this.addZero(this.day);
       input.value = this.addZero(this.day) + '/' + (this.addZero(this.month + 1)) + '/' + this.year;
       this.buildCalendar();
-    } else this.date = date;
+    } 
+    // else this.date = date;
 
     this.dispatchEvent(new CustomEvent(EVENT.CHANGE, {detail: this.date}));
   }
