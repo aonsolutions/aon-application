@@ -1088,6 +1088,7 @@
 	width: 100%;
 	font-size: 0.8rem;
 	color: #5f6368;
+	min-height: 1rem;
 }
 
 .aon_custom_text_box_input{
@@ -1477,6 +1478,7 @@
 .aon_custom_dialog_header {
 	margin: 0px;
 	padding: 1em;
+	padding-top:0.6em;
 	padding-bottom: 0;
 	width: auto;
 	display: flex;

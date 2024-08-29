@@ -180,6 +180,11 @@
 	background-color: var(--etlRed);
 }
 
+.aonHeaderComunica,
+.aonMenuLeftopComunica {
+	background-color: var(--etlRed);
+}
+
 .aonHeaderDocumental,
 .onMenuLeftopDocumental {
 	background-color: var(--etlRed);
@@ -267,6 +272,7 @@
 .aonHeaderFiscal .material-icons,
 .aonHeaderPayroll .material-icons,
 .aonHeaderInvoice  .material-icons,
+.aonHeaderComunica  .material-icons,
 .aonHeaderMessenger .material-icons,
 .aonHeaderAccounting .material-icons,
 .aonHeaderDocumental .material-icons,
@@ -294,6 +300,7 @@
 .aonMenuLeftopFiscal .material-symbols-outlined,
 .aonMenuLeftopPayroll .material-symbols-outlined,
 .aonMenuLeftopInvoice  .material-symbols-outlined,
+.aonMenuLeftopComunica  .material-symbols-outlined,
 .aonMenuLeftopMessenger .material-symbols-outlined,
 .aonMenuLeftopAccounting .material-symbols-outlined,
 .aonMenuLeftopDocumental .material-symbols-outlined,
@@ -321,6 +328,7 @@
 .aonHeaderFiscal #aonHeaderCompanyName,
 .aonHeaderPayroll #aonHeaderCompanyName,
 .aonHeaderInvoice  #aonHeaderCompanyName,
+.aonHeaderComunica  #aonHeaderCompanyName,
 .aonHeaderMessenger #aonHeaderCompanyName,
 .aonHeaderAccounting #aonHeaderCompanyName,
 .aonHeaderDocumental #aonHeaderCompanyName,
@@ -346,6 +354,7 @@
 
 #home:hover,
 #invoice:hover,
+#comunica:hover,
 #documental:hover,
 #accounting:hover,
 #fiscal:hover,

@@ -745,6 +745,13 @@ export class AonApplication extends AonElement {
         } else img.style.width = '18px';
         img.src = option.img;
         li.appendChild(img);
+      } else if (option.html) {
+        let divHtml = this.createElement(TAG.DIV);
+        divHtml.innerHTML = option.html;
+        li.appendChild(divHtml.firstChild);
+
+        li.style.display = "flex";
+        li.style.alignItems = "center";
       } else {
         span.style.marginLeft = '28px';
       }
@@ -818,20 +825,12 @@ export class AonApplication extends AonElement {
   addSidenavOptions(title, options, newButton) {
     let tmp = undefined;
     if (options && options.length > 0) {
-      tmp = this.addSidenavOptionsTitle(
-        {
-          id: title,
-          name: title,
-        },
-        newButton
-      );
-      this.addSidenavOptionsList(
-        {
-          id: title,
-          name: title,
-        },
-        options
-      );
+      let data = {
+        id: title,
+        name: title,
+      };
+      tmp = this.addSidenavOptionsTitle(data, newButton);
+      this.addSidenavOptionsList(data,options);
     }
     return tmp;
   }

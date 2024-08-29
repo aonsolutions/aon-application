@@ -1,6 +1,6 @@
 import { AonApplication } from "../../components/aon-application.js";
 import { MSG } from "../../environments/environments.js";
-import Apps from "../../services/app.js";
+import Apps, { COMUNICA } from "../../services/app.js";
 import { AonComunicaUtils } from "./comunic@/aon-comunica-utils.js";
 import { PayrollOptions, PAYROLL_VIEWS } from "./PayrollEnums.js";
 import 'aoncss';
@@ -54,8 +54,16 @@ export class AonComunica extends AonComunicaUtils {
         }
         options.push(aon_cert);
       }
+    
+    let data = {
+      id: MSG.COMUNICA,
+      title: MSG.COMUNICA,
+      name: MSG.COMUNICA,
+      app: COMUNICA,
+      options
+    };
 
-    this.getApplication().addSidenavOptions(MSG.COMUNICA, options);
+    this.getApplication().addSidenavOptions3(data);
 
     let movButton = this.getElement('aonComunicaSidenavMovimientosAonIcon');
     if(movButton){

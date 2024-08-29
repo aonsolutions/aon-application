@@ -16,6 +16,8 @@ public class AonCustomDockLayout extends DockLayoutPanel {
 	private static final String EMPTY_STRING = "";
 
 	// Toolbar
+	private Label titleLabel;
+	
 	private HTMLPanel toolbarButtonsRight = new HTMLPanel(EMPTY_STRING);
 	private TextBox searchTextBox = new TextBox();
 	private HTMLPanel searchPanel = new HTMLPanel(EMPTY_STRING);
@@ -55,7 +57,7 @@ public class AonCustomDockLayout extends DockLayoutPanel {
 		HTMLPanel toolbarLeft = new HTMLPanel(EMPTY_STRING);
 		toolbarLeft.addStyleName(AON.CSS.aonItemFlex());
 		
-		Label titleLabel = new Label(title);
+		titleLabel = new Label(title);
 		titleLabel.getElement().getStyle().setProperty("font-size", "1.1rem");
 		toolbarLeft.add(titleLabel);
 		
@@ -64,6 +66,8 @@ public class AonCustomDockLayout extends DockLayoutPanel {
 		// Right
 		HTMLPanel toolbarRight = new HTMLPanel(EMPTY_STRING);
 		toolbarRight.addStyleName(AON.CSS.aonItemFlex());
+		
+		toolbarButtonsRight.addStyleName(AON.CSS.aonItemFlex());
 		
 		searchPanel.setStyleName(AON.CSS.aonCustomSearchBox());
 		
@@ -94,8 +98,20 @@ public class AonCustomDockLayout extends DockLayoutPanel {
 		addNorth(toolbar, 50.00);
 	}
 	
+	public void setToolbarTitle(String title) {
+		titleLabel.setText(title);
+	}
+	
 	public void addToolbarButton(Widget widget) {
 		toolbarButtonsRight.add(widget);
+	}
+
+	public int getToolbarButtonCount() {
+		return toolbarButtonsRight.getWidgetCount();
+	}
+	
+	public HTMLPanel getToolbarButtonPanel() {
+		return toolbarButtonsRight;
 	}
 	
 	public TextBox getSearchTextBox() {

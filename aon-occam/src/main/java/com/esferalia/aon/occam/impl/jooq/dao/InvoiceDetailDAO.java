@@ -124,6 +124,10 @@ public class InvoiceDetailDAO {
 			.findFirst().orElse(new InvoiceDetail());
 	}
 	
+	public static InvoiceDetail get(AONContext ctx, Integer id) {
+		return get(ctx, f -> f.getIdProperty().eq(id));
+	}
+	
 	static List<InvoiceDetail> save(AONContext ctx, List<InvoiceDetail> invoiceDetails) {
 		LinkedList<InvoiceDetail> list = new LinkedList<>();
 		invoiceDetails.stream().forEach(invoiceDetail -> 
@@ -132,7 +136,7 @@ public class InvoiceDetailDAO {
 	}
 	
 	static InvoiceDetail save(AONContext ctx, InvoiceDetail invoiceDetail) {
-		invoiceDetail = invoiceDetail.getId() != null 
+		invoiceDetail = (invoiceDetail.getId() != null && get(ctx, invoiceDetail.getId()).getId() != null)
 			? update(ctx, invoiceDetail)
 			: insert(ctx, invoiceDetail);
 		

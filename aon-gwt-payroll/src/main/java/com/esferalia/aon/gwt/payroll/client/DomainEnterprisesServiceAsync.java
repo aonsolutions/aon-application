@@ -56,6 +56,7 @@ import com.esferalia.aon.gwt.payroll.shared.WorkplaceInfo;
 import com.esferalia.aon.occam.api.model.Certificate;
 import com.esferalia.aon.occam.api.model.CertificateInfo;
 import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.occam.api.model.EnterpriseCCC;
 import com.esferalia.aon.occam.api.model.MailAccount;
 import com.esferalia.aon.occam.api.model.aonsolutions.DomainUserRoles;
 import com.esferalia.aon.occam.api.model.mod145.Mod145;
@@ -732,6 +733,14 @@ public class DomainEnterprisesServiceAsync {
 
 	public void saveActivities(List<com.esferalia.aon.occam.api.model.payroll.Activity> activities, AsyncCallback<Void> asyncCallback) throws IllegalArgumentException {
 		enterprisesServiceAsync.saveActivities(getCurrentDomainName(), getCurrentUser(), activities, asyncCallback);
+	}
+	
+	public void deleteCCC(Integer cccId, AsyncCallback<Void> asyncCallback) throws IllegalArgumentException {
+		enterprisesServiceAsync.deleteCCC(getCurrentDomainName(), getCurrentUser(), cccId, asyncCallback);
+	}
+	
+	public void saveCCC(EnterpriseCCC ccc, AsyncCallback<EnterpriseCCC> asyncCallback) throws IllegalArgumentException {
+		enterprisesServiceAsync.saveCCC(getCurrentDomainName(), getCurrentUser(), ccc, asyncCallback);
 	}
 	
 	// ------------------------------------------------ Mod145 (API)
