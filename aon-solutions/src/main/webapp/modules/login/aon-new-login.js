@@ -204,7 +204,7 @@ export class AonNewLogin extends AonElement {
     d.getContent().addEventListener(EVENT.MOUSELEAVE, () => d.close());
 
     let options = [{
-      name: "Español",
+      name: "Castellano",
       image: '../assets/img/aonIconCastellano.png',
       fn: () => LS.setLanguage(Language.SPANISH)
     }, {
