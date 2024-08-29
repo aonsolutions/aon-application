@@ -79,6 +79,7 @@ public class SettleSalariesDAO {
 				.where(SALARY.DOMAIN.eq(ctx.getDomainId()))
 				.and(SALARY.ISSUE_DATE.eq(parseToSQLDate(date)))
 				.and(SALARY.TYPE.lt((byte)4)) // Nomina, Extra, Finiquito, Atraso
+//				.and(SALARY.TOTAL_LIQUID.ne(0.00))
 				.orderBy(SALARY.START_DATE, SALARY.CHARGE_DATE)
 				.fetch();
 		
@@ -113,38 +114,7 @@ public class SettleSalariesDAO {
 			
 			if(finances.isEmpty()) {
 				// Insert new salary finance
-				ctx.getDslContext().insertInto(FINANCE)
-					.set(FINANCE.DOMAIN, ctx.getDomainId())
-					.set(FINANCE.PAYMENT, (byte)1)
-					.set(FINANCE.REGISTRY, record.get(REGISTRY.ID))
-					.set(FINANCE.RDOCUMENT, record.get(REGISTRY.DOCUMENT))
-					.set(FINANCE.RDOCUMENT_TYPE, record.get(REGISTRY.DOCUMENT_TYPE))
-					.set(FINANCE.RDOCUMENT_COUNTRY, record.get(REGISTRY.DOCUMENT_COUNTRY))
-					.set(FINANCE.RNAME, record.get(REGISTRY.NAME))
-					.set(FINANCE.AMOUNT, record.get(SALARY.TOTAL_LIQUID))
-					.set(FINANCE.CONCEPT, concept + " - " + formatDate(date))
-//					.set(FINANCE.DUE_DATE, parseToSQLDate(date))
-					.set(FINANCE.DUE_DATE,  record.get(SALARY.CHARGE_DATE))
-					.set(FINANCE.PAY_METHOD, record.get(RPAYMETHOD.PAY_METHOD))
-					.set(FINANCE.BANK_ACCOUNT, record.get(RBANK.BANK_ACCOUNT))
-					.set(FINANCE.BANK_ALIAS, record.get(RBANK.ALIAS))
-					.set(FINANCE.BIC, record.get(RBANK.BIC))
-					.set(FINANCE.SCOPE, record.get(WORKPLACE.SCOPE))
-					.set(FINANCE.PAYROLL, (byte)1)
-					.set(FINANCE.SOURCE_ID, record.get(SALARY.ID))
-					.set(FINANCE.CREATION_DATE, new Timestamp(new Date().getTime()))
-					.set(FINANCE.CREATION_USER, ctx.getUser())
-					.execute();
-				
-				hasSettleSalaryModify = true;
-			} else {
-				// Check if existing amount is same as salary
-				Double salaryAmount = record.get(SALARY.TOTAL_LIQUID);
-				Double financeAmount = finances.stream().mapToDouble(finance -> finance.get(FINANCE.AMOUNT)).sum();
-				
-				if(!salaryAmount.equals(financeAmount)) {
-					Double amountDiff = salaryAmount - financeAmount;
-					// Insert new salary diff finance
+				if(record.get(SALARY.TOTAL_LIQUID) != 0.00) {
 					ctx.getDslContext().insertInto(FINANCE)
 						.set(FINANCE.DOMAIN, ctx.getDomainId())
 						.set(FINANCE.PAYMENT, (byte)1)
@@ -153,9 +123,9 @@ public class SettleSalariesDAO {
 						.set(FINANCE.RDOCUMENT_TYPE, record.get(REGISTRY.DOCUMENT_TYPE))
 						.set(FINANCE.RDOCUMENT_COUNTRY, record.get(REGISTRY.DOCUMENT_COUNTRY))
 						.set(FINANCE.RNAME, record.get(REGISTRY.NAME))
-						.set(FINANCE.AMOUNT, amountDiff)
+						.set(FINANCE.AMOUNT, record.get(SALARY.TOTAL_LIQUID))
 						.set(FINANCE.CONCEPT, concept + " - " + formatDate(date))
-//						.set(FINANCE.DUE_DATE, parseToSQLDate(date))
+	//					.set(FINANCE.DUE_DATE, parseToSQLDate(date))
 						.set(FINANCE.DUE_DATE,  record.get(SALARY.CHARGE_DATE))
 						.set(FINANCE.PAY_METHOD, record.get(RPAYMETHOD.PAY_METHOD))
 						.set(FINANCE.BANK_ACCOUNT, record.get(RBANK.BANK_ACCOUNT))
@@ -169,6 +139,41 @@ public class SettleSalariesDAO {
 						.execute();
 					
 					hasSettleSalaryModify = true;
+				}
+			} else {
+				// Check if existing amount is same as salary
+				Double salaryAmount = record.get(SALARY.TOTAL_LIQUID);
+				Double financeAmount = finances.stream().mapToDouble(finance -> finance.get(FINANCE.AMOUNT)).sum();
+				
+				if(!salaryAmount.equals(financeAmount)) {
+					Double amountDiff = salaryAmount - financeAmount;
+					// Insert new salary diff finance
+					if(amountDiff != 0.00) {
+						ctx.getDslContext().insertInto(FINANCE)
+							.set(FINANCE.DOMAIN, ctx.getDomainId())
+							.set(FINANCE.PAYMENT, (byte)1)
+							.set(FINANCE.REGISTRY, record.get(REGISTRY.ID))
+							.set(FINANCE.RDOCUMENT, record.get(REGISTRY.DOCUMENT))
+							.set(FINANCE.RDOCUMENT_TYPE, record.get(REGISTRY.DOCUMENT_TYPE))
+							.set(FINANCE.RDOCUMENT_COUNTRY, record.get(REGISTRY.DOCUMENT_COUNTRY))
+							.set(FINANCE.RNAME, record.get(REGISTRY.NAME))
+							.set(FINANCE.AMOUNT, amountDiff)
+							.set(FINANCE.CONCEPT, concept + " - " + formatDate(date))
+	//						.set(FINANCE.DUE_DATE, parseToSQLDate(date))
+							.set(FINANCE.DUE_DATE,  record.get(SALARY.CHARGE_DATE))
+							.set(FINANCE.PAY_METHOD, record.get(RPAYMETHOD.PAY_METHOD))
+							.set(FINANCE.BANK_ACCOUNT, record.get(RBANK.BANK_ACCOUNT))
+							.set(FINANCE.BANK_ALIAS, record.get(RBANK.ALIAS))
+							.set(FINANCE.BIC, record.get(RBANK.BIC))
+							.set(FINANCE.SCOPE, record.get(WORKPLACE.SCOPE))
+							.set(FINANCE.PAYROLL, (byte)1)
+							.set(FINANCE.SOURCE_ID, record.get(SALARY.ID))
+							.set(FINANCE.CREATION_DATE, new Timestamp(new Date().getTime()))
+							.set(FINANCE.CREATION_USER, ctx.getUser())
+							.execute();
+						
+						hasSettleSalaryModify = true;
+					}
 				}
 			}
 		}

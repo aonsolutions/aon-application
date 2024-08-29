@@ -194,7 +194,7 @@ export class AonHeader extends AonElement {
 				let aonUnread = this.createElement('div');
 				aonUnread.id = this.BASE_ID + 'Unread';
 				aonUnread.className = 'aonConnected';
-				aonUnread.style.backgroundColor = "red";
+				aonUnread.style.backgroundColor = "#DC4D30";
 
 				let aonHeaderNotificationButtonIconButton = this.getElement('aonHeaderNotificationButtonIconButton');
 				aonHeaderNotificationButtonIconButton.appendChild(aonUnread);
@@ -398,7 +398,6 @@ export class AonHeader extends AonElement {
 				const welcomeClickListener = (event) => {
 					event.preventDefault();
 					event.stopPropagation();
-					// Remueve el listener después de ejecutarse
 					appss.removeEventListener("click", welcomeClickListener);
 				};
 				

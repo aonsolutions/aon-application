@@ -211,11 +211,11 @@ export class AonNewLogin extends AonElement {
       name: "English",
       image: '../assets/img/aonIconEnglish.png',
       fn: () => LS.setLanguage(Language.ENGLISH)
-    },/* {
+    }, {
       name: "Français",
-      image: '../assets/img/aonIconEnglish.png',
+      image: '../assets/img/aonIconFrancais.png',
       fn: () => LS.setLanguage(Language.FRENCH)
-    },*/ {
+    }, {
       name: "Deutsch",
       image: '../assets/img/aonIconDeutsch.png',
       fn: () => LS.setLanguage(Language.DEUTSCH)

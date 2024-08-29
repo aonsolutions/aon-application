@@ -75,22 +75,32 @@
 }
 */
 
-#aon-notesSidenav .material-icons {
+#aon-notesSidenav .material-icons,
+#aon-notesSidenav aon-icon {
 	--aonNote: rgb(95, 99, 104);
 }
 
-#aonInvoiceSidenav .material-icons {
+#aonInvoiceSidenav .material-icons,
+#aonInvoiceSidenav aon-icon {
 	--aonInvoice: rgb(95, 99, 104);
 }
 
-#aonAccountingSidenav .material-icons {
+#aonComunicaSidenav .material-icons,
+#aonComunicaSidenav aon-icon {
+	--aonPayroll: rgb(95, 99, 104);
+}
+
+#aonAccountingSidenav .material-icons,
+#aonAccountingSidenav aon-icon {
 	--aonAccounting: rgb(95, 99, 104);
 }
 
 #aonFiscalSidenav img {
 	filter: grayscale(100%);
 }
-#aonFiscalSidenav .material-icons {
+
+#aonFiscalSidenav .material-icons,
+#aonFiscalSidenav aon-icon {
 	--aonFiscal: rgb(95, 99, 104);
 }
 
@@ -99,15 +109,18 @@
 	--aonPayroll: rgb(95, 99, 104);
 }
 
-#aonMessengerSidenav .material-icons {
+#aonMessengerSidenav .material-icons,
+#aonMessengerSidenav aon-icon {
 	--aonMessenger: rgb(95, 99, 104);
 }
 
-#aonDocumentalSidenav .material-icons {
+#aonDocumentalSidenav .material-icons,
+#aonDocumentalSidenav aon-icon {
 	--aonDocumental: rgb(95, 99, 104);
 }
 
-#aonSigninSidenav .material-icons {
+#aonSigninSidenav .material-icons,
+#aonSigninSidenav aon-icon {
 	--aonTimecontrol: rgb(95, 99, 104);
 }
 

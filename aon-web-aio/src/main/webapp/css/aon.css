@@ -155,6 +155,14 @@
 }
 
 
+.material-icons-selected {
+  font-variation-settings:
+  'FILL' 1,
+  'wght' 200,
+  'GRAD' 0,
+  'opsz' 24 !important;
+}
+
 .material-icons {
   font-family: 'Material Symbols Outlined';
   font-weight: normal;
@@ -171,9 +179,9 @@
   -moz-osx-font-smoothing: grayscale;
   font-variation-settings:
   'FILL' 0,
-  'wght' 400,
+  'wght' 200,
   'GRAD' 0,
-  'opsz' 24
+  'opsz' 24;
 }
 
 #aon-search-buttonIcon {
@@ -183,7 +191,7 @@
 .material-symbols-outlined {
   font-variation-settings:
   'FILL' 0,
-  'wght' 400,
+  'wght' 200,
   'GRAD' 0,
   'opsz' 24
 }
@@ -2833,6 +2841,17 @@ label.rating:hover {
 	border-left: 2px solid var(--aonInvoice);
 }
 
+.aonHeaderComunica,
+.aonMenuLeftopComunica {
+	background-color: var(--aonPayroll);
+}
+
+
+#aonMenuList-comunica.aonMenuSidenavLiSeleted {
+	margin-left: 2px;
+	border-left: 2px solid var(--aonPayroll);
+}
+
 .aonHeaderDocumental,
 .onMenuLeftopDocumental {
 	background-color: var(--aonDocumental);
@@ -2951,6 +2970,7 @@ label.rating:hover {
 .aonHeaderFiscal .material-icons,
 .aonHeaderPayroll .material-icons,
 .aonHeaderInvoice  .material-icons,
+.aonHeaderComunica  .material-icons,
 .aonHeaderMessenger .material-icons,
 .aonHeaderAccounting .material-icons,
 .aonHeaderDocumental .material-icons,
@@ -2976,6 +2996,7 @@ label.rating:hover {
 .aonHeaderFiscal #aon-search-buttonIcon,
 .aonHeaderPayroll #aon-search-buttonIcon,
 .aonHeaderInvoice  #aon-search-buttonIcon,
+.aonHeaderComunica  #aon-search-buttonIcon,
 .aonHeaderMessenger #aon-search-buttonIcon,
 .aonHeaderAccounting #aon-search-buttonIcon,
 .aonHeaderDocumental #aon-search-buttonIcon,
@@ -3007,6 +3028,7 @@ label.rating:hover {
 .aonMenuLeftopFiscal .material-symbols-outlined,
 .aonMenuLeftopPayroll .material-symbols-outlined,
 .aonMenuLeftopInvoice  .material-symbols-outlined,
+.aonMenuLeftopComunica  .material-symbols-outlined,
 .aonMenuLeftopMessenger .material-symbols-outlined,
 .aonMenuLeftopAccounting .material-symbols-outlined,
 .aonMenuLeftopDocumental .material-symbols-outlined,
@@ -3037,7 +3059,8 @@ label.rating:hover {
 .aonHeaderNote #aonHeaderCompanyName,
 .aonHeaderFiscal #aonHeaderCompanyName,
 .aonHeaderPayroll #aonHeaderCompanyName,
-.aonHeaderInvoice  #aonHeaderCompanyName,
+.aonHeaderInvoice #aonHeaderCompanyName,
+.aonHeaderComunica #aonHeaderCompanyName,
 .aonHeaderMessenger #aonHeaderCompanyName,
 .aonHeaderAccounting #aonHeaderCompanyName,
 .aonHeaderDocumental #aonHeaderCompanyName,
@@ -3068,6 +3091,7 @@ label.rating:hover {
 #new:hover,
 #home:hover,
 #invoice:hover,
+#comunica:hover,
 #documental:hover,
 #accounting:hover,
 #fiscal:hover,

@@ -2797,7 +2797,7 @@ export class AonInvoice extends AonElement {
 				this.appendChild(div);
 			}
 			this.clearElement(div);
-	
+			document.body.classList.add('gwt-Selector');
 			GWT.load(GWT.RAWDOC_RECORD, "PRUEBA_RAWDOC_RECORD");
 		// } else {
 		// 	this.showError({

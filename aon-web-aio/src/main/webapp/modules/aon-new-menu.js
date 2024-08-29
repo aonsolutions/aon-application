@@ -256,14 +256,18 @@ export class AonNewMenu extends AonElement {
 		};
 
         if(this.isApp(app) || excludedApps.includes(app.app)){
-			this.dispatchEvent(new CustomEvent(EVENT.AON_APPLICATION_SELECT, { detail }));
+			if(app.app != "new"){
+				this.dispatchEvent(new CustomEvent(EVENT.AON_APPLICATION_SELECT, { detail }));	
+			}
 			this.setSelectedMenuSidenav(app);
 		}
-		
-		let appsDiv = this.getElement("aonMenuLeftop-applications");
-		appsDiv.style.removeProperty('background-color'); 
-		let appName = app.app[0].toUpperCase() + app.app.slice(1);
-		appsDiv.className = `${CSS.AON_MENU_LEFTOP} ${CSS.AON_MENU_LEFTOP}${appName}`
+		if(app.app != "new"){
+			let appsDiv = this.getElement("aonMenuLeftop-applications");
+			appsDiv.style.removeProperty('background-color'); 
+			let appName = app.app[0].toUpperCase() + app.app.slice(1);
+			appsDiv.className = `${CSS.AON_MENU_LEFTOP} ${CSS.AON_MENU_LEFTOP}${appName}`	
+		}
+	
 	}
 	
 
@@ -604,12 +608,14 @@ export class AonNewMenu extends AonElement {
 			span.innerHTML = app.description; 
 			div.appendChild(span);
 		}
+		
 		if(welcome && app.app == "applications"){
 			div.addEventListener("click", (event) => {
 				event.preventDefault(); 
 				event.stopPropagation();
 			});
 		}
+		
 		a.appendChild(div);
 		return a;
 	}
@@ -899,10 +905,8 @@ export class AonNewMenu extends AonElement {
 			return this.getDur().isFiscal();
 		else if (MenuApps.PAYROLL.app === app.app)
 			return this.getDur().isPayroll();
-		else if (MenuApps.COMUNICA.app === app.app)
-			return !this.getDur().isPayroll() && this.getDur().isComunica();
-		else if (MenuApps.AON_SALTRA.app === app.app)
-			return !this.getDur().isPayroll() && !this.getDur().isComunica() && this.getDur().isSaltra();
+		else if (MenuApps.COMUNICA.app === app.app) 
+			return !this.getDur().isPayroll() && (this.getDur().isComunica() || this.getDur().isSaltra());			
 		else if (MenuApps.DOCUMENTAL.app === app.app)
 			return this.getDur().isDocumental();
 		else if (MenuApps.TIMECONTROL.app === app.app)
@@ -970,7 +974,6 @@ export class AonNewMenu extends AonElement {
 	}
 	
 	showNewDialogMenu(el){
-		
 		let newDialogMenu =  this.getApplication().getOptionDialog();
 
 		let newMenuOptions = [];
