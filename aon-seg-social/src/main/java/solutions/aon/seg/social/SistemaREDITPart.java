@@ -412,7 +412,7 @@ class SistemaREDITPart extends ServicioREDPartUtils {
 				htmlPage = HtmlUnitToolkit.selectOption(htmlPage, "tipoContrato", "1");
 				
 
-				wait4(htmlPage, p -> p.getElementById("#sumaBaseCot"))
+				wait4(htmlPage, p -> p.getElementById("sumaBaseCot"))
 						.orElseThrow(() -> new SegSocialException(TRY_AGAIN));
 
 				cotBaseInput = (HtmlInput) htmlPage.getElementById("sumaBaseCot");
