@@ -10,7 +10,7 @@ public enum InvoiceCommunicationType implements Serializable{
  
 	SII { @Override public void visit(IInvoiceCommunicationTypeVisitor visitor) { visitor.visitSII();}},
 	TBAI { @Override public void visit(IInvoiceCommunicationTypeVisitor visitor) { visitor.visitTBAI();}},
-	LROE { @Override public void visit(IInvoiceCommunicationTypeVisitor visitor) { visitor.visitLROE();}},
+	LROE { @Override public void visit(IInvoiceCommunicationTypeVisitor visitor) throws Exception { visitor.visitLROE();}},
 	SERES { @Override public void visit(IInvoiceCommunicationTypeVisitor visitor) { visitor.visitSERES();}},
 	EMAIL { @Override public void visit(IInvoiceCommunicationTypeVisitor visitor) { visitor.visitSERES();}}
 	;
@@ -24,7 +24,7 @@ public enum InvoiceCommunicationType implements Serializable{
 		return (byte) ordinal();
 	}
 	
-	public void visit(IInvoiceCommunicationTypeVisitor visitor) {
+	public void visit(IInvoiceCommunicationTypeVisitor visitor) throws Exception {
 		// Redefine
 	}
 	

@@ -233,7 +233,7 @@ export class AonInvoice extends AonElement {
 
 		window.reloadInvoice = (invoiceId) => {
 			if(invoiceId) {
-				this.isInvofoxInvoice() && this.setInvofoxState(CONSTANT.EXPORTED);
+				// this.isInvofoxInvoice() && this.setInvofoxState(CONSTANT.EXPORTED);
 				getInvoice(invoiceId).then((inv) => {
 					this.invoice = new Invoice(inv);
 					this.reload();
@@ -2749,7 +2749,7 @@ export class AonInvoice extends AonElement {
 			this.accept = false;
 			acceptInvoice(this.getInvoice())
 			.then(r => {
-				this.isInvofoxInvoice() && this.setInvofoxState(CONSTANT.EXPORTED);
+				// this.isInvofoxInvoice() && this.setInvofoxState(CONSTANT.EXPORTED);
 				this.updateCounter(this.getAcceptFromOption(), this.getAcceptToOption(), 1);
 				this.invoice = new Invoice(r);
 				this.getApplication().stopLoader(); 
@@ -2808,13 +2808,13 @@ export class AonInvoice extends AonElement {
 	}
 
 	rejectInvoice() {
-		if ( this.isInvofoxInvoice() ) {
-			this.setInvofoxState(CONSTANT.PENDING_DECISSION);
-			this.updateCounter(this.getAcceptFromOption(), OPTION.RAWDOC_REJECT, 1);
-			this.updateCounter(OPTION.INVOICE_PENDINGS, undefined, -1);
-			this.reload();
-			return;
-		}
+		// if ( this.isInvofoxInvoice() ) {
+		// 	this.setInvofoxState(CONSTANT.PENDING_DECISSION);
+		// 	this.updateCounter(this.getAcceptFromOption(), OPTION.RAWDOC_REJECT, 1);
+		// 	this.updateCounter(OPTION.INVOICE_PENDINGS, undefined, -1);
+		// 	this.reload();
+		// 	return;
+		// }
 			
 		let d = this.getApplication().getDialog();
 		d.clear();
@@ -3123,12 +3123,12 @@ export class AonInvoice extends AonElement {
 		let invofoxRejected = this.isInvofoxInvoice() && this.getInvoice().isOcrStatus(CONSTANT.DISCARDED, CONSTANT.PENDING_DECISSION);
 		if(!this.getInvoice().isRejected() && !invofoxRejected)
 			this.updateCounter(OPTION.INVOICE_PENDINGS, undefined, -1);
-		if(this.isInvofoxInvoice()) {
-			this.setInvofoxState(CONSTANT.DISCARDED);
-		} else {
-			this.getInvoice().status = CONSTANT.DRAFT;
-			this.save(MSG.MOVED_TO_TRASH);
-		}
+		// if(this.isInvofoxInvoice()) {
+		// 	this.setInvofoxState(CONSTANT.DISCARDED);
+		// } else {
+		this.getInvoice().status = CONSTANT.DRAFT;
+		this.save(MSG.MOVED_TO_TRASH);
+		// }
 		this.reload();
 	}
 
@@ -3179,12 +3179,12 @@ export class AonInvoice extends AonElement {
 	}
 
 	restoreInvoice() {
-		if (this.isInvofoxInvoice()) {
-			this.setInvofoxState(CONSTANT.PENDING_CORRECTION);
-		} else {
+		// if (this.isInvofoxInvoice()) {
+		// 	this.setInvofoxState(CONSTANT.PENDING_CORRECTION);
+		// } else {
 			this.getInvoice().status = CONSTANT.INBOX;
 			this.save(MSG.RESTORED_DATA);
-		}		
+		// }		
 		this.updateCounter(this.getRestoreFromOption(), this.getRestoreToOption(), 1);
 		this.updateCounter(OPTION.INVOICE_PENDINGS, undefined, 1);
 		this.reload();
