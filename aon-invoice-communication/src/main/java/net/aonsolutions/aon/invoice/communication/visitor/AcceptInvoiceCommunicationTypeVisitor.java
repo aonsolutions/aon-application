@@ -14,6 +14,7 @@ import net.aonsolutions.aon.tbai.InvoiceCommunication;
 import net.aonsolutions.aon.tbai.LroeMain;
 import net.aonsolutions.aon.tbai.TBAI;
 import net.aonsolutions.aon.tbai.TbaiMain;
+import net.aonsolutions.aon.tbai.responses.LROEResponse;
 
 public class AcceptInvoiceCommunicationTypeVisitor extends BasicCommunicationInvoiceTypeVisitor implements IInvoiceCommunicationTypeVisitor {
 		
@@ -50,7 +51,7 @@ public class AcceptInvoiceCommunicationTypeVisitor extends BasicCommunicationInv
 	}
 
 	@Override
-	public void visitLROE() {
+	public void visitLROE() throws Exception {
 		if(InvoiceType.SALES.equals(getInvoice().getType())) visitTBAI();
 		else {
 			Company company = getCompany();
@@ -59,7 +60,6 @@ public class AcceptInvoiceCommunicationTypeVisitor extends BasicCommunicationInv
 					.setInvoice(getInvoice())
 					.setOperation(InvoiceCommunicationOperation.REGISTER)
 					.setTbaiConfiguration(getTbaiConfiguration())
-					
 					.setType(InvoiceCommunicationType.LROE)
 					.setPerson(isPersonaFisica(company.getDocument()) 
 							? getPerson(company.getId()) : null)
@@ -67,7 +67,10 @@ public class AcceptInvoiceCommunicationTypeVisitor extends BasicCommunicationInv
 							? FiscalModelType.M140 : FiscalModelType.M240);
 			
 			LroeMain lroe = new LroeMain();
-			lroe.alta(ic);
+			LROEResponse resp = lroe.alta(ic);
+			if(resp.isError()) {
+				throw new Exception(resp.getErrorMessage());
+			}
 		}
 	}
 	

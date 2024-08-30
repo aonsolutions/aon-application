@@ -54,9 +54,9 @@ public class InvoiceCommunicationServiceAsyncDecorator implements InvoiceCommuni
 	}
 
 	@Override
-	public void altaLroe140(String domainName, int domainId, String user, Invoice invoice, AEATParams aeatParams, AsyncCallback<ICResponse> callback) {
+	public void altaLroe(String domainName, int domainId, String user, Invoice invoice, AEATParams aeatParams, AsyncCallback<ICResponse> callback) {
 		AON.start();
-		ssa.altaLroe140(domainName, domainId, user, invoice, aeatParams, new AsyncCallbackWrapper<>(callback));
+		ssa.altaLroe(domainName, domainId, user, invoice, aeatParams, new AsyncCallbackWrapper<>(callback));
 		
 	}
 
@@ -64,13 +64,6 @@ public class InvoiceCommunicationServiceAsyncDecorator implements InvoiceCommuni
 	public void bajaLroe140(String domainName, int domainId, String user, Invoice invoice, AEATParams aeatParams, AsyncCallback<String> callback) {
 		AON.start();
 		ssa.bajaLroe140(domainName, domainId, user, invoice, aeatParams, new AsyncCallbackWrapper<>(callback));		
-	}
-	
-	@Override
-	public void altaLroe240(String domainName, int domainId, String user, Invoice invoice, AEATParams aeatParams, AsyncCallback<ICResponse> callback) {
-		AON.start();
-		ssa.altaLroe240(domainName, domainId, user, invoice, aeatParams, new AsyncCallbackWrapper<>(callback));
-		
 	}
 
 	@Override
