@@ -95,7 +95,6 @@ export const HomeApps = {
 
 export const COMMERCIAL_MENU = {
 	app: "comercialMenu",
-	icon: AON_ICONS.AON_KIT_DIGITAL,
 	symbol: MATERIAL_ICONS.HANDSHAKE,
 	title: MSG.COMMERCIAL,
 	description: MSG.COMMERCIAL,
@@ -108,7 +107,6 @@ export const COMMERCIAL_MENU = {
 
 export const MANAGEMENT_MENU = {
 	app: "managementMenu",
-	icon: AON_ICONS.AON_KIT_DIGITAL,
 	symbol: MATERIAL_ICONS.MONITORING,
 	title: MSG.MANAGEMENT,
 	description: MSG.MANAGEMENT,
@@ -121,7 +119,6 @@ export const MANAGEMENT_MENU = {
 
 export const TREASURY_MENU = {
 	app: "treasuryMenu",
-	icon: AON_ICONS.AON_KIT_DIGITAL,
 	symbol: MATERIAL_ICONS.ACCOUNT_BALANCE,
 	title: MSG.TREASURY,
 	description: MSG.TREASURY,
@@ -134,7 +131,6 @@ export const TREASURY_MENU = {
 
 export const WAREHOUSE_MENU = {
 	app: "warehouseMenu",
-	icon: AON_ICONS.AON_KIT_DIGITAL,
 	symbol: MATERIAL_ICONS.TROLLEY,
 	title: MSG.WAREHOUSE,
 	description: MSG.WAREHOUSE,
@@ -147,7 +143,6 @@ export const WAREHOUSE_MENU = {
 
 export const GROUPWARE_MENU = {
 	app: "groupwareMenu",
-	icon: AON_ICONS.AON_KIT_DIGITAL,
 	symbol: MATERIAL_ICONS.NOTE_STACK,
 	title: MSG.GROUPWARE,
 	description: MSG.GROUPWARE,
@@ -160,7 +155,6 @@ export const GROUPWARE_MENU = {
 
 export const ACCOUNTING_MENU = {
 	app: "accountingMenu",
-	icon: AON_ICONS.AON_KIT_DIGITAL,
 	symbol: MATERIAL_ICONS.CALCULATE,
 	title: MSG.ACCOUNTING,
 	description: MSG.ACCOUNTING,
@@ -173,7 +167,6 @@ export const ACCOUNTING_MENU = {
 
 export const FISCAL_MENU = {
 	app: "fiscalMenu",
-	icon: AON_ICONS.AON_KIT_DIGITAL,
 	symbol: MATERIAL_ICONS.EURO_SYMBOL,
 	title: MSG.FISCAL,
 	description: MSG.FISCAL,
@@ -186,7 +179,6 @@ export const FISCAL_MENU = {
 
 export const PAYROLL_MENU = {
 	app: "payrollMenu",
-	icon: AON_ICONS.AON_KIT_DIGITAL,
 	symbol: "group",
 	title: MSG.PAYROLL,
 	description: MSG.PAYROLL,
@@ -199,7 +191,6 @@ export const PAYROLL_MENU = {
 
 export const MARKETING_MENU = {
 	app: "marketingMenu",
-	icon: AON_ICONS.AON_KIT_DIGITAL,
 	symbol: "ads_click",
 	title: MSG.MARKETING,
 	description: MSG.MARKETING,
