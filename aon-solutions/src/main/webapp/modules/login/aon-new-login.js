@@ -22,6 +22,7 @@ import { AonEmail } from "../../components/aon-email.js";
 import { AonNewInput } from "../../components/aon-new-input.js";
 import { AonMobileParent } from "../company/aon-mobile-parent.js";
 import { AonParent } from "aonparent";
+import { AonIconButton } from "../../components/aon-icon-button.js";
 
 export class AonNewLogin extends AonElement {
   tag;
@@ -49,7 +50,7 @@ export class AonNewLogin extends AonElement {
 
     let divLogoToolbar = this.createElement(TAG.DIV);
     divLogoToolbar.id = 'aonLoginLogoDiv';
-	divLogoToolbar.className = CSS.AON_LOGIN_LOGO;
+	  divLogoToolbar.className = CSS.AON_LOGIN_LOGO;
     toolbar.appendChild(divLogoToolbar);
 
     //let logoToolbar = this.createElement(TAG.IMG);
@@ -62,10 +63,16 @@ export class AonNewLogin extends AonElement {
       divLanguage.id = 'aonLoginLanguageDivToolbar';
       toolbar.appendChild(divLanguage);
 
+      let languageButton = new AonIconButton();
+      languageButton.id = "aonLoginLanguageButton";
+      languageButton.icon = MATERIAL_ICONS.LANGUAGE;
+      languageButton.addEventListener(EVENT.CLICK, () => this.languageDialog());
+      divLanguage.appendChild(languageButton);
+
       let spanLanguage = this.createElement(TAG.SPAN);
       spanLanguage.id = 'aonLoginLanguageSpanToolbar';
       spanLanguage.innerHTML = this.getLanguageText();
-      spanLanguage.addEventListener(EVENT.MOUSEOVER, () => this.languageDialog());
+      //spanLanguage.addEventListener(EVENT.MOUSEOVER, () => this.languageDialog());
       divLanguage.appendChild(spanLanguage);
     }
 
@@ -79,7 +86,7 @@ export class AonNewLogin extends AonElement {
     divCompanyLogoForm.id = "divCompanyLogoForm";
     divCompanyLogoForm.className = CSS.AON_LOGIN_FORM;
     divCompanyLogoForm.style.marginBottom = "2rem";
-	divCompanyLogoForm.appendChild(this.companyLogo);
+	  divCompanyLogoForm.appendChild(this.companyLogo);
     divForm.appendChild(divCompanyLogoForm);
 
     let divTitleForm = this.createElement(TAG.DIV);
@@ -193,7 +200,7 @@ export class AonNewLogin extends AonElement {
   languageDialog() {
     let divLanguage = this.getElement('aonLoginLanguageDivToolbar');
     let spanLanguage = this.getElement('aonLoginLanguageSpanToolbar');
-    const top  = spanLanguage.getBoundingClientRect().top;
+    const top  = spanLanguage.getBoundingClientRect().top + 25;
     const left = spanLanguage.getBoundingClientRect().left;
     let d = this.getElement('aonHeaderDialogHelpOption');
     if(!d) {
