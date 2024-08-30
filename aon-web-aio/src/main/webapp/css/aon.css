@@ -3996,3 +3996,8 @@ label.rating:hover {
 #aonMenuListAppImgTop-fiscal {
   scale: 1.2;
 }
+
+.aonCompanyTitleSpan {
+    font-size: 16px;
+		font-weight: 600;
+}
