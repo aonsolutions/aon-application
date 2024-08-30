@@ -2370,6 +2370,10 @@ public class EmployeesServiceHelper {
 	private static EnterprisePayrollEntry salary2EnterprisePayrollEntry(ISalary salary) {
 		return  new EnterprisePayrollEntry(
 				EnterprisePayrollEntry.EnterpriseEntryType.AON_SYSTEM,
+				salary.getSocialSecurityNumber(),
+				salary.getCcc(),
+				salary.getStartDate(),
+				salary.getEndDate(),
 				salary.getEmployeeName(),
 				salary.getType().getName(new Locale("es")),
 				salary.getTotalPayment(),

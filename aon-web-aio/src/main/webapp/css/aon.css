@@ -2736,7 +2736,7 @@ label.rating:hover {
   cursor: pointer;
   background-position: center;
   background-repeat: no-repeat;
-  background-image: url("../assets/aon-logo.svg");
+  background-image: url("../assets/aon-black-logo.svg");
 }
 
 .aonLink:after {
@@ -3482,6 +3482,13 @@ label.rating:hover {
   background-color: rgba(225, 225, 227, 1);
 }
 
+.notificationPanelNoNotification{
+  top: 100px;
+  position: relative;
+  font-size: 18px;
+  margin-left: 15px;
+}
+
 .suiteMenuNewButton{
   display: block;
   width: 157px;
@@ -3983,6 +3990,14 @@ label.rating:hover {
 #aonLoginLanguageSpanToolbar{
   font-size: 12px;
   color: var(--gray-50);
+  top: -7px;
+  position: relative;
+  margin-left: 2px;
+}
+
+#aonLoginLanguageButtonIconButton:hover{
+  background-color: rgba(0,0,0,0.1)!important;
+  border-radius: 100px;  
 }
 
 .aonLoginInfo {
@@ -3997,7 +4012,7 @@ label.rating:hover {
   scale: 1.2;
 }
 
-.aonCompanyTitleSpan {
+.aonCompanyTitleSpan{
     font-size: 16px;
 		font-weight: 600;
 }

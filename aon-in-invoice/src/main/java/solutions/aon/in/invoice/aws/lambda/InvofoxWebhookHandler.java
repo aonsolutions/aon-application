@@ -178,76 +178,73 @@ public class InvofoxWebhookHandler implements RequestHandler<Object, String> {
     }
 
     private String documentFinished(JSONObject data) throws URISyntaxException, IOException, InterruptedException {
+    	//	JSONObject taskWorkflowJSON = getDocumentProcessed(data);
+    	//	if ( taskWorkflowJSON != null ) {
+    	//	    return taskWorkflowJSON.toString(1);
+    	//	}
+	
+    	TaskWorkflow taskWorkflow = getDocumentSent(data);
+    	if ( taskWorkflow == null ) {
+    		taskWorkflow = getDocumentProcessed(data);
+    	}
+    	if ( taskWorkflow == null ) {
+    		Integer task = get(data, "clientData/loadTask/id");
+    		taskWorkflow = new TaskWorkflow().setTask(task).setType(TaskWorkflowType.COMMENT);
+    	}
 	
 	
-//	JSONObject taskWorkflowJSON = getDocumentProcessed(data);
-//	if ( taskWorkflowJSON != null ) {
-//	    return taskWorkflowJSON.toString(1);
-//	}
+    	Map<String, String> params = new HashMap<>();
 	
-	TaskWorkflow taskWorkflow = getDocumentSent(data);
-	if ( taskWorkflow == null ) {
-	    taskWorkflow = getDocumentProcessed(data);
-	}
-	if ( taskWorkflow == null ) {
-	    Integer task = get(data, "clientData/loadTask/id");
-	    taskWorkflow = new TaskWorkflow().setTask(task).setType(TaskWorkflowType.COMMENT);
-	}
+    	String id = get(data, "_id");
+    	params.put("id", id);
 	
+    	String type = get(data, "type"); 
+    	params.put("type", valueOf(type, Type.unknown).getDescription());
 	
-	Map<String, String> params = new HashMap<>();
-	
-	String id = get(data, "_id");
-	params.put("id", id);
-	
-	String type = get(data, "type"); 
-	params.put("type", valueOf(type, Type.unknown).getDescription());
-	
-	String publicState = get(data, "publicState");
-	params.put("publicState", valueOf(publicState, State.unknown).getDescription());
-	params.put("publicStateColor", valueOf(publicState, State.unknown).getColor());
-	
-	
-	JSONArray errors = get(data, "validationInfo/errors");
+    	String publicState = get(data, "publicState");
+    	params.put("publicState", valueOf(publicState, State.unknown).getDescription());
+    	params.put("publicStateColor", valueOf(publicState, State.unknown).getColor());
+    	
+    	JSONArray errors = get(data, "validationInfo/errors");	
 
     	String errorsHTML = formatErrors(errors);
 
-	params.put("errorsHTML", errorsHTML);
+    	params.put("errorsHTML", errorsHTML);
 	
-	String  confidence = get(data, "confidence");
-	params.put("confidenceColor", valueOf(confidence, Confidence.unknown).getColor());
+    	String  confidence = get(data, "confidence");
+    	params.put("confidenceColor", valueOf(confidence, Confidence.unknown).getColor());
 	
 
-	String s3Key = get(data, "clientData/loadS3/key");
-	String s3Bucket = get(data, "clientData/loadS3/bucket");
+    	String s3Key = get(data, "clientData/loadS3/key");
+    	String s3Bucket = get(data, "clientData/loadS3/bucket");
 
-	URL downloadURL = S3.getDownloadURL(s3Bucket, s3Key);
-	params.put("downloadURL", downloadURL.toExternalForm());
+    	URL downloadURL = S3.getDownloadURL(s3Bucket, s3Key);
+    	params.put("downloadURL", downloadURL.toExternalForm());
 
-	String documentNumber = get(data, "data/documentNumber/value");
-	params.put("documentNumber", getOrDefault(documentNumber, "-"));
+    	String documentNumber = get(data, "data/documentNumber/value");
+    	params.put("documentNumber", getOrDefault(documentNumber, "-"));
 	
-	String issuerName = get(data, "data/issuerName/value"); 
-	params.put("issuerName", getOrDefault(issuerName, ""));
+    	String issuerName = get(data, "data/issuerName/value"); 
+    	params.put("issuerName", getOrDefault(issuerName, ""));
 	
-	String recipientName = get(data, "data/recipientName/value");
-	params.put("recipientName", getOrDefault(recipientName, ""));
+    	String recipientName = get(data, "data/recipientName/value");
+    	params.put("recipientName", getOrDefault(recipientName, ""));
 	
-	Number totalTaxBaseAmount = get(data, "data/totalTaxBaseAmount/value");
-	params.put("totalTaxBaseAmount", format(totalTaxBaseAmount, ""));
+    	Number totalTaxBaseAmount = get(data, "data/totalTaxBaseAmount/value");
+    	params.put("totalTaxBaseAmount", format(totalTaxBaseAmount, ""));
 	
-	Date issueDate = parse(get(data, "data/issueDate/value"));
-	params.put("issueDate", format(issueDate, "dd/MM/yyyy", ""));
+    	Date issueDate = parse(get(data, "data/issueDate/value"));
+    	params.put("issueDate", format(issueDate, "dd/MM/yyyy", ""));
 	
-	Date creationDate = parse(get(data, "creation"));
-	params.put("creationDate", format(creationDate, ""));
+    	Date creationDate = parse(get(data, "creation"));
+    	params.put("creationDate", format(creationDate, ""));
 	
-	String companyName = S3.getCompanyName(s3Bucket, s3Key);
-	params.put("companyName", getOrDefault(companyName, ""));
+    	String companyName = S3.getCompanyName(s3Bucket, s3Key);
+    	params.put("companyName", getOrDefault(companyName, ""));
 	
-	params.put("font", "font-family: Karla,sans-serif;font-size: 11px; color: rgb(57,57,57);");
+    	params.put("font", "font-family: Karla,sans-serif;font-size: 11px; color: rgb(57,57,57);");
 	
-	taskWorkflow.setComment(format(
+    	taskWorkflow.setComment(format(
                 """
                 <!-- id:"${id}" -->
                 <div style="font-family: Karla,sans-serif;font-size: 11px; color: rgb(57,57,57); font-weight:normal;">
@@ -285,20 +282,20 @@ public class InvofoxWebhookHandler implements RequestHandler<Object, String> {
                 </div>
                 """, 
 		params));
-	
-	
-	String userLogin = get(data, "clientData/loadS3/user");
-	String domainName = get(data, "clientData/loadS3/domain");
+    	
+    	String userLogin = get(data, "clientData/loadS3/user");
+    	String domainName = get(data, "clientData/loadS3/domain");
 
-	taskWorkflow.setCreationDate(new Date());
-	taskWorkflow.setCreationUser(userLogin);
+    	taskWorkflow.setCreationDate(new Date());
+    	taskWorkflow.setCreationUser(userLogin);
 	
-	JSONObject taskWorkflowJSON = AonTask.addTaskWorkflow(domainName, userLogin, taskWorkflow);
-
-	if(publicState != null && State.approved.equals(valueOf(publicState, State.unknown)))
-		AonInvofox.acceptInvofoxInvoice(domainName, userLogin, id);
-	
-	return taskWorkflowJSON.toString(1);
+    	JSONObject taskWorkflowJSON = AonTask.addTaskWorkflow(domainName, userLogin, taskWorkflow);
+    	State state = valueOf(publicState, State.unknown);
+    	if(publicState != null && State.approved.equals(state)
+    		AonInvofox.acceptInvofoxInvoice(domainName, userLogin, id);
+    	else AonInvofox.rawdocInvofoxInvoice(domainName, userLogin, id);
+    	
+    	return taskWorkflowJSON.toString(1);
     }
 
     /**

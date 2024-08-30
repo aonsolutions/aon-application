@@ -188,7 +188,9 @@ export const LOGOUT = 'logout';
 export const LINK = 'link';
 export const LINK_OFF = 'link_off';
 export const LIST = 'list';
+export const LIST_ALT = 'list_alt';
 export const LABEL = 'label';
+export const LANGUAGE = 'language';
 
 // ----- M
 
