@@ -183,8 +183,6 @@ public class IdcTest extends AbstractSQLTestCase {
 					assertEquals(_1October2020, startDate,"FECHA DESDE");
 					assertEquals(_31October2020, endDate,"FECHA HASTA");
 
-					// System.out.println(nss + " " + startDate + " " + endDate );
-
 				}
 
 				@Override
@@ -332,8 +330,8 @@ public class IdcTest extends AbstractSQLTestCase {
 				@Override
 				public void onEmployeeQuotePEC(String nss, String ccc, String pec, String description, String portTipo,
 						String quota, Date startDate, Date endDate) {
-					assertEquals("NSS:", "371013120530", nss);
-					assertEquals("C.C.C:", "37106820136", ccc);
+					assertEquals("371013120530", nss, "NSS:");
+					assertEquals("37106820136", ccc, "C.C.C:");
 
 					ArrayList<IdcPEC> PECS = new ArrayList<IdcPEC>(6);
 					PECS.add(new IdcPEC("23", getDate(1, Calendar.SEPTEMBER, 2020),
@@ -399,32 +397,32 @@ public class IdcTest extends AbstractSQLTestCase {
 				public void onEnterprise(String socialReason, String ccc, String cif, String economicActivityCode,
 						String economicActivityDescription, String regime, String fullCCC) {
 
-					assertEquals("RAZÓN SOCIAL:", "SOUTHWEST GOLF S.L.", socialReason);
-					assertEquals("C.C.C:", "11112501771", ccc);
-					assertEquals("DNI/NIE/CIF:", "B85729648", cif);
-					assertEquals("ACT ECONÓMICA:", "9311", economicActivityCode);
-					assertEquals("C.C.C", "011111112501771", fullCCC);
+					assertEquals("SOUTHWEST GOLF S.L.", socialReason,"RAZÓN SOCIAL:");
+					assertEquals("11112501771", ccc,"C.C.C:");
+					assertEquals("B85729648", cif,"DNI/NIE/CIF:");
+					assertEquals("9311", economicActivityCode,"ACT ECONÓMICA:");
+					assertEquals("011111112501771", fullCCC,"C.C.C");
 
 				}
 
 				@Override
 				public void onEmployee(String nss, String name) {
-					assertEquals("NSS:", "081053913352", nss);
-					assertEquals("NOMBRE Y APELLIDOS:", "MARC JOVE JOVE", name);
+					assertEquals("081053913352", nss,"NSS:");
+					assertEquals("MARC JOVE JOVE", name,"NOMBRE Y APELLIDOS:");
 				}
 
 				@Override
 				public void onEmployeePerido(String nss, String ccc, Date startDate, Date endDate) {
-					assertEquals("NSS:", "081053913352", nss);
-					assertEquals("C.C.C:", "11112501771", ccc);
+					assertEquals("081053913352", nss,"NSS:");
+					assertEquals("11112501771", ccc,"C.C.C:");
 
 				}
 
 				@Override
 				public void onEmployeeQuotePEC(String nss, String ccc, String pec, String description, String portTipo,
 						String quota, Date startDate, Date endDate) {
-					assertEquals("NSS:", "081053913352", nss);
-					assertEquals("C.C.C:", "11112501771", ccc);
+					assertEquals("081053913352", nss,"NSS:");
+					assertEquals("11112501771", ccc,"C.C.C:");
 					if (startDate.equals(getDate(14, Calendar.MAY, 2020)))
 						assertEquals(getDate(31, Calendar.MAY, 2020), endDate);
 					else if (startDate.equals(getDate(1, Calendar.JUNE, 2020)))
@@ -467,7 +465,6 @@ public class IdcTest extends AbstractSQLTestCase {
 					assertEquals(ims, 1.30, 0.00);
 					assertEquals(unemployment, 7.05, 0.00);
 					onEmployeeQuoteTypes.set(true);
-					System.out.println("IT:" + it + " I.M.S:" + ims + " DESEMPLEO:" + unemployment);
 				}
 
 			});
@@ -485,18 +482,18 @@ public class IdcTest extends AbstractSQLTestCase {
 				public void onEnterprise(String socialReason, String ccc, String cif, String economicActivityCode,
 						String economicActivityDescription, String regime, String fullCCC) {
 
-					assertEquals("RAZÓN SOCIAL:", "AON SOLUTIONS S.L.", socialReason);
-					assertEquals("C.C.C:", "01105360062", ccc);
-					assertEquals("DNI/NIE/CIF:", "B01487271", cif);
+					assertEquals("AON SOLUTIONS S.L.", socialReason,"RAZÓN SOCIAL:");
+					assertEquals("01105360062", ccc,"C.C.C:");
+					assertEquals("B01487271", cif,"DNI/NIE/CIF:");
 
-					assertEquals("ACT ECONÓMICA:", "6209", economicActivityCode);
+					assertEquals("6209", economicActivityCode,"ACT ECONÓMICA:");
 
 				}
 
 				@Override
 				public void onEmployee(String nss, String name) {
-					assertEquals("NSS:", "011005185924", nss);
-					assertEquals("NOMBRE Y APELLIDOS:", "RAUL TREPIANA ZARATE", name);
+					assertEquals("011005185924", nss,"NSS:");
+					assertEquals("RAUL TREPIANA ZARATE", name,"NOMBRE Y APELLIDOS:");
 				}
 
 				@Override
@@ -542,8 +539,6 @@ public class IdcTest extends AbstractSQLTestCase {
 
 			assertEquals(4 * 2 + 4, ssPecs.stream().filter(pec -> isDeduction(pec)).count());
 			assertEquals(4 * 3, ssPecs.stream().filter(pec -> isCost(pec)).count());
-
-			ssPecs.forEach(b -> System.out.println(b));
 		}
 	}
 
@@ -609,27 +604,16 @@ public class IdcTest extends AbstractSQLTestCase {
 				assertEquals(_31122020, salaryData[1].getEndDate(),var.getName());
 			}
 
-			for (SalaryPayment payment : salary.getSalaryPayments()) {
-				System.out.println(payment.getDescription() + ": " + payment.getAmount() + ", " + payment.getQuote());
-			}
-
 			double totalCost = 0.00;
 			for (SalaryCost cost : salary.getSalaryCosts()) {
 				totalCost += cost.getAmount();
-				System.out.println(cost.getName() + ": " + cost.getAmount());
 			}
-
 			assertEquals(1, salary.getSalaryBonus().size());
 			double totalBonus = 0.00;
 			for (SalaryBonus bonus : salary.getSalaryBonus()) {
 				totalBonus += bonus.getAmount();
-				System.out.println(bonus.getDescription() + ": " + bonus.getAmount());
 			}
-
-			System.out.println("CUOTA EMPRESARIAL :" + totalCost);
-
 			assertEquals(totalCost * 9 / 30, totalBonus, DELTA);
-
 			assertEquals(totalCost * 21 / 30, salary.getTotalEnterprise(), DELTA);
 		}
 	}
@@ -688,20 +672,14 @@ public class IdcTest extends AbstractSQLTestCase {
 			double totalCost = 0.00;
 			for (SalaryCost cost : salary.getSalaryCosts()) {
 				totalCost += cost.getAmount();
-				System.out.println(cost.getName() + ": " + cost.getAmount());
 			}
 
 			assertEquals(1, salary.getSalaryBonus().size());
 			double totalBonus = 0.00;
 			for (SalaryBonus bonus : salary.getSalaryBonus()) {
 				totalBonus += bonus.getAmount();
-				System.out.println(bonus.getDescription() + ": " + bonus.getAmount());
 			}
-
-			System.out.println("CUOTA EMPRESARIAL :" + totalCost);
-
 			assertEquals(totalCost * 10 / 31, totalBonus, DELTA);
-
 			assertEquals(totalCost * 21 / 31, salary.getTotalEnterprise(), DELTA);
 		}
 	}
@@ -798,27 +776,17 @@ public class IdcTest extends AbstractSQLTestCase {
 				assertEquals(_31122020, salaryData[1].getEndDate(),var.getName());
 			}
 
-			for (SalaryPayment payment : salary.getSalaryPayments()) {
-				System.out.println(payment.getDescription() + ": " + payment.getAmount() + ", " + payment.getQuote());
-			}
-
 			double totalCost = 0.00;
 			for (SalaryCost cost : salary.getSalaryCosts()) {
 				totalCost += cost.getAmount();
-				System.out.println(cost.getName() + ": " + cost.getAmount());
 			}
 
 			assertEquals(2, salary.getSalaryBonus().size());
 			double totalBonus = 0.00;
 			for (SalaryBonus bonus : salary.getSalaryBonus()) {
 				totalBonus += bonus.getAmount();
-				System.out.println(bonus.getDescription() + ": " + bonus.getAmount());
 			}
-
-			System.out.println("CUOTA EMPRESARIAL :" + totalCost);
-
 			assertEquals(totalCost * 9 / 30 + totalCost * 21 / 30 * 0.55, totalBonus, DELTA);
-
 			assertEquals(totalCost * 21 / 30 * 0.45, salary.getTotalEnterprise(), DELTA);
 		}
 	}
@@ -1082,8 +1050,6 @@ public class IdcTest extends AbstractSQLTestCase {
 					.peek(c -> assertNotEquals(c.getType(), DeductionType.FOGASA))
 					.peek(c -> assertNotEquals(c.getType(), DeductionType.UNEMPLOYMENT))
 					.peek(c -> assertNotEquals(c.getType(), DeductionType.JOB_TRAINING))
-					// .peek(c -> System.out.println(c.getCostConcept() +" : " + c.getAmount() +", "
-					// + c.getType()) )
 					.filter(c -> c.getType() != DeductionType.COMMON_CONTINGENCY)
 					.filter(c -> c.getType() != DeductionType.PROFESSIONAL_CONTINGENCY)
 					.collect(Collectors.summingDouble(c -> c.getAmount()));
@@ -1092,8 +1058,6 @@ public class IdcTest extends AbstractSQLTestCase {
 					.peek(c -> assertNotEquals(c.getType(), DeductionType.FOGASA))
 					.peek(c -> assertNotEquals(c.getType(), DeductionType.UNEMPLOYMENT))
 					.peek(c -> assertNotEquals(c.getType(), DeductionType.JOB_TRAINING))
-					.peek(c -> System.out.println(c.getDeductionConcept() + " : " + c.getAmount() + ", " + c.getType()))
-					// .filter( c -> c.getType() != DeductionType.COMMON_CONTINGENCY )
 					.filter(c -> c.getType() != DeductionType.PROFESSIONAL_CONTINGENCY)
 					.collect(Collectors.summingDouble(c -> c.getAmount()));
 
@@ -1138,13 +1102,7 @@ public class IdcTest extends AbstractSQLTestCase {
 					.filter(d -> d.getType() != DeductionType.BONUS)
 					.filter(d -> !AonStringUtils.equals(d.getDeductionConcept(), "CGC"))
 					.collect(Collectors.summingDouble(c -> c.getAmount()));
-
-			salary.getSalaryDeductions().forEach(
-					d -> System.out.println(d.getDeductionConcept() + " : " + d.getAmount() + ", " + d.getType()));
-
 			assertEquals(totalCost / 31 * 27, salary.getTotalEnterprise(), DELTA);
-			// assertEquals(totalDeduction, salary.getSocialSecurityContributions(), DELTA);
-
 		}
 	}
 
@@ -1181,8 +1139,6 @@ public class IdcTest extends AbstractSQLTestCase {
 					new SalaryBuilder());
 			Salary salary = builder.calculate(ctx);
 
-			salary.getSalaryCosts().forEach(p -> System.out.println(p.getCostConcept() + " = " + p.getAmount()));
-
 			double totalCost = salary.getSalaryCosts().stream().collect(Collectors.summingDouble(c -> c.getAmount()));
 
 			assertEquals(totalCost - 321.50, salary.getTotalEnterprise(), DELTA);
@@ -1194,9 +1150,6 @@ public class IdcTest extends AbstractSQLTestCase {
 			ctx = getContractSalaryCalculatorContext(connection, startDate, endDate, endDate, contract);
 			builder = new SmartContractSalaryCalculator<Salary>(new SalaryBuilder());
 			salary = builder.calculate(ctx);
-
-			// salary.getSalaryDatas().forEach(s -> System.out.println(s.getName() +" = " +
-			// s.getExpression() ));
 
 			totalCost = salary.getSalaryCosts().stream().collect(Collectors.summingDouble(c -> c.getAmount()));
 			assertEquals(totalCost - 321.50, salary.getTotalEnterprise(), DELTA);
@@ -1218,14 +1171,12 @@ public class IdcTest extends AbstractSQLTestCase {
 			double totalCost = 0.00;
 			for (SalaryCost cost : salary.getSalaryCosts()) {
 				totalCost += cost.getAmount();
-				System.out.println(cost.getName() + ": " + cost.getAmount());
 			}
 
 			assertEquals(1, salary.getSalaryBonus().size());
 			double totalBonus = 0.00;
 			for (SalaryBonus bonus : salary.getSalaryBonus()) {
 				totalBonus += bonus.getAmount();
-				System.out.println(bonus.getDescription() + ": " + bonus.getAmount());
 			}
 
 			assertEquals(totalCost, totalBonus, DELTA);
@@ -1253,8 +1204,6 @@ public class IdcTest extends AbstractSQLTestCase {
 
 			Salary salary = calculate(ssBonuses);
 
-			System.out.println(salary.getTotalEnterprise());
-
 		}
 	}
 
@@ -1265,7 +1214,7 @@ public class IdcTest extends AbstractSQLTestCase {
 			TrabajadoresTramos trabajadoresTramos = Idcplccc.geTrabajadoresTramos(is, new TrabajadoresTramosCallback() {
 			});
 			
-			marshal(trabajadoresTramos, System.out);
+			// marshal(trabajadoresTramos, System.out);
 
 			assertEquals(trabajadoresTramos.getAutorizado(), "00228115");
 
@@ -1329,7 +1278,7 @@ public class IdcTest extends AbstractSQLTestCase {
 				}
 			});
 
-			marshall(trabajadoresTramos, System.out);
+			//marshall(trabajadoresTramos, System.out);
 
 			assertEquals(trabajadoresTramos.getAutorizado(), "00228115");
 
@@ -1469,7 +1418,7 @@ public class IdcTest extends AbstractSQLTestCase {
 				}
 			});
 
-			marshall(trabajadoresTramos, System.out);
+			//marshall(trabajadoresTramos, System.out);
 
 			assertEquals(trabajadoresTramos.getAutorizado(), "00228115");
 
@@ -1535,7 +1484,7 @@ public class IdcTest extends AbstractSQLTestCase {
 				
 			});
 
-			marshall(trabajadoresTramos, System.out);
+			//marshall(trabajadoresTramos, System.out);
 
 			assertEquals(trabajadoresTramos.getAutorizado(), "00088233");
 
@@ -1561,7 +1510,7 @@ public class IdcTest extends AbstractSQLTestCase {
 
 			for (Trabajador trabajador : trabajadores.getTrabajador()) {
 				if (ssNums.contains(trabajador.getNaf())) {
-					marshal(trabajador, System.out);
+					//marshal(trabajador, System.out);
 					assertEquals(1, trabajador.getTramos().getTramo().size());
 					assertTramoTiempoParcial(trabajador.getTramos().getTramo().get(0));
 				}
@@ -1633,18 +1582,13 @@ public class IdcTest extends AbstractSQLTestCase {
 			double totalCost = 0.00;
 			for (SalaryCost cost : salary.getSalaryCosts()) {
 				totalCost += cost.getAmount();
-				System.out.println(cost.getName() + ": " + cost.getAmount());
 			}
 
 			assertEquals(1, salary.getSalaryBonus().size());
 			double totalBonus = 0.00;
 			for (SalaryBonus bonus : salary.getSalaryBonus()) {
 				totalBonus += bonus.getAmount();
-				System.out.println(bonus.getDescription() + ": " + bonus.getAmount());
 			}
-
-			System.out.println("CUOTA EMPRESARIAL :" + totalCost);
-
 			assertEquals(totalCost * 17 / 31, totalBonus, DELTA);
 			assertEquals(totalCost * 14 / 31, salary.getTotalEnterprise(), DELTA);
 
@@ -1694,20 +1638,14 @@ public class IdcTest extends AbstractSQLTestCase {
 			double totalCost = 0.00;
 			for (SalaryCost cost : salary.getSalaryCosts()) {
 				totalCost += cost.getAmount();
-				System.out.println(cost.getName() + ": " + cost.getAmount());
 			}
 
 			assertEquals(1, salary.getSalaryBonus().size());
 			double totalBonus = 0.00;
 			for (SalaryBonus bonus : salary.getSalaryBonus()) {
 				totalBonus += bonus.getAmount();
-				System.out.println(bonus.getDescription() + ": " + bonus.getAmount());
 			}
-
-			System.out.println("CUOTA EMPRESARIAL :" + totalCost);
-
 			assertEquals(341.66, totalBonus, DELTA);
-
 			assertEquals(totalCost - 341.66, salary.getTotalEnterprise(), DELTA);
 		}
 	}
@@ -1736,10 +1674,6 @@ public class IdcTest extends AbstractSQLTestCase {
 			ssBonuses.stream().forEach(b -> {
 				assertEquals(_01022021, b.getStartDate(),b.getDescription());
 				assertEquals(_28022021, b.getEndDate(),b.getDescription());
-			});
-
-			ssBonuses.stream().forEach(b -> {
-				System.out.println(b.getFormula());
 			});
 
 			java.sql.Date startDate = toSQL(AonDateUtils.getFirstDayOfMonth(_01022021));
@@ -1772,12 +1706,6 @@ public class IdcTest extends AbstractSQLTestCase {
 			SmartContractSalaryCalculator<Salary> builder = new SmartContractSalaryCalculator<Salary>(salaryBuilder);
 			Salary salary = builder.calculate(ctx);
 
-			// salary.getSalaryPayments().forEach( p -> System.out.println( "PAYMENT :" +
-			// p.getName() +" : " + p.getAmount()));
-
-			// salary.getSalaryCosts().forEach( c -> System.out.println( "COST :" +
-			// c.getName() +" : " + c.getAmount()));
-
 			for (ContextVariable var : new ContextVariable[] { ContextVariable.CGC_BASE, ContextVariable.CGP_BASE, }) {
 				SalaryData[] salaryData = salary.getSalaryDatas().stream()
 						.filter(d -> AonStringUtils.equals(d.getName(), var.getName()))
@@ -1796,20 +1724,15 @@ public class IdcTest extends AbstractSQLTestCase {
 			double totalCost = 0.00;
 			for (SalaryCost cost : salary.getSalaryCosts()) {
 				totalCost += cost.getAmount();
-				System.out.println(cost.getName() + ": " + cost.getAmount());
 			}
 
 			assertEquals(3, salary.getSalaryBonus().size());
 			double totalBonus = 0.00;
 			for (SalaryBonus bonus : salary.getSalaryBonus()) {
 				totalBonus += bonus.getAmount();
-				System.out.println(bonus.getDescription() + ": " + bonus.getAmount());
 			}
 
-			System.out.println("CUOTA EMPRESARIAL :" + totalCost);
-
 			assertEquals(341.66, totalBonus, DELTA);
-
 			assertEquals(totalCost - 341.66, salary.getTotalEnterprise(), DELTA);
 		}
 	}
@@ -1838,10 +1761,6 @@ public class IdcTest extends AbstractSQLTestCase {
 			ssBonuses.stream().forEach(b -> {
 				assertEquals(_01022021, b.getStartDate(),b.getDescription());
 				assertEquals(_28022021, b.getEndDate(),b.getDescription());
-			});
-
-			ssBonuses.stream().forEach(b -> {
-				System.out.println(b.getFormula());
 			});
 
 			java.sql.Date startDate = toSQL(AonDateUtils.getFirstDayOfMonth(_01022021));
@@ -1875,12 +1794,6 @@ public class IdcTest extends AbstractSQLTestCase {
 			SmartContractSalaryCalculator<Salary> builder = new SmartContractSalaryCalculator<Salary>(salaryBuilder);
 			Salary salary = builder.calculate(ctx);
 
-			// salary.getSalaryPayments().forEach( p -> System.out.println( "PAYMENT :" +
-			// p.getName() +" : " + p.getAmount()));
-
-			// salary.getSalaryCosts().forEach( c -> System.out.println( "COST :" +
-			// c.getName() +" : " + c.getAmount()));
-
 			for (ContextVariable var : new ContextVariable[] { ContextVariable.CGC_BASE, ContextVariable.CGP_BASE, }) {
 				SalaryData[] salaryData = salary.getSalaryDatas().stream()
 						.filter(d -> AonStringUtils.equals(d.getName(), var.getName()))
@@ -1903,18 +1816,13 @@ public class IdcTest extends AbstractSQLTestCase {
 					atep += cost.getAmount();
 				else
 					totalCost += cost.getAmount();
-
-				System.out.println(cost.getName() + ": " + cost.getAmount());
 			}
 
 			assertEquals(3, salary.getSalaryBonus().size());
 			double totalBonus = 0.00;
 			for (SalaryBonus bonus : salary.getSalaryBonus()) {
 				totalBonus += bonus.getAmount();
-				System.out.println(bonus.getDescription() + ": " + bonus.getAmount());
 			}
-
-			System.out.println("CUOTA EMPRESARIAL :" + totalCost);
 
 			assertEquals(totalCost, totalBonus, DELTA);
 
@@ -1965,14 +1873,12 @@ public class IdcTest extends AbstractSQLTestCase {
 			double totalCost = 0.00;
 			for (SalaryCost cost : salary.getSalaryCosts()) {
 				totalCost += cost.getAmount();
-				System.out.println(cost.getName() + ": " + cost.getAmount());
 			}
 
 			assertEquals(1, salary.getSalaryBonus().size());
 			double totalBonus = 0.00;
 			for (SalaryBonus bonus : salary.getSalaryBonus()) {
 				totalBonus += bonus.getAmount();
-				System.out.println(bonus.getDescription() + ": " + bonus.getAmount());
 			}
 
 			double totalCgcE = 0.00;
@@ -1980,10 +1886,7 @@ public class IdcTest extends AbstractSQLTestCase {
 				if (cost.getType() != DeductionType.COMMON_CONTINGENCY)
 					continue;
 				totalCgcE += cost.getAmount();
-				System.out.println(cost.getDescription() + ": " + cost.getAmount());
 			}
-
-			System.out.println("CUOTA EMPRESARIAL :" + totalCost);
 
 			assertEquals(totalCgcE * 0.40, totalBonus, DELTA);
 
@@ -2034,14 +1937,12 @@ public class IdcTest extends AbstractSQLTestCase {
 			double totalCost = 0.00;
 			for (SalaryCost cost : salary.getSalaryCosts()) {
 				totalCost += cost.getAmount();
-				System.out.println(cost.getName() + ": " + cost.getAmount());
 			}
 
 			assertEquals(1, salary.getSalaryBonus().size());
 			double totalBonus = 0.00;
 			for (SalaryBonus bonus : salary.getSalaryBonus()) {
 				totalBonus += bonus.getAmount();
-				System.out.println(bonus.getDescription() + ": " + bonus.getAmount());
 			}
 
 			double totalCgcE = 0.00;
@@ -2049,10 +1950,7 @@ public class IdcTest extends AbstractSQLTestCase {
 				if (cost.getType() != DeductionType.COMMON_CONTINGENCY)
 					continue;
 				totalCgcE += cost.getAmount();
-				System.out.println(cost.getDescription() + ": " + cost.getAmount());
 			}
-
-			System.out.println("CUOTA EMPRESARIAL :" + totalCost);
 
 			assertEquals(totalCgcE, totalBonus, DELTA);
 
@@ -2161,16 +2059,6 @@ public class IdcTest extends AbstractSQLTestCase {
 
 			double totalCost = salary.getSalaryCosts().stream().collect(Collectors.summingDouble(c -> c.getAmount()));
 
-			// salary.getSalaryDeductions().forEach(d ->
-			// System.out.println(d.getDeductionConcept() +" : " + d.getAmount() +", " +
-			// d.getType()));
-
-			// salary.getSalaryCosts().forEach(d -> System.out.println(d.getCostConcept() +"
-			// : " + d.getAmount() +", " + d.getType()));
-
-			salary.getSalaryBonus().forEach(d -> System.out.println(
-					d.getBonusConcept() + " : " + d.getAmount() + ", " + d.getType() + "," + d.getDescription()));
-
 			assertEquals(totalCost - 1.67 * 7.00, salary.getTotalEnterprise(), DELTA);
 
 			salary.getSalaryCosts().stream().filter(c -> c.getType() == DeductionType.FOGASA)
@@ -2226,9 +2114,6 @@ public class IdcTest extends AbstractSQLTestCase {
 					.filter(d -> !AonStringUtils.equals(d.getDeductionConcept(), "CGC"))
 					.collect(Collectors.summingDouble(c -> c.getAmount()));
 
-			salary.getSalaryDeductions().forEach(
-					d -> System.out.println(d.getDeductionConcept() + " : " + d.getAmount() + ", " + d.getType()));
-
 			assertEquals(totalCost - 50.00, salary.getTotalEnterprise(), DELTA);
 
 		}
@@ -2257,21 +2142,14 @@ public class IdcTest extends AbstractSQLTestCase {
 			ssPecs.stream().forEach(pec -> assertEquals(may202021, pec.getStartDate()));
 			ssPecs.stream().forEach(pec -> assertNull(pec.getEndDate()));
 
-			ssPecs.forEach(pec -> System.out.println("[" + pec.getName() + "] " + pec.getDescription() + " = "
-					+ pec.getFormula() + ", " + pec.getStartDate()));
-
 			calendar.set(Calendar.MONTH, Calendar.JUNE);
 			calendar.set(Calendar.DAY_OF_MONTH, 1);
 			Date june = calendar.getTime();
 
 			Salary salary = calculate(ssPecs, Collections.emptyList(), june);
 
-			salary.getSalaryDeductions().forEach(
-					d -> System.out.println(d.getDeductionConcept() + " : " + d.getAmount() + ", " + d.getType()));
 			assertEquals(1 + 3 /*CGC + DESMPL + FP*/, salary.getSalaryDeductions().size());
 
-			salary.getSalaryCosts()
-			.forEach(c -> System.out.println(c.getName() + " : " + c.getAmount() + ", " + c.getType()));
 			assertEquals(1 + 5 /*DESMPL + FP + IT + IMS + FOGASA*/, salary.getSalaryCosts().size());
 
 			assertEquals(0.00, salary.getTotalEnterprise(), DELTA);
@@ -2303,22 +2181,10 @@ public class IdcTest extends AbstractSQLTestCase {
 			ssPecs.stream().forEach(pec -> assertEquals(april012020, pec.getStartDate()));
 			ssPecs.stream().forEach(pec -> assertNull(pec.getEndDate()));
 
-			ssPecs.forEach(pec -> System.out.println("[" + pec.getName() + "] " + pec.getDescription() + " = "
-					+ pec.getFormula() + ", " + pec.getStartDate()));
-
 			calendar.set(Calendar.MONTH, Calendar.JUNE);
 			calendar.set(Calendar.DAY_OF_MONTH, 1);
 			Date june = calendar.getTime();
-
 			Salary salary = calculate(ssPecs, Collections.emptyList(), june);
-
-			salary.getSalaryCosts().forEach(
-					c -> System.out.println("COST :" + c.getName() + " : " + c.getAmount() + ", " + c.getType()));
-			salary.getSalaryDeductions().forEach(d -> System.out
-					.println("DEDUCTION :" + d.getDeductionConcept() + " : " + d.getAmount() + ", " + d.getType()));
-			salary.getSalaryBonus().forEach(d -> System.out
-					.println("BONUS :" + d.getBonusConcept() + " : " + d.getAmount() + ", " + d.getType()));
-
 			assertEquals(0.00, salary.getTotalEnterprise(), DELTA);
 			assertEquals(0.00, salary.getSocialSecurityContributions(), DELTA);
 
@@ -2348,22 +2214,10 @@ public class IdcTest extends AbstractSQLTestCase {
 			ssPecs.stream().forEach(pec -> assertEquals(october2020201, pec.getStartDate()));
 			ssPecs.stream().forEach(pec -> assertNull(pec.getEndDate()));
 
-			ssPecs.forEach(pec -> System.out.println("[" + pec.getName() + "] " + pec.getDescription() + " = "
-					+ pec.getFormula() + ", " + pec.getStartDate()));
-
 			calendar.set(Calendar.MONTH, Calendar.NOVEMBER);
 			calendar.set(Calendar.DAY_OF_MONTH, 1);
 			Date november = calendar.getTime();
-
 			Salary salary = calculate(ssPecs, Collections.emptyList(), november);
-
-			salary.getSalaryCosts().forEach(
-					c -> System.out.println("COST :" + c.getName() + " : " + c.getAmount() + ", " + c.getType()));
-			salary.getSalaryDeductions().forEach(d -> System.out
-					.println("DEDUCTION :" + d.getDeductionConcept() + " : " + d.getAmount() + ", " + d.getType()));
-			salary.getSalaryBonus().forEach(d -> System.out
-					.println("BONUS :" + d.getBonusConcept() + " : " + d.getAmount() + ", " + d.getType()));
-
 			assertEquals(0.00, salary.getTotalEnterprise(), DELTA);
 			// assertEquals(0.00, salary.getSocialSecurityContributions(), DELTA);
 
@@ -2400,23 +2254,11 @@ public class IdcTest extends AbstractSQLTestCase {
 
 			ssPecs.stream().forEach(pec -> assertEquals(october2020204, pec.getEndDate()));
 
-			ssPecs.forEach(pec -> System.out.println("[" + pec.getName() + "] " + pec.getDescription() + " = "
-					+ pec.getFormula() + ", " + pec.getStartDate()));
-
 			calendar.set(Calendar.YEAR, 2022);
 			calendar.set(Calendar.MONTH, Calendar.NOVEMBER);
 			calendar.set(Calendar.DAY_OF_MONTH, 1);
 			Date november = calendar.getTime();
-
 			Salary salary = calculate(ssPecs, Collections.emptyList(), november);
-
-			salary.getSalaryCosts().forEach(
-					c -> System.out.println("COST :" + c.getName() + " : " + c.getAmount() + ", " + c.getType()));
-			salary.getSalaryDeductions().forEach(d -> System.out
-					.println("DEDUCTION :" + d.getDeductionConcept() + " : " + d.getAmount() + ", " + d.getType()));
-			salary.getSalaryBonus().forEach(d -> System.out
-					.println("BONUS :" + d.getBonusConcept() + " : " + d.getAmount() + ", " + d.getType()));
-
 			salary.getSalaryBonus().forEach(d -> assertEquals(43.75, d.getAmount(), DELTA));
 
 			// assertEquals(0.00, salary.getTotalEnterprise(), DELTA);
@@ -2449,22 +2291,12 @@ public class IdcTest extends AbstractSQLTestCase {
 
 			ssPecs.stream().forEach(pec -> assertNull(pec.getEndDate()));
 
-			ssPecs.forEach(pec -> System.out.println("[" + pec.getName() + "] " + pec.getDescription() + " = "
-					+ pec.getFormula() + ", " + pec.getStartDate()));
-
 			calendar.set(Calendar.YEAR, 2022);
 			calendar.set(Calendar.MONTH, Calendar.NOVEMBER);
 			calendar.set(Calendar.DAY_OF_MONTH, 1);
 			Date november = calendar.getTime();
 
 			Salary salary = calculate(ssPecs, Collections.emptyList(), november);
-
-			salary.getSalaryCosts().forEach(
-					c -> System.out.println("COST :" + c.getName() + " : " + c.getAmount() + ", " + c.getType()));
-			salary.getSalaryDeductions().forEach(d -> System.out
-					.println("DEDUCTION :" + d.getDeductionConcept() + " : " + d.getAmount() + ", " + d.getType()));
-			salary.getSalaryBonus().forEach(d -> System.out
-					.println("BONUS :" + d.getBonusConcept() + " : " + d.getAmount() + ", " + d.getType()));
 
 			assertEquals(0.00, salary.getTotalEnterprise(), DELTA);
 			assertEquals(0.00, salary.getSocialSecurityContributions(), DELTA);
@@ -2495,9 +2327,6 @@ public class IdcTest extends AbstractSQLTestCase {
 			ssPecs.stream().forEach(pec -> assertEquals(february21, pec.getStartDate()));
 
 			ssPecs.stream().forEach(pec -> assertNull(pec.getEndDate()));
-
-			ssPecs.forEach(pec -> System.out.println("[" + pec.getName() + "] " + pec.getDescription() + " = "
-					+ pec.getFormula() + ", " + pec.getStartDate()));
 
 			calendar.set(Calendar.YEAR, 2022);
 			calendar.set(Calendar.DAY_OF_MONTH, 28);
@@ -2548,9 +2377,6 @@ public class IdcTest extends AbstractSQLTestCase {
 			});
 
 			Salary salary = calculate(ssPecs, datas, new String[] { "320.43" }, february21, february28);
-
-			salary.getSalaryCosts().forEach(
-					c -> System.out.println("COST :" + c.getName() + " : " + c.getAmount() + ", " + c.getType()));
 
 			double totalBonus = salary.getSalaryBonus().stream().collect(Collectors.summingDouble(b -> b.getAmount()));
 
@@ -2751,7 +2577,7 @@ public class IdcTest extends AbstractSQLTestCase {
 					new TrabajadoresTramosCallback() {
 					});
 
-			marshal(trabajadoresTramos, System.out);
+			//marshal(trabajadoresTramos, System.out);
 
 			Liquidacion liquidacion = trabajadoresTramos.getLiquidacion();
 
@@ -2805,7 +2631,7 @@ public class IdcTest extends AbstractSQLTestCase {
 					new TrabajadoresTramosCallback() {
 					});
 
-			marshal(trabajadoresTramos, System.out);
+			//marshal(trabajadoresTramos, System.out);
 
 			Liquidacion liquidacion = trabajadoresTramos.getLiquidacion();
 
@@ -2859,7 +2685,7 @@ public class IdcTest extends AbstractSQLTestCase {
 					new TrabajadoresTramosCallback() {
 					});
 
-			marshal(trabajadoresTramos, System.out);
+			//marshal(trabajadoresTramos, System.out);
 
 			Liquidacion liquidacion = trabajadoresTramos.getLiquidacion();
 
@@ -2920,7 +2746,7 @@ public class IdcTest extends AbstractSQLTestCase {
 					new TrabajadoresTramosCallback() {
 					});
 
-			marshal(trabajadoresTramos, System.out);
+			//marshal(trabajadoresTramos, System.out);
 
 			Liquidacion liquidacion = trabajadoresTramos.getLiquidacion();
 
@@ -2989,7 +2815,7 @@ public class IdcTest extends AbstractSQLTestCase {
 					new TrabajadoresTramosCallback() {
 					});
 
-			marshal(trabajadoresTramos, System.out);
+			//marshal(trabajadoresTramos, System.out);
 
 			Liquidacion liquidacion = trabajadoresTramos.getLiquidacion();
 
@@ -3052,7 +2878,7 @@ public class IdcTest extends AbstractSQLTestCase {
 					new TrabajadoresTramosCallback() {
 					});
 
-			marshal(trabajadoresTramos, System.out);
+			//marshal(trabajadoresTramos, System.out);
 
 			Liquidacion liquidacion = trabajadoresTramos.getLiquidacion();
 
@@ -3116,7 +2942,7 @@ public class IdcTest extends AbstractSQLTestCase {
 					new TrabajadoresTramosCallback() {
 					});
 
-			marshal(trabajadoresTramos, System.out);
+			//marshal(trabajadoresTramos, System.out);
 
 			Liquidacion liquidacion = trabajadoresTramos.getLiquidacion();
 
@@ -3179,7 +3005,7 @@ public class IdcTest extends AbstractSQLTestCase {
 					new TrabajadoresTramosCallback() {
 					});
 
-			marshal(trabajadoresTramos, System.out);
+			//marshal(trabajadoresTramos, System.out);
 
 			Liquidacion liquidacion = trabajadoresTramos.getLiquidacion();
 
@@ -3253,7 +3079,7 @@ public class IdcTest extends AbstractSQLTestCase {
 					new TrabajadoresTramosCallback() {
 					});
 
-			marshal(trabajadoresTramos, System.out);
+			//marshal(trabajadoresTramos, System.out);
 
 			Liquidacion liquidacion = trabajadoresTramos.getLiquidacion();
 
@@ -3316,7 +3142,7 @@ public class IdcTest extends AbstractSQLTestCase {
 					new TrabajadoresTramosCallback() {
 					});
 
-			marshal(trabajadoresTramos, System.out);
+			//marshal(trabajadoresTramos, System.out);
 
 			Liquidacion liquidacion = trabajadoresTramos.getLiquidacion();
 
@@ -3368,7 +3194,7 @@ public class IdcTest extends AbstractSQLTestCase {
 					new TrabajadoresTramosCallback() {
 					});
 
-			marshal(trabajadoresTramos, System.out);
+			//marshal(trabajadoresTramos, System.out);
 			// PEC 17 Expedientes de Regulación de Empleo Total
 			Liquidacion liquidacion = trabajadoresTramos.getLiquidacion();
 
@@ -3420,7 +3246,7 @@ public class IdcTest extends AbstractSQLTestCase {
 					new TrabajadoresTramosCallback() {
 					});
 
-			marshal(trabajadoresTramos, System.out);
+			//marshal(trabajadoresTramos, System.out);
 			// PEC 17 Expedientes de Regulación de Empleo Total
 			Liquidacion liquidacion = trabajadoresTramos.getLiquidacion();
 
@@ -3585,7 +3411,7 @@ public class IdcTest extends AbstractSQLTestCase {
 					new TrabajadoresTramosCallback() {
 					});
 
-			marshal(trabajadoresTramos, System.out);
+			//marshal(trabajadoresTramos, System.out);
 			// PEC 17 Expedientes de Regulación de Empleo Total
 			Liquidacion liquidacion = trabajadoresTramos.getLiquidacion();
 
@@ -3700,7 +3526,7 @@ public class IdcTest extends AbstractSQLTestCase {
 			    		}
 				});
 	
-			marshal(trabajadoresTramos, System.out);
+			//marshal(trabajadoresTramos, System.out);
 	
 			Liquidacion liquidacion = trabajadoresTramos.getLiquidacion();
 	
@@ -3764,7 +3590,7 @@ public class IdcTest extends AbstractSQLTestCase {
 			    		}
 				});
 	
-			marshal(trabajadoresTramos, System.out);
+			//marshal(trabajadoresTramos, System.out);
 	
 			Liquidacion liquidacion = trabajadoresTramos.getLiquidacion();
 	
@@ -3826,7 +3652,7 @@ public class IdcTest extends AbstractSQLTestCase {
 			    		}
 				});
 	
-			marshal(trabajadoresTramos, System.out);
+			//marshal(trabajadoresTramos, System.out);
 	
 			Liquidacion liquidacion = trabajadoresTramos.getLiquidacion();
 	
@@ -4342,20 +4168,12 @@ public class IdcTest extends AbstractSQLTestCase {
 			ssPecs.stream().forEach(pec -> assertEquals(may012020, pec.getStartDate()));
 			ssPecs.stream().forEach(pec -> assertNull(pec.getEndDate()));
 
-			ssPecs.forEach(pec -> System.out.println("[" + pec.getName() + "] " + pec.getDescription() + " = "
-					+ pec.getFormula() + ", " + pec.getStartDate()));
-
 			calendar.set(Calendar.YEAR, 2022);
 			calendar.set(Calendar.MONTH, Calendar.NOVEMBER);
 			calendar.set(Calendar.DAY_OF_MONTH, 1);
 			Date november = calendar.getTime();
 
 			Salary salary = calculate(ssPecs, Collections.emptyList(), november);
-
-			salary.getSalaryCosts().forEach(
-					c -> System.out.println("COST :" + c.getName() + " : " + c.getAmount() + ", " + c.getType()));
-			salary.getSalaryDeductions().forEach(
-					c -> System.out.println("DEDUCTION :" + c.getName() + " : " + c.getAmount() + ", " + c.getType()));
 
 			salary.getSalaryCosts().forEach(c -> {
 				if (AonStringUtils.equalsIgnoreCase("DESMPL_E", c.getName()))
@@ -4397,16 +4215,12 @@ public class IdcTest extends AbstractSQLTestCase {
 				byte data[] = is.readAllBytes();
 				Date date = new SimpleDateFormat("dd-MM-yyyy").parse(idc.substring(8, 19));
 				SistemaRED2AON.syncWithIdc(data, "userLogin", domainName, domainId, date, ccc, naf);
-				System.out.println(idc + " : " + date);
 			}
 		}
 
 		Bonus[] bonuses = PAYROLL.getBonuses(domainName, domainId, "userLogin", contract.getId());
 
 		Arrays.sort(bonuses, (b1, b2) -> b1.getStartDate().compareTo(b2.getStartDate()));
-
-		Arrays.stream(bonuses).forEach(
-				b -> System.out.println(b.getDescription() + " : " + b.getStartDate() + "..." + b.getEndDate()));
 
 		assertEquals("22-04-2019", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[0].getStartDate()));
 		assertEquals("05-08-2019", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[0].getEndDate()));
@@ -4466,7 +4280,6 @@ public class IdcTest extends AbstractSQLTestCase {
 				byte data[] = is.readAllBytes();
 				Date date = new SimpleDateFormat("dd-MM-yyyy").parse(idc.substring(8, 19));
 				SistemaRED2AON.syncWithIdc(data, "userLogin", domainName, domainId, date, ccc, naf);
-				System.out.println(idc + " : " + date);
 			}
 		}
 		for (String idc : idcs) {
@@ -4474,7 +4287,6 @@ public class IdcTest extends AbstractSQLTestCase {
 				byte data[] = is.readAllBytes();
 				Date date = new SimpleDateFormat("dd-MM-yyyy").parse(idc.substring(8, 19));
 				SistemaRED2AON.syncWithIdc(data, "userLogin", domainName, domainId, date, ccc, naf);
-				System.out.println(idc + " : " + date);
 			}
 		}
 
@@ -4482,8 +4294,6 @@ public class IdcTest extends AbstractSQLTestCase {
 
 		Arrays.sort(bonuses, (b1, b2) -> b1.getStartDate().compareTo(b2.getStartDate()));
 
-		Arrays.stream(bonuses).forEach(
-				b -> System.out.println(b.getDescription() + " : " + b.getStartDate() + "..." + b.getEndDate()));
 		int i = 0;
 		assertEquals("22-04-2019", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[i].getStartDate()));
 		assertEquals("05-08-2019", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[i++].getEndDate()));
@@ -4544,16 +4354,12 @@ public class IdcTest extends AbstractSQLTestCase {
 				byte data[] = is.readAllBytes();
 				Date date = new SimpleDateFormat("dd-MM-yyyy").parse(idc.substring(8, 19));
 				SistemaRED2AON.syncWithIdc(data, "userLogin", domainName, domainId, date, ccc, naf);
-				System.out.println(idc + " : " + date);
 			}
 		}
 
 		Bonus[] bonuses = PAYROLL.getBonuses(domainName, domainId, "userLogin", contract.getId());
 
 		Arrays.sort(bonuses, (b1, b2) -> b1.getStartDate().compareTo(b2.getStartDate()));
-
-		Arrays.stream(bonuses).forEach(
-				b -> System.out.println(b.getDescription() + " : " + b.getStartDate() + "..." + b.getEndDate()));
 
 		assertEquals("22-04-2019", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[0].getStartDate()));
 		assertEquals("05-08-2019", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[0].getEndDate()));
@@ -4614,7 +4420,6 @@ public class IdcTest extends AbstractSQLTestCase {
 				byte data[] = is.readAllBytes();
 				Date date = new SimpleDateFormat("dd-MM-yyyy").parse(idc.substring(8, 19));
 				SistemaRED2AON.syncWithIdc(data, "userLogin", domainName, domainId, date, ccc, naf);
-				System.out.println(idc + " : " + date);
 			}
 		}
 
@@ -4624,16 +4429,12 @@ public class IdcTest extends AbstractSQLTestCase {
 				byte data[] = is.readAllBytes();
 				Date date = new SimpleDateFormat("dd-MM-yyyy").parse(idc.substring(8, 19));
 				SistemaRED2AON.syncWithIdc(data, "userLogin", domainName, domainId, date, ccc, naf);
-				System.out.println(idc + " : " + date);
 			}
 		}
 
 		Bonus[] bonuses = PAYROLL.getBonuses(domainName, domainId, "userLogin", contract.getId());
 
 		Arrays.sort(bonuses, (b1, b2) -> b1.getStartDate().compareTo(b2.getStartDate()));
-
-		Arrays.stream(bonuses).forEach(
-				b -> System.out.println(b.getDescription() + " : " + b.getStartDate() + "..." + b.getEndDate()));
 
 		assertEquals("22-04-2019", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[0].getStartDate()));
 		assertEquals("05-08-2019", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[0].getEndDate()));
@@ -5103,9 +4904,6 @@ public class IdcTest extends AbstractSQLTestCase {
 			ssPecs.stream().forEach(pec -> assertEquals(march182023, pec.getStartDate()));
 			ssPecs.stream().forEach(pec -> assertEquals(march172025, pec.getEndDate()));
 
-			ssPecs.forEach(pec -> System.out.println("[" + pec.getName() + "] " + pec.getDescription() + " = "
-					+ pec.getFormula() + ", " + pec.getStartDate()));
-
 			calendar.set(Calendar.YEAR, 2022);
 			calendar.set(Calendar.DAY_OF_MONTH, 1);
 			calendar.set(Calendar.MONTH, Calendar.OCTOBER);
@@ -5136,16 +4934,7 @@ public class IdcTest extends AbstractSQLTestCase {
 			double deductions = salary.getSalaryDeductions().stream()
 					.collect(Collectors.summingDouble(SalaryDeduction::getAmount));
 
-			salary.getSalaryCosts().forEach(
-					c -> System.out.println("COST :" + c.getName() + " : " + c.getAmount() + ", " + c.getType()));
-			salary.getSalaryDeductions().forEach(d -> System.out
-					.println("DEDUCTION :" + d.getDeductionConcept() + " : " + d.getAmount() + ", " + d.getType()));
-			salary.getSalaryBonus().forEach(d -> System.out
-					.println("BONUS :" + d.getBonusConcept() + " : " + d.getAmount() + ", " + d.getType()));
-
 			assertEquals(costs - 141.15, salary.getTotalEnterprise(), DELTA);
-			// assertEquals(0.00, salary.getSocialSecurityContributions(), DELTA);
-
 		}
 	}
 
@@ -5177,10 +4966,6 @@ public class IdcTest extends AbstractSQLTestCase {
 
 			ssPecs.stream().forEach(pec -> assertEquals(december212022, pec.getStartDate()));
 			ssPecs.stream().forEach(pec -> assertEquals(april42023, pec.getEndDate()));
-
-			ssPecs.forEach(pec -> System.out.println("[" + pec.getName() + "] " + pec.getDescription() + " = "
-					+ pec.getFormula() + ", " + pec.getStartDate()));
-
 
 			List<Data> datas = new ArrayList<>();
 			datas.add(new Data() {
@@ -5227,9 +5012,6 @@ public class IdcTest extends AbstractSQLTestCase {
 		try (InputStream is = IdcTest.class.getResourceAsStream("idcXXVIII.pdf")) {
 			Collection<PEC> ssPecs = Idc.getSSPECs(is);
 			//assertEquals(5, ssPecs.size());
-
-			ssPecs.forEach(pec -> System.out.println("[" + pec.getName() + "] " + pec.getDescription() + " = "
-				+ pec.getFormula() + ", " + pec.getStartDate() + ".." + pec.getEndDate()));
 
 			Calendar calendar = Calendar.getInstance();
 			calendar.set(Calendar.HOUR_OF_DAY, 0);
@@ -5337,10 +5119,6 @@ public class IdcTest extends AbstractSQLTestCase {
 		try (InputStream is = IdcTest.class.getResourceAsStream("idcXXIX.pdf")) {
 			Collection<PEC> ssPecs = Idc.getSSPECs(is);
 
-			ssPecs.forEach(pec -> System.out.println("[" + pec.getName() + "] " + pec.getDescription() + " = "
-				+ pec.getFormula() + ", " + pec.getStartDate() + ".." + pec.getEndDate()));
-			//assertEquals(1, ssPecs.size());
-
 			Calendar calendar = Calendar.getInstance();
 			calendar.set(Calendar.HOUR_OF_DAY, 0);
 			calendar.set(Calendar.MINUTE, 0);
@@ -5377,10 +5155,6 @@ public class IdcTest extends AbstractSQLTestCase {
 
 		try (InputStream is = IdcTest.class.getResourceAsStream("idcXXX.pdf")) {
 			Collection<PEC> ssPecs = Idc.getSSPECs(is);
-
-			ssPecs.forEach(pec -> System.out.println("[" + pec.getName() + "] " + pec.getDescription() + " = "
-				+ pec.getFormula() + ", " + pec.getStartDate() + ".." + pec.getEndDate()));
-			//assertEquals(1, ssPecs.size());
 
 			Calendar calendar = Calendar.getInstance();
 			calendar.set(Calendar.HOUR_OF_DAY, 0);
@@ -5432,15 +5206,11 @@ public class IdcTest extends AbstractSQLTestCase {
 			assertEquals(march2023, cgcBaseEnterpriseDatas.get(0).getStartDate() );
 			assertEquals(march092023, cgcBaseEnterpriseDatas.get(1).getStartDate() );
 			
-			salary.getSalaryDeductions().forEach( d -> System.out.println(d.getName() + ": " + d.getAmount()));
-			
 			assertEquals(
 				Double.parseDouble(cgcBaseDatas.get(1).getExpression()) *  ( 0.25 ) / 100.00  
 				+ Double.parseDouble(cgcBaseDatas.get(0).getExpression()) *  ( 4.7  + 0.10 + 1.55 + 0.10 ) / 100.00  
 				, salary.getSocialSecurityContributions(), 0.01);
 			
-			salary.getSalaryCosts().forEach( d -> System.out.println(d.getName() + ": " + d.getAmount()));
-
 			assertEquals(
 				Double.parseDouble(cgcBaseDatas.get(1).getExpression()) *  ( 1.30 + 1.40 + 2.20  ) / 100.00  
 				+ Double.parseDouble(cgcBaseDatas.get(0).getExpression()) *  ( 23.60 + 0.50 + 0.60 + 0.20 + 5.50 + 1.40 + 2.20 ) / 100.00  
@@ -5456,10 +5226,6 @@ public class IdcTest extends AbstractSQLTestCase {
 
 		try (InputStream is = IdcTest.class.getResourceAsStream("idcXXXI.pdf")) {
 			Collection<PEC> ssPecs = Idc.getSSPECs(is);
-
-			ssPecs.forEach(pec -> System.out.println("[" + pec.getName() + "] " + pec.getDescription() + " = "
-				+ pec.getFormula() + ", " + pec.getStartDate() + ".." + pec.getEndDate()));
-			//assertEquals(1, ssPecs.size());
 
 			Calendar calendar = Calendar.getInstance();
 			calendar.set(Calendar.HOUR_OF_DAY, 0);
@@ -5493,10 +5259,6 @@ public class IdcTest extends AbstractSQLTestCase {
 		try (InputStream is = IdcTest.class.getResourceAsStream("idcXXXII.pdf")) {
 			Collection<PEC> ssPecs = Idc.getSSPECs(is);
 
-			ssPecs.forEach(pec -> System.out.println("[" + pec.getName() + "] " + pec.getDescription() + " = "
-				+ pec.getFormula() + ", " + pec.getStartDate() + ".." + pec.getEndDate()));
-			
-			//assertEquals(1, ssPecs.size());
 
 			Calendar calendar = Calendar.getInstance();
 			calendar.set(Calendar.HOUR_OF_DAY, 0);
@@ -5536,10 +5298,6 @@ public class IdcTest extends AbstractSQLTestCase {
 			double fogasaPercent = 0.20;
 
 			assertEquals(cgcBase *  ( cgcEPercent + unemployEPercent  + itPercent + imsEPercent + fogasaPercent + meiEPercent + fpEPercent) / 100.00 - 91.00  , salary.getTotalEnterprise() , DELTA);
-
-			
-			salary.getSalaryDeductions().forEach( d -> System.out.println(d.getDescription() + " = " + d.getExpression() + " , " + d.getAmount() ));
-			
 			assertEquals(cgcBase *  ( cgcPercent + unemployPercent  + meiPercent + fpPercent) / 100.00 - 28.00  , salary.getSocialSecurityContributions(), DELTA);
 			
 		}
@@ -5552,10 +5310,6 @@ public class IdcTest extends AbstractSQLTestCase {
 		try (InputStream is = IdcTest.class.getResourceAsStream("idcXXXIII.pdf")) {
 			Collection<PEC> ssPecs = Idc.getSSPECs(is);
 
-			ssPecs.forEach(pec -> System.out.println("[" + pec.getName() + "] " + pec.getDescription() + " = "
-				+ pec.getFormula() + ", " + pec.getStartDate() + ".." + pec.getEndDate()));
-			
-			//assertEquals(1, ssPecs.size());
 
 			Calendar calendar = Calendar.getInstance();
 			calendar.set(Calendar.HOUR_OF_DAY, 0);
@@ -5576,12 +5330,8 @@ public class IdcTest extends AbstractSQLTestCase {
 			double cgcPercent = 4.70;
 			double cgcEPercent = 23.60;
 
-			//salary.getSalaryDeductions().forEach( d -> System.out.println(d.getDescription() + " = " + d.getExpression() + " , " + d.getAmount() ));
-
 			assertEquals(cgcBase *  cgcPercent / 100.00 *  0.05 , salary.getSocialSecurityContributions() , DELTA);
 
-			salary.getSalaryCosts().forEach( d -> System.out.println(d.getCostConcept() + " = " + d.getExpression() + " , " + d.getAmount() ));
-			
 			double itPercent = 1.40;
 			double imsEPercent = 2.20;
 
@@ -5596,11 +5346,6 @@ public class IdcTest extends AbstractSQLTestCase {
 
 		try (InputStream is = IdcTest.class.getResourceAsStream("idcXXXV.pdf")) {
 			Collection<PEC> ssPecs = Idc.getSSPECs(is);
-
-			ssPecs.forEach(pec -> System.out.println("[" + pec.getName() + "] " + pec.getDescription() + " = "
-				+ pec.getFormula() + ", " + pec.getStartDate() + ".." + pec.getEndDate()));
-			
-			//assertEquals(1, ssPecs.size());
 
 			Calendar calendar = Calendar.getInstance();
 			calendar.set(Calendar.HOUR_OF_DAY, 0);
@@ -5625,8 +5370,6 @@ public class IdcTest extends AbstractSQLTestCase {
 			
 			assertEquals(salary.getSalaryBonus().size(), 0);
 
-			salary.getSalaryDeductions().forEach( d -> System.out.println(d.getDescription() + " = " + d.getExpression() + " , " + d.getAmount() ));
-			
 			salary.getSalaryDeductions().stream()
 			.forEach( d -> { 
 				try {
@@ -5640,8 +5383,6 @@ public class IdcTest extends AbstractSQLTestCase {
 			
 			assertEquals(cgcBase *  cgcPercent / 100.00 *  0.05 + cgcBase *  meiPercent / 100.00 , deductions  , DELTA);
 
-			salary.getSalaryCosts().forEach( d -> System.out.println(d.getAmount() + ": " + d.getCostConcept() + " = " + d.getExpression() + " , " + d.getAmount() ));
-			
 			salary.getSalaryCosts().stream()
 			.forEach( d -> {
 				try {
@@ -5673,9 +5414,6 @@ public class IdcTest extends AbstractSQLTestCase {
 		try (InputStream is = IdcTest.class.getResourceAsStream("idcXXXVI.pdf")) {
 			Collection<PEC> ssPecs = Idc.getSSPECs(is);
 
-			ssPecs.forEach(pec -> System.out.println("[" + pec.getName() + "] " + pec.getDescription() + " = "
-				+ pec.getFormula() + ", " + pec.getStartDate() + ".." + pec.getEndDate()));
-			
 			assertEquals(0, ssPecs.size());
 
 			Calendar calendar = Calendar.getInstance();
@@ -5705,9 +5443,6 @@ public class IdcTest extends AbstractSQLTestCase {
 
 			assertEquals(salary.getSalaryBonus().size(), 0);
 
-			salary.getSalaryDeductions().forEach( d -> System.out.println(d.getDescription() + " = " + d.getExpression() + " , " + d.getAmount() ));
-			
-			
 			double deductions = salary.getSalaryDeductions().stream().collect(Collectors.summingDouble(d -> d.getAmount()));
 			
 			assertEquals(cgcBase *  cgcPercent / 100.00 
@@ -5736,9 +5471,6 @@ public class IdcTest extends AbstractSQLTestCase {
 
 		try (InputStream is = IdcTest.class.getResourceAsStream("idc986.pdf")) {
 			Collection<PEC> ssPecs = Idc.getSSPECs(is);
-
-			ssPecs.forEach(pec -> System.out.println("[" + pec.getName() + "] " + pec.getDescription() + " = "
-				+ pec.getFormula() + ", " + pec.getStartDate() + ".." + pec.getEndDate()));
 
 			Calendar calendar = Calendar.getInstance();
 			calendar.set(Calendar.HOUR_OF_DAY, 0);
@@ -5783,7 +5515,7 @@ public class IdcTest extends AbstractSQLTestCase {
 						}
 			});
 	
-			marshal(trabajadoresTramos, System.out);
+			//marshal(trabajadoresTramos, System.out);
 	
 			Liquidacion liquidacion = trabajadoresTramos.getLiquidacion();
 	
@@ -5859,7 +5591,7 @@ public class IdcTest extends AbstractSQLTestCase {
 	
 			for (Trabajador trabajador : trabajadores.getTrabajador()) {
 				if ("411011776004".equals(trabajador.getNaf())) {
-					marshal(trabajador, System.out);
+					//marshal(trabajador, System.out);
 					assertEquals(2, trabajador.getTramos().getTramo().size());
 					assertEquals((double)1.0, Double.valueOf(trabajador.getTramos().getTramo().get(0).getFechaDesde().getDia()), 0.00);
 					assertEquals((double)5.0, Double.valueOf(trabajador.getTramos().getTramo().get(0).getFechaHasta().getDia()), 0.00);
@@ -5909,7 +5641,7 @@ public class IdcTest extends AbstractSQLTestCase {
 	
 			for (Trabajador trabajador : trabajadores.getTrabajador()) {
 				if ("411146304896".equals(trabajador.getNaf())) {
-					marshal(trabajador, System.out);
+					//marshal(trabajador, System.out);
 					assertEquals(4, trabajador.getTramos().getTramo().size());
 					assertEquals((double)1.0, Double.valueOf(trabajador.getTramos().getTramo().get(0).getFechaDesde().getDia()), 0.00);
 					assertEquals((double)15.0, Double.valueOf(trabajador.getTramos().getTramo().get(0).getFechaHasta().getDia()), 0.00);
@@ -5967,7 +5699,7 @@ public class IdcTest extends AbstractSQLTestCase {
 	
 			for (Trabajador trabajador : trabajadores.getTrabajador()) {
 				if ("411146304896".equals(trabajador.getNaf())) {
-					marshal(trabajador, System.out);
+					//marshal(trabajador, System.out);
 					assertEquals(3, trabajador.getTramos().getTramo().size());
 
 					assertEquals((double)1.0, Double.valueOf(trabajador.getTramos().getTramo().get(0).getFechaDesde().getDia()), 0.00);
@@ -6023,7 +5755,7 @@ public class IdcTest extends AbstractSQLTestCase {
 	
 			for (Trabajador trabajador : trabajadores.getTrabajador()) {
 				if ("410132761989".equals(trabajador.getNaf())) {
-					marshal(trabajador, System.out);
+					//marshal(trabajador, System.out);
 					assertEquals(3, trabajador.getTramos().getTramo().size());
 
 					assertEquals((double)1.0, Double.valueOf(trabajador.getTramos().getTramo().get(0).getFechaDesde().getDia()), 0.00);
@@ -6084,9 +5816,9 @@ public class IdcTest extends AbstractSQLTestCase {
 			
 			
 			for (Trabajador trabajador : trabajadores.getTrabajador()) {
-				marshal(trabajador, System.out);
+				//marshal(trabajador, System.out);
 				if ("411043162473".equals(trabajador.getNaf())) {
-					marshal(trabajador, System.out);
+					//marshal(trabajador, System.out);
 					assertEquals(1, trabajador.getTramos().getTramo().size());
 
 					assertEquals((double)1.0, Double.valueOf(trabajador.getTramos().getTramo().get(0).getFechaDesde().getDia()), 0.00);
@@ -6094,7 +5826,7 @@ public class IdcTest extends AbstractSQLTestCase {
 					assertTramoActivoNormal(trabajador.getTramos().getTramo().get(0));
 				}
 				else if ("411087630408".equals(trabajador.getNaf())) {
-					marshal(trabajador, System.out);
+					//marshal(trabajador, System.out);
 					assertEquals(1, trabajador.getTramos().getTramo().size());
 
 					assertEquals((double)1.0, Double.valueOf(trabajador.getTramos().getTramo().get(0).getFechaDesde().getDia()), 0.00);
@@ -6128,7 +5860,7 @@ public class IdcTest extends AbstractSQLTestCase {
 			    		
 				});
 	
-			marshal(trabajadoresTramos, System.out);
+			//marshal(trabajadoresTramos, System.out);
 	
 			Liquidacion liquidacion = trabajadoresTramos.getLiquidacion();
 	
@@ -6178,7 +5910,7 @@ public class IdcTest extends AbstractSQLTestCase {
 		try (InputStream is = IdcTest.class.getResourceAsStream("idcplcccXXV.pdf")) {
 			TrabajadoresTramos trabajadoresTramos = Idcplccc.geTrabajadoresTramos(is, new TrabajadoresTramosCallback() {});
 	
-			marshal(trabajadoresTramos, System.out);
+			//marshal(trabajadoresTramos, System.out);
 	
 			Liquidacion liquidacion = trabajadoresTramos.getLiquidacion();
 	
@@ -6376,7 +6108,7 @@ public class IdcTest extends AbstractSQLTestCase {
 				    break;
 				// EDUARDO ALCON SALAMANCA
 				case "411068669332" : 
-				    marshal(trabajador, System.out);
+				    //marshal(trabajador, System.out);
 				    trabajador.getTramos().getTramo().sort((t1,t2) -> t1.getFechaDesde().getDia().compareTo(t2.getFechaDesde().getDia()) );
 				    assertTramoActivoNormal(trabajador.getTramos().getTramo().get(0));
 				    assertTramoMaternidadTiempoCompleto(trabajador.getTramos().getTramo().get(1));
@@ -6438,7 +6170,7 @@ public class IdcTest extends AbstractSQLTestCase {
 				switch (trabajador.getNaf()) {
 				// ISABEL BARBERO OVIEDO
 				case "411111039336":
-				    marshal(trabajador, System.out);
+				    //marshal(trabajador, System.out);
 				    trabajador.getTramos().getTramo().sort((t1,t2) -> t1.getFechaDesde().getDia().compareTo(t2.getFechaDesde().getDia()) );
 				    assertTramoActivoNormalFormacionEnAlternancia(trabajador.getTramos().getTramo().get(0));
 				    assertTramoIT15PrimerosDias(trabajador.getTramos().getTramo().get(1));
