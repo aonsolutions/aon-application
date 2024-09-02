@@ -324,6 +324,15 @@ public class InvoiceServlet extends AonApiHttpServlet{
 			f.getAttachModuleProperty().eq(invoiceId)
 			.and(f.getTypeProperty().eq(InvoiceAttachmentType.INVOICE.value()))
 			, AttachType.INVOICE, true);		
+
+		// ids to null
+		invoice.setId(null);
+		invoice.setDetails(invoice.getDetails().stream().map(r -> {
+			r.setId(null);
+			r.setInvoiceTaxes(r.getInvoiceTaxes().stream().map(tax -> tax.setId(null)).toList());
+			return r;
+		}).toList());
+		// ----------
 		
 		Rawdoc rawdoc = new Rawdoc()
 				.setData(attach.getData())

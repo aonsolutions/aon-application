@@ -577,7 +577,7 @@ public class LroeModel240 extends DockLayoutPanel {
 								String message = "La factura " + invoice.getReferenceCode() + " ya est\u00e1 enviada.";
 								vp.add(getErrorMessage(message));
 							} else {
-								SII_SERVICE.altaLroe240(options.getDomainName(), options.getDomain(), options.getUser(), invoice, params, new AsyncCallback<ICResponse>() {
+								SII_SERVICE.altaLroe(options.getDomainName(), options.getDomain(), options.getUser(), invoice, params, new AsyncCallback<ICResponse>() {
 									
 									@Override
 									public void onSuccess(ICResponse result) {

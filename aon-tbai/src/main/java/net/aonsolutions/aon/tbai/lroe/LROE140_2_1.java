@@ -223,7 +223,15 @@ public class LROE140_2_1 extends LROE140 {
 
 			r.setCriterioCobrosYPagos(invoice.isVatAccrualPayment() ? SiNoEnum.S : SiNoEnum.N);
 
-			if(!AonStringUtils.isBlank(detail.getAccountCode()) && detail.getAccountCode().length() >= 3) {
+			// BIEN AFECTO !!
+			if(invoice.getInvestAsset() != null) { 
+				Integer ia = detail.getInvestAssetData() != null && detail.getInvestAssetData().getId() != null 
+					? detail.getInvestAssetData().getId() : invoice.getInvestAsset();
+				r.setBienAfectoIRPFYOIVA(BienAfectoIRPFYOIVAEnum.I);
+				r.setReferenciaBien(Integer.toString(ia));
+			}
+			
+			if(r.getBienAfectoIRPFYOIVA() == null && !AonStringUtils.isBlank(detail.getAccountCode()) && detail.getAccountCode().length() >= 3) {
 				r.setConcepto(detail.getAccountCode().substring(0,3));
 				double importeGastoIRPF = AonMathUtils.round(tax.getBase() * tax.getDeductiblePercent() / 100);
 				r.setImporteGastoIRPF(Double.toString(importeGastoIRPF));
@@ -238,12 +246,6 @@ public class LROE140_2_1 extends LROE140 {
 
 //			r.setPorcentajeCompensacionREAGYP("");
 //			r.setImporteCompensacionREAGYP("");
-			if(invoice.getInvestAsset() != null) {
-				Integer ia = detail.getInvestAssetData() != null && detail.getInvestAssetData().getId() != null 
-					? detail.getInvestAssetData().getId() : invoice.getInvestAsset();
-				r.setBienAfectoIRPFYOIVA(BienAfectoIRPFYOIVAEnum.I);
-				r.setReferenciaBien(Integer.toString(ia));
-			}
 			
 			renta.getDetalleRentaIVA().add(r);
 		}
@@ -271,12 +273,12 @@ public class LROE140_2_1 extends LROE140 {
 			
 			jaxbMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
 			jaxbMarshaller.marshal( p140, bos );
-			// TODO SAVE DATA_REQUEST!!!!!
 			byte[] xml = bos.toByteArray();
+			DataRequest dataRequest = LroeData.saveRequest(person.getDomain(), new User().setLogin(""), invoices.get(0), info, xml);
 			Document doc = getDocument(xml);
 			System.out.println(toString(doc));
 			byte[] data = toGzip(xml);
-			return send(tbaiConfiguration, buildJSON(person, info), data);
+			return send(tbaiConfiguration, buildJSON(person, info), data).setDataRequest(dataRequest);
 		} catch (Exception e) {
 			return error(e);
 		}

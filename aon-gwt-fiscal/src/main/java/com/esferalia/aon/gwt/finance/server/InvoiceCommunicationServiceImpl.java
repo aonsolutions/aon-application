@@ -28,27 +28,23 @@ import com.esferalia.aon.occam.api.model.attachment.AttachType;
 import com.esferalia.aon.occam.api.model.attachment.DataAttachSource;
 import com.esferalia.aon.occam.api.model.attachment.DataAttachType;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
-import com.esferalia.aon.occam.api.model.finance.InvoiceCommunicationOperation;
 import com.esferalia.aon.occam.api.model.finance.InvoiceCommunicationTracking;
 import com.esferalia.aon.occam.api.model.finance.InvoiceCommunicationType;
 import com.esferalia.aon.occam.api.model.finance.InvoiceProperties;
 import com.esferalia.aon.occam.api.model.finance.SiiConfiguration;
 import com.esferalia.aon.occam.api.model.finance.TbaiConfiguration;
-import com.esferalia.aon.occam.api.model.fiscal.FiscalModelType;
 import com.esferalia.aon.occam.api.model.fiscal.aeat.AEATParams;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 import jakarta.servlet.annotation.WebServlet;
+import net.aonsolutions.aon.invoice.communication.visitor.AcceptInvoiceCommunicationTypeVisitor;
 import net.aonsolutions.aon.invoice.communication.visitor.CancelInvoiceCommunicationTypeVisitor;
-import net.aonsolutions.aon.tbai.InvoiceCommunication;
-import net.aonsolutions.aon.tbai.LroeMain;
 import net.aonsolutions.aon.tbai.TbaiMain;
 import net.aonsolutions.aon.tbai.lroe.LROE140_1_1;
 import net.aonsolutions.aon.tbai.lroe.LROE140_2_1;
 import net.aonsolutions.aon.tbai.lroe.LROE240_1_1;
 import net.aonsolutions.aon.tbai.lroe.LROE240_2;
-import net.aonsolutions.aon.tbai.responses.LROEResponse;
 
 @WebServlet(name = "Invoice Communication Servlet", urlPatterns = { "/aon_gwt_fiscal/ms/invoiceCommunication" })
 public class InvoiceCommunicationServiceImpl extends AonStatelessRemoteServiceServlet implements InvoiceCommunicationService {
@@ -108,48 +104,31 @@ public class InvoiceCommunicationServiceImpl extends AonStatelessRemoteServiceSe
     }
 
 	@Override
-	public ICResponse altaLroe140(String domainName, int domainId, String user, Invoice invoice, AEATParams aeatParams) {
+	public ICResponse altaLroe(String domainName, int domainId, String user, Invoice invoice, AEATParams aeatParams) {
 		try {
 			Domain domain = AON.getDomain(domainName, domainId, user);
 			Company company = AON.getCompanyForDomain(domainName, domainId, user);
-			Person person = AON.getPerson(domain, user, f -> f.getIdProperty().eq(company.getId()));
-			if(person == null || person.getId() == null) {
-				person = new Person().copy(company);
-			}
-			TbaiConfiguration tbaiConfiguration = AON.getTbaiConfiguration(domain, user);
-			Certificate cert = AON.getCertificates(domain, new User().setLogin(user), f -> f.getIdProperty().eq(aeatParams.getCertificateId())).findFirst().orElse(new Certificate());
-			tbaiConfiguration.setCertificate(cert);
+			
 			Integer invoiceId = invoice.getId();
 			invoice = AON_SOLUTIONS.getInvoice(domain.getName(), domain.getId(), user, invoiceId);
 			invoice.setInvoiceInfo(AON.getInvoiceInfo(domain, new User().setLogin(user), f -> f.getInvoiceProperty().eq(invoiceId)));
+
+			// ***** 
 			EnterpriseActivity ea = AON.getEnterpriseActivity(company.getDomain().getName(),
-			company.getDomain().getId(), "", invoice.getActivity().getId());
+					company.getDomain().getId(), "", invoice.getActivity().getId());
 			if(ea == null || ea.getId() == null) {
 				ea = AON.getEnterpriseActivities(company.getDomain().getName(),
 						company.getDomain().getId(), "").filter(f -> f.isPrincipal()).findFirst().orElse(new EnterpriseActivity());
 			}
 			invoice.setEpigraph(ea.getIae().getFullEpigraph());
-			InvoiceCommunication ic = new InvoiceCommunication()
-					.setCompany(company)
-					.setPerson(person)
-					.setInvoice(invoice)
-					.setModel(FiscalModelType.M140)
-					.setOperation(InvoiceCommunicationOperation.REGISTER)
-					.setTbaiConfiguration(tbaiConfiguration)
-					.setType(InvoiceCommunicationType.LROE);
+			//*****
 			
-			if(invoice.isSales()) {
-				TbaiMain tbai = new TbaiMain();
-				tbai.createEmisionLROE(company, invoice, tbaiConfiguration);
-				return new ICResponse().setError(false);
-			} else {
-				LroeMain lroe = new LroeMain();
-				LROEResponse resp = lroe.alta(ic);
-				ICResponse icResponse = new ICResponse();
-				icResponse.setError(resp.isError());
-				icResponse.setErrorMessage(resp.getErrorMessage());
-				return icResponse;
-			}
+			AcceptInvoiceCommunicationTypeVisitor visitor = (AcceptInvoiceCommunicationTypeVisitor) 
+					new AcceptInvoiceCommunicationTypeVisitor(domain, new User().setLogin(user), invoice, aeatParams.getCertificateId())
+						.setCompany(company);
+
+			InvoiceCommunicationType.LROE.visit(visitor);
+			return new ICResponse().setError(false);
 		} catch (Exception e) {
 			e.printStackTrace();
 			ICResponse icResponse = new ICResponse();
@@ -165,7 +144,11 @@ public class InvoiceCommunicationServiceImpl extends AonStatelessRemoteServiceSe
 		User user = new User().setLogin(login);
 
 		CancelInvoiceCommunicationTypeVisitor visitor = new CancelInvoiceCommunicationTypeVisitor(domain, user, invoice, aeatParams.getCertificateId());
-		type.visit(visitor);
+		try {
+			type.visit(visitor);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 		
 		return "";
 	}
@@ -190,47 +173,6 @@ public class InvoiceCommunicationServiceImpl extends AonStatelessRemoteServiceSe
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw e;
-		}
-	}
-	
-	@Override
-	public ICResponse altaLroe240(String domainName, int domainId, String user, Invoice invoice, AEATParams aeatParams) {
-		try {
-			Domain domain = AON.getDomain(domainName, domainId, user);
-			Company company = AON.getCompanyForDomain(domainName, domainId, user);
-			TbaiConfiguration tbaiConfiguration = AON.getTbaiConfiguration(domain, user);
-			Certificate cert = AON.getCertificates(domain, new User().setLogin(user), f -> f.getIdProperty().eq(aeatParams.getCertificateId())).findFirst().orElse(new Certificate());
-			tbaiConfiguration.setCertificate(cert);
-			Integer invoiceId = invoice.getId();
-			invoice = AON_SOLUTIONS.getInvoice(domain.getName(), domain.getId(), user, invoiceId);
-			invoice.setInvoiceInfo(AON.getInvoiceInfo(domain, new User().setLogin(user), f -> f.getInvoiceProperty().eq(invoiceId)));
-			InvoiceCommunication ic = new InvoiceCommunication()
-					.setCompany(company)
-					.setInvoice(invoice)
-					.setModel(FiscalModelType.M240)
-					.setOperation(InvoiceCommunicationOperation.REGISTER)
-					.setTbaiConfiguration(tbaiConfiguration)
-					.setType(InvoiceCommunicationType.LROE);
-			
-			if(invoice.isSales()) {
-				TbaiMain tbai = new TbaiMain();
-				tbai.createEmisionLROE(company, invoice, tbaiConfiguration);
-				return new ICResponse().setError(false);
-			} else {
-				LroeMain lroe = new LroeMain();
-				LROEResponse resp = lroe.alta(ic);
-				ICResponse icResponse = new ICResponse();
-				icResponse.setError(resp.isError());
-				icResponse.setErrorMessage(resp.getErrorMessage());
-				icResponse.setErrorCode(resp.getErrorCode());
-				return icResponse;
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-			ICResponse icResponse = new ICResponse();
-			icResponse.setError(true);
-			icResponse.setErrorMessage(e.getMessage());
-			return icResponse;
 		}
 	}
 

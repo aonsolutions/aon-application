@@ -53,7 +53,7 @@ export class AonNotificationPanel extends AonElement {
         this.OPEN_BUTTON = this.id+ 'OpenButton';
     }
 
-	build() {
+	async build() {
         let header = this.getElement("aonHeaderWeb");
         let apps = this.getElement("aonMenuLeftop-applications");
         let aonHeader = this.getElement("aonHeader");
@@ -87,17 +87,33 @@ export class AonNotificationPanel extends AonElement {
             });
             
         } 
-
+        
         let enterprise = this.getElement("aonHeaderCompanyListButton");
         enterprise.addEventListener(EVENT.CLICK, () => {
             apps.classList.remove("aonMenuLeftopNotification");
-        })
+        });
 
-        this.loadMore(true);
+        let notifications = await this.getData();  // Espera la Promesa aquí
+    
+        if (notifications.length === 0) {
+            divGeneral.appendChild(this.buildNoNotifications());
+        } else {
+            this.loadMore(true);
+        }
 
-
-        
         this.appendChild(divGeneral);
+        
+    }
+
+    buildNoNotifications(){
+        let div = this.createDiv();
+        div.id = this.ID + "NoNotifications";
+        div.className = "notificationPanelNoNotification";
+        
+        let span = this.createElement(TAG.SPAN);
+        span.innerHTML = "No hay notificaciones pendientes";
+        div.appendChild(span);
+        return div;
     }
 
     buildRow(res){
@@ -178,6 +194,8 @@ export class AonNotificationPanel extends AonElement {
         });
 
         divPrincipal.addEventListener(EVENT.CLICK, () => {
+            this.markReadNotification(res);
+            divGeneral.style.display = "none";
             header.className = "aonHeader aonHeaderNotification";
             apps.className = "aonMenuLeftop aonMenuLeftopNotification";
             aonHeader.buildApp(NOTIFICATION);
@@ -263,16 +281,40 @@ export class AonNotificationPanel extends AonElement {
         return getNotification({page:1, perPage:30, status:"unread"});
     }
 
-    markReadNotification(res){
-        if(res.status ===0){
-          markReadNotification(res);
-          res.status=1;
-          let aonNotificationIcon = document.querySelector("aon-notification-icon");
-          if (aonNotificationIcon) { 
-            aonNotificationIcon.getTotalNotification();
-          }
+    markReadNotification(res) {
+        if (res.status === 0) {
+            markReadNotification(res);
+            res.status = 1;
+    
+            let aonNotificationIcon = document.querySelector("aon-notification-icon");
+            if (aonNotificationIcon) { 
+                aonNotificationIcon.getTotalNotification();
+            }
+    
+            this.checkIfAllRead();
         }
     }
+
+    checkIfAllRead() {
+    const notifications = this.getElementsByClassName("notificationPanelRowPrincipalDiv");
+
+    let allRead = true;
+
+    for (let notification of notifications) {
+        if (notification.style.display !== "none") {
+            allRead = false;
+            break;
+        }
+    }
+
+    if (allRead) {
+        let divGeneral = this.getElement(this.DIV_GENERAL);
+        divGeneral.innerHTML = ""; // Limpia las notificaciones anteriores
+        divGeneral.appendChild(this.buildNoNotifications());
+    }
+}
+
+    
 
     goNotification(data) {
         const aonComponent = NotificationUtils.getNotificationComponent(data);
