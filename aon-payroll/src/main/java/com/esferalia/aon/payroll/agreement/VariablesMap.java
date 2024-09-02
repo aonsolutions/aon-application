@@ -19,6 +19,8 @@ public class VariablesMap implements Serializable {
 	
 	private static void createVariablesMap() {
 		variablesMap = new HashMap<>();
+		
+		variablesMap.put("ADELANTO_DE_JORNADA_HORAS", "ADELANTO_JORNADA_H");
 	
 		variablesMap.put("ABSENTISMO_TRAMO_1_ANUAL", "ABSENTISMO_T_1");
 		variablesMap.put("ABSENTISMO_TRAMO_2_ANUAL", "ABSENTISMO_T_2");
@@ -600,6 +602,7 @@ public class VariablesMap implements Serializable {
 		variablesMap.put("COMPLEMENTO_HIJO_DISCAPACITADO_MENSUAL", "COMPL_HIJO_DISCAPACITADO");
 		variablesMap.put("COMPLEMENTO_JEFE_DE_ESTUDIOS_ANUAL", "COMPL_JEFE_ESTUDIOS");
 		variablesMap.put("COMPLEMENTO_JEFE_DE_ESTUDIOS_MENSUAL", "COMPL_JEFE_ESTUDIOS");
+		variablesMap.put("COMPLEMENTO_JORNADA_ESPECIAL_DIARIO", "COMPL_J_ESPECIAL_D");
 		variablesMap.put("COMPLEMENTO_JORNADA_PARTIDA_ANUAL", "JORNADA_PARTIDA_A");
 		variablesMap.put("COMPLEMENTO_JORNADA_PARTIDA_DIARIO", "JORNADA_PARTIDA_D");
 		variablesMap.put("COMPLEMENTO_JORNADA_PARTIDA_B_ANUAL", "COMPL_JORNADA_PARTIDA_B");
@@ -1190,6 +1193,7 @@ public class VariablesMap implements Serializable {
 		variablesMap.put("MEDIA_DIETA_TERRITORIO_NACIONAL_DIARIO", "MEDIA_DIETA_NACIONAL");
 		variablesMap.put("MEDIA_DIETA_TENDIDOS_ELECTRICOS_DIARIO", "MD_TEND_ELECTRICOS");
 		variablesMap.put("MERCANCIAS_PELIGROSAS_MENSUAL", "MERCAN_PELIGRO_M");
+		variablesMap.put("MUERTE_ACCIDENTE_TRAFICO_ANUAL", "M_ACC_TRAFICO_A");
 		variablesMap.put("MULTA_CIRCULACION_Y_RETIRADA_CARNE_ANUAL", "MULTA_RETIRADA_CARNE");
 		
 		variablesMap.put("NO_CONCURRENCIA_MENSUAL", "NO_CONCURRENCIA_M");
@@ -1225,6 +1229,7 @@ public class VariablesMap implements Serializable {
 		variablesMap.put("PENSIONES_ANUAL", "PENSIONES_A");
 		variablesMap.put("PENSIONES_MENSUAL", "PENSIONES_M");
 		variablesMap.put("PENSIONES_DIARIO", "PENSIONES_D");
+		variablesMap.put("PENSIONES_SOBRE_ANTIGUEDAD_MENSUAL", "PENS_ANTIGUEDAD_M");
 		variablesMap.put("PENSIONES_SOBRE_ACTIVIDAD_ANUAL", "PENS_ACTIVIDAD_A");
 		variablesMap.put("PENSIONES_SOBRE_ACTIVIDAD_MENSUAL", "PENS_ACTIVIDAD_M");
 		variablesMap.put("PENSIONES_SOBRE_ACTIVIDAD_DIARIO", "PENS_ACTIVIDAD_D");
@@ -1455,6 +1460,7 @@ public class VariablesMap implements Serializable {
 		variablesMap.put("PLUS_FESTIVOS_DIARIO", "FESTIVO_D");
 		variablesMap.put("PLUS_FESTIVOS_MENSUAL", "FESTIVO_M");
 		variablesMap.put("PLUS_FESTIVOS_HORAS", "FESTIVO_H");
+		variablesMap.put("PLUS_FESTIVOS_ESPECIALES_ANUAL", "FESTIVOS_ESP_A");
 		variablesMap.put("PLUS_FESTIVOS_ESPECIALES_DIARIO", "FESTIVOS_ESP_D");
 		variablesMap.put("PLUS_FESTIVOS_ESPECIALES_HORAS", "FESTIVOS_ESP_H");
 		variablesMap.put("PLUS_FESTIVO_NOCTURNO_DIARIO", "P_FESTIVO_NOCT_D");
@@ -1466,6 +1472,7 @@ public class VariablesMap implements Serializable {
 		variablesMap.put("PLUS_FIN_DE_SEMANA_DIARIO", "PLUS_FIN_SEMANA_D");
 		variablesMap.put("PLUS_FIN_DE_SEMANA_HORAS", "PLUS_FIN_SEMANA_H");
 		variablesMap.put("PLUS_FINALIZACION_SERVICIOS_MENSUAL", "P_FINALIZACION_SERVICIOS");
+		variablesMap.put("PLUS_FLEXIBILIDAD_MENSUAL", "FLEXIBILIDAD_M");
 		variablesMap.put("PLUS_FLEXIBILIDAD_HORAS", "FLEXIBILIDAD_H");
 		variablesMap.put("PLUS_FOMENTO_A_LA_CULTURA_ANUAL", "PLUS_FOMENTO_CULTURA");
 		variablesMap.put("PLUS_FOMENTO_A_LA_CULTURA_MENSUAL", "PLUS_FOMENTO_CULTURA");
@@ -1975,7 +1982,8 @@ public class VariablesMap implements Serializable {
 		variablesMap.put("SALARIO_MINIMO_CONVENIO_MENSUAL", "SM_CONVENIO_M");
 		variablesMap.put("SALARIO_MINIMO_GARANTIZADO_ANUAL", "S_MIN_GARANT");
 		variablesMap.put("SALARIO_MINIMO_GARANTIZADO_MENSUAL", "S_MIN_GARANT");
-		variablesMap.put("SALARIO_SEMANA_MENSUAL", "SALARIO_SEMANA");
+		variablesMap.put("SALARIO_SEMANA_ANUAL", "SALARIO_SEMANA_A");
+		variablesMap.put("SALARIO_SEMANA_MENSUAL", "SALARIO_SEMANA_M");
 		variablesMap.put("SALARIO_SEMANA_NORMAL_MENSUAL", "SALARIO_SEMANA_N_ME");
 		variablesMap.put("SALARIO_SEMANA_45_HORAS_MENSUAL", "SALARIO_SEMANA_45_H");
 		variablesMap.put("SALARIO_SEMANA_50_HORAS_MENSUAL", "SALARIO_SEMANA_50_H");
