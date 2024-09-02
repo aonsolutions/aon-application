@@ -57,7 +57,7 @@ public class JooqEmployeeIrpf {
 		return getEmployeeIrpf(DSL.using(conn, getDefaultSettings()), domainId, ssNumber, document, startDate);
 	}
 
-	private static List<EmployeeIrpf> getEmployeeIrpf(DSLContext dslContext, Integer domainId, String ssNumber, String document, Date startDate) throws IllegalArgumentException {
+	public static List<EmployeeIrpf> getEmployeeIrpf(DSLContext dslContext, Integer domainId, String ssNumber, String document, Date startDate) throws IllegalArgumentException {
 		List<EmployeeIrpf> employeeIrpfList = new ArrayList<>();
 		
 		// Iterator Date
@@ -137,10 +137,11 @@ public class JooqEmployeeIrpf {
 					
 					Double totalIrpf = salaryRecord.get(SALARY.TOTAL_IRPF);
 					if(employeeSSQuote == 0.00) {
-						Double value = dslContext.select(SALARY_DEDUCTION.AMOUNT).from(SALARY_DEDUCTION)
+						List<Double> irpfRecords = dslContext.select(SALARY_DEDUCTION.AMOUNT).from(SALARY_DEDUCTION)
 								.where(SALARY_DEDUCTION.SALARY.eq(salaryId))
-								.and(SALARY_DEDUCTION.DEDUCTION_CONCEPT.eq("IRPF")).fetchOne(SALARY_DEDUCTION.AMOUNT);
-						if(null != value)
+								.and(SALARY_DEDUCTION.DEDUCTION_CONCEPT.eq("IRPF")).fetch(SALARY_DEDUCTION.AMOUNT);
+						Double value = irpfRecords.stream().reduce(0.00, (a, b) -> a + b);
+						if(null != value && 0.00 != value)
 							totalIrpf = value;
 					}
 					
