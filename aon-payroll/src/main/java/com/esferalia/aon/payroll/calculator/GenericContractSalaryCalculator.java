@@ -111,6 +111,7 @@ import com.esferalia.aon.salary.enumeration.PaymentTypeVisitor;
 import com.esferalia.aon.salary.enumeration.SalaryType;
 import com.esferalia.aon.salary.enumeration.SalaryTypeVisitor;
 import com.esferalia.aon.salary.expression.CheckException;
+import com.esferalia.aon.salary.expression.DisableException;
 import com.esferalia.aon.salary.expression.ExpressionContext;
 import com.esferalia.aon.salary.expression.ExpressionContext.ExpressionExceptionWrapper;
 import com.esferalia.aon.salary.expression.ExpressionContext.RemoveVariableError;
@@ -287,6 +288,8 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 		public void onRemove(IContractDeduction payment);
 
 		public void onRemove(IContractPayment payment);
+		
+		public void onDisable(IContractPayment payment);
 
 		public void onCheckError(IContractPayment payment, String message);
 
@@ -340,6 +343,10 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 
 		@Override
 		public void onRemove(IContractPayment payment) {
+		}
+		
+		@Override
+		public void onDisable(IContractPayment payment) {
 		}
 
 		@Override
@@ -1865,6 +1872,9 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 			if (AonStringUtils.isNotBlank(e.getMessage()))
 				onCheckError(e.getMessage());
 			addResult(expressionContext, name, start, end, 0.00);
+		} catch (DisableException e) {
+			onDisable(contractPayment);
+			addResult(expressionContext, name, start, end, 0.00);
 		} catch (RemoveException e) {
 			onRemove(contractPayment);
 			addResult(expressionContext, name, start, end, 0.00);
@@ -2386,6 +2396,12 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 	protected void onRemove(IContractPayment payment) {
 		if (listener != null) {
 			listener.onRemove(payment);
+		}
+	}
+	
+	protected void onDisable(IContractPayment payment) {
+		if (listener != null) {
+			listener.onDisable(payment);
 		}
 	}
 
