@@ -4016,3 +4016,13 @@ label.rating:hover {
     font-size: 16px;
 		font-weight: 600;
 }
+
+.aonLoginTitle {
+  font-family: var(--roboto-34-sp-h4-font-family);
+  color: var(--gray-90);
+  font-size: 2rem;
+  margin-bottom: -10px !important;
+  margin-top: 0;
+  font-weight: 600;
+  letter-spacing: 0.44px;
+}

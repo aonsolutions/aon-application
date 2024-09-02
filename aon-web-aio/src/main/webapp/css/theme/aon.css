@@ -40,9 +40,9 @@
   color: var(--aonWhite);
 } */
 
-.aonLoginSubTitle::after {
+/* .aonLoginSubTitle::after {
 	content: 'Accede a tu cuenta de AON';
-}
+} */
 
 /*
 .aonMenuSidenav{
