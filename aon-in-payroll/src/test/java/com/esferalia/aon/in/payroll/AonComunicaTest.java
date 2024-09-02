@@ -1,14 +1,14 @@
 package com.esferalia.aon.in.payroll;
 
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Date;
 import java.util.Optional;
 
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
 import com.esferalia.aon.occam.api.PAYROLL;
 import com.esferalia.aon.occam.api.model.Domain;
@@ -19,7 +19,7 @@ import solutions.aon.seg.social.TestSistemaREDI;
 public class AonComunicaTest {
 
 	@Test
-	@Ignore
+	@Disabled
 	public void addContractAndCommunicate() {
 		try (final InputStream is = TestSistemaREDI.class.getResourceAsStream("FNMT.p12")) {
 
@@ -64,7 +64,7 @@ public class AonComunicaTest {
 	}
 	
 	@Test
-	@Ignore
+	@Disabled
 	public void deleteContract() {
 		try (final InputStream is = TestSistemaREDI.class.getResourceAsStream("FNMT.p12")) {
 
@@ -92,7 +92,7 @@ public class AonComunicaTest {
 	}
 	
 	@Test
-	@Ignore
+	@Disabled
 	public void contractExist() {
 		try {
 			Employee data = new Employee()

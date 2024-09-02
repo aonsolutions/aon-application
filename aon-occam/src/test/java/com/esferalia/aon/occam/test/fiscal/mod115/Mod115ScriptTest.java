@@ -1,12 +1,15 @@
 package com.esferalia.aon.occam.test.fiscal.mod115;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+
 import java.util.Arrays;
 import java.util.Date;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.esferalia.aon.occam.api.fiscal.MODEL115;
 import com.esferalia.aon.occam.api.model.finance.EnumVisitors.IFiscalModelKeyInfoVisitor;
@@ -22,10 +25,10 @@ import com.esferalia.aon.occam.test.faker.FiscalFaker;
 import com.esferalia.aon.occam.test.faker.FiscalFaker.FiscalFakerParams;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
-public class Mod115ScriptTest extends AbstractOccamTest {
+class Mod115ScriptTest extends AbstractOccamTest {
 	
 	@Test
-	public void testCommonTerritoryExpressions() {
+	void testCommonTerritoryExpressions() {
 		FiscalFakerParams params = new FiscalFakerParams(ctx,getOccam())
 				.setIssueDate(new Date())
 				.setMonthly(true)
@@ -36,7 +39,7 @@ public class Mod115ScriptTest extends AbstractOccamTest {
 	}
 
 	@Test
-	public void testAraba() {
+	void testAraba() {
 		FiscalFakerParams params = new FiscalFakerParams(ctx,getOccam())
 				.setIssueDate(new Date())
 				.setMonthly(true)
@@ -47,7 +50,7 @@ public class Mod115ScriptTest extends AbstractOccamTest {
 	}
 
 	@Test
-	public void testBizkaia() {
+	void testBizkaia() {
 		FiscalFakerParams params = new FiscalFakerParams(ctx,getOccam())
 				.setIssueDate(new Date())
 				.setMonthly(true)
@@ -58,7 +61,7 @@ public class Mod115ScriptTest extends AbstractOccamTest {
 	}
 
 	@Test
-	public void testGipuzkoa() {
+	void testGipuzkoa() {
 		FiscalFakerParams params = new FiscalFakerParams(ctx,getOccam())
 				.setIssueDate(new Date())
 				.setMonthly(true)
@@ -69,7 +72,7 @@ public class Mod115ScriptTest extends AbstractOccamTest {
 	}
 
 	@Test
-	public void testNavarra() {
+	void testNavarra() {
 		FiscalFakerParams params = new FiscalFakerParams(ctx,getOccam())
 				.setIssueDate(new Date())
 				.setMonthly(true)
@@ -91,7 +94,7 @@ public class Mod115ScriptTest extends AbstractOccamTest {
 									
 									private String arrayNotNull() {
 										JSONArray array = new JSONArray(info);
-										Assert.assertNotNull(array);
+										assertNotNull(array);
 										return null;
 									}
 									
@@ -106,20 +109,20 @@ public class Mod115ScriptTest extends AbstractOccamTest {
 									public String visitComputeKey() {
 										Mod115Declaration dec = Mod115Declaration.getInstance(mod115);
 										if (key != null && Arrays.stream(dec.getSamePeriodExplainKeys()).anyMatch(k -> k == key)) {
-											Assert.assertNotNull(info);
-											Assert.assertNotEquals(info, "");
+											assertNotNull(info);
+											assertNotEquals("", info);
 										} else if (key != null) {
 											JSONObject json = new JSONObject(info);
-											Assert.assertNotNull(json);
+											assertNotNull(json);
 											JSONArray array = json.getJSONArray("messages");
-											Assert.assertNotNull(array);
+											assertNotNull(array);
 										}
 										return null;
 									}
 									
 									@Override 
 									public String visitNone() { 
-										Assert.assertEquals(AonStringUtils.EMPTY,info);
+										assertEquals(AonStringUtils.EMPTY,info);
 										return null;
 									}
 									

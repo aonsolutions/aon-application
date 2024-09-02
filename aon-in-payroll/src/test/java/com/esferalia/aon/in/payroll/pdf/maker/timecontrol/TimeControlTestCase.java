@@ -1,6 +1,7 @@
 package com.esferalia.aon.in.payroll.pdf.maker.timecontrol;
 
-import static org.junit.Assert.fail;
+
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -10,10 +11,9 @@ import java.util.Date;
 import java.util.LinkedList;
 import java.util.Locale;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.esferalia.aon.in.payroll.pdf.maker.exception.CanNotCreatePdfException;
-import com.esferalia.aon.in.payroll.pdf.maker.timecontrol.TimeControlTemplate;
 import com.esferalia.aon.in.payroll.pdf.maker.timecontrol.bean.EmployeeData;
 import com.github.javafaker.Faker;
 

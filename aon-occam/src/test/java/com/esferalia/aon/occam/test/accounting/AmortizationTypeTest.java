@@ -1,13 +1,10 @@
 package com.esferalia.aon.occam.test.accounting;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThrows;
+import static com.esferalia.aon.jooq.tables.AmortizationType.AMORTIZATION_TYPE;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
-import java.util.ArrayList;
-import java.util.List;
+import org.junit.jupiter.api.Test;
 
-import org.junit.Test;
-
-import com.esferalia.aon.occam.api.ACCOUNTING;
 import com.esferalia.aon.occam.api.model.accounting.AmortizationType;
 import com.esferalia.aon.occam.api.model.accounting.AmortizationTypeParams;
 import com.esferalia.aon.occam.impl.jooq.dao.AmortizationTypeDAO;
@@ -16,8 +13,6 @@ import com.esferalia.aon.occam.test.faker.AonFaker;
 import com.esferalia.aon.watson.AonError;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.util.AonStringUtils;
-
-import static com.esferalia.aon.jooq.tables.AmortizationType.AMORTIZATION_TYPE;
 
 public class AmortizationTypeTest extends AbstractOccamTest {
 	

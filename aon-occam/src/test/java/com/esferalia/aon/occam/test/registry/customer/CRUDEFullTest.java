@@ -1,9 +1,9 @@
 package com.esferalia.aon.occam.test.registry.customer;
 
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
-import static org.junit.Assert.assertFalse;
-
-import org.junit.Test;
+import org.junit.jupiter.api.RepeatedTest;
+import org.junit.jupiter.api.Test;
 
 import com.esferalia.aon.occam.api.model.Customer;
 import com.esferalia.aon.occam.api.model.registry.CustomerFull;
@@ -12,13 +12,12 @@ import com.esferalia.aon.occam.api.model.registry.RegistryMedia;
 import com.esferalia.aon.occam.impl.jooq.dao.CustomerDAO;
 import com.esferalia.aon.occam.test.AbstractOccamTest;
 import com.esferalia.aon.occam.test.Asserts;
-import com.esferalia.aon.occam.test.Repeat;
 import com.esferalia.aon.occam.test.faker.AonFaker;
 import com.esferalia.aon.occam.test.faker.AonRandom;
 
 public class CRUDEFullTest extends AbstractOccamTest {
 
-	@Repeat( 20 )
+	@RepeatedTest( 20 )
 	@Test
 	public void test() {
 		CustomerFull full = new CustomerFull();
@@ -42,7 +41,7 @@ public class CRUDEFullTest extends AbstractOccamTest {
 		
 		if (inserted.hasMedias()) {
 			for (RegistryMedia media : inserted.getMedias()) {
-				assertFalse("Registry Media must be not dirty", media.isDirty());
+				assertFalse(media.isDirty(),"Registry Media must be not dirty");
 			}
 		}
 		if (inserted.hasMedias()) {
@@ -60,7 +59,7 @@ public class CRUDEFullTest extends AbstractOccamTest {
 		
 		if (inserted.hasAddresses()) {
 			for (RegistryAddress address : inserted.getAddresses()) {
-				assertFalse("Registry Address must be not dirty", address.isDirty());
+				assertFalse(address.isDirty(),"Registry Address must be not dirty");
 			}
 		}
 		if (inserted.hasAddresses()) {

@@ -1,8 +1,8 @@
 package com.esferalia.aon.in.payroll.pdf.maker.payroll;
 
-import static org.junit.Assert.fail;
 
-import java.io.ByteArrayOutputStream;
+import static org.junit.jupiter.api.Assertions.fail;
+
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.OutputStream;
@@ -14,17 +14,17 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.esferalia.aon.in.payroll.pdf.maker.PdfMaker;
 import com.esferalia.aon.in.payroll.pdf.maker.exception.CanNotCreatePdfException;
-import com.esferalia.aon.in.payroll.pdf.maker.payroll.bean.PDFPayment;
-import com.esferalia.aon.in.payroll.pdf.maker.payroll.bean.PDFDeduction;
-import com.esferalia.aon.in.payroll.pdf.maker.payroll.bean.PayrollTypes;
-import com.github.javafaker.Faker;
 import com.esferalia.aon.in.payroll.pdf.maker.payroll.bean.ContingencyBases;
 import com.esferalia.aon.in.payroll.pdf.maker.payroll.bean.ContingencyBases.ContingencyBasesBuilder;
 import com.esferalia.aon.in.payroll.pdf.maker.payroll.bean.DefaultPayroll.DefaultPayrollBuilder;
+import com.esferalia.aon.in.payroll.pdf.maker.payroll.bean.PDFDeduction;
+import com.esferalia.aon.in.payroll.pdf.maker.payroll.bean.PDFPayment;
+import com.esferalia.aon.in.payroll.pdf.maker.payroll.bean.PayrollTypes;
+import com.github.javafaker.Faker;
 
 public class DetailedPayrollTest {
 	

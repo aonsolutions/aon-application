@@ -1,8 +1,10 @@
 package com.esferalia.aon.occam.test.accounting.account;
 
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
 import java.io.IOException;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.esferalia.aon.occam.api.ACCOUNTING;
 import com.esferalia.aon.occam.api.model.Account;
@@ -11,13 +13,14 @@ import com.esferalia.aon.watson.error.AonCoreException;
 
 public class AccountDuplicatedCodeTest extends AbstractOccamTest {
 	
-	@Test (expected = AonCoreException.class)
+	@Test
 	public void test() throws IOException {
 		Account account = new Account()
 				.setDomain(DOMAIN_ID)
 				.setDescription("ERROR")
 				;
+		assertThrows(AonCoreException.class,
+			() -> ACCOUNTING.save(DOMAIN_NAME, DOMAIN_ID, USER, account));	
 		
-		ACCOUNTING.save(DOMAIN_NAME, DOMAIN_ID, USER, account);
 	}	
 }

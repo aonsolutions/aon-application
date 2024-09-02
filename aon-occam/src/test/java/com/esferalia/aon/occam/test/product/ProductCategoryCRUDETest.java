@@ -1,8 +1,9 @@
 package com.esferalia.aon.occam.test.product;
 
-import static org.junit.Assert.assertNull;
 
-import org.junit.Test;
+import static org.junit.jupiter.api.Assertions.assertNull;
+
+import org.junit.jupiter.api.Test;
 
 import com.esferalia.aon.occam.api.model.product.ProductCategory;
 import com.esferalia.aon.occam.impl.jooq.dao.ProductCategoryDAO;

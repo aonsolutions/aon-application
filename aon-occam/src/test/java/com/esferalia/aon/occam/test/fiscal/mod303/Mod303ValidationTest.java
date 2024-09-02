@@ -1,12 +1,12 @@
 package com.esferalia.aon.occam.test.fiscal.mod303;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.util.Optional;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.esferalia.aon.occam.api.fiscal.MODEL303;
 import com.esferalia.aon.occam.api.model.finance.EnumVisitors.IFiscalStatusVisitor;
@@ -22,13 +22,13 @@ import com.esferalia.aon.watson.AonError;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.util.AonMathUtils;
 
-public class Mod303ValidationTest extends Mod303AbstractTest {
+class Mod303ValidationTest extends Mod303AbstractTest {
 	
 	/**
 	 * No se puede grabar una complementaria sin algo a lo que complementar.
 	 */
 	@Test
-	public void testComplementary() {
+	void testComplementary() {
 		FiscalFakerParams params = getParams()
 			.setComplementary(true)
 			.setReplacement(false);
@@ -37,14 +37,14 @@ public class Mod303ValidationTest extends Mod303AbstractTest {
 			insertMod303( params );
 	    });
 		String expected = AonError.FISCAL_NO_REPLACED_DECLARATION.getMessage();
-		assertEquals("Wrong Exception", expected, e.getMessage());
+		assertEquals(expected, e.getMessage(),"Wrong Exception");
 	}
 	
 	/**
 	 * No se puede grabar una sustitutiva algo a lo que sustituir.
 	 */
 	@Test
-	public void testReplacement() {
+	void testReplacement() {
 		FiscalFakerParams params = getParams()
 			.setComplementary(false)
 			.setReplacement(true);
@@ -53,14 +53,14 @@ public class Mod303ValidationTest extends Mod303AbstractTest {
 			insertMod303( params );
 	    });
 		String expected = AonError.FISCAL_NO_REPLACED_DECLARATION.getMessage();
-		assertEquals("Wrong Exception", expected, e.getMessage());
+		assertEquals(expected, e.getMessage(),"Wrong Exception");
 	}
 	
 	/**
 	 * No se puede grabar una delcaración que ya exista.
 	 */
 	@Test
-	public void testDuplicated() {
+	void testDuplicated() {
 		FiscalFakerParams params = getParams()
 			.setComplementary(false)
 			.setReplacement(false);
@@ -70,14 +70,14 @@ public class Mod303ValidationTest extends Mod303AbstractTest {
 			insertMod303( params );
 	    });
 		String expected = AonError.FISCAL_DECLARATION_ALREADY_EXISTS.format(mod303.getModelFullName());
-		assertEquals("Wrong Exception", expected, e.getMessage());
+		assertEquals(expected, e.getMessage(), "Wrong Exception");
 	}
 
 	/**
 	 * No se puede borrar una declaración si no está pendiente.
 	 */
 	@Test
-	public void testDeleteWithComplementary() {
+	void testDeleteWithComplementary() {
 		FiscalFakerParams params = getParams()
 			.setComplementary(false)
 			.setReplacement(false);
@@ -88,14 +88,14 @@ public class Mod303ValidationTest extends Mod303AbstractTest {
 			MODEL303.delete(getOccam(), original);
 	    });
 		String expected = AonError.FISCAL_WRONG_REPLACED_DELETION.getMessage();
-		assertEquals("Wrong Exception", expected, e.getMessage());
+		assertEquals(expected, e.getMessage(),"Wrong Exception");
 	}
 
 	/**
 	 * No se puede borrar una declaración si algo la complemeta
 	 */
 	@Test
-	public void testDeleteFinishedModel() {
+	void testDeleteFinishedModel() {
 		final FiscalFakerParams params = getParams()
 				.setComplementary(false)
 				.setReplacement(false);
@@ -107,7 +107,7 @@ public class Mod303ValidationTest extends Mod303AbstractTest {
 				mod.setStatus( status );
 				MODEL303.delete(getOccam(), mod);
 				Mod303 model = MODEL303.get(getOccam(), mod.getId());
-				assertNull("Modelo no nulo!", model );
+				assertNull(model, "Modelo no nulo!");
 				return params;
 			}
 			
@@ -115,11 +115,11 @@ public class Mod303ValidationTest extends Mod303AbstractTest {
 				deleteAllModels();
 				Mod303 mod = insertMod303( params );
 				mod.setStatus(status);
-				Exception e = assertThrows("Status: " + status.getName(), AonCoreException.class, () -> {
+				Exception e = assertThrows(AonCoreException.class, () -> {
 					MODEL303.delete(getOccam(), mod);
-				});
+				},"Status: " + status.getName());
 				String expected = AonError.FISCAL_WRONG_STATUS_DELETION.format(mod.getStatus());
-				assertEquals("Wrong Exception", expected, e.getMessage());
+				assertEquals(expected, e.getMessage(),"Wrong Exception");
 				return params;
 			}
 			

@@ -2,7 +2,7 @@ package com.esferalia.aon.occam.test.json;
 
 
 import org.json.JSONObject;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.esferalia.aon.occam.api.json.AccountJSON;
 import com.esferalia.aon.occam.api.model.Account;

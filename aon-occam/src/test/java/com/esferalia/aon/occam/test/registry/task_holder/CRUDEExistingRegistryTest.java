@@ -1,6 +1,6 @@
 package com.esferalia.aon.occam.test.registry.task_holder;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.task.TaskHolder;

@@ -2,13 +2,13 @@ package com.esferalia.aon.occam.test.fiscal.mod390hf;
 
 import static com.esferalia.aon.jooq.tables.AppParam.APP_PARAM;
 import static com.esferalia.aon.jooq.tables.FsModel.FS_MODEL;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 import java.util.Objects;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.esferalia.aon.occam.api.fiscal.MODEL390HF;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalStatus;
@@ -23,10 +23,10 @@ import com.esferalia.aon.occam.test.faker.AonFaker;
 import com.esferalia.aon.occam.test.faker.AonRandom;
 import com.esferalia.aon.occam.test.fiscal.FiscalTestSuite;
 
-public class Mod390HFFinishTest extends AbstractOccamTest {
+class Mod390HFFinishTest extends AbstractOccamTest {
 	
 	@Test
-	public void testFinalize() {
+	void testFinalize() {
 		Integer creditorId = null;
 		Creditor ar = getConfiguration().fiscal().getAdmonCreditor();
 		if ( ar != null) {
@@ -62,23 +62,23 @@ public class Mod390HFFinishTest extends AbstractOccamTest {
 					.orElse(null);
 			mod = MODEL390HF.initializeForFinish(getOccam(), mod);
 			double result0 = mod.getDeclarationResult();
-			assertNotNull("Mod390HF. Tipo resultado NULL",mod.getDeclarationResultType());
+			assertNotNull(mod.getDeclarationResultType(), "Mod390HF. Tipo resultado NULL");
 			boolean finance = mod.getDeclarationResultType().mustCreateFinance(); 
 			MODEL390HF.markAsFinished(getOccam(), mod);
 			Mod390HF modBis = MODEL390HF.get(getOccam(), model.getId());
 			FiscalTestSuite.printModel(modBis);
-			assertEquals("Status not FINISHED", FiscalStatus.FINISHED, modBis.getStatus());
+			assertEquals(FiscalStatus.FINISHED, modBis.getStatus(), "Status not FINISHED");
 			Asserts.assertEqualsDouble("Mod303. Resultado no coincide."
 					, result0
 					, modBis.getDeclarationResult());
-			assertNotNull("Mod303. Tipo resultado NULL",modBis.getDeclarationResultType());
+			assertNotNull(modBis.getDeclarationResultType(),"Mod303. Tipo resultado NULL");
 			if (finance) {
-				assertNotNull("Mod303. Finance NULL",modBis.getFinance());	
+				assertNotNull(modBis.getFinance(),"Mod303. Finance NULL");	
 			} else {
-				assertNull("Mod303. Finance NOT NULL",modBis.getFinance());
+				assertNull(modBis.getFinance(),"Mod303. Finance NOT NULL");
 			}
 			if (oldFinanceId != null) {
-				assertNull("Mod303. PREVIOUS Finance ["+ oldFinanceId +"] NOT DELETED!", FinanceDAO.getFinance(ctx, oldFinanceId));	
+				assertNull(FinanceDAO.getFinance(ctx, oldFinanceId),"Mod303. PREVIOUS Finance ["+ oldFinanceId +"] NOT DELETED!");	
 			}
 		}
 	}

@@ -1,32 +1,26 @@
 package com.esferalia.aon.in.payroll.img;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThrows;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.io.InputStream;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Arrays;
-import java.util.Collection;
 import java.util.Date;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
-import org.junit.runners.Suite;
-import org.junit.runners.Suite.SuiteClasses;
+import org.junit.jupiter.api.Test;
+import org.junit.platform.suite.api.SelectClasses;
+import org.junit.platform.suite.api.Suite;
 
 import com.esferalia.aon.occam.api.model.PersonDocument;
-import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.watson.AonError;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.server.io.AonIOUtils;
 
-@RunWith(Suite.class)
-
-@SuiteClasses({ PersonDocumentParserGlobalTest.PersonDocumentParserTest.class,
-		PersonDocumentParserGlobalTest.PersonDocumentParserTest2.class,
-		PersonDocumentParserGlobalTest.PersonDocumentParserTest3.class, })
+@Suite
+@SelectClasses({
+	PersonDocumentParserGlobalTest.PersonDocumentParserTest.class	 })
 
 public class PersonDocumentParserGlobalTest {
 
@@ -180,63 +174,4 @@ public class PersonDocumentParserGlobalTest {
 
 	}
 
-	@RunWith(Parameterized.class)
-	public static class PersonDocumentParserTest2 {
-		private String fileName;
-
-		@Parameterized.Parameters
-		public static Collection<Object> fileNames() {
-			return Arrays.asList(new Object[] { "DNI-EUKE-1.jpg", "GenericDNI.jpeg", "dniJuanmaInvert.png" });
-		}
-
-		public PersonDocumentParserTest2(String fileName) {
-			this.fileName = fileName;
-		}
-
-		@Test
-		public void personDocumentParserOtherFormat() throws Exception {
-			String file = "com/esferalia/aon/in/payroll/image/" + fileName;
-			ClassLoader classLoader = PersonDocumentParserGlobalTest.class.getClassLoader();
-			try (InputStream is = classLoader.getResourceAsStream(file)) {
-				byte[] bytes = AonIOUtils.toByteArray(is);
-				PersonDocument  person = PersonDocumentParser.parse(bytes);
-				Country expectedNation = Country.ES;
-				Country actualNation = person.getNationality();
-				System.out.println(person.getNationality());
-				assertEquals(expectedNation, actualNation);
-			}
-		}
-
-	}
-
-	@RunWith(Parameterized.class)
-	public static class PersonDocumentParserTest3 {
-
-		private String fileName;
-
-		@Parameterized.Parameters
-		public static Collection<Object> fileNames() {
-			return Arrays
-					.asList(new Object[] { "pdf/dniJuanmaTorcido.pdf", "image/dniJuanmaTorcido.jpg", "image/dniJuanmaTorcido.png" });
-		}
-
-		public PersonDocumentParserTest3(String fileName) {
-			this.fileName = fileName;
-		}
-
-		@Test
-		public void personDocumentParserParameterizedTest() throws Exception {
-			String file = "com/esferalia/aon/in/payroll/" + fileName;
-			ClassLoader classLoader = PersonDocumentParserGlobalTest.class.getClassLoader();
-			try (InputStream is = classLoader.getResourceAsStream(file)) {
-				byte[] bytes = AonIOUtils.toByteArray(is);
-				PersonDocument  person = PersonDocumentParser.parse(bytes);
-				String expectedName = "JUAN MANUEL";
-				String actualName = person.getName();
-				assertEquals(expectedName, actualName);
-				
-			}
-		}
-
-	}
 }

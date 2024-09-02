@@ -1,7 +1,7 @@
 package com.esferalia.aon.occam.test.finance.invoice;
 
 import org.json.JSONObject;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.esferalia.aon.occam.api.json.invoice.InvoiceJSON;
 import com.esferalia.aon.occam.api.model.finance.Invoice;

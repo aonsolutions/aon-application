@@ -2,13 +2,13 @@ package com.esferalia.aon.occam.test.fiscal.mod303;
 
 import static com.esferalia.aon.jooq.tables.AppParam.APP_PARAM;
 import static com.esferalia.aon.jooq.tables.FsModel.FS_MODEL;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 import java.util.Objects;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.esferalia.aon.occam.api.fiscal.MODEL303;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalStatus;
@@ -22,10 +22,10 @@ import com.esferalia.aon.occam.test.faker.AonFaker;
 import com.esferalia.aon.occam.test.faker.AonRandom;
 import com.esferalia.aon.occam.test.fiscal.FiscalTestSuite;
 
-public class Mod303FinishTest extends Mod303AbstractTest {
+class Mod303FinishTest extends Mod303AbstractTest {
 	
 	@Test
-	public void testFinalize() {
+	void testFinalize() {
 		Integer creditorId = null;
 		Creditor ar = getConfiguration().fiscal().getAdmonCreditor();
 		if ( ar != null) {
@@ -61,23 +61,23 @@ public class Mod303FinishTest extends Mod303AbstractTest {
 					.orElse(null);
 			mod303 = MODEL303.initializeForFinish(getOccam(), mod303);
 			double result0 = mod303.getDeclarationResult();
-			assertNotNull("Mod303. Tipo resultado NULL",mod303.getDeclarationResultType());
+			assertNotNull(mod303.getDeclarationResultType(),"Mod303. Tipo resultado NULL");
 			boolean finance = mod303.getDeclarationResultType().mustCreateFinance(); 
 			MODEL303.markAsFinished(getOccam(), mod303);
 			Mod303 mod303Bis = MODEL303.get(getOccam(), model.getId());
 			FiscalTestSuite.printModel(mod303Bis);
-			assertEquals("Status not FINISHED", FiscalStatus.FINISHED, mod303Bis.getStatus());
+			assertEquals(FiscalStatus.FINISHED, mod303Bis.getStatus(),"Status not FINISHED");
 			Asserts.assertEqualsDouble("Mod303. Resultado no coincide."
 					, result0
 					, mod303Bis.getDeclarationResult());
-			assertNotNull("Mod303. Tipo resultado NULL",mod303Bis.getDeclarationResultType());
+			assertNotNull(mod303Bis.getDeclarationResultType(),"Mod303. Tipo resultado NULL");
 			if (finance) {
-				assertNotNull("Mod303. Finance NULL",mod303Bis.getFinance());	
+				assertNotNull(mod303Bis.getFinance(),"Mod303. Finance NULL");	
 			} else {
-				assertNull("Mod303. Finance NOT NULL",mod303Bis.getFinance());
+				assertNull(mod303Bis.getFinance(),"Mod303. Finance NOT NULL");
 			}
 			if (oldFinanceId != null) {
-				assertNull("Mod303. PREVIOUS Finance ["+ oldFinanceId +"] NOT DELETED!", FinanceDAO.getFinance(ctx, oldFinanceId));	
+				assertNull(FinanceDAO.getFinance(ctx, oldFinanceId),"Mod303. PREVIOUS Finance ["+ oldFinanceId +"] NOT DELETED!");	
 			}
 		}
 	}

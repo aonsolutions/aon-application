@@ -1,9 +1,10 @@
 package com.esferalia.aon.in.payroll.pdf;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -15,17 +16,16 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Map;
 
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
 import com.esferalia.aon.payroll.SalaryBuilder;
 import com.esferalia.aon.salary.deduction.IDeduction;
 import com.esferalia.aon.salary.expression.ITimedVariable;
 import com.esferalia.aon.salary.payment.IPayment;
 
-@Ignore
+@Disabled
 public class PdfTest {
-//	@Ignore
 	@Test
 	public void testOmega() throws IOException, UnknownPDFException {
 		try ( InputStream is = PdfTest.class.getResourceAsStream("omega/COVAIN.pdf") ){
@@ -68,7 +68,7 @@ public class PdfTest {
 	
 	
 	@Test
-	@Ignore
+	@Disabled
 	public void testDsi() throws IOException, UnknownPDFException{
 		try (InputStream is = PdfTest.class.getResourceAsStream("dsi_nomina_1pag.pdf")){
 			SalaryPDFParser.parse(is, new SalaryBuilder() {
@@ -429,7 +429,7 @@ public class PdfTest {
 	
 	
 	@Test
-	@Ignore
+	@Disabled
 	public void testDsiAt() throws IOException, UnknownPDFException{
 		try (InputStream is = PdfTest.class.getResourceAsStream("dsi_at.pdf")){
 			SalaryPDFParser.parse(is, new SalaryBuilder() {
@@ -796,7 +796,6 @@ public class PdfTest {
 	}
 	
 	@Test
-	//@Ignore
 	public void testA3() throws IOException, UnknownPDFException {
 		try ( InputStream is = PdfTest.class.getResourceAsStream("a3.pdf") ){
 			SalaryPDFParser.parse(is, new SalaryBuilder() {
@@ -1229,7 +1228,6 @@ public class PdfTest {
 	
 	
 	@Test
-	//@Ignore
 	public void testA3New() throws IOException, UnknownPDFException {
 		try ( InputStream is = PdfTest.class.getResourceAsStream("learning2020.pdf") ){
 			SalaryPDFParser.parse(is, new SalaryBuilder());
@@ -1237,7 +1235,6 @@ public class PdfTest {
 	}
 	
 	@Test
-	//@Ignore
 	public void testA3Muchos() throws IOException, UnknownPDFException {
 		try ( InputStream is = PdfTest.class.getResourceAsStream("learning2020.pdf") ){
 			SalaryPDFParser.parse(is, new SalaryBuilder() {
@@ -1255,7 +1252,6 @@ public class PdfTest {
 	}
 	
 	@Test
-	//@Ignore
 	public void testA3Demasiados() throws IOException, UnknownPDFException {
 		try ( InputStream is = PdfTest.class.getResourceAsStream("NOMINAS UN LUGAR 2020.pdf") ){
 			SalaryPDFParser.parse(is, new SalaryBuilder() {
@@ -1272,7 +1268,7 @@ public class PdfTest {
 	}
 	
 	@Test
-	@Ignore
+	@Disabled
 	public void testA3Excessive() throws IOException, UnknownPDFException {
 		try ( InputStream is = PdfTest.class.getResourceAsStream("NOMINAS ATSP 2020.pdf") ){
 			SalaryPDFParser.parse(is, new SalaryBuilder() {
@@ -1288,17 +1284,8 @@ public class PdfTest {
 		}
 	}
 	
-//	@Test
-//	@Ignore
-//	public void hfhffh() throws IOException, UnknownPDFException {
-//		try ( InputStream is = PdfTest.class.getResourceAsStream("dsi_paga_extra.pdf") ){
-//			SalaryPDFParser.parse(is, new SalaryBuilder());
-//		}
-//	}
-	
 	
 	@Test
-	//@Ignore
 	public void testAplifisa() throws IOException, UnknownPDFException {
 		try ( InputStream is = PdfTest.class.getResourceAsStream("aplifisa/nomina.pdf") ){
 			SalaryPDFParser.parse(is, new SalaryBuilder() {
@@ -1674,7 +1661,6 @@ public class PdfTest {
 		}
 	}
 	@Test
-	//@Ignore
 	public void testAplifisa2() throws IOException, UnknownPDFException {
 		try ( InputStream is = PdfTest.class.getResourceAsStream("aplifisa/aplifisa_para_probar.pdf") ){
 			SalaryPDFParser.parse(is, new SalaryBuilder() {
@@ -1801,7 +1787,6 @@ public class PdfTest {
 	}
 	
 	@Test
-	//@Ignore
 	public void testAplifisa3() throws IOException, UnknownPDFException {
 		try ( InputStream is = PdfTest.class.getResourceAsStream("aplifisa/1-Nominas otra asesoria capital en20.pdf") ){
 			SalaryPDFParser.parse(is, new SalaryBuilder() {
@@ -1811,7 +1796,6 @@ public class PdfTest {
 	}
 	
 	@Test
-	//@Ignore
 	public void testAplifisa2000() throws IOException, UnknownPDFException {
 		try ( InputStream is = PdfTest.class.getResourceAsStream("aplifisa/nominas 2020.pdf") ){
 			SalaryPDFParser.parse(is, new SalaryBuilder() {
@@ -1822,7 +1806,6 @@ public class PdfTest {
 	
 	
 	@Test
-	//@Ignore
 	public void testAplifisaOmar() throws IOException, UnknownPDFException {
 		try ( InputStream is = PdfTest.class.getResourceAsStream("aplifisa/nominaOmar.pdf") ){
 			SalaryPDFParser.parse(is, new SalaryBuilder() {
@@ -2105,7 +2088,6 @@ public class PdfTest {
 	
 	
 	@Test
-	//@Ignore
 	public void testNPE() throws IOException, UnknownPDFException {
 		try ( InputStream is = PdfTest.class.getResourceAsStream("aplifisa/nominaNullPointer.pdf") ){
 			SalaryPDFParser.parse(is, new SalaryBuilder() {
@@ -2508,7 +2490,6 @@ public class PdfTest {
 	}
 	
 	@Test
-	//@Ignore
 	public void testAplifisaSettle() throws IOException, UnknownPDFException {
 		try ( InputStream is = PdfTest.class.getResourceAsStream("aplifisa/nomrec.pdf") ){
 			SalaryPDFParser.parse(is, new SalaryBuilder() {
@@ -2636,7 +2617,6 @@ public class PdfTest {
 	
 	
 	@Test
-	//@Ignore
 	public void testIRPF() throws IOException, UnknownPDFException {
 		try ( InputStream is = PdfTest.class.getResourceAsStream("aplifisa/nomina_testeo.pdf") ){
 			SalaryPDFParser.parse(is, new SalaryBuilder() {
@@ -2765,7 +2745,7 @@ public class PdfTest {
 	
 
 	@Test
-	@Ignore
+	@Disabled
 	public void testAltai() throws IOException, UnknownPDFException {
 		try ( InputStream is = PdfTest.class.getResourceAsStream("aplifisa/EXTRA DIC.pdf") ){
 			SalaryPDFParser.parse(is, new SalaryBuilder() {
@@ -2779,7 +2759,6 @@ public class PdfTest {
 	}
 
 	@Test
-	//@Ignore
 	public void test260() throws IOException, UnknownPDFException {
 		try ( InputStream is = PdfTest.class.getResourceAsStream("nomina260.pdf") ){
 			SalaryPDFParser.parse(is, new SalaryBuilder() {

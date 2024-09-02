@@ -1,10 +1,10 @@
 package com.esferalia.aon.occam.test.registry.dirstaff;
 
 import static com.esferalia.aon.jooq.tables.RdirStaff.RDIR_STAFF;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.esferalia.aon.occam.api.model.registry.RDirStaff;
 import com.esferalia.aon.occam.impl.jooq.dao.RDirStaffDAO;

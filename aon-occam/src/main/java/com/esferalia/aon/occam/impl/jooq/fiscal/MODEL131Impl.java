@@ -66,6 +66,16 @@ public class MODEL131Impl implements IMODEL131 {
 			configuration -> Mod131DAO.markAsCustomerCheck(ctx, mod131));		
 	}
 	@Override
+	public Mod131 markAsCustomerAccepted(AONContext ctx, Mod131 mod131){
+		return ctx.getDslContext().transactionResult(
+			configuration -> Mod131DAO.markAsCustomerAccepted(ctx, mod131));		
+	}
+	@Override
+	public Mod131 markAsCustomerCheckRejected(AONContext ctx, Mod131 mod131, String reason) {
+		return ctx.getDslContext().transactionResult(
+				configuration -> Mod131DAO.markAsCustomerRejected(ctx, mod131, reason));		
+	}
+	@Override
 	public Mod131 markAsPending(AONContext ctx, Mod131 mod131){
 		return ctx.getDslContext().transactionResult(
 			configuration -> Mod131DAO.markAsPending(ctx, mod131));		
@@ -95,6 +105,4 @@ public class MODEL131Impl implements IMODEL131 {
 	public Mod131 aeatPresentation(AONContext ctx, Mod131 mod131, String aeatResponse) {
 		return Mod131DAO.aeatPresentation(ctx, mod131, aeatResponse);
 	}
-
-
 }

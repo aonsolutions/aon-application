@@ -1,10 +1,10 @@
 package com.esferalia.aon.occam.test.fiscal.model;
 
 import static com.esferalia.aon.jooq.tables.FsModel.FS_MODEL;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModel;
 import com.esferalia.aon.occam.impl.jooq.dao.FiscalModelValidation;
@@ -29,7 +29,7 @@ public class ValidationZipLengthTest extends AbstractOccamTest {
 			FiscalModelDAO.save(ctx, model);
 	    });
 		String expected = AonError.INVALID_LENGTH.format( FiscalModelValidation.ZIP, length );
-		assertEquals("Wrong Exception", expected, e.getMessage());
+		assertEquals(expected, e.getMessage(),"Wrong Exception");
 	}
 	
 }

@@ -3,7 +3,7 @@ package com.esferalia.aon.occam.test.fiscal.mod130;
 import java.util.Arrays;
 import java.util.Date;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.esferalia.aon.occam.api.fiscal.MODEL130;
 import com.esferalia.aon.occam.api.model.fiscal.Mod130;

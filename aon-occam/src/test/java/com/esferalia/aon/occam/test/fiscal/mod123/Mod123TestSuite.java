@@ -1,64 +1,24 @@
 package com.esferalia.aon.occam.test.fiscal.mod123;
 
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
-import org.junit.runners.Suite.SuiteClasses;
+import org.junit.platform.suite.api.SelectClasses;
+import org.junit.platform.suite.api.Suite;
 
-import com.esferalia.aon.occam.test.fiscal.invoice.InsertRandomInvoicesTest;
-
-@RunWith(Suite.class)
-@SuiteClasses({
-	// MVEL expresions syntax check en las declaraciones
+@Suite
+@SelectClasses({
 	Mod123ExpressionsTest.class,
 	Mod123ScriptTest.class,
 	
-	// Modelos mensuale
-	Mod123ReopenTest.class,
-	Mod123DeleteTest.class,
-	InsertRandomInvoicesTest.class,
-	Mod123InsertMonthlyTest.class,
-	Mod123FinishTest.class,
+	Mod123InsertMonthlySuite.class,
+	Mod123InsertMonthlyComplementarySuite.class,
+	Mod123InsertMonthlyReplacementSuite.class,
 	
-	InsertRandomInvoicesTest.class,
-	Mod123InsertMonthlyComplementaryTest.class,
-	Mod123FinishTest.class,
+	Mod123InsertQuarterlySuite.class,
+	Mod123InsertQuarterlyComplementarySuite.class,
+	Mod123InsertQuarterlyReplacementSuite.class,
 	
-	InsertRandomInvoicesTest.class,
-	Mod123InsertMonthlyReplacementTest.class,
-	Mod123RoundedAmountsTest.class,
-	
-	// Modelos trimestrales
-	Mod123ReopenTest.class,
-	Mod123DeleteTest.class,
-	InsertRandomInvoicesTest.class,
-	Mod123InsertQuarterlyTest.class,
-	Mod123FinishTest.class,
-	
-	InsertRandomInvoicesTest.class,
-	Mod123InsertQuarterlyComplementaryTest.class,
-	Mod123FinishTest.class,
-	
-	InsertRandomInvoicesTest.class,
-	Mod123InsertQuarterlyReplacementTest.class,
-	Mod123RoundedAmountsTest.class,
-	
-	// Flujo de estados
-	Mod123ReopenTest.class,					// Pendiente
-	Mod123FinishTest.class,					// Finalizado
-	Mod123SentTest.class,					// Presentado
-//	// Flujo de estados
-	Mod123ReopenTest.class,					// Pendiente
-	Mod123MarkAsCustomerCheckTest.class,	// Enviado a cliente
-	Mod123MarkAsCustomerAcceptedTest.class,	// Aceptado por cliente
-	Mod123SentTest.class,					// Presentado
-	// Flujo de estados 
-	Mod123ReopenTest.class,					// Pendiente
-	Mod123MarkAsCustomerCheckTest.class,	// Enviado a cliente
-	Mod123MarkAsCustomerRejectedTest.class, // Rechazado por cliente
-	Mod123MarkAsCustomerCheckTest.class,	// Enviado a cliente
-	Mod123MarkAsCustomerAcceptedTest.class,	// Aceptado por cliente
-	Mod123SentTest.class,					// Presentado
-	
+	Mod123StatusFlow1Suite.class,
+	Mod123StatusFlow2Suite.class,
+	Mod123StatusFlow3Suite.class,
 })
 public class Mod123TestSuite {
 

@@ -11,12 +11,11 @@ import static com.esferalia.aon.jooq.tables.Person.PERSON;
 import static com.esferalia.aon.jooq.tables.Raddress.RADDRESS;
 import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
 import static com.esferalia.aon.jooq.tables.Workplace.WORKPLACE;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -33,7 +32,7 @@ import org.jooq.Record;
 import org.jooq.conf.ParamType;
 import org.jooq.conf.Settings;
 import org.jooq.impl.DSL;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.esferalia.aon.in.payroll.pdf.UnknownPDFException;
 import com.esferalia.aon.jooq.Keys;
@@ -49,8 +48,6 @@ public class IvlTest extends AbstractSQLTestCase {
 	    
 	    IvlcccParser.parse(is, new IvlParserListener() {
 		
-		private int personCount = 0;
-		private int contractCount = 0;
 		private String employeeName = null ;
 		
 		@Override
@@ -75,11 +72,9 @@ public class IvlTest extends AbstractSQLTestCase {
 		@Override
 		public void onEmployee(String nafProvince, String nafNumber, String docType, String docNumber,
 			String employeeName) {
-		    personCount++;
-		    assertFalse(docNumber, docNumber.startsWith("0"));
-		    assertFalse(employeeName, employeeName.contains("---"));
+		    assertFalse(docNumber.startsWith("0"),docNumber);
+		    assertFalse(employeeName.contains("---"),employeeName);
 		    assertNull("ERROR : " + this.employeeName + ", without contracts ", this.employeeName);
-		    this.employeeName = employeeName;
 		}
 		
 		@Override
@@ -87,7 +82,7 @@ public class IvlTest extends AbstractSQLTestCase {
 			Date efectiveEndDate, String quoteGroup, String monthly, String tc2, Double partialFactor, Double it, Double ims, Integer quoteDays) {
 		    
 		    if ( "100".equals(tc2) ) {
-			assertNull(employeeName + " : 100- INDEFINIDO, TIEMPO COMPLETO, ORDINARIO", partialFactor);
+		    	assertNull(partialFactor, employeeName + " : 100- INDEFINIDO, TIEMPO COMPLETO, ORDINARIO");
 		    }
 		    
 		    Map<String, Date> endDates = new HashMap<String, Date>();
@@ -100,13 +95,11 @@ public class IvlTest extends AbstractSQLTestCase {
 		    
 		    endDates.forEach(( name, pdfDate ) -> {
 			if ( name.equalsIgnoreCase(employeeName) ) {
-			    assertEquals(name, pdfDate, realEndDate );
-			    assertEquals(name, pdfDate, efectiveEndDate);
+			    assertEquals(pdfDate, realEndDate ,name);
+			    assertEquals(pdfDate, efectiveEndDate,name);
 			}
 		    });
 			
-		    contractCount++;
-		    System.out.printf("persons : %d = contracts: %d\r\n", personCount , contractCount );
 		    this.employeeName = null;
 		}
 	    });
@@ -118,8 +111,6 @@ public class IvlTest extends AbstractSQLTestCase {
 	try (InputStream is = IvlTest.class.getResourceAsStream("ivlcccII.pdf")) {
 	    IvlcccParser.parse(is, new IvlParserListener() {
 		
-		private int personCount = 0;
-		private int contractCount = 0;
 		private String employeeName = null ;
 		
 		@Override
@@ -144,23 +135,18 @@ public class IvlTest extends AbstractSQLTestCase {
 		@Override
 		public void onEmployee(String nafProvince, String nafNumber, String docType, String docNumber,
 			String employeeName) {
-		    
 		    assertNull("ERROR : " + this.employeeName + ", without contracts ", this.employeeName);
-		    this.employeeName = employeeName;
-		    personCount++;
 		}
 		
 		@Override
 		public void onEmployeeContract(Date realStartDate, Date efectiveStartDate, Date realEndDate,
 			Date efectiveEndDate, String quoteGroup, String monthly, String tc2, Double partialFactor, Double it, Double ims, Integer quoteDays) {
 		    if ( "100".equals(tc2) ) {
-			assertNull(employeeName + " : 100 - INDEFINIDO, TIEMPO COMPLETO, ORDINARIO", partialFactor);
+			assertNull(partialFactor, employeeName + " : 100 - INDEFINIDO, TIEMPO COMPLETO, ORDINARIO");
 		    } else if ("501".equals(tc2) ) {
-			//assertNotNull(employeeName + " : 501 - DURACION DETERMINADA, TIEMPO PARCIAL, OBRA O SERVICIO DETERMINADO", partialFactor);
+		    	// assertNotNull(employeeName + " : 501 - DURACION DETERMINADA, TIEMPO PARCIAL, OBRA O SERVICIO DETERMINADO", partialFactor);
 		    }
 		    this.employeeName = null;
-		    contractCount++;
-		    System.out.printf("persons : %d = contracts: %d\r\n", personCount , contractCount );
 		}
 	    });
 	}
@@ -276,7 +262,7 @@ public class IvlTest extends AbstractSQLTestCase {
 	    .where(PERSON.DOMAIN.eq(domainId))
 	    .fetchOne(DSL.count());
 	    
-	    assertTrue("CONTRACTS : " + contractCount + ", PERSONS : " + personCount ,  contractCount >= personCount);
+	    assertTrue(contractCount >= personCount, "CONTRACTS : " + contractCount + ", PERSONS : " + personCount );
 	    
 	    
 	    dslContext

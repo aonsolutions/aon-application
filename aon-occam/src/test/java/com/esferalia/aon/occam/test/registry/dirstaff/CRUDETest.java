@@ -1,20 +1,20 @@
 package com.esferalia.aon.occam.test.registry.dirstaff;
 
-import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
-import org.junit.Test;
+import org.junit.jupiter.api.RepeatedTest;
+import org.junit.jupiter.api.Test;
 
 import com.esferalia.aon.occam.api.model.registry.RDirStaff;
 import com.esferalia.aon.occam.impl.jooq.dao.RDirStaffDAO;
 import com.esferalia.aon.occam.test.AbstractOccamTest;
 import com.esferalia.aon.occam.test.Asserts;
-import com.esferalia.aon.occam.test.Repeat;
 import com.esferalia.aon.occam.test.faker.AonFaker;
 
 public class CRUDETest extends AbstractOccamTest {
 
 	@Test
-	@Repeat( 50 )
+	@RepeatedTest( 50 )
 	public void test() {
 		RDirStaff rDirStaff = AonFaker.getRDirStaff( ctx ); 
 		rDirStaff = RDirStaffDAO.save(ctx, rDirStaff);

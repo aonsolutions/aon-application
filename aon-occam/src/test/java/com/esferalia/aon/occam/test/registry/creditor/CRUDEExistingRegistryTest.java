@@ -1,6 +1,6 @@
 package com.esferalia.aon.occam.test.registry.creditor;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.esferalia.aon.occam.api.model.registry.Creditor;
 import com.esferalia.aon.occam.api.model.registry.Registry;

@@ -2,13 +2,12 @@ package com.esferalia.aon.occam.test.fiscal.mod390hf;
 
 import java.util.Date;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.esferalia.aon.occam.api.fiscal.MODEL390HF;
 import com.esferalia.aon.occam.api.model.fiscal.Mod390HF;
 import com.esferalia.aon.occam.api.model.type.Administration;
 import com.esferalia.aon.occam.test.AbstractOccamTest;
-import com.esferalia.aon.occam.test.faker.AonFaker;
 import com.esferalia.aon.occam.test.faker.AonRandom;
 import com.esferalia.aon.occam.test.faker.FiscalFaker;
 import com.esferalia.aon.occam.test.faker.FiscalFaker.FiscalFakerParams;

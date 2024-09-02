@@ -1,13 +1,14 @@
 package com.esferalia.aon.occam.test.fiscal.mod303;
 
-import static org.junit.Assert.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.util.Arrays;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.esferalia.aon.occam.api.fiscal.MODEL303;
 import com.esferalia.aon.occam.api.model.finance.EnumVisitors.IFiscalModelKeyInfoVisitor;
@@ -74,14 +75,13 @@ import com.esferalia.aon.occam.api.model.type.Period;
 import com.esferalia.aon.occam.impl.jooq.dao.fiscal.mod303.Mod303Declaration;
 import com.esferalia.aon.occam.test.faker.FiscalFaker;
 import com.esferalia.aon.occam.test.faker.FiscalFaker.FiscalFakerParams;
-import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
-public class Mod303ScriptTest extends Mod303AbstractTest {
+class Mod303ScriptTest extends Mod303AbstractTest {
 	
 	@Test
-	public void testCommonTerritoryExpressions() {
+	void testCommonTerritoryExpressions() {
 		FiscalFakerParams params = new FiscalFakerParams(ctx,getOccam())
 				.setIssueDate(getTestDate())
 				.setMonthly(true)
@@ -113,100 +113,79 @@ public class Mod303ScriptTest extends Mod303AbstractTest {
 	}
 	
 	@Test
-	public void testGipuzkoaExpressions() {
+	void testGipuzkoaExpressions() {
 		FiscalFakerParams params = new FiscalFakerParams(ctx,getOccam())
 				.setIssueDate(getTestDate())
 				.setMonthly(true)
 				.setAdministration(Administration.GIPUZKOA);
 		
-		Period p = Period.getMonthlyPeriod(AonDateUtils.getMonth(params.getIssueDate()));
-//		if (p.isLastPeriod()) {
-//			assertThrows(AonCoreException.class, () -> {
-//				FiscalFaker.getMod303(params);
-//			});
-//		} else {
-			final Mod303 mod303 = FiscalFaker.getMod303(params);
-			MODEL303.calculate(getOccam(), mod303);
-			
-			test( mod303,Model3032017GIPUZKOAAdditionalDataScript.values() );
-			test( mod303,Model3032017GIPUZKOAResultScript.values() );
-			test( mod303,Model3032017GIPUZKOARScript1.values() );
-			test( mod303,Model3032017GIPUZKOAPrintScript.values() );
-			test( mod303,Model3032021GIPUZKOAAdditionalDataScript.values() );
-			test( mod303,Model3032022GIPUZKOAAdditionalDataScript.values() );
-			test( mod303,Model3032022GIPUZKOAResultScript.values() );
-			test( mod303,Model3032022GIPUZKOARScript1.values() );
-			test( mod303,Model3032023GIPUZKOARScript1.values() );
-			test( mod303,Model3032023GIPUZKOAPrintScript.values() );
-//		}
+		final Mod303 mod303 = FiscalFaker.getMod303(params);
+		MODEL303.calculate(getOccam(), mod303);
+		
+		test( mod303,Model3032017GIPUZKOAAdditionalDataScript.values() );
+		test( mod303,Model3032017GIPUZKOAResultScript.values() );
+		test( mod303,Model3032017GIPUZKOARScript1.values() );
+		test( mod303,Model3032017GIPUZKOAPrintScript.values() );
+		test( mod303,Model3032021GIPUZKOAAdditionalDataScript.values() );
+		test( mod303,Model3032022GIPUZKOAAdditionalDataScript.values() );
+		test( mod303,Model3032022GIPUZKOAResultScript.values() );
+		test( mod303,Model3032022GIPUZKOARScript1.values() );
+		test( mod303,Model3032023GIPUZKOARScript1.values() );
+		test( mod303,Model3032023GIPUZKOAPrintScript.values() );
 	}
 	
 	@Test
-	public void testBizkaiaExpressions() {
+	void testBizkaiaExpressions() {
 		FiscalFakerParams params = new FiscalFakerParams(ctx,getOccam())
 				.setIssueDate(AonDateUtils.getYearFirstDay( getTestDate()))
 				.setMonthly(true)
 				.setAdministration(Administration.BIZKAIA);
 
-		Period p = Period.getMonthlyPeriod(AonDateUtils.getMonth(params.getIssueDate()));
-//		if (p.isLastPeriod()) {
-//			assertThrows(AonCoreException.class, () -> {
-//				FiscalFaker.getMod303(params);
-//			});
-//		} else {
-			Mod303 mod303 = FiscalFaker.getMod303(params);
-			MODEL303.calculate(getOccam(), mod303);
-			 
-			test( mod303,Model3032017BIZKAIAAdditionalDataScript.values() );
-			test( mod303,Model3032017BIZKAIAPrintScript.values() );
-			test( mod303,Model3032017BIZKAIAScript1.values() );
-			test( mod303,Model3032017BIZKAIAScript2.values() );
-			test( mod303,Model3032017BIZKAIASpecificOperationsScript.values() );
-			test( mod303,Model3032022BIZKAIAAdditionalDataScript.values() );
-			test( mod303,Model3032022BIZKAIAScript1.values() );
-			test( mod303,Model3032022BIZKAIAScript2.values() );
-			test( mod303,Model3032022BIZKAIASpecificOperationsScript.values() );
-			test( mod303,Model3032023BIZKAIAScript.values() );
-			test( mod303,Model3032023BIZKAIAAdditionalDataScript.values() );
-//		}			
+		Mod303 mod303 = FiscalFaker.getMod303(params);
+		MODEL303.calculate(getOccam(), mod303);
+		 
+		test( mod303,Model3032017BIZKAIAAdditionalDataScript.values() );
+		test( mod303,Model3032017BIZKAIAPrintScript.values() );
+		test( mod303,Model3032017BIZKAIAScript1.values() );
+		test( mod303,Model3032017BIZKAIAScript2.values() );
+		test( mod303,Model3032017BIZKAIASpecificOperationsScript.values() );
+		test( mod303,Model3032022BIZKAIAAdditionalDataScript.values() );
+		test( mod303,Model3032022BIZKAIAScript1.values() );
+		test( mod303,Model3032022BIZKAIAScript2.values() );
+		test( mod303,Model3032022BIZKAIASpecificOperationsScript.values() );
+		test( mod303,Model3032023BIZKAIAScript.values() );
+		test( mod303,Model3032023BIZKAIAAdditionalDataScript.values() );
 	}
 	
 	@Test
-	public void testArabaExpressions() {
+	void testArabaExpressions() {
 		FiscalFakerParams params = new FiscalFakerParams(ctx,getOccam())
 				.setIssueDate(getTestDate())
 				.setMonthly(true)
 				.setAdministration(Administration.ALAVA);
-		Period p = Period.getMonthlyPeriod(AonDateUtils.getMonth(params.getIssueDate()));
-//		if (p.isLastPeriod()) {
-//			assertThrows(AonCoreException.class, () -> {
-//				FiscalFaker.getMod303(params);
-//			});
-//		} else {
-			Mod303 mod303 = FiscalFaker.getMod303(params);
-			mod303.setPeriod(
-				mod303.isLastPeriod() 
-						?Period.values()[(mod303.getPeriod().ordinal()-1)]
-						:mod303.getPeriod()
-			);
-			MODEL303.calculate(getOccam(), mod303);
-			
-			test( mod303,Model3032017ARABAAdditionalDataScript.values() );
-			test( mod303,Model3032017ARABAResultScript.values() );
-			test( mod303,Model3032017ARABARScript1.values() );
-			test( mod303,Model3032017ARABAScript2.values() );
-			test( mod303,Model3032019ARABAScript2.values() );
-			test( mod303,Model3032022ARABAAdditionalDataScript.values() );
-			test( mod303,Model3032022ARABAResultScript.values() );
-			test( mod303,Model3032022ARABARScript1.values() );
-			test( mod303,Model3032022ARABAScript2.values() );
-			test( mod303,Model3032023ARABARScript1.values() );
-			test( mod303,Model3032023ARABAPrintScript.values() );
-//		}
+		Mod303 mod303 = FiscalFaker.getMod303(params);
+		mod303.setPeriod(
+			mod303.isLastPeriod() 
+					?Period.values()[(mod303.getPeriod().ordinal()-1)]
+					:mod303.getPeriod()
+		);
+		MODEL303.calculate(getOccam(), mod303);
+		
+		test( mod303,Model3032017ARABAAdditionalDataScript.values() );
+		test( mod303,Model3032017ARABAResultScript.values() );
+		test( mod303,Model3032017ARABARScript1.values() );
+		test( mod303,Model3032017ARABAScript2.values() );
+		test( mod303,Model3032019ARABAScript2.values() );
+		test( mod303,Model3032022ARABAAdditionalDataScript.values() );
+		test( mod303,Model3032022ARABAResultScript.values() );
+		test( mod303,Model3032022ARABARScript1.values() );
+		test( mod303,Model3032022ARABAScript2.values() );
+		test( mod303,Model3032023ARABARScript1.values() );
+		test( mod303,Model3032023ARABAPrintScript.values() );
 	}
 	
 	@Test
-	public void testNavarraExpressions() {
+	void testNavarraExpressions() {
 		FiscalFakerParams params = new FiscalFakerParams(ctx,getOccam())
 				.setIssueDate(getTestDate())
 				.setMonthly(true)
@@ -229,7 +208,7 @@ public class Mod303ScriptTest extends Mod303AbstractTest {
 									
 									private String arrayNotNull() {
 										JSONArray array = new JSONArray(info);
-										Assert.assertNotNull(array);
+										assertNotNull(array);
 										return null;
 									}
 			
@@ -245,19 +224,19 @@ public class Mod303ScriptTest extends Mod303AbstractTest {
 									public String visitComputeKey() {
 										Mod303Declaration dec = Mod303Declaration.getInstance(mod303);
 										if (key != null && dec.getRegularizationKey() != null && dec.getRegularizationKey() == key) {
-											Assert.assertNotNull(info);
-											Assert.assertNotEquals(info, "");
+											assertNotNull(info);
+											assertNotEquals("", info);
 										} else  if (key != null && Arrays.stream(dec.getCompensationExplainKeys()).anyMatch(k -> k == key)) {
-											Assert.assertNotNull(info);
-											Assert.assertNotEquals(info, "");
+											assertNotNull(info);
+											assertNotEquals("", info);
 										} else if (key != null && Arrays.stream(dec.getSamePeriodExplainKeys()).anyMatch(k -> k == key)) {
-											Assert.assertNotNull(info);
-											Assert.assertNotEquals(info, "");
+											assertNotNull(info);
+											assertNotEquals("", info);
 										} else if (key != null) {
 											JSONObject json = new JSONObject(info);
-											Assert.assertNotNull(json);
+											assertNotNull(json);
 											JSONArray array = json.getJSONArray("messages");
-											Assert.assertNotNull(array);
+											assertNotNull(array);
 										}
 			
 										return null;
@@ -265,7 +244,7 @@ public class Mod303ScriptTest extends Mod303AbstractTest {
 									
 									@Override 
 									public String visitNone() { 
-										Assert.assertEquals(AonStringUtils.EMPTY,info);
+										assertEquals(AonStringUtils.EMPTY,info);
 										return null;
 									}
 									

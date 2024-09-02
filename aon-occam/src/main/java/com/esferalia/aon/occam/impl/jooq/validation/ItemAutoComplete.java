@@ -24,7 +24,7 @@ public class ItemAutoComplete {
 	
 	public static final BiConsumer<AONContext, Item> COMPLETE_STATUS = (ctx, item) -> {
 		if (item.getStatus() == null) {
-			ctx.log().info("\t saving item: autocomplete status: " + ProductStatus.ACTIVE);
+			ctx.log().debug("\t saving item: autocomplete status: " + ProductStatus.ACTIVE);
 			item.setStatus(ProductStatus.ACTIVE);
 		}
 	};

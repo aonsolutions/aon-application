@@ -1,14 +1,13 @@
 package com.esferalia.aon.occam.test.fiscal.mod303;
 
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
-import org.junit.runners.Suite.SuiteClasses;
+import org.junit.platform.suite.api.SelectClasses;
+import org.junit.platform.suite.api.Suite;
 
 import com.esferalia.aon.occam.test.fiscal.mod390hf.Mod390HFDeleteTest;
 import com.esferalia.aon.occam.test.fiscal.mod390hf.Mod390HFReopenTest;
  
-@RunWith(Suite.class)
-@SuiteClasses({
+@Suite
+@SelectClasses({
 	
 	Mod303ReopenTest.class,					// Pendiente
 	Mod303DeleteTest.class,

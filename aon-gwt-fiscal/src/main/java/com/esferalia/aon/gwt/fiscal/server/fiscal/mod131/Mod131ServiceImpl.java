@@ -62,7 +62,7 @@ public class Mod131ServiceImpl extends AonStatelessRemoteServiceServlet implemen
 
 	@Override
 	public Mod131 markAsFinished(Occam occam, Mod131 mod131) {
-		return MODEL131.finish(occam, mod131);
+		return MODEL131.markAsFinished(occam, mod131);
 	}
 	@Override
 	public Mod131 markAsSent(Occam occam, Mod131 mod131) {
@@ -74,7 +74,7 @@ public class Mod131ServiceImpl extends AonStatelessRemoteServiceServlet implemen
 	}
 	@Override
 	public Mod131 markAsPending(Occam occam, Mod131 mod131) {
-		return MODEL131.reopen(occam, mod131);
+		return MODEL131.markAsPending(occam, mod131);
 	}
 
 	@Override

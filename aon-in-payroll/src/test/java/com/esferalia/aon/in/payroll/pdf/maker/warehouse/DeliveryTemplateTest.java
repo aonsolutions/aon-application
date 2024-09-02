@@ -3,7 +3,8 @@ package com.esferalia.aon.in.payroll.pdf.maker.warehouse;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
-import org.junit.Test;
+
+import org.junit.jupiter.api.Test;
 
 import com.esferalia.aon.in.payroll.pdf.maker.exception.CanNotCreatePdfException;
 import com.esferalia.aon.occam.api.model.Company;

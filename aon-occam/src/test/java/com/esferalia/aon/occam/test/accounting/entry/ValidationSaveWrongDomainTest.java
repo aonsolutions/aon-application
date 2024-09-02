@@ -1,7 +1,9 @@
 package com.esferalia.aon.occam.test.accounting.entry;
 
 
-import org.junit.Test;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
+import org.junit.jupiter.api.Test;
 
 import com.esferalia.aon.occam.api.ACCOUNTING;
 import com.esferalia.aon.occam.api.model.AccountEntry;
@@ -14,7 +16,7 @@ import com.esferalia.aon.watson.server.AonDateUtils;
 
 public class ValidationSaveWrongDomainTest extends AbstractOccamTest {
 
-	@Test(expected=AonCoreException.class)
+	@Test
 	public void testWrongDomain() {
 		AccountPeriod period = ACCOUNTING.getPeriodByYear(ctx,1974);
 		if (period == null) {
@@ -30,7 +32,8 @@ public class ValidationSaveWrongDomainTest extends AbstractOccamTest {
 		accountEntry.setDomain(100); // Other
 		accountEntry.setEntryDate( AonDateUtils.getDate(1974, 5, 4) );
 		accountEntry.setPeriod(period.getId());
-		ACCOUNTING.save(DOMAIN_NAME, DOMAIN_ID, USER, accountEntry);
+		assertThrows(AonCoreException.class, () ->
+			ACCOUNTING.save(DOMAIN_NAME, DOMAIN_ID, USER, accountEntry));
 	}
 	
 }

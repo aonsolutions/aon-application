@@ -1,8 +1,10 @@
 package com.esferalia.aon.occam.test.accounting.account;
 
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
 import java.io.IOException;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.esferalia.aon.occam.api.ACCOUNTING;
 import com.esferalia.aon.occam.api.model.Account;
@@ -12,7 +14,7 @@ import com.esferalia.aon.watson.error.AonCoreException;
 
 public class AccountEmptyDescriptionInsertTest extends AbstractOccamTest {
 	
-	@Test (expected = AonCoreException.class)
+	@Test 
 	public void test() throws IOException {
 		
 		Account existingRandomAccount = AonRandom.getAccount(ctx);
@@ -21,7 +23,7 @@ public class AccountEmptyDescriptionInsertTest extends AbstractOccamTest {
 				.setDomain(existingRandomAccount.getDomain())
 				.setDescription(existingRandomAccount.getDescription())
 				.setCode(existingRandomAccount.getCode());
-		
-		ACCOUNTING.save(DOMAIN_NAME, DOMAIN_ID, USER, account);
+		assertThrows(AonCoreException.class, () ->
+			ACCOUNTING.save(DOMAIN_NAME, DOMAIN_ID, USER, account));
 	}	
 }

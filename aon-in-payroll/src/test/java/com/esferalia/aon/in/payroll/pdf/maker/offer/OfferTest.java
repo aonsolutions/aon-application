@@ -6,9 +6,8 @@ import static com.esferalia.aon.in.payroll.pdf.maker.Logger.Separator.ARROW;
 import static com.esferalia.aon.in.payroll.pdf.maker.Logger.Status.COMPARE;
 import static com.esferalia.aon.in.payroll.pdf.maker.Logger.Status.GENERATE;
 import static com.esferalia.aon.in.payroll.pdf.maker.Logger.Status.SUCCESS;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.fail;
 
-import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -19,10 +18,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedList;
 
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.TestName;
+import org.junit.jupiter.api.Test;
 
 import com.esferalia.aon.in.payroll.pdf.maker.Logger;
 import com.esferalia.aon.in.payroll.pdf.maker.exception.CanNotCreatePdfException;
@@ -54,15 +50,6 @@ import com.esferalia.aon.occam.api.model.type.StreetType;
 
 public class OfferTest {
 
-	@Rule
-	public TestName testName = new TestName();
-	
-	@Before
-	public void prepare() {
-		Logger.start(testName.getMethodName());
-	}
-	
-	
 	@Test
 	public void DataIntegrationTest() {
 		

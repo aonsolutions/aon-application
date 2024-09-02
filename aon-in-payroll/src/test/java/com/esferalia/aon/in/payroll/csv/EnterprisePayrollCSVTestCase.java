@@ -1,12 +1,13 @@
 package com.esferalia.aon.in.payroll.csv;
 
-import static org.junit.Assert.fail;
+
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.esferalia.aon.occam.api.model.type.SalaryType;
 import com.fasterxml.jackson.annotation.JsonProperty;

@@ -12,7 +12,6 @@ import java.util.Locale;
 import java.util.Random;
 
 import com.esferalia.aon.occam.api.AONContext;
-import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.esferalia.aon.occam.api.model.Account;
 import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.Customer;
@@ -42,7 +41,6 @@ import com.esferalia.aon.occam.api.model.product.Tariff;
 import com.esferalia.aon.occam.api.model.product.Tax;
 import com.esferalia.aon.occam.api.model.project.ProjectHolder;
 import com.esferalia.aon.occam.api.model.project.ProjectType;
-import com.esferalia.aon.occam.api.model.registry.AccountingRegistry;
 import com.esferalia.aon.occam.api.model.registry.Carrier;
 import com.esferalia.aon.occam.api.model.registry.CompanyFull;
 import com.esferalia.aon.occam.api.model.registry.Creditor;
@@ -445,16 +443,21 @@ public class AonFaker {
 	}
 	
 	public static Product getProduct( AONContext ctx ) {
+		String code = null;
+		do {
+			code = AonRandom.string(0, 1, 14);
+		} while (ProductDAO.get(ctx, code).isPresent());
+		
 		return  new Product()
 			.setDomain(new Domain().setId(ctx.getDomainId()))
 			.setName(faker.commerce().productName())
-			.setCode(AonRandom.string(0, 1, 14))
+			.setCode( code )
 			.setVat(new Tax()
-					.setDomain(ctx.getDomainId())
-					.setName("test")
-					.setType(TaxType.VAT)
-					.setPercentage(21.0)
-					.setStartDate(new Date()));
+				.setDomain(ctx.getDomainId())
+				.setName("test")
+				.setType(TaxType.VAT)
+				.setPercentage(21.0)
+				.setStartDate(new Date()));
 	}
 	
 	public static Item getItem(AONContext ctx ) {

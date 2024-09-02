@@ -1,12 +1,14 @@
 package com.esferalia.aon.occam.test.fiscal.mod130;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+
 import java.util.Arrays;
 import java.util.Date;
 
 import org.json.JSONArray;
-import org.json.JSONObject;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.esferalia.aon.occam.api.fiscal.MODEL130;
 import com.esferalia.aon.occam.api.model.finance.EnumVisitors.IFiscalModelKeyInfoVisitor;
@@ -21,10 +23,10 @@ import com.esferalia.aon.occam.test.faker.FiscalFaker;
 import com.esferalia.aon.occam.test.faker.FiscalFaker.FiscalFakerParams;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
-public class Mod130ScriptTest extends AbstractOccamTest {
+class Mod130ScriptTest extends AbstractOccamTest {
 	
 	@Test
-	public void testCommonTerritoryExpressions() {
+	void testCommonTerritoryExpressions() {
 		FiscalFakerParams params = new FiscalFakerParams(ctx,getOccam())
 				.setIssueDate(new Date())
 				.setMonthly(true)
@@ -35,7 +37,7 @@ public class Mod130ScriptTest extends AbstractOccamTest {
 	}
 
 	@Test
-	public void testBizkaia() {
+	void testBizkaia() {
 		FiscalFakerParams params = new FiscalFakerParams(ctx,getOccam())
 				.setIssueDate(new Date())
 				.setMonthly(true)
@@ -58,7 +60,7 @@ public class Mod130ScriptTest extends AbstractOccamTest {
 										
 										private String arrayNotNull() {
 											JSONArray array = new JSONArray(info);
-											Assert.assertNotNull(array);
+											assertNotNull(array);
 											return null;
 										}
 										
@@ -71,13 +73,13 @@ public class Mod130ScriptTest extends AbstractOccamTest {
 										
 										@Override 
 										public String visitComputeKey() {
-											System.out.println(key + " --> " + info);
+											assertNotEquals(AonStringUtils.EMPTY,info);
 											return null;
 										}
 										
 										@Override 
 										public String visitNone() { 
-											Assert.assertEquals(AonStringUtils.EMPTY,info);
+											assertEquals(AonStringUtils.EMPTY,info);
 											return null;
 										}
 										

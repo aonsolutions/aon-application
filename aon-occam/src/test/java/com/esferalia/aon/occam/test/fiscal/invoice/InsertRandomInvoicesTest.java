@@ -1,9 +1,11 @@
 package com.esferalia.aon.occam.test.fiscal.invoice;
 
-import java.text.MessageFormat;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import org.junit.Assert;
-import org.junit.Test;
+import java.text.MessageFormat;
+import java.text.NumberFormat;
+
+import org.junit.jupiter.api.Test;
 
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.finance.Finance;
@@ -18,6 +20,7 @@ import com.esferalia.aon.occam.test.faker.InvoiceFaker.InvoiceFakerParams;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonCollectionUtils;
 import com.esferalia.aon.watson.util.AonMathUtils;
+import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class InsertRandomInvoicesTest extends AbstractOccamTest {
@@ -26,6 +29,7 @@ public class InsertRandomInvoicesTest extends AbstractOccamTest {
 	public void test() {
 		int year = AonDateUtils.getYear( getTestDate() );
 		int times = AonRandom.getInt(1, 10);
+
 		for (int count = 0; count < times; count++) {
 			Invoice invoice = null;
 			if (AonRandom.gt(90)) {
@@ -47,20 +51,17 @@ public class InsertRandomInvoicesTest extends AbstractOccamTest {
 					FinanceTrackingDAO.pay(ctx, tracking);
 				}
 			}
-			System.out.println(MessageFormat.format("\t\t ["
-					+ AonStringUtils.repeat("-", count)
-					+ AonStringUtils.repeat(" ", times - count)+"] "
-					+ AonMathUtils.round( count * 100 / times)
-					+ " %"
-					,times));
+			System.out.println(MessageFormat.format("\t\t [{0}% {1}{2}]"
+					,AonStringUtils.rightPad(AonMathUtils.round( count * 100 / times,2), 6)
+					,AonStringUtils.repeat("-", count)
+					,AonStringUtils.repeat(" ", times - count)
+					));
 			count++;
 		}
-		System.out.println(MessageFormat.format("\t\t ["
-				+ AonStringUtils.repeat("-", times)
-				+ "] ("
-				+ times + " facturas creadas.)"
-				,times));
-		Assert.assertTrue( 
+		System.out.println(MessageFormat.format("\t\t [100.00% {0}]"
+				,AonStringUtils.repeat("-", times)
+				));
+		assertTrue( 
 			AON.getInvoiceHeaders(ctx, p -> p.getDomainProperty().eq(DOMAIN_ID), 0, 1)
 				.findFirst()
 				.isPresent()

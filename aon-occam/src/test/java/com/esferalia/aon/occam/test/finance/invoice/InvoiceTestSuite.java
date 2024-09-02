@@ -1,14 +1,13 @@
 package com.esferalia.aon.occam.test.finance.invoice;
 
 
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
-import org.junit.runners.Suite.SuiteClasses;
+import org.junit.platform.suite.api.SelectClasses;
+import org.junit.platform.suite.api.Suite;
 
 import com.esferalia.aon.occam.test.product.TargetItemTest;
 
-@RunWith(Suite.class)
-@SuiteClasses({
+@Suite
+@SelectClasses({
 	InvoiceBreakdownJSONTest.class,
 	ValidationSaveEmptyDomainTest.class,
 	ValidationSaveEmptyIssueDateTest.class,

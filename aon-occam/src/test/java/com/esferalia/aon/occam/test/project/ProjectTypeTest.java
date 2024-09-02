@@ -1,10 +1,11 @@
 package com.esferalia.aon.occam.test.project;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
 
-import org.junit.Test;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+
+import org.junit.jupiter.api.Test;
 
 import com.esferalia.aon.occam.api.model.project.ProjectType;
 import com.esferalia.aon.occam.impl.jooq.dao.ProjectTypeDAO;

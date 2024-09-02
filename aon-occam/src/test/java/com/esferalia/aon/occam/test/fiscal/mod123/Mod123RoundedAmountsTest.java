@@ -2,7 +2,7 @@ package com.esferalia.aon.occam.test.fiscal.mod123;
 
 import java.text.MessageFormat;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.esferalia.aon.occam.api.fiscal.MODEL123;
 import com.esferalia.aon.occam.test.AbstractOccamTest;

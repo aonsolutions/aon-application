@@ -2,7 +2,7 @@ package com.esferalia.aon.occam.test.fiscal.mod390hf;
 
 import java.util.Date;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.esferalia.aon.occam.api.fiscal.MODEL390HF;
 import com.esferalia.aon.occam.api.model.fiscal.Mod390HF;

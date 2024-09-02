@@ -4,7 +4,7 @@ package com.esferalia.aon.occam.test.finance.invoice;
 import java.util.Date;
 import java.util.Optional;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.esferalia.aon.occam.api.model.Account;
 import com.esferalia.aon.occam.api.model.AccountingInvoice;

@@ -1,15 +1,14 @@
 package com.esferalia.aon.occam.test.payroll;
 
 
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
-import org.junit.runners.Suite.SuiteClasses;
+import org.junit.platform.suite.api.SelectClasses;
+import org.junit.platform.suite.api.Suite;
 
-import com.esferalia.aon.occam.test.payroll.employee.EmployeeTestSuite;
+import com.esferalia.aon.occam.test.payroll.employee.EmployeeTest;
 
-@RunWith(Suite.class)
-@SuiteClasses({
-	EmployeeTestSuite.class,
+@Suite
+@SelectClasses({
+	EmployeeTest.class,
 })
 public class PayrollTestSuite {
 	

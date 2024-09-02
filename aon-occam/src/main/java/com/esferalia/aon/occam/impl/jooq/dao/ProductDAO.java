@@ -119,6 +119,29 @@ public class ProductDAO {
 		return getStream(ctx, filter).collect(Collectors.toCollection(LinkedList::new));
 	}
 
+	public static Optional<Product> get(AONContext ctx, Integer id) {
+		return select(ctx, f -> f.getIdProperty().eq(id))
+		.fetch()
+		.stream()
+		.map(new ProductFiller())
+		.findFirst();
+	}
+	
+	public static Optional<Product> get(AONContext ctx, String code) {
+		return select(ctx, f -> f.getCodeProperty().eq(code))
+		.fetch()
+		.stream()
+		.map(new ProductFiller())
+		.findFirst();
+	}
+	
+	/**
+	 * Filter can return more than one row
+	 * @param ctx
+	 * @param filter
+	 * @return
+	 */
+	@Deprecated
 	public static Product get(AONContext ctx, ProductFilter filter) {
 		return select(ctx, filter).limit(1)
 		.fetch().stream().map(new ProductFiller())

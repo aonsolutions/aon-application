@@ -1,8 +1,8 @@
 package com.esferalia.aon.occam.test.registry.supplier;
 
-import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.esferalia.aon.occam.api.model.registry.Supplier;
 import com.esferalia.aon.occam.impl.jooq.dao.SupplierDAO;

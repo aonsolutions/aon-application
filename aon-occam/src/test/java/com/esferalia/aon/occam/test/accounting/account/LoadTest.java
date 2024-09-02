@@ -2,7 +2,7 @@ package com.esferalia.aon.occam.test.accounting.account;
 
 import java.io.IOException;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.esferalia.aon.occam.api.model.Account;
 import com.esferalia.aon.occam.impl.jooq.dao.AccountDAO;

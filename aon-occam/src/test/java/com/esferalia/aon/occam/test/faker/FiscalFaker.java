@@ -233,6 +233,12 @@ public class FiscalFaker {
 		return mod130;
 	}
 
+	public static Mod131 createMod131( FiscalFakerParams params) {
+		Mod131 mod131 = getMod131( params );
+		MODEL131.create(params.getOccam(), mod131);
+		return mod131;
+	}
+
 	public static Mod131 getMod131( FiscalFakerParams params) {
 		return getFiscalModel(params,Mod131::new,
 			(m) -> MODEL131.initialize( params.getOccam(), m));

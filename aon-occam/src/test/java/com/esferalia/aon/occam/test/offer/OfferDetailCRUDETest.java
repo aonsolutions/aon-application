@@ -1,8 +1,9 @@
 package com.esferalia.aon.occam.test.offer;
 
-import static org.junit.Assert.assertNull;
 
-import org.junit.Test;
+import static org.junit.jupiter.api.Assertions.assertNull;
+
+import org.junit.jupiter.api.Test;
 
 import com.esferalia.aon.occam.api.model.management.OfferDetail;
 import com.esferalia.aon.occam.api.model.product.Product;

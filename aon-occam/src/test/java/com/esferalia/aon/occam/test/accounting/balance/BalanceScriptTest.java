@@ -2,7 +2,7 @@ package com.esferalia.aon.occam.test.accounting.balance;
 
 import java.util.Arrays;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.esferalia.aon.occam.api.ACCOUNTING;
 import com.esferalia.aon.occam.api.model.AccountPeriod;

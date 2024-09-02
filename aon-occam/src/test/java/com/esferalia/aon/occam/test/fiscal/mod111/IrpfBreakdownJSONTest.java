@@ -1,7 +1,7 @@
 package com.esferalia.aon.occam.test.fiscal.mod111;
 
 import org.json.JSONObject;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.esferalia.aon.occam.api.fiscal.MODEL111;
 import com.esferalia.aon.occam.api.json.IrpfBreakdownJSON;

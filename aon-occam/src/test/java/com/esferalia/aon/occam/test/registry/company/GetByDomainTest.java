@@ -1,8 +1,8 @@
 package com.esferalia.aon.occam.test.registry.company;
 
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.impl.jooq.dao.CompanyDAO;

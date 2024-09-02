@@ -1,9 +1,10 @@
 package com.esferalia.aon.occam.test.fiscal.model;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThrows;
 
-import org.junit.Test;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
+import org.junit.jupiter.api.Test;
 
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModel;
 import com.esferalia.aon.occam.impl.jooq.dao.fiscal.FiscalModelDAO;
@@ -24,7 +25,7 @@ public class ValidationSaveEmptyPeriodTest extends AbstractOccamTest {
 		Exception e = assertThrows(AonCoreException.class, () -> {
 			FiscalModelDAO.save(ctx, model);
 	    });
-		assertEquals("Wrong Exception",AonError.EMPTY_PERIOD.getMessage(),e.getMessage());
+		assertEquals(AonError.EMPTY_PERIOD.getMessage(),e.getMessage(),"Wrong Exception");
 	}
 	
 }

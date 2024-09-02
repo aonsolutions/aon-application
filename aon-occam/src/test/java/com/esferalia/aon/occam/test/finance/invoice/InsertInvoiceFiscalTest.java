@@ -1,7 +1,7 @@
 package com.esferalia.aon.occam.test.finance.invoice;
 
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.AonConfiguration;

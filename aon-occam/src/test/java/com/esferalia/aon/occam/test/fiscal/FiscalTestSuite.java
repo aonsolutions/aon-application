@@ -4,9 +4,8 @@ import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
-import org.junit.runners.Suite.SuiteClasses;
+import org.junit.platform.suite.api.SelectClasses;
+import org.junit.platform.suite.api.Suite;
 
 import com.esferalia.aon.occam.api.model.AccountEntry;
 import com.esferalia.aon.occam.api.model.AccountEntryDetail;
@@ -15,7 +14,6 @@ import com.esferalia.aon.occam.test.fiscal.mod111.Mod111TestSuite;
 import com.esferalia.aon.occam.test.fiscal.mod115.Mod115TestSuite;
 import com.esferalia.aon.occam.test.fiscal.mod123.Mod123TestSuite;
 import com.esferalia.aon.occam.test.fiscal.mod130.Mod130TestSuite;
-import com.esferalia.aon.occam.test.fiscal.mod131.Mod131TestSuite;
 import com.esferalia.aon.occam.test.fiscal.mod190.Mod190TestSuite;
 import com.esferalia.aon.occam.test.fiscal.mod303.Mod303TestSuite;
 import com.esferalia.aon.occam.test.fiscal.mod349.Mod349TestSuite;
@@ -25,8 +23,8 @@ import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
-@RunWith(Suite.class)
-@SuiteClasses({
+@Suite
+@SelectClasses({
 	FiscalModelTestSuite.class,
 	Mod111TestSuite.class,
 	Mod115TestSuite.class,

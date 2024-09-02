@@ -3,6 +3,7 @@ package com.esferalia.aon.occam.api.fiscal;
 import java.util.LinkedList;
 
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.esferalia.aon.occam.api.model.fiscal.IModelScript;
 import com.esferalia.aon.occam.api.model.fiscal.Mod131;
 import com.esferalia.aon.occam.api.model.fiscal.Mod131Activity;
@@ -22,6 +23,8 @@ public interface IMODEL131 {
 	public Mod131 markAsSent(AONContext ctx, Mod131 mod131);
 	public Mod131 markAsPending(AONContext ctx, Mod131 mod131);
 	public Mod131 markAsCustomerCheck(AONContext ctx, Mod131 mod131);
+	public Mod131 markAsCustomerAccepted(AONContext ctx, Mod131 mod131);
+	public Mod131 markAsCustomerCheckRejected(AONContext ctx, Mod131 mod131, String reason);
 	public Mod131 initialize(AONContext ctx, Mod131 mod131);
 	public Mod131 create(AONContext ctx, Mod131 mod131);
 	public void delete(AONContext ctx, Mod131 mod131);

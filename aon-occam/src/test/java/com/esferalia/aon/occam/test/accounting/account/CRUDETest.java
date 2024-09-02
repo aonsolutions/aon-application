@@ -2,14 +2,15 @@ package com.esferalia.aon.occam.test.accounting.account;
 
 
 import static com.esferalia.aon.jooq.tables.Account.ACCOUNT;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import org.junit.Test;
+import org.junit.jupiter.api.RepeatedTest;
+import org.junit.jupiter.api.Test;
 
 import com.esferalia.aon.jooq.tables.records.AccountRecord;
 import com.esferalia.aon.occam.api.ACCOUNTING;
@@ -17,13 +18,12 @@ import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.esferalia.aon.occam.api.model.Account;
 import com.esferalia.aon.occam.test.AbstractOccamTest;
-import com.esferalia.aon.occam.test.Repeat;
 import com.esferalia.aon.occam.test.faker.AccountingFaker;
 import com.github.javafaker.Faker;
 
 public class CRUDETest extends AbstractOccamTest {
 
-	@Repeat( 20 )
+	@RepeatedTest( 20 )
 	@Test
 	public void test() {
 		String code = getRandomUnusedCode();

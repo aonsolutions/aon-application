@@ -22,6 +22,7 @@ import static com.esferalia.aon.jooq.tables.Workplace.WORKPLACE;
 import java.sql.Timestamp;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -139,7 +140,23 @@ public class InvoiceDetailDAO {
 	static Stream<InvoiceDetail> getDetails(AONContext ctx, Integer invoiceId) {  
         return getFullStream(ctx, p -> p.getInvoiceProperty().eq(invoiceId));
     }
-
+	
+	public static Optional<InvoiceDetail> get(AONContext ctx, Integer detailId) {
+		return select(ctx, f-> f.getIdProperty().eq(detailId))
+			.fetch()
+			.stream()
+			.map(new InvoiceDetailFiller())
+			.findFirst();
+	}
+	
+	/**
+	 * Filter can return more than one row!
+	 * 
+	 * @param ctx
+	 * @param filter
+	 * @return
+	 */
+	@Deprecated
 	public static InvoiceDetail get(AONContext ctx, InvoiceDetailFilter filter) {
 		return select(ctx, filter)
 				.limit(1)

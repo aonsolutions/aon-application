@@ -1,6 +1,6 @@
 package com.esferalia.aon.occam.test.fiscal.mod390hf;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.esferalia.aon.occam.api.fiscal.MODEL303;
 import com.esferalia.aon.occam.api.fiscal.MODEL390HF;

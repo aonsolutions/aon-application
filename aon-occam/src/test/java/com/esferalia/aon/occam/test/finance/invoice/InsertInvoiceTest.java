@@ -1,14 +1,15 @@
 package com.esferalia.aon.occam.test.finance.invoice;
 
 
-import org.junit.Test;
+
+import org.junit.jupiter.api.RepeatedTest;
+import org.junit.jupiter.api.Test;
 
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.test.AbstractOccamTest;
 import com.esferalia.aon.occam.test.Asserts;
-import com.esferalia.aon.occam.test.Repeat;
 import com.esferalia.aon.occam.test.faker.AonRandom;
 import com.esferalia.aon.occam.test.faker.InvoiceFaker;
 import com.esferalia.aon.occam.test.faker.InvoiceFaker.InvoiceFakerParams;
@@ -23,7 +24,7 @@ public class InsertInvoiceTest extends AbstractOccamTest {
 	}
 	
 	@Test
-	@Repeat(10)
+	@RepeatedTest(10)
 	public void testRandomInvoiceInsert() {
 		AonConfiguration config = AON.getConfiguration(ctx,null);
 		InvoiceFakerParams params = new InvoiceFakerParams(ctx, config).setIssueDate(AonRandom.today());

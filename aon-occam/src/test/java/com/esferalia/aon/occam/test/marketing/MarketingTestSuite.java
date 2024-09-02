@@ -1,14 +1,13 @@
 package com.esferalia.aon.occam.test.marketing;
 
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
-import org.junit.runners.Suite.SuiteClasses;
+import org.junit.platform.suite.api.SelectClasses;
+import org.junit.platform.suite.api.Suite;
 
-import com.esferalia.aon.occam.test.marketing.question.QuestionDAOTest;
 import com.esferalia.aon.occam.test.marketing.question.QuestionAONTest;
+import com.esferalia.aon.occam.test.marketing.question.QuestionDAOTest;
 
-@RunWith(Suite.class)
-@SuiteClasses({
+@Suite
+@SelectClasses({
 	QuestionDAOTest.class,
 	QuestionAONTest.class
 })

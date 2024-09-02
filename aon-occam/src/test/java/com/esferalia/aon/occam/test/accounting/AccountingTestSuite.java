@@ -1,15 +1,14 @@
 package com.esferalia.aon.occam.test.accounting;
 
 
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
-import org.junit.runners.Suite.SuiteClasses;
+import org.junit.platform.suite.api.SelectClasses;
+import org.junit.platform.suite.api.Suite;
 
 import com.esferalia.aon.occam.test.accounting.entry.AccountEntryTestSuite;
 import com.esferalia.aon.occam.test.accounting.period.AccountPeriodTestSuite;
 
-@RunWith(Suite.class)
-@SuiteClasses({
+@Suite
+@SelectClasses({
 	AccountPeriodTestSuite.class,
 	AccountEntryTestSuite.class,
 	// BalanceTestSuite.class

@@ -11,8 +11,8 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
 import com.esferalia.aon.in.payroll.pdf.maker.PdfMaker;
 import com.esferalia.aon.in.payroll.pdf.maker.enterprisepayroll.beans.EnterprisePayroll;
@@ -129,7 +129,7 @@ public class EnterprisePayrollTestv2 {
 	}
 	
 	@Test
-	@Ignore
+	@Disabled
 	public void testEnterprisePayroll2() {
 
 		try {

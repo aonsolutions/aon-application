@@ -22,9 +22,13 @@ import static java.util.Calendar.OCTOBER;
 import static java.util.Calendar.SEPTEMBER;
 import static java.util.Calendar.YEAR;
 import static net.aonsolutions.core.tgss.creta.jaxb.Utils.marshal;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -58,10 +62,8 @@ import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
-import org.junit.Assert;
-import org.junit.ComparisonFailure;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
 import com.esferalia.aon.in.payroll.SistemaRED2AON;
 import com.esferalia.aon.in.payroll.pdf.UnknownPDFException;
@@ -142,19 +144,18 @@ public class IdcTest extends AbstractSQLTestCase {
 
 				@Override
 				public void onPeriod(Date date) {
-					assertEquals("PERIODO DE LIQUIDACIÓN:", 2020, get(date, YEAR));
-					assertEquals("PERIODO DE LIQUIDACIÓN:", OCTOBER, get(date, MONTH));
+					assertEquals(2020, get(date, YEAR),"PERIODO DE LIQUIDACIÓN:");
+					assertEquals(OCTOBER, get(date, MONTH),"PERIODO DE LIQUIDACIÓN:");
 				}
 
 				@Override
 				public void onEnterprise(String socialReason, String ccc, String nif, String economicActivityCode,
 						String economicActivityDescription, String regime, String fullCCC) {
 
-					assertEquals("RAZÓN SOCIAL:", "AON SOLUTIONS S.L.", socialReason);
-					assertEquals("C.C.C:", "01105360062", ccc);
-					assertEquals("DNI/NIE/CIF:", "B01487271", nif);
-
-					assertEquals("ACT ECONÓMICA:", "6209", economicActivityCode);
+					assertEquals("AON SOLUTIONS S.L.", socialReason,"RAZÓN SOCIAL:");
+					assertEquals("01105360062", ccc,"C.C.C:");
+					assertEquals("B01487271", nif,"DNI/NIE/CIF:");
+					assertEquals("6209", economicActivityCode,"ACT ECONÓMICA:");
 
 				}
 
@@ -170,7 +171,7 @@ public class IdcTest extends AbstractSQLTestCase {
 					NSS_NAME_MAP.put("281468615302", "SERGIO VALDEPEÑAS DEL POZO");
 					NSS_NAME_MAP.put("291136796369", "RAY DE JESUS VASQUEZ BEAUPERTHUY");
 
-					assertEquals("NSS:", NSS_NAME_MAP.get(nss), name);
+					assertEquals(NSS_NAME_MAP.get(nss), name,"NSS:");
 				}
 
 				@Override
@@ -179,8 +180,8 @@ public class IdcTest extends AbstractSQLTestCase {
 					Date _1October2020 = getDate(1, Calendar.OCTOBER, 2020);
 					Date _31October2020 = getDate(31, Calendar.OCTOBER, 2020);
 
-					assertEquals("FECHA DESDE", _1October2020, startDate);
-					assertEquals("FECHA HASTA", _31October2020, endDate);
+					assertEquals(_1October2020, startDate,"FECHA DESDE");
+					assertEquals(_31October2020, endDate,"FECHA HASTA");
 
 					// System.out.println(nss + " " + startDate + " " + endDate );
 
@@ -189,9 +190,9 @@ public class IdcTest extends AbstractSQLTestCase {
 				@Override
 				public void onEmployeeQuotePEC(String nss, String ccc, String pec, String description, String portTipo,
 						String quota, Date startDate, Date endDate) {
-					assertEquals("NSS:", "291136796369", nss);
-					assertEquals("C.C.C:", "01105360062", ccc);
-					assertEquals("TIPO DE PECULIARIDAD", "04", pec);
+					assertEquals("291136796369", nss,"NSS:");
+					assertEquals("01105360062", ccc,"C.C.C:");
+					assertEquals("04", pec,"TIPO DE PECULIARIDAD");
 
 					Map<String, Double> QUOTA_POR_TIPO_MAP = new HashMap<String, Double>();
 					QUOTA_POR_TIPO_MAP.put("05", 0.05);
@@ -199,7 +200,7 @@ public class IdcTest extends AbstractSQLTestCase {
 
 					NumberFormat numberFormat = DecimalFormat.getNumberInstance(new Locale("es", "ES"));
 					try {
-						assertEquals("POR/TIPO", QUOTA_POR_TIPO_MAP.get(quota), numberFormat.parse(portTipo));
+						assertEquals(QUOTA_POR_TIPO_MAP.get(quota), numberFormat.parse(portTipo),"POR/TIPO");
 					} catch (ParseException e) {
 						fail(e.getMessage());
 					}
@@ -207,8 +208,8 @@ public class IdcTest extends AbstractSQLTestCase {
 					Date _1October2020 = getDate(1, Calendar.OCTOBER, 2020);
 					Date _31October2020 = getDate(31, Calendar.OCTOBER, 2020);
 
-					assertEquals("FECHA DESDE", _1October2020, startDate);
-					assertEquals("FECHA HASTA", _31October2020, endDate);
+					assertEquals(_1October2020, startDate,"FECHA DESDE");
+					assertEquals(_31October2020, endDate,"FECHA HASTA");
 				}
 
 			});
@@ -222,19 +223,18 @@ public class IdcTest extends AbstractSQLTestCase {
 
 				@Override
 				public void onPeriod(Date date) {
-					assertEquals("PERIODO DE LIQUIDACIÓN:", 2020, get(date, YEAR));
-					assertEquals("PERIODO DE LIQUIDACIÓN:", OCTOBER, get(date, MONTH));
+					assertEquals(2020, get(date, YEAR),"PERIODO DE LIQUIDACIÓN:");
+					assertEquals(OCTOBER, get(date, MONTH),"PERIODO DE LIQUIDACIÓN:");
 				}
 
 				@Override
 				public void onEnterprise(String socialReason, String ccc, String nif, String economicActivityCode,
 						String economicActivityDescription, String regime, String fullCCC) {
 
-					assertEquals("RAZÓN SOCIAL:", "AON SOLUTIONS S.L.", socialReason);
-					assertEquals("C.C.C:", "01105577910", ccc);
-					assertEquals("DNI/NIE/CIF:", "B01487271", nif);
-
-					assertEquals("ACT ECONÓMICA:", "6209", economicActivityCode);
+					assertEquals("AON SOLUTIONS S.L.", socialReason,"RAZÓN SOCIAL:");
+					assertEquals("01105577910", ccc,"C.C.C:");
+					assertEquals("B01487271", nif,"DNI/NIE/CIF:");
+					assertEquals("6209", economicActivityCode,"ACT ECONÓMICA:");
 
 				}
 
@@ -246,7 +246,7 @@ public class IdcTest extends AbstractSQLTestCase {
 					NSS_NAME_MAP.put("011021493543", "AKETZA EGUSQUIZA VAZQUEZ");
 					NSS_NAME_MAP.put("141026133260", "MARIA LUISA BLASCO DE PORRES");
 
-					assertEquals("NSS:", NSS_NAME_MAP.get(nss), name);
+					assertEquals(NSS_NAME_MAP.get(nss), name,"NSS:");
 				}
 
 				@Override
@@ -255,8 +255,8 @@ public class IdcTest extends AbstractSQLTestCase {
 					Date _1October2020 = getDate(1, Calendar.OCTOBER, 2020);
 					Date _31October2020 = getDate(31, Calendar.OCTOBER, 2020);
 
-					assertEquals("FECHA DESDE", _1October2020, startDate);
-					assertEquals("FECHA HASTA", _31October2020, endDate);
+					assertEquals(_1October2020, startDate,"FECHA DESDE");
+					assertEquals(_31October2020, endDate,"FECHA HASTA");
 				}
 
 				@Override
@@ -267,11 +267,11 @@ public class IdcTest extends AbstractSQLTestCase {
 					PEC_QUOTA_MAP.put("01", "68");
 					PEC_QUOTA_MAP.put("09", "53");
 
-					assertEquals("TIPO DE PECULIARIDAD FRACCIÓN DE CUOTA:", PEC_QUOTA_MAP.get(pec), quota);
+					assertEquals(PEC_QUOTA_MAP.get(pec), quota,"TIPO DE PECULIARIDAD FRACCIÓN DE CUOTA:");
 
 					NumberFormat numberFormat = DecimalFormat.getNumberInstance(new Locale("es", "ES"));
 					try {
-						assertEquals("POR/TIPO", 100.00, numberFormat.parse(portTipo).doubleValue(), 0.00);
+						assertEquals(100.00, numberFormat.parse(portTipo).doubleValue(), 0.00,"POR/TIPO");
 					} catch (ParseException e) {
 						fail(e.getMessage());
 					}
@@ -279,8 +279,8 @@ public class IdcTest extends AbstractSQLTestCase {
 					Date _1October2020 = getDate(1, Calendar.OCTOBER, 2020);
 					Date _31October2020 = getDate(31, Calendar.OCTOBER, 2020);
 
-					assertEquals("FECHA DESDE", _1October2020, startDate);
-					assertEquals("FECHA HASTA", _31October2020, endDate);
+					assertEquals(_1October2020, startDate,"FECHA DESDE");
+					assertEquals(_31October2020, endDate,"FECHA HASTA");
 				}
 
 			});
@@ -288,28 +288,28 @@ public class IdcTest extends AbstractSQLTestCase {
 	}
 
 	@Test
-	@Ignore
+	@Disabled
 	public void testIdcplnss() throws com.esferalia.aon.in.payroll.pdf.UnknownPDFException, IOException {
 		try (InputStream is = IdcTest.class.getResourceAsStream("idcplnss.pdf")) {
 			IdcplnssParser.parse(is, new IdcParserListener() {
 
 				@Override
 				public void onPeriod(Date date) {
-					assertEquals("PERIODO SOLICITADO:", 2020, get(date, YEAR));
-					assertEquals("PERIODO SOLICITADO:", SEPTEMBER, get(date, MONTH));
+					assertEquals(2020, get(date, YEAR),"PERIODO SOLICITADO:");
+					assertEquals(SEPTEMBER, get(date, MONTH),"PERIODO SOLICITADO:");
 				}
 
 				@Override
 				public void onEnterprise(String socialReason, String ccc, String nif, String economicActivityCode,
 						String economicActivityDescription, String regime, String fullCCC) {
-					assertEquals("C.C.C:", "37106820136", ccc);
-					assertEquals("RAZÓN SOCIAL:", "EDUCAMOS SALAMANCA, S.L.", socialReason);
+					assertEquals("37106820136", ccc,"C.C.C:");
+					assertEquals("EDUCAMOS SALAMANCA, S.L.", socialReason,"RAZÓN SOCIAL:");
 				}
 
 				@Override
 				public void onEmployee(String nss, String name) {
-					assertEquals("CCC SOLICITADO:", "371013120530", nss);
-					assertEquals("NOMBRE Y APELLIDOS:", "JOANA VAQUERO GARCIA", name);
+					assertEquals("371013120530", nss,"CCC SOLICITADO:");
+					assertEquals("JOANA VAQUERO GARCIA", name,"NOMBRE Y APELLIDOS:");
 				}
 
 				@Override
@@ -321,9 +321,9 @@ public class IdcTest extends AbstractSQLTestCase {
 					Date _30September2020 = getDate(30, Calendar.SEPTEMBER, 2020);
 
 					if (startDate.equals(_3July2020))
-						assertEquals("FECHA HASTA", _14September2020, endDate);
+						assertEquals(_14September2020, endDate, "FECHA HASTA");
 					else if (startDate.equals(_15September2020))
-						assertEquals("FECHA HASTA", _30September2020, endDate);
+						assertEquals(_30September2020, endDate,"FECHA HASTA");
 					else
 						fail();
 
@@ -392,7 +392,7 @@ public class IdcTest extends AbstractSQLTestCase {
 
 				@Override
 				public void onPeriod(Date date) {
-					assertEquals("PERIODO:", getDate(14, Calendar.MAY, 2020), date);
+					assertEquals(getDate(14, Calendar.MAY, 2020), date,"PERIODO:");
 				}
 
 				@Override
@@ -472,7 +472,7 @@ public class IdcTest extends AbstractSQLTestCase {
 
 			});
 
-			Assert.assertTrue(onEmployeeQuoteTypes.get());
+			assertTrue(onEmployeeQuoteTypes.get());
 		}
 	}
 
@@ -590,9 +590,9 @@ public class IdcTest extends AbstractSQLTestCase {
 						.filter(d -> AonStringUtils.equals(d.getName(), var.getName()))
 						.sorted((d1, d2) -> d1.getStartDate().compareTo(d2.getStartDate())).toArray(SalaryData[]::new);
 
-				assertEquals(var.getName(), 1, salaryData.length);
-				assertEquals(var.getName(), _11122020, salaryData[0].getStartDate());
-				assertEquals(var.getName(), _31122020, salaryData[0].getEndDate());
+				assertEquals(1, salaryData.length,var.getName());
+				assertEquals(_11122020, salaryData[0].getStartDate(),var.getName());
+				assertEquals(_31122020, salaryData[0].getEndDate(),var.getName());
 			}
 
 			for (ContextVariable var : new ContextVariable[] { ContextVariable.CGC_BASE_ENTERPRISE,
@@ -601,12 +601,12 @@ public class IdcTest extends AbstractSQLTestCase {
 						.filter(d -> AonStringUtils.equals(d.getName(), var.getName()))
 						.sorted((d1, d2) -> d1.getStartDate().compareTo(d2.getStartDate())).toArray(SalaryData[]::new);
 
-				assertEquals(var.getName(), 2, salaryData.length);
-				assertEquals(var.getName(), _01122020, salaryData[0].getStartDate());
-				assertEquals(var.getName(), _10122020, salaryData[0].getEndDate());
+				assertEquals(2, salaryData.length,var.getName());
+				assertEquals(_01122020, salaryData[0].getStartDate(),var.getName());
+				assertEquals(_10122020, salaryData[0].getEndDate(),var.getName());
 
-				assertEquals(var.getName(), _11122020, salaryData[1].getStartDate());
-				assertEquals(var.getName(), _31122020, salaryData[1].getEndDate());
+				assertEquals(_11122020, salaryData[1].getStartDate(),var.getName());
+				assertEquals(_31122020, salaryData[1].getEndDate(),var.getName());
 			}
 
 			for (SalaryPayment payment : salary.getSalaryPayments()) {
@@ -678,12 +678,11 @@ public class IdcTest extends AbstractSQLTestCase {
 						.filter(d -> AonStringUtils.equals(d.getName(), var.getName()))
 						.sorted((d1, d2) -> d1.getStartDate().compareTo(d2.getStartDate())).toArray(SalaryData[]::new);
 
-				assertEquals(var.getName(), 2, salaryData.length);
-				assertEquals(var.getName(), _01122020, salaryData[0].getStartDate());
-				assertEquals(var.getName(), _10122020, salaryData[0].getEndDate());
-
-				assertEquals(var.getName(), _11122020, salaryData[1].getStartDate());
-				assertEquals(var.getName(), _31122020, salaryData[1].getEndDate());
+				assertEquals(2, salaryData.length,var.getName());
+				assertEquals(_01122020, salaryData[0].getStartDate(),var.getName());
+				assertEquals(_10122020, salaryData[0].getEndDate(),var.getName());
+				assertEquals(_11122020, salaryData[1].getStartDate(),var.getName());
+				assertEquals(_31122020, salaryData[1].getEndDate(),var.getName());
 			}
 
 			double totalCost = 0.00;
@@ -708,14 +707,14 @@ public class IdcTest extends AbstractSQLTestCase {
 	}
 
 	@Test
-	@Ignore
+	@Disabled
 	public void testIdcplnssVBonusI() throws com.esferalia.aon.in.payroll.pdf.UnknownPDFException, IOException,
 			ExpressionException, SQLException, SalaryException {
 		testIdcplnssVBonus(ContextVariable.ERE_FACTOR);
 	}
 
 	@Test
-	@Ignore
+	@Disabled
 	public void testIdcplnssVBonusII() throws com.esferalia.aon.in.payroll.pdf.UnknownPDFException, IOException,
 			ExpressionException, SQLException, SalaryException {
 		testIdcplnssVBonus(ContextVariable.ERE_FACTOR_FORCE);
@@ -781,9 +780,9 @@ public class IdcTest extends AbstractSQLTestCase {
 						.filter(d -> AonStringUtils.equals(d.getName(), var.getName()))
 						.sorted((d1, d2) -> d1.getStartDate().compareTo(d2.getStartDate())).toArray(SalaryData[]::new);
 
-				assertEquals(var.getName(), 1, salaryData.length);
-				assertEquals(var.getName(), _11122020, salaryData[0].getStartDate());
-				assertEquals(var.getName(), _31122020, salaryData[0].getEndDate());
+				assertEquals(1, salaryData.length,var.getName());
+				assertEquals(_11122020, salaryData[0].getStartDate(),var.getName());
+				assertEquals(_31122020, salaryData[0].getEndDate(),var.getName());
 			}
 
 			for (ContextVariable var : new ContextVariable[] { ContextVariable.CGC_BASE_ENTERPRISE,
@@ -792,12 +791,11 @@ public class IdcTest extends AbstractSQLTestCase {
 						.filter(d -> AonStringUtils.equals(d.getName(), var.getName()))
 						.sorted((d1, d2) -> d1.getStartDate().compareTo(d2.getStartDate())).toArray(SalaryData[]::new);
 
-				assertEquals(var.getName(), 2, salaryData.length);
-				assertEquals(var.getName(), _01122020, salaryData[0].getStartDate());
-				assertEquals(var.getName(), _10122020, salaryData[0].getEndDate());
-
-				assertEquals(var.getName(), _11122020, salaryData[1].getStartDate());
-				assertEquals(var.getName(), _31122020, salaryData[1].getEndDate());
+				assertEquals(2, salaryData.length,var.getName());
+				assertEquals(_01122020, salaryData[0].getStartDate(),var.getName());
+				assertEquals(_10122020, salaryData[0].getEndDate(),var.getName());
+				assertEquals(_11122020, salaryData[1].getStartDate(),var.getName());
+				assertEquals(_31122020, salaryData[1].getEndDate(),var.getName());
 			}
 
 			for (SalaryPayment payment : salary.getSalaryPayments()) {
@@ -958,8 +956,8 @@ public class IdcTest extends AbstractSQLTestCase {
 			Date january18 = calendar.getTime();
 			PEC bonus = ssBonuses.stream().findFirst().get();
 
-			Assert.assertEquals(january18, bonus.getStartDate());
-			Assert.assertNull(bonus.getEndDate());
+			assertEquals(january18, bonus.getStartDate());
+			assertNull(bonus.getEndDate());
 
 			calendar.set(Calendar.DAY_OF_MONTH, 31);
 			Date january31 = calendar.getTime();
@@ -998,8 +996,8 @@ public class IdcTest extends AbstractSQLTestCase {
 			Date january18 = calendar.getTime();
 			PEC bonus = ssBonuses.stream().findFirst().get();
 
-			Assert.assertEquals(january18, bonus.getStartDate());
-			Assert.assertNull(bonus.getEndDate());
+			assertEquals(january18, bonus.getStartDate());
+			assertNull(bonus.getEndDate());
 
 			calendar.set(Calendar.DAY_OF_MONTH, 31);
 			Date january31 = calendar.getTime();
@@ -1072,8 +1070,8 @@ public class IdcTest extends AbstractSQLTestCase {
 			Date october10 = calendar.getTime();
 			PEC bonus = ssPECs.stream().findFirst().get();
 
-			Assert.assertEquals(october10, bonus.getStartDate());
-			Assert.assertNull(bonus.getEndDate());
+			assertEquals(october10, bonus.getStartDate());
+			assertNull(bonus.getEndDate());
 
 			calendar.set(Calendar.DAY_OF_MONTH, 1);
 			Date october = calendar.getTime();
@@ -1081,9 +1079,9 @@ public class IdcTest extends AbstractSQLTestCase {
 			Salary salary = calculate(ssPECs, Collections.emptyList(), october);
 
 			double totalCost = salary.getSalaryCosts().stream()
-					.peek(c -> Assert.assertNotEquals(c.getType(), DeductionType.FOGASA))
-					.peek(c -> Assert.assertNotEquals(c.getType(), DeductionType.UNEMPLOYMENT))
-					.peek(c -> Assert.assertNotEquals(c.getType(), DeductionType.JOB_TRAINING))
+					.peek(c -> assertNotEquals(c.getType(), DeductionType.FOGASA))
+					.peek(c -> assertNotEquals(c.getType(), DeductionType.UNEMPLOYMENT))
+					.peek(c -> assertNotEquals(c.getType(), DeductionType.JOB_TRAINING))
 					// .peek(c -> System.out.println(c.getCostConcept() +" : " + c.getAmount() +", "
 					// + c.getType()) )
 					.filter(c -> c.getType() != DeductionType.COMMON_CONTINGENCY)
@@ -1091,9 +1089,9 @@ public class IdcTest extends AbstractSQLTestCase {
 					.collect(Collectors.summingDouble(c -> c.getAmount()));
 
 			double totalDeduction = salary.getSalaryDeductions().stream()
-					.peek(c -> Assert.assertNotEquals(c.getType(), DeductionType.FOGASA))
-					.peek(c -> Assert.assertNotEquals(c.getType(), DeductionType.UNEMPLOYMENT))
-					.peek(c -> Assert.assertNotEquals(c.getType(), DeductionType.JOB_TRAINING))
+					.peek(c -> assertNotEquals(c.getType(), DeductionType.FOGASA))
+					.peek(c -> assertNotEquals(c.getType(), DeductionType.UNEMPLOYMENT))
+					.peek(c -> assertNotEquals(c.getType(), DeductionType.JOB_TRAINING))
 					.peek(c -> System.out.println(c.getDeductionConcept() + " : " + c.getAmount() + ", " + c.getType()))
 					// .filter( c -> c.getType() != DeductionType.COMMON_CONTINGENCY )
 					.filter(c -> c.getType() != DeductionType.PROFESSIONAL_CONTINGENCY)
@@ -1126,8 +1124,8 @@ public class IdcTest extends AbstractSQLTestCase {
 			Date may28 = calendar.getTime();
 			PEC bonus = ssBonuses.stream().findFirst().get();
 
-			Assert.assertEquals(may28, bonus.getStartDate());
-			Assert.assertNull(bonus.getEndDate());
+			assertEquals(may28, bonus.getStartDate());
+			assertNull(bonus.getEndDate());
 
 			calendar.set(Calendar.DAY_OF_MONTH, 1);
 			Date may = calendar.getTime();
@@ -1151,7 +1149,7 @@ public class IdcTest extends AbstractSQLTestCase {
 	}
 
 	@Test
-	@Ignore
+	@Disabled
 	public void testIdcVBonusII() throws com.esferalia.aon.in.payroll.pdf.UnknownPDFException, IOException,
 			ExpressionException, SalaryException, SQLException {
 
@@ -1372,12 +1370,12 @@ public class IdcTest extends AbstractSQLTestCase {
 	public void testIdcContractData() throws IOException, UnknownPDFException {
 		try (InputStream is = IdcTest.class.getResourceAsStream("idc.pdf")) {
 			Map<ContextVariable, Object> contractData = Idc.getContractData(is);
-			org.junit.Assert.assertEquals(contractData.get(ContextVariable.TC2), "100");
-			org.junit.Assert.assertEquals(contractData.get(ContextVariable.QUOTE_GROUP), "08");
-			org.junit.Assert.assertEquals(contractData.get(ContextVariable.IT_PERCENT), 1.70);
-			org.junit.Assert.assertEquals(contractData.get(ContextVariable.IMS_PERCENT), 1.30);
-			org.junit.Assert.assertEquals(contractData.get(ContextVariable.UNEMPLOY_EMPLOYEE_PERCENT), 1.55);
-			org.junit.Assert.assertEquals(contractData.get(ContextVariable.UNEMPLOY_ENTERPRISE_PERCENT), 5.50);
+			assertEquals(contractData.get(ContextVariable.TC2), "100");
+			assertEquals(contractData.get(ContextVariable.QUOTE_GROUP), "08");
+			assertEquals(contractData.get(ContextVariable.IT_PERCENT), 1.70);
+			assertEquals(contractData.get(ContextVariable.IMS_PERCENT), 1.30);
+			assertEquals(contractData.get(ContextVariable.UNEMPLOY_EMPLOYEE_PERCENT), 1.55);
+			assertEquals(contractData.get(ContextVariable.UNEMPLOY_ENTERPRISE_PERCENT), 5.50);
 		}
 	}
 
@@ -1385,13 +1383,13 @@ public class IdcTest extends AbstractSQLTestCase {
 	public void testIdcContractDataI() throws IOException, UnknownPDFException {
 		try (InputStream is = IdcTest.class.getResourceAsStream("idcI.pdf")) {
 			Map<ContextVariable, Object> contractData = Idc.getContractData(is);
-			org.junit.Assert.assertEquals(contractData.get(ContextVariable.TC2), "189");
-			org.junit.Assert.assertEquals(contractData.get(ContextVariable.QUOTE_GROUP), "10");
-			org.junit.Assert.assertEquals(contractData.get(ContextVariable.IT_PERCENT), 1.70);
-			org.junit.Assert.assertEquals(contractData.get(ContextVariable.IMS_PERCENT), 1.30);
-			org.junit.Assert.assertEquals(contractData.get(ContextVariable.UNEMPLOY_EMPLOYEE_PERCENT), 1.55);
-			org.junit.Assert.assertEquals(contractData.get(ContextVariable.UNEMPLOY_ENTERPRISE_PERCENT), 5.50);
-			org.junit.Assert.assertFalse(contractData.containsKey(ContextVariable.OCCUPATION));
+			assertEquals(contractData.get(ContextVariable.TC2), "189");
+			assertEquals(contractData.get(ContextVariable.QUOTE_GROUP), "10");
+			assertEquals(contractData.get(ContextVariable.IT_PERCENT), 1.70);
+			assertEquals(contractData.get(ContextVariable.IMS_PERCENT), 1.30);
+			assertEquals(contractData.get(ContextVariable.UNEMPLOY_EMPLOYEE_PERCENT), 1.55);
+			assertEquals(contractData.get(ContextVariable.UNEMPLOY_ENTERPRISE_PERCENT), 5.50);
+			assertFalse(contractData.containsKey(ContextVariable.OCCUPATION));
 			
 		}
 	}
@@ -1400,9 +1398,9 @@ public class IdcTest extends AbstractSQLTestCase {
 	public void testIdcContractDataII() throws IOException, UnknownPDFException {
 		try (InputStream is = IdcTest.class.getResourceAsStream("idcII.pdf")) {
 			Map<ContextVariable, Object> contractData = Idc.getContractData(is);
-			org.junit.Assert.assertEquals(contractData.get(ContextVariable.TC2), "100");
-			org.junit.Assert.assertEquals(contractData.get(ContextVariable.QUOTE_GROUP), "01");
-			org.junit.Assert.assertEquals(contractData.get(ContextVariable.OCCUPATION), "a");
+			assertEquals(contractData.get(ContextVariable.TC2), "100");
+			assertEquals(contractData.get(ContextVariable.QUOTE_GROUP), "01");
+			assertEquals(contractData.get(ContextVariable.OCCUPATION), "a");
 		}
 	}
 
@@ -1410,14 +1408,14 @@ public class IdcTest extends AbstractSQLTestCase {
 	public void testIdcContractDataIII() throws IOException, UnknownPDFException {
 		try (InputStream is = IdcTest.class.getResourceAsStream("idcIII.pdf")) {
 			Map<ContextVariable, Object> contractData = Idc.getContractData(is);
-			org.junit.Assert.assertEquals(contractData.get(ContextVariable.TC2), "289");
-			org.junit.Assert.assertEquals(contractData.get(ContextVariable.QUOTE_GROUP), "07");
-			org.junit.Assert.assertEquals(contractData.get(ContextVariable.PARTIAL_FACTOR), 0.750);
-			org.junit.Assert.assertEquals(contractData.get(ContextVariable.IT_PERCENT), 1.70);
-			org.junit.Assert.assertEquals(contractData.get(ContextVariable.IMS_PERCENT), 1.30);
-			org.junit.Assert.assertEquals(contractData.get(ContextVariable.UNEMPLOY_EMPLOYEE_PERCENT), 1.55);
-			org.junit.Assert.assertEquals(contractData.get(ContextVariable.UNEMPLOY_ENTERPRISE_PERCENT), 5.50);
-			org.junit.Assert.assertFalse(contractData.containsKey(ContextVariable.OCCUPATION));
+			assertEquals(contractData.get(ContextVariable.TC2), "289");
+			assertEquals(contractData.get(ContextVariable.QUOTE_GROUP), "07");
+			assertEquals(contractData.get(ContextVariable.PARTIAL_FACTOR), 0.750);
+			assertEquals(contractData.get(ContextVariable.IT_PERCENT), 1.70);
+			assertEquals(contractData.get(ContextVariable.IMS_PERCENT), 1.30);
+			assertEquals(contractData.get(ContextVariable.UNEMPLOY_EMPLOYEE_PERCENT), 1.55);
+			assertEquals(contractData.get(ContextVariable.UNEMPLOY_ENTERPRISE_PERCENT), 5.50);
+			assertFalse(contractData.containsKey(ContextVariable.OCCUPATION));
 		}
 	}
 
@@ -1425,13 +1423,13 @@ public class IdcTest extends AbstractSQLTestCase {
 	public void testIdcContractDataIV() throws IOException, UnknownPDFException {
 		try (InputStream is = IdcTest.class.getResourceAsStream("idcIV.pdf")) {
 			Map<ContextVariable, Object> contractData = Idc.getContractData(is);
-			org.junit.Assert.assertEquals(contractData.get(ContextVariable.TC2), "100");
-			org.junit.Assert.assertEquals(contractData.get(ContextVariable.QUOTE_GROUP), "02");
-			org.junit.Assert.assertEquals(contractData.get(ContextVariable.IT_PERCENT), 0.80);
-			org.junit.Assert.assertEquals(contractData.get(ContextVariable.IMS_PERCENT), 0.70);
-			org.junit.Assert.assertEquals(contractData.get(ContextVariable.UNEMPLOY_EMPLOYEE_PERCENT), 1.55);
-			org.junit.Assert.assertEquals(contractData.get(ContextVariable.UNEMPLOY_ENTERPRISE_PERCENT), 5.50);
-			org.junit.Assert.assertEquals(contractData.get(ContextVariable.OCCUPATION), "a");
+			assertEquals(contractData.get(ContextVariable.TC2), "100");
+			assertEquals(contractData.get(ContextVariable.QUOTE_GROUP), "02");
+			assertEquals(contractData.get(ContextVariable.IT_PERCENT), 0.80);
+			assertEquals(contractData.get(ContextVariable.IMS_PERCENT), 0.70);
+			assertEquals(contractData.get(ContextVariable.UNEMPLOY_EMPLOYEE_PERCENT), 1.55);
+			assertEquals(contractData.get(ContextVariable.UNEMPLOY_ENTERPRISE_PERCENT), 5.50);
+			assertEquals(contractData.get(ContextVariable.OCCUPATION), "a");
 		}
 	}
 
@@ -1439,13 +1437,13 @@ public class IdcTest extends AbstractSQLTestCase {
 	public void testIdcContractDataXII() throws IOException, UnknownPDFException {
 		try (InputStream is = IdcTest.class.getResourceAsStream("idcXII.pdf")) {
 			Map<ContextVariable, Object> contractData = Idc.getContractData(is);
-			org.junit.Assert.assertEquals(contractData.get(ContextVariable.TC2), "189");
-			org.junit.Assert.assertEquals(contractData.get(ContextVariable.QUOTE_GROUP), "09");
-			org.junit.Assert.assertEquals(contractData.get(ContextVariable.IT_PERCENT), 3.35);
-			org.junit.Assert.assertEquals(contractData.get(ContextVariable.IMS_PERCENT), 3.35);
-			org.junit.Assert.assertEquals(contractData.get(ContextVariable.UNEMPLOY_EMPLOYEE_PERCENT), 1.55);
-			org.junit.Assert.assertEquals(contractData.get(ContextVariable.UNEMPLOY_ENTERPRISE_PERCENT), 5.50);
-			org.junit.Assert.assertFalse(contractData.containsKey(ContextVariable.OCCUPATION));
+			assertEquals(contractData.get(ContextVariable.TC2), "189");
+			assertEquals(contractData.get(ContextVariable.QUOTE_GROUP), "09");
+			assertEquals(contractData.get(ContextVariable.IT_PERCENT), 3.35);
+			assertEquals(contractData.get(ContextVariable.IMS_PERCENT), 3.35);
+			assertEquals(contractData.get(ContextVariable.UNEMPLOY_EMPLOYEE_PERCENT), 1.55);
+			assertEquals(contractData.get(ContextVariable.UNEMPLOY_ENTERPRISE_PERCENT), 5.50);
+			assertFalse(contractData.containsKey(ContextVariable.OCCUPATION));
 		}
 	}
 
@@ -1455,7 +1453,7 @@ public class IdcTest extends AbstractSQLTestCase {
 
 		try (InputStream is = IdcTest.class.getResourceAsStream("idcIX.pdf")) {
 			Map<ContextVariable, Object> contractData = Idc.getContractData(is);
-			org.junit.Assert.assertFalse(contractData.containsKey(ContextVariable.OCCUPATION));
+			assertFalse(contractData.containsKey(ContextVariable.OCCUPATION));
 		}
 	}
 
@@ -1609,8 +1607,8 @@ public class IdcTest extends AbstractSQLTestCase {
 			Date _31012021 = calendar.getTime();
 
 			ssBonuses.stream().forEach(b -> {
-				assertEquals(b.getDescription(), _06012021, b.getStartDate());
-				assertEquals(b.getDescription(), _22012021, b.getEndDate());
+				assertEquals(_06012021, b.getStartDate(),b.getDescription());
+				assertEquals(_22012021, b.getEndDate(),b.getDescription());
 			});
 
 			Salary salary = calculate(ssBonuses, Collections.emptyList());
@@ -1623,16 +1621,13 @@ public class IdcTest extends AbstractSQLTestCase {
 						.filter(d -> AonStringUtils.equals(d.getName(), var.getName()))
 						.sorted((d1, d2) -> d1.getStartDate().compareTo(d2.getStartDate())).toArray(SalaryData[]::new);
 
-				assertEquals(var.getName(), 3, salaryData.length);
-
-				assertEquals(var.getName(), _01012021, salaryData[0].getStartDate());
-				assertEquals(var.getName(), _05012021, salaryData[0].getEndDate());
-
-				assertEquals(var.getName(), _06012021, salaryData[1].getStartDate());
-				assertEquals(var.getName(), _22012021, salaryData[1].getEndDate());
-
-				assertEquals(var.getName(), _23012021, salaryData[2].getStartDate());
-				assertEquals(var.getName(), _31012021, salaryData[2].getEndDate());
+				assertEquals(3, salaryData.length,var.getName());
+				assertEquals(_01012021, salaryData[0].getStartDate(),var.getName());
+				assertEquals(_05012021, salaryData[0].getEndDate(),var.getName());
+				assertEquals(_06012021, salaryData[1].getStartDate(),var.getName());
+				assertEquals(_22012021, salaryData[1].getEndDate(),var.getName());
+				assertEquals(_23012021, salaryData[2].getStartDate(),var.getName());
+				assertEquals(_31012021, salaryData[2].getEndDate(),var.getName());
 			}
 
 			double totalCost = 0.00;
@@ -1678,8 +1673,8 @@ public class IdcTest extends AbstractSQLTestCase {
 			Date _28022021 = calendar.getTime();
 
 			ssBonuses.stream().forEach(b -> {
-				assertEquals(b.getDescription(), _01022021, b.getStartDate());
-				assertEquals(b.getDescription(), _28022021, b.getEndDate());
+				assertEquals(_01022021, b.getStartDate(),b.getDescription());
+				assertEquals(_28022021, b.getEndDate(),b.getDescription());
 			});
 
 			Salary salary = calculate(ssBonuses, Collections.emptyList());
@@ -1689,10 +1684,10 @@ public class IdcTest extends AbstractSQLTestCase {
 						.filter(d -> AonStringUtils.equals(d.getName(), var.getName()))
 						.sorted((d1, d2) -> d1.getStartDate().compareTo(d2.getStartDate())).toArray(SalaryData[]::new);
 
-				assertEquals(var.getName(), 1, salaryData.length);
+				assertEquals(1, salaryData.length,var.getName());
 
-				assertEquals(var.getName(), _01022021, salaryData[0].getStartDate());
-				assertEquals(var.getName(), _28022021, salaryData[0].getEndDate());
+				assertEquals(_01022021, salaryData[0].getStartDate(),var.getName());
+				assertEquals(_28022021, salaryData[0].getEndDate(),var.getName());
 
 			}
 
@@ -1739,8 +1734,8 @@ public class IdcTest extends AbstractSQLTestCase {
 			Date _28022021 = calendar.getTime();
 
 			ssBonuses.stream().forEach(b -> {
-				assertEquals(b.getDescription(), _01022021, b.getStartDate());
-				assertEquals(b.getDescription(), _28022021, b.getEndDate());
+				assertEquals(_01022021, b.getStartDate(),b.getDescription());
+				assertEquals(_28022021, b.getEndDate(),b.getDescription());
 			});
 
 			ssBonuses.stream().forEach(b -> {
@@ -1788,13 +1783,13 @@ public class IdcTest extends AbstractSQLTestCase {
 						.filter(d -> AonStringUtils.equals(d.getName(), var.getName()))
 						.sorted((d1, d2) -> d1.getStartDate().compareTo(d2.getStartDate())).toArray(SalaryData[]::new);
 
-				assertEquals(var.getName(), 3, salaryData.length);
+				assertEquals(3, salaryData.length,var.getName());
 
-				assertEquals(var.getName(), startDate, salaryData[0].getStartDate());
+				assertEquals(startDate, salaryData[0].getStartDate(),var.getName());
 
-				assertEquals(var.getName(), startItDate, salaryData[1].getStartDate());
+				assertEquals(startItDate, salaryData[1].getStartDate(),var.getName());
 
-				assertEquals(var.getName(), endDate, salaryData[2].getEndDate());
+				assertEquals(endDate, salaryData[2].getEndDate(),var.getName());
 
 			}
 
@@ -1841,8 +1836,8 @@ public class IdcTest extends AbstractSQLTestCase {
 			Date _28022021 = calendar.getTime();
 
 			ssBonuses.stream().forEach(b -> {
-				assertEquals(b.getDescription(), _01022021, b.getStartDate());
-				assertEquals(b.getDescription(), _28022021, b.getEndDate());
+				assertEquals(_01022021, b.getStartDate(),b.getDescription());
+				assertEquals(_28022021, b.getEndDate(),b.getDescription());
 			});
 
 			ssBonuses.stream().forEach(b -> {
@@ -1891,13 +1886,13 @@ public class IdcTest extends AbstractSQLTestCase {
 						.filter(d -> AonStringUtils.equals(d.getName(), var.getName()))
 						.sorted((d1, d2) -> d1.getStartDate().compareTo(d2.getStartDate())).toArray(SalaryData[]::new);
 
-				assertEquals(var.getName(), 3, salaryData.length);
+				assertEquals(3, salaryData.length,var.getName());
 
-				assertEquals(var.getName(), startDate, salaryData[0].getStartDate());
+				assertEquals(startDate, salaryData[0].getStartDate(),var.getName());
 
-				assertEquals(var.getName(), startItDate, salaryData[1].getStartDate());
+				assertEquals(startItDate, salaryData[1].getStartDate(),var.getName());
 
-				assertEquals(var.getName(), endDate, salaryData[2].getEndDate());
+				assertEquals(endDate, salaryData[2].getEndDate(),var.getName());
 
 			}
 
@@ -1949,8 +1944,8 @@ public class IdcTest extends AbstractSQLTestCase {
 			Date _28022021 = calendar.getTime();
 
 			ssBonuses.stream().forEach(b -> {
-				assertEquals(b.getDescription(), _01022021, b.getStartDate());
-				assertEquals(b.getDescription(), _28022021, b.getEndDate());
+				assertEquals(_01022021, b.getStartDate(),b.getDescription());
+				assertEquals(_28022021, b.getEndDate(),b.getDescription());
 			});
 
 			Salary salary = calculate(ssBonuses, Collections.emptyList());
@@ -1960,10 +1955,10 @@ public class IdcTest extends AbstractSQLTestCase {
 						.filter(d -> AonStringUtils.equals(d.getName(), var.getName()))
 						.sorted((d1, d2) -> d1.getStartDate().compareTo(d2.getStartDate())).toArray(SalaryData[]::new);
 
-				assertEquals(var.getName(), 1, salaryData.length);
+				assertEquals(1, salaryData.length,var.getName());
 
-				assertEquals(var.getName(), _01022021, salaryData[0].getStartDate());
-				assertEquals(var.getName(), _28022021, salaryData[0].getEndDate());
+				assertEquals(_01022021, salaryData[0].getStartDate(),var.getName());
+				assertEquals(_28022021, salaryData[0].getEndDate(),var.getName());
 
 			}
 
@@ -2018,8 +2013,8 @@ public class IdcTest extends AbstractSQLTestCase {
 			Date _30042021 = calendar.getTime();
 
 			ssBonuses.stream().forEach(b -> {
-				assertEquals(b.getDescription(), _01042021, b.getStartDate());
-				assertEquals(b.getDescription(), _30042021, b.getEndDate());
+				assertEquals(_01042021, b.getStartDate(),b.getDescription());
+				assertEquals(_30042021, b.getEndDate(),b.getDescription());
 			});
 
 			Salary salary = calculate(ssBonuses, Collections.emptyList());
@@ -2029,10 +2024,10 @@ public class IdcTest extends AbstractSQLTestCase {
 						.filter(d -> AonStringUtils.equals(d.getName(), var.getName()))
 						.sorted((d1, d2) -> d1.getStartDate().compareTo(d2.getStartDate())).toArray(SalaryData[]::new);
 
-				assertEquals(var.getName(), 1, salaryData.length);
+				assertEquals(1, salaryData.length,var.getName());
 
-				assertEquals(var.getName(), _01042021, salaryData[0].getStartDate());
-				assertEquals(var.getName(), _30042021, salaryData[0].getEndDate());
+				assertEquals(_01042021, salaryData[0].getStartDate(),var.getName());
+				assertEquals(_30042021, salaryData[0].getEndDate(),var.getName());
 
 			}
 
@@ -2093,8 +2088,8 @@ public class IdcTest extends AbstractSQLTestCase {
 
 			PEC bonus = ssBonuses.stream().findFirst().get();
 
-			Assert.assertEquals(october2020, bonus.getStartDate());
-			Assert.assertEquals(_9december2022, bonus.getEndDate());
+			assertEquals(october2020, bonus.getStartDate());
+			assertEquals(_9december2022, bonus.getEndDate());
 
 			calendar.set(Calendar.DAY_OF_MONTH, 1);
 			Date december2022 = calendar.getTime();
@@ -2151,12 +2146,12 @@ public class IdcTest extends AbstractSQLTestCase {
 			Date december2024 = calendar.getTime();
 
 			ssPecs.stream().findFirst().ifPresent(p -> {
-				Assert.assertEquals(december82020, p.getStartDate());
-				Assert.assertEquals(december2024, p.getEndDate());
+				assertEquals(december82020, p.getStartDate());
+				assertEquals(december2024, p.getEndDate());
 			});
 			ssPecs.stream().skip(1).forEach(p -> {
-				Assert.assertEquals(december82020, p.getStartDate());
-				Assert.assertNull(p.getEndDate());
+				assertEquals(december82020, p.getStartDate());
+				assertNull(p.getEndDate());
 			});
 
 			calendar.set(Calendar.DAY_OF_MONTH, 1);
@@ -2179,16 +2174,16 @@ public class IdcTest extends AbstractSQLTestCase {
 			assertEquals(totalCost - 1.67 * 7.00, salary.getTotalEnterprise(), DELTA);
 
 			salary.getSalaryCosts().stream().filter(c -> c.getType() == DeductionType.FOGASA)
-					.forEach(c -> Assert.fail(c.getType().name()));
+					.forEach(c -> fail(c.getType().name()));
 
 			salary.getSalaryCosts().stream().filter(c -> c.getType() == DeductionType.JOB_TRAINING)
-					.forEach(c -> Assert.fail(c.getType().name()));
+					.forEach(c -> fail(c.getType().name()));
 
 		}
 	}
 
 	@Test
-	@Ignore
+	@Disabled
 	public void testIdcXBonus() throws com.esferalia.aon.in.payroll.pdf.UnknownPDFException, IOException,
 			ExpressionException, SalaryException, SQLException {
 
@@ -2216,8 +2211,8 @@ public class IdcTest extends AbstractSQLTestCase {
 
 			PEC bonus = ssBonuses.stream().findFirst().get();
 
-			Assert.assertEquals(december82020, bonus.getStartDate());
-			Assert.assertEquals(december2024, bonus.getEndDate());
+			assertEquals(december82020, bonus.getStartDate());
+			assertEquals(december2024, bonus.getEndDate());
 
 			calendar.set(Calendar.DAY_OF_MONTH, 1);
 			Date may = calendar.getTime();
@@ -2245,7 +2240,7 @@ public class IdcTest extends AbstractSQLTestCase {
 
 		try (InputStream is = IdcTest.class.getResourceAsStream("idcXI.pdf")) {
 			Collection<PEC> ssPecs = Idc.getSSPECs(is);
-			Assert.assertTrue(ssPecs.size() > 1);
+			assertTrue(ssPecs.size() > 1);
 
 			Calendar calendar = Calendar.getInstance();
 			calendar.set(Calendar.HOUR_OF_DAY, 0);
@@ -2259,8 +2254,8 @@ public class IdcTest extends AbstractSQLTestCase {
 
 			Date may202021 = calendar.getTime();
 
-			ssPecs.stream().forEach(pec -> Assert.assertEquals(may202021, pec.getStartDate()));
-			ssPecs.stream().forEach(pec -> Assert.assertNull(pec.getEndDate()));
+			ssPecs.stream().forEach(pec -> assertEquals(may202021, pec.getStartDate()));
+			ssPecs.stream().forEach(pec -> assertNull(pec.getEndDate()));
 
 			ssPecs.forEach(pec -> System.out.println("[" + pec.getName() + "] " + pec.getDescription() + " = "
 					+ pec.getFormula() + ", " + pec.getStartDate()));
@@ -2273,11 +2268,11 @@ public class IdcTest extends AbstractSQLTestCase {
 
 			salary.getSalaryDeductions().forEach(
 					d -> System.out.println(d.getDeductionConcept() + " : " + d.getAmount() + ", " + d.getType()));
-			Assert.assertEquals(1 + 3 /*CGC + DESMPL + FP*/, salary.getSalaryDeductions().size());
+			assertEquals(1 + 3 /*CGC + DESMPL + FP*/, salary.getSalaryDeductions().size());
 
 			salary.getSalaryCosts()
 			.forEach(c -> System.out.println(c.getName() + " : " + c.getAmount() + ", " + c.getType()));
-			Assert.assertEquals(1 + 5 /*DESMPL + FP + IT + IMS + FOGASA*/, salary.getSalaryCosts().size());
+			assertEquals(1 + 5 /*DESMPL + FP + IT + IMS + FOGASA*/, salary.getSalaryCosts().size());
 
 			assertEquals(0.00, salary.getTotalEnterprise(), DELTA);
 			assertEquals(0.00, salary.getSocialSecurityContributions(), DELTA);
@@ -2291,7 +2286,7 @@ public class IdcTest extends AbstractSQLTestCase {
 
 		try (InputStream is = IdcTest.class.getResourceAsStream("idcXV.pdf")) {
 			Collection<PEC> ssPecs = Idc.getSSPECs(is);
-			Assert.assertTrue(ssPecs.size() > 1);
+			assertTrue(ssPecs.size() > 1);
 
 			Calendar calendar = Calendar.getInstance();
 			calendar.set(Calendar.HOUR_OF_DAY, 0);
@@ -2305,8 +2300,8 @@ public class IdcTest extends AbstractSQLTestCase {
 
 			Date april012020 = calendar.getTime();
 
-			ssPecs.stream().forEach(pec -> Assert.assertEquals(april012020, pec.getStartDate()));
-			ssPecs.stream().forEach(pec -> Assert.assertNull(pec.getEndDate()));
+			ssPecs.stream().forEach(pec -> assertEquals(april012020, pec.getStartDate()));
+			ssPecs.stream().forEach(pec -> assertNull(pec.getEndDate()));
 
 			ssPecs.forEach(pec -> System.out.println("[" + pec.getName() + "] " + pec.getDescription() + " = "
 					+ pec.getFormula() + ", " + pec.getStartDate()));
@@ -2336,7 +2331,7 @@ public class IdcTest extends AbstractSQLTestCase {
 
 		try (InputStream is = IdcTest.class.getResourceAsStream("idcXVI.pdf")) {
 			Collection<PEC> ssPecs = Idc.getSSPECs(is);
-			Assert.assertTrue(ssPecs.size() == 1);
+			assertTrue(ssPecs.size() == 1);
 
 			Calendar calendar = Calendar.getInstance();
 			calendar.set(Calendar.HOUR_OF_DAY, 0);
@@ -2350,8 +2345,8 @@ public class IdcTest extends AbstractSQLTestCase {
 
 			Date october2020201 = calendar.getTime();
 
-			ssPecs.stream().forEach(pec -> Assert.assertEquals(october2020201, pec.getStartDate()));
-			ssPecs.stream().forEach(pec -> Assert.assertNull(pec.getEndDate()));
+			ssPecs.stream().forEach(pec -> assertEquals(october2020201, pec.getStartDate()));
+			ssPecs.stream().forEach(pec -> assertNull(pec.getEndDate()));
 
 			ssPecs.forEach(pec -> System.out.println("[" + pec.getName() + "] " + pec.getDescription() + " = "
 					+ pec.getFormula() + ", " + pec.getStartDate()));
@@ -2381,7 +2376,7 @@ public class IdcTest extends AbstractSQLTestCase {
 
 		try (InputStream is = IdcTest.class.getResourceAsStream("idcXVII.pdf")) {
 			Collection<PEC> ssPecs = Idc.getSSPECs(is);
-			Assert.assertTrue(ssPecs.size() == 1);
+			assertTrue(ssPecs.size() == 1);
 
 			Calendar calendar = Calendar.getInstance();
 			calendar.set(Calendar.HOUR_OF_DAY, 0);
@@ -2395,7 +2390,7 @@ public class IdcTest extends AbstractSQLTestCase {
 
 			Date october2120201 = calendar.getTime();
 
-			ssPecs.stream().forEach(pec -> Assert.assertEquals(october2120201, pec.getStartDate()));
+			ssPecs.stream().forEach(pec -> assertEquals(october2120201, pec.getStartDate()));
 
 			calendar.set(Calendar.YEAR, 2024);
 			calendar.set(Calendar.DAY_OF_MONTH, 20);
@@ -2403,7 +2398,7 @@ public class IdcTest extends AbstractSQLTestCase {
 
 			Date october2020204 = calendar.getTime();
 
-			ssPecs.stream().forEach(pec -> Assert.assertEquals(october2020204, pec.getEndDate()));
+			ssPecs.stream().forEach(pec -> assertEquals(october2020204, pec.getEndDate()));
 
 			ssPecs.forEach(pec -> System.out.println("[" + pec.getName() + "] " + pec.getDescription() + " = "
 					+ pec.getFormula() + ", " + pec.getStartDate()));
@@ -2436,7 +2431,7 @@ public class IdcTest extends AbstractSQLTestCase {
 
 		try (InputStream is = IdcTest.class.getResourceAsStream("idcXXI.pdf")) {
 			Collection<PEC> ssPecs = Idc.getSSPECs(is);
-			// Assert.assertTrue(ssPecs.size() == 1);
+			// assertTrue(ssPecs.size() == 1);
 
 			Calendar calendar = Calendar.getInstance();
 			calendar.set(Calendar.HOUR_OF_DAY, 0);
@@ -2450,9 +2445,9 @@ public class IdcTest extends AbstractSQLTestCase {
 
 			Date may112022 = calendar.getTime();
 
-			ssPecs.stream().forEach(pec -> Assert.assertEquals(may112022, pec.getStartDate()));
+			ssPecs.stream().forEach(pec -> assertEquals(may112022, pec.getStartDate()));
 
-			ssPecs.stream().forEach(pec -> Assert.assertNull(pec.getEndDate()));
+			ssPecs.stream().forEach(pec -> assertNull(pec.getEndDate()));
 
 			ssPecs.forEach(pec -> System.out.println("[" + pec.getName() + "] " + pec.getDescription() + " = "
 					+ pec.getFormula() + ", " + pec.getStartDate()));
@@ -2483,7 +2478,7 @@ public class IdcTest extends AbstractSQLTestCase {
 
 		try (InputStream is = IdcTest.class.getResourceAsStream("idcXXII.pdf")) {
 			Collection<PEC> ssPecs = Idc.getSSPECs(is);
-			// Assert.assertTrue(ssPecs.size() == 1);
+			// assertTrue(ssPecs.size() == 1);
 
 			Calendar calendar = Calendar.getInstance();
 			calendar.set(Calendar.HOUR_OF_DAY, 0);
@@ -2497,9 +2492,9 @@ public class IdcTest extends AbstractSQLTestCase {
 
 			Date february21 = calendar.getTime();
 
-			ssPecs.stream().forEach(pec -> Assert.assertEquals(february21, pec.getStartDate()));
+			ssPecs.stream().forEach(pec -> assertEquals(february21, pec.getStartDate()));
 
-			ssPecs.stream().forEach(pec -> Assert.assertNull(pec.getEndDate()));
+			ssPecs.stream().forEach(pec -> assertNull(pec.getEndDate()));
 
 			ssPecs.forEach(pec -> System.out.println("[" + pec.getName() + "] " + pec.getDescription() + " = "
 					+ pec.getFormula() + ", " + pec.getStartDate()));
@@ -2572,7 +2567,7 @@ public class IdcTest extends AbstractSQLTestCase {
 
 		try (InputStream is = IdcTest.class.getResourceAsStream("idcXXII.pdf")) {
 			Collection<PEC> ssPecs = Idc.getSSPECs(is);
-			// Assert.assertTrue(ssPecs.size() == 1);
+			// assertTrue(ssPecs.size() == 1);
 
 			Calendar calendar = Calendar.getInstance();
 			calendar.set(Calendar.HOUR_OF_DAY, 0);
@@ -2663,7 +2658,7 @@ public class IdcTest extends AbstractSQLTestCase {
 
 		try (InputStream is = IdcTest.class.getResourceAsStream("idcXXIII.pdf")) {
 			Collection<PEC> ssPecs = Idc.getSSPECs(is);
-			// Assert.assertTrue(ssPecs.size() == 1);
+			// assertTrue(ssPecs.size() == 1);
 
 			Calendar calendar = Calendar.getInstance();
 			calendar.set(Calendar.HOUR_OF_DAY, 0);
@@ -2677,9 +2672,9 @@ public class IdcTest extends AbstractSQLTestCase {
 
 			Date march11 = calendar.getTime();
 
-			ssPecs.stream().forEach(pec -> Assert.assertEquals(march11, pec.getStartDate()));
+			ssPecs.stream().forEach(pec -> assertEquals(march11, pec.getStartDate()));
 
-			ssPecs.stream().forEach(pec -> Assert.assertNull(pec.getEndDate()));
+			ssPecs.stream().forEach(pec -> assertNull(pec.getEndDate()));
 
 		}
 	}
@@ -2690,7 +2685,7 @@ public class IdcTest extends AbstractSQLTestCase {
 
 		try (InputStream is = IdcTest.class.getResourceAsStream("idcXI.pdf")) {
 			Collection<PEC> ssPecs = Idc.getSSPECs(is);
-			Assert.assertTrue(ssPecs.size() > 1);
+			assertTrue(ssPecs.size() > 1);
 
 			Calendar calendar = Calendar.getInstance();
 			calendar.set(Calendar.HOUR_OF_DAY, 0);
@@ -2742,9 +2737,9 @@ public class IdcTest extends AbstractSQLTestCase {
 			Deduction[] deductionsII = PAYROLL.getDeductions(domain.getName(), domain.getId(), "login",
 					contract.getId());
 
-			Assert.assertEquals(bonusI.length, bonusII.length);
-			Assert.assertEquals(costsI.length, costsII.length);
-			Assert.assertEquals(deductionsI.length, deductionsII.length);
+			assertEquals(bonusI.length, bonusII.length);
+			assertEquals(costsI.length, costsII.length);
+			assertEquals(deductionsI.length, deductionsII.length);
 		}
 	}
 
@@ -3900,39 +3895,39 @@ public class IdcTest extends AbstractSQLTestCase {
 					.collect(Collectors.toMap(d -> d.getName(), d -> d));
 
 			ContractData tc2Data = contractDatas.get(ContextVariable.TC2.getName());
-			Assert.assertNull(tc2Data.getEndDate());
-			Assert.assertEquals(idcDate, tc2Data.getStartDate());
-			Assert.assertEquals("\"189\"", tc2Data.getExpression());
+			assertNull(tc2Data.getEndDate());
+			assertEquals(idcDate, tc2Data.getStartDate());
+			assertEquals("\"189\"", tc2Data.getExpression());
 
 			ContractData quoteGroupData = contractDatas.get(ContextVariable.QUOTE_GROUP.getName());
-			Assert.assertNull(quoteGroupData.getEndDate());
-			Assert.assertEquals(idcDate, quoteGroupData.getStartDate());
-			Assert.assertEquals("\"10\"", quoteGroupData.getExpression());
+			assertNull(quoteGroupData.getEndDate());
+			assertEquals(idcDate, quoteGroupData.getStartDate());
+			assertEquals("\"10\"", quoteGroupData.getExpression());
 
 			ContractData itData = contractDatas.get(ContextVariable.IT_PERCENT.getName());
-			Assert.assertNull(itData.getEndDate());
-			Assert.assertEquals(idcDate, itData.getStartDate());
-			Assert.assertEquals(1.70, Double.parseDouble(itData.getExpression()), 0.00);
+			assertNull(itData.getEndDate());
+			assertEquals(idcDate, itData.getStartDate());
+			assertEquals(1.70, Double.parseDouble(itData.getExpression()), 0.00);
 
 			ContractData imsData = contractDatas.get(ContextVariable.IMS_PERCENT.getName());
-			Assert.assertNull(imsData.getEndDate());
-			Assert.assertEquals(idcDate, imsData.getStartDate());
-			Assert.assertEquals(1.30, Double.parseDouble(imsData.getExpression()), 0.00);
+			assertNull(imsData.getEndDate());
+			assertEquals(idcDate, imsData.getStartDate());
+			assertEquals(1.30, Double.parseDouble(imsData.getExpression()), 0.00);
 
 			ContractData unemployEmployeePercentData = contractDatas
 					.get(ContextVariable.UNEMPLOY_EMPLOYEE_PERCENT.getName());
-			Assert.assertNull(unemployEmployeePercentData.getEndDate());
-			Assert.assertEquals(idcDate, unemployEmployeePercentData.getStartDate());
-			Assert.assertEquals(1.55, Double.parseDouble(unemployEmployeePercentData.getExpression()), 0.00);
+			assertNull(unemployEmployeePercentData.getEndDate());
+			assertEquals(idcDate, unemployEmployeePercentData.getStartDate());
+			assertEquals(1.55, Double.parseDouble(unemployEmployeePercentData.getExpression()), 0.00);
 
 			ContractData unemployEnterprisePercentData = contractDatas
 					.get(ContextVariable.UNEMPLOY_ENTERPRISE_PERCENT.getName());
-			Assert.assertNull(unemployEnterprisePercentData.getEndDate());
-			Assert.assertEquals(idcDate, unemployEnterprisePercentData.getStartDate());
-			Assert.assertEquals(5.50, Double.parseDouble(unemployEnterprisePercentData.getExpression()), 0.00);
+			assertNull(unemployEnterprisePercentData.getEndDate());
+			assertEquals(idcDate, unemployEnterprisePercentData.getStartDate());
+			assertEquals(5.50, Double.parseDouble(unemployEnterprisePercentData.getExpression()), 0.00);
 
 			ContractData partialFactorData = contractDatas.get(ContextVariable.PARTIAL_FACTOR.getName());
-			Assert.assertNull(partialFactorData);
+			assertNull(partialFactorData);
 
 		} finally {
 
@@ -3965,36 +3960,36 @@ public class IdcTest extends AbstractSQLTestCase {
 			Date idcEndDate = getDate(31, Calendar.JULY, 2021);
 
 			ContractData tc2Data = contractDatas.get(ContextVariable.TC2.getName());
-			Assert.assertEquals(idcEndDate, tc2Data.getEndDate());
-			Assert.assertEquals(idcStartDate, tc2Data.getStartDate());
-			Assert.assertEquals("\"100\"", tc2Data.getExpression());
+			assertEquals(idcEndDate, tc2Data.getEndDate());
+			assertEquals(idcStartDate, tc2Data.getStartDate());
+			assertEquals("\"100\"", tc2Data.getExpression());
 
 			ContractData quoteGroupData = contractDatas.get(ContextVariable.QUOTE_GROUP.getName());
-			Assert.assertEquals(idcEndDate, quoteGroupData.getEndDate());
-			Assert.assertEquals(idcStartDate, quoteGroupData.getStartDate());
-			Assert.assertEquals("\"01\"", quoteGroupData.getExpression());
+			assertEquals(idcEndDate, quoteGroupData.getEndDate());
+			assertEquals(idcStartDate, quoteGroupData.getStartDate());
+			assertEquals("\"01\"", quoteGroupData.getExpression());
 
 			ContractData itData = contractDatas.get(ContextVariable.IT_PERCENT.getName());
-			Assert.assertEquals(idcEndDate, itData.getEndDate());
-			Assert.assertEquals(idcStartDate, itData.getStartDate());
-			Assert.assertEquals(0.80, Double.parseDouble(itData.getExpression()), 0.00);
+			assertEquals(idcEndDate, itData.getEndDate());
+			assertEquals(idcStartDate, itData.getStartDate());
+			assertEquals(0.80, Double.parseDouble(itData.getExpression()), 0.00);
 
 			ContractData imsData = contractDatas.get(ContextVariable.IMS_PERCENT.getName());
-			Assert.assertEquals(idcEndDate, imsData.getEndDate());
-			Assert.assertEquals(idcStartDate, imsData.getStartDate());
-			Assert.assertEquals(0.70, Double.parseDouble(imsData.getExpression()), 0.00);
+			assertEquals(idcEndDate, imsData.getEndDate());
+			assertEquals(idcStartDate, imsData.getStartDate());
+			assertEquals(0.70, Double.parseDouble(imsData.getExpression()), 0.00);
 
 			ContractData unemployEmployeePercentData = contractDatas
 					.get(ContextVariable.UNEMPLOY_EMPLOYEE_PERCENT.getName());
-			Assert.assertEquals(idcEndDate, unemployEmployeePercentData.getEndDate());
-			Assert.assertEquals(idcStartDate, unemployEmployeePercentData.getStartDate());
-			Assert.assertEquals(1.55, Double.parseDouble(unemployEmployeePercentData.getExpression()), 0.00);
+			assertEquals(idcEndDate, unemployEmployeePercentData.getEndDate());
+			assertEquals(idcStartDate, unemployEmployeePercentData.getStartDate());
+			assertEquals(1.55, Double.parseDouble(unemployEmployeePercentData.getExpression()), 0.00);
 
 			ContractData unemployEnterprisePercentData = contractDatas
 					.get(ContextVariable.UNEMPLOY_ENTERPRISE_PERCENT.getName());
-			Assert.assertEquals(idcEndDate, unemployEnterprisePercentData.getEndDate());
-			Assert.assertEquals(idcStartDate, unemployEnterprisePercentData.getStartDate());
-			Assert.assertEquals(5.50, Double.parseDouble(unemployEnterprisePercentData.getExpression()), 0.00);
+			assertEquals(idcEndDate, unemployEnterprisePercentData.getEndDate());
+			assertEquals(idcStartDate, unemployEnterprisePercentData.getStartDate());
+			assertEquals(5.50, Double.parseDouble(unemployEnterprisePercentData.getExpression()), 0.00);
 
 		} finally {
 
@@ -4014,47 +4009,47 @@ public class IdcTest extends AbstractSQLTestCase {
 			List<ContractData> tc2Datas = contractDatas.get(ContextVariable.TC2.getName());
 			Collections.sort(tc2Datas, (d1, d2) -> d2.getStartDate().compareTo(d1.getStartDate()));
 			ContractData tc2Data = tc2Datas.get(0);
-			Assert.assertNull(tc2Data.getEndDate());
-			Assert.assertEquals(idcStartDate, tc2Data.getStartDate());
-			Assert.assertEquals("\"100\"", tc2Data.getExpression());
+			assertNull(tc2Data.getEndDate());
+			assertEquals(idcStartDate, tc2Data.getStartDate());
+			assertEquals("\"100\"", tc2Data.getExpression());
 
 			List<ContractData> quoteGroupDatas = contractDatas.get(ContextVariable.QUOTE_GROUP.getName());
 			Collections.sort(quoteGroupDatas, (d1, d2) -> d2.getStartDate().compareTo(d1.getStartDate()));
 			ContractData quoteGroupData = quoteGroupDatas.get(0);
-			Assert.assertNull(quoteGroupData.getEndDate());
-			Assert.assertEquals(idcStartDate, quoteGroupData.getStartDate());
-			Assert.assertEquals("\"01\"", quoteGroupData.getExpression());
+			assertNull(quoteGroupData.getEndDate());
+			assertEquals(idcStartDate, quoteGroupData.getStartDate());
+			assertEquals("\"01\"", quoteGroupData.getExpression());
 
 			List<ContractData> itDatas = contractDatas.get(ContextVariable.IT_PERCENT.getName());
 			Collections.sort(itDatas, (d1, d2) -> d2.getStartDate().compareTo(d1.getStartDate()));
 			ContractData itData = itDatas.get(0);
-			Assert.assertNull(itData.getEndDate());
-			Assert.assertEquals(idcStartDate, itData.getStartDate());
-			Assert.assertEquals(0.80, Double.parseDouble(itData.getExpression()), 0.00);
+			assertNull(itData.getEndDate());
+			assertEquals(idcStartDate, itData.getStartDate());
+			assertEquals(0.80, Double.parseDouble(itData.getExpression()), 0.00);
 
 			List<ContractData> imsDatas = contractDatas.get(ContextVariable.IMS_PERCENT.getName());
 			Collections.sort(imsDatas, (d1, d2) -> d2.getStartDate().compareTo(d1.getStartDate()));
 			ContractData imsData = imsDatas.get(0);
-			Assert.assertNull(imsData.getEndDate());
-			Assert.assertEquals(idcStartDate, imsData.getStartDate());
-			Assert.assertEquals(0.70, Double.parseDouble(imsData.getExpression()), 0.00);
+			assertNull(imsData.getEndDate());
+			assertEquals(idcStartDate, imsData.getStartDate());
+			assertEquals(0.70, Double.parseDouble(imsData.getExpression()), 0.00);
 
 			List<ContractData> unemployEmployeePercentDatas = contractDatas
 					.get(ContextVariable.UNEMPLOY_EMPLOYEE_PERCENT.getName());
 			Collections.sort(unemployEmployeePercentDatas, (d1, d2) -> d2.getStartDate().compareTo(d1.getStartDate()));
 			ContractData unemployEmployeePercentData = unemployEmployeePercentDatas.get(0);
-			Assert.assertNull(unemployEmployeePercentData.getEndDate());
-			Assert.assertEquals(idcStartDate, unemployEmployeePercentData.getStartDate());
-			Assert.assertEquals(1.55, Double.parseDouble(unemployEmployeePercentData.getExpression()), 0.00);
+			assertNull(unemployEmployeePercentData.getEndDate());
+			assertEquals(idcStartDate, unemployEmployeePercentData.getStartDate());
+			assertEquals(1.55, Double.parseDouble(unemployEmployeePercentData.getExpression()), 0.00);
 
 			List<ContractData> unemployEnterprisePercentDatas = contractDatas
 					.get(ContextVariable.UNEMPLOY_ENTERPRISE_PERCENT.getName());
 			Collections.sort(unemployEnterprisePercentDatas,
 					(d1, d2) -> d2.getStartDate().compareTo(d1.getStartDate()));
 			ContractData unemployEnterprisePercentData = unemployEnterprisePercentDatas.get(0);
-			Assert.assertNull(unemployEnterprisePercentData.getEndDate());
-			Assert.assertEquals(idcStartDate, unemployEnterprisePercentData.getStartDate());
-			Assert.assertEquals(5.50, Double.parseDouble(unemployEnterprisePercentData.getExpression()), 0.00);
+			assertNull(unemployEnterprisePercentData.getEndDate());
+			assertEquals(idcStartDate, unemployEnterprisePercentData.getStartDate());
+			assertEquals(5.50, Double.parseDouble(unemployEnterprisePercentData.getExpression()), 0.00);
 
 		} finally {
 
@@ -4100,36 +4095,36 @@ public class IdcTest extends AbstractSQLTestCase {
 				Date idcEndDate = getDate(31, Calendar.JULY, 2021);
 
 				ContractData tc2Data = contractDatas.get(ContextVariable.TC2.getName());
-				Assert.assertEquals(idcEndDate, tc2Data.getEndDate());
-				Assert.assertEquals(idcStartDate, tc2Data.getStartDate());
-				Assert.assertEquals("\"100\"", tc2Data.getExpression());
+				assertEquals(idcEndDate, tc2Data.getEndDate());
+				assertEquals(idcStartDate, tc2Data.getStartDate());
+				assertEquals("\"100\"", tc2Data.getExpression());
 
 				ContractData quoteGroupData = contractDatas.get(ContextVariable.QUOTE_GROUP.getName());
-				Assert.assertEquals(idcEndDate, quoteGroupData.getEndDate());
-				Assert.assertEquals(idcStartDate, quoteGroupData.getStartDate());
-				Assert.assertEquals("\"01\"", quoteGroupData.getExpression());
+				assertEquals(idcEndDate, quoteGroupData.getEndDate());
+				assertEquals(idcStartDate, quoteGroupData.getStartDate());
+				assertEquals("\"01\"", quoteGroupData.getExpression());
 
 				ContractData itData = contractDatas.get(ContextVariable.IT_PERCENT.getName());
-				Assert.assertEquals(idcEndDate, itData.getEndDate());
-				Assert.assertEquals(idcStartDate, itData.getStartDate());
-				Assert.assertEquals(0.80, Double.parseDouble(itData.getExpression()), 0.00);
+				assertEquals(idcEndDate, itData.getEndDate());
+				assertEquals(idcStartDate, itData.getStartDate());
+				assertEquals(0.80, Double.parseDouble(itData.getExpression()), 0.00);
 
 				ContractData imsData = contractDatas.get(ContextVariable.IMS_PERCENT.getName());
-				Assert.assertEquals(idcEndDate, imsData.getEndDate());
-				Assert.assertEquals(idcStartDate, imsData.getStartDate());
-				Assert.assertEquals(0.70, Double.parseDouble(imsData.getExpression()), 0.00);
+				assertEquals(idcEndDate, imsData.getEndDate());
+				assertEquals(idcStartDate, imsData.getStartDate());
+				assertEquals(0.70, Double.parseDouble(imsData.getExpression()), 0.00);
 
 				ContractData unemployEmployeePercentData = contractDatas
 						.get(ContextVariable.UNEMPLOY_EMPLOYEE_PERCENT.getName());
-				Assert.assertEquals(idcEndDate, unemployEmployeePercentData.getEndDate());
-				Assert.assertEquals(idcStartDate, unemployEmployeePercentData.getStartDate());
-				Assert.assertEquals(1.55, Double.parseDouble(unemployEmployeePercentData.getExpression()), 0.00);
+				assertEquals(idcEndDate, unemployEmployeePercentData.getEndDate());
+				assertEquals(idcStartDate, unemployEmployeePercentData.getStartDate());
+				assertEquals(1.55, Double.parseDouble(unemployEmployeePercentData.getExpression()), 0.00);
 
 				ContractData unemployEnterprisePercentData = contractDatas
 						.get(ContextVariable.UNEMPLOY_ENTERPRISE_PERCENT.getName());
-				Assert.assertEquals(idcEndDate, unemployEnterprisePercentData.getEndDate());
-				Assert.assertEquals(idcStartDate, unemployEnterprisePercentData.getStartDate());
-				Assert.assertEquals(5.50, Double.parseDouble(unemployEnterprisePercentData.getExpression()), 0.00);
+				assertEquals(idcEndDate, unemployEnterprisePercentData.getEndDate());
+				assertEquals(idcStartDate, unemployEnterprisePercentData.getStartDate());
+				assertEquals(5.50, Double.parseDouble(unemployEnterprisePercentData.getExpression()), 0.00);
 
 			} finally {
 
@@ -4150,48 +4145,48 @@ public class IdcTest extends AbstractSQLTestCase {
 					List<ContractData> tc2Datas = contractDatas.get(ContextVariable.TC2.getName());
 					Collections.sort(tc2Datas, (d1, d2) -> d2.getStartDate().compareTo(d1.getStartDate()));
 					ContractData tc2Data = tc2Datas.get(0);
-					Assert.assertNull(tc2Data.getEndDate());
-					Assert.assertEquals(idcStartDate, tc2Data.getStartDate());
-					Assert.assertEquals("\"100\"", tc2Data.getExpression());
+					assertNull(tc2Data.getEndDate());
+					assertEquals(idcStartDate, tc2Data.getStartDate());
+					assertEquals("\"100\"", tc2Data.getExpression());
 
 					List<ContractData> quoteGroupDatas = contractDatas.get(ContextVariable.QUOTE_GROUP.getName());
 					Collections.sort(quoteGroupDatas, (d1, d2) -> d2.getStartDate().compareTo(d1.getStartDate()));
 					ContractData quoteGroupData = quoteGroupDatas.get(0);
-					Assert.assertNull(quoteGroupData.getEndDate());
-					Assert.assertEquals(idcStartDate, quoteGroupData.getStartDate());
-					Assert.assertEquals("\"01\"", quoteGroupData.getExpression());
+					assertNull(quoteGroupData.getEndDate());
+					assertEquals(idcStartDate, quoteGroupData.getStartDate());
+					assertEquals("\"01\"", quoteGroupData.getExpression());
 
 					List<ContractData> itDatas = contractDatas.get(ContextVariable.IT_PERCENT.getName());
 					Collections.sort(itDatas, (d1, d2) -> d2.getStartDate().compareTo(d1.getStartDate()));
 					ContractData itData = itDatas.get(0);
-					Assert.assertNull(itData.getEndDate());
-					Assert.assertEquals(idcStartDate, itData.getStartDate());
-					Assert.assertEquals(0.80, Double.parseDouble(itData.getExpression()), 0.00);
+					assertNull(itData.getEndDate());
+					assertEquals(idcStartDate, itData.getStartDate());
+					assertEquals(0.80, Double.parseDouble(itData.getExpression()), 0.00);
 
 					List<ContractData> imsDatas = contractDatas.get(ContextVariable.IMS_PERCENT.getName());
 					Collections.sort(imsDatas, (d1, d2) -> d2.getStartDate().compareTo(d1.getStartDate()));
 					ContractData imsData = imsDatas.get(0);
-					Assert.assertNull(imsData.getEndDate());
-					Assert.assertEquals(idcStartDate, imsData.getStartDate());
-					Assert.assertEquals(0.70, Double.parseDouble(imsData.getExpression()), 0.00);
+					assertNull(imsData.getEndDate());
+					assertEquals(idcStartDate, imsData.getStartDate());
+					assertEquals(0.70, Double.parseDouble(imsData.getExpression()), 0.00);
 
 					List<ContractData> unemployEmployeePercentDatas = contractDatas
 							.get(ContextVariable.UNEMPLOY_EMPLOYEE_PERCENT.getName());
 					Collections.sort(unemployEmployeePercentDatas,
 							(d1, d2) -> d2.getStartDate().compareTo(d1.getStartDate()));
 					ContractData unemployEmployeePercentData = unemployEmployeePercentDatas.get(0);
-					Assert.assertNull(unemployEmployeePercentData.getEndDate());
-					Assert.assertEquals(idcStartDate, unemployEmployeePercentData.getStartDate());
-					Assert.assertEquals(1.55, Double.parseDouble(unemployEmployeePercentData.getExpression()), 0.00);
+					assertNull(unemployEmployeePercentData.getEndDate());
+					assertEquals(idcStartDate, unemployEmployeePercentData.getStartDate());
+					assertEquals(1.55, Double.parseDouble(unemployEmployeePercentData.getExpression()), 0.00);
 
 					List<ContractData> unemployEnterprisePercentDatas = contractDatas
 							.get(ContextVariable.UNEMPLOY_ENTERPRISE_PERCENT.getName());
 					Collections.sort(unemployEnterprisePercentDatas,
 							(d1, d2) -> d2.getStartDate().compareTo(d1.getStartDate()));
 					ContractData unemployEnterprisePercentData = unemployEnterprisePercentDatas.get(0);
-					Assert.assertNull(unemployEnterprisePercentData.getEndDate());
-					Assert.assertEquals(idcStartDate, unemployEnterprisePercentData.getStartDate());
-					Assert.assertEquals(5.50, Double.parseDouble(unemployEnterprisePercentData.getExpression()), 0.00);
+					assertNull(unemployEnterprisePercentData.getEndDate());
+					assertEquals(idcStartDate, unemployEnterprisePercentData.getStartDate());
+					assertEquals(5.50, Double.parseDouble(unemployEnterprisePercentData.getExpression()), 0.00);
 
 				} finally {
 
@@ -4222,35 +4217,35 @@ public class IdcTest extends AbstractSQLTestCase {
 					.collect(Collectors.toMap(d -> d.getName(), d -> d));
 
 			ContractData tc2Data = contractDatas.get(ContextVariable.TC2.getName());
-			Assert.assertNull(tc2Data.getEndDate());
-			Assert.assertEquals(idcDate, tc2Data.getStartDate());
-			Assert.assertEquals("\"421\"", tc2Data.getExpression());
+			assertNull(tc2Data.getEndDate());
+			assertEquals(idcDate, tc2Data.getStartDate());
+			assertEquals("\"421\"", tc2Data.getExpression());
 
 			ContractData quoteGroupData = contractDatas.get(ContextVariable.QUOTE_GROUP.getName());
-			Assert.assertNull(quoteGroupData.getEndDate());
-			Assert.assertEquals(idcDate, quoteGroupData.getStartDate());
-			Assert.assertEquals("\"10\"", quoteGroupData.getExpression());
+			assertNull(quoteGroupData.getEndDate());
+			assertEquals(idcDate, quoteGroupData.getStartDate());
+			assertEquals("\"10\"", quoteGroupData.getExpression());
 
 			ContractData unemployEmployeePercentData = contractDatas
 					.get(ContextVariable.UNEMPLOY_EMPLOYEE_PERCENT.getName());
-			Assert.assertNull(unemployEmployeePercentData.getEndDate());
-			Assert.assertEquals(idcDate, unemployEmployeePercentData.getStartDate());
-			Assert.assertEquals(1.55, Double.parseDouble(unemployEmployeePercentData.getExpression()), 0.00);
+			assertNull(unemployEmployeePercentData.getEndDate());
+			assertEquals(idcDate, unemployEmployeePercentData.getStartDate());
+			assertEquals(1.55, Double.parseDouble(unemployEmployeePercentData.getExpression()), 0.00);
 
 			ContractData unemployEnterprisePercentData = contractDatas
 					.get(ContextVariable.UNEMPLOY_ENTERPRISE_PERCENT.getName());
-			Assert.assertNull(unemployEnterprisePercentData.getEndDate());
-			Assert.assertEquals(idcDate, unemployEnterprisePercentData.getStartDate());
-			Assert.assertEquals(5.50, Double.parseDouble(unemployEnterprisePercentData.getExpression()), 0.00);
+			assertNull(unemployEnterprisePercentData.getEndDate());
+			assertEquals(idcDate, unemployEnterprisePercentData.getStartDate());
+			assertEquals(5.50, Double.parseDouble(unemployEnterprisePercentData.getExpression()), 0.00);
 
 			ContractData partialFactorData = contractDatas.get(ContextVariable.PARTIAL_FACTOR.getName());
-			Assert.assertNull(partialFactorData);
+			assertNull(partialFactorData);
 
 			ContractData itData = contractDatas.get(ContextVariable.IT_PERCENT.getName());
-			Assert.assertNull(itData);
+			assertNull(itData);
 
 			ContractData imsData = contractDatas.get(ContextVariable.IMS_PERCENT.getName());
-			Assert.assertNull(imsData);
+			assertNull(imsData);
 
 		} finally {
 
@@ -4280,41 +4275,41 @@ public class IdcTest extends AbstractSQLTestCase {
 					.collect(Collectors.toMap(d -> d.getName(), d -> d));
 
 			ContractData tc2Data = contractDatas.get(ContextVariable.TC2.getName());
-			Assert.assertNull(tc2Data);
+			assertNull(tc2Data);
 
 			ContractData quoteGroupData = contractDatas.get(ContextVariable.QUOTE_GROUP.getName());
-			Assert.assertNull(quoteGroupData.getEndDate());
-			Assert.assertEquals(idcDate, quoteGroupData.getStartDate());
-			Assert.assertEquals("\"07\"", quoteGroupData.getExpression());
+			assertNull(quoteGroupData.getEndDate());
+			assertEquals(idcDate, quoteGroupData.getStartDate());
+			assertEquals("\"07\"", quoteGroupData.getExpression());
 
 			ContractData unemployEmployeePercentData = contractDatas
 					.get(ContextVariable.UNEMPLOY_EMPLOYEE_PERCENT.getName());
-			Assert.assertNull(unemployEmployeePercentData);
+			assertNull(unemployEmployeePercentData);
 
 			ContractData unemployEnterprisePercentData = contractDatas
 					.get(ContextVariable.UNEMPLOY_ENTERPRISE_PERCENT.getName());
-			Assert.assertNull(unemployEnterprisePercentData);
+			assertNull(unemployEnterprisePercentData);
 
 			ContractData partialFactorData = contractDatas.get(ContextVariable.PARTIAL_FACTOR.getName());
-			Assert.assertNull(partialFactorData);
+			assertNull(partialFactorData);
 
 			ContractData itData = contractDatas.get(ContextVariable.IT_PERCENT.getName());
-			Assert.assertNull(itData);
+			assertNull(itData);
 
 			ContractData imsData = contractDatas.get(ContextVariable.IMS_PERCENT.getName());
-			Assert.assertNull(imsData);
+			assertNull(imsData);
 
 			Deduction[] deductions = PAYROLL.getDeductions(domainName, contract.getDomain(), "login", contract.getId());
-			Assert.assertEquals(4, deductions.length);
+			assertEquals(4, deductions.length);
 			for (Deduction deduction : deductions) {
 				if (deduction.getType() == UNEMPLOYMENT) {
-					Assert.assertTrue(AonStringUtils.containsIgnoreCase(deduction.getExpression(), "REMOVE"));
+					assertTrue(AonStringUtils.containsIgnoreCase(deduction.getExpression(), "REMOVE"));
 				} else if (deduction.getType() == JOB_TRAINING) {
-					Assert.assertTrue(AonStringUtils.containsIgnoreCase(deduction.getExpression(), "REMOVE"));
+					assertTrue(AonStringUtils.containsIgnoreCase(deduction.getExpression(), "REMOVE"));
 				} else if (deduction.getType() == BONUS) {
 
 				} else {
-					Assert.fail("Unknow " + deduction.getType());
+					fail("Unknow " + deduction.getType());
 				}
 			}
 
@@ -4330,7 +4325,7 @@ public class IdcTest extends AbstractSQLTestCase {
 
 		try (InputStream is = IdcTest.class.getResourceAsStream("idcAsimilados.pdf")) {
 			Collection<PEC> ssPecs = Idc.getSSPECs(is);
-			// Assert.assertTrue(ssPecs.size() == 1);
+			// assertTrue(ssPecs.size() == 1);
 
 			Calendar calendar = Calendar.getInstance();
 			calendar.set(Calendar.HOUR_OF_DAY, 0);
@@ -4344,8 +4339,8 @@ public class IdcTest extends AbstractSQLTestCase {
 
 			Date may012020 = calendar.getTime();
 
-			ssPecs.stream().forEach(pec -> Assert.assertEquals(may012020, pec.getStartDate()));
-			ssPecs.stream().forEach(pec -> Assert.assertNull(pec.getEndDate()));
+			ssPecs.stream().forEach(pec -> assertEquals(may012020, pec.getStartDate()));
+			ssPecs.stream().forEach(pec -> assertNull(pec.getEndDate()));
 
 			ssPecs.forEach(pec -> System.out.println("[" + pec.getName() + "] " + pec.getDescription() + " = "
 					+ pec.getFormula() + ", " + pec.getStartDate()));
@@ -4413,40 +4408,40 @@ public class IdcTest extends AbstractSQLTestCase {
 		Arrays.stream(bonuses).forEach(
 				b -> System.out.println(b.getDescription() + " : " + b.getStartDate() + "..." + b.getEndDate()));
 
-		Assert.assertEquals("22-04-2019", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[0].getStartDate()));
-		Assert.assertEquals("05-08-2019", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[0].getEndDate()));
+		assertEquals("22-04-2019", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[0].getStartDate()));
+		assertEquals("05-08-2019", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[0].getEndDate()));
 
-		Assert.assertEquals("06-08-2019", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[1].getStartDate()));
-		Assert.assertEquals("13-03-2020", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[1].getEndDate()));
+		assertEquals("06-08-2019", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[1].getStartDate()));
+		assertEquals("13-03-2020", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[1].getEndDate()));
 
-		Assert.assertEquals("14-03-2020", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[2].getStartDate()));
-		Assert.assertEquals("12-07-2020", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[2].getEndDate()));
-		Assert.assertEquals("14-03-2020", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[3].getStartDate()));
-		Assert.assertEquals("30-04-2020", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[3].getEndDate()));
-		Assert.assertEquals("01-05-2020", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[4].getStartDate()));
-		Assert.assertEquals("31-05-2020", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[4].getEndDate()));
-		Assert.assertEquals("01-06-2020", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[5].getStartDate()));
-		Assert.assertEquals("30-06-2020", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[5].getEndDate()));
-		Assert.assertEquals("01-07-2020", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[6].getStartDate()));
-		Assert.assertEquals("12-07-2020", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[6].getEndDate()));
+		assertEquals("14-03-2020", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[2].getStartDate()));
+		assertEquals("12-07-2020", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[2].getEndDate()));
+		assertEquals("14-03-2020", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[3].getStartDate()));
+		assertEquals("30-04-2020", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[3].getEndDate()));
+		assertEquals("01-05-2020", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[4].getStartDate()));
+		assertEquals("31-05-2020", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[4].getEndDate()));
+		assertEquals("01-06-2020", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[5].getStartDate()));
+		assertEquals("30-06-2020", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[5].getEndDate()));
+		assertEquals("01-07-2020", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[6].getStartDate()));
+		assertEquals("12-07-2020", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[6].getEndDate()));
 
-		Assert.assertEquals("13-07-2020", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[7].getStartDate()));
-		Assert.assertEquals("31-10-2021", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[7].getEndDate()));
-		Assert.assertEquals("13-07-2020", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[8].getStartDate()));
-		Assert.assertEquals("31-07-2020", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[8].getEndDate()));
-		Assert.assertEquals("01-08-2020", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[9].getStartDate()));
-		Assert.assertEquals("31-08-2020", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[9].getEndDate()));
-		Assert.assertEquals("01-09-2020", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[10].getStartDate()));
-		Assert.assertEquals("30-09-2020", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[10].getEndDate()));
+		assertEquals("13-07-2020", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[7].getStartDate()));
+		assertEquals("31-10-2021", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[7].getEndDate()));
+		assertEquals("13-07-2020", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[8].getStartDate()));
+		assertEquals("31-07-2020", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[8].getEndDate()));
+		assertEquals("01-08-2020", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[9].getStartDate()));
+		assertEquals("31-08-2020", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[9].getEndDate()));
+		assertEquals("01-09-2020", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[10].getStartDate()));
+		assertEquals("30-09-2020", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[10].getEndDate()));
 
-		Assert.assertEquals("01-11-2021", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[11].getStartDate()));
-		Assert.assertEquals("31-07-2022", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[11].getEndDate()));
+		assertEquals("01-11-2021", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[11].getStartDate()));
+		assertEquals("31-07-2022", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[11].getEndDate()));
 
-		Assert.assertEquals("01-08-2022", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[12].getStartDate()));
-		Assert.assertEquals("30-09-2022", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[12].getEndDate()));
+		assertEquals("01-08-2022", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[12].getStartDate()));
+		assertEquals("30-09-2022", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[12].getEndDate()));
 
-		Assert.assertEquals("01-10-2022", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[13].getStartDate()));
-		Assert.assertNull(bonuses[13].getEndDate());
+		assertEquals("01-10-2022", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[13].getStartDate()));
+		assertNull(bonuses[13].getEndDate());
 	}
 
 	@Test
@@ -4490,40 +4485,40 @@ public class IdcTest extends AbstractSQLTestCase {
 		Arrays.stream(bonuses).forEach(
 				b -> System.out.println(b.getDescription() + " : " + b.getStartDate() + "..." + b.getEndDate()));
 		int i = 0;
-		Assert.assertEquals("22-04-2019", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[i].getStartDate()));
-		Assert.assertEquals("05-08-2019", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[i++].getEndDate()));
+		assertEquals("22-04-2019", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[i].getStartDate()));
+		assertEquals("05-08-2019", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[i++].getEndDate()));
 
-		Assert.assertEquals("06-08-2019", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[i].getStartDate()));
-		Assert.assertEquals("13-03-2020", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[i++].getEndDate()));
+		assertEquals("06-08-2019", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[i].getStartDate()));
+		assertEquals("13-03-2020", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[i++].getEndDate()));
 
-		Assert.assertEquals("14-03-2020", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[i].getStartDate()));
-		Assert.assertEquals("12-07-2020", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[i++].getEndDate()));
-		Assert.assertEquals("14-03-2020", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[i].getStartDate()));
-		Assert.assertEquals("30-04-2020", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[i++].getEndDate()));
-		Assert.assertEquals("01-05-2020", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[i].getStartDate()));
-		Assert.assertEquals("31-05-2020", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[i++].getEndDate()));
-		Assert.assertEquals("01-06-2020", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[i].getStartDate()));
-		Assert.assertEquals("30-06-2020", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[i++].getEndDate()));
-		Assert.assertEquals("01-07-2020", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[i].getStartDate()));
-		Assert.assertEquals("12-07-2020", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[i++].getEndDate()));
+		assertEquals("14-03-2020", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[i].getStartDate()));
+		assertEquals("12-07-2020", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[i++].getEndDate()));
+		assertEquals("14-03-2020", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[i].getStartDate()));
+		assertEquals("30-04-2020", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[i++].getEndDate()));
+		assertEquals("01-05-2020", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[i].getStartDate()));
+		assertEquals("31-05-2020", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[i++].getEndDate()));
+		assertEquals("01-06-2020", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[i].getStartDate()));
+		assertEquals("30-06-2020", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[i++].getEndDate()));
+		assertEquals("01-07-2020", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[i].getStartDate()));
+		assertEquals("12-07-2020", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[i++].getEndDate()));
 
-		Assert.assertEquals("13-07-2020", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[i].getStartDate()));
-		Assert.assertEquals("31-10-2021", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[i++].getEndDate()));
-		Assert.assertEquals("13-07-2020", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[i].getStartDate()));
-		Assert.assertEquals("31-07-2020", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[i++].getEndDate()));
-		Assert.assertEquals("01-08-2020", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[i].getStartDate()));
-		Assert.assertEquals("31-08-2020", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[i++].getEndDate()));
-		Assert.assertEquals("01-09-2020", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[i].getStartDate()));
-		Assert.assertEquals("30-09-2020", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[i++].getEndDate()));
+		assertEquals("13-07-2020", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[i].getStartDate()));
+		assertEquals("31-10-2021", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[i++].getEndDate()));
+		assertEquals("13-07-2020", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[i].getStartDate()));
+		assertEquals("31-07-2020", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[i++].getEndDate()));
+		assertEquals("01-08-2020", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[i].getStartDate()));
+		assertEquals("31-08-2020", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[i++].getEndDate()));
+		assertEquals("01-09-2020", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[i].getStartDate()));
+		assertEquals("30-09-2020", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[i++].getEndDate()));
 
-		Assert.assertEquals("01-11-2021", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[i].getStartDate()));
-		Assert.assertEquals("31-07-2022", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[i++].getEndDate()));
+		assertEquals("01-11-2021", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[i].getStartDate()));
+		assertEquals("31-07-2022", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[i++].getEndDate()));
 
-		Assert.assertEquals("01-08-2022", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[i].getStartDate()));
-		Assert.assertEquals("30-09-2022", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[i++].getEndDate()));
+		assertEquals("01-08-2022", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[i].getStartDate()));
+		assertEquals("30-09-2022", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[i++].getEndDate()));
 
-		Assert.assertEquals("01-10-2022", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[i].getStartDate()));
-		Assert.assertNull(bonuses[i++].getEndDate());
+		assertEquals("01-10-2022", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[i].getStartDate()));
+		assertNull(bonuses[i++].getEndDate());
 	}
 
 	@Test
@@ -4560,40 +4555,40 @@ public class IdcTest extends AbstractSQLTestCase {
 		Arrays.stream(bonuses).forEach(
 				b -> System.out.println(b.getDescription() + " : " + b.getStartDate() + "..." + b.getEndDate()));
 
-		Assert.assertEquals("22-04-2019", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[0].getStartDate()));
-		Assert.assertEquals("05-08-2019", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[0].getEndDate()));
+		assertEquals("22-04-2019", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[0].getStartDate()));
+		assertEquals("05-08-2019", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[0].getEndDate()));
 
-		Assert.assertEquals("06-08-2019", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[1].getStartDate()));
-		Assert.assertEquals("13-03-2020", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[1].getEndDate()));
+		assertEquals("06-08-2019", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[1].getStartDate()));
+		assertEquals("13-03-2020", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[1].getEndDate()));
 
-		Assert.assertEquals("14-03-2020", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[2].getStartDate()));
-		Assert.assertEquals("12-07-2020", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[2].getEndDate()));
-		Assert.assertEquals("14-03-2020", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[3].getStartDate()));
-		Assert.assertEquals("30-04-2020", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[3].getEndDate()));
-		Assert.assertEquals("01-05-2020", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[4].getStartDate()));
-		Assert.assertEquals("31-05-2020", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[4].getEndDate()));
-		Assert.assertEquals("01-06-2020", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[5].getStartDate()));
-		Assert.assertEquals("30-06-2020", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[5].getEndDate()));
-		Assert.assertEquals("01-07-2020", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[6].getStartDate()));
-		Assert.assertEquals("12-07-2020", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[6].getEndDate()));
+		assertEquals("14-03-2020", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[2].getStartDate()));
+		assertEquals("12-07-2020", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[2].getEndDate()));
+		assertEquals("14-03-2020", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[3].getStartDate()));
+		assertEquals("30-04-2020", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[3].getEndDate()));
+		assertEquals("01-05-2020", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[4].getStartDate()));
+		assertEquals("31-05-2020", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[4].getEndDate()));
+		assertEquals("01-06-2020", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[5].getStartDate()));
+		assertEquals("30-06-2020", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[5].getEndDate()));
+		assertEquals("01-07-2020", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[6].getStartDate()));
+		assertEquals("12-07-2020", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[6].getEndDate()));
 
-		Assert.assertEquals("13-07-2020", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[7].getStartDate()));
-		Assert.assertEquals("31-10-2021", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[7].getEndDate()));
-		Assert.assertEquals("13-07-2020", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[8].getStartDate()));
-		Assert.assertEquals("31-07-2020", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[8].getEndDate()));
-		Assert.assertEquals("01-08-2020", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[9].getStartDate()));
-		Assert.assertEquals("31-08-2020", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[9].getEndDate()));
-		Assert.assertEquals("01-09-2020", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[10].getStartDate()));
-		Assert.assertEquals("30-09-2020", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[10].getEndDate()));
+		assertEquals("13-07-2020", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[7].getStartDate()));
+		assertEquals("31-10-2021", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[7].getEndDate()));
+		assertEquals("13-07-2020", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[8].getStartDate()));
+		assertEquals("31-07-2020", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[8].getEndDate()));
+		assertEquals("01-08-2020", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[9].getStartDate()));
+		assertEquals("31-08-2020", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[9].getEndDate()));
+		assertEquals("01-09-2020", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[10].getStartDate()));
+		assertEquals("30-09-2020", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[10].getEndDate()));
 
-		Assert.assertEquals("01-11-2021", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[11].getStartDate()));
-		Assert.assertEquals("31-07-2022", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[11].getEndDate()));
+		assertEquals("01-11-2021", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[11].getStartDate()));
+		assertEquals("31-07-2022", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[11].getEndDate()));
 
-		Assert.assertEquals("01-08-2022", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[12].getStartDate()));
-		Assert.assertEquals("30-09-2022", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[12].getEndDate()));
+		assertEquals("01-08-2022", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[12].getStartDate()));
+		assertEquals("30-09-2022", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[12].getEndDate()));
 
-		Assert.assertEquals("01-10-2022", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[13].getStartDate()));
-		Assert.assertNull(bonuses[13].getEndDate());
+		assertEquals("01-10-2022", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[13].getStartDate()));
+		assertNull(bonuses[13].getEndDate());
 	}
 
 	@Test
@@ -4640,40 +4635,40 @@ public class IdcTest extends AbstractSQLTestCase {
 		Arrays.stream(bonuses).forEach(
 				b -> System.out.println(b.getDescription() + " : " + b.getStartDate() + "..." + b.getEndDate()));
 
-		Assert.assertEquals("22-04-2019", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[0].getStartDate()));
-		Assert.assertEquals("05-08-2019", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[0].getEndDate()));
+		assertEquals("22-04-2019", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[0].getStartDate()));
+		assertEquals("05-08-2019", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[0].getEndDate()));
 
-		Assert.assertEquals("06-08-2019", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[1].getStartDate()));
-		Assert.assertEquals("13-03-2020", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[1].getEndDate()));
+		assertEquals("06-08-2019", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[1].getStartDate()));
+		assertEquals("13-03-2020", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[1].getEndDate()));
 
-		Assert.assertEquals("14-03-2020", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[2].getStartDate()));
-		Assert.assertEquals("12-07-2020", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[2].getEndDate()));
-		Assert.assertEquals("14-03-2020", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[3].getStartDate()));
-		Assert.assertEquals("30-04-2020", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[3].getEndDate()));
-		Assert.assertEquals("01-05-2020", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[4].getStartDate()));
-		Assert.assertEquals("31-05-2020", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[4].getEndDate()));
-		Assert.assertEquals("01-06-2020", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[5].getStartDate()));
-		Assert.assertEquals("30-06-2020", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[5].getEndDate()));
-		Assert.assertEquals("01-07-2020", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[6].getStartDate()));
-		Assert.assertEquals("12-07-2020", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[6].getEndDate()));
+		assertEquals("14-03-2020", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[2].getStartDate()));
+		assertEquals("12-07-2020", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[2].getEndDate()));
+		assertEquals("14-03-2020", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[3].getStartDate()));
+		assertEquals("30-04-2020", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[3].getEndDate()));
+		assertEquals("01-05-2020", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[4].getStartDate()));
+		assertEquals("31-05-2020", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[4].getEndDate()));
+		assertEquals("01-06-2020", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[5].getStartDate()));
+		assertEquals("30-06-2020", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[5].getEndDate()));
+		assertEquals("01-07-2020", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[6].getStartDate()));
+		assertEquals("12-07-2020", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[6].getEndDate()));
 
-		Assert.assertEquals("13-07-2020", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[7].getStartDate()));
-		Assert.assertEquals("31-10-2021", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[7].getEndDate()));
-		Assert.assertEquals("13-07-2020", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[8].getStartDate()));
-		Assert.assertEquals("31-07-2020", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[8].getEndDate()));
-		Assert.assertEquals("01-08-2020", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[9].getStartDate()));
-		Assert.assertEquals("31-08-2020", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[9].getEndDate()));
-		Assert.assertEquals("01-09-2020", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[10].getStartDate()));
-		Assert.assertEquals("30-09-2020", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[10].getEndDate()));
+		assertEquals("13-07-2020", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[7].getStartDate()));
+		assertEquals("31-10-2021", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[7].getEndDate()));
+		assertEquals("13-07-2020", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[8].getStartDate()));
+		assertEquals("31-07-2020", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[8].getEndDate()));
+		assertEquals("01-08-2020", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[9].getStartDate()));
+		assertEquals("31-08-2020", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[9].getEndDate()));
+		assertEquals("01-09-2020", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[10].getStartDate()));
+		assertEquals("30-09-2020", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[10].getEndDate()));
 
-		Assert.assertEquals("01-11-2021", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[11].getStartDate()));
-		Assert.assertEquals("31-07-2022", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[11].getEndDate()));
+		assertEquals("01-11-2021", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[11].getStartDate()));
+		assertEquals("31-07-2022", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[11].getEndDate()));
 
-		Assert.assertEquals("01-08-2022", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[12].getStartDate()));
-		Assert.assertEquals("30-09-2022", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[12].getEndDate()));
+		assertEquals("01-08-2022", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[12].getStartDate()));
+		assertEquals("30-09-2022", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[12].getEndDate()));
 
-		Assert.assertEquals("01-10-2022", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[13].getStartDate()));
-		Assert.assertNull(bonuses[13].getEndDate());
+		assertEquals("01-10-2022", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[13].getStartDate()));
+		assertNull(bonuses[13].getEndDate());
 	}
 
 	public static final DomainRecord newDomain(AONContext aonContext, String name) {
@@ -5085,7 +5080,7 @@ public class IdcTest extends AbstractSQLTestCase {
 
 		try (InputStream is = IdcTest.class.getResourceAsStream("idcXXV.pdf")) {
 			Collection<PEC> ssPecs = Idc.getSSPECs(is);
-			Assert.assertTrue(ssPecs.size() == 1);
+			assertTrue(ssPecs.size() == 1);
 
 			Calendar calendar = Calendar.getInstance();
 			calendar.set(Calendar.HOUR_OF_DAY, 0);
@@ -5105,8 +5100,8 @@ public class IdcTest extends AbstractSQLTestCase {
 
 			Date march172025 = calendar.getTime();
 
-			ssPecs.stream().forEach(pec -> Assert.assertEquals(march182023, pec.getStartDate()));
-			ssPecs.stream().forEach(pec -> Assert.assertEquals(march172025, pec.getEndDate()));
+			ssPecs.stream().forEach(pec -> assertEquals(march182023, pec.getStartDate()));
+			ssPecs.stream().forEach(pec -> assertEquals(march172025, pec.getEndDate()));
 
 			ssPecs.forEach(pec -> System.out.println("[" + pec.getName() + "] " + pec.getDescription() + " = "
 					+ pec.getFormula() + ", " + pec.getStartDate()));
@@ -5160,7 +5155,7 @@ public class IdcTest extends AbstractSQLTestCase {
 
 		try (InputStream is = IdcTest.class.getResourceAsStream("idcXXVII.pdf")) {
 			Collection<PEC> ssPecs = Idc.getSSPECs(is);
-			Assert.assertEquals(1, ssPecs.size());
+			assertEquals(1, ssPecs.size());
 
 			Calendar calendar = Calendar.getInstance();
 			calendar.set(Calendar.HOUR_OF_DAY, 0);
@@ -5180,8 +5175,8 @@ public class IdcTest extends AbstractSQLTestCase {
 
 			Date april42023 = calendar.getTime();
 
-			ssPecs.stream().forEach(pec -> Assert.assertEquals(december212022, pec.getStartDate()));
-			ssPecs.stream().forEach(pec -> Assert.assertEquals(april42023, pec.getEndDate()));
+			ssPecs.stream().forEach(pec -> assertEquals(december212022, pec.getStartDate()));
+			ssPecs.stream().forEach(pec -> assertEquals(april42023, pec.getEndDate()));
 
 			ssPecs.forEach(pec -> System.out.println("[" + pec.getName() + "] " + pec.getDescription() + " = "
 					+ pec.getFormula() + ", " + pec.getStartDate()));
@@ -5231,7 +5226,7 @@ public class IdcTest extends AbstractSQLTestCase {
 
 		try (InputStream is = IdcTest.class.getResourceAsStream("idcXXVIII.pdf")) {
 			Collection<PEC> ssPecs = Idc.getSSPECs(is);
-			//Assert.assertEquals(5, ssPecs.size());
+			//assertEquals(5, ssPecs.size());
 
 			ssPecs.forEach(pec -> System.out.println("[" + pec.getName() + "] " + pec.getDescription() + " = "
 				+ pec.getFormula() + ", " + pec.getStartDate() + ".." + pec.getEndDate()));
@@ -5254,7 +5249,7 @@ public class IdcTest extends AbstractSQLTestCase {
 
 			assertPECS(ssPecs, october01102020, may01052021, 1, pec -> pec.getFormula().contains("pec:16,quota:51") );
 			
-			//ssPecs.stream().forEach(pec -> Assert.assertEquals(april42023, pec.getEndDate()));
+			//ssPecs.stream().forEach(pec -> assertEquals(april42023, pec.getEndDate()));
 
 			calendar.set(Calendar.YEAR, 2021);
 			calendar.set(Calendar.DAY_OF_MONTH, 31);
@@ -5344,7 +5339,7 @@ public class IdcTest extends AbstractSQLTestCase {
 
 			ssPecs.forEach(pec -> System.out.println("[" + pec.getName() + "] " + pec.getDescription() + " = "
 				+ pec.getFormula() + ", " + pec.getStartDate() + ".." + pec.getEndDate()));
-			//Assert.assertEquals(1, ssPecs.size());
+			//assertEquals(1, ssPecs.size());
 
 			Calendar calendar = Calendar.getInstance();
 			calendar.set(Calendar.HOUR_OF_DAY, 0);
@@ -5370,7 +5365,7 @@ public class IdcTest extends AbstractSQLTestCase {
 			    return;
 			}
 			
-			Assert.fail();
+			fail();
 			
 
 		}
@@ -5385,7 +5380,7 @@ public class IdcTest extends AbstractSQLTestCase {
 
 			ssPecs.forEach(pec -> System.out.println("[" + pec.getName() + "] " + pec.getDescription() + " = "
 				+ pec.getFormula() + ", " + pec.getStartDate() + ".." + pec.getEndDate()));
-			//Assert.assertEquals(1, ssPecs.size());
+			//assertEquals(1, ssPecs.size());
 
 			Calendar calendar = Calendar.getInstance();
 			calendar.set(Calendar.HOUR_OF_DAY, 0);
@@ -5464,7 +5459,7 @@ public class IdcTest extends AbstractSQLTestCase {
 
 			ssPecs.forEach(pec -> System.out.println("[" + pec.getName() + "] " + pec.getDescription() + " = "
 				+ pec.getFormula() + ", " + pec.getStartDate() + ".." + pec.getEndDate()));
-			//Assert.assertEquals(1, ssPecs.size());
+			//assertEquals(1, ssPecs.size());
 
 			Calendar calendar = Calendar.getInstance();
 			calendar.set(Calendar.HOUR_OF_DAY, 0);
@@ -5501,7 +5496,7 @@ public class IdcTest extends AbstractSQLTestCase {
 			ssPecs.forEach(pec -> System.out.println("[" + pec.getName() + "] " + pec.getDescription() + " = "
 				+ pec.getFormula() + ", " + pec.getStartDate() + ".." + pec.getEndDate()));
 			
-			//Assert.assertEquals(1, ssPecs.size());
+			//assertEquals(1, ssPecs.size());
 
 			Calendar calendar = Calendar.getInstance();
 			calendar.set(Calendar.HOUR_OF_DAY, 0);
@@ -5560,7 +5555,7 @@ public class IdcTest extends AbstractSQLTestCase {
 			ssPecs.forEach(pec -> System.out.println("[" + pec.getName() + "] " + pec.getDescription() + " = "
 				+ pec.getFormula() + ", " + pec.getStartDate() + ".." + pec.getEndDate()));
 			
-			//Assert.assertEquals(1, ssPecs.size());
+			//assertEquals(1, ssPecs.size());
 
 			Calendar calendar = Calendar.getInstance();
 			calendar.set(Calendar.HOUR_OF_DAY, 0);
@@ -5605,7 +5600,7 @@ public class IdcTest extends AbstractSQLTestCase {
 			ssPecs.forEach(pec -> System.out.println("[" + pec.getName() + "] " + pec.getDescription() + " = "
 				+ pec.getFormula() + ", " + pec.getStartDate() + ".." + pec.getEndDate()));
 			
-			//Assert.assertEquals(1, ssPecs.size());
+			//assertEquals(1, ssPecs.size());
 
 			Calendar calendar = Calendar.getInstance();
 			calendar.set(Calendar.HOUR_OF_DAY, 0);
@@ -5681,7 +5676,7 @@ public class IdcTest extends AbstractSQLTestCase {
 			ssPecs.forEach(pec -> System.out.println("[" + pec.getName() + "] " + pec.getDescription() + " = "
 				+ pec.getFormula() + ", " + pec.getStartDate() + ".." + pec.getEndDate()));
 			
-			Assert.assertEquals(0, ssPecs.size());
+			assertEquals(0, ssPecs.size());
 
 			Calendar calendar = Calendar.getInstance();
 			calendar.set(Calendar.HOUR_OF_DAY, 0);
@@ -5866,17 +5861,17 @@ public class IdcTest extends AbstractSQLTestCase {
 				if ("411011776004".equals(trabajador.getNaf())) {
 					marshal(trabajador, System.out);
 					assertEquals(2, trabajador.getTramos().getTramo().size());
-					Assert.assertEquals((double)1.0, Double.valueOf(trabajador.getTramos().getTramo().get(0).getFechaDesde().getDia()), 0.00);
-					Assert.assertEquals((double)5.0, Double.valueOf(trabajador.getTramos().getTramo().get(0).getFechaHasta().getDia()), 0.00);
+					assertEquals((double)1.0, Double.valueOf(trabajador.getTramos().getTramo().get(0).getFechaDesde().getDia()), 0.00);
+					assertEquals((double)5.0, Double.valueOf(trabajador.getTramos().getTramo().get(0).getFechaHasta().getDia()), 0.00);
 					assertTramoIT15PrimerosDias(trabajador.getTramos().getTramo().get(0));
-					Assert.assertEquals((double)6.0, Double.valueOf(trabajador.getTramos().getTramo().get(1).getFechaDesde().getDia()), 0.00);
-					Assert.assertEquals((double)30.0, Double.valueOf(trabajador.getTramos().getTramo().get(1).getFechaHasta().getDia()), 0.00);
+					assertEquals((double)6.0, Double.valueOf(trabajador.getTramos().getTramo().get(1).getFechaDesde().getDia()), 0.00);
+					assertEquals((double)30.0, Double.valueOf(trabajador.getTramos().getTramo().get(1).getFechaHasta().getDia()), 0.00);
 					assertTramoActivoNormal(trabajador.getTramos().getTramo().get(1));
 					return;
 				}
 			}
 			
-			Assert.fail();
+			fail();
 	
 		}
 	}
@@ -5916,26 +5911,26 @@ public class IdcTest extends AbstractSQLTestCase {
 				if ("411146304896".equals(trabajador.getNaf())) {
 					marshal(trabajador, System.out);
 					assertEquals(4, trabajador.getTramos().getTramo().size());
-					Assert.assertEquals((double)1.0, Double.valueOf(trabajador.getTramos().getTramo().get(0).getFechaDesde().getDia()), 0.00);
-					Assert.assertEquals((double)15.0, Double.valueOf(trabajador.getTramos().getTramo().get(0).getFechaHasta().getDia()), 0.00);
+					assertEquals((double)1.0, Double.valueOf(trabajador.getTramos().getTramo().get(0).getFechaDesde().getDia()), 0.00);
+					assertEquals((double)15.0, Double.valueOf(trabajador.getTramos().getTramo().get(0).getFechaHasta().getDia()), 0.00);
 					assertTramoActivoNormal(trabajador.getTramos().getTramo().get(0));
 
-					Assert.assertEquals((double)16.0, Double.valueOf(trabajador.getTramos().getTramo().get(1).getFechaDesde().getDia()), 0.00);
-					Assert.assertEquals((double)20.0, Double.valueOf(trabajador.getTramos().getTramo().get(1).getFechaHasta().getDia()), 0.00);
+					assertEquals((double)16.0, Double.valueOf(trabajador.getTramos().getTramo().get(1).getFechaDesde().getDia()), 0.00);
+					assertEquals((double)20.0, Double.valueOf(trabajador.getTramos().getTramo().get(1).getFechaHasta().getDia()), 0.00);
 					assertTramoIT15PrimerosDias(trabajador.getTramos().getTramo().get(1));
 
-					Assert.assertEquals((double)21.0, Double.valueOf(trabajador.getTramos().getTramo().get(2).getFechaDesde().getDia()), 0.00);
-					Assert.assertEquals((double)22.0, Double.valueOf(trabajador.getTramos().getTramo().get(2).getFechaHasta().getDia()), 0.00);
+					assertEquals((double)21.0, Double.valueOf(trabajador.getTramos().getTramo().get(2).getFechaDesde().getDia()), 0.00);
+					assertEquals((double)22.0, Double.valueOf(trabajador.getTramos().getTramo().get(2).getFechaHasta().getDia()), 0.00);
 					assertTramoActivoNormal(trabajador.getTramos().getTramo().get(2));
 					
-					Assert.assertEquals((double)23.0, Double.valueOf(trabajador.getTramos().getTramo().get(3).getFechaDesde().getDia()), 0.00);
-					Assert.assertEquals((double)31.0, Double.valueOf(trabajador.getTramos().getTramo().get(3).getFechaHasta().getDia()), 0.00);
+					assertEquals((double)23.0, Double.valueOf(trabajador.getTramos().getTramo().get(3).getFechaDesde().getDia()), 0.00);
+					assertEquals((double)31.0, Double.valueOf(trabajador.getTramos().getTramo().get(3).getFechaHasta().getDia()), 0.00);
 					assertTramoIT15PrimerosDias(trabajador.getTramos().getTramo().get(3));
 					return;
 				}
 			}
 			
-			Assert.fail();
+			fail();
 	
 		}
 	}
@@ -5975,23 +5970,23 @@ public class IdcTest extends AbstractSQLTestCase {
 					marshal(trabajador, System.out);
 					assertEquals(3, trabajador.getTramos().getTramo().size());
 
-					Assert.assertEquals((double)1.0, Double.valueOf(trabajador.getTramos().getTramo().get(0).getFechaDesde().getDia()), 0.00);
-					Assert.assertEquals((double)11.0, Double.valueOf(trabajador.getTramos().getTramo().get(0).getFechaHasta().getDia()), 0.00);
+					assertEquals((double)1.0, Double.valueOf(trabajador.getTramos().getTramo().get(0).getFechaDesde().getDia()), 0.00);
+					assertEquals((double)11.0, Double.valueOf(trabajador.getTramos().getTramo().get(0).getFechaHasta().getDia()), 0.00);
 					assertTramoActivoNormal(trabajador.getTramos().getTramo().get(0));
 
-					Assert.assertEquals((double)12.0, Double.valueOf(trabajador.getTramos().getTramo().get(1).getFechaDesde().getDia()), 0.00);
-					Assert.assertEquals((double)13.0, Double.valueOf(trabajador.getTramos().getTramo().get(1).getFechaHasta().getDia()), 0.00);
+					assertEquals((double)12.0, Double.valueOf(trabajador.getTramos().getTramo().get(1).getFechaDesde().getDia()), 0.00);
+					assertEquals((double)13.0, Double.valueOf(trabajador.getTramos().getTramo().get(1).getFechaHasta().getDia()), 0.00);
 					assertTramoITATEPPagoDelegado(trabajador.getTramos().getTramo().get(1));
 
-					Assert.assertEquals((double)14.0, Double.valueOf(trabajador.getTramos().getTramo().get(2).getFechaDesde().getDia()), 0.00);
-					Assert.assertEquals((double)30.0, Double.valueOf(trabajador.getTramos().getTramo().get(2).getFechaHasta().getDia()), 0.00);
+					assertEquals((double)14.0, Double.valueOf(trabajador.getTramos().getTramo().get(2).getFechaDesde().getDia()), 0.00);
+					assertEquals((double)30.0, Double.valueOf(trabajador.getTramos().getTramo().get(2).getFechaHasta().getDia()), 0.00);
 					assertTramoActivoNormal(trabajador.getTramos().getTramo().get(2));
 					
 					return;
 				}
 			}
 			
-			Assert.fail();
+			fail();
 	
 		}
 	}
@@ -6031,24 +6026,24 @@ public class IdcTest extends AbstractSQLTestCase {
 					marshal(trabajador, System.out);
 					assertEquals(3, trabajador.getTramos().getTramo().size());
 
-					Assert.assertEquals((double)1.0, Double.valueOf(trabajador.getTramos().getTramo().get(0).getFechaDesde().getDia()), 0.00);
-					Assert.assertEquals((double)19.0, Double.valueOf(trabajador.getTramos().getTramo().get(0).getFechaHasta().getDia()), 0.00);
+					assertEquals((double)1.0, Double.valueOf(trabajador.getTramos().getTramo().get(0).getFechaDesde().getDia()), 0.00);
+					assertEquals((double)19.0, Double.valueOf(trabajador.getTramos().getTramo().get(0).getFechaHasta().getDia()), 0.00);
 					assertTramoActivoNormal(trabajador.getTramos().getTramo().get(0));
 
-					Assert.assertEquals((double)20.0, Double.valueOf(trabajador.getTramos().getTramo().get(1).getFechaDesde().getDia()), 0.00);
-					Assert.assertEquals((double)21.0, Double.valueOf(trabajador.getTramos().getTramo().get(1).getFechaHasta().getDia()), 0.00);
+					assertEquals((double)20.0, Double.valueOf(trabajador.getTramos().getTramo().get(1).getFechaDesde().getDia()), 0.00);
+					assertEquals((double)21.0, Double.valueOf(trabajador.getTramos().getTramo().get(1).getFechaHasta().getDia()), 0.00);
 					assertTramoITATEPPagoDelegado(trabajador.getTramos().getTramo().get(1));
 					assertDatosSolicitado(trabajador.getTramos().getTramo().get(1), "I", "51", "P");
 
-					Assert.assertEquals((double)22.0, Double.valueOf(trabajador.getTramos().getTramo().get(2).getFechaDesde().getDia()), 0.00);
-					Assert.assertEquals((double)31.0, Double.valueOf(trabajador.getTramos().getTramo().get(2).getFechaHasta().getDia()), 0.00);
+					assertEquals((double)22.0, Double.valueOf(trabajador.getTramos().getTramo().get(2).getFechaDesde().getDia()), 0.00);
+					assertEquals((double)31.0, Double.valueOf(trabajador.getTramos().getTramo().get(2).getFechaHasta().getDia()), 0.00);
 					assertTramoActivoNormal(trabajador.getTramos().getTramo().get(2));
 					
 					return;
 				}
 			}
 			
-			Assert.fail();
+			fail();
 	
 		}
 	}
@@ -6094,16 +6089,16 @@ public class IdcTest extends AbstractSQLTestCase {
 					marshal(trabajador, System.out);
 					assertEquals(1, trabajador.getTramos().getTramo().size());
 
-					Assert.assertEquals((double)1.0, Double.valueOf(trabajador.getTramos().getTramo().get(0).getFechaDesde().getDia()), 0.00);
-					Assert.assertEquals((double)24.0, Double.valueOf(trabajador.getTramos().getTramo().get(0).getFechaHasta().getDia()), 0.00);
+					assertEquals((double)1.0, Double.valueOf(trabajador.getTramos().getTramo().get(0).getFechaDesde().getDia()), 0.00);
+					assertEquals((double)24.0, Double.valueOf(trabajador.getTramos().getTramo().get(0).getFechaHasta().getDia()), 0.00);
 					assertTramoActivoNormal(trabajador.getTramos().getTramo().get(0));
 				}
 				else if ("411087630408".equals(trabajador.getNaf())) {
 					marshal(trabajador, System.out);
 					assertEquals(1, trabajador.getTramos().getTramo().size());
 
-					Assert.assertEquals((double)1.0, Double.valueOf(trabajador.getTramos().getTramo().get(0).getFechaDesde().getDia()), 0.00);
-					Assert.assertEquals((double)31.0, Double.valueOf(trabajador.getTramos().getTramo().get(0).getFechaHasta().getDia()), 0.00);
+					assertEquals((double)1.0, Double.valueOf(trabajador.getTramos().getTramo().get(0).getFechaDesde().getDia()), 0.00);
+					assertEquals((double)31.0, Double.valueOf(trabajador.getTramos().getTramo().get(0).getFechaHasta().getDia()), 0.00);
 					assertTramoTiempoParcial(trabajador.getTramos().getTramo().get(0));
 				}
 				
@@ -6227,7 +6222,7 @@ public class IdcTest extends AbstractSQLTestCase {
 			    } else if ("100038464322".equals(trabajador.getNaf())){
 				
 			    } else {
-				Assert.fail();
+				fail();
 			    }
 			}
 	
@@ -6634,8 +6629,8 @@ public class IdcTest extends AbstractSQLTestCase {
 	    .filter(test)
 	    .toArray(PEC[]::new);
 	    
-	    Assert.assertEquals(1, pecs.length);
-	    Arrays.stream(pecs).forEach(pec -> Assert.assertTrue(test.test(pec)));
+	    assertEquals(1, pecs.length);
+	    Arrays.stream(pecs).forEach(pec -> assertTrue(test.test(pec)));
 	    
 	}
 

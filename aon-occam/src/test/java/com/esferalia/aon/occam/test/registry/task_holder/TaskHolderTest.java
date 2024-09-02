@@ -1,10 +1,11 @@
 package com.esferalia.aon.occam.test.registry.task_holder;
 
-import static org.junit.Assert.assertEquals;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.List;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.esferalia.aon.occam.api.model.Options;
 import com.esferalia.aon.occam.api.model.task.TaskHolder;

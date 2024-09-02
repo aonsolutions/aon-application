@@ -2,20 +2,20 @@ package com.esferalia.aon.occam.test.json;
 
 
 import org.json.JSONObject;
-import org.junit.Test;
+import org.junit.jupiter.api.RepeatedTest;
+import org.junit.jupiter.api.Test;
 
 import com.esferalia.aon.occam.api.json.AccountPeriodJSON;
 import com.esferalia.aon.occam.api.model.AccountPeriod;
 import com.esferalia.aon.occam.test.AbstractOccamTest;
 import com.esferalia.aon.occam.test.Asserts;
-import com.esferalia.aon.occam.test.Repeat;
 import com.esferalia.aon.occam.test.faker.AonRandom;
 
 
 public class JsonAccountPeriodTest extends AbstractOccamTest {
 
 	@Test
-	@Repeat( 10 )
+	@RepeatedTest( 10 )
 	public void test() {
 		AccountPeriod expected = AonRandom.getAccountPeriod( ctx );
 		JSONObject json = AccountPeriodJSON.toJSON(expected);

@@ -87,22 +87,27 @@ public class Mod123AEAT2024Declaration extends Mod123Declaration {
 			this.template =  template;
 		}
 	
+		@Override
 		public Mod123Key getKey() {
 			return key;
 		}
+		@Override
 		public boolean acceptValue(Mod123 mod,IrpfBreakdown  br) {
 			return  acceptValue != null &&  acceptValue.accept(mod,br);
 		}
+		@Override
 		public void initialize(AONContext ctx,Mod123 mod,Map<Mod123Key,Set<String>> docs ,IrpfBreakdown  br) {
 			if (initializer != null) {
 				initializer.initialize(ctx, mod, docs, br);
 			}
 		}
+		@Override
 		public void uniqueInitialize(AONContext ctx,Mod123 mod) {
 			if (uniqueInitializer != null) {
 				uniqueInitializer.initialize(ctx, mod);
 			}
 		}
+		@Override
 		public String getExpression() {
 			return expression;
 		}

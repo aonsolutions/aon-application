@@ -1,6 +1,7 @@
 package com.esferalia.aon.in.payroll.pdf.maker.modificationform;
 
-import static org.junit.Assert.fail;
+
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.FileOutputStream;
 import java.io.InputStream;
@@ -10,7 +11,7 @@ import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.IntStream;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.esferalia.aon.in.payroll.pdf.maker.form.bean.ModificationForm;
 import com.esferalia.aon.in.payroll.pdf.maker.form.bean.ModificationForm.ClientData;

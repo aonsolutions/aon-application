@@ -1,17 +1,18 @@
 package com.esferalia.aon.occam.test.finance.invoice;
 
 
-import org.junit.Assert;
-import org.junit.Test;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+import org.junit.jupiter.api.Test;
 
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.test.AbstractOccamTest;
 
 
-public class DeleteAllInvoicesTest extends AbstractOccamTest {
+class DeleteAllInvoicesTest extends AbstractOccamTest {
 
 	@Test
-	public void test() {
+	void test() {
 		System.out.print(" ");
 		AON.getInvoiceStream(getOccam(), p -> p.getDomainProperty().eq(DOMAIN_ID))
 			.map(inv ->  {
@@ -20,10 +21,9 @@ public class DeleteAllInvoicesTest extends AbstractOccamTest {
 			})
 			.forEach(inv ->  AON.deleteInvoice(getOccam(), inv.getId()));
 		System.out.println();
-		Assert.assertEquals("Existen facturas después del borrado"
-				, AON.getInvoiceStream(getOccam(), p -> p.getDomainProperty().eq(DOMAIN_ID))
-					.count()
-				, 0);
+		assertEquals(0 
+			, AON.getInvoiceStream(getOccam(), p -> p.getDomainProperty().eq(DOMAIN_ID)).count()
+			, "Existen facturas después del borrado");
 	}
 
 }

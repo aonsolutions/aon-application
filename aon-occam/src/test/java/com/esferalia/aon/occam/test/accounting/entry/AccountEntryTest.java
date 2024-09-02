@@ -4,7 +4,7 @@ package com.esferalia.aon.occam.test.accounting.entry;
 import java.util.Date;
 import java.util.stream.Stream;
 
-import org.junit.Ignore;
+import org.junit.jupiter.api.Disabled;
 
 import com.esferalia.aon.occam.api.ACCOUNTING;
 import com.esferalia.aon.occam.api.model.AccountEntry;
@@ -20,7 +20,7 @@ public class AccountEntryTest extends AbstractOccamTest {
 
 	
 	// @Test
-	@Ignore
+	@Disabled
 	public void testInsert() {
 		AccountPeriod period = ACCOUNTING.getPeriodByYear(ctx,1974);
 		if (period == null) {

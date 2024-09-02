@@ -11,22 +11,22 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import org.junit.Ignore;
-import org.junit.Test;
+import org.htmlunit.ElementNotFoundException;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
 import com.esferalia.aon.in.payroll.tgss.its.ITComunica;
 import com.esferalia.aon.in.payroll.tgss.its.ITParse;
 import com.esferalia.aon.occam.api.AON;
+import com.esferalia.aon.occam.api.model.Certificate;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.EmployeeIT;
 import com.esferalia.aon.occam.api.model.EmployeeITPart;
 import com.esferalia.aon.occam.api.model.payroll.CCCInfo;
-import com.esferalia.aon.occam.api.model.Certificate;
 import com.esferalia.aon.occam.api.model.type.ContractLeaveDetailType;
 import com.esferalia.aon.occam.api.model.type.ContractLeaveDischargeCause;
 import com.esferalia.aon.occam.api.model.type.ContractLeaveType;
 import com.esferalia.aon.occam.api.model.type.Gender;
-import org.htmlunit.ElementNotFoundException;
 
 import solutions.aon.seg.social.Paternity;
 import solutions.aon.seg.social.SistemaRED;
@@ -43,7 +43,7 @@ public class ITComunicaTest {
 	private static final String CERTIFICATE_PATH =  System.getProperty("user.home")+"/CERT.pfx"; 
 	
 	@Test
-	@Ignore
+	@Disabled
 	public void getIts() {
 		try (final InputStream is = TestSistemaREDI.class.getResourceAsStream("FNMT.p12")) {
 			
@@ -63,7 +63,7 @@ public class ITComunicaTest {
 	}
 	
 	@Test
-	@Ignore
+	@Disabled
 	public void syncUpITs() {
 		try (final InputStream is = TestSistemaREDI.class.getResourceAsStream("AyudaTFNMT.p12")) {
 			
@@ -77,7 +77,7 @@ public class ITComunicaTest {
 	}
 	
 	@Test
-	@Ignore
+	@Disabled
 	public void communicateITs() {
 		try (final InputStream certificateInputStream = TestItRegister.class.getResourceAsStream("FNMT.p12")){
 			
@@ -123,7 +123,7 @@ public class ITComunicaTest {
 	}
 	
 	@Test
-	@Ignore
+	@Disabled
 	public void removeITs() {
 		try (final InputStream certificateInputStream = TestItRegister.class.getResourceAsStream("FNMT.p12")){
 			
@@ -159,7 +159,7 @@ public class ITComunicaTest {
 		
 	//	---------------------------PATERNITY---------------------------------------------
 	@Test
-	@Ignore
+	@Disabled
 	public void getITPaternity() {
 		try (final InputStream certificateInputStream = new FileInputStream(CERTIFICATE_PATH) ) {	
 				

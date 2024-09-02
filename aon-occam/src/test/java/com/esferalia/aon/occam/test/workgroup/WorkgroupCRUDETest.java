@@ -1,8 +1,10 @@
 package com.esferalia.aon.occam.test.workgroup;
 
-import static org.junit.Assert.assertNull;
 
-import org.junit.Test;
+import static org.junit.jupiter.api.Assertions.assertNull;
+
+import org.junit.jupiter.api.Test;
+
 import com.esferalia.aon.occam.api.model.Workgroup;
 import com.esferalia.aon.occam.impl.jooq.dao.WorkgroupDAO;
 import com.esferalia.aon.occam.test.AbstractOccamTest;

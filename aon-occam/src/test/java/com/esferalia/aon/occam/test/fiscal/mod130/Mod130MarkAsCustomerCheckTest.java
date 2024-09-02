@@ -1,10 +1,10 @@
 package com.esferalia.aon.occam.test.fiscal.mod130;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.esferalia.aon.occam.api.fiscal.MODEL130;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalStatus;
@@ -12,27 +12,27 @@ import com.esferalia.aon.occam.api.model.fiscal.Mod130;
 import com.esferalia.aon.occam.test.AbstractOccamTest;
 import com.esferalia.aon.occam.test.Asserts;
 
-public class Mod130MarkAsCustomerCheckTest extends AbstractOccamTest {
+class Mod130MarkAsCustomerCheckTest extends AbstractOccamTest {
 	
 	@Test
-	public void testMarkAsCustomerCheck() {
+	void testMarkAsCustomerCheck() {
 		for (Mod130 model : MODEL130.getMod130s(getOccam()) ) {
 			Mod130 mod130 = MODEL130.get(getOccam(), model.getId());
 			mod130 = MODEL130.initializeForFinish(getOccam(), mod130);
 			double result0 = mod130.getDeclarationResult();
-			assertNotNull("Mod130. Tipo resultado NULL",mod130.getDeclarationResultType());
+			assertNotNull(mod130.getDeclarationResultType(),"Mod130. Tipo resultado NULL");
 			boolean finance = mod130.getDeclarationResultType().mustCreateFinance(); 
 			MODEL130.markAsCustomerCheck(getOccam(), mod130);
 			Mod130 mod130Bis = MODEL130.get(getOccam(), model.getId());
-			assertEquals("Status not CUSTOMER_CHECK", FiscalStatus.CUSTOMER_CHECK, mod130Bis.getStatus());
+			assertEquals(FiscalStatus.CUSTOMER_CHECK, mod130Bis.getStatus(),"Status not CUSTOMER_CHECK");
 			Asserts.assertEqualsDouble("Mod130. Resultado no coincide."
 					, result0
 					, mod130Bis.getDeclarationResult());
-			assertNotNull("Mod130. Tipo resultado NULL",mod130Bis.getDeclarationResultType());
+			assertNotNull(mod130Bis.getDeclarationResultType(),"Mod130. Tipo resultado NULL");
 			if (finance) {
-				assertNotNull("Mod130. Finance NULL",mod130Bis.getFinance());	
+				assertNotNull(mod130Bis.getFinance(),"Mod130. Finance NULL");	
 			} else {
-				assertNull("Mod130. Finance NOT NULL",mod130Bis.getFinance());
+				assertNull(mod130Bis.getFinance(),"Mod130. Finance NOT NULL");
 			}
 		}
 	}

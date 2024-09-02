@@ -3,7 +3,7 @@ package com.esferalia.aon.occam.test.fiscal.mod390hf;
 import java.time.LocalDate;
 import java.util.Date;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.fiscal.MODEL303;
@@ -15,8 +15,8 @@ import com.esferalia.aon.occam.test.AbstractOccamTest;
 import com.esferalia.aon.occam.test.Asserts;
 import com.esferalia.aon.occam.test.faker.AonRandom;
 import com.esferalia.aon.occam.test.faker.FiscalFaker;
-import com.esferalia.aon.occam.test.faker.InvoiceFaker;
 import com.esferalia.aon.occam.test.faker.FiscalFaker.FiscalFakerParams;
+import com.esferalia.aon.occam.test.faker.InvoiceFaker;
 import com.esferalia.aon.occam.test.faker.InvoiceFaker.InvoiceFakerParams;
 import com.esferalia.aon.occam.test.fiscal.FiscalTestSuite;
 import com.esferalia.aon.watson.util.AonMathUtils;

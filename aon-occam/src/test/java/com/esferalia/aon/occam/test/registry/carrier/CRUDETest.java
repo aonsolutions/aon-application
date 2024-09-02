@@ -1,13 +1,11 @@
 package com.esferalia.aon.occam.test.registry.carrier;
 
-import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.esferalia.aon.occam.api.model.registry.Carrier;
-import com.esferalia.aon.occam.api.model.registry.Creditor;
 import com.esferalia.aon.occam.impl.jooq.dao.CarrierDAO;
-import com.esferalia.aon.occam.impl.jooq.dao.CreditorDAO;
 import com.esferalia.aon.occam.test.AbstractOccamTest;
 import com.esferalia.aon.occam.test.Asserts;
 import com.esferalia.aon.occam.test.faker.AonFaker;

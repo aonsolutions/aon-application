@@ -1,6 +1,6 @@
 package com.esferalia.aon.occam.test.fiscal.mod190;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.esferalia.aon.occam.api.fiscal.MODEL190;
 import com.esferalia.aon.occam.api.model.fiscal.Mod190;

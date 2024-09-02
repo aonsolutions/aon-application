@@ -1234,9 +1234,12 @@ public class InvoiceDAO {
 	
 	private static void beforeInsertDetail(AONContext ctx, AonConfiguration config, Invoice invoice, InvoiceDetail detail) {
 		if(detail.getId() != null) {
-			InvoiceDetail d = InvoiceDetailDAO.get(ctx, f-> f.getIdProperty().eq(detail.getId()));
-			if(d != null && d.getInvoice() != null && !d.getInvoice().equals(invoice.getId())) {
-				throw new AonCoreException("No se ha podido guardar la factura.");
+			Optional<InvoiceDetail> oid = InvoiceDetailDAO.get(ctx, detail.getId());
+			if ( oid.isPresent() ) {
+				InvoiceDetail d = oid.get(); 
+				if (d.getInvoice() != null && AonNumberUtils.notEquals( invoice.getId(), d.getInvoice().getId())) {
+					throw new AonCoreException("No se ha podido guardar la factura. Incoherencia en IdS de líneas y factura");
+				}
 			}
 		}
 	}

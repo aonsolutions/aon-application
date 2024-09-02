@@ -1,14 +1,15 @@
 package com.esferalia.aon.in.payroll.excel;
 
-import static com.esferalia.aon.in.payroll.excel.AggregatedAnnualSummary.SummaryType.QUARTERLY;
 import static com.esferalia.aon.in.payroll.excel.AggregatedAnnualSummary.SummaryType.MONTHLY;
+import static com.esferalia.aon.in.payroll.excel.AggregatedAnnualSummary.SummaryType.QUARTERLY;
+
 import java.io.OutputStream;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.Locale;
 import java.util.Map;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.esferalia.aon.occam.api.model.Salary;
 import com.esferalia.aon.occam.api.model.Salary.Deduction;

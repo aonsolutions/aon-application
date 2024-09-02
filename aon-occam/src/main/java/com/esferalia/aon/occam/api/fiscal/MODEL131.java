@@ -64,7 +64,7 @@ public class MODEL131 {
 		}
 	}
 
-	public static Mod131 finish(Occam occam, Mod131 mod131) {
+	public static Mod131 markAsFinished(Occam occam, Mod131 mod131) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(occam)) {
 			return getImpl().markAsFinished(ctx, mod131);
 		}
@@ -81,7 +81,19 @@ public class MODEL131 {
 		}
 	}
 
-	public static Mod131 reopen(Occam occam, Mod131 mod131) {
+	public static Mod131 markAsCustomerAccepted(Occam occam, Mod131 mod131) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(occam)) {
+			return getImpl().markAsCustomerAccepted(ctx, mod131);
+		}
+	}
+
+	public static Mod131 markAsCustomerRejected(Occam occam, Mod131 mod131, String reason) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(occam)) {
+			return getImpl().markAsCustomerCheckRejected(ctx, mod131, reason);
+		}
+	}
+
+	public static Mod131 markAsPending(Occam occam, Mod131 mod131) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(occam)) {
 			return getImpl().markAsPending(ctx, mod131);
 		}

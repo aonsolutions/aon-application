@@ -11,10 +11,12 @@ import java.util.Date;
 import java.util.Properties;
 import java.util.TimeZone;
 
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Rule;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.RepetitionInfo;
+import org.junit.jupiter.api.TestInfo;
 
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
@@ -23,9 +25,8 @@ import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.watson.server.AonObjectUtils;
+import com.esferalia.aon.watson.util.AonStringUtils;
 import com.mysql.jdbc.Driver;
-
-import net.aonsolutions.core.pool.AonConnectionException;
 
 public abstract class AbstractOccamTest {
 
@@ -45,9 +46,6 @@ public abstract class AbstractOccamTest {
 	
 	private Date testDate; // AonDateUtils.getDate(2022, 11, 15);
 	
-	@Rule
-	public RepeatRule repeatRule = new RepeatRule();
-
 	protected static Occam getOccam() {
 		return new Occam()
 				.setDomainName(DOMAIN_NAME)
@@ -62,8 +60,8 @@ public abstract class AbstractOccamTest {
 		return config;
 	}
 	
-	@BeforeClass
-	public static void beforeClass() throws ClassNotFoundException, SQLException, AonConnectionException {
+	@BeforeAll
+	public static void beforeClass() throws ClassNotFoundException, SQLException {
 		shutUp();
 		if ( DOMAIN_ID == null) {
 			AONContext context = new AONContext(connect());
@@ -75,14 +73,27 @@ public abstract class AbstractOccamTest {
 		System.setErr(System.err);
 	}
 
-	@AfterClass
+	@AfterAll
 	public static void afterClass() {
 		if (ctx != null) ctx.close();
 	}
 	
-	@Before
-	public void beforeTest() {
-		System.out.println( "Running [" + this.getClass().getSimpleName() + "]");
+	@BeforeEach
+	public void beforeEach(TestInfo testInfo) {
+		boolean isRepeatedTest = AonStringUtils.contains(testInfo.getDisplayName(),"repetition");
+		String className = testInfo.getTestClass().map(clazz -> clazz.getName()).orElse("?");
+		String methodName = testInfo.getTestMethod().map(tm -> tm.getName()).map(mn -> mn + "()").orElse("?");
+		String repetitionInfo = isRepeatedTest?testInfo.getDisplayName():""; 
+		System.out.println( 
+			String.format("Running [ %s.%s %s ]"
+				,className
+				,methodName
+				,repetitionInfo 
+		));				
+	}
+	
+	@AfterEach
+	public void afterEach(TestInfo testInfo) {
 	}
 
 	private static void shutUp() {

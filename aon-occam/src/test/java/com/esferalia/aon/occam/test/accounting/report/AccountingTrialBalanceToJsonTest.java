@@ -3,7 +3,7 @@ package com.esferalia.aon.occam.test.accounting.report;
 
 import java.util.Date;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.esferalia.aon.occam.api.ACCOUNTING;
 import com.esferalia.aon.occam.api.json.AccountTrialBalanceReportJSON;

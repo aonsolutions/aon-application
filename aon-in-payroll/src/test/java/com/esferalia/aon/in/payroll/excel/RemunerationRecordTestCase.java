@@ -8,21 +8,20 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.RepeatedTest;
+import org.junit.jupiter.api.Test;
 
 import com.code.aon.person.enumeration.Gender;
 import com.esferalia.aon.in.payroll.excel.IRemunerationRecordEntry.Schedule;
 import com.esferalia.aon.in.payroll.excel.IRetributiveConcept.RetributionForm;
 import com.esferalia.aon.in.payroll.excel.IRetributiveConcept.RetributionType;
-import com.esferalia.aon.occam.test.Repeat;
 import com.esferalia.aon.payroll.enumeration.FamilySituation;
 import com.esferalia.aon.salary.enumeration.PaymentType;
 import com.github.javafaker.Faker;
-//@Ignore
+
 public class RemunerationRecordTestCase {
-public static class RemunerationRecordEntry implements IRemunerationRecordEntry{
-		
+	public static class RemunerationRecordEntry implements IRemunerationRecordEntry {
+
 		private String name;
 		private String socialSecurityNumber;
 		private Gender gender;
@@ -52,14 +51,14 @@ public static class RemunerationRecordEntry implements IRemunerationRecordEntry{
 		private String professionalGroup;
 		private String level;
 		private Integer quoteGroup;
-		
+
 		private Map<String, Double> payments;
-		
+
 		@Override
 		public String getName() {
 			return name;
 		}
-		
+
 		@Override
 		public String getSocialSecurityNumber() {
 			return socialSecurityNumber;
@@ -204,11 +203,11 @@ public static class RemunerationRecordEntry implements IRemunerationRecordEntry{
 		public Map<String, Double> getPayments() {
 			return payments;
 		}
-		
+
 	}
-	
+
 	public static class RetributiveConcept implements IRetributiveConcept {
-		
+
 		PaymentType type;
 		String name;
 		String description;
@@ -216,12 +215,12 @@ public static class RemunerationRecordEntry implements IRemunerationRecordEntry{
 		RetributionType retributionType;
 		Boolean normalizable;
 		Boolean anualizable;
-		
+
 		@Override
 		public PaymentType getType() {
 			return type;
 		}
-		
+
 		@Override
 		public String getName() {
 			return name;
@@ -251,12 +250,11 @@ public static class RemunerationRecordEntry implements IRemunerationRecordEntry{
 		public Boolean isAnualizable() {
 			return anualizable;
 		}
-		
-	}
-	
 
-	@Test
-	@Repeat (100)
+	}
+
+	@Test( )
+	@RepeatedTest(100)
 	public void test() {
 		Faker faker = Faker.instance(new Locale("es"));
 		RemunerationRecordData data = new RemunerationRecordData();
@@ -264,42 +262,57 @@ public static class RemunerationRecordEntry implements IRemunerationRecordEntry{
 		data.setEndDate(faker.date().future(100, TimeUnit.DAYS));
 		data.setEnterpriseDocument(faker.chuckNorris().fact());
 		data.setSocialReason(faker.company().name());
-		
+
 		LinkedList<IRetributiveConcept> conceptList = new LinkedList<IRetributiveConcept>();
 		int conceptNum = faker.number().numberBetween(0, 30);
-		for (int i=1; i<conceptNum; i++) {
+		for (int i = 1; i < conceptNum; i++) {
 			RetributiveConcept concept = new RetributiveConcept();
-			concept.anualizable = (faker.number().numberBetween(1, 100) < 20) ? null :faker.bool().bool();
+			concept.anualizable = (faker.number().numberBetween(1, 100) < 20) ? null : faker.bool().bool();
 			concept.description = (faker.number().numberBetween(1, 100) < 20) ? null : faker.chuckNorris().fact();
 			concept.name = (faker.number().numberBetween(1, 100) < 20) ? null : faker.pokemon().name();
 			concept.normalizable = (faker.number().numberBetween(1, 100) < 20) ? null : faker.bool().bool();
-			concept.retributionForm = (faker.number().numberBetween(1, 100) < 20) ? null : faker.bool().bool() ? RetributionForm.IN_KIND : RetributionForm.MONEY;
-			concept.retributionType = (faker.number().numberBetween(1, 100) < 20) ? null : RetributionType.values()[faker.number().numberBetween(0, RetributionType.values().length-1)];
-			concept.type = (faker.number().numberBetween(1, 100) < 20) ? null : PaymentType.values()[faker.number().numberBetween(0, PaymentType.values().length-1)];
+			concept.retributionForm = (faker.number().numberBetween(1, 100) < 20) ? null
+					: faker.bool().bool() ? RetributionForm.IN_KIND : RetributionForm.MONEY;
+			concept.retributionType = (faker.number().numberBetween(1, 100) < 20) ? null
+					: RetributionType.values()[faker.number().numberBetween(0, RetributionType.values().length - 1)];
+			concept.type = (faker.number().numberBetween(1, 100) < 20) ? null
+					: PaymentType.values()[faker.number().numberBetween(0, PaymentType.values().length - 1)];
 			conceptList.add(concept);
 		}
 		data.setConcepts(conceptList);
 		LinkedHashMap<String, LinkedList<IRemunerationRecordEntry>> entries = new LinkedHashMap<String, LinkedList<IRemunerationRecordEntry>>();
-		
-		for (int i=1; i<faker.number().numberBetween(0, 90); i++) {
-			LinkedList<IRemunerationRecordEntry> entryList = new LinkedList<IRemunerationRecordEntry>(); 
-			for (int j=1; j<faker.number().numberBetween(0, 2); j++) {
+
+		for (int i = 1; i < faker.number().numberBetween(0, 90); i++) {
+			LinkedList<IRemunerationRecordEntry> entryList = new LinkedList<IRemunerationRecordEntry>();
+			for (int j = 1; j < faker.number().numberBetween(0, 2); j++) {
 				RemunerationRecordEntry entry = new RemunerationRecordEntry();
 				entry.agreement = (faker.number().numberBetween(1, 100) < 20) ? null : faker.chuckNorris().fact();
-				entry.birthDate = (faker.number().numberBetween(1, 100) < 20) ? null : faker.date().past(68*365, TimeUnit.DAYS);
+				entry.birthDate = (faker.number().numberBetween(1, 100) < 20) ? null
+						: faker.date().past(68 * 365, TimeUnit.DAYS);
 				entry.byTurns = (faker.number().numberBetween(1, 100) < 20) ? null : faker.bool().bool();
 				entry.category = (faker.number().numberBetween(1, 100) < 20) ? null : faker.pokemon().name();
-				entry.children = (faker.number().numberBetween(1, 100) < 20) ? null : faker.number().numberBetween(0, 10);
-				entry.contractEndDate = (faker.number().numberBetween(1, 100) < 20) ? null : faker.date().past(5000, TimeUnit.DAYS);
-				entry.contractKey = (faker.number().numberBetween(1, 100) < 20) ? null : ""+faker.number().numberBetween(0, 1000);
-				entry.contractSituationEndDate = (faker.number().numberBetween(1, 100) < 20) ? null : faker.date().past(365, TimeUnit.DAYS);
-				entry.contractSituationStartDate = (faker.number().numberBetween(1, 100) < 20) ? null : faker.date().past(365*10, TimeUnit.DAYS);
+				entry.children = (faker.number().numberBetween(1, 100) < 20) ? null
+						: faker.number().numberBetween(0, 10);
+				entry.contractEndDate = (faker.number().numberBetween(1, 100) < 20) ? null
+						: faker.date().past(5000, TimeUnit.DAYS);
+				entry.contractKey = (faker.number().numberBetween(1, 100) < 20) ? null
+						: "" + faker.number().numberBetween(0, 1000);
+				entry.contractSituationEndDate = (faker.number().numberBetween(1, 100) < 20) ? null
+						: faker.date().past(365, TimeUnit.DAYS);
+				entry.contractSituationStartDate = (faker.number().numberBetween(1, 100) < 20) ? null
+						: faker.date().past(365 * 10, TimeUnit.DAYS);
 				entry.enterpriseArea = (faker.number().numberBetween(1, 100) < 20) ? null : faker.lebowski().quote();
-				entry.enterpriseDepartment = (faker.number().numberBetween(1, 100) < 20) ? null : faker.esports().game();
-				entry.enterpriseScale = (faker.number().numberBetween(1, 100) < 20) ? null : faker.internet().domainName();
-				entry.familySituation = (faker.number().numberBetween(1, 100) < 20) ? null : FamilySituation.values()[faker.number().numberBetween(0, FamilySituation.values().length-1)];
-				entry.gender = (faker.number().numberBetween(1, 100) < 20) ? null : Gender.values()[faker.number().numberBetween(0, Gender.values().length-1)];
-				entry.hireDate = (faker.number().numberBetween(1, 100) < 20) ? null : faker.date().past(5000, TimeUnit.DAYS);
+				entry.enterpriseDepartment = (faker.number().numberBetween(1, 100) < 20) ? null
+						: faker.esports().game();
+				entry.enterpriseScale = (faker.number().numberBetween(1, 100) < 20) ? null
+						: faker.internet().domainName();
+				entry.familySituation = (faker.number().numberBetween(1, 100) < 20) ? null
+						: FamilySituation.values()[faker.number().numberBetween(0,
+								FamilySituation.values().length - 1)];
+				entry.gender = (faker.number().numberBetween(1, 100) < 20) ? null
+						: Gender.values()[faker.number().numberBetween(0, Gender.values().length - 1)];
+				entry.hireDate = (faker.number().numberBetween(1, 100) < 20) ? null
+						: faker.date().past(5000, TimeUnit.DAYS);
 				entry.level = (faker.number().numberBetween(1, 100) < 20) ? null : faker.ancient().titan();
 				entry.name = (faker.number().numberBetween(1, 100) < 20) ? null : faker.lebowski().actor();
 				LinkedHashMap<String, Double> payments = new LinkedHashMap<String, Double>();
@@ -307,18 +320,26 @@ public static class RemunerationRecordEntry implements IRemunerationRecordEntry{
 					payments.put(c.getName(), faker.number().numberBetween(0, 5000) * Math.random());
 				});
 				entry.payments = (faker.number().numberBetween(1, 100) < 20) ? null : payments;
-				entry.professionalCategory = (faker.number().numberBetween(1, 100) < 20) ? null : faker.chuckNorris().fact();
+				entry.professionalCategory = (faker.number().numberBetween(1, 100) < 20) ? null
+						: faker.chuckNorris().fact();
 				entry.professionalClass = (faker.number().numberBetween(1, 100) < 20) ? null : faker.currency().name();
 				entry.professionalGroup = (faker.number().numberBetween(1, 100) < 20) ? null : faker.beer().name();
-				entry.quoteGroup = (faker.number().numberBetween(1, 100) < 20) ? null : faker.number().numberBetween(0, 10);
-				entry.reducedWorkdayPercent = (faker.number().numberBetween(1, 100) < 20) ? null : Math.random() * faker.number().numberBetween(0, 100);
+				entry.quoteGroup = (faker.number().numberBetween(1, 100) < 20) ? null
+						: faker.number().numberBetween(0, 10);
+				entry.reducedWorkdayPercent = (faker.number().numberBetween(1, 100) < 20) ? null
+						: Math.random() * faker.number().numberBetween(0, 100);
 				entry.scale = (faker.number().numberBetween(1, 100) < 20) ? null : faker.book().title();
-				entry.schedule = (faker.number().numberBetween(1, 100) < 20) ? null : Schedule.values()[faker.number().numberBetween(0, Schedule.values().length-1)];
-				entry.seniorityDate = (faker.number().numberBetween(1, 100) < 20) ? null : faker.date().past(7000, TimeUnit.DAYS);
-				entry.socialSecurityNumber = (faker.number().numberBetween(1, 100) < 20) ? null : faker.business().creditCardNumber();
+				entry.schedule = (faker.number().numberBetween(1, 100) < 20) ? null
+						: Schedule.values()[faker.number().numberBetween(0, Schedule.values().length - 1)];
+				entry.seniorityDate = (faker.number().numberBetween(1, 100) < 20) ? null
+						: faker.date().past(7000, TimeUnit.DAYS);
+				entry.socialSecurityNumber = (faker.number().numberBetween(1, 100) < 20) ? null
+						: faker.business().creditCardNumber();
 				entry.studies = (faker.number().numberBetween(1, 100) < 20) ? null : faker.educator().course();
-				entry.workdayPercent = (faker.number().numberBetween(1, 100) < 20) ? null : faker.number().numberBetween(0, 100) * Math.random();
-				entry.workdayReductionReason = (faker.number().numberBetween(1, 100) < 20) ? null : faker.demographic().educationalAttainment();
+				entry.workdayPercent = (faker.number().numberBetween(1, 100) < 20) ? null
+						: faker.number().numberBetween(0, 100) * Math.random();
+				entry.workdayReductionReason = (faker.number().numberBetween(1, 100) < 20) ? null
+						: faker.demographic().educationalAttainment();
 				entryList.add(entry);
 			}
 			entries.put(faker.friends().character(), entryList);

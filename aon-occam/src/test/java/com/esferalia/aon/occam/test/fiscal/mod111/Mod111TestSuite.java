@@ -1,67 +1,24 @@
 package com.esferalia.aon.occam.test.fiscal.mod111;
 
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
-import org.junit.runners.Suite.SuiteClasses;
+import org.junit.platform.suite.api.SelectClasses;
+import org.junit.platform.suite.api.Suite;
 
-import com.esferalia.aon.occam.test.fiscal.invoice.InsertRandomInvoicesTest;
-
-@RunWith(Suite.class)
-@SuiteClasses({
-	// MVEL expresions syntax check en las declaraciones
+@Suite
+@SelectClasses({
 	Mod111ExpressionsTest.class,
 	Mod111ScriptTest.class,
 	
-	// Modelos mensuales
-	Mod111ReopenTest.class,
-	Mod111DeleteTest.class,
-	InsertRandomInvoicesTest.class,
-	Mod111InsertMonthlyTest.class,
-	Mod111FinishTest.class,
+	Mod111InsertMonthlySuite.class,
+	Mod111InsertMonthlyComplementarySuite.class,
+	Mod111InsertMonthlyReplacementSuite.class,
 	
-	InsertRandomInvoicesTest.class,
-	Mod111InsertMonthlyComplementaryTest.class,
-	Mod111FinishTest.class,
-//	
-	InsertRandomInvoicesTest.class,
-	Mod111InsertMonthlyReplacementTest.class,
-	Mod111RoundedAmountsTest.class,
-
-	// Modelos trimestrales
-	Mod111ReopenTest.class,
-	Mod111DeleteTest.class,
-//	InsertRandomInvoicesTest.class,
-	Mod111InsertQuarterlyTest.class,
-	Mod111FinishTest.class,
-//	
-	InsertRandomInvoicesTest.class,
-	Mod111InsertQuarterlyComplementaryTest.class,
-	Mod111FinishTest.class,
+	Mod111InsertQuarterlySuite.class,
+	Mod111InsertQuarterlyComplementarySuite.class,
+	Mod111InsertQuarterlyReplacementSuite.class,
 	
-//	InsertRandomInvoicesTest.class,
-	Mod111InsertQuarterlyReplacementTest.class,
-	Mod111RoundedAmountsTest.class,
-	
-//	// IRPF JSON 
-	IrpfBreakdownJSONTest.class,
-	
-//	// Flujo de estados
-	Mod111ReopenTest.class,					// Pendiente
-	Mod111FinishTest.class,					// Finalizado
-	Mod111SentTest.class,					// Presentado
-//	// Flujo de estados
-	Mod111ReopenTest.class,					// Pendiente
-	Mod111MarkAsCustomerCheckTest.class,	// Enviado a cliente
-	Mod111MarkAsCustomerAcceptedTest.class,	// Aceptado por cliente
-	Mod111SentTest.class,					// Presentado
-//	// Flujo de estados 
-	Mod111ReopenTest.class,					// Pendiente
-	Mod111MarkAsCustomerCheckTest.class,	// Enviado a cliente
-	Mod111MarkAsCustomerRejectedTest.class, // Rechazado por cliente
-	Mod111MarkAsCustomerCheckTest.class,	// Enviado a cliente
-	Mod111MarkAsCustomerAcceptedTest.class,	// Aceptado por cliente
-	Mod111SentTest.class,					// Presentado
-	
+	Mod111StatusFlow1Suite.class,
+	Mod111StatusFlow2Suite.class,
+	Mod111StatusFlow3Suite.class,
 })
 public class Mod111TestSuite {
 

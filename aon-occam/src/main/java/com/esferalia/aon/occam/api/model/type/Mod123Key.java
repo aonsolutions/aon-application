@@ -107,6 +107,7 @@ public enum Mod123Key implements IFiscalModelKey {
 	public Administration getAdministration() {
 		return admon;
 	} 
+	@Override
 	public String getBoxFormatted() {
 		return " [" + getBoxAsString() +"] ";
 	}

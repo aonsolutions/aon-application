@@ -1,19 +1,20 @@
 package com.esferalia.aon.occam.test.marketing.question;
 
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.List;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
+import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.Question;
 import com.esferalia.aon.occam.api.model.QuestionParams;
 import com.esferalia.aon.occam.impl.jooq.validation.QuestionValidation;
 import com.esferalia.aon.occam.test.AbstractOccamTest;
 import com.esferalia.aon.occam.test.Asserts;
 import com.esferalia.aon.occam.test.faker.AonFaker;
-import com.esferalia.aon.occam.api.AON;
 
 /**
  * Tests the question's methods of the class AON

@@ -1,9 +1,8 @@
 package com.esferalia.aon.occam.test;
 
 
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
-import org.junit.runners.Suite.SuiteClasses;
+import org.junit.platform.suite.api.SelectClasses;
+import org.junit.platform.suite.api.Suite;
 
 import com.esferalia.aon.occam.test.accounting.AccountingTestSuite;
 import com.esferalia.aon.occam.test.accounting.account.AccountTestSuite;
@@ -28,8 +27,8 @@ import com.esferalia.aon.occam.test.registry.supplier.SupplierTestSuite;
 import com.esferalia.aon.occam.test.registry.task_holder.TaskHolderTestSuite;
 import com.esferalia.aon.occam.test.workgroup.WorkgroupTestSuite;
 
-@RunWith(Suite.class)
-@SuiteClasses({
+@Suite
+@SelectClasses({
 	CompanyTestSuite.class,
 	AccountTestSuite.class,
 	TariffTestSuite.class,
