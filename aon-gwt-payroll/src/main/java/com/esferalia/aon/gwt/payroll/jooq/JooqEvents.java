@@ -659,6 +659,8 @@ public class JooqEvents {
 						@Override public void onRemove(IContractDeduction payment) {}
 
 						@Override public void onRemove(IContractBonus bonus) {}
+						
+						@Override public void onDisable(IContractPayment payment) {}
 
 						@Override public void onInvalidData(IContractBonus bonus, String variableName, String message) {}
 
