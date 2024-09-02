@@ -118,8 +118,6 @@ public class SistemaREDCCC {
 	
 	XmlPage xmlPage = (XmlPage ) (htmlPage.getElementById("CRITERIOS")).click();
 	
-	Toolkit.buildFile(HtmlUnitToolkit.transformXmlPage(xmlPage).asXml().getBytes(), "/Users/svaldepenas/Desktop/getAssignedCCCs.html");
-	
 	getAssignedCCCs(xmlPage).forEach(callback);	
 	while ( hasNextPage(xmlPage) ) {
 	    xmlPage = nextPage(xmlPage);
