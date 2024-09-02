@@ -90,13 +90,14 @@ public class Lroe140_2_1Test {
 		invoiceDetail.getInvoiceTaxes().add(tax);
 		invoice.getDetails().add(invoiceDetail);
 		
+		
 		InvoiceBreakdown ib = new InvoiceBreakdown();
 		ib.setBase(10.0);
 		ib.setPercentage(21.0);
 		ib.setQuota(2.1);
 		ib.setSurcharge(0.0);
 		ib.setSurchargeQuota(0.0);
-		invoice.getBreakdown().add(ib);
+		invoice.addBreakdown(ib);
 		
 		return invoice;
 	}

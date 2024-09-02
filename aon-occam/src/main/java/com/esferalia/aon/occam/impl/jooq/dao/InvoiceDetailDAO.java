@@ -37,7 +37,6 @@ import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.IDAOCallback;
 import com.esferalia.aon.occam.api.model.Filter.InvoiceDetailFilter;
 import com.esferalia.aon.occam.api.model.Filter.Property;
-import com.esferalia.aon.occam.api.model.InvestAsset;
 import com.esferalia.aon.occam.api.model.Properties.InvoiceDetailProperties;
 import com.esferalia.aon.occam.api.model.Workplace;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
@@ -167,10 +166,6 @@ public class InvoiceDetailDAO {
 				.orElse(new InvoiceDetail());
 	}
 	
-	public static InvoiceDetail get(AONContext ctx, Integer id) {
-		return get(ctx, f -> f.getIdProperty().eq(id));
-	}
-	
 	static List<InvoiceDetail> save(AONContext ctx, List<InvoiceDetail> invoiceDetails) {
 		LinkedList<InvoiceDetail> list = new LinkedList<>();
 		invoiceDetails.stream().forEach(invoiceDetail -> 
@@ -179,7 +174,7 @@ public class InvoiceDetailDAO {
 	}
 	
 	static InvoiceDetail save(AONContext ctx, InvoiceDetail invoiceDetail) {
-		invoiceDetail = (invoiceDetail.getId() != null && get(ctx, invoiceDetail.getId()).getId() != null)
+		invoiceDetail = (invoiceDetail.getId() != null && get(ctx, invoiceDetail.getId()).isEmpty())
 			? update(ctx, invoiceDetail)
 			: insert(ctx, invoiceDetail);
 		

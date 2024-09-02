@@ -226,14 +226,16 @@ public class LROE140_2_1 extends LROE140 {
 
 			// BIEN AFECTO !!
 			if(invoice.getInvestAsset() != null) { 
-				Integer ia = detail.getInvestAssetData() != null && detail.getInvestAssetData().getId() != null 
-					? detail.getInvestAssetData().getId() : invoice.getInvestAsset();
+				Integer ia = detail.getInvestAsset().isPresent() && detail.getInvestAsset().get().getId() != null 
+					? detail.getInvestAsset().get().getId() 
+					: invoice.getInvestAsset();
 				r.setBienAfectoIRPFYOIVA(BienAfectoIRPFYOIVAEnum.I);
 				r.setReferenciaBien(Integer.toString(ia));
 			}
 			
-			if(r.getBienAfectoIRPFYOIVA() == null && detail.getExpAccount() != null  && AonStringUtils.length(detail.getAccountCode()) >= 3) {
-				r.setConcepto(detail.getAccountCode().substring(0,3));
+			if(r.getBienAfectoIRPFYOIVA() == null && detail.getExpAccount() != null  
+				&& AonStringUtils.length(detail.getExpAccount().getCode()) >= 3) {
+				r.setConcepto(AonStringUtils.substring(detail.getExpAccount().getCode(),0,3));
 				double importeGastoIRPF = AonMathUtils.round(tax.getBase() * tax.getDeductiblePercent() / 100);
 				r.setImporteGastoIRPF(Double.toString(importeGastoIRPF));
 			}
