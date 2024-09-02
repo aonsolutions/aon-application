@@ -22,8 +22,8 @@ import org.jooq.Record;
 import org.jooq.SelectConditionStep;
 import org.jooq.UpdateSetMoreStep;
 import org.jooq.impl.DSL;
-import org.json.JSONObject;
 
+import com.esferalia.aon.jooq.tables.Registry;
 import com.esferalia.aon.jooq.tables.User;
 import com.esferalia.aon.jooq.tables.records.TimecontrolRecord;
 import com.esferalia.aon.occam.api.AONContext;
@@ -77,7 +77,7 @@ public class TimeControlDAO {
 		            .select()
 		            .from(TIMECONTROL)
 		            .join(TASK_HOLDER).on(TASK_HOLDER.REGISTRY.eq(TIMECONTROL.TASK_HOLDER))
-		            .join(REGISTRY).on(REGISTRY.ID.eq(TASK_HOLDER.REGISTRY))
+		            .join(Registry.REGISTRY).on(Registry.REGISTRY.ID.eq(TASK_HOLDER.REGISTRY))
 		            .join(DOMAIN).on(TIMECONTROL.DOMAIN.eq(DOMAIN.ID))
 		            .join(User.USER).on(TIMECONTROL.CREATION_USER.eq(User.USER.LOGIN))
 		            .leftOuterJoin(LOCATION).on(LOCATION.ID.eq(TIMECONTROL.LOCATION))

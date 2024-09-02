@@ -70,12 +70,11 @@ public interface ITask {
 	public Stream<TaskHolder> getTaskMemberWStream(AONContext ctx, String filter, Integer workgroupId);
 
 	
-	public Stream<TaskHolder> getTaskHolderStream(AONContext ctx, TaskHolderFilter filter);
+//	public Stream<TaskHolder> getTaskHolderStream(AONContext ctx, TaskHolderFilter filter);
 	public long getTaskHolderCount(AONContext ctx, TaskHolderFilter filter);
 	public Stream<TaskHolder> getTaskHolderEmployee(AONContext ctx, TaskHolderFilter filter, Integer page, Integer perPage);
-	public List<TaskHolder> getTaskHolderFullList(AONContext ctx, TaskHolderFilter filter);
+	
 	/* En TaskHolderDAO */
-
 	public TaskHolder getTaskHolder(AONContext ctx, TaskHolderFilter filter, Options...options);
 	public Stream<TaskHolder> getTaskHolderStream(AONContext ctx, TaskHolderFilter filter, Options...options);
 	public void deleteTaskHolder(AONContext ctx, Integer taskHolder);

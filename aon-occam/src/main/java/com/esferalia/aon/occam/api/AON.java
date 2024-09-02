@@ -6734,16 +6734,6 @@ public class AON {
 		}
 	}
 	
-	public static List<TaskHolder> getTaskHolderFullList(String domainName, Integer domainId, String login, TaskHolderFilter filter){
-		CloseableAONContext ctx = null;
-		try {
-			ctx = AONContext.getAONContext(domainName, domainId, login);
-			return getTask().getTaskHolderFullList(ctx, filter);
-		} finally {
-			if (ctx != null) ctx.close();
-		}
-	}
-	
 	public static Stream<TaskHolder> getTaskHolderWorkgroupStream(Domain domain, User user, TaskHolderFilter filter, Integer workgroupId, int ofs, int limit){
 		try (CloseableAONContext ctx = AONContext.getAONContext(domain, user)){
 			return getTask().getTaskHolderWorkgroupStream(ctx, filter, workgroupId, ofs, limit);
