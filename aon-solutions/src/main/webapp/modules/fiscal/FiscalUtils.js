@@ -37,7 +37,7 @@ const getModelNumberHtml = (administration, model)=>{
     modelText = "110";
   } 
 
-  return /*html*/`<div style="width: 25px; height: 25px; font-size: 10px; line-height: 21px;border: 2px solid #949393;border-radius: 50%;display: flex;justify-content: center;color: #949393;">${modelText}</div>`;
+  return /*html*/`<div style="width: 25px; height: 25px; font-size: 10px; line-height: 23px;border: 1px solid var(--aonFiscal);border-radius: 50%;display: flex;justify-content: center;color: var(--aonFiscal);">${modelText}</div>`;
 }
 
 const getModelNumber = (administration, model)=>{
