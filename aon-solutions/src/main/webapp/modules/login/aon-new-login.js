@@ -66,6 +66,7 @@ export class AonNewLogin extends AonElement {
       let languageButton = new AonIconButton();
       languageButton.id = "aonLoginLanguageButton";
       languageButton.icon = MATERIAL_ICONS.LANGUAGE;
+      languageButton.title = MSG.SELECT_LANGUAGE;
       languageButton.addEventListener(EVENT.CLICK, () => this.languageDialog());
       divLanguage.appendChild(languageButton);
 
@@ -97,12 +98,12 @@ export class AonNewLogin extends AonElement {
 
     let h1 = this.createElement(TAG.H1);
     h1.className = CSS.AON_LOGIN_TITLE;
-    h1.innerHTML = "Inicia Sesión";
+    h1.innerHTML = MSG.LOGIN;
     divTitleForm.appendChild(h1);
 
     let h2 = this.createElement(TAG.H1);
     h2.className = CSS.AON_LOGIN_SUB_TITLE;
-    /*h2.innerHTML = MSG.ACCESS_TO_YOUR_AON_ACCOUNT;*/
+    h2.innerHTML = MSG.LOGIN_SUBTITLE;
     divTitleForm.appendChild(h2);
 
     // Form
@@ -131,7 +132,12 @@ export class AonNewLogin extends AonElement {
     let signIn = this.createElement(TAG.BUTTON);
     signIn.id = 'aonLoginSignin';
     signIn.className = CSS.AON_LOGIN_BUTTON;
-    signIn.title = MSG.SIGN_IN;
+    getManifest().then(
+		  (manifest) => {
+				let version = MSG.VERSION + ": " + manifest.build_date;
+        signIn.title = version;
+			}
+		);
     signIn.innerHTML = MSG.SIGN_IN.toUpperCase();
     divFormContent.appendChild(signIn);
 
@@ -152,20 +158,12 @@ export class AonNewLogin extends AonElement {
     magicLinkButton.addEventListener(EVENT.CLICK, () => this.magicLink(userInput.value));
     divFormContent.appendChild(magicLinkButton);
 
-    // Form Aon Version
-    let divInfo = this.createElement(TAG.DIV);
-	divInfo.className = CSS.AON_LOGIN_INFO;
-    divInfo.innerHTML = `
-      <span>
-        <a target="_blank" class="aonLink" href="http://www.aonsolutions.es">
-        <!--  aonSolutions -->
-        </a> 
-		<span class="aonTrademark" >
-		<! -- ${MSG.REGISTERED_TRADEMARK_AON} -->
-		</span> 
-      </span>
-      <div id="aonManifest"></div>`;
-    divFormContent.appendChild(divInfo);
+    // // Form Aon Version
+    // let divInfo = this.createElement(TAG.DIV);
+	  // divInfo.className = CSS.AON_LOGIN_INFO;
+    // divInfo.innerHTML = `
+    //   <div id="aonManifest"></div>`;
+    // divFormContent.appendChild(divInfo);
 
     let divMobiles = this.createElement(TAG.DIV);
     divMobiles.id = 'logosMobiles';

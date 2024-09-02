@@ -258,6 +258,8 @@ export const LINK_DOMAINS = 'Vincular Dominios a Clientes';
 export const LINK_DOMAIN_QUESTION = "¿Desea vincular este cliente con el dominio?";
 export const LOADING = 'Cargando';
 export const LOCATION = 'Ubicación';
+export const LOGIN = 'Se connecter';
+export const LOGIN_SUBTITLE = 'Entrez vos identifiants';
 
 // ----- M
 
@@ -427,7 +429,7 @@ export const SUPPORT = 'Support';
 export const SURCHARGE = 'Recargo';
 export const SURNAME = 'Apellidos';
 export const SYSTEM_MESSAGES = 'Mensajes del Sistema';
-export const SELECT_LANGUAGE = "Seleccionar idioma";
+export const SELECT_LANGUAGE = "Sélection de la langue";
 export const SELECT_COMPANY_TYPE = "Seleccionar tipo de empresa";
 
 // ----- T
