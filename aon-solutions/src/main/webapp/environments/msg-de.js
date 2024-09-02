@@ -254,6 +254,8 @@ export const LINK_DOMAINS = 'Domains Verknüpfen';
 export const LINK_DOMAIN_QUESTION = "Möchten Sie diesen Client mit der Domain verknüpfen?";
 export const LOADING = 'Wird geladen';
 export const LOCATION = 'Location';
+export const LOGIN = 'Login';
+export const LOGIN_SUBTITLE = 'Geben Sie Ihre Anmeldedaten ein';
 
 // ----- M
 
@@ -421,7 +423,7 @@ export const SUPPORT = 'Support';
 export const SURCHARGE = 'Surcharge';
 export const SURNAME = 'Surname';
 export const SYSTEM_MESSAGES = 'System Messages';
-export const SELECT_LANGUAGE = "Sprache auswählen";
+export const SELECT_LANGUAGE = "Sprachauswahl";
 export const SELECT_COMPANY_TYPE = "Wählen Sie den Unternehmenstyp aus";
 
 // ----- T

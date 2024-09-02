@@ -254,6 +254,9 @@ export const LINK_DOMAINS = 'Dominioak Bezeroekin Estekatu';
 export const LINK_DOMAIN_QUESTION = "Domeinuarekin bezero hau estekatu nahi duzu?";
 export const LOADING = 'Kargatzen';
 export const LOCATION = 'Kokapena';
+export const LOGIN = 'Saioa hasi';
+export const LOGIN_SUBTITLE = 'Sartu zure kredentzialak';
+
 
 // ----- M
 
@@ -420,7 +423,7 @@ export const SUPPORT = 'Euskarri';
 export const SURCHARGE = 'Errekargua';
 export const SURNAME = 'Abizenak';
 export const SYSTEM_MESSAGES = 'Sistemaren Mezuak';
-export const SELECT_LANGUAGE = "Hautatu hizkuntza";
+export const SELECT_LANGUAGE = "Hizkuntza hautatzea";
 export const SELECT_COMPANY_TYPE = "Hautatu enpresa mota";
 
 // ----- T

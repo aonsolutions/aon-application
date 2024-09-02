@@ -43,7 +43,7 @@ public class AonCustomTable extends HTMLPanel {
 	public void addHeaderStyle() {
 		header.addStyleName(AON.CSS.aonItemFlex());
 		header.getElement().getStyle().setProperty("min-height", "2rem");
-		header.getElement().getStyle().setProperty("background-color", "white");
+		header.getElement().getStyle().setProperty("background-color", "transparent");
 		header.getElement().getStyle().setProperty("position", "sticky");
 		header.getElement().getStyle().setProperty("top", "-1px");
 		header.getElement().getStyle().setProperty("z-index", "1");
@@ -81,6 +81,10 @@ public class AonCustomTable extends HTMLPanel {
 		return getWidgetCount() - 1;
 	}
 
-	
+	public Widget getWidget(int row, int col) {
+		HTMLPanel htmlPanelRow = (HTMLPanel) this.getWidget(row);
+		Widget widget = htmlPanelRow.getWidget(col);
+		return widget;
+	}
 
 }

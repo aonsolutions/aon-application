@@ -202,7 +202,7 @@ public class TaskHolderServlet extends AonApiHttpServlet{
 		
 		Integer workgroup = JsonUtils.getInteger(api.getData(), IJsonNames.WORKGROUP);
 		Integer page = JsonUtils.getInteger(api.getData(), IJsonNames.PAGE);
-		Integer perPage = JsonUtils.getInteger(api.getData(), IJsonNames.PAGE);
+		Integer perPage = JsonUtils.getInteger(api.getData(), IJsonNames.PER_PAGE);
 		
 		if(workgroup != null) {
 			return TaskHolderJSON.toJSON(AON.getTaskHolderWorkgroupStream(domain, api.getUser(), 

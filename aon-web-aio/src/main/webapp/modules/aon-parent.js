@@ -217,8 +217,7 @@ export class AonParent extends AonElement {
 
 		let companyTitleSpan = this.createSpan();
 		companyTitleSpan.innerHTML = MSG.COMPANY_SELECTION;
-		companyTitleSpan.style.fontSize = '16px';
-		companyTitleSpan.style.fontWeight = '600';
+		companyTitleSpan.classList.add("aonCompanyTitleSpan");
 		companyTitleDiv.appendChild(companyTitleSpan);
 		
 		

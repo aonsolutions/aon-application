@@ -56,6 +56,7 @@ import com.esferalia.aon.gwt.payroll.shared.WorkplaceInfo;
 import com.esferalia.aon.occam.api.model.Certificate;
 import com.esferalia.aon.occam.api.model.CertificateInfo;
 import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.occam.api.model.EnterpriseCCC;
 import com.esferalia.aon.occam.api.model.MailAccount;
 import com.esferalia.aon.occam.api.model.aonsolutions.DomainUserRoles;
 import com.esferalia.aon.occam.api.model.mod145.Mod145;
@@ -177,6 +178,7 @@ public interface EnterprisesServiceAsync {
 	void getContractBonus(String currentDomainName, Integer contractId, AsyncCallback<List<SSBonusData>> asyncCallback);
 	void setContractBonus(String currentDomainName, EmployeeContractInfo employeeContractData, AsyncCallback<Void> asyncCallback);
 	void getSecondaryUsers(String currentDomainName, String currentUser, Integer rattachId, AsyncCallback<List<SecondaryUserCertificate>> asyncCallback) throws IllegalArgumentException;
+	void getSecondaryUsersPDF(String currentDomainName, String currentUser, Integer rattachId, AsyncCallback<String> asyncCallback) throws IllegalArgumentException;
 	void deleteSecondaryUser(String currentDomainName, String currentUser, Integer rattachId, String ipfType, String ipf, AsyncCallback<Void> asyncCallback);
 	void createSecondaryUser(String currentDomainName, String currentUser, Integer rattachId, String ipfType, String ipf, String naf, AsyncCallback<Void> asyncCallback);
 	void getIpfxNaf(String currentDomainName, String currentUser, ArrayList<String> nssList, AsyncCallback<EmployeeSegSocial> asyncCallback);
@@ -286,6 +288,10 @@ public interface EnterprisesServiceAsync {
 	
 	void saveActivities(String currentDomainName, String user, List<com.esferalia.aon.occam.api.model.payroll.Activity> activity, AsyncCallback<Void> asyncCallback) throws IllegalArgumentException;
 	
+	void deleteCCC(String currentDomainName, String user, Integer cccId, AsyncCallback<Void> asyncCallback) throws IllegalArgumentException;
+	
+	void saveCCC(String currentDomainName, String user, EnterpriseCCC ccc, AsyncCallback<EnterpriseCCC> asyncCallback) throws IllegalArgumentException;
+	
 	// --------------------------- Mod 145 (API)
 	
 	void getMod145List(String currentDomainName, String currentUser, Integer contractId, AsyncCallback<List<Mod145>> asyncCallback) throws IllegalArgumentException;
@@ -327,4 +333,5 @@ public interface EnterprisesServiceAsync {
 	// ------------------------------------------------ Pension Plan AFI
 	
 	void checkPensionPlanAFI(String currentDomainName, String currentUser, long date, List<Integer> cccIdList, AsyncCallback<String> asyncCallback) throws IllegalArgumentException;
+	
 }

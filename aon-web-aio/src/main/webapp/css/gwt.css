@@ -2,7 +2,6 @@
  * The file contains styles for GWT widgets in the 365 theme.
  */
  
-@import url(/aonResource/aon-richCss.css); 
 @import url(/css/header.css);
  
  
@@ -36,7 +35,7 @@
   -moz-osx-font-smoothing: grayscale;
   font-variation-settings:
   'FILL' 0,
-  'wght' 400,
+  'wght' 200,
   'GRAD' 0,
   'opsz' 24
 }
@@ -44,7 +43,7 @@
 .material-symbols-outlined {
   font-variation-settings:
   'FILL' 0,
-  'wght' 400,
+  'wght' 200,
   'GRAD' 0,
   'opsz' 24
 }

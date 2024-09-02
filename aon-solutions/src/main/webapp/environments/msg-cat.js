@@ -252,6 +252,8 @@ export const LINK_DOMAINS = 'Vincular Dominis amb Clients';
 export const LINK_DOMAIN_QUESTION = "Voleu desvincular aquest client del domini?";
 export const LOADING = 'Carregant';
 export const LOCATION = 'Ubicació';
+export const LOGIN = 'Inici de sessió';
+export const LOGIN_SUBTITLE = 'Introduïu les vostres credencials';
 
 // ----- M
 
@@ -419,7 +421,7 @@ export const SUPPORT = 'Suport';
 export const SURCHARGE = 'Recàrrec';
 export const SURNAME = 'Cognoms';
 export const SYSTEM_MESSAGES =  'Missatges de Sistema';
-export const SELECT_LANGUAGE = "Seleccionar idioma";
+export const SELECT_LANGUAGE = "Selecció d'idioma";
 export const SELECT_COMPANY_TYPE = "Seleccionar tipus d'empresa";
 
 // ----- T

@@ -219,7 +219,7 @@ public class InvoiceDetail implements Serializable {
 		this.warehouse = warehouse;
 		return this;
 	}
-	
+    
 	public String getWarehouseName() {
 		return warehouseName;
 	}

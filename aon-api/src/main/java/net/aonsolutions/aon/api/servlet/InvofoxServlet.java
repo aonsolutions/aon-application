@@ -30,6 +30,7 @@ import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.IJsonNames;
+import com.esferalia.aon.occam.api.model.Rawdoc;
 import com.esferalia.aon.occam.api.model.finance.EnumVisitors.IInvoiceTypeVisitor;
 import com.esferalia.aon.occam.api.model.finance.InvofoxConfiguration;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
@@ -43,6 +44,10 @@ import com.esferalia.aon.occam.api.model.registry.RegistryAddress;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.occam.api.model.type.InvoiceType;
+import com.esferalia.aon.occam.api.model.type.MimeType;
+import com.esferalia.aon.occam.api.model.type.RawdocNature;
+import com.esferalia.aon.occam.api.model.type.RawdocStatus;
+import com.esferalia.aon.occam.api.model.type.RawdocType;
 import com.esferalia.aon.occam.api.model.type.TaxType;
 import com.esferalia.aon.occam.api.model.type.VatDeductionType;
 import com.esferalia.aon.occam.impl.jooq.dao.AccountingInvoiceDAO;
@@ -109,6 +114,7 @@ public class InvofoxServlet extends AonApiHttpServlet {
 	public static final String TEXT_CONTENT = "/text_content";
 	public static final String CONFIGURATION = "/configuration";
 	public static final String ACCEPT = "/accept";
+	public static final String RAWDOC = "/rawdoc";
 	public static final String LOGIN = "/login";
 
 	@Override
@@ -154,7 +160,9 @@ public class InvofoxServlet extends AonApiHttpServlet {
 					.addRoute(LOGIN, InvofoxServlet::invofoxLogin)
 					.addRoute(DOCUMENT, InvofoxServlet::updateDocument)
 					.addRoute(CONFIGURATION, InvofoxServlet::saveConfiguration)
-					.addRoute(ACCEPT, InvofoxServlet::acceptDocument).apply();
+					.addRoute(ACCEPT, InvofoxServlet::acceptDocument)
+					.addRoute(RAWDOC, InvofoxServlet::rawdocDocument)
+					.apply();
 
 			response(req, resp, object);
 		} catch (Exception e) {
@@ -163,11 +171,64 @@ public class InvofoxServlet extends AonApiHttpServlet {
 	}
 
 	private static JSONObject getDocument(AonApiData api) {
-		JSONObject params = api.getData();
-		String documentId = params.optString(IJsonNames.ID);
-		return getDocument(api.getDomain(), api.getUser(), documentId);
+//		JSONObject params = api.getData();
+//		String documentId = params.optString(IJsonNames.ID);
+//		return getDocument(api.getDomain(), api.getUser(), documentId);	
+		return rawdocDocument(api);
 	}
 
+	private static JSONObject rawdocDocument(AonApiData api) {
+		JSONObject params = api.getData();
+		String documentId = params.optString(IJsonNames.ID);
+		JSONObject json = getDocument(api.getDomain(), api.getUser(), documentId);
+
+		RawdocType type = json.opt("type") != null && json.optString("type").equalsIgnoreCase("emitida") 
+				? RawdocType.OUTPUT : RawdocType.INPUT;
+		RawdocStatus status = getRawdocStatus(json.optString("status")); 
+		json.put("status", status.getTediName());
+		
+		Rawdoc rawdoc = new Rawdoc()
+			.setDomain(api.getDomain().getId())
+			.setNature(RawdocNature.INVOICE)
+			.setType(type)
+			.setStatus(status)
+			.setJson(json.toString())
+			.setS3Key(getS3Key(json))
+			.setMimeType(getMimeType(json));
+		
+		rawdoc = AON.rawdocSave(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), rawdoc);
+		json.put("id", rawdoc.getId()); 
+
+		exportDocument(api, documentId);
+		return json;
+	}
+	
+	private static RawdocStatus getRawdocStatus(String status) {
+		Optional<OCRSeverity> ocrSeverity = OCRSeverity.safeValueOf(status);
+		if(ocrSeverity.isPresent() && (
+				OCRSeverity.pendingDecission.equals(ocrSeverity.get())
+				|| OCRSeverity.rejected.equals(ocrSeverity.get()))) {
+			return RawdocStatus.REJECTED;
+		} else if(ocrSeverity.isPresent() && OCRSeverity.discarded.equals(ocrSeverity.get())) {
+			return RawdocStatus.DRAFT;
+		}
+		return RawdocStatus.INBOX;
+	}
+	
+	private static String getS3Key(JSONObject json) {
+		if(JsonUtils.has(json, IJsonNames.FILE)) {
+			JSONObject file = JsonUtils.getJSONObject(json, IJsonNames.FILE);
+			return JsonUtils.getString(file, "s3Key");
+		} else return null;
+	}
+	
+	private static MimeType getMimeType(JSONObject json) {
+		if(JsonUtils.has(json, IJsonNames.FILE)) {
+			JSONObject file = JsonUtils.getJSONObject(json, IJsonNames.FILE);
+			return MimeType.get(JsonUtils.getString(file, "content_type"));
+		} else return null;
+	}
+	
 	private static JSONObject acceptDocument(AonApiData api) {
 		try (CloseableAONContext aonContext = AONContext.getAONContext(api.getDomain().getName(), api.getUser().getLogin())) {
 			Company company = AON.getCompany( aonContext, f -> f.getDomainProperty().eq( api.getDomain().getId()));
@@ -197,12 +258,8 @@ public class InvofoxServlet extends AonApiHttpServlet {
 					if (inv != null && inv.getId() != null) {
 						api.getData().put("file", getFileJSON(ocrDocument));
 						InvoiceServlet.processInvoiceFile(api, inv);
+						exportDocument(api, documentId);
 					}
-					JSONObject data = new JSONObject();
-					data.put("_id", documentId);
-					data.put("publicState", "exported");
-					api.setData(data);
-					updateDocument(api);
 				}
 
 				if(invofoxConfiguration.isAutoRecord()) {					
@@ -212,6 +269,14 @@ public class InvofoxServlet extends AonApiHttpServlet {
 			
 			return new JSONObject();
 		}
+	}
+	
+	private static void exportDocument(AonApiData api, String documentId) {
+		JSONObject data = new JSONObject();
+		data.put("_id", documentId);
+		data.put("publicState", "exported");
+		api.setData(data);
+		updateDocument(api);
 	}
 
 	public static JSONObject getDocument(Domain domain, User user, String documentId) {

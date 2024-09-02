@@ -22,6 +22,7 @@ import { AonEmail } from "../../components/aon-email.js";
 import { AonNewInput } from "../../components/aon-new-input.js";
 import { AonMobileParent } from "../company/aon-mobile-parent.js";
 import { AonParent } from "aonparent";
+import { AonIconButton } from "../../components/aon-icon-button.js";
 
 export class AonNewLogin extends AonElement {
   tag;
@@ -49,7 +50,7 @@ export class AonNewLogin extends AonElement {
 
     let divLogoToolbar = this.createElement(TAG.DIV);
     divLogoToolbar.id = 'aonLoginLogoDiv';
-	divLogoToolbar.className = CSS.AON_LOGIN_LOGO;
+	  divLogoToolbar.className = CSS.AON_LOGIN_LOGO;
     toolbar.appendChild(divLogoToolbar);
 
     //let logoToolbar = this.createElement(TAG.IMG);
@@ -62,10 +63,17 @@ export class AonNewLogin extends AonElement {
       divLanguage.id = 'aonLoginLanguageDivToolbar';
       toolbar.appendChild(divLanguage);
 
+      let languageButton = new AonIconButton();
+      languageButton.id = "aonLoginLanguageButton";
+      languageButton.icon = MATERIAL_ICONS.LANGUAGE;
+      languageButton.title = MSG.SELECT_LANGUAGE;
+      languageButton.addEventListener(EVENT.CLICK, () => this.languageDialog());
+      divLanguage.appendChild(languageButton);
+
       let spanLanguage = this.createElement(TAG.SPAN);
       spanLanguage.id = 'aonLoginLanguageSpanToolbar';
       spanLanguage.innerHTML = this.getLanguageText();
-      spanLanguage.addEventListener(EVENT.MOUSEOVER, () => this.languageDialog());
+      //spanLanguage.addEventListener(EVENT.MOUSEOVER, () => this.languageDialog());
       divLanguage.appendChild(spanLanguage);
     }
 
@@ -79,7 +87,7 @@ export class AonNewLogin extends AonElement {
     divCompanyLogoForm.id = "divCompanyLogoForm";
     divCompanyLogoForm.className = CSS.AON_LOGIN_FORM;
     divCompanyLogoForm.style.marginBottom = "2rem";
-	divCompanyLogoForm.appendChild(this.companyLogo);
+	  divCompanyLogoForm.appendChild(this.companyLogo);
     divForm.appendChild(divCompanyLogoForm);
 
     let divTitleForm = this.createElement(TAG.DIV);
@@ -90,12 +98,12 @@ export class AonNewLogin extends AonElement {
 
     let h1 = this.createElement(TAG.H1);
     h1.className = CSS.AON_LOGIN_TITLE;
-    h1.innerHTML = "Inicia Sesión";
+    h1.innerHTML = MSG.LOGIN;
     divTitleForm.appendChild(h1);
 
     let h2 = this.createElement(TAG.H1);
     h2.className = CSS.AON_LOGIN_SUB_TITLE;
-    /*h2.innerHTML = MSG.ACCESS_TO_YOUR_AON_ACCOUNT;*/
+    h2.innerHTML = MSG.LOGIN_SUBTITLE;
     divTitleForm.appendChild(h2);
 
     // Form
@@ -124,7 +132,12 @@ export class AonNewLogin extends AonElement {
     let signIn = this.createElement(TAG.BUTTON);
     signIn.id = 'aonLoginSignin';
     signIn.className = CSS.AON_LOGIN_BUTTON;
-    signIn.title = MSG.SIGN_IN;
+    getManifest().then(
+		  (manifest) => {
+				let version = MSG.VERSION + ": " + manifest.build_date;
+        signIn.title = version;
+			}
+		);
     signIn.innerHTML = MSG.SIGN_IN.toUpperCase();
     divFormContent.appendChild(signIn);
 
@@ -145,20 +158,12 @@ export class AonNewLogin extends AonElement {
     magicLinkButton.addEventListener(EVENT.CLICK, () => this.magicLink(userInput.value));
     divFormContent.appendChild(magicLinkButton);
 
-    // Form Aon Version
-    let divInfo = this.createElement(TAG.DIV);
-	divInfo.className = CSS.AON_LOGIN_INFO;
-    divInfo.innerHTML = `
-      <span>
-        <a target="_blank" class="aonLink" href="http://www.aonsolutions.es">
-        <!--  aonSolutions -->
-        </a> 
-		<span class="aonTrademark" >
-		<! -- ${MSG.REGISTERED_TRADEMARK_AON} -->
-		</span> 
-      </span>
-      <div id="aonManifest"></div>`;
-    divFormContent.appendChild(divInfo);
+    // // Form Aon Version
+    // let divInfo = this.createElement(TAG.DIV);
+	  // divInfo.className = CSS.AON_LOGIN_INFO;
+    // divInfo.innerHTML = `
+    //   <div id="aonManifest"></div>`;
+    // divFormContent.appendChild(divInfo);
 
     let divMobiles = this.createElement(TAG.DIV);
     divMobiles.id = 'logosMobiles';
@@ -193,7 +198,7 @@ export class AonNewLogin extends AonElement {
   languageDialog() {
     let divLanguage = this.getElement('aonLoginLanguageDivToolbar');
     let spanLanguage = this.getElement('aonLoginLanguageSpanToolbar');
-    const top  = spanLanguage.getBoundingClientRect().top;
+    const top  = spanLanguage.getBoundingClientRect().top + 25;
     const left = spanLanguage.getBoundingClientRect().left;
     let d = this.getElement('aonHeaderDialogHelpOption');
     if(!d) {
@@ -204,27 +209,31 @@ export class AonNewLogin extends AonElement {
     d.getContent().addEventListener(EVENT.MOUSELEAVE, () => d.close());
 
     let options = [{
-      name: MSG.SPANISH,
+      name: "Castellano",
       image: '../assets/img/aonIconCastellano.png',
       fn: () => LS.setLanguage(Language.SPANISH)
     }, {
-      name: MSG.ENGLISH,
+      name: "English",
       image: '../assets/img/aonIconEnglish.png',
       fn: () => LS.setLanguage(Language.ENGLISH)
     }, {
-      name: MSG.DEUTSCH,
+      name: "Français",
+      image: '../assets/img/aonIconFrancais.png',
+      fn: () => LS.setLanguage(Language.FRENCH)
+    }, {
+      name: "Deutsch",
       image: '../assets/img/aonIconDeutsch.png',
       fn: () => LS.setLanguage(Language.DEUTSCH)
     }, {
-      name: MSG.BASQUE,
+      name: "Euskara",
       image: '../assets/img/aonIconEuskera.png',
       fn: () => LS.setLanguage(Language.BASQUE)
     }, {
-      name: MSG.CATALAN,
+      name: "Català",
       image: '../assets/img/aonIconCatala.png',
       fn: () => LS.setLanguage(Language.CATALAN)
     }, {
-      name: MSG.GALICIAN,
+      name: "Galego",
       image: '../assets/img/aonIconGalego.png',
       fn: () => LS.setLanguage(Language.GALICIAN)
     } ];

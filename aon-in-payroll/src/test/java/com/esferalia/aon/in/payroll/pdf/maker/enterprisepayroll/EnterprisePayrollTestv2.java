@@ -1,10 +1,13 @@
 package com.esferalia.aon.in.payroll.pdf.maker.enterprisepayroll;
 
 import static com.esferalia.aon.in.payroll.pdf.maker.PdfMaker.printEnterprisePayroll;
+import static com.esferalia.aon.jooq.tables.Contract.CONTRACT;
+import static com.esferalia.aon.jooq.tables.Salary.SALARY;
 
 import java.io.ByteArrayOutputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Locale;
@@ -19,6 +22,8 @@ import com.esferalia.aon.in.payroll.pdf.maker.enterprisepayroll.beans.Enterprise
 import com.esferalia.aon.in.payroll.pdf.maker.enterprisepayroll.beans.EnterprisePayrollEntry;
 import com.esferalia.aon.in.payroll.pdf.maker.enterprisepayroll.beans.EnterprisePayrollEntry.EnterpriseEntryType;
 import com.esferalia.aon.in.payroll.pdf.maker.exception.CanNotCreatePdfException;
+import com.esferalia.aon.salary.enumeration.SalaryType;
+import com.esferalia.aon.watson.util.AonDateUtils;
 import com.github.javafaker.Faker;
 
 public class EnterprisePayrollTestv2 {
@@ -51,7 +56,13 @@ public class EnterprisePayrollTestv2 {
 			
 			for (int i = 0; i < 4; i++) {
 				String cat = "Categoria " + i;
-				EnterprisePayrollEntry e = new EnterprisePayrollEntry(EnterpriseEntryType.AON_SYSTEM, f.name().fullName(), "N髆ina",
+				EnterprisePayrollEntry e = new EnterprisePayrollEntry(EnterpriseEntryType.AON_SYSTEM, 
+						f.number().digits(12),
+						f.number().digits(11),
+						AonDateUtils.getFirstDayOfMonth(new Date()),
+						AonDateUtils.getLastDayOfMonth(new Date()),
+						f.name().fullName(), 
+						"N贸mina",
 						f.number().randomDouble(2, 0, 99999),
 						f.number().randomDouble(2, 0, 99999),
 						f.number().randomDouble(2, 0, 99999),
@@ -72,7 +83,13 @@ public class EnterprisePayrollTestv2 {
 			
 			for (int i = 0; i < 4; i++) {
 				String cat = "cet " + i;
-				EnterprisePayrollEntry e = new EnterprisePayrollEntry(EnterpriseEntryType.AON_SYSTEM, f.name().fullName(), "N髆ina",
+				EnterprisePayrollEntry e = new EnterprisePayrollEntry(EnterpriseEntryType.AON_SYSTEM, 
+						f.number().digits(12),
+						f.number().digits(11),
+						AonDateUtils.getFirstDayOfMonth(new Date()),
+						AonDateUtils.getLastDayOfMonth(new Date()),
+						f.name().fullName(), 
+						"N贸mina",
 						f.number().randomDouble(2, 0, 99999),
 						f.number().randomDouble(2, 0, 99999),
 						f.number().randomDouble(2, 0, 99999),
@@ -93,7 +110,13 @@ public class EnterprisePayrollTestv2 {
 			
 			for (int i = 0; i < 4; i++) {
 				String cat = "Categoria " + i;
-				EnterprisePayrollEntry e = new EnterprisePayrollEntry(EnterpriseEntryType.SEG_SOCIAL, f.name().fullName(), "N髆ina",
+				EnterprisePayrollEntry e = new EnterprisePayrollEntry(EnterpriseEntryType.SEG_SOCIAL, 
+						f.number().digits(12),
+						f.number().digits(11),
+						AonDateUtils.getFirstDayOfMonth(new Date()),
+						AonDateUtils.getLastDayOfMonth(new Date()),
+						f.name().fullName(), 
+						"N贸mina",
 						f.number().randomDouble(2, 0, 99999),
 						f.number().randomDouble(2, 0, 99999),
 						f.number().randomDouble(2, 0, 99999),
@@ -120,7 +143,7 @@ public class EnterprisePayrollTestv2 {
 			ssEntries.put(f.pokemon().location(),categoria5);
 			ssEntries.put(f.pokemon().location(),categoria6);
 
-			EnterprisePayroll payroll = new EnterprisePayroll(null, new Date(), "N覯INA EMPRESA", f.zelda().game() + " S.L",	entries, ssEntries);
+			EnterprisePayroll payroll = new EnterprisePayroll(null, new Date(), "N脫MINA EMPRESA", f.zelda().game() + " S.L",	entries, ssEntries);
 			printEnterprisePayroll(payroll,new FileOutputStream("ListadoCostesPDF.pdf"),Optional.of(new Locale("Es")));
 			
 		} catch (IOException | CanNotCreatePdfException e) {
@@ -128,6 +151,48 @@ public class EnterprisePayrollTestv2 {
 		}
 	}
 	
+	@Test
+	@Disabled
+	public void testEnterprisePayrollMergeI() {
+		
+			final Faker FAKER =Faker.instance(); 
+			
+			
+			Map<String, Map<String, EnterprisePayrollEntry>> entries = new HashMap<>();
+			Map<String, Map<String, EnterprisePayrollEntry>> ssEntries = new HashMap<>();
+			
+			Date firstDayOfMonth = AonDateUtils.getFirstDayOfMonth(new Date());
+			Date lastDayOfMonth =  AonDateUtils.getLastDayOfMonth(firstDayOfMonth);
+			
+			EnterprisePayrollEntry ssEntry = new EnterprisePayrollEntry(
+					EnterpriseEntryType.SEG_SOCIAL,
+					FAKER.number().digits(12),
+					FAKER.number().digits(11),
+					AonDateUtils.getFirstDayOfMonth(new Date()),
+					AonDateUtils.getLastDayOfMonth(new Date()),
+					FAKER.name().fullName(), 
+					"N贸mina",
+					FAKER.number().randomDouble(2, 0, 99999),
+					FAKER.number().randomDouble(2, 0, 99999),
+					FAKER.number().randomDouble(2, 0, 99999),
+					FAKER.number().randomDouble(2, 0, 99999),
+					FAKER.number().randomDouble(2, 0, 99999), 
+					FAKER.number().randomDouble(2, 0, 99999),
+					FAKER.number().randomDouble(2, 0, 99999), 
+					FAKER.number().randomDouble(2, 0, 99999), 
+					FAKER.number().randomDouble(2, 0, 99999)
+			);
+
+			ssEntries.put("Workplace",  Collections.singletonMap( String.format("0001-SALARY-%1$td-%1$tm-%1$tY", lastDayOfMonth ), ssEntry ));
+
+			Optional<Map<String, Map<String, EnterprisePayrollEntry>>> mergedEntries = 
+			new EnterprisePayroll(null, null, null, null, entries, ssEntries).getEntries();
+			
+			
+			
+			
+	}
+
 	@Test
 	@Disabled
 	public void testEnterprisePayroll2() {
@@ -145,7 +210,7 @@ public class EnterprisePayrollTestv2 {
 
 			for (int i = 0; i < 4; i++) {
 				String cat = "Categoria " + i;
-				EnterprisePayrollEntry e = new EnterprisePayrollEntry(EnterpriseEntryType.AON_SYSTEM, null, "N髆ina",
+				EnterprisePayrollEntry e = new EnterprisePayrollEntry(EnterpriseEntryType.AON_SYSTEM, null, null, null, null, null, "N贸mina",
 						null, null, null, null, null, null, 9999.99, 9.99, 9999.99);
 
 				categoria1.put(cat, e);
@@ -155,7 +220,7 @@ public class EnterprisePayrollTestv2 {
 			
 			for (int i = 0; i < 4; i++) {
 				String cat = "cet " + i;
-				EnterprisePayrollEntry e = new EnterprisePayrollEntry(EnterpriseEntryType.AON_SYSTEM, null, "N髆ina",
+				EnterprisePayrollEntry e = new EnterprisePayrollEntry(EnterpriseEntryType.AON_SYSTEM, null, null, null, null, null, "N贸mina",
 						null, null, null, null, null, null, 9999.99, 9.999,9999.99);
 
 				categoria1.put(cat, e);
@@ -165,7 +230,7 @@ public class EnterprisePayrollTestv2 {
 			
 			for (int i = 0; i < 4; i++) {
 				String cat = "Categoria " + i;
-				EnterprisePayrollEntry e = new EnterprisePayrollEntry(EnterpriseEntryType.SEG_SOCIAL, null, "N髆ina",
+				EnterprisePayrollEntry e = new EnterprisePayrollEntry(EnterpriseEntryType.SEG_SOCIAL, null, null, null, null, null, "N贸mina",
 						null, null, null, null, null, null, 29999.99, null,9999.99);
 
 				categoria3.put(cat, e);
@@ -182,7 +247,7 @@ public class EnterprisePayrollTestv2 {
 			ssEntries.put("Donosti",categoria5);
 			ssEntries.put("Bilbao",categoria6);
 
-			EnterprisePayroll payroll = new EnterprisePayroll(null, new Date(), "N覯INA EMPRESA", "AON SOLUTIONS S.L",	entries, ssEntries);
+			EnterprisePayroll payroll = new EnterprisePayroll(null, new Date(), "N脫MINA EMPRESA", "AON SOLUTIONS S.L",	entries, ssEntries);
 			PdfMaker.printEnterprisePayroll(payroll,new ByteArrayOutputStream(),Optional.of(new Locale("Es")));
 			
 		} catch (IOException | CanNotCreatePdfException e) {

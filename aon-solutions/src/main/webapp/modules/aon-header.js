@@ -1,5 +1,5 @@
 import {AonElement} from '../components/AonElement.js';
-import {closeSession, getTimeControl, saveTimeControl, clearDurum, getDomainUserRoles} from  '../services/service.js';
+import {closeSession, getTimeControl, saveTimeControl, clearDurum, getDomainUserRoles, getOneNotification, getNotification} from  '../services/service.js';
 import {getPosition} from '../services/maps.js';
 
 import '../components/aon-dialog-menu.js';
@@ -184,14 +184,22 @@ export class AonHeader extends AonElement {
 		let aonHeaderNotiication = this.createElement(TAG.SPAN);
 		aonHeaderNotiication.id = this.AON_HEADER_NOTIFICATION;
 		aonHeaderNotiication.title = MSG.NOTIFICATIONS;
-		if(this.newTheme){
-			let aonHeaderNotificationButton = new AonIconButton();
-			aonHeaderNotificationButton.id = 'aonHeaderNotificationButton';
-			aonHeaderNotificationButton.icon = "notifications";
-			aonHeaderNotiication.appendChild(aonHeaderNotificationButton);
-		}else
-			aonHeaderNotiication.appendChild(new AonNotificationIcon());
 
+		let aonHeaderNotificationButton = new AonIconButton();
+		aonHeaderNotificationButton.id = 'aonHeaderNotificationButton';
+		aonHeaderNotificationButton.icon = "notifications";
+		aonHeaderNotiication.appendChild(aonHeaderNotificationButton);
+		this.getData().then(n => {
+			if(n.length > 0){
+				let aonUnread = this.createElement('div');
+				aonUnread.id = this.BASE_ID + 'Unread';
+				aonUnread.className = 'aonConnected';
+				aonUnread.style.backgroundColor = "#DC4D30";
+
+				let aonHeaderNotificationButtonIconButton = this.getElement('aonHeaderNotificationButtonIconButton');
+				aonHeaderNotificationButtonIconButton.appendChild(aonUnread);
+			}
+		});
 		aonHeaderButtons.appendChild(aonHeaderNotiication);
 
 		let aonHeaderUser = this.createElement(TAG.SPAN)
@@ -390,7 +398,6 @@ export class AonHeader extends AonElement {
 				const welcomeClickListener = (event) => {
 					event.preventDefault();
 					event.stopPropagation();
-					// Remueve el listener después de ejecutarse
 					appss.removeEventListener("click", welcomeClickListener);
 				};
 				
@@ -704,29 +711,86 @@ export class AonHeader extends AonElement {
 
 		let div = this.createElement(TAG.DIV);
 		div.classList.add("aonHeaderAppDiv");
-
-		if ((!sidenav && app.symbol) || (sidenav && !app.icon && app.symbol)) {
-			let icon = this.createElement(TAG.SPAN);
-			icon.classList.add(CSS.MATERIAL_SYMBOLS_OUTLINED);
-			icon.id = `aonMenuListAppImg-${app.app}`;
-			icon.innerHTML = app.symbol;
-			icon.classList.add("aonHeaderAppIcon");
-			div.appendChild(icon);
-		} else if (app.icon) {
+		
+		if (app.cssIcon) {
+			const appColor = app.newColor || app.color;
 			let aonIcon = new AonIcon();
-			aonIcon.id = `aonMenuListAppImg-${app.app}`;
-			aonIcon.icon = app.icon;
+			aonIcon.id = `aonMenuListAppImgTop-${app.app}`;
+			aonIcon.icon =  app.cssIcon;
 			aonIcon.color = "var(--aonIcon)";
 			aonIcon.size = "32px";
 			div.appendChild(aonIcon);
+		} else if (app.cssSymbol) {
+			let icon = this.createElement(TAG.SPAN);
+			icon.id = `aonMenuListAppImgTop-${app.app}`;
+			icon.classList.add(CSS.MATERIAL_SYMBOLS_OUTLINED);
+			icon.innerHTML = app.cssSymbol;
+			icon.color = "var(--aonIcon)";
+			icon.classList.add("aonHeaderAppIcon");
+			div.appendChild(icon);
+		} else if (app.cssLogo) {
+			let img = this.createElement(TAG.IMG);
+			img.id = `aonMenuListAppImgTop-${app.app}`;
+			img.classList.add("aonHeaderAppIcon");
+			img.src = app.cssLogo;
+			img.title = app.title;
+			div.appendChild(img);
+		} else if (app.headerIcon) {
+			let aonIcon = new AonIcon();
+			aonIcon.id = `aonMenuListAppImg-${app.app}`;
+			aonIcon.icon = app.headerIcon;
+			aonIcon.color = "var(--aonIcon)";
+			aonIcon.size = app.iconSize || "32px";
+			div.appendChild(aonIcon);
+		} else if (app.icon) {
+			const appColor = app.newColor || app.color;
+			let aonIcon = new AonIcon();
+			aonIcon.id = `aonMenuListAppImgTop-${app.app}`;
+			aonIcon.icon = app.newIcon || app.icon;
+			aonIcon.color = "var(--aonIcon)";
+			aonIcon.size = "32px";
+			div.appendChild(aonIcon);
+		} else if (app.symbol) {
+			let icon = this.createElement(TAG.SPAN);
+			icon.id = `aonMenuListAppImgTop-${app.app}`;
+			icon.classList.add(CSS.MATERIAL_SYMBOLS_OUTLINED);
+			icon.innerHTML = app.symbol;
+			icon.color = "var(--aonIcon)";
+			icon.classList.add("aonHeaderAppIcon");
+			div.appendChild(icon);
 		} else if (app.logo) {
 			let img = this.createElement(TAG.IMG);
-			img.id = `aonMenuListAppImg-${app.app}`;
-			img.style.width = '24px';
+			img.id = `aonMenuListAppImgTop-${app.app}`;
+			img.classList.add("aonHeaderAppIcon");
 			img.src = app.logo;
 			img.title = app.title;
 			div.appendChild(img);
 		}
+		
+		// ((!sidenav && app.symbol) || (sidenav && !app.icon && app.symbol)) {
+		// 	let icon = this.createElement(TAG.SPAN);
+		// 	icon.classList.add(CSS.MATERIAL_SYMBOLS_OUTLINED);
+		// 	icon.id = `aonMenuListAppImg-${app.app}`;
+		// 	icon.innerHTML = app.symbol;
+		// 	icon.classList.add("aonHeaderAppIcon");
+		// 	div.appendChild(icon);
+		// } else if (app.icon) {
+		// 	let aonIcon = new AonIcon();
+		// 	aonIcon.id = `aonMenuListAppImg-${app.app}`;
+		// 	aonIcon.icon = app.icon;
+		// 	aonIcon.color = "var(--aonIcon)";
+		// 	aonIcon.size = app.iconSize || "32px";
+		// 	div.appendChild(aonIcon);
+		// } else if (app.logo) {
+		// 	let img = this.createElement(TAG.IMG);
+		// 	img.id = `aonMenuListAppImg-${app.app}`;
+		// 	//img.style.width = '24px';
+		// 	img.src = app.logo;
+		// 	img.title = app.title;
+		// 	div.appendChild(img);
+		// }
+
+		
 
 		if (app.title) {
 			// let titles = app.title.match(/\b\w+\b/g);
@@ -772,6 +836,10 @@ export class AonHeader extends AonElement {
 		else 
 			this.getElement(elementId).style.display = 'none';
 	}
+
+	getData() {
+        return getNotification({page:1, perPage:1, status:"unread"});
+    }
 	
 
 }

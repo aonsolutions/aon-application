@@ -7,15 +7,13 @@ import java.util.Map;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.css.AonGwtTemplateResources;
-import com.esferalia.aon.gwt.common.client.widget.solutions.AonConfirmDialog;
-import com.esferalia.aon.gwt.common.client.widget.solutions.AonConfirmDialog.AonConfirmDialogCallback;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomDockLayout;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomTable;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog.AonAcceptDialogCallback;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonMessagePanel;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonTableButton;
-import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
-import com.esferalia.aon.gwt.payroll.shared.SecondaryUserCertificate;
 import com.esferalia.aon.occam.api.model.Certificate;
 import com.esferalia.aon.occam.api.model.Certificate.CertificateOwner;
 import com.esferalia.aon.occam.api.model.Certificate.CertificateSecurity;
@@ -32,9 +30,7 @@ import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.DeckPanel;
-import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.FormPanel;
-import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Hidden;
@@ -43,6 +39,8 @@ import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.TabLayoutPanel;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
+
+import net.aonsolutions.gwt.pdfjs.client.FullViewer;
 
 public class MainCertificates extends MainEntryPoint{
 
@@ -58,109 +56,55 @@ public class MainCertificates extends MainEntryPoint{
 	MyStyle style;
 
 	interface MyStyle extends CssResource {
-		String headerStyle();
-		String loadingPanel();
-		String warningTB();
-		String flexGrow();
 		String flex();
 		String checkBox();
 	}
 	
 	@UiField
-	DockLayoutPanel dockLayoutPanel;
+	DeckPanel deckPanel;
 	
-	@UiField (provided = true)
-	AonToolbar toolbar;
+	@UiField(provided = true)
+	AonCustomDockLayout dockLayoutPanel;
 	
-	@UiField
-	HTMLPanel messagePanel;
+	@UiField(provided = true)
+	AonCustomDockLayout pdfDockLayoutPanel;
 	
-	@UiField
-	TabLayoutPanel tabLayoutPanel;
+	private HTMLPanel container;
+	private HTMLPanel messagePanel = new HTMLPanel("");
 	
-	@UiField
-	Grid userCertDataTableHeader;
+	private TabLayoutPanel tabLayoutPanel;
 	
-	@UiField
-	DeckPanel userCertDataTableDeckPanel;
+	private AonCustomTable userCertTable;
+	private AonCustomTable enterpriseCertTable;
 	
-	@UiField
-	HTMLPanel  userCertLoadingPanel;
+	private FullViewer fullViewer;
 	
-	@UiField
-	ScrollPanel  userCertTableScrollPanel;
-	
-	@UiField
-	Grid  userCertDataTable;
-	
-	@UiField
-	HTMLPanel userSecondayUsersPanel;
-	
-	@UiField
-	Grid userSecondaryUserDataTableHeader;
-	
-	@UiField
-	ScrollPanel userSecondaryUserScrollPanel;
-	
-	@UiField
-	DeckPanel userSecondaryUserDeckPanel;
-	
-	@UiField
-	HTMLPanel userLoadingPanel;
-	
-	@UiField
-	Grid userSecondaryUserDataTable;
-	
-	@UiField
-	HTMLPanel userSecondaryUserToolbar;
-	
-	@UiField
-	HTMLPanel addUserSecondaryUserToolbar;
-	
-	@UiField
-	HTMLPanel showUserSecondaryUserToolbar;
-	
-	@UiField
-	Grid enterpriseCertDataTableHeader;
-	
-	@UiField
-	DeckPanel enterpriseCertDataTablDeckPanel;
-	
-	@UiField
-	HTMLPanel  enterpriseCertLoadingPanel;
-	
-	@UiField
-	ScrollPanel  enterpriseCertTableScrollPanel;
-	
-	@UiField
-	Grid  enterpriseCertDataTable;
-	
-	@UiField
-	HTMLPanel enterpriseSecondayUsersPanel;
-	
-	@UiField
-	Grid enterpriseSecondaryUserDataTableHeader;
-	
-	@UiField
-	ScrollPanel enterpriseSecondaryUserScrollPanel;
-	
-	@UiField
-	DeckPanel enterpriseSecondaryUserDeckPanel;
-	
-	@UiField
-	HTMLPanel enterpriseLoadingPanel;
-	
-	@UiField
-	Grid enterpriseSecondaryUserDataTable;
-	
-	@UiField
-	HTMLPanel enterpriseSecondaryUserToolbar;
-	
-	@UiField
-	HTMLPanel addEnterpriseSecondaryUserToolbar;
-	
-	@UiField
-	HTMLPanel showEnterpriseSecondaryUserToolbar;
+	private static enum COLS {
+		  DES("Titular"						,"-moz-available")
+		, BUD("Representaci\u00f3n"			,"60rem")
+		, DOC("F. Expiraci\u00f3n"			,"30rem")
+		, TYP(AON.MSG.alias()				,"45rem")
+		, ACT(AonStringUtils.EMPTY			,"10rem")
+		, TGS("TGSS"						,"10rem")
+		, SEP("SEPE"						,"10rem")
+		, AEA("AEAT"						,"10rem")
+		, BUT(AonStringUtils.EMPTY			,"40rem")
+		;
+
+		String headerLabel;
+		String colWidth;
+
+		private COLS(String headerLabel,String colWidth) {
+			this.headerLabel = headerLabel;
+			this.colWidth = colWidth;
+		}
+		public String getColWidth() {
+			return colWidth;
+		}
+		public String getHeaderLabel() {
+			return headerLabel;
+		}
+	}
 	
 	// ------------------------------------------------------ Variables
 	
@@ -168,26 +112,78 @@ public class MainCertificates extends MainEntryPoint{
 	private DateTimeFormat formatFullDate = DateTimeFormat.getFormat("dd/MM/yyyy");
 	
 	private Integer domainId = null;
-	private boolean showInactives = false;
 	
 	// ------------------------------------------------------ Constructor
 
 	public MainCertificates() {	
 		GWT.<AonGwtTemplateResources>create(AonGwtTemplateResources.class).css().ensureInjected();
 		AON.ensureInjected();
-		
-		initToolbar();
 	
+		this.dockLayoutPanel = new AonCustomDockLayout("Certificados Digitales");
+		this.pdfDockLayoutPanel = new AonCustomDockLayout("Usuarios Secundarios");
+		
 		Widget ui = binder.createAndBindUi(this);
 		RootLayoutPanel.get(getRootPanel() != null ? getRootPanel() : "rootPanel").add(ui);
 		
-		initTabLayoutPanel();
+		// dockLayoutPanel
+		
+		container = new HTMLPanel("");
+		container.addStyleName(AON.CSS.aonFlexColumn());
+		
+		container.add(messagePanel);
+	
+		tabLayoutPanel = new TabLayoutPanel(3.00, Unit.EM);
+		tabLayoutPanel.setHeight("100%");
+		
+		container.add(tabLayoutPanel);
+		
+		this.dockLayoutPanel.add(container);
+		
+		addButtonsToolbar();
 		
 		initUserCertDataTable();
 		initEnterpriseCertDataTable();
 		
-		initUserSecondaryTable();
-		initEnterpriseSecondaryTable();
+		initTabLayoutPanel();
+		
+		// pdfDockLayoutPanel
+		
+		fullViewer = new FullViewer();
+		this.pdfDockLayoutPanel.add(fullViewer);
+		
+		addPDFButtonsToolbar();
+		
+		deckPanel.showWidget(0);
+	}
+	
+	// ------------------------------------------------------ Toolbar
+	
+	private void addButtonsToolbar() {
+		AonToolbarButton newButton = new AonToolbarButton( "Nuevo certificado", AON.CSS.aonIconAdd());
+		newButton.addClickHandler(e -> createNewCertificate());
+		
+		this.dockLayoutPanel.addToolbarButton(newButton);
+		this.dockLayoutPanel.hideSearchWidget();
+		this.dockLayoutPanel.hideFilterWidget();
+	}
+	
+	private void addPDFButtonsToolbar() {
+		AonToolbarButton backButton = new AonToolbarButton( "Volver", AON.CSS.aonIconBack());
+		backButton.addClickHandler(e -> deckPanel.showWidget(0));
+		
+		this.pdfDockLayoutPanel.addToolbarButton(backButton);
+		this.pdfDockLayoutPanel.hideSearchWidget();
+		this.pdfDockLayoutPanel.hideFilterWidget();
+	}
+	
+	private void createNewCertificate() {
+		new CertificateDialog() {
+			
+			@Override
+			public void onAccept() {
+				loadDigitalCertificates();
+			}
+		};
 	}
 
 	// ------------------------------------------------------ Constructor.Methods
@@ -208,180 +204,37 @@ public class MainCertificates extends MainEntryPoint{
 		tabLayoutPanel.selectTab(0, false);
 	}
 
-	private void initUserSecondaryTable() {
-		userSecondayUsersPanel.setVisible(false);
-		
-		userSecondaryUserDeckPanel.showWidget(0);
-		
-		AonTableButton loadingBtn = new AonTableButton("", AON.CSS.aonIconRenew());
-		loadingBtn.addStyleName(style.loadingPanel());
-		
-		Label loadingL = new Label("Verificando certificado sistema RED...");
-		loadingL.getElement().getStyle().setMarginLeft(5, Unit.PX);
-		
-		userLoadingPanel.clear();
-		userLoadingPanel.add(loadingBtn);
-		userLoadingPanel.add(loadingL);
-		
-		resetPreviewSecondaryUser(userSecondaryUserDataTableHeader, userSecondaryUserDataTable);
-		paintHeaderSecondaryUser(userSecondaryUserDataTableHeader);
-		setSecondaryUserColumnWidth(userSecondaryUserDataTableHeader, userSecondaryUserDataTable);
-	}
-	
-	private void initEnterpriseSecondaryTable() {
-		enterpriseSecondayUsersPanel.setVisible(false);
-		
-		enterpriseSecondaryUserDeckPanel.showWidget(0);
-		
-		AonTableButton loadingBtn = new AonTableButton("", AON.CSS.aonIconRenew());
-		loadingBtn.addStyleName(style.loadingPanel());
-		
-		Label loadingL = new Label("Verificando certificado sistema RED...");
-		loadingL.getElement().getStyle().setMarginLeft(5, Unit.PX);
-		
-		enterpriseLoadingPanel.clear();
-		enterpriseLoadingPanel.add(loadingBtn);
-		enterpriseLoadingPanel.add(loadingL);
-		
-		resetPreviewSecondaryUser(enterpriseSecondaryUserDataTableHeader, enterpriseSecondaryUserDataTable);
-		paintHeaderSecondaryUser(enterpriseSecondaryUserDataTableHeader);
-		setSecondaryUserColumnWidth(enterpriseSecondaryUserDataTableHeader, enterpriseSecondaryUserDataTable);
-	}
-
 	// ------------------------------------------------------ Init Preview (Tables TGSS & SEPE)
 	
 	private void initUserCertDataTable() {
-		resetPreview(userCertDataTableHeader, userCertDataTable);
-		initLoadingPanel(userCertLoadingPanel);
-		userCertDataTableDeckPanel.showWidget(0);
+		userCertTable = new AonCustomTable();
+		userCertTable.setMaxHeight((Window.getClientHeight() - Window.getClientHeight()/3) + "px");
+		ScrollPanel scrollPanel = new ScrollPanel(userCertTable);
+		
+		paintUserHeader();
+		tabLayoutPanel.add(scrollPanel);
+	}
+	
+	private void paintUserHeader() {
+		userCertTable.createHeader();
+		for ( COLS col : COLS.values()) 
+			userCertTable.addHeader(new Label(col.getHeaderLabel()), col.getColWidth());
 	}
 
 	private void initEnterpriseCertDataTable() {
-		resetPreview(enterpriseCertDataTableHeader, enterpriseCertDataTable);
-		initLoadingPanel(enterpriseCertLoadingPanel);
-		enterpriseCertDataTablDeckPanel.showWidget(0);
+		enterpriseCertTable = new AonCustomTable();
+		enterpriseCertTable.ensureDebugId("enterpriseCertTable");
+		enterpriseCertTable.setMaxHeight((Window.getClientHeight() - Window.getClientHeight()/3) + "px");
+		ScrollPanel scrollPanel = new ScrollPanel(enterpriseCertTable);
+		
+		paintEnterpriseHeader();
+		tabLayoutPanel.add(scrollPanel);
 	}
 	
-	private void initLoadingPanel(HTMLPanel loadingPanel) {
-		loadingPanel.clear();
-		AonTableButton loadingBtn = new AonTableButton("", AON.CSS.aonIconRenew());
-		loadingBtn.addStyleName(style.loadingPanel());
-		
-		Label loadingL = new Label("Obteniendo certificados...");
-		loadingL.getElement().getStyle().setMarginLeft(5, Unit.PX);
-		
-		loadingPanel.add(loadingBtn);
-		loadingPanel.add(loadingL);
-	}
-
-	private void resetPreview(Grid dataTableHeader, Grid dataTable) {
-		dataTableHeader.clear();
-		dataTableHeader.resize(0, 0);
-		dataTableHeader.resizeColumns(tabLayoutPanel.getSelectedIndex() == 0 ? 8 :9);
-		
-		dataTable.clear();
-		dataTable.resize(0, 0);
-		dataTable.resizeColumns(tabLayoutPanel.getSelectedIndex() == 0 ? 8 :9);
-		
-		paintHeader(dataTableHeader);
-		setColumnWidth(dataTableHeader, dataTable);
-	}
-
-	private void resetPreviewSecondaryUser(Grid dataTableHeader, Grid dataTable) {
-		dataTableHeader.clear();
-		dataTableHeader.resize(0, 0);
-		dataTable.clear();
-		dataTable.resize(0, 0);
-		dataTableHeader.resizeColumns(5);
-		dataTable.resizeColumns(5);
-	}
-	
-	private void paintHeader(Grid dataTableHeader) {
-		int row = dataTableHeader.insertRow(dataTableHeader.getRowCount());
-		
-		Label certificateFor = new Label("TITULAR");
-		Label representation = new Label("REPRESENTACI\u00d3N");
-		Label type = new Label("F. EXPIRACI\u00d3N");
-		Label alias = new Label("ALIAS");
-		Label security = new Label("");
-		Label tgss = new Label("TGSS");
-		Label sepe = new Label("SEPE");
-		Label aeat = new Label("AEAT");
-		Label buttons = new Label("");
-		
-		certificateFor.addStyleName(style.headerStyle());
-		representation.addStyleName(style.headerStyle());
-		type.addStyleName(style.headerStyle());
-		alias.addStyleName(style.headerStyle());
-		tgss.addStyleName(style.headerStyle());
-		sepe.addStyleName(style.headerStyle());
-		aeat.addStyleName(style.headerStyle());
-		
-		dataTableHeader.setWidget(row, 0, certificateFor);
-		dataTableHeader.setWidget(row, 1, representation);
-		dataTableHeader.setWidget(row, 2, type);
-		dataTableHeader.setWidget(row, 3, alias);
-		if(tabLayoutPanel.getSelectedIndex() == 0) {
-			dataTableHeader.setWidget(row, 4, tgss);
-			dataTableHeader.setWidget(row, 5, sepe);
-			dataTableHeader.setWidget(row, 6, aeat);
-			dataTableHeader.setWidget(row, 7, buttons);
-		} else {
-			dataTableHeader.setWidget(row, 4, security);
-			dataTableHeader.setWidget(row, 5, tgss);
-			dataTableHeader.setWidget(row, 6, sepe);
-			dataTableHeader.setWidget(row, 7, aeat);
-			dataTableHeader.setWidget(row, 8, buttons);
-		}
-	}
-	
-	private void setColumnWidth(Grid dataTableHeader, Grid dataTable) {
-		//MaxWidth 750px
-		dataTableHeader.getColumnFormatter().getElement(0).getStyle().setWidth(240, Unit.PX);
-		dataTable.getColumnFormatter().getElement(0).getStyle().setWidth(240, Unit.PX);
-		
-		dataTableHeader.getColumnFormatter().getElement(1).getStyle().setWidth(240, Unit.PX);
-		dataTable.getColumnFormatter().getElement(1).getStyle().setWidth(240, Unit.PX);
-		
-		dataTableHeader.getColumnFormatter().getElement(2).getStyle().setWidth(100, Unit.PX);
-		dataTableHeader.getCellFormatter().getElement(0, 2).getStyle().setTextAlign(TextAlign.CENTER);
-		dataTable.getColumnFormatter().getElement(2).getStyle().setWidth(100, Unit.PX);
-		
-		dataTableHeader.getColumnFormatter().getElement(3).getStyle().setWidth(150, Unit.PX);
-		dataTableHeader.getCellFormatter().getElement(0, 3).getStyle().setTextAlign(TextAlign.CENTER);
-		dataTable.getColumnFormatter().getElement(3).getStyle().setWidth(150, Unit.PX);
-		
-		if(tabLayoutPanel.getSelectedIndex() == 0) {
-			dataTableHeader.getColumnFormatter().getElement(4).getStyle().setWidth(50, Unit.PX);
-			dataTableHeader.getCellFormatter().getElement(0, 4).getStyle().setTextAlign(TextAlign.CENTER);
-			dataTable.getColumnFormatter().getElement(4).getStyle().setWidth(50, Unit.PX);
-			
-			dataTableHeader.getColumnFormatter().getElement(5).getStyle().setWidth(50, Unit.PX);
-			dataTableHeader.getCellFormatter().getElement(0, 5).getStyle().setTextAlign(TextAlign.CENTER);
-			dataTable.getColumnFormatter().getElement(5).getStyle().setWidth(50, Unit.PX);
-			
-			dataTableHeader.getColumnFormatter().getElement(6).getStyle().setWidth(50, Unit.PX);
-			dataTableHeader.getCellFormatter().getElement(0, 6).getStyle().setTextAlign(TextAlign.CENTER);
-			dataTable.getColumnFormatter().getElement(6).getStyle().setWidth(50, Unit.PX);
-			
-		} else {
-			dataTableHeader.getColumnFormatter().getElement(4).getStyle().setWidth(50, Unit.PX);
-			dataTableHeader.getCellFormatter().getElement(0, 4).getStyle().setTextAlign(TextAlign.CENTER);
-			dataTable.getColumnFormatter().getElement(4).getStyle().setWidth(50, Unit.PX);
-			
-			dataTableHeader.getColumnFormatter().getElement(5).getStyle().setWidth(50, Unit.PX);
-			dataTableHeader.getCellFormatter().getElement(0, 5).getStyle().setTextAlign(TextAlign.CENTER);
-			dataTable.getColumnFormatter().getElement(5).getStyle().setWidth(50, Unit.PX);
-			
-			dataTableHeader.getColumnFormatter().getElement(6).getStyle().setWidth(50, Unit.PX);
-			dataTableHeader.getCellFormatter().getElement(0, 6).getStyle().setTextAlign(TextAlign.CENTER);
-			dataTable.getColumnFormatter().getElement(6).getStyle().setWidth(50, Unit.PX);
-			
-			dataTableHeader.getColumnFormatter().getElement(7).getStyle().setWidth(50, Unit.PX);
-			dataTableHeader.getCellFormatter().getElement(0, 7).getStyle().setTextAlign(TextAlign.CENTER);
-			dataTable.getColumnFormatter().getElement(7).getStyle().setWidth(50, Unit.PX);
-		}
-		
+	private void paintEnterpriseHeader() {
+		enterpriseCertTable.createHeader();
+		for ( COLS col : COLS.values()) 
+			enterpriseCertTable.addHeader(new Label(col.getHeaderLabel()), col.getColWidth());
 	}
 	
 	// ------------------------------------------------------ onModuleLoad
@@ -409,102 +262,85 @@ public class MainCertificates extends MainEntryPoint{
 	private void hideEnterpriseTab() {
 		tabLayoutPanel.remove(1);
 	}
+	
 
-	// ------------------------------------------------------ Init Preview (Secondary Users)
-	
-	private void paintHeaderSecondaryUser(Grid dataTableHeader) {
-		int row = dataTableHeader.insertRow(dataTableHeader.getRowCount());
-		
-		Label name = new Label("NOMBRE");
-		Label naf = new Label("NAF");
-		Label status = new Label("ESTADO");
-		Label date = new Label("FECHA ESTADO");
-		Label action = new Label("");
-		
-		name.addStyleName(style.headerStyle());
-		naf.addStyleName(style.headerStyle());
-		status.addStyleName(style.headerStyle());
-		date.addStyleName(style.headerStyle());
-		action.addStyleName(style.headerStyle());
-		
-		dataTableHeader.setWidget(row, 0, name);
-		dataTableHeader.setWidget(row, 1, naf);
-		dataTableHeader.setWidget(row, 2, status);
-		dataTableHeader.setWidget(row, 3, date);
-		dataTableHeader.setWidget(row, 4, action);
+	private void loadDigitalCertificates() {
+		this.mainDigitalCertificatesObject.getCertificates(
+				s -> {
+					Integer index = tabLayoutPanel.getSelectedIndex();
+					if(index == 0) 
+						createUserCertDataTable();
+					else if(index == 1)
+						createEntepriseCertDataTable();
+					updateTabTitle();
+				}, 
+				f -> {});
 	}
-	
-	private void setSecondaryUserColumnWidth(Grid dataTableHeader, Grid dataTable) {
-		//MaxWidth 750px
-		dataTableHeader.getColumnFormatter().getElement(0).getStyle().setWidth(300, Unit.PX);
-		dataTable.getColumnFormatter().getElement(0).getStyle().setWidth(300, Unit.PX);
-		
-		dataTableHeader.getColumnFormatter().getElement(1).getStyle().setWidth(200, Unit.PX);
-		dataTableHeader.getCellFormatter().getElement(0, 1).getStyle().setTextAlign(TextAlign.CENTER);
-		dataTable.getColumnFormatter().getElement(1).getStyle().setWidth(200, Unit.PX);
-		
-		dataTableHeader.getColumnFormatter().getElement(2).getStyle().setWidth(200, Unit.PX);
-		dataTableHeader.getCellFormatter().getElement(0, 2).getStyle().setTextAlign(TextAlign.CENTER);
-		dataTable.getColumnFormatter().getElement(2).getStyle().setWidth(200, Unit.PX);
-		
-		dataTableHeader.getColumnFormatter().getElement(3).getStyle().setWidth(200, Unit.PX);
-		dataTableHeader.getCellFormatter().getElement(0, 3).getStyle().setTextAlign(TextAlign.CENTER);
-		dataTable.getColumnFormatter().getElement(3).getStyle().setWidth(200, Unit.PX);
-		
-		dataTableHeader.getColumnFormatter().getElement(4).getStyle().setWidth(90, Unit.PX);
-		dataTable.getColumnFormatter().getElement(4).getStyle().setWidth(90, Unit.PX);
+
+	private void updateTabTitle() {
+		tabLayoutPanel.setTabText(0, "Personales (" + this.mainDigitalCertificatesObject.getUserCertificateList().size() + ")");
+		tabLayoutPanel.setTabText(1, "Compartidos (" + this.mainDigitalCertificatesObject.getEnterpriseCertificateList().size() + ")");
 	}
 	
 	// ------------------------------------------------------ Create certificate tables
 
 	private void createUserCertDataTable() {
-		hideSecondaryUsers();
-		initUserCertDataTable();
+		removeTableRows(userCertTable);
+		paintUserHeader();
 		createUserCertDataTableRows();
 	}
 
 	private void createEntepriseCertDataTable() {
-		hideSecondaryUsers();
-		initEnterpriseCertDataTable();
+		removeTableRows(enterpriseCertTable);
+		paintEnterpriseHeader();
 		createEnterpriseCertDataTableRows();
 	}
 	
-	private void createUserCertDataTableRows() {
-		List<Certificate> userCertificateList = mainDigitalCertificatesObject.getUserCertificateList();
-		if(userCertificateList.isEmpty())
-			userCertDataTableDeckPanel.showWidget(2);
-		else {
-			userCertDataTableDeckPanel.showWidget(1);
-			for(Certificate certificate : userCertificateList)
-				insertCertificateRow(certificate, userCertDataTable, false);
+	private void removeTableRows(AonCustomTable table) {
+		int rows = table.getRowsCount();
+		while(rows >= 0) {
+			table.remove(rows);
+			rows--;
 		}
-	}
-	
-	private void createEnterpriseCertDataTableRows() {
-		List<Certificate> enterpriseCertificateList = mainDigitalCertificatesObject.getEnterpriseCertificateList();
-		if(enterpriseCertificateList.isEmpty())
-			enterpriseCertDataTablDeckPanel.showWidget(2);
-		else {
-			enterpriseCertDataTablDeckPanel.showWidget(1);
-			for(Certificate certificate : enterpriseCertificateList)
-				insertCertificateRow(certificate, enterpriseCertDataTable, true);
-		}
-	}
-	
-	// ------------------------------------------------------ Insert Rows
-	
-	private void insertCertificateRow(Certificate certificate, Grid dataTable, boolean isEnterprise) {
-		// Insert new row
-		int row = dataTable.insertRow(dataTable.getRowCount());
-		
-		// Form Panel
-		createFormPanel(dataTable, row, certificate, isEnterprise);
 	}
 
-	private void createFormPanel(Grid table, int row, Certificate certificate, boolean isEnterprise) {
-		
+	private void createUserCertDataTableRows() {
+		List<Certificate> userCertificateList = mainDigitalCertificatesObject.getUserCertificateList();
+		if(userCertificateList.isEmpty()) {
+			paintNoDataRow(userCertTable);
+		} else
+			for(Certificate certificate : userCertificateList)
+				paintRow(userCertTable, certificate, false);
+			
+	}
+
+	private void createEnterpriseCertDataTableRows() {
+		List<Certificate> enterpriseCertificateList = mainDigitalCertificatesObject.getEnterpriseCertificateList();
+		if(enterpriseCertificateList.isEmpty()) {
+			paintNoDataRow(enterpriseCertTable);
+		} else 
+			for(Certificate certificate : enterpriseCertificateList)
+				paintRow(enterpriseCertTable, certificate, true);
+	}
+	
+
+	
+	private void paintNoDataRow(AonCustomTable table) {
+		HTMLPanel row = table.createRow();
+		Label noData = new Label("No existen certificados");
+		noData.getElement().getStyle().setTextAlign(TextAlign.CENTER);
+		table.addRow(row, noData, "100%");
+	}
+	
+	private void paintRow(AonCustomTable table, Certificate certificate, boolean isEnterprise) {
+		HTMLPanel row = table.createRow();
+		createFormCells(table, row, certificate, false);
+	}
+	
+	private void createFormCells(AonCustomTable table, HTMLPanel row, Certificate certificate, boolean isEnterprise) {
 		// Save Button
 		AonTableButton saveButton = new AonTableButton("Guardar", AON.CSS.aonIconSave());
+		saveButton.addStyleName(AON.CSS.aonCustomRowButtom());
 		
 		// Create Form Panel
 		FormPanel formPanel = new FormPanel();
@@ -536,6 +372,7 @@ public class MainCertificates extends MainEntryPoint{
 		}
 
 		Label certificateForL = new Label(parseStringLenght(certificateFor));
+		textEllipsis(certificateForL);
 		certificateForL.setTitle(certificateFor);
 
 		String representation = "-";
@@ -543,6 +380,7 @@ public class MainCertificates extends MainEntryPoint{
 			representation = AonStringUtils.isBlank(certificate.getCertificateInfo().getEnterprise()) ? "PERSONA F\u00cdSICA" : 
 				(AonStringUtils.isBlank(certificate.getCertificateInfo().getCif()) ? "" : "(" + certificate.getCertificateInfo().getCif() + ") ") + certificate.getCertificateInfo().getEnterprise();
 		Label representationL = new Label(parseStringLenght(representation));
+		textEllipsis(representationL);
 		representationL.setTitle(representation);
 		
 		String expirationDate = null == certificate.getCertificateInfo().getToDate() ? "" : formatFullDate.format(certificate.getCertificateInfo().getToDate());
@@ -623,6 +461,7 @@ public class MainCertificates extends MainEntryPoint{
 		// Buttons Panel
 		HTMLPanel buttonsPanel = new HTMLPanel("");
 		buttonsPanel.addStyleName(style.flex());
+		buttonsPanel.getElement().getStyle().setProperty("justify-content", "right");
 		
 		saveButton.addClickHandler(e -> {
 			if(hasTGSSCertificate(certificate) || hasSEPECertificate(certificate) || hasAEATCertificate(certificate)) {
@@ -634,11 +473,13 @@ public class MainCertificates extends MainEntryPoint{
 		});
 		
 		AonTableButton verifyButton = new AonTableButton("Verificar Certificado", AON.CSS.aonIconVerify());
+		verifyButton.addStyleName(AON.CSS.aonCustomRowButtom());
 		verifyButton.addClickHandler(e ->  {
 			showLoading("Validando certificado SEPE...");
-			hideSecondaryUsers();
+			
 			ArrayList<CertificateType> tags = new ArrayList<CertificateType>();
 			tags.add(CertificateType.SEPE);
+			
 			mainDigitalCertificatesObject.verifyCertificate(
 				certificate.getId(), 
 				tags, 
@@ -649,18 +490,21 @@ public class MainCertificates extends MainEntryPoint{
 		verifyButton.setVisible(false);
 		
 		AonTableButton secondaryUsersButton = new AonTableButton("Usuarios Secundarios", AON.CSS.aonIconList());
+		secondaryUsersButton.addStyleName(AON.CSS.aonCustomRowButtom());
 		secondaryUsersButton.addClickHandler(e -> onSecondaryUser(certificate.getId()));
 		
 		secondaryUsersButton.setVisible(false);
 		
 		AonTableButton deleteButton = new AonTableButton("Borrar", AON.CSS.aonIconDelete());
+		deleteButton.addStyleName(AON.CSS.aonCustomRowButtom());
 		deleteButton.addClickHandler(e -> deleteCertificate(certificate));
 		
-		// Para descargar un certificado descomentar lineas 660, 661, 705. Y cambiar el path del metodo downloadCertificate(...)
-//		AonTableButton downloadButton = new AonTableButton("Borrar", AON.CSS.aonIconDownload());
-//		downloadButton.addClickHandler(e -> downloadCertificate(certificate));
+		AonTableButton downloadButton = new AonTableButton("Descargar", AON.CSS.aonIconDownload());
+		downloadButton.addStyleName(AON.CSS.aonCustomRowButtom());
+		downloadButton.addClickHandler(e -> downloadCertificate(certificate));
 		
 		AonTableButton checkCertificateButton = new AonTableButton("Informaci\u00F3n", AON.CSS.aonIconInfo());
+		checkCertificateButton.addStyleName(AON.CSS.aonCustomRowButtom());
 		checkCertificateButton.addClickHandler(e -> getCertificateInfo(certificate));
 		
 		// Buttons visibility
@@ -679,6 +523,7 @@ public class MainCertificates extends MainEntryPoint{
 		//Add all to FlowPanel to add to FormPanel
 		HTMLPanel flowPanel = new HTMLPanel("");
 		flowPanel.addStyleName(style.flex());
+		flowPanel.getElement().getStyle().setProperty("justify-content", "right");
 				
 		flowPanel.add(rattachIdHidden);
 		flowPanel.add(raddinfoIdHidden);
@@ -704,33 +549,15 @@ public class MainCertificates extends MainEntryPoint{
 		buttonsPanel.add(deleteButton);
 //		buttonsPanel.add(downloadButton);
 		
-		table.setWidget(row, 0, certificateForL);
-		table.setWidget(row, 1, representationL);
-		table.setWidget(row, 2, expirationDateL);
-		table.getCellFormatter().getElement(row, 2).getStyle().setTextAlign(TextAlign.CENTER);
-		table.setWidget(row, 3, alias);
-		table.getCellFormatter().getElement(row, 3).getStyle().setTextAlign(TextAlign.CENTER);
-		if(tabLayoutPanel.getSelectedIndex() == 0) {
-			table.setWidget(row, 4, tgssCB);
-			table.getCellFormatter().getElement(row, 4).getStyle().setTextAlign(TextAlign.CENTER);
-			table.setWidget(row, 5, sepeCB);
-			table.getCellFormatter().getElement(row, 5).getStyle().setTextAlign(TextAlign.CENTER);
-			table.setWidget(row, 6, aeatCB);
-			table.getCellFormatter().getElement(row, 6).getStyle().setTextAlign(TextAlign.CENTER);
-			table.setWidget(row, 7, buttonsPanel);
-			table.getCellFormatter().getElement(row, 7).getStyle().setTextAlign(TextAlign.RIGHT);
-		} else {
-			table.setWidget(row, 4, security);
-			table.getCellFormatter().getElement(row, 4).getStyle().setTextAlign(TextAlign.CENTER);
-			table.setWidget(row, 5, tgssCB);
-			table.getCellFormatter().getElement(row, 5).getStyle().setTextAlign(TextAlign.CENTER);
-			table.setWidget(row, 6, sepeCB);
-			table.getCellFormatter().getElement(row, 6).getStyle().setTextAlign(TextAlign.CENTER);
-			table.setWidget(row, 7, aeatCB);
-			table.getCellFormatter().getElement(row, 7).getStyle().setTextAlign(TextAlign.CENTER);
-			table.setWidget(row, 8, buttonsPanel);
-			table.getCellFormatter().getElement(row, 8).getStyle().setTextAlign(TextAlign.RIGHT);
-		}
+		table.addRow(row, certificateForL, COLS.DES.getColWidth());
+		table.addRow(row, representationL, COLS.BUD.getColWidth());
+		table.addRow(row, expirationDateL, COLS.DOC.getColWidth());
+		table.addRow(row, alias, COLS.TYP.getColWidth());
+		table.addRow(row, tabLayoutPanel.getSelectedIndex() == 0 ? new Label() : security, tabLayoutPanel.getSelectedIndex() == 0 ? "10rem" : "3rem");
+		table.addRow(row, tgssCB, COLS.TGS.getColWidth());
+		table.addRow(row, sepeCB, COLS.SEP.getColWidth());
+		table.addRow(row, aeatCB, COLS.AEA.getColWidth());
+		table.addRow(row, buttonsPanel, COLS.BUT.getColWidth());
 		
 		// Para poder visualizar certificados publicos del padre pero con edicion restringida
 		if(Boolean.TRUE.equals(isEnterprise) && (certificate.getDomain() != null && !certificate.getDomain().equals(domainId))) {
@@ -751,6 +578,14 @@ public class MainCertificates extends MainEntryPoint{
 		}
 	}
 	
+	// ------------------------------------------------------ Insert Rows
+	
+	private void textEllipsis(Widget widget) {
+		widget.getElement().getStyle().setProperty("text-overflow", "ellipsis");
+		widget.getElement().getStyle().setProperty("overflow", "hidden");
+		widget.getElement().getStyle().setProperty("white-space", "nowrap");
+	}
+	
 	private String parseStringLenght(String input) {
 		return (AonStringUtils.isBlank(input) || input.length() < 35) ? input : AonStringUtils.substring(input, 0, 32) + "...";
 	}
@@ -759,7 +594,6 @@ public class MainCertificates extends MainEntryPoint{
 		mainDigitalCertificatesObject.getCertificateInfo(
 				certificate.getId(), 
 				certificateInfo -> {
-					hideSecondaryUsers();
 					String certificateInfoStr = certificateInfo.toString();
 					certificateInfoStr += "<br>Validez desde : " + formatFullDate.format(certificateInfo.getFromDate()) + " hasta : " + formatFullDate.format(certificateInfo.getToDate());
 					AonDialog dialog = new AonDialog("Informaci\u00F3n Certificado", new HTML(certificateInfoStr));
@@ -769,92 +603,32 @@ public class MainCertificates extends MainEntryPoint{
 	}
 
 	private void onSecondaryUser(Integer rattachId) {
-		CertificateOwner owner = tabLayoutPanel.getSelectedIndex() == 0 ? CertificateOwner.USER : CertificateOwner.ENTERPRISE;
-		
-		if(CertificateOwner.USER.equals(owner)) {
-			initUserSecondaryTable();
-			userSecondayUsersPanel.setVisible(true);
-		} else {
-			initEnterpriseSecondaryTable();
-			enterpriseSecondayUsersPanel.setVisible(true);
-		}
-		
 		ArrayList<CertificateType> tags = new ArrayList<CertificateType>();
 		tags.add(CertificateType.TGSS);
+		
+		showLoading("Verificando certificado sistema RED...");
 		
 		mainDigitalCertificatesObject.verifyCertificate(
 			rattachId, 
 			tags,
 			success -> {
-				Label loadingL =  null;
-				if(CertificateOwner.USER.equals(owner))
-					loadingL = (Label) userLoadingPanel.getWidget(userLoadingPanel.getWidgetCount()-1);
-				else
-					loadingL = (Label) enterpriseLoadingPanel.getWidget(enterpriseLoadingPanel.getWidgetCount()-1);
+				showLoading("Accediendo al sistema RED para consultar los usuarios secundarios...");
 				
-				loadingL.setText("Accediendo al sistema RED para consultar los usuarios secundarios...");
-				
-				mainDigitalCertificatesObject.getSecondaryUsers(
+				mainDigitalCertificatesObject.getSecondaryUsersPDF(
 					rattachId, 
-					s -> {
-						if(CertificateOwner.USER.equals(owner))
-							insertSecondaryUsersRows(userSecondaryUserDataTableHeader, userSecondaryUserDataTable, userSecondaryUserDeckPanel);
-						else
-							insertSecondaryUsersRows(enterpriseSecondaryUserDataTableHeader, enterpriseSecondaryUserDataTable, enterpriseSecondaryUserDeckPanel);
+					dataURI -> {
+						deckPanel.showWidget(1);
+						fullViewer.open(dataURI);
 					}, 
 					f -> {
-						if(CertificateOwner.USER.equals(owner))
-							userSecondayUsersPanel.setVisible(false);
-						else
-							enterpriseSecondayUsersPanel.setVisible(false);
-						
 						showWarning("Error usuarios secundarios", f.getMessage());
 					}
 				);
 			
 			}, failure -> {
-				if(CertificateOwner.USER.equals(owner))
-					userSecondayUsersPanel.setVisible(false);
-				else
-					enterpriseSecondayUsersPanel.setVisible(false);
-				
 				showWarning("Error verificaci\u00F3n", failure.getMessage());
 			}
 		);	
-	}
-
-	private void loadDigitalCertificates() {
-		updateLoadingPanelStatus();
-		this.mainDigitalCertificatesObject.getCertificates(
-				s -> {
-					Integer index = tabLayoutPanel.getSelectedIndex();
-					if(index == 0) 
-						createUserCertDataTable();
-					else if(index == 1)
-						createEntepriseCertDataTable();
-					updateTabTitle();
-				}, 
-				f -> {});
-	}
-
-	private void updateTabTitle() {
-		tabLayoutPanel.setTabText(0, "Personales (" + this.mainDigitalCertificatesObject.getUserCertificateList().size() + ")");
-		tabLayoutPanel.setTabText(1, "Compartidos (" + this.mainDigitalCertificatesObject.getEnterpriseCertificateList().size() + ")");
-	}
-
-	private void updateLoadingPanelStatus() {
-		CertificateOwner owner = tabLayoutPanel.getSelectedIndex() == 0 ? CertificateOwner.USER : CertificateOwner.ENTERPRISE;
-		Label loadingL =  null;
-		
-		if(CertificateOwner.USER.equals(owner)) {
-			userCertDataTableDeckPanel.showWidget(0);
-			loadingL = (Label) userCertLoadingPanel.getWidget(userCertLoadingPanel.getWidgetCount()-1);
-		} else {
-			enterpriseCertDataTablDeckPanel.showWidget(0);
-			loadingL = (Label) enterpriseCertLoadingPanel.getWidget(enterpriseCertLoadingPanel.getWidgetCount()-1);
-		}
-		
-		loadingL.setText("Cargando certificados...");
 	}
 
 	private boolean hasTGSSCertificate(Certificate certificate) {
@@ -903,9 +677,13 @@ public class MainCertificates extends MainEntryPoint{
 			
 			@Override
 			public void onAccept() {
+				showLoading("Eliminando certificado ...");
 				mainDigitalCertificatesObject.deleteCertificate(
 						certificate, 
-						s -> loadDigitalCertificates(), 
+						s -> {
+							showSuccess("Certificado eliminado", "Certificado eliminado correctamente");
+							loadDigitalCertificates();
+						}, 
 						f -> {});
 			}
 		});
@@ -921,223 +699,6 @@ public class MainCertificates extends MainEntryPoint{
 				s -> showSuccess("Descarga", "Certificado descargado en la ruta " + filePath), 
 				f -> {});
 		
-	}
-
-	// ------------------------------------------------------ Insert Secondary Users
-	
-	private void insertSecondaryUsersRows(Grid dataTableHeader, Grid dataTable, DeckPanel deckPanel) {
-		dataTable.clear();
-		dataTable.resize(0, 0);
-		dataTable.resizeColumns(5);
-		
-		setSecondaryUserColumnWidth(dataTableHeader, dataTable);
-		
-		CertificateOwner owner = tabLayoutPanel.getSelectedIndex() == 0 ? CertificateOwner.USER : CertificateOwner.ENTERPRISE;
-		
-		if(CertificateOwner.USER.equals(owner))
-			initSeconaryUserToolBar(addUserSecondaryUserToolbar, showUserSecondaryUserToolbar);
-		else
-			initSeconaryUserToolBar(addEnterpriseSecondaryUserToolbar, showEnterpriseSecondaryUserToolbar);
-		
-		if(mainDigitalCertificatesObject.getSecondaryUsers(showInactives).isEmpty())
-			deckPanel.showWidget(1);
-		else {
-			deckPanel.showWidget(2);
-			for(SecondaryUserCertificate secondaryUser : mainDigitalCertificatesObject.getSecondaryUsers(showInactives)) {
-				if(CertificateOwner.USER.equals(owner))
-					fillSecondaryUserRow(userSecondaryUserDataTable, secondaryUser);
-				else
-					fillSecondaryUserRow(enterpriseSecondaryUserDataTable, secondaryUser);
-			}
-		}
-	}
-	
-	private void fillSecondaryUserRow(Grid dataTable, SecondaryUserCertificate secondaryUser) {
-		// Insert new row
-		int row = dataTable.insertRow(dataTable.getRowCount());
-		
-		// Name Label
-		Label nameL = new Label(secondaryUser.getName());
-		
-		// NAF Label
-		Label nafL = new Label(secondaryUser.getNaf());
-		
-		// NAF Label
-		Label statusL = new Label(secondaryUser.getSituation());
-		
-		// NAF Label
-		Label dateL = new Label(formatFullDate.format(secondaryUser.getSituation_date()));
-		
-		// Delete Button
-		AonTableButton comunicateBtn;
-		if(AonStringUtils.equalsIgnoreCase(secondaryUser.getSituation(), "Baja"))
-			comunicateBtn =  new AonTableButton("Activar Certificado", AON.CSS.aonIconSend());
-		else
-			comunicateBtn =  new AonTableButton("Anular Certificado", AON.CSS.aonIconSendCancel());
-		
-		CertificateOwner owner = tabLayoutPanel.getSelectedIndex() == 0 ? CertificateOwner.USER : CertificateOwner.ENTERPRISE;
-		
-		comunicateBtn.addClickHandler(e -> {
-			if(AonStringUtils.equalsIgnoreCase(secondaryUser.getSituation(), "Baja")) {
-				SecondaryUserDialog dialog = new SecondaryUserDialog(mainDigitalCertificatesObject.getCertificateTGSSId(owner), secondaryUser.getNaf()) {
-					
-					@Override
-					protected void onAccept() {
-						showSuccess("AVISO: Creado", "El usuario secundario ha sido creado correctamente.");
-						
-						mainDigitalCertificatesObject.getSecondaryUsers(
-								mainDigitalCertificatesObject.getCertificateTGSSId(owner), 
-								t -> {
-									if(CertificateOwner.USER.equals(owner))
-										insertSecondaryUsersRows(userSecondaryUserDataTableHeader, userSecondaryUserDataTable, userSecondaryUserDeckPanel);
-									else
-										insertSecondaryUsersRows(enterpriseSecondaryUserDataTableHeader, enterpriseSecondaryUserDataTable, enterpriseSecondaryUserDeckPanel);
-								}, 
-								e -> {});
-					}
-				};
-				dialog.center();
-				dialog.show();
-			} else {
-				// Delete User Dialog Confirm
-				AonConfirmDialog confirmDialog = new AonConfirmDialog();
-				confirmDialog.confirm(
-					"BORRADO", 
-					"\u00BFRealmente desea eliminar a este usuario?",
-					new AonConfirmDialogCallback() {
-
-						@Override
-						public void onAccept() {
-							mainDigitalCertificatesObject.deleteSecondaryUser(mainDigitalCertificatesObject.getCertificateTGSSId(owner), secondaryUser, s -> {
-								showSuccess("AVISO: Borrado", "El usuario secundario ha sido borrado correctamente.");
-								
-								mainDigitalCertificatesObject.getSecondaryUsers(
-										mainDigitalCertificatesObject.getCertificateTGSSId(owner), 
-										t -> {
-											if(CertificateOwner.USER.equals(owner))
-												insertSecondaryUsersRows(userSecondaryUserDataTableHeader, userSecondaryUserDataTable, userSecondaryUserDeckPanel);
-											else
-												insertSecondaryUsersRows(enterpriseSecondaryUserDataTableHeader, enterpriseSecondaryUserDataTable, enterpriseSecondaryUserDeckPanel);
-										}, e -> {});
-							}, f -> {});
-						}
-
-						@Override
-						public void onCancel() {
-							// Not use in this case
-						}
-					}
-				);
-			}
-			
-		});
-		
-		//Add to table
-		dataTable.setWidget(row, 0, nameL);
-		dataTable.setWidget(row, 1, nafL);
-		dataTable.getCellFormatter().getElement(row, 1).getStyle().setTextAlign(TextAlign.CENTER);
-		dataTable.setWidget(row, 2, statusL);
-		dataTable.getCellFormatter().getElement(row, 2).getStyle().setTextAlign(TextAlign.CENTER);
-		dataTable.setWidget(row, 3, dateL);
-		dataTable.getCellFormatter().getElement(row, 3).getStyle().setTextAlign(TextAlign.CENTER);
-		dataTable.setWidget(row, 4, comunicateBtn);
-		dataTable.getCellFormatter().getElement(row, 4).getStyle().setTextAlign(TextAlign.CENTER);
-	}
-	
-	
-	// ------------------------------------------------------ Insert Secondary Users.Toolbar
-	
-	private void initSeconaryUserToolBar(HTMLPanel addSecondaryUserToolbar, HTMLPanel showSecondaryUserToolbar) {
-		addSecondaryUserToolbar.clear();
-		showSecondaryUserToolbar.clear();
-		
-		AonTableButton addSecondaryUser = new AonTableButton("Nuevo Usuario Secundario",  AON.CSS.aonIconAdd());
-		addSecondaryUser.addClickHandler(e -> onAddSecondaryUser());
-		
-		Label addSecondaryUserL = new Label("A\u00F1adir Autorizado");
-		
-		addSecondaryUserToolbar.add(addSecondaryUser);
-		addSecondaryUserToolbar.add(addSecondaryUserL);
-		
-		Button showInactiveUserBtn = getEnableDisableButton();
-		showInactiveUserBtn.addClickHandler(e -> {
-			showInactives = !showInactives;
-			CertificateOwner owner = tabLayoutPanel.getSelectedIndex() == 0 ? CertificateOwner.USER : CertificateOwner.ENTERPRISE;
-			if(CertificateOwner.USER.equals(owner))
-				insertSecondaryUsersRows(userSecondaryUserDataTableHeader, userSecondaryUserDataTable, userSecondaryUserDeckPanel);
-			else
-				insertSecondaryUsersRows(enterpriseSecondaryUserDataTableHeader, enterpriseSecondaryUserDataTable, enterpriseSecondaryUserDeckPanel);
-		});
-		
-		Label inactiveL = new Label("Ver inactivos");
-		
-		showSecondaryUserToolbar.add(inactiveL);
-		showSecondaryUserToolbar.add(showInactiveUserBtn);	
-	}
-	
-	// ------------------------------------------------------ Insert Secondary Users.Toolbar Methods
-	
-	private void onAddSecondaryUser() {
-		CertificateOwner owner = tabLayoutPanel.getSelectedIndex() == 0 ? CertificateOwner.USER : CertificateOwner.ENTERPRISE;
-		SecondaryUserDialog dialog = new SecondaryUserDialog(mainDigitalCertificatesObject.getCertificateTGSSId(owner)) {
-			
-			@Override
-			protected void onAccept() {
-				showSuccess("AVISO: Creado", "El usuario secundario ha sido creado correctamente.");
-				
-				mainDigitalCertificatesObject.getSecondaryUsers(
-						mainDigitalCertificatesObject.getCertificateTGSSId(owner), 
-						t -> {
-							CertificateOwner owner = tabLayoutPanel.getSelectedIndex() == 0 ? CertificateOwner.USER : CertificateOwner.ENTERPRISE;
-							if(CertificateOwner.USER.equals(owner))
-								insertSecondaryUsersRows(userSecondaryUserDataTableHeader, userSecondaryUserDataTable, userSecondaryUserDeckPanel);
-							else
-								insertSecondaryUsersRows(enterpriseSecondaryUserDataTableHeader, enterpriseSecondaryUserDataTable, enterpriseSecondaryUserDeckPanel);
-						}, 
-						e -> {});
-			}
-		};
-		
-		dialog.center();
-		dialog.show();
-	}
-	
-	// ------------------------------------------------------ Auxiliar Methods
-	
-	private void hideSecondaryUsers() {
-		Integer index = tabLayoutPanel.getSelectedIndex();
-		if(index == 0)
-			userSecondayUsersPanel.setVisible(false);
-		else if(index == 1)
-			enterpriseSecondayUsersPanel.setVisible(false);
-	}
-	
-	private Button getEnableDisableButton() {
-		Button showInactiveUserBtn = new Button();
-		showInactiveUserBtn.setStyleName(!showInactives ? AON.AON_ICON_DISABLE : AON.AON_ICON_ENABLE );
-		showInactiveUserBtn.setStyleName(AON.AON_NO_MARGIN, true);
-		showInactiveUserBtn.setStyleName(AON.AON_EDIT_DATA_TABLE_BUTTON, true);
-		return showInactiveUserBtn;
-	}
-
-	// ------------------------------------------------------ Toolbar
-	
-	private void initToolbar() {
-		this.toolbar = new AonToolbar("Gesti\u00F3n de certificados");
-		
-		AonToolbarButton newCertificateBtn = new AonToolbarButton("Nuevo certificado", AON.CSS.aonIconAdd());
-		newCertificateBtn.addClickHandler(e -> createNewCertificate());
-		toolbar.add(newCertificateBtn);
-	}
-	
-	private void createNewCertificate() {
-		new CertificateDialog() {
-			
-			@Override
-			public void onAccept() {
-				loadDigitalCertificates();
-			}
-		};
 	}
 
 	// ------------------------------------------------- Aon Messages panel

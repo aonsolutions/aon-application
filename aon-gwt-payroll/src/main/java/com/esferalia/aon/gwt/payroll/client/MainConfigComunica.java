@@ -98,7 +98,7 @@ public class MainConfigComunica extends MainEntryPoint{
 		}
 
 		@Override
-		protected void showPDF(String dataURI, boolean isLaboralLife) {
+		protected void showPDF(String dataURI, String title, boolean isLaboralLife) {
 			// Nothing to do here
 		}
 

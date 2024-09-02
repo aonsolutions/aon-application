@@ -146,6 +146,7 @@
 					}
 					
 				}	
+				
 
 				let script = idocument.createElement(TAG.SRIPT);
 				script.type = "text/javascript";
@@ -182,13 +183,12 @@
 				`;
 
 				idocument.head.appendChild(script);
-/*	
-				let gwtScript = idocument.createElement(TAG.SRIPT);
-				gwtScript.type = "text/javascript";
-				gwtScript.defer = "true";
-				gwtScript.src = `${module}/${module}.nocache.js?entryPoint=${entrypoint}&id=${getRamdomId()}`;
-				idocument.head.appendChild(gwtScript);
-*/				
+
+				let aonRichCssLink = idocument.createElement('link');
+				aonRichCssLink.rel= 'stylesheet';
+				aonRichCssLink.type= 'text/css';
+				aonRichCssLink.href = '/aonResource/aon-richCss.css';
+				idocument.head.insertBefore(aonRichCssLink, idocument.head.firstChild);
 				
 				fetch('css/gwt.css')
 				.then(response => response.text())

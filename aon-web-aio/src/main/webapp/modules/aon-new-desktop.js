@@ -2,6 +2,7 @@ import {AonElement} from 'aonsolutions/components/AonElement.js';
 
 import { MSG, CONSTANT, AON_ICONS, CSS, EVENT, MATERIAL_ICONS, TAG } from 'aonsolutions/environments/environments.js';
 import { AonIcon } from 'aonsolutions/components/aon-icon.js';
+import { AonApplication } from 'aonsolutions/components/aon-application.js';
 import * as LS from 'aonsolutions/services/localStorageService.js';
 
 export class AonNewDesktop extends AonElement {
@@ -27,10 +28,18 @@ export class AonNewDesktop extends AonElement {
 	}
 
 	build() {
-		
+
+		let app = this.createApplication(this.AON_DESKTOP, MSG.APPLICATIONS, new AonApplication());
+		app.main = "true";
+		this.appendChild(app);
+		app.closeSidenav();
+
+		let div = this.createDiv();
+		app.setContent(div);
+
 		let headerDiv = this.createElement(TAG.DIV);
 		headerDiv.classList.add("aonNewDesktopHeaderDiv");
-		this.appendChild(headerDiv);		
+		div.appendChild(headerDiv);		
 
 
 		let desktopDiv = this.createElement(TAG.DIV);
@@ -68,7 +77,9 @@ export class AonNewDesktop extends AonElement {
 		}
 		desktopDiv.appendChild(desktopAonAppsDiv);
 */		
-		this.appendChild(desktopDiv);		
+		div.appendChild(desktopDiv);	
+		
+
 	}
 	
 	buildApp(app) {
@@ -188,7 +199,7 @@ export class AonNewDesktop extends AonElement {
 			aonIcon.id = `aonDesktopAppImg-${app.app}`;
 			aonIcon.icon = app.newIcon || app.icon;
 			aonIcon.color = app.newColor || app.color;
-			aonIcon.size = "32px";
+			aonIcon.size = app.iconSize || "32px";
 			appDiv.appendChild(aonIcon);
 		} 
 		// else if (app.symbol) {
@@ -355,7 +366,7 @@ export class AonNewDesktop extends AonElement {
 			aonIcon.id = `aonDesktopAppImg-${app.app}`;
 			aonIcon.icon = app.newIcon || app.icon;
 			aonIcon.color = app.newColor || app.color;
-			aonIcon.size = "32px";
+			aonIcon.size = app.iconSize || "32px";
 			mainDiv.appendChild(aonIcon);
 		} else if (app.logo) {
 			let img = this.createElement(TAG.IMG);
@@ -416,6 +427,22 @@ export class AonNewDesktop extends AonElement {
 	appSelection(app) {
 		document.querySelector(TAG.AON_NEW_MENU).appSelection(app);
 	}
+
+	createApplication(id, title, application, main) {
+		const app = this.createAonElement(application, id, title, main);
+		this.appendChild(app);
+		return app;
+	}
+
+	createAonElement(el, id, title, main){
+		el.id = id || '';
+		el.title = title || '';
+		el.description = title || '';
+		if(main)
+		  el.main = true;
+		return el;
+	}
+	
 	
 }
 

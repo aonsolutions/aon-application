@@ -304,6 +304,9 @@ public abstract class SalaryPaymentWizard extends AonCustomDialog {
 
 	@UiField
 	TextBox paymentDescription;
+	
+	@UiField
+	ListBox salaryTypeLB;
 
 	@UiField
 	Label paymentExpressionTitle;
@@ -417,6 +420,7 @@ public abstract class SalaryPaymentWizard extends AonCustomDialog {
 		initPaymentCRAType();
 		initTaxedAndQuoteLB();
 		initMonthLB();
+		initSalaryTypeLB();
 		showFirstPage();
 
 		// Fire SALARIO_BASE
@@ -813,6 +817,14 @@ public abstract class SalaryPaymentWizard extends AonCustomDialog {
 		yearLB.addItem(year + "", year + "");
 		yearLB.addItem(year - 1 + "", year - 1 + "");
 		yearLB.setSelectedIndex(2);
+	}
+	
+	private void initSalaryTypeLB() {
+		salaryTypeLB.clear();
+		salaryTypeLB.addItem("N\u00f3mina", Salary.Type.SALARY.ordinal() + "");
+		salaryTypeLB.addItem("Extra", Salary.Type.EXTRA.ordinal() + "");
+		salaryTypeLB.addItem("Finiquito", Salary.Type.SETTLE.ordinal() + "");
+		salaryTypeLB.addItem("Atraso", Salary.Type.DELAY.ordinal() + "");
 	}
 
 	private Short getMonth() {
@@ -1462,6 +1474,7 @@ public abstract class SalaryPaymentWizard extends AonCustomDialog {
 				for (Payment gtzdoPayment : gtzdoPayments) {
 					gtzdoPayment.setStartDate(createStartDate());
 					gtzdoPayment.setEndDate(createEndDate());
+					gtzdoPayment.setSalaryType(Salary.Type.values()[Integer.parseInt(salaryTypeLB.getSelectedValue())]);
 				}
 				onGtzdoAccept(gtzdoPayments);
 			} else {
@@ -1484,7 +1497,8 @@ public abstract class SalaryPaymentWizard extends AonCustomDialog {
 		payment.setIrpfExpression(getTaxedExpression());
 		payment.setQuoteExpression(getQuoteExpression());
 		payment.setType(paymentTypeListBox.getSelected());
-		payment.setSalaryType(Salary.Type.SALARY);
+		payment.setSalaryType(Salary.Type.values()[Integer.parseInt(salaryTypeLB.getSelectedValue())]);
+//		payment.setSalaryType(Salary.Type.SALARY);
 		payment.setName(paymentConcept.getValue());
 		payment.setMonth(getMonth());
 		payment.setStartDate(createStartDate());
@@ -1555,7 +1569,8 @@ public abstract class SalaryPaymentWizard extends AonCustomDialog {
 		paymentExtra.setIrpfExpression("_P");
 		paymentExtra.setQuoteExpression("_P");
 		paymentExtra.setType(paymentTypeListBox.getSelected());
-		paymentExtra.setSalaryType(Salary.Type.SALARY);
+		paymentExtra.setSalaryType(Salary.Type.values()[Integer.parseInt(salaryTypeLB.getSelectedValue())]);
+//		paymentExtra.setSalaryType(Salary.Type.SALARY);
 		paymentExtra.setName(paymentConcept.getValue());
 		paymentExtra.setStartDate(createStartDate());
 		paymentExtra.setEndDate(createEndDate());

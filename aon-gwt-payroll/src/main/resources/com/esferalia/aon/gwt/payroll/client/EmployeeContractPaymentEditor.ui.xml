@@ -96,6 +96,10 @@
 						<g:TextArea ui:field="paymentExpressionTB"/>
 					</g:HTMLPanel>
 					<g:HTMLPanel styleName="{style.element}">
+						<g:Label styleName="{style.title}">Tipo Nómina/Recibo</g:Label>
+						<g:ListBox ui:field="paymentSalaryTypeLB"/>
+					</g:HTMLPanel>
+					<g:HTMLPanel styleName="{style.element}">
 						<g:Label styleName="{style.title}">Tributa</g:Label>
 						<g:HTMLPanel styleName="{style.flex}">
 							<g:ListBox ui:field="paymentTaxedTypeLB"/>

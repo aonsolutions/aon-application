@@ -256,6 +256,8 @@ export const LINK_DOMAINS = 'Link Domains with Customers';
 export const LINK_DOMAIN_QUESTION = "Do you want to link this client to the domain?";
 export const LOADING = 'Loading';
 export const LOCATION = 'Location';
+export const LOGIN = 'Login';
+export const LOGIN_SUBTITLE = 'Enter your credentials';
 
 // ----- M
 
@@ -424,7 +426,7 @@ export const SUPPORT = 'Support';
 export const SURCHARGE = 'Surcharge';
 export const SURNAME = 'Surname';
 export const SYSTEM_MESSAGES = 'System Messages';
-export const SELECT_LANGUAGE = "Select Language";
+export const SELECT_LANGUAGE = "Language selection";
 export const SELECT_COMPANY_TYPE = "Select company type";
 
 // ----- T

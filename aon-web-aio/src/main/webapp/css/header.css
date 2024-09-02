@@ -196,7 +196,8 @@ img[src*='LineSeparatorImage'] {
 	border-top: none;
 	border-left: none;
 	border-right: none;
-	border-bottom: 2px solid #fff;
+	/*border-bottom: 2px solid #fff;*/
+	border-bottom: 2px solid transparent;
 }
 .gwt-Selector .gwt-TabLayoutPanel .gwt-TabLayoutPanelTab-selected {
 	color : #000;
@@ -211,7 +212,8 @@ img[src*='LineSeparatorImage'] {
 
 .gwt-Selector .gwt-TabLayoutPanel .gwt-TabLayoutPanelTabs {
 	padding-top: 5px;
-	border-bottom: 2px solid #fff;
+	/*border-bottom: 2px solid #fff;*/
+	border-bottom: 2px solid transparent;
 }
 
 
@@ -1736,7 +1738,7 @@ div[id$='notesMenuPortlet'] table tr:nth-child(even) .aon-note {
 .aon-EmployeeTree .gwt-SplitLayoutPanel-VDragger,
 .aon-EmployeeTree-Events .gwt-MenuBar-horizontal, 
 .aon-EmployeeTree-Employees .gwt-MenuBar-horizontal {
-	background-color: #f6f8fc !important;
+	background-color: #fafafa !important;
 }
 
 .aon-Model-Detail{

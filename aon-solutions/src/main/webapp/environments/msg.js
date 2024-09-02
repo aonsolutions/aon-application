@@ -402,6 +402,8 @@ export const LINKED1 = MSG.LINKED1;
 export const LINK_DOMAINS = MSG.LINK_DOMAINS;
 export const LINK_DOMAIN_QUESTION = MSG.LINK_DOMAIN_QUESTION;
 export const LOADING = MSG.LOADING;
+export const LOGIN = MSG.LOGIN;
+export const LOGIN_SUBTITLE = MSG.LOGIN_SUBTITLE;
 // ----- M
 
 export const MARK_ENTRY = MSG.MARK_ENTRY;

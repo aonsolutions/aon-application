@@ -1,66 +1,39 @@
 package com.esferalia.aon.gwt.payroll.client;
 
-import static com.esferalia.aon.watson.util.AonStringUtils.endsWith;
-import static com.esferalia.aon.watson.util.AonStringUtils.trim;
-
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.function.Consumer;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.css.AonGwtTemplateResources;
 import com.esferalia.aon.gwt.common.client.widget.MonthListBox;
-import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog;
-import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog.AonAcceptDialogCallback;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomDialog;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomDockLayout;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonMessagePanel;
-import com.esferalia.aon.gwt.common.client.widget.solutions.AonTableButton;
-import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
 import com.esferalia.aon.gwt.common.shared.DateUtils;
+import com.esferalia.aon.gwt.payroll.client.AonActivityPanel.AonActivityPanelCallback;
+import com.esferalia.aon.gwt.payroll.client.AonCCCPanel.AonCCCPanelCallback;
 import com.esferalia.aon.gwt.payroll.shared.HttpException;
 import com.esferalia.aon.gwt.payroll.shared.IvlService;
-import com.esferalia.aon.gwt.payroll.shared.ProvinceContract;
-import com.esferalia.aon.gwt.payroll.shared.SistemaREDService;
-import com.esferalia.aon.gwt.payroll.shared.SistemaREDService.JsSistemaREDCCC;
 import com.esferalia.aon.occam.api.model.EnterpriseCCC;
-import com.esferalia.aon.watson.util.AonStringUtils;
+import com.esferalia.aon.occam.api.model.payroll.Activity;
 import com.esferalia.aon.watson.util.Pair;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.core.client.JsArray;
-import com.google.gwt.core.client.JsonUtils;
-import com.google.gwt.dom.client.Style.Unit;
-import com.google.gwt.event.shared.HandlerRegistration;
-import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.user.client.Timer;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.DeckPanel;
-import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.FileUpload;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.FormPanel;
-import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Hidden;
-import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.MultiWordSuggestOracle;
-import com.google.gwt.user.client.ui.SimpleLayoutPanel;
-import com.google.gwt.user.client.ui.SuggestOracle.Request;
-import com.google.gwt.user.client.ui.SuggestOracle.Suggestion;
-import com.google.gwt.user.client.ui.TabLayoutPanel;
-import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.xhr.client.XMLHttpRequest;
 
@@ -70,51 +43,63 @@ public class MainCCC extends MainEntryPoint{
 	
 	// ----------------------------------------------- CCC Implementation
 	
-	private class CCCWidgetImpl extends CCC {
-	    
-	    	Label loadingLabel;
+	private class CCCWidgetImpl extends CCCNew {
 
 		@Override
-		protected void onInsertRow() {
-			// Not use in this case
-		}
-		
-		@Override
 		protected void onInsertRows() {
-			if(mainCCCObject.getCCCs().isEmpty())
-				showCCCMessage();
-			else {
-				showCCCTable();
+			if(mainCCCObject.getCCCs().isEmpty()) {
+				initPreview();
+				paintNoDataRow();
+			} else {
+				initPreview();
 				mainCCCObject.getCCCs().forEach(CCCWidgetImpl.this::insertRow);
 			}
 		}
 
 		@Override
 		protected void onDeleteCCC(Integer cccId) {
-			mainCCCObject.deleteCCC(cccId);
-			setHasChange(true);
+			AonMessagePanel.showLoading(messagePanel, "Eliminando cuenta de cotizaci\u00f3n ...");
+			mainCCCObject.deleteCCC(cccId, s -> {
+				AonMessagePanel.showSuccess(messagePanel, "Cuenta de cotizaci\u00f3n eliminada correctamente");
+				onModuleLoad(mainCCCObject);
+			}, f -> AonMessagePanel.showError(messagePanel, f.getMessage()));
 		}
-
+		
 		@Override
-		protected void onInsertCCC(EnterpriseCCC ccc) {
-			mainCCCObject.insertCCC(ccc);
-			setHasChange(true);
-		}
+		protected void onCCCOpen(EnterpriseCCC ccc) {
+			final AonCustomDialog dialog = new AonCustomDialog();
+			dialog.setCaption( "Editar Cuenta Cotizaci\u00f3n" );
+			AonCCCPanel cccDialog = new AonCCCPanel(mainCCCObject.getDomain(), mainCCCObject.getActivities(), ccc, new AonCCCPanelCallback() {
+				
+				@Override
+				public void onCancel() {
+					dialog.hide();
+				}
+				
+				@Override
+				public void onAccept(EnterpriseCCC ccc) {
+					dialog.hide();
+					AonMessagePanel.showLoading(messagePanel, "Guardando cuenta de cotizaci\u00f3n ...");
+					mainCCCObject.saveCCC(ccc, s -> {
+						AonMessagePanel.showSuccess(messagePanel, "Cuenta de cotizaci\u00f3n guardada correctamente");
+						onModuleLoad(mainCCCObject);
+					}, f -> AonMessagePanel.showError(messagePanel, f.getMessage()));
+				}
+			}) {
 
-		@Override
-		protected void onInsertActivity(com.esferalia.aon.occam.api.model.payroll.Activity activity) {
-			mainCCCObject.insertActivity(activity);
-			setHasChange(true);
+				@Override
+				protected void onResize() {
+					dialog.showLoaded();
+				}};
+			
+			
+			dialog.add( cccDialog );
+			dialog.showLoaded();
 		}
 
 		@Override
 		protected Set<Entry<Integer, String>> getActivities() {
 			return mainCCCObject.getActivities();
-		}
-		
-		@Override
-		public List<EnterpriseCCC> getEnterpriseCCCs() {
-			return mainCCCObject.getActiveCCCs();
 		}
 
 		@Override
@@ -129,175 +114,23 @@ public class MainCCC extends MainEntryPoint{
 
 		@Override
 		protected <T> void fireLoadingMessage(T message) {
-			loadingLabel = AonMessagePanel.showLoading(messagePanel, message);
+			AonMessagePanel.showLoading(messagePanel, message);
 		}
 
 		@Override
 		protected void hideMessage() {
 			AonMessagePanel.hideMessage(messagePanel);
+			AonMessagePanel.hideMessage(messagePanelPDF);
 		}
 
 		@Override
-		protected void showPDF(String dataURI, boolean isLaboralLife) {
+		protected void showPDF(String dataURI, String title, boolean isLaboralLife) {
 			showPdf(isLaboralLife);
-			pdfViewer.open(dataURI);
-		}
-		
-		protected void setLoadingMessage(String text) {
-			loadingLabel.setText(text);
-		}
-
-		protected void setLoadingMessage(SafeHtml html) {
-			((HTML) loadingLabel).setHTML(html);
+			pdfDockLayoutPanel.setToolbarTitle(title);
+			fullViewer.open(dataURI);
 		}
 	}
-	public class CCCAssignedWidgetImpl extends CCCWidgetImpl {
-	    
-	    private int limit = 100;
-	    
-	    List<EnterpriseCCC> enterpriseCCCs ;
-	    private MultiWordSuggestOracle cccSuggestOracle;
-	    private MultiWordSuggestOracle enterpriseNameSuggestOracle;
-	    
-	    
-	    public CCCAssignedWidgetImpl() {
-		super();
-		customizeHead();
-	    }
-	    
-	    @Override
-	    protected Set<Entry<Integer, String>> getActivities() {
-	        return Collections.emptySet();
-	    }
-	    
-	    @Override
-	    public void insertRow(EnterpriseCCC enterpriseCCC) {
-	        this.insertRowUI(enterpriseCCC);
-	        
-	        enterpriseCCCs.add(enterpriseCCC);
-	        cccSuggestOracle.add(enterpriseCCC.getCcc());
-	        enterpriseNameSuggestOracle.add(enterpriseCCC.getEnterpriseName());
-	        
-	        MainCCC.log(enterpriseCCC.getEnterpriseName() + ", " + enterpriseCCC.getCcc() );
-	        
-	    }
-	    
-	    private void insertRowUI(EnterpriseCCC enterpriseCCC) {
-	        if ( cccDataTable.getRowCount() >= limit ) 
-	            return;
-	        super.insertRow(enterpriseCCC);
-	        int row = cccDataTable.getRowCount() - 1;
-	        Label enterpriseNamelabel = new Label(enterpriseCCC.getEnterpriseName());
-	        cccDataTable.setWidget(row, 0, enterpriseNamelabel );
-	    }
-	    
-	    
-	    private void customizeHead() {
-		enterpriseCCCs = new ArrayList<>();
-		
-		int row = cccDataTableHeader.getRowCount() -1;
-		TextBox enterpriseNameTextBox = new TextBox();
-		cccDataTableHeader.setWidget(row, 0, enterpriseNameTextBox);
-		enterpriseNameSuggestOracle = new MultiWordSuggestOracle();
-		enterpriseNameTextBox.getElement().getStyle().setWidth(95, Unit.PCT);
-		
-		HTMLPanel hPanel = new HTMLPanel("");
-		hPanel.setStyleName(style.flexEvenly());
-		hPanel.addStyleName(style.widthAll());
-		Label typeLabel = new Label("0111");
-		typeLabel.setVisible(false);
-		AonTableButton cccButton = new AonTableButton("", AON.CSS.aonIconValid());
-		cccButton.setVisible(false);
-		TextBox cccTextBox = new TextBox();
-		cccTextBox.addStyleName("aon-inputText");
-		cccTextBox.addStyleName(style.inputTextHeight());
-		cccTextBox.getElement().getStyle().setProperty("width", "65%");
-		
-		hPanel.add(typeLabel);
-		hPanel.add(cccTextBox);
-		hPanel.add(cccButton);
-
-		cccDataTableHeader.setWidget(row, 2, hPanel);
-		cccSuggestOracle = new MultiWordSuggestOracle();
-
-		Timer cccTimer = newTimer(() -> filterByCCC(cccTextBox.getText()) );
-		cccTextBox.addKeyUpHandler(e -> cccTimer.schedule(2000));
-		Timer enterpriseNameTimer = newTimer(() -> filterByEnterpriseName(enterpriseNameTextBox.getText()));
-		enterpriseNameTextBox.addKeyUpHandler(e -> enterpriseNameTimer.schedule(2000));
-		
-	    }
-	    
-	    
-	    private void filterByCCC(String query ) {
-		if (AonStringUtils.isBlank(query)) {
-		    clearRows();
-		    enterpriseCCCs.stream().limit(limit).forEach(this::insertRowUI);
-		    return;
-		}
-		Request request = new Request(query, limit);
-		cccSuggestOracle.requestSuggestions(request, (req, res) -> {
-		    Set<String> cccs = res.getSuggestions().stream().map(Suggestion::getReplacementString)
-			    .collect(Collectors.toSet());
-		    clearRows();
-		    cccs.stream()
-		    .flatMap(this::getCCCByCCC)
-		    .forEach(this::insertRowUI);
-		});
-	    }
-
-	    private void filterByEnterpriseName(String query ) {
-		if (AonStringUtils.isBlank(query)) {
-		    clearRows();
-		    enterpriseCCCs.stream().limit(limit).forEach(this::insertRowUI);
-		    return;
-		}
-		Request request = new Request(query, limit);
-		enterpriseNameSuggestOracle.requestSuggestions(request, (req, res) -> {
-		    Set<String> enterprisesNames = res.getSuggestions().stream().map(Suggestion::getReplacementString)
-			    .collect(Collectors.toSet());
-		    clearRows();
-		    
-		    enterprisesNames.forEach( MainCCC::log);
-		    enterprisesNames.stream().flatMap(this::getCCCByName).forEach(ccc -> MainCCC.log("  *" + ccc.getEnterpriseName() ));
-		    
-		    enterprisesNames.stream()
-		    .flatMap(this::getCCCByName)
-		    .forEach(this::insertRowUI);
-		});
-	    }
-	    
-	    private void clearRows() {
-		while ( cccDataTable.getRowCount() > 0 )
-		    cccDataTable.removeRow(0);
-	    }
-	    
-	    private Timer newTimer(Runnable runnable) {
-		return new Timer() {
-		  @Override
-		    public void run() {
-		      runnable.run();
-		    }  
-		};
-	    }
-
-	    private Stream<EnterpriseCCC> getCCCByName(String enterpriseName) {
-		return enterpriseCCCs.stream()
-		.filter(ccc -> AonStringUtils.equals(ccc.getEnterpriseName(), enterpriseName))
-		.limit(1);
-	    }
-	    
-	    private Stream<EnterpriseCCC> getCCCByCCC(String ccc) {
-		return enterpriseCCCs.stream()
-		.filter(enterpriseCCC -> AonStringUtils.equalsIgnoreCase(enterpriseCCC.getCcc(), ccc))
-		.limit(1);
-	    }
-	    
-	    private  int getEnterpriseCCCCount() {
-		return enterpriseCCCs.size();
-	    }
-	    
- 	}
-
+	
 	// ----------------------------------------------- UiBinder
 	
 	interface Binder extends UiBinder<Widget, MainCCC> {}
@@ -307,52 +140,13 @@ public class MainCCC extends MainEntryPoint{
 	// ----------------------------------------------- UiFields
 	
 	@UiField
-	MyStyle style;
-
-	interface MyStyle extends CssResource {
-		String container();
-		String widthAll();
-	}
-	
-	
-	@UiField
-	HTMLPanel mainHtmlPanel;
-	
-	@UiField
-	DockLayoutPanel dockLayoutPanel;
-	
-	@UiField
-	DeckPanel toolbarDeckPanel;
+	DeckPanel deckPanel;
 	
 	@UiField(provided = true)
-	AonToolbar toolbar;
+	AonCustomDockLayout dockLayoutPanel;
 	
 	@UiField(provided = true)
-	AonToolbar toolbarPDFViewer;
-	
-	@UiField 
-	HTMLPanel messagePanel;
-	
-	@UiField
-	DeckPanel mainDeckPanel;
-	
-	@UiField
-	HTMLPanel activityCCCPanel;
-	
-	@UiField
-	HTMLPanel assignedCCCPanel;
-
-	@UiField
-	SimpleLayoutPanel scrolledPDFPanel;
-
-	@UiField
-	FullViewer pdfViewer;
-	
-	@UiField
-	TabLayoutPanel cccTabLayoutPanel;
-	
-	@UiField
-	SimpleLayoutPanel mainCCCPanel;
+	AonCustomDockLayout pdfDockLayoutPanel;
 	
 	// --------------------------------------------- Import Form
 	
@@ -363,22 +157,26 @@ public class MainCCC extends MainEntryPoint{
 	
 	private MainCCCObject mainCCCObject;
 	
+	// ----------------------------------------------- Variables (dockLayoutPanel)
+	
+	private HTMLPanel container;
+	private HTMLPanel messagePanel = new HTMLPanel("");
 	private CCCWidgetImpl activityCCCWidget;
-	private CCCAssignedWidgetImpl assignedCCCWidget;
+	private AonToolbarButton checkUpdateCert;
 	
-	private AonToolbarButton acceptButton;
-	private AonToolbarButton undoAllButton;
+	// ----------------------------------------------- Variables (pdfDockLayoutPanel)
 	
-	private boolean hasChange;
+	private HTMLPanel containerPDF;
+	private HTMLPanel messagePanelPDF = new HTMLPanel("");
+	private FullViewer fullViewer;
 	
 	// ----------------------------------------------- Constructor
 
 	public MainCCC() {	
 		activityCCCWidget = new CCCWidgetImpl();
-		assignedCCCWidget = new CCCAssignedWidgetImpl();
 		
-		this.toolbar = new AonToolbar("C\u00F3digo Cuentas Cotizaci\u00F3n");
-		this.toolbarPDFViewer = new AonToolbar("C\u00F3digo Cuentas Cotizaci\u00F3n");
+		this.dockLayoutPanel = new AonCustomDockLayout("C\u00f3digo Cuentas Cotizaci\u00f3n");
+		this.pdfDockLayoutPanel = new AonCustomDockLayout("PDF");
 		
 		GWT.<AonGwtTemplateResources>create(AonGwtTemplateResources.class).css().ensureInjected();
 		AON.ensureInjected();
@@ -386,39 +184,35 @@ public class MainCCC extends MainEntryPoint{
 		Widget ui = binder.createAndBindUi(this);
 		RootLayoutPanel.get(getRootPanel() != null ? getRootPanel() : "rootPanel").add(ui);
 		
+		// dockLayoutPanel
+		
 		showCCCs();
 		
-		getToolbarPanel();
-		getToolbarPDFViewerPanel();
+		container = new HTMLPanel("");
+		container.addStyleName(AON.CSS.aonFlexColumn());
 		
-		dockLayoutPanel.addStyleName(style.container());
+		container.add(messagePanel);
+		container.add(activityCCCWidget);
 		
-		mainCCCPanel.getElement().getStyle().setHeight(Window.getClientHeight() - 170.00, Unit.PX);
-		scrolledPDFPanel.getElement().getStyle().setHeight(Window.getClientHeight() - 170.00, Unit.PX);
+		this.dockLayoutPanel.add(container);
 		
-		activityCCCPanel.add(activityCCCWidget);
-		activityCCCPanel.addStyleName(style.widthAll());
+		addButtonsToolbar();
 		
-		assignedCCCPanel.add(assignedCCCWidget);
-		assignedCCCPanel.addStyleName(style.widthAll());
+		// pdfDockLayoutPanel
 		
-		List<HandlerRegistration> tabLayoutHadlers = new ArrayList<>();
-		tabLayoutHadlers.add( 
-		cccTabLayoutPanel.addSelectionHandler( e -> {
-		    if ( e.getSelectedItem() == 0 ) {
-			return;
-		    }
-		    if ( assignedCCCWidget.getRowCount() > 0 ) { 
-			return;
-		    }
-		    assignedCCCWidget.calculateScrollPanelHeightMainCCC();
-		    assignedCCCWidget.fireLoadingMessage(toSafeHtml("Consultando CCCs asignados."));
-		    getAssignedCCCs(this::onAssignedCCCSuccess,this::onAssignedCCCFailure, this::onAssignedCCCDone);
-		    tabLayoutHadlers.forEach(HandlerRegistration::removeHandler);
-		}));
+		containerPDF = new HTMLPanel("");
+		containerPDF.addStyleName(AON.CSS.aonFlexColumn());
+		
+		fullViewer = new FullViewer();
+		
+		containerPDF.add(messagePanelPDF);
+		containerPDF.add(fullViewer);
+		
+		this.pdfDockLayoutPanel.add(containerPDF);
+		
+		addPDFButtonsToolbar();
 
 		initUploadForm();
-		
 		
 	}
 	
@@ -433,10 +227,8 @@ public class MainCCC extends MainEntryPoint{
 		this.mainCCCObject = mainCCCObject;
 		this.mainCCCObject.getMainCCCInfo(
 				s -> {
-					activityCCCWidget.setDomain(mainCCCObject.getDomain());
+					checkUpdateCert.setVisible(!mainCCCObject.getActivities().isEmpty());
 					activityCCCWidget.onInsertRows();
-					activityCCCWidget.calculateScrollPanelHeightMainCCC();
-					setHasChange(false);
 				}, f -> {});
 	}
 	
@@ -469,7 +261,8 @@ public class MainCCC extends MainEntryPoint{
 	    
 	    
 	    uploadForm.add(formPanel);
-	    mainHtmlPanel.add(uploadForm);
+	    
+	    this.dockLayoutPanel.addToolbarButton(uploadForm);
 	}
 	
 	private void uploadFile() {
@@ -480,94 +273,140 @@ public class MainCCC extends MainEntryPoint{
 	    });
 	}
 
-	/**
-	 * @return
-	 */
 	private SafeHtml toSafeHtml(String html) {
 	    return new SafeHtmlBuilder().appendHtmlConstant(html).toSafeHtml();
 	}
 	
 	// ----------------------------------------------- Toolbar
 
-	private void getToolbarPanel() {
-		
-		acceptButton = new AonToolbarButton( AON.MSG.saveAction(), AON.CSS.aonIconSave() );
-		acceptButton.addClickHandler(e -> onAccept());
-		toolbar.add(acceptButton);
-		
-		undoAllButton = new AonToolbarButton( AON.MSG.undo() + " todo", AON.CSS.aonIconUndoAll() );
-		undoAllButton.addClickHandler(e -> {
-			AonDialog confirmDialog =  new AonDialog("Restaurar CCCs", new HTMLPanel("\u00bfDesea realmente deshacer los cambios realizados sobre las cuentas de cotizaci\u00f3n\u003f <br>Este proceso es irreversible."));
-			confirmDialog.confirm(new AonAcceptDialogCallback() {
-				
-				@Override
-				public void onCancel() {
-					// Nothing to do
-				}
-				
-				@Override
-				public void onAccept() {
-					mainCCCObject.getMainCCCInfo(
-							s -> {
-								activityCCCWidget.setDomain(mainCCCObject.getDomain());
-								activityCCCWidget.resetPreview();
-								activityCCCWidget.onInsertRows();
-								activityCCCWidget.calculateScrollPanelHeightMainCCC();
-								setHasChange(false);
-							}, f -> {});
-				}
-			});
-		});
-		toolbar.add(undoAllButton);
-		
-		AonToolbarButton checkUpdateCert = new AonToolbarButton("Cert. de estar al corriente con TGSS", AON.CSS.aonIconTgss() );
-		checkUpdateCert.addClickHandler(e -> onCheckUpdateCert());
-		toolbar.add(checkUpdateCert);
+	private void addButtonsToolbar() {
 		
 		AonToolbarButton createCCCBtn = new AonToolbarButton(AON.MSG.newAction() + " CCC", AON.CSS.aonIconAdd() );
-		createCCCBtn.addClickHandler(e -> activityCCCWidget.onAddNewCCC());
-		toolbar.add(createCCCBtn);
+		createCCCBtn.addClickHandler(e -> {
+			
+			if(mainCCCObject.getActivities().isEmpty()) {
+				
+				final AonCustomDialog dialog = new AonCustomDialog();
+				dialog.setCaption( "Nueva Actividad" );
+				AonActivityPanel cccDialog = new AonActivityPanel(mainCCCObject.getDomain(), new AonActivityPanelCallback() {
+					
+					@Override
+					public void onCancel() {
+						dialog.hide();
+					}
+					
+					@Override
+					public void onAccept(Activity activity) {
+						dialog.hide();
+						AonMessagePanel.showLoading(messagePanel, "Creando actividad " + activity.getDescription() + " ...");
+						mainCCCObject.saveActivity(activity, s -> {
+							AonMessagePanel.showSuccess(messagePanel, "Actividad creada correctamente");
+							mainCCCObject.getMainCCCInfo(
+									su -> {
+										activityCCCWidget.onInsertRows();
+										
+										final AonCustomDialog dialog = new AonCustomDialog();
+										dialog.setCaption( "Nueva Cuenta Cotizaci\u00f3n" );
+										AonCCCPanel cccDialog = new AonCCCPanel(mainCCCObject.getDomain(), mainCCCObject.getActivities(), new AonCCCPanelCallback() {
+											
+											@Override
+											public void onCancel() {
+												dialog.hide();
+											}
+											
+											@Override
+											public void onAccept(EnterpriseCCC ccc) {
+												dialog.hide();
+												AonMessagePanel.showLoading(messagePanel, "Guardando cuenta de cotizaci\u00f3n ...");
+												mainCCCObject.saveCCC(ccc, s -> {
+													AonMessagePanel.showSuccess(messagePanel, "Cuenta de cotizaci\u00f3n guardada correctamente");
+													onModuleLoad(mainCCCObject);
+												}, f -> AonMessagePanel.showError(messagePanel, f.getMessage()));
+											}
+										}) {
+
+											@Override
+											protected void onResize() {
+												dialog.showLoaded();
+											}};
+										
+										
+										dialog.add( cccDialog );
+										dialog.showLoaded();
+									}, f -> {});
+						}, f -> AonMessagePanel.showError(messagePanel, f.getMessage()));
+					}
+				}) {
+
+					@Override
+					protected void onResize() {
+						dialog.showLoaded();
+					}};
+				
+				
+				dialog.add( cccDialog );
+				dialog.showLoaded();
+				
+			} else {
+				final AonCustomDialog dialog = new AonCustomDialog();
+				dialog.setCaption( "Nueva Cuenta Cotizaci\u00f3n" );
+				AonCCCPanel cccDialog = new AonCCCPanel(mainCCCObject.getDomain(), mainCCCObject.getActivities(), new AonCCCPanelCallback() {
+					
+					@Override
+					public void onCancel() {
+						dialog.hide();
+					}
+					
+					@Override
+					public void onAccept(EnterpriseCCC ccc) {
+						dialog.hide();
+						AonMessagePanel.showLoading(messagePanel, "Guardando cuenta de cotizaci\u00f3n ...");
+						mainCCCObject.saveCCC(ccc, s -> {
+							AonMessagePanel.showSuccess(messagePanel, "Cuenta de cotizaci\u00f3n guardada correctamente");
+							onModuleLoad(mainCCCObject);
+						}, f -> AonMessagePanel.showError(messagePanel, f.getMessage()));
+					}
+				}) {
+
+					@Override
+					protected void onResize() {
+						dialog.showLoaded();
+					}};
+				
+				
+				dialog.add( cccDialog );
+				dialog.showLoaded();
+			}
+		});
 		
-		AonToolbarButton importBtn = new AonToolbarButton(AON.MSG.importAction() , AON.CSS.aonIconUploadFile() );
+		checkUpdateCert = new AonToolbarButton("Cert. de estar al corriente con TGSS", AON.CSS.aonIconTgss() );
+		checkUpdateCert.addClickHandler(e -> onCheckUpdateCert());
+		
+		AonToolbarButton importBtn = new AonToolbarButton(AON.MSG.importAction() + " vida laboral" , AON.CSS.aonIconUploadFile() );
 		importBtn.addClickHandler(e -> uploadFile());
-		toolbar.add(importBtn);
+		
+		this.dockLayoutPanel.addToolbarButton(createCCCBtn);
+		this.dockLayoutPanel.addToolbarButton(checkUpdateCert);
+		this.dockLayoutPanel.addToolbarButton(importBtn);
+		
+		this.dockLayoutPanel.hideSearchWidget();
+		this.dockLayoutPanel.hideFilterWidget();
 		
 	}
 	
 	// ------------------------------------------------- Toolbar PDFViewer panel
 	
-	private AonToolbar getToolbarPDFViewerPanel() {
+	private void addPDFButtonsToolbar() {
 
-		AonToolbarButton closePDF = new AonToolbarButton(AON.MSG.closed(), AON.CSS.aonIconBack());
-		closePDF.addClickHandler(e -> onClosePDF());
-		toolbarPDFViewer.add(closePDF);
+		AonToolbarButton backButton = new AonToolbarButton(AON.MSG.closed(), AON.CSS.aonIconBack());
+		backButton.addClickHandler(e -> showCCCs());
 		
-		return toolbarPDFViewer;
+		this.pdfDockLayoutPanel.addToolbarButton(backButton);
+		this.pdfDockLayoutPanel.hideSearchWidget();
+		this.pdfDockLayoutPanel.hideFilterWidget();
 	}
 	
 	// ----------------------------------------------- Toolbar.Methods TGSS
-	
-	private void onAccept() {
-		AonMessagePanel.showLoading(messagePanel, "Guardando CCCs ...");
-		this.mainCCCObject.setMainCCCInfo(s -> {
-			Map<String, String> successMap = new HashMap<>();
-			successMap.put("Guardado", "CCCs guardados correctamente");
-			AonMessagePanel.showSuccess(messagePanel, successMap);
-			
-			mainCCCObject.getMainCCCInfo(
-					su -> {
-						activityCCCWidget.setDomain(mainCCCObject.getDomain());
-						activityCCCWidget.resetPreview();
-						activityCCCWidget.onInsertRows();
-						activityCCCWidget.calculateScrollPanelHeightMainCCC();
-						setHasChange(false);
-					}, f -> {});
-		}, f -> {
-			Map<String, String> errorMap = new HashMap<>();
-			errorMap.put("Error Guardado", f.getMessage());
-			AonMessagePanel.showError(messagePanel, errorMap);
-		});
-	}
 	
 	private void onCheckUpdateCert() {
 		AonMessagePanel.showLoading(messagePanel, "Obteniendo Cert. de estar al corriente con TGSS ...");
@@ -576,7 +415,8 @@ public class MainCCC extends MainEntryPoint{
 		mainCCCObject.getUpdateCert(completeCCC.getKey(), completeCCC.getValue(),
 				dataURI -> {
 					showPdf(false);
-					pdfViewer.open(dataURI);
+					pdfDockLayoutPanel.setToolbarTitle("Cert. de estar al corriente con TGSS");
+					fullViewer.open(dataURI);
 					AonMessagePanel.hideMessage(messagePanel);
 				}, f -> {
 					Map<String, String> warningMap = new HashMap<>();
@@ -588,19 +428,16 @@ public class MainCCC extends MainEntryPoint{
 	// ------------------------------------------------- Show/Hide PDF
 
 	private void showCCCs() {
-		toolbarDeckPanel.showWidget(0);
-		mainDeckPanel.showWidget(0);
+		deckPanel.showWidget(0);
 	}
 
 	private void showPdf(boolean isLaboralLife) {
-		toolbarDeckPanel.showWidget(1);
-		mainDeckPanel.showWidget(1);
-		
+		deckPanel.showWidget(1);
 		checkPDFToolbar(isLaboralLife);
 	}
 	
 	private void checkPDFToolbar(boolean isLaboralLife) {
-		if(isLaboralLife && toolbarPDFViewer.getButtonContainer().getWidgetCount() == 1) {
+		if(isLaboralLife && this.pdfDockLayoutPanel.getToolbarButtonCount() == 1) {
 			MonthListBox monthListBox = new MonthListBox();
 			Date lastMonth = DateUtils.getFirstDayOfMonth(); 
 			Date firstMonth = DateUtils.addYears2Date(DateUtils.getFirstDayOfMonth(), -4);
@@ -608,110 +445,34 @@ public class MainCCC extends MainEntryPoint{
 			monthListBox.setLastMonth(lastMonth);
 			monthListBox.setPageSize(52);
 			monthListBox.setVisibleRange(0, 52);
-			monthListBox.addChangeHandler(e -> this.activityCCCWidget.onLaboralLife(monthListBox.getSelected()));
+			monthListBox.addChangeHandler(e -> {
+				AonMessagePanel.showLoading(messagePanelPDF, "Obteniendo Informe de Vida Laboral ...");
+				this.activityCCCWidget.onLaboralLife(monthListBox.getSelected());
+			});
 			monthListBox.setSelected(DateUtils.getFirstDayOfMonth(), true);
 			monthListBox.setWidth("200px");
-			toolbarPDFViewer.add(monthListBox);
+			this.pdfDockLayoutPanel.addToolbarButton(monthListBox);
 			
 			AonToolbarButton importPDF = new AonToolbarButton(AON.MSG.importAction(), AON.CSS.aonIconImport());
 			importPDF.addClickHandler(e -> onImportIvl());
-			toolbarPDFViewer.add(importPDF);
+			this.pdfDockLayoutPanel.addToolbarButton(importPDF);
 
-		} else if(!isLaboralLife && toolbarPDFViewer.getButtonContainer().getWidgetCount() > 1)
-			toolbarPDFViewer.getButtonContainer().remove(toolbarPDFViewer.getButtonContainer().getWidgetCount()-1);
+		} else if(!isLaboralLife && this.pdfDockLayoutPanel.getToolbarButtonCount() > 1)
+			this.pdfDockLayoutPanel.getToolbarButtonPanel().remove(this.pdfDockLayoutPanel.getToolbarButtonCount()-1);
 		
-	}
-	
-	private void onClosePDF() {
-		showCCCs();
 	}
 	
 	
 	private void onImportIvl() {
-	    pdfViewer.getData(this::importIvl);
+	    fullViewer.getData(this::importIvl);
 	}
 	
 	private void importIvl(String data) {
-	    activityCCCWidget.fireLoadingMessage(toSafeHtml("Importando <b>Informe Vida Laboral de un C&oacute;digo de Cuenta de Cotizaci&oacute;n</b>..."));
-	    upload(data, 
-		    message -> activityCCCWidget.fireInfoMessage(Collections.singletonMap("IVL", toSafeHtml(message))), 
-		    exception -> activityCCCWidget.fireWarningMessage(Collections.singletonMap("IVL", exception.getMessage())) );
-	}
-
-	private void setHasChange(boolean hasChange) {
-		this.hasChange = hasChange;
-		acceptButton.setEnabled(this.hasChange);
-		undoAllButton.setEnabled(this.hasChange);
-	}
-	
-	private void onAssignedCCCDone() {
-	    assignedCCCWidget.hideMessage();
-	}
-	
-	private void onAssignedCCCFailure(HttpException exception) {
-	    assignedCCCWidget.fireWarningMessage(Collections.singletonMap(SistemaREDService.ASSIGNED_CCCS, exception.getMessage()));
-	}
-
-	private void onAssignedCCCSuccess(EnterpriseCCC enterpriseCCC) {
-	    assignedCCCWidget.insertRow(enterpriseCCC);
-	    assignedCCCWidget.setLoadingMessage(toSafeHtml(enterpriseCCC.getEnterpriseName() + " <b>" + enterpriseCCC.getCcc() + "</b> (" + assignedCCCWidget.getEnterpriseCCCCount() + " CCCs )" ));
-	}
-
-	protected static void getAssignedCCCs(Consumer<EnterpriseCCC> onSuccess, Consumer<HttpException> onFailure,  Runnable onDone) {
-	    
-	    Set<String> assignedCCCs = new HashSet<>();
-	    
-	    XMLHttpRequest xmlHttpRequest = XMLHttpRequest.create();
-	    
-	    xmlHttpRequest.setOnReadyStateChange(xhr -> {
-
-		int state = xhr.getReadyState();
+		AonMessagePanel.showLoading(messagePanelPDF, toSafeHtml("Importando <b>Informe Vida Laboral de un C&oacute;digo de Cuenta de Cotizaci&oacute;n</b>..."));
 		
-		String text = xhr.getResponseText();
-		if ( AonStringUtils.isNotEmpty(text)) {
-		    String json ; 
-		    if ( endsWith(trim(text), "]") ) {
-			json = text;
-		    } else {
-			json = text + "]";
-		    }
-		    JsArray<JsSistemaREDCCC> jsCCCs = JsonUtils.safeEval(json);
-		    for (int i = 0; i < jsCCCs.length(); i++) {
-			JsSistemaREDCCC jsCCC = jsCCCs.get(i);
-			EnterpriseCCC enterpriseCCC = new EnterpriseCCC();
-			enterpriseCCC.setType((byte)0);
-			enterpriseCCC.setCcc(jsCCC.getCCC());
-			enterpriseCCC.setGeozoneCode(jsCCC.getProvince());
-			enterpriseCCC.setEnterpriseName(jsCCC.getEnterpriseName());
-			enterpriseCCC.setGeozoneDescription(ProvinceContract.getName(jsCCC.getProvince()));
-			if ( assignedCCCs.add(jsCCC.getHashCode()) ) {
-			    onSuccess.accept(enterpriseCCC);
-			}
-		    }
-		}
-
-		if (state != XMLHttpRequest.DONE )
-			return;
-		
-		int status = xhr.getStatus();
-		// Failure 1xx, 3xx, 4xx, 5xxx 
-		if (status < 200 && status >= 300)
-			onFailure.accept(new HttpException(status, xhr.getResponseText()));
-		
-		onDone.run();
-		
-	    });
-
-
-	    Map<String, String> datas = new HashMap<>();
-	    datas.put(SistemaREDService.Parameter.USER.name(), Wnd.getCurrentUser());
-	    datas.put(SistemaREDService.Parameter.DOMAIN.name(), Wnd.getCurrentDomainNameURL());
-	    
-	    String queryString = datas.entrySet().stream().map(e -> e.getKey() + "=" + e.getValue()).collect(Collectors.joining("&"));
-	    
-	    xmlHttpRequest.open("GET", SistemaREDService.SISTEMA_RED_URL + "/" + SistemaREDService.ASSIGNED_CCCS + "?" + queryString);
-	    xmlHttpRequest.send();
-
+		upload(data, 
+		    message -> AonMessagePanel.showInfo(messagePanelPDF, Collections.singletonMap("IVL", toSafeHtml(message))), 
+		    exception -> AonMessagePanel.showWarning(messagePanelPDF, Collections.singletonMap("IVL", exception.getMessage())) );
 	}
 
 	protected static void upload(String data, Consumer<String> onSuccess, Consumer<HttpException> onFailure ) {
@@ -788,7 +549,6 @@ public class MainCCC extends MainEntryPoint{
 	}
 	
 	
-	
 	static native String btoa(byte[] data) /*-{
 	    return btoa(data);
 	}-*/;
@@ -797,10 +557,8 @@ public class MainCCC extends MainEntryPoint{
 		console.log(message);
 	}-*/;
 
-        public static native void error (String message ) /*-{
-        	console.error(message);
-        }-*/;
-	
-	
-	
-    }
+    public static native void error (String message ) /*-{
+    	console.error(message);
+    }-*/;
+		
+}

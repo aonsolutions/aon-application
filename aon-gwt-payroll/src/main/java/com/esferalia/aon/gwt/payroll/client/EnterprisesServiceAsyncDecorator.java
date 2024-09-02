@@ -60,6 +60,7 @@ import com.esferalia.aon.gwt.payroll.shared.WorkplaceInfo;
 import com.esferalia.aon.occam.api.model.Certificate;
 import com.esferalia.aon.occam.api.model.CertificateInfo;
 import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.occam.api.model.EnterpriseCCC;
 import com.esferalia.aon.occam.api.model.MailAccount;
 import com.esferalia.aon.occam.api.model.aonsolutions.DomainUserRoles;
 import com.esferalia.aon.occam.api.model.mod145.Mod145;
@@ -745,6 +746,12 @@ public class EnterprisesServiceAsyncDecorator implements
 		AON.start();
 		enterprisesServiceAsync.getSecondaryUsers(currentDomainName, currentUser, rattachId, new AsyncCallbackWrapper<List<SecondaryUserCertificate>>(callback));
 	}
+	
+	@Override
+	public void getSecondaryUsersPDF(String currentDomainName, String currentUser, Integer rattachId, AsyncCallback<String> callback) throws IllegalArgumentException {
+		AON.start();
+		enterprisesServiceAsync.getSecondaryUsersPDF(currentDomainName, currentUser, rattachId, new AsyncCallbackWrapper<String>(callback));
+	}
 
 	@Override
 	public void deleteSecondaryUser(String currentDomainName, String currentUser, Integer rattachId, String ipfType, String ipf, AsyncCallback<Void> callback) {
@@ -1128,6 +1135,20 @@ public class EnterprisesServiceAsyncDecorator implements
 			AsyncCallback<Void> callback) throws IllegalArgumentException {
 		AON.start();
 		enterprisesServiceAsync.saveActivities(domainName, user, activities, callback);
+	}
+	
+	@Override
+	public void deleteCCC(String domainName, String user, Integer cccId,
+			AsyncCallback<Void> callback) throws IllegalArgumentException {
+		AON.start();
+		enterprisesServiceAsync.deleteCCC(domainName, user, cccId, callback);
+	}
+	
+	@Override
+	public void saveCCC(String domainName, String user, EnterpriseCCC ccc,
+			AsyncCallback<EnterpriseCCC> callback) throws IllegalArgumentException {
+		AON.start();
+		enterprisesServiceAsync.saveCCC(domainName, user, ccc, callback);
 	}
 	
 	// --------------------------- Mod 145 (API)

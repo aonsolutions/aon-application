@@ -618,7 +618,9 @@ public class JooqPayrollBuilder {
 										} else
 											costBuilder.setMeiType(Optional.of(-1.00));
 									} else if (containsIgnoreCase(costName, "TARIFA_IMS")
-											|| containsIgnoreCase(costName, "TARIFA_IT")) {
+											|| containsIgnoreCase(costName, "TARIFA_IT")
+											|| containsIgnoreCase(costName, "PORCENTAJE_IMS")
+											|| containsIgnoreCase(costName, "PORCENTAJE_IT")) {
 
 										if (cd.getExpression() != null) {
 											atEp[0] += Double.parseDouble(cd.getExpression());
