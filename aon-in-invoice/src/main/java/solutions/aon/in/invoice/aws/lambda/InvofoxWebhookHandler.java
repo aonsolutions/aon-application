@@ -291,7 +291,7 @@ public class InvofoxWebhookHandler implements RequestHandler<Object, String> {
 	
     	JSONObject taskWorkflowJSON = AonTask.addTaskWorkflow(domainName, userLogin, taskWorkflow);
     	State state = valueOf(publicState, State.unknown);
-    	if(publicState != null && State.approved.equals(state)
+    	if(publicState != null && State.approved.equals(state))
     		AonInvofox.acceptInvofoxInvoice(domainName, userLogin, id);
     	else AonInvofox.rawdocInvofoxInvoice(domainName, userLogin, id);
     	
