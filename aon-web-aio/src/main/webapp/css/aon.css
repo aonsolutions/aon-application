@@ -503,7 +503,7 @@ h1 {
 
   background-repeat: no-repeat;
   background-repeat: no-repeat;
-  background-image: url("../assets/aon-black-logo.svg");
+  background-image: url("../assets/aon-white-logo.svg");
 }
 
 .aonParentLogo {
@@ -2074,7 +2074,7 @@ label.rating:hover {
   padding: 0px 0px 0px 68px;
   background-position: center;
   background-repeat: no-repeat;
-  background-image: url("../assets/aon-black-logo.svg");
+  background-image: url("../assets/aon-white-logo.svg");
 }
 
 
@@ -2726,9 +2726,9 @@ label.rating:hover {
   box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
 }
 
-.aonFavicon {
-	background-image: url("../favicon.ico");	
-}
+/* .aonFavicon {
+	background-image: url("../favicon.png");	
+} */
 
 .aonLoginLogo{
   width: 132px;
@@ -2776,13 +2776,13 @@ label.rating:hover {
 
 .aonHeaderStart,
 .aonMenuLeftopStart{
-	background-color: var(--aonHeaderBackgroundColor);
+	background-color: var(--aonBlue);
 }
 
 
 .aonHeaderHome,
 .aonMenuLeftopHome{
-	background-color: var(--aonLightGray);
+	background-color: var(--aonBlue);
 }
 
 .aonNewMenuSideNavLi {
@@ -2797,7 +2797,7 @@ label.rating:hover {
 
 .aonHeaderApplications,
 .aonMenuLeftopApplications{
-	background-color: var(--aonLightGray);
+	background-color: var(--aonBlue);
 }
 
 .aonHeaderNote,
@@ -2988,7 +2988,10 @@ label.rating:hover {
 .aonHeaderFiscalMenu .material-icons,
 .aonHeaderPayrollMenu .material-icons,
 .aonHeaderMarketingMenu .material-icons,
-.aonHeaderNotification .material-icons {
+.aonHeaderNotification .material-icons,
+.aonHeaderHome .material-icons,
+.aonHeaderStart .material-icons,
+.aonHeaderApplications .material-icons  {
 	color: var(--aonWhite);
 }
 
@@ -3018,11 +3021,6 @@ label.rating:hover {
   color: var(--aonSearchButton);
 }
 
-.aonHeaderHome .material-icons,
-.aonHeaderStart .material-icons,
-.aonHeaderApplications .material-icons {
-  color: rgb(95, 99, 104);
-}
 
 .aonMenuLeftopNote .material-symbols-outlined,
 .aonMenuLeftopFiscal .material-symbols-outlined,
@@ -3046,15 +3044,14 @@ label.rating:hover {
 .aonMenuLeftopGroupwareMenu .material-symbols-outlined,
 .aonMenuLeftopManagementMenu .material-symbols-outlined,
 .aonMenuLeftopAccountingMenu .material-symbols-outlined,
-.aonMenuLeftopNotification .material-symbols-outlined {
-	color: var(--aonWhite);
-}
-
+.aonMenuLeftopNotification .material-symbols-outlined,
 .aonMenuLeftopHome .material-symbols-outlined,
 .aonMenuLeftopStart .material-symbols-outlined,
 .aonMenuLeftopApplications .material-symbols-outlined {
-  color: rgb(95, 99, 104);
+	color: var(--aonWhite);
 }
+
+
 
 .aonHeaderNote #aonHeaderCompanyName,
 .aonHeaderFiscal #aonHeaderCompanyName,
@@ -3078,15 +3075,14 @@ label.rating:hover {
 .aonHeaderFiscalMenu #aonHeaderCompanyName,
 .aonHeaderPayrollMenu #aonHeaderCompanyName,
 .aonHeaderMarketingMenu #aonHeaderCompanyName,
-.aonHeaderNotification #aonHeaderCompanyName {
-	color: var(--aonWhite);
-}
-
+.aonHeaderNotification #aonHeaderCompanyName,
 .aonHeaderHome  #aonHeaderCompanyName,
 .aonHeaderApplications  #aonHeaderCompanyName,
 .aonHeaderStart #aonHeaderCompanyName {
-  color: rgb(95, 99, 104);
+	color: var(--aonWhite);
 }
+
+
 
 #new:hover,
 #home:hover,
