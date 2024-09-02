@@ -16,19 +16,18 @@ import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.Scanner;
 
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-
 import org.apache.commons.io.FileUtils;
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
 import com.esferalia.aon.occam.test.AbstractOccamTest;
 import com.github.javafaker.Faker;
 
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import net.aonsolutions.tests.request.Method;
 import net.aonsolutions.tests.request.Request;
 
@@ -46,7 +45,7 @@ public class TestIngenetDeliveryServlet extends AbstractOccamTest {
     @Mock
     private OutputStream myOutputStream;
  
-    @Before
+    //@BeforeAll
     public void setUp() throws Exception {
         MockitoAnnotations.initMocks(this);
     }
@@ -72,7 +71,7 @@ public class TestIngenetDeliveryServlet extends AbstractOccamTest {
 	}
 	
 	@Test
-	@Ignore
+	@Disabled
 	public void test() throws IOException {
 		IngenetDeliveryServletTest servlet = new IngenetDeliveryServletTest();
 		when(request.getParameter(AbstractIngenetServlet.PARAM_USERNAME)).thenReturn("ingenet");
