@@ -306,7 +306,7 @@
 					<aon:div id="purchaseReference-div" style="display:inline;">
 						<aon:inputText id="Sales_purchaseReference"
 							value="#{sales.to.purchaseReference}"
-							disabled="#{!sales.pending}"
+							disabled="#{!sales.pending and !domainSwitcher.udapa}"
 							size="35" maxlength="32" >
 							<a4j:support event="onchange" ajaxSingle="#{true}"
 								reRender="purchaseReference-div" />
