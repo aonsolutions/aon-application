@@ -1,5 +1,7 @@
 package solutions.aon.seg.social;
 
+import static solutions.aon.seg.social.exception.StatusCodeException.HandleStatusCodeException;
+
 import java.io.ByteArrayInputStream;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -11,11 +13,14 @@ import java.util.stream.Stream.Builder;
 import javax.xml.transform.TransformerException;
 
 import org.htmlunit.FailingHttpStatusCodeException;
+import org.htmlunit.UnexpectedPage;
 import org.htmlunit.WebClient;
 import org.htmlunit.html.DomElement;
 import org.htmlunit.html.DomNodeList;
 import org.htmlunit.html.HtmlAnchor;
+import org.htmlunit.html.HtmlButton;
 import org.htmlunit.html.HtmlElement;
+import org.htmlunit.html.HtmlInput;
 import org.htmlunit.html.HtmlPage;
 import org.htmlunit.html.HtmlRadioButtonInput;
 import org.htmlunit.html.HtmlSelect;
@@ -23,6 +28,7 @@ import org.htmlunit.xml.XmlPage;
 
 import solutions.aon.seg.social.exception.SegSocialException;
 import solutions.aon.seg.social.toolkit.HtmlUnitToolkit;
+import solutions.aon.seg.social.toolkit.Toolkit;
 
 public class SistemaREDCCC {
     
@@ -78,28 +84,30 @@ public class SistemaREDCCC {
 	    final String certificateType, Consumer<CCC> callback)
 	    throws SegSocialException, IOException{
 
-	try (WebClient webClient = HtmlUnitToolkit.getWebClient(certificateInputStream, certificatePassword,
-		certificateType)) {
-
-	    HtmlPage htmlPage = webClient.getPage(
-		    "https://w2.seg-social.es/ProsaInternet/OnlineAccess?ARQ.SPM.ACTION=LOGIN&ARQ.SPM.APPTYPE=SERVICE&ARQ.IDAPP=XV24P002");
-
-	    DomElement authorizedTable = htmlPage.getElementById("tabla_lisAutorizad");
-	    if (authorizedTable == null) {
-		getAssignedCCCs(htmlPage, callback);
-	    }
-	    
-	    DomNodeList<HtmlElement> authorizedAnchors = authorizedTable.getElementsByTagName("a");
-	    for (int i = 0; i < authorizedAnchors.size(); i++) {
-		HtmlAnchor authorizedAnchor = (HtmlAnchor) authorizedAnchors.get(i);
-		XmlPage authorizedXmlPage =  (XmlPage) authorizedAnchor.openLinkInNewWindow();
-		HtmlPage authorizedHtmlPage = HtmlUnitToolkit.transformXmlPage(authorizedXmlPage);
-		getAssignedCCCs(authorizedHtmlPage, callback);
-	    }
-	    
-	} catch ( FailingHttpStatusCodeException | TransformerException e ) {
-	    throw new SegSocialException(e); 
-	}
+		try (WebClient webClient = HtmlUnitToolkit.getWebClient(certificateInputStream, certificatePassword, certificateType)) {
+			
+			webClient.getOptions().setUseInsecureSSL(true);
+			webClient.getOptions().setJavaScriptEnabled(true);
+	
+		    HtmlPage htmlPage = HtmlUnitToolkit.transformXmlPage( webClient.getPage(
+			    "https://w2.seg-social.es/ProsaInternet/OnlineAccess?ARQ.SPM.ACTION=LOGIN&ARQ.SPM.APPTYPE=SERVICE&ARQ.IDAPP=XV24P002") );
+	
+		    DomElement authorizedTable = htmlPage.getElementById("tabla_lisAutorizad");
+		    if (authorizedTable == null) {
+			getAssignedCCCs(htmlPage, callback);
+		    }
+		    
+		    DomNodeList<HtmlElement> authorizedAnchors = authorizedTable.getElementsByTagName("a");
+		    for (int i = 0; i < authorizedAnchors.size(); i++) {
+			HtmlAnchor authorizedAnchor = (HtmlAnchor) authorizedAnchors.get(i);
+			XmlPage authorizedXmlPage =  (XmlPage) authorizedAnchor.openLinkInNewWindow();
+			HtmlPage authorizedHtmlPage = HtmlUnitToolkit.transformXmlPage(authorizedXmlPage);
+			getAssignedCCCs(authorizedHtmlPage, callback);
+		    }
+		    
+		} catch ( FailingHttpStatusCodeException | TransformerException e ) {
+		    throw new SegSocialException(e); 
+		}
 	
     }
 
@@ -109,12 +117,74 @@ public class SistemaREDCCC {
 	((HtmlSelect)htmlPage.getElementById("seleccion_3")).setSelectedAttribute("O", true); // Online
 	
 	XmlPage xmlPage = (XmlPage ) (htmlPage.getElementById("CRITERIOS")).click();
+	
+	Toolkit.buildFile(HtmlUnitToolkit.transformXmlPage(xmlPage).asXml().getBytes(), "/Users/svaldepenas/Desktop/getAssignedCCCs.html");
+	
 	getAssignedCCCs(xmlPage).forEach(callback);	
 	while ( hasNextPage(xmlPage) ) {
 	    xmlPage = nextPage(xmlPage);
 	    getAssignedCCCs(xmlPage).forEach(callback);
 	}
     }
+    
+    public static byte[] getAssignedCCCsPDF(final InputStream certificateInputStream, final String certificatePassword, final String certificateType) throws SegSocialException, IOException{
+		byte[] certificateData = certificateInputStream.readAllBytes();
+		
+		try (WebClient webClient = HtmlUnitToolkit.getWebClient(certificateData, certificatePassword, certificateType)) {
+				
+			webClient.getOptions().setCssEnabled(false);
+            webClient.getOptions().setJavaScriptEnabled(true);
+            
+			webClient.getOptions().setUseInsecureSSL(true);
+			webClient.getOptions().setRedirectEnabled(true);
+			
+			XmlPage xmlPage = webClient.getPage("https://w2.seg-social.es/ProsaInternet/OnlineAccess?ARQ.SPM.ACTION=LOGIN&ARQ.SPM.APPTYPE=SERVICE&ARQ.IDAPP=XV24P002");
+			HtmlPage document = HtmlUnitToolkit.transformXmlPage(xmlPage);
+			
+			HtmlInput sitUsuSec = document.querySelector("#autorizado_1");
+			sitUsuSec.click();
+			
+			webClient.waitForBackgroundJavaScript(5000);
+			
+			document = HtmlUnitToolkit.selectOption(document, "seleccion_2", "T");
+			
+			document = HtmlUnitToolkit.selectOption(document, "seleccion_3", "O");
+			
+			HtmlButton continueButton = document.querySelector("#INFORME");
+
+			// Check if we have more than one CCC for this person
+			try {
+				document = HtmlUnitToolkit.transformXmlPage(continueButton.click());
+				
+				// Check table
+				HtmlAnchor docButton = document.querySelector("section#SECCION_1 a");
+				
+				if(docButton != null)
+					return getPDFDocument(docButton);
+				else
+					return null;
+				
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			
+		} catch (FailingHttpStatusCodeException e) {
+			HandleStatusCodeException(e);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
+	private static byte[] getPDFDocument(HtmlElement linkElement) throws IllegalArgumentException {
+		try {
+			UnexpectedPage docPage = linkElement.click();
+			return docPage.getWebResponse().getContentAsStream().readAllBytes();
+		} catch (IOException e) {
+			// Exception
+			throw new IllegalArgumentException(e.getMessage());
+		}
+	}
 
     /**
      * @param xmlPage

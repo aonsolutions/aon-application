@@ -25,6 +25,7 @@ import org.htmlunit.WebClient;
 import org.htmlunit.WebRequest;
 import org.htmlunit.WebResponse;
 import org.htmlunit.html.HtmlAnchor;
+import org.htmlunit.html.HtmlButton;
 import org.htmlunit.html.HtmlElement;
 import org.htmlunit.html.HtmlInput;
 import org.htmlunit.html.HtmlPage;
@@ -39,6 +40,8 @@ import solutions.aon.seg.social.toolkit.HtmlUnitToolkit;
 import solutions.aon.seg.social.toolkit.Toolkit;
 
 public class ServicioREDSecondaryUser extends ServicioREDRegeXML {
+	
+	private static final String TRY_AGAIN  = "Intente nuevamente!";
 	
 	public static List<SecondaryUser> getSecondaryUsers(final InputStream certificateInputStream,
 			final String certificatePassword, final String certificateType) throws SegSocialException{
@@ -114,37 +117,39 @@ public class ServicioREDSecondaryUser extends ServicioREDRegeXML {
 	}
 	
 	public static byte[] getSecondaryUsersPDF(final InputStream certificateInputStream, final String certificatePassword, final String certificateType) throws SegSocialException, IOException{
-//		try (WebClient webClient = HtmlUnitToolkit.getWebClient(certificateInputStream, certificatePassword, certificateType)) {
-		
 		byte[] certificateData = certificateInputStream.readAllBytes();
 		
-		try (WebClient webClient = HtmlUnitToolkit.getWebClient(certificateData, certificatePassword, certificateType);
-				/*WebConnectionWrapper wrapper = HtmlUnitToolkit.transformXmlPage(webClient, certificateData, certificatePassword, certificateType, Collections.emptyMap(), ServicioREDSecondaryUser::skipDateFormatError)*/) {
+		try (WebClient webClient = HtmlUnitToolkit.getWebClient(certificateData, certificatePassword, certificateType)) {
 				
+			webClient.getOptions().setCssEnabled(false);
+            webClient.getOptions().setJavaScriptEnabled(true);
+            
 			webClient.getOptions().setUseInsecureSSL(true);
 			webClient.getOptions().setRedirectEnabled(true);
-			webClient.getOptions().setJavaScriptEnabled(true);
 			
 			XmlPage xmlPage = webClient.getPage("https://w2.seg-social.es/ProsaInternet/OnlineAccess?ARQ.SPM.ACTION=LOGIN&ARQ.SPM.APPTYPE=SERVICE&ARQ.IDAPP=XV24P003");
 			HtmlPage document = HtmlUnitToolkit.transformXmlPage(xmlPage);
 			
 			HtmlInput sitUsuSec = document.querySelector("#sitUsuSec_1");
 			sitUsuSec.click();
-			webClient.waitForBackgroundJavaScript(10000);
 			
+			webClient.waitForBackgroundJavaScript(5000);
 			document = HtmlUnitToolkit.selectOption(document, "situacion", "T");
-			webClient.waitForBackgroundJavaScript(10000);
+			
+			HtmlButton loadSitActUsuari = document.querySelector("button[name=\"SPM.ACC.ACC_CARGAR_SITUACIONACTIVO\"]");
+			webClient.waitForBackgroundJavaScript(5000);
+			document = HtmlUnitToolkit.transformXmlPage(loadSitActUsuari.click());
 			
 			// Al elegir la situacion se actualizan los valores de este input, pero no carga nada...
 			document = HtmlUnitToolkit.selectOption(document, "sitActUsuari", "T");
 			
 			document = HtmlUnitToolkit.selectOption(document, "tipImpresio", "O");
 			
-			HtmlSubmitInput continueButton = document.querySelector("#INFORME");
+			HtmlButton continueButton = document.querySelector("#INFORME");
 
 			// Check if we have more than one CCC for this person
 			try {
-				document = continueButton.click();
+				document = HtmlUnitToolkit.transformXmlPage(continueButton.click());
 				
 				// Check table
 				HtmlAnchor docButton = document.querySelector("section#SECCION_1 a");
