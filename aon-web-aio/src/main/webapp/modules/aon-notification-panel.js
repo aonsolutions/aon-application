@@ -202,12 +202,14 @@ export class AonNotificationPanel extends AonElement {
             aonHeader.setVisibleLogo(false);
             aonHeader.setVisibleApp(true);
             this.goNotification(res);
-        })
+        });
         
-        span.addEventListener(EVENT.CLICK, () => {
+        span.addEventListener(EVENT.CLICK, (event) => {
+            event.stopPropagation(); 
             this.markReadNotification(res);
             divGeneral.style.display = "none";
         });
+        
 
         return divPrincipal;
     }
