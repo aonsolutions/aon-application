@@ -174,6 +174,7 @@ public class MainCCC extends MainEntryPoint{
 
 	public MainCCC() {	
 		activityCCCWidget = new CCCWidgetImpl();
+		activityCCCWidget.getElement().getStyle().setProperty("margin", "0 1rem");
 		
 		this.dockLayoutPanel = new AonCustomDockLayout("C\u00f3digo Cuentas Cotizaci\u00f3n");
 		this.pdfDockLayoutPanel = new AonCustomDockLayout("PDF");
