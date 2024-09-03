@@ -6,8 +6,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
 
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
 import com.esferalia.aon.occam.api.model.Certificate;
 import com.esferalia.aon.occam.api.model.Company;
@@ -49,7 +49,7 @@ public class InvoiceCommunicationTest {
 	private static final String DOCUMENT_3 = "99999972C";
 	
 	@Test
-	@Ignore
+	@Disabled
 	public void test() throws Exception {
 		Domain domain = new Domain();
 		User user = new User();
