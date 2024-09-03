@@ -180,26 +180,34 @@ public class InvofoxServlet extends AonApiHttpServlet {
 	private static JSONObject rawdocDocument(AonApiData api) {
 		JSONObject params = api.getData();
 		String documentId = params.optString(IJsonNames.ID);
-		JSONObject json = getDocument(api.getDomain(), api.getUser(), documentId);
-
-		RawdocType type = json.opt("type") != null && json.optString("type").equalsIgnoreCase("emitida") 
-				? RawdocType.OUTPUT : RawdocType.INPUT;
-		RawdocStatus status = getRawdocStatus(json.optString("status")); 
-		json.put("status", status.getTediName());
+		JSONObject json = new JSONObject();
+		Rawdoc rawdoc = AON.getRawdocStream(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), 
+				f -> f.getDomainProperty().eq(api.getDomain().getId())
+					.and(f.getJsonProperty().like("%invofoxId%" + documentId + "%"))).findFirst().orElse(null);
 		
-		Rawdoc rawdoc = new Rawdoc()
-			.setDomain(api.getDomain().getId())
-			.setNature(RawdocNature.INVOICE)
-			.setType(type)
-			.setStatus(status)
-			.setJson(json.toString())
-			.setS3Key(getS3Key(json))
-			.setMimeType(getMimeType(json));
-		
-		rawdoc = AON.rawdocSave(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), rawdoc);
-		json.put("id", rawdoc.getId()); 
+		if(rawdoc == null) {
+			json = getDocument(api.getDomain(), api.getUser(), documentId);
 
-		exportDocument(api, documentId);
+			RawdocType type = json.opt("type") != null && json.optString("type").equalsIgnoreCase("emitida") 
+					? RawdocType.OUTPUT : RawdocType.INPUT;
+			RawdocStatus status = getRawdocStatus(json.optString("status")); 
+			json.put("status", status.getTediName());
+			
+			rawdoc = new Rawdoc()
+				.setDomain(api.getDomain().getId())
+				.setNature(RawdocNature.INVOICE)
+				.setType(type)
+				.setStatus(status)
+				.setJson(json.toString())
+				.setS3Key(getS3Key(json))
+				.setMimeType(getMimeType(json));
+			
+			rawdoc = AON.rawdocSave(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), rawdoc);
+			json.put("id", rawdoc.getId()); 
+
+			exportDocument(api, documentId);
+		} else json = new JSONObject(rawdoc.getJson());
+		
 		return json;
 	}
 	

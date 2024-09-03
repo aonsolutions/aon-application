@@ -74,6 +74,7 @@ public class RawdocDAO {
 		@Override public Property<Byte> getNatureProperty() {return new FilterDAO.PropertyDAO<>(RAWDOC.NATURE);}
 		@Override public Property<Byte> getTypeProperty() {return new FilterDAO.PropertyDAO<>(RAWDOC.TYPE);}
 		@Override public Property<Byte> getStatusProperty() {return new FilterDAO.PropertyDAO<>(RAWDOC.STATUS);}
+		@Override public Property<String> getJsonProperty() {return new FilterDAO.PropertyDAO<>(RAWDOC.JSON);}		
 		@Override public Property<Timestamp> getCreationDateProperty() {return new FilterDAO.TimestampPropertyDAO(RAWDOC.CREATION_DATE);}
 		@Override public Property<String> getCreationUserProperty() {return new FilterDAO.PropertyDAO<>(RAWDOC.CREATION_USER);}
 		@Override public Property<Timestamp> getModificationDateProperty() {return new FilterDAO.TimestampPropertyDAO(RAWDOC.MODIFICATION_DATE);}
