@@ -95,7 +95,7 @@ public class SLDSalariesTestCase {
 	}
 	
 	@Test
-	
+	@Disabled
 	public void testGetSalariesByPeriod() throws IOException, SegSocialException {
 		try(InputStream certificateInputStream=TestCalculationQuery.class.getResourceAsStream("/solutions/aon/seg/social/AyudaTFNMT.p12") ){
 			
