@@ -74,7 +74,7 @@ public class IvlTest extends AbstractSQLTestCase {
 			String employeeName) {
 		    assertFalse(docNumber.startsWith("0"),docNumber);
 		    assertFalse(employeeName.contains("---"),employeeName);
-		    assertNull("ERROR : " + this.employeeName + ", without contracts ", this.employeeName);
+		    assertNull(this.employeeName, "ERROR : " + this.employeeName + ", without contracts ");
 		}
 		
 		@Override
@@ -135,7 +135,7 @@ public class IvlTest extends AbstractSQLTestCase {
 		@Override
 		public void onEmployee(String nafProvince, String nafNumber, String docType, String docNumber,
 			String employeeName) {
-		    assertNull("ERROR : " + this.employeeName + ", without contracts ", this.employeeName);
+		    assertNull(this.employeeName, "ERROR : " + this.employeeName + ", without contracts ");
 		}
 		
 		@Override

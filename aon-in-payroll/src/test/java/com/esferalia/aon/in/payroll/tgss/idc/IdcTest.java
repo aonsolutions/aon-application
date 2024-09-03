@@ -515,7 +515,7 @@ public class IdcTest extends AbstractSQLTestCase {
 				
 				@Override
 				public void onContractOcupation(String ocupation) {
-					assertEquals("OCUPACION", "A", ocupation);
+					assertEquals("A", ocupation, "OCUPACION");
 				}
 
 			});
