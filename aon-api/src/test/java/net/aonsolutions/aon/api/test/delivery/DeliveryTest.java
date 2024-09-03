@@ -7,20 +7,19 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-
 import org.json.JSONArray;
 import org.json.JSONObject;
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
 import com.esferalia.aon.occam.test.AbstractOccamTest;
 import com.github.javafaker.Faker;
 
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import net.aonsolutions.aon.api.ewok.IConstants;
 import net.aonsolutions.tests.request.Method;
 import net.aonsolutions.tests.request.Request;
@@ -37,7 +36,7 @@ public class DeliveryTest extends AbstractOccamTest {
     @Mock
     private OutputStream myOutputStream;
  
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         MockitoAnnotations.initMocks(this);
     }
@@ -45,7 +44,7 @@ public class DeliveryTest extends AbstractOccamTest {
     Map<String, String> headers = new HashMap<>();
 
 	@Test
-	@Ignore
+	@Disabled
 	public void test() {
 		headers.put(IConstants.DOMAIN_NAME, "udapa.aibanez.net");
 		headers.put(IConstants.DOMAIN_ID, "3049");

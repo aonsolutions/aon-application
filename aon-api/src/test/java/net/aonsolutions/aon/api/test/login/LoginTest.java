@@ -1,15 +1,12 @@
 package net.aonsolutions.aon.api.test.login;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.OutputStream;
 
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-
 import org.json.JSONObject;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
@@ -18,6 +15,8 @@ import com.esferalia.aon.occam.api.model.security.Auth;
 import com.esferalia.aon.occam.test.AbstractOccamTest;
 import com.github.javafaker.Faker;
 
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import net.aonsolutions.aon.api.servlet.Utils;
 import net.aonsolutions.tests.request.Method;
 import net.aonsolutions.tests.request.Request;
@@ -34,7 +33,7 @@ public class LoginTest extends AbstractOccamTest {
     @Mock
     private OutputStream myOutputStream;
  
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         MockitoAnnotations.initMocks(this);
     }
