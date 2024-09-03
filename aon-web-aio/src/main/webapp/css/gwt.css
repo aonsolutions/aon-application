@@ -48,9 +48,12 @@
   'opsz' 24
 }
 
+/*
+ Why this, I don't understand ?
 .aon_search_panel{
 	display:none;
 }
+*/
 
 /*
  * DataGrid  
