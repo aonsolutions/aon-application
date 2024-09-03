@@ -394,8 +394,6 @@ public class BudgetTemplate extends PdfFile {
 	@Override
 	public void drawHeader() {
 		super.drawHeader();
-		
-		System.out.println("Header bro :V");
 	}
 
 	public static void newPage(BudgetTemplate template) {

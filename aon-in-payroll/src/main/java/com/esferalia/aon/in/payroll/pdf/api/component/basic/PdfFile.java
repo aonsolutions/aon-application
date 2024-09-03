@@ -276,7 +276,6 @@ public class PdfFile {
 			{
 				newPage(PAGE_TYPE.VERTICAL);
 				y(startPointY);
-				System.out.println("St pt: " + startPointY);
 				text.stream(this.contents);
 				text.y(this.y());
 				

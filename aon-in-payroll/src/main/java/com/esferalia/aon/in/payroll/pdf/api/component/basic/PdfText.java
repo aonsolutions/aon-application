@@ -248,7 +248,6 @@ public class PdfText extends PdfComponent {
 			float  fh	= (font.getFontDescriptor().getCapHeight()) / 1000 * fontSize;
 			String line	= lines.get(currentLine);			
 			line = line.trim();
-			System.out.println(line);
 			
 			if(lines.size() > 1) line += " ...";
 		
