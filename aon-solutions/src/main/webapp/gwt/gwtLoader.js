@@ -62,10 +62,18 @@
 	}
 
 	export const iLoad = (gwtOption, rootPanel) => {
-		if(gwtOption.subEntryPoint) loadEntryPointsFunctions(gwtOption);
-		window.drawChartsCallback = () => {};
-		iStartModule(gwtOption.module, gwtOption.entryPoint, rootPanel);
+		iStartModule(gwtOption.module, gwtOption.entryPoint, gwtOption.subEntryPoint, rootPanel, document => {
+			gwtOption.javaScripts?.forEach( (script) =>  addScript(document, "text/javascript", script))				
+		});
 	}
+	
+	const addScript = (document, type,  src) => {
+		let script = document.createElement(TAG.SRIPT);
+		script.src = src;
+		script.type = type;
+		document.head.appendChild(script);
+	}
+	
 	
 	const loadEntryPointsFunctions = (gwtOption) => {
 		window.getSubEntryPoint = () => gwtOption.subEntryPoint;
@@ -107,7 +115,7 @@
 		}
 	}
 
-	export const iStartModule = (module, entrypoint, rootPanel) => {
+	export const iStartModule = (module, entrypoint, subEntryPoint, rootPanel, customize) => {
 		let panel = rootPanel || 'rootPanel';
 		if(rootPanel) {
 			localStorage.setItem('rootPanel', rootPanel);
@@ -126,12 +134,21 @@
 			iframe.src = 'about:blank';
 			iframe.onload = () => {
 				
-				// loadDomainFunctions
+
 				let iwindow = iframe.contentWindow;			
+				
+				iwindow.drawChartsCallback = () => {};
+				iwindow.getSubEntryPoint = () => subEntryPoint;
+
+				// loadDomainFunctions
 				iwindow.getCurrentDomainNameURL = () => LS.getDomainName();
 				iwindow.getCurrentDomainName = () => LS.getDomainName();
 				iwindow.getCurrentDomain = () => LS.getDomainId();
 				iwindow.getCurrentUser = () => LS.getDomainLogin();
+				
+
+				
+
 
 				// inject 'gwt' script 
 				let idocument = iframe.document || iframe.contentDocument || iframe.contentWindow.document;		
@@ -147,6 +164,11 @@
 					
 				}	
 				
+				customize?.(idocument);				
+
+				let rootPanel = idocument.createElement(TAG.DIV);
+				rootPanel.id = 'rootPanel';
+				idocument.body.appendChild(rootPanel);
 
 				let script = idocument.createElement(TAG.SRIPT);
 				script.type = "text/javascript";
