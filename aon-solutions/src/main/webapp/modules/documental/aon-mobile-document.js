@@ -1,6 +1,4 @@
 import {AonDocument} from './aon-document.js';
-import {getDomainUserRoles} from '../../services/service.js';
-import {DomainUserRoles} from '../../models/DomainUserRoles.js';
 import {ToolbarType} from '../../models/enums.js';
 
 import '../../components/aon-card.js';
@@ -31,8 +29,7 @@ export class AonMobileDocument extends AonDocument {
       </div>
     `;
 
-    getDomainUserRoles({}).then(r => {
-      this._roles = new DomainUserRoles(r);
+    this.buildDur().then(() => {
       this.buildOptions();
       this.buildData();
       this.buildDocumentToolbar();
@@ -73,7 +70,7 @@ export class AonMobileDocument extends AonDocument {
       remove.fn = () => this.remove();
 
       let actions = [send, download];
-      if(this._roles.isDocumentalManager() || this._roles.isDocumentalPortal()) {
+      if(this.getDur().isDocumentalManager() || this.getDur().isDocumentalPortal()) {
         actions.push(remove);
       }
       d.setMenuOptions(actions, top, left);
