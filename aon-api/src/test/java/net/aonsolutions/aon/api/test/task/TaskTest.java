@@ -13,12 +13,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
@@ -30,6 +27,8 @@ import com.esferalia.aon.occam.api.model.task.TaskStatus;
 import com.esferalia.aon.occam.test.AbstractOccamTest;
 import com.github.javafaker.Faker;
 
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import net.aonsolutions.aon.api.ewok.IConstants;
 import net.aonsolutions.aon.api.excel.TaskExcel;
 
@@ -45,7 +44,7 @@ public class TaskTest extends AbstractOccamTest {
     @Mock
     private OutputStream myOutputStream;
  
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         MockitoAnnotations.initMocks(this);
     }
@@ -53,7 +52,7 @@ public class TaskTest extends AbstractOccamTest {
     Map<String, String> headers = new HashMap<>();
     
     @Test
-    @Ignore
+    @Disabled
 	public void test() {
 		headers.put(IConstants.DOMAIN_NAME, DOMAIN_NAME);
 		headers.put(IConstants.DOMAIN_ID, DOMAIN_ID.toString());
