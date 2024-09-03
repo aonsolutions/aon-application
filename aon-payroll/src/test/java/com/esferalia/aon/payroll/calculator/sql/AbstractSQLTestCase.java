@@ -521,15 +521,15 @@ public abstract class AbstractSQLTestCase {
 		while (rs.next()) {
 			if (rs.getString(1).startsWith(dbName)) {
 				connection.createStatement().execute("use " + rs.getString(1));
-				new VersionManager().uptodateDatabase(connection);
-				System.out.println("use " + rs.getString(1));
+				//new VersionManager().uptodateDatabase(connection);
+				//System.out.println("use " + rs.getString(1));
 				return connection;
 			}
 		}
 
 		VersionManager versionManager = new VersionManager();
 		versionManager.createDatabase(connection, dbName);
-		versionManager.uptodateDatabase(connection);
+		//versionManager.uptodateDatabase(connection);
 
 		return connection;
 	}
