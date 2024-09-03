@@ -42,6 +42,7 @@ import com.esferalia.aon.gwt.payroll.shared.Extra;
 import com.esferalia.aon.gwt.payroll.shared.IT;
 import com.esferalia.aon.gwt.payroll.shared.ITEmployee;
 import com.esferalia.aon.gwt.payroll.shared.ITPart;
+import com.esferalia.aon.gwt.payroll.shared.Mail;
 import com.esferalia.aon.gwt.payroll.shared.MainCCCInfo;
 import com.esferalia.aon.gwt.payroll.shared.Payment;
 import com.esferalia.aon.gwt.payroll.shared.Peculiarities;
@@ -323,12 +324,12 @@ public class DomainEnterprisesServiceAsync {
 		enterprisesServiceAsync.getPayrollEmailSendTo(getCurrentDomainName(), asyncCallback);
 	}
 	
-	public void getPayrollEmailBody(Type type, HashMap<String, String> params, AsyncCallback<String> asyncCallback) {
-		enterprisesServiceAsync.getPayrollEmailBody(getCurrentDomainName(), type, params, asyncCallback);
+	public void getPayrollEmailBody(Type type, HashMap<String, String> params, boolean isPassword, AsyncCallback<String> asyncCallback) {
+		enterprisesServiceAsync.getPayrollEmailBody(getCurrentDomainName(), type, params, isPassword, asyncCallback);
 	}
 	
-	public void sendPayrollEmail(Type type, HashMap<String, String> params, String from, String to, String cc, String cco, String bodyHTML, AsyncCallback<String> asyncCallback) throws IllegalArgumentException {
-		enterprisesServiceAsync.sendPayrollEmail(getCurrentDomainName(), type, params, from, to, cc, cco, bodyHTML, asyncCallback);
+	public void sendPayrollEmail(Type type, HashMap<String, String> params, Mail mail, AsyncCallback<String> asyncCallback) throws IllegalArgumentException {
+		enterprisesServiceAsync.sendPayrollEmail(getCurrentDomainName(), type, params, mail, asyncCallback);
 	}
 	
 	public void checkEmployeesEmails(ArrayList<Integer> salaryIds, AsyncCallback<String> asyncCallback) {
