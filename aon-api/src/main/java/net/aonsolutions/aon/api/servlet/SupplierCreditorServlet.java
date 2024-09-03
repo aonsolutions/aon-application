@@ -124,6 +124,13 @@ public class SupplierCreditorServlet extends AonApiHttpServlet {
 		Filter filter = f.getDomainProperty().eq(api.getDomain().getId());
 		String jsonValue = json.optString(IJsonNames.VALUE);
 		String global = json.optString(IJsonNames.GLOBAL);
+		Boolean withDocument = api.getData().has("with_document") ? api.getData().optBoolean("with_document") : null;
+		if(withDocument != null) {
+			if(withDocument)
+				filter = filter.and(f.getDocumentProperty().ne(""));
+			else
+				filter = filter.and(f.getDocumentProperty().eq(""));
+		}
 		jsonValue = global.isEmpty() ? jsonValue : global;
 		if(!jsonValue.isEmpty()) {
 			Filter valueFilter = f.getNameProperty().like("%" + jsonValue + "%")
