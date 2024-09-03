@@ -253,6 +253,8 @@ export class AonNewLogin extends AonElement {
         return MSG.ENGLISH;
       } else if(LS.getLanguage() && Language.GALICIAN === LS.getLanguage()){
         return MSG.GALICIAN;
+      } else if(LS.getLanguage() && Language.FRENCH === LS.getLanguage()){
+        return MSG.FRENCH;
       } else return MSG.SPANISH;
   }
 
