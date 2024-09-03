@@ -641,9 +641,6 @@ public class InvoiceImport extends ImportUtils{
 			ai.setRegistry(ar);
 			ai.setInvoice(invoice);
 
-			String reference = ivs.get(i).getRef();
-			String serie = ivs.get(i).getSerie();
-			Integer number = ivs.get(i).getNumber();
 			Double total = 0.0;
 			Double base = 0.0;
 			Double retBase = 0.0;
@@ -1481,7 +1478,7 @@ public class InvoiceImport extends ImportUtils{
 
 	public static boolean isSales(InvoiceImportClass ant, InvoiceImportClass act) {
 		if(ant.getInvoiceType() == null) ant.setInvoiceType(getInvoiceType(ant.getAccount()));
-		if(act.getInvoiceType() == null) act.setInvoiceType(getInvoiceType(ant.getAccount()));
+		if(act.getInvoiceType() == null) act.setInvoiceType(getInvoiceType(act.getAccount()));
 		return (ant.getInvoiceType() != null && InvoiceType.SALES.equals(ant.getInvoiceType()))
 			|| (act.getInvoiceType() != null && InvoiceType.SALES.equals(act.getInvoiceType()));
 	}

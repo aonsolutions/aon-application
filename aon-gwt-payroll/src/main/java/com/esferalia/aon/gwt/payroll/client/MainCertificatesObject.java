@@ -192,9 +192,26 @@ public class MainCertificatesObject {
 		
 	}
 	
-public void getSecondaryUsersPDF(Integer rattachId, Consumer<String> success, Consumer<Throwable> failure){
+	public void getSecondaryUsersPDF(Integer rattachId, Consumer<String> success, Consumer<Throwable> failure){
 		
 		impl.getSecondaryUsersPDF(rattachId, new AsyncCallback<String>() {
+			
+			@Override
+			public void onSuccess(String result) {
+				success.accept(result);	
+			}
+
+			@Override
+			public void onFailure(Throwable caught) {
+				failure.accept(caught);
+			}
+		});
+		
+	}
+	
+	public void getAssignedCCCsPDF(Integer rattachId, Consumer<String> success, Consumer<Throwable> failure){
+		
+		impl.getAssignedCCCsPDF(rattachId, new AsyncCallback<String>() {
 			
 			@Override
 			public void onSuccess(String result) {

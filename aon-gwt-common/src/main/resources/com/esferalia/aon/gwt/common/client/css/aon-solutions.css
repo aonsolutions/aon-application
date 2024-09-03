@@ -1078,6 +1078,15 @@
 	height: 2.5rem;
   	justify-content: space-between;
   	margin-bottom: .5rem;
+  	border-bottom: 1px solid #b9b8b8;
+}
+
+.aon_custom_text_box_no_border{
+	gap: 0;
+	width: 100%;
+	height: 2.5rem;
+  	justify-content: space-between;
+  	margin-bottom: .5rem;
 }
 
 .aon_utility_option:hover, .aon_custom_text_box:hover{
@@ -1100,7 +1109,7 @@
 	width: -webkit-fill-available;
 	height: 1.5rem;
 	padding: .2rem;
-	border-bottom: 1px solid #b9b8b8;	
+	/*border-bottom: 1px solid #b9b8b8;*/	
 }
 
 .aon_custom_search_box{
@@ -1127,10 +1136,15 @@
   	box-shadow: none !important;
 }
 
+
 .aon_custom_text_box_input:focus{
-	border: none!important;
-	border-bottom: 1px solid #b9b8b8 !important;
+	border: none !important;
   	box-shadow: none !important;
+	/*border-bottom: 1px solid #b9b8b8 !important;*/
+}
+
+.aon_custom_text_box:focus{
+	border-bottom: 1px solid #b9b8b8 !important;
 }
 
 .aon_custom_text_box:hover > .aon_custom_text_box_title{

@@ -34,6 +34,7 @@ import com.esferalia.aon.payroll.calculator.sql.SQLContractExtraCalculatorContex
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.payroll.enumeration.LeaveType;
 import com.esferalia.aon.salary.expression.CheckException;
+import com.esferalia.aon.salary.expression.DisableException;
 import com.esferalia.aon.salary.expression.ExpressionContext;
 import com.esferalia.aon.salary.expression.ExpressionContext.ExpressionExceptionWrapper;
 import com.esferalia.aon.salary.expression.ExpressionContext.MacroException;
@@ -109,6 +110,10 @@ public class ContextFunctions {
 
 	public static void remove() throws RemoveException {
 		throw new RemoveException();
+	}
+	
+	public static void disable() throws DisableException {
+		throw new DisableException();
 	}
 
 	public static Double excess(Double amount, ExpressionContext context) {
@@ -950,6 +955,25 @@ public class ContextFunctions {
 		}
 
 	}
+	
+	private static void loadDisableFunction(ExpressionContext context, Date startDate, Date endDate)
+			throws ExpressionException {
+		try {
+			Method disable = ContextFunctions.class.getMethod("disable");
+
+			MethodStub disableStub = new MethodStub(disable);
+
+			context.setVariable(ContextVariable.DISABLE, disableStub, startDate, endDate);
+
+		} catch (SecurityException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (NoSuchMethodException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+	}
 
 	private static void loadMonthsFunction(ExpressionContext context, Date startDate, Date endDate)
 			throws ExpressionException {
@@ -1205,6 +1229,7 @@ public class ContextFunctions {
 		loadIsReadFunction(context, startDate, endDate);
 		loadHideFunction(context, startDate, endDate);
 		loadRemoveFunction(context, startDate, endDate);
+		loadDisableFunction(context, startDate, endDate);
 		loadExcessFunction(context, startDate, endDate);
 		loadSeniorityFunction(context, startDate, endDate);
 		loadSectionFunction(context, startDate, endDate);

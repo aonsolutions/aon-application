@@ -295,7 +295,7 @@ export class AonNewMenu extends AonElement {
 		this.getRootPanel().style.marginTop = '1px'; //'69px';
 		this.buildMenuTopnav();
 
-		if(LS.isTopMenu() && false ){
+		if(LS.isTopMenu()){
 			this.showTopNav();
 		}
 

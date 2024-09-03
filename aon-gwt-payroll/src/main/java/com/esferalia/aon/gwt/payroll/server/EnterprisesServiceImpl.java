@@ -3207,6 +3207,38 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 	}
 	
 	@Override
+	public String getAssignedCCCsPDF(String domainName, String userLogin, Integer rattachId) throws IllegalArgumentException {
+		try(Connection connection = AonServletUtils.getConnection(domainName)){
+			Certificate certificate = null;
+			Integer domainId = AonServletUtils.getDomainID(domainName);
+			
+			if(rattachId == null) {
+				Integer parentDomainId = AonServletUtils.getParentDomainID(domainName); 
+				Integer userId = AonServletUtils.getUserID(connection, userLogin, domainId, parentDomainId);	
+				
+				certificate = AON.getCertificate(domainName, domainId, userLogin, userId, "TGSS");
+			} else
+				certificate = parseCertificate(AON.getCertificate(domainName, domainId, userLogin, f -> f.getIdProperty().eq(rattachId)));
+			
+			byte[] data = SistemaRED.getAssignedCCCsPDF(new ByteArrayInputStream(certificate.getData()), certificate.getPassword(), certificate.getType());
+			String base64Pdf = Base64.getEncoder().encodeToString(data);
+					
+			Writer stringWriter = new StringWriter();
+			encodeURIComponent("application/pdf", base64Pdf, stringWriter);
+
+			stringWriter.flush();
+			String dataUri = stringWriter.toString();
+			stringWriter.close();
+
+			return dataUri;
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw new IllegalArgumentException(e.getMessage());
+		}
+	}
+	
+	@Override
 	public void deleteSecondaryUser(String domainName, String userLogin, String ipfType, String ipf) {
 		try(Connection connection = AonServletUtils.getConnection(domainName)) {
 			Integer domainId = AonServletUtils.getDomainID(domainName);

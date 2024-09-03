@@ -752,6 +752,12 @@ public class EnterprisesServiceAsyncDecorator implements
 		AON.start();
 		enterprisesServiceAsync.getSecondaryUsersPDF(currentDomainName, currentUser, rattachId, new AsyncCallbackWrapper<String>(callback));
 	}
+	
+	@Override
+	public void getAssignedCCCsPDF(String currentDomainName, String currentUser, Integer rattachId, AsyncCallback<String> callback) throws IllegalArgumentException {
+		AON.start();
+		enterprisesServiceAsync.getAssignedCCCsPDF(currentDomainName, currentUser, rattachId, new AsyncCallbackWrapper<String>(callback));
+	}
 
 	@Override
 	public void deleteSecondaryUser(String currentDomainName, String currentUser, Integer rattachId, String ipfType, String ipf, AsyncCallback<Void> callback) {

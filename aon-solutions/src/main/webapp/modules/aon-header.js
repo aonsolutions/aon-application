@@ -539,17 +539,17 @@ export class AonHeader extends AonElement {
 
 	buildLogo() {
 
-		aonLogo.addEventListener('click', () => {
-			if(LS.getDomainId()){
-				this.rootPanelHtml(this.isMobile()
-					? '<aon-mobile-desktop id="aonDesktop"></aon-mobile-desktop>'
-					: '<aon-desktop id="aonDesktop"></aon-desktop>');
-				let aonDesktop = this.getElement('aonDesktop');
-				aonDesktop.setAttribute('company', this.getAttribute('company'));
-			} else {
-				this.rootPanel(new AonParent());
-			}
-		})
+		// aonLogo.addEventListener('click', () => {
+		// 	if(LS.getDomainId()){
+		// 		this.rootPanelHtml(this.isMobile()
+		// 			? '<aon-mobile-desktop id="aonDesktop"></aon-mobile-desktop>'
+		// 			: '<aon-desktop id="aonDesktop"></aon-desktop>');
+		// 		let aonDesktop = this.getElement('aonDesktop');
+		// 		aonDesktop.setAttribute('company', this.getAttribute('company'));
+		// 	} else {
+		// 		this.rootPanel(new AonParent());
+		// 	}
+		// })
 	}
 
 	aonConfiguration() {

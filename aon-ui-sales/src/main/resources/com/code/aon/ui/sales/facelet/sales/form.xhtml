@@ -315,7 +315,7 @@
 							value="&#160;" title="#{bundle.aon_edit}"
 							styleClass="aon-icon-edit-add-simple aon-vertical-align-top" 
 							style="margin-left: 5px; padding-right: 12px;"
-							rendered="#{sales.served}"
+							rendered="#{!sales.pending}"
 							reRender="showPurchaseReferenceWindow" ajaxSingle="true" >
 							<f:setPropertyActionListener target="#{sales.showPurchaseReferenceWindow}"
 								value="#{true}" />

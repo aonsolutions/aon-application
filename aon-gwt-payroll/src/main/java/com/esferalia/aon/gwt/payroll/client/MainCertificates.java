@@ -14,30 +14,27 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog.AonAcceptD
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonMessagePanel;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonTableButton;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
+import com.esferalia.aon.gwt.payroll.client.AonCertificateDialog.AonCerticateDialogCallback;
 import com.esferalia.aon.occam.api.model.Certificate;
-import com.esferalia.aon.occam.api.model.Certificate.CertificateOwner;
 import com.esferalia.aon.occam.api.model.Certificate.CertificateSecurity;
 import com.esferalia.aon.occam.api.model.security.CertificateType;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.TextAlign;
 import com.google.gwt.dom.client.Style.Unit;
+import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.Window;
-import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.DeckPanel;
-import com.google.gwt.user.client.ui.FormPanel;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HTMLPanel;
-import com.google.gwt.user.client.ui.Hidden;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.TabLayoutPanel;
-import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 
 import net.aonsolutions.gwt.pdfjs.client.FullViewer;
@@ -81,7 +78,7 @@ public class MainCertificates extends MainEntryPoint{
 	
 	private static enum COLS {
 		  DES("Titular"						,"-moz-available")
-		, BUD("Representaci\u00f3n"			,"60rem")
+		, BUD("Representaci\u00f3n"			,"-moz-available")
 		, DOC("F. Expiraci\u00f3n"			,"30rem")
 		, TYP(AON.MSG.alias()				,"45rem")
 		, ACT(AonStringUtils.EMPTY			,"10rem")
@@ -160,7 +157,16 @@ public class MainCertificates extends MainEntryPoint{
 	
 	private void addButtonsToolbar() {
 		AonToolbarButton newButton = new AonToolbarButton( "Nuevo certificado", AON.CSS.aonIconAdd());
-		newButton.addClickHandler(e -> createNewCertificate());
+		newButton.addClickHandler(e -> {
+			new AonCertificateDialog(new AonCerticateDialogCallback() {
+
+				@Override
+				public void onAccept() {
+					loadDigitalCertificates();
+				}
+			
+			});
+		});
 		
 		this.dockLayoutPanel.addToolbarButton(newButton);
 		this.dockLayoutPanel.hideSearchWidget();
@@ -174,16 +180,6 @@ public class MainCertificates extends MainEntryPoint{
 		this.pdfDockLayoutPanel.addToolbarButton(backButton);
 		this.pdfDockLayoutPanel.hideSearchWidget();
 		this.pdfDockLayoutPanel.hideFilterWidget();
-	}
-	
-	private void createNewCertificate() {
-		new CertificateDialog() {
-			
-			@Override
-			public void onAccept() {
-				loadDigitalCertificates();
-			}
-		};
 	}
 
 	// ------------------------------------------------------ Constructor.Methods
@@ -336,145 +332,57 @@ public class MainCertificates extends MainEntryPoint{
 		HTMLPanel row = table.createRow();
 		createFormCells(table, row, certificate, false);
 	}
-	
+
 	private void createFormCells(AonCustomTable table, HTMLPanel row, Certificate certificate, boolean isEnterprise) {
-		// Save Button
-		AonTableButton saveButton = new AonTableButton("Guardar", AON.CSS.aonIconSave());
-		saveButton.addStyleName(AON.CSS.aonCustomRowButtom());
-		
-		// Create Form Panel
-		FormPanel formPanel = new FormPanel();
-		formPanel.setAction(GWT.getModuleBaseURL() + "certificate/create/");
-		formPanel.setEncoding(FormPanel.ENCODING_MULTIPART);
-		formPanel.setMethod(FormPanel.METHOD_POST);
-		formPanel.addSubmitCompleteHandler(e -> {
-			saveButton.setEnabled(true);
-			showSuccess("Certitficado", "Los certificados han sido actualizados correctamente");
-			loadDigitalCertificates();
-		});
-		
-		Hidden rattachIdHidden = new Hidden("rattachId", certificate.getId().toString());
-		Hidden raddinfoIdHidden = new Hidden("raddinfoId", "");
-		Hidden extensionHidden = new Hidden("extension", "");
-		Hidden fileNameHidden = new Hidden("filename", certificate.getDescription());
-		Hidden passwordHidden = new Hidden("password", certificate.getPassword());
-		Hidden userLoginHidden = new Hidden("currentUser", Wnd.getCurrentUser());
-		Hidden currentDomainHidden = new Hidden("currentDomain", Wnd.getCurrentDomainNameURL());
-		Hidden tokenHidden = new Hidden("token", Wnd.getToken());
-		Hidden securityHidden = new Hidden("security", certificate.getConfidential() != null && certificate.getConfidential().equals(CertificateSecurity.PRIVATE) ? "private" : "public");
-		Hidden tgssHidden = new Hidden("tgss", hasTGSSCertificate(certificate) ? "tgss" : "");
-		Hidden sepeHidden = new Hidden("sepe", hasSEPECertificate(certificate) ? "sepe" : "");
-		Hidden aeatHidden = new Hidden("aeat", hasAEATCertificate(certificate) ? "aeat" : "");
-		Hidden ownerHidden = new Hidden("owner", certificate.getOwner().name());
 		String certificateFor = "-";
 		if(!certificate.getCertificateInfo().isEmpty()) {
 			certificateFor = (AonStringUtils.isBlank(certificate.getCertificateInfo().getDocument()) ? "" : "(" + certificate.getCertificateInfo().getDocument() + ") ") + certificate.getCertificateInfo().getName() + " " + certificate.getCertificateInfo().getSurname();
 		}
-
-		Label certificateForL = new Label(parseStringLenght(certificateFor));
-		textEllipsis(certificateForL);
-		certificateForL.setTitle(certificateFor);
+		
+		Label certificateForL = new Label(certificateFor);
 
 		String representation = "-";
 		if(!certificate.getCertificateInfo().isEmpty())
 			representation = AonStringUtils.isBlank(certificate.getCertificateInfo().getEnterprise()) ? "PERSONA F\u00cdSICA" : 
 				(AonStringUtils.isBlank(certificate.getCertificateInfo().getCif()) ? "" : "(" + certificate.getCertificateInfo().getCif() + ") ") + certificate.getCertificateInfo().getEnterprise();
-		Label representationL = new Label(parseStringLenght(representation));
-		textEllipsis(representationL);
-		representationL.setTitle(representation);
+		
+		Label representationL = new Label(representation);
 		
 		String expirationDate = null == certificate.getCertificateInfo().getToDate() ? "" : formatFullDate.format(certificate.getCertificateInfo().getToDate());
 		Label expirationDateL = new Label(expirationDate);
 		
-		TextBox alias = new TextBox();
-		alias.setStyleName("aon-inputText");
-		alias.setValue(certificate.getDescription());
-		alias.addValueChangeHandler(e -> fileNameHidden.setValue(e.getValue()));
+		Label alias = new Label(certificate.getDescription());
 		
 		String securityTitle = certificate.getConfidential() != null && certificate.getConfidential().equals(CertificateSecurity.PRIVATE) ? "Privado: S\u00f3lo visible para usuarios de la empresa" : "P\u00fablico: Visible para todos los usuarios";
 		String securityIcon = certificate.getConfidential() != null && certificate.getConfidential().equals(CertificateSecurity.PRIVATE) ? AON.CSS.aonIconLock() : AON.CSS.aonIconUnLock();
 		AonTableButton security = new AonTableButton(securityTitle, securityIcon);
-		security.addClickHandler(e -> {
-			Boolean oldValue = isActiveToggleButton(security);
-			Boolean value = !oldValue;
-			getEnableDisableButton(security, value);
-			certificate.setConfidential(Boolean.TRUE.equals(value) ? CertificateSecurity.PRIVATE : CertificateSecurity.PUBLIC);
-			securityHidden.setValue(Boolean.TRUE.equals(value) ? "private" : "public");
-		});
-		
-		CertificateOwner owner = tabLayoutPanel.getSelectedIndex() == 0 ? CertificateOwner.USER : CertificateOwner.ENTERPRISE;
+		security.setEnabled(false);
 		
 		CheckBox tgssCB = new CheckBox();
 		tgssCB.addStyleName(style.checkBox());
 		tgssCB.setValue(hasTGSSCertificate(certificate));
-		tgssCB.addValueChangeHandler(e -> {
-			if(Boolean.TRUE.equals(e.getValue())) {
-				if(this.mainDigitalCertificatesObject.hasOtherHasType(CertificateType.TGSS, owner)) {
-					showWarning("Tipo certificado", "El tipo de certificado " + CertificateType.TGSS.name() + " ya existe");
-					tgssCB.setValue(false);
-				} else {
-					certificate.addTag(CertificateType.TGSS);
-					tgssHidden.setValue("tgss");
-				}
-			} else {
-				certificate.removeTag(CertificateType.TGSS);
-				tgssHidden.setValue("");
-			}
-		});
+		tgssCB.setEnabled(false);
 		
 		CheckBox sepeCB = new CheckBox();
 		sepeCB.addStyleName(style.checkBox());
 		sepeCB.setValue(hasSEPECertificate(certificate));
-		sepeCB.addValueChangeHandler(e -> {
-			if(Boolean.TRUE.equals(e.getValue())) {
-				if(this.mainDigitalCertificatesObject.hasOtherHasType(CertificateType.SEPE, owner)) {
-					showWarning("Tipo certificado", "El tipo de certificado " + CertificateType.SEPE.name() + " ya existe");
-					sepeCB.setValue(false);
-				} else{
-					certificate.addTag(CertificateType.SEPE);
-					sepeHidden.setValue("sepe");
-				}
-			} else {
-				certificate.removeTag(CertificateType.SEPE);
-				sepeHidden.setValue("");
-			}
-		});
+		sepeCB.setEnabled(false);
 		
 		CheckBox aeatCB = new CheckBox();
 		aeatCB.addStyleName(style.checkBox());
 		aeatCB.setValue(hasAEATCertificate(certificate));
-		aeatCB.addValueChangeHandler(e -> {
-			if(Boolean.TRUE.equals(e.getValue())) {
-				if(this.mainDigitalCertificatesObject.hasOtherHasType(CertificateType.AEAT, owner)) {
-					showWarning("Tipo certificado", "El tipo de certificado " + CertificateType.AEAT.name() + " ya existe");
-					aeatCB.setValue(false);
-				} else {
-					certificate.addTag(CertificateType.AEAT);
-					aeatHidden.setValue("aeat");
-				}
-			} else {
-				certificate.removeTag(CertificateType.AEAT);
-				aeatHidden.setValue("");
-			}
-		});
+		aeatCB.setEnabled(false);
 		
 		// Buttons Panel
 		HTMLPanel buttonsPanel = new HTMLPanel("");
 		buttonsPanel.addStyleName(style.flex());
 		buttonsPanel.getElement().getStyle().setProperty("justify-content", "right");
 		
-		saveButton.addClickHandler(e -> {
-			if(hasTGSSCertificate(certificate) || hasSEPECertificate(certificate) || hasAEATCertificate(certificate)) {
-				saveButton.setEnabled(false);
-				AonMessagePanel.showLoading(messagePanel, "Guardando certificado digital...");
-				formPanel.submit();
-			} else 
-				showError("Certitficado", "Debe seleccionar un tipo de certificado para poder guardarlo");
-		});
-		
 		AonTableButton verifyButton = new AonTableButton("Verificar Certificado", AON.CSS.aonIconVerify());
 		verifyButton.addStyleName(AON.CSS.aonCustomRowButtom());
 		verifyButton.addClickHandler(e ->  {
+			e.stopPropagation();
+			
 			showLoading("Validando certificado SEPE...");
 			
 			ArrayList<CertificateType> tags = new ArrayList<CertificateType>();
@@ -491,59 +399,61 @@ public class MainCertificates extends MainEntryPoint{
 		
 		AonTableButton secondaryUsersButton = new AonTableButton("Usuarios Secundarios", AON.CSS.aonIconList());
 		secondaryUsersButton.addStyleName(AON.CSS.aonCustomRowButtom());
-		secondaryUsersButton.addClickHandler(e -> onSecondaryUser(certificate.getId()));
+		secondaryUsersButton.addClickHandler(e -> {
+			e.stopPropagation();
+			onSecondaryUser(certificate.getId());
+		});
 		
 		secondaryUsersButton.setVisible(false);
 		
+		AonTableButton assignedCCCButton = new AonTableButton("CCCs Asignados", AON.CSS.aonIconTgss());
+		assignedCCCButton.addStyleName(AON.CSS.aonCustomRowButtom());
+		assignedCCCButton.addClickHandler(e -> {
+			e.stopPropagation();
+			onAssignedCCC(certificate.getId());
+		});
+		
+		assignedCCCButton.setVisible(false);
+		
 		AonTableButton deleteButton = new AonTableButton("Borrar", AON.CSS.aonIconDelete());
 		deleteButton.addStyleName(AON.CSS.aonCustomRowButtom());
-		deleteButton.addClickHandler(e -> deleteCertificate(certificate));
+		deleteButton.addClickHandler(e ->{
+			e.stopPropagation();
+			deleteCertificate(certificate);
+		});
 		
 		AonTableButton downloadButton = new AonTableButton("Descargar", AON.CSS.aonIconDownload());
 		downloadButton.addStyleName(AON.CSS.aonCustomRowButtom());
-		downloadButton.addClickHandler(e -> downloadCertificate(certificate));
+		downloadButton.addClickHandler(e -> { 
+			e.stopPropagation();
+			downloadCertificate(certificate);
+		});
 		
 		AonTableButton checkCertificateButton = new AonTableButton("Informaci\u00F3n", AON.CSS.aonIconInfo());
 		checkCertificateButton.addStyleName(AON.CSS.aonCustomRowButtom());
-		checkCertificateButton.addClickHandler(e -> getCertificateInfo(certificate));
+		checkCertificateButton.addClickHandler(e -> {
+			e.stopPropagation();
+			getCertificateInfo(certificate);
+		});
 		
 		// Buttons visibility
 		if(Boolean.FALSE.equals(certificate.hasCertificate())) {
 			verifyButton.setVisible(false);
 			secondaryUsersButton.setVisible(false);
+			assignedCCCButton.setVisible(false);
 			checkCertificateButton.setVisible(false);
 		} else {
-			if(hasTGSSCertificate(certificate))
+			if(hasTGSSCertificate(certificate)){
 				secondaryUsersButton.setVisible(true);
+				assignedCCCButton.setVisible(true);
+			}
 			if(hasSEPECertificate(certificate))
 				verifyButton.setVisible(true);
 			checkCertificateButton.setVisible(true);
 		}
 		
-		//Add all to FlowPanel to add to FormPanel
-		HTMLPanel flowPanel = new HTMLPanel("");
-		flowPanel.addStyleName(style.flex());
-		flowPanel.getElement().getStyle().setProperty("justify-content", "right");
-				
-		flowPanel.add(rattachIdHidden);
-		flowPanel.add(raddinfoIdHidden);
-		flowPanel.add(extensionHidden);
-		flowPanel.add(fileNameHidden);
-		flowPanel.add(passwordHidden);
-		flowPanel.add(userLoginHidden);
-		flowPanel.add(currentDomainHidden);
-		flowPanel.add(tokenHidden);
-		flowPanel.add(securityHidden);
-		flowPanel.add(tgssHidden);
-		flowPanel.add(sepeHidden);
-		flowPanel.add(aeatHidden);
-		flowPanel.add(ownerHidden);
-		
-		formPanel.add(flowPanel);
-		
-		buttonsPanel.add(formPanel);
-		buttonsPanel.add(saveButton);
 		buttonsPanel.add(verifyButton);
+		buttonsPanel.add(assignedCCCButton);
 		buttonsPanel.add(secondaryUsersButton);
 		buttonsPanel.add(checkCertificateButton);
 		buttonsPanel.add(deleteButton);
@@ -561,35 +471,34 @@ public class MainCertificates extends MainEntryPoint{
 		
 		// Para poder visualizar certificados publicos del padre pero con edicion restringida
 		if(Boolean.TRUE.equals(isEnterprise) && (certificate.getDomain() != null && !certificate.getDomain().equals(domainId))) {
-			alias.setEnabled(false);
 			alias.setTitle("Certificado p\u00fablico del dominio padre");
-			security.setEnabled(false);
-			tgssCB.setEnabled(false);
 			tgssCB.setTitle("Certificado p\u00fablico del dominio padre");
-			sepeCB.setEnabled(false);
 			sepeCB.setTitle("Certificado p\u00fablico del dominio padre");
-			aeatCB.setEnabled(false);
 			aeatCB.setTitle("Certificado p\u00fablico del dominio padre");
 			
-			saveButton.setVisible(false);
 			verifyButton.setVisible(false);
 			secondaryUsersButton.setVisible(false);
+			assignedCCCButton.setVisible(false);
 			deleteButton.setVisible(false);
+		} else {
+			row.addDomHandler(e -> onCertificaUpdate(certificate), ClickEvent.getType());
 		}
+	}
+	
+	private void onCertificaUpdate(Certificate certificate) {
+		new AonCertificateDialog(certificate, new AonCerticateDialogCallback() {
+
+			@Override
+			public void onAccept() {
+				showSuccess("Certitficado", "Los certificados han sido actualizados correctamente");
+				loadDigitalCertificates();
+			}
+		
+		});
 	}
 	
 	// ------------------------------------------------------ Insert Rows
 	
-	private void textEllipsis(Widget widget) {
-		widget.getElement().getStyle().setProperty("text-overflow", "ellipsis");
-		widget.getElement().getStyle().setProperty("overflow", "hidden");
-		widget.getElement().getStyle().setProperty("white-space", "nowrap");
-	}
-	
-	private String parseStringLenght(String input) {
-		return (AonStringUtils.isBlank(input) || input.length() < 35) ? input : AonStringUtils.substring(input, 0, 32) + "...";
-	}
-
 	private void getCertificateInfo(Certificate certificate) {
 		mainDigitalCertificatesObject.getCertificateInfo(
 				certificate.getId(), 
@@ -617,6 +526,8 @@ public class MainCertificates extends MainEntryPoint{
 				mainDigitalCertificatesObject.getSecondaryUsersPDF(
 					rattachId, 
 					dataURI -> {
+						AonMessagePanel.hideMessage(messagePanel);
+						this.pdfDockLayoutPanel.setToolbarTitle("Usuarios Secundarios");
 						deckPanel.showWidget(1);
 						fullViewer.open(dataURI);
 					}, 
@@ -631,6 +542,37 @@ public class MainCertificates extends MainEntryPoint{
 		);	
 	}
 
+	private void onAssignedCCC(Integer rattachId) {
+		ArrayList<CertificateType> tags = new ArrayList<CertificateType>();
+		tags.add(CertificateType.TGSS);
+		
+		showLoading("Verificando certificado sistema RED...");
+		
+		mainDigitalCertificatesObject.verifyCertificate(
+			rattachId, 
+			tags,
+			success -> {
+				showLoading("Accediendo al sistema RED para consultar las cuentas de cotizaci\u00f3n asignadas...");
+				
+				mainDigitalCertificatesObject.getAssignedCCCsPDF(
+					rattachId, 
+					dataURI -> {
+						AonMessagePanel.hideMessage(messagePanel);
+						this.pdfDockLayoutPanel.setToolbarTitle("Cuentas de Cotizaci\u00f3n asignadas");
+						deckPanel.showWidget(1);
+						fullViewer.open(dataURI);
+					}, 
+					f -> {
+						showWarning("Error usuarios secundarios", f.getMessage());
+					}
+				);
+			
+			}, failure -> {
+				showWarning("Error verificaci\u00F3n", failure.getMessage());
+			}
+		);	
+	}
+	
 	private boolean hasTGSSCertificate(Certificate certificate) {
 		if(null == certificate.getTags())
 			return false;
@@ -715,26 +657,8 @@ public class MainCertificates extends MainEntryPoint{
 		AonMessagePanel.showWarning(messagePanel, warningMap);
 	}
 	
-	private void showError(String title, String message) {
-		Map<String, String> errorMap = new HashMap<>();
-		errorMap.put(title, message);
-		AonMessagePanel.showError(messagePanel, errorMap);
-	}
-	
 	private void showLoading(String message) {
 		AonMessagePanel.showLoading(messagePanel, message);
-	}
-	
-	// ------------------------------------------------- SecurityButton
-	
-	private void getEnableDisableButton(Button button, boolean disabled) {
-		button.removeStyleName(disabled ? AON.CSS.aonIconUnLock() : AON.CSS.aonIconLock());
-		button.addStyleName(!disabled ? AON.CSS.aonIconUnLock() : AON.CSS.aonIconLock() );
-		button.setTitle(!disabled ? "P\u00fablico: Visible para todos los usuarios" : "Privado: S\u00f3lo visible para usuarios de la empresa");
-	}
-	
-	private boolean isActiveToggleButton(Button button) {
-		return AonStringUtils.containsIgnoreCase(button.getStyleName(), AON.CSS.aonIconLock());
 	}
 	
 }

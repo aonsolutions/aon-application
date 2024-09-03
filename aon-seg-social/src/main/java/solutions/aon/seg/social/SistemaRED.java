@@ -968,4 +968,8 @@ public class SistemaRED {
 
 	}
 
+	public static byte[] getAssignedCCCsPDF(ByteArrayInputStream certificateInputStream, String certificatePassword, String certificateType) throws SegSocialException, IOException {
+		return SistemaREDCCC.getAssignedCCCsPDF(certificateInputStream, certificatePassword, certificateType);
+	}
+
 }
