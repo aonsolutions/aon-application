@@ -2,7 +2,11 @@ package com.esferalia.aon.in.payroll.pdf.maker;
 
 import static com.esferalia.aon.in.payroll.pdf.maker.Logger.Separator.STANDARD;
 
+import java.io.OutputStream;
+import java.io.PrintStream;
+
 public class Logger {
+	private static final java.util.logging.Logger LOGGER =  java.util.logging.Logger.getLogger(Logger.class.getName());
 	
 	final static int MAX_CHARACTERS = 100;
 	final static int MAX_STATUS_CHARACTERS = 8;
@@ -98,7 +102,7 @@ public class Logger {
 		String statusName = status.getName().toUpperCase();
 		String out = "[" + statusName + "] " + fill(" ", MAX_STATUS_CHARACTERS - statusName.length()) + title + " " + separator.getExpression() + " ";
 		out += crop(MAX_CHARACTERS,message);
-		System.out.println(out);
+		LOGGER.finest(out);
 	}
 	
 	/**
@@ -112,7 +116,7 @@ public class Logger {
 		String statusName = status.getName().toUpperCase();
 		String out = "[" + statusName + "] " + fill(" ", MAX_STATUS_CHARACTERS - statusName.length());
 		out += crop(MAX_CHARACTERS,message);
-		System.out.println(out);
+		LOGGER.finest(out);
 	}
 	
 	
@@ -134,7 +138,7 @@ public class Logger {
 		
 		jump();
 		line();
-		System.out.println("  " + title);
+		LOGGER.finest("  " + title);
 		line();
 		
 	}
@@ -158,8 +162,8 @@ public class Logger {
 	 * @param times - Times to jump
 	 */
 	public static void jump(int times) {
-		for (int j = 0; j < times; j++) 
-			System.out.println();
+//		for (int j = 0; j < times; j++)
+//			LOGGER.finest();
 	}
 	
 	/**
@@ -171,7 +175,7 @@ public class Logger {
 		for (int i = 0; i < MAX_CHARACTERS; i++) {
 			line += character;
 		}	
-		System.out.println(line);
+		LOGGER.finest(line);
 	}
 	
 	public static String fill(String text, int times) {

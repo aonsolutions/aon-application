@@ -33,12 +33,6 @@ public class EnterprisePayrollTestv2 {
 		
 		try {
 			
-			System.out.println("\n\n-----------------------------------");
-			System.out.println(" ENTERPRISE PAYROLL CREATOR");
-			System.out.println("-----------------------------------");
-			System.out.println("\n Starting.....");
-			
-			
 			Map<String, Map<String, EnterprisePayrollEntry>> entries = new HashMap<>();
 			Map<String, Map<String, EnterprisePayrollEntry>> ssEntries = new HashMap<>();;
 
@@ -50,9 +44,6 @@ public class EnterprisePayrollTestv2 {
 			HashMap<String, EnterprisePayrollEntry> categoria6 = new HashMap<>();
 
 			Faker f = new Faker();
-			
-			System.out.println(" Starting java faker.....");
-			System.out.println(" Collecting data .....");
 			
 			for (int i = 0; i < 4; i++) {
 				String cat = "Categoria " + i;
@@ -74,12 +65,10 @@ public class EnterprisePayrollTestv2 {
 						f.number().randomDouble(2, 0, 99999)
 				);
 
-				System.out.println(" > new Entry: " + e.getEmpleado());
 				categoria1.put(cat, e);
 				categoria2.put(cat, e);
 				categoria3.put(cat, e);
 			}
-			System.out.println(" Setting up categories .....");
 			
 			for (int i = 0; i < 4; i++) {
 				String cat = "cet " + i;
@@ -100,13 +89,11 @@ public class EnterprisePayrollTestv2 {
 						f.number().randomDouble(2, 0, 99999), 
 						f.number().randomDouble(2, 0, 99999)
 				);
-				System.out.println(" > new Entry: " + e.getEmpleado());
 				
 				categoria1.put(cat, e);
 				categoria2.put(cat, e);
 				categoria3.put(cat, e);
 			}
-			System.out.println(" Settting up data.....");
 			
 			for (int i = 0; i < 4; i++) {
 				String cat = "Categoria " + i;
@@ -127,7 +114,6 @@ public class EnterprisePayrollTestv2 {
 						f.number().randomDouble(2, 0, 99999), 
 						f.number().randomDouble(2, 0, 99999)
 				);
-				System.out.println(" > new Entry: " + e.getEmpleado());
 				
 				categoria3.put(cat, e);
 				categoria4.put(cat, e);

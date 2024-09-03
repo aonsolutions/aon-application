@@ -110,11 +110,6 @@ public class DetailedPayrollTest {
 	@Test
 	public void randomPrintTest() {
 
-		System.out.println("\n\n-----------------------------------");
-		System.out.println(" PAYROLL CREATOR");
-		System.out.println("-----------------------------------");
-		System.out.println("\n Starting.....");
-
 		DefaultPayrollBuilder builder = new DefaultPayrollBuilder();
 		Map<Integer, ArrayList<PDFPayment>> payments = generateRandomPayments();
 		Map<Integer, ArrayList<PDFDeduction>> de = generateRandomDeductions();
@@ -147,9 +142,7 @@ public class DetailedPayrollTest {
 			OutputStream out = new FileOutputStream("./PayrollRandom.pdf");
 			// OutputStream out = new ByteArrayOutputStream();
 
-			System.out.println(" Printing PDF file..... \n");
 			PdfMaker.printDefaultPayroll(out, builder.build(),DetailedPayrollTest.class.getResourceAsStream("logo.png"), new Locale("Es"));
-			System.out.println(" >> DONE.");
 		} catch (CanNotCreatePdfException e)
 		{
 			e.printStackTrace();
@@ -163,10 +156,6 @@ public class DetailedPayrollTest {
 
 	@Test
 	public void CraZeroPrintTest() {
-
-		System.out.println("\n\n-----------------------------------");
-		System.out.println(" PAYROLL [CRA - 00]");
-		System.out.println("-----------------------------------");
 
 		DefaultPayrollBuilder builder = new DefaultPayrollBuilder();
 		Map<Integer, ArrayList<PDFPayment>> ac = new HashMap<Integer, ArrayList<PDFPayment>>();
@@ -202,12 +191,10 @@ public class DetailedPayrollTest {
 
 		try
 		{
-			System.out.println(" Printing PDF file..... \n");
 			OutputStream out = new FileOutputStream("./PayrollCraZero.pdf");
 			// OutputStream out = new ByteArrayOutputStream();
 
 			PdfMaker.printDefaultPayroll(out, builder.build(),DetailedPayrollTest.class.getResourceAsStream("logo.png"), new Locale("Es"));
-			System.out.println(" >> DONE.");
 		} catch (CanNotCreatePdfException e)
 		{
 			e.printStackTrace();
@@ -222,10 +209,6 @@ public class DetailedPayrollTest {
 	
 	@Test
 	public void LargePrintTest() {
-
-		System.out.println("\n\n-----------------------------------");
-		System.out.println(" PAYROLL [Large version]");
-		System.out.println("-----------------------------------");
 
 		DefaultPayrollBuilder builder = new DefaultPayrollBuilder();
 		Map<Integer, ArrayList<PDFPayment>> ac = new HashMap<Integer, ArrayList<PDFPayment>>();
@@ -307,12 +290,10 @@ public class DetailedPayrollTest {
 
 		try
 		{
-			System.out.println(" Printing PDF file..... \n");
 			OutputStream out = new FileOutputStream("./PayrollLarge.pdf");
 			// OutputStream out = new ByteArrayOutputStream();
 
 			PdfMaker.printDefaultPayroll(out, builder.build(),DetailedPayrollTest.class.getResourceAsStream("logo.png"), new Locale("Es"));
-			System.out.println(" >> DONE.");
 		} catch (CanNotCreatePdfException e)
 		{
 			e.printStackTrace();

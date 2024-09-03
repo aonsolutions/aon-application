@@ -52,14 +52,9 @@ public class PrintTextLocations extends PDFTextStripper {
 		}
 		
 		for (TextPosition text : textPositions) {
-			System.out.println("String[" + text.getXDirAdj() + "," + text.getYDirAdj() + " fs=" + text.getFontSize()
+			String a = "String[" + text.getXDirAdj() + "," + text.getYDirAdj() + " fs=" + text.getFontSize()
 					+ " xscale=" + text.getXScale() + " height=" + text.getHeightDir() + " space="
-					+ text.getWidthOfSpace() + " width=" + text.getWidthDirAdj() + "]" + text.getUnicode());
-			/*if(text.getYDirAdj()<y+text.getHeightDir()) {
-				System.out.println();
-				y = text.getYDirAdj();
-			}
-			System.out.print(text.getUnicode());*/
+					+ text.getWidthOfSpace() + " width=" + text.getWidthDirAdj() + "]" + text.getUnicode();
 		}
 	}
 

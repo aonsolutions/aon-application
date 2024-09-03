@@ -134,7 +134,6 @@ public class SLDSalariesTestCase {
 					if ( period == null )
 						return;
 					
-					System.out.printf("%s: %tD..%tD\r\n", naf, period.getStartDate(), period.getEndDate());
 					
 					Salary salary = SLDSalaries.getSalary(type, ccc, naf, periodCalcs, period);
 					

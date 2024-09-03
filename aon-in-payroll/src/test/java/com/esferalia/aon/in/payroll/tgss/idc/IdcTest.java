@@ -21,7 +21,6 @@ import static java.util.Calendar.MONTH;
 import static java.util.Calendar.OCTOBER;
 import static java.util.Calendar.SEPTEMBER;
 import static java.util.Calendar.YEAR;
-import static net.aonsolutions.core.tgss.creta.jaxb.Utils.marshal;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
@@ -32,7 +31,6 @@ import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.math.RoundingMode;
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -58,9 +56,6 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import javax.xml.bind.JAXBException;
-import javax.xml.stream.XMLOutputFactory;
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamWriter;
 
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
@@ -92,7 +87,6 @@ import com.esferalia.aon.payroll.SalaryBuilder;
 import com.esferalia.aon.payroll.SalaryCost;
 import com.esferalia.aon.payroll.SalaryData;
 import com.esferalia.aon.payroll.SalaryDeduction;
-import com.esferalia.aon.payroll.SalaryPayment;
 import com.esferalia.aon.payroll.calculator.GenericContractSalaryCalculator;
 import com.esferalia.aon.payroll.calculator.IContractBonus;
 import com.esferalia.aon.payroll.calculator.RoundSalaryBuilder;
@@ -103,7 +97,6 @@ import com.esferalia.aon.payroll.enumeration.CCCType;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.payroll.enumeration.LeaveType;
 import com.esferalia.aon.payroll.enumeration.SSRegimeType;
-import com.esferalia.aon.payroll.tgss.creta.IndentXMLStreamWriter;
 import com.esferalia.aon.salary.ISalaryBuilder;
 import com.esferalia.aon.salary.SalaryException;
 import com.esferalia.aon.salary.bonus.IBonus;
@@ -117,7 +110,6 @@ import com.esferalia.aon.watson.util.AonDateUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.mchange.util.AssertException;
 
-import net.aonsolutions.core.tgss.creta.jaxb.Utils;
 import net.aonsolutions.core.tgss.creta.jaxb.trabajadorestramos.DatoSolicitado;
 import net.aonsolutions.core.tgss.creta.jaxb.trabajadorestramos.Liquidacion;
 import net.aonsolutions.core.tgss.creta.jaxb.trabajadorestramos.LiquidacionMes;
@@ -1214,8 +1206,6 @@ public class IdcTest extends AbstractSQLTestCase {
 			TrabajadoresTramos trabajadoresTramos = Idcplccc.geTrabajadoresTramos(is, new TrabajadoresTramosCallback() {
 			});
 			
-			// marshal(trabajadoresTramos, System.out);
-
 			assertEquals(trabajadoresTramos.getAutorizado(), "00228115");
 
 			Liquidacion liquidacion = trabajadoresTramos.getLiquidacion();
@@ -1278,7 +1268,6 @@ public class IdcTest extends AbstractSQLTestCase {
 				}
 			});
 
-			//marshall(trabajadoresTramos, System.out);
 
 			assertEquals(trabajadoresTramos.getAutorizado(), "00228115");
 
@@ -1418,7 +1407,6 @@ public class IdcTest extends AbstractSQLTestCase {
 				}
 			});
 
-			//marshall(trabajadoresTramos, System.out);
 
 			assertEquals(trabajadoresTramos.getAutorizado(), "00228115");
 
@@ -1484,7 +1472,6 @@ public class IdcTest extends AbstractSQLTestCase {
 				
 			});
 
-			//marshall(trabajadoresTramos, System.out);
 
 			assertEquals(trabajadoresTramos.getAutorizado(), "00088233");
 
@@ -1510,7 +1497,6 @@ public class IdcTest extends AbstractSQLTestCase {
 
 			for (Trabajador trabajador : trabajadores.getTrabajador()) {
 				if (ssNums.contains(trabajador.getNaf())) {
-					//marshal(trabajador, System.out);
 					assertEquals(1, trabajador.getTramos().getTramo().size());
 					assertTramoTiempoParcial(trabajador.getTramos().getTramo().get(0));
 				}
@@ -2577,7 +2563,6 @@ public class IdcTest extends AbstractSQLTestCase {
 					new TrabajadoresTramosCallback() {
 					});
 
-			//marshal(trabajadoresTramos, System.out);
 
 			Liquidacion liquidacion = trabajadoresTramos.getLiquidacion();
 
@@ -2631,7 +2616,6 @@ public class IdcTest extends AbstractSQLTestCase {
 					new TrabajadoresTramosCallback() {
 					});
 
-			//marshal(trabajadoresTramos, System.out);
 
 			Liquidacion liquidacion = trabajadoresTramos.getLiquidacion();
 
@@ -2685,7 +2669,6 @@ public class IdcTest extends AbstractSQLTestCase {
 					new TrabajadoresTramosCallback() {
 					});
 
-			//marshal(trabajadoresTramos, System.out);
 
 			Liquidacion liquidacion = trabajadoresTramos.getLiquidacion();
 
@@ -2746,7 +2729,6 @@ public class IdcTest extends AbstractSQLTestCase {
 					new TrabajadoresTramosCallback() {
 					});
 
-			//marshal(trabajadoresTramos, System.out);
 
 			Liquidacion liquidacion = trabajadoresTramos.getLiquidacion();
 
@@ -2815,7 +2797,6 @@ public class IdcTest extends AbstractSQLTestCase {
 					new TrabajadoresTramosCallback() {
 					});
 
-			//marshal(trabajadoresTramos, System.out);
 
 			Liquidacion liquidacion = trabajadoresTramos.getLiquidacion();
 
@@ -2878,7 +2859,6 @@ public class IdcTest extends AbstractSQLTestCase {
 					new TrabajadoresTramosCallback() {
 					});
 
-			//marshal(trabajadoresTramos, System.out);
 
 			Liquidacion liquidacion = trabajadoresTramos.getLiquidacion();
 
@@ -2942,7 +2922,6 @@ public class IdcTest extends AbstractSQLTestCase {
 					new TrabajadoresTramosCallback() {
 					});
 
-			//marshal(trabajadoresTramos, System.out);
 
 			Liquidacion liquidacion = trabajadoresTramos.getLiquidacion();
 
@@ -3005,7 +2984,6 @@ public class IdcTest extends AbstractSQLTestCase {
 					new TrabajadoresTramosCallback() {
 					});
 
-			//marshal(trabajadoresTramos, System.out);
 
 			Liquidacion liquidacion = trabajadoresTramos.getLiquidacion();
 
@@ -3079,7 +3057,6 @@ public class IdcTest extends AbstractSQLTestCase {
 					new TrabajadoresTramosCallback() {
 					});
 
-			//marshal(trabajadoresTramos, System.out);
 
 			Liquidacion liquidacion = trabajadoresTramos.getLiquidacion();
 
@@ -3142,7 +3119,6 @@ public class IdcTest extends AbstractSQLTestCase {
 					new TrabajadoresTramosCallback() {
 					});
 
-			//marshal(trabajadoresTramos, System.out);
 
 			Liquidacion liquidacion = trabajadoresTramos.getLiquidacion();
 
@@ -3194,7 +3170,6 @@ public class IdcTest extends AbstractSQLTestCase {
 					new TrabajadoresTramosCallback() {
 					});
 
-			//marshal(trabajadoresTramos, System.out);
 			// PEC 17 Expedientes de Regulación de Empleo Total
 			Liquidacion liquidacion = trabajadoresTramos.getLiquidacion();
 
@@ -3246,7 +3221,6 @@ public class IdcTest extends AbstractSQLTestCase {
 					new TrabajadoresTramosCallback() {
 					});
 
-			//marshal(trabajadoresTramos, System.out);
 			// PEC 17 Expedientes de Regulación de Empleo Total
 			Liquidacion liquidacion = trabajadoresTramos.getLiquidacion();
 
@@ -3411,7 +3385,6 @@ public class IdcTest extends AbstractSQLTestCase {
 					new TrabajadoresTramosCallback() {
 					});
 
-			//marshal(trabajadoresTramos, System.out);
 			// PEC 17 Expedientes de Regulación de Empleo Total
 			Liquidacion liquidacion = trabajadoresTramos.getLiquidacion();
 
@@ -3526,7 +3499,6 @@ public class IdcTest extends AbstractSQLTestCase {
 			    		}
 				});
 	
-			//marshal(trabajadoresTramos, System.out);
 	
 			Liquidacion liquidacion = trabajadoresTramos.getLiquidacion();
 	
@@ -3590,7 +3562,6 @@ public class IdcTest extends AbstractSQLTestCase {
 			    		}
 				});
 	
-			//marshal(trabajadoresTramos, System.out);
 	
 			Liquidacion liquidacion = trabajadoresTramos.getLiquidacion();
 	
@@ -3652,7 +3623,6 @@ public class IdcTest extends AbstractSQLTestCase {
 			    		}
 				});
 	
-			//marshal(trabajadoresTramos, System.out);
 	
 			Liquidacion liquidacion = trabajadoresTramos.getLiquidacion();
 	
@@ -4530,16 +4500,6 @@ public class IdcTest extends AbstractSQLTestCase {
 
 	}
 
-	private static <T> void marshall(T t, OutputStream os) {
-		try {
-			XMLStreamWriter xsw = new IndentXMLStreamWriter(XMLOutputFactory.newInstance().createXMLStreamWriter(os),
-					"  ");
-			Utils.marshal(t, xsw);
-			os.close();
-		} catch (JAXBException | IOException | XMLStreamException e) {
-		}
-	}
-
 	private static Date getDate(int day, int month, int year) {
 		Calendar calendar = Calendar.getInstance();
 		calendar.set(Calendar.HOUR_OF_DAY, 0);
@@ -5139,7 +5099,6 @@ public class IdcTest extends AbstractSQLTestCase {
 			    };
 			});
 			} catch ( Error error ) {
-			    System.out.println(error.getMessage());
 			    return;
 			}
 			
@@ -5515,8 +5474,6 @@ public class IdcTest extends AbstractSQLTestCase {
 						}
 			});
 	
-			//marshal(trabajadoresTramos, System.out);
-	
 			Liquidacion liquidacion = trabajadoresTramos.getLiquidacion();
 	
 			assertEquals("0111", liquidacion.getCcc().getRegimen());
@@ -5567,8 +5524,6 @@ public class IdcTest extends AbstractSQLTestCase {
 			TrabajadoresTramos trabajadoresTramos = Idcplccc.geTrabajadoresTramos(is, new TrabajadoresTramosCallback() {
 			});
 	
-			//marshall(trabajadoresTramos, System.out);
-	
 			Liquidacion liquidacion = trabajadoresTramos.getLiquidacion();
 	
 			assertEquals("0111", liquidacion.getCcc().getRegimen());
@@ -5591,7 +5546,6 @@ public class IdcTest extends AbstractSQLTestCase {
 	
 			for (Trabajador trabajador : trabajadores.getTrabajador()) {
 				if ("411011776004".equals(trabajador.getNaf())) {
-					//marshal(trabajador, System.out);
 					assertEquals(2, trabajador.getTramos().getTramo().size());
 					assertEquals((double)1.0, Double.valueOf(trabajador.getTramos().getTramo().get(0).getFechaDesde().getDia()), 0.00);
 					assertEquals((double)5.0, Double.valueOf(trabajador.getTramos().getTramo().get(0).getFechaHasta().getDia()), 0.00);
@@ -5617,7 +5571,6 @@ public class IdcTest extends AbstractSQLTestCase {
 			TrabajadoresTramos trabajadoresTramos = Idcplccc.geTrabajadoresTramos(is, new TrabajadoresTramosCallback() {
 			});
 	
-			//marshall(trabajadoresTramos, System.out);
 	
 			Liquidacion liquidacion = trabajadoresTramos.getLiquidacion();
 	
@@ -5641,7 +5594,6 @@ public class IdcTest extends AbstractSQLTestCase {
 	
 			for (Trabajador trabajador : trabajadores.getTrabajador()) {
 				if ("411146304896".equals(trabajador.getNaf())) {
-					//marshal(trabajador, System.out);
 					assertEquals(4, trabajador.getTramos().getTramo().size());
 					assertEquals((double)1.0, Double.valueOf(trabajador.getTramos().getTramo().get(0).getFechaDesde().getDia()), 0.00);
 					assertEquals((double)15.0, Double.valueOf(trabajador.getTramos().getTramo().get(0).getFechaHasta().getDia()), 0.00);
@@ -5676,7 +5628,6 @@ public class IdcTest extends AbstractSQLTestCase {
 			TrabajadoresTramos trabajadoresTramos = Idcplccc.geTrabajadoresTramos(is, new TrabajadoresTramosCallback() {
 			});
 	
-			//marshall(trabajadoresTramos, System.out);
 	
 			Liquidacion liquidacion = trabajadoresTramos.getLiquidacion();
 	
@@ -5699,7 +5650,6 @@ public class IdcTest extends AbstractSQLTestCase {
 	
 			for (Trabajador trabajador : trabajadores.getTrabajador()) {
 				if ("411146304896".equals(trabajador.getNaf())) {
-					//marshal(trabajador, System.out);
 					assertEquals(3, trabajador.getTramos().getTramo().size());
 
 					assertEquals((double)1.0, Double.valueOf(trabajador.getTramos().getTramo().get(0).getFechaDesde().getDia()), 0.00);
@@ -5732,7 +5682,6 @@ public class IdcTest extends AbstractSQLTestCase {
 			TrabajadoresTramos trabajadoresTramos = Idcplccc.geTrabajadoresTramos(is, new TrabajadoresTramosCallback() {
 			});
 	
-			//marshall(trabajadoresTramos, System.out);
 	
 			Liquidacion liquidacion = trabajadoresTramos.getLiquidacion();
 	
@@ -5755,7 +5704,6 @@ public class IdcTest extends AbstractSQLTestCase {
 	
 			for (Trabajador trabajador : trabajadores.getTrabajador()) {
 				if ("410132761989".equals(trabajador.getNaf())) {
-					//marshal(trabajador, System.out);
 					assertEquals(3, trabajador.getTramos().getTramo().size());
 
 					assertEquals((double)1.0, Double.valueOf(trabajador.getTramos().getTramo().get(0).getFechaDesde().getDia()), 0.00);
@@ -5793,7 +5741,6 @@ public class IdcTest extends AbstractSQLTestCase {
 				}
 			});
 	
-			//marshall(trabajadoresTramos, System.out);
 	
 			Liquidacion liquidacion = trabajadoresTramos.getLiquidacion();
 	
@@ -5816,9 +5763,7 @@ public class IdcTest extends AbstractSQLTestCase {
 			
 			
 			for (Trabajador trabajador : trabajadores.getTrabajador()) {
-				//marshal(trabajador, System.out);
 				if ("411043162473".equals(trabajador.getNaf())) {
-					//marshal(trabajador, System.out);
 					assertEquals(1, trabajador.getTramos().getTramo().size());
 
 					assertEquals((double)1.0, Double.valueOf(trabajador.getTramos().getTramo().get(0).getFechaDesde().getDia()), 0.00);
@@ -5826,7 +5771,6 @@ public class IdcTest extends AbstractSQLTestCase {
 					assertTramoActivoNormal(trabajador.getTramos().getTramo().get(0));
 				}
 				else if ("411087630408".equals(trabajador.getNaf())) {
-					//marshal(trabajador, System.out);
 					assertEquals(1, trabajador.getTramos().getTramo().size());
 
 					assertEquals((double)1.0, Double.valueOf(trabajador.getTramos().getTramo().get(0).getFechaDesde().getDia()), 0.00);
@@ -5860,7 +5804,6 @@ public class IdcTest extends AbstractSQLTestCase {
 			    		
 				});
 	
-			//marshal(trabajadoresTramos, System.out);
 	
 			Liquidacion liquidacion = trabajadoresTramos.getLiquidacion();
 	
@@ -5910,7 +5853,6 @@ public class IdcTest extends AbstractSQLTestCase {
 		try (InputStream is = IdcTest.class.getResourceAsStream("idcplcccXXV.pdf")) {
 			TrabajadoresTramos trabajadoresTramos = Idcplccc.geTrabajadoresTramos(is, new TrabajadoresTramosCallback() {});
 	
-			//marshal(trabajadoresTramos, System.out);
 	
 			Liquidacion liquidacion = trabajadoresTramos.getLiquidacion();
 	
@@ -5990,7 +5932,6 @@ public class IdcTest extends AbstractSQLTestCase {
 			    }
 			});
 	
-			//marshall(trabajadoresTramos, System.out);
 	
 			Liquidacion liquidacion = trabajadoresTramos.getLiquidacion();
 	
@@ -6037,7 +5978,6 @@ public class IdcTest extends AbstractSQLTestCase {
 				case "111087431349":
 				case "111093814454":
 				case "111046070246":
-				    //marshal(trabajador, System.out);
 				    trabajador.getTramos().getTramo().forEach(IdcTest::assertTramoActivoNormalFormacionEnAlternancia);
 				    break;
 				case "111046297689" :
@@ -6076,7 +6016,6 @@ public class IdcTest extends AbstractSQLTestCase {
 			    }
 			});
 	
-			//marshall(trabajadoresTramos, System.out);
 	
 			Liquidacion liquidacion = trabajadoresTramos.getLiquidacion();
 	
@@ -6108,7 +6047,6 @@ public class IdcTest extends AbstractSQLTestCase {
 				    break;
 				// EDUARDO ALCON SALAMANCA
 				case "411068669332" : 
-				    //marshal(trabajador, System.out);
 				    trabajador.getTramos().getTramo().sort((t1,t2) -> t1.getFechaDesde().getDia().compareTo(t2.getFechaDesde().getDia()) );
 				    assertTramoActivoNormal(trabajador.getTramos().getTramo().get(0));
 				    assertTramoMaternidadTiempoCompleto(trabajador.getTramos().getTramo().get(1));
@@ -6144,7 +6082,6 @@ public class IdcTest extends AbstractSQLTestCase {
 			    }
 			});
 	
-			//marshall(trabajadoresTramos, System.out);
 	
 			Liquidacion liquidacion = trabajadoresTramos.getLiquidacion();
 	
@@ -6170,7 +6107,6 @@ public class IdcTest extends AbstractSQLTestCase {
 				switch (trabajador.getNaf()) {
 				// ISABEL BARBERO OVIEDO
 				case "411111039336":
-				    //marshal(trabajador, System.out);
 				    trabajador.getTramos().getTramo().sort((t1,t2) -> t1.getFechaDesde().getDia().compareTo(t2.getFechaDesde().getDia()) );
 				    assertTramoActivoNormalFormacionEnAlternancia(trabajador.getTramos().getTramo().get(0));
 				    assertTramoIT15PrimerosDias(trabajador.getTramos().getTramo().get(1));

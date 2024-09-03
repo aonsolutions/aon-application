@@ -117,7 +117,6 @@ public class AonComunicaTest {
 					)
 				
 			);
-			System.out.println("IS_PRESENT "+employee.isPresent());
 		} catch (Exception e) {
 			e.printStackTrace();
 			fail();

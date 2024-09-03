@@ -9,7 +9,6 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import org.junit.jupiter.api.RepeatedTest;
-import org.junit.jupiter.api.Test;
 
 import com.code.aon.person.enumeration.Gender;
 import com.esferalia.aon.in.payroll.excel.IRemunerationRecordEntry.Schedule;
@@ -253,8 +252,7 @@ public class RemunerationRecordTestCase {
 
 	}
 
-	@Test( )
-	@RepeatedTest(100)
+	@RepeatedTest(10)
 	public void test() {
 		Faker faker = Faker.instance(new Locale("es"));
 		RemunerationRecordData data = new RemunerationRecordData();

@@ -54,9 +54,6 @@ public class ITComunicaTest {
 				Date endDate = new Date();
 				Collection<It> ssIts = SistemaRED.getIts( is, "jg@FNMT", "pkcs12", 
 						"0111", "01105360062", startDate, endDate, Optional.empty());
-				for (It ssIt:ssIts) {
-					System.out.println(ssIt);
-				}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -114,9 +111,6 @@ public class ITComunicaTest {
 			
 			List<String> messages = ITComunica.communicateITs(certificateInputStream.readAllBytes(), "jg@FNMT","pkcs12", employeeIt);
 			
-			for (String message:messages) {
-				System.out.println(message);
-			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -149,9 +143,6 @@ public class ITComunicaTest {
 			
 			List<String> messages = ITComunica.removeITs(certificateInputStream.readAllBytes(), "jg@FNMT","pkcs12", employeeIt);
 			
-			for (String message:messages) {
-				System.out.println(message);
-			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -179,9 +170,6 @@ public class ITComunicaTest {
 				ccc.setCccAccount("01105360062");
 						
 				List<EmployeeIT> list = getITFromTGSSPaternity(domain, certificate, startDate, endDate, ccc, nss);
-				for (EmployeeIT employeeIT : list) {
-					System.out.println(employeeIT);
-				}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

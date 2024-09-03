@@ -223,18 +223,6 @@ public class IvlTest extends AbstractSQLTestCase {
 	    .fetchStream()
 	    .collect(Collectors.toMap(r -> r.get(PERSON.REGISTRY), r -> r));
 	    
-	    System.out.println(
-		    dslContext
-		    .select()
-		    .from(CONTRACT)
-		    .innerJoin(PERSON).onKey()
-		    .innerJoin(tc2).on(CONTRACT.ID.eq(tc2.CONTRACT).and(tc2.NAME.eq("TC2")))
-		    .innerJoin(quoteGroup).on(CONTRACT.ID.eq(quoteGroup.CONTRACT).and(quoteGroup.NAME.eq("GRUPO_COTIZACION")))
-		    .leftJoin(coeficienteParcialidad).on(CONTRACT.ID.eq(coeficienteParcialidad.CONTRACT).and(coeficienteParcialidad.NAME.eq("COEFICIENTE_PARCIALIDAD")))
-		    .where(CONTRACT.DOMAIN.eq(domainId))
-		    .getSQL()
-	  );
-	    
 	    contractMap  =
 	    dslContext
 	    .select()

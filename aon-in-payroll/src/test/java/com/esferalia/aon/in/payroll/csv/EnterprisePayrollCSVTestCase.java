@@ -4,6 +4,7 @@ package com.esferalia.aon.in.payroll.csv;
 import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.IOException;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Date;
 
@@ -366,7 +367,7 @@ public class EnterprisePayrollCSVTestCase {
 		}
 		
 		try {
-			EnterprisePayrollCSV.write(System.out/*new FileOutputStream("src/test/resources/com/esferalia/aon/in/payroll/csv/prueba.csv")*/, payrollList);
+			EnterprisePayrollCSV.write(OutputStream.nullOutputStream()/*new FileOutputStream("src/test/resources/com/esferalia/aon/in/payroll/csv/prueba.csv")*/, payrollList);
 		} catch (IOException e) {
 			fail(e.getMessage());
 		}
