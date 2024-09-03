@@ -46,6 +46,7 @@ import static com.esferalia.aon.watson.util.AonDateUtils.getLastDayOfMonth;
 import static java.lang.String.format;
 import static java.util.Calendar.DAY_OF_MONTH;
 import static java.util.Calendar.MONTH;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.sql.Connection;
 import java.sql.Date;
@@ -53,9 +54,7 @@ import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.List;
 
-import junit.framework.Assert;
-
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.esferalia.aon.jooq.tables.records.ContractRecord;
 import com.esferalia.aon.occam.api.AONContext;
@@ -105,13 +104,11 @@ public abstract class SQLAbstractPeriodsTestCase extends AbstractSQLTestCase {
 						.getExpressionContext().eval(format("%s", getDaysVariable()),
 								startDate, endDate, Double.class);
 			
-				Assert.assertEquals(1, quoteDays.size());
-				Assert.assertEquals(
-						getDaysVariable().getName(),
-						(double) (get(endDate, DAY_OF_MONTH) - (get(getToday(),
-								DAY_OF_MONTH) - 1)), quoteDays.get(0).getValue(), DELTA);
-				Assert.assertEquals(getDaysVariable().getName(), quoteDays.get(0).getPeriod(),
-						new Period(getToday(), endDate));
+				assertEquals(1, quoteDays.size());
+				assertEquals((double) (get(endDate, DAY_OF_MONTH) - (get(getToday(),
+								DAY_OF_MONTH) - 1)), quoteDays.get(0).getValue(), DELTA,getDaysVariable().getName());
+				assertEquals(quoteDays.get(0).getPeriod(),
+						new Period(getToday(), endDate),getDaysVariable().getName());
 			
 				startDate = getFirstDayOfMonth(add(getToday(), MONTH, 1));
 				endDate = getLastDayOfMonth(add(getToday(), MONTH, 1));
@@ -120,12 +117,11 @@ public abstract class SQLAbstractPeriodsTestCase extends AbstractSQLTestCase {
 						endDate, endDate, contract).getExpressionContext().eval(
 						format("%s", getDaysVariable()), startDate, endDate, Double.class);
 			
-				Assert.assertEquals(1, quoteDays.size());
-				Assert.assertEquals(getDaysVariable().getName(),
-						(double) (get(endDate, DAY_OF_MONTH)), quoteDays.get(0)
-								.getValue(), DELTA);
-				Assert.assertEquals(getDaysVariable().getName(), quoteDays.get(0).getPeriod(),
-						new Period(startDate, endDate));
+				assertEquals(1, quoteDays.size());
+				assertEquals((double) (get(endDate, DAY_OF_MONTH)), quoteDays.get(0)
+								.getValue(), DELTA,getDaysVariable().getName());
+				assertEquals(quoteDays.get(0).getPeriod(),
+						new Period(startDate, endDate),getDaysVariable().getName());
 			
 			}
 
@@ -156,23 +152,19 @@ public abstract class SQLAbstractPeriodsTestCase extends AbstractSQLTestCase {
 						.getExpressionContext().eval(format("%s", getDaysVariable()),
 								startDate, endDate, Double.class);
 			
-				Assert.assertEquals(2, quoteDays.size());
+				assertEquals(2, quoteDays.size());
 				
-				Assert.assertEquals(getDaysVariable().getName(),
-						(double) (get(strikeDayI, DAY_OF_MONTH)-1), 
+				assertEquals((double) (get(strikeDayI, DAY_OF_MONTH)-1), 
 						quoteDays.get(0).getValue(),
-						DELTA);
-				Assert.assertEquals(getDaysVariable().getName(), 
-						quoteDays.get(0).getPeriod(),
-						new Period(startDate, add(strikeDayI, DAY_OF_MONTH,-1)));
+						DELTA,getDaysVariable().getName());
+				assertEquals(quoteDays.get(0).getPeriod(),
+						new Period(startDate, add(strikeDayI, DAY_OF_MONTH,-1)),getDaysVariable().getName());
 			
-				Assert.assertEquals(getDaysVariable().getName(),
-						(double) (get(endDate, DAY_OF_MONTH)-get(strikeDayI, DAY_OF_MONTH)), 
+				assertEquals((double) (get(endDate, DAY_OF_MONTH)-get(strikeDayI, DAY_OF_MONTH)), 
 						quoteDays.get(1).getValue(),
-						DELTA);
-				Assert.assertEquals(getDaysVariable().getName(), 
-						quoteDays.get(1).getPeriod(),
-						new Period(add(strikeDayI, DAY_OF_MONTH,1), endDate));
+						DELTA,getDaysVariable().getName());
+				assertEquals(quoteDays.get(1).getPeriod(),
+						new Period(add(strikeDayI, DAY_OF_MONTH,1), endDate),getDaysVariable().getName());
 			
 				Date strikeDayII = add(startDate, DAY_OF_MONTH, 19);
 				addData(aonContext, contract, strikeDayII, strikeDayII,
@@ -185,28 +177,22 @@ public abstract class SQLAbstractPeriodsTestCase extends AbstractSQLTestCase {
 						.eval(format("%s", getDaysVariable()),
 								startDate, endDate, Double.class);
 			
-				Assert.assertEquals(3, quoteDays.size());
-				Assert.assertEquals(getDaysVariable().getName(),
-						(double) (get(strikeDayI, DAY_OF_MONTH)-1), 
+				assertEquals(3, quoteDays.size());
+				assertEquals((double) (get(strikeDayI, DAY_OF_MONTH)-1), 
 						quoteDays.get(0).getValue(),
-						DELTA);
-				Assert.assertEquals(getDaysVariable().getName(), 
-						quoteDays.get(0).getPeriod(),
-						new Period(startDate, add(strikeDayI, DAY_OF_MONTH,-1)));
-				Assert.assertEquals(getDaysVariable().getName(),
-						(double) ((get(strikeDayII,DAY_OF_MONTH) -1 )-get(strikeDayI, DAY_OF_MONTH)), 
+						DELTA,getDaysVariable().getName());
+				assertEquals(quoteDays.get(0).getPeriod(),
+						new Period(startDate, add(strikeDayI, DAY_OF_MONTH,-1)),getDaysVariable().getName());
+				assertEquals((double) ((get(strikeDayII,DAY_OF_MONTH) -1 )-get(strikeDayI, DAY_OF_MONTH)), 
 						quoteDays.get(1).getValue(),
-						DELTA);
-				Assert.assertEquals(getDaysVariable().getName(), 
-						quoteDays.get(1).getPeriod(),
-						new Period(add(strikeDayI, DAY_OF_MONTH,1), add(strikeDayII, DAY_OF_MONTH,-1)));
-				Assert.assertEquals(getDaysVariable().getName(),
-						(double) (get(endDate,DAY_OF_MONTH)-get(strikeDayII, DAY_OF_MONTH)), 
+						DELTA,getDaysVariable().getName());
+				assertEquals(quoteDays.get(1).getPeriod(),
+						new Period(add(strikeDayI, DAY_OF_MONTH,1), add(strikeDayII, DAY_OF_MONTH,-1)),getDaysVariable().getName());
+				assertEquals((double) (get(endDate,DAY_OF_MONTH)-get(strikeDayII, DAY_OF_MONTH)), 
 						quoteDays.get(2).getValue(),
-						DELTA);
-				Assert.assertEquals(getDaysVariable().getName(), 
-						quoteDays.get(2).getPeriod(),
-						new Period(add(strikeDayII, DAY_OF_MONTH,1), endDate));
+						DELTA,getDaysVariable().getName());
+				assertEquals(quoteDays.get(2).getPeriod(),
+						new Period(add(strikeDayII, DAY_OF_MONTH,1), endDate),getDaysVariable().getName());
 				
 			}
 
@@ -235,15 +221,13 @@ public abstract class SQLAbstractPeriodsTestCase extends AbstractSQLTestCase {
 						.getExpressionContext().eval(format("%s", getDaysVariable()),
 								startDate, endDate, Double.class);
 			
-				Assert.assertEquals(1, quoteDays.size());
+				assertEquals(1, quoteDays.size());
 				
-				Assert.assertEquals(getDaysVariable().getName(),
-						(double) (get(endDate, DAY_OF_MONTH)-1), 
+				assertEquals((double) (get(endDate, DAY_OF_MONTH)-1), 
 						quoteDays.get(0).getValue(),
-						DELTA);
-				Assert.assertEquals(getDaysVariable().getName(), 
-						quoteDays.get(0).getPeriod(),
-						new Period(add(startDate, DAY_OF_MONTH,1), endDate));
+						DELTA,getDaysVariable().getName());
+				assertEquals(quoteDays.get(0).getPeriod(),
+						new Period(add(startDate, DAY_OF_MONTH,1), endDate),getDaysVariable().getName());
 			}
 
 	@Test
@@ -271,15 +255,13 @@ public abstract class SQLAbstractPeriodsTestCase extends AbstractSQLTestCase {
 						.getExpressionContext().eval(format("%s", getDaysVariable()),
 								startDate, endDate, Double.class);
 			
-				Assert.assertEquals(1, quoteDays.size());
+				assertEquals(1, quoteDays.size());
 				
-				Assert.assertEquals(getDaysVariable().getName(),
-						(double) (get(endDate, DAY_OF_MONTH)-1), 
+				assertEquals((double) (get(endDate, DAY_OF_MONTH)-1), 
 						quoteDays.get(0).getValue(),
-						DELTA);
-				Assert.assertEquals(getDaysVariable().getName(), 
-						quoteDays.get(0).getPeriod(),
-						new Period(startDate, add(endDate, DAY_OF_MONTH,-1)));
+						DELTA,getDaysVariable().getName());
+				assertEquals(quoteDays.get(0).getPeriod(),
+						new Period(startDate, add(endDate, DAY_OF_MONTH,-1)),getDaysVariable().getName());
 			}
 
 	@Test
@@ -309,21 +291,17 @@ public abstract class SQLAbstractPeriodsTestCase extends AbstractSQLTestCase {
 						.getExpressionContext().eval(format("%s", getDaysVariable()),
 								startDate, endDate, Double.class);
 			
-				Assert.assertEquals(2, quoteDays.size());
-				Assert.assertEquals(getDaysVariable().getName(),
-						(double) (get(group07Date, DAY_OF_MONTH)-1), 
+				assertEquals(2, quoteDays.size());
+				assertEquals((double) (get(group07Date, DAY_OF_MONTH)-1), 
 						quoteDays.get(0).getValue(),
-						DELTA);
-				Assert.assertEquals(getDaysVariable().getName(), 
-						quoteDays.get(0).getPeriod(),
-						new Period(startDate, add(group07Date, DAY_OF_MONTH,-1)));
-				Assert.assertEquals(getDaysVariable().getName(),
-						(double) (get(endDate, DAY_OF_MONTH) - get(group07Date, DAY_OF_MONTH) +1 ), 
+						DELTA,getDaysVariable().getName());
+				assertEquals(quoteDays.get(0).getPeriod(),
+						new Period(startDate, add(group07Date, DAY_OF_MONTH,-1)),getDaysVariable().getName());
+				assertEquals((double) (get(endDate, DAY_OF_MONTH) - get(group07Date, DAY_OF_MONTH) +1 ), 
 						quoteDays.get(1).getValue(),
-						DELTA);
-				Assert.assertEquals(getDaysVariable().getName(), 
-						quoteDays.get(1).getPeriod(),
-						new Period(group07Date, endDate));
+						DELTA,getDaysVariable().getName());
+				assertEquals(quoteDays.get(1).getPeriod(),
+						new Period(group07Date, endDate),getDaysVariable().getName());
 			}
 
 	@Test
@@ -353,14 +331,12 @@ public abstract class SQLAbstractPeriodsTestCase extends AbstractSQLTestCase {
 						.getExpressionContext().eval(format("%s", getDaysVariable()),
 								startDate, endDate, Double.class);
 			
-				Assert.assertEquals(1, quoteDays.size());
-				Assert.assertEquals(getDaysVariable().getName(),
-						(double) get(endDate, DAY_OF_MONTH), 
+				assertEquals(1, quoteDays.size());
+				assertEquals((double) get(endDate, DAY_OF_MONTH), 
 						quoteDays.get(0).getValue(),
-						DELTA);
-				Assert.assertEquals(getDaysVariable().getName(), 
-						quoteDays.get(0).getPeriod(),
-						new Period(startDate, endDate));
+						DELTA,getDaysVariable().getName());
+				assertEquals(quoteDays.get(0).getPeriod(),
+						new Period(startDate, endDate),getDaysVariable().getName());
 			}
 	
 
@@ -391,21 +367,17 @@ public abstract class SQLAbstractPeriodsTestCase extends AbstractSQLTestCase {
 				.getExpressionContext().eval(format("%s", getDaysVariable()),
 						startDate, endDate, Double.class);
 
-		Assert.assertEquals(2, quoteDays.size());
-		Assert.assertEquals(getDaysVariable().getName(),
-				(double) (get(occupationADate, DAY_OF_MONTH)-1), 
+		assertEquals(2, quoteDays.size());
+		assertEquals((double) (get(occupationADate, DAY_OF_MONTH)-1), 
 				quoteDays.get(0).getValue(),
-				DELTA);
-		Assert.assertEquals(getDaysVariable().getName(), 
-				quoteDays.get(0).getPeriod(),
-				new Period(startDate, add(occupationADate, DAY_OF_MONTH,-1)));
-		Assert.assertEquals(getDaysVariable().getName(),
-				(double) (get(endDate, DAY_OF_MONTH) - get(occupationADate, DAY_OF_MONTH) +1 ), 
+				DELTA,getDaysVariable().getName());
+		assertEquals(quoteDays.get(0).getPeriod(),
+				new Period(startDate, add(occupationADate, DAY_OF_MONTH,-1)),getDaysVariable().getName());
+		assertEquals((double) (get(endDate, DAY_OF_MONTH) - get(occupationADate, DAY_OF_MONTH) +1 ), 
 				quoteDays.get(1).getValue(),
-				DELTA);
-		Assert.assertEquals(getDaysVariable().getName(), 
-				quoteDays.get(1).getPeriod(),
-				new Period(occupationADate, endDate));
+				DELTA,getDaysVariable().getName());
+		assertEquals(quoteDays.get(1).getPeriod(),
+				new Period(occupationADate, endDate),getDaysVariable().getName());
 	}
 	
 	@Test
@@ -436,21 +408,17 @@ public abstract class SQLAbstractPeriodsTestCase extends AbstractSQLTestCase {
 				.getExpressionContext().eval(format("%s", getDaysVariable()),
 						startDate, endDate, Double.class);
 
-		Assert.assertEquals(2, quoteDays.size());
-		Assert.assertEquals(getDaysVariable().getName(),
-				(double) (get(occupationADate, DAY_OF_MONTH)-1), 
+		assertEquals(2, quoteDays.size());
+		assertEquals((double) (get(occupationADate, DAY_OF_MONTH)-1), 
 				quoteDays.get(0).getValue(),
-				DELTA);
-		Assert.assertEquals(getDaysVariable().getName(), 
-				quoteDays.get(0).getPeriod(),
-				new Period(startDate, add(occupationADate, DAY_OF_MONTH,-1)));
-		Assert.assertEquals(getDaysVariable().getName(),
-				(double) (get(endDate, DAY_OF_MONTH) - get(occupationADate, DAY_OF_MONTH) +1 ), 
+				DELTA,getDaysVariable().getName());
+		assertEquals(quoteDays.get(0).getPeriod(),
+				new Period(startDate, add(occupationADate, DAY_OF_MONTH,-1)),getDaysVariable().getName());
+		assertEquals((double) (get(endDate, DAY_OF_MONTH) - get(occupationADate, DAY_OF_MONTH) +1 ), 
 				quoteDays.get(1).getValue(),
-				DELTA);
-		Assert.assertEquals(getDaysVariable().getName(), 
-				quoteDays.get(1).getPeriod(),
-				new Period(occupationADate, endDate));
+				DELTA,getDaysVariable().getName());
+		assertEquals(quoteDays.get(1).getPeriod(),
+				new Period(occupationADate, endDate),getDaysVariable().getName());
 	}
 
 	@Test
@@ -481,14 +449,12 @@ public abstract class SQLAbstractPeriodsTestCase extends AbstractSQLTestCase {
 				.getExpressionContext().eval(format("%s", getDaysVariable()),
 						startDate, endDate, Double.class);
 
-		Assert.assertEquals(1, quoteDays.size());
-		Assert.assertEquals(getDaysVariable().getName(),
-				(double) get(endDate, DAY_OF_MONTH), 
+		assertEquals(1, quoteDays.size());
+		assertEquals((double) get(endDate, DAY_OF_MONTH), 
 				quoteDays.get(0).getValue(),
-				DELTA);
-		Assert.assertEquals(getDaysVariable().getName(), 
-				quoteDays.get(0).getPeriod(),
-				new Period(startDate, endDate));
+				DELTA,getDaysVariable().getName());
+		assertEquals(quoteDays.get(0).getPeriod(),
+				new Period(startDate, endDate),getDaysVariable().getName());
 	}
 	
 	@Test
@@ -519,21 +485,17 @@ public abstract class SQLAbstractPeriodsTestCase extends AbstractSQLTestCase {
 				.getExpressionContext().eval(format("%s", getDaysVariable()),
 						startDate, endDate, Double.class);
 
-		Assert.assertEquals(2, quoteDays.size());
-		Assert.assertEquals(getDaysVariable().getName(),
-				(double) (get(factorChangeDate, DAY_OF_MONTH)-1), 
+		assertEquals(2, quoteDays.size());
+		assertEquals((double) (get(factorChangeDate, DAY_OF_MONTH)-1), 
 				quoteDays.get(0).getValue(),
-				DELTA);
-		Assert.assertEquals(getDaysVariable().getName(), 
-				quoteDays.get(0).getPeriod(),
-				new Period(startDate, add(factorChangeDate, DAY_OF_MONTH,-1)));
-		Assert.assertEquals(getDaysVariable().getName(),
-				(double) (get(endDate, DAY_OF_MONTH) - get(factorChangeDate, DAY_OF_MONTH) +1 ), 
+				DELTA,getDaysVariable().getName());
+		assertEquals(quoteDays.get(0).getPeriod(),
+				new Period(startDate, add(factorChangeDate, DAY_OF_MONTH,-1)),getDaysVariable().getName());
+		assertEquals((double) (get(endDate, DAY_OF_MONTH) - get(factorChangeDate, DAY_OF_MONTH) +1 ), 
 				quoteDays.get(1).getValue(),
-				DELTA);
-		Assert.assertEquals(getDaysVariable().getName(), 
-				quoteDays.get(1).getPeriod(),
-				new Period(factorChangeDate, endDate));
+				DELTA,getDaysVariable().getName());
+		assertEquals(quoteDays.get(1).getPeriod(),
+				new Period(factorChangeDate, endDate),getDaysVariable().getName());
 	}
 	
 	@Test
@@ -564,14 +526,12 @@ public abstract class SQLAbstractPeriodsTestCase extends AbstractSQLTestCase {
 				.getExpressionContext().eval(format("%s", getDaysVariable()),
 						startDate, endDate, Double.class);
 
-		Assert.assertEquals(1, quoteDays.size());
-		Assert.assertEquals(getDaysVariable().getName(),
-				(double) get(endDate, DAY_OF_MONTH), 
+		assertEquals(1, quoteDays.size());
+		assertEquals((double) get(endDate, DAY_OF_MONTH), 
 				quoteDays.get(0).getValue(),
-				DELTA);
-		Assert.assertEquals(getDaysVariable().getName(), 
-				quoteDays.get(0).getPeriod(),
-				new Period(startDate, endDate));
+				DELTA,getDaysVariable().getName());
+		assertEquals(quoteDays.get(0).getPeriod(),
+				new Period(startDate, endDate),getDaysVariable().getName());
 	}
 	
 	
@@ -607,20 +567,16 @@ public abstract class SQLAbstractPeriodsTestCase extends AbstractSQLTestCase {
 				.getExpressionContext().eval(format("%s", getDaysVariable()),
 						startDate, endDate, Double.class);
 
-		Assert.assertEquals(2, quoteDays.size());
-		Assert.assertEquals(getDaysVariable().getName(),
-				(double) (get(tc2ChangeDate, DAY_OF_MONTH)-1), 
+		assertEquals(2, quoteDays.size());
+		assertEquals((double) (get(tc2ChangeDate, DAY_OF_MONTH)-1), 
 				quoteDays.get(0).getValue(),
-				DELTA);
-		Assert.assertEquals(getDaysVariable().getName(), 
-				quoteDays.get(0).getPeriod(),
-				new Period(startDate, add(tc2ChangeDate, DAY_OF_MONTH,-1)));
-		Assert.assertEquals(getDaysVariable().getName(),
-				(double) (get(endDate, DAY_OF_MONTH) - get(tc2ChangeDate, DAY_OF_MONTH) +1 ), 
+				DELTA,getDaysVariable().getName());
+		assertEquals(quoteDays.get(0).getPeriod(),
+				new Period(startDate, add(tc2ChangeDate, DAY_OF_MONTH,-1)),getDaysVariable().getName());
+		assertEquals((double) (get(endDate, DAY_OF_MONTH) - get(tc2ChangeDate, DAY_OF_MONTH) +1 ), 
 				quoteDays.get(1).getValue(),
-				DELTA);
-		Assert.assertEquals(getDaysVariable().getName(), 
-				quoteDays.get(1).getPeriod(),
-				new Period(tc2ChangeDate, endDate));
+				DELTA,getDaysVariable().getName());
+		assertEquals(quoteDays.get(1).getPeriod(),
+				new Period(tc2ChangeDate, endDate),getDaysVariable().getName());
 	}
 }

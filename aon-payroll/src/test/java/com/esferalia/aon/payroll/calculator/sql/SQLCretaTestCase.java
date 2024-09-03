@@ -52,7 +52,10 @@ import static java.util.Calendar.THURSDAY;
 import static java.util.Calendar.TUESDAY;
 import static java.util.Calendar.WEDNESDAY;
 import static java.util.Calendar.YEAR;
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -78,8 +81,9 @@ import javax.xml.bind.JAXBException;
 import javax.xml.stream.FactoryConfigurationError;
 import javax.xml.stream.XMLStreamException;
 
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
+import org.opentest4j.AssertionFailedError;
 import org.xml.sax.SAXException;
 
 import com.code.aon.common.enumeration.Month;
@@ -122,8 +126,6 @@ import com.esferalia.aon.salary.expression.Period;
 import com.esferalia.aon.watson.util.AonDateUtils;
 import com.mchange.util.AssertException;
 
-import junit.framework.Assert;
-import junit.framework.AssertionFailedError;
 import net.aonsolutions.core.tgss.creta.jaxb.Utils;
 import net.aonsolutions.core.tgss.creta.jaxb.bases.Dato;
 import net.aonsolutions.core.tgss.creta.jaxb.respuesta.CtaCot;
@@ -194,37 +196,37 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 	int salaries = calculateAndSave(connection, ctx);
 
 	// Only one salary saved to DB.
-	Assert.assertEquals(1, salaries);
+	assertEquals(1, salaries);
 
 	AON.getSalaryData(aonContext, props -> props.getContractProperty().eq(contract.getId())).forEach(salary -> {
 
 	    // 500 Base de contingencias comunes.
 	    List<ContextData> datas = salary.getContextData().get(CGC_BASE.getName());
-	    Assert.assertEquals(1, datas.size());
-	    Assert.assertEquals(startDate, datas.get(0).getStartDate());
-	    Assert.assertEquals(endDate, datas.get(0).getEndDate());
-	    Assert.assertEquals(1750.00, Double.parseDouble(datas.get(0).getExpression()));
+	    assertEquals(1, datas.size());
+	    assertEquals(startDate, datas.get(0).getStartDate());
+	    assertEquals(endDate, datas.get(0).getEndDate());
+	    assertEquals(1750.00, Double.parseDouble(datas.get(0).getExpression()));
 
 	    // 501 Base de Horas Extras Fuerza Mayor
 	    datas = salary.getContextData().get(STRUCTURAL_OVERTIME_BASE.getName());
-	    Assert.assertEquals(1, datas.size());
-	    Assert.assertEquals(startDate, datas.get(0).getStartDate());
-	    Assert.assertEquals(endDate, datas.get(0).getEndDate());
-	    Assert.assertEquals(0.00, Double.parseDouble(datas.get(0).getExpression()));
+	    assertEquals(1, datas.size());
+	    assertEquals(startDate, datas.get(0).getStartDate());
+	    assertEquals(endDate, datas.get(0).getEndDate());
+	    assertEquals(0.00, Double.parseDouble(datas.get(0).getExpression()));
 
 	    // 502 Base de Horas Extras
 	    datas = salary.getContextData().get(NON_STRUCTURAL_OVERTIME_BASE.getName());
-	    Assert.assertEquals(1, datas.size());
-	    Assert.assertEquals(startDate, datas.get(0).getStartDate());
-	    Assert.assertEquals(endDate, datas.get(0).getEndDate());
-	    Assert.assertEquals(0.00, Double.parseDouble(datas.get(0).getExpression()));
+	    assertEquals(1, datas.size());
+	    assertEquals(startDate, datas.get(0).getStartDate());
+	    assertEquals(endDate, datas.get(0).getEndDate());
+	    assertEquals(0.00, Double.parseDouble(datas.get(0).getExpression()));
 
 	    // 601 o 611 Base de Accidentes de Trabajo.
 	    datas = salary.getContextData().get(CGP_BASE.getName());
-	    Assert.assertEquals(1, datas.size());
-	    Assert.assertEquals(startDate, datas.get(0).getStartDate());
-	    Assert.assertEquals(endDate, datas.get(0).getEndDate());
-	    Assert.assertEquals(1750.00, Double.parseDouble(datas.get(0).getExpression()));
+	    assertEquals(1, datas.size());
+	    assertEquals(startDate, datas.get(0).getStartDate());
+	    assertEquals(endDate, datas.get(0).getEndDate());
+	    assertEquals(1750.00, Double.parseDouble(datas.get(0).getExpression()));
 
 	});
 	;
@@ -255,7 +257,7 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 		
 		List<net.aonsolutions.core.tgss.creta.jaxb.bases.Tramo> bases = getBases(connection, trabajadoresYTramos);
 
-		org.junit.Assert.assertEquals(1, bases.size());
+		assertEquals(1, bases.size());
 		assertDato(bases.get(0).getDatosTramo().getDato(), "C", "500");
 		assertDato(bases.get(0).getDatosTramo().getDato(), "C", "601");
 		assertDato(bases.get(0).getDatosTramo().getDato(), "C", "301");
@@ -296,7 +298,7 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 		
 		List<net.aonsolutions.core.tgss.creta.jaxb.bases.Tramo> bases = getBases(connection, trabajadoresYTramos);
 
-		org.junit.Assert.assertEquals(3, bases.size());
+		assertEquals(3, bases.size());
 		assertDato(bases.get(0).getDatosTramo().getDato(), "C", "500");
 		assertDato(bases.get(0).getDatosTramo().getDato(), "C", "601");
 		assertDato(bases.get(0).getDatosTramo().getDato(), "C", "301");
@@ -334,7 +336,7 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 
 	List<net.aonsolutions.core.tgss.creta.jaxb.bases.Tramo> bases = getBases(connection, trabajadoresYTramos);
 
-	org.junit.Assert.assertEquals(1, bases.size());
+	assertEquals(1, bases.size());
 	assertDato(bases.get(0).getDatosTramo().getDato(), "C", "500");
 	assertDato(bases.get(0).getDatosTramo().getDato(), "C", "601");
 	assertNoDato(bases.get(0).getDatosTramo().getDato(), "I", "51");
@@ -375,8 +377,8 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 		endDate, ccc, contracts);
 
 	List<Dato> datos = liquidacion.getDatosLiquidacion().getDato();
-	org.junit.Assert.assertEquals(1, datos.size());
-	org.junit.Assert.assertEquals(c763 * 100.00, Double.parseDouble(datos.get(0).getValor()), DELTA);
+	assertEquals(1, datos.size());
+	assertEquals(c763 * 100.00, Double.parseDouble(datos.get(0).getValor()), DELTA);
 
     }
 
@@ -399,8 +401,8 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 		endDate, ccc, contract);
 
 	List<Dato> datos = liquidacion.getDatosLiquidacion().getDato();
-	org.junit.Assert.assertEquals(1, datos.size());
-	org.junit.Assert.assertEquals(33300.00, Double.parseDouble(datos.get(0).getValor()), DELTA);
+	assertEquals(1, datos.size());
+	assertEquals(33300.00, Double.parseDouble(datos.get(0).getValor()), DELTA);
 
 	datos = liquidacion.getLiquidacionMes().get(0).getTrabajadores().getTrabajador().get(0).getTramos().getTramo()
 		.get(0).getDatosTramo().getDato();
@@ -425,7 +427,7 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 	try {
 	    List<net.aonsolutions.core.tgss.creta.jaxb.bases.Tramo> bases = getTramosBases(connection, startDate,
 		    endDate, ccc, contract);
-	    org.junit.Assert.fail("Bases must be empty");
+	    fail("Bases must be empty");
 	} catch (EmptyBasesException e) {
 	    return;
 	}
@@ -459,32 +461,32 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 	List<net.aonsolutions.core.tgss.creta.jaxb.bases.Tramo> bases = getTramosBases(connection, startDate, endDate,
 		ccc, contract);
 
-	org.junit.Assert.assertEquals(1, bases.size());
+	assertEquals(1, bases.size());
 
 	List<Dato> datos = bases.get(0).getDatosTramo().getDato();
 
-	org.junit.Assert.assertEquals(4, datos.size());
+	assertEquals(4, datos.size());
 	// 500 , 601 , 737 , 06
 
 	double c500 = datos.stream().filter(d -> d.getCodigo().equals("500")).map(d -> d.getValor())
 		.collect(Collectors.summingDouble(Double::parseDouble));
 
-	org.junit.Assert.assertEquals(175000, c500, DELTA);
+	assertEquals(175000, c500, DELTA);
 
 	double c601 = datos.stream().filter(d -> d.getCodigo().equals("601")).map(d -> d.getValor())
 		.collect(Collectors.summingDouble(Double::parseDouble));
 
-	org.junit.Assert.assertEquals(175000, c601, DELTA);
+	assertEquals(175000, c601, DELTA);
 
 	double c737 = datos.stream().filter(d -> d.getCodigo().equals("737")).map(d -> d.getValor())
 		.collect(Collectors.summingDouble(Double::parseDouble));
 
-	org.junit.Assert.assertEquals(73766, c737, DELTA);
+	assertEquals(73766, c737, DELTA);
 
 	double h6 = datos.stream().filter(d -> d.getCodigo().equals("06")).map(d -> d.getValor())
 		.collect(Collectors.summingDouble(Double::parseDouble));
 
-	org.junit.Assert.assertEquals(6, h6, DELTA);
+	assertEquals(6, h6, DELTA);
 
     }
 
@@ -523,55 +525,55 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 
 	List<net.aonsolutions.core.tgss.creta.jaxb.bases.Tramo> bases = getBases(connection, trabajadoresYTramos);
 
-	org.junit.Assert.assertEquals(2, bases.size());
+	assertEquals(2, bases.size());
 
 	List<Dato> datos = bases.get(0).getDatosTramo().getDato();
 
-	org.junit.Assert.assertEquals(4, datos.size());
+	assertEquals(4, datos.size());
 
 	double c500 = datos.stream().filter(d -> d.getCodigo().equals("500")).map(d -> d.getValor())
 		.collect(Collectors.summingDouble(Double::parseDouble));
 
-	org.junit.Assert.assertEquals(175000 * 15 / monthDays, c500, DELTA);
+	assertEquals(175000 * 15 / monthDays, c500, DELTA);
 
 	double c601 = datos.stream().filter(d -> d.getCodigo().equals("601")).map(d -> d.getValor())
 		.collect(Collectors.summingDouble(Double::parseDouble));
 
-	org.junit.Assert.assertEquals(175000 * 15 / monthDays, c601, DELTA);
+	assertEquals(175000 * 15 / monthDays, c601, DELTA);
 
 	double c737 = datos.stream().filter(d -> d.getCodigo().equals("737")).map(d -> d.getValor())
 		.collect(Collectors.summingDouble(Double::parseDouble));
 
-	org.junit.Assert.assertEquals(15.00 * 1000.00, c737, DELTA);
+	assertEquals(15.00 * 1000.00, c737, DELTA);
 
 	double h6 = datos.stream().filter(d -> d.getCodigo().equals("06")).map(d -> d.getValor())
 		.collect(Collectors.summingDouble(Double::parseDouble));
 
-	org.junit.Assert.assertEquals(15.00, h6, DELTA);
+	assertEquals(15.00, h6, DELTA);
 
 	datos = bases.get(1).getDatosTramo().getDato();
 
-	org.junit.Assert.assertEquals(4, datos.size());
+	assertEquals(4, datos.size());
 
 	c500 = datos.stream().filter(d -> d.getCodigo().equals("500")).map(d -> d.getValor())
 		.collect(Collectors.summingDouble(Double::parseDouble));
 
-	org.junit.Assert.assertEquals(175000 * (monthDays - 15) / monthDays, c500, 1);
+	assertEquals(175000 * (monthDays - 15) / monthDays, c500, 1);
 
 	c601 = datos.stream().filter(d -> d.getCodigo().equals("601")).map(d -> d.getValor())
 		.collect(Collectors.summingDouble(Double::parseDouble));
 
-	org.junit.Assert.assertEquals(175000 * (monthDays - 15) / monthDays, c601, 1);
+	assertEquals(175000 * (monthDays - 15) / monthDays, c601, 1);
 
 	c737 = datos.stream().filter(d -> d.getCodigo().equals("737")).map(d -> d.getValor())
 		.collect(Collectors.summingDouble(Double::parseDouble));
 
-	org.junit.Assert.assertEquals((monthDays - 15) * 1000.00, c737, DELTA);
+	assertEquals((monthDays - 15) * 1000.00, c737, DELTA);
 
 	h6 = datos.stream().filter(d -> d.getCodigo().equals("06")).map(d -> d.getValor())
 		.collect(Collectors.summingDouble(Double::parseDouble));
 
-	org.junit.Assert.assertEquals((monthDays - 15), h6, DELTA);
+	assertEquals((monthDays - 15), h6, DELTA);
 
     }
 
@@ -611,31 +613,31 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 
 	List<net.aonsolutions.core.tgss.creta.jaxb.bases.Tramo> bases = getBases(connection, trabajadoresYTramos);
 
-	org.junit.Assert.assertEquals(2, bases.size());
+	assertEquals(2, bases.size());
 
 	List<Dato> datos = bases.get(1).getDatosTramo().getDato();
 
-	org.junit.Assert.assertEquals(4, datos.size());
+	assertEquals(4, datos.size());
 
 	double c500 = datos.stream().filter(d -> d.getCodigo().equals("500")).map(d -> d.getValor())
 		.collect(Collectors.summingDouble(Double::parseDouble));
 
-	org.junit.Assert.assertEquals(175000 * 1 / 30, c500, DELTA);
+	assertEquals(175000 * 1 / 30, c500, DELTA);
 
 	double c601 = datos.stream().filter(d -> d.getCodigo().equals("601")).map(d -> d.getValor())
 		.collect(Collectors.summingDouble(Double::parseDouble));
 
-	org.junit.Assert.assertEquals(175000 * 1 / 30, c601, DELTA);
+	assertEquals(175000 * 1 / 30, c601, DELTA);
 
 	double c737 = datos.stream().filter(d -> d.getCodigo().equals("737")).map(d -> d.getValor())
 		.collect(Collectors.summingDouble(Double::parseDouble));
 
-	org.junit.Assert.assertEquals(1.00 * 1000.00, c737, DELTA);
+	assertEquals(1.00 * 1000.00, c737, DELTA);
 
 	double h6 = datos.stream().filter(d -> d.getCodigo().equals("06")).map(d -> d.getValor())
 		.collect(Collectors.summingDouble(Double::parseDouble));
 
-	org.junit.Assert.assertEquals(1.00, h6, DELTA);
+	assertEquals(1.00, h6, DELTA);
 
     }
 
@@ -664,31 +666,31 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 
 	List<net.aonsolutions.core.tgss.creta.jaxb.bases.Tramo> bases = getBases(connection, trabajadoresYTramos);
 
-	org.junit.Assert.assertEquals(1, bases.size());
+	assertEquals(1, bases.size());
 
 	List<Dato> datos = bases.get(0).getDatosTramo().getDato();
 
-	org.junit.Assert.assertEquals(4, datos.size());
+	assertEquals(4, datos.size());
 
 	double c500 = datos.stream().filter(d -> d.getCodigo().equals("500")).map(d -> d.getValor())
 		.collect(Collectors.summingDouble(Double::parseDouble));
 
-	org.junit.Assert.assertEquals(175000, c500, DELTA);
+	assertEquals(175000, c500, DELTA);
 
 	double c601 = datos.stream().filter(d -> d.getCodigo().equals("601")).map(d -> d.getValor())
 		.collect(Collectors.summingDouble(Double::parseDouble));
 
-	org.junit.Assert.assertEquals(175000, c601, DELTA);
+	assertEquals(175000, c601, DELTA);
 
 	double h4 = datos.stream().filter(d -> d.getCodigo().equals("04")).map(d -> d.getValor())
 		.collect(Collectors.summingDouble(Double::parseDouble));
 
-	org.junit.Assert.assertEquals(44, h4, DELTA);
+	assertEquals(44, h4, DELTA);
 
 	double h3 = datos.stream().filter(d -> d.getCodigo().equals("03")).map(d -> d.getValor())
 		.collect(Collectors.summingDouble(Double::parseDouble));
 
-	org.junit.Assert.assertEquals(33, h3, DELTA);
+	assertEquals(33, h3, DELTA);
 
     }
 
@@ -717,20 +719,20 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 	addData(aonContext, contract, startDate, endDate, ContextVariable.SLD_H03, "33");
 	List<net.aonsolutions.core.tgss.creta.jaxb.bases.Tramo> bases = getBases(connection, trabajadoresYTramos);
 
-	org.junit.Assert.assertEquals(1, bases.size());
+	assertEquals(1, bases.size());
 
 	List<Dato> datos = bases.get(0).getDatosTramo().getDato();
 
-	org.junit.Assert.assertEquals(4, datos.size());
+	assertEquals(4, datos.size());
 
 	double h4 = datos.stream().filter(d -> d.getCodigo().equals("04")).map(d -> d.getValor())
 		.collect(Collectors.summingDouble(Double::parseDouble));
 
-	org.junit.Assert.assertEquals(44, h4, DELTA);
+	assertEquals(44, h4, DELTA);
 
 	double h3 = datos.stream().filter(d -> d.getCodigo().equals("03")).map(d -> d.getValor())
 		.collect(Collectors.summingDouble(Double::parseDouble));
-	org.junit.Assert.assertEquals(33, h3, DELTA);
+	assertEquals(33, h3, DELTA);
 
     }
 
@@ -791,46 +793,46 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 	List<net.aonsolutions.core.tgss.creta.jaxb.bases.Tramo> bases = getTramosBases(connection, startDate, endDate,
 		ccc, contract);
 
-	org.junit.Assert.assertEquals(1, bases.size());
+	assertEquals(1, bases.size());
 
 	List<Dato> datos = bases.get(0).getDatosTramo().getDato();
 
-	org.junit.Assert.assertEquals(7, datos.size());
+	assertEquals(7, datos.size());
 
 	double c500 = datos.stream().filter(d -> d.getCodigo().equals("500")).map(d -> d.getValor())
 		.collect(Collectors.summingDouble(Double::parseDouble));
 
-	org.junit.Assert.assertEquals(1750.00 * 0.40 * 100.00, c500, DELTA);
+	assertEquals(1750.00 * 0.40 * 100.00, c500, DELTA);
 
 	double c601 = datos.stream().filter(d -> d.getCodigo().equals("601")).map(d -> d.getValor())
 		.collect(Collectors.summingDouble(Double::parseDouble));
 
-	org.junit.Assert.assertEquals(1750.00 * 0.40 * 100.00, c601, DELTA);
+	assertEquals(1750.00 * 0.40 * 100.00, c601, DELTA);
 
 	double c536 = datos.stream().filter(d -> d.getCodigo().equals("536")).map(d -> d.getValor())
 		.collect(Collectors.summingDouble(Double::parseDouble));
 
-	org.junit.Assert.assertEquals(1750.00 * 0.60 * 100.00, c536, DELTA);
+	assertEquals(1750.00 * 0.60 * 100.00, c536, DELTA);
 
 	double c636 = datos.stream().filter(d -> d.getCodigo().equals("636")).map(d -> d.getValor())
 		.collect(Collectors.summingDouble(Double::parseDouble));
 
-	org.junit.Assert.assertEquals(1750.00 * 0.60 * 100.00, c636, DELTA);
+	assertEquals(1750.00 * 0.60 * 100.00, c636, DELTA);
 
 	double h4 = datos.stream().filter(d -> d.getCodigo().equals("04")).map(d -> d.getValor())
 		.collect(Collectors.summingDouble(Double::parseDouble));
 
-	org.junit.Assert.assertEquals(44, h4, DELTA);
+	assertEquals(44, h4, DELTA);
 
 	double h3 = datos.stream().filter(d -> d.getCodigo().equals("03")).map(d -> d.getValor())
 		.collect(Collectors.summingDouble(Double::parseDouble));
 
-	org.junit.Assert.assertEquals(33, h3, DELTA);
+	assertEquals(33, h3, DELTA);
 
 	double h5 = datos.stream().filter(d -> d.getCodigo().equals("05")).map(d -> d.getValor())
 		.collect(Collectors.summingDouble(Double::parseDouble));
 
-	org.junit.Assert.assertEquals(400, h5, DELTA);
+	assertEquals(400, h5, DELTA);
 
     }
 
@@ -855,7 +857,7 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 	try {
 	    List<net.aonsolutions.core.tgss.creta.jaxb.bases.Tramo> bases = getTramosBases(connection, startDate,
 		    endDate, ccc, contract);
-	    org.junit.Assert.fail("Bases must be empty");
+	    fail("Bases must be empty");
 	} catch (EmptyBasesException e) {
 	    // Nothing to comunicate .
 	    return;
@@ -959,26 +961,26 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 	List<net.aonsolutions.core.tgss.creta.jaxb.bases.Tramo> bases = getTramosBases(connection, startDate, endDate,
 		ccc, contract);
 
-	org.junit.Assert.assertEquals(2, bases.size());
+	assertEquals(2, bases.size());
 
 	List<Dato> datos = bases.get(0).getDatosTramo().getDato();
 
-	org.junit.Assert.assertEquals(1, datos.size());
+	assertEquals(1, datos.size());
 
 	double c563 = datos.stream().filter(d -> d.getCodigo().equals("563")).map(d -> d.getValor())
 		.collect(Collectors.summingDouble(Double::parseDouble));
 
-	org.junit.Assert.assertEquals(Math.ceil(100.00 * 0.75 * 5 * 100), c563, DELTA);
+	assertEquals(Math.ceil(100.00 * 0.75 * 5 * 100), c563, DELTA);
 
 	datos = bases.get(1).getDatosTramo().getDato();
 
-	org.junit.Assert.assertEquals(1, datos.size());
+	assertEquals(1, datos.size());
 
 	c563 = datos.stream().filter(d -> d.getCodigo().equals("563")).map(d -> d.getValor())
 		.collect(Collectors.summingDouble(Double::parseDouble));
 
 	int days = AonDateUtils.getMax(endDate, DAY_OF_MONTH) - 21 + 1;
-	org.junit.Assert.assertEquals(Math.ceil(100.00 * 0.75 * (days) * 100), c563, DELTA);
+	assertEquals(Math.ceil(100.00 * 0.75 * (days) * 100), c563, DELTA);
 
     }
 
@@ -1016,21 +1018,21 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 
 	List<net.aonsolutions.core.tgss.creta.jaxb.bases.Tramo> bases = getBases(connection, trabajadoresYTramos);
 
-	org.junit.Assert.assertEquals(2, bases.size());
+	assertEquals(2, bases.size());
 
 	List<Dato> datos = bases.get(0).getDatosTramo().getDato();
 
-	org.junit.Assert.assertEquals(4, datos.size());
+	assertEquals(4, datos.size());
 
 	double h4 = datos.stream().filter(d -> d.getCodigo().equals("04")).map(d -> d.getValor())
 		.collect(Collectors.summingDouble(Double::parseDouble));
 
-	org.junit.Assert.assertEquals(44, h4, DELTA);
+	assertEquals(44, h4, DELTA);
 
 	double h3 = datos.stream().filter(d -> d.getCodigo().equals("03")).map(d -> d.getValor())
 		.collect(Collectors.summingDouble(Double::parseDouble));
 
-	org.junit.Assert.assertEquals(33, h3, DELTA);
+	assertEquals(33, h3, DELTA);
 
 	assertDato(bases.get(0).getDatosTramo().getDato(), "C", "500",
 		Integer.toString((int) Math.round(1750.00 * 9 / 30 * 100)));
@@ -1066,54 +1068,54 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 	List<net.aonsolutions.core.tgss.creta.jaxb.bases.Tramo> bases = getTramosBases(connection, startDate, endDate,
 		ccc, contract);
 
-	org.junit.Assert.assertEquals(3, bases.size());
+	assertEquals(3, bases.size());
 
 	List<Dato> datos = bases.get(0).getDatosTramo().getDato();
 
-	org.junit.Assert.assertEquals(3, datos.size());
+	assertEquals(3, datos.size());
 
 	double c500 = datos.stream().filter(d -> d.getCodigo().equals("500")).map(d -> d.getValor())
 		.collect(Collectors.summingDouble(Double::parseDouble));
-	org.junit.Assert.assertEquals(Math.round(1750.00 * 10 / 30 * 100.00), c500, DELTA);
+	assertEquals(Math.round(1750.00 * 10 / 30 * 100.00), c500, DELTA);
 
 	double c601 = datos.stream().filter(d -> d.getCodigo().equals("601")).map(d -> d.getValor())
 		.collect(Collectors.summingDouble(Double::parseDouble));
-	org.junit.Assert.assertEquals(Math.round(1750.00 * 10 / 30 * 100.00), c601, DELTA);
+	assertEquals(Math.round(1750.00 * 10 / 30 * 100.00), c601, DELTA);
 
 	double h4 = datos.stream().filter(d -> d.getCodigo().equals("737")).map(d -> d.getValor())
 		.collect(Collectors.summingDouble(Double::parseDouble));
 
 	int workedDays = AonDateUtils.getMax(endDate, DAY_OF_MONTH) - 10;
-	org.junit.Assert.assertEquals(Math.round(100.00 / workedDays * 10.00 * 100.00), h4, DELTA);
+	assertEquals(Math.round(100.00 / workedDays * 10.00 * 100.00), h4, DELTA);
 
 	datos = bases.get(1).getDatosTramo().getDato();
 
-	org.junit.Assert.assertEquals(2, datos.size());
+	assertEquals(2, datos.size());
 
 	double c509 = datos.stream().filter(d -> d.getCodigo().equals("509")).map(d -> d.getValor())
 		.collect(Collectors.summingDouble(Double::parseDouble));
-	org.junit.Assert.assertEquals(Math.round(1750.00 * (30 - workedDays) / 30 * 100.00), c509, DELTA);
+	assertEquals(Math.round(1750.00 * (30 - workedDays) / 30 * 100.00), c509, DELTA);
 
 	double c603 = datos.stream().filter(d -> d.getCodigo().equals("603")).map(d -> d.getValor())
 		.collect(Collectors.summingDouble(Double::parseDouble));
-	org.junit.Assert.assertEquals(Math.round(1750.00 * (30 - workedDays) / 30 * 100.00), c603, DELTA);
+	assertEquals(Math.round(1750.00 * (30 - workedDays) / 30 * 100.00), c603, DELTA);
 
 	datos = bases.get(2).getDatosTramo().getDato();
 
-	org.junit.Assert.assertEquals(3, datos.size());
+	assertEquals(3, datos.size());
 
 	c500 = datos.stream().filter(d -> d.getCodigo().equals("500")).map(d -> d.getValor())
 		.collect(Collectors.summingDouble(Double::parseDouble));
-	org.junit.Assert.assertEquals(Math.round(1750.00 * (workedDays - 10) / 30 * 100.00), c500, DELTA);
+	assertEquals(Math.round(1750.00 * (workedDays - 10) / 30 * 100.00), c500, DELTA);
 
 	c601 = datos.stream().filter(d -> d.getCodigo().equals("601")).map(d -> d.getValor())
 		.collect(Collectors.summingDouble(Double::parseDouble));
-	org.junit.Assert.assertEquals(Math.round(1750.00 * (workedDays - 10) / 30 * 100.00), c601, DELTA);
+	assertEquals(Math.round(1750.00 * (workedDays - 10) / 30 * 100.00), c601, DELTA);
 
 	h4 = datos.stream().filter(d -> d.getCodigo().equals("737")).map(d -> d.getValor())
 		.collect(Collectors.summingDouble(Double::parseDouble));
 
-	org.junit.Assert.assertEquals(Math.round(100.00 / workedDays * (workedDays - 10) * 100.00), h4, DELTA);
+	assertEquals(Math.round(100.00 / workedDays * (workedDays - 10) * 100.00), h4, DELTA);
 
     }
 
@@ -1183,41 +1185,41 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 
 	List<net.aonsolutions.core.tgss.creta.jaxb.bases.Tramo> bases = getBases(connection, trabajadoresTramos);
 
-	org.junit.Assert.assertEquals(3, bases.size());
+	assertEquals(3, bases.size());
 
 	List<Dato> datos = bases.get(0).getDatosTramo().getDato();
 
-	org.junit.Assert.assertEquals(3, datos.size());
+	assertEquals(3, datos.size());
 
 	double c500 = datos.stream().filter(d -> d.getCodigo().equals("500")).map(d -> d.getValor())
 		.collect(Collectors.summingDouble(Double::parseDouble));
-	org.junit.Assert.assertEquals(Math.round(1750.00 * 10 / 30 * 100.00), c500, DELTA);
+	assertEquals(Math.round(1750.00 * 10 / 30 * 100.00), c500, DELTA);
 
 	double c601 = datos.stream().filter(d -> d.getCodigo().equals("601")).map(d -> d.getValor())
 		.collect(Collectors.summingDouble(Double::parseDouble));
-	org.junit.Assert.assertEquals(Math.round(1750.00 * 10 / 30 * 100.00), c601, DELTA);
+	assertEquals(Math.round(1750.00 * 10 / 30 * 100.00), c601, DELTA);
 
 	double h4 = datos.stream().filter(d -> d.getCodigo().equals("737")).map(d -> d.getValor())
 		.collect(Collectors.summingDouble(Double::parseDouble));
 
 	int workedDays = AonDateUtils.getMax(endDate, DAY_OF_MONTH) - 10;
-	org.junit.Assert.assertEquals(Math.round(100.00 / workedDays * 10.00 * 100.00), h4, DELTA);
+	assertEquals(Math.round(100.00 / workedDays * 10.00 * 100.00), h4, DELTA);
 
 	datos = bases.get(1).getDatosTramo().getDato();
 
-	org.junit.Assert.assertEquals(2, datos.size());
+	assertEquals(2, datos.size());
 
 	double c509 = datos.stream().filter(d -> d.getCodigo().equals("509")).map(d -> d.getValor())
 		.collect(Collectors.summingDouble(Double::parseDouble));
-	org.junit.Assert.assertEquals(Math.round(1750.00 * (30 - workedDays) / 30 * 100.00), c509, DELTA);
+	assertEquals(Math.round(1750.00 * (30 - workedDays) / 30 * 100.00), c509, DELTA);
 
 	double c603 = datos.stream().filter(d -> d.getCodigo().equals("603")).map(d -> d.getValor())
 		.collect(Collectors.summingDouble(Double::parseDouble));
-	org.junit.Assert.assertEquals(Math.round(1750.00 * (30 - workedDays) / 30 * 100.00), c603, DELTA);
+	assertEquals(Math.round(1750.00 * (30 - workedDays) / 30 * 100.00), c603, DELTA);
 
 	datos = bases.get(2).getDatosTramo().getDato();
 
-	org.junit.Assert.assertEquals(3, datos.size());
+	assertEquals(3, datos.size());
 
 	h4 = datos.stream().filter(d -> d.getCodigo().equals("737")).map(d -> d.getValor())
 		.collect(Collectors.summingDouble(Double::parseDouble));
@@ -1261,10 +1263,10 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 	List<net.aonsolutions.core.tgss.creta.jaxb.bases.Tramo> tramosBases = getTramosBases(connection, startDate,
 		endDate, ccc, contract);
 
-	org.junit.Assert.assertEquals(1, tramosBases.size());
+	assertEquals(1, tramosBases.size());
 
 	tramosBases.get(0).getDatosTramo().getDato().forEach(d -> {
-	    org.junit.Assert.assertNotEquals("51", d.getCodigo());
+	    assertNotEquals("51", d.getCodigo());
 
 	});
 	double _500 = tramosBases.get(0).getDatosTramo().getDato().stream().filter(d -> d.getCodigo().equals("500"))
@@ -1273,7 +1275,7 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 	double _563 = tramosBases.get(0).getDatosTramo().getDato().stream().filter(d -> d.getCodigo().equals("563"))
 		.map(d -> d.getValor()).collect(Collectors.summingDouble(Double::parseDouble));
 
-	org.junit.Assert.assertEquals(_500 * 0.75, _563, DELTA);
+	assertEquals(_500 * 0.75, _563, DELTA);
 
     }
 
@@ -1331,7 +1333,7 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 	// int salaries = calculateAndSave(connection, ctx);
 
 	// Only one salary saved to DB.
-	Assert.assertEquals(1, salaries);
+	assertEquals(1, salaries);
 
 	AON.getSalaryData(aonContext, props -> props.getContractProperty().eq(contract.getId())).forEach(salary -> {
 
@@ -1339,11 +1341,11 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 
 	    // 500 Base de contingencias comunes.
 	    List<ContextData> datas = salary.getContextData().get(CGC_BASE.getName());
-	    Assert.assertEquals(1, datas.size());
+	    assertEquals(1, datas.size());
 
-	    Assert.assertEquals(startDate, datas.get(0).getStartDate());
-	    Assert.assertEquals(endDate, datas.get(0).getEndDate());
-	    Assert.assertEquals(1750.00, Double.parseDouble(datas.get(0).getExpression()), DELTA);
+	    assertEquals(startDate, datas.get(0).getStartDate());
+	    assertEquals(endDate, datas.get(0).getEndDate());
+	    assertEquals(1750.00, Double.parseDouble(datas.get(0).getExpression()), DELTA);
 
 	});
 	;
@@ -1408,17 +1410,17 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 //		int salaries = calculateAndSave(connection, ctx);
 
 	// Only one salary saved to DB.
-	Assert.assertEquals(1, salaries);
+	assertEquals(1, salaries);
 
 	AON.getSalaryData(aonContext, props -> props.getContractProperty().eq(contract.getId())).forEach(salary -> {
 
 	    // 500 Base de contingencias comunes.
 	    List<ContextData> datas = salary.getContextData().get(CGC_BASE.getName());
-	    Assert.assertEquals(1, datas.size());
+	    assertEquals(1, datas.size());
 
-	    Assert.assertEquals(startDate, datas.get(0).getStartDate());
-	    Assert.assertEquals(endDate, datas.get(0).getEndDate());
-	    Assert.assertEquals(br * monthDays, Double.parseDouble(datas.get(0).getExpression()), DELTA);
+	    assertEquals(startDate, datas.get(0).getStartDate());
+	    assertEquals(endDate, datas.get(0).getEndDate());
+	    assertEquals(br * monthDays, Double.parseDouble(datas.get(0).getExpression()), DELTA);
 
 	});
 	;
@@ -1480,7 +1482,7 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 //		int salaries = calculateAndSave(connection, ctx);
 
 	// Only one salary saved to DB.
-	Assert.assertEquals(1, salaries);
+	assertEquals(1, salaries);
 
 	AON.getSalaryData(aonContext, props -> props.getContractProperty().eq(contract.getId())).forEach(salary -> {
 
@@ -1489,30 +1491,30 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 
 	    // 500 Base de contingencias comunes.
 	    List<ContextData> datas = salary.getContextData().get(CGC_BASE.getName());
-	    Assert.assertEquals(2, datas.size());
+	    assertEquals(2, datas.size());
 	    Collections.sort(datas, (d1, d2) -> d1.getStartDate().compareTo(d2.getStartDate()));
 
-	    Assert.assertEquals(startDate, datas.get(0).getStartDate());
-	    Assert.assertEquals(endActive, datas.get(0).getEndDate());
-	    Assert.assertEquals(1750.00 * 13 / monthDays, Double.parseDouble(datas.get(0).getExpression()), DELTA);
+	    assertEquals(startDate, datas.get(0).getStartDate());
+	    assertEquals(endActive, datas.get(0).getEndDate());
+	    assertEquals(1750.00 * 13 / monthDays, Double.parseDouble(datas.get(0).getExpression()), DELTA);
 
-	    Assert.assertEquals(startIt, datas.get(1).getStartDate());
-	    Assert.assertEquals(endDate, datas.get(1).getEndDate());
-	    Assert.assertEquals(1750.00 * (monthDays - 13) / monthDays,
+	    assertEquals(startIt, datas.get(1).getStartDate());
+	    assertEquals(endDate, datas.get(1).getEndDate());
+	    assertEquals(1750.00 * (monthDays - 13) / monthDays,
 		    Double.parseDouble(datas.get(1).getExpression()), DELTA);
 
 	    // 601 o 611 Base de Accidentes de Trabajo.
 	    datas = salary.getContextData().get(CGP_BASE.getName());
-	    Assert.assertEquals(2, datas.size());
+	    assertEquals(2, datas.size());
 	    Collections.sort(datas, (d1, d2) -> d1.getStartDate().compareTo(d2.getStartDate()));
 
-	    Assert.assertEquals(startDate, datas.get(0).getStartDate());
-	    Assert.assertEquals(endActive, datas.get(0).getEndDate());
-	    Assert.assertEquals(1750.00 * 13 / monthDays, Double.parseDouble(datas.get(0).getExpression()), DELTA);
+	    assertEquals(startDate, datas.get(0).getStartDate());
+	    assertEquals(endActive, datas.get(0).getEndDate());
+	    assertEquals(1750.00 * 13 / monthDays, Double.parseDouble(datas.get(0).getExpression()), DELTA);
 
-	    Assert.assertEquals(startIt, datas.get(1).getStartDate());
-	    Assert.assertEquals(endDate, datas.get(1).getEndDate());
-	    Assert.assertEquals(1750.00 * (monthDays - 13) / monthDays,
+	    assertEquals(startIt, datas.get(1).getStartDate());
+	    assertEquals(endDate, datas.get(1).getEndDate());
+	    assertEquals(1750.00 * (monthDays - 13) / monthDays,
 		    Double.parseDouble(datas.get(1).getExpression()), DELTA);
 
 	});
@@ -1579,7 +1581,7 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 		getLastDayOfMonth(add(getToday(), YEAR, 2)), contract);
 
 	int salaries = calculateAndSave(connection, ctx);
-	Assert.assertEquals(1, salaries);
+	assertEquals(1, salaries);
 
 	// Only one salary saved to DB.
 	Map<String, List<ContextData>> datas = AON
@@ -1590,31 +1592,31 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 	Date endDate = getLastDayOfMonth(add(getToday(), YEAR, 2));
 
 	List<ContextData> cgcBases = datas.get(ContextVariable.CGC_BASE.getName());
-	Assert.assertEquals(finBonif.before(endDate) ? 2 : 1, cgcBases.size());
+	assertEquals(finBonif.before(endDate) ? 2 : 1, cgcBases.size());
 
 	Collections.sort(cgcBases, (d1, d2) -> d1.getStartDate().compareTo(d2.getStartDate()));
-	Assert.assertEquals(cgcBases.get(0).getStartDate(), getFirstDayOfMonth(add(getToday(), YEAR, 2)));
-	Assert.assertEquals(cgcBases.get(0).getEndDate(), add(getToday(), YEAR, 2));
+	assertEquals(cgcBases.get(0).getStartDate(), getFirstDayOfMonth(add(getToday(), YEAR, 2)));
+	assertEquals(cgcBases.get(0).getEndDate(), add(getToday(), YEAR, 2));
 	if (cgcBases.size() > 1) {
-	    Assert.assertEquals(cgcBases.get(1).getStartDate(), add(add(getToday(), YEAR, 2), DAY_OF_MONTH, 1));
-	    Assert.assertEquals(cgcBases.get(1).getEndDate(), getLastDayOfMonth(add(getToday(), YEAR, 2)));
+	    assertEquals(cgcBases.get(1).getStartDate(), add(add(getToday(), YEAR, 2), DAY_OF_MONTH, 1));
+	    assertEquals(cgcBases.get(1).getEndDate(), getLastDayOfMonth(add(getToday(), YEAR, 2)));
 	}
 
 	List<ContextData> cgpBases = datas.get(ContextVariable.CGP_BASE.getName());
-	Assert.assertEquals(finBonif.before(endDate) ? 2 : 1, cgpBases.size());
+	assertEquals(finBonif.before(endDate) ? 2 : 1, cgpBases.size());
 	Collections.sort(cgpBases, (d1, d2) -> d1.getStartDate().compareTo(d2.getStartDate()));
-	Assert.assertEquals(cgpBases.get(0).getStartDate(), getFirstDayOfMonth(add(getToday(), YEAR, 2)));
-	Assert.assertEquals(cgpBases.get(0).getEndDate(), add(getToday(), YEAR, 2));
+	assertEquals(cgpBases.get(0).getStartDate(), getFirstDayOfMonth(add(getToday(), YEAR, 2)));
+	assertEquals(cgpBases.get(0).getEndDate(), add(getToday(), YEAR, 2));
 	if (cgcBases.size() > 1) {
-	    Assert.assertEquals(cgpBases.get(1).getStartDate(), add(add(getToday(), YEAR, 2), DAY_OF_MONTH, 1));
-	    Assert.assertEquals(cgpBases.get(1).getEndDate(), getLastDayOfMonth(add(getToday(), YEAR, 2)));
+	    assertEquals(cgpBases.get(1).getStartDate(), add(add(getToday(), YEAR, 2), DAY_OF_MONTH, 1));
+	    assertEquals(cgpBases.get(1).getEndDate(), getLastDayOfMonth(add(getToday(), YEAR, 2)));
 	}
 
 //		List<ContextData> structuralBases = datas.get(ContextVariable.STRUCTURAL_OVERTIME_BASE.getName());
-//		Assert.assertEquals(1, structuralBases.size());
+//		assertEquals(1, structuralBases.size());
 //
 //		List<ContextData> nonStructuralBases = datas.get(ContextVariable.NON_STRUCTURAL_OVERTIME_BASE.getName());
-//		Assert.assertEquals(1, nonStructuralBases.size());
+//		assertEquals(1, nonStructuralBases.size());
 
     }
 
@@ -1697,7 +1699,7 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 		getLastDayOfMonth(add(getToday(), YEAR, 2)), contract);
 
 	int salaries = calculateAndSave(connection, ctx);
-	Assert.assertEquals(1, salaries);
+	assertEquals(1, salaries);
 
 	// Only one salary saved to DB.
 	Map<String, List<ContextData>> datas = AON
@@ -1714,61 +1716,61 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 	int monthDays = AonDateUtils.get(endDate, Calendar.DAY_OF_MONTH);
 
 	List<ContextData> cgcBases = datas.get(ContextVariable.CGC_BASE.getName());
-	Assert.assertEquals(4, cgcBases.size());
+	assertEquals(4, cgcBases.size());
 	Collections.sort(cgcBases, (d1, d2) -> d1.getStartDate().compareTo(d2.getStartDate()));
-	Assert.assertEquals(cgcBases.get(0).getStartDate(), startDate);
-	Assert.assertEquals(cgcBases.get(1).getEndDate(), sectionDate);
-	Assert.assertEquals(cgcBases.get(2).getStartDate(), next2SectionDate);
-	Assert.assertEquals(cgcBases.get(2).getEndDate(), itEndDate);
-	Assert.assertEquals(cgcBases.get(3).getStartDate(), workStartDate);
-	Assert.assertEquals(cgcBases.get(3).getEndDate(), endDate);
+	assertEquals(cgcBases.get(0).getStartDate(), startDate);
+	assertEquals(cgcBases.get(1).getEndDate(), sectionDate);
+	assertEquals(cgcBases.get(2).getStartDate(), next2SectionDate);
+	assertEquals(cgcBases.get(2).getEndDate(), itEndDate);
+	assertEquals(cgcBases.get(3).getStartDate(), workStartDate);
+	assertEquals(cgcBases.get(3).getEndDate(), endDate);
 
-	Assert.assertEquals(100.00 * 3, Double.parseDouble(cgcBases.get(0).getExpression()), DELTA);
-	Assert.assertEquals(100.00 * 7, Double.parseDouble(cgcBases.get(1).getExpression()), DELTA);
-	Assert.assertEquals(100.00 * 5, Double.parseDouble(cgcBases.get(2).getExpression()), DELTA);
-	Assert.assertEquals(1500.00 * (monthDays - 15) / monthDays, Double.parseDouble(cgcBases.get(3).getExpression()),
+	assertEquals(100.00 * 3, Double.parseDouble(cgcBases.get(0).getExpression()), DELTA);
+	assertEquals(100.00 * 7, Double.parseDouble(cgcBases.get(1).getExpression()), DELTA);
+	assertEquals(100.00 * 5, Double.parseDouble(cgcBases.get(2).getExpression()), DELTA);
+	assertEquals(1500.00 * (monthDays - 15) / monthDays, Double.parseDouble(cgcBases.get(3).getExpression()),
 		DELTA);
 
 	List<ContextData> cgpBases = datas.get(ContextVariable.CGP_BASE.getName());
-	Assert.assertEquals(4, cgpBases.size());
+	assertEquals(4, cgpBases.size());
 	Collections.sort(cgpBases, (d1, d2) -> d1.getStartDate().compareTo(d2.getStartDate()));
-	Assert.assertEquals(cgpBases.get(0).getStartDate(), startDate);
-	Assert.assertEquals(cgpBases.get(1).getEndDate(), sectionDate);
-	Assert.assertEquals(cgpBases.get(2).getStartDate(), next2SectionDate);
-	Assert.assertEquals(cgpBases.get(2).getEndDate(), itEndDate);
-	Assert.assertEquals(cgpBases.get(3).getStartDate(), workStartDate);
-	Assert.assertEquals(cgpBases.get(3).getEndDate(), endDate);
+	assertEquals(cgpBases.get(0).getStartDate(), startDate);
+	assertEquals(cgpBases.get(1).getEndDate(), sectionDate);
+	assertEquals(cgpBases.get(2).getStartDate(), next2SectionDate);
+	assertEquals(cgpBases.get(2).getEndDate(), itEndDate);
+	assertEquals(cgpBases.get(3).getStartDate(), workStartDate);
+	assertEquals(cgpBases.get(3).getEndDate(), endDate);
 
-	Assert.assertEquals(100.00 * 3, Double.parseDouble(cgpBases.get(0).getExpression()), DELTA);
-	Assert.assertEquals(100.00 * 7, Double.parseDouble(cgpBases.get(1).getExpression()), DELTA);
-	Assert.assertEquals(100.00 * 5, Double.parseDouble(cgpBases.get(2).getExpression()), DELTA);
-	Assert.assertEquals(1500.00 * (monthDays - 15) / monthDays, Double.parseDouble(cgpBases.get(3).getExpression()),
+	assertEquals(100.00 * 3, Double.parseDouble(cgpBases.get(0).getExpression()), DELTA);
+	assertEquals(100.00 * 7, Double.parseDouble(cgpBases.get(1).getExpression()), DELTA);
+	assertEquals(100.00 * 5, Double.parseDouble(cgpBases.get(2).getExpression()), DELTA);
+	assertEquals(1500.00 * (monthDays - 15) / monthDays, Double.parseDouble(cgpBases.get(3).getExpression()),
 		DELTA);
 
 	List<ContextData> prestIts = datas.get(ContextVariable.PREST_IT);
-	Assert.assertEquals(4, prestIts.size());
+	assertEquals(4, prestIts.size());
 	Collections.sort(prestIts, (d1, d2) -> d1.getStartDate().compareTo(d2.getStartDate()));
-	Assert.assertEquals(prestIts.get(0).getStartDate(), startDate);
-	Assert.assertEquals(prestIts.get(1).getEndDate(), sectionDate);
-	Assert.assertEquals(prestIts.get(2).getStartDate(), next2SectionDate);
-	Assert.assertEquals(prestIts.get(2).getEndDate(), itEndDate);
-	Assert.assertEquals(prestIts.get(3).getStartDate(), workStartDate);
-	Assert.assertEquals(prestIts.get(3).getEndDate(), endDate);
+	assertEquals(prestIts.get(0).getStartDate(), startDate);
+	assertEquals(prestIts.get(1).getEndDate(), sectionDate);
+	assertEquals(prestIts.get(2).getStartDate(), next2SectionDate);
+	assertEquals(prestIts.get(2).getEndDate(), itEndDate);
+	assertEquals(prestIts.get(3).getStartDate(), workStartDate);
+	assertEquals(prestIts.get(3).getEndDate(), endDate);
 
-	Assert.assertEquals(0.00, Double.parseDouble(prestIts.get(0).getExpression()), DELTA);
-	Assert.assertEquals(100.00 * 7 * 0.60, Double.parseDouble(prestIts.get(1).getExpression()), DELTA);
-	Assert.assertEquals(100.00 * 5 * 0.60, Double.parseDouble(prestIts.get(2).getExpression()), DELTA);
-	Assert.assertEquals(0.00, Double.parseDouble(prestIts.get(3).getExpression()), DELTA);
+	assertEquals(0.00, Double.parseDouble(prestIts.get(0).getExpression()), DELTA);
+	assertEquals(100.00 * 7 * 0.60, Double.parseDouble(prestIts.get(1).getExpression()), DELTA);
+	assertEquals(100.00 * 5 * 0.60, Double.parseDouble(prestIts.get(2).getExpression()), DELTA);
+	assertEquals(0.00, Double.parseDouble(prestIts.get(3).getExpression()), DELTA);
 
 //		List<ContextData> structuralBases = datas.get(ContextVariable.STRUCTURAL_OVERTIME_BASE.getName());
-//		Assert.assertEquals(1, structuralBases.size());
-//		Assert.assertEquals(startDate, structuralBases.get(0).getStartDate());
-//		Assert.assertEquals(endDate, structuralBases.get(0).getEndDate());
+//		assertEquals(1, structuralBases.size());
+//		assertEquals(startDate, structuralBases.get(0).getStartDate());
+//		assertEquals(endDate, structuralBases.get(0).getEndDate());
 //
 //		List<ContextData> nonStructuralBases = datas.get(ContextVariable.NON_STRUCTURAL_OVERTIME_BASE.getName());
-//		Assert.assertEquals(1, nonStructuralBases.size());
-//		Assert.assertEquals(startDate, nonStructuralBases.get(0).getStartDate());
-//		Assert.assertEquals(endDate, nonStructuralBases.get(0).getEndDate());
+//		assertEquals(1, nonStructuralBases.size());
+//		assertEquals(startDate, nonStructuralBases.get(0).getStartDate());
+//		assertEquals(endDate, nonStructuralBases.get(0).getEndDate());
 
     }
 
@@ -1841,7 +1843,7 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 		getFirstDayOfMonth(getToday()), getLastDayOfMonth(getToday()), getLastDayOfMonth(getToday()), contract);
 
 	int salaries = calculateAndSave(connection, ctx);
-	Assert.assertEquals(1, salaries);
+	assertEquals(1, salaries);
 
 	// Only one salary saved to DB.
 	Map<String, List<ContextData>> datas = AON
@@ -1857,60 +1859,60 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 	int monthDays = AonDateUtils.get(endDate, Calendar.DAY_OF_MONTH);
 
 	List<ContextData> cgcBases = datas.get(ContextVariable.CGC_BASE.getName());
-	Assert.assertEquals(4, cgcBases.size());
+	assertEquals(4, cgcBases.size());
 	Collections.sort(cgcBases, (d1, d2) -> d1.getStartDate().compareTo(d2.getStartDate()));
-	Assert.assertEquals(cgcBases.get(0).getStartDate(), startDate);
-	Assert.assertEquals(cgcBases.get(1).getEndDate(), sectionDate);
-	Assert.assertEquals(cgcBases.get(2).getStartDate(), next2SectionDate);
-	Assert.assertEquals(cgcBases.get(2).getEndDate(), itEndDate);
-	Assert.assertEquals(cgcBases.get(3).getStartDate(), workStartDate);
-	Assert.assertEquals(cgcBases.get(3).getEndDate(), endDate);
+	assertEquals(cgcBases.get(0).getStartDate(), startDate);
+	assertEquals(cgcBases.get(1).getEndDate(), sectionDate);
+	assertEquals(cgcBases.get(2).getStartDate(), next2SectionDate);
+	assertEquals(cgcBases.get(2).getEndDate(), itEndDate);
+	assertEquals(cgcBases.get(3).getStartDate(), workStartDate);
+	assertEquals(cgcBases.get(3).getEndDate(), endDate);
 
-	Assert.assertEquals(100.00 * 3, Double.parseDouble(cgcBases.get(0).getExpression()), DELTA);
-	Assert.assertEquals(100.00 * 7, Double.parseDouble(cgcBases.get(1).getExpression()), DELTA);
-	Assert.assertEquals(100.00 * 5, Double.parseDouble(cgcBases.get(2).getExpression()), DELTA);
+	assertEquals(100.00 * 3, Double.parseDouble(cgcBases.get(0).getExpression()), DELTA);
+	assertEquals(100.00 * 7, Double.parseDouble(cgcBases.get(1).getExpression()), DELTA);
+	assertEquals(100.00 * 5, Double.parseDouble(cgcBases.get(2).getExpression()), DELTA);
 
-	Assert.assertEquals(1500.00 * (monthDays - 15) / monthDays, Double.parseDouble(cgcBases.get(3).getExpression()),
+	assertEquals(1500.00 * (monthDays - 15) / monthDays, Double.parseDouble(cgcBases.get(3).getExpression()),
 		DELTA);
 
 	List<ContextData> cgpBases = datas.get(ContextVariable.CGP_BASE.getName());
-	Assert.assertEquals(4, cgpBases.size());
+	assertEquals(4, cgpBases.size());
 	Collections.sort(cgpBases, (d1, d2) -> d1.getStartDate().compareTo(d2.getStartDate()));
-	Assert.assertEquals(cgpBases.get(0).getStartDate(), startDate);
-	Assert.assertEquals(cgpBases.get(1).getEndDate(), sectionDate);
-	Assert.assertEquals(cgpBases.get(2).getStartDate(), next2SectionDate);
-	Assert.assertEquals(cgpBases.get(2).getEndDate(), itEndDate);
-	Assert.assertEquals(cgpBases.get(3).getStartDate(), workStartDate);
-	Assert.assertEquals(cgpBases.get(3).getEndDate(), endDate);
+	assertEquals(cgpBases.get(0).getStartDate(), startDate);
+	assertEquals(cgpBases.get(1).getEndDate(), sectionDate);
+	assertEquals(cgpBases.get(2).getStartDate(), next2SectionDate);
+	assertEquals(cgpBases.get(2).getEndDate(), itEndDate);
+	assertEquals(cgpBases.get(3).getStartDate(), workStartDate);
+	assertEquals(cgpBases.get(3).getEndDate(), endDate);
 
-	Assert.assertEquals(100.00 * 3, Double.parseDouble(cgpBases.get(0).getExpression()), DELTA);
-	Assert.assertEquals(100.00 * 7, Double.parseDouble(cgpBases.get(1).getExpression()), DELTA);
-	Assert.assertEquals(100.00 * 5, Double.parseDouble(cgpBases.get(2).getExpression()), DELTA);
+	assertEquals(100.00 * 3, Double.parseDouble(cgpBases.get(0).getExpression()), DELTA);
+	assertEquals(100.00 * 7, Double.parseDouble(cgpBases.get(1).getExpression()), DELTA);
+	assertEquals(100.00 * 5, Double.parseDouble(cgpBases.get(2).getExpression()), DELTA);
 
-	Assert.assertEquals(100.00 + (1500.00 * (monthDays - 15) / monthDays),
+	assertEquals(100.00 + (1500.00 * (monthDays - 15) / monthDays),
 		Double.parseDouble(cgpBases.get(3).getExpression()), DELTA);
 
 	List<ContextData> prestIts = datas.get(ContextVariable.PREST_IT);
-	Assert.assertEquals(4, prestIts.size());
+	assertEquals(4, prestIts.size());
 	Collections.sort(prestIts, (d1, d2) -> d1.getStartDate().compareTo(d2.getStartDate()));
-	Assert.assertEquals(prestIts.get(0).getStartDate(), startDate);
-	Assert.assertEquals(prestIts.get(1).getEndDate(), sectionDate);
-	Assert.assertEquals(prestIts.get(2).getStartDate(), next2SectionDate);
-	Assert.assertEquals(prestIts.get(2).getEndDate(), itEndDate);
-	Assert.assertEquals(prestIts.get(3).getStartDate(), workStartDate);
-	Assert.assertEquals(prestIts.get(3).getEndDate(), endDate);
+	assertEquals(prestIts.get(0).getStartDate(), startDate);
+	assertEquals(prestIts.get(1).getEndDate(), sectionDate);
+	assertEquals(prestIts.get(2).getStartDate(), next2SectionDate);
+	assertEquals(prestIts.get(2).getEndDate(), itEndDate);
+	assertEquals(prestIts.get(3).getStartDate(), workStartDate);
+	assertEquals(prestIts.get(3).getEndDate(), endDate);
 
 	List<ContextData> structuralBases = datas.get(ContextVariable.STRUCTURAL_OVERTIME_BASE.getName());
-	Assert.assertEquals(1, structuralBases.size());
-	Assert.assertEquals(structuralBases.get(0).getStartDate(), startDate);
-	Assert.assertEquals(structuralBases.get(0).getEndDate(), endDate);
-	Assert.assertEquals(0.00, Double.parseDouble(structuralBases.get(0).getExpression()), DELTA);
+	assertEquals(1, structuralBases.size());
+	assertEquals(structuralBases.get(0).getStartDate(), startDate);
+	assertEquals(structuralBases.get(0).getEndDate(), endDate);
+	assertEquals(0.00, Double.parseDouble(structuralBases.get(0).getExpression()), DELTA);
 
 	List<ContextData> nonStructuralBases = datas.get(ContextVariable.NON_STRUCTURAL_OVERTIME_BASE.getName());
-	Assert.assertEquals(1, nonStructuralBases.size());
-	Assert.assertEquals(nonStructuralBases.get(0).getStartDate(), workStartDate);
-	Assert.assertEquals(nonStructuralBases.get(0).getEndDate(), endDate);
-	Assert.assertEquals(100.00, Double.parseDouble(nonStructuralBases.get(0).getExpression()), DELTA);
+	assertEquals(1, nonStructuralBases.size());
+	assertEquals(nonStructuralBases.get(0).getStartDate(), workStartDate);
+	assertEquals(nonStructuralBases.get(0).getEndDate(), endDate);
+	assertEquals(100.00, Double.parseDouble(nonStructuralBases.get(0).getExpression()), DELTA);
     }
 
     @Test
@@ -1974,7 +1976,7 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 		getLastDayOfMonth(startDate), getLastDayOfMonth(startDate), contract);
 
 	int salaries = calculateAndSave(connection, ctx);
-	Assert.assertEquals(1, salaries);
+	assertEquals(1, salaries);
 
 	// Only one salary saved to DB.
 	Map<String, List<ContextData>> datas = AON
@@ -1986,27 +1988,27 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 
 	List<ContextData> cgcBases = datas.get(ContextVariable.CGC_BASE.getName());
 
-	Assert.assertEquals(2, cgcBases.size());
+	assertEquals(2, cgcBases.size());
 	Collections.sort(cgcBases, (d1, d2) -> d1.getStartDate().compareTo(d2.getStartDate()));
-	Assert.assertEquals(cgcBases.get(0).getStartDate(), startDate);
-	Assert.assertEquals(cgcBases.get(0).getEndDate(), itDate);
-	Assert.assertEquals(cgcBases.get(1).getStartDate(), workStartDate);
-	Assert.assertEquals(cgcBases.get(1).getEndDate(), endDate);
+	assertEquals(cgcBases.get(0).getStartDate(), startDate);
+	assertEquals(cgcBases.get(0).getEndDate(), itDate);
+	assertEquals(cgcBases.get(1).getStartDate(), workStartDate);
+	assertEquals(cgcBases.get(1).getEndDate(), endDate);
 
-	Assert.assertEquals(0.00, Double.parseDouble(cgcBases.get(0).getExpression()));
-	Assert.assertEquals(1500.00, Double.parseDouble(cgcBases.get(1).getExpression()), DELTA);
+	assertEquals(0.00, Double.parseDouble(cgcBases.get(0).getExpression()));
+	assertEquals(1500.00, Double.parseDouble(cgcBases.get(1).getExpression()), DELTA);
 
 	List<ContextData> cgpBases = datas.get(ContextVariable.CGP_BASE.getName());
 
-	Assert.assertEquals(2, cgpBases.size());
+	assertEquals(2, cgpBases.size());
 	Collections.sort(cgpBases, (d1, d2) -> d1.getStartDate().compareTo(d2.getStartDate()));
-	Assert.assertEquals(cgpBases.get(0).getStartDate(), startDate);
-	Assert.assertEquals(cgpBases.get(0).getEndDate(), itDate);
-	Assert.assertEquals(cgpBases.get(1).getStartDate(), workStartDate);
-	Assert.assertEquals(cgpBases.get(1).getEndDate(), endDate);
+	assertEquals(cgpBases.get(0).getStartDate(), startDate);
+	assertEquals(cgpBases.get(0).getEndDate(), itDate);
+	assertEquals(cgpBases.get(1).getStartDate(), workStartDate);
+	assertEquals(cgpBases.get(1).getEndDate(), endDate);
 
-	Assert.assertEquals(0.00, Double.parseDouble(cgpBases.get(0).getExpression()));
-	Assert.assertEquals(1500.00, Double.parseDouble(cgpBases.get(1).getExpression()), DELTA);
+	assertEquals(0.00, Double.parseDouble(cgpBases.get(0).getExpression()));
+	assertEquals(1500.00, Double.parseDouble(cgpBases.get(1).getExpression()), DELTA);
     }
 
     // -------------------------------------------------------------------------
@@ -2053,7 +2055,7 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 	int salaries = calculateAndSave(connection, ctx);
 
 	// Only one salary saved to DB.
-	Assert.assertEquals(1, salaries);
+	assertEquals(1, salaries);
 
 	AON.getSalaryData(aonContext, props -> props.getContractProperty().eq(contract.getId())).forEach(salary -> {
 	    Date noOcupationEnd = add(startDate, DAY_OF_MONTH, 9);
@@ -2063,29 +2065,29 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 
 	    // 500 Base de contingencias comunes.
 	    List<ContextData> datas = salary.getContextData().get(CGC_BASE.getName());
-	    Assert.assertEquals(2, datas.size());
+	    assertEquals(2, datas.size());
 	    Collections.sort(datas, (d1, d2) -> d1.getStartDate().compareTo(d2.getStartDate()));
 
-	    Assert.assertEquals(startDate, datas.get(0).getStartDate());
-	    Assert.assertEquals(noOcupationEnd, datas.get(0).getEndDate());
-	    Assert.assertEquals(1750.00 * 10 / monthDays, Double.parseDouble(datas.get(0).getExpression()), DELTA);
+	    assertEquals(startDate, datas.get(0).getStartDate());
+	    assertEquals(noOcupationEnd, datas.get(0).getEndDate());
+	    assertEquals(1750.00 * 10 / monthDays, Double.parseDouble(datas.get(0).getExpression()), DELTA);
 
-	    Assert.assertEquals(ocupationStart, datas.get(1).getStartDate());
-	    Assert.assertEquals(endDate, datas.get(1).getEndDate());
-	    Assert.assertEquals(1750.00 * (monthDays - 10) / monthDays,
+	    assertEquals(ocupationStart, datas.get(1).getStartDate());
+	    assertEquals(endDate, datas.get(1).getEndDate());
+	    assertEquals(1750.00 * (monthDays - 10) / monthDays,
 		    Double.parseDouble(datas.get(1).getExpression()), DELTA);
 
 	    // 601 o 611 Base de Accidentes de Trabajo.
 	    datas = salary.getContextData().get(CGP_BASE.getName());
-	    Assert.assertEquals(2, datas.size());
+	    assertEquals(2, datas.size());
 	    Collections.sort(datas, (d1, d2) -> d1.getStartDate().compareTo(d2.getStartDate()));
-	    Assert.assertEquals(startDate, datas.get(0).getStartDate());
-	    Assert.assertEquals(noOcupationEnd, datas.get(0).getEndDate());
-	    Assert.assertEquals(1750.00 * 10 / monthDays, Double.parseDouble(datas.get(0).getExpression()), DELTA);
+	    assertEquals(startDate, datas.get(0).getStartDate());
+	    assertEquals(noOcupationEnd, datas.get(0).getEndDate());
+	    assertEquals(1750.00 * 10 / monthDays, Double.parseDouble(datas.get(0).getExpression()), DELTA);
 
-	    Assert.assertEquals(ocupationStart, datas.get(1).getStartDate());
-	    Assert.assertEquals(endDate, datas.get(1).getEndDate());
-	    Assert.assertEquals(1750.00 * (monthDays - 10) / monthDays,
+	    assertEquals(ocupationStart, datas.get(1).getStartDate());
+	    assertEquals(endDate, datas.get(1).getEndDate());
+	    assertEquals(1750.00 * (monthDays - 10) / monthDays,
 		    Double.parseDouble(datas.get(1).getExpression()), DELTA);
 
 	});
@@ -2188,12 +2190,12 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 	for (String employeeDocument : employeDocuments.keySet())
 	    System.out.println(employeeDocument);
 
-	Assert.assertEquals(10, employeDocuments.size());
+	assertEquals(10, employeDocuments.size());
 
-	Assert.assertEquals((Long) 10L, employeDocuments.get("00000000A"));
+	assertEquals((Long) 10L, employeDocuments.get("00000000A"));
 
 	for (int i = 1; i < 10; i++) {
-	    Assert.assertEquals((Long) 1L, employeDocuments
+	    assertEquals((Long) 1L, employeDocuments
 		    .get(String.format("%sA", new String(new char[8]).replace("\0", Integer.toString(i)))));
 	}
     }
@@ -2219,11 +2221,11 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 
 	List<Tramo> tramos = getTramos(connection, contract, startDate, endDate, ccc);
 
-	Assert.assertEquals(1, tramos.size());
+	assertEquals(1, tramos.size());
 
 	Tramo tramo = tramos.get(0);
-	Assert.assertEquals("01", tramo.getFechaDesde().getDia());
-	Assert.assertEquals(Integer.toString(get(endDate, DAY_OF_MONTH)), tramo.getFechaHasta().getDia());
+	assertEquals("01", tramo.getFechaDesde().getDia());
+	assertEquals(Integer.toString(get(endDate, DAY_OF_MONTH)), tramo.getFechaHasta().getDia());
 	assertTramoActivoNormalArtistas(tramo);
 
     }
@@ -2258,16 +2260,16 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 
 	List<Tramo> tramos = getTramos(connection, startDateI, endDateII, ccc, contractI, contractII);
 
-	Assert.assertEquals(2, tramos.size());
+	assertEquals(2, tramos.size());
 
 	Tramo tramoI = tramos.get(0);
-	Assert.assertEquals("01", tramoI.getFechaDesde().getDia());
-	Assert.assertEquals("06", tramoI.getFechaHasta().getDia());
+	assertEquals("01", tramoI.getFechaDesde().getDia());
+	assertEquals("06", tramoI.getFechaHasta().getDia());
 	assertTramoActivoNormalArtistas(tramoI);
 
 	Tramo tramoII = tramos.get(1);
-	Assert.assertEquals(Integer.toString(get(startDateII, DAY_OF_MONTH)), tramoII.getFechaDesde().getDia());
-	Assert.assertEquals(Integer.toString(get(endDateII, DAY_OF_MONTH)), tramoII.getFechaHasta().getDia());
+	assertEquals(Integer.toString(get(startDateII, DAY_OF_MONTH)), tramoII.getFechaDesde().getDia());
+	assertEquals(Integer.toString(get(endDateII, DAY_OF_MONTH)), tramoII.getFechaHasta().getDia());
 	assertTramoActivoNormalArtistas(tramoII);
 
     }
@@ -2304,21 +2306,21 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 		connection, startDateI, endDateII, ccc, contractI, contractII);
 	List<net.aonsolutions.core.tgss.creta.jaxb.bases.Tramo> tramos = getBases(connection, trabajadoresTramos);
 
-	Assert.assertEquals(2, tramos.size());
+	assertEquals(2, tramos.size());
 
 	net.aonsolutions.core.tgss.creta.jaxb.bases.Tramo tramoI = tramos.get(0);
-	Assert.assertEquals("01", tramoI.getFechaDesde().getDia());
-	Assert.assertEquals("06", tramoI.getFechaHasta().getDia());
+	assertEquals("01", tramoI.getFechaDesde().getDia());
+	assertEquals("06", tramoI.getFechaHasta().getDia());
 	double _300 = tramoI.getDatosTramo().getDato().stream().filter(d -> d.getCodigo().equals("300"))
 		.map(d -> d.getValor()).collect(Collectors.summingDouble(Double::parseDouble));
-	org.junit.Assert.assertEquals(_300, (1750.00 * 6 / 30) * 100.00, DELTA);
+	assertEquals(_300, (1750.00 * 6 / 30) * 100.00, DELTA);
 
 	net.aonsolutions.core.tgss.creta.jaxb.bases.Tramo tramoII = tramos.get(1);
-	Assert.assertEquals(Integer.toString(get(startDateII, DAY_OF_MONTH)), tramoII.getFechaDesde().getDia());
-	Assert.assertEquals(Integer.toString(get(endDateII, DAY_OF_MONTH)), tramoII.getFechaHasta().getDia());
+	assertEquals(Integer.toString(get(startDateII, DAY_OF_MONTH)), tramoII.getFechaDesde().getDia());
+	assertEquals(Integer.toString(get(endDateII, DAY_OF_MONTH)), tramoII.getFechaHasta().getDia());
 	_300 = tramoII.getDatosTramo().getDato().stream().filter(d -> d.getCodigo().equals("300"))
 		.map(d -> d.getValor()).collect(Collectors.summingDouble(Double::parseDouble));
-	org.junit.Assert.assertEquals(_300, (int) ((1750.00 * 7.00 / 30.00) * 100.00), DELTA);
+	assertEquals(_300, (int) ((1750.00 * 7.00 / 30.00) * 100.00), DELTA);
 
     }
 
@@ -2374,50 +2376,50 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 		contractIII, contractIV, contractV);
 	List<net.aonsolutions.core.tgss.creta.jaxb.bases.Tramo> tramos = getBases(connection, trabajadoresTramos);
 
-	Assert.assertEquals(5, tramos.size());
+	assertEquals(5, tramos.size());
 
 	{
 	    net.aonsolutions.core.tgss.creta.jaxb.bases.Tramo tramoI = tramos.get(0);
-	    Assert.assertEquals(get(startDateI, DAY_OF_MONTH), Integer.parseInt(tramoI.getFechaDesde().getDia()));
-	    Assert.assertEquals(get(endDateI, DAY_OF_MONTH), Integer.parseInt(tramoI.getFechaHasta().getDia()));
+	    assertEquals(get(startDateI, DAY_OF_MONTH), Integer.parseInt(tramoI.getFechaDesde().getDia()));
+	    assertEquals(get(endDateI, DAY_OF_MONTH), Integer.parseInt(tramoI.getFechaHasta().getDia()));
 	    double _300 = tramoI.getDatosTramo().getDato().stream().filter(d -> d.getCodigo().equals("300"))
 		    .map(d -> d.getValor()).collect(Collectors.summingDouble(Double::parseDouble));
-	    org.junit.Assert.assertEquals(_300, (int) ((1750.00 / 30.00) * 100.00), DELTA);
+	    assertEquals(_300, (int) ((1750.00 / 30.00) * 100.00), DELTA);
 	}
 	{
 	    net.aonsolutions.core.tgss.creta.jaxb.bases.Tramo tramoII = tramos.get(1);
-	    Assert.assertEquals(get(startDateII, DAY_OF_MONTH), Integer.parseInt(tramoII.getFechaDesde().getDia()));
-	    Assert.assertEquals(get(endDateII, DAY_OF_MONTH), Integer.parseInt(tramoII.getFechaHasta().getDia()));
+	    assertEquals(get(startDateII, DAY_OF_MONTH), Integer.parseInt(tramoII.getFechaDesde().getDia()));
+	    assertEquals(get(endDateII, DAY_OF_MONTH), Integer.parseInt(tramoII.getFechaHasta().getDia()));
 	    double _300 = tramoII.getDatosTramo().getDato().stream().filter(d -> d.getCodigo().equals("300"))
 		    .map(d -> d.getValor()).collect(Collectors.summingDouble(Double::parseDouble));
-	    org.junit.Assert.assertEquals(_300, (int) ((1750.00 / 30.00) * 100.00), DELTA);
+	    assertEquals(_300, (int) ((1750.00 / 30.00) * 100.00), DELTA);
 	}
 
 	{
 	    net.aonsolutions.core.tgss.creta.jaxb.bases.Tramo tramoIII = tramos.get(2);
-	    Assert.assertEquals(get(startDateIII, DAY_OF_MONTH), Integer.parseInt(tramoIII.getFechaDesde().getDia()));
-	    Assert.assertEquals(get(endDateIII, DAY_OF_MONTH), Integer.parseInt(tramoIII.getFechaHasta().getDia()));
+	    assertEquals(get(startDateIII, DAY_OF_MONTH), Integer.parseInt(tramoIII.getFechaDesde().getDia()));
+	    assertEquals(get(endDateIII, DAY_OF_MONTH), Integer.parseInt(tramoIII.getFechaHasta().getDia()));
 	    double _300 = tramoIII.getDatosTramo().getDato().stream().filter(d -> d.getCodigo().equals("300"))
 		    .map(d -> d.getValor()).collect(Collectors.summingDouble(Double::parseDouble));
-	    org.junit.Assert.assertEquals(_300, (int) ((1750.00 / 30.00) * 100.00), DELTA);
+	    assertEquals(_300, (int) ((1750.00 / 30.00) * 100.00), DELTA);
 	}
 
 	{
 	    net.aonsolutions.core.tgss.creta.jaxb.bases.Tramo tramoIV = tramos.get(3);
-	    Assert.assertEquals(get(startDateIV, DAY_OF_MONTH), Integer.parseInt(tramoIV.getFechaDesde().getDia()));
-	    Assert.assertEquals(get(endDateIV, DAY_OF_MONTH), Integer.parseInt(tramoIV.getFechaHasta().getDia()));
+	    assertEquals(get(startDateIV, DAY_OF_MONTH), Integer.parseInt(tramoIV.getFechaDesde().getDia()));
+	    assertEquals(get(endDateIV, DAY_OF_MONTH), Integer.parseInt(tramoIV.getFechaHasta().getDia()));
 	    double _300 = tramoIV.getDatosTramo().getDato().stream().filter(d -> d.getCodigo().equals("300"))
 		    .map(d -> d.getValor()).collect(Collectors.summingDouble(Double::parseDouble));
-	    org.junit.Assert.assertEquals(_300, (int) ((1750.00 / 30.00) * 100.00), DELTA);
+	    assertEquals(_300, (int) ((1750.00 / 30.00) * 100.00), DELTA);
 	}
 
 	{
 	    net.aonsolutions.core.tgss.creta.jaxb.bases.Tramo tramoV = tramos.get(4);
-	    Assert.assertEquals(get(startDateV, DAY_OF_MONTH), Integer.parseInt(tramoV.getFechaDesde().getDia()));
-	    Assert.assertEquals(get(endDateV, DAY_OF_MONTH), Integer.parseInt(tramoV.getFechaHasta().getDia()));
+	    assertEquals(get(startDateV, DAY_OF_MONTH), Integer.parseInt(tramoV.getFechaDesde().getDia()));
+	    assertEquals(get(endDateV, DAY_OF_MONTH), Integer.parseInt(tramoV.getFechaHasta().getDia()));
 	    double _300 = tramoV.getDatosTramo().getDato().stream().filter(d -> d.getCodigo().equals("300"))
 		    .map(d -> d.getValor()).collect(Collectors.summingDouble(Double::parseDouble));
-	    org.junit.Assert.assertEquals(_300, (int) ((1750.00 / 30.00) * 100.00), DELTA);
+	    assertEquals(_300, (int) ((1750.00 / 30.00) * 100.00), DELTA);
 	}
     }
 
@@ -2440,11 +2442,11 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 
 	List<Tramo> tramos = getTramos(connection, contract, startDate, endDate, ccc);
 
-	Assert.assertEquals(1, tramos.size());
+	assertEquals(1, tramos.size());
 
 	Tramo tramo = tramos.get(0);
-	Assert.assertEquals("01", tramo.getFechaDesde().getDia());
-	Assert.assertEquals(Integer.toString(get(endDate, DAY_OF_MONTH)), tramo.getFechaHasta().getDia());
+	assertEquals("01", tramo.getFechaDesde().getDia());
+	assertEquals(Integer.toString(get(endDate, DAY_OF_MONTH)), tramo.getFechaHasta().getDia());
 	assertTramoActivoNormalTiempoCompleto(tramo);
 
     }
@@ -2471,11 +2473,11 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 	
 		List<Tramo> tramos = getTramos(connection, contract, startDate, endDate, ccc);
 		
-		Assert.assertEquals(1, tramos.size());
+		assertEquals(1, tramos.size());
 	
 		Tramo tramo = tramos.get(0);
-		Assert.assertEquals("01", tramo.getFechaDesde().getDia());
-		Assert.assertEquals(Integer.toString(get(endDate, DAY_OF_MONTH)), tramo.getFechaHasta().getDia());
+		assertEquals("01", tramo.getFechaDesde().getDia());
+		assertEquals(Integer.toString(get(endDate, DAY_OF_MONTH)), tramo.getFechaHasta().getDia());
 		assertTramoActivoNormalTiempoCompleto(tramo);
 		
 		assertDatosSolicitado(tramo.getDatosTramo().getDatoSolicitado(), "C", "301", "B");
@@ -2508,21 +2510,21 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 	
 		List<Tramo> tramos = getTramos(connection, contract, startDate, endDate, ccc);
 		
-		Assert.assertEquals(3, tramos.size());
+		assertEquals(3, tramos.size());
 	
 		Tramo tramo = tramos.get(0);
-		Assert.assertEquals("01", tramo.getFechaDesde().getDia());
+		assertEquals("01", tramo.getFechaDesde().getDia());
 		assertTramoActivoNormalTiempoCompleto(tramo);
 		assertDatosSolicitado(tramo.getDatosTramo().getDatoSolicitado(), "C", "301", "B");
 
 		tramo = tramos.get(1);
-		Assert.assertEquals("10", tramo.getFechaDesde().getDia());
+		assertEquals("10", tramo.getFechaDesde().getDia());
 		assertTramoIT15PrimerosDias(tramo);
 		assertNoDatoSolicitado(tramo.getDatosTramo().getDatoSolicitado(), "C", "301");
 
 		tramo = tramos.get(2);
-		Assert.assertEquals("15", tramo.getFechaDesde().getDia());
-		Assert.assertEquals(Integer.toString(get(endDate, DAY_OF_MONTH)), tramo.getFechaHasta().getDia());
+		assertEquals("15", tramo.getFechaDesde().getDia());
+		assertEquals(Integer.toString(get(endDate, DAY_OF_MONTH)), tramo.getFechaHasta().getDia());
 		assertTramoActivoNormalTiempoCompleto(tramo);
 		assertDatosSolicitado(tramo.getDatosTramo().getDatoSolicitado(), "C", "301", "B");
     }
@@ -2550,11 +2552,11 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 	List<Tramo> tramos = liquidacion.getLiquidacionMes().get(0).getTrabajadores().getTrabajador().get(0).getTramos()
 		.getTramo();
 
-	Assert.assertEquals(1, tramos.size());
+	assertEquals(1, tramos.size());
 
 	Tramo tramo = tramos.get(0);
-	Assert.assertEquals("01", tramo.getFechaDesde().getDia());
-	Assert.assertEquals(Integer.toString(get(endDate, DAY_OF_MONTH)), tramo.getFechaHasta().getDia());
+	assertEquals("01", tramo.getFechaDesde().getDia());
+	assertEquals(Integer.toString(get(endDate, DAY_OF_MONTH)), tramo.getFechaHasta().getDia());
 	assertTramoActivoNormalTiempoCompleto(tramo);
 
     }
@@ -2578,11 +2580,11 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 
 	List<Tramo> tramos = getTramos(connection, contract, startDate, endDate, ccc);
 
-	Assert.assertEquals(1, tramos.size());
+	assertEquals(1, tramos.size());
 
 	Tramo tramo = tramos.get(0);
-	Assert.assertEquals("01", tramo.getFechaDesde().getDia());
-	Assert.assertEquals(Integer.toString(get(endDate, DAY_OF_MONTH)), tramo.getFechaHasta().getDia());
+	assertEquals("01", tramo.getFechaDesde().getDia());
+	assertEquals(Integer.toString(get(endDate, DAY_OF_MONTH)), tramo.getFechaHasta().getDia());
 	assertTramoActivoNormalFormacionEnAlternancia(tramo);
 
     }
@@ -2606,11 +2608,11 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 
 	List<Tramo> tramos = getTramos(connection, contract, startDate, endDate, ccc);
 
-	Assert.assertEquals(1, tramos.size());
+	assertEquals(1, tramos.size());
 
 	Tramo tramo = tramos.get(0);
-	Assert.assertEquals("01", tramo.getFechaDesde().getDia());
-	Assert.assertEquals(Integer.toString(get(endDate, DAY_OF_MONTH)), tramo.getFechaHasta().getDia());
+	assertEquals("01", tramo.getFechaDesde().getDia());
+	assertEquals(Integer.toString(get(endDate, DAY_OF_MONTH)), tramo.getFechaHasta().getDia());
 	assertTramoActivoNormalTiempoCompletoDiario(tramo);
 
     }
@@ -2637,11 +2639,11 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 
 	List<Tramo> tramos = getTramos(connection, contract, startDate, endDate, ccc);
 
-	Assert.assertEquals(1, tramos.size());
+	assertEquals(1, tramos.size());
 
 	Tramo tramo = tramos.get(0);
-	Assert.assertEquals("01", tramo.getFechaDesde().getDia());
-	Assert.assertEquals(Integer.toString(get(endDate, DAY_OF_MONTH)), tramo.getFechaHasta().getDia());
+	assertEquals("01", tramo.getFechaDesde().getDia());
+	assertEquals(Integer.toString(get(endDate, DAY_OF_MONTH)), tramo.getFechaHasta().getDia());
 	assertTramoActivoNormalTiempoParcial(tramo);
 
     }
@@ -2665,11 +2667,11 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 
 	List<Tramo> tramos = getTramos(connection, contract, startDate, endDate, ccc);
 
-	Assert.assertEquals(1, tramos.size());
+	assertEquals(1, tramos.size());
 
 	Tramo tramo = tramos.get(0);
-	Assert.assertEquals("01", tramo.getFechaDesde().getDia());
-	Assert.assertEquals(Integer.toString(get(endDate, DAY_OF_MONTH)), tramo.getFechaHasta().getDia());
+	assertEquals("01", tramo.getFechaDesde().getDia());
+	assertEquals(Integer.toString(get(endDate, DAY_OF_MONTH)), tramo.getFechaHasta().getDia());
 	assertTramoActivoNormalTiempoParcial(tramo);
 
     }
@@ -2693,11 +2695,11 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 //		
 //		List<Tramo> tramos = getTramos(connection, contract, startDate, endDate, ccc);
 //		
-//		Assert.assertEquals(1, tramos.size());
+//		assertEquals(1, tramos.size());
 //		
 //		Tramo tramo = tramos.get(0); 
-//		Assert.assertEquals("01", tramo.getFechaDesde().getDia());
-//		Assert.assertEquals(Integer.toString(get(endDate, DAY_OF_MONTH)), tramo.getFechaHasta().getDia());
+//		assertEquals("01", tramo.getFechaDesde().getDia());
+//		assertEquals(Integer.toString(get(endDate, DAY_OF_MONTH)), tramo.getFechaHasta().getDia());
 //		assertTramoActivoNormalTiempoParcial(tramo);
 //
 //	}
@@ -2724,11 +2726,11 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 
 	List<Tramo> tramos = getTramos(connection, contract, startDate, endDate, ccc);
 
-	Assert.assertEquals(1, tramos.size());
+	assertEquals(1, tramos.size());
 
 	Tramo tramo = tramos.get(0);
-	Assert.assertEquals("01", tramo.getFechaDesde().getDia());
-	Assert.assertEquals("30", tramo.getFechaHasta().getDia());
+	assertEquals("01", tramo.getFechaDesde().getDia());
+	assertEquals("30", tramo.getFechaHasta().getDia());
 	assertTramoActivoNormalTiempoParcial(tramo);
 
     }
@@ -2755,16 +2757,16 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 
 	List<Tramo> tramos = getTramos(connection, contract, startDate, endDate, ccc);
 
-	Assert.assertEquals(2, tramos.size());
+	assertEquals(2, tramos.size());
 
 	Tramo tramo = tramos.get(0);
-	Assert.assertEquals("01", tramo.getFechaDesde().getDia());
-	Assert.assertEquals("29", tramo.getFechaHasta().getDia());
+	assertEquals("01", tramo.getFechaDesde().getDia());
+	assertEquals("29", tramo.getFechaHasta().getDia());
 	assertTramoActivoNormalTiempoParcial(tramo);
 
 	tramo = tramos.get(1);
-	Assert.assertEquals("30", tramo.getFechaDesde().getDia());
-	Assert.assertEquals("30", tramo.getFechaHasta().getDia());
+	assertEquals("30", tramo.getFechaDesde().getDia());
+	assertEquals("30", tramo.getFechaHasta().getDia());
 	assertTramoActivoNormalTiempoParcial(tramo);
     }
 
@@ -2791,16 +2793,16 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 
 	List<Tramo> tramos = getTramos(connection, contract, startDate, endDate, ccc);
 
-	Assert.assertEquals(2, tramos.size());
+	assertEquals(2, tramos.size());
 
 	Tramo tramo = tramos.get(0);
-	Assert.assertEquals("01", tramo.getFechaDesde().getDia());
-	Assert.assertEquals("30", tramo.getFechaHasta().getDia());
+	assertEquals("01", tramo.getFechaDesde().getDia());
+	assertEquals("30", tramo.getFechaHasta().getDia());
 	assertTramoActivoNormalTiempoParcial(tramo);
 
 	tramo = tramos.get(1);
-	Assert.assertEquals("31", tramo.getFechaDesde().getDia());
-	Assert.assertEquals("31", tramo.getFechaHasta().getDia());
+	assertEquals("31", tramo.getFechaDesde().getDia());
+	assertEquals("31", tramo.getFechaHasta().getDia());
 	assertTramoIT15PrimerosDias(tramo);
     }
 
@@ -2828,27 +2830,27 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 	List<net.aonsolutions.core.tgss.creta.jaxb.bases.Tramo> tramos = getTramosBases(connection, startDate, endDate,
 		ccc, contract);
 
-	Assert.assertEquals(2, tramos.size());
+	assertEquals(2, tramos.size());
 
 	net.aonsolutions.core.tgss.creta.jaxb.bases.Tramo tramo = tramos.get(0);
-	Assert.assertEquals("01", tramo.getFechaDesde().getDia());
-	Assert.assertEquals("30", tramo.getFechaHasta().getDia());
+	assertEquals("01", tramo.getFechaDesde().getDia());
+	assertEquals("30", tramo.getFechaHasta().getDia());
 	double _500 = tramo.getDatosTramo().getDato().stream().filter(d -> d.getCodigo().equals("500"))
 		.map(d -> d.getValor()).collect(Collectors.summingDouble(Double::parseDouble));
-	org.junit.Assert.assertEquals(_500, (1750.00 * 0.25) * 100, DELTA);
+	assertEquals(_500, (1750.00 * 0.25) * 100, DELTA);
 	double _601 = tramo.getDatosTramo().getDato().stream().filter(d -> d.getCodigo().equals("601"))
 		.map(d -> d.getValor()).collect(Collectors.summingDouble(Double::parseDouble));
-	org.junit.Assert.assertEquals(_601, (1750.00 * 0.25) * 100, DELTA);
+	assertEquals(_601, (1750.00 * 0.25) * 100, DELTA);
 
 	tramo = tramos.get(1);
-	Assert.assertEquals("31", tramo.getFechaDesde().getDia());
-	Assert.assertEquals("31", tramo.getFechaHasta().getDia());
+	assertEquals("31", tramo.getFechaDesde().getDia());
+	assertEquals("31", tramo.getFechaHasta().getDia());
 	_500 = tramo.getDatosTramo().getDato().stream().filter(d -> d.getCodigo().equals("500")).map(d -> d.getValor())
 		.collect(Collectors.summingDouble(Double::parseDouble));
-	org.junit.Assert.assertEquals(_500, (int) (1750.00 * 0.25 / 30.00 * 100.00), DELTA);
+	assertEquals(_500, (int) (1750.00 * 0.25 / 30.00 * 100.00), DELTA);
 	double _603 = tramo.getDatosTramo().getDato().stream().filter(d -> d.getCodigo().equals("603"))
 		.map(d -> d.getValor()).collect(Collectors.summingDouble(Double::parseDouble));
-	org.junit.Assert.assertEquals(_603, (int) (1750.00 * 0.25 / 30.00 * 100.00), DELTA);
+	assertEquals(_603, (int) (1750.00 * 0.25 / 30.00 * 100.00), DELTA);
     }
 
     @Test
@@ -2876,17 +2878,17 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 	List<net.aonsolutions.core.tgss.creta.jaxb.bases.Tramo> tramos = getTramosBases(connection, startDate, endDate,
 		ccc, contract);
 
-	Assert.assertEquals(1, tramos.size());
+	assertEquals(1, tramos.size());
 
 	net.aonsolutions.core.tgss.creta.jaxb.bases.Tramo tramo = tramos.get(0);
-	Assert.assertEquals("01", tramo.getFechaDesde().getDia());
-	Assert.assertEquals("30", tramo.getFechaHasta().getDia());
+	assertEquals("01", tramo.getFechaDesde().getDia());
+	assertEquals("30", tramo.getFechaHasta().getDia());
 	double _500 = tramo.getDatosTramo().getDato().stream().filter(d -> d.getCodigo().equals("500"))
 		.map(d -> d.getValor()).collect(Collectors.summingDouble(Double::parseDouble));
-	org.junit.Assert.assertEquals(_500, (1750.00 * 0.25) * 100, DELTA);
+	assertEquals(_500, (1750.00 * 0.25) * 100, DELTA);
 	double _601 = tramo.getDatosTramo().getDato().stream().filter(d -> d.getCodigo().equals("601"))
 		.map(d -> d.getValor()).collect(Collectors.summingDouble(Double::parseDouble));
-	org.junit.Assert.assertEquals(_601, (1750.00 * 0.25) * 100, DELTA);
+	assertEquals(_601, (1750.00 * 0.25) * 100, DELTA);
 
     }
 
@@ -2912,17 +2914,17 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 	List<net.aonsolutions.core.tgss.creta.jaxb.bases.Tramo> tramos = getTramosBases(connection, startDate, endDate,
 		ccc, contract);
 
-	Assert.assertEquals(1, tramos.size());
+	assertEquals(1, tramos.size());
 
 	net.aonsolutions.core.tgss.creta.jaxb.bases.Tramo tramo = tramos.get(0);
-	Assert.assertEquals("01", tramo.getFechaDesde().getDia());
-	Assert.assertEquals("31", tramo.getFechaHasta().getDia());
+	assertEquals("01", tramo.getFechaDesde().getDia());
+	assertEquals("31", tramo.getFechaHasta().getDia());
 	double _500 = tramo.getDatosTramo().getDato().stream().filter(d -> d.getCodigo().equals("500"))
 		.map(d -> d.getValor()).collect(Collectors.summingDouble(Double::parseDouble));
-	org.junit.Assert.assertEquals(_500, (1750.00 * 0.25) * 100, DELTA);
+	assertEquals(_500, (1750.00 * 0.25) * 100, DELTA);
 	double _601 = tramo.getDatosTramo().getDato().stream().filter(d -> d.getCodigo().equals("601"))
 		.map(d -> d.getValor()).collect(Collectors.summingDouble(Double::parseDouble));
-	org.junit.Assert.assertEquals(_601, (1750.00 * 0.25) * 100, DELTA);
+	assertEquals(_601, (1750.00 * 0.25) * 100, DELTA);
 	double _01 = tramo.getDatosTramo().getDato().stream().filter(d -> d.getCodigo().equals("01"))
 		.map(d -> d.getValor()).collect(Collectors.summingDouble(Double::parseDouble));
 
@@ -2935,25 +2937,25 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 
 	tramos = getTramosBases(connection, startDate, endDate, ccc, contract);
 	tramo = tramos.get(0);
-	Assert.assertEquals("01", tramo.getFechaDesde().getDia());
-	Assert.assertEquals("31", tramo.getFechaHasta().getDia());
+	assertEquals("01", tramo.getFechaDesde().getDia());
+	assertEquals("31", tramo.getFechaHasta().getDia());
 
 	double __02 = tramo.getDatosTramo().getDato().stream().filter(d -> d.getCodigo().equals("02"))
 		.map(d -> d.getValor()).collect(Collectors.summingDouble(Double::parseDouble));
-	org.junit.Assert.assertEquals(11, __02, 0.00);
+	assertEquals(11, __02, 0.00);
 	double __537 = tramo.getDatosTramo().getDato().stream().filter(d -> d.getCodigo().equals("537"))
 		.map(d -> d.getValor()).collect(Collectors.summingDouble(Double::parseDouble));
-	org.junit.Assert.assertEquals(11 * 66.66 * 100.00, __537, DELTA);
+	assertEquals(11 * 66.66 * 100.00, __537, DELTA);
 
 	double __01 = tramo.getDatosTramo().getDato().stream().filter(d -> d.getCodigo().equals("01"))
 		.map(d -> d.getValor()).collect(Collectors.summingDouble(Double::parseDouble));
-	org.junit.Assert.assertEquals(_01 + __02, __01, 0.00);
+	assertEquals(_01 + __02, __01, 0.00);
 	double __500 = tramo.getDatosTramo().getDato().stream().filter(d -> d.getCodigo().equals("500"))
 		.map(d -> d.getValor()).collect(Collectors.summingDouble(Double::parseDouble));
-	org.junit.Assert.assertEquals(_500 + __537, __500, DELTA);
+	assertEquals(_500 + __537, __500, DELTA);
 	double __601 = tramo.getDatosTramo().getDato().stream().filter(d -> d.getCodigo().equals("601"))
 		.map(d -> d.getValor()).collect(Collectors.summingDouble(Double::parseDouble));
-	org.junit.Assert.assertEquals(_601 + __537, __601, DELTA);
+	assertEquals(_601 + __537, __601, DELTA);
 
     }
 
@@ -2979,17 +2981,17 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 	List<net.aonsolutions.core.tgss.creta.jaxb.bases.Tramo> tramos = getTramosBases(connection, startDate, endDate,
 		ccc, contract);
 
-	Assert.assertEquals(1, tramos.size());
+	assertEquals(1, tramos.size());
 
 	net.aonsolutions.core.tgss.creta.jaxb.bases.Tramo tramo = tramos.get(0);
-	Assert.assertEquals("01", tramo.getFechaDesde().getDia());
-	Assert.assertEquals("31", tramo.getFechaHasta().getDia());
+	assertEquals("01", tramo.getFechaDesde().getDia());
+	assertEquals("31", tramo.getFechaHasta().getDia());
 	double _500 = tramo.getDatosTramo().getDato().stream().filter(d -> d.getCodigo().equals("500"))
 		.map(d -> d.getValor()).collect(Collectors.summingDouble(Double::parseDouble));
-	org.junit.Assert.assertEquals(_500, (1750.00 * 0.25) * 100, DELTA);
+	assertEquals(_500, (1750.00 * 0.25) * 100, DELTA);
 	double _601 = tramo.getDatosTramo().getDato().stream().filter(d -> d.getCodigo().equals("601"))
 		.map(d -> d.getValor()).collect(Collectors.summingDouble(Double::parseDouble));
-	org.junit.Assert.assertEquals(_601, (1750.00 * 0.25) * 100, DELTA);
+	assertEquals(_601, (1750.00 * 0.25) * 100, DELTA);
 	double _01 = tramo.getDatosTramo().getDato().stream().filter(d -> d.getCodigo().equals("01"))
 		.map(d -> d.getValor()).collect(Collectors.summingDouble(Double::parseDouble));
 
@@ -3002,25 +3004,25 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 
 	tramos = getTramosBases(connection, startDate, endDate, ccc, contract);
 	tramo = tramos.get(0);
-	Assert.assertEquals("01", tramo.getFechaDesde().getDia());
-	Assert.assertEquals("31", tramo.getFechaHasta().getDia());
+	assertEquals("01", tramo.getFechaDesde().getDia());
+	assertEquals("31", tramo.getFechaHasta().getDia());
 
 	double __02 = tramo.getDatosTramo().getDato().stream().filter(d -> d.getCodigo().equals("02"))
 		.map(d -> d.getValor()).collect(Collectors.summingDouble(Double::parseDouble));
-	org.junit.Assert.assertEquals(11, __02, 0.00);
+	assertEquals(11, __02, 0.00);
 	double __537 = tramo.getDatosTramo().getDato().stream().filter(d -> d.getCodigo().equals("537"))
 		.map(d -> d.getValor()).collect(Collectors.summingDouble(Double::parseDouble));
-	org.junit.Assert.assertEquals(11 * 66.66 * 100.00, __537, DELTA);
+	assertEquals(11 * 66.66 * 100.00, __537, DELTA);
 
 	double __01 = tramo.getDatosTramo().getDato().stream().filter(d -> d.getCodigo().equals("01"))
 		.map(d -> d.getValor()).collect(Collectors.summingDouble(Double::parseDouble));
-	org.junit.Assert.assertEquals(_01 + __02, __01, 0.00);
+	assertEquals(_01 + __02, __01, 0.00);
 	double __500 = tramo.getDatosTramo().getDato().stream().filter(d -> d.getCodigo().equals("500"))
 		.map(d -> d.getValor()).collect(Collectors.summingDouble(Double::parseDouble));
-	org.junit.Assert.assertEquals(_500 + __537, __500, DELTA);
+	assertEquals(_500 + __537, __500, DELTA);
 	double __601 = tramo.getDatosTramo().getDato().stream().filter(d -> d.getCodigo().equals("601"))
 		.map(d -> d.getValor()).collect(Collectors.summingDouble(Double::parseDouble));
-	org.junit.Assert.assertEquals(_601 + __537, __601, DELTA);
+	assertEquals(_601 + __537, __601, DELTA);
 
     }
 
@@ -3046,20 +3048,20 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 	List<net.aonsolutions.core.tgss.creta.jaxb.bases.Tramo> tramos = getTramosBases(connection, startDate, endDate,
 		ccc, contract);
 
-	Assert.assertEquals(1, tramos.size());
+	assertEquals(1, tramos.size());
 
 	net.aonsolutions.core.tgss.creta.jaxb.bases.Tramo tramo = tramos.get(0);
-	Assert.assertEquals("01", tramo.getFechaDesde().getDia());
-	Assert.assertEquals("31", tramo.getFechaHasta().getDia());
+	assertEquals("01", tramo.getFechaDesde().getDia());
+	assertEquals("31", tramo.getFechaHasta().getDia());
 	double _500 = tramo.getDatosTramo().getDato().stream().filter(d -> d.getCodigo().equals("500"))
 		.map(d -> d.getValor()).collect(Collectors.summingDouble(Double::parseDouble));
-	org.junit.Assert.assertEquals(_500, (1750.00) * 100, DELTA);
+	assertEquals(_500, (1750.00) * 100, DELTA);
 	double _601 = tramo.getDatosTramo().getDato().stream().filter(d -> d.getCodigo().equals("601"))
 		.map(d -> d.getValor()).collect(Collectors.summingDouble(Double::parseDouble));
-	org.junit.Assert.assertEquals(_601, (1750.00) * 100, DELTA);
+	assertEquals(_601, (1750.00) * 100, DELTA);
 
 	tramo.getDatosTramo().getDato().stream().filter(d -> d.getCodigo().equals("01")).findAny()
-		.ifPresent(d -> org.junit.Assert.fail("H 01 Dato solicitado proporcionado no requerido"));
+		.ifPresent(d -> fail("H 01 Dato solicitado proporcionado no requerido"));
 	;
 
     }
@@ -3102,24 +3104,24 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 	List<net.aonsolutions.core.tgss.creta.jaxb.bases.Tramo> tramos = getTramosBases(connection, startDate, endDate,
 		ccc, contract);
 
-	Assert.assertEquals(1, tramos.size());
+	assertEquals(1, tramos.size());
 
 	Integer today = get(getToday(), Calendar.DAY_OF_MONTH);
 
 	net.aonsolutions.core.tgss.creta.jaxb.bases.Tramo tramo = tramos.get(0);
-	Assert.assertEquals((int) today, (int) Integer.parseInt(tramo.getFechaDesde().getDia()));
-	Assert.assertEquals((int) today, (int) Integer.parseInt(tramo.getFechaHasta().getDia()));
+	assertEquals((int) today, (int) Integer.parseInt(tramo.getFechaDesde().getDia()));
+	assertEquals((int) today, (int) Integer.parseInt(tramo.getFechaHasta().getDia()));
 	double _500 = tramo.getDatosTramo().getDato().stream().filter(d -> d.getCodigo().equals("500"))
 		.map(d -> d.getValor()).collect(Collectors.summingDouble(Double::parseDouble));
-	org.junit.Assert.assertEquals(_500, Math.round((1750.00 / 30 * 0.03125) * 100), DELTA);
+	assertEquals(_500, Math.round((1750.00 / 30 * 0.03125) * 100), DELTA);
 	double _601 = tramo.getDatosTramo().getDato().stream().filter(d -> d.getCodigo().equals("601"))
 		.map(d -> d.getValor()).collect(Collectors.summingDouble(Double::parseDouble));
-	org.junit.Assert.assertEquals(_601, Math.round((1750.00 / 30 * 0.03125) * 100), DELTA);
+	assertEquals(_601, Math.round((1750.00 / 30 * 0.03125) * 100), DELTA);
 
 	double _01 = tramo.getDatosTramo().getDato().stream().filter(d -> d.getCodigo().equals("01"))
 		.map(d -> d.getValor()).collect(Collectors.summingDouble(Double::parseDouble));
 
-	org.junit.Assert.assertEquals(_01, 1.00, DELTA);
+	assertEquals(_01, 1.00, DELTA);
     }
 
     @Test
@@ -3144,17 +3146,17 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 	List<net.aonsolutions.core.tgss.creta.jaxb.bases.Tramo> tramos = getTramosBases(connection, startDate, endDate,
 		ccc, contract);
 
-	Assert.assertEquals(1, tramos.size());
+	assertEquals(1, tramos.size());
 
 	net.aonsolutions.core.tgss.creta.jaxb.bases.Tramo tramo = tramos.get(0);
-	Assert.assertEquals("01", tramo.getFechaDesde().getDia());
-	Assert.assertEquals("31", tramo.getFechaHasta().getDia());
+	assertEquals("01", tramo.getFechaDesde().getDia());
+	assertEquals("31", tramo.getFechaHasta().getDia());
 	double _500 = tramo.getDatosTramo().getDato().stream().filter(d -> d.getCodigo().equals("500"))
 		.map(d -> d.getValor()).collect(Collectors.summingDouble(Double::parseDouble));
-	org.junit.Assert.assertEquals(_500, (1750.00) * 75, DELTA);
+	assertEquals(_500, (1750.00) * 75, DELTA);
 	double _601 = tramo.getDatosTramo().getDato().stream().filter(d -> d.getCodigo().equals("601"))
 		.map(d -> d.getValor()).collect(Collectors.summingDouble(Double::parseDouble));
-	org.junit.Assert.assertEquals(_601, (1750.00) * 75, DELTA);
+	assertEquals(_601, (1750.00) * 75, DELTA);
 
 	tramo.getDatosTramo().getDato().stream().filter(d -> d.getCodigo().equals("01")).findAny()
 		.orElseThrow(() -> new AssertionError("H 01 Dato solicitado no proporcionado"));
@@ -3195,20 +3197,20 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 	List<net.aonsolutions.core.tgss.creta.jaxb.bases.Tramo> tramos = getTramosBases(connection, startDate, endDate,
 		ccc, contract);
 
-	Assert.assertEquals(1, tramos.size());
+	assertEquals(1, tramos.size());
 
 	net.aonsolutions.core.tgss.creta.jaxb.bases.Tramo tramo = tramos.get(0);
-	Assert.assertEquals("01", tramo.getFechaDesde().getDia());
-	Assert.assertEquals("31", tramo.getFechaHasta().getDia());
+	assertEquals("01", tramo.getFechaDesde().getDia());
+	assertEquals("31", tramo.getFechaHasta().getDia());
 	double _500 = tramo.getDatosTramo().getDato().stream().filter(d -> d.getCodigo().equals("500"))
 		.map(d -> d.getValor()).collect(Collectors.summingDouble(Double::parseDouble));
-	org.junit.Assert.assertEquals(_500, (1750.00) * 100, DELTA);
+	assertEquals(_500, (1750.00) * 100, DELTA);
 	double _601 = tramo.getDatosTramo().getDato().stream().filter(d -> d.getCodigo().equals("601"))
 		.map(d -> d.getValor()).collect(Collectors.summingDouble(Double::parseDouble));
-	org.junit.Assert.assertEquals(_601, (1750.00) * 100, DELTA);
+	assertEquals(_601, (1750.00) * 100, DELTA);
 
 	tramo.getDatosTramo().getDato().stream().filter(d -> d.getCodigo().equals("01")).findAny()
-		.ifPresent(d -> org.junit.Assert.fail("H 01 Dato solicitado proporcionado no requerido"));
+		.ifPresent(d -> fail("H 01 Dato solicitado proporcionado no requerido"));
 	;
 
     }
@@ -3239,27 +3241,27 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 	List<net.aonsolutions.core.tgss.creta.jaxb.bases.Tramo> tramos = getTramosBases(connection, startDate, endDate,
 		ccc, contract);
 
-	Assert.assertEquals(2, tramos.size());
+	assertEquals(2, tramos.size());
 
 	net.aonsolutions.core.tgss.creta.jaxb.bases.Tramo tramo = tramos.get(0);
-	Assert.assertEquals("01", tramo.getFechaDesde().getDia());
-	Assert.assertEquals("29", tramo.getFechaHasta().getDia());
+	assertEquals("01", tramo.getFechaDesde().getDia());
+	assertEquals("29", tramo.getFechaHasta().getDia());
 	double _500 = tramo.getDatosTramo().getDato().stream().filter(d -> d.getCodigo().equals("500"))
 		.map(d -> d.getValor()).collect(Collectors.summingDouble(Double::parseDouble));
-	org.junit.Assert.assertEquals(_500 / 100.00, (1750.00 * 0.25 / 30.00 * 29), DELTA);
+	assertEquals(_500 / 100.00, (1750.00 * 0.25 / 30.00 * 29), DELTA);
 	double _601 = tramo.getDatosTramo().getDato().stream().filter(d -> d.getCodigo().equals("601"))
 		.map(d -> d.getValor()).collect(Collectors.summingDouble(Double::parseDouble));
-	org.junit.Assert.assertEquals(_601 / 100.00, (1750.00 * 0.25 / 30.00 * 29), DELTA);
+	assertEquals(_601 / 100.00, (1750.00 * 0.25 / 30.00 * 29), DELTA);
 
 	tramo = tramos.get(1);
-	Assert.assertEquals("30", tramo.getFechaDesde().getDia());
-	Assert.assertEquals("31", tramo.getFechaHasta().getDia());
+	assertEquals("30", tramo.getFechaDesde().getDia());
+	assertEquals("31", tramo.getFechaHasta().getDia());
 	_500 = tramo.getDatosTramo().getDato().stream().filter(d -> d.getCodigo().equals("500")).map(d -> d.getValor())
 		.collect(Collectors.summingDouble(Double::parseDouble));
-	org.junit.Assert.assertEquals(_500 / 100.00, (1750.00 * 0.50 / 30.00), DELTA * 1000);
+	assertEquals(_500 / 100.00, (1750.00 * 0.50 / 30.00), DELTA * 1000);
 	_601 = tramo.getDatosTramo().getDato().stream().filter(d -> d.getCodigo().equals("601")).map(d -> d.getValor())
 		.collect(Collectors.summingDouble(Double::parseDouble));
-	org.junit.Assert.assertEquals(_601 / 100.00, (1750.00 * 0.50 / 30.00), DELTA * 1000);
+	assertEquals(_601 / 100.00, (1750.00 * 0.50 / 30.00), DELTA * 1000);
 
     }
 
@@ -3294,22 +3296,22 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 
 	List<Tramo> tramos = getTramos(connection, contract, startDate, endDate, ccc);
 
-	Assert.assertEquals(3, tramos.size());
+	assertEquals(3, tramos.size());
 
 	// Activo
 	Tramo tramo0 = tramos.get(0);
-	Assert.assertEquals("01", tramo0.getFechaDesde().getDia());
-	Assert.assertEquals("10", tramo0.getFechaHasta().getDia());
+	assertEquals("01", tramo0.getFechaDesde().getDia());
+	assertEquals("10", tramo0.getFechaHasta().getDia());
 	assertTramoActivoNormalTiempoCompleto(tramo0);
 
 	Tramo tramo1 = tramos.get(1);
-	Assert.assertEquals("11", tramo1.getFechaDesde().getDia());
-	Assert.assertEquals("25", tramo1.getFechaHasta().getDia());
+	assertEquals("11", tramo1.getFechaDesde().getDia());
+	assertEquals("25", tramo1.getFechaHasta().getDia());
 	assertTramoIT15PrimerosDias(tramo1);
 
 	Tramo tramo2 = tramos.get(2);
-	Assert.assertEquals("26", tramo2.getFechaDesde().getDia());
-	Assert.assertEquals(Integer.toString(endDate.getDate()), tramo2.getFechaHasta().getDia());
+	assertEquals("26", tramo2.getFechaDesde().getDia());
+	assertEquals(Integer.toString(endDate.getDate()), tramo2.getFechaHasta().getDia());
 	assertTramoActivoNormalTiempoCompleto(tramo2);
 
     }
@@ -3357,22 +3359,22 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 
 	List<Tramo> tramos = getTramos(connection, contract, startDate, endDate, ccc);
 
-	Assert.assertEquals(3, tramos.size());
+	assertEquals(3, tramos.size());
 
 	// Activo
 	Tramo tramo0 = tramos.get(0);
-	Assert.assertEquals("01", tramo0.getFechaDesde().getDia());
-	Assert.assertEquals("10", tramo0.getFechaHasta().getDia());
+	assertEquals("01", tramo0.getFechaDesde().getDia());
+	assertEquals("10", tramo0.getFechaHasta().getDia());
 	assertTramoActivoNormalTiempoCompleto(tramo0);
 
 	Tramo tramo1 = tramos.get(1);
-	Assert.assertEquals("11", tramo1.getFechaDesde().getDia());
-	Assert.assertEquals("20", tramo1.getFechaHasta().getDia());
+	assertEquals("11", tramo1.getFechaDesde().getDia());
+	assertEquals("20", tramo1.getFechaHasta().getDia());
 	assertTramoIT15PrimerosDias(tramo1);
 
 	Tramo tramo2 = tramos.get(2);
-	Assert.assertEquals("21", tramo2.getFechaDesde().getDia());
-	Assert.assertEquals(Integer.toString(endDate.getDate()), tramo2.getFechaHasta().getDia());
+	assertEquals("21", tramo2.getFechaDesde().getDia());
+	assertEquals(Integer.toString(endDate.getDate()), tramo2.getFechaHasta().getDia());
 	assertTramoActivoNormalTiempoCompleto(tramo2);
 
     }
@@ -3408,22 +3410,22 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 
 	List<Tramo> tramos = getTramos(connection, contract, startDate, endDate, ccc);
 
-	Assert.assertEquals(3, tramos.size());
+	assertEquals(3, tramos.size());
 
 	// Activo
 	Tramo tramo0 = tramos.get(0);
-	Assert.assertEquals("01", tramo0.getFechaDesde().getDia());
-	Assert.assertEquals("10", tramo0.getFechaHasta().getDia());
+	assertEquals("01", tramo0.getFechaDesde().getDia());
+	assertEquals("10", tramo0.getFechaHasta().getDia());
 	assertTramoActivoNormalTiempoCompleto(tramo0);
 
 	Tramo tramo1 = tramos.get(1);
-	Assert.assertEquals("11", tramo1.getFechaDesde().getDia());
-	Assert.assertEquals("14", tramo1.getFechaHasta().getDia());
+	assertEquals("11", tramo1.getFechaDesde().getDia());
+	assertEquals("14", tramo1.getFechaHasta().getDia());
 	assertTramoIT15PrimerosDias(tramo1);
 
 	Tramo tramo2 = tramos.get(2);
-	Assert.assertEquals("15", tramo2.getFechaDesde().getDia());
-	Assert.assertEquals(Integer.toString(endDate.getDate()), tramo2.getFechaHasta().getDia());
+	assertEquals("15", tramo2.getFechaDesde().getDia());
+	assertEquals(Integer.toString(endDate.getDate()), tramo2.getFechaHasta().getDia());
 	assertTramoActivoNormalTiempoCompleto(tramo2);
 
     }
@@ -3459,32 +3461,32 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 
 	List<Tramo> tramos = getTramos(connection, contract, startDate, endDate, ccc);
 
-	Assert.assertEquals(5, tramos.size());
+	assertEquals(5, tramos.size());
 
 	// Activo
 	Tramo tramo0 = tramos.get(0);
-	Assert.assertEquals("01", tramo0.getFechaDesde().getDia());
-	Assert.assertEquals("02", tramo0.getFechaHasta().getDia());
+	assertEquals("01", tramo0.getFechaDesde().getDia());
+	assertEquals("02", tramo0.getFechaHasta().getDia());
 	assertTramoActivoNormalTiempoCompleto(tramo0);
 
 	Tramo tramo1 = tramos.get(1);
-	Assert.assertEquals("03", tramo1.getFechaDesde().getDia());
-	Assert.assertEquals("17", tramo1.getFechaHasta().getDia());
+	assertEquals("03", tramo1.getFechaDesde().getDia());
+	assertEquals("17", tramo1.getFechaHasta().getDia());
 	assertTramoIT15PrimerosDias(tramo1);
 
 	Tramo tramo2 = tramos.get(2);
-	Assert.assertEquals("18", tramo2.getFechaDesde().getDia());
-	Assert.assertEquals("22", tramo2.getFechaHasta().getDia());
+	assertEquals("18", tramo2.getFechaDesde().getDia());
+	assertEquals("22", tramo2.getFechaHasta().getDia());
 	assertTramoITPagoDelegado(tramo2);
 
 	Tramo tramo3 = tramos.get(3);
-	Assert.assertEquals("23", tramo3.getFechaDesde().getDia());
-	Assert.assertEquals("27", tramo3.getFechaHasta().getDia());
+	assertEquals("23", tramo3.getFechaDesde().getDia());
+	assertEquals("27", tramo3.getFechaHasta().getDia());
 	assertTramoITPagoDelegado(tramo3);
 
 	Tramo tramo4 = tramos.get(4);
-	Assert.assertEquals("28", tramo4.getFechaDesde().getDia());
-	Assert.assertEquals(Integer.toString(endDate.getDate()), tramo4.getFechaHasta().getDia());
+	assertEquals("28", tramo4.getFechaDesde().getDia());
+	assertEquals(Integer.toString(endDate.getDate()), tramo4.getFechaHasta().getDia());
 	assertTramoActivoNormalTiempoCompleto(tramo4);
 
     }
@@ -3520,27 +3522,27 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 
 	List<Tramo> tramos = getTramos(connection, contract, startDate, endDate, ccc);
 
-	Assert.assertEquals(4, tramos.size());
+	assertEquals(4, tramos.size());
 
 	// Activo
 	Tramo tramo0 = tramos.get(0);
-	Assert.assertEquals("01", tramo0.getFechaDesde().getDia());
-	Assert.assertEquals("05", tramo0.getFechaHasta().getDia());
+	assertEquals("01", tramo0.getFechaDesde().getDia());
+	assertEquals("05", tramo0.getFechaHasta().getDia());
 	assertTramoActivoNormalTiempoCompleto(tramo0);
 
 	Tramo tramo1 = tramos.get(1);
-	Assert.assertEquals("06", tramo1.getFechaDesde().getDia());
-	Assert.assertEquals("20", tramo1.getFechaHasta().getDia());
+	assertEquals("06", tramo1.getFechaDesde().getDia());
+	assertEquals("20", tramo1.getFechaHasta().getDia());
 	assertTramoIT15PrimerosDias(tramo1);
 
 	Tramo tramo2 = tramos.get(2);
-	Assert.assertEquals("21", tramo2.getFechaDesde().getDia());
-	Assert.assertEquals("25", tramo2.getFechaHasta().getDia());
+	assertEquals("21", tramo2.getFechaDesde().getDia());
+	assertEquals("25", tramo2.getFechaHasta().getDia());
 	assertTramoITPagoDelegado(tramo2);
 
 	Tramo tramo3 = tramos.get(3);
-	Assert.assertEquals("26", tramo3.getFechaDesde().getDia());
-	Assert.assertEquals(Integer.toString(endDate.getDate()), tramo3.getFechaHasta().getDia());
+	assertEquals("26", tramo3.getFechaDesde().getDia());
+	assertEquals(Integer.toString(endDate.getDate()), tramo3.getFechaHasta().getDia());
 	assertTramoITPagoDelegado(tramo3);
 
     }
@@ -3576,22 +3578,22 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 
 	List<Tramo> tramos = getTramos(connection, contract, startDate, endDate, ccc);
 
-	Assert.assertEquals(3, tramos.size());
+	assertEquals(3, tramos.size());
 
 	// Activo
 	Tramo tramo0 = tramos.get(0);
-	Assert.assertEquals("01", tramo0.getFechaDesde().getDia());
-	Assert.assertEquals("10", tramo0.getFechaHasta().getDia());
+	assertEquals("01", tramo0.getFechaDesde().getDia());
+	assertEquals("10", tramo0.getFechaHasta().getDia());
 	assertTramoActivoNormalTiempoCompleto(tramo0);
 
 	Tramo tramo1 = tramos.get(1);
-	Assert.assertEquals("11", tramo1.getFechaDesde().getDia());
-	Assert.assertEquals("13", tramo1.getFechaHasta().getDia());
+	assertEquals("11", tramo1.getFechaDesde().getDia());
+	assertEquals("13", tramo1.getFechaHasta().getDia());
 	assertTramoIT15PrimerosDias(tramo1);
 
 	Tramo tramo2 = tramos.get(2);
-	Assert.assertEquals("14", tramo2.getFechaDesde().getDia());
-	Assert.assertEquals(Integer.toString(endDate.getDate()), tramo2.getFechaHasta().getDia());
+	assertEquals("14", tramo2.getFechaDesde().getDia());
+	assertEquals(Integer.toString(endDate.getDate()), tramo2.getFechaHasta().getDia());
 	assertTramoActivoNormalTiempoCompleto(tramo2);
 
     }
@@ -3627,27 +3629,27 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 
 	List<Tramo> tramos = getTramos(connection, contract, startDate, endDate, ccc);
 
-	// Assert.assertEquals(4, tramos.size());
+	// assertEquals(4, tramos.size());
 
 	// Activo
 	Tramo tramo0 = tramos.get(0);
-	Assert.assertEquals("01", tramo0.getFechaDesde().getDia());
-	Assert.assertEquals("10", tramo0.getFechaHasta().getDia());
+	assertEquals("01", tramo0.getFechaDesde().getDia());
+	assertEquals("10", tramo0.getFechaHasta().getDia());
 	assertTramoActivoNormalTiempoCompleto(tramo0);
 
 	Tramo tramo1 = tramos.get(1);
-	Assert.assertEquals("11", tramo1.getFechaDesde().getDia());
-	Assert.assertEquals("25", tramo1.getFechaHasta().getDia());
+	assertEquals("11", tramo1.getFechaDesde().getDia());
+	assertEquals("25", tramo1.getFechaHasta().getDia());
 	assertTramoIT15PrimerosDias(tramo1);
 
 	Tramo tramo2 = tramos.get(2);
-	Assert.assertEquals("26", tramo2.getFechaDesde().getDia());
-	Assert.assertEquals("26", tramo2.getFechaHasta().getDia());
+	assertEquals("26", tramo2.getFechaDesde().getDia());
+	assertEquals("26", tramo2.getFechaHasta().getDia());
 	assertTramoITPagoDelegado(tramo2);
 
 	Tramo tramo3 = tramos.get(3);
-	Assert.assertEquals("27", tramo3.getFechaDesde().getDia());
-	Assert.assertEquals(Integer.toString(endDate.getDate()), tramo3.getFechaHasta().getDia());
+	assertEquals("27", tramo3.getFechaDesde().getDia());
+	assertEquals(Integer.toString(endDate.getDate()), tramo3.getFechaHasta().getDia());
 	assertTramoActivoNormalTiempoCompleto(tramo3);
 
     }
@@ -3683,22 +3685,22 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 
 	List<Tramo> tramos = getTramos(connection, contract, startDate, endDate, ccc);
 
-	Assert.assertEquals(3, tramos.size());
+	assertEquals(3, tramos.size());
 
 	// Activo
 	Tramo tramo0 = tramos.get(0);
-	Assert.assertEquals("01", tramo0.getFechaDesde().getDia());
-	Assert.assertEquals("11", tramo0.getFechaHasta().getDia());
+	assertEquals("01", tramo0.getFechaDesde().getDia());
+	assertEquals("11", tramo0.getFechaHasta().getDia());
 	assertTramoActivoNormalTiempoCompleto(tramo0);
 
 	Tramo tramo1 = tramos.get(1);
-	Assert.assertEquals("12", tramo1.getFechaDesde().getDia());
-	Assert.assertEquals("15", tramo1.getFechaHasta().getDia());
+	assertEquals("12", tramo1.getFechaDesde().getDia());
+	assertEquals("15", tramo1.getFechaHasta().getDia());
 	assertTramoITATEPPagoDelegado(tramo1);
 
 	Tramo tramo2 = tramos.get(2);
-	Assert.assertEquals("16", tramo2.getFechaDesde().getDia());
-	Assert.assertEquals(Integer.toString(endDate.getDate()), tramo2.getFechaHasta().getDia());
+	assertEquals("16", tramo2.getFechaDesde().getDia());
+	assertEquals(Integer.toString(endDate.getDate()), tramo2.getFechaHasta().getDia());
 	assertTramoActivoNormalTiempoCompleto(tramo2);
 
     }
@@ -3734,22 +3736,22 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 
 	List<Tramo> tramos = getTramos(connection, contract, startDate, endDate, ccc);
 
-	Assert.assertEquals(3, tramos.size());
+	assertEquals(3, tramos.size());
 
 	// Activo
 	Tramo tramo0 = tramos.get(0);
-	Assert.assertEquals("01", tramo0.getFechaDesde().getDia());
-	Assert.assertEquals("10", tramo0.getFechaHasta().getDia());
+	assertEquals("01", tramo0.getFechaDesde().getDia());
+	assertEquals("10", tramo0.getFechaHasta().getDia());
 	assertTramoActivoNormalTiempoCompleto(tramo0);
 
 	Tramo tramo1 = tramos.get(1);
-	Assert.assertEquals("11", tramo1.getFechaDesde().getDia());
-	Assert.assertEquals("15", tramo1.getFechaHasta().getDia());
+	assertEquals("11", tramo1.getFechaDesde().getDia());
+	assertEquals("15", tramo1.getFechaHasta().getDia());
 	assertTramoITATEPPagoDelegado(tramo1);
 
 	Tramo tramo2 = tramos.get(2);
-	Assert.assertEquals("16", tramo2.getFechaDesde().getDia());
-	Assert.assertEquals(Integer.toString(endDate.getDate()), tramo2.getFechaHasta().getDia());
+	assertEquals("16", tramo2.getFechaDesde().getDia());
+	assertEquals(Integer.toString(endDate.getDate()), tramo2.getFechaHasta().getDia());
 	assertTramoActivoNormalTiempoCompleto(tramo2);
 
     }
@@ -3784,18 +3786,18 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 
 	List<Tramo> tramos = getTramos(connection, contract, startDate, endDate, ccc);
 
-	Assert.assertEquals(2, tramos.size());
+	assertEquals(2, tramos.size());
 
 	// Activo
 	Tramo tramo0 = tramos.get(0);
-	Assert.assertEquals("01", tramo0.getFechaDesde().getDia());
-	Assert.assertEquals("10", tramo0.getFechaHasta().getDia());
+	assertEquals("01", tramo0.getFechaDesde().getDia());
+	assertEquals("10", tramo0.getFechaHasta().getDia());
 	assertTramoActivoNormalTiempoCompleto(tramo0);
 
 	// Maternidad
 	Tramo tramo1 = tramos.get(1);
-	Assert.assertEquals("11", tramo1.getFechaDesde().getDia());
-	Assert.assertEquals(Integer.toString(endDate.getDate()), tramo1.getFechaHasta().getDia());
+	assertEquals("11", tramo1.getFechaDesde().getDia());
+	assertEquals(Integer.toString(endDate.getDate()), tramo1.getFechaHasta().getDia());
 	assertTramoMaternidadTiempoCompleto(tramo1);
 
     }
@@ -3858,30 +3860,30 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 	    System.out.println("Tramo : " + t.getFechaDesde().getMes() + "/" + t.getFechaDesde().getDia() + "..."
 		    + t.getFechaHasta().getMes() + "/" + t.getFechaHasta().getDia());
 
-	Assert.assertEquals(4, tramos.size());
+	assertEquals(4, tramos.size());
 
 	// Activo
 	Tramo tramo0 = tramos.get(0);
-	Assert.assertEquals("01", tramo0.getFechaDesde().getDia());
-	Assert.assertEquals("04", tramo0.getFechaHasta().getDia());
+	assertEquals("01", tramo0.getFechaDesde().getDia());
+	assertEquals("04", tramo0.getFechaHasta().getDia());
 	assertTramoActivoNormalTiempoCompleto(tramo0);
 
 	// IT
 	Tramo tramo1 = tramos.get(1);
-	Assert.assertEquals("05", tramo1.getFechaDesde().getDia());
-	Assert.assertEquals("10", tramo1.getFechaHasta().getDia());
+	assertEquals("05", tramo1.getFechaDesde().getDia());
+	assertEquals("10", tramo1.getFechaHasta().getDia());
 	assertTramoIT15PrimerosDias(tramo1);
 
 	// Risk
 	Tramo tramo2 = tramos.get(2);
-	Assert.assertEquals("11", tramo2.getFechaDesde().getDia());
-	Assert.assertEquals("20", tramo2.getFechaHasta().getDia());
+	assertEquals("11", tramo2.getFechaDesde().getDia());
+	assertEquals("20", tramo2.getFechaHasta().getDia());
 	assertTramoMaternidadTiempoCompleto(tramo2);
 
 	// Mtndad
 	Tramo tramo3 = tramos.get(3);
-	Assert.assertEquals("21", tramo3.getFechaDesde().getDia());
-	Assert.assertEquals(Integer.toString(endDate.getDate()), tramo3.getFechaHasta().getDia());
+	assertEquals("21", tramo3.getFechaDesde().getDia());
+	assertEquals(Integer.toString(endDate.getDate()), tramo3.getFechaHasta().getDia());
 	assertTramoMaternidadTiempoCompleto(tramo3);
 
     }
@@ -3919,18 +3921,18 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 
 	List<Tramo> tramos = getTramos(connection, contract, startDate, endDate, ccc);
 
-	Assert.assertEquals(2, tramos.size());
+	assertEquals(2, tramos.size());
 
 	// Activo
 	Tramo tramo0 = tramos.get(0);
-	Assert.assertEquals("01", tramo0.getFechaDesde().getDia());
-	Assert.assertEquals("10", tramo0.getFechaHasta().getDia());
+	assertEquals("01", tramo0.getFechaDesde().getDia());
+	assertEquals("10", tramo0.getFechaHasta().getDia());
 	assertTramoActivoNormalTiempoCompleto(tramo0);
 
 	// Paternidad
 	Tramo tramo1 = tramos.get(1);
-	Assert.assertEquals("11", tramo1.getFechaDesde().getDia());
-	Assert.assertEquals(Integer.toString(endDate.getDate()), tramo1.getFechaHasta().getDia());
+	assertEquals("11", tramo1.getFechaDesde().getDia());
+	assertEquals(Integer.toString(endDate.getDate()), tramo1.getFechaHasta().getDia());
 	assertTramoMaternidadTiempoParcial(tramo1);
 
     }
@@ -3958,18 +3960,18 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 
 	List<Tramo> tramos = getTramos(connection, contract, startDate, endDate, ccc);
 
-	Assert.assertEquals(2, tramos.size());
+	assertEquals(2, tramos.size());
 
 	// Activo
 	Tramo tramo0 = tramos.get(0);
-	Assert.assertEquals("01", tramo0.getFechaDesde().getDia());
-	Assert.assertEquals("10", tramo0.getFechaHasta().getDia());
+	assertEquals("01", tramo0.getFechaDesde().getDia());
+	assertEquals("10", tramo0.getFechaHasta().getDia());
 	assertTramoActivoNormalTiempoCompleto(tramo0);
 
 	String diaHasta = Integer.toString(get(endDate, Calendar.DAY_OF_MONTH));
 	Tramo tramo1 = tramos.get(1);
-	Assert.assertEquals("11", tramo1.getFechaDesde().getDia());
-	Assert.assertEquals(diaHasta, tramo1.getFechaHasta().getDia());
+	assertEquals("11", tramo1.getFechaDesde().getDia());
+	assertEquals(diaHasta, tramo1.getFechaHasta().getDia());
 	assertTramoExpedienteRegulacionEmpleoTotal(tramo1);
 
     }
@@ -3997,18 +3999,18 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 
 	List<Tramo> tramos = getTramos(connection, contract, startDate, endDate, ccc);
 
-	Assert.assertEquals(2, tramos.size());
+	assertEquals(2, tramos.size());
 
 	// Activo
 	Tramo tramo0 = tramos.get(0);
-	Assert.assertEquals("01", tramo0.getFechaDesde().getDia());
-	Assert.assertEquals("10", tramo0.getFechaHasta().getDia());
+	assertEquals("01", tramo0.getFechaDesde().getDia());
+	assertEquals("10", tramo0.getFechaHasta().getDia());
 	assertTramoActivoNormalTiempoCompleto(tramo0);
 
 	String diaHasta = Integer.toString(get(endDate, Calendar.DAY_OF_MONTH));
 	Tramo tramo1 = tramos.get(1);
-	Assert.assertEquals("11", tramo1.getFechaDesde().getDia());
-	Assert.assertEquals(diaHasta, tramo1.getFechaHasta().getDia());
+	assertEquals("11", tramo1.getFechaDesde().getDia());
+	assertEquals(diaHasta, tramo1.getFechaHasta().getDia());
 	assertTramoExpedienteRegulacionEmpleoTotal(tramo1);
 
     }
@@ -4064,38 +4066,38 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 
 	List<Tramo> tramos = getTramos(connection, contract, startDate, endDate, ccc);
 
-	Assert.assertEquals(5, tramos.size());
+	assertEquals(5, tramos.size());
 
 	// ERE
 	Tramo tramo0 = tramos.get(0);
-	Assert.assertEquals("01", tramo0.getFechaDesde().getDia());
-	Assert.assertEquals("05", tramo0.getFechaHasta().getDia());
+	assertEquals("01", tramo0.getFechaDesde().getDia());
+	assertEquals("05", tramo0.getFechaHasta().getDia());
 	assertTramoExpedienteRegulacionEmpleoTotal(tramo0);
 
 	Tramo tramo1 = tramos.get(1);
-	Assert.assertEquals("06", tramo1.getFechaDesde().getDia());
-	Assert.assertEquals("06", tramo1.getFechaHasta().getDia());
+	assertEquals("06", tramo1.getFechaDesde().getDia());
+	assertEquals("06", tramo1.getFechaHasta().getDia());
 	assertTramoActivoNormal(tramo1);
 
 	Tramo tramo2 = tramos.get(2);
-	Assert.assertEquals("07", tramo2.getFechaDesde().getDia());
-	Assert.assertEquals("21", tramo2.getFechaHasta().getDia());
+	assertEquals("07", tramo2.getFechaDesde().getDia());
+	assertEquals("21", tramo2.getFechaHasta().getDia());
 	assertTramoIT15PrimerosDias(tramo2);
 
 	Tramo tramo3 = tramos.get(3);
-	Assert.assertEquals("22", tramo3.getFechaDesde().getDia());
-	Assert.assertEquals("26", tramo3.getFechaHasta().getDia());
+	assertEquals("22", tramo3.getFechaDesde().getDia());
+	assertEquals("26", tramo3.getFechaHasta().getDia());
 	assertTramoITPagoDelegado(tramo3);
 
 	Tramo tramo4 = tramos.get(4);
-	Assert.assertEquals("27", tramo4.getFechaDesde().getDia());
-	// Assert.assertEquals("28", tramo4.getFechaHasta().getDia());
+	assertEquals("27", tramo4.getFechaDesde().getDia());
+	// assertEquals("28", tramo4.getFechaHasta().getDia());
 	assertTramoITPagoDelegado(tramo4);
 
 	List<net.aonsolutions.core.tgss.creta.jaxb.bases.Tramo> bases = getTramosBases(connection, startDate, endDate,
 		ccc, contract);
 
-	Assert.assertEquals(5, bases.size());
+	assertEquals(5, bases.size());
     }
 
     @Test
@@ -4150,30 +4152,30 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 	    System.out.println(tramo.getFechaDesde().getDia() + ".." + tramo.getFechaHasta().getDia());
 	}
 
-	Assert.assertEquals(3, tramos.size());
+	assertEquals(3, tramos.size());
 
 	// ERE
 	Tramo tramo0 = tramos.get(0);
-	Assert.assertEquals("01", tramo0.getFechaDesde().getDia());
-	Assert.assertEquals("15", tramo0.getFechaHasta().getDia());
+	assertEquals("01", tramo0.getFechaDesde().getDia());
+	assertEquals("15", tramo0.getFechaHasta().getDia());
 	assertTramoIT15PrimerosDias(tramo0);
 	assertTramoExpedienteRegulacionEmpleoParcial(tramo0);
 
 	Tramo tramo1 = tramos.get(1);
-	Assert.assertEquals("16", tramo1.getFechaDesde().getDia());
-	Assert.assertEquals("20", tramo1.getFechaHasta().getDia());
+	assertEquals("16", tramo1.getFechaDesde().getDia());
+	assertEquals("20", tramo1.getFechaHasta().getDia());
 	assertTramoITPagoDelegado(tramo1);
 	assertTramoExpedienteRegulacionEmpleoParcial(tramo1);
 
 	Tramo tramo2 = tramos.get(2);
-	Assert.assertEquals("21", tramo2.getFechaDesde().getDia());
+	assertEquals("21", tramo2.getFechaDesde().getDia());
 	assertTramoITPagoDelegado(tramo1);
 	assertTramoExpedienteRegulacionEmpleoParcial(tramo2);
 
 	List<net.aonsolutions.core.tgss.creta.jaxb.bases.Tramo> bases = getTramosBases(connection, startDate, endDate,
 		ccc, contract);
 
-	Assert.assertEquals(3, bases.size());
+	assertEquals(3, bases.size());
     }
 
     @Test
@@ -4230,35 +4232,35 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 	    System.out.println(tramo.getFechaDesde().getDia() + ".." + tramo.getFechaHasta().getDia());
 	}
 
-	Assert.assertEquals(4, tramos.size());
+	assertEquals(4, tramos.size());
 
 	// ERE
 	Tramo tramo0 = tramos.get(0);
-	Assert.assertEquals("01", tramo0.getFechaDesde().getDia());
-	Assert.assertEquals("06", tramo0.getFechaHasta().getDia());
+	assertEquals("01", tramo0.getFechaDesde().getDia());
+	assertEquals("06", tramo0.getFechaHasta().getDia());
 	assertTramoExpedienteRegulacionEmpleoParcialActivo(tramo0);
 
 	Tramo tramo1 = tramos.get(1);
-	Assert.assertEquals("07", tramo1.getFechaDesde().getDia());
-	Assert.assertEquals("21", tramo1.getFechaHasta().getDia());
+	assertEquals("07", tramo1.getFechaDesde().getDia());
+	assertEquals("21", tramo1.getFechaHasta().getDia());
 	assertTramoIT15PrimerosDias(tramo1);
 	assertTramoExpedienteRegulacionEmpleoParcial(tramo1);
 
 	Tramo tramo2 = tramos.get(2);
-	Assert.assertEquals("22", tramo2.getFechaDesde().getDia());
-	Assert.assertEquals("26", tramo2.getFechaHasta().getDia());
+	assertEquals("22", tramo2.getFechaDesde().getDia());
+	assertEquals("26", tramo2.getFechaHasta().getDia());
 	assertTramoITPagoDelegado(tramo2);
 	assertTramoExpedienteRegulacionEmpleoParcial(tramo2);
 
 	Tramo tramo3 = tramos.get(3);
-	Assert.assertEquals("27", tramo3.getFechaDesde().getDia());
+	assertEquals("27", tramo3.getFechaDesde().getDia());
 	assertTramoITPagoDelegado(tramo3);
 	assertTramoExpedienteRegulacionEmpleoParcial(tramo3);
 
 	List<net.aonsolutions.core.tgss.creta.jaxb.bases.Tramo> bases = getTramosBases(connection, startDate, endDate,
 		ccc, contract);
 
-	Assert.assertEquals(4, bases.size());
+	assertEquals(4, bases.size());
     }
 
     @Test
@@ -4293,29 +4295,29 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 	    System.out.println(tramo.getFechaDesde().getDia() + ".." + tramo.getFechaHasta().getDia());
 	}
 
-	Assert.assertEquals(3, tramos.size());
+	assertEquals(3, tramos.size());
 
 	// ERE
 	Tramo tramo0 = tramos.get(0);
-	Assert.assertEquals("01", tramo0.getFechaDesde().getDia());
-	Assert.assertEquals("14", tramo0.getFechaHasta().getDia());
+	assertEquals("01", tramo0.getFechaDesde().getDia());
+	assertEquals("14", tramo0.getFechaHasta().getDia());
 	assertTramoExpedienteRegulacionEmpleoParcialActivo(tramo0);
 
 	Tramo tramo1 = tramos.get(1);
-	Assert.assertEquals("15", tramo1.getFechaDesde().getDia());
-	Assert.assertEquals("25", tramo1.getFechaHasta().getDia());
+	assertEquals("15", tramo1.getFechaDesde().getDia());
+	assertEquals("25", tramo1.getFechaHasta().getDia());
 	assertTramoITATEPPagoDelegado(tramo1);
 	;
 	assertTramoExpedienteRegulacionEmpleoParcial(tramo1);
 
 	Tramo tramo2 = tramos.get(2);
-	Assert.assertEquals("26", tramo2.getFechaDesde().getDia());
+	assertEquals("26", tramo2.getFechaDesde().getDia());
 	assertTramoExpedienteRegulacionEmpleoParcialActivo(tramo2);
 
 	List<net.aonsolutions.core.tgss.creta.jaxb.bases.Tramo> bases = getTramosBases(connection, startDate, endDate,
 		ccc, contract);
 
-	Assert.assertEquals(3, bases.size());
+	assertEquals(3, bases.size());
     }
 
     @Test
@@ -4341,18 +4343,18 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 
 	List<Tramo> tramos = getTramos(connection, contract, startDate, endDate, ccc);
 
-	Assert.assertEquals(2, tramos.size());
+	assertEquals(2, tramos.size());
 
 	// Activo
 	Tramo tramo0 = tramos.get(0);
-	Assert.assertEquals("01", tramo0.getFechaDesde().getDia());
-	Assert.assertEquals("10", tramo0.getFechaHasta().getDia());
+	assertEquals("01", tramo0.getFechaDesde().getDia());
+	assertEquals("10", tramo0.getFechaHasta().getDia());
 	assertTramoActivoNormalTiempoCompleto(tramo0);
 
 	String diaHasta = Integer.toString(get(endDate, Calendar.DAY_OF_MONTH));
 	Tramo tramo1 = tramos.get(1);
-	Assert.assertEquals("11", tramo1.getFechaDesde().getDia());
-	Assert.assertEquals(diaHasta, tramo1.getFechaHasta().getDia());
+	assertEquals("11", tramo1.getFechaDesde().getDia());
+	assertEquals(diaHasta, tramo1.getFechaHasta().getDia());
 	assertTramoExpedienteRegulacionEmpleoTotal(tramo1);
 
     }
@@ -4380,18 +4382,18 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 
 	List<Tramo> tramos = getTramos(connection, contract, startDate, endDate, ccc);
 
-	Assert.assertEquals(2, tramos.size());
+	assertEquals(2, tramos.size());
 
 	// Activo
 	Tramo tramo0 = tramos.get(0);
-	Assert.assertEquals("01", tramo0.getFechaDesde().getDia());
-	Assert.assertEquals("10", tramo0.getFechaHasta().getDia());
+	assertEquals("01", tramo0.getFechaDesde().getDia());
+	assertEquals("10", tramo0.getFechaHasta().getDia());
 	assertTramoActivoNormalTiempoCompleto(tramo0);
 
 	String diaHasta = Integer.toString(get(endDate, Calendar.DAY_OF_MONTH));
 	Tramo tramo1 = tramos.get(1);
-	Assert.assertEquals("11", tramo1.getFechaDesde().getDia());
-	Assert.assertEquals(diaHasta, tramo1.getFechaHasta().getDia());
+	assertEquals("11", tramo1.getFechaDesde().getDia());
+	assertEquals(diaHasta, tramo1.getFechaHasta().getDia());
 	assertTramoExpedienteRegulacionEmpleoParcialActivo(tramo1);
 
     }
@@ -4420,12 +4422,12 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 	List<net.aonsolutions.core.tgss.creta.jaxb.bases.Tramo> tramos = getTramosBases(connection, startDate, endDate,
 		ccc, contract);
 
-	Assert.assertEquals(2, tramos.size());
+	assertEquals(2, tramos.size());
 
 	// Activo
 	net.aonsolutions.core.tgss.creta.jaxb.bases.Tramo tramo0 = tramos.get(0);
-	Assert.assertEquals("01", tramo0.getFechaDesde().getDia());
-	Assert.assertEquals("10", tramo0.getFechaHasta().getDia());
+	assertEquals("01", tramo0.getFechaDesde().getDia());
+	assertEquals("10", tramo0.getFechaHasta().getDia());
 	// assertDato(tramo0.getDatosTramo().getDato(), "I", "51", "M");
 	assertDato(tramo0.getDatosTramo().getDato(), "C", "500",
 		Integer.toString((int) Math.round(1750.00 * 10.00 / 30.00 * 100)));
@@ -4434,8 +4436,8 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 
 	String diaHasta = Integer.toString(get(endDate, Calendar.DAY_OF_MONTH));
 	net.aonsolutions.core.tgss.creta.jaxb.bases.Tramo tramo1 = tramos.get(1);
-	Assert.assertEquals("11", tramo1.getFechaDesde().getDia());
-	Assert.assertEquals(diaHasta, tramo1.getFechaHasta().getDia());
+	assertEquals("11", tramo1.getFechaDesde().getDia());
+	assertEquals(diaHasta, tramo1.getFechaHasta().getDia());
 	assertDato(tramo1.getDatosTramo().getDato(), "C", "509",
 		Integer.toString((int) Math.round(1750.00 * 20.00 / 30.00 * 100)));
 	assertDato(tramo1.getDatosTramo().getDato(), "C", "603",
@@ -4498,12 +4500,12 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 	List<net.aonsolutions.core.tgss.creta.jaxb.bases.Tramo> tramos = getTramosBases(connection, startDate, endDate,
 		ccc, contract);
 
-	Assert.assertEquals(1, tramos.size());
+	assertEquals(1, tramos.size());
 
 	String diaHasta = Integer.toString(get(endDate, Calendar.DAY_OF_MONTH));
 	net.aonsolutions.core.tgss.creta.jaxb.bases.Tramo tramo1 = tramos.get(0);
-	Assert.assertEquals("01", tramo1.getFechaDesde().getDia());
-	Assert.assertEquals(diaHasta, tramo1.getFechaHasta().getDia());
+	assertEquals("01", tramo1.getFechaDesde().getDia());
+	assertEquals(diaHasta, tramo1.getFechaHasta().getDia());
 	assertDato(tramo1.getDatosTramo().getDato(), "C", "509", Integer.toString((int) Math.round(1750.00 * 100)));
 	assertDato(tramo1.getDatosTramo().getDato(), "C", "603", Integer.toString((int) Math.round(1750.00 * 100)));
 
@@ -4533,12 +4535,12 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 	List<net.aonsolutions.core.tgss.creta.jaxb.bases.Tramo> tramos = getTramosBases(connection, startDate, endDate,
 		ccc, contract);
 
-	Assert.assertEquals(2, tramos.size());
+	assertEquals(2, tramos.size());
 
 	// Activo
 	net.aonsolutions.core.tgss.creta.jaxb.bases.Tramo tramo0 = tramos.get(0);
-	Assert.assertEquals("01", tramo0.getFechaDesde().getDia());
-	Assert.assertEquals("10", tramo0.getFechaHasta().getDia());
+	assertEquals("01", tramo0.getFechaDesde().getDia());
+	assertEquals("10", tramo0.getFechaHasta().getDia());
 	// assertDato(tramo0.getDatosTramo().getDato(), "I", "51", "M");
 	assertDato(tramo0.getDatosTramo().getDato(), "C", "500",
 		Integer.toString((int) Math.round(1750.00 * 10.00 / 30.00 * 100)));
@@ -4547,8 +4549,8 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 
 	String diaHasta = Integer.toString(get(endDate, Calendar.DAY_OF_MONTH));
 	net.aonsolutions.core.tgss.creta.jaxb.bases.Tramo tramo1 = tramos.get(1);
-	Assert.assertEquals("11", tramo1.getFechaDesde().getDia());
-	Assert.assertEquals(diaHasta, tramo1.getFechaHasta().getDia());
+	assertEquals("11", tramo1.getFechaDesde().getDia());
+	assertEquals(diaHasta, tramo1.getFechaHasta().getDia());
 	assertDato(tramo1.getDatosTramo().getDato(), "C", "509",
 		Integer.toString((int) Math.round(1750.00 * 20.00 / 30.00 * 100)));
 	assertDato(tramo1.getDatosTramo().getDato(), "C", "603",
@@ -4580,12 +4582,12 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 	List<net.aonsolutions.core.tgss.creta.jaxb.bases.Tramo> tramos = getTramosBases(connection, startDate, endDate,
 		ccc, contract);
 
-	Assert.assertEquals(2, tramos.size());
+	assertEquals(2, tramos.size());
 
 	// Activo
 	net.aonsolutions.core.tgss.creta.jaxb.bases.Tramo tramo0 = tramos.get(0);
-	Assert.assertEquals("01", tramo0.getFechaDesde().getDia());
-	Assert.assertEquals("10", tramo0.getFechaHasta().getDia());
+	assertEquals("01", tramo0.getFechaDesde().getDia());
+	assertEquals("10", tramo0.getFechaHasta().getDia());
 	// assertDato(tramo0.getDatosTramo().getDato(), "I", "51", "M");
 	assertDato(tramo0.getDatosTramo().getDato(), "C", "500",
 		Integer.toString((int) Math.round(1750.00 * 10.00 / 30.00 * 100)));
@@ -4594,8 +4596,8 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 
 	String diaHasta = Integer.toString(get(endDate, Calendar.DAY_OF_MONTH));
 	net.aonsolutions.core.tgss.creta.jaxb.bases.Tramo tramo1 = tramos.get(1);
-	Assert.assertEquals("11", tramo1.getFechaDesde().getDia());
-	Assert.assertEquals(diaHasta, tramo1.getFechaHasta().getDia());
+	assertEquals("11", tramo1.getFechaDesde().getDia());
+	assertEquals(diaHasta, tramo1.getFechaHasta().getDia());
 	assertDato(tramo1.getDatosTramo().getDato(), "C", "509",
 		Integer.toString((int) Math.round(1750.00 * 20.00 / 30.00 * 100)));
 	assertDato(tramo1.getDatosTramo().getDato(), "C", "603",
@@ -4627,12 +4629,12 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 	List<net.aonsolutions.core.tgss.creta.jaxb.bases.Tramo> tramos = getTramosBases(connection, startDate, endDate,
 		ccc, contract);
 
-	Assert.assertEquals(2, tramos.size());
+	assertEquals(2, tramos.size());
 
 	// Activo
 	net.aonsolutions.core.tgss.creta.jaxb.bases.Tramo tramo0 = tramos.get(0);
-	Assert.assertEquals("01", tramo0.getFechaDesde().getDia());
-	Assert.assertEquals("10", tramo0.getFechaHasta().getDia());
+	assertEquals("01", tramo0.getFechaDesde().getDia());
+	assertEquals("10", tramo0.getFechaHasta().getDia());
 	// assertDato(tramo0.getDatosTramo().getDato(), "I", "51", "M");
 	assertDato(tramo0.getDatosTramo().getDato(), "C", "500",
 		Integer.toString((int) Math.round(1750.00 * 10.00 / 30.00 * 100)));
@@ -4641,8 +4643,8 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 
 	String diaHasta = Integer.toString(get(endDate, Calendar.DAY_OF_MONTH));
 	net.aonsolutions.core.tgss.creta.jaxb.bases.Tramo tramo1 = tramos.get(1);
-	Assert.assertEquals("11", tramo1.getFechaDesde().getDia());
-	Assert.assertEquals(diaHasta, tramo1.getFechaHasta().getDia());
+	assertEquals("11", tramo1.getFechaDesde().getDia());
+	assertEquals(diaHasta, tramo1.getFechaHasta().getDia());
 	assertDato(tramo1.getDatosTramo().getDato(), "C", "500",
 		Integer.toString((int) Math.round(1750.00 * 20.00 / 30.00 * 0.75 * 100)));
 	assertDato(tramo1.getDatosTramo().getDato(), "C", "601",
@@ -4679,12 +4681,12 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 	List<net.aonsolutions.core.tgss.creta.jaxb.bases.Tramo> tramos = getTramosBases(connection, startDate, endDate,
 		ccc, contract);
 
-	Assert.assertEquals(2, tramos.size());
+	assertEquals(2, tramos.size());
 
 	// Activo
 	net.aonsolutions.core.tgss.creta.jaxb.bases.Tramo tramo0 = tramos.get(0);
-	Assert.assertEquals("01", tramo0.getFechaDesde().getDia());
-	Assert.assertEquals("10", tramo0.getFechaHasta().getDia());
+	assertEquals("01", tramo0.getFechaDesde().getDia());
+	assertEquals("10", tramo0.getFechaHasta().getDia());
 	// assertDato(tramo0.getDatosTramo().getDato(), "I", "51", "M");
 	assertDato(tramo0.getDatosTramo().getDato(), "C", "500",
 		Integer.toString((int) Math.round(1750.00 * 10.00 / 30.00 * 100)));
@@ -4693,8 +4695,8 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 
 	String diaHasta = Integer.toString(get(endDate, Calendar.DAY_OF_MONTH));
 	net.aonsolutions.core.tgss.creta.jaxb.bases.Tramo tramo1 = tramos.get(1);
-	Assert.assertEquals("11", tramo1.getFechaDesde().getDia());
-	Assert.assertEquals(diaHasta, tramo1.getFechaHasta().getDia());
+	assertEquals("11", tramo1.getFechaDesde().getDia());
+	assertEquals(diaHasta, tramo1.getFechaHasta().getDia());
 	assertDato(tramo1.getDatosTramo().getDato(), "C", "500",
 		Integer.toString((int) Math.round(1750.00 * 20.00 / 30.00 * 0.75 * 100)));
 	assertDato(tramo1.getDatosTramo().getDato(), "C", "601",
@@ -4731,25 +4733,25 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 	List<net.aonsolutions.core.tgss.creta.jaxb.bases.Tramo> tramos = getTramosBases(connection, startDate, endDate,
 		ccc, contract);
 
-	Assert.assertEquals(2, tramos.size());
+	assertEquals(2, tramos.size());
 
 	// Activo
 	net.aonsolutions.core.tgss.creta.jaxb.bases.Tramo tramo0 = tramos.get(0);
-	Assert.assertEquals("01", tramo0.getFechaDesde().getDia());
-	Assert.assertEquals("10", tramo0.getFechaHasta().getDia());
+	assertEquals("01", tramo0.getFechaDesde().getDia());
+	assertEquals("10", tramo0.getFechaHasta().getDia());
 	// assertDato(tramo0.getDatosTramo().getDato(), "I", "51", "M");
 	assertDato(tramo0.getDatosTramo().getDato(), "C", "500",
 		Integer.toString((int) Math.round(1750.00 * 10.00 / 30.00 * 100)));
 	assertDato(tramo0.getDatosTramo().getDato(), "C", "601",
 		Integer.toString((int) Math.round(1750.00 * 10.00 / 30.00 * 100)));
 	tramo0.getDatosTramo().getDato().stream().filter(d -> d.getCodigo().equals("01")).findAny()
-		.ifPresent(d -> org.junit.Assert.fail("H 01 Dato solicitado proporcionado no requerido"));
+		.ifPresent(d -> fail("H 01 Dato solicitado proporcionado no requerido"));
 	;
 
 	String diaHasta = Integer.toString(get(endDate, Calendar.DAY_OF_MONTH));
 	net.aonsolutions.core.tgss.creta.jaxb.bases.Tramo tramo1 = tramos.get(1);
-	Assert.assertEquals("11", tramo1.getFechaDesde().getDia());
-	Assert.assertEquals(diaHasta, tramo1.getFechaHasta().getDia());
+	assertEquals("11", tramo1.getFechaDesde().getDia());
+	assertEquals(diaHasta, tramo1.getFechaHasta().getDia());
 	assertDato(tramo1.getDatosTramo().getDato(), "C", "500",
 		Integer.toString((int) Math.round(1750.00 * 20.00 / 30.00 * 0.75 * 100)));
 	assertDato(tramo1.getDatosTramo().getDato(), "C", "601",
@@ -4763,7 +4765,7 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
     }
 
     @Test
-    @Ignore("Not fixed yet BRUTO...:-(")
+    @Disabled("Not fixed yet BRUTO...:-(")
     public void testCretaEREFZOFFParcialII() throws ExpressionException, SQLException, SalaryException, JAXBException,
 	    IOException, EmptyBasesException, XMLStreamException, FactoryConfigurationError {
 	Connection connection = getConnection();
@@ -4796,12 +4798,12 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 	List<net.aonsolutions.core.tgss.creta.jaxb.bases.Tramo> tramos = getTramosBases(connection, startDate, endDate,
 		ccc, contract);
 
-	Assert.assertEquals(2, tramos.size());
+	assertEquals(2, tramos.size());
 
 	// Activo
 	net.aonsolutions.core.tgss.creta.jaxb.bases.Tramo tramo0 = tramos.get(0);
-	Assert.assertEquals("01", tramo0.getFechaDesde().getDia());
-	Assert.assertEquals("25", tramo0.getFechaHasta().getDia());
+	assertEquals("01", tramo0.getFechaDesde().getDia());
+	assertEquals("25", tramo0.getFechaHasta().getDia());
 	// assertDato(tramo0.getDatosTramo().getDato(), "I", "51", "M");
 	// assertDato(tramo0.getDatosTramo().getDato(), "C", "500",
 	// Integer.toString((int)Math.round(1750.00 * 25.00 /30.00 * 0.75 * 100)));
@@ -4817,15 +4819,15 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 
 	String diaHasta = Integer.toString(get(endDate, Calendar.DAY_OF_MONTH));
 	net.aonsolutions.core.tgss.creta.jaxb.bases.Tramo tramo1 = tramos.get(1);
-	Assert.assertEquals("26", tramo1.getFechaDesde().getDia());
-	Assert.assertEquals(diaHasta, tramo1.getFechaHasta().getDia());
+	assertEquals("26", tramo1.getFechaDesde().getDia());
+	assertEquals(diaHasta, tramo1.getFechaHasta().getDia());
 	// assertDato(tramo1.getDatosTramo().getDato(), "C", "500",
 	// Integer.toString((int)Math.round(1750.00 * activeDays /30.00 * 100)));
 	// assertDato(tramo1.getDatosTramo().getDato(), "C", "601",
 	// Integer.toString((int)Math.round(1750.00 * activeDays /30.00 * 100)));
 	tramo1.getDatosTramo().getDato().stream().filter(d -> !d.getCodigo().equals("500"))
 		.filter(d -> !d.getCodigo().equals("601")).findAny()
-		.ifPresent(d -> org.junit.Assert.fail("Dato solicitado proporcionado no requerido"));
+		.ifPresent(d -> fail("Dato solicitado proporcionado no requerido"));
 	;
 
     }
@@ -4876,11 +4878,11 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 	Dato _537 = tramosBases.get(0).getDatosTramo().getDato().stream().filter(d -> d.getCodigo().equals("537"))
 		.findFirst().orElseThrow(() -> new AssertionFailedError(""));
 	;
-	Assert.assertEquals("69000", _537.getValor());
+	assertEquals("69000", _537.getValor());
 
 	Dato _2 = tramosBases.get(0).getDatosTramo().getDato().stream().filter(d -> d.getCodigo().equals("02"))
 		.findFirst().orElseThrow(() -> new AssertionFailedError(""));
-	Assert.assertEquals("10", _2.getValor());
+	assertEquals("10", _2.getValor());
 
     }
 
@@ -4926,16 +4928,16 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 	List<net.aonsolutions.core.tgss.creta.jaxb.bases.Tramo> tramosBases = getTramosBases(connection, startDate,
 		endDate, ccc, contract);
 
-	org.junit.Assert.assertEquals(1, tramosBases.size());
+	assertEquals(1, tramosBases.size());
 
 	Dato _537 = tramosBases.get(0).getDatosTramo().getDato().stream().filter(d -> d.getCodigo().equals("537"))
 		.findFirst().orElseThrow(() -> new AssertionFailedError(""));
 	;
-	Assert.assertEquals("69000", _537.getValor());
+	assertEquals("69000", _537.getValor());
 
 	Dato _2 = tramosBases.get(0).getDatosTramo().getDato().stream().filter(d -> d.getCodigo().equals("02"))
 		.findFirst().orElseThrow(() -> new AssertionFailedError(""));
-	Assert.assertEquals("10", _2.getValor());
+	assertEquals("10", _2.getValor());
 
     }
 
@@ -5003,7 +5005,7 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 	int end = get(endDate, Calendar.DAY_OF_MONTH);
 	int endI = get(endDateI, Calendar.DAY_OF_MONTH);
 	int expected = (int) (10.00 * endI / end * 69.00 * 100.00);
-	Assert.assertEquals(69000.00, Double.valueOf(_0537.getValor()) + Double.valueOf(_1537.getValor()));
+	assertEquals(69000.00, Double.valueOf(_0537.getValor()) + Double.valueOf(_1537.getValor()));
 
 	Dato _02 = tramosBases.get(0).getDatosTramo().getDato().stream().filter(d -> d.getCodigo().equals("02"))
 		.findFirst().orElseThrow(() -> new AssertionFailedError(""));
@@ -5011,7 +5013,7 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 		.findFirst().orElseThrow(() -> new AssertionFailedError(""));
 
 	expected = (int) (10.00 * endI / end);
-	Assert.assertEquals(9.00, Double.valueOf(_02.getValor()) + Double.valueOf(_12.getValor()));
+	assertEquals(9.00, Double.valueOf(_02.getValor()) + Double.valueOf(_12.getValor()));
 
     }
 
@@ -5061,11 +5063,11 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 	Dato _537 = tramosBases.get(0).getDatosTramo().getDato().stream().filter(d -> d.getCodigo().equals("537"))
 		.findFirst().orElseThrow(() -> new AssertionFailedError(""));
 	;
-	Assert.assertEquals("69000", _537.getValor());
+	assertEquals("69000", _537.getValor());
 
 	Dato _2 = tramosBases.get(0).getDatosTramo().getDato().stream().filter(d -> d.getCodigo().equals("02"))
 		.findFirst().orElseThrow(() -> new AssertionFailedError(""));
-	Assert.assertEquals("10", _2.getValor());
+	assertEquals("10", _2.getValor());
 
     }
 
@@ -5114,11 +5116,11 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 	Dato _537 = tramosBases.get(0).getDatosTramo().getDato().stream().filter(d -> d.getCodigo().equals("537"))
 		.findFirst().orElseThrow(() -> new AssertionFailedError(""));
 	;
-	Assert.assertEquals("69000", _537.getValor());
+	assertEquals("69000", _537.getValor());
 
 	Dato _2 = tramosBases.get(0).getDatosTramo().getDato().stream().filter(d -> d.getCodigo().equals("02"))
 		.findFirst().orElseThrow(() -> new AssertionFailedError(""));
-	Assert.assertEquals("10", _2.getValor());
+	assertEquals("10", _2.getValor());
 
     }
 
@@ -5165,7 +5167,7 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 	});
 
 	tramosBases.get(0).getDatosTramo().getDato().stream().filter(d -> d.getCodigo().equals("01")).forEach(d -> {
-	    Assert.assertEquals("66", d.getValor());
+	    assertEquals("66", d.getValor());
 	});
     }
 
@@ -5290,27 +5292,27 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 
 	Dato _2 = tramosBases.get(0).getDatosTramo().getDato().stream().filter(d -> d.getCodigo().equals("02"))
 		.findFirst().orElseThrow(() -> new AssertionFailedError(""));
-	Assert.assertEquals(Integer.toString((int) (10.00 / activeDays * 9)), _2.getValor());
+	assertEquals(Integer.toString((int) (10.00 / activeDays * 9)), _2.getValor());
 
 	Dato _537 = tramosBases.get(0).getDatosTramo().getDato().stream().filter(d -> d.getCodigo().equals("537"))
 		.findFirst().orElseThrow(() -> new AssertionFailedError(""));
 	;
-	Assert.assertEquals(Integer.toString((int) (6900 * 10.00 / activeDays * 9)), _537.getValor());
+	assertEquals(Integer.toString((int) (6900 * 10.00 / activeDays * 9)), _537.getValor());
 
 	_2 = tramosBases.get(2).getDatosTramo().getDato().stream().filter(d -> d.getCodigo().equals("02")).findFirst()
 		.orElseThrow(() -> new AssertionFailedError(""));
-	Assert.assertEquals(Integer.toString((int) (10.00 / activeDays * (activeDays2))), _2.getValor());
+	assertEquals(Integer.toString((int) (10.00 / activeDays * (activeDays2))), _2.getValor());
 
 	_537 = tramosBases.get(2).getDatosTramo().getDato().stream().filter(d -> d.getCodigo().equals("537"))
 		.findFirst().orElseThrow(() -> new AssertionFailedError(""));
 	;
-	Assert.assertEquals(Integer.toString((int) Math.round((6900 * 10.00 / activeDays * (activeDays2)))),
+	assertEquals(Integer.toString((int) Math.round((6900 * 10.00 / activeDays * (activeDays2)))),
 		_537.getValor());
 
     }
 
     @Test
-    @Ignore
+    @Disabled
     public void testCretaAdditionalHoursITOK() throws ExpressionException, SQLException, SalaryException, JAXBException,
 	    IOException, EmptyBasesException, XMLStreamException, FactoryConfigurationError {
 	Connection connection = getConnection();
@@ -5383,21 +5385,21 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 
 	Dato _2 = tramosBases.get(0).getDatosTramo().getDato().stream().filter(d -> d.getCodigo().equals("02"))
 		.findFirst().orElseThrow(() -> new AssertionFailedError(""));
-	Assert.assertEquals(Integer.toString(3), _2.getValor());
+	assertEquals(Integer.toString(3), _2.getValor());
 
 	Dato _537 = tramosBases.get(0).getDatosTramo().getDato().stream().filter(d -> d.getCodigo().equals("537"))
 		.findFirst().orElseThrow(() -> new AssertionFailedError(""));
 	;
-	Assert.assertEquals(Integer.toString((int) (6900 * 3)), _537.getValor());
+	assertEquals(Integer.toString((int) (6900 * 3)), _537.getValor());
 
 	_2 = tramosBases.get(2).getDatosTramo().getDato().stream().filter(d -> d.getCodigo().equals("02")).findFirst()
 		.orElseThrow(() -> new AssertionFailedError(""));
-	Assert.assertEquals(Integer.toString(7), _2.getValor());
+	assertEquals(Integer.toString(7), _2.getValor());
 
 	_537 = tramosBases.get(2).getDatosTramo().getDato().stream().filter(d -> d.getCodigo().equals("537"))
 		.findFirst().orElseThrow(() -> new AssertionFailedError(""));
 	;
-	Assert.assertEquals(Integer.toString((int) Math.round((6900 * 7))), _537.getValor());
+	assertEquals(Integer.toString((int) Math.round((6900 * 7))), _537.getValor());
 
     }
 
@@ -5528,13 +5530,13 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 
 	Dato _2 = tramosBases.get(0).getDatosTramo().getDato().stream().filter(d -> d.getCodigo().equals("02"))
 		.findFirst().orElseThrow(() -> new AssertionFailedError(""));
-	Assert.assertEquals(Integer.toString((int) (10.00 / monthDays * 12)), _2.getValor());
+	assertEquals(Integer.toString((int) (10.00 / monthDays * 12)), _2.getValor());
 
 	Dato _537 = tramosBases.get(0).getDatosTramo().getDato().stream().filter(d -> d.getCodigo().equals("537"))
 		.findFirst().orElseThrow(() -> new AssertionFailedError(""));
 	;
 
-	Assert.assertEquals(Long.toString(Math.round(6900.00 * 10.00 / monthDays * 12)), _537.getValor());
+	assertEquals(Long.toString(Math.round(6900.00 * 10.00 / monthDays * 12)), _537.getValor());
 
     }
 
@@ -5587,11 +5589,11 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 
 	List<Tramo> tramos = getTramos(connection, contract, startDate, endDate, ccc);
 
-	Assert.assertEquals(1, tramos.size());
+	assertEquals(1, tramos.size());
 
 	Tramo tramo = tramos.get(0);
-	Assert.assertEquals("01", tramo.getFechaDesde().getDia());
-	Assert.assertEquals(Integer.toString(get(endDate, DAY_OF_MONTH)), tramo.getFechaHasta().getDia());
+	assertEquals("01", tramo.getFechaDesde().getDia());
+	assertEquals(Integer.toString(get(endDate, DAY_OF_MONTH)), tramo.getFechaHasta().getDia());
 	assertTramoActivoNormalTiempoCompleto(tramo);
 
     }
@@ -5656,27 +5658,27 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 	int salaries = jooqSalaryBuilder.execute();
 
 	// Only one salary saved to DB.
-	Assert.assertEquals(1, salaries);
+	assertEquals(1, salaries);
 
 	AON.getSalaryData(aonContext, props -> props.getContractProperty().eq(contract.getId())).forEach(salary -> {
 
 	    // 500 Base de contingencias comunes.
 	    List<ContextData> datas = salary.getContextData().get(CGC_BASE.getName());
-	    Assert.assertEquals(3, datas.size());
+	    assertEquals(3, datas.size());
 	    Collections.sort(datas, (d1, d2) -> d1.getStartDate().compareTo(d2.getStartDate()));
 	    // I
-	    Assert.assertEquals(startDateI, datas.get(0).getStartDate());
-	    Assert.assertEquals(endDateI, datas.get(0).getEndDate());
-	    Assert.assertEquals(1500.00 * 10 / 30.00, Double.parseDouble(datas.get(0).getExpression()), DELTA);
+	    assertEquals(startDateI, datas.get(0).getStartDate());
+	    assertEquals(endDateI, datas.get(0).getEndDate());
+	    assertEquals(1500.00 * 10 / 30.00, Double.parseDouble(datas.get(0).getExpression()), DELTA);
 	    // II
-	    Assert.assertEquals(startDateII, datas.get(1).getStartDate());
-	    Assert.assertEquals(endDateII, datas.get(1).getEndDate());
-	    Assert.assertEquals(1500.00 * 10 / 30.00, Double.parseDouble(datas.get(1).getExpression()), DELTA);
+	    assertEquals(startDateII, datas.get(1).getStartDate());
+	    assertEquals(endDateII, datas.get(1).getEndDate());
+	    assertEquals(1500.00 * 10 / 30.00, Double.parseDouble(datas.get(1).getExpression()), DELTA);
 
 	    // III
-	    Assert.assertEquals(startDateIII, datas.get(2).getStartDate());
-	    Assert.assertEquals(endDateIII, datas.get(2).getEndDate());
-	    Assert.assertEquals(1500.00 * 10 / 30.00, Double.parseDouble(datas.get(2).getExpression()), DELTA);
+	    assertEquals(startDateIII, datas.get(2).getStartDate());
+	    assertEquals(endDateIII, datas.get(2).getEndDate());
+	    assertEquals(1500.00 * 10 / 30.00, Double.parseDouble(datas.get(2).getExpression()), DELTA);
 
 	});
 	;
@@ -5713,14 +5715,14 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 
 	List<Tramo> tramos = getTramos(connection, contract, startDate, endDate, ccc);
 
-	Assert.assertEquals(2, tramos.size());
-	Assert.assertEquals(1, Integer.parseInt(tramos.get(0).getFechaDesde().getDia()));
-	Assert.assertEquals(10, Integer.parseInt(tramos.get(0).getFechaHasta().getDia()));
-	Assert.assertEquals(10, Integer.parseInt(tramos.get(0).getDiasCotizados()));
+	assertEquals(2, tramos.size());
+	assertEquals(1, Integer.parseInt(tramos.get(0).getFechaDesde().getDia()));
+	assertEquals(10, Integer.parseInt(tramos.get(0).getFechaHasta().getDia()));
+	assertEquals(10, Integer.parseInt(tramos.get(0).getDiasCotizados()));
 
-	Assert.assertEquals(12, Integer.parseInt(tramos.get(1).getFechaDesde().getDia()));
-	Assert.assertEquals(31, Integer.parseInt(tramos.get(1).getFechaHasta().getDia()));
-	Assert.assertEquals(19, Integer.parseInt(tramos.get(1).getDiasCotizados()));
+	assertEquals(12, Integer.parseInt(tramos.get(1).getFechaDesde().getDia()));
+	assertEquals(31, Integer.parseInt(tramos.get(1).getFechaHasta().getDia()));
+	assertEquals(19, Integer.parseInt(tramos.get(1).getDiasCotizados()));
 
     }
 
@@ -5749,7 +5751,7 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 	int salaries = calculateAndSave(connection, ctx);
 
 	// Only one salary saved to DB.
-	// Assert.assertEquals(1, salaries);
+	// assertEquals(1, salaries);
 
 	AON.getSalaryData(aonContext,
 		props -> props.getContractProperty().eq(contract.getId()).and(props.getCCCProperty().eq(ccc)))
@@ -5768,37 +5770,37 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 		    // 500 Base de contingencias comunes.
 		    List<ContextData> datas = salary.getContextData().get(CGC_BASE.getName());
 
-		    Assert.assertEquals(2, datas.size());
-		    Assert.assertEquals(startDate, datas.get(0).getStartDate());
-		    Assert.assertEquals(endActive, datas.get(0).getEndDate());
-		    Assert.assertEquals(1750.00, Double.parseDouble(datas.get(0).getExpression()));
-		    Assert.assertEquals(endDate, datas.get(1).getStartDate());
-		    Assert.assertEquals(endDate, datas.get(1).getEndDate());
-		    Assert.assertEquals(0.00, Double.parseDouble(datas.get(1).getExpression()));
+		    assertEquals(2, datas.size());
+		    assertEquals(startDate, datas.get(0).getStartDate());
+		    assertEquals(endActive, datas.get(0).getEndDate());
+		    assertEquals(1750.00, Double.parseDouble(datas.get(0).getExpression()));
+		    assertEquals(endDate, datas.get(1).getStartDate());
+		    assertEquals(endDate, datas.get(1).getEndDate());
+		    assertEquals(0.00, Double.parseDouble(datas.get(1).getExpression()));
 
 		    // 601 o 611 Base de Accidentes de Trabajo.
 		    datas = salary.getContextData().get(CGP_BASE.getName());
-		    Assert.assertEquals(2, datas.size());
-		    Assert.assertEquals(startDate, datas.get(0).getStartDate());
-		    Assert.assertEquals(endActive, datas.get(0).getEndDate());
-		    Assert.assertEquals(1750.00, Double.parseDouble(datas.get(0).getExpression()));
-		    Assert.assertEquals(endDate, datas.get(1).getStartDate());
-		    Assert.assertEquals(endDate, datas.get(1).getEndDate());
-		    Assert.assertEquals(0.00, Double.parseDouble(datas.get(1).getExpression()));
+		    assertEquals(2, datas.size());
+		    assertEquals(startDate, datas.get(0).getStartDate());
+		    assertEquals(endActive, datas.get(0).getEndDate());
+		    assertEquals(1750.00, Double.parseDouble(datas.get(0).getExpression()));
+		    assertEquals(endDate, datas.get(1).getStartDate());
+		    assertEquals(endDate, datas.get(1).getEndDate());
+		    assertEquals(0.00, Double.parseDouble(datas.get(1).getExpression()));
 
 		    // 501 Base de Horas Extras Fuerza Mayor
 		    datas = salary.getContextData().get(STRUCTURAL_OVERTIME_BASE.getName());
-		    Assert.assertEquals(1, datas.size());
-		    Assert.assertEquals(startDate, datas.get(0).getStartDate());
-		    Assert.assertEquals(endDate, datas.get(0).getEndDate());
-		    Assert.assertEquals(0.00, Double.parseDouble(datas.get(0).getExpression()));
+		    assertEquals(1, datas.size());
+		    assertEquals(startDate, datas.get(0).getStartDate());
+		    assertEquals(endDate, datas.get(0).getEndDate());
+		    assertEquals(0.00, Double.parseDouble(datas.get(0).getExpression()));
 
 		    // 502 Base de Horas Extras
 		    datas = salary.getContextData().get(NON_STRUCTURAL_OVERTIME_BASE.getName());
-		    Assert.assertEquals(1, datas.size());
-		    Assert.assertEquals(startDate, datas.get(0).getStartDate());
-		    Assert.assertEquals(endDate, datas.get(0).getEndDate());
-		    Assert.assertEquals(0.00, Double.parseDouble(datas.get(0).getExpression()));
+		    assertEquals(1, datas.size());
+		    assertEquals(startDate, datas.get(0).getStartDate());
+		    assertEquals(endDate, datas.get(0).getEndDate());
+		    assertEquals(0.00, Double.parseDouble(datas.get(0).getExpression()));
 
 		});
 	;
@@ -5806,42 +5808,42 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 	cleanSalaries(aonContext);
 
 	List<Tramo> tramos = getTramos(connection, contract, startDate, endDate, ccc);
-	Assert.assertEquals(2, tramos.size());
+	assertEquals(2, tramos.size());
 
-	Assert.assertEquals("01", tramos.get(0).getFechaDesde().getDia());
-	Assert.assertEquals("07", tramos.get(0).getFechaDesde().getMes());
-	Assert.assertEquals("30", tramos.get(0).getFechaHasta().getDia());
-	Assert.assertEquals("07", tramos.get(0).getFechaHasta().getMes());
-	Assert.assertEquals("30", tramos.get(0).getDiasCotizados());
+	assertEquals("01", tramos.get(0).getFechaDesde().getDia());
+	assertEquals("07", tramos.get(0).getFechaDesde().getMes());
+	assertEquals("30", tramos.get(0).getFechaHasta().getDia());
+	assertEquals("07", tramos.get(0).getFechaHasta().getMes());
+	assertEquals("30", tramos.get(0).getDiasCotizados());
 	assertTramoActivoNormalTiempoCompletoDiario(tramos.get(0));
 
-	Assert.assertEquals("31", tramos.get(1).getFechaDesde().getDia());
-	Assert.assertEquals("07", tramos.get(1).getFechaDesde().getMes());
-	Assert.assertEquals("31", tramos.get(1).getFechaHasta().getDia());
-	Assert.assertEquals("07", tramos.get(1).getFechaHasta().getMes());
-	Assert.assertEquals("0", tramos.get(1).getDiasCotizados());
+	assertEquals("31", tramos.get(1).getFechaDesde().getDia());
+	assertEquals("07", tramos.get(1).getFechaDesde().getMes());
+	assertEquals("31", tramos.get(1).getFechaHasta().getDia());
+	assertEquals("07", tramos.get(1).getFechaHasta().getMes());
+	assertEquals("0", tramos.get(1).getDiasCotizados());
 	assertTramoIT15PrimerosDiasDiario(tramos.get(1));
 
 	cleanSalaries(aonContext);
 
 	List<net.aonsolutions.core.tgss.creta.jaxb.bases.Tramo> bases = getTramosBases(connection, startDate, endDate,
 		ccc, contract);
-	Assert.assertEquals(2, bases.size());
+	assertEquals(2, bases.size());
 
 	net.aonsolutions.core.tgss.creta.jaxb.bases.Tramo tramo1 = bases.get(0);
-	Assert.assertEquals("01", tramo1.getFechaDesde().getDia());
-	Assert.assertEquals("07", tramo1.getFechaDesde().getMes());
-	Assert.assertEquals("30", tramo1.getFechaHasta().getDia());
-	Assert.assertEquals("07", tramo1.getFechaHasta().getMes());
+	assertEquals("01", tramo1.getFechaDesde().getDia());
+	assertEquals("07", tramo1.getFechaDesde().getMes());
+	assertEquals("30", tramo1.getFechaHasta().getDia());
+	assertEquals("07", tramo1.getFechaHasta().getMes());
 	assertDato(tramo1.getDatosTramo().getDato(), "I", "51", "M");
 	assertDato(tramo1.getDatosTramo().getDato(), "C", "500", "175000");
 	assertDato(tramo1.getDatosTramo().getDato(), "C", "601", "175000");
 
 	net.aonsolutions.core.tgss.creta.jaxb.bases.Tramo tramo2 = bases.get(1);
-	Assert.assertEquals("31", tramo2.getFechaDesde().getDia());
-	Assert.assertEquals("07", tramo2.getFechaDesde().getMes());
-	Assert.assertEquals("31", tramo2.getFechaHasta().getDia());
-	Assert.assertEquals("07", tramo2.getFechaHasta().getMes());
+	assertEquals("31", tramo2.getFechaDesde().getDia());
+	assertEquals("07", tramo2.getFechaDesde().getMes());
+	assertEquals("31", tramo2.getFechaHasta().getDia());
+	assertEquals("07", tramo2.getFechaHasta().getMes());
 	assertDato(tramo2.getDatosTramo().getDato(), "I", "51", "M");
 
     }
@@ -5871,7 +5873,7 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 	int salaries = calculateAndSave(connection, ctx);
 
 	// Only one salary saved to DB.
-	// Assert.assertEquals(1, salaries);
+	// assertEquals(1, salaries);
 
 	AON.getSalaryData(aonContext,
 		props -> props.getContractProperty().eq(contract.getId()).and(props.getCCCProperty().eq(ccc)))
@@ -5890,37 +5892,37 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 		    // 500 Base de contingencias comunes.
 		    List<ContextData> datas = salary.getContextData().get(CGC_BASE.getName());
 
-		    Assert.assertEquals(2, datas.size());
-		    Assert.assertEquals(startDate, datas.get(0).getStartDate());
-		    Assert.assertEquals(endActive, datas.get(0).getEndDate());
-		    Assert.assertEquals(1750.00, Double.parseDouble(datas.get(0).getExpression()));
-		    Assert.assertEquals(endDate, datas.get(1).getStartDate());
-		    Assert.assertEquals(endDate, datas.get(1).getEndDate());
-		    Assert.assertEquals(0.00, Double.parseDouble(datas.get(1).getExpression()));
+		    assertEquals(2, datas.size());
+		    assertEquals(startDate, datas.get(0).getStartDate());
+		    assertEquals(endActive, datas.get(0).getEndDate());
+		    assertEquals(1750.00, Double.parseDouble(datas.get(0).getExpression()));
+		    assertEquals(endDate, datas.get(1).getStartDate());
+		    assertEquals(endDate, datas.get(1).getEndDate());
+		    assertEquals(0.00, Double.parseDouble(datas.get(1).getExpression()));
 
 		    // 601 o 611 Base de Accidentes de Trabajo.
 		    datas = salary.getContextData().get(CGP_BASE.getName());
-		    Assert.assertEquals(2, datas.size());
-		    Assert.assertEquals(startDate, datas.get(0).getStartDate());
-		    Assert.assertEquals(endActive, datas.get(0).getEndDate());
-		    Assert.assertEquals(1750.00, Double.parseDouble(datas.get(0).getExpression()));
-		    Assert.assertEquals(endDate, datas.get(1).getStartDate());
-		    Assert.assertEquals(endDate, datas.get(1).getEndDate());
-		    Assert.assertEquals(0.00, Double.parseDouble(datas.get(1).getExpression()));
+		    assertEquals(2, datas.size());
+		    assertEquals(startDate, datas.get(0).getStartDate());
+		    assertEquals(endActive, datas.get(0).getEndDate());
+		    assertEquals(1750.00, Double.parseDouble(datas.get(0).getExpression()));
+		    assertEquals(endDate, datas.get(1).getStartDate());
+		    assertEquals(endDate, datas.get(1).getEndDate());
+		    assertEquals(0.00, Double.parseDouble(datas.get(1).getExpression()));
 
 		    // 501 Base de Horas Extras Fuerza Mayor
 		    datas = salary.getContextData().get(STRUCTURAL_OVERTIME_BASE.getName());
-		    Assert.assertEquals(1, datas.size());
-		    Assert.assertEquals(startDate, datas.get(0).getStartDate());
-		    Assert.assertEquals(endDate, datas.get(0).getEndDate());
-		    Assert.assertEquals(0.00, Double.parseDouble(datas.get(0).getExpression()));
+		    assertEquals(1, datas.size());
+		    assertEquals(startDate, datas.get(0).getStartDate());
+		    assertEquals(endDate, datas.get(0).getEndDate());
+		    assertEquals(0.00, Double.parseDouble(datas.get(0).getExpression()));
 
 		    // 502 Base de Horas Extras
 		    datas = salary.getContextData().get(NON_STRUCTURAL_OVERTIME_BASE.getName());
-		    Assert.assertEquals(1, datas.size());
-		    Assert.assertEquals(startDate, datas.get(0).getStartDate());
-		    Assert.assertEquals(endDate, datas.get(0).getEndDate());
-		    Assert.assertEquals(0.00, Double.parseDouble(datas.get(0).getExpression()));
+		    assertEquals(1, datas.size());
+		    assertEquals(startDate, datas.get(0).getStartDate());
+		    assertEquals(endDate, datas.get(0).getEndDate());
+		    assertEquals(0.00, Double.parseDouble(datas.get(0).getExpression()));
 
 		});
 	;
@@ -5928,26 +5930,26 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 	cleanSalaries(aonContext);
 
 	List<Tramo> tramos = getTramos(connection, contract, startDate, endDate, ccc);
-	Assert.assertEquals(1, tramos.size());
+	assertEquals(1, tramos.size());
 
-	Assert.assertEquals("01", tramos.get(0).getFechaDesde().getDia());
-	Assert.assertEquals("07", tramos.get(0).getFechaDesde().getMes());
-	Assert.assertEquals("30", tramos.get(0).getFechaHasta().getDia());
-	Assert.assertEquals("07", tramos.get(0).getFechaHasta().getMes());
-	Assert.assertEquals("30", tramos.get(0).getDiasCotizados());
+	assertEquals("01", tramos.get(0).getFechaDesde().getDia());
+	assertEquals("07", tramos.get(0).getFechaDesde().getMes());
+	assertEquals("30", tramos.get(0).getFechaHasta().getDia());
+	assertEquals("07", tramos.get(0).getFechaHasta().getMes());
+	assertEquals("30", tramos.get(0).getDiasCotizados());
 	assertTramoActivoNormalTiempoCompleto(tramos.get(0));
 
 	cleanSalaries(aonContext);
 
 	List<net.aonsolutions.core.tgss.creta.jaxb.bases.Tramo> bases = getTramosBases(connection, startDate, endDate,
 		ccc, contract);
-	Assert.assertEquals(1, bases.size());
+	assertEquals(1, bases.size());
 
 	net.aonsolutions.core.tgss.creta.jaxb.bases.Tramo tramo1 = bases.get(0);
-	Assert.assertEquals("01", tramo1.getFechaDesde().getDia());
-	Assert.assertEquals("07", tramo1.getFechaDesde().getMes());
-	Assert.assertEquals("30", tramo1.getFechaHasta().getDia());
-	Assert.assertEquals("07", tramo1.getFechaHasta().getMes());
+	assertEquals("01", tramo1.getFechaDesde().getDia());
+	assertEquals("07", tramo1.getFechaDesde().getMes());
+	assertEquals("30", tramo1.getFechaHasta().getDia());
+	assertEquals("07", tramo1.getFechaHasta().getMes());
 	assertDato(tramo1.getDatosTramo().getDato(), "C", "500", "175000");
 	assertDato(tramo1.getDatosTramo().getDato(), "C", "601", "175000");
 
@@ -5988,7 +5990,7 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 	int salaries = calculateAndSave(connection, ctx);
 
 	// Only one salary saved to DB.
-	// Assert.assertEquals(1, salaries);
+	// assertEquals(1, salaries);
 
 	AON.getSalaryData(aonContext,
 		props -> props.getContractProperty().eq(contract.getId()).and(props.getCCCProperty().eq(ccc)))
@@ -6005,36 +6007,36 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 		    // 500 Base de contingencias comunes.
 		    List<ContextData> datas = salary.getContextData().get(CGC_BASE.getName());
 
-		    Assert.assertEquals(3, datas.size());
-		    Assert.assertEquals(startDate, datas.get(0).getStartDate());
-		    Assert.assertEquals(add(startIt, DATE, -1), datas.get(0).getEndDate());
+		    assertEquals(3, datas.size());
+		    assertEquals(startDate, datas.get(0).getStartDate());
+		    assertEquals(add(startIt, DATE, -1), datas.get(0).getEndDate());
 
-		    Assert.assertEquals(startIt, datas.get(1).getStartDate());
-		    Assert.assertEquals(endIt, datas.get(1).getEndDate());
+		    assertEquals(startIt, datas.get(1).getStartDate());
+		    assertEquals(endIt, datas.get(1).getEndDate());
 
-		    Assert.assertEquals(add(endIt, Calendar.DAY_OF_MONTH, 1), datas.get(2).getStartDate());
-		    Assert.assertEquals(endDate, datas.get(2).getEndDate());
+		    assertEquals(add(endIt, Calendar.DAY_OF_MONTH, 1), datas.get(2).getStartDate());
+		    assertEquals(endDate, datas.get(2).getEndDate());
 		});
 	;
 
 	cleanSalaries(aonContext);
 
 	List<Tramo> tramos = getTramos(connection, contract, startDate, endDate, ccc);
-	Assert.assertEquals(3, tramos.size());
+	assertEquals(3, tramos.size());
 
-	Assert.assertEquals("01", tramos.get(0).getFechaDesde().getDia());
-	Assert.assertEquals("09", tramos.get(0).getFechaHasta().getDia());
-	Assert.assertEquals("9", tramos.get(0).getDiasCotizados());
+	assertEquals("01", tramos.get(0).getFechaDesde().getDia());
+	assertEquals("09", tramos.get(0).getFechaHasta().getDia());
+	assertEquals("9", tramos.get(0).getDiasCotizados());
 	assertTramoActivoNormalTiempoCompleto(tramos.get(0));
 
-	Assert.assertEquals("10", tramos.get(1).getFechaDesde().getDia());
-	Assert.assertEquals("11", tramos.get(1).getFechaHasta().getDia());
-	Assert.assertEquals("2", tramos.get(1).getDiasCotizados());
+	assertEquals("10", tramos.get(1).getFechaDesde().getDia());
+	assertEquals("11", tramos.get(1).getFechaHasta().getDia());
+	assertEquals("2", tramos.get(1).getDiasCotizados());
 	assertTramoIT15PrimerosDias(tramos.get(1));
 
-	Assert.assertEquals("12", tramos.get(2).getFechaDesde().getDia());
-	Assert.assertEquals("31", tramos.get(2).getFechaHasta().getDia());
-	Assert.assertEquals("20", tramos.get(2).getDiasCotizados());
+	assertEquals("12", tramos.get(2).getFechaDesde().getDia());
+	assertEquals("31", tramos.get(2).getFechaHasta().getDia());
+	assertEquals("20", tramos.get(2).getDiasCotizados());
 	assertTramoActivoNormalTiempoCompleto(tramos.get(2));
 
     }
@@ -6076,7 +6078,7 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 	int salaries = calculateAndSave(connection, ctx);
 
 	// Only one salary saved to DB.
-	// Assert.assertEquals(1, salaries);
+	// assertEquals(1, salaries);
 
 	AON.getSalaryData(aonContext,
 		props -> props.getContractProperty().eq(contract.getId()).and(props.getCCCProperty().eq(ccc)))
@@ -6093,37 +6095,37 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 		    // 500 Base de contingencias comunes.
 		    List<ContextData> datas = salary.getContextData().get(CGC_BASE.getName());
 
-		    Assert.assertEquals(3, datas.size());
-		    Assert.assertEquals(startDate, datas.get(0).getStartDate());
-		    Assert.assertEquals(add(startIt, DATE, -1), datas.get(0).getEndDate());
+		    assertEquals(3, datas.size());
+		    assertEquals(startDate, datas.get(0).getStartDate());
+		    assertEquals(add(startIt, DATE, -1), datas.get(0).getEndDate());
 
-		    Assert.assertEquals(startIt, datas.get(1).getStartDate());
-		    Assert.assertEquals(endIt, datas.get(1).getEndDate());
-		    org.junit.Assert.assertTrue(Double.parseDouble(datas.get(1).getExpression()) > 0.00);
+		    assertEquals(startIt, datas.get(1).getStartDate());
+		    assertEquals(endIt, datas.get(1).getEndDate());
+		    assertTrue(Double.parseDouble(datas.get(1).getExpression()) > 0.00);
 
-		    Assert.assertEquals(add(endIt, Calendar.DAY_OF_MONTH, 1), datas.get(2).getStartDate());
-		    Assert.assertEquals(endDate, datas.get(2).getEndDate());
+		    assertEquals(add(endIt, Calendar.DAY_OF_MONTH, 1), datas.get(2).getStartDate());
+		    assertEquals(endDate, datas.get(2).getEndDate());
 		});
 	;
 
 	cleanSalaries(aonContext);
 
 	List<Tramo> tramos = getTramos(connection, contract, startDate, endDate, ccc);
-	Assert.assertEquals(3, tramos.size());
+	assertEquals(3, tramos.size());
 
-	Assert.assertEquals("01", tramos.get(0).getFechaDesde().getDia());
-	Assert.assertEquals("06", tramos.get(0).getFechaHasta().getDia());
-	Assert.assertEquals("6", tramos.get(0).getDiasCotizados());
+	assertEquals("01", tramos.get(0).getFechaDesde().getDia());
+	assertEquals("06", tramos.get(0).getFechaHasta().getDia());
+	assertEquals("6", tramos.get(0).getDiasCotizados());
 	assertTramoActivoNormalTiempoCompleto(tramos.get(0));
 
-	Assert.assertEquals("07", tramos.get(1).getFechaDesde().getDia());
-	Assert.assertEquals("07", tramos.get(1).getFechaHasta().getDia());
-	Assert.assertEquals("1", tramos.get(1).getDiasCotizados());
+	assertEquals("07", tramos.get(1).getFechaDesde().getDia());
+	assertEquals("07", tramos.get(1).getFechaHasta().getDia());
+	assertEquals("1", tramos.get(1).getDiasCotizados());
 	assertTramoIT15PrimerosDias(tramos.get(1));
 
-	Assert.assertEquals("08", tramos.get(2).getFechaDesde().getDia());
-	Assert.assertEquals("31", tramos.get(2).getFechaHasta().getDia());
-	Assert.assertEquals("24", tramos.get(2).getDiasCotizados());
+	assertEquals("08", tramos.get(2).getFechaDesde().getDia());
+	assertEquals("31", tramos.get(2).getFechaHasta().getDia());
+	assertEquals("24", tramos.get(2).getDiasCotizados());
 	assertTramoActivoNormalTiempoCompleto(tramos.get(2));
 
     }
@@ -6157,7 +6159,7 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 	int salaries = calculateAndSave(connection, ctx);
 
 	// Only one salary saved to DB.
-	// Assert.assertEquals(1, salaries);
+	// assertEquals(1, salaries);
 
 	AON.getSalaryData(aonContext,
 		props -> props.getContractProperty().eq(contract.getId()).and(props.getCCCProperty().eq(ccc)))
@@ -6227,22 +6229,22 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 
 	List<Tramo> tramos = getTramos(connection, contract, startDate, endDate, ccc);
 
-	Assert.assertEquals(3, tramos.size());
+	assertEquals(3, tramos.size());
 
 	// Activo
 	Tramo tramo0 = tramos.get(0);
-	Assert.assertEquals("01", tramo0.getFechaDesde().getDia());
-	Assert.assertEquals("10", tramo0.getFechaHasta().getDia());
+	assertEquals("01", tramo0.getFechaDesde().getDia());
+	assertEquals("10", tramo0.getFechaHasta().getDia());
 	assertTramoActivoNormalTiempoCompleto(tramo0);
 
 	Tramo tramo1 = tramos.get(1);
-	Assert.assertEquals("11", tramo1.getFechaDesde().getDia());
-	Assert.assertEquals("25", tramo1.getFechaHasta().getDia());
+	assertEquals("11", tramo1.getFechaDesde().getDia());
+	assertEquals("25", tramo1.getFechaHasta().getDia());
 	assertTramoITPagoDirecto(tramo1);
 
 	Tramo tramo2 = tramos.get(2);
-	Assert.assertEquals("26", tramo2.getFechaDesde().getDia());
-	Assert.assertEquals(Integer.toString(endDate.getDate()), tramo2.getFechaHasta().getDia());
+	assertEquals("26", tramo2.getFechaDesde().getDia());
+	assertEquals(Integer.toString(endDate.getDate()), tramo2.getFechaHasta().getDia());
 	assertTramoActivoNormalTiempoCompleto(tramo2);
 
     }
@@ -6278,20 +6280,20 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 
 	    // 500 Base de contingencias comunes.
 	    List<ContextData> datas = salary.getContextData().get(CGC_BASE.getName());
-	    Assert.assertEquals(2, datas.size());
-	    Assert.assertEquals(firstDayOfMonth, datas.get(0).getStartDate());
-	    Assert.assertEquals(firstDayOfMonth, datas.get(0).getEndDate());
-	    Assert.assertEquals(secondDayOfMonth, datas.get(1).getStartDate());
-	    Assert.assertEquals(endDate, datas.get(1).getEndDate());
+	    assertEquals(2, datas.size());
+	    assertEquals(firstDayOfMonth, datas.get(0).getStartDate());
+	    assertEquals(firstDayOfMonth, datas.get(0).getEndDate());
+	    assertEquals(secondDayOfMonth, datas.get(1).getStartDate());
+	    assertEquals(endDate, datas.get(1).getEndDate());
 
 	});
 	;
 
-	Assert.assertEquals(2, tramosBases.size());
-	org.junit.Assert.assertEquals("01", tramosBases.get(0).getFechaDesde().getDia());
-	org.junit.Assert.assertEquals("01", tramosBases.get(0).getFechaHasta().getDia());
+	assertEquals(2, tramosBases.size());
+	assertEquals("01", tramosBases.get(0).getFechaDesde().getDia());
+	assertEquals("01", tramosBases.get(0).getFechaHasta().getDia());
 
-	org.junit.Assert.assertEquals("02", tramosBases.get(1).getFechaDesde().getDia());
+	assertEquals("02", tramosBases.get(1).getFechaDesde().getDia());
     }
 
     @Test
@@ -6337,16 +6339,16 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 	int salaries = calculateAndSave(connection, ctx);
 
 	// Only one salary saved to DB.
-	Assert.assertEquals(1, salaries);
+	assertEquals(1, salaries);
 
 	AON.getSalaryData(aonContext, props -> props.getContractProperty().eq(contract.getId())).forEach(salary -> {
 	    // 500 Base de contingencias comunes.
 	    List<ContextData> datas = salary.getContextData().get(CGC_BASE.getName());
-	    Assert.assertEquals(2, datas.size());
-	    Assert.assertEquals(add(endDate, Calendar.DAY_OF_MONTH, 1), datas.get(0).getStartDate());
-	    Assert.assertEquals(lastDayOfMonth, datas.get(0).getEndDate());
-	    Assert.assertEquals(add(lastDayOfMonth, Calendar.DAY_OF_MONTH, 1), datas.get(1).getStartDate());
-	    Assert.assertEquals(add(lastDayOfMonth, Calendar.DAY_OF_MONTH, 19), datas.get(1).getEndDate());
+	    assertEquals(2, datas.size());
+	    assertEquals(add(endDate, Calendar.DAY_OF_MONTH, 1), datas.get(0).getStartDate());
+	    assertEquals(lastDayOfMonth, datas.get(0).getEndDate());
+	    assertEquals(add(lastDayOfMonth, Calendar.DAY_OF_MONTH, 1), datas.get(1).getStartDate());
+	    assertEquals(add(lastDayOfMonth, Calendar.DAY_OF_MONTH, 19), datas.get(1).getEndDate());
 
 	});
 	;
@@ -6380,47 +6382,47 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 	trabajadoresTramosIs.close();
 
 	Liquidacion liquidacion = trabajadoresTramos.getLiquidacion();
-	org.junit.Assert.assertEquals(Integer.parseInt(anho),
+	assertEquals(Integer.parseInt(anho),
 		Integer.parseInt(liquidacion.getPeriodoDesde().getAnho()));
-	org.junit.Assert.assertEquals(Integer.parseInt(mes), Integer.parseInt(liquidacion.getPeriodoDesde().getMes()));
-	org.junit.Assert.assertEquals(Integer.parseInt(anho),
+	assertEquals(Integer.parseInt(mes), Integer.parseInt(liquidacion.getPeriodoDesde().getMes()));
+	assertEquals(Integer.parseInt(anho),
 		Integer.parseInt(liquidacion.getPeriodoHasta().getAnho()));
-	org.junit.Assert.assertEquals(Integer.parseInt(mes), Integer.parseInt(liquidacion.getPeriodoHasta().getMes()));
+	assertEquals(Integer.parseInt(mes), Integer.parseInt(liquidacion.getPeriodoHasta().getMes()));
 
-	org.junit.Assert.assertEquals(2, liquidacion.getLiquidacionMes().size());
+	assertEquals(2, liquidacion.getLiquidacionMes().size());
 
 	LiquidacionMes liquidacionMes = liquidacion.getLiquidacionMes().get(0);
-	org.junit.Assert.assertEquals(Integer.parseInt(anho),
+	assertEquals(Integer.parseInt(anho),
 		Integer.parseInt(liquidacionMes.getMesLiquidativo().getAnho()));
-	org.junit.Assert.assertEquals(Integer.parseInt(mes),
+	assertEquals(Integer.parseInt(mes),
 		Integer.parseInt(liquidacionMes.getMesLiquidativo().getMes()));
 
 	Trabajadores trabajadores = liquidacionMes.getTrabajadores();
 	Trabajador trabajador = trabajadores.getTrabajador().get(0);
-	org.junit.Assert.assertEquals(1, trabajador.getTramos().getTramo().size());
+	assertEquals(1, trabajador.getTramos().getTramo().size());
 
 	Tramo tramo0 = trabajador.getTramos().getTramo().get(0);
-	org.junit.Assert.assertEquals(Integer.parseInt(mes), Integer.parseInt(tramo0.getFechaDesde().getMes()));
-	org.junit.Assert.assertEquals(Integer.parseInt(anho), Integer.parseInt(tramo0.getFechaDesde().getAnho()));
+	assertEquals(Integer.parseInt(mes), Integer.parseInt(tramo0.getFechaDesde().getMes()));
+	assertEquals(Integer.parseInt(anho), Integer.parseInt(tramo0.getFechaDesde().getAnho()));
 
 	calendar.setTime(add(firstDayOfMonth, Calendar.MONTH, 1));
 	String mes1 = Integer.toString(calendar.get(Calendar.MONTH) + 1);
 	String anho1 = Integer.toString(calendar.get(Calendar.YEAR));
 
 	liquidacionMes = liquidacion.getLiquidacionMes().get(1);
-	org.junit.Assert.assertEquals(Integer.parseInt(anho1),
+	assertEquals(Integer.parseInt(anho1),
 		Integer.parseInt(liquidacionMes.getMesLiquidativo().getAnho()));
-	org.junit.Assert.assertEquals(Integer.parseInt(mes1),
+	assertEquals(Integer.parseInt(mes1),
 		Integer.parseInt(liquidacionMes.getMesLiquidativo().getMes()));
 
 	trabajadores = liquidacionMes.getTrabajadores();
 	trabajador = trabajadores.getTrabajador().get(0);
-	org.junit.Assert.assertEquals(1, trabajador.getTramos().getTramo().size());
+	assertEquals(1, trabajador.getTramos().getTramo().size());
 
 	tramo0 = trabajador.getTramos().getTramo().get(0);
-	org.junit.Assert.assertEquals(calendar.get(Calendar.MONTH) + 1,
+	assertEquals(calendar.get(Calendar.MONTH) + 1,
 		Integer.parseInt(tramo0.getFechaDesde().getMes()));
-	org.junit.Assert.assertEquals(calendar.get(Calendar.YEAR), Integer.parseInt(tramo0.getFechaDesde().getAnho()));
+	assertEquals(calendar.get(Calendar.YEAR), Integer.parseInt(tramo0.getFechaDesde().getAnho()));
 
 	net.aonsolutions.core.tgss.creta.jaxb.bases.LiquidacionMes liquidacionMes1 = getLiquidacion(connection,
 		trabajadoresTramos).getLiquidacionMes().get(1);
@@ -6433,7 +6435,7 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
     }
 
     @Test
-    @Ignore("Not real")
+    @Disabled("Not real")
     public void testCretaL13I() throws ExpressionException, SQLException, SalaryException, JAXBException, IOException,
 	    EmptyBasesException, XMLStreamException, FactoryConfigurationError {
 	Connection connection = getConnection();
@@ -6478,19 +6480,19 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 	int salaries = calculateAndSave(connection, ctx);
 
 	// Only one salary saved to DB.
-	Assert.assertEquals(1, salaries);
+	assertEquals(1, salaries);
 
 	AON.getSalaryData(aonContext, props -> props.getContractProperty().eq(contract.getId())).forEach(salary -> {
 	    // 500 Base de contingencias comunes.
 	    List<ContextData> datas = salary.getContextData().get(CGC_BASE.getName());
-	    Assert.assertEquals(1, datas.size());
+	    assertEquals(1, datas.size());
 
-	    // Assert.assertEquals(getFirstDayOfYear(getToday()),
+	    // assertEquals(getFirstDayOfYear(getToday()),
 	    // datas.get(0).getStartDate());
-	    // Assert.assertEquals(endDate, datas.get(0).getEndDate());
+	    // assertEquals(endDate, datas.get(0).getEndDate());
 
-	    Assert.assertEquals(add(endDate, Calendar.DAY_OF_MONTH, 1), datas.get(0).getStartDate());
-	    Assert.assertEquals(add(endDate, Calendar.DAY_OF_MONTH, 50), datas.get(0).getEndDate());
+	    assertEquals(add(endDate, Calendar.DAY_OF_MONTH, 1), datas.get(0).getStartDate());
+	    assertEquals(add(endDate, Calendar.DAY_OF_MONTH, 50), datas.get(0).getEndDate());
 
 	});
 	;
@@ -6526,28 +6528,28 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 	Utils.marshal(trabajadoresTramos, System.out);
 
 	Liquidacion liquidacion = trabajadoresTramos.getLiquidacion();
-	org.junit.Assert.assertEquals(Integer.parseInt(anho),
+	assertEquals(Integer.parseInt(anho),
 		Integer.parseInt(liquidacion.getPeriodoDesde().getAnho()));
-	org.junit.Assert.assertEquals(Integer.parseInt(mes), Integer.parseInt(liquidacion.getPeriodoDesde().getMes()));
-	org.junit.Assert.assertEquals(Integer.parseInt(anho),
+	assertEquals(Integer.parseInt(mes), Integer.parseInt(liquidacion.getPeriodoDesde().getMes()));
+	assertEquals(Integer.parseInt(anho),
 		Integer.parseInt(liquidacion.getPeriodoHasta().getAnho()));
-	org.junit.Assert.assertEquals(Integer.parseInt(mes), Integer.parseInt(liquidacion.getPeriodoHasta().getMes()));
+	assertEquals(Integer.parseInt(mes), Integer.parseInt(liquidacion.getPeriodoHasta().getMes()));
 
-	org.junit.Assert.assertEquals(1, liquidacion.getLiquidacionMes().size());
+	assertEquals(1, liquidacion.getLiquidacionMes().size());
 
 	LiquidacionMes liquidacionMes = liquidacion.getLiquidacionMes().get(0);
-	org.junit.Assert.assertEquals(Integer.parseInt(anho),
+	assertEquals(Integer.parseInt(anho),
 		Integer.parseInt(liquidacionMes.getMesLiquidativo().getAnho()));
-	org.junit.Assert.assertEquals(Integer.parseInt(mes),
+	assertEquals(Integer.parseInt(mes),
 		Integer.parseInt(liquidacionMes.getMesLiquidativo().getMes()));
 
 	Trabajadores trabajadores = liquidacionMes.getTrabajadores();
 	Trabajador trabajador = trabajadores.getTrabajador().get(0);
-	org.junit.Assert.assertEquals(1, trabajador.getTramos().getTramo().size());
+	assertEquals(1, trabajador.getTramos().getTramo().size());
 
 	Tramo tramo0 = trabajador.getTramos().getTramo().get(0);
-	org.junit.Assert.assertEquals(Integer.parseInt(mes), Integer.parseInt(tramo0.getFechaDesde().getMes()));
-	org.junit.Assert.assertEquals(Integer.parseInt(anho), Integer.parseInt(tramo0.getFechaDesde().getAnho()));
+	assertEquals(Integer.parseInt(mes), Integer.parseInt(tramo0.getFechaDesde().getMes()));
+	assertEquals(Integer.parseInt(anho), Integer.parseInt(tramo0.getFechaDesde().getAnho()));
 
 	List<net.aonsolutions.core.tgss.creta.jaxb.bases.Tramo> bases = getBases(connection, trabajadoresTramos);
 
@@ -6593,14 +6595,14 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 	int salaries = calculateAndSave(connection, ctx);
 
 	// Only one salary saved to DB.
-	Assert.assertEquals(1, salaries);
+	assertEquals(1, salaries);
 
 	AON.getSalaryData(aonContext, props -> props.getContractProperty().eq(contract.getId())).forEach(salary -> {
 	    // 500 Base de contingencias comunes.
 	    List<ContextData> datas = salary.getContextData().get(CGC_BASE.getName());
-	    Assert.assertEquals(1, datas.size());
-	    Assert.assertEquals(add(lastDayOfMonth, Calendar.DAY_OF_MONTH, 1), datas.get(0).getStartDate());
-	    Assert.assertEquals(add(lastDayOfMonth, Calendar.DAY_OF_MONTH, 19), datas.get(0).getEndDate());
+	    assertEquals(1, datas.size());
+	    assertEquals(add(lastDayOfMonth, Calendar.DAY_OF_MONTH, 1), datas.get(0).getStartDate());
+	    assertEquals(add(lastDayOfMonth, Calendar.DAY_OF_MONTH, 19), datas.get(0).getEndDate());
 
 	});
 	;
@@ -6635,14 +6637,14 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 	trabajadoresTramosOs.close();
 
 	Liquidacion liquidacion = trabajadoresTramos.getLiquidacion();
-	org.junit.Assert.assertEquals(Integer.parseInt(anho),
+	assertEquals(Integer.parseInt(anho),
 		Integer.parseInt(liquidacion.getPeriodoDesde().getAnho()));
-	org.junit.Assert.assertEquals(Integer.parseInt(mes), Integer.parseInt(liquidacion.getPeriodoDesde().getMes()));
-	org.junit.Assert.assertEquals(Integer.parseInt(anho),
+	assertEquals(Integer.parseInt(mes), Integer.parseInt(liquidacion.getPeriodoDesde().getMes()));
+	assertEquals(Integer.parseInt(anho),
 		Integer.parseInt(liquidacion.getPeriodoHasta().getAnho()));
-	org.junit.Assert.assertEquals(Integer.parseInt(mes), Integer.parseInt(liquidacion.getPeriodoHasta().getMes()));
+	assertEquals(Integer.parseInt(mes), Integer.parseInt(liquidacion.getPeriodoHasta().getMes()));
 
-	org.junit.Assert.assertEquals(1, liquidacion.getLiquidacionMes().size());
+	assertEquals(1, liquidacion.getLiquidacionMes().size());
 
 	LiquidacionMes liquidacionMes = liquidacion.getLiquidacionMes().get(0);
 	int year = Integer.parseInt(anho);
@@ -6652,18 +6654,18 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 	    month = month % 12;
 	}
 
-	org.junit.Assert.assertEquals(year, Integer.parseInt(liquidacionMes.getMesLiquidativo().getAnho()));
-	org.junit.Assert.assertEquals(month, Integer.parseInt(liquidacionMes.getMesLiquidativo().getMes()));
+	assertEquals(year, Integer.parseInt(liquidacionMes.getMesLiquidativo().getAnho()));
+	assertEquals(month, Integer.parseInt(liquidacionMes.getMesLiquidativo().getMes()));
 
 	Trabajadores trabajadores = liquidacionMes.getTrabajadores();
 	Trabajador trabajador = trabajadores.getTrabajador().get(0);
-	org.junit.Assert.assertEquals(1, trabajador.getTramos().getTramo().size());
+	assertEquals(1, trabajador.getTramos().getTramo().size());
 
 	Tramo tramo1 = trabajador.getTramos().getTramo().get(0);
 	calendar.setTime(add(firstDayOfMonth, Calendar.MONTH, 1));
-	org.junit.Assert.assertEquals(calendar.get(Calendar.MONTH) + 1,
+	assertEquals(calendar.get(Calendar.MONTH) + 1,
 		Integer.parseInt(tramo1.getFechaDesde().getMes()));
-	org.junit.Assert.assertEquals(calendar.get(Calendar.YEAR), Integer.parseInt(tramo1.getFechaDesde().getAnho()));
+	assertEquals(calendar.get(Calendar.YEAR), Integer.parseInt(tramo1.getFechaDesde().getAnho()));
 
 	List<net.aonsolutions.core.tgss.creta.jaxb.bases.Tramo> bases = getBases(connection, trabajadoresTramos);
 
@@ -6706,7 +6708,7 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 	int salaries = calculateAndSave(connection, ctx);
 
 	// Only one salary saved to DB.
-	Assert.assertEquals(1, salaries);
+	assertEquals(1, salaries);
 
 	AON.getSalaryData(aonContext, props -> props.getContractProperty().eq(contract.getId())).forEach(salary -> {
 
@@ -6714,11 +6716,11 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 
 	    // 500 Base de contingencias comunes.
 	    List<ContextData> datas = salary.getContextData().get(CGC_BASE.getName());
-	    Assert.assertEquals(1, datas.size());
+	    assertEquals(1, datas.size());
 
-	    Assert.assertEquals(startDate, datas.get(0).getStartDate());
-	    Assert.assertEquals(endDate, datas.get(0).getEndDate());
-	    Assert.assertEquals(1750.00, Double.parseDouble(datas.get(0).getExpression()), DELTA);
+	    assertEquals(startDate, datas.get(0).getStartDate());
+	    assertEquals(endDate, datas.get(0).getEndDate());
+	    assertEquals(1750.00, Double.parseDouble(datas.get(0).getExpression()), DELTA);
 
 	});
 	;
@@ -6727,11 +6729,11 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 		connection, contract, startDate, endDate, ccc, "L00");
 
 	List<net.aonsolutions.core.tgss.creta.jaxb.bases.Tramo> bases = getBases(connection, trabajadoresTramos);
-	org.junit.Assert.assertEquals(1, bases.size());
-	org.junit.Assert.assertEquals(1, Integer.parseInt(bases.get(0).getFechaDesde().getDia()));
-	org.junit.Assert.assertEquals(get(endDate, DAY_OF_MONTH),
+	assertEquals(1, bases.size());
+	assertEquals(1, Integer.parseInt(bases.get(0).getFechaDesde().getDia()));
+	assertEquals(get(endDate, DAY_OF_MONTH),
 		Integer.parseInt(bases.get(0).getFechaHasta().getDia()));
-	org.junit.Assert.assertEquals(175000,
+	assertEquals(175000,
 		Integer.parseInt(bases.get(0).getDatosTramo().getDato().get(0).getValor()));
 
 	Trabajador trabajador = trabajadoresTramos.getLiquidacion().getLiquidacionMes().get(0).getTrabajadores()
@@ -6744,19 +6746,19 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 	tramos.add(bonusTramo);
 
 	List<net.aonsolutions.core.tgss.creta.jaxb.bases.Tramo> bonusBases = getBases(connection, trabajadoresTramos);
-	org.junit.Assert.assertEquals(2, bonusBases.size());
+	assertEquals(2, bonusBases.size());
 
-	org.junit.Assert.assertEquals(1, Integer.parseInt(bonusBases.get(0).getFechaDesde().getDia()));
-	org.junit.Assert.assertEquals(9, Integer.parseInt(bonusBases.get(0).getFechaHasta().getDia()));
+	assertEquals(1, Integer.parseInt(bonusBases.get(0).getFechaDesde().getDia()));
+	assertEquals(9, Integer.parseInt(bonusBases.get(0).getFechaHasta().getDia()));
 
-	org.junit.Assert.assertEquals(10, Integer.parseInt(bonusBases.get(1).getFechaDesde().getDia()));
-	org.junit.Assert.assertEquals(get(endDate, DAY_OF_MONTH),
+	assertEquals(10, Integer.parseInt(bonusBases.get(1).getFechaDesde().getDia()));
+	assertEquals(get(endDate, DAY_OF_MONTH),
 		Integer.parseInt(bonusBases.get(1).getFechaHasta().getDia()));
 
-	org.junit.Assert.assertEquals(Math.round(175000.00 * 9 / get(endDate, DAY_OF_MONTH)),
+	assertEquals(Math.round(175000.00 * 9 / get(endDate, DAY_OF_MONTH)),
 		Integer.parseInt(bonusBases.get(0).getDatosTramo().getDato().get(0).getValor()));
 
-	org.junit.Assert.assertEquals(
+	assertEquals(
 		Math.round(175000.00 * (get(endDate, DAY_OF_MONTH) - 9) / get(endDate, DAY_OF_MONTH)),
 		Integer.parseInt(bonusBases.get(1).getDatosTramo().getDato().get(1).getValor()));
     }
@@ -6800,7 +6802,7 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 	int salaries = calculateAndSave(connection, ctx);
 
 	// Only one salary saved to DB.
-	Assert.assertEquals(1, salaries);
+	assertEquals(1, salaries);
 
 	AON.getSalaryData(aonContext, props -> props.getContractProperty().eq(contract.getId())).forEach(salary -> {
 
@@ -6808,11 +6810,11 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 
 	    // 500 Base de contingencias comunes.
 	    List<ContextData> datas = salary.getContextData().get(CGC_BASE.getName());
-	    Assert.assertEquals(1, datas.size());
+	    assertEquals(1, datas.size());
 
-	    Assert.assertEquals(startDate, datas.get(0).getStartDate());
-	    Assert.assertEquals(endDate, datas.get(0).getEndDate());
-	    Assert.assertEquals(1750.00 * 0.50, Double.parseDouble(datas.get(0).getExpression()), DELTA);
+	    assertEquals(startDate, datas.get(0).getStartDate());
+	    assertEquals(endDate, datas.get(0).getEndDate());
+	    assertEquals(1750.00 * 0.50, Double.parseDouble(datas.get(0).getExpression()), DELTA);
 
 	});
 	;
@@ -6821,9 +6823,9 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 		connection, contract, startDate, endDate, ccc, "L00");
 
 	List<net.aonsolutions.core.tgss.creta.jaxb.bases.Tramo> bases = getBases(connection, trabajadoresTramos);
-	org.junit.Assert.assertEquals(1, bases.size());
-	org.junit.Assert.assertEquals(1, Integer.parseInt(bases.get(0).getFechaDesde().getDia()));
-	org.junit.Assert.assertEquals(get(endDate, DAY_OF_MONTH),
+	assertEquals(1, bases.size());
+	assertEquals(1, Integer.parseInt(bases.get(0).getFechaDesde().getDia()));
+	assertEquals(get(endDate, DAY_OF_MONTH),
 		Integer.parseInt(bases.get(0).getFechaHasta().getDia()));
 
 	assertDato(bases.get(0).getDatosTramo().getDato(), "C", "500", "87500");
@@ -6884,7 +6886,7 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 	int salaries = calculateAndSave(connection, ctx);
 
 	// Only one salary saved to DB.
-	Assert.assertEquals(1, salaries);
+	assertEquals(1, salaries);
 
 	AON.getSalaryData(aonContext, props -> props.getContractProperty().eq(contract.getId())).forEach(salary -> {
 
@@ -6892,11 +6894,11 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 
 	    // 500 Base de contingencias comunes.
 	    List<ContextData> datas = salary.getContextData().get(CGC_BASE.getName());
-	    Assert.assertEquals(2, datas.size());
+	    assertEquals(2, datas.size());
 
-	    Assert.assertEquals(startDate, datas.get(0).getStartDate());
-	    Assert.assertEquals(add(startIDate, Calendar.DAY_OF_MONTH, -1), datas.get(0).getEndDate());
-	    Assert.assertEquals(1750.00 * 10 / 30, Double.parseDouble(datas.get(0).getExpression()), DELTA);
+	    assertEquals(startDate, datas.get(0).getStartDate());
+	    assertEquals(add(startIDate, Calendar.DAY_OF_MONTH, -1), datas.get(0).getEndDate());
+	    assertEquals(1750.00 * 10 / 30, Double.parseDouble(datas.get(0).getExpression()), DELTA);
 
 	});
 	;
@@ -6910,9 +6912,9 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 	assertTramoMaternidadTiempoParcial(trabajador.getTramos().getTramo().get(1));
 
 	List<net.aonsolutions.core.tgss.creta.jaxb.bases.Tramo> bases = getBases(connection, trabajadoresTramos);
-	org.junit.Assert.assertEquals(2, bases.size());
-	org.junit.Assert.assertEquals(1, Integer.parseInt(bases.get(0).getFechaDesde().getDia()));
-	// org.junit.Assert.assertEquals( get(endDate, DAY_OF_MONTH),
+	assertEquals(2, bases.size());
+	assertEquals(1, Integer.parseInt(bases.get(0).getFechaDesde().getDia()));
+	// assertEquals( get(endDate, DAY_OF_MONTH),
 	// Integer.parseInt(bases.get(0).getFechaHasta().getDia()));
 
 	// assertDato(bases.get(0).getDatosTramo().getDato(), "C", "500", 1750.00 * 10
@@ -6979,7 +6981,7 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 	int salaries = calculateAndSave(connection, ctx);
 
 	// Only one salary saved to DB.
-	Assert.assertEquals(1, salaries);
+	assertEquals(1, salaries);
 
 	AON.getSalaryData(aonContext, props -> props.getContractProperty().eq(contract.getId())).forEach(salary -> {
 
@@ -6987,10 +6989,10 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 
 	    // 500 Base de contingencias comunes.
 	    List<ContextData> datas = salary.getContextData().get(CGC_BASE.getName());
-	    Assert.assertEquals(2, datas.size());
+	    assertEquals(2, datas.size());
 
-	    Assert.assertEquals(startDate, datas.get(0).getStartDate());
-	    Assert.assertEquals(add(startITDate, Calendar.DAY_OF_MONTH, -1), datas.get(0).getEndDate());
+	    assertEquals(startDate, datas.get(0).getStartDate());
+	    assertEquals(add(startITDate, Calendar.DAY_OF_MONTH, -1), datas.get(0).getEndDate());
 
 	});
 	;
@@ -7004,9 +7006,9 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 	assertTramoITATEPPagoDelegado(trabajador.getTramos().getTramo().get(1));
 
 	List<net.aonsolutions.core.tgss.creta.jaxb.bases.Tramo> bases = getBases(connection, trabajadoresTramos);
-	org.junit.Assert.assertEquals(2, bases.size());
-	org.junit.Assert.assertEquals(1, Integer.parseInt(bases.get(0).getFechaDesde().getDia()));
-	// org.junit.Assert.assertEquals( get(endDate, DAY_OF_MONTH),
+	assertEquals(2, bases.size());
+	assertEquals(1, Integer.parseInt(bases.get(0).getFechaDesde().getDia()));
+	// assertEquals( get(endDate, DAY_OF_MONTH),
 	// Integer.parseInt(bases.get(0).getFechaHasta().getDia()));
 
 	// assertDato(bases.get(0).getDatosTramo().getDato(), "C", "500", (valor) ->
@@ -7037,7 +7039,7 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 	int salaries = calculateAndSave(connection, ctx);
 
 	// Only one salary saved to DB.
-	Assert.assertEquals(1, salaries);
+	assertEquals(1, salaries);
 
 	AON.getSalaryData(aonContext,
 		props -> props.getContractProperty().eq(contract.getId()).and(props.getCCCProperty().eq(ccc)))
@@ -7053,24 +7055,24 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 
 		    // 300 Percepciones íntegras.
 		    List<ContextData> datas = salary.getContextData().get(TOTAL_PAYMENT.getName());
-		    Assert.assertEquals(1, datas.size());
-		    Assert.assertEquals(startDate, datas.get(0).getStartDate());
-		    Assert.assertEquals(endDate, datas.get(0).getEndDate());
-		    Assert.assertEquals(1750.00, Double.parseDouble(datas.get(0).getExpression()));
+		    assertEquals(1, datas.size());
+		    assertEquals(startDate, datas.get(0).getStartDate());
+		    assertEquals(endDate, datas.get(0).getEndDate());
+		    assertEquals(1750.00, Double.parseDouble(datas.get(0).getExpression()));
 
 		    // 501 Base de Horas Extras Fuerza Mayor
 		    datas = salary.getContextData().get(STRUCTURAL_OVERTIME_BASE.getName());
-		    Assert.assertEquals(1, datas.size());
-		    Assert.assertEquals(startDate, datas.get(0).getStartDate());
-		    Assert.assertEquals(endDate, datas.get(0).getEndDate());
-		    Assert.assertEquals(0.00, Double.parseDouble(datas.get(0).getExpression()));
+		    assertEquals(1, datas.size());
+		    assertEquals(startDate, datas.get(0).getStartDate());
+		    assertEquals(endDate, datas.get(0).getEndDate());
+		    assertEquals(0.00, Double.parseDouble(datas.get(0).getExpression()));
 
 		    // 502 Base de Horas Extras
 		    datas = salary.getContextData().get(NON_STRUCTURAL_OVERTIME_BASE.getName());
-		    Assert.assertEquals(1, datas.size());
-		    Assert.assertEquals(startDate, datas.get(0).getStartDate());
-		    Assert.assertEquals(endDate, datas.get(0).getEndDate());
-		    Assert.assertEquals(0.00, Double.parseDouble(datas.get(0).getExpression()));
+		    assertEquals(1, datas.size());
+		    assertEquals(startDate, datas.get(0).getStartDate());
+		    assertEquals(endDate, datas.get(0).getEndDate());
+		    assertEquals(0.00, Double.parseDouble(datas.get(0).getExpression()));
 
 		});
 	;
@@ -7078,26 +7080,26 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 	cleanSalaries(aonContext);
 
 	List<Tramo> tramos = getTramos(connection, contract, startDate, endDate, ccc);
-	Assert.assertEquals(1, tramos.size());
+	assertEquals(1, tramos.size());
 
-	Assert.assertEquals("01", tramos.get(0).getFechaDesde().getDia());
-	Assert.assertEquals("07", tramos.get(0).getFechaDesde().getMes());
-	Assert.assertEquals("31", tramos.get(0).getFechaHasta().getDia());
-	Assert.assertEquals("07", tramos.get(0).getFechaHasta().getMes());
-	Assert.assertEquals("30", tramos.get(0).getDiasCotizados());
+	assertEquals("01", tramos.get(0).getFechaDesde().getDia());
+	assertEquals("07", tramos.get(0).getFechaDesde().getMes());
+	assertEquals("31", tramos.get(0).getFechaHasta().getDia());
+	assertEquals("07", tramos.get(0).getFechaHasta().getMes());
+	assertEquals("30", tramos.get(0).getDiasCotizados());
 	assertTramoActivoNormalArtistas(tramos.get(0));
 
 	cleanSalaries(aonContext);
 
 	List<net.aonsolutions.core.tgss.creta.jaxb.bases.Tramo> bases = getTramosBases(connection, startDate, endDate,
 		ccc, contract);
-	Assert.assertEquals(1, bases.size());
+	assertEquals(1, bases.size());
 
 	net.aonsolutions.core.tgss.creta.jaxb.bases.Tramo tramo1 = bases.get(0);
-	Assert.assertEquals("01", tramo1.getFechaDesde().getDia());
-	Assert.assertEquals("07", tramo1.getFechaDesde().getMes());
-	Assert.assertEquals("31", tramo1.getFechaHasta().getDia());
-	Assert.assertEquals("07", tramo1.getFechaHasta().getMes());
+	assertEquals("01", tramo1.getFechaDesde().getDia());
+	assertEquals("07", tramo1.getFechaDesde().getMes());
+	assertEquals("31", tramo1.getFechaHasta().getDia());
+	assertEquals("07", tramo1.getFechaHasta().getMes());
 	assertDato(tramo1.getDatosTramo().getDato(), "C", "300", "175000");
 
     }
@@ -7157,45 +7159,45 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 		    // 500 Base de contingencias comunes.
 		    List<ContextData> datas = salary.getContextData().get(CGC_BASE.getName());
 
-		    Assert.assertEquals(2, datas.size());
-		    Assert.assertEquals(startDate, datas.get(0).getStartDate());
-		    Assert.assertEquals(endActive, datas.get(0).getEndDate());
-		    Assert.assertEquals(1750.00 / 2 / 30 * 29, Double.parseDouble(datas.get(0).getExpression()), DELTA);
-		    Assert.assertEquals(startIT, datas.get(1).getStartDate());
-		    Assert.assertEquals(startIT, datas.get(1).getEndDate());
-		    Assert.assertEquals(1750.00 / 2 / 30.00, Double.parseDouble(datas.get(1).getExpression()), DELTA);
+		    assertEquals(2, datas.size());
+		    assertEquals(startDate, datas.get(0).getStartDate());
+		    assertEquals(endActive, datas.get(0).getEndDate());
+		    assertEquals(1750.00 / 2 / 30 * 29, Double.parseDouble(datas.get(0).getExpression()), DELTA);
+		    assertEquals(startIT, datas.get(1).getStartDate());
+		    assertEquals(startIT, datas.get(1).getEndDate());
+		    assertEquals(1750.00 / 2 / 30.00, Double.parseDouble(datas.get(1).getExpression()), DELTA);
 
 		    // 601 o 611 Base de Accidentes de Trabajo.
 		    datas = salary.getContextData().get(CGP_BASE.getName());
-		    Assert.assertEquals(2, datas.size());
-		    Assert.assertEquals(startDate, datas.get(0).getStartDate());
-		    Assert.assertEquals(endActive, datas.get(0).getEndDate());
-		    Assert.assertEquals(1750.00 / 2 / 30 * 29, Double.parseDouble(datas.get(0).getExpression()), DELTA);
-		    Assert.assertEquals(startIT, datas.get(1).getStartDate());
-		    Assert.assertEquals(startIT, datas.get(1).getEndDate());
-		    Assert.assertEquals(1750.00 / 2 / 30.00, Double.parseDouble(datas.get(1).getExpression()), DELTA);
+		    assertEquals(2, datas.size());
+		    assertEquals(startDate, datas.get(0).getStartDate());
+		    assertEquals(endActive, datas.get(0).getEndDate());
+		    assertEquals(1750.00 / 2 / 30 * 29, Double.parseDouble(datas.get(0).getExpression()), DELTA);
+		    assertEquals(startIT, datas.get(1).getStartDate());
+		    assertEquals(startIT, datas.get(1).getEndDate());
+		    assertEquals(1750.00 / 2 / 30.00, Double.parseDouble(datas.get(1).getExpression()), DELTA);
 
 		    //
 		    datas = salary.getContextData().get(ERE_BASE.getName());
-		    Assert.assertEquals(1, datas.size());
-		    Assert.assertEquals(endDate, datas.get(0).getStartDate());
-		    Assert.assertEquals(endDate, datas.get(0).getEndDate());
-		    // Assert.assertEquals(( 1750/2.00) / 30.00,
+		    assertEquals(1, datas.size());
+		    assertEquals(endDate, datas.get(0).getStartDate());
+		    assertEquals(endDate, datas.get(0).getEndDate());
+		    // assertEquals(( 1750/2.00) / 30.00,
 		    // Double.parseDouble(datas.get(0).getExpression()), DELTA);
 
 		    // 501 Base de Horas Extras Fuerza Mayor
 		    datas = salary.getContextData().get(STRUCTURAL_OVERTIME_BASE.getName());
-		    Assert.assertEquals(1, datas.size());
-		    Assert.assertEquals(startDate, datas.get(0).getStartDate());
-		    Assert.assertEquals(endDate, datas.get(0).getEndDate());
-		    Assert.assertEquals(0.00, Double.parseDouble(datas.get(0).getExpression()));
+		    assertEquals(1, datas.size());
+		    assertEquals(startDate, datas.get(0).getStartDate());
+		    assertEquals(endDate, datas.get(0).getEndDate());
+		    assertEquals(0.00, Double.parseDouble(datas.get(0).getExpression()));
 
 		    // 502 Base de Horas Extras
 		    datas = salary.getContextData().get(NON_STRUCTURAL_OVERTIME_BASE.getName());
-		    Assert.assertEquals(1, datas.size());
-		    Assert.assertEquals(startDate, datas.get(0).getStartDate());
-		    Assert.assertEquals(endDate, datas.get(0).getEndDate());
-		    Assert.assertEquals(0.00, Double.parseDouble(datas.get(0).getExpression()));
+		    assertEquals(1, datas.size());
+		    assertEquals(startDate, datas.get(0).getStartDate());
+		    assertEquals(endDate, datas.get(0).getEndDate());
+		    assertEquals(0.00, Double.parseDouble(datas.get(0).getExpression()));
 
 		});
 	;
@@ -7203,56 +7205,56 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 	cleanSalaries(aonContext);
 
 	List<Tramo> tramos = getTramos(connection, contract, startDate, endDate, ccc);
-	Assert.assertEquals(3, tramos.size());
+	assertEquals(3, tramos.size());
 
-	Assert.assertEquals("01", tramos.get(0).getFechaDesde().getDia());
-	Assert.assertEquals("07", tramos.get(0).getFechaDesde().getMes());
-	Assert.assertEquals("29", tramos.get(0).getFechaHasta().getDia());
-	Assert.assertEquals("07", tramos.get(0).getFechaHasta().getMes());
-	Assert.assertEquals("29", tramos.get(0).getDiasCotizados());
+	assertEquals("01", tramos.get(0).getFechaDesde().getDia());
+	assertEquals("07", tramos.get(0).getFechaDesde().getMes());
+	assertEquals("29", tramos.get(0).getFechaHasta().getDia());
+	assertEquals("07", tramos.get(0).getFechaHasta().getMes());
+	assertEquals("29", tramos.get(0).getDiasCotizados());
 	assertTramoActivoNormalTiempoCompleto(tramos.get(0));
 
-	Assert.assertEquals("30", tramos.get(1).getFechaDesde().getDia());
-	Assert.assertEquals("07", tramos.get(1).getFechaDesde().getMes());
-	Assert.assertEquals("30", tramos.get(1).getFechaHasta().getDia());
-	Assert.assertEquals("07", tramos.get(1).getFechaHasta().getMes());
-	Assert.assertEquals("1", tramos.get(1).getDiasCotizados());
+	assertEquals("30", tramos.get(1).getFechaDesde().getDia());
+	assertEquals("07", tramos.get(1).getFechaDesde().getMes());
+	assertEquals("30", tramos.get(1).getFechaHasta().getDia());
+	assertEquals("07", tramos.get(1).getFechaHasta().getMes());
+	assertEquals("1", tramos.get(1).getDiasCotizados());
 	assertTramoIT15PrimerosDias(tramos.get(1));
 
-	Assert.assertEquals("31", tramos.get(2).getFechaDesde().getDia());
-	Assert.assertEquals("07", tramos.get(2).getFechaDesde().getMes());
-	Assert.assertEquals("31", tramos.get(2).getFechaHasta().getDia());
-	Assert.assertEquals("07", tramos.get(2).getFechaHasta().getMes());
-	Assert.assertEquals("1", tramos.get(2).getDiasCotizados());
+	assertEquals("31", tramos.get(2).getFechaDesde().getDia());
+	assertEquals("07", tramos.get(2).getFechaDesde().getMes());
+	assertEquals("31", tramos.get(2).getFechaHasta().getDia());
+	assertEquals("07", tramos.get(2).getFechaHasta().getMes());
+	assertEquals("1", tramos.get(2).getDiasCotizados());
 	assertTramoExpedienteRegulacionEmpleoTotal(tramos.get(2));
 
 	cleanSalaries(aonContext);
 
 	List<net.aonsolutions.core.tgss.creta.jaxb.bases.Tramo> bases = getTramosBases(connection, startDate, endDate,
 		ccc, contract);
-	Assert.assertEquals(3, bases.size());
+	assertEquals(3, bases.size());
 
 	net.aonsolutions.core.tgss.creta.jaxb.bases.Tramo tramo1 = bases.get(0);
-	Assert.assertEquals("01", tramo1.getFechaDesde().getDia());
-	Assert.assertEquals("07", tramo1.getFechaDesde().getMes());
-	Assert.assertEquals("29", tramo1.getFechaHasta().getDia());
-	Assert.assertEquals("07", tramo1.getFechaHasta().getMes());
+	assertEquals("01", tramo1.getFechaDesde().getDia());
+	assertEquals("07", tramo1.getFechaDesde().getMes());
+	assertEquals("29", tramo1.getFechaHasta().getDia());
+	assertEquals("07", tramo1.getFechaHasta().getMes());
 	assertDato(tramo1.getDatosTramo().getDato(), "C", "500", "84583");
 	assertDato(tramo1.getDatosTramo().getDato(), "C", "601", "84583");
 
 	net.aonsolutions.core.tgss.creta.jaxb.bases.Tramo tramo2 = bases.get(1);
-	Assert.assertEquals("30", tramo2.getFechaDesde().getDia());
-	Assert.assertEquals("07", tramo2.getFechaDesde().getMes());
-	Assert.assertEquals("30", tramo2.getFechaHasta().getDia());
-	Assert.assertEquals("07", tramo2.getFechaHasta().getMes());
+	assertEquals("30", tramo2.getFechaDesde().getDia());
+	assertEquals("07", tramo2.getFechaDesde().getMes());
+	assertEquals("30", tramo2.getFechaHasta().getDia());
+	assertEquals("07", tramo2.getFechaHasta().getMes());
 	assertDato(tramo2.getDatosTramo().getDato(), "C", "500", "2917");
 	assertDato(tramo2.getDatosTramo().getDato(), "C", "603", "2917");
 
 	net.aonsolutions.core.tgss.creta.jaxb.bases.Tramo tramo3 = bases.get(2);
-	Assert.assertEquals("31", tramo3.getFechaDesde().getDia());
-	Assert.assertEquals("07", tramo3.getFechaDesde().getMes());
-	Assert.assertEquals("31", tramo3.getFechaHasta().getDia());
-	Assert.assertEquals("07", tramo3.getFechaHasta().getMes());
+	assertEquals("31", tramo3.getFechaDesde().getDia());
+	assertEquals("07", tramo3.getFechaDesde().getMes());
+	assertEquals("31", tramo3.getFechaHasta().getDia());
+	assertEquals("07", tramo3.getFechaHasta().getMes());
 	assertDato(tramo3.getDatosTramo().getDato(), "C", "509", "2917");
 	assertDato(tramo3.getDatosTramo().getDato(), "C", "603", "2917");
 
@@ -7313,50 +7315,50 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 		    // 500 Base de contingencias comunes.
 		    List<ContextData> datas = salary.getContextData().get(CGC_BASE.getName());
 
-		    Assert.assertEquals(3, datas.size());
-		    Assert.assertEquals(startDate, datas.get(0).getStartDate());
-		    Assert.assertEquals(endActive, datas.get(0).getEndDate());
-		    Assert.assertEquals(1750.00 / 2 / 30 * 29, Double.parseDouble(datas.get(0).getExpression()), DELTA);
-		    Assert.assertEquals(startIT, datas.get(1).getStartDate());
-		    Assert.assertEquals(startIT, datas.get(1).getEndDate());
-		    Assert.assertEquals(1750.00 / 2 / 30.00, Double.parseDouble(datas.get(1).getExpression()), DELTA);
-		    Assert.assertEquals(startERE, datas.get(2).getStartDate());
-		    Assert.assertEquals(startERE, datas.get(2).getEndDate());
-		    Assert.assertEquals(1750.00 / 4 / 30.00, Double.parseDouble(datas.get(2).getExpression()), DELTA);
+		    assertEquals(3, datas.size());
+		    assertEquals(startDate, datas.get(0).getStartDate());
+		    assertEquals(endActive, datas.get(0).getEndDate());
+		    assertEquals(1750.00 / 2 / 30 * 29, Double.parseDouble(datas.get(0).getExpression()), DELTA);
+		    assertEquals(startIT, datas.get(1).getStartDate());
+		    assertEquals(startIT, datas.get(1).getEndDate());
+		    assertEquals(1750.00 / 2 / 30.00, Double.parseDouble(datas.get(1).getExpression()), DELTA);
+		    assertEquals(startERE, datas.get(2).getStartDate());
+		    assertEquals(startERE, datas.get(2).getEndDate());
+		    assertEquals(1750.00 / 4 / 30.00, Double.parseDouble(datas.get(2).getExpression()), DELTA);
 
 		    // 601 o 611 Base de Accidentes de Trabajo.
 		    datas = salary.getContextData().get(CGP_BASE.getName());
-		    Assert.assertEquals(3, datas.size());
-		    Assert.assertEquals(startDate, datas.get(0).getStartDate());
-		    Assert.assertEquals(endActive, datas.get(0).getEndDate());
-		    Assert.assertEquals(1750.00 / 2 / 30 * 29, Double.parseDouble(datas.get(0).getExpression()), DELTA);
-		    Assert.assertEquals(startIT, datas.get(1).getStartDate());
-		    Assert.assertEquals(startIT, datas.get(1).getEndDate());
-		    Assert.assertEquals(1750.00 / 2 / 30.00, Double.parseDouble(datas.get(1).getExpression()), DELTA);
-		    Assert.assertEquals(startERE, datas.get(2).getStartDate());
-		    Assert.assertEquals(startERE, datas.get(2).getEndDate());
-		    Assert.assertEquals(1750.00 / 4 / 30.00, Double.parseDouble(datas.get(2).getExpression()), DELTA);
+		    assertEquals(3, datas.size());
+		    assertEquals(startDate, datas.get(0).getStartDate());
+		    assertEquals(endActive, datas.get(0).getEndDate());
+		    assertEquals(1750.00 / 2 / 30 * 29, Double.parseDouble(datas.get(0).getExpression()), DELTA);
+		    assertEquals(startIT, datas.get(1).getStartDate());
+		    assertEquals(startIT, datas.get(1).getEndDate());
+		    assertEquals(1750.00 / 2 / 30.00, Double.parseDouble(datas.get(1).getExpression()), DELTA);
+		    assertEquals(startERE, datas.get(2).getStartDate());
+		    assertEquals(startERE, datas.get(2).getEndDate());
+		    assertEquals(1750.00 / 4 / 30.00, Double.parseDouble(datas.get(2).getExpression()), DELTA);
 
 		    //
 		    datas = salary.getContextData().get(ERE_BASE.getName());
-		    Assert.assertEquals(1, datas.size());
-		    Assert.assertEquals(endDate, datas.get(0).getStartDate());
-		    Assert.assertEquals(endDate, datas.get(0).getEndDate());
-		    Assert.assertEquals((1750 / 4.00) / 30.00, Double.parseDouble(datas.get(0).getExpression()), DELTA);
+		    assertEquals(1, datas.size());
+		    assertEquals(endDate, datas.get(0).getStartDate());
+		    assertEquals(endDate, datas.get(0).getEndDate());
+		    assertEquals((1750 / 4.00) / 30.00, Double.parseDouble(datas.get(0).getExpression()), DELTA);
 
 		    // 501 Base de Horas Extras Fuerza Mayor
 		    datas = salary.getContextData().get(STRUCTURAL_OVERTIME_BASE.getName());
-		    Assert.assertEquals(1, datas.size());
-		    Assert.assertEquals(startDate, datas.get(0).getStartDate());
-		    Assert.assertEquals(endDate, datas.get(0).getEndDate());
-		    Assert.assertEquals(0.00, Double.parseDouble(datas.get(0).getExpression()));
+		    assertEquals(1, datas.size());
+		    assertEquals(startDate, datas.get(0).getStartDate());
+		    assertEquals(endDate, datas.get(0).getEndDate());
+		    assertEquals(0.00, Double.parseDouble(datas.get(0).getExpression()));
 
 		    // 502 Base de Horas Extras
 		    datas = salary.getContextData().get(NON_STRUCTURAL_OVERTIME_BASE.getName());
-		    Assert.assertEquals(1, datas.size());
-		    Assert.assertEquals(startDate, datas.get(0).getStartDate());
-		    Assert.assertEquals(endDate, datas.get(0).getEndDate());
-		    Assert.assertEquals(0.00, Double.parseDouble(datas.get(0).getExpression()));
+		    assertEquals(1, datas.size());
+		    assertEquals(startDate, datas.get(0).getStartDate());
+		    assertEquals(endDate, datas.get(0).getEndDate());
+		    assertEquals(0.00, Double.parseDouble(datas.get(0).getExpression()));
 
 		});
 	;
@@ -7364,56 +7366,56 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 	cleanSalaries(aonContext);
 
 	List<Tramo> tramos = getTramos(connection, contract, startDate, endDate, ccc);
-	Assert.assertEquals(3, tramos.size());
+	assertEquals(3, tramos.size());
 
-	Assert.assertEquals("01", tramos.get(0).getFechaDesde().getDia());
-	Assert.assertEquals("07", tramos.get(0).getFechaDesde().getMes());
-	Assert.assertEquals("29", tramos.get(0).getFechaHasta().getDia());
-	Assert.assertEquals("07", tramos.get(0).getFechaHasta().getMes());
-	Assert.assertEquals("29", tramos.get(0).getDiasCotizados());
+	assertEquals("01", tramos.get(0).getFechaDesde().getDia());
+	assertEquals("07", tramos.get(0).getFechaDesde().getMes());
+	assertEquals("29", tramos.get(0).getFechaHasta().getDia());
+	assertEquals("07", tramos.get(0).getFechaHasta().getMes());
+	assertEquals("29", tramos.get(0).getDiasCotizados());
 	assertTramoActivoNormalTiempoCompleto(tramos.get(0));
 
-	Assert.assertEquals("30", tramos.get(1).getFechaDesde().getDia());
-	Assert.assertEquals("07", tramos.get(1).getFechaDesde().getMes());
-	Assert.assertEquals("30", tramos.get(1).getFechaHasta().getDia());
-	Assert.assertEquals("07", tramos.get(1).getFechaHasta().getMes());
-	Assert.assertEquals("1", tramos.get(1).getDiasCotizados());
+	assertEquals("30", tramos.get(1).getFechaDesde().getDia());
+	assertEquals("07", tramos.get(1).getFechaDesde().getMes());
+	assertEquals("30", tramos.get(1).getFechaHasta().getDia());
+	assertEquals("07", tramos.get(1).getFechaHasta().getMes());
+	assertEquals("1", tramos.get(1).getDiasCotizados());
 	assertTramoIT15PrimerosDias(tramos.get(1));
 
-	Assert.assertEquals("31", tramos.get(2).getFechaDesde().getDia());
-	Assert.assertEquals("07", tramos.get(2).getFechaDesde().getMes());
-	Assert.assertEquals("31", tramos.get(2).getFechaHasta().getDia());
-	Assert.assertEquals("07", tramos.get(2).getFechaHasta().getMes());
-	Assert.assertEquals("1", tramos.get(2).getDiasCotizados());
+	assertEquals("31", tramos.get(2).getFechaDesde().getDia());
+	assertEquals("07", tramos.get(2).getFechaDesde().getMes());
+	assertEquals("31", tramos.get(2).getFechaHasta().getDia());
+	assertEquals("07", tramos.get(2).getFechaHasta().getMes());
+	assertEquals("1", tramos.get(2).getDiasCotizados());
 	assertTramoExpedienteRegulacionEmpleoParcial(tramos.get(2));
 
 	cleanSalaries(aonContext);
 
 	List<net.aonsolutions.core.tgss.creta.jaxb.bases.Tramo> bases = getTramosBases(connection, startDate, endDate,
 		ccc, contract);
-	Assert.assertEquals(3, bases.size());
+	assertEquals(3, bases.size());
 
 	net.aonsolutions.core.tgss.creta.jaxb.bases.Tramo tramo1 = bases.get(0);
-	Assert.assertEquals("01", tramo1.getFechaDesde().getDia());
-	Assert.assertEquals("07", tramo1.getFechaDesde().getMes());
-	Assert.assertEquals("29", tramo1.getFechaHasta().getDia());
-	Assert.assertEquals("07", tramo1.getFechaHasta().getMes());
+	assertEquals("01", tramo1.getFechaDesde().getDia());
+	assertEquals("07", tramo1.getFechaDesde().getMes());
+	assertEquals("29", tramo1.getFechaHasta().getDia());
+	assertEquals("07", tramo1.getFechaHasta().getMes());
 	assertDato(tramo1.getDatosTramo().getDato(), "C", "500", "84583");
 	assertDato(tramo1.getDatosTramo().getDato(), "C", "601", "84583");
 
 	net.aonsolutions.core.tgss.creta.jaxb.bases.Tramo tramo2 = bases.get(1);
-	Assert.assertEquals("30", tramo2.getFechaDesde().getDia());
-	Assert.assertEquals("07", tramo2.getFechaDesde().getMes());
-	Assert.assertEquals("30", tramo2.getFechaHasta().getDia());
-	Assert.assertEquals("07", tramo2.getFechaHasta().getMes());
+	assertEquals("30", tramo2.getFechaDesde().getDia());
+	assertEquals("07", tramo2.getFechaDesde().getMes());
+	assertEquals("30", tramo2.getFechaHasta().getDia());
+	assertEquals("07", tramo2.getFechaHasta().getMes());
 	assertDato(tramo2.getDatosTramo().getDato(), "C", "500", "2917");
 	assertDato(tramo2.getDatosTramo().getDato(), "C", "603", "2917");
 
 	net.aonsolutions.core.tgss.creta.jaxb.bases.Tramo tramo3 = bases.get(2);
-	Assert.assertEquals("31", tramo3.getFechaDesde().getDia());
-	Assert.assertEquals("07", tramo3.getFechaDesde().getMes());
-	Assert.assertEquals("31", tramo3.getFechaHasta().getDia());
-	Assert.assertEquals("07", tramo3.getFechaHasta().getMes());
+	assertEquals("31", tramo3.getFechaDesde().getDia());
+	assertEquals("07", tramo3.getFechaDesde().getMes());
+	assertEquals("31", tramo3.getFechaHasta().getDia());
+	assertEquals("07", tramo3.getFechaHasta().getMes());
 	assertDato(tramo3.getDatosTramo().getDato(), "C", "500", "1458");
 	assertDato(tramo3.getDatosTramo().getDato(), "C", "601", "1458");
 	assertDato(tramo3.getDatosTramo().getDato(), "C", "536", "1458");
@@ -7455,7 +7457,7 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 	int salaries = calculateAndSave(connection, delayCtx);
 
 	// Only one salary saved to DB.
-	Assert.assertEquals(1, salaries);
+	assertEquals(1, salaries);
 
 	Calendar calendar = Calendar.getInstance();
 	calendar.setTime(startDate);
@@ -7489,24 +7491,24 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 	List<Tramo> tTramos = trabajadoresTramos.getLiquidacion().getLiquidacionMes().get(0).getTrabajadores()
 		.getTrabajador().get(0).getTramos().getTramo();
 
-	Assert.assertEquals(4, tTramos.size());
+	assertEquals(4, tTramos.size());
 
-	Assert.assertEquals("01", tTramos.get(0).getFechaDesde().getDia());
-	Assert.assertEquals("08", tTramos.get(0).getFechaHasta().getDia());
-	Assert.assertEquals("8", tTramos.get(0).getDiasCotizados());
+	assertEquals("01", tTramos.get(0).getFechaDesde().getDia());
+	assertEquals("08", tTramos.get(0).getFechaHasta().getDia());
+	assertEquals("8", tTramos.get(0).getDiasCotizados());
 	assertTramoActivoNormalTiempoCompleto(tTramos.get(0));
 
-	Assert.assertEquals("09", tTramos.get(1).getFechaDesde().getDia());
-	Assert.assertEquals("23", tTramos.get(1).getFechaHasta().getDia());
-	// Assert.assertEquals("15", tramos.get(1).getDiasCotizados());
+	assertEquals("09", tTramos.get(1).getFechaDesde().getDia());
+	assertEquals("23", tTramos.get(1).getFechaHasta().getDia());
+	// assertEquals("15", tramos.get(1).getDiasCotizados());
 	assertTramoIT15PrimerosDias(tTramos.get(1));
 
-	Assert.assertEquals("24", tTramos.get(2).getFechaDesde().getDia());
-	Assert.assertEquals("28", tTramos.get(2).getFechaHasta().getDia());
-	// Assert.assertEquals("5", tramos.get(2).getDiasCotizados());
+	assertEquals("24", tTramos.get(2).getFechaDesde().getDia());
+	assertEquals("28", tTramos.get(2).getFechaHasta().getDia());
+	// assertEquals("5", tramos.get(2).getDiasCotizados());
 	assertTramoITPagoDelegado(tTramos.get(2));
 
-	Assert.assertEquals("29", tTramos.get(3).getFechaDesde().getDia());
+	assertEquals("29", tTramos.get(3).getFechaDesde().getDia());
 	assertTramoITPagoDelegado(tTramos.get(3));
 
 	trabajadoresTramosIs = new ByteArrayInputStream(trabajadoresTramosOs.toByteArray());
@@ -7533,7 +7535,7 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 	List<net.aonsolutions.core.tgss.creta.jaxb.bases.Tramo> bTramos = bases.getLiquidacion().get(0)
 		.getLiquidacionMes().get(0).getTrabajadores().getTrabajador().get(0).getTramos().getTramo();
 
-	Assert.assertEquals(4, bTramos.size());
+	assertEquals(4, bTramos.size());
 
 	net.aonsolutions.core.tgss.creta.jaxb.bases.Tramo tramo0 = bTramos.get(0);
 	assertDato(tramo0.getDatosTramo().getDato(), "C", "500", "800");
@@ -7696,7 +7698,7 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 	List<net.aonsolutions.core.tgss.creta.jaxb.bases.Tramo> tramos = bases.getLiquidacion().get(0)
 		.getLiquidacionMes().get(0).getTrabajadores().getTrabajador().get(0).getTramos().getTramo();
 
-	Assert.assertEquals(2, tramos.size());
+	assertEquals(2, tramos.size());
 
 	net.aonsolutions.core.tgss.creta.jaxb.bases.Tramo tramo0 = tramos.get(0);
 	assertDato(tramo0.getDatosTramo().getDato(), "C", "500", "400");
@@ -7769,7 +7771,7 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 	    return;
 	}
 
-	org.junit.Assert.fail("EmptyBasesException expected");
+	fail("EmptyBasesException expected");
 
     }
 
@@ -7814,7 +7816,7 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 
 	List<Tramo> tramos = getTramos(connection, contract, startDate, endDate, ccc);
 
-	Assert.assertEquals(1, tramos.size());
+	assertEquals(1, tramos.size());
 	
 	tramos.forEach ( tramo -> {
 	    try {
@@ -7825,18 +7827,18 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 	} );
 
 	Tramo tramo = tramos.get(0);
-	Assert.assertEquals("01", tramo.getFechaDesde().getDia());
-	Assert.assertEquals(Integer.toString(get(endDate, DAY_OF_MONTH)), tramo.getFechaHasta().getDia());
+	assertEquals("01", tramo.getFechaDesde().getDia());
+	assertEquals(Integer.toString(get(endDate, DAY_OF_MONTH)), tramo.getFechaHasta().getDia());
 	
 	
-	org.junit.Assert.assertEquals(2, tramo.getDatosTramo().getDatoSolicitado().size());
+	assertEquals(2, tramo.getDatosTramo().getDatoSolicitado().size());
 	
 	tramo.getDatosTramo().getDatoSolicitado().forEach( d -> {
 	    if ( d.getCodigo().equals("500")) 
 		return ;
 	    else if (d.getCodigo().equals("601") )
 		return ;
-	    org.junit.Assert.fail(d.getCodigo());
+	    fail(d.getCodigo());
 	});
 
     }
@@ -7883,7 +7885,7 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 
 	List<Tramo> tramos = getTramos(connection, contract, startDate, endDate, ccc);
 
-	Assert.assertEquals(1, tramos.size());
+	assertEquals(1, tramos.size());
 	
 	tramos.forEach ( tramo -> {
 	    try {
@@ -7894,18 +7896,18 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 	} );
 
 	Tramo tramo = tramos.get(0);
-	Assert.assertEquals("01", tramo.getFechaDesde().getDia());
-	Assert.assertEquals(Integer.toString(get(endDate, DAY_OF_MONTH)), tramo.getFechaHasta().getDia());
+	assertEquals("01", tramo.getFechaDesde().getDia());
+	assertEquals(Integer.toString(get(endDate, DAY_OF_MONTH)), tramo.getFechaHasta().getDia());
 	
 	
-	org.junit.Assert.assertEquals(2, tramo.getDatosTramo().getDatoSolicitado().size());
+	assertEquals(2, tramo.getDatosTramo().getDatoSolicitado().size());
 	
 	tramo.getDatosTramo().getDatoSolicitado().forEach( d -> {
 	    if ( d.getCodigo().equals("500")) 
 		return ;
 	    else if (d.getCodigo().equals("601") )
 		return ;
-	    org.junit.Assert.fail(d.getCodigo());
+	    fail(d.getCodigo());
 	});
 
     }
@@ -7994,7 +7996,7 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 		Dato _1 = tramosBases.get(0).getDatosTramo().getDato().stream().filter(d -> d.getCodigo().equals("01"))
 			.findFirst().orElseThrow(() -> new AssertionFailedError(""));
 		
-		org.junit.Assert.assertEquals(salaryHours, Double.parseDouble(_1.getValor()), 0.00);
+		assertEquals(salaryHours, Double.parseDouble(_1.getValor()), 0.00);
 
     }
 
@@ -8188,7 +8190,7 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 	int salaries = calculateAndSave(connection, ctx);
 
 	// Only one salary saved to DB.
-	Assert.assertEquals(1, salaries);
+	assertEquals(1, salaries);
 
 	Calendar calendar = Calendar.getInstance();
 	calendar.setTime(startDate);
@@ -8231,7 +8233,7 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 
 	    int salaries = calculateAndSave(connection, ctx);
 	    // Only one salary saved to DB.
-	    Assert.assertEquals(1, salaries);
+	    assertEquals(1, salaries);
 
 	}
 
@@ -8349,7 +8351,7 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 	    int salaries = calculateAndSave(connection, ctx);
 
 	    // Only one salary saved to DB.
-	    Assert.assertEquals(1, salaries);
+	    assertEquals(1, salaries);
 	}
 
 	Calendar calendar = Calendar.getInstance();
@@ -8656,8 +8658,8 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 	    String indicadorObligatoriedad) {
 	for (DatoSolicitado datoSolicitado : datoSolicitados) {
 	    if (datoSolicitado.getCodigo().equals(codigo)) {
-		Assert.assertEquals(tipoDato, datoSolicitado.getTipoDato());
-		Assert.assertEquals(indicadorObligatoriedad, datoSolicitado.getIndicadorObligatoriedad());
+		assertEquals(tipoDato, datoSolicitado.getTipoDato());
+		assertEquals(indicadorObligatoriedad, datoSolicitado.getIndicadorObligatoriedad());
 		return;
 	    }
 	}
@@ -8677,7 +8679,7 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 	private static void assertDato(List<Dato> datos, String tipoDato, String codigo) {
 	for (Dato dato : datos) {
 	    if (dato.getCodigo().equals(codigo)) {
-		Assert.assertEquals(tipoDato, dato.getTipoDato());
+		assertEquals(tipoDato, dato.getTipoDato());
 		return;
 	    }
 	}
@@ -8688,8 +8690,8 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
     private static void assertDato(List<Dato> datos, String tipoDato, String codigo, String valor) {
 	for (Dato dato : datos) {
 	    if (dato.getCodigo().equals(codigo)) {
-		Assert.assertEquals(tipoDato, dato.getTipoDato());
-		Assert.assertEquals(valor, dato.getValor());
+		assertEquals(tipoDato, dato.getTipoDato());
+		assertEquals(valor, dato.getValor());
 		return;
 	    }
 	}
@@ -8704,8 +8706,8 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
     private static void assertDato(List<Dato> datos, String tipoDato, String codigo, Predicate<String> predicate) {
 	for (Dato dato : datos) {
 	    if (dato.getCodigo().equals(codigo)) {
-		Assert.assertEquals(tipoDato, dato.getTipoDato());
-		Assert.assertEquals(true, predicate.test(dato.getValor()));
+		assertEquals(tipoDato, dato.getTipoDato());
+		assertEquals(true, predicate.test(dato.getValor()));
 		return;
 	    }
 	}

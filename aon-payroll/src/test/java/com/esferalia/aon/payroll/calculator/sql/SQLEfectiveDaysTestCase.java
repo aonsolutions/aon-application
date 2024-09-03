@@ -10,6 +10,7 @@ import static com.esferalia.aon.jooq.tables.PayrollWorkplace.PAYROLL_WORKPLACE;
 import static com.esferalia.aon.watson.util.AonDateUtils.getFirstDayOfMonth;
 import static com.esferalia.aon.watson.util.AonDateUtils.getFirstDayOfYear;
 import static com.esferalia.aon.watson.util.AonDateUtils.getLastDayOfMonth;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.sql.Connection;
 import java.sql.Date;
@@ -19,9 +20,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
-import junit.framework.Assert;
-
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.esferalia.aon.calendar.enumeration.DayType;
 import com.esferalia.aon.jooq.tables.records.CalendarRecord;
@@ -33,7 +32,6 @@ import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.payroll.enumeration.ContractCode;
 import com.esferalia.aon.salary.expression.ExpressionException;
 import com.esferalia.aon.salary.expression.ITimedResult;
-import com.esferalia.aon.watson.util.AonDateUtils;
 
 
 /**
@@ -100,7 +98,7 @@ public class SQLEfectiveDaysTestCase extends AbstractSQLTestCase {
 		for ( ITimedResult<Double> result: results )
 			ctxActualDays += result.getValue();
 		
-		Assert.assertEquals(ContextVariable.ACTUAL_DAYS.getName(), actualDays, ctxActualDays);
+		assertEquals(actualDays, ctxActualDays,ContextVariable.ACTUAL_DAYS.getName());
 
 	}
 	
@@ -168,7 +166,7 @@ public class SQLEfectiveDaysTestCase extends AbstractSQLTestCase {
 		for ( ITimedResult<Double> result: results )
 			ctxActualDays += result.getValue();
 		
-		Assert.assertEquals(ContextVariable.ACTUAL_DAYS.getName(), actualDays, ctxActualDays);
+		assertEquals(actualDays, ctxActualDays,ContextVariable.ACTUAL_DAYS.getName());
 
 		
 	}
@@ -244,7 +242,7 @@ public class SQLEfectiveDaysTestCase extends AbstractSQLTestCase {
 		for ( ITimedResult<Double> result: results )
 			ctxActualDays += result.getValue();
 		
-		Assert.assertEquals(ContextVariable.ACTUAL_DAYS.getName(), actualDays, ctxActualDays);
+		assertEquals(actualDays, ctxActualDays,ContextVariable.ACTUAL_DAYS.getName());
 
 		
 	}
@@ -325,7 +323,7 @@ public class SQLEfectiveDaysTestCase extends AbstractSQLTestCase {
 		for ( ITimedResult<Double> result: results )
 			ctxActualDays += result.getValue();
 		
-		Assert.assertEquals(ContextVariable.ACTUAL_DAYS.getName(), 0.00, ctxActualDays);
+		assertEquals(0.00, ctxActualDays,ContextVariable.ACTUAL_DAYS.getName());
 
 		
 	}
@@ -409,7 +407,7 @@ public class SQLEfectiveDaysTestCase extends AbstractSQLTestCase {
 		double ctxActualDays = 0;
 		for ( ITimedResult<Double> result: results )
 			ctxActualDays += result.getValue();
-		Assert.assertEquals(ContextVariable.ACTUAL_DAYS.getName(), actualDays, ctxActualDays);
+		assertEquals(actualDays, ctxActualDays,ContextVariable.ACTUAL_DAYS.getName());
 
 		day.setTime(secondWeekEnd);
 		day.add(Calendar.DAY_OF_MONTH, 1);
@@ -441,7 +439,7 @@ public class SQLEfectiveDaysTestCase extends AbstractSQLTestCase {
 		ctxActualDays = 0;
 		for ( ITimedResult<Double> result: results )
 			ctxActualDays += result.getValue();
-		Assert.assertEquals(ContextVariable.ACTUAL_DAYS.getName(), actualDays, ctxActualDays);
+		assertEquals(actualDays, ctxActualDays,ContextVariable.ACTUAL_DAYS.getName());
 
 	
 		addData(aonContext, 
@@ -462,7 +460,7 @@ public class SQLEfectiveDaysTestCase extends AbstractSQLTestCase {
 		ctxActualDays = 0;
 		for ( ITimedResult<Double> result: results )
 			ctxActualDays += result.getValue();
-		Assert.assertEquals(ContextVariable.ACTUAL_DAYS.getName(), actualDays, ctxActualDays);
+		assertEquals(actualDays, ctxActualDays,ContextVariable.ACTUAL_DAYS.getName());
 
 		addData(aonContext, 
 				contract, 
@@ -481,7 +479,7 @@ public class SQLEfectiveDaysTestCase extends AbstractSQLTestCase {
 		ctxActualDays = 0;
 		for ( ITimedResult<Double> result: results )
 			ctxActualDays += result.getValue();
-		Assert.assertEquals(ContextVariable.ACTUAL_DAYS.getName(), 1.0, ctxActualDays);
+		assertEquals(1.0, ctxActualDays,ContextVariable.ACTUAL_DAYS.getName());
 
 	}
 
@@ -531,7 +529,7 @@ public class SQLEfectiveDaysTestCase extends AbstractSQLTestCase {
 		for ( ITimedResult<Double> result: results )
 			ctxActualDays += result.getValue();
 		
-		Assert.assertEquals(ContextVariable.ACTUAL_DAYS.getName(), actualDays, ctxActualDays);
+		assertEquals(actualDays, ctxActualDays,ContextVariable.ACTUAL_DAYS.getName());
 
 	}
 

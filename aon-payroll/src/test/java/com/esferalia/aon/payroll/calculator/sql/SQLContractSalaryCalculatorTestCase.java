@@ -7,6 +7,8 @@ import static com.esferalia.aon.jooq.tables.Contract.CONTRACT;
 import static com.esferalia.aon.watson.util.AonDateUtils.getFirstDayOfMonth;
 import static com.esferalia.aon.watson.util.AonDateUtils.getFirstDayOfYear;
 import static com.esferalia.aon.watson.util.AonDateUtils.getLastDayOfMonth;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.sql.Connection;
 import java.sql.Date;
@@ -19,7 +21,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.code.aon.ql.Criteria;
 import com.esferalia.aon.jooq.tables.records.ContractRecord;
@@ -48,8 +50,6 @@ import com.esferalia.aon.salary.expression.IExpressionVariable;
 import com.esferalia.aon.salary.expression.ITimedResult;
 import com.esferalia.aon.salary.expression.ITimedVariable;
 import com.esferalia.aon.salary.payment.IPayment;
-
-import junit.framework.Assert;
 
 /**
  * @author rtrepiana
@@ -99,7 +99,7 @@ public class SQLContractSalaryCalculatorTestCase extends AbstractSQLTestCase {
 
 		ISalary salary = calculator.calculate(ctx);
 
-		Assert.assertEquals(1500.00, salary.getTotalPayment());
+		assertEquals(1500.00, salary.getTotalPayment());
 
 	}
 
@@ -161,11 +161,11 @@ public class SQLContractSalaryCalculatorTestCase extends AbstractSQLTestCase {
 				Map<String, Object> data = new HashMap<String, Object>();
 				load(context, data);
 
-				Assert.assertEquals("01", data.get("GRUPO_COTIZACION"));
+				assertEquals("01", data.get("GRUPO_COTIZACION"));
 
-				Assert.assertEquals(true, data.get("COTIZACION_MENSUAL"));
+				assertEquals(true, data.get("COTIZACION_MENSUAL"));
 
-				Assert.assertEquals(8.10, data.get("REDUCCION_CGC_E_01"));
+				assertEquals(8.10, data.get("REDUCCION_CGC_E_01"));
 
 			}
 		});
@@ -233,7 +233,7 @@ public class SQLContractSalaryCalculatorTestCase extends AbstractSQLTestCase {
 			AON.getSalaries(aonContext,
 					props -> props.getContractProperty().eq(contract.getId()))
 					.forEach(salary -> {
-						Assert.assertEquals(8.10,
+						assertEquals(8.10,
 								Double.parseDouble(salary.getContextData()
 										.get("REDUCCION_CGC_E_01").get(0)
 										.getExpression()));
@@ -243,7 +243,7 @@ public class SQLContractSalaryCalculatorTestCase extends AbstractSQLTestCase {
 			return;
 		}
 
-		Assert.fail();
+		fail();
 	}
 
 	@Test
@@ -317,8 +317,7 @@ public class SQLContractSalaryCalculatorTestCase extends AbstractSQLTestCase {
 								ContextVariable.SUNDAY_HOURS,
 //								ContextVariable.WORKED_HOURS,
 								ContextVariable.SALARY_HOURS, }) {
-							Assert.assertEquals(var.getName(), true, salary.getContextData()
-									.containsKey(var.getName()));
+							assertEquals(true, salary.getContextData().containsKey(var.getName()), var.getName());
 							System.out.printf("%s = %s\r\n", var.name(),
 									salary.getContextData().get(var.getName())
 											.get(0).getExpression());
@@ -330,7 +329,7 @@ public class SQLContractSalaryCalculatorTestCase extends AbstractSQLTestCase {
 			return;
 		}
 
-		Assert.fail();
+		fail();
 	}
 
 	@Test
@@ -423,7 +422,7 @@ public class SQLContractSalaryCalculatorTestCase extends AbstractSQLTestCase {
 								"EMBARGADO",
 								"OCUPACION",
 								}) {
-							Assert.assertEquals(true, salary.getContextData()
+							assertEquals(true, salary.getContextData()
 									.containsKey(var));
 							System.out.printf("%s = %s\r\n", var,
 									salary.getContextData().get(var)
@@ -436,7 +435,7 @@ public class SQLContractSalaryCalculatorTestCase extends AbstractSQLTestCase {
 			return;
 		}
 
-		Assert.fail();
+		fail();
 	}
 
 	@Test
@@ -514,7 +513,7 @@ public class SQLContractSalaryCalculatorTestCase extends AbstractSQLTestCase {
 								"HORAS_FORMACION_PRESENCIAL",
 								"HORAS_FORMACION_DISTANCIA"
 								}) {
-							Assert.assertEquals(true, salary.getContextData()
+							assertEquals(true, salary.getContextData()
 									.containsKey(var));
 							
 							System.out.printf("%s = %s\r\n", var,
@@ -528,7 +527,7 @@ public class SQLContractSalaryCalculatorTestCase extends AbstractSQLTestCase {
 			return;
 		}
 
-		Assert.fail();
+		fail();
 	}
 
 	@Test
@@ -569,7 +568,7 @@ public class SQLContractSalaryCalculatorTestCase extends AbstractSQLTestCase {
 
 		ISalary salary = calculator.calculate(ctx);
 
-		Assert.assertEquals(1500.00, salary.getTotalPayment());
+		assertEquals(1500.00, salary.getTotalPayment());
 
 	}
 
@@ -612,7 +611,7 @@ public class SQLContractSalaryCalculatorTestCase extends AbstractSQLTestCase {
 
 		ISalary salary = calculator.calculate(ctx);
 
-		Assert.assertEquals(1500.00, salary.getTotalPayment());
+		assertEquals(1500.00, salary.getTotalPayment());
 
 	}
 
@@ -672,8 +671,8 @@ public class SQLContractSalaryCalculatorTestCase extends AbstractSQLTestCase {
 			System.out.println("ERROR: " + message);
 		
 		
-		Assert.assertEquals(2, errors.size() );
-		Assert.assertEquals(666.66 * 2, salary.getTotalPayment());
+		assertEquals(2, errors.size() );
+		assertEquals(666.66 * 2, salary.getTotalPayment());
 		
 		
 	}
@@ -736,14 +735,14 @@ public class SQLContractSalaryCalculatorTestCase extends AbstractSQLTestCase {
 		
 		Salary salary = calculator.calculate(ctx);
 		
-		//Assert.assertEquals(0.00, salary.getTotalPayment());
+		//assertEquals(0.00, salary.getTotalPayment());
 		
 		for ( String message: errors ) 
 			System.out.println("ERROR: " + message);
 		
 		
-		Assert.assertEquals(2, errors.size() );
-		Assert.assertEquals(666.66 + 66.66, salary.getTotalPayment());
+		assertEquals(2, errors.size() );
+		assertEquals(666.66 + 66.66, salary.getTotalPayment());
 		
 		
 	}
@@ -796,7 +795,7 @@ public class SQLContractSalaryCalculatorTestCase extends AbstractSQLTestCase {
 			return;
 		}
 		
-		Assert.fail();
+		fail();
 	}
 	
 	@Test
@@ -845,7 +844,7 @@ public class SQLContractSalaryCalculatorTestCase extends AbstractSQLTestCase {
 			return;
 		}
 		
-		Assert.fail();
+		fail();
 	}
 	// ------------------------------------------------------------------------
 	@Test
@@ -884,7 +883,7 @@ public class SQLContractSalaryCalculatorTestCase extends AbstractSQLTestCase {
 			@Override
 			public void onCheckError(IContractPayment payment, String message) {
 				if ( payment.getExpression().equals("666.66"))
-					Assert.fail();
+					fail();
 			}
 		});
 
@@ -937,7 +936,7 @@ public class SQLContractSalaryCalculatorTestCase extends AbstractSQLTestCase {
 			return;
 		}
 		
-		Assert.fail();
+		fail();
 	}
 
 	@Test
@@ -978,7 +977,7 @@ public class SQLContractSalaryCalculatorTestCase extends AbstractSQLTestCase {
 		
 		ISalary salary = calculator.calculate(ctx);
 		
-		Assert.assertEquals( 1250.00 + 1250.00/12, salary.getTotalPayment());
+		assertEquals( 1250.00 + 1250.00/12, salary.getTotalPayment());
 	}
 
 	@Test
@@ -1019,7 +1018,7 @@ public class SQLContractSalaryCalculatorTestCase extends AbstractSQLTestCase {
 		
 		ISalary salary = calculator.calculate(ctx);
 		
-		Assert.assertEquals( 1250.00 + 1250.00/12, salary.getTotalPayment());
+		assertEquals( 1250.00 + 1250.00/12, salary.getTotalPayment());
 	}
 
 	@Test
@@ -1061,7 +1060,7 @@ public class SQLContractSalaryCalculatorTestCase extends AbstractSQLTestCase {
 		
 		ISalary salary = calculator.calculate(ctx);
 		
-		Assert.assertEquals( 1600.00 + 1600.00/12, salary.getTotalPayment());
+		assertEquals( 1600.00 + 1600.00/12, salary.getTotalPayment());
 	}
 
 	@Test
@@ -1100,10 +1099,10 @@ public class SQLContractSalaryCalculatorTestCase extends AbstractSQLTestCase {
 		Salary salary = calculator.calculate(ctx);
 		
 		for (IPayment payment : salary.getSalaryPayments()) {
-			Assert.assertEquals("DESCRIPTION WITH UNDEFINED VAR 33.33 12", payment.getDescription());
+			assertEquals("DESCRIPTION WITH UNDEFINED VAR 33.33 12", payment.getDescription());
 		}
 		
-		Assert.assertEquals(666.66 * 1, salary.getTotalPayment());
+		assertEquals(666.66 * 1, salary.getTotalPayment());
 		
 		
 	}
@@ -1144,10 +1143,10 @@ public class SQLContractSalaryCalculatorTestCase extends AbstractSQLTestCase {
 		Salary salary = calculator.calculate(ctx);
 		
 		for (IPayment payment : salary.getSalaryPayments()) {
-			Assert.assertEquals("DESCRIPTION WITH UNDEFINED VAR 33.33 12", payment.getDescription());
+			assertEquals("DESCRIPTION WITH UNDEFINED VAR 33.33 12", payment.getDescription());
 		}
 		
-		Assert.assertEquals(666.66 * 1, salary.getTotalPayment());
+		assertEquals(666.66 * 1, salary.getTotalPayment());
 		
 		
 	}
@@ -1190,7 +1189,7 @@ public class SQLContractSalaryCalculatorTestCase extends AbstractSQLTestCase {
 
 		ISalary salary = calculator.calculate(ctx);
 
-		Assert.assertEquals(1500.00, salary.getTotalPayment());
+		assertEquals(1500.00, salary.getTotalPayment());
 		
 		
 
@@ -1277,10 +1276,10 @@ public class SQLContractSalaryCalculatorTestCase extends AbstractSQLTestCase {
 
 		ISalary salary = calculator.calculate(ctx);
 
-		Assert.assertEquals(500.00, salary.getTotalPayment());
-		Assert.assertEquals(1056.90, salary.getCommonBase());
-		Assert.assertEquals(756.600, salary.getProfessionalBase());
-		Assert.assertEquals(500.00, salary.getIrpfBase());
+		assertEquals(500.00, salary.getTotalPayment());
+		assertEquals(1056.90, salary.getCommonBase());
+		assertEquals(756.600, salary.getProfessionalBase());
+		assertEquals(500.00, salary.getIrpfBase());
 		
 		
 		addPayment(aonContext, contract, "300.00");
@@ -1294,10 +1293,10 @@ public class SQLContractSalaryCalculatorTestCase extends AbstractSQLTestCase {
 
 		salary = calculator.calculate(ctx);
 
-		Assert.assertEquals(800.00, salary.getTotalPayment());
-		Assert.assertEquals(1056.90, salary.getCommonBase());
-		Assert.assertEquals(800.000, salary.getProfessionalBase());
-		Assert.assertEquals(800.00, salary.getIrpfBase());
+		assertEquals(800.00, salary.getTotalPayment());
+		assertEquals(1056.90, salary.getCommonBase());
+		assertEquals(800.000, salary.getProfessionalBase());
+		assertEquals(800.00, salary.getIrpfBase());
 
 		addPayment(aonContext, contract, "256.00");
 		
@@ -1310,10 +1309,10 @@ public class SQLContractSalaryCalculatorTestCase extends AbstractSQLTestCase {
 
 		salary = calculator.calculate(ctx);
 
-		Assert.assertEquals(1056.00, salary.getTotalPayment());
-		Assert.assertEquals(1056.90, salary.getCommonBase());
-		Assert.assertEquals(1056.000, salary.getProfessionalBase());
-		Assert.assertEquals(1056.00, salary.getIrpfBase());
+		assertEquals(1056.00, salary.getTotalPayment());
+		assertEquals(1056.90, salary.getCommonBase());
+		assertEquals(1056.000, salary.getProfessionalBase());
+		assertEquals(1056.00, salary.getIrpfBase());
 
 	}	
 	@Test
@@ -1365,17 +1364,17 @@ public class SQLContractSalaryCalculatorTestCase extends AbstractSQLTestCase {
 		calculator.setListener(new GenericContractSalaryCalculator.Listener() {
 			@Override
 			public void onCheckError(String message) {
-				org.junit.Assert.fail(message);
+				fail(message);
 			}
 			
 		});
 		
 		ISalary salary = calculator.calculate(ctx);
 
-		Assert.assertEquals(500.00, salary.getTotalPayment());
-		Assert.assertEquals(1572.30, salary.getCommonBase());
-		Assert.assertEquals(1125.90, salary.getProfessionalBase());
-		Assert.assertEquals(500.00, salary.getIrpfBase());
+		assertEquals(500.00, salary.getTotalPayment());
+		assertEquals(1572.30, salary.getCommonBase());
+		assertEquals(1125.90, salary.getProfessionalBase());
+		assertEquals(500.00, salary.getIrpfBase());
 		
 		
 		addPayment(aonContext, contract, "5000.00");
@@ -1392,11 +1391,11 @@ public class SQLContractSalaryCalculatorTestCase extends AbstractSQLTestCase {
 		
 			salary = calculator.calculate(ctx);
 
-		Assert.assertEquals(5500.00, salary.getTotalPayment(), DELTA);
-		Assert.assertEquals(4070.10, salary.getCommonBase(), DELTA);
-		Assert.assertEquals(4070.10, salary.getProfessionalBase(), DELTA);
-		Assert.assertEquals(5500.00, salary.getIrpfBase(), DELTA);
-		Assert.assertEquals(5500.00, salary.getRawCommonBase(), DELTA);
+		assertEquals(5500.00, salary.getTotalPayment(), DELTA);
+		assertEquals(4070.10, salary.getCommonBase(), DELTA);
+		assertEquals(4070.10, salary.getProfessionalBase(), DELTA);
+		assertEquals(5500.00, salary.getIrpfBase(), DELTA);
+		assertEquals(5500.00, salary.getRawCommonBase(), DELTA);
 		
 		
 
@@ -1456,7 +1455,7 @@ public class SQLContractSalaryCalculatorTestCase extends AbstractSQLTestCase {
 		}).calculate(ctx);
 		
 		
-		org.junit.Assert.assertEquals(666.66, salary.getTotalPayment(), 0.0001);
+		assertEquals(666.66, salary.getTotalPayment(), 0.0001);
 	}
 	
 	private static void load(Map<String, ITimedVariable<?>> context,

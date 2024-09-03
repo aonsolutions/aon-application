@@ -15,6 +15,8 @@ import static com.esferalia.aon.watson.util.AonDateUtils.getLastDayOfMonth;
 import static com.esferalia.aon.watson.util.AonDateUtils.getMax;
 import static java.util.Calendar.DAY_OF_MONTH;
 import static java.util.Calendar.MONTH;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.sql.Connection;
 import java.sql.Date;
@@ -23,7 +25,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.esferalia.aon.jooq.tables.records.ContractRecord;
 import com.esferalia.aon.occam.api.AONContext;
@@ -37,8 +39,6 @@ import com.esferalia.aon.salary.expression.ExpressionException;
 import com.esferalia.aon.salary.expression.ITimedResult;
 import com.esferalia.aon.salary.expression.Period;
 import com.esferalia.aon.salary.expression.UndefinedVariablesException;
-
-import junit.framework.Assert;
 
 public class SQLStrikeTestCase extends AbstractSQLTestCase {
 
@@ -72,19 +72,19 @@ public class SQLStrikeTestCase extends AbstractSQLTestCase {
 		List<ITimedResult<Double>> workDays = ctx.getExpressionContext().eval(
 				WORKED_DAYS.getName(), startDate, endDate, Double.class);
 
-		Assert.assertEquals(2, workDays.size());
+		assertEquals(2, workDays.size());
 
-		Assert.assertEquals((double)get(strikeDay, DAY_OF_MONTH)-1, workDays.get(0).getValue());
-		Assert.assertEquals(
+		assertEquals((double)get(strikeDay, DAY_OF_MONTH)-1, workDays.get(0).getValue());
+		assertEquals(
 				workDays.get(0).getPeriod(),
 				new Period(getFirstDayOfMonth(strikeDay), add(strikeDay,
 						DAY_OF_MONTH, -1)));
 
-		Assert.assertEquals(
+		assertEquals(
 				workDays.get(1).getValue(),
 				(double) (getMax(strikeDay, DAY_OF_MONTH) - get(strikeDay,
 						DAY_OF_MONTH)));
-		Assert.assertEquals(workDays.get(1).getPeriod(),
+		assertEquals(workDays.get(1).getPeriod(),
 				new Period(add(strikeDay, DAY_OF_MONTH, +1),
 						getLastDayOfMonth(getToday())));
 
@@ -119,13 +119,13 @@ public class SQLStrikeTestCase extends AbstractSQLTestCase {
 		List<ITimedResult<Double>> workDays = ctx.getExpressionContext().eval(
 				"DIAS_TRABAJADOS", startDate, endDate, Double.class);
 
-		Assert.assertEquals(1, workDays.size());
+		assertEquals(1, workDays.size());
 
-		Assert.assertEquals(
+		assertEquals(
 				workDays.get(0).getValue(),
 				(double) (getMax(getToday(), DAY_OF_MONTH) - get(endStrike,
 						DAY_OF_MONTH)));
-		Assert.assertEquals(workDays.get(0).getPeriod(),
+		assertEquals(workDays.get(0).getPeriod(),
 				new Period(add(endStrike, DAY_OF_MONTH, +1),
 						getLastDayOfMonth(getToday())));
 
@@ -160,22 +160,22 @@ public class SQLStrikeTestCase extends AbstractSQLTestCase {
 		List<ITimedResult<Double>> workDays = ctx.getExpressionContext().eval(
 				WORKED_DAYS.getName(), startDate, endDate, Double.class);
 
-		Assert.assertEquals(11, workDays.size());
+		assertEquals(11, workDays.size());
 
-		Assert.assertEquals(2.00, workDays.get(0).getValue());
-		Assert.assertEquals(workDays.get(0).getPeriod(),
+		assertEquals(2.00, workDays.get(0).getValue());
+		assertEquals(workDays.get(0).getPeriod(),
 				new Period(start, add(start, DAY_OF_MONTH, 1)));
 
 		for (int i = 1; i < 10; i++) {
 			Date date = add(start, DAY_OF_MONTH, i * 2 + 1);
-			Assert.assertEquals(1.00, workDays.get(i).getValue());
-			Assert.assertEquals(workDays.get(i).getPeriod(), new Period(date,
+			assertEquals(1.00, workDays.get(i).getValue());
+			assertEquals(workDays.get(i).getPeriod(), new Period(date,
 					date));
 		}
 
-		Assert.assertEquals((double) (getMax(getToday(), DAY_OF_MONTH) - 21),
+		assertEquals((double) (getMax(getToday(), DAY_OF_MONTH) - 21),
 				workDays.get(10).getValue());
-		Assert.assertEquals(workDays.get(10).getPeriod(),
+		assertEquals(workDays.get(10).getPeriod(),
 				new Period(add(start, DAY_OF_MONTH, 21),
 						getLastDayOfMonth(getToday())));
 
@@ -207,12 +207,12 @@ public class SQLStrikeTestCase extends AbstractSQLTestCase {
 		try {
 			List<ITimedResult<Double>> workDays = ctx.getExpressionContext()
 					.eval("DIAS_TRABAJADOS", startDate, endDate, Double.class);
-			Assert.fail();
+			fail();
 		} catch (UndefinedVariablesException e) {
-			Assert.assertEquals("DIAS_TRABAJADOS", e.getVariableNames()[0]);
+			assertEquals("DIAS_TRABAJADOS", e.getVariableNames()[0]);
 			return;
 		}
-		Assert.fail();
+		fail();
 
 	}
 
@@ -242,10 +242,10 @@ public class SQLStrikeTestCase extends AbstractSQLTestCase {
 		List<ITimedResult<Double>> workDays = ctx.getExpressionContext().eval(
 				"DIAS_TRABAJADOS", startDate, endDate, Double.class);
 
-		Assert.assertEquals(1, workDays.size());
-		Assert.assertEquals(workDays.get(0).getPeriod(), new Period(startDate,
+		assertEquals(1, workDays.size());
+		assertEquals(workDays.get(0).getPeriod(), new Period(startDate,
 				endDate));
-		Assert.assertEquals(workDays.get(0).getValue(),
+		assertEquals(workDays.get(0).getValue(),
 				get(endDate, DAY_OF_MONTH) * 0.25);
 
 	}
@@ -300,17 +300,17 @@ public class SQLStrikeTestCase extends AbstractSQLTestCase {
 				new SalaryBuilder(){
 				}).calculate(ctx);
 
-		Assert.assertEquals(
+		assertEquals(
 				(1750.00 * 1.10) * (get(endDate, DAY_OF_MONTH) - (strikeDays))
 						/ get(endDate, DAY_OF_MONTH), salary.getTotalPayment(),
 				DELTA);
 
-		Assert.assertEquals(
+		assertEquals(
 				salary.getTotalPayment(), 
 				salary.getCommonBase(),
 				DELTA);
 
-		Assert.assertEquals(
+		assertEquals(
 				salary.getTotalPayment() * 0.15 
 				, salary.getSocialSecurityContributions(),
 				DELTA);
@@ -365,17 +365,17 @@ public class SQLStrikeTestCase extends AbstractSQLTestCase {
 				new SalaryBuilder(){
 				}).calculate(ctx);
 
-		Assert.assertEquals(
+		assertEquals(
 				(1750.00 * 1.10) * (get(endDate, DAY_OF_MONTH) - (strikeDays))
 						/ get(endDate, DAY_OF_MONTH), salary.getTotalPayment(),
 				DELTA);
 
-		Assert.assertEquals(
+		assertEquals(
 				salary.getTotalPayment(), 
 				salary.getCommonBase(),
 				DELTA);
 
-		Assert.assertEquals(
+		assertEquals(
 				salary.getTotalPayment() * 0.15 
 				, salary.getSocialSecurityContributions(),
 				DELTA);
@@ -432,17 +432,17 @@ public class SQLStrikeTestCase extends AbstractSQLTestCase {
 				new SalaryBuilder(){
 				}).calculate(ctx);
 
-		Assert.assertEquals(
+		assertEquals(
 				((1850.00 ) * (get(endDate, DAY_OF_MONTH) - (strikeDays)) / get(endDate, DAY_OF_MONTH) ) 
 				, salary.getTotalPayment(),
 				DELTA);
 
-		Assert.assertEquals(
+		assertEquals(
 				salary.getTotalPayment(), 
 				salary.getCommonBase(),
 				DELTA);
 
-		Assert.assertEquals(
+		assertEquals(
 				salary.getTotalPayment() * 0.15 
 				, salary.getSocialSecurityContributions(),
 				DELTA);
@@ -455,7 +455,7 @@ public class SQLStrikeTestCase extends AbstractSQLTestCase {
 		;
 		
 		
-		Assert.assertEquals(
+		assertEquals(
 				1 
 				, count);
 	}
@@ -499,7 +499,7 @@ public class SQLStrikeTestCase extends AbstractSQLTestCase {
 				new SalaryBuilder(){
 				}).calculate(ctx);
 		
-		Assert.assertEquals(1200.00 * 29 / 30.00, salary.getTotalPayment(), DELTA);
+		assertEquals(1200.00 * 29 / 30.00, salary.getTotalPayment(), DELTA);
 		
 
 	}

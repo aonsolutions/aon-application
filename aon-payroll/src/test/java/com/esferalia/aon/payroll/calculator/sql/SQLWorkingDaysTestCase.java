@@ -6,6 +6,7 @@ package com.esferalia.aon.payroll.calculator.sql;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.WORKING_DAYS;
 import static com.esferalia.aon.watson.util.AonDateUtils.getFirstDayOfMonth;
 import static com.esferalia.aon.watson.util.AonDateUtils.getLastDayOfMonth;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.sql.Connection;
 import java.sql.Date;
@@ -14,8 +15,7 @@ import java.util.Calendar;
 import java.util.Collections;
 import java.util.HashMap;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.esferalia.aon.jooq.tables.records.CalendarRecord;
 import com.esferalia.aon.jooq.tables.records.ContractRecord;
@@ -80,9 +80,9 @@ public class SQLWorkingDaysTestCase extends AbstractSQLTestCase {
 			System.out.println(p.getDescription() + " = " + p.getAmount());
 
 		for ( SalaryPayment p: salary.getSalaryPayments())
-			Assert.assertEquals(workDays, p.getAmount(), 0.00);
+			assertEquals(workDays, p.getAmount(), 0.00);
 		
-		Assert.assertEquals(workDays, salary.getTotalPayment(), 0.00);
+		assertEquals(workDays, salary.getTotalPayment(), 0.00);
 
 	}
 
@@ -137,9 +137,9 @@ public class SQLWorkingDaysTestCase extends AbstractSQLTestCase {
 			System.out.println(p.getDescription() + " = " + p.getAmount());
 
 		for ( SalaryPayment p: salary.getSalaryPayments())
-			Assert.assertEquals(workDays, p.getAmount(), 0.00);
+			assertEquals(workDays, p.getAmount(), 0.00);
 		
-		Assert.assertEquals(workDays, salary.getTotalPayment(), 0.00);
+		assertEquals(workDays, salary.getTotalPayment(), 0.00);
 
 	}
 
@@ -187,9 +187,9 @@ public class SQLWorkingDaysTestCase extends AbstractSQLTestCase {
 			System.out.println(p.getDescription() + " = " + p.getAmount());
 
 		for ( SalaryPayment p: salary.getSalaryPayments())
-			Assert.assertEquals(workDays, p.getAmount(), 0.00);
+			assertEquals(workDays, p.getAmount(), 0.00);
 		
-		Assert.assertEquals(workDays, salary.getTotalPayment(), 0.00);
+		assertEquals(workDays, salary.getTotalPayment(), 0.00);
 
 	}
 
@@ -260,9 +260,9 @@ public class SQLWorkingDaysTestCase extends AbstractSQLTestCase {
 			System.out.println(p.getDescription() + " = " + p.getAmount());
 
 		for ( SalaryPayment p: salary.getSalaryPayments())
-			Assert.assertEquals(workDays, p.getAmount(), 0.00);
+			assertEquals(workDays, p.getAmount(), 0.00);
 		
-		Assert.assertEquals(workDays, salary.getTotalPayment(), 0.00);
+		assertEquals(workDays, salary.getTotalPayment(), 0.00);
 
 	}
 
@@ -338,9 +338,9 @@ public class SQLWorkingDaysTestCase extends AbstractSQLTestCase {
 			System.out.println(p.getDescription() + " = " + p.getAmount());
 
 		for ( SalaryPayment p: salary.getSalaryPayments())
-			Assert.assertEquals(workDays, p.getAmount(), 0.00);
+			assertEquals(workDays, p.getAmount(), 0.00);
 		
-		Assert.assertEquals(workDays, salary.getTotalPayment(), 0.00);
+		assertEquals(workDays, salary.getTotalPayment(), 0.00);
 
 	}
 
@@ -425,9 +425,9 @@ public class SQLWorkingDaysTestCase extends AbstractSQLTestCase {
 			System.out.println(p.getDescription() + " = " + p.getAmount());
 
 		for ( SalaryPayment p: salary.getSalaryPayments())
-			Assert.assertEquals(workDays, p.getAmount(), 0.00);
+			assertEquals(workDays, p.getAmount(), 0.00);
 		
-		Assert.assertEquals(workDays, salary.getTotalPayment(), 0.00);
+		assertEquals(workDays, salary.getTotalPayment(), 0.00);
 
 	}
 
@@ -511,9 +511,9 @@ public class SQLWorkingDaysTestCase extends AbstractSQLTestCase {
 			System.out.println(p.getDescription() + " = " + p.getAmount());
 
 		for ( SalaryPayment p: salary.getSalaryPayments())
-			Assert.assertEquals(workDays, p.getAmount(), 0.00);
+			assertEquals(workDays, p.getAmount(), 0.00);
 		
-		Assert.assertEquals(workDays, salary.getTotalPayment(), 0.00);
+		assertEquals(workDays, salary.getTotalPayment(), 0.00);
 
 	}
 
@@ -604,9 +604,9 @@ public class SQLWorkingDaysTestCase extends AbstractSQLTestCase {
 			System.out.println(p.getDescription() + " = " + p.getAmount());
 
 		for ( SalaryPayment p: salary.getSalaryPayments())
-			Assert.assertEquals(workDays, p.getAmount(), 0.00);
+			assertEquals(workDays, p.getAmount(), 0.00);
 		
-		Assert.assertEquals(workDays, salary.getTotalPayment(), 0.00);
+		assertEquals(workDays, salary.getTotalPayment(), 0.00);
 
 	}
 
@@ -700,9 +700,9 @@ public class SQLWorkingDaysTestCase extends AbstractSQLTestCase {
 			System.out.println(p.getDescription() + " = " + p.getAmount());
 
 		for ( SalaryPayment p: salary.getSalaryPayments())
-			Assert.assertEquals(workDays, p.getAmount(), 0.00);
+			assertEquals(workDays, p.getAmount(), 0.00);
 		
-		Assert.assertEquals(workDays, salary.getTotalPayment(), 0.00);
+		assertEquals(workDays, salary.getTotalPayment(), 0.00);
 
 	}
 

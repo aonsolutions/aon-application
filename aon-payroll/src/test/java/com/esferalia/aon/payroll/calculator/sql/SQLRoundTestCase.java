@@ -19,6 +19,8 @@ import static com.esferalia.aon.watson.util.AonDateUtils.getFirstDayOfMonth;
 import static com.esferalia.aon.watson.util.AonDateUtils.getFirstDayOfYear;
 import static com.esferalia.aon.watson.util.AonDateUtils.getLastDayOfMonth;
 import static com.esferalia.aon.watson.util.AonDateUtils.getLastDayOfYear;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -31,13 +33,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import org.jooq.DSLContext;
-import org.junit.Assert;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.code.aon.common.enumeration.Month;
-import com.esferalia.aon.jooq.tables.SalaryData;
 import com.esferalia.aon.jooq.tables.records.AgreementExtraRecord;
 import com.esferalia.aon.jooq.tables.records.AgreementLevelCategoryRecord;
 import com.esferalia.aon.jooq.tables.records.AgreementRecord;
@@ -48,13 +46,10 @@ import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.payroll.Salary;
 import com.esferalia.aon.payroll.SalaryBuilder;
 import com.esferalia.aon.payroll.SalaryPayment;
-import com.esferalia.aon.payroll.calculator.ContractSalaryCalculator;
 import com.esferalia.aon.payroll.calculator.IContractSalaryCalculatorContext;
 import com.esferalia.aon.payroll.calculator.RoundSalaryBuilder;
 import com.esferalia.aon.payroll.calculator.SmartContractSalaryCalculator;
-import com.esferalia.aon.payroll.calculator.ContractSalaryCalculator.Listener;
 import com.esferalia.aon.payroll.calculator.jooq.JooqSalaryBuilder;
-import com.esferalia.aon.payroll.calculator.sql.AbstractSQLTestCase.Extra;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.payroll.enumeration.SSRegimeType;
 import com.esferalia.aon.salary.SalaryException;
@@ -93,49 +88,49 @@ public class SQLRoundTestCase extends AbstractSQLTestCase {
 		assertTotalPayment(salary);
 		assertCommanBase(salary);
 		
-		Assert.assertEquals(99.19 , salary.getSocialSecurityContributions(),0.00);
-		Assert.assertEquals(490.54 , salary.getTotalEnterprise(),0.00);
+		assertEquals(99.19 , salary.getSocialSecurityContributions(),0.00);
+		assertEquals(490.54 , salary.getTotalEnterprise(),0.00);
 		
 		salary.getSalaryDeductions().forEach(d -> {
 			switch (d.getType()) {
 			case COMMON_CONTINGENCY:
-				Assert.assertEquals(73.42, d.getAmount(),0.00);
+				assertEquals(73.42, d.getAmount(),0.00);
 				break;
 			case UNEMPLOYMENT:
-				Assert.assertEquals(24.21, d.getAmount(),0.00);
+				assertEquals(24.21, d.getAmount(),0.00);
 				break;
 			case JOB_TRAINING:
-				Assert.assertEquals(1.56, d.getAmount(),0.00);
+				assertEquals(1.56, d.getAmount(),0.00);
 				break;
 			case IRPF:
 				break;
 			default:
-				Assert.fail("Unknown deduction " + d.getType() + ", " + d.getDescription());
+				fail("Unknown deduction " + d.getType() + ", " + d.getDescription());
 			}
 		});
 
 		salary.getSalaryCosts().forEach(c -> {
 			switch (c.getType()) {
 			case COMMON_CONTINGENCY:
-				Assert.assertEquals(368.68, c.getAmount(),0.00);
+				assertEquals(368.68, c.getAmount(),0.00);
 				break;
 			case UNEMPLOYMENT:
-				Assert.assertEquals(85.92, c.getAmount(),0.00);
+				assertEquals(85.92, c.getAmount(),0.00);
 				break;
 			case JOB_TRAINING:
-				Assert.assertEquals(9.38, c.getAmount(),0.00);
+				assertEquals(9.38, c.getAmount(),0.00);
 				break;
 			case FOGASA:
-				Assert.assertEquals(3.12, c.getAmount(),0.00);
+				assertEquals(3.12, c.getAmount(),0.00);
 				break;
 			case PROFESSIONAL_CONTINGENCY:
 				if ( c.getName().equals("IT_E"))
-					Assert.assertEquals(12.50, c.getAmount(),0.00);
+					assertEquals(12.50, c.getAmount(),0.00);
 				else if ( c.getName().equals("IMS_E"))
-					Assert.assertEquals(10.94, c.getAmount(),0.00);
+					assertEquals(10.94, c.getAmount(),0.00);
 				break;
 			default:
-				Assert.fail("Unknown deduction " + c.getType() + ", " + c.getDescription());
+				fail("Unknown deduction " + c.getType() + ", " + c.getDescription());
 			}
 		});
 		} finally {
@@ -163,49 +158,49 @@ public class SQLRoundTestCase extends AbstractSQLTestCase {
 		
 		assertTotalPayment(salary);
 		assertCommanBase(salary);
-		//Assert.assertEquals(99.19 , salary.getSocialSecurityContributions(),0.00);
-		//Assert.assertEquals(490.54 , salary.getTotalEnterprise(),0.00);
+		//assertEquals(99.19 , salary.getSocialSecurityContributions(),0.00);
+		//assertEquals(490.54 , salary.getTotalEnterprise(),0.00);
 		
 		salary.getSalaryDeductions().forEach(d -> {
 			switch (d.getType()) {
 			case COMMON_CONTINGENCY:
-				Assert.assertEquals(115.40, d.getAmount(),0.00);
+				assertEquals(115.40, d.getAmount(),0.00);
 				break;
 			case UNEMPLOYMENT:
-				Assert.assertEquals(38.06, d.getAmount(),0.00);
+				assertEquals(38.06, d.getAmount(),0.00);
 				break;
 			case JOB_TRAINING:
-				Assert.assertEquals(2.46, d.getAmount(),0.00);
+				assertEquals(2.46, d.getAmount(),0.00);
 				break;
 			case IRPF:
 				break;
 			default:
-				Assert.fail("Unknown deduction " + d.getType() + ", " + d.getDescription());
+				fail("Unknown deduction " + d.getType() + ", " + d.getDescription());
 			}
 		});
 
 		salary.getSalaryCosts().forEach(c -> {
 			switch (c.getType()) {
 			case COMMON_CONTINGENCY:
-				Assert.assertEquals(579.46, c.getAmount(),0.00);
+				assertEquals(579.46, c.getAmount(),0.00);
 				break;
 			case UNEMPLOYMENT:
-				Assert.assertEquals(135.04, c.getAmount(),0.00);
+				assertEquals(135.04, c.getAmount(),0.00);
 				break;
 			case JOB_TRAINING:
-				Assert.assertEquals(14.73, c.getAmount(),0.00);
+				assertEquals(14.73, c.getAmount(),0.00);
 				break;
 			case FOGASA:
-				Assert.assertEquals(4.91, c.getAmount(),0.00);
+				assertEquals(4.91, c.getAmount(),0.00);
 				break;
 			case PROFESSIONAL_CONTINGENCY:
 				if ( c.getName().equals("IT_E"))
-					Assert.assertEquals(19.64, c.getAmount(),0.00);
+					assertEquals(19.64, c.getAmount(),0.00);
 				else if ( c.getName().equals("IMS_E"))
-					Assert.assertEquals(17.19, c.getAmount(),0.00);
+					assertEquals(17.19, c.getAmount(),0.00);
 				break;
 			default:
-				Assert.fail("Unknown deduction " + c.getType() + ", " + c.getDescription());
+				fail("Unknown deduction " + c.getType() + ", " + c.getDescription());
 			}
 		});
 		} 
@@ -239,50 +234,50 @@ public class SQLRoundTestCase extends AbstractSQLTestCase {
 		assertTotalPayment(salary);
 		assertCommanBase(salary);
 		
-		Assert.assertEquals(2455.35 , salary.getCommonBase(),0.00);
-		//Assert.assertEquals(99.19 , salary.getSocialSecurityContributions(),0.00);
-		//Assert.assertEquals(490.54 , salary.getTotalEnterprise(),0.00);
+		assertEquals(2455.35 , salary.getCommonBase(),0.00);
+		//assertEquals(99.19 , salary.getSocialSecurityContributions(),0.00);
+		//assertEquals(490.54 , salary.getTotalEnterprise(),0.00);
 		
 		salary.getSalaryDeductions().forEach(d -> {
 			switch (d.getType()) {
 			case COMMON_CONTINGENCY:
-				Assert.assertEquals(115.40, d.getAmount(),0.00);
+				assertEquals(115.40, d.getAmount(),0.00);
 				break;
 			case UNEMPLOYMENT:
-				Assert.assertEquals(38.06, d.getAmount(),0.00);
+				assertEquals(38.06, d.getAmount(),0.00);
 				break;
 			case JOB_TRAINING:
-				Assert.assertEquals(2.46, d.getAmount(),0.00);
+				assertEquals(2.46, d.getAmount(),0.00);
 				break;
 			case IRPF:
 				break;
 			default:
-				Assert.fail("Unknown deduction " + d.getType() + ", " + d.getDescription());
+				fail("Unknown deduction " + d.getType() + ", " + d.getDescription());
 			}
 		});
 
 		salary.getSalaryCosts().forEach(c -> {
 			switch (c.getType()) {
 			case COMMON_CONTINGENCY:
-				Assert.assertEquals(579.46, c.getAmount(),0.00);
+				assertEquals(579.46, c.getAmount(),0.00);
 				break;
 			case UNEMPLOYMENT:
-				Assert.assertEquals(135.04, c.getAmount(),0.00);
+				assertEquals(135.04, c.getAmount(),0.00);
 				break;
 			case JOB_TRAINING:
-				Assert.assertEquals(14.73, c.getAmount(),0.00);
+				assertEquals(14.73, c.getAmount(),0.00);
 				break;
 			case FOGASA:
-				Assert.assertEquals(4.91, c.getAmount(),0.00);
+				assertEquals(4.91, c.getAmount(),0.00);
 				break;
 			case PROFESSIONAL_CONTINGENCY:
 				if ( c.getName().equals("IT_E"))
-					Assert.assertEquals(19.64, c.getAmount(),0.00);
+					assertEquals(19.64, c.getAmount(),0.00);
 				else if ( c.getName().equals("IMS_E"))
-					Assert.assertEquals(17.19, c.getAmount(),0.00);
+					assertEquals(17.19, c.getAmount(),0.00);
 				break;
 			default:
-				Assert.fail("Unknown deduction " + c.getType() + ", " + c.getDescription());
+				fail("Unknown deduction " + c.getType() + ", " + c.getDescription());
 			}
 		});
 		} finally {
@@ -315,16 +310,16 @@ public class SQLRoundTestCase extends AbstractSQLTestCase {
 		assertTotalPayment(salary);
 		assertCommanBase(salary);
 		
-		Assert.assertEquals(2455.35 , salary.getCommonBase(),0.00);
-		//Assert.assertEquals(99.19 , salary.getSocialSecurityContributions(),0.00);
-		//Assert.assertEquals(490.54 , salary.getTotalEnterprise(),0.00);
+		assertEquals(2455.35 , salary.getCommonBase(),0.00);
+		//assertEquals(99.19 , salary.getSocialSecurityContributions(),0.00);
+		//assertEquals(490.54 , salary.getTotalEnterprise(),0.00);
 		
 		double deductions = salary.getSalaryDeductions().stream().collect(Collectors.summingDouble(d->d.getAmount()));
-		Assert.assertEquals(deductions, salary.getTotalDeduction(),0.00);
+		assertEquals(deductions, salary.getTotalDeduction(),0.00);
 
 		
 		
-		Assert.assertEquals(salary.getTotalPayment() - deductions, salary.getTotalLiquid(),FLOATING_POINT_ERROR);
+		assertEquals(salary.getTotalPayment() - deductions, salary.getTotalLiquid(),FLOATING_POINT_ERROR);
 
 		} finally {
 			cleanSystemData(aonContext);
@@ -366,21 +361,21 @@ public class SQLRoundTestCase extends AbstractSQLTestCase {
 		assertTotalPayment(salary);
 		assertCommanBase(salary);
 
-		Assert.assertEquals(2455.35 , salary.getCommonBase(),0.00);
-		//Assert.assertEquals(99.19 , salary.getSocialSecurityContributions(),0.00);
-		//Assert.assertEquals(490.54 , salary.getTotalEnterprise(),0.00);
+		assertEquals(2455.35 , salary.getCommonBase(),0.00);
+		//assertEquals(99.19 , salary.getSocialSecurityContributions(),0.00);
+		//assertEquals(490.54 , salary.getTotalEnterprise(),0.00);
 		
 		double deductions = salary.getSalaryDeductions().stream().collect(Collectors.summingDouble(d->d.getAmount()));
-		Assert.assertEquals(deductions, salary.getTotalDeduction(),0.00);
+		assertEquals(deductions, salary.getTotalDeduction(),0.00);
 
 		double embargos = salary.getSalaryEmbargos().stream().collect(Collectors.summingDouble(d->d.getAmount()));
-		Assert.assertEquals(20.07+ 20.05, embargos ,0.00);
+		assertEquals(20.07+ 20.05, embargos ,0.00);
 		
 		System.out.println("Embargos : " + embargos);
 		System.out.println("Deductions : " + deductions);
 		System.out.println("Payment : " + salary.getTotalPayment());
 		
-		Assert.assertEquals(salary.getTotalPayment() - deductions - 40.12 , salary.getTotalLiquid(),FLOATING_POINT_ERROR);
+		assertEquals(salary.getTotalPayment() - deductions - 40.12 , salary.getTotalLiquid(),FLOATING_POINT_ERROR);
 
 		} finally {
 			cleanSystemData(aonContext);
@@ -392,13 +387,13 @@ public class SQLRoundTestCase extends AbstractSQLTestCase {
 	void assertTotalPayment(Salary salary) {
 	    double totalPayment = 
 	    salary.getSalaryPayments().stream().map( p -> Math.round(p.getAmount()*100)/100.00 ).map( d -> BigDecimal.valueOf(d)).reduce(BigDecimal.ZERO, (d1,d2) -> d1.add(d2)).doubleValue();
-	    Assert.assertEquals(totalPayment, salary.getTotalPayment(),0.00);
+	    assertEquals(totalPayment, salary.getTotalPayment(),0.00);
 	}
 
 	void assertCommanBase(Salary salary) {
 	    double commonBase = 
 	    salary.getSalaryPayments().stream().map( p -> Math.round(p.getQuote()*100)/100.00 ).map( d -> BigDecimal.valueOf(d)).reduce(BigDecimal.ZERO, (d1,d2) -> d1.add(d2)).doubleValue();
-	    Assert.assertEquals(commonBase, salary.getCommonBase(),0.00);
+	    assertEquals(commonBase, salary.getCommonBase(),0.00);
 	}
 
 	@Test
@@ -555,7 +550,7 @@ public class SQLRoundTestCase extends AbstractSQLTestCase {
 		
 		System.out.println( salary.getIrpfBase() + " = " + salary.getInMoneyIrpfBase() + "+" + salary.getInkindIrpfBase());
 		
-		Assert.assertEquals(salary.getIrpfBase(), salary.getInMoneyIrpfBase() + salary.getInkindIrpfBase() ,FLOATING_POINT_ERROR);
+		assertEquals(salary.getIrpfBase(), salary.getInMoneyIrpfBase() + salary.getInkindIrpfBase() ,FLOATING_POINT_ERROR);
 		
 		Map<String, Double> irpfQuotas =
 		salary.getSalaryDatas()
@@ -573,7 +568,7 @@ public class SQLRoundTestCase extends AbstractSQLTestCase {
 		;
 		
 		double totalIrpf = irpfQuotas.values().stream().collect( Collectors.summingDouble( d -> d ));
-		Assert.assertEquals(salary.getTotalIrpf(), totalIrpf ,FLOATING_POINT_ERROR);
+		assertEquals(salary.getTotalIrpf(), totalIrpf ,FLOATING_POINT_ERROR);
 		
 		Map<String, Double> irpfBases =
 		salary.getSalaryDatas()
@@ -591,7 +586,7 @@ public class SQLRoundTestCase extends AbstractSQLTestCase {
 		;
 
 		double irpfBase = irpfBases.values().stream().collect( Collectors.summingDouble( d -> d ));
-		Assert.assertEquals(salary.getIrpfBase(), irpfBase ,FLOATING_POINT_ERROR);
+		assertEquals(salary.getIrpfBase(), irpfBase ,FLOATING_POINT_ERROR);
 
 		assertTotalPayment(salary);
 
@@ -658,7 +653,7 @@ public class SQLRoundTestCase extends AbstractSQLTestCase {
 		assertCommanBase(salary);
 		
 		salary.getSalaryPayments().forEach( p -> System.out.println(p.getDescription() + " = " + p.getAmount()));
-		salary.getSalaryPayments().stream().filter(p -> p.getDescription().startsWith("[92]")).forEach( p -> Assert.assertEquals(81.22, p.getAmount(), 0.00));
+		salary.getSalaryPayments().stream().filter(p -> p.getDescription().startsWith("[92]")).forEach( p -> assertEquals(81.22, p.getAmount(), 0.00));
 
 		} finally {
 		cleanSystemData(aonContext);
@@ -706,9 +701,9 @@ public class SQLRoundTestCase extends AbstractSQLTestCase {
 		.distinct()
 		.count();
 		
-		Assert.assertEquals(1, distinct);
+		assertEquals(1, distinct);
 		
-		Assert.assertEquals(1000+ 83.33 * 2 , salary.getTotalPayment(), 0.00);
+		assertEquals(1000+ 83.33 * 2 , salary.getTotalPayment(), 0.00);
 		
 
 		} finally {
@@ -749,7 +744,7 @@ public class SQLRoundTestCase extends AbstractSQLTestCase {
 
 		//salary.getSalaryPayments().forEach(p -> System.out.println(p.getDescription() + " = " + p.getAmount()));
 
-		Assert.assertEquals(1000.00, salary.getTotalPayment(), 0.00);
+		assertEquals(1000.00, salary.getTotalPayment(), 0.00);
 		
 		// PAGA EXTRA NAVIDAD
 		Date decemberStart = getFirstDayOfMonth(getLastDayOfYear(getToday()));
@@ -758,7 +753,7 @@ public class SQLRoundTestCase extends AbstractSQLTestCase {
 		new SmartContractSalaryCalculator<Salary>( new RoundSalaryBuilder<Salary>(new SalaryBuilder(), d -> d.setScale(2, RoundingMode.HALF_UP) ))
 		.calculate(getContractSalaryCalculatorContext(connection, decemberStart, decemberEnd, decemberEnd, contract));
 		salary.getSalaryPayments().forEach(p -> System.out.println(p.getDescription() + " = " + p.getAmount()));
-		Assert.assertEquals(2000.00, salary.getTotalPayment(), 0.00);
+		assertEquals(2000.00, salary.getTotalPayment(), 0.00);
 		
 		// PAGA EXTRA VERANO 1/2
 		Date juneStart = add(decemberStart, Calendar.MONTH, -6);
@@ -767,7 +762,7 @@ public class SQLRoundTestCase extends AbstractSQLTestCase {
 		new SmartContractSalaryCalculator<Salary>( new RoundSalaryBuilder<Salary>(new SalaryBuilder(), d -> d.setScale(2, RoundingMode.HALF_UP) ))
 		.calculate(getContractSalaryCalculatorContext(connection, juneStart, juneEnd, juneEnd, contract));
 		salary.getSalaryPayments().forEach(p -> System.out.println(p.getDescription() + " = " + p.getAmount()));
-		Assert.assertEquals(1500.00, salary.getTotalPayment(), 0.00);
+		assertEquals(1500.00, salary.getTotalPayment(), 0.00);
 		
 		
 		Date date = getFirstDayOfYear(getToday());
@@ -785,7 +780,7 @@ public class SQLRoundTestCase extends AbstractSQLTestCase {
 		new SmartContractSalaryCalculator<Salary>( new RoundSalaryBuilder<Salary>(new SalaryBuilder(), d -> d.setScale(2, RoundingMode.HALF_UP) ))
 		.calculate(getContractSalaryCalculatorContext(connection, juneStart, juneEnd, juneEnd, contract));
 		salary.getSalaryPayments().forEach(p -> System.out.println(p.getDescription() + " = " + p.getAmount()));
-		Assert.assertEquals(1500.00, salary.getTotalPayment(), 0.00);
+		assertEquals(1500.00, salary.getTotalPayment(), 0.00);
 
 		while ( AonDateUtils.get(date, Calendar.MONTH) < 10 ) {
 		    JooqSalaryBuilder<Salary> jooqSalaryBuilder = new JooqSalaryBuilder<>(connection);
@@ -802,7 +797,7 @@ public class SQLRoundTestCase extends AbstractSQLTestCase {
 		new SmartContractSalaryCalculator<Salary>( new RoundSalaryBuilder<Salary>(new SalaryBuilder(), d -> d.setScale(2, RoundingMode.HALF_UP) ))
 		.calculate(getContractSalaryCalculatorContext(connection, decemberStart, decemberEnd, decemberEnd, contract));
 		salary.getSalaryPayments().forEach(p -> System.out.println(p.getDescription() + " = " + p.getAmount()));
-		Assert.assertEquals(2000.00, salary.getTotalPayment(), 0.00);
+		assertEquals(2000.00, salary.getTotalPayment(), 0.00);
 
 	    } finally {
 		cleanSystemData(aonContext);
@@ -861,7 +856,7 @@ public class SQLRoundTestCase extends AbstractSQLTestCase {
 
 		//salary.getSalaryPayments().forEach(p -> System.out.println(p.getDescription() + " = " + p.getAmount()));
 
-		Assert.assertEquals(1000.00, salary.getTotalPayment(), 0.00);
+		assertEquals(1000.00, salary.getTotalPayment(), 0.00);
 		
 		AgreementRecord agreement = getAgreement(aonContext, category.getAgreementLevel());
 
@@ -873,14 +868,14 @@ public class SQLRoundTestCase extends AbstractSQLTestCase {
 		AgreementExtraRecord decemberExtra = getExtra(aonContext, agreement.getId(), "15/12");
 		ISQLContractSalaryCalculatorContext extraCtx = getExtraSalaryCalculatorContext(connection, contract, decemberExtra, year, december15);
 		Salary extra = new SmartContractSalaryCalculator<Salary>(new SalaryBuilder()).calculate(extraCtx);
-		Assert.assertEquals(1000.00, extra.getTotalPayment(), 0.0000001);
+		assertEquals(1000.00, extra.getTotalPayment(), 0.0000001);
 		
 		// PAGA EXTRA VERANO 1/2
 		Date julyStart = add(getFirstDayOfYear(getToday()), Calendar.MONTH,6 );
 		AgreementExtraRecord julyExtra = getExtra(aonContext, agreement.getId(), "01/07");
 		extraCtx = getExtraSalaryCalculatorContext(connection, contract, julyExtra, year, julyStart);
 		extra = new SmartContractSalaryCalculator<Salary>(new SalaryBuilder()).calculate(extraCtx);
-		Assert.assertEquals(500.00, extra.getTotalPayment(), DELTA);
+		assertEquals(500.00, extra.getTotalPayment(), DELTA);
 		
 		
 		Date date = getFirstDayOfYear(getToday());
@@ -895,7 +890,7 @@ public class SQLRoundTestCase extends AbstractSQLTestCase {
 		}
 		extraCtx = getExtraSalaryCalculatorContext(connection, contract, julyExtra, year, julyStart);
 		extra = new SmartContractSalaryCalculator<Salary>(new SalaryBuilder()).calculate(extraCtx);
-		Assert.assertEquals(500.00, extra.getTotalPayment(), DELTA);
+		assertEquals(500.00, extra.getTotalPayment(), DELTA);
 		while ( AonDateUtils.get(date, Calendar.MONTH) > 0 ) {
 		    JooqSalaryBuilder<Salary> jooqSalaryBuilder = new JooqSalaryBuilder<>(connection);
 		    new SmartContractSalaryCalculator<Salary>(new RoundSalaryBuilder<Salary>(jooqSalaryBuilder,
@@ -907,17 +902,17 @@ public class SQLRoundTestCase extends AbstractSQLTestCase {
 		}
 		extraCtx = getExtraSalaryCalculatorContext(connection, contract, decemberExtra, year, december15);
 		extra = new SmartContractSalaryCalculator<Salary>(new SalaryBuilder()).calculate(extraCtx);
-		Assert.assertEquals(1000.00, extra.getTotalPayment(), DELTA);
+		assertEquals(1000.00, extra.getTotalPayment(), DELTA);
 		
 		aonContext.getDslContext().deleteFrom(SALARY_DATA).where(SALARY_DATA.NAME.like("DECIMAL_%")).execute();
 		
 		extraCtx = getExtraSalaryCalculatorContext(connection, contract, julyExtra, year, julyStart);
 		extra = new SmartContractSalaryCalculator<Salary>(new SalaryBuilder()).calculate(extraCtx);
-		Assert.assertEquals(83.33 * 6, extra.getTotalPayment(), DELTA);
+		assertEquals(83.33 * 6, extra.getTotalPayment(), DELTA);
 
 		extraCtx = getExtraSalaryCalculatorContext(connection, contract, decemberExtra, year, december15);
 		extra = new SmartContractSalaryCalculator<Salary>(new SalaryBuilder()).calculate(extraCtx);
-		Assert.assertEquals(83.33 * 12, extra.getTotalPayment(), DELTA);
+		assertEquals(83.33 * 12, extra.getTotalPayment(), DELTA);
 		
 		
 

@@ -1,7 +1,5 @@
 package com.esferalia.aon.payroll.calculator.sql;
 
-import static com.esferalia.aon.payroll.enumeration.ContextVariable.ERE_BASE;
-
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
 
 public class SQLEreForceTestCase extends SQLERETestCase {

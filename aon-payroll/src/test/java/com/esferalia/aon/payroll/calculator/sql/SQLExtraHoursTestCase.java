@@ -6,15 +6,15 @@ package com.esferalia.aon.payroll.calculator.sql;
 import static com.esferalia.aon.watson.util.AonDateUtils.getFirstDayOfMonth;
 import static com.esferalia.aon.watson.util.AonDateUtils.getLastDayOfMonth;
 import static java.lang.String.format;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.SQLException;
 import java.util.HashMap;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import com.esferalia.aon.jooq.tables.SalaryPayment;
 import com.esferalia.aon.jooq.tables.records.ContractRecord;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.payroll.Salary;
@@ -23,15 +23,12 @@ import com.esferalia.aon.payroll.calculator.IContractSalaryCalculatorContext;
 import com.esferalia.aon.payroll.calculator.SmartContractSalaryCalculator;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.payroll.enumeration.ContractCode;
-import com.esferalia.aon.salary.ISalary;
 import com.esferalia.aon.salary.ISalaryBuilder;
 import com.esferalia.aon.salary.SalaryException;
 import com.esferalia.aon.salary.enumeration.PaymentType;
 import com.esferalia.aon.salary.enumeration.SalaryType;
 import com.esferalia.aon.salary.expression.ExpressionException;
-import com.esferalia.aon.salary.expression.ITimedVariable;
 
-import junit.framework.Assert;
 
 /**
  * @author rtrepiana
@@ -116,19 +113,19 @@ public class SQLExtraHoursTestCase extends AbstractSQLTestCase {
 		for ( com.esferalia.aon.payroll.SalaryPayment payment: salary.getSalaryPayments())
 			System.out.println(payment.getExpression() + "= " + payment.getAmount());
 		
-		Assert.assertEquals(1000.00, salary.getCommonBase(), DELTA);
-		Assert.assertEquals(1100.00, salary.getProfessionalBase(), DELTA);
+		assertEquals(1000.00, salary.getCommonBase(), DELTA);
+		assertEquals(1100.00, salary.getProfessionalBase(), DELTA);
 		
 		String cgcBase = salary.getSalaryData(ContextVariable.CGC_BASE.getName());
-		Assert.assertEquals(1000.00, Double.parseDouble(cgcBase), DELTA);
+		assertEquals(1000.00, Double.parseDouble(cgcBase), DELTA);
 		String cgpBase = salary.getSalaryData(ContextVariable.CGP_BASE.getName());
-		Assert.assertEquals(1100.00, Double.parseDouble(cgpBase), DELTA);
+		assertEquals(1100.00, Double.parseDouble(cgpBase), DELTA);
 		
 		
 		String cgcBaseEnterprise = salary.getSalaryData(ContextVariable.CGC_BASE_ENTERPRISE.getName());
-		Assert.assertEquals(1000.00, Double.parseDouble(cgcBaseEnterprise), DELTA);
+		assertEquals(1000.00, Double.parseDouble(cgcBaseEnterprise), DELTA);
 		String cgpBaseEnterprise = salary.getSalaryData(ContextVariable.CGP_BASE_ENTERPRISE.getName());
-		Assert.assertEquals(1100.00, Double.parseDouble(cgpBaseEnterprise), DELTA);
+		assertEquals(1100.00, Double.parseDouble(cgpBaseEnterprise), DELTA);
 
 	}
 	

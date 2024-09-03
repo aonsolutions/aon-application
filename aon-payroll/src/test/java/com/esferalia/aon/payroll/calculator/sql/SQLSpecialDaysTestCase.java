@@ -24,7 +24,7 @@ import static com.esferalia.aon.watson.util.AonDateUtils.get;
 import static com.esferalia.aon.watson.util.AonDateUtils.getFirstDayOfMonth;
 import static com.esferalia.aon.watson.util.AonDateUtils.getLastDayOfMonth;
 import static java.lang.String.format;
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -33,7 +33,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.esferalia.aon.jooq.tables.records.ContractRecord;
 import com.esferalia.aon.occam.api.AONContext;
@@ -49,8 +49,6 @@ import com.esferalia.aon.salary.enumeration.SalaryType;
 import com.esferalia.aon.salary.expression.ExpressionException;
 import com.esferalia.aon.salary.expression.ITimedResult;
 import com.esferalia.aon.watson.util.AonDateUtils;
-
-import junit.framework.Assert;
 
 public class SQLSpecialDaysTestCase extends AbstractSQLTestCase {
 
@@ -151,7 +149,7 @@ public class SQLSpecialDaysTestCase extends AbstractSQLTestCase {
 		
 		Salary salary = calculator.calculate(ctx);
 		
-		Assert.assertEquals(1000.00, salary.getTotalPayment(), DELTA);
+		assertEquals(1000.00, salary.getTotalPayment(), DELTA);
 		
 		// Add InactivityDays Period -> 14/12/2019 - 24/12/2019
 		Calendar startDateIDay = Calendar.getInstance();
@@ -177,7 +175,7 @@ public class SQLSpecialDaysTestCase extends AbstractSQLTestCase {
 		
 		int lastDayOfMonth = AonDateUtils.get(endDate, Calendar.DAY_OF_MONTH);
 		
-		Assert.assertEquals(1000.00 * (lastDayOfMonth - 11) / 30, salary.getTotalPayment(), DELTA);
+		assertEquals(1000.00 * (lastDayOfMonth - 11) / 30, salary.getTotalPayment(), DELTA);
 		
 	}
 	
@@ -218,7 +216,7 @@ public class SQLSpecialDaysTestCase extends AbstractSQLTestCase {
 		
 		Salary salary = calculator.calculate(ctx);
 		
-		Assert.assertEquals(1, salary.getSalaryDatas().stream().filter(sd -> sd.getName().equals("DIAS_COTIZADOS")).count(), DELTA);
+		assertEquals(1, salary.getSalaryDatas().stream().filter(sd -> sd.getName().equals("DIAS_COTIZADOS")).count(), DELTA);
 		
 		// Add InactivityDays Period -> 13/12/2019 - 20/12/2019
 		Calendar startDateIDay = Calendar.getInstance();
@@ -242,7 +240,7 @@ public class SQLSpecialDaysTestCase extends AbstractSQLTestCase {
 		
 		salary = calculator.calculate(ctx);
 		
-		Assert.assertEquals(2, salary.getSalaryDatas().stream().filter(sd -> sd.getName().equals("DIAS_COTIZADOS")).count(), DELTA);
+		assertEquals(2, salary.getSalaryDatas().stream().filter(sd -> sd.getName().equals("DIAS_COTIZADOS")).count(), DELTA);
 		
 		// Add InactivityDays Period -> 24/12/2019 - 27/12/2019
 		Calendar startDateIDay2 = Calendar.getInstance();
@@ -268,9 +266,9 @@ public class SQLSpecialDaysTestCase extends AbstractSQLTestCase {
 		
 		int lastDayOfMonth = AonDateUtils.get(endDate, Calendar.DAY_OF_MONTH);
 		
-		Assert.assertEquals(3, salary.getSalaryDatas().stream().filter(sd -> sd.getName().equals("DIAS_COTIZADOS")).count(), DELTA);
-		Assert.assertEquals(1000.00 * (lastDayOfMonth - 12) /30, salary.getTotalPayment(), DELTA);
-		Assert.assertEquals(1000.00 * (lastDayOfMonth - 12) /30, salary.getCommonBase(), DELTA);
+		assertEquals(3, salary.getSalaryDatas().stream().filter(sd -> sd.getName().equals("DIAS_COTIZADOS")).count(), DELTA);
+		assertEquals(1000.00 * (lastDayOfMonth - 12) /30, salary.getTotalPayment(), DELTA);
+		assertEquals(1000.00 * (lastDayOfMonth - 12) /30, salary.getCommonBase(), DELTA);
 		
 	}
 	
@@ -351,7 +349,7 @@ public class SQLSpecialDaysTestCase extends AbstractSQLTestCase {
 		for ( SalaryPayment p : salary.getSalaryPayments() )
 			System.out.println(p.getExpression() + " :" + p.getQuote());
 		
-		Assert.assertEquals(1050.00, salary.getCommonBase(), DELTA);
+		assertEquals(1050.00, salary.getCommonBase(), DELTA);
 		
 	}
 
@@ -410,7 +408,7 @@ public class SQLSpecialDaysTestCase extends AbstractSQLTestCase {
 		
 		Salary salary = calculator.calculate(ctx);
 		
-		Assert.assertEquals(1500.00, salary.getTotalPayment(), DELTA);
+		assertEquals(1500.00, salary.getTotalPayment(), DELTA);
 		
 		// Add DropDays Period -> 14/12/2019 - 24/12/2019
 		Calendar startDateIDay = Calendar.getInstance();
@@ -437,9 +435,9 @@ public class SQLSpecialDaysTestCase extends AbstractSQLTestCase {
 		for(SalaryPayment p: salary.getSalaryPayments())
 			System.out.println(p.getDescription() + " = " + p.getAmount() + " = " + p.getQuote() );
 		
-		Assert.assertEquals(1500.00 * 19 / 30, salary.getTotalPayment(), DELTA);
-		Assert.assertEquals(3, salary.getSalaryDatas().stream().filter(sd -> sd.getName().equals("BASE_CGC")).count(), DELTA);
-		Assert.assertEquals(1500.00 * 19 / 30 + 35.00 * 11, salary.getCommonBase(), DELTA);
+		assertEquals(1500.00 * 19 / 30, salary.getTotalPayment(), DELTA);
+		assertEquals(3, salary.getSalaryDatas().stream().filter(sd -> sd.getName().equals("BASE_CGC")).count(), DELTA);
+		assertEquals(1500.00 * 19 / 30 + 35.00 * 11, salary.getCommonBase(), DELTA);
 		
 	}
 	
@@ -497,7 +495,7 @@ public class SQLSpecialDaysTestCase extends AbstractSQLTestCase {
 		
 		Salary salary = calculator.calculate(ctx);
 		
-		Assert.assertEquals(1500.00 /30 * get(contract.getEndDate(), Calendar.DAY_OF_MONTH), salary.getTotalPayment(), DELTA);
+		assertEquals(1500.00 /30 * get(contract.getEndDate(), Calendar.DAY_OF_MONTH), salary.getTotalPayment(), DELTA);
 		
 		addDropContractData(aonContext, contract, getFirstDayOfMonth(getToday()), contract.getEndDate());
 		
@@ -520,9 +518,9 @@ public class SQLSpecialDaysTestCase extends AbstractSQLTestCase {
 		int activeDays = 0;
 		int dropDays = AonDateUtils.get(contract.getEndDate(), Calendar.DAY_OF_MONTH); // not adjust
 
-		Assert.assertEquals(1500.00 * activeDays / 30, salary.getTotalPayment(), DELTA);
-		Assert.assertEquals(1, salary.getSalaryDatas().stream().filter(sd -> sd.getName().equals("BASE_CGC")).count(), DELTA);
-		Assert.assertEquals(1500.00 * activeDays / 30 + 35.00 * dropDays, salary.getCommonBase(), DELTA);
+		assertEquals(1500.00 * activeDays / 30, salary.getTotalPayment(), DELTA);
+		assertEquals(1, salary.getSalaryDatas().stream().filter(sd -> sd.getName().equals("BASE_CGC")).count(), DELTA);
+		assertEquals(1500.00 * activeDays / 30 + 35.00 * dropDays, salary.getCommonBase(), DELTA);
 		
 	}
 	
@@ -580,7 +578,7 @@ public class SQLSpecialDaysTestCase extends AbstractSQLTestCase {
 		
 		Salary salary = calculator.calculate(ctx);
 		
-		Assert.assertEquals(1500.00 /30 * get(contract.getEndDate(), Calendar.DAY_OF_MONTH), salary.getTotalPayment(), DELTA);
+		assertEquals(1500.00 /30 * get(contract.getEndDate(), Calendar.DAY_OF_MONTH), salary.getTotalPayment(), DELTA);
 		
 		addDropContractData(aonContext, contract, getFirstDayOfMonth(getToday()), add(getFirstDayOfMonth(getToday()), Calendar.DAY_OF_MONTH,1) );
 		
@@ -603,9 +601,9 @@ public class SQLSpecialDaysTestCase extends AbstractSQLTestCase {
 		int dropDays = 2; // not adjust
 		int activeDays = 15 -dropDays;
 
-		Assert.assertEquals(1500.00 * activeDays / 30, salary.getTotalPayment(), DELTA);
-		Assert.assertEquals(2, salary.getSalaryDatas().stream().filter(sd -> sd.getName().equals("BASE_CGC")).count(), DELTA);
-		Assert.assertEquals(1500.00 * activeDays / 30 + 35.00 * dropDays, salary.getCommonBase(), DELTA);
+		assertEquals(1500.00 * activeDays / 30, salary.getTotalPayment(), DELTA);
+		assertEquals(2, salary.getSalaryDatas().stream().filter(sd -> sd.getName().equals("BASE_CGC")).count(), DELTA);
+		assertEquals(1500.00 * activeDays / 30 + 35.00 * dropDays, salary.getCommonBase(), DELTA);
 		
 	}
 

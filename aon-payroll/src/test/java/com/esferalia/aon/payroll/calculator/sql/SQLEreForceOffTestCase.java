@@ -10,6 +10,8 @@ import static com.esferalia.aon.watson.util.AonDateUtils.getFirstDayOfYear;
 import static com.esferalia.aon.watson.util.AonDateUtils.getLastDayOfMonth;
 import static java.util.Calendar.DAY_OF_MONTH;
 import static java.util.Calendar.MONTH;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.sql.Connection;
 import java.sql.Date;
@@ -20,9 +22,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.junit.Assert;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
 import com.esferalia.aon.jooq.tables.records.ContractRecord;
 import com.esferalia.aon.jooq.tables.records.PaymentConceptRecord;
@@ -139,21 +140,21 @@ public class SQLEreForceOffTestCase extends SQLERETestCase {
 		
 		cleanSystemCosts(aonContext);
 
-		Assert.assertEquals(
+		assertEquals(
 				(1750.00 * 1.10) * 0.50
 						, salary.getTotalPayment(),
 				DELTA);
 
-		Assert.assertEquals(
+		assertEquals(
 				(1750.00 * 1.10), salary.getCommonBase(),
 				DELTA);
 
-		Assert.assertEquals(
+		assertEquals(
 				salary.getTotalPayment() * 0.15 
 				, salary.getSocialSecurityContributions(),
 				DELTA);
 
-		Assert.assertEquals(
+		assertEquals(
 				salary.getTotalPayment() * ((23.6+4+1.50)/100.00) 
 				, salary.getTotalEnterprise(),
 				DELTA);
@@ -230,21 +231,21 @@ public class SQLEreForceOffTestCase extends SQLERETestCase {
 					+ " (" + bonus.getDescription() + ")");
 		}
 
-		Assert.assertEquals(
+		assertEquals(
 				(1750.00 * 1.10) * 0.00
 						, salary.getTotalPayment(),
 				DELTA);
 
-		Assert.assertEquals(
+		assertEquals(
 				(1750.00 * 1.10), salary.getCommonBase(),
 				DELTA);
 
-		Assert.assertEquals(
+		assertEquals(
 				salary.getTotalPayment() * 0.15 
 				, salary.getSocialSecurityContributions(),
 				DELTA);
 
-		Assert.assertEquals(
+		assertEquals(
 				0.00 
 				, salary.getTotalEnterprise(),
 				DELTA);
@@ -326,21 +327,21 @@ public class SQLEreForceOffTestCase extends SQLERETestCase {
 		int ereDays = AonDateUtils.get(startEre, Calendar.DAY_OF_MONTH);
 		int workDays = monthDays - ereDays;
 
-		Assert.assertEquals(
+		assertEquals(
 				(1750.00 * 1.10) * 10 / monthDays 
 				, salary.getTotalPayment(),
 				DELTA);
 
-		Assert.assertEquals(
+		assertEquals(
 				(1750.00 * 1.10), salary.getCommonBase(),
 				DELTA);
 
-		Assert.assertEquals(
+		assertEquals(
 				salary.getTotalPayment() * 0.15 
 				, salary.getSocialSecurityContributions(),
 				DELTA);
 
-		Assert.assertEquals(
+		assertEquals(
 				salary.getTotalPayment() * ((23.6+4+1.50)/100.00) 
 				, salary.getTotalEnterprise(),
 				DELTA);
@@ -422,28 +423,28 @@ public class SQLEreForceOffTestCase extends SQLERETestCase {
 		int ereDays = AonDateUtils.get(startEre, Calendar.DAY_OF_MONTH);
 		int workDays = monthDays - 10;
 
-		Assert.assertEquals(
+		assertEquals(
 				(1750.00 * 1.10) * 10 / monthDays + (1750.00 * 1.10) * workDays / monthDays * 0.80 
 				, salary.getTotalPayment(),
 				DELTA);
 
-		Assert.assertEquals(
+		assertEquals(
 				(1750.00 * 1.10), salary.getCommonBase(),
 				DELTA);
 
-		Assert.assertEquals(
+		assertEquals(
 				salary.getTotalPayment() * 0.15 
 				, salary.getSocialSecurityContributions(),
 				DELTA);
 
-		Assert.assertEquals(
+		assertEquals(
 				salary.getTotalPayment() * ((23.6+4+1.50)/100.00) 
 				, salary.getTotalEnterprise(),
 				DELTA);
 	}
 	
 	@Test
-	@Ignore("'REINCORPRADO_ERE' has been deprecated")
+	@Disabled("'REINCORPRADO_ERE' has been deprecated")
 	public void testVariableREINCORPRADO_EREI() throws ExpressionException, SQLException,
 			SalaryException {
 		Connection connection = getConnection();
@@ -479,8 +480,8 @@ public class SQLEreForceOffTestCase extends SQLERETestCase {
 		List<ITimedResult<Boolean>> ereBack = ctx.getExpressionContext().eval(
 				"REINCORPORADO_ERE", startDate, endDate, Boolean.class);
 
-		Assert.assertEquals(backDate, ereBack.get(0).getPeriod().getStart());
-		Assert.assertEquals(Boolean.TRUE, ereBack.get(0).getValue());
+		assertEquals(backDate, ereBack.get(0).getPeriod().getStart());
+		assertEquals(Boolean.TRUE, ereBack.get(0).getValue());
 
 	
 		startDate = add(startDate, MONTH, 1);
@@ -489,14 +490,14 @@ public class SQLEreForceOffTestCase extends SQLERETestCase {
 				connection, startDate, endDate, endDate, contract);
 		ereBack = ctx.getExpressionContext().eval(
 				"REINCORPORADO_ERE", startDate, endDate, Boolean.class);
-		Assert.assertEquals(1, ereBack.size());
-		Assert.assertEquals(startDate, ereBack.get(0).getPeriod().getStart());
-		Assert.assertEquals(endDate, ereBack.get(0).getPeriod().getEnd());
-		Assert.assertEquals(Boolean.TRUE, ereBack.get(0).getValue());
+		assertEquals(1, ereBack.size());
+		assertEquals(startDate, ereBack.get(0).getPeriod().getStart());
+		assertEquals(endDate, ereBack.get(0).getPeriod().getEnd());
+		assertEquals(Boolean.TRUE, ereBack.get(0).getValue());
 	}
 
 	@Test
-	@Ignore("'REINCORPRADO_ERE' has been deprecated")
+	@Disabled("'REINCORPRADO_ERE' has been deprecated")
 	public void testVariableREINCORPRADO_EREII() throws ExpressionException, SQLException,
 			SalaryException {
 		Connection connection = getConnection();
@@ -514,7 +515,7 @@ public class SQLEreForceOffTestCase extends SQLERETestCase {
 		try {
 		List<ITimedResult<Boolean>> ereBack = ctx.getExpressionContext().eval(
 				"REINCORPORADO_ERE", startDate, endDate, Boolean.class);
-		Assert.fail();
+		fail();
 		} catch ( UndefinedVariablesException e ) {
 			
 		}
@@ -526,14 +527,14 @@ public class SQLEreForceOffTestCase extends SQLERETestCase {
 		try {
 		List<ITimedResult<Boolean>> ereBack = ctx.getExpressionContext().eval(
 				"REINCORPORADO_ERE", startDate, endDate, Boolean.class);
-		Assert.fail();
+		fail();
 		} catch ( UndefinedVariablesException e ) {
 			
 		}
 	}
 	
 	@Test
-	@Ignore("'REINCORPRADO_ERE' has been deprecated")
+	@Disabled("'REINCORPRADO_ERE' has been deprecated")
 	public void testVariableREINCORPRADO_EREIII() throws ExpressionException, SQLException,
 			SalaryException {
 		Connection connection = getConnection();
@@ -570,9 +571,9 @@ public class SQLEreForceOffTestCase extends SQLERETestCase {
 		List<ITimedResult<Boolean>> ereBack = ctx.getExpressionContext().eval(
 				"REINCORPORADO_ERE", startDate, endDate, Boolean.class);
 
-		Assert.assertEquals(1, ereBack.size());
-		Assert.assertEquals(backDate, ereBack.get(0).getPeriod().getStart());
-		Assert.assertEquals(Boolean.TRUE, ereBack.get(0).getValue());
+		assertEquals(1, ereBack.size());
+		assertEquals(backDate, ereBack.get(0).getPeriod().getStart());
+		assertEquals(Boolean.TRUE, ereBack.get(0).getValue());
 		
 		startDate = add(startDate, MONTH, 1);
 		endDate = getLastDayOfMonth(startDate);
@@ -580,15 +581,15 @@ public class SQLEreForceOffTestCase extends SQLERETestCase {
 				connection, startDate, endDate, endDate, contract);
 		ereBack = ctx.getExpressionContext().eval(
 				"REINCORPORADO_ERE", startDate, endDate, Boolean.class);
-		Assert.assertEquals(1, ereBack.size());
-		Assert.assertEquals(startDate, ereBack.get(0).getPeriod().getStart());
-		Assert.assertEquals(endDate, ereBack.get(0).getPeriod().getEnd());
-		Assert.assertEquals(Boolean.TRUE, ereBack.get(0).getValue());
+		assertEquals(1, ereBack.size());
+		assertEquals(startDate, ereBack.get(0).getPeriod().getStart());
+		assertEquals(endDate, ereBack.get(0).getPeriod().getEnd());
+		assertEquals(Boolean.TRUE, ereBack.get(0).getValue());
 		
 	}
 	
 	@Test
-	@Ignore("'REINCORPRADO_ERE' has been deprecated")
+	@Disabled("'REINCORPRADO_ERE' has been deprecated")
 	public void testVariableREINCORPRADO_EREIV() throws ExpressionException, SQLException,
 			SalaryException {
 		Connection connection = getConnection();
@@ -623,7 +624,7 @@ public class SQLEreForceOffTestCase extends SQLERETestCase {
 		try {
 		List<ITimedResult<Boolean>> ereBack = ctx.getExpressionContext().eval(
 				"REINCORPORADO_ERE", startDate, endDate, Boolean.class);
-		Assert.fail();
+		fail();
 		} catch ( UndefinedVariablesException e ) {
 			
 		}
@@ -635,7 +636,7 @@ public class SQLEreForceOffTestCase extends SQLERETestCase {
 		try {
 		List<ITimedResult<Boolean>> ereBack = ctx.getExpressionContext().eval(
 				"REINCORPORADO_ERE", startDate, endDate, Boolean.class);
-		Assert.fail();
+		fail();
 		} catch ( UndefinedVariablesException e ) {
 			
 		}
@@ -643,7 +644,7 @@ public class SQLEreForceOffTestCase extends SQLERETestCase {
 	}
 
 	@Test
-	@Ignore("'REINCORPRADO_ERE' has been deprecated")
+	@Disabled("'REINCORPRADO_ERE' has been deprecated")
 	public void testVariableREINCORPRADO_EREV() throws ExpressionException, SQLException,
 			SalaryException {
 		Connection connection = getConnection();
@@ -687,7 +688,7 @@ public class SQLEreForceOffTestCase extends SQLERETestCase {
 		try {
 		List<ITimedResult<Boolean>> ereBack = ctx.getExpressionContext().eval(
 				"REINCORPORADO_ERE", startDate, endDate, Boolean.class);
-		Assert.fail();
+		fail();
 		} catch ( UndefinedVariablesException e ) {
 			
 		}
@@ -699,7 +700,7 @@ public class SQLEreForceOffTestCase extends SQLERETestCase {
 		try {
 		List<ITimedResult<Boolean>> ereBack = ctx.getExpressionContext().eval(
 				"REINCORPORADO_ERE", startDate, endDate, Boolean.class);
-		Assert.fail();
+		fail();
 		} catch ( UndefinedVariablesException e ) {
 			
 		}
@@ -707,7 +708,7 @@ public class SQLEreForceOffTestCase extends SQLERETestCase {
 	}
 
 	@Test
-	@Ignore("'REINCORPRADO_ERE' has been deprecated")
+	@Disabled("'REINCORPRADO_ERE' has been deprecated")
 	public void testVariableREINCORPRADO_EREVI() throws ExpressionException, SQLException,
 			SalaryException {
 		Connection connection = getConnection();
@@ -753,9 +754,9 @@ public class SQLEreForceOffTestCase extends SQLERETestCase {
 		List<ITimedResult<Boolean>> ereBack = ctx.getExpressionContext().eval(
 				"REINCORPORADO_ERE", startDate, endDate, Boolean.class);
 
-		Assert.assertEquals(1, ereBack.size());
-		Assert.assertEquals(backDate, ereBack.get(0).getPeriod().getStart());
-		Assert.assertEquals(Boolean.TRUE, ereBack.get(0).getValue());
+		assertEquals(1, ereBack.size());
+		assertEquals(backDate, ereBack.get(0).getPeriod().getStart());
+		assertEquals(Boolean.TRUE, ereBack.get(0).getValue());
 		
 		startDate = add(startDate, MONTH, 1);
 		endDate = getLastDayOfMonth(startDate);
@@ -763,14 +764,14 @@ public class SQLEreForceOffTestCase extends SQLERETestCase {
 				connection, startDate, endDate, endDate, contract);
 		ereBack = ctx.getExpressionContext().eval(
 				"REINCORPORADO_ERE", startDate, endDate, Boolean.class);
-		Assert.assertEquals(1, ereBack.size());
-		Assert.assertEquals(startDate, ereBack.get(0).getPeriod().getStart());
-		Assert.assertEquals(endDate, ereBack.get(0).getPeriod().getEnd());
-		Assert.assertEquals(Boolean.TRUE, ereBack.get(0).getValue());
+		assertEquals(1, ereBack.size());
+		assertEquals(startDate, ereBack.get(0).getPeriod().getStart());
+		assertEquals(endDate, ereBack.get(0).getPeriod().getEnd());
+		assertEquals(Boolean.TRUE, ereBack.get(0).getValue());
 	}
 
 	@Test
-	@Ignore("'REINCORPRADO_ERE' has been deprecated")
+	@Disabled("'REINCORPRADO_ERE' has been deprecated")
 	public void testVariableREINCORPRADO_EREVII() throws ExpressionException, SQLException,
 			SalaryException {
 		Connection connection = getConnection();
@@ -815,14 +816,14 @@ public class SQLEreForceOffTestCase extends SQLERETestCase {
 
 		List<ITimedResult<Boolean>> ereBack = ctx.getExpressionContext().eval(
 				"REINCORPORADO_ERE", startDate, endDate, Boolean.class);
-		Assert.assertEquals(1, ereBack.size());
-		Assert.assertEquals(backDate, ereBack.get(0).getPeriod().getStart());
-		Assert.assertEquals(Boolean.TRUE, ereBack.get(0).getValue());
+		assertEquals(1, ereBack.size());
+		assertEquals(backDate, ereBack.get(0).getPeriod().getStart());
+		assertEquals(Boolean.TRUE, ereBack.get(0).getValue());
 
 	}
 
 	@Test
-	@Ignore("'REINCORPRADO_ERE' has been deprecated")
+	@Disabled("'REINCORPRADO_ERE' has been deprecated")
 	public void testVariableREINCORPRADO_EREVIII() throws ExpressionException, SQLException,
 			SalaryException {
 		Connection connection = getConnection();
@@ -859,9 +860,9 @@ public class SQLEreForceOffTestCase extends SQLERETestCase {
 		List<ITimedResult<Boolean>> ereBack = ctx.getExpressionContext().eval(
 				"REINCORPORADO_ERE", startDate, endDate, Boolean.class);
 
-		Assert.assertEquals(1, ereBack.size());
-		Assert.assertEquals(backDate, ereBack.get(0).getPeriod().getStart());
-		Assert.assertEquals(Boolean.TRUE, ereBack.get(0).getValue());
+		assertEquals(1, ereBack.size());
+		assertEquals(backDate, ereBack.get(0).getPeriod().getStart());
+		assertEquals(Boolean.TRUE, ereBack.get(0).getValue());
 		
 		startDate = add(startDate, MONTH, 1);
 		endDate = getLastDayOfMonth(startDate);
@@ -869,14 +870,14 @@ public class SQLEreForceOffTestCase extends SQLERETestCase {
 				connection, startDate, endDate, endDate, contract);
 		ereBack = ctx.getExpressionContext().eval(
 				"REINCORPORADO_ERE", startDate, endDate, Boolean.class);
-		Assert.assertEquals(1, ereBack.size());
-		Assert.assertEquals(startDate, ereBack.get(0).getPeriod().getStart());
-		Assert.assertEquals(endDate, ereBack.get(0).getPeriod().getEnd());
-		Assert.assertEquals(Boolean.TRUE, ereBack.get(0).getValue());
+		assertEquals(1, ereBack.size());
+		assertEquals(startDate, ereBack.get(0).getPeriod().getStart());
+		assertEquals(endDate, ereBack.get(0).getPeriod().getEnd());
+		assertEquals(Boolean.TRUE, ereBack.get(0).getValue());
 	}
 
 	@Test
-	@Ignore("'REINCORPRADO_ERE' has been deprecated")
+	@Disabled("'REINCORPRADO_ERE' has been deprecated")
 	public void testVariableREINCORPRADO_EREIX() throws ExpressionException, SQLException,
 			SalaryException {
 		Connection connection = getConnection();
@@ -922,9 +923,9 @@ public class SQLEreForceOffTestCase extends SQLERETestCase {
 		List<ITimedResult<Boolean>> ereBack = ctx.getExpressionContext().eval(
 				"REINCORPORADO_ERE", startDate, endDate, Boolean.class);
 
-		Assert.assertEquals(1, ereBack.size());
-		Assert.assertEquals(backDate, ereBack.get(0).getPeriod().getStart());
-		Assert.assertEquals(Boolean.TRUE, ereBack.get(0).getValue());
+		assertEquals(1, ereBack.size());
+		assertEquals(backDate, ereBack.get(0).getPeriod().getStart());
+		assertEquals(Boolean.TRUE, ereBack.get(0).getValue());
 		
 		startDate = add(startDate, MONTH, 1);
 		endDate = getLastDayOfMonth(startDate);
@@ -932,14 +933,14 @@ public class SQLEreForceOffTestCase extends SQLERETestCase {
 				connection, startDate, endDate, endDate, contract);
 		ereBack = ctx.getExpressionContext().eval(
 				"REINCORPORADO_ERE", startDate, endDate, Boolean.class);
-		Assert.assertEquals(1, ereBack.size());
-		Assert.assertEquals(startDate, ereBack.get(0).getPeriod().getStart());
-		Assert.assertEquals(endDate, ereBack.get(0).getPeriod().getEnd());
-		Assert.assertEquals(Boolean.TRUE, ereBack.get(0).getValue());
+		assertEquals(1, ereBack.size());
+		assertEquals(startDate, ereBack.get(0).getPeriod().getStart());
+		assertEquals(endDate, ereBack.get(0).getPeriod().getEnd());
+		assertEquals(Boolean.TRUE, ereBack.get(0).getValue());
 	}
 
 	@Test
-	@Ignore("'REINCORPRADO_ERE' has been deprecated")
+	@Disabled("'REINCORPRADO_ERE' has been deprecated")
 	public void testVariableREINCORPRADO_EREX() throws ExpressionException, SQLException,
 			SalaryException {
 		Connection connection = getConnection();
@@ -983,7 +984,7 @@ public class SQLEreForceOffTestCase extends SQLERETestCase {
 		try {
 		List<ITimedResult<Boolean>> ereBack = ctx.getExpressionContext().eval(
 				"REINCORPORADO_ERE", startDate, endDate, Boolean.class);
-		Assert.fail();
+		fail();
 		} catch ( UndefinedVariablesException e ) {
 			
 		}
@@ -994,7 +995,7 @@ public class SQLEreForceOffTestCase extends SQLERETestCase {
 		try {
 		List<ITimedResult<Boolean>> ereBack = ctx.getExpressionContext().eval(
 				"REINCORPORADO_ERE", startDate, endDate, Boolean.class);
-		Assert.fail();
+		fail();
 		} catch ( UndefinedVariablesException e ) {
 			
 		}
@@ -1027,10 +1028,10 @@ public class SQLEreForceOffTestCase extends SQLERETestCase {
 		List<ITimedResult<Boolean>> fullEre = ctx.getExpressionContext().eval(
 				"ERE_TOTAL", startDate, endDate, Boolean.class);
 
-		Assert.assertEquals(1, fullEre.size());
-		Assert.assertEquals(ereDay, fullEre.get(0).getPeriod().getStart());
-		Assert.assertEquals(ereDay, fullEre.get(0).getPeriod().getEnd());
-		Assert.assertEquals(Boolean.TRUE, fullEre.get(0).getValue());
+		assertEquals(1, fullEre.size());
+		assertEquals(ereDay, fullEre.get(0).getPeriod().getStart());
+		assertEquals(ereDay, fullEre.get(0).getPeriod().getEnd());
+		assertEquals(Boolean.TRUE, fullEre.get(0).getValue());
 	}
 
 	@Test
@@ -1059,10 +1060,10 @@ public class SQLEreForceOffTestCase extends SQLERETestCase {
 		List<ITimedResult<Boolean>> fullEre = ctx.getExpressionContext().eval(
 				"ERE_TOTAL", startDate, endDate, Boolean.class);
 
-		Assert.assertEquals(1, fullEre.size());
-		Assert.assertEquals(startDate, fullEre.get(0).getPeriod().getStart());
-		Assert.assertEquals(endDate, fullEre.get(0).getPeriod().getEnd());
-		Assert.assertEquals(Boolean.TRUE, fullEre.get(0).getValue());
+		assertEquals(1, fullEre.size());
+		assertEquals(startDate, fullEre.get(0).getPeriod().getStart());
+		assertEquals(endDate, fullEre.get(0).getPeriod().getEnd());
+		assertEquals(Boolean.TRUE, fullEre.get(0).getValue());
 
 	}
 
@@ -1095,10 +1096,10 @@ public class SQLEreForceOffTestCase extends SQLERETestCase {
 		List<ITimedResult<Boolean>> fullEre = ctx.getExpressionContext().eval(
 				"ERE_TOTAL", startDate, endDate, Boolean.class);
 
-		Assert.assertEquals(1, fullEre.size());
-		Assert.assertEquals(startDate, fullEre.get(0).getPeriod().getStart());
-		Assert.assertEquals(endDate, fullEre.get(0).getPeriod().getEnd());
-		Assert.assertEquals(Boolean.TRUE, fullEre.get(0).getValue());
+		assertEquals(1, fullEre.size());
+		assertEquals(startDate, fullEre.get(0).getPeriod().getStart());
+		assertEquals(endDate, fullEre.get(0).getPeriod().getEnd());
+		assertEquals(Boolean.TRUE, fullEre.get(0).getValue());
 	}
 
 	@Test
@@ -1132,15 +1133,15 @@ public class SQLEreForceOffTestCase extends SQLERETestCase {
 				"ERE_TOTAL", startDate, endDate, Boolean.class);
 		
 		Date backDate = add(startDate, DAY_OF_MONTH, 11);
-		Assert.assertEquals(2, fullEre.size());
-		Assert.assertEquals(startDate, fullEre.get(0).getPeriod().getStart());
-		Assert.assertEquals(backDate, fullEre.get(0).getPeriod().getEnd());
-		Assert.assertEquals(Boolean.TRUE, fullEre.get(0).getValue());
+		assertEquals(2, fullEre.size());
+		assertEquals(startDate, fullEre.get(0).getPeriod().getStart());
+		assertEquals(backDate, fullEre.get(0).getPeriod().getEnd());
+		assertEquals(Boolean.TRUE, fullEre.get(0).getValue());
 
 		backDate = add(startDate, DAY_OF_MONTH, 13);
-		Assert.assertEquals(backDate, fullEre.get(1).getPeriod().getStart());
-		Assert.assertEquals(endDate, fullEre.get(1).getPeriod().getEnd());
-		Assert.assertEquals(Boolean.FALSE, fullEre.get(1).getValue());
+		assertEquals(backDate, fullEre.get(1).getPeriod().getStart());
+		assertEquals(endDate, fullEre.get(1).getPeriod().getEnd());
+		assertEquals(Boolean.FALSE, fullEre.get(1).getValue());
 	}
 
 	@Test
@@ -1173,25 +1174,25 @@ public class SQLEreForceOffTestCase extends SQLERETestCase {
 		List<ITimedResult<Boolean>> fullEre = ctx.getExpressionContext().eval(
 				"ERE_TOTAL", startDate, endDate, Boolean.class);
 		Date backDate = add(startDate, DAY_OF_MONTH, 11);
-		Assert.assertEquals(2, fullEre.size());
-		Assert.assertEquals(startDate, fullEre.get(0).getPeriod().getStart());
-		Assert.assertEquals(backDate, fullEre.get(0).getPeriod().getEnd());
-		Assert.assertEquals(Boolean.TRUE, fullEre.get(0).getValue());
+		assertEquals(2, fullEre.size());
+		assertEquals(startDate, fullEre.get(0).getPeriod().getStart());
+		assertEquals(backDate, fullEre.get(0).getPeriod().getEnd());
+		assertEquals(Boolean.TRUE, fullEre.get(0).getValue());
 
 		backDate = add(startDate, DAY_OF_MONTH, 13);
-		Assert.assertEquals(backDate, fullEre.get(1).getPeriod().getStart());
-		Assert.assertEquals(endDate, fullEre.get(1).getPeriod().getEnd());
-		Assert.assertEquals(Boolean.FALSE, fullEre.get(1).getValue());
+		assertEquals(backDate, fullEre.get(1).getPeriod().getStart());
+		assertEquals(endDate, fullEre.get(1).getPeriod().getEnd());
+		assertEquals(Boolean.FALSE, fullEre.get(1).getValue());
 
 
 		Date _13DayOfMonth = add(startDate, Calendar.DAY_OF_MONTH, 12);
 		fullEre = ctx.getExpressionContext().eval(
 				"ERE_TOTAL", add(_13DayOfMonth, Calendar.DAY_OF_MONTH,1), endDate, Boolean.class);
 
-		Assert.assertEquals(1, fullEre.size());
-		Assert.assertEquals(backDate, fullEre.get(0).getPeriod().getStart());
-		Assert.assertEquals(endDate, fullEre.get(0).getPeriod().getEnd());
-		Assert.assertEquals(Boolean.FALSE, fullEre.get(0).getValue());
+		assertEquals(1, fullEre.size());
+		assertEquals(backDate, fullEre.get(0).getPeriod().getStart());
+		assertEquals(endDate, fullEre.get(0).getPeriod().getEnd());
+		assertEquals(Boolean.FALSE, fullEre.get(0).getValue());
 	}
 
 	@Test
@@ -1226,29 +1227,29 @@ public class SQLEreForceOffTestCase extends SQLERETestCase {
 				"ERE_TOTAL", startDate, endDate, Boolean.class);
 
 		Date backDate = add(startDate, DAY_OF_MONTH, 11);
-		Assert.assertEquals(3, fullEre.size());
-		Assert.assertEquals(startDate, fullEre.get(0).getPeriod().getStart());
-		Assert.assertEquals(backDate, fullEre.get(0).getPeriod().getEnd());
-		Assert.assertEquals(Boolean.TRUE, fullEre.get(0).getValue());
+		assertEquals(3, fullEre.size());
+		assertEquals(startDate, fullEre.get(0).getPeriod().getStart());
+		assertEquals(backDate, fullEre.get(0).getPeriod().getEnd());
+		assertEquals(Boolean.TRUE, fullEre.get(0).getValue());
 
 		backDate = add(startDate, DAY_OF_MONTH, 12);
-		Assert.assertEquals(backDate, fullEre.get(1).getPeriod().getStart());
-		Assert.assertEquals(backDate, fullEre.get(1).getPeriod().getEnd());
-		Assert.assertEquals(Boolean.FALSE, fullEre.get(1).getValue());
+		assertEquals(backDate, fullEre.get(1).getPeriod().getStart());
+		assertEquals(backDate, fullEre.get(1).getPeriod().getEnd());
+		assertEquals(Boolean.FALSE, fullEre.get(1).getValue());
 		
 		backDate = add(startDate, DAY_OF_MONTH, 13);
-		Assert.assertEquals(backDate, fullEre.get(2).getPeriod().getStart());
-		Assert.assertEquals(endDate, fullEre.get(2).getPeriod().getEnd());
-		Assert.assertEquals(Boolean.FALSE, fullEre.get(2).getValue());
+		assertEquals(backDate, fullEre.get(2).getPeriod().getStart());
+		assertEquals(endDate, fullEre.get(2).getPeriod().getEnd());
+		assertEquals(Boolean.FALSE, fullEre.get(2).getValue());
 
 
 		fullEre = ctx.getExpressionContext().eval(
 				"ERE_TOTAL", add(_13DayOfMonth, Calendar.DAY_OF_MONTH,1), endDate, Boolean.class);
 
 		backDate = add(startDate, DAY_OF_MONTH, 13);
-		Assert.assertEquals(backDate, fullEre.get(0).getPeriod().getStart());
-		Assert.assertEquals(endDate, fullEre.get(0).getPeriod().getEnd());
-		Assert.assertEquals(Boolean.FALSE, fullEre.get(0).getValue());
+		assertEquals(backDate, fullEre.get(0).getPeriod().getStart());
+		assertEquals(endDate, fullEre.get(0).getPeriod().getEnd());
+		assertEquals(Boolean.FALSE, fullEre.get(0).getValue());
 		
 	}
 
@@ -1278,10 +1279,10 @@ public class SQLEreForceOffTestCase extends SQLERETestCase {
 		List<ITimedResult<Boolean>> fullEre = ctx.getExpressionContext().eval(
 				"ERE_TOTAL", startDate, endDate, Boolean.class);
 
-		Assert.assertEquals(1, fullEre.size());
-		Assert.assertEquals(startDate, fullEre.get(0).getPeriod().getStart());
-		Assert.assertEquals(endDate, fullEre.get(0).getPeriod().getEnd());
-		Assert.assertEquals(Boolean.TRUE, fullEre.get(0).getValue());
+		assertEquals(1, fullEre.size());
+		assertEquals(startDate, fullEre.get(0).getPeriod().getStart());
+		assertEquals(endDate, fullEre.get(0).getPeriod().getEnd());
+		assertEquals(Boolean.TRUE, fullEre.get(0).getValue());
 		
 		ContractRecord contractII =
 		newContract(aonContext, 
@@ -1306,10 +1307,10 @@ public class SQLEreForceOffTestCase extends SQLERETestCase {
 		fullEre = ctx.getExpressionContext().eval(
 				"ERE_TOTAL", startDate, endDate, Boolean.class);
 
-		Assert.assertEquals(1, fullEre.size());
-		Assert.assertEquals(startDate, fullEre.get(0).getPeriod().getStart());
-		Assert.assertEquals(endDate, fullEre.get(0).getPeriod().getEnd());
-		Assert.assertEquals(Boolean.TRUE, fullEre.get(0).getValue());		
+		assertEquals(1, fullEre.size());
+		assertEquals(startDate, fullEre.get(0).getPeriod().getStart());
+		assertEquals(endDate, fullEre.get(0).getPeriod().getEnd());
+		assertEquals(Boolean.TRUE, fullEre.get(0).getValue());		
 		
 		addData(aonContext, contractII, startDate, add(startDate, Calendar.DAY_OF_MONTH, 11),
 				new HashMap<String, String>() {
@@ -1324,9 +1325,9 @@ public class SQLEreForceOffTestCase extends SQLERETestCase {
 		fullEre = ctx.getExpressionContext().eval(
 				"ERE_TOTAL", startDate, endDate, Boolean.class);
 
-		Assert.assertEquals(2, fullEre.size());
-		Assert.assertEquals(Boolean.TRUE, fullEre.get(0).getValue());
-		Assert.assertEquals(Boolean.FALSE, fullEre.get(1).getValue());
+		assertEquals(2, fullEre.size());
+		assertEquals(Boolean.TRUE, fullEre.get(0).getValue());
+		assertEquals(Boolean.FALSE, fullEre.get(1).getValue());
 
 		addData(aonContext, contractII, add(startDate, Calendar.DAY_OF_MONTH, 12), endDate,
 				new HashMap<String, String>() {
@@ -1340,10 +1341,10 @@ public class SQLEreForceOffTestCase extends SQLERETestCase {
 		fullEre = ctx.getExpressionContext().eval(
 				"ERE_TOTAL", startDate, endDate, Boolean.class);
 
-		Assert.assertEquals(1, fullEre.size());
-		Assert.assertEquals(startDate, fullEre.get(0).getPeriod().getStart());
-		Assert.assertEquals(endDate, fullEre.get(0).getPeriod().getEnd());
-		Assert.assertEquals(Boolean.TRUE, fullEre.get(0).getValue());
+		assertEquals(1, fullEre.size());
+		assertEquals(startDate, fullEre.get(0).getPeriod().getStart());
+		assertEquals(endDate, fullEre.get(0).getPeriod().getEnd());
+		assertEquals(Boolean.TRUE, fullEre.get(0).getValue());
 		
 		ContractRecord contracts [] = new  ContractRecord [33];
 		
@@ -1374,10 +1375,10 @@ public class SQLEreForceOffTestCase extends SQLERETestCase {
 		fullEre = ctx.getExpressionContext().eval(
 				"ERE_TOTAL", startDate, endDate, Boolean.class);
 
-		Assert.assertEquals(1, fullEre.size());
-		Assert.assertEquals(startDate, fullEre.get(0).getPeriod().getStart());
-		Assert.assertEquals(endDate, fullEre.get(0).getPeriod().getEnd());
-		Assert.assertEquals(Boolean.TRUE, fullEre.get(0).getValue());
+		assertEquals(1, fullEre.size());
+		assertEquals(startDate, fullEre.get(0).getPeriod().getStart());
+		assertEquals(endDate, fullEre.get(0).getPeriod().getEnd());
+		assertEquals(Boolean.TRUE, fullEre.get(0).getValue());
 		
 		addData(aonContext, contracts[22], startDate, endDate,
 				new HashMap<String, String>() {
@@ -1389,10 +1390,10 @@ public class SQLEreForceOffTestCase extends SQLERETestCase {
 				connection, startDate, endDate, endDate, contract);
 		fullEre = ctx.getExpressionContext().eval(
 				"ERE_TOTAL", startDate, endDate, Boolean.class);
-		Assert.assertEquals(1, fullEre.size());
-		Assert.assertEquals(startDate, fullEre.get(0).getPeriod().getStart());
-		Assert.assertEquals(endDate, fullEre.get(0).getPeriod().getEnd());
-		Assert.assertEquals(Boolean.TRUE, fullEre.get(0).getValue());
+		assertEquals(1, fullEre.size());
+		assertEquals(startDate, fullEre.get(0).getPeriod().getStart());
+		assertEquals(endDate, fullEre.get(0).getPeriod().getEnd());
+		assertEquals(Boolean.TRUE, fullEre.get(0).getValue());
 
 		ContractRecord contractIII =
 		newContract(aonContext, 
@@ -1426,13 +1427,13 @@ public class SQLEreForceOffTestCase extends SQLERETestCase {
 		fullEre = ctx.getExpressionContext().eval(
 				"ERE_TOTAL", startDate, endDate, Boolean.class);
 
-		Assert.assertEquals(2, fullEre.size());
-		Assert.assertEquals(startDate, fullEre.get(0).getPeriod().getStart());
-		Assert.assertEquals( add(startDate, DAY_OF_MONTH, 10), fullEre.get(0).getPeriod().getEnd());
-		Assert.assertEquals(Boolean.TRUE, fullEre.get(0).getValue());
-		Assert.assertEquals(add(startDate, DAY_OF_MONTH, 11), fullEre.get(1).getPeriod().getStart());
-		Assert.assertEquals( endDate, fullEre.get(1).getPeriod().getEnd());
-		Assert.assertEquals(Boolean.FALSE, fullEre.get(1).getValue());		
+		assertEquals(2, fullEre.size());
+		assertEquals(startDate, fullEre.get(0).getPeriod().getStart());
+		assertEquals( add(startDate, DAY_OF_MONTH, 10), fullEre.get(0).getPeriod().getEnd());
+		assertEquals(Boolean.TRUE, fullEre.get(0).getValue());
+		assertEquals(add(startDate, DAY_OF_MONTH, 11), fullEre.get(1).getPeriod().getStart());
+		assertEquals( endDate, fullEre.get(1).getPeriod().getEnd());
+		assertEquals(Boolean.FALSE, fullEre.get(1).getValue());		
 	}
 
 	@Test
@@ -1461,10 +1462,10 @@ public class SQLEreForceOffTestCase extends SQLERETestCase {
 		List<ITimedResult<Boolean>> fullEre = ctx.getExpressionContext().eval(
 				"ERE_TOTAL", startDate, endDate, Boolean.class);
 
-		Assert.assertEquals(1, fullEre.size());
-		Assert.assertEquals(startDate, fullEre.get(0).getPeriod().getStart());
-		Assert.assertEquals(endDate, fullEre.get(0).getPeriod().getEnd());
-		Assert.assertEquals(Boolean.TRUE, fullEre.get(0).getValue());
+		assertEquals(1, fullEre.size());
+		assertEquals(startDate, fullEre.get(0).getPeriod().getStart());
+		assertEquals(endDate, fullEre.get(0).getPeriod().getEnd());
+		assertEquals(Boolean.TRUE, fullEre.get(0).getValue());
 		
 		ContractRecord contractII =
 		newContract(aonContext, 
@@ -1489,10 +1490,10 @@ public class SQLEreForceOffTestCase extends SQLERETestCase {
 		 fullEre = ctx.getExpressionContext().eval(
 				"ERE_TOTAL", startDate, endDate, Boolean.class);
 
-		Assert.assertEquals(1, fullEre.size());
-		Assert.assertEquals(startDate, fullEre.get(0).getPeriod().getStart());
-		Assert.assertEquals(endDate, fullEre.get(0).getPeriod().getEnd());
-		Assert.assertEquals(Boolean.TRUE, fullEre.get(0).getValue());	
+		assertEquals(1, fullEre.size());
+		assertEquals(startDate, fullEre.get(0).getPeriod().getStart());
+		assertEquals(endDate, fullEre.get(0).getPeriod().getEnd());
+		assertEquals(Boolean.TRUE, fullEre.get(0).getValue());	
 		
 		addData(aonContext, contractII, startDate, add(startDate, Calendar.DAY_OF_MONTH, 11),
 				new HashMap<String, String>() {
@@ -1507,12 +1508,12 @@ public class SQLEreForceOffTestCase extends SQLERETestCase {
 		fullEre = ctx.getExpressionContext().eval(
 				"ERE_TOTAL", startDate, endDate, Boolean.class);
 
-		Assert.assertEquals(2, fullEre.size());
-		Assert.assertEquals(startDate, fullEre.get(0).getPeriod().getStart());
-		Assert.assertEquals(Boolean.TRUE, fullEre.get(0).getValue());
+		assertEquals(2, fullEre.size());
+		assertEquals(startDate, fullEre.get(0).getPeriod().getStart());
+		assertEquals(Boolean.TRUE, fullEre.get(0).getValue());
 
-		Assert.assertEquals(endDate, fullEre.get(1).getPeriod().getEnd());
-		Assert.assertEquals(Boolean.FALSE, fullEre.get(1).getValue());
+		assertEquals(endDate, fullEre.get(1).getPeriod().getEnd());
+		assertEquals(Boolean.FALSE, fullEre.get(1).getValue());
 
 		addData(aonContext, contractII, add(startDate, Calendar.DAY_OF_MONTH, 12), endDate,
 				new HashMap<String, String>() {
@@ -1527,9 +1528,9 @@ public class SQLEreForceOffTestCase extends SQLERETestCase {
 		fullEre = ctx.getExpressionContext().eval(
 				"ERE_TOTAL", startDate, endDate, Boolean.class);
 
-		Assert.assertEquals(1, fullEre.size());
+		assertEquals(1, fullEre.size());
 
-		Assert.assertEquals(Boolean.TRUE, fullEre.get(0).getValue());
+		assertEquals(Boolean.TRUE, fullEre.get(0).getValue());
 		ContractRecord contracts [] = new  ContractRecord [33];
 		
 		for ( int i = 0; i < 33; i ++ ) {
@@ -1559,9 +1560,9 @@ public class SQLEreForceOffTestCase extends SQLERETestCase {
 		fullEre = ctx.getExpressionContext().eval(
 				"ERE_TOTAL", startDate, endDate, Boolean.class);
 
-		Assert.assertEquals(1, fullEre.size());
+		assertEquals(1, fullEre.size());
 
-		Assert.assertEquals(Boolean.TRUE, fullEre.get(0).getValue());
+		assertEquals(Boolean.TRUE, fullEre.get(0).getValue());
 		
 		addData(aonContext, contracts[22], startDate, endDate,
 				new HashMap<String, String>() {
@@ -1571,8 +1572,8 @@ public class SQLEreForceOffTestCase extends SQLERETestCase {
 				});			
 		fullEre = ctx.getExpressionContext().eval(
 				"ERE_TOTAL", startDate, endDate, Boolean.class);
-		Assert.assertEquals(1, fullEre.size());
-		Assert.assertEquals(Boolean.TRUE, fullEre.get(0).getValue());
+		assertEquals(1, fullEre.size());
+		assertEquals(Boolean.TRUE, fullEre.get(0).getValue());
 	}
 
 	@Test
@@ -1674,7 +1675,7 @@ public class SQLEreForceOffTestCase extends SQLERETestCase {
 			bonuses += bonus.getAmount();
 		}
 		
-		org.junit.Assert.assertEquals(costs, bonuses, DELTA);
+		assertEquals(costs, bonuses, DELTA);
 		
 		ContractRecord contractII =
 		newContract(aonContext, 
@@ -1721,7 +1722,7 @@ public class SQLEreForceOffTestCase extends SQLERETestCase {
 		
 		int monthDays = get(endDate, DAY_OF_MONTH);
 		double expected = costs / monthDays * 13 + costs / monthDays * ( monthDays - 13 ) * 0.60;
-		org.junit.Assert.assertEquals(expected, bonuses, DELTA);
+		assertEquals(expected, bonuses, DELTA);
 		
 		addData(aonContext, contractII, startDate, endDate,
 				new HashMap<String, String>() {
@@ -1745,7 +1746,7 @@ public class SQLEreForceOffTestCase extends SQLERETestCase {
 			bonuses += bonus.getAmount();
 		}
 		
-		org.junit.Assert.assertEquals(costs, bonuses, DELTA);
+		assertEquals(costs, bonuses, DELTA);
 
 		addData(aonContext, contractII, startDate, endDate,
 				new HashMap<String, String>() {
@@ -1769,7 +1770,7 @@ public class SQLEreForceOffTestCase extends SQLERETestCase {
 			bonuses += bonus.getAmount();
 		}
 		
-		org.junit.Assert.assertEquals(costs, bonuses, DELTA);
+		assertEquals(costs, bonuses, DELTA);
 	}
 	
 	@Test
@@ -1886,12 +1887,12 @@ public class SQLEreForceOffTestCase extends SQLERETestCase {
 //			bonuses += bonus.getAmount();
 //		}
 		
-		org.junit.Assert.assertEquals(costs, bonuses[0], DELTA);
+		assertEquals(costs, bonuses[0], DELTA);
 		
 	}
 
 	@Test
-	@Ignore("'REINCORPRADO_ERE' has been deprecated")
+	@Disabled("'REINCORPRADO_ERE' has been deprecated")
 	public void testBackBonusI() throws ExpressionException, SQLException,
 			SalaryException {
 		Connection connection = getConnection();
@@ -2003,7 +2004,7 @@ public class SQLEreForceOffTestCase extends SQLERETestCase {
 		
 		int monthDays = get(endDate, DAY_OF_MONTH);
 		double off = costs / monthDays * 12 + costs / monthDays * (monthDays -12 ) * 0.75 ;
-		org.junit.Assert.assertEquals(off, bonuses, DELTA);
+		assertEquals(off, bonuses, DELTA);
 		
 		
 		addData(aonContext, contract, backDate, null,
@@ -2046,7 +2047,7 @@ public class SQLEreForceOffTestCase extends SQLERETestCase {
 		off = costs / monthDays * 12
 			+(costs / monthDays * (monthDays -12 ) * 0.60) * 0.5 
 			+(costs / monthDays * (monthDays -12 ) * 0.75) * 0.5 ;
-		org.junit.Assert.assertEquals(off, bonuses, DELTA);
+		assertEquals(off, bonuses, DELTA);
 		
 	}
 

@@ -4,13 +4,15 @@ import static com.esferalia.aon.payroll.enumeration.ContextVariable.GEROA;
 import static com.esferalia.aon.watson.util.AonDateUtils.getFirstDayOfMonth;
 import static com.esferalia.aon.watson.util.AonDateUtils.getFirstDayOfYear;
 import static com.esferalia.aon.watson.util.AonDateUtils.getLastDayOfMonth;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.SQLException;
 import java.util.HashMap;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.esferalia.aon.jooq.tables.records.ContractRecord;
 import com.esferalia.aon.jooq.tables.records.PaymentConceptRecord;
@@ -28,7 +30,6 @@ import com.esferalia.aon.salary.enumeration.PaymentType;
 import com.esferalia.aon.salary.enumeration.SalaryType;
 import com.esferalia.aon.salary.expression.ExpressionException;
 
-import junit.framework.Assert;
 
 public class SQLGeroaTestCase extends AbstractSQLTestCase {
 	
@@ -103,11 +104,11 @@ public class SQLGeroaTestCase extends AbstractSQLTestCase {
 		try {
 			for ( SalaryPayment s : salary.getSalaryPayments() ) {
 				if ( s.getExpression().equals("/*read-only*//**/"))  {
-					Assert.assertEquals(s.getQuote(), 1750.00*1.10*2.00/100.00, DELTA );
+					assertEquals(s.getQuote(), 1750.00*1.10*2.00/100.00, DELTA );
 					throw new SuccessException();
 				}
 			}
-			Assert.fail("No GEROA payment!!!");
+			fail("No GEROA payment!!!");
 		} catch ( SuccessException e ) {
 			
 		}
@@ -115,11 +116,11 @@ public class SQLGeroaTestCase extends AbstractSQLTestCase {
 		try {
 			for ( SalaryDeduction d : salary.getSalaryDeductions() ) { 
 				if ( d.getExpression().equals(GEROA_DEDUCTION))  {
-					Assert.assertEquals(d.getAmount(), 1750.00*1.10*2.00/100.00, DELTA );
+					assertEquals(d.getAmount(), 1750.00*1.10*2.00/100.00, DELTA );
 					throw new SuccessException();
 				}
 			}
-			Assert.fail("No GEROA deduction!!!");
+			fail("No GEROA deduction!!!");
 		} catch ( SuccessException e ) {
 			
 		}
@@ -127,19 +128,19 @@ public class SQLGeroaTestCase extends AbstractSQLTestCase {
 		try {
 			for ( SalaryCost d : salary.getSalaryCosts() ) { 
 				if ( d.getName().equals("GEROA_E"))  {
-					Assert.assertEquals(d.getAmount(), 1750.00*1.10*2.00/100.00, DELTA );
+					assertEquals(d.getAmount(), 1750.00*1.10*2.00/100.00, DELTA );
 					throw new SuccessException();
 				}
 			}
-			Assert.fail("No GEROA cost!!!");
+			fail("No GEROA cost!!!");
 		} catch ( SuccessException e ) {
 			
 		}
 
-		Assert.assertEquals(1750.00 * 1.10,salary.getTotalPayment(), DELTA);
-		Assert.assertEquals(1750.00 * 1.10 + 1750.00 * 1.10* 2.00/100.00,salary.getCommonBase(), DELTA);
-		Assert.assertEquals(salary.getCommonBase() * 0.15 + 1750.00 * 1.10 * 2.00/100.00,salary.getTotalDeduction(), DELTA);
-		Assert.assertEquals(1750.00 * 1.10 * 2.00/100.00,salary.getTotalEnterprise(), DELTA);
+		assertEquals(1750.00 * 1.10,salary.getTotalPayment(), DELTA);
+		assertEquals(1750.00 * 1.10 + 1750.00 * 1.10* 2.00/100.00,salary.getCommonBase(), DELTA);
+		assertEquals(salary.getCommonBase() * 0.15 + 1750.00 * 1.10 * 2.00/100.00,salary.getTotalDeduction(), DELTA);
+		assertEquals(1750.00 * 1.10 * 2.00/100.00,salary.getTotalEnterprise(), DELTA);
 		
 		
 	}

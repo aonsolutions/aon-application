@@ -14,6 +14,7 @@ import static com.esferalia.aon.watson.util.AonDateUtils.getLastDayOfMonth;
 import static com.esferalia.aon.watson.util.AonDateUtils.getLastDayOfYear;
 import static java.util.Calendar.DATE;
 import static java.util.Calendar.DAY_OF_MONTH;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.sql.Connection;
 import java.sql.Date;
@@ -23,8 +24,8 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
 import com.code.aon.common.enumeration.Month;
 import com.code.aon.ql.Criteria;
@@ -48,8 +49,6 @@ import com.esferalia.aon.salary.expression.ExpressionException;
 import com.esferalia.aon.salary.expression.ITimedVariable;
 import com.esferalia.aon.salary.payment.IPayment;
 import com.esferalia.aon.watson.util.AonDateUtils;
-
-import junit.framework.Assert;
 
 public class SQLGTZDOTestCase extends AbstractSQLTestCase {
 
@@ -110,7 +109,7 @@ public class SQLGTZDOTestCase extends AbstractSQLTestCase {
 			System.out.println(p.getExpression() + " = " + p.getAmount() );
 				
 		//@formatter:off
-		Assert.assertEquals(
+		assertEquals(
 				1000.00, 
 				salary.getTotalPayment() 
 				, DELTA);
@@ -178,7 +177,7 @@ public class SQLGTZDOTestCase extends AbstractSQLTestCase {
 		double monthDays = AonDateUtils.getMax(getToday(), DATE);
 		double itDays = AonDateUtils.getMax(getToday(), DATE);
 		//@formatter:off
-		Assert.assertEquals(
+		assertEquals(
 				1750.00 + ( 125.00 * workedDays / monthDays ), 
 				salary.getTotalPayment() 
 				, DELTA);
@@ -245,7 +244,7 @@ public class SQLGTZDOTestCase extends AbstractSQLTestCase {
 			System.out.println(p.getExpression() + " = " + p.getAmount());
 		
 		//@formatter:off
-		Assert.assertEquals(
+		assertEquals(
 				1000.00, 
 				salary.getTotalPayment() 
 				, DELTA);
@@ -319,7 +318,7 @@ public class SQLGTZDOTestCase extends AbstractSQLTestCase {
 			System.out.println(p.getExpression() + " = " + p.getAmount());
 		
 		//@formatter:off
-		Assert.assertEquals(
+		assertEquals(
 				1000.00, 
 				salary.getTotalPayment() 
 				, DELTA);
@@ -393,7 +392,7 @@ public class SQLGTZDOTestCase extends AbstractSQLTestCase {
 			System.out.println(p.getExpression() + " = " + p.getAmount());
 		
 		//@formatter:off
-		Assert.assertEquals(
+		assertEquals(
 				1000.00, 
 				salary.getTotalPayment() 
 				, DELTA);
@@ -462,7 +461,7 @@ public class SQLGTZDOTestCase extends AbstractSQLTestCase {
 			System.out.println(p.getExpression() + " = " + p.getAmount());
 		
 		//@formatter:off
-		Assert.assertEquals(
+		assertEquals(
 				1000.00, 
 				salary.getTotalPayment() 
 				, DELTA);
@@ -536,7 +535,7 @@ public class SQLGTZDOTestCase extends AbstractSQLTestCase {
 			System.out.println(p.getExpression() + " = " + p.getAmount());
 		
 		//@formatter:off
-		Assert.assertEquals(
+		assertEquals(
 				1000.00, 
 				salary.getTotalPayment() 
 				, DELTA);
@@ -611,7 +610,7 @@ public class SQLGTZDOTestCase extends AbstractSQLTestCase {
 			System.out.println(p.getExpression() + " = " + p.getAmount());
 		
 		//@formatter:off
-		Assert.assertEquals(
+		assertEquals(
 				1000.00, 
 				salary.getTotalPayment() 
 				, DELTA);
@@ -631,7 +630,7 @@ public class SQLGTZDOTestCase extends AbstractSQLTestCase {
 			System.out.println(p.getExpression() + " = " + p.getAmount());
 		
 		//@formatter:off
-		Assert.assertEquals(
+		assertEquals(
 				1000.00, 
 				salary.getTotalPayment() 
 				, DELTA);
@@ -707,7 +706,7 @@ public class SQLGTZDOTestCase extends AbstractSQLTestCase {
 			System.out.println(p.getExpression() + " = " + p.getAmount());
 		
 		//@formatter:off
-		Assert.assertEquals(
+		assertEquals(
 				1000.00, 
 				salary.getTotalPayment() 
 				, DELTA);
@@ -725,7 +724,7 @@ public class SQLGTZDOTestCase extends AbstractSQLTestCase {
 			System.out.println(p.getExpression() + " = " + p.getAmount());
 		
 		//@formatter:off
-		Assert.assertEquals(
+		assertEquals(
 				1000.00, 
 				salary.getTotalPayment() 
 				, DELTA);
@@ -809,7 +808,7 @@ public class SQLGTZDOTestCase extends AbstractSQLTestCase {
 			System.out.println(p.getExpression() + " = " + p.getAmount());
 		
 		//@formatter:off
-		Assert.assertEquals(
+		assertEquals(
 				1000.00, 
 				salary.getTotalPayment() 
 				, DELTA);
@@ -829,7 +828,7 @@ public class SQLGTZDOTestCase extends AbstractSQLTestCase {
 			System.out.println(p.getExpression() + " = " + p.getAmount());
 		
 		//@formatter:off
-		Assert.assertEquals(
+		assertEquals(
 				1000.00, 
 				salary.getTotalPayment() 
 				, DELTA);
@@ -906,7 +905,7 @@ public class SQLGTZDOTestCase extends AbstractSQLTestCase {
 			System.out.println(p.getExpression() + " = " + p.getAmount());
 		
 		//@formatter:off
-		Assert.assertEquals(
+		assertEquals(
 				1000.00, 
 				salary.getTotalPayment() 
 				, DELTA);
@@ -927,7 +926,7 @@ public class SQLGTZDOTestCase extends AbstractSQLTestCase {
 			System.out.println(p.getExpression() + " = " + p.getAmount());
 		
 		//@formatter:off
-		Assert.assertEquals(
+		assertEquals(
 				1000.00, 
 				salary.getTotalPayment() 
 				, DELTA);
@@ -993,7 +992,7 @@ public class SQLGTZDOTestCase extends AbstractSQLTestCase {
 			System.out.println(p.getExpression() + " = " + p.getAmount());
 		
 		//@formatter:off
-		Assert.assertEquals(
+		assertEquals(
 				1000.00, 
 				salary.getTotalPayment() 
 				, DELTA);
@@ -1076,7 +1075,7 @@ public class SQLGTZDOTestCase extends AbstractSQLTestCase {
 			System.out.println(p.getExpression() + " = " + p.getAmount());
 		
 		//@formatter:off
-		Assert.assertEquals(
+		assertEquals(
 				1000.00, 
 				salary.getTotalPayment() 
 				, DELTA);
@@ -1146,7 +1145,7 @@ public class SQLGTZDOTestCase extends AbstractSQLTestCase {
 		double itDays = monthDays - workedDays;
 
 		//@formatter:off
-		Assert.assertEquals(
+		assertEquals(
 				(1000.00 * workedDays/ monthDays)
 				+ (1000.00 * 3/ monthDays)
 				+ (1000.00/monthDays * 0.60 * 12), 
@@ -1216,7 +1215,7 @@ public class SQLGTZDOTestCase extends AbstractSQLTestCase {
 		double itDays = monthDays - workedDays;
 
 		//@formatter:off
-		Assert.assertEquals(
+		assertEquals(
 				(1000.00 * workedDays/ monthDays)
 				+ (1000.00/monthDays * 0.60 * 3), 
 				salary.getTotalPayment() 
@@ -1305,7 +1304,7 @@ public class SQLGTZDOTestCase extends AbstractSQLTestCase {
 		double itDays = monthDays - workedDays;
 		
 		//@formatter:off
-		Assert.assertEquals(
+		assertEquals(
 				(( 1500.00 + 250.00 ) * 1.10) * workedDays / monthDays 
 				+ (1500.00 + 250.00 ) * itDays / monthDays, 
 				salary.getTotalPayment() 
@@ -1400,7 +1399,7 @@ public class SQLGTZDOTestCase extends AbstractSQLTestCase {
 		System.out.println("BR = " + br );
 		
 		//@formatter:off
-		Assert.assertEquals(
+		assertEquals(
 				(( 1500.00 + 250.00 ) * 1.10) * workedDays / monthDays 
 				+ (1500.00 + 250.00 ) * Math.min(3,itDays) / monthDays
 				+ (br * 0.60 * Math.min(12,Math.max(0, itDays-3)))
@@ -1499,7 +1498,7 @@ public class SQLGTZDOTestCase extends AbstractSQLTestCase {
 			System.out.println(payment.getName() +  " = " + payment.getAmount() + " (" + payment.getExpression() +")");
 		
 		//@formatter:off
-		Assert.assertEquals(
+		assertEquals(
 				(( 1500.00 + 250.00 ) * 1.10) * workedDays / monthDays 
 				+ (1500.00 + 250.00 ) * Math.max(0,Math.min(30,itDays)-3) / monthDays
 				+ (1750.00 + 1750.00*0.10)/30.00 * 0.75 * Math.max(itDays-30,0) 
@@ -1590,7 +1589,7 @@ public class SQLGTZDOTestCase extends AbstractSQLTestCase {
 		double itDays = monthDays - workedDays;
 		
 		//@formatter:off
-		Assert.assertEquals(
+		assertEquals(
 				(( 1500.00 + 250.00 ) * 1.10) * workedDays / monthDays 
 					+ (1500.00 ) * Math.min(3,itDays) / monthDays
 				+ (1500.00 + 250.00 ) * Math.max(0,itDays-3) / monthDays
@@ -1683,7 +1682,7 @@ public class SQLGTZDOTestCase extends AbstractSQLTestCase {
 		double itDays = monthDays - workedDays;
 		
 		//@formatter:off
-		Assert.assertEquals(
+		assertEquals(
 				(( 1500.00 + 250.00 ) * 1.10) * workedDays / monthDays 
 					+ (1500.00 ) * Math.min(3,itDays) / monthDays
 				+ (1500.00 + 250.00 ) * Math.min(7,Math.max(0,itDays-3)) / monthDays
@@ -1748,7 +1747,7 @@ public class SQLGTZDOTestCase extends AbstractSQLTestCase {
 			System.out.println(p.getExpression() + " = " + p.getAmount());
 				
 		//@formatter:off
-		Assert.assertEquals(
+		assertEquals(
 				1000.00, 
 				salary.getTotalPayment() 
 				, DELTA);
@@ -1826,7 +1825,7 @@ public class SQLGTZDOTestCase extends AbstractSQLTestCase {
 			System.out.println(p.getExpression() + " = " + p.getAmount());
 				
 		//@formatter:off
-		Assert.assertEquals(
+		assertEquals(
 				1000.00, 
 				salary.getTotalPayment() 
 				, DELTA);
@@ -1901,7 +1900,7 @@ public class SQLGTZDOTestCase extends AbstractSQLTestCase {
 			System.out.println(p.getExpression() + " = " + p.getAmount());
 				
 		//@formatter:off
-		Assert.assertEquals(
+		assertEquals(
 				3000.00, 
 				salary.getTotalPayment() 
 				, DELTA);
@@ -1984,7 +1983,7 @@ public class SQLGTZDOTestCase extends AbstractSQLTestCase {
 			System.out.println(p.getExpression() + " = " + p.getAmount());
 				
 		//@formatter:off
-		Assert.assertEquals(
+		assertEquals(
 				1000.00, 
 				salary.getTotalPayment() 
 				, DELTA);
@@ -2058,7 +2057,7 @@ public class SQLGTZDOTestCase extends AbstractSQLTestCase {
 			System.out.println(p.getExpression() + " = " + p.getAmount());
 				
 		//@formatter:off
-		Assert.assertEquals(
+		assertEquals(
 				1000.00, 
 				salary.getTotalPayment() 
 				, DELTA);
@@ -2129,7 +2128,7 @@ public class SQLGTZDOTestCase extends AbstractSQLTestCase {
 			System.out.println(p.getExpression() + " = " + p.getAmount());
 				
 		//@formatter:off
-		Assert.assertEquals(
+		assertEquals(
 				1000.00, 
 				salary.getTotalPayment() 
 				, DELTA);
@@ -2194,7 +2193,7 @@ public class SQLGTZDOTestCase extends AbstractSQLTestCase {
 			System.out.println(p.getExpression() + " = " + p.getAmount());
 				
 		//@formatter:off
-		Assert.assertEquals(
+		assertEquals(
 				1000.00, 
 				salary.getTotalPayment() 
 				, DELTA);
@@ -2260,7 +2259,7 @@ public class SQLGTZDOTestCase extends AbstractSQLTestCase {
 			System.out.println(p.getExpression() + " = " + p.getAmount());
 				
 		//@formatter:off
-		Assert.assertEquals(
+		assertEquals(
 				1000.00, 
 				salary.getTotalPayment() 
 				, DELTA);
@@ -2328,7 +2327,7 @@ public class SQLGTZDOTestCase extends AbstractSQLTestCase {
 			System.out.println("" +  get(startDate, Calendar.MONTH) + " "+  p.getExpression() + " = " + p.getAmount());
 				
 		//@formatter:off
-		Assert.assertEquals(
+		assertEquals(
 				764.4, 
 				salary.getTotalPayment() 
 				, DELTA);
@@ -2348,7 +2347,7 @@ public class SQLGTZDOTestCase extends AbstractSQLTestCase {
 			System.out.println("" +  get(startDate, Calendar.MONTH) + " "+  p.getExpression() + " = " + p.getAmount());
 				
 		//@formatter:off
-		Assert.assertEquals(
+		assertEquals(
 				764.4, 
 				salary.getTotalPayment() 
 				, DELTA);
@@ -2367,7 +2366,7 @@ public class SQLGTZDOTestCase extends AbstractSQLTestCase {
 			System.out.println("" +  get(startDate, Calendar.MONTH) + " "+  p.getExpression() + " = " + p.getAmount());
 				
 		//@formatter:off
-		Assert.assertEquals(
+		assertEquals(
 				764.4, 
 				salary.getTotalPayment() 
 				, DELTA);
@@ -2452,7 +2451,7 @@ public class SQLGTZDOTestCase extends AbstractSQLTestCase {
 //			System.out.println(p.getExpression() + " = " + p.getAmount() + "," + p.getQuote() );
 				
 		//@formatter:off
-		Assert.assertEquals(
+		assertEquals(
 				1000.00, 
 				salary.getTotalPayment() 
 				, DELTA);
@@ -2516,7 +2515,7 @@ public class SQLGTZDOTestCase extends AbstractSQLTestCase {
 			System.out.println(p.getExpression() + " = " + p.getAmount());
 				
 		//@formatter:off
-		Assert.assertEquals(
+		assertEquals(
 				1000.00, 
 				salary.getTotalPayment() 
 				, DELTA);
@@ -2702,8 +2701,8 @@ public class SQLGTZDOTestCase extends AbstractSQLTestCase {
 				connection, startDate, endDate, endDate, criteria);
 		ctx.next();
 		Salary salary = new SmartContractSalaryCalculator<Salary>( new SalaryBuilder()).calculate(ctx);
-		Assert.assertEquals(1000.00, salary.getTotalPayment() , DELTA);
-		Assert.assertEquals(1000.00 * ( 1.00 + 1.00/12 + 1.00/12 ), salary.getCommonBase() , DELTA);
+		assertEquals(1000.00, salary.getTotalPayment() , DELTA);
+		assertEquals(1000.00 * ( 1.00 + 1.00/12 + 1.00/12 ), salary.getCommonBase() , DELTA);
 		
 		// Extra without ITs
 		AgreementRecord agreement = getAgreement(aonContext, category.getAgreementLevel());
@@ -2719,7 +2718,7 @@ public class SQLGTZDOTestCase extends AbstractSQLTestCase {
 				super.addPayment(amount, quote, tax, description, startDate, endDate, payment, context);
 			};
 		}).calculate(ctx);
-		Assert.assertEquals(1000.00, salary.getTotalPayment() , DELTA);
+		assertEquals(1000.00, salary.getTotalPayment() , DELTA);
 
 		Date startIt = add(getToday(), Calendar.MONTH, 1);
 		
@@ -2742,8 +2741,8 @@ public class SQLGTZDOTestCase extends AbstractSQLTestCase {
 				.getSalaryPayments())
 			System.out.println("-->" + payment.getName() + " = " + payment.getAmount() + ", " + payment.getQuote()
 					+ " (" + payment.getExpression() + ")");
-		Assert.assertEquals(1000.00, salary.getTotalPayment() , DELTA);
-		Assert.assertEquals(1000.00 * ( 1.00 + 1.00/12 + 1.00/12 ), salary.getCommonBase() , DELTA);
+		assertEquals(1000.00, salary.getTotalPayment() , DELTA);
+		assertEquals(1000.00 * ( 1.00 + 1.00/12 + 1.00/12 ), salary.getCommonBase() , DELTA);
 
 		// Month partial IT
 		startDate = getFirstDayOfMonth(add(getToday(), Calendar.MONTH, 1));
@@ -2766,8 +2765,8 @@ public class SQLGTZDOTestCase extends AbstractSQLTestCase {
 				.getSalaryPayments())
 			System.out.println("-->" + payment.getName() + " = " + payment.getAmount() + ", " + payment.getQuote()
 					+ " (" + payment.getExpression() + ")");
-		Assert.assertEquals(1000.00, salary.getTotalPayment() , DELTA);
-		Assert.assertEquals(1000.00 * ( 1.00 + 1.00/12 + 1.00/12 ), salary.getCommonBase() , DELTA);
+		assertEquals(1000.00, salary.getTotalPayment() , DELTA);
+		assertEquals(1000.00 * ( 1.00 + 1.00/12 + 1.00/12 ), salary.getCommonBase() , DELTA);
 		
 		agreement = getAgreement(aonContext, category.getAgreementLevel());
 		extra = getExtra(aonContext, agreement.getId(), "15/12");
@@ -2787,7 +2786,7 @@ public class SQLGTZDOTestCase extends AbstractSQLTestCase {
 			};
 		}).calculate(ctx);
 		
-		Assert.assertEquals(1000.00, salary.getTotalPayment() , DELTA);
+		assertEquals(1000.00, salary.getTotalPayment() , DELTA);
 		
 	
 	}
@@ -2869,20 +2868,20 @@ public class SQLGTZDOTestCase extends AbstractSQLTestCase {
 				connection, startDate, endDate, endDate, criteria);
 		ctx.next();
 		Salary salary = new SmartContractSalaryCalculator<Salary>( new SalaryBuilder()).calculate(ctx);
-		Assert.assertEquals(1000.00, salary.getTotalPayment() , DELTA);
-		Assert.assertEquals(1000.00 * ( 1.00 + 1.00/12 + 1.00/12 ), salary.getCommonBase() , DELTA);
+		assertEquals(1000.00, salary.getTotalPayment() , DELTA);
+		assertEquals(1000.00 * ( 1.00 + 1.00/12 + 1.00/12 ), salary.getCommonBase() , DELTA);
 		
 		// Extra without ITs
 		AgreementRecord agreement = getAgreement(aonContext, category.getAgreementLevel());
 		AgreementExtraRecord extra = getExtra(aonContext, agreement.getId(), "15/12");
 		ctx = getExtraSalaryCalculatorContext(connection, contract, extra, get(getToday(), Calendar.YEAR), getLastDayOfYear(getToday()));
 		salary = new SmartContractSalaryCalculator<Salary>( new SalaryBuilder()).calculate(ctx);
-		Assert.assertEquals(1000.00, salary.getTotalPayment() , DELTA);
+		assertEquals(1000.00, salary.getTotalPayment() , DELTA);
 
 		extra = getExtra(aonContext, agreement.getId(), "15/07");
 		ctx = getExtraSalaryCalculatorContext(connection, contract, extra, get(getToday(), Calendar.YEAR), getLastDayOfYear(getToday()));
 		salary = new SmartContractSalaryCalculator<Salary>( new SalaryBuilder()).calculate(ctx);
-		Assert.assertEquals(1000.00, salary.getTotalPayment() , DELTA);
+		assertEquals(1000.00, salary.getTotalPayment() , DELTA);
 
 		Date startIt = add(getToday(), Calendar.MONTH, 1);
 		
@@ -2901,8 +2900,8 @@ public class SQLGTZDOTestCase extends AbstractSQLTestCase {
 		ctx.next();
 		
 		salary = new SmartContractSalaryCalculator<Salary>( new SalaryBuilder()).calculate(ctx);
-		Assert.assertEquals(1000.00, salary.getTotalPayment() , DELTA);
-		Assert.assertEquals(1000.00 * ( 1.00 + 1.00/12 + 1.00/12 ), salary.getCommonBase() , DELTA);
+		assertEquals(1000.00, salary.getTotalPayment() , DELTA);
+		assertEquals(1000.00 * ( 1.00 + 1.00/12 + 1.00/12 ), salary.getCommonBase() , DELTA);
 
 		// Month partial IT
 		startDate = getFirstDayOfMonth(add(getToday(), Calendar.MONTH, 1));
@@ -2923,8 +2922,8 @@ public class SQLGTZDOTestCase extends AbstractSQLTestCase {
 			System.out.println(p.getName() + " , "+ p.getExpression() +" = " + p.getAmount() );
 			
 		}
-		Assert.assertEquals(1000.00, salary.getTotalPayment() , DELTA);
-		Assert.assertEquals(1000.00 * ( 1.00 + 1.00/12 + 1.00/12 ), salary.getCommonBase() , DELTA);
+		assertEquals(1000.00, salary.getTotalPayment() , DELTA);
+		assertEquals(1000.00 * ( 1.00 + 1.00/12 + 1.00/12 ), salary.getCommonBase() , DELTA);
 		
 		extra = getExtra(aonContext, agreement.getId(), "15/07");
 		ctx = getExtraSalaryCalculatorContext(connection, contract, extra, get(getToday(), Calendar.YEAR), getLastDayOfYear(getToday()));
@@ -2932,7 +2931,7 @@ public class SQLGTZDOTestCase extends AbstractSQLTestCase {
 		// TODO: Fix this
 		expressionContext.setVariable("GARANTIZADO", 0.00, ctx.getStartDate(), ctx.getEndDate());
 		salary = new SmartContractSalaryCalculator<Salary>( new SalaryBuilder()).calculate(ctx);
-		Assert.assertEquals(1000.00, salary.getTotalPayment() , DELTA);
+		assertEquals(1000.00, salary.getTotalPayment() , DELTA);
 
 		extra = getExtra(aonContext, agreement.getId(), "15/12");
 		ctx = getExtraSalaryCalculatorContext(connection, contract, extra, get(getToday(), Calendar.YEAR), getLastDayOfYear(getToday()));
@@ -2949,7 +2948,7 @@ public class SQLGTZDOTestCase extends AbstractSQLTestCase {
 				super.addPayment(amount, quote, tax, description, startDate, endDate, payment, context);
 			};
 		}).calculate(ctx);
-		Assert.assertEquals(1000.00, salary.getTotalPayment() , DELTA);
+		assertEquals(1000.00, salary.getTotalPayment() , DELTA);
 		
 	
 	}
@@ -3017,30 +3016,30 @@ public class SQLGTZDOTestCase extends AbstractSQLTestCase {
 		ISQLContractSalaryCalculatorContext ctx = 
 		getContractSalaryCalculatorContext(connection, startDate, endDate, endDate, contract);
 		Salary salary = new SmartContractSalaryCalculator<Salary>( new SalaryBuilder()).calculate(ctx);
-		org.junit.Assert.assertEquals(1000.00, salary.getTotalPayment() , DELTA);
-		org.junit.Assert.assertEquals(1000.00 * ( 1.00 + 1.00/12 + 1.00/12 ), salary.getCommonBase() , DELTA);
+		assertEquals(1000.00, salary.getTotalPayment() , DELTA);
+		assertEquals(1000.00 * ( 1.00 + 1.00/12 + 1.00/12 ), salary.getCommonBase() , DELTA);
 		
 		// June with extra without ITs
 		startDate = add(startDate, Calendar.MONTH, 5);
 		endDate = getLastDayOfMonth(startDate);
 		ctx = getContractSalaryCalculatorContext(connection, startDate, endDate, endDate, contract);
 		salary = new SmartContractSalaryCalculator<Salary>( new SalaryBuilder()).calculate(ctx);
-		org.junit.Assert.assertEquals(1000.00 * ( 1.00 + 1.00/12 + 1.00/12 ), salary.getCommonBase() , DELTA);
-		org.junit.Assert.assertEquals(2000.00, salary.getTotalPayment(), DELTA);
+		assertEquals(1000.00 * ( 1.00 + 1.00/12 + 1.00/12 ), salary.getCommonBase() , DELTA);
+		assertEquals(2000.00, salary.getTotalPayment(), DELTA);
 		
 		addIT(aonContext, contract, LeaveType.COMMON_DISEASE, startDate, endDate, null);
 		ctx = getContractSalaryCalculatorContext(connection, startDate, endDate, endDate, contract);
 		salary = new SmartContractSalaryCalculator<Salary>( new SalaryBuilder()).calculate(ctx);
-		org.junit.Assert.assertEquals(1000.00 * ( 1.00 + 1.00/12 + 1.00/12 ), salary.getCommonBase() , DELTA);
-		org.junit.Assert.assertEquals(2000.00, salary.getTotalPayment(), DELTA);
+		assertEquals(1000.00 * ( 1.00 + 1.00/12 + 1.00/12 ), salary.getCommonBase() , DELTA);
+		assertEquals(2000.00, salary.getTotalPayment(), DELTA);
 		
 		endDate = getLastDayOfYear(getToday());
 		startDate = getFirstDayOfMonth(endDate);
 		addIT(aonContext, contract, LeaveType.COMMON_DISEASE, add(startDate, Calendar.DAY_OF_MONTH, 22), null, null);
 		ctx = getContractSalaryCalculatorContext(connection, startDate, endDate, endDate, contract);
 		salary = new SmartContractSalaryCalculator<Salary>( new SalaryBuilder()).calculate(ctx);
-		org.junit.Assert.assertEquals(1000.00 * ( 1.00 + 1.00/12 + 1.00/12 ), salary.getCommonBase() , DELTA);
-		org.junit.Assert.assertEquals(2000.00, salary.getTotalPayment(), DELTA);
+		assertEquals(1000.00 * ( 1.00 + 1.00/12 + 1.00/12 ), salary.getCommonBase() , DELTA);
+		assertEquals(2000.00, salary.getTotalPayment(), DELTA);
 	
 	}
 
@@ -3104,7 +3103,7 @@ public class SQLGTZDOTestCase extends AbstractSQLTestCase {
 		double br = 1000.00 / 30.00;
 		double prestIt = br * 0.75 * get(endDate, Calendar.DAY_OF_MONTH );
 		//@formatter:off
-		Assert.assertEquals(
+		assertEquals(
 				Math.max(prestIt, 500.00) , 
 				salary.getTotalPayment() 
 				, DELTA);
@@ -3172,7 +3171,7 @@ public class SQLGTZDOTestCase extends AbstractSQLTestCase {
 		double br = 1000.00 / 30.00;
 		double prestIt = br * 0.75 * 30.00;
 		//@formatter:off
-		Assert.assertEquals(
+		assertEquals(
 				1000.00 , 
 				salary.getTotalPayment() 
 				, DELTA);
@@ -3240,7 +3239,7 @@ public class SQLGTZDOTestCase extends AbstractSQLTestCase {
 		double br = 1000.00 / 30.00;
 		double prestIt = br * 0.75 * 30.00;
 		//@formatter:off
-		Assert.assertEquals(
+		assertEquals(
 				800.00, 
 				salary.getTotalPayment() 
 				, DELTA);
@@ -3309,7 +3308,7 @@ public class SQLGTZDOTestCase extends AbstractSQLTestCase {
 		double br = 1000.00 / 30.00;
 		double prestIt = br * 0.75 * 30.00;
 		//@formatter:off
-		Assert.assertEquals(
+		assertEquals(
 				800.00, 
 				salary.getTotalPayment() 
 				, DELTA);
@@ -3377,7 +3376,7 @@ public class SQLGTZDOTestCase extends AbstractSQLTestCase {
 			System.out.println(p.getExpression() + " = " + p.getAmount() );
 		
 		//@formatter:off
-		Assert.assertEquals(
+		assertEquals(
 				800.00, 
 				salary.getTotalPayment() 
 				, DELTA);
@@ -3445,7 +3444,7 @@ public class SQLGTZDOTestCase extends AbstractSQLTestCase {
 			System.out.println(p.getExpression() + " = " + p.getAmount() );
 		
 		//@formatter:off
-		Assert.assertEquals(
+		assertEquals(
 				1000.00, 
 				salary.getTotalPayment() 
 				, DELTA);
@@ -3455,7 +3454,7 @@ public class SQLGTZDOTestCase extends AbstractSQLTestCase {
 	}
 
 	@Test
-	@Ignore("Not implemented")
+	@Disabled("Not implemented")
 	public void testGtzdoArguments() throws ExpressionException, SQLException,
 			SalaryException {
 		Connection connection = getConnection();
@@ -3514,7 +3513,7 @@ public class SQLGTZDOTestCase extends AbstractSQLTestCase {
 		double monthDays = AonDateUtils.getMax(getToday(), DATE);
 		double itDays = AonDateUtils.getMax(getToday(), DATE);
 		//@formatter:off
-		Assert.assertEquals(
+		assertEquals(
 				1750.00 + ( 125.00 * workedDays / monthDays ), 
 				salary.getTotalPayment() 
 				, DELTA);
@@ -3577,7 +3576,7 @@ public class SQLGTZDOTestCase extends AbstractSQLTestCase {
 			System.out.println(p.getExpression() + " = " + p.getAmount() );
 				
 		//@formatter:off
-		Assert.assertEquals(
+		assertEquals(
 				1000.00, 
 				salary.getTotalPayment() 
 				, DELTA);
@@ -3637,7 +3636,7 @@ public class SQLGTZDOTestCase extends AbstractSQLTestCase {
 				
 		int monthDays = get(getLastDayOfMonth(startIT), Calendar.DAY_OF_MONTH);
 		//@formatter:off
-		Assert.assertEquals(
+		assertEquals(
 				(1000.00 / monthDays ) * 3, 
 				salary.getTotalPayment() 
 				, DELTA);
@@ -3714,7 +3713,7 @@ public class SQLGTZDOTestCase extends AbstractSQLTestCase {
 			System.out.println(p.getExpression() + " = " + p.getAmount() );
 		
 		//@formatter:off
-		Assert.assertEquals(
+		assertEquals(
 				1000.00, 
 				salary.getTotalPayment() 
 				, DELTA);
@@ -3789,7 +3788,7 @@ public class SQLGTZDOTestCase extends AbstractSQLTestCase {
 			System.out.println(p.getExpression() + " = " + p.getAmount() );
 		
 		//@formatter:off
-		Assert.assertEquals(
+		assertEquals(
 				1000.00, 
 				salary.getTotalPayment() 
 				, DELTA);
@@ -3866,7 +3865,7 @@ public class SQLGTZDOTestCase extends AbstractSQLTestCase {
 		//int brDays = Math.min(get(getLastDayOfMonth(startIt), Calendar.DATE), 30); // BR : Monthly
 		int itDays = get(getLastDayOfMonth(startDate), Calendar.DATE); 
 		//@formatter:off
-		Assert.assertEquals(
+		assertEquals(
 				(1000.00 / 30.00 * 0.75 * itDays ) + 100.00 , //850.00, 
 				salary.getTotalPayment() 
 				, DELTA);
@@ -3929,7 +3928,7 @@ public class SQLGTZDOTestCase extends AbstractSQLTestCase {
 //			System.out.println(p.getExpression() + " = " + p.getAmount());
 				
 		//@formatter:off
-		Assert.assertEquals(
+		assertEquals(
 				1000.00,
 				salary.getTotalPayment() 
 				, DELTA);
@@ -3946,7 +3945,7 @@ public class SQLGTZDOTestCase extends AbstractSQLTestCase {
 			System.out.println(p.getExpression() + " = " + p.getAmount());
 				
 		//@formatter:off
-		Assert.assertEquals(
+		assertEquals(
 				1000.00 / 30.00 * 1.00 * 5 
 				+ 1000.00 / 30.00 * 0.75 * 26, 
 				salary.getTotalPayment() 
@@ -4023,7 +4022,7 @@ public class SQLGTZDOTestCase extends AbstractSQLTestCase {
 			System.out.println(p.getExpression() + " = " + p.getAmount());
 				
 		//@formatter:off
-		Assert.assertEquals(
+		assertEquals(
 				1000.00,
 				salary.getTotalPayment() 
 				, DELTA);
@@ -4093,7 +4092,7 @@ public class SQLGTZDOTestCase extends AbstractSQLTestCase {
 		double prestIt = br * 0.75 * AonDateUtils.getMax(endDate, DAY_OF_MONTH);
 		int monthDays = get(endDate, DAY_OF_MONTH);
 		//@formatter:off
-		Assert.assertEquals(
+		assertEquals(
 				prestIt + (br * 0.15 * monthDays), 
 				salary.getTotalPayment() 
 				
@@ -4160,7 +4159,7 @@ public class SQLGTZDOTestCase extends AbstractSQLTestCase {
 			System.out.println(p.getExpression() + " = " + p.getAmount() + "," + p.getQuote());
 		
 		//@formatter:off
-		Assert.assertEquals(
+		assertEquals(
 				1000.00, 
 				salary.getTotalPayment() 
 				
@@ -4227,7 +4226,7 @@ public class SQLGTZDOTestCase extends AbstractSQLTestCase {
 			System.out.println(p.getExpression() + " = " + p.getAmount() + "," + p.getQuote());
 		
 		//@formatter:off
-		Assert.assertEquals(
+		assertEquals(
 				1000.00, 
 				salary.getTotalPayment() 
 				
@@ -4294,7 +4293,7 @@ public class SQLGTZDOTestCase extends AbstractSQLTestCase {
 			System.out.println(p.getExpression() + " = " + p.getAmount() + "," + p.getQuote());
 		
 		//@formatter:off
-		Assert.assertEquals(
+		assertEquals(
 				1000.00, 
 				salary.getTotalPayment() 
 				
@@ -4361,7 +4360,7 @@ public class SQLGTZDOTestCase extends AbstractSQLTestCase {
 			System.out.println(p.getExpression() + " = " + p.getAmount() + "," + p.getQuote());
 		
 		//@formatter:off
-		Assert.assertEquals(
+		assertEquals(
 				1000.00 -1000.00/30*3, 
 				salary.getTotalPayment() 
 				
@@ -4428,7 +4427,7 @@ public class SQLGTZDOTestCase extends AbstractSQLTestCase {
 			System.out.println(p.getExpression() + " = " + p.getAmount() + "," + p.getQuote());
 		
 		//@formatter:off
-		Assert.assertEquals(
+		assertEquals(
 				1000.00 -(1000.00/30*3)/2, 
 				salary.getTotalPayment() 
 				
@@ -4504,7 +4503,7 @@ public class SQLGTZDOTestCase extends AbstractSQLTestCase {
 			System.out.println(p.getExpression() + " = " + p.getAmount() + "," + p.getQuote());
 		
 		//@formatter:off
-		Assert.assertEquals(
+		assertEquals(
 				1000.00 , 
 				salary.getTotalPayment() 
 				
@@ -4579,7 +4578,7 @@ public class SQLGTZDOTestCase extends AbstractSQLTestCase {
 			System.out.println(p.getExpression() + " = " + p.getAmount() + "," + p.getQuote());
 		
 		//@formatter:off
-		Assert.assertEquals(
+		assertEquals(
 				1000.00 , 
 				salary.getTotalPayment() 
 				
@@ -4655,7 +4654,7 @@ public class SQLGTZDOTestCase extends AbstractSQLTestCase {
 			System.out.println(p.getExpression() + " = " + p.getAmount() + "," + p.getQuote());
 		int monthDays = get(endDate, Calendar.DAY_OF_MONTH);
 		//@formatter:off
-		Assert.assertEquals(
+		assertEquals(
 				1000.00/monthDays*(monthDays -5) 
 				+ 1000.00/monthDays*3.00*0.10 
 				+ 1000.00/monthDays*2.00*0.70, 
@@ -4726,7 +4725,7 @@ public class SQLGTZDOTestCase extends AbstractSQLTestCase {
 		double br = 1000.00 / 30.00;
 		double prestIt = br * 0.75 * 30.00;
 		//@formatter:off
-		Assert.assertEquals(
+		assertEquals(
 				1000.00 
 				+ ((get(startIt, Calendar.DAY_OF_MONTH) == 30.00 && get(endDate, Calendar.DAY_OF_MONTH) == 31.00 ) ? br * 0.75 : 0.00), 
 				salary.getTotalPayment() 
@@ -4795,7 +4794,7 @@ public class SQLGTZDOTestCase extends AbstractSQLTestCase {
 		double br = 1000.00 / 30.00;
 		double prestIt = br * 0.75 * 30.00;
 		//@formatter:off
-		Assert.assertEquals(
+		assertEquals(
 				1000.00 , 
 				salary.getTotalPayment() 
 				, DELTA);
@@ -4863,7 +4862,7 @@ public class SQLGTZDOTestCase extends AbstractSQLTestCase {
 		double br = 1000.00 / 30.00;
 		double prestIt = br * 0.75 * 30.00;
 		//@formatter:off
-		Assert.assertEquals(
+		assertEquals(
 				1000.00 , 
 				salary.getTotalPayment() 
 				, DELTA);
@@ -4933,7 +4932,7 @@ public class SQLGTZDOTestCase extends AbstractSQLTestCase {
 		
 		int monthDays = AonDateUtils.get(endDate, Calendar.DAY_OF_MONTH);
 		//@formatter:off
-		Assert.assertEquals(
+		assertEquals(
 				1000.00 / 30 * ( monthDays - 6 ) * 1.10, 
 				salary.getTotalPayment() 
 				
@@ -5016,7 +5015,7 @@ public class SQLGTZDOTestCase extends AbstractSQLTestCase {
 		int monthDays = get(endDate, Calendar.DAY_OF_MONTH);
 				
 		//@formatter:off
-		Assert.assertEquals(
+		assertEquals(
 				1000.00 / 30 * ( 11 * 0.75 + 12 * 0.60 + ( monthDays - 26 ) * 0.60 + 11 * 0.25 ), 
 				salary.getTotalPayment() 
 				, DELTA);
@@ -5106,7 +5105,7 @@ public class SQLGTZDOTestCase extends AbstractSQLTestCase {
 		
 		int monthDays = AonDateUtils.get(endDate, Calendar.DAY_OF_MONTH);
 		//@formatter:off
-		Assert.assertEquals(
+		assertEquals(
 			600 +
 			1650.00 / 30 * 0.75 * 20 +
 			1650.00 / 30  * ( monthDays - 20 )  

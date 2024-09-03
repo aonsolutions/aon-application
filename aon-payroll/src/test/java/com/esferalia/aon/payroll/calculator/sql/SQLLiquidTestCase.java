@@ -5,6 +5,7 @@ import static com.esferalia.aon.payroll.enumeration.ContextVariable.PREST_IT;
 import static com.esferalia.aon.watson.util.AonDateUtils.getFirstDayOfMonth;
 import static com.esferalia.aon.watson.util.AonDateUtils.getFirstDayOfYear;
 import static com.esferalia.aon.watson.util.AonDateUtils.getLastDayOfMonth;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.sql.Connection;
 import java.sql.Date;
@@ -12,7 +13,7 @@ import java.sql.SQLException;
 import java.util.Calendar;
 import java.util.HashMap;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.code.aon.common.enumeration.Month;
 import com.esferalia.aon.jooq.tables.records.AgreementLevelCategoryRecord;
@@ -29,7 +30,6 @@ import com.esferalia.aon.salary.SalaryException;
 import com.esferalia.aon.salary.expression.ExpressionException;
 import com.esferalia.aon.watson.util.AonDateUtils;
 
-import junit.framework.Assert;
 
 public class SQLLiquidTestCase extends AbstractSQLTestCase {
 
@@ -92,7 +92,7 @@ public class SQLLiquidTestCase extends AbstractSQLTestCase {
 		
 		
 		//@formatter:off
-		Assert.assertEquals(
+		assertEquals(
 				3333.00, 
 				salary.getTotalLiquid() 
 				, DELTA);
@@ -180,12 +180,12 @@ public class SQLLiquidTestCase extends AbstractSQLTestCase {
 		int workedDays = AonDateUtils.get(startIt, Calendar.DAY_OF_MONTH) -1; 
 		
 		//@formatter:off
-		Assert.assertEquals(
+		assertEquals(
 				3333.00 / monthDays * workedDays + ( br * 1.00 * itDays) , 
 				salary.getTotalLiquid() 
 				, DELTA);
 		//@formatter:on
-		Assert.assertEquals(
+		assertEquals(
 				commonBase, 
 				salary.getCommonBase() 
 				, DELTA);
@@ -254,7 +254,7 @@ public class SQLLiquidTestCase extends AbstractSQLTestCase {
 		
 		
 		//@formatter:off
-		Assert.assertEquals(
+		assertEquals(
 				3333.00, 
 				salary.getTotalLiquid() 
 				, DELTA);
@@ -319,7 +319,7 @@ public class SQLLiquidTestCase extends AbstractSQLTestCase {
 		System.out.println("BASE :" + salary.getCommonBase());
 		
 		
-		Assert.assertEquals(
+		assertEquals(
 				3333.00 * (1.0215), 
 				salary.getTotalPayment() 
 				, DELTA);

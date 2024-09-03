@@ -3,24 +3,11 @@
  */
 package com.esferalia.aon.payroll.calculator.sql;
 
-import static com.esferalia.aon.jooq.tables.Contract.CONTRACT;
-import static com.esferalia.aon.payroll.enumeration.ContextVariable.AGREEMENT_HOURS;
-import static com.esferalia.aon.payroll.enumeration.ContextVariable.ERE_FACTOR;
-import static com.esferalia.aon.payroll.enumeration.ContextVariable.FRIDAY_HOURS;
-import static com.esferalia.aon.payroll.enumeration.ContextVariable.MONDAY_HOURS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.MONTH_DAYS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.PARTIAL_FACTOR;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.QUOTE_DAYS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.SALARY_DAYS;
-import static com.esferalia.aon.payroll.enumeration.ContextVariable.SATURDAY_HOURS;
-import static com.esferalia.aon.payroll.enumeration.ContextVariable.STRIKE_DAYS;
-import static com.esferalia.aon.payroll.enumeration.ContextVariable.STRIKE_FACTOR;
-import static com.esferalia.aon.payroll.enumeration.ContextVariable.SUNDAY_HOURS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.TC2;
-import static com.esferalia.aon.payroll.enumeration.ContextVariable.THURSDAY_HOURS;
-import static com.esferalia.aon.payroll.enumeration.ContextVariable.TUESDAY_HOURS;
-import static com.esferalia.aon.payroll.enumeration.ContextVariable.WEDNESDAY_HOURS;
-import static com.esferalia.aon.payroll.enumeration.ContextVariable.WEEK_HOURS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.WORKED_DAYS;
 import static com.esferalia.aon.payroll.enumeration.ContractCode.C100;
 import static com.esferalia.aon.payroll.enumeration.ContractCode.C109;
@@ -58,58 +45,28 @@ import static com.esferalia.aon.payroll.enumeration.ContractCode.C540;
 import static com.esferalia.aon.payroll.enumeration.ContractCode.C541;
 import static com.esferalia.aon.payroll.enumeration.ContractCode.C550;
 import static com.esferalia.aon.payroll.enumeration.ContractCode.C552;
-import static com.esferalia.aon.watson.util.AonDateUtils.get;
-import static com.esferalia.aon.watson.util.AonDateUtils.getFirstDayOfMonth;
 import static com.esferalia.aon.watson.util.AonDateUtils.getFirstDayOfYear;
 import static com.esferalia.aon.watson.util.AonDateUtils.getLastDayOfMonth;
-import static com.esferalia.aon.watson.util.AonDateUtils.getLastDayOfYear;
-import static com.esferalia.aon.watson.util.AonDateUtils.getMax;
 import static java.lang.String.format;
-import static java.util.Calendar.DAY_OF_MONTH;
-import static java.util.Calendar.DAY_OF_WEEK;
-import static java.util.Calendar.DAY_OF_YEAR;
-import static java.util.Calendar.MONTH;
-import static java.util.Calendar.YEAR;
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.SQLException;
 import java.util.Calendar;
 import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
 import java.util.stream.Collectors;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import com.code.aon.ql.Criteria;
-import com.esferalia.aon.jooq.tables.records.AgreementLevelCategoryRecord;
-import com.esferalia.aon.jooq.tables.records.AgreementRecord;
 import com.esferalia.aon.jooq.tables.records.ContractRecord;
-import com.esferalia.aon.jooq.tables.records.DomainRecord;
-import com.esferalia.aon.jooq.tables.records.EnterpriseActivityRecord;
-import com.esferalia.aon.jooq.tables.records.EnterpriseCccRecord;
-import com.esferalia.aon.jooq.tables.records.RegistryRecord;
-import com.esferalia.aon.jooq.tables.records.ScopeRecord;
-import com.esferalia.aon.jooq.tables.records.WorkplaceRecord;
 import com.esferalia.aon.occam.api.AONContext;
-import com.esferalia.aon.payroll.Salary;
-import com.esferalia.aon.payroll.SalaryBuilder;
-import com.esferalia.aon.payroll.calculator.SmartContractSalaryCalculator;
-import com.esferalia.aon.payroll.calculator.jooq.JooqSalaryBuilder;
-import com.esferalia.aon.payroll.enumeration.CCCType;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.payroll.enumeration.ContractCode;
 import com.esferalia.aon.payroll.enumeration.LeaveType;
-import com.esferalia.aon.payroll.enumeration.SSRegimeType;
-import com.esferalia.aon.salary.SalaryException;
 import com.esferalia.aon.salary.expression.ExpressionException;
 import com.esferalia.aon.salary.expression.ITimedResult;
-import com.esferalia.aon.salary.expression.Period;
 import com.esferalia.aon.salary.expression.UndefinedVariablesException;
-
-import junit.framework.Assert;
 
 /**
  * @author rtrepiana

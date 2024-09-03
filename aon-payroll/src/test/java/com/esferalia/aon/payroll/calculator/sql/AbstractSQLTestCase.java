@@ -72,8 +72,8 @@ import org.jooq.Configuration;
 import org.jooq.Record;
 import org.jooq.TransactionalCallable;
 import org.jooq.impl.DSL;
-import org.junit.After;
-import org.junit.Before;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 
 import com.code.aon.common.enumeration.Month;
 import com.code.aon.config.enumeration.Administration;
@@ -160,7 +160,7 @@ public abstract class AbstractSQLTestCase {
 		return connection;
 	}
 
-	@Before
+	@BeforeEach
 	public void setUp() throws ClassNotFoundException, SQLException,
 			AonSQLException {
 		shutUp();
@@ -172,7 +172,7 @@ public abstract class AbstractSQLTestCase {
 		cleanSystemDeductions(context);
 	}
 
-	@After
+	@AfterEach
 	public void tearDown() throws SQLException {
 		if (connection != null)
 			connection.close();
@@ -521,7 +521,7 @@ public abstract class AbstractSQLTestCase {
 		while (rs.next()) {
 			if (rs.getString(1).startsWith(dbName)) {
 				connection.createStatement().execute("use " + rs.getString(1));
-				new VersionManager().uptodateDatabase(connection);
+				// new VersionManager().uptodateDatabase(connection);
 				System.out.println("use " + rs.getString(1));
 				return connection;
 			}
@@ -529,7 +529,7 @@ public abstract class AbstractSQLTestCase {
 
 		VersionManager versionManager = new VersionManager();
 		versionManager.createDatabase(connection, dbName);
-		versionManager.uptodateDatabase(connection);
+		//  versionManager.uptodateDatabase(connection);
 
 		return connection;
 	}

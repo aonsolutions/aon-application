@@ -3,8 +3,8 @@ package com.esferalia.aon.payroll.calculator.test;
 import java.sql.Connection;
 import java.sql.DriverManager;
 
-import org.junit.After;
-import org.junit.Before;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -16,7 +16,7 @@ public abstract class AbstractCalculatorTest {
 	protected Connection connection;
 
 
-	@Before
+	@BeforeEach
 	public void setUp() throws Exception {
 		String url = "jdbc:mysql://127.0.0.1:3306/payroll-esferalia-org?autoReconnect=true";
 		//String url = "jdbc:mysql://localhost:3306/aon-lanfisa-esferalia-net?autoReconnect=true";
@@ -26,7 +26,7 @@ public abstract class AbstractCalculatorTest {
 		connection = DriverManager.getConnection(url,usr ,psw );
 	}
 
-	@After
+	@AfterEach
 	public void tearDown() throws Exception {
 		if ( connection != null ) {
 			connection.close();

@@ -10,6 +10,7 @@ import static com.esferalia.aon.watson.util.AonDateUtils.getLastDayOfMonth;
 import static com.esferalia.aon.watson.util.AonDateUtils.getLastDayOfYear;
 import static java.util.Calendar.DAY_OF_MONTH;
 import static java.util.Calendar.YEAR;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.sql.Connection;
 import java.sql.Date;
@@ -18,8 +19,7 @@ import java.util.Calendar;
 import java.util.Collections;
 import java.util.HashMap;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.code.aon.common.enumeration.Month;
 import com.esferalia.aon.jooq.tables.records.AgreementExtraRecord;
@@ -109,8 +109,8 @@ public class SQLSeniorityTestCase extends
 		
 		Salary salary = new SmartContractSalaryCalculator<Salary>(new SalaryBuilder()).calculate(ctx);
 		
-		Assert.assertEquals( 1500.00 * 1.05, salary.getTotalPayment() , DELTA);
-		Assert.assertEquals( ( 1500.00 * 1.05 / 12 ) * 2, salary.getExtraPayProration(), DELTA);
+		assertEquals( 1500.00 * 1.05, salary.getTotalPayment() , DELTA);
+		assertEquals( ( 1500.00 * 1.05 / 12 ) * 2, salary.getExtraPayProration(), DELTA);
 		
 		
 		
@@ -122,7 +122,7 @@ public class SQLSeniorityTestCase extends
 		AgreementExtraRecord extra = getExtra(aonContext, agreement.getId(), "15/12");
 		ctx = getExtraSalaryCalculatorContext(connection, contract, extra, year, issueDate);
 		salary = new SmartContractSalaryCalculator<Salary>(new SalaryBuilder()).calculate(ctx);
-		Assert.assertEquals( 1500.00 * 1.05, salary.getTotalPayment(), DELTA);
+		assertEquals( 1500.00 * 1.05, salary.getTotalPayment(), DELTA);
 
 
 		startDate = add(add(getFirstDayOfYear(getToday()), Calendar.YEAR, -1), Calendar.MONTH,6); // 01/07 -1
@@ -132,7 +132,7 @@ public class SQLSeniorityTestCase extends
 		extra = getExtra(aonContext, agreement.getId(), "01/07");
 		ctx = getExtraSalaryCalculatorContext(connection, contract, extra, year, issueDate);
 		salary = new SmartContractSalaryCalculator<Salary>(new SalaryBuilder()).calculate(ctx);
-		Assert.assertEquals( 1500.00 * 1.05, salary.getTotalPayment(), DELTA);
+		assertEquals( 1500.00 * 1.05, salary.getTotalPayment(), DELTA);
 	}
 		
 	
@@ -201,8 +201,8 @@ public class SQLSeniorityTestCase extends
 		
 		Salary salary = new SmartContractSalaryCalculator<Salary>(new SalaryBuilder()).calculate(ctx);
 		
-		Assert.assertEquals( 1500.00 * 1.00, salary.getTotalPayment(), DELTA);
-		Assert.assertEquals( ( 1500.00 * 1.00 / 12 ) * 2, salary.getExtraPayProration(), DELTA);
+		assertEquals( 1500.00 * 1.00, salary.getTotalPayment(), DELTA);
+		assertEquals( ( 1500.00 * 1.00 / 12 ) * 2, salary.getExtraPayProration(), DELTA);
 		
 		
 		startDate = getFirstDayOfYear(getToday());
@@ -216,7 +216,7 @@ public class SQLSeniorityTestCase extends
 		int month = AonDateUtils.get(getToday(), Calendar.MONTH) +1 ; // +1 remember starts at end 
 		
 		//@formatter:off
-		Assert.assertEquals( 
+		assertEquals( 
 				(1500.00/12 * month) 
 				+(1500.00 * 1.05 / 12 *(12-month)), 
 				salary.getTotalPayment()
@@ -233,13 +233,13 @@ public class SQLSeniorityTestCase extends
 		salary = new SmartContractSalaryCalculator<Salary>(new SalaryBuilder()).calculate(ctx);
 		
 		if ( month < 7 )
-			Assert.assertEquals( 
+			assertEquals( 
 					(1500.00/12 * (12 - ( 6-month  )) 		// without seniority  
 					+(1500.00 * 1.05 / 12 * (6-month))), 	// with seniority
 					salary.getTotalPayment() 
 					, DELTA);
 		else
-			Assert.assertEquals( 
+			assertEquals( 
 					(1500.00) 
 //					(1500.00/12 * (month - 6 )) 
 //					+(1500.00/ 12 * ( 6  + 12 - month))
@@ -323,8 +323,8 @@ public class SQLSeniorityTestCase extends
 		
 		Salary salary = new SmartContractSalaryCalculator<Salary>(new SalaryBuilder()).calculate(ctx);
 		
-		Assert.assertEquals( 1500.00 * 1.05, salary.getTotalPayment(), DELTA);
-		Assert.assertEquals( ( 1500.00 * 1.05 / 12 ) * 2, salary.getExtraPayProration(), DELTA);
+		assertEquals( 1500.00 * 1.05, salary.getTotalPayment(), DELTA);
+		assertEquals( ( 1500.00 * 1.05 / 12 ) * 2, salary.getExtraPayProration(), DELTA);
 		
 		
 		
@@ -335,7 +335,7 @@ public class SQLSeniorityTestCase extends
 		AgreementExtraRecord extra = getExtra(aonContext, agreement.getId(), "15/12");
 		ctx = getExtraSalaryCalculatorContext(connection, contract, extra, year, issueDate);
 		salary = new SmartContractSalaryCalculator<Salary>(new SalaryBuilder()).calculate(ctx);
-		Assert.assertEquals( 1500.00 * 1.05, salary.getTotalPayment(), DELTA);
+		assertEquals( 1500.00 * 1.05, salary.getTotalPayment(), DELTA);
 
 
 		startDate = add(add(getFirstDayOfYear(getToday()), Calendar.YEAR, -1), Calendar.MONTH,6); // 01/07 -1
@@ -345,7 +345,7 @@ public class SQLSeniorityTestCase extends
 		extra = getExtra(aonContext, agreement.getId(), "01/07");
 		ctx = getExtraSalaryCalculatorContext(connection, contract, extra, year, issueDate);
 		salary = new SmartContractSalaryCalculator<Salary>(new SalaryBuilder()).calculate(ctx);
-		Assert.assertEquals( 1500.00 * 1.05, salary.getTotalPayment(), DELTA);
+		assertEquals( 1500.00 * 1.05, salary.getTotalPayment(), DELTA);
 	}
 		
 	
@@ -422,7 +422,7 @@ public class SQLSeniorityTestCase extends
 		
 		Salary salary = new SmartContractSalaryCalculator<Salary>(new SalaryBuilder()).calculate(ctx);
 		
-		Assert.assertEquals( 1500.00 + (int)((get(getToday(), YEAR)-2000)/4) * 66.66, salary.getTotalPayment(), DELTA);
+		assertEquals( 1500.00 + (int)((get(getToday(), YEAR)-2000)/4) * 66.66, salary.getTotalPayment(), DELTA);
 
 		
 		
@@ -446,7 +446,7 @@ public class SQLSeniorityTestCase extends
 				contract);
 		//@formatter:on
 		salary = new SmartContractSalaryCalculator<Salary>(new SalaryBuilder()).calculate(ctx);
-		Assert.assertEquals( 1500.00 + (int)((get(getToday(), YEAR)-1994)/4) * 66.66, salary.getTotalPayment(), DELTA);
+		assertEquals( 1500.00 + (int)((get(getToday(), YEAR)-1994)/4) * 66.66, salary.getTotalPayment(), DELTA);
 
 
 		// 1996
@@ -469,7 +469,7 @@ public class SQLSeniorityTestCase extends
 				contract);
 		//@formatter:on
 		salary = new SmartContractSalaryCalculator<Salary>(new SalaryBuilder()).calculate(ctx);
-		Assert.assertEquals( 1500.00 + (int)((get(getToday(), YEAR)-1996)/4) * 66.66, salary.getTotalPayment(), DELTA);
+		assertEquals( 1500.00 + (int)((get(getToday(), YEAR)-1996)/4) * 66.66, salary.getTotalPayment(), DELTA);
 
 		// 1993
 		//@formatter:off
@@ -491,7 +491,7 @@ public class SQLSeniorityTestCase extends
 				contract);
 		//@formatter:on
 		salary = new SmartContractSalaryCalculator<Salary>(new SalaryBuilder()).calculate(ctx);
-		Assert.assertEquals( 1500.00 + ((int)((get(getToday(), YEAR)-1996)/4) * 66.66) + 19.96, salary.getTotalPayment(), DELTA);
+		assertEquals( 1500.00 + ((int)((get(getToday(), YEAR)-1996)/4) * 66.66) + 19.96, salary.getTotalPayment(), DELTA);
 	}
 	@Test
 	public void testSeniorityV() throws ExpressionException, SQLException, SalaryException {
@@ -615,7 +615,7 @@ public class SQLSeniorityTestCase extends
 			//@formatter:on
 			Salary salary = new SmartContractSalaryCalculator<Salary>(new SalaryBuilder()).calculate(ctx);
 			
-			Assert.assertEquals( payments[i-1], salary.getTotalPayment(), DELTA );
+			assertEquals( payments[i-1], salary.getTotalPayment(), DELTA );
 		}
 
 		
@@ -693,8 +693,8 @@ public class SQLSeniorityTestCase extends
 		
 		Salary salary = new SmartContractSalaryCalculator<Salary>(new SalaryBuilder()).calculate(ctx);
 		
-		Assert.assertEquals( 1500.00 * 1.05, salary.getTotalPayment(), DELTA);
-		Assert.assertEquals( ( 1500.00 * 1.05 / 12 ) * 2, salary.getExtraPayProration(), DELTA);
+		assertEquals( 1500.00 * 1.05, salary.getTotalPayment(), DELTA);
+		assertEquals( ( 1500.00 * 1.05 / 12 ) * 2, salary.getExtraPayProration(), DELTA);
 		
 		
 		
@@ -707,7 +707,7 @@ public class SQLSeniorityTestCase extends
 		ctx = getExtraSalaryCalculatorContext(connection, contract, extra, year, issueDate);
 		salary = new SmartContractSalaryCalculator<Salary>(new SalaryBuilder()).calculate(ctx);
 		int month = get(getToday(), Calendar.MONTH);
-		Assert.assertEquals( 1500.00 * 1.05 / 12.00 * ( 12 - month ) + 1500.00 * 1.00 / 12.00 * month, salary.getTotalPayment(), DELTA);
+		assertEquals( 1500.00 * 1.05 / 12.00 * ( 12 - month ) + 1500.00 * 1.00 / 12.00 * month, salary.getTotalPayment(), DELTA);
 
 
 //		startDate = add(add(getFirstDayOfMonth(getToday()), Calendar.YEAR, -1), Calendar.MONTH,6); // 01/07 -1
@@ -717,7 +717,7 @@ public class SQLSeniorityTestCase extends
 //		extra = getExtra(aonContext, agreement.getId(), "01/07");
 //		ctx = getExtraSalaryCalculatorContext(connection, contract, extra, year, issueDate);
 //		salary = new SmartContractSalaryCalculator<Salary>(new SalaryBuilder()).calculate(ctx);
-//		Assert.assertEquals( 1500.00 * 1.05, salary.getTotalPayment() );
+//		assertEquals( 1500.00 * 1.05, salary.getTotalPayment() );
 	}
 	
 	@Test
@@ -791,8 +791,8 @@ public class SQLSeniorityTestCase extends
 		
 		Salary salary = new SmartContractSalaryCalculator<Salary>(new SalaryBuilder()).calculate(ctx);
 		
-		Assert.assertEquals( 1500.00 * 1.05, salary.getTotalPayment(), DELTA);
-		Assert.assertEquals( ( 1500.00 * 1.05 / 12 ) * 2, salary.getExtraPayProration(), DELTA);
+		assertEquals( 1500.00 * 1.05, salary.getTotalPayment(), DELTA);
+		assertEquals( ( 1500.00 * 1.05 / 12 ) * 2, salary.getExtraPayProration(), DELTA);
 		
 		
 		
@@ -805,7 +805,7 @@ public class SQLSeniorityTestCase extends
 		ctx = getExtraSalaryCalculatorContext(connection, contract, extra, year, issueDate);
 		salary = new SmartContractSalaryCalculator<Salary>(new SalaryBuilder()).calculate(ctx);
 		int month = get(getToday(), Calendar.MONTH);
-		Assert.assertEquals( 1500.00 * 1.05 , salary.getTotalPayment(), DELTA);
+		assertEquals( 1500.00 * 1.05 , salary.getTotalPayment(), DELTA);
 
 
 //		startDate = add(add(getFirstDayOfMonth(getToday()), Calendar.YEAR, -1), Calendar.MONTH,6); // 01/07 -1
@@ -815,6 +815,6 @@ public class SQLSeniorityTestCase extends
 //		extra = getExtra(aonContext, agreement.getId(), "01/07");
 //		ctx = getExtraSalaryCalculatorContext(connection, contract, extra, year, issueDate);
 //		salary = new SmartContractSalaryCalculator<Salary>(new SalaryBuilder()).calculate(ctx);
-//		Assert.assertEquals( 1500.00 * 1.05, salary.getTotalPayment() );
+//		assertEquals( 1500.00 * 1.05, salary.getTotalPayment() );
 	}
 }

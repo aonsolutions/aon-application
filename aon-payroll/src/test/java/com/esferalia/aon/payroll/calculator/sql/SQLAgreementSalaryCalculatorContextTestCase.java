@@ -5,15 +5,14 @@ import static com.esferalia.aon.payroll.enumeration.ContextVariable.IRPF_PERCENT
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.MONTH_DAYS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.WORKED_DAYS;
 import static com.esferalia.aon.watson.util.AonDateUtils.getFirstDayOfYear;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.SQLException;
 import java.util.HashMap;
 
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.esferalia.aon.jooq.tables.records.AgreementLevelCategoryRecord;
 import com.esferalia.aon.jooq.tables.records.AgreementRecord;
@@ -29,7 +28,6 @@ import com.esferalia.aon.salary.enumeration.DeductionType;
 import com.esferalia.aon.salary.expression.ExpressionException;
 import com.esferalia.aon.watson.server.AonDateUtils;
 
-import junit.framework.Assert;
 
 public class SQLAgreementSalaryCalculatorContextTestCase extends AbstractSQLTestCase {
 
@@ -115,7 +113,7 @@ public class SQLAgreementSalaryCalculatorContextTestCase extends AbstractSQLTest
 		
 		cleanSystemDeductions(aonContext);
 		
-		Assert.assertTrue( salary.getTotalIrpf() > 0.00 );
+		assertTrue( salary.getTotalIrpf() > 0.00 );
 		
 		
 	}

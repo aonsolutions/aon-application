@@ -48,6 +48,7 @@ import static com.esferalia.aon.payroll.enumeration.ContractCode.C552;
 import static com.esferalia.aon.watson.util.AonDateUtils.getFirstDayOfYear;
 import static com.esferalia.aon.watson.util.AonDateUtils.getLastDayOfMonth;
 import static java.lang.String.format;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.sql.Connection;
 import java.sql.Date;
@@ -59,10 +60,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import com.esferalia.aon.jooq.tables.PayrollWorkplace;
-import com.esferalia.aon.jooq.tables.Workplace;
 import com.esferalia.aon.jooq.tables.records.CalendarRecord;
 import com.esferalia.aon.jooq.tables.records.ContractRecord;
 import com.esferalia.aon.jooq.tables.records.HolidayRecord;
@@ -75,7 +74,6 @@ import com.esferalia.aon.salary.expression.ExpressionException;
 import com.esferalia.aon.salary.expression.ITimedResult;
 import com.esferalia.aon.salary.expression.Period;
 import com.esferalia.aon.salary.expression.TimedResult;
-import com.esferalia.aon.watson.util.AonDateUtils;
 
 /**
  * @author rtrepiana
@@ -133,7 +131,7 @@ public class SQLActualDaysTestCase extends AbstractSQLTestCase {
 			
 			long expectedActualDays = getSumExpectedActualDays(startDate, endDate);
 			
-			org.junit.Assert.assertEquals(expectedActualDays, calculatedActualDays);
+			assertEquals(expectedActualDays, calculatedActualDays);
 		}
 	}
 	
@@ -173,7 +171,7 @@ public class SQLActualDaysTestCase extends AbstractSQLTestCase {
 			
 			long expectedActualDays = getSumExpectedActualDays(startDate, endDate);
 			
-			org.junit.Assert.assertEquals(expectedActualDays, calculatedActualDays);
+			assertEquals(expectedActualDays, calculatedActualDays);
 		}
 		
 	}
@@ -217,7 +215,7 @@ public class SQLActualDaysTestCase extends AbstractSQLTestCase {
 			
 			long expectedActualDays = getSumExpectedActualDays(startDate, endDate, Calendar.WEDNESDAY, Calendar.SATURDAY, Calendar.SUNDAY );
 			
-			org.junit.Assert.assertEquals(expectedActualDays, calculatedActualDays);
+			assertEquals(expectedActualDays, calculatedActualDays);
 		}
 		
 	}
@@ -273,7 +271,7 @@ public class SQLActualDaysTestCase extends AbstractSQLTestCase {
 		
 		long expectedActualDays = getSumExpectedActualDays(startDate, endDate, Calendar.SATURDAY, Calendar.SUNDAY );
 		
-		org.junit.Assert.assertEquals(expectedActualDays, calculatedActualDays);
+		assertEquals(expectedActualDays, calculatedActualDays);
 
 	}
 
@@ -323,20 +321,20 @@ public class SQLActualDaysTestCase extends AbstractSQLTestCase {
 			long expectedActualDays = getSumExpectedActualDays(startDate, add(startIT, Calendar.DAY_OF_MONTH,-1), Calendar.WEDNESDAY, Calendar.SATURDAY, Calendar.SUNDAY );
 			expectedActualDays += getSumExpectedActualDays(add(endIT, Calendar.DAY_OF_MONTH,1), endDate, Calendar.WEDNESDAY, Calendar.SATURDAY, Calendar.SUNDAY );
 			
-			org.junit.Assert.assertEquals(expectedActualDays, calculatedActualDays);
+			assertEquals(expectedActualDays, calculatedActualDays);
 			
 			Collections.sort(actualDays, (r1,r2) -> r1.getPeriod().compareTo(r2.getPeriod()));
-			org.junit.Assert.assertEquals(2, actualDays.size());
+			assertEquals(2, actualDays.size());
 			
 			expectedActualDays = getSumExpectedActualDays(startDate, add(startIT, Calendar.DAY_OF_MONTH,-1), Calendar.WEDNESDAY, Calendar.SATURDAY, Calendar.SUNDAY );
 			calculatedActualDays = actualDays.get(0).getValue().intValue();
-			org.junit.Assert.assertEquals(expectedActualDays, calculatedActualDays);
-			org.junit.Assert.assertEquals(actualDays.get(0).getPeriod().getStart(), startDate);
+			assertEquals(expectedActualDays, calculatedActualDays);
+			assertEquals(actualDays.get(0).getPeriod().getStart(), startDate);
 			
 			expectedActualDays = getSumExpectedActualDays(add(endIT, Calendar.DAY_OF_MONTH,1), endDate, Calendar.WEDNESDAY, Calendar.SATURDAY, Calendar.SUNDAY );
 			calculatedActualDays = actualDays.get(1).getValue().intValue();
-			org.junit.Assert.assertEquals(expectedActualDays, calculatedActualDays);
-			org.junit.Assert.assertEquals(actualDays.get(1).getPeriod().getEnd(), endDate);
+			assertEquals(expectedActualDays, calculatedActualDays);
+			assertEquals(actualDays.get(1).getPeriod().getEnd(), endDate);
 		}
 		
 	}

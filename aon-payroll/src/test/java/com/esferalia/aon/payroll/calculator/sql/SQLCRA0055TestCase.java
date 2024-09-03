@@ -1,37 +1,20 @@
 package com.esferalia.aon.payroll.calculator.sql;
 
-import static com.esferalia.aon.jooq.tables.Contract.CONTRACT;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.COMMON_DISEASE_DAYS;
-import static com.esferalia.aon.payroll.enumeration.ContextVariable.MATERNITY_DAYS;
-import static com.esferalia.aon.payroll.enumeration.ContextVariable.MONTH_DAYS;
-import static com.esferalia.aon.payroll.enumeration.ContextVariable.OCCUPATIONAL_DISEASE_DAYS;
-import static com.esferalia.aon.payroll.enumeration.ContextVariable.PREST_IT;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.QUOTE_DAYS;
-import static com.esferalia.aon.watson.util.AonDateUtils.get;
 import static com.esferalia.aon.watson.util.AonDateUtils.getFirstDayOfMonth;
 import static com.esferalia.aon.watson.util.AonDateUtils.getFirstDayOfYear;
 import static com.esferalia.aon.watson.util.AonDateUtils.getLastDayOfMonth;
-import static com.esferalia.aon.watson.util.AonDateUtils.getLastDayOfYear;
-import static java.util.Calendar.DATE;
-import static java.util.Calendar.DAY_OF_MONTH;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.SQLException;
 import java.util.Calendar;
-import java.util.Collections;
 import java.util.HashMap;
-import java.util.Map;
 
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import com.code.aon.common.enumeration.Month;
-import com.code.aon.ql.Criteria;
-import com.esferalia.aon.jooq.tables.records.AgreementExtraRecord;
-import com.esferalia.aon.jooq.tables.records.AgreementLevelCategoryRecord;
-import com.esferalia.aon.jooq.tables.records.AgreementRecord;
-import com.esferalia.aon.jooq.tables.records.ContractLeaveRecord;
 import com.esferalia.aon.jooq.tables.records.ContractRecord;
 import com.esferalia.aon.jooq.tables.records.PaymentConceptRecord;
 import com.esferalia.aon.occam.api.AONContext;
@@ -39,18 +22,11 @@ import com.esferalia.aon.payroll.Salary;
 import com.esferalia.aon.payroll.SalaryBuilder;
 import com.esferalia.aon.payroll.SalaryPayment;
 import com.esferalia.aon.payroll.calculator.SmartContractSalaryCalculator;
-import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.payroll.enumeration.LeaveType;
 import com.esferalia.aon.salary.SalaryException;
 import com.esferalia.aon.salary.enumeration.PaymentType;
 import com.esferalia.aon.salary.enumeration.SalaryType;
-import com.esferalia.aon.salary.expression.ExpressionContext;
 import com.esferalia.aon.salary.expression.ExpressionException;
-import com.esferalia.aon.salary.expression.ITimedVariable;
-import com.esferalia.aon.salary.payment.IPayment;
-import com.esferalia.aon.watson.util.AonDateUtils;
-
-import junit.framework.Assert;
 
 public class SQLCRA0055TestCase extends AbstractSQLTestCase {
 
@@ -104,8 +80,8 @@ public class SQLCRA0055TestCase extends AbstractSQLTestCase {
 		for ( SalaryPayment p: salary.getSalaryPayments())
 			System.out.println(p.getExpression() + " = " + p.getAmount() );
 				
-		org.junit.Assert.assertEquals( 1000.00, salary.getCommonBase(), DELTA);
-		org.junit.Assert.assertEquals( 1000.00, salary.getTotalPayment(), DELTA);
+		assertEquals( 1000.00, salary.getCommonBase(), DELTA);
+		assertEquals( 1000.00, salary.getTotalPayment(), DELTA);
 		
 	}
 

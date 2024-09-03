@@ -11,8 +11,6 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Random;
 
-import org.junit.Test;
-
 import com.code.aon.customer.enumeration.CustomerStatus;
 import com.code.aon.ql.Criteria;
 import com.esferalia.aon.payroll.calculator.ContractSalaryCalculator;

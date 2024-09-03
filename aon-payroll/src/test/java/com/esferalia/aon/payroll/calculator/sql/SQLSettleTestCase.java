@@ -24,6 +24,8 @@ import static com.esferalia.aon.watson.util.AonDateUtils.getLastDayOfYear;
 import static java.lang.String.format;
 import static java.util.Calendar.DAY_OF_MONTH;
 import static java.util.Calendar.MONTH;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.sql.Connection;
 import java.sql.Date;
@@ -37,8 +39,8 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
 import com.code.aon.common.enumeration.Month;
 import com.code.aon.ql.Criteria;
@@ -74,8 +76,6 @@ import com.esferalia.aon.salary.expression.ITimedVariable;
 import com.esferalia.aon.salary.expression.Period;
 import com.esferalia.aon.salary.payment.IPayment;
 import com.esferalia.aon.watson.util.AonDateUtils;
-
-import junit.framework.Assert;
 
 public class SQLSettleTestCase extends AbstractSQLTestCase {
 	
@@ -118,42 +118,42 @@ public class SQLSettleTestCase extends AbstractSQLTestCase {
 				getSQLContractSettleContext(connection, seniority, contract);
 		
 		double fix29Feb = 0; //Math.min(1, Math.abs(get(seniority, DAY_OF_MONTH) - get(getToday(), DAY_OF_MONTH)));
-		Assert.assertEquals(seniority, ctx.getStartDate());
+		assertEquals(seniority, ctx.getStartDate());
 		for ( ITimedResult<Object> result:  ctx.getExpressionContext().eval("AÑOS_TRABAJADOS", seniority, getToday()))
-			Assert.assertEquals( (2.00 + 2/12.00 + fix29Feb/12.00), result.getValue());
+			assertEquals( (2.00 + 2/12.00 + fix29Feb/12.00), result.getValue());
 
 		double br = (1750.00) * 12.00 / 365; //AonDateUtils.getMax(getToday(), DAY_OF_YEAR);
 
 		for ( ITimedResult<Object> result:  ctx.getExpressionContext().eval("SALARIO_DIA", seniority, getToday())) {
-			Assert.assertEquals( seniority, result.getPeriod().getStart());
-			Assert.assertEquals( br , result.getValue());
+			assertEquals( seniority, result.getPeriod().getStart());
+			assertEquals( br , result.getValue());
 		}
 
 
 		for ( ITimedResult<Object> result:  ctx.getExpressionContext().eval("12.00 * AÑOS_TRABAJADOS * SALARIO_DIA", seniority, getToday())) {
-			Assert.assertEquals( seniority, result.getPeriod().getStart());
-			Assert.assertEquals( 12.00 * (2.00 + 2/12.00+ fix29Feb/12.00) * br , result.getValue());
+			assertEquals( seniority, result.getPeriod().getStart());
+			assertEquals( 12.00 * (2.00 + 2/12.00+ fix29Feb/12.00) * br , result.getValue());
 		}
 			
 		for ( ITimedResult<Object> result:  ctx.getExpressionContext().eval("FIN", seniority, getToday())) {
-			Assert.assertEquals( seniority, result.getPeriod().getStart());
+			assertEquals( seniority, result.getPeriod().getStart());
 		}
 
 		for ( ITimedResult<Object> result:  ctx.getExpressionContext().eval("CAUSA_INDEMNIZACION", seniority, getToday())) {
-			Assert.assertEquals( seniority, result.getPeriod().getStart());
+			assertEquals( seniority, result.getPeriod().getStart());
 		}
 
 		for ( ITimedResult<Object> result:  ctx.getExpressionContext().eval("(CAUSA_INDEMNIZACION == FIN) ? 12.00 * AÑOS_TRABAJADOS * SALARIO_DIA: 0.00", seniority, getToday()))
 			System.out.println(result.getPeriod().getStart() + ".." + result.getPeriod().getEnd() + " = " + result.getValue() );
-			//Assert.assertEquals( 12.00 * (2.00 + 2/12.00) * br , result.getValue());
+			//assertEquals( 12.00 * (2.00 + 2/12.00) * br , result.getValue());
 
 		Salary settle = new SmartContractSalaryCalculator<Salary>( new SalaryBuilder()).calculate(ctx);
 		
 		int days = (int) new Period(seniority, getToday()).daysStream().count();
-		Assert.assertEquals(days, (int)settle.getTimeUnits());
+		assertEquals(days, (int)settle.getTimeUnits());
 
-		Assert.assertEquals( 12 * (2.00 + 2/12.00 + fix29Feb/12.00) * br, settle.getTotalPayment(), DELTA);
-		Assert.assertEquals( 12 * ( 2 + 2/12.00 + fix29Feb/12.00) * br, settle.getTotalLiquid(), DELTA);
+		assertEquals( 12 * (2.00 + 2/12.00 + fix29Feb/12.00) * br, settle.getTotalPayment(), DELTA);
+		assertEquals( 12 * ( 2 + 2/12.00 + fix29Feb/12.00) * br, settle.getTotalLiquid(), DELTA);
 	}
 
 	@Test
@@ -244,8 +244,8 @@ public class SQLSettleTestCase extends AbstractSQLTestCase {
 		double br = (1750.00 * 1.10) * (1 + 1.00 / 12 + 1.00 / 12) * 12 / 365; //AonDateUtils.getMax(getToday(), DAY_OF_YEAR);
 		
 
-		Assert.assertEquals( 12 * (2/12.00) * br, settle.getTotalPayment(), DELTA);
-		Assert.assertEquals( 12 * (2/12.00) * br , settle.getTotalLiquid(), DELTA);
+		assertEquals( 12 * (2/12.00) * br, settle.getTotalPayment(), DELTA);
+		assertEquals( 12 * (2/12.00) * br , settle.getTotalLiquid(), DELTA);
 	}
 
 	@Test
@@ -331,11 +331,11 @@ public class SQLSettleTestCase extends AbstractSQLTestCase {
 		
 		double br = (1750.00 * 1.10) * (1 + 1.00 / 12 + 1.00 / 12) * 12 / 365; //AonDateUtils.getMax(getToday(), DAY_OF_YEAR);
 
-		Assert.assertEquals( 20 * (2/12.00) * br, settle.getTotalPayment(), DELTA);
+		assertEquals( 20 * (2/12.00) * br, settle.getTotalPayment(), DELTA);
 		
 		System.out.println( (20 * (2/12.00) * br ) + " = " + settle.getTotalPayment() );
 		
-		Assert.assertEquals( 20 * (2/12.00) * br, settle.getTotalLiquid(), DELTA);
+		assertEquals( 20 * (2/12.00) * br, settle.getTotalLiquid(), DELTA);
 	}
 
 	@Test
@@ -425,11 +425,11 @@ public class SQLSettleTestCase extends AbstractSQLTestCase {
 		
 		long workedDays = new Period(contractStart, getToday()).getDays();
 		
-		org.junit.Assert.assertEquals( 12 * (workedDays/365.00) * br, settle.getTotalPayment(), DELTA);
+		assertEquals( 12 * (workedDays/365.00) * br, settle.getTotalPayment(), DELTA);
 		
 		System.out.println( (12 * (workedDays/365.00) * br) + " = " + settle.getTotalPayment() );
 		
-		org.junit.Assert.assertEquals(12 * (workedDays/365.00) * br, settle.getTotalLiquid(), DELTA);
+		assertEquals(12 * (workedDays/365.00) * br, settle.getTotalLiquid(), DELTA);
 		
 		setData(aonContext, contract, 
 			add(getToday(), Calendar.DAY_OF_MONTH,1)
@@ -443,7 +443,7 @@ public class SQLSettleTestCase extends AbstractSQLTestCase {
 		ctx = getSmartSQLContractSettleContext(connection, contractStart, contract);
 		settle = new SmartContractSalaryCalculator<Salary>( new SalaryBuilder()).calculate(ctx);
 		
-		org.junit.Assert.assertEquals(12 * (workedDays/365.00) * br + 4 * br, settle.getTotalPayment(), DELTA);
+		assertEquals(12 * (workedDays/365.00) * br + 4 * br, settle.getTotalPayment(), DELTA);
 		
 		System.out.println( (12 * (workedDays/365.00) * br + 4 * br) + " = " + settle.getTotalPayment() );
 		
@@ -544,9 +544,9 @@ public class SQLSettleTestCase extends AbstractSQLTestCase {
 //		settle.getSalaryDatas().stream().forEach(d->System.out.println(d.getName() + " = "  + d.getExpression() ));
 //		settle.getSalaryPayments().stream().forEach(p->System.out.println(p.getExpression() + " = "  + p.getAmount() ));
 
-		Assert.assertEquals( 20 * (2/12.00) * br + ( br * 4 ), settle.getTotalPayment(), DELTA);
+		assertEquals( 20 * (2/12.00) * br + ( br * 4 ), settle.getTotalPayment(), DELTA);
 		
-		Assert.assertEquals( br * 4 , settle.getCommonBase(), DELTA);
+		assertEquals( br * 4 , settle.getCommonBase(), DELTA);
 		
 	}
 
@@ -602,9 +602,9 @@ public class SQLSettleTestCase extends AbstractSQLTestCase {
 //		settle.getSalaryDatas().stream().forEach(d->System.out.println(d.getName() + " = "  + d.getExpression() ));
 //		settle.getSalaryPayments().stream().forEach(p->System.out.println(p.getExpression() + " = "  + p.getAmount() ));
 
-		Assert.assertEquals( br * 4 , settle.getCommonBase(), DELTA);
-		Assert.assertEquals( 20 * (2/12.00) * br + ( br * 4 ), settle.getTotalPayment(), DELTA);
-		Assert.assertEquals( settle.getCommonBase() * 1.60 / 100 , settle.getTotalDeduction(), DELTA);
+		assertEquals( br * 4 , settle.getCommonBase(), DELTA);
+		assertEquals( 20 * (2/12.00) * br + ( br * 4 ), settle.getTotalPayment(), DELTA);
+		assertEquals( settle.getCommonBase() * 1.60 / 100 , settle.getTotalDeduction(), DELTA);
 	
 		
 	}
@@ -717,11 +717,11 @@ public class SQLSettleTestCase extends AbstractSQLTestCase {
 		
 		double br = (1750.00 * 1.10) * (1 + 1.00 / 12 + 1.00 / 12) * 12 / 365; 
 
-		Assert.assertEquals( 20 * (2/12.00) * br + ( br * (10 + noHolidays) ), settle.getTotalPayment(), DELTA);
+		assertEquals( 20 * (2/12.00) * br + ( br * (10 + noHolidays) ), settle.getTotalPayment(), DELTA);
 		
-		Assert.assertEquals( br * ( 10 + noHolidays ) , settle.getRawCommonBase(), DELTA);
+		assertEquals( br * ( 10 + noHolidays ) , settle.getRawCommonBase(), DELTA);
 		// TODO: 
-		//Assert.assertEquals( br * ( 10 + noHolidays ) , settle.getCommonBase(), DELTA);
+		//assertEquals( br * ( 10 + noHolidays ) , settle.getCommonBase(), DELTA);
 		
 		SalaryData cgcBases [] = settle.getSalaryDatas()
 				.stream()
@@ -729,16 +729,16 @@ public class SQLSettleTestCase extends AbstractSQLTestCase {
 				.sorted((s1,s2)-> s1.getStartDate().compareTo(s2.getStartDate()) )
 				.toArray(l-> new SalaryData[l]);
 		
-		Assert.assertEquals(2, cgcBases.length);
+		assertEquals(2, cgcBases.length);
 		
-		Assert.assertEquals(startNoHolidays, cgcBases[0].getStartDate());
-		Assert.assertEquals(endNoHolidays, cgcBases[0].getEndDate());
+		assertEquals(startNoHolidays, cgcBases[0].getStartDate());
+		assertEquals(endNoHolidays, cgcBases[0].getEndDate());
 		// TODO
-		//Assert.assertEquals(br*noHolidays, Double.parseDouble(cgcBases[0].getExpression()), DELTA);
+		//assertEquals(br*noHolidays, Double.parseDouble(cgcBases[0].getExpression()), DELTA);
 		
-		Assert.assertEquals(AonDateUtils.add(endNoHolidays, DAY_OF_MONTH, 1), cgcBases[1].getStartDate());
-		Assert.assertEquals(AonDateUtils.add(endNoHolidays, DAY_OF_MONTH, 10), cgcBases[1].getEndDate());
-		Assert.assertEquals(br*10.00, Double.parseDouble(cgcBases[1].getExpression()), DELTA);
+		assertEquals(AonDateUtils.add(endNoHolidays, DAY_OF_MONTH, 1), cgcBases[1].getStartDate());
+		assertEquals(AonDateUtils.add(endNoHolidays, DAY_OF_MONTH, 10), cgcBases[1].getEndDate());
+		assertEquals(br*10.00, Double.parseDouble(cgcBases[1].getExpression()), DELTA);
 		
 	}
 
@@ -798,9 +798,9 @@ public class SQLSettleTestCase extends AbstractSQLTestCase {
 		
 		double br = (1750.00 * 1.10) * 12 / 365; 
 
-		org.junit.Assert.assertEquals( br * 11 , settle.getRawCommonBase(), DELTA);
+		assertEquals( br * 11 , settle.getRawCommonBase(), DELTA);
 		// TODO: 
-		//Assert.assertEquals( br * ( 10 + noHolidays ) , settle.getCommonBase(), DELTA);
+		//assertEquals( br * ( 10 + noHolidays ) , settle.getCommonBase(), DELTA);
 		
 		SalaryData cgcBases [] = settle.getSalaryDatas()
 				.stream()
@@ -809,26 +809,26 @@ public class SQLSettleTestCase extends AbstractSQLTestCase {
 				.filter(s->s.getName().equals(ContextVariable.CGC_BASE.getName()))
 				.sorted((s1,s2)-> s1.getStartDate().compareTo(s2.getStartDate()) )
 				.toArray(l-> new SalaryData[l]);
-		//org.junit.Assert.assertEquals(2, cgcBases.length);
+		//assertEquals(2, cgcBases.length);
 		
-		org.junit.Assert.assertEquals(startNoHolidays, cgcBases[0].getStartDate());
-		org.junit.Assert.assertEquals(startNoHolidays, cgcBases[0].getEndDate());
+		assertEquals(startNoHolidays, cgcBases[0].getStartDate());
+		assertEquals(startNoHolidays, cgcBases[0].getEndDate());
 
-		org.junit.Assert.assertEquals(br, Double.parseDouble(cgcBases[0].getExpression()), DELTA);
+		assertEquals(br, Double.parseDouble(cgcBases[0].getExpression()), DELTA);
 		
-		org.junit.Assert.assertEquals(AonDateUtils.add(startNoHolidays, DAY_OF_MONTH, 1), cgcBases[1].getStartDate());
-		org.junit.Assert.assertEquals(AonDateUtils.add(startNoHolidays, DAY_OF_MONTH, 10), cgcBases[cgcBases.length-1].getEndDate());
+		assertEquals(AonDateUtils.add(startNoHolidays, DAY_OF_MONTH, 1), cgcBases[1].getStartDate());
+		assertEquals(AonDateUtils.add(startNoHolidays, DAY_OF_MONTH, 10), cgcBases[cgcBases.length-1].getEndDate());
 		
 		double cgcBases1 = 0.00;
 		for ( int i = 1 ; i < cgcBases.length ; i++ )
 		    cgcBases1 += Double.parseDouble(cgcBases[i].getExpression());
 		
-		org.junit.Assert.assertEquals(br*10.00, cgcBases1 , DELTA);
+		assertEquals(br*10.00, cgcBases1 , DELTA);
 		
 	}
 
 	@Test
-	@Ignore
+	@Disabled
 	public void testSettleVacations2MonthJOOQ() throws ExpressionException, SQLException, SalaryException {
 
 		Connection connection = getConnection();
@@ -937,30 +937,30 @@ public class SQLSettleTestCase extends AbstractSQLTestCase {
 		Optional<com.esferalia.aon.occam.api.model.Salary> optional = AON.getSalaries(aonContext, props-> props.getContractProperty().eq(contract.getId()).and(props.getIsSettlementProperty().eq(true)) ).
 		findFirst();
 		
-		Assert.assertTrue(optional.isPresent());
+		assertTrue(optional.isPresent());
 		
 		com.esferalia.aon.occam.api.model.Salary settle = optional.get();
 		
 		double br = (1750.00 * 1.10) * (1 + 1.00 / 12 + 1.00 / 12) * 12 / 365; 
 
-		Assert.assertEquals( 20 * (2/12.00) * br + ( br * (10 + noHolidays) ), settle.getTotalPayment(), DELTA);
+		assertEquals( 20 * (2/12.00) * br + ( br * (10 + noHolidays) ), settle.getTotalPayment(), DELTA);
 		
-		Assert.assertEquals( br * ( 10 + noHolidays) , settle.getCommonContingenciesBase(), DELTA);
+		assertEquals( br * ( 10 + noHolidays) , settle.getCommonContingenciesBase(), DELTA);
 		
 
 		List<ContextData> cgcBases = settle.getContextData().get(ContextVariable.CGC_BASE.getName());
 		
 		Collections.sort(cgcBases, (d1,d2) -> d1.getStartDate().compareTo(d2.getStartDate()));
 		
-		Assert.assertEquals(2, cgcBases.size());
+		assertEquals(2, cgcBases.size());
 
-		Assert.assertEquals(startNoHolidays, cgcBases.get(0).getStartDate());
-		Assert.assertEquals(endNoHolidays, cgcBases.get(0).getEndDate());
-		Assert.assertEquals(br*noHolidays, Double.parseDouble(cgcBases.get(0).getExpression()), DELTA);
+		assertEquals(startNoHolidays, cgcBases.get(0).getStartDate());
+		assertEquals(endNoHolidays, cgcBases.get(0).getEndDate());
+		assertEquals(br*noHolidays, Double.parseDouble(cgcBases.get(0).getExpression()), DELTA);
 
-		Assert.assertEquals(AonDateUtils.add(endNoHolidays, DAY_OF_MONTH, 1), cgcBases.get(1).getStartDate());
-		Assert.assertEquals(AonDateUtils.add(endNoHolidays, DAY_OF_MONTH, 10), cgcBases.get(1).getEndDate());
-		Assert.assertEquals(br*10.00, Double.parseDouble(cgcBases.get(1).getExpression()), DELTA);
+		assertEquals(AonDateUtils.add(endNoHolidays, DAY_OF_MONTH, 1), cgcBases.get(1).getStartDate());
+		assertEquals(AonDateUtils.add(endNoHolidays, DAY_OF_MONTH, 10), cgcBases.get(1).getEndDate());
+		assertEquals(br*10.00, Double.parseDouble(cgcBases.get(1).getExpression()), DELTA);
 		
 	}
 
@@ -1012,8 +1012,8 @@ public class SQLSettleTestCase extends AbstractSQLTestCase {
 		
 		Salary settle = new ContractSalaryCalculator<Salary>( new SalaryBuilder()).calculate(ctx);
 		
-		Assert.assertEquals(( 1000.00 * 12 / 365 * 10.00 ) , settle.getCommonBase());
-		Assert.assertEquals(( 1000.00 * 12 / 365 * 10.00 ) * (4.70/100.00), settle.getTotalDeduction());
+		assertEquals(( 1000.00 * 12 / 365 * 10.00 ) , settle.getCommonBase());
+		assertEquals(( 1000.00 * 12 / 365 * 10.00 ) * (4.70/100.00), settle.getTotalDeduction());
 		
 		
 	}
@@ -1078,10 +1078,10 @@ public class SQLSettleTestCase extends AbstractSQLTestCase {
 		
 		Salary settle = new SmartContractSalaryCalculator<Salary>( new SalaryBuilder()).calculate(ctx);
 		
-		Assert.assertEquals(( 2500.00 * 12 / 365 * 30.00 ) , settle.getIrpfBase());
+		assertEquals(( 2500.00 * 12 / 365 * 30.00 ) , settle.getIrpfBase());
 		
 		Collection<SalaryDeduction> deductions = settle.getSalaryDeductions();
-		org.junit.Assert.assertEquals(1, deductions.size());
+		assertEquals(1, deductions.size());
 		for ( SalaryDeduction d: deductions )
 			System.out.println(d.getDescription() + " = " + d.getAmount());
 		
@@ -1162,7 +1162,7 @@ public class SQLSettleTestCase extends AbstractSQLTestCase {
 		Salary settle = new ContractSalaryCalculator<Salary>( new SalaryBuilder()).calculate(ctx);
 		Double sirpf = ( settle.getTotalIrpf() / settle.getIrpfBase() ) * 100.00;
 		System.out.println(irpf + "(" + salary.getIrpfBase() + ")" + " = " + sirpf + "(" + settle.getIrpfBase() + ")");
-		Assert.assertTrue(sirpf > 0 );
+		assertTrue(sirpf > 0 );
 	}
 
 	@Test
@@ -1260,7 +1260,7 @@ public class SQLSettleTestCase extends AbstractSQLTestCase {
 		Salary settle = new ContractSalaryCalculator<Salary>( new SalaryBuilder()).calculate(settleCtx);
 		
 
-		Assert.assertTrue( settle.getTotalPayment() > 0.00);
+		assertTrue( settle.getTotalPayment() > 0.00);
 
 	}
 	
@@ -1352,7 +1352,7 @@ public class SQLSettleTestCase extends AbstractSQLTestCase {
 			decemberExtra = 0.00; 
 		// 'December Extra...' have been already emitted. 
 
-		Assert.assertEquals( decemberExtra + julyExtra, settle.getTotalPayment(), DELTA);
+		assertEquals( decemberExtra + julyExtra, settle.getTotalPayment(), DELTA);
 
 	}
 
@@ -1432,7 +1432,7 @@ public class SQLSettleTestCase extends AbstractSQLTestCase {
 		if ( months == Calendar.DECEMBER && days > 15 )
 			decemberExtra = 0.00; 
 		// 'December Extra...' have been already emitted. 
-		Assert.assertEquals( decemberExtra + julyExtra, settle.getTotalPayment(), DELTA);
+		assertEquals( decemberExtra + julyExtra, settle.getTotalPayment(), DELTA);
 
 	}
 
@@ -1520,7 +1520,7 @@ public class SQLSettleTestCase extends AbstractSQLTestCase {
 			decemberExtra = 0.00; 
 		// 'December Extra...' have been already emitted. 
 		
-		Assert.assertEquals( decemberExtra , settle.getTotalPayment(), DELTA);
+		assertEquals( decemberExtra , settle.getTotalPayment(), DELTA);
 	}
 		
 	@Test
@@ -1604,7 +1604,7 @@ public class SQLSettleTestCase extends AbstractSQLTestCase {
 		
 		
 		
-		Assert.assertEquals( 0.00 , settle.getTotalPayment(), DELTA);
+		assertEquals( 0.00 , settle.getTotalPayment(), DELTA);
 	}
 
 	@Test
@@ -1677,7 +1677,7 @@ public class SQLSettleTestCase extends AbstractSQLTestCase {
 		for ( SalaryPayment p : settle.getSalaryPayments() ) 
 			System.out.println(p.getDescription() + "= " + p.getAmount() );
 		
-		Assert.assertEquals( 1750.00 *1.10 / 6 * 2.5 , settle.getTotalPayment(), DELTA);
+		assertEquals( 1750.00 *1.10 / 6 * 2.5 , settle.getTotalPayment(), DELTA);
 	}
 
 	// ------------------------------------------------------------------------
@@ -1767,7 +1767,7 @@ public class SQLSettleTestCase extends AbstractSQLTestCase {
 			decemberExtra = 0.00; 
 		// 'December Extra...' have been already emitted. 
 
-		Assert.assertEquals( decemberExtra + julyExtra + bonusExtra, settle.getTotalPayment(), DELTA);
+		assertEquals( decemberExtra + julyExtra + bonusExtra, settle.getTotalPayment(), DELTA);
 
 	}
 
@@ -1841,7 +1841,7 @@ public class SQLSettleTestCase extends AbstractSQLTestCase {
 		for ( SalaryPayment p : settle.getSalaryPayments() ) 
 			System.out.println(p.getDescription() + "= " + p.getAmount() );
 		
-		Assert.assertEquals( 1750.00 *1.10 / 6 * 2.5 , settle.getTotalPayment(), DELTA);
+		assertEquals( 1750.00 *1.10 / 6 * 2.5 , settle.getTotalPayment(), DELTA);
 	}
 
 	@Test
@@ -1918,7 +1918,7 @@ public class SQLSettleTestCase extends AbstractSQLTestCase {
 		for ( SalaryPayment p : settle.getSalaryPayments() ) 
 			System.out.println(p.getDescription() + "= " + p.getAmount() );
 		
-		Assert.assertEquals( 1750.00 *1.10 / 12 * 4.50 , settle.getTotalPayment(), DELTA);
+		assertEquals( 1750.00 *1.10 / 12 * 4.50 , settle.getTotalPayment(), DELTA);
 	}
 
 	@Test
@@ -1986,11 +1986,11 @@ public class SQLSettleTestCase extends AbstractSQLTestCase {
 		for ( SalaryPayment p : settle.getSalaryPayments() ) 
 			System.out.println(p.getDescription() + "= " + p.getAmount() );
 		
-		Assert.assertEquals( 1750.00 *1.10 / 12 * 3.50 * 2 , settle.getTotalPayment(), DELTA);
+		assertEquals( 1750.00 *1.10 / 12 * 3.50 * 2 , settle.getTotalPayment(), DELTA);
 	}
 
 	@Test
-	@Ignore("Uppps not yet :-(")
+	@Disabled("Uppps not yet :-(")
 	public void testSettleWithExtrasX() throws ExpressionException, SQLException, SalaryException {
 
 		Connection connection = getConnection();
@@ -2070,13 +2070,13 @@ public class SQLSettleTestCase extends AbstractSQLTestCase {
 			decemberExtra = 0.00; 
 		// 'December Extra...' have been already emitted. 
 
-		Assert.assertEquals( decemberExtra + julyExtra, settle.getTotalPayment(), DELTA);
+		assertEquals( decemberExtra + julyExtra, settle.getTotalPayment(), DELTA);
 
 	}
 
 
 	@Test
-	@Ignore
+	@Disabled
 	public void testSettleWithExtrasXI() throws ExpressionException, SQLException, SalaryException {
 
 		Connection connection = getConnection();
@@ -2119,7 +2119,7 @@ public class SQLSettleTestCase extends AbstractSQLTestCase {
 			new SmartContractSalaryCalculator<Salary>(salaryBuilder)
 			.calculate(getContractSalaryCalculatorContext(connection, startDate, endDate , endDate , contract));
 			Salary salary = salaryBuilder.getSalary();
-			org.junit.Assert.assertEquals(950.00/6.00, salary.getExtraPayProration(), DELTA);
+			assertEquals(950.00/6.00, salary.getExtraPayProration(), DELTA);
 		}
 		
 		;
@@ -2134,7 +2134,7 @@ public class SQLSettleTestCase extends AbstractSQLTestCase {
 		for ( SalaryPayment p : settle.getSalaryPayments() ) 
 			System.out.println(p.getDescription() + "= " + p.getAmount() );
 		
-		Assert.assertEquals( 950.00/6.00 * 3, settle.getTotalPayment(), DELTA);
+		assertEquals( 950.00/6.00 * 3, settle.getTotalPayment(), DELTA);
 	}
 
 	@Test
@@ -2184,7 +2184,7 @@ public class SQLSettleTestCase extends AbstractSQLTestCase {
 		
 		AON.getSalaries(aonContext, p-> p.getContractProperty().eq(contract.getId()))
 		.forEach( salary -> {
-			org.junit.Assert.assertEquals(950.00/6.00, salary.getExtraProrationBase(), DELTA);
+			assertEquals(950.00/6.00, salary.getExtraProrationBase(), DELTA);
 		});
 		;
 		
@@ -2198,7 +2198,7 @@ public class SQLSettleTestCase extends AbstractSQLTestCase {
 		for ( SalaryPayment p : settle.getSalaryPayments() ) 
 			System.out.println(p.getDescription() + "= " + p.getAmount() );
 		
-		Assert.assertEquals( 950.00/6.00 * 3, settle.getTotalPayment(), 0.005);
+		assertEquals( 950.00/6.00 * 3, settle.getTotalPayment(), 0.005);
 	}
 
 	@Test
@@ -2249,7 +2249,7 @@ public class SQLSettleTestCase extends AbstractSQLTestCase {
 		
 		AON.getSalaries(aonContext, p-> p.getContractProperty().eq(contract.getId()))
 		.forEach( salary -> {
-			org.junit.Assert.assertEquals(950.00/12.00 *3, salary.getExtraProrationBase(), DELTA);
+			assertEquals(950.00/12.00 *3, salary.getExtraProrationBase(), DELTA);
 		});
 		;
 		
@@ -2263,7 +2263,7 @@ public class SQLSettleTestCase extends AbstractSQLTestCase {
 		for ( SalaryPayment p : settle.getSalaryPayments() ) 
 			System.out.println(p.getDescription() + "= " + p.getAmount() );
 		
-		Assert.assertEquals( 950.00/12.00 * 6, settle.getTotalPayment(), 0.005);
+		assertEquals( 950.00/12.00 * 6, settle.getTotalPayment(), 0.005);
 	}
 
 	@Test
@@ -2314,7 +2314,7 @@ public class SQLSettleTestCase extends AbstractSQLTestCase {
 		
 		AON.getSalaries(aonContext, p-> p.getContractProperty().eq(contract.getId()))
 		.forEach( salary -> {
-			org.junit.Assert.assertEquals(950.00/12.00 *3, salary.getExtraProrationBase(), DELTA);
+			assertEquals(950.00/12.00 *3, salary.getExtraProrationBase(), DELTA);
 		});
 		;
 		
@@ -2329,11 +2329,11 @@ public class SQLSettleTestCase extends AbstractSQLTestCase {
 			System.out.println(p.getDescription() + "= " + p.getAmount() );
 		
 		// Three for June, another three for December and only one for February.
-		Assert.assertEquals( 950.00/12.00 * 7, settle.getTotalPayment(), 0.005);
+		assertEquals( 950.00/12.00 * 7, settle.getTotalPayment(), 0.005);
 	}
 
 	@Test
-	@Ignore("Fails day 29")
+	@Disabled("Fails day 29")
 	public void testSettleWithExtrasXV() throws ExpressionException, SQLException, SalaryException {
 
 		Connection connection = getConnection();
@@ -2388,7 +2388,7 @@ public class SQLSettleTestCase extends AbstractSQLTestCase {
 		for ( SalaryPayment p : settle.getSalaryPayments() ) 
 			System.out.println(p.getDescription() + "= " + p.getAmount() );
 		
-		Assert.assertEquals( 950.00/12.00 * 7, settle.getTotalPayment(), 0.005);
+		assertEquals( 950.00/12.00 * 7, settle.getTotalPayment(), 0.005);
 	}
 
 	@Test
@@ -2468,7 +2468,7 @@ public class SQLSettleTestCase extends AbstractSQLTestCase {
 		for ( SalaryPayment p : settle.getSalaryPayments() ) 
 			System.out.println(p.getDescription() + "= " + p.getAmount() );
 		
-		Assert.assertEquals( 
+		assertEquals( 
 				Math.round(1750.00 * 1.10 / 12 * 1000.00 ) / 1000.00 * 7.5 
 				+Math.round(1750.00 * 1.10 / 12 * 1000.00 ) / 1000.00 * 1.5  , 
 				settle.getTotalPayment(), 0.001);
@@ -2562,7 +2562,7 @@ public class SQLSettleTestCase extends AbstractSQLTestCase {
 		for ( SalaryPayment p : settle.getSalaryPayments() ) 
 			System.out.println(p.getDescription() + "= " + p.getAmount() );
 		
-		Assert.assertEquals( 
+		assertEquals( 
 				Math.round(1750.00 * 1.10 / 12 * 1000.00 ) / 1000.00 * 7.5 
 				+Math.round(1750.00 * 1.10 / 12 * 1000.00 ) / 1000.00 * 1.5  , 
 				settle.getTotalPayment(), 0.005);
@@ -2615,7 +2615,7 @@ public class SQLSettleTestCase extends AbstractSQLTestCase {
 		
 		AON.getSalaries(aonContext, p-> p.getContractProperty().eq(contract.getId()))
 		.forEach( salary -> {
-			org.junit.Assert.assertEquals(950.00/6.00, salary.getExtraProrationBase(), DELTA);
+			assertEquals(950.00/6.00, salary.getExtraProrationBase(), DELTA);
 		});
 		;
 		
@@ -2629,7 +2629,7 @@ public class SQLSettleTestCase extends AbstractSQLTestCase {
 		for ( SalaryPayment p : settle.getSalaryPayments() ) 
 			System.out.println(p.getDescription() + "= " + p.getAmount() );
 		
-		Assert.assertEquals( 950.00/6.00 * 3, settle.getTotalPayment(), 0.005);
+		assertEquals( 950.00/6.00 * 3, settle.getTotalPayment(), 0.005);
 	}
 
 	@Test
@@ -2737,7 +2737,7 @@ public class SQLSettleTestCase extends AbstractSQLTestCase {
 		for ( SalaryPayment p : settle.getSalaryPayments() ) 
 			System.out.println(p.getDescription() + "= " + p.getAmount() );
 		
-		Assert.assertEquals( 
+		assertEquals( 
 				1750.00 * 1.10 / 12.00 * 9.00 			/*JULY..MARCH JUNIO*/
 				+ 1750.00 * 1.10 / 12.00 * 3.00 		/*JANUARY..MARCH DICIEMBRE */
 				+ 1750.00 * 1.10 / 12.00 / 30.00 * 6 	/*APRIL JUNIO */ 
@@ -2843,7 +2843,7 @@ public class SQLSettleTestCase extends AbstractSQLTestCase {
 			decemberExtra = 0.00; 
 		// 'December Extra...' have been already emitted. 
 
-		Assert.assertEquals( decemberExtra + julyExtra + manualPayment, settle.getTotalPayment(), DELTA);
+		assertEquals( decemberExtra + julyExtra + manualPayment, settle.getTotalPayment(), DELTA);
 
 	}
 
@@ -2912,7 +2912,7 @@ public class SQLSettleTestCase extends AbstractSQLTestCase {
 		jooqSalaryBuilder.execute();
 		
 		AON.getSalaries(aonContext, props -> props.getContractProperty().eq(contract.getId()) )
-		.forEach(s -> Assert.assertEquals(1750*1.1*15/30  + 1750*1.1/12*5.5, s.getTotalPayment(), DELTA))
+		.forEach(s -> assertEquals(1750*1.1*15/30  + 1750*1.1/12*5.5, s.getTotalPayment(), DELTA))
 		;
 		
 
@@ -2934,7 +2934,7 @@ public class SQLSettleTestCase extends AbstractSQLTestCase {
 		
 		double decemberExtra = ( 1750.00 * 1.10 ) / 12  * 5.5 ;
 
-		Assert.assertEquals( decemberExtra , settle.getTotalPayment(), DELTA);
+		assertEquals( decemberExtra , settle.getTotalPayment(), DELTA);
 
 	}
 
@@ -3009,7 +3009,7 @@ public class SQLSettleTestCase extends AbstractSQLTestCase {
 		jooqSalaryBuilder.execute();
 		
 		AON.getSalaries(aonContext, props -> props.getContractProperty().eq(contract.getId()) )
-		.forEach(s -> Assert.assertEquals(1750*1.1*15/30  + 1750*1.1/12*5.5, s.getTotalPayment(), DELTA))
+		.forEach(s -> assertEquals(1750*1.1*15/30  + 1750*1.1/12*5.5, s.getTotalPayment(), DELTA))
 		;
 		
 
@@ -3031,7 +3031,7 @@ public class SQLSettleTestCase extends AbstractSQLTestCase {
 		
 		double decemberExtra = ( 1750.00 * 1.10 ) / 12  * 5.5 ;
 
-		Assert.assertEquals( decemberExtra , settle.getTotalPayment(), DELTA);
+		assertEquals( decemberExtra , settle.getTotalPayment(), DELTA);
 
 	}
 	
@@ -3102,7 +3102,7 @@ public class SQLSettleTestCase extends AbstractSQLTestCase {
 		extra +=  1750.00 * 1.10 / 12  * ( months + days / 30.00);
 		
 
-		Assert.assertEquals( extra, settle.getTotalPayment(), DELTA);
+		assertEquals( extra, settle.getTotalPayment(), DELTA);
 
 	}
 	
@@ -3168,7 +3168,7 @@ public class SQLSettleTestCase extends AbstractSQLTestCase {
 		double julyExtra = ( 1750.00 * 1.10 ) * ((julyExtraMonths * 30) + days ) / 360;
 		
 
-		Assert.assertEquals( decemberExtra + julyExtra, settle.getTotalPayment(), DELTA);
+		assertEquals( decemberExtra + julyExtra, settle.getTotalPayment(), DELTA);
 
 	}
 
@@ -3236,7 +3236,7 @@ public class SQLSettleTestCase extends AbstractSQLTestCase {
 		double julyExtra = ( 1750.00 * 1.10 ) * ((julyExtraMonths * 30) + days ) / 360;
 		
 
-		Assert.assertEquals( decemberExtra + julyExtra, settle.getTotalPayment(), DELTA);
+		assertEquals( decemberExtra + julyExtra, settle.getTotalPayment(), DELTA);
 
 	}
 
@@ -3314,7 +3314,7 @@ public class SQLSettleTestCase extends AbstractSQLTestCase {
 			System.out.println(payment.getDescription() + " = " + payment.getAmount() + ", " );
 		}
 		
-		Assert.assertEquals( decemberExtra + julyExtra, settle.getTotalPayment(), 0.05);
+		assertEquals( decemberExtra + julyExtra, settle.getTotalPayment(), 0.05);
 
 	}
 
@@ -3393,7 +3393,7 @@ public class SQLSettleTestCase extends AbstractSQLTestCase {
 		double julyExtra = ( 1750.00 * 1.10 ) * ((julyExtraMonths * 30) + days ) / 360;
 		
 
-		Assert.assertEquals( decemberExtra + julyExtra, settle.getTotalPayment(), 0.05);
+		assertEquals( decemberExtra + julyExtra, settle.getTotalPayment(), 0.05);
 
 	}
 
@@ -3456,7 +3456,7 @@ public class SQLSettleTestCase extends AbstractSQLTestCase {
 		double extra = ( 1750.00 * 1.10 ) * ((months * 30) + days ) / 360;
 		
 
-		Assert.assertEquals( 0.00, settle.getTotalPayment(), DELTA);
+		assertEquals( 0.00, settle.getTotalPayment(), DELTA);
 
 	}
 
@@ -3529,13 +3529,13 @@ public class SQLSettleTestCase extends AbstractSQLTestCase {
 //		settle.getSalaryDatas().stream().forEach(d->System.out.println(d.getName() + " = "  + d.getExpression() ));
 		settle.getSalaryPayments().stream().forEach(p->System.out.println(p.getExpression() + " = "  + p.getAmount() ));
 
-		Assert.assertEquals( ( br * 4 ), settle.getTotalPayment(), DELTA);
+		assertEquals( ( br * 4 ), settle.getTotalPayment(), DELTA);
 		
-		Assert.assertEquals( br * 4 , settle.getCommonBase(), DELTA);
+		assertEquals( br * 4 , settle.getCommonBase(), DELTA);
 		
 	}
 	
-	@Ignore("Too difficult for SALARIO_DIA")
+	@Disabled("Too difficult for SALARIO_DIA")
 	@Test
 	public void testSettleVacationsEREII() throws ExpressionException, SQLException, SalaryException {
 
@@ -3606,9 +3606,9 @@ public class SQLSettleTestCase extends AbstractSQLTestCase {
 //		settle.getSalaryDatas().stream().forEach(d->System.out.println(d.getName() + " = "  + d.getExpression() ));
 		settle.getSalaryPayments().stream().forEach(p->System.out.println(p.getExpression() + " = "  + p.getAmount() ));
 
-		Assert.assertEquals( ( br * 4 ), settle.getTotalPayment(), DELTA);
+		assertEquals( ( br * 4 ), settle.getTotalPayment(), DELTA);
 		
-		Assert.assertEquals( br * 4 , settle.getCommonBase(), DELTA);
+		assertEquals( br * 4 , settle.getCommonBase(), DELTA);
 		
 	}
 
@@ -3757,7 +3757,7 @@ public class SQLSettleTestCase extends AbstractSQLTestCase {
 			decemberExtra = 0.00; 
 		// 'December Extra...' have been already emitted. 
 
-		Assert.assertEquals( decemberExtra + julyExtra, settle.getTotalPayment(), DELTA);
+		assertEquals( decemberExtra + julyExtra, settle.getTotalPayment(), DELTA);
 
 	}
 
@@ -3820,13 +3820,13 @@ public class SQLSettleTestCase extends AbstractSQLTestCase {
 			}
 			) {
         		SalaryData salaryData = getSalaryData(settle, ctxVar);
-        		org.junit.Assert.assertEquals(ctxVar.getName(), add(getToday(), Calendar.DAY_OF_MONTH,1), salaryData.getStartDate());
-        		org.junit.Assert.assertEquals(ctxVar.getName(), add(getToday(), Calendar.DAY_OF_MONTH,4), salaryData.getEndDate());
+        		assertEquals(add(getToday(), Calendar.DAY_OF_MONTH,1), salaryData.getStartDate(),ctxVar.getName());
+        		assertEquals(add(getToday(), Calendar.DAY_OF_MONTH,4), salaryData.getEndDate(),ctxVar.getName());
 		}
 
-		Assert.assertEquals( br * 4 , settle.getCommonBase(), DELTA);
-		Assert.assertEquals( br * 4 , settle.getTotalPayment(), DELTA);
-		Assert.assertEquals( settle.getCommonBase() * 1.60 / 100 , settle.getTotalDeduction(), DELTA);
+		assertEquals( br * 4 , settle.getCommonBase(), DELTA);
+		assertEquals( br * 4 , settle.getTotalPayment(), DELTA);
+		assertEquals( settle.getCommonBase() * 1.60 / 100 , settle.getTotalDeduction(), DELTA);
 	
 		
 	}
@@ -3929,7 +3929,7 @@ public class SQLSettleTestCase extends AbstractSQLTestCase {
 	}
 	
 	@Test
-	@Ignore
+	@Disabled
 	public void testSettleSalaryDayWithVacations() throws ExpressionException, SQLException, SalaryException {
 
 		Connection connection = getConnection();
@@ -3989,9 +3989,9 @@ public class SQLSettleTestCase extends AbstractSQLTestCase {
 		long days = get(getToday(), Calendar.DAY_OF_MONTH);
 		double salaryDay = ((1750.00 * 1.10) / 30 * days   + 500.00 ) / days ; 
 		
-		Assert.assertEquals( ( salaryDay * 4 ), settle.getTotalPayment(), DELTA);
+		assertEquals( ( salaryDay * 4 ), settle.getTotalPayment(), DELTA);
 		
-		Assert.assertEquals( salaryDay * 4 , settle.getCommonBase(), DELTA);
+		assertEquals( salaryDay * 4 , settle.getCommonBase(), DELTA);
 		
 	}
 	// ------------------------------------------------------------------------

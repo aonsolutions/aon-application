@@ -1,6 +1,6 @@
 package com.esferalia.aon.payroll.calculator.test;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -11,19 +11,13 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.code.aon.common.util.CommonUtil;
+import com.esferalia.aon.payroll.calculator.sql.SQLSalaryProxy;
 import com.esferalia.aon.payroll.sql.SQLConstants;
 import com.esferalia.aon.payroll.sql.SQLConstants.SalaryColumns;
-import com.esferalia.aon.payroll.calculator.sql.SQLSalaryProxy;
 import com.esferalia.aon.salary.AbstractSalaryBuilder;
 import com.esferalia.aon.salary.ISalary;
-import com.esferalia.aon.salary.ISalaryBuilder;
 import com.esferalia.aon.salary.ISalaryBuilderListener;
-import com.esferalia.aon.salary.deduction.IDeduction;
-import com.esferalia.aon.salary.enumeration.DeductionType;
-import com.esferalia.aon.salary.enumeration.PaymentType;
 import com.esferalia.aon.salary.enumeration.SalaryType;
-import com.esferalia.aon.salary.expression.ITimedVariable;
-import com.esferalia.aon.salary.payment.IPayment;
 
 
 
@@ -138,7 +132,7 @@ public class SQLSalaryBuilderTester<T extends ISalary> extends  AbstractSalaryBu
 		String msg = 
 			String.format("[%s]:%s", 
 					employeeDocument, field );
-		assertEquals(msg, expected, CommonUtil.round(actual), (double) 0.9);
+		assertEquals(expected, CommonUtil.round(actual), (double) 0.9,msg);
 	}
 
 	protected void assertDoubleFieldIfNotZero(String field, ResultSet rs  ) 
@@ -152,7 +146,7 @@ public class SQLSalaryBuilderTester<T extends ISalary> extends  AbstractSalaryBu
 		String msg = 
 			String.format("[%s]:%s", 
 					employeeDocument, field );
-		assertEquals(msg, expected, CommonUtil.round(actual), (double) 0.9);
+		assertEquals(expected, CommonUtil.round(actual), (double) 0.9,msg);
 	}
 
 	private void addField(String field, Object value) {

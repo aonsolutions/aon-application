@@ -5,6 +5,8 @@ import static com.esferalia.aon.watson.util.AonDateUtils.getFirstDayOfMonth;
 import static com.esferalia.aon.watson.util.AonDateUtils.getFirstDayOfYear;
 import static com.esferalia.aon.watson.util.AonDateUtils.getLastDayOfMonth;
 import static java.util.Calendar.DAY_OF_MONTH;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.sql.Connection;
 import java.sql.Date;
@@ -14,7 +16,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.esferalia.aon.jooq.tables.records.ContractRecord;
 import com.esferalia.aon.jooq.tables.records.PaymentConceptRecord;
@@ -23,7 +25,6 @@ import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.payroll.Salary;
 import com.esferalia.aon.payroll.SalaryBuilder;
 import com.esferalia.aon.payroll.calculator.ContractSalaryCalculator;
-import com.esferalia.aon.payroll.calculator.ContractSalaryCalculator.Listener;
 import com.esferalia.aon.payroll.calculator.GenericContractSalaryCalculator;
 import com.esferalia.aon.payroll.calculator.IContractBonus;
 import com.esferalia.aon.payroll.calculator.IContractDeduction;
@@ -40,8 +41,6 @@ import com.esferalia.aon.salary.expression.ExpressionContext.RemovedExpressionVa
 import com.esferalia.aon.salary.expression.ExpressionException;
 import com.esferalia.aon.salary.expression.ITimedVariable;
 import com.esferalia.aon.salary.payment.IPayment;
-
-import junit.framework.Assert;
 
 public class SQLPaymentsTestCase extends AbstractSQLTestCase {
 
@@ -95,10 +94,10 @@ public class SQLPaymentsTestCase extends AbstractSQLTestCase {
 				System.out.println(payment.getName()+ ": " + amount + "[" + start + "..." + end + "]");
 				if ( payment.getName().equals("PAGA")) {
 					if ( startDate.equals(start))
-						Assert.assertEquals(startDate, end);
+						assertEquals(startDate, end);
 					else { 
-						Assert.assertEquals(add(startDate,DAY_OF_MONTH,1), start);
-						Assert.assertEquals(add(startITDate,DAY_OF_MONTH,-1), end);
+						assertEquals(add(startDate,DAY_OF_MONTH,1), start);
+						assertEquals(add(startITDate,DAY_OF_MONTH,-1), end);
 					}
 				}
 				super.addPayment(amount, quote, tax, description, startDate, endDate, payment, context);
@@ -106,9 +105,9 @@ public class SQLPaymentsTestCase extends AbstractSQLTestCase {
 		});
 		Salary salary = calculator.calculate(ctx);
 		
-		//Assert.assertEquals((1000.00 * 10 / 30.00 + 50.00 + 100.00 * 9/12) * ( 1 + 1/12 ) , salary.getTotalPayment());
+		//assertEquals((1000.00 * 10 / 30.00 + 50.00 + 100.00 * 9/12) * ( 1 + 1/12 ) , salary.getTotalPayment());
 
-		//Assert.assertEquals(4, salary.getSalaryPayments().size());
+		//assertEquals(4, salary.getSalaryPayments().size());
 
 	}
 
@@ -181,7 +180,7 @@ public class SQLPaymentsTestCase extends AbstractSQLTestCase {
 		
 		salaries.forEach( salary -> {
 			salary.getPayments().forEach( p -> System.out.println(p.getDescription() +":" + p.getAmount()));
-			salary.getPayments().forEach( p -> org.junit.Assert.assertEquals("31 DÍAS DE IT", p.getDescription()) );
+			salary.getPayments().forEach( p -> assertEquals("31 DÍAS DE IT", p.getDescription()) );
 		});
 		
 		
@@ -264,7 +263,7 @@ public class SQLPaymentsTestCase extends AbstractSQLTestCase {
 			salary.getPayments().forEach( p -> System.out.println(p.getDescription() +":" + p.getAmount()));
 			salary.getPayments().forEach( p -> {
 				if ( p.getDescription().contains("VACACIONES"))
-					org.junit.Assert.assertEquals("VACACIONES 10 DÍAS", p.getDescription());
+					assertEquals("VACACIONES 10 DÍAS", p.getDescription());
 			} );
 		});
 		
@@ -349,20 +348,20 @@ public class SQLPaymentsTestCase extends AbstractSQLTestCase {
 		
 		
 		
-		org.junit.Assert.assertEquals( 1000.00 * 13.00/12.00  + 1200.00, salary.getIrpfBase(), 0.001);
-		org.junit.Assert.assertEquals( 1000.00 * 13.00/12.00  + 1200.00 + (1200.00 * 9.55 / 100.00), salary.getTotalPayment(), 0.001);
+		assertEquals( 1000.00 * 13.00/12.00  + 1200.00, salary.getIrpfBase(), 0.001);
+		assertEquals( 1000.00 * 13.00/12.00  + 1200.00 + (1200.00 * 9.55 / 100.00), salary.getTotalPayment(), 0.001);
 		
 		salary.getSalaryDeductions().forEach( p -> {
 			System.out.println( p.getDescription() + ": " + p.getAmount() );
 		});
 
-		org.junit.Assert.assertEquals( 5, salary.getSalaryDeductions().size(), 0.001);
+		assertEquals( 5, salary.getSalaryDeductions().size(), 0.001);
 		
-		org.junit.Assert.assertEquals( salary.getCommonBase() * ( 4.7 + 0.10 + 1.55 ) / 100.00 + salary.getIrpfBase() * 9.55 / 100.00 + 1200.00 * 9.55 / 100.00 , 
+		assertEquals( salary.getCommonBase() * ( 4.7 + 0.10 + 1.55 ) / 100.00 + salary.getIrpfBase() * 9.55 / 100.00 + 1200.00 * 9.55 / 100.00 , 
 				salary.getSalaryDeductions().stream().collect(Collectors.summingDouble(d -> d.getAmount() )), 
 				0.001);
 		
-		org.junit.Assert.assertEquals( 1000.00 * 13/12, salary.getRemuneration(), 0.001);
+		assertEquals( 1000.00 * 13/12, salary.getRemuneration(), 0.001);
 
 	}
 
@@ -443,7 +442,7 @@ public class SQLPaymentsTestCase extends AbstractSQLTestCase {
 					Map<String, ITimedVariable<?>> context) {
 				if ( "INGR_CTA_ESP".equals(payment.getName())) {
 					ITimedVariable<?> baseCtaEsp = context.get("BASE_CTA_ESP");
-					org.junit.Assert.assertEquals(1200.00, baseCtaEsp.getValue(baseCtaEsp.getPeriod()));
+					assertEquals(1200.00, baseCtaEsp.getValue(baseCtaEsp.getPeriod()));
 				}
 				super.addPayment(amount, quote, tax, description, startDate, endDate, payment, context);
 			}
@@ -459,21 +458,21 @@ public class SQLPaymentsTestCase extends AbstractSQLTestCase {
 		//double irpf = Double.parseDouble(salary.getSalaryData("PORCENTAJE_IRPF"));
 		double irpf = salary.getTotalIrpf() / salary.getIrpfBase() * 100.00;
 		
-		org.junit.Assert.assertEquals( 1000.00 * 13.00/12.00  + 1200.00, salary.getIrpfBase(), 0.001);
-		org.junit.Assert.assertEquals( 1000.00 * 13.00/12.00  + 1200.00 + (1200.00 * irpf / 100.00), salary.getTotalPayment(), 0.001);
+		assertEquals( 1000.00 * 13.00/12.00  + 1200.00, salary.getIrpfBase(), 0.001);
+		assertEquals( 1000.00 * 13.00/12.00  + 1200.00 + (1200.00 * irpf / 100.00), salary.getTotalPayment(), 0.001);
 		
 		salary.getSalaryDeductions().forEach( p -> {
 			System.out.println( p.getDescription() + ": " + p.getAmount() );
 		});
 
-		org.junit.Assert.assertEquals( 5, salary.getSalaryDeductions().size(), 0.001);
+		assertEquals( 5, salary.getSalaryDeductions().size(), 0.001);
 		
-		org.junit.Assert.assertEquals( salary.getCommonBase() * ( 4.7 + 0.10 + 1.55 ) / 100.00 + salary.getIrpfBase() * irpf / 100.00 + 1200.00 * irpf / 100.00 , 
+		assertEquals( salary.getCommonBase() * ( 4.7 + 0.10 + 1.55 ) / 100.00 + salary.getIrpfBase() * irpf / 100.00 + 1200.00 * irpf / 100.00 , 
 				salary.getSalaryDeductions().stream().collect(Collectors.summingDouble(d -> d.getAmount() )), 
 				0.001);
 		
 		
-		org.junit.Assert.assertEquals( 1000.00 * 13/12, salary.getRemuneration(), 0.001);
+		assertEquals( 1000.00 * 13/12, salary.getRemuneration(), 0.001);
 
 	}
 
@@ -551,59 +550,59 @@ public class SQLPaymentsTestCase extends AbstractSQLTestCase {
 			@Override
 			public void addZeroPayment(Double quote, Double tax, java.util.Date startDate, java.util.Date endDate,
 					IPayment payment, Map<String, ITimedVariable<?>> context) {
-				org.junit.Assert.fail();
+				fail();
 			}
 		});
 		calculator.setListener(new GenericContractSalaryCalculator.Listener() {
 			
 			@Override
 			public void onUndefinedData(IContractDeduction deduction, String variableName, String message) {
-				org.junit.Assert.fail();
+				fail();
 			}
 			
 			@Override
 			public void onUndefinedData(IContractDeduction deduction, RemovedExpressionVariable<?> var) {
-				org.junit.Assert.fail();
+				fail();
 			}
 			
 			@Override
 			public void onUndefinedData(IContractPayment payment, String variableName, String message) {
-				org.junit.Assert.fail();
+				fail();
 			}
 			
 			@Override
 			public void onUndefinedData(IContractPayment payment, RemovedExpressionVariable<?> var) {
-				org.junit.Assert.fail();
+				fail();
 			}
 			
 			@Override
 			public void onRemove(IContractPayment payment) {
-				org.junit.Assert.fail();
+				fail();
 			}
 			
 			@Override
 			public void onRemove(IContractDeduction payment) {
-				org.junit.Assert.fail();
+				fail();
 			}
 			
 			@Override
 			public void onRemove(IContractBonus bonus) {
-				org.junit.Assert.fail();
+				fail();
 			}
 			
 			@Override
 			public void onInvalidData(IContractBonus bonus, String variableName, String message) {
-				org.junit.Assert.fail();
+				fail();
 			}
 			
 			@Override
 			public void onInvalidData(IContractDeduction deduction, String variableName, String message) {
-				org.junit.Assert.fail();
+				fail();
 			}
 			
 			@Override
 			public void onInvalidData(IContractPayment payment, String variableName, String message) {
-				org.junit.Assert.fail();
+				fail();
 			}
 			
 		});
@@ -616,16 +615,16 @@ public class SQLPaymentsTestCase extends AbstractSQLTestCase {
 		
 		double irpf = salary.getTotalIrpf() / salary.getIrpfBase() * 100.00;
 		
-		org.junit.Assert.assertEquals( 1000.00 * 13.00/12.00  + 1200.00, salary.getIrpfBase(), 0.001);
-		org.junit.Assert.assertEquals( 1000.00 * 13.00/12.00  + 1200.00 , salary.getTotalPayment(), 0.001);
+		assertEquals( 1000.00 * 13.00/12.00  + 1200.00, salary.getIrpfBase(), 0.001);
+		assertEquals( 1000.00 * 13.00/12.00  + 1200.00 , salary.getTotalPayment(), 0.001);
 		
 		salary.getSalaryDeductions().forEach( p -> {
 			System.out.println( p.getDescription() + ": " + p.getAmount() );
 		});
 
-		org.junit.Assert.assertEquals( 4, salary.getSalaryDeductions().size(), 0.001);
+		assertEquals( 4, salary.getSalaryDeductions().size(), 0.001);
 		
-		org.junit.Assert.assertEquals( salary.getCommonBase() * ( 4.7 + 0.10 + 1.55 ) / 100.00 + salary.getIrpfBase() * irpf / 100.00  , 
+		assertEquals( salary.getCommonBase() * ( 4.7 + 0.10 + 1.55 ) / 100.00 + salary.getIrpfBase() * irpf / 100.00  , 
 				salary.getSalaryDeductions().stream().collect(Collectors.summingDouble(d -> d.getAmount() )), 
 				0.001);
 

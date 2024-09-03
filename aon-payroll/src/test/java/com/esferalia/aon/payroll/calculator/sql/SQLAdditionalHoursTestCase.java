@@ -5,6 +5,7 @@ package com.esferalia.aon.payroll.calculator.sql;
 
 import static com.esferalia.aon.watson.util.AonDateUtils.getFirstDayOfMonth;
 import static com.esferalia.aon.watson.util.AonDateUtils.getLastDayOfMonth;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.math.RoundingMode;
 import java.sql.Connection;
@@ -16,8 +17,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.esferalia.aon.jooq.tables.records.ContractRecord;
 import com.esferalia.aon.occam.api.AON;
@@ -106,20 +106,20 @@ public class SQLAdditionalHoursTestCase extends AbstractSQLTestCase {
 		for ( com.esferalia.aon.payroll.SalaryPayment payment: salary.getSalaryPayments())
 			System.out.println(payment.getExpression() + "= " + payment.getAmount() + "," + payment.getQuote());
 		
-		Assert.assertEquals(1166.70 * 0.5 + 7.03 * 10.00, salary.getCommonBase(), DELTA);
-		Assert.assertEquals(1166.70 * 0.5 + 7.03 * 10.00, salary.getProfessionalBase(), DELTA);
-		//Assert.assertEquals(100.00 * 0.5 + 4.03 * 10.00, salary.getRawCommonBase(), DELTA);
+		assertEquals(1166.70 * 0.5 + 7.03 * 10.00, salary.getCommonBase(), DELTA);
+		assertEquals(1166.70 * 0.5 + 7.03 * 10.00, salary.getProfessionalBase(), DELTA);
+		//assertEquals(100.00 * 0.5 + 4.03 * 10.00, salary.getRawCommonBase(), DELTA);
 		
 		String cgcBase = salary.getSalaryData(ContextVariable.CGC_BASE.getName());
-		Assert.assertEquals(1166.70 * 0.5 + 7.03 * 10.00, Double.parseDouble(cgcBase), DELTA);
+		assertEquals(1166.70 * 0.5 + 7.03 * 10.00, Double.parseDouble(cgcBase), DELTA);
 		String cgpBase = salary.getSalaryData(ContextVariable.CGP_BASE.getName());
-		Assert.assertEquals(1166.70 * 0.5 + 7.03 * 10.00, Double.parseDouble(cgpBase), DELTA);
+		assertEquals(1166.70 * 0.5 + 7.03 * 10.00, Double.parseDouble(cgpBase), DELTA);
 //		
 //		
 //		String cgcBaseEnterprise = salary.getSalaryData(ContextVariable.CGC_BASE_ENTERPRISE.getName());
-//		Assert.assertEquals(1000.00, Double.parseDouble(cgcBaseEnterprise), DELTA);
+//		assertEquals(1000.00, Double.parseDouble(cgcBaseEnterprise), DELTA);
 //		String cgpBaseEnterprise = salary.getSalaryData(ContextVariable.CGP_BASE_ENTERPRISE.getName());
-//		Assert.assertEquals(1100.00, Double.parseDouble(cgpBaseEnterprise), DELTA);
+//		assertEquals(1100.00, Double.parseDouble(cgpBaseEnterprise), DELTA);
 
 	}
 	
@@ -183,17 +183,17 @@ public class SQLAdditionalHoursTestCase extends AbstractSQLTestCase {
 		for ( com.esferalia.aon.payroll.SalaryPayment payment: salary.getSalaryPayments())
 			System.out.println(payment.getExpression() + "= " + payment.getAmount() + "," + payment.getQuote());
 		
-		Assert.assertEquals(1166.70 * 0.5 + 10.03 * 10.00, salary.getCommonBase(), DELTA);
-		Assert.assertEquals(1166.70 * 0.5 + 10.03 * 10.00, salary.getProfessionalBase(), DELTA);
-		//Assert.assertEquals(100.00 * 0.5 + 4.03 * 10.00, salary.getRawCommonBase(), DELTA);
+		assertEquals(1166.70 * 0.5 + 10.03 * 10.00, salary.getCommonBase(), DELTA);
+		assertEquals(1166.70 * 0.5 + 10.03 * 10.00, salary.getProfessionalBase(), DELTA);
+		//assertEquals(100.00 * 0.5 + 4.03 * 10.00, salary.getRawCommonBase(), DELTA);
 		
 		String cgcBase = salary.getSalaryData(ContextVariable.CGC_BASE.getName());
 		salary.getSalaryDatas().stream().filter( e -> e.getName().equals(ContextVariable.CGC_BASE.getName())).forEach( e -> System.out.println(e.getName() + " = " + e.getExpression() + ", " + e.getStartDate() +"," + e.getEndDate()));
-		Assert.assertEquals(1166.70 * 0.5 + 10.03 * 10.00, Double.parseDouble(cgcBase), DELTA);
+		assertEquals(1166.70 * 0.5 + 10.03 * 10.00, Double.parseDouble(cgcBase), DELTA);
 
 		String cgpBase = salary.getSalaryData(ContextVariable.CGP_BASE.getName());
 		salary.getSalaryDatas().stream().filter( e -> e.getName().equals(ContextVariable.CGP_BASE.getName())).forEach( e -> System.out.println(e.getName() + " = " + e.getExpression() + ", " + e.getStartDate() +"," + e.getEndDate()));
-		Assert.assertEquals(1166.70 * 0.5 + 10.03 * 10.00, Double.parseDouble(cgpBase), DELTA);
+		assertEquals(1166.70 * 0.5 + 10.03 * 10.00, Double.parseDouble(cgpBase), DELTA);
 
 	}
 
@@ -287,16 +287,16 @@ public class SQLAdditionalHoursTestCase extends AbstractSQLTestCase {
 //		for ( com.esferalia.aon.occam.api.model.Salary.Payment payment: salary.getPayments())
 //			System.out.println(payment.getExpression() + "= " + payment.getAmount() + "," + payment.getQuote());
 		
-		Assert.assertEquals(1166.70 * 2 * 0.5 / 30.00 + 1166.70 * 28 / 30.00 * 0.75 + 8.03 * 10.00, salary.getCommonContingenciesBase(), DELTA);
-		Assert.assertEquals(1166.70 * 2 * 0.5 / 30.00 + 1166.70 * 28 / 30.00 * 0.75 + 8.03 * 10.00, salary.getProfessionalContingenciesBase(), DELTA);
-		//Assert.assertEquals(100.00 * 0.5 + 4.03 * 10.00, salary.getRawCommonBase(), DELTA);
+		assertEquals(1166.70 * 2 * 0.5 / 30.00 + 1166.70 * 28 / 30.00 * 0.75 + 8.03 * 10.00, salary.getCommonContingenciesBase(), DELTA);
+		assertEquals(1166.70 * 2 * 0.5 / 30.00 + 1166.70 * 28 / 30.00 * 0.75 + 8.03 * 10.00, salary.getProfessionalContingenciesBase(), DELTA);
+		//assertEquals(100.00 * 0.5 + 4.03 * 10.00, salary.getRawCommonBase(), DELTA);
 		
 		Double cgcBase = salary.getContextData(ContextVariable.CGC_BASE.getName(), Collectors.summingDouble( Double::parseDouble ));
-		Assert.assertEquals(1166.70 * 2 / 30.00 * 0.5 + 1166.70 * 28 / 30.00 * 0.75 + 8.03 * 10.00, cgcBase, DELTA);
+		assertEquals(1166.70 * 2 / 30.00 * 0.5 + 1166.70 * 28 / 30.00 * 0.75 + 8.03 * 10.00, cgcBase, DELTA);
 		Double cgpBase = salary.getContextData(ContextVariable.CGP_BASE.getName(), Collectors.summingDouble( Double::parseDouble ));
-		Assert.assertEquals(1166.70 * 2 / 30.00 * 0.5 + 1166.70 * 28 / 30.00 * 0.75 + 8.03 * 10.00, cgpBase, DELTA);
+		assertEquals(1166.70 * 2 / 30.00 * 0.5 + 1166.70 * 28 / 30.00 * 0.75 + 8.03 * 10.00, cgpBase, DELTA);
 		Double additionalBase = salary.getContextData(ContextVariable.ADDITIONAL_BASE.getName(), Collectors.summingDouble( Double::parseDouble ));
-		Assert.assertEquals(8.03 * 10.00, additionalBase, DELTA);
+		assertEquals(8.03 * 10.00, additionalBase, DELTA);
 
 		salary.getContextData().get(ContextVariable.CGC_BASE.getName())
 		.forEach(d -> System.out.println(d.getExpression() +" [ " + d.getStartDate() + ".." + d.getEndDate() +" ]"));
@@ -305,10 +305,10 @@ public class SQLAdditionalHoursTestCase extends AbstractSQLTestCase {
 		.forEach(d -> System.out.println(d.getExpression() +" [ " + d.getStartDate() + ".." + d.getEndDate() +" ]"));
 
 		 List<ContextData> cgcBaseData = salary.getContextData(ContextVariable.CGC_BASE.getName(), startDate, add(startDate, Calendar.DAY_OF_MONTH, 1));
-		 Assert.assertEquals(1166.70 * 2 / 30.00 * 0.5 + 8.03 * 10  , Double.parseDouble(cgcBaseData.get(0).getExpression()), DELTA);
+		 assertEquals(1166.70 * 2 / 30.00 * 0.5 + 8.03 * 10  , Double.parseDouble(cgcBaseData.get(0).getExpression()), DELTA);
 		
 		 List<ContextData> additionalBaseData = salary.getContextData(ContextVariable.ADDITIONAL_BASE.getName(), startDate, add(startDate, Calendar.DAY_OF_MONTH, 1));
-		 Assert.assertEquals(8.03 * 10  , Double.parseDouble(additionalBaseData.get(0).getExpression()), DELTA);
+		 assertEquals(8.03 * 10  , Double.parseDouble(additionalBaseData.get(0).getExpression()), DELTA);
 	}
 	
 	@Test
