@@ -42,6 +42,7 @@ import com.esferalia.aon.gwt.payroll.shared.Extra;
 import com.esferalia.aon.gwt.payroll.shared.IT;
 import com.esferalia.aon.gwt.payroll.shared.ITEmployee;
 import com.esferalia.aon.gwt.payroll.shared.ITPart;
+import com.esferalia.aon.gwt.payroll.shared.Mail;
 import com.esferalia.aon.gwt.payroll.shared.MainCCCInfo;
 import com.esferalia.aon.gwt.payroll.shared.Payment;
 import com.esferalia.aon.gwt.payroll.shared.Peculiarities;
@@ -193,10 +194,9 @@ public interface EnterprisesService extends RemoteService {
 
 	String getPayrollEmailSendTo(String currentDomainName);
 
-	String getPayrollEmailBody(String currentDomainName, Type type, HashMap<String, String> params);
+	String getPayrollEmailBody(String currentDomainName, Type type, HashMap<String, String> params, boolean isPassword);
 
-	String sendPayrollEmail(String currentDomainName, Type type, HashMap<String, String> params, String from, String to,
-			String cc, String cco, String bodyHTML) throws IllegalArgumentException;
+	String sendPayrollEmail(String currentDomainName, Type type, HashMap<String, String> params, Mail mail) throws IllegalArgumentException;
 
 	String checkEmployeesEmails(String currentDomainName, ArrayList<Integer> salaryIds);
 	

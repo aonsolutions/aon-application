@@ -127,6 +127,7 @@ import com.esferalia.aon.gwt.payroll.shared.Extra;
 import com.esferalia.aon.gwt.payroll.shared.IT;
 import com.esferalia.aon.gwt.payroll.shared.ITEmployee;
 import com.esferalia.aon.gwt.payroll.shared.ITPart;
+import com.esferalia.aon.gwt.payroll.shared.Mail;
 import com.esferalia.aon.gwt.payroll.shared.MainCCCInfo;
 import com.esferalia.aon.gwt.payroll.shared.NumberVariable;
 import com.esferalia.aon.gwt.payroll.shared.OutOfDateException;
@@ -2179,9 +2180,9 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 	}
 
 	@Override
-	public String getPayrollEmailBody(String domainName, com.esferalia.aon.gwt.payroll.client.PayrollEmailDialog.Type type, HashMap<String, String> params) {
+	public String getPayrollEmailBody(String domainName, com.esferalia.aon.gwt.payroll.client.PayrollEmailDialog.Type type, HashMap<String, String> params, boolean isPassword) {
 		try(Connection connection = AonServletUtils.getConnection(domainName)) {
-			return JooqMail.getPayrollEmailBody(connection, type, params);
+			return JooqMail.getPayrollEmailBody(connection, type, params, isPassword);
 		} catch (SQLException e) {
 			throw new RuntimeException(e);
 		}
@@ -2293,11 +2294,12 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 	}
 	
 	@Override
-	public String sendPayrollEmail(String domainName, com.esferalia.aon.gwt.payroll.client.PayrollEmailDialog.Type type, HashMap<String, String> params, String from, String to, String cc, String cco, String bodyHTML) throws IllegalArgumentException {
+	public String sendPayrollEmail(String domainName, com.esferalia.aon.gwt.payroll.client.PayrollEmailDialog.Type type, HashMap<String, String> params, Mail mail) throws IllegalArgumentException {
 		try(Connection connection = AonServletUtils.getConnection(domainName)) {
 			Integer domainId = AonServletUtils.getDomainID(domainName);
-			return JooqMail.sendPayrollEmail(connection, domainId, type, params, from, to, cc, cco, bodyHTML);
+			return JooqMail.sendPayrollEmail(connection, domainId, type, params, mail);
 		} catch (Exception e) {
+			e.printStackTrace();
 			throw new IllegalArgumentException(e);
 		}
 	}

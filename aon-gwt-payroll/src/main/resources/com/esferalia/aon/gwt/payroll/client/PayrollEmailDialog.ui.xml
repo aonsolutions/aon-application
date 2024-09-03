@@ -25,7 +25,6 @@
 		
 		.flex{
 			display: flex;
-			justify-content: space-between;
 			align-items: center;
 			margin: 5px 0;
 		}
@@ -51,6 +50,10 @@
 			margin: 0px 20px 10px 20px;
 		}
 		
+		.italic {
+			font-style: italic;
+		}
+		
 	</ui:Style>
 
 
@@ -73,6 +76,11 @@
 			<g:HTMLPanel styleName="{style.flex}">
 				<g:Label styleName="{style.label}">CCO:</g:Label>
 				<g:TextBox ui:field="cco" styleName='aon-inputText {style.widthAll}'></g:TextBox>
+			</g:HTMLPanel>
+			<g:HTMLPanel styleName="{style.flex}">
+				<g:Label styleName="{style.label}">Proteger PDF</g:Label>
+				<g:CheckBox ui:field="passwordCheck" />
+				<g:Label styleName="{style.italic}">Proteger PDF con el NIF del receptor</g:Label>
 			</g:HTMLPanel>
 			<g:HTMLPanel styleName="{style.flex}">
 				<g:HTMLPanel ui:field="textAreaPanel"></g:HTMLPanel>
