@@ -1,8 +1,10 @@
 package net.aonsolutions.core.dbutils;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 import java.io.InputStream;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class AonSQLFileTestCase {
 
@@ -12,9 +14,9 @@ public class AonSQLFileTestCase {
 				"net/aonsolutions/core/dbutils/create_procedure.sql");
 		AonSQLFile aonSQLFile = new AonSQLFile(input);
 		while( aonSQLFile.ready() ) {
-			System.out.println(aonSQLFile.getStatement());
+			aonSQLFile.getStatement();
 		}
-		org.junit.Assert.assertEquals(false, aonSQLFile.ready());
+		assertEquals(false, aonSQLFile.ready());
 	}
 	
 }
