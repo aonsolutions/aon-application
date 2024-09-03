@@ -1,5 +1,8 @@
 :root{
 	--favicon: ../faviconColors.png;
+	--accountingSideNavSymbol: CALCULATE;
+  	--fiscalSideNavSymbol: EURO_SYMBOL;
+	--payrollSideNavSymbol: GROUP;
 }
 
 .rootPanel {
@@ -75,7 +78,7 @@
 }
 */
 
-#aon-notesSidenav .material-icons,
+/* #aon-notesSidenav .material-icons,
 #aon-notesSidenav aon-icon {
 	--aonNote: rgb(95, 99, 104);
 }
@@ -122,7 +125,7 @@
 #aonSigninSidenav .material-icons,
 #aonSigninSidenav aon-icon {
 	--aonTimecontrol: rgb(95, 99, 104);
-}
+} */
 
 #applications:hover {
   background-size: cover ;
