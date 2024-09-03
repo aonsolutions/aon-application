@@ -1,12 +1,15 @@
 package net.aonsolutions.aon.api.servlet;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
+import java.security.KeyStore;
 import java.util.ArrayList;
 import java.util.Base64;
+import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -18,6 +21,9 @@ import org.json.JSONArray;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.IJsonNames;
 import com.esferalia.aon.occam.api.model.security.CertificateType;
+import com.esferalia.aon.occam.api.model.type.MimeType;
+import com.esferalia.aon.watson.util.AonNumberUtils;
+import com.esferalia.aon.watson.util.AonStringUtils;
 import com.esferalia.aon.occam.api.model.Certificate;
 import com.esferalia.aon.occam.api.model.Certificate.CertificateOwner;
 import com.esferalia.aon.occam.api.model.Certificate.CertificateSecurity;
@@ -27,6 +33,7 @@ import net.aonsolutions.aon.api.error.AonApiException;
 import net.aonsolutions.aon.api.ewok.AonApiData;
 import solutions.aon.seg.social.SistemaRED;
 import solutions.aon.seg.social.exception.SegSocialException;
+import solutions.aon.seg.social.object.SecondaryUser;
 import solutions.aon.sepe.Sepe;
 import solutions.aon.sepe.exceptions.SepeException;
 
@@ -39,6 +46,8 @@ public class NewCertificateServlet extends AonApiHttpServlet {
 	public static final String CERTIFICATES = "/";
 	public static final String CERTIFICATE_ONE = "/one";
 	public static final String CERTIFICATE_VERIFY = "/verify";
+	public static final String CERTIFICATE_SECONDARY_USERS = "/secondary-users";
+	public static final String CHECKPASS = "/check-password";
 	
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) {
@@ -68,6 +77,7 @@ public class NewCertificateServlet extends AonApiHttpServlet {
 				.addRoute(CERTIFICATES, NewCertificateServlet::getListAction)
 				.addRoute(CERTIFICATE_ONE, NewCertificateServlet::getOneAction)
 				.addRoute(CERTIFICATE_VERIFY, NewCertificateServlet::getVerifyAction)
+				.addRoute(CERTIFICATE_SECONDARY_USERS, NewCertificateServlet::getSecondaryUsers)
 				.apply();
 			response(req, resp, object);
 		} catch (Exception e) {
@@ -81,6 +91,7 @@ public class NewCertificateServlet extends AonApiHttpServlet {
 			AonApiData api = initialize(req);
 			Object object = new AonRouting(api)
 				.addRoute(CERTIFICATES, NewCertificateServlet::postAction)
+				.addRoute(CHECKPASS, NewCertificateServlet::checkPassword)
 				.apply();
 			response(req, resp, object);
 		} catch (Exception e) {
@@ -125,18 +136,16 @@ public class NewCertificateServlet extends AonApiHttpServlet {
 		Certificate cert = AON.getOneCertificate(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), api.getUser().getId(), id);
 		if(cert.getTags().contains(CertificateType.TGSS)) {
 			try {
-				Certificate certificate = AON.getCertificate(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), api.getUser().getId(), "TGSS");
-				InputStream certificateIS = new ByteArrayInputStream(certificate.getData());
-				SistemaRED.validateCert(certificateIS, certificate.getPassword(), certificate.getType());
+				InputStream certificateIS = new ByteArrayInputStream(cert.getData());
+				SistemaRED.validateCert(certificateIS, cert.getPassword(), cert.getType());
 			} catch(SegSocialException e) {
 				throw new AonApiException(e.getMessage());
 			}
 		}
 		if(cert.getTags().contains(CertificateType.SEPE)) {
 			try {
-				Certificate certificate = AON.getCertificate(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), api.getUser().getId(), "SEPE");
-				InputStream certificateIS = new ByteArrayInputStream(certificate.getData());
-				Sepe.validateCert(certificateIS, certificate.getPassword(), certificate.getType());	
+				InputStream certificateIS = new ByteArrayInputStream(cert.getData());
+				Sepe.validateCert(certificateIS, cert.getPassword(), cert.getType());
 			} catch(SepeException e) {
 				throw new AonApiException(e.getMessage());
 			}
@@ -153,16 +162,40 @@ public class NewCertificateServlet extends AonApiHttpServlet {
 		return json;
 	}
 	
+	public static JSONArray getSecondaryUsers(AonApiData api) {
+		JSONArray json = new JSONArray();
+		Certificate certificate = AON.getCertificate(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), api.getUser().getId(), "TGSS");
+		InputStream certificateIS = new ByteArrayInputStream(certificate.getData());
+		Collection<SecondaryUser> users;
+		try {
+			users = SistemaRED.getSecondaryUsers(certificateIS, certificate.getPassword(), certificate.getType());
+			List<SecondaryUser> list = users.stream().collect(Collectors.toList());
+			for(int i = 0; i < list.size(); i++) {
+				json.put(sUserToJSON(list.get(i)));
+			}
+		} catch (SegSocialException e) {
+			e.printStackTrace();
+		}
+		return json; 
+	}
+	
 	private static JSONObject postAction(AonApiData api) {
 		String owner = api.getData().optString(IJsonNames.OWNER);
-		String confidential = api.getData().optString(IJsonNames.CONFIDENTIAL);
+//		String confidential = api.getData().optString(IJsonNames.CONFIDENTIAL);
 		String pass = api.getData().optString(IJsonNames.PASSWORD);
 		String data = api.getData().optString(IJsonNames.FILE_DATA);
 		String filename = api.getData().optString(IJsonNames.FILE_NAME);
+		String alias = api.getData().optString(IJsonNames.ALIAS);
 		Boolean aeat = api.getData().optBoolean("aeat");
 		Boolean sepe = api.getData().optBoolean("sepe");
 		Boolean tgss = api.getData().optBoolean("tgss");
 		byte[] dataFile = Base64.getDecoder().decode(data);
+		try (InputStream certificateInputStream = new ByteArrayInputStream(dataFile)) {
+			KeyStore keyStore = KeyStore.getInstance(MimeType.PKCS12.name());
+	        keyStore.load(certificateInputStream, pass.toCharArray());
+		}catch (Exception e) {
+			throw new AonApiException("La contraseña no es correcta.");
+		}
 		List<CertificateType> list = new ArrayList<>();
 		if(Boolean.TRUE.equals(aeat)) list.add(CertificateType.AEAT);
 		if(Boolean.TRUE.equals(tgss)) list.add(CertificateType.TGSS);
@@ -171,13 +204,29 @@ public class NewCertificateServlet extends AonApiHttpServlet {
 				.setDescription(filename)
 				.setDomain(api.getDomain().getId())
 				.setData(dataFile)
-				.setConfidential(CertificateSecurity.valueOf(confidential))
+				.setDescription(alias)
+				// De momento vamos a dejar todos los certificados que se suban a través de la api como privados ya que el hecho de que sea publico solo tendría sentido en la suite, 
+				// dentro de un portal ninguna empresa querría tener un certificado público que fuera visible desde otra
+				.setConfidential(CertificateSecurity.PRIVATE) 
 				.setOwner(CertificateOwner.valueOf(owner))
 				.setPassword(pass)
 				.setTags(list);
 		checkCertificateType(api, certificate);
 		AON.saveCertificate(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), api.getUser().getId(), certificate);
 		return new JSONObject();
+	}
+	
+	private static boolean checkPassword(AonApiData api) {
+		String dataj = api.getData().optString(IJsonNames.FILE_DATA);
+		String password = api.getData().optString(IJsonNames.PASSWORD);
+		byte[] data = Base64.getDecoder().decode(dataj);
+		try (InputStream certificateInputStream = new ByteArrayInputStream(data)) {
+					KeyStore keyStore = KeyStore.getInstance(MimeType.PKCS12.name());
+			        keyStore.load(certificateInputStream, password.toCharArray());
+		}catch (Exception e) {
+			return false;
+		}
+		return true;
 	}
 	
 	private static void checkCertificateType(AonApiData api, Certificate certificate) {
@@ -241,11 +290,11 @@ public class NewCertificateServlet extends AonApiHttpServlet {
 		json.put(IJsonNames.ID, c.getId());
 		json.put(IJsonNames.TYPE, c.getType());
 		json.put(IJsonNames.NAME, c.getCertificateInfo().getName());
-		json.put(IJsonNames.END_DATE, c.getCertificateInfo().getToDate());
+		json.put(IJsonNames.END_DATE, c.getCertificateInfo().getToDate().getTime());
 		json.put(IJsonNames.REPRESENTATION, c.getCertificateInfo().getEnterprise());
 		json.put(IJsonNames.TYPE, c.getConfidential());
 		json.put(IJsonNames.ALIAS, c.getDescription());
-		json.put(IJsonNames.START_DATE, c.getCertificateInfo().getFromDate());
+		json.put(IJsonNames.START_DATE, c.getCertificateInfo().getFromDate().getTime());
 		json.put(IJsonNames.DOCUMENT, c.getCertificateInfo().getDocument());
 		json.put(IJsonNames.OWNER, c.getOwner());
 		for(int i = 0; i < c.getTags().size(); i++) {
@@ -253,6 +302,15 @@ public class NewCertificateServlet extends AonApiHttpServlet {
 			if(c.getTags().get(i).name().equals("TGSS")) json.put("tgss", true);
 			if(c.getTags().get(i).name().equals("AEAT")) json.put("aeat", true);
 		}
+		return json;
+	}
+	
+	private static JSONObject sUserToJSON(SecondaryUser su) {
+		JSONObject json = new JSONObject();
+		json.put(IJsonNames.NAME, su.getName());
+		json.put(IJsonNames.NUMBER, su.getNaf());
+		json.put(IJsonNames.STATUS, su.getSituation());
+		json.put(IJsonNames.DATE, su.getSituationDate());
 		return json;
 	}
 }
