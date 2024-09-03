@@ -5,10 +5,9 @@ import java.io.InputStream;
 import java.util.Date;
 import java.util.Random;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.esferalia.aon.occam.api.model.Certificate;
-import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.Person;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceBreakdown;
@@ -102,13 +101,14 @@ public class Lroe140_2_1Test {
 		return invoice;
 	}
 	
-
+/*
 	private Company getCompany() {
 		Company company = new Company();
 		company.setName(TEST_NAME_140 + " " + TEST_SURNAME1_140 + " " + TEST_SURNAME2_140);
 		company.setDocument(TEST_NIF_140);
 		return company;
 	}
+*/
 	
 	private Person getPerson() {
 		Person person = new Person();
