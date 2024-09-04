@@ -65,7 +65,7 @@ export class AonMobileDocumentalList extends AonMobileList {
   }
 
   aonDocument(doc, i) {
-    this.getApplication().setContentHTML(`<aon-mobile-document document='${JSON.stringify(doc)}'> </aon-mobile-invoice>`);
+    this.getApplication().setContentHTML(`<aon-mobile-document document='${JSON.stringify(doc)}'> </aon-mobile-document>`);
 	}
 }
 window.customElements.define('aon-mobile-documental-list', AonMobileDocumentalList);

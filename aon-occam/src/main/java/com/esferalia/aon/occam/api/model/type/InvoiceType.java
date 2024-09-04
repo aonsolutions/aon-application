@@ -74,4 +74,14 @@ public enum InvoiceType implements Serializable  {
 		}
 		return null;
 	}
+	
+	public static boolean contains(Byte[] types, InvoiceType type) {
+		boolean bool = false;
+		for(Byte t : types) {
+			if(t.equals(type.value())) {
+				bool = true;
+			}
+		}
+		return bool;
+	}
 }

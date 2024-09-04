@@ -58,8 +58,7 @@ export class AonElement extends HTMLElement{
     el.id = id || '';
     el.title = title || '';
     el.description = title || '';
-    if(main)
-      el.main = true;
+    if(main) el.main = true;
     return el;
   }
 
