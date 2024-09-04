@@ -5,7 +5,6 @@ import java.sql.Date;
 import java.sql.SQLException;
 
 import com.code.aon.ql.Criteria;
-import com.esferalia.aon.gwt.payroll.shared.Salary;
 import com.esferalia.aon.gwt.payroll.shared.SalaryDraft;
 import com.esferalia.aon.payroll.calculator.sql.ISQLContractSalaryCalculatorContext;
 import com.esferalia.aon.payroll.calculator.sql.SQLBRTestCase;

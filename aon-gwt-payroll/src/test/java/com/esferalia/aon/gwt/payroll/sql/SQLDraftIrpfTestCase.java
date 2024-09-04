@@ -2,9 +2,8 @@ package com.esferalia.aon.gwt.payroll.sql;
 
 import static com.esferalia.aon.gwt.payroll.shared.Payment.Type.CRA_0001;
 import static com.esferalia.aon.jooq.tables.Contract.CONTRACT;
-import static com.esferalia.aon.watson.util.AonDateUtils.get;
 import static com.esferalia.aon.watson.util.AonDateUtils.getLastDayOfMonth;
-import static java.util.Calendar.MONTH;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.sql.Connection;
 import java.sql.Date;
@@ -12,7 +11,7 @@ import java.sql.SQLException;
 import java.util.Calendar;
 import java.util.Collections;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.code.aon.ql.Criteria;
 import com.esferalia.aon.gwt.payroll.server.EmployeesServiceHelper;
@@ -22,16 +21,13 @@ import com.esferalia.aon.gwt.payroll.shared.NumberVariable;
 import com.esferalia.aon.gwt.payroll.shared.Salary;
 import com.esferalia.aon.gwt.payroll.shared.SalaryDraft;
 import com.esferalia.aon.gwt.payroll.shared.SalaryDraft.Scope;
-import com.esferalia.aon.jooq.tables.Contract;
 import com.esferalia.aon.jooq.tables.records.ContractRecord;
 import com.esferalia.aon.occam.api.AONContext;
-import com.esferalia.aon.payroll.IrpfOutcome;
 import com.esferalia.aon.payroll.SalaryBuilder;
 import com.esferalia.aon.payroll.SalaryDeduction;
 import com.esferalia.aon.payroll.SalaryPayment;
 import com.esferalia.aon.payroll.calculator.IContractSalaryCalculatorContext;
 import com.esferalia.aon.payroll.calculator.SmartContractSalaryCalculator;
-import com.esferalia.aon.payroll.calculator.IContractSalaryCalculatorContext.IListener;
 import com.esferalia.aon.payroll.calculator.sql.ISQLContractSalaryCalculatorContext;
 import com.esferalia.aon.payroll.calculator.sql.SQLContractSalaryCalculatorContext;
 import com.esferalia.aon.payroll.calculator.sql.SQLIrpfTestCase;
@@ -243,7 +239,7 @@ public class SQLDraftIrpfTestCase extends SQLIrpfTestCase {
 			for ( SalaryDeduction d : salary.getSalaryDeductions() ) {
 				System.out.println(d.getExpression() + ": " + d.getAmount() );
 			}
-			org.junit.Assert.assertEquals(3, salary.getSalaryDeductions().size());
+			assertEquals(3, salary.getSalaryDeductions().size());
 			
 		} catch (SalaryException e1) {
 		}
@@ -371,7 +367,7 @@ public class SQLDraftIrpfTestCase extends SQLIrpfTestCase {
 			for ( SalaryDeduction d : salary.getSalaryDeductions() ) {
 				System.out.println(d.getExpression() + ": " + d.getAmount() );
 			}
-			org.junit.Assert.assertEquals(1500.00*2, salary.getTotalPayment(), 0.001 );
+			assertEquals(1500.00*2, salary.getTotalPayment(), 0.001 );
 			
 		} catch (SalaryException e1) {
 		}

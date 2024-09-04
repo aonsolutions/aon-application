@@ -4,26 +4,24 @@ import static com.esferalia.aon.payroll.enumeration.ContextVariable.HOLIDAYS;
 import static com.esferalia.aon.watson.util.AonDateUtils.getFirstDayOfYear;
 import static com.esferalia.aon.watson.util.AonDateUtils.getLastDayOfMonth;
 import static java.util.Calendar.DAY_OF_MONTH;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.SQLException;
 import java.util.Calendar;
 import java.util.Map;
-import java.util.stream.Stream;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.esferalia.aon.gwt.payroll.server.SalaryDraftBuilder;
 import com.esferalia.aon.gwt.payroll.shared.Employee;
 import com.esferalia.aon.gwt.payroll.shared.SalaryDraft;
 import com.esferalia.aon.jooq.tables.records.ContractRecord;
-import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.payroll.calculator.SmartContractSalaryCalculator;
 import com.esferalia.aon.payroll.calculator.sql.AbstractSQLTestCase;
 import com.esferalia.aon.payroll.calculator.sql.ISQLContractSalaryCalculatorContext;
-import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.payroll.enumeration.LeaveType;
 import com.esferalia.aon.salary.ISalary;
 import com.esferalia.aon.salary.SalaryException;
@@ -110,7 +108,7 @@ public class SQLDraftPaymentsTestCase extends AbstractSQLTestCase {
 		calculator.calculate(ctx);
 		
 		salaryDraft.getPayments().forEach( p -> System.out.println(p.getDescription() +":" + p.getAmount()));
-		salaryDraft.getPayments().forEach( p -> org.junit.Assert.assertEquals("31 DÍAS DE IT", p.getDescription()) );
+		salaryDraft.getPayments().forEach( p -> assertEquals("31 DÍAS DE IT", p.getDescription()) );
 		
 
 	}
@@ -193,7 +191,7 @@ public class SQLDraftPaymentsTestCase extends AbstractSQLTestCase {
 		salaryDraft.getPayments().forEach( p -> System.out.println(p.getDescription() +":" + p.getAmount()));
 		salaryDraft.getPayments().forEach( p -> {
 			if ( p.getExpression().contains("DIAS_VACACIONES"))
-				org.junit.Assert.assertEquals("VACACIONES 8 DÍAS", p.getDescription());
+				assertEquals("VACACIONES 8 DÍAS", p.getDescription());
 		} );
 		
 

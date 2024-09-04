@@ -10,13 +10,6 @@
 	<name>tgss Java Classes of TGSS SLD XSD schemas</name>
 	<description>aon Solutions JAXB Java classes of TGSS SLD XSD validation schemas</description>
 
-	<properties>
-		<junit.version>4.12</junit.version>
-		<junit.jupiter.version>5.0.3</junit.jupiter.version>
-		<junit.vintage.version>${junit.version}.3</junit.vintage.version>
-		<junit.platform.version>1.0.3</junit.platform.version>
-	</properties>
-
 	<build>
 		<plugins>
 			<plugin>
@@ -24,10 +17,6 @@
 				<artifactId>jaxb2-maven-plugin</artifactId>
                                 <version>2.5.0</version>
 				<dependencies>
-					<!--
-					 Migrating From Java 8 To Java 11.
-					 Instead of using the deprecated JAF (java.activation) module, use the following artifacts.
-					 -->
 					<dependency>
 					    <groupId>com.sun.activation</groupId>
 					    <artifactId>javax.activation</artifactId>
@@ -47,17 +36,6 @@
 							<clearOutputDir>false</clearOutputDir>
 						</configuration>
 					</execution>
-					<!--execution>
-						<id>xjc-request-draft</id>
-						<goals>
-							<goal>xjc</goal>
-						</goals>
-						<configuration>
-							<sources><source>src/main/xsd/SolicitudBorrador.xsd</source></sources>
-							<packageName>net.aonsolutions.core.tgss.creta.jaxb.solicitud.borrador</packageName>
-							<clearOutputDir>false</clearOutputDir>
-						</configuration>
-					</execution-->
 					<execution>
 						<id>xjc-response-calc</id>
 						<goals>
@@ -69,17 +47,6 @@
 							<clearOutputDir>false</clearOutputDir>
 						</configuration>
 					</execution>
-					<!--execution>
-						<id>xjc-response-bases</id>
-						<goals>
-							<goal>xjc</goal>
-						</goals>
-						<configuration>
-							<sources><source>src/main/xsd/Bases.xsd</source></sources>
-							<packageName>net.aonsolutions.core.tgss.creta.jaxb.bases</packageName>
-							<clearOutputDir>false</clearOutputDir>
-						</configuration>
-					</execution-->
 					<execution>
 						<id>xjc-response-rlc</id>
 						<goals>
@@ -156,56 +123,35 @@
 					<properties>
 						<!-- <includeTags>fast</includeTags> -->
 						<excludeTags>slow</excludeTags>
-						<!--
-						<configurationParameters>
-							junit.jupiter.conditions.deactivate = *
-						</configurationParameters>
-						-->
 					</properties>
 				</configuration>
-				<dependencies>
-					<dependency>
-						<groupId>org.junit.platform</groupId>
-						<artifactId>junit-platform-surefire-provider</artifactId>
-						<version>${junit.platform.version}</version>
-					</dependency>
-				</dependencies>
 		</plugin>
 		</plugins>
 	</build>
 
 	<dependencies>
 		<dependency>
-			<groupId>org.junit.jupiter</groupId>
-			<artifactId>junit-jupiter-api</artifactId>
-			<version>${junit.jupiter.version}</version>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
-			<version>${junit.version}</version>
+			<version>4.13.2</version>
 			<scope>test</scope>
 		</dependency>
-		<!-- Only required to run tests in an IDE that bundles an older version -->
 		<dependency>
 			<groupId>org.junit.platform</groupId>
 			<artifactId>junit-platform-launcher</artifactId>
-			<version>${junit.platform.version}</version>
+			<version>1.11.0</version>
 			<scope>test</scope>
 		</dependency>
-		<!-- Only required to run tests in an IDE that bundles an older version -->
 		<dependency>
 			<groupId>org.junit.jupiter</groupId>
 			<artifactId>junit-jupiter-engine</artifactId>
-			<version>${junit.jupiter.version}</version>
+			<version>5.11.0</version>
 			<scope>test</scope>
 		</dependency>
-		<!-- Only required to run tests in an IDE that bundles an older version -->
 		<dependency>
 			<groupId>org.junit.vintage</groupId>
 			<artifactId>junit-vintage-engine</artifactId>
-			<version>${junit.vintage.version}</version>
+			<version>5.11.0</version>
 			<scope>test</scope>
 		</dependency>
 		<!-- To avoid compiler warnings about @API annotations in JUnit code -->

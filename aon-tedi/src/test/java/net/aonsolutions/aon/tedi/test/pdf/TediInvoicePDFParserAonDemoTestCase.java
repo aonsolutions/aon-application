@@ -138,12 +138,12 @@ public class TediInvoicePDFParserAonDemoTestCase extends AbstractTediTest {
 			
 			TediInvoiceBuilder tediInvoiceBuilder = new TediInvoiceBuilder( tctx );
 			InvoicePDFParser.parse(is , tediInvoiceBuilder);
-			String file = "["+ template.getFile() +"]. ";
-			System.out.println( file );
+			String file = "[Parsing .... " + template.getFile() +"]. ";
+			// System.out.println( file );
 			TediInvoice invoice = tediInvoiceBuilder.get();
 			
 			invoice.setInsight(null);
-			System.out.println( TediInvoiceJSON.toJSON( tediInvoiceBuilder.get() ).toString(2) );
+			// System.out.println( TediInvoiceJSON.toJSON( tediInvoiceBuilder.get() ).toString(2) );
 
 			
 			assertNotNull(invoice,file + "Invoice not parsed!");
@@ -351,11 +351,11 @@ public class TediInvoicePDFParserAonDemoTestCase extends AbstractTediTest {
 			TediInvoiceBuilder tediInvoiceBuilder = new TediInvoiceBuilder( tctx );
 			InvoicePDFParser.parse(is , tediInvoiceBuilder);
 			String file = "["+ template.getFile() +"]. ";
-			System.out.println( file );
+			//System.out.println( file );
 			TediInvoice invoice = tediInvoiceBuilder.get();
 			
 			invoice.setInsight(null);
-			System.out.println( TediInvoiceJSON.toJSON( tediInvoiceBuilder.get() ).toString(2) );
+			//System.out.println( TediInvoiceJSON.toJSON( tediInvoiceBuilder.get() ).toString(2) );
 
 			assertNotNull(invoice,file + "Invoice not parsed!");
 

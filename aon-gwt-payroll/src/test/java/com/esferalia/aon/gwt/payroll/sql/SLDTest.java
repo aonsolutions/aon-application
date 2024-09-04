@@ -8,17 +8,17 @@ import java.sql.SQLException;
 import java.util.Calendar;
 import java.util.Date;
 
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
 import com.esferalia.aon.gwt.payroll.util.SLD;
 import com.esferalia.aon.in.payroll.pdf.jooq.JooqPDFSalaryBuilder;
 import com.esferalia.aon.occam.api.AONContext;
+import com.google.gwt.editor.client.Editor.Ignore;
 
 import solutions.aon.seg.social.SistemaRED;
-import solutions.aon.seg.social.SistemaRED.Regime;
 import solutions.aon.seg.social.exception.SegSocialException;
-@Ignore
+@Disabled
 public class SLDTest {
 
 	@Test

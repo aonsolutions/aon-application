@@ -6,18 +6,18 @@ package com.esferalia.aon.gwt.payroll.sql;
 import static com.esferalia.aon.watson.util.AonDateUtils.getFirstDayOfMonth;
 import static com.esferalia.aon.watson.util.AonDateUtils.getFirstDayOfYear;
 import static com.esferalia.aon.watson.util.AonDateUtils.getLastDayOfMonth;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.SQLException;
 import java.util.Calendar;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.esferalia.aon.gwt.payroll.jooq.JooqEmployees;
 import com.esferalia.aon.gwt.payroll.jooq.JooqPayrollSalaries;
@@ -140,7 +140,7 @@ public class SQLJOOQTestCase extends AbstractSQLTestCase {
 		JooqPayrollSalaries.deleteSalaries(connection, ids);
 
 		AON.getSalaries(domain, "login", p -> p.getContractProperty().eq(contract.getId())).findAny()
-		.ifPresent( c -> org.junit.Assert.fail("Contracts NOT deleted!!!!!!!!!!!!" ));
+		.ifPresent( c -> fail("Contracts NOT deleted!!!!!!!!!!!!" ));
 
 	}
 
@@ -234,10 +234,10 @@ public class SQLJOOQTestCase extends AbstractSQLTestCase {
 		JooqEmployees.delete(connection, contract.getId());
 		
 		PAYROLL.getContract(domain.getName(), domain.getId(), "login", p -> p.getIdProperty().eq(contract.getId()))
-		.ifPresent( c -> org.junit.Assert.fail("Contracts NOT deleted!!!!!!!!!!!!" ));
+		.ifPresent( c -> fail("Contracts NOT deleted!!!!!!!!!!!!" ));
 
 		AON.getSalaries(domain, "login", p -> p.getContractProperty().eq(contract.getId())).findAny()
-		.ifPresent( c -> org.junit.Assert.fail("Contracts NOT deleted!!!!!!!!!!!!" ));
+		.ifPresent( c -> fail("Contracts NOT deleted!!!!!!!!!!!!" ));
 
 	}
 

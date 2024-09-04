@@ -1,15 +1,12 @@
 package com.esferalia.aon.gwt.payroll.sql;
 
 import static com.esferalia.aon.gwt.payroll.server.EmployeesServiceHelper.getAvailableBonuses;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.sql.Connection;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 
-import junit.framework.Assert;
-
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.esferalia.aon.gwt.payroll.shared.Bonus;
 import com.esferalia.aon.jooq.tables.records.DomainRecord;
@@ -27,21 +24,14 @@ public class EmployeesServiceHelperTest extends AbstractSQLTestCase {
 		DomainRecord domainI = newDomain(aonContext);
 
 		for (BonusType bonusType : BonusType.values())
-			addBonusConcept(aonContext, domainI.getId(), bonusType,
-					String.format("%d", bonusType.ordinal()));
+			addBonusConcept(aonContext, domainI.getId(), bonusType, String.format("%d", bonusType.ordinal()));
 
-		List<Bonus> availableBonuses = getAvailableBonuses(connection, 0,
-				domainI.getId());
+		List<Bonus> availableBonuses = getAvailableBonuses(connection, 0, domainI.getId());
 
-		Assert.assertEquals(BonusType.values().length,availableBonuses.size());
-		System.out.println(availableBonuses.size());
-
+		assertEquals(BonusType.values().length,availableBonuses.size());
 		for (Bonus bonus : availableBonuses) {
-			Assert.assertEquals(bonus.getType().ordinal(),
-					Integer.parseInt(bonus.getExpression()));
-			System.out.println(bonus.getType().ordinal() + "-." + bonus.getDescription() + " = '" + bonus.getExpression() + "'");
+			assertEquals(bonus.getType().ordinal(), Integer.parseInt(bonus.getExpression()));
 		}
-
 	}
 
 	@Test
@@ -53,19 +43,14 @@ public class EmployeesServiceHelperTest extends AbstractSQLTestCase {
 		Integer domains  []= new Integer [BonusType.values().length];
 		
 		for (int i = 0 ; i<  BonusType.values().length; i++ )
-			domains[i]=addBonusConcept(aonContext, BonusType.values()[i],
-					String.format("%d", BonusType.values()[i].ordinal())).getDomain();
+			domains[i]=addBonusConcept(aonContext, BonusType.values()[i], String.format("%d", BonusType.values()[i].ordinal())).getDomain();
 		
-		List<Bonus> availableBonuses = getAvailableBonuses(connection, 0,
-				domains);
+		List<Bonus> availableBonuses = getAvailableBonuses(connection, 0, domains);
 
-		Assert.assertEquals(BonusType.values().length, availableBonuses.size());
-		System.out.println(availableBonuses.size());
+		assertEquals(BonusType.values().length, availableBonuses.size());
 
 		for (Bonus bonus : availableBonuses) {
-			Assert.assertEquals(bonus.getType().ordinal(),
-					Integer.parseInt(bonus.getExpression()));
-			System.out.println(bonus.getType().ordinal() + "-." + bonus.getDescription() + " = '" + bonus.getExpression() + "'");
+			assertEquals(bonus.getType().ordinal(), Integer.parseInt(bonus.getExpression()));
 		}
 
 	}

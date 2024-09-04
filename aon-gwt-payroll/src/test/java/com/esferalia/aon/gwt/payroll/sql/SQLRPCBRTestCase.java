@@ -4,14 +4,10 @@ import java.sql.Connection;
 import java.sql.Date;
 import java.sql.SQLException;
 
-import com.code.aon.ql.Criteria;
 import com.esferalia.aon.gwt.payroll.server.EmployeesServiceHelper;
 import com.esferalia.aon.gwt.payroll.shared.Employee;
-import com.esferalia.aon.gwt.payroll.shared.Salary;
 import com.esferalia.aon.gwt.payroll.shared.SalaryDraft;
 import com.esferalia.aon.jooq.tables.records.ContractRecord;
-import com.esferalia.aon.payroll.IrpfOutcome;
-import com.esferalia.aon.payroll.calculator.IContractSalaryCalculatorContext;
 import com.esferalia.aon.payroll.calculator.sql.ISQLContractSalaryCalculatorContext;
 import com.esferalia.aon.payroll.calculator.sql.SQLBRTestCase;
 import com.esferalia.aon.salary.expression.ExpressionException;

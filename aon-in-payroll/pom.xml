@@ -104,24 +104,24 @@
 			<version>8.0.13</version>
 			<scope>test</scope>
 		</dependency>
-<!--		
+		<!-- En local tengo Mariadb (Euke) -->
 		<dependency>
 			<groupId>org.mariadb.jdbc</groupId>
 			<artifactId>mariadb-java-client</artifactId>
 			<version>2.4.2</version>
 			<scope>test</scope>
 		</dependency>
--->
+		
 		<dependency>
 		    <groupId>org.junit.jupiter</groupId>
 		    <artifactId>junit-jupiter-engine</artifactId>
-		    <version>5.10.3</version>
+		    <version>5.11.0</version>
 		    <scope>test</scope>
 		</dependency>
 		<dependency>
 		    <groupId>org.junit.platform</groupId>
 		    <artifactId>junit-platform-suite-engine</artifactId>
-		    <version>1.10.3</version>
+		    <version>1.11.0</version>
 		    <scope>test</scope>
 		</dependency>
 	     <dependency>
@@ -337,7 +337,6 @@
 			<version>3.5.0</version>
 			<scope>provided</scope>
 		</dependency>
-
 		<dependency>
 			<groupId>solutions.aon</groupId>
 			<artifactId>aon.seg.social</artifactId>
@@ -350,9 +349,6 @@
 				</exclusion>
 			</exclusions>
 		</dependency>
-		
-				
-
 	  </dependencies>
     </profile>
   </profiles>

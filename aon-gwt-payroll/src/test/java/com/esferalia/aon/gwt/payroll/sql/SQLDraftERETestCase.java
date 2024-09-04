@@ -12,6 +12,7 @@ import static com.esferalia.aon.watson.util.AonDateUtils.getFirstDayOfYear;
 import static com.esferalia.aon.watson.util.AonDateUtils.getLastDayOfMonth;
 import static com.esferalia.aon.watson.util.AonDateUtils.getMax;
 import static java.util.Calendar.DAY_OF_MONTH;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.sql.Connection;
 import java.sql.Date;
@@ -22,7 +23,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.esferalia.aon.gwt.payroll.server.EmployeesServiceHelper;
 import com.esferalia.aon.gwt.payroll.server.SalaryDraftBuilder;
@@ -41,7 +42,6 @@ import com.esferalia.aon.payroll.calculator.sql.ISQLContractSalaryCalculatorCont
 import com.esferalia.aon.payroll.calculator.sql.SQLContractSalaryCalculatorContext;
 import com.esferalia.aon.payroll.calculator.sql.SQLERETestCase;
 import com.esferalia.aon.salary.ISalary;
-import com.esferalia.aon.salary.ISalaryBuilder;
 import com.esferalia.aon.salary.SalaryException;
 import com.esferalia.aon.salary.cost.Costs;
 import com.esferalia.aon.salary.data.IData;
@@ -51,8 +51,6 @@ import com.esferalia.aon.salary.enumeration.SalaryType;
 import com.esferalia.aon.salary.expression.ExpressionException;
 import com.esferalia.aon.salary.payment.IPayment;
 import com.esferalia.aon.salary.payment.Payments;
-
-import junit.framework.Assert;
 
 public class SQLDraftERETestCase extends SQLERETestCase {
 	
@@ -383,14 +381,14 @@ public class SQLDraftERETestCase extends SQLERETestCase {
 					+ " (" + payment.getExpression() + ")");
 		}
 
-		Assert.assertEquals(
+		assertEquals(
 				((1500.00 + 250.00) * 1.10 )*(get(endDate, DAY_OF_MONTH) - ereDays) / get(endDate, DAY_OF_MONTH), 
 				salary.getTotalPayment(),
 				DELTA);
 
-		Assert.assertEquals((1750.00 * 1.10), salary.getCommonBase(), DELTA);
+		assertEquals((1750.00 * 1.10), salary.getCommonBase(), DELTA);
 
-		Assert.assertEquals(salary.getTotalPayment() * 0.15,
+		assertEquals(salary.getTotalPayment() * 0.15,
 				salary.getSocialSecurityContributions(), DELTA);
 		
 		

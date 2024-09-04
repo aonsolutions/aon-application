@@ -2,12 +2,13 @@ package com.esferalia.aon.gwt.payroll.sql;
 
 import static com.esferalia.aon.watson.util.AonDateUtils.getFirstDayOfMonth;
 import static com.esferalia.aon.watson.util.AonDateUtils.getLastDayOfMonth;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.SQLException;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.esferalia.aon.gwt.payroll.server.EmployeesServiceHelper;
 import com.esferalia.aon.gwt.payroll.server.SalaryDraftBuilder;
@@ -29,8 +30,6 @@ import com.esferalia.aon.salary.ISalary;
 import com.esferalia.aon.salary.SalaryException;
 import com.esferalia.aon.salary.enumeration.BonusType;
 import com.esferalia.aon.salary.expression.ExpressionException;
-
-import junit.framework.Assert;
 
 public class SQLSalaryDraftCalculatorTestCase extends AbstractSQLTestCase {
 
@@ -82,10 +81,10 @@ public class SQLSalaryDraftCalculatorTestCase extends AbstractSQLTestCase {
 				builder);
 		calculator.setListener(builder);
 		calculator.calculate(ctx);
-		Assert.assertEquals(1, draft.getEvents().size());
+		assertEquals(1, draft.getEvents().size());
 		DeductionEvent event = (DeductionEvent) draft.getEvents().get(0);
-		Assert.assertEquals(embargo, event.getDeduction());
-		Assert.assertEquals(Deduction.Type.EMBARGO,
+		assertEquals(embargo, event.getDeduction());
+		assertEquals(Deduction.Type.EMBARGO,
 				event.getDeduction().getType());
 
 	}
@@ -135,10 +134,10 @@ public class SQLSalaryDraftCalculatorTestCase extends AbstractSQLTestCase {
 				builder);
 		calculator.setListener(builder);
 		calculator.calculate(ctx);
-		Assert.assertEquals(1, draft.getEvents().size());
+		assertEquals(1, draft.getEvents().size());
 		DeductionEvent event = (DeductionEvent) draft.getEvents().get(0);
-		Assert.assertEquals(embargo.getId(), event.getDeduction().getId());
-		Assert.assertEquals(Deduction.Type.EMBARGO,
+		assertEquals(embargo.getId(), event.getDeduction().getId());
+		assertEquals(Deduction.Type.EMBARGO,
 				event.getDeduction().getType());
 
 		Deduction draftEmbargo = new Deduction();
@@ -156,8 +155,8 @@ public class SQLSalaryDraftCalculatorTestCase extends AbstractSQLTestCase {
 		calculator.setListener(builder);
 		calculator.calculate(ctx);
 
-		Assert.assertEquals(0, draft.getEvents().size());
-		Assert.assertEquals(1, draft.getEmbargos().size());
+		assertEquals(0, draft.getEvents().size());
+		assertEquals(1, draft.getEmbargos().size());
 
 	}
 
@@ -209,10 +208,10 @@ public class SQLSalaryDraftCalculatorTestCase extends AbstractSQLTestCase {
 		calculator.setListener(builder);
 		calculator.calculate(ctx);
 
-		Assert.assertEquals(1, draft.getEvents().size());
+		assertEquals(1, draft.getEvents().size());
 		BonusEvent event = (BonusEvent) draft.getEvents().get(0);
-		Assert.assertEquals(bonus, event.getBonus());
-		Assert.assertEquals(bonus.getId(), event.getBonus().getId());
+		assertEquals(bonus, event.getBonus());
+		assertEquals(bonus.getId(), event.getBonus().getId());
 
 	}
 
@@ -262,9 +261,9 @@ public class SQLSalaryDraftCalculatorTestCase extends AbstractSQLTestCase {
 				builder);
 		calculator.setListener(builder);
 		calculator.calculate(ctx);
-		Assert.assertEquals(1, draft.getEvents().size());
+		assertEquals(1, draft.getEvents().size());
 		BonusEvent event = (BonusEvent) draft.getEvents().get(0);
-		Assert.assertEquals(bonus.getId(), event.getBonus().getId());
+		assertEquals(bonus.getId(), event.getBonus().getId());
 
 		Bonus draftBonus = new Bonus();
 		draftBonus.setId(event.getBonus().getId());
@@ -280,8 +279,8 @@ public class SQLSalaryDraftCalculatorTestCase extends AbstractSQLTestCase {
 		calculator.setListener(builder);
 		calculator.calculate(ctx);
 
-		Assert.assertEquals(0, draft.getEvents().size());
-		Assert.assertEquals(1, draft.getBonuses().size());
+		assertEquals(0, draft.getEvents().size());
+		assertEquals(1, draft.getBonuses().size());
 
 	}
 

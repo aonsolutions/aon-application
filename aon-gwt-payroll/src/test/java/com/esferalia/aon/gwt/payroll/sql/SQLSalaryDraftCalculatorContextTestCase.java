@@ -2,16 +2,14 @@ package com.esferalia.aon.gwt.payroll.sql;
 
 import static com.esferalia.aon.watson.util.AonDateUtils.getFirstDayOfMonth;
 import static com.esferalia.aon.watson.util.AonDateUtils.getLastDayOfMonth;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.SQLException;
 
-import junit.framework.Assert;
+import org.junit.jupiter.api.Test;
 
-import org.junit.Test;
-
-import com.esferalia.aon.gwt.payroll.client.SalaryDraftObject;
 import com.esferalia.aon.gwt.payroll.server.EmployeesServiceHelper;
 import com.esferalia.aon.gwt.payroll.server.SalaryDraftBuilder;
 import com.esferalia.aon.gwt.payroll.shared.Bonus;
@@ -96,8 +94,8 @@ public class SQLSalaryDraftCalculatorContextTestCase extends
 		ISalary salary = new ContractSalaryCalculator<ISalary>(
 				new SalaryDraftBuilder(draft)).calculate(ctx);
 		
-		Assert.assertEquals(1, draft.getBonuses().size());
-		draft.getBonuses().forEach(bonus->Assert.assertEquals(666.999,bonus.getAmount()));
+		assertEquals(1, draft.getBonuses().size());
+		draft.getBonuses().forEach(bonus->assertEquals(666.999,bonus.getAmount()));
 		
 		
 		draft.getBonuses().forEach(bonus-> {
@@ -116,8 +114,8 @@ public class SQLSalaryDraftCalculatorContextTestCase extends
 		salary = new ContractSalaryCalculator<ISalary>(
 				new SalaryDraftBuilder(draft)).calculate(ctx);
 		
-		Assert.assertEquals(1, draft.getBonuses().size());
-		draft.getBonuses().forEach(bonus->Assert.assertEquals(999.666,bonus.getAmount()));
+		assertEquals(1, draft.getBonuses().size());
+		draft.getBonuses().forEach(bonus->assertEquals(999.666,bonus.getAmount()));
 		
 		draft.getBonuses().forEach(bonus-> {
 			Bonus continousBonusI = new Bonus();
@@ -136,8 +134,8 @@ public class SQLSalaryDraftCalculatorContextTestCase extends
 		salary = new ContractSalaryCalculator<ISalary>(
 				new SalaryDraftBuilder(draft)).calculate(ctx);
 
-		Assert.assertEquals(1, draft.getBonuses().size());
-		draft.getBonuses().forEach(bonus->Assert.assertEquals(true,bonus.getDescription().startsWith("REDEFINED")));
+		assertEquals(1, draft.getBonuses().size());
+		draft.getBonuses().forEach(bonus->assertEquals(true,bonus.getDescription().startsWith("REDEFINED")));
 	
 		draft.getBonuses().forEach(bonus-> {
 			Bonus continousBonusI = new Bonus();
@@ -155,7 +153,7 @@ public class SQLSalaryDraftCalculatorContextTestCase extends
 		salary = new ContractSalaryCalculator<ISalary>(
 				new SalaryDraftBuilder(draft)).calculate(ctx);
 
-		Assert.assertEquals(0, draft.getBonuses().size());
+		assertEquals(0, draft.getBonuses().size());
 	}
 	
 	

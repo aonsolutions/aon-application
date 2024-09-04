@@ -3,21 +3,23 @@ package com.esferalia.aon.gwt.payroll.sql;
 import static com.esferalia.aon.watson.util.AonDateUtils.getFirstDayOfMonth;
 import static com.esferalia.aon.watson.util.AonDateUtils.getFirstDayOfYear;
 import static com.esferalia.aon.watson.util.AonDateUtils.getLastDayOfMonth;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.SQLException;
+import java.util.Calendar;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.commons.io.filefilter.AgeFileFilter;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.code.aon.common.enumeration.Month;
 import com.esferalia.aon.gwt.payroll.server.EmployeesServiceHelper;
-import com.esferalia.aon.gwt.payroll.shared.AgreementDraft;
 import com.esferalia.aon.gwt.payroll.shared.Agreement.Level;
+import com.esferalia.aon.gwt.payroll.shared.AgreementDraft;
 import com.esferalia.aon.gwt.payroll.shared.Payment.Type;
 import com.esferalia.aon.jooq.tables.records.AgreementExtraRecord;
 import com.esferalia.aon.jooq.tables.records.AgreementLevelCategoryRecord;
@@ -28,10 +30,6 @@ import com.esferalia.aon.jooq.tables.records.DomainRecord;
 import com.esferalia.aon.jooq.tables.records.PaymentConceptRecord;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.payroll.calculator.sql.AbstractSQLTestCase;
-import com.esferalia.aon.watson.util.AonDateUtils;
-import java.util.Calendar;
-
-import junit.framework.Assert;
 
 public class SQLAgreementDraftTestCase extends AbstractSQLTestCase {
 
@@ -70,10 +68,10 @@ public class SQLAgreementDraftTestCase extends AbstractSQLTestCase {
 		draft.clearDrafts();
 		EmployeesServiceHelper.calculate(connection,
 				draft, domain.getId(), null);
-		Assert.assertEquals(2, draft.getCategoriesMap().size());
+		assertEquals(2, draft.getCategoriesMap().size());
 		
 		for( Map.Entry<Integer, Set<String>> entry: draft.getCategoriesMap().entrySet()) 
-			Assert.assertEquals(2, entry.getValue().size());			
+			assertEquals(2, entry.getValue().size());			
 
 	}
 
@@ -104,7 +102,7 @@ public class SQLAgreementDraftTestCase extends AbstractSQLTestCase {
 		draft.clearDrafts();
 		EmployeesServiceHelper.calculate(connection,
 				draft, agreement.getDomain(), null);
-		Assert.assertEquals(1, draft.getCategoriesMap().size());
+		assertEquals(1, draft.getCategoriesMap().size());
 
 		Level levelII = new Level();
 		levelII.setId(-2);
@@ -123,14 +121,14 @@ public class SQLAgreementDraftTestCase extends AbstractSQLTestCase {
 		EmployeesServiceHelper.calculate(connection,
 				draft, agreement.getDomain(), null);
 		
-		Assert.assertEquals(2, draft.getCategoriesMap().size());
+		assertEquals(2, draft.getCategoriesMap().size());
 		
 		for( Map.Entry<Integer, Set<String>> entry: draft.getCategoriesMap().entrySet()) 
 			for( String category: entry.getValue())
 				System.out.println("1 :" + entry.getKey() + "-." +category);
 
 		for( Map.Entry<Integer, Set<String>> entry: draft.getCategoriesMap().entrySet()){ 
-			Assert.assertEquals(2, entry.getValue().size());			
+			assertEquals(2, entry.getValue().size());			
 		}
 				
 				
@@ -149,14 +147,14 @@ public class SQLAgreementDraftTestCase extends AbstractSQLTestCase {
 		EmployeesServiceHelper.calculate(connection,
 				draft, agreement.getDomain(), null);
 	
-		Assert.assertEquals(2, draft.getCategoriesMap().size());
+		assertEquals(2, draft.getCategoriesMap().size());
 
 		for( Map.Entry<Integer, Set<String>> entry: draft.getCategoriesMap().entrySet()) 
 			for( String category: entry.getValue())
 				System.out.println("2 :" + entry.getKey() + "-." +category);
 
 		for( Map.Entry<Integer, Set<String>> entry: draft.getCategoriesMap().entrySet()){ 
-			Assert.assertEquals(100, entry.getValue().size());			
+			assertEquals(100, entry.getValue().size());			
 		}
 
 		for ( Level level : draft.getLevels() ){
@@ -174,14 +172,14 @@ public class SQLAgreementDraftTestCase extends AbstractSQLTestCase {
 		EmployeesServiceHelper.calculate(connection,
 				draft, agreement.getDomain(), null);
 	
-		Assert.assertEquals(2, draft.getCategoriesMap().size());
+		assertEquals(2, draft.getCategoriesMap().size());
 
 		for( Map.Entry<Integer, Set<String>> entry: draft.getCategoriesMap().entrySet()) 
 			for( String category: entry.getValue())
 				System.out.println("2 :" + entry.getKey() + "-." +category);
 
 		for( Map.Entry<Integer, Set<String>> entry: draft.getCategoriesMap().entrySet()){ 
-			Assert.assertEquals(50, entry.getValue().size());			
+			assertEquals(50, entry.getValue().size());			
 		}
 	}
 
@@ -291,18 +289,18 @@ public class SQLAgreementDraftTestCase extends AbstractSQLTestCase {
 		// insert new payment 
 		AgreementPaymentRecord paymentRecords [] = getAgreementPayments(aonContext, agreement.getId());
 		for ( AgreementPaymentRecord paymentRecord: paymentRecords ) {
-			Assert.assertEquals( epoch.getTime(), paymentRecord.getStartDate());
-			Assert.assertNull(paymentRecord.getEndDate());
+			assertEquals( epoch.getTime(), paymentRecord.getStartDate());
+			assertNull(paymentRecord.getEndDate());
 
 			PaymentConceptRecord conceptRecord = getPaymentConcept(aonContext, paymentRecord.getPaymentConcept());
-			Assert.assertEquals("SALARIO_BASE", conceptRecord.getCode());
-			Assert.assertEquals("_P", conceptRecord.getIrpfExpression());
-			Assert.assertEquals("_P", conceptRecord.getQuoteExpression());
-			Assert.assertEquals("1000.00 * DIAS_TRABAJADOS / DIAS_MES", conceptRecord.getExpression());
-			Assert.assertEquals("SALARIO BASE", conceptRecord.getDescription());
+			assertEquals("SALARIO_BASE", conceptRecord.getCode());
+			assertEquals("_P", conceptRecord.getIrpfExpression());
+			assertEquals("_P", conceptRecord.getQuoteExpression());
+			assertEquals("1000.00 * DIAS_TRABAJADOS / DIAS_MES", conceptRecord.getExpression());
+			assertEquals("SALARIO BASE", conceptRecord.getDescription());
 			
 		}
-		Assert.assertEquals(1, paymentRecords.length);
+		assertEquals(1, paymentRecords.length);
 		
 		// update this payment
 		draft.removeDraftPaymet(draftPayment);
@@ -317,21 +315,21 @@ public class SQLAgreementDraftTestCase extends AbstractSQLTestCase {
 		
 		paymentRecords = getAgreementPayments(aonContext, agreement.getId());
 		for ( AgreementPaymentRecord paymentRecord: paymentRecords ) {
-			Assert.assertEquals( epoch.getTime(), paymentRecord.getStartDate());
-			Assert.assertNull(paymentRecord.getEndDate());
+			assertEquals( epoch.getTime(), paymentRecord.getStartDate());
+			assertNull(paymentRecord.getEndDate());
 			
-			Assert.assertEquals("666.00 * DIAS_TRABAJADOS / DIAS_MES", paymentRecord.getExpression());
-			Assert.assertEquals("SALARIO MENSUAL", paymentRecord.getDescription());
+			assertEquals("666.00 * DIAS_TRABAJADOS / DIAS_MES", paymentRecord.getExpression());
+			assertEquals("SALARIO MENSUAL", paymentRecord.getDescription());
 			
 			PaymentConceptRecord conceptRecord = getPaymentConcept(aonContext, paymentRecord.getPaymentConcept());
-			Assert.assertEquals("SALARIO_BASE", conceptRecord.getCode());
-			Assert.assertEquals("_P", conceptRecord.getIrpfExpression());
-			Assert.assertEquals("_P", conceptRecord.getQuoteExpression());
-			//Assert.assertEquals("666.00 * DIAS_TRABAJADOS / DIAS_MES", conceptRecord.getExpression());
-			//Assert.assertEquals("SALARIO MENSUAL", conceptRecord.getDescription());
+			assertEquals("SALARIO_BASE", conceptRecord.getCode());
+			assertEquals("_P", conceptRecord.getIrpfExpression());
+			assertEquals("_P", conceptRecord.getQuoteExpression());
+			//assertEquals("666.00 * DIAS_TRABAJADOS / DIAS_MES", conceptRecord.getExpression());
+			//assertEquals("SALARIO MENSUAL", conceptRecord.getDescription());
 			
 		}
-		Assert.assertEquals(1, paymentRecords.length);
+		assertEquals(1, paymentRecords.length);
 		
 		//draft.removeDraftPaymet(draftPayment);
 		
@@ -343,7 +341,7 @@ public class SQLAgreementDraftTestCase extends AbstractSQLTestCase {
 		
 		SQLAgreementDraft.save(connection, draft, agreement.getDomain(), null, null);
 		paymentRecords = getAgreementPayments(aonContext, agreement.getId());
-		Assert.assertEquals(0, paymentRecords.length);
+		assertEquals(0, paymentRecords.length);
 		
 	}
 
@@ -383,18 +381,18 @@ public class SQLAgreementDraftTestCase extends AbstractSQLTestCase {
 		
 		AgreementPaymentRecord paymentRecords [] = getAgreementPayments(aonContext, agreement.getId());
 		for ( AgreementPaymentRecord paymentRecord: paymentRecords ) {
-			Assert.assertEquals( epoch.getTime(), paymentRecord.getStartDate());
-			Assert.assertNull(paymentRecord.getEndDate());
+			assertEquals( epoch.getTime(), paymentRecord.getStartDate());
+			assertNull(paymentRecord.getEndDate());
 
 			PaymentConceptRecord conceptRecord = getPaymentConcept(aonContext, paymentRecord.getPaymentConcept());
-			Assert.assertEquals("SALARIO_BASE", conceptRecord.getCode());
-			Assert.assertEquals("_P", conceptRecord.getIrpfExpression());
-			Assert.assertEquals("_P", conceptRecord.getQuoteExpression());
-			Assert.assertEquals("1000.00 * DIAS_TRABAJADOS / DIAS_MES", conceptRecord.getExpression());
-			Assert.assertEquals("SALARIO BASE", conceptRecord.getDescription());
+			assertEquals("SALARIO_BASE", conceptRecord.getCode());
+			assertEquals("_P", conceptRecord.getIrpfExpression());
+			assertEquals("_P", conceptRecord.getQuoteExpression());
+			assertEquals("1000.00 * DIAS_TRABAJADOS / DIAS_MES", conceptRecord.getExpression());
+			assertEquals("SALARIO BASE", conceptRecord.getDescription());
 			
 		}
-		Assert.assertEquals(1, paymentRecords.length);
+		assertEquals(1, paymentRecords.length);
 		
 	}
 	
@@ -439,16 +437,16 @@ public class SQLAgreementDraftTestCase extends AbstractSQLTestCase {
 		
 		AgreementPaymentRecord paymentRecords [] = getAgreementPayments(aonContext, agreement.getId());
 		for ( AgreementPaymentRecord paymentRecord: paymentRecords ) {
-			Assert.assertEquals( epoch.getTime(), paymentRecord.getStartDate());
-			Assert.assertNull(paymentRecord.getEndDate());
-			Assert.assertEquals("1000.00 * DIAS_TRABAJADOS / DIAS_MES", paymentRecord.getExpression());
+			assertEquals( epoch.getTime(), paymentRecord.getStartDate());
+			assertNull(paymentRecord.getEndDate());
+			assertEquals("1000.00 * DIAS_TRABAJADOS / DIAS_MES", paymentRecord.getExpression());
 
 			PaymentConceptRecord conceptRecord = getPaymentConcept(aonContext, paymentRecord.getPaymentConcept());
-			Assert.assertEquals("SALARIO_BASE", conceptRecord.getCode());
+			assertEquals("SALARIO_BASE", conceptRecord.getCode());
 
 			
 		}
-		Assert.assertEquals(1, paymentRecords.length);
+		assertEquals(1, paymentRecords.length);
 		
 	}
 	

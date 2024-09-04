@@ -10,6 +10,7 @@ import static com.esferalia.aon.jooq.tables.AgreementPayment.AGREEMENT_PAYMENT;
 import static com.esferalia.aon.watson.util.AonDateUtils.getFirstDayOfMonth;
 import static com.esferalia.aon.watson.util.AonDateUtils.getFirstDayOfYear;
 import static com.esferalia.aon.watson.util.AonDateUtils.getLastDayOfMonth;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.sql.Connection;
 import java.sql.Date;
@@ -20,7 +21,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import org.jooq.Result;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.code.aon.common.enumeration.Month;
 import com.esferalia.aon.gwt.payroll.jooq.JooqAgreement;
@@ -40,8 +41,6 @@ import com.esferalia.aon.payroll.calculator.ContractSalaryCalculator;
 import com.esferalia.aon.payroll.calculator.sql.AbstractSQLTestCase;
 import com.esferalia.aon.salary.SalaryException;
 import com.esferalia.aon.salary.expression.ExpressionException;
-
-import junit.framework.Assert;
 
 public class SQLTrashTestCase extends AbstractSQLTestCase {
 
@@ -129,25 +128,25 @@ public class SQLTrashTestCase extends AbstractSQLTestCase {
 		trashOrRestore(connection, aonContext, agreement, true );
 		
 		Salary trashSalary = new ContractSalaryCalculator<Salary>(new SalaryBuilder()).calculate(getContractSalaryCalculatorContext(connection, firstdayOfMonth , lastdayOfMonth, lastdayOfMonth, contract));
-		Assert.assertEquals(salary.getTotalLiquid(), trashSalary.getTotalLiquid());
+		assertEquals(salary.getTotalLiquid(), trashSalary.getTotalLiquid());
 		
 		AgreementRecord trashAgreement = aonContext.getDslContext().select().from(AGREEMENT).where(AGREEMENT.ID.eq(agreement.getId()*-1)).fetchOneInto(AGREEMENT);
 		// <-- trash
 		trashOrRestore(connection, aonContext, trashAgreement, false );
 
 		Salary restoreSalary = new ContractSalaryCalculator<Salary>(new SalaryBuilder()).calculate(getContractSalaryCalculatorContext(connection, firstdayOfMonth , lastdayOfMonth, lastdayOfMonth, contract));
-		Assert.assertEquals(salary.getTotalLiquid(), restoreSalary.getTotalLiquid());
+		assertEquals(salary.getTotalLiquid(), restoreSalary.getTotalLiquid());
 		
 		agreement = aonContext.getDslContext().select().from(AGREEMENT).where(AGREEMENT.ID.eq(agreement.getId())).fetchOneInto(AGREEMENT);
 		trashAgreement = aonContext.getDslContext().select().from(AGREEMENT).where(AGREEMENT.ID.eq(agreement.getId()*-1)).fetchOneInto(AGREEMENT);
 		
-		Assert.assertEquals((int)agreement.getId(), (int)(trashAgreement.getId() * -1));
-		Assert.assertEquals(agreement.getDescription(), trashAgreement.getDescription());
+		assertEquals((int)agreement.getId(), (int)(trashAgreement.getId() * -1));
+		assertEquals(agreement.getDescription(), trashAgreement.getDescription());
 		
 		contract.setAgreementLevel(contract.getAgreementLevel()*-1);
 		contract.update();
 		trashSalary = new ContractSalaryCalculator<Salary>(new SalaryBuilder()).calculate(getContractSalaryCalculatorContext(connection, firstdayOfMonth , lastdayOfMonth, lastdayOfMonth, contract));
-		Assert.assertEquals(restoreSalary.getTotalLiquid(), trashSalary.getTotalLiquid());
+		assertEquals(restoreSalary.getTotalLiquid(), trashSalary.getTotalLiquid());
 		
 		addPayment(aonContext, agreement, startDate, new Payment() {
 			{
@@ -159,19 +158,19 @@ public class SQLTrashTestCase extends AbstractSQLTestCase {
 		contract.setAgreementLevel(contract.getAgreementLevel()*-1);
 		contract.update();
 		salary = new ContractSalaryCalculator<Salary>(new SalaryBuilder()).calculate(getContractSalaryCalculatorContext(connection, firstdayOfMonth , lastdayOfMonth, lastdayOfMonth, contract));
-		Assert.assertEquals(salary.getTotalLiquid() , trashSalary.getTotalLiquid() * 1.10 , DELTA);
+		assertEquals(salary.getTotalLiquid() , trashSalary.getTotalLiquid() * 1.10 , DELTA);
 		System.out.println(contract.getAgreementLevel() + "-. " + salary.getTotalLiquid());
 		
 		// <-- trash 
 		trashOrRestore(connection, aonContext, trashAgreement, true );
 		Salary unTrashSalary = new ContractSalaryCalculator<Salary>(new SalaryBuilder()).calculate(getContractSalaryCalculatorContext(connection, firstdayOfMonth , lastdayOfMonth, lastdayOfMonth, contract));
 		System.out.println(contract.getAgreementLevel() + "-. " + unTrashSalary.getTotalLiquid());
-		Assert.assertEquals(trashSalary.getTotalLiquid(), unTrashSalary.getTotalLiquid(), DELTA);
+		assertEquals(trashSalary.getTotalLiquid(), unTrashSalary.getTotalLiquid(), DELTA);
 
 		contract.setAgreementLevel(contract.getAgreementLevel()*-1);
 		contract.update();
 		salary = new ContractSalaryCalculator<Salary>(new SalaryBuilder()).calculate(getContractSalaryCalculatorContext(connection, firstdayOfMonth , lastdayOfMonth, lastdayOfMonth, contract));
-		Assert.assertEquals(salary.getTotalLiquid(), unTrashSalary.getTotalLiquid() * 1.10, DELTA);
+		assertEquals(salary.getTotalLiquid(), unTrashSalary.getTotalLiquid() * 1.10, DELTA);
 		
 		
 		
@@ -192,8 +191,8 @@ public class SQLTrashTestCase extends AbstractSQLTestCase {
 		JooqAgreement.trashRestoreAgreement(connection, agreement.getId(), delete);
 		
 		AgreementRecord trashAgreementRecord = aonContext.getDslContext().select().from(AGREEMENT).where(AGREEMENT.ID.eq(agreementRecord.getId()*-1)).fetchOneInto(AGREEMENT);
-		Assert.assertEquals( agreementRecord.getDomain(), trashAgreementRecord.getDomain() );
-		Assert.assertEquals( agreementRecord.getDescription(), trashAgreementRecord.getDescription() );
+		assertEquals( agreementRecord.getDomain(), trashAgreementRecord.getDomain() );
+		assertEquals( agreementRecord.getDescription(), trashAgreementRecord.getDescription() );
 		
 		paymentsRecords.forEach( paymentRecord -> {
 			AgreementPaymentRecord trashRecord = aonContext.getDslContext()
@@ -202,16 +201,16 @@ public class SQLTrashTestCase extends AbstractSQLTestCase {
 					.where(AGREEMENT_PAYMENT.ID.eq(paymentRecord.getId()*-1))
 					.and(AGREEMENT_PAYMENT.AGREEMENT.eq(agreementRecord.getId()*-1))
 					.fetchOneInto(AGREEMENT_PAYMENT);
-			Assert.assertEquals( paymentRecord.getDomain(), trashRecord.getDomain() );
-			Assert.assertEquals( paymentRecord.getEndDate(), trashRecord.getEndDate() );
-			Assert.assertEquals( paymentRecord.getStartDate(), trashRecord.getStartDate() );
-			Assert.assertEquals( paymentRecord.getType(), trashRecord.getType() );
-			Assert.assertEquals( paymentRecord.getMonth(), trashRecord.getMonth() );
-			Assert.assertEquals( paymentRecord.getExpression(), trashRecord.getExpression() );
-			Assert.assertEquals( paymentRecord.getDescription(), trashRecord.getDescription() );
-			Assert.assertEquals( paymentRecord.getIrpfExpression(), trashRecord.getIrpfExpression() );
-			Assert.assertEquals( paymentRecord.getQuoteExpression(), trashRecord.getQuoteExpression() );
-			Assert.assertEquals( paymentRecord.getPaymentConcept(), trashRecord.getPaymentConcept() );
+			assertEquals( paymentRecord.getDomain(), trashRecord.getDomain() );
+			assertEquals( paymentRecord.getEndDate(), trashRecord.getEndDate() );
+			assertEquals( paymentRecord.getStartDate(), trashRecord.getStartDate() );
+			assertEquals( paymentRecord.getType(), trashRecord.getType() );
+			assertEquals( paymentRecord.getMonth(), trashRecord.getMonth() );
+			assertEquals( paymentRecord.getExpression(), trashRecord.getExpression() );
+			assertEquals( paymentRecord.getDescription(), trashRecord.getDescription() );
+			assertEquals( paymentRecord.getIrpfExpression(), trashRecord.getIrpfExpression() );
+			assertEquals( paymentRecord.getQuoteExpression(), trashRecord.getQuoteExpression() );
+			assertEquals( paymentRecord.getPaymentConcept(), trashRecord.getPaymentConcept() );
 		});
 		
 		extrasRecords.forEach( extraRecord -> {
@@ -221,11 +220,11 @@ public class SQLTrashTestCase extends AbstractSQLTestCase {
 					.where(AGREEMENT_EXTRA.ID.eq(extraRecord.getId()*-1))
 					.and(AGREEMENT_EXTRA.AGREEMENT.eq(agreementRecord.getId()*-1))
 					.fetchOneInto(AGREEMENT_EXTRA);
-			Assert.assertEquals( extraRecord.getDomain(), trashRecord.getDomain() );
-			Assert.assertEquals( extraRecord.getEndDate(), trashRecord.getEndDate() );
-			Assert.assertEquals( extraRecord.getStartDate(), trashRecord.getStartDate() );
-			Assert.assertEquals( extraRecord.getIssueDate(), trashRecord.getIssueDate() );
-			Assert.assertEquals( (int)(extraRecord.getAgreementPayment()*-1), (int)trashRecord.getAgreementPayment() );
+			assertEquals( extraRecord.getDomain(), trashRecord.getDomain() );
+			assertEquals( extraRecord.getEndDate(), trashRecord.getEndDate() );
+			assertEquals( extraRecord.getStartDate(), trashRecord.getStartDate() );
+			assertEquals( extraRecord.getIssueDate(), trashRecord.getIssueDate() );
+			assertEquals( (int)(extraRecord.getAgreementPayment()*-1), (int)trashRecord.getAgreementPayment() );
 		});
 
 		datasRecords.forEach( dataRecord -> {
@@ -235,9 +234,9 @@ public class SQLTrashTestCase extends AbstractSQLTestCase {
 					.where(AGREEMENT_DATA.ID.eq(dataRecord.getId()*-1))
 					.and(AGREEMENT_DATA.AGREEMENT.eq(agreementRecord.getId()*-1))
 					.fetchOneInto(AGREEMENT_DATA);
-			Assert.assertEquals( dataRecord.getDomain(), trashRecord.getDomain() );
-			Assert.assertEquals( dataRecord.getName(), trashRecord.getName() );
-			Assert.assertEquals( dataRecord.getExpression(), trashRecord.getExpression() );
+			assertEquals( dataRecord.getDomain(), trashRecord.getDomain() );
+			assertEquals( dataRecord.getName(), trashRecord.getName() );
+			assertEquals( dataRecord.getExpression(), trashRecord.getExpression() );
 		});
 
 		levelsRecords.forEach( levelRecord -> {
@@ -247,8 +246,8 @@ public class SQLTrashTestCase extends AbstractSQLTestCase {
 					.where(AGREEMENT_LEVEL.ID.eq(levelRecord.getId()*-1))
 					.and(AGREEMENT_LEVEL.AGREEMENT.eq(agreementRecord.getId()*-1))
 					.fetchOneInto(AGREEMENT_LEVEL);
-			Assert.assertEquals( levelRecord.getDomain(), trashRecord.getDomain() );
-			Assert.assertEquals( levelRecord.getDescription(), trashRecord.getDescription() );
+			assertEquals( levelRecord.getDomain(), trashRecord.getDomain() );
+			assertEquals( levelRecord.getDescription(), trashRecord.getDescription() );
 		});
 		
 		categoriesRecords.forEach( categoryRecord -> {
@@ -257,8 +256,8 @@ public class SQLTrashTestCase extends AbstractSQLTestCase {
 					.from(AGREEMENT_LEVEL_CATEGORY)
 					.where(AGREEMENT_LEVEL_CATEGORY.ID.eq(categoryRecord.getId()*-1))
 					.fetchOneInto(AGREEMENT_LEVEL_CATEGORY);
-			Assert.assertEquals( categoryRecord.getDomain(), trashRecord.getDomain() );
-			Assert.assertEquals( categoryRecord.getDescription(), trashRecord.getDescription() );
+			assertEquals( categoryRecord.getDomain(), trashRecord.getDomain() );
+			assertEquals( categoryRecord.getDescription(), trashRecord.getDescription() );
 		});
 		
 		levelDatasRecords.forEach( levelDataRecord -> {
@@ -267,9 +266,9 @@ public class SQLTrashTestCase extends AbstractSQLTestCase {
 					.from(AGREEMENT_LEVEL_DATA)
 					.where(AGREEMENT_LEVEL_DATA.ID.eq(levelDataRecord.getId()*-1))
 					.fetchOneInto(AGREEMENT_LEVEL_DATA);
-			Assert.assertEquals( levelDataRecord.getDomain(), trashRecord.getDomain() );
-			Assert.assertEquals( levelDataRecord.getName(), trashRecord.getName() );
-			Assert.assertEquals( levelDataRecord.getExpression(), trashRecord.getExpression() );
+			assertEquals( levelDataRecord.getDomain(), trashRecord.getDomain() );
+			assertEquals( levelDataRecord.getName(), trashRecord.getName() );
+			assertEquals( levelDataRecord.getExpression(), trashRecord.getExpression() );
 		});
 	}
 
