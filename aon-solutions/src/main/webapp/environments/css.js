@@ -457,3 +457,16 @@ export const AON_SUPPORT_TELEPHONE = 'aonSupportTelephone';
 export const AON_SUPPORT_USERS_EMAIL = 'aonSupportUsersEmail';
 export const AON_SUPPORT_SALES_EMAIL = 'aonSupportSalesEmail';
 export const AON_SUPPORT_ADMIN_EMAIL = 'aonSupportAdminEmail';
+
+
+export const AON_CARDS_PANEL = 'aonCardsPanel';
+
+// Config
+
+export const AON_CONFIG_APPS = 'aonConfigApps';
+export const AON_CONFIG_DARK = 'aonConfigDark';
+export const AON_CONFIG_BRAND = 'aonConfigBrand';
+export const AON_CONFIG_TOP_NAV = 'aonConfigTopNav';
+export const AON_CONFIG_SIDE_NAV = 'aonConfigSideNav';
+
+

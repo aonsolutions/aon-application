@@ -7,11 +7,13 @@ import java.util.stream.Stream;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.ITimeControl;
 import com.esferalia.aon.occam.api.model.Filter.LocationFilter;
+import com.esferalia.aon.occam.api.model.Filter.TaskHolderFilter;
 import com.esferalia.aon.occam.api.model.Filter.TimeControlFilter;
 import com.esferalia.aon.occam.api.model.aonsolutions.Coordinates;
 import com.esferalia.aon.occam.api.model.aonsolutions.Location;
 import com.esferalia.aon.occam.api.model.aonsolutions.TimeControl;
 import com.esferalia.aon.occam.api.model.aonsolutions.TimeControlDetail;
+import com.esferalia.aon.occam.api.model.aonsolutions.TimeControlDetailUserName;
 import com.esferalia.aon.occam.api.model.aonsolutions.TimeControlGroup;
 import com.esferalia.aon.occam.impl.jooq.dao.LocationDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.TimeControlDAO;
@@ -22,6 +24,12 @@ public class TimeControlImpl implements ITimeControl {
 	public Stream<TimeControl> getTimeControlStream(AONContext ctx, Date startDate, Date endDate) {
 		return ctx.getDslContext().transactionResult(
 				configuration -> TimeControlDAO.getTimeControlStream(ctx, startDate, endDate));
+	}
+	
+	@Override
+	public Stream<TimeControl> getTimeControlEmployeeStream(AONContext ctx, Date startDate, Date endDate, TaskHolderFilter filter, Integer page, Integer perPage) {
+		return ctx.getDslContext().transactionResult(
+				configuration -> TimeControlDAO.getTimeControlEmployeeStream(ctx, startDate, endDate, filter, page, perPage));
 	}
 
 	@Override
@@ -46,6 +54,11 @@ public class TimeControlImpl implements ITimeControl {
 	public Stream<TimeControlDetail> getTimeControlHistoric(AONContext ctx, TimeControlFilter filter) {
 		return ctx.getDslContext().transactionResult(
 				configuration -> TimeControlDAO.getTimeControlHistoric(ctx, filter));
+	}
+	@Override
+	public Stream<TimeControlDetailUserName> getTimeControlHistoricNewPortal(AONContext ctx, TimeControlFilter filter) {
+		return ctx.getDslContext().transactionResult(
+				configuration -> TimeControlDAO.getTimeControlHistoricNewPortal(ctx, filter));
 	}
 
 	@Override

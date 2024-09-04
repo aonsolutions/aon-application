@@ -46,7 +46,10 @@ import org.jooq.*;
 import org.jooq.Record;
 import org.jooq.impl.*;
 
+import com.esferalia.aon.jooq.tables.Auth;
+import com.esferalia.aon.jooq.tables.TaskHolder;
 import com.esferalia.aon.jooq.tables.Timecontrol;
+import com.esferalia.aon.jooq.tables.User;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.AuxSalaryInfo;
 import com.esferalia.aon.occam.api.model.ContractExtendedData;
@@ -99,13 +102,19 @@ public class ContractDAO {
 	
 	public static Stream<ContractExtendedData> getContractSimplifiedData(AONContext ctx, ContractExtendedDataFilter filter,  Integer page, Integer perPage){
 		ctx.checkRead();
-		return ctx.getDslContext()
+		DSLContext dslContext = ctx.getDslContext();
+		dslContext.settings().withRenderGroupConcatMaxLenSessionVariable(false);
+		return dslContext
 				.select(CONTRACT.ID)
+				.select(CONTRACT.PERSON)
+				.select(REGISTRY.ID)
 				.select(REGISTRY.NAME.as(PERSON_FULL_NAME))
 				.select(REGISTRY.DOCUMENT)
+				.select(DSL.groupConcat(CONTRACT.ID).as("contract_ids"))
 				.from(CONTRACT)
 				.join(REGISTRY).on(REGISTRY.ID.eq(CONTRACT.PERSON))
 				.where(CONTRACT_EXTENDED_DATA_PROPERTIES.getConditions(filter))
+				.groupBy(CONTRACT.PERSON)
 				.orderBy(REGISTRY.NAME.asc())
 				.limit(perPage).offset(perPage * (page -1))
 				.fetch()
@@ -117,6 +126,7 @@ public class ContractDAO {
 		return ctx.getDslContext()
 				.select(CONTRACT.ID)
 				.from(CONTRACT)
+				.join(WORKPLACE).onKey()
 				.join(REGISTRY).on(REGISTRY.ID.eq(CONTRACT.PERSON))
 				.where(CONTRACT_EXTENDED_DATA_PROPERTIES.getConditions(filter))
 				.fetch()
@@ -144,15 +154,18 @@ public class ContractDAO {
 	
 	public static List<AuxSalaryInfo> getEmployeeSalary(AONContext ctx , SalaryNewPortalFilter filter, Integer page, Integer perPage) {
 		List<AuxSalaryInfo> salaryList = new ArrayList<>();
-		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd"); 
-		Result<Record> results = ctx.getDslContext().select()
+		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+		SelectSeekStep2<Record, java.sql.Date, Integer> results = ctx.getDslContext().select()
 		        .from(SALARY)
 		        .where(SALARY_NEW_PORTAL_PROPERTIES.getConditions(filter))
-		        .limit(perPage)
-				.offset(perPage * (page -1))
-		        .fetch();
+		        .orderBy(SALARY.START_DATE.desc(), SALARY.ID.desc());
+		
+		if(page != null && perPage != null)
+			results.limit(perPage)
+			.offset(perPage * (page -1));
+		results.fetch();
 		 
-		 for (Record salaryRecord : results) {
+		for (Record salaryRecord : results) {
 		        AuxSalaryInfo salaryInfo = new AuxSalaryInfo();
 		        salaryInfo.setId(salaryRecord.get(SALARY.ID));
 				salaryInfo.setDomain(salaryRecord.get(SALARY.DOMAIN));
@@ -196,6 +209,41 @@ public class ContractDAO {
 		        .fetch().stream().count();
 	}
 	
+	public static AuxSalaryInfo getEmployeeSalaryById(AONContext ctx, Integer id) {
+		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+		Record salaryRecord = ctx.getDslContext().select()
+		        .from(SALARY)
+		        .where(SALARY.DOMAIN.eq(ctx.getDomainId()))
+		        .and(SALARY.ID.eq(id)).fetch().getFirst();
+		
+		AuxSalaryInfo salaryInfo = new AuxSalaryInfo();
+        salaryInfo.setId(salaryRecord.get(SALARY.ID));
+		salaryInfo.setDomain(salaryRecord.get(SALARY.DOMAIN));
+		salaryInfo.setContract(salaryRecord.get(SALARY.CONTRACT));
+		Date startDate = salaryRecord.get(SALARY.START_DATE);
+        Date endDate = salaryRecord.get(SALARY.END_DATE);
+        Date issueDate = salaryRecord.get(SALARY.ISSUE_DATE);
+        salaryInfo.setStartDate(dateFormat.format(startDate));
+        salaryInfo.setEndDate(dateFormat.format(endDate));
+        salaryInfo.setIssueDate(dateFormat.format(issueDate));
+		salaryInfo.setType(salaryRecord.get(SALARY.TYPE));
+		salaryInfo.setEnterpriseName(salaryRecord.get(SALARY.ENTERPRISE_NAME));
+		salaryInfo.setEmployeeName(salaryRecord.get(SALARY.EMPLOYEE_NAME));
+		salaryInfo.setTotalPayment(salaryRecord.get(SALARY.TOTAL_PAYMENT));
+		salaryInfo.setTotalDeduction(salaryRecord.get(SALARY.TOTAL_DEDUCTION));
+		salaryInfo.setTotalLiquid(salaryRecord.get(SALARY.TOTAL_LIQUID));
+		Integer contractId = salaryRecord.get(SALARY.CONTRACT);
+		Integer enterpriseId = getEnterpriseId(ctx.getDslContext(), contractId);
+		Record workplaceRecord = getWorkplaceRecord(ctx.getDslContext(), contractId);
+		String workplaceName = workplaceRecord.get(WORKPLACE.DESCRIPTION);
+		Integer workplaceId =  workplaceRecord.get(WORKPLACE.ID);
+		salaryInfo.setWorkplaceName(workplaceName);
+		salaryInfo.setWorkplaceId(workplaceId);
+		salaryInfo.setEnterpriseId(enterpriseId);
+		
+		return salaryInfo;
+	}
+	
 	public static Stream<ContractExtendedData> getContractExtendedDataStream(AONContext ctx, ContractExtendedDataFilter filter, Integer page, Integer perPage){
 		ctx.checkRead();
 		Field<Integer> dateMiliseconds = DSL.field("UNIX_TIMESTAMP(date)", Integer.class);
@@ -223,8 +271,7 @@ public class ContractDAO {
 			.from(CONTRACT)
 			.join(WORKPLACE).onKey()
 			.join(REGISTRY).on(REGISTRY.ID.eq(CONTRACT.PERSON))
-			.groupBy(CONTRACT.ID)
-			.having(CONTRACT_EXTENDED_DATA_PROPERTIES.getConditions(filter))
+			.where(CONTRACT_EXTENDED_DATA_PROPERTIES.getConditions(filter))
 			.orderBy(REGISTRY.NAME.asc())
 			.limit(perPage).offset(perPage * (page -1))
 			.fetch().stream().forEach( (r) -> {
@@ -233,6 +280,7 @@ public class ContractDAO {
 				documents.add(r.get(REGISTRY.DOCUMENT));
 			});
 			
+		
 		CommonTableExpression<Record> cteSalary = DSL.name("cte").as(DSL.select(SALARY.CONTRACT.as(idSalary))
 				.select(SALARY.TOTAL_PAYMENT.as(salaryAmount))
 				.select(DSL.rowNumber().over(DSL.partitionBy(SALARY.CONTRACT).orderBy(SALARY.END_DATE.desc())).as(rnSalary))
@@ -246,7 +294,7 @@ public class ContractDAO {
 					if(r.getValue(cteSalary.field(idSalary)).intValue() == e.getId().intValue())
 						e.setGrossSalaryLastMonth(r.getValue(cteSalary.field(salaryAmount)));
 				});
-			});;
+			});
 		
 		CommonTableExpression<Record> cteType = DSL.name("cte").as(DSL.select(CONTRACT_DATA.CONTRACT.as(idContractData))
 				.select(CONTRACT_DATA.EXPRESSION.as(expressionCD))
@@ -257,32 +305,34 @@ public class ContractDAO {
 		ctx.getDslContext().with(cteType)
 			.select(cteType.field(expressionCD), cteType.field(rnContractData), cteType.field(idContractData))
 			.from(cteType)
-			.where(cteType.field(idContractData).in(ids).and(cteType.field(rnContractData).eq(1)))
+			.where(cteType.field(rnContractData).eq(1))
 			.fetch().stream().forEach(r -> {
 				arrayContracts.forEach(e -> {
 					if(r.getValue(cteType.field(idContractData)).intValue() == e.getId().intValue()) {
 						e.setContractType(r.getValue(cteType.field(expressionCD)));
 					}
 				});				
-			});;
-		
+			});
+			
 		ctx.getDslContext().select(
 				DSL.coalesce(
 						DSL.sum(DSL.if_(Timecontrol.TIMECONTROL.STATUS.eq((byte) 0), dateMiliseconds.neg(), dateMiliseconds)
 								).cast(Long.class), 0).cast(Long.class).as(totalTime)
 				)
-		.select(REGISTRY.DOCUMENT)
+		.select(Auth.AUTH.DOCUMENT)
 		.from(Timecontrol.TIMECONTROL)
-		.join(REGISTRY).on(REGISTRY.ID.eq(Timecontrol.TIMECONTROL.TASK_HOLDER))
+		.join(TaskHolder.TASK_HOLDER).on(TaskHolder.TASK_HOLDER.REGISTRY.eq(Timecontrol.TIMECONTROL.TASK_HOLDER))
+		.join(User.USER).on(User.USER.ID.eq(TaskHolder.TASK_HOLDER.USER_ID))
+		.join(Auth.AUTH).on(Auth.AUTH.ID.eq(User.USER.AUTH))
 		.where(
 				Timecontrol.TIMECONTROL.DOMAIN.eq(ctx.getDomainId())
 				.and(Timecontrol.TIMECONTROL.MODIFICATED_TIMECONTROL.isNull())
-				.and(DSL.sql("date >= DATE_FORMAT(NOW() ,'%Y-%m-01') AND date < DATE(NOW())"))
-				.and(REGISTRY.DOCUMENT.in(documents))
+				.and(DSL.sql("date >= DATE_FORMAT(NOW() ,'%Y-%m-01') AND date <= DATE(NOW())"))
+				.and(Auth.AUTH.DOCUMENT.in(documents))
 				)
-		.groupBy(REGISTRY.DOCUMENT).fetch().stream().forEach(r -> {
+		.groupBy(Auth.AUTH.DOCUMENT).fetch().stream().forEach(r -> {
 			arrayContracts.forEach(e -> {
-				if(r.getValue(REGISTRY.DOCUMENT).equals(e.getPersonDocument())) {
+				if(r.getValue(Auth.AUTH.DOCUMENT).equals(e.getPersonDocument())) {
 					e.setTotalMarksLastMonth(r.getValue(totalTime).doubleValue());
 				}				
 			});
@@ -370,7 +420,57 @@ public class ContractDAO {
 				dslContext.delete(CONTRACT).where(CONTRACT.ID.in(contractIds))
 		).execute();
 	}
-}
+	
+	
+	public static ContractExtendedData getContractById(AONContext ctx, ContractExtendedDataFilter filter, Integer contractId) {
+	   ContractExtendedData contract = new ContractExtendedData();
+	   ctx.getDslContext()
+			   .select().from(CONTRACT)
+			   .join(CONTRACT_DATA)
+			   .on(CONTRACT.ID.eq(CONTRACT_DATA.CONTRACT))
+			   .join(PERSON)
+			   .on(CONTRACT.PERSON.eq(PERSON.REGISTRY))
+			   .join(REGISTRY)
+			   .on(CONTRACT.PERSON.eq(REGISTRY.ID))
+			   .where(CONTRACT.DOMAIN.eq(ctx.getDomainId()).and(CONTRACT.ID.eq(contractId))).groupBy(CONTRACT.ID).fetch().stream().forEach(r ->{
+				   	Record mainRecord = r;
+				   	contract.setId(mainRecord.getValue(CONTRACT.ID));
+			        contract.setPersonDocument(mainRecord.getValue(REGISTRY.DOCUMENT));
+			        contract.setPersonName(mainRecord.getValue(PERSON.NAME));
+			        contract.setPersonFirstName(mainRecord.getValue(PERSON.FIRST_SURNAME));
+			        contract.setPersonSecondName(mainRecord.getValue(PERSON.SECOND_SURNAME));
+			        contract.setPersonSsNumber(mainRecord.getValue(PERSON.SOCIAL_SECURITY_NUM));
+			        contract.setWorkplace(mainRecord.getValue(CONTRACT.WORKPLACE));
+			        contract.setEnterpriseCCC(Integer.toString(mainRecord.getValue(CONTRACT.ENTERPRISE_CCC)));
+			        contract.setStartDate(mainRecord.getValue(CONTRACT.START_DATE));
+			        contract.setEndDate(mainRecord.getValue(CONTRACT.END_DATE));
+			        contract.setCategoryDescription((mainRecord.getValue(CONTRACT.CATEGORY_DESCRIPTION)));
+			   });
+	    ctx.getDslContext()
+	    		.select(CONTRACT_DATA.NAME)
+	    		.select(CONTRACT_DATA.EXPRESSION)
+	    		.from(CONTRACT_DATA)
+	    		.where(CONTRACT_DATA.DOMAIN.eq(ctx.getDomainId())
+	    		.and(CONTRACT_DATA.CONTRACT.eq(contractId))
+	    		.and(CONTRACT_DATA.NAME.in("TC2","GRUPO_COTIZACION","OCUPACION","RLCE","COLECTIVO_TRABAJADORES","CNO"))
+	    		).orderBy(CONTRACT_DATA.START_DATE.asc()).fetch().stream().forEach(r -> {
+	    			if(r.getValue(CONTRACT_DATA.NAME).equals("TC2")) {
+	    				contract.setContractType(r.getValue(CONTRACT_DATA.EXPRESSION));
+	    			}else if(r.getValue(CONTRACT_DATA.NAME).equals("GRUPO_COTIZACION")) {
+	    				contract.setQuoteGroup(r.getValue(CONTRACT_DATA.EXPRESSION));
+	    			}else if(r.getValue(CONTRACT_DATA.NAME).equals("OCUPACION")) {
+	    				contract.setOccupation(r.getValue(CONTRACT_DATA.EXPRESSION));
+	    			}else if(r.getValue(CONTRACT_DATA.NAME).equals("RLCE")) {
+	    				contract.setRlce(r.getValue(CONTRACT_DATA.EXPRESSION));
+	    			}else if(r.getValue(CONTRACT_DATA.NAME).equals("COLECTIVO_TRABAJADORES")) {
+	    				contract.setWorkerCollective(r.getValue(CONTRACT_DATA.EXPRESSION));
+	    			}else if(r.getValue(CONTRACT_DATA.NAME).equals("CNO")) {
+	    				contract.setCno(r.getValue(CONTRACT_DATA.EXPRESSION));
+	    			}
+	    		});
+	    return contract;
+		}
+	}
 
 
 

@@ -57,6 +57,7 @@ import static org.junit.Assert.assertEquals;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.SQLException;
@@ -97,6 +98,7 @@ import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Salary;
 import com.esferalia.aon.occam.api.model.Salary.ContextData;
+import com.esferalia.aon.payroll.SalaryBuilder;
 import com.esferalia.aon.payroll.calculator.CollectSalaryBuilder;
 import com.esferalia.aon.payroll.calculator.ContractSalaryCalculator;
 import com.esferalia.aon.payroll.calculator.SmartContractSalaryCalculator;
@@ -7905,6 +7907,94 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 		return ;
 	    org.junit.Assert.fail(d.getCodigo());
 	});
+
+    }
+
+    @Test
+    public void testCretaHoursAndDrop() throws ExpressionException, SQLException, SalaryException, JAXBException,
+	    IOException, EmptyBasesException, XMLStreamException, FactoryConfigurationError {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+	
+		cleanSalaries(aonContext);
+		cleanSystemPayments(aonContext);
+	
+		//"MAX(1,FLOOR(MIN(HORAS_TRABAJADAS, BASE_CGC/BASE_CGC_MIN_HORA)))"
+		
+		
+		String ccc = Long.toString(System.currentTimeMillis()).substring(0, 11);
+	
+		@SuppressWarnings("serial")
+		ContractRecord contract = newContract(aonContext, ccc, ContractCode.C200, "08");
+	
+		addSystemData(aonContext, contract.getStartDate(), contract.getEndDate(), Collections.singletonMap(ContextVariable.CGC_BASE_MIN.getName(), "44.10 * DIAS_NOMINA"));
+		addSystemData(aonContext, contract.getStartDate(), contract.getEndDate(), Collections.singletonMap(ContextVariable.SALARY_HOURS.getName(), "MAX(1,FLOOR(MIN(HORAS_TRABAJADAS, BASE_CGC/(BASE_CGC_MIN_HORA=7.97))))"));
+		
+		
+		addSSRegimePayment(aonContext, SSRegimeType.GENERAL, contract.getStartDate(), PaymentType.CRA_0001, "DIAS_AUSENCIA * 0.00", "BASE_CGC_MIN", "_P");
+	
+		addData(aonContext, contract, contract.getStartDate(), contract.getEndDate(), new HashMap<String, String>() {
+		    {
+			put(ContextVariable.MONDAY_HOURS.getName(), "2.00");
+			put(ContextVariable.TUESDAY_HOURS.getName(), "2.00");
+			put(ContextVariable.WEDNESDAY_HOURS.getName(), "2.00");
+			put(ContextVariable.THURSDAY_HOURS.getName(), "2.00");
+			put(ContextVariable.FRIDAY_HOURS.getName(), "2.00");
+			put(ContextVariable.SATURDAY_HOURS.getName(), "2.00");
+			put(ContextVariable.SUNDAY_HOURS.getName(), "2.00");
+		    }
+		});
+	
+		Date startDate = add(getFirstDayOfMonth(getToday()), MONTH, 1);
+		Date endDate = getLastDayOfMonth(startDate);
+		
+		net.aonsolutions.core.tgss.creta.jaxb.trabajadorestramos.TrabajadoresTramos trabajadoresTramos = 
+		getTrabajadoresTramos(connection, startDate, endDate, ccc, contract);
+	
+		addData(aonContext, contract, add(startDate, Calendar.DAY_OF_MONTH, 3 ), endDate, ContextVariable.DROP_FACTOR, 1.00);
+		
+		com.esferalia.aon.payroll.Salary salary = 
+		new SmartContractSalaryCalculator<com.esferalia.aon.payroll.Salary>(new SalaryBuilder()).calculate(getContractSalaryCalculatorContext(connection, startDate, endDate, endDate, contract));
+		salary.getSalaryPayments().forEach( payment -> System.out.println( payment.getName() + " = " + payment.getQuote()  ));
+		double salaryHours = 
+		salary.getSalaryDatas().stream()
+		.filter( data -> data.getName().equals(ContextVariable.SALARY_HOURS.getName()))
+		.peek( hours -> System.out.println( hours.getExpression() + "(" + hours.getStartDate() + ".." + hours.getEndDate() +")"))
+		.collect(Collectors.summingDouble(hours -> Double.parseDouble(hours.getExpression())));
+		
+		cleanSalaries(aonContext);
+		calculateAndSave(connection, getContractSalaryCalculatorContext(connection, startDate, endDate, endDate, contract));
+		
+		ByteArrayOutputStream trabajadoresTramosOs = new ByteArrayOutputStream();
+		Utils.marshal(trabajadoresTramos, trabajadoresTramosOs);
+		
+		InputStream trabajadoresTramosIs = new ByteArrayInputStream(trabajadoresTramosOs.toByteArray());
+	
+		ByteArrayOutputStream basesOs = new ByteArrayOutputStream();
+		Bases.generate(connection, true,	// comments,
+				false, 						// skipExisting,
+				false, 						// acceptPrevBases,
+				null, 						// nafs,
+				new String[] {}, 			// defaultsValues,
+				trabajadoresTramosIs, null, // respuestaIs,
+				basesOs, 					// os,
+				new Bases.BasesCallback[] {}// cbs
+			);
+		
+		InputStream basesIs = new ByteArrayInputStream(basesOs.toByteArray());
+		net.aonsolutions.core.tgss.creta.jaxb.bases.Bases bases = 
+		Utils.unmarshal(net.aonsolutions.core.tgss.creta.jaxb.bases.Bases.class, basesIs);
+		
+		Utils.marshal(bases, System.out);
+		
+		List<net.aonsolutions.core.tgss.creta.jaxb.bases.Tramo> tramosBases =
+		bases.getLiquidacion().get(0).getLiquidacionMes().get(0).getTrabajadores().getTrabajador().get(0).getTramos().getTramo();
+		
+	
+		Dato _1 = tramosBases.get(0).getDatosTramo().getDato().stream().filter(d -> d.getCodigo().equals("01"))
+			.findFirst().orElseThrow(() -> new AssertionFailedError(""));
+		
+		org.junit.Assert.assertEquals(salaryHours, Double.parseDouble(_1.getValor()), 0.00);
 
     }
 

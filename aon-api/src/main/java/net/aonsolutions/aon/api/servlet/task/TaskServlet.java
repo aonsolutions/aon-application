@@ -79,6 +79,9 @@ public class TaskServlet extends AonApiHttpServlet{
 				case "/":
 					response(req, resp, getTasks(api));
 					break;
+				case "/list":
+					response(req, resp, getTasksList(api));
+					break;
 				case "/one":
 					response(req, resp, getTask(api));
 					break;
@@ -227,6 +230,23 @@ public class TaskServlet extends AonApiHttpServlet{
 			array.put(json);
 		});
 		
+		return array;
+	}
+	
+	private JSONArray getTasksList(AonApiData api) {
+		JSONArray array = new JSONArray();
+		JSONObject params  = api.getData();
+		Integer page       = params.optInt(IJsonNames.PAGE);
+		Integer perPage    = params.optInt(IJsonNames.PER_PAGE);
+		List<Task> tasks = new ArrayList<>(); 
+		tasks = AON_SOLUTIONS.getTaskListStream(api.getDomain(), api.getUser(), f -> TaskFilter.task(api, f, api.getDomain(), new Customer()), page, perPage).toList();
+		tasks.forEach(t ->{
+			JSONObject json = TaskJSON.toJSON(t);
+			if(t.getParentObj()!=null) {
+				json.put("parentObj", TaskJSON.toJSON(t.getParentObj()));
+			}
+			array.put(json);
+		});
 		return array;
 	}
 

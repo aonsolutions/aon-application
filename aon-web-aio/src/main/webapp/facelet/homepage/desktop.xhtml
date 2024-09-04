@@ -176,6 +176,17 @@
 	
 
 		</aon:div>
+
+		<a4j:jsFunction 
+		id="refreshCount" 
+		name="refreshCount"
+		reRender="summaryControlPortlet"
+		data="#{domainSwitcher.summaryCount}"
+		action="#{domainSwitcher.refreshSummaryCount}"
+		oncomplete="if ( data > 0 ) expandMenuPortlet(#{rich:element('summaryControlPortletButton')});"  
+		>
+		</a4j:jsFunction>
+
 	</aon:form>
 	
 	<script type="text/javascript">
@@ -188,6 +199,9 @@
 	<script type='text/javascript' >
 		#{rich:element('desktopDiv1')}.style.width='100%';
 		#{rich:element('infoGroupDiv')}.style.display='block';
+	</script>
+	<script type="text/javascript">
+		refreshCount();
 	</script>
 	 
 </ui:composition>

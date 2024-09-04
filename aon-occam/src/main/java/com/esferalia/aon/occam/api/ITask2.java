@@ -24,6 +24,7 @@ public interface ITask2 {
 	public Task getTaskAndChilds(AONContext ctx, TaskFilter filter);
 	public Stream<Task> getTaskStream(AONContext ctx, TaskFilter filter);
 	public Stream<Task> getTaskStream(AONContext ctx, TaskFilter filter, Integer page, Integer perPage);
+	public Stream<Task> getTaskListStream(AONContext ctx, TaskFilter filter, Integer page, Integer perPage);
 	public Stream<Task> getTaskParentOrChildStream(AONContext ctx, TaskFilter filter);
 	public Stream<Task> getTaskParentOrChildStream(AONContext ctx, TaskFilter filter, Integer page, Integer perPage);
 	public Stream<Task> getTaskAndChildsStream(AONContext ctx, TaskFilter filter);

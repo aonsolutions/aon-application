@@ -31,6 +31,7 @@ import com.esferalia.aon.occam.api.model.Workgroup;
 import com.esferalia.aon.occam.api.model.Workplace;
 import com.esferalia.aon.occam.api.model.finance.BankAccount;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
+import com.esferalia.aon.occam.api.model.finance.InvoiceBreakdown;
 import com.esferalia.aon.occam.api.model.finance.InvoiceFiscal;
 import com.esferalia.aon.occam.api.model.finance.InvoiceSeries;
 import com.esferalia.aon.occam.api.model.finance.PayMethod;
@@ -76,10 +77,8 @@ import com.esferalia.aon.occam.api.model.registry.SupplierFull;
 import com.esferalia.aon.occam.api.model.security.Scope;
 import com.esferalia.aon.occam.api.model.seres.EdiCodes;
 import com.esferalia.aon.occam.api.model.task.TaskHolder;
-import com.esferalia.aon.occam.api.model.type.SecurityLevel;
 import com.esferalia.aon.occam.api.model.warehouse.Delivery;
 import com.esferalia.aon.occam.api.model.warehouse.DeliveryDetail;
-import com.esferalia.aon.occam.api.model.warehouse.Warehouse;
 import com.esferalia.aon.watson.server.AonDateUtils;
 
 public class Asserts {
@@ -688,6 +687,23 @@ public class Asserts {
 		assertEquals("Comments", expected.getComments(), actual.getComments());
 		assertEquals("Remarks", expected.getRemarks(), actual.getRemarks());
 		assertEqualsInvoiceFiscal(expected.getFiscal(), actual.getFiscal());
+	}
+	
+	public static void assertEqualsInvoiceBreakdown(InvoiceBreakdown expected, InvoiceBreakdown actual) {
+		assertEqualsNulls( "InvoiceBreakdown", expected, actual);
+		assertEquals("Id", expected.getId(), actual.getId());
+		assertEquals("Domain", expected.getDomain(), actual.getDomain());
+		assertEquals("Invoice", expected.getInvoice(), actual.getInvoice());	
+		assertEquals("TaxType", expected.getTaxType(), actual.getTaxType());
+		assertEquals("Base", expected.getBase(), actual.getBase(), DELTA);
+		assertEquals("Percentage", expected.getPercentage(), actual.getPercentage(), DELTA);
+		assertEquals("Quota", expected.getQuota(), actual.getQuota(), DELTA);
+		assertEquals("Surcharge", expected.getSurcharge(), actual.getSurcharge(), DELTA);
+		assertEquals("SurchargeQuota", expected.getSurchargeQuota(), actual.getSurchargeQuota(), DELTA);
+		assertEquals("DeductibleQuota", expected.getDeductibleQuota(), actual.getDeductibleQuota(), DELTA);
+		assertEquals("WithholdingType", expected.getWithholdingType(), actual.getWithholdingType()); 
+		assertEquals("VatDeductionType", expected.getVatDeductionType(), actual.getVatDeductionType());
+		
 	}
 
 	public static void assertEqualsInvoiceFiscal(InvoiceFiscal expected, InvoiceFiscal actual) {

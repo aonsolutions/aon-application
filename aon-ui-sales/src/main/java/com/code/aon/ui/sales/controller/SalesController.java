@@ -103,6 +103,7 @@ import com.esferalia.aon.occam.api.model.security.Scope;
 import com.esferalia.aon.occam.api.model.type.DeliveryStatus;
 import com.esferalia.aon.occam.api.model.warehouse.CarrierPacking;
 import com.esferalia.aon.occam.api.model.warehouse.CarrierPackingStatus;
+import com.esferalia.aon.occam.api.model.warehouse.CarrierPackingType;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.server.io.AonIOUtils;
 
@@ -124,6 +125,7 @@ public class SalesController extends HeaderObjectController implements ISalesCon
 	private boolean showDeliveryWindow;
 	private boolean showElaborationWindow;
 	private boolean showPrepareSaleWindow;
+	private boolean showInPreparationWindow;
 	private String deliverySeries;
 	private int deliveryNumber;
 	private Date deliveryDate;
@@ -146,18 +148,7 @@ public class SalesController extends HeaderObjectController implements ISalesCon
 	private boolean showPurchaseReferenceWindow;
 	private RegistryAddressFilter addressesFilter;
 	
-	private Date chargeDate;
-	private String numberPlate;
-	private String driverName;
-	private String driverDocument;
-	private Integer delivery;
-	private boolean newDelivery;
-	private Carrier carrier;
-
-	private boolean includePackingList;
-	private Integer packingList;
-	private boolean newPackingList;
-
+	private PrepareSaleProcess prepareSaleProcess;
 
 	private EdiSalesImporterHandler ediImporter;
 	@Deprecated
@@ -167,7 +158,7 @@ public class SalesController extends HeaderObjectController implements ISalesCon
 	private SalesIngenetHandler ingenetHandler;
 	
 	private SalesElaborationProcess elaborationProcess;
-	
+
     public SalesController() {
     	this.emailUtil = new SalesEmailUtil();
     	this.accountHelper = new BankAccountHelper(this);
@@ -236,6 +227,14 @@ public class SalesController extends HeaderObjectController implements ISalesCon
 	
 	public void setShowElaborationWindow(boolean value) {
 		this.showElaborationWindow = value;
+	}
+	
+	public boolean isShowInPreparationWindow() {
+		return showInPreparationWindow;
+	}
+	
+	public void setShowInPreparationWindow(boolean value) {
+		this.showInPreparationWindow = value;
 	}
 	
 	public boolean isShowPrepareSaleWindow() {
@@ -390,85 +389,6 @@ public class SalesController extends HeaderObjectController implements ISalesCon
 		this.savedCarrier = savedCarrier;
 	}
 	
-	public Date getChargeDate() {
-		return chargeDate;
-	}
-	
-	public void setChargeDate(Date chargeDate) {
-		this.chargeDate = chargeDate;
-	}
-	
-	public String getNumberPlate() {
-		return numberPlate;
-	}
-	
-	public void setNumberPlate(String numberPlate) {
-		this.numberPlate = numberPlate;
-	}
-	
-	public String getDriverName() {
-		return driverName;
-	}
-	
-	public void setDriverName(String driverName) {
-		this.driverName = driverName;
-	}
-	
-	public String getDriverDocument() {
-		return driverDocument;
-	}
-	
-	public void setDriverDocument(String driverDocument) {
-		this.driverDocument = driverDocument;
-	}
-	
-	public Integer getDelivery() {
-		return delivery;
-	}
-	
-	public void setDelivery(Integer delivery) {
-		this.delivery = delivery;
-	}
-	
-	public boolean isNewDelivery() {
-		return newDelivery;
-	}
-	
-	public void setNewDelivery(boolean newDelivery) {
-		this.newDelivery = newDelivery;
-	}
-	
-	public Integer getPackingList() {
-		return packingList;
-	}
-	
-	public void setPackingList(Integer packingList) {
-		this.packingList = packingList;
-	}
-	
-	public boolean isNewPackingList() {
-		return newPackingList;
-	}
-	
-	public void setNewPackingList(boolean newPackingList) {
-		this.newPackingList = newPackingList;
-	}
-	
-	public boolean isIncludePackingList() {
-		return includePackingList;
-	}
-	
-	public void setIncludePackingList(boolean includePackingList) {
-		this.includePackingList = includePackingList;
-	}
-	
-	public Carrier getCarrier() {
-		return carrier;
-	}
-	
-	public void setCarrier(Carrier carrier) {
-		this.carrier = carrier;
-	}
 	
 	public boolean isShowPurchaseReferenceWindow() {
 		return showPurchaseReferenceWindow;
@@ -529,6 +449,13 @@ public class SalesController extends HeaderObjectController implements ISalesCon
 		return elaborationProcess;
 	}
 
+	public PrepareSaleProcess getPrepareSaleProcess() {
+		if(prepareSaleProcess==null){
+			prepareSaleProcess = new PrepareSaleProcess(this);
+		}
+		return prepareSaleProcess;
+	}
+	
 	public boolean isCustomerReadOnly() throws ManagerBeanException {
 		Sales sales = (Sales)this.getTo();
 		if (sales.getProject() != null && sales.getProject().getId() != null) {
@@ -609,6 +536,14 @@ public class SalesController extends HeaderObjectController implements ISalesCon
 	public boolean isInPreparation(){
 		Sales sales = (Sales)this.getTo();
 		return sales.getStatus() == SalesStatus.IN_PREPARATION;
+	}
+	
+	public boolean isShowPrepareSale() {
+		Sales sales = (Sales)this.getTo();
+		String domainName = AonUtil.getDomainName();
+		String login = UserUtils.getInstance().getLoggedUser().getLogin();
+		
+		return AON.getSalesDetailStream(domainName, sales.getDomain(), login, f -> f.getSalesProperty().eq(sales.getId()).and(f.getDeliveryProperty().isNull())).count() > 0;
 	}
 
 	public Invoice getInvoice() throws ManagerBeanException {
@@ -1235,11 +1170,34 @@ public class SalesController extends HeaderObjectController implements ISalesCon
 		String login = UserUtils.getInstance().getLoggedUser().getLogin();
 		String series = Integer.toString(AonDateUtils.getYear(new Date()));
 		Sales to = (Sales)this.getTo();
-		to.setCarrier(getCarrier());
+		to.setCarrier(getPrepareSaleProcess().getCarrier());
 		to.setStatus(SalesStatus.IN_PREPARATION);
-
-		Integer deliveryId = getDelivery();
-		if(isNewDelivery() || deliveryId == null) {
+		Integer packingListId = null;
+		if(getPrepareSaleProcess().isIncludePackingList()) {
+			packingListId = getPrepareSaleProcess().getPackingList();
+			if(getPrepareSaleProcess().isNewPackingList() || packingListId == null) {
+				CarrierPacking cp = new CarrierPacking()
+						.setDomain(to.getDomain())
+						.setCarrier(to.getCarrier().getId())
+						.setCarrierName(to.getCarrier().getRegistry().getName())
+						.setCarrierDocument(to.getCarrier().getRegistry().getDocument())
+						.setSeries(series)
+						.setType(CarrierPackingType.WAYBILL)
+						.setStatus(CarrierPackingStatus.PENDING)
+						.setIssueDate(getPrepareSaleProcess().getChargeDate())
+						.setDeliveryDate(to.getDeliveryDate())
+						.setCarrierReference("")
+						.setNumberPlate(getPrepareSaleProcess().getNumberPlate())
+						.setDriverName(getPrepareSaleProcess().getDriverName())
+						.setDriverDocument(getPrepareSaleProcess().getDriverDocument())						
+						;
+				packingListId = AON.insertCarrierPacking(domainName, to.getDomain(), login, cp);				
+			}
+			to.setCarrierPacking(packingListId);
+		}
+		
+		Integer deliveryId = getPrepareSaleProcess().getDelivery();
+		if(getPrepareSaleProcess().isNewDelivery() || deliveryId == null) {
 			com.esferalia.aon.occam.api.model.warehouse.Delivery d = new com.esferalia.aon.occam.api.model.warehouse.Delivery()
 				.setDomain(to.getDomain())
 				.setCustomer(new com.esferalia.aon.occam.api.model.Customer().setId(to.getCustomer().getId()))
@@ -1250,24 +1208,32 @@ public class SalesController extends HeaderObjectController implements ISalesCon
 				.setWorkplace(new Workplace().setId(to.getWorkPlace().getId()))
 				.setScope(new Scope().setId(to.getScope().getId()))
 				.setCarrier(to.getCarrier().getId())
-				.setNumberPlate(getNumberPlate())
-				.setDriver(getDriverName())
-				.setDriverDocument(getDriverDocument())
-				.setStatusModificationDate(getChargeDate());
+				.setNumberPlate(getPrepareSaleProcess().getNumberPlate())
+				.setDriver(getPrepareSaleProcess().getDriverName())
+				.setDriverDocument(getPrepareSaleProcess().getDriverDocument())
+				.setStatusModificationDate(getPrepareSaleProcess().getChargeDate())
+				.setCarrierPacking(packingListId);
 			d = AON.saveDelivery(domainName, to.getDomain(), login, d);
 			deliveryId = d.getId();
 		}
 		Integer deliveryIdAux = deliveryId;
+		
 		AON.getSalesDetailStream(domainName, to.getDomain(), login, f -> f.getSalesProperty().eq(to.getId()))
 		.forEach(detail -> {
-			detail.setDelivery(deliveryIdAux);
-			AON.updateSalesDetail(domainName, to.getDomain(), login, detail);
+			if(!getPrepareSaleProcess().isPartialPreparation() || (getPrepareSaleProcess().isPartialPreparation() && getPrepareSaleProcess().getSalesDetailsChecks().contains(detail.getId()))) {
+				detail.setDelivery(deliveryIdAux);
+				AON.updateSalesDetail(domainName, to.getDomain(), login, detail);
+			}
 		});
-		
-		accept(event);
-	
+		prepareSaleProcess = null;
+
+		accept(event);		
 	}
 	
+	public void onCancelPrepareSale(ActionEvent event) {
+		prepareSaleProcess = null;
+	}
+
 	public String getPackagingSalesDownloadURL() {
 		Sales sales = (Sales) getTo();
 		com.esferalia.aon.occam.api.model.Domain domain = AON.getDomain(AonUtil.getDomainName(), DomainManager.getCurrentDomain(), "");
@@ -1307,8 +1273,9 @@ public class SalesController extends HeaderObjectController implements ISalesCon
 		List<CarrierPacking> packingListList = 
 			AON.getCarrierPackingList(new Domain().setId(to.getDomain()).setName(domainName),
 				login, f -> f.getDomainProperty().eq(to.getDomain())
-				.and(f.getStatusProperty().eq(CarrierPackingStatus.PENDING.value())
-				.and(f.getCarrierProperty().eq(getCarrier().getId())))
+				.and(f.getStatusProperty().eq(CarrierPackingStatus.PENDING.value()))
+						
+//				.and(f.getCarrierProperty().eq(getCarrier().getId()))
 			);
 		LinkedList<SelectItem> list = new LinkedList<>();
 		for (CarrierPacking cp : packingListList) {
@@ -1318,6 +1285,77 @@ public class SalesController extends HeaderObjectController implements ISalesCon
 		
 		return list;
 	}
-
+	
+	// In Preparation Modal
+	
+	public List<com.esferalia.aon.occam.api.model.warehouse.Delivery> getInPreparationDeliveries() {
+		String domainName = AonUtil.getDomainName();
+		String login = UserUtils.getInstance().getLoggedUser().getLogin();
+		Sales sales = (Sales)this.getTo();
+		Integer[] ids = sales.getDetailList().stream()
+				.map(to -> (SalesDetail) to)
+				.mapToInt(r -> r.getDelivery() != null ? r.getDelivery().getId() : -1)
+				.boxed().toArray(Integer[]::new);		
+		return AON.getDeliveryStream(new Domain().setName(domainName).setId(sales.getDomain()), login, f -> 
+			f.getDomainProperty().eq(sales.getDomain())
+			.and(f.getIdProperty().in(ids)))
+			.toList();
+	}
+	
+	public List<com.esferalia.aon.occam.api.model.management.SalesDetail> getDeliverySalesDetail(Integer delivery) {
+		String domainName = AonUtil.getDomainName();
+		String login = UserUtils.getInstance().getLoggedUser().getLogin();
+		Sales sales = (Sales)this.getTo();
+		
+		return AON.getSalesDetailStream(domainName, sales.getDomain(), login, f -> 
+			f.getSalesProperty().eq(sales.getId())
+			.and(f.getDomainProperty().eq(sales.getDomain()))
+			.and(f.getDeliveryProperty().eq(delivery)))
+			.toList();
+	}
+	
+	public void removeSalesDetailDelivery(com.esferalia.aon.occam.api.model.management.SalesDetail salesDetail) { //ActionEvent.¿?
+		String domainName = AonUtil.getDomainName();
+		String login = UserUtils.getInstance().getLoggedUser().getLogin();
+		Sales sales = (Sales)this.getTo();
+		Integer delivery = salesDetail.getDelivery();
+		salesDetail.setDelivery(null);
+		AON.updateSalesDetail(domainName, sales.getDomain(), login, salesDetail);
+		
+		List<com.esferalia.aon.occam.api.model.management.SalesDetail> list = AON.getSalesDetailStream(domainName, sales.getDomain(), login, f -> 
+			f.getSalesProperty().eq(sales.getId())
+			.and(f.getDomainProperty().eq(sales.getDomain()))
+			.and(f.getDeliveryProperty().isNotNull()))
+			.toList();
+		
+		if(list.isEmpty()) {
+			sales.setStatus(SalesStatus.PENDING);
+			com.esferalia.aon.occam.api.model.management.Sales s = AON.getSales(domainName, sales.getDomain(), login, f-> f.getIdProperty().eq(sales.getId()));
+			s.setStatus(com.esferalia.aon.occam.api.model.type.SalesStatus.PENDING);
+			AON.saveSales(domainName, sales.getDomain(), login, s);
+		}
+		
+		List<com.esferalia.aon.occam.api.model.management.SalesDetail> list2 = AON.getSalesDetailStream(domainName, sales.getDomain(), login, f -> 
+				f.getDomainProperty().eq(sales.getDomain())
+				.and(f.getDeliveryProperty().eq(delivery)))
+				.toList();
+		List<com.esferalia.aon.occam.api.model.warehouse.DeliveryDetail> list3 = AON.getDeliveryDetailList(domainName, sales.getDomain(), login, f -> f.getDelivery().eq(delivery));
+		if(list2.isEmpty() && list3.isEmpty()) {
+			AON.deleteDelivery(domainName, sales.getDomain(), login, delivery);
+		}
+		
+	}
+	
+	public String getDeliveryDownloadURL(Integer delivery) {
+		Sales sales = (Sales) getTo();
+		com.esferalia.aon.occam.api.model.Domain domain = AON.getDomain(AonUtil.getDomainName(), DomainManager.getCurrentDomain(), "");
+		JSONObject json = new JSONObject()
+				.put(IJsonNames.SALES, sales.getId())
+				.put(IJsonNames.DELIVERY, delivery)
+				.put("domain_id", domain.getId())
+				.put("domain_name", domain.getName())
+				.put(IJsonNames.LOGIN, UserUtils.getInstance().getLoggedUser().getLogin());		
+		return "/ms/api/download_packaging_sales_pdf?json=" + Base64.getEncoder().encodeToString(json.toString().getBytes(StandardCharsets.UTF_8));
+	}
 }
 

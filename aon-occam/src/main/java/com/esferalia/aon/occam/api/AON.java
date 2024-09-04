@@ -89,7 +89,6 @@ import com.esferalia.aon.occam.api.model.Filter.InventoryDetailFilter;
 import com.esferalia.aon.occam.api.model.Filter.InvestAssetFilter;
 import com.esferalia.aon.occam.api.model.Filter.InvoiceCommunicationTrackingFilter;
 import com.esferalia.aon.occam.api.model.Filter.InvoiceDetailCommissionFilter;
-import com.esferalia.aon.occam.api.model.Filter.InvoiceDetailFilter;
 import com.esferalia.aon.occam.api.model.Filter.InvoiceInfoFilter;
 import com.esferalia.aon.occam.api.model.Filter.ItemAddInfoFilter;
 import com.esferalia.aon.occam.api.model.Filter.ItemCompositionFilter;
@@ -181,6 +180,7 @@ import com.esferalia.aon.occam.api.model.RegistryParams;
 import com.esferalia.aon.occam.api.model.Salary;
 import com.esferalia.aon.occam.api.model.SalaryFilter;
 import com.esferalia.aon.occam.api.model.SellerParams;
+import com.esferalia.aon.occam.api.model.Series;
 import com.esferalia.aon.occam.api.model.Signature;
 import com.esferalia.aon.occam.api.model.Survey;
 import com.esferalia.aon.occam.api.model.Workgroup;
@@ -210,7 +210,6 @@ import com.esferalia.aon.occam.api.model.finance.InvoiceCommunicationTracking;
 import com.esferalia.aon.occam.api.model.finance.InvoiceDetail;
 import com.esferalia.aon.occam.api.model.finance.InvoiceFilter;
 import com.esferalia.aon.occam.api.model.finance.InvoiceInfo;
-import com.esferalia.aon.occam.api.model.finance.InvoiceSeries;
 import com.esferalia.aon.occam.api.model.finance.InvoiceTax;
 import com.esferalia.aon.occam.api.model.finance.InvoicingGroup;
 import com.esferalia.aon.occam.api.model.finance.InvoicingGroupFilter;
@@ -277,6 +276,7 @@ import com.esferalia.aon.occam.api.model.registry.Target;
 import com.esferalia.aon.occam.api.model.security.Booking;
 import com.esferalia.aon.occam.api.model.security.CertificateNotFoundException;
 import com.esferalia.aon.occam.api.model.security.Scope;
+import com.esferalia.aon.occam.api.model.security.TaskHolderWorkgroup;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.security.UserScope;
 import com.esferalia.aon.occam.api.model.security.UserWorkgroup;
@@ -304,7 +304,6 @@ import com.esferalia.aon.occam.api.model.warehouse.InventoryDetail;
 import com.esferalia.aon.occam.api.model.warehouse.Packaging;
 import com.esferalia.aon.occam.api.model.warehouse.PackagingDelivery;
 import com.esferalia.aon.occam.api.model.warehouse.PaturpatQuality;
-import com.esferalia.aon.occam.api.model.Series;
 import com.esferalia.aon.occam.api.model.warehouse.Stock;
 import com.esferalia.aon.occam.api.model.warehouse.UdapaQuality;
 import com.esferalia.aon.occam.api.model.warehouse.Warehouse;
@@ -343,7 +342,7 @@ import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class AON {
-
+	
 	private AON() {
 		throw new IllegalStateException("Utility class");
 	}
@@ -1826,11 +1825,22 @@ public class AON {
 	// ********************************************
 	// ********************************* FINANCE **
 	// ********************************************
+	public static Stream<Invoice> getInvoiceHeaders(Occam occam, InvoiceFilter filter, int offset, int limit) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(occam)) {
+			return getInvoiceHeaders(ctx, filter, offset, limit);
+		}
+	}
+	public static Stream<Invoice> getInvoiceHeaders(AONContext ctx, InvoiceFilter filter, int offset, int limit) {
+		return getFinance().getInvoiceHeaders(ctx, filter, offset, limit);
+	}
 	
 	public static Stream<Invoice> getInvoiceHeaders(Occam occam, AccountingReportParams params, int offset, int limit) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(occam)) {
-			return getFinance().getInvoiceHeaders(ctx, params, offset, limit);
+			return getInvoiceHeaders(ctx, params, offset, limit);
 		}
+	}
+	public static Stream<Invoice> getInvoiceHeaders(AONContext ctx, AccountingReportParams params, int offset, int limit) {
+		return getFinance().getInvoiceHeaders(ctx, params, offset, limit);
 	}
 
 	public static Stream<Invoice> getInvoiceStream(Occam occam, InvoiceFilter filter){
@@ -1840,13 +1850,8 @@ public class AON {
 	}
 	
 	public static Stream<Invoice> getInvoiceStream(String domainName, Integer domainId, String login, InvoiceFilter filter){
-		CloseableAONContext ctx = null;
-		try {
-			ctx = AONContext.getAONContext(domainName, domainId, login);
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)) {
 			return getFinance().getInvoiceStream(ctx, filter);
-		} finally {
-			if (ctx != null)
-				ctx.close();
 		}
 	}
 	
@@ -1866,9 +1871,13 @@ public class AON {
 
 	public static Invoice acceptInvoice(String domainName, Integer domainId, String login, Invoice invoice, Integer rawdocId){
 		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
-			return getFinance().acceptInvoice(ctx, invoice, rawdocId);
+			return acceptInvoice(ctx, invoice, rawdocId);
 		}
 	}
+	public static Invoice acceptInvoice(AONContext ctx, Invoice invoice, Integer rawdocId){
+		return getFinance().acceptInvoice(ctx, invoice, rawdocId);
+	}
+	
 
 	public static Invoice insertInvoice(Occam occam, Invoice invoice){
 		return insertInvoice( occam.getDomainName(), occam.getDomain(), occam.getUser(), invoice);
@@ -1941,6 +1950,10 @@ public class AON {
 		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)) {
 			return getFinance().getInvoice(ctx, id);
 		}
+	}
+	
+	public static Optional<Item> getLastItem( AONContext ctx, Integer registry) {
+		return getFinance().getLastItem(ctx, registry);
 	}
 	
 	public static Invoice getLastSaleInvoice(Occam occam, String serie){
@@ -2129,8 +2142,11 @@ public class AON {
 
 	public static Integer getInvoiceNextNumber(String domainName, Integer domainId, String login, Byte[] types, String series) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)) {
-			return getFinance().getInvoiceNextNumber(ctx, types,series);
+			return getInvoiceNextNumber(ctx, types,series);
 		}
+	}
+	public static Integer getInvoiceNextNumber(AONContext ctx, Byte[] types, String series) {
+			return getFinance().getInvoiceNextNumber(ctx, types,series);
 	}
 	
 	public static Integer getInvoiceMinNumber(String domainName, Integer domainId, String login, InvoiceType type, String series) {
@@ -2605,6 +2621,14 @@ public class AON {
 		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
 			getManagement().deleteDelivery(ctx, filter);
 		}
+	}
+	
+	public static void deleteDelivery(Domain domain, User user, Integer id) {
+		deleteDelivery(domain.getName(), domain.getId(), user.getLogin(), id);
+	}
+	
+	public static void deleteDelivery(Domain domain, String login, Integer id) {
+		deleteDelivery(domain.getName(), domain.getId(), login, id);
 	}
 	
 	public static void deleteDelivery(String domainName, Integer domainId, String login, Integer id) {
@@ -4474,6 +4498,12 @@ public class AON {
 		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
 			return getRegistry().getTargetStream(ctx, filter);
 		}
+	}
+	
+	public static Stream<Target> getTargetStream(String domainName, Integer domainId, String login, TargetFilter filter, int ofs, int limit){
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)) {
+			return getRegistry().getTargetStream(ctx, filter, ofs, limit);
+		} 
 	}
 	
 	public static Optional<Target> getTarget(String domainName, Integer domainId, String login, TargetFilter filter) {
@@ -6660,6 +6690,36 @@ public class AON {
 		}
 	}
 	
+	public static long getTaskHolderCount(String domainName, Integer domainId, String login, TaskHolderFilter filter){
+		CloseableAONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			return getTask().getTaskHolderCount(ctx, filter);
+		} finally {
+			if (ctx != null) ctx.close();
+		}
+	}
+	
+	public static Stream<TaskHolder> getTaskHolderEmployee(String domainName, Integer domainId, String login, TaskHolderFilter filter, Integer page, Integer perPage){
+		CloseableAONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			return getTask().getTaskHolderEmployee(ctx, filter, page, perPage);
+		} finally {
+			if (ctx != null) ctx.close();
+		}
+	}
+	
+	public static List<TaskHolder> getTaskHolderFullList(String domainName, Integer domainId, String login, TaskHolderFilter filter){
+		CloseableAONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			return getTask().getTaskHolderFullList(ctx, filter);
+		} finally {
+			if (ctx != null) ctx.close();
+		}
+	}
+	
 	public static Stream<TaskHolder> getTaskHolderWorkgroupStream(Domain domain, User user, TaskHolderFilter filter, Integer workgroupId){
 		try (CloseableAONContext ctx = AONContext.getAONContext(domain, user)){
 			return getTask().getTaskHolderWorkgroupStream(ctx, filter, workgroupId);
@@ -6766,6 +6826,25 @@ public class AON {
 		return getTaskHolderWorkgroupStream(domainName, domainId, login, filter)
 				.collect(Collectors.toCollection(LinkedList::new));
 	}
+	
+	public static void saveTaskHolderWorkgroups(Domain domain, User user, TaskHolder taskHolder) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domain.getName(), domain.getId(), user.getLogin())){
+			getTask().saveTaskHolderWorkgroups(ctx, taskHolder);
+		} 
+	}
+	
+	public static List<TaskHolderWorkgroup> getTaskHolderWorkgroupsList(Domain domain, User user, TaskHolderWorkgroupFilter filter) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domain.getName(), domain.getId(), user.getLogin())){
+			return getTask().getTaskHolderWorkgroupsList(ctx, filter);
+		} 
+	}
+	
+	public static TaskHolderWorkgroup saveTaskHolderWorkgroup(Domain domain, User user, TaskHolderWorkgroup taskHolderWorkgroup) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domain.getName(), domain.getId(), user.getLogin())){
+			return getTask().saveTaskHolderWorkgroup(ctx, taskHolderWorkgroup);
+		} 
+	}
+	
 	// ------------------- USER WORKGROUP
 	
 	public static Stream<UserWorkgroup> getUserWorkgroupStream(String domainName, Integer domainId, String login, UserWorkgroupFilter filter) {

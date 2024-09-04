@@ -1,9 +1,9 @@
 import { AonIconButton } from "../../../components/aon-icon-button.js";
 import { AonSearch } from "../../../components/aon-search.js";
 import { AonElement } from "../../../components/AonElement.js";
-import { CONSTANT, CSS, EVENT, MATERIAL_ICONS, TAG } from "../../../environments/environments.js";
-import { assignUserWorkgroup, removeUserWorkgroup, getUserList } from "../../../services/userService.js";
-import { AonUserSimpleList } from "../../user/aon-user-simple-list.js";
+import { CONSTANT, CSS, EVENT, MATERIAL_ICONS, MSG, TAG } from "../../../environments/environments.js";
+import { assignTaskHolderWorkgroup, removeTaskHolderWorkgroup, getTastHoldersWithWorkgroupsList } from "../../../services/taskHolderService.js";
+import { AonTaskHolderSimpleList } from "../../registry/taskholder/aon-taskholder-simple-list.js";
 import { AonGroupList } from "./aon-group-list.js";
 
 export class AonWorkgroup extends AonElement {
@@ -35,7 +35,11 @@ export class AonWorkgroup extends AonElement {
     }
     
     build(){
-        getUserList().then(users => this.users = users);
+        getTastHoldersWithWorkgroupsList().then(users => {
+            this.users = users;
+            console.log("TaskHolders");
+            console.log(this.users);
+        });
         let div = this.createElement(TAG.DIV);
         div.id = this.DIV;
         div.className = CSS.AON_FLEX;
@@ -69,6 +73,21 @@ export class AonWorkgroup extends AonElement {
         div.style.borderBottom = '1px solid #ddd';
         div.style.height = '48px';
         parent.appendChild(div);
+
+        let workgroupBack = new AonIconButton();
+        workgroupBack.id =  'workgroupBack';
+		workgroupBack.title = MSG.BACK;
+        workgroupBack.icon = MATERIAL_ICONS.ARROW_BACK;
+		workgroupBack.noHover = true;
+        workgroupBack.style.top = '10px';
+		workgroupBack.style.position = 'relative';
+		workgroupBack.style.right = '4px';
+        div.appendChild(workgroupBack);
+
+		workgroupBack.addEventListener(EVENT.CLICK, () => {
+			console.log("Back");
+            this.clearHolderList();
+        });
         
         let span = this.createElement(TAG.SPAN);
         span.innerHTML = workgroup.description;
@@ -118,42 +137,56 @@ export class AonWorkgroup extends AonElement {
             this.add = true;
             this.loadUserList(workgroup).init();
         });
+
+        let searchInput = this.getElement("aonSearchSearchInput");
+        searchInput .placeholder = "Buscar por nombre";
     }
 
-    addUser(user, workgroup){
+    clearHolderList(){
+        let workgroupList = this.getElement(this.LIST);
+        let userList = this.getElement(this.USERS);
+		if(workgroupList && userList){
+			workgroupList.style.width = "100%";
+			userList.style.display = 'none';
+			userList.style.width = "50%";
+			userList.style.borderLeft = '1px solid #ddd';
+		}
+	}
+
+    addUser(taskholder, workgroup){
         let data = {
-            user: user.id,
+            task_holder: taskholder.id,
             workgroup: workgroup.id
         }
         this.users.forEach((usr, i) => {
-            if(user.id === usr.id)
+            if(taskholder.id === usr.id)
                 usr.workgroups.push(workgroup);
         });
-        assignUserWorkgroup(data);   
+        assignTaskHolderWorkgroup(data);   
         this.loadUserList(workgroup).init();
     }
 
-    removeUser(user, workgroup) {
+    removeUser(taskholder, workgroup) {
         let data = {
-            user: user.id,
+            task_holder: taskholder.id,
             workgroup: workgroup.id
         }
         this.users.forEach((usr, i) => {
-            if(user.id === usr.id)
+            if(taskholder.id === usr.id)
                 usr.workgroups.forEach((wg, j) => {
                     if(wg.id === workgroup.id)
                        usr.workgroups.splice(j, 1);
                 });
         });
-        removeUserWorkgroup(data);
+        removeTaskHolderWorkgroup(data);
         this.loadUserList(workgroup).init();
     }
 
 
     loadUserList(workgroup, search) {
         search = search || '';
-        let userList = this.getElement(this.USER_LIST) || new AonUserSimpleList();
-        userList = new AonUserSimpleList();
+        let userList = this.getElement(this.USER_LIST) || new AonTaskHolderSimpleList();
+        userList = new AonTaskHolderSimpleList();
         userList.id = this.USER_LIST;
         userList.users = this.users
         .filter(f => ((this.add && !f.workgroups.map(r => r.id).includes(workgroup.id)) 

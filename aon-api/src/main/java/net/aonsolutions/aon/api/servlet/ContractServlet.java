@@ -11,14 +11,18 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.PAYROLL;
 import com.esferalia.aon.occam.api.json.ContractExtendedDataJSON;
 import com.esferalia.aon.occam.api.json.JsonUtils;
+import com.esferalia.aon.occam.api.json.WorkplaceJSON;
 import com.esferalia.aon.occam.api.model.AuxSalaryInfo;
+import com.esferalia.aon.occam.api.model.ContractExtendedData;
 import com.esferalia.aon.occam.api.model.Filter;
 import com.esferalia.aon.occam.api.model.IJsonNames;
 import com.esferalia.aon.occam.api.model.Properties.ContractExtendedDataProperties;
 import com.esferalia.aon.occam.api.model.Properties.SalaryNewPortalProperties;
+import com.esferalia.aon.occam.api.model.type.CCCType;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
@@ -31,11 +35,15 @@ public class ContractServlet extends AonApiHttpServlet {
 	private static final Logger LOGGER  = Logger.getLogger(ContractServlet.class.getName());
 	
 	public static final String CONTRACT_LIST = "/";
-	public static final String CONTRACT_BY_ID = "/one/:id";
+	public static final String CONTRACT_BY_ID = "/one/";
 	public static final String CONTRACT_LIST_SIMPLIFIED = "/simple";
 	public static final String CONTRACT_COUNT = "/count";
 	public static final String EMPLOYEE_SALARY = "/salary";
 	public static final String EMPLOYEE_SALARY_COUNT = "/salary_count";
+	public static final String EMPLOYEE_SALARY_BY_ID = "/salary_id";
+	public static final String WORKPLACE = "/workplace";
+	public static final String CCC = "/ccc";
+	
 	
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) {
@@ -57,13 +65,45 @@ public class ContractServlet extends AonApiHttpServlet {
 				.addRoute(CONTRACT_LIST_SIMPLIFIED, ContractServlet::getContractSimplifiedList)
 				.addRoute(CONTRACT_COUNT, ContractServlet::getContractCount)
 				.addRoute(EMPLOYEE_SALARY,ContractServlet::getEmployeeSalaries)
+				.addRoute(EMPLOYEE_SALARY_BY_ID,ContractServlet::getEmployeeSalary)
 				.addRoute(EMPLOYEE_SALARY_COUNT, ContractServlet::getEmployeeSalariesCount)
+				.addRoute(WORKPLACE,ContractServlet::getWorkplaceList)
+				.addRoute(CCC, ContractServlet::getCccList)
 				.apply();
 			
 			response(req, resp, object);
 		} catch (Exception e) {
 			error(req, resp, e);
 		}
+	}
+	
+	private static JSONArray getWorkplaceList(AonApiData api) {
+		JSONArray array = new JSONArray();
+		AON.getWorkplaceList(
+				api.getDomain().getName(), 
+				api.getDomain().getId(), 
+				api.getUser().getLogin(), 
+				f -> f.getDomainProperty().eq(api.getDomain().getId())
+				).forEach(e -> {
+					array.put(WorkplaceJSON.toJSON(e));
+				});;
+		return array;
+	}
+	
+	private static JSONArray getCccList(AonApiData api) {
+		JSONArray array = new JSONArray();
+		AON.getEnterpriseCCCStream(
+				api.getDomain(), 
+				api.getUser().getLogin(), 
+				f -> f.getDomainProperty().eq(api.getDomain().getId())
+				).forEach(e -> {
+					JSONObject json = new JSONObject();
+					json.put(IJsonNames.ID, e.getId());
+					json.put(IJsonNames.CODE, e.getCcc());
+					json.put(IJsonNames.DESCRIPTION, CCCType.values()[e.getType()]);
+					array.put(json);
+				});
+		return array;
 	}
 	
 	private static JSONArray getContractList(AonApiData api) {
@@ -100,15 +140,22 @@ public class ContractServlet extends AonApiHttpServlet {
 	}
 	
 	private static JSONArray getEmployeeSalaries(AonApiData api) {
-		 JSONArray array = new JSONArray();
-		 	Integer page = api.getData().optInt("page");
-		 	Integer perPage = api.getData().optInt("per_page");
-		    List<AuxSalaryInfo> salaryList = PAYROLL.getEmployeeSalary(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(),
-		            f -> buildFilterSalariesNewPortal(f, api) , page, perPage);
-		    for (AuxSalaryInfo s : salaryList) {
-		        array.put(toJSONSalaryInfo(s));
-		    }
-		    return array;
+		JSONArray array = new JSONArray();
+	 	Integer page = api.getData().has("page") ? api.getData().optInt("page") : null;
+	 	Integer perPage = api.getData().has("per_page") ? api.getData().optInt("per_page") : null;
+	    List<AuxSalaryInfo> salaryList = PAYROLL.getEmployeeSalary(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(),
+	            f -> buildFilterSalariesNewPortal(f, api) , page, perPage);
+	    for (AuxSalaryInfo s : salaryList) {
+	        array.put(toJSONSalaryInfo(s));
+	    }
+	    return array;
+	}
+	
+	private static JSONObject getEmployeeSalary(AonApiData api) {
+		JSONObject json = new JSONObject();
+	    AuxSalaryInfo salary = PAYROLL.getEmployeeSalaryById(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), api.getData().optInt(IJsonNames.ID));
+	    json = toJSONSalaryInfo(salary);
+	    return json;
 	}
 	
 	private static long getEmployeeSalariesCount(AonApiData api) {
@@ -123,18 +170,25 @@ public class ContractServlet extends AonApiHttpServlet {
 		Filter filter = properties.getDomainProperty().eq(api.getDomain().getId());
 		Boolean status = JsonUtils.getBoolean(params, IJsonNames.STATUS);
 		Integer workplace = JsonUtils.getInteger(params, IJsonNames.WORKPLACE);
+		Integer ccc = JsonUtils.getInteger(params, IJsonNames.CODE);
 		Integer contractId = JsonUtils.getInteger(params, "contract");
 		byte salaryType = JsonUtils.getByte(params, "salary_type");
 		Integer auxSalaryType = (int) salaryType;
 		Date to = JsonUtils.getDate(params, IJsonNames.TO);
 		Date from = JsonUtils.getDate(params, IJsonNames.FROM);
+		String global = JsonUtils.optString(params, IJsonNames.GLOBAL);
 		
 //		if(name != null) {
 //			filter = filter.and(properties.getPersonFullNameProperty().like("%"+name+"%"));
 //		}
-		if(!AonStringUtils.isEmpty(api.getData().optString("global"))) {
-			filter = filter.and(properties.getNameProperty().like("%"+api.getData().optString("global")+"%"));
-//					.or(properties.getDateStringProperty().like("%"+api.getData().optString("global")+"%")));
+		
+		if(!AonStringUtils.isEmpty(global)) {
+			filter = filter.and(properties.getNameProperty().like("%"+api.getData().optString("global")+"%")
+					.or(properties.getDocumentProperty().like("%"+api.getData().optString("global")+"%")));
+		}
+		
+		if(ccc != null) {
+			filter = filter.and(properties.getEnterpriseCCCProperty().eq(ccc));
 		}
 		
 		if(workplace != null) {
@@ -172,28 +226,53 @@ public class ContractServlet extends AonApiHttpServlet {
 	private static Filter buildFilterSalariesNewPortal(SalaryNewPortalProperties properties , AonApiData api) {
 		JSONObject params = api.getData();
 		Filter filter = properties.getDomainProperty().eq(api.getDomain().getId());
-		Integer contractId = JsonUtils.getInteger(params, "contract");
 		byte salaryType = JsonUtils.getByte(params, "salary_type");
 		Integer auxSalaryType = (int) salaryType;
-
+		String contractIds = JsonUtils.getString(params, "contract_ids");
+		String document = JsonUtils.getString(params, IJsonNames.DOCUMENT);
+		Date to = JsonUtils.getDate(params, IJsonNames.TO);
+		Date from = JsonUtils.getDate(params, IJsonNames.FROM);
+		
+		if(to != null) {
+			filter = filter.and(properties.getStartDateProperty().le(to).or(properties.getEndDateProperty().le(to)));
+		}
+		
+		if(from != null) {
+			filter = filter.and(properties.getStartDateProperty().ge(from).or(properties.getEndDateProperty().ge(from)));
+		}
+		
 		if(!AonStringUtils.isEmpty(api.getData().optString("global"))) {
 			filter = filter.and(properties.getNameProperty().like("%"+api.getData().optString("global")+"%")
 					.or(properties.getDateStringProperty().like("%"+api.getData().optString("global")+"%")));
 		}
 		
-		if(contractId != null) {
-			filter = filter.and(properties.getContractProperty().eq(contractId));
+		if(!AonStringUtils.isEmpty(document)) {
+			filter = filter.and(properties.getEmployeeDocumentProperty().eq(document));
 		}
 		
 		if(auxSalaryType != null) {
 			filter = filter.and(properties.getSalaryType().eq(salaryType));
+		}
+			
+		if(contractIds != null) {
+			String [] stringIdArray = contractIds.split(",");
+			Integer [] intIdArray = new Integer[stringIdArray.length];
+
+			for (int i = 0; i < stringIdArray .length; i++) {
+				intIdArray [i] = Integer.parseInt(stringIdArray[i]);			
+			}
+			filter = filter.and(properties.getContractProperty().in(intIdArray));
+
 		}
 		return filter;
 	}
 	
 	private static JSONObject getContractById(AonApiData api) {
 		LOGGER.info("GET BY ID METHOD");
-		return new JSONObject();
+		Integer contractId = api.getData().optInt("contractId");   
+		ContractExtendedData contract = PAYROLL.getContractByid(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(),
+				f -> buildFilter(f, api) ,contractId);
+		return toJSONContractId(contract);
 	}
 	
 	private static JSONObject toJSONSalaryInfo(AuxSalaryInfo salaryInfo) {
@@ -214,4 +293,24 @@ public class ContractServlet extends AonApiHttpServlet {
 	        .put("issue_date", salaryInfo.getIssueDate());
 	}
 	
+	private static JSONObject toJSONContractId(ContractExtendedData data) {
+		return new JSONObject()
+		.put(IJsonNames.ID, data.getId())
+		.put(IJsonNames.START_DATE, data.getStartDate())
+		.put(IJsonNames.END_DATE, data.getEndDate())
+		.put(IJsonNames.WORKPLACE, data.getWorkplace())
+		.put(IJsonNames.NAME, data.getPersonName())
+		.put(IJsonNames.DOCUMENT, data.getPersonDocument())
+		.put("first_surname", data.getPersonFirstName())
+		.put("second_surname", data.getPersonSecondName())
+		.put("enterprise_ccc", data.getEnterpriseCCC())
+		.put("nss", data.getPersonSsNumber())
+		.put("category", data.getCategoryDescription())
+		.put(IJsonNames.TYPE, data.getContractType() != null ? data.getContractType().replaceAll("\"", "") : null)
+		.put("occupation", data.getOccupation() != null ? data.getOccupation().replaceAll("\"", "") : null)
+		.put("quote_group", data.getQuoteGroup() != null ? data.getQuoteGroup().replaceAll("\"", "") : null)
+		.put("cno", data.getCno() != null ? data.getCno().replaceAll("\"", "") : null)
+		.put("rlce", data.getRlce() != null ? data.getRlce().replaceAll("\"", "") : null)
+		.put("worker_collective", data.getWorkerCollective() != null ? data.getWorkerCollective().replaceAll("\"", "") : null);
+	}
 }

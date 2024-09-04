@@ -110,6 +110,46 @@ public class SendMailServlet extends AonApiHttpServlet{
 				subject = "Documentos";
 				body = documentContent(api, api.getData().optJSONArray("documents"));				
 			}
+			
+			if("proforma".equalsIgnoreCase(pathInfo[1])) {
+				subject = "Presupuesto";
+				body = rawdocContent(api, cp);
+				JSONObject rawdoc = JsonUtils.getJSONObject(api.getData(), "invoice");
+				Integer id = JsonUtils.optInteger(rawdoc, IJsonNames.ID);
+				if(id != null) {
+					InvoiceInfo info = new InvoiceInfo()
+							.setDomain(api.getDomain().getId())
+							.setInvoice(id)
+							.setCreationDate(new Date())
+							.setCreationUser(api.getUser().getLogin())
+							.setModificationDate(new Date())
+							.setModificationUser(api.getUser().getLogin())
+							.setType(InvoiceCommunicationType.EMAIL)
+							.setStatus(InvoiceCommunicationStatus.ACCEPTED);
+					AON.saveInvoiceInfo(api.getDomain(), api.getUser(), info);
+				}
+			}
+			
+			if("ticket".equalsIgnoreCase(pathInfo[1])) {
+				subject = "Ticket";
+				body = ticketContent(api, cp);
+				JSONObject rawdoc = JsonUtils.getJSONObject(api.getData(), "invoice");
+				Integer id = JsonUtils.optInteger(rawdoc, IJsonNames.ID);
+				if(id != null) {
+					InvoiceInfo info = new InvoiceInfo()
+							.setDomain(api.getDomain().getId())
+							.setInvoice(id)
+							.setCreationDate(new Date())
+							.setCreationUser(api.getUser().getLogin())
+							.setModificationDate(new Date())
+							.setModificationUser(api.getUser().getLogin())
+							.setType(InvoiceCommunicationType.EMAIL)
+							.setStatus(InvoiceCommunicationStatus.ACCEPTED);
+					AON.saveInvoiceInfo(api.getDomain(), api.getUser(), info);
+				}
+			}
+			
+			
 		}
 		
 		String bcc = api.getUser().getAuth().getEmail();
@@ -131,6 +171,7 @@ public class SendMailServlet extends AonApiHttpServlet{
 	
 	private String invoice2Content(AonApiData api, CompanyFull company) {
 		JSONObject inv = JsonUtils.getJSONObject(api.getData(), "invoice");
+
 		VelocityEngine engine = new VelocityEngine();
 		engine.setProperty(RuntimeConstants.RESOURCE_LOADER, "classpath");
 		engine.setProperty("classpath.resource.loader.class", ClasspathResourceLoader.class.getName());
@@ -172,6 +213,109 @@ public class SendMailServlet extends AonApiHttpServlet{
 		context.put("invoice", im);
 		context.put("company", cm);		
 		Template template = engine.getTemplate("/net/aonsolutions/aon/api/servlet/templates/invoice2.vm");
+		
+		StringWriter writer = new StringWriter();
+		template.merge(context, writer);
+
+		return writer.toString();
+	}
+	
+	private String rawdocContent(AonApiData api, CompanyFull company) {
+		JSONObject rawdoc = JsonUtils.getJSONObject(api.getData(), "invoice");
+
+		VelocityEngine engine = new VelocityEngine();
+		engine.setProperty(RuntimeConstants.RESOURCE_LOADER, "classpath");
+		engine.setProperty("classpath.resource.loader.class", ClasspathResourceLoader.class.getName());
+		engine.init();
+		
+		Date date = JsonUtils.getDate(rawdoc, "date");
+		InvoiceMail im = new InvoiceMail();
+		im.setReference(rawdoc.opt("reference") != null ? rawdoc.getString("reference"): "");
+		im.setTotal(rawdoc.opt("total") != null ? Double.toString(rawdoc.getDouble("total")) : "");
+		im.setDate(AonDateUtils.format(date, "dd/MM/yyyy"));
+		im.setUrl(rawdoc.opt("file") != null 
+				? rawdoc.optJSONObject("file").optString("url") 
+				: getInvoiceUrl(api.getDomain(), api.getUser().getLogin(), rawdoc));
+		StringBuilder medias = new StringBuilder();
+		company.getMedias().stream().filter(f -> MediaType.FIXED_PHONE.equals(f.getMedia()) || MediaType.CELLULAR.equals(f.getMedia()))
+		.forEach(r -> {
+			medias.append(" " + r.getValue());
+		});
+		
+		String web = company.getMedias().stream().filter(f -> MediaType.WEB.equals(f.getMedia())).map(r -> r.getValue()).findFirst().orElse("");
+		medias.append(AonStringUtils.isBlank(web) ? web : " /" + web);
+		String email = api.getUser().getAuth().getEmail() != null 
+				?api.getUser().getAuth().getEmail() : "";
+		CompanyMail cm = new CompanyMail();
+		cm.setAddress(company.getMainAddress().getFullAddress());
+		cm.setName(company.getRegistry().getName());
+		cm.setMedias(medias.toString());
+		cm.setEmail(email);
+		
+		Attach attach = AON.getAttach(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(),
+				f -> f.getAttachModuleProperty().eq(company.getId())
+				.and(f.getTypeProperty().eq(RegistryAttachmentType.LOGO.value())), AttachType.REGISTRY);
+		cm.setLogo(!attach.isEmpty()
+				? "https://" + company.getRegistry().getDomain().getName() + "/aonDocuments/company.logo"	
+				: "https://aon.solutions/assets/aon-logo.png");
+
+		
+		VelocityContext context = new VelocityContext();
+		context.put("rawdoc", im);
+		context.put("company", cm);		
+		Template template = engine.getTemplate("/net/aonsolutions/aon/api/servlet/templates/rawdoc.vm");
+		
+		StringWriter writer = new StringWriter();
+		template.merge(context, writer);
+
+		return writer.toString();
+	
+	}
+	
+	private String ticketContent(AonApiData api, CompanyFull company) {
+		JSONObject ticket = JsonUtils.getJSONObject(api.getData(), "invoice");
+
+		VelocityEngine engine = new VelocityEngine();
+		engine.setProperty(RuntimeConstants.RESOURCE_LOADER, "classpath");
+		engine.setProperty("classpath.resource.loader.class", ClasspathResourceLoader.class.getName());
+		engine.init();
+		
+		Date date = JsonUtils.getDate(ticket, "date");
+		InvoiceMail im = new InvoiceMail();
+		im.setReference(ticket.opt("reference") != null ? ticket.getString("reference"): "");
+		im.setTotal(ticket.opt("total") != null ? Double.toString(ticket.getDouble("total")) : "");
+		im.setDate(AonDateUtils.format(date, "dd/MM/yyyy"));
+		im.setUrl(ticket.opt("file") != null 
+				? ticket.optJSONObject("file").optString("url") 
+				: getInvoiceUrl(api.getDomain(), api.getUser().getLogin(), ticket));
+		StringBuilder medias = new StringBuilder();
+		company.getMedias().stream().filter(f -> MediaType.FIXED_PHONE.equals(f.getMedia()) || MediaType.CELLULAR.equals(f.getMedia()))
+		.forEach(r -> {
+			medias.append(" " + r.getValue());
+		});
+		
+		String web = company.getMedias().stream().filter(f -> MediaType.WEB.equals(f.getMedia())).map(r -> r.getValue()).findFirst().orElse("");
+		medias.append(AonStringUtils.isBlank(web) ? web : " /" + web);
+		String email = api.getUser().getAuth().getEmail() != null 
+				?api.getUser().getAuth().getEmail() : "";
+		CompanyMail cm = new CompanyMail();
+		cm.setAddress(company.getMainAddress().getFullAddress());
+		cm.setName(company.getRegistry().getName());
+		cm.setMedias(medias.toString());
+		cm.setEmail(email);
+		
+		Attach attach = AON.getAttach(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(),
+				f -> f.getAttachModuleProperty().eq(company.getId())
+				.and(f.getTypeProperty().eq(RegistryAttachmentType.LOGO.value())), AttachType.REGISTRY);
+		cm.setLogo(!attach.isEmpty()
+				? "https://" + company.getRegistry().getDomain().getName() + "/aonDocuments/company.logo"	
+				: "https://aon.solutions/assets/aon-logo.png");
+
+		
+		VelocityContext context = new VelocityContext();
+		context.put("ticket", im);
+		context.put("company", cm);		
+		Template template = engine.getTemplate("/net/aonsolutions/aon/api/servlet/templates/ticket.vm");
 		
 		StringWriter writer = new StringWriter();
 		template.merge(context, writer);

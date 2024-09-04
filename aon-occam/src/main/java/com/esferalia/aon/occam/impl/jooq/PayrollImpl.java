@@ -134,6 +134,11 @@ public class PayrollImpl implements IPayroll {
 		ContractDAO.getContractSimplifiedData(ctx, filter, page, perPage));
 	}
 	
+	public ContractExtendedData getContractById(AONContext ctx, ContractExtendedDataFilter filter, Integer id) {
+		return ctx.getDslContext().transactionResult(configuration ->
+		ContractDAO.getContractById(ctx, filter, id));
+	}
+	
 	public long getContractCount(AONContext ctx, ContractExtendedDataFilter filter) {
 		return ctx.getDslContext().transactionResult(configuration ->
 		ContractDAO.getContractCount(ctx, filter));
@@ -147,6 +152,11 @@ public class PayrollImpl implements IPayroll {
 	public long getEmployeeSalaryCount(AONContext ctx, SalaryNewPortalFilter filter) {
 		return ctx.getDslContext().transactionResult(configuration ->
 		ContractDAO.getEmployeeSalaryCount(ctx, filter));
+	}
+	
+	public AuxSalaryInfo getEmployeeSalaryById(AONContext ctx, Integer id) {
+		return ctx.getDslContext().transactionResult(configuration ->
+		ContractDAO.getEmployeeSalaryById(ctx, id));
 	}
 
 	public void deleteContracts(AONContext ctx, Integer ...contractIds) {

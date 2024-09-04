@@ -7,18 +7,18 @@ import static com.esferalia.aon.jooq.tables.InvoiceDetailAccount.INVOICE_DETAIL_
 import static com.esferalia.aon.jooq.tables.InvoiceInfo.INVOICE_INFO;
 import static com.esferalia.aon.jooq.tables.InvoiceFiscal.INVOICE_FISCAL;
 import static com.esferalia.aon.jooq.tables.InvoiceTax.INVOICE_TAX;
-import static com.esferalia.aon.jooq.tables.InvoiceAttach.INVOICE_ATTACH;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.jooq.Field;
 import org.jooq.Record;
-import org.jooq.Table;
 import org.jooq.impl.DSL;
 
 import com.esferalia.aon.occam.api.AONContext;
@@ -38,15 +38,14 @@ import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.occam.api.model.type.DocumentType;
 import com.esferalia.aon.occam.api.model.type.InvoiceTransactionType;
 import com.esferalia.aon.occam.api.model.type.InvoiceType;
-import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.occam.api.model.type.RectificationType;
 import com.esferalia.aon.occam.api.model.type.SecurityLevel;
 import com.esferalia.aon.occam.api.model.type.TaxType;
 import com.esferalia.aon.occam.api.model.type.VatDeductionType;
 import com.esferalia.aon.occam.api.model.type.WithholdingType;
-import com.esferalia.aon.occam.impl.jooq.dao.AccountingInvoiceDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.Filler;
 import com.esferalia.aon.occam.impl.jooq.dao.FinanceDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.InvoiceDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.InvoicePropertiesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.PropertyOrdersDAO.InvoicePropertyOrdersDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.invoice.InvoiceInfoDAO.InvoiceInfoFiller;
@@ -65,7 +64,13 @@ public class InvoiceApiDAO {
 	public static Stream<InvoiceNewPortal> getInvoiceNewPortal(AONContext ctx, InvoiceFilter filter, InvoiceOrder order) {
 		Integer page = INVOICE_PROPERTIES.getPage(filter);
 		Integer perPage = INVOICE_PROPERTIES.getPerPage(filter);
-		return ctx.getDslContext()
+		
+		Field<BigDecimal> quotaSum = DSL.sum((INVOICE_TAX.QUOTA)).as("quotaSum");
+		Field<BigDecimal> surchageSum = DSL.sum(INVOICE_TAX.SURCHARGE_QUOTA).as("surchageQuotaSum");
+		List<Integer> ids = new ArrayList<>();
+		List<InvoiceNewPortal> invoiceArray = new ArrayList<>();
+		
+		ctx.getDslContext()
 			.select(INVOICE.ID)
 			.select(INVOICE.DOMAIN)
 			.select(INVOICE.TOTAL)
@@ -77,25 +82,66 @@ public class InvoiceApiDAO {
 			.select(INVOICE.TYPE)
 			.select(INVOICE.RDOCUMENT)
 			.select(INVOICE.STATUS)
-//			.select(INVOICE_ATTACH.MIMETYPE)
-//			.select(INVOICE_INFO.fields())
 			.select(INVOICE.TAXABLE_BASE)
-//			.select(surchargeQuota)
-//			.select(quota)
-//			.select(retentionPercentage)
-			.from(INVOICE)
-//			.leftJoin(INVOICE_ATTACH).on(INVOICE.ID.eq(INVOICE_ATTACH.INVOICE))
-//			.leftJoin(INVOICE_INFO).on(INVOICE.ID.eq(INVOICE_INFO.INVOICE).and(INVOICE_INFO.TYPE.eq(InvoiceCommunicationType.EMAIL.value())))
-//			.leftJoin(INVOICE_DETAIL).on(INVOICE.ID.eq(INVOICE_DETAIL.INVOICE))
-//			.leftJoin(INVOICE_TAX.asTable(retention)).on(INVOICE_DETAIL.ID.eq(retention.field(INVOICE_TAX.INVOICE_DETAIL)).and(retention.field(INVOICE_TAX.TAX_TYPE).eq((byte)2)))
-//			.leftJoin(INVOICE_TAX.asTable(tax)).on(INVOICE_DETAIL.ID.eq(tax.field(INVOICE_TAX.INVOICE_DETAIL)).and(tax.field(INVOICE_TAX.TAX_TYPE).eq((byte)1)))
-//			.groupBy(INVOICE.ID)
-//			.having(INVOICE_PROPERTIES.getConditions(filter))
-			.where(INVOICE_PROPERTIES.getConditions(filter))
-			.orderBy(INVOICE_PROPERTY_ORDERS.getOrders(order))
-			.limit(perPage)
-			.offset(perPage * (page -1))
-			.fetch().stream().map(new InvoiceNewPortalFiller());
+				.from(INVOICE)
+				.where(INVOICE_PROPERTIES.getConditions(filter))
+				.orderBy(INVOICE_PROPERTY_ORDERS.getOrders(order))
+				.limit(perPage)
+				.offset(perPage * (page -1))
+				.fetch().stream().forEach((r) ->{
+					invoiceArray.add(new InvoiceNewPortalFiller().apply(r));
+					ids.add(r.get(INVOICE.ID));
+				});
+		 
+		 ctx.getDslContext()
+		 	.select(INVOICE_DETAIL.INVOICE)
+		 	.select(quotaSum)
+		 	.select(surchageSum)
+				    .from(INVOICE_DETAIL)
+				    .join(INVOICE_TAX)
+				        .on(INVOICE_DETAIL.ID.eq(INVOICE_TAX.INVOICE_DETAIL))
+				        .and(INVOICE_TAX.TAX_TYPE.eq((byte) 1))
+				        .where(INVOICE_DETAIL.INVOICE.in(ids))
+				        .groupBy(INVOICE_DETAIL.INVOICE)
+				        .fetch().stream().forEach(e ->{
+				        	invoiceArray.forEach(r ->{
+				        		if(e.getValue(INVOICE_DETAIL.INVOICE).equals(r.getId())) {
+				        			r.setSurchargeQuota(e.getValue(surchageSum).doubleValue());
+				        			r.setVatQuota(e.getValue(quotaSum).doubleValue());
+				        		}
+				        	});
+				        });
+			
+		 ctx.getDslContext()
+	 		.select(INVOICE_DETAIL.INVOICE)
+	 		.select(INVOICE_TAX.PERCENTAGE)
+					.from( INVOICE_DETAIL)
+					.join(INVOICE_TAX)
+						.on(INVOICE_DETAIL.ID.eq(INVOICE_TAX.INVOICE_DETAIL))
+				        .and(INVOICE_TAX.TAX_TYPE.eq((byte) 2))
+						.where(INVOICE_DETAIL.INVOICE.in(ids))
+						.groupBy(INVOICE_DETAIL.INVOICE)
+						.fetch().stream().forEach(e->{
+							invoiceArray.forEach(r ->{
+				        		if(e.getValue(INVOICE_DETAIL.INVOICE).equals(r.getId())) {
+				        			r.setRetentionPercentage(e.getValue(INVOICE_TAX.PERCENTAGE));
+				        		}
+							});
+						});
+		 
+		 ctx.getDslContext()
+		 	.select()
+		 		.from(INVOICE_INFO)
+		 			.where(INVOICE_INFO.TYPE.eq(InvoiceCommunicationType.EMAIL.value())).and(INVOICE_INFO.INVOICE.in(ids))
+		 			.fetch().stream().forEach(e ->{
+		 				invoiceArray.forEach(r ->{
+		 					if(e.getValue(INVOICE_INFO.INVOICE).equals(r.getId())) {
+		 						r.setInvoiceInfo(new InvoiceInfoFiller().apply(e));
+		 					}
+		 				});
+		 			});
+		 
+		 return invoiceArray.stream();
 	}
 	
 	public static long getInvoiceNewPortalCount(AONContext ctx, InvoiceFilter filter) {
@@ -176,9 +222,9 @@ public class InvoiceApiDAO {
 				.setSeries(r.getValue(INVOICE.SERIES))
 //				.setMimeType(MimeType.safeValueOf(r.getValue(INVOICE_ATTACH.MIMETYPE)))
 //				.setInvoiceInfo(InvoiceInfoFiller.build(r))
-//				.setVatQuota(r.getValue(quota) != null ? r.getValue(quota).doubleValue() : 0)
+//				.setVatQuota(r.getValue(INVOICE_TAX.QUOTA) != null ? r.getValue(INVOICE_TAX.QUOTA).doubleValue() : 0)
 				.setTaxableBase(r.getValue(INVOICE.TAXABLE_BASE) != null ? r.getValue(INVOICE.TAXABLE_BASE).doubleValue() : 0)
-//				.setSurchargeQuota(r.getValue(surchargeQuota) != null ? r.getValue(surchargeQuota).doubleValue() : 0)
+//				.setSurchargeQuota(r.getValue(INVOICE_TAX.SURCHARGE_QUOTA) != null ? r.getValue(INVOICE_TAX.SURCHARGE_QUOTA).doubleValue() : 0)
 //				.setRetentionPercentage(r.getValue(retentionPercentage))
 				;
 		}
@@ -266,7 +312,7 @@ public class InvoiceApiDAO {
 				invoice.setFinances(FinanceDAO.getFinanceStream(ctx, f -> f.getInvoiceProperty().eq(invoice.getId()))
 					.collect(Collectors.toCollection(LinkedList::new)));
 			
-				AccountingInvoiceDAO.fillBreakdown(ctx, invoice);
+				InvoiceDAO.fillBreakdown(ctx, invoice);
 			} 
 			return invoice;
 		}

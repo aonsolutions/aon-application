@@ -1,5 +1,8 @@
 package com.esferalia.aon.occam.api.model;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class AuxSalaryInfo {
 
 	private Integer id;
@@ -17,6 +20,7 @@ public class AuxSalaryInfo {
 	private Double totalDeduction;
 	private Double totalLiquid;
 	private String issueDate;
+	private List<String> idList;
 	
 	public Integer getId() {
 		return id;
@@ -108,7 +112,10 @@ public class AuxSalaryInfo {
 	public void setIssueDate(String issueDate) {
 		this.issueDate = issueDate;
 	}
-	
-	
-	
+	public List<String> getIdList() {
+		return idList;
+	}
+	public void setIdList(List<String> idList) {
+		this.idList = idList;
+	}
 }

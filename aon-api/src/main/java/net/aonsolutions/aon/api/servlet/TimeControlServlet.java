@@ -22,7 +22,9 @@ import com.esferalia.aon.occam.api.AON_SOLUTIONS;
 import com.esferalia.aon.occam.api.SECURITY;
 import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.occam.api.model.Filter;
 import com.esferalia.aon.occam.api.model.IJsonNames;
+import com.esferalia.aon.occam.api.model.Properties.TaskHolderProperties;
 import com.esferalia.aon.occam.api.model.aonsolutions.AonToken;
 import com.esferalia.aon.occam.api.model.aonsolutions.Coordinates;
 import com.esferalia.aon.occam.api.model.aonsolutions.Location;
@@ -63,8 +65,14 @@ public class TimeControlServlet extends AonApiHttpServlet{
 			case "/list":
 				response(req, resp, getTimeControlList(api));
 				break;
+			case "/listEmployee":
+				response(req, resp, getTimeControlListEmployee(api));
+				break;
 			case "/historic":
 				response(req, resp, getTimeControlHistoric(api));
+				break;
+			case "/historic_new_portal":
+				response(req, resp, getTimeControlHistoricNewPortal(api));
 				break;
 			case "/list-holder":
 				response(req, resp, getTaskHolderTimeControlStream(api));
@@ -218,6 +226,22 @@ public class TimeControlServlet extends AonApiHttpServlet{
 		return array;
 	}
 	
+	private JSONArray getTimeControlListEmployee(AonApiData api) {
+		Date startDate = AonDateUtils.getDateWithoutTime(new Date());
+		Date endDate = AonDateUtils.addDays(startDate, 1);
+		endDate = AonDateUtils.addSeconds(endDate, -1);
+		Integer page = api.getData().has(IJsonNames.PAGE) ? api.getData().optInt(IJsonNames.PAGE) : null;
+		Integer perPage = api.getData().has(IJsonNames.PER_PAGE) ? api.getData().optInt(IJsonNames.PER_PAGE) : null;
+		if(!api.getData().optString(START_DATE).isEmpty()) 
+			startDate =  AonDateUtils.parse(api.getData().optString(START_DATE), FORMAT_DATE);
+		if(!api.getData().optString(END_DATE).isEmpty()) 
+			endDate = AonDateUtils.parse(api.getData().optString(END_DATE), FORMAT_DATE);
+		JSONArray array = new JSONArray();
+		AON_SOLUTIONS.getTimeControlEmployeeStream(api.getDomain(), "", startDate, endDate, f-> taskHolderFilter(api, f), page, perPage)
+		.forEach(tc -> 	array.put(tc.toJSON()));
+		return array;
+	}
+	
 	private JSONArray getTimeControlHistoric(AonApiData api) {
 		Integer id = api.getData().optInt(IJsonNames.ID);
 		JSONArray array = new JSONArray();
@@ -231,6 +255,22 @@ public class TimeControlServlet extends AonApiHttpServlet{
 		);
 		return array;
 	}
+	
+	private JSONArray getTimeControlHistoricNewPortal(AonApiData api) {
+		Integer id = api.getData().optInt(IJsonNames.ID);
+		JSONArray array = new JSONArray();
+		
+		AON_SOLUTIONS.getTimeControlHistoricNewPortal(api.getDomain(), api.getUser().getLogin(), 
+				f->f.getDomainProperty().eq(api.getDomain().getId())
+				.and( f.getIdProperty().eq(id).or( f.getModificatedTimeControlProperty().eq(id)) )
+		)
+		.forEach(tc -> 
+			array.put(tc.toJSON())
+		);
+		return array;
+	}
+	
+	
 	
 	private JSONArray getTaskHolderTimeControlStream(AonApiData api) {		
 		Date startDate = AonDateUtils.getDateWithoutTime(new Date());
@@ -401,4 +441,31 @@ public class TimeControlServlet extends AonApiHttpServlet{
 			throw new AonApiException("Empleado requerido");
 		}
 	}
+	
+	public static Filter taskHolderFilter(AonApiData api, TaskHolderProperties f) {
+		JSONObject params  = api.getData();
+
+		Integer id = params.optInt(IJsonNames.ID);
+		String search = params.optString(IJsonNames.SEARCH);
+		
+		
+		Filter filter  = f.getDomainProperty().eq(api.getDomain().getId());
+		
+		if(id!=0) {
+			filter = filter.and(f.getIdProperty().eq(id));
+		} 
+		
+		if(params.opt(IJsonNames.ACTIVE)!=null) {
+			filter = filter.and(f.getActiveProperty().eq( (byte)(params.optBoolean(IJsonNames.ACTIVE) ? 1 : 0)) );
+		}
+		
+		if(!search.isEmpty()) {
+			Filter searchFilter = f.getNameProperty().like("%" + search + "%")
+					.or(f.getDocumentProperty().like("%" + search + "%"))
+					.or(f.getAliasProperty().like("%" + search + "%"));
+			filter = filter.and(searchFilter);
+		}
+		
+		return filter;
+	}	
 }

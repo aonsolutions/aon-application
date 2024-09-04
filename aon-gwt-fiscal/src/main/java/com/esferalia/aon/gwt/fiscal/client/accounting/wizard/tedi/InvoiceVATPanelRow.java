@@ -26,8 +26,8 @@ import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.CheckBox;
+import com.google.gwt.user.client.ui.FocusWidget;
 import com.google.gwt.user.client.ui.Focusable;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
@@ -253,6 +253,10 @@ class InvoiceVATPanelRow extends AonDisplayGridRow implements Focusable, HasSele
 			vatPanel.getGrid().getCellFormatter().setStyleName(rowIndex,idx,AON.CSS.aonDisplayGridCell());
 			vatPanel.getGrid().getCellFormatter().addStyleName(rowIndex,idx,AON.CSS.aonNowrap());
 			vatPanel.getGrid().setWidget(rowIndex,idx,finalWidget);
+			if ( finalWidget instanceof FocusWidget) {
+				FocusWidget focusWidget = (FocusWidget) finalWidget;
+				focusWidget.setEnabled( column.isEnabled( callback,vatIdx ) );
+			}
 			idx++;
 		}
 		return idx;
@@ -510,6 +514,7 @@ class InvoiceVATPanelRow extends AonDisplayGridRow implements Focusable, HasSele
 				callback.getVat(vatIdx).setAdjAccountCode(null);
 				callback.getVat(vatIdx).setAdjAccountDescription(null);
 			}
+			ValueChangeEvent.fire(this, callback.getVat(vatIdx) );
 		});
 	}
 

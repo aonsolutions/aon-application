@@ -1359,6 +1359,7 @@ public interface Properties {
 		Property<String> getPersonFullNameProperty();
 		Property <Byte> getSalaryType();
 		Property<String> getNameProperty();
+		Property<String> getDocumentProperty();
 	}
 	
 	public interface SalaryNewPortalProperties extends SalaryProperties{
@@ -1366,6 +1367,7 @@ public interface Properties {
 		Property<String> getDateStringProperty();
 		Property <Byte> getSalaryType();
 		Property<String> getNameProperty();
+		Property<String> getEmployeeDocumentProperty();
 	}
 	
 	public interface DocProperties{

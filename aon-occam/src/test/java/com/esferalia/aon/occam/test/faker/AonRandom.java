@@ -27,6 +27,7 @@ import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.accounting.BalanceType;
 import com.esferalia.aon.occam.api.model.finance.EnumVisitors.IWithholdingTypeVisitor;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
+import com.esferalia.aon.occam.api.model.finance.InvoiceBreakdown;
 import com.esferalia.aon.occam.api.model.fiscal.VatSummaryType;
 import com.esferalia.aon.occam.api.model.product.ProductStatus;
 import com.esferalia.aon.occam.api.model.product.Tariff;
@@ -51,6 +52,8 @@ import com.esferalia.aon.occam.api.model.type.RegistryStatus;
 import com.esferalia.aon.occam.api.model.type.SSRegimeType;
 import com.esferalia.aon.occam.api.model.type.SecurityLevel;
 import com.esferalia.aon.occam.api.model.type.StreetType;
+import com.esferalia.aon.occam.api.model.type.TaxType;
+import com.esferalia.aon.occam.api.model.type.VatDeductionType;
 import com.esferalia.aon.occam.api.model.type.WithholdingType;
 import com.esferalia.aon.occam.impl.jooq.dao.AccountDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.AccountPeriodDAO;
@@ -99,9 +102,12 @@ public class AonRandom {
         		?AonStringUtils.abbreviate(faker.book().title(),maxLength)
         		:null;
     }
+    public static Integer integer( int nullThreshold ) {
+    	return integer(nullThreshold, Integer.MAX_VALUE-1 );
+    }
     public static Integer integer( int nullThreshold,  int maxLength ) {
     	return ( gt(nullThreshold) )
-        		?Integer.valueOf( getInt(0, 20) )
+        		?Integer.valueOf( getInt(0, maxLength) )
         		:null;
     }
     public static String lorem( int nullThreshold, int maxLength ) {
@@ -330,12 +336,30 @@ public class AonRandom {
     			:null;
 	}
 
+	public static TaxType getRandomTaxType() {
+		return getRandomTaxType(-1);
+	}
+	public static TaxType getRandomTaxType(int nullThreshold) {
+    	return gt(nullThreshold)
+			?TaxType.values()[faker.random().nextInt(TaxType.values().length)]
+			:null;
+	}
+
 	public static WithholdingType getRandomWithholdingType() {
 		return getRandomWithholdingType(-1);
 	}
 	public static WithholdingType getRandomWithholdingType(int nullThreshold) {
     	return gt(nullThreshold)
 			?WithholdingType.values()[faker.random().nextInt(WithholdingType.values().length)]
+			:null;
+	}
+
+	public static VatDeductionType  getRandomVatDeductionType() {
+		return getRandomVatDeductionType(-1);
+	}
+	public static VatDeductionType getRandomVatDeductionType(int nullThreshold) {
+    	return gt(nullThreshold)
+			?VatDeductionType.values()[faker.random().nextInt(VatDeductionType.values().length)]
 			:null;
 	}
 
@@ -591,6 +615,22 @@ public class AonRandom {
 	public static <T> T get(List<T> list) {
 		if (AonCollectionUtils.isEmpty(list)) return null;
 		return list.get( getInt(0, (list.size() - 1) ) );
+	}
+	
+	public static InvoiceBreakdown getInvoiceBreakdown() {
+		return new InvoiceBreakdown()
+			.setId( integer( 30 ))
+			.setDomain( integer( 30 ))
+			.setInvoice(integer( 30 ))
+			.setTaxType( getRandomTaxType() )
+			.setBase( getDouble( 0, 10000, 4) )
+			.setPercentage( getDouble( 0, 100, 2) )
+			.setQuota( getDouble( 0, 10000, 2) )
+			.setSurchargeQuota( getDouble( 0, 10000, 2) )
+			.setDeductibleQuota( getDouble( 0, 10000, 2) )
+			.setWithholdingType( getRandomWithholdingType() )
+			.setVatDeductionType( getRandomVatDeductionType() )
+		;
 	}
 	
 }

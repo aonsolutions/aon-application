@@ -5,21 +5,25 @@ import java.util.LinkedList;
 import java.util.stream.Stream;
 
 import com.esferalia.aon.occam.api.model.Filter.LocationFilter;
+import com.esferalia.aon.occam.api.model.Filter.TaskHolderFilter;
 import com.esferalia.aon.occam.api.model.Filter.TimeControlFilter;
 import com.esferalia.aon.occam.api.model.aonsolutions.Coordinates;
 import com.esferalia.aon.occam.api.model.aonsolutions.Location;
 import com.esferalia.aon.occam.api.model.aonsolutions.TimeControl;
 import com.esferalia.aon.occam.api.model.aonsolutions.TimeControlDetail;
+import com.esferalia.aon.occam.api.model.aonsolutions.TimeControlDetailUserName;
 import com.esferalia.aon.occam.api.model.aonsolutions.TimeControlGroup;
 
 public interface ITimeControl {
 
 	public Stream<TimeControl> getTimeControlStream(AONContext ctx, Date startDate, Date endDate);
+	public Stream<TimeControl> getTimeControlEmployeeStream(AONContext ctx, Date startDate, Date endDate, TaskHolderFilter filter, Integer page, Integer perPage);
 	public Stream<TimeControl> getTaskHolderTimeControlStream(AONContext ctx, Integer taskHolderId, Date startDate, Date endDate, TimeControlGroup group);
 	public TimeControl getTaskHolderTimeControl(AONContext ctx, Integer taskHolderId, Date startDate, Date endDate);
 	
 	public Stream<TimeControlDetail> getTimeControlDetailStream(AONContext ctx, TimeControlFilter filter);
 	public Stream<TimeControlDetail> getTimeControlHistoric(AONContext ctx, TimeControlFilter filter);
+	public Stream<TimeControlDetailUserName> getTimeControlHistoricNewPortal(AONContext ctx, TimeControlFilter filter);
 	public LinkedList<TimeControlDetail> getTimeControlDetailList(AONContext ctx, TimeControlFilter filter);
 	public TimeControlDetail saveTimeControlDetail(AONContext ctx, TimeControlDetail tcd);
 	public void deleteTimeControlDetail(AONContext ctx, Integer id);

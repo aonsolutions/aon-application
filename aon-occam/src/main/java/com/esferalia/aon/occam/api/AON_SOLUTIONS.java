@@ -36,6 +36,7 @@ import com.esferalia.aon.occam.api.model.Filter.RRelationshipFilter;
 import com.esferalia.aon.occam.api.model.Filter.RegistryFilter;
 import com.esferalia.aon.occam.api.model.Filter.TaskAttachFilter;
 import com.esferalia.aon.occam.api.model.Filter.TaskFilter;
+import com.esferalia.aon.occam.api.model.Filter.TaskHolderFilter;
 import com.esferalia.aon.occam.api.model.Filter.TaskWorkflowFilter;
 import com.esferalia.aon.occam.api.model.Filter.TimeControlFilter;
 import com.esferalia.aon.occam.api.model.Filter.UserAppRoleFilter;
@@ -49,6 +50,7 @@ import com.esferalia.aon.occam.api.model.aonsolutions.Note;
 import com.esferalia.aon.occam.api.model.aonsolutions.Notification;
 import com.esferalia.aon.occam.api.model.aonsolutions.TimeControl;
 import com.esferalia.aon.occam.api.model.aonsolutions.TimeControlDetail;
+import com.esferalia.aon.occam.api.model.aonsolutions.TimeControlDetailUserName;
 import com.esferalia.aon.occam.api.model.aonsolutions.TimeControlGroup;
 import com.esferalia.aon.occam.api.model.aonsolutions.UserAppRole;
 import com.esferalia.aon.occam.api.model.finance.FinanceFilter;
@@ -577,9 +579,21 @@ public class AON_SOLUTIONS {
 		}
 	}
 	
+	public static Stream<TimeControl> getTimeControlEmployeeStream(Domain domain, String login, Date startDate, Date endDate, TaskHolderFilter filter, Integer page, Integer perPage) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domain.getName(), domain.getId(), login)){
+			return getTimeControl().getTimeControlEmployeeStream(ctx, startDate, endDate, filter, page, perPage);
+		}
+	}
+	
 	public static Stream<TimeControlDetail> getTimeControlHistoric(Domain domain, String login, TimeControlFilter filter) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(domain.getName(), domain.getId(), login)){
 			return getTimeControl().getTimeControlHistoric(ctx, filter);
+		}
+	}
+	
+	public static Stream<TimeControlDetailUserName> getTimeControlHistoricNewPortal(Domain domain, String login, TimeControlFilter filter) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domain.getName(), domain.getId(), login)){
+			return getTimeControl().getTimeControlHistoricNewPortal(ctx, filter);
 		}
 	}
 	
@@ -1035,6 +1049,12 @@ public class AON_SOLUTIONS {
 	public static Stream<Task> getTaskStream(Domain domain, User user, TaskFilter filter, Integer page, Integer perPage) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(domain, user)){
 			return getTask2().getTaskStream(ctx, filter, page, perPage);
+		}
+	}
+	
+	public static Stream<Task> getTaskListStream(Domain domain, User user, TaskFilter filter, Integer page, Integer perPage) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domain, user)){
+			return getTask2().getTaskListStream(ctx, filter, page, perPage);
 		}
 	}
 	

@@ -48,6 +48,11 @@ public class InvoiceVATPanel extends FlowPanel implements HasValueChangeHandlers
 			boolean isRowCellEnabled(IEditableInvoicePanelCallback callback, final int vatIdx) {
 				return true;
 			}
+			
+			@Override
+			boolean isEnabled(IEditableInvoicePanelCallback callback, int vatIdx) {
+				return true;
+			}
 		},
 		TAXABALE_BASE {
 			@Override
@@ -68,6 +73,11 @@ public class InvoiceVATPanel extends FlowPanel implements HasValueChangeHandlers
 			@Override
 			boolean isRowCellEnabled(IEditableInvoicePanelCallback callback, final int vatIdx) {
 				return true;
+			}
+
+			@Override
+			boolean isEnabled(IEditableInvoicePanelCallback callback, int vatIdx) {
+				return isAccountingSource( callback, vatIdx ); 
 			}
 		},
 		VAT_PERCENT {
@@ -90,6 +100,11 @@ public class InvoiceVATPanel extends FlowPanel implements HasValueChangeHandlers
 			boolean isRowCellEnabled(IEditableInvoicePanelCallback callback, final int vatIdx) {
 				return isVATEnabled(callback, vatIdx);
 			}
+
+			@Override
+			boolean isEnabled(IEditableInvoicePanelCallback callback, int vatIdx) {
+				return isAccountingSource( callback, vatIdx ); 
+			}
 		},
 		VAT_QUOTA {
 			@Override
@@ -110,6 +125,11 @@ public class InvoiceVATPanel extends FlowPanel implements HasValueChangeHandlers
 			@Override
 			boolean isRowCellEnabled(IEditableInvoicePanelCallback callback, final int vatIdx) {
 				return isVATEnabled(callback, vatIdx);
+			}
+
+			@Override
+			boolean isEnabled(IEditableInvoicePanelCallback callback, int vatIdx) {
+				return isAccountingSource( callback, vatIdx );
 			}
 		},
 		SURCHARGE_PERCENT {
@@ -132,6 +152,11 @@ public class InvoiceVATPanel extends FlowPanel implements HasValueChangeHandlers
 			boolean isRowCellEnabled(IEditableInvoicePanelCallback callback, final int vatIdx) {
 				return isSurchargeEnabled(callback, vatIdx);
 			}
+
+			@Override
+			boolean isEnabled(IEditableInvoicePanelCallback callback, int vatIdx) {
+				return isAccountingSource( callback, vatIdx );
+			}
 		},
 		SURCHARGE_QUOTA {
 			@Override
@@ -152,6 +177,11 @@ public class InvoiceVATPanel extends FlowPanel implements HasValueChangeHandlers
 			@Override
 			boolean isRowCellEnabled(IEditableInvoicePanelCallback callback, final int vatIdx) {
 				return isSurchargeEnabled(callback, vatIdx);
+			}
+
+			@Override
+			boolean isEnabled(IEditableInvoicePanelCallback callback, int vatIdx) {
+				return isAccountingSource( callback, vatIdx );
 			}
 		},
 		INVEST_ASSET {
@@ -179,6 +209,11 @@ public class InvoiceVATPanel extends FlowPanel implements HasValueChangeHandlers
 			boolean isAdditionalDataEnabled(IEditableInvoicePanelCallback callback, final int vatIdx) {
 				return isInvestAssetsEnabled(callback, vatIdx) && callback.getVat(vatIdx).getInvestAsset() != null;
 			}
+
+			@Override
+			boolean isEnabled(IEditableInvoicePanelCallback callback, int vatIdx) {
+				return true;
+			}
 		},
 		INPUT_VAT_ACCOUNT {
 			@Override
@@ -199,6 +234,11 @@ public class InvoiceVATPanel extends FlowPanel implements HasValueChangeHandlers
 			@Override
 			boolean isRowCellEnabled(IEditableInvoicePanelCallback callback, final int vatIdx) {
 				return isInputVATEnabled(callback, vatIdx);
+			}
+
+			@Override
+			boolean isEnabled(IEditableInvoicePanelCallback callback, int vatIdx) {
+				return true;
 			}
 		},
 		OUTPUT_VAT_ACCOUNT {
@@ -221,6 +261,11 @@ public class InvoiceVATPanel extends FlowPanel implements HasValueChangeHandlers
 			boolean isRowCellEnabled(IEditableInvoicePanelCallback callback, final int vatIdx) {
 				return isOutputVATEnabled(callback, vatIdx);
 			}
+
+			@Override
+			boolean isEnabled(IEditableInvoicePanelCallback callback, int vatIdx) {
+				return true;
+			}
 		},
 		WITHHOLDING {
 			@Override
@@ -241,6 +286,11 @@ public class InvoiceVATPanel extends FlowPanel implements HasValueChangeHandlers
 			@Override
 			boolean isRowCellEnabled(IEditableInvoicePanelCallback callback, final int vatIdx) {
 				return callback.getInvoice().isWithholding() && !callback.getVat(vatIdx).isPrepayment();
+			}
+
+			@Override
+			boolean isEnabled(IEditableInvoicePanelCallback callback, int vatIdx) {
+				return true;
 			}
 		},
 		PREPAYMENT {
@@ -263,6 +313,11 @@ public class InvoiceVATPanel extends FlowPanel implements HasValueChangeHandlers
 			boolean isRowCellEnabled(IEditableInvoicePanelCallback callback, final int vatIdx) {
 				return callback.getInvoice().hasPrepayments();
 			}
+
+			@Override
+			boolean isEnabled(IEditableInvoicePanelCallback callback, int vatIdx) {
+				return true;
+			}
 		},
 		EMPTY {
 			@Override
@@ -284,15 +339,18 @@ public class InvoiceVATPanel extends FlowPanel implements HasValueChangeHandlers
 			boolean isRowCellEnabled(IEditableInvoicePanelCallback callback, final int vatIdx) {
 				return true;
 			}
+
+			@Override
+			boolean isEnabled(IEditableInvoicePanelCallback callback, int vatIdx) {
+				return true;
+			}
 		};
 
 		abstract String width();
-
 		abstract Widget getLabel();
-
 		abstract boolean isHeaderEnabled(IEditableInvoicePanelCallback callback);
-
 		abstract boolean isRowCellEnabled(IEditableInvoicePanelCallback callback, final int vatIdx);
+		abstract boolean isEnabled(IEditableInvoicePanelCallback callback, final int vatIdx);
 
 		boolean isAdditionalDataEnabled(IEditableInvoicePanelCallback callback, final int vatIdx) {
 			return callback.isInvestAssetsAvailable() && callback.getVat(vatIdx).getInvestAsset() != null;			
@@ -312,6 +370,10 @@ public class InvoiceVATPanel extends FlowPanel implements HasValueChangeHandlers
 
 		boolean isSurchargeEnabled(IEditableInvoicePanelCallback callback, final int vatIdx) {
 			return isSurchargeEnabled(callback) && isVATEnabled(callback, vatIdx);
+		}
+
+		boolean isAccountingSource(IEditableInvoicePanelCallback callback, final int vatIdx) {
+			return callback.getVat(vatIdx).isAccountingSource();
 		}
 
 		boolean isInputVATEnabled(IEditableInvoicePanelCallback callback) {

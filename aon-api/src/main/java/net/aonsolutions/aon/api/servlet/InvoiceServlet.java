@@ -4,7 +4,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
 import java.util.Base64;
 import java.util.Date;
 import java.util.LinkedList;
@@ -28,6 +27,7 @@ import com.esferalia.aon.occam.api.json.invoice.InvoiceSeriesJSON;
 import com.esferalia.aon.occam.api.json.invoice.PrintInvoiceConfigurationJSON;
 import com.esferalia.aon.occam.api.json.invoice.SiiConfigurationJSON;
 import com.esferalia.aon.occam.api.json.invoice.TbaiConfigurationJSON;
+import com.esferalia.aon.occam.api.model.Account;
 import com.esferalia.aon.occam.api.model.AccountProperties;
 import com.esferalia.aon.occam.api.model.ApplicationParameter;
 import com.esferalia.aon.occam.api.model.Company;
@@ -613,20 +613,22 @@ public class InvoiceServlet extends AonApiHttpServlet{
 		JSONObject json = new JSONObject();
 		JSONObject jsonInvoice = new JSONObject(rawdoc.getJson());
 		JSONArray taxes = jsonInvoice.optJSONArray(IJsonNames.TAXES);
+		System.out.println(taxes);
 		Double taxableBase = 0.0;
 		Double retentionPercentage = 0.0;
 		Double surchargeQuota = 0.0;
 		Double vatQuota = 0.0;
 		if(taxes != null) {
 			for(int i = 0; i < taxes.length(); i++) {
-				if(taxes.optJSONObject(i).optString(IJsonNames.WITHHOLDING_TYPE).isEmpty()) {
-					taxableBase = taxes.optJSONObject(i).optDouble(IJsonNames.BASE);
+				if(taxes.optJSONObject(i).optString(IJsonNames.TYPE).equals("IRPF")) {
 					retentionPercentage = taxes.optJSONObject(i).optDouble(IJsonNames.PERCENTAGE);
 				} else {
-					Double a = taxes.optJSONObject(i).optDouble(IJsonNames.BASE);
+					Double a = taxes.optJSONObject(i).optDouble(IJsonNames.SURCHARGE_QUOTA);
 					surchargeQuota += a.isNaN() ? 0 : a;
-					Double b = taxes.optJSONObject(i).optDouble(IJsonNames.BASE);
+					Double b = taxes.optJSONObject(i).optDouble(IJsonNames.QUOTA);
 					vatQuota += b.isNaN() ? 0 : b;
+					Double c = taxes.optJSONObject(i).optDouble(IJsonNames.BASE);
+					taxableBase += c.isNaN() ? 0 : c;
 				}
 			}
 		}
@@ -1353,12 +1355,16 @@ public class InvoiceServlet extends AonApiHttpServlet{
 	
 	private JSONObject getConfiguration(AonApiData api) {
 		ApplicationParameter defaultWithholdingPercent = AON.getApplicationParameter(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), AppParam.ACC_DEFAULT_RETENTION_PERCENT);
+		ApplicationParameter defaultSalesAcc = AON.getApplicationParameter(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), AppParam.ACC_DEFAULT_SALES_ACC);
 		Integer withholdingPercentId = AonNumberUtils.toInteger(defaultWithholdingPercent.getValue());
+		Integer accId = AonNumberUtils.toInteger(defaultSalesAcc.getValue());
 		Tax withholdingPercent = AON.getTax(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), withholdingPercentId);
 		if(withholdingPercent.getWithholdingType() == null) withholdingPercent.setWithholdingType(WithholdingType.PROFESSIONAL);
-
+		Account acc = null;
+		if(accId != null) acc = ACCOUNTING.getAccount(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), accId);
 		Company company = AON.getCompanyForDomain(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin());
 		JSONObject json = new JSONObject();
+		json.put("defaultSalesAcc", acc != null ? acc.getCode() : null);
 		json.put("print", getPrintConfiguration(api));
 		json.put("company", CompanyJSON.toJSON(company));
 		json.put(IJsonNames.E_INVOICE, company.iseInvoice());

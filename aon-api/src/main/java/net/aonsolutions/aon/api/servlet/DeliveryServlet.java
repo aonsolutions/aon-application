@@ -156,7 +156,7 @@ public class DeliveryServlet extends AonApiHttpServlet {
 	
 	private JSONObject deleteDelivery(AonApiData api) {
 		Integer id = JsonUtils.getInteger(api.getData(), IJsonNames.ID);
-		AON.deleteSales(api.getDomain(), api.getUser(), id);
+		AON.deleteDelivery(api.getDomain(), api.getUser(), id);
 		return new JSONObject();
 	}
 	
