@@ -48,7 +48,7 @@
   --aonTopMenuNotAvailable : var(--aonGray);
   --aonTopMenuSpecial: var(--aonBlack);
 
-  --aonNote: #FFC000;
+  --aonNote: #FB982E;
   
 	--aonInvoice: var(--aonClearBlue);
 	--aonInvoiceBackground: #ebf2ff;
@@ -626,7 +626,6 @@ h1 {
   
   align-items: center; 
   border-bottom: none;
-  background-color: var(--aonHeaderBackgroundColor);
 }
 
 .aonHeaderBeta {
@@ -1161,6 +1160,13 @@ h1 {
 	font-weight: bold;
 	background-color: var(--aonLightGray);
 }   
+
+.aonAppMenuSidenavListSelected div{
+  font-weight: bold;
+	background-color: rgb(95, 99, 104);
+  color: white;
+
+}
 
 .aonAppMenuSidenavListBeta {
   line-height: 30px;
@@ -2802,7 +2808,7 @@ label.rating:hover {
 
 .aonHeaderNote,
 .aonMenuLeftopNote {
-	background-color: var(--aonNote);
+	background-color: var(--aonBlue);
 }
 
 #aonMenuList-note.aonMenuSidenavLiSeleted {
@@ -2813,7 +2819,7 @@ label.rating:hover {
 
 .aonHeaderFiscal,
 .aonMenuLeftopFiscal{
-	background-color: var(--aonFiscal);
+	background-color: var(--aonBlue);
 }
 
 #aonMenuList-fiscal.aonMenuSidenavLiSeleted {
@@ -2823,7 +2829,7 @@ label.rating:hover {
 
 .aonHeaderPayroll,
 .aonMenuLeftopPayroll {
-	background-color: var(--aonPayroll);
+	background-color: var(--aonBlue);
 }
 
 #aonMenuList-payroll.aonMenuSidenavLiSeleted {
@@ -2833,7 +2839,7 @@ label.rating:hover {
 
 .aonHeaderInvoice,
 .aonMenuLeftopInvoice {
-	background-color: var(--aonInvoice);
+	background-color: var(--aonBlue);
 }
 
 #aonMenuList-invoice.aonMenuSidenavLiSeleted {
@@ -2843,7 +2849,7 @@ label.rating:hover {
 
 .aonHeaderComunica,
 .aonMenuLeftopComunica {
-	background-color: var(--aonPayroll);
+	background-color: var(--aonBlue);
 }
 
 
@@ -2854,7 +2860,7 @@ label.rating:hover {
 
 .aonHeaderDocumental,
 .onMenuLeftopDocumental {
-	background-color: var(--aonDocumental);
+	background-color: var(--aonBlue);
 }
 
 #aonMenuList-documental.aonMenuSidenavLiSeleted {
@@ -2864,7 +2870,7 @@ label.rating:hover {
 
 .aonHeaderAccounting,
 .aonMenuLeftopAccounting {
-	background-color: var(--aonAccountingColor);
+	background-color: var(--aonBlue);
 }
 
 #aonMenuList-accounting.aonMenuSidenavLiSeleted {
@@ -2874,7 +2880,7 @@ label.rating:hover {
 
 .aonHeaderTimecontrol,
 .aonMenuLeftopTimecontrol {
-	background-color: var(--aonTimecontrol);
+	background-color: var(--aonBlue);
 }
 
 #aonMenuList-timecontrol.aonMenuSidenavLiSeleted {
@@ -2884,7 +2890,7 @@ label.rating:hover {
 
 .aonHeaderMessenger,
 .aonMenuLeftopMessenger {
-	background-color: var(--aonMessenger);
+	background-color: var(--aonBlue);
 }
 
 #aonMenuList-messenger.aonMenuSidenavLiSeleted {
@@ -4022,3 +4028,15 @@ label.rating:hover {
   font-weight: 600;
   letter-spacing: 0.44px;
 }
+
+.aonSideNavFiscalCircle{
+  width: 25px;
+  height: 25px;
+  font-size: 10px;
+  line-height: 23px;
+  border: 1px solid rgb(95, 99, 104);
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  color: rgb(95, 99, 104);
+} 

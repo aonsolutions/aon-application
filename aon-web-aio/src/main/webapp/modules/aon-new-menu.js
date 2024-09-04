@@ -120,10 +120,16 @@ export class AonNewMenu extends AonElement {
 	}
 
 	init() {
+		
 		this.setAttribute('opened', true);
-		this.buildDur().then(()=> {
-			this.build();
-		})
+		
+		return new Promise((resolve, reject) => {
+			this.buildDur().then(()=> {
+				this.build();
+				resolve();
+			});
+		});
+
 		
 		//if(localStorage.getItem('aon_domain_id') && localStorage.getItem('company')){
 		//	getDomainUserRoles({}).then(r => {
@@ -295,13 +301,7 @@ export class AonNewMenu extends AonElement {
 		this.getRootPanel().style.marginTop = '1px'; //'69px';
 		this.buildMenuTopnav();
 
-		if(LS.isTopMenu()){
-			this.showTopNav();
-		}
-
-		if(LS.isLeftMenu()){
-			this.showSideNav();
-		} 
+		
 
 		let header = this.getElement('aonHeaderWeb');
 		header.className = 'aonHeader aonHeaderStart';
@@ -837,6 +837,16 @@ export class AonNewMenu extends AonElement {
 	close() {
 		this.hideSideNav();
 		this.hideTopNav();
+	}
+
+	open() {
+		if(LS.isTopMenu()){
+			this.showTopNav();
+		}
+
+		if(LS.isLeftMenu()){
+			this.showSideNav();
+		} 
 	}
 
 	isExpanded() {
