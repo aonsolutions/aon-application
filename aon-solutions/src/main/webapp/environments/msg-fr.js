@@ -275,7 +275,9 @@ export const MOVED_TO_TRASH = 'Se ha movido a la papelera';
 export const MY_DATA = 'Mis Datos';
 export const MY_MANAGER = 'Mi Gestor';
 export const MY_USER = 'Mi Usuario';
+export const MAGIC_LINK = "Envoi du lien d'accès par email";
 export const UPPER_MENU = `Menu d'en-tête`;
+
 
 // ----- N
 
@@ -316,14 +318,14 @@ export const OPEN_MENU = 'Abrir Menú';
 export const OPEN_REQUESTS = 'Solicitudes Abiertas';
 export const OPTIONAL = "Opcional"; 
 export const OPTIONS = 'Opciones';
-export const OR_ACCESS = 'o ACCEDE';
+export const OR_ACCESS = 'ou ACCÈS';
 export const OTHER_SERVICES = 'Otros Servicios';
 
 // ----- P
 
 export const PARENT_APPS = 'Aplicaciones del padre';
 export const PAUSE = 'Pausa';
-export const PASSWORD = 'Contraseña';
+export const PASSWORD = 'Mot de passe';
 export const PAYMETHOD = 'Forma de Pago';
 export const PAYROLL = "Travail";
 export const PAYSHEET = 'Nómina';
@@ -411,8 +413,8 @@ export const SETTING =  'Configuration';
 export const SHARED = 'Compartidas';
 export const SHOW_FILE = 'Mostrar Fichero';
 export const SIDE_MENU = 'Menu latéral';
-export const SIGN_IN = 'Iniciar Sesión';
-export const SIGN_IN_WITHOUT_PASSWORD = 'Sin Contraseña';
+export const SIGN_IN = 'Se connecter';
+export const SIGN_IN_WITHOUT_PASSWORD = 'Pas de mot de passe';
 export const SIGN_IN_WITH_CERTIFICATE = 'Iniciar Sesión con Certificado';
 export const SII = 'SII';
 export const SII_TICKETBAI = 'SII / TicketBAI';
