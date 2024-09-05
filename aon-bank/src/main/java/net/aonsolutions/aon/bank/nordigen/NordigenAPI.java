@@ -117,9 +117,11 @@ class NordigenAPI {
 			checkResposeStatus(resp);
 			return responseBuilder.apply(resp.body());
 		} catch (InterruptedException e) {
+			NordigenUtils.logException(e);
 			Thread.currentThread().interrupt();
 			throw new NordigenException(e.getMessage());
 		} catch (IOException  e) {
+			NordigenUtils.logException(e);
 			throw new NordigenException(e.getMessage());
 		}
 	}
@@ -141,8 +143,10 @@ class NordigenAPI {
 			return responseBuilder.apply(resp.body());
 		} catch (InterruptedException e) {
 			Thread.currentThread().interrupt();
+			NordigenUtils.logException(e);
 			throw new NordigenException(e.getMessage());
 		} catch (IOException e) {
+			NordigenUtils.logException(e);
 			throw new NordigenException(e.getMessage());
 		}
 	}
@@ -162,9 +166,11 @@ class NordigenAPI {
 			checkResposeStatus(resp);
 			return responseBuilder.apply(resp.body());
 		} catch (InterruptedException e) {
+			NordigenUtils.logException(e);
 			Thread.currentThread().interrupt();
 			throw new NordigenException(e.getMessage());
 		} catch (IOException  e) {
+			NordigenUtils.logException(e);
 			throw new NordigenException(e.getMessage());
 		}
 	}
@@ -190,6 +196,7 @@ class NordigenAPI {
 			}
 			return uriBuilder.build();
 		} catch (URISyntaxException e) {
+			NordigenUtils.logException(e);
 			throw new NordigenException(e.getMessage());
 		}
 	}

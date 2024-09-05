@@ -53,6 +53,25 @@ public class NordigenDAO {
 			.collect(Collectors.toList());
 	}
 	
+	public static NordigenBankAccount getAccountByIban(AONContext ctx, String iban) {
+	    Company company = CompanyDAO.getCompany(ctx, ctx.getDomainId());
+	    
+	    return RegistryBankDAO.getStream(ctx
+	            , f -> f.getActiveProperty().eq(AonEnumUtils.getByte(true))
+	                .and(f.getRegistryProperty().eq(company.getId()))
+	                .and(f.getBankAccountProperty().eq(iban))) 
+	            .map(rbank -> new NordigenBankAccount()
+	                .setRbank(rbank)
+	                .setIban(rbank != null && rbank.getBankAccount() != null ? rbank.getBankAccount().getIban() : null)
+	                .setBankAlias(rbank != null ? rbank.getAlias() : null)
+	                .setLinked(AonStringUtils.isNotBlank(rbank.getRequisition()))
+	                .setRequisitionId(rbank.getRequisition())
+	                .setLastMovementDate(BankStatementDAO.getLastMovementDate(ctx, rbank.getId())))
+	            .findFirst()  
+	            .orElse(null); 
+	}
+
+	
 	public static NordigenBankAccount updateRegistryBank(AONContext ctx, NordigenBankAccount account) {
 		RegistryBank rb = account.getRbank();
 		Double balance = 0.0;
@@ -181,6 +200,8 @@ public class NordigenDAO {
 		bs.setStatus(AonEnumUtils.enumValue(StatementStatus.class, rec.getStatus()));
 		return bs;
 	}
+	
+	
 
 	// ***********************************************************************************
 	// ***********************************************************************************

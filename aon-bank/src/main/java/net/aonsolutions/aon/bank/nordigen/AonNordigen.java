@@ -44,12 +44,14 @@ import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
+
 public class AonNordigen  {
 
 	private static final String LINK_REGEX = "^https\\:\\/\\/(?<link>.*?)\\/ms\\/.*$";
 	private static final Pattern LINK_PATTERN = Pattern.compile(LINK_REGEX, Pattern.CASE_INSENSITIVE);
 	private static final Integer MAX_DAYS = 90;
-	
+//	private static final Logger LOGGER = Logger.getLogger(AonNordigen.class.getName());
+
 	private AonNordigen() {
 	}
 	
@@ -60,6 +62,7 @@ public class AonNordigen  {
 				.setToken(AonNordigen.getNewAccessToken())
 				.setAccounts(NordigenDAO.getAllAccounts(ctx));
 		} catch ( AonCoreException ex) {
+			NordigenUtils.logException(ex);
 			throw new NordigenException(ex.getMessage());
 		}
 	}
@@ -91,6 +94,10 @@ public class AonNordigen  {
 	
 	public static List<NordigenInstitution> getInstitutions(NordigenAccessToken token, Country country, Boolean paymentsEnabled) {
 		return NordigenAPI.getInstitutions(token.getAccess(), country, paymentsEnabled);
+	}
+	
+	public static List<NordigenInstitution> getAllInstitutions(NordigenAccessToken token){
+		return NordigenAPI.getInstitutions(token.getAccess(), null, null);
 	}
 
 	public static List<NordigenInstitution> getInstitutionsByBic(NordigenAccessToken token, String bic) {
@@ -126,7 +133,7 @@ public class AonNordigen  {
 	
 	public static List<NordigenRequisition> getDomainRequisitions(NordigenAccessToken token, String domainName) {
 		LinkedList<NordigenRequisition> list = new LinkedList<>();
-		AonCollectionUtils.stream( AonNordigen.getAllRequisitions(token) )
+		AonCollectionUtils.stream( AonNordigen.getAllRequisitions(token))
 			.filter(req -> {
 				Matcher matcher = LINK_PATTERN.matcher(req.getRedirect());
 				if (matcher.matches()) {
@@ -182,20 +189,44 @@ public class AonNordigen  {
 //	}
 	
 	private static NordigenAccountTransactions getTransactions(NordigenAccessToken token, String nordigenAccountId, Date dateFrom) {
-		return NordigenAPI.getTransactions(token.getAccess(), nordigenAccountId, null, null);
+		try {
+			return NordigenAPI.getTransactions(token.getAccess(), nordigenAccountId, null, null);
+		} catch (Exception e) {
+			NordigenUtils.logException(e);
+			return null;
+		}
 	}
 	
 	
 	private static List<NordigenBankStatement> getPendingAccountTransactions(NordigenBankAccount account, NordigenAccountTransactions transactions) {
 		if (transactions != null) {
-			return AonCollectionUtils.stream( transactions.getPending() )
+			return AonCollectionUtils.stream( transactions.getPending())
 				.map(t -> NordigenBankAccount.toBankStatement(account,t))
 				.filter( Objects::nonNull)
 				.map(st -> st.setPending(true))
 				.collect(Collectors.toCollection( LinkedList::new));
 		}
 		return new LinkedList<>();
+		
+		
 	}
+	
+//	private static List<NordigenBankStatement> getPendingAccountTransactions(NordigenBankAccount account, NordigenAccountTransactions transactions) {
+//		if (transactions != null) {
+//			
+//			try {
+//				return AonCollectionUtils.stream( transactions.getPending())
+//						.map(t -> NordigenBankAccount.toBankStatement(account,t))
+//						.filter( Objects::nonNull)
+//						.map(st -> st.setPending(true))
+//						.collect(Collectors.toCollection( LinkedList::new));
+//			} catch (Exception e) {
+//				NordigenUtils.logException(e);
+//			}
+//
+//		}
+//		return new LinkedList<>();		
+//	}
 	
 	private static List<NordigenBankStatement> getBookedAccountTransactions(NordigenBankAccount account, NordigenAccountTransactions transactions, Date dateFrom) {
 		if (transactions != null) {
@@ -230,6 +261,7 @@ public class AonNordigen  {
 	public static NordigenBankAccount setBankAccountValues(Occam occam, NordigenAccessToken token, NordigenBankAccount account) {
 		try (CloseableAONContext ctx =  AONContext.getAONContext(occam)) {
 			RegistryBank rbank = account.getRbank();
+//			RegistryBank rbank = null;
 			if (rbank.getRequisition() != null) {
 				String reqId = rbank.getRequisition();
 				if (AonStringUtils.isNotBlank(reqId)) {
@@ -245,6 +277,7 @@ public class AonNordigen  {
 								account.setInstitution(getInstitution(token, account.getRequisition().getInstitutionId()));
 							}
 						} catch (Exception e) {
+							NordigenUtils.logException(e);
 							e.printStackTrace();
 							account.addLog(e.getMessage());
 						}
@@ -283,6 +316,7 @@ public class AonNordigen  {
 			}
 			return NordigenDAO.updateRegistryBank(ctx, account);
 		} catch (InterruptedException e) {
+			NordigenUtils.logException(e);
 			Thread.currentThread().interrupt();
 			throw new AonCoreException(e);
 		}
@@ -345,6 +379,11 @@ public class AonNordigen  {
 		return list;
 	}
 	
+	//Nuevo, no existia ningun metodo para trar UN solo banco
+//	public static RegistryBank getRbankByRequisition(Occam occam, String requisitionId) {
+//		return AON.getRegistryBank(occam, f -> f.getRequisitionProperty().eq(requisitionId));
+//	}
+	
 	public static RegistryBank updateRbank(Occam occam, RegistryBank rbank) {
 		return AON.saveRegistryBank(occam, rbank);
 	}
@@ -390,14 +429,19 @@ public class AonNordigen  {
 	}
 
 	public static RegistryBank updateRequisitionId(Occam occam, NordigenRequisition requisition, Integer rbank) {
-		if (requisition != null && requisition.getId() != null && AonNumberUtils.zeroIfNull(rbank) > 0) {
-			String requisitionId = requisition.getId();
-			RegistryBank registryBank = AON.getRegistryBank(occam, f -> f.getIdProperty().eq(rbank));
-			if (registryBank != null) {
-				registryBank.setRequisition(requisitionId);
-				return AON.saveRegistryBank(occam, registryBank);
+		try {
+			if (requisition != null && requisition.getId() != null && AonNumberUtils.zeroIfNull(rbank) > 0) {
+				String requisitionId = requisition.getId();
+				RegistryBank registryBank = AON.getRegistryBank(occam, f -> f.getIdProperty().eq(rbank));
+				if (registryBank != null) {
+					registryBank.setRequisition(requisitionId);
+					return AON.saveRegistryBank(occam, registryBank);
+				}
 			}
+		} catch (Exception e) {
+			NordigenUtils.logException(e);
 		}
+		
 		return null;
 	}
 
@@ -412,6 +456,8 @@ public class AonNordigen  {
 	}
 
 	public static List<NordigenBankStatement> getMovements(NordigenAccessToken token, Occam occam, NordigenBankAccount nordigenBankAccount, Date endDate, boolean online) {
+	
+		
 		try (CloseableAONContext ctx =  AONContext.getAONContext(occam)) {
 			List<NordigenBankStatement> list = new LinkedList<>();
 			if (nordigenBankAccount != null && nordigenBankAccount.getMetadata() != null) {
@@ -441,56 +487,128 @@ public class AonNordigen  {
 			List<NordigenBankStatement> orderedList = list.stream().filter(Objects::nonNull).collect(Collectors.toList());
 			List<NordigenAccountBalance> balances = nordigenBankAccount.getBalances();
 			NordigenAccountBalance consolidado = AonNordigen.filterConsolidado(balances);
+			
 			NordigenAccountBalance real = AonNordigen.filterReal(balances);
 			NordigenAccountBalance balance = consolidado != null ? consolidado : real;
-			Double remaining = balance.getBalanceAmount() != null ? balance.getBalanceAmount().getAmount() : 0;
+			
+			Double remaining = (balance != null && balance.getBalanceAmount() != null) ? balance.getBalanceAmount().getAmount() : 0;
 			for(NordigenBankStatement bs : orderedList) {
 				bs.setCurrentBalance(remaining);
 				remaining += (bs.getAmount() * (bs.isPayment() ? 1 : -1));
 			}
 			return orderedList;
 		} catch (NordigenException e) {
+			NordigenUtils.logException(e);
 			throw e;
 		} catch (Exception e) {
 			throw mapException(e);
 		}
 	}
 
+//	public static NordigenRequisition addAccount(NordigenAccessToken token, Occam occam, NordigenBankAccount nordigenBankAccount) {
+//		RegistryBank rbank = nordigenBankAccount.getRbank();
+//		Pattern bicPattern = Pattern.compile("^(?<bic>.*?)X*$", Pattern.CASE_INSENSITIVE);
+//		Matcher bicMatcher = bicPattern.matcher(AonStringUtils.trimToEmpty(rbank.getBic()));
+//		StringBuilder bicBuilder = new StringBuilder();
+//		System.out.println("bic en bbdd" + rbank.getBic());
+//		if (bicMatcher.matches()) {
+//			bicBuilder.append(AonStringUtils.trimToEmpty(bicMatcher.group("bic")));
+//		}
+//		final String bic = bicBuilder.toString();
+//		System.out.println("bic de la entindad" + bic);
+//		
+//		
+//		List<NordigenInstitution> instList = AonNordigen.getInstitutions(token, null, null)
+//			.stream()
+//			.filter(inst -> AonStringUtils.equalsIgnoreCase(inst.getBic(), bic))
+//			.toList();
+//
+////		posible control cuando no encuentre inst
+//		if(instList.isEmpty()) {
+//			instList = AonNordigen.getInstitutionsByBic(token, bic);
+//		}
+//		System.out.println(instList);
+//		Optional<NordigenInstitution> optInstitution = Optional.ofNullable(instList.size() == 1 ? instList.get(0) : null);
+//		StringBuilder instIdBuilder = new StringBuilder();
+//		if (optInstitution.isPresent()) {
+//			instIdBuilder.append(AonStringUtils.trimToEmpty(optInstitution.get().getId()));
+//		}
+//		final String institutionId = instIdBuilder.toString();
+////		System.out.println("id de la institucion" + institutionId);
+//		
+//		//EN CASO DE QUE HAYA PROBLEMAS CON EL BIC:
+//		NordigenInstitution inst = nordigenBankAccount.getInstitution();
+//		
+//		if (inst == null && instList.size() > 1) {
+//			throw new NordigenException("Too much institutions");
+//		}
+//		
+//		NordigenAgreement agreement = AonNordigen.createAgreement(token, inst != null ? inst.getId() : institutionId);
+////		NordigenAgreement agreement = AonNordigen.createAgreement(token, "SANDBOXFINANCE_SFIN0000");
+//
+//		NordigenRequisition requisition = AonNordigen.createRequisition(token, agreement, "https://" + occam .getDomainName() + "/ms/api/task-evaluation/rbank?rbank=" + (rbank != null ? ""+rbank.getId() : ""));
+//		AonNordigen.updateRequisitionId(occam, requisition, rbank.getId());
+//		
+//		return requisition;
+//	}
+	
+	//funcion de prueba
 	public static NordigenRequisition addAccount(NordigenAccessToken token, Occam occam, NordigenBankAccount nordigenBankAccount) {
-		RegistryBank rbank = nordigenBankAccount.getRbank();
-		Pattern bicPattern = Pattern.compile("^(?<bic>.*?)X*$", Pattern.CASE_INSENSITIVE);
-		Matcher bicMatcher = bicPattern.matcher(AonStringUtils.trimToEmpty(rbank.getBic()));
-		StringBuilder bicBuilder = new StringBuilder();
-		if (bicMatcher.matches()) {
-			bicBuilder.append(AonStringUtils.trimToEmpty(bicMatcher.group("bic")));
-		}
-		final String bic = bicBuilder.toString();
-		
-		List<NordigenInstitution> instList = AonNordigen.getInstitutions(token, null, null)
-			.stream()
-			.filter(inst -> AonStringUtils.equalsIgnoreCase(inst.getBic(), bic))
-			.toList();
-		
-		Optional<NordigenInstitution> optInstitution = Optional.ofNullable(instList.size() == 1 ? instList.get(0) : null);
-		StringBuilder instIdBuilder = new StringBuilder();
-		if (optInstitution.isPresent()) {
-			instIdBuilder.append(AonStringUtils.trimToEmpty(optInstitution.get().getId()));
-		}
-		final String institutionId = instIdBuilder.toString();
-		
-		//EN CASO DE QUE HAYA PROBLEMAS CON EL BIC:
-		NordigenInstitution inst = nordigenBankAccount.getInstitution();
-		
-		if (inst == null && instList.size() > 1) {
-			throw new NordigenException("Too much institutions");
-		}
-		
-		NordigenAgreement agreement = AonNordigen.createAgreement(token, inst != null ? inst.getId() : institutionId);
-		NordigenRequisition requisition = AonNordigen.createRequisition(token, agreement, "https://" + occam .getDomainName() + "/ms/api/task-evaluation/rbank?rbank=" + (rbank != null ? ""+rbank.getId() : ""));
-		AonNordigen.updateRequisitionId(occam, requisition, rbank.getId());
-		
-		return requisition;
+		System.out.println("entra addAccount");
+	    try {
+	        RegistryBank rbank = nordigenBankAccount.getRbank();
+	        
+	        Pattern bicPattern = Pattern.compile("^(?<bic>.*?)X*$", Pattern.CASE_INSENSITIVE);
+	        Matcher bicMatcher = bicPattern.matcher(AonStringUtils.trimToEmpty(rbank.getBic()));
+	        StringBuilder bicBuilder = new StringBuilder();
+//	        System.out.println("bic en bbdd" + rbank.getBic());
+	        
+	        if (bicMatcher.matches()) {
+	            bicBuilder.append(AonStringUtils.trimToEmpty(bicMatcher.group("bic")));
+	        }
+	        final String bic = bicBuilder.toString();
+//	        System.out.println("bic de la entidad" + bic);
+
+	        List<NordigenInstitution> instList = AonNordigen.getInstitutions(token, null, null)
+	            .stream()
+	            .filter(inst -> AonStringUtils.equalsIgnoreCase(inst.getBic(), bic))
+	            .toList();
+
+	        // Control cuando no se encuentra la institución
+	        if (instList.isEmpty()) {
+	            instList = AonNordigen.getInstitutionsByBic(token, bic);
+	        }
+//	        System.out.println(instList);
+	        Optional<NordigenInstitution> optInstitution = Optional.ofNullable(instList.size() == 1 ? instList.get(0) : null);
+	        StringBuilder instIdBuilder = new StringBuilder();
+	        if (optInstitution.isPresent()) {
+	            instIdBuilder.append(AonStringUtils.trimToEmpty(optInstitution.get().getId()));
+	        }
+	        final String institutionId = instIdBuilder.toString();
+
+	        // En caso de que haya problemas con el BIC
+	        NordigenInstitution inst = nordigenBankAccount.getInstitution();
+	        if (inst == null && instList.size() > 1) {
+	            throw new NordigenException("Too many institutions");
+	        }
+
+	        NordigenAgreement agreement = AonNordigen.createAgreement(token, inst != null ? inst.getId() : institutionId);
+
+	        NordigenRequisition requisition = AonNordigen.createRequisition(
+	            token,
+	            agreement,
+	            "https://" + occam.getDomainName() + "/ms/api/task-evaluation/rbank?rbank=" + (rbank != null ? "" + rbank.getId() : "")
+	        );
+	        AonNordigen.updateRequisitionId(occam, requisition, rbank.getId());
+
+	        return requisition;
+	    } catch (Exception e) {
+	        // Llamar a logException para registrar el error
+	    	NordigenUtils.logException(e);
+	        throw e instanceof NordigenException ? (NordigenException) e : new NordigenException(e.getMessage());
+	    }
 	}
+
 
 	// -----------------------------------------------------------------
 	// -------------------------------------------------------- [PRIVATE]
@@ -531,7 +649,7 @@ public class AonNordigen  {
 							return metadata;
 						}
 					} catch (Exception e) {
-						
+						NordigenUtils.logException(e);
 					}
 				}
 			}
