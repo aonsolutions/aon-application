@@ -60,6 +60,7 @@ import com.esferalia.aon.gwt.payroll.shared.Workplace;
 import com.esferalia.aon.gwt.payroll.shared.WorkplaceInfo;
 import com.esferalia.aon.occam.api.model.Certificate;
 import com.esferalia.aon.occam.api.model.CertificateInfo;
+import com.esferalia.aon.occam.api.model.ContractParams;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.EnterpriseCCC;
 import com.esferalia.aon.occam.api.model.MailAccount;
@@ -559,6 +560,12 @@ public class EnterprisesServiceAsyncDecorator implements
 		AON.start();
 		enterprisesServiceAsync.getEmployeesInfo(currentDomainName, allEmployees, new AsyncCallbackWrapper<List<EmployeeContractInfo>>(callback));
 	}
+	
+	@Override
+	public void getEmployees(String currentDomainName, String user, ContractParams params, AsyncCallback<List<EmployeeContractInfo>> callback) throws IllegalArgumentException {
+		AON.start();
+		enterprisesServiceAsync.getEmployees(currentDomainName, user, params, new AsyncCallbackWrapper<List<EmployeeContractInfo>>(callback));
+	} 
 	
 	@Override
 	public void getFJEmployeesInfo(String currentDomainName, AsyncCallback<List<EmployeeContractInfo>> callback) {
