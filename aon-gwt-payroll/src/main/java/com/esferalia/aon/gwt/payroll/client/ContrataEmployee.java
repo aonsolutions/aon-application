@@ -1795,14 +1795,14 @@ public abstract class ContrataEmployee extends ResizeComposite {
 
 		previusContract = new AonToolbarButton("Contrato anterior", AON.CSS.aonIconLeft());
 		previusContract.addClickHandler(e -> onPreviusContract(contractId));
-		toolbar.add(previusContract);
+//		toolbar.add(previusContract);
 
 		employeeCounter = new Label();
-		toolbar.add(employeeCounter);
+//		toolbar.add(employeeCounter);
 
 		nextContract = new AonToolbarButton("Contrato siguiente", AON.CSS.aonIconRight());
 		nextContract.addClickHandler(e -> onNextContract(contractId));
-		toolbar.add(nextContract);
+//		toolbar.add(nextContract);
 
 		return toolbar;
 
