@@ -14,6 +14,7 @@ export class AonConfig extends AonElement {
 	DARK_SWITCH;
 	BRAND_SWITCH;
 	LANG_CARD;
+	THEMES_CARD;
 	TYPE_CARD;
 
 	get id() {
@@ -37,6 +38,7 @@ export class AonConfig extends AonElement {
 		this.DARK_SWITCH = this.id + 'DarkSwitch';
 		this.BRAND_SWITCH = this.id + 'BrandSwitch';
 		this.LANG_CARD = this.id + 'HelpLangCard';
+		this.THEMES_CARD = this.id + 'ThemesCard';
 		this.TYPE_CARD = this.id + 'TypeCard';
 	}
 
@@ -118,6 +120,24 @@ export class AonConfig extends AonElement {
 
 		this.appendChild(brandDiv);
 
+		let themesCard = new AonCard();
+		themesCard.id = this.THEMES_CARD;
+		themesCard.title = "Selección de tema";
+		themesCard.className = "rightPanelLangCard";
+		this.appendChild(themesCard);
+
+		let themesCardDiv = this.getElement(themesCard.CARD);
+		themesCardDiv.style.boxShadow = '0 2px 4px rgba(0,0,0,.1)';
+		themesCardDiv.style.backgroundColor = "var(--aonCardColor)";
+		themesCardDiv.style.borderRadius = '2px';
+
+		let themesDiv = this.createDiv();
+		themesDiv.appendChild(this.buildThemeData("Standard",'/css/theme/aon.css'));
+		themesDiv.appendChild(this.buildThemeData("Classic",'/css/theme/classic.css'));
+		themesDiv.appendChild(this.buildThemeData("Modern",'/css/theme/modern.css'));
+		themesDiv.appendChild(this.buildThemeData("Dark",'/css/theme/dark.css'));
+		themesCard.setContent(themesDiv);
+
 		let langCard = new AonCard();
 		langCard.id = this.LANG_CARD;
 		langCard.title = MSG.SELECT_LANGUAGE;
@@ -143,13 +163,13 @@ export class AonConfig extends AonElement {
 			LS.setTopMenu(topNavSwitch.checked);
 
       
-      if(LS.isTopMenu()) {
-				aonMenu.showTopNav();
-            } else {
-				aonMenu.hideTopNav();
-			};
-			
-	    });
+		if(LS.isTopMenu()) {
+					aonMenu.showTopNav();
+				} else {
+					aonMenu.hideTopNav();
+				};
+				
+			});
 
 		sideNavSwitch.addEventListener(EVENT.CHANGE, () => {
 			LS.setLeftMenu(sideNavSwitch.checked);
@@ -184,6 +204,34 @@ export class AonConfig extends AonElement {
 		
 	}
 
+	buildThemeData(value,theme){
+		let div = this.createDiv();
+		div.style.title = "Temas";
+		div.className = "configPanelLanguageDiv";
+
+		let i = this.createElement(TAG.I);
+		i.className = CSS.MATERIAL_ICONS + " configPanelLanguageI";
+		div.appendChild(i);
+
+		let span = this.createElement(TAG.SPAN);
+		span.className = CSS.AON_CARD_TEXT;
+		span.innerHTML = value;
+		div.appendChild(span);
+
+		if(theme == LS.getTheme()) {
+			i.innerHTML = "done";
+			span.style.fontWeight = "bold";
+		}else{
+			i.innerHTML = "palette";
+		}
+
+		div.addEventListener(EVENT.CLICK, () => {
+			LS.setTheme(theme);
+		})
+
+		return div;
+	}
+
 	buildLanguageData(value,language) {
 		let div = this.createDiv();
 		div.style.title = "Idioma";
@@ -206,7 +254,6 @@ export class AonConfig extends AonElement {
 		}
 
 		div.addEventListener(EVENT.CLICK, () => {
-			LS.setRightPanel(CONSTANT.TRUE);
 			LS.setLanguage(language);
 		})
 	
