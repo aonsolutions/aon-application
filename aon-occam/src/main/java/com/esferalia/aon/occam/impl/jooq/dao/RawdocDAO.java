@@ -81,7 +81,7 @@ public class RawdocDAO {
 		@Override public Property<String> getModificationUserProperty() {return new FilterDAO.PropertyDAO<>(RAWDOC.MODIFICATION_USER);}
 	}
 	
-	private static class RawdocFiller  implements Function<Record,Rawdoc> {
+	private static class RawdocFiller extends Filler implements Function<Record,Rawdoc> {
 		@Override
 		public Rawdoc apply(Record r) {
 			return build(r);
@@ -89,24 +89,25 @@ public class RawdocDAO {
 		
 		public static Rawdoc build(Record r) {
 			return new Rawdoc()
-					.setId(r.getValue(RAWDOC.ID))
-					.setDomain(r.getValue(RAWDOC.DOMAIN))
-					.setNature(RawdocNature.safeValueOf( r.getValue(RAWDOC.NATURE)))
-					.setType(RawdocType.safeValueOf( r.getValue(RAWDOC.TYPE)))
-					.setStatus(RawdocStatus.safeValueOf( r.getValue(RAWDOC.STATUS)))
-					.setJson(r.getValue(RAWDOC.JSON))
-					.setTediInvoice( AonStringUtils.isBlank(r.getValue(RAWDOC.JSON)) 
+					.setId(getValue(r, RAWDOC.ID))
+					.setDomain(getValue(r, RAWDOC.DOMAIN))
+					.setNature(RawdocNature.safeValueOf(getValue(r, RAWDOC.NATURE)))
+					.setType(RawdocType.safeValueOf(getValue(r, RAWDOC.TYPE)))
+					.setStatus(RawdocStatus.safeValueOf(getValue(r, RAWDOC.STATUS)))
+					.setJson(getValue(r, RAWDOC.JSON))
+					.setTediInvoice(AonStringUtils.isBlank(getValue(r, RAWDOC.JSON)) 
 							? null 
 							: TediInvoiceJSON.fromJSON( new JSONObject(r.getValue(RAWDOC.JSON) ) ) )
-					.setInvoice(AonStringUtils.isBlank(r.getValue(RAWDOC.JSON))
+					.setInvoice(AonStringUtils.isBlank(getValue(r, RAWDOC.JSON))
 							? new Invoice()
-							: InvoiceJSON.fromJSON(r.getValue(RAWDOC.JSON)))
-					.setLog(r.getValue(RAWDOC.LOG))
-					.setMimeType(MimeType.safeValueOf( r.getValue(RAWDOC.MIME_TYPE)))
-					.setCreationUser(r.getValue(RAWDOC.CREATION_USER))
-					.setCreationDate(r.getValue(RAWDOC.CREATION_DATE))
-					.setModificationUser(r.getValue(RAWDOC.MODIFICATION_USER))
-					.setModificationDate(r.getValue(RAWDOC.MODIFICATION_DATE));
+							: InvoiceJSON.fromJSON(getValue(r, RAWDOC.JSON)))
+					.setLog(getValue(r, RAWDOC.LOG))
+					.setMimeType(MimeType.safeValueOf(getValue(r, RAWDOC.MIME_TYPE)))
+					.setS3Key(getValue(r, RAWDOC.S3_KEY))
+					.setCreationUser(getValue(r, RAWDOC.CREATION_USER))
+					.setCreationDate(getValue(r, RAWDOC.CREATION_DATE))
+					.setModificationUser(getValue(r, RAWDOC.MODIFICATION_USER))
+					.setModificationDate(getValue(r, RAWDOC.MODIFICATION_DATE));
 		}
 	}
 	
@@ -138,6 +139,7 @@ public class RawdocDAO {
 	private static Field<?>[] SELECT_FIELDS = new Field[]{
 		 RAWDOC.ID		,RAWDOC.DOMAIN	,RAWDOC.NATURE	,RAWDOC.TYPE
 		,RAWDOC.STATUS	,RAWDOC.JSON	,RAWDOC.LOG		,RAWDOC.MIME_TYPE
+		,RAWDOC.S3_KEY
 		,RAWDOC.CREATION_USER			,RAWDOC.CREATION_DATE
 		,RAWDOC.MODIFICATION_USER		,RAWDOC.MODIFICATION_DATE
 	}; 
@@ -212,6 +214,7 @@ public class RawdocDAO {
 			.set(RAWDOC.LOG,rawdoc.getLog())
 			.set(RAWDOC.MIME_TYPE,rawdoc.getMimeType() == null? null : rawdoc.getMimeType().value())
 			.set(RAWDOC.DATA,rawdoc.getData())
+			.set(RAWDOC.S3_KEY, rawdoc.getS3Key())
 			.set(RAWDOC.CREATION_USER,ctx.getUser())
 			.set(RAWDOC.CREATION_DATE, new Timestamp( System.currentTimeMillis()))
 			.returning(RAWDOC.ID)
@@ -235,6 +238,7 @@ public class RawdocDAO {
 			.set(RAWDOC.STATUS,rawdoc.getStatus().value())
 			.set(RAWDOC.JSON,rawdoc.getJson())
 			.set(RAWDOC.LOG, rawdoc.getLog() != null ? rawdoc.getLog() : getLogArray(ctx, r, rawdoc.getStatus(), null))
+			.set(RAWDOC.S3_KEY, rawdoc.getS3Key())
 			.set(RAWDOC.MODIFICATION_USER, ctx.getUser())
 			.set(RAWDOC.MODIFICATION_DATE, new Timestamp( System.currentTimeMillis()))
 			.where(RAWDOC.ID.eq(rawdoc.getId()))

@@ -4040,3 +4040,73 @@ label.rating:hover {
   justify-content: center;
   color: rgb(95, 99, 104);
 } 
+
+.aonLoginSubTitle {
+  font-family: var(--roboto-body-big-font-family);
+  font-weight: var(--roboto-body-big-font-weight);
+  color: var(--gray-50);
+  font-size: var(--roboto-body-big-font-size);
+  letter-spacing: 0.44px;
+}
+
+.aonLoginButton {
+  width: 100%;
+  border-radius: 4px;
+  font-family: var(--roboto-button-font-family);
+  letter-spacing: var(--roboto-button-letter-spacing);
+  height: 3rem;
+  cursor: pointer;
+  margin-top: 1rem;
+  color: var(--white-base);
+  background-color: var(--gray-90);
+  border: 1px solid var(--gray-90);
+}
+
+.aonLoginButton:hover {
+  background-color: var(--black-100);
+}
+
+.aonDividerButtons {
+  width: 100%;
+  text-align: center;
+  border-bottom: 1px solid #d2d2d6;
+  line-height: 0px;
+  margin: 10px 0;
+}
+
+.aonDividerSpan {
+  background: var(--white-base);
+  padding: 0 10px;
+  color: var(--icons-gray-50);
+  font-size: 10px;
+}
+
+.aonMagicButton {
+  width: 100%;
+  border-radius: 4px;
+  border: 1px solid var(--gray-90);
+  font-family: var(--roboto-button-font-family);
+  letter-spacing: var(--roboto-button-letter-spacing);
+  height: 3rem;
+  cursor: pointer;
+  background-color: var(--white-base);
+  color: var(--gray-90);
+}
+
+.aonMagicButton:hover{
+  background-color: var(--gray-90);
+  color: var(--white-base);
+}
+
+.aonMagicButtonHover{
+  width: 100%;
+  border-radius: 4px;
+  font-family: var(--roboto-button-font-family);
+  letter-spacing: var(--roboto-button-letter-spacing);
+  height: 3rem;
+  cursor: pointer;
+  margin-top: 1rem;
+  background-color: var(--white-base);
+  color: var(--gray-90);
+  border: 1px solid var(--gray-90);
+}

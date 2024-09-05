@@ -269,6 +269,7 @@ export const MODEL_190 = 'Form 190';
 export const MODEL_190_DESCRIPTION = 'Form 190. Information Return. Withholdings and payment on account. Work income and income from economic activities, prizes and certain capital gains and income allocations. Annual summary.';
 export const MOVED_TO_TRASH = 'It has been moved to the trash';
 export const MY_DATA = 'My Data';
+export const MAGIC_LINK = 'Zusendung des Zugangslinks per E-Mail';
 export const MY_MANAGER = 'Mein Manager';
 export const MY_USER = 'My User';
 
@@ -406,7 +407,7 @@ export const SHARED = 'Shared';
 export const SHOW_FILE = 'Show File';
 export const SIDE_MENU = 'Seitliches Menü';
 export const SIGN_IN = 'Einloggen';
-export const SIGN_IN_WITHOUT_PASSWORD = 'Login ohne Passwort';
+export const SIGN_IN_WITHOUT_PASSWORD = 'Kein Passwort';
 export const SIGN_IN_WITH_CERTIFICATE = 'Mit Zertifikat Einloggen';
 export const SII = 'SII';
 export const SII_TICKETBAI = 'SII / TicketBAI';
