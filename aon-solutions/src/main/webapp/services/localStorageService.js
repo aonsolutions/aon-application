@@ -92,8 +92,13 @@ export const getTheme = () => {
 }
 
 export const setTheme = (theme) => {
-    set (THEME, theme);
+    if(theme){
+        set (THEME, theme); 
+    }else{
+        remove(THEME);
+    }
     location.reload();
+    
     
 }
 

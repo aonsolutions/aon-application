@@ -132,9 +132,9 @@ export class AonConfig extends AonElement {
 		themesCardDiv.style.borderRadius = '2px';
 
 		let themesDiv = this.createDiv();
-		themesDiv.appendChild(this.buildThemeData("Standard",'/css/theme/aon.css'));
+		themesDiv.appendChild(this.buildThemeData("Standard", "/css/theme/aon.css"));
 		themesDiv.appendChild(this.buildThemeData("Classic",'/css/theme/classic.css'));
-		themesDiv.appendChild(this.buildThemeData("Modern",'/css/theme/modern.css'));
+		themesDiv.appendChild(this.buildThemeData("Modern",'/css/tsheme/modern.css'));
 		themesDiv.appendChild(this.buildThemeData("Dark",'/css/theme/dark.css'));
 		themesCard.setContent(themesDiv);
 
