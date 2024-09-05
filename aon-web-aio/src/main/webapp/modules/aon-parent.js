@@ -298,7 +298,6 @@ export class AonParent extends AonElement {
 				ul.style.maxHeight = `calc(100vh - ${totalOffsetTop + totalBottom }px)`; 
 			}
 	    }, 100);
-		
 	}
 
 	loadMore() {

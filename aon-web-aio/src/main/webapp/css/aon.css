@@ -1163,7 +1163,7 @@ h1 {
 
 .aonAppMenuSidenavListSelected div{
   font-weight: bold;
-	background-color: rgb(95, 99, 104);
+	background-color: var(--aonFiscal);
   color: white;
 
 }
@@ -4034,11 +4034,11 @@ label.rating:hover {
   height: 25px;
   font-size: 10px;
   line-height: 23px;
-  border: 1px solid rgb(95, 99, 104);
+  border: 1px solid var(--aonFiscal);
   border-radius: 50%;
   display: flex;
   justify-content: center;
-  color: rgb(95, 99, 104);
+  color: var(--aonFiscal);
 } 
 
 .aonLoginSubTitle {

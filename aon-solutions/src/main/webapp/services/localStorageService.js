@@ -26,11 +26,11 @@ export const AON_THEME = '/css/theme/aon.css';
 export const DARK_THEME = '/css/theme/dark.css';
 
 export const get = (item) => {
-	let value = localStorage.getItem(item);
-	if ( value === null ){ 
-		value = getComputedStyle(document.body).getPropertyValue(`--${item}`);
-	} 
-	return value;
+    let value = localStorage.getItem(item);
+    if ( value === null ){ 
+        value = getComputedStyle(document.body).getPropertyValue(`--${item}`);
+    } 
+    return value;
 }
 
 export const set = (item, value) => {
@@ -74,38 +74,45 @@ export const setLeftMenu = (value) => {
     set(LEFT_MENU,value);
 } 
 
-export const isAppMenu= () => {
+export const isAppMenu = () => {
     let aon = getAppMenu();
     return CONSTANT.TRUE == aon;
 }
 
-export const getAppMenu= () => {
+export const getAppMenu = () => {
     return get (APP_MENU);
 }
 
-export const setAppMenu= (value) => {
+export const setAppMenu = (value) => {
     set(APP_MENU, value);
 }
 
-export const getTheme= () => {
+export const getTheme = () => {
     return get (THEME);
 }
 
-export const setTheme= (theme) => {
-    return set (THEME, theme);
+export const setTheme = (theme) => {
+    if(theme){
+        set (THEME, theme); 
+    }else{
+        remove(THEME);
+    }
+    location.reload();
+    
+    
 }
 
-export const isDarkTheme= () => {
+export const isDarkTheme = () => {
     let theme = get (THEME);
     return DARK_THEME == theme;
 }
 
-export const setDarkTheme= (value) => {
-	if ( value ==  CONSTANT.TRUE ) {
-    	setTheme(DARK_THEME);
-	} else {
-		remove(THEME);
-	}
+export const setDarkTheme = (value) => {
+    if ( value ==  CONSTANT.TRUE ) {
+        setTheme(DARK_THEME);
+    } else {
+        remove(THEME);
+    }
 }
 
 export const isWhiteBrand = () => {
@@ -274,3 +281,4 @@ export const removeDomain = () => {
     removeDomainLogin();
     removeDomainDocument();
 }
+
