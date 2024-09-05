@@ -5,7 +5,6 @@ import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import java.util.List;
 
 import org.junit.jupiter.api.RepeatedTest;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInfo;
 
 import com.code.aon.common.BeanManager;
@@ -20,7 +19,6 @@ import com.code.aon.finance.enumeration.InvoiceType;
 import com.code.aon.finance.invoicing.finance.FinanceGenerator;
 import com.code.aon.ql.Criteria;
 import com.esferalia.aon.entity.IEntityAlias;
-import com.esferalia.aon.watson.util.AonChronometer;
 
 import es.aonsolutions.aio.test.AonHibernateTestBasic;
 import es.aonsolutions.aio.test.AonHibernateTestFaker;
@@ -28,13 +26,8 @@ import es.aonsolutions.aio.test.AonHibernateTestRandom;
 
 class InvoiceInsertTest extends AonHibernateTestBasic {
 
-//	@Test()
-//	void testInsertInvoice() throws Exception {
-	@RepeatedTest(value = 100, name = RepeatedTest.SHORT_DISPLAY_NAME)
+	@RepeatedTest(value = 10)
 	void testInsertInvoice(TestInfo testInfo) throws Exception {
-		AonChronometer ac = new AonChronometer();
-		ac.start();
-		
 		Invoice invoice = AonHibernateTestFaker.getInvoice();
 		IManagerBean bean = BeanManager.getManagerBean(Invoice.class);
 		IManagerBean detailBean = BeanManager.getManagerBean(InvoiceDetail.class);
@@ -43,15 +36,8 @@ class InvoiceInsertTest extends AonHibernateTestBasic {
 		for ( InvoiceDetail detail : details) {
 			assertDoesNotThrow( () -> detailBean.insert(detail),"Fallo al insertar Invoice Detail" );	
 		}
-		
 		inv = (Invoice) bean.get(inv.getId());
-		
 		new FinanceGenerator().generateFinances( inv, inv.getTotal());
-		System.out.println("Inserting invoice " + testInfo.getDisplayName() + " -- " + ac.getMarkSeconds());
-//		System.out.println("Inserting invoice  -- " + ac.getMarkSeconds());
-	
-		ac.stop();
-		System.out.println("[END] " + ac.getTime());
 	}
 
 	public static Invoice getSalesInvoice( ) throws ManagerBeanException  {

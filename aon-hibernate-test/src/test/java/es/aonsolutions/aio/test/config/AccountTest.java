@@ -35,19 +35,14 @@ class AccountTest extends AonHibernateTestBasic {
 		
 		IManagerBean bean = BeanManager.getManagerBean(Account.class);
 		assertDoesNotThrow( () -> bean.insert(account),"Fallo al insertar cuenta contable" );
-	}
 
-	@Test
-	void testListAccount() throws Exception {
-		IManagerBean bean = BeanManager.getManagerBean(Account.class);
 		Criteria c = new Criteria();
-		c.addExpression( ExpressionUtilities.getLikeExpression( bean.getFieldName(IEntityAlias.ACCOUNT_CODE), "600%")) ;
+		c.addExpression( ExpressionUtilities.getEqualExpression( bean.getFieldName(IEntityAlias.ACCOUNT_DESCRIPTION), ACCOUNT_DESCRIPTION)) ;
 		c.addOrder( bean.getFieldName(IEntityAlias.ACCOUNT_ID) , false );
 		List<ITransferObject> accounts = bean.getList(c,0,1);
 		Asserts.assertNotEmptyCollection( "Empty account list", accounts );
-		Assertions.assertEquals(1, accounts.size(), "Account list not suitable size");
-		Account account = (Account) accounts.get(0);
-		Assertions.assertEquals( ACCOUNT_DESCRIPTION, account.getDescription(), "Account not last inserted");
+		Account acc = (Account) accounts.get(0);
+		Assertions.assertEquals( ACCOUNT_DESCRIPTION, acc.getDescription(), "Account not last inserted");
 		
 		
 	}

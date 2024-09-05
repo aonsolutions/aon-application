@@ -2,9 +2,6 @@ package es.aonsolutions.aio.test;
 
 import static org.mockito.Mockito.mock;
 
-import jakarta.servlet.ServletContext;
-import jakarta.servlet.ServletContextEvent;
-
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.TestInfo;
@@ -15,6 +12,10 @@ import com.code.aon.ui.common.listener.BeanRegisterContextListener;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.esferalia.aon.occam.api.model.Occam;
+import com.esferalia.aon.watson.util.AonStringUtils;
+
+import jakarta.servlet.ServletContext;
+import jakarta.servlet.ServletContextEvent;
 
 public class AonHibernateTestBasic {
 	private static final Object MONITOR = new Object();
@@ -32,18 +33,26 @@ public class AonHibernateTestBasic {
 
 	
 	@BeforeEach
-	public void beforeEach( TestInfo info) {
-//		System.out.println( "beforeEach " + info.getTestMethod() );
+	public void beforeEach( TestInfo testInfo) {
 		synchronized (MONITOR) {
 			if ( ctx == null) {
 				ctx = AONContext.getAONContext(getOccam());
 			}
 		}
+		boolean isRepeatedTest = AonStringUtils.contains(testInfo.getDisplayName(),"repetition");
+		String className = testInfo.getTestClass().map(clazz -> clazz.getName()).orElse("?");
+		String methodName = testInfo.getTestMethod().map(tm -> tm.getName()).map(mn -> mn + "()").orElse("?");
+		String repetitionInfo = isRepeatedTest?testInfo.getDisplayName():""; 
+		System.out.println( 
+			String.format("Running [ %s.%s %s ]"
+				,className
+				,methodName
+				,repetitionInfo 
+		));				
 	}
 	
 	@AfterEach
 	public void afterEach(TestInfo info) {
-//		System.out.println( "afterEach" + info.getTestMethod() );
 		synchronized (MONITOR) {
 			if (ctx != null) ctx.close();
 		}

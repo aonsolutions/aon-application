@@ -8,12 +8,12 @@ import es.aonsolutions.aio.test.config.ConfigTestSuite;
 import es.aonsolutions.aio.test.invoice.InvoiceTestSuite;
 import es.aonsolutions.aio.test.product.ProductTestSuite;
 
+@Suite
 @SelectClasses({
 	ConfigTestSuite.class,
 	ProductTestSuite.class,
 	InvoiceTestSuite.class
 })
-@Suite
 public class AonHibernateTestSuite {
 
 	

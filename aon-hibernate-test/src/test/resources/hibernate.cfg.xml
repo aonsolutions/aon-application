@@ -5,9 +5,7 @@
 <hibernate-configuration>
 
 	<session-factory>
-		<property name="connection.provider_class">
-			es.aonsolutions.aio.test.HibernateConnectionProvider
-		</property>
+		<property name="connection.provider_class">es.aonsolutions.aio.test.HibernateConnectionProvider</property>
 		<property name="dialect">org.hibernate.dialect.MySQLDialect</property>
 
 		<mapping package="com.code.aon.common.dao.hibernate.type"/>
@@ -202,7 +200,7 @@
 		<mapping class="com.code.aon.geozone.GeoZone"/>
 		 
 
-		<!-- AON-GROUPWARE Mapping files 
+		<!-- AON-GROUPWARE Mapping files --> 
 		<mapping class="com.code.aon.groupware.Alarm"/>
 		<mapping class="com.code.aon.groupware.Campaign"/>
 		<mapping class="com.code.aon.groupware.CampaignProject"/>
@@ -222,7 +220,7 @@
 		<mapping class="com.code.aon.groupware.Task"/>
 		<mapping class="com.code.aon.groupware.TaskHolder"/>
 		<mapping class="com.code.aon.groupware.TaskHolderWorkgroup"/>
-		-->
+		
  
 		<!-- AON-MARKETING Mapping files --> 
 		<mapping class="com.code.aon.marketing.ActionTarget"/>

@@ -1,6 +1,7 @@
 package es.aonsolutions.aio.test.config;
 
-import static org.junit.Assert.assertNotNull;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import org.junit.jupiter.api.Test;
 
@@ -19,23 +20,23 @@ class AppParamTest extends AonHibernateTestBasic {
 	@Test
 	void testAccDefaultChargedVatAcc( ) throws Exception {
 		ApplicationParameter param = checkIfExistAccountParam( "477", AppParam.ACC_DEFAULT_CHARGED_VAT_ACC );
-		assertNotNull( "Parámetro null" , param );
+		assertNotNull( param , "Parámetro null");
 	}
 	
 	@Test
 	void testAccDefaultPaidVatAcc() throws Exception {
 		ApplicationParameter param = checkIfExistAccountParam( "472", AppParam.ACC_DEFAULT_CHARGED_VAT_ACC );
-		assertNotNull( "Parámetro null" , param );
+		assertNotNull( param , "Parámetro null");
 	}
 	@Test
 	void testAccDefDuaVatAcc() throws Exception {
 		ApplicationParameter param = checkIfExistAccountParam( "472", AppParam.ACC_DEF_DUA_VAT_ACC );
-		assertNotNull( "Parámetro null" , param );
+		assertNotNull( param , "Parámetro null" );
 	}
 	@Test
 	void testAccVatNegativeAdjustAcc() throws Exception {
 		ApplicationParameter param = checkIfExistAccountParam( "633", AppParam.ACC_VAT_NEGATIVE_ADJUST_ACC );
-		assertNotNull( "Parámetro null" , param );
+		assertNotNull( param , "Parámetro null");
 	}
 	
 	private ApplicationParameter checkIfExistAccountParam(String prefix, AppParam parameter) throws Exception {
@@ -48,7 +49,7 @@ class AppParamTest extends AonHibernateTestBasic {
 
 	private ApplicationParameter insertAccountParam(String prefix, AppParam parameter) throws Exception {
 		Account account = AonHibernateTestFaker.getAccount(prefix);
-		assertNotNull( "Parámetro null" , account );
+		assertNotNull( account , "Parámetro null");
 		ApplicationParameter appParam = new ApplicationParameter();
 		appParam.setName( parameter.toString() );
 		appParam.setValue( AonNumberUtils.toString(account.getId()));

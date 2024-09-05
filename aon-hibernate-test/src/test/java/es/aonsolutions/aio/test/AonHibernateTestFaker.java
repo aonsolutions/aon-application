@@ -1,5 +1,7 @@
 package es.aonsolutions.aio.test;
 
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
@@ -34,6 +36,7 @@ import com.code.aon.product.util.DiscountExpression;
 import com.code.aon.ql.Criteria;
 import com.code.aon.supplier.Supplier;
 import com.esferalia.aon.entity.IEntityAlias;
+import com.esferalia.aon.watson.util.AonCollectionUtils;
 import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.github.javafaker.Faker;
@@ -161,11 +164,11 @@ public class AonHibernateTestFaker {
 			detail.setWorkPlace( workplace );
 			Item item = null;
 			if (invoice.isExpense() || invoice.isUndeductible()) {
-				item =  getExpenseItem();
+				item =  getInvoiceExpenseItem();
 			} else if (AonHibernateTestRandom.gt(10)) {
-				item =  getCommercialItem();
+				item =  getInvoiceCommercialItem();
 			} else {
-				item =  getServiceItem();
+				item =  getInvoiceServiceItem();
 			}
 			detail.setItem( item );
 			detail.setDescription(item.getFullName());
@@ -205,28 +208,54 @@ public class AonHibernateTestFaker {
 	// ***************************************
 	// 									[ITEM] 
 	// ***************************************
-	public static Item getExpenseItem( ) throws ManagerBeanException  {
-		return getItem( ProductType.EXPENSE, false );
+	private static Item getInvoiceExpenseItem( ) throws ManagerBeanException  {
+		Item item = getInvoiceItem( ProductType.EXPENSE, false );
+		if (item == null) {
+			IManagerBean bean = BeanManager.getManagerBean(Item.class);
+			item = getNewExpenseItem();
+			item = (Item) bean.insert(item);
+		}
+		return item;
 	}
-	public static Item getCommercialItem() throws ManagerBeanException {
-		return getItem( ProductType.COMMERCIAL_PRODUCT, false );
+	private static Item getInvoiceCommercialItem() throws ManagerBeanException {
+		Item item = getInvoiceItem( ProductType.COMMERCIAL_PRODUCT, false );
+		if (item == null) {
+			IManagerBean bean = BeanManager.getManagerBean(Item.class);
+			item = getNewCommercialItem();
+			item = (Item) bean.insert(item);
+		}
+		return item;
 	}
-	public static Item getServiceItem() throws ManagerBeanException {
-		return getItem( ProductType.SERVICE, false );
+	private static Item getInvoiceServiceItem() throws ManagerBeanException {
+		Item item = getInvoiceItem( ProductType.SERVICE, false );
+		if (item == null) {
+			IManagerBean bean = BeanManager.getManagerBean(Item.class);
+			item = getNewServiceItem();
+			item = (Item) bean.insert(item);
+		}
+		return item;
 	}
-	public static Item getItem( ProductType type, boolean nullable) throws ManagerBeanException  {
-		IManagerBean bean = BeanManager.getManagerBean(Item.class);
-		Criteria c = new Criteria();
-		c.addEqualExpression(bean.getFieldName(IEntityAlias.ITEM_PRODUCT_TYPE), type);
-		int count = bean.getCount(c);
-		if (count > 0) {
-			List<ITransferObject> items = bean.getList(c
-				,AonHibernateTestRandom.number( 0, count - (nullable?0:1) ),1);
-			if ( items != null && !items.isEmpty()) {
-				return (Item) items.get(0);
+	private static Item getInvoiceItem( ProductType type, boolean nullable) throws ManagerBeanException  {
+		Item item = null;
+		if (!nullable || (nullable && AonHibernateTestRandom.gt(10))) {
+			IManagerBean productBean = BeanManager.getManagerBean(Product.class);
+			Criteria productCriteria = new Criteria();
+			productCriteria.addEqualExpression(productBean.getFieldName(IEntityAlias.PRODUCT_TYPE), type);
+			productCriteria.addNotNullExpression(productBean.getFieldName(IEntityAlias.PRODUCT_VAT_ID));
+			List<ITransferObject> productList = productBean.getList(productCriteria);
+			if ( AonCollectionUtils.isNotEmpty(productList)) {
+				Product p = (Product) productList.get(0);
+				
+				IManagerBean bean = BeanManager.getManagerBean(Item.class);
+				Criteria c = new Criteria();
+				c.addEqualExpression(bean.getFieldName(IEntityAlias.ITEM_PRODUCT_ID), p.getId());
+				List<ITransferObject> items = bean.getList(c);
+				if ( AonCollectionUtils.isNotEmpty(items)) {
+					item = (Item) items.get(0);	
+				}
 			}
 		}
-		return null;
+		return item;
 	}
 	
 	public static Item getNewCommercialItem() throws ManagerBeanException {

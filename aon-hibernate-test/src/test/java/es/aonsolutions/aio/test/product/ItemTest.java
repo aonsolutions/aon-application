@@ -2,12 +2,19 @@ package es.aonsolutions.aio.test.product;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
+import java.util.List;
+
 import org.junit.jupiter.api.RepeatedTest;
 
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
+import com.code.aon.common.ITransferObject;
 import com.code.aon.product.Item;
 import com.code.aon.product.Product;
+import com.code.aon.ql.Criteria;
+import com.code.aon.ql.util.ExpressionUtilities;
+import com.esferalia.aon.entity.IEntityAlias;
+import com.esferalia.aon.watson.util.AonCollectionUtils;
 
 import es.aonsolutions.aio.test.AonHibernateTestBasic;
 import es.aonsolutions.aio.test.AonHibernateTestFaker;
@@ -43,7 +50,14 @@ class ItemTest extends AonHibernateTestBasic {
 		Product product = item.getProduct();
 		if ( product != null &&  product.getId() == null ) {
 			IManagerBean bean = BeanManager.getManagerBean(Product.class);
-			Product prod = (Product) assertDoesNotThrow( () -> bean.insert(product),"Fallo al insertar Product" );
+			
+			Criteria c = new Criteria();
+			c.addExpression( ExpressionUtilities.getEqualExpression( bean.getFieldName(IEntityAlias.PRODUCT_CODE), product.getCode())) ;
+			List<ITransferObject> productList = bean.getList(c);
+			Product prod = (Product) 
+				(( AonCollectionUtils.isEmpty(productList) )
+					?assertDoesNotThrow( () -> bean.insert(product),"Fallo al insertar Product" )
+					:productList.get(0)); 
 			item.setProduct(prod);
 		}
 		IManagerBean bean = BeanManager.getManagerBean(Item.class);
