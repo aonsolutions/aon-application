@@ -41,10 +41,10 @@
 		 
 		<!-- **** TEST DEPENDENCIES **** -->
 		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
-			<version>${junitVersion}</version>
-			<scope>test</scope>
+		    <groupId>org.junit.jupiter</groupId>
+		    <artifactId>junit-jupiter-engine</artifactId>
+		    <version>5.11.0</version>
+		    <scope>test</scope>
 		</dependency>
 	</dependencies>
 </project>

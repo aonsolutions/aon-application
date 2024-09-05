@@ -1,47 +1,40 @@
 package com.esferalia.aon.watson.util;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.TestName;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInfo;
 
 public class SmartSearchTest {
 	
-
-	@Rule
-	public TestName name = new TestName();
-	
-	@Before
-	public void showTestName() {
-		System.out.println("\n--------------------------------------------------------");
-		System.out.println("  " + name.getMethodName());
-		System.out.println("---------------------------------------------------------");
+	@BeforeEach
+	public void beforeEach(TestInfo testInfo) {
+		boolean isRepeatedTest = AonStringUtils.contains(testInfo.getDisplayName(),"repetition");
+		String className = testInfo.getTestClass().map(clazz -> clazz.getName()).orElse("?");
+		String methodName = testInfo.getTestMethod().map(tm -> tm.getName()).map(mn -> mn + "()").orElse("?");
+		String repetitionInfo = isRepeatedTest?testInfo.getDisplayName():""; 
+		System.out.println( 
+			String.format("Running [ %s.%s %s ]"
+				,className
+				,methodName
+				,repetitionInfo 
+		));				
 	}
-	
 	
 	private void matching(String text, String searcher) {
-		System.out.println(" TEXT     : \"" + text + "\"");
-		System.out.println(" SEARCHER : \"" + searcher + "\"");
-		System.out.println(" TARGET   : match" );
 		assertTrue(AonStringUtils.containsMatching(text, searcher));
-		System.out.println("\n SUCCESS." );
-		
 	}
 	private void notMatching(String text, String searcher) {
-		System.out.println(" TEXT     : \"" + text + "\"");
-		System.out.println(" SEARCHER : \"" + searcher + "\"");
-		System.out.println(" TARGET   : not match" );
 		assertFalse(AonStringUtils.containsMatching(text, searcher));
-		System.out.println("\n SUCCESS." );
 	}
 	
 	
@@ -103,20 +96,13 @@ public class SmartSearchTest {
 	public void getMatchingTest() {
 		final String searcher = "nom trabajidores";
 		final String text = "IMPORTACIÓN DE Nóminas Y TRABAJADORES";
-
 		
 		List<String> matching = AonStringUtils.getMatching(text, searcher);
 		if(matching.size() != 2) {
 			fail("Incorrect matching word number");
 		}
-		
-		System.out.println(" EXPECTING: \"Nóminas\" , \"TRABAJADORES\" ");
-		System.out.println(" GET: \"" + matching.get(0) + "\" ");
-		System.out.println(" GET: \"" + matching.get(1) + "\" ");
-		
 		assertEquals("Nóminas", matching.get(0));
 		assertEquals("TRABAJADORES", matching.get(1));
-		System.out.println("\n SUCCESS.");
 	}
 	
 	@Test
@@ -124,9 +110,7 @@ public class SmartSearchTest {
 		final String searcher = "2";
 		final String text = "IMPORTACIÓN   DE Nóminas  TRABAJADORES";		
 		List<String> matching = AonStringUtils.getMatching(text, searcher);
-		 
 		assertEquals(0, matching.size());
-		System.out.println("\n SUCCESS.");
 	}	
 
 	@Test
@@ -142,16 +126,11 @@ public class SmartSearchTest {
 		results.add("Modelo 123 - Retenciones e ingresos a cuenta sobre determinados rendimientos");
 		
 		final String searcher = "trabaji Retencions";
-		List<String> filteredResults = results.stream().filter(p -> AonStringUtils.containsMatching(p, searcher)).collect(Collectors.toList());
-		
-		System.out.println(" RAW RESULTS: \n");
-		results.forEach(r -> System.out.println(" > " + r));
-		
-		System.out.println("\n FILTERED RESULTS: \n");
-		filteredResults.forEach(r -> System.out.println(" > " + r));
-		
+		LinkedList<String> filteredResults = results
+			.stream()
+			.filter(p -> AonStringUtils.containsMatching(p, searcher))
+			.collect(Collectors.toCollection(LinkedList::new));
 		assertEquals(results.get(4),filteredResults.get(0));
-		System.out.println("\n SUCCESS.");
 			
 	}
 	
