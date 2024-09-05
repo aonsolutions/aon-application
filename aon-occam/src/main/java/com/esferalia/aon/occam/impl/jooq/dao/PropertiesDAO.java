@@ -238,7 +238,7 @@ public class PropertiesDAO {
 		@Override public Property<String> getCreationUserProperty() {return new FilterDAO.PropertyDAO<>(INVOICE.CREATION_USER);}
 		@Override public Property<Timestamp> getModificationDateProperty() {return new FilterDAO.PropertyDAO<>(INVOICE.MODIFICATION_DATE);}
 		@Override public Property<String> getModificationUserProperty() {return new FilterDAO.PropertyDAO<>(INVOICE.MODIFICATION_USER);}
-		@Override public Property<String> getTotalStringProperty() {return new FilterDAO.PropertyDAO<>(INVOICE.TOTAL.cast(SQLDataType.VARCHAR));}
+		@Override public Property<String> getTotalStringProperty() {return new FilterDAO.PropertyDAO<>(INVOICE.TOTAL.round(2).cast(SQLDataType.VARCHAR));}
 		@Override public Property<String> getDateNewPortalProperty() {return new FilterDAO.PropertyDAO<>(
 				DSL.concat(
 						DSL.splitPart(INVOICE.ISSUE_DATE.cast(SQLDataType.VARCHAR), "-", 3),
