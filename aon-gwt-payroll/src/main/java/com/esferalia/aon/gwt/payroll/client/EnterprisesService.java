@@ -56,6 +56,7 @@ import com.esferalia.aon.gwt.payroll.shared.Workplace;
 import com.esferalia.aon.gwt.payroll.shared.WorkplaceInfo;
 import com.esferalia.aon.occam.api.model.Certificate;
 import com.esferalia.aon.occam.api.model.CertificateInfo;
+import com.esferalia.aon.occam.api.model.ContractParams;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.EnterpriseCCC;
 import com.esferalia.aon.occam.api.model.MailAccount;
@@ -211,6 +212,8 @@ public interface EnterprisesService extends RemoteService {
 	List<CCCInfo> getEnterprisesCCCInfo(String currentDomainName, String user, long findPeriodTime);
 
 	List<EmployeeContractInfo> getEmployeesInfo(String currentDomainName, Boolean allEmployees);
+	
+	List<EmployeeContractInfo> getEmployees(String currentDomainName, String user, ContractParams params) throws IllegalArgumentException;
 	
 	List<EmployeeContractInfo> getFJEmployeesInfo(String currentDomainName);
 

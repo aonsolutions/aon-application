@@ -163,6 +163,7 @@ import com.esferalia.aon.occam.api.PAYROLL;
 import com.esferalia.aon.occam.api.SECURITY;
 import com.esferalia.aon.occam.api.model.Certificate;
 import com.esferalia.aon.occam.api.model.CertificateInfo;
+import com.esferalia.aon.occam.api.model.ContractParams;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.EmployeeIT;
 import com.esferalia.aon.occam.api.model.EmployeeITPart;
@@ -2339,6 +2340,23 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 	}
 	
 	@Override
+	public List<EmployeeContractInfo> getEmployees(String domain, String user, ContractParams params) throws IllegalArgumentException {
+		try(Connection connection = AonServletUtils.getConnection(domain)) {
+			Integer domainId = AonServletUtils.getDomainID(domain);
+			Integer parentDomainId = AonServletUtils.getParentDomainID(domain);
+			Integer userId = AonServletUtils.getUserID(connection, user, domainId, parentDomainId);
+			
+			params.setDomainName(domain);
+			params.setDomain(domainId);
+			params.setUser(user);
+			
+			return JooqContrataContract.getEmployees(connection, params);
+		} catch (SQLException e) {
+			throw new RuntimeException(e);
+		}
+	}
+	
+	@Override
 	public List<EmployeeContractInfo> getFJEmployeesInfo(String domainName) {
 		try(Connection connection = AonServletUtils.getConnection(domainName)) {
 			Integer domainId = AonServletUtils.getDomainID(domainName);
@@ -3743,6 +3761,9 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 			
 			try { enterpriseContext.setScopes(JooqWorkplace.getScopes(connection, domainId)); } 
 			catch (Exception e) { e.printStackTrace(); errorMessage += " Error al cargar ambitos."; }
+			
+			try { enterpriseContext.setContractTypes(JooqWorkplace.getContractTypes(connection, domainId)); } 
+			catch (Exception e) { e.printStackTrace(); errorMessage += " Error al cargar tipos de contratos."; }
 			
 			return enterpriseContext;
 		} catch (Exception e) {

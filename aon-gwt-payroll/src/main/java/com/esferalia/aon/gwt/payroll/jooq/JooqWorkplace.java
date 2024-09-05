@@ -2,6 +2,7 @@ package com.esferalia.aon.gwt.payroll.jooq;
 
 import static com.esferalia.aon.jooq.tables.PayMethod.PAY_METHOD;
 import static com.esferalia.aon.jooq.tables.Calendar.CALENDAR;
+import static com.esferalia.aon.jooq.tables.ContractData.CONTRACT_DATA;
 import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
 import static com.esferalia.aon.jooq.tables.Enterprise.ENTERPRISE;
 import static com.esferalia.aon.jooq.tables.EnterpriseActivity.ENTERPRISE_ACTIVITY;
@@ -18,6 +19,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 
 import org.jooq.DSLContext;
 import org.jooq.Record;
@@ -31,6 +33,7 @@ import com.esferalia.aon.gwt.payroll.shared.ActivitiesCCC;
 import com.esferalia.aon.gwt.payroll.shared.Workplace;
 import com.esferalia.aon.gwt.payroll.shared.WorkplaceInfo;
 import com.esferalia.aon.jooq.tables.records.WorkplaceRecord;
+import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class JooqWorkplace {
 
@@ -345,6 +348,39 @@ public class JooqWorkplace {
 		}
 		
 		return payMethods;
+	}
+	
+	public static Map<String, String> getContractTypes(Connection conn, Integer domainId) {
+		return getContractTypesDB(DSL.using(conn, getDefaultSettings()), domainId);
+	}
+
+	private static Map<String, String> getContractTypesDB(DSLContext dslContext, Integer domainId) {
+		Map<String, String> contractTypes = new TreeMap<String, String>();
+		
+		List<String> contractTypeRecords = dslContext.selectDistinct(CONTRACT_DATA.EXPRESSION)
+			.from(CONTRACT_DATA)
+			.where(CONTRACT_DATA.NAME.eq("TC2"))
+			.and(CONTRACT_DATA.DOMAIN.eq(domainId))
+			.and(CONTRACT_DATA.EXPRESSION.isNotNull().and(CONTRACT_DATA.EXPRESSION.ne("\"000\"")).and(CONTRACT_DATA.EXPRESSION.ne("")))
+			.fetch(CONTRACT_DATA.EXPRESSION);
+		
+		contractTypes.put("RETA", "RETA");
+		contractTypes.put("BECARIO", "000");
+		
+		contractTypeRecords.forEach(contractTypeRecord -> contractTypes.put(parseContractType(contractTypeRecord), parseContractType(contractTypeRecord)) );
+		
+		return contractTypes;
+	}
+	
+	private static String parseContractType(String contractType) {
+		if(AonStringUtils.isNotBlank(contractType) && contractType.contains("\""))
+			try {
+				return contractType.split("\"")[1];
+			} catch (IndexOutOfBoundsException e) {
+				return contractType;
+			}	
+		else
+			return contractType;
 	}
 	
 	public static Map<Integer, String> getScopes(Connection conn, Integer domainId) {

@@ -118,6 +118,10 @@ public class AonCustomDockLayout extends DockLayoutPanel {
 		return searchTextBox;
 	}
 	
+	public void setSearchPlaceholder(String placeholder) {
+		searchTextBox.getElement().setPropertyString("placeholder", placeholder);
+	}
+	
 	public void hideSearchWidget() {
 		searchPanel.setVisible(false);
 	}
