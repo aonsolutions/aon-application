@@ -25,7 +25,13 @@ export const THEME = 'aonTheme';
 export const AON_THEME = '/css/theme/aon.css';
 export const DARK_THEME = '/css/theme/dark.css';
 
-export const get = (item) => localStorage.getItem(item);
+export const get = (item) => {
+	let value = localStorage.getItem(item);
+	if ( value === null ){ 
+		value = getComputedStyle(document.body).getPropertyValue(`--${item}`);
+	} 
+	return value;
+}
 
 export const set = (item, value) => {
     localStorage.setItem(item, value);

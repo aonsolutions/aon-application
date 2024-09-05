@@ -21,6 +21,7 @@ export class AonRegistrySuggestion extends AonElement {
   OPTIONS;
   OPTIONS_UL;
   OPTIONS_LI;
+  GENERAL_TABLE;
   DOCUMENT;
   NAME;
   ADDRESS;
@@ -76,6 +77,7 @@ export class AonRegistrySuggestion extends AonElement {
     this.OPTIONS = this.id + 'Options';
     this.OPTIONS_UL = this.OPTIONS + 'Ul';
     this.OPTIONS_LI = this.OPTIONS + 'Li';
+    this.GENERAL_TABLE = this.id + 'GeneralTable';
     this.DOCUMENT_COUNTRY = this.id + 'DocumentCountry';
     this.DOCUMENT = this.id + 'Document';
     this.NAME = this.id + 'Name';
@@ -177,9 +179,16 @@ export class AonRegistrySuggestion extends AonElement {
   }
 
   buildGeneral() {
+    let table = new AonBasicTable();
+    table.id = this.GENERAL_TABLE;
+    this.appendChild(table);
+    this.getElement(table.TABLE).style.borderSpacing = '0px';
+    table.addRow();
+
     let div = this.createElement(TAG.DIV);
     div.className = this.isMobile() ? CSS.AON_BLOCK : CSS.AON_FLEX;
-    this.appendChild(div);
+    let td = table.addCell(div);
+    td.style.width = '100%';
 
     let span0 = this.createElement(TAG.SPAN);
     span0.style.width="20%";
@@ -250,7 +259,7 @@ export class AonRegistrySuggestion extends AonElement {
       this.clearAddress();
       this.dispatchEvent(new Event(EVENT.SELECT_REGISTRY));
     });
-    div.appendChild(removeRegistry);
+    table.addCell(removeRegistry);
 
     let options = this.createElement(TAG.DIV);
 		options.id = this.OPTIONS;
@@ -280,13 +289,12 @@ export class AonRegistrySuggestion extends AonElement {
       }
       this.clearElement(div);
 
-      if(this.registry.address.id && this.registry.addresses && this.registry.addresses.length > 0 && this.showAddressList) { 
-        let table = new AonBasicTable();
-		    table.id = this.ADDRESS_TABLE;
-		    div.appendChild(table);
-
-        table.addRow();
-        
+      let table = new AonBasicTable();
+      table.id = this.ADDRESS_TABLE;
+      div.appendChild(table);
+      this.getElement(table.TABLE).style.borderSpacing = '0px';
+      table.addRow();
+      if(this.registry.address.id && this.registry.addresses && this.registry.addresses.length > 0 && this.showAddressList) {         
         let addressList = LS.isNewTheme() ? new AonNewSelect() : new AonSelect();
         addressList.id = this.ADDRESS_LIST;
         addressList.title = MSG.ADDRESS;
@@ -311,12 +319,6 @@ export class AonRegistrySuggestion extends AonElement {
 	  		td.style.width = '100%';
   			table.addCell(addAddress);
       } else {
-        let table = new AonBasicTable();
-		    table.id = this.ADDRESS_TABLE;
-		    div.appendChild(table);
-
-        table.addRow();
-
         let address = new AonAddress();
         address.id = this.ADDRESS;
         address.title = MSG.ADDRESS;

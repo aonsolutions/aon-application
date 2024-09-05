@@ -1,5 +1,5 @@
 :root{
-	--favicon: 'https://www.aonsolutions.es/favicon.svg';
+	--favicon: ../faviconColors.png;
 }
 
 .rootPanel {
@@ -40,9 +40,9 @@
   color: var(--aonWhite);
 } */
 
-.aonLoginSubTitle::after {
+/* .aonLoginSubTitle::after {
 	content: 'Accede a tu cuenta de AON';
-}
+} */
 
 /*
 .aonMenuSidenav{
@@ -124,11 +124,7 @@
 	--aonTimecontrol: rgb(95, 99, 104);
 }
 
-#applications:hover,
-.aonMenuLeftopNew #applications,
-.aonMenuLeftopHome #applications,
-.aonNewMenuLeftTopAppDiv #applications,
-.aonMenuLeftopApplications #applications{
+#applications:hover {
   background-size: cover ;
   background-image: url("/images/theme/aon-background.webp");
 }

@@ -53,7 +53,12 @@ public class InvofoxWebhookHandler implements RequestHandler<Object, String> {
 	unknown("Desconocido", "gray"),
 	approved("Aprobada", "green"),
 	discarded("Descartada", "gray"),
-	pendingCorrection("Pte.correción", "orange");
+	pendingCorrection("Pte.correción", "orange"),
+	processing("Procesando", "gray"),
+	pendingDecission("Pte.decisión", "orange"),
+	rejected("Rechazado", "red"),
+	exported("Exportada", "blue"),
+	error("Error", "red");
 	
 	private String color;
 	private String decription;
@@ -291,9 +296,11 @@ public class InvofoxWebhookHandler implements RequestHandler<Object, String> {
 	
     	JSONObject taskWorkflowJSON = AonTask.addTaskWorkflow(domainName, userLogin, taskWorkflow);
     	State state = valueOf(publicState, State.unknown);
-    	if(publicState != null && State.approved.equals(state)
+    	if(publicState != null && State.approved.equals(state))
     		AonInvofox.acceptInvofoxInvoice(domainName, userLogin, id);
-    	else AonInvofox.rawdocInvofoxInvoice(domainName, userLogin, id);
+    	else if(publicState != null && (State.pendingCorrection.equals(state) || State.discarded.equals(state)
+    			|| State.pendingDecission.equals(state) || State.rejected.equals(state)))
+    		AonInvofox.rawdocInvofoxInvoice(domainName, userLogin, id);
     	
     	return taskWorkflowJSON.toString(1);
     }

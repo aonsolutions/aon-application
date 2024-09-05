@@ -26,6 +26,7 @@ import net.aonsolutions.db.up2date.fiscal.AlterFsMod200Registry2023;
 import net.aonsolutions.db.up2date.payroll.AgreementUpdateHideMessage;
 import net.aonsolutions.db.up2date.payroll.AgreementUpdateHideToDisable;
 import net.aonsolutions.db.up2date.payroll.CleanDuplicatesPayrollWorkplace;
+import net.aonsolutions.db.up2date.payroll.InKindDeductionUpdate;
 import net.aonsolutions.db.up2date.task.AddColumnTaskHolderWorkgroupDatesType;
 import net.aonsolutions.db.up2date.tgss.MEIFellows2024Remove;
 import net.aonsolutions.db.up2date.warehouse.ElaborationSerialNumberUpdate;
@@ -449,7 +450,7 @@ public class Up2Date {
 		//AddColumnMarketingCampaignBudget.ADD_COLUMN_MARKETING_CAMPAIGN_BUDGET,
 		//AddColumnMarketingActionBudget.ADD_COLUMN_MARKETING_ACTION_BUDGET,
 
-		MEIFellows2024Remove.MEIFELLOWSREMOVE,
+		//MEIFellows2024Remove.MEIFELLOWSREMOVE,
         
 		//AddColumnMarketingCampaignExpense.ADD_COLUMN_MARKETING_CAMPAIGN_EXPENSE,
         //AddColumnMarketingActionExpense.ADD_COLUMN_MARKETING_ACTION_EXPENSE,
@@ -462,19 +463,21 @@ public class Up2Date {
         //AddColumnMarketingActionTargetAudit.ADD_COLUMN_MARKETING_ACTION_TARGET_AUDIT,
         //AddColumnSellerTaskHolder.ADD_COLUMN_SELLER_TASK_HOLDER,
 		
-        CleanDuplicatesPayrollWorkplace.CLEAN_DUPLICATE_PAYROLL_WORKPLACE, 
-        AnnuledInvoiceCreation.ANNULED_INVOICE_CREATION,
-       // AddColumnMarketingActionTag.ADD_COLUMN_MARKETING_ACTION_TAG,
+        //CleanDuplicatesPayrollWorkplace.CLEAN_DUPLICATE_PAYROLL_WORKPLACE, 
+        //AnnuledInvoiceCreation.ANNULED_INVOICE_CREATION,
+        // AddColumnMarketingActionTag.ADD_COLUMN_MARKETING_ACTION_TAG,
         
-        AlterFsMod2002023.ALTER_FS_MODEL200_2023,
-        AlterFsMod200Registry2023.ALTER_FS_MODEL200_REGISTRY_2023,
-        ElaborationSerialNumberUpdate.ELABORATION_SERIAL_NUMBER_UPDATE,
+        //AlterFsMod2002023.ALTER_FS_MODEL200_2023,
+        //AlterFsMod200Registry2023.ALTER_FS_MODEL200_REGISTRY_2023,
+        //ElaborationSerialNumberUpdate.ELABORATION_SERIAL_NUMBER_UPDATE,
         
-        AddColumnTaskHolderWorkgroupDatesType.ADD_COLUMN_TASK_HOLDER_WORKGROUP_DATES_TYPE,
-        InsertIAE864.INSERT_IAE_864,
+        //AddColumnTaskHolderWorkgroupDatesType.ADD_COLUMN_TASK_HOLDER_WORKGROUP_DATES_TYPE,
+        //InsertIAE864.INSERT_IAE_864,
         
         //AgreementUpdateHideMessage.AGREEMENTUPDATEHIDEMESSAGE,
-        AgreementUpdateHideToDisable.AGREEMENTUPDATEHIDETODISABLE
+        //AgreementUpdateHideToDisable.AGREEMENTUPDATEHIDETODISABLE,
+        
+        InKindDeductionUpdate.INKIND_DEDUCTION_UPDATE
 	};
 
     // ------------------------------------------------------------------------

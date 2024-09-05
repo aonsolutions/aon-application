@@ -503,7 +503,7 @@ h1 {
 
   background-repeat: no-repeat;
   background-repeat: no-repeat;
-  background-image: url("../assets/aon-black-logo.svg");
+  background-image: url("../assets/aon-white-logo.svg");
 }
 
 .aonParentLogo {
@@ -2074,7 +2074,7 @@ label.rating:hover {
   padding: 0px 0px 0px 68px;
   background-position: center;
   background-repeat: no-repeat;
-  background-image: url("../assets/aon-black-logo.svg");
+  background-image: url("../assets/aon-white-logo.svg");
 }
 
 
@@ -2726,9 +2726,9 @@ label.rating:hover {
   box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
 }
 
-.aonFavicon {
-	background-image: url("../favicon.ico");	
-}
+/* .aonFavicon {
+	background-image: url("../favicon.png");	
+} */
 
 .aonLoginLogo{
   width: 132px;
@@ -2776,13 +2776,13 @@ label.rating:hover {
 
 .aonHeaderStart,
 .aonMenuLeftopStart{
-	background-color: var(--aonHeaderBackgroundColor);
+	background-color: var(--aonBlue);
 }
 
 
 .aonHeaderHome,
 .aonMenuLeftopHome{
-	background-color: var(--aonLightGray);
+	background-color: var(--aonBlue);
 }
 
 .aonNewMenuSideNavLi {
@@ -2797,7 +2797,7 @@ label.rating:hover {
 
 .aonHeaderApplications,
 .aonMenuLeftopApplications{
-	background-color: var(--aonLightGray);
+	background-color: var(--aonBlue);
 }
 
 .aonHeaderNote,
@@ -2988,7 +2988,10 @@ label.rating:hover {
 .aonHeaderFiscalMenu .material-icons,
 .aonHeaderPayrollMenu .material-icons,
 .aonHeaderMarketingMenu .material-icons,
-.aonHeaderNotification .material-icons {
+.aonHeaderNotification .material-icons,
+.aonHeaderHome .material-icons,
+.aonHeaderStart .material-icons,
+.aonHeaderApplications .material-icons  {
 	color: var(--aonWhite);
 }
 
@@ -3018,11 +3021,6 @@ label.rating:hover {
   color: var(--aonSearchButton);
 }
 
-.aonHeaderHome .material-icons,
-.aonHeaderStart .material-icons,
-.aonHeaderApplications .material-icons {
-  color: rgb(95, 99, 104);
-}
 
 .aonMenuLeftopNote .material-symbols-outlined,
 .aonMenuLeftopFiscal .material-symbols-outlined,
@@ -3046,15 +3044,14 @@ label.rating:hover {
 .aonMenuLeftopGroupwareMenu .material-symbols-outlined,
 .aonMenuLeftopManagementMenu .material-symbols-outlined,
 .aonMenuLeftopAccountingMenu .material-symbols-outlined,
-.aonMenuLeftopNotification .material-symbols-outlined {
-	color: var(--aonWhite);
-}
-
+.aonMenuLeftopNotification .material-symbols-outlined,
 .aonMenuLeftopHome .material-symbols-outlined,
 .aonMenuLeftopStart .material-symbols-outlined,
 .aonMenuLeftopApplications .material-symbols-outlined {
-  color: rgb(95, 99, 104);
+	color: var(--aonWhite);
 }
+
+
 
 .aonHeaderNote #aonHeaderCompanyName,
 .aonHeaderFiscal #aonHeaderCompanyName,
@@ -3078,15 +3075,14 @@ label.rating:hover {
 .aonHeaderFiscalMenu #aonHeaderCompanyName,
 .aonHeaderPayrollMenu #aonHeaderCompanyName,
 .aonHeaderMarketingMenu #aonHeaderCompanyName,
-.aonHeaderNotification #aonHeaderCompanyName {
-	color: var(--aonWhite);
-}
-
+.aonHeaderNotification #aonHeaderCompanyName,
 .aonHeaderHome  #aonHeaderCompanyName,
 .aonHeaderApplications  #aonHeaderCompanyName,
 .aonHeaderStart #aonHeaderCompanyName {
-  color: rgb(95, 99, 104);
+	color: var(--aonWhite);
 }
+
+
 
 #new:hover,
 #home:hover,
@@ -4015,4 +4011,84 @@ label.rating:hover {
 .aonCompanyTitleSpan{
     font-size: 16px;
 		font-weight: 600;
+}
+
+.aonLoginTitle {
+  font-family: var(--roboto-34-sp-h4-font-family);
+  color: var(--gray-90);
+  font-size: 2rem;
+  margin-bottom: -10px !important;
+  margin-top: 0;
+  font-weight: 600;
+  letter-spacing: 0.44px;
+}
+
+.aonLoginSubTitle {
+  font-family: var(--roboto-body-big-font-family);
+  font-weight: var(--roboto-body-big-font-weight);
+  color: var(--gray-50);
+  font-size: var(--roboto-body-big-font-size);
+  letter-spacing: 0.44px;
+}
+
+.aonLoginButton {
+  width: 100%;
+  border-radius: 4px;
+  font-family: var(--roboto-button-font-family);
+  letter-spacing: var(--roboto-button-letter-spacing);
+  height: 3rem;
+  cursor: pointer;
+  margin-top: 1rem;
+  color: var(--white-base);
+  background-color: var(--gray-90);
+  border: 1px solid var(--gray-90);
+}
+
+.aonLoginButton:hover {
+  background-color: var(--black-100);
+}
+
+.aonDividerButtons {
+  width: 100%;
+  text-align: center;
+  border-bottom: 1px solid #d2d2d6;
+  line-height: 0px;
+  margin: 10px 0;
+}
+
+.aonDividerSpan {
+  background: var(--white-base);
+  padding: 0 10px;
+  color: var(--icons-gray-50);
+  font-size: 10px;
+}
+
+.aonMagicButton {
+  width: 100%;
+  border-radius: 4px;
+  border: 1px solid var(--gray-90);
+  font-family: var(--roboto-button-font-family);
+  letter-spacing: var(--roboto-button-letter-spacing);
+  height: 3rem;
+  cursor: pointer;
+  background-color: var(--white-base);
+  color: var(--gray-90);
+}
+
+.aonMagicButton:hover{
+  background-color: var(--gray-90);
+  color: var(--white-base);
+}
+
+.aonMagicButtonHover{
+  width: 100%;
+  border-radius: 4px;
+  font-family: var(--roboto-button-font-family);
+  letter-spacing: var(--roboto-button-letter-spacing);
+  height: 3rem;
+  cursor: pointer;
+  margin-top: 1rem;
+  background-color: var(--white-base);
+  color: var(--gray-90);
+  border: 1px solid var(--gray-90);
 }

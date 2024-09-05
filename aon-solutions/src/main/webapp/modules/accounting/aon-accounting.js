@@ -225,7 +225,7 @@ export class AonAccounting extends AonElement {
 			fn: () => {
 				this.getApplication().removeSidenavById(CONSTANT.OPTIONS);
 				this.clearElementById(this.getApplication().getContent().id);
-				GWT.load(GWT.ACCOUNT_OPERATING_REPORT, this.getApplication().CONTENT);
+				GWT.load(GWT.ACCOUNT_OPERATION_REPORT, this.getApplication().CONTENT);
 				this.loader(`#${this.getApplication().getContent().id} .aon_toolbar`);
 			}
 		});
