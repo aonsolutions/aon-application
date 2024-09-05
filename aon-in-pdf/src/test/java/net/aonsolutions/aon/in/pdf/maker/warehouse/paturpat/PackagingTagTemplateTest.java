@@ -8,7 +8,7 @@ import java.util.LinkedList;
 import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.product.Item;

@@ -69,12 +69,5 @@
                 <scope>runtime</scope>
         </dependency>
 
-		<!-- **** TEST DEPENDENCIES **** -->
-		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
-			<version>${junitVersion}</version>
-			<scope>test</scope>
-		</dependency>
 	</dependencies>
 </project>

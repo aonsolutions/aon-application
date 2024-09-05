@@ -3,7 +3,8 @@ package net.aonsolutions.aon.in.pdf.maker.warehouse;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
-import org.junit.Test;
+
+import org.junit.jupiter.api.Test;
 
 import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.Customer;
@@ -15,7 +16,6 @@ import com.esferalia.aon.occam.api.model.warehouse.Warehouse;
 import com.esferalia.aon.occam.test.faker.AonFaker;
 
 import net.aonsolutions.aon.in.pdf.maker.exception.CanNotCreatePdfException;
-import net.aonsolutions.aon.in.pdf.maker.warehouse.DeliveryTemplate;
 
 
 public class DeliveryTemplateTest {

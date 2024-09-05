@@ -8,8 +8,8 @@ import java.util.LinkedList;
 import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
 import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.Customer;
@@ -24,8 +24,6 @@ import com.esferalia.aon.occam.api.model.warehouse.Delivery;
 import com.github.javafaker.Faker;
 
 import net.aonsolutions.aon.in.pdf.maker.exception.CanNotCreatePdfException;
-import net.aonsolutions.aon.in.pdf.maker.warehouse.WarehouseSaleTemplate;
-import net.aonsolutions.aon.in.pdf.maker.warehouse.WarehouseTemplate;
 
 public class WarehouseTest {
 
@@ -65,7 +63,7 @@ public class WarehouseTest {
 	}
 	
 	@Test
-	@Ignore
+	@Disabled
 	public void test2() throws CanNotCreatePdfException, IOException {
 		Registry registry = new Registry()
 			.setName("CONSERVAS LA BRÚJULA S.L.")
