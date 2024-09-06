@@ -129,10 +129,7 @@ public class SES {
 
             // Instantiate an Amazon SES client, which will make the service 
             // call with the supplied AWS credentials.
-            AmazonSimpleEmailService client = AmazonSimpleEmailServiceClientBuilder.standard()
-                    .withCredentials(AWS.getProvider())
-                    .withRegion(Regions.EU_WEST_1)
-                    .build();
+            AmazonSimpleEmailService client = AmazonSimpleEmailServiceClientBuilder.standard().build();
            
             // Send the email.
             ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
@@ -155,10 +152,7 @@ public class SES {
     	try {
             // Instantiate an Amazon SES client, which will make the service 
             // call with the supplied AWS credentials.
-            AmazonSimpleEmailService client = AmazonSimpleEmailServiceClientBuilder.standard()
-                    .withCredentials(AWS.getProvider())
-                    .withRegion(Regions.EU_WEST_1)
-                    .build();
+            AmazonSimpleEmailService client = AmazonSimpleEmailServiceClientBuilder.standard().build();
 
             // Send the email.
             ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
@@ -202,10 +196,7 @@ public class SES {
     
     public static String sendEmail(SendEmailRequest request) {
     	try {
-            AmazonSimpleEmailService client = AmazonSimpleEmailServiceClientBuilder.standard()
-                    .withCredentials(AWS.getProvider())
-                    .withRegion(Regions.EU_WEST_1)
-                    .build();
+            AmazonSimpleEmailService client = AmazonSimpleEmailServiceClientBuilder.standard().build();
             
             client.sendEmail(request);
             LOGGER.info(EMAIL_SENT);

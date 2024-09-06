@@ -17,8 +17,6 @@ import com.amazonaws.services.dynamodbv2.model.ListTablesResult;
 import com.amazonaws.services.dynamodbv2.model.ProvisionedThroughput;
 import com.amazonaws.services.dynamodbv2.model.ScanRequest;
 
-import solutions.aon.aws.AWS;
-
 public class DYNAMODB {
 
 	private DYNAMODB() {
@@ -26,10 +24,7 @@ public class DYNAMODB {
 	}
 	
 	private static AmazonDynamoDB connect() {
-		return AmazonDynamoDBClientBuilder.standard()
-				.withCredentials(AWS.getProvider())
-				.withRegion("eu-west-1")
-				.build();
+		return AmazonDynamoDBClientBuilder.standard().build();
 	}
 
 	public static Map<String, AttributeValue> get2(String table, String key, String value) {
