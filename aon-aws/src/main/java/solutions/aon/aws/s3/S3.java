@@ -16,7 +16,6 @@ import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.amazonaws.services.s3.model.S3Object;
 
-import solutions.aon.aws.AWS;
 import solutions.aon.aws.exceptions.AonAwsErrorMessage;
 import solutions.aon.aws.exceptions.AonAwsS3Exception;
 
