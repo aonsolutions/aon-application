@@ -5,16 +5,13 @@ import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Consumer;
-import java.util.stream.Collectors;
 
 import com.esferalia.aon.gwt.payroll.shared.CCCInfo;
-import com.esferalia.aon.gwt.payroll.shared.ContractParams;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeContractInfo;
 import com.esferalia.aon.gwt.payroll.shared.EnterpriseContext;
 import com.esferalia.aon.gwt.payroll.shared.EnterpriseStatus;
+import com.esferalia.aon.occam.api.model.ContractParams;
 import com.esferalia.aon.occam.api.model.aonsolutions.DomainUserRoles;
-import com.esferalia.aon.watson.util.AonNumberUtils;
-import com.esferalia.aon.watson.util.AonStringUtils;
 import com.esferalia.aon.watson.util.Pair;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
@@ -25,9 +22,7 @@ public class MainContrataContractObject {
 	final DomainEnterprisesServiceAsync impl = DomainEnterprisesServiceAsync.newInstance();
 	final DomainEmployeesServiceAsync employeesService = DomainEmployeesServiceAsync.newInstance();
 	
-	private List<EmployeeContractInfo> allEmployeesList;
 	private List<EmployeeContractInfo> employeesList;
-	private List<EmployeeContractInfo> trashEmployeesList;
 	
 	private boolean hasCertificateSEPE;
 	
@@ -39,73 +34,69 @@ public class MainContrataContractObject {
 	
 	public MainContrataContractObject() {
 		super();
-		this.allEmployeesList = new ArrayList<>();
 		this.employeesList = new ArrayList<>();
-		this.trashEmployeesList = new ArrayList<>();
 		this.hasCertificateSEPE = false;
 		this.enterpriseContext = new EnterpriseContext();
 	}
 	
 	// ------------------------------------------ DataBase Methods
 	
-	public void getEmployeesInfo(Boolean allEmployees, Consumer<List<EmployeeContractInfo>> success, Consumer<Throwable> failure){
-		
-		impl.getEmployeesInfo(allEmployees, new AsyncCallback<List<EmployeeContractInfo>>() {
-			
-			@Override
-			public void onSuccess(List<EmployeeContractInfo> employeesInfoList) {
-				initEmployeeList(employeesInfoList);
-				
-				impl.hasCertificateSEPE(new AsyncCallback<Boolean>() {
-
-					@Override
-					public void onFailure(Throwable caught) {
-						failure.accept(caught);
-					}
-
-					@Override
-					public void onSuccess(Boolean result) {
-						hasCertificateSEPE = result.booleanValue();
-						success.accept(employeesInfoList);	
-					}
-				});
-			}
-
-			@Override
-			public void onFailure(Throwable caught) {
-				failure.accept(caught);
-			}
-		});
-		
-	}
-	
-	public void getContextInfo(Consumer<EnterpriseContext> success, Consumer<Throwable> failure){
+	public void getCertificateSEPE(){
 		impl.getDomainUserRoles(new AsyncCallback<DomainUserRoles>() {
 			
 			@Override
 			public void onSuccess(DomainUserRoles domainUserRolesDB) {
 				domainUserRoles = domainUserRolesDB;
 				
-				impl.getEnterpriseContext(new AsyncCallback<EnterpriseContext>() {
+				impl.hasCertificateSEPE(new AsyncCallback<Boolean>() {
 
 					@Override
-					public void onFailure(Throwable caught) {
-						failure.accept(caught);
+					public void onFailure(Throwable caught) {}
+
+					@Override
+					public void onSuccess(Boolean result) {
+						hasCertificateSEPE = result.booleanValue();
 					}
-
-					@Override
-					public void onSuccess(EnterpriseContext enterpriseContextDB) {
-						enterpriseContext = enterpriseContextDB;
-						success.accept(enterpriseContext);
-					}}
-				);
+				});
 			}
 			
+			@Override
+			public void onFailure(Throwable caught) {}
+		});
+	}
+	
+
+	public void getEmployeesInfo(ContractParams params, Consumer<List<EmployeeContractInfo>> success, Consumer<Throwable> failure) {
+		
+		impl.getEmployees(params, new AsyncCallback<List<EmployeeContractInfo>>() {
+			
+			@Override
+			public void onSuccess(List<EmployeeContractInfo> employeesInfoList) {
+				employeesList.addAll(employeesInfoList);
+				success.accept(employeesInfoList);
+			}
+
 			@Override
 			public void onFailure(Throwable caught) {
 				failure.accept(caught);
 			}
 		});
+	}
+	
+	public void getContextInfo(Consumer<EnterpriseContext> success, Consumer<Throwable> failure){
+		impl.getEnterpriseContext(new AsyncCallback<EnterpriseContext>() {
+
+			@Override
+			public void onFailure(Throwable caught) {
+				failure.accept(caught);
+			}
+
+			@Override
+			public void onSuccess(EnterpriseContext enterpriseContextDB) {
+				enterpriseContext = enterpriseContextDB;
+				success.accept(enterpriseContext);
+			}}
+		);
 	}
 
 	public void checkStatus(Consumer<EnterpriseStatus> success, Consumer<Throwable> failure) {
@@ -155,121 +146,17 @@ public class MainContrataContractObject {
 		
 	}
 
-	// ------------------------------------------ Initialize Methods
-	
-	private void initEmployeeList(List<EmployeeContractInfo> employeesInfoList) {
-		allEmployeesList.clear();
-		employeesList.clear();
-		allEmployeesList.addAll(employeesInfoList);
-		employeesList.addAll(employeesInfoList);
-	}
-	
 	// ------------------------------------------ Getters Methods
 	
 	public List<EmployeeContractInfo> getEmployeesList(){
-		employeesList.sort((e1, e2) -> e1.getEmployeeInfo().getFullName().compareTo(e2.getEmployeeInfo().getFullName()));
 		return employeesList;
-	}
-	
-	public List<EmployeeContractInfo> getAllEmployeesList(){
-		return allEmployeesList;
 	}
 
 	public void resetEmployeesList() {
-		this.employeesList.clear();
-		this.employeesList.addAll(allEmployeesList);
+		employeesList.clear();
 	}
 	
-	public void filterEmployeeList(ContractParams params) {
-		if(AonStringUtils.isBlank(params.getEmployee()) && AonStringUtils.isBlank(params.getWorkplace()) && AonStringUtils.isBlank(params.getTc2()) && null == params.getFrom() && null == params.getTo())
-			resetEmployeesList();
-		else {
-			resetEmployeesList();
-			
-			// Employee
-			if(AonStringUtils.isNotBlank(params.getEmployee()) && params.getEmployee().length() >= 3) {
-				this.employeesList = this.employeesList.stream().filter(ec -> isEmployeeByPattern(ec, params.getEmployee())).collect(Collectors.toList());
-			}
-			
-			// Workplace
-			if(AonStringUtils.isNotBlank(params.getWorkplace())) {
-				Integer workplace = Integer.parseInt(params.getWorkplace());
-				this.employeesList = this.employeesList.stream().filter(ec -> null != ec.getContractInfo().getWorkplaceId() && AonNumberUtils.equals(workplace, ec.getContractInfo().getWorkplaceId())).collect(Collectors.toList());
-			}
-			
-			// Tc2
-			if(AonStringUtils.isNotBlank(params.getTc2())) {
-				this.employeesList = this.employeesList.stream().filter(ec -> 
-					(AonStringUtils.isBlank(ec.getContractInfo().getContractType()) && AonStringUtils.equalsIgnoreCase(params.getTc2(), "RETA")) ||
-					(AonStringUtils.isNotBlank(ec.getContractInfo().getContractType()) && AonStringUtils.equalsIgnoreCase(params.getTc2(), ec.getContractInfo().getContractType()))
-				).collect(Collectors.toList());
-			}
-			
-			// Date
-			this.employeesList = this.employeesList.stream().filter(ec -> filterFromToEmployeesList(ec.getContractInfo().getEndDate(), ec.getContractInfo().getStartDate(), params.getFrom(), params.getTo())).collect(Collectors.toList());
-			
-		}
-	}
-	
-	public boolean filterFromToEmployeesList(Date endDate, Date startDate, Date fromDate, Date toDate) {
-		if(null == fromDate && null == toDate)
-			return true;
-		else if(null != fromDate && null == toDate && (startDate.after(fromDate) || startDate.equals(fromDate)))
-			return true;
-		else if(null == fromDate && null != toDate && (null != endDate && (endDate.before(toDate) || endDate.equals(toDate))))
-			return true;
-		else if(null != fromDate && null != toDate && (null != endDate && dateBetween(startDate, fromDate, toDate) && dateBetween(endDate, fromDate, toDate)))
-			return true;
-		else return false;
-	}
-
-	private boolean dateBetween(Date date, Date fromDate, Date toDate) {
-		return (date.after(fromDate) || date.equals(fromDate)) && (date.before(toDate) || date.equals(toDate));
-	}
-
-	private boolean isEmployeeByPattern(EmployeeContractInfo employee, String pattern) {
-		String fullName = employee.getEmployeeInfo().getFullName();
-		String document = employee.getEmployeeInfo().getDocument();
-		String ssNumber = employee.getEmployeeInfo().getSsNumber();
-		
-		return AonStringUtils.containsIgnoreCase(fullName, pattern) ||
-				(AonStringUtils.isNotBlank(document) && AonStringUtils.containsIgnoreCase(document, pattern)) ||
-				(AonStringUtils.isNotBlank(ssNumber) && AonStringUtils.containsIgnoreCase(ssNumber, pattern));
-	}
-	
-	// ------------------------------------------ DataBase Methods Trash
-
-	public void getTrashEmployeesInfo(Consumer<List<EmployeeContractInfo>> success, Consumer<Throwable> failure) {
-		impl.getTrashEmployeesInfo(new AsyncCallback<List<EmployeeContractInfo>>() {
-			
-			@Override
-			public void onSuccess(List<EmployeeContractInfo> employeesInfoList) {
-				trashEmployeesList.clear();
-				trashEmployeesList.addAll(employeesInfoList);
-				success.accept(employeesInfoList);	
-			}
-
-			@Override
-			public void onFailure(Throwable caught) {
-				failure.accept(caught);
-			}
-		});	
-	}
-
-	public void restoreContract(Integer contractId, Consumer<Void> success, Consumer<Throwable> failure) {
-		impl.restoreContract(contractId, new AsyncCallback<Void>() {
-			
-			@Override
-			public void onSuccess(Void resutl) {
-				success.accept(resutl);	
-			}
-
-			@Override
-			public void onFailure(Throwable caught) {
-				failure.accept(caught);
-			}
-		});	
-	}
+	// ------------------------------------------ DataBase Methods
 
 	public void delete4EverContract(Integer contractId, Consumer<Void> success, Consumer<Throwable> failure) {
 		impl.delete4EverContract(contractId, new AsyncCallback<Void>() {
@@ -288,10 +175,6 @@ public class MainContrataContractObject {
 		
 	// ------------------------------------------ Getters Methods Trash
 	
-	public List<EmployeeContractInfo> getTrashEmployeesList() {
-		return this.trashEmployeesList;
-	}
-
 	public boolean hasCertificateSEPE() {
 		return this.hasCertificateSEPE;
 	}
@@ -365,5 +248,6 @@ public class MainContrataContractObject {
 			return "0111";
 		}
 	}
+
 }
 		
