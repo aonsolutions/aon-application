@@ -338,7 +338,6 @@ export class AonFiscalCard extends AonElement {
       fiscalTotalDiv.className = CSS.AON_CARD_TOTAL;
       fiscalTotalDiv.classList.add(CSS.AON_FISCAL_CARD_TOTAL);
       fiscalTotalDiv.innerHTML = this.getTotal(modelDatas, total390);
-      fiscalTotalDiv.style.color = "black";
     }
   }
 
@@ -439,8 +438,8 @@ export class AonFiscalCard extends AonElement {
     fiscalTotalDiv.classList.add(CSS.AON_FISCAL_CARD_TOTAL);
     fiscalTotalDiv.innerHTML = this.getEstimationTotal(estimationModels);
 
-    if(this.getEstimationTotal(estimationModels).includes('-')) fiscalTotalDiv.style.color = "green";
-    else fiscalTotalDiv.style.color = "black";
+    // if(this.getEstimationTotal(estimationModels).includes('-')) fiscalTotalDiv.style.color = "green";
+    // else fiscalTotalDiv.style.color = "black";
   }
 
   removeAllChildNodes(parent) {

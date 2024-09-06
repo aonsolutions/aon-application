@@ -108,14 +108,12 @@ export class AonDocumentalCard extends AonElement {
         rightContent.style.alignItems = "center";
 
         let date = this.createElement(TAG.SPAN);
-        date.style.color = "rgb(120, 120, 133)";
-        date.style.fontSize = ".7rem";
+        date.classList.add("aonDocumentalCardDate");
         date.innerHTML = document.date;
         rightContent.appendChild(date);
 
         let describeDate = this.createElement(TAG.SPAN);
-        describeDate.style.color = "rgb(120, 120, 133)";
-        describeDate.style.fontSize = ".7rem";
+        describeDate.classList.add("aonDocumentalCardDescribeDate");
         describeDate.innerHTML = this.describeDate(this.changeDateFormat(document.date));
         rightContent.appendChild(describeDate);
 

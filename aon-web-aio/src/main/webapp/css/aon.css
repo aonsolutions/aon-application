@@ -53,7 +53,7 @@
 	--aonInvoice: var(--aonClearBlue);
 	--aonInvoiceBackground: #ebf2ff;
   
-	--aonDocumental: #75163F; /* #EF6292;*/
+  --aonDocumental:  #c84c79; 
 	--aonDocumentalBackground: #fdedf2;
   
 	--aonPayroll: #e2001a; /* #33A9A9;*/
@@ -1388,6 +1388,7 @@ h1 {
   /*opacity: 0;
   transform: translateY(30%);*/
   transition: 0.3s ease-in;
+  color:black;
 }
 
 .aonFiscalCardTotal .aonBankCardTotal{
@@ -1409,7 +1410,7 @@ h1 {
 }
 
 .aonCard:hover .aonFiscalCardTotal{
-  color: var(--aonFiscal);
+  color: rgb(251, 152, 46);
 }
 
 .aonCard:hover .aonBankCardTotal{
@@ -1444,7 +1445,7 @@ h1 {
   padding: 20px;
   border: 1px solid #ddd;
   width: 80%;
-  box-shadow: 2px 2px 5px 1px #ddd;
+  /* box-shadow: 2px 2px 5px 1px #ddd; */
 }
 
 .aonProgress,
@@ -3743,6 +3744,11 @@ label.rating:hover {
 
 .aonNewDesktopCardDiv{
   position: relative;
+  cursor: pointer;
+}
+
+.aonNewDesktopCardDiv:hover {
+  background-color: rgb(240, 240, 240);
 }
 
 .aonNewDesktopCardButton{
@@ -4109,4 +4115,33 @@ label.rating:hover {
   background-color: var(--white-base);
   color: var(--gray-90);
   border: 1px solid var(--gray-90);
+}
+
+.aonBankCardDate{
+  color: rgb(120, 120, 133);
+}
+
+.aonCompanyCostCardDivTitle {
+  color: grey;
+  font-weight: 500;
+}
+
+.aonDocumentalCardDate{
+  color: rgb(120, 120, 133);
+  font-size: .7rem;
+}
+
+.aonDocumentalCardDescribeDate{
+  color: rgb(120, 120, 133);
+  font-size: .7rem;
+}
+
+.aonMessengerCardDate{
+  text-align: right;
+  color: rgb(120, 120, 133);
+  font-size: 0.8rem;
+}
+
+.accountingChatLegend {
+  color: black;
 }

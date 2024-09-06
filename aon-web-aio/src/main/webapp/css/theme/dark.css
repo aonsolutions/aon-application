@@ -72,7 +72,6 @@
  	--aonSearchBar: var(--aonCardColor);
   
  	--aonSearchButton: white;
-
 }
 
 .aonBody{
@@ -496,6 +495,44 @@ display: none;
 
 .profile-letters {
 	border: 2px solid white;
+	color: white;
+}
+
+.graphicsDashBoardYear {
+	border: 1px white solid;
+}
+
+.aonBankCardDate,
+#pyGyearelect,
+.aonCompanyCostCardDivTitle,
+.aonDocumentalCardDescribeDate,
+.aonDocumentalCardDate,
+.aonMessengerCardDate,
+.aonCardTotal{
+	color: white;
+}
+
+.aonAppLi{
+	background-color: var(--aonCardColor);
+}
+
+.aonAppLi:hover {
+	background-color: var(--aonContentBeta);
+}
+
+#pygCardCanvas {
+	background-color: white;
+}
+
+.aonNewDesktopCardDiv:hover {
+	background-color: var(--aonContentBeta);
+}
+
+.aonUl {
+	color: white;
+}
+
+.accountingChatLegend {
 	color: white;
 }
 
