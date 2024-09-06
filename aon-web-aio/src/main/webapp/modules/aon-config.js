@@ -163,13 +163,13 @@ export class AonConfig extends AonElement {
 			LS.setTopMenu(topNavSwitch.checked);
 
       
-		if(LS.isTopMenu()) {
+			if(LS.isTopMenu()) {
 					aonMenu.showTopNav();
 				} else {
 					aonMenu.hideTopNav();
 				};
 				
-			});
+		});
 
 		sideNavSwitch.addEventListener(EVENT.CHANGE, () => {
 			LS.setLeftMenu(sideNavSwitch.checked);

@@ -98,8 +98,6 @@ export const setTheme = (theme) => {
         remove(THEME);
     }
     location.reload();
-    
-    
 }
 
 export const isDarkTheme = () => {
