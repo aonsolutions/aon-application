@@ -23,7 +23,7 @@ import solutions.aon.aws.exceptions.AonAwsS3Exception;
 public class S3 {
 	
 	private S3() {
-	
+		
 	}
 	
 	public static final String DEFAULT_BUCKET = "aon-attach";
@@ -31,10 +31,7 @@ public class S3 {
 	public static final String INVOICE_DOC = "aon-invoice-doc";
 	
 	private static AmazonS3 connect() {
-		return AmazonS3ClientBuilder.standard()
-				.withCredentials(AWS.getProvider())
-				.withRegion("eu-west-1")
-				.build();
+		return AmazonS3ClientBuilder.standard().build();
 	}
 	
 	public static String upload(File file) {
