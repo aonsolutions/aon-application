@@ -53,7 +53,7 @@
 --aonInvoice: var(--aonClearBlue);
 --aonInvoiceBackground: #ebf2ff;
  
---aonDocumental: #75163F; /* #EF6292;*/
+--aonDocumental: #75163F; /* #c84c79 #EF6292;*/
 --aonDocumentalBackground: #fdedf2;
  
 --aonPayroll: #e2001a; /* #33A9A9;*/
@@ -1178,6 +1178,13 @@ background-color: var(--aonFiscal);
 
 }
 
+.aonAppMenuSidenavListSelected div{
+  font-weight: bold;
+	background-color: var(--aonFiscal);
+  color: white;
+
+}
+
 .aonAppMenuSidenavListBeta {
   line-height: 30px;
   margin: 0;
@@ -1398,6 +1405,7 @@ margin-top: 20px;
   /*opacity: 0;
   transform: translateY(30%);*/
   transition: 0.3s ease-in;
+  color:black;
 }
 
 .aonFiscalCardTotal .aonBankCardTotal{
@@ -1419,7 +1427,7 @@ margin-top: 20px;
 }
 
 .aonCard:hover .aonFiscalCardTotal{
-  color: var(--aonFiscal);
+  color: rgb(251, 152, 46);
 }
 
 .aonCard:hover .aonBankCardTotal{
@@ -1454,7 +1462,7 @@ margin-top: 20px;
   padding: 20px;
   border: 1px solid #ddd;
   width: 80%;
-  box-shadow: 2px 2px 5px 1px #ddd;
+  /* box-shadow: 2px 2px 5px 1px #ddd; */
 }
 
 .aonProgress,
@@ -2818,7 +2826,7 @@ background-color: var(--aonBlue);
 
 .aonHeaderNote,
 .aonMenuLeftopNote {
-background-color: var(--aonBlue);
+	background-color: var(--aonBlue);
 }
 
 #aonMenuList-note.aonMenuSidenavLiSeleted {
@@ -2829,7 +2837,7 @@ border-left: 2px solid var(--aonNote);
 
 .aonHeaderFiscal,
 .aonMenuLeftopFiscal{
-background-color: var(--aonBlue);
+	background-color: var(--aonBlue);
 }
 
 #aonMenuList-fiscal.aonMenuSidenavLiSeleted {
@@ -2839,7 +2847,7 @@ border-left: 2px solid var(--aonFiscal);
 
 .aonHeaderPayroll,
 .aonMenuLeftopPayroll {
-background-color: var(--aonBlue);
+	background-color: var(--aonBlue);
 }
 
 #aonMenuList-payroll.aonMenuSidenavLiSeleted {
@@ -2849,7 +2857,7 @@ border-left: 2px solid var(--aonPayroll);
 
 .aonHeaderInvoice,
 .aonMenuLeftopInvoice {
-background-color: var(--aonBlue);
+	background-color: var(--aonBlue);
 }
 
 #aonMenuList-invoice.aonMenuSidenavLiSeleted {
@@ -2859,7 +2867,7 @@ border-left: 2px solid var(--aonInvoice);
 
 .aonHeaderComunica,
 .aonMenuLeftopComunica {
-background-color: var(--aonBlue);
+	background-color: var(--aonBlue);
 }
 
 
@@ -2870,7 +2878,7 @@ border-left: 2px solid var(--aonPayroll);
 
 .aonHeaderDocumental,
 .onMenuLeftopDocumental {
-background-color: var(--aonBlue);
+	background-color: var(--aonBlue);
 }
 
 #aonMenuList-documental.aonMenuSidenavLiSeleted {
@@ -2880,7 +2888,7 @@ border-left: 2px solid var(--aonDocumental);
 
 .aonHeaderAccounting,
 .aonMenuLeftopAccounting {
-background-color: var(--aonBlue);
+	background-color: var(--aonBlue);
 }
 
 #aonMenuList-accounting.aonMenuSidenavLiSeleted {
@@ -2890,7 +2898,7 @@ border-left: 2px solid var(--aonAccounting);
 
 .aonHeaderTimecontrol,
 .aonMenuLeftopTimecontrol {
-background-color: var(--aonBlue);
+	background-color: var(--aonBlue);
 }
 
 #aonMenuList-timecontrol.aonMenuSidenavLiSeleted {
@@ -2900,7 +2908,7 @@ border-left: 2px solid var(--aonTimecontrol);
 
 .aonHeaderMessenger,
 .aonMenuLeftopMessenger {
-background-color: var(--aonBlue);
+	background-color: var(--aonBlue);
 }
 
 #aonMenuList-messenger.aonMenuSidenavLiSeleted {
@@ -3753,6 +3761,11 @@ color: var(--aonWhite);
 
 .aonNewDesktopCardDiv{
   position: relative;
+  cursor: pointer;
+}
+
+.aonNewDesktopCardDiv:hover {
+  background-color: rgb(240, 240, 240);
 }
 
 .aonNewDesktopCardButton{
@@ -4049,7 +4062,7 @@ font-weight: 600;
   display: flex;
   justify-content: center;
   color: var(--aonFiscal);
-}
+} 
 
 .aonLoginSubTitle {
   font-family: var(--roboto-body-big-font-family);
@@ -4119,4 +4132,33 @@ font-weight: 600;
   background-color: var(--white-base);
   color: var(--gray-90);
   border: 1px solid var(--gray-90);
+}
+
+.aonBankCardDate{
+  color: rgb(120, 120, 133);
+}
+
+.aonCompanyCostCardDivTitle {
+  color: grey;
+  font-weight: 500;
+}
+
+.aonDocumentalCardDate{
+  color: rgb(120, 120, 133);
+  font-size: .7rem;
+}
+
+.aonDocumentalCardDescribeDate{
+  color: rgb(120, 120, 133);
+  font-size: .7rem;
+}
+
+.aonMessengerCardDate{
+  text-align: right;
+  color: rgb(120, 120, 133);
+  font-size: 0.8rem;
+}
+
+.accountingChatLegend {
+  color: black;
 }

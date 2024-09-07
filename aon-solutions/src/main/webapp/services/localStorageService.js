@@ -26,11 +26,11 @@ export const AON_THEME = '/css/theme/aon.css';
 export const DARK_THEME = '/css/theme/dark.css';
 
 export const get = (item) => {
-	let value = localStorage.getItem(item);
-	if ( value === null ){ 
-		value = getComputedStyle(document.body).getPropertyValue(`--${item}`);
-	} 
-	return value;
+    let value = localStorage.getItem(item);
+    if ( value === null ){ 
+        value = getComputedStyle(document.body).getPropertyValue(`--${item}`);
+    } 
+    return value;
 }
 
 export const set = (item, value) => {
@@ -106,11 +106,11 @@ export const isDarkTheme = () => {
 }
 
 export const setDarkTheme = (value) => {
-	if ( value ==  CONSTANT.TRUE ) {
-    	setTheme(DARK_THEME);
-	} else {
-		remove(THEME);
-	}
+    if ( value ==  CONSTANT.TRUE ) {
+        setTheme(DARK_THEME);
+    } else {
+        remove(THEME);
+    }
 }
 
 export const isWhiteBrand = () => {
@@ -279,3 +279,4 @@ export const removeDomain = () => {
     removeDomainLogin();
     removeDomainDocument();
 }
+

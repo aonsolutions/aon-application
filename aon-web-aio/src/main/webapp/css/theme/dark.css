@@ -1,262 +1,263 @@
 :root {
+	--favicon: ../faviconColors.png;
 
-	--aonHeaderButtonColor: var(--aonWhite);
+  	--aonHeaderButtonColor: var(--aonWhite);
+	
+	--aonHeaderBackgroundColor: black;
+
+	--aonHeaderBackgroundAvailable: black;
+
+  	--aonRightPanelColor: #212121;
+
+	--aonGrayHeaderButtonsColor:var(--aonWhite);
+
+	--aonHeaderButtonsColor: var(--aonWhite);
   
-  --aonHeaderBackgroundColor: black;
+	--aonCardColor: #3b3a39;
 
-  --aonHeaderBackgroundAvailable: black;
+	--aonCardTitle: var(--aonWhite);
 
-	--aonRightPanelColor: #212121;
+	--aonCardText: var(--aonWhite);
 
-  --aonGrayHeaderButtonsColor:var(--aonWhite);
+	--aonNewUploadLabel: var(--aonWhite);
 
-  --aonHeaderButtonsColor: var(--aonWhite);
+	--aonContentBeta:  #212121;
 
-  --aonCardColor: #3b3a39;
+	--aonDashboardButtonText: white;
 
-  --aonCardTitle: var(--aonWhite);
+	--aonDashboardButton: #3b3a39;
 
-  --aonCardText: var(--aonWhite);
+	--aonSuiteMenuSideMenu: #212121;
 
-  --aonNewUploadLabel: var(--aonWhite);
+	--aonSuiteMenuSideMenuBorder:rgba(255,255,255,0.1);
 
-  --aonContentBeta:  #212121;
+	--aonSuiteMenuNewButtonBorder: white;
 
-  --aonDashboardButtonText: white;
+	--aonSuiteMenuNewButtonText: white;
 
-  --aonDashboardButton: #3b3a39;
+	--aonSuiteMenuNewButtonIcon: var(--aonSuiteMenuNewButtonText);
 
-  --aonSuiteMenuSideMenu: #212121;
+	--aonSuiteMenuUploadButtonBorder: rgba(255,255,255,0.1);
 
-  --aonSuiteMenuSideMenuBorder:rgba(255,255,255,0.1);
+	--aonSuiteMenuTitle: white;
 
-  --aonSuiteMenuNewButtonBorder: white;
+	--aonSuiteMenuCardText: white;
 
-  --aonSuiteMenuNewButtonText: white;
+	--aonSuiteMenuCardText2: var(--aonCardText);
 
-  --aonSuiteMenuNewButtonIcon: var(--aonSuiteMenuNewButtonText);
+	--aonSideNavRowHoverColor: #3b3a39;
 
-  --aonSuiteMenuUploadButtonBorder: rgba(255,255,255,0.1);
+	--aonTopAppTextColor: var(--aonWhite);
 
-  --aonSuiteMenuTitle: white;
+  	--aonTopMenuAvailableMouseOverImg : black;
 
-  --aonSuiteMenuCardText: white;
+	--aonTopMenuAvilableMouseOutText: white;
 
-  --aonSuiteMenuCardText2: var(--aonCardText);
+	--aonAccountingMouseOver: var(--aonBlue);
 
-  --aonSideNavRowHoverColor: #3b3a39;
+	--aonAccountingMouseOut: white;
 
-  --aonTopAppTextColor: var(--aonWhite);
+	--aonSwitchButtonBarOn: gray;
 
-	--aonTopMenuAvailableMouseOverImg : black;
+	--aonSwitchButtonBarOff: gray;
 
-  --aonTopMenuAvilableMouseOutText: white;
+	--aonSwitchButtonCircleOff: var(--aonDarkGray);
+  
+	--aonSwitchButtonCircleOn: white;
 
-  --aonAccountingMouseOver: var(--aonBlue);
+	--aonHomeMouseOverImg: black; 
 
-  --aonAccountingMouseOut: white;
-
-  --aonSwitchButtonBarOn: gray;
-
-  --aonSwitchButtonBarOff: gray;
-
-  --aonSwitchButtonCircleOff: var(--aonDarkGray);
-
-  --aonSwitchButtonCircleOn: white;
-
-  --aonHomeMouseOverImg: black; 
-
-  --aonHomeImg: white;
-
-	--aonSearchBar: var(--aonCardColor);
-
-	--aonSearchButton: white;
+	--aonHomeImg: white;
+  
+ 	--aonSearchBar: var(--aonCardColor);
+  
+ 	--aonSearchButton: white;
 }
 
 .aonBody{
-  background-color: var(--aonContentBeta);
+	background-color: var(--aonContentBeta);
 }
 
 .aonDashboardButton i {
-  background-color: transparent;
+	background-color: transparent;
 }
 
 .aonDashboardButton:hover{
-  background-color: black;
+	background-color: black;
 }
-
+  
 .aonDashboardButton:hover i{
-  background-color: black;
+	background-color: black;
 }
 
 .rootPanel {
-  background-color: var(--aonContentBeta); 
+	background-color: var(--aonContentBeta); 
 }
 
 h1 {
-  color: white;
+	color: white;
 }
 
 .aonLogo {
-  background-image: url("../assets/aon-white-logo.svg");
+	background-image: url("../assets/aon-white-logo.svg");
 }
 
 .sidenavHover:hover{
-  background-color: black;
+	background-color: black;
 }
 
 .aonHeader {
-  color: var(--aonHeaderButtonsColor);
-  
+	color: var(--aonHeaderButtonsColor);
+	
 }
 
 .aonAvatar {
-  color: white;
+	color: white;
 }
 
 .aonLiBeta:hover {
-	 background-color: rgba(0,0,0,.70);
+   	background-color: rgba(0,0,0,.70);
 }
 
 .aonLiSpan {
-  color: white;
+	color: white;
 }
 
 .aonLiSpanSubtitle {
-  color: white;
+	color: white;
 }
 
 .aonToolbar {
-  background-color: var(--aonContentBeta);
+	background-color: var(--aonContentBeta);
 }
 
 .aonToolbarTitle {
-  color: white;
+	color: white;
 }
 
 .aonToolbarSection {
-  background-color: var(--aonContentBeta);
+	background-color: var(--aonContentBeta);
 }
-
+  
 .aonToolbarSectionEnd {
-  color: white;
+	color: white;
 }
 
 .aonSecondaryToolbarTitle {
-  color: white;
+	color: white;
 }
 
 .aonTable th {
-  color: white;
+	color: white;
 }
 
 .aonTable tbody tr {
-  color: white;
-  background-color: var(--aonContentBeta);
+	color: white;
+	background-color: var(--aonContentBeta);
 }
 
 .aonTableTrChecked {
-  background-color: black;
+	background-color: black;
 }
-
+  
 .aonTable tbody tr:hover {
-  background-color: black;
+	background-color: black;
 }
-
+  
 .aonTable tbody tr:active {
-  background-color: black;
+	background-color: black;
 }
 
 .aonMenuSidenav {
-  color: #FFF;
-  background-color: var(--aonHeaderBackgroundColor);
+	color: #FFF;
+	background-color: var(--aonHeaderBackgroundColor);
 }
 
 .aonSidenavTitle {
-  color: white;
+	color: white;
 }
 
 .aonSidenav {
-  background-color: var(--aonContentBeta);
+	background-color: var(--aonContentBeta);
 }
 
-#aonAccountingSidenavPyG {
-  background-color: black;
+ #aonAccountingSidenavPyG {
+	background-color: black;
 }
 
 .aonSearchBoxBeta {
-  color: var(--aonSearchButton);
+	color: var(--aonSearchButton);
 }
 
 .aonDashboardCard{
-  color: white;
+	color: white;
 }
 
 /* Checked, Indeterminate */
 .aonCheckbox > input:checked,
 .aonCheckbox > input:indeterminate {
-  border-color: white;
-  background-color: white;
+	border-color: white;
+	background-color: white;
 }
 
 .aonCheckbox > input:checked + span::before,
 .aonCheckbox > input:indeterminate + span::before {
-  border-color: white;
-  background-color: white;
+	border-color: white;
+	background-color: white;
 }
-
+  
 .aonCheckbox > input:checked + span::after,
 .aonCheckbox > input:indeterminate + span::after {
-  border-color: black;
+	border-color: black;
 }
 
 .aonCheckbox > input:active + span::before {
-  border-color: white;
+	border-color: white;
 }
-
+  
 .aonCheckbox > input:checked:active + span::before {
-  border-color: white;
+	border-color: white;
 }
 
 .aonCheckbox > span::before {
-	  border-color: white;
+    	border-color: white;
 }
 
 .aonTableTr.aonTableTrChecked {
-	background-color: black;
+  	background-color: black;
 }
 
 .aonNewLogo{
-   background-image: url("../image/aon-white-logo.svg");  
+ 	background-image: url("../../assets/aon-white-logo.svg");  
 }
 
 .aonRootGradiantHeader {
-   background-color: var(--aonContentBeta);
+ 	background-color: var(--aonContentBeta);
 }
 
 .aonParentDiv  {
-  background-color: var(--aonContentBeta);
+	background-color: var(--aonContentBeta);
 }
 
 .aonWelcomeDiv  {
-  color: white;
+	color: white;
 }
 
 .aonTabItemText {
-	color: white;
+	  color: white;
 }
 
 .aonTabItemText:hover{
-	background-color: rgba(0, 0, 0, 0.2);
-	border-radius: 5px;
+	  background-color: rgba(0, 0, 0, 0.2);
+	  border-radius: 5px;
 }
 
 .aonTabItemTextSelected {
-	color: white;
+	  color: white;
 }
 
 .aonLoginLogo{
-	 background-image: url("../image/aon-white-logo.svg");
+ 	  background-image: url("../../assets/aon-white-logo.svg");
 }
 
 .aonHeaderStart, .aonMenuLeftopStart,
@@ -283,12 +284,12 @@ h1 {
 .aonHeaderFiscalMenu, .aonMenuLeftopFiscalMenu,
 .aonHeaderPayrollMenu, .aonMenuLeftopPayrollMenu,
 .aonHeaderMarketingMenu, .aonMenuLeftopMarketingMenu {
-  background-color: var(--aonHeaderBackgroundColor);
+	background-color: var(--aonHeaderBackgroundColor);
 }
 
 .aonHeader #aonHeaderCompanyName,
 .aonHeader .material-icons {
-  color: white;
+	color: white;
 }
 
 #aonHeaderCompanyList:hover,
@@ -296,20 +297,20 @@ h1 {
 #aonHeaderConfig:hover, 
 #aonHeaderNotification:hover, 
 #aonHeaderUser:hover{
-  background-color: rgba(255,255,255,0.3);
-	border-radius: 100px;
+	background-color: rgba(255,255,255,0.3);
+  	border-radius: 100px;
 }
 
 .aonMenuLeftopHome .material-symbols-outlined, 
 .aonMenuLeftopStart .material-symbols-outlined, 
 .aonMenuLeftopApplications .material-symbols-outlined{
-  color: white;
+	color: white;
 }
 
 .aonHeaderHome  #aonHeaderCompanyName,
 .aonHeaderApplications  #aonHeaderCompanyName,
 .aonHeaderStart #aonHeaderCompanyName {
-  color: var(--aonWhite);
+	color: var(--aonWhite);
 }
 
 #new:hover,
@@ -337,7 +338,7 @@ h1 {
 #marketingMenu:hover,
 #applications:hover,
 #aonApplication:hover {
-	background-color: rgba(255,255,255,0.1);
+  	background-color: rgba(255,255,255,0.1);
 }
 
 #aonHeaderCompanyList:hover,
@@ -345,33 +346,33 @@ h1 {
 #aonHeaderConfig:hover,
 #aonHeaderNotification:hover,
 #aonHeaderUser:hover{
-	background-color: rgba(255,255,255,0.1);
-	border-radius: 100px;
+  	background-color: rgba(255,255,255,0.1);
+  	border-radius: 100px;
 }
 
 .graphicsDashBoardSummary{
-	color: white;
+  	color: white;
 }
 
 .aonHelpSpan{
-	color: white;
+  	color: white;
 }
 
 /* .notificationPanelAllDiv{
-	color: white;
+  	color: white;
 } */
 
 .notificationPanelRowPrincipalDiv,
 .notificationPanelRowPrincipalDiv .material-icons {
-  color: white;
+	color: white;
 }
 
 .notificationPanelRowPrincipalDiv:hover{
-	background-color: rgba(225, 225, 227, 1);
-	color: black;
-	.material-icons {
-	  color: black;
-	}
+  	background-color: rgba(225, 225, 227, 1);
+  	color: black;
+  	.material-icons {
+		color: black;
+  	}
 }
 
 .aonNewDesktopAppDiv{
@@ -479,6 +480,60 @@ color: var(--white-base);
 
 #divCompanyLogoForm {
 display: none;
+}
+
+.aonSideNavFiscalCircle{
+	border: 1px solid white;
+	color: white;
+}
+  
+.aonAppMenuSidenavListSelected div {
+	background-color: white;
+	border: 1px solid white;
+	color: var(--aonContentBeta); 
+}
+
+.profile-letters {
+	border: 2px solid white;
+	color: white;
+}
+
+.graphicsDashBoardYear {
+	border: 1px white solid;
+}
+
+.aonBankCardDate,
+#pyGyearelect,
+.aonCompanyCostCardDivTitle,
+.aonDocumentalCardDescribeDate,
+.aonDocumentalCardDate,
+.aonMessengerCardDate,
+.aonCardTotal{
+	color: white;
+}
+
+.aonAppLi{
+	background-color: var(--aonCardColor);
+}
+
+.aonAppLi:hover {
+	background-color: var(--aonContentBeta);
+}
+
+#pygCardCanvas {
+	background-color: white;
+}
+
+.aonNewDesktopCardDiv:hover {
+	background-color: var(--aonContentBeta);
+}
+
+.aonUl {
+	color: white;
+}
+
+.accountingChatLegend {
+	color: white;
 }
 
 /**

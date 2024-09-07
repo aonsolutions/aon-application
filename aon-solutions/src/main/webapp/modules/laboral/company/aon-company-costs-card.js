@@ -48,8 +48,7 @@ export class AonCompanyCostsCard extends AonElement {
     //-----TITLE--------------
     let divTitle = this.createElement(TAG.DIV);
     divTitle.id = this.id + "titleDiv";
-    divTitle.style.color  = "grey";
-    divTitle.style.fontWeight ="500";
+    divTitle.classList.add("aonCompanyCostCardDivTitle");
     main.appendChild(divTitle);
 
     //-----CHART--------------
