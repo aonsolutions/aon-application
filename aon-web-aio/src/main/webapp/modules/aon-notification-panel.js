@@ -93,7 +93,7 @@ export class AonNotificationPanel extends AonElement {
             apps.classList.remove("aonMenuLeftopNotification");
         });
 
-        let notifications = await this.getData();  // Espera la Promesa aquí
+        let notifications = await this.getData();  
     
         if (notifications.length === 0) {
             divGeneral.appendChild(this.buildNoNotifications());
@@ -221,10 +221,8 @@ export class AonNotificationPanel extends AonElement {
         const yesterday = new Date(todayStart);
         yesterday.setDate(todayStart.getDate() - 1);
     
-        // Abreviaturas de los meses
         const abbreviatedMonths = ["Ene.", "Feb.", "Mar.", "Abr.", "May.", "Jun.", "Jul.", "Ago.", "Sep.", "Oct.", "Nov.", "Dic."];
     
-        // Obtén el día y el mes en formato abreviado
         let dayMonth = AonDateUtils.getDayMonth(inputDate);
         dayMonth = dayMonth.split(' ');
         const day = dayMonth[0];
@@ -311,7 +309,7 @@ export class AonNotificationPanel extends AonElement {
 
     if (allRead) {
         let divGeneral = this.getElement(this.DIV_GENERAL);
-        divGeneral.innerHTML = ""; // Limpia las notificaciones anteriores
+        divGeneral.innerHTML = ""; 
         divGeneral.appendChild(this.buildNoNotifications());
     }
 }
