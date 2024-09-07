@@ -7,7 +7,7 @@ import { loadTheme } from '..';
 import * as LS from 'aonsolutions/services/localStorageService.js';
 
 export class AonConfig extends AonElement {
-
+  
     TOP_NAV_SWITCH;
     SIDE_NAV_SWITCH;
     APPS_SWITCH;
@@ -267,8 +267,6 @@ export class AonConfig extends AonElement {
     getLeftButton() {
         return this.getElement(this.SIDE_NAV_SWITCH);
     }
-
-
 }
 if(!window.customElements.get(TAG.AON_CONFIG)){
     window.customElements.define(TAG.AON_CONFIG, AonConfig);

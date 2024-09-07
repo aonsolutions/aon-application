@@ -48,7 +48,8 @@ export class AonLoginPanel extends AonElement {
 	}
 
 	create(auth) {
-		this.rightPanel = this.getElement("aonRightPanel"); // Guardar referencia a rightPanel
+		//auth = "";
+		this.rightPanel = this.getElement("aonRightPanel"); 
 		this.rightPanel.style.boxShadow = "0 24px 54px rgba(0,0,0,.15),0 4.5px 13.5px rgba(0,0,0,.08)";
 		this.rightPanel.style.marginTop = '0px';
 		this.rightPanel.style.height = '220px';
@@ -63,9 +64,10 @@ export class AonLoginPanel extends AonElement {
 
 		let divUserInfo = this.createDiv();
 		divUserInfo.className = "userPanelDivUserInfo";
-		if (!auth.name && !auth.email && !auth.document && !auth.phone) {
+		if ((!auth.name && !auth.email && !auth.document && !auth.phone) || !auth) {
 			divUserInfo.appendChild(this.buildName(MSG.EXPIRED_SESSION));
-			divUserInfo.style.marginBottom = "58px";
+			divUserInfo.style.marginBottom = "54px";
+			divUserInfo.style.marginTop = "0px";
 			divUserInfo.appendChild(this.buildInfo(MATERIAL_ICONS.ERROR, "Cierra sesion para reconectar"));
 		} else {
 			if (auth.name)
@@ -114,6 +116,7 @@ export class AonLoginPanel extends AonElement {
 		divLogout.addEventListener(EVENT.CLICK, () => {
 			closeSession();
 			LS.setNewTheme(true);
+			LS.removeToken();
 		});
 		divLogout.appendChild(this.buildInfoLink(MATERIAL_ICONS.LOGOUT, MSG.CLOSE_SESSION));
 		this.appendChild(divLogout);

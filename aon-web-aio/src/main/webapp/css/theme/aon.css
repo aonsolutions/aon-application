@@ -1,9 +1,9 @@
 :root{
-	--favicon: ../faviconColors.png;
+    --favicon: ../faviconColors.png;
 }
 
 .rootPanel {
-  z-index: 3;	
+  z-index: 3;   
   padding-left: 2px;
   background-color: #fafafa;
 }
@@ -23,17 +23,17 @@
 } */
 
 /* .aonLoginLogo::before {
-	content: '';
-	width: 32px;
-	height: 32px;
-	display: block;
-	border-radius:32px;
-	background-size: contain;
-	background-image: url('https://www.aonsolutions.es/favicon.svg');
+    content: '';
+    width: 32px;
+    height: 32px;
+    display: block;
+    border-radius:32px;
+    background-size: contain;
+    background-image: url('https://www.aonsolutions.es/favicon.svg');
 } */
 
 #divCompanyLogoForm {
-	display:none;
+    display:none;
 }
 
 /* #aonLoginLanguageSpanToolbar{
@@ -41,31 +41,31 @@
 } */
 
 /* .aonLoginSubTitle::after {
-	content: 'Accede a tu cuenta de AON';
+    content: 'Accede a tu cuenta de AON';
 } */
 
 /*
 .aonMenuSidenav{
-	--aonNote: rgb(255, 228, 104);
+    --aonNote: rgb(255, 228, 104);
 }
 
 .rootPanel,
 .aonHeader,
 .aonMenuLeftop {
-	--aonNote: rgb(255, 248, 184);
+    --aonNote: rgb(255, 248, 184);
 }
 
  .aonHeaderNote {
-	--aonIcon: rgb(95, 99, 104);
+    --aonIcon: rgb(95, 99, 104);
 } 
 
 
 #aon-notesSidenav {
-	--aonSidenavSelected: rgb(95, 99, 104);
+    --aonSidenavSelected: rgb(95, 99, 104);
 }
 
 .aonHeaderNote .aonHeaderAppSpan{
-  	color: rgb(95, 99, 104);
+    color: rgb(95, 99, 104);
 }
 
 .aonHeaderNote .material-icons,
@@ -93,5 +93,7 @@
 Important. Keep this rule at the end of file 
 **/
 .aonTheme {
-	--aon-theme: 'AON';
+    --aon-theme: 'AON';
 }
+
+
