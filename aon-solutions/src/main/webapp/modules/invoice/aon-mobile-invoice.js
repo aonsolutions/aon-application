@@ -264,9 +264,7 @@ export class AonMobileInvoice extends AonInvoice {
 
 		// ----- PAYMETHOD
 
-		// let paymethod = new AonNewSelect();
-		// paymethod.id = this.PAYMETHOD;
-		// paymethod.title = MSG.PAYMETHOD;
+		// let paymethod = createSelect(this.PAYMETHOD, MSG.PAYMETHOD);
 		// paymethod.autocomplete = true;
 		// paymethod.readonly = this.invoice.isReadonly();
 		// paymethod.addEventListener(EVENT.SELECT, () => {

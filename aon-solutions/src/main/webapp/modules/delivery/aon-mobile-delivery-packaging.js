@@ -1,19 +1,14 @@
 import { AonElement } from '../../components/AonElement.js';
 
-import { AonCard } from "../../components/aon-card.js";
-
-import { CONSTANT, EVENT, MATERIAL_ICONS, MSG, TAG } from '../../environments/environments.js'; 
+import { CONSTANT, MATERIAL_ICONS, MSG, TAG } from '../../environments/environments.js'; 
 
 import { Elaboration } from '../../models/elaboration/Elaboration.js';
 import { AonBasicTable } from '../../components/aon-basic-table.js';
-import { AonIconButton } from '../../components/aon-icon-button.js';
 import * as LS from '../../services/localStorageService.js';
 import {openFileUrl} from '../../services/service.js';
 
 import * as ACTION from '../actions.js';
-import { AonNewInput } from '../../components/aon-new-input.js';
-import { AonNewNumber } from '../../components/aon-new-number.js';
-import { AonNewSelect } from '../../components/aon-new-select.js';
+import { createCard, createInput } from '../../components/CreateComponent.js';
 
 export class AonMobileDeliveryPackaging extends AonElement {
 
@@ -95,8 +90,7 @@ export class AonMobileDeliveryPackaging extends AonElement {
 	}
 
 	buildPackageGeneral(parent){
-		let card = this.createCard(this.PACKAGE_CARD, MSG.PACKAGING);
-		parent.appendChild(card);
+		let card = createCard(this.PACKAGE_CARD, MSG.PACKAGING, parent);
 		card.addTitleButton(MSG.PRINT, MATERIAL_ICONS.PRINT, false, () => this.print());
 
 		let table = new AonBasicTable();
@@ -105,14 +99,14 @@ export class AonMobileDeliveryPackaging extends AonElement {
 
 		table.addRow();
 
-		let product = this.createInput(this.PACKAGE_PRODUCT, "Envase");
+		let product = createInput(this.PACKAGE_PRODUCT, "Envase");
 		product.value = this.packaging.item.name;
 		product.disabled = true;
 		table.addCell(product);
 
 		table.addRow();
 
-		let serialNumber = this.createInput(this.PACKAGE_SERIAL_NUMBER, "SSCC");
+		let serialNumber = createInput(this.PACKAGE_SERIAL_NUMBER, "SSCC");
 		serialNumber.value = this.packaging.item.serialNumber;
 		serialNumber.disabled = true;
 		table.addCell(serialNumber);
@@ -120,8 +114,7 @@ export class AonMobileDeliveryPackaging extends AonElement {
 	}
 
 	buildPackageComposition(parent){
-		let card = this.createCard(this.COMPOSITION_CARD, MSG.COMPOSITION);
-		parent.appendChild(card);
+		let card = createCard(this.COMPOSITION_CARD, MSG.COMPOSITION, parent);
 
 		let div = this.createElement(TAG.DIV);
 		card.setContent(div);
@@ -134,14 +127,14 @@ export class AonMobileDeliveryPackaging extends AonElement {
 		this.packaging.item.itemComposition.forEach((c, i) => {
 			table.addRow();
 			
-			let comp1 = this.createInput(this.COMPOSITION_ITEM + i, "Producto");
+			let comp1 = createInput(this.COMPOSITION_ITEM + i, "Producto");
 			comp1.value = c.composition.description.isEmpty()
 				? c.composition.product.code
 				: c.composition.description;
 			comp1.disabled = CONSTANT.TRUE;
 			table.addCell(comp1);
 
-			let comp2 = this.createInput(this.COMPOSITION_QUANTITY + i, "Cantidad");
+			let comp2 = createInput(this.COMPOSITION_QUANTITY + i, "Cantidad");
 			comp2.value = c.quantity;
 			comp2.disabled = CONSTANT.TRUE;
 			table.addCell(comp2);
@@ -181,38 +174,6 @@ export class AonMobileDeliveryPackaging extends AonElement {
 	
 	setPackaging(packaging) {
 		this.packaging = packaging; //new Package(elaboration);
-	}
-
-	// Create Components
-
-	createCard(id, title) {
-		let card = new AonCard();
-		card.id = id;
-		card.title = title;
-		return card;
-	}
-
-	createSelect(id, title) {
-		let select = new AonNewSelect();
-		select.id = id;
-		select.title = title;
-		return select;
-	}
-
-	createInput(id, title) {
-		let input = new AonNewInput();
-		input.id = id;
-		input.description = title;
-		input.title = title;
-		return input;
-	}
-
-	createNumber(id, title) {
-		let number = new AonNewNumber();
-		number.id = id;
-		number.description = title;
-		number.title = title;
-		return number;
 	}
 
 	setElaborationToolbar(toolbar) {

@@ -99,7 +99,7 @@ h1 {
 }
 
 .aonLogo {
-	background-image: url("../assets/aon-white-logo.svg");
+	background-image: url("../../assets/aon-white-logo.svg");
 }
 
 .sidenavHover:hover{
@@ -244,20 +244,20 @@ h1 {
 }
 
 .aonTabItemText {
-	  color: white;
+	color: white;
 }
 
 .aonTabItemText:hover{
-	  background-color: rgba(0, 0, 0, 0.2);
-	  border-radius: 5px;
+	background-color: rgba(0, 0, 0, 0.2);
+	border-radius: 5px;
 }
 
 .aonTabItemTextSelected {
-	  color: white;
+	color: white;
 }
 
 .aonLoginLogo{
- 	  background-image: url("../../assets/aon-white-logo.svg");
+ 	background-image: url("../../assets/aon-white-logo.svg");
 }
 
 .aonHeaderStart, .aonMenuLeftopStart,
@@ -380,7 +380,7 @@ h1 {
 }
 
 .aonNewMenuAppIcon{
-  color: white;
+  	color: white;
 }
 
 .aonConfigAppsTitle,
@@ -388,82 +388,82 @@ h1 {
 .aonConfigBrandTitle,
 .aonConfigTopNavTitle,
 .aonConfigSideNavTitle {
-  color: white;
+  	color: white;
 }
 
 #aonLoginLanguageSpanToolbar {
-  color: white;
+  	color: white;
 }
 
 .aonLoginTitle {
-  color: white;
+  	color: white;
 }
 
 .aonLink {
-  color: white ! important;
+  	color: white ! important;
 }
 
 .aonLink:hover {
-  color: white ! important;
+  	color: white ! important;
 }
 
 .aonLoginButton:hover {
-background-color: black;
-color: var(--white-base);
+	background-color: black;
+	color: var(--white-base);
 }
 
 .aonCompanyTitleSpan {
-  color: white;
+  	color: white;
 }
 
 .material-icons {
-  color: white; 
+  	color: white; 
 }
 
 #aonNotificationPanelOpenButtonIcon:hover{
-  background-color: rgba(225,225,227,1);
-  color: black;
+  	background-color: rgba(225,225,227,1);
+  	color: black;
 }
 
 .aonMenuItemSpan {
-  color: white;
+  	color: white;
 }
 
 .aonAppMenuSidenavListSelected {
-  background-color: black;
+	background-color: black;
 }
 
 #aon-notesSidenav .material-icons {
-  --aonNote: white;
+  	--aonNote: white;
 }
 
 #aonInvoiceSidenav .material-icons {
-  --aonInvoice: white;
+  	--aonInvoice: white;
 }
 
 #aonAccountingSidenav .material-icons {
-  --aonAccounting: white;
+  	--aonAccounting: white;
 }
 
 #aonFiscalSidenav .material-icons {
-  --aonFiscal: white;
+  	--aonFiscal: white;
 }
 
 #aonLaboralSidenav aon-icon,
 #aonLaboralSidenav .material-icons {
-  --aonPayroll: white;
+  	--aonPayroll: white;
 }
 
 #aonMessengerSidenav .material-icons {
-  --aonMessenger: white;
+  	--aonMessenger: white;
 }
 
 #aonDocumentalSidenav .material-icons {
-  --aonDocumental: white;
+  	--aonDocumental: white;
 }
 
 #aonSigninSidenav .material-icons {
-  --aonTimecontrol: white;
+  	--aonTimecontrol: white;
 }
 
 #aonAccountingSidenavoptionsSelect,
@@ -471,15 +471,15 @@ color: var(--white-base);
 #aonAccountingSidenavoptionsDetailSelect,
 #aonFiscalSidenavPeriodoSelect,
 #aonFiscalSidenavEjercicioSelect {
-  color: white;
+  	color: white;
 }
 
 .aonInputBoxLabel > input {
-  background-color: var(--aonContentBeta);
+ 	background-color: var(--aonContentBeta);
 }
 
 #divCompanyLogoForm {
-display: none;
+	display: none;
 }
 
 .aonSideNavFiscalCircle{
@@ -540,5 +540,5 @@ display: none;
 Important. Keep this rule at the end of file 
 **/
 .aonTheme {
-  --aon-theme: 'DARK';
+  	--aon-theme: 'DARK';
 }

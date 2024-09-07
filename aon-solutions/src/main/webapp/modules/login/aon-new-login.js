@@ -19,10 +19,10 @@ import { AonToast } from "../../components/aon-toast.js";
 import { AonDialogMenu } from "../../components/aon-dialog-menu.js";
 import { Language } from "../../models/Language.js";
 import { AonEmail } from "../../components/aon-email.js";
-import { AonNewInput } from "../../components/aon-new-input.js";
 import { AonMobileParent } from "../company/aon-mobile-parent.js";
 import { AonParent } from "aonparent";
 import { AonIconButton } from "../../components/aon-icon-button.js";
+import { createInput } from "../../components/CreateComponent.js";
 
 export class AonNewLogin extends AonElement {
   tag;
@@ -123,7 +123,7 @@ export class AonNewLogin extends AonElement {
     })
     divFormContent.appendChild(userInput);
 
-    let passwordInput = this.createAonElement(new AonNewInput(), 'aonLoginPassword', MSG.PASSWORD);
+    let passwordInput = createInput('aonLoginPassword', MSG.PASSWORD);
     passwordInput.setRequired(true);
     passwordInput.type = 'password';
     divFormContent.appendChild(passwordInput);

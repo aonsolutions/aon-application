@@ -1,20 +1,13 @@
 import { AonElement } from '../../../components/AonElement.js';
 import { getRegistries, getRegistryAddress, getCustomer } from '../../../services/service.js';
-
-import { AonSuggestion} from '../../../components/aon-suggestion.js';
-
 import { CONSTANT, CSS, EVENT, MATERIAL_ICONS, MSG, TAG } from '../../../environments/environments.js';
 import { AonAddress } from '../../../components/aon-address.js';
 import { RegistryType } from '../../../models/enums.js';
-import { AonSelect } from '../../../components/aon-select.js';
 import { AonBasicTable } from '../../../components/aon-basic-table.js';
 import { AonIconButton } from '../../../components/aon-icon-button.js';
 import { Address } from '../../../models/registry/Address.js';
-
-import * as LS from '../../../services/localStorageService.js';
-import { AonNewSuggestion } from '../../../components/aon-new-suggestion.js';
-import { AonNewSelect } from '../../../components/aon-new-select.js';
 import { Countries } from '../../../services/country.js';
+import { createSelect, createSuggestion } from '../../../components/CreateComponent.js';
 
 export class AonCustomerSuggestion extends AonElement {
 
@@ -191,9 +184,7 @@ export class AonCustomerSuggestion extends AonElement {
     span0.style.marginRight = "2px";
     div.appendChild(span0);
 
-    let country = LS.isNewTheme() ? new AonNewSelect() : new AonSelect();
-    country.id = this.DOCUMENT_COUNTRY;
-    country.title = MSG.COUNTRY;
+    let country = createSelect(this.DOCUMENT_COUNTRY, MSG.COUNTRY);
     country.autocomplete = true;
     country.options = JSON.stringify(
       Countries.map((c) => {
@@ -214,7 +205,7 @@ export class AonCustomerSuggestion extends AonElement {
     span1.style.marginRight = "2px";
     div.appendChild(span1);
 
-    let document = this.createAonElement(LS.isNewTheme() ? new AonNewSuggestion() : new AonSuggestion(), this.DOCUMENT, MSG.NIF);
+    let document = createSuggestion(this.DOCUMENT, MSG.NIF);
     document.readonly = this.isReadonly();
     document.value = this.customer.document;
     document.addEventListener(EVENT.KEYUP, (e) => this.onKeyupDocument(e, document.value));
@@ -226,7 +217,7 @@ export class AonCustomerSuggestion extends AonElement {
     span2.style.width="55%";
     div.appendChild(span2);
 
-    let name = this.createAonElement(LS.isNewTheme() ? new AonNewSuggestion() : new AonSuggestion(), this.NAME, MSG.BUSINESS_NAME);
+    let name = createSuggestion(this.NAME, MSG.BUSINESS_NAME);
     name.name = CONSTANT.NAME;
     name.value = this.customer.name;
     name.readonly = this.isReadonly();
@@ -291,9 +282,7 @@ export class AonCustomerSuggestion extends AonElement {
       this.getElement(table.TABLE).style.borderSpacing = '0px';
       table.addRow();
       if(this.customer.address && this.customer.address.id && this.customer.addresses && this.customer.addresses.length > 0 && this.showAddressList) { 
-        let addressList = LS.isNewTheme() ? new AonNewSelect() : new AonSelect();
-        addressList.id = this.ADDRESS_LIST;
-        addressList.title = MSG.ADDRESS;
+        let addressList = createSelect(this.ADDRESS_LIST, MSG.ADDRESS);
         addressList.setAlias('id', 'fullAddress');
         addressList.setOptions(this.customer.addresses);
         addressList.value = this.customer.address.id;
