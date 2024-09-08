@@ -298,7 +298,6 @@ export class AonParent extends AonElement {
 				ul.style.maxHeight = `calc(100vh - ${totalOffsetTop + totalBottom }px)`; 
 			}
 	    }, 100);
-		
 	}
 
 	loadMore() {
@@ -411,7 +410,7 @@ export class AonParent extends AonElement {
 		
 		this.clearElementById('aonMenu');
 		let aonMenu = this.getElement('aonMenu');
-		aonMenu.init();
+		aonMenu.init().then(() => aonMenu.open());
 
 		getUser().then(user => {
 			localStorage.setItem('aon_domain_login', user.login);
@@ -421,6 +420,9 @@ export class AonParent extends AonElement {
 
 			this.rootPanel(aonDesktop);
 		});
+
+		
+
 	}
 
 

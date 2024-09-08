@@ -120,10 +120,16 @@ export class AonNewMenu extends AonElement {
 	}
 
 	init() {
+		
 		this.setAttribute('opened', true);
-		this.buildDur().then(()=> {
-			this.build();
-		})
+		
+		return new Promise((resolve, reject) => {
+			this.buildDur().then(()=> {
+				this.build();
+				resolve();
+			});
+		});
+
 		
 		//if(localStorage.getItem('aon_domain_id') && localStorage.getItem('company')){
 		//	getDomainUserRoles({}).then(r => {
@@ -278,6 +284,9 @@ export class AonNewMenu extends AonElement {
 		this.appendChild(aonMenuLefttop);
 		aonMenuLefttop.classList.add("aonNewMenuLeftTop");
 		this.buildMenuLeftop();
+		// let icon = this.getElement("aonMenuLeftop");
+		aonMenuLefttop.style.visibility = "visible";
+
 
 		let aonMenuSidenav = this.createElement(TAG.DIV);
 		aonMenuSidenav.id = this.AON_MENU_SIDENAV;
@@ -295,13 +304,7 @@ export class AonNewMenu extends AonElement {
 		this.getRootPanel().style.marginTop = '1px'; //'69px';
 		this.buildMenuTopnav();
 
-		if(LS.isTopMenu()){
-			this.showTopNav();
-		}
-
-		if(LS.isLeftMenu()){
-			this.showSideNav();
-		} 
+		
 
 		let header = this.getElement('aonHeaderWeb');
 		header.className = 'aonHeader aonHeaderStart';
@@ -463,7 +466,7 @@ export class AonNewMenu extends AonElement {
 		let menulist = this.getElement("aonMenuList");
 		let rootPanel = this.getElement("rootPanel");
 		let aonlogo = this.getElement("aonLogo");		
-		let icon = this.getElement("aonMenuLeftop");
+		// let icon = this.getElement("aonMenuLeftop");
 
 		sidenav.style.width = '68px';
 		sidenav.style.display = "";
@@ -473,7 +476,7 @@ export class AonNewMenu extends AonElement {
 		aonlogo.style.left = '60px';
 		aonlogo.style.position = 'relative';
 
-		icon.style.visibility = "visible";
+		// icon.style.visibility = "visible";
 
 		rootPanel.style.marginLeft = '68px';
 	}
@@ -609,12 +612,12 @@ export class AonNewMenu extends AonElement {
 			div.appendChild(span);
 		}
 		
-		if(welcome && app.app == "applications"){
-			div.addEventListener("click", (event) => {
-				event.preventDefault(); 
-				event.stopPropagation();
-			});
-		}
+		// if(welcome && app.app == "applications"){
+		// 	div.addEventListener("click", (event) => {
+		// 		event.preventDefault(); 
+		// 		event.stopPropagation();
+		// 	});
+		// }
 		
 		a.appendChild(div);
 		return a;
@@ -837,6 +840,16 @@ export class AonNewMenu extends AonElement {
 	close() {
 		this.hideSideNav();
 		this.hideTopNav();
+	}
+
+	open() {
+		if(LS.isTopMenu()){
+			this.showTopNav();
+		}
+
+		if(LS.isLeftMenu()){
+			this.showSideNav();
+		} 
 	}
 
 	isExpanded() {

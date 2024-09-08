@@ -8,9 +8,9 @@ import { AonIconButton } from "../../components/aon-icon-button.js";
 import { Note } from "../../models/note/Note.js";
 import { AonDialogMenu } from "../../components/aon-dialog-menu.js";
 import { AonNewDialog } from "../../components/aon-new-dialog.js";
-import { AonNewInput } from "../../components/aon-new-input.js";
 import { sortBy } from "../../services/utils.js";
 import { AonIcon } from "../../components/aon-icon.js";
+import { createInput } from "../../components/CreateComponent.js";
 
 export class AonNotes extends AonElement {
   NOTES;
@@ -365,7 +365,7 @@ export class AonNotes extends AonElement {
     this.getApplication().appendChild(aonCreateUpdateTagDialog);
 
     // Create name input
-    let nameInput = this.createAonElement(new AonNewInput(), 'nameInput', 'Nombre');
+    let nameInput = createInput('nameInput', 'Nombre');
     nameInput.type = 'text';
     nameInput.setAttribute("maxLength", 17);
     nameInput.id = "dialogTag"

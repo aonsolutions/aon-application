@@ -1,12 +1,9 @@
 import { AonElement } from "../../components/AonElement.js";
 import { CSS, EVENT, TAG, MSG, CONSTANT } from "../../environments/environments.js";
-import { AonCard } from "../../components/aon-card.js";
 import { AonSwitch } from "../../components/aon-switch.js";
-import { AonSelect } from "../../components/aon-select.js";
-import { AonEmail } from "../../components/aon-email.js";
-import { AonNewInput } from "../../components/aon-new-input.js";
 import { invofoxLogin } from "../../services/invofoxService.js";
 import { AonIcon } from "../../components/aon-icon.js";
+import { createCard, createEmail, createInput, createSelect } from "../../components/CreateComponent.js";
 
 export class AonOcrConfiguration extends AonElement {
     
@@ -42,9 +39,7 @@ export class AonOcrConfiguration extends AonElement {
     }
     
     buildCard(parent) {
-        let card = new AonCard();
-		card.id = this.CARD;
-        card.title = 'Configuración de Invofox';
+        let card = createCard(this.CARD, 'Configuración de Invofox');
         card.style.width = '50%';
         parent.appendChild(card);
         
@@ -72,11 +67,11 @@ export class AonOcrConfiguration extends AonElement {
         aonIcon.style.marginLeft = '40%';
         content.appendChild(aonIcon);
 
-        let userInput = this.createAonElement( new AonEmail(),this.USER, MSG.USER);
+        let userInput = createEmail(this.USER, MSG.USER);
         userInput.setRequired(true);
         content.appendChild(userInput);
     
-        let passwordInput = this.createAonElement(new AonNewInput(), this.PASSWORD, MSG.PASSWORD);
+        let passwordInput = createInput(this.PASSWORD, MSG.PASSWORD);
         passwordInput.setRequired(true);
         passwordInput.type = 'password';
         content.appendChild(passwordInput);
@@ -117,9 +112,7 @@ export class AonOcrConfiguration extends AonElement {
         let div1 = this.createDiv();
         div1.style.marginBottom = '10px';
         content.appendChild(div1);
-        let env = new AonSelect();
-        env.id = this.ENVIRONMENT;
-        env.title = "Entorno"; 
+        let env = createSelect(this.ENVIRONMENT, "Entorno"); 
         let enabled = this.configuration.personalized || this.isConsole() || this.isBeta();
         if(!enabled) env.disabled = CONSTANT.DISABLED;
         env.value = this.configuration.environment;
