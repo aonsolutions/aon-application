@@ -112,6 +112,7 @@ export const CREDIT_CARD = 'credit_card';
 export const DATA_OBJECT = 'data_object';
 export const DATASET_LINKED = 'dataset_linked';
 export const DELETE = 'delete';
+export const DELETE_FOREVER = 'delete_forever';
 export const DELETE_SWEEP = 'delete_sweep';
 export const DICTIONARY = 'dictionary';
 export const DOCUMENT_SCANNER = 'document_scanner';
@@ -187,11 +188,14 @@ export const LOGOUT = 'logout';
 export const LINK = 'link';
 export const LINK_OFF = 'link_off';
 export const LIST = 'list';
+export const LIST_ALT = 'list_alt';
 export const LABEL = 'label';
+export const LANGUAGE = 'language';
 
 // ----- M
 
 export const MAIL = 'mail';
+export const MANAGE_ACCOUNTS = 'manage_accounts';
 export const MORE_VERT = 'more_vert';
 export const MOVE_TO_INBOX = 'move_to_inbox';
 export const MARK_EMAIL_READ = 'mark_email_read';

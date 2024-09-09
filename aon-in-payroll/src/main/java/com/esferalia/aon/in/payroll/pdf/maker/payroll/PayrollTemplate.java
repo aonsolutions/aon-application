@@ -530,9 +530,9 @@ public class PayrollTemplate implements IPayrollTemplate {
 			if (localTotal != 0)
 			    m.getValue().stream().forEach(n -> {
 				String entryValue = toLatinNumber(n.getAmount().orElse(null)) + " " + text("MONEDA");
-				String entryTxt = " por " + n.getDescription().orElse("").replaceAll("<.*>", "");
 				String entryPercent = (n.getPercent().isEmpty()) ? ""
 					: toLatinNumber(n.getPercent().get()) + " % ";
+				String entryTxt = n.getPercent().map( p -> " por ").orElse("") + n.getDescription().orElse("").replaceAll("<.*>", "");
 
 				if (n.getAmount().isPresent() && n.getAmount().get() != 0) {
 				    PdfText quantity = new PdfText(x, y, 60, 15, contents, entryPercent, BLACK,

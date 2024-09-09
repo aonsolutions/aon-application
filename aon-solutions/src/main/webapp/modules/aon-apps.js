@@ -80,6 +80,14 @@ export class AonApps extends AonElement {
 
 				if(app.icon) {
 					span.innerHTML = `<aon-icon icon="${app.icon}" color="${app.color}" size="30px"></aon-icon>`;
+				}  else if(app.symbol) {
+					let icon = this.createSpan();
+					icon.classList.add(CSS.MATERIAL_SYMBOLS_OUTLINED);
+					icon.innerHTML = app.symbol;
+					icon.style.color = app.color;
+					icon.style.paddingTop = '5px';
+					icon.style.paddingLeft = '4px';
+					span.appendChild(icon);
 				} else {
 					let img = this.createElement(TAG.IMG);
 					img.style.width = '30px';

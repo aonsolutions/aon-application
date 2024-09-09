@@ -256,6 +256,8 @@ export const LINK_DOMAINS = 'Vincular Dominios a Clientes';
 export const LINK_DOMAIN_QUESTION = "Desexa vincular este cliente co dominio?";
 export const LOADING = 'Cargando';
 export const LOCATION = 'Ubicación';
+export const LOGIN = 'Iniciar sesión';
+export const LOGIN_SUBTITLE = 'Introduza as súas credenciais';
 
 // ----- M
 
@@ -271,6 +273,7 @@ export const MOVED_TO_TRASH = 'Trasladouse ao papeleira';
 export const MY_DATA = 'Os Meus Datos';
 export const MY_MANAGER = 'O meu Xestor';
 export const MY_USER = 'O Meu Usuario';
+export const MAGIC_LINK = 'Enviando ligazón de acceso por correo electrónico';
 
 // ----- N
 
@@ -406,7 +409,7 @@ export const SHARED = 'Compartidas';
 export const SHOW_FILE = 'Ensinar Ficheiro';
 export const SIDE_MENU = 'Menú lateral';
 export const SIGN_IN = 'Iniciar Sesión';
-export const SIGN_IN_WITHOUT_PASSWORD = 'Iniciar Sesión sen Contrasinal';
+export const SIGN_IN_WITHOUT_PASSWORD = 'Sen Contrasinal';
 export const SIGN_IN_WITH_CERTIFICATE = 'Iniciar Sesión con Certificado';
 export const SII = 'SII';
 export const SII_TICKETBAI = 'SII / TicketBAI';
@@ -423,7 +426,7 @@ export const SUPPORT = 'Soporte';
 export const SURCHARGE = 'Recargo';
 export const SURNAME = 'Apelidos';
 export const SYSTEM_MESSAGES = 'Mesaxes do Sistema';
-export const SELECT_LANGUAGE = "Seleccione o idioma";
+export const SELECT_LANGUAGE = "Selección da lingua";
 export const SELECT_COMPANY_TYPE = "Seleccione o tipo de empresa";
 
 // ----- T

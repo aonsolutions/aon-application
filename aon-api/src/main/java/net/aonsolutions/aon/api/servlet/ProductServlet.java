@@ -10,6 +10,7 @@ import java.util.stream.Collectors;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import com.code.aon.product.enumeration.ProductStatus;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AON_SOLUTIONS;
 import com.esferalia.aon.occam.api.json.CustomerJSON;
@@ -390,6 +391,9 @@ public class ProductServlet extends AonApiHttpServlet {
 		if(!AonStringUtils.isEmpty(api.getData().optString("kind"))) {
 			filter = filter.and(f.getKindProperty().eq(ProductKind.safeValueOf(api.getData().optString("kind")).value())
 					.or(f.getKindProperty().eq(ProductKind.SALE_PURCHASE.value())));
+		}
+		if(!AonStringUtils.isEmpty(api.getData().optString(IJsonNames.STATUS))) {
+			filter = filter.and(f.getStatusProperty().eq((byte)ProductStatus.valueOf(api.getData().optString(IJsonNames.STATUS)).ordinal()));
 		}
 		return filter;
 	}

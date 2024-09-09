@@ -15,6 +15,8 @@ import static com.esferalia.aon.jooq.tables.TaskHolder.TASK_HOLDER;
 import static com.esferalia.aon.jooq.tables.User.USER;
 import static com.esferalia.aon.jooq.tables.Workgroup.WORKGROUP;
 
+import static com.esferalia.aon.occam.impl.jooq.dao.TaskHolderDAO.TASK_HOLDER_ALIAS;
+
 import java.sql.Timestamp;
 import java.util.List;
 import java.util.function.Function;
@@ -74,14 +76,10 @@ public class MarketingCampaignDAO {
 
 	public static MarketingCampaign get(CloseableAONContext ctx, Integer id) {
 		Record marketingCampaignRecord = ctx.getDslContext().select().from(MK_CAMPAIGN)
-				.leftOuterJoin(SCOPE)
-				.on(SCOPE.ID.eq(MK_CAMPAIGN.SCOPE))
-				.leftOuterJoin(WORKGROUP)
-				.on(WORKGROUP.ID.eq(MK_CAMPAIGN.WORKGROUP))
-				.leftOuterJoin(TASK_HOLDER)
-				.on(TASK_HOLDER.REGISTRY.eq(MK_CAMPAIGN.TASK_HOLDER))
-				.leftOuterJoin(REGISTRY)
-				.on(REGISTRY.ID.eq(TASK_HOLDER.REGISTRY))
+				.leftOuterJoin(SCOPE).on(SCOPE.ID.eq(MK_CAMPAIGN.SCOPE))
+				.leftOuterJoin(WORKGROUP).on(WORKGROUP.ID.eq(MK_CAMPAIGN.WORKGROUP))
+				.leftOuterJoin(TASK_HOLDER).on(TASK_HOLDER.REGISTRY.eq(MK_CAMPAIGN.TASK_HOLDER))
+				.leftOuterJoin(TASK_HOLDER_ALIAS).on(TASK_HOLDER_ALIAS.ID.eq(TASK_HOLDER.REGISTRY))
 				.where(MK_CAMPAIGN.ID.eq(id))
 				.fetchOne();
 		
@@ -96,16 +94,11 @@ public class MarketingCampaignDAO {
 	
 	public static MarketingCampaign getByAction(CloseableAONContext ctx, Integer actionId) {
 		Record marketingCampaignRecord = ctx.getDslContext().select().from(MK_ACTION)
-				.join(MK_CAMPAIGN)
-				.on(MK_CAMPAIGN.ID.eq(MK_ACTION.CAMPAIGN))
-				.leftOuterJoin(SCOPE)
-				.on(SCOPE.ID.eq(MK_CAMPAIGN.SCOPE))
-				.leftOuterJoin(WORKGROUP)
-				.on(WORKGROUP.ID.eq(MK_CAMPAIGN.WORKGROUP))
-				.leftOuterJoin(TASK_HOLDER)
-				.on(TASK_HOLDER.REGISTRY.eq(MK_CAMPAIGN.TASK_HOLDER))
-				.leftOuterJoin(REGISTRY)
-				.on(REGISTRY.ID.eq(TASK_HOLDER.REGISTRY))
+				.join(MK_CAMPAIGN).on(MK_CAMPAIGN.ID.eq(MK_ACTION.CAMPAIGN))
+				.leftOuterJoin(SCOPE).on(SCOPE.ID.eq(MK_CAMPAIGN.SCOPE))
+				.leftOuterJoin(WORKGROUP).on(WORKGROUP.ID.eq(MK_CAMPAIGN.WORKGROUP))
+				.leftOuterJoin(TASK_HOLDER).on(TASK_HOLDER.REGISTRY.eq(MK_CAMPAIGN.TASK_HOLDER))
+				.leftOuterJoin(TASK_HOLDER_ALIAS).on(TASK_HOLDER_ALIAS.ID.eq(TASK_HOLDER.REGISTRY))
 				.where(MK_ACTION.ID.eq(actionId))
 				.fetchOne();
 		
@@ -122,14 +115,10 @@ public class MarketingCampaignDAO {
 		Condition condition = paramsToCondition(ctx, params);
 		
 		List<MarketingCampaign> marketingCampaigns = ctx.getDslContext().select().from(MK_CAMPAIGN)
-			.leftOuterJoin(SCOPE)
-			.on(SCOPE.ID.eq(MK_CAMPAIGN.SCOPE))
-			.leftOuterJoin(WORKGROUP)
-			.on(WORKGROUP.ID.eq(MK_CAMPAIGN.WORKGROUP))
-			.leftOuterJoin(TASK_HOLDER)
-			.on(TASK_HOLDER.REGISTRY.eq(MK_CAMPAIGN.TASK_HOLDER))
-			.leftOuterJoin(REGISTRY)
-			.on(REGISTRY.ID.eq(TASK_HOLDER.REGISTRY))
+			.leftOuterJoin(SCOPE).on(SCOPE.ID.eq(MK_CAMPAIGN.SCOPE))
+			.leftOuterJoin(WORKGROUP).on(WORKGROUP.ID.eq(MK_CAMPAIGN.WORKGROUP))
+			.leftOuterJoin(TASK_HOLDER).on(TASK_HOLDER.REGISTRY.eq(MK_CAMPAIGN.TASK_HOLDER))
+			.leftOuterJoin(TASK_HOLDER_ALIAS).on(TASK_HOLDER_ALIAS.ID.eq(TASK_HOLDER.REGISTRY))
 			.where(condition)
 			.limit(params.getOffset(), params.getLimit())
 			.fetch()
@@ -144,18 +133,12 @@ public class MarketingCampaignDAO {
 	
 	private static void getMarketingCampaignActions(CloseableAONContext ctx, MarketingCampaign marketingCampaign) {
 		List<MarketingAction> marketingActions = ctx.getDslContext().select().from(MK_ACTION)
-				.leftOuterJoin(SURVEY)
-				.on(SURVEY.ID.eq(MK_ACTION.SURVEY))
-				.leftOuterJoin(SCOPE)
-				.on(SCOPE.ID.eq(SURVEY.SCOPE))
-				.leftOuterJoin(WORKGROUP)
-				.on(WORKGROUP.ID.eq(MK_ACTION.WORKGROUP))
-				.leftOuterJoin(TASK_HOLDER)
-				.on(TASK_HOLDER.REGISTRY.eq(MK_ACTION.TASK_HOLDER))
-				.leftOuterJoin(REGISTRY)
-				.on(REGISTRY.ID.eq(TASK_HOLDER.REGISTRY))
-				.leftOuterJoin(TAG)
-				.on(TAG.ID.eq(MK_ACTION.TAG))
+				.leftOuterJoin(SURVEY).on(SURVEY.ID.eq(MK_ACTION.SURVEY))
+				.leftOuterJoin(SCOPE).on(SCOPE.ID.eq(SURVEY.SCOPE))
+				.leftOuterJoin(WORKGROUP).on(WORKGROUP.ID.eq(MK_ACTION.WORKGROUP))
+				.leftOuterJoin(TASK_HOLDER).on(TASK_HOLDER.REGISTRY.eq(MK_ACTION.TASK_HOLDER))
+				.leftOuterJoin(TASK_HOLDER_ALIAS).on(TASK_HOLDER_ALIAS.ID.eq(TASK_HOLDER.REGISTRY))
+				.leftOuterJoin(TAG).on(TAG.ID.eq(MK_ACTION.TAG))
 				.where(MK_ACTION.DOMAIN.eq(marketingCampaign.getDomain()))
 				.and(MK_ACTION.CAMPAIGN.eq(marketingCampaign.getId()))
 				.fetch()
@@ -253,18 +236,12 @@ public class MarketingCampaignDAO {
 		Condition condition = actionParamsToCondition(ctx, params);
 		
 		List<MarketingAction> marketingActions = ctx.getDslContext().select().from(MK_ACTION)
-			.leftOuterJoin(SURVEY)
-			.on(SURVEY.ID.eq(MK_ACTION.SURVEY))
-			.leftOuterJoin(SCOPE)
-			.on(SCOPE.ID.eq(SURVEY.SCOPE))
-			.leftOuterJoin(WORKGROUP)
-			.on(WORKGROUP.ID.eq(MK_ACTION.WORKGROUP))
-			.leftOuterJoin(TASK_HOLDER)
-			.on(TASK_HOLDER.REGISTRY.eq(MK_ACTION.TASK_HOLDER))
-			.leftOuterJoin(REGISTRY)
-			.on(REGISTRY.ID.eq(TASK_HOLDER.REGISTRY))
-			.leftOuterJoin(TAG)
-			.on(TAG.ID.eq(MK_ACTION.TAG))
+			.leftOuterJoin(SURVEY).on(SURVEY.ID.eq(MK_ACTION.SURVEY))
+			.leftOuterJoin(SCOPE).on(SCOPE.ID.eq(SURVEY.SCOPE))
+			.leftOuterJoin(WORKGROUP).on(WORKGROUP.ID.eq(MK_ACTION.WORKGROUP))
+			.leftOuterJoin(TASK_HOLDER).on(TASK_HOLDER.REGISTRY.eq(MK_ACTION.TASK_HOLDER))
+			.leftOuterJoin(TASK_HOLDER_ALIAS).on(TASK_HOLDER_ALIAS.ID.eq(TASK_HOLDER.REGISTRY))
+			.leftOuterJoin(TAG).on(TAG.ID.eq(MK_ACTION.TAG))
 			.where(condition)
 			.limit(params.getOffset(), params.getLimit())
 			.fetch()
@@ -282,18 +259,12 @@ public class MarketingCampaignDAO {
 	
 	public static MarketingAction getAction(CloseableAONContext ctx, Integer id) {
 		Record marketingActionRecord = ctx.getDslContext().select().from(MK_ACTION)
-			.leftOuterJoin(SURVEY)
-			.on(SURVEY.ID.eq(MK_ACTION.SURVEY))
-			.leftOuterJoin(SCOPE)
-			.on(SCOPE.ID.eq(SURVEY.SCOPE))
-			.leftOuterJoin(WORKGROUP)
-			.on(WORKGROUP.ID.eq(MK_ACTION.WORKGROUP))
-			.leftOuterJoin(TASK_HOLDER)
-			.on(TASK_HOLDER.REGISTRY.eq(MK_ACTION.TASK_HOLDER))
-			.leftOuterJoin(REGISTRY)
-			.on(REGISTRY.ID.eq(TASK_HOLDER.REGISTRY))
-			.leftOuterJoin(TAG)
-			.on(TAG.ID.eq(MK_ACTION.TAG))
+			.leftOuterJoin(SURVEY).on(SURVEY.ID.eq(MK_ACTION.SURVEY))
+			.leftOuterJoin(SCOPE).on(SCOPE.ID.eq(SURVEY.SCOPE))
+			.leftOuterJoin(WORKGROUP).on(WORKGROUP.ID.eq(MK_ACTION.WORKGROUP))
+			.leftOuterJoin(TASK_HOLDER).on(TASK_HOLDER.REGISTRY.eq(MK_ACTION.TASK_HOLDER))
+			.leftOuterJoin(TASK_HOLDER_ALIAS).on(TASK_HOLDER_ALIAS.ID.eq(TASK_HOLDER.REGISTRY))
+			.leftOuterJoin(TAG).on(TAG.ID.eq(MK_ACTION.TAG))
 			.where(MK_ACTION.ID.eq(id))
 			.fetchOne();
 		
@@ -594,7 +565,7 @@ public class MarketingCampaignDAO {
 				.setBudget(r.getValue(MK_CAMPAIGN.BUDGET))
 				.setExpense(r.getValue(MK_CAMPAIGN.EXPENSE))
 				.setWorkgroup(null == r.getValue(MK_CAMPAIGN.WORKGROUP) ? null : WorkgroupFiller.build(r))
-				.setTaskHolder(null == r.getValue(MK_CAMPAIGN.TASK_HOLDER) ? null : TaskHolderFiller.build(r, REGISTRY))
+				.setTaskHolder(null == r.getValue(MK_CAMPAIGN.TASK_HOLDER) ? null : TaskHolderFiller.build(r))
 				;
 		}
 	}
@@ -628,7 +599,7 @@ public class MarketingCampaignDAO {
 				.setBudget(r.getValue(MK_ACTION.BUDGET))
 				.setExpense(r.getValue(MK_ACTION.EXPENSE))
 				.setWorkgroup(null == r.getValue(MK_ACTION.WORKGROUP) ? null : WorkgroupFiller.build(r))
-				.setTaskHolder(null == r.getValue(MK_ACTION.TASK_HOLDER) ? null : TaskHolderFiller.build(r, REGISTRY))
+				.setTaskHolder(null == r.getValue(MK_ACTION.TASK_HOLDER) ? null : TaskHolderFiller.build(r))
 				;
 		}
 

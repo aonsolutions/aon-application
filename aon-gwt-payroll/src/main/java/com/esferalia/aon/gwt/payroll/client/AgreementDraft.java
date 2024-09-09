@@ -4804,7 +4804,7 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 	// ------------------------------------------------------------------------
 
 	protected static <T extends Item<?>> boolean isEnabled(T item) {
-		return !isDisabled(item) && !isRemove(item);
+		return !isDisabled(item) && !isRemove(item) && !isDisable(item);
 	}
 
 	protected static <T extends Item<?>> boolean isDisabled(T item) {
@@ -4849,7 +4849,11 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 	}
 
 	private static <T extends Item<?>> boolean isRemove(T item) {
-		return StringUtils.equalsIgnoreCase("REMOVE()", item.getExpression());
+		return AonStringUtils.equalsIgnoreCase("REMOVE()", item.getExpression());
+	}
+	
+	private static <T extends Item<?>> boolean isDisable(T item) {
+		return AonStringUtils.equalsIgnoreCase("DISABLE()", item.getExpression()) || AonStringUtils.startsWithAny(item.getExpression(), "DISABLE();");
 	}
 
 	private static void addStyle(FlexTable table, int row, String style) {

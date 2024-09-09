@@ -41,6 +41,7 @@ import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.ui.AbstractImagePrototype;
 import com.google.gwt.user.client.ui.Anchor;
+import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.FileUpload;
@@ -162,6 +163,12 @@ public class SistemaREDResults extends Composite implements RequiresResize, Empl
 	@UiField
 	DockLayoutPanel dockLayoutPanel;
 	
+	@UiField
+	Button clearButton;
+	
+	@UiField
+	Button runButton;
+	
 	// Certificate 
 	@UiField
 	FormPanel certificateFormPanel;
@@ -262,6 +269,14 @@ public class SistemaREDResults extends Composite implements RequiresResize, Empl
 	@UiHandler("clearButton")
 	void onClickClearButton(ClickEvent event ){
 		removeAll();
+	}
+	
+	public void hideRunButton() {
+		runButton.setVisible(false);
+	}
+	
+	public void hideClearButton() {
+		clearButton.setVisible(false);
 	}
 
 //	@UiHandler("expandAllButton")

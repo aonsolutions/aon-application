@@ -1,5 +1,5 @@
 import { AonElement } from "../../../components/AonElement.js";
-import { CONSTANT, MSG } from "../../../environments/environments.js";
+import { CONSTANT, MSG, EVENT } from "../../../environments/environments.js";
 import * as GWT from "../../../gwt/gwt.js";
 import * as LS from "../../../services/localStorageService.js";
 import { DomainUserRoles } from "../../../models/DomainUserRoles.js";
@@ -19,6 +19,7 @@ import { AonContractList } from "../payroll/aon-contract-list.js";
 import { AonPayrollList } from "../payroll/aon-payroll-list.js";
 import { CONTRACT_OPTIONS, PAYROLL_VIEWS } from "../PayrollEnums.js";
 import { AonCompanyCostsListNew, paintCompanyCostPieChart } from "../company/aon-company-costs-list-new.js";
+import { AonDocumentalSepaList, AonSepaList } from "../../documental/aon-sepa-list.js";
 
 export class AonComunicaUtils extends AonElement {
   static get observedAttributes() {
@@ -213,8 +214,8 @@ export class AonComunicaUtils extends AonElement {
           aonView = new AonPayrollList();
           break;
         case PAYROLL_VIEWS.AON_SEPA_FILES_LIST:
-          aonView = this.isMobile() ? new AonMobileDocumentalList() : new AonDocumentalList();
-          aonView.setFilter({ type: "system" });
+          aonView = this.isMobile() ? new AonMobileDocumentalList() : new AonSepaList();
+          if(this.isMobile()) aonView.setFilter({ type: "system" });
           break;
         case PAYROLL_VIEWS.AON_CONTRACT_LIST:
           if (this.isMobile()) 
@@ -224,12 +225,14 @@ export class AonComunicaUtils extends AonElement {
           break;
         case PAYROLL_VIEWS.AON_CERT:
           this.loadGwt(GWT.MAIN_DIGITAL_CERTIFICATES);
+          this.getApplication().closeSidenav();
           break;
         case PAYROLL_VIEWS.AON_CTA_LIST:
           if (this.isMobile()) 
             aonView = new AonCtaList();
           else 
             this.loadGwt(GWT.MAIN_CCC);
+            this.getApplication().closeSidenav();
           break;
         case PAYROLL_VIEWS.AON_MOVEMENTS_LIST:
           aonView = new AonMovementsList();
@@ -240,6 +243,7 @@ export class AonComunicaUtils extends AonElement {
         case PAYROLL_VIEWS.AON_COMPANY_COSTS_LIST:
           if(LS.isNewTheme()){
             aonView = new AonCompanyCostsListNew();
+			aonView.addEventListener(EVENT.BUILD, paintCompanyCostPieChart );
           } else {
             aonView = new AonCompanyCostsList();
           }
@@ -252,7 +256,7 @@ export class AonComunicaUtils extends AonElement {
         this.getApplication().setContent(aonView);
         
         if(LS.isNewTheme() && view === PAYROLL_VIEWS.AON_COMPANY_COSTS_LIST){
-          await paintCompanyCostPieChart();
+          /*await paintCompanyCostPieChart();*/
         }
       }
       resolve(aonView);
@@ -300,10 +304,20 @@ export class AonComunicaUtils extends AonElement {
 
     GWT.iLoad(module, application.CONTENT);
 
+    waitEl(`#${application.CONTENT} iframe`).finally(() => {
+      this.fixBackgroundColor();
+    });
+
     waitEl(`#${application.CONTENT} .aon_toolbar`).finally(() => {
       application.stopLoader();
       this.fixSpacing();
     });
+  }
+
+  fixBackgroundColor(){
+    let application = this.getApplication();
+    let iframe = document.querySelector(`#${application.CONTENT} iframe`);
+    iframe.contentWindow.document.body.style.backgroundColor = "transparent";
   }
 
   fixSpacing() {

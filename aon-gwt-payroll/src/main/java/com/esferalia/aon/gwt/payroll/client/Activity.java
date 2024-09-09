@@ -98,7 +98,7 @@ public abstract class Activity extends ResizeComposite {
 		}
 
 		@Override
-		protected void showPDF(String dataURI, boolean isLaboralLife) {
+		protected void showPDF(String dataURI, String title, boolean isLaboralLife) {
 			Activity.this.showPDF(dataURI, isLaboralLife);
 		}
 		

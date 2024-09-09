@@ -66,6 +66,26 @@
 			text-decoration: none;
 			transition: background .25s ease-in-out,transform .15s ease;
 		}		
+
+		.aon-align-left {
+			text-align:left;
+		}
+		
+		.aon-vertical-middle  {
+			font-size: 1.3rem;
+			vertical-align: middle;
+		}
+		
+		a.aon-width-all {
+			display: inline-block;
+		}
+		
+		.aon-direct-access-list-element.selected {
+	    	background-color: #eaeaea;
+	    	border-top-right-radius: 50px 50px;
+	    	border-bottom-right-radius: 50px 50px;
+		}
+	
 	</style>
 	
 	<script type='text/javascript' >
@@ -98,6 +118,9 @@
 
 			<ui:include src="/facelet/homepage/portlet/logoPortlet.xhtml" />					
 
+			<aon:if test="#{domainSwitcher.childDomain}">
+			<ui:include src="/facelet/homepage/portlet/domainSummaryPortlet.xhtml" /> 
+			</aon:if>
 			<aon:if test="#{!domainSwitcher.childDomain}">
 			<ui:include src="/facelet/homepage/portlet/summaryControlPortlet.xhtml" /> 
 			<ui:include src="/facelet/homepage/portlet/filterControlPortlet.xhtml" />

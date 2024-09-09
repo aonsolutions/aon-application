@@ -56,34 +56,42 @@ public class InvoiceCommunicationTest {
 		Invoice invoice = new Invoice();
 		getConfigurations().stream().forEach(config -> {
 			AcceptInvoiceCommunicationTypeVisitor visitor = (AcceptInvoiceCommunicationTypeVisitor) 
+					new AcceptInvoiceCommunicationTypeVisitor(domain, user, invoice)
+					.setTbaiConfiguration(config.getTbaiConfiguration())
+					.setCompany(config.getCompany())
+					.setPerson(config.getPerson());
+			try {
+				if (config.getTbaiConfiguration().isBizkaia())
+					InvoiceCommunicationType.LROE.visit(visitor);
+				else InvoiceCommunicationType.TBAI.visit(visitor);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			
+			ModifyInvoiceCommunicationTypeVisitor visitor2 = (ModifyInvoiceCommunicationTypeVisitor) 
 				new AcceptInvoiceCommunicationTypeVisitor(domain, user, invoice)
 					.setTbaiConfiguration(config.getTbaiConfiguration())
 					.setCompany(config.getCompany())
 					.setPerson(config.getPerson());
-
-			if (config.getTbaiConfiguration().isBizkaia())
-				InvoiceCommunicationType.LROE.visit(visitor);
-			else InvoiceCommunicationType.TBAI.visit(visitor);
-			
-			ModifyInvoiceCommunicationTypeVisitor visitor2 = (ModifyInvoiceCommunicationTypeVisitor) 
-					new AcceptInvoiceCommunicationTypeVisitor(domain, user, invoice)
-						.setTbaiConfiguration(config.getTbaiConfiguration())
-						.setCompany(config.getCompany())
-						.setPerson(config.getPerson());
-
-			if (config.getTbaiConfiguration().isBizkaia())
-				InvoiceCommunicationType.LROE.visit(visitor2);
-			else InvoiceCommunicationType.TBAI.visit(visitor2);
-			
+			try {
+				if (config.getTbaiConfiguration().isBizkaia())
+					InvoiceCommunicationType.LROE.visit(visitor2);
+				else InvoiceCommunicationType.TBAI.visit(visitor2);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 			CancelInvoiceCommunicationTypeVisitor visitor3 = (CancelInvoiceCommunicationTypeVisitor) 
-					new CancelInvoiceCommunicationTypeVisitor(domain, user, invoice)
-						.setTbaiConfiguration(config.getTbaiConfiguration())
-						.setCompany(config.getCompany())
-						.setPerson(config.getPerson());
-
-			if (config.getTbaiConfiguration().isBizkaia())
-				InvoiceCommunicationType.LROE.visit(visitor3);
-			else InvoiceCommunicationType.TBAI.visit(visitor3);			
+				new CancelInvoiceCommunicationTypeVisitor(domain, user, invoice)
+					.setTbaiConfiguration(config.getTbaiConfiguration())
+					.setCompany(config.getCompany())
+					.setPerson(config.getPerson());
+			try {
+				if (config.getTbaiConfiguration().isBizkaia())
+					InvoiceCommunicationType.LROE.visit(visitor3);
+				else InvoiceCommunicationType.TBAI.visit(visitor3);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 		});
 	}
 	

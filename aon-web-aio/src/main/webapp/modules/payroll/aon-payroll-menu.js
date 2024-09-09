@@ -1,6 +1,7 @@
 import { MSG, CSS, EVENT, TAG } from 'aonsolutions/environments/environments.js'; 
 import { AonSuiteMenu } from '../aon-suite-menu.js';
 import * as GWT from 'aonsolutions/gwt/gwt.js';
+import { AonComunica } from 'aonsolutions/modules/laboral/aon-comunica.js';
 
 export class AonPayrollMenu extends AonSuiteMenu {
 
@@ -52,73 +53,73 @@ export class AonPayrollMenu extends AonSuiteMenu {
             },{
                 description: "Partes IT",
                 title: "Partes IT",
-                action: () => alert("description")
+                action: () => GWT.iLoad(GWT.MAIN_IT)
             },{
                 description: "Convenios",
                 title: "Convenios",
-                action: () => alert("description")
+                action: () => GWT.iLoad(GWT.CONVENIOS)
             },{
                 description: "Calculo de Nóminas",
                 title: "Calculo de Nóminas",
-                action: () => alert("description")
+                action: () => GWT.iLoad(GWT.MAIN_CALCULATOR)
             }]
         },{
             title: 'Seguridad Social',
             options: [{
                 description: "Cret@ - Sistema de Liquidación Directa",
                 title: "Cret@ - Sistema de Liquidación Directa",
-                action: () => alert("description")
+                action: () => GWT.iLoad(GWT.MAIN_CRETA)
             },{
                 description: "CRA - Conceptos Retributivos Abonados",
                 title: "CRA - Conceptos Retributivos Abonados",
-                action: () => alert("description")
-            },{
+                action: () => GWT.iLoad(GWT.MAIN_CRA)
+            },/*{
                 description: "AFI - Altas, bajas y modificaciones de trabajadores",
                 title: "AFI - Altas, bajas y modificaciones de trabajadores",
                 action: () => alert("description")
-            },{
+            },*/{
                 description: "AFI - Régimen Especial Agrario Jornadas",
                 title: "AFI - Régimen Especial Agrario Jornadas",
-                action: () => alert("description")
+                action: () => GWT.iLoad(GWT.MAIN_AFI)
             },{
                 description: "AFI - Reduc. contribuciones planes de pensiones",
                 title: "AFI - Reduc. contribuciones planes de pensiones",
-                action: () => alert("description")
+                action: () => GWT.iLoad(GWT.PENSION_PLAN_AFI)
             }]
         },{
             title: 'Procesos',
             options: [{
                 description: "Impresión / eMail de Nóminas",
                 title: "Impresión / eMail de Nóminas",
-                action: () => alert("description")
-            },{
+                action: () => GWT.iLoad(GWT.MAIN_SALARY_PRINT)
+            },/*{
                 description: "Listado de costes",
                 title: "Listado de costes",
                 action: () => alert("description")
-            },{
+            },*/{
                 description: "Resumen de actividad",
                 title: "Resumen de actividad",
-                action: () => alert("description")
+                action: () => GWT.iLoad(GWT.ACTIVITY_SUMMARY)
             },{
                 description: "Informe de personal asalariado",
                 title: "Informe de personal asalariado",
-                action: () => alert("description")
+                action: () => GWT.iLoad(GWT.CONTRACT_MEDIA)
             },{
                 description: "Cambio masivo contratos",
                 title: "Cambio masivo contratos",
-                action: () => alert("description")
+                action: () => GWT.iLoad(GWT.MASSIVE_CONTRACTS)
             }]
         },{
             title: 'Gestión',
             options: [{
                 description: "Remesa Transferencia de Nóminas",
                 title: "Remesa Transferencia de Nóminas",
-                action: () => alert("description")
+                action: () => GWT.iLoad(GWT.BATCH_PAYROLL)
             },{
                 description: "Vencimientos de Nóminas",
                 title: "Vencimientos de Nóminas",
-                action: () => alert("description")
-            },{
+                action: () => GWT.iLoad(GWT.FINANCE_PAYROLL)
+            },/*{
                 description: "Facturas de Gastos",
                 title: "Facturas de Gastos",
                 action: () => alert("description")
@@ -130,8 +131,8 @@ export class AonPayrollMenu extends AonSuiteMenu {
                 description: "Remesa Transferencia de Nóminas",
                 title: "Remesa Transferencia de Nóminas",
                 action: () => alert("description")
-            }]
-        },{
+            }*/]
+        },/*{
             title: 'SEPE',
             options: [{
                 description: "Notificaciones Contrat@",
@@ -161,41 +162,41 @@ export class AonPayrollMenu extends AonSuiteMenu {
                 title: "Variables Calculo Trabajadores",
                 action: () => alert("description")
             }]
-        },{
+        },*/{
             title: 'Utilidades',
             options: [{
                 description: "Gestión de Certificados",
                 title: "Gestión de Certificados",
-                action: () => alert("description")
+                action: () => GWT.iLoad(GWT.MAIN_DIGITAL_CERTIFICATES)
             },{
                 description: "Papelera",
                 title: "Papelera",
-                action: () => alert("description")
+                action: () => GWT.iLoad(GWT.PAYROLL_TRASH)
             },{
                 description: "CCC",
                 title: "CCC",
-                action: () => alert("description")
+                action: () => GWT.iLoad(GWT.MAIN_CCC)
             },{
                 description: "Comunic@",
                 title: "Comunic@",
-                action: () => alert("description")
+                action: () => this.rootPanel(new AonComunica())
             }]
         },{
             title: 'Modelos Tributarios',
-            options: [{
+            options: [/*{
                 description: "Modelo 145",
                 title: "Modelo 145",
                 action: () => alert("description")
-            },{
+            },*/{
                 description: "Modelo 111",
                 title: "Modelo 111",
-                action: () => GWT.load(GWT.MODEL_111)
+                action: () => GWT.iLoad(GWT.MODEL_111)
             },{
                 description: "Modelo 190",
                 title: "Modelo 190",
-                action: () => GWT.load(GWT.MODEL_190)
+                action: () => GWT.iLoad(GWT.MODEL_190)
             }]
-        },{
+        },/*{
             title: 'Antiguas Opciones (Obsoletas)',
             options: [{
                 description: "Contratos",
@@ -214,7 +215,7 @@ export class AonPayrollMenu extends AonSuiteMenu {
                 title: "CRA - Conceptos retributivos abonados",
                 action: () => alert("description")
             }]
-        }];
+        }*/];
     }
     /*
     build() {

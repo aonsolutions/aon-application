@@ -1078,6 +1078,15 @@
 	height: 2.5rem;
   	justify-content: space-between;
   	margin-bottom: .5rem;
+  	border-bottom: 1px solid #b9b8b8;
+}
+
+.aon_custom_text_box_no_border{
+	gap: 0;
+	width: 100%;
+	height: 2.5rem;
+  	justify-content: space-between;
+  	margin-bottom: .5rem;
 }
 
 .aon_utility_option:hover, .aon_custom_text_box:hover{
@@ -1088,6 +1097,7 @@
 	width: 100%;
 	font-size: 0.8rem;
 	color: #5f6368;
+	min-height: 1rem;
 }
 
 .aon_custom_text_box_input{
@@ -1099,7 +1109,7 @@
 	width: -webkit-fill-available;
 	height: 1.5rem;
 	padding: .2rem;
-	border-bottom: 1px solid #b9b8b8;	
+	/*border-bottom: 1px solid #b9b8b8;*/	
 }
 
 .aon_custom_search_box{
@@ -1126,10 +1136,15 @@
   	box-shadow: none !important;
 }
 
+
 .aon_custom_text_box_input:focus{
-	border: none!important;
-	border-bottom: 1px solid #b9b8b8 !important;
+	border: none !important;
   	box-shadow: none !important;
+	/*border-bottom: 1px solid #b9b8b8 !important;*/
+}
+
+.aon_custom_text_box:focus{
+	border-bottom: 1px solid #b9b8b8 !important;
 }
 
 .aon_custom_text_box:hover > .aon_custom_text_box_title{
@@ -1457,7 +1472,7 @@
 	box-shadow: 0 16px 24px 2px rgba(0, 0, 0, 0.14), 0 6px 30px 5px rgba(0, 0, 0, 0.12), 0 8px 10px -5px rgba(0, 0, 0, 0.4);
 	clip: unset !important;
 	border-radius: 10px;
-	z-index: 2;
+	z-index: 4;
 }
 .aon_custom_dialog_panel {
 	margin: 0px;
@@ -1467,7 +1482,7 @@
     background-color: #000;
     opacity: 0.2;
     filter: opacity(45%);
-    z-index: 1;
+    z-index: 3;
 }
 
 .aon_custom_dialog .popupContent {
@@ -1477,6 +1492,7 @@
 .aon_custom_dialog_header {
 	margin: 0px;
 	padding: 1em;
+	padding-top:0.6em;
 	padding-bottom: 0;
 	width: auto;
 	display: flex;

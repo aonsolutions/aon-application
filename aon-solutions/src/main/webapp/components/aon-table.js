@@ -156,6 +156,8 @@ export class AonTable extends AonElement {
     th.style.width = width;
     this.columns.push({ name, type, id, width, textAlign });
 
+    if(type == "number") th.style.textAlign = "right";
+
     header.appendChild(th);
   }
 
@@ -191,15 +193,15 @@ export class AonTable extends AonElement {
       tr.style.border = '1px solid #ddd';
       tr.style.borderRadius = '5px';
     }  
-    if(this.getApp() && LS.isNewTheme()) {
-      tr.addEventListener(EVENT.MOUSEOVER, () => {
-        tr.style.backgroundColor = this.getApp().backgroundColor || '#eaf1fb'; 
-      });
+    // if(this.getApp() && LS.isNewTheme()) {
+    //   tr.addEventListener(EVENT.MOUSEOVER, () => {
+    //     tr.style.backgroundColor = this.getApp().backgroundColor || '#eaf1fb'; 
+    //   });
 
-      tr.addEventListener(EVENT.MOUSELEAVE, () => {
-        tr.style.backgroundColor = 'transparent'; 
-      });
-    }
+    //   tr.addEventListener(EVENT.MOUSELEAVE, () => {
+    //     tr.style.backgroundColor = 'transparent'; 
+    //   });
+    // }
 
     
     if(this.selectedColor){
@@ -217,8 +219,9 @@ export class AonTable extends AonElement {
         if (aonCheckbox.isChecked()) {
           if(!this.selected.includes(value))
             this.selected.push(value);
-          tr.style.backgroundColor = "aliceblue";
+          tr.className = "aonTableTr aonTableTrChecked";
         } else {
+          tr.classList.remove("aonTableTrChecked");
           this.selected.forEach((item, i) => {
             if (item == value) {
               this.selected.splice(i, 1);
@@ -236,6 +239,7 @@ export class AonTable extends AonElement {
       let td = this.createElement(TAG.TD);
       td.style.width = item.width;
       td.style.textAlign = item.textAlign;
+      if(value.color) td.style.color = value.color;
 
       let id = item.id;
       if ("option" === id && value[id]) {
@@ -338,21 +342,13 @@ export class AonTable extends AonElement {
           td.addEventListener("contextmenu", contextMenu);
         }
       } 
-      // else if(item.type && item.type ==="number") {
-      //   let formatValue = formatNumber(value[id], 2, "EUR");
-      //   td.innerHTML = formatValue;
-      //   td.addEventListener(EVENT.CLICK, fn);
-      //   if (contextMenu) {
-      //     td.addEventListener("contextmenu", () => {
-      //       let cb = this.getElement(checkBoxId + "Input");
-      //       if(cb && !cb.checked){
-      //         this.deselectAll();
-      //         cb.click();
-      //       } 
-      //     });
-      //     td.addEventListener("contextmenu", contextMenu);
-      //   }
-      // } 
+      else if(item.type && item.type ==="number") {
+        td.innerHTML = value[id] !== undefined? value[id] : "";
+        td.style.textAlign = "right";
+        if(value[id] !== undefined && value[id].includes('-')){
+          td.style.color = "green";
+        }
+      } 
       else {
         td.innerHTML = value[id] !== undefined? value[id] : "";
         td.addEventListener(EVENT.CLICK, fn);

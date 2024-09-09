@@ -6,19 +6,17 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.math.BigInteger;
 import java.net.URI;
 import java.time.Month;
 import java.util.Calendar;
 import java.util.Deque;
 import java.util.LinkedList;
+import java.util.Vector;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
-import jakarta.servlet.ServletException;
-import jakarta.servlet.annotation.WebServlet;
-import jakarta.servlet.http.HttpServlet;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
+import javax.xml.bind.JAXBException;
 
 import com.esferalia.aon.gwt.common.server.AonServletUtils;
 import com.esferalia.aon.occam.api.AON;
@@ -26,11 +24,20 @@ import com.esferalia.aon.occam.api.model.DomainGserviceaccount;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.attachment.AttachType;
 import com.esferalia.aon.occam.api.model.attachment.RegistryAttachmentType;
+import com.esferalia.aon.occam.api.model.fiscal.d2_deposit.D2DepositHeaderKey;
 import com.esferalia.aon.occam.api.model.type.MimeType;
+import com.esferalia.aon.occam.impl.jooq.dao.d2_deposit.DBConsults;
+import com.esferalia.aon.occam.impl.jooq.dao.d2_deposit.Esquema;
+import com.esferalia.aon.occam.impl.jooq.dao.d2_deposit.Utils;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.server.io.AonFileUtils;
 import com.google.api.services.drive.Drive;
 
+import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import net.aonsolutions.aon.google.apis.drive.AonDrive;
 
 @WebServlet(name = "DownloadXml", urlPatterns = { "/aon_gwt_deposit/gwt_download_deposit/*",
@@ -262,14 +269,42 @@ public class DownloadXmlFileServlet extends HttpServlet {
 
 				File f = File.createTempFile("DEPOSITO%", ".xml", parent);
 				
-				if(xml.getData() != null)
-					data = xml.getData();
-				else if(xml.getDriveId() != null) {
-					DomainGserviceaccount g = AON.getDomainGserviceaccount(domain, domainId, "");
-					Drive drive = AonDrive.getInstace().serviceInitialize(g);
-					data = AonDrive.getInstace().downloadFileByteArray(drive, xml.getDriveId());
-				} else data = null;
+				Esquema schema = DBConsults.getDeposit(xml);
 				
+				if(!schema.getCabecera().isMemoriaNormalizada()) {
+					Vector<Integer> id = DBConsults.getMemoryFile(domain, domainId, D2_FILE_MEMORY + year);
+					if(id.get(0) == -1) {
+						schema.getCabecera().setMemoriaNormalizada(true);		
+					}
+				}
+						
+				Integer count = 0;
+				Esquema.Claves claves = new Esquema.Claves();
+				for(Integer i = 0; i < schema.getClaves().getClave().size(); i++) {
+
+					BigInteger code = new BigInteger(D2DepositHeaderKey.BA2121300.getCode());
+					if(schema.getClaves().getClave().get(i).getCodigo().equals(code)) {
+						count++;
+					}
+					if(!schema.getClaves().getClave().get(i).getCodigo().equals(code) || count <= 1) {
+						claves.getClave().add(schema.getClaves().getClave().get(i));
+					}
+				}
+				schema.setClaves(claves);
+				
+				try {
+					data = Utils.writeXml(schema);
+				} catch (JAXBException | IOException e) {
+					e.printStackTrace();
+					if(xml.getData() != null)
+						data = xml.getData();
+					else if(xml.getDriveId() != null) {
+						DomainGserviceaccount g = AON.getDomainGserviceaccount(domain, domainId, "");
+						Drive drive = AonDrive.getInstace().serviceInitialize(g);
+						data = AonDrive.getInstace().downloadFileByteArray(drive, xml.getDriveId());
+					} else data = null;
+				}
+								
 				if(data != null)
 					try {
 						AonFileUtils.writeByteArrayToFile(f, data);

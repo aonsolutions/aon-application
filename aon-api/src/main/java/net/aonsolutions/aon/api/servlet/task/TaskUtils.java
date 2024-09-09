@@ -331,7 +331,7 @@ public class TaskUtils {
 						f.getIdProperty().isNotNull()
 				)
 				.and(f.getDomainProperty().eq(domain.getId()).or(f.getDomainProperty().eq(domain.getParentId()))),
-				task.getWorkgroup().getId()
+				task.getWorkgroup().getId(), 0, Integer.MAX_VALUE
 			)
 			.forEach(th ->{
 				User usr = AON.getUser(domain, api.getUser().getLogin(), f -> f.getIdProperty().eq(th.getUserId()));

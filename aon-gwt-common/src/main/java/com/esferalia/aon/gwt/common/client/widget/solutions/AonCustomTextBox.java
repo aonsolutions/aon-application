@@ -8,6 +8,7 @@ import com.google.gwt.user.client.ui.TextBox;
 public class AonCustomTextBox extends HTMLPanel {
 
 	private static final String EMPTY_STRING = "";
+	private HTMLPanel textBoxPanel = new HTMLPanel(EMPTY_STRING);
 	private TextBox textBox;
 	
 	public AonCustomTextBox(String title) {
@@ -26,9 +27,15 @@ public class AonCustomTextBox extends HTMLPanel {
 	}
 
 	private void createInput() {
+		textBoxPanel.addStyleName(AON.CSS.aonItemFlex());
+		textBoxPanel.addStyleName(AON.CSS.aonFlexBetween());
+		textBoxPanel.getElement().getStyle().setProperty("align-items", "flex-start");
+		
 		textBox = new TextBox();
 		textBox.setStyleName(AON.CSS.aonCustomTextBoxInput());
-		add(textBox);
+		
+		textBoxPanel.add(textBox);
+		add(textBoxPanel);
 	}
 	
 	public TextBox getTextBox() {
@@ -49,6 +56,10 @@ public class AonCustomTextBox extends HTMLPanel {
 
 	public void setFocus(boolean focused) {
 		this.textBox.setFocus(focused);
+	}
+
+	public void addButton(AonTableButton button) {
+		textBoxPanel.add(button);
 	}
 
 }

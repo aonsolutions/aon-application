@@ -3,6 +3,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 import java.util.Date;
@@ -803,6 +804,15 @@ public class InvoiceServlet extends AonApiHttpServlet{
 			f.getAttachModuleProperty().eq(invoiceId)
 			.and(f.getTypeProperty().eq(InvoiceAttachmentType.INVOICE.value()))
 			, AttachType.INVOICE, true);		
+
+		// ids to null
+		invoice.setId(null);
+		invoice.setDetails(invoice.getDetails().stream().map(r -> {
+			r.setId(null);
+			r.setInvoiceTaxes(r.getInvoiceTaxes().stream().map(tax -> tax.setId(null)).toList());
+			return r;
+		}).toList());
+		// ----------
 		
 		Rawdoc rawdoc = new Rawdoc()
 				.setData(attach.getData())
@@ -1023,7 +1033,16 @@ public class InvoiceServlet extends AonApiHttpServlet{
 				JSONObject json = new JSONObject(r.getJson());
 				json.put(IJsonNames.ID, r.getId());
 				json.put(IJsonNames.STATUS, r.getStatus() != null ? r.getStatus().getName() : IConstants.INBOX);
-				if(r.getMimeType() != null){
+				if(!AonStringUtils.isBlank(r.getS3Key())) {
+					URL url = S3.getURL(r.getS3Bucket(), r.getS3Key());
+					JSONObject f = new JSONObject();
+					f.put("url", url.toExternalForm());
+					f.put("path", url.toExternalForm());
+					String contentType = S3.getContentType(r.getS3Bucket(), r.getS3Key());
+					f.put("content_type", contentType);
+					f.put("s3Bucket", r.getS3Bucket());
+					f.put("s3Key", r.getS3Key());
+				} else if(r.getMimeType() != null){
 					JSONObject data = new JSONObject();
 					data.put("domain_name", domain.getName());
 					data.put("domain_id", domain.getId());
@@ -1138,10 +1157,17 @@ public class InvoiceServlet extends AonApiHttpServlet{
 		Company company = AON.getCompanyForDomain(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin());
 		TbaiConfiguration tbaiConfiguration = AON.getTbaiConfiguration(api.getDomain(), api.getUser());
 		Invoice invoice = InvoiceJSON.fromJSON(api.getData());
+		if(invoice.isSales()) {
+			if (AonStringUtils.contains( invoice.getReferenceCode(), "undefined")) {
+				invoice.setReferenceCode(null);	
+			}
+		}
+				
 		if(invoice.isSales() && tbaiConfiguration.isActive()) {
 			tbaiConfiguration.setCertificate(checkCertificate(api));
 			tbaiValidation(invoice);
 		}
+		
 		invoice = AON_SOLUTIONS.acceptInvoice(api.getDomain(), api.getUser(), invoice);
 		processInvoiceFile(api, invoice);
 		acceptTbai(tbaiConfiguration, company, invoice);

@@ -81,6 +81,10 @@ public class AonCustomTable extends HTMLPanel {
 		return getWidgetCount() - 1;
 	}
 
-	
+	public Widget getWidget(int row, int col) {
+		HTMLPanel htmlPanelRow = (HTMLPanel) this.getWidget(row);
+		Widget widget = htmlPanelRow.getWidget(col);
+		return widget;
+	}
 
 }

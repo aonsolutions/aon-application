@@ -8,11 +8,10 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import com.esferalia.aon.occam.api.model.IJsonNames;
-import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.security.UserType;
+import com.esferalia.aon.occam.api.model.type.OldAonRole;
 import com.esferalia.aon.watson.util.AonStringUtils;
-import com.fasterxml.jackson.core.JsonEncoding;
 
 public class UserJSON {
 	
@@ -38,11 +37,9 @@ public class UserJSON {
 		if(json.optJSONArray("taskHolders") != null) user.setTaskHolders(TaskHolderJSON.fromJSON(json.optJSONArray("taskHolders")));
 		else user.setTaskHolders(null);
 		user.setRegistry(RegistryJSON.fromJSON(json.optJSONObject(IJsonNames.REGISTRY)));
-		
-		
 
-		
-		
+		List<OldAonRole> roles = OldAonRoleJSON.fromJSON(JsonUtils.getJSONArray(json, IJsonNames.ROLES));
+		user.setRoles(roles.toArray(OldAonRole[]::new));
 		return user;
 	}
 	
@@ -73,6 +70,7 @@ public class UserJSON {
 			.put(IJsonNames.LOGIN, user.getLogin())
 			.put(IJsonNames.ACTIVE, user.isActive())
 			.put("taskHolders", TaskHolderJSON.toJSON(user.getTaskHolders()))
-			.put(IJsonNames.REGISTRY, RegistryJSON.toJSON(user.getRegistry()));
+			.put(IJsonNames.REGISTRY, RegistryJSON.toJSON(user.getRegistry()))
+			.put(IJsonNames.ROLES, OldAonRoleJSON.toJSON(user.getUserRoles()));
 	}
 }

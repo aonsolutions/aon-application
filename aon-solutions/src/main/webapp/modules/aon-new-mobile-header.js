@@ -8,8 +8,11 @@ import './notification/aon-notification-icon.js';
 import { CONSTANT, CSS, EVENT, MATERIAL_ICONS, TAG } from '../environments/environments.js';
 import { AonIconButton } from '../components/aon-icon-button.js';
 import { AonDialogMenu } from '../components/aon-dialog-menu.js';
-import * as LS from '../services/localStorageService.js';
 import { AonMobileProfile } from './user/aon-mobile-profile.js';
+import { changeStatusBarColor } from '../services/actionService.js';
+
+import * as LS from '../services/localStorageService.js';
+import * as UA from '../services/userAgentService.js';
 
 export class AonNewMobileHeader extends AonElement {
 
@@ -176,7 +179,10 @@ export class AonNewMobileHeader extends AonElement {
 
 	companyIn(onlyOne) {
 		onlyOne = onlyOne || LS.isOnlyOne();
-		mobileAction({ action: "statusBar", statusBar: true});
+		let ionicData = { action: "statusBar", statusBar: true};
+		if(UA.isAndroidApp()) {
+			changeStatusBarColor(ionicData, "#002469");
+		} else mobileAction(ionicData);
 
 		this.parent = false;
 		let div = this.getElement(this.WEB);
@@ -217,7 +223,10 @@ export class AonNewMobileHeader extends AonElement {
 	}
 
 	companyOut() {
-		mobileAction({ action: "statusBar", statusBar: false});
+		let ionicData = { action: "statusBar", statusBar: false};
+		if(UA.isAndroidApp()) {
+			changeStatusBarColor(ionicData, "white");
+		} else mobileAction(ionicData);
 
 		this.parent = true;
 		let div = this.getElement(this.WEB);

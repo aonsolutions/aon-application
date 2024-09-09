@@ -2,30 +2,33 @@ import { AonElement } from '../../components/AonElement.js';
 import { ToolbarType } from '../../models/enums.js';
 import { ASESOR_TYPE_OPTION, ENTERPRISE_TYPE_OPTION,
    EMPLOYEE_TYPE_OPTION } from './DocumentalEnums.js';
-import { deleteFile, getCategories, getScopes, updateFile,
-  getDomainUserRoles, openFileUrl } from '../../services/service.js';
-import { DomainUserRoles } from '../../models/DomainUserRoles.js';
+import { deleteFile, getCategories, getScopes, updateFile, openFileUrl } from '../../services/service.js';
 import { EVENT, MSG, TAG } from '../../environments/environments.js';
 import * as ACTION from '../actions.js';
-import { AonSelect } from '../../components/aon-select.js';
 import '../../components/aon-toolbar.js';
-import '../../components/aon-date.js';
-import '../../components/aon-input.js';
 import '../../components/aon-viewer.js';
 import '../../components/aon-switch.js';
 import '../../components/aon-card.js';
+import { createDate, createInput, createSelect } from '../../components/CreateComponent.js';
 
 
 export class AonDocument extends AonElement {
 
   doc;
   _tags;
-  _roles;
 
   TOOLBAR;
   DATA;
   DATA_CARD;
   FILE;
+
+  DATE;
+  NAME;
+  CATEGORY;
+  SCOPE;
+  TAG;
+  TYPE;
+
 
   get document() {
     return JSON.parse(this.getAttribute('document'));
@@ -41,20 +44,7 @@ export class AonDocument extends AonElement {
 
   connectedCallback () {
     this.initialize();
-    this.innerHTML = `
-      <aon-toolbar id="${this.TOOLBAR}" type="${ToolbarType.SECONDARY}" title="${this.document.title}"> </aon-toolbar>
-      <div style="display:flex;">
-        <div id="${this.DATA}" class="aonSubContent" style="width:100%">
-          <aon-card id="${this.DATA_CARD}" title="${MSG.FILE_DATA}"> </aon-card>
-        </div>
-        <div id="${this.FILE}" class="aonSubContent">
-
-        </div>
-      </div>
-    `;
-
-    getDomainUserRoles({}).then(r => {
-      this._roles = new DomainUserRoles(r);
+    this.buildDur().then(() => {
       this.build();
     });
   }
@@ -67,9 +57,28 @@ export class AonDocument extends AonElement {
     this.FILE = this.id + 'File';
     this.doc = this.document;
     this._tags = [];
+
+    this.DATE = this.id + 'Date';
+    this.NAME = this.id + 'Name';
+    this.CATEGORY = this.id + 'Category';
+    this.SCOPE = this.id + 'Scope';
+    this.TAG = this.id + 'Tag';
+    this.TYPE = this.id + 'Type';
   }
 
   build() {
+    this.innerHTML = `
+      <aon-toolbar id="${this.TOOLBAR}" type="${ToolbarType.SECONDARY}" title="${this.document.title}"> </aon-toolbar>
+      <div style="display:flex;">
+        <div id="${this.DATA}" class="aonSubContent" style="width:100%">
+          <aon-card id="${this.DATA_CARD}" title="${MSG.FILE_DATA}"> </aon-card>
+        </div>
+        <div id="${this.FILE}" class="aonSubContent">
+
+        </div>
+      </div>
+    `;
+
     this.doc = this.document;
     let fileDiv = this.getElement(this.FILE);
     fileDiv.style.display = 'block';
@@ -104,22 +113,23 @@ export class AonDocument extends AonElement {
 
     let tdDate = this.createElement(TAG.TD);
     tdDate.setAttribute('colspan', '1');
-		tdDate.innerHTML = `<aon-date id="date" title="${MSG.DATE}"></aon-date>`;
 		tr.appendChild(tdDate);
-		let date = document.getElementById('date');
-    if(!this._roles.isDocumentalManager() && !this._roles.isDocumentalPortal()){
+
+    let date = createDate(this.DATE, MSG.DATE, tdDate);
+    if(!this.getDur().isDocumentalManager() && !this.getDur().isDocumentalPortal()){
       date.readonly = 'true';
     }
     if(this.document.date) {
       let d = this.document.date.split('/');
       date.setDate(new Date(d[2], d[1] - 1, d[0]));
     }
+
     let tdConfidential = this.createElement(TAG.TD);
     tdConfidential.setAttribute('colspan', '1');
     tdConfidential.innerHTML = `<aon-switch id="confidential" title="${MSG.CONFIDENTIAL}"></aon-switch>`;
     tr.appendChild(tdConfidential);
     let confidential = this.getElement('confidential');
-    confidential.disabled = !this._roles.isDocumentalManager() && !this._roles.isDocumentalPortal();
+    confidential.disabled = !this.getDur().isDocumentalManager() && !this.getDur().isDocumentalPortal();
     confidential.checked = this.document.confidential;
     confidential.addEventListener(EVENT.CHANGE, () => this.updateConfidential(confidential.checked));
 
@@ -128,13 +138,12 @@ export class AonDocument extends AonElement {
 
     let tdName = this.createElement(TAG.TD);
     tdName.setAttribute('colspan', '2');
-		tdName.innerHTML = `<aon-input id="name" description="${MSG.NAME}"></aon-input>`;
 		tr2.appendChild(tdName);
-		let name = this.getElement('name');
-    if(!this._roles.isDocumentalManager() && !this._roles.isDocumentalPortal()){
+		let name = createInput(this.NAME, MSG.NAME, tdName);
+    if(!this.getDur().isDocumentalManager() && !this.getDur().isDocumentalPortal()){
       name.readonly = 'true';
     }
-    name.value = this.document.title;
+    name.setValue(this.document.title);
 		name.addEventListener(EVENT.CHANGE, () => this.updateName(name.value));
 
     let tr3 = this.createElement(TAG.TR);
@@ -143,13 +152,10 @@ export class AonDocument extends AonElement {
     // CATEGORY
     let tdCategory = this.createElement(TAG.TD);
     tdCategory.setAttribute('colspan', '1');
-    let categorySelect = new AonSelect();
-    categorySelect.id = 'category';
-    if(!this._roles.isDocumentalManager() && !this._roles.isDocumentalPortal()){
+    let categorySelect = createSelect(this.CATEGORY, MSG.CATEGORY, tdCategory);
+    if(!this.getDur().isDocumentalManager() && !this.getDur().isDocumentalPortal()){
       categorySelect.readonly = 'true';
     }
-    categorySelect.title = MSG.CATEGORY;
-    tdCategory.appendChild(categorySelect);
     tr3.appendChild(tdCategory);
     getCategories({domain: localStorage.getItem('aon_domain_id')}).then( categories => {
       categorySelect.setOptions(categories.map(c => {
@@ -166,13 +172,10 @@ export class AonDocument extends AonElement {
     // SCOPE
     let tdScope = this.createElement(TAG.TD);
     tdScope.setAttribute('colspan', '1');
-    let scopeSelect = new AonSelect();
-    scopeSelect.id = 'scope';
-    if(!this._roles.isDocumentalManager() && !this._roles.isDocumentalPortal()){
+    let scopeSelect =  createSelect(this.SCOPE, MSG.SCOPE, tdScope);
+    if(!this.getDur().isDocumentalManager() && !this.getDur().isDocumentalPortal()){
       scopeSelect.readonly = 'true';
     }
-    scopeSelect.title = MSG.SCOPE;
-    tdScope.appendChild(scopeSelect);
     tr3.appendChild(tdScope);
     getScopes().then( scopes => {
       scopeSelect.setOptions(scopes.map(s => {
@@ -194,13 +197,10 @@ export class AonDocument extends AonElement {
     let tdTag = this.createElement(TAG.TD);
     tdTag.setAttribute('colspan', '1');
 
-    let tagSelect = new AonSelect();
-    tagSelect.id = 'tag';
-    tagSelect.title = MSG.TAG;
-    if(!this._roles.isDocumentalManager() && !this._roles.isDocumentalPortal()){
+    let tagSelect = createSelect(this.TAG, MSG.TAG, tdTag);
+    if(!this.getDur().isDocumentalManager() && !this.getDur().isDocumentalPortal()){
       tagSelect.readonly = 'true';
     }
-    tdTag.appendChild(tagSelect);
     tr4.appendChild(tdTag);
     tagSelect.addEventListener(EVENT.SELECT, (event) => {
       this.addTag(event.detail);
@@ -211,20 +211,17 @@ export class AonDocument extends AonElement {
     let tdType = this.createElement(TAG.TD);
     tdType.setAttribute('colspan', '1');
 
-    let typeSelect = new AonSelect();
-    typeSelect.id = 'type';
-    typeSelect.title = MSG.TYPE;
-    if(!this._roles.isDocumentalManager() && !this._roles.isDocumentalPortal()){
+    let typeSelect = createSelect(this.TYPE, MSG.TYPE, tdType);
+    if(!this.getDur().isDocumentalManager() && !this.getDur().isDocumentalPortal()){
       typeSelect.readonly = 'true';
     }
     let typeOptions = EMPLOYEE_TYPE_OPTION;
-    if(this._roles.isDocumentalManager()) {
+    if(this.getDur().isDocumentalManager()) {
       typeOptions = ASESOR_TYPE_OPTION;
-    } else if(this._roles.isDocumentalPortal()){
+    } else if(this.getDur().isDocumentalPortal()){
       typeOptions = ENTERPRISE_TYPE_OPTION;
     }
     typeSelect.setOptions(typeOptions);
-    tdType.appendChild(typeSelect);
     tr4.appendChild(tdType);
     typeSelect.value = this.document.type;
     typeSelect.addEventListener(EVENT.SELECT, () => this.updateType(typeSelect.value));
@@ -270,7 +267,7 @@ export class AonDocument extends AonElement {
   }
 
   setTagsAvaible(){
-    const tagSelect = this.getElement("tag");
+    const tagSelect = this.getElement(this.TAG);
     if(tagSelect){
       const applicationParent = this.getApplication().getParent();
       const tags = applicationParent._tags ? applicationParent._tags : [];
@@ -289,7 +286,7 @@ export class AonDocument extends AonElement {
       documentToolbar.addButton2(ACTION.PREVIOUS, () => this.previous());
 
       documentToolbar.addSeparator();
-      if(this._roles.isDocumentalManager() || this._roles.isDocumentalPortal()){
+      if(this.getDur().isDocumentalManager() || this.getDur().isDocumentalPortal()){
         documentToolbar.addButton2(ACTION.DELETE_FILE, () => this.remove());
       }
       //  documentToolbar.addButton2(ACTION.SEND_FILE, () => this.send());

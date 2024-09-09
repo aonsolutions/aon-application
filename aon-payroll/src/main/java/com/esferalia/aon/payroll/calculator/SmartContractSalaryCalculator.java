@@ -77,6 +77,7 @@ import com.esferalia.aon.salary.SalaryException;
 import com.esferalia.aon.salary.enumeration.PaymentType;
 import com.esferalia.aon.salary.enumeration.SalaryType;
 import com.esferalia.aon.salary.expression.CheckException;
+import com.esferalia.aon.salary.expression.DisableException;
 import com.esferalia.aon.salary.expression.ExpressionContext;
 import com.esferalia.aon.salary.expression.ExpressionException;
 import com.esferalia.aon.salary.expression.ExpressionScope;
@@ -1883,7 +1884,7 @@ public class SmartContractSalaryCalculator<T extends ISalary> extends GenericCon
 		    if ( Arrays.stream(e.getVariableNames()).anyMatch( name -> ContextVariable.getVariableByName(name) == null ) ) {
 			throw e;
 		    }
-		} catch (RemoveException | CheckException |RemoveVariableError | CompileException | ScriptRuntimeException e) {
+		} catch (RemoveException | CheckException | RemoveVariableError | CompileException | ScriptRuntimeException e) {
 		    	return;
 		} catch ( ConversionException | NumberFormatException e ) {
 			throw new UndefinedVariablesException();

@@ -210,7 +210,7 @@ public class GWTSalaryDraftTestCase extends GWTTestCase {
 
 
 			@Override
-			public void getSalaries(String currentDomainName, SalaryInfoFilter filter,
+			public void getSalaries(String currentDomainName, String userLogin, SalaryInfoFilter filter,
 					AsyncCallback<List<SalaryInfo>> callback) {
 				// TODO Auto-generated method stub
 				
@@ -228,7 +228,7 @@ public class GWTSalaryDraftTestCase extends GWTTestCase {
 
 
 			@Override
-			public void getWorkplaceActiveEmployees(String currentDomainName, Integer workplaceId,
+			public void getWorkplaceActiveEmployees(String currentDomainName, String userLogin, Integer workplaceId,
 					AsyncCallback<WorkplaceEmployees> callback) {
 				// TODO Auto-generated method stub
 				
@@ -237,7 +237,7 @@ public class GWTSalaryDraftTestCase extends GWTTestCase {
 
 
 			@Override
-			public void getEnterpriseActiveEmployees(String currentDomainName, Integer enterpriseId,
+			public void getEnterpriseActiveEmployees(String currentDomainName, String userLogin, Integer enterpriseId,
 					AsyncCallback<List<EmployeeInfo>> callback) {
 				// TODO Auto-generated method stub
 				
@@ -589,7 +589,7 @@ public class GWTSalaryDraftTestCase extends GWTTestCase {
 
 
 			@Override
-			public void getSalariesDates(String currentDomainName, SalaryInfoFilter filter,
+			public void getSalariesDates(String currentDomainName, String userLogin, SalaryInfoFilter filter,
 					AsyncCallback<Period> callback) {
 				// TODO Auto-generated method stub
 				

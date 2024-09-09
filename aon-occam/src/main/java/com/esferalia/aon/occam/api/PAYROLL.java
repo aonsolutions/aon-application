@@ -14,6 +14,7 @@ import com.esferalia.aon.occam.api.model.Bonus;
 import com.esferalia.aon.occam.api.model.Cost;
 import com.esferalia.aon.occam.api.model.Deduction;
 import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.occam.api.model.EnterpriseCCC;
 import com.esferalia.aon.occam.api.model.Filter.AgreementLevelCategoryFilter;
 import com.esferalia.aon.occam.api.model.Filter.ContractAttachFilter;
 import com.esferalia.aon.occam.api.model.Filter.ContractDataFilter;
@@ -459,6 +460,18 @@ public class PAYROLL {
 	public static void saveActivities(String domainName, Integer domainId, String login, List<Activity> activity) {
 		try( CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login) ){
 			getPayroll().saveActivities(ctx, activity);
+		}
+	}
+	
+	public static void deleteCCC(String domainName, Integer domainId, String login, Integer cccId) {
+		try( CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login) ){
+			getPayroll().deleteCCC(ctx, cccId);
+		}
+	}
+	
+	public static EnterpriseCCC saveCCC(String domainName, Integer domainId, String login, EnterpriseCCC ccc) {
+		try( CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login) ){
+			return getPayroll().saveCCC(ctx, ccc);
 		}
 	}
 	

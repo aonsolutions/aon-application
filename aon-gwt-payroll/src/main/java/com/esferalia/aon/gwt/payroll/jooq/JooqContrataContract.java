@@ -32,11 +32,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.jooq.Condition;
 import org.jooq.DSLContext;
 import org.jooq.Record;
 import org.jooq.Record1;
 import org.jooq.Result;
 import org.jooq.SelectConditionStep;
+import org.jooq.SelectOnConditionStep;
 import org.jooq.conf.Settings;
 import org.jooq.impl.DSL;
 
@@ -54,6 +56,8 @@ import com.esferalia.aon.gwt.payroll.shared.EmployeeInfo;
 import com.esferalia.aon.gwt.payroll.shared.JourneyDuration;
 import com.esferalia.aon.jooq.tables.records.ContractInfoRecord;
 import com.esferalia.aon.jooq.tables.records.ContractRecord;
+import com.esferalia.aon.occam.api.model.ContractParams;
+import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class JooqContrataContract {
 	
@@ -596,6 +600,172 @@ public class JooqContrataContract {
 		return getEmployeesInfoDB(DSL.using(conn, getDefaultSettings()), domainId, allEmployees);
 	}
 	
+	public static List<EmployeeContractInfo> getEmployees(Connection conn, ContractParams params) {
+		return getEmployees(DSL.using(conn, getDefaultSettings()), params);
+	}
+	
+	private static List<EmployeeContractInfo> getEmployees(DSLContext dslContext, ContractParams params) {
+		List<EmployeeContractInfo> employeesInfo = new ArrayList<>();
+		
+		Condition condition = paramsToCondition(params);
+		
+		SelectOnConditionStep<Record> select = dslContext.select()
+			.from(CONTRACT)
+			.join(PERSON).on(PERSON.REGISTRY.eq(CONTRACT.PERSON))
+			.join(REGISTRY).on(REGISTRY.ID.eq(CONTRACT.PERSON))
+			.join(WORKPLACE).on(WORKPLACE.ID.eq(CONTRACT.WORKPLACE))
+			.leftOuterJoin(ENTERPRISE_CCC).on(ENTERPRISE_CCC.ID.eq(CONTRACT.ENTERPRISE_CCC));
+		
+		if(AonStringUtils.isNotBlank(params.getTc2()))
+			select.leftOuterJoin(CONTRACT_DATA).on(
+					CONTRACT_DATA.CONTRACT.eq(CONTRACT.ID)
+					.and(CONTRACT_DATA.NAME.eq("TC2"))
+					.and(
+							CONTRACT_DATA.END_DATE.isNull()
+							.or(CONTRACT_DATA.END_DATE.eq(CONTRACT.END_DATE))
+					));
+		
+		select.where(condition);
+		
+		if(params.isAsc()) {
+			if(AonStringUtils.equals(params.getOrderBy(), "name"))
+				select.orderBy(REGISTRY.NAME);
+			else if(AonStringUtils.equals(params.getOrderBy(), "document"))
+				select.orderBy(REGISTRY.DOCUMENT);
+		} else {
+			if(AonStringUtils.equals(params.getOrderBy(), "name"))
+				select.orderBy(REGISTRY.NAME.desc());
+			else if(AonStringUtils.equals(params.getOrderBy(), "document"))
+				select.orderBy(REGISTRY.DOCUMENT.desc());
+		}
+		
+		List<Record> contracts = select
+				.limit(params.getOffset(), params.getLimit())
+				.fetch();
+		
+		for(Record contract : contracts) {
+			
+			// --------------------------------------------- Init
+			
+			EmployeeContractInfo employeeContractInfo = new EmployeeContractInfo();
+			ContractInfo contractData = new ContractInfo();
+			EmployeeInfo employeeData = new EmployeeInfo();
+			
+			// --------------------------------------------- Employee Info
+			employeeData.setEmployeeId(contract.get(PERSON.REGISTRY));
+			employeeData.setDomain(contract.get(PERSON.DOMAIN));
+			employeeData.setSsNumber(contract.get(PERSON.SOCIAL_SECURITY_NUM));
+			employeeData.setName(contract.get(PERSON.NAME));
+			employeeData.setSurName(contract.get(PERSON.FIRST_SURNAME));
+			employeeData.setSecondSurName(contract.get(PERSON.SECOND_SURNAME));
+			employeeData.setDocument(contract.get(REGISTRY.DOCUMENT));
+			
+			// --------------------------------------------- Contract Info
+			
+			// HAS PAYROLL
+			Result<Record> salaryRecords = dslContext.select().from(SALARY)
+					.where(SALARY.CONTRACT.eq(contract.get(CONTRACT.ID)))
+						.orderBy(SALARY.END_DATE.desc())
+						.fetch();
+			
+			if(salaryRecords.isEmpty()){
+				contractData.setHasPayroll(false);
+				contractData.setPayrollDate(null);
+				contractData.setSalariesCount(0);
+			}else{
+				contractData.setHasPayroll(true);
+				contractData.setPayrollDate(salaryRecords.get(0).get(SALARY.END_DATE));
+				contractData.setSalariesCount(salaryRecords.size());
+				contractData.setContractSalariesInfo(createSalariesInfo(salaryRecords));
+			}
+			
+			// CONTRACT TABLE
+			contractData.setContractId(contract.get(CONTRACT.ID));
+			contractData.setStartDate(contract.get(CONTRACT.START_DATE));
+			contractData.setEndDate(contract.get(CONTRACT.END_DATE));
+			contractData.setSsRegimen(contract.get(CONTRACT.SS_REGIME));
+			contractData.setAgreementCategory(contract.get(CONTRACT.CATEGORY_DESCRIPTION));
+			
+			// ENTERPRISE CCC
+			if(null != contract.get(ENTERPRISE_CCC.ID)) {
+				contractData.setCccId(contract.get(ENTERPRISE_CCC.ID));
+				contractData.setCccType(contract.get(ENTERPRISE_CCC.TYPE));
+				contractData.setCompleteCCC(getCCCRegimeCode(contractData.getCccType()) + contract.get(ENTERPRISE_CCC.CCC));	
+			}
+			
+			// WORKPLACE TABLE		
+			contractData.setWorkplaceId(contract.get(WORKPLACE.ID));
+			contractData.setWorkplaceName(contract.get(WORKPLACE.DESCRIPTION));
+			
+			// TC2
+			Result<Record> tc2Records = dslContext.select().from(CONTRACT_DATA)
+				.where(CONTRACT_DATA.CONTRACT.eq(contract.get(CONTRACT.ID)))
+				.and(CONTRACT_DATA.NAME.eq("TC2"))
+				.orderBy(CONTRACT_DATA.START_DATE.desc())
+				.fetch();
+			
+			if(tc2Records.isNotEmpty()) {
+				Record tc2Rocerd = tc2Records.get(0);
+				contractData.setContracttypeId(tc2Rocerd.get(CONTRACT_DATA.ID));
+				contractData.setContractType(tc2Rocerd.get(CONTRACT_DATA.EXPRESSION));
+			}
+			
+			// Filter TC2
+//			if(AonStringUtils.isNotBlank(params.getTc2())) {
+//				if(AonStringUtils.isBlank(contractData.getContractType()) && !AonStringUtils.equalsIgnoreCase(params.getTc2(), "RETA")) continue;
+//				else if(AonStringUtils.isNotBlank(contractData.getContractType()) && !AonStringUtils.equalsIgnoreCase(params.getTc2(), contractData.getContractType())) continue;
+//			}
+			
+			employeeContractInfo.setEmployeeInfo(employeeData);
+			employeeContractInfo.setContractInfo(contractData);
+			
+			// --------------------------------------------- Add employeeContractInfo
+						
+			employeesInfo.add(employeeContractInfo);
+			
+		}
+		
+		System.out.println("employees : " + employeesInfo.size());
+		
+		return employeesInfo;
+	}
+	
+	private static Condition paramsToCondition(ContractParams params) {
+		Condition condition = CONTRACT.DOMAIN.eq(params.getDomain());
+		
+		if(AonStringUtils.isNotBlank(params.getDescription())) {
+			condition = condition.and(
+					REGISTRY.NAME.like("%" + params.getDescription() + "%")
+					.or(REGISTRY.DOCUMENT.like("%" + params.getDescription() + "%"))
+					.or(PERSON.SOCIAL_SECURITY_NUM.like("%" + params.getDescription() + "%"))
+			);
+		}
+		
+		if(null != params.getActive()) {
+			if(params.getActive() == (byte) 0) // Inactive
+				condition = condition.and(CONTRACT.END_DATE.isNotNull().and(CONTRACT.END_DATE.lt(parseDate(new java.util.Date()))));
+			else if(params.getActive() == (byte) 1) // Active
+				condition = condition.and(CONTRACT.END_DATE.isNull().or(CONTRACT.END_DATE.ge(parseDate(new java.util.Date()))));
+		}
+		
+		if(AonStringUtils.isNotBlank(params.getTc2())) {
+			if(AonStringUtils.equalsIgnoreCase(params.getTc2(), "RETA")) condition = condition.and(CONTRACT.SS_REGIME.eq((byte)3));
+			else condition = condition.and(CONTRACT_DATA.EXPRESSION.eq("\"" + params.getTc2() + "\""));
+		}
+			
+		if(null != params.getWorkplace())
+			condition = condition.and(CONTRACT.WORKPLACE.eq(params.getWorkplace()));
+		
+		if(null != params.getFrom())
+			condition = condition.and(CONTRACT.START_DATE.ge(parseDate(params.getFrom())));
+		
+		if(null != params.getTo())
+			condition = condition.and(CONTRACT.START_DATE.le(parseDate(params.getTo())));
+		
+		return condition;
+	}
+
+
 	private static List<EmployeeContractInfo> getEmployeesInfoDB(DSLContext dslContext, Integer domainId, Boolean allEmployees) {
 		List<EmployeeContractInfo> employeesInfo = new ArrayList<>();
 		

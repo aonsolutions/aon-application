@@ -4,24 +4,28 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class PayrollUtils {
 
+
 	public static int getDeductionPDFType(int type) {
+		
 		switch (type) {
-		case 0:
-		case 1:
-		case 2:
-		case 3:
-		case 4:
-		case 5:
-		case 13:
+		case 0: 		// COMMON_CONTINGENCY
+		case 1: 		// PROFESSIONAL_CONTINGENCY
+		case 2: 		// UNEMPLOYMENT
+		case 3: 		// JOB_TRAINING
+		case 4: 		// STRUCTURAL_OVERTIME
+		case 5: 		// NON_STRUCTURAL_OVERTIME
+		case 13: 		// MEI
 			return 1;
-		case 6:
+		case 6: 		// IRPF
 			return 2;
-		case 7:
+		case 7: 		// ADVANCE_PAYMENT
 			return 3;
-		case 8:
+		case 8: 		// IN_KIND
 			return 4;
-		default:
+		case 10: 		// EMBARGO
 			return 5;
+		default:		// OTHER
+			return 6;
 		}
 	}
 	

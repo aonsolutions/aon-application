@@ -859,7 +859,7 @@ public class InvoiceDAO {
 	
 	public static int getNextNumber(AONContext ctx, Byte[] types, String series ) {
 		TbaiConfiguration tbaiConfiguration = TbaiConfigurationDAO.get(ctx);
-		if(tbaiConfiguration.isActive()) {
+		if(tbaiConfiguration.isActive() && InvoiceType.contains(types, InvoiceType.SALES)) {
 			return getTbaiNextNumber(ctx, types, series);
 		} else {
 			Integer next = selectMaxInvoice(ctx, types, series)

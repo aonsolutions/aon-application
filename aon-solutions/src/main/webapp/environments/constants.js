@@ -156,6 +156,7 @@ export const IBAN = 'iban';
 export const ICON = 'icon';
 export const ICON_BUTTON = 'iconButton';
 export const ID = 'id';
+export const IMAGE = 'image';
 export const IN_PROGRESS = 'inProgress';
 export const INBOX = 'inbox';
 export const INPUT = 'input';

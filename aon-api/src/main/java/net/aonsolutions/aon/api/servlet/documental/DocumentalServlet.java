@@ -9,6 +9,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.Collection;
+import java.util.List;
 import java.util.logging.Logger;
 
 import org.json.JSONArray;
@@ -18,6 +19,8 @@ import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.SECURITY;
 import com.esferalia.aon.occam.api.json.IJsonNames;
 import com.esferalia.aon.occam.api.json.JsonUtils;
+import com.esferalia.aon.occam.api.json.invoice.FinanceJSON;
+import com.esferalia.aon.occam.api.model.FBatchParams;
 import com.esferalia.aon.occam.api.model.Filter;
 import com.esferalia.aon.occam.api.model.Options;
 import com.esferalia.aon.occam.api.model.Properties.AttachProperties;
@@ -25,6 +28,8 @@ import com.esferalia.aon.occam.api.model.aonsolutions.DomainUserRoles;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.attachment.AttachType;
 import com.esferalia.aon.occam.api.model.attachment.RegistryAttachmentType;
+import com.esferalia.aon.occam.api.model.finance.FBatch;
+import com.esferalia.aon.occam.api.model.finance.FBatchDetail;
 import com.esferalia.aon.occam.api.model.office.Tag;
 import com.esferalia.aon.occam.api.model.registry.Category;
 import com.esferalia.aon.occam.api.model.security.Scope;
@@ -63,6 +68,12 @@ public class DocumentalServlet extends AonApiHttpServlet{
 				break;
 			case "/count":
 				response(req, resp, getFilesCount(api));
+				break;
+			case "/files/sepa":
+				response(req, resp, getSepaFiles(api));
+				break;
+			case "/file/sepa":
+				response(req, resp, getSepaFile(api));
 				break;
 			default:
 				throw new AonApiException(AonApiError.ROUTE_ERROR.getMessage());
@@ -127,7 +138,7 @@ public class DocumentalServlet extends AonApiHttpServlet{
 				.setPage(page).setPerPage(perPage);
 		
 		AON.getDocumentalAttachStream(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), 
-				f -> attachFilter(api, f),AttachType.REGISTRY, false, options)
+				f -> attachFilter(api, f), AttachType.REGISTRY, false, options)
 //		.sorted((o1, o2) -> o2.getDate().compareTo(o1.getDate()))
 		.forEach(a -> {
 			array.put(attachToJSON(a));
@@ -151,7 +162,7 @@ public class DocumentalServlet extends AonApiHttpServlet{
 	    AON.getDocumentalAttachStream(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(),
 	            f -> attachFilter(api, f), AttachType.REGISTRY, false, options)
 	            .forEach(a -> {
-	                // Aquí asumo que attachToFiles(a) convierte el objeto adjunto a un archivo
+	                // Aquï¿½ asumo que attachToFiles(a) convierte el objeto adjunto a un archivo
 	                fileList.addAll((Collection<? extends File>) attachToJSON(a));
 	            });
 
@@ -161,12 +172,35 @@ public class DocumentalServlet extends AonApiHttpServlet{
 	        // Comprimir archivos en un array de bytes
 	        compressedFiles = ZipUtils.compress(fileList.toArray(new File[0]));
 	    } catch (IOException e) {
-	        e.printStackTrace(); // Manejo de errores: puedes ajustarlo según tus necesidades
+	        e.printStackTrace(); // Manejo de errores: puedes ajustarlo segï¿½n tus necesidades
 	    }
 
 	    return compressedFiles;
 	}
     
+	private JSONArray getSepaFiles(AonApiData api) {
+		JSONArray array = new JSONArray();
+		
+		Integer page = JsonUtils.getInteger(api.getData(), com.esferalia.aon.occam.api.model.IJsonNames.PAGE);
+		Integer perPage = JsonUtils.getInteger(api.getData(), "per_page");
+		
+		FBatchParams params = new FBatchParams()
+				.setDomainName(api.getDomain().getName())
+				.setDomain(api.getDomain().getId())
+				.setType((byte)10);
+		
+		AON.getFBatches(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), params, perPage * (page -1), perPage)
+			.forEach(a -> array.put(fbatchToJSON(a)));
+
+		return array;
+	}
+	
+	private JSONObject getSepaFile(AonApiData api) {
+		Integer fbatch = JsonUtils.getInteger(api.getData(), "fbatch");
+		FBatch fbatchObj = AON.getFBatch(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), fbatch);
+		return fbatchToJSON(fbatchObj);
+	}
+
 	private Filter attachFilter(AonApiData api, AttachProperties f) {
 		DomainUserRoles dur = SECURITY.getDomainUserRoles(api.getDomain(), api.getUser().getLogin(), api.getUser().getId());
 		
@@ -239,12 +273,12 @@ public class DocumentalServlet extends AonApiHttpServlet{
 		}
     	
     	if(api.getData().opt(IJsonNames.CATEGORY) != null) {
-    		// TODO FILTRO CATEGORÍA MÚLTIPLE
+    		// TODO FILTRO CATEGORï¿½A Mï¿½LTIPLE
     		filter = filter.and(f.getCategoryProperty().eq(api.getData().optInt(IJsonNames.CATEGORY)));
     	}
     	
     	if(api.getData().opt(IJsonNames.TAG) != null) {
-    		// TODO FILTRO ETIQUETAS MÚLTIPLE
+    		// TODO FILTRO ETIQUETAS Mï¿½LTIPLE
     		filter = filter.and(f.getTagProperty().eq(api.getData().optInt(IJsonNames.TAG)));
     	}
     	
@@ -272,6 +306,49 @@ public class DocumentalServlet extends AonApiHttpServlet{
 		return filter;
     }
 	
+	private JSONObject fbatchToJSON(FBatch fBatch) {
+		return new JSONObject()
+				.put(com.esferalia.aon.occam.api.model.IJsonNames.ID, fBatch.getId())
+				.put(com.esferalia.aon.occam.api.model.IJsonNames.DOMAIN, fBatch.getDomain())
+				.put(com.esferalia.aon.occam.api.model.IJsonNames.DESCRIPTION, fBatch.getDescription())
+				.put(com.esferalia.aon.occam.api.model.IJsonNames.ISSUE_DATE, AonDateUtils.simpleFormat(fBatch.getIssueDate()))
+				.put(com.esferalia.aon.occam.api.model.IJsonNames.TYPE, fBatch.getType())
+				.put(com.esferalia.aon.occam.api.model.IJsonNames.STATUS, fBatch.getStatus().getDescription())
+				.put("bank", null == fBatch.getRbank() ? null : fBatch.getRbank().getFullName())
+				.put("bank_statement_link", fBatch.getBankStatementLink())
+				.put("payment", fBatch.getPayment())
+				.put(com.esferalia.aon.occam.api.model.IJsonNames.SECURITY_LEVEL, fBatch.getSecurityLevel().getName())
+				.put(com.esferalia.aon.occam.api.model.IJsonNames.RATTACH, fBatch.getRattach())
+				.put("fbatch_details", fbatchDetailToJSON(fBatch.getBatchDetails()))
+				.put(com.esferalia.aon.occam.api.model.IJsonNames.CREATION_USER, fBatch.getCreationUser())
+				.put(com.esferalia.aon.occam.api.model.IJsonNames.CREATION_DATE, AonDateUtils.simpleFormat(fBatch.getCreationDate()))
+				.put(com.esferalia.aon.occam.api.model.IJsonNames.MODIFICATION_USER, fBatch.getModificationUser())
+				.put(com.esferalia.aon.occam.api.model.IJsonNames.MODIFICATION_DATE, AonDateUtils.simpleFormat(fBatch.getModificationDate()))
+				;
+	}
+	
+	private JSONArray fbatchDetailToJSON(List<FBatchDetail> fbatchDetails) {
+		JSONArray array = new JSONArray();
+		fbatchDetails.forEach(fbatchDetail -> array.put(fbatchDetailToJSON(fbatchDetail)));
+		return array;
+	}
+
+	private JSONObject fbatchDetailToJSON(FBatchDetail fbatchDetail) {
+		return new JSONObject()
+				.put(com.esferalia.aon.occam.api.model.IJsonNames.ID, fbatchDetail.getId())
+				.put(com.esferalia.aon.occam.api.model.IJsonNames.DOMAIN, fbatchDetail.getDomain())
+				.put("fbatch", fbatchDetail.getFbatch())
+				.put("finance", FinanceJSON.toJSON(fbatchDetail.getFinance()))
+				.put(com.esferalia.aon.occam.api.model.IJsonNames.AMOUNT, fbatchDetail.getAmount())
+				.put(com.esferalia.aon.occam.api.model.IJsonNames.STATUS, fbatchDetail.getStatus())
+				.put(com.esferalia.aon.occam.api.model.IJsonNames.CREATION_USER, fbatchDetail.getCreationUser())
+				.put(com.esferalia.aon.occam.api.model.IJsonNames.CREATION_DATE, AonDateUtils.simpleFormat(fbatchDetail.getCreationDate()))
+				.put(com.esferalia.aon.occam.api.model.IJsonNames.MODIFICATION_USER, fbatchDetail.getModificationUser())
+				.put(com.esferalia.aon.occam.api.model.IJsonNames.MODIFICATION_DATE, AonDateUtils.simpleFormat(fbatchDetail.getModificationDate()))
+				
+				;
+	}
+
 	public static JSONObject attachToJSON(Attach attach){	
 		JSONArray tagArray = new JSONArray();
 		if(attach.getTagList() != null)

@@ -30,6 +30,26 @@ const getPathImg = (administration)=>{
   return path+src;
 }
 
+const getModelNumberHtml = (administration, model)=>{
+  const newModel = TAX_ENUMS.TAX_MODEL_NUMBER[model];
+  let modelText = newModel;
+  if(newModel === "111" && administration === "ALAVA") {
+    modelText = "110";
+  } 
+
+  return /*html*/`<div id = "aonSideNavFiscalCircle" class = "aonSideNavFiscalCircle">${modelText}</div>`;
+}
+
+const getModelNumber = (administration, model)=>{
+  const newModel = TAX_ENUMS.TAX_MODEL_NUMBER[model];
+  let modelText = newModel;
+  if(newModel === "111" && administration === "ALAVA") {
+    modelText = "110";
+  } 
+
+  return modelText;
+}
+
 const getModelNew = (model)=> {
   const newModel = TAX_ENUMS.TAX_MODEL_NUMBER[model.model];
   const statusText = TAX_ENUMS.TAX_STATUS[model.status];
@@ -38,7 +58,7 @@ const getModelNew = (model)=> {
   const statusHtml = createStatusDot(model.status);
     
   if(["PENDING", "CUSTOMER_CHECK"].includes(model.status))  {
-    color = "fin";
+    color = "pause";
   } else if("FINISHED" === model.status) {
     color = "in";
   }
@@ -163,6 +183,8 @@ const groupBy = (list, keyGetter) =>{
 export const FiscalUtils = {
     createImgAdmin,
     getPathImg,
+    getModelNumberHtml,
+    getModelNumber,
     getModelNew,
     groupBy
 }
