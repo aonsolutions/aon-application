@@ -77,7 +77,7 @@ public class SettleSalariesDAO {
 				.join(RPAYMETHOD).on(RPAYMETHOD.REGISTRY.eq(CONTRACT.PERSON))
 				.leftOuterJoin(RBANK).on(RBANK.ID.eq(RPAYMETHOD.RBANK))
 				.where(SALARY.DOMAIN.eq(ctx.getDomainId()))
-				.and(SALARY.ISSUE_DATE.eq(parseToSQLDate(date)))
+				.and(SALARY.CHARGE_DATE.eq(parseToSQLDate(date)))
 				.and(SALARY.TYPE.lt((byte)4)) // Nomina, Extra, Finiquito, Atraso
 //				.and(SALARY.TOTAL_LIQUID.ne(0.00))
 				.orderBy(SALARY.START_DATE, SALARY.CHARGE_DATE)
@@ -105,7 +105,8 @@ public class SettleSalariesDAO {
 					.innerJoin(SALARY)
 					.on(SALARY.ID.eq(FINANCE.SOURCE_ID))
 					.where(FINANCE.DOMAIN.eq(ctx.getDomainId()))
-					.and(FINANCE.DUE_DATE.eq(parseToSQLDate(date)))
+					.and(FINANCE.DUE_DATE.eq(record.get(SALARY.CHARGE_DATE)))
+//					.and(FINANCE.DUE_DATE.eq(parseToSQLDate(date)))
 					.and(FINANCE.REGISTRY.eq(record.get(REGISTRY.ID)))
 					.and(FINANCE.PAYROLL.eq((byte)1))
 					.and(FINANCE.CONCEPT.like(concept + "%"))
