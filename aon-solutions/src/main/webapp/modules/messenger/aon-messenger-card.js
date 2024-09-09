@@ -174,7 +174,7 @@ export class AonMessengerCard extends AonElement {
     title.title = messenger.title;
     title.className = CSS.AON_ELLIPSIS;
     title.style.fontSize = "1.1rem";
-    title.style.color = "rgb(246, 101, 90)";
+    title.style.color = "var(--aonMessenger)";
     title.style.fontWeight = "500";
 
     div.appendChild(title);
@@ -239,7 +239,7 @@ export class AonMessengerCard extends AonElement {
       leftContent.style.alignItems = "center";
 
       let icon = messenger.lettersHtml;
-      icon.firstElementChild.style.color = "rgb(246, 101, 90)";
+      icon.firstElementChild.style.color = "Var(--aonMessenger)";
       icon.firstElementChild.firstElementChild.style.fontSize = "30px";
       leftContent.appendChild(icon);
 
@@ -278,7 +278,7 @@ export class AonMessengerCard extends AonElement {
     let message = this.getElement("messengerCardMessage");
 
     let showAll = this.createElement(TAG.SPAN);
-    showAll.style.color = "rgb(246, 101, 90)";
+    showAll.style.color = "var(aonMessenger)";
     showAll.style.fontWeight = "500";
     showAll.innerHTML = "Ver todos los mensajes";
 

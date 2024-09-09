@@ -435,6 +435,7 @@ export const TAG = 'Etiqueta';
 export const TAGS = 'Etiquetas';
 export const TAX = 'Imposto';
 export const TAX_BASE = 'Base Impoñible';
+export const TAXES = 'Impostos';
 export const TAXES_DETAIL = 'Detalle Impostos';
 export const TEST_ENVIRONMENT = 'Entorno de Proba';
 export const TICKET = 'Tícket';
