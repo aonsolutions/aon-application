@@ -446,6 +446,10 @@ public class ProductServlet extends AonApiHttpServlet {
 			filter = filter.and(f.getTypeProperty().eq(type.value()));
 		}
 		
+		if(api.getData().opt(IJsonNames.ID) != null) {
+			filter = filter.and(f.getIdProperty().eq(api.getData().optInt(IJsonNames.ID)));
+		}
+		
 		return filter;
 	}
 	
