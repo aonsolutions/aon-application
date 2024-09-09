@@ -369,7 +369,7 @@ public class ProductServlet extends AonApiHttpServlet {
 	
 	private long getProductsCount(AonApiData api) {
 		return AON_SOLUTIONS.getProductCount(api.getDomain().getName(), api.getDomain().getId(),api.getUser().getLogin(), f -> newProductFilter(api, f));
-	}
+	} 
 	
 	
 	private Filter newProductFilter(AonApiData api, ProductProperties f) {
