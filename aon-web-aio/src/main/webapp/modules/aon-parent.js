@@ -298,6 +298,14 @@ export class AonParent extends AonElement {
 				ul.style.maxHeight = `calc(100vh - ${totalOffsetTop + totalBottom }px)`; 
 			}
 	    }, 100);
+
+		let apps = this.getElement("applications");
+		let company = this.getElement("aonHeaderCompanyListButton");
+		let companyy = this.getElement("aonHeaderCompanyList");
+		apps.addEventListener(EVENT.CLICK, () => {
+			company.style.display = "block";
+			companyy.style.display = "block";
+		});
 	}
 
 	loadMore() {

@@ -1,7 +1,7 @@
 import { AonElement } from 'aonsolutions/components/AonElement.js';
 import { AonAvatar } from 'aonsolutions/components/aon-avatar.js';
 import { MSG, CONSTANT, CSS, EVENT, MATERIAL_ICONS, TAG } from "aonsolutions/environments/environments.js";
-import { closeSession, getAuth } from 'aonsolutions/services/service.js';
+import { closeSession2, getAuth } from 'aonsolutions/services/service.js';
 import { AonConfiguration } from 'aonsolutions/modules/configuration/aon-configuration.js';
 import * as LS from 'aonsolutions/services/localStorageService.js';
 
@@ -114,9 +114,8 @@ export class AonLoginPanel extends AonElement {
 		divLogout.id = this.LOGOUT;
 		divLogout.className = 'divLogout';
 		divLogout.addEventListener(EVENT.CLICK, () => {
-			closeSession();
+			closeSession2();
 			LS.setNewTheme(true);
-			LS.removeToken();
 		});
 		divLogout.appendChild(this.buildInfoLink(MATERIAL_ICONS.LOGOUT, MSG.CLOSE_SESSION));
 		this.appendChild(divLogout);
