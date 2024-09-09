@@ -50,27 +50,27 @@
 
   --aonNote: #FB982E;
  
---aonInvoice: var(--aonClearBlue);
---aonInvoiceBackground: #ebf2ff;
+  --aonInvoice: var(--aonClearBlue);
+  --aonInvoiceBackground: #ebf2ff;
  
---aonDocumental: #75163F; /* #c84c79 #EF6292;*/
---aonDocumentalBackground: #fdedf2;
+  --aonDocumental: rgb(246, 101, 90); /* #c84c79 #EF6292;*/
+  --aonDocumentalBackground: #fdedf2;
  
---aonPayroll: #e2001a; /* #33A9A9;*/
---aonPayrollBackground: #e8f5f5;
+  --aonPayroll: #e2001a; /* #33A9A9;*/
+  --aonPayrollBackground: #e8f5f5;
  
---aonFiscal:#005eb5;
---aonFiscalBackground: #fef3e7;
+  --aonFiscal:#005eb5;
+  --aonFiscalBackground: #fef3e7;
  
   --aonMessenger: #33A9A9; /* #f6655a; --aonMessenger: rgb(134, 211, 100); */
---aonMessengerBackground: #feedec;
+  --aonMessengerBackground: #feedec;
  
---aonTimecontrol: #D1C36D;
---aonTimecontrolBackground: rgba(209, 195, 109, .2);
+  --aonTimecontrol: #D1C36D;
+  --aonTimecontrolBackground: rgba(209, 195, 109, .2);
  
---aonAccounting: #c1022d;
---aonAccountingColor: #c1022d;
---aonAccountingBackground: rgba(0, 36, 105, .2);
+  --aonAccounting: #c1022d;
+  --aonAccountingColor: #c1022d;
+  --aonAccountingBackground: rgba(0, 36, 105, .2);
  
   --aonHeaderBackgroundColor: var(--aonWhiteGray);
 
@@ -82,7 +82,7 @@
 
   --aonHeaderButtonsColor :var(--aonWhite);
 
---aonCardColor: var(--aonWhite);
+  --aonCardColor: var(--aonWhite);
 
   --aonCardTitle:  rgb(38,38,38);
 
@@ -94,7 +94,7 @@
 
   --aonDashboardButtonText: #19191d;
 
---aonDashboardButton: #fff;
+  --aonDashboardButton: #fff;
 
   --aonSuiteMenuSideMenu: rgb(250,249,248);
  
@@ -102,9 +102,9 @@
 
   --aonSuiteMenuNewButtonBorder: rgb(72,70,68);
 
---aonSuiteMenuNewButtonText: rgb(72,70,68);
+  --aonSuiteMenuNewButtonText: rgb(72,70,68);
 
---aonSuiteMenuNewButtonIcon: var(--aonSuiteMenuNewButtonText);
+  --aonSuiteMenuNewButtonIcon: var(--aonSuiteMenuNewButtonText);
 
   --aonSuiteMenuUploadButtonBorder: rgba(0,0,0,0.1);
 
@@ -138,7 +138,9 @@
 
   --aonHomeMouseOverImg: white;
 
---aonHomeImg: black;
+  --aonHomeImg: black;
+
+  --aonTaxBuildPrintRes: grey;
 
 }
 
@@ -2048,7 +2050,7 @@ label.rating:hover {
 }
 
 .aonMessengerCardButton:hover{
-  border: 1px solid rgb(246, 101, 90);
+  border: 1px solid var(--aonMessenger);
 }
 
 .aonMessengerCardRow, .aonDocumentalCardRow{
@@ -2062,8 +2064,8 @@ label.rating:hover {
 }
 
 .aonMessengerCardRow:hover{
-  border-top: 1px solid rgb(246, 101, 90);
-  border-bottom: 1px solid rgb(246, 101, 90);
+  border-top: 1px solid var(--aonMessenger);
+  border-bottom: 1px solid var(--aonMessenger);
 }
 
 .aonDocumentalCardRow:hover{
@@ -2087,7 +2089,7 @@ label.rating:hover {
   padding: .5rem;
   color: white;
   text-align: center;
-  background-color: rgba(246, 101, 90, 0.7);
+  background-color: var(--aonMessenger);
   font-weight: 600;
 }
 
@@ -4161,4 +4163,33 @@ font-weight: 600;
 
 .accountingChatLegend {
   color: black;
+}
+
+.aonSignDivLastTime {
+  margin-top: 10px;
+  color: grey;
+  font-size: 12px;
+  cursor: default;
+}
+
+.aonCompanyCostListDivTitle {
+  color: grey;
+  font-weight: 500;
+  font-size: 1.2rem;
+}
+
+.aonCompanyCostListNewTitle {
+  color: black;
+  font-weight: 600;
+}
+
+.aonTableRowIcon2{
+  margin-right: 15px;
+  color: #5f6368;
+}
+
+.aonInvoiceHomePendingRecordName {
+  font-weight:  normal;
+	color:  gray;
+	line-height:  21px;
 }

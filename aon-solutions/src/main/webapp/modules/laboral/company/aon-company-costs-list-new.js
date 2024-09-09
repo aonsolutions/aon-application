@@ -139,9 +139,7 @@ export class AonCompanyCostsListNew extends AonElement {
     //-----TITLE--------------
     let divTitle = this.createElement(TAG.DIV);
     divTitle.id = this.id + "titleDiv";
-    divTitle.style.color  = "grey";
-    divTitle.style.fontWeight ="500";
-    divTitle.style.fontSize = "1.2rem";
+    divTitle.classList.add("aonCompanyCostListDivTitle");
     main.appendChild(divTitle);
 
     //-----CHART--------------
@@ -271,7 +269,7 @@ const paintCompanyCostPieChart = async () => {
       title = `${title} ${startDateText} - ${endDateText}`;
     }
 
-    title = `${title}<br> ${workplaceText} <span style="color:black;font-weight:600;">${formatNumber(total, 2, "EUR")}<span>`;
+    title = `${title}<br> ${workplaceText} <span class="aonCompanyCostListNewTitle";">${formatNumber(total, 2, "EUR")}<span>`;
 
     let divTitle = document.getElementById("aon-company-costs-listtitleDiv");
     divTitle.innerHTML = title;
