@@ -500,6 +500,8 @@ export class AonDesktop extends AonElement {
 				div.appendChild(new AonStatistics());
 				div.appendChild(aonSign);
 
+				timecontrolCard.firstChild.children.item(1).style.height = "200px";
+
 				aonSign.buildSignin(r);
 				let aonHeader = this.getElement('aonHeader');
 				aonHeader.timeControlStatus(r);

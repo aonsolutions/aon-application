@@ -43,6 +43,7 @@ public class AonToolbar extends FlowPanel {
 		
 		titlePanel = new FlowPanel();
 		titlePanel.addStyleName(AON.CSS.aonToolbarTitleContainer());
+		titlePanel.addStyleName(AON.CSS.aonItemFlex());
 		setTitle(name);
 		innerToolbar.add(titlePanel);
 
@@ -103,6 +104,10 @@ public class AonToolbar extends FlowPanel {
 	public void setTitle(Widget widget) {
 		titlePanel.clear();
 		titlePanel.add( widget );
+	}
+	
+	public void addFilterButton(Widget widget) {
+		titlePanel.add(widget);
 	}
 	
 }
