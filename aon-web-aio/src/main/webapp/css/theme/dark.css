@@ -53,6 +53,10 @@
 
 	--aonTopMenuAvilableMouseOutText: white;
 
+	--aonTopMenuAvailable: white;
+
+	--aonTopMenuSpecial: white;
+
 	--aonAccountingMouseOver: var(--aonBlue);
 
 	--aonAccountingMouseOut: white;
@@ -72,10 +76,14 @@
  	--aonSearchBar: var(--aonCardColor);
   
  	--aonSearchButton: white;
+
+	--aonTaxBuildPrintRes: white;
+
 }
 
 .aonBody{
 	background-color: var(--aonContentBeta);
+	color: white;
 }
 
 .aonDashboardButton i {
@@ -416,8 +424,22 @@ h1 {
   	color: white;
 }
 
-.material-icons {
+/* .material-icons {
   	color: white; 
+} */
+
+#aonRightPanel .material-icons,
+#aonMessengerToolbar .material-icons,
+#aon-notesToolbar .material-icons,
+#aonSigninToolbar .material-icons,
+#aonLaboralToolbar .material-icons,
+#aonFiscalToolbar .material-icons,
+#aonAccountingToolbar .material-icons,
+#aonDocumentalToolbar .material-icons,
+#aonInvoiceToolbar .material-icons,
+#aonDocumentalSheetToolbar .material-icons,
+#aonInvoiceSheetToolbar .material-icons {
+	color: white;
 }
 
 #aonNotificationPanelOpenButtonIcon:hover{
@@ -435,6 +457,7 @@ h1 {
 
 #aon-notesSidenav .material-icons {
   	--aonNote: white;
+	color: white;
 }
 
 #aonInvoiceSidenav .material-icons {
@@ -456,10 +479,12 @@ h1 {
 
 #aonMessengerSidenav .material-icons {
   	--aonMessenger: white;
+	color: white;
 }
 
 #aonDocumentalSidenav .material-icons {
   	--aonDocumental: white;
+	color: white;
 }
 
 #aonSigninSidenav .material-icons {
@@ -476,6 +501,7 @@ h1 {
 
 .aonInputBoxLabel > input {
  	background-color: var(--aonContentBeta);
+	color: white;
 }
 
 #divCompanyLogoForm {
@@ -528,12 +554,44 @@ h1 {
 	background-color: var(--aonContentBeta);
 }
 
-.aonUl {
+.aonUl,
+.accountingChatLegend,
+.aonSearchInput {
 	color: white;
 }
 
-.accountingChatLegend {
+#nullIcon .material-icons {
+	color: rgb(95, 99, 104);
+}
+
+#iconLocationIcon {
 	color: white;
+}
+
+#aonMessengerSidenavTASK {
+	color: white;
+}
+
+#aonEventListTableBackIcon {
+	color: white;
+}
+
+#aonEventDetailListTableBackIcon {
+	color: white;
+}
+
+.aonSignDivLastTime,
+.aonCompanyCostListDivTitle,
+.aonCompanyCostListNewTitle {
+	color: white;
+}
+
+.aonTableRowIcon2{
+	color: white;
+}
+
+.aonInvoiceHomePendingRecordName {
+	color:  white;  
 }
 
 /**

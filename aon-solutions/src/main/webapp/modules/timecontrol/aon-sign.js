@@ -312,10 +312,7 @@ export class AonSign extends AonElement {
       const id = 'lastTimeUser';
       const div = this.getElement(id) || this.createElement(TAG.DIV);
       div.id = id;
-      div.style.marginTop = "10px";
-      div.style.color = "grey";
-      div.style.fontSize = "12px";
-      div.style.cursor = "default";
+      div.classList.add("aonSignDivLastTime");
       div.innerHTML = `${MSG.LAST} ${textStatus} ${AonDateUtils.setDateTimestampDay(signin.last_date)}`;
       content.appendChild(div);
       this.totalHourWeek();

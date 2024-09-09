@@ -273,9 +273,8 @@ export class AonTable extends AonElement {
           let icon2 = this.createElement(TAG.I);
           icon2.id = this.getId() + "Icon" + i;
           icon2.className = icon.class || "material-icons";
-          icon2.style.marginRight = '15px';
+          icon2.classList.add("aonTableRowIcon2");
           icon2.innerHTML = icon.icon;
-          icon2.style.color = icon.color || "#5f6368";
           icon2.title = icon.title; 
           if(icon.fn) icon2.addEventListener(EVENT.CLICK, icon.fn);
           span.appendChild(icon2);
