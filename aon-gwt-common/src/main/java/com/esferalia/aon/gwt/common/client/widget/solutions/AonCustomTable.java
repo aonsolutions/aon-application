@@ -42,20 +42,11 @@ public class AonCustomTable extends HTMLPanel {
 	
 	public void addHeaderStyle() {
 		header.addStyleName(AON.CSS.aonItemFlex());
-		header.getElement().getStyle().setProperty("min-height", "2rem");
-		header.getElement().getStyle().setProperty("background-color", "white");
-		header.getElement().getStyle().setProperty("position", "sticky");
-		header.getElement().getStyle().setProperty("top", "-1px");
-		header.getElement().getStyle().setProperty("z-index", "1");
-		header.getElement().getStyle().setProperty("padding", "0 1rem");
-		header.getElement().getStyle().setProperty("border-bottom", "1px solid #ddd");
+		header.addStyleName(AON.CSS.aonCustomTableHeader());
 	}
 
 	public void addCellHeaderStyle(Label label) {
-		label.getElement().getStyle().setProperty("background", "transparent");
-		label.getElement().getStyle().setProperty("color", "#5f6368");
-		label.getElement().getStyle().setProperty("font-size", ".8rem");
-		label.getElement().getStyle().setProperty("font-weight", "bold");
+		label.addStyleName(AON.CSS.aonCustomTableCellHeader());
 	}
 	
 	public HTMLPanel createRow() {

@@ -2207,3 +2207,21 @@
 	border-radius: 5px;
  	background: #7A9AD7; 
 }
+
+/* Aon Custom Table */
+.aon_custom_table_header{
+	min-height : 2rem;
+	background-color : white;
+	position : sticky;
+	top : -1px;
+	z-index : 1;
+	padding : 0 1rem;
+	border-bottom : 1px solid #ddd;
+}
+
+.aon_custom_table_cell_header{
+	background : transparent;
+	color : #5f6368;
+	font-size : .8rem;
+	font-weight : bold;
+}
