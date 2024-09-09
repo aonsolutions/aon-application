@@ -1,19 +1,20 @@
 import { SIGNIN_VIEWS } from "../../signinEnums.js";
-import {  CONSTANT, TAG } from "../../../../environments/environments.js";
+import { charts } from "./charts.js";
+import {  CONSTANT } from "../../../../environments/environments.js";
 import { AonElement } from "../../../../components/AonElement.js";
 import { timeHour } from "../utils.js";
-import { getTaskHolder} from "../../../../services/taskHolderService.js";
-import { getTaskHolderTimeControl} from "../../../../services/timeControlService.js";
+import { getTaskHoldersUser, getTaskHolder} from "../../../../services/taskHolderService.js";
+import { getTaskHolderTimeControl,
+} from "../../../../services/timeControlService.js";
+import {  setStyles } from "../../../../services/utilsComponents.js";
 import { DAYS } from "../../../../models/enums.js";
 import { AonDateUtils } from "../../../utils/AonDateUtils.js";
-import * as LS from "../../../../services/localStorageService.js";
 
 export class AonStatistics extends AonElement {
   
   TABLE_ID;
   dur;
   taskHolder;
-  comboBarChart;
 
   static get observedAttributes() {
     return [CONSTANT.FILTER, CONSTANT.DATA];
@@ -64,23 +65,12 @@ export class AonStatistics extends AonElement {
   build() {
     getTaskHolder({reload:true}).then(th => {
       this.taskHolder = th;
-
-      let canvasDiv = this.createElement(TAG.DIV);
-      canvasDiv.id = "timeControlCanvasDiv";
-      canvasDiv.style.width = "100%";
-      canvasDiv.style.height = "100%";
-      this.appendChild(canvasDiv);
-
-      let canvas = this.createElement(TAG.CANVAS);
-      canvas.id = "timeControlCanvas";
-      canvasDiv.appendChild(canvas);
-
-      this.paintChart(canvas);
+      this.paintChart();
     });
 
   }
 
-  async paintChart(canvas) {
+  async paintChart() {
     try {
       const resp = await this.getData();
       let sum = 0;
@@ -94,15 +84,12 @@ export class AonStatistics extends AonElement {
         }
         const newTime = this.timeToDecimal(time);
         const day =  new Date(start_date);
-        let color = "rgba(189, 189, 189, 0.7)";
-        let colorBorder = "rgba(189, 189, 189, 1)";
+        let color = "#bdbdbd";
         const newDayTime = day.setHours(0,0,0,0);
         if(newDayTime === new Date().setHours(0,0,0,0)){
-            color = "rgba(134, 211, 100, 0.7)";
-            colorBorder = "rgba(134, 211, 100, 1)";
+            color = "#86D364";
         } else if(newDayTime >= firstDayOfWeek){
-          color = "rgba(200, 230, 201, 0.7)";
-          colorBorder = "rgba(200, 230, 201, 1)";
+          color = "#c8e6c9";
         } 
         
         if(
@@ -114,87 +101,26 @@ export class AonStatistics extends AonElement {
         }
           
         datos.push({
-          time: newTime, 
+          time:newTime, 
           dayLetter: this.getFirstLettersDay(day),
-          color,
-          colorBorder
+          color
         });
       }
       
-      let average = sum / count;
-      let labels = datos.map(dt => dt.dayLetter);
-      let colors = datos.map(dt => dt.color);
-      let colorsBorder = datos.map(dt => dt.colorBorder);
-      let datas = datos.map(dt => dt.time);
-      let colorGrid = LS.isDarkTheme() ? "#ffffff" : "#bdbdbd"
-      
-      const dataChart = {
-        labels,
-        datasets: [
-          {
-            label: labels,
-            backgroundColor: colors,
-            borderRadius: 5,
-            borderWidth: 2,
-            borderColor: colorsBorder,
-            data: datas,
-            order: 1
-          },
-          // Lines
-          {
-            label: 'Media',
-            // borderColor: '#4c4c4c',
-            borderColor: "rgb(143, 143, 143)",
-            data: [average, average, average, average, average, average, average, average],
-            type: 'line',
-            order: 0
-          }
-        ]
-      };
+      const average = sum / count;
+      let newData = [];
+      for (const dt of datos) 
+        newData.push([dt.dayLetter, dt.time, `color:${dt.color};stroke-width:0;` , average]);
+ 
+      setStyles(this,{
+        display:"flex",
+        flexWrap:"wrap",
+        justifyContent:"center",
+        alignItems:"center",
+        width:"100%"
+      });
 
-      const config = {
-        type: "bar",
-        data: dataChart,
-        options: {
-          responsive: true,
-          maintainAspectRatio: false,
-          scales: {
-            x: {
-              grid: {
-                display : false
-              },
-              border : {
-                color : colorGrid
-              },
-              ticks : {
-                color : colorGrid
-              }
-            },
-            y: {
-              grid: {
-                display : false
-              },
-              border : {
-                color :  colorGrid
-              },
-              ticks : {
-                color : colorGrid
-              }
-            },
-          },
-          plugins: {
-            legend: {
-              display: false, // This hides all text in the legend and also the labels.
-            },
-          },
-        },
-      };
-
-      if (this.comboBarChart != undefined) {
-        this.comboBarChart.destroy();
-      }
-  
-      this.comboBarChart = new Chart(canvas, config);
+      await charts(this, newData, { width: this.offsetWidth });
     } catch (error) {
       console.log(error);
     }
