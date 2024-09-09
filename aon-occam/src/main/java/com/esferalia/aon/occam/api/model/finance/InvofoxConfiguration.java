@@ -5,7 +5,9 @@ import java.io.Serializable;
 public class InvofoxConfiguration implements Serializable{
 	
 	private static final long serialVersionUID = 1L;
-		
+
+	public static final String DEFAULT_API_URL = "https://api.invofox.com";
+
 	private boolean personalized;
 	private String user;
 	private String pass;

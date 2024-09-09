@@ -440,6 +440,7 @@ export const TAG = 'Etiqueta';
 export const TAGS = 'Etiquetas';
 export const TAX = 'Impuesto';
 export const TAX_BASE = 'Base Imponible';
+export const TAXES = 'Impôts';
 export const TAXES_DETAIL= 'Detalle Impuestos';
 export const TEST_ENVIRONMENT = 'Entorno de Pruebas';
 export const TICKET = 'Ticket';
