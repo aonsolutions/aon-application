@@ -39,9 +39,7 @@ import net.aonsolutions.invofox.model.OCRType;
 class InvofoxRESTTestCase {
 	
 	private static final String API_URL = "https://api.invofox.com";
-	private static final String X_API_KEY = "$2b$10$ZyMOXKSmPwl4VUFk76wFWuK9aCDsXRiaxytOwpqk3gK.epVl6Mfwi";
-	private static final String DEMO_X_API_KEY = "$2b$10$ntU8dI5/uFHV6sDjd1q9UO1JwZWBPVWKPDP50IVy5m9EMr71s7PCy";
-	private static final String TEST_X_API_KEY = "$2b$10$sOCmh0BS1Mna1UMsfm6PbeTr8SD2/0wUaBWBeulReiXYCkmxin3H.";
+	private static final String DEMO_X_API_KEY = "";
 	
 	@Test
 	@Disabled("Disabled due 403 ")
