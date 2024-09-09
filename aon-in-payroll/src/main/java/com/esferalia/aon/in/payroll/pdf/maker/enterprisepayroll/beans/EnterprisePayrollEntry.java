@@ -1,9 +1,17 @@
 package com.esferalia.aon.in.payroll.pdf.maker.enterprisepayroll.beans;
 
+import java.util.Date;
 import java.util.Objects;
 import java.util.Optional;
 
 public class EnterprisePayrollEntry {
+	String naf;
+	String ccc;
+	Date startDate;
+	Date endDate;
+	
+	boolean mergedSS;
+
 	Optional<String> empleado;
 	Optional<String> tipo;
 	Optional<Double> devengado;
@@ -35,12 +43,20 @@ public class EnterprisePayrollEntry {
 		AON_SYSTEM, SEG_SOCIAL
 	}
 
-	// CONSTRUCTOR
 	public EnterprisePayrollEntry(
-			EnterpriseEntryType type, String empleado, String tipo, Double devengado, Double ssTrab, Double irpf,
-			Double deducciones, Double liquido, Double ssEmpr, Double costeTotal, Double ssTotal, Double bonificaciones
-	) {
-
+			String naf, 
+			String ccc, 
+			Date startDate, 
+			Date endDate
+	) 
+	{
+		this.naf			= naf;
+		this.ccc			= ccc;
+		this.startDate		= startDate;
+		this.endDate		= endDate;
+		
+		this.mergedSS			= false;
+		
 		this.empleado		= Optional.empty();
 		this.tipo			= Optional.empty();
 		this.devengado		= Optional.empty();
@@ -67,6 +83,29 @@ public class EnterprisePayrollEntry {
 		this.costeTotalSS	  = Optional.empty();
 		this.ssTotalSS		  = Optional.empty();
 		this.bonificacionesSS = Optional.empty();
+	}
+
+	// CONSTRUCTOR
+	public EnterprisePayrollEntry(
+			EnterpriseEntryType type,
+			String naf,
+			String ccc,
+			Date startDate,
+			Date endDate,
+			String empleado, 
+			String tipo, 
+			Double devengado, 
+			Double ssTrab, 
+			Double irpf,
+			Double deducciones, 
+			Double liquido, 
+			Double ssEmpr, 
+			Double costeTotal, 
+			Double ssTotal, 
+			Double bonificaciones
+	) {
+		
+		this(naf, ccc, startDate, endDate);
 
 		if (type == EnterpriseEntryType.AON_SYSTEM)
 		{
@@ -98,25 +137,46 @@ public class EnterprisePayrollEntry {
 		}
 	}
 
-	public EnterprisePayrollEntry() {
-	}
+
 
 	// SETS SS PARAMETERS WITH OTHER OBJECT
-	public void mergeSsEntry(EnterprisePayrollEntry ss_en) {
-		this.tipoSS			  = ss_en.getTipoSS();
-		this.devengadoSS	  = ss_en.getDevengadoSS();
-		this.ssTrabSS		  = ss_en.getSsTrabSS();
-		this.irpfSS			  = ss_en.getIrpfSS();
-		this.deduccionesSS	  = ss_en.getDeduccionesSS();
-		this.liquidoSS		  = ss_en.getLiquidoSS();
-		this.inKindSS		  = ss_en.getInKindSS();
-		this.ssEmprSS		  = ss_en.getSsEmprSS();
-		this.costeTotalSS	  = ss_en.getCosteTotalSS();
-		this.ssTotalSS		  = ss_en.getSsTotalSS();
-		this.bonificacionesSS = ss_en.getBonificacionesSS();
+	public void mergeSsEntry(EnterprisePayrollEntry ssEntry) {
+		this.tipoSS			  = ssEntry.getTipoSS();
+		this.devengadoSS	  = ssEntry.getDevengadoSS();
+		this.ssTrabSS		  = ssEntry.getSsTrabSS();
+		this.irpfSS			  = ssEntry.getIrpfSS();
+		this.deduccionesSS	  = ssEntry.getDeduccionesSS();
+		this.liquidoSS		  = ssEntry.getLiquidoSS();
+		this.inKindSS		  = ssEntry.getInKindSS();
+		this.ssEmprSS		  = ssEntry.getSsEmprSS();
+		this.costeTotalSS	  = ssEntry.getCosteTotalSS();
+		this.ssTotalSS		  = ssEntry.getSsTotalSS();
+		this.bonificacionesSS = ssEntry.getBonificacionesSS();
+		this.mergedSS		  = true;
 	}
 
 	// GETTERS
+	
+	public String getNaf() {
+		return naf;
+	}
+	
+	public String getCcc() {
+		return ccc;
+	}
+	
+	public Date getStartDate() {
+		return startDate;
+	}
+	
+	public Date getEndDate() {
+		return endDate;
+	}
+	
+	public boolean isMergedSS() {
+		return mergedSS;
+	}
+	
 	public Optional<String> getEmpleado() {
 		return empleado;
 	}

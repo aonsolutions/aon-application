@@ -81,22 +81,13 @@ export const loadTheme = () => {
 
 
 const favicon = () => {
-	loadLink('', 'icon', 'image/x-icon')
-	.then( faviconLink  => {
-		const aonFavicon = document.createElement(TAG.SPAN);
-		aonFavicon.className = 'aonFavicon';
-		aonFavicon.style.display = 'none';
-		document.body.appendChild(aonFavicon);
-		
-		setTimeout(function(){
-			const aonFaviconStyle = getComputedStyle(aonFavicon);
-			const backgroundImage = aonFaviconStyle.backgroundImage;
-			const href = /url\(["']?([^"']*)["']?\)/.exec(backgroundImage)[1];
-			aonFavicon.remove();
-			faviconLink.href = href;
-		}, 200);
-
-	});
+	let favicon = getComputedStyle(document.body).getPropertyValue('--favicon');
+	if ( favicon ) {
+		loadLink('', 'icon', 'image/x-icon')
+		.then( faviconLink  => {
+			faviconLink.href = favicon;
+		});
+	}
 
 }
 

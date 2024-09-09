@@ -695,11 +695,10 @@
   height: 48px;
   font-size: 12px;
   color: rgb(95, 99, 104);
-  padding-bottom: 8px;
   border-bottom: 1px solid #ddd;
-  padding-left: 8px;
   text-align: inherit;
   box-sizing: border-box;
+  padding: 8px;
 }
 
 .aonTable tbody {
@@ -734,7 +733,7 @@
 }
 
 .aonTable td {
-  padding-left: 8px;
+  padding: 0 8px;
 }
 
 .aonMenuSidenav {
@@ -1109,7 +1108,7 @@
   /*transform: translateY(0);
   opacity: 1;*/
   font-size: 1.8rem;
-  color: var(--aonFiscal);
+  color: var(--aonFiscal) !important;
 }
 
 .aonCard:hover .aonCardTotal{
@@ -1432,11 +1431,11 @@
 }
 
 .profile-letters{
-  border: 2px solid #949393;
+  border: 1px solid #949393;
   color: #949393;
   border-radius: 19.98px;
   height: 30px;
-  line-height: 28px;
+  line-height: 30px;
   width: 30px;
   display: block;
   font-size: 15px;
@@ -1447,7 +1446,7 @@
 
 .profile-letters.size{
   height: 35px;
-  line-height: 32px;
+  line-height: 35px;
   width: 35px;
 }
 
@@ -2205,4 +2204,3 @@ label.rating:hover {
     margin-top :10px;
     border-top: 1px solid #ddd;
 }
-

@@ -217,8 +217,7 @@ export class AonParent extends AonElement {
 
 		let companyTitleSpan = this.createSpan();
 		companyTitleSpan.innerHTML = MSG.COMPANY_SELECTION;
-		companyTitleSpan.style.fontSize = '16px';
-		companyTitleSpan.style.fontWeight = '600';
+		companyTitleSpan.classList.add("aonCompanyTitleSpan");
 		companyTitleDiv.appendChild(companyTitleSpan);
 		
 		
@@ -299,7 +298,6 @@ export class AonParent extends AonElement {
 				ul.style.maxHeight = `calc(100vh - ${totalOffsetTop + totalBottom }px)`; 
 			}
 	    }, 100);
-		
 	}
 
 	loadMore() {
@@ -412,7 +410,7 @@ export class AonParent extends AonElement {
 		
 		this.clearElementById('aonMenu');
 		let aonMenu = this.getElement('aonMenu');
-		aonMenu.init();
+		aonMenu.init().then(() => aonMenu.open());
 
 		getUser().then(user => {
 			localStorage.setItem('aon_domain_login', user.login);
@@ -422,6 +420,9 @@ export class AonParent extends AonElement {
 
 			this.rootPanel(aonDesktop);
 		});
+
+		
+
 	}
 
 

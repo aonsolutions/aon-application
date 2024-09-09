@@ -401,6 +401,7 @@ public enum ContextVariable implements IResourceable {
 	public static final String SELF = "SELF";
 	public static final String HIDE = "HIDE";
 	public static final String REMOVE = "REMOVE";
+	public static final String DISABLE = "DISABLE";
 	public static final String CONTEXT = "CONTEXT";
 
 	public static final String BR = "BR";
@@ -458,6 +459,7 @@ public enum ContextVariable implements IResourceable {
 			SELF,
 			HIDE,
 			REMOVE,
+			DISABLE,
 			CONTEXT,
 			BR,
 			SUM,

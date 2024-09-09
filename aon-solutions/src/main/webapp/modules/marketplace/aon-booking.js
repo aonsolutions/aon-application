@@ -11,19 +11,16 @@ import '../../components/aon-icon.js';
 
 import { CSS, MATERIAL_ICONS, MSG, TAG, EVENT } from '../../environments/environments.js'; 
 import * as ACTION from '../actions.js';
-import { AonInput } from '../../components/aon-input.js';
-import { AonNewInput } from '../../components/aon-new-input.js';
 import { AonToast } from '../../components/aon-toast.js';
 import { AonDialog } from '../../components/aon-dialog.js';
 import { AonCheckbox } from '../../components/aon-checkbox.js';
-import { AonSelect } from '../../components/aon-select.js';
-import { AonNewSelect } from '../../components/aon-new-select.js';
 import { AonBasicTable } from '../../components/aon-basic-table.js';
 import { AonTab } from '../../components/aon-tab.js';
 import { AonBookingInvoiceList } from './aon-booking-invoice-list.js';
 
 import * as GWT from '../../gwt/gwt.js';
 import * as LS from '../../services/localStorageService.js';
+import { createInput, createSelect } from '../../components/CreateComponent.js';
 
 export class AonBooking extends AonElement {
 
@@ -241,10 +238,7 @@ export class AonBooking extends AonElement {
 		div1.style.width = '250px';
 		div.appendChild(div1);
 
-		let users = LS.isNewTheme() ? new AonNewInput() : new AonInput();
-		users.id = 'users1';
-		users.description = 'Usuarios' + ' (Activos: '+ this.definedUsers+ ')';
-		users.title = 'Usuarios' + ' (Activos: '+ this.definedUsers+ ')';
+		let users = createInput('users1', 'Usuarios' + ' (Activos: '+ this.definedUsers+ ')');
 		users.value = this.users;
 		div1.appendChild(users);
 		users.onChange(() => this.users = users.value);
@@ -256,10 +250,8 @@ export class AonBooking extends AonElement {
 			div2.style.width = '250px';
 			div.appendChild(div2);
 
-			let companies = LS.isNewTheme() ? new AonNewSelect() : new AonSelect();
-			companies.id = 'companies';
+			let companies = createSelect('companies', 'Empresas');
 			companies.value = -1;
-			companies.title = 'Empresas';
 			companies.setOptions([
 				{name: '10 Empresas', value: 10},
 				{name: '15 Empresas', value: 15},
@@ -285,9 +277,18 @@ export class AonBooking extends AonElement {
 			let span = document.createElement('span');
 			span.style.margin = '20px';
 
+			let color = contratado || app.app.includes('pack') || app.domainType ? app.color : 'lightgray';
 			if(app.icon) {
-				let color = contratado || app.app.includes('pack') || app.domainType ? app.color : 'lightgray';
 				span.innerHTML = `<aon-icon id="${this.APP + app.app + 'Icon'}" icon="${app.icon}" color="${color}" size="30px"></aon-icon>`;
+			} else if(app.symbol) {
+				let icon = this.createSpan();
+				icon.id = this.APP + app.app + 'Icon';
+				icon.classList.add(CSS.MATERIAL_SYMBOLS_OUTLINED);
+				icon.innerHTML = app.symbol;
+				icon.style.color = color;
+				icon.style.paddingTop = '5px';
+				icon.style.paddingLeft = '4px';
+				span.appendChild(icon);
 			} else {
 				let img = document.createElement('img');
 				img.style.width = '30px';
@@ -397,8 +398,11 @@ export class AonBooking extends AonElement {
 
 	activate(app, contract, text){
 		let contractIcon = this.getElement(this.APP + app.app + 'Icon');
-		if(contractIcon)
+		if(contractIcon) {
 			contractIcon.color = contract || app.app.includes('pack') ? app.color : 'lightgray';
+			contractIcon.style.color = contract || app.app.includes('pack') ? app.color : 'lightgray';
+		}
+
 		let contractSwitch = this.getElement(this.APP + app.app + 'Contract');
 		if(contractSwitch) contractSwitch.checked = contract;
 
@@ -584,9 +588,7 @@ export class AonBooking extends AonElement {
 			value: 'Commerce',
 		}];
 
-		let type = new AonSelect();
-		type.id = this.TYPE;
-		type.title = MSG.TYPE;
+		let type = createSelect(this.TYPE, MSG.TYPE);
 		type.setOptions(types);
 		type.value = this.getDur().getDomain().domainType;
 

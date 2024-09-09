@@ -194,7 +194,7 @@ export class AonHeader extends AonElement {
 				let aonUnread = this.createElement('div');
 				aonUnread.id = this.BASE_ID + 'Unread';
 				aonUnread.className = 'aonConnected';
-				aonUnread.style.backgroundColor = "red";
+				aonUnread.style.backgroundColor = "#DC4D30";
 
 				let aonHeaderNotificationButtonIconButton = this.getElement('aonHeaderNotificationButtonIconButton');
 				aonHeaderNotificationButtonIconButton.appendChild(aonUnread);
@@ -394,16 +394,15 @@ export class AonHeader extends AonElement {
 			let appss = this.getElement("applications");
 			let welcome = this.getElement("aonCompanyTabFilter");
 
-			if (welcome) {
-				const welcomeClickListener = (event) => {
-					event.preventDefault();
-					event.stopPropagation();
-					// Remueve el listener después de ejecutarse
-					appss.removeEventListener("click", welcomeClickListener);
-				};
+			// if (welcome) {
+			// 	const welcomeClickListener = (event) => {
+			// 		event.preventDefault();
+			// 		event.stopPropagation();
+			// 		appss.removeEventListener("click", welcomeClickListener);
+			// 	};
 				
-				appss.addEventListener("click", welcomeClickListener);
-			}
+			// 	appss.addEventListener("click", welcomeClickListener);
+			// }
 
 		let header2 = this.getElement('aonHeaderWeb');
 		header2.className = 'aonHeader aonHeaderStart';
@@ -540,17 +539,17 @@ export class AonHeader extends AonElement {
 
 	buildLogo() {
 
-		aonLogo.addEventListener('click', () => {
-			if(LS.getDomainId()){
-				this.rootPanelHtml(this.isMobile()
-					? '<aon-mobile-desktop id="aonDesktop"></aon-mobile-desktop>'
-					: '<aon-desktop id="aonDesktop"></aon-desktop>');
-				let aonDesktop = this.getElement('aonDesktop');
-				aonDesktop.setAttribute('company', this.getAttribute('company'));
-			} else {
-				this.rootPanel(new AonParent());
-			}
-		})
+		// aonLogo.addEventListener('click', () => {
+		// 	if(LS.getDomainId()){
+		// 		this.rootPanelHtml(this.isMobile()
+		// 			? '<aon-mobile-desktop id="aonDesktop"></aon-mobile-desktop>'
+		// 			: '<aon-desktop id="aonDesktop"></aon-desktop>');
+		// 		let aonDesktop = this.getElement('aonDesktop');
+		// 		aonDesktop.setAttribute('company', this.getAttribute('company'));
+		// 	} else {
+		// 		this.rootPanel(new AonParent());
+		// 	}
+		// })
 	}
 
 	aonConfiguration() {
@@ -713,35 +712,85 @@ export class AonHeader extends AonElement {
 		let div = this.createElement(TAG.DIV);
 		div.classList.add("aonHeaderAppDiv");
 		
-		if (app.headerIcon) {
+		if (app.cssIcon) {
+			const appColor = app.newColor || app.color;
+			let aonIcon = new AonIcon();
+			aonIcon.id = `aonMenuListAppImgTop-${app.app}`;
+			aonIcon.icon =  app.cssIcon;
+			aonIcon.color = "var(--aonIcon)";
+			aonIcon.size = "32px";
+			div.appendChild(aonIcon);
+		} else if (app.cssSymbol) {
+			let icon = this.createElement(TAG.SPAN);
+			icon.id = `aonMenuListAppImgTop-${app.app}`;
+			icon.classList.add(CSS.MATERIAL_SYMBOLS_OUTLINED);
+			icon.innerHTML = app.cssSymbol;
+			icon.color = "var(--aonIcon)";
+			icon.classList.add("aonHeaderAppIcon");
+			div.appendChild(icon);
+		} else if (app.cssLogo) {
+			let img = this.createElement(TAG.IMG);
+			img.id = `aonMenuListAppImgTop-${app.app}`;
+			img.classList.add("aonHeaderAppIcon");
+			img.src = app.cssLogo;
+			img.title = app.title;
+			div.appendChild(img);
+		} else if (app.headerIcon) {
 			let aonIcon = new AonIcon();
 			aonIcon.id = `aonMenuListAppImg-${app.app}`;
 			aonIcon.icon = app.headerIcon;
 			aonIcon.color = "var(--aonIcon)";
 			aonIcon.size = app.iconSize || "32px";
 			div.appendChild(aonIcon);
-		} else if ((!sidenav && app.symbol) || (sidenav && !app.icon && app.symbol)) {
+		} else if (app.icon) {
+			const appColor = app.newColor || app.color;
+			let aonIcon = new AonIcon();
+			aonIcon.id = `aonMenuListAppImgTop-${app.app}`;
+			aonIcon.icon = app.newIcon || app.icon;
+			aonIcon.color = "var(--aonIcon)";
+			aonIcon.size = "32px";
+			div.appendChild(aonIcon);
+		} else if (app.symbol) {
 			let icon = this.createElement(TAG.SPAN);
+			icon.id = `aonMenuListAppImgTop-${app.app}`;
 			icon.classList.add(CSS.MATERIAL_SYMBOLS_OUTLINED);
-			icon.id = `aonMenuListAppImg-${app.app}`;
 			icon.innerHTML = app.symbol;
+			icon.color = "var(--aonIcon)";
 			icon.classList.add("aonHeaderAppIcon");
 			div.appendChild(icon);
-		} else if (app.icon) {
-			let aonIcon = new AonIcon();
-			aonIcon.id = `aonMenuListAppImg-${app.app}`;
-			aonIcon.icon = app.icon;
-			aonIcon.color = "var(--aonIcon)";
-			aonIcon.size = app.iconSize || "32px";
-			div.appendChild(aonIcon);
 		} else if (app.logo) {
 			let img = this.createElement(TAG.IMG);
-			img.id = `aonMenuListAppImg-${app.app}`;
-			//img.style.width = '24px';
+			img.id = `aonMenuListAppImgTop-${app.app}`;
+			img.classList.add("aonHeaderAppIcon");
 			img.src = app.logo;
 			img.title = app.title;
 			div.appendChild(img);
 		}
+		
+		// ((!sidenav && app.symbol) || (sidenav && !app.icon && app.symbol)) {
+		// 	let icon = this.createElement(TAG.SPAN);
+		// 	icon.classList.add(CSS.MATERIAL_SYMBOLS_OUTLINED);
+		// 	icon.id = `aonMenuListAppImg-${app.app}`;
+		// 	icon.innerHTML = app.symbol;
+		// 	icon.classList.add("aonHeaderAppIcon");
+		// 	div.appendChild(icon);
+		// } else if (app.icon) {
+		// 	let aonIcon = new AonIcon();
+		// 	aonIcon.id = `aonMenuListAppImg-${app.app}`;
+		// 	aonIcon.icon = app.icon;
+		// 	aonIcon.color = "var(--aonIcon)";
+		// 	aonIcon.size = app.iconSize || "32px";
+		// 	div.appendChild(aonIcon);
+		// } else if (app.logo) {
+		// 	let img = this.createElement(TAG.IMG);
+		// 	img.id = `aonMenuListAppImg-${app.app}`;
+		// 	//img.style.width = '24px';
+		// 	img.src = app.logo;
+		// 	img.title = app.title;
+		// 	div.appendChild(img);
+		// }
+
+		
 
 		if (app.title) {
 			// let titles = app.title.match(/\b\w+\b/g);

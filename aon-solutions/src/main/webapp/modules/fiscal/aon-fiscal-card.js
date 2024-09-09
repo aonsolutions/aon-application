@@ -345,7 +345,7 @@ export class AonFiscalCard extends AonElement {
     let content = this.getElement("fiscalCardTable");
     this.removeAllChildNodes(content);
 
-    estimationModels = estimationModels.filter(estimationModel => estimationModel.amount && estimationModel.amount > 0);
+    estimationModels = estimationModels.filter(estimationModel => estimationModel.amount && estimationModel.amount != 0);
 
     let maxModels = estimationModels && estimationModels.length < 5 ? estimationModels.length : 5;
     let accumulatedModels = 0;
@@ -382,6 +382,7 @@ export class AonFiscalCard extends AonElement {
       amount.style.minWidth = "5rem";
       amount.style.textAlign = "right";
       amount.innerHTML = formatNumber(modelData.amount, 2, "EUR");
+      if(formatNumber(modelData.amount, 2, "EUR").includes('-')) amount.style.color = "green";
       rightContent.appendChild(amount);
 
       accumulatedModels += modelData.amount;
@@ -436,6 +437,9 @@ export class AonFiscalCard extends AonElement {
     fiscalTotalDiv.className = CSS.AON_CARD_TOTAL;
     fiscalTotalDiv.classList.add(CSS.AON_FISCAL_CARD_TOTAL);
     fiscalTotalDiv.innerHTML = this.getEstimationTotal(estimationModels);
+
+    // if(this.getEstimationTotal(estimationModels).includes('-')) fiscalTotalDiv.style.color = "green";
+    // else fiscalTotalDiv.style.color = "black";
   }
 
   removeAllChildNodes(parent) {

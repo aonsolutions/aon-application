@@ -11,6 +11,8 @@
 	--aonHeaderBackgroundAvailable:var(--etlRed);
 
 	--aonHeaderBackgroundColor : var(--etlRed);
+
+	--favicon : "https://etl.es/wp-content/uploads/2020/07/cropped-cropped-cropped-0-1-32x32.png";
 }
 
 .aonHeader {
@@ -47,9 +49,9 @@
 }
 
 
-.aonFavicon {
+/* .aonFavicon {
 	background-image: url("https://etl.es/wp-content/uploads/2020/07/cropped-cropped-cropped-0-1-32x32.png");
-}
+} */
 
 .aonTabItemTextSelected {
     border-bottom: 2px solid var(--etlRed);
@@ -180,6 +182,11 @@
 	background-color: var(--etlRed);
 }
 
+.aonHeaderComunica,
+.aonMenuLeftopComunica {
+	background-color: var(--etlRed);
+}
+
 .aonHeaderDocumental,
 .onMenuLeftopDocumental {
 	background-color: var(--etlRed);
@@ -267,6 +274,7 @@
 .aonHeaderFiscal .material-icons,
 .aonHeaderPayroll .material-icons,
 .aonHeaderInvoice  .material-icons,
+.aonHeaderComunica  .material-icons,
 .aonHeaderMessenger .material-icons,
 .aonHeaderAccounting .material-icons,
 .aonHeaderDocumental .material-icons,
@@ -294,6 +302,7 @@
 .aonMenuLeftopFiscal .material-symbols-outlined,
 .aonMenuLeftopPayroll .material-symbols-outlined,
 .aonMenuLeftopInvoice  .material-symbols-outlined,
+.aonMenuLeftopComunica  .material-symbols-outlined,
 .aonMenuLeftopMessenger .material-symbols-outlined,
 .aonMenuLeftopAccounting .material-symbols-outlined,
 .aonMenuLeftopDocumental .material-symbols-outlined,
@@ -321,6 +330,7 @@
 .aonHeaderFiscal #aonHeaderCompanyName,
 .aonHeaderPayroll #aonHeaderCompanyName,
 .aonHeaderInvoice  #aonHeaderCompanyName,
+.aonHeaderComunica  #aonHeaderCompanyName,
 .aonHeaderMessenger #aonHeaderCompanyName,
 .aonHeaderAccounting #aonHeaderCompanyName,
 .aonHeaderDocumental #aonHeaderCompanyName,
@@ -346,6 +356,7 @@
 
 #home:hover,
 #invoice:hover,
+#comunica:hover,
 #documental:hover,
 #accounting:hover,
 #fiscal:hover,
@@ -414,12 +425,12 @@
 	display:none;
 }
 
-.aonLoginSubTitle::after {
+.aonLoginSubTitle {
 	color: var(--aonWhite);
 	font-size: 50px;
-	content: 'Accede a tu cuenta de ETL';
 	font-family: 'Gotcha Standup', Helvetica;
 }
+
 .aonDividerSpan {
 	color: var(--aonWhite);
 	background-color: transparent;

@@ -53,7 +53,7 @@ export class AonNotificationPanel extends AonElement {
         this.OPEN_BUTTON = this.id+ 'OpenButton';
     }
 
-	build() {
+	async build() {
         let header = this.getElement("aonHeaderWeb");
         let apps = this.getElement("aonMenuLeftop-applications");
         let aonHeader = this.getElement("aonHeader");
@@ -87,17 +87,33 @@ export class AonNotificationPanel extends AonElement {
             });
             
         } 
-
+        
         let enterprise = this.getElement("aonHeaderCompanyListButton");
         enterprise.addEventListener(EVENT.CLICK, () => {
             apps.classList.remove("aonMenuLeftopNotification");
-        })
+        });
 
-        this.loadMore(true);
+        let notifications = await this.getData();  
+    
+        if (notifications.length === 0) {
+            divGeneral.appendChild(this.buildNoNotifications());
+        } else {
+            this.loadMore(true);
+        }
 
-
-        
         this.appendChild(divGeneral);
+        
+    }
+
+    buildNoNotifications(){
+        let div = this.createDiv();
+        div.id = this.ID + "NoNotifications";
+        div.className = "notificationPanelNoNotification";
+        
+        let span = this.createElement(TAG.SPAN);
+        span.innerHTML = "No hay notificaciones pendientes";
+        div.appendChild(span);
+        return div;
     }
 
     buildRow(res){
@@ -178,18 +194,22 @@ export class AonNotificationPanel extends AonElement {
         });
 
         divPrincipal.addEventListener(EVENT.CLICK, () => {
+            this.markReadNotification(res);
+            divGeneral.style.display = "none";
             header.className = "aonHeader aonHeaderNotification";
             apps.className = "aonMenuLeftop aonMenuLeftopNotification";
             aonHeader.buildApp(NOTIFICATION);
             aonHeader.setVisibleLogo(false);
             aonHeader.setVisibleApp(true);
             this.goNotification(res);
-        })
+        });
         
-        span.addEventListener(EVENT.CLICK, () => {
+        span.addEventListener(EVENT.CLICK, (event) => {
+            event.stopPropagation(); 
             this.markReadNotification(res);
             divGeneral.style.display = "none";
         });
+        
 
         return divPrincipal;
     }
@@ -201,10 +221,8 @@ export class AonNotificationPanel extends AonElement {
         const yesterday = new Date(todayStart);
         yesterday.setDate(todayStart.getDate() - 1);
     
-        // Abreviaturas de los meses
         const abbreviatedMonths = ["Ene.", "Feb.", "Mar.", "Abr.", "May.", "Jun.", "Jul.", "Ago.", "Sep.", "Oct.", "Nov.", "Dic."];
     
-        // Obtén el día y el mes en formato abreviado
         let dayMonth = AonDateUtils.getDayMonth(inputDate);
         dayMonth = dayMonth.split(' ');
         const day = dayMonth[0];
@@ -263,16 +281,40 @@ export class AonNotificationPanel extends AonElement {
         return getNotification({page:1, perPage:30, status:"unread"});
     }
 
-    markReadNotification(res){
-        if(res.status ===0){
-          markReadNotification(res);
-          res.status=1;
-          let aonNotificationIcon = document.querySelector("aon-notification-icon");
-          if (aonNotificationIcon) { 
-            aonNotificationIcon.getTotalNotification();
-          }
+    markReadNotification(res) {
+        if (res.status === 0) {
+            markReadNotification(res);
+            res.status = 1;
+    
+            let aonNotificationIcon = document.querySelector("aon-notification-icon");
+            if (aonNotificationIcon) { 
+                aonNotificationIcon.getTotalNotification();
+            }
+    
+            this.checkIfAllRead();
         }
     }
+
+    checkIfAllRead() {
+    const notifications = this.getElementsByClassName("notificationPanelRowPrincipalDiv");
+
+    let allRead = true;
+
+    for (let notification of notifications) {
+        if (notification.style.display !== "none") {
+            allRead = false;
+            break;
+        }
+    }
+
+    if (allRead) {
+        let divGeneral = this.getElement(this.DIV_GENERAL);
+        divGeneral.innerHTML = ""; 
+        divGeneral.appendChild(this.buildNoNotifications());
+    }
+}
+
+    
 
     goNotification(data) {
         const aonComponent = NotificationUtils.getNotificationComponent(data);

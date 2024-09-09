@@ -259,6 +259,8 @@ export const LINK_DOMAINS = 'Vincular Dominios a Clientes';
 export const LINK_DOMAIN_QUESTION = "¿Desea vincular este cliente con el dominio?";
 export const LOADING = 'Cargando';
 export const LOCATION = 'Ubicación';
+export const LOGIN = 'Inicio de Sesión';
+export const LOGIN_SUBTITLE = 'Introduzca sus credenciales';
 
 // ----- M
 
@@ -274,6 +276,7 @@ export const MOVED_TO_TRASH = 'Se ha movido a la papelera';
 export const MY_DATA = 'Mis Datos';
 export const MY_MANAGER = 'Mi Gestor';
 export const MY_USER = 'Mi Usuario';
+export const MAGIC_LINK = 'Envío de enlace de acceso por email';
 export const UPPER_MENU = 'Menú de cabecera';
 
 // ----- N
@@ -428,7 +431,7 @@ export const SUPPORT = 'Soporte';
 export const SURCHARGE = 'Recargo';
 export const SURNAME = 'Apellidos';
 export const SYSTEM_MESSAGES = 'Mensajes del Sistema';
-export const SELECT_LANGUAGE = "Seleccionar idioma";
+export const SELECT_LANGUAGE = "Selección de idioma";
 export const SELECT_COMPANY_TYPE = "Seleccionar tipo de empresa";
 
 // ----- T

@@ -117,9 +117,9 @@ export class AonFiscal extends AonElement {
       }));
 
       let data = {
-        id: "Modelo",
-        title: "Modelo",
-        name: "Modelo",
+        id: "Periodo",
+        title: "Periodo",
+        name: "Periodo",
         app: FISCAL,
         options: ejercicios,
       };
@@ -129,14 +129,18 @@ export class AonFiscal extends AonElement {
       // Show aviable periods for default year
       await this.checkAviablePeriodsForYear();
 
+      console.log("getModelsNoRepeat");
+      console.log(this.getModelsNoRepeat(mdls));
+      
       let models = this.getModelsNoRepeat(mdls).map((model) => ({
         ...FiscalOptions.AON_TAX,
-        id: model.model,
+        id: FiscalUtils.getModelNumber(model.administration, model.model),
         icon: undefined,
-        img: FiscalUtils.getPathImg(model.administration),
-        name: model.modelText,
+        // img: FiscalUtils.getPathImg(model.administration),
+        html: FiscalUtils.getModelNumberHtml(model.administration, model.model),
+        name: model.modelText === "IRPF Trabajo y Profesionales" ? "IRPF Trabajo/Profesionales" : model.modelText,
         fn: () => {
-          this._filter.model = this._filter.model === model.model ? undefined : model.model;
+          this._filter.model = this._filter.model === FiscalUtils.getModelNumber(model.administration, model.model) ? undefined : FiscalUtils.getModelNumber(model.administration, model.model);
           this._filter.estimationFilter = undefined;
           this.addBackgroundSidenav();
           this.showView(FISCAL_VIEWS.AON_TAX);
@@ -144,9 +148,9 @@ export class AonFiscal extends AonElement {
       }));
 
       let data3 = {
-        id: "Tipo",
-        title: "Tipo",
-        name: "Tipo",
+        id: "Modelo",
+        title: "Modelo",
+        name: "Modelo",
         app: FISCAL,
         options: models,
       };
@@ -188,7 +192,11 @@ export class AonFiscal extends AonElement {
           let futureButton = this.getElement("aonFiscalSidenavFuture");
           futureButton.click();
         } else {
-          let aonFiscalSidenavModeloSelect = this.getElement("aonFiscalSidenavModeloSelect");
+
+          console.log("fistTime");
+          console.log(this._filter);
+
+          let aonFiscalSidenavModeloSelect = this.getElement("aonFiscalSidenavPeriodoSelect");
           aonFiscalSidenavModeloSelect.value = this._filter.year;
   
           let aonFiscalSidenavEjercicioSelect = this.getElement("aonFiscalSidenavEjercicioSelect");
@@ -242,7 +250,7 @@ export class AonFiscal extends AonElement {
 
   getModelsNoRepeat(models) {
     return models.filter(
-      (v, i) => models.findIndex((v2) => v2.model === v.model) === i
+      (v, i) => models.findIndex((v2) => v2.model === v.model && v2.administration === v.administration) === i
     );
   }
 
@@ -310,7 +318,7 @@ export class AonFiscal extends AonElement {
       // }
 
       let data2 = {
-        parent: "Modelo",
+        parent: "Periodo",
         id: "Ejercicio",
         title: "Ejercicio",
         name: "Ejercicio",

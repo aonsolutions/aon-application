@@ -402,12 +402,13 @@ export const LINKED1 = MSG.LINKED1;
 export const LINK_DOMAINS = MSG.LINK_DOMAINS;
 export const LINK_DOMAIN_QUESTION = MSG.LINK_DOMAIN_QUESTION;
 export const LOADING = MSG.LOADING;
+export const LOGIN = MSG.LOGIN;
+export const LOGIN_SUBTITLE = MSG.LOGIN_SUBTITLE;
 // ----- M
 
 export const MARK_ENTRY = MSG.MARK_ENTRY;
 export const MARK_EXIT = MSG.MARK_EXIT;
 export const MARKETING = MSG.MARKETING;
-export const MAGIC_LINK = "Magic Link";
 export const MANAGEMENT = MSG.MANAGEMENT;
 export const MODEL = "Modelo"; //TODO
 export const MODEL_111 = MSG.MODEL_111;
@@ -418,6 +419,7 @@ export const MOVED_TO_TRASH = MSG.MOVED_TO_TRASH;
 export const MY_DATA = MSG.MY_DATA;
 export const MY_MANAGER = MSG.MY_MANAGER;
 export const MY_USER = MSG.MY_USER;
+export const MAGIC_LINK = MSG.MAGIC_LINK;
 export const MSG_SENT = "Mensaje enviado";//TODO
 export const MAXIMIZE = "Maximizar";//TODO
 export const MINIMIZE = "Minimizar";//TODO

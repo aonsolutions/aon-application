@@ -26,4 +26,10 @@ public class AonInvofox {
     	postJSON(domainName, userLogin, "/ms/api/invofox/accept", json);
     }
     
+    public static void rawdocInvofoxInvoice(String domainName, String userLogin, String id) throws URISyntaxException, IOException, InterruptedException {
+    	JSONObject json = new JSONObject();
+    	json.put("id", id);
+    	postJSON(domainName, userLogin, "/ms/api/invofox/rawdoc", json);
+    }
+    
 }

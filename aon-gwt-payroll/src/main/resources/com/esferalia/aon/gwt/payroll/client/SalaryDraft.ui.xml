@@ -382,6 +382,8 @@
 									styleName='aon-finding-toolbar-item aon-icon-printer' text="IMPRIMIR" /-->
 								<g:Button debugId='closePreviewButton' ui:field='closePreviewButton'
 									styleName='aon-finding-toolbar-item aon-icon-cancel' text="CERRAR PRELIMINAR" />
+								<g:Button debugId='tgssButton' ui:field='tgssButton'
+									styleName="aon-finding-toolbar-item aon_icon_tgss {style.aon-toolbar-button} {style.white}" text="." visible="false"/>
 									
 								<g:InlineLabel debugId="toolBarTitleLabel" ui:field="toolbarTitleLabel" styleName="aon_toolbar_title aon-float-right" />
 

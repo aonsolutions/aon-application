@@ -47,8 +47,8 @@ export class AonAccountingMenu extends AonSuiteMenu {
 			options: [ {
 				description:"Mantenimiento de Apuntes",
 				title:"Mantenimiento de Apuntes",
-				action: () => GWT.load(GWT.ACCOUNT_ENTRY)
-			},{
+				action: () => GWT.iLoad(GWT.ACCOUNT_ENTRY)
+			},/*{
 				description: "Apuntes de Amortizaciones",
 				title: "Apuntes de Amortizaciones",
 				action: () => alert("Apuntes de Amortizaciones")
@@ -64,114 +64,114 @@ export class AonAccountingMenu extends AonSuiteMenu {
 				description: "Contabilización de Cobros y Pagos realizados",
 				title: "Contabilización de Cobros y Pagos realizados",
 				action: () => alert("Contabilización de Cobros y Pagos realizados")
-			},{
+			},*/{
 				description: "Documentos Pendientes",
 				title: "Documentos Pendientes",
-				action: () => GWT.load(GWT.RAWDOC)
+				action: () => GWT.iLoad(GWT.RAWDOC)
 			}]
 		},{
 			title: 'Listados Contables',
 			options: [{
 				description: "Extracto de cuenta",
 				title: "Extracto de cuenta",
-				action: () => GWT.load(GWT.STATEMENT_REPORT)
+				action: () => GWT.iLoad(GWT.STATEMENT_REPORT)
 			},{
 				description: "Cuenta de Explotación (P y G)",
 				title: "Cuenta de Explotación (P y G)",
-				action: () => GWT.load(GWT.ACCOUNT_OPERATING_REPORT)
+				action: () => GWT.iLoad(GWT.ACCOUNT_OPERATION_STATEMENT)
 			},{
 				description: "Balance de Sumas y Saldos",
 				title: "Balance de Sumas y Saldos",
-				action: () => GWT.load(GWT.ACCOUNT_TRIAL_BALANCE_REPORT)
+				action: () => GWT.iLoad(GWT.ACCOUNT_TRIAL_BALANCE_REPORT)
 			},{
 				description: "Listado Diario de Movimientos",
 				title: "Listado Diario de Movimientos",
-				action: () => GWT.load(GWT.JOURNAL_REPORT)
+				action: () => GWT.iLoad(GWT.JOURNAL_REPORT)
 			},{
 				description: "Listado Mayor de Cuentas",
 				title: "Listado Mayor de Cuentas",
-				action: () => GWT.load(GWT.LEDGER_REPORT)
+				action: () => GWT.iLoad(GWT.LEDGER_REPORT)
 			},{
 				description: "Balances oficiales",
 				title: "Balances oficiales",
-				action: () => GWT.load(GWT.ACCOUNT_BALANCE_REPORT)
+				action: () => GWT.iLoad(GWT.ACCOUNT_BALANCE_REPORT)
 			},{
 				description: "Cuenta de Explotación (P y G) ANALÍTICA",
 				title: "Cuenta de Explotación (P y G) ANALÍTICA",
-				action: () => GWT.load(GWT.ACCOUNT_ANALYTICAL_REPORT)
+				action: () => GWT.iLoad(GWT.ACCOUNT_ANALYTICAL_REPORT)
 			}]
 		},{
 			title: 'Tablas Auxiliares',
 			options: [{
 				description: "Plan General Contable",
 				title: "Plan General Contable",
-				action: () => GWT.load(GWT.ACCOUNT_MODULE)
-			},{
+				action: () => GWT.iLoad(GWT.ACCOUNT_MODULE)
+			},/*{
 				description: "Conceptos Automáticos",
 				title: "Conceptos Automáticos",
 				action: () => alert("description")
 			},{
 				description: "Centros de Costo",
 				title: "Centros de Costo",
-				action: () => alert("description")//GWT.load(GWT.CostCenterModule)
-			},{
+				action: () => alert("description")//GWT.iLoad(GWT.CostCenterModule)
+			},*/{
 				description: "Ejercicios Contables",
 				title: "Ejercicios Contables",
-				action: () => GWT.load(GWT.ACCOUNTING_PERIOD)
+				action: () => GWT.iLoad(GWT.ACCOUNTING_PERIOD)
 			},{
 				description: MSG.CUSTOMER,
 				title: MSG.CUSTOMER,
-				action: () => GWT.load(GWT.CUSTOMER)
+				action: () => GWT.iLoad(GWT.CUSTOMER)
 			},{
 				description: MSG.SUPPLIER,
 				title: MSG.SUPPLIER,
-				action: () => GWT.load(GWT.SUPPLIER)
+				action: () => GWT.iLoad(GWT.SUPPLIER)
 			},{
 				description: MSG.CREDITOR,
 				title: MSG.CREDITOR,
-				action: () => GWT.load(GWT.CREDITOR)
+				action: () => GWT.iLoad(GWT.CREDITOR)
 			}]
 		},{
 			title: 'Inmovilizado',
-			options: [{
+			options: [/*{
 				description: "Ficha de Amortización",
 				title: "Ficha de Amortización",
 				action: () => alert("description")
-			},{
+			},*/{
 				description: "Tabla de tipos de Amortización",
 				title: "Tabla de tipos de Amortización",
-				action: () => alert("description")
+				action: () => GWT.iLoad(GWT.AMORTIZATION_TYPE)
 			},{
 				description: "Bienes Afectos o de Inversión",
 				title: "Bienes Afectos o de Inversión",
-				action: () => alert("description")
+				action: () => GWT.iLoad(GWT.INVEST_ASSET)
 			}]
 		},{
 			title: 'Listados de Hacienda',
 			options: [{
 				description: "Panel de control de IVA",
 				title: "Panel de control de IVA",
-				action: () => GWT.load(GWT.VAT_REPORT)
+				action: () => GWT.iLoad(GWT.VAT_REPORT)
 			},{
 				description: "Panel de Control de IRPF",
 				title: "Panel de Control de IRPF",
-				action: () => GWT.load(GWT.IRPF_REPORT)
+				action: () => GWT.iLoad(GWT.IRPF_REPORT)
 			},{
 				description: "Panel de Compras y Gastos/ Ventas e Ingresos",
 				title: "Panel de Compras y Gastos/ Ventas e Ingresos",
-				action: () => GWT.load(GWT.OPERATION_REPORT)
-			},{
+				action: () => GWT.iLoad(GWT.ACCOUNT_OPERATION_REPORT)
+			}/*,{
 				description: "Listado de Excel de Impuestos aplicados en Facturas",
 				title: "Listado de Excel de Impuestos aplicados en Facturas",
 				action: () => alert("description")
-			}]
+			}*/]
 		},{
 			title: 'Utilidades',
 			options: [{
 				description: "Utilidades y chequeos contables",
 				title: "Utilidades y chequeos contables",
-				action: () => alert("description")
-			},{
+				action: () => GWT.iLoad(GWT.ACCOUNTING_UTILITIES)
+			},/*{
 				description: "Cambio de Cuenta",
 				title: "Cambio de Cuenta",
 				action: () => alert("description")
@@ -183,42 +183,42 @@ export class AonAccountingMenu extends AonSuiteMenu {
 				description: "Chequeo de Integridad de Facturas",
 				title: "Chequeo de Integridad de Facturas",
 				action: () => alert("Chequeo de Integridad de Facturas")
-			},{
+			},*/{
 				description: "Utilidades facturas/vencimientos",
 				title: "Utilidades facturas/vencimientos",
-				action: () => alert("Utilidades facturas/vencimientos")
+				action: () => GWT.iLoad(GWT.FINANCE_UTILITIES)
 			}]
 		},{
 			title: 'Movimientos Bancarios',
-			options: [{
+			options: [/*{
 				description: "Conciliador Bancario",
 				title: "Conciliador Bancario",
 				action: () => alert("Conciliador Bancario")
-			},{
+			},*/{
 				description: "Agregador Bancario",
 				title: "Agregador Bancario",
-				action: () => alert("Agregador Bancario")
+				action: () => GWT.iLoad(GWT.NORDIGEN)
 			},{
 				description: "Cartera de cobros y pagos",
 				title: "Cartera de cobros y pagos",
-				action: () => GWT.load(GWT.FINANCE)
+				action: () => GWT.iLoad(GWT.FINANCE)
 			},{
 				description: "Formas de pago",
 				title: "Formas de pago",
-				action: () => alert("description")
+				action: () => GWT.iLoad(GWT.PAY_METHOD)
 			}]
 		},{
 			title: 'Registro Mercantil',
-			options: [{
+			options: [/*{
 				description: "Emisión de libros contables (LEGALIA)",
 				title: "Emisión de libros contables (LEGALIA)",
 				action: () => alert("Emisión de libros contables (LEGALIA)")
-			},{
+			},*/{
 				description: "Depósito de cuentas (D2)",
 				title: "Depósito de cuentas (D2)",
-				action: () => GWT.load(GWT.DEPOSIT)
+				action: () => GWT.iLoad(GWT.DEPOSIT)
 			}]
-		},{
+		}/*,{
 			title: 'Tesorería de Gestión (TEMPORAL)',
 			options: [{
 				description: "Gestión de Cobros",
@@ -237,7 +237,7 @@ export class AonAccountingMenu extends AonSuiteMenu {
 				title: "Remesas de Pago",
 				action: () => alert("Remesas de Pago")
 			}]
-		}];
+		}*/];
 	}
 
 	/*

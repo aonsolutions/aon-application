@@ -42,6 +42,7 @@ import com.esferalia.aon.gwt.payroll.shared.Extra;
 import com.esferalia.aon.gwt.payroll.shared.IT;
 import com.esferalia.aon.gwt.payroll.shared.ITEmployee;
 import com.esferalia.aon.gwt.payroll.shared.ITPart;
+import com.esferalia.aon.gwt.payroll.shared.Mail;
 import com.esferalia.aon.gwt.payroll.shared.MainCCCInfo;
 import com.esferalia.aon.gwt.payroll.shared.Payment;
 import com.esferalia.aon.gwt.payroll.shared.Peculiarities;
@@ -55,6 +56,7 @@ import com.esferalia.aon.gwt.payroll.shared.Workplace;
 import com.esferalia.aon.gwt.payroll.shared.WorkplaceInfo;
 import com.esferalia.aon.occam.api.model.Certificate;
 import com.esferalia.aon.occam.api.model.CertificateInfo;
+import com.esferalia.aon.occam.api.model.ContractParams;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.EnterpriseCCC;
 import com.esferalia.aon.occam.api.model.MailAccount;
@@ -193,10 +195,9 @@ public interface EnterprisesService extends RemoteService {
 
 	String getPayrollEmailSendTo(String currentDomainName);
 
-	String getPayrollEmailBody(String currentDomainName, Type type, HashMap<String, String> params);
+	String getPayrollEmailBody(String currentDomainName, Type type, HashMap<String, String> params, boolean isPassword);
 
-	String sendPayrollEmail(String currentDomainName, Type type, HashMap<String, String> params, String from, String to,
-			String cc, String cco, String bodyHTML) throws IllegalArgumentException;
+	String sendPayrollEmail(String currentDomainName, Type type, HashMap<String, String> params, Mail mail) throws IllegalArgumentException;
 
 	String checkEmployeesEmails(String currentDomainName, ArrayList<Integer> salaryIds);
 	
@@ -211,6 +212,8 @@ public interface EnterprisesService extends RemoteService {
 	List<CCCInfo> getEnterprisesCCCInfo(String currentDomainName, String user, long findPeriodTime);
 
 	List<EmployeeContractInfo> getEmployeesInfo(String currentDomainName, Boolean allEmployees);
+	
+	List<EmployeeContractInfo> getEmployees(String currentDomainName, String user, ContractParams params) throws IllegalArgumentException;
 	
 	List<EmployeeContractInfo> getFJEmployeesInfo(String currentDomainName);
 
@@ -273,6 +276,8 @@ public interface EnterprisesService extends RemoteService {
 	List<SecondaryUserCertificate> getSecondaryUsers(String currentDomainName, String currentUser, Integer rattachId) throws IllegalArgumentException;
 
 	String getSecondaryUsersPDF(String currentDomainName, String currentUser, Integer rattachId) throws IllegalArgumentException;
+
+	String getAssignedCCCsPDF(String currentDomainName, String currentUser, Integer rattachId) throws IllegalArgumentException;
 
 	void deleteSecondaryUser(String currentDomainName, String currentUser, Integer rattachId, String ipfType, String ipf);
 

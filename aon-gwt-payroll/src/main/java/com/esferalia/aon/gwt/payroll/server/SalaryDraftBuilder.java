@@ -967,6 +967,13 @@ public class SalaryDraftBuilder
 		draftPayment.setDescription(payment.getDescription());
 		salaryDraft.addPayment(draftPayment);
 	}
+	
+	@Override
+	public void onDisable(IContractPayment payment) {
+		Payment draftPayment = newPayment(payment);
+		draftPayment.setDescription(payment.getDescription());
+		salaryDraft.addPayment(draftPayment);
+	}
 
 	@Override
 	public void onCheckError(IContractPayment payment, String message) {

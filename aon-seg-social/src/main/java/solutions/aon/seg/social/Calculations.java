@@ -6,6 +6,7 @@ import java.net.MalformedURLException;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.chrono.MinguoChronology;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -552,7 +553,9 @@ class Calculations {
 								.setBaseCC(sum(baseCC, employeePeriod.getBaseCC()))
 								.setBaseAT(sum(baseAT, employeePeriod.getBaseAT()))
 								.setQuoteDays(sum(quoteDays, employeePeriod.getQuoteDays()))
-								.setStartDate(fromDate != null ? fromDate : employeePeriod.getStartDate());
+								.setStartDate(employeePeriod.getStartDate() == null ? fromDate : employeePeriod.getStartDate());
+								
+								
 								
 								firstTable = htmlPage.querySelector("table>tbody");
 								trList = firstTable.querySelectorAll("tr:not(.cabecera)");

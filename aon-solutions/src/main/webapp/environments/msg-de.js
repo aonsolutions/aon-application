@@ -254,6 +254,8 @@ export const LINK_DOMAINS = 'Domains Verknüpfen';
 export const LINK_DOMAIN_QUESTION = "Möchten Sie diesen Client mit der Domain verknüpfen?";
 export const LOADING = 'Wird geladen';
 export const LOCATION = 'Location';
+export const LOGIN = 'Login';
+export const LOGIN_SUBTITLE = 'Geben Sie Ihre Anmeldedaten ein';
 
 // ----- M
 
@@ -267,6 +269,7 @@ export const MODEL_190 = 'Form 190';
 export const MODEL_190_DESCRIPTION = 'Form 190. Information Return. Withholdings and payment on account. Work income and income from economic activities, prizes and certain capital gains and income allocations. Annual summary.';
 export const MOVED_TO_TRASH = 'It has been moved to the trash';
 export const MY_DATA = 'My Data';
+export const MAGIC_LINK = 'Zusendung des Zugangslinks per E-Mail';
 export const MY_MANAGER = 'Mein Manager';
 export const MY_USER = 'My User';
 
@@ -404,7 +407,7 @@ export const SHARED = 'Shared';
 export const SHOW_FILE = 'Show File';
 export const SIDE_MENU = 'Seitliches Menü';
 export const SIGN_IN = 'Einloggen';
-export const SIGN_IN_WITHOUT_PASSWORD = 'Login ohne Passwort';
+export const SIGN_IN_WITHOUT_PASSWORD = 'Kein Passwort';
 export const SIGN_IN_WITH_CERTIFICATE = 'Mit Zertifikat Einloggen';
 export const SII = 'SII';
 export const SII_TICKETBAI = 'SII / TicketBAI';
@@ -421,7 +424,7 @@ export const SUPPORT = 'Support';
 export const SURCHARGE = 'Surcharge';
 export const SURNAME = 'Surname';
 export const SYSTEM_MESSAGES = 'System Messages';
-export const SELECT_LANGUAGE = "Sprache auswählen";
+export const SELECT_LANGUAGE = "Sprachauswahl";
 export const SELECT_COMPANY_TYPE = "Wählen Sie den Unternehmenstyp aus";
 
 // ----- T

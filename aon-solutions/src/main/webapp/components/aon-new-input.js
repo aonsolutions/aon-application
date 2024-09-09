@@ -371,6 +371,10 @@ export class AonNewInput extends AonElement {
     setDisabled(disabled) {
         this.disabled = disabled;
     }
+
+    focus() {
+        this.getElement(this.INPUT).focus();
+    }
 }
 if(!window.customElements.get(TAG.AON_NEW_INPUT)){
     window.customElements.define(TAG.AON_NEW_INPUT, AonNewInput);

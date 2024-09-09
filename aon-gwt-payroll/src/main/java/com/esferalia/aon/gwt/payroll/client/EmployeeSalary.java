@@ -18,6 +18,7 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
 import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.esferalia.aon.gwt.payroll.shared.Salary.Type;
+import com.esferalia.aon.gwt.payroll.shared.Mail;
 import com.esferalia.aon.gwt.payroll.shared.SalaryInfo;
 import com.esferalia.aon.gwt.payroll.shared.SalaryInfoFilter;
 import com.google.gwt.core.client.GWT;
@@ -121,13 +122,15 @@ public abstract class EmployeeSalary extends Composite {
 			
 			@Override
 			protected void onAccept() {
-				String from = this.getFromMAilAccount().getId().toString();
-				String to = this.getSendTo();
-				String cc = this.getCC();
-				String cco = this.getCCO();
-				String bodyHTML = this.getBody();
+				Mail mail = new Mail()
+						.setFrom(this.getFromMAilAccount().getId().toString())
+						.setTo(this.getSendTo())
+						.setCc(this.getCC())
+						.setCco(this.getCCO())
+						.setBodyHTML(this.getBody())
+						.setPassword(this.isPassword());
 				
-				employeeSalaryObject.sendPayrollEmail(type, params, from, to, cc, cco, bodyHTML,
+				employeeSalaryObject.sendPayrollEmail(type, params, mail,
 					s -> {
 						AonMessagePanel.showSuccess(messagePanel, employeeSalaryObject.getEmailStatus());
 						hide();

@@ -1767,6 +1767,7 @@ public interface Properties {
 		Property<Byte> getNatureProperty();
 		Property<Byte> getTypeProperty();
 		Property<Byte> getStatusProperty();
+		Property<String> getJsonProperty();
 		Property<Timestamp> getCreationDateProperty();
 		Property<String> getCreationUserProperty();
 		Property<Timestamp> getModificationDateProperty();

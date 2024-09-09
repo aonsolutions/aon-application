@@ -46,6 +46,7 @@ import com.esferalia.aon.gwt.payroll.shared.Extra;
 import com.esferalia.aon.gwt.payroll.shared.IT;
 import com.esferalia.aon.gwt.payroll.shared.ITEmployee;
 import com.esferalia.aon.gwt.payroll.shared.ITPart;
+import com.esferalia.aon.gwt.payroll.shared.Mail;
 import com.esferalia.aon.gwt.payroll.shared.MainCCCInfo;
 import com.esferalia.aon.gwt.payroll.shared.Payment;
 import com.esferalia.aon.gwt.payroll.shared.Peculiarities;
@@ -59,6 +60,7 @@ import com.esferalia.aon.gwt.payroll.shared.Workplace;
 import com.esferalia.aon.gwt.payroll.shared.WorkplaceInfo;
 import com.esferalia.aon.occam.api.model.Certificate;
 import com.esferalia.aon.occam.api.model.CertificateInfo;
+import com.esferalia.aon.occam.api.model.ContractParams;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.EnterpriseCCC;
 import com.esferalia.aon.occam.api.model.MailAccount;
@@ -512,15 +514,15 @@ public class EnterprisesServiceAsyncDecorator implements
 	}
 
 	@Override
-	public void getPayrollEmailBody(String currentDomainName, Type type, HashMap<String, String> params, AsyncCallback<String> callback) {
+	public void getPayrollEmailBody(String currentDomainName, Type type, HashMap<String, String> params, boolean isPassword, AsyncCallback<String> callback) {
 		AON.start();
-		enterprisesServiceAsync.getPayrollEmailBody(currentDomainName, type, params, new AsyncCallbackWrapper<String>(callback));
+		enterprisesServiceAsync.getPayrollEmailBody(currentDomainName, type, params, isPassword, new AsyncCallbackWrapper<String>(callback));
 	}
 
 	@Override
-	public void sendPayrollEmail(String currentDomainName, Type type, HashMap<String, String> params, String from, String to, String cc, String cco, String bodyHTML, AsyncCallback<String> callback) throws IllegalArgumentException {
+	public void sendPayrollEmail(String currentDomainName, Type type, HashMap<String, String> params, Mail mail, AsyncCallback<String> callback) throws IllegalArgumentException {
 		AON.start();
-		enterprisesServiceAsync.sendPayrollEmail(currentDomainName, type, params, from, to, cc, cco, bodyHTML, new AsyncCallbackWrapper<String>(callback));
+		enterprisesServiceAsync.sendPayrollEmail(currentDomainName, type, params, mail, new AsyncCallbackWrapper<String>(callback));
 	}
 
 	@Override
@@ -558,6 +560,12 @@ public class EnterprisesServiceAsyncDecorator implements
 		AON.start();
 		enterprisesServiceAsync.getEmployeesInfo(currentDomainName, allEmployees, new AsyncCallbackWrapper<List<EmployeeContractInfo>>(callback));
 	}
+	
+	@Override
+	public void getEmployees(String currentDomainName, String user, ContractParams params, AsyncCallback<List<EmployeeContractInfo>> callback) throws IllegalArgumentException {
+		AON.start();
+		enterprisesServiceAsync.getEmployees(currentDomainName, user, params, new AsyncCallbackWrapper<List<EmployeeContractInfo>>(callback));
+	} 
 	
 	@Override
 	public void getFJEmployeesInfo(String currentDomainName, AsyncCallback<List<EmployeeContractInfo>> callback) {
@@ -751,6 +759,12 @@ public class EnterprisesServiceAsyncDecorator implements
 	public void getSecondaryUsersPDF(String currentDomainName, String currentUser, Integer rattachId, AsyncCallback<String> callback) throws IllegalArgumentException {
 		AON.start();
 		enterprisesServiceAsync.getSecondaryUsersPDF(currentDomainName, currentUser, rattachId, new AsyncCallbackWrapper<String>(callback));
+	}
+	
+	@Override
+	public void getAssignedCCCsPDF(String currentDomainName, String currentUser, Integer rattachId, AsyncCallback<String> callback) throws IllegalArgumentException {
+		AON.start();
+		enterprisesServiceAsync.getAssignedCCCsPDF(currentDomainName, currentUser, rattachId, new AsyncCallbackWrapper<String>(callback));
 	}
 
 	@Override
