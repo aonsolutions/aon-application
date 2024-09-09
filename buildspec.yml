@@ -37,7 +37,7 @@ phases:
       - echo Building TEST version...
       - echo Build started on `date`
       #- mvn --offline --fail-fast -DbuildNumber=666 -Dgwt.working=true clean install
-      - mvn -B --offline --fail-at-end -DbuildNumber=666 -Dgwt.working=true clean install
+      - mvn -B --fail-at-end -DbuildNumber=666 -Dgwt.working=true clean install
       - echo Building TEST Docker images...
       - docker build --no-cache -t aonsolutions/aon-application:test .
       #- docker tag aonsolutions/aon-application:test $REPOSITORY_URI/aon-application:test
