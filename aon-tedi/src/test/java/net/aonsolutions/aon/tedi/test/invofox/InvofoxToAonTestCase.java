@@ -19,7 +19,7 @@ import net.aonsolutions.invofox.model.OCRDocumentResponse;
 public class InvofoxToAonTestCase extends AbstractTediTest {
 	
 	private static final String API_URL = "https://api.invofox.com";
-	private static final String X_API_KEY = "$2b$10$ZyMOXKSmPwl4VUFk76wFWuK9aCDsXRiaxytOwpqk3gK.epVl6Mfwi";
+	private static final String X_API_KEY = "";
 
 	
 	@Test

@@ -433,6 +433,7 @@ export const TAG = 'Etiketa';
 export const TAGS = 'Etiketak';
 export const TAX = 'Zerga';
 export const TAX_BASE = 'Zerga-Oinarria';
+export const TAXES = 'Zergak';
 export const TAXES_DETAIL = 'Zergak';
 export const TEST_ENVIRONMENT = 'Proba-ingurunea';
 export const TICKET = 'Tiket';

@@ -2768,6 +2768,22 @@ public class CustomerFee extends MainEntryPoint {
 		toolbar.add(customerButton);
 		toolbar.add(backButton);
 		toolbar.add(exportCustomerButton);
+		
+		AonToolbarButton filterButton = new AonToolbarButton("Filtrar", AON.CSS.aonIconFilterListOff());
+		filterButton.addClickHandler(e -> {
+			String display = filterContentPanel.getElement().getStyle().getDisplay();
+			if(AonStringUtils.isBlank(display)) {
+				filterContentPanel.getElement().getStyle().setDisplay(Display.NONE);
+				filterButton.removeStyleName( AON.CSS.aonIconFilterListOff());
+				filterButton.addStyleName( AON.CSS.aonIconFilterList());
+			}
+			else {
+				filterContentPanel.getElement().getStyle().clearDisplay();
+				filterButton.removeStyleName( AON.CSS.aonIconFilterList());
+				filterButton.addStyleName( AON.CSS.aonIconFilterListOff());
+			}
+		});
+		toolbar.addFilterButton(filterButton);
 	}
 	
 	private void showCustomerFee() {

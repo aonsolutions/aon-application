@@ -148,6 +148,8 @@ public class SIIPost {
         String endBody = "</env:Body>";
         if(result.contains("<env:Body Id=\"Body\">")) {
         	body = "<env:Body Id=\"Body\">";
+        } else if(result.contains("<env:Body Id='Body'>")) {
+        	body = "<env:Body Id='Body'>";
         } else if(result.contains("<soap:Body>")) {
         	body = "<soap:Body>";
         	endBody = "</soap:Body>";

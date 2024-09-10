@@ -3,9 +3,10 @@ import {getPeriod, getTaskHolder, getTaskHoldersUser, getTaskHolderTimeControl, 
 import {getPosition} from '../../services/maps.js';
 import { AonSelect } from '../../components/aon-select.js';
 import { SIGNIN_VIEWS } from "./signinEnums.js";
-import { CONSTANT, EVENT, MSG, TAG } from '../../environments/environments.js';
+import { CONSTANT, EVENT, MSG, TAG, } from '../../environments/environments.js';
 import { timeHour } from './time-control/utils.js';
 import { AonDateUtils } from '../utils/AonDateUtils.js';
+import * as LS from "../../services/localStorageService.js";
 
 export class AonSign extends AonElement {
   _taskHolders;
@@ -129,7 +130,8 @@ export class AonSign extends AonElement {
       button.id = this.id+"Entrada";
       button.className = 'aonButton';
       button.style.backgroundColor = '#86D364';
-      button.style.padding = '1rem 1rem';
+      button.style.padding = '.7rem';
+      button.style.fontSize = '.9rem';
       button.style.width = '120px';
       button.innerHTML = MSG.ENTRY.toUpperCase();
       if(this.isMobile()){
@@ -171,7 +173,8 @@ export class AonSign extends AonElement {
       button.style.backgroundColor = '#DC4D30';
       button.style.marginRight = '10px';
       button.style.width = '100px';
-      button.style.padding = '1rem 1rem';
+      button.style.padding = '.7rem';
+      button.style.fontSize = '.9rem';
       button.innerHTML = MSG.EXIT.toUpperCase();
       button.addEventListener(EVENT.CLICK, () => this.saveTimeCtrl('out'));
       content.appendChild(button);
@@ -181,7 +184,8 @@ export class AonSign extends AonElement {
       button2.style.backgroundColor = '#F39F1D';
       button2.style.marginRight = '10px';
       button2.style.width = '100px';
-      button2.style.padding = '1rem 1rem';
+      button2.style.padding = '.7rem';
+      button2.style.fontSize = '.9rem';
       button2.innerHTML = 'PAUSA';
       button2.addEventListener(EVENT.CLICK, () => this.saveTimeCtrl('pause'));
       content.appendChild(button2);
@@ -312,10 +316,7 @@ export class AonSign extends AonElement {
       const id = 'lastTimeUser';
       const div = this.getElement(id) || this.createElement(TAG.DIV);
       div.id = id;
-      div.style.marginTop = "10px";
-      div.style.color = "grey";
-      div.style.fontSize = "12px";
-      div.style.cursor = "default";
+      div.classList.add("aonSignDivLastTime");
       div.innerHTML = `${MSG.LAST} ${textStatus} ${AonDateUtils.setDateTimestampDay(signin.last_date)}`;
       content.appendChild(div);
       this.totalHourWeek();
@@ -340,7 +341,7 @@ export class AonSign extends AonElement {
             const div = this.getElement(this.TOTAL_HOUR) || this.createElement(TAG.DIV);
             div.id = this.TOTAL_HOUR;
             div.style.marginTop = "10px";
-            div.style.color = "grey";
+            div.style.color =  LS.isDarkTheme() ? "#ffffff" : "gray";
             div.style.fontSize = "12px";
             div.style.cursor = "default";
             div.dataset.sumHour = sumHour;
@@ -365,7 +366,7 @@ export class AonSign extends AonElement {
         const hour = Number(dataset.sumHour);
         const span = this.getElement(div.id+"Span");
         span.innerHTML = timeHour(hour);
-        span.style.color = "black";
+        span.style.color =  LS.isDarkTheme() ? "#ffffff" : "black";
         dataset.sumHour  = hour + 1000;
       }
     } catch (error) {}
