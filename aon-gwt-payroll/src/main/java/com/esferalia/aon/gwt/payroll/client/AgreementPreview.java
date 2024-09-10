@@ -467,8 +467,8 @@ public abstract class AgreementPreview extends Composite {
 
 	private void openDialog(Payment payment) {
 		boolean isHide = AonStringUtils.isNotBlank(payment.getExpression())
-				&& AonStringUtils.containsIgnoreCase(payment.getExpression(), "HIDE")
-				&& AonStringUtils.startsWithIgnoreCase(payment.getExpression(), "HIDE");
+				&& AonStringUtils.containsIgnoreCase(payment.getExpression(), "DISABLE")
+				&& AonStringUtils.startsWithIgnoreCase(payment.getExpression(), "DISABLE");
 		
 		Date startDate = null;
 		if(!agreement.getSortedDates().isEmpty())
@@ -504,7 +504,7 @@ public abstract class AgreementPreview extends Composite {
 						? showHidePayment(updatedPayment.getDescription(), updatedPayment.getExpression())
 						: updatedPayment.getExpression());
 				selectedPayment.setScope(Scope.SALARY);
-				selectedPayment.setSalaryType(Type.SALARY);
+				selectedPayment.setSalaryType(updatedPayment.getSalaryType());
 			}
 
 			@Override
@@ -526,18 +526,19 @@ public abstract class AgreementPreview extends Composite {
 
 	private boolean isHideExpression(Payment payment) {
 		String expression = payment.getExpression();
-		return !AonStringUtils.isBlank(expression) && AonStringUtils.containsIgnoreCase(expression, "HIDE")
-				&& AonStringUtils.startsWithIgnoreCase(expression, "HIDE");
+		return !AonStringUtils.isBlank(expression) && AonStringUtils.containsIgnoreCase(expression, "DISABLE")
+				&& AonStringUtils.startsWithIgnoreCase(expression, "DISABLE");
 	}
 
 	public String showHidePayment(String description, String expression) {
-		if (!AonStringUtils.isBlank(expression) && AonStringUtils.containsIgnoreCase(expression, "HIDE")
-				&& AonStringUtils.startsWithIgnoreCase(expression, "HIDE"))
-			expression = expression.replaceAll("HIDE\\(.*\\);\\s", "");
+		if (!AonStringUtils.isBlank(expression) && AonStringUtils.containsIgnoreCase(expression, "DISABLE")
+				&& AonStringUtils.startsWithIgnoreCase(expression, "DISABLE"))
+			expression = expression.replaceAll("DISABLE\\(.*\\);\\s", "");
 		else
-			expression = "HIDE(\"<div>" + description
-					+ " oculto desde Convenio</div><div>&nbsp;</div><div class='aon-text-right'><span class='aon-icon aon-icon-logo'/>aon Solutions</div>\"); "
-					+ expression;
+			expression = "DISABLE(); " + expression;
+//			expression = "DISABLE(\"<div>" + description
+//					+ " oculto desde Convenio</div><div>&nbsp;</div><div class='aon-text-right'><span class='aon-icon aon-icon-logo'/>aon Solutions</div>\"); "
+//					+ expression;
 
 		return expression;
 	}
@@ -545,12 +546,13 @@ public abstract class AgreementPreview extends Composite {
 	public void showHidePayment(Payment payment) {
 		String expression = payment.getExpression();
 
-		expression = !AonStringUtils.isBlank(expression) && AonStringUtils.containsIgnoreCase(expression, "HIDE")
-				&& AonStringUtils.startsWithIgnoreCase(expression, "HIDE")
-						? expression.replaceAll("HIDE\\(.*\\);\\s", "")
-						: "HIDE(\"<div>" + payment.getDescription()
-								+ " oculto desde Convenio</div><div>&nbsp;</div><div class='aon-text-right'><span class='aon-icon aon-icon-logo'/>aon Solutions</div>\"); "
-								+ expression;
+		expression = !AonStringUtils.isBlank(expression) && AonStringUtils.containsIgnoreCase(expression, "DISABLE")
+				&& AonStringUtils.startsWithIgnoreCase(expression, "DISABLE")
+						? expression.replaceAll("DISABLE\\(.*\\);\\s", "")
+						: "DISABLE(); " + expression;
+//						: "DISABLE(\"<div>" + payment.getDescription()
+//								+ " oculto desde Convenio</div><div>&nbsp;</div><div class='aon-text-right'><span class='aon-icon aon-icon-logo'/>aon Solutions</div>\"); "
+//								+ expression;
 
 		payment.setExpression(expression);
 	}

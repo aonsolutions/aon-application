@@ -1411,9 +1411,11 @@ public abstract class FBatchPaymentEntryModule extends SimpleLayoutPanel {
 
 	private void paintSelectedFinanceTable(final FinanceModuleOptions opt) {
 		if (this.fBatch.getBatchDetails() != null && !this.fBatch.getBatchDetails().isEmpty()) {
-			this.fBatch.getBatchDetails().stream().map(batchDetail -> batchDetail.getFinance()).forEach(finance -> {
-				paintSelectedRow(opt, finance);
-			});
+			this.fBatch.getBatchDetails().stream()
+				.sorted((o1, o2) -> o1.getFinance().getRegistryName().compareTo(o2.getFinance().getRegistryName()))
+				.map(batchDetail -> batchDetail.getFinance()).forEach(finance -> {
+					paintSelectedRow(opt, finance);
+				});
 		}
 	}
 

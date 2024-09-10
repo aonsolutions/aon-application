@@ -151,6 +151,8 @@ public class ServicioRED extends ServicioREDRegeXML {
 			onlineSelect.getOption(1).setSelected(true);
 
 			HtmlSubmitInput continueButton = document.querySelector("#Sub2207601004");
+			
+//			System.out.println("Regime: " + regime + ", CCC: " + ccc + ", NAF: " + affiliationNumber + ", Date: " + date);
 
 			// Check if we have more than one CCC for this person
 			try {
@@ -164,11 +166,12 @@ public class ServicioRED extends ServicioREDRegeXML {
 					HtmlTableCell endDateCell = table.getCellAt(row, 2);
 					
 					String startDate = startDateCell.getTextContent().trim();
-					String endDate = endDateCell.getTextContent().trim();
+//					String endDate = endDateCell.getTextContent().trim();
 					
-					if(startDate.length() > 0 && endDate.length() == 0) {
+					if(startDate.length() > 0) {
 						HtmlSpan span = (HtmlSpan) startDateCell.getChildNodes().get(1);
 						HtmlLabel label = (HtmlLabel) span.getChildNodes().get(1);
+						
 						return getPDFDocument(label);
 					}
 				}
@@ -1129,12 +1132,15 @@ public class ServicioRED extends ServicioREDRegeXML {
 	public static Collection<Idc> getIDCDatesPOST(final InputStream certificateInputStream,
 			final String certificatePassword, final String certificateType,
 			final String regime, final String ccc, final String affiliationNumber) throws SegSocialException {
-		SSLContext sslContext = null;
-		try {
-			sslContext = SSLContexts.custom().loadKeyMaterial(Toolkit.readStore(certificateInputStream, certificatePassword, certificateType), certificatePassword.toCharArray()).build();
-		} catch (Exception e1) {
-			throw new InvalidCertificateException();
-		}
+//		SSLContext sslContext = null;
+//		try {
+//			sslContext = SSLContexts.custom().loadKeyMaterial(Toolkit.readStore(certificateInputStream, certificatePassword, certificateType), certificatePassword.toCharArray()).build();
+//		} catch (Exception e1) {
+//			throw new InvalidCertificateException();
+//		}
+		
+		SSLContext sslContext = Toolkit.getTrustedSSLContext(certificateInputStream, certificatePassword, certificateType);
+		
 		String link = "";
 		String sessionId = "";
 		

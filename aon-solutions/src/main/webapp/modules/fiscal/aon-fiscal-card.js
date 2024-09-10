@@ -25,6 +25,7 @@ export class AonFiscalCard extends AonElement {
 
   constructor(filter) {
     super();
+    this._filter = filter;
     this.defaultFilter = filter;
   }
 
@@ -79,6 +80,7 @@ export class AonFiscalCard extends AonElement {
     if (!this.MODELS.length) {
       try {
         const datos = await getModelsFiscal();
+
         if (datos) {
           this.MODELS = sortBy(datos, "year", "desc").map((model) =>
             FiscalUtils.getModelNew(model)
@@ -94,6 +96,7 @@ export class AonFiscalCard extends AonElement {
         let filterDatos = this.MODELS.filter((dato) => {
           return dato.year == filter.year && dato.period === filter.period;
         });
+
         return filterDatos;
       } catch (error) {
         console.error(error);
@@ -342,7 +345,7 @@ export class AonFiscalCard extends AonElement {
     let content = this.getElement("fiscalCardTable");
     this.removeAllChildNodes(content);
 
-    estimationModels = estimationModels.filter(estimationModel => estimationModel.amount && estimationModel.amount > 0);
+    estimationModels = estimationModels.filter(estimationModel => estimationModel.amount && estimationModel.amount != 0);
 
     let maxModels = estimationModels && estimationModels.length < 5 ? estimationModels.length : 5;
     let accumulatedModels = 0;
@@ -379,6 +382,7 @@ export class AonFiscalCard extends AonElement {
       amount.style.minWidth = "5rem";
       amount.style.textAlign = "right";
       amount.innerHTML = formatNumber(modelData.amount, 2, "EUR");
+      if(formatNumber(modelData.amount, 2, "EUR").includes('-')) amount.style.color = "green";
       rightContent.appendChild(amount);
 
       accumulatedModels += modelData.amount;
@@ -433,6 +437,9 @@ export class AonFiscalCard extends AonElement {
     fiscalTotalDiv.className = CSS.AON_CARD_TOTAL;
     fiscalTotalDiv.classList.add(CSS.AON_FISCAL_CARD_TOTAL);
     fiscalTotalDiv.innerHTML = this.getEstimationTotal(estimationModels);
+
+    // if(this.getEstimationTotal(estimationModels).includes('-')) fiscalTotalDiv.style.color = "green";
+    // else fiscalTotalDiv.style.color = "black";
   }
 
   removeAllChildNodes(parent) {
@@ -566,6 +573,8 @@ export class AonFiscalCard extends AonElement {
   }
 
   filterTable(filter) {
+    this._filter = filter;
+
     let section2 = this.getElement("fiscalCardTitleSection2");
     let titleSection2 = section2.firstChild;
 
@@ -580,13 +589,22 @@ export class AonFiscalCard extends AonElement {
   }
 
   async filterEstimationTable(filter) {
+    this._filter = filter;
+
     let section2 = this.getElement("fiscalCardTitleSection2");
     let titleSection2 = section2.firstChild;
     titleSection2.innerHTML = filter.title;
 
     const estimationModels = await getEstimationModelsFiscal(filter);
-    // console.log(estimationModels);
     this.getEstimationTable(estimationModels);
+  }
+
+  async getFilter(){
+    let __filter = await this._filter;
+    if(__filter.title && __filter.title.includes("Borrador")){
+      __filter.future = true;
+    }
+    return __filter;
   }
 }
 window.customElements.define("aon-fiscal-card", AonFiscalCard);

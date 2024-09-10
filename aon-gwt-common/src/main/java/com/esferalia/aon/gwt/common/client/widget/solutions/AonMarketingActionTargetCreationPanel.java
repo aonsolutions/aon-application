@@ -49,7 +49,7 @@ import com.google.gwt.user.client.ui.TextBox;
 public abstract class AonMarketingActionTargetCreationPanel extends SimplePanel {
 	
 	public static interface AonMarketingActionTargetCreationPanelCallback {
-		void onAccept(JSONObject json);
+		void onAccept(String domainName, String login, Integer domainId, String sessionId, JSONObject json);
 		void onCancel();
 	}
 	
@@ -94,6 +94,11 @@ public abstract class AonMarketingActionTargetCreationPanel extends SimplePanel 
 	private Integer domainId;
 	private String user;
 	private Seller seller;
+	
+	private String domainNameValueStr;
+	private Integer domainIdValueInt;
+	private String userValueStr;
+	private String sessionIdValueStr;
 	
 	public AonMarketingActionTargetCreationPanel(final String domainName,final int domain, final String user, LinkedList<Scope> aviableScopes, LinkedList<GeoZone> aviableGeozones, final MarketingAction marketingAction, Seller seller, final AonMarketingActionTargetCreationPanelCallback aonMarketingActionTargetCreationPanelCallback) {
 		this.aviableGeozones = aviableGeozones;
@@ -412,7 +417,8 @@ public abstract class AonMarketingActionTargetCreationPanel extends SimplePanel 
 		sendButton.addClickHandler(e -> {
 			if(canSendRequest(messagePanel)) {
 				sendButton.setEnabled(false);
-				callback.onAccept(createActionTargetJSON());
+				
+				callback.onAccept(domainNameValueStr, userValueStr, domainIdValueInt, sessionIdValueStr, createActionTargetJSON());
 			}
 		});
 		form.add(sendButton);
@@ -651,9 +657,17 @@ public abstract class AonMarketingActionTargetCreationPanel extends SimplePanel 
 						            if (response.getStatusCode() == 200) {
 						            	JSONObject userTokenJson = JSONParser.parseStrict(response.getText()).isObject();
 						            	domainNameValue.setText(JsonGWTUtils.getString(userTokenJson, "domain_name"));
+						            	domainNameValueStr = JsonGWTUtils.getString(userTokenJson, "domain_name");
+						            	
 						            	domainIdValue.setText(JsonGWTUtils.getInteger(userTokenJson, "domain_id").toString());
+						            	domainIdValueInt = JsonGWTUtils.getInteger(userTokenJson, "domain_id");
+						            	
 						            	userValue.setText(JsonGWTUtils.getString(userTokenJson, "domain_login"));
+						            	userValueStr = JsonGWTUtils.getString(userTokenJson, "domain_login");
+						            	
 						            	sessionIdValue.setText(JsonGWTUtils.getString(userTokenJson, "session_id"));
+						            	sessionIdValueStr = JsonGWTUtils.getString(userTokenJson, "session_id");
+						            	
 						            	copySessionIdValue.setVisible(true);
 						            	AonMessagePanel.hideMessage(messagePanel);
 						            } 

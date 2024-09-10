@@ -3,14 +3,13 @@ package net.aonsolutions.aon.api.servlet;
 import java.util.logging.Logger;
 import java.util.stream.Stream;
 
-import jakarta.servlet.annotation.WebServlet;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-
 import org.json.JSONArray;
 import org.json.JSONObject;
 
 import com.esferalia.aon.occam.api.AON;
+import com.esferalia.aon.occam.api.AON_SOLUTIONS;
+import com.esferalia.aon.occam.api.json.ProjectHolderJSON;
+import com.esferalia.aon.occam.api.json.TaskJSON;
 import com.esferalia.aon.occam.api.json.WorkgroupJSON;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Filter;
@@ -19,6 +18,9 @@ import com.esferalia.aon.occam.api.model.Properties.WorkgroupProperties;
 import com.esferalia.aon.occam.api.model.Workgroup;
 import com.esferalia.aon.occam.api.model.type.WorkgroupStatus;
 
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import net.aonsolutions.aon.api.error.AonApiError;
 import net.aonsolutions.aon.api.error.AonApiException;
 import net.aonsolutions.aon.api.ewok.AonApiData;
@@ -38,6 +40,12 @@ public class WorkgroupServlet extends AonApiHttpServlet{
 			switch (api.getPath()) {
 				case "/":
 					response(req, resp, getWorkgroups(api));
+					break;
+				case "/projectsHolder":
+					response(req, resp, getWorkgroupProjectHolders(api));
+					break;
+				case "/task":
+					response(req, resp, getWorkgroupTasks(api));
 					break;
 				default:
 					throw new AonApiException(AonApiError.ROUTE_ERROR.getMessage());
@@ -79,6 +87,22 @@ public class WorkgroupServlet extends AonApiHttpServlet{
 		} catch (Exception e) {
 			error(req, resp, e);
 		}
+	}
+	
+	private JSONArray getWorkgroupTasks(AonApiData api) {
+		Domain domain = api.getDomain();
+		Integer workgroup = api.getData().optInt(IJsonNames.WORKGROUP);
+		
+		return TaskJSON.toJSON(AON_SOLUTIONS.getTaskStream(domain, api.getUser(), f -> f.getDomainProperty().eq(domain.getId()).and(f.getWorkgroupProperty().eq(workgroup))));
+	}
+	
+	private JSONArray getWorkgroupProjectHolders(AonApiData api) {
+		Domain domain = api.getDomain();
+		Integer workgroup = api.getData().optInt(IJsonNames.WORKGROUP);
+		
+		return ProjectHolderJSON.toJSON(AON.getProjectHolderStream(api.getDomain(), api.getUser().getLogin(), 
+				f -> f.getDomainProperty().eq(domain.getId()).and(f.getWorkgroupProperty().eq(workgroup)) 
+		));
 	}
 
 	private JSONArray getWorkgroups(AonApiData api) {

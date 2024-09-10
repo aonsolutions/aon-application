@@ -167,6 +167,12 @@ public class InvoiceTemplate {
 			throw new CanNotCreatePdfException("No invoice found.");
 		
 		this.document = new PDDocument();
+		Date date = new Date();
+		document.getDocumentInformation().setCustomMetadataValue("ref_homologation", "000000");
+		document.getDocumentInformation().setCustomMetadataValue("software_name", "Aon Solutions");
+		document.getDocumentInformation().setCustomMetadataValue("software_version", "9.23");
+		document.getDocumentInformation().setCustomMetadataValue("timestamp", AonDateUtils.format(date, "hh:mm dd/MM/yyyy"));
+
 		this.company = company;
 		this.regularFont = PdfFonts.HELVETICA;
 		this.boldFont = PdfFonts.HELVETICA_BOLD;

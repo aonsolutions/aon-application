@@ -144,6 +144,12 @@ public class NormalizedMemoryServlet extends AonStatelessRemoteServiceServlet im
 		}
 		try {
 			Esquema schema = Utils.readXml(attach.getData());		
+			if(!schema.getCabecera().isMemoriaNormalizada()) {
+				Vector<Integer> id = DBConsults.getMemoryFile(aonData.getDomain().getName(), aonData.getDomain().getId(), D2_FILE_MEMORY + year);
+				if(id.get(0) == -1) {
+					schema.getCabecera().setMemoriaNormalizada(true);		
+				}
+			}
 			
 			List<Clave> claves = schema.getClaves().getClave();
 			if(schema.getError() != null) {

@@ -232,9 +232,7 @@ export class AonInvoiceHome extends AonElement {
 		let pendingRecordName = this.createDiv();
 		pendingRecordName.id = 'pendingRecordName';
 		pendingRecordName.innerHTML = "Pendientes de Contabilizar";
-		pendingRecordName.style.fontWeight = 'normal';
-		pendingRecordName.style.color = 'gray';
-		pendingRecordName.style.lineHeight = '21px';
+		pendingRecordName.classList.add("aonInvoiceHomePendingRecordName");
 		pendingRecordsDiv.appendChild(pendingRecordName);
 
 		// PENDING

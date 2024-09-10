@@ -44,15 +44,6 @@ const xmlHttpRequestXml = (method, url, sendData) =>{
   return xmlHttpRequest(method, url, header, sendData);
 }
 
-const xmlHttpRequestInvofox = (method, url, sendData) =>{
-  const header = {
-    "x-api-key": "$2b$10$ZyMOXKSmPwl4VUFk76wFWuK9aCDsXRiaxytOwpqk3gK.epVl6Mfwi",
-    "Content-Type": "application/json;charset=UTF-8",
-    "Access-Control-Allow-Origin": "*"
-  }
-  return xmlHttpRequest(method, url, header, sendData);
-}
-
 const xmlHttpRequest = (method, url, header, sendData) =>{
   let xhr = new XMLHttpRequest();
   if (sendData && method === "GET") url = url + formatParams(sendData); //send params url method GET
@@ -61,38 +52,6 @@ const xmlHttpRequest = (method, url, header, sendData) =>{
     xhr.setRequestHeader(name, header[name]);
   }
   return xhr;
-}
-
-export const requestInvofox = (method, url, sendData, fn) => {
-  try {
-    let xhr = xmlHttpRequestInvofox(method, url, sendData);
-    xhr.send(JSON.stringify(sendData));
-    xhr.onload = () => {
-      if (xhr.status != 200) {
-        // analyze HTTP status of the response
-        console.error(`Error ${xhr.status}: ${xhr.statusText}`); // e.g. 404: Not Found
-        fn(undefined, xhr.response);
-      } else {
-        // show the result
-        console.debug(`Done, got ${xhr.response.length} bytes`); // responseText is the server
-        let response = !xhr.response ? "[]" : xhr.response;
-        fn(response);
-      }
-    };
-    xhr.onprogress = (event) => {
-      if (event.lengthComputable) {
-        console.debug(`Received ${event.loaded} of ${event.total} bytes`);
-      } else {
-        console.debug(`Received ${event.loaded} bytes`); // no Content-Length
-      }
-    };
-    xhr.onerror = () => {
-      console.error("Request failed");
-    };
-  } catch (error) {
-    console.error("error");
-    fn(undefined, error);
-  }
 }
 
 export const request = (method, url, token, sendData, fn) => {
@@ -262,28 +221,6 @@ export const requestFile = (method, url, sendData, fn) => {
 export const get = (url, data) => {
   return new Promise((resolve, reject) => {
     request("GET", url, getToken(), data, (result, error) => {
-      try{
-        if (error) reject(error);
-        else resolve(JSON.parse(result));
-      } catch(e){reject(e);}
-    });
-  });
-};
-
-export const getInvofox = (url, data) => {
-  return new Promise((resolve, reject) => {
-    requestInvofox("GET", url, data, (result, error) => {
-      try{
-        if (error) reject(error);
-        else resolve(JSON.parse(result));
-      } catch(e){reject(e);}
-    });
-  });
-};
-
-export const postInvofox = (url, data) => {
-  return new Promise((resolve, reject) => {
-    requestInvofox("POST", url, data, (result, error) => {
       try{
         if (error) reject(error);
         else resolve(JSON.parse(result));

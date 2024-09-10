@@ -631,7 +631,7 @@ export class AonApplication extends AonElement {
     select = select || this.getElement(sidenavId + data.id + "Select");
 
     let optYear = this.createElement('option');
-    optYear.value = JSON.stringify(option.name);
+    optYear.value = JSON.stringify(option.value ? option.value : option.name);
     optYear.innerHTML = option.name;
     select.appendChild(optYear);
   }
@@ -664,9 +664,7 @@ export class AonApplication extends AonElement {
       li.id = id;
       li.title = option.title || option.name;
 
-      li.className = LS.isNewTheme() 
-          ? `aonAppMenuSidenavListBeta aonOpacity ${data.app ? data.app.hover : 'sidenavHover'}`
-          : "aonAppMenuSidenavList aonOpacity sidenavHover";  
+      li.className = "aonAppMenuSidenavList aonOpacity sidenavHover";
       ul.appendChild(li);
       if(option.options) {
         li.style.paddingLeft = '6px';
@@ -747,20 +745,17 @@ export class AonApplication extends AonElement {
         } else img.style.width = '18px';
         img.src = option.img;
         li.appendChild(img);
+      } else if (option.html) {
+        let divHtml = this.createElement(TAG.DIV);
+        divHtml.innerHTML = option.html;
+        li.appendChild(divHtml.firstChild);
+
+        li.style.display = "flex";
+        li.style.alignItems = "center";
       } else {
         span.style.marginLeft = '28px';
       }
       li.appendChild(span);
-
-      // li.addEventListener(EVENT.MOUSEOVER, () => {
-      //   if (!this.selected || this.selected !== id)
-      //     li.style.backgroundColor = "#f1f1f1";
-      // });
-
-      // li.addEventListener(EVENT.MOUSELEAVE, () => {
-      //   if (!this.selected || this.selected !== id)
-      //     li.style.backgroundColor = "white";
-      // });
 
       if (option.actions) {
         let actionDiv = this.createElement(TAG.SPAN);
@@ -797,34 +792,19 @@ export class AonApplication extends AonElement {
         li.addEventListener(EVENT.CLICK, () => {
           // ul
           this.querySelectorAll(`[id^='${sidenavId}'] li`).forEach((el) => {
-            if (el.id !== sidenavId)
-              el.style.removeProperty("background-color");
-              el.style.removeProperty("font-weight");
-              el.style.removeProperty("color");
-              
-              if(LS.isNewTheme()) {
-                let icon = this.getElement(el.id + 'icon');
-                if(icon && data.app) {
-                  icon.style.color = icon.color || data.app.color;
-                } 
-
-                let aonIcon = this.getElement(el.id + 'AonIcon');
-                if(aonIcon && data.app) {
-                  aonIcon.color = data.app.color;
-                }
-              }
+            if (el.id !== sidenavId){
+              el.classList.remove(CSS.AON_APP_MENU_SIDENAV_LIST_SELECTED);
+              el.style.removeProperty("border-left");
+              let icon = this.getElement(el.id + 'icon');
+              if(icon) icon.classList.remove('material-icons-selected');
+            }
           });
-          li.style.fontWeight= "bold"
-          if(!LS.isNewTheme())
-            li.style.backgroundColor = "#d3e3fd";
-          else if(data.app){
-            li.style.color = 'white';
-            li.style.backgroundColor = data.app.color;
-            let icon = this.getElement(id + 'icon');
-            if(icon) icon.style.color = 'white';
-            let aonIcon = this.getElement(id + 'AonIcon');
-            if(aonIcon) aonIcon.color = 'white';
-          }
+
+          li.classList.add(CSS.AON_APP_MENU_SIDENAV_LIST_SELECTED);
+          li.style.borderLeft = '2px solid ' + (data.app ? data.app.color : 'black');
+          let icon = this.getElement(li.id + 'icon');
+          if(icon) icon.classList.add('material-icons-selected');
+
           this.selected = id;
           let toolbar = this.getElement(this.TOOLBAR);
           if(toolbar) toolbar.setAttribute("option", option.name);
@@ -845,20 +825,12 @@ export class AonApplication extends AonElement {
   addSidenavOptions(title, options, newButton) {
     let tmp = undefined;
     if (options && options.length > 0) {
-      tmp = this.addSidenavOptionsTitle(
-        {
-          id: title,
-          name: title,
-        },
-        newButton
-      );
-      this.addSidenavOptionsList(
-        {
-          id: title,
-          name: title,
-        },
-        options
-      );
+      let data = {
+        id: title,
+        name: title,
+      };
+      tmp = this.addSidenavOptionsTitle(data, newButton);
+      this.addSidenavOptionsList(data,options);
     }
     return tmp;
   }
@@ -944,7 +916,7 @@ export class AonApplication extends AonElement {
         select.addEventListener('change', () => {
           let yearSelected = JSON.parse(select.value);
           // options.forEach(option =>  console.log(option.name + " == " + yearSelected));
-          let filteredYears = options.filter(option => option.name == yearSelected);
+          let filteredYears = options.filter(option => option.name == yearSelected || (option.value && option.value == yearSelected));
           let optionFiltered = filteredYears[0];
           optionFiltered.fn();
          
@@ -975,16 +947,11 @@ export class AonApplication extends AonElement {
   removeBackgroundSidenavAll(color){
     const sidenavId = this.isMobile() ? this.MOBILE_SIDENAV_CONTENT: this.SIDENAV;
     this.querySelectorAll(`[id^='${sidenavId}'] li`).forEach((li) => {
-      li.style.removeProperty("background-color");
-      li.style.removeProperty("font-weight");
-      li.style.removeProperty("color");
+      li.classList.remove(CSS.AON_APP_MENU_SIDENAV_LIST_SELECTED);
+      li.style.removeProperty("border-left");
+      let icon = this.getElement(li.id + 'icon');
+      if(icon) icon.classList.remove('material-icons-selected');
 
-      if(LS.isNewTheme()) {
-        let icon = this.getElement(li.id + 'icon'); 
-        if(icon && color) icon.style.color = icon.color || color;
-        let aonIcon = this.getElement(li.id + 'AonIcon');
-        if(aonIcon && color) aonIcon.color = color;
-      }
     });
   }
 
@@ -992,14 +959,10 @@ export class AonApplication extends AonElement {
     const sidenavId = this.isMobile() ? this.MOBILE_SIDENAV_CONTENT: this.SIDENAV;
     const li =  this.getElement(sidenavId + id);
     if(li){
-      if(LS.isNewTheme()) {
-        li.style.color = 'white';
-        li.style.backgroundColor = color && LS.isNewTheme() ? color : "#d3e3fd";
-        let icon = this.getElement(li.id + 'icon');
-        if(icon) icon.style.color = 'white';
-        let aonIcon = this.getElement(li.id + 'AonIcon');
-        if(aonIcon) aonIcon.color = 'white';
-      } else li.style.backgroundColor = "#d3e3fd";
+      li.classList.add(CSS.AON_APP_MENU_SIDENAV_LIST_SELECTED);
+      li.style.borderLeft = '2px solid ' + (color || 'transparent');
+      let icon = this.getElement(li.id + 'icon');
+      if(icon) icon.classList.add('material-icons-selected');
     }
   }
 
@@ -1007,16 +970,10 @@ export class AonApplication extends AonElement {
     const sidenavId = this.isMobile() ? this.MOBILE_SIDENAV_CONTENT: this.SIDENAV;
     const li =  this.getElement(sidenavId + id);
     if(li){
-      li.style.removeProperty("background-color");
-      li.style.removeProperty("font-weight");
-      li.style.removeProperty("color");
-
-      if(LS.isNewTheme()) {
-        let icon = this.getElement(li.id + 'icon'); 
-        if(icon && color) icon.style.color = icon.color || color;
-        let aonIcon = this.getElement(li.id + 'AonIcon');
-        if(aonIcon && color) aonIcon.color = color;
-      }
+      li.classList.remove(CSS.AON_APP_MENU_SIDENAV_LIST_SELECTED);
+      li.style.removeProperty("border-left");
+      let icon = this.getElement(li.id + 'icon');
+      if(icon) icon.classList.remove('material-icons-selected');
     }
   }
 
@@ -1031,15 +988,13 @@ export class AonApplication extends AonElement {
       let span = li.querySelector("span");
       if(span){
         let name = span.title;
-        let fontWeight = "normal";
         let text = name;
         span.dataset.count = count;
         if(count) {
           text = name + " (" + count + ")";
-          fontWeight = "bold";
+          span.style.fontWeight = 'bold';
         } 
         span.innerHTML = text;
-        span.style.fontWeight = fontWeight;
       }
     }
   }

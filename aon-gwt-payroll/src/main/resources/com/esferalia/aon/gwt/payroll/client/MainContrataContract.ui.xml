@@ -1,122 +1,17 @@
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
 	xmlns:g='urn:import:com.google.gwt.user.client.ui'
-	xmlns:a='urn:import:com.esferalia.aon.gwt.common.client.widget'
-	xmlns:c='urn:import:com.google.gwt.user.cellview.client'
 	xmlns:d='urn:import:com.esferalia.aon.gwt.payroll.client'
-	xmlns:p="urn:import:net.aonsolutions.gwt.pdfjs.client"
 	xmlns:aon='urn:import:com.esferalia.aon.gwt.common.client.widget.solutions' >
 
 	<ui:with type="com.esferalia.aon.gwt.common.client.css.AonResources" field="aonResources"></ui:with>
 
-	<ui:style type="com.esferalia.aon.gwt.payroll.client.MainContrataContract.MyStyle">
-		
-		.flexColumn{
-			display: flex;
-			flex-direction: column;
-			gap: 5px;
-			padding: 5px;
-		}
-		
-		.cmdBtn{
-			background-position: center left;
-			background-repeat: no-repeat;
-			padding-left: 25px !important;
-			background-size: contain;
-		}
-		
-		.pointer{
-			cursor: pointer;
-			margin: 0 10px;
-		}
-		
-		.filterPanel{
-			display: flex;
-			justify-content: space-between;
-			margin: auto 15px;
-		}
-		
-		.flexPanel{
-			display: flex;
-			align-items: center;
-		}
-		
-		.suggestBox{
-			width: 100%;
-			margin: 3px;
-			margin-left: 11px;
-		}
-		
-		.inactive {
-			font-weight: bold;
-			color: red;
-		}
-		
-		.prevAlta {
-			font-weight: bold;
-			color: green;
-		}
-		
-		.closeEnd {
-			font-weight: bold;
-			color: orange;
-		}
-		
-	
-	</ui:style>
-
 	<g:DeckPanel ui:field="deckPanel">
-		
-		<g:DockLayoutPanel ui:field="dockLayoutPanel" unit="PX">
-			<g:north size="50">
-				<aon:AonToolbar ui:field="employeeToolbar"/>
-			</g:north>
-			<g:center>
-				<g:SplitLayoutPanel ui:field="splitLayoutPanel" >
-					<g:center>
-						<g:HTMLPanel styleName="{style.flexColumn}">
-							<g:HTMLPanel ui:field="messageContainer" />
-							<g:HTMLPanel ui:field="filterEmployeePanel" />
-						 	<c:DataGrid ui:field="employeeDataGrid" />
-						</g:HTMLPanel>
-					</g:center>
-					<g:south size="17">
-						<aon:AonMinimizePanel ui:field="footPanel" styleName="{aonResources.css.aonSelector} aon-EmployeeTree-Events" >
-							<g:TabLayoutPanel barHeight="26" barUnit="PX" ui:field="footTabPanel" addStyleNames="aon-pointer-events-auto"/>
-						</aon:AonMinimizePanel>
-					</g:south>
-				</g:SplitLayoutPanel>
-			</g:center>
-		</g:DockLayoutPanel>
-		
-		<g:DockLayoutPanel unit="PX">
-			<g:north size="50">
-				<aon:AonToolbar ui:field="employeeTrashToolbar"/>
-			</g:north>
-			<g:center>
-				<g:HTMLPanel styleName="{style.flexColumn}">
-					<g:HTMLPanel ui:field="filterTrashEmployeePanel" />
-				 	<c:DataGrid ui:field="trashEmployeeDataGrid" styleName="{style.pointer}" />
-			 	</g:HTMLPanel>				
-			</g:center>
-		</g:DockLayoutPanel>
-		
+	
+		<aon:AonCustomDockLayout ui:field="employeesDockLayoutPanel"/>
 		<d:ContrataEmployee ui:field="contrataEmployee" />
-		
-		<g:DockLayoutPanel unit="PX">
-			<g:north size="50">
-				<aon:AonToolbar ui:field="pdfViewerToolbar"/>
-			</g:north>
-			<g:center>
-				<g:HTMLPanel styleName="{style.flexColumn}">
-					<g:HTMLPanel ui:field="messagePDFContainer" />
-					<p:FullViewer styleName="reset" ui:field='pdfViewer' />
-			 	</g:HTMLPanel>				
-			</g:center>
-		</g:DockLayoutPanel>
-		
-
-		<d:EnterpriseSalary ui:field="enterpriseSalary"></d:EnterpriseSalary>
+		<aon:AonCustomDockLayout ui:field="pdfDockLayoutPanel"/>
+		<d:EnterpriseSalary ui:field="enterpriseSalary" />
 		
 	</g:DeckPanel>
 </ui:UiBinder> 

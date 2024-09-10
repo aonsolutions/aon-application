@@ -127,6 +127,7 @@ import com.esferalia.aon.gwt.payroll.shared.Extra;
 import com.esferalia.aon.gwt.payroll.shared.IT;
 import com.esferalia.aon.gwt.payroll.shared.ITEmployee;
 import com.esferalia.aon.gwt.payroll.shared.ITPart;
+import com.esferalia.aon.gwt.payroll.shared.Mail;
 import com.esferalia.aon.gwt.payroll.shared.MainCCCInfo;
 import com.esferalia.aon.gwt.payroll.shared.NumberVariable;
 import com.esferalia.aon.gwt.payroll.shared.OutOfDateException;
@@ -162,6 +163,7 @@ import com.esferalia.aon.occam.api.PAYROLL;
 import com.esferalia.aon.occam.api.SECURITY;
 import com.esferalia.aon.occam.api.model.Certificate;
 import com.esferalia.aon.occam.api.model.CertificateInfo;
+import com.esferalia.aon.occam.api.model.ContractParams;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.EmployeeIT;
 import com.esferalia.aon.occam.api.model.EmployeeITPart;
@@ -2179,9 +2181,9 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 	}
 
 	@Override
-	public String getPayrollEmailBody(String domainName, com.esferalia.aon.gwt.payroll.client.PayrollEmailDialog.Type type, HashMap<String, String> params) {
+	public String getPayrollEmailBody(String domainName, com.esferalia.aon.gwt.payroll.client.PayrollEmailDialog.Type type, HashMap<String, String> params, boolean isPassword) {
 		try(Connection connection = AonServletUtils.getConnection(domainName)) {
-			return JooqMail.getPayrollEmailBody(connection, type, params);
+			return JooqMail.getPayrollEmailBody(connection, type, params, isPassword);
 		} catch (SQLException e) {
 			throw new RuntimeException(e);
 		}
@@ -2293,11 +2295,12 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 	}
 	
 	@Override
-	public String sendPayrollEmail(String domainName, com.esferalia.aon.gwt.payroll.client.PayrollEmailDialog.Type type, HashMap<String, String> params, String from, String to, String cc, String cco, String bodyHTML) throws IllegalArgumentException {
+	public String sendPayrollEmail(String domainName, com.esferalia.aon.gwt.payroll.client.PayrollEmailDialog.Type type, HashMap<String, String> params, Mail mail) throws IllegalArgumentException {
 		try(Connection connection = AonServletUtils.getConnection(domainName)) {
 			Integer domainId = AonServletUtils.getDomainID(domainName);
-			return JooqMail.sendPayrollEmail(connection, domainId, type, params, from, to, cc, cco, bodyHTML);
+			return JooqMail.sendPayrollEmail(connection, domainId, type, params, mail);
 		} catch (Exception e) {
+			e.printStackTrace();
 			throw new IllegalArgumentException(e);
 		}
 	}
@@ -2331,6 +2334,23 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 		try(Connection connection = AonServletUtils.getConnection(domainName)) {
 			Integer domainId = AonServletUtils.getDomainID(domainName);
 			return JooqContrataContract.getEmployeesInfo(connection, domainId, allEmployees);
+		} catch (SQLException e) {
+			throw new RuntimeException(e);
+		}
+	}
+	
+	@Override
+	public List<EmployeeContractInfo> getEmployees(String domain, String user, ContractParams params) throws IllegalArgumentException {
+		try(Connection connection = AonServletUtils.getConnection(domain)) {
+			Integer domainId = AonServletUtils.getDomainID(domain);
+			Integer parentDomainId = AonServletUtils.getParentDomainID(domain);
+			Integer userId = AonServletUtils.getUserID(connection, user, domainId, parentDomainId);
+			
+			params.setDomainName(domain);
+			params.setDomain(domainId);
+			params.setUser(user);
+			
+			return JooqContrataContract.getEmployees(connection, params);
 		} catch (SQLException e) {
 			throw new RuntimeException(e);
 		}
@@ -3175,6 +3195,70 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 	}
 	
 	@Override
+	public String getSecondaryUsersPDF(String domainName, String userLogin, Integer rattachId) throws IllegalArgumentException {
+		try(Connection connection = AonServletUtils.getConnection(domainName)){
+			Certificate certificate = null;
+			Integer domainId = AonServletUtils.getDomainID(domainName);
+			
+			if(rattachId == null) {
+				Integer parentDomainId = AonServletUtils.getParentDomainID(domainName); 
+				Integer userId = AonServletUtils.getUserID(connection, userLogin, domainId, parentDomainId);	
+				
+				certificate = AON.getCertificate(domainName, domainId, userLogin, userId, "TGSS");
+			} else
+				certificate = parseCertificate(AON.getCertificate(domainName, domainId, userLogin, f -> f.getIdProperty().eq(rattachId)));
+			
+			byte[] data = SistemaRED.getSecondaryUsersPDF(new ByteArrayInputStream(certificate.getData()), certificate.getPassword(), certificate.getType());
+			String base64Pdf = Base64.getEncoder().encodeToString(data);
+					
+			Writer stringWriter = new StringWriter();
+			encodeURIComponent("application/pdf", base64Pdf, stringWriter);
+
+			stringWriter.flush();
+			String dataUri = stringWriter.toString();
+			stringWriter.close();
+
+			return dataUri;
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw new IllegalArgumentException(e.getMessage());
+		}
+	}
+	
+	@Override
+	public String getAssignedCCCsPDF(String domainName, String userLogin, Integer rattachId) throws IllegalArgumentException {
+		try(Connection connection = AonServletUtils.getConnection(domainName)){
+			Certificate certificate = null;
+			Integer domainId = AonServletUtils.getDomainID(domainName);
+			
+			if(rattachId == null) {
+				Integer parentDomainId = AonServletUtils.getParentDomainID(domainName); 
+				Integer userId = AonServletUtils.getUserID(connection, userLogin, domainId, parentDomainId);	
+				
+				certificate = AON.getCertificate(domainName, domainId, userLogin, userId, "TGSS");
+			} else
+				certificate = parseCertificate(AON.getCertificate(domainName, domainId, userLogin, f -> f.getIdProperty().eq(rattachId)));
+			
+			byte[] data = SistemaRED.getAssignedCCCsPDF(new ByteArrayInputStream(certificate.getData()), certificate.getPassword(), certificate.getType());
+			String base64Pdf = Base64.getEncoder().encodeToString(data);
+					
+			Writer stringWriter = new StringWriter();
+			encodeURIComponent("application/pdf", base64Pdf, stringWriter);
+
+			stringWriter.flush();
+			String dataUri = stringWriter.toString();
+			stringWriter.close();
+
+			return dataUri;
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw new IllegalArgumentException(e.getMessage());
+		}
+	}
+	
+	@Override
 	public void deleteSecondaryUser(String domainName, String userLogin, String ipfType, String ipf) {
 		try(Connection connection = AonServletUtils.getConnection(domainName)) {
 			Integer domainId = AonServletUtils.getDomainID(domainName);
@@ -3677,6 +3761,9 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 			
 			try { enterpriseContext.setScopes(JooqWorkplace.getScopes(connection, domainId)); } 
 			catch (Exception e) { e.printStackTrace(); errorMessage += " Error al cargar ambitos."; }
+			
+			try { enterpriseContext.setContractTypes(JooqWorkplace.getContractTypes(connection, domainId)); } 
+			catch (Exception e) { e.printStackTrace(); errorMessage += " Error al cargar tipos de contratos."; }
 			
 			return enterpriseContext;
 		} catch (Exception e) {
@@ -4556,6 +4643,28 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 		try(Connection connection = AonServletUtils.getConnection(domainName)) {
 			Integer domainId = AonServletUtils.getDomainID(domainName);
 			PAYROLL.saveActivities(domainName, domainId, userLogin, activities);
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw new IllegalArgumentException(e);
+		}
+	}
+	
+	@Override
+	public void deleteCCC(String domainName, String userLogin, Integer cccId) throws IllegalArgumentException {
+		try(Connection connection = AonServletUtils.getConnection(domainName)) {
+			Integer domainId = AonServletUtils.getDomainID(domainName);
+			PAYROLL.deleteCCC(domainName, domainId, userLogin, cccId);
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw new IllegalArgumentException(e);
+		}
+	}
+	
+	@Override
+	public com.esferalia.aon.occam.api.model.EnterpriseCCC saveCCC(String domainName, String userLogin, com.esferalia.aon.occam.api.model.EnterpriseCCC ccc) throws IllegalArgumentException {
+		try(Connection connection = AonServletUtils.getConnection(domainName)) {
+			Integer domainId = AonServletUtils.getDomainID(domainName);
+			return PAYROLL.saveCCC(domainName, domainId, userLogin, ccc);
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new IllegalArgumentException(e);

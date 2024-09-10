@@ -448,6 +448,10 @@ public class SalaryDraftController extends BasicController implements ContractSa
 	@Override
 	public void onRemove(IContractPayment payment) {
 	}
+	
+	@Override
+	public void onDisable(IContractPayment payment) {
+	}
 
 	@Override
 	public void onRemove(IContractBonus payment) {

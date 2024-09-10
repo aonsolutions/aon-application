@@ -670,5 +670,31 @@ public class FiscalModel implements IFiscalModel, HasAudit {
 		return this;
 	}
 	
+	// PARA LOS APLAZAMIENTOS
+	
+	@Override
+	public int getPlazos() {
+    	return (int) ensureDetail("PLAZOS").getAmount();
+	}
+	
+	@Override
+	public FiscalModel setPlazos(int p) {
+		ensureDetail("PLAZOS").setAmount(p);
+		return this;
+	}
+	
+	// Lo pongo como String, para que sea más fácil su manejo, pues en fs_model_detail, realmente se graba como un string
+	
+	@Override
+	public String getFechaPlazo() {
+		return ensureDetail("FECHAPLAZO").getDescription();		
+	}
+	
+	@Override
+	public FiscalModel setFechaPlazo(String d) {
+		ensureDetail("FECHAPLAZO").setDescription(d);
+		return this;
+	}	
+	
 }
 

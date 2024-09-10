@@ -100,7 +100,7 @@ public class Utils {
 		header.setRazonSocial(doc.getElementById("RazonSocial").getTextContent());
 		header.setEjercicio(BigInteger.valueOf(Integer.parseInt(doc.getElementById("Ejercicio").getTextContent())));
 		header.setIdiomaCuestionario(doc.getElementById("IdiomaCuestionario").getTextContent());
-		header.setMemoriaNormalizada(doc.getElementById("MemoriaNormalizada").getTextContent().equals("True"));
+		header.setMemoriaNormalizada(doc.getElementById("MemoriaNormalizada").getTextContent().equalsIgnoreCase("True"));
 		header.setTipoCuestionario(doc.getElementById("TipoCuestionario").getTextContent());
 
 		

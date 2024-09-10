@@ -817,7 +817,7 @@ public abstract class CCC extends ResizeComposite {
 
 	protected abstract void hideMessage();
 	
-	protected abstract void showPDF(String dataURI, boolean isLaboralLife);
+	protected abstract void showPDF(String dataURI, String title, boolean isLaboralLife);
 
 	// -------------------------------------------- Footer Panel
 	
@@ -838,7 +838,7 @@ public abstract class CCC extends ResizeComposite {
 			
 			@Override
 			public void onSuccess(String dataURI) {
-				showPDF(dataURI, false);
+				showPDF(dataURI, "Trabajadores en situaci\u00f3n de alta", false);
 				hideMessage();
 			}
 			
@@ -855,7 +855,7 @@ public abstract class CCC extends ResizeComposite {
 			
 			@Override
 			public void onSuccess(String dataURI) {
-				showPDF(dataURI, false);
+				showPDF(dataURI, "Movimientos previos de trabajadores", false);
 				hideMessage();
 			}
 			
@@ -872,7 +872,7 @@ public abstract class CCC extends ResizeComposite {
 			
 			@Override
 			public void onSuccess(String dataURI) {
-				showPDF(dataURI, false);
+				showPDF(dataURI, "IDC", false);
 				hideMessage();
 			}
 			
@@ -889,7 +889,7 @@ public abstract class CCC extends ResizeComposite {
 			
 			@Override
 			public void onSuccess(String dataURI) {
-				showPDF(dataURI, true);
+				showPDF(dataURI, "Informe de Vida Laboral", true);
 				hideMessage();
 			}
 			

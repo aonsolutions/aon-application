@@ -2,10 +2,12 @@ import { AonElement } from "../components/AonElement.js";
 import { AonIconButton } from "../components/aon-icon-button.js";
 import {DomainUserRoles} from '../models/DomainUserRoles.js';
 import {AonDialogMenu} from "../components/aon-dialog-menu.js";
-import { waitEl } from "../services/utils.js";
+import { getReader, waitEl } from "../services/utils.js";
 import { MOBILE_ACTION, mobileAction, closeSession, getDomainUserRoles, uploadFileDocumental } from "../services/service.js";
 import { CONSTANT, EVENT, MATERIAL_ICONS, MSG, TAG } from '../environments/environments.js';
 import * as LS from '../services/localStorageService.js';
+import * as UA from '../services/userAgentService.js';
+
 import { AonNotification } from "./notification/aon-notification.js";
 import { AonApps } from "./aon-apps.js";
 import { AonNotificationIcon } from "./notification/aon-notification-icon.js";
@@ -17,6 +19,8 @@ import { AonMessenger } from "./messenger/aon-messenger.js";
 import { TASK_SOURCE } from "./messenger/MessengerEnums.js";
 import { AonDocumental } from "./documental/aon-documental.js";
 import { AonWarehouse } from "./warehouse/aon-warehouse.js";
+import { openCamera, openBarcode } from "../services/actionService.js";
+import { AonImageEditor } from "../components/aon-image-editor.js";
 
 import * as WAREHOUSE_OPTION from './warehouse/WarehouseOptions.js';
 
@@ -97,10 +101,22 @@ export class AonMobileMenu extends AonElement {
       if(this.SELECTED == "documental"){
         this.saveDocumentFile(files[0]);
       } else {
-        uploadInvoices(inputCamera, files).then(invoices => {
-          if(invoices && invoices.length>0) 
-            this.goInvoice(invoices[0]);
-        });
+        if(this.isBeta()) {
+          getReader(files[0]).then(file => {
+            let editor = new AonImageEditor();
+            editor.setImage("data:image/jpeg;base64,"+ file.content);
+            editor.addEventListener(EVENT.CROPPER, (e) => {
+                alert("RECORTADA!!");
+               // SUBIR IMAGEN RECORTADA A S3;
+            });
+            this.rootPanel(editor);
+          }).catch(()=>null);
+        } else {
+          uploadInvoices(inputCamera, files).then(invoices => {
+            if(invoices && invoices.length>0) 
+              this.goInvoice(invoices[0]);
+          });
+        }
       }
     });
 
@@ -313,7 +329,19 @@ export class AonMobileMenu extends AonElement {
       fn :  () => {
         if(isInvoice){
           dialog.close();
-          this.openCamera("invoice");
+          if(UA.isAndroidApp()) {
+            this.SELECTED = "invoice";
+            let ionicData = { action: MOBILE_ACTION.CAMERA, id: this.INPUT_CAMERA, selector: 'aon-new-mobile-menu' };
+            openCamera(ionicData, (result) => {
+              let editor = new AonImageEditor();
+              editor.setImage("data:image/jpeg;base64,"+ result.photo);
+              editor.addEventListener(EVENT.CROPPER, (e) => {
+                alert("RECORTADA!!");
+                // SUBIR IMAGEN RECORTADA A S3;
+              });
+              this.rootPanel(editor);
+            });
+          } else this.openCamera("invoice");
         }
       }
     };
@@ -395,7 +423,10 @@ export class AonMobileMenu extends AonElement {
   }
 
   openBarcode() {
-		mobileAction({ action: MOBILE_ACTION.BARCODE, selector: TAG.AON_MOBILE_MENU });
+    let ionicData = { action: MOBILE_ACTION.BARCODE, selector: TAG.AON_MOBILE_MENU };
+    if(UA.isAndroidApp()) {
+      openBarcode(ionicData, (result) => this.setBarcodeAction(result.code));
+    } else mobileAction(ionicData);
 	}
 
 	setBarcodeData(barcodeStr) {
@@ -406,18 +437,22 @@ export class AonMobileMenu extends AonElement {
 
 			const {text, format, cancelled} = barcodeStr;
 			if(!cancelled) {
-        console.log("delivery: " + text);
-
-        let aonComponent = new  AonWarehouse();
-        let option = WAREHOUSE_OPTION.DELIVERY;
-        option.delivery = text;
-        aonComponent.setOption(option);
-        this.rootPanel(aonComponent);
+        this.setBarcodeAction(text);
 			}
 		} catch (error) {
 			this.showError(error);
 		}
 	}
+
+  setBarcodeAction(code) {
+    console.log("delivery: " + code);
+
+    let aonComponent = new  AonWarehouse();
+    let option = WAREHOUSE_OPTION.DELIVERY;
+    option.delivery = code;
+    aonComponent.setOption(option);
+    this.rootPanel(aonComponent);
+  }
 
 
   add() {
@@ -477,18 +512,31 @@ export class AonMobileMenu extends AonElement {
 
 	async openCamera(type) {
     this.SELECTED = type;
-		const isApp = await mobileAction({ action: MOBILE_ACTION.CAMERA, id: this.INPUT_CAMERA, selector: 'aon-new-mobile-menu' });
-		if (!isApp) this.getElement(this.INPUT_CAMERA).click();
+    if(this.isBeta()) this.getElement(this.INPUT_CAMERA).click();
+    else {
+      const isApp = await mobileAction({ action: MOBILE_ACTION.CAMERA, id: this.INPUT_CAMERA, selector: 'aon-new-mobile-menu' });
+		  if (!isApp) this.getElement(this.INPUT_CAMERA).click();
+    }
 	}
 
   receiveAppImage(file) {
     if(this.SELECTED == "documental"){
       this.saveDocumentFile(file);
     } else {
-      uploadInvoice(file).then(f=>{
-        this.goInvoice(f);
-        this.showMessage("Factura registrada");
-      });
+        if(this.isBeta()) {
+          let editor = new AonImageEditor();
+          editor.setImage("data:image/jpeg;base64,"+ file.content);
+          editor.addEventListener(EVENT.CROPPER, (e) => {
+            alert("RECORTADA!!");
+            // SUBIR IMAGEN RECORTADA A S3;
+          });
+          this.rootPanel(editor); 
+        } else {
+          uploadInvoice(file).then(f=>{
+            this.goInvoice(f);
+            this.showMessage("Factura registrada");
+            });
+        }
     }
 	}
 

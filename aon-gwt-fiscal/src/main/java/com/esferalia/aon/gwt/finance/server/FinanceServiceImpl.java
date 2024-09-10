@@ -9,6 +9,7 @@ import com.esferalia.aon.occam.api.ACCOUNTING;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.FBatchParams;
 import com.esferalia.aon.occam.api.model.FinanceParams;
+import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.attachment.AttachType;
 import com.esferalia.aon.occam.api.model.finance.FBatch;
 import com.esferalia.aon.occam.api.model.finance.Finance;
@@ -29,6 +30,11 @@ public class FinanceServiceImpl extends AonStatelessRemoteServiceServlet impleme
 		return AON.getInvoiceNextNumber(domainName, domainId,user, types, series);
 	}
 	
+	@Override
+	public Integer getInvoiceNextNumber(Occam occam, Byte[] types, String series) throws AonCoreException {
+		return AON.getInvoiceNextNumber(occam, types, series);
+	}
+
 	@Override
 	public LinkedList<FinanceTracking> getFinanceTracking(String domainName, int domainId, String user, Integer finance)
 			throws AonCoreException {

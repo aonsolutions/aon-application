@@ -10,6 +10,7 @@ import { AonNewLogin } from 'aonsolutions/modules/login/aon-new-login.js';
 
 import { AonNewInput } from "aonsolutions/components/aon-new-input.js";
 import { AonParent } from 'aonparent';
+import { AonMobileParent } from 'aonsolutions/modules/company/aon-mobile-parent.js';
 
 
 export class AonModule extends AonElement {
@@ -64,7 +65,9 @@ export class AonModule extends AonElement {
 		await this.checkLogin();
 		if(LS.getToken()){
 			this.buildHome();
-			this.rootPanel(new AonParent());
+			this.rootPanel(this.isMobile()
+				? new AonMobileParent()
+				: new AonParent());
 		} else {
 			this.buildLogin();
 		}

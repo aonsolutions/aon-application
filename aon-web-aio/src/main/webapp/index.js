@@ -34,38 +34,60 @@ const load = () => {
     LS.setAonSolutions(true);
     // TODO: Skip reload
 	LS.set(LS.NEW_THEME, true);
-    // TODO: loadScriptFirebase();
-    document.body.appendChild(new AonModule());
-    loadScripts(); 
+
+	loadScripts(); 
+	loadTheme().then(
+	() => { 
+		favicon(); 
+		document.body.appendChild(new AonModule());
+	},
+	(err) => {
+		document.body.appendChild(new AonModule());
+	}  
+	);  
+
+	// TODO: loadScriptFirebase();
     window.loadScripts = () => loadScripts();
-    loadTheme().then(() => favicon() );  
 
 	console.debug("Fantastic aonSolutions loaded :-).")
 }
 
 export const loadTheme = () => {
-    let themeUrl = getParam("theme") || LS.getTheme() || LS.AON_THEME; 
-    return loadLink(themeUrl, 'stylesheet', 'text/css');
+    let themeUrl = getParam("theme") || LS.getTheme() || getCookie("theme") || LS.AON_THEME; 
+	return new Promise((resolve, reject) => {
+		try {
+			const aonThemeSpan = document.createElement(TAG.SPAN);
+			aonThemeSpan.className = 'aonTheme';
+			aonThemeSpan.style.display = 'none';
+			document.body.appendChild(aonThemeSpan);
+			
+			loadLink(themeUrl, 'stylesheet', 'text/css');
+			let tries = 0;
+			let interval = setInterval(() => {
+				const aonThemeStyle = getComputedStyle(aonThemeSpan);
+				const aonThemeProperty = aonThemeStyle.getPropertyValue('--aon-theme');
+				if ( ( tries++ > 5 ) || aonThemeProperty ) {
+					resolve();
+					aonThemeSpan.remove();
+					clearInterval(interval);
+				}
+			}, 200);
+			
+		} catch ( err ) {
+			reject(new Error(`Something was wrong with theme '${themeUrl}'`));
+		}
+	});
 }
 
 
 const favicon = () => {
-	loadLink('', 'icon', 'image/x-icon')
-	.then( faviconLink  => {
-		const aonFavicon = document.createElement('span');
-		aonFavicon.className = 'aonFavicon';
-		aonFavicon.style.display = 'none';
-		document.body.appendChild(aonFavicon);
-		
-		setTimeout(function(){
-			const aonFaviconStyle = getComputedStyle(aonFavicon);
-			const backgroundImage = aonFaviconStyle.backgroundImage;
-			const href = /url\(["']?([^"']*)["']?\)/.exec(backgroundImage)[1];
-			aonFavicon.remove();
-			faviconLink.href = href;
-		}, 200);
-
-	});
+	let favicon = getComputedStyle(document.body).getPropertyValue('--favicon');
+	if ( favicon ) {
+		loadLink('', 'icon', 'image/x-icon')
+		.then( faviconLink  => {
+			faviconLink.href = favicon;
+		});
+	}
 
 }
 
@@ -131,6 +153,15 @@ const getParam = (paramName) => {
 	return searchParams.get(paramName);
 }
 
-  
+const getCookie = (cookieName) => {
+	const cookieValue = decodeURIComponent(document.cookie)
+    .split(';')
+	.map((row) => row.trimStart() )
+    .find((row) => row.startsWith(`${cookieName}=`))
+    ?.split('=')[1];
+	
+	return cookieValue;  
+} 
+ 
 load();
 

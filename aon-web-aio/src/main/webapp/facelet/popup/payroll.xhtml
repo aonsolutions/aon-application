@@ -364,6 +364,19 @@
 								</f:facet>
 								<aon:div styleClass="aon-direct-access-list">
 									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="gwt_fbatchPaymentPayroll"
+											action="gwt_fbatchPaymentPayroll"
+											title="#{bundle.payroll_fbatch_payment_module} (new)"
+											value="#{bundle.payroll_fbatch_payment_module} (new)" />
+									</aon:div>
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="gwt_financePayroll"
+											action="gwt_financePayroll"
+											title="#{bundle.payroll_finance_payment_module} (new)"
+											value="#{bundle.payroll_finance_payment_module} (new)" />
+									</aon:div>
+									<!-- 		
+									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="fbatchPayment-payroll"
 											rendered="#{actionDenied.renderedOption('fbatch_search-Payroll')}"
 											action="fbatch_search-Payroll"
@@ -380,6 +393,7 @@
 											actionListener="#{finance.onEditSearchPayroll}"
 											value="#{bundle.payroll_finance_payment_module}" />
 									</aon:div>
+									-->
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="expenseInvoice-payroll"
 											rendered="#{actionDenied.renderedOption('expenseInvoice_search-payroll')}"
@@ -387,22 +401,10 @@
 											actionListener="#{expenseInvoice.onEditSearch}"
 											value="#{bundle.finance_expense_invoice_management_module}" />
 									</aon:div>
-									<aon:if test="#{domainSwitcher.alphaUser}">
-										<aon:div styleClass="aon-direct-access-list-element">
-											<aon:commandLink id="gwt_financePayroll"
-												action="gwt_financePayroll"
-												title="#{bundle.payroll_finance_payment_module} (new)"
-												value="#{bundle.payroll_finance_payment_module} (new)" />
-										</aon:div>
-									</aon:if>
-									<aon:if test="#{domainSwitcher.alphaUser}">
-										<aon:div styleClass="aon-direct-access-list-element">
-											<aon:commandLink id="gwt_fbatchPaymentPayroll"
-												action="gwt_fbatchPaymentPayroll"
-												title="#{bundle.payroll_fbatch_payment_module} (new)"
-												value="#{bundle.payroll_fbatch_payment_module} (new)" />
-										</aon:div>
-									</aon:if>
+									<!-- aon:if test="#{domainSwitcher.alphaUser}" -->
+									<!-- /aon:if -->
+									<!-- aon:if test="#{domainSwitcher.alphaUser}" -->
+									<!-- /aon:if -->
 								</aon:div>
 							</aon:panelGrid>
 						</aon:panelGroup>
@@ -411,6 +413,8 @@
 					<!-- 
 							SEPE
 					 -->
+					 
+					 <!-- 
 					<aon:panelGroup>
 						<aon:panelGrid id="group_payroll_contrata_batch"
 							rendered="#{actionDenied.renderedGroup('group_payroll_contrata_batch')}"
@@ -448,6 +452,8 @@
 							</aon:div>
 						</aon:panelGrid>
 					</aon:panelGroup>
+					
+					-->
 
 					<!--
 						AUXILIARS 

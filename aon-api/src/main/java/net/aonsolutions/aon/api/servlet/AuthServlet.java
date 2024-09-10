@@ -54,6 +54,8 @@ public class AuthServlet extends AonApiHttpServlet{
 				User user = AON.getUser(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), 
 						f -> f.getIdProperty().eq(th.getUserId()));
 				auth = AON_SOLUTIONS.getAuth(user.getAuth().getAuth());	
+			} else if(api.getUser().hasAuth() && !api.getUser().getAuth().isEmpty()) {
+				auth = api.getUser().getAuth();
 			} else {
 				aonToken = SECURITY.getAonToken(api.getToken());
 // TODO AUTH with dynamodb

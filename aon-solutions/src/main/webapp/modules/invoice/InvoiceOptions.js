@@ -158,6 +158,12 @@ import * as UA from '../../services/userAgentService.js';
     icon: MATERIAL_ICONS.PAYMENT
   }
 
+  export const FISCAL_DRAFT = {
+    id: "fiscalModelDraft",
+    name: "Precálculo Impuestos",
+    icon: MATERIAL_ICONS.PAYMENT
+  }
+
   export const INVEST = {
     id: CONSTANT.INVEST_ASSET.initCap(),
     name: MSG.INVEST_ASSET,
@@ -178,7 +184,7 @@ import * as UA from '../../services/userAgentService.js';
     id: CONSTANT.MANAGEMENT.initCap(),
     title: MSG.MANAGEMENT,
     name: MSG.MANAGEMENT,
-    options:[ REGISTRY, CONCEPTS, CHARGES_PAYMENTS, VAT_PANEL, RETENTION_PANEL ]
+    options:[ REGISTRY, CONCEPTS, CHARGES_PAYMENTS, /*VAT_PANEL, RETENTION_PANEL,*/ FISCAL_DRAFT ]
     //  UA.isMobile() ? 
       
       // : [ REGISTRY, PRODUCT ]

@@ -31,6 +31,8 @@ import { AonAutosizeTextarea } from "../../../components/aon-autosize-textarea.j
 import { DataAttachSource } from "../../../models/DataAttachSource.js";
 import { FISCAL } from "../../../services/app.js";
 import * as LS from "../../../services/localStorageService.js";
+import { AonNumber } from "../../../components/aon-number.js";
+import { AonDate } from "../../../components/aon-date.js";
 
 export class AonTax extends AonElement {
   ERROR_TEMPLATE_START =
@@ -130,17 +132,17 @@ export class AonTax extends AonElement {
     const aonTable = this.getElement(this.TABLE_ID);
     if (aonTable) {
       aonTable.removeColumns();
-      aonTable.addColumn("", "string", "lettersHtml", "6%");
-      aonTable.addColumn("Modelo", "", "modelText", "20%");
+      aonTable.addColumn("", "string", "lettersHtml", "10%");
+      aonTable.addColumn("Modelo", "", "modelText", "auto");
       aonTable.addColumn("Hacienda", "", "hacienda", "10%");
       aonTable.addColumn("Ejercicio", "", "year", "10%");
       aonTable.addColumn("Periodo", "", "periodText", "10%");
       if (LS.isNewTheme()) {
-        aonTable.addColumn("Estado", "string", "statusHtml", "10%");
+        aonTable.addColumn("Estado", "string", "statusHtml", "12%");
       } else {
-        aonTable.addColumn("Estado", "", "statusText", "10%");
+        aonTable.addColumn("Estado", "", "statusText", "12%");
       }
-      aonTable.addColumn("Importe", "number", "resultFormat", "8%");
+      aonTable.addColumn("Importe", "number", "resultFormat", "15%");
       aonTable.addColumn("", "icon", "icon", "5%");
 
       try {
@@ -212,9 +214,11 @@ export class AonTax extends AonElement {
     let filter = applicationParent._filter;
     let datos = await applicationParent.getModelsFiscal();
 
-    if (filter.period && filter.period.includes("future")) {
+    if (filter.estimationFilter) {
       const estimationModels = await getEstimationModelsFiscal(filter.estimationFilter);
-      let estimationModelDatos = estimationModels.filter((estimationModel) => estimationModel.amount && estimationModel.amount > 0).map((estimationModel) => this.formatEstimationModel(estimationModel, filter.estimationFilter))
+      console.log("estimationModels");
+      console.log(estimationModels);
+      let estimationModelDatos = estimationModels.filter((estimationModel) => estimationModel.amount && estimationModel.amount != 0).map((estimationModel) => this.formatEstimationModel(estimationModel, filter.estimationFilter))
       return estimationModelDatos;
     } else {
       if (filter.year) {
@@ -226,9 +230,13 @@ export class AonTax extends AonElement {
       }
 
       if (filter.model) {
-        datos = datos.filter(({ model }) => model == filter.model);
+        datos = datos.filter(({ model, administration }) => FiscalUtils.getModelNumber(administration, model) == filter.model);
       }
     }
+
+    console.log("AON_TAX");
+    console.log("getFiscalModels");
+    console.log(datos);
 
     return datos;
   }
@@ -259,6 +267,7 @@ export class AonTax extends AonElement {
       hacienda : model.hacienda, // Alava, AEAT...
       result : model.amount,
       statusHtml,
+      lettersHtml : `<div style="font-weight: bold;">Precálculo</div>`,
       statusText : "Borrardor",
       newModel
     };
@@ -321,21 +330,45 @@ export class AonTax extends AonElement {
     divTextTwo.textContent = resp.resultFormat;
     divOne.appendChild(divTextTwo);
     div.appendChild(divOne);
-
-    if (resp.typeText) {
-      const divK = this.createElement(TAG.DIV);
-      divK.classList.add("aonFlexBetween", "colorGrey", "aonFontWeight-700");
-      divK.style.margin = "20px 0";
-      const divT = this.createElement(TAG.DIV);
-      divT.innerHTML = `${MSG.TYPE}: <span style="color:black;"> ${resp.typeText}</span>`;
-      divK.appendChild(divT);
-      div.appendChild(divK);
-    }
+    
+    // Esto no aparece en el modelo 303 a ingresar, pues en el 303 se deja elegir el tipo de ingreso que se quiere hacer (para poder indicar aplazamiento) 
+    if (resp.model != "IVA" || resp.result <= 0)
+	    if(resp.typeText){
+	      const divK =  this.createElement(TAG.DIV);
+	      divK.classList.add("aonFlexBetween", "colorGrey", "aonFontWeight-700");
+	      divK.style.margin = "20px 0";
+	      const divT =  this.createElement(TAG.DIV);
+	      divT.innerHTML = `${MSG.TYPE}: <span style="color:black;"> ${resp.typeText}</span>`;
+	      divK.appendChild(divT);
+	      div.appendChild(divK);
+	    }
 
     //---FORM------
     const form = this.createElement(TAG.FORM);
     form.id = `${this.id}Form`;
     div.appendChild(form);
+    
+    // Para el Modelo 303 a ingresar, se deja elegir el tipo de ingreso
+    if (resp.model == "IVA" && resp.result > 0) {
+	    let types = [
+			{ value: 'DEPOSIT', name: 'Ingreso'}, 
+			{ value: 'BANK', name: 'Domiciliación'}, 
+			{ value: 'DEPOSIT_CCT', name: 'Ingreso a anotar en CCT'},
+			{ value: 'DEFERRAL', name: 'Solicitud de aplazamiento'}
+		];
+			
+	    const aonSelectTipo = new AonSelect();
+	    aonSelectTipo.name = "tipodec";
+	    aonSelectTipo.id = "tipodec";
+	    aonSelectTipo.title = "Tipo";
+	    aonSelectTipo.setOptions(types)    
+	    if (resp.type) aonSelectTipo.value = resp.type;
+	    aonSelectTipo.addEventListener(EVENT.SELECT, () => {
+					resp.type = aonSelectTipo.value;
+					this.visibleFields(resp);
+				});
+	    form.appendChild(aonSelectTipo);
+    }
 
     const aonSelect = new AonSelect();
     aonSelect.name = "iban";
@@ -351,6 +384,8 @@ export class AonTax extends AonElement {
     aonInputId.value = resp.id;
     aonInputId.visible = false;
     form.appendChild(aonInputId);
+    
+    // NRC
 
     const divNrc = this.createElement(TAG.DIV);
     divNrc.hidden = true;
@@ -367,7 +402,31 @@ export class AonTax extends AonElement {
     aonInputNrc.type = "text";
     if (resp.nrc) aonInputNrc.value = resp.nrc;
     divNrc.appendChild(aonInputNrc);
-
+    
+    // DATOS APLAZAMIENTO
+    
+    const divAplazamiento = this.createElement(TAG.DIV);
+    divAplazamiento.hidden = true;
+    divAplazamiento.className= "aon-margin-0";
+    divAplazamiento.id= "divAplazamiento";
+    form.appendChild(divAplazamiento);
+    
+    const aonInputPlazos = new AonNumber();
+    aonInputPlazos.className = "aonWidth75";
+    aonInputPlazos.id = "plazos";
+    aonInputPlazos.description = "Número de Plazos";
+    if (resp.plazos) aonInputPlazos.value = resp.plazos;  
+    divAplazamiento.appendChild(aonInputPlazos);
+    
+    const aonInputFechaPlazo = new AonDate();
+    aonInputFechaPlazo.className = "aonWidth75";
+    aonInputFechaPlazo.id = "fechaPlazo";
+	aonInputFechaPlazo.title = "Fecha Primer Plazo";
+	aonInputFechaPlazo.readonly = ("CUSTOMER_CHECK"!==resp.status);	
+	divAplazamiento.appendChild(aonInputFechaPlazo);
+		
+    // CERTIFICADO ELECTRONICO
+    
     const aonSelect2 = new AonSelect();
     aonSelect2.name = "certi";
     aonSelect2.id = "certi";
@@ -403,7 +462,7 @@ export class AonTax extends AonElement {
 
     // Si esta configurado presentacion automatica del modelo, mostrar texto informandolo (tambien se muestra si está en entorno de pruebas de la AEAT)
     if (resp.presModelAuto == 1) {
-      const divTextPres = this.createElement(TAG.DIV);
+      const divTextPres = this.createElement(TAG.DIV, "divTextPres");
       divTextPres.style.marginTop = 6;
       divTextPres.style.textAlign = "center";
       divTextPres.style.fontWeight = "bold";
@@ -420,10 +479,10 @@ export class AonTax extends AonElement {
     divMain.appendChild(div);
 
     // Boton Rechazar
-    const buttonCancel = dialog.addCancelAction(() => {
-      this.visibleFields({ type: "d" });
-      const certi = this.getElement("certi");
-      if (certi) certi.hidden = true;
+    const buttonCancel = dialog.addCancelAction(() =>{
+      this.visibleFields(null);
+      const tipodec = this.getElement('tipodec');
+      if (tipodec) tipodec.disabled = true;
       div.innerHTML = "";
       textArea = new AonAutosizeTextarea();
       textArea.name = "reasonReject";
@@ -481,6 +540,12 @@ export class AonTax extends AonElement {
       if (certi.getOptions().length == 1) {
         certi.value = certi.getOptions()[0].value;
       }
+		
+	if (resp.fechaPlazo) {
+		const fechaPlazo = this.getElement('fechaPlazo');		
+		fechaPlazo.value = resp.fechaPlazo;			
+	}	
+		
     });
   }
 
@@ -489,52 +554,75 @@ export class AonTax extends AonElement {
   }
 
   getFormValues() {
-    let banks = this.getApplicationParent().BANKS;
-    let formObj = serializeForm(this.getElement(`${this.id}Form`));
-    if (!isEmptyObject(banks) && formObj.iban) {
-      const bankObj = banks.find(
-        (bank) => this.replaceAllPoint(bank.bank_account) == formObj.iban
-      );
-      if (bankObj) {
-        formObj["bankAlias"] = bankObj.alias;
-        formObj["bic"] = bankObj.bic;
-      }
-    }
 
-    const nrc = this.getElement("nrc");
-    formObj["nrc"] = nrc.value;
-
-    const certi = this.getElement("certi");
-    formObj["certi"] = certi.value;
-
-    return formObj;
+      let banks = this.getApplicationParent().BANKS;
+      let formObj = serializeForm(this.getElement(`${this.id}Form`));
+      if(!isEmptyObject(banks) && formObj.iban){
+        const bankObj = banks.find(bank => this.replaceAllPoint(bank.bank_account) == formObj.iban);
+        if(bankObj){
+          formObj["bankAlias"] = bankObj.alias;
+          formObj["bic"] = bankObj.bic;
+        } 
+      } 
+      
+      const nrc = this.getElement('nrc');
+      formObj["nrc"] = nrc.value;      
+      
+      const certi = this.getElement('certi');
+      formObj["certi"] = certi.value;
+      
+      const plazos = this.getElement('plazos');
+      formObj["plazos"] = plazos.value;      
+      const fechaPlazo = this.getElement('fechaPlazo');
+      formObj["fechaPlazo"] = fechaPlazo.value;      
+      
+      return formObj;
+      
   }
 
-  visibleFields({ type }) {
-    if (type) {
-      let iban = this.getElement("iban");
-      let divNrc = this.getElement("divNrc");
-      let ibanHidden = true;
-      let nrcHidden = true;
-      switch (type) {
+  visibleFields(resp){
+	
+    let iban = this.getElement("iban");
+    let divNrc = this.getElement("divNrc");
+    let divAplazamiento = this.getElement("divAplazamiento");
+    let certi = this.getElement('certi');
+    let divTextPres = this.getElement('divTextPres');
+    let ibanHidden = true;      
+    let nrcHidden = true;
+    let aplazamientoHidden = true;
+    let certiHidden = true;      
+	
+    if (resp) {
+      certiHidden = (resp.presModelAuto==0 || "CUSTOMER_CHECK"!=resp.status);
+      switch(resp.type){		
         case CONST_FISCAL.DEPOSIT:
           nrcHidden = false;
-          break;
+        break;
         case CONST_FISCAL.BANK:
         case CONST_FISCAL.PAYBACK:
           ibanHidden = false;
-          break;
-      }
-      iban.hidden = ibanHidden;
-      divNrc.hidden = nrcHidden;
+        break;
+		case CONST_FISCAL.DEFERRAL:
+          ibanHidden = false;
+          aplazamientoHidden = false;
+          certiHidden = true;
+        break;        
+      }      
     }
+    
+    iban.hidden = ibanHidden;
+    divNrc.hidden = nrcHidden;
+    divAplazamiento.hidden = aplazamientoHidden;      
+    if (certi) certi.hidden = certiHidden;
+    if (divTextPres) divTextPres.hidden = certiHidden;
+    
   }
 
   buildPrint(res) {
     if (!["FINISHED", "SENT"].includes(res.status)) return;
 
     res.icon = MATERIAL_ICONS.PDF;
-    res.icon_color = "grey";
+    res.icon_color = "var(--aonTaxBuildPrintRes)";
     res.fn = () => this.getPdf(res);
   }
 

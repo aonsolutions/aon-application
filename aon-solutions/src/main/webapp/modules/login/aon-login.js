@@ -18,11 +18,9 @@ import { AonDialog } from "../../components/aon-dialog.js";
 import { AonToast } from "../../components/aon-toast.js";
 import { AonDialogMenu } from "../../components/aon-dialog-menu.js";
 import { Language } from "../../models/Language.js";
-import * as COLORS from "../../environments/colors.js";
-import { AonNewInput } from "../../components/aon-new-input.js";
-import { AonEmail } from "../../components/aon-email.js";
 import { AonMobileParent } from "../company/aon-mobile-parent.js";
 import { AonParent } from "aonparent";
+import { createEmail, createInput } from "../../components/CreateComponent.js";
 
 export class AonLogin extends AonElement {
   tag;
@@ -105,18 +103,14 @@ export class AonLogin extends AonElement {
     aonLoader.id = 'aonLoginLoader';
     divContent.appendChild(aonLoader);
 
-    let userInput = this.createAonElement(
-      LS.isNewTheme() ? new AonEmail() : new AonInput()
-      , 'aonLoginUser', MSG.USER);
+    let userInput =  createEmail('aonLoginUser', MSG.USER);
     // userInput.setRequired(true);
     userInput.addEventListener(EVENT.KEYUP, () => {
       this.getElement('aonLoginMagicLink').setDisabled(!userInput.value.includes('@')); 
     })
     divContent.appendChild(userInput);
 
-    let passwordInput = this.createAonElement(
-      LS.isNewTheme() ? new AonNewInput() : new AonInput()
-      , 'aonLoginPassword', MSG.PASSWORD);
+    let passwordInput = createInput('aonLoginPassword', MSG.PASSWORD);
     // passwordInput.setRequired(true);
     passwordInput.type = 'password';
     divContent.appendChild(passwordInput);

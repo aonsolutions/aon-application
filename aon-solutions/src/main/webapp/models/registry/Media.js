@@ -18,7 +18,7 @@ export class Media {
            this.registry = media.registry;
            this.media = media.media;
            this.value = media.value;
-           this.comment = media.comment;
+           this.comment = media.comment || '';
            this.administrative = media.administrative;
            this.commercial = media.commercial;
            this.technical = media.technical;
@@ -26,6 +26,7 @@ export class Media {
            this.removed = media.removed || false;
         } else {
             this.value = '';
+            this.comment = '';
             this.administrative = true;
             this.commercial = true;
             this.technical = true;  
@@ -98,6 +99,7 @@ export class Media {
     }
 
     setComment(comment) {
+        this.setDirty(true);
         this.comment = comment; 
         return this;
     }

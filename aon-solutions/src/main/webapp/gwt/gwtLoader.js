@@ -62,10 +62,18 @@
 	}
 
 	export const iLoad = (gwtOption, rootPanel) => {
-		if(gwtOption.subEntryPoint) loadEntryPointsFunctions(gwtOption);
-		window.drawChartsCallback = () => {};
-		iStartModule(gwtOption.module, gwtOption.entryPoint, rootPanel);
+		iStartModule(gwtOption.module, gwtOption.entryPoint, gwtOption.subEntryPoint, rootPanel, document => {
+			gwtOption.javaScripts?.forEach( (script) =>  addScript(document, "text/javascript", script))				
+		});
 	}
+	
+	const addScript = (document, type,  src) => {
+		let script = document.createElement(TAG.SRIPT);
+		script.src = src;
+		script.type = type;
+		document.head.appendChild(script);
+	}
+	
 	
 	const loadEntryPointsFunctions = (gwtOption) => {
 		window.getSubEntryPoint = () => gwtOption.subEntryPoint;
@@ -107,7 +115,7 @@
 		}
 	}
 
-	export const iStartModule = (module, entrypoint, rootPanel) => {
+	export const iStartModule = (module, entrypoint, subEntryPoint, rootPanel, customize) => {
 		let panel = rootPanel || 'rootPanel';
 		if(rootPanel) {
 			localStorage.setItem('rootPanel', rootPanel);
@@ -126,12 +134,21 @@
 			iframe.src = 'about:blank';
 			iframe.onload = () => {
 				
-				// loadDomainFunctions
+
 				let iwindow = iframe.contentWindow;			
+				
+				iwindow.drawChartsCallback = () => {};
+				iwindow.getSubEntryPoint = () => subEntryPoint;
+
+				// loadDomainFunctions
 				iwindow.getCurrentDomainNameURL = () => LS.getDomainName();
 				iwindow.getCurrentDomainName = () => LS.getDomainName();
 				iwindow.getCurrentDomain = () => LS.getDomainId();
 				iwindow.getCurrentUser = () => LS.getDomainLogin();
+				
+
+				
+
 
 				// inject 'gwt' script 
 				let idocument = iframe.document || iframe.contentDocument || iframe.contentWindow.document;		
@@ -146,6 +163,12 @@
 					}
 					
 				}	
+				
+				customize?.(idocument);				
+
+				let rootPanel = idocument.createElement(TAG.DIV);
+				rootPanel.id = 'rootPanel';
+				idocument.body.appendChild(rootPanel);
 
 				let script = idocument.createElement(TAG.SRIPT);
 				script.type = "text/javascript";
@@ -182,13 +205,12 @@
 				`;
 
 				idocument.head.appendChild(script);
-/*	
-				let gwtScript = idocument.createElement(TAG.SRIPT);
-				gwtScript.type = "text/javascript";
-				gwtScript.defer = "true";
-				gwtScript.src = `${module}/${module}.nocache.js?entryPoint=${entrypoint}&id=${getRamdomId()}`;
-				idocument.head.appendChild(gwtScript);
-*/				
+
+				let aonRichCssLink = idocument.createElement('link');
+				aonRichCssLink.rel= 'stylesheet';
+				aonRichCssLink.type= 'text/css';
+				aonRichCssLink.href = '/aonResource/aon-richCss.css';
+				idocument.head.insertBefore(aonRichCssLink, idocument.head.firstChild);
 				
 				fetch('css/gwt.css')
 				.then(response => response.text())

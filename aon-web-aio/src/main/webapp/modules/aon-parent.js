@@ -45,7 +45,7 @@ export class AonParent extends AonElement {
 		this.init({id:'active', active: true, domainActive:true});
 		let searchBox = this.getElement('aonHeaderSearchBox');
 		searchBox.addEventListener(EVENT.KEYUP, () => {
-			this.init({value: searchBox.value});
+			this.select({value:searchBox.value});
 			this.addFilter({value:searchBox.value});
 		});
 	}
@@ -53,10 +53,10 @@ export class AonParent extends AonElement {
 	init(filter) {
 		//TODO: aonParent.startLoader();
 		this.build();
-		this.select(filter);
+		this.select(filter, companies => this.decorateTabs(companies) );
 	}
 
-	select(filter) {
+	select(filter, callback) {
 		this.filter = filter;
 		
 		this.clearSelectedTab(this._filter);		
@@ -72,6 +72,7 @@ export class AonParent extends AonElement {
 				this.page = 1;
 				this.cleanCompanies();
 				this.buildCompanies(companies.filter(f => this.companyFilter(f, filter)).slice(0, 30));
+				callback?.(companies);
 			}	
 		}, () => closeSession());
 
@@ -80,6 +81,37 @@ export class AonParent extends AonElement {
 		}
 	}
 	
+	decorateTabs(companies) {
+		let companyFilterTabs = [{
+				id: 'active',
+				active: true,
+				name: MSG.ACTIVES,
+			}, {
+				id: 'inactive',
+				inactive: true,
+				name: MSG.INACTIVES
+			}, {
+				id: 'shared',
+				shared: true,
+				name: MSG.SHARED
+			}/*, {
+				id: 'consultancy',
+				entorno:true,
+				name: MSG.ENVIRONMENT
+			},{
+				id: 'office',
+				despacho:true,
+				name: MSG.OFFICE
+			}*/
+		];	
+		for( let companyFilterTab of companyFilterTabs ){
+			let companyFilterTabCompanies = companies.filter(f => this.companyFilter(f, companyFilterTab));
+			let companyFilterTabSpan = this.getElement(`${this.COMPANY_FILTER_TAB}-${companyFilterTab.id}`);
+			companyFilterTabSpan.innerHTML = `${companyFilterTab.name} (${companyFilterTabCompanies.length})`;
+		}
+
+	}
+
 	selectTab(filter) {
 		this.getElement(`${this.COMPANY_FILTER_TAB}-${filter?.id}`)?.classList.add(CSS.AON_TAB_ITEM_TEXT_SELECTED);
 	}
@@ -87,7 +119,7 @@ export class AonParent extends AonElement {
 	clearSelectedTab(filter) {
 		this.getElement(`${this.COMPANY_FILTER_TAB}-${filter?.id}`)?.classList.remove(CSS.AON_TAB_ITEM_TEXT_SELECTED);
 	}
-
+	
 	companyFilter(f, q) {
 		if(!q) {
 			q = {
@@ -158,7 +190,7 @@ export class AonParent extends AonElement {
 		application.updateSidenavCount('PendingInvoices', inboxCount);
 		application.updateSidenavCount('RejectedInvoices', rejectedCount);
 	}
-
+	
 	build() {
 		let parentDiv = this.createDiv();
 		parentDiv.className = CSS.AON_PARENT_DIV;
@@ -171,28 +203,26 @@ export class AonParent extends AonElement {
 		welcomeSpan.style.fontSize = '24px';
 		welcomeSpan.style.fontWeight = '600';
 		welcomeDiv.appendChild(welcomeSpan);
-		
-
+	
 		let companyDiv = this.createDiv();
 		companyDiv.className = CSS.AON_COMPANY_DIV;
-
+	
 		let companyTitleDiv = this.createDiv();
 		companyTitleDiv.className = CSS.AON_COMPANY_TITLE_DIV;
-
+	
 		let userOption = new AonDialogMenu();
 		userOption.id = 'aonCompanyDialogOption';
 		this.appendChild(userOption);
-
+	
 		let companyTitleSpan = this.createSpan();
 		companyTitleSpan.innerHTML = MSG.COMPANY_SELECTION;
-		companyTitleSpan.style.fontSize = '16px';
-		companyTitleSpan.style.fontWeight = '600';
+		companyTitleSpan.classList.add("aonCompanyTitleSpan");
 		companyTitleDiv.appendChild(companyTitleSpan);
-		
-		
+	
 		let companyFilterTabDiv = this.createDiv();
 		companyFilterTabDiv.id = this.COMPANY_FILTER_TAB;
 		companyFilterTabDiv.className = CSS.AON_TAB;
+	
 		let filterOptions = [{
 				id: 'active',
 				name: MSG.ACTIVES,
@@ -220,58 +250,80 @@ export class AonParent extends AonElement {
 				fn: () => this.select({id: 'office', despacho:true, type:"OFFICE"})
 			}
 		];	
+	
 		for( let filterOption of filterOptions ){
 			let companyFilterTabA = this.createElement(TAG.A);
 			companyFilterTabA.className = CSS.AON_TAB_ITEM;
 			companyFilterTabA.addEventListener(EVENT.CLICK, (ev) => filterOption.fn(ev) );
-
+	
 			let companyFilterTabSpan = this.createElement(TAG.SPAN);
 			companyFilterTabSpan.innerHTML = filterOption.name; 
 			companyFilterTabSpan.className = CSS.AON_TAB_ITEM_TEXT;
 			companyFilterTabSpan.id = `${this.COMPANY_FILTER_TAB}-${filterOption.id}`; 
 			companyFilterTabA.appendChild(companyFilterTabSpan);
-
+	
 			companyFilterTabDiv.appendChild(companyFilterTabA);	
 		}
-
+	
 		companyDiv.appendChild(companyTitleDiv);
 		companyDiv.appendChild(companyFilterTabDiv);
-		
+	
 		let ul = this.createElement(TAG.UL);
 		ul.id = "UlCompanies";
 		ul.classList.add(CSS.AON_UL);
 		ul.classList.add(CSS.NO_SCROLLBAR);
-		ul.style.overflowY = 'auto';
-		ul.style.maxHeight = '700px';
+		ul.style.overflowY = 'auto';		
 		ul.style.width = "100%";
-		
+	
 		companyDiv.appendChild(ul);
 		ul.addEventListener("scroll", () => {
-			let scrollTop = ul.scrollTop;
-			let offsetHeight = ul.offsetHeight;
-			let physicalSize = ul.scrollHeight;
-			let maxScrollPosition = physicalSize - offsetHeight;
-
-			if (scrollTop >= maxScrollPosition) {
+			let scrollTop = ul.scrollTop;					
+			let offsetHeight = ul.offsetHeight; 					
+			let scrollHeight = ul.scrollHeight;	
+			
+			// load more before reach end 
+			if ( ( scrollTop +  offsetHeight ) >= ( 0.75 * scrollHeight) ) {
 				this.loadMore();
 			}
 		});
-		
+	
 		parentDiv.appendChild(welcomeDiv);
 		parentDiv.appendChild(companyDiv);		
-
-		
+	
+		const interval = setInterval(() => {
+			let totalBottom = this.getTotalBottom(ul);
+			let totalOffsetTop = this.getTotalOffsetTop(ul);
+			if ( totalOffsetTop  ) {
+				clearInterval(interval);
+				ul.style.maxHeight = `calc(100vh - ${totalOffsetTop + totalBottom }px)`; 
+			}
+		}, 100);
+	
+		// Aquí está el nuevo setInterval para comprobar cuando apps esté disponible
+		const appsInterval = setInterval(() => {
+			let apps = this.getElement("applications");
+			if (apps) {
+				clearInterval(appsInterval); // Detener el intervalo una vez que se encuentra "apps"
+				apps.addEventListener(EVENT.CLICK, () => {
+					let companyy = this.getElement("aonHeaderCompanyListButton");
+					let companyyy = this.getElement("aonHeaderCompanyList");
+					companyy.style.display = "block";
+					companyyy.style.display = "block";
+				});
+			}
+		}, 100); // Intenta cada 100 ms
 	}
+	
 
 	loadMore() {
-		this.getApplication().startLoader();
+		//TODO: this.getApplication().startLoader();
 		getCompanies().then( companies => {
 			let first = this.page * 30;
 			this.page = this.page + 1;
 			this.buildCompanies(companies.filter(f => this.companyFilter(f, this.filter)).slice(first, first + 30));	
 		})
 		.finally(()=>{
-			this.getApplication().stopLoader();
+			//TODO: this.getApplication().stopLoader();
 		});
 	}
 
@@ -373,7 +425,7 @@ export class AonParent extends AonElement {
 		
 		this.clearElementById('aonMenu');
 		let aonMenu = this.getElement('aonMenu');
-		aonMenu.init();
+		aonMenu.init().then(() => aonMenu.open());
 
 		getUser().then(user => {
 			localStorage.setItem('aon_domain_login', user.login);
@@ -391,6 +443,24 @@ export class AonParent extends AonElement {
 		.then(console.log);
 
 		return "Consultando...."
+	}
+	
+	getTotalOffsetTop(element) {
+		let totalOffsetTop = 0;
+		for ( let el = element; el; el = el.offsetParent ) {
+			totalOffsetTop += el.offsetTop;
+		}
+		return totalOffsetTop;
+	}
+
+	getTotalBottom(element) {
+		let totalBottom = 0;
+		for ( let el = element; el; el = el.parentElement ) {
+			let style = getComputedStyle(el);
+			totalBottom += parseFloat(style.paddingBottom) ;
+			totalBottom += parseFloat(style.marginBottom);
+		}
+		return totalBottom;
 	}
 }
 

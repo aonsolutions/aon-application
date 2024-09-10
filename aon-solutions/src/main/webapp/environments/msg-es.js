@@ -259,6 +259,8 @@ export const LINK_DOMAINS = 'Vincular Dominios a Clientes';
 export const LINK_DOMAIN_QUESTION = "¿Desea vincular este cliente con el dominio?";
 export const LOADING = 'Cargando';
 export const LOCATION = 'Ubicación';
+export const LOGIN = 'Inicio de Sesión';
+export const LOGIN_SUBTITLE = 'Introduzca sus credenciales';
 
 // ----- M
 
@@ -274,6 +276,7 @@ export const MOVED_TO_TRASH = 'Se ha movido a la papelera';
 export const MY_DATA = 'Mis Datos';
 export const MY_MANAGER = 'Mi Gestor';
 export const MY_USER = 'Mi Usuario';
+export const MAGIC_LINK = 'Envío de enlace de acceso por email';
 export const UPPER_MENU = 'Menú de cabecera';
 
 // ----- N
@@ -428,7 +431,7 @@ export const SUPPORT = 'Soporte';
 export const SURCHARGE = 'Recargo';
 export const SURNAME = 'Apellidos';
 export const SYSTEM_MESSAGES = 'Mensajes del Sistema';
-export const SELECT_LANGUAGE = "Seleccionar idioma";
+export const SELECT_LANGUAGE = "Selección de idioma";
 export const SELECT_COMPANY_TYPE = "Seleccionar tipo de empresa";
 
 // ----- T
@@ -437,12 +440,14 @@ export const TAG = 'Etiqueta';
 export const TAGS = 'Etiquetas';
 export const TAX = 'Impuesto';
 export const TAX_BASE = 'Base Imponible';
+export const TAXES = 'Impuestos';
 export const TAXES_DETAIL= 'Detalle Impuestos';
 export const TEST_ENVIRONMENT = 'Entorno de Pruebas';
 export const TICKET = 'Ticket';
 export const TICKETBAI = 'TicketBAI';
 export const TICKETS = 'Tickets';
-export const TIMECONTROL = 'Control Horario'; //'Control de Horario';
+export const TIMECONTROL = 'Control Horario'; 
+export const TIMECTRL = 'Ctrl. Horario'; 
 export const TITLE = 'Título';
 export const TITULAR_DATA = 'Datos del Titular';
 export const TO = 'Hasta';

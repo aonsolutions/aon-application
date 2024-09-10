@@ -618,7 +618,9 @@ public class JooqPayrollBuilder {
 										} else
 											costBuilder.setMeiType(Optional.of(-1.00));
 									} else if (containsIgnoreCase(costName, "TARIFA_IMS")
-											|| containsIgnoreCase(costName, "TARIFA_IT")) {
+											|| containsIgnoreCase(costName, "TARIFA_IT")
+											|| containsIgnoreCase(costName, "PORCENTAJE_IMS")
+											|| containsIgnoreCase(costName, "PORCENTAJE_IT")) {
 
 										if (cd.getExpression() != null) {
 											atEp[0] += Double.parseDouble(cd.getExpression());
@@ -1260,8 +1262,10 @@ public class JooqPayrollBuilder {
 			return 3;
 		case 8:
 			return 4;
-		default:
+		case 10: 		// EMBARGO
 			return 5;
+		default:		// OTHER
+			return 6;
 		}
 	}
 
@@ -1287,8 +1291,10 @@ public class JooqPayrollBuilder {
 			return 3;
 		case 8:
 			return 4;
-		default:
+		case 10: 		// EMBARGO
 			return 5;
+		default:		// OTHER
+			return 6;
 		}
 	}
 

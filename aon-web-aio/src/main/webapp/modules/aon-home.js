@@ -10,9 +10,13 @@ import { AonLoginPanel } from './aon-login-panel.js';
 import { AonNotificationPanel } from './aon-notification-panel.js';
 import { clearAuth } from 'aonsolutions/services/service.js';
 
+import { AonNewMobileHeader } from 'aonsolutions/modules/aon-new-mobile-header.js';
+import { AonMobileMenu } from 'aonsolutions/modules/aon-mobile-menu.js';
+
 export class AonHome extends AonElement {
 
 	AON_MENU;
+	AON_MOBILE_MENU;
 	AON_HEADER;
 	ROOT_PANEL;
 	RIGHT_PANEL;
@@ -24,15 +28,35 @@ export class AonHome extends AonElement {
 	connectedCallback () {
 		this.clear();
 		this.initialize();
-		this.build();
-		this.customize();
+		if(this.isMobile()) {
+			this.buildMobile();
+		} else {
+			this.build();
+			this.customize();
+		}
 	}
 
 	initialize() {
 		this.AON_MENU = 'aonMenu';
+		this.AON_MOBILE_MENU = 'aonMobileMenu';
 		this.AON_HEADER = 'aonHeader';
 		this.ROOT_PANEL = 'rootPanel';
 		this.RIGHT_PANEL = 'rightPanel';
+	}
+
+	buildMobile() {
+		let aonMobileHeader = new AonNewMobileHeader();
+		aonMobileHeader.id = this.AON_HEADER;
+		this.appendChild(aonMobileHeader);
+
+		let rootPanel = this.createElement(TAG.DIV);
+		rootPanel.id = this.ROOT_PANEL;
+		rootPanel.className = CSS.AON_MOBILE_ROOT_PANEL;
+		this.appendChild(rootPanel);
+
+		let aonMobileMenu = new AonMobileMenu();
+		aonMobileMenu.id = this.AON_MOBILE_MENU;
+		this.appendChild(aonMobileMenu);
 	}
 
 	build() {
@@ -40,19 +64,19 @@ export class AonHome extends AonElement {
 		let gradiantHeader = this.createElement(TAG.DIV);
 		gradiantHeader.className = 'aonRootGradiantHeader';
 		gradiantHeader.id = 'aonRootGradiantHeader';
-		this.appendChild(gradiantHeader);
+		//this.appendChild(gradiantHeader);
 		let gradiantHeaderTop = this.createElement(TAG.DIV);
 		gradiantHeaderTop.className = 'aonRootGradiantHeaderTop';
 		gradiantHeaderTop.id = 'aonRootGradiantHeaderTop';
-		this.appendChild(gradiantHeaderTop);
+		//this.appendChild(gradiantHeaderTop);
 		let gradiantHeaderBottom = this.createElement(TAG.DIV);
 		gradiantHeaderBottom.className = 'aonRootGradiantHeaderBottom';
 		gradiantHeaderBottom.id = 'aonRootGradiantHeaderBottom';
-		this.appendChild(gradiantHeaderBottom);
+		//this.appendChild(gradiantHeaderBottom);
 		let gradiantHeaderBlur = this.createElement(TAG.DIV);
 		gradiantHeaderBlur.className = 'aonRootGradiantHeaderBlur';
 		gradiantHeaderBlur.id = 'aonRootGradiantHeaderBlur';
-		this.appendChild(gradiantHeaderBlur);
+		//this.appendChild(gradiantHeaderBlur);
 
 		let aonHeader = new AonHeader();
 		aonHeader.id = this.AON_HEADER;
@@ -80,17 +104,9 @@ export class AonHome extends AonElement {
 				aonHeader.buildApp(app,sidenav);
 				aonHeader.setVisibleLogo(!appEl);
 				aonHeader.setVisibleApp(appEl);
-				/*aonHeader.setColor(appColor && '#fff', appColor);
-				if(appColor == "var(--aonTopMenuAvailable)")
-					aonHeader.setBackgroundColor("var(--aonHeaderBackgroundAvailable)")
-				else
-					aonHeader.setBackgroundColor(appColor);
-				*/
 			} else {
 				aonHeader.setVisibleApp(false);
 				aonHeader.setVisibleLogo(true);
-				//aonHeader.setColor("var(--aonGrayHeaderButtonsColor)","red");
-				//aonHeader.setBackgroundColor("var(--aonHeaderBackgroundColor)");
 			}
 			
 			aonHeader.setColor();

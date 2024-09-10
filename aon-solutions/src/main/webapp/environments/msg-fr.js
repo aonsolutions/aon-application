@@ -258,6 +258,8 @@ export const LINK_DOMAINS = 'Vincular Dominios a Clientes';
 export const LINK_DOMAIN_QUESTION = "¿Desea vincular este cliente con el dominio?";
 export const LOADING = 'Cargando';
 export const LOCATION = 'Ubicación';
+export const LOGIN = 'Se connecter';
+export const LOGIN_SUBTITLE = 'Entrez vos identifiants';
 
 // ----- M
 
@@ -273,7 +275,9 @@ export const MOVED_TO_TRASH = 'Se ha movido a la papelera';
 export const MY_DATA = 'Mis Datos';
 export const MY_MANAGER = 'Mi Gestor';
 export const MY_USER = 'Mi Usuario';
+export const MAGIC_LINK = "Envoi du lien d'accès par email";
 export const UPPER_MENU = `Menu d'en-tête`;
+
 
 // ----- N
 
@@ -314,14 +318,14 @@ export const OPEN_MENU = 'Abrir Menú';
 export const OPEN_REQUESTS = 'Solicitudes Abiertas';
 export const OPTIONAL = "Opcional"; 
 export const OPTIONS = 'Opciones';
-export const OR_ACCESS = 'o ACCEDE';
+export const OR_ACCESS = 'ou ACCÈS';
 export const OTHER_SERVICES = 'Otros Servicios';
 
 // ----- P
 
 export const PARENT_APPS = 'Aplicaciones del padre';
 export const PAUSE = 'Pausa';
-export const PASSWORD = 'Contraseña';
+export const PASSWORD = 'Mot de passe';
 export const PAYMETHOD = 'Forma de Pago';
 export const PAYROLL = "Travail";
 export const PAYSHEET = 'Nómina';
@@ -409,8 +413,8 @@ export const SETTING =  'Configuration';
 export const SHARED = 'Compartidas';
 export const SHOW_FILE = 'Mostrar Fichero';
 export const SIDE_MENU = 'Menu latéral';
-export const SIGN_IN = 'Iniciar Sesión';
-export const SIGN_IN_WITHOUT_PASSWORD = 'Sin Contraseña';
+export const SIGN_IN = 'Se connecter';
+export const SIGN_IN_WITHOUT_PASSWORD = 'Pas de mot de passe';
 export const SIGN_IN_WITH_CERTIFICATE = 'Iniciar Sesión con Certificado';
 export const SII = 'SII';
 export const SII_TICKETBAI = 'SII / TicketBAI';
@@ -427,7 +431,7 @@ export const SUPPORT = 'Support';
 export const SURCHARGE = 'Recargo';
 export const SURNAME = 'Apellidos';
 export const SYSTEM_MESSAGES = 'Mensajes del Sistema';
-export const SELECT_LANGUAGE = "Seleccionar idioma";
+export const SELECT_LANGUAGE = "Sélection de la langue";
 export const SELECT_COMPANY_TYPE = "Seleccionar tipo de empresa";
 
 // ----- T
@@ -436,6 +440,7 @@ export const TAG = 'Etiqueta';
 export const TAGS = 'Etiquetas';
 export const TAX = 'Impuesto';
 export const TAX_BASE = 'Base Imponible';
+export const TAXES = 'Impôts';
 export const TAXES_DETAIL= 'Detalle Impuestos';
 export const TEST_ENVIRONMENT = 'Entorno de Pruebas';
 export const TICKET = 'Ticket';

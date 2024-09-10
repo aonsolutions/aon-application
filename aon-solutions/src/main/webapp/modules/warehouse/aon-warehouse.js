@@ -10,17 +10,13 @@ import { deleteWarehouse, getDelivery, getWarehouses, saveWarehouse } from '../.
 import { AonDeliveryTag } from './deliveryTag/aon-delivery-tag.js';
 import { AonMobileDeliveryList } from '../delivery/aon-mobile-delivery-list.js';
 import { AonMobileDelivery } from '../delivery/aon-mobile-delivery.js';
-import { AonDeliveryList } from '../delivery/aon-delivery-list.js';
 import { AonCarrierList } from '../registry/carrier/aon-carrier-list.js';
 import { AonMobileCarrierList } from '../registry/carrier/aon-mobile-carrier-list.js';
-import { AonNewInput } from '../../components/aon-new-input.js';
-import { AonNewSelect } from '../../components/aon-new-select.js';
-import { AonSwitch } from '../../components/aon-switch.js';
 import { getWorkplaces } from '../../services/workplaceService.js';
 import * as LS from '../../services/localStorageService.js';
-import { AonElaborationList } from './elaboration/aon-elaboration-list.js';
 import { AonMobileProductList } from '../product/aon-mobile-product-list.js';
 import { AonProductList } from '../product/aon-product-list.js';
+import { createInput, createSelect } from '../../components/CreateComponent.js';
 
 export class AonWarehouse extends AonElement {
 
@@ -104,9 +100,7 @@ export class AonWarehouse extends AonElement {
 		if(!warehouse) warehouse = {domain: LS.getDomainId(), active: true};
 		let div = this.createDiv(this.WAREHOUSE_EDIT_DIV);
 
-		let warehouseName = new AonNewInput();
-		warehouseName.id = this.WAREHOUSE_NAME;
-		warehouseName.title = MSG.WAREHOUSE;
+		let warehouseName = createInput(this.WAREHOUSE_NAME, MSG.WAREHOUSE);
 		warehouseName.value = warehouse && warehouse.name 
 			? warehouse.name : CONSTANT.EMPTY;
 		warehouseName.addEventListener(EVENT.CHANGE, () => {
@@ -115,9 +109,7 @@ export class AonWarehouse extends AonElement {
 		
 		div.appendChild(warehouseName);
 
-		let warehouseWorkplace = new AonNewSelect();
-		warehouseWorkplace.id = this.WAREHOUSE_EDIT_WORKPLACE;
-		warehouseWorkplace.title = MSG.WORKPLACE;
+		let warehouseWorkplace = createSelect(this.WAREHOUSE_EDIT_WORKPLACE, MSG.WORKPLACE);
 		warehouseWorkplace.autocomplete = true;
 		warehouseWorkplace.default = true;
 		warehouseWorkplace.addEventListener(EVENT.SELECT, () => {
@@ -244,8 +236,8 @@ export class AonWarehouse extends AonElement {
 				this.getApplication().setContent(aonDelivery);
 			});
 		} else this.getApplication().setContent(
-			// new AonMobileDeliveryList());
-			this.isMobile() ? new AonMobileDeliveryList() : new AonDeliveryList());
+			new AonMobileDeliveryList());
+			// this.isMobile() ? new AonMobileDeliveryList() : new AonDeliveryList());
 	}
 
 	aonDeliveryTag() {

@@ -9,8 +9,8 @@ import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.AonDateUtils;
 import com.esferalia.aon.gwt.common.client.widget.DateBoxEx;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog;
-import com.esferalia.aon.gwt.common.client.widget.solutions.AonIcon;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog.AonAcceptDialogCallback;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonIcon;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonMenu;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
@@ -29,8 +29,8 @@ import com.esferalia.aon.gwt.fiscal.shared.invoice.InvoiceParams;
 import com.esferalia.aon.occam.api.model.InvestAsset;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceCommunicationStatus;
-import com.esferalia.aon.occam.api.model.finance.InvoiceCommunicationType;
 import com.esferalia.aon.occam.api.model.finance.InvoiceCommunicationTracking;
+import com.esferalia.aon.occam.api.model.finance.InvoiceCommunicationType;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModel;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModelType;
 import com.esferalia.aon.occam.api.model.fiscal.aeat.AEATParams;
@@ -631,7 +631,7 @@ public class LroeModel140 extends DockLayoutPanel {
 								String message = "La factura " + invoice.getReferenceCode() + " ya est\u00e1 enviada.";
 								vp.add(getErrorMessage(message));
 							} else {
-								SII_SERVICE.altaLroe140(options.getDomainName(), options.getDomain(), options.getUser(), invoice, params, new AsyncCallback<ICResponse>() {
+								SII_SERVICE.altaLroe(options.getDomainName(), options.getDomain(), options.getUser(), invoice, params, new AsyncCallback<ICResponse>() {
 									
 									@Override
 									public void onSuccess(ICResponse result) {

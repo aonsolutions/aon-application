@@ -253,3 +253,5 @@ export const AON_ACADEMY_MENU = 'aon-academy-menu';
 export const AON_COMMERCE_MENU = 'aon-commerce-menu';
 
 export const AON_GARAGE_MENU = 'aon-garage-menu';
+
+export const AON_IMAGE_EDITOR = 'aon-image-editor';

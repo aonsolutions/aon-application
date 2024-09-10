@@ -1248,6 +1248,10 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 						@Override
 						public void onRemove(IContractBonus bonus) {
 						}
+						
+						@Override
+						public void onDisable(IContractPayment payment) {
+						}
 
 						@Override
 						public void onInvalidData(IContractBonus bonus, String variableName, String message) {
@@ -5793,20 +5797,24 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 	// ----- Payroll Salaries
 
 	@Override
-	public Period getSalariesDates(String domainName, SalaryInfoFilter filter) {
+	public Period getSalariesDates(String domainName, String userLogin, SalaryInfoFilter filter) {
 		try (Connection connection = AonServletUtils.getConnection(domainName)) {
 			Integer domainId = AonServletUtils.getDomainID(domainName);
-			return JooqPayrollSalaries.getSalariesDates(connection, domainId, filter);
+			Integer parentDomainId = AonServletUtils.getParentDomainID(domainName);
+			Integer userId = AonServletUtils.getUserID(connection, userLogin, domainId, parentDomainId);
+			return JooqPayrollSalaries.getSalariesDates(connection, domainId, userId, filter);
 		} catch (SQLException e) {
 			throw new IllegalArgumentException(e);
 		}
 	}
 
 	@Override
-	public List<SalaryInfo> getSalaries(String domainName, SalaryInfoFilter filter) {
+	public List<SalaryInfo> getSalaries(String domainName, String userLogin, SalaryInfoFilter filter) {
 		try (Connection connection = AonServletUtils.getConnection(domainName)) {
 			Integer domainId = AonServletUtils.getDomainID(domainName);
-			return JooqPayrollSalaries.getSalaries(connection, domainId, filter);
+			Integer parentDomainId = AonServletUtils.getParentDomainID(domainName);
+			Integer userId = AonServletUtils.getUserID(connection, userLogin, domainId, parentDomainId);
+			return JooqPayrollSalaries.getSalaries(connection, domainId, userId, filter);
 		} catch (SQLException e) {
 			throw new IllegalArgumentException(e);
 		}
@@ -5822,11 +5830,14 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 	}
 
 	@Override
-	public WorkplaceEmployees getWorkplaceActiveEmployees(String currentDomainName, Integer workplaceId) {
+	public WorkplaceEmployees getWorkplaceActiveEmployees(String domainName, String userLogin, Integer workplaceId) {
 		Connection connection = null;
 		try {
-			connection = AonServletUtils.getConnection(currentDomainName);
-			return JooqPayrollSalaries.getWorkplaceActiveEmployees(connection, workplaceId);
+			connection = AonServletUtils.getConnection(domainName);
+			Integer domainId = AonServletUtils.getDomainID(domainName);
+			Integer parentDomainId = AonServletUtils.getParentDomainID(domainName);
+			Integer userId = AonServletUtils.getUserID(connection, userLogin, domainId, parentDomainId);
+			return JooqPayrollSalaries.getWorkplaceActiveEmployees(connection, domainId, userId, workplaceId);
 		} catch (SQLException e) {
 			throw new IllegalArgumentException(e);
 		} finally {
@@ -5840,11 +5851,14 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 	}
 
 	@Override
-	public List<EmployeeInfo> getEnterpriseActiveEmployees(String currentDomainName, Integer enterpriseId) {
+	public List<EmployeeInfo> getEnterpriseActiveEmployees(String domainName, String userLogin, Integer enterpriseId) {
 		Connection connection = null;
 		try {
-			connection = AonServletUtils.getConnection(currentDomainName);
-			return JooqPayrollSalaries.getEnterpriseActiveEmployees(connection, enterpriseId);
+			connection = AonServletUtils.getConnection(domainName);
+			Integer domainId = AonServletUtils.getDomainID(domainName);
+			Integer parentDomainId = AonServletUtils.getParentDomainID(domainName);
+			Integer userId = AonServletUtils.getUserID(connection, userLogin, domainId, parentDomainId);
+			return JooqPayrollSalaries.getEnterpriseActiveEmployees(connection, domainId, userId, enterpriseId);
 		} catch (SQLException e) {
 			throw new IllegalArgumentException(e);
 		} finally {
@@ -7503,7 +7517,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 		builder.setNss(employeeContractInfo.getEmployeeInfo().getSsNumber());
 		builder.setName(employeeContractInfo.getEmployeeInfo().getName());
 		builder.setBirthDate(employeeContractInfo.getEmployeeInfo().getBirthdate());
-		builder.setIpf(ipf);
+		builder.setIpf(AonStringUtils.isNotBlank(employeeContractInfo.getEmployeeInfo().getDocument()) ? employeeContractInfo.getEmployeeInfo().getDocument() : ipf);
 		builder.setFra(employeeContractInfo.getContractInfo().getStartDate());
 		
 		Date endDate = employeeContractInfo.getContractInfo().getEndDate();

@@ -256,6 +256,8 @@ export const LINK_DOMAINS = 'Link Domains with Customers';
 export const LINK_DOMAIN_QUESTION = "Do you want to link this client to the domain?";
 export const LOADING = 'Loading';
 export const LOCATION = 'Location';
+export const LOGIN = 'Login';
+export const LOGIN_SUBTITLE = 'Enter your credentials';
 
 // ----- M
 
@@ -271,6 +273,7 @@ export const MOVED_TO_TRASH = 'It has been moved to the trash';
 export const MY_DATA = 'My Data';
 export const MY_MANAGER = 'My Manager';
 export const MY_USER = 'My User';
+export const MAGIC_LINK = 'Sending access link by email';
 
 // ----- N
 
@@ -407,7 +410,7 @@ export const SHARED = 'Shared';
 export const SHOW_FILE = 'Show File';
 export const SIDE_MENU = 'Side menu';
 export const SIGN_IN = 'Sign in';
-export const SIGN_IN_WITHOUT_PASSWORD = 'Sign in without Password';
+export const SIGN_IN_WITHOUT_PASSWORD = 'Without Password';
 export const SIGN_IN_WITH_CERTIFICATE = 'Sign in with Cetificate';
 export const SII = 'SII';
 export const SII_TICKETBAI = 'SII / TicketBAI';
@@ -424,7 +427,7 @@ export const SUPPORT = 'Support';
 export const SURCHARGE = 'Surcharge';
 export const SURNAME = 'Surname';
 export const SYSTEM_MESSAGES = 'System Messages';
-export const SELECT_LANGUAGE = "Select Language";
+export const SELECT_LANGUAGE = "Language selection";
 export const SELECT_COMPANY_TYPE = "Select company type";
 
 // ----- T
@@ -433,6 +436,7 @@ export const TAG = 'Tag';
 export const TAGS = 'Tags';
 export const TAX = 'Tax';
 export const TAX_BASE = 'Tax Base';
+export const TAXES = 'Taxes';
 export const TAXES_DETAIL= 'Taxes Detail';
 export const TEST_ENVIRONMENT = 'Test Environment';
 export const TICKET = 'Ticket';

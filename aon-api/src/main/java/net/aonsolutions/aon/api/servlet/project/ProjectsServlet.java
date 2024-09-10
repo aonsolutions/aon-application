@@ -360,6 +360,11 @@ public class ProjectsServlet extends AonApiHttpServlet{
 			filter = filter.and(f.getEndDateProperty().isNotNull().and(f.getEndDateProperty().le(ts)));
 		}
 
+		if(params.opt(IJsonNames.WORKGROUP) != null) {
+  			Integer workgroup = params.optInt(IJsonNames.WORKGROUP);
+  			filter = filter.and(f.getWorkgroupProperty().eq(workgroup));
+  		}
+		
   		return filter;
    }
 

@@ -3,7 +3,6 @@ package com.esferalia.aon.occam.api;
 import java.util.List;
 import java.util.stream.Stream;
 
-import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.esferalia.aon.occam.api.model.Customer;
 import com.esferalia.aon.occam.api.model.Filter.TaskCommentFilter;
 import com.esferalia.aon.occam.api.model.Filter.TaskEventFilter;
@@ -12,6 +11,7 @@ import com.esferalia.aon.occam.api.model.Filter.TaskHolderFilter;
 import com.esferalia.aon.occam.api.model.Filter.TaskHolderWorkgroupFilter;
 import com.esferalia.aon.occam.api.model.Filter.TaskTagFilter;
 import com.esferalia.aon.occam.api.model.OldTask;
+import com.esferalia.aon.occam.api.model.Options;
 import com.esferalia.aon.occam.api.model.Workgroup;
 import com.esferalia.aon.occam.api.model.office.Tag;
 import com.esferalia.aon.occam.api.model.security.TaskHolderWorkgroup;
@@ -68,24 +68,30 @@ public interface ITask {
 	public Workgroup updateWorkgroup(AONContext ctx, Workgroup workgroup); 
 	public Workgroup deleteWorkgroup(AONContext ctx, Integer wId); 
 	public Stream<TaskHolder> getTaskMemberWStream(AONContext ctx, String filter, Integer workgroupId);
+
 	
-	public Stream<TaskHolder> getTaskHolderStream(AONContext ctx, TaskHolderFilter filter);
+//	public Stream<TaskHolder> getTaskHolderStream(AONContext ctx, TaskHolderFilter filter);
 	public long getTaskHolderCount(AONContext ctx, TaskHolderFilter filter);
 	public Stream<TaskHolder> getTaskHolderEmployee(AONContext ctx, TaskHolderFilter filter, Integer page, Integer perPage);
-	public List<TaskHolder> getTaskHolderFullList(AONContext ctx, TaskHolderFilter filter);
+	
+	/* En TaskHolderDAO */
+	public TaskHolder getTaskHolder(AONContext ctx, TaskHolderFilter filter, Options...options);
+	public Stream<TaskHolder> getTaskHolderStream(AONContext ctx, TaskHolderFilter filter, Options...options);
+	public void deleteTaskHolder(AONContext ctx, Integer taskHolder);
+	
+	/* usan TaskOldDAO cambiar a TaskHolderDAO */
 	public Stream<TaskHolder> getTaskHolderStream(AONContext ctx, byte[] auth);
-	public TaskHolder getTaskHolder(AONContext ctx, TaskHolderFilter filter);
 	public TaskHolder save(AONContext ctx, TaskHolder taskHolder);
 	public TaskHolder updateTaskHolder(AONContext ctx, TaskHolder taskHolder); 
 	public TaskHolder insertTaskHolder(AONContext ctx, TaskHolder taskHolder);
-	public TaskHolder deleteTaskHolder(AONContext ctx, Integer taskHolder);
+	/* *************************************** */
 	
 	public Stream<Workgroup> getTaskHolderWorkgroupStream(AONContext ctx, TaskHolderWorkgroupFilter filter);
 	public Boolean isTaskHolderWorkgroup(AONContext ctx, TaskHolderWorkgroupFilter filter);
 	public void insertTaskHolderWorkgroup(AONContext ctx, Integer taskHolder, Integer workgroup);
 	public void deleteTaskHolderWorkgroup(AONContext ctx, TaskHolderWorkgroupFilter filter);
 	
-	public Stream<TaskHolder> getTaskHolderWorkgroupStream(AONContext ctx, TaskHolderFilter filter, Integer workgroupId);
+	public Stream<TaskHolder> getTaskHolderWorkgroupStream(AONContext ctx, TaskHolderFilter filter, Integer workgroupId, int ofs, int limit);
 	public List<TaskHolder> getAviableSellerTaskHolders(AONContext ctx);
 	void saveTaskHolderWorkgroups(AONContext ctx, TaskHolder taskHolder);
 	

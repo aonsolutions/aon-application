@@ -23,11 +23,16 @@ import com.esferalia.aon.occam.api.model.IJsonNames;
 import com.esferalia.aon.occam.api.model.Order;
 import com.esferalia.aon.occam.api.model.Filter.RegistryAddressFilter;
 import com.esferalia.aon.occam.api.model.Filter.RegistryMediaFilter;
+import com.esferalia.aon.occam.api.model.Properties.CreditorProperties;
+import com.esferalia.aon.occam.api.model.Properties.CustomerProperties;
 import com.esferalia.aon.occam.api.model.Properties.RegistryProperties;
+import com.esferalia.aon.occam.api.model.Properties.SupplierProperties;
 import com.esferalia.aon.occam.api.model.PropertyOrders.CustomerPropertyOrders;
 import com.esferalia.aon.occam.api.model.PropertyOrders.SupplierCreditorPropertyOrders;
 import com.esferalia.aon.occam.api.model.registry.RegistryAddress;
 import com.esferalia.aon.occam.api.model.registry.RegistryMedia;
+import com.esferalia.aon.occam.api.model.type.RegistryStatus;
+import com.esferalia.aon.watson.util.AonStringUtils;
 
 import net.aonsolutions.aon.api.ewok.AonApiData;
 import net.aonsolutions.aon.api.servlet.registry.RegistryAdditionalInfo;
@@ -85,7 +90,7 @@ public class SupplierCreditorServlet extends AonApiHttpServlet {
 		Integer perPage = api.getData().opt(IJsonNames.PER_PAGE) != null
 			? api.getData().optInt(IJsonNames.PER_PAGE) : 50;
 		String globalFilter = api.getData().optString(IJsonNames.GLOBAL);
-		JSONArray result = CustomerJSON.toJSON(AON.getCustomerList(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), f -> genericFilter(api, api.getData(), f),
+		JSONArray result = CustomerJSON.toJSON(AON.getCustomerList(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), f -> customerFilter(api, api.getData(), f),
 				page, perPage, globalFilter, o -> customerOrder(api, o)));
 		if (api.getData().opt("additional_info") != null) {
 			result = getAdditionalInfo(api, result);
@@ -106,7 +111,7 @@ public class SupplierCreditorServlet extends AonApiHttpServlet {
 			? api.getData().optInt(IJsonNames.PER_PAGE) : 50;
 		String globalFilter = api.getData().optString(IJsonNames.GLOBAL);
 		JSONArray result = CreditorSupplierJSON.toJSON(AON.getSupplierCreditorStream(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), 
-			f -> genericFilter(api, api.getData(), f), f -> genericFilter(api, api.getData(), f), page, perPage, globalFilter, o -> supplierCreditorOrder(api, o)));
+			f -> creditorFilter(api, api.getData(), f), f -> supplierFilter(api, api.getData(), f), page, perPage, globalFilter, o -> supplierCreditorOrder(api, o)));
 		if (api.getData().opt("additional_info") != null) {
 			result = getAdditionalInfo(api, result);
 	    }
@@ -124,6 +129,13 @@ public class SupplierCreditorServlet extends AonApiHttpServlet {
 		Filter filter = f.getDomainProperty().eq(api.getDomain().getId());
 		String jsonValue = json.optString(IJsonNames.VALUE);
 		String global = json.optString(IJsonNames.GLOBAL);
+		Boolean withDocument = api.getData().has("with_document") ? api.getData().optBoolean("with_document") : null;
+		if(withDocument != null) {
+			if(withDocument)
+				filter = filter.and(f.getDocumentProperty().ne(""));
+			else
+				filter = filter.and(f.getDocumentProperty().eq(""));
+		}
 		jsonValue = global.isEmpty() ? jsonValue : global;
 		if(!jsonValue.isEmpty()) {
 			Filter valueFilter = f.getNameProperty().like("%" + jsonValue + "%")
@@ -131,6 +143,33 @@ public class SupplierCreditorServlet extends AonApiHttpServlet {
 			if(!global.isEmpty())
 				valueFilter = valueFilter.or(f.getNationalityProperty().like("%" + jsonValue + "%"));
 			filter = filter.and(valueFilter);
+		}
+		return filter;
+	}
+	
+	private static Filter supplierFilter(AonApiData api, JSONObject json, SupplierProperties f) {
+		Filter filter = genericFilter(api, json, f);		
+		String status = json.optString(IJsonNames.STATUS);
+		if(!AonStringUtils.isBlank(status)) {
+			filter = filter.and(f.getStatusProperty().eq(RegistryStatus.safeValueOf(status).value()));
+		}
+		return filter;
+	}
+	
+	private static Filter creditorFilter(AonApiData api, JSONObject json, CreditorProperties f) {
+		Filter filter = genericFilter(api, json, f);		
+		String status = json.optString(IJsonNames.STATUS);
+		if(!AonStringUtils.isBlank(status)) {
+			filter = filter.and(f.getStatusProperty().eq(RegistryStatus.safeValueOf(status).value()));
+		}
+		return filter;
+	}
+	
+	private static Filter customerFilter(AonApiData api, JSONObject json, CustomerProperties f) {
+		Filter filter = genericFilter(api, json, f);		
+		String status = json.optString(IJsonNames.STATUS);
+		if(!AonStringUtils.isBlank(status)) {
+			filter = filter.and(f.getStatusProperty().eq(RegistryStatus.safeValueOf(status).value()));
 		}
 		return filter;
 	}
