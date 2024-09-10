@@ -17,7 +17,6 @@ import com.esferalia.aon.occam.api.model.Options;
 import com.esferalia.aon.occam.api.model.finance.Finance;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceCommunicationType;
-import com.esferalia.aon.occam.api.model.finance.InvoiceDetail;
 import com.esferalia.aon.occam.api.model.finance.InvoiceInfo;
 import com.esferalia.aon.occam.api.model.finance.TbaiConfiguration;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModel;
@@ -42,7 +41,7 @@ public class InvoiceValidation {
 	 * El dominio de la factura no puede estar vacio.
 	 */
 	private static final BiConsumer<AONContext,Invoice> EMPTY_DOMAIN = (ctx,inv) -> {
-		if (inv.getDomain() == 0) 
+		if (inv.getDomain() == null || inv.getDomain() == 0) 
 			throw new AonCoreException(AonError.EMPTY_DOMAIN.getMessage());
 	};
 	
@@ -121,7 +120,7 @@ public class InvoiceValidation {
 					.and(INVOICE.NUMBER.eq(inv.getNumber()))
 					.and(inv.getId() == null ? DSL.trueCondition() : INVOICE.ID.ne(inv.getId()))
 					.and(INVOICE.TYPE.eq(inv.getType().value())))) {
-			throw new AonCoreException(AonError.INVOICE_DUPLICATED_SERIES_NUMBER.getMessage() 
+			throw new AonCoreException(AonError.INVOICE_DUPLICATED_SERIES_NUMBER.getMessage()					
 				+ "["+ (AonStringUtils.isBlank(inv.getSeries())? "" : (inv.getSeries() + "/") + inv.getNumber()) +"]");
 		}
 	};
@@ -183,24 +182,6 @@ public class InvoiceValidation {
 			if (!AonMathUtils.equals(inv.getTotal(), financesTotal )) {
 				throw new AonCoreException(AonError.INVOICE_FINANCES_AMOUNT.getMessage());	
 			}
-		}
-	};
-
-	/**
-	 * El origen de la linea de factura es un dato obligatorio.
-	 */
-	private static final BiConsumer<AONContext,InvoiceDetail> EMPTY_SOURCE = (ctx,det) -> {
-		if (det.getSource() == null ) {
-			throw new AonCoreException(AonError.INVOICE_EMPTY_SOURCE.getMessage());
-		}
-	};
-
-	/**
-	 * El centro de trabajo es un dato obligatorio.
-	 */
-	private static final BiConsumer<AONContext,InvoiceDetail> EMPTY_WORKPLACE = (ctx,det) -> {
-		if(det.getWorkplace() == null || det.getWorkplace().getId() == null) {
-			throw new AonCoreException(AonError.INVOICE_EMPTY_WORKPLACE.getMessage());
 		}
 	};
 
@@ -276,7 +257,7 @@ public class InvoiceValidation {
 		}
 	};
 
-	static void validateInvoice(AONContext ctx, Invoice inv) throws AonCoreException {
+	static void validate(AONContext ctx, Invoice inv) throws AonCoreException {
 		EMPTY_DOMAIN
 			.andThen(EMPTY_DATE)
 			.andThen(EMPTY_TAX_DATE)
@@ -286,6 +267,7 @@ public class InvoiceValidation {
 			.andThen(EMPTY_REFERENCE_CODE)
 			.andThen(EMPTY_TRANSACTION)
 			.andThen(DUPLICATED_SERIES_NUMBER)
+			
 			.andThen(DUPLICATED_REFERENCE_CODE)
 			.andThen(OPERATIONS_DEADLINE)
 			.andThen(CHECK_TEN_YEARS)
@@ -293,21 +275,6 @@ public class InvoiceValidation {
 			.andThen(ALCATRAZ)
 			.accept(ctx,inv);
 
-	}
-
-	private static void validateUpdateSpecialInvoice(AONContext ctx, Invoice inv) throws AonCoreException {
-		EMPTY_DOMAIN
-			.andThen(EMPTY_TAX_DATE)
-			.andThen(OPERATIONS_DEADLINE)
-			.andThen(CHECK_TEN_YEARS)
-			.accept(ctx,inv);
-
-	}
-
-	static void validateDetail(AONContext ctx, InvoiceDetail detail) {
-		EMPTY_SOURCE
-			.andThen(EMPTY_WORKPLACE)
-			.accept(ctx,detail);
 	}
 
 	static void validateInvoiceDeletion(AONContext ctx, Invoice inv) {

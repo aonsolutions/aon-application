@@ -274,6 +274,13 @@ public class AonRandom {
 		return RegistryAddressDAO.getRandom(ctx, filter );
 	}
 
+	public static Customer ensureCustomer(AONContext ctx) {
+		Customer customer = getCustomer(ctx,null);
+		if (customer == null) {
+			customer = CustomerDAO.save(ctx, AonFaker.getCustomer(ctx));	
+		}
+		return customer;
+	}
 	public static Customer getCustomer(AONContext ctx) {
 		return getCustomer(ctx,null);	
 	}
@@ -281,6 +288,13 @@ public class AonRandom {
 		return CustomerDAO.getRandom(ctx, filter);
 	}
 
+	public static Creditor ensureCreditor(AONContext ctx) {
+		Creditor creditor = getCreditor(ctx,null);
+		if (creditor == null) {
+			creditor = CreditorDAO.save(ctx, AonFaker.getCreditor(ctx));	
+		}
+		return creditor;
+	}
 	public static Creditor getCreditor(AONContext ctx) {
 		return getCreditor(ctx,null);	
 	}
@@ -288,6 +302,13 @@ public class AonRandom {
 		return CreditorDAO.getRandom(ctx, filter);
 	}
 
+	public static Supplier ensureSupplier(AONContext ctx) {
+		Supplier supplier = getSupplier(ctx,null);
+		if (supplier == null) {
+			supplier = SupplierDAO.save(ctx, AonFaker.getSupplier(ctx));	
+		}
+		return supplier;
+	}
 	public static Supplier getSupplier(AONContext ctx) {
 		return getSupplier(ctx,null);	
 	}

@@ -12,7 +12,6 @@ import com.esferalia.aon.occam.api.model.registry.RegistryAddress;
 import com.esferalia.aon.occam.api.model.type.InvoiceType;
 import com.esferalia.aon.occam.api.model.type.RectificationType;
 import com.esferalia.aon.occam.api.model.type.SecurityLevel;
-import com.esferalia.aon.occam.impl.jooq.dao.InvoiceOLDDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.RegistryAddressDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.RegistryDAO;
 import com.esferalia.aon.watson.error.AonCoreException;
@@ -46,7 +45,7 @@ class InvoiceAutoComplete {
 			}
 			if (inv.getNumber() == 0) {
 				Byte[] types = new Byte[]{InvoiceType.SALES.value()};
-				int number = InvoiceOLDDAO.getNextNumber(ctx,types, inv.getSeries());
+				int number = InvoiceDAO.getNextNumber(ctx,types, inv.getSeries());
 				inv.setNumber(number);
 			}
 			if(inv.getReferenceCode() == null || "".equals(inv.getReferenceCode())) {
@@ -67,7 +66,7 @@ class InvoiceAutoComplete {
 			inv.setSeries(Integer.toString(AonDateUtils.getYear(inv.getIssueDate())));
 			if (inv.getNumber() == 0) {
 				Byte[] types = new Byte[]{InvoiceType.PURCHASE.value(),InvoiceType.EXPENSES.value()};
-				int number = InvoiceOLDDAO.getNextNumber(ctx,types, inv.getSeries());
+				int number = InvoiceDAO.getNextNumber(ctx,types, inv.getSeries());
 				inv.setNumber(number);
 			}
 		} 
@@ -90,7 +89,7 @@ class InvoiceAutoComplete {
 			inv.setSeries(Integer.toString(AonDateUtils.getYear(inv.getIssueDate()==null?new Date():inv.getIssueDate())));
 			if (inv.getNumber() == 0) {
 				Byte[] types = new Byte[]{InvoiceType.UNDEDUCTIBLE.value()};
-				int number = InvoiceOLDDAO.getNextNumber(ctx,types, inv.getSeries());
+				int number = InvoiceDAO.getNextNumber(ctx,types, inv.getSeries());
 				inv.setNumber(number);
 			}
 		} 

@@ -2,9 +2,6 @@ package com.esferalia.aon.occam.impl.jooq.dao.invoice;
 
 import static com.esferalia.aon.jooq.tables.Account.ACCOUNT;
 import static com.esferalia.aon.jooq.tables.Brand.BRAND;
-import static com.esferalia.aon.jooq.tables.EnterpriseActivity.ENTERPRISE_ACTIVITY;
-import static com.esferalia.aon.jooq.tables.Geozone.GEOZONE;
-import static com.esferalia.aon.jooq.tables.Iae.IAE;
 import static com.esferalia.aon.jooq.tables.InvestAsset.INVEST_ASSET;
 import static com.esferalia.aon.jooq.tables.Invoice.INVOICE;
 import static com.esferalia.aon.jooq.tables.InvoiceDetail.INVOICE_DETAIL;
@@ -15,13 +12,9 @@ import static com.esferalia.aon.jooq.tables.Item.ITEM;
 import static com.esferalia.aon.jooq.tables.Pcategory.PCATEGORY;
 import static com.esferalia.aon.jooq.tables.Product.PRODUCT;
 import static com.esferalia.aon.jooq.tables.Project.PROJECT;
-import static com.esferalia.aon.jooq.tables.Raddress.RADDRESS;
-import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
-import static com.esferalia.aon.jooq.tables.Scope.SCOPE;
 import static com.esferalia.aon.jooq.tables.Seller.SELLER;
 import static com.esferalia.aon.jooq.tables.Warehouse.WAREHOUSE;
 import static com.esferalia.aon.jooq.tables.Workplace.WORKPLACE;
-import static com.esferalia.aon.occam.impl.jooq.dao.invoice.InvoiceDAO.ORDERED_TYPE;
 
 import java.sql.Timestamp;
 import java.text.MessageFormat;
@@ -32,52 +25,27 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import org.jooq.Condition;
 import org.jooq.Record;
-import org.jooq.Result;
 import org.jooq.SelectOnConditionStep;
-import org.jooq.SelectSeekStep1;
 
 import com.esferalia.aon.occam.api.AONContext;
-import com.esferalia.aon.occam.api.IDAOCallback;
 import com.esferalia.aon.occam.api.model.Account;
-import com.esferalia.aon.occam.api.model.Filter.InvoiceDetailFilter;
-import com.esferalia.aon.occam.api.model.Filter.Property;
-import com.esferalia.aon.occam.api.model.Properties.InvoiceDetailProperties;
 import com.esferalia.aon.occam.api.model.Workplace;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceDetail;
-import com.esferalia.aon.occam.api.model.finance.InvoiceFilter;
-import com.esferalia.aon.occam.api.model.invoice.InvoiceDetailExtended;
-import com.esferalia.aon.occam.api.model.management.PurchaseDetail;
 import com.esferalia.aon.occam.api.model.product.Item;
-import com.esferalia.aon.occam.api.model.registry.RegistryAddress;
 import com.esferalia.aon.occam.api.model.registry.Seller;
-import com.esferalia.aon.occam.api.model.security.Scope;
-import com.esferalia.aon.occam.api.model.type.Country;
-import com.esferalia.aon.occam.api.model.type.DocumentType;
 import com.esferalia.aon.occam.api.model.type.InvoiceSource;
 import com.esferalia.aon.occam.api.model.type.InvoiceSource.IInvoiceSourceVisitor;
 import com.esferalia.aon.occam.api.model.type.InvoiceType;
-import com.esferalia.aon.occam.api.model.type.SecurityLevel;
-import com.esferalia.aon.occam.api.model.warehouse.IncomeDetail;
 import com.esferalia.aon.occam.impl.jooq.dao.AccountDAO.FullAccountFiller;
-import com.esferalia.aon.occam.impl.jooq.dao.DeliveryDetailDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.Filler;
-import com.esferalia.aon.occam.impl.jooq.dao.FilterDAO;
-import com.esferalia.aon.occam.impl.jooq.dao.IncomeDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.InvestAssetDAO.InvestAssetFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.ItemDAO.ItemFiller;
-import com.esferalia.aon.occam.impl.jooq.dao.PurchaseDAO;
-import com.esferalia.aon.occam.impl.jooq.dao.RegistryDAO;
-import com.esferalia.aon.occam.impl.jooq.dao.RegistryDAO.RegistryFiller;
-import com.esferalia.aon.occam.impl.jooq.dao.SalesDetailDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.SellerDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.SellerDAO.SellerFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.WorkplaceDAO.WorkplaceFiller;
-import com.esferalia.aon.occam.impl.jooq.dao.accounting.AccountingInvoiceDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.invoice.InvoiceDAO.InvoiceFiller;
-import com.esferalia.aon.occam.impl.jooq.dao.offer.OfferDetailDAO;
 import com.esferalia.aon.watson.AonError;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.util.AonCollectionUtils;
@@ -243,7 +211,7 @@ class InvoiceDetailDAO {
 			invoiceDetail.setDescription(MessageFormat.format(DETAIL_MSG, invoice.getReferenceCode(), invoice.getIssueDate()));	
 		}
 		invoiceDetail.setInvoice(invoice);
-		InvoiceValidation.validateDetail(ctx, invoiceDetail);
+		InvoiceDetailValidation.validate(ctx, invoiceDetail);
 		Integer id = ctx.getDslContext().insertInto(INVOICE_DETAIL)
 			.set(INVOICE_DETAIL.DOMAIN, invoiceDetail.getDomain())
 			.set(INVOICE_DETAIL.INVOICE, invoiceDetail.getInvoice().getId())

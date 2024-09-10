@@ -386,7 +386,7 @@ public class InvoiceFaker {
 			
 			@Override
 			public Void visitSales(Invoice invoice) {
-				Customer customer = AonRandom.getCustomer( params.getCtx() );
+				Customer customer = AonRandom.ensureCustomer( params.getCtx() );
 				fillRegistryData(invoice, customer);
 				invoice.setSeries(params.getCtx().getConfiguration().getDefaultInvoiceSeries());
 				invoice.setNumber( AON.getInvoiceNextNumber(params.getCtx(), new Byte[]{invoice.getType().value()}, invoice.getSeries()));
@@ -404,7 +404,7 @@ public class InvoiceFaker {
 			
 			@Override
 			public Void visitPurchase(Invoice invoice) {
-				Supplier supplier = AonRandom.getSupplier( params.getCtx() );
+				Supplier supplier = AonRandom.ensureSupplier( params.getCtx() );
 				if (supplier == null && params.mustForceRegistry()) {
 					supplier = AonFaker.getSupplier( params.getCtx() );
 					supplier = SupplierDAO.save(params.getCtx(), supplier);
@@ -425,7 +425,7 @@ public class InvoiceFaker {
 			
 			@Override
 			public Void visitExpenses(Invoice invoice) {
-				Creditor creditor = AonRandom.getCreditor( params.getCtx() );
+				Creditor creditor = AonRandom.ensureCreditor( params.getCtx() );
 				if (creditor == null && params.mustForceRegistry()) {
 					creditor = AonFaker.getCreditor( params.getCtx() );
 					creditor = CreditorDAO.save(params.getCtx(), creditor);
@@ -722,6 +722,10 @@ public class InvoiceFaker {
 			.collect(Collectors.toCollection(LinkedList::new));
 		InvoiceFakerTypes type = list.get(faker.random().nextInt(list.size()-1));
 		return type.get(params);
+	}
+	
+	public static Invoice getRandom(AONContext ctx) {
+		return getRandom( new InvoiceFakerParams(ctx) ); 
 	}
 	
 	public static Invoice getRandom(InvoiceFakerParams params) {

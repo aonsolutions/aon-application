@@ -6,6 +6,7 @@ import org.junit.platform.suite.api.Suite;
 
 @Suite
 @SelectClasses({
+	InvoiceValidationTests.class,
 	InvoiceDaoInitializationTests.class,
 	InvoiceDaoGettersTest.class,
 	InvoiceDaoSettersTest.class,
