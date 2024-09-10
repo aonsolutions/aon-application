@@ -67,8 +67,17 @@ export class AonStatistics extends AonElement {
 
       let canvasDiv = this.createElement(TAG.DIV);
       canvasDiv.id = "timeControlCanvasDiv";
-      canvasDiv.style.width = "100%";
-      canvasDiv.style.height = "100%";
+
+      if(this.isMobile()){
+        canvasDiv.style.width = "100%";
+        // canvasDiv.style.height = "16rem";
+        canvasDiv.style.height = "45vh";
+        canvasDiv.style.padding = "1rem";
+      } else {
+        canvasDiv.style.width = "100%";
+        canvasDiv.style.height = "100%";
+      }
+
       this.appendChild(canvasDiv);
 
       let canvas = this.createElement(TAG.CANVAS);

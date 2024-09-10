@@ -219,12 +219,6 @@ export class AonMobileMenu extends AonElement {
       let menu = this.getElement(`${this.id}Sidenav`);
       let n = (window.innerWidth / 5 - 40) / 2;
       span.id = idSpan;
-      span.style.top = '10px';
-      span.style.position = 'relative';
-      span.style.marginLeft = n;
-      if(menu.childNodes && menu.childNodes.length < 5){
-        span.style.marginRight = n;
-      }
       menu.appendChild(span);
 
       if(app.icon === MATERIAL_ICONS.NOTIFICATIONS){
