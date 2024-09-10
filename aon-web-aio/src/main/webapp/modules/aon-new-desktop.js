@@ -29,6 +29,11 @@ export class AonNewDesktop extends AonElement {
 
 	build() {
 
+		this.buildPrueba();
+
+	}
+
+	buildNormal(){
 		let app = this.createApplication(this.AON_DESKTOP, MSG.APPLICATIONS, new AonApplication());
 		app.main = "true";
 		this.appendChild(app);
@@ -61,27 +66,113 @@ export class AonNewDesktop extends AonElement {
 		}
 		
 		desktopDiv.appendChild(desktopAppsDiv);
+		div.appendChild(desktopDiv);	
+	}
+	
+	buildPrueba(){
+		let app = this.createApplication(this.AON_DESKTOP, MSG.APPLICATIONS, new AonApplication());
+		app.main = "true";
+		this.appendChild(app);
+		app.closeSidenav();
+
+		let div = this.createDiv();
+		app.setContent(div);
+
+		let headerDiv = this.createElement(TAG.DIV);
+		headerDiv.classList.add("aonNewDesktopHeaderDiv");
+		div.appendChild(headerDiv);		
+
+
+		let desktopDiv = this.createElement(TAG.DIV);
+		desktopDiv.classList.add("aonNewDesktopDesktopDiv");
 		
-/*		let bannerAonAppsDiv = this.createElement(TAG.DIV);
-		let titleAonH1 = this.createElement(TAG.H1);
-		titleAonH1.innerHTML = 'Más de AON Solutions';
-		titleAonH1.classList.add("aonNewDesktopTitleAonH1");
-		bannerAonAppsDiv.appendChild(titleAonH1);
-		desktopDiv.appendChild(bannerAonAppsDiv);
+		let bannerAppsDiv = this.createElement(TAG.DIV);
+		let titleH1 = this.createElement(TAG.H1);
+		titleH1.innerHTML = MSG.APPLICATIONS +  " Portal";
+		titleH1.classList.add("aonNewDesktopTitleH1");
+		bannerAppsDiv.appendChild(titleH1);
+		desktopDiv.appendChild(bannerAppsDiv);
+		
+		let bannerAonAppsDiv = this.createElement(TAG.DIV);
+		let titleAppsPortal = this.createElement(TAG.H1);
+		titleAppsPortal.innerHTML = MSG.APPLICATIONS + " Suite";
+		titleAppsPortal.classList.add("aonNewDesktopTitleAonH1");
+		titleAppsPortal.style.fontSize = "20px";
+		titleAppsPortal.style.marginTop = "50px";
+		titleAppsPortal.style.paddingBottom = "10px";
+
+		let divGeneral = this.createDiv();
+		divGeneral.style.display = "flex";
+
+		let divContratadas = this.createDiv();
+		divContratadas.style.marginRight = "50px";
+		divContratadas.style.maxWidth = "800px";
+		divGeneral.appendChild(divContratadas);
+
+		let subTitlePortal1 = this.createElement(TAG.H1);
+		subTitlePortal1.innerHTML = "Contratadas";
+		subTitlePortal1.style.fontSize = "16px";
+		subTitlePortal1.style.fontWeight = "500";
+		subTitlePortal1.style.paddingBottom = "32px";
+		divContratadas.appendChild(subTitlePortal1);
+
+		let divDisponibles = this.createDiv();
+		divGeneral.appendChild(divDisponibles);
+
+		let subtitlePortal2 = this.createElement(TAG.H1);
+		subtitlePortal2.innerHTML = "Disponibles";
+		subtitlePortal2.style.fontSize = "16px";
+		subtitlePortal2.style.fontWeight = "500";
+		subtitlePortal2.style.paddingBottom = "32px";
+		divDisponibles.appendChild(subtitlePortal2);
+
+		let desktopAppsDiv =  this.createElement(TAG.DIV);
+		desktopAppsDiv.classList.add('aonDesktopAppsContainer');	
+		divContratadas.appendChild(desktopAppsDiv);
 
 		let desktopAonAppsDiv =  this.createElement(TAG.DIV);
 		desktopAonAppsDiv.classList.add('aonDesktopAonAppsContainer');
+		divDisponibles.appendChild(desktopAonAppsDiv);
+
+		for ( const app in this.apps ) {
+			desktopAppsDiv.appendChild(this.buildApp(this.apps[app]));
+		}
 
 		for ( const app in this.aonApps ) {
 			desktopAonAppsDiv.appendChild(this.buildMasApp(this.aonApps[app]));
 		}
-		desktopDiv.appendChild(desktopAonAppsDiv);
-*/		
-		div.appendChild(desktopDiv);	
-		
 
-	}
+
+		desktopDiv.appendChild(divGeneral);
+
+		bannerAonAppsDiv.appendChild(titleAppsPortal);
+		desktopDiv.appendChild(bannerAonAppsDiv);
+
+		// const excludedApps = ['commerce', 'garage', 'academy', 'office'];
 	
+		// for (let item in TOP_MENU_APPS) {
+		// 	let app = TOP_MENU_APPS[item];
+	
+		// 	if (!this.isApp(app)) {
+		// 		if (!showAllApps || excludedApps.includes(app.app)) {
+		// 			continue;
+		// 		} else {
+		// 			let appElement = this.buildTopApp(app);
+
+		// 			// app.cssLogo = this.getCssVariable(`${app.app}TopNavLogo`);
+		// 			// app.cssIcon = this.getCssVariable(`${app.app}TopNavIcon`);
+		// 			// app.cssSymbol = this.getCssVariable(`${app.app}TopNavSymbol`);
+
+		// 			appElement.classList.add("aonNewMenuTopNavAppElement");
+		// 			app.color = "var(--aonTopMenuNotAvailable)";
+		// 			div.appendChild(appElement);
+		// 			continue;
+		// 		}
+		// 	}
+		
+		div.appendChild(desktopDiv);	
+	}
+
 	buildApp(app) {
 		
 		let cardDiv  = this.createElement(TAG.DIV);
