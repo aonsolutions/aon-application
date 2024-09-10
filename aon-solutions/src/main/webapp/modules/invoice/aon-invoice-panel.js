@@ -336,7 +336,7 @@ export class AonInvoicePanel extends AonElement {
 
   invoiceCounter() {
     getRawdocCount({}).then((r) => {
-      this.counterActive = !this.getDur().isInvofox();
+      this.counterActive = true;
       if (r.invoice && r.invoice.emitida && r.invoice.emitida > 0) {
         addCounter(OPTION.INVOICE_ISSUED, r.invoice.emitida);
       }
@@ -435,7 +435,7 @@ export class AonInvoicePanel extends AonElement {
       this.updateCounterSpan(OPTION.INVOICE_PENDINGS);
       this.updateCounterSpan(OPTION.RAWDOC_INBOX_ISSUED);
       this.updateCounterHome();
-    });
+    }).catch( e => this.counterActive = true);
 
     let receivedFilter = {
       publicStatus: ["approved", "pendingCorrection"],
@@ -451,7 +451,7 @@ export class AonInvoicePanel extends AonElement {
       this.updateCounterSpan(OPTION.INVOICE_PENDINGS);
       this.updateCounterSpan(OPTION.RAWDOC_INBOX_RECEIVED);
       this.updateCounterHome();
-    });
+    }).catch( e => this.counterActive = true);
 
     let ticketFilter = {
       publicStatus: ["approved", "pendingCorrection"],
@@ -467,7 +467,7 @@ export class AonInvoicePanel extends AonElement {
       this.updateCounterSpan(OPTION.INVOICE_PENDINGS);
       this.updateCounterSpan(OPTION.RAWDOC_INBOX_TICKET);
       this.updateCounterHome();
-    });
+    }).catch( e => this.counterActive = true);
 
     let rejectedFilter = {
       publicStatus: ["pendingDecission", "rejected"],
@@ -480,7 +480,7 @@ export class AonInvoicePanel extends AonElement {
       }
       this.updateCounterSpan(OPTION.RAWDOC_REJECT);
       this.updateCounterHome();
-    });
+    }).catch( e => this.counterActive = true);
 
     let trashFilter = { publicStatus: ["discarded"] };
     getInvofoxCount(trashFilter).then((r) => {
@@ -490,7 +490,7 @@ export class AonInvoicePanel extends AonElement {
       }
       this.updateCounterSpan(OPTION.RAWDOC_DRAFT);
       this.updateCounterHome();
-    });
+    }).catch( e => this.counterActive = true);
   }
 
   updateCounterSpan(option) {

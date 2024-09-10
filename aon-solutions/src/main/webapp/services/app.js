@@ -552,7 +552,7 @@ export const OFFICE = {
   title: MSG.OFFICE,
   description: MSG.OFFICE,
   // color: "var(--aonTopMenuSpecial)",
-  color: "black",
+  color: "var(--aonTopMenuSpecial)",
   backgroundColor: "rgba(0, 0, 0, .2)",
   hover: 'sidenavHover',
   domainType: true,

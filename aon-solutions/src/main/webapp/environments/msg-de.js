@@ -433,6 +433,7 @@ export const TAG = 'Tag';
 export const TAGS = 'Tags';
 export const TAX = 'Tax';
 export const TAX_BASE = 'Tax Base';
+export const TAXES = 'Steuern';
 export const TAXES_DETAIL = 'Taxes Detail';
 export const TEST_ENVIRONMENT = 'Test Umgebung';
 export const TICKET = 'Ticket';

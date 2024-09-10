@@ -1,5 +1,5 @@
 import { AonElement } from "../../components/AonElement.js";
-import { CSS, TAG, EVENT } from "../../environments/environments.js";
+import { TAG } from "../../environments/environments.js";
 import { isEmptyObject } from "../../services/utils.js";
 import { getAccounting, getPeriods } from "../../services/accountingService.js";
 import * as UTILS from "./AccountingUtils.js";

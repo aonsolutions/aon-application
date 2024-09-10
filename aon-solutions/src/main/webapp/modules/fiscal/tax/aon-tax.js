@@ -622,7 +622,7 @@ export class AonTax extends AonElement {
     if (!["FINISHED", "SENT"].includes(res.status)) return;
 
     res.icon = MATERIAL_ICONS.PDF;
-    res.icon_color = "grey";
+    res.icon_color = "var(--aonTaxBuildPrintRes)";
     res.fn = () => this.getPdf(res);
   }
 
