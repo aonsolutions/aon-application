@@ -175,12 +175,12 @@ public class FinanceImpl implements IFinance {
 	
 	@Override
 	public Stream<InvoiceDetail> getInvoiceDetails(AONContext ctx, InvoiceFilter filter) {
-		return InvoiceDetailDAO.getInvoiceDetails(ctx, filter);
+		return InvoiceDAO.getInvoiceDetails(ctx, filter);
 	}
 	
 	@Override
 	public Stream<InvoiceDetailExtended> getInvoiceDetailsExtended(AONContext ctx, InvoiceFilter filter, IDAOCallback callback) {
-		return InvoiceDetailDAO.getInvoiceDetailsExtended(ctx, filter, callback);
+		return InvoiceDAO.getInvoiceDetailsExtended(ctx, filter, callback);
 	}
 
 	@Override

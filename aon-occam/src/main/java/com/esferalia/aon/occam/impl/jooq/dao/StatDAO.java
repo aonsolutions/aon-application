@@ -300,7 +300,7 @@ public class StatDAO {
 		for (StatFilterItem item : params.getFilterItems() ) {
 			item.getType().visit(visitor,item);
 		}
-		Stream<InvoiceDetail> stream = InvoiceDetailDAO.getInvoiceDetailsExtended(ctx, 
+		Stream<InvoiceDetail> stream = InvoiceDAO.getInvoiceDetailsExtended(ctx, 
 				p -> p.getDomainProperty().eq(ctx.getDomainId())
 				.and(scopes==null?null:p.getScopeProperty().in(scopes))							
 				.and(params.getFrom()==null?null:p.getStartIssueDateProperty().ge(params.getFrom()))

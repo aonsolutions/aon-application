@@ -123,7 +123,7 @@ public class AccountingInvoiceDAO {
 						.findFirst()
 						.orElse(null);
 				ai.setRegistry(reg);
-				InvoiceDetailDAO.getDetails(ctx, invoice.getId())
+				InvoiceDAO.getInvoiceDetails(ctx, f -> f.getIdProperty().eq( invoice.getId() ))
 					.forEach( det -> {
 						ai.getInvoice().getDetails().add( det );
 						ai.setAccountSource(ai.isAccountSource() || (det.getSource() == InvoiceSource.ACCOUNT));

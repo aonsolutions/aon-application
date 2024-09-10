@@ -79,7 +79,7 @@ public class AccountingInvoiceDAO {
 			.stream()
 			.map(rec -> rec.getValue(ACCOUNT_ENTRY_INVOICE.INVOICE))
 			.findFirst()
-			.flatMap( invoiceIdOpt -> InvoiceDAO.getFull(ctx, invoiceIdOpt))
+			.map( invoiceIdOpt -> InvoiceDAO.getFullInvoice(ctx, invoiceIdOpt))
 			.map( invoice -> new AccountingInvoice().setInvoice(invoice))
 			.map( ai -> ai.fillAccountEntry(AccountEntryDAO.getAccountEntry(ctx, accountEntryId)))
 			.map( ai -> fillAccountingInvoice(ctx, ai) )
@@ -87,8 +87,7 @@ public class AccountingInvoiceDAO {
 	}
 	
 	public static Optional<AccountingInvoice> getFromInvoice(final AONContext ctx, final Integer invoiceId) {
-		return InvoiceDAO.getFull(ctx, invoiceId)
-			.flatMap(invoice -> getFromInvoice(ctx, invoice));
+		return getFromInvoice(ctx, InvoiceDAO.getFullInvoice(ctx, invoiceId));
 	}
 	
 	public static Optional<AccountingInvoice> getFromInvoice(final AONContext ctx, final Invoice invoice) {
@@ -194,7 +193,7 @@ public class AccountingInvoiceDAO {
 			.setRegistry(reg)
 			.setWorkplace(config.getFirstWorkplace().map(w -> w.getId()).orElse(null))
 			.setAuthFinanceCalculation(true)
-			.setInvoice( InvoiceDAO.initialize(ctx, ctx.getDomainId(), config, type, activity, issueDate))
+//			.setInvoice( InvoiceDAO.initialize(ctx, ctx.getDomainId(), config, type, activity, issueDate))
 		;
 		ai.setSuggestedAccounts(getSuggestedAccounts(ctx , ai.getInvoice().getDomain(), ai.getRegistry().getId(), reg.getType().getInvoiceType()));
 		ai.getInvoice().addDetail(createNewInvoiceDetail(ai, config));
@@ -481,7 +480,7 @@ public class AccountingInvoiceDAO {
 		try {
 			ctx.log().debug("------ [START] INSERT INVOICE");
 			LinkedList<AccountEntry> entries = new LinkedList<>();
-			InvoiceDAO.save(ctx, config, accInvoice.getInvoice());
+			InvoiceDAO.save(ctx, accInvoice.getInvoice());
 			
 //			if (accInvoice.isDuaLinked()) {
 //				insertInvoiceDUA( ctx, config, accInvoice);
