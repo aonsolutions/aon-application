@@ -652,6 +652,7 @@ export const TARGET = "Cliente Potencial"; //TODO
 export const TARGETS = "Clientes Potenciales"; //TODO
 export const TAX = MSG.TAX;
 export const TAX_BASE = MSG.TAX_BASE;
+export const TAXES = MSG.TAXES;
 export const TAXES_DETAIL = MSG.TAXES_DETAIL;
 export const TEST_ENVIRONMENT = MSG.TEST_ENVIRONMENT;
 export const THEME = 'Tema';

@@ -2,6 +2,7 @@ import { request, post, get } from "./request.js";
 import { clear } from "./service.js"
 import { API_URL, TAG } from "../environments/environments.js";
 
+import * as LS from './localStorageService.js';
 
 let auth;
 
@@ -21,7 +22,7 @@ export const login = (data) => {
 };
 
 export const closeSession = () => {
-  localStorage.clear();
+  LS.closeSession();
   clear();
   let module = document.querySelector(TAG.AON_MODULE);
   module.buildLogin();

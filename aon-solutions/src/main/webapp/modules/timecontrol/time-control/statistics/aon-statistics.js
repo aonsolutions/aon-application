@@ -1,5 +1,5 @@
 import { SIGNIN_VIEWS } from "../../signinEnums.js";
-import { charts } from "./charts";
+import { charts } from "./charts.js";
 import {  CONSTANT } from "../../../../environments/environments.js";
 import { AonElement } from "../../../../components/AonElement.js";
 import { timeHour } from "../utils.js";
