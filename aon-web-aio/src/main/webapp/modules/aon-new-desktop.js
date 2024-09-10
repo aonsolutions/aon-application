@@ -29,7 +29,7 @@ export class AonNewDesktop extends AonElement {
 
 	build() {
 
-		this.buildPrueba();
+		this.buildNormal();
 
 	}
 
