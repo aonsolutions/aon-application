@@ -28,13 +28,6 @@ export const closeSession = () => {
   module.buildLogin();
 };
 
-export const closeSession2 = () => {
-  // localStorage.clear();
-  clear();
-  let module = document.querySelector(TAG.AON_MODULE);
-  module.buildLogin();
-};
-
 export const rememberPassword = (email) => post(`${API_URL}/remember`, {email});
 
 export const magicLink = (email) => post(`${API_URL}/magicLink`, {email});
