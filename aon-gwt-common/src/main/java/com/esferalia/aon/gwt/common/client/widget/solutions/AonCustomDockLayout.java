@@ -74,7 +74,7 @@ public class AonCustomDockLayout extends DockLayoutPanel {
 		searchPanel.add(searchTextBox);
 		
 		titleLabel = new Label(title);
-		titleLabel.getElement().getStyle().setProperty("font-size", "1.1rem");
+		titleLabel.setStyleName(AON.CSS.aonToolbarTitle());
 		
 		filterButton.addClickHandler(e -> {
 			isRightMenuShown = !isRightMenuShown;
