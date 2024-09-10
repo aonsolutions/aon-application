@@ -7,6 +7,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import com.esferalia.aon.occam.api.AON_SOLUTIONS;
+import com.esferalia.aon.occam.api.model.IJsonNames;
 import com.esferalia.aon.occam.api.model.aonsolutions.Coordinates;
 import com.esferalia.aon.occam.api.model.aonsolutions.Location;
 import net.aonsolutions.aon.api.error.AonApiError;
@@ -28,6 +29,9 @@ public class LocationServlet extends AonApiHttpServlet{
 			switch (api.getPath()) {
 			case "/":
 				response(req, resp, getLocationList(api));
+				break;
+			case "/one":
+				response(req, resp, getLocation(api));
 				break;
 			default:
 				throw new AonApiException(AonApiError.ROUTE_ERROR.getMessage());
@@ -76,6 +80,12 @@ public class LocationServlet extends AonApiHttpServlet{
 		AON_SOLUTIONS.getLocationStream(api.getDomain(), "", f -> f.getDomainProperty().eq(api.getDomain().getId()))
 		.forEach(lc -> array.put(lc.toJSON()));
 		return array;
+	}
+	
+	private JSONObject getLocation(AonApiData api) {
+		int id = api.getData().optInt(IJsonNames.ID);
+		Location loc = AON_SOLUTIONS.getLocation(api.getDomain(), api.getUser().getLogin(), f -> f.getIdProperty().eq(id));
+		return loc.toJSON();
 	}
 
 	
