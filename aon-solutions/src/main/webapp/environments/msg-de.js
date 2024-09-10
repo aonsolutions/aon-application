@@ -484,6 +484,7 @@ export const VIEW_PAYROLLS = "Ver nóminas";
 export const WAREHOUSE = 'Lagerhaus';
 export const WAREHOUSES = 'Lagerhaus';
 export const WEB = 'Web';
+export const WELCOME_TO_AON_SOLUTIONS = 'Willkommen bei aon Solutions';
 export const WITHHOLDING = 'Withholding';
 export const WORKGROUP = 'Workgroup';
 export const WORKSHOPS = 'Werkstätten';
