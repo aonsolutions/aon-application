@@ -4,15 +4,24 @@ import static com.esferalia.aon.jooq.tables.BankStatement.BANK_STATEMENT;
 import static com.esferalia.aon.jooq.tables.Rbank.RBANK;
 
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.function.Function;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.jooq.InsertValuesStep11;
+import org.jooq.Record;
 
 import com.esferalia.aon.jooq.tables.records.BankStatementRecord;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Company;
+import com.esferalia.aon.occam.api.model.Filter.NordigenBankStatementFilter;
+import com.esferalia.aon.occam.api.model.Filter.Property;
+import com.esferalia.aon.occam.api.model.Properties.NordigenBankStatementProperties;
+import com.esferalia.aon.occam.api.model.Properties.RegistryBankProperties;
+import com.esferalia.aon.occam.api.model.finance.BankStatement;
 import com.esferalia.aon.occam.api.model.finance.nordigen.NordigenAccountBalance;
 import com.esferalia.aon.occam.api.model.finance.nordigen.NordigenBalanceType;
 import com.esferalia.aon.occam.api.model.finance.nordigen.NordigenBankAccount;
@@ -22,6 +31,7 @@ import com.esferalia.aon.occam.api.model.type.SecurityLevel;
 import com.esferalia.aon.occam.api.model.type.StatementConcept;
 import com.esferalia.aon.occam.api.model.type.StatementReliability;
 import com.esferalia.aon.occam.api.model.type.StatementStatus;
+import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.NordigenBankStatementPropertiesDAO;
 import com.esferalia.aon.occam.impl.jooq.validation.BankStatementValidator;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.server.AonDateUtils;
@@ -72,6 +82,39 @@ public class NordigenDAO {
 	}
 
 	
+	//FUNCION GET MOVEMENTS BASE DATOS BANK_STATEMENT, NO SON NORDIGEN BANKSTATEMENT
+	
+	private static final NordigenBankStatementPropertiesDAO STATEMENT_PROPERTIES = new NordigenBankStatementPropertiesDAO();
+	
+	public static Stream<BankStatement> getMovementsFromDB(AONContext ctx , NordigenBankStatementFilter filter, Integer page, Integer perPage){
+		return ctx.getDslContext()
+		.select()
+		.from(BANK_STATEMENT)
+		.where(STATEMENT_PROPERTIES.getConditions(filter))
+		.limit(perPage).offset(perPage * (page -1))
+		.fetch()
+		.stream()
+		.map(new BankStatementFiller());
+	}
+	
+	static class BankStatementFiller extends Filler implements Function<Record, BankStatement>{
+
+		@Override
+		public BankStatement apply(Record r) {
+			return buildStatement(r);
+		}
+		
+		static BankStatement buildStatement(Record r) {
+			return new BankStatement()
+					.setId(r.getValue(BANK_STATEMENT.ID))
+					.setDomain(r.getValue(BANK_STATEMENT.DOMAIN))
+					.setOperationDate(r.getValue(BANK_STATEMENT.OPERATION_DATE))
+					.setAmount(r.getValue(BANK_STATEMENT.AMOUNT))
+					.setDescription(r.getValue(BANK_STATEMENT.DESCRIPTION))
+					.setStatus(StatementStatus.values()[r.getValue(BANK_STATEMENT.STATUS)]);
+		}
+	}
+	
 	public static NordigenBankAccount updateRegistryBank(AONContext ctx, NordigenBankAccount account) {
 		RegistryBank rb = account.getRbank();
 		Double balance = 0.0;
@@ -88,6 +131,8 @@ public class NordigenDAO {
 		if (real != null && real.getBalanceAmount() != null) {
 			remainder += AonNumberUtils.zeroIfNull(real.getBalanceAmount().getAmount());
 		}
+		
+		
 		ctx.getDslContext().update(RBANK)
 			.set(RBANK.BALANCE, AonNumberUtils.zeroIfNull(balance))
 			.set(RBANK.AVAILABLE_BALANCE, AonNumberUtils.zeroIfNull(remainder))
@@ -118,7 +163,7 @@ public class NordigenDAO {
 	}
 
 	public static Integer insertStatements(AONContext ctx, NordigenBankAccount account) throws AonCoreException {
-		InsertValuesStep11<BankStatementRecord, Integer, Integer, Integer, java.sql.Date, Byte, Byte, Double, String, Byte, String, String> query =
+			InsertValuesStep11<BankStatementRecord, Integer, Integer, Integer, java.sql.Date, Byte, Byte, Double, String, Byte, String, String> query =
 			ctx.getDslContext().insertInto(
 				BANK_STATEMENT
 				, BANK_STATEMENT.DOMAIN
@@ -134,7 +179,7 @@ public class NordigenDAO {
 				, BANK_STATEMENT.REFERENCE2
 				);
 		
-		List<NordigenBankStatement> bankStatements = account.getNotInsertedMovements();
+		List<NordigenBankStatement> bankStatements = account.getNotInsertedMovements();		
 		
 		if (bankStatements != null) {
 			int lotNumber = BankStatementDAO.getNextLotNumber(ctx, ctx.getDomainId(), account.getRbank());
@@ -162,6 +207,7 @@ public class NordigenDAO {
 				
 			}
 		}
+		
 		final InsertValuesStep11<BankStatementRecord, Integer, Integer, Integer, java.sql.Date, Byte, Byte, Double, String, Byte, String, String> finalQuery = query;
 		return ctx.getDslContext().transactionResult(cnf -> finalQuery.execute());
 	}

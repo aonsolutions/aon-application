@@ -31,6 +31,7 @@ import com.esferalia.aon.occam.api.model.finance.nordigen.NordigenBankStatement;
 import com.esferalia.aon.occam.api.model.finance.nordigen.NordigenRequisitionStatus;
 import com.esferalia.aon.occam.api.json.nordigen.NordigenAccountBalanceJSON;
 import com.esferalia.aon.occam.api.model.Occam;
+import com.esferalia.aon.occam.api.model.finance.BankStatement;
 import com.esferalia.aon.occam.api.model.finance.nordigen.NordigenAccessToken;
 import com.esferalia.aon.occam.api.model.finance.nordigen.NordigenAccountBalance;
 import com.esferalia.aon.occam.api.model.finance.nordigen.NordigenRequisition;
@@ -102,6 +103,16 @@ public class NordigenUtils {
 		movementsJson.put("iban",  nordigenTrueAccount.getIban());
 		return movementsJson;
 	}
+	
+	public static JSONObject bankStatementJSON(BankStatement statement) {
+		JSONObject statementJSON = new JSONObject();
+		statementJSON.put("id", statement.getId());
+		statementJSON.put("operation_date", statement.getOperationDate());
+		statementJSON.put("amount", statement.getAmount());
+		statementJSON.put("description", statement.getDescription());
+		statementJSON.put("status", statement.getStatus());
+		return statementJSON;
+	}
 
 	public static JSONObject nordigenBankToJson(NordigenBankAccount account) {
 
@@ -139,11 +150,11 @@ public class NordigenUtils {
 	}
 
 	//MOVIMIENTOS
-	public static JSONArray convertAcccountMovementsToJsonArray(List<NordigenBankAccount> linkedAccountList, String iban,
+	public static JSONArray convertAcccountMovementsToJsonArray(List<NordigenBankAccount> linkedAccountList, Integer id,
 			NordigenAccessToken token, Occam occam) {
 		JSONArray movementsJsonArray = new JSONArray();
 
-		linkedAccountList.stream().filter(account -> account.getIban().equals(iban)).findFirst().ifPresent(account -> {
+		linkedAccountList.stream().filter(account -> account.getRbank().getId().equals(id)).findFirst().ifPresent(account -> {
 			try {
 				NordigenBankAccount nordigenTrueAccount = AonNordigen.setBankAccountValues(occam, token, account);
 				Date lastAccessedDate = nordigenTrueAccount.getLastMovementDate();
@@ -176,11 +187,11 @@ public class NordigenUtils {
 		return balancesArray;
 	}
 
-	public static JSONArray processSingleAccountBalance(List<NordigenBankAccount> linkedAccountList, String iban,
+	public static JSONArray processSingleAccountBalance(List<NordigenBankAccount> linkedAccountList, Integer id,
 			NordigenAccessToken token, Occam occam) throws Exception {
 		JSONArray result = new JSONArray();
 
-		linkedAccountList.stream().filter(account -> account.getIban().equals(iban)).findFirst().ifPresent(account -> {
+		linkedAccountList.stream().filter(account -> account.getRbank().getId().equals(id)).findFirst().ifPresent(account -> {
 			try {
 				NordigenBankAccount nordigenTrueAccount = AonNordigen.setBankAccountValues(occam, token, account);
 				List<NordigenAccountBalance> balances = nordigenTrueAccount.getBalances();
@@ -197,13 +208,14 @@ public class NordigenUtils {
 
 		return result;
 	}
+	
+	
 
-	public static void processAccountLinking(List<NordigenBankAccount> rAccounts, String iban,
+	public static void processAccountLinking(List<NordigenBankAccount> rAccounts, Integer id,
 			NordigenAccessToken token, JSONObject jsonLink, Occam occam) throws Exception {
 		for (NordigenBankAccount account : rAccounts) {
-			if (account.getIban().equals(iban)) {
+			if (account.getRbank().getId().equals(id)) {
 				if (account.isLinked()) {
-					
 					jsonLink.put("link", "Already linked");
 				} else {
 					NordigenRequisition requisition = AonNordigen.addAccount(token, occam, account);
@@ -214,7 +226,6 @@ public class NordigenUtils {
 		}
 		jsonLink.put("link", "IBAN no encontrado");
 	}
-
 	
     private static final Logger LOGGER = configureLogger();
 	
@@ -247,14 +258,9 @@ public class NordigenUtils {
 	}
 	
 	public static void exceptionAddInfo(String info) {
-		
-//		StackTraceElement[] stackTrace = e.getStackTrace();
-//        StackTraceElement element = stackTrace[0];
 		//Extraer y registrar informacion adicional util para la excepcion
 		LOGGER.error("Additional information about error : " + info);
-//		LOGGER.error("In class : " + element.getClassName());
-//		LOGGER.error("In method: " + element.getMethodName());
-//		LOGGER.error("In line: "+ element.getLineNumber());
+
 	}
 
 	

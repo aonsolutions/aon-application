@@ -20,6 +20,7 @@ import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
 import net.aonsolutions.db.up2date.config.InsertIAE864;
+import net.aonsolutions.db.up2date.accounting.RawdocAddColumS3Key;
 import net.aonsolutions.db.up2date.finance.AnnuledInvoiceCreation;
 import net.aonsolutions.db.up2date.fiscal.AlterFsMod2002023;
 import net.aonsolutions.db.up2date.fiscal.AlterFsMod200Registry2023;
@@ -28,6 +29,11 @@ import net.aonsolutions.db.up2date.payroll.AgreementUpdateHideToDisable;
 import net.aonsolutions.db.up2date.payroll.CleanDuplicatesPayrollWorkplace;
 import net.aonsolutions.db.up2date.payroll.InKindDeductionUpdate;
 import net.aonsolutions.db.up2date.task.AddColumnTaskHolderWorkgroupDatesType;
+import net.aonsolutions.db.up2date.payroll.NoteInsert;
+import net.aonsolutions.db.up2date.finance.InvoiceInfoAddAudit;
+import net.aonsolutions.db.up2date.marketing.AddColumnMarketingActionTargetAudit;
+import net.aonsolutions.db.up2date.marketing.AddColumnMarketingActionTargetProject;
+import net.aonsolutions.db.up2date.registry.AddColumnSellerTaskHolder;
 import net.aonsolutions.db.up2date.tgss.MEIFellows2024Remove;
 import net.aonsolutions.db.up2date.warehouse.ElaborationSerialNumberUpdate;
 
@@ -375,7 +381,7 @@ public class Up2Date {
 	    // DomainAonCustomer.DOMAIN_AON_CUSTOMER,
 	    // FixBofFormTDistan.FIXBOFFORMTDISTAN,
 	    // PermissionUnPaidDaysFix.PERMISSIONNOTPAIDDAYSFIX,
-	    // NoteInsert.NOTEINSERT,
+//	     NoteInsert.NOTEINSERT,
 	    // SuspendJobAndSalaryDaysInsert.SUSPENDJOBANDSALARYDAYSINSERT,
 	    // RealDecreeLaw012023Insert.REALDECREELAW012023INSERT,
 	    // RealDecreeLaw012023421Fix.REALDECREELAW012023421FIX,
@@ -431,7 +437,7 @@ public class Up2Date {
     	// RItemAddCustomerFeeColumn.RITEM_ADD_CUSTOMER_FEE_COLUMN,
 		// RItemAddSellerColumn.RITEM_ADD_SELLER_COLUMN,
 		// InvoiceDocCreate.INVOICEDOCCREATE,
-		// RawdocAddColumS3Key.RAWDOC_ADD_COLUMN_S3_KEY,
+//		 RawdocAddColumS3Key.RAWDOC_ADD_COLUMN_S3_KEY,
 		// BasesMin2024UpdateIV.BASESMIN2024UPDATEIV,
 		// HomeBases2024Update.HOMEBASES2024UPDATEIV,
 		// Art1512024Update.ART1512024UPDATE,
@@ -446,7 +452,7 @@ public class Up2Date {
         //UdpateDomainApp.UPDATE_DOMAIN_APP,
         //AlterRitemEdiSalesCode.ALTER_RITEM_EDI_SALES_CODE,
         //PPEUpdate.PPE_UPDATE,
-		//InvoiceInfoAddAudit.INVOICE_INFO_ADD_AUDIT
+//		InvoiceInfoAddAudit.INVOICE_INFO_ADD_AUDIT,
 		//AddColumnMarketingCampaignBudget.ADD_COLUMN_MARKETING_CAMPAIGN_BUDGET,
 		//AddColumnMarketingActionBudget.ADD_COLUMN_MARKETING_ACTION_BUDGET,
 
@@ -477,7 +483,7 @@ public class Up2Date {
         //AgreementUpdateHideMessage.AGREEMENTUPDATEHIDEMESSAGE,
         //AgreementUpdateHideToDisable.AGREEMENTUPDATEHIDETODISABLE,
         
-        InKindDeductionUpdate.INKIND_DEDUCTION_UPDATE
+//        InKindDeductionUpdate.INKIND_DEDUCTION_UPDATE
 	};
 
     // ------------------------------------------------------------------------

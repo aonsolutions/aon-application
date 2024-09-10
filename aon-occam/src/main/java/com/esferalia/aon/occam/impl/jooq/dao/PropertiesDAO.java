@@ -68,6 +68,7 @@ import org.jooq.SelectJoinStep;
 import org.jooq.impl.DSL;
 import org.jooq.impl.SQLDataType;
 
+import com.esferalia.aon.jooq.tables.BankStatement;
 import com.esferalia.aon.jooq.tables.Raddinfo;
 import com.esferalia.aon.occam.api.model.Filter.AgreementLevelCategoryFilter;
 import com.esferalia.aon.occam.api.model.Filter.ApplicationParameterFilter;
@@ -98,6 +99,7 @@ import com.esferalia.aon.occam.api.model.Filter.IrpfDataFilter;
 import com.esferalia.aon.occam.api.model.Filter.ItemAddInfoFilter;
 import com.esferalia.aon.occam.api.model.Filter.LocationFilter;
 import com.esferalia.aon.occam.api.model.Filter.MailTemplateFilter;
+import com.esferalia.aon.occam.api.model.Filter.NordigenBankStatementFilter;
 import com.esferalia.aon.occam.api.model.Filter.NotificationFilter;
 import com.esferalia.aon.occam.api.model.Filter.OfferDetailCommissionFilter;
 import com.esferalia.aon.occam.api.model.Filter.PersonFilter;
@@ -150,6 +152,7 @@ import com.esferalia.aon.occam.api.model.Properties.IrpfDataProperties;
 import com.esferalia.aon.occam.api.model.Properties.ItemAddInfoProperties;
 import com.esferalia.aon.occam.api.model.Properties.LocationProperties;
 import com.esferalia.aon.occam.api.model.Properties.MailTemplateProperties;
+import com.esferalia.aon.occam.api.model.Properties.NordigenBankStatementProperties;
 import com.esferalia.aon.occam.api.model.Properties.NotificationProperties;
 import com.esferalia.aon.occam.api.model.Properties.OfferDetailCommissionProperties;
 import com.esferalia.aon.occam.api.model.Properties.PersonProperties;
@@ -239,6 +242,7 @@ public class PropertiesDAO {
 		@Override public Property<Timestamp> getModificationDateProperty() {return new FilterDAO.PropertyDAO<>(INVOICE.MODIFICATION_DATE);}
 		@Override public Property<String> getModificationUserProperty() {return new FilterDAO.PropertyDAO<>(INVOICE.MODIFICATION_USER);}
 		@Override public Property<String> getTotalStringProperty() {return new FilterDAO.PropertyDAO<>(INVOICE.TOTAL.round(2).cast(SQLDataType.VARCHAR));}
+
 		@Override public Property<String> getDateNewPortalProperty() {return new FilterDAO.PropertyDAO<>(
 				DSL.concat(
 						DSL.splitPart(INVOICE.ISSUE_DATE.cast(SQLDataType.VARCHAR), "-", 3),
@@ -1656,6 +1660,51 @@ public class PropertiesDAO {
 		@Override public Property<Byte> getPurchaseProperty() {return new FilterDAO.PropertyDAO<Byte>(TARIFF.PURCHASE);}
 		@Override public Property<Double> getDiscountProperty() {return new FilterDAO.PropertyDAO<Double>(TARIFF.DISCOUNT);}
 		@Override public Property<Byte> getActiveProperty() {return new FilterDAO.PropertyDAO<Byte>(TARIFF.ACTIVE);}
+	}
+	
+	protected static class NordigenBankStatementPropertiesDAO implements NordigenBankStatementProperties{
+		
+		protected Condition[] getConditions(NordigenBankStatementFilter filter) {
+			if (filter == null) {
+				return new Condition[0];
+			}
+			FilterDAO filterDAO = (FilterDAO) filter.filter(this);
+			if (filterDAO == null){
+				return new Condition[0];
+			}
+			return new Condition[] { filterDAO.getCondition() };
+		}
+
+		@Override
+		public Property<Integer> getIdProperty() {return new FilterDAO.PropertyDAO<>(BankStatement.BANK_STATEMENT.RBANK);}
+		@Override
+		public Property<Integer> getDomainProperty() {return new FilterDAO.PropertyDAO<>(BankStatement.BANK_STATEMENT.DOMAIN);}
+		@Override
+		public Property<String> getDescriptionProperty() {return new FilterDAO.PropertyDAO<>(BankStatement.BANK_STATEMENT.DESCRIPTION);}
+		@Override
+		public Property<Byte> getStatusProperty() {return new FilterDAO.PropertyDAO<>(BankStatement.BANK_STATEMENT.STATUS);}
+		@Override
+		public Property<Double> getAmountProperty() {return new FilterDAO.PropertyDAO<>(BankStatement.BANK_STATEMENT.AMOUNT);}
+
+		@Override
+		public Property<java.util.Date> getOperationDateProperty() {
+			return new FilterDAO.PropertyDAO(BankStatement.BANK_STATEMENT.OPERATION_DATE);
+		}
+		@Override
+		public Property<String> getAmountStringProperty() {return new FilterDAO.PropertyDAO<>(BankStatement.BANK_STATEMENT.AMOUNT.round(2).cast(SQLDataType.VARCHAR));}
+		
+		@Override
+		public Property<String> getOperationDateStringProperty() {
+		    return new FilterDAO.PropertyDAO<>(
+		        DSL.field(
+		            "DATE_FORMAT({0}, {1})",
+		            SQLDataType.VARCHAR,
+		            BankStatement.BANK_STATEMENT.OPERATION_DATE,
+		            DSL.inline("%d/%m/%Y")
+		        )
+		    );
+		}
+
 	}
 
 }

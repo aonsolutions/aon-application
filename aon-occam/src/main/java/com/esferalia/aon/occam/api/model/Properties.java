@@ -1,6 +1,7 @@
 package com.esferalia.aon.occam.api.model;
 
 import java.sql.Date;
+
 import java.sql.Timestamp;
 
 import com.esferalia.aon.occam.api.model.Filter.Property;
@@ -1950,5 +1951,16 @@ public interface Properties {
 		Property<Byte> getActiveProperty();
 		Property<String> getDescriptionProperty();
 		Property<Integer> getScopeProperty();
+	}
+	
+	public interface NordigenBankStatementProperties{
+		Property<Integer> getIdProperty();
+		Property<Integer> getDomainProperty();
+		Property<String> getDescriptionProperty();
+		Property<Byte> getStatusProperty();
+		Property<Double> getAmountProperty();
+		Property<java.util.Date> getOperationDateProperty();
+		Property<String> getAmountStringProperty();
+		Property<String> getOperationDateStringProperty();
 	}
 }

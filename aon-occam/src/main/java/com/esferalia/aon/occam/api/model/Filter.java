@@ -780,5 +780,9 @@ public interface Filter extends Serializable{
 	public interface MarketingCampaignFilter{
 		Filter filter(MarketingCampaignProperties properties);
 	}
+	@FunctionalInterface
+	public interface NordigenBankStatementFilter{
+		Filter filter(NordigenBankStatementProperties properties);
+	}
 	
 }
