@@ -35,12 +35,13 @@ import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
-public class InvoiceValidation {
+public class InvoiceValidationOLD {
 	
-	private InvoiceValidation() {
+	private InvoiceValidationOLD() {
 		
 	}
 
+	@Deprecated
 	public static class AonConfigurationContext {
 		
 		private AONContext ctx;
@@ -63,6 +64,7 @@ public class InvoiceValidation {
 	/**
 	 * El dominio de la factura no puede estar vacio.
 	 */
+	@Deprecated
 	public static final BiConsumer<Invoice,AonConfigurationContext> EMPTY_DOMAIN = (inv,ctx) -> {
 		if (inv.getDomain() == 0) 
 			throw new AonCoreException(AonError.EMPTY_DOMAIN.getMessage());
@@ -71,6 +73,7 @@ public class InvoiceValidation {
 	/**
 	 * La fecha de la factura es un dato obligatorio.
 	 */
+	@Deprecated
 	public static final BiConsumer<Invoice,AonConfigurationContext> EMPTY_DATE = (inv,ctx) -> {
 		if (inv.getIssueDate() == null)
 			throw new AonCoreException(AonError.INVOICE_EMPTY_DATE.getMessage());
@@ -79,6 +82,7 @@ public class InvoiceValidation {
 	/**
 	 * La fecha IVA de la factura es un dato obligatorio.
 	 */
+	@Deprecated
 	public static final BiConsumer<Invoice,AonConfigurationContext> EMPTY_TAX_DATE = (inv,ctx) -> {
 		if (inv.getTaxDate() == null)
 			throw new AonCoreException(AonError.INVOICE_EMPTY_TAX_DATE.getMessage());
@@ -87,6 +91,7 @@ public class InvoiceValidation {
 	/**
 	 * El Tipo de la factura no puede ser null.
 	 */
+	@Deprecated
 	public static final BiConsumer<Invoice,AonConfigurationContext> EMPTY_INVOICE_TYPE = (inv,ctx) -> {
 		if (inv.getType() == null) {
 			throw new AonCoreException(AonError.INVOICE_EMPTY_TYPE.getMessage());
@@ -96,6 +101,7 @@ public class InvoiceValidation {
 	/**
 	 * El titular de la factura es un dato obligatorio.
 	 */
+	@Deprecated
 	public static final BiConsumer<Invoice,AonConfigurationContext> EMPTY_INVOICE_REGISTRY = (inv,ctx) -> {
 		if (inv.getRegistry() == null ) {
 			throw new AonCoreException(AonError.INVOICE_EMPTY_REGISTRY.getMessage());
@@ -105,6 +111,7 @@ public class InvoiceValidation {
 	/**
 	 * El ámbito de la factura es un dato obligatorio.
 	 */
+	@Deprecated
 	public static final BiConsumer<Invoice,AonConfigurationContext> EMPTY_INVOICE_SCOPE = (inv,ctx) -> {
 		if (inv.getScope() == null || inv.getScope().getId() == null ) {
 			throw new AonCoreException(AonError.INVOICE_EMPTY_SCOPE.getMessage());
@@ -114,6 +121,7 @@ public class InvoiceValidation {
 	/**
 	 * Si la factura no es de ventas, el codigo de referencia debe tener valor.
 	 */
+	@Deprecated
 	public static final BiConsumer<Invoice,AonConfigurationContext> EMPTY_REFERENCE_CODE = (inv,ctx) -> {
 		if (!inv.isSales() && AonStringUtils.isBlank( inv.getReferenceCode()) ) {
 			throw new AonCoreException(AonError.INVOICE_EMPTY_REFERENCE_CODE.getMessage());
@@ -123,6 +131,7 @@ public class InvoiceValidation {
 	/**
 	 * Si la factura no es de ventas, el codigo de referencia debe tener valor.
 	 */
+	@Deprecated
 	public static final BiConsumer<Invoice,AonConfigurationContext> EMPTY_TRANSACTION = (inv,ctx) -> {
 		if (inv.getTransaction() == null) {
 			throw new AonCoreException(AonError.INVOICE_EMPTY_TRANSACTION.getMessage());
@@ -132,6 +141,7 @@ public class InvoiceValidation {
 	/**
 	 * El Domain/Serie/Número/Tipo no puede estar duplicado
 	 */
+	@Deprecated
 	public static final BiConsumer<Invoice,AonConfigurationContext> DUPLICATED_SERIES_NUMBER = (inv,ctx) -> {
 		if (ctx.getContext().getDslContext().fetchExists( 
 				ctx.getContext().getDslContext().selectOne()
@@ -151,6 +161,7 @@ public class InvoiceValidation {
 	/**
 	 * En facturas recibidas, el Domain/Registry/Numero Referencia no puede estar duplicado
 	 */
+	@Deprecated
 	public static final BiConsumer<Invoice,AonConfigurationContext> DUPLICATED_REFERENCE_CODE = (inv,ctx) -> {
 		if (!inv.isSales() || (inv.getReferenceCode() != null && !"".equals(inv.getReferenceCode()))) {
 			if (ctx.getContext().getDslContext().fetchExists( 
@@ -173,6 +184,7 @@ public class InvoiceValidation {
 	 * empresa, debe ser anterior a la fecha de factura.
 	 * 
 	 */
+	@Deprecated
 	public static final BiConsumer<Invoice,AonConfigurationContext> OPERATIONS_DEADLINE = (inv,ctx) -> {
 		Date deadline = ctx.getConfiguration().getOperationsDeadline();
 		if (deadline != null && deadline.after(inv.getIssueDate())) 
@@ -182,6 +194,7 @@ public class InvoiceValidation {
 	/**
 	 * Si el año de la factura no es anterior en diez años al actual.
 	 */
+	@Deprecated
 	public static final BiConsumer<Invoice,AonConfigurationContext> CHECK_TEN_YEARS  = (inv,ctx) -> {
 		int thisYear = AonDateUtils.getYear(new Date());
 		int invoiceYear = AonDateUtils.getYear(inv.getIssueDate());
@@ -194,6 +207,7 @@ public class InvoiceValidation {
 	 * Si existen vencimientos, las suma debe coincidir con el total factura.
 	 * Sólo se realiza en la creación de la factura.
 	 */
+	@Deprecated
 	public static final BiConsumer<Invoice,AonConfigurationContext> CHECK_FINANCES = (inv,ctx) -> {
 		if (inv.getFinances() != null && !inv.getFinances().isEmpty()) {
 			double financesTotal = 0.0;
@@ -211,6 +225,7 @@ public class InvoiceValidation {
 	/**
 	 * El origen de la linea de factura es un dato obligatorio.
 	 */
+	@Deprecated
 	public static final BiConsumer<InvoiceDetail,AonConfigurationContext> EMPTY_SOURCE = (det,ctx) -> {
 		if (det.getSource() == null ) {
 			throw new AonCoreException(AonError.INVOICE_EMPTY_SOURCE.getMessage());
@@ -220,6 +235,7 @@ public class InvoiceValidation {
 	/**
 	 * El centro de trabajo es un dato obligatorio.
 	 */
+	@Deprecated
 	public static final BiConsumer<InvoiceDetail,AonConfigurationContext> EMPTY_WORKPLACE = (det,ctx) -> {
 		if(det.getWorkplace() == null || det.getWorkplace().getId() == null) {
 			throw new AonCoreException(AonError.INVOICE_EMPTY_WORKPLACE.getMessage());
@@ -229,6 +245,7 @@ public class InvoiceValidation {
 	/**
 	 * Las facturas rectificadas no se pueden borrar.
 	 */
+	@Deprecated
 	public static final BiConsumer<Invoice,AonConfigurationContext> RECTIFIED_INVOICE = (inv,ctx) -> {
 		if (inv.isRectified()) 
 			throw new AonCoreException(AonError.INVOICE_CANT_DELETE_RECTIFIED.getMessage());
@@ -237,6 +254,7 @@ public class InvoiceValidation {
 	/**
 	 * Las facturas rectificadas no se pueden borrar.
 	 */
+	@Deprecated
 	public static final BiConsumer<Invoice,AonConfigurationContext> DUA_LINKED_INVOICE = (inv,ctx) -> {
 		if (inv.isDUALinkAllowed() && 
 			ctx.getContext().getDslContext().fetchExists( 
@@ -251,6 +269,7 @@ public class InvoiceValidation {
 	/**
 	 * La factura ha sido utilizada para los calculos de los modelos fiscales.
 	 */
+	@Deprecated
 	public static final BiConsumer<Invoice, AonConfigurationContext> ALCATRAZ = (inv,ctx) -> {
 		if (inv.getId() != null) {
 			List<FiscalModel> models = AlcatrazDAO.isInvoiceDeclared(ctx.getContext(), inv.getId() );
@@ -269,6 +288,7 @@ public class InvoiceValidation {
 	/**
 	 * Las facturas enviadas al SII y que no se han dado de baja en el SII no se pueden borrar.
 	 */
+	@Deprecated
 	public static final BiConsumer<Invoice, AonConfigurationContext> SII = (inv,ctx) -> {
 		Invoice a = InvoiceSIIDAO.getSiiInvoiceStream(ctx.getContext(), f -> f.getIdProperty().eq(inv.getId()), false, true, true, false, false, "").findFirst().orElse(new Invoice());
 		if(a.getId() != null) {
@@ -279,6 +299,7 @@ public class InvoiceValidation {
 	/**
 	 * Las facturas enviadas a Ticket Bai y que no se han dado de baja en Ticket Bai no se pueden borrar.
 	 */
+	@Deprecated
 	public static final BiConsumer<Invoice, AonConfigurationContext> TBAI = (inv,ctx) -> {
 		TbaiConfiguration tbai = TbaiConfigurationDAO.get(ctx.getContext());
 		if(tbai.isActive()) {
@@ -298,6 +319,7 @@ public class InvoiceValidation {
 		}
 	};
 
+	@Deprecated
 	public static void validateInvoice(AONContext ctx,AonConfiguration config,Invoice inv) throws AonCoreException {
 		EMPTY_DOMAIN
 			.andThen(EMPTY_DATE)
@@ -317,6 +339,7 @@ public class InvoiceValidation {
 
 	}
 
+	@Deprecated
 	public static void validateUpdateSpecialInvoice(AONContext ctx,AonConfiguration config,Invoice inv) throws AonCoreException {
 		EMPTY_DOMAIN
 			.andThen(EMPTY_TAX_DATE)
@@ -326,12 +349,14 @@ public class InvoiceValidation {
 
 	}
 
+	@Deprecated
 	public static void validateDetail(AONContext ctx, AonConfiguration config, InvoiceDetail detail) {
 		EMPTY_SOURCE
 		.andThen(EMPTY_WORKPLACE)
 			.accept(detail, new AonConfigurationContext(ctx,config));
 	}
 
+	@Deprecated
 	public static void validateInvoiceDeletion(AONContext ctx, AonConfiguration config, Invoice inv) {
 		if (config == null) config = ConfigurationDAO.getConfiguration(ctx, inv.getIssueDate());
 		RECTIFIED_INVOICE

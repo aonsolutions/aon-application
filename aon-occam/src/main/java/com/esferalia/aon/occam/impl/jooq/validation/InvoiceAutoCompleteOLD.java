@@ -54,13 +54,14 @@ import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonCollectionUtils;
 import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
-
-public class InvoiceAutoComplete {
+@Deprecated
+public class InvoiceAutoCompleteOLD {
 	
-	private InvoiceAutoComplete() {
+	private InvoiceAutoCompleteOLD() {
 		
 	}
 	
+	@Deprecated
 	private static class AonConfigurationContext {
 		
 		private AONContext ctx;
@@ -82,6 +83,7 @@ public class InvoiceAutoComplete {
 	/**
 	 * Se rellena el dominio.
 	 */
+	@Deprecated
 	public static final BiConsumer<Invoice,AonConfigurationContext> COMPLETE_DOMAIN = (inv,ctx) -> {
 		if(inv.getDomain() == null) {
 			inv.setDomain(ctx.getContext().getDomainId());
@@ -93,6 +95,7 @@ public class InvoiceAutoComplete {
 	/**
 	 * Se rellena el número de referencia para las facturas de ventas.
 	 */
+	@Deprecated
 	public static final BiConsumer<Invoice,AonConfigurationContext> COMPLETE_SALES_SERIES = (inv,ctx) -> {
 		if (inv.isSales()) {
 			if (AonStringUtils.isBlank(inv.getSeries())) {
@@ -116,6 +119,7 @@ public class InvoiceAutoComplete {
 	/**
 	 * Se rellena las serie y numero para las facturas de compras y gastos.
 	 */
+	@Deprecated
 	public static final BiConsumer<Invoice,AonConfigurationContext> COMPLETE_PURCHASE_EXPENSES_SERIES = (inv,ctx) -> {
 		if (inv.isPurchase() || inv.isExpenses()) {
 			inv.setSeries(Integer.toString(AonDateUtils.getYear(inv.getIssueDate())));
@@ -130,6 +134,7 @@ public class InvoiceAutoComplete {
 	/**
 	 * Se rellena las serie y numero para las facturas de compras y gastos.
 	 */
+	@Deprecated
 	public static final BiConsumer<Invoice,AonConfigurationContext> COMPLETE_UNDEDUCTIBLE_REFERENCE_CODE = (inv,ctx) -> {
 		if (inv.isUndeductible() && AonStringUtils.equalsIgnoreCase("<auto>",inv.getReferenceCode())) {
 			inv.setReferenceCode( inv.getDocumentNumber());
@@ -139,6 +144,7 @@ public class InvoiceAutoComplete {
 	/**
 	 * Se rellena las serie y numero para las facturas de compras y gastos.
 	 */
+	@Deprecated
 	public static final BiConsumer<Invoice,AonConfigurationContext> COMPLETE_UNDEDUCTIBLE_SERIES = (inv,ctx) -> {
 		if (inv.isUndeductible()) {
 			inv.setSeries(Integer.toString(AonDateUtils.getYear(inv.getIssueDate()==null?new Date():inv.getIssueDate())));
@@ -153,6 +159,7 @@ public class InvoiceAutoComplete {
 	/**
 	 * Aseguramos el SecurityLevel.
 	 */
+	@Deprecated
 	public static final BiConsumer<Invoice,AonConfigurationContext> COMPLETE_SECURITY_LEVEL = (inv,ctx) -> {
 		if (inv.getSecurityLevel() == null) inv.setSecurityLevel(SecurityLevel.OFFICIAL); 
 	};
@@ -160,6 +167,7 @@ public class InvoiceAutoComplete {
 	/**
 	 * Aseguramos la fecha de IVA..
 	 */
+	@Deprecated
 	public static final BiConsumer<Invoice,AonConfigurationContext> COMPLETE_TAX_DATE = (inv,ctx) -> {
 		if (inv.getTaxDate() == null) inv.setTaxDate(inv.getIssueDate());
 	};
@@ -167,6 +175,7 @@ public class InvoiceAutoComplete {
 	/**
 	 * Aseguramos la Actividad.
 	 */
+	@Deprecated
 	public static final BiConsumer<Invoice,AonConfigurationContext> COMPLETE_ACTIVITY = (inv,ctx) -> {
 		if (inv.getActivity() == null
 			&& ctx.getConfiguration() != null 
@@ -182,6 +191,7 @@ public class InvoiceAutoComplete {
 	/**
 	 * Si solo hay un vencimiento, el importe será igual al total factura.
 	 */
+	@Deprecated
 	public static final BiConsumer<Invoice,AonConfigurationContext> COMPLETE_FIRST_FINANCE = (inv,ctx) -> {
 		if (inv.hasFinances() && inv.getFinances().size() == 1 && inv.getFinances().get(0).isPending()) {
 			inv.getFinances().get(0).setAmount( inv.getTotal());
@@ -191,6 +201,7 @@ public class InvoiceAutoComplete {
 	/**
 	 * Aseguramos la fecha de IVA..
 	 */
+	@Deprecated
 	public static final  BiConsumer<Invoice,AonConfigurationContext> COMPLETE_RECTIFICATION_TYPE = (inv,ctx) -> {
 		if (inv.getRectificationType() == null) inv.setRectificationType(RectificationType.NONE);
 	};
@@ -199,6 +210,7 @@ public class InvoiceAutoComplete {
 	/**
 	 * Aseguramos el nombre del titular de la factura.
 	 */
+	@Deprecated
 	public static final BiConsumer<Invoice,AonConfigurationContext> ENSURE_REGISTRY_DATA = (inv,ctx) -> {
 		if (AonStringUtils.isBlank(inv.getRegistryName()) || AonStringUtils.isBlank(inv.getRegistryDocument())) {
 			if (inv.getRegistry() != null) {
@@ -216,6 +228,7 @@ public class InvoiceAutoComplete {
 	/**
 	 * Aseguramos el nombre del titular de la factura.
 	 */
+	@Deprecated
 	public static final BiConsumer<Invoice,AonConfigurationContext> COMPLETE_REGISTRY_DATA = (inv,ctx) -> {
 		if(inv.getRegistry() == null && inv.getRegistryData() != null) {
 			if(inv.getRegistryData().getId() == null && !AonStringUtils.isBlank(inv.getRegistryData().getDocument())) {
@@ -398,6 +411,7 @@ public class InvoiceAutoComplete {
 	/**
 	 * Aseguramos el nombre del titular de la factura.
 	 */
+	@Deprecated
 	public static final BiConsumer<Invoice,AonConfigurationContext> COMPLETE_REGISTRY_ADDRESS_DATA = (inv,ctx) -> {
 		if(inv.getAddress().isGlobal()) {
 			inv.setRegistryAddress(null);
@@ -420,6 +434,7 @@ public class InvoiceAutoComplete {
 		}	
 	};
 	
+	@Deprecated
 	public static final BiConsumer<Invoice,AonConfigurationContext> COMPLETE_REGISTRY_ADDRESS = (inv,ctx) -> {
 		if(inv.getAddress() == null || inv.getAddress().isEmpty()) {
 			RegistryAddressFilter filter = inv.getRegistryAddress() != null 
@@ -444,6 +459,7 @@ public class InvoiceAutoComplete {
 	/**
 	 * Aseguramos los detalles de la factura.
 	 */
+	@Deprecated
 	public static final BiConsumer<Invoice,AonConfigurationContext> COMPLETE_DETAILS = (inv,ctx) -> {
 		if((inv.getDetails() == null || inv.getDetails().isEmpty()) && inv.getBreakdown() != null) {	
 			
@@ -595,6 +611,7 @@ public class InvoiceAutoComplete {
 		});
 	};
 	
+	@Deprecated
 	private static Item createProductItem(AONContext ctx, String code,
 			String name, InvoiceDetail id, InvoiceTax it) {
 		Product p = new Product();
@@ -624,6 +641,7 @@ public class InvoiceAutoComplete {
 	/**
 	 * Aseguramos el nombre del titular de la factura.
 	 */
+	@Deprecated
 	public static final BiConsumer<Invoice,AonConfigurationContext> COMPLETE_FINANCES = (inv,ctx) -> 
 		inv.getFinances().stream().forEach(finance -> {
 			finance.setDomain(inv.getDomain());
@@ -657,6 +675,7 @@ public class InvoiceAutoComplete {
 	/**
 	 * Aseguramos el ambito de la factura.
 	 */
+		@Deprecated
 	public static final BiConsumer<Invoice,AonConfigurationContext> COMPLETE_SCOPE = (inv,ctx) -> {
 		if((inv.getScope() == null || inv.getScope().getId() == null) && inv.getRegistry() != null)  {
 			if(inv.isSales()) {
@@ -697,6 +716,7 @@ public class InvoiceAutoComplete {
 	/**
 	 * Aseguramos la base imponible de la factura.
 	 */
+	@Deprecated
 	public static final BiConsumer<Invoice,AonConfigurationContext> COMPLETE_TAXABLE_BASE = (inv,ctx) -> {
 		if (inv.isUndeductible() ) {
 			inv.setTaxableBase(inv.getTotal());
@@ -712,6 +732,7 @@ public class InvoiceAutoComplete {
 		
 	};
 	
+	@Deprecated
 	public static void completeInvoice(AONContext ctx, AonConfiguration config,Invoice inv) throws AonCoreException {
 		COMPLETE_DOMAIN
 		.andThen(COMPLETE_SALES_SERIES)
@@ -728,6 +749,7 @@ public class InvoiceAutoComplete {
 		.accept(inv, new AonConfigurationContext(ctx,config));
 	}
 	
+	@Deprecated
 	public static void completeInvoice2(AONContext ctx, AonConfiguration config, Invoice inv) throws AonCoreException {
 		COMPLETE_DOMAIN
 		.andThen(COMPLETE_SALES_SERIES)

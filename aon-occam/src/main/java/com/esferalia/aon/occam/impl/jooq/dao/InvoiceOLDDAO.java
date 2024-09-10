@@ -123,8 +123,8 @@ import com.esferalia.aon.occam.impl.jooq.dao.invoice.InvoiceAddressDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.invoice.InvoiceBatchDetailDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.invoice.InvoiceInfoDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.offer.OfferDetailDAO;
-import com.esferalia.aon.occam.impl.jooq.validation.InvoiceAutoComplete;
-import com.esferalia.aon.occam.impl.jooq.validation.InvoiceValidation;
+import com.esferalia.aon.occam.impl.jooq.validation.InvoiceAutoCompleteOLD;
+import com.esferalia.aon.occam.impl.jooq.validation.InvoiceValidationOLD;
 import com.esferalia.aon.watson.AonError;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.mutable.MutableInt;
@@ -912,16 +912,16 @@ public class InvoiceOLDDAO {
 	@Deprecated
 	public static Invoice validate(AONContext ctx, Invoice invoice, Integer rawdocId) {
 		AonConfiguration aonCtx = ConfigurationDAO.getConfiguration(ctx, invoice.getIssueDate());
-		InvoiceAutoComplete.completeInvoice2(ctx, aonCtx, invoice);
-		InvoiceValidation.validateInvoice(ctx, aonCtx, invoice);
+		InvoiceAutoCompleteOLD.completeInvoice2(ctx, aonCtx, invoice);
+		InvoiceValidationOLD.validateInvoice(ctx, aonCtx, invoice);
 		return invoice;
 	}
 	
 	@Deprecated
 	public static Invoice accept(AONContext ctx, Invoice invoice, Integer rawdocId) {
 		AonConfiguration aonCtx = ConfigurationDAO.getConfiguration(ctx, invoice.getIssueDate());
-		InvoiceAutoComplete.completeInvoice2(ctx, aonCtx, invoice);
-		InvoiceValidation.validateInvoice(ctx, aonCtx, invoice);
+		InvoiceAutoCompleteOLD.completeInvoice2(ctx, aonCtx, invoice);
+		InvoiceValidationOLD.validateInvoice(ctx, aonCtx, invoice);
 		invoice = insert(ctx, aonCtx, invoice);
 		FinanceDAO.insertFinances(ctx, invoice.getFinances());
 		if(invoice.isRectifier() && invoice.getRectificationInvoice().isPresent()) {
@@ -973,8 +973,8 @@ public class InvoiceOLDDAO {
 	@Deprecated
 	public static Invoice insert(AONContext ctx, AonConfiguration config, Invoice invoice) {
 		ctx.checkWrite();
-		InvoiceAutoComplete.completeInvoice(ctx, config, invoice);
-		InvoiceValidation.validateInvoice(ctx, config, invoice);
+		InvoiceAutoCompleteOLD.completeInvoice(ctx, config, invoice);
+		InvoiceValidationOLD.validateInvoice(ctx, config, invoice);
 		InvoiceRecord record = ctx.getDslContext()
 			.insertInto(INVOICE)
 			.set(INVOICE.DOMAIN, invoice.getDomain() )
@@ -1042,7 +1042,7 @@ public class InvoiceOLDDAO {
 	}
 	@Deprecated
 	private static void insertDetail(AONContext ctx, AonConfiguration config, Invoice invoice,InvoiceDetail detail) {
-		InvoiceValidation.validateDetail(ctx, config, detail);
+		InvoiceValidationOLD.validateDetail(ctx, config, detail);
 		beforeInsertDetail(ctx, config, invoice, detail);
 		detail.setDescription((AonStringUtils.isBlank(detail.getDescription()) && detail.getSource() == InvoiceSource.ACCOUNT)
 				? MessageFormat.format(DETAIL_MSG, invoice.getReferenceCode(), invoice.getIssueDate())
@@ -1071,8 +1071,8 @@ public class InvoiceOLDDAO {
 	@Deprecated
 	private static Invoice update(AONContext ctx, AonConfiguration config, Invoice invoice, boolean only) {
 		ctx.checkWrite();
-		InvoiceValidation.validateInvoice(ctx, config, invoice);
-		InvoiceAutoComplete.completeInvoice(ctx, config, invoice);
+		InvoiceValidationOLD.validateInvoice(ctx, config, invoice);
+		InvoiceAutoCompleteOLD.completeInvoice(ctx, config, invoice);
 		int i = ctx.getDslContext()
 			.update(INVOICE)
 			.set(INVOICE.DOMAIN, invoice.getDomain() )
@@ -1168,7 +1168,7 @@ public class InvoiceOLDDAO {
 		ctx.checkWrite();
 		Invoice invoice = getFullInvoice(ctx, id);
 		if (invoice == null) throw new AonCoreException(AonError.INVOICE_NOT_FOUND.getMessage());
-		InvoiceValidation.validateInvoiceDeletion(ctx, config, invoice);
+		InvoiceValidationOLD.validateInvoiceDeletion(ctx, config, invoice);
 		
 		if (invoice.isRectifier()) {
 			if (invoice.getRectificationInvoice().isPresent()) {

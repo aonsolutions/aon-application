@@ -77,7 +77,7 @@ import com.esferalia.aon.occam.api.model.type.TaxType;
 import com.esferalia.aon.occam.api.model.type.WithholdingType;
 import com.esferalia.aon.occam.impl.jooq.dao.fiscal.FiscalModelDAO;
 import com.esferalia.aon.occam.impl.jooq.validation.AccountEntryValidation;
-import com.esferalia.aon.occam.impl.jooq.validation.InvoiceValidation;
+import com.esferalia.aon.occam.impl.jooq.validation.InvoiceValidationOLD;
 import com.esferalia.aon.occam.server.accounting.AccountEntryUtils;
 import com.esferalia.aon.watson.AonError;
 import com.esferalia.aon.watson.error.AonCoreException;
@@ -953,7 +953,7 @@ public class AccountEntryDAO {
 					if (wrapper instanceof AccountingInvoice) {
 						AccountingInvoice ai = (AccountingInvoice) wrapper;
 						Invoice inv = ai.getInvoice();
-						InvoiceValidation.validateUpdateSpecialInvoice(ctx, ConfigurationDAO.getConfiguration(ctx), inv);
+						InvoiceValidationOLD.validateUpdateSpecialInvoice(ctx, ConfigurationDAO.getConfiguration(ctx), inv);
 						ctx.getDslContext()
 							.update(INVOICE)
 								.set(INVOICE.SECURITY_LEVEL, AonEnumUtils.getByte(ae.getSecurityLevel()))
@@ -984,7 +984,7 @@ public class AccountEntryDAO {
 					if (wrapper instanceof AccountingInvoice) {
 						AccountingInvoice ai = (AccountingInvoice) wrapper;
 						Invoice inv = ai.getInvoice();
-						InvoiceValidation.validateUpdateSpecialInvoice(ctx, ConfigurationDAO.getConfiguration(ctx), inv);
+						InvoiceValidationOLD.validateUpdateSpecialInvoice(ctx, ConfigurationDAO.getConfiguration(ctx), inv);
 						ctx.getDslContext()
 							.update(INVOICE)
 								.set(INVOICE.ACTIVITY, ae.getActivity() )
@@ -1006,7 +1006,7 @@ public class AccountEntryDAO {
 					ctx.checkWrite();
 					AccountingInvoice ai = (AccountingInvoice) wrapper;
 					Invoice inv = ai.getInvoice();
-					InvoiceValidation.validateUpdateSpecialInvoice(ctx, ConfigurationDAO.getConfiguration(ctx), inv);
+					InvoiceValidationOLD.validateUpdateSpecialInvoice(ctx, ConfigurationDAO.getConfiguration(ctx), inv);
 					inv.setInvestment(!inv.isInvestment());
 					ctx.getDslContext()
 						.update(INVOICE)
@@ -1026,7 +1026,7 @@ public class AccountEntryDAO {
 					ctx.checkWrite();
 					AccountingInvoice ai = (AccountingInvoice) wrapper;
 					Invoice inv = ai.getInvoice();
-					InvoiceValidation.validateUpdateSpecialInvoice(ctx, ConfigurationDAO.getConfiguration(ctx), inv);
+					InvoiceValidationOLD.validateUpdateSpecialInvoice(ctx, ConfigurationDAO.getConfiguration(ctx), inv);
 					ctx.getDslContext()
 						.update(INVOICE)
 							.set(INVOICE.TAX_DATE, AonDateUtils.toSql(inv.getTaxDate()) )
@@ -1046,7 +1046,7 @@ public class AccountEntryDAO {
 					AccountingInvoice ai = (AccountingInvoice) wrapper;
 					Invoice inv = ai.getInvoice();
 					inv.setService(!inv.isService());
-					InvoiceValidation.validateUpdateSpecialInvoice(ctx, ConfigurationDAO.getConfiguration(ctx), inv);
+					InvoiceValidationOLD.validateUpdateSpecialInvoice(ctx, ConfigurationDAO.getConfiguration(ctx), inv);
 					ctx.getDslContext()
 						.update(INVOICE)
 							.set(INVOICE.SERVICE, AonEnumUtils.getByte( inv.isService() ) )
@@ -1066,7 +1066,7 @@ public class AccountEntryDAO {
 					AccountingInvoice ai = (AccountingInvoice) wrapper;
 					Invoice inv = ai.getInvoice();
 					inv.setVatAccrualPayment(!inv.isVatAccrualPayment());
-					InvoiceValidation.validateUpdateSpecialInvoice(ctx, ConfigurationDAO.getConfiguration(ctx), inv);
+					InvoiceValidationOLD.validateUpdateSpecialInvoice(ctx, ConfigurationDAO.getConfiguration(ctx), inv);
 					ctx.getDslContext()
 						.update(INVOICE)
 							.set(INVOICE.VAT_ACCRUAL_PAYMENT, AonEnumUtils.getByte( inv.isVatAccrualPayment() ) )
