@@ -12,7 +12,7 @@ import com.esferalia.aon.occam.api.model.fiscal.VatContext;
 import com.esferalia.aon.occam.api.model.type.Mod303Key;
 import com.esferalia.aon.occam.api.model.type.Mod390Key;
 import com.esferalia.aon.occam.api.model.type.VATRegime;
-import com.esferalia.aon.occam.impl.jooq.dao.InvoiceDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.InvoiceOLDDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.fiscal.AlcatrazDAO.Alcatraz;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonMathUtils;
@@ -549,7 +549,7 @@ class Mod390HFGipuzkoa2021Declaration extends Mod390HFGIPUZKOADeclaration {
 	public void specificInitialization(AONContext ctx, Mod390HF mod) {
 		Date fromDate = AonDateUtils.getYearFirstDay(mod.getYear());
 		Date toDate = AonDateUtils.getYearLastDay(mod.getYear());
-		LinkedList<InvoiceSeries> seriesList = InvoiceDAO.getInvoiceSeries(ctx, mod.getDomain(), fromDate, toDate)
+		LinkedList<InvoiceSeries> seriesList = InvoiceOLDDAO.getInvoiceSeries(ctx, mod.getDomain(), fromDate, toDate)
 			.collect(Collectors.toCollection(LinkedList::new));
 		Mod390Key[][] eKeys = new Mod390Key[][]{
 			 new Mod390Key[]{Mod390Key.GP_SE1N,Mod390Key.GP_SE1D,Mod390Key.GP_SE1H,Mod390Key.GP_SE1X}

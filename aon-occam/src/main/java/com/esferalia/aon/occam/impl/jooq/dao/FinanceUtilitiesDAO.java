@@ -81,7 +81,7 @@ public class FinanceUtilitiesDAO {
 	
 	public static Invoice missingFinanceInvoicesFix(AONContext ctx, Integer invoiceId) {
 		FinanceDAO.insertFinancesForInvoice(ctx, invoiceId);
-		return InvoiceDAO.getFullInvoice(ctx, invoiceId); 
+		return InvoiceOLDDAO.getFullInvoice(ctx, invoiceId); 
 	}
 
 	private static class MinimalInvoiceFiller  implements Function<Record,Invoice> {

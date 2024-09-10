@@ -38,20 +38,23 @@ import com.esferalia.aon.occam.api.model.type.InvoiceSource;
 import com.esferalia.aon.occam.api.model.type.InvoiceType;
 import com.esferalia.aon.occam.impl.jooq.dao.AccountDAO.FullAccountFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.InvestAssetDAO.InvestAssetFiller;
-import com.esferalia.aon.occam.impl.jooq.dao.InvoiceDAO.InvoiceFiller;
+import com.esferalia.aon.occam.impl.jooq.dao.InvoiceOLDDAO.InvoiceFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.ItemDAO.ItemFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.SellerDAO.SellerFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.WorkplaceDAO.WorkplaceFiller;
 import com.esferalia.aon.watson.util.AonEnumUtils;
 
-public class InvoiceDetailDAO {
+@Deprecated
+public class InvoiceDetailOLDDAO {
    
-    private InvoiceDetailDAO() {
+    private InvoiceDetailOLDDAO() {
      
     }
 	
-	private static final InvoiceDetailPropertiesDAO INVOICE_DETAIL_PROPERTIES = new InvoiceDetailPropertiesDAO();
-	private static class InvoiceDetailPropertiesDAO implements InvoiceDetailProperties {
+    @Deprecated
+    private static final InvoiceDetailPropertiesDAO INVOICE_DETAIL_PROPERTIES = new InvoiceDetailPropertiesDAO();
+    @Deprecated
+    private static class InvoiceDetailPropertiesDAO implements InvoiceDetailProperties {
 		
 		public Condition[] getConditions(InvoiceDetailFilter filter) {
 			FilterDAO filterDAO = (FilterDAO) filter.filter(this);
@@ -85,7 +88,7 @@ public class InvoiceDetailDAO {
 	}
 	
 	
-	
+    @Deprecated
 	private static SelectSeekStep1<Record, Short> select(AONContext ctx, InvoiceDetailFilter filter){	
 		return ctx.getDslContext()
 				.select()
@@ -94,6 +97,7 @@ public class InvoiceDetailDAO {
 				.orderBy(INVOICE_DETAIL.LINE);
 	}
 	
+    @Deprecated
 	private static SelectSeekStep1<Record, Short> selectFull(AONContext ctx, InvoiceDetailFilter filter){  
         return ctx.getDslContext()
                 .select()
@@ -111,24 +115,29 @@ public class InvoiceDetailDAO {
                 .orderBy(INVOICE_DETAIL.LINE);
     }
 	
+    @Deprecated
 	private static Stream<InvoiceDetail> getFullStream(AONContext ctx, InvoiceDetailFilter filter){ 
         return selectFull(ctx, filter).fetch().stream().map(new InvoiceDetailFiller());
     }
 	
+    @Deprecated
 	static List<InvoiceDetail> getFullList(AONContext ctx, InvoiceDetailFilter filter) {  
         return getFullStream(ctx, filter).collect(Collectors.toCollection(LinkedList::new));
     }
 	
+    @Deprecated
 	public static InvoiceDetail get(AONContext ctx, InvoiceDetailFilter filter) {
 		return select(ctx, filter).limit(1)
 			.fetch().stream().map(new InvoiceDetailFiller())
 			.findFirst().orElse(new InvoiceDetail());
 	}
 	
+    @Deprecated
 	public static InvoiceDetail get(AONContext ctx, Integer id) {
 		return get(ctx, f -> f.getIdProperty().eq(id));
 	}
 	
+    @Deprecated
 	static List<InvoiceDetail> save(AONContext ctx, List<InvoiceDetail> invoiceDetails) {
 		LinkedList<InvoiceDetail> list = new LinkedList<>();
 		invoiceDetails.stream().forEach(invoiceDetail -> 
@@ -136,13 +145,14 @@ public class InvoiceDetailDAO {
 		return list;
 	}
 	
+    @Deprecated
 	static InvoiceDetail save(AONContext ctx, InvoiceDetail invoiceDetail) {
 		invoiceDetail = (invoiceDetail.getId() != null && get(ctx, invoiceDetail.getId()).getId() != null)
 			? update(ctx, invoiceDetail)
 			: insert(ctx, invoiceDetail);
 		
 		if (invoiceDetail.getInvoice().getType() != InvoiceType.UNDEDUCTIBLE && !invoiceDetail.isPrepayment()) {
-			InvoiceTaxDAO.save(ctx, invoiceDetail.getInvoiceTaxes(), invoiceDetail);	
+			InvoiceTaxOLDDAO.save(ctx, invoiceDetail.getInvoiceTaxes(), invoiceDetail);	
 		} else {
 			ctx.log().debug("\t\tSKIPPING INVOICE TAX CREATION ({0})",(invoiceDetail.isPrepayment()? "PREPAYMENT": "UNDEDUCTIBLE INVOICE"));
 		}
@@ -150,6 +160,7 @@ public class InvoiceDetailDAO {
 		return invoiceDetail;
 	}
 	
+    @Deprecated
 	private static InvoiceDetail update(AONContext ctx, InvoiceDetail invoiceDetail) {
 		ctx.getDslContext().update(INVOICE_DETAIL)
 		.set(INVOICE_DETAIL.DOMAIN, invoiceDetail.getDomain())
@@ -177,6 +188,7 @@ public class InvoiceDetailDAO {
 		return invoiceDetail;
 	}
 	
+    @Deprecated
 	private static InvoiceDetail insert(AONContext ctx, InvoiceDetail invoiceDetail) {
 		Integer id = ctx.getDslContext().insertInto(INVOICE_DETAIL)
 			.set(INVOICE_DETAIL.DOMAIN, invoiceDetail.getDomain())
@@ -205,13 +217,16 @@ public class InvoiceDetailDAO {
 		return invoiceDetail.setId(id);
 	}	
 
+    @Deprecated
 	public static class InvoiceDetailFiller extends Filler implements Function<Record, InvoiceDetail> {
 
 		@Override
+	    @Deprecated
 		public InvoiceDetail apply(Record r) {
 			return build(r);
 		}
 		
+	    @Deprecated
 		public static InvoiceDetail build(Record r) {
 			return new InvoiceDetail()
 					.setId(getValue(r, INVOICE_DETAIL.ID))

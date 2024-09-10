@@ -1,8 +1,5 @@
 package com.esferalia.aon.occam.api.json.invoice;
 
-import static com.esferalia.aon.jooq.tables.Finance.FINANCE;
-import static com.esferalia.aon.jooq.tables.PayMethod.PAY_METHOD;
-
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
@@ -15,16 +12,8 @@ import com.esferalia.aon.occam.api.json.RegistryJSON;
 import com.esferalia.aon.occam.api.model.IJsonNames;
 import com.esferalia.aon.occam.api.model.finance.BankAccount;
 import com.esferalia.aon.occam.api.model.finance.Finance;
-import com.esferalia.aon.occam.api.model.security.Scope;
-import com.esferalia.aon.occam.api.model.type.Country;
-import com.esferalia.aon.occam.api.model.type.DocumentType;
-import com.esferalia.aon.occam.api.model.type.FinanceStatus;
 import com.esferalia.aon.occam.api.model.type.PayMethodType;
-import com.esferalia.aon.occam.api.model.type.SecurityLevel;
-import com.esferalia.aon.occam.impl.jooq.dao.InvoiceDAO;
-import com.esferalia.aon.occam.impl.jooq.dao.RegistryDAO;
 import com.esferalia.aon.watson.server.AonDateUtils;
-import com.esferalia.aon.watson.server.AonEnumUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 
 public class FinanceJSON {
@@ -90,22 +79,5 @@ public class FinanceJSON {
 			.put(IJsonNames.MODIFICATION_USER, finance.getModificationUser())
 			.put(IJsonNames.MODIFICATION_DATE, AonDateUtils.simpleFormat(finance.getModificationDate()))
 			;
-			
-		/**
-		 * 		TODO
-		 * 		.setInvoice(record.getValue(FINANCE.INVOICE)==null?null : new InvoiceDAO.MinimalInvoiceFiller().apply(record)) 
-				.setChequeNumber(record.getValue(FINANCE.CHEQUE_NUMBER))
-				.setFinanceStatus(FinanceStatus.safeValueOf( record.getValue(FINANCE.STATUS)))
-				.setSecurityLevel( SecurityLevel.safeValueOf( record.getValue(FINANCE.SECURITY_LEVEL)))
-				.setRemarks(record.getValue(FINANCE.REMARKS))
-				.setScope(new Scope().setId(record.getValue(FINANCE.SCOPE)))
-				.setManual(AonEnumUtils.getBoolean( record.getValue(FINANCE.MANUAL)))
-				.setAdvance(AonEnumUtils.getBoolean( record.getValue(FINANCE.ADVANCE)))
-				.setPayroll(AonEnumUtils.getBoolean( record.getValue(FINANCE.PAYROLL)))
-				.setPrepayment(AonEnumUtils.getBoolean( record.getValue(FINANCE.PREPAYMENT)))
-				.setSourceId(record.getValue(FINANCE.SOURCE_ID))
-				.setFinanceGroup(record.getValue(FINANCE.FINANCE_GROUP))
-		 * 
-		 * */
 	}
 }

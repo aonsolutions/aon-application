@@ -105,7 +105,7 @@ public class AccountingInvoiceDAO {
 			.findFirst()
 			.orElse( Integer.MIN_VALUE );
 		if (invoiceId != null && invoiceId != Integer.MIN_VALUE) {
-			Invoice invoice = InvoiceDAO.getInvoice(ctx, invoiceId);
+			Invoice invoice = InvoiceOLDDAO.getInvoice(ctx, invoiceId);
 			if (invoice != null) {
 				final AccountingInvoice ai = new AccountingInvoice();
 				ai.setAccountEntry(AccountEntryDAO.getAccountEntry(ctx, accountEntry));
@@ -123,7 +123,7 @@ public class AccountingInvoiceDAO {
 						.findFirst()
 						.orElse(null);
 				ai.setRegistry(reg);
-				InvoiceDAO.getInvoiceDetails(ctx, f -> f.getIdProperty().eq( invoice.getId() ))
+				InvoiceOLDDAO.getInvoiceDetails(ctx, f -> f.getIdProperty().eq( invoice.getId() ))
 					.forEach( det -> {
 						ai.getInvoice().getDetails().add( det );
 						ai.setAccountSource(ai.isAccountSource() || (det.getSource() == InvoiceSource.ACCOUNT));
@@ -167,7 +167,7 @@ public class AccountingInvoiceDAO {
 				}
 				
 				if ( !ai.isAccountSource() ) {
-					InvoiceDAO.fillBreakdown(ctx, ai.getInvoice());
+					InvoiceOLDDAO.fillBreakdown(ctx, ai.getInvoice());
 				}
 				ai.getInvoice().setFinances(FinanceDAO.getInvoiceFinances(ctx, invoiceId));
 				
@@ -495,7 +495,7 @@ public class AccountingInvoiceDAO {
 		public void visitCustomer() {
 			visitCommon();
 			invoice.setReferenceCode(null);
-			invoice.setNumber( InvoiceDAO.getNextNumber(ctx, new Byte[]{invoice.getType().value()}, invoice.getSeries()));
+			invoice.setNumber( InvoiceOLDDAO.getNextNumber(ctx, new Byte[]{invoice.getType().value()}, invoice.getSeries()));
 		}
 
 		@Override
@@ -547,7 +547,7 @@ public class AccountingInvoiceDAO {
 //			}
 //			// ---------------------------
 //			
-//			InvoiceDAO.update(ctx, config, accInvoice.getInvoice());
+//			InvoiceOLDDAO.update(ctx, config, accInvoice.getInvoice());
 //			if (accInvoice.isDuaLinked()) {
 //				updateInvoiceDUA( ctx, config, accInvoice);
 //			}
@@ -580,14 +580,14 @@ public class AccountingInvoiceDAO {
 //				LinkedList<InvoiceDetail> details = generateDetails(accInvoice);
 //				accInvoice.getInvoice().setDetails(details);
 //				accInvoice.getInvoice().setRecorded(true);
-//				InvoiceDAO.insert(ctx, config, accInvoice.getInvoice());
+//				InvoiceOLDDAO.insert(ctx, config, accInvoice.getInvoice());
 //				saveFinances(ctx, accInvoice);
 //			} else {
-//				Invoice i = InvoiceDAO.getInvoice(ctx, accInvoice.getInvoice().getId());
+//				Invoice i = InvoiceOLDDAO.getInvoice(ctx, accInvoice.getInvoice().getId());
 //				if (i.isRecorded()) {
 //					throw new AonCoreException("La factura ya ha sido contabilizada");
 //				}
-//				InvoiceDAO.save(ctx, accInvoice.getInvoice().setRecorded(true));
+//				InvoiceOLDDAO.save(ctx, accInvoice.getInvoice().setRecorded(true));
 //			}
 //			
 //			AccountEntry ae = InvoiceRecorder.getInvoiceEntry(accInvoice);
@@ -1133,7 +1133,7 @@ public class AccountingInvoiceDAO {
 //		ai.getAccountEntry().setPeriod(ap.getId());
 //		ai.getAccountEntry().setJournal(null);
 //		ai.getAccountEntry().setComments(data.getCause());
-//		InvoiceDAO.mergeRecitificationData(ai.getInvoice(), data);
+//		InvoiceOLDDAO.mergeRecitificationData(ai.getInvoice(), data);
 //		
 //		for (InvoiceVAT vat : ai.getVats()) {
 //			vat.setBase( AonMathUtils.round(vat.getBase() * (-1),4));
@@ -1156,7 +1156,7 @@ public class AccountingInvoiceDAO {
 //		}
 //		AonConfiguration config = ConfigurationDAO.getConfiguration(ctx, ai.getInvoice().getIssueDate());
 //		ai = save(ctx, config, ai);
-//		InvoiceDAO.rectifyInvoiceUpdate(ctx, invoiceId, ai.getInvoice().getId(), oldRectificationType);
+//		InvoiceOLDDAO.rectifyInvoiceUpdate(ctx, invoiceId, ai.getInvoice().getId(), oldRectificationType);
 //		for (Finance finance : ai.getInvoice().getFinances()) {
 //			if (data.isSettleFinances() && finance.getFinanceStatus() == FinanceStatus.PENDING) {
 //				FinanceTrackingDAO.settle(ctx, finance.getId());
@@ -1385,7 +1385,7 @@ public class AccountingInvoiceDAO {
 	
 	public static LinkedList<AccountingInvoice> getPendingImportAccountingInvoices(AONContext ctx, String query) {
 		final String filter = decorateQueryString( query );
-		return InvoiceDAO.getInvoiceHeaders(ctx, p ->
+		return InvoiceOLDDAO.getInvoiceHeaders(ctx, p ->
 				p.getDomainProperty().eq(ctx.getDomainId())
 				 .and(p.getRegistryDocumentProperty().like(filter)
 				  .or(p.getRegistryNameProperty().like(filter))
@@ -1404,7 +1404,7 @@ public class AccountingInvoiceDAO {
 
 	public static LinkedList<AccountingInvoice> getRegistryNotRectifiedAccountingInvoices(AONContext ctx, Integer registry, String query) {
 		final String filter = decorateQueryString( query );
-		return InvoiceDAO.getInvoiceHeaders(ctx, p ->
+		return InvoiceOLDDAO.getInvoiceHeaders(ctx, p ->
 				p.getDomainProperty().eq(ctx.getDomainId())
 				 .and(p.getRegistryProperty().eq(registry))
 				 .and(p.getRectificationTypeProperty().isNull())

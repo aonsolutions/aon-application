@@ -23,7 +23,7 @@ import com.esferalia.aon.occam.api.model.type.VatDeductionType;
 import com.esferalia.aon.occam.api.model.type.WithholdingType;
 import com.esferalia.aon.watson.util.AonMathUtils;
 
-public class InvoiceTaxDAO {
+public class InvoiceTaxOLDDAO {
 	
 	private static final InvoiceTaxPropertiesDAO INVOICE_TAX_PROPERTIES = new InvoiceTaxPropertiesDAO();
 	public static class InvoiceTaxPropertiesDAO implements InvoiceTaxProperties {

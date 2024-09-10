@@ -57,7 +57,7 @@ import com.esferalia.aon.occam.impl.jooq.dao.ConfigurationDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.FilterDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.FinanceDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.FiscalModelValidation;
-import com.esferalia.aon.occam.impl.jooq.dao.InvoiceDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.InvoiceOLDDAO;
 import com.esferalia.aon.occam.server.fiscal.FiscalUtils;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.server.AonDateUtils;
@@ -665,7 +665,7 @@ public class FiscalModelDAO {
 	
 	public static LinkedList<InvoiceFiscalModels> getInvoicesModels(AONContext ctx,InvoiceModelReportParams params) {
 		ctx.checkRead();
-		return InvoiceDAO.getInvoiceStream(ctx, p-> getFilter(p,params))
+		return InvoiceOLDDAO.getInvoiceStream(ctx, p-> getFilter(p,params))
 			.map(inv -> new InvoiceFiscalModels().setInvoice(inv))
 			.map(ifm -> ifm.setModels( 
 				getSelect(ctx)

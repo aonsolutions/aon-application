@@ -873,7 +873,7 @@ public class Mod349DAO {
 				.and(INVOICE.TRANSACTION.eq(InvoiceTransactionType.INTRACOMMUNITY.value()))
 				.and(INVOICE_TAX.TAX_TYPE.equal((byte) 1))
 				.groupBy(INVOICE.ID)
-				.orderBy(InvoiceDAO.getOrderedType(),INVOICE.SERIES,INVOICE.NUMBER )				
+				.orderBy(InvoiceOLDDAO.getOrderedType(),INVOICE.SERIES,INVOICE.NUMBER )				
 				.fetch()
 				.stream()
 				.map( rec -> {

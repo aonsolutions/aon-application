@@ -72,8 +72,6 @@ import com.esferalia.aon.occam.impl.jooq.dao.FinanceDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.FinanceTrackingDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.FinanceUtilitiesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.InvofoxConfigurationDAO;
-import com.esferalia.aon.occam.impl.jooq.dao.InvoiceDAO;
-import com.esferalia.aon.occam.impl.jooq.dao.InvoiceDetailDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.InvoiceFiscalDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.InvoiceOLDDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.InvoiceSIIDAO;
@@ -93,59 +91,59 @@ public class FinanceImpl implements IFinance {
 	@Override
 	public Optional<Item> getLastItem(AONContext ctx, Integer registry) {
 		return ctx.getDslContext().transactionResult(
-			configuration -> InvoiceDAO.getLastItem(ctx, registry));
+			configuration -> InvoiceOLDDAO.getLastItem(ctx, registry));
 	}
 	
 	@Override
 	public Invoice getLastSaleInvoice(AONContext ctx, String serie) {
 		return ctx.getDslContext().transactionResult(
-				configuration -> InvoiceDAO.getLastSaleInvoice(ctx, serie));
+				configuration -> InvoiceOLDDAO.getLastSaleInvoice(ctx, serie));
 	}
 	
 	@Override
 	public Invoice getInvoice(AONContext ctx, Integer id) {
 		return ctx.getDslContext().transactionResult(
-				configuration -> InvoiceDAO.getInvoice(ctx, id));
+				configuration -> InvoiceOLDDAO.getInvoice(ctx, id));
 	}
 	
 	@Override
 	public void deleteInvoice(AONContext ctx, Integer invoiceId) {
 		ctx.getDslContext().transaction(configuration -> 
-			InvoiceDAO.delete(ctx, invoiceId));
+		InvoiceOLDDAO.delete(ctx, invoiceId));
 	}
 	
 	@Override
 	public Invoice getFullInvoice(AONContext ctx, Integer id){
 		return ctx.getDslContext().transactionResult(
-				configuration -> InvoiceDAO.getFullInvoice(ctx, id));
+				configuration -> InvoiceOLDDAO.getFullInvoice(ctx, id));
 	}
 	
 	@Override
 	public Invoice acceptInvoice(AONContext ctx, Invoice invoice, Integer rawdocId){
 		return ctx.getDslContext().transactionResult(
-				configuration -> InvoiceDAO.accept(ctx, invoice, rawdocId));
+				configuration -> InvoiceOLDDAO.accept(ctx, invoice, rawdocId));
 	}
 	
 	@Override
 	public Invoice validateInvoice(AONContext ctx, Invoice invoice, Integer rawdocId){
 		return ctx.getDslContext().transactionResult(
-				configuration -> InvoiceDAO.validate(ctx, invoice, rawdocId));
+				configuration -> InvoiceOLDDAO.validate(ctx, invoice, rawdocId));
 	}
 	
 	@Override
 	public Stream<Invoice> getInvoiceHeaders(AONContext ctx, InvoiceFilter filter, int offset, int limit) {
 		return ctx.getDslContext().transactionResult(
-			configuration -> InvoiceDAO.getInvoiceHeaders(ctx, filter, offset, limit));
+			configuration -> InvoiceOLDDAO.getInvoiceHeaders(ctx, filter, offset, limit));
 	}
 	@Override
 	public Stream<Invoice> getInvoiceHeaders(AONContext ctx, AccountingReportParams params, int offset, int limit) {
 		return ctx.getDslContext().transactionResult(
-			configuration -> InvoiceDAO.getInvoiceHeaders(ctx, params, offset, limit));
+			configuration -> InvoiceOLDDAO.getInvoiceHeaders(ctx, params, offset, limit));
 	}
 	@Override
 	public Stream<Invoice> getInvoiceStream(AONContext ctx, InvoiceFilter filter){
 		return ctx.getDslContext().transactionResult(
-				configuration -> InvoiceDAO.getInvoiceStream(ctx, filter));
+				configuration -> InvoiceOLDDAO.getInvoiceStream(ctx, filter));
 	}
 	
 	@Override
@@ -156,18 +154,18 @@ public class FinanceImpl implements IFinance {
 		
 	@Override
 	public Stream<InvoiceDetail> getInvoiceMovements(AONContext ctx, InvoiceFilter filter, ProductFilter pFilter, ItemFilter iFilter) {
-		return InvoiceDAO.getInvoiceDetails(ctx, filter, pFilter, iFilter);
+		return InvoiceOLDDAO.getInvoiceDetails(ctx, filter, pFilter, iFilter);
 	}
 
 	@Override
 	public void rectifyInvoice(AONContext ctx, Integer rectifierInvoice, Integer rectifiedInvoice) {
-		ctx.getDslContext().transaction(configuration -> InvoiceDAO.rectify(ctx, rectifierInvoice, rectifiedInvoice));
+		ctx.getDslContext().transaction(configuration -> InvoiceOLDDAO.rectify(ctx, rectifierInvoice, rectifiedInvoice));
 	}
 	
 	@Override
 	public InvoiceCounter getInvoiceCounter(AONContext ctx) {
 		return ctx.getDslContext().transactionResult(
-				configuration -> InvoiceDAO.getCounter(ctx));
+				configuration -> InvoiceOLDDAO.getCounter(ctx));
 	}
 	
 	
@@ -175,12 +173,12 @@ public class FinanceImpl implements IFinance {
 	
 	@Override
 	public Stream<InvoiceDetail> getInvoiceDetails(AONContext ctx, InvoiceFilter filter) {
-		return InvoiceDAO.getInvoiceDetails(ctx, filter);
+		return InvoiceOLDDAO.getInvoiceDetails(ctx, filter);
 	}
 	
 	@Override
 	public Stream<InvoiceDetailExtended> getInvoiceDetailsExtended(AONContext ctx, InvoiceFilter filter, IDAOCallback callback) {
-		return InvoiceDAO.getInvoiceDetailsExtended(ctx, filter, callback);
+		return InvoiceOLDDAO.getInvoiceDetailsExtended(ctx, filter, callback);
 	}
 
 	@Override
@@ -217,41 +215,41 @@ public class FinanceImpl implements IFinance {
 
 	@Override
 	public Integer getInvoiceMinNumber(AONContext ctx, Byte[] types, String series) {
-		return InvoiceDAO.getMinNumber(ctx, types, series);
+		return InvoiceOLDDAO.getMinNumber(ctx, types, series);
 	}
 	
 	@Override
 	public Integer getInvoiceMinNumber(AONContext ctx, InvoiceType type, String series) {
-		return InvoiceDAO.getMinNumber(ctx, type, series);
+		return InvoiceOLDDAO.getMinNumber(ctx, type, series);
 	}
 	
 	@Override
 	public Integer getInvoiceNextNumber(AONContext ctx, Byte[] types, String series) {
-		return InvoiceDAO.getNextNumber(ctx, types, series);
+		return InvoiceOLDDAO.getNextNumber(ctx, types, series);
 	}
 	// ------------------------------------- INVOICING GROUP
 	
 	@Override
 	public LinkedList<InvoicingGroup> getInvoicingGroupList(AONContext ctx, InvoicingGroupFilter filter){
-		return InvoiceDAO.getInvoicingGroupList(ctx, filter);
+		return InvoiceOLDDAO.getInvoicingGroupList(ctx, filter);
 	}
 
 	@Override
 	public InvoicingGroup save(AONContext ctx, InvoicingGroup invoicingGroup) {
 		return ctx.getDslContext().transactionResult(configuration
-				-> InvoiceDAO.save(ctx, invoicingGroup));
+				-> InvoiceOLDDAO.save(ctx, invoicingGroup));
 	}
 	
 	// ------------------------------------- INVOICE SERIES
 	@Override
 	public List<InvoiceSeries> getInvoiceSeries(AONContext ctx, int domain, Date from, Date to) {
-		return InvoiceDAO.getInvoiceSeries(ctx, domain, from, to)
+		return InvoiceOLDDAO.getInvoiceSeries(ctx, domain, from, to)
 				.collect(Collectors.toCollection(LinkedList::new));
 	}
 
 	@Override
 	public List<InvoiceSeries> getInvoiceSalesSeries(AONContext ctx, int domain) {
-		return InvoiceDAO.getInvoiceSeries(ctx, domain, null, null)
+		return InvoiceOLDDAO.getInvoiceSeries(ctx, domain, null, null)
 			.collect(Collectors.toCollection(LinkedList::new));
 	}
 	
@@ -409,7 +407,7 @@ public class FinanceImpl implements IFinance {
 	@Override
 	public Stream<InvoiceDetail> getBoughtProductStream(AONContext ctx, InvoiceFilter filter) {
 		return ctx.getDslContext().transactionResult(configuration
-				-> InvoiceDAO.getBoughtProductStream(ctx, filter));
+				-> InvoiceOLDDAO.getBoughtProductStream(ctx, filter));
 	}
 
 	@Override
@@ -436,7 +434,7 @@ public class FinanceImpl implements IFinance {
 	@Override
 	public Stream<InvoiceRegistry> getInvoiceRegistries(AONContext ctx, RegistryFilter filter) {
 		return 	ctx.getDslContext().transactionResult(
-				configuration -> InvoiceDAO.getInvoiceRegistries(ctx, filter));
+				configuration -> InvoiceOLDDAO.getInvoiceRegistries(ctx, filter));
 	}
 
 	@Override
@@ -448,20 +446,20 @@ public class FinanceImpl implements IFinance {
 	@Override
 	public Invoice insertInvoice(AONContext ctx, Invoice invoice) {
 		return ctx.getDslContext().transactionResult(configuration -> 
-			InvoiceDAO.insert(ctx, invoice));		
+		InvoiceOLDDAO.insert(ctx, invoice));		
 	}
 
 	@Override
 	public Invoice updateInvoice(AONContext ctx, Invoice invoice, boolean only) {
 		return ctx.getDslContext().transactionResult(configuration -> 
-			InvoiceDAO.update(ctx, invoice, only));		
+		InvoiceOLDDAO.update(ctx, invoice, only));		
 	}
 
 	
 	@Override
 	public Invoice updateInvoice(AONContext ctx, Invoice invoice) {
 		return ctx.getDslContext().transactionResult(configuration -> 
-			InvoiceDAO.update(ctx, invoice));		
+		InvoiceOLDDAO.update(ctx, invoice));		
 	}
 
 	@Override
@@ -481,19 +479,19 @@ public class FinanceImpl implements IFinance {
 	@Override
 	public Stream<InvoiceTax> getInvoiceTaxStream(AONContext ctx, Integer invoiceId) {
 		return ctx.getDslContext().transactionResult(configuration
-				-> InvoiceDAO.getInvoiceTaxStream(ctx, invoiceId));
+				-> InvoiceOLDDAO.getInvoiceTaxStream(ctx, invoiceId));
 	}
 
 	// UTILITIES
 	@Override
 	public void updateWithholdingType(AONContext ctx, Integer invoiceId, WithholdingType newType) {
 		ctx.getDslContext().transaction(configuration
-				-> InvoiceDAO.updateWithholdingType( ctx , invoiceId, newType));
+				-> InvoiceOLDDAO.updateWithholdingType( ctx , invoiceId, newType));
 	}
 	@Override
 	public void updateActivity(AONContext ctx, Integer invoiceId, Integer activity) {
 		ctx.getDslContext().transaction(configuration
-				-> InvoiceDAO.updateActivity( ctx , invoiceId, activity));
+				-> InvoiceOLDDAO.updateActivity( ctx , invoiceId, activity));
 	}
 	@Override
 	public FinanceUtilitiesResult missingFinanceInvoices(AONContext ctx,FinanceUtilitiesParams params) {
@@ -768,7 +766,7 @@ public class FinanceImpl implements IFinance {
 	@Override
 	public void saveFacturaeCodeAsignacion(AONContext ctx, Integer invoice, Integer registry, String code) {
 		ctx.getDslContext().transaction(
-				configuration -> InvoiceDAO.saveFacturaeCodeAsignacion(ctx, invoice, registry, code));		
+				configuration -> InvoiceOLDDAO.saveFacturaeCodeAsignacion(ctx, invoice, registry, code));		
 	}
 
 	@Override

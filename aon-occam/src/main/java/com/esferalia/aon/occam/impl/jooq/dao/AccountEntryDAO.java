@@ -670,7 +670,7 @@ public class AccountEntryDAO {
 						.where(ACCOUNT_ENTRY_INVOICE.ACCOUNT_ENTRY.equal(entry.getId()))
 						.execute();
 					ctx.log().debug("DELETE ACCOUNT_ENTRY_INVOICE ({0} filas.)",count);
-					InvoiceDAO.delete(ctx, invoiceId);
+					InvoiceOLDDAO.delete(ctx, invoiceId);
 				}
 			}
 		});	
@@ -1084,7 +1084,7 @@ public class AccountEntryDAO {
 				if (wrapper instanceof AccountingInvoice) {
 					ctx.checkWrite();
 					AccountingInvoice ai = (AccountingInvoice) wrapper;
-					Invoice inv = InvoiceDAO.getFullInvoice(ctx, ai.getInvoice().getId());
+					Invoice inv = InvoiceOLDDAO.getFullInvoice(ctx, ai.getInvoice().getId());
 					for ( InvoiceDetail detail : inv.getDetails() ) {
 						for (InvoiceTax tax : detail.getInvoiceTaxes() ) {
 							if (tax.getTaxType() == TaxType.RETENTION) {

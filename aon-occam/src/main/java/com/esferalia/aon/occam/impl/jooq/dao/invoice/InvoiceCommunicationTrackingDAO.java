@@ -24,7 +24,7 @@ import com.esferalia.aon.occam.api.model.finance.InvoiceBatchDetail;
 import com.esferalia.aon.occam.api.model.finance.InvoiceCommunicationTracking;
 import com.esferalia.aon.occam.impl.jooq.dao.Filler;
 import com.esferalia.aon.occam.impl.jooq.dao.FilterDAO;
-import com.esferalia.aon.occam.impl.jooq.dao.InvoiceDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.InvoiceOLDDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.invoice.InvoiceBatchDAO.InvoiceBatchFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.invoice.InvoiceBatchDetailDAO.InvoiceBatchDetailFiller;
 
@@ -85,7 +85,7 @@ public class InvoiceCommunicationTrackingDAO {
 	}
 	
 	public static InvoiceCommunicationTracking save(AONContext ctx, InvoiceCommunicationTracking invoiceCommunicationTracking) {
-		Invoice inv = InvoiceDAO.getInvoice(ctx, invoiceCommunicationTracking.getInvoiceBatchDetail().getInvoice());
+		Invoice inv = InvoiceOLDDAO.getInvoice(ctx, invoiceCommunicationTracking.getInvoiceBatchDetail().getInvoice());
 		if(inv != null && inv.getId() != null) {
 			InvoiceBatch invoiceBatch = InvoiceBatchDAO.save(ctx, invoiceCommunicationTracking.getInvoiceBatch());
 			invoiceCommunicationTracking.setInvoiceBatch(invoiceBatch);

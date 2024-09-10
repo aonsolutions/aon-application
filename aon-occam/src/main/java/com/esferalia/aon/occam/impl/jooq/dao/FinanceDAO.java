@@ -313,7 +313,7 @@ public class FinanceDAO {
 	}
 	
 	public static Invoice insertFinancesForInvoice(AONContext ctx, Integer invoiceId) {
-		Invoice invoice = InvoiceDAO.getInvoice(ctx, invoiceId);
+		Invoice invoice = InvoiceOLDDAO.getInvoice(ctx, invoiceId);
 		if (invoice == null) {
 			throw new AonCoreException(AonError.INVOICE_NOT_FOUND.getMessage());
 		}
@@ -510,7 +510,7 @@ public class FinanceDAO {
 				.setAmount(record.getValue(FINANCE.AMOUNT))
 				.setExpenses(record.getValue(FINANCE.EXPENSES))
 				.setConcept(record.getValue(FINANCE.CONCEPT))
-				.setInvoice(record.getValue(FINANCE.INVOICE)==null?null : new InvoiceDAO.MinimalInvoiceFiller().apply(record)) 
+				.setInvoice(record.getValue(FINANCE.INVOICE)==null?null : new InvoiceOLDDAO.MinimalInvoiceFiller().apply(record)) 
 				.setDueDate(record.getValue(FINANCE.DUE_DATE))
 				.setPayMethod(record.getValue(FINANCE.PAY_METHOD))
 				.setPayMethodName(record.getValue(PAY_METHOD.NAME))

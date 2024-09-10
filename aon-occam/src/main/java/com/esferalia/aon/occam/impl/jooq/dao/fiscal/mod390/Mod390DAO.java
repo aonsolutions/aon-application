@@ -24,7 +24,7 @@ import com.esferalia.aon.occam.api.model.type.Administration;
 import com.esferalia.aon.occam.api.model.type.InvoiceType;
 import com.esferalia.aon.occam.api.model.type.TaxType;
 import com.esferalia.aon.occam.impl.jooq.dao.ConfigurationDAO;
-import com.esferalia.aon.occam.impl.jooq.dao.InvoiceDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.InvoiceOLDDAO;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonMathUtils;
@@ -245,7 +245,7 @@ public class Mod390DAO {
 				.and(INVOICE.TYPE.equal( InvoiceType.SALES.value() )) // VENTAS
 				.and(INVOICE.TAX_DATE.between(AonDateUtils.toSql(fromDate),AonDateUtils.toSql(toDate)))
 				.and(INVOICE.VAT_ACCRUAL_PAYMENT.equal( (byte) 1) ) // Criterio de Caja.
-				.orderBy( InvoiceDAO.getOrderedType(),INVOICE.SERIES,INVOICE.NUMBER )
+				.orderBy( InvoiceOLDDAO.getOrderedType(),INVOICE.SERIES,INVOICE.NUMBER )
 				.fetch()
 				.stream()
 				.mapToDouble( rec -> {
@@ -286,7 +286,7 @@ public class Mod390DAO {
 				.and(INVOICE.TYPE.notEqual( InvoiceType.SALES.value() )) // NO VENTAS
 				.and(INVOICE.TAX_DATE.between(AonDateUtils.toSql(fromDate),AonDateUtils.toSql(toDate)))
 				.and(INVOICE.VAT_ACCRUAL_PAYMENT.equal( (byte) 1) ) // Criterio de Caja.
-				.orderBy( InvoiceDAO.getOrderedType(),INVOICE.SERIES,INVOICE.NUMBER )
+				.orderBy( InvoiceOLDDAO.getOrderedType(),INVOICE.SERIES,INVOICE.NUMBER )
 				.fetch()
 				.stream()
 				.mapToDouble( rec -> {

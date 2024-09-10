@@ -7,7 +7,6 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import java.util.List;
 
 import org.junit.jupiter.api.RepeatedTest;
-import org.junit.jupiter.api.Test;
 
 import com.esferalia.aon.occam.api.model.Customer;
 import com.esferalia.aon.occam.api.model.Domain;
@@ -21,7 +20,7 @@ import com.esferalia.aon.occam.api.model.registry.RegistryItemStatus;
 import com.esferalia.aon.occam.api.model.registry.RegistryMode;
 import com.esferalia.aon.occam.api.model.type.Priority;
 import com.esferalia.aon.occam.impl.jooq.dao.CustomerDAO;
-import com.esferalia.aon.occam.impl.jooq.dao.InvoiceDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.InvoiceOLDDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.ItemDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.ProductDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.RegistryOldDAO;
@@ -57,14 +56,14 @@ public class TargetItemTest extends AbstractOccamTest {
 		);
 			
 		InvoiceFakerParams params = new InvoiceFakerParams(ctx, getConfiguration()).setIssueDate(AonRandom.today());
-		Invoice inserted = InvoiceDAO.insert(ctx, InvoiceFaker.getRandom(params));
+		Invoice inserted = InvoiceOLDDAO.insert(ctx, InvoiceFaker.getRandom(params));
 			
 		List<InvoiceDetail> dets = inserted.getDetails();
 		for (InvoiceDetail det : dets) {
 			det.setItem(newItem);
 		}
 			
-		Invoice insertedUpdated = InvoiceDAO.update(ctx, inserted);
+		Invoice insertedUpdated = InvoiceOLDDAO.update(ctx, inserted);
 		
 		TargetItemDAO.updateAllTargetItem(ctx, f -> f.getIdProperty().eq(insertedUpdated.getId()), false);
 		List<InvoiceDetail> details = insertedUpdated.getDetails();

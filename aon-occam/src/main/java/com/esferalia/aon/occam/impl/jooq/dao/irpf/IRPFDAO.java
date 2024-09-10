@@ -50,7 +50,7 @@ import com.esferalia.aon.occam.api.model.type.SalaryType;
 import com.esferalia.aon.occam.api.model.type.TaxType;
 import com.esferalia.aon.occam.api.model.type.WithholdingType;
 import com.esferalia.aon.occam.impl.jooq.dao.FilterDAO;
-import com.esferalia.aon.occam.impl.jooq.dao.InvoiceDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.InvoiceOLDDAO;
 import com.esferalia.aon.occam.server.fiscal.FiscalUtils;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.server.AonObjectUtils;
@@ -61,7 +61,7 @@ public class IRPFDAO {
 	
 	private static final Byte[] INPUT_TYPES = new Byte[]{ InvoiceType.PURCHASE.value(),InvoiceType.EXPENSES.value()};
 	
-	private static final Field<Integer> INVOICE_NUMDOC_TYPE =  InvoiceDAO.getOrderedType();
+	private static final Field<Integer> INVOICE_NUMDOC_TYPE =  InvoiceOLDDAO.getOrderedType();
 	private static final Field<Integer> ALCATRAZ_SALARY_ID = ALCATRAZ.SALARY.as("alcatrazSalary");
 	private static final Field<Integer> ALCATRAZ_INVOICE_ID = ALCATRAZ.INVOICE.as("alcatrazInvoice");
 

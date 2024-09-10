@@ -922,7 +922,7 @@ public class AccountingUtilitiesDAO {
 				Date to = AonDateUtils.getYearLastDay( year );
 				StringBuffer msg = new StringBuffer();
 				MutableBoolean regenerable = new MutableBoolean(false);
-				InvoiceDAO.getInvoiceSeries(ctx, ctx.getDomainId(), from, to )
+				InvoiceOLDDAO.getInvoiceSeries(ctx, ctx.getDomainId(), from, to )
 					.filter( invoiceSeries -> !invoiceSeries.isSales() )
 					.forEach(invoiceSeries -> { 
 						msg.append(invoiceSeries.getDescription());
@@ -1110,7 +1110,7 @@ public class AccountingUtilitiesDAO {
 			LinkedList<AccountEntry> entries = null;
 			if (accountEntryInvCount == 0 && invCount == 1) {
 				return new AccUtilitiesWrongRecordedInvoicesItem()
-						.setInvoice( InvoiceDAO.getFullInvoice(ctx, invoiceID ))
+						.setInvoice( InvoiceOLDDAO.getFullInvoice(ctx, invoiceID ))
 						.setOnlyMarked(true)
 						.setDomain(domain.getId())
 						.setDomainName(domain.getDescription())
@@ -1132,7 +1132,7 @@ public class AccountingUtilitiesDAO {
 			}
 			
 			return new AccUtilitiesWrongRecordedInvoicesItem()
-				.setInvoice( InvoiceDAO.getFullInvoice(ctx, invoiceID ))
+				.setInvoice( InvoiceOLDDAO.getFullInvoice(ctx, invoiceID ))
 				.setEntries(entries)
 				.setDomain(domain.getId())
 				.setDomainName(domain.getDescription())
@@ -1247,7 +1247,7 @@ public class AccountingUtilitiesDAO {
 	}
 	public static AccUtilitiesResult invoiceIntegrityFix(AONContext ctx,Integer invoiceId) {
 		AccUtilitiesResult result = new AccUtilitiesResult();
-		Invoice invoice = InvoiceDAO.getInvoice(ctx, invoiceId);
+		Invoice invoice = InvoiceOLDDAO.getInvoice(ctx, invoiceId);
 		if ( invoice == null) {
 			result.addMessage("Factura no encontrada");
 		} else {

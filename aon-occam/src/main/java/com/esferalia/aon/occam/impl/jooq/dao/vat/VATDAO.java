@@ -49,7 +49,7 @@ import com.esferalia.aon.occam.api.model.type.RectificationType;
 import com.esferalia.aon.occam.api.model.type.TaxType;
 import com.esferalia.aon.occam.api.model.type.VATRegime;
 import com.esferalia.aon.occam.api.model.type.VatDeductionType;
-import com.esferalia.aon.occam.impl.jooq.dao.InvoiceDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.InvoiceOLDDAO;
 import com.esferalia.aon.occam.server.fiscal.FiscalUtils;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.server.AonEnumUtils;
@@ -143,7 +143,7 @@ public class VATDAO  {
 			.and(INVOICE_TAX.TAX_TYPE.equal( TaxType.VAT.value() ))
 			.and(INVOICE.TAX_DATE.between( AonDateUtils.toSql(params.getFromDate()), AonDateUtils.toSql(params.getToDate())))
 			.and(INVOICE.VAT_ACCRUAL_PAYMENT.equal( FALSE_BYTE ))	// No Criterio de Caja.
-			.orderBy( InvoiceDAO.getOrderedType(),INVOICE.SERIES,INVOICE.NUMBER )
+			.orderBy( InvoiceOLDDAO.getOrderedType(),INVOICE.SERIES,INVOICE.NUMBER )
 			.fetch()
 			.stream()
 			.map(new VatContextFiller());
@@ -191,7 +191,7 @@ public class VATDAO  {
 			.and(INVOICE_TAX.TAX_TYPE.equal( TaxType.VAT.value() ))
 			.and(INVOICE.TAX_DATE.ge(prevYearFirstDay))
 			.and(INVOICE.VAT_ACCRUAL_PAYMENT.equal( TRUE_BYTE ))
-			.orderBy( InvoiceDAO.getOrderedType(),INVOICE.SERIES,INVOICE.NUMBER )
+			.orderBy( InvoiceOLDDAO.getOrderedType(),INVOICE.SERIES,INVOICE.NUMBER )
 			.fetch()
 			.stream()
 			.map(new VatContextCritCajaFiller())
@@ -236,7 +236,7 @@ public class VATDAO  {
 			.and(FINANCE.STATUS.eq(FinanceStatus.PENDING.value()))
 			.and(INVOICE_TAX.TAX_TYPE.equal( TaxType.VAT.value()))
 			.and(INVOICE.VAT_ACCRUAL_PAYMENT.equal( TRUE_BYTE ))	// Criterio de Caja.
-			.orderBy( InvoiceDAO.getOrderedType(),INVOICE.SERIES,INVOICE.NUMBER )
+			.orderBy( InvoiceOLDDAO.getOrderedType(),INVOICE.SERIES,INVOICE.NUMBER )
 			.fetch()
 			.stream()
 			.map(new VatContextLastPeriodCritCajaFiller())
@@ -265,7 +265,7 @@ public class VATDAO  {
 				.and(INVOICE_TAX.TAX_TYPE.equal(TaxType.VAT.value()))
 				.and(INVOICE.TAX_DATE.between( getStartDate(mod), getEndDate(mod)))
 				.and(INVOICE.VAT_ACCRUAL_PAYMENT.equal( FALSE_BYTE) )	// No Criterio de Caja.
-				.orderBy( InvoiceDAO.getOrderedType(),INVOICE.SERIES,INVOICE.NUMBER )
+				.orderBy( InvoiceOLDDAO.getOrderedType(),INVOICE.SERIES,INVOICE.NUMBER )
 				.stream()
 				.map(new VatContextFiller())
 				;
@@ -297,7 +297,7 @@ public class VATDAO  {
 			.and(FINANCE_TRACKING.TYPE.in(FinanceTrackingType.PAID.value(),FinanceTrackingType.RETURNED.value()))
 			.and(INVOICE_TAX.TAX_TYPE.equal( TaxType.VAT.value() ))
 			.and(INVOICE.VAT_ACCRUAL_PAYMENT.equal( TRUE_BYTE ))
-			.orderBy( InvoiceDAO.getOrderedType(),INVOICE.SERIES,INVOICE.NUMBER )
+			.orderBy( InvoiceOLDDAO.getOrderedType(),INVOICE.SERIES,INVOICE.NUMBER )
 			.stream()
 			.map(new VatContextCritCajaFiller())
 			;
@@ -328,7 +328,7 @@ public class VATDAO  {
 			.and(FINANCE.STATUS.eq(FinanceStatus.PENDING.value()))
 			.and(INVOICE_TAX.TAX_TYPE.equal( TaxType.VAT.value()))
 			.and(INVOICE.VAT_ACCRUAL_PAYMENT.equal( TRUE_BYTE ))	// Criterio de Caja.
-			.orderBy( InvoiceDAO.getOrderedType(),INVOICE.SERIES,INVOICE.NUMBER )
+			.orderBy( InvoiceOLDDAO.getOrderedType(),INVOICE.SERIES,INVOICE.NUMBER )
 			.fetch()
 			.stream()
 			.map(new VatContextLastPeriodCritCajaFiller())
@@ -347,7 +347,7 @@ public class VATDAO  {
 					.and(ALCATRAZ.FINANCE_TRACKING.isNull())
 					.and(INVOICE_TAX.TAX_TYPE.equal(TaxType.VAT.value()))
 					.and(INVOICE.VAT_ACCRUAL_PAYMENT.equal( FALSE_BYTE) )	// No Criterio de Caja.
-				.orderBy( InvoiceDAO.getOrderedType(),INVOICE.SERIES,INVOICE.NUMBER )
+				.orderBy( InvoiceOLDDAO.getOrderedType(),INVOICE.SERIES,INVOICE.NUMBER )
 				.stream()
 				.map(new VatContextFiller())
 				;
@@ -365,7 +365,7 @@ public class VATDAO  {
 				.and(ALCATRAZ.FS_MODEL.eq(mod.getId()))
 				.and(INVOICE_TAX.TAX_TYPE.equal( TaxType.VAT.value() ))
 				.and(INVOICE.VAT_ACCRUAL_PAYMENT.equal( TRUE_BYTE ))
-			.orderBy( InvoiceDAO.getOrderedType(),INVOICE.SERIES,INVOICE.NUMBER )
+			.orderBy( InvoiceOLDDAO.getOrderedType(),INVOICE.SERIES,INVOICE.NUMBER )
 			.stream()
 			.map(new VatContextCritCajaFiller())
 			;
@@ -383,7 +383,7 @@ public class VATDAO  {
 				.and(ALCATRAZ.FS_MODEL.eq(mod.getId()))
 				.and(INVOICE_TAX.TAX_TYPE.equal( TaxType.VAT.value()))
 				.and(INVOICE.VAT_ACCRUAL_PAYMENT.equal( TRUE_BYTE ))	// Criterio de Caja.
-			.orderBy( InvoiceDAO.getOrderedType(),INVOICE.SERIES,INVOICE.NUMBER )
+			.orderBy( InvoiceOLDDAO.getOrderedType(),INVOICE.SERIES,INVOICE.NUMBER )
 			.fetch()
 			.stream()
 			.map(new VatContextLastPeriodCritCajaFiller())
@@ -813,7 +813,7 @@ public class VATDAO  {
 					.and(INVOICE_TAX.TAX_TYPE.equal(TaxType.VAT.value()))
 					.and(INVOICE.TAX_DATE.between( getStartDate(mod), getEndDate(mod)))
 					.and(INVOICE.VAT_ACCRUAL_PAYMENT.equal( TRUE_BYTE) )	// Criterio de Caja.
-				.orderBy( InvoiceDAO.getOrderedType(),INVOICE.SERIES,INVOICE.NUMBER )
+				.orderBy( InvoiceOLDDAO.getOrderedType(),INVOICE.SERIES,INVOICE.NUMBER )
 				.stream()
 				.map(new VatContextFiller())
 				;
@@ -830,7 +830,7 @@ public class VATDAO  {
 				.where(INVOICE_TAX.DOMAIN.equal(ctx.getDomainId()))
 					.and(INVOICE_TAX.TAX_TYPE.equal(TaxType.VAT.value()))
 					.and(INVOICE.VAT_ACCRUAL_PAYMENT.equal( TRUE_BYTE) )	// Criterio de Caja.
-				.orderBy( InvoiceDAO.getOrderedType(),INVOICE.SERIES,INVOICE.NUMBER )
+				.orderBy( InvoiceOLDDAO.getOrderedType(),INVOICE.SERIES,INVOICE.NUMBER )
 				.stream()
 				.map(new VatContextFiller())
 				;
@@ -857,7 +857,7 @@ public class VATDAO  {
 					.and(INVOICE_TAX.TAX_TYPE.equal(TaxType.VAT.value()))
 					.and(INVOICE.TAX_DATE.between( getStartDate(mod), getEndDate(mod)))
 					.and(INVOICE.VAT_ACCRUAL_PAYMENT.equal( TRUE_BYTE) )	// Criterio de Caja.
-				.orderBy( InvoiceDAO.getOrderedType(),INVOICE.SERIES,INVOICE.NUMBER )
+				.orderBy( InvoiceOLDDAO.getOrderedType(),INVOICE.SERIES,INVOICE.NUMBER )
 				.stream()
 				.map(new VatContextFiller())
 				;

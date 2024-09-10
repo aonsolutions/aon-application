@@ -13,7 +13,7 @@ import com.esferalia.aon.occam.api.model.type.FiscalModelDeclarationType;
 import com.esferalia.aon.occam.api.model.type.Mod390Key;
 import com.esferalia.aon.occam.api.model.type.VATRegime;
 import com.esferalia.aon.occam.impl.jooq.dao.ConfigurationDAO;
-import com.esferalia.aon.occam.impl.jooq.dao.InvoiceDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.InvoiceOLDDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.fiscal.AlcatrazDAO.Alcatraz;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonMathUtils;
@@ -746,7 +746,7 @@ class Mod390HFBizkaia2017Declaration extends Mod390HFBizkaiaDeclaration {
 	public void specificInitialization(AONContext ctx, Mod390HF mod) {
 		Date fromDate = AonDateUtils.getYearFirstDay(mod.getYear());
 		Date toDate = AonDateUtils.getYearLastDay(mod.getYear());
-		LinkedList<InvoiceSeries> seriesList = InvoiceDAO.getInvoiceSeries(ctx, mod.getDomain(), fromDate, toDate)
+		LinkedList<InvoiceSeries> seriesList = InvoiceOLDDAO.getInvoiceSeries(ctx, mod.getDomain(), fromDate, toDate)
 				.collect(Collectors.toCollection(LinkedList::new));
 		int e = 0;
 		int r = 0;

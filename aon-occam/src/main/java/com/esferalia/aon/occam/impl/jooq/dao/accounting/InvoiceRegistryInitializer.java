@@ -6,7 +6,7 @@ import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.registry.AccountingRegistry;
 import com.esferalia.aon.occam.api.model.registry.AccountingRegistryType.AccountingRegistryTypeVisitor;
 import com.esferalia.aon.occam.api.model.security.Scope;
-import com.esferalia.aon.occam.impl.jooq.dao.InvoiceDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.InvoiceOLDDAO;
 
 public class InvoiceRegistryInitializer implements AccountingRegistryTypeVisitor {
 	private AONContext ctx;
@@ -29,7 +29,7 @@ public class InvoiceRegistryInitializer implements AccountingRegistryTypeVisitor
 		invoice.setRegistryName(reg.getName());
 		invoice.setVatAccrualPayment(invoice.isNational()
 			&& invoice.getIssueDate() != null
-			&& !invoice.getIssueDate().before(InvoiceDAO.VAT_ACCRUAL_START_DATE)
+			&& !invoice.getIssueDate().before(InvoiceOLDDAO.VAT_ACCRUAL_START_DATE)
 			&& ( config.getCompany().isVatAccrualPayment() || reg.isVatAccrualPayment()));
 	}
 
@@ -40,7 +40,7 @@ public class InvoiceRegistryInitializer implements AccountingRegistryTypeVisitor
 		invoice.setWithholding(reg.isWithholding() && config.getCompany().isWithholding());
 		invoice.setWithholdingFarmer(false);
 		invoice.setSeries(config.getDefaultInvoiceSeries());
-		invoice.setNumber( InvoiceDAO.getNextNumber(ctx, new Byte[]{invoice.getType().value()}, invoice.getSeries()));
+		invoice.setNumber( InvoiceOLDDAO.getNextNumber(ctx, new Byte[]{invoice.getType().value()}, invoice.getSeries()));
 	}
 
 	@Override

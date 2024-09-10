@@ -50,7 +50,7 @@ import com.esferalia.aon.occam.impl.jooq.dao.AccountingRegistryDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.ConfigurationDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.CreditorDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.CustomerDAO;
-import com.esferalia.aon.occam.impl.jooq.dao.InvoiceDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.InvoiceOLDDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.OCRDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.SupplierDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.TbaiConfigurationDAO;
@@ -79,7 +79,7 @@ public class AccountingInvoiceDAO {
 			.stream()
 			.map(rec -> rec.getValue(ACCOUNT_ENTRY_INVOICE.INVOICE))
 			.findFirst()
-			.map( invoiceIdOpt -> InvoiceDAO.getFullInvoice(ctx, invoiceIdOpt))
+			.map( invoiceIdOpt -> InvoiceOLDDAO.getFullInvoice(ctx, invoiceIdOpt))
 			.map( invoice -> new AccountingInvoice().setInvoice(invoice))
 			.map( ai -> ai.fillAccountEntry(AccountEntryDAO.getAccountEntry(ctx, accountEntryId)))
 			.map( ai -> fillAccountingInvoice(ctx, ai) )
@@ -87,7 +87,7 @@ public class AccountingInvoiceDAO {
 	}
 	
 	public static Optional<AccountingInvoice> getFromInvoice(final AONContext ctx, final Integer invoiceId) {
-		return getFromInvoice(ctx, InvoiceDAO.getFullInvoice(ctx, invoiceId));
+		return getFromInvoice(ctx, InvoiceOLDDAO.getFullInvoice(ctx, invoiceId));
 	}
 	
 	public static Optional<AccountingInvoice> getFromInvoice(final AONContext ctx, final Invoice invoice) {
@@ -193,7 +193,7 @@ public class AccountingInvoiceDAO {
 			.setRegistry(reg)
 			.setWorkplace(config.getFirstWorkplace().map(w -> w.getId()).orElse(null))
 			.setAuthFinanceCalculation(true)
-//			.setInvoice( InvoiceDAO.initialize(ctx, ctx.getDomainId(), config, type, activity, issueDate))
+//			.setInvoice( InvoiceOLDDAO.initialize(ctx, ctx.getDomainId(), config, type, activity, issueDate))
 		;
 		ai.setSuggestedAccounts(getSuggestedAccounts(ctx , ai.getInvoice().getDomain(), ai.getRegistry().getId(), reg.getType().getInvoiceType()));
 		ai.getInvoice().addDetail(createNewInvoiceDetail(ai, config));
@@ -480,7 +480,7 @@ public class AccountingInvoiceDAO {
 		try {
 			ctx.log().debug("------ [START] INSERT INVOICE");
 			LinkedList<AccountEntry> entries = new LinkedList<>();
-			InvoiceDAO.save(ctx, accInvoice.getInvoice());
+			InvoiceOLDDAO.save(ctx, accInvoice.getInvoice());
 			
 //			if (accInvoice.isDuaLinked()) {
 //				insertInvoiceDUA( ctx, config, accInvoice);
@@ -599,7 +599,7 @@ public class AccountingInvoiceDAO {
 //			}
 //			// ---------------------------
 //			
-//			InvoiceDAO.update(ctx, config, accInvoice.getInvoice());
+//			InvoiceOLDDAO.update(ctx, config, accInvoice.getInvoice());
 //			if (accInvoice.isDuaLinked()) {
 //				updateInvoiceDUA( ctx, config, accInvoice);
 //			}

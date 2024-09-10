@@ -20,9 +20,9 @@ public class InvoiceRecorderDAO {
 	}
 	
 	public static Stream<Invoice> getUnrecordedInvoices(AONContext ctx, InvoiceFilter filter) {
-		return InvoiceDAO.getInvoiceStream(ctx, filter)
+		return InvoiceOLDDAO.getInvoiceStream(ctx, filter)
 			.filter( Invoice::isRecorded )
-			.map( i -> InvoiceDAO.getFullInvoice(ctx, i.getId()) )
+			.map( i -> InvoiceOLDDAO.getFullInvoice(ctx, i.getId()) )
 			.map( i -> fillRecorderMessages(ctx, i) );
 	}
 	

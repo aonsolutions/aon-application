@@ -40,8 +40,8 @@ import com.esferalia.aon.occam.impl.jooq.dao.CreditorDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.CustomerDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.DomainDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.GlobalDAO;
-import com.esferalia.aon.occam.impl.jooq.dao.InvoiceDAO;
-import com.esferalia.aon.occam.impl.jooq.dao.InvoiceDetailDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.InvoiceDetailOLDDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.InvoiceOLDDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.ItemDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.PayMethodDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.RegistryAddressDAO;
@@ -100,7 +100,7 @@ public class InvoiceAutoComplete {
 			}
 			if (inv.getNumber() == 0) {
 				Byte[] types = new Byte[]{InvoiceType.SALES.value()};
-				int number = InvoiceDAO.getNextNumber(ctx.getContext(),types, inv.getSeries());
+				int number = InvoiceOLDDAO.getNextNumber(ctx.getContext(),types, inv.getSeries());
 				inv.setNumber(number);
 			}
 			if(inv.getReferenceCode() == null || "".equals(inv.getReferenceCode())) {
@@ -121,7 +121,7 @@ public class InvoiceAutoComplete {
 			inv.setSeries(Integer.toString(AonDateUtils.getYear(inv.getIssueDate())));
 			if (inv.getNumber() == 0) {
 				Byte[] types = new Byte[]{InvoiceType.PURCHASE.value(),InvoiceType.EXPENSES.value()};
-				int number = InvoiceDAO.getNextNumber(ctx.getContext(),types, inv.getSeries());
+				int number = InvoiceOLDDAO.getNextNumber(ctx.getContext(),types, inv.getSeries());
 				inv.setNumber(number);
 			}
 		} 
@@ -144,7 +144,7 @@ public class InvoiceAutoComplete {
 			inv.setSeries(Integer.toString(AonDateUtils.getYear(inv.getIssueDate()==null?new Date():inv.getIssueDate())));
 			if (inv.getNumber() == 0) {
 				Byte[] types = new Byte[]{InvoiceType.UNDEDUCTIBLE.value()};
-				int number = InvoiceDAO.getNextNumber(ctx.getContext(),types, inv.getSeries());
+				int number = InvoiceOLDDAO.getNextNumber(ctx.getContext(),types, inv.getSeries());
 				inv.setNumber(number);
 			}
 		} 
@@ -505,7 +505,7 @@ public class InvoiceAutoComplete {
 		inv.getDetails().stream().forEach(detail -> {
 			
 			if(detail.getId() != null) {
-				InvoiceDetail d = InvoiceDetailDAO.get(ctx.getContext(), f-> f.getIdProperty().eq(detail.getId()));
+				InvoiceDetail d = InvoiceDetailOLDDAO.get(ctx.getContext(), f-> f.getIdProperty().eq(detail.getId()));
 				if(d != null && d.getInvoice() != null && !d.getInvoice().equals(inv.getId())) {
 					detail.setId(null);
 				}
