@@ -64,7 +64,7 @@ public class AonNordigen  {
 				.setToken(AonNordigen.getNewAccessToken())
 				.setAccounts(NordigenDAO.getAllAccounts(ctx));
 		} catch ( AonCoreException ex) {
-			NordigenUtils.logException(ex);
+//			NordigenUtils.logException(ex);
 			throw new NordigenException(ex.getMessage());
 		}
 	}
@@ -210,7 +210,7 @@ public class AonNordigen  {
 		try {
 			return NordigenAPI.getTransactions(token.getAccess(), nordigenAccountId, null, null);
 		} catch (Exception e) {
-			NordigenUtils.logException(e);
+//			NordigenUtils.logException(e);
 			return null;
 		}
 	}
@@ -295,7 +295,7 @@ public class AonNordigen  {
 								account.setInstitution(getInstitution(token, account.getRequisition().getInstitutionId()));
 							}
 						} catch (Exception e) {
-							NordigenUtils.logException(e);
+//							NordigenUtils.logException(e);
 							e.printStackTrace();
 							account.addLog(e.getMessage());
 						}
@@ -334,7 +334,7 @@ public class AonNordigen  {
 			}
 			return NordigenDAO.updateRegistryBank(ctx, account);
 		} catch (InterruptedException e) {
-			NordigenUtils.logException(e);
+//			NordigenUtils.logException(e);
 			Thread.currentThread().interrupt();
 			throw new AonCoreException(e);
 		}
@@ -452,7 +452,7 @@ public class AonNordigen  {
 				}
 			}
 		} catch (Exception e) {
-			NordigenUtils.logException(e);
+//			NordigenUtils.logException(e);
 		}
 		
 		return null;
@@ -512,7 +512,7 @@ public class AonNordigen  {
 			}
 			return orderedList;
 		} catch (NordigenException e) {
-			NordigenUtils.logException(e);
+//			NordigenUtils.logException(e);
 			throw e;
 		} catch (Exception e) {
 			throw mapException(e);
@@ -615,7 +615,7 @@ public class AonNordigen  {
 							return metadata;
 						}
 					} catch (Exception e) {
-						NordigenUtils.logException(e);
+//						NordigenUtils.logException(e);
 					}
 				}
 			}

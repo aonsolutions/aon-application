@@ -268,7 +268,7 @@ public class BankServlet extends AonApiHttpServlet {
 				NordigenUtils.processAccountLinking(rAccounts, id, token, jsonLink, occam);
 			}
 		} catch (Exception e) {
-			NordigenUtils.logException(e);
+//			NordigenUtils.logException(e);
 		}
 		return jsonLink;
 	}
@@ -282,7 +282,7 @@ public class BankServlet extends AonApiHttpServlet {
 			List<NordigenBankAccount> linkedAccountList = nc.getLinkedAccounts();
 			return NordigenUtils.processAccountBalances(linkedAccountList, token, occam);
 		} catch (Exception e) {
-			NordigenUtils.logException(e);
+//			NordigenUtils.logException(e);
 			return new JSONArray();
 		}
 	}
@@ -312,7 +312,7 @@ public class BankServlet extends AonApiHttpServlet {
 			List<NordigenBankAccount> linkedAccountList = nc.getLinkedAccounts();
 			return NordigenUtils.convertAccountsMovementsToJsonArray(linkedAccountList, token, occam);
 		} catch (Exception e) {
-			NordigenUtils.logException(e);
+//			NordigenUtils.logException(e);
 			return new JSONArray();
 		}
 	}

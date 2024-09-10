@@ -227,67 +227,67 @@ public class NordigenUtils {
 		jsonLink.put("link", "IBAN no encontrado");
 	}
 	
-    private static final Logger LOGGER = configureLogger();
-	
-	private static Logger configureLogger() {
-        Logger logger = Logger.getLogger(NordigenUtils.class.getName());
-        try {
-            String logFilePath = "C:/Program Files/Apache Software Foundation/tomcat/webapps/aon-solutions/WEB-INF/logs/bankErrorsLog.log";
-
-
-            PatternLayout layout = new PatternLayout("%d{yyyy-MM-dd HH:mm:ss} %-5p %c{1} - %m%n");
-            FileAppender fileAppender = new FileAppender(layout, logFilePath, true);
-            logger.addAppender(fileAppender);
-            logger.setLevel(org.apache.log4j.Level.ALL);
-        } catch (IOException e) {
-            logger.error("Failed to initialize file appender for logger", e);
-        }
-        return logger;
-    }
-	
-	public static void closeNordigenLogger() {
-	    Enumeration<?> appenders = LOGGER.getAllAppenders();
-	    while (appenders.hasMoreElements()) {
-	        Appender appender = (Appender) appenders.nextElement();
-	        if (appender instanceof FileAppender) {
-	            FileAppender fileAppender = (FileAppender) appender;
-	            LOGGER.removeAppender(fileAppender);
-	            fileAppender.close();
-	        }
-	    }
-	}
-	
-	public static void exceptionAddInfo(String info) {
-		//Extraer y registrar informacion adicional util para la excepcion
-		LOGGER.error("Additional information about error : " + info);
-
-	}
-
-	
-	public static void logException(Exception e) {
-        // Extraer y registrar el nombre de la excepción
-        String exceptionName = e.getClass().getName();
-        LOGGER.error("Exception Type: " + exceptionName);
-
-        // Registrar el mensaje de la excepción
-        String errorMessage = e.getMessage();
-        LOGGER.error("Error Message: " + (errorMessage != null ? errorMessage : "No message available"));        
-        // Registrar la causa de la excepción (si existe)
-        Throwable cause = e.getCause();
-        if (cause != null) {
-            LOGGER.error("Cause: " + cause.toString());
-        } else {
-            LOGGER.error("Cause: No cause available");
-        }
-
-        // Información adicional, como la clase y línea donde ocurrió la excepción
-        StackTraceElement[] stackTrace = e.getStackTrace();
-        if (stackTrace.length > 0) {
-            StackTraceElement element = stackTrace[0];
-            LOGGER.error("Occurred in Class: " + element.getClassName());
-            LOGGER.error("Occurred in Method: " + element.getMethodName());
-            LOGGER.error("Occurred at Line: " + element.getLineNumber());
-        }
-    }
+//    private static final Logger LOGGER = configureLogger();
+//	
+//	private static Logger configureLogger() {
+//        Logger logger = Logger.getLogger(NordigenUtils.class.getName());
+//        try {
+//            String logFilePath = "C:/Program Files/Apache Software Foundation/tomcat/webapps/aon-solutions/WEB-INF/logs/bankErrorsLog.log";
+//
+//
+//            PatternLayout layout = new PatternLayout("%d{yyyy-MM-dd HH:mm:ss} %-5p %c{1} - %m%n");
+//            FileAppender fileAppender = new FileAppender(layout, logFilePath, true);
+//            logger.addAppender(fileAppender);
+//            logger.setLevel(org.apache.log4j.Level.ALL);
+//        } catch (IOException e) {
+//            logger.error("Failed to initialize file appender for logger", e);
+//        }
+//        return logger;
+//    }
+//	
+//	public static void closeNordigenLogger() {
+//	    Enumeration<?> appenders = LOGGER.getAllAppenders();
+//	    while (appenders.hasMoreElements()) {
+//	        Appender appender = (Appender) appenders.nextElement();
+//	        if (appender instanceof FileAppender) {
+//	            FileAppender fileAppender = (FileAppender) appender;
+//	            LOGGER.removeAppender(fileAppender);
+//	            fileAppender.close();
+//	        }
+//	    }
+//	}
+//	
+//	public static void exceptionAddInfo(String info) {
+//		//Extraer y registrar informacion adicional util para la excepcion
+//		LOGGER.error("Additional information about error : " + info);
+//
+//	}
+//
+//	
+//	public static void logException(Exception e) {
+//        // Extraer y registrar el nombre de la excepción
+//        String exceptionName = e.getClass().getName();
+//        LOGGER.error("Exception Type: " + exceptionName);
+//
+//        // Registrar el mensaje de la excepción
+//        String errorMessage = e.getMessage();
+//        LOGGER.error("Error Message: " + (errorMessage != null ? errorMessage : "No message available"));        
+//        // Registrar la causa de la excepción (si existe)
+//        Throwable cause = e.getCause();
+//        if (cause != null) {
+//            LOGGER.error("Cause: " + cause.toString());
+//        } else {
+//            LOGGER.error("Cause: No cause available");
+//        }
+//
+//        // Información adicional, como la clase y línea donde ocurrió la excepción
+//        StackTraceElement[] stackTrace = e.getStackTrace();
+//        if (stackTrace.length > 0) {
+//            StackTraceElement element = stackTrace[0];
+//            LOGGER.error("Occurred in Class: " + element.getClassName());
+//            LOGGER.error("Occurred in Method: " + element.getMethodName());
+//            LOGGER.error("Occurred at Line: " + element.getLineNumber());
+//        }
+//    }
 
 }
