@@ -51,7 +51,8 @@ export class Invoice {
   workplace;
   
   messages;
-  
+  ocrStatus;
+
   constructor(invoice) {
     this.buildObject(invoice);
   }
@@ -72,6 +73,7 @@ export class Invoice {
       this.category = invoice.category || '',
       this.transaction = invoice.transaction || 'NAC',
       this.status = invoice.status || 'inbox',
+      this.ocrStatus = invoice.ocrStatus || undefined,
       this.name = invoice.name;
       this.sender = invoice.sender || {
         document: '',
@@ -364,7 +366,11 @@ export class Invoice {
   }
 
   isOcrStatus(...publicStates) {
-	return publicStates.some( publicState =>  this.status.toLowerCase() === CONSTANT.OCR + publicState.toLowerCase() ); 
+  	return publicStates.some( publicState =>  this.status.toLowerCase() === CONSTANT.OCR + publicState.toLowerCase() ); 
+  }
+
+  isRawdocOcrStatus(...publicStates) {
+  	return this.ocrStatus && publicStates.some( publicState =>  this.ocrStatus.toLowerCase() === CONSTANT.OCR + publicState.toLowerCase() ); 
   }
 
   isInbox() {

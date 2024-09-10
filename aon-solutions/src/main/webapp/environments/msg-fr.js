@@ -490,6 +490,7 @@ export const VIEW_PAYROLLS = "Ver nóminas";
 export const WAREHOUSE = 'Entrepôt';
 export const WAREHOUSES = 'Almacenes';
 export const WEB = 'Web';
+export const WELCOME_TO_AON_SOLUTIONS = 'Bienvenue chez aon Solutions';
 export const WITHHOLDING = 'Retención';
 export const WORKGROUP = 'Grupo de trabajo';
 export const WORKSHOPS = 'Talleres';

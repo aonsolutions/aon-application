@@ -275,7 +275,8 @@ export class AonTable extends AonElement {
           icon2.className = icon.class || "material-icons";
           icon2.classList.add("aonTableRowIcon2");
           icon2.innerHTML = icon.icon;
-          icon2.title = icon.title; 
+          icon2.title = icon.title;
+          icon2.style.color = icon.color || "#5f6368"; 
           if(icon.fn) icon2.addEventListener(EVENT.CLICK, icon.fn);
           span.appendChild(icon2);
         });
