@@ -262,7 +262,7 @@ public class SellerDAO {
 	}
 	
 	
-	protected static class SellerFiller extends Filler implements Function<Record,Seller> {
+	public static class SellerFiller extends Filler implements Function<Record,Seller> {
 	
 		@Override
 		public Seller apply(Record r) {

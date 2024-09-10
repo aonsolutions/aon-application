@@ -7,6 +7,7 @@ import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
@@ -26,6 +27,7 @@ import com.esferalia.aon.occam.api.model.Filter.SupplierFilter;
 import com.esferalia.aon.occam.api.model.GeoZone;
 import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.accounting.BalanceType;
+import com.esferalia.aon.occam.api.model.finance.EnumVisitors.IInvoiceTypeVisitor;
 import com.esferalia.aon.occam.api.model.finance.EnumVisitors.IWithholdingTypeVisitor;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceBreakdown;
@@ -82,7 +84,7 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 import com.github.javafaker.Faker;
 
 public class AonRandom {
-	private static Faker faker = new Faker( new Locale("es"));
+	private static Faker faker = new Faker( Locale.of("es"));
 	
     public static boolean gt( int threshold) {
 		return faker.random().nextInt(0,100) >= threshold;
@@ -556,7 +558,7 @@ public class AonRandom {
 			:null;
 	}
 
-	public static Invoice generateRandomRetentionInvoice(final AONContext ctx, final Occam occam, final AonConfiguration configuration, WithholdingType withholdingType) {
+	public static Invoice generateRandomRetentionInvoice(final AONContext ctx, final Occam occam, WithholdingType withholdingType) {
 		Invoice inv = withholdingType.visit(new IWithholdingTypeVisitor<Invoice>() {
 
 			@Override public Invoice visitProfessional(Invoice i) { return getRetentionInvoice( WithholdingType.PROFESSIONAL);   }
@@ -582,20 +584,20 @@ public class AonRandom {
 			
 			@Override
 			public Invoice visitFarmer(Invoice t) {
-				InvoiceFakerParams params = new InvoiceFakerParams(ctx,configuration)
+				InvoiceFakerParams params = new InvoiceFakerParams(ctx)
 					.setIssueDate(AonRandom.getYearDay(new Date()));
 				return InvoiceFaker.getPurchaseFarmerRetention(params);
 			}
 
 			private Invoice getRetentionInvoice( final WithholdingType wt) {
-				return InvoiceFaker.getRetentionInvoice( ctx, occam, configuration, wt);
+				return InvoiceFaker.getRetentionInvoice( ctx, occam, wt);
 			}
 			
 		},null);
 		return inv;
 	}
 
-	public static Invoice generateRandomSalesRetentionInvoice(final AONContext ctx, final Occam occam, final AonConfiguration configuration, WithholdingType withholdingType) {
+	public static Invoice generateRandomSalesRetentionInvoice(final AONContext ctx, final Occam occam, WithholdingType withholdingType) {
 		Invoice inv = withholdingType.visit(new IWithholdingTypeVisitor<Invoice>() {
 
 			@Override public Invoice visitProfessional(Invoice i) { return getRetentionInvoice( WithholdingType.PROFESSIONAL);   }
@@ -621,13 +623,13 @@ public class AonRandom {
 			
 			@Override
 			public Invoice visitFarmer(Invoice t) {
-				InvoiceFakerParams params = new InvoiceFakerParams(ctx,configuration)
+				InvoiceFakerParams params = new InvoiceFakerParams(ctx)
 					.setIssueDate(AonRandom.getYearDay(new Date()));
 				return InvoiceFaker.getSalesFarmerRetention(params);
 			}
 
 			private Invoice getRetentionInvoice( final WithholdingType wt) {
-				return InvoiceFaker.getSalesRetentionInvoice( ctx, occam, configuration, wt);
+				return InvoiceFaker.getSalesRetentionInvoice( ctx, occam, wt);
 			}
 			
 		},null);
@@ -694,5 +696,45 @@ public class AonRandom {
 		});
 		return ret.getValue();
 	}
+
+	public static Integer getRandomInvoiceRegistry(AONContext ctx, InvoiceType type) {
+		return type.visit(null, new IInvoiceTypeVisitor<Integer>() {
+			@Override
+			public Integer visitPurchase(Invoice invoice) {
+				return SupplierDAO.getRandom(ctx, p -> p.getIdProperty().ge(0) ).getId();
+			}
+
+			@Override
+			public Integer visitSales(Invoice invoice) {
+				return CustomerDAO.getRandom(ctx, p -> p.getIdProperty().ge(0) ).getId();
+			}
+
+			@Override
+			public Integer visitExpenses(Invoice invoice) {
+				return CreditorDAO.getRandom(ctx, p -> p.getIdProperty().ge(0) ).getId();
+			}
+
+			@Override
+			public Integer visitUndeductible(Invoice invoice) {
+				return visitExpenses(invoice);
+			}
+		});
+	}
+	public static EnterpriseActivity getRandomActivity(AONContext ctx, AonConfiguration configuration) {
+		EnterpriseActivity activity = null;
+		if (AonCollectionUtils.isNotEmpty( configuration.getActivities())) {
+			int w = AonRandom.getInt(0, 100);
+			if (w > 10) {
+				if (w > 80) {
+					activity = Optional.of( configuration.getMainActivity() ).orElse(null);
+				} else {
+					int i = AonRandom.getInt(0, configuration.getActivities().size() - 1);
+					activity = configuration.getActivities().get(i); 
+				}
+			}
+		}
+		return activity;
+	}
+	
 }
 

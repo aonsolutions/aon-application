@@ -72,7 +72,6 @@ import com.esferalia.aon.occam.impl.jooq.dao.FinanceDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.FinanceTrackingDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.FinanceUtilitiesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.InvofoxConfigurationDAO;
-import com.esferalia.aon.occam.impl.jooq.dao.InvoiceFiscalDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.InvoiceOLDDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.InvoiceSIIDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.PayMethodDAO;
@@ -83,6 +82,7 @@ import com.esferalia.aon.occam.impl.jooq.dao.SettleSalariesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.SiiConfigurationDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.TbaiConfigurationDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.invoice.InvoiceCommunicationTrackingDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.invoice.InvoiceFiscalDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.invoice.InvoiceInfoDAO;
 
 public class FinanceImpl implements IFinance {
@@ -752,9 +752,9 @@ public class FinanceImpl implements IFinance {
 	}
 
 	@Override
-	public void saveInvoiceFiscal(AONContext ctx, AonConfiguration config, Invoice invoice) {
+	public void saveInvoiceFiscal(AONContext ctx, Invoice invoice) {
 		ctx.getDslContext().transaction(
-				configuration -> InvoiceFiscalDAO.save(ctx, config, invoice));
+				configuration -> InvoiceFiscalDAO.save(ctx, invoice));
 	}
 	
 	@Override

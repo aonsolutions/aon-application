@@ -1,4 +1,4 @@
-package com.esferalia.aon.occam.impl.jooq.dao;
+package com.esferalia.aon.occam.impl.jooq.dao.invoice;
 
 import static com.esferalia.aon.jooq.tables.InvoiceFiscal.INVOICE_FISCAL;
 
@@ -8,13 +8,13 @@ import java.util.function.Function;
 import org.jooq.Record;
 
 import com.esferalia.aon.occam.api.AONContext;
-import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.EnterpriseActivity;
 import com.esferalia.aon.occam.api.model.finance.EnumVisitors.IVATTaxRegimeVisitor;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceFiscal;
 import com.esferalia.aon.occam.api.model.finance.VATTaxRegime;
 import com.esferalia.aon.occam.api.model.type.VATRegime;
+import com.esferalia.aon.occam.impl.jooq.dao.Filler;
 import com.esferalia.aon.watson.AonError;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.server.AonDateUtils;
@@ -25,7 +25,7 @@ public class InvoiceFiscalDAO {
 	private InvoiceFiscalDAO() {
 	}
 	
-	protected static class InvoiceFiscalFiller extends Filler implements Function<Record,InvoiceFiscal> {
+	public static class InvoiceFiscalFiller extends Filler implements Function<Record,InvoiceFiscal> {
 
 		@Override
 		public InvoiceFiscal apply(Record r) {
@@ -55,37 +55,19 @@ public class InvoiceFiscalDAO {
 		}
 	}
 	
-	private static class AonConfigurationContext {
-		
-		private AONContext ctx;
-		private AonConfiguration config;
-		
-		private AonConfigurationContext (AONContext ctx,AonConfiguration config) {
-			this.ctx = ctx;
-			this.config = config;
-		}
-		@SuppressWarnings("unused")
-		private AONContext getContext() {
-			return ctx;
-		}
-		private AonConfiguration getConfiguration() {
-			return config;
-		}
-	}
-
 	private static class Validation {
 		
-		private static final BiConsumer<AonConfigurationContext,InvoiceFiscal> EMPTY_DOMAIN = (ctx,invoiceFiscal) -> {
+		private static final BiConsumer<AONContext,InvoiceFiscal> EMPTY_DOMAIN = (ctx,invoiceFiscal) -> {
 			if (invoiceFiscal.getDomain() == null) 
 				throw new AonCoreException(AonError.EMPTY_DOMAIN.getMessage());
 		};
 		
-		private static final BiConsumer<AonConfigurationContext,InvoiceFiscal> EMPTY_INVOICE = (ctx,invoiceFiscal) -> {
+		private static final BiConsumer<AONContext,InvoiceFiscal> EMPTY_INVOICE = (ctx,invoiceFiscal) -> {
 			if (invoiceFiscal.getInvoice() == null) 
 				throw new AonCoreException(AonError.EMPTY_NAME.getMessage());
 		};
 		
-		public static void validate(AonConfigurationContext ctx,InvoiceFiscal invoiceFiscal) throws AonCoreException{
+		public static void validate(AONContext ctx,InvoiceFiscal invoiceFiscal) throws AonCoreException{
 			EMPTY_DOMAIN
 			.andThen(EMPTY_INVOICE)
 			.accept(ctx, invoiceFiscal);
@@ -95,14 +77,14 @@ public class InvoiceFiscalDAO {
 
 	private static class AutoComplete {
 
-		private static final BiConsumer<AonConfigurationContext,Invoice> COMPLETE_INVOICE_DATA = (ctx,invoice) -> {
+		private static final BiConsumer<AONContext,Invoice> COMPLETE_INVOICE_DATA = (ctx,invoice) -> {
 			invoice.ensureFiscal().setInvoice( invoice.getId() );
 			invoice.ensureFiscal().setDomain( invoice.getDomain() );
 			invoice.ensureFiscal().setIssueDate( invoice.getIssueDate() );
 			invoice.ensureFiscal().setTaxDate( invoice.getTaxDate() );
 		};
 		
-		private static final BiConsumer<AonConfigurationContext,Invoice> COMPLETE_VAT_TAX_REGIME = (ctx,invoice) -> {
+		private static final BiConsumer<AONContext,Invoice> COMPLETE_VAT_TAX_REGIME = (ctx,invoice) -> {
 			IVATTaxRegimeVisitor visitor = new IVATTaxRegimeVisitor() {
 				
 				@Override 
@@ -201,7 +183,7 @@ public class InvoiceFiscalDAO {
 			}
 		};
 
-		public static void autoComplete(AonConfigurationContext ctx, Invoice invoice) throws AonCoreException {
+		public static void autoComplete(AONContext ctx, Invoice invoice) throws AonCoreException {
 			COMPLETE_INVOICE_DATA
 			.andThen(COMPLETE_VAT_TAX_REGIME)
 			.accept(ctx, invoice);
@@ -209,9 +191,9 @@ public class InvoiceFiscalDAO {
 
 	}
 	
-	public static InvoiceFiscal save(AONContext ctx, AonConfiguration config, Invoice invoice) {
-		AutoComplete.autoComplete(new AonConfigurationContext(ctx,config), invoice);
-		Validation.validate(new AonConfigurationContext(ctx,config), invoice.getFiscal());
+	public static InvoiceFiscal save(AONContext ctx, Invoice invoice) {
+		AutoComplete.autoComplete(ctx, invoice);
+		Validation.validate(ctx, invoice.getFiscal());
 		InvoiceFiscal invFiscal = invoice.ensureFiscal();
 		ctx.getDslContext()
 			.insertInto(INVOICE_FISCAL)

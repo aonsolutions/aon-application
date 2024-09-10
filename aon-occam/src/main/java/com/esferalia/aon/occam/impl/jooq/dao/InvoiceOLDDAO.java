@@ -121,6 +121,7 @@ import com.esferalia.aon.occam.impl.jooq.dao.RegistryDAO.RegistryFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.SecurityDAO.ScopeFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.invoice.InvoiceAddressDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.invoice.InvoiceBatchDetailDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.invoice.InvoiceFiscalDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.invoice.InvoiceInfoDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.offer.OfferDetailDAO;
 import com.esferalia.aon.occam.impl.jooq.validation.InvoiceAutoCompleteOLD;
@@ -1028,7 +1029,7 @@ public class InvoiceOLDDAO {
 //			invoice.setAddress(InvoiceAddressDAO.save(ctx, invoice.getAddress(), invoice.getId()));
 		
 		insertDetails(ctx, config, invoice);
-		InvoiceFiscalDAO.save(ctx, config, invoice);
+		InvoiceFiscalDAO.save(ctx, invoice);
 		return invoice.setCreationDate(new Date()); 
 	}
 	
@@ -1119,7 +1120,7 @@ public class InvoiceOLDDAO {
 			.execute();
 		ctx.log().debug("UPDATE INVOICE invoice: {0} ({1} rows)",invoice.getId(),i);
 		if(!only) {
-			InvoiceFiscalDAO.save(ctx, config, invoice);
+			InvoiceFiscalDAO.save(ctx, invoice);
 			updateDetails(ctx, config, invoice);
 		}
 		return invoice; 

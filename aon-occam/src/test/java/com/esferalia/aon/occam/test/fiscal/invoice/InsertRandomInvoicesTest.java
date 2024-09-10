@@ -3,7 +3,6 @@ package com.esferalia.aon.occam.test.fiscal.invoice;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.text.MessageFormat;
-import java.text.NumberFormat;
 
 import org.junit.jupiter.api.Test;
 
@@ -20,7 +19,6 @@ import com.esferalia.aon.occam.test.faker.InvoiceFaker.InvoiceFakerParams;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonCollectionUtils;
 import com.esferalia.aon.watson.util.AonMathUtils;
-import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class InsertRandomInvoicesTest extends AbstractOccamTest {
@@ -33,9 +31,9 @@ public class InsertRandomInvoicesTest extends AbstractOccamTest {
 		for (int count = 0; count < times; count++) {
 			Invoice invoice = null;
 			if (AonRandom.gt(90)) {
-				invoice = AonRandom.generateRandomRetentionInvoice(ctx,getOccam(),getConfiguration(),AonRandom.getRandomWithholdingType());
+				invoice = AonRandom.generateRandomRetentionInvoice(ctx,getOccam(),AonRandom.getRandomWithholdingType());
 			} else {
-				InvoiceFakerParams params = new InvoiceFakerParams(ctx,getConfiguration()).setIssueDate( AonRandom.getRandomYearDay( year ) );
+				InvoiceFakerParams params = new InvoiceFakerParams(ctx).setIssueDate( AonRandom.getRandomYearDay( year ) );
 				invoice = InvoiceFaker.getRandom(params);
 			}
 			invoice = AON.insertInvoice(getOccam(),invoice);

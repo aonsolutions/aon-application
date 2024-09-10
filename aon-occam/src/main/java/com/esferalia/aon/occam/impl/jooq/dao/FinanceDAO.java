@@ -192,6 +192,57 @@ public class FinanceDAO {
 	// -------------------------------------------------------------
 	// ------------------- FINANCE --- ESCRITURA -------------------
 	// -------------------------------------------------------------
+	// -------------------------------------------------------------
+	// ------------------- FINANCE --- ESCRITURA -------------------
+	// -------------------------------------------------------------
+	public static void saveFinance(AONContext ctx, Invoice invoice, Finance finance) {
+		if ( !finance.isFullPending()) {
+			ctx.log().debug("** FINANCE NOT SAVED [NOT PENDING]");
+			return;
+		}
+		if (!finance.isDirty() ) {
+			ctx.log().debug("** FINANCE NOT SAVED [NOT DIRTY]");
+			return;
+		}
+		if ( finance.getId() == null && finance.isRemoved()) {
+			ctx.log().debug("** FINANCE NOT SAVED [MARKED TO DELETE BUT NOT SAVED]");
+			return;
+		}
+		if ( finance.getId() != null && finance.isRemoved()) {
+			ctx.log().debug("** FINANCE MARKED TO DELETE");
+			FinanceDAO.delete(ctx, finance.getId());
+			return;
+		} 
+		
+		if (finance.getId() == null) {
+			finance
+				.setInvoice(new Invoice().setId(invoice.getId()))
+				.setDomain(ctx.getDomainId())
+				.setRegistry(new Registry().setId(invoice.getRegistry()))
+				.setRegistryDocument(invoice.getRegistryDocument())
+				.setRegistryDocumentType(invoice.getRegistryDocumentType())
+				.setRegistryDocumentCountry(invoice.getRegistryDocumentCountry())
+				.setRegistryName(invoice.getRegistryName())
+				.setScope(invoice.getScope())
+				.setSecurityLevel(invoice.getSecurityLevel())
+				.setConcept(invoice.getDocumentNumber())
+				.setFinanceStatus(FinanceStatus.PENDING)
+			;
+		} else {
+			finance
+				.setSecurityLevel(invoice.getSecurityLevel())
+				.setConcept(invoice.getDocumentNumber())
+				;
+		}
+		if ( AonMathUtils.isNotZero(finance.getAmount()) ) {
+			ctx.log().debug("** FINANCE READY TO SAVE");
+			Integer financeId = save(ctx, finance);
+			finance.setId(financeId);
+		} else {
+			ctx.log().debug("** FINANCE NOT SAVED [AMOUNT 0]");
+		}
+	}
+	
 	public static Integer save(AONContext ctx, Finance finance) {
 		if (finance.getId() == null) {
 			return insert(ctx, finance);

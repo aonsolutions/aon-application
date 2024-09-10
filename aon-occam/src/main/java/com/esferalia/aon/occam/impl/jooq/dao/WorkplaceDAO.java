@@ -104,7 +104,7 @@ public class WorkplaceDAO {
 		return workplace;
 	}
 	
-	protected static class WorkplaceFiller extends Filler implements Function<Record, Workplace> {
+	public static class WorkplaceFiller extends Filler implements Function<Record, Workplace> {
 		
 		@Override
 		public Workplace apply(Record r) {

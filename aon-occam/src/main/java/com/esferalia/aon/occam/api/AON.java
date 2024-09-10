@@ -7959,9 +7959,9 @@ public class AON {
 	
 	//---------- INVOICE FISCAL
 
-	public static void saveInvoiceFiscal(String domainName, Integer domainId, String login, AonConfiguration config, Invoice invoice) {
+	public static void saveInvoiceFiscal(String domainName, Integer domainId, String login, Invoice invoice) {
 		try(CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
-			getFinance().saveInvoiceFiscal(ctx, config, invoice);
+			getFinance().saveInvoiceFiscal(ctx, invoice);
 		}
 	}	
 	

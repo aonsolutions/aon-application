@@ -1715,4 +1715,14 @@ public class Asserts {
 			assertEquals(expected.getCount(), actual.getCount(),"Count");
 		}
 	}
+	
+	public static void assertsRegistryData(Registry reg, Invoice invoice) {
+		assertNotNull(reg);
+		assertNotNull(invoice);
+		assertEquals( reg.getId(), invoice.getRegistry() );
+		assertEquals( reg.getDocumentType(), invoice.getRegistryDocumentType());
+		assertEquals( reg.getDocumentCountry(), invoice.getRegistryDocumentCountry());
+		assertEquals( reg.getDocument(), invoice.getRegistryDocument());
+		assertEquals( reg.getName(), invoice.getRegistryName());
+	}
 }

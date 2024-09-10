@@ -251,7 +251,7 @@ public interface IFinance {
 	// 	***********************************************
 	// 	***************** INVOICE FISCAL **************
 	// 	***********************************************
-	public void saveInvoiceFiscal(AONContext ctx, AonConfiguration config, Invoice invoice);
+	public void saveInvoiceFiscal(AONContext ctx, Invoice invoice);
 	public void deleteInvoiceFiscal(AONContext ctx, Integer id);
 	
 	public void saveFacturaeCodeAsignacion(AONContext ctx, Integer invoice, Integer registry, String code);

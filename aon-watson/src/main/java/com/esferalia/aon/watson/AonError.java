@@ -172,6 +172,7 @@ public enum AonError implements Serializable{
 	,AMORTIZATION_TYPE_PARAMS_NULL("Los parametros son nulos")
 	
 	// --------------------------------------------- INVOICE
+	,INVOICE_EMPTY_DOMAIN("El dominio de la factura es un dato obligatorio, no puede estar vac\u00EDa")
 	,INVOICE_EMPTY_DATE("La fecha de la factura es un dato obligatorio, no puede estar vac\u00EDa")
 	,INVOICE_EMPTY_TAX_DATE("La fecha I.V.A. de la factura es un dato obligatorio, no puede estar vac\u00EDa")
 	,INVOICE_EMPTY_TYPE("El tipo de la factura es un dato obligatorio, no puede estar vac\u00EDa")

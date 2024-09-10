@@ -52,7 +52,7 @@ public class ValidationDeleteForeignKey extends AbstractOccamTest {
 		RegistryAddress registryAddress = customer.getMainAddress(); 
 		
 		if (registryAddress != null) {
-			Invoice invoice = InvoiceFaker.getSalesNational(ctx, getConfiguration());
+			Invoice invoice = InvoiceFaker.getSalesNational(ctx);
 			invoice.setRegistry(customer.getRegistry().getId());
 			invoice.setRegistryName(customer.getRegistry().getName());
 			invoice.setRegistryDocument(customer.getRegistry().getDocument());

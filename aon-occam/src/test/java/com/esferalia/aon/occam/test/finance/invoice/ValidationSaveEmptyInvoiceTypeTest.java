@@ -18,8 +18,7 @@ public class ValidationSaveEmptyInvoiceTypeTest extends AbstractOccamTest {
 
 	@Test
 	public void testValidationSaveEmptyInvoiceType() {
-		AonConfiguration config = AON.getConfiguration(ctx,null);
-		InvoiceFakerParams params = new InvoiceFakerParams(ctx, config);
+		InvoiceFakerParams params = new InvoiceFakerParams(ctx);
 		Invoice invoice = InvoiceFaker.getRandom(params);
 		invoice.setType(null);
 		assertThrows(AonCoreException.class, () ->

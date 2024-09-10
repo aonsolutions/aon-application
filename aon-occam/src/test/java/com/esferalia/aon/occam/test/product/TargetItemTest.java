@@ -55,7 +55,7 @@ public class TargetItemTest extends AbstractOccamTest {
 				.setStatus(ProductStatus.ACTIVE)
 		);
 			
-		InvoiceFakerParams params = new InvoiceFakerParams(ctx, getConfiguration()).setIssueDate(AonRandom.today());
+		InvoiceFakerParams params = new InvoiceFakerParams(ctx).setIssueDate(AonRandom.today());
 		Invoice inserted = InvoiceOLDDAO.insert(ctx, InvoiceFaker.getRandom(params));
 			
 		List<InvoiceDetail> dets = inserted.getDetails();

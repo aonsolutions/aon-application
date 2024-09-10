@@ -446,8 +446,7 @@ public class TbaiData {
 		invoice.ensureFiscal().setExpDate(new Date());
 		LinkedList<EnterpriseActivity> list = new LinkedList<>();
 		list.add(invoice.getActivity());
-		AonConfiguration config = new AonConfiguration().setEnterpriseActivities(list);
-		AON.saveInvoiceFiscal(domain.getName(), domain.getId(), user.getLogin(), config, invoice);
+		AON.saveInvoiceFiscal(domain.getName(), domain.getId(), user.getLogin(), invoice);
 		
 		return dr;
 	}
