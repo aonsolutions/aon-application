@@ -1,11 +1,10 @@
 package com.esferalia.aon.gwt.payroll.client;
 
-import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.function.Consumer;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.css.AonGwtTemplateResources;
@@ -155,8 +154,6 @@ public class MainContrataContract extends MainEntryPoint {
 	private MainContrataContractObject mainContrataContractObject;
 	private EnterpriseSalaryObject enterpriseSalaryObject;
 	
-	private List<EmployeeContractInfo> employeesList = Collections.emptyList();
-	
 	private AonExpandButton tgssExpandButton;
 	private TGSSContextMenu tgssContextMenu;
 	
@@ -232,59 +229,6 @@ public class MainContrataContract extends MainEntryPoint {
 			showContracts();
 		}
 
-		@Override
-		protected void onPreviusContract(Integer currentContractId) {
-			EmployeeContractInfo newSelectectedEmployee = null;
-			Integer selectedEmployeeIdx = null;
-
-			for (int i = 0; i < employeesList.size(); i++) {
-				EmployeeContractInfo employeeContractInfo = employeesList.get(i);
-				Integer contractId = employeeContractInfo.getContractInfo().getContractId();
-				if (currentContractId.equals(contractId)) {
-					if (i == 0) {
-						newSelectectedEmployee = employeesList.get(employeesList.size() - 1);
-						selectedEmployeeIdx = employeesList.size() - 1;
-					} else {
-						newSelectectedEmployee = employeesList.get(i - 1);
-						selectedEmployeeIdx = i - 1;
-					}
-
-					selectedEmployeeIdx++;
-					break;
-				}
-			}
-
-			loadEmployee(newSelectectedEmployee, selectedEmployeeIdx, employeesList.size(),
-					tabLayOutPanel.getSelectedIndex());
-
-		}
-
-		@Override
-		protected void onNextContract(Integer currentContractId) {
-			EmployeeContractInfo newSelectectedEmployee = null;
-			Integer selectedEmployeeIdx = null;
-
-			for (int i = 0; i < employeesList.size(); i++) {
-				EmployeeContractInfo employeeContractInfo = employeesList.get(i);
-				Integer contractId = employeeContractInfo.getContractInfo().getContractId();
-				if (currentContractId.equals(contractId)) {
-					if (i == (employeesList.size() - 1)) {
-						newSelectectedEmployee = employeesList.get(0);
-						selectedEmployeeIdx = 0;
-					} else {
-						newSelectectedEmployee = employeesList.get(i + 1);
-						selectedEmployeeIdx = i + 1;
-					}
-
-					selectedEmployeeIdx++;
-					break;
-				}
-			}
-
-			loadEmployee(newSelectectedEmployee, selectedEmployeeIdx, employeesList.size(),
-					tabLayOutPanel.getSelectedIndex());
-		}
-
 		private void loadEmployee(EmployeeContractInfo employee, Integer selectedEmployeeIdx, int employeesSize,
 				int selectedTab) {
 			if (null != employee) {
@@ -305,6 +249,22 @@ public class MainContrataContract extends MainEntryPoint {
 		@Override
 		protected DomainUserRoles getDomainUserRole() {
 			return mainContrataContractObject.getDomainUserRoles();
+		}
+
+		@Override
+		protected ContractParams getContractListParams() {
+			return params;
+		}
+
+		@Override
+		protected void getContractListCount(Consumer<Integer> finish) {
+			mainContrataContractObject.getContractListCount(params, count -> finish.accept(count));
+		}
+
+		@Override
+		protected void onContractSelectionChange(EmployeeContractInfo employeeContractInfo, Integer position) {
+//			Window.alert("[ " + position + " ] " + employeeContractInfo.getEmployeeInfo().getFullName());
+			loadEmployee(employeeContractInfo, position, mainContrataContractObject.getEmployeesList().size(), tabLayOutPanel.getSelectedIndex());
 		}
 
 	}
@@ -450,7 +410,7 @@ public class MainContrataContract extends MainEntryPoint {
 			hPanel.add(sistemaREDMessagePanel);
 			
 			ResultsPanel resultPanel = new ResultsPanel();
-			resultPanel.setHeight("120px");
+			resultPanel.setHeight((sistemaREDResults.getTreeItems() > 20 ? 20 : sistemaREDResults.getTreeItems() * 30) + "px");
 			resultPanel.setWidth("800px");
 			resultPanel.setWidget(sistemaREDResults);
 			hPanel.add(resultPanel);
@@ -470,7 +430,7 @@ public class MainContrataContract extends MainEntryPoint {
 				contrataEmployee.setIsComunica(mainContrataContractObject.isComunica());
 				contrataEmployee.setHasPayroll(mainContrataContractObject.hasPayroll());
 
-				Integer selectedEmployeeIdx = getSelectedEmployeeIdx(contractId);
+				Integer selectedEmployeeIdx = getContractListPosition(contractId);
 
 				ContrataEmployeeObject contrataEmployeeDialogObject = new ContrataEmployeeObject();
 				contrataEmployeeDialogObject.setActivitiesCCC(mainContrataContractObject.getEnterpriseContext().getActivitiesCCC());
@@ -482,7 +442,8 @@ public class MainContrataContract extends MainEntryPoint {
 						contrataEmployeeDialogObject, 
 						contractId,
 						selectedEmployeeIdx, 
-						employeesList.size(), 
+						mainContrataContractObject.getEmployeesList().size(), 
+						0,
 						s -> deckPanel.showWidget(1));
 			}
 		};
@@ -492,18 +453,12 @@ public class MainContrataContract extends MainEntryPoint {
 		employeeDialog.setModal(true);
 		employeeDialog.setAnimationEnabled(true);
 	}
-
-	private Integer getSelectedEmployeeIdx(Integer currentContractId) {
-		Integer selectedEmployee = null;
-		for (int i = 0; i < employeesList.size(); i++) {
-			EmployeeContractInfo employeeContractInfo = employeesList.get(i);
-			Integer contractId = employeeContractInfo.getContractInfo().getContractId();
-			if (currentContractId.equals(contractId)) {
-				selectedEmployee = i + 1;
-				break;
-			}
-		}
-		return selectedEmployee;
+	
+	public Integer getContractListPosition(Integer contractId) {
+		for(int i=0; i<mainContrataContractObject.getEmployeesList().size(); i++)
+			if(mainContrataContractObject.getEmployeesList().get(i).getContractInfo().getContractId().equals(contractId))
+				return i;
+		return 0;
 	}
 	
 	private void onUpdateCert() {
@@ -956,7 +911,7 @@ public class MainContrataContract extends MainEntryPoint {
 		
 		Integer contractId = employeeContractInfoSelected.getContractInfo().getContractId();
 
-		Integer selectedEmployeeIdx = getSelectedEmployeeIdx(contractId);
+		Integer selectedEmployeeIdx = getContractListPosition(contractId);
 		
 		contrataEmployee.setHasCertificateSEPE(mainContrataContractObject.hasCertificateSEPE());
 		contrataEmployee.setIsComunica(mainContrataContractObject.isComunica());
@@ -967,7 +922,7 @@ public class MainContrataContract extends MainEntryPoint {
 		contrataEmployeeDialogObject.setAgreements(mainContrataContractObject.getEnterpriseContext().getAgreements());
 		contrataEmployeeDialogObject.setPayMethodsMap(mainContrataContractObject.getEnterpriseContext().getPayMethods());
 		contrataEmployee.setContrataEmployeeObject(contrataEmployeeDialogObject, contractId, selectedEmployeeIdx,
-				employeesList.size(), s -> deckPanel.showWidget(1));
+				mainContrataContractObject.getEmployeesList().size(), 0, s -> deckPanel.showWidget(1));
 	}
 	
 	// Employee List Methods

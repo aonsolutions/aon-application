@@ -142,6 +142,7 @@ public interface EnterprisesServiceAsync {
 	void getEnterprisesCCCInfo(String currentDomainName, String user, long findPeriodTime, AsyncCallback<List<CCCInfo>> asyncCallback);
 	void getEmployeesInfo(String currentDomainName, Boolean allEmployees, AsyncCallback<List<EmployeeContractInfo>> asyncCallback);
 	void getEmployees(String currentDomainName, String user, ContractParams params, AsyncCallback<List<EmployeeContractInfo>> asyncCallback) throws IllegalArgumentException;
+	void getContractListCount(String currentDomainName, String user, ContractParams params, AsyncCallback<Integer> asyncCallback) throws IllegalArgumentException;	
 	void getFJEmployeesInfo(String currentDomainName, AsyncCallback<List<EmployeeContractInfo>> asyncCallback);
 	void getEmployeesITInfo(String currentDomainName, Boolean allEmployees,
 			AsyncCallback<List<ITEmployee>> asyncCallback);

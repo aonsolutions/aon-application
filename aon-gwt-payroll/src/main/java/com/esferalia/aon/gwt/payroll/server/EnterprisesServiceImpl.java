@@ -2357,6 +2357,23 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 	}
 	
 	@Override
+	public Integer getContractListCount(String domain, String user, ContractParams params) throws IllegalArgumentException {
+		try(Connection connection = AonServletUtils.getConnection(domain)) {
+			Integer domainId = AonServletUtils.getDomainID(domain);
+			Integer parentDomainId = AonServletUtils.getParentDomainID(domain);
+			Integer userId = AonServletUtils.getUserID(connection, user, domainId, parentDomainId);
+			
+			params.setDomainName(domain);
+			params.setDomain(domainId);
+			params.setUser(user);
+			
+			return JooqContrataContract.getContractListCount(connection, params);
+		} catch (SQLException e) {
+			throw new RuntimeException(e);
+		}
+	}
+	
+	@Override
 	public List<EmployeeContractInfo> getFJEmployeesInfo(String domainName) {
 		try(Connection connection = AonServletUtils.getConnection(domainName)) {
 			Integer domainId = AonServletUtils.getDomainID(domainName);
