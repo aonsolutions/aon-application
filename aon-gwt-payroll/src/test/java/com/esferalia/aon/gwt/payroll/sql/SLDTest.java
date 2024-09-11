@@ -72,7 +72,7 @@ public class SLDTest {
 		}
 	}
 	
-	@Ignore
+	@Disabled
 	@Test
 	public void testGetSLDCostsByNAFS() throws FileNotFoundException, SegSocialException, SQLException {
 		try (Connection connection = DriverManager

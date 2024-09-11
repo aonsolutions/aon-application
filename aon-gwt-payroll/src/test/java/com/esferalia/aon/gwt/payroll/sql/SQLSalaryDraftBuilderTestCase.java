@@ -16,6 +16,7 @@ import java.util.Calendar;
 import java.util.Collection;
 import java.util.Map;
 
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import com.esferalia.aon.gwt.payroll.server.EmployeesServiceHelper;
@@ -46,11 +47,12 @@ import com.esferalia.aon.salary.expression.ExpressionException;
 import com.esferalia.aon.salary.expression.ITimedVariable;
 import com.esferalia.aon.salary.payment.IPayment;
 import com.esferalia.aon.watson.util.AonDateUtils;
-import com.google.gwt.editor.client.Editor.Ignore;
 
 public class SQLSalaryDraftBuilderTestCase extends AbstractSQLTestCase {
 
 	protected static final double DELTA = 0.004;
+	
+	
 	
 
 	@Test
@@ -1236,7 +1238,7 @@ public class SQLSalaryDraftBuilderTestCase extends AbstractSQLTestCase {
 	}
 
 	@Test
-	@Ignore
+	@Disabled
 	public void testJoinContext() throws ExpressionException, SQLException,
 			SalaryException {
 		Connection connection = getConnection();
@@ -1308,9 +1310,9 @@ public class SQLSalaryDraftBuilderTestCase extends AbstractSQLTestCase {
 		
 //		salaryDraft.getPayments().forEach( p -> System.out.println(p.getDescription() +":" + p.getAmount()));
 
-//		salaryDraft.getContext().stream()
-//		.filter(v -> v.getName().equals("CAUSA_INDEMNIZACION"))
-//		.forEach( v -> System.out.println(v.getName() + " = '" + v.getValue() +"' " + v.getStartDate() + ".." + v.getEndDate()));
+		salaryDraft.getContext().stream()
+		.filter(v -> v.getName().equals("CAUSA_INDEMNIZACION"))
+		.forEach( v -> System.out.println(v.getName() + " = '" + v.getValue() +"' " + v.getStartDate() + ".." + v.getEndDate()));
 
 		long count =
 		salaryDraft.getContext().stream()
