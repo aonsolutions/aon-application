@@ -4193,3 +4193,11 @@ font-weight: 600;
 	color:  gray;
 	line-height:  21px;
 }
+
+.aonNewDesktopBeta {
+  display: none;
+}
+
+.aonNewDesktopNormal {
+  display: block;
+}
