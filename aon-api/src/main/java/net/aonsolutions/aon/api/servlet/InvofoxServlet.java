@@ -542,22 +542,24 @@ public class InvofoxServlet extends AonApiHttpServlet {
 				if(apikey == null) {
 					OCRInvofox.createApikey(token, r.getId());
 				}
-				
-				OCRWebhook webhook = r.getWebhooks().stream().filter(f -> WEBHOOK_URL.equals(f.getEndpoint().getUrl())).findFirst().orElse(null);
-				if(webhook == null) {
-					webhook = new OCRWebhook()
-						.setEndpoint(new OCREndpoint()
-							.setHeaders(new LinkedList<>())
-							.setMethod("POST")
-							.setUrl(WEBHOOK_URL))
-						.setEvents(OCREvent.getValues())
-						.setSecurity(new OCRSecurity()
-								.setAlgorithm("sha256")
-								.setSecret(""))
-						.setActive(true);
-						
-					OCRInvofox.createWebhook(token, r.getId(), webhook);
-				}
+
+//	TODO revisar...
+//				
+//				OCRWebhook webhook = r.getWebhooks().stream().filter(f -> WEBHOOK_URL.equals(f.getEndpoint().getUrl())).findFirst().orElse(null);
+//				if(webhook == null) {
+//					webhook = new OCRWebhook()
+//						.setEndpoint(new OCREndpoint()
+//							.setHeaders(new LinkedList<>())
+//							.setMethod("POST")
+//							.setUrl(WEBHOOK_URL))
+//						.setEvents(OCREvent.getValues())
+//						.setSecurity(new OCRSecurity()
+//								.setAlgorithm("sha256")
+//								.setSecret(""))
+//						.setActive(true);
+//						
+//					OCRInvofox.createWebhook(token, r.getId(), webhook);
+//				}
 			});
 		}
 		
