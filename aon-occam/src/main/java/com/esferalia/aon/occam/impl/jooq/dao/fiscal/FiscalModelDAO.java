@@ -37,7 +37,7 @@ import com.esferalia.aon.occam.api.model.Properties.FiscalModelProperties;
 import com.esferalia.aon.occam.api.model.config.ConfigBlock;
 import com.esferalia.aon.occam.api.model.config.ConfigParams;
 import com.esferalia.aon.occam.api.model.finance.Finance;
-import com.esferalia.aon.occam.api.model.finance.InvoiceProperties;
+import com.esferalia.aon.occam.api.model.finance.InvoicePropertiesOLD;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModel;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModelDetail;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModelType;
@@ -681,7 +681,7 @@ public class FiscalModelDAO {
 			.collect(Collectors.toCollection(LinkedList::new));			
 	}
 
-	private static Filter getFilter(InvoiceProperties p, InvoiceModelReportParams params) {
+	private static Filter getFilter(InvoicePropertiesOLD p, InvoiceModelReportParams params) {
 		if (params.getDomain() == null) {
 			throw new IllegalArgumentException("No se ha indicado el dominio");
 		}

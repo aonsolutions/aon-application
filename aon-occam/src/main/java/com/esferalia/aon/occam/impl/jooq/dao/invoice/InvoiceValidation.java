@@ -209,7 +209,7 @@ public class InvoiceValidation {
 	private static final BiConsumer<AONContext,Invoice> RECTIFIED_INVOICE = (ctx,inv) -> {
 		if (inv.isRectified()) {
 			inv.addMessage( InvoiceErrorMessages.C050.err( InvoiceErrorKey.GENERIC) );
-			throw new AonCoreException(AonError.INVOICE_CANT_DELETE_RECTIFIED.getMessage());
+			throw new AonCoreException(AonError.INVOICE_SAVE_DELETE_ERROR.getMessage());
 		}
 	};
 
@@ -223,25 +223,36 @@ public class InvoiceValidation {
 					.from(INVOICE_DUA)
 					.where(INVOICE_DUA.DOMAIN.eq(inv.getDomain()))
 					.and(INVOICE_DUA.INVOICE_IMPORT.eq(inv.getId() )))) {
-			throw new AonCoreException(AonError.INVOICE_CANT_DELETE_RECTIFIED.getMessage());
+			inv.addMessage( InvoiceErrorMessages.C051.err( InvoiceErrorKey.GENERIC) );
+			throw new AonCoreException(AonError.INVOICE_SAVE_DELETE_ERROR.getMessage());
 		}
 	};
 	
 	/**
 	 * La factura ha sido utilizada para los calculos de los modelos fiscales.
 	 */
-	private static final BiConsumer<AONContext,Invoice> ALCATRAZ = (ctx,inv) -> {
+	private static final BiConsumer<AONContext,Invoice> ALCATRAZ_MODEL = (ctx,inv) -> {
 		if (inv.getId() != null) {
 			List<FiscalModel> models = AlcatrazDAO.isInvoiceDeclared(ctx, inv.getId() );
 			if (models != null && !models.isEmpty()) {
-				throw new AonCoreException(AonError.INVOICE_CANT_DELETE_MODEL.format(
-						models
-						.stream()
-						.map( fm -> MessageFormat.format("[Mod. {0}] ",fm.getModelFullName()))
-						.collect(StringBuilder::new, StringBuilder::append , StringBuilder::append )
-						.toString()
-						));
+				String message = models
+					.stream()
+					.map( fm -> MessageFormat.format("[Mod. {0}] ",fm.getModelFullName()))
+					.collect(StringBuilder::new, StringBuilder::append , StringBuilder::append )
+					.toString(); 
+				inv.addMessage( InvoiceErrorMessages.C052.err( InvoiceErrorKey.GENERIC, message ) );
+				throw new AonCoreException(AonError.INVOICE_SAVE_DELETE_ERROR.format( message ));
 			}
+		}
+	};
+
+	/**
+	 * La factura ha sido bloqueada de alguna forma en ALCATRAZ
+	 */
+	private static final BiConsumer<AONContext,Invoice> ALCATRAZ = (ctx,inv) -> {
+		if (inv.getId() != null && AlcatrazDAO.isInvoiceAlcatrazed(ctx, inv.getId() )) {
+			inv.addMessage( InvoiceErrorMessages.C056.err( InvoiceErrorKey.GENERIC) );
+			throw new AonCoreException(AonError.INVOICE_SAVE_DELETE_ERROR.getMessage());
 		}
 	};
 
@@ -249,9 +260,12 @@ public class InvoiceValidation {
 	 * Las facturas enviadas al SII y que no se han dado de baja en el SII no se pueden borrar.
 	 */
 	private static final BiConsumer<AONContext,Invoice> SII = (ctx,inv) -> {
-		Invoice a = InvoiceSIIDAO.getSiiInvoiceStream(ctx, f -> f.getIdProperty().eq(inv.getId()), false, true, true, false, false, "").findFirst().orElse(new Invoice());
-		if(a.getId() != null) {
-			throw new AonCoreException(AonError.INVOICE_CANT_DELETE_SII.getMessage());
+		if (InvoiceSIIDAO.getSiiInvoiceStream(ctx, f -> f.getIdProperty().eq(inv.getId()), false, true, true, false, false, "")
+			.findFirst()
+			.isPresent()) {
+			
+			inv.addMessage( InvoiceErrorMessages.C052.err( InvoiceErrorKey.GENERIC) );
+			throw new AonCoreException(AonError.INVOICE_SAVE_DELETE_ERROR.getMessage());
 		}
 	};
 	
@@ -272,28 +286,30 @@ public class InvoiceValidation {
 					.and(f.getSourceIdProperty().eq(inv.getId())), new Options().setFull(true));
 			String type = dr.getDetails().stream().filter(f -> f.getDataVariable().equals("type")).map(DataResponseDetail::getDataValue).findFirst().orElse("alta");
 			if(dr.getId() != null && "alta".equalsIgnoreCase(type) && accepted) {
-				throw new AonCoreException(AonError.INVOICE_CANT_DELETE_TBAI.getMessage());
+				inv.addMessage( InvoiceErrorMessages.C053.err( InvoiceErrorKey.GENERIC) );
+				throw new AonCoreException(AonError.INVOICE_SAVE_DELETE_ERROR.getMessage());
 			}
 		}
 	};
 
 	static void validate(AONContext ctx, Invoice inv) throws AonCoreException {
 		EMPTY_DOMAIN
-			.andThen(EMPTY_DATE)
-			.andThen(EMPTY_TAX_DATE)
-			.andThen(EMPTY_INVOICE_TYPE)
-			.andThen(EMPTY_INVOICE_REGISTRY)
-			.andThen(EMPTY_INVOICE_SCOPE)
-			.andThen(EMPTY_REFERENCE_CODE)
-			.andThen(EMPTY_TRANSACTION)
-			.andThen(DUPLICATED_SERIES_NUMBER)
-			
-			.andThen(DUPLICATED_REFERENCE_CODE)
-			.andThen(OPERATIONS_DEADLINE)
-			.andThen(CHECK_TEN_YEARS)
-			.andThen(CHECK_FINANCES)
-			.andThen(ALCATRAZ)
-			.accept(ctx,inv);
+		.andThen(EMPTY_DATE)
+		.andThen(EMPTY_TAX_DATE)
+		.andThen(EMPTY_INVOICE_TYPE)
+		.andThen(EMPTY_INVOICE_REGISTRY)
+		.andThen(EMPTY_INVOICE_SCOPE)
+		.andThen(EMPTY_REFERENCE_CODE)
+		.andThen(EMPTY_TRANSACTION)
+		.andThen(DUPLICATED_SERIES_NUMBER)
+		
+		.andThen(DUPLICATED_REFERENCE_CODE)
+		.andThen(OPERATIONS_DEADLINE)
+		.andThen(CHECK_TEN_YEARS)
+		.andThen(CHECK_FINANCES)
+		.andThen(ALCATRAZ_MODEL)
+		.andThen(ALCATRAZ)
+		.accept(ctx,inv);
 	}
 
 	static void validateDeletion(AONContext ctx, Invoice inv) {

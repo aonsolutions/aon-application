@@ -165,7 +165,20 @@ public class AlcatrazDAO {
 			.execute();
 		log(ctx,"DELETE ALCATRAZ id: {0} Mod: {1} {2} rows",fm.getId(), fm.getModel(), count);
 	}
+	
+	public static boolean isInvoiceAlcatrazed(AONContext ctx, Integer invoiceId) {
+		return ctx.getDslContext()
+				.select()
+				.from(ALCATRAZ)
+				.where(ALCATRAZ.INVOICE.eq(invoiceId))
+				.fetch()
+				.stream()
+				.findFirst()
+				.isPresent()
+			;
+	}
 
+	
 	public static List<FiscalModel> isInvoiceDeclared(AONContext ctx, Integer invoiceId) {
 		return ctx.getDslContext()
 			.select()

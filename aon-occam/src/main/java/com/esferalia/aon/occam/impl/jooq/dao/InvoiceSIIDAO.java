@@ -17,7 +17,7 @@ import org.jooq.Record;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.EnterpriseActivity;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
-import com.esferalia.aon.occam.api.model.finance.InvoiceFilter;
+import com.esferalia.aon.occam.api.model.finance.InvoiceFilterOLD;
 import com.esferalia.aon.occam.api.model.finance.InvoiceFiscal;
 import com.esferalia.aon.occam.api.model.security.Scope;
 import com.esferalia.aon.occam.api.model.type.Country;
@@ -40,7 +40,7 @@ public class InvoiceSIIDAO {
 
 	private static final InvoicePropertiesDAO INVOICE_PROPERTIES = new InvoicePropertiesDAO();
 
-	public static Stream<Invoice> getSiiInvoiceStream(AONContext ctx, InvoiceFilter filter,Boolean pending,  Boolean aceptada, Boolean aceptadaErrores, Boolean incorrecta, Boolean anulada, String sii){
+	public static Stream<Invoice> getSiiInvoiceStream(AONContext ctx, InvoiceFilterOLD filter,Boolean pending,  Boolean aceptada, Boolean aceptadaErrores, Boolean incorrecta, Boolean anulada, String sii){
 		Boolean intracomunitaria = "intracomunitarias".equals(sii);
 		Boolean bienes = "bienes".equals(sii);
 		Boolean cp = "cp_cobros_pagos".equals(sii) || "cp_cobros".equals(sii) || "cp_pagos".equals(sii);

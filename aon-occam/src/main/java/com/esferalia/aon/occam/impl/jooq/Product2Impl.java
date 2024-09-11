@@ -12,7 +12,7 @@ import com.esferalia.aon.occam.api.model.Filter.ItemFilter;
 import com.esferalia.aon.occam.api.model.Filter.ProductFilter;
 import com.esferalia.aon.occam.api.model.Filter.RegistryItemFilter;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
-import com.esferalia.aon.occam.api.model.finance.InvoiceFilter;
+import com.esferalia.aon.occam.api.model.finance.InvoiceFilterOLD;
 import com.esferalia.aon.occam.api.model.InvestAsset;
 import com.esferalia.aon.occam.api.model.InvestAssetParams;
 import com.esferalia.aon.occam.api.model.Options;
@@ -127,7 +127,7 @@ public class Product2Impl implements IProduct2{
 	}
 	
 	@Override
-	public void updateAllTargetItem(AONContext ctx, InvoiceFilter filter, boolean disable) {
+	public void updateAllTargetItem(AONContext ctx, InvoiceFilterOLD filter, boolean disable) {
 		ctx.getDslContext().transaction( configuration -> 
 			TargetItemDAO.updateAllTargetItem(ctx, filter, disable));
 	}

@@ -10,7 +10,7 @@ import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.EnterpriseActivity;
 import com.esferalia.aon.occam.api.model.finance.EnumVisitors.IInvoiceTypeVisitor;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
-import com.esferalia.aon.occam.api.model.finance.InvoiceFilter;
+import com.esferalia.aon.occam.api.model.finance.InvoiceFilterOLD;
 import com.esferalia.aon.occam.api.model.type.AccountEntryType;
 
 public class InvoiceRecorderDAO {
@@ -19,7 +19,7 @@ public class InvoiceRecorderDAO {
 		
 	}
 	
-	public static Stream<Invoice> getUnrecordedInvoices(AONContext ctx, InvoiceFilter filter) {
+	public static Stream<Invoice> getUnrecordedInvoices(AONContext ctx, InvoiceFilterOLD filter) {
 		return InvoiceOLDDAO.getInvoiceStream(ctx, filter)
 			.filter( Invoice::isRecorded )
 			.map( i -> InvoiceOLDDAO.getFullInvoice(ctx, i.getId()) )

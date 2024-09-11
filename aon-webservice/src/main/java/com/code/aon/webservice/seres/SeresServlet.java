@@ -10,12 +10,6 @@ import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import jakarta.servlet.ServletException;
-import jakarta.servlet.annotation.WebServlet;
-import jakarta.servlet.http.HttpServlet;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -35,12 +29,18 @@ import com.esferalia.aon.occam.api.model.attachment.AttachType;
 import com.esferalia.aon.occam.api.model.attachment.DataAttachSource;
 import com.esferalia.aon.occam.api.model.attachment.DataAttachType;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
-import com.esferalia.aon.occam.api.model.finance.InvoiceProperties;
+import com.esferalia.aon.occam.api.model.finance.InvoicePropertiesOLD;
 import com.esferalia.aon.occam.api.model.management.Sales;
 import com.esferalia.aon.occam.api.model.type.DataResponseSource;
 import com.esferalia.aon.occam.api.model.type.InvoiceType;
 import com.esferalia.aon.occam.api.model.warehouse.Delivery;
 import com.esferalia.aon.watson.server.AonDateUtils;
+
+import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 @SuppressWarnings("serial")
 @WebServlet(name = "SeresServlet", urlPatterns = { "/seres/*", "/aon_gwt_aio/ms/seres/*" })
@@ -465,7 +465,7 @@ public class SeresServlet extends HttpServlet {
 	}
 
 	
-	private Filter saleInvoiceFilter(Domain domain, Integer[] ediRegistryIds, Map<String, String[]> filterMap, InvoiceProperties f) {
+	private Filter saleInvoiceFilter(Domain domain, Integer[] ediRegistryIds, Map<String, String[]> filterMap, InvoicePropertiesOLD f) {
 		Filter filter = f.getDomainProperty().eq(domain.getId());
 		filter = filter.and(f.getTypeProperty().eq(InvoiceType.SALES.value()));
 		if(ediRegistryIds!=null && ediRegistryIds.length>0)

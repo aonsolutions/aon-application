@@ -30,7 +30,7 @@ import com.esferalia.aon.occam.api.model.attachment.DataAttachType;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceCommunicationTracking;
 import com.esferalia.aon.occam.api.model.finance.InvoiceCommunicationType;
-import com.esferalia.aon.occam.api.model.finance.InvoiceProperties;
+import com.esferalia.aon.occam.api.model.finance.InvoicePropertiesOLD;
 import com.esferalia.aon.occam.api.model.finance.SiiConfiguration;
 import com.esferalia.aon.occam.api.model.finance.TbaiConfiguration;
 import com.esferalia.aon.occam.api.model.fiscal.aeat.AEATParams;
@@ -62,7 +62,7 @@ public class InvoiceCommunicationServiceImpl extends AonStatelessRemoteServiceSe
 				.collect(Collectors.toCollection(LinkedList::new));
 	}
 		
-	public Filter getFilter(InvoiceProperties f, InvoiceParams params) {
+	public Filter getFilter(InvoicePropertiesOLD f, InvoiceParams params) {
 		Filter filter =  f.getDomainProperty().eq(params.getDomain())
 				.and(f.getNumberProperty().gt(0));
 

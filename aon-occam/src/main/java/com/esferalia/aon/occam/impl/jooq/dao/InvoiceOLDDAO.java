@@ -76,7 +76,7 @@ import com.esferalia.aon.occam.api.model.finance.Finance;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceBreakdown;
 import com.esferalia.aon.occam.api.model.finance.InvoiceDetail;
-import com.esferalia.aon.occam.api.model.finance.InvoiceFilter;
+import com.esferalia.aon.occam.api.model.finance.InvoiceFilterOLD;
 import com.esferalia.aon.occam.api.model.finance.InvoiceFiscal;
 import com.esferalia.aon.occam.api.model.finance.InvoiceRectificationData;
 import com.esferalia.aon.occam.api.model.finance.InvoiceSeries;
@@ -202,14 +202,14 @@ public class InvoiceOLDDAO {
 	}
 
 	@Deprecated
-	public static Stream<Invoice> getInvoiceStream(AONContext ctx, InvoiceFilter filter){
+	public static Stream<Invoice> getInvoiceStream(AONContext ctx, InvoiceFilterOLD filter){
 		return INVOICE_PROPERTIES.build(ctx.getDslContext().select().from(INVOICE)
 				.join(SCOPE).on(SCOPE.ID.eq(INVOICE.SCOPE)), filter)
 				.fetch().stream().map(new InvoiceFiller());
 	}
 	
 	@Deprecated
-	public static Stream<InvoiceDetail> getInvoiceDetails(AONContext ctx, InvoiceFilter filter, ProductFilter pFilter, ItemFilter iFilter){
+	public static Stream<InvoiceDetail> getInvoiceDetails(AONContext ctx, InvoiceFilterOLD filter, ProductFilter pFilter, ItemFilter iFilter){
 		ctx.checkRead();
 		
 		Collection<Condition> whereConditions = new ArrayList<>();
@@ -249,7 +249,7 @@ public class InvoiceOLDDAO {
 	}
 
 	@Deprecated
-	private static Result<Record14<Integer, java.sql.Date, Integer, String, Integer, Integer, String, String, Short, String, Double, Double, String, Double>> getBoughtProductInvoices(AONContext ctx, InvoiceFilter filter) {
+	private static Result<Record14<Integer, java.sql.Date, Integer, String, Integer, Integer, String, String, Short, String, Double, Double, String, Double>> getBoughtProductInvoices(AONContext ctx, InvoiceFilterOLD filter) {
 		ctx.checkRead();
 		return  ctx.getDslContext()
 				.select(INVOICE.ID, DSL.max(INVOICE.ISSUE_DATE), INVOICE.REGISTRY, INVOICE.REFERENCE_CODE
@@ -281,7 +281,7 @@ public class InvoiceOLDDAO {
 	}
 	
 	@Deprecated
-	private static Result<Record> getFullInvoices(AONContext ctx, InvoiceFilter filter) {
+	private static Result<Record> getFullInvoices(AONContext ctx, InvoiceFilterOLD filter) {
 		ctx.checkRead();
 		Field<Integer> orderedType = getOrderedType();
 		return ctx.getDslContext()
@@ -388,7 +388,7 @@ public class InvoiceOLDDAO {
 	
 	
 	@Deprecated
-	public static Stream<Invoice> getInvoiceHeaders(AONContext ctx,InvoiceFilter filter, int offset , int numberOfRows) {
+	public static Stream<Invoice> getInvoiceHeaders(AONContext ctx,InvoiceFilterOLD filter, int offset , int numberOfRows) {
 		ctx.checkRead();
 		Field<Integer> orderedType = getOrderedType();
 		return ctx.getDslContext()
@@ -422,14 +422,14 @@ public class InvoiceOLDDAO {
 	}
 
 	@Deprecated
-	public static Stream<InvoiceDetail> getInvoiceDetails(AONContext ctx, InvoiceFilter filter) {
+	public static Stream<InvoiceDetail> getInvoiceDetails(AONContext ctx, InvoiceFilterOLD filter) {
 		return getFullInvoices(ctx, filter)
 			.stream()
 			.map(new FullInvoiceDetailFiller());
 	}
 
 	@Deprecated
-	public static Stream<InvoiceDetailExtended> getInvoiceDetailsExtended(AONContext ctx, InvoiceFilter filter, IDAOCallback callback) {
+	public static Stream<InvoiceDetailExtended> getInvoiceDetailsExtended(AONContext ctx, InvoiceFilterOLD filter, IDAOCallback callback) {
 		return getFullInvoices(ctx, filter)
 			.stream()
 			.onClose(() -> { if (callback != null) callback.onFinish();})
@@ -563,7 +563,7 @@ public class InvoiceOLDDAO {
 	}
 	
 	@Deprecated
-	public static Stream<InvoiceDetail> getBoughtProductStream(AONContext ctx, InvoiceFilter filter) {
+	public static Stream<InvoiceDetail> getBoughtProductStream(AONContext ctx, InvoiceFilterOLD filter) {
 		return getBoughtProductInvoices(ctx, filter)
 			.stream()
 			.map(record -> new InvoiceDetail().setId(record.getValue(INVOICE_DETAIL.ID))

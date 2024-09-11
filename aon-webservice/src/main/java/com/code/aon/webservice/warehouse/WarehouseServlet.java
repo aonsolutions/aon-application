@@ -12,12 +12,6 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.logging.Logger;
 
-import jakarta.servlet.ServletException;
-import jakarta.servlet.annotation.WebServlet;
-import jakarta.servlet.http.HttpServlet;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -42,7 +36,7 @@ import com.esferalia.aon.occam.api.model.Properties.ItemProperties;
 import com.esferalia.aon.occam.api.model.Properties.ProductProperties;
 import com.esferalia.aon.occam.api.model.Properties.PurchaseProperties;
 import com.esferalia.aon.occam.api.model.Properties.SalesProperties;
-import com.esferalia.aon.occam.api.model.finance.InvoiceProperties;
+import com.esferalia.aon.occam.api.model.finance.InvoicePropertiesOLD;
 import com.esferalia.aon.occam.api.model.management.Purchase;
 import com.esferalia.aon.occam.api.model.management.PurchaseDetail;
 import com.esferalia.aon.occam.api.model.product.OldItem;
@@ -62,6 +56,12 @@ import com.esferalia.aon.occam.impl.jooq.dao.StatDAO;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
+
+import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 @SuppressWarnings("serial")
 @WebServlet(name = "WarehouseServlet", urlPatterns = { "/warehouse/*",
@@ -957,7 +957,7 @@ public class WarehouseServlet extends HttpServlet{
 		}
 		return filter;
     }
-	private static Filter invoiceFilter(Domain domain, Map<String, String[]> filterMap, InvoiceProperties f) {
+	private static Filter invoiceFilter(Domain domain, Map<String, String[]> filterMap, InvoicePropertiesOLD f) {
 		Filter filter = f.getDomainProperty().eq(domain.getId());
 		filter.page(1).perPage(1000);
 		if(filterMap.containsKey(MSG.FROM)){

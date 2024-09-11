@@ -173,6 +173,8 @@ public enum AonError implements Serializable{
 	
 	// --------------------------------------------- INVOICE
 	,INVOICE_SAVE_ERROR("No se ha podido grabar la factura")
+	,INVOICE_SAVE_DELETE_ERROR("No se ha podido modificar o borrar la factura")
+	
 	,INVOICE_EMPTY_DOMAIN("El dominio de la factura es un dato obligatorio, no puede estar vac\u00EDa")
 	,INVOICE_EMPTY_DATE("La fecha de la factura es un dato obligatorio, no puede estar vac\u00EDa")
 	,INVOICE_EMPTY_TAX_DATE("La fecha I.V.A. de la factura es un dato obligatorio, no puede estar vac\u00EDa")
@@ -198,6 +200,7 @@ public enum AonError implements Serializable{
 	,INVOICE_CANT_DELETE_SII("No es posible borrar la factura porque est\u00E1 enviada al SII. Dar de baja la factura en el SII.")
 	,INVOICE_CANT_DELETE_TBAI("No es posible borrar la factura porque est\u00E1 enviada a Ticket Bai. Dar de baja la factura en Ticket Bai.")
 	,INVOICE_CANT_DELETE_MODEL("Imposible borrar o modificar, la factura ha sido declarada en modelos fiscales: {0}")
+	,INVOICE_CANT_DELETE_ALCATRAZ("Imposible borrar o modificar, la factura ha sido bloqueada (Alcatraz)")
 	,TRACKING_CANT_DELETE_MODEL("Imposible borrar o modificar, el vto. ha sido declarada en modelos fiscales: {0}")
 
 	// --------------------------------------------- DUA

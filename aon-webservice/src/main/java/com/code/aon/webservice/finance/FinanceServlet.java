@@ -6,12 +6,6 @@ import java.util.Date;
 import java.util.Map;
 import java.util.logging.Logger;
 
-import jakarta.servlet.ServletException;
-import jakarta.servlet.annotation.WebServlet;
-import jakarta.servlet.http.HttpServlet;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -24,13 +18,19 @@ import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Filter;
 import com.esferalia.aon.occam.api.model.Properties.ItemProperties;
 import com.esferalia.aon.occam.api.model.Properties.ProductProperties;
-import com.esferalia.aon.occam.api.model.finance.InvoiceProperties;
+import com.esferalia.aon.occam.api.model.finance.InvoicePropertiesOLD;
 import com.esferalia.aon.occam.api.model.type.AppParam;
 import com.esferalia.aon.occam.api.model.type.BillingPeriod;
 import com.esferalia.aon.occam.api.model.type.InvoiceTransactionType;
 import com.esferalia.aon.occam.api.model.type.InvoiceType;
 import com.esferalia.aon.occam.api.model.type.RectificationType;
 import com.esferalia.aon.watson.server.AonDateUtils;
+
+import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 @SuppressWarnings("serial")
 @WebServlet(name = "FinanceServlet", urlPatterns = { "/finance/*",
@@ -177,7 +177,7 @@ public class FinanceServlet extends HttpServlet{
     	return array;
     }
     
-    public static Filter iFilterEmitidas(Domain domain, String login, InvoiceProperties f, Date from, Date to, Integer page, Integer perPage, String sii) {
+    public static Filter iFilterEmitidas(Domain domain, String login, InvoicePropertiesOLD f, Date from, Date to, Integer page, Integer perPage, String sii) {
     	ApplicationParameter ap = AON.getApplicationParameter(domain.getName(), domain.getId(), login, AppParam.FS_MODEL_CFG_SII);
     	Boolean isRegistro = "R".equals(ap.getValue());
     	Filter filter =  f.getDomainProperty().eq(domain.getId())
@@ -207,7 +207,7 @@ public class FinanceServlet extends HttpServlet{
 		return filter;
     }
     
-    public static Filter iFilterRecibidas(Domain domain, String login, InvoiceProperties f, Date from, Date to, Integer page, Integer perPage, String sii) {
+    public static Filter iFilterRecibidas(Domain domain, String login, InvoicePropertiesOLD f, Date from, Date to, Integer page, Integer perPage, String sii) {
     	ApplicationParameter ap = AON.getApplicationParameter(domain.getName(), domain.getId(), login, AppParam.FS_MODEL_CFG_SII);
     	Boolean isRegistro = "R".equals(ap.getValue());
     	Filter filter =  f.getDomainProperty().eq(domain.getId())
@@ -297,7 +297,7 @@ public class FinanceServlet extends HttpServlet{
     	return array;
 	}
     
-	public static Filter iFilterCobrosPagos(Domain domain, String login, InvoiceProperties f, Date from, Date to, Integer page, Integer perPage, String sii) {
+	public static Filter iFilterCobrosPagos(Domain domain, String login, InvoicePropertiesOLD f, Date from, Date to, Integer page, Integer perPage, String sii) {
 		ApplicationParameter ap = AON.getApplicationParameter(domain.getName(), domain.getId(), login, AppParam.FS_MODEL_CFG_SII);
     	Boolean isRegistro = "R".equals(ap.getValue());	
     	Filter filter =  f.getDomainProperty().eq(domain.getId())
@@ -411,7 +411,7 @@ public class FinanceServlet extends HttpServlet{
     	return array;
     }
      
-    public static Filter invoiceFilter(Domain domain, Map<String, String[]> filterMap, InvoiceProperties f) {
+    public static Filter invoiceFilter(Domain domain, Map<String, String[]> filterMap, InvoicePropertiesOLD f) {
 		Filter filter = f.getDomainProperty().eq(domain.getId());
 		
 		if(filterMap.containsKey(MSG.FROM)){

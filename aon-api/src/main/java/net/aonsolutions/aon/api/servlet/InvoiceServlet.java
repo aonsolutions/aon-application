@@ -45,7 +45,7 @@ import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceCommunicationType;
 import com.esferalia.aon.occam.api.model.finance.InvoiceInfo;
 import com.esferalia.aon.occam.api.model.finance.InvoiceNewPortal;
-import com.esferalia.aon.occam.api.model.finance.InvoiceProperties;
+import com.esferalia.aon.occam.api.model.finance.InvoicePropertiesOLD;
 import com.esferalia.aon.occam.api.model.finance.InvoiceStatus;
 import com.esferalia.aon.occam.api.model.finance.PrintInvoiceConfiguration;
 import com.esferalia.aon.occam.api.model.finance.SiiConfiguration;
@@ -359,7 +359,7 @@ public class InvoiceServlet extends AonApiHttpServlet{
 	    return list;
 	}
 	
-	public static Filter invoiceFilter(InvoiceProperties f, Integer domainId, InvoiceFilter invoiceFilter) {
+	public static Filter invoiceFilter(InvoicePropertiesOLD f, Integer domainId, InvoiceFilter invoiceFilter) {
     	Filter filter =  f.getDomainProperty().eq(domainId);
     
     	if(invoiceFilter.getDescription() != null) {

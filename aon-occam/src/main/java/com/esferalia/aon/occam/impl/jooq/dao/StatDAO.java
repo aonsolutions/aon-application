@@ -54,7 +54,7 @@ import com.esferalia.aon.occam.api.model.Properties.FeeProperties;
 import com.esferalia.aon.occam.api.model.Workplace;
 import com.esferalia.aon.occam.api.model.finance.FinanceFilter;
 import com.esferalia.aon.occam.api.model.finance.InvoiceDetail;
-import com.esferalia.aon.occam.api.model.finance.InvoiceFilter;
+import com.esferalia.aon.occam.api.model.finance.InvoiceFilterOLD;
 import com.esferalia.aon.occam.api.model.product.ProductCategory;
 import com.esferalia.aon.occam.api.model.stat.IStatFilterItemVisitor;
 import com.esferalia.aon.occam.api.model.stat.StatData;
@@ -363,7 +363,7 @@ public class StatDAO {
 	private static final FinancePropertiesDAO FINANCE_PROPERTIES = new FinancePropertiesDAO();
 	
 	public static StatData<Integer, String, Double> getProductStat(AONContext ctx, ProductFilter productFilter,
-			ItemFilter itemFilter, InvoiceFilter invoiceFilter, DeliveryFilter deliveryFilter,
+			ItemFilter itemFilter, InvoiceFilterOLD invoiceFilter, DeliveryFilter deliveryFilter,
 			SalesFilter salesFilter, PurchaseFilter purchaseFilter) {
 		
 		Map<Integer, Double> outputs = getOutputs(ctx, ITEM.PRODUCT, productFilter, itemFilter, invoiceFilter, deliveryFilter);
@@ -383,7 +383,7 @@ public class StatDAO {
 	}
 	
 	public static StatData<Integer, String, Double> getWarehouseProductMovements(AONContext ctx,
-			ProductFilter productFilter, ItemFilter itemFilter, InvoiceFilter invoiceFilter,
+			ProductFilter productFilter, ItemFilter itemFilter, InvoiceFilterOLD invoiceFilter,
 			DeliveryFilter deliveryFilter, IncomeFilter incomeFilter) {
 
 		Map<Integer, Double> outputs = getOutputs(ctx, ITEM.PRODUCT, productFilter, itemFilter, invoiceFilter, deliveryFilter);
@@ -399,7 +399,7 @@ public class StatDAO {
 	}
 	
 	public static StatData<Integer, String, Double> getWarehouseItemMovements(AONContext ctx,
-			ProductFilter productFilter, ItemFilter itemFilter, InvoiceFilter invoiceFilter,
+			ProductFilter productFilter, ItemFilter itemFilter, InvoiceFilterOLD invoiceFilter,
 			DeliveryFilter deliveryFilter, IncomeFilter incomeFilter) {
 
 		Map<Integer, Double> outputs = getOutputs(ctx, ITEM.ID, productFilter, itemFilter, invoiceFilter, deliveryFilter);
@@ -474,7 +474,7 @@ public class StatDAO {
 	}
 	
 	private static Map<Integer, Double> getOutputs(AONContext ctx, TableField<ItemRecord, Integer> selectField,
-			ProductFilter productFilter, ItemFilter itemFilter, InvoiceFilter invoiceFilter, DeliveryFilter deliveryFilter) {
+			ProductFilter productFilter, ItemFilter itemFilter, InvoiceFilterOLD invoiceFilter, DeliveryFilter deliveryFilter) {
 		Collection<Condition> deliveryConditions = new ArrayList<Condition>();
 		deliveryConditions.addAll(Arrays.asList(DELIVERY_PROPERTIES.getConditions(deliveryFilter)));
 		deliveryConditions.addAll(Arrays.asList(PRODUCT_PROPERTIES.getConditions(productFilter)));
@@ -519,7 +519,7 @@ public class StatDAO {
 	}
 	
 	private static Map<Integer, Double> getInputs(AONContext ctx, TableField<ItemRecord, Integer> selectField,
-			ProductFilter productFilter, ItemFilter itemFilter, InvoiceFilter invoiceFilter, IncomeFilter incomeFilter) {
+			ProductFilter productFilter, ItemFilter itemFilter, InvoiceFilterOLD invoiceFilter, IncomeFilter incomeFilter) {
 		Collection<Condition> deliveryConditions = new ArrayList<Condition>();
 		deliveryConditions.addAll(Arrays.asList(INCOME_PROPERTIES.getConditions(incomeFilter)));
 		deliveryConditions.addAll(Arrays.asList(PRODUCT_PROPERTIES.getConditions(productFilter)));

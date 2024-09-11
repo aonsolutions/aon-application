@@ -22,7 +22,7 @@ import com.esferalia.aon.occam.api.model.Rawdoc;
 import com.esferalia.aon.occam.api.model.RawdocInvoiceCounter;
 import com.esferalia.aon.occam.api.model.attachment.AttachType;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
-import com.esferalia.aon.occam.api.model.finance.InvoiceProperties;
+import com.esferalia.aon.occam.api.model.finance.InvoicePropertiesOLD;
 import com.esferalia.aon.occam.api.model.finance.InvoiceStatus;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.type.InvoiceType;
@@ -224,7 +224,7 @@ public class InvoicesServlet extends AonApiHttpServlet {
         return new JSONObject();
     }
 
-    private static Filter invoiceFilter(AonApiData api, InvoiceProperties f) {
+    private static Filter invoiceFilter(AonApiData api, InvoicePropertiesOLD f) {
         Filter filter = f.getDomainProperty().eq(api.getDomain().getId());
 
         if (api.getData().has(IJsonNames.DESCRIPTION)) {

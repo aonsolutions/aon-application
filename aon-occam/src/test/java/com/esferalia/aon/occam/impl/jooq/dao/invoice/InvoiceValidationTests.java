@@ -1,6 +1,6 @@
 package com.esferalia.aon.occam.impl.jooq.dao.invoice;
 
-
+import static com.esferalia.aon.jooq.tables.Alcatraz.ALCATRAZ;
 import static org.hamcrest.CoreMatchers.allOf;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.hasItem;
@@ -13,17 +13,19 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.util.Date;
-import java.util.List;
+import java.util.LinkedList;
 
 import org.hamcrest.MatcherAssert;
 import org.junit.jupiter.api.Test;
 
+import com.esferalia.aon.occam.api.model.finance.Finance;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
-import com.esferalia.aon.occam.api.model.invoice.InvoiceError;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceErrorKey;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceErrorMessages;
 import com.esferalia.aon.occam.api.model.security.Scope;
+import com.esferalia.aon.occam.api.model.type.FinanceStatus;
 import com.esferalia.aon.occam.api.model.type.RectificationType;
+import com.esferalia.aon.occam.impl.jooq.dao.accounting.invoice.InvoiceTextPrinter;
 import com.esferalia.aon.occam.test.AbstractOccamTest;
 import com.esferalia.aon.occam.test.Asserts;
 import com.esferalia.aon.occam.test.faker.InvoiceFaker;
@@ -220,7 +222,21 @@ class InvoiceValidationTests extends AbstractOccamTest {
 	}
 	
 	@Test
-	void testValidationCheckFinanceFinances() {
+	void testValidationCheckNullFinances() {
+		Invoice invoice = InvoiceFaker.getRandom(ctx);
+		invoice.setFinances(null);
+		assertDoesNotThrow(() -> InvoiceValidation.validate(ctx, invoice));
+	}
+
+	@Test
+	void testValidationCheckEmptyFinances() {
+		Invoice invoice = InvoiceFaker.getRandom(ctx);
+		invoice.setFinances( new LinkedList<>() );
+		assertDoesNotThrow(() -> InvoiceValidation.validate(ctx, invoice));
+	}
+
+	@Test
+	void testValidationCheckFinanceTotal() {
 		Invoice invoice = InvoiceFaker.getRandom(ctx);
 		AonCollectionUtils.stream(invoice.getFinances())
 			.findFirst()
@@ -231,17 +247,58 @@ class InvoiceValidationTests extends AbstractOccamTest {
 	}
 
 	@Test
+	void testValidationCheckFinanceRemovedTotal() {
+		Invoice invoice = InvoiceFaker.getRandom(ctx);
+		invoice.addFinance(new Finance()
+			.setDueDate(invoice.getIssueDate())
+			.setPayment(invoice.isNotSales()) 
+			.setFinanceStatus(FinanceStatus.PENDING)	
+			.setRemoved(true)
+			.setAmount(5000));
+		assertDoesNotThrow(() -> InvoiceValidation.validate(ctx, invoice));
+	}
+
+	@Test
 	void testValidationRectifiedDeletion() {
 		Invoice invoice = InvoiceFaker.getRandom(ctx);
 		invoice.setRectificationType( RectificationType.RECTIFIED );
 		AonCoreException e = assertThrows(AonCoreException.class, () -> InvoiceValidation.validateDeletion(ctx, invoice));
-		assertEquals(AonError.INVOICE_CANT_DELETE_RECTIFIED.getMessage(), e.getMessage());
+		assertEquals(AonError.INVOICE_SAVE_DELETE_ERROR.getMessage(), e.getMessage());
 		assertInvoiceErrorMessage(invoice, InvoiceErrorMessages.C050, InvoiceErrorKey.GENERIC );
 	}
 
+	@Test
+	void testValidationNotRectifiedDeletion() {
+		Invoice invoice = InvoiceFaker.getRandom(ctx);
+		invoice.setRectificationType( RectificationType.NONE );
+		assertDoesNotThrow(() -> InvoiceValidation.validateDeletion(ctx, invoice));
+	}
+
+	@Test
+	void testValidationAlcatraz() {
+		Invoice invoice = InvoiceFaker.getRandom(ctx);
+		Invoice newInvoice = assertDoesNotThrow(() -> InvoiceDAO.save(ctx, invoice));
+		try {
+			ctx.getDslContext()
+				.insertInto(ALCATRAZ)
+				.set(ALCATRAZ.DOMAIN, newInvoice.getDomain())
+				.set(ALCATRAZ.INVOICE, newInvoice.getId())
+				.execute();
+			AonCoreException e = assertThrows(AonCoreException.class, () -> InvoiceValidation.validateDeletion(ctx, invoice));
+			assertEquals(AonError.INVOICE_SAVE_DELETE_ERROR.getMessage(), e.getMessage());
+			assertInvoiceErrorMessage(invoice, InvoiceErrorMessages.C056, InvoiceErrorKey.GENERIC );
+		} finally {
+			ctx.getDslContext()
+				.deleteFrom(ALCATRAZ)
+				.where(ALCATRAZ.INVOICE.eq(newInvoice.getId()))
+				.execute();
+		}
+		
+	}
+	
 	private void assertInvoiceErrorMessage(Invoice invoice, InvoiceErrorMessages msg, InvoiceErrorKey key) {
 		Asserts.assertNotEmptyCollection("Empty Messages", invoice.getMessages());
-		printMessages(invoice.getMessages());
+		InvoiceTextPrinter.printMessages(System.out, invoice);
 		MatcherAssert.assertThat(invoice.getMessages(), hasItem(
 			allOf(
 				hasProperty("code", equalTo(msg.toString()))
@@ -250,47 +307,5 @@ class InvoiceValidationTests extends AbstractOccamTest {
 			));
 	}
 	
-	
-	private void printMessages(List<InvoiceError> messages) {
-		if (messages != null && messages.size()>0) {
-			System.out.println();
-			System.out.println("\t\t"
-					+" " + AonStringUtils.repeat("-", 4)
-					+" " + AonStringUtils.repeat("-", 5)
-					+" " + AonStringUtils.repeat("-", 25)
-					+" " + AonStringUtils.repeat("-", 80)
-					+" "
-					);
-			System.out.println("\t\t"
-					+"|" + AonStringUtils.rightPad("TYP", 4)
-					+"|" + AonStringUtils.rightPad("CODE", 5)
-					+"|" + AonStringUtils.rightPad("FIELD", 25)
-					+"|" + AonStringUtils.rightPad("MESSAGE", 80)
-					+"|"
-					);
-			System.out.println("\t\t"
-					+"|" + AonStringUtils.repeat("-", 4)
-					+"|" + AonStringUtils.repeat("-", 5)
-					+"|" + AonStringUtils.repeat("-", 25)
-					+"|" + AonStringUtils.repeat("-", 80)
-					+"|"
-					);
-			for (InvoiceError e : messages) {
-				System.out.println("\t\t"
-						+"|" + AonStringUtils.rightPad(e.getLevel() == null ? "" : e.getLevel().toString(), 4)
-						+"|" + AonStringUtils.rightPad(AonStringUtils.defaultString(e.getCode()), 5)
-						+"|" + AonStringUtils.rightPad(e.getContext() == null ? "" : e.getContext().toString(), 25)
-						+"|" + AonStringUtils.rightPad(AonStringUtils.abbreviate(AonStringUtils.defaultString(e.getMessage()),79),80)
-						+"|");
-			}
-			System.out.println("\t\t"
-					+" " + AonStringUtils.repeat("-", 4)
-					+" " + AonStringUtils.repeat("-", 5)
-					+" " + AonStringUtils.repeat("-", 25)
-					+" " + AonStringUtils.repeat("-", 80)
-					+" "
-					);
-		}
-	}
 	
 }

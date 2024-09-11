@@ -11,6 +11,8 @@ import com.esferalia.aon.occam.api.model.finance.InvoiceDetail;
 import com.esferalia.aon.occam.api.model.finance.InvoiceFiscal;
 import com.esferalia.aon.occam.api.model.finance.InvoiceTax;
 import com.esferalia.aon.occam.api.model.finance.InvoiceWithholding;
+import com.esferalia.aon.occam.api.model.invoice.InvoiceError;
+import com.esferalia.aon.occam.api.model.invoice.InvoiceErrorLevel;
 import com.esferalia.aon.occam.api.model.type.TaxType;
 import com.esferalia.aon.watson.util.AonCollectionUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
@@ -552,8 +554,100 @@ public class InvoiceTextPrinter {
 			.vatBreakdown(invoice, out)
 			.withholding(invoice, out)
 			.totals(invoice, out)
-			.fiscal(invoice, out);
+			.fiscal(invoice, out)
+			.messages(invoice, out);
 		out.flush();
+	}
+
+	public static void printMessages(PrintStream out, Invoice invoice) {
+		new InvoiceTextPrinter(false)
+			.messages(invoice, out);
+		out.flush();
+	}
+
+	public InvoiceTextPrinter messages(Invoice invoice, PrintStream out) {
+		if (AonCollectionUtils.isNotEmpty(invoice.getMessages())) {
+			out.println();
+			StringBuilder buf = new StringBuilder();
+			buf.append(AonStringUtils.spaces(15));
+			buf.append(TOP_LEFT_CORNER);
+			buf.append(AonStringUtils.repeat(HORIZONTAL_BAR, 4));
+			buf.append(HORIZONTAL_DOWN_BAR);
+			buf.append(AonStringUtils.repeat(HORIZONTAL_BAR, 5));
+			buf.append(HORIZONTAL_DOWN_BAR);
+			buf.append(AonStringUtils.repeat(HORIZONTAL_BAR, 25));
+			buf.append(HORIZONTAL_DOWN_BAR);
+			buf.append(AonStringUtils.repeat(HORIZONTAL_BAR, 80));
+			buf.append(TOP_RIGHT_CORNER);
+			out.println(buf.toString());
+			
+			buf = new StringBuilder();
+			buf.append(AonStringUtils.spaces(15));
+			buf.append(VERTICAL_BAR);
+			buf.append(ConsoleColors.whiteRed(AonStringUtils.rightPad("TYP", 4)));
+			buf.append(VERTICAL_BAR);
+			buf.append(ConsoleColors.whiteRed(AonStringUtils.rightPad("CODE", 5)));
+			buf.append(VERTICAL_BAR);
+			buf.append(ConsoleColors.whiteRed(AonStringUtils.rightPad("FIELD", 25)));
+			buf.append(VERTICAL_BAR);
+			buf.append(ConsoleColors.whiteRed(AonStringUtils.rightPad("MESSAGE", 80)));
+			buf.append(VERTICAL_BAR);
+			out.println(buf.toString());			
+			
+
+			buf = new StringBuilder();
+			buf.append(AonStringUtils.spaces(15));
+			buf.append(VERTICAL_RIGHT_BAR);
+			buf.append(AonStringUtils.repeat(HORIZONTAL_BAR, 4));
+			buf.append(CROSS);
+			buf.append(AonStringUtils.repeat(HORIZONTAL_BAR, 5));
+			buf.append(CROSS);
+			buf.append(AonStringUtils.repeat(HORIZONTAL_BAR, 25));
+			buf.append(CROSS);
+			buf.append(AonStringUtils.repeat(HORIZONTAL_BAR, 80));
+			buf.append(VERTICAL_LEFT_BAR);
+			out.println(buf.toString());
+
+			for (InvoiceError e : invoice.getMessages()) {
+				buf = new StringBuilder();
+				buf.append(AonStringUtils.spaces(15));
+				buf.append(VERTICAL_BAR);
+				if (e.getLevel() == InvoiceErrorLevel.ERR) buf.append(ConsoleColors.RED);
+				if (e.getLevel() == InvoiceErrorLevel.WRN) buf.append(ConsoleColors.YELLOW);
+				if (e.getLevel() == InvoiceErrorLevel.INF) buf.append(ConsoleColors.BLUE);
+				buf.append(AonStringUtils.rightPad(e.getLevel() == null ? "" : e.getLevel().toString(), 4));
+				buf.append(ConsoleColors.RESET);
+				buf.append(VERTICAL_BAR);
+				buf.append(AonStringUtils.rightPad(AonStringUtils.defaultString(e.getCode()), 5));
+				buf.append(VERTICAL_BAR);
+				buf.append(AonStringUtils.rightPad(e.getContext() == null ? "" : e.getContext().toString(), 25));
+				buf.append(VERTICAL_BAR);
+				buf.append(AonStringUtils.rightPad(AonStringUtils.abbreviate(AonStringUtils.defaultString(e.getMessage()),79),80));
+				buf.append(VERTICAL_BAR);
+				out.println(buf.toString());			
+			}
+			buf = new StringBuilder();
+			buf.append(AonStringUtils.spaces(15));
+			buf.append(LOWER_LEFT_CORNER);
+			buf.append(AonStringUtils.repeat(HORIZONTAL_BAR, 4));
+			buf.append(HORIZONTAL_UP_BAR);
+			buf.append(AonStringUtils.repeat(HORIZONTAL_BAR, 5));
+			buf.append(HORIZONTAL_UP_BAR);
+			buf.append(AonStringUtils.repeat(HORIZONTAL_BAR, 25));
+			buf.append(HORIZONTAL_UP_BAR);
+			buf.append(AonStringUtils.repeat(HORIZONTAL_BAR, 80));
+			buf.append(LOWER_RIGHT_CORNER);
+			out.println(buf.toString());
+			
+			System.out.println("\t\t"
+					+" " + AonStringUtils.repeat("-", 4)
+					+" " + AonStringUtils.repeat("-", 5)
+					+" " + AonStringUtils.repeat("-", 25)
+					+" " + AonStringUtils.repeat("-", 80)
+					+" "
+					);
+		}
+		return this;
 	}
 
 	public static class ConsoleColors {
@@ -598,7 +692,7 @@ public class InvoiceTextPrinter {
 		public static final String BLUE_BACKGROUND = "\033[44m"; // BLUE
 		public static final String PURPLE_BACKGROUND = "\033[45m"; // PURPLE
 		public static final String CYAN_BACKGROUND = "\033[46m"; // CYAN
-		public static final String WHITE_BACKGROUND = "\033[47m"; // WHITE
+		public static final String WHITE_BACKGROUND = "\u001B[47m"; //"\033[47m"; // WHITE
 
 		// High Intensity
 		public static final String BLACK_BRIGHT = "\033[0;90m"; // BLACK
@@ -637,5 +731,4 @@ public class InvoiceTextPrinter {
 			return ConsoleColors.RED_BACKGROUND + WHITE + text + ConsoleColors.RESET;
 		}
 	}
-
 }

@@ -28,7 +28,7 @@ import com.esferalia.aon.occam.api.model.commission.InvoiceDetailCommissionStatu
 import com.esferalia.aon.occam.api.model.commission.OfferDetailCommission;
 import com.esferalia.aon.occam.api.model.commission.OfferDetailCommissionStatus;
 import com.esferalia.aon.occam.api.model.finance.InvoiceDetail;
-import com.esferalia.aon.occam.api.model.finance.InvoiceProperties;
+import com.esferalia.aon.occam.api.model.finance.InvoicePropertiesOLD;
 import com.esferalia.aon.occam.api.model.management.OfferDetail;
 import com.esferalia.aon.occam.api.model.management.OfferProperties;
 import com.esferalia.aon.occam.api.model.registry.Seller;
@@ -246,7 +246,7 @@ public class CommissionCalculationServlet extends HttpServlet implements Seriali
 		return strm;
 	}
 	
-	public Filter invoiceDetailFilter(Domain domain, InvoiceProperties f) {
+	public Filter invoiceDetailFilter(Domain domain, InvoicePropertiesOLD f) {
 		Filter filter = f.getDomainProperty().eq(domain.getId())
 				.and(f.getTypeProperty().eq(InvoiceType.SALES.value()));
 		

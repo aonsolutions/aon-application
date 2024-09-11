@@ -41,7 +41,7 @@ import com.esferalia.aon.occam.api.model.finance.InvofoxConfiguration;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceCommunicationTracking;
 import com.esferalia.aon.occam.api.model.finance.InvoiceDetail;
-import com.esferalia.aon.occam.api.model.finance.InvoiceFilter;
+import com.esferalia.aon.occam.api.model.finance.InvoiceFilterOLD;
 import com.esferalia.aon.occam.api.model.finance.InvoiceInfo;
 import com.esferalia.aon.occam.api.model.finance.InvoiceSeries;
 import com.esferalia.aon.occam.api.model.finance.InvoiceTax;
@@ -131,7 +131,7 @@ public class FinanceImpl implements IFinance {
 	}
 	
 	@Override
-	public Stream<Invoice> getInvoiceHeaders(AONContext ctx, InvoiceFilter filter, int offset, int limit) {
+	public Stream<Invoice> getInvoiceHeaders(AONContext ctx, InvoiceFilterOLD filter, int offset, int limit) {
 		return ctx.getDslContext().transactionResult(
 			configuration -> InvoiceOLDDAO.getInvoiceHeaders(ctx, filter, offset, limit));
 	}
@@ -141,19 +141,19 @@ public class FinanceImpl implements IFinance {
 			configuration -> InvoiceOLDDAO.getInvoiceHeaders(ctx, params, offset, limit));
 	}
 	@Override
-	public Stream<Invoice> getInvoiceStream(AONContext ctx, InvoiceFilter filter){
+	public Stream<Invoice> getInvoiceStream(AONContext ctx, InvoiceFilterOLD filter){
 		return ctx.getDslContext().transactionResult(
 				configuration -> InvoiceOLDDAO.getInvoiceStream(ctx, filter));
 	}
 	
 	@Override
-	public Stream<Invoice> getSiiInvoiceStream(AONContext ctx, InvoiceFilter filter, Boolean pending,  Boolean aceptada, Boolean aceptadaErrores, Boolean incorrecta, Boolean anulada, String sii) {
+	public Stream<Invoice> getSiiInvoiceStream(AONContext ctx, InvoiceFilterOLD filter, Boolean pending,  Boolean aceptada, Boolean aceptadaErrores, Boolean incorrecta, Boolean anulada, String sii) {
 		return ctx.getDslContext().transactionResult(
 				configuration -> InvoiceSIIDAO.getSiiInvoiceStream(ctx, filter, pending, aceptada, aceptadaErrores,incorrecta, anulada, sii));
 	}
 		
 	@Override
-	public Stream<InvoiceDetail> getInvoiceMovements(AONContext ctx, InvoiceFilter filter, ProductFilter pFilter, ItemFilter iFilter) {
+	public Stream<InvoiceDetail> getInvoiceMovements(AONContext ctx, InvoiceFilterOLD filter, ProductFilter pFilter, ItemFilter iFilter) {
 		return InvoiceOLDDAO.getInvoiceDetails(ctx, filter, pFilter, iFilter);
 	}
 
@@ -172,12 +172,12 @@ public class FinanceImpl implements IFinance {
 	// ------------------------------------- INVOICE DETAIL
 	
 	@Override
-	public Stream<InvoiceDetail> getInvoiceDetails(AONContext ctx, InvoiceFilter filter) {
+	public Stream<InvoiceDetail> getInvoiceDetails(AONContext ctx, InvoiceFilterOLD filter) {
 		return InvoiceOLDDAO.getInvoiceDetails(ctx, filter);
 	}
 	
 	@Override
-	public Stream<InvoiceDetailExtended> getInvoiceDetailsExtended(AONContext ctx, InvoiceFilter filter, IDAOCallback callback) {
+	public Stream<InvoiceDetailExtended> getInvoiceDetailsExtended(AONContext ctx, InvoiceFilterOLD filter, IDAOCallback callback) {
 		return InvoiceOLDDAO.getInvoiceDetailsExtended(ctx, filter, callback);
 	}
 
@@ -405,7 +405,7 @@ public class FinanceImpl implements IFinance {
 	}
 
 	@Override
-	public Stream<InvoiceDetail> getBoughtProductStream(AONContext ctx, InvoiceFilter filter) {
+	public Stream<InvoiceDetail> getBoughtProductStream(AONContext ctx, InvoiceFilterOLD filter) {
 		return ctx.getDslContext().transactionResult(configuration
 				-> InvoiceOLDDAO.getBoughtProductStream(ctx, filter));
 	}

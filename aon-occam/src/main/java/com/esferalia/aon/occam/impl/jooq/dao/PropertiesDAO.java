@@ -163,8 +163,9 @@ import com.esferalia.aon.occam.api.model.Properties.TimeControlProperties;
 import com.esferalia.aon.occam.api.model.Properties.UserAppRoleProperties;
 import com.esferalia.aon.occam.api.model.Properties.UserProperties;
 import com.esferalia.aon.occam.api.model.Properties.UserScopeProperties;
-import com.esferalia.aon.occam.api.model.finance.InvoiceFilter;
+import com.esferalia.aon.occam.api.model.finance.InvoiceFilterOLD;
 import com.esferalia.aon.occam.api.model.finance.InvoiceProperties;
+import com.esferalia.aon.occam.api.model.finance.InvoicePropertiesOLD;
 
 public class PropertiesDAO {
 	
@@ -173,24 +174,24 @@ public class PropertiesDAO {
 	}
 	
 	public static final InvoicePropertiesDAO INVOICE_PROPERTIES = new InvoicePropertiesDAO();
-	public static class InvoicePropertiesDAO implements InvoiceProperties {
+	public static class InvoicePropertiesDAO implements InvoicePropertiesOLD {
 		
-		public Integer getPage(InvoiceFilter filter) {
+		public Integer getPage(InvoiceFilterOLD filter) {
 			FilterDAO filterDAO = (FilterDAO) filter.filter(this);
 			return filterDAO.getPage();
 		}
 		
-		public Integer getPerPage(InvoiceFilter filter) {
+		public Integer getPerPage(InvoiceFilterOLD filter) {
 			FilterDAO filterDAO = (FilterDAO) filter.filter(this);
 			return filterDAO.getPerPage();
 		}
 		
-		public Select<Record> build(SelectJoinStep<Record> select, InvoiceFilter filter) {
+		public Select<Record> build(SelectJoinStep<Record> select, InvoiceFilterOLD filter) {
 			FilterDAO filterDAO = (FilterDAO) filter.filter(this);
 			return filterDAO.build(select);
 		}
 		
-		public Condition[] getConditions(InvoiceFilter filter) {
+		public Condition[] getConditions(InvoiceFilterOLD filter) {
 			FilterDAO filterDAO = (FilterDAO) filter.filter(this);
 			if (filterDAO == null)
 				return new Condition[0];

@@ -51,7 +51,7 @@ import com.esferalia.aon.occam.api.model.aonsolutions.TimeControlGroup;
 import com.esferalia.aon.occam.api.model.aonsolutions.UserAppRole;
 import com.esferalia.aon.occam.api.model.finance.FinanceFilter;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
-import com.esferalia.aon.occam.api.model.finance.InvoiceFilter;
+import com.esferalia.aon.occam.api.model.finance.InvoiceFilterOLD;
 import com.esferalia.aon.occam.api.model.finance.InvoiceNewPortal;
 import com.esferalia.aon.occam.api.model.finance.PrintInvoiceConfiguration;
 import com.esferalia.aon.occam.api.model.news.News;
@@ -480,13 +480,13 @@ public class AON_SOLUTIONS {
 	
 	// INVOICE
 	
-	public static Stream<Invoice> getInvoices(String domainName, Integer domainId, String login, InvoiceFilter filter) {
+	public static Stream<Invoice> getInvoices(String domainName, Integer domainId, String login, InvoiceFilterOLD filter) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
 			return getApi().getInvoices(ctx, filter);
 		} 
 	}
 	
-	public static Stream<InvoiceNewPortal> getInvoiceNewPortal(String domainName, Integer domainId, String login, InvoiceFilter filter) {
+	public static Stream<InvoiceNewPortal> getInvoiceNewPortal(String domainName, Integer domainId, String login, InvoiceFilterOLD filter) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
 			return getApi().getInvoiceNewPortal(ctx, filter);
 		} 

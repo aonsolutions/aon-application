@@ -25,7 +25,7 @@ import com.esferalia.aon.occam.api.model.AccountingReportParams;
 import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Filter;
-import com.esferalia.aon.occam.api.model.finance.InvoiceProperties;
+import com.esferalia.aon.occam.api.model.finance.InvoicePropertiesOLD;
 import com.esferalia.aon.occam.api.model.finance.SiiConfiguration;
 import com.esferalia.aon.occam.api.model.fiscal.VatContext;
 import com.esferalia.aon.occam.api.model.type.MimeType;
@@ -184,7 +184,7 @@ public class GenerateSIIServlet extends HttpServlet{
 		LOGGER.info("SII Servlet - POST METHOD");
 	}	
 	
-    public static Filter invoiceFilter(Domain domain, Map<String, String[]> filterMap, InvoiceProperties f) {
+    public static Filter invoiceFilter(Domain domain, Map<String, String[]> filterMap, InvoicePropertiesOLD f) {
 		Filter filter = f.getDomainProperty().eq(domain.getId());
 	
 		if(filterMap.containsKey("id")){

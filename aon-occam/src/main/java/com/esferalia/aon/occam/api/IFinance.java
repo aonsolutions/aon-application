@@ -37,7 +37,7 @@ import com.esferalia.aon.occam.api.model.finance.InvofoxConfiguration;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceCommunicationTracking;
 import com.esferalia.aon.occam.api.model.finance.InvoiceDetail;
-import com.esferalia.aon.occam.api.model.finance.InvoiceFilter;
+import com.esferalia.aon.occam.api.model.finance.InvoiceFilterOLD;
 import com.esferalia.aon.occam.api.model.finance.InvoiceInfo;
 import com.esferalia.aon.occam.api.model.finance.InvoiceSeries;
 import com.esferalia.aon.occam.api.model.finance.InvoiceTax;
@@ -96,16 +96,16 @@ public interface IFinance {
 
 	Invoice getFullInvoice(AONContext ctx, Integer id);
 	Stream<Invoice> getInvoiceHeaders(AONContext ctx, AccountingReportParams params, int offset, int limit);
-	Stream<Invoice> getInvoiceHeaders(AONContext ctx, InvoiceFilter filter, int offset, int limit);
-	Stream<Invoice> getInvoiceStream(AONContext ctx, InvoiceFilter filter);
+	Stream<Invoice> getInvoiceHeaders(AONContext ctx, InvoiceFilterOLD filter, int offset, int limit);
+	Stream<Invoice> getInvoiceStream(AONContext ctx, InvoiceFilterOLD filter);
 	Invoice insertInvoice(AONContext ctx, Invoice invoice);
 	Invoice updateInvoice(AONContext ctx, Invoice invoice);
 	Invoice updateInvoice(AONContext ctx, Invoice invoice, boolean only);
-	Stream<Invoice> getSiiInvoiceStream(AONContext ctx, InvoiceFilter filter, Boolean pending,  Boolean aceptada, Boolean aceptadaErrores, Boolean incorrecta, Boolean anulada, String sii);
-	Stream<InvoiceDetail> getInvoiceMovements(AONContext ctx, InvoiceFilter filter, ProductFilter pFilter,
+	Stream<Invoice> getSiiInvoiceStream(AONContext ctx, InvoiceFilterOLD filter, Boolean pending,  Boolean aceptada, Boolean aceptadaErrores, Boolean incorrecta, Boolean anulada, String sii);
+	Stream<InvoiceDetail> getInvoiceMovements(AONContext ctx, InvoiceFilterOLD filter, ProductFilter pFilter,
 			ItemFilter iFilter);
-	Stream<InvoiceDetail> getInvoiceDetails(AONContext ctx,InvoiceFilter filter);
-	Stream<InvoiceDetailExtended> getInvoiceDetailsExtended(AONContext ctx,InvoiceFilter filter, IDAOCallback callback);
+	Stream<InvoiceDetail> getInvoiceDetails(AONContext ctx,InvoiceFilterOLD filter);
+	Stream<InvoiceDetailExtended> getInvoiceDetailsExtended(AONContext ctx,InvoiceFilterOLD filter, IDAOCallback callback);
 	InvoiceDetail getLastInvoiceDetail(AONContext ctx, OldItem item, Integer workplaceId, Integer warehouseId);
 	InvoiceDetail getLastInvoiceDetailUntilDate(AONContext ctx, OldItem item, Integer workplaceId, Integer warehouseId, Date date);
 	LinkedList<InvoiceDetail> getLastInvoiceDetailList(AONContext ctx, OldItem item, Date startDate, Integer workplaceId, Integer warehouseId);
@@ -116,7 +116,7 @@ public interface IFinance {
 	Integer getInvoiceMinNumber(AONContext ctx, InvoiceType type, String series);
 	Integer getInvoiceMinNumber(AONContext ctx, Byte[] types, String series);
 	
-	Stream<InvoiceDetail> getBoughtProductStream(AONContext ctx, InvoiceFilter filter);
+	Stream<InvoiceDetail> getBoughtProductStream(AONContext ctx, InvoiceFilterOLD filter);
 	
 	void rectifyInvoice(AONContext ctx, Integer rectifierInvoice, Integer rectifiedInvoice);
 	

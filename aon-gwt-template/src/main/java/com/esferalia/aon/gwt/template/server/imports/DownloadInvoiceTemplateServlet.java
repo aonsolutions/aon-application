@@ -23,7 +23,7 @@ import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Filter;
 import com.esferalia.aon.occam.api.model.IJsonNames;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
-import com.esferalia.aon.occam.api.model.finance.InvoiceProperties;
+import com.esferalia.aon.occam.api.model.finance.InvoicePropertiesOLD;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.type.InvoiceType;
 import com.esferalia.aon.watson.util.AonStringUtils;
@@ -62,7 +62,7 @@ public class DownloadInvoiceTemplateServlet extends HttpServlet {
 		}
     }
 	
-	public static Filter invoiceFilter(InvoiceProperties f, Integer domainId, JSONObject json ) {
+	public static Filter invoiceFilter(InvoicePropertiesOLD f, Integer domainId, JSONObject json ) {
     	Filter filter =  f.getDomainProperty().eq(domainId);
     
 		String description = JsonUtils.getString(json, IJsonNames.DESCRIPTION);

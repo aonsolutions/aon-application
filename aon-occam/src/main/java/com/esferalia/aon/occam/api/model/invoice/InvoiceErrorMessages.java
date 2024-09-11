@@ -36,6 +36,13 @@ public enum InvoiceErrorMessages implements Serializable {
 	C020("La suma de los vencimiento no coincide con el total factura."),
 	
 	C050("No es posible borrar la factura porque est\u00E1 rectificada. Borre primero la factura rectificativa."),
+	C051("No es posible borrar la factura porque est\u00E1 vinculada a un documento DUA."),
+	C052("No es posible borrar la factura porque est\u00E1 enviada al SII. Dar de baja la factura en el SII."),
+	C053("No es posible borrar la factura porque est\u00E1 enviada a Ticket Bai. Dar de baja la factura en Ticket Bai."),
+	C054("Imposible borrar o modificar, la factura ha sido declarada en modelos fiscales: {0}"),
+	C055("Imposible borrar o modificar, el vto. ha sido declarada en modelos fiscales: {0}"),
+	C056("Imposible borrar o modificar, la factura ha sido bloqueada (Alcatraz)"),
+	
 	
 	// Mensajes previos a la contabilización
 	C200("No se puede Contabilizar. Hay un descuadre entre el total factura y la suma total de los vencimientos."),

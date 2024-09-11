@@ -24,7 +24,7 @@ import com.esferalia.aon.occam.api.model.EnterpriseActivity;
 import com.esferalia.aon.occam.api.model.Workplace;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceDetail;
-import com.esferalia.aon.occam.api.model.finance.InvoiceFilter;
+import com.esferalia.aon.occam.api.model.finance.InvoiceFilterOLD;
 import com.esferalia.aon.occam.api.model.finance.InvoiceNewPortal;
 import com.esferalia.aon.occam.api.model.finance.InvoiceTax;
 import com.esferalia.aon.occam.api.model.registry.Registry;
@@ -52,7 +52,7 @@ public class InvoiceApiDAO {
 	
 	private static final InvoicePropertiesDAO INVOICE_PROPERTIES = new InvoicePropertiesDAO();
 	
-	public static Stream<InvoiceNewPortal> getInvoiceNewPortal(AONContext ctx, InvoiceFilter filter) {
+	public static Stream<InvoiceNewPortal> getInvoiceNewPortal(AONContext ctx, InvoiceFilterOLD filter) {
 		Integer page = INVOICE_PROPERTIES.getPage(filter);
 		Integer perPage = INVOICE_PROPERTIES.getPerPage(filter);
 		return ctx.getDslContext()
@@ -81,7 +81,7 @@ public class InvoiceApiDAO {
 	 *  @deprecated USE InvoiceDAO suitable method
 	 */
 	@Deprecated 
-	public static Stream<Invoice> getInvoices(AONContext ctx, InvoiceFilter filter) {
+	public static Stream<Invoice> getInvoices(AONContext ctx, InvoiceFilterOLD filter) {
 		Integer page = INVOICE_PROPERTIES.getPage(filter);
 		Integer perPage = INVOICE_PROPERTIES.getPerPage(filter);
 		

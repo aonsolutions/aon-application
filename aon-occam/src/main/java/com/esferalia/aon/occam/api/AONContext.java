@@ -27,8 +27,10 @@ import com.esferalia.aon.jooq.tables.records.DomainRecord;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Occam;
+import com.esferalia.aon.occam.api.model.finance.TbaiConfiguration;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.impl.jooq.dao.ConfigurationDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.TbaiConfigurationDAO;
 import com.esferalia.aon.watson.AonError;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.server.AonDatabaseUtil;
@@ -228,7 +230,10 @@ public class AONContext {
 	private String domainName;
 	private int domainId;
 	private String user;
+	
+	
 	private AonConfiguration configuration;
+	private TbaiConfiguration tbaiConfiguration;
 	
 	public AONContext(DSLContext dslContext) {
 		this.dslContext = dslContext;
@@ -298,6 +303,12 @@ public class AONContext {
 			configuration = ConfigurationDAO.getAccountingConfiguration(this);
 		}
 		return configuration;
+	}
+	public TbaiConfiguration getTbaiConfiguration() {
+		if (tbaiConfiguration == null) {
+			tbaiConfiguration = TbaiConfigurationDAO.get(this);			
+		}
+		return tbaiConfiguration;
 	}
 
 	public boolean canWrite() {

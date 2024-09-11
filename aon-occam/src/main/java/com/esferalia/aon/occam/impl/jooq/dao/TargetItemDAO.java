@@ -13,7 +13,7 @@ import java.util.stream.Collectors;
 
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Customer;
-import com.esferalia.aon.occam.api.model.finance.InvoiceFilter;
+import com.esferalia.aon.occam.api.model.finance.InvoiceFilterOLD;
 import com.esferalia.aon.occam.api.model.product.Item;
 import com.esferalia.aon.occam.api.model.registry.RegistryItem;
 import com.esferalia.aon.occam.api.model.registry.RegistryItemStatus;
@@ -25,7 +25,7 @@ import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.InvoicePropertiesDAO;
 public class TargetItemDAO {
 	public static final InvoicePropertiesDAO INVOICE_PROPERTIES = new InvoicePropertiesDAO();
 
-	public static void updateAllTargetItem(AONContext ctx, InvoiceFilter filter, boolean disable) {
+	public static void updateAllTargetItem(AONContext ctx, InvoiceFilterOLD filter, boolean disable) {
 		Integer domainId = ctx.getDomainId();
 		Map<Integer, List<Integer>> map = getRegistryItems(ctx, filter);
 		Set<Integer> registryIds = map.keySet();
@@ -64,7 +64,7 @@ public class TargetItemDAO {
 		}
 	}
 	
-	private static Map<Integer, List<Integer>> getRegistryItems(AONContext ctx, InvoiceFilter filter) {
+	private static Map<Integer, List<Integer>> getRegistryItems(AONContext ctx, InvoiceFilterOLD filter) {
 		Map<Integer, List<Integer>> map = new LinkedHashMap<>();
 		ctx.getDslContext()
 		.select(INVOICE.REGISTRY, INVOICE_DETAIL.ITEM)

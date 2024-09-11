@@ -40,7 +40,7 @@ import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.attachment.AttachType;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceDetail;
-import com.esferalia.aon.occam.api.model.finance.InvoiceFilter;
+import com.esferalia.aon.occam.api.model.finance.InvoiceFilterOLD;
 import com.esferalia.aon.occam.api.model.finance.InvoiceTax;
 import com.esferalia.aon.occam.api.model.registry.RegistryAddress;
 import com.esferalia.aon.occam.api.model.security.Scope;
@@ -78,7 +78,7 @@ public class DBInvoice {
 	public static final Geotree INVOICE_GEOTREE = GEOTREE.as("invoice_geotree");
 	public static final Geotree REGISTRY_GEOTREE = GEOTREE.as("registry_geotree");
 	
-	public static Result<Record> getSaleInvoices(AONContext ctx, InvoiceFilter filter) {
+	public static Result<Record> getSaleInvoices(AONContext ctx, InvoiceFilterOLD filter) {
 		return ctx.getDslContext().select()
 				.from(INVOICE)
 				.join(INVOICE_DETAIL).on(INVOICE.ID.eq(INVOICE_DETAIL.INVOICE))
@@ -110,7 +110,7 @@ public class DBInvoice {
 				.fetch();
 	}
 	
-	public static List<Invoice> getInvoices(Domain domain, User user, InvoiceFilter filter) {
+	public static List<Invoice> getInvoices(Domain domain, User user, InvoiceFilterOLD filter) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(domain, user)){
 			Result<Record> a = getSaleInvoices(ctx, filter);
 			HashMap<Integer, Invoice> invoiceMap = new HashMap<>();

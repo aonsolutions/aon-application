@@ -681,7 +681,6 @@ public class Asserts {
 		assertEquals(expected.getRectificationType(), actual.getRectificationType(),"RectificationType");
 		assertEquals(expected.getSecurityLevel(), actual.getSecurityLevel(),"SecurityLevel");
 		assertEquals(expected.getRectificationInvoice(), actual.getRectificationInvoice(),"RectificationInvoice");
-		// assertEqualsRegistry(expected.getRegistryData(), actual.getRegistryData());
 		assertEquals(expected.getRegistry(), actual.getRegistry(),"Registry");
 		assertEquals(expected.getRegistryDocument(), actual.getRegistryDocument(),"RegistryDocument");
 		assertEquals(expected.getRegistryDocumentType(), actual.getRegistryDocumentType(),"RegistryDocumentType");

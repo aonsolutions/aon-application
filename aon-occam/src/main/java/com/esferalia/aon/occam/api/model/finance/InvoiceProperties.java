@@ -1,53 +1,58 @@
 package com.esferalia.aon.occam.api.model.finance;
 
+import static com.esferalia.aon.jooq.tables.Invoice.INVOICE;
+
 import java.io.Serializable;
 import java.sql.Timestamp;
 import java.util.Date;
 
 import com.esferalia.aon.occam.api.model.Filter.Property;
+import com.esferalia.aon.occam.impl.jooq.dao.FilterDAO;
 
 public interface InvoiceProperties extends Serializable {
 	
 	Property<Integer> getIdProperty();
 	Property<Integer> getDomainProperty();
+	Property<Integer> getActivityProperty();
+	Property<Integer> getInvestAssetProperty();
+	Property<Integer> getProjectProperty();
 	Property<String> getSeriesProperty();
-	Property<Byte> getStatusProperty();
 	Property<Integer> getNumberProperty();	
 	Property<String> getReferenceCodeProperty();
-	Property<Integer> getActivityProperty();
 	Property<Integer> getRegistryProperty();
 	Property<String> getRegistryDocumentProperty();
+	Property<Byte> getRegistryDocumentTypeProperty();
+	Property<String> getRegistryDocumentCountryProperty();
 	Property<String> getRegistryNameProperty();
-	Property<Byte> getTypeProperty();
-	Property<Date> getStartIssueDateProperty();
-	Property<Date> getEndIssueDateProperty();
-	Property<Integer> getScopeProperty();
+	Property<Integer> getRegistryAddressProperty();
+	Property<Date> getIssueDateProperty();
+	Property<Date> getTaxDateProperty();
 	Property<Byte> getConfidentialProperty();
+	Property<Byte> getStatusProperty();
+	Property<Byte> getTypeProperty();
+	Property<Byte> getSurchargeProperty();
+	Property<Byte> getWithholdingProperty();
+	Property<Byte> getWithholdingFarmerProperty();
+	Property<Byte> getVatAccrualPayment(); 
+	Property<String> getCommentsProperty();
+	Property<String> getRemarksProperty();
+	Property<Byte> getInvestmentProperty();
+	Property<Byte> getTransactionProperty(); 
+	Property<Byte> getSignedProperty();
+	Property<Integer> getScopeProperty(); 
+	Property<Byte> getServiceProperty();
 	Property<Byte> getRectificationTypeProperty();
 	Property<Integer> getRectificationInvoiceProperty();
-	Property<Integer> getWorkplaceProperty();
-	Property<Integer> getSellerProperty();
-	Property<Integer> getProductProperty();
-	Property<Integer> getItemProperty();
-	Property<Integer> getProductCategoryProperty();
-	Property<Integer> getProductBrandProperty();
-	Property<String> getProductCodeProperty();
-	Property<Byte> getProductTypeProperty();
-	Property<Byte> getTransactionProperty();
-	Property<Byte> getInvestmentProperty();
-	Property<Integer> getPosShiftroperty();	
-	Property<Date> getTaxDateProperty();
-	Property<Byte> getVatAccrualPayment();
-	Property<Byte> getWithholdingProperty();
+	Property<Byte> getAdvanceProperty();
+	Property<Integer> getPosShiftProperty(); 
+	Property<Integer> getSellerProperty(); 
+	Property<Double> getTaxableBaseProperty();
+	Property<Double> getVatQuotaProperty();
+	Property<Double> getRetentionQuotaTotalProperty();
 	Property<Double> getTotalProperty();
-
-	Property<Timestamp> getCreationDateProperty();
 	Property<String> getCreationUserProperty();
+	Property<Timestamp> getCreationDateProperty();
 	Property<Timestamp> getModificationDateProperty();
 	Property<String> getModificationUserProperty();
-	
-	// INVOICE COMMUNICATION
-	Property<Byte> getInvoiceInfoTypeProperty();
-	Property<Byte> getInvoiceInfoStatusProperty();
-	
+
 }
