@@ -127,7 +127,7 @@ export class AonMobileMenu extends AonElement {
     div.id = id;
     div.className = 'aonMobileMenu';
     if(this.isSab()) {
-      div.style.marginBottom = '10px'; 
+      div.style.height = '4rem'; 
     }
     this.appendChild(div);
     let dialogMenu = new AonDialogMenu();
