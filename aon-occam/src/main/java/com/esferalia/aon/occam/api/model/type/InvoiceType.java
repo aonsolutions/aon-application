@@ -6,6 +6,8 @@ import com.esferalia.aon.occam.api.model.AccountingInvoice;
 import com.esferalia.aon.occam.api.model.finance.EnumVisitors.IInvoiceTypeVisitor;
 import com.esferalia.aon.occam.api.model.finance.IAccountingInvoiceTypeVisitor;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
+import com.esferalia.aon.watson.util.AonCollectionUtils;
+import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 public enum InvoiceType implements Serializable  {
@@ -73,5 +75,10 @@ public enum InvoiceType implements Serializable  {
 				return rs;
 		}
 		return null;
+	}
+
+	public static boolean contains(Byte[] types, InvoiceType type) {
+		if (type == null) return false;
+		return AonCollectionUtils.stream(types).anyMatch( t -> AonNumberUtils.equals(t, type.value()) );
 	}
 }
