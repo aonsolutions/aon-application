@@ -14,13 +14,6 @@ export const SIG_URL = "https://aonsolutions.org";
 export const SIG_DOMAIN_NAME = "sig.aonsolutions.org";
 export const SIG_DOMAIN_ID = 5;
 export const PRO_URL = "https://aon.solutions";
-//----TEST
-// export const SIG_URL = "http://localhost:8080";
-// export const SIG_DOMAIN_NAME = "sig.aibanez.org";
-// export const SIG_DOMAIN_ID = 5;
-
-
-export const SIG_SESSION_ID = "SIGd95770f269e711eb94390242ac130002";
 
 //FB
 export const VAPIDKEY_FB = "BCH91WxACVIpylkYRMj3xSpIfrzjz7Ixnctcj25BPMBZKSbGeKjJFIdaRsJGQ3F-SXVFGD0cr4outWLCFwemIkE";
