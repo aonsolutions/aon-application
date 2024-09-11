@@ -141,6 +141,16 @@
   --aonHomeImg: black;
 
   --aonTaxBuildPrintRes: grey;
+	
+	
+  --aonMenuSidenav: true;
+	
+  /*
+  false or undefined same effect
+  */
+  --aonMenuTopnav: false;
+  --aonConfigSwitchApps: false;
+	
 
 }
 

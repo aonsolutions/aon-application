@@ -56,7 +56,7 @@ public class LoginModule extends UsernamePasswordLoginModule {
 		super.initialize(subject, callbackHandler, sharedState, options);
 		HttpServletRequest request = HttpServletRequestValve.getHttpServletRequest();
 		this.contextPath = StringUtils.defaultIfEmpty(request.getContextPath(), DEFAULT_CONTEXT_PATH);
-		this.domainName = IDN.toUnicode(request.getServerName());
+		this.domainName = IDN.toUnicode(HttpServletRequestValve.getDomainName());
 		ConnectionInfo ci = null;
 		try {
 			ci = ConnectionInfo.getDefaultConnectionInfo();
