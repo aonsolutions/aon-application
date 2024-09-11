@@ -16,6 +16,7 @@ import com.esferalia.aon.gwt.payroll.shared.ContractJourneyDuration;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeContractInfo;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeInfo;
 import com.esferalia.aon.gwt.payroll.shared.JourneyDuration;
+import com.esferalia.aon.occam.api.model.ContractParams;
 import com.esferalia.aon.occam.api.model.type.ContractType;
 import com.esferalia.aon.occam.api.model.type.ContractType.ContractTypeRecord;
 import com.esferalia.aon.watson.util.AonNumberUtils;
@@ -403,7 +404,11 @@ public abstract class ContractEmployeeUI extends ResizeComposite {
 		getSplitLayoutPanel().setWidgetSize(getFootPanel(), 25);
 		
 		// Load info and fill fields
-		this.contrataEmployeeObject.getEmployeeContract(contractId,
+		ContractParams params = getContractParams();
+		params.setOffset(getPosition());
+		params.setLimit(1); 
+		
+		this.contrataEmployeeObject.getContract(params,
 				r -> {
 					// Init toolbar
 					getToolbar().setTitle(this.contrataEmployeeObject.getEmployeeFullName());		
@@ -412,7 +417,7 @@ public abstract class ContractEmployeeUI extends ResizeComposite {
 					initializeIdcMonthListBox();
 					initExistingEmployee(this.contrataEmployeeObject.getContractData().hasPayroll());
 					success.accept(this.contrataEmployeeObject.getContractEmployeeInfo());
-				}, t -> {}
+				}
 		);
 		
 	}
@@ -780,5 +785,7 @@ public abstract class ContractEmployeeUI extends ResizeComposite {
 	protected abstract void showWarningMessage(String title, String message);
 	protected abstract void showAfiOption();
 	protected abstract void hideAfiOption();
+	protected abstract ContractParams getContractParams();
+	protected abstract Integer getPosition();
 	
 }

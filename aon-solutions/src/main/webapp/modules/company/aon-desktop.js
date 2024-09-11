@@ -494,15 +494,27 @@ export class AonDesktop extends AonElement {
 			timecontrolCard.getCardTitle1().style.cursor = 'pointer';
 
 			getTimeControl().then(r => {
-				let div = this.createElement(TAG.DIV);
-				timecontrolCard.setContent(div)
+				let staticsDiv = this.createElement(TAG.DIV);
+				staticsDiv.style.height = "12rem";
+				staticsDiv.style.minWidth = "15rem";
+				staticsDiv.style.maxWidth = "25rem";
+				staticsDiv.style.margin = "0 auto";
+				staticsDiv.appendChild(new AonStatistics());
+
 				let aonSign = new AonSign();
-				div.appendChild(new AonStatistics());
-				div.appendChild(aonSign);
+
+				timecontrolCard.setContent(staticsDiv);
+				timecontrolCard.setContent(aonSign);
+
+				// timecontrolCard.getContent().style.height = "12rem";
+				// timecontrolCard.getContent().style.minWidth = "15rem";
+				// timecontrolCard.getContent().style.maxWidth = "25rem";
+				// timecontrolCard.getContent().style.margin = "0 auto";
 
 				aonSign.buildSignin(r);
 				let aonHeader = this.getElement('aonHeader');
 				aonHeader.timeControlStatus(r);
+
 				timecontrolCard.firstChild.style.minHeight = "420px";
 				timecontrolCard.firstChild.style.margin = '0';
 			});
@@ -595,8 +607,7 @@ export class AonDesktop extends AonElement {
 			let payrollCard = new AonCard(() => this.appSelection(Apps.PAYROLL.app));
 			payrollCard.classList.add(CSS.AON_DASHBOARD_CARD);
 			payrollCard.id = "payroll";
-			// payrollCard.title = "Nóminas";
-			payrollCard.message = "Nóminas";
+			payrollCard.message = MSG.PAYSHEETS;
 			payrollCard.setApp(Apps.PAYROLL);
 			payrollCard.addEventListener(EVENT.CLICK_TITLE ,() => this.appSelection(Apps.PAYROLL.app));
 			cardsPanel.appendChild(payrollCard);
@@ -615,8 +626,7 @@ export class AonDesktop extends AonElement {
 			let bankCard = new AonCard();
 			bankCard.classList.add(CSS.AON_DASHBOARD_CARD);
 			bankCard.id = "bankCard";
-			// bankCard.title = "Bancos";
-			bankCard.message = "Bancos";
+			bankCard.message = MSG.BANKS;
 			bankCard.setApp(Apps.ACCOUNTING);
 			bankCard.addEventListener(EVENT.CLICK_TITLE, () => {
 				this.appSelection(Apps.ACCOUNTING.app);
@@ -641,8 +651,7 @@ export class AonDesktop extends AonElement {
 			let fiscalCard = new AonCard();
 			fiscalCard.classList.add(CSS.AON_DASHBOARD_CARD);
 			fiscalCard.id = "fiscalCard";
-			// fiscalCard.title = "Impuestos";
-			fiscalCard.message = "Impuestos";
+			fiscalCard.message = MSG.TAXES;
 			fiscalCard.setApp(Apps.FISCAL);
 			fiscalCard.addEventListener(EVENT.CLICK_TITLE, async () => {
 				// this.appSelection(Apps.FISCAL.app);
@@ -701,7 +710,7 @@ export class AonDesktop extends AonElement {
 			messengerCard.classList.add(CSS.AON_DASHBOARD_CARD);
 			messengerCard.id = "messengerCard";
 			// messengerCard.title = "Solicitudes";
-			messengerCard.message = "Solicitudes";
+			messengerCard.message = MSG.REQUESTS;
 			messengerCard.setApp(Apps.MESSENGER);
 			messengerCard.addEventListener(EVENT.CLICK_TITLE, () => this.appSelection(Apps.MESSENGER.app));
 			cardsPanel.appendChild(messengerCard);

@@ -273,6 +273,7 @@ export const MOVED_TO_TRASH = 'Trasladouse ao papeleira';
 export const MY_DATA = 'Os Meus Datos';
 export const MY_MANAGER = 'O meu Xestor';
 export const MY_USER = 'O Meu Usuario';
+export const MAGIC_LINK = 'Enviando ligazón de acceso por correo electrónico';
 
 // ----- N
 
@@ -408,7 +409,7 @@ export const SHARED = 'Compartidas';
 export const SHOW_FILE = 'Ensinar Ficheiro';
 export const SIDE_MENU = 'Menú lateral';
 export const SIGN_IN = 'Iniciar Sesión';
-export const SIGN_IN_WITHOUT_PASSWORD = 'Iniciar Sesión sen Contrasinal';
+export const SIGN_IN_WITHOUT_PASSWORD = 'Sen Contrasinal';
 export const SIGN_IN_WITH_CERTIFICATE = 'Iniciar Sesión con Certificado';
 export const SII = 'SII';
 export const SII_TICKETBAI = 'SII / TicketBAI';
@@ -434,6 +435,7 @@ export const TAG = 'Etiqueta';
 export const TAGS = 'Etiquetas';
 export const TAX = 'Imposto';
 export const TAX_BASE = 'Base Impoñible';
+export const TAXES = 'Impostos';
 export const TAXES_DETAIL = 'Detalle Impostos';
 export const TEST_ENVIRONMENT = 'Entorno de Proba';
 export const TICKET = 'Tícket';
@@ -484,6 +486,7 @@ export const VIEW_PAYROLLS = "Ver nóminas";
 export const WAREHOUSE = 'Almacén';
 export const WAREHOUSES = 'Almacéns';
 export const WEB = 'Web';
+export const WELCOME_TO_AON_SOLUTIONS = 'Benvido a aon Solutions';
 export const WITHHOLDING = 'Retención';
 export const WORKGROUP = 'Grupo de traballo';
 export const WORKSHOPS = 'Obradoiros';

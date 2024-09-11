@@ -276,6 +276,7 @@ export const MOVED_TO_TRASH = 'Se ha movido a la papelera';
 export const MY_DATA = 'Mis Datos';
 export const MY_MANAGER = 'Mi Gestor';
 export const MY_USER = 'Mi Usuario';
+export const MAGIC_LINK = 'Envío de enlace de acceso por email';
 export const UPPER_MENU = 'Menú de cabecera';
 
 // ----- N
@@ -439,6 +440,7 @@ export const TAG = 'Etiqueta';
 export const TAGS = 'Etiquetas';
 export const TAX = 'Impuesto';
 export const TAX_BASE = 'Base Imponible';
+export const TAXES = 'Impuestos';
 export const TAXES_DETAIL= 'Detalle Impuestos';
 export const TEST_ENVIRONMENT = 'Entorno de Pruebas';
 export const TICKET = 'Ticket';
@@ -489,6 +491,7 @@ export const VIEW_PAYROLLS = "Ver nóminas";
 export const WAREHOUSE = 'Almacén';
 export const WAREHOUSES = 'Almacenes';
 export const WEB = 'Web';
+export const WELCOME_TO_AON_SOLUTIONS = "Le damos la bienvenida a aon Solutions";
 export const WITHHOLDING = 'Retención';
 export const WORKGROUP = 'Grupo de trabajo';
 export const WORKSHOPS = 'Talleres';

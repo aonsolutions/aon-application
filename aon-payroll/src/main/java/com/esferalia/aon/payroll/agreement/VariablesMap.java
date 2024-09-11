@@ -878,7 +878,8 @@ public class VariablesMap implements Serializable {
 		variablesMap.put("GARANTIA_MINIMA_ANUAL", "GARANTIA_MINIMA");
 		variablesMap.put("GARANTIA_MINIMA_DIARIO", "GARANTIA_MINIMA");
 		variablesMap.put("GARANTIA_MINIMA_MENSUAL", "GARANTIA_MINIMA");
-		variablesMap.put("GARANTIZADO_MENSUAL", "GARANTIZADO_MENSUAL");
+		variablesMap.put("GARANTIZADO_ANUAL", "GARANTIZADO_A");
+		variablesMap.put("GARANTIZADO_MENSUAL", "GARANTIZADO_M");
 		variablesMap.put("GASTOS_EXTRA_TRANSPORTE_MAS_DE_10_KMS_HORAS", "G_EXTRA_TRANSPOR_MAS_10_H");
 		variablesMap.put("GASTOS_EXTRA_TRANSPORTE_MAS_DE_10_KMS_MENSUAL", "G_EXTRA_TRANSPOR_MAS_10_M");
 		variablesMap.put("GASTOS_GENERALES_MENSUAL", "GASTOS_GEN_M");
@@ -1305,6 +1306,7 @@ public class VariablesMap implements Serializable {
 		variablesMap.put("PLUS_CARGA_Y_DESCARGA_MENSUAL", "CARGA_DESCARGA_M");
 		variablesMap.put("PLUS_CARGA_Y_DESCARGA_DIARIO", "CARGA_DESCARGA_D");
 		variablesMap.put("PLUS_CARGA_Y_DESCARGA_HORAS", "CARGA_DESCARGA_H");
+		variablesMap.put("PLUS_CARGA_Y_DESCARGA_EQUIPAJE_ESPECIAL_HORAS", "CD_EQUIP_ESP_H");
 		variablesMap.put("PLUS_CARRETILLERO_MENSUAL", "P_CARRETILLERO_M");
 		variablesMap.put("PLUS_CASEROS_DIARIO", "PLUS_CASEROS");
 		variablesMap.put("PLUS_CENTRAL_NUCLEAR_MENSUAL", "CENTRAL_NUCLEAR_M");
@@ -1669,7 +1671,8 @@ public class VariablesMap implements Serializable {
 		variablesMap.put("PLUS_RESIDENCIA_MENSUAL", "PLUS_RESIDENCIA");
 		variablesMap.put("PLUS_REFUERZO_DIARIO", "PLUS_REFUERZO");
 		variablesMap.put("PLUS_REFUERZO_MEDIO_TURNO_DIARIO", "PLUS_REFUERZO_M_TURNO");
-		variablesMap.put("PLUS_RETEN_DIARIO", "PLUS_RETEN");
+		variablesMap.put("PLUS_RETEN_ANUAL", "PLUS_RETEN_A");
+		variablesMap.put("PLUS_RETEN_DIARIO", "PLUS_RETEN_D");
 		variablesMap.put("PLUS_RIESGO_MENSUAL", "PLUS_RIESGO");
 		variablesMap.put("PLUS_RIESGO_DIARIO", "PLUS_RIESGO");
 		variablesMap.put("PLUS_RIESGOS_LABORALES_MENSUAL", "PLUS_RIESGO_LABORAL");

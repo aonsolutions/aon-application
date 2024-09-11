@@ -16,3 +16,11 @@
 #aonMenuBar-marketingMenu {
   display: none;
 }
+
+.aonNewDesktopBeta {
+  display: block;
+}
+
+.aonNewDesktopNormal {
+  display: none;
+}

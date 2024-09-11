@@ -394,15 +394,15 @@ export class AonHeader extends AonElement {
 			let appss = this.getElement("applications");
 			let welcome = this.getElement("aonCompanyTabFilter");
 
-			if (welcome) {
-				const welcomeClickListener = (event) => {
-					event.preventDefault();
-					event.stopPropagation();
-					appss.removeEventListener("click", welcomeClickListener);
-				};
+			// if (welcome) {
+			// 	const welcomeClickListener = (event) => {
+			// 		event.preventDefault();
+			// 		event.stopPropagation();
+			// 		appss.removeEventListener("click", welcomeClickListener);
+			// 	};
 				
-				appss.addEventListener("click", welcomeClickListener);
-			}
+			// 	appss.addEventListener("click", welcomeClickListener);
+			// }
 
 		let header2 = this.getElement('aonHeaderWeb');
 		header2.className = 'aonHeader aonHeaderStart';

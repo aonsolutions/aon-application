@@ -199,31 +199,30 @@ export class AonParent extends AonElement {
 		let welcomeDiv = this.createDiv();
 		welcomeDiv.className = CSS.AON_WELCOME_DIV;
 		let welcomeSpan = this.createSpan();
-		welcomeSpan.innerHTML = MSG.WELCOME;
+		welcomeSpan.innerHTML = MSG.WELCOME_TO_AON_SOLUTIONS;
 		welcomeSpan.style.fontSize = '24px';
 		welcomeSpan.style.fontWeight = '600';
 		welcomeDiv.appendChild(welcomeSpan);
-		
-
+	
 		let companyDiv = this.createDiv();
 		companyDiv.className = CSS.AON_COMPANY_DIV;
-
+	
 		let companyTitleDiv = this.createDiv();
 		companyTitleDiv.className = CSS.AON_COMPANY_TITLE_DIV;
-
+	
 		let userOption = new AonDialogMenu();
 		userOption.id = 'aonCompanyDialogOption';
 		this.appendChild(userOption);
-
+	
 		let companyTitleSpan = this.createSpan();
 		companyTitleSpan.innerHTML = MSG.COMPANY_SELECTION;
 		companyTitleSpan.classList.add("aonCompanyTitleSpan");
 		companyTitleDiv.appendChild(companyTitleSpan);
-		
-		
+	
 		let companyFilterTabDiv = this.createDiv();
 		companyFilterTabDiv.id = this.COMPANY_FILTER_TAB;
 		companyFilterTabDiv.className = CSS.AON_TAB;
+	
 		let filterOptions = [{
 				id: 'active',
 				name: MSG.ACTIVES,
@@ -251,55 +250,68 @@ export class AonParent extends AonElement {
 				fn: () => this.select({id: 'office', despacho:true, type:"OFFICE"})
 			}
 		];	
+	
 		for( let filterOption of filterOptions ){
 			let companyFilterTabA = this.createElement(TAG.A);
 			companyFilterTabA.className = CSS.AON_TAB_ITEM;
 			companyFilterTabA.addEventListener(EVENT.CLICK, (ev) => filterOption.fn(ev) );
-
+	
 			let companyFilterTabSpan = this.createElement(TAG.SPAN);
 			companyFilterTabSpan.innerHTML = filterOption.name; 
 			companyFilterTabSpan.className = CSS.AON_TAB_ITEM_TEXT;
 			companyFilterTabSpan.id = `${this.COMPANY_FILTER_TAB}-${filterOption.id}`; 
 			companyFilterTabA.appendChild(companyFilterTabSpan);
-
+	
 			companyFilterTabDiv.appendChild(companyFilterTabA);	
 		}
-
+	
 		companyDiv.appendChild(companyTitleDiv);
 		companyDiv.appendChild(companyFilterTabDiv);
-		
+	
 		let ul = this.createElement(TAG.UL);
 		ul.id = "UlCompanies";
 		ul.classList.add(CSS.AON_UL);
 		ul.classList.add(CSS.NO_SCROLLBAR);
 		ul.style.overflowY = 'auto';		
 		ul.style.width = "100%";
-		
+	
 		companyDiv.appendChild(ul);
 		ul.addEventListener("scroll", () => {
 			let scrollTop = ul.scrollTop;					
 			let offsetHeight = ul.offsetHeight; 					
 			let scrollHeight = ul.scrollHeight;	
 			
-			// load more before reach end 
 			if ( ( scrollTop +  offsetHeight ) >= ( 0.75 * scrollHeight) ) {
 				this.loadMore();
 			}
 		});
-		
+	
 		parentDiv.appendChild(welcomeDiv);
 		parentDiv.appendChild(companyDiv);		
-
-	    const interval = setInterval(() => {
+	
+		const interval = setInterval(() => {
 			let totalBottom = this.getTotalBottom(ul);
 			let totalOffsetTop = this.getTotalOffsetTop(ul);
 			if ( totalOffsetTop  ) {
 				clearInterval(interval);
 				ul.style.maxHeight = `calc(100vh - ${totalOffsetTop + totalBottom }px)`; 
 			}
-	    }, 100);
-		
+		}, 100);
+	
+		const appsInterval = setInterval(() => {
+			let apps = this.getElement("applications");
+			if (apps) {
+				clearInterval(appsInterval); 
+				apps.addEventListener(EVENT.CLICK, () => {
+					let companyy = this.getElement("aonHeaderCompanyListButton");
+					let companyyy = this.getElement("aonHeaderCompanyList");
+					companyy.style.display = "block";
+					companyyy.style.display = "block";
+				});
+			}
+		}, 100); 
 	}
+	
 
 	loadMore() {
 		//TODO: this.getApplication().startLoader();
@@ -411,7 +423,7 @@ export class AonParent extends AonElement {
 		
 		this.clearElementById('aonMenu');
 		let aonMenu = this.getElement('aonMenu');
-		aonMenu.init();
+		aonMenu.init().then(() => aonMenu.open());
 
 		getUser().then(user => {
 			localStorage.setItem('aon_domain_login', user.login);

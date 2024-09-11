@@ -272,6 +272,7 @@ export const MOVED_TO_TRASH = 'Paperontzira mugitu da.';
 export const MY_DATA = 'Nire Datuak';
 export const MY_MANAGER = 'Nire Gestorea';
 export const MY_USER = 'Nire Erabiltzailea';
+export const MAGIC_LINK = 'Sarbide-esteka posta elektronikoz bidaltzen';
 
 // ----- N
 
@@ -406,7 +407,7 @@ export const SHARED = 'Partekatuak';
 export const SHOW_FILE = 'Fitxategia Erakutsi';
 export const SIDE_MENU = 'Alboko menua';
 export const SIGN_IN = 'Saioa Hasi';
-export const SIGN_IN_WITHOUT_PASSWORD = 'Saioa Hasi Pasahitzik gabe';
+export const SIGN_IN_WITHOUT_PASSWORD = 'Pasahitzik gabe';
 export const SIGN_IN_WITH_CERTIFICATE = 'Saioa Hasi Ziurtagiriarekin';
 export const SII = 'SII';
 export const SII_TICKETBAI = 'SII / TicketBAI';
@@ -432,6 +433,7 @@ export const TAG = 'Etiketa';
 export const TAGS = 'Etiketak';
 export const TAX = 'Zerga';
 export const TAX_BASE = 'Zerga-Oinarria';
+export const TAXES = 'Zergak';
 export const TAXES_DETAIL = 'Zergak';
 export const TEST_ENVIRONMENT = 'Proba-ingurunea';
 export const TICKET = 'Tiket';
@@ -482,6 +484,7 @@ export const VIEW_PAYROLLS = "Ver nóminas";
 export const WAREHOUSE = 'Biltegia';
 export const WAREHOUSES = 'Biltegiak';
 export const WEB = 'Web';
+export const WELCOME_TO_AON_SOLUTIONS = "Ongi etorri aon Solutions-era";
 export const WITHHOLDING = 'Atxikipen';
 export const WORKGROUP = 'Lan Taldea';
 export const WORKSHOPS = 'Tailerrak';

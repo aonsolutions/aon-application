@@ -60,14 +60,12 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import net.aonsolutions.aon.api.error.AonApiException;
 import net.aonsolutions.aon.api.ewok.AonApiData;
-import net.aonsolutions.aon.tedi.invofox.OCRBlankValueException;
 import net.aonsolutions.aon.tedi.invofox.OCRInvalidValueException;
 import net.aonsolutions.aon.tedi.invofox.OCRInvoiceBuilder;
 import net.aonsolutions.aon.tedi.invofox.OCROwnerNotFoundException;
 import net.aonsolutions.aon.tedi.invofox.OCRResult;
 import net.aonsolutions.aon.tedi.invofox.OCRTooManyOwnersException;
 import net.aonsolutions.aon.tedi.invofox.OCRUndefinedTypeException;
-import net.aonsolutions.aon.tedi.invofox.OCRZeroValueException;
 import net.aonsolutions.invofox.OCRCompanyParams;
 import net.aonsolutions.invofox.OCRDocumentsParams;
 import net.aonsolutions.invofox.OCRInvofox;
@@ -190,8 +188,11 @@ public class InvofoxServlet extends AonApiHttpServlet {
 
 			RawdocType type = json.opt("type") != null && json.optString("type").equalsIgnoreCase("emitida") 
 					? RawdocType.OUTPUT : RawdocType.INPUT;
-			RawdocStatus status = getRawdocStatus(json.optString("status")); 
-			json.put("status", status.getTediName());
+			String ocrStatus = JsonUtils.getString(json, IJsonNames.STATUS);
+			RawdocStatus status = getRawdocStatus(ocrStatus); 
+			json.put("ocrStatus", ocrStatus);
+			json.put(IJsonNames.STATUS, status.getTediName());
+
 			
 			rawdoc = new Rawdoc()
 				.setDomain(api.getDomain().getId())
@@ -311,10 +312,8 @@ public class InvofoxServlet extends AonApiHttpServlet {
 					.map(invoice -> invoice.put("token", token))
 					.map(invoice -> invoice.put("file", getFileJSON(ocrDocument)))
 					.map(invoice -> invoice.put("messages", getMessages(ocrDocument, company)))
-					.map(invoice -> invoice.put("status",
-							toString(ocrDocument.getPublicState().orElse(OCRSeverity.error))))
-					.map(invoice -> invoice.put("insight",
-							new JSONObject().put("invofoxId", ocrDocument.getId().orElse(""))))
+					.map(invoice -> invoice.put("status", toString(ocrDocument.getPublicState().orElse(OCRSeverity.error))))
+					.map(invoice -> invoice.put("insight", new JSONObject().put("invofoxId", ocrDocument.getId().orElse(""))))
 					.orElseThrow(() -> new AonApiException("No such document"));
 		}
 	}

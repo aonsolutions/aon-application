@@ -18,7 +18,9 @@ public class AonCustomDockLayout extends DockLayoutPanel {
 	// Toolbar
 	private Label titleLabel;
 	
-	private HTMLPanel toolbarButtonsRight = new HTMLPanel(EMPTY_STRING);
+	private HTMLPanel toolbarLeft = new HTMLPanel(EMPTY_STRING);
+	
+	private HTMLPanel toolbarRight = new HTMLPanel(EMPTY_STRING);
 	private TextBox searchTextBox = new TextBox();
 	private HTMLPanel searchPanel = new HTMLPanel(EMPTY_STRING);
 	private AonToolbarButton filterButton = new AonToolbarButton("Filtros", AON.CSS.aonIconFilterList());
@@ -54,20 +56,11 @@ public class AonCustomDockLayout extends DockLayoutPanel {
 		toolbar.getElement().getStyle().setProperty("padding", "0 1rem");
 		
 		// Left
-		HTMLPanel toolbarLeft = new HTMLPanel(EMPTY_STRING);
 		toolbarLeft.addStyleName(AON.CSS.aonItemFlex());
-		
-		titleLabel = new Label(title);
-		titleLabel.getElement().getStyle().setProperty("font-size", "1.1rem");
-		toolbarLeft.add(titleLabel);
-		
 		toolbar.add(toolbarLeft);
 		
 		// Right
-		HTMLPanel toolbarRight = new HTMLPanel(EMPTY_STRING);
 		toolbarRight.addStyleName(AON.CSS.aonItemFlex());
-		
-		toolbarButtonsRight.addStyleName(AON.CSS.aonItemFlex());
 		
 		searchPanel.setStyleName(AON.CSS.aonCustomSearchBox());
 		
@@ -80,6 +73,9 @@ public class AonCustomDockLayout extends DockLayoutPanel {
 		searchPanel.add(searchButton);
 		searchPanel.add(searchTextBox);
 		
+		titleLabel = new Label(title);
+		titleLabel.setStyleName(AON.CSS.aonToolbarTitle());
+		
 		filterButton.addClickHandler(e -> {
 			isRightMenuShown = !isRightMenuShown;
 			setWidgetSize(rightMenuScroll, isRightMenuShown ? 350.00 : 0.00);
@@ -89,8 +85,8 @@ public class AonCustomDockLayout extends DockLayoutPanel {
 			filterButton.addStyleName(isRightMenuShown ? AON.CSS.aonIconFilterListOff() : AON.CSS.aonIconFilterList());
 		});
 		
-		toolbarRight.add(toolbarButtonsRight);
 		toolbarRight.add(searchPanel);
+		toolbarRight.add(titleLabel);
 		toolbarRight.add(filterButton);
 		
 		toolbar.add(toolbarRight);
@@ -103,19 +99,23 @@ public class AonCustomDockLayout extends DockLayoutPanel {
 	}
 	
 	public void addToolbarButton(Widget widget) {
-		toolbarButtonsRight.add(widget);
+		toolbarLeft.add(widget);
 	}
 
 	public int getToolbarButtonCount() {
-		return toolbarButtonsRight.getWidgetCount();
+		return toolbarLeft.getWidgetCount();
 	}
 	
 	public HTMLPanel getToolbarButtonPanel() {
-		return toolbarButtonsRight;
+		return toolbarLeft;
 	}
 	
 	public TextBox getSearchTextBox() {
 		return searchTextBox;
+	}
+	
+	public void setSearchPlaceholder(String placeholder) {
+		searchTextBox.getElement().setPropertyString("placeholder", placeholder);
 	}
 	
 	public void hideSearchWidget() {

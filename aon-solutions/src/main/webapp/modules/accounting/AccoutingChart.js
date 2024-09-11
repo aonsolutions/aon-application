@@ -772,6 +772,7 @@ const colChart = (div, data, selectedPeriod, isMobile, filter, aonIframe, leyend
     function getColLegend(isMobile) {
       //LEGEND
       let legend = setStyles(document.createElement(TAG.TABLE), {marginTop : "auto", marginBottom : "auto"});
+      legend.classList.add("accountingChatLegend");
 
       const colorSize = 15;
       const legendColData = [

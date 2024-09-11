@@ -425,7 +425,7 @@ export class AonDocumental extends AonElement {
     aonDocument(doc) {
       let application = this.getApplication();
       if(this.isMobile()) {
-        application.setContentHTML(`<aon-mobile-document document='${JSON.stringify(doc)}'> </aon-mobile-invoice>`);
+        application.setContentHTML(`<aon-mobile-document document='${JSON.stringify(doc)}'> </aon-mobile-document>`);
       } else {
         application.setContentHTML(`<aon-document document='${JSON.stringify(doc)}'> </aon-document>`);
       }

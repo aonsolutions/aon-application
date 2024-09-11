@@ -19,10 +19,10 @@ import { AonToast } from "../../components/aon-toast.js";
 import { AonDialogMenu } from "../../components/aon-dialog-menu.js";
 import { Language } from "../../models/Language.js";
 import { AonEmail } from "../../components/aon-email.js";
-import { AonNewInput } from "../../components/aon-new-input.js";
 import { AonMobileParent } from "../company/aon-mobile-parent.js";
 import { AonParent } from "aonparent";
 import { AonIconButton } from "../../components/aon-icon-button.js";
+import { createInput } from "../../components/CreateComponent.js";
 
 export class AonNewLogin extends AonElement {
   tag;
@@ -123,7 +123,7 @@ export class AonNewLogin extends AonElement {
     })
     divFormContent.appendChild(userInput);
 
-    let passwordInput = this.createAonElement(new AonNewInput(), 'aonLoginPassword', MSG.PASSWORD);
+    let passwordInput = createInput('aonLoginPassword', MSG.PASSWORD);
     passwordInput.setRequired(true);
     passwordInput.type = 'password';
     divFormContent.appendChild(passwordInput);
@@ -152,10 +152,12 @@ export class AonNewLogin extends AonElement {
     let magicLinkButton = this.createElement(TAG.BUTTON);
     magicLinkButton.id = 'aonLoginMagicLink';
     magicLinkButton.className = CSS.AON_MAGIC_BUTTON;
-    magicLinkButton.title = MSG.SIGN_IN_WITHOUT_PASSWORD;
+    magicLinkButton.title = MSG.MAGIC_LINK;
     magicLinkButton.innerHTML = MSG.SIGN_IN_WITHOUT_PASSWORD.toUpperCase();
     magicLinkButton.disabled = true;
     magicLinkButton.addEventListener(EVENT.CLICK, () => this.magicLink(userInput.value));
+    magicLinkButton.addEventListener(EVENT.MOUSEOVER, () => signIn.className = "aonMagicButtonHover");
+    magicLinkButton.addEventListener("mouseout", () => signIn.className = CSS.AON_LOGIN_BUTTON);
     divFormContent.appendChild(magicLinkButton);
 
     // // Form Aon Version
@@ -253,6 +255,8 @@ export class AonNewLogin extends AonElement {
         return MSG.ENGLISH;
       } else if(LS.getLanguage() && Language.GALICIAN === LS.getLanguage()){
         return MSG.GALICIAN;
+      } else if(LS.getLanguage() && Language.FRENCH === LS.getLanguage()){
+        return MSG.FRENCH;
       } else return MSG.SPANISH;
   }
 
@@ -266,22 +270,23 @@ export class AonNewLogin extends AonElement {
     } else {
       this.getElement('logosMobiles').style.display = 'none';
     }
-
+  
     let aonManifest = this.getElement("aonManifest");
     getManifest().then(
       (manifest) => (aonManifest.innerHTML = MSG.VERSION + ": " + manifest.build_date)
     );
-
+  
     let username = this.getElement("aonLoginUser");
     username.addEventListener(EVENT.KEYUP, (event) => this.onEnter(event));
     let password = this.getElement("aonLoginPassword");
     password.addEventListener(EVENT.KEYUP, (event) => this.onEnter(event));
-
+  
     let signin = this.getElement("aonLoginSignin");
     signin.addEventListener(EVENT.CLICK, () => this.signin());
     
     if(!this.isMobile()) username.focus();
   }
+  
 
   buildAppLogo(){
     const div  = this.getElement('logosMobiles');
@@ -377,7 +382,7 @@ export class AonNewLogin extends AonElement {
         this.getModule().startLoading();
         // LS.setLanguage(Language.SPANISH);
 
-        LS.setLeftMenu(true);
+        // LS.setLeftMenu(true);
         LS.setTopMenu(false);
         LS.setAppMenu(false);
         getCompanies().then(companies => {
