@@ -441,6 +441,9 @@ public class Invoice implements Serializable, HasAudit {
 		return FinanceUtil.getDocumentNumber(type, series, number);
 	}
 	
+	public String getSeriesNumber() {
+		return FinanceUtil.getSeriesNumber(series, number);
+	}
 	public String getComments() {
 		return comments;
 	}
@@ -767,27 +770,25 @@ public class Invoice implements Serializable, HasAudit {
 	
 	public List<InvoiceError> getMessages() {
 	    if ( messages == null ) {
-		messages = new LinkedList<>();
+	    	messages = new LinkedList<>();
 	    }
 	    return messages;
 	}
-	
+	public boolean hasMessages() {
+		return AonCollectionUtils.isNotEmpty(messages);
+	}
 	public Invoice setMessages(LinkedList<InvoiceError> messages) {
 	    this.messages = messages;
 	    return this;
 	}
-	
 	public Invoice addMessage(InvoiceError message) {
-	    if ( messages == null ) {
-		messages = new LinkedList<>();
-	    }
-	    messages.add(message);
+	    getMessages().add(message);
 	    return this;
 	}
-
 	public void clearMessages() {
 		this.messages = new LinkedList<>();		
 	}
+	
 	
 	public boolean isSelected() {
 		return selected;

@@ -2,6 +2,7 @@ package com.esferalia.aon.occam.test;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -133,6 +134,10 @@ public class Asserts {
 	public static void assertEmptyCollection(String msg,Collection<?> actual) {
 		assertNotNull(actual, msg);		
 		assertTrue(actual.isEmpty(), msg);
+	}
+	public static void assertNotEmptyCollection(String msg,Collection<?> actual) {
+		assertNotNull(actual, msg);		
+		assertFalse(actual.isEmpty(), msg);
 	}
 	
 	public static void assertEqualsCollection(String msg,Collection<?> expected, Collection<?> actual) {

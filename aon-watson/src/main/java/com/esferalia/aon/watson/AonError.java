@@ -5,8 +5,6 @@ import java.text.MessageFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import com.esferalia.aon.watson.util.AonStringUtils;
-
 public enum AonError implements Serializable{
 	// Á --> \u00C1 á --> \u00E1
 	// É --> \u00C9 é --> \u00E9
@@ -174,16 +172,17 @@ public enum AonError implements Serializable{
 	,AMORTIZATION_TYPE_PARAMS_NULL("Los parametros son nulos")
 	
 	// --------------------------------------------- INVOICE
+	,INVOICE_SAVE_ERROR("No se ha podido grabar la factura")
 	,INVOICE_EMPTY_DOMAIN("El dominio de la factura es un dato obligatorio, no puede estar vac\u00EDa")
 	,INVOICE_EMPTY_DATE("La fecha de la factura es un dato obligatorio, no puede estar vac\u00EDa")
 	,INVOICE_EMPTY_TAX_DATE("La fecha I.V.A. de la factura es un dato obligatorio, no puede estar vac\u00EDa")
 	,INVOICE_EMPTY_TYPE("El tipo de la factura es un dato obligatorio, no puede estar vac\u00EDa")
 	,INVOICE_EMPTY_REGISTRY("El titular de la factura es un dato obligatorio, no puede estar vac\u00EDa")
 	,INVOICE_EMPTY_SCOPE("El \u00E1mbito de la factura es un dato obligatorio, no puede estar vac\u00EDa")
-	,INVOICE_DUPLICATED_SERIES_NUMBER("Ya existe una factura con esa Serie/N\u00FAmero. [{0}/{1}]")
+	,INVOICE_DUPLICATED_SERIES_NUMBER("Ya existe una factura con esa Serie/N\u00FAmero. [{0}]")
 
 	
-	,INVOICE_DUPLICATED_REFERENCE_CODE("Ya existe una factura del titular con ese N\u00FAmero de referencia.")
+	,INVOICE_DUPLICATED_REFERENCE_CODE("Ya existe una factura del titular con ese N\u00FAmero de referencia. [Factura {0}]")
 	,INVOICE_OPERATIONS_DEADLINE("La fecha de la factura rebasa la fecha l\u00EDmite de operaciones indicada en la configuraci\u00F3n de empresa. ")
 	,INVOICE_TEN_YEARS("El a\u00F1o de la factura no es v\u00E1lido, es anterior diez a\u00F1os al actual") 
 	,INVOICE_EMPTY_SOURCE("No se ha indicado un origen (INVOICE_DETAIL.SOURCE) en la l\u00EDnea de factura (Error interno)")

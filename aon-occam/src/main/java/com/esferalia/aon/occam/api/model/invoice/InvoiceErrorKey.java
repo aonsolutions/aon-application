@@ -3,6 +3,12 @@ package com.esferalia.aon.occam.api.model.invoice;
 import java.io.Serializable;
 
 public enum InvoiceErrorKey implements Serializable {
+	GENERIC("Gen\u00E9rico") {
+		@Override
+		public <T> void visit(InvoiceErrorKeyVisitor<T> visitor, T t) {
+			visitor.visitGeneric(t);
+		}
+	},
 	DOMAIN("Dominio") {
 		@Override
 		public <T> void visit(InvoiceErrorKeyVisitor<T> visitor, T t) {

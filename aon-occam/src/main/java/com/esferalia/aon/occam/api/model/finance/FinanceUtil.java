@@ -14,6 +14,15 @@ public class FinanceUtil {
 		documentNumber += AonStringUtils.leftPad(AonNumberUtils.toString(number), 6, "0");
 		return documentNumber;
 	}
+	
+	public static String getSeriesNumber(String series, Integer number) {
+		String seriesNumber = AonStringUtils.defaultIfBlank(series);
+		if (AonStringUtils.isNotBlank(series)) {
+			seriesNumber += "/";
+		}
+		seriesNumber += AonStringUtils.leftPad(AonNumberUtils.toString(number), 6, "0");
+		return seriesNumber;
+	}
 
 
 }

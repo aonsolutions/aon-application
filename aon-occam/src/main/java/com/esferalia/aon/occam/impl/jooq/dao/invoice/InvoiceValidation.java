@@ -20,6 +20,8 @@ import com.esferalia.aon.occam.api.model.finance.InvoiceCommunicationType;
 import com.esferalia.aon.occam.api.model.finance.InvoiceInfo;
 import com.esferalia.aon.occam.api.model.finance.TbaiConfiguration;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModel;
+import com.esferalia.aon.occam.api.model.invoice.InvoiceErrorKey;
+import com.esferalia.aon.occam.api.model.invoice.InvoiceErrorMessages;
 import com.esferalia.aon.occam.api.model.type.DataResponseSource;
 import com.esferalia.aon.occam.impl.jooq.dao.DataResponseDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.InvoiceSIIDAO;
@@ -41,24 +43,30 @@ public class InvoiceValidation {
 	 * El dominio de la factura no puede estar vacio.
 	 */
 	private static final BiConsumer<AONContext,Invoice> EMPTY_DOMAIN = (ctx,inv) -> {
-		if (inv.getDomain() == null || inv.getDomain() == 0) 
-			throw new AonCoreException(AonError.EMPTY_DOMAIN.getMessage());
+		if (inv.getDomain() == null || inv.getDomain() == 0) {
+			inv.addMessage( InvoiceErrorMessages.C001.err(InvoiceErrorKey.DOMAIN) );
+			throw new AonCoreException(AonError.INVOICE_SAVE_ERROR.getMessage());
+		}
 	};
 	
 	/**
 	 * La fecha de la factura es un dato obligatorio.
 	 */
 	private static final BiConsumer<AONContext,Invoice> EMPTY_DATE = (ctx,inv) -> {
-		if (inv.getIssueDate() == null)
-			throw new AonCoreException(AonError.INVOICE_EMPTY_DATE.getMessage());
+		if (inv.getIssueDate() == null) {
+			inv.addMessage( InvoiceErrorMessages.C001.err(InvoiceErrorKey.ISSUE_DATE) );
+			throw new AonCoreException(AonError.INVOICE_SAVE_ERROR.getMessage());
+		}
 	};
 
 	/**
 	 * La fecha IVA de la factura es un dato obligatorio.
 	 */
 	private static final BiConsumer<AONContext,Invoice> EMPTY_TAX_DATE = (ctx,inv) -> {
-		if (inv.getTaxDate() == null)
-			throw new AonCoreException(AonError.INVOICE_EMPTY_TAX_DATE.getMessage());
+		if (inv.getTaxDate() == null) {
+			inv.addMessage( InvoiceErrorMessages.C001.err(InvoiceErrorKey.TAX_DATE) );
+			throw new AonCoreException(AonError.INVOICE_SAVE_ERROR.getMessage());
+		}
 	};
 
 	/**
@@ -66,7 +74,8 @@ public class InvoiceValidation {
 	 */
 	private static final BiConsumer<AONContext,Invoice> EMPTY_INVOICE_TYPE = (ctx,inv) -> {
 		if (inv.getType() == null) {
-			throw new AonCoreException(AonError.INVOICE_EMPTY_TYPE.getMessage());
+			inv.addMessage( InvoiceErrorMessages.C001.err(InvoiceErrorKey.TYPE) );
+			throw new AonCoreException(AonError.INVOICE_SAVE_ERROR.getMessage());
 		}
 	};
 	
@@ -75,7 +84,8 @@ public class InvoiceValidation {
 	 */
 	private static final BiConsumer<AONContext,Invoice> EMPTY_INVOICE_REGISTRY = (ctx,inv) -> {
 		if (inv.getRegistry() == null ) {
-			throw new AonCoreException(AonError.INVOICE_EMPTY_REGISTRY.getMessage());
+			inv.addMessage( InvoiceErrorMessages.C001.err(InvoiceErrorKey.REGISTRY) );
+			throw new AonCoreException(AonError.INVOICE_SAVE_ERROR.getMessage());
 		}
 	};
 	
@@ -84,7 +94,8 @@ public class InvoiceValidation {
 	 */
 	private static final BiConsumer<AONContext,Invoice> EMPTY_INVOICE_SCOPE = (ctx,inv) -> {
 		if (inv.getScope() == null || inv.getScope().getId() == null ) {
-			throw new AonCoreException(AonError.INVOICE_EMPTY_SCOPE.getMessage());
+			inv.addMessage( InvoiceErrorMessages.C001.err(InvoiceErrorKey.SCOPE) );
+			throw new AonCoreException(AonError.INVOICE_SAVE_ERROR.getMessage());
 		}
 	};
 	
@@ -93,7 +104,8 @@ public class InvoiceValidation {
 	 */
 	private static final BiConsumer<AONContext,Invoice> EMPTY_REFERENCE_CODE = (ctx,inv) -> {
 		if (!inv.isSales() && AonStringUtils.isBlank( inv.getReferenceCode()) ) {
-			throw new AonCoreException(AonError.INVOICE_EMPTY_REFERENCE_CODE.getMessage());
+			inv.addMessage( InvoiceErrorMessages.C001.err(InvoiceErrorKey.REFERENCE_CODE) );
+			throw new AonCoreException(AonError.INVOICE_SAVE_ERROR.getMessage());
 		}
 	};
 
@@ -102,7 +114,8 @@ public class InvoiceValidation {
 	 */
 	private static final BiConsumer<AONContext,Invoice> EMPTY_TRANSACTION = (ctx,inv) -> {
 		if (inv.getTransaction() == null) {
-			throw new AonCoreException(AonError.INVOICE_EMPTY_TRANSACTION.getMessage());
+			inv.addMessage( InvoiceErrorMessages.C001.err(InvoiceErrorKey.TRANSACTION) );
+			throw new AonCoreException(AonError.INVOICE_SAVE_ERROR.getMessage());
 		}
 	};
 
@@ -120,8 +133,8 @@ public class InvoiceValidation {
 					.and(INVOICE.NUMBER.eq(inv.getNumber()))
 					.and(inv.getId() == null ? DSL.trueCondition() : INVOICE.ID.ne(inv.getId()))
 					.and(INVOICE.TYPE.eq(inv.getType().value())))) {
-			throw new AonCoreException(AonError.INVOICE_DUPLICATED_SERIES_NUMBER.getMessage()					
-				+ "["+ (AonStringUtils.isBlank(inv.getSeries())? "" : (inv.getSeries() + "/") + inv.getNumber()) +"]");
+			inv.addMessage( InvoiceErrorMessages.C005.err(InvoiceErrorKey.DUPLICATED_SERIES_NUMBER) );
+			throw new AonCoreException(AonError.INVOICE_SAVE_ERROR.getMessage());
 		}
 	};
 
@@ -129,19 +142,20 @@ public class InvoiceValidation {
 	 * En facturas recibidas, el Domain/Registry/Numero Referencia no puede estar duplicado
 	 */
 	private static final BiConsumer<AONContext,Invoice> DUPLICATED_REFERENCE_CODE = (ctx,inv) -> {
-		if (!inv.isSales() || (inv.getReferenceCode() != null && !"".equals(inv.getReferenceCode()))) {
-			if (ctx.getDslContext().fetchExists( 
-					ctx.getDslContext().selectOne()
-					.from(INVOICE)
-					.where(INVOICE.DOMAIN.eq(inv.getDomain()))
-					.and(INVOICE.REGISTRY.eq(inv.getRegistry()))
-					.and(INVOICE.REFERENCE_CODE.eq(inv.getReferenceCode()))
-					.and(INVOICE.TYPE.eq(inv.getType().value()))
-					.and(inv.getId() == null ? DSL.trueCondition() : INVOICE.ID.ne(inv.getId()))					
-					.and(DSL.year(INVOICE.ISSUE_DATE).eq(AonDateUtils.getYear( inv.getIssueDate())))
-				)) {
-				throw new AonCoreException("[Factura "+ inv.getReferenceCode()+ "] " + AonError.INVOICE_DUPLICATED_REFERENCE_CODE.getMessage());
-			}
+		if (inv.isNotSales() && 
+			ctx.getDslContext().fetchExists( 
+				ctx.getDslContext().selectOne()
+				.from(INVOICE)
+				.where(INVOICE.DOMAIN.eq(inv.getDomain()))
+				.and(INVOICE.REGISTRY.eq(inv.getRegistry()))
+				.and(INVOICE.REFERENCE_CODE.eq(inv.getReferenceCode()))
+				.and(INVOICE.TYPE.eq(inv.getType().value()))
+				.and(inv.getId() == null ? DSL.trueCondition() : INVOICE.ID.ne(inv.getId()))					
+				.and(DSL.year(INVOICE.ISSUE_DATE).eq(AonDateUtils.getYear( inv.getIssueDate())))
+			)
+		) {
+			inv.addMessage( InvoiceErrorMessages.C006.err(InvoiceErrorKey.DUPLICATED_REFERENCE_CODE) );
+			throw new AonCoreException(AonError.INVOICE_SAVE_ERROR.getMessage());
 		}
 	};
 
@@ -152,8 +166,10 @@ public class InvoiceValidation {
 	 */
 	private static final BiConsumer<AONContext,Invoice> OPERATIONS_DEADLINE = (ctx,inv) -> {
 		Date deadline = ctx.getConfiguration().getOperationsDeadline();
-		if (deadline != null && deadline.after(inv.getIssueDate())) 
-			throw new AonCoreException(AonError.INVOICE_OPERATIONS_DEADLINE.getMessage());
+		if (AonDateUtils.isAfter(deadline, inv.getIssueDate())) {
+			inv.addMessage( InvoiceErrorMessages.C007.err(InvoiceErrorKey.ISSUE_DATE) );
+			throw new AonCoreException(AonError.INVOICE_SAVE_ERROR.getMessage());
+		}
 	};
 	
 	/**
@@ -163,7 +179,8 @@ public class InvoiceValidation {
 		int thisYear = AonDateUtils.getYear(new Date());
 		int invoiceYear = AonDateUtils.getYear(inv.getIssueDate());
 		if (invoiceYear < (thisYear-10) || invoiceYear > (thisYear+1)) {
-			throw new AonCoreException(AonError.INVOICE_TEN_YEARS.getMessage());
+			inv.addMessage( InvoiceErrorMessages.C008.err(InvoiceErrorKey.ISSUE_DATE) );
+			throw new AonCoreException(AonError.INVOICE_SAVE_ERROR.getMessage());
 		}
 	};
 	
@@ -180,7 +197,8 @@ public class InvoiceValidation {
 				}
 			}
 			if (!AonMathUtils.equals(inv.getTotal(), financesTotal )) {
-				throw new AonCoreException(AonError.INVOICE_FINANCES_AMOUNT.getMessage());	
+				inv.addMessage( InvoiceErrorMessages.C020.err(InvoiceErrorKey.FINANCE_TOTAL_AMOUNT) );
+				throw new AonCoreException(AonError.INVOICE_SAVE_ERROR.getMessage());
 			}
 		}
 	};
@@ -189,8 +207,10 @@ public class InvoiceValidation {
 	 * Las facturas rectificadas no se pueden borrar.
 	 */
 	private static final BiConsumer<AONContext,Invoice> RECTIFIED_INVOICE = (ctx,inv) -> {
-		if (inv.isRectified()) 
+		if (inv.isRectified()) {
+			inv.addMessage( InvoiceErrorMessages.C050.err( InvoiceErrorKey.GENERIC) );
 			throw new AonCoreException(AonError.INVOICE_CANT_DELETE_RECTIFIED.getMessage());
+		}
 	};
 
 	/**
@@ -274,10 +294,9 @@ public class InvoiceValidation {
 			.andThen(CHECK_FINANCES)
 			.andThen(ALCATRAZ)
 			.accept(ctx,inv);
-
 	}
 
-	static void validateInvoiceDeletion(AONContext ctx, Invoice inv) {
+	static void validateDeletion(AONContext ctx, Invoice inv) {
 		RECTIFIED_INVOICE
 		.andThen(DUA_LINKED_INVOICE)
 		.andThen(OPERATIONS_DEADLINE)

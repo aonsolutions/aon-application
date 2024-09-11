@@ -1,6 +1,7 @@
 package com.esferalia.aon.occam.api.model.invoice;
 
 public interface InvoiceErrorKeyVisitor<T> {
+	void visitGeneric(T t);
 	void visitDomain(T t);
 	void visitType(T t);
 	void visitSeries(T t);

@@ -84,6 +84,11 @@ public class TediContextVisitor implements InvoiceErrorKeyVisitor<ICallback> {
 	}
 
 	@Override
+	public void visitGeneric(ICallback t) {
+		noVisit();
+	}
+	
+	@Override
 	public void visitIssueDate(ICallback callback) {
 		showDateDialog(AON.MSG.issueDate(), callback.getResult().getInvoice().getIssueDate(), new ITediCallback<Date>() {
 			@Override
@@ -138,7 +143,7 @@ public class TediContextVisitor implements InvoiceErrorKeyVisitor<ICallback> {
 			}
 		});
 	}
-
+	
 	@Override
 	public void visitType(ICallback callback) {
 		noVisit();

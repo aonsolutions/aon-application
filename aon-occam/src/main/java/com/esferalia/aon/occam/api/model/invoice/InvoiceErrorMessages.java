@@ -21,7 +21,7 @@ public enum InvoiceErrorMessages implements Serializable {
 	C005("Ya existe una factura con esa Serie/N\u00FAmero."),
 	C006("Ya existe una factura del titular con ese N\u00FAmero de referencia."),
 	C007("La fecha de la factura rebasa la fecha l\u00EDmite de operaciones indicada en la configuraci\u00F3n de empresa. "),
-	C008("El a\u00F1o de la factura no es v\u00E1lido, es anterior cinco a\u00F1os al actual"),
+	C008("El a\u00F1o de la factura no es v\u00E1lido, es muy anterior o muy posterior al actual"),
 	C009("No se ha encontrado un {0} v\u00E1lido para el titular \"{1}\""),
 	C010("La factura no tiene l\u00EDneas de detalle"),
 	C011("La factura tiene varios posibles titulares"),
@@ -33,6 +33,9 @@ public enum InvoiceErrorMessages implements Serializable {
 	C017("No se han podido determinar bases y cuotas de la factura"),
 	C018("No se ha podido determinar el tipo de factura"),
 	C019("La fecha del vencimiento no es correcta."),
+	C020("La suma de los vencimiento no coincide con el total factura."),
+	
+	C050("No es posible borrar la factura porque est\u00E1 rectificada. Borre primero la factura rectificativa."),
 	
 	// Mensajes previos a la contabilización
 	C200("No se puede Contabilizar. Hay un descuadre entre el total factura y la suma total de los vencimientos."),

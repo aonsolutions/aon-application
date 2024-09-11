@@ -527,7 +527,7 @@ public class InvoiceDAO {
 		ctx.checkWrite();
 		Invoice invoice = getFull(ctx, id)
 			.orElseThrow(() -> new AonCoreException(AonError.INVOICE_NOT_FOUND.getMessage()));
-		InvoiceValidation.validateInvoiceDeletion(ctx, invoice);
+		InvoiceValidation.validateDeletion(ctx, invoice);
 		InvoiceDAO.onDeleteRectifier(ctx, invoice);
 		InvoiceDetailDAO.deleteInvoice(ctx, invoice.getId());
 		InvoiceDAO.onDeleteDUA(ctx, invoice);
