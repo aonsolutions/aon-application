@@ -65,7 +65,6 @@ public class MainContrataContractObject {
 		});
 	}
 	
-
 	public void getEmployeesInfo(ContractParams params, Consumer<List<EmployeeContractInfo>> success, Consumer<Throwable> failure) {
 		
 		impl.getEmployees(params, new AsyncCallback<List<EmployeeContractInfo>>() {
@@ -80,6 +79,19 @@ public class MainContrataContractObject {
 			public void onFailure(Throwable caught) {
 				failure.accept(caught);
 			}
+		});
+	}
+	
+	public void getContractListCount(ContractParams params, Consumer<Integer> success) {
+		impl.getContractListCount(params, new AsyncCallback<Integer>() {
+			
+			@Override
+			public void onSuccess(Integer count) {
+				success.accept(count);
+			}
+
+			@Override
+			public void onFailure(Throwable caught) {}
 		});
 	}
 	

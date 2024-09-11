@@ -190,7 +190,7 @@ export class AonInvoiceList extends AonElement {
 			icons.push(icon);
 		}
 
-		if(invoice.invofox) {
+		if(invoice.invofox || invoice.ocrStatus) {
 			let icon = {
 				icon: this.getOcrInvoiceStatusIcon(),
 				title: this.getOcrInvoiceStatusIconTitle(invoice),
@@ -198,6 +198,7 @@ export class AonInvoiceList extends AonElement {
 			};
 			icons.push(icon);
 		}
+		
 		return icons;
 	}
 
@@ -243,21 +244,21 @@ export class AonInvoiceList extends AonElement {
 
 	getOcrInvoiceStatusIconTitle(invoice) {
 		let inv = new Invoice(invoice);
-		if(inv.isOcrStatus(CONSTANT.PROCESSING)) {
+		if(inv.isOcrStatus(CONSTANT.PROCESSING) || inv.isRawdocOcrStatus(CONSTANT.PROCESSING)) {
 			return MSG.PROCCESSING;
-		} else if(inv.isOcrStatus(CONSTANT.APPROVED)) {
+		} else if(inv.isOcrStatus(CONSTANT.APPROVED) || inv.isRawdocOcrStatus(CONSTANT.APPROVED)) {
 			return MSG.APPROVED;
-		} else if(inv.isOcrStatus(CONSTANT.EXPORTED)) {
+		} else if(inv.isOcrStatus(CONSTANT.EXPORTED) || inv.isRawdocOcrStatus(CONSTANT.EXPORTED)) {
 			return MSG.EXPORTED;
-		} else if(inv.isOcrStatus(CONSTANT.ERROR)){
+		} else if(inv.isOcrStatus(CONSTANT.ERROR) || inv.isRawdocOcrStatus(CONSTANT.ERROR)){
 			return MSG.ERROR;
-		} else if(inv.isOcrStatus(CONSTANT.REJECTED)){
+		} else if(inv.isOcrStatus(CONSTANT.REJECTED) || inv.isRawdocOcrStatus(CONSTANT.REJECTED)){
 			return MSG.REJECTED;
-		} else if(inv.isOcrStatus(CONSTANT.DISCARDED)) {
+		} else if(inv.isOcrStatus(CONSTANT.DISCARDED) || inv.isRawdocOcrStatus(CONSTANT.DISCARDED)) {
 			return MSG.DISCARDED;
-		} else if(inv.isOcrStatus(CONSTANT.PENDING_CORRECTION)) {
+		} else if(inv.isOcrStatus(CONSTANT.PENDING_CORRECTION) || inv.isRawdocOcrStatus(CONSTANT.PENDING_CORRECTION)) {
 			return MSG.PENDING_CORRECTION;
-		}else if(inv.isOcrStatus(CONSTANT.PENDING_DECISSION)) {
+		}else if(inv.isOcrStatus(CONSTANT.PENDING_DECISSION) || inv.isRawdocOcrStatus(CONSTANT.PENDING_DECISSION)) {
 			return MSG.PENDING_DECISSION;
 		} else { 
 			return "";
@@ -266,13 +267,13 @@ export class AonInvoiceList extends AonElement {
 
 	getOcrInvoiceStatusIconColor(invoice) {
 		let inv = new Invoice(invoice);
-		if(inv.isOcrStatus(CONSTANT.PROCESSING)) {
+		if(inv.isOcrStatus(CONSTANT.PROCESSING) || inv.isRawdocOcrStatus(CONSTANT.PROCESSING)) {
 			return '#bbb';
-		} else if(inv.isOcrStatus(CONSTANT.APPROVED, CONSTANT.EXPORTED)) {
+		} else if(inv.isOcrStatus(CONSTANT.APPROVED, CONSTANT.EXPORTED) || inv.isRawdocOcrStatus(CONSTANT.APPROVED, CONSTANT.EXPORTED)) {
 			return 'green';
-		} else if(inv.isOcrStatus(CONSTANT.ERROR, CONSTANT.REJECTED, CONSTANT.DISCARDED)) {
+		} else if(inv.isOcrStatus(CONSTANT.ERROR, CONSTANT.REJECTED, CONSTANT.DISCARDED) || inv.isRawdocOcrStatus(CONSTANT.ERROR, CONSTANT.REJECTED, CONSTANT.DISCARDED)) {
 			return 'red';
-		} else if(inv.isOcrStatus(CONSTANT.PENDING_CORRECTION, CONSTANT.PENDING_DECISSION)) {
+		} else if(inv.isOcrStatus(CONSTANT.PENDING_CORRECTION, CONSTANT.PENDING_DECISSION) || inv.isRawdocOcrStatus(CONSTANT.PENDING_CORRECTION, CONSTANT.PENDING_DECISSION)) {
 			return 'orange';
 		} else { 
 			return "#5f6368";

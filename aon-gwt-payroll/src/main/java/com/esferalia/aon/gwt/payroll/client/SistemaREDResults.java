@@ -1046,6 +1046,16 @@ public class SistemaREDResults extends Composite implements RequiresResize, Empl
 
 		return horizontalPanel;
 	}
+	
+	public Integer getTreeItems() {
+		Integer events = eventsTree.getItemCount();
+		Integer errors = errorsItem.getChildCount();
+		Integer warnings = warningsItem.getChildCount();
+		Integer messages = messagesItem.getChildCount();
+		Integer notFound = notFoundItem.getChildCount();
+		
+		return events + errors + warnings + messages + notFound;
+	}
 
 	/**
 	 * Generates HTML for a tree item with an attached icon.

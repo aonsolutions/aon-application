@@ -730,6 +730,7 @@ public class JooqEnterpriseSalaryBuilder {
 		return map;
 	}
 	
+	private static Locale ES = new Locale("es");
 	
 	private static Map<String, Map<String, EnterprisePayrollEntry>> getEnterprisePayrollsByEmployee(DSLContext ctx, Condition condition, Optional<Map<Integer, Map<String, Map<String, List<ContractData>>>>> optContractDatas)
 			throws IOException {
@@ -752,6 +753,7 @@ public class JooqEnterpriseSalaryBuilder {
 		.from(SALARY_PAYMENT)
 		.innerJoin(SALARY).onKey()
 		.innerJoin(CONTRACT).onKey()
+		.innerJoin(PERSON).on(PERSON.REGISTRY.eq(CONTRACT.PERSON))
 		.innerJoin(WORKPLACE).onKey()
 		.innerJoin(ENTERPRISE).onKey()
 		.where(condition)
@@ -768,6 +770,7 @@ public class JooqEnterpriseSalaryBuilder {
 		.from(SALARY_PAYMENT)
 		.innerJoin(SALARY).onKey()
 		.innerJoin(CONTRACT).onKey()
+		.innerJoin(PERSON).on(PERSON.REGISTRY.eq(CONTRACT.PERSON))
 		.innerJoin(WORKPLACE).onKey()
 		.innerJoin(ENTERPRISE).onKey()
 		.where(condition)
@@ -838,7 +841,7 @@ public class JooqEnterpriseSalaryBuilder {
 					, r.get(SALARY.START_DATE)
 					, r.get(SALARY.END_DATE)
 					, r.get(SALARY.EMPLOYEE_NAME)
-					, salaryType.getName(null) 
+					, salaryType.getName(ES) 
 					, r.get(SALARY.TOTAL_PAYMENT)
 					, r.get(SALARY.SOCIAL_SECURITY_CONTRIBUTIONS)
 					, r.get(SALARY.TOTAL_IRPF)
