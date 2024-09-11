@@ -355,6 +355,13 @@ color: var(--aonSearchButton);
   background-color: #cccccc !important;
 }
 
+.aonTimeControlButton {
+  padding: .5rem 1rem;
+  font-size: .8rem;
+  width: 6rem;
+  height: 2.5rem;
+}
+
 .aonDashboardButton{
   padding: 10px 20px;
   box-sizing: border-box;
@@ -2386,7 +2393,7 @@ size: 32px;
 /* @media only screen and (min-width: 768px) {} */
 @media only screen and (min-width: 768px) {
   .aonMessengerCardRow > .aonFlex > .aonFlexColumn > .aonEllipsis{
-      max-width: 20rem;
+      max-width: 25rem;
   }
 
   .aonDocumentalCardRow > .aonFlex > .aonDocumentalEllipsis{
@@ -2405,11 +2412,6 @@ size: 32px;
       min-width: 22rem;
   }
 
-
-  .aonMessengerCardRow > .aonFlex > .aonFlexColumn > .aonEllipsis{
-    max-width: 14rem;
-  }
-
   .aonDocumentalCardRow > .aonFlex > .aonDocumentalEllipsis{
     max-width: 14rem;
   }
@@ -2424,6 +2426,18 @@ size: 32px;
 
   .noteCard{
     max-width: 21rem;
+  }
+}
+
+@media only screen and (min-width: 1230px) {
+  .aonMessengerCardRow > .aonFlex > .aonFlexColumn > .aonEllipsis{
+      max-width: 27rem;
+  }
+}
+
+@media only screen and (min-width: 1441px) {
+  .aonMessengerCardRow > .aonFlex > .aonFlexColumn > .aonEllipsis{
+      max-width: 39rem;
   }
 }
 
@@ -4006,8 +4020,29 @@ flex-grow: 2;
 }
 
 .aonCardsPanel {
-display: grid !important;
-grid-template-columns: repeat(3, minmax(0px, 1fr));
+	display: grid !important;
+	grid-template-columns: repeat(1, minmax(0px, 1fr));
+	grid-gap: 1rem;
+}
+
+@media (769px <= width <= 1229px) {
+  .aonCardsPanel {
+	grid-template-columns: repeat(2, minmax(0px, 1fr));
+  }
+  
+  .aonCardsPanel #messengerCard {
+	grid-column: span 2;
+  }
+}
+
+@media (1230px <= width) {
+  .aonCardsPanel {
+	grid-template-columns: repeat(3, minmax(0px, 1fr));
+  }
+  
+  .aonCardsPanel #messengerCard {
+	grid-column: span 2;
+  }
 }
 
 .messageContent * {

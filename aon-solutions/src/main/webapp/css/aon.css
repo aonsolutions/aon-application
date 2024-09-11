@@ -210,6 +210,13 @@
   background-color: #cccccc !important;
 }
 
+.aonTimeControlButton {
+  padding: .5rem 1rem;
+  font-size: .8rem;
+  width: 6rem;
+  height: 2.5rem;
+}
+
 .aonDashboardButton{
   padding: 10px 20px;
   box-sizing: border-box;

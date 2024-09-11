@@ -494,17 +494,27 @@ export class AonDesktop extends AonElement {
 			timecontrolCard.getCardTitle1().style.cursor = 'pointer';
 
 			getTimeControl().then(r => {
-				let div = this.createElement(TAG.DIV);
-				timecontrolCard.setContent(div)
-				let aonSign = new AonSign();
-				div.appendChild(new AonStatistics());
-				div.appendChild(aonSign);
+				let staticsDiv = this.createElement(TAG.DIV);
+				staticsDiv.style.height = "12rem";
+				staticsDiv.style.minWidth = "15rem";
+				staticsDiv.style.maxWidth = "25rem";
+				staticsDiv.style.margin = "0 auto";
+				staticsDiv.appendChild(new AonStatistics());
 
-				timecontrolCard.firstChild.children.item(1).style.height = "200px";
+				let aonSign = new AonSign();
+
+				timecontrolCard.setContent(staticsDiv);
+				timecontrolCard.setContent(aonSign);
+
+				// timecontrolCard.getContent().style.height = "12rem";
+				// timecontrolCard.getContent().style.minWidth = "15rem";
+				// timecontrolCard.getContent().style.maxWidth = "25rem";
+				// timecontrolCard.getContent().style.margin = "0 auto";
 
 				aonSign.buildSignin(r);
 				let aonHeader = this.getElement('aonHeader');
 				aonHeader.timeControlStatus(r);
+
 				timecontrolCard.firstChild.style.minHeight = "420px";
 				timecontrolCard.firstChild.style.margin = '0';
 			});
