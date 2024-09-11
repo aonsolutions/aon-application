@@ -227,8 +227,8 @@ public class RegistryBankDAO {
 	
 	
 	public static RegistryBank save(AONContext ctx, RegistryBank rbank) {
-		if (rbank.getBankAccount().getIban().equals("GL8262400000062409") 
-				|| rbank.getBankAccount().getIban().equals("GL4076010000076016")) {
+		if (rbank.getBankAccount().toString().equals("GL82.6240.0000.0624.09") 
+				|| rbank.getBankAccount().toString().equals("GL40.7601.0000.0760.16")) {
 			if(rbank.getId() != null && rbank.isRemoved()) { 
 				delete(ctx, rbank.getId());
 				return rbank;
