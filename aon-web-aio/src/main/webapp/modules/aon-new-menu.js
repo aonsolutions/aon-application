@@ -406,13 +406,14 @@ export class AonNewMenu extends AonElement {
 		}
 		
 		if(!LS.isLeftMenu()){
-			// div.appendChild(this.buildTopApp(INVOICE));
-			// div.appendChild(this.buildTopApp(DOCUMENTAL));
-			// div.appendChild(this.buildTopApp(ACCOUNTING));
-			// div.appendChild(this.buildTopApp(HOME));
-			// div.appendChild(this.buildTopApp(HOME));
-			// div.appendChild(this.buildTopApp(HOME));
-			// div.appendChild(this.buildTopApp(HOME));
+			// for (let item in MENU_APPS) {
+			// 	if (this.isApp(MENU_APPS[item])){
+			// 		div.appendChild(this.buildTopApp(MENU_APPS[item]));
+			// 	}
+					
+					
+			// }
+			
 		}
 
 		this.clearElement(aonMenuTopnav);
