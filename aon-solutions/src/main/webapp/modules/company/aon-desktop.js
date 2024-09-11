@@ -407,72 +407,6 @@ export class AonDesktop extends AonElement {
 			upload.appendChild(uploadInv);
 		}
 
-		/*
-		// Fast Access Buttons Panel
-		let fastAccessButtons = this.createElement(TAG.DIV);
-		fastAccessButtons.className = CSS.AON_FAST_ACCESS;
-		fastAccessButtons.id = "fastAccessButtons";
-		dashboard.appendChild(fastAccessButtons);
-
-		if(this.getDur().isInvoice()){
-			let newInvoice = new AonDashboardButton();
-			newInvoice.setId('newInvoice');
-			newInvoice.setIcon('note_add');
-			newInvoice.setMessage(MSG.NEW_INVOICE);
-			newInvoice.addEventListener(EVENT.CLICK, () => {
-				this.addInvoice(newInvoice, dashboard);
-			});
-			fastAccessButtons.appendChild(newInvoice);
-		}
-
-		if(this.getDur().isDocumental()){
-			let newDocument = new AonDashboardUploadButton();
-			newDocument.setId('newDocument');
-			newDocument.setIcon('post_add');
-			newDocument.setMessage(MSG.NEW_DOCUMENT);
-			fastAccessButtons.appendChild(newDocument);
-		}
-
-		if(this.getDur().isMessenger()){
-			let newRequest = new AonDashboardButton();
-			newRequest.setId('newRequest');
-			newRequest.setIcon('add_comment');
-			newRequest.setMessage('CREAR CONSULTA');
-			newRequest.addEventListener(EVENT.CLICK, () => {
-				let aonMessengerChat = new AonMessenger();	
-				aonMessengerChat.data = {source:TASK_SOURCE.QUERY};
-				this.rootPanel(aonMessengerChat);
-			});
-			fastAccessButtons.appendChild(newRequest);
-		}
-
-		if(this.getDur().isAon()){
-			let newEmployee = new AonDashboardButton();
-			newEmployee.setId('newEmployee');
-			newEmployee.setIcon('person_add');
-			newEmployee.setMessage(MSG.NEW_EMPLOYEE);
-			newEmployee.addEventListener(EVENT.CLICK, () => {
-				let aonMessengerChat = new AonMessenger();	
-				aonMessengerChat.data = {source:TASK_SOURCE.REQUEST};
-				this.rootPanel(aonMessengerChat);
-
-				this.isElementLoaded("#sourceTask").then(sourceTaskSelect => {
-					console.log(sourceTaskSelect);
-					sourceTaskSelect.value = "request";
-					this.isElementLoaded("#processType").then(processTypeSelect => {
-						console.log(processTypeSelect);
-						processTypeSelect.value = "2";
-						this.isElementLoaded("#aonMessengerToolbarHeaderTitleSectionMenuIconButton").then(sidenavBtn => {
-							console.log(sidenavBtn);
-							sidenavBtn.click();
-						});
-					});
-				});
-			});
-			fastAccessButtons.appendChild(newEmployee);
-		}
-
-		*/
 		// Cards Panel
 		let cardsPanel = this.createElement(TAG.DIV);
 		cardsPanel.className = CSS.AON_CARDS_PANEL;
@@ -505,11 +439,6 @@ export class AonDesktop extends AonElement {
 
 				timecontrolCard.setContent(staticsDiv);
 				timecontrolCard.setContent(aonSign);
-
-				// timecontrolCard.getContent().style.height = "12rem";
-				// timecontrolCard.getContent().style.minWidth = "15rem";
-				// timecontrolCard.getContent().style.maxWidth = "25rem";
-				// timecontrolCard.getContent().style.margin = "0 auto";
 
 				aonSign.buildSignin(r);
 				let aonHeader = this.getElement('aonHeader');

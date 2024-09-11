@@ -190,6 +190,7 @@ export class AonMobileDesktop extends AonElement {
 			div.appendChild(titleA);
 
 			let ul = this.createElement(TAG.UL);
+			ul.id = this.PENDING_TASK + "Ul";
 			ul.classList.add(CSS.AON_UL);
 			ul.classList.add(CSS.AON_CLIP);
 			div.appendChild(ul);
@@ -269,6 +270,22 @@ export class AonMobileDesktop extends AonElement {
 			staticsDiv.style.minWidth = "10rem";
 			staticsDiv.style.maxWidth = "20rem";
 			staticsDiv.style.margin = "0 auto";
+
+			// Make static smaller if pendingTask exists
+			if(this.isMobile()){
+				let pendingTask = this.getElement(this.PENDING_TASK);
+				if(pendingTask){
+					let pendingTaskUl = this.getElement(this.PENDING_TASK + "Ul");
+					if(pendingTaskUl){
+						if(pendingTaskUl.childElementCount == 3)
+							staticsDiv.style.height = "10rem";
+						else if(pendingTaskUl.childElementCount == 2) {
+							staticsDiv.style.height = "12rem";
+						}
+					}
+				}
+			}
+
 			staticsDiv.appendChild(new AonStatistics());
 
 			div3.appendChild(staticsDiv);

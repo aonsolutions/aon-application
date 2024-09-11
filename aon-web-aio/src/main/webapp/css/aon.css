@@ -2367,17 +2367,6 @@ size: 32px;
   background-color: #ddd;
 }
 
-
-/* Extra small devices (phones, 600px and down) */
-@media only screen and (max-width: 600px) {
-  /*
-  POR ESTO NO SE PINTA LA EMPRESA EN LA APP MOVIL ...
-
-  #aonHeaderCompany{
-      display: none !important;
-  } */
-}
-
 /* Small devices (portrait tablets and large phones, 600px and up) */
 @media only screen and (min-width: 600px) {
   .aonUploadPanel, .aonFastAccess{
@@ -2393,7 +2382,7 @@ size: 32px;
 /* @media only screen and (min-width: 768px) {} */
 @media only screen and (min-width: 768px) {
   .aonMessengerCardRow > .aonFlex > .aonFlexColumn > .aonEllipsis{
-      max-width: 25rem;
+      max-width: 22rem;
   }
 
   .aonDocumentalCardRow > .aonFlex > .aonDocumentalEllipsis{
@@ -2403,10 +2392,6 @@ size: 32px;
 
 /* Large devices (laptops/desktops, 992px and up) */
 @media only screen and (min-width: 854px) {
-  #messengerCard{
-    /*min-width: 42.2rem;*/
-  }
-
   .aonDashboardCard{
       width: auto;
       min-width: 22rem;
@@ -2429,6 +2414,12 @@ size: 32px;
   }
 }
 
+@media only screen and (min-width: 1000px) {
+  .aonMessengerCardRow > .aonFlex > .aonFlexColumn > .aonEllipsis{
+      max-width: 36rem;
+  }
+}
+
 @media only screen and (min-width: 1230px) {
   .aonMessengerCardRow > .aonFlex > .aonFlexColumn > .aonEllipsis{
       max-width: 27rem;
@@ -2438,6 +2429,12 @@ size: 32px;
 @media only screen and (min-width: 1441px) {
   .aonMessengerCardRow > .aonFlex > .aonFlexColumn > .aonEllipsis{
       max-width: 39rem;
+  }
+}
+
+@media only screen and (min-width: 1920px) {
+  .aonMessengerCardRow > .aonFlex > .aonFlexColumn > .aonEllipsis{
+      max-width: 55rem;
   }
 }
 
@@ -4228,7 +4225,6 @@ font-weight: 600;
 	color:  gray;
 	line-height:  21px;
 }
-
 .aonNewDesktopBeta {
   display: none;
 }

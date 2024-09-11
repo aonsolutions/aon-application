@@ -105,7 +105,7 @@ export class AonDocumentalCard extends AonElement {
 
         let rightContent = this.createElement(TAG.DIV);
         rightContent.className = CSS.AON_FLEX_COLUMN;
-        rightContent.style.alignItems = "center";
+        rightContent.style.alignItems = "end";
 
         let date = this.createElement(TAG.SPAN);
         date.classList.add("aonDocumentalCardDate");
