@@ -406,13 +406,13 @@ export class AonNewMenu extends AonElement {
 		}
 		
 		if(!LS.isLeftMenu()){
-			for (let item in MENU_APPS) {
-				if (this.isApp(MENU_APPS[item])){
-					div.appendChild(this.buildTopApp(MENU_APPS[item]));
-				}
+			// for (let item in MENU_APPS) {
+			// 	if (this.isApp(MENU_APPS[item])){
+			// 		div.appendChild(this.buildTopApp(MENU_APPS[item]));
+			// 	}
 					
 					
-			}
+			// }
 			
 		}
 
