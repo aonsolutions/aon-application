@@ -199,7 +199,7 @@ export class AonParent extends AonElement {
 		let welcomeDiv = this.createDiv();
 		welcomeDiv.className = CSS.AON_WELCOME_DIV;
 		let welcomeSpan = this.createSpan();
-		welcomeSpan.innerHTML = MSG.WELCOME;
+		welcomeSpan.innerHTML = MSG.WELCOME_TO_AON_SOLUTIONS;
 		welcomeSpan.style.fontSize = '24px';
 		welcomeSpan.style.fontWeight = '600';
 		welcomeDiv.appendChild(welcomeSpan);

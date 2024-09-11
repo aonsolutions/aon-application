@@ -483,6 +483,7 @@ export const VIEW_PAYROLLS = "Ver nóminas";
 export const WAREHOUSE = 'Magatzem';
 export const WAREHOUSES = 'Magatzems';
 export const WEB = 'Web';
+export const WELCOME_TO_AON_SOLUTIONS = 'Us donem la benvinguda a aon Solutions'
 export const WITHHOLDING = 'Retenció';
 export const WORKGROUP = 'Grup de treball';
 export const WORKSHOPS = 'Tallers';

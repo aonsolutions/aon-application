@@ -484,6 +484,7 @@ export const VIEW_PAYROLLS = "Ver nóminas";
 export const WAREHOUSE = 'Biltegia';
 export const WAREHOUSES = 'Biltegiak';
 export const WEB = 'Web';
+export const WELCOME_TO_AON_SOLUTIONS = "Ongi etorri aon Solutions-era";
 export const WITHHOLDING = 'Atxikipen';
 export const WORKGROUP = 'Lan Taldea';
 export const WORKSHOPS = 'Tailerrak';

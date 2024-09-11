@@ -361,6 +361,10 @@ public class DomainEnterprisesServiceAsync {
 		enterprisesServiceAsync.getEmployees(getCurrentDomainName(), getCurrentUser(), params, asyncCallback);
 	}
 	
+	public void getContractListCount(ContractParams params, AsyncCallback<Integer> asyncCallback) throws IllegalArgumentException {
+		enterprisesServiceAsync.getContractListCount(getCurrentDomainName(), getCurrentUser(), params, asyncCallback);
+	}
+	
 	public void getFJEmployeesInfo(AsyncCallback<List<EmployeeContractInfo>> asyncCallback) {
 		enterprisesServiceAsync.getFJEmployeesInfo(getCurrentDomainName(), asyncCallback);
 	}

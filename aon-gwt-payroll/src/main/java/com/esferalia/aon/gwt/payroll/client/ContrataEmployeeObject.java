@@ -21,6 +21,7 @@ import com.esferalia.aon.gwt.payroll.shared.EmployeeInfo;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeStatus;
 import com.esferalia.aon.gwt.payroll.shared.JourneyDuration;
 import com.esferalia.aon.gwt.payroll.shared.Workplace;
+import com.esferalia.aon.occam.api.model.ContractParams;
 import com.esferalia.aon.occam.api.model.type.ContractType;
 import com.esferalia.aon.occam.api.model.type.ContractType.ContractTypeRecord;
 import com.esferalia.aon.watson.util.AonStringUtils;
@@ -74,6 +75,33 @@ public class ContrataEmployeeObject {
 	}
 	
 	// ------------------------------------------------- Database Methods (Employee)
+	
+	public void getContract(ContractParams params, Consumer<EmployeeContractInfo> success) {
+		enterprisesService.getEmployees(params, new AsyncCallback<List<EmployeeContractInfo>>() {
+			
+			@Override
+			public void onSuccess(List<EmployeeContractInfo> employeesInfoList) {
+				
+				employeesService.getEmployeeInfoDataBase(employeesInfoList.get(0).getContractInfo().getContractId(), workplace, new AsyncCallback<EmployeeContractInfo>() {
+					
+					@Override
+					public void onSuccess(EmployeeContractInfo result) {
+						employeeContractData = result;
+						employeeData = result.getEmployeeInfo();
+						contractData = result.getContractInfo();
+						success.accept(result);
+					}
+
+					@Override
+					public void onFailure(Throwable caught) {}
+					
+				});
+			}
+
+			@Override
+			public void onFailure(Throwable caught) {}
+		});
+	}
 	
 	public void getEmployeeContract(Integer contractId, Consumer<EmployeeContractInfo> success, Consumer<Throwable> failure) {
 		employeesService.getEmployeeInfoDataBase(contractId, workplace, new AsyncCallback<EmployeeContractInfo>() {
