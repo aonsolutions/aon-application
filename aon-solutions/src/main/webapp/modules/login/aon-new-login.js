@@ -58,7 +58,7 @@ export class AonNewLogin extends AonElement {
     //logoToolbar.style.height = '25px';
     //divLogoToolbar.appendChild(logoToolbar);
 
-    if(!this.isMobile()) {
+    // if(!this.isMobile()) {
       let divLanguage = this.createElement(TAG.DIV);
       divLanguage.id = 'aonLoginLanguageDivToolbar';
       toolbar.appendChild(divLanguage);
@@ -75,7 +75,7 @@ export class AonNewLogin extends AonElement {
       spanLanguage.innerHTML = this.getLanguageText();
       //spanLanguage.addEventListener(EVENT.MOUSEOVER, () => this.languageDialog());
       divLanguage.appendChild(spanLanguage);
-    }
+    // }
 
     // Content
     let divForm = this.createElement(TAG.DIV);
@@ -169,6 +169,7 @@ export class AonNewLogin extends AonElement {
 
     let divMobiles = this.createElement(TAG.DIV);
     divMobiles.id = 'logosMobiles';
+    divMobiles.classList.add("aonNewLoginDivMobiles");
     divFormContent.appendChild(divMobiles);
 
     let dialog = new AonDialog();
@@ -374,7 +375,7 @@ export class AonNewLogin extends AonElement {
     loader.start();
     login(data)
       .then(() => {
-        document.body.style.background = 'transparent';
+        // document.body.style.background = 'transparent';
         loader.stop();
 
         LS.removeDomain();
