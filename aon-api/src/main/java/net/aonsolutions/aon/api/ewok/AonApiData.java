@@ -11,6 +11,8 @@ import com.esferalia.aon.occam.api.model.Options;
 import com.esferalia.aon.occam.api.model.aonsolutions.DomainUserRoles;
 import com.esferalia.aon.occam.api.model.security.User;
 
+import jakarta.servlet.http.HttpServletRequest;
+
 public class AonApiData implements Serializable{
 	
 	private static final long serialVersionUID = 1L;
@@ -24,6 +26,8 @@ public class AonApiData implements Serializable{
 	
 	private String path;
 	private DomainUserRoles dur;
+	
+	private HttpServletRequest request;
 	
 	public String getMethod() {
 		return method;
@@ -113,6 +117,15 @@ public class AonApiData implements Serializable{
         this.options = options;
     }
 	
+	public HttpServletRequest getRequest() {
+		return request;
+	}
+	
+	public AonApiData setRequest(HttpServletRequest request) {
+		this.request = request;
+		return this;
+	}
+	
 	public Occam getOccam() {
 		if (getDomain() == null) throw new IllegalStateException("Domain not set!");
 		if (getUser() == null) throw new IllegalStateException("User not set!");
@@ -124,8 +137,7 @@ public class AonApiData implements Serializable{
 	}
 	
 	public boolean isPredefinedToken() {
-		return "SIGd95770f269e711eb94390242ac130002".equals(getToken())
-				|| "AONd95770f269e711eb94390242ac130002".equals(getToken());
+		return "AONd95770f269e711eb94390242ac130002".equals(getToken());
 	}
 	
 	

@@ -1,5 +1,5 @@
 import { AonElement } from '../components/AonElement.js';
-import { getToken , getCompanies, login} from '../services/service.js';
+import { getCompanies, login} from '../services/service.js';
 import { AonLogin } from './login/aon-login.js';
 
 import { AonHome } from './aon-home.js';
@@ -60,7 +60,7 @@ export class AonModule extends AonElement {
 
 	async load() {
 		await this.checkLogin();
-		if(getToken()){
+		if(LS.getToken()){
 			LS.removeDomain();
 			this.buildHome();
 
