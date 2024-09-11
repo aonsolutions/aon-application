@@ -143,10 +143,12 @@ export class AonNewMenu extends AonElement {
 		let apps = this.getElement("applications");
 		apps.className = '';
 		const excludedApps = ['commerce', 'garage', 'academy', 'office'];
-		const isApps = DESKTOP_APPS.filter( app => this.isApp(app) ); 
-		const notApps = DESKTOP_APPS.filter( app => !this.isApp(app) ); 
+		const portalApps = DESKTOP_APPS.filter( app => this.isApp(app) ); 
+		const portalNoApps = DESKTOP_APPS.filter( app => !this.isApp(app) ); 
+		const suiteApps = TOP_MENU_APPS.filter(app => this.isApp(app));
+		const suiteNoApps = TOP_MENU_APPS.filter(app => !this.isApp(app));
 		if (!this.isApp(app) && !excludedApps.includes(app.app)) {
-			this.rootPanel(new AonNewDesktop(isApps, notApps));
+			this.rootPanel(new AonNewDesktop(portalApps,portalNoApps,suiteApps,suiteNoApps));
 			let headerapp = this.getElement("aonHeaderApp");
 			headerapp.style.display = "none";
 			let logo = this.getElement("aonLogo");
@@ -250,7 +252,7 @@ export class AonNewMenu extends AonElement {
 					this.rootPanel(new AonGarageMenu());
 					break;
 				default/*Apps.HOME*/:
-					this.rootPanel(new AonNewDesktop(isApps, notApps));
+					this.rootPanel(new AonNewDesktop(portalApps, portalNoApps, suiteApps, suiteNoApps));
 					break;
 		}
 		
@@ -402,7 +404,18 @@ export class AonNewMenu extends AonElement {
 			let appElement = this.buildTopApp(app);
 			div.appendChild(appElement);
 		}
-	
+		
+		if(!LS.isLeftMenu()){
+			// for (let item in MENU_APPS) {
+			// 	if (this.isApp(MENU_APPS[item])){
+			// 		div.appendChild(this.buildTopApp(MENU_APPS[item]));
+			// 	}
+					
+					
+			// }
+			
+		}
+
 		this.clearElement(aonMenuTopnav);
 		aonMenuTopnav.appendChild(div);
 	}

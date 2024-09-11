@@ -281,7 +281,6 @@ export class AonParent extends AonElement {
 			let offsetHeight = ul.offsetHeight; 					
 			let scrollHeight = ul.scrollHeight;	
 			
-			// load more before reach end 
 			if ( ( scrollTop +  offsetHeight ) >= ( 0.75 * scrollHeight) ) {
 				this.loadMore();
 			}
@@ -299,11 +298,10 @@ export class AonParent extends AonElement {
 			}
 		}, 100);
 	
-		// Aquí está el nuevo setInterval para comprobar cuando apps esté disponible
 		const appsInterval = setInterval(() => {
 			let apps = this.getElement("applications");
 			if (apps) {
-				clearInterval(appsInterval); // Detener el intervalo una vez que se encuentra "apps"
+				clearInterval(appsInterval); 
 				apps.addEventListener(EVENT.CLICK, () => {
 					let companyy = this.getElement("aonHeaderCompanyListButton");
 					let companyyy = this.getElement("aonHeaderCompanyList");
@@ -311,7 +309,7 @@ export class AonParent extends AonElement {
 					companyyy.style.display = "block";
 				});
 			}
-		}, 100); // Intenta cada 100 ms
+		}, 100); 
 	}
 	
 

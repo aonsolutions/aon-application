@@ -69,6 +69,8 @@ export class AonDashboardChargePayments extends AonElement {
   }
 
   drawBarLineChart(canvas, cypData){
+    let colorGrid = LS.isDarkTheme() ? "#ffffff" : "#bdbdbd";
+  
     let dataChart = {
       labels: [
         "Anteriores", 
@@ -141,14 +143,14 @@ export class AonDashboardChargePayments extends AonElement {
 
         {
           label: "CashFlow",
-          backgroundColor: "rgb(153, 0, 153, 0.9)",
+          backgroundColor: colorGrid,
           type: 'line',
           data: [cypData.cashFlow.previous, cypData.cashFlow.period, cypData.cashFlow.accumulate]
         }
       ]
     };
-    
-    const config = {
+
+   const config = {
       type: "bar",
       data: dataChart,
       options: {
@@ -156,10 +158,28 @@ export class AonDashboardChargePayments extends AonElement {
         maintainAspectRatio: false,
         scales: {
           x: {
-            stacked: true,
+            grid: {
+              display : false
+            },
+            border : {
+              color : colorGrid
+            },
+            ticks : {
+              color : colorGrid
+            },
+            stacked: true
           },
           y: {
-            stacked: true,
+            grid: {
+              display : false
+            },
+            border : {
+              color :  colorGrid
+            },
+            ticks : {
+              color : colorGrid
+            },
+            stacked: true
           },
         },
         plugins: {

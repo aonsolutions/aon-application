@@ -67,7 +67,6 @@ import net.aonsolutions.aon.api.servlet.AonApiHttpServlet;
 public class TaskServlet extends AonApiHttpServlet{
 		
 	private static final Logger LOGGER  = Logger.getLogger(TaskServlet.class.getName());
-//	private static final String SIG_SESSION_ID = "SIGd95770f269e711eb94390242ac130002";
 
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) {
