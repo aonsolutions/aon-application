@@ -14,6 +14,7 @@ on:
   pull_request:
     # By default, a workflow only runs when a pull_request event's activity type is opened, synchronize, or reopened. types: [opened, synchronize, repoened]
     branches: [ "master" ]
+  workflow_dispatch:
 
 env:
   AWS_REGION: eu-west-1
