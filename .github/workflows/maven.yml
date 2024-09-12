@@ -9,9 +9,10 @@
 name: Java CI with Maven
 
 on:
-  push:
-    branches: [ "master" ]
+  # push:
+  #   branches: [ "master" ]
   pull_request:
+    # By default, a workflow only runs when a pull_request event's activity type is opened, synchronize, or reopened. types: [opened, synchronize, repoened]
     branches: [ "master" ]
 
 jobs:
