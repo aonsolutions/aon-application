@@ -183,7 +183,7 @@ export class AonFiscalCard extends AonElement {
         leftContent.appendChild(leftContent2);
 
         let description = this.createElement(TAG.SPAN);
-        description.style.fontSize = modelDatas.length > 5 ? "1rem" : "1.2rem";
+        description.style.fontSize = "1rem";
         description.style.color = "#fb982e";
         description.style.fontWeight = "500";
         description.innerHTML = "Modelo " + this.getParsedModel(modelData);
@@ -196,7 +196,7 @@ export class AonFiscalCard extends AonElement {
 
         let territory = this.createElement(TAG.SPAN);
         territory.className = "fiscalCardTerritory";
-        territory.style.fontSize = modelDatas.length > 5 ? ".8rem" : "1rem";
+        territory.style.fontSize = ".8rem";
         territory.innerHTML = this.getModelTerritory(modelData.administration);
         leftContent.appendChild(territory);
 
@@ -249,7 +249,7 @@ export class AonFiscalCard extends AonElement {
         leftContent.appendChild(leftContent2);
 
         let description = this.createElement(TAG.SPAN);
-        description.style.fontSize = modelDatas.length > 5 ? "1rem" : "1.2rem";
+        description.style.fontSize = "1rem";
         description.style.color = "#fb982e";
         description.style.fontWeight = "500";
         description.innerHTML = "Modelo " + this.getParsedModel(modelData);
@@ -262,7 +262,7 @@ export class AonFiscalCard extends AonElement {
 
         let territory = this.createElement(TAG.SPAN);
         territory.className = "fiscalCardTerritory";
-        territory.style.fontSize = modelDatas.length > 5 ? ".8rem" : "1rem";
+        territory.style.fontSize = ".8rem";
         territory.innerHTML = this.getModelTerritory(modelData.administration);
         leftContent.appendChild(territory);
 
@@ -366,7 +366,7 @@ export class AonFiscalCard extends AonElement {
       leftContent.style.gap = "1rem";
 
       let description = this.createElement(TAG.SPAN);
-      description.style.fontSize = estimationModels.length > 5 ? "1rem" : "1.2rem";
+      description.style.fontSize = "1rem";
       description.style.color = "#fb982e";
       description.style.fontWeight = "500";
       description.innerHTML = modelData.description;
