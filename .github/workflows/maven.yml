@@ -15,6 +15,9 @@ on:
     # By default, a workflow only runs when a pull_request event's activity type is opened, synchronize, or reopened. types: [opened, synchronize, repoened]
     branches: [ "master" ]
 
+env:
+  AWS_REGION: eu-west-1
+  
 jobs:
   build:
 
@@ -43,8 +46,14 @@ jobs:
         CREATE USER 'dbuser'@'localhost' IDENTIFIED WITH mysql_native_password BY 'serubd2000' ;
         GRANT ALL ON *.* TO 'dbuser'@'localhost';
         EOSQL
+    - name: Configure AWS credentials
+      uses: aws-actions/configure-aws-credentials@v1
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: ${{ env.AWS_REGION }}
     - name: Build with Maven
-      run: mvn -B --fail-at-end -Dgwt.working=true -DskipTests=true clean install
+      run: mvn -B -Dgwt.working=true clean install
     
     # - name: Build the Docker images
     #  run: |
