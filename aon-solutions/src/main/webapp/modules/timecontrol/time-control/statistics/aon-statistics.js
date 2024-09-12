@@ -65,6 +65,8 @@ export class AonStatistics extends AonElement {
     getTaskHolder({reload:true}).then(th => {
       this.taskHolder = th;
 
+      this.innerHTML = '';
+
       let canvasDiv = this.createElement(TAG.DIV);
       canvasDiv.id = "timeControlCanvasDiv";
       canvasDiv.style.width = "100%";
