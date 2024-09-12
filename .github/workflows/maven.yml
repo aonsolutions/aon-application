@@ -56,7 +56,7 @@ jobs:
     - name: Create configuration file
       run: |
         sudo mkdir /etc/aon-aio
-        sudo cat >> /etc/aon-aio/configuration <<-EOF
+        sudo tee -a /etc/aon-aio/configuration >/dev/null <<-EOF
         driverClass=com.mysql.cj.jdbc.Driver
         jdbcUrl=jdbc:mysql://127.0.0.1:3306
         user=dbuser
