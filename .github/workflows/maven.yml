@@ -17,7 +17,7 @@ on:
   workflow_dispatch:
 
 env:
-  TZ: Europ/Madrid
+  TZ: Europe/Madrid
   AWS_REGION: eu-west-1
   
 jobs:
