@@ -55,6 +55,7 @@ jobs:
         aws-region: ${{ env.AWS_REGION }}
     - name: Create configuration file
       run: |
+        mkdir /etc/aon-aio
         cat >> /etc/aon-aio/configuration <<-EOF
         driverClass=com.mysql.cj.jdbc.Driver
         jdbcUrl=jdbc:mysql://127.0.0.1:3306
@@ -64,6 +65,7 @@ jobs:
         useSSL=false
         sessionVariables=SQL_SAFE_UPDATES=1
         EOF
+        cat /etc/aon-aio/configuration
     - name: Build with Maven
       run: mvn -B -Dgwt.working=true clean install
     
