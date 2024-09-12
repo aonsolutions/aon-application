@@ -67,6 +67,7 @@ export class AonNewLogin extends AonElement {
       languageButton.id = "aonLoginLanguageButton";
       languageButton.icon = MATERIAL_ICONS.LANGUAGE;
       languageButton.title = MSG.SELECT_LANGUAGE;
+      if(LS.isDarkBetaTheme()) languageButton.color = "var(--aonNewWhite)";
       languageButton.addEventListener(EVENT.CLICK, () => this.languageDialog());
       divLanguage.appendChild(languageButton);
 
@@ -156,7 +157,8 @@ export class AonNewLogin extends AonElement {
     magicLinkButton.innerHTML = MSG.SIGN_IN_WITHOUT_PASSWORD.toUpperCase();
     magicLinkButton.disabled = true;
     magicLinkButton.addEventListener(EVENT.CLICK, () => this.magicLink(userInput.value));
-    magicLinkButton.addEventListener(EVENT.MOUSEOVER, () => signIn.className = "aonMagicButtonHover");
+    if(!LS.isDarkBetaTheme())
+      magicLinkButton.addEventListener(EVENT.MOUSEOVER, () => signIn.className = "aonMagicButtonHover");
     magicLinkButton.addEventListener("mouseout", () => signIn.className = CSS.AON_LOGIN_BUTTON);
     divFormContent.appendChild(magicLinkButton);
 

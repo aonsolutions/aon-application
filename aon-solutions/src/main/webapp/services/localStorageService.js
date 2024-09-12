@@ -24,6 +24,7 @@ export const WHITE_BRAND = 'aonConfigWhiteBrandSwitch';
 export const THEME = 'aonTheme';
 export const AON_THEME = '/css/theme/aon.css';
 export const DARK_THEME = '/css/theme/dark.css';
+export const DARK_BETA_THEME = '/css/theme/darkBeta.css';
 
 export const get = (item) => {
     let value = localStorage.getItem(item);
@@ -115,6 +116,11 @@ export const setTheme = (theme) => {
 export const isDarkTheme = () => {
     let theme = get(THEME);
     return DARK_THEME == theme;
+}
+
+export const isDarkBetaTheme = () => {
+    let theme = get(THEME);
+    return DARK_BETA_THEME == theme;
 }
 
 export const setDarkTheme = (value) => {

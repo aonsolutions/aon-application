@@ -429,14 +429,16 @@ export class AonDesktop extends AonElement {
 
 			getTimeControl().then(r => {
 				let staticsDiv = this.createElement(TAG.DIV);
-				staticsDiv.style.height = "12rem";
+				staticsDiv.style.height = "14rem";
 				staticsDiv.style.minWidth = "15rem";
 				staticsDiv.style.maxWidth = "25rem";
 				staticsDiv.style.margin = "0 auto";
+				staticsDiv.innerHTML = '',
 				staticsDiv.appendChild(new AonStatistics());
 
 				let aonSign = new AonSign();
 
+				timecontrolCard.clearContent();
 				timecontrolCard.setContent(staticsDiv);
 				timecontrolCard.setContent(aonSign);
 
@@ -444,7 +446,7 @@ export class AonDesktop extends AonElement {
 				let aonHeader = this.getElement('aonHeader');
 				aonHeader.timeControlStatus(r);
 
-				timecontrolCard.firstChild.style.minHeight = "420px";
+				timecontrolCard.firstChild.style.minHeight = "28rem";
 				timecontrolCard.firstChild.style.margin = '0';
 			});
 
@@ -473,8 +475,8 @@ export class AonDesktop extends AonElement {
 			pygCard.setContent(aonDashboardGraphicsTrial);
 			pygCard.addTitleButton(MSG.OPTIONS, MATERIAL_ICONS.MORE_VERT, false, () => this.filterPyG(pygCard));
 			pygCard.firstChild.style.marginLeft = '0';
-			pygCard.firstChild.style.minHeight = "420px";
-			pygCard.firstChild.children.item(1).style.height = "315px";
+			pygCard.firstChild.style.minHeight = "28rem";
+			pygCard.firstChild.children.item(1).style.height = "22.5rem";
 			pygCard.firstChild.style.margin = '0';
 
 			pygCard.addEventListener(EVENT.CLICK_TITLE, () => {
@@ -497,8 +499,8 @@ export class AonDesktop extends AonElement {
 			cypCard.setContent(new AonDashboardChargePayments("current_month"));
 			cypCard.addTitleButton(MSG.OPTIONS, MATERIAL_ICONS.MORE_VERT, false, () => this.filterCyP(cypCard));
 			cypCard.firstChild.style.marginLeft = '0';
-			cypCard.firstChild.style.minHeight = "420px";
-			cypCard.firstChild.children.item(1).style.height = "315px";
+			cypCard.firstChild.style.minHeight = "28rem";
+			cypCard.firstChild.children.item(1).style.height = "22.5rem";
 			cypCard.firstChild.style.margin = '0';
 
 			cypCard.addEventListener(EVENT.CLICK_TITLE, () => {
@@ -528,8 +530,8 @@ export class AonDesktop extends AonElement {
 			payrollCard.setContent(aonCompanyCostsCard);
 			await paintCompanyCostPieChart();
 			payrollCard.addTitleButton(MSG.OPTIONS, MATERIAL_ICONS.MORE_VERT, false, () => this.filterPayrollStatics(payrollCard));
-			payrollCard.firstChild.style.minHeight = "420px";
-			payrollCard.firstChild.children.item(1).style.height = "315px";
+			payrollCard.firstChild.style.minHeight = "28rem";
+			payrollCard.firstChild.children.item(1).style.height = "22.5rem";
 			payrollCard.firstChild.style.margin = '0';
 		} else if(this.getDur().isPayroll()) {
 			// Nominas
@@ -545,8 +547,8 @@ export class AonDesktop extends AonElement {
 			let aonPayrollCard = new AonPayrollCard();
 			payrollCard.setContent(aonPayrollCard);
 			
-			payrollCard.firstChild.style.minHeight = "420px";
-			payrollCard.firstChild.children.item(1).style.height = "315px";
+			payrollCard.firstChild.style.minHeight = "28rem";
+			payrollCard.firstChild.children.item(1).style.height = "22.5rem";
 			payrollCard.firstChild.style.margin = '0';
 		}
 
@@ -570,8 +572,8 @@ export class AonDesktop extends AonElement {
 			let aonBankCard = new AonBankCard(company.registry);
 			bankCard.setContent(aonBankCard);
 			
-			bankCard.firstChild.style.minHeight = "420px";
-			bankCard.firstChild.children.item(1).style.height = "315px";
+			bankCard.firstChild.style.minHeight = "28rem";
+			bankCard.firstChild.children.item(1).style.height = "22.5rem";
 			bankCard.firstChild.style.margin = '0';
 		}
 
@@ -605,8 +607,8 @@ export class AonDesktop extends AonElement {
 			fiscalCard.addSection2(spanPeriod);
 			
 			fiscalCard.addTitleButton(MSG.OPTIONS, MATERIAL_ICONS.MORE_VERT, false, () => this.filterFiscal(fiscalCard));
-			fiscalCard.firstChild.style.minHeight = "420px";
-			fiscalCard.firstChild.children.item(1).style.height = "315px";
+			fiscalCard.firstChild.style.minHeight = "28rem";
+			fiscalCard.firstChild.children.item(1).style.height = "22.5rem";
 			fiscalCard.firstChild.style.margin = '0';
 
 			await this.filterFutureFiscal();
@@ -628,8 +630,8 @@ export class AonDesktop extends AonElement {
 			let aonBankCard = new AonDocumentalCard();
 			documentalCard.setContent(aonBankCard);
 			
-			documentalCard.firstChild.style.minHeight = "420px";
-			documentalCard.firstChild.children.item(1).style.height = "315px";
+			documentalCard.firstChild.style.minHeight = "28rem";
+			documentalCard.firstChild.children.item(1).style.height = "22.5rem";
 			documentalCard.firstChild.style.margin = '0';
 		}
 
@@ -648,8 +650,8 @@ export class AonDesktop extends AonElement {
 
 			messengerCard.setContent(aonMessengerCard);
 			
-			messengerCard.firstChild.style.minHeight = "420px";
-			messengerCard.firstChild.children.item(1).style.height = "315px";
+			messengerCard.firstChild.style.minHeight = "28rem";
+			messengerCard.firstChild.children.item(1).style.height = "22.5rem";
 			messengerCard.firstChild.style.margin = '0';
 		}
 	}
