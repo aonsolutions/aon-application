@@ -17,6 +17,7 @@ on:
   workflow_dispatch:
 
 env:
+  TZ: Europ/Madrid
   AWS_REGION: eu-west-1
   
 jobs:
@@ -64,6 +65,8 @@ jobs:
         useSSL=false
         sessionVariables=SQL_SAFE_UPDATES=1
         EOF
+    - name: Set Timezone ${{TZ}}
+      run: export TZ=${{TZ}}
     - name: Build with Maven
       run: mvn -B -Dgwt.working=true clean install
     
