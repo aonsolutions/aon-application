@@ -42,7 +42,7 @@ public class OpenIDLoginModule extends LoginModule {
 		super.initialize(subject, callbackHandler, sharedState, options);
 		String t = HttpServletRequestValve.getHttpServletRequest().getParameter("token");
 		token = t != null ? IDN.toUnicode(HttpServletRequestValve.getHttpServletRequest().getParameter("token")) : null;
-		domain = IDN.toUnicode(HttpServletRequestValve.getHttpServletRequest().getServerName());
+		domain = IDN.toUnicode(HttpServletRequestValve.getDomainName());
 	}
 	
 	@Override

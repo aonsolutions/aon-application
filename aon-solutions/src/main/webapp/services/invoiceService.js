@@ -1,6 +1,7 @@
-import { post, get, remove, put, getSig } from "./request.js";
+import { post, get, remove, put } from "./request.js";
 import { openFileUrl } from "./fileService.js";
 import { API_URL, SIG_URL } from "../environments/environments.js";
+import { generateTokenSig } from "./userService.js";
 
 // PRINT CONFIGURATION
 export const getInvoiceConfiguration = (data) =>  get(`${API_URL}/invoice/configuration`, data);
@@ -19,7 +20,7 @@ export const getRawdocCount = (data) => get(`${API_URL}/invoices/count`, data);
 
 export const getInvoices = (data) => get(`${API_URL}/invoice`, data);
 
-export const getSigInvoices = (data) => getSig(`${SIG_URL}/${API_URL}/invoice`, data);
+export const getSigInvoices = async(data) => get(`${SIG_URL}/${API_URL}/invoice`, data, await generateTokenSig({}));
 
 export const insertInvoice = (data) => post(`${API_URL}/invoice`, data);
 

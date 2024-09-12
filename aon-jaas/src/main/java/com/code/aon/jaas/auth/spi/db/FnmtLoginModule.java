@@ -30,7 +30,7 @@ public class FnmtLoginModule extends OpenIDLoginModule {
 	public void initialize(Subject subject, CallbackHandler callbackHandler,
 			Map sharedState, Map options) {
 		super.initialize(subject, callbackHandler, sharedState, options);
-		domain = IDN.toUnicode(HttpServletRequestValve.getHttpServletRequest().getServerName());
+		domain = IDN.toUnicode(HttpServletRequestValve.getDomainName());
 	}
 	
 	@Override

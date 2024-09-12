@@ -383,9 +383,11 @@ export class AonNewLogin extends AonElement {
         this.getModule().startLoading();
         // LS.setLanguage(Language.SPANISH);
 
-        // LS.setLeftMenu(true);
-        LS.setTopMenu(false);
-        LS.setAppMenu(false);
+        // Already set in css
+		//LS.setLeftMenu(true);
+        //LS.setTopMenu(false);
+        //LS.setAppMenu(false);
+		
         getCompanies().then(companies => {
           this.getModule().stopLoading();
           

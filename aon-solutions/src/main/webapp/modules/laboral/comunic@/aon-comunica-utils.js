@@ -222,6 +222,7 @@ export class AonComunicaUtils extends AonElement {
             aonView = new AonContractList();
           else 
             this.goContractDesk();
+            this.getApplication().closeSidenav();
           break;
         case PAYROLL_VIEWS.AON_CERT:
           this.loadGwt(GWT.MAIN_DIGITAL_CERTIFICATES);
@@ -288,11 +289,8 @@ export class AonComunicaUtils extends AonElement {
   }
 
   goContractDesk() {
-    this.getApplication().removeToolbarOptions();
-
+    // this.getApplication().removeToolbarOptions();
     this.loadGwt(GWT.MAIN_CONTRATA);
-
-    this.getApplication().closeSidenav();
   }
 
   loadGwt(module) {
@@ -311,7 +309,22 @@ export class AonComunicaUtils extends AonElement {
     waitEl(`#${application.CONTENT} .aon_toolbar`).finally(() => {
       application.stopLoader();
       this.fixSpacing();
+      this.fixTableHeaderBackgroundColor();
     });
+  }
+
+  fixTableHeaderBackgroundColor(){
+    let application = this.getApplication();
+    let iframe = document.querySelector(`#${application.CONTENT} iframe`);
+    let iframeContent = iframe.contentWindow.document;
+
+    let tableHeaders = iframeContent.body.querySelectorAll(`div.aon_custom_table_header`);
+    if(tableHeaders) tableHeaders.forEach(tableHeader => tableHeader.style.backgroundColor = "#fafafa");
+    
+    // waitEl(`div.aon_custom_table_header`).finally(() => {
+    //   let tableHeader = iframeContent.body.querySelector(`div.aon_custom_table_header`);
+    //   tableHeader.style.backgroundColor = "#fafafa";
+    // });
   }
 
   fixBackgroundColor(){

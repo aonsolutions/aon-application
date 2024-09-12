@@ -141,6 +141,16 @@
   --aonHomeImg: black;
 
   --aonTaxBuildPrintRes: grey;
+	
+	
+  --aonMenuSidenav: true;
+	
+  /*
+  false or undefined same effect
+  */
+  --aonMenuTopnav: false;
+  --aonConfigSwitchApps: false;
+	
 
 }
 
@@ -353,6 +363,13 @@ color: var(--aonSearchButton);
 .aonButton[disabled], .aonButton:disabled {
   cursor: not-allowed;
   background-color: #cccccc !important;
+}
+
+.aonTimeControlButton {
+  padding: .5rem 1rem;
+  font-size: .8rem;
+  width: 6rem;
+  height: 2.5rem;
 }
 
 .aonDashboardButton{
@@ -2360,17 +2377,6 @@ size: 32px;
   background-color: #ddd;
 }
 
-
-/* Extra small devices (phones, 600px and down) */
-@media only screen and (max-width: 600px) {
-  /*
-  POR ESTO NO SE PINTA LA EMPRESA EN LA APP MOVIL ...
-
-  #aonHeaderCompany{
-      display: none !important;
-  } */
-}
-
 /* Small devices (portrait tablets and large phones, 600px and up) */
 @media only screen and (min-width: 600px) {
   .aonUploadPanel, .aonFastAccess{
@@ -2386,7 +2392,7 @@ size: 32px;
 /* @media only screen and (min-width: 768px) {} */
 @media only screen and (min-width: 768px) {
   .aonMessengerCardRow > .aonFlex > .aonFlexColumn > .aonEllipsis{
-      max-width: 20rem;
+      max-width: 22rem;
   }
 
   .aonDocumentalCardRow > .aonFlex > .aonDocumentalEllipsis{
@@ -2396,18 +2402,9 @@ size: 32px;
 
 /* Large devices (laptops/desktops, 992px and up) */
 @media only screen and (min-width: 854px) {
-  #messengerCard{
-    /*min-width: 42.2rem;*/
-  }
-
   .aonDashboardCard{
       width: auto;
       min-width: 22rem;
-  }
-
-
-  .aonMessengerCardRow > .aonFlex > .aonFlexColumn > .aonEllipsis{
-    max-width: 14rem;
   }
 
   .aonDocumentalCardRow > .aonFlex > .aonDocumentalEllipsis{
@@ -2424,6 +2421,30 @@ size: 32px;
 
   .noteCard{
     max-width: 21rem;
+  }
+}
+
+@media only screen and (min-width: 1000px) {
+  .aonMessengerCardRow > .aonFlex > .aonFlexColumn > .aonEllipsis{
+      max-width: 36rem;
+  }
+}
+
+@media only screen and (min-width: 1230px) {
+  .aonMessengerCardRow > .aonFlex > .aonFlexColumn > .aonEllipsis{
+      max-width: 27rem;
+  }
+}
+
+@media only screen and (min-width: 1441px) {
+  .aonMessengerCardRow > .aonFlex > .aonFlexColumn > .aonEllipsis{
+      max-width: 39rem;
+  }
+}
+
+@media only screen and (min-width: 1920px) {
+  .aonMessengerCardRow > .aonFlex > .aonFlexColumn > .aonEllipsis{
+      max-width: 55rem;
   }
 }
 
@@ -4006,8 +4027,29 @@ flex-grow: 2;
 }
 
 .aonCardsPanel {
-display: grid !important;
-grid-template-columns: repeat(3, minmax(0px, 1fr));
+	display: grid !important;
+	grid-template-columns: repeat(1, minmax(0px, 1fr));
+	grid-gap: 1rem;
+}
+
+@media (769px <= width <= 1229px) {
+  .aonCardsPanel {
+	grid-template-columns: repeat(2, minmax(0px, 1fr));
+  }
+  
+  .aonCardsPanel #messengerCard {
+	grid-column: span 2;
+  }
+}
+
+@media (1230px <= width) {
+  .aonCardsPanel {
+	grid-template-columns: repeat(3, minmax(0px, 1fr));
+  }
+  
+  .aonCardsPanel #messengerCard {
+	grid-column: span 2;
+  }
 }
 
 .messageContent * {
@@ -4428,4 +4470,11 @@ font-weight: 600;
   font-weight: normal;
   color: gray;
   line-height: 21px;
+}
+.aonNewDesktopBeta {
+  display: none;
+}
+
+.aonNewDesktopNormal {
+  display: block;
 }

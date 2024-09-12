@@ -1,7 +1,7 @@
 import { MSG, CSS, EVENT, TAG } from 'aonsolutions/environments/environments.js'; 
 import { AonSuiteMenu } from '../aon-suite-menu.js';
 import * as GWT from 'aonsolutions/gwt/gwt.js';
-import { AonJsfCustomer, AonJsfCreditor,AonJsfExpense, AonJsfProduct, AonJsfSupplier} from '../aon-jsf-app.js';
+import * as JSF from '../aon-jsf-app.js';
 
 
 
@@ -37,13 +37,13 @@ export class AonManagementMenu extends AonSuiteMenu {
         };
         this.selectOptions= [{
             title: "Factura de venta",
-            action: () => alert("description")
+            action: () => this.rootPanel(new JSF.AonJsfSaleInvoice())
         },{
             title: "Factura de gastos",
-            action: () => alert("description")
+            action: () => this.rootPanel(new JSF.AonJsfExpenseInvoice())
         },{
             title: "Factura de compras", 
-            action: () => alert("description")
+            action: () => this.rootPanel(new JSF.AonJsfPurchaseInvoice())
         },{
             title: "Gasto no deducible en IVA", 
             action: () => alert("description")
@@ -56,19 +56,19 @@ export class AonManagementMenu extends AonSuiteMenu {
             options: [ {
                 description: "Clientes",
                 title: "Clientes",
-                action: () => this.rootPanel(new AonJsfCustomer())
+                action: () => this.rootPanel(new JSF.AonJsfCustomer())
             },{
                 description: "Facturas de Venta",
                 title: "Facturas de Venta",
-                action: () => alert("description")
+                action: () => this.rootPanel(new JSF.AonJsfSaleInvoice())
             },{
                 description: "Impresión / eMail de Facturas",
                 title: "Impresión / eMail de Facturas",
-                action: () => alert("description")
+                action: () => this.rootPanel(new JSF.AonJsfInvoicePrint())
             },{
                 description: "Pedidos de Venta",
                 title: "Pedidos de Venta",
-                action: () => alert("description")
+                action: () => this.rootPanel(new JSF.AonJsfSale())
             },{
                 description: "Facturación masiva de Albaranes",
                 title: "Facturación masiva de Albaranes",
@@ -79,11 +79,11 @@ export class AonManagementMenu extends AonSuiteMenu {
             options: [{
                 description: "Proveedores",
                 title: "Proveedores",
-                action: () => this.rootPanel(new AonJsfSupplier())
+                action: () => this.rootPanel(new JSF.AonJsfSupplier())
             },{
                 description: "Facturas de Compra",
                 title: "Facturas de Compra",
-                action: () => alert("description")
+                action: () => this.rootPanel(new JSF.AonJsfPurchaseInvoice())
             },{
                 description: "Pedidos de Compra",
                 title: "Facturas de Compra",
@@ -94,11 +94,11 @@ export class AonManagementMenu extends AonSuiteMenu {
             options: [{
                 description: "Acreedores",
                 title: "Acreedores",
-                action: () => this.rootPanel(new AonJsfCreditor())
+                action: () => this.rootPanel(new JSF.AonJsfCreditor())
             },{
                 description: "Facturas de Gastos",
                 title: "Facturas de Gastos",
-                action: () => alert("description")
+                action: () => this.rootPanel(new JSF.AonJsfExpenseInvoice())
             },{
                 description: "Gastos no Deducibles en IVA",
                 title: "Gastos no Deducibles en IVA",
@@ -155,11 +155,11 @@ export class AonManagementMenu extends AonSuiteMenu {
             options: [{
                 description: "Productos",
                 title: "Productos",
-                action: () => this.rootPanel(new AonJsfProduct())
+                action: () => this.rootPanel(new JSF.AonJsfProduct())
             },{
                 description: "Gastos",
                 title: "Gastos",
-                action: () => this.rootPanel(new AonJsfExpense())
+                action: () => this.rootPanel(new JSF.AonJsfExpense())
             },{
                 description: "Categorías",
                 title: "Categorías",

@@ -267,6 +267,10 @@ public enum AppParam {
 	, INVOFOX_AUTO_ACCEPT	
 	, INVOFOX_AUTO_RECORD
 	, INVOFOX_PERSONALIZED
+	, AON_SECRET
+	, SIG_DOMAIN_NAME
+	, SIG_DOMAIN_ID
+	, SIG_LOGIN
 	;
 	
 	public String getValue() {
