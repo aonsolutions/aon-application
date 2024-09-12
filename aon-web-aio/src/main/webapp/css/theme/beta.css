@@ -12,7 +12,7 @@
 #aonMenuBar-comercialMenu,
 #aonMenuBar-warehouseMenu,
 #aonMenuBar-groupwareMenu,
-#aonMenuBar-managementMenu,
+#_aonMenuBar-managementMenu,
 #aonMenuBar-marketingMenu {
   display: none;
 }

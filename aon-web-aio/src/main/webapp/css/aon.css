@@ -143,6 +143,14 @@
   --aonTaxBuildPrintRes: grey;
   
   --aonNewWhite: #EEEEEE;
+	
+  --aonMenuSidenav: true;
+	
+  /*
+  false or undefined same effect
+  */
+  --aonMenuTopnav: false;
+  --aonConfigSwitchApps: false;
 
 }
 
