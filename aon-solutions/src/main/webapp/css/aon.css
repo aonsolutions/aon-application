@@ -210,6 +210,13 @@
   background-color: #cccccc !important;
 }
 
+.aonTimeControlButton {
+  padding: .5rem 1rem;
+  font-size: .8rem;
+  width: 6rem;
+  height: 2.5rem;
+}
+
 .aonDashboardButton{
   padding: 10px 20px;
   box-sizing: border-box;
@@ -1428,6 +1435,18 @@
 
 .timeControl.pause{
   background: #FF9002;
+}
+
+.profile-avatar-letters{
+  background-color: var(--aonBlue);
+  color: var(--aonNewWhite);
+  width: 6rem;
+  height: 6rem;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 2rem;
 }
 
 .profile-letters{

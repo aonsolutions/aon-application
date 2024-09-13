@@ -64,7 +64,14 @@ export class AonJsfApp extends AonElement {
         tokenInput.value = LS.getToken();
 		form.appendChild(tokenInput);
 
-        this.appendChild(form);
+		let domainInput = this.createElement(TAG.INPUT);
+		domainInput.type = 'hidden';
+		domainInput.name = 'com.code.aon.jaas.domain';
+		domainInput.value = LS.getDomainName();
+		form.appendChild(domainInput);
+
+
+		this.appendChild(form);
 
         form.submit();
         
@@ -78,6 +85,24 @@ export class AonJsfApp extends AonElement {
 		this.viewId = viewId;
 	}
 	
+	
+}
+
+export class AonJsfSale extends AonJsfApp {
+	
+	constructor() {
+		super();
+		this.setViewId('/facelet/app/sale.xhtml');
+	}
+	
+}
+
+export class AonJsfExpense extends AonJsfApp {
+	
+	constructor() {
+		super();
+		this.setViewId('/facelet/app/expense.xhtml');
+	}
 	
 }
 
@@ -117,18 +142,51 @@ export class AonJsfCreditor extends AonJsfApp {
 	
 }
 
-export class AonJsfExpense extends AonJsfApp {
+
+export class AonJsfSaleInvoice extends AonJsfApp {
 	
 	constructor() {
 		super();
-		this.setViewId('/facelet/app/expense.xhtml');
+		this.setViewId('/facelet/app/saleInvoice.xhtml');
 	}
 	
 }
 
+export class AonJsfPurchaseInvoice extends AonJsfApp {
+	
+	constructor() {
+		super();
+		this.setViewId('/facelet/app/purchaseInvoice.xhtml');
+	}
+	
+}
+
+export class AonJsfExpenseInvoice extends AonJsfApp {
+	
+	constructor() {
+		super();
+		this.setViewId('/facelet/app/expenseInvoice.xhtml');
+	}
+}
+
+export class AonJsfInvoicePrint extends AonJsfApp {
+	
+	constructor() {
+		super();
+		this.setViewId('/facelet/app/invoicePrint.xhtml');
+	}
+}
 
 if(!window.customElements.get(TAG.AON_JSF_APP)){
 	window.customElements.define(TAG.AON_JSF_APP, AonJsfApp);
+}
+
+if(!window.customElements.get(TAG.AON_JSF_SALE)){
+	window.customElements.define(TAG.AON_JSF_SALE, AonJsfSale);
+}
+
+if(!window.customElements.get(TAG.AON_JSF_EXPENSE)){
+	window.customElements.define(TAG.AON_JSF_EXPENSE, AonJsfExpense);
 }
 
 if(!window.customElements.get(TAG.AON_JSF_PRODUCT)){
@@ -147,6 +205,18 @@ if(!window.customElements.get(TAG.AON_JSF_SUPPLIER)){
 	window.customElements.define(TAG.AON_JSF_SUPPLIER, AonJsfSupplier);
 }
 
-if(!window.customElements.get(TAG.AON_JSF_EXPENSE)){
-	window.customElements.define(TAG.AON_JSF_EXPENSE, AonJsfExpense);
+if(!window.customElements.get(TAG.AON_JSF_SALE_INVOICE)){
+	window.customElements.define(TAG.AON_JSF_SALE_INVOICE, AonJsfSaleInvoice);
+}
+
+if(!window.customElements.get(TAG.AON_JSF_PURCHASE_INVOICE)){
+	window.customElements.define(TAG.AON_JSF_PURCHASE_INVOICE, AonJsfPurchaseInvoice);
+}
+
+if(!window.customElements.get(TAG.AON_JSF_EXPENSE_INVOICE)){
+	window.customElements.define(TAG.AON_JSF_EXPENSE_INVOICE, AonJsfExpenseInvoice);
+}
+
+if(!window.customElements.get(TAG.AON_JSF_INVOICE_PRINT)){
+	window.customElements.define(TAG.AON_JSF_INVOICE_PRINT, AonJsfInvoicePrint);
 }

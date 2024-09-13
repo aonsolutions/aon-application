@@ -72,7 +72,11 @@ export class AonSign extends AonElement {
 
   build(){
     let divGeneral = this.createElement(TAG.DIV);
-    divGeneral.style.textAlign = "center";   
+    divGeneral.style.display = "flex";   
+    divGeneral.style.flexDirection = "column"; 
+    divGeneral.style.alignItems = "center";  
+    divGeneral.style.gap = ".5rem";  
+     
     this.appendChild(divGeneral);
 
     if(this.isMobile()){
@@ -103,7 +107,7 @@ export class AonSign extends AonElement {
 
     if(!this.getElement(this.TIME)){
       let time = this.createElement(TAG.DIV);
-      time.style.fontSize = '30px';
+      time.style.fontSize = '1.6rem';
       time.id = this.TIME;
       time.innerHTML = "00:00:00";
       divGeneral.appendChild(time);
@@ -111,9 +115,10 @@ export class AonSign extends AonElement {
 
     let div = this.createElement(TAG.DIV);
     div.id = this.CONTENT;
-    if(this.isMobile()) {
-      div.style.marginTop = "5px";
-    }
+    div.style.display = "flex";
+    div.style.flexDirection = "column";
+    div.style.alignItems = "center";
+    div.style.gap = ".5rem";
 
     divGeneral.appendChild(div);
 
@@ -129,10 +134,8 @@ export class AonSign extends AonElement {
       let button = this.createElement(TAG.BUTTON);
       button.id = this.id+"Entrada";
       button.className = 'aonButton';
+      button.classList.add('aonTimeControlButton');
       button.style.backgroundColor = '#86D364';
-      button.style.padding = '.7rem';
-      button.style.fontSize = '.9rem';
-      button.style.width = '120px';
       button.innerHTML = MSG.ENTRY.toUpperCase();
       if(this.isMobile()){
         button.style.width = "60%";
@@ -150,9 +153,8 @@ export class AonSign extends AonElement {
       let button = this.createElement(TAG.BUTTON);
       button.id = this.id+"Vuelta";
       button.className = 'aonButton';
+      button.classList.add('aonTimeControlButton');
       button.style.backgroundColor = '#86D364';
-      button.style.width = '120px';
-      button.style.padding = '1rem 1rem';
       button.innerHTML = 'VUELTA';
       if(this.isMobile()){
         button.style.width = "60%";
@@ -167,28 +169,30 @@ export class AonSign extends AonElement {
     let content = this.getElement(this.CONTENT);
     if(content){
       this.clearElement(content);
+
+      let buttons = this.createElement(TAG.DIV);
+      buttons.style.display = "flex";
+      buttons.style.justifyContent = "center";
+      buttons.style.gap = "1rem";
+
       let button = this.createElement(TAG.BUTTON);
       button.id = this.id+"Salida";
       button.className = 'aonButton';
+      button.classList.add('aonTimeControlButton');
       button.style.backgroundColor = '#DC4D30';
-      button.style.marginRight = '10px';
-      button.style.width = '100px';
-      button.style.padding = '.7rem';
-      button.style.fontSize = '.9rem';
       button.innerHTML = MSG.EXIT.toUpperCase();
       button.addEventListener(EVENT.CLICK, () => this.saveTimeCtrl('out'));
-      content.appendChild(button);
+      buttons.appendChild(button);
   
       let button2 = this.createElement(TAG.BUTTON);
       button2.className = 'aonButton';
+      button2.classList.add('aonTimeControlButton');
       button2.style.backgroundColor = '#F39F1D';
-      button2.style.marginRight = '10px';
-      button2.style.width = '100px';
-      button2.style.padding = '.7rem';
-      button2.style.fontSize = '.9rem';
       button2.innerHTML = 'PAUSA';
       button2.addEventListener(EVENT.CLICK, () => this.saveTimeCtrl('pause'));
-      content.appendChild(button2);
+      buttons.appendChild(button2);
+
+      content.appendChild(buttons);
     }
 	}
 
@@ -316,7 +320,9 @@ export class AonSign extends AonElement {
       const id = 'lastTimeUser';
       const div = this.getElement(id) || this.createElement(TAG.DIV);
       div.id = id;
-      div.classList.add("aonSignDivLastTime");
+      div.style.color = "grey";
+      div.style.cursor = "default";
+      div.style.fontSize  = ".8rem";
       div.innerHTML = `${MSG.LAST} ${textStatus} ${AonDateUtils.setDateTimestampDay(signin.last_date)}`;
       content.appendChild(div);
       this.totalHourWeek();
@@ -340,7 +346,6 @@ export class AonSign extends AonElement {
             let content = this.getElement(this.CONTENT);
             const div = this.getElement(this.TOTAL_HOUR) || this.createElement(TAG.DIV);
             div.id = this.TOTAL_HOUR;
-            div.style.marginTop = "10px";
             div.style.color =  LS.isDarkTheme() ? "#ffffff" : "gray";
             div.style.fontSize = "12px";
             div.style.cursor = "default";

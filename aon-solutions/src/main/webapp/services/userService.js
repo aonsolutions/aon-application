@@ -20,3 +20,5 @@ export const assignUserWorkgroup = (data) => put(`${API_URL}/user/workgroup`, da
 export const removeUserWorkgroup = (data) => remove(`${API_URL}/user/workgroup`, data);
 
 export const generateToken = (data) => open(`${API_URL}/generate_token?json=${data}`);
+
+export const generateTokenSig = (data) => get(`${API_URL}/generate_token/sig`, data);

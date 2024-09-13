@@ -40,6 +40,7 @@ public class JsfAppServlet extends HttpServlet {
 	private static final String TOKEN = "token";
 	private static final String VIEW_ID = "viewId";
 	private static final String ACTION = "action";
+	private static final String DOMAIN = "domain";
 	private static final String ACTION_LISTENER = "actionListener";
 
 	@Override
@@ -74,7 +75,7 @@ public class JsfAppServlet extends HttpServlet {
 	}
 	
 	protected void doLogin(HttpServletRequest httpRequest,
-			HttpServletResponse httpResponse) throws HttpError, IOException {
+			HttpServletResponse httpResponse) throws IOException {
 
 		Request request = getRealRequest(httpRequest);
 		if ( request != null ) {
@@ -86,7 +87,7 @@ public class JsfAppServlet extends HttpServlet {
             manager.changeSessionId(session, sessionId );
             request.changeSessionId(session.getId());
 			Principal principal = session.getPrincipal();
-
+			
 			if ( principal == null ) {
 				String username = ":-|"; 
 				String password = ":-o"; 
@@ -97,8 +98,7 @@ public class JsfAppServlet extends HttpServlet {
 				}
 			}
 			boolean sessionUpdated = false;
-			if ( session instanceof HttpSession ) {
-				HttpSession httpSession = (HttpSession) session;
+			if ( session instanceof HttpSession httpSession ) {
 				if ( principal == null ) {
 					httpSession.setAttribute(LOGIN_SERVLET_FAIL_ATTRIBUTE, Boolean.TRUE.toString());
 				} else {

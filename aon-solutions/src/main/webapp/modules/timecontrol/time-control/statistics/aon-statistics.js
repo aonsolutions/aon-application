@@ -65,23 +65,18 @@ export class AonStatistics extends AonElement {
     getTaskHolder({reload:true}).then(th => {
       this.taskHolder = th;
 
+      this.innerHTML = '';
+
       let canvasDiv = this.createElement(TAG.DIV);
       canvasDiv.id = "timeControlCanvasDiv";
-
-      if(this.isMobile()){
-        canvasDiv.style.width = "100%";
-        // canvasDiv.style.height = "16rem";
-        canvasDiv.style.height = "45vh";
-        canvasDiv.style.padding = "1rem";
-      } else {
-        canvasDiv.style.width = "100%";
-        canvasDiv.style.height = "100%";
-      }
+      canvasDiv.style.width = "100%";
+      canvasDiv.style.height = "100%";
 
       this.appendChild(canvasDiv);
 
       let canvas = this.createElement(TAG.CANVAS);
       canvas.id = "timeControlCanvas";
+      canvas.cle
       canvasDiv.appendChild(canvas);
 
       this.paintChart(canvas);
@@ -103,15 +98,12 @@ export class AonStatistics extends AonElement {
         }
         const newTime = this.timeToDecimal(time);
         const day =  new Date(start_date);
-        let color = "rgba(189, 189, 189, 0.7)";
-        let colorBorder = "rgba(189, 189, 189, 1)";
+        let color = "rgba(189, 189, 189, 1)";
         const newDayTime = day.setHours(0,0,0,0);
         if(newDayTime === new Date().setHours(0,0,0,0)){
-            color = "rgba(134, 211, 100, 0.7)";
-            colorBorder = "rgba(134, 211, 100, 1)";
+            color = "rgba(134, 211, 100, 1)";
         } else if(newDayTime >= firstDayOfWeek){
-          color = "rgba(200, 230, 201, 0.7)";
-          colorBorder = "rgba(200, 230, 201, 1)";
+          color = "rgba(200, 230, 201, 1)";
         } 
         
         if(
@@ -125,15 +117,13 @@ export class AonStatistics extends AonElement {
         datos.push({
           time: newTime, 
           dayLetter: this.getFirstLettersDay(day),
-          color,
-          colorBorder
+          color
         });
       }
       
       let average = sum / count;
       let labels = datos.map(dt => dt.dayLetter);
       let colors = datos.map(dt => dt.color);
-      let colorsBorder = datos.map(dt => dt.colorBorder);
       let datas = datos.map(dt => dt.time);
       let colorGrid = LS.isDarkTheme() ? "#ffffff" : "#bdbdbd"
       
@@ -141,21 +131,24 @@ export class AonStatistics extends AonElement {
         labels,
         datasets: [
           {
-            label: labels,
-            backgroundColor: colors,
-            borderRadius: 5,
-            borderWidth: 2,
-            borderColor: colorsBorder,
+            label: 'Horas',
             data: datas,
+            backgroundColor: colors,
+            borderRadius: Number.MAX_VALUE,
+            borderSkipped: false,
             order: 1
           },
           // Lines
           {
             label: 'Media',
             // borderColor: '#4c4c4c',
-            borderColor: "rgb(143, 143, 143)",
             data: [average, average, average, average, average, average, average, average],
             type: 'line',
+            borderColor: "rgb(143, 143, 143)",
+            borderDash: [2, 4],
+            pointStyle: 'circle',
+            pointRadius: 0,
+            fill: false,
             order: 0
           }
         ]
@@ -202,6 +195,8 @@ export class AonStatistics extends AonElement {
       if (this.comboBarChart != undefined) {
         this.comboBarChart.destroy();
       }
+      // clear canvas for android mobiles
+      canvas.innerHTML = '';
   
       this.comboBarChart = new Chart(canvas, config);
     } catch (error) {
