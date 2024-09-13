@@ -132,6 +132,9 @@ export class AonLoginPanel extends AonElement {
 		loginContent.appendChild(divGeneral);
 		loginContent.appendChild(divLogout);
 		
+		let openButton = this.getElement("openNotificationButton");
+		openButton.style.display = "none";
+
 		this.appendChild(loginContent);
 	}
 
