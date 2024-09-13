@@ -127,7 +127,7 @@ export class AonHome extends AonElement {
 
 		let rightPanel = new AonRightPanel();
 		rightPanel.addEventListener(EVENT.CLOSE, () => {
-			rootPanel.style.marginRight = '0px';
+			// CLose Right Sidenav
 		});
 
 		this.appendChild(rightPanel);
@@ -138,10 +138,10 @@ export class AonHome extends AonElement {
 		let configButton = this.getElement('aonRightPanelConfigButton');
 		let helpButton = this.getElement('aonRightPanelHelpButton');
 		let notificationButton = this.getElement('aonRightPanelNotificationButton');
-		let title = this.getElement('aonRightPanelTitle')
+		let title = this.getElement('aonRightPanelTitle');
+		
 		if(LS.isRightPanel()) {
 			LS.removeRightPanel();
-			rootPanel.style.marginRight = '320px';
 			rightPanel.clear();
 			rightPanel.setContent(new AonConfig());
 			rightPanel.setTitle(MSG.CONFIGURATION);
@@ -153,22 +153,18 @@ export class AonHome extends AonElement {
 			headerConfig.addEventListener(EVENT.CLICK, () => {
 				let config = this.getElement('aonConfig');
 				if (!rightPanel.isClose() && config) {
-					editButton.style.visibility='hidden';
-					configButton.style.visibility='hidden';
-					helpButton.style.visibility='hidden';
-					rootPanel.style.marginRight = '0px';
-					title.style.marginLeft = '10px';
+					editButton.style.display='none';
+					configButton.style.display='none';
+					helpButton.style.display='none';
 					rightPanel.close();
 				} else {
 					rightPanel.clear();
 					rightPanel.setContent(new AonConfig());
 					rightPanel.setTitle(MSG.CONFIGURATION);
-					rootPanel.style.marginRight = '320px';
-					configButton.style.visibility='visible';
-					helpButton.style.visibility='hidden';
-					editButton.style.visibility='hidden';
-					notificationButton.style.visibility='hidden';
-					title.style.marginLeft = '39px';
+					configButton.style.display='block';
+					helpButton.style.display='none';
+					editButton.style.display='none';
+					notificationButton.style.display='none';
 					rightPanel.open();
 				}
 			});
@@ -179,24 +175,19 @@ export class AonHome extends AonElement {
 			headerHelp.addEventListener(EVENT.CLICK, () => {
 				let help = this.getElement('aonHelp');
 				if(!rightPanel.isClose() && help) {
-					editButton.style.visibility='hidden';
-					configButton.style.visibility='hidden';
-					notificationButton.style.visibility='hidden';
-					helpButton.style.visibility='hidden';
-					title.style.marginLeft = '10px';
-					rootPanel.style.marginRight = '0px';
+					editButton.style.display='none';
+					configButton.style.display='none';
+					notificationButton.style.display='none';
+					helpButton.style.display='none';
 					rightPanel.close();
 				} else {
 					rightPanel.clear();
 					rightPanel.setContent(new AonHelp());
 					rightPanel.setTitle(MSG.HELP);
-					rootPanel.style.marginRight = '320px';
-					title.style.marginLeft = '10px';
-					helpButton.style.visibility='visible';
-					editButton.style.visibility='hidden';
-					notificationButton.style.visibility='hidden';
-					configButton.style.visibility='hidden';
-					title.style.marginLeft = '39px';
+					helpButton.style.display='block';
+					editButton.style.display='none';
+					notificationButton.style.display='none';
+					configButton.style.display='none';
 					rightPanel.open();
 				}
 			});
@@ -207,22 +198,19 @@ export class AonHome extends AonElement {
 			headerUser.addEventListener(EVENT.CLICK, () => {
 				let user = this.getElement('aonLoginPanel');
 				if(!rightPanel.isClose() && user) {
-					title.style.marginLeft = '10px';
-					editButton.style.visibility='hidden';
-					helpButton.style.visibility='hidden';
-					configButton.style.visibility='hidden';
-					notificationButton.style.visibility='hidden';
+					editButton.style.display='none';
+					helpButton.style.display='none';
+					configButton.style.display='none';
+					notificationButton.style.display='none';
 					rightPanel.close();
 				} else  {
 					rightPanel.clear();
 					rightPanel.setContent(new AonLoginPanel());
 					rightPanel.setTitle(MSG.USER);
-					rootPanel.style.marginRight = '0px';
-					editButton.style.visibility = 'visible';
-					helpButton.style.visibility = 'hidden';
-					configButton.style.visibility = 'hidden';
-					notificationButton.style.visibility='hidden';
-					title.style.marginLeft = '39px';
+					editButton.style.display = 'block';
+					helpButton.style.display = 'none';
+					configButton.style.display = 'none';
+					notificationButton.style.display='none';
 					rightPanel.open("200px","0px","0 24px 54px rgba(0,0,0,.15),0 4.5px 13.5px rgba(0,0,0,.08)");
 				}
 			});
@@ -233,22 +221,19 @@ export class AonHome extends AonElement {
 			headerNotification.addEventListener(EVENT.CLICK, () => {
 				let notification = this.getElement('aonNotificationPanel');
 				if(!rightPanel.isClose() && notification) {
-					title.style.marginLeft = '10px';
-					editButton.style.visibility='hidden';
-					helpButton.style.visibility='hidden';
-					configButton.style.visibility='hidden';
-					notificationButton.style.visibility='hidden';
+					editButton.style.display='none';
+					helpButton.style.display='none';
+					configButton.style.display='none';
+					notificationButton.style.display='none';
 					rightPanel.close();
 				} else  {
 					rightPanel.clear();
 					rightPanel.setContent(new AonNotificationPanel());
 					rightPanel.setTitle(MSG.NOTIFICATIONS);
-					rootPanel.style.marginRight = '320px';
-					editButton.style.visibility = 'hidden';
-					helpButton.style.visibility = 'hidden';
-					configButton.style.visibility = 'hidden';
-					notificationButton.style.visibility='visible';
-					title.style.marginLeft = '39px';
+					editButton.style.display = 'none';
+					helpButton.style.display = 'none';
+					configButton.style.display = 'none';
+					notificationButton.style.display='block';
 					rightPanel.open();
 				}
 			});
