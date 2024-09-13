@@ -103,6 +103,10 @@ export class AonLoginPanel extends AonElement {
                 if (rightPanel) {
                     rightPanel.close(); 
                 }
+				let companyy = this.getElement("aonHeaderCompanyListButton");
+				let companyyy = this.getElement("aonHeaderCompanyList");
+				companyy.style.display = "block";
+				companyyy.style.display = "block";
 			});
 			divUserInfo.appendChild(divConfiguration);
 		}
