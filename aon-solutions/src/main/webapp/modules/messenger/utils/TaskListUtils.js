@@ -362,13 +362,13 @@ const getAssignedHtml = (res, domainId) => {
     display: "flex",
     gap: "4px",
   });
-
+  
   if (workgroupDescription) {
     let color = person ? "949393" : "FF6F1D";
     if(LS.isDarkBetaTheme()) color = "var(--aonNewWhite)";
     const divOne = setStyles(document.createElement(TAG.DIV), {
-      border: `2px solid ${color}`,
-      color: `#${color}`,
+      border: `2px solid var(--aonMessenger)`,
+      color: `var(--aonMessenger)`,
       borderRadius: "29px",
       height: "23px",
       lineHeight: "21px",
