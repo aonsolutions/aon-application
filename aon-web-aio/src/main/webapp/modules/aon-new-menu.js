@@ -478,7 +478,7 @@ export class AonNewMenu extends AonElement {
 		let sidenav = this.getElement(this.AON_MENU_SIDENAV);
 		let menulist = this.getElement("aonMenuList");
 		let rootPanel = this.getElement("rootPanel");
-		let aonlogo = this.getElement("aonLogo");		
+		// let aonlogo = this.getElement("aonLogo");		
 		// let icon = this.getElement("aonMenuLeftop");
 
 		sidenav.style.width = '68px';
@@ -486,8 +486,8 @@ export class AonNewMenu extends AonElement {
 		
 		menulist.style.visibility = "visible";
 		
-		aonlogo.style.left = '60px';
-		aonlogo.style.position = 'relative';
+		// aonlogo.style.left = '60px';
+		// aonlogo.style.position = 'relative';
 
 		// icon.style.visibility = "visible";
 
@@ -507,7 +507,7 @@ export class AonNewMenu extends AonElement {
 		sidenav.style.display = "none";
 		aonlogo.style.position = "relative";
 		// icon.style.visibility = "hidden";
-		aonlogo.style.left = '60px';
+		// aonlogo.style.left = '60px';
 	
 		rootPanel.style.marginLeft = '0px';
 		//menulist.style.visibility = "hidden";
@@ -525,7 +525,11 @@ export class AonNewMenu extends AonElement {
 
 		let a = this.createElement(TAG.A);
 		a.addEventListener(EVENT.CLICK, () => {
-			this.appSelection(app);
+			// if(app.app === "new") {
+
+			// } else {
+				this.appSelection(app);
+			// }
 		});
 		a.classList.add('aonMenuApp');
 

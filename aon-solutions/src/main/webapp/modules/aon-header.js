@@ -571,7 +571,8 @@ export class AonHeader extends AonElement {
 		aonHeaderHelp.style.display = company ? 'block' : 'none';
 
 		let aonHeaderSearch = this.getElement(this.AON_HEADER_SEARCH);
-		aonHeaderSearch.style.display = company ? 'none' : 'flex';
+		// aonHeaderSearch.style.display = company ? 'none' : 'flex';
+		aonHeaderSearch.style.display = 'flex';
 		if(!LS.isNewTheme() && !this.newTheme)
 			aonHeaderSearch.style.marginLeft = '33px';
 
@@ -583,6 +584,7 @@ export class AonHeader extends AonElement {
 
 		let aonHeaderCompanyName = this.getElement(this.AON_HEADER_COMPANY_NAME);
 		aonHeaderCompanyName.innerHTML = company ? company.name : '';
+
 
 		if(onlyOne) {
 			// aonHeaderHome.style.right = '140px';
