@@ -1871,6 +1871,16 @@ public interface Properties {
 		Property<Byte> getTypeProperty();
 		Property<Byte> getStatusProperty();
 	}
+
+	public interface InvoiceDataProperties {
+		Property<Integer> getIdProperty();
+		Property<Integer> getDomainProperty();
+		Property<Integer> getInvoiceProperty();
+		Property<String> getNameProperty();
+		Property<String> getValueProperty();
+		Property<Date> getStartDateProperty();
+		Property<Date> getEndDateProperty();
+	}
 	
 	public interface InvoiceBatchProperties {
 		Property<Integer> getIdProperty();
