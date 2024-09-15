@@ -239,11 +239,11 @@ public class InvofoxServlet extends AonApiHttpServlet {
 	}
 	
 	private static JSONObject acceptDocument(AonApiData api) {
+		JSONObject params = api.getData();
+		String documentId = params.optString(IJsonNames.ID);
 		try (CloseableAONContext aonContext = AONContext.getAONContext(api.getDomain().getName(), api.getUser().getLogin())) {
 			Company company = AON.getCompany( aonContext, f -> f.getDomainProperty().eq( api.getDomain().getId()));
 			String companyDocument = company == null? null : company.getDocument(); 
-			JSONObject params = api.getData();
-			String documentId = params.optString(IJsonNames.ID);
 
 			InvofoxConfiguration invofoxConfiguration = InvofoxConfigurationDAO.get(aonContext);
 //			if(invofoxConfiguration.isAutoAccept()) {
@@ -261,7 +261,8 @@ public class InvofoxServlet extends AonApiHttpServlet {
 						.orElse(null);
 
 				OCRSeverity publicState = ocrDocument.getPublicState().orElse(null);
-				if (inv != null && publicState != null && OCRSeverity.approved.equals(publicState)) {
+				if (inv != null && publicState != null && OCRSeverity.approved.equals(publicState)
+						&& inv.getTediCategory() != null) {
 					inv = AON.acceptInvoice(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(),
 							inv, null);
 					if (inv != null && inv.getId() != null) {
@@ -269,11 +270,11 @@ public class InvofoxServlet extends AonApiHttpServlet {
 						InvoiceServlet.processInvoiceFile(api, inv);
 						exportDocument(api, documentId);
 					}
-				}
 
-				if(invofoxConfiguration.isAutoRecord()) {					
-					// TODO RECORD INVOICE!
-				}
+					if(invofoxConfiguration.isAutoRecord()) {					
+						// TODO RECORD INVOICE!
+					}
+				} else rawdocDocument(api);
 //			}
 			
 			return new JSONObject();
@@ -307,7 +308,8 @@ public class InvofoxServlet extends AonApiHttpServlet {
 					.map(invoice -> fillReferenceCode(ocrInvoice, invoice))
 					.map(invoice -> OCRInvoiceBuilder.guessItemsOrAccounts(aonContext, invoice))
 					.map(invoice -> fillFinances(aonContext, ocrInvoice, invoice))
-					.map(invoice -> fillCategory(aonContext, invoice)).map(invoice -> fillActivity(aonContext, invoice))
+					.map(invoice -> fillCategory(aonContext, invoice))
+					.map(invoice -> fillActivity(aonContext, invoice))
 					.map(InvoiceJSON::toJSON)
 					.map(invoice -> invoice.put("token", token))
 					.map(invoice -> invoice.put("file", getFileJSON(ocrDocument)))
@@ -689,6 +691,7 @@ public class InvofoxServlet extends AonApiHttpServlet {
 							.ifPresent(registry::setNationality));
 					ocrInvoice.getRecipientAddressDetails().ifPresentOrElse(details -> {
 						RegistryAddress registryAddress = toRegistryAddress(details);
+						if(registryAddress.getDomain() == null) registryAddress.setDomain(invoice.getDomain());
 						invoice.setAddress(registryAddress);
 					}, () -> {
 
@@ -740,8 +743,7 @@ public class InvofoxServlet extends AonApiHttpServlet {
 	private static Invoice fillCategory(AONContext ctx, Invoice invoice) {
 		if (invoice.getRegistry() == null)
 			return invoice;
-		List<Account> accounts = AccountingInvoiceDAO.getSuggestedAccounts(ctx, invoice.getRegistry(),
-				invoice.getType());
+		List<Account> accounts = AccountingInvoiceDAO.getSuggestedAccounts(ctx, invoice.getRegistry(), invoice.getType());
 		if (accounts.isEmpty() && InvoiceType.EXPENSES.equals(invoice.getType())) {
 			accounts = AccountingInvoiceDAO.getSuggestedAccounts(ctx, invoice.getRegistry(), InvoiceType.PURCHASE);
 			if (!accounts.isEmpty())
