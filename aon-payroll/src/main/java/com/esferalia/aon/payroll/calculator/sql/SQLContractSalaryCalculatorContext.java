@@ -3981,6 +3981,16 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 	    };
 	}
 
+	public Object br(Date date, LeaveType leaveType) throws ExpressionException, SQLException, SalaryException {
+		switch (leaveType) {
+		case MATERNITY , PATERNITY : {
+			return br(add(date, Calendar.MONTH, -1));
+		}
+		default:
+			return this.br(date);
+		}
+	}
+
 	public Object br(Date date) throws ExpressionException, SQLException, SalaryException {
 		
 		double br = getSavedBr(date);
