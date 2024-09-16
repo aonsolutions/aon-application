@@ -80,10 +80,11 @@ jobs:
         echo "PROJECTS=${PROJECTS}" >> $GITHUB_ENV
 
     - name: Build with Maven
-      run: mvn -B -pl ${PROJECTS:=.} -amd -Dgwt.working=true -DskipTests=true clean install
+      if: github.ref != 'refs/heads/master'
+      run: mvn -B -pl ${PROJECTS:=.} -amd -Dgwt.working=true clean install
 
     - name: Publish to GitHub Packages Apache Maven
       if: github.ref == 'refs/heads/master'
-      run: mvn -B -DskipTests=true -Dmaven.install.skip=true deploy
+      run: mvn -B -DskipTests=true clean deploy
       env:
         GITHUB_TOKEN: ${{ github.token }}
