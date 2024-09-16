@@ -81,7 +81,9 @@ jobs:
 
     - name: Build with Maven
       if: github.ref != 'refs/heads/master'
-      run: mvn -B -pl ${PROJECTS:=.} -amd -Dgwt.working=true clean install
+      run: mvn -B -pl ${PROJECTS:=.} -amd -Dgwt.working=true -Dgithub.actions=true clean install
+      env:
+        GITHUB_TOKEN: ${{ github.token }}
 
     - name: Publish to GitHub Packages Apache Maven
       if: github.ref == 'refs/heads/master'

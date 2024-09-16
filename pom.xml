@@ -1,337 +1,302 @@
 <?xml version="1.0"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-	<prerequisites>
-		<maven>3.2.5</maven>
-	</prerequisites>
-
-	<modelVersion>4.0.0</modelVersion>
-	<groupId>com.code.aon</groupId>
-	<artifactId>aon.parent</artifactId>
-	<version>9.23-SNAPSHOT</version>
-	<packaging>pom</packaging>
-	<name>AON PARENT</name>
-	<description>
+  <prerequisites>
+    <maven>3.2.5</maven>
+  </prerequisites>
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>com.code.aon</groupId>
+  <artifactId>aon.parent</artifactId>
+  <version>9.23-SNAPSHOT</version>
+  <packaging>pom</packaging>
+  <name>AON PARENT</name>
+  <description>
 		"Un padre para cien hijos, antes que cien hijos para un padre."
 	</description>
-
-	<properties>
-		<compileSource>17</compileSource>
-		<compileTarget>21</compileTarget>
-		<svnkitVersion>1.7.4-v1</svnkitVersion>
-		<aonCoreLibsVersion>8.112</aonCoreLibsVersion>
-		<project.build.sourceEncoding>ISO-8859-1</project.build.sourceEncoding>
-		<jasperReportsArtifact>jasperreports-javaflow</jasperReportsArtifact>
-		<jasperReportsVersion>6.7.0</jasperReportsVersion>
-		<jasperreportsMavenPluginGroup>com.esferalia.aon</jasperreportsMavenPluginGroup>
-		<jasperreportsMavenPluginArtifact>aon-maven-plugin</jasperreportsMavenPluginArtifact>
-		<jasperreportsMavenPluginVersion>8.2-SNAPSHOT</jasperreportsMavenPluginVersion>
-		<junitVersion>4.13.2</junitVersion>
-                <tomcat-version>10.1.19</tomcat-version>
-	</properties>
-
-	<modules>
-		<!--  
+  <properties>
+    <compileSource>17</compileSource>
+    <compileTarget>21</compileTarget>
+    <svnkitVersion>1.7.4-v1</svnkitVersion>
+    <aonCoreLibsVersion>8.112</aonCoreLibsVersion>
+    <project.build.sourceEncoding>ISO-8859-1</project.build.sourceEncoding>
+    <jasperReportsArtifact>jasperreports-javaflow</jasperReportsArtifact>
+    <jasperReportsVersion>6.7.0</jasperReportsVersion>
+    <jasperreportsMavenPluginGroup>com.esferalia.aon</jasperreportsMavenPluginGroup>
+    <jasperreportsMavenPluginArtifact>aon-maven-plugin</jasperreportsMavenPluginArtifact>
+    <jasperreportsMavenPluginVersion>8.2-SNAPSHOT</jasperreportsMavenPluginVersion>
+    <junitVersion>4.13.2</junitVersion>
+    <tomcat-version>10.1.19</tomcat-version>
+  </properties>
+  <modules>
+    <!--  
 		<module>jakarta.persistence-api</module>
 		-->
-
-		<!-- NET AONSULTIONS PLUGINS -->
-		<module>invofox.sdk</module>
-
-		<!-- MAVEN PLUGINS -->
-		<module>aon-alias-maven-plugin</module>
-		<module>aon-maven-plugin</module>
-		<module>aon.mock.entity.maven.plugin</module>
-
-		<!-- CORE MODULES -->
-		<module>aeat</module>
-		<module>tgss</module>
-		<module>pool</module>
-		<module>dbutils</module>
-
-		<!-- DB MODULES -->
-		<module>aon-master</module>
-		<module>aon.entity.common</module>
-		<module>aon.entity</module>
-		<module>aon.entity.alias</module>
-		<module>aon-db-manager</module>
-		<module>aon-dbutils</module>
-		<module>aon-ingenet</module>
-		<module>aon-ui-dbutils</module>
-		<module>aon-ui-db-manager</module>
-		<module>aon-master-jooq</module>
-
-		<!-- CORE  -->
-		<module>aon-watson</module>
-		<module>aon-occam</module>
-		<module>aon-occam-mod200</module>
-		
-		<!-- FRAMEWORK -->
-		<module>aon-audit</module>
-		<module>aon-ui-audit</module>
-		<module>aon-jaas</module>
-		<module>aon-common</module>
-		<module>aon-report</module>
-		<module>aon-ql</module>
-		<module>aon-rich-components</module>
-		<module>aon-ui-common</module>
-		<module>aon-ui-form</module>
-		<module>aon-ui-report</module>
-		<module>aon-ui-resources</module>
-		<module>aon-webmail</module>
-		<module>aon-ui-webmail</module>
-		<module>aon-jsf-bridge</module>
-		<module>aon-admin</module>
-		<module>aon-ui-admin</module>
-		<module>aon-google-apis</module>
-		<module>aon-google-apis-v2</module>
-		<!--module>aon-conexflow</module-->
-		<module>aon-oauth2</module>
-		<module>aon-hhg-webservice</module>
-		<module>aon-webservice</module>
-		<module>aon-dump</module>
-		<module>aon-sii</module>
-		<module>aon-seres</module>
-		<module>aon-tbai</module>
-		<module>aon-invoice-communication</module>
-		<module>aon-external-sources</module>
-		<module>aon-sign</module>		
-		<module>aon-bank</module>
-		<module>aon-templates</module>
-		
-		<!-- ENTITY -->
-		<module>aon-carrier</module>
-		<module>aon-company</module>
-		<module>aon-config</module>
-		<module>aon-customer</module>
-		<module>aon-groupware</module>
-		<module>aon-project</module>
-		<module>aon-registry</module>
-		<module>aon-calendar</module>
-		<module>aon-payroll</module>
-		<module>aon-salary</module>
-		<module>aon-account-bridge</module>
-		<module>aon-accounting</module>
-		<module>aon-commercial</module>
-		<module>aon-finance</module>
-		<module>aon-finance-bridge</module>
-		<module>aon-fiscal</module>
-		<module>aon-product</module>
-		<module>aon-purchase</module>
-		<module>aon-sales</module>
-		<module>aon-sales-bridge</module>
-		<module>aon-seller</module>
-		<module>aon-supplier</module>
-		<module>aon-warehouse</module>
-		<module>aon-warehouse-bridge</module>
-		<module>aon-asset</module>
-		<module>aon-marketing</module>
-		<module>aon-purchase-bridge</module>
-		<module>aon-tas</module>
-		<module>aon-academy</module>
-		
-		<!--  OBSOLETE
+    <!-- NET AONSULTIONS PLUGINS -->
+    <module>invofox.sdk</module>
+    <!-- MAVEN PLUGINS -->
+    <module>aon-alias-maven-plugin</module>
+    <module>aon-maven-plugin</module>
+    <module>aon.mock.entity.maven.plugin</module>
+    <!-- CORE MODULES -->
+    <module>aeat</module>
+    <module>tgss</module>
+    <module>pool</module>
+    <module>dbutils</module>
+    <!-- DB MODULES -->
+    <module>aon-master</module>
+    <module>aon.entity.common</module>
+    <module>aon.entity</module>
+    <module>aon.entity.alias</module>
+    <module>aon-db-manager</module>
+    <module>aon-dbutils</module>
+    <module>aon-ingenet</module>
+    <module>aon-ui-dbutils</module>
+    <module>aon-ui-db-manager</module>
+    <module>aon-master-jooq</module>
+    <!-- CORE  -->
+    <module>aon-watson</module>
+    <module>aon-occam</module>
+    <module>aon-occam-mod200</module>
+    <!-- FRAMEWORK -->
+    <module>aon-audit</module>
+    <module>aon-ui-audit</module>
+    <module>aon-jaas</module>
+    <module>aon-common</module>
+    <module>aon-report</module>
+    <module>aon-ql</module>
+    <module>aon-rich-components</module>
+    <module>aon-ui-common</module>
+    <module>aon-ui-form</module>
+    <module>aon-ui-report</module>
+    <module>aon-ui-resources</module>
+    <module>aon-webmail</module>
+    <module>aon-ui-webmail</module>
+    <module>aon-jsf-bridge</module>
+    <module>aon-admin</module>
+    <module>aon-ui-admin</module>
+    <module>aon-google-apis</module>
+    <module>aon-google-apis-v2</module>
+    <!--module>aon-conexflow</module-->
+    <module>aon-oauth2</module>
+    <module>aon-hhg-webservice</module>
+    <module>aon-webservice</module>
+    <module>aon-dump</module>
+    <module>aon-sii</module>
+    <module>aon-seres</module>
+    <module>aon-tbai</module>
+    <module>aon-invoice-communication</module>
+    <module>aon-external-sources</module>
+    <module>aon-sign</module>
+    <module>aon-bank</module>
+    <module>aon-templates</module>
+    <!-- ENTITY -->
+    <module>aon-carrier</module>
+    <module>aon-company</module>
+    <module>aon-config</module>
+    <module>aon-customer</module>
+    <module>aon-groupware</module>
+    <module>aon-project</module>
+    <module>aon-registry</module>
+    <module>aon-calendar</module>
+    <module>aon-payroll</module>
+    <module>aon-salary</module>
+    <module>aon-account-bridge</module>
+    <module>aon-accounting</module>
+    <module>aon-commercial</module>
+    <module>aon-finance</module>
+    <module>aon-finance-bridge</module>
+    <module>aon-fiscal</module>
+    <module>aon-product</module>
+    <module>aon-purchase</module>
+    <module>aon-sales</module>
+    <module>aon-sales-bridge</module>
+    <module>aon-seller</module>
+    <module>aon-supplier</module>
+    <module>aon-warehouse</module>
+    <module>aon-warehouse-bridge</module>
+    <module>aon-asset</module>
+    <module>aon-marketing</module>
+    <module>aon-purchase-bridge</module>
+    <module>aon-tas</module>
+    <module>aon-academy</module>
+    <!--  OBSOLETE
 		<module>aon-pms</module>
 		<module>aon-geozone</module>
  		-->
-
-
-		<!-- UI MODULES -->
-		<module>aon-ui-academy</module>
-		<module>aon-ui-carrier</module>
-		<module>aon-ui-company</module>
-		<module>aon-ui-config</module>
-		<module>aon-ui-customer</module>
-		<module>aon-ui-geozone</module>
-		<module>aon-ui-groupware</module>
-		<module>aon-ui-registry</module>
-		<module>aon-ui-calendar</module>
-		<module>aon-ui-payroll</module>
-		<module>aon-ui-account</module>
-		<module>aon-ui-accounting</module>
-		<module>aon-ui-commercial</module>
-		<module>aon-ui-finance</module>
-		<module>aon-ui-fiscal</module>
-		<module>aon-ui-product</module>
-		<module>aon-ui-sales</module>
-		<module>aon-ui-seller</module>
-		<module>aon-ui-sign</module>
-		<module>aon-ui-stat</module>
-		<module>aon-ui-supplier</module>
-		<module>aon-ui-asset</module>
-		<module>aon-ui-mailing</module>
-		<module>aon-ui-marketing</module>
-		<module>aon-ui-project</module>
-		<module>aon-ui-publisher</module>
-		<module>aon-ui-purchase</module>
-		<module>aon-ui-warehouse</module>
-		<module>aon-ui-tas</module>
-		<module>aon-ui-sepe</module>
-		<module>aon-ui-help</module>
-
-		<!-- OTHER -->
-		<module>aon-jasperreports</module>
-		<module>aon-common-resources</module>
-		<module>aon-db-up2date</module>
-		<module>aon-sepe</module>
-		<module>aon-seg-social</module>
-		<module>aon-in-invoice</module>
-		<module>aon-in-payroll</module>
-		<module>aon-in-pdf</module>
-
-		<!-- JS MODULES -->
-		<module>aon-js-payroll</module>
-
-		<module>aon-storage</module>
-
-		<!-- GWT MODULES -->
-		<module>aon-gwt-pdfjs</module>
-		<module>aon-gwt-aio</module>
-		<module>aon-gwt-polymer</module>
-		<module>aon-gwt-vaadin</module>
-		<module>aon-gwt-common</module>
-		<module>aon-gwt-visualization</module>
-		<module>aon-gwt-codemirror</module>
-		<module>aon-gwt-connect</module>
-		<module>aon-gwt-payroll</module>
-		<module>aon-gwt-fiscal</module>
-		<module>aon-gwt-mod200</module>
-		<module>aon-gwt-ccaa</module>
-		<!-- <module>aon-gwt-document</module> -->
-		<module>aon-gwt-template</module>
-		<module>aon-gwt-stat</module>
-		<module>aon-gwt-api</module>
-		<module>aon-gwt-issues</module>
-		<module>aon-gwt-warehouse</module>
-		<module>aon-gwt-udapa</module>
-		<module>aon-gwt-dump</module>
-		<module>aon-gwt-sii</module>
-		<module>aon-gwt-seres</module>
-		<module>aon-gwt-commercial</module>
-		<module>aon-gwt-communication</module>
-		<module>aon-gwt-marketing</module>
-
-
-		<!-- API -->
-		<module>aon-api</module>
-		<module>aon-api-sdk</module>
-		<module>aon-tests</module>
-
-		<!-- GENERATED -->
-		<module>aon-sepe-api</module>
-		<module>aon-ingenet-api</module>
-
-		<!-- UTILITY -->
-		<module>aon-file-format</module>
-		<module>aon-file-bank</module>
-		<module>aon-file-tax</module>
-		<module>aon-file-payroll</module>
-		<module>aon-file-seres</module>
-		<module>aon-facturae</module>
-		<module>aon-stat</module>
-		
-		
-		<!-- WEB MODULES -->
-		<module>aon-web-aio</module>
-		<module>aon-solutions</module>
-
-
-		<module>aon-tedi</module>
-		<module>tedi-api</module>
-		<!-- AWS API Gateway & Lambda 
+    <!-- UI MODULES -->
+    <module>aon-ui-academy</module>
+    <module>aon-ui-carrier</module>
+    <module>aon-ui-company</module>
+    <module>aon-ui-config</module>
+    <module>aon-ui-customer</module>
+    <module>aon-ui-geozone</module>
+    <module>aon-ui-groupware</module>
+    <module>aon-ui-registry</module>
+    <module>aon-ui-calendar</module>
+    <module>aon-ui-payroll</module>
+    <module>aon-ui-account</module>
+    <module>aon-ui-accounting</module>
+    <module>aon-ui-commercial</module>
+    <module>aon-ui-finance</module>
+    <module>aon-ui-fiscal</module>
+    <module>aon-ui-product</module>
+    <module>aon-ui-sales</module>
+    <module>aon-ui-seller</module>
+    <module>aon-ui-sign</module>
+    <module>aon-ui-stat</module>
+    <module>aon-ui-supplier</module>
+    <module>aon-ui-asset</module>
+    <module>aon-ui-mailing</module>
+    <module>aon-ui-marketing</module>
+    <module>aon-ui-project</module>
+    <module>aon-ui-publisher</module>
+    <module>aon-ui-purchase</module>
+    <module>aon-ui-warehouse</module>
+    <module>aon-ui-tas</module>
+    <module>aon-ui-sepe</module>
+    <module>aon-ui-help</module>
+    <!-- OTHER -->
+    <module>aon-jasperreports</module>
+    <module>aon-common-resources</module>
+    <module>aon-db-up2date</module>
+    <module>aon-sepe</module>
+    <module>aon-seg-social</module>
+    <module>aon-in-invoice</module>
+    <module>aon-in-payroll</module>
+    <module>aon-in-pdf</module>
+    <!-- JS MODULES -->
+    <module>aon-js-payroll</module>
+    <module>aon-storage</module>
+    <!-- GWT MODULES -->
+    <module>aon-gwt-pdfjs</module>
+    <module>aon-gwt-aio</module>
+    <module>aon-gwt-polymer</module>
+    <module>aon-gwt-vaadin</module>
+    <module>aon-gwt-common</module>
+    <module>aon-gwt-visualization</module>
+    <module>aon-gwt-codemirror</module>
+    <module>aon-gwt-connect</module>
+    <module>aon-gwt-payroll</module>
+    <module>aon-gwt-fiscal</module>
+    <module>aon-gwt-mod200</module>
+    <module>aon-gwt-ccaa</module>
+    <!-- <module>aon-gwt-document</module> -->
+    <module>aon-gwt-template</module>
+    <module>aon-gwt-stat</module>
+    <module>aon-gwt-api</module>
+    <module>aon-gwt-issues</module>
+    <module>aon-gwt-warehouse</module>
+    <module>aon-gwt-udapa</module>
+    <module>aon-gwt-dump</module>
+    <module>aon-gwt-sii</module>
+    <module>aon-gwt-seres</module>
+    <module>aon-gwt-commercial</module>
+    <module>aon-gwt-communication</module>
+    <module>aon-gwt-marketing</module>
+    <!-- API -->
+    <module>aon-api</module>
+    <module>aon-api-sdk</module>
+    <module>aon-tests</module>
+    <!-- GENERATED -->
+    <module>aon-sepe-api</module>
+    <module>aon-ingenet-api</module>
+    <!-- UTILITY -->
+    <module>aon-file-format</module>
+    <module>aon-file-bank</module>
+    <module>aon-file-tax</module>
+    <module>aon-file-payroll</module>
+    <module>aon-file-seres</module>
+    <module>aon-facturae</module>
+    <module>aon-stat</module>
+    <!-- WEB MODULES -->
+    <module>aon-web-aio</module>
+    <module>aon-solutions</module>
+    <module>aon-tedi</module>
+    <module>tedi-api</module>
+    <!-- AWS API Gateway & Lambda 
 		<module>aon-rest-api</module>
 		-->
-		<module>aon-aws</module>
-		<module>aon.accounting.report</module>
-
-		<!-- TRASPASO DSI NOMINAS -->
-		<module>paradoxdriver</module>
-		<module>aon-dsi-nominas</module>				
-		
-		<!-- TESTS  
+    <module>aon-aws</module>
+    <module>aon.accounting.report</module>
+    <!-- TRASPASO DSI NOMINAS -->
+    <module>paradoxdriver</module>
+    <module>aon-dsi-nominas</module>
+    <!-- TESTS  
 		<module>aon-hibernate-test</module>
 		-->
-	</modules>
-
-	<scm>
-		<connection>scm:git:https://github.com/aonsolutions/aon-application.git</connection>
-		<url>https://github.com/aonsolutions/aon-application</url>
-	  <tag></tag>
+  </modules>
+  <scm>
+    <connection>scm:git:https://github.com/aonsolutions/aon-application.git</connection>
+    <url>https://github.com/aonsolutions/aon-application</url>
+    <tag/>
   </scm>
-
-	<organization>
-		<name>esferalia Networks S.A.</name>
-		<url>http://www.esferalia.com</url>
-	</organization>
-
-	<developers>
-		<developer>
-			<id>ecastellano</id>
-		</developer>
-		<developer>
-			<id>girazu</id>
-		</developer>
-		<developer>
-			<id>atellitu</id>
-		</developer>
-		<developer>
-			<id>rtrepiana</id>
-		</developer>
-		<developer>
-			<id>eagirrezabal</id>
-		</developer>
-	</developers>
-
-	<issueManagement>
-		<system>Bugzilla</system>
-		<url>http://bugzilla.esferalia.com/</url>
-	</issueManagement>
-
-	<repositories>
-	
-		<repository>
-			<id>external_free</id>
-			<name>External Free Repository</name>
-			<url>https://aonsolutions.github.io/aon-application/maven/2/external_free</url>
-			<releases>
-				<enabled>true</enabled>
-				<updatePolicy>never</updatePolicy>
-			</releases>
-			<snapshots>
-				<enabled>true</enabled>
-				<updatePolicy>never</updatePolicy>
-			</snapshots>
-		</repository>
-
-                <repository>
-                        <id>central-repository</id>
-                        <name>Central Repository</name>
-                        <layout>default</layout>
-                        <url>https://mvnrepository.com/repos/central</url>
-                        <releases>
-                                <enabled>true</enabled>
-                                <updatePolicy>never</updatePolicy>
-                        </releases>
-                        <snapshots>
-                                <enabled>false</enabled>
-                                <updatePolicy>never</updatePolicy>
-                        </snapshots>
-                </repository>
-                <repository>
-                        <id>repo1.maven.org</id>
-                        <name>Central Repository 1</name>
-                        <layout>default</layout>
-                        <url>https://repo1.maven.org/maven2/</url>
-                        <releases>
-                                <enabled>true</enabled>
-                                <updatePolicy>never</updatePolicy>
-                        </releases>
-                        <snapshots>
-                                <enabled>false</enabled>
-                                <updatePolicy>never</updatePolicy>
-                        </snapshots>
-                </repository>
-
-		<!--repository>
+  <organization>
+    <name>esferalia Networks S.A.</name>
+    <url>http://www.esferalia.com</url>
+  </organization>
+  <developers>
+    <developer>
+      <id>ecastellano</id>
+    </developer>
+    <developer>
+      <id>girazu</id>
+    </developer>
+    <developer>
+      <id>atellitu</id>
+    </developer>
+    <developer>
+      <id>rtrepiana</id>
+    </developer>
+    <developer>
+      <id>eagirrezabal</id>
+    </developer>
+  </developers>
+  <issueManagement>
+    <system>Bugzilla</system>
+    <url>http://bugzilla.esferalia.com/</url>
+  </issueManagement>
+  <repositories>
+    <repository>
+      <id>external_free</id>
+      <name>External Free Repository</name>
+      <url>https://aonsolutions.github.io/aon-application/maven/2/external_free</url>
+      <releases>
+        <enabled>true</enabled>
+        <updatePolicy>never</updatePolicy>
+      </releases>
+      <snapshots>
+        <enabled>true</enabled>
+        <updatePolicy>never</updatePolicy>
+      </snapshots>
+    </repository>
+    <repository>
+      <id>central-repository</id>
+      <name>Central Repository</name>
+      <layout>default</layout>
+      <url>https://mvnrepository.com/repos/central</url>
+      <releases>
+        <enabled>true</enabled>
+        <updatePolicy>never</updatePolicy>
+      </releases>
+      <snapshots>
+        <enabled>false</enabled>
+        <updatePolicy>never</updatePolicy>
+      </snapshots>
+    </repository>
+    <repository>
+      <id>repo1.maven.org</id>
+      <name>Central Repository 1</name>
+      <layout>default</layout>
+      <url>https://repo1.maven.org/maven2/</url>
+      <releases>
+        <enabled>true</enabled>
+        <updatePolicy>never</updatePolicy>
+      </releases>
+      <snapshots>
+        <enabled>false</enabled>
+        <updatePolicy>never</updatePolicy>
+      </snapshots>
+    </repository>
+    <!--repository>
 			<id>maven2-repository.dev.java.net</id>
 			<name>Java.net Repository for Maven 2</name>
 			<url>http://download.java.net/maven/2</url>
@@ -344,37 +309,34 @@
 				<updatePolicy>never</updatePolicy>
 			</snapshots>
 		</repository-->
-
-		<repository>
-			<id>jboss-thirdparty-releases</id>
-			<name>JBoss Thirdparty Releases</name>
-			<url>https://repository.jboss.org/nexus/content/repositories/thirdparty-releases</url>
-			<releases>
-				<enabled>true</enabled>
-				<updatePolicy>never</updatePolicy>
-			</releases>
-			<snapshots>
-				<enabled>false</enabled>
-				<updatePolicy>never</updatePolicy>
-			</snapshots>
-		</repository>
-
-		<repository>
-			<id>jboss-public-repository-group</id>
-			<name>JBoss Public Maven Repository Group</name>
-			<url>https://repository.jboss.org/nexus/content/groups/public-jboss/</url>
-			<layout>default</layout>
-			<releases>
-				<enabled>true</enabled>
-				<updatePolicy>never</updatePolicy>
-			</releases>
-			<snapshots>
-				<enabled>false</enabled>
-				<updatePolicy>never</updatePolicy>
-			</snapshots>
-		</repository>
-
-		<!--repository>
+    <repository>
+      <id>jboss-thirdparty-releases</id>
+      <name>JBoss Thirdparty Releases</name>
+      <url>https://repository.jboss.org/nexus/content/repositories/thirdparty-releases</url>
+      <releases>
+        <enabled>true</enabled>
+        <updatePolicy>never</updatePolicy>
+      </releases>
+      <snapshots>
+        <enabled>false</enabled>
+        <updatePolicy>never</updatePolicy>
+      </snapshots>
+    </repository>
+    <repository>
+      <id>jboss-public-repository-group</id>
+      <name>JBoss Public Maven Repository Group</name>
+      <url>https://repository.jboss.org/nexus/content/groups/public-jboss/</url>
+      <layout>default</layout>
+      <releases>
+        <enabled>true</enabled>
+        <updatePolicy>never</updatePolicy>
+      </releases>
+      <snapshots>
+        <enabled>false</enabled>
+        <updatePolicy>never</updatePolicy>
+      </snapshots>
+    </repository>
+    <!--repository>
 			<id>jasperForge</id>
 			<name>Jasper Forge Repository</name>
 			<layout>default</layout>
@@ -388,150 +350,135 @@
 				<updatePolicy>true</updatePolicy>
 			</snapshots>
 		</repository-->
-
-
-	</repositories>
-
-	<pluginRepositories>
-
-		<pluginRepository>
-			<id>maven2-repository.dev.java.net</id>
-			<url>http://download.java.net/maven/2/</url>
-			<snapshots>
-				<enabled>false</enabled>
-			</snapshots>
-			<releases>
-				<enabled>true</enabled>
-			</releases>
-		</pluginRepository>
-
-		<pluginRepository>
-			<id>Codehaus Public</id>
-			<url>https://repository-master.mulesoft.org/nexus/content/groups/public/</url>
-			<snapshots>
-				<enabled>true</enabled>
-			</snapshots>
-			<releases>
-				<enabled>true</enabled>
-			</releases>
-		</pluginRepository>
-
-		<pluginRepository>
-			<id>aon.external.free</id>
-			<url>https://aonsolutions.github.io/aon-application/maven/2/external_free</url>
-			<snapshots>
-				<enabled>true</enabled>
-			</snapshots>
-			<releases>
-				<enabled>true</enabled>
-			</releases>
-		</pluginRepository>
-
-
-	</pluginRepositories>
-
-	<build>
-		<plugins>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-enforcer-plugin</artifactId>
-				<version>3.0.0</version>
-				<executions>
-					<execution>
-						<id>enforce-maven</id>
-						<goals>
-							<goal>enforce</goal>
-						</goals>
-						<configuration>
-							<rules>
-								<requireMavenVersion>
-									<version>3.2.5</version>
-								</requireMavenVersion>
-							</rules>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
-
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-compiler-plugin</artifactId>
-				<version>3.10.1</version>
-				<configuration>
-					<source>${compileSource}</source>
-					<target>${compileTarget}</target>
-					<encoding>ISO-8859-1</encoding>
-					<compilerArgs>
-						<arg>--add-exports</arg>
-						<arg>java.base/sun.net.www.protocol.jar=ALL-UNNAMED</arg>
-					</compilerArgs>
-				</configuration>
-			</plugin>
-
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-surefire-plugin</artifactId>
-				<version>3.0.0-M6</version>
-				<configuration>
-					<workingDirectory>target</workingDirectory>
-					<excludes>
-						<exclude>**/GWT*.java</exclude>
-					</excludes>
-				</configuration>
-			</plugin>
-
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-jar-plugin</artifactId>
-				<version>3.2.2</version>
-				<configuration>
-					<archive>
-						<manifest>
-							<addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
-							<addDefaultImplementationEntries>true</addDefaultImplementationEntries>
-						</manifest>
-					</archive>
-				</configuration>
-			</plugin>
-
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-source-plugin</artifactId>
-				<version>3.2.1</version>
-				<executions>
-					<execution>
-						<goals>
-							<goal>jar-no-fork</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
-
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-javadoc-plugin</artifactId>
-				<version>3.4.0</version>
-				<configuration>
-					<skip>true</skip>
-				</configuration>
-			</plugin>
-
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-release-plugin</artifactId>
-				<version>3.0.0-M6</version>
-				<configuration>
-					<autoVersionSubmodules>true</autoVersionSubmodules>
-				</configuration>
-				<dependencies>
-					<dependency>
-						<groupId>org.apache.maven.scm</groupId>
-						<artifactId>maven-scm-provider-gitexe</artifactId>
-						<version>1.11.1</version>
-					</dependency>
-				</dependencies>
-			</plugin>
-			<!--
+  </repositories>
+  <pluginRepositories>
+    <pluginRepository>
+      <id>maven2-repository.dev.java.net</id>
+      <url>http://download.java.net/maven/2/</url>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
+      <releases>
+        <enabled>true</enabled>
+      </releases>
+    </pluginRepository>
+    <pluginRepository>
+      <id>Codehaus Public</id>
+      <url>https://repository-master.mulesoft.org/nexus/content/groups/public/</url>
+      <snapshots>
+        <enabled>true</enabled>
+      </snapshots>
+      <releases>
+        <enabled>true</enabled>
+      </releases>
+    </pluginRepository>
+    <pluginRepository>
+      <id>aon.external.free</id>
+      <url>https://aonsolutions.github.io/aon-application/maven/2/external_free</url>
+      <snapshots>
+        <enabled>true</enabled>
+      </snapshots>
+      <releases>
+        <enabled>true</enabled>
+      </releases>
+    </pluginRepository>
+  </pluginRepositories>
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-enforcer-plugin</artifactId>
+        <version>3.0.0</version>
+        <executions>
+          <execution>
+            <id>enforce-maven</id>
+            <goals>
+              <goal>enforce</goal>
+            </goals>
+            <configuration>
+              <rules>
+                <requireMavenVersion>
+                  <version>3.2.5</version>
+                </requireMavenVersion>
+              </rules>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <version>3.10.1</version>
+        <configuration>
+          <source>${compileSource}</source>
+          <target>${compileTarget}</target>
+          <encoding>ISO-8859-1</encoding>
+          <compilerArgs>
+            <arg>--add-exports</arg>
+            <arg>java.base/sun.net.www.protocol.jar=ALL-UNNAMED</arg>
+          </compilerArgs>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <version>3.0.0-M6</version>
+        <configuration>
+          <workingDirectory>target</workingDirectory>
+          <excludes>
+            <exclude>**/GWT*.java</exclude>
+          </excludes>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-jar-plugin</artifactId>
+        <version>3.2.2</version>
+        <configuration>
+          <archive>
+            <manifest>
+              <addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
+              <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+            </manifest>
+          </archive>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-source-plugin</artifactId>
+        <version>3.2.1</version>
+        <executions>
+          <execution>
+            <goals>
+              <goal>jar-no-fork</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-javadoc-plugin</artifactId>
+        <version>3.4.0</version>
+        <configuration>
+          <skip>true</skip>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-release-plugin</artifactId>
+        <version>3.0.0-M6</version>
+        <configuration>
+          <autoVersionSubmodules>true</autoVersionSubmodules>
+        </configuration>
+        <dependencies>
+          <dependency>
+            <groupId>org.apache.maven.scm</groupId>
+            <artifactId>maven-scm-provider-gitexe</artifactId>
+            <version>1.11.1</version>
+          </dependency>
+        </dependencies>
+      </plugin>
+      <!--
 			Disabled, for GitHub Actions
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
@@ -551,69 +498,87 @@
 				</dependencies>
 			</plugin>
 			-->
-
-			<!-- Para añadir la carpeta de los fuentes generados como source folder. -->
-			<plugin>
-				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>build-helper-maven-plugin</artifactId>
-				<version>3.3.0</version>
-				<executions>
-					<execution>
-						<id>add-source</id>
-						<phase>process-sources</phase>
-						<goals>
-							<goal>add-source</goal>
-						</goals>
-						<configuration>
-							<sources>
-								<source>
+      <!-- Para añadir la carpeta de los fuentes generados como source folder. -->
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>build-helper-maven-plugin</artifactId>
+        <version>3.3.0</version>
+        <executions>
+          <execution>
+            <id>add-source</id>
+            <phase>process-sources</phase>
+            <goals>
+              <goal>add-source</goal>
+            </goals>
+            <configuration>
+              <sources>
+                <source>
 									${project.build.directory}/generated-sources
 								</source>
-							</sources>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
-
-			<plugin>
-				<groupId>org.codehaus.mojo</groupId>
-				<!--groupId>cz.atomsoft.maven</groupId -->
-				<artifactId>buildnumber-maven-plugin</artifactId>
-				<version>3.0.0</version>
-				<executions>
-					<execution>
-						<phase>validate</phase>
-						<goals>
-							<goal>create</goal>
-						</goals>
-					</execution>
-				</executions>
-				<configuration>
-					<shortRevisionLength>5</shortRevisionLength>
-					<doCheck>false</doCheck>
-					<doUpdate>false</doUpdate>
-				</configuration>
-			</plugin>
-
-			<plugin>
-				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>versions-maven-plugin</artifactId>
-				<version>2.10.0</version>
-			</plugin>
-
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-plugin-plugin</artifactId>
-				<version>3.9.0</version>
-			</plugin>
-		</plugins>
-	</build>
-  	<distributionManagement>
-		<repository>
-			<id>github</id>
-			<name>GitHub Packages</name>
-			<url>https://maven.pkg.github.com/aonsolutions/aon-application</url>
-    		</repository>
-	</distributionManagement>	
+              </sources>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <!--groupId>cz.atomsoft.maven</groupId -->
+        <artifactId>buildnumber-maven-plugin</artifactId>
+        <version>3.0.0</version>
+        <executions>
+          <execution>
+            <phase>validate</phase>
+            <goals>
+              <goal>create</goal>
+            </goals>
+          </execution>
+        </executions>
+        <configuration>
+          <shortRevisionLength>5</shortRevisionLength>
+          <doCheck>false</doCheck>
+          <doUpdate>false</doUpdate>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>versions-maven-plugin</artifactId>
+        <version>2.10.0</version>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-plugin-plugin</artifactId>
+        <version>3.9.0</version>
+      </plugin>
+    </plugins>
+  </build>
+  <distributionManagement>
+    <repository>
+      <id>github</id>
+      <name>GitHub Packages</name>
+      <url>https://maven.pkg.github.com/aonsolutions/aon-application</url>
+    </repository>
+  </distributionManagement>
+  <profiles>
+    <profile>
+      <id>github</id>
+        <activation>
+          <property>
+            <name>github.actions</name>
+            <value>true</value>
+          </property>
+        </activation>      <repositories>
+        <repository>
+          <id>github</id>
+          <name>GitHub Packages</name>
+          <url>https://maven.pkg.github.com/aonsolutions/aon-application</url>
+          <releases>
+            <enabled>true</enabled>
+          </releases>
+          <snapshots>
+            <enabled>true</enabled>
+          </snapshots>
+        </repository>
+      </repositories>
+    </profile>
+  </profiles>
 </project>
-
