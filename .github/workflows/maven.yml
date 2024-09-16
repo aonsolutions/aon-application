@@ -30,8 +30,7 @@ jobs:
         distribution: 'temurin'
         cache: maven
         server-id: github
-        settings-path: ${{ github.workspace }}
-
+        
     - name: Set up MySQL
       run: |
         sudo systemctl start mysql.service
@@ -85,6 +84,6 @@ jobs:
 
     - name: Publish to GitHub Packages Apache Maven
       if: github.ref == 'refs/heads/master'
-      run: mvn -B -DskipTests=true deploy -s $GITHUB_WORKSPACE/settings.xml
+      run: mvn -B -DskipTests=true -Dmaven.install.skip=true deploy
       env:
         GITHUB_TOKEN: ${{ github.token }}
