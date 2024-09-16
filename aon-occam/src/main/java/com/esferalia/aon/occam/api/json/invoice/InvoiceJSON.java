@@ -147,7 +147,7 @@ public class InvoiceJSON {
 			.put(IJsonNames.ACTIVITY, EnterpriseActivityJSON.toJSON(invoice.getActivity()))
 			.put(IJsonNames.SCOPE, ScopeJSON.toJSON(invoice.getScope()));
 		
-		if(invoice.getDetails() != null && !invoice.getDetails().isEmpty()) {
+		if(!invoice.getDetails().isEmpty()) {
 			json.put(IJsonNames.CATEGORY, invoice.getDetails().get(0).getAccountCode());
 		}
 			

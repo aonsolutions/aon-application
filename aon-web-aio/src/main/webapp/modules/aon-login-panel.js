@@ -110,6 +110,10 @@ export class AonLoginPanel extends AonElement {
                 if (rightPanel) {
                     rightPanel.close(); 
                 }
+				let companyy = this.getElement("aonHeaderCompanyListButton");
+				let companyyy = this.getElement("aonHeaderCompanyList");
+				companyy.style.display = "block";
+				companyyy.style.display = "block";
 			});
 			divUserInfo.appendChild(divConfiguration);
 		}
@@ -128,6 +132,9 @@ export class AonLoginPanel extends AonElement {
 		loginContent.appendChild(divGeneral);
 		loginContent.appendChild(divLogout);
 		
+		let openButton = this.getElement("openNotificationButton");
+		openButton.style.display = "none";
+
 		this.appendChild(loginContent);
 	}
 

@@ -198,6 +198,8 @@ export class AonConfig extends AonElement {
             LS.setWhiteBrand(brandSwitch.checked);
         })
 
+        let openButton = this.getElement("openNotificationButton");
+		openButton.style.display = "none";
         
     }
 

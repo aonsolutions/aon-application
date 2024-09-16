@@ -3216,7 +3216,7 @@ color: var(--aonWhite);
   border-top: 1px solid rgba(0,0,0,.08);
   color: inherit;
   background-color: rgba(0,0,0,.04);
-  height: 43px;
+  height: 45px;
   cursor: pointer;
   transition: background-color 0.1s;
   width: 100%;
@@ -3525,7 +3525,7 @@ color: var(--aonWhite);
   top: 100px;
   position: relative;
   font-size: 18px;
-  margin-left: 15px;
+  margin-left: 30px;
 }
 
 .suiteMenuNewButton{

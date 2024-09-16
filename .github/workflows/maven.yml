@@ -27,6 +27,8 @@ jobs:
 
     steps:
     - uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
     - name: Set up JDK 21
       uses: actions/setup-java@v4
       with:
@@ -67,8 +69,18 @@ jobs:
         EOF
     - name: Set Timezone ${{env.TZ}}
       run: export TZ=${{env.TZ}}
+    - name: Get changed projects
+      run: |
+        export PROJECTS=$(\
+        git diff --name-only origin/master |\
+        cut -d/ -f1 | sort -u |\
+        while read module; \
+          do  [ -f $module/pom.xml ] && echo $module; \
+        done |\
+        sed -e '$ ! s/$/,/g' | tr -d '\n')
+        echo "PROJECTS=${PROJECTS}" >> $GITHUB_ENV
     - name: Build with Maven
-      run: mvn -B -Dgwt.working=true clean install
+      run: mvn -B -pl ${PROJECTS:=.} -amd -Dgwt.working=true clean install
     
     # - name: Build the Docker images
     #  run: |

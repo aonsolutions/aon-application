@@ -20,7 +20,7 @@
 		method="#{aonRole.renderedCommand}">
  	 	
  	 		 		
-			<aon:div style="overflow: auto; height: calc(100vh - 103px)" id="contentScrollDiv" >
+			<aon:div style="overflow: auto; height: calc(100vh -${app.standAlone ? '0':'103'}px)" id="contentScrollDiv" >
 				<ui:insert name="content" />
 			
 			</aon:div>
