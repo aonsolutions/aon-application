@@ -1212,22 +1212,24 @@ public class AccountingInvoiceDAO {
 				:0;
 		LinkedList<InvoiceDetail> details = new LinkedList<>();
 		for (InvoiceVAT vat :  accInvoice.getVats()) {
-			
 			InvoiceDetail detail = vat.getInvoiceDetail() != null
-				? vat.getInvoiceDetail() : new InvoiceDetail()
-				.setDomain(accInvoice.getInvoice().getDomain())
-				.setInvoice(accInvoice.getInvoice())
-				.setInvestAsset(vat.getInvestAsset())
-				.setWorkplace( new Workplace().setId( accInvoice.getWorkplace()))
-				.setLine(line)
-				.setDescription( vat.getExpAccountDescription() )
-				.setQuantity(1)
-				.setPrice(vat.getBase())
-				.setDiscountExpression("0.0")
-				.setSource(InvoiceSource.ACCOUNT)
-				.setTaxableBase(vat.getBase())
-				.setAccount(vat.getExpAccountId())
-				.setPrepayment(vat.isPrepayment());
+				? vat.getInvoiceDetail() 
+					.setAccount(vat.getInvoiceDetail().getAccount() != null
+						? vat.getInvoiceDetail().getAccount() : vat.getExpAccountId())
+				: new InvoiceDetail()
+					.setDomain(accInvoice.getInvoice().getDomain())
+					.setInvoice(accInvoice.getInvoice())
+					.setInvestAsset(vat.getInvestAsset())
+					.setWorkplace( new Workplace().setId( accInvoice.getWorkplace()))
+					.setLine(line)
+					.setDescription( vat.getExpAccountDescription() )
+					.setQuantity(1)
+					.setPrice(vat.getBase())
+					.setDiscountExpression("0.0")
+					.setSource(InvoiceSource.ACCOUNT)
+					.setTaxableBase(vat.getBase())
+					.setAccount(vat.getExpAccountId())
+					.setPrepayment(vat.isPrepayment());
 			if (!vat.isPrepayment()) {				
 				InvoiceTax invoiceTax = detail.getInvoiceTaxes().stream().filter(f -> TaxType.VAT.equals(f.getTaxType())).findFirst().orElse(null);
 				

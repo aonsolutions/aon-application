@@ -568,6 +568,12 @@ public class EnterprisesServiceAsyncDecorator implements
 	} 
 	
 	@Override
+	public void getContractListCount(String currentDomainName, String user, ContractParams params, AsyncCallback<Integer> callback) throws IllegalArgumentException {
+		AON.start();
+		enterprisesServiceAsync.getContractListCount(currentDomainName, user, params, new AsyncCallbackWrapper<Integer>(callback));
+	} 
+	
+	@Override
 	public void getFJEmployeesInfo(String currentDomainName, AsyncCallback<List<EmployeeContractInfo>> callback) {
 		AON.start();
 		enterprisesServiceAsync.getFJEmployeesInfo(currentDomainName, new AsyncCallbackWrapper<List<EmployeeContractInfo>>(callback));

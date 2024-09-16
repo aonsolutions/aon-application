@@ -486,6 +486,7 @@ export const VIEW_PAYROLLS = "Ver nóminas";
 export const WAREHOUSE = 'Almacén';
 export const WAREHOUSES = 'Almacéns';
 export const WEB = 'Web';
+export const WELCOME_TO_AON_SOLUTIONS = 'Benvido a aon Solutions';
 export const WITHHOLDING = 'Retención';
 export const WORKGROUP = 'Grupo de traballo';
 export const WORKSHOPS = 'Obradoiros';

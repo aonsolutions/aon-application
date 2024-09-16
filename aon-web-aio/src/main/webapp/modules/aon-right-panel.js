@@ -38,6 +38,7 @@ export class AonRightPanel extends AonElement {
 
     initialize() {
         this.RIGHT_PANEL = "aonRightPanel";
+        this.TOOLBAR_PANEL = "aonToolbarPanel";
         this.CLOSE_BUTTON = this.RIGHT_PANEL+'CloseButton';
         this.CONTENT = this.RIGHT_PANEL+'Content';
         this.TITLE = this.RIGHT_PANEL+'Title';
@@ -50,68 +51,64 @@ export class AonRightPanel extends AonElement {
     build(){
 
         let rightPanel = this.createDiv(this.RIGHT_PANEL, "rightPanel");
-
+        rightPanel.classList.add('hiddenSidenav');
+        
+        let toolbarPanel = this.createDiv(this.TOOLBAR_PANEL, "toolbarSidenavPanel");
+        let toolbarTitlePanel = this.createDiv(this.TOOLBAR_PANEL, "toolbarSidenavTitlePanel");
+        let toolbarRightButtonsPanel = this.createDiv("toolbarRightButtonsPanel", "toolbarSidenavTitlePanel");
+        
+        toolbarPanel.appendChild(toolbarTitlePanel);
+        toolbarPanel.appendChild(toolbarRightButtonsPanel);
+        rightPanel.appendChild(toolbarPanel);
+        
         this.appendChild(rightPanel);
         
         let rightPanelEditButton = new AonIconButton(); 
 		rightPanelEditButton.id = this.EDIT_BUTTON;
 		rightPanelEditButton.icon ='manage_accounts';
         rightPanelEditButton.className = "rightPanelEditButton";
-		rightPanel.appendChild(rightPanelEditButton);
+		toolbarTitlePanel.appendChild(rightPanelEditButton);
 
         let rightPanelConfigButton = new AonIconButton(); 
 		rightPanelConfigButton.id = 'aonRightPanelConfigButton';
 		rightPanelConfigButton.icon ='settings';
 		rightPanelConfigButton.className = "rightPanelButtons";
-		rightPanel.appendChild(rightPanelConfigButton);
+		toolbarTitlePanel.appendChild(rightPanelConfigButton);
 
         let rightPanelHelpButton = new AonIconButton(); 
 		rightPanelHelpButton.id = 'aonRightPanelHelpButton';
 		rightPanelHelpButton.icon ='help_outline';
         rightPanelHelpButton.className = "rightPanelButtons";
-		rightPanel.appendChild(rightPanelHelpButton);
+		toolbarTitlePanel.appendChild(rightPanelHelpButton);
 
         let rightPanelNotificationButton = new AonIconButton();
 		rightPanelNotificationButton.id = 'aonRightPanelNotificationButton';
 		rightPanelNotificationButton.icon ='notifications';
         rightPanelNotificationButton.className = "rightPanelButtons";
-        rightPanelNotificationButton.style.position = "absolute";
-		rightPanel.appendChild(rightPanelNotificationButton);
+		toolbarTitlePanel.appendChild(rightPanelNotificationButton);
+
+		let openNotificationButton =new AonIconButton();
+        openNotificationButton.id = "openNotificationButton";
+        openNotificationButton.icon = "open_in_new";
+        openNotificationButton.title = "Ver en pantalla completa";
+        openNotificationButton.className = "rightPanelButtons";
+        toolbarRightButtonsPanel.appendChild(openNotificationButton);
 
         let rightPanelCloseButton = new AonIconButton(); 
 		rightPanelCloseButton.id = this.CLOSE_BUTTON;
 		rightPanelCloseButton.icon ='close';
         rightPanelCloseButton.className = "rightPanelCloseButton";
-		rightPanel.appendChild(rightPanelCloseButton);
+		toolbarRightButtonsPanel.appendChild(rightPanelCloseButton);
 
         rightPanelCloseButton.addEventListener(EVENT.CLICK, () => {
 			this.close();
 		});
 
-        /*
-        if(LS.isDarkTheme()){
-            this.style.color = "white";
-            let close = this.getElement("aonRightPanelCloseButtonIconButton");
-            let edit = this.getElement("aonRightPanelEditButtonIconButton");
-            let config = this.getElement("aonRightPanelConfigButtonIconButton")
-            let help = this.getElement("aonRightPanelHelpButtonIconButton");
-            let noti = this.getElement("aonRightPanelNotificationButtonIconButton");
-            close.style.color = "white";
-            edit.style.color = "white";
-            config.style.color = "white";
-            help.style.color = "white";
-            noti.style.color = "white";
-        }
-        */
-
         let title = this.createElement(TAG.H1);
 		title.id = this.TITLE;
-		title.style.marginTop = '18px';
-		title.style.marginLeft = '10px'
 		title.style.fontSize = '16px';
-		title.style.fontWeight = '500';
-		title.style.paddingBottom = '20px';
-		rightPanel.appendChild(title);
+		title.style.fontWeight = 'bold';
+		toolbarTitlePanel.appendChild(title);
 
         let content = this.createDiv(this.CONTENT);
     
@@ -138,7 +135,9 @@ export class AonRightPanel extends AonElement {
 
     open(height,marginTop,boxShadow){
         let welcome = this.getElement("aonCompanyTabFilter");
-        this.getRightPanel().style.visibility = "visible";
+        //this.getRightPanel().style.visibility = "visible";
+        
+        this.getRightPanel().classList.add("open");
 		
         if(height) 
 			this.getRightPanel().style.height = height;
@@ -161,24 +160,25 @@ export class AonRightPanel extends AonElement {
     }
 
     toogle() {
-		if(this.style.visibility === "visible") {
+		if(this.style.marginRight === "0px") {
 			this.close()
 		} else this.open();
 	}
 
     close(){
-        this.getRightPanel().style.visibility = "hidden";
-        this.getRightPanel().style.visibility = "hidden";
-        this.getEditButton().style.visibility = "hidden";
-        this.getConfigButton().style.visibility = "hidden";
-        this.getHelpButton().style.visibility = "hidden";
-        this.getNotificationButton().style.visibility = "hidden";
+		this.getRightPanel().classList.remove("open");
+        //this.getRightPanel().style.visibility = "hidden";
+        this.getEditButton().style.display = "none";
+        this.getConfigButton().style.display = "none";
+        this.getHelpButton().style.display = "none";
+        this.getNotificationButton().style.display = "none";
+        this.getNotificationOpenButton().style.display = "none";
         this.clearElement(this.getContent());
         this.dispatchEvent(new Event(EVENT.CLOSE));
     }
 
     isClose() {
-        return this.getRightPanel().style.visibility == "hidden";
+        return this.getRightPanel().style.marginRight == "-360px";
     }
 
     isOpen(){
@@ -211,6 +211,10 @@ export class AonRightPanel extends AonElement {
 
     getNotificationButton(){
         return this.getElement(this.NOTIFICATION_BUTTON);
+    }
+    
+    getNotificationOpenButton(){
+        return this.getElement("openNotificationButton");
     }
 
     getTitle(){

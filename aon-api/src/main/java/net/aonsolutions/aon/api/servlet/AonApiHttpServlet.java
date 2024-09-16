@@ -88,6 +88,7 @@ public class AonApiHttpServlet extends HttpServlet{
 
 	protected AonApiData initialize(HttpServletRequest req, boolean check, String...method) {
 		AonApiData api = new AonApiData();
+		api.setRequest(req);
 		api.setMethod(method.length > 0 ? method[0] : req.getMethod());
 		api.setData(api.isGet() ? getParamsJSON(req) : getRequestJSON(req));
 		

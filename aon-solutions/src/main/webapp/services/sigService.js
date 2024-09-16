@@ -1,5 +1,6 @@
-import { API_URL, SIG_SESSION_ID, SIG_URL, SIG_DOMAIN_NAME, SIG_DOMAIN_ID } from "../environments/environments.js";
-import { get, post, remove, requestSig } from "./request.js";
+import { API_URL, SIG_URL, SIG_DOMAIN_NAME, SIG_DOMAIN_ID } from "../environments/environments.js";
+import { get, post, remove } from "./request.js";
+import { generateTokenSig } from "./userService.js";
 
 
 const isCau  = () => parseInt(localStorage.getItem("taskCau") || 0);
@@ -15,7 +16,7 @@ const setCauData = (data) => {
     }
 }
 
-export const isSigGet = (url, data) => {
+export const isSigGet = async(url, data) => {
     if(data && isCau()){
         data = {
             ...data, 
@@ -23,54 +24,28 @@ export const isSigGet = (url, data) => {
             domainId: SIG_DOMAIN_ID,
             domainName: SIG_DOMAIN_NAME
         }   
-    }
-    return isCau() ? getSig(`${SIG_URL}/${API_URL}/${url}`, data) : get(`${API_URL}/${url}`, data);
+    } 
+    return isCau() 
+        ? get(`${SIG_URL}/${API_URL}/${url}`, data, await generateTokenSig({})) 
+        : get(`${API_URL}/${url}`, data);
 }  
   
-export const isSigPost = (url, data) => {
+export const isSigPost = async(url, data) => {
     if(data && isCau()){
         data = setCauData(data);
     }
     
-    return isCau() ? postSig(`${SIG_URL}/${API_URL}/${url}`, data) : post(`${API_URL}/${url}`, data);
+    return isCau() 
+        ? post(`${SIG_URL}/${API_URL}/${url}`, data, await generateTokenSig({})) 
+        : post(`${API_URL}/${url}`, data);
 } 
     
-export const isSigRemove = (url, data) => {
+export const isSigRemove = async(url, data) => {
     if(data && isCau()){
         data = setCauData(data);
     }
 
-    return isCau() ? removeSig(`${SIG_URL}/${API_URL}/${url}`, data) : remove(`${API_URL}/${url}`, data);
+    return isCau() 
+        ? remove(`${SIG_URL}/${API_URL}/${url}`, data, await generateTokenSig({})) 
+        : remove(`${API_URL}/${url}`, data);
 } 
-
-  
-//--------------------------------------SIG REQUEST
-
-const getSig = (url, data) =>  new Promise((resolve, reject) => {
-    requestSig("GET", url, SIG_SESSION_ID, data, (result, error) => {
-        try{
-            if (error) reject(error);
-            else resolve(JSON.parse(result));
-        } catch(e){reject(e);}
-    });
-});
-
-const postSig = (url, data) =>  new Promise((resolve, reject) => {
-    requestSig("POST", url, SIG_SESSION_ID, data, (result, error) => {
-        try{
-            if (error) reject(error);
-            else resolve(JSON.parse(result));
-        } catch(e){reject(e);}
-    });
-});
-//-------------------------------------- END SIG REQUEST
-  
-
-const removeSig = (url, data) => new Promise((resolve, reject) => {
-    requestSig("DELETE", url, SIG_SESSION_ID, data, (result, error) => {
-        try{
-            if (error) reject(error);
-            else resolve(JSON.parse(result));
-        } catch(e){reject(e);}
-    });
-});

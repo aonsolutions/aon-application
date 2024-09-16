@@ -234,6 +234,8 @@ export const AON_JSF_APP = 'aon-jsf-app' ;
 
 export const AON_JSF_PRODUCT = 'aon-jsf-product' ;
 
+export const AON_JSF_SALE = 'aon-jsf-sale' ;
+
 export const AON_JSF_EXPENSE = 'aon-jsf-expense' ;
 
 export const AON_JSF_CUSTOMER = 'aon-jsf-customer' ;
@@ -241,6 +243,8 @@ export const AON_JSF_CUSTOMER = 'aon-jsf-customer' ;
 export const AON_JSF_CREDITOR = 'aon-jsf-creditor' ;
 
 export const AON_JSF_SUPPLIER = 'aon-jsf-supplier' ;
+
+export const AON_JSF_INVOICE_PRINT = 'aon-jsf-invoice-print' ;
 
 export const AON_JSF_SALE_INVOICE = 'aon-jsf-sale-invoice' ;
 

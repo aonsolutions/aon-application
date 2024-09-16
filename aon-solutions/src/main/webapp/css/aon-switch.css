@@ -41,23 +41,19 @@
 .aonSwitch > span::before {
     content: "";
     float: right;
-    display: inline-block;
-    margin: 5px 0 5px 10px;
     border-radius: 7px;
     width: 36px;
     height: 14px;
     background-color: var(--aonSwitchButtonBarOff);
-    vertical-align: top;
     transition: background-color 0.2s, opacity 0.2s;
-    margin-bottom: -22%;
 }
 
 /* Thumb */
 .aonSwitch > span::after {
     content: "";
     position: absolute;
-    top: 2px;
-    right: 16px;
+    top: -3px;
+    right: 17px;
     border-radius: 50%;
     width: 20px;
     height: 20px;
@@ -70,6 +66,7 @@
 .aonSwitch > input:checked {
     right: -10px;
     background-color: var(--aonSwitchButtonCircleOn);
+    top: -13px;
     /*rgb(var(--pure-material-primary-rgb, 33, 150, 243));*/
 }
 

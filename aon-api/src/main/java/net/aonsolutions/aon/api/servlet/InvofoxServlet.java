@@ -60,14 +60,12 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import net.aonsolutions.aon.api.error.AonApiException;
 import net.aonsolutions.aon.api.ewok.AonApiData;
-import net.aonsolutions.aon.tedi.invofox.OCRBlankValueException;
 import net.aonsolutions.aon.tedi.invofox.OCRInvalidValueException;
 import net.aonsolutions.aon.tedi.invofox.OCRInvoiceBuilder;
 import net.aonsolutions.aon.tedi.invofox.OCROwnerNotFoundException;
 import net.aonsolutions.aon.tedi.invofox.OCRResult;
 import net.aonsolutions.aon.tedi.invofox.OCRTooManyOwnersException;
 import net.aonsolutions.aon.tedi.invofox.OCRUndefinedTypeException;
-import net.aonsolutions.aon.tedi.invofox.OCRZeroValueException;
 import net.aonsolutions.invofox.OCRCompanyParams;
 import net.aonsolutions.invofox.OCRDocumentsParams;
 import net.aonsolutions.invofox.OCRInvofox;
@@ -190,8 +188,11 @@ public class InvofoxServlet extends AonApiHttpServlet {
 
 			RawdocType type = json.opt("type") != null && json.optString("type").equalsIgnoreCase("emitida") 
 					? RawdocType.OUTPUT : RawdocType.INPUT;
-			RawdocStatus status = getRawdocStatus(json.optString("status")); 
-			json.put("status", status.getTediName());
+			String ocrStatus = JsonUtils.getString(json, IJsonNames.STATUS);
+			RawdocStatus status = getRawdocStatus(ocrStatus); 
+			json.put("ocrStatus", ocrStatus);
+			json.put(IJsonNames.STATUS, status.getTediName());
+
 			
 			rawdoc = new Rawdoc()
 				.setDomain(api.getDomain().getId())
@@ -238,11 +239,11 @@ public class InvofoxServlet extends AonApiHttpServlet {
 	}
 	
 	private static JSONObject acceptDocument(AonApiData api) {
+		JSONObject params = api.getData();
+		String documentId = params.optString(IJsonNames.ID);
 		try (CloseableAONContext aonContext = AONContext.getAONContext(api.getDomain().getName(), api.getUser().getLogin())) {
 			Company company = AON.getCompany( aonContext, f -> f.getDomainProperty().eq( api.getDomain().getId()));
 			String companyDocument = company == null? null : company.getDocument(); 
-			JSONObject params = api.getData();
-			String documentId = params.optString(IJsonNames.ID);
 
 			InvofoxConfiguration invofoxConfiguration = InvofoxConfigurationDAO.get(aonContext);
 //			if(invofoxConfiguration.isAutoAccept()) {
@@ -260,7 +261,8 @@ public class InvofoxServlet extends AonApiHttpServlet {
 						.orElse(null);
 
 				OCRSeverity publicState = ocrDocument.getPublicState().orElse(null);
-				if (inv != null && publicState != null && OCRSeverity.approved.equals(publicState)) {
+				if (inv != null && publicState != null && OCRSeverity.approved.equals(publicState)
+						&& inv.getTediCategory() != null) {
 					inv = AON.acceptInvoice(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(),
 							inv, null);
 					if (inv != null && inv.getId() != null) {
@@ -268,11 +270,11 @@ public class InvofoxServlet extends AonApiHttpServlet {
 						InvoiceServlet.processInvoiceFile(api, inv);
 						exportDocument(api, documentId);
 					}
-				}
 
-				if(invofoxConfiguration.isAutoRecord()) {					
-					// TODO RECORD INVOICE!
-				}
+					if(invofoxConfiguration.isAutoRecord()) {					
+						// TODO RECORD INVOICE!
+					}
+				} else rawdocDocument(api);
 //			}
 			
 			return new JSONObject();
@@ -306,15 +308,14 @@ public class InvofoxServlet extends AonApiHttpServlet {
 					.map(invoice -> fillReferenceCode(ocrInvoice, invoice))
 					.map(invoice -> OCRInvoiceBuilder.guessItemsOrAccounts(aonContext, invoice))
 					.map(invoice -> fillFinances(aonContext, ocrInvoice, invoice))
-					.map(invoice -> fillCategory(aonContext, invoice)).map(invoice -> fillActivity(aonContext, invoice))
+					.map(invoice -> fillCategory(aonContext, invoice))
+					.map(invoice -> fillActivity(aonContext, invoice))
 					.map(InvoiceJSON::toJSON)
 					.map(invoice -> invoice.put("token", token))
 					.map(invoice -> invoice.put("file", getFileJSON(ocrDocument)))
 					.map(invoice -> invoice.put("messages", getMessages(ocrDocument, company)))
-					.map(invoice -> invoice.put("status",
-							toString(ocrDocument.getPublicState().orElse(OCRSeverity.error))))
-					.map(invoice -> invoice.put("insight",
-							new JSONObject().put("invofoxId", ocrDocument.getId().orElse(""))))
+					.map(invoice -> invoice.put("status", toString(ocrDocument.getPublicState().orElse(OCRSeverity.error))))
+					.map(invoice -> invoice.put("insight", new JSONObject().put("invofoxId", ocrDocument.getId().orElse(""))))
 					.orElseThrow(() -> new AonApiException("No such document"));
 		}
 	}
@@ -543,22 +544,24 @@ public class InvofoxServlet extends AonApiHttpServlet {
 				if(apikey == null) {
 					OCRInvofox.createApikey(token, r.getId());
 				}
-				
-				OCRWebhook webhook = r.getWebhooks().stream().filter(f -> WEBHOOK_URL.equals(f.getEndpoint().getUrl())).findFirst().orElse(null);
-				if(webhook == null) {
-					webhook = new OCRWebhook()
-						.setEndpoint(new OCREndpoint()
-							.setHeaders(new LinkedList<>())
-							.setMethod("POST")
-							.setUrl(WEBHOOK_URL))
-						.setEvents(OCREvent.getValues())
-						.setSecurity(new OCRSecurity()
-								.setAlgorithm("sha256")
-								.setSecret(""))
-						.setActive(true);
-						
-					OCRInvofox.createWebhook(token, r.getId(), webhook);
-				}
+
+//	TODO revisar...
+//				
+//				OCRWebhook webhook = r.getWebhooks().stream().filter(f -> WEBHOOK_URL.equals(f.getEndpoint().getUrl())).findFirst().orElse(null);
+//				if(webhook == null) {
+//					webhook = new OCRWebhook()
+//						.setEndpoint(new OCREndpoint()
+//							.setHeaders(new LinkedList<>())
+//							.setMethod("POST")
+//							.setUrl(WEBHOOK_URL))
+//						.setEvents(OCREvent.getValues())
+//						.setSecurity(new OCRSecurity()
+//								.setAlgorithm("sha256")
+//								.setSecret(""))
+//						.setActive(true);
+//						
+//					OCRInvofox.createWebhook(token, r.getId(), webhook);
+//				}
 			});
 		}
 		
@@ -688,6 +691,7 @@ public class InvofoxServlet extends AonApiHttpServlet {
 							.ifPresent(registry::setNationality));
 					ocrInvoice.getRecipientAddressDetails().ifPresentOrElse(details -> {
 						RegistryAddress registryAddress = toRegistryAddress(details);
+						if(registryAddress.getDomain() == null) registryAddress.setDomain(invoice.getDomain());
 						invoice.setAddress(registryAddress);
 					}, () -> {
 
@@ -739,8 +743,7 @@ public class InvofoxServlet extends AonApiHttpServlet {
 	private static Invoice fillCategory(AONContext ctx, Invoice invoice) {
 		if (invoice.getRegistry() == null)
 			return invoice;
-		List<Account> accounts = AccountingInvoiceDAO.getSuggestedAccounts(ctx, invoice.getRegistry(),
-				invoice.getType());
+		List<Account> accounts = AccountingInvoiceDAO.getSuggestedAccounts(ctx, invoice.getRegistry(), invoice.getType());
 		if (accounts.isEmpty() && InvoiceType.EXPENSES.equals(invoice.getType())) {
 			accounts = AccountingInvoiceDAO.getSuggestedAccounts(ctx, invoice.getRegistry(), InvoiceType.PURCHASE);
 			if (!accounts.isEmpty())

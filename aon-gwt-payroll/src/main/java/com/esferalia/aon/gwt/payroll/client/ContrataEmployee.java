@@ -24,12 +24,14 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
 import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.esferalia.aon.gwt.payroll.shared.ContractInfo;
 import com.esferalia.aon.gwt.payroll.shared.ContractSalaryInfo;
+import com.esferalia.aon.gwt.payroll.shared.EmployeeContractInfo;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeInfo;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeStatus.MismatchedContractType;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeStatus.MismatchedOccupation;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeStatus.MismatchedPartialFactor;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeStatus.MismatchedQuoteGroup;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeStatus.MismatchedStartDate;
+import com.esferalia.aon.occam.api.model.ContractParams;
 import com.esferalia.aon.occam.api.model.aonsolutions.DomainUserRoles;
 import com.esferalia.aon.occam.api.model.type.ContractType;
 import com.esferalia.aon.occam.api.model.type.ContractType.ContractTypeRecord;
@@ -139,6 +141,16 @@ public abstract class ContrataEmployee extends ResizeComposite {
 			tgssContextMenu.afi.setVisible(false);
 			tgssContextMenu.comunicateAFI.setVisible(false);
 			tgssContextMenu.altaConsolidadaDelete.setVisible(false);
+		}
+
+		@Override
+		protected ContractParams getContractParams() {
+			return getContractListParams();
+		}
+		
+		@Override
+		protected Integer getPosition() {
+			return position;
 		}
 
 	}
@@ -1205,6 +1217,7 @@ public abstract class ContrataEmployee extends ResizeComposite {
 
 	private ContrataEmployeeObject contrataEmployeeObject;
 	private Integer contractId;
+	private EmployeeContractInfo contract;
 
 	private AonToolbarButton listEmployees;
 	private HTMLPanel employeeContractButtons;
@@ -1216,6 +1229,11 @@ public abstract class ContrataEmployee extends ResizeComposite {
 	private DateListBox idcDateListBox;
 	private MonthListBox idcMonthListBox;
 	private AonToolbarButton saveDocument;
+	
+	private Integer position = -1;
+	private AonToolbarButton previusContract;
+	private Label sellerIteration;
+	private AonToolbarButton nextContract;
 
 	private TGSSContextMenu tgssContextMenu;
 	private SEPEContextMenu sepeContextMenu;
@@ -1253,10 +1271,6 @@ public abstract class ContrataEmployee extends ResizeComposite {
 	
 	// Mod145
 	private HTMLPanel mod145Buttons;
-
-	private AonToolbarButton previusContract;
-	private AonToolbarButton nextContract;
-	private Label employeeCounter;
 
 	private boolean hasCertificateSEPE = false;
 
@@ -1580,37 +1594,45 @@ public abstract class ContrataEmployee extends ResizeComposite {
 	// ------------------------------------------------- setContrataEmployeeObject
 
 	public void setContrataEmployeeObject(ContrataEmployeeObject contrataEmployeeDialogObject, Integer contractId,
-			Integer selectedEmployeeIdx, int employeesSize, Consumer<String> success) {
-
-		this.contractId = contractId;
-		this.contrataEmployeeObject = contrataEmployeeDialogObject;
-		this.tabLayOutPanel.selectTab(0, false);
-		
-		// Get Idc Dates
-		initializeIdcDateListBox();
-
-		loadWindow(s -> {
-			employeeCounter.setText(selectedEmployeeIdx + " de " + employeesSize);
-			
-			employeeCalendar.initializeYearLB(calendarYaerLB, contrataEmployeeDialogObject.getContractStartDate());
-			employeeCalendar.setYearLB(calendarYaerLB);
-			
-			success.accept("");
-		});
-	}
-
-	public void setContrataEmployeeObject(ContrataEmployeeObject contrataEmployeeDialogObject, Integer contractId,
 			Integer selectedEmployeeIdx, int employeesSize, int selectedTab, Consumer<String> success) {
 
 		this.contractId = contractId;
 		this.contrataEmployeeObject = contrataEmployeeDialogObject;
 		this.tabLayOutPanel.selectTab(0, false);
+		this.position = selectedEmployeeIdx;
 		
 		// Get Idc Dates
 		initializeIdcDateListBox();
 
 		loadWindow(s -> {
-			employeeCounter.setText(selectedEmployeeIdx + " de " + employeesSize);
+			
+			this.contract = this.contrataEmployeeObject.getContractEmployeeInfo();
+			
+			// EmployeeContractButtons
+			getContractListCount(count -> {
+				if(toolbar.getWidgetIndex(nextContract) < 0){
+					sellerIteration = new Label();
+					toolbar.add(sellerIteration);
+					
+					nextContract = new AonToolbarButton("Siguiente Agente Comercial", AON.CSS.aonIconRight());
+					nextContract.setEnabled(position < (count - 1));
+					nextContract.addClickHandler(e -> {
+						previusContract.setEnabled(false);
+						nextContract.setEnabled(false);
+						position = position + 1;
+						getNextContract(position, nextContract -> onContractSelectionChange(nextContract, position));
+					});
+					toolbar.add(nextContract);
+				}
+				
+				sellerIteration.setText((null == contract ? "ND" : (position + 1)) + " / " + count);
+				previusContract.setEnabled(position > 0);
+				nextContract.setEnabled(position < (count - 1));
+				
+				if(position >= 0) showNavegationOptions();
+				else hideNavegationOptions();
+			});
+			
 			tabLayOutPanel.selectTab(selectedTab, true);
 			
 			employeeCalendar.initializeYearLB(calendarYaerLB, contrataEmployeeDialogObject.getContractStartDate());
@@ -1734,10 +1756,6 @@ public abstract class ContrataEmployee extends ResizeComposite {
 
 	protected abstract void onListShow(boolean reloadEmployees);
 
-	protected abstract void onPreviusContract(Integer contractId);
-
-	protected abstract void onNextContract(Integer contractId);
-
 	protected abstract DomainUserRoles getDomainUserRole();
 
 	// ------------------------------------------------- Toolbar panel
@@ -1792,18 +1810,16 @@ public abstract class ContrataEmployee extends ResizeComposite {
 
 		mod145Buttons = initMod145Buttons();
 		toolbar.add(mod145Buttons);
-
-		previusContract = new AonToolbarButton("Contrato anterior", AON.CSS.aonIconLeft());
-		previusContract.addClickHandler(e -> onPreviusContract(contractId));
-//		toolbar.add(previusContract);
-
-		employeeCounter = new Label();
-//		toolbar.add(employeeCounter);
-
-		nextContract = new AonToolbarButton("Contrato siguiente", AON.CSS.aonIconRight());
-		nextContract.addClickHandler(e -> onNextContract(contractId));
-//		toolbar.add(nextContract);
-
+		
+		previusContract = new AonToolbarButton("Anterior Agente Comercial", AON.CSS.aonIconLeft());
+		previusContract.addClickHandler(e -> {
+			previusContract.setEnabled(false);
+			nextContract.setEnabled(false);
+			position = position - 1;
+			getNextContract(position, nextContract -> onContractSelectionChange(nextContract, position));
+		});
+		toolbar.add(previusContract);
+		
 		return toolbar;
 
 	}
@@ -1875,6 +1891,29 @@ public abstract class ContrataEmployee extends ResizeComposite {
 
 		return hPanel;
 	}
+	
+	private void getNextContract(Integer nextPos, Consumer<EmployeeContractInfo> sellerLoad) {
+		ContractParams params = getContractListParams();
+		params.setOffset(nextPos);
+		params.setLimit(1); 
+		contrataEmployeeObject.getContract(params, employeeContractInfo -> sellerLoad.accept(employeeContractInfo));
+	}
+
+	private void hideNavegationOptions() {
+		previusContract.setVisible(false);
+		sellerIteration.setVisible(false);
+		nextContract.setVisible(false);
+	}
+
+	private void showNavegationOptions() {
+		previusContract.setVisible(true);
+		sellerIteration.setVisible(true);
+		nextContract.setVisible(true);
+	}
+	
+	protected abstract ContractParams getContractListParams();
+	protected abstract void getContractListCount(Consumer<Integer> finish);
+	protected abstract void onContractSelectionChange(EmployeeContractInfo employeeContractInfo, Integer position);
 
 	// ------------------------------------------------- EmployeeContractButtons (Auxiliar methods)
 

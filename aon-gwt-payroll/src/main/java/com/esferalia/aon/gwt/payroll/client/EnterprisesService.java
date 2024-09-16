@@ -215,6 +215,8 @@ public interface EnterprisesService extends RemoteService {
 	
 	List<EmployeeContractInfo> getEmployees(String currentDomainName, String user, ContractParams params) throws IllegalArgumentException;
 	
+	Integer getContractListCount(String currentDomainName, String user, ContractParams params) throws IllegalArgumentException;
+	
 	List<EmployeeContractInfo> getFJEmployeesInfo(String currentDomainName);
 
 	List<ITEmployee> getEmployeesITInfo(String currentDomainName, Boolean allEmployees);

@@ -724,7 +724,7 @@ export const VOLUME = "Tomo";
 
 export const WAREHOUSE = MSG.WAREHOUSE;
 export const WAREHOUSES = MSG.WAREHOUSES;
-export const WELCOME = "Le damos la bienvenida a aon Solutions";//TODO
+export const WELCOME_TO_AON_SOLUTIONS = MSG.WELCOME_TO_AON_SOLUTIONS;
 export const WEB = MSG.WEB;
 export const BLACK_AND_WHITE = 'Blanco y Negro';
 export const WITHHOLDING = MSG.WITHHOLDING;
