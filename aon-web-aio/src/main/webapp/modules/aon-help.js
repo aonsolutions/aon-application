@@ -10,6 +10,8 @@ export class AonHelp extends AonElement {
 	SUPPORT_SWITCH;
 	ABOUT_CONTACT_CARD;
 	SCHEDULE_CONTACT_CARD;
+	HELP_CONTENT;
+	SUPPORT_CONTENT;
 	cont;
 
 	get id() {
@@ -30,15 +32,29 @@ export class AonHelp extends AonElement {
 		this.SUPPORT_SWITCH = this.id + 'SwitchSupport';
 		this.ABOUT_CONTACT_CARD = this.id + 'AboutContactCard';
 		this.SCHEDULE_CONTACT_CARD = this.id + 'ScheduleContactCard';
+		this.HELP_CONTENT = 'helpContent';
+		this.SUPPORT_CONTENT = 'supportContent';
 		this.cont = 1;
 	}
 
 	build() {
+		
+		let helpContent = this.createDiv(this.HELP_CONTENT, "aonFlexColumn");
+		
+		let supportContent = this.createDiv(this.SUPPORT_CONTENT, "aonFlexBetween");
+		supportContent.style.padding = ".5rem 1rem";
+		
+		this.appendChild(helpContent);
 
 		let span = this.createSpan();
 		span.innerHTML = MSG.SUPPORT;
-		span.classList.add("aonHelpSpan");
-		this.appendChild(span);
+		supportContent.appendChild(span);
+		
+		let rightPanelSwitchSupportButton = new AonSwitch();
+		rightPanelSwitchSupportButton.id = this.SUPPORT_SWITCH;
+		supportContent.appendChild(rightPanelSwitchSupportButton);
+		
+		helpContent.appendChild(supportContent);
 
 		let div = this.createSpan();
 		div.className = "helpCardText";
@@ -54,13 +70,7 @@ export class AonHelp extends AonElement {
         span2.classList.add("aonHelpSpan2");
 		span2.innerHTML = "Índice contenidos";
 		div.appendChild(span2);
-		this.appendChild(div);
-
-		let rightPanelSwitchSupportButton = new AonSwitch();
-		rightPanelSwitchSupportButton.id = this.SUPPORT_SWITCH;
-		rightPanelSwitchSupportButton.className = "rightPanelSwitchSupportButton";
-		
-		this.appendChild(rightPanelSwitchSupportButton);
+		helpContent.appendChild(div);
 
 		getSupport().then(r => {
 			rightPanelSwitchSupportButton.checked = r.value;
@@ -76,7 +86,7 @@ export class AonHelp extends AonElement {
 		rightPanelAboutContactCard.id = this.ABOUT_CONTACT_CARD;
 		rightPanelAboutContactCard.title = MSG.CONTACT_DATA2;
 		rightPanelAboutContactCard.className = "rightPanelAboutContactCard";
-		this.appendChild(rightPanelAboutContactCard);
+		helpContent.appendChild(rightPanelAboutContactCard);
 
 		let cardDiv = this.getElement(rightPanelAboutContactCard.CARD);
 		cardDiv.className = "aonCard rightPanelcardDiv";
@@ -92,7 +102,7 @@ export class AonHelp extends AonElement {
 		rightPanelAboutScheduleCard.id = this.SCHEDULE_CONTACT_CARD;
 		rightPanelAboutScheduleCard.title = MSG.SCHEDULE;
 		rightPanelAboutScheduleCard.className = "rightPanelAboutScheduleCard";
-		this.appendChild(rightPanelAboutScheduleCard);
+		helpContent.appendChild(rightPanelAboutScheduleCard);
 
 		let cardDiv2 = this.getElement(rightPanelAboutScheduleCard.CARD);
 		cardDiv.className = "aonCard rightPanelCardDiv";
@@ -117,16 +127,16 @@ export class AonHelp extends AonElement {
 					</span> 
 				  </span>
 				  <div id="aonManifest">${version}</div>`;
-				  this.appendChild(divInfo);
+				  helpContent.appendChild(divInfo);
 			}
 		);
+
+		let openButton = this.getElement("openNotificationButton");
+		openButton.style.display = "none";
 	
 	}
 
 	buildSupportData(value, title, icon, className) {
-
-		
-
 		let div = this.createDiv();
 		div.style.marginTop = '10px';
 		div.style.title = title;

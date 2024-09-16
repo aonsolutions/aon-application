@@ -78,7 +78,7 @@ export class AonDocumentalCard extends AonElement {
       let documentalCard = this.getElement("documentalCard");
       documentalCard.style.display = "none";
     } else {
-      let maxLength = documents.length > 6 ? 6 : documents.length;
+      let maxLength = documents.length > 5 ? 5 : documents.length;
 
       for (let index = 0; index < maxLength; index++) {
         const document = documents[index];
@@ -106,6 +106,7 @@ export class AonDocumentalCard extends AonElement {
         let rightContent = this.createElement(TAG.DIV);
         rightContent.className = CSS.AON_FLEX_COLUMN;
         rightContent.style.alignItems = "end";
+        rightContent.style.gap = "0";
 
         let date = this.createElement(TAG.SPAN);
         date.classList.add("aonDocumentalCardDate");

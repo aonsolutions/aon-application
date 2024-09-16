@@ -58,7 +58,7 @@ export class AonNewLogin extends AonElement {
     //logoToolbar.style.height = '25px';
     //divLogoToolbar.appendChild(logoToolbar);
 
-    if(!this.isMobile()) {
+    // if(!this.isMobile()) {
       let divLanguage = this.createElement(TAG.DIV);
       divLanguage.id = 'aonLoginLanguageDivToolbar';
       toolbar.appendChild(divLanguage);
@@ -67,6 +67,7 @@ export class AonNewLogin extends AonElement {
       languageButton.id = "aonLoginLanguageButton";
       languageButton.icon = MATERIAL_ICONS.LANGUAGE;
       languageButton.title = MSG.SELECT_LANGUAGE;
+      if(LS.isDarkBetaTheme()) languageButton.color = "var(--aonNewWhite)";
       languageButton.addEventListener(EVENT.CLICK, () => this.languageDialog());
       divLanguage.appendChild(languageButton);
 
@@ -75,7 +76,7 @@ export class AonNewLogin extends AonElement {
       spanLanguage.innerHTML = this.getLanguageText();
       //spanLanguage.addEventListener(EVENT.MOUSEOVER, () => this.languageDialog());
       divLanguage.appendChild(spanLanguage);
-    }
+    // }
 
     // Content
     let divForm = this.createElement(TAG.DIV);
@@ -156,7 +157,8 @@ export class AonNewLogin extends AonElement {
     magicLinkButton.innerHTML = MSG.SIGN_IN_WITHOUT_PASSWORD.toUpperCase();
     magicLinkButton.disabled = true;
     magicLinkButton.addEventListener(EVENT.CLICK, () => this.magicLink(userInput.value));
-    magicLinkButton.addEventListener(EVENT.MOUSEOVER, () => signIn.className = "aonMagicButtonHover");
+    if(!LS.isDarkBetaTheme())
+      magicLinkButton.addEventListener(EVENT.MOUSEOVER, () => signIn.className = "aonMagicButtonHover");
     magicLinkButton.addEventListener("mouseout", () => signIn.className = CSS.AON_LOGIN_BUTTON);
     divFormContent.appendChild(magicLinkButton);
 
@@ -169,6 +171,7 @@ export class AonNewLogin extends AonElement {
 
     let divMobiles = this.createElement(TAG.DIV);
     divMobiles.id = 'logosMobiles';
+    divMobiles.classList.add("aonNewLoginDivMobiles");
     divFormContent.appendChild(divMobiles);
 
     let dialog = new AonDialog();
@@ -374,7 +377,7 @@ export class AonNewLogin extends AonElement {
     loader.start();
     login(data)
       .then(() => {
-        document.body.style.background = 'transparent';
+        // document.body.style.background = 'transparent';
         loader.stop();
 
         LS.removeDomain();
