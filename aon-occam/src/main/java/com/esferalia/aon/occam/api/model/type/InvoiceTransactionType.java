@@ -39,6 +39,11 @@ public enum InvoiceTransactionType implements Serializable {
 		return tediName;
 	}
 
+	public static Byte safeValueOf( InvoiceTransactionType i ) {
+		if (i == null) return null;
+		return i.value(); 
+	}
+	
 	public static InvoiceTransactionType safeValueOf( Byte i ) {
 		if (i == null) return null;
 		return safeValueOf( i.intValue() ); 

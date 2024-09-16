@@ -1,13 +1,10 @@
 package com.esferalia.aon.occam.api.model.finance;
 
-import static com.esferalia.aon.jooq.tables.Invoice.INVOICE;
-
 import java.io.Serializable;
 import java.sql.Timestamp;
 import java.util.Date;
 
 import com.esferalia.aon.occam.api.model.Filter.Property;
-import com.esferalia.aon.occam.impl.jooq.dao.FilterDAO;
 
 public interface InvoiceProperties extends Serializable {
 	

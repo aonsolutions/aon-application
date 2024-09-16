@@ -788,7 +788,7 @@ public class InvoiceFaker {
 				.setWithholdingType(wt))
 				.setMustForceRegistry(true);
 	}
-	public static Invoice getRetentionInvoice( AONContext ctx, Occam occam, final WithholdingType wt) {
+	public static Invoice getRetentionInvoice( AONContext ctx, final WithholdingType wt) {
 		InvoiceFakerParams params = new InvoiceFakerParams(ctx)
 			.setIssueDate(AonRandom.getYearDay(new Date()));
 		InvoiceFaker.fillRetentionParams(ctx, params, wt);

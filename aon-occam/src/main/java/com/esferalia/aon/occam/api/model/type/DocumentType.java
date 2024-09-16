@@ -30,6 +30,11 @@ public enum DocumentType implements Serializable {
 		return (byte) this.ordinal();
 	}
 	
+	public static Byte safeValueOf( DocumentType i ) {
+		if (i == null) return null;
+		return i.value(); 
+	}
+
 	public static DocumentType safeValueOf( Byte i ) {
 		if (i == null) return null;
 		return safeValueOf( i.intValue() ); 

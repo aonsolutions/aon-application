@@ -23,6 +23,16 @@ public enum InvoiceStatus implements Serializable {
 		return name;
 	}
 	
+	public static Byte safeValueOf( boolean i ) {
+		return i
+			?InvoiceStatus.SCORED.value()
+			:InvoiceStatus.PENDING.value();
+	}
+	
+	public static Byte safeValueOf( InvoiceStatus i ) {
+		if (i == null) return null;
+		return i.value();
+	}
 	public static InvoiceStatus safeValueOf( Byte i ) {
 		if (i == null) return null;
 		if (i < 0 || i >= InvoiceStatus.values().length) return null;

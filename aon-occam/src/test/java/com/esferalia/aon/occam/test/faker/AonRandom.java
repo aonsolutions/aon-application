@@ -1,5 +1,6 @@
 package com.esferalia.aon.occam.test.faker;
 
+import java.text.MessageFormat;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
@@ -11,6 +12,7 @@ import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
+import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Account;
 import com.esferalia.aon.occam.api.model.AccountFilter;
@@ -29,8 +31,12 @@ import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.accounting.BalanceType;
 import com.esferalia.aon.occam.api.model.finance.EnumVisitors.IInvoiceTypeVisitor;
 import com.esferalia.aon.occam.api.model.finance.EnumVisitors.IWithholdingTypeVisitor;
+import com.esferalia.aon.occam.api.model.finance.Finance;
+import com.esferalia.aon.occam.api.model.finance.FinanceTracking;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceBreakdown;
+import com.esferalia.aon.occam.api.model.finance.InvoiceFilter;
+import com.esferalia.aon.occam.api.model.finance.InvoiceMin;
 import com.esferalia.aon.occam.api.model.fiscal.VatSummaryType;
 import com.esferalia.aon.occam.api.model.product.ProductStatus;
 import com.esferalia.aon.occam.api.model.product.Tariff;
@@ -64,16 +70,19 @@ import com.esferalia.aon.occam.api.model.type.VatDeductionType;
 import com.esferalia.aon.occam.api.model.type.WithholdingType;
 import com.esferalia.aon.occam.impl.jooq.dao.AccountDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.AccountPeriodDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.AccountingInvoiceDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.AccountingRegistryDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.CompanyDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.CreditorDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.CustomerDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.FinanceTrackingDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.GeoZoneDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.RegistryAddressDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.RegistryDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.RegistryMediaDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.SupplierDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.TariffDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.invoice.InvoiceDAO;
 import com.esferalia.aon.occam.server.fiscal.FiscalUtils;
 import com.esferalia.aon.occam.test.faker.InvoiceFaker.InvoiceFakerParams;
 import com.esferalia.aon.watson.mutable.MutableObject;
@@ -578,8 +587,46 @@ public class AonRandom {
 			?ProductStatus.values()[faker.random().nextInt(ProductStatus.values().length)]
 			:null;
 	}
+	
+	public static void generateRandomInvoices(final AONContext ctx, Date testDate, int times ) {
+		int year = AonDateUtils.getYear( testDate );
+		for (int count = 0; count < times; count++) {
+			Invoice invoice = null;
+			if (AonRandom.gt(90)) {
+				invoice = AonRandom.generateRandomRetentionInvoice(ctx,AonRandom.getRandomWithholdingType());
+			} else {
+				InvoiceFakerParams params = new InvoiceFakerParams(ctx).setIssueDate( AonRandom.getRandomYearDay( year ) );
+				invoice = InvoiceFaker.getRandom(params);
+			}
+			invoice = AON.insertInvoice(ctx,invoice);
+			AccountingInvoiceDAO.saveFinances(ctx, invoice);
+			if (invoice.isVatAccrualPayment() && AonCollectionUtils.isNotEmpty(invoice.getFinances()) && AonRandom.gt(40)) {
+				Finance finance = AonRandom.get(invoice.getFinances());
+				if (finance != null && finance.getId() != null) {
+					FinanceTracking tracking = new FinanceTracking()
+							.setDomain(invoice.getDomain())
+							.setFinance(finance)
+							.setTrackingDate( AonRandom.getFutureDate(finance.getDueDate()) )
+							.setAmount(finance.getAmount() );
+					FinanceTrackingDAO.pay(ctx, tracking);
+				}
+			}
+			System.out.println(MessageFormat.format("\t\t [{0}% {1}{2}]"
+					,AonStringUtils.rightPad(AonMathUtils.round( count * 100 / times,2), 6)
+					,AonStringUtils.repeat("-", count)
+					,AonStringUtils.repeat(" ", times - count)
+					));
+			count++;
+		}
+		System.out.println(MessageFormat.format("\t\t [100.00% {0}]"
+				,AonStringUtils.repeat("-", times)
+				));
+	}
 
-	public static Invoice generateRandomRetentionInvoice(final AONContext ctx, final Occam occam, WithholdingType withholdingType) {
+	
+	
+
+	public static Invoice generateRandomRetentionInvoice(final AONContext ctx, WithholdingType withholdingType) {
 		Invoice inv = withholdingType.visit(new IWithholdingTypeVisitor<Invoice>() {
 
 			@Override public Invoice visitProfessional(Invoice i) { return getRetentionInvoice( WithholdingType.PROFESSIONAL);   }
@@ -611,7 +658,7 @@ public class AonRandom {
 			}
 
 			private Invoice getRetentionInvoice( final WithholdingType wt) {
-				return InvoiceFaker.getRetentionInvoice( ctx, occam, wt);
+				return InvoiceFaker.getRetentionInvoice( ctx, wt);
 			}
 			
 		},null);
@@ -755,6 +802,13 @@ public class AonRandom {
 			}
 		}
 		return activity;
+	}
+	
+	public static InvoiceMin getInvoiceMin(AONContext ctx) {
+		return getInvoiceMin(ctx, p -> p.getDomainProperty().eq(ctx.getDomainId()));	
+	}
+	public static InvoiceMin getInvoiceMin(AONContext ctx, InvoiceFilter filter) {
+		return InvoiceDAO.getRandom(ctx, filter);
 	}
 	
 }

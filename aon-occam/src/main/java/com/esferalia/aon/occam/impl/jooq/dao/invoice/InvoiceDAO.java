@@ -114,6 +114,9 @@ public class InvoiceDAO {
 		}
 		
 		public Condition[] getConditions(InvoiceFilter filter) {
+			if (filter == null) {
+				throw new AonCoreException( "Use some conditions.");
+			}
 			FilterDAO filterDAO = (FilterDAO) filter.filter(this);
 			if (filterDAO == null)
 				return new Condition[0];
@@ -179,20 +182,12 @@ public class InvoiceDAO {
 	// ------------------------------------------- [PUBLIC METHODS]
 	// ------------------------------------------------------------
 	// ------------------------------------------------------------
-	
-	public static Stream<InvoiceMin> stream(AONContext ctx,InvoiceFilter filter) {
-		return stream(ctx,filter,0,Integer.MAX_VALUE);
-	}
-	
-	public static Stream<InvoiceMin> stream(AONContext ctx,InvoiceFilter filter, int offset , int numberOfRows) {
-		ctx.checkRead();
+	private static SelectOnConditionStep<Record> getInvoiceMinSelect(AONContext ctx ) {
 		return ctx.getDslContext()
 			.select(
 				 INVOICE.ID
 				,INVOICE.DOMAIN
 				,INVOICE.ACTIVITY
-				,IAE.EPIGRAPH
-				,ENTERPRISE_ACTIVITY.DESCRIPTION
 				,INVOICE.TYPE
 				,INVOICE.SERIES
 				,INVOICE.NUMBER
@@ -209,11 +204,25 @@ public class InvoiceDAO {
 				,INVOICE.SECURITY_LEVEL
 				,INVOICE.STATUS
 				,INVOICE.TOTAL
+			)
+			.select(
+				 IAE.EPIGRAPH
+				,ENTERPRISE_ACTIVITY.DESCRIPTION
 				,ORDERED_TYPE
 			)
 			.from(INVOICE)
 			.leftOuterJoin(ENTERPRISE_ACTIVITY).on(INVOICE.ACTIVITY.eq(ENTERPRISE_ACTIVITY.ID))
 			.leftOuterJoin(IAE).on(IAE.ID.equal(ENTERPRISE_ACTIVITY.IAE))
+			;		
+	}
+	
+	public static Stream<InvoiceMin> stream(AONContext ctx,InvoiceFilter filter) {
+		return stream(ctx,filter,0,Integer.MAX_VALUE);
+	}
+	
+	public static Stream<InvoiceMin> stream(AONContext ctx,InvoiceFilter filter, int offset , int numberOfRows) {
+		ctx.checkRead();
+		return getInvoiceMinSelect(ctx)
 			.where(INVOICE_PROPERTIES.getConditions(filter))
 			.orderBy(ORDERED_TYPE,INVOICE.TYPE,INVOICE.ISSUE_DATE.desc(),INVOICE.REFERENCE_CODE)
 			.limit(offset,numberOfRows)
@@ -338,20 +347,14 @@ public class InvoiceDAO {
 				.setRegistryDocumentCountry(Country.safeValueOf(r.getValue(inv.RDOCUMENT_COUNTRY)))
 				.setRegistryName(r.getValue(inv.RNAME))
 				.setRegistryAddress(r.getValue(inv.RADDRESS))
-				.setScope(checkField(r, SCOPE.ID)
-						? ScopeFiller.buildScope(r)
-						: new Scope().setId(r.getValue(inv.SCOPE)))
-				.setActivity(checkField(r, ENTERPRISE_ACTIVITY.ID)
-						? EnterpriseActivityFiller.build(r)
-						: new EnterpriseActivity().setId(r.getValue(inv.ACTIVITY)))	
+				.setScope(ScopeFiller.buildScope(r))
+				.setActivity(EnterpriseActivityFiller.build(r))	
 				.setInvestAsset(r.getValue(inv.INVEST_ASSET))
 				.setProject(r.getValue(inv.PROJECT))
 				.setRectificationType(AonEnumUtils.enumValue(RectificationType.class, r.getValue(inv.RECTIFICATION_TYPE)))
-
 				.setRectificationInvoice(getValue(r,inv.RECTIFICATION_INVOICE) == null
-						?null
-						:InvoiceMinFiller.build(r, RECTIFICATION_INVOICE))
-				
+					?null
+					:InvoiceMinFiller.build(r, RECTIFICATION_INVOICE))
 				.setTransaction(InvoiceTransactionType.safeValueOf(r.getValue(inv.TRANSACTION)))
 				.setRecorded(r.getValue(inv.STATUS) != null && r.getValue(inv.STATUS) == 1 )	
 				.setSurcharge(r.getValue(inv.SURCHARGE) == 1 )	
@@ -366,9 +369,7 @@ public class InvoiceDAO {
 				.setRetentionQuota(r.getValue(inv.RETENTION_QUOTA))	
 				.setTotal(r.getValue(inv.TOTAL))	
 				.setComments(r.getValue(inv.COMMENTS))
-				.setFiscal(checkField(r, INVOICE_FISCAL.INVOICE)
-						? InvoiceFiscalDAO.InvoiceFiscalFiller.buildInvoiceFiscal(r)
-						: new InvoiceFiscal())
+				.setFiscal(InvoiceFiscalDAO.InvoiceFiscalFiller.buildInvoiceFiscal(r))
 				.setSeller(getValue(r, inv.SELLER))
 				.setCreationDate(r.getValue(inv.CREATION_DATE))
 				.setCreationUser(r.getValue(inv.CREATION_USER))
@@ -963,6 +964,20 @@ public class InvoiceDAO {
 		InvoiceAutoComplete.completeInvoice(ctx, invoice);
 		InvoiceValidation.validate(ctx, invoice);
 		return invoice;
+	}
+
+	// *************************************************
+	// ********** TEST PURPOSE METHODS *****************
+	// *************************************************
+	public static InvoiceMin getRandom(AONContext ctx, InvoiceFilter filter) {
+		return getInvoiceMinSelect(ctx)
+			.where(INVOICE_PROPERTIES.getConditions(filter))
+			.orderBy( DSL.rand() )
+			.fetch()
+			.stream()
+			.map(new InvoiceMinFiller())
+			.findFirst()
+			.orElse(null);
 	}
 }
 

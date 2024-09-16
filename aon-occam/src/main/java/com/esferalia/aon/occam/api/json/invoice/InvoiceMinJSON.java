@@ -33,6 +33,12 @@ public class InvoiceMinJSON {
 			.collect(Collectors.toCollection(LinkedList::new));
 	}
 
+	public static InvoiceMin fromString(String text) {
+		JSONObject json = new JSONObject(text);
+		return fromJSON(json); 
+	}
+
+
 	public static InvoiceMin fromJSON(String json) {
 		return fromJSON(new JSONObject(json));
 	}
@@ -47,7 +53,7 @@ public class InvoiceMinJSON {
 			.setType(InvoiceType.safeValueOf(JsonUtils.getString(json, IJsonNames.TYPE)))
 			.setSeries(JsonUtils.getString(json, IJsonNames.SERIE))
 			.setNumber(JsonUtils.getInt(json, IJsonNames.NUMBER))
-			.setReferenceCode(JsonUtils.getString(json, IJsonNames.REFERENCE))
+			.setReferenceCode(JsonUtils.getString(json, IJsonNames.REFERENCE_CODE))
 			.setIssueDate(JsonUtils.getDate(json, IJsonNames.ISSUE_DATE))
 			.setTaxDate(JsonUtils.getDate(json, IJsonNames.TAX_DATE))
 			.setTransaction(InvoiceTransactionType.safeValueOf(json.optString(IJsonNames.TRANSACTION)))

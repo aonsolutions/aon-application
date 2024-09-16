@@ -1878,11 +1878,13 @@ public class AON {
 	public static Invoice insertInvoice(Occam occam, Invoice invoice){
 		return insertInvoice( occam.getDomainName(), occam.getDomain(), occam.getUser(), invoice);
 	}
-	
 	public static Invoice insertInvoice(String domainName, Integer domainId, String login, Invoice invoice){
 		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
-			return getFinance().insertInvoice(ctx, invoice);
+			return insertInvoice(ctx, invoice);
 		}
+	}
+	public static Invoice insertInvoice(AONContext ctx, Invoice invoice){
+		return getFinance().insertInvoice(ctx, invoice);
 	}
 	
 	public static Invoice updateInvoice(String domainName, Integer domainId, String login, Invoice invoice, boolean only){

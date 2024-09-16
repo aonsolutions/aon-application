@@ -18,6 +18,11 @@ public enum SecurityLevel implements Serializable{
 	public Byte value() {
 		return (byte) ordinal();
 	}
+	public static Byte safeValueOf( boolean i ) {
+		return i
+			?SecurityLevel.CONFIDENTIAL.value()
+			:SecurityLevel.OFFICIAL.value();
+	}
 	public static SecurityLevel safeValueOf( Byte i ) {
 		if (i == null) return null;
 		return safeValueOf( i.intValue() ); 

@@ -2,6 +2,7 @@ package com.esferalia.aon.occam.api.model.finance;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.Optional;
 
 import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.occam.api.model.type.DocumentType;
@@ -216,6 +217,34 @@ public class InvoiceMin implements Serializable {
 	
 	public String getSeriesNumber() {
 		return FinanceUtil.getSeriesNumber(series, number);
+	}
+	
+	public static InvoiceMin to(Invoice inv) {
+		if (inv == null) return null;
+		return new InvoiceMin()
+			.setId(inv.getId())
+			.setDomain(inv.getDomain())
+			.setActivity( Optional.ofNullable(inv.getActivity()).map( a -> a.getId()).orElse(null))
+			.setActivityName(Optional.ofNullable(inv.getActivity()).map( a -> a.getDescription()).orElse(null))
+			.setActivityEpigraph(Optional.ofNullable(inv.getActivity()).map( a -> a.getEpigraph()).orElse(null))
+			.setType(inv.getType())
+			.setSeries(inv.getSeries())
+			.setNumber(inv.getNumber())
+			.setReferenceCode(inv.getReferenceCode())
+			.setTransaction(inv.getTransaction())
+			.setIssueDate(inv.getIssueDate())
+			.setTaxDate(inv.getTaxDate())
+			.setRegistry(inv.getRegistry())
+			.setRegistryDocument(inv.getRegistryDocument())
+			.setRegistryDocumentType(inv.getRegistryDocumentType())
+			.setRegistryDocumentCountry(inv.getRegistryDocumentCountry())
+			.setRegistryName(inv.getRegistryName())
+			.setScope(Optional.ofNullable(inv.getScope()).map( s -> s.getId()).orElse(null))
+			.setConfidential(inv.isConfidential())
+			.setRecorded(inv.isRecorded())
+			.setTotal(inv.getTotal())
+		;		
+		
 	}
 	
 }

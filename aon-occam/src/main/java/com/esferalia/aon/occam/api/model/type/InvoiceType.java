@@ -56,6 +56,11 @@ public enum InvoiceType implements Serializable  {
 	public abstract <T> T visit(Invoice invoice, IInvoiceTypeVisitor<T> visitor);
 	public abstract void visit(AccountingInvoice invoice, IAccountingInvoiceTypeVisitor visitor);
 	
+	public static Byte safeValueOf( InvoiceType i ) {
+		if (i == null) return null;
+		return i.value(); 
+	}
+
 	public static InvoiceType safeValueOf( Byte i ) {
 		if (i == null) return null;
 		return safeValueOf( i.intValue() ); 

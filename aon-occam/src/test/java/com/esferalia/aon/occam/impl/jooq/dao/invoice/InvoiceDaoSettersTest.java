@@ -21,7 +21,7 @@ class InvoiceDaoSettersTest extends AbstractOccamTest {
 		int year = AonDateUtils.getYear( getTestDate() );
 		Invoice invoice = null;
 		if (AonRandom.gt(90)) {
-			invoice = AonRandom.generateRandomRetentionInvoice(ctx,getOccam(),AonRandom.getRandomWithholdingType());
+			invoice = AonRandom.generateRandomRetentionInvoice(ctx,AonRandom.getRandomWithholdingType());
 		} else {
 			InvoiceFakerParams params = new InvoiceFakerParams(ctx).setIssueDate( AonRandom.getRandomYearDay( year ) );
 			invoice = InvoiceFaker.getRandom(params);
