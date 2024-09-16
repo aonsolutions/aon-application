@@ -70,6 +70,28 @@ public class NordigenUtils {
 		return null;
 	}
 	
+	public static boolean isTokenExpired(NordigenAccessToken token) {
+		Date today = new Date();
+		long tokenExpirationTime = token.getCreationDate().getTime() + token.getAccessExpires() * 1000;
+        return today.getTime() > tokenExpirationTime;	    
+	}
+	
+	public static boolean isRefreshTokenExpired(NordigenAccessToken token) {
+		Date today = new Date();
+		long tokenRefreshExpirationTime = token.getRefreshDate().getTime() + token.getRefreshExpires() * 1000;
+        return today.getTime() > tokenRefreshExpirationTime;	    
+	}
+	
+	public static NordigenAccessToken handleToken(NordigenAccessToken token) {
+		if (isTokenExpired(token)) {
+			if (!isRefreshTokenExpired(token)) {
+				return NordigenAPI.refreshAccessToken(token.getRefresh());
+			}else {
+				return NordigenAPI.newAccessToken();
+			}
+		}
+		return token;
+	}
 	
 	// NUEVOS METODOS PROCESAR INFO DE BANCOS
 

@@ -69,6 +69,7 @@ public class RegistryBankJSON {
 				.put(IJsonNames.BALANCE, rbank.getBalance())
 				.put(IJsonNames.AVAILABLE_BALANCE, rbank.getAvailableBalance())
 				.put(IJsonNames.BALANCE_DATE, rbank.getBalanceDate())
+				.put(IJsonNames.REQUISITION, rbank.getRequisition())
 				;
 	}
 }
