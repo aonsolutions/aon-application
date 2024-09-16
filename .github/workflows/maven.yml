@@ -39,7 +39,8 @@ jobs:
       uses: actions/setup-node@v4
       with:
         node-version: 20.7.0
-        cache: 'npm'    
+        cache: 'npm'
+        cache-dependency-path: '**/package-lock.json'
     - name: Set up MySQL
       run: |
         sudo systemctl start mysql.service
