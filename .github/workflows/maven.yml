@@ -72,7 +72,7 @@ jobs:
     - name: Get changed projects
       run: |
         export PROJECTS=$(\
-        git diff --name-only master |\
+        git diff --name-only origin/master |\
         cut -d/ -f1 | sort -u |\
         while read module; \
           do  [ -f $module/pom.xml ] && echo $module; \
