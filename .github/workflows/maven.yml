@@ -83,6 +83,6 @@ jobs:
       run: mvn -B -pl ${PROJECTS:=.} -Dgwt.working=true -DskipTests=true clean install
 
     - name: Publish to GitHub Packages Apache Maven
-      run: mvn deploy
+      run: mvn -B -pl ${PROJECTS:=.} deploy
       env:
         GITHUB_TOKEN: ${{ github.token }}
