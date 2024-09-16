@@ -19,6 +19,7 @@ import com.esferalia.aon.occam.api.model.EnterpriseActivity;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceFilterOLD;
 import com.esferalia.aon.occam.api.model.finance.InvoiceFiscal;
+import com.esferalia.aon.occam.api.model.finance.InvoiceMin;
 import com.esferalia.aon.occam.api.model.security.Scope;
 import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.occam.api.model.type.DataResponseSource;
@@ -128,7 +129,7 @@ public class InvoiceSIIDAO {
 				.setProject(r.getValue(INVOICE.PROJECT))
 				.setRectificationType(AonEnumUtils.enumValue(RectificationType.class, r.getValue(INVOICE.RECTIFICATION_TYPE)))	
 				.setRectificationInvoice(
-						Optional.ofNullable( r.getValue(INVOICE.RECTIFICATION_INVOICE) ).map( rid -> new Invoice().setId(rid)).orElse(null)
+						Optional.ofNullable( r.getValue(INVOICE.RECTIFICATION_INVOICE) ).map( rid -> new InvoiceMin().setId(rid)).orElse(null)
 					)	
 				.setTransaction(InvoiceTransactionType.safeValueOf(r.getValue(INVOICE.TRANSACTION)))
 				.setRecorded(r.getValue(INVOICE.STATUS) != null && r.getValue(INVOICE.STATUS) == 1 )	

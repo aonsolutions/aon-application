@@ -446,7 +446,9 @@ public class InvoiceTextPrinter {
 			buf.append(VERTICAL_BAR);
 			buf.append(AonStringUtils.spaces(5));
 			buf.append(AonStringUtils.rightPad("Rectificativa  ............: "
-				+ invoice.getRectificationInvoice().map( ri -> ri.getReferenceCode() + " [ " + ri.getRectificationInvoiceId() +" ]").orElse("NO") ,87));
+				+ invoice.getRectificationInvoice()
+					.map( ri -> "SI --> "  + ri.getReferenceCode() + " [ " + ri.getId() +" ]")
+					.orElse("NO") ,87));
 			buf.append(VERTICAL_BAR);
 			buf.append(AonStringUtils.spaces(getLineSize() - buf.length()));			
 			out.println(buf.toString());

@@ -78,6 +78,7 @@ import com.esferalia.aon.occam.api.model.finance.InvoiceBreakdown;
 import com.esferalia.aon.occam.api.model.finance.InvoiceDetail;
 import com.esferalia.aon.occam.api.model.finance.InvoiceFilterOLD;
 import com.esferalia.aon.occam.api.model.finance.InvoiceFiscal;
+import com.esferalia.aon.occam.api.model.finance.InvoiceMin;
 import com.esferalia.aon.occam.api.model.finance.InvoiceRectificationData;
 import com.esferalia.aon.occam.api.model.finance.InvoiceSeries;
 import com.esferalia.aon.occam.api.model.finance.InvoiceStatus;
@@ -121,6 +122,7 @@ import com.esferalia.aon.occam.impl.jooq.dao.RegistryDAO.RegistryFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.SecurityDAO.ScopeFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.invoice.InvoiceAddressDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.invoice.InvoiceBatchDetailDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.invoice.InvoiceDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.invoice.InvoiceFiscalDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.invoice.InvoiceInfoDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.offer.OfferDetailDAO;
@@ -133,7 +135,7 @@ import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonEnumUtils;
 import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
-import com.esferalia.aon.watson.util.AonStringUtils;;
+import com.esferalia.aon.watson.util.AonStringUtils;
 
 @Deprecated
 public class InvoiceOLDDAO {
@@ -508,7 +510,11 @@ public class InvoiceOLDDAO {
 			fillBreakdown(ctx, invoice, true);
 		
 			if (invoice.getRectificationInvoiceId() != null) {
-				invoice.setRectificationInvoice(getInvoice(ctx, invoice.getRectificationInvoiceId())); 
+				invoice.setRectificationInvoice(
+					InvoiceDAO.stream(ctx, f -> f.getIdProperty().eq(invoice.getRectificationInvoiceId()))
+						.findFirst()
+						.orElse(null)
+				); 
 			}
 		}
 		return invoice;
@@ -652,9 +658,9 @@ public class InvoiceOLDDAO {
 				.setInvestAsset(r.getValue(INVOICE.INVEST_ASSET))
 				.setProject(r.getValue(INVOICE.PROJECT))
 				.setRectificationType(AonEnumUtils.enumValue(RectificationType.class, r.getValue(INVOICE.RECTIFICATION_TYPE)))	
-				.setRectificationInvoice(excludeRectification || r.getValue(inv.RECTIFICATION_INVOICE) == null
+				.setRectificationInvoice(r.getValue(inv.RECTIFICATION_INVOICE) == null
 					?null
-					:InvoiceFiller.build(r, RECTIFICATION_INVOICE, true))
+					:InvoiceMinFiller.build(r, RECTIFICATION_INVOICE))
 	
 				.setTransaction(InvoiceTransactionType.safeValueOf(r.getValue(INVOICE.TRANSACTION)))
 				.setRecorded(r.getValue(INVOICE.STATUS) != null && r.getValue(INVOICE.STATUS) == 1 )	
@@ -1201,7 +1207,7 @@ public class InvoiceOLDDAO {
 						if (rectified.getRectificationInvoice() == null) {
 							// Primera iteracion.
 							rectified.setRectificationType(RectificationType.RECTIFIED);							
-							rectified.setRectificationInvoice(new Invoice().setId(rectifier.getId()));
+							rectified.setRectificationInvoice(new InvoiceMin().setId(rectifier.getId()));
 						} else {
 							// Segunda iteracion y sucesivas. Hay mas de una, debe continuar a null.
 							rectified.setRectificationInvoice(null);
@@ -1407,7 +1413,7 @@ public class InvoiceOLDDAO {
 		inv.setIssueDate(data.getIssueDate());
 		inv.setTaxDate(data.getIssueDate());
 		inv.setRectificationType(data.getRectificationtype());
-		inv.setRectificationInvoice( new Invoice().setId(invoiceId));
+		inv.setRectificationInvoice( new InvoiceMin().setId(invoiceId));
 		inv.setRecorded(false);
 		inv.setTaxableBase( AonMathUtils.round(inv.getTaxableBase() * (-1)));
 		inv.setVatQuota(AonMathUtils.round(inv.getVatQuota() * (-1)));
@@ -2193,4 +2199,41 @@ public class InvoiceOLDDAO {
 	}
 	
 	
+	public static class InvoiceMinFiller extends Filler implements Function<Record,InvoiceMin> {
+
+		@Override
+		public InvoiceMin apply(Record r) {
+			return build(r, INVOICE);
+		}
+
+	    public static InvoiceMin build(Record r) {
+	        return build(r, INVOICE);
+	    }
+	     
+	    static InvoiceMin build(Record r, com.esferalia.aon.jooq.tables.Invoice inv) {
+			return new InvoiceMin()
+				.setId(getValue(r,inv.ID))
+				.setDomain(getValue(r,inv.DOMAIN))
+				.setType(AonEnumUtils.enumValue(InvoiceType.class, getValue(r,inv.TYPE)))
+				.setActivity(getValue(r,inv.ACTIVITY))	
+				.setActivityEpigraph(getValue(r, IAE.EPIGRAPH))
+				.setActivityName(getValue(r, ENTERPRISE_ACTIVITY.DESCRIPTION))
+				.setSeries(getValue(r,inv.SERIES))
+				.setNumber(getValue(r,inv.NUMBER))
+				.setReferenceCode(getValue(r,inv.REFERENCE_CODE))
+				.setTransaction(InvoiceTransactionType.safeValueOf(getValue(r,inv.TRANSACTION)))
+				.setIssueDate(getValue(r,inv.ISSUE_DATE))
+				.setTaxDate(getValue(r,inv.TAX_DATE))
+				.setRegistry(getValue(r,inv.REGISTRY))
+				.setRegistryDocument(getValue(r,inv.RDOCUMENT))
+				.setRegistryDocumentType(AonEnumUtils.enumValue(DocumentType.class,getValue(r,inv.RDOCUMENT_TYPE)))
+				.setRegistryDocumentCountry(Country.safeValueOf(getValue(r,inv.RDOCUMENT_COUNTRY)))
+				.setRegistryName(getValue(r,inv.RNAME))
+				.setScope(getValue(r, inv.SCOPE))
+				.setSecurityLevel(AonEnumUtils.enumValue(SecurityLevel.class, getValue(r,inv.SECURITY_LEVEL)))
+				.setRecorded(getValue(r,inv.STATUS) != null && r.getValue(inv.STATUS) == 1 )	
+				.setTotal(getValue(r,inv.TOTAL))	
+				;
+		}
+	}
 }

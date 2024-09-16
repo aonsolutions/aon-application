@@ -49,7 +49,7 @@ public class Invoice implements Serializable, HasAudit {
 	private Date taxDate;
 	
 	private RectificationType rectificationType;
-	private Invoice rectificationInvoice;
+	private InvoiceMin rectificationInvoice;
 	
 	private SecurityLevel securityLevel;
 	
@@ -211,12 +211,12 @@ public class Invoice implements Serializable, HasAudit {
 	}
 	
 	public Integer getRectificationInvoiceId() {
-		return getRectificationInvoice().map( Invoice::getId ).orElse(null);	
+		return getRectificationInvoice().map( InvoiceMin::getId ).orElse(null);	
 	}
-	public Optional<Invoice> getRectificationInvoice() {
+	public Optional<InvoiceMin> getRectificationInvoice() {
 		return Optional.ofNullable( rectificationInvoice );
 	}
-	public Invoice setRectificationInvoice(Invoice rectificationInvoice) {
+	public Invoice setRectificationInvoice(InvoiceMin rectificationInvoice) {
 		this.rectificationInvoice = rectificationInvoice;
 		return this;
 	}

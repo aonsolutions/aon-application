@@ -77,6 +77,7 @@ import com.esferalia.aon.occam.api.model.finance.Finance;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceBreakdown;
 import com.esferalia.aon.occam.api.model.finance.InvoiceDetail;
+import com.esferalia.aon.occam.api.model.finance.InvoiceMin;
 import com.esferalia.aon.occam.api.model.finance.PrintInvoiceConfiguration;
 import com.esferalia.aon.occam.api.model.finance.PrintInvoiceThemeConfiguration;
 import com.esferalia.aon.occam.api.model.management.Sales;
@@ -342,7 +343,7 @@ public class InvoiceTemplate {
 	private void drawComment(PDDocument doc, CompanyFull company, Invoice invoice, String comment, PrintInvoiceThemeConfiguration theme) throws IOException {
 		float firstY = y;
 		if (invoice.isRectifier() && invoice.getRectificationInvoice().isPresent()) {
-			Invoice rectificationInvoice = invoice.getRectificationInvoice().get(); 
+			InvoiceMin rectificationInvoice = invoice.getRectificationInvoice().get(); 
 			String rn = AonStringUtils.trimToEmpty(AonNumberUtils.toString(rectificationInvoice.getNumber()));
 			String rectNum = !AonStringUtils.isBlank(rn) ? AonStringUtils.leftPad(rn, 6, '0') : "";
 			String message = getMsg().rectifies() + " " + AonStringUtils.trimToEmpty(rectificationInvoice.getSeries()) + "/" + rectNum;

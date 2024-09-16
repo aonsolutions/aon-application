@@ -64,6 +64,7 @@ import com.esferalia.aon.occam.api.model.finance.Finance;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceBreakdown;
 import com.esferalia.aon.occam.api.model.finance.InvoiceDetail;
+import com.esferalia.aon.occam.api.model.finance.InvoiceMin;
 import com.esferalia.aon.occam.api.model.finance.PrintInvoiceConfiguration;
 import com.esferalia.aon.occam.api.model.finance.PrintInvoiceTheme;
 import com.esferalia.aon.occam.api.model.finance.PrintInvoiceThemeConfiguration;
@@ -128,8 +129,8 @@ public class InvoiceTest {
 		invoice.setNumber(1);
 		
 		invoice.setRectificationInvoice(
-			new Invoice()
-				.setSeries("NO LO SÉ XD")
+			new InvoiceMin()
+				.setSeries("UNKN")
 				.setNumber(288)
 		);
 		invoice.setRectificationType(RectificationType.NORMAL_RECTIFIER);
@@ -1049,8 +1050,8 @@ public class InvoiceTest {
 		invoice.setNumber(1);
 		
 		invoice.setRectificationInvoice(
-				new Invoice()
-					.setSeries("NO LO SÉ XD")
+				new InvoiceMin()
+					.setSeries("UNKN")
 					.setNumber(288)
 			);
 		invoice.setRectificationType(RectificationType.NORMAL_RECTIFIER);
@@ -1065,8 +1066,8 @@ public class InvoiceTest {
 		invoice2.setNumber(1);
 		
 		invoice2.setRectificationInvoice(
-				new Invoice()
-					.setSeries("NO LO SÉ XD")
+				new InvoiceMin()
+					.setSeries("UNKN")
 					.setNumber(288)
 			);
 		invoice2.setRectificationType(RectificationType.NORMAL_RECTIFIER);

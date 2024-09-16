@@ -62,6 +62,7 @@ import com.esferalia.aon.occam.api.model.commission.OfferDetailCommission;
 import com.esferalia.aon.occam.api.model.commission.OfferDetailCommissionStatus;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceDetail;
+import com.esferalia.aon.occam.api.model.finance.InvoiceMin;
 import com.esferalia.aon.occam.api.model.fiscal.IrpfData;
 import com.esferalia.aon.occam.api.model.management.OfferDetail;
 import com.esferalia.aon.occam.api.model.management.Purchase;
@@ -767,7 +768,7 @@ public class FillerDAO {
 				.setProject(r.getValue(INVOICE.PROJECT))
 				.setRectificationType(AonEnumUtils.enumValue(RectificationType.class,r.getValue(INVOICE.RECTIFICATION_TYPE)))	
 				.setRectificationInvoice(
-					Optional.ofNullable( r.getValue(INVOICE.RECTIFICATION_INVOICE) ).map( rid -> new Invoice().setId(rid)).orElse(null)
+					Optional.ofNullable( r.getValue(INVOICE.RECTIFICATION_INVOICE) ).map( rid -> new InvoiceMin().setId(rid)).orElse(null)
 				)	
 				.setTransaction(AonEnumUtils.enumValue(InvoiceTransactionType.class,r.getValue(INVOICE.TRANSACTION)))
 				.setRecorded(r.getValue(INVOICE.STATUS) == 1 )	

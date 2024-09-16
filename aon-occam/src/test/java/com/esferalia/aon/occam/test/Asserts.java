@@ -43,6 +43,7 @@ import com.esferalia.aon.occam.api.model.finance.InvoiceBreakdown;
 import com.esferalia.aon.occam.api.model.finance.InvoiceDetail;
 import com.esferalia.aon.occam.api.model.finance.InvoiceFiscal;
 import com.esferalia.aon.occam.api.model.finance.InvoiceInfo;
+import com.esferalia.aon.occam.api.model.finance.InvoiceMin;
 import com.esferalia.aon.occam.api.model.finance.InvoiceSeries;
 import com.esferalia.aon.occam.api.model.finance.InvoiceTax;
 import com.esferalia.aon.occam.api.model.finance.PayMethod;
@@ -665,6 +666,31 @@ public class Asserts {
 		assertEquals(expected.iseInvoice(),actual.iseInvoice(),"eInvoice");
 	}
 	
+	public static void assertEqualsInvoiceMin(InvoiceMin expected, InvoiceMin actual) {
+		assertEqualsNulls( "Invoice", expected, actual);
+		assertEquals(expected.getId(), actual.getId(),"Id");
+		assertEquals(expected.getDomain(), actual.getDomain(),"Domain");
+		assertEquals(expected.getActivity(), actual.getActivity(),"Activity");
+		assertEquals(expected.getActivityEpigraph(), actual.getActivityEpigraph(),"ActivityEpigraph");
+		assertEquals(expected.getActivityName(), actual.getActivityName(),"ActivityName");
+		assertEquals(expected.getType(), actual.getType(),"Type");
+		assertEquals(expected.getSeries(), actual.getSeries(),"Series");
+		assertEquals(expected.getNumber(), actual.getNumber(),"Number");
+		assertEquals(expected.getReferenceCode(), actual.getReferenceCode(),"ReferenceCode");
+		assertEquals(expected.getIssueDate(), actual.getIssueDate(),"IssueDate");
+		assertEquals(expected.getTaxDate(), actual.getTaxDate(),"TaxDate");
+		assertEquals(expected.getTransaction(), actual.getTransaction(),"Transaction");
+		assertEquals(expected.getRegistry(), actual.getRegistry(),"Registry");
+		assertEquals(expected.getRegistryDocument(), actual.getRegistryDocument(),"RegistryDocument");
+		assertEquals(expected.getRegistryDocumentType(), actual.getRegistryDocumentType(),"RegistryDocumentType");
+		assertEquals(expected.getRegistryDocumentCountry(), actual.getRegistryDocumentCountry(),"RegistryDocumentCountry");
+		assertEquals(expected.getRegistryName(), actual.getRegistryName(),"RegistryName");
+		assertEquals(expected.getSecurityLevel(), actual.getSecurityLevel(),"SecurityLevel");
+		assertEquals(expected.getScope(), actual.getScope());
+		assertEquals(expected.isRecorded(), actual.isRecorded(),"Recorded");
+		assertEquals(expected.getTotal(), actual.getTotal(), DELTA,"Total");
+	}
+
 	public static void assertEqualsInvoice(Invoice expected, Invoice actual) {
 		assertEqualsNulls( "Invoice", expected, actual);
 		assertEquals(expected.getId(), actual.getId(),"Id");
@@ -855,7 +881,7 @@ public class Asserts {
 			assertEquals(expected.getTaxDate(), actual.getTaxDate(),"TaxDate");
 			assertEquals(expected.getRectificationType(), actual.getRectificationType(),"RectificationType");
 			assertEquals(expected.getSecurityLevel(), actual.getSecurityLevel(),"SecurityLevel");
-			assertEqualsFullInvoice(expected.getRectificationInvoice().orElse(null), actual.getRectificationInvoice().orElse(null));
+			assertEqualsInvoiceMin(expected.getRectificationInvoice().orElse(null), actual.getRectificationInvoice().orElse(null));
 			assertEquals(expected.getRegistryAddress(), actual.getRegistryAddress(),"RegistryAddress");
 			assertEqualsRegistryAddress (expected.getAddress(), actual.getAddress());
 			assertEquals(expected.getRegistry(), actual.getRegistry(),"Registry");

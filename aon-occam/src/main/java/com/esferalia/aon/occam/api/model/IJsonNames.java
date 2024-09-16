@@ -482,6 +482,7 @@ public final class IJsonNames {
 	public static final String RAWDOC = "rawdoc";
 	public static final String RDOCUMENT = "rdocument";
 	public static final String RECEIVER = "receiver";
+	public static final String RECORDED = "recorded";
 	public static final String RECORD_DATA = "recordData";
 	public static final String RECORD_DATE = "recordDate";
 	public static final String RECTIFICATION = "rectification";
