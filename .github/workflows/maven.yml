@@ -86,7 +86,7 @@ jobs:
         sed -e '$ ! s/$/,/g' | tr -d '\n')
         echo "PROJECTS=${PROJECTS}" >> $GITHUB_ENV
     - name: Build with Maven
-      run: mvn -B -pl ${PROJECTS:=.} -amd -Dgwt.working=true -DskipApiTests clean install
+      run: mvn -B -pl ${PR0JECTS:=.} -amd -Dgwt.working=true -DskipApiTests clean install
     
     # - name: Build the Docker images
     #  run: |
