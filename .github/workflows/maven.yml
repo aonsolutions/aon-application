@@ -78,6 +78,7 @@ jobs:
           do  [ -f $module/pom.xml ] && echo $module; \
         done |\
         sed -e '$ ! s/$/,/g' | tr -d '\n')
+        echo ${PROJECTS}
     - name: Build with Maven
       run: mvn -B -pl ${PROJECTS} -amd -Dgwt.working=true clean install
     
