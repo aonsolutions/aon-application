@@ -101,6 +101,8 @@ public class ContractServlet extends AonApiHttpServlet {
 					json.put(IJsonNames.ID, e.getId());
 					json.put(IJsonNames.CODE, e.getCcc());
 					json.put(IJsonNames.DESCRIPTION, CCCType.values()[e.getType()]);
+					json.put(IJsonNames.ACTIVITY, AON.getEnterpriseActivity(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), e.getEnterpriseActivity()).getDescription());
+					json.put("geozone", e.getGeozoneDescription());
 					array.put(json);
 				});
 		return array;
