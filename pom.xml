@@ -217,12 +217,13 @@
 		-->
     <module>aon-aws</module>
     <module>aon.accounting.report</module>
-    <!-- TRASPASO DSI NOMINAS -->
+    <!-- TRASPASO DSI NOMINAS 
     <module>paradoxdriver</module>
     <module>aon-dsi-nominas</module>
+    -->
     <!-- TESTS  
-		<module>aon-hibernate-test</module>
-		-->
+	<module>aon-hibernate-test</module>
+	-->
   </modules>
   <scm>
     <connection>scm:git:https://github.com/aonsolutions/aon-application.git</connection>
