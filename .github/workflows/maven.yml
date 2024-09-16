@@ -1,10 +1,3 @@
-# This workflow will build a Java project with Maven, and cache/restore any dependencies to improve the workflow execution time
-# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-java-with-maven
-
-# This workflow uses actions that are not certified by GitHub.
-# They are provided by a third-party and are governed by
-# separate terms of service, privacy policy, and support
-# documentation.
 
 name: Java CI with Maven
 
@@ -12,7 +5,8 @@ on:
   # push:
   #   branches: [ "master" ]
   pull_request:
-    # By default, a workflow only runs when a pull_request event's activity type is opened, synchronize, or reopened. types: [opened, synchronize, repoened]
+    # By default, a workflow only runs when a pull_request event's activity type
+    # is opened, synchronize, or reopened. types: [opened, synchronize, reopened]
     branches: [ "master" ]
   workflow_dispatch:
 
@@ -35,12 +29,8 @@ jobs:
         java-version: '21'
         distribution: 'temurin'
         cache: maven
-    - name: Set up Node 20
-      uses: actions/setup-node@v4
-      with:
-        node-version: 20.7.0
-        cache: 'npm'
-        cache-dependency-path: '**/package-lock.json'
+        server-id: github
+        
     - name: Set up MySQL
       run: |
         sudo systemctl start mysql.service
@@ -56,12 +46,14 @@ jobs:
         CREATE USER 'dbuser'@'localhost' IDENTIFIED WITH mysql_native_password BY 'serubd2000' ;
         GRANT ALL ON *.* TO 'dbuser'@'localhost';
         EOSQL
+
     - name: Configure AWS credentials
       uses: aws-actions/configure-aws-credentials@v1
       with:
         aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         aws-region: ${{ env.AWS_REGION }}
+
     - name: Create connection file
       run: |
         sudo mkdir /etc/aon-aio
@@ -73,8 +65,9 @@ jobs:
         useSSL=false
         sessionVariables=SQL_SAFE_UPDATES=1
         EOF
-    - name: Set Timezone ${{env.TZ}}
-      run: export TZ=${{env.TZ}}
+    # - name: Set Timezone ${{env.TZ}}
+    #  run: export TZ=${{env.TZ}}
+
     - name: Get changed projects
       run: |
         export PROJECTS=$(\
@@ -85,14 +78,12 @@ jobs:
         done |\
         sed -e '$ ! s/$/,/g' | tr -d '\n')
         echo "PROJECTS=${PROJECTS}" >> $GITHUB_ENV
-    - name: Build with Maven
-      run: mvn -B -pl ${PR0JECTS:=.} -amd -Dgwt.working=true -DskipApiTests clean install
-    
-    # - name: Build the Docker images
-    #  run: |
-    #    docker build --no-cache -t aonsolutions/aon-application:test .
-    #    docker build --no-cache -t aonsolutions/aon-db-up2date:test ./aon-db-up2date
 
-    # Optional: Uploads the full dependency graph to GitHub to improve the quality of Dependabot alerts this repository can receive
-    # - name: Update dependency graph
-    #   uses: advanced-security/maven-dependency-submission-action@571e99aab1055c2e71a1e2309b9691de18d6b7d6
+    - name: Build with Maven
+      run: mvn -B -pl ${PROJECTS:=.} -amd -Dgwt.working=true -DskipTests=true clean install
+
+    - name: Publish to GitHub Packages Apache Maven
+      if: github.ref == 'refs/heads/master'
+      run: mvn -B -DskipTests=true -Dmaven.install.skip=true deploy
+      env:
+        GITHUB_TOKEN: ${{ github.token }}
