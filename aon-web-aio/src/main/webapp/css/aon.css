@@ -2141,6 +2141,8 @@ label.rating:hover {
   background-position: center;
   background-repeat: no-repeat;
   background-image: url("../assets/aon-white-logo.svg");
+  left: 60px;
+  position: relative;
 }
 
 

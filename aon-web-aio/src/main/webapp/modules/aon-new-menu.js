@@ -293,6 +293,7 @@ export class AonNewMenu extends AonElement {
 		let aonMenuSidenav = this.createElement(TAG.DIV);
 		aonMenuSidenav.id = this.AON_MENU_SIDENAV;
 		aonMenuSidenav.className = CSS.AON_MENU_SIDENAV;
+		aonMenuSidenav.classList.add("hiddenMenuLeft");
 		this.appendChild(aonMenuSidenav);
 		aonMenuSidenav.classList.add("aonNewMenuSideNav");
 		this.getRootPanel().style.marginLeft = '0px';
@@ -377,6 +378,7 @@ export class AonNewMenu extends AonElement {
 	
 		if (!LS.isLeftMenu()) {
 			div.appendChild(this.buildTopApp(HOME));
+			div.appendChild(this.buildTopApp(NEW));
 		}
 	
 		const excludedApps = ['commerce', 'garage', 'academy', 'office'];
@@ -405,14 +407,16 @@ export class AonNewMenu extends AonElement {
 			div.appendChild(appElement);
 		}
 		
-		if(!LS.isLeftMenu()){
-			// for (let item in MENU_APPS) {
-			// 	if (this.isApp(MENU_APPS[item])){
-			// 		div.appendChild(this.buildTopApp(MENU_APPS[item]));
-			// 	}
-					
-					
-			// }
+		if(!LS.isLeftMenu() && this.isCSSLoaded("beta.css")){
+			for (let item in MENU_APPS) {
+				let app = MENU_APPS[item];
+				if(app.app!= "home" && app.app!= "new"){
+					if (this.isApp(MENU_APPS[item])){
+						div.appendChild(this.buildTopApp(MENU_APPS[item]));
+					}
+				}
+						
+			}
 			
 		}
 
@@ -472,46 +476,62 @@ export class AonNewMenu extends AonElement {
 	}
 
 	showSideNav() {
-		if(LS.isTopMenu())
+		if (LS.isTopMenu())
 			this.reloadTopNav();
-
+	
 		let sidenav = this.getElement(this.AON_MENU_SIDENAV);
 		let menulist = this.getElement("aonMenuList");
 		let rootPanel = this.getElement("rootPanel");
-		let aonlogo = this.getElement("aonLogo");		
-		// let icon = this.getElement("aonMenuLeftop");
-
+		let aonlogo = this.getElement("aonLogo");
+	
+		// Añadir transición de forma directa en JavaScript
+		sidenav.style.transition = 'width 0.3s ease';
+		rootPanel.style.transition = 'margin-left 0.3s ease';
+		// aonlogo.style.transition = 'left 0.3s ease';
+	
+		// Mostrar el sidenav de forma suave
 		sidenav.style.width = '68px';
-		sidenav.style.display = "";
-		
+		sidenav.style.display = "";  // Asegurarse de que esté visible
+	
 		menulist.style.visibility = "visible";
-		
+	
+		// Mover suavemente el logo
 		aonlogo.style.left = '60px';
 		aonlogo.style.position = 'relative';
-
-		// icon.style.visibility = "visible";
-
+	
 		rootPanel.style.marginLeft = '68px';
 	}
+	
 
-	hideSideNav(){
-		if(LS.isTopMenu())
+	hideSideNav() {
+		if (LS.isTopMenu())
 			this.reloadTopNav();
-
+	
 		let sidenav = this.getElement(this.AON_MENU_SIDENAV);
 		let rootPanel = this.getElement("rootPanel");
 		let menulist = this.getElement("aonMenuList");
 		let aonlogo = this.getElement("aonLogo");
-		let icon = this.getElement("aonMenuLeftop");
+	
+		// Añadir transición de forma directa en JavaScript
+		sidenav.style.transition = 'width 0.3s ease';
+		rootPanel.style.transition = 'margin-left 0.3s ease';
+		// aonlogo.style.transition = 'left 0.3s ease';
+	
+		// Ocultar el sidenav de forma suave
 		sidenav.style.width = '0px';
-		sidenav.style.display = "none";
-		aonlogo.style.position = "relative";
-		// icon.style.visibility = "hidden";
-		aonlogo.style.left = '60px';
+	
+		// Retrasar el cambio de display a none hasta que la animación termine
+		setTimeout(() => {
+			sidenav.style.display = "none";
+		}, 300);  // La duración de la animación en milisegundos
+	
+		// // Resetear la posición del logo
+		// aonlogo.style.left = '0px';
+		// aonlogo.style.position = 'relative';
 	
 		rootPanel.style.marginLeft = '0px';
-		//menulist.style.visibility = "hidden";
 	}
+	
 
 	showMenuButton() {
 		let aonMenuSidenav = this.getElement(this.AON_MENU_SIDENAV);
@@ -633,7 +653,58 @@ export class AonNewMenu extends AonElement {
 		// }
 		
 		a.appendChild(div);
+		if (app.app == "applications" && this.isCSSLoaded("beta.css")) {
+			if (!LS.isLeftMenu()) {
+				// Mostrar el menú cuando el ratón entra en el div
+				div.addEventListener("mouseenter", () => {
+					LS.setLeftMenu(true);
+					this.showSideNav();
+		
+					// Obtener el sidenav cuando el menú está visible
+					let side = this.getElement(this.AON_MENU_SIDENAV);
+		
+					// Asegurarse de que el side existe antes de añadir eventos
+					if (side) {
+						// Mantener el menú abierto mientras el ratón está en el sidenav
+						side.addEventListener("mouseenter", () => {
+							LS.setLeftMenu(true);
+							this.showSideNav();
+						});
+		
+						// Cerrar el menú si el ratón sale completamente del sidenav
+						side.addEventListener("mouseleave", (event) => {
+							// Verificar si el ratón no va al div (solo cerrar si se sale de ambos)
+							if (!div.contains(event.relatedTarget)) {
+								LS.setLeftMenu(false);
+								this.hideSideNav();
+							}
+						});
+					}
+				});
+		
+				// Cerrar el menú si el ratón sale completamente del div
+				div.addEventListener("mouseleave", (event) => {
+					let side = this.getElement(this.AON_MENU_SIDENAV);
+		
+					// Verificar si el ratón no va al sidenav (solo cerrar si se sale de ambos)
+					if (side && !side.contains(event.relatedTarget)) {
+						LS.setLeftMenu(false);
+						this.hideSideNav();
+					}
+				});
+			}
+		}
+	
 		return a;
+	}
+
+	isCSSLoaded(cssFileName) {
+		for (let sheet of document.styleSheets) {
+			if (sheet.href && sheet.href.includes(cssFileName)) {
+				return true;
+			}
+		}
+		return false;
 	}
 	
 	getCssVariable( variable ){
