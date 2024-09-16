@@ -255,9 +255,25 @@ public class RegistryServlet extends AonApiHttpServlet {
 		if(json.opt(RegistryAdditionalInfo.BANKS.name().toLowerCase()) != null) {
 			JSONArray arr = json.optJSONArray(RegistryAdditionalInfo.BANKS.name().toLowerCase());
 			RegistryBankJSON.fromJSON(arr).stream().forEach( bank -> {
-				bank.setDomain(registryDomain);
-				if(bank.getRegistry() == null) bank.setRegistry(registryId);
-				AON.saveRegistryBank(api.getDomain(), api.getUser().getLogin(), bank);
+				if(bank.getId() != null) {
+					RegistryBank auxBank = AON.getRegistryBank(api.getDomain(), api.getUser().getLogin(), f -> f.getIdProperty().eq(bank.getId()));
+					if(auxBank.getBalanceDate() == null) {
+						bank.setDomain(registryDomain);
+						if(bank.getRegistry() == null) bank.setRegistry(registryId);
+						AON.saveRegistryBank(api.getDomain(), api.getUser().getLogin(), bank);
+					} else {
+						if (bank.getAlias() != null && !bank.getAlias().isEmpty() && !bank.getAlias().isBlank()) {
+							auxBank.setAlias(bank.getAlias());
+							auxBank.setDomain(registryDomain);
+							if(auxBank.getRegistry() == null) auxBank.setRegistry(registryId);
+							AON.saveRegistryBank(api.getDomain(), api.getUser().getLogin(), auxBank);
+						}
+					}
+				} else {					
+					bank.setDomain(registryDomain);
+					if(bank.getRegistry() == null) bank.setRegistry(registryId);
+					AON.saveRegistryBank(api.getDomain(), api.getUser().getLogin(), bank);
+				}
 			});
 		}
 		
