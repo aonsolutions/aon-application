@@ -740,6 +740,11 @@ public interface Filter extends Serializable{
 	public interface InvoiceInfoFilter{
 		Filter filter(InvoiceInfoProperties properties);
 	}
+	
+	@FunctionalInterface
+	public interface InvoiceDataFilter{
+		Filter filter(InvoiceDataProperties properties);
+	}
 
 	@FunctionalInterface
 	public interface InvoiceCommunicationTrackingFilter{

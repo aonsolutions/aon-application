@@ -19,23 +19,8 @@ import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
-import net.aonsolutions.db.up2date.config.InsertIAE864;
-import net.aonsolutions.db.up2date.accounting.RawdocAddColumS3Key;
-import net.aonsolutions.db.up2date.finance.AnnuledInvoiceCreation;
-import net.aonsolutions.db.up2date.fiscal.AlterFsMod2002023;
-import net.aonsolutions.db.up2date.fiscal.AlterFsMod200Registry2023;
-import net.aonsolutions.db.up2date.payroll.AgreementUpdateHideMessage;
-import net.aonsolutions.db.up2date.payroll.AgreementUpdateHideToDisable;
-import net.aonsolutions.db.up2date.payroll.CleanDuplicatesPayrollWorkplace;
+import net.aonsolutions.db.up2date.finance.InvoiceDataCreation;
 import net.aonsolutions.db.up2date.payroll.InKindDeductionUpdate;
-import net.aonsolutions.db.up2date.task.AddColumnTaskHolderWorkgroupDatesType;
-import net.aonsolutions.db.up2date.payroll.NoteInsert;
-import net.aonsolutions.db.up2date.finance.InvoiceInfoAddAudit;
-import net.aonsolutions.db.up2date.marketing.AddColumnMarketingActionTargetAudit;
-import net.aonsolutions.db.up2date.marketing.AddColumnMarketingActionTargetProject;
-import net.aonsolutions.db.up2date.registry.AddColumnSellerTaskHolder;
-import net.aonsolutions.db.up2date.tgss.MEIFellows2024Remove;
-import net.aonsolutions.db.up2date.warehouse.ElaborationSerialNumberUpdate;
 
 public class Up2Date {
 
@@ -483,7 +468,8 @@ public class Up2Date {
         //AgreementUpdateHideMessage.AGREEMENTUPDATEHIDEMESSAGE,
         //AgreementUpdateHideToDisable.AGREEMENTUPDATEHIDETODISABLE,
         
-//        InKindDeductionUpdate.INKIND_DEDUCTION_UPDATE
+        InKindDeductionUpdate.INKIND_DEDUCTION_UPDATE,
+        InvoiceDataCreation.INVOICE_DATA_CREATION
 	};
 
     // ------------------------------------------------------------------------

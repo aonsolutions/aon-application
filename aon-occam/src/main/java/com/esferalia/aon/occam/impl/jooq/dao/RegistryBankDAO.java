@@ -227,17 +227,6 @@ public class RegistryBankDAO {
 	
 	
 	public static RegistryBank save(AONContext ctx, RegistryBank rbank) {
-//		if (rbank.getBankAccount().toString().equals("GL82.6240.0000.0624.09") 
-//				|| rbank.getBankAccount().toString().equals("GL40.7601.0000.0760.16")) {
-//			if(rbank.getId() != null && rbank.isRemoved()) { 
-//				delete(ctx, rbank.getId());
-//				return rbank;
-//			}
-//			if(!rbank.isDirty()) return rbank;
-//			return (rbank.getId() == null)
-//					? insert(ctx, rbank)
-//					: update(ctx, rbank);
-//		}else {
 			RegistryBankAutoComplete.autoComplete(ctx, rbank);
 			RegistryBankValidation.validate(ctx, rbank);
 			ctx.checkWrite();
@@ -250,7 +239,6 @@ public class RegistryBankDAO {
 					? insert(ctx, rbank)
 					: update(ctx, rbank);
 		}
-//	}
 	
 	private static RegistryBank insert(AONContext ctx, RegistryBank rbank){
 		Integer id = ctx.getDslContext().insertInto(RBANK)

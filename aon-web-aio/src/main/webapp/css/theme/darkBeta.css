@@ -1,0 +1,778 @@
+:root {
+	--favicon: ../faviconColors.png;
+	
+	--aonPrimary: #222831;
+	
+	--aonSecondary: #31363F;
+	
+	--aonNewWhite: #EEEEEE;
+	
+	--aonBlue: #76ABAE;
+
+  	--aonHeaderButtonColor: var(--aonNewWhite);
+	
+	--aonHeaderBackgroundColor: var(--aonPrimary);
+
+	--aonHeaderBackgroundAvailable: var(--aonPrimary);
+
+  	--aonRightPanelColor: var(--aonPrimary);
+
+	--aonGrayHeaderButtonsColor:var(--aonNewWhite);
+
+	--aonHeaderButtonsColor: var(--aonNewWhite);
+  
+	--aonCardColor: var(--aonSecondary);
+
+	--aonCardTitle: var(--aonNewWhite);
+
+	--aonCardText: var(--aonNewWhite);
+
+	--aonNewUploadLabel: var(--aonNewWhite);
+
+	--aonContentBeta:  var(--aonPrimary);
+
+	--aonDashboardButtonText: var(--aonNewWhite);
+
+	--aonDashboardButton: var(--aonSecondary);
+
+	--aonSuiteMenuSideMenu: var(--aonSecondary);
+
+	--aonSuiteMenuSideMenuBorder:rgba(255,255,255,0.1);
+
+	--aonSuiteMenuNewButtonBorder: var(--aonNewWhite);
+
+	--aonSuiteMenuNewButtonText: var(--aonNewWhite);
+
+	--aonSuiteMenuNewButtonIcon: var(--aonSuiteMenuNewButtonText);
+
+	--aonSuiteMenuUploadButtonBorder: rgba(255,255,255,0.1);
+
+	--aonSuiteMenuTitle: var(--aonNewWhite);
+
+	--aonSuiteMenuCardText: var(--aonNewWhite);
+
+	--aonSuiteMenuCardText2: var(--aonCardText);
+
+	--aonSideNavRowHoverColor: var(--aonSecondary);
+
+	--aonTopAppTextColor: var(--aonNewWhite);
+
+  	--aonTopMenuAvailableMouseOverImg : var(--aonPrimary);
+
+	--aonTopMenuAvilableMouseOutText: var(--aonNewWhite);
+
+	--aonTopMenuAvailable: var(--aonNewWhite);
+
+	--aonTopMenuSpecial: var(--aonNewWhite);
+
+	--aonAccountingMouseOver: var(--aonBlue);
+
+	--aonAccountingMouseOut: var(--aonNewWhite);
+
+	--aonSwitchButtonBarOn: var(--aonBlue);
+
+	--aonSwitchButtonBarOff: var(--aonBlue);
+
+	--aonSwitchButtonCircleOff: var(--aonSecondary);
+  
+	--aonSwitchButtonCircleOn: var(--aonNewWhite);
+
+	--aonHomeMouseOverImg: var(--aonPrimary); 
+
+	--aonHomeImg: var(--aonNewWhite);
+  
+ 	--aonSearchBar: var(--aonSecondary);
+  
+ 	--aonSearchButton: var(--aonNewWhite);
+
+	--aonTaxBuildPrintRes: var(--aonNewWhite);
+	
+	--aonError : #A04747;
+
+}
+
+body{
+	background: var(--aonPrimary);
+}
+
+input:-webkit-autofill,
+input:-webkit-autofill:hover, 
+input:-webkit-autofill:focus, 
+input:-webkit-autofill:active  {
+  -webkit-box-shadow: 0 0 0px 1000px var(--aonPrimary) inset !important;
+  box-shadow: 0 0 0px 1000px var(--aonPrimary) inset !important;
+  background-color: transparent !important;
+  color: var(--aonNewWhite);
+  -webkit-text-fill-color: var(--aonNewWhite);
+}
+
+aon-icon-button button{
+	color: var(--aonNewWhite);
+}
+
+.aonBody{
+	background-color: var(--aonContentBeta) !important;
+	color: var(--aonNewWhite);
+}
+
+.aonToolbar2{
+	border-bottom: .05rem solid var(--aonSecondary);
+}
+
+.aonLoginFormConten{
+	border: .05rem solid var(--aonSecondary);
+}
+
+.aonDashboardButton i {
+	background-color: transparent;
+}
+
+.aonDashboardButton:hover{
+	background-color: var(--aonPrimary);
+}
+  
+.aonDashboardButton:hover i{
+	background-color: var(--aonPrimary);
+}
+
+.rootPanel {
+	background-color: var(--aonContentBeta); 
+}
+
+h1 {
+	color: var(--aonNewWhite);
+}
+
+.aonLogo {
+	background-image: url("../../assets/aon-white-logo.svg");  
+}
+
+.sidenavHover:hover{
+	background-color: var(--aonPrimary);
+}
+
+.aonHeader {
+	color: var(--aonHeaderButtonsColor);
+	
+}
+
+.aonAvatar {
+	color: var(--aonNewWhite);
+}
+
+.aonLiBeta:hover {
+   	background-color: var(--aonSecondary);
+}
+
+.aonLiSpan {
+	color: var(--aonNewWhite);
+}
+
+.aonLiSpanSubtitle {
+	color: var(--aonNewWhite);
+}
+
+.aonToolbar {
+	background-color: var(--aonContentBeta);
+}
+
+.aonToolbarTitle {
+	color: var(--aonNewWhite);
+}
+
+.aonToolbarSection {
+	background-color: var(--aonContentBeta);
+}
+  
+.aonToolbarSectionEnd {
+	color: var(--aonNewWhite);
+}
+
+.aonSecondaryToolbarTitle {
+	color: var(--aonNewWhite);
+}
+
+.aonTable th {
+	color: var(--aonNewWhite);
+}
+
+.aonTable tbody tr {
+	color: var(--aonNewWhite);
+	background-color: var(--aonContentBeta);
+}
+
+.aonTableTrChecked {
+	background-color: var(--aonPrimary);
+}
+  
+.aonTable tbody tr:hover {
+	background-color: var(--aonPrimary);
+}
+  
+.aonTable tbody tr:active {
+	background-color: var(--aonPrimary);
+}
+
+.aonMenuSidenav {
+	color: #FFF;
+	background-color: var(--aonHeaderBackgroundColor);
+}
+
+.aonSidenavTitle {
+	color: var(--aonNewWhite);
+}
+
+.aonSidenav {
+	background-color: var(--aonContentBeta);
+}
+
+ #aonAccountingSidenavPyG {
+	background-color: var(--aonPrimary);
+}
+
+.aonSearchBoxBeta {
+	color: var(--aonSearchButton);
+}
+
+.aonDashboardCard{
+	color: var(--aonNewWhite);
+}
+
+/* Checked, Indeterminate */
+.aonCheckbox > input:checked,
+.aonCheckbox > input:indeterminate {
+	border-color: var(--aonNewWhite);
+	background-color: var(--aonNewWhite);
+}
+
+.aonCheckbox > input:checked + span::before,
+.aonCheckbox > input:indeterminate + span::before {
+	border-color: var(--aonNewWhite);
+	background-color: var(--aonNewWhite);
+}
+  
+.aonCheckbox > input:checked + span::after,
+.aonCheckbox > input:indeterminate + span::after {
+	border-color: var(--aonPrimary);
+}
+
+.aonCheckbox > input:active + span::before {
+	border-color: var(--aonNewWhite);
+}
+  
+.aonCheckbox > input:checked:active + span::before {
+	border-color: var(--aonNewWhite);
+}
+
+.aonCheckbox > span::before {
+    	border-color: var(--aonNewWhite);
+}
+
+.aonTableTr.aonTableTrChecked {
+  	background-color: var(--aonPrimary);
+}
+
+.aonNewLogo{
+ 	background-image: url("../../assets/aon-white-logo.svg");  
+}
+
+.aonRootGradiantHeader {
+ 	background-color: var(--aonContentBeta);
+}
+
+.aonParentDiv  {
+	background-color: var(--aonContentBeta);
+}
+
+.aonWelcomeDiv  {
+	color: var(--aonNewWhite);
+}
+
+.aonTabItemText {
+	color: var(--aonNewWhite);
+}
+
+.aonTabItemText:hover{
+	background-color: rgba(0, 0, 0, 0.2);
+	border-radius: 5px;
+}
+
+.aonTabItemTextSelected {
+	color: var(--aonNewWhite);
+}
+
+.aonUserConfigLink{
+	color: var(--aonBlue);
+}
+
+.aonLoginLogo{
+ 	background-image:  url("../../assets/aon-white-logo.svg");  
+}
+
+.divLogout{
+	border-top: 1px solid var(--aonSecondary);
+  	background-color: var(--aonPrimary);
+}
+
+.divLogout:hover{
+  background-color: var(--aonSecondary);
+}
+
+.aonUpload{
+	border: 2px dashed var(--aonSecondary);
+}
+
+.aonUpload:hover{
+	border: 2px dashed var(--aonBlue);
+}
+
+.aonHeaderStart, .aonMenuLeftopStart,
+.aonHeaderHome, .aonMenuLeftopHome,
+.aonHeaderApplications, .aonMenuLeftopApplications,
+.aonHeaderNote, .aonMenuLeftopNote,
+.aonHeaderFiscal, .aonMenuLeftopFiscal,
+.aonHeaderPayroll, .aonMenuLeftopPayroll,
+.aonHeaderInvoice, .aonMenuLeftopInvoice,
+.aonHeaderDocumental, .aonMenuLeftopDocumental,
+.aonHeaderAccounting, .aonMenuLeftopAccounting,
+.aonHeaderTimecontrol, .aonMenuLeftopTimecontrol,
+.aonHeaderMessenger, .aonMenuLeftopMessenger,
+.aonHeaderOffice, .aonMenuLeftopOffice,
+.aonHeaderGarage, .aonMenuLeftopGarage,
+.aonHeaderAcademy, .aonMenuLeftopAcademy,
+.aonHeaderComerce, .aonMenuLeftopComerce,
+.aonHeaderComercialMenu, .aonMenuLeftopComercialMenu,
+.aonHeaderManagementMenu, .aonMenuLeftopManagementMenu,
+.aonHeaderTreasuryMenu, .aonMenuLeftopTreasuryMenu,
+.aonHeaderWarehouseMenu, .aonMenuLeftopWarehouseMenu,
+.aonHeaderGroupwareMenu, .aonMenuLeftopGroupwareMenu ,
+.aonHeaderAccountingMenu, .aonMenuLeftopAccountingMenu,
+.aonHeaderFiscalMenu, .aonMenuLeftopFiscalMenu,
+.aonHeaderPayrollMenu, .aonMenuLeftopPayrollMenu,
+.aonHeaderMarketingMenu, .aonMenuLeftopMarketingMenu {
+	background-color: var(--aonHeaderBackgroundColor);
+}
+
+.aonHeader #aonHeaderCompanyName,
+.aonHeader .material-icons {
+	color: var(--aonNewWhite);
+}
+
+#aonHeaderCompanyList:hover,
+#aonHeaderHelp:hover, 
+#aonHeaderConfig:hover, 
+#aonHeaderNotification:hover, 
+#aonHeaderUser:hover{
+	background-color: rgba(255,255,255,0.3);
+  	border-radius: 100px;
+}
+
+.aonMenuLeftopHome .material-symbols-outlined, 
+.aonMenuLeftopStart .material-symbols-outlined, 
+.aonMenuLeftopApplications .material-symbols-outlined{
+	color: var(--aonNewWhite);
+}
+
+.aonHeaderHome  #aonHeaderCompanyName,
+.aonHeaderApplications  #aonHeaderCompanyName,
+.aonHeaderStart #aonHeaderCompanyName {
+	color: var(--aonNewWhite);
+}
+
+#new:hover,
+#home:hover,
+#invoice:hover,
+#documental:hover,
+#accounting:hover,
+#fiscal:hover,
+#payroll:hover,
+#timecontrol:hover,
+#note:hover,
+#messenger:hover,
+#office:hover,
+#garage:hover,
+#academy:hover,
+#comerce:hover,
+#comercialMenu:hover,
+#managementMenu:hover,
+#treasuryMenu:hover,
+#warehouseMenu:hover,
+#groupwareMenu:hover,
+#accountingMenu:hover,
+#fiscalMenu:hover,
+#payrollMenu:hover,
+#marketingMenu:hover,
+#applications:hover,
+#aonApplication:hover {
+  	background-color: rgba(255,255,255,0.1);
+}
+
+#aonHeaderCompanyList:hover,
+#aonHeaderHelp:hover,
+#aonHeaderConfig:hover,
+#aonHeaderNotification:hover,
+#aonHeaderUser:hover{
+  	background-color: rgba(255,255,255,0.1);
+  	border-radius: 100px;
+}
+
+.graphicsDashBoardSummary{
+  	color: var(--aonNewWhite);
+}
+
+.aonHelpSpan{
+  	color: var(--aonNewWhite);
+}
+
+/* .notificationPanelAllDiv{
+  	color: var(--aonNewWhite);
+} */
+
+.notificationPanelRowPrincipalDiv,
+.notificationPanelRowPrincipalDiv .material-icons {
+	color: var(--aonNewWhite);
+}
+
+.notificationPanelRowPrincipalDiv:hover{
+  	background-color: var(--aonSecondary);
+  	color: var(--aonNewWhite);
+  	.material-icons { 
+  		color: var(--aonNewWhite);
+  	}
+}
+
+.aonNewDesktopAppDiv{
+	color: var(--aonNewWhite);
+}
+
+.aonNewMenuAppIcon{
+  	color: var(--aonNewWhite);
+}
+
+.aonConfigAppsTitle,
+.aonConfigDarkTitle,
+.aonConfigBrandTitle,
+.aonConfigTopNavTitle,
+.aonConfigSideNavTitle {
+  	color: var(--aonNewWhite);
+}
+
+#aonLoginLanguageSpanToolbar {
+  	color: var(--aonNewWhite);
+}
+
+.aonLoginTitle {
+  	color: var(--aonNewWhite);
+}
+
+.aonLink {
+  	color: var(--aonNewWhite) ! important;
+}
+
+.aonLink:hover {
+  	color: var(--aonNewWhite) ! important;
+}
+
+.aonLoginButton{
+	border: 1px solid var(--aonSecondary);
+	background-color: var(--aonPrimary);
+	color: var(--aonNewWhite);
+}
+
+.aonLoginButton:hover {
+	background-color: var(--aonBlue);
+	border: 1px solid var(--aonBlue);
+}
+
+.aonMagicButton{
+	background-color: var(--aonSecondary);
+	color: var(--aonNewWhite);
+}
+
+.aonMagicButton:hover {
+	background-color: var(--aonBlue);
+}
+
+.aonCompanyTitleSpan {
+  	color: var(--aonNewWhite);
+}
+
+.aonDialogMenuContent{
+	background-color: var(--aonPrimary);
+	border: 1px solid var(--aonSecondary);
+}
+
+/* .material-icons {
+  	color: var(--aonNewWhite); 
+} */
+
+#aonRightPanel .material-icons,
+#aonMessengerToolbar .material-icons,
+#aon-notesToolbar .material-icons,
+#aonSigninToolbar .material-icons,
+#aonLaboralToolbar .material-icons,
+#aonFiscalToolbar .material-icons,
+#aonAccountingToolbar .material-icons,
+#aonDocumentalToolbar .material-icons,
+#aonInvoiceToolbar .material-icons,
+#aonDocumentalSheetToolbar .material-icons,
+#aonInvoiceSheetToolbar .material-icons {
+	color: var(--aonNewWhite);
+}
+
+#aonNotificationPanelOpenButtonIcon:hover{
+  	background-color: rgba(225,225,227,1);
+  	color: var(--aonPrimary);
+}
+
+.aonMenuItemSpan {
+  	color: var(--aonNewWhite);
+}
+
+.aonAppMenuSidenavListSelected {
+	background-color: var(--aonPrimary);
+}
+
+#aon-notesSidenav .material-icons {
+  	--aonNote: var(--aonNewWhite);
+	color: var(--aonNewWhite);
+}
+
+#aonInvoiceSidenav .material-icons {
+  	--aonInvoice: var(--aonNewWhite);
+}
+
+#aonAccountingSidenav .material-icons {
+  	--aonAccounting: var(--aonNewWhite);
+}
+
+#aonFiscalSidenav .material-icons {
+  	--aonFiscal: var(--aonNewWhite);
+}
+
+#aonLaboralSidenav aon-icon,
+#aonLaboralSidenav .material-icons {
+  	--aonPayroll: var(--aonNewWhite);
+}
+
+#aonMessengerSidenav .material-icons {
+  	--aonMessenger: var(--aonNewWhite);
+	color: var(--aonNewWhite);
+}
+
+#aonDocumentalSidenav .material-icons {
+  	--aonDocumental: var(--aonNewWhite);
+	color: var(--aonNewWhite);
+}
+
+#aonSigninSidenav .material-icons {
+  	--aonTimecontrol: var(--aonNewWhite);
+}
+
+#aonAccountingSidenavoptionsSelect,
+#aonAccountingSidenavoptionsViewSelect,
+#aonAccountingSidenavoptionsDetailSelect,
+#aonFiscalSidenavPeriodoSelect,
+#aonFiscalSidenavEjercicioSelect {
+  	color: var(--aonNewWhite);
+}
+
+.aonInputBoxLabel > input {
+ 	background-color: var(--aonContentBeta);
+	color: var(--aonNewWhite);
+	border: 1px solid var(--aonNewWhite);
+}
+
+.aonInputBoxLabel > span{
+	background: var(--aonPrimary);
+	padding: 0 .5rem;
+}
+
+.aonDividerButtons{
+	border-bottom: 1px solid var(--aonSecondary);
+}
+
+.aonDividerSpan{
+	background: var(--aonPrimary);
+  	color: var(--aonNewWhite);
+}
+
+#divCompanyLogoForm {
+	display: none;
+}
+
+.aonSideNavFiscalCircle{
+	border: 1px solid var(--aonNewWhite);
+	color: var(--aonNewWhite);
+}
+  
+.aonAppMenuSidenavListSelected div {
+	background-color: var(--aonNewWhite);
+	border: 1px solid var(--aonNewWhite);
+	color: var(--aonContentBeta); 
+}
+
+.profile-letters {
+	border: 2px solid var(--aonNewWhite);
+	color: var(--aonNewWhite);
+}
+
+.graphicsDashBoardYear {
+	border: 1px var(--aonNewWhite) solid;
+}
+
+.rightPanelCardDiv{
+	background-color: var(--aonPrimary);
+}
+
+.aonCard{
+	background-color: var(--aonPrimary);
+	border: 1px solid var(--aonSecondary);
+}
+
+.notifcationPanelRowGeneralDiv{
+  border-bottom: 1px solid var(--aonSecondary);
+}
+
+.aonLiBeta {
+ border-bottom: 1px solid var(--aonSecondary);
+}
+
+#lastTimeUser,
+#totalHour,
+#totalHour span,
+#aon-company-costs-cardtitleDiv span {
+	color: var(--aonNewWhite) !important;
+}
+
+
+#bankCardTable span{
+	color: var(--aonNewWhite) !important;
+}
+
+#bankCardTable > div{
+	border-bottom: 1px solid var(--aonSecondary) !important;
+}
+
+#fiscalCardTable span{
+	color: var(--aonNewWhite) !important;
+}
+
+#fiscalCardTable > div{
+	border-bottom: 1px solid var(--aonSecondary) !important;
+}
+
+.aonDocumentalCardRow, .aonMessengerCardRow{
+	border-bottom: 1px solid var(--aonSecondary) !important;
+}
+
+.aonDocumentalCardRow span, .aonMessengerCardRow span{
+	color: var(--aonNewWhite) !important;
+}
+
+.aonDocumentalCardRow:hover, .aonMessengerCardRow:hover{
+	border-top : none !important;
+	border-bottom: 1px solid var(--aonBlue) !important;
+}
+
+#messengerCardMessage:hover{
+	border: 1px solid var(--aonBlue);
+}
+
+.aonBadge{
+	background-color: var(--aonBlue);
+}
+
+.aonCard:hover .aonBankCardTotal,
+.aonCard:hover .aonFiscalCardTotal{
+	color: var(--aonBlue);
+}
+
+.divInfo{
+	color: var(--aonNewWhite);
+}
+
+.divInfo a{
+	font-weight: bold;
+}
+
+.helpCardText:hover{
+	background-color: var(--aonSecondary);
+}
+
+.aonBankCardDate,
+#pyGyearelect,
+.aonCompanyCostCardDivTitle,
+.aonDocumentalCardDescribeDate,
+.aonDocumentalCardDate,
+.aonMessengerCardDate,
+.aonCardTotal{
+	color: var(--aonNewWhite);
+}
+
+.aonAppLi{
+	background-color: var(--aonCardColor);
+}
+
+.aonAppLi:hover {
+	background-color: var(--aonContentBeta);
+}
+
+.aonNewDesktopCardDiv:hover {
+	background-color: var(--aonContentBeta);
+}
+
+.aonUl,
+.accountingChatLegend,
+.aonSearchInput {
+	color: var(--aonNewWhite);
+}
+
+#nullIcon .material-icons {
+	color: rgb(95, 99, 104);
+}
+
+#iconLocationIcon {
+	color: var(--aonNewWhite);
+}
+
+#aonMessengerSidenavTASK {
+	color: var(--aonNewWhite);
+}
+
+#aonEventListTableBackIcon {
+	color: var(--aonNewWhite);
+}
+
+#aonEventDetailListTableBackIcon {
+	color: var(--aonNewWhite);
+}
+
+.aonSignDivLastTime,
+.aonCompanyCostListDivTitle,
+.aonCompanyCostListNewTitle {
+	color: var(--aonNewWhite);
+}
+
+.aonTableRowIcon2{
+	color: var(--aonNewWhite);
+}
+
+.aonInvoiceHomePendingRecordName {
+	color:  var(--aonNewWhite);  
+}
+
+.aonLiBeta {
+  border-bottom: 1px solid var(--aonSecondary);
+}
+
+.aonTabItemTextSelected{
+	border-bottom: 2px solid var(--aonBlue);
+}
+
+/**
+Important. Keep this rule at the end of file 
+**/
+.aonTheme {
+  	--aon-theme: 'DARK';
+}

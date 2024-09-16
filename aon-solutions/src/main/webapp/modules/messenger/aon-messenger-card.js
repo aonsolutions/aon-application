@@ -147,8 +147,50 @@ export class AonMessengerCard extends AonElement {
     }
   }
 
+  // getDateParseNew(date) {
+  //   return window.innerWidth < 768 ? AonDateUtils.getDayMonthOrFull(date) : AonDateUtils.setDateTpDay(date);
+  // }
+  
   getDateParseNew(date) {
-    return window.innerWidth < 768 ? AonDateUtils.getDayMonthOrFull(date) : AonDateUtils.setDateTpDay(date);
+    if(!date) {
+      return "Formating Err"
+    }
+    
+    var today = new Date();
+    today.setHours(0,0,0,0);
+    var yesterday = new Date(today);
+    yesterday.setDate(today.getDate() - 1);
+    var week = new Date(today);
+    week.setDate(today.getDate() - 7);
+    var month = new Date(today);
+    month.setDate(today.getDate() - 30);
+    var quarter = new Date(today);
+    quarter.setDate(today.getDate() - 90);
+    var halfYear = new Date(today);
+    halfYear.setDate(today.getDate() - 180);
+    var year = new Date(today);
+    year.setDate(today.getDate() - 365);
+
+    if (date >= today) {
+        return 'Hoy';
+    } else if (date >= yesterday) {
+        return 'Ayer';
+    // } else if (date >= week) {
+    //     return 'Última semana';
+    // } else if (date >= month) {
+    //     return 'Último mes';
+    // } else if (date >= quarter) {
+    //     return 'Último trimestre';
+    // } else if (date >= halfYear) {
+    //     return 'Último semestre';
+    // } else if (date >= year) {
+    //     return 'Último año';
+    // } else {
+    //     return 'Más de un año';
+    // }
+    } else {
+        return AonDateUtils.getDayMonthOrFull(date);
+    }
   }
 
   getDocuments() {
@@ -168,36 +210,41 @@ export class AonMessengerCard extends AonElement {
     let div = this.createElement(TAG.DIV);
     div.className = CSS.AON_FLEX_COLUMN;
     div.style.alignItems = "flex-start";
+    div.style.gap = ".2rem";
+
+    let sender = this.getSender(messenger, document, documentTh);
 
     let title = this.createElement(TAG.SPAN);
-    title.innerHTML = messenger.title;
-    title.title = messenger.title;
+    title.innerHTML = sender;
+    title.title = sender;
     title.className = CSS.AON_ELLIPSIS;
-    title.style.fontSize = "1.1rem";
+    title.style.fontSize = ".9rem";
     title.style.color = "var(--aonMessenger)";
-    title.style.fontWeight = "500";
+    title.style.fontWeight = "bold";
 
     div.appendChild(title);
 
     let content = this.createElement(TAG.SPAN);
     content.className = CSS.AON_ELLIPSIS;
+    content.style.fontSize = ".7rem";
+    content.style.fontWeight = "bold";
+    content.innerHTML = messenger.title;
+    content.title = messenger.title;
     div.appendChild(content);
-
-    let sender = this.getSender(messenger, document, documentTh);
 
     let description = messenger.description;
     try {
       description = JSON.parse(messenger.description).observation;
     } catch (e) {}
 
-    if (description) {
-      const dText = description.replace(/<[^>]+>|&nbsp;|\n/g, " ");
-      content.innerHTML = `<b>${sender}</b> ${dText}`;
-      content.title = dText;
-    } else {
-      content.innerHTML = `<b>${sender}</b> ${description}`;
-      content.title = description;
-    }
+    if (description) description = description.replace(/<[^>]+>|&nbsp;|\n/g, " ");
+
+    let descriptionContent = this.createElement(TAG.SPAN);
+    descriptionContent.className = CSS.AON_ELLIPSIS;
+    descriptionContent.style.fontSize = ".7rem";
+    descriptionContent.innerHTML = `(${messenger.newNumber}) ${description}`;
+    descriptionContent.title = description;
+    div.appendChild(descriptionContent);
 
     return div;
   }
@@ -234,12 +281,12 @@ export class AonMessengerCard extends AonElement {
 
       let leftContent = this.createElement(TAG.DIV);
       leftContent.className = CSS.AON_FLEX;
-      leftContent.style.gap = ".5rem";
-      leftContent.style.alignContent = "center";
+      leftContent.style.gap = ".8rem";
+      leftContent.style.alignContent = "start";
       leftContent.style.alignItems = "center";
 
       let icon = messenger.lettersHtml;
-      icon.firstElementChild.style.color = "Var(--aonMessenger)";
+      icon.firstElementChild.style.color = "var(--aonMessenger)";
       icon.firstElementChild.firstElementChild.style.fontSize = "30px";
       leftContent.appendChild(icon);
 
@@ -251,12 +298,10 @@ export class AonMessengerCard extends AonElement {
       rightContent.style.alignItems = "center";
       rightContent.style.gap = ".5rem";
 
-      let assigned = messenger.assigned;
-      rightContent.appendChild(assigned);
+      // let assigned = messenger.assigned;
+      // rightContent.appendChild(assigned);
 
       let date = this.createElement(TAG.SPAN);
-      date.style.whiteSpace = "nowrap";
-      date.style.minWidth = window.innerWidth < 768 ? "5rem" : "8rem";
       date.classList.add("aonMessengerCardDate");
       date.innerHTML = messenger.dateParse;
 
@@ -278,7 +323,7 @@ export class AonMessengerCard extends AonElement {
     let message = this.getElement("messengerCardMessage");
 
     let showAll = this.createElement(TAG.SPAN);
-    showAll.style.color = "var(aonMessenger)";
+    showAll.style.color = "var(--aonMessenger)";
     showAll.style.fontWeight = "500";
     showAll.innerHTML = "Ver todos los mensajes";
 

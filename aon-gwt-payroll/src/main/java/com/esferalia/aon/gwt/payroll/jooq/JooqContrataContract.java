@@ -730,6 +730,50 @@ public class JooqContrataContract {
 		return employeesInfo;
 	}
 	
+	public static Integer getContractListCount(Connection conn, ContractParams params) {
+		return getContractListCount(DSL.using(conn, getDefaultSettings()), params);
+	}
+	
+	private static Integer getContractListCount(DSLContext dslContext, ContractParams params) {
+		Condition condition = paramsToCondition(params);
+		
+		SelectOnConditionStep<Record1<Integer>> select = dslContext.selectCount()
+			.from(CONTRACT)
+			.join(PERSON).on(PERSON.REGISTRY.eq(CONTRACT.PERSON))
+			.join(REGISTRY).on(REGISTRY.ID.eq(CONTRACT.PERSON))
+			.join(WORKPLACE).on(WORKPLACE.ID.eq(CONTRACT.WORKPLACE))
+			.leftOuterJoin(ENTERPRISE_CCC).on(ENTERPRISE_CCC.ID.eq(CONTRACT.ENTERPRISE_CCC));
+		
+		if(AonStringUtils.isNotBlank(params.getTc2()))
+			select.leftOuterJoin(CONTRACT_DATA).on(
+					CONTRACT_DATA.CONTRACT.eq(CONTRACT.ID)
+					.and(CONTRACT_DATA.NAME.eq("TC2"))
+					.and(
+							CONTRACT_DATA.END_DATE.isNull()
+							.or(CONTRACT_DATA.END_DATE.eq(CONTRACT.END_DATE))
+					));
+		
+		select.where(condition);
+		
+		if(params.isAsc()) {
+			if(AonStringUtils.equals(params.getOrderBy(), "name"))
+				select.orderBy(REGISTRY.NAME);
+			else if(AonStringUtils.equals(params.getOrderBy(), "document"))
+				select.orderBy(REGISTRY.DOCUMENT);
+		} else {
+			if(AonStringUtils.equals(params.getOrderBy(), "name"))
+				select.orderBy(REGISTRY.NAME.desc());
+			else if(AonStringUtils.equals(params.getOrderBy(), "document"))
+				select.orderBy(REGISTRY.DOCUMENT.desc());
+		}
+		
+		Record1<Integer> contracts = select.fetchOne();
+		
+		System.out.println("Contracts : " + contracts.value1());
+		
+		return contracts == null ? 0 : contracts.value1();
+	}
+	
 	private static Condition paramsToCondition(ContractParams params) {
 		Condition condition = CONTRACT.DOMAIN.eq(params.getDomain());
 		

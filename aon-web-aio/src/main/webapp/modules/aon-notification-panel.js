@@ -10,6 +10,7 @@ import { getTotalNotification, saveAuthDevice, deleteAuthDevice, getNotification
 import { AonDateUtils } from "aonsolutions/modules/utils/AonDateUtils.js";
 import { NotificationUtils } from "aonsolutions/modules/notification/utils/NotificationUtils.js";
 import { AonApplication } from "aonsolutions/components/aon-application.js";
+import * as LS from 'aonsolutions/services/localStorageService.js';
 
 
 export const firstLetters = (l) => l.replace(/^.{1}/g, l[0].toUpperCase());
@@ -63,16 +64,12 @@ export class AonNotificationPanel extends AonElement {
 		let divGeneral = this.createDiv();
         divGeneral.id = this.DIV_GENERAL;
         divGeneral.classList.add("notificationPanelGeneralDiv");
-
-        let openButton =new AonIconButton();
-        openButton.id = this.OPEN_BUTTON;
-        openButton.icon = "open_in_new";
-        openButton.title = "Ver en pantalla completa";
-        openButton.classList.add("notificationPanelAllDiv");
-
-        divGeneral.appendChild(openButton);
+  
         let welcome = this.getElement("aonCompanyTabFilter");
         if(!welcome){
+			let openButton = this.getElement("openNotificationButton");
+			openButton.style.display = "block";
+       
             openButton.addEventListener(EVENT.CLICK, () =>  {
                 this.goAonNotification();
                 let rightPanel = document.querySelector('aon-right-panel'); 
@@ -138,7 +135,11 @@ export class AonNotificationPanel extends AonElement {
                 icon.icon = "aon_new_payroll";
             else if (res.source == "INVOICE")
                 icon.icon = "aon_new_invoice";
-            icon.color = "grey";
+                
+            if(LS.isDarkBetaTheme())
+            	icon.color = "var(--aonNewWhite)";
+            else
+            	icon.color = "grey";
             icon.title = "Solicitudes";
             
             divGeneral.appendChild(icon);
@@ -184,12 +185,10 @@ export class AonNotificationPanel extends AonElement {
         divPrincipal.appendChild(divGeneral);
 
         divPrincipal.addEventListener(EVENT.MOUSEOVER, () => {
-            divPrincipal.style.backgroundColor = 'rgba(225, 225, 227, 1)';
             span.style.visibility = "visible";
         });
 
         divPrincipal.addEventListener(EVENT.MOUSELEAVE, () => {
-            divPrincipal.style.backgroundColor = 'transparent';
             span.style.visibility = "hidden";
         });
 

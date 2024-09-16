@@ -52,15 +52,22 @@ export class AonLoginPanel extends AonElement {
 		this.rightPanel = this.getElement("aonRightPanel"); 
 		this.rightPanel.style.boxShadow = "0 24px 54px rgba(0,0,0,.15),0 4.5px 13.5px rgba(0,0,0,.08)";
 		this.rightPanel.style.marginTop = '0px';
-		this.rightPanel.style.height = '218px';
+		this.rightPanel.style.height = '235px';
+		
+		let loginContent = this.createDiv("loginContent", "aonFlexColumn");
 
 		let divGeneral = this.createDiv();
 		divGeneral.style.display = "flex";
+		divGeneral.style.alignItems = "center";
+		divGeneral.style.gap = "1rem";
+		divGeneral.style.width = "100%";
+		divGeneral.style.padding = "0 1rem";
+		
 		
 		let avatar = new AonAvatar();
 		avatar.setAuth(auth);
-		avatar.setScale("1.8", "23px");
-		this.appendChild(avatar);
+		//avatar.setScale("1.8", "23px");
+		divGeneral.appendChild(avatar);
 
 		let divUserInfo = this.createDiv();
 		divUserInfo.className = "userPanelDivUserInfo";
@@ -103,12 +110,15 @@ export class AonLoginPanel extends AonElement {
                 if (rightPanel) {
                     rightPanel.close(); 
                 }
+				let companyy = this.getElement("aonHeaderCompanyListButton");
+				let companyyy = this.getElement("aonHeaderCompanyList");
+				companyy.style.display = "block";
+				companyyy.style.display = "block";
 			});
 			divUserInfo.appendChild(divConfiguration);
 		}
 	
 		divGeneral.appendChild(divUserInfo);
-		this.appendChild(divGeneral);
 
 		let divLogout = this.createDiv();
 		divLogout.id = this.LOGOUT;
@@ -118,7 +128,14 @@ export class AonLoginPanel extends AonElement {
 			LS.setNewTheme(true);
 		});
 		divLogout.appendChild(this.buildInfoLink(MATERIAL_ICONS.LOGOUT, MSG.CLOSE_SESSION));
-		this.appendChild(divLogout);
+		
+		loginContent.appendChild(divGeneral);
+		loginContent.appendChild(divLogout);
+		
+		let openButton = this.getElement("openNotificationButton");
+		openButton.style.display = "none";
+
+		this.appendChild(loginContent);
 	}
 
 	handleDocumentClick(event) {

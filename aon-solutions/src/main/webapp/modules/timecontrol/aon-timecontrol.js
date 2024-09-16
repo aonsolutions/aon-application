@@ -1,8 +1,8 @@
 import { AonElement } from "../../components/AonElement.js";
 
-import {AonPresenceList} from "./time-control/aon-presence-list.js";
-import { domainId, getAuthNoCache, getDomainUserRoles, getPeriod, getTaskHoldersUser, getTastHolders, getTimeControl } from "../../services/service.js";
-import {  isEmptyObject, setValueName } from "../../services/utils.js";
+import { AonPresenceList} from "./time-control/aon-presence-list.js";
+import { getAuthNoCache, getDomainUserRoles, getPeriod, getTaskHoldersUser, getTastHolders, getTimeControl } from "../../services/service.js";
+import { isEmptyObject, setValueName } from "../../services/utils.js";
 import { AonLocationAdd } from "./time-control/location/aon-location-add.js";
 import { AonLocationList } from "./time-control/location/aon-location-list.js";
 import { SigninSidenav, SIGNIN_VIEWS } from "./signinEnums.js";
@@ -260,7 +260,7 @@ export class AonTimecontrol extends AonElement {
   async getTaskHolder(){
     if(isEmptyObject(this.TASK_HOLDER)){
       const result = await getTaskHoldersUser({reload:true});
-      this.TASK_HOLDER = result.find(({domain_id})=> domain_id === parseInt(domainId()));
+      this.TASK_HOLDER = result.find(({domain_id})=> domain_id === parseInt(LS.getDomainId()));
     }
     return this.TASK_HOLDER;
   }

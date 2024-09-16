@@ -295,7 +295,7 @@ public class ContractLeaveLoader {
 		if (dailyRegBase != null) {
 			exp.setExpression(dailyRegBase);
 		} else {
-			exp.setExpression(String.format("SELF.br(%s)", ContextVariable.IT_START));
+			exp.setExpression(String.format("SELF.br(%s, %s)", ContextVariable.IT_START, type.name()));
 		}
 		exprCtx.addLazyExpression(exp, start, end);
 

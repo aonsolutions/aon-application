@@ -148,7 +148,7 @@ public class InvoiceJSON {
 //			.put(IJsonNames.REMARKS, new JSONArray(invoice.getRemarks()))
 			.put(IJsonNames.COMMENTS, invoice.getComments());
 		
-		if(invoice.getDetails() != null && !invoice.getDetails().isEmpty()) {
+		if(!invoice.getDetails().isEmpty()) {
 			json.put(IJsonNames.CATEGORY, invoice.getDetails().get(0).getAccountCode());
 		}
 		

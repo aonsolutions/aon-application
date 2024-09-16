@@ -81,6 +81,16 @@
 
 }
 
+
+input:-webkit-autofill,
+input:-webkit-autofill:hover, 
+input:-webkit-autofill:focus, 
+input:-webkit-autofill:active  {
+	-webkit-box-shadow: 0 0 0px 1000px var(--aonContentBeta) inset !important;
+  	box-shadow: 0 0 0px 1000px var(--aonContentBeta) inset !important;
+	-webkit-text-fill-color: white !important; 
+}
+
 .aonBody{
 	background-color: var(--aonContentBeta);
 	color: white;
@@ -257,7 +267,6 @@ h1 {
 
 .aonTabItemText:hover{
 	background-color: rgba(0, 0, 0, 0.2);
-	border-radius: 5px;
 }
 
 .aonTabItemTextSelected {
@@ -415,10 +424,30 @@ h1 {
   	color: white ! important;
 }
 
-.aonLoginButton:hover {
-	background-color: black;
-	color: var(--white-base);
+.aonLoginButton {
+	background-color: white;
+	color: black;
 }
+.aonLoginButton:hover {
+	background-color: white;
+	color: black;
+}
+
+.aonMagicButton {
+	background-color: var(--gray-90);
+	color: white;
+}
+
+.aonMagicButton:focus, 
+.aonMagicButton:hover {
+	background-color: white;
+	color: black;
+}
+
+.aonMagicButtonHover{
+	background-color: var(--gray-90);
+	color:  white;
+  }
 
 .aonCompanyTitleSpan {
   	color: white;
@@ -546,10 +575,6 @@ h1 {
 	background-color: var(--aonContentBeta);
 }
 
-#pygCardCanvas {
-	background-color: white;
-}
-
 .aonNewDesktopCardDiv:hover {
 	background-color: var(--aonContentBeta);
 }
@@ -590,8 +615,78 @@ h1 {
 	color: white;
 }
 
+
+#aonLoginLanguageButtonIcon {
+	color: white;
+}
+
+.aonInputBoxLabel > span {
+	background: var(--aonContentBeta);
+}
+
+#aonLoginPasswordIconButtonIcon {
+	color: white;
+}
+
+.aonDividerSpan {
+	background: var(--aonContentBeta);
+	color: white;
+}
+
 .aonInvoiceHomePendingRecordName {
 	color:  white;  
+}
+
+.aonInvoiceHomePendingRecordsDiv:hover{
+	background-color: black;
+}
+
+.aonInvoiceHomePendingName {
+	color: white;
+}
+
+.aonInvoiceHomePendingIssuedDiv:hover{
+	background-color: black;
+}
+
+.aonInvoiceHomePendingIssuedName{
+	color: white;
+}
+
+.aonInvoiceHomePendingReceivedDiv:hover{
+	background-color: black;
+}
+
+.aonInvoiceHomePendingReceivedName {
+	color: white;
+}
+
+.aonInvoiceHomePendingTicketDiv:hover {
+	background-color: black;
+}
+
+.aonInvoiceHomePendingTicketName {
+	color: white;
+}
+
+.aonInvoiceHomeRejectedDiv:hover{
+	background-color: black;
+}
+
+.aonInvoiceHomeRejectedName {
+	color: white;
+}
+
+.aonInvoiceHomeTrashDiv:hover {
+	background-color: black;
+}
+  
+.aonInvoiceHomeTrashNumber {
+	color: white;
+}
+
+.aonInvoiceHomeTrashName {
+	color: white;
 }
 
 /**

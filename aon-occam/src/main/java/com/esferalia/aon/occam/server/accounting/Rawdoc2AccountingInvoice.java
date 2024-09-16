@@ -17,7 +17,6 @@ import com.esferalia.aon.occam.api.model.AccountingInvoice;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.Customer;
 import com.esferalia.aon.occam.api.model.Domain;
-import com.esferalia.aon.occam.api.model.EnterpriseActivity;
 import com.esferalia.aon.occam.api.model.IJsonNames;
 import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.Rawdoc;
@@ -75,7 +74,8 @@ public class Rawdoc2AccountingInvoice {
 			invoice = AON_SOLUTIONS.getInvoice(domainName, domainId, login, invoice.getId());
 		}
 		AccountingInvoice ai = tedi2Aon(domain, user, invoice, json); 
-		if(rawdoc != null && rawdoc.getId() != null) {
+		
+		if(rawdoc != null && rawdoc.getId() != null && rawdoc.getData() != null) {
 			Attach attach = new Attach();
 			attach.setId(rawdoc.getId());
 			attach.setAttachType(AttachType.INVOICE);
@@ -179,7 +179,6 @@ public class Rawdoc2AccountingInvoice {
 				ai.getAccountEntry().setActivityDescription(invoice.getActivity().getDescription());
 			}
 			
-			
 			fillAttach( ctx, ai, ti);
 			return ai;
 		}
@@ -188,9 +187,8 @@ public class Rawdoc2AccountingInvoice {
 	private static AccountingInvoice fillAttach(AONContext ctx, AccountingInvoice ai,  JSONObject ti) {
 		JSONObject file = ti.optJSONObject("file");
 		if (file != null) {
-			String s3Key = file.optString("s3Key");
 			String url = file.optString("url");
-			if (AonStringUtils.isNotBlank(url) && AonStringUtils.isNotBlank(s3Key)) {
+			if (AonStringUtils.isNotBlank(url)) {
 				Attach attach = new Attach()
 					.setAttachType(AttachType.INVOICE)
 					.setAttachURL( url );
