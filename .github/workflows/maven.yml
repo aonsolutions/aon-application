@@ -29,8 +29,7 @@ jobs:
         java-version: '21'
         distribution: 'temurin'
         cache: maven
-        server-id: github # Value of the distributionManagement/repository/id field of the pom.xml
-        settings-path: ${{ github.workspace }} # location for the settings.xml file
+        server-id: github
 
     - name: Set up MySQL
       run: |
@@ -81,9 +80,9 @@ jobs:
         echo "PROJECTS=${PROJECTS}" >> $GITHUB_ENV
 
     - name: Build with Maven
-      run: mvn -B -pl ${PROJECTS:=.} -amd -Dgwt.working=true -DskipTests=true clean install
+      run: mvn -B -pl ${PROJECTS:=.} -Dgwt.working=true -DskipTests=true clean install
 
     - name: Publish to GitHub Packages Apache Maven
-      run: mvn deploy -s $GITHUB_WORKSPACE/settings.xml
+      run: mvn deploy
       env:
         GITHUB_TOKEN: ${{ github.token }}
