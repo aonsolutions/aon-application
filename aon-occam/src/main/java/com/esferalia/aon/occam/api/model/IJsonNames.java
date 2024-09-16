@@ -90,6 +90,7 @@ public final class IJsonNames {
 	public static final String BRAND_IDS = "brandIds";
 	public static final String BREAKDOWN_ENABLED = "breakdownEnabled";
 	public static final String BY_MONTH = "byMonth";
+	public static final String REQUISITION = "requisition";
 	// ---------------------------------------------------------------------------------------------	[C] 
 	public static final String CALLBACK = "callback";
 	public static final String CARRIER = "carrier";

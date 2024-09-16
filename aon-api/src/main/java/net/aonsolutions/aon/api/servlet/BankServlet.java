@@ -72,27 +72,27 @@ public class BankServlet extends AonApiHttpServlet {
 		try {
 			AonApiData api = initialize(req);
 			switch (api.getPath()) {
-			//Lista de bancos
+			// Lista de bancos
 			case "/banks":
 				response(req, resp, getBanks(api));
 				break;
-			//Un banco
+			// Un banco
 			case "/bank":
 				response(req, resp, getBank(api));
 				break;
-			//Link para vincular con Nordigen
+			// Link para vincular con Nordigen
 			case "/link":
 				response(req, resp, getUrlForLinkBankToNordigen(api));
 				break;
-			//Balances desde Nordigen
+			// Balances desde Nordigen
 			case "/balances":
 				response(req, resp, getBalances(api));
 				break;
-			//Movimientos desde Nordigen
+			// Movimientos desde Nordigen
 			case "/movements":
 				response(req, resp, getMovements(api));
 				break;
-			//Movimientos desde bbdd
+			// Movimientos desde bbdd
 			case "/movementsBD":
 				response(req, resp, getMovementsFromBD(api));
 				break;
@@ -114,13 +114,13 @@ public class BankServlet extends AonApiHttpServlet {
 		try {
 			AonApiData api = initialize(req);
 			switch (api.getPath()) {
-			//Introduce los movimientos obtenidos de Nordigen a BD
+			// Introduce los movimientos obtenidos de Nordigen a BD
 			case "/movements":
-				response(req, resp, insertMovesIntoBD(api));
+				response(req, resp, insertMovesIntoBD(api, req));
 				break;
-			//Introduce los balances obtenidos de Nordigen a BD
+			// Introduce los balances obtenidos de Nordigen a BD
 			case "/balances":
-				response(req, resp, insertBalancesIntoBD(api));
+				response(req, resp, insertBalancesIntoBD(api, req));
 				break;
 			default:
 				throw new AonApiException(AonApiError.ROUTE_ERROR.getMessage());
@@ -130,15 +130,18 @@ public class BankServlet extends AonApiHttpServlet {
 		}
 	}
 
-	private static boolean insertMovesIntoBD(AonApiData api) {
+	private static boolean insertMovesIntoBD(AonApiData api, HttpServletRequest request) {
 		try {
-			int id = api.getData().optInt("id");
+			String idParam = request.getParameter("id");
+			int id = Integer.parseInt(idParam);
+
 			occam.setDomain(api.getDomain().getId()).setDomainName(api.getDomain().getName())
 					.setUser(api.getUser().getLogin());
 
 			NordigenConfiguration nc = AonNordigen.getConfiguration(occam);
 
 			NordigenAccessToken token = nc.getToken();
+			token = NordigenUtils.handleToken(token);
 			List<NordigenBankAccount> lista = nc.getAccounts();
 			NordigenBankAccount bank2 = new NordigenBankAccount();
 
@@ -154,9 +157,11 @@ public class BankServlet extends AonApiHttpServlet {
 		}
 	}
 
-	private static boolean insertBalancesIntoBD(AonApiData api) {
+	private static boolean insertBalancesIntoBD(AonApiData api, HttpServletRequest request) {
 		try {
-			int id = api.getData().optInt("id");
+			String idParam = request.getParameter("id");
+			int id = Integer.parseInt(idParam);
+
 			NordigenBankAccount bank = new NordigenBankAccount();
 			occam.setDomain(api.getDomain().getId()).setDomainName(api.getDomain().getName())
 					.setUser(api.getUser().getLogin());
@@ -188,7 +193,6 @@ public class BankServlet extends AonApiHttpServlet {
 				.setStatus(!AonStringUtils.isBlank(api.getData().optString("status"))
 						? StatementStatus.valueOf(api.getData().optString("status")).value()
 						: null);
-
 		AonNordigen.getMovementsFromBD(occam, f -> statementsFilter(f, api.getDomain().getId(), filter), page, perPage)
 				.forEach(bankStatement -> array.put(NordigenUtils.bankStatementJSON(bankStatement)));
 		return array;
@@ -203,6 +207,7 @@ public class BankServlet extends AonApiHttpServlet {
 
 		NordigenConfiguration nc = AonNordigen.getConfiguration(occam);
 		NordigenAccessToken token = nc.getToken();
+		token = NordigenUtils.handleToken(token);
 
 		List<NordigenInstitution> instList = AonNordigen.getAllInstitutions(token);
 
@@ -239,6 +244,7 @@ public class BankServlet extends AonApiHttpServlet {
 
 		NordigenConfiguration nc = AonNordigen.getConfiguration(occam);
 		NordigenAccessToken token = nc.getToken();
+		token = NordigenUtils.handleToken(token);
 		List<NordigenInstitution> instList = AonNordigen.getAllInstitutions(token);
 
 		String bankBic = bank.getBic();
@@ -264,6 +270,7 @@ public class BankServlet extends AonApiHttpServlet {
 			try (CloseableAONContext ctx = AONContext.getAONContext(occam)) {
 				NordigenConfiguration nc = AonNordigen.getConfiguration(occam);
 				NordigenAccessToken token = nc.getToken();
+				token = NordigenUtils.handleToken(token);
 				List<NordigenBankAccount> rAccounts = nc.getAccounts();
 				NordigenUtils.processAccountLinking(rAccounts, id, token, jsonLink, occam);
 			}
@@ -279,6 +286,7 @@ public class BankServlet extends AonApiHttpServlet {
 					.setUser(api.getUser().getLogin());
 			NordigenConfiguration nc = AonNordigen.getConfiguration(occam);
 			NordigenAccessToken token = nc.getToken();
+			token = NordigenUtils.handleToken(token);
 			List<NordigenBankAccount> linkedAccountList = nc.getLinkedAccounts();
 			return NordigenUtils.processAccountBalances(linkedAccountList, token, occam);
 		} catch (Exception e) {
@@ -309,6 +317,7 @@ public class BankServlet extends AonApiHttpServlet {
 
 			NordigenConfiguration nc = AonNordigen.getConfiguration(occam);
 			NordigenAccessToken token = nc.getToken();
+			token = NordigenUtils.handleToken(token);
 			List<NordigenBankAccount> linkedAccountList = nc.getLinkedAccounts();
 			return NordigenUtils.convertAccountsMovementsToJsonArray(linkedAccountList, token, occam);
 		} catch (Exception e) {
