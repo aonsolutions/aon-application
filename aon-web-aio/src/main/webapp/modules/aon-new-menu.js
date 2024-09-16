@@ -266,8 +266,9 @@ export class AonNewMenu extends AonElement {
         if(this.isApp(app) || excludedApps.includes(app.app)){
 			if(app.app != "new"){
 				this.dispatchEvent(new CustomEvent(EVENT.AON_APPLICATION_SELECT, { detail }));	
+				this.setSelectedMenuSidenav(app);
 			}
-			this.setSelectedMenuSidenav(app);
+			
 		}
 		if(app.app != "new"){
 			let appsDiv = this.getElement("aonMenuLeftop-applications");
@@ -312,6 +313,10 @@ export class AonNewMenu extends AonElement {
 		header.className = 'aonHeader aonHeaderStart';
 		let applications = this.getElement('applications');
 		applications.className = 'aonMenuLeftopStart';
+
+		if(LS.isOnlyOne()&& LS.isLeftMenu()){
+			this.showSideNav();
+		}
 
 	}
 
