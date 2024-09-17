@@ -79,12 +79,15 @@ jobs:
         sed -e '$ ! s/$/,/g' | tr -d '\n')
         echo "PROJECTS=${PROJECTS}" >> $GITHUB_ENV
 
-    - name: Build with Maven
-      if: github.ref != 'refs/heads/master'
-      run: mvn -B -pl ${PROJECTS:=.} -amd -Dgwt.working=true clean install
-
     - name: Publish to GitHub Packages Apache Maven
       if: github.ref == 'refs/heads/master'
-      run: mvn -B -DskipTests=true clean deploy
+      run: mvn -B clean deploy
       env:
         GITHUB_TOKEN: ${{ github.token }}
+
+    - name: Build with Maven
+      if: github.ref != 'refs/heads/master'
+      run: mvn -B -pl ${PROJECTS:=.} -amd -Dgwt.working=true -Dgithub.actions=true -DskipApiTests=true clean install
+      env:
+        GITHUB_TOKEN: ${{ github.token }}
+
