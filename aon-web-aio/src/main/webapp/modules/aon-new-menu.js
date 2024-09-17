@@ -262,6 +262,11 @@ export class AonNewMenu extends AonElement {
 			app,
 			sidenav
 		};
+		
+		if(app.app == "new"){
+			LS.setLeftMenu(true);
+			this.showSideNav();
+		}
 
         if(this.isApp(app) || excludedApps.includes(app.app)){
 			if(app.app != "new"){
@@ -308,16 +313,10 @@ export class AonNewMenu extends AonElement {
 		this.getRootPanel().style.marginTop = '1px'; //'69px';
 		this.buildMenuTopnav();
 
-		
-
 		let header = this.getElement('aonHeaderWeb');
 		header.className = 'aonHeader aonHeaderStart';
 		let applications = this.getElement('applications');
 		applications.className = 'aonMenuLeftopStart';
-
-		if(LS.isOnlyOne()&& LS.isLeftMenu()){
-			this.showSideNav();
-		}
 
 	}
 
@@ -487,20 +486,20 @@ export class AonNewMenu extends AonElement {
 		let sidenav = this.getElement(this.AON_MENU_SIDENAV);
 		let menulist = this.getElement("aonMenuList");
 		let rootPanel = this.getElement("rootPanel");
-
-		// let aonlogo = this.getElement("aonLogo");		
-		// let icon = this.getElement("aonMenuLeftop");
-
+		let aonlogo = this.getElement("aonLogo");
+	
+		sidenav.style.transition = 'width 0.3s ease';
+		rootPanel.style.transition = 'margin-left 0.3s ease';
+		// aonlogo.style.transition = 'left 0.3s ease';
+	
 		sidenav.style.width = '68px';
-		sidenav.style.display = "";  // Asegurarse de que esté visible
+		sidenav.style.display = "";  
 	
 		menulist.style.visibility = "visible";
-		
+	
 		// aonlogo.style.left = '60px';
 		// aonlogo.style.position = 'relative';
-
-		// icon.style.visibility = "visible";
-
+	
 		rootPanel.style.marginLeft = '68px';
 	}
 	
@@ -514,18 +513,19 @@ export class AonNewMenu extends AonElement {
 		let menulist = this.getElement("aonMenuList");
 		let aonlogo = this.getElement("aonLogo");
 	
-		// Añadir transición de forma directa en JavaScript
 		sidenav.style.transition = 'width 0.3s ease';
 		rootPanel.style.transition = 'margin-left 0.3s ease';
 		// aonlogo.style.transition = 'left 0.3s ease';
 	
-		// Ocultar el sidenav de forma suave
 		sidenav.style.width = '0px';
-
-		sidenav.style.display = "none";
-		aonlogo.style.position = "relative";
-		// icon.style.visibility = "hidden";
-		// aonlogo.style.left = '60px';
+	
+		setTimeout(() => {
+			sidenav.style.display = "none";
+		}, 300); 
+	
+		// // Resetear la posición del logo
+		// aonlogo.style.left = '0px';
+		// aonlogo.style.position = 'relative';
 	
 		rootPanel.style.marginLeft = '0px';
 	}
@@ -543,11 +543,7 @@ export class AonNewMenu extends AonElement {
 
 		let a = this.createElement(TAG.A);
 		a.addEventListener(EVENT.CLICK, () => {
-			// if(app.app === "new") {
-
-			// } else {
-				this.appSelection(app);
-			// }
+			this.appSelection(app);
 		});
 		a.classList.add('aonMenuApp');
 
