@@ -81,7 +81,7 @@ jobs:
 
     - name: Publish to GitHub Packages Apache Maven
       if: github.ref == 'refs/heads/master'
-      run: mvn -B -DskipTests=true clean deploy
+      run: mvn -B -DskipTests=true -rf aon-gwt-fiscal clean deploy
       env:
         GITHUB_TOKEN: ${{ github.token }}
 
