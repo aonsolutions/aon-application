@@ -4,7 +4,7 @@ package com.esferalia.aon.occam.test;
 import org.junit.platform.suite.api.SelectClasses;
 import org.junit.platform.suite.api.Suite;
 
-import com.esferalia.aon.occam.impl.jooq.dao.invoice.InvoiceDaoTestSuite;
+import com.esferalia.aon.occam.impl.jooq.dao.invoice.InvoiceDAOTestSuite;
 import com.esferalia.aon.occam.test.accounting.AccountingTestSuite;
 import com.esferalia.aon.occam.test.accounting.account.AccountTestSuite;
 import com.esferalia.aon.occam.test.delivery.DeliveryTest;
@@ -53,7 +53,7 @@ import com.esferalia.aon.occam.test.workgroup.WorkgroupTestSuite;
 //	OfferTest.class,
 //	DeliveryTest.class,
 //	MarketingTestSuite.class
-	InvoiceDaoTestSuite.class
+	InvoiceDAOTestSuite.class
 })
 public class OccamTestSuite {
 

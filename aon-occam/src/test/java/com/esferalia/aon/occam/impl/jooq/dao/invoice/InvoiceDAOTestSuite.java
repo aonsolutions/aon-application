@@ -12,6 +12,6 @@ import org.junit.platform.suite.api.Suite;
 	InvoiceDaoGettersTest.class,
 	InvoiceDaoSettersTest.class,
 })
-public class InvoiceDaoTestSuite {
+public class InvoiceDAOTestSuite {
 	
 }

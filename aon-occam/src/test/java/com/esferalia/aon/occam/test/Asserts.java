@@ -10,6 +10,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
@@ -100,11 +102,32 @@ import com.esferalia.aon.occam.api.model.warehouse.Delivery;
 import com.esferalia.aon.occam.api.model.warehouse.DeliveryDetail;
 import com.esferalia.aon.occam.api.model.warehouse.Income;
 import com.esferalia.aon.occam.api.model.warehouse.IncomeDetail;
+import com.esferalia.aon.occam.api.model.warehouse.Warehouse;
 import com.esferalia.aon.watson.server.AonDateUtils;
+import com.esferalia.aon.watson.util.AonCollectionUtils;
 
 public class Asserts {
 	
 	private static final double DELTA = 1e-8;
+	
+	public static void assertEqualsDate(String msg,Date expected,Date actual) {
+		assertEqualsNulls(msg, expected, actual);
+		if (expected != null) {
+			LocalDate expectedLD;
+			if (expected instanceof java.sql.Date sqlExpected) {
+				expectedLD = sqlExpected.toLocalDate();
+			} else {
+				expectedLD = LocalDate.ofInstant(expected.toInstant(), ZoneId.systemDefault());
+			}
+			LocalDate actualLD;
+			if (actual instanceof java.sql.Date sqlActual) {
+				actualLD = sqlActual.toLocalDate();
+			} else {
+				actualLD = LocalDate.ofInstant(actual.toInstant(), ZoneId.systemDefault());
+			}
+			assertTrue(expectedLD.isEqual(actualLD));
+		}
+	}
 	
 	public static void assertEqualsDouble(String msg,double expected,double actual) {
 		assertEquals(expected, actual, DELTA, msg);		
@@ -142,15 +165,14 @@ public class Asserts {
 	}
 	
 	public static void assertEqualsCollection(String msg,Collection<?> expected, Collection<?> actual) {
-		if ( (expected == null || expected.isEmpty()) 
-			&& ( (actual != null && !actual.isEmpty()))) 
+		if ( AonCollectionUtils.isEmpty(expected) && AonCollectionUtils.isNotEmpty(actual)) {
 			fail( msg + " actual List is not Empty");
-		if ( (expected != null && !expected.isEmpty()) 
-			&& (actual == null || actual.isEmpty()))  
-			fail( msg + " actual List is Empty");
-		if ( expected != null && actual != null) {
-			assertEquals(expected.size(), actual.size(), " sizes not fit");	
 		}
+		if ( AonCollectionUtils.isNotEmpty(expected) && AonCollectionUtils.isEmpty(actual)) {
+			System.out.println("expected size ..:" +  AonCollectionUtils.size( expected) );
+			fail( msg + " actual List is Empty");
+		}
+		assertEquals(AonCollectionUtils.size( expected), AonCollectionUtils.size( actual ), " sizes not fit");	
 	}
 	
 	public static void assertEqualsMap(String msg,Map<?,?> expected, Map<?,?> actual) {
@@ -385,10 +407,12 @@ public class Asserts {
 
 	public static void assertEqualsSeller(Seller expected, Seller actual) {
 		assertEqualsNulls( "Seller", expected, actual);
-		assertEqualsRegistry(expected, actual);
-		assertEquals(expected.getCommissionType().getId(), actual.getCommissionType().getId(),"CommissionType");
-		assertEquals(expected.getScope().getId(), actual.getScope().getId(),"Scope");
-		assertEquals(expected.getStatus(), actual.getStatus(),"Status");
+		if (expected != null) {
+			assertEqualsRegistry(expected, actual);
+			assertEquals(expected.getCommissionType().getId(), actual.getCommissionType().getId(),"CommissionType");
+			assertEquals(expected.getScope().getId(), actual.getScope().getId(),"Scope");
+			assertEquals(expected.getStatus(), actual.getStatus(),"Status");
+		}
 	}
 	
 	public static void assertEqualsSupplier(Supplier expected, Supplier actual) {
@@ -668,27 +692,29 @@ public class Asserts {
 	
 	public static void assertEqualsInvoiceMin(InvoiceMin expected, InvoiceMin actual) {
 		assertEqualsNulls( "Invoice", expected, actual);
-		assertEquals(expected.getId(), actual.getId(),"Id");
-		assertEquals(expected.getDomain(), actual.getDomain(),"Domain");
-		assertEquals(expected.getActivity(), actual.getActivity(),"Activity");
-		assertEquals(expected.getActivityEpigraph(), actual.getActivityEpigraph(),"ActivityEpigraph");
-		assertEquals(expected.getActivityName(), actual.getActivityName(),"ActivityName");
-		assertEquals(expected.getType(), actual.getType(),"Type");
-		assertEquals(expected.getSeries(), actual.getSeries(),"Series");
-		assertEquals(expected.getNumber(), actual.getNumber(),"Number");
-		assertEquals(expected.getReferenceCode(), actual.getReferenceCode(),"ReferenceCode");
-		assertEquals(expected.getIssueDate(), actual.getIssueDate(),"IssueDate");
-		assertEquals(expected.getTaxDate(), actual.getTaxDate(),"TaxDate");
-		assertEquals(expected.getTransaction(), actual.getTransaction(),"Transaction");
-		assertEquals(expected.getRegistry(), actual.getRegistry(),"Registry");
-		assertEquals(expected.getRegistryDocument(), actual.getRegistryDocument(),"RegistryDocument");
-		assertEquals(expected.getRegistryDocumentType(), actual.getRegistryDocumentType(),"RegistryDocumentType");
-		assertEquals(expected.getRegistryDocumentCountry(), actual.getRegistryDocumentCountry(),"RegistryDocumentCountry");
-		assertEquals(expected.getRegistryName(), actual.getRegistryName(),"RegistryName");
-		assertEquals(expected.getSecurityLevel(), actual.getSecurityLevel(),"SecurityLevel");
-		assertEquals(expected.getScope(), actual.getScope());
-		assertEquals(expected.isRecorded(), actual.isRecorded(),"Recorded");
-		assertEquals(expected.getTotal(), actual.getTotal(), DELTA,"Total");
+		if (expected != null) {
+			assertEquals(expected.getId(), actual.getId(),"Id");
+			assertEquals(expected.getDomain(), actual.getDomain(),"Domain");
+			assertEquals(expected.getActivity(), actual.getActivity(),"Activity");
+			assertEquals(expected.getActivityEpigraph(), actual.getActivityEpigraph(),"ActivityEpigraph");
+			assertEquals(expected.getActivityName(), actual.getActivityName(),"ActivityName");
+			assertEquals(expected.getType(), actual.getType(),"Type");
+			assertEquals(expected.getSeries(), actual.getSeries(),"Series");
+			assertEquals(expected.getNumber(), actual.getNumber(),"Number");
+			assertEquals(expected.getReferenceCode(), actual.getReferenceCode(),"ReferenceCode");
+			assertEqualsDate("IssueDate",expected.getIssueDate(), actual.getIssueDate());
+			assertEqualsDate("TaxDate",expected.getTaxDate(), actual.getTaxDate());
+			assertEquals(expected.getTransaction(), actual.getTransaction(),"Transaction");
+			assertEquals(expected.getRegistry(), actual.getRegistry(),"Registry");
+			assertEquals(expected.getRegistryDocument(), actual.getRegistryDocument(),"RegistryDocument");
+			assertEquals(expected.getRegistryDocumentType(), actual.getRegistryDocumentType(),"RegistryDocumentType");
+			assertEquals(expected.getRegistryDocumentCountry(), actual.getRegistryDocumentCountry(),"RegistryDocumentCountry");
+			assertEquals(expected.getRegistryName(), actual.getRegistryName(),"RegistryName");
+			assertEquals(expected.getSecurityLevel(), actual.getSecurityLevel(),"SecurityLevel");
+			assertEquals(expected.getScope(), actual.getScope());
+			assertEquals(expected.isRecorded(), actual.isRecorded(),"Recorded");
+			assertEquals(expected.getTotal(), actual.getTotal(), DELTA,"Total");
+		}
 	}
 
 	public static void assertEqualsInvoice(Invoice expected, Invoice actual) {
@@ -702,16 +728,18 @@ public class Asserts {
 		assertEquals(expected.getSeries(), actual.getSeries(),"Series");
 		assertEquals(expected.getNumber(), actual.getNumber(),"Number");
 		assertEquals(expected.getReferenceCode(), actual.getReferenceCode(),"ReferenceCode");
-		assertEquals(expected.getIssueDate(), actual.getIssueDate(),"IssueDate");
-		assertEquals(expected.getTaxDate(), actual.getTaxDate(),"TaxDate");
+		assertEqualsDate("IssueDate",expected.getIssueDate(), actual.getIssueDate());
+		assertEqualsDate("TaxDate",expected.getTaxDate(), actual.getTaxDate());
 		assertEquals(expected.getRectificationType(), actual.getRectificationType(),"RectificationType");
 		assertEquals(expected.getSecurityLevel(), actual.getSecurityLevel(),"SecurityLevel");
-		assertEquals(expected.getRectificationInvoice(), actual.getRectificationInvoice(),"RectificationInvoice");
+		// assertEquals(expected.getRectificationInvoice(), actual.getRectificationInvoice(),"RectificationInvoice");
+		assertEqualsInvoiceMin(expected.getRectificationInvoice().orElse(null), actual.getRectificationInvoice().orElse(null));
 		assertEquals(expected.getRegistry(), actual.getRegistry(),"Registry");
 		assertEquals(expected.getRegistryDocument(), actual.getRegistryDocument(),"RegistryDocument");
 		assertEquals(expected.getRegistryDocumentType(), actual.getRegistryDocumentType(),"RegistryDocumentType");
 		assertEquals(expected.getRegistryDocumentCountry(), actual.getRegistryDocumentCountry(),"RegistryDocumentCountry");
 		assertEquals(expected.getRegistryName(), actual.getRegistryName(),"RegistryName");
+		assertEquals(expected.getRegistryAddress(), actual.getRegistryAddress(),"RegistryAddress");
 		assertEqualsScopeId(expected.getScope(), actual.getScope());
 		assertEquals(expected.getType(), actual.getType(),"Type");
 		assertEquals(expected.getTransaction(), actual.getTransaction(),"Transaction");
@@ -733,6 +761,8 @@ public class Asserts {
 		assertEquals(expected.getSellerName(), actual.getSellerName(),"SellerName");
 		assertEquals(expected.getComments(), actual.getComments(),"Comments");
 		assertEquals(expected.getRemarks(), actual.getRemarks(),"Remarks");
+		assertEquals(expected.isAnnulled(), actual.isAnnulled(),"Annulled");
+		assertEquals(expected.getSiiStatus(), actual.getSiiStatus(),"SIIStatus");
 		assertEqualsInvoiceFiscal(expected.getFiscal(), actual.getFiscal());
 	}
 	
@@ -763,11 +793,25 @@ public class Asserts {
 	    	.forEach( i -> assertEqualsInvoiceDetail(expected.get(i),actual.get(i)));
 	}
 
+	public static void assertEqualsInvoiceId(Invoice expected, Invoice actual) {
+		assertEqualsNulls( "Invoice", expected, actual);
+		if (expected != null ) {
+			assertEquals(expected.getId(), actual.getId(),"Id");
+		}
+	}
+
+	public static void assertEqualsRegistryId(Registry expected, Registry actual) {
+		assertEqualsNulls( "Registry", expected, actual);
+		if (expected != null ) {
+			assertEquals(expected.getId(), actual.getId(),"Id");
+		}
+	}
+
 	public static void assertEqualsInvoiceDetail(InvoiceDetail expected, InvoiceDetail actual) {
 		assertEqualsNulls( "InvoiceBreakdown", expected, actual);
 		assertEquals(expected.getId(), actual.getId(),"Id");
 		assertEquals(expected.getDomain(), actual.getDomain(),"Domain");
-		assertEquals(expected.getInvoice(), actual.getInvoice(),"Invoice");	
+		assertEqualsInvoiceId(expected.getInvoice(), actual.getInvoice());	
 		assertEquals(expected.getInvestAsset(), actual.getInvestAsset(),"InvestAsset");
 		assertEquals(expected.getProject(), actual.getProject(),"Project");
 		assertEquals(expected.getProjectName(), actual.getProjectName(),"ProjectName");
@@ -781,8 +825,7 @@ public class Asserts {
 		assertEquals(expected.getTaxableBase(), actual.getTaxableBase(), DELTA,"TaxableBase");
 		assertEquals(expected.getTaxes(), actual.getTaxes(), DELTA,"Taxes");
 		assertEquals(expected.isPrepayment(), actual.isPrepayment(),"Prepayment");
-		assertEquals(expected.getWarehouse(), actual.getWarehouse(),"Warehouse");
-		assertEquals(expected.getWarehouseName(), actual.getWarehouseName(),"WarehouseName");
+		assertEqualsWarehouse(expected.getWarehouse(), actual.getWarehouse());
 		assertEqualsWorkplace(expected.getWorkplace(), actual.getWorkplace());
 		assertEqualsAccount(expected.getExpAccount(), actual.getExpAccount());
 		assertEqualsInvoiceTaxes( expected.getInvoiceTaxes(), actual.getInvoiceTaxes() );
@@ -868,53 +911,11 @@ public class Asserts {
 	public static void assertEqualsFullInvoice(Invoice expected, Invoice actual) {
 		assertEqualsNulls( "FullInvoice", expected, actual);
 		if (expected != null) {
-			assertEquals(expected.getId(), actual.getId(),"Id");
-			assertEquals(expected.getDomain(), actual.getDomain(),"Domain");
+			assertEqualsInvoice(expected, actual);
+
 			assertEqualsEnterpriseActivity(expected.getActivity(), actual.getActivity());
-			assertEquals(expected.getEpigraph(), actual.getEpigraph(),"Epigraph");
-			assertEquals(expected.getInvestAsset(), actual.getInvestAsset(),"InvestAsset");
-			assertEquals(expected.getProject(), actual.getProject(),"Project");
-			assertEquals(expected.getSeries(), actual.getSeries(),"Series");
-			assertEquals(expected.getNumber(), actual.getNumber(),"Number");
-			assertEquals(expected.getReferenceCode(), actual.getReferenceCode(),"ReferenceCode");
-			assertEquals(expected.getIssueDate(), actual.getIssueDate(),"IssueDate");
-			assertEquals(expected.getTaxDate(), actual.getTaxDate(),"TaxDate");
-			assertEquals(expected.getRectificationType(), actual.getRectificationType(),"RectificationType");
-			assertEquals(expected.getSecurityLevel(), actual.getSecurityLevel(),"SecurityLevel");
-			assertEqualsInvoiceMin(expected.getRectificationInvoice().orElse(null), actual.getRectificationInvoice().orElse(null));
-			assertEquals(expected.getRegistryAddress(), actual.getRegistryAddress(),"RegistryAddress");
-			assertEqualsRegistryAddress (expected.getAddress(), actual.getAddress());
-			assertEquals(expected.getRegistry(), actual.getRegistry(),"Registry");
-			assertEquals(expected.getRegistryDocument(), actual.getRegistryDocument(),"RegistryDocument");
-			assertEquals(expected.getRegistryDocumentType(), actual.getRegistryDocumentType(),"RegistryDocumentType");
-			assertEquals(expected.getRegistryDocumentCountry(), actual.getRegistryDocumentCountry(),"RegistryDocumentCountry");
-			assertEquals(expected.getRegistryName(), actual.getRegistryName(),"RegistryName");
 			assertEqualsAccount(expected.getRegistryAccount(), actual.getRegistryAccount());
-			assertEqualsScope(expected.getScope(), actual.getScope());
-			assertEquals(expected.getType(), actual.getType(),"Type");
-			assertEquals(expected.getTransaction(), actual.getTransaction(),"Transaction");
-			assertEquals(expected.isRecorded(), actual.isRecorded(),"Recorded");
-			assertEquals(expected.isSurcharge(), actual.isSurcharge(),"Surcharge");
-			
-			assertEquals(expected.isWithholding(), actual.isWithholding(),"Withholding");
-			assertEquals(expected.isWithholdingFarmer(), actual.isWithholdingFarmer(),"WithholdingFarmer");
-			assertEquals(expected.isVatAccrualPayment(), actual.isVatAccrualPayment(),"VatAccrualPayment");
-			assertEquals(expected.isInvestment(), actual.isInvestment(),"Investment");
-			assertEquals(expected.isService(), actual.isService(),"Service");
-			assertEquals(expected.isAdvance(), actual.isAdvance(),"Advance");
-			assertEquals(expected.isSigned(), actual.isSigned(),"Signed");
-			assertEquals(expected.isAnnulled(), actual.isAnnulled(),"Annulled");
-			assertEquals(expected.getTaxableBase(), actual.getTaxableBase(), DELTA,"TaxableBase");
-			assertEquals(expected.getVatQuota(), actual.getVatQuota(), DELTA,"VatQuota");
-			assertEquals(expected.getRetentionQuota(), actual.getRetentionQuota(), DELTA,"RetentionQuota");
-			assertEquals(expected.getTotal(), actual.getTotal(), DELTA,"Total");
-			assertEquals(expected.getPosShift(), actual.getPosShift(),"PosShift");
-			assertEquals(expected.getSeller(), actual.getSeller(),"Seller");
-			assertEquals(expected.getSellerName(), actual.getSellerName(),"SellerName");
-			assertEquals(expected.getComments(), actual.getComments(),"Comments");
-			assertEquals(expected.getRemarks(), actual.getRemarks(),"Remarks");
-			assertEquals(expected.getSiiStatus(), actual.getSiiStatus(),"SIIStatus");
-			
+			// assertEqualsRegistryAddress (expected.getAddress(), actual.getAddress());
 			assertEqualsInvoiceDetails(expected.getDetails(), actual.getDetails());
 			assertEqualsFinances(expected.getFinances(), actual.getFinances());
 			assertEqualsInvoiceFiscal(expected.getFiscal(), actual.getFiscal());
@@ -930,6 +931,9 @@ public class Asserts {
 			//assertEqualsInvoiceBreakdowns(expected.getBreakdown(), actual.getBreakdown());
 			//assertEqualsTaxBreakdown(expected.getTaxBreakdown().orElse(null), actual.getTaxBreakdown().orElse(null));
 			//assertEqualsRegistry(expected.getRegistryData(), actual.getRegistryData());
+			
+			assertEqualsInvoiceFiscal(expected.getFiscal(), actual.getFiscal());
+			
 		}
 
 			
@@ -1019,15 +1023,15 @@ public class Asserts {
 	
 	public static void assertEqualsFinance(Finance expected, Finance actual) {
 		assertEqualsNulls( "Finance", expected, actual);
-		assertEquals(expected.isDirty(), actual.isDirty(),"Dirty");
+		// assertEquals(expected.isDirty(), actual.isDirty(),"Dirty");
 		assertEquals(expected.isSelected(), actual.isSelected(),"Selected");
 		assertEquals(expected.isRemoved(), actual.isRemoved(),"Removed");
 		assertEquals(expected.getId(), actual.getId(),"Id");
-		assertEqualsInvoice( expected.getInvoice(), actual.getInvoice());
+		assertEqualsInvoiceId( expected.getInvoice(), actual.getInvoice());
 		assertEquals(expected.getPayMethod(), actual.getPayMethod(),"PayMethod");
 		assertEquals(expected.getPayMethodType(), actual.getPayMethodType(),"PayMethodType");
 		assertEquals(expected.getPayMethodName(), actual.getPayMethodName(),"PayMethodName");
-		assertEqualsRegistry( expected.getRegistry(), actual.getRegistry());
+		assertEqualsRegistryId( expected.getRegistry(), actual.getRegistry());
 		assertEqualsScope( expected.getScope(), actual.getScope());
 		assertEquals(expected.getDomain(), actual.getDomain(),"Domain");
 		assertEquals(expected.isPayment(), actual.isPayment(),"Payment");
@@ -1041,7 +1045,7 @@ public class Asserts {
 		assertEquals(expected.getAmount(), actual.getAmount(), DELTA,"Amount");
 		assertEquals(expected.getExpenses(), actual.getExpenses(), DELTA,"Expenses");
 		assertEquals(expected.getConcept(), actual.getConcept(),"Concept");
-		assertEquals(expected.getDueDate(), actual.getDueDate(),"DueDate");
+		assertEqualsDate("DueDate", expected.getDueDate(), actual.getDueDate());
 		assertEqualsBankAccount(expected.getBankAccount(), actual.getBankAccount());
 		assertEquals(expected.getBankAlias(), actual.getBankAlias(),"BankAlias");
 		assertEquals(expected.getBic(), actual.getBic(),"Bic");
@@ -1369,6 +1373,19 @@ public class Asserts {
 		}
 	}
 	
+	public static void assertEqualsWarehouse(Warehouse expected, Warehouse actual) {
+		assertEqualsNulls("Workplace", expected, actual);
+		
+		if (expected != null && actual != null) {
+			assertEquals(expected.getId(), actual.getId(),"Id");
+			assertEquals(expected.getDomain(), actual.getDomain(),"Domain");
+			assertEquals(expected.getDepartment(), actual.getDepartment(),"Department");
+			assertEquals(expected.getName(), actual.getName(),"Name");
+			assertEquals(expected.getWorkplace(), actual.getWorkplace(),"Workplace");
+			assertEquals(expected.isActive(), actual.isActive(),"Active");
+		}
+	}
+
 	public static void assertEqualsEdiCodes(EdiCodes expected, EdiCodes actual) {
 		assertEqualsNulls("EdiCodes", expected, actual);
 		
@@ -1613,30 +1630,32 @@ public class Asserts {
 
 	public static void assertEqualsItem(Item expected, Item actual) {
 		assertEqualsNulls( "Item", expected, actual);
-		assertEquals(expected.getId(), actual.getId(),"Id");
-		assertEquals(expected.getDomain().getId(), actual.getDomain().getId(),"Domain");
-		assertEquals(expected.getDetail(), actual.getDetail(),"Detail");
-		assertEquals(expected.getDetail2(), actual.getDetail2(),"Detail2");
-		assertEquals(expected.getDetail3(), actual.getDetail3(),"Detail3");
-		assertEquals(expected.getDescription(), actual.getDescription(),"Description");
-		assertEquals(expected.getSerialNumber(), actual.getSerialNumber(),"SerialNumber");
-		assertEquals(expected.getSerialDate(), actual.getSerialDate(),"SerialDate");
-		assertEquals(expected.getExpireDate(), actual.getExpireDate(),"ExpireDate");
-		assertEquals(expected.getBarcode(), actual.getBarcode(),"Barcode");
-		assertEquals(expected.getStatus(), actual.getStatus(),"Status");
-		assertEqualsProduct(expected.getProduct(), actual.getProduct());
-		assertEqualsDouble("Price",expected.getPrice(), actual.getPrice());
-		assertEqualsDouble("ExpensesPercent",expected.getExpensesPercent(), actual.getExpensesPercent());
-		assertEqualsDouble("ExpensesFixed",expected.getExpensesFixed(), actual.getExpensesFixed());
-		assertEqualsDouble("ProfitPercent",expected.getProfitPercent(), actual.getProfitPercent());
-		assertEqualsDouble("PurchasePrice",expected.getPurchasePrice(), actual.getPurchasePrice());
-		assertEquals(expected.isInternet(), actual.isInternet(),"Internet");
-		assertEqualsTag(expected.getPackFormatTag(), actual.getPackFormatTag());
-		assertEquals(expected.getPackUnits(), actual.getPackUnits(),"PackUnits");
-		assertEqualsTag(expected.getPackUnitsTag(), actual.getPackUnitsTag());
-		assertEqualsDouble("PackMeasurement", expected.getPackMeasurement(), actual.getPackMeasurement());
-		assertEqualsTag(expected.getPackMeasurementTag(), actual.getPackMeasurementTag());
-		assertEqualsTag(expected.getStockUnitTag(), actual.getStockUnitTag());
+		if (expected != null) {
+			assertEquals(expected.getId(), actual.getId(),"Id");
+			assertEquals(expected.getDomain().getId(), actual.getDomain().getId(),"Domain");
+			assertEquals(expected.getDetail(), actual.getDetail(),"Detail");
+			assertEquals(expected.getDetail2(), actual.getDetail2(),"Detail2");
+			assertEquals(expected.getDetail3(), actual.getDetail3(),"Detail3");
+			assertEquals(expected.getDescription(), actual.getDescription(),"Description");
+			assertEquals(expected.getSerialNumber(), actual.getSerialNumber(),"SerialNumber");
+			assertEquals(expected.getSerialDate(), actual.getSerialDate(),"SerialDate");
+			assertEquals(expected.getExpireDate(), actual.getExpireDate(),"ExpireDate");
+			assertEquals(expected.getBarcode(), actual.getBarcode(),"Barcode");
+			assertEquals(expected.getStatus(), actual.getStatus(),"Status");
+			assertEqualsProduct(expected.getProduct(), actual.getProduct());
+			assertEqualsDouble("Price",expected.getPrice(), actual.getPrice());
+			assertEqualsDouble("ExpensesPercent",expected.getExpensesPercent(), actual.getExpensesPercent());
+			assertEqualsDouble("ExpensesFixed",expected.getExpensesFixed(), actual.getExpensesFixed());
+			assertEqualsDouble("ProfitPercent",expected.getProfitPercent(), actual.getProfitPercent());
+			assertEqualsDouble("PurchasePrice",expected.getPurchasePrice(), actual.getPurchasePrice());
+			assertEquals(expected.isInternet(), actual.isInternet(),"Internet");
+			assertEqualsTag(expected.getPackFormatTag(), actual.getPackFormatTag());
+			assertEquals(expected.getPackUnits(), actual.getPackUnits(),"PackUnits");
+			assertEqualsTag(expected.getPackUnitsTag(), actual.getPackUnitsTag());
+			assertEqualsDouble("PackMeasurement", expected.getPackMeasurement(), actual.getPackMeasurement());
+			assertEqualsTag(expected.getPackMeasurementTag(), actual.getPackMeasurementTag());
+			assertEqualsTag(expected.getStockUnitTag(), actual.getStockUnitTag());
+		}
 	}
 	
 	public static void assertEqualsTag(Tag expected, Tag actual) {

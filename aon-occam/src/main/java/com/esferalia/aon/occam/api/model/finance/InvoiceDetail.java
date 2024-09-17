@@ -19,6 +19,7 @@ import com.esferalia.aon.occam.api.model.type.InvoiceSource;
 import com.esferalia.aon.occam.api.model.type.TaxType;
 import com.esferalia.aon.occam.api.model.warehouse.DeliveryDetail;
 import com.esferalia.aon.occam.api.model.warehouse.IncomeDetail;
+import com.esferalia.aon.occam.api.model.warehouse.Warehouse;
 import com.esferalia.aon.watson.util.AonCollectionUtils;
 
 public class InvoiceDetail implements Serializable {
@@ -48,8 +49,7 @@ public class InvoiceDetail implements Serializable {
 	private double taxableBase;
 	private double taxes;
 	private boolean prepayment;
-	private Integer warehouse;
-	private String warehouseName;
+	private Warehouse warehouse;
 	private Workplace workplace;
 	private Account expAccount;
 	
@@ -212,22 +212,14 @@ public class InvoiceDetail implements Serializable {
 		return this;
 	}
 
-	public Integer getWarehouse() {
+	public Warehouse getWarehouse() {
 		return warehouse;
 	}
-	public InvoiceDetail setWarehouse(Integer warehouse) {
+	public InvoiceDetail setWarehouse(Warehouse warehouse) {
 		this.warehouse = warehouse;
 		return this;
 	}
     
-	public String getWarehouseName() {
-		return warehouseName;
-	}
-	public InvoiceDetail setWarehouseName(String warehouseName) {
-		this.warehouseName = warehouseName;
-		return this;
-	}
-	
 	public Workplace getWorkplace() {
 		return workplace;
 	}
@@ -421,7 +413,6 @@ public class InvoiceDetail implements Serializable {
 			.setTaxes( getTaxes() )
 			.setPrepayment( isPrepayment() )
 			.setWarehouse( getWarehouse() )
-			.setWarehouseName( getWarehouseName() )
 			.setWorkplace( getWorkplace() )
 			.setExpAccount( getExpAccount() )
 			.setSource( getSource() )

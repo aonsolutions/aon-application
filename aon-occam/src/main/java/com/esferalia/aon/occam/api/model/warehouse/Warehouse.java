@@ -5,12 +5,12 @@ import java.io.Serializable;
 @SuppressWarnings("serial")
 public class Warehouse implements Serializable {
 	
-	Integer id;
-	Integer domain;
-	Integer department;
-	String name;
-	Integer workplace;
-	boolean active;
+	private Integer id;
+	private Integer domain;
+	private Integer department;
+	private String name;
+	private Integer workplace;
+	private boolean active;
 
 	public Warehouse setActive(boolean active) {
 		this.active = active;

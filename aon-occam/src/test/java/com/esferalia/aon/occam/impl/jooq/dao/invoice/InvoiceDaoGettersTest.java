@@ -45,11 +45,11 @@ class InvoiceDaoGettersTest extends AbstractOccamTest {
 	@Test
 	void testGet() {
 		Invoice invoice = InvoiceFaker.getRandom(ctx);
-		Invoice saved = assertDoesNotThrow(() -> InvoiceDAO.saveAndGet(ctx, invoice ));
-		Optional<Invoice> opt = InvoiceDAO.get(ctx, saved.getId());
+		Invoice saved = assertDoesNotThrow(() -> InvoiceDAO.save(ctx, invoice ));
+		Optional<InvoiceMin> opt = InvoiceDAO.get(ctx, saved.getId());
 		assertTrue(opt.isPresent());
-		Invoice get = opt.get();
-		Asserts.assertEqualsInvoice(saved, get );
+		InvoiceMin get = opt.get();
+		Asserts.assertEqualsInvoiceMin(InvoiceMin.to(saved) , get );
 	}
 	
 	@Test
@@ -57,7 +57,7 @@ class InvoiceDaoGettersTest extends AbstractOccamTest {
 		Date dateFrom = AonDateUtils.getYearFirstDay(2020);
 		Date dateTo = AonDateUtils.getYearFirstDay(2023);
 		Date date = AonRandom.getRangeDate(dateFrom, dateTo);
-		InvoiceDAO.getStream( ctx, p -> p.getIdProperty().ge(0)
+		InvoiceDAO.stream( ctx, p -> p.getIdProperty().ge(0)
 			.and( p.getDomainProperty().eq(getOccam().getDomain()))
 			.and( p.getRectificationTypeProperty().eq(RectificationType.NORMAL_RECTIFIER.value()))
 			.and( p.getIssueDateProperty().ge(date)))

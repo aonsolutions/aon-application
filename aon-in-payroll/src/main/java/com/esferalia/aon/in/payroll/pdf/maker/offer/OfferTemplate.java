@@ -1834,7 +1834,6 @@ public class OfferTemplate {
 		newInvoiceDetail.setTaxes(original.getTaxes());
 		newInvoiceDetail.setPrepayment(original.isPrepayment());
 		newInvoiceDetail.setWarehouse(original.getWarehouse());
-		newInvoiceDetail.setWarehouseName(original.getWarehouseName());
 		newInvoiceDetail.setWorkplace(original.getWorkplace());
 		newInvoiceDetail.setExpAccount(original.getExpAccount());
 		newInvoiceDetail.setInvoiceTaxes(original.getInvoiceTaxes());

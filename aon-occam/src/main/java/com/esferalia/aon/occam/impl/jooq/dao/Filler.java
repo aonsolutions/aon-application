@@ -1,5 +1,7 @@
 package com.esferalia.aon.occam.impl.jooq.dao;
 
+import java.util.Optional;
+
 import org.jooq.Field;
 import org.jooq.Record;
 
@@ -13,6 +15,9 @@ public class Filler {
 			} 
 		}
 		return bool;
+	}
+	protected static <T> Optional<T> getOpt(Record r, Field<T> field) {
+		return Optional.ofNullable(getValue(r,field));
 	}
 	
 	protected static <T> T getValue(Record r, Field<T> field) {

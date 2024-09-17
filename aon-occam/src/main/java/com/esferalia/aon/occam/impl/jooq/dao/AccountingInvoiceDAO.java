@@ -485,7 +485,6 @@ public class AccountingInvoiceDAO {
 					detail.setId( null );
 					detail.setItem(null);
 					detail.setWarehouse(null);
-					detail.setWarehouseName(null);
 					detail.setSource(InvoiceSource.ACCOUNT);
 				}
 			}

@@ -40,6 +40,7 @@ import com.esferalia.aon.occam.api.model.type.SecurityLevel;
 import com.esferalia.aon.occam.api.model.type.TaxType;
 import com.esferalia.aon.occam.api.model.type.VatDeductionType;
 import com.esferalia.aon.occam.api.model.type.WithholdingType;
+import com.esferalia.aon.occam.api.model.warehouse.Warehouse;
 import com.esferalia.aon.occam.impl.jooq.dao.AccountDAO.FullAccountFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.Filler;
 import com.esferalia.aon.occam.impl.jooq.dao.FinanceDAO;
@@ -260,7 +261,7 @@ public class InvoiceApiDAO {
 				.setTaxes(record.getValue(INVOICE_DETAIL.TAXES))
 				.setSeller(new Seller().copy(new Registry().setId(record.getValue(INVOICE_DETAIL.SELLER))))
 				.setWorkplace( new Workplace().setId(record.getValue(INVOICE_DETAIL.WORKPLACE)))
-				.setWarehouse(record.getValue(INVOICE_DETAIL.WAREHOUSE))
+				.setWarehouse( new Warehouse().setId(record.getValue(INVOICE_DETAIL.WAREHOUSE)))
 				.setExpAccount( checkField(record, ACCOUNT.ID)
 					? FullAccountFiller.build(record)
 					: null )

@@ -8,6 +8,7 @@ import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.occam.api.model.type.DocumentType;
 import com.esferalia.aon.occam.api.model.type.InvoiceTransactionType;
 import com.esferalia.aon.occam.api.model.type.InvoiceType;
+import com.esferalia.aon.occam.api.model.type.RectificationType;
 import com.esferalia.aon.occam.api.model.type.SecurityLevel;
 
 public class InvoiceMin implements Serializable {
@@ -34,6 +35,8 @@ public class InvoiceMin implements Serializable {
 	private Integer scope;
 	private SecurityLevel securityLevel;
 	private boolean recorded;
+	private RectificationType rectificationType;
+	private Integer rectificationInvoiceId;
 	private double total;
 
 	public Integer getId() {
@@ -202,7 +205,21 @@ public class InvoiceMin implements Serializable {
 		this.recorded = recorded;
 		return this;
 	}
-
+	
+	public RectificationType getRectificationType() {
+		return rectificationType;
+	}
+	public InvoiceMin setRectificationType(RectificationType rectificationType) {
+		this.rectificationType = rectificationType;
+		return this;
+	}
+	public Integer getRectificationInvoiceId() {
+		return rectificationInvoiceId;
+	}
+	public InvoiceMin setRectificationInvoiceId(Integer rectificationInvoiceId) {
+		this.rectificationInvoiceId = rectificationInvoiceId;
+		return this;
+	}
 	public double getTotal() {
 		return total;
 	}
@@ -242,6 +259,8 @@ public class InvoiceMin implements Serializable {
 			.setScope(Optional.ofNullable(inv.getScope()).map( s -> s.getId()).orElse(null))
 			.setConfidential(inv.isConfidential())
 			.setRecorded(inv.isRecorded())
+			.setRectificationType(inv.getRectificationType())
+			.setRectificationInvoiceId(inv.getRectificationInvoiceId())
 			.setTotal(inv.getTotal())
 		;		
 		

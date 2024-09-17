@@ -81,7 +81,7 @@ public enum InvoiceErrorKey implements Serializable {
 			visitor.visitTaxDate(t);
 		}
 	},
-	TAX_RATE("Tipo (%) de IVA") {
+	TAX_RATE("Tipo (%) del Impuesto") {
 		@Override
 		public <T> void visit(InvoiceErrorKeyVisitor<T> visitor, T t) {
 			visitor.visitTaxRate(t);

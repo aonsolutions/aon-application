@@ -9,13 +9,17 @@ import com.esferalia.aon.occam.api.model.Filter.RegistryAddressFilter;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.registry.RegistryAddress;
+import com.esferalia.aon.occam.api.model.type.FinanceStatus;
 import com.esferalia.aon.occam.api.model.type.InvoiceType;
 import com.esferalia.aon.occam.api.model.type.RectificationType;
 import com.esferalia.aon.occam.api.model.type.SecurityLevel;
+import com.esferalia.aon.occam.api.model.type.VatDeductionType;
+import com.esferalia.aon.occam.api.model.type.WithholdingType;
 import com.esferalia.aon.occam.impl.jooq.dao.RegistryAddressDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.RegistryDAO;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.server.AonDateUtils;
+import com.esferalia.aon.watson.util.AonCollectionUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 
@@ -33,8 +37,6 @@ class InvoiceAutoComplete {
 		}
 	};
 
-	
-	
 	/**
 	 * Se rellena el número de referencia para las facturas de ventas.
 	 */
@@ -178,6 +180,21 @@ class InvoiceAutoComplete {
 		}
 	};
 	
+	/**
+	 * Se inicializa el tipo de retención y el tipo de deducción de IVA
+	 */
+	private static final BiConsumer<AONContext,Invoice> COMPLETE_VAT_DEDUCTION_TYPE = (ctx,inv) -> 
+		AonCollectionUtils.stream(inv.getDetails())
+			.flatMap(id -> AonCollectionUtils.stream(id.getInvoiceTaxes()))
+			.filter(it -> it.getVatDeductionType() == null )
+			.forEach( it -> it.setVatDeductionType(VatDeductionType.WITH_RIGHT));
+	
+	private static final BiConsumer<AONContext,Invoice> COMPLETE_IRPF_PROFESSIONAL = (ctx,inv) -> 
+		AonCollectionUtils.stream(inv.getDetails())
+			.flatMap(id -> AonCollectionUtils.stream(id.getInvoiceTaxes()))
+			.filter(it -> it.getWithholdingType() == null )
+			.forEach( it -> it.setWithholdingType(WithholdingType.PROFESSIONAL));
+
 	static void completeInvoice(AONContext ctx,Invoice inv) throws AonCoreException {
 		COMPLETE_DOMAIN
 		.andThen(COMPLETE_SALES_SERIES)
@@ -190,6 +207,8 @@ class InvoiceAutoComplete {
 		.andThen(COMPLETE_REGISTRY_ADDRESS)
 		.andThen(COMPLETE_ACTIVITY)
 		.andThen(COMPLETE_SECURITY_LEVEL)
+		.andThen(COMPLETE_VAT_DEDUCTION_TYPE)
+		.andThen(COMPLETE_IRPF_PROFESSIONAL)
 		.andThen(COMPLETE_FIRST_FINANCE)
 		.accept(ctx,inv);
 	}

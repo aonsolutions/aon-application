@@ -36,11 +36,13 @@ import com.esferalia.aon.occam.api.model.product.Item;
 import com.esferalia.aon.occam.api.model.registry.Seller;
 import com.esferalia.aon.occam.api.model.type.InvoiceSource;
 import com.esferalia.aon.occam.api.model.type.InvoiceType;
+import com.esferalia.aon.occam.api.model.warehouse.Warehouse;
 import com.esferalia.aon.occam.impl.jooq.dao.AccountDAO.FullAccountFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.InvestAssetDAO.InvestAssetFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.InvoiceOLDDAO.InvoiceFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.ItemDAO.ItemFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.SellerDAO.SellerFiller;
+import com.esferalia.aon.occam.impl.jooq.dao.WarehouseDAO.WarehouseFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.WorkplaceDAO.WorkplaceFiller;
 import com.esferalia.aon.watson.util.AonEnumUtils;
 
@@ -180,7 +182,7 @@ public class InvoiceDetailOLDDAO {
 		.set(INVOICE_DETAIL.PREPAYMENT, AonEnumUtils.getByte(invoiceDetail.isPrepayment())) 
 		.set(INVOICE_DETAIL.SELLER, invoiceDetail.getSeller() == null ? null : invoiceDetail.getSeller().getId())
 		.set(INVOICE_DETAIL.WORKPLACE, invoiceDetail.getWorkplace() == null ? null : invoiceDetail.getWorkplace().getId())
-		.set(INVOICE_DETAIL.WAREHOUSE, invoiceDetail.getWarehouse())
+		.set(INVOICE_DETAIL.WAREHOUSE, invoiceDetail.getWarehouse() == null ? null : invoiceDetail.getWarehouse().getId())
 		.set(INVOICE_DETAIL.MODIFICATION_USER ,ctx.getUser())
 		.set(INVOICE_DETAIL.MODIFICATION_DATE, new Timestamp( System.currentTimeMillis()))
 		.where(INVOICE_DETAIL.ID.eq(invoiceDetail.getId()))
@@ -208,7 +210,7 @@ public class InvoiceDetailOLDDAO {
 			.set(INVOICE_DETAIL.PREPAYMENT, AonEnumUtils.getByte(invoiceDetail.isPrepayment())) 
 			.set(INVOICE_DETAIL.SELLER, invoiceDetail.getSeller() == null ? null : invoiceDetail.getSeller().getId())
 			.set(INVOICE_DETAIL.WORKPLACE, invoiceDetail.getWorkplace() == null ? null : invoiceDetail.getWorkplace().getId())
-			.set(INVOICE_DETAIL.WAREHOUSE, invoiceDetail.getWarehouse())
+			.set(INVOICE_DETAIL.WAREHOUSE, invoiceDetail.getWarehouse() == null ? null : invoiceDetail.getWarehouse().getId())
 			.set(INVOICE_DETAIL.CREATION_USER ,ctx.getUser())
 			.set(INVOICE_DETAIL.CREATION_DATE, new Timestamp( System.currentTimeMillis()))
 			.set(INVOICE_DETAIL.MODIFICATION_USER ,ctx.getUser())
@@ -251,8 +253,9 @@ public class InvoiceDetailOLDDAO {
 					.setWorkplace(checkField(r, WORKPLACE.ID) 
 							? WorkplaceFiller.build(r)
 							: new Workplace().setId(getValue(r, INVOICE_DETAIL.WORKPLACE)))
-					.setWarehouse(getValue(r, INVOICE_DETAIL.WAREHOUSE))
-					.setWarehouseName(getString(r, WAREHOUSE.NAME))
+					.setWarehouse(checkField(r, WAREHOUSE.ID)
+							? WarehouseFiller.build(r)
+							: new Warehouse().setId(getValue(r, INVOICE_DETAIL.WAREHOUSE)))
 					.setExpAccount( checkField(r, ACCOUNT.ID)
 						? FullAccountFiller.build(r)
 						: null )

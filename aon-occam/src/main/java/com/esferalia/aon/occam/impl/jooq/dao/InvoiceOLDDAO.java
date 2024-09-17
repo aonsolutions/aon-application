@@ -111,6 +111,7 @@ import com.esferalia.aon.occam.api.model.type.SecurityLevel;
 import com.esferalia.aon.occam.api.model.type.TaxType;
 import com.esferalia.aon.occam.api.model.type.WithholdingType;
 import com.esferalia.aon.occam.api.model.warehouse.IncomeDetail;
+import com.esferalia.aon.occam.api.model.warehouse.Warehouse;
 import com.esferalia.aon.occam.impl.jooq.dao.AccountDAO.FullAccountFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.CompanyDAO.EnterpriseActivityFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.InvestAssetDAO.InvestAssetFiller;
@@ -736,8 +737,9 @@ public class InvoiceOLDDAO {
 				.setWorkplace( new Workplace()
 					.setId( r.getValue(INVOICE_DETAIL.WORKPLACE) )
 					.setDescription(getValue(r,WORKPLACE.DESCRIPTION)))
-				.setWarehouse(r.getValue(INVOICE_DETAIL.WAREHOUSE))
-				.setWarehouseName(r.getValue(WAREHOUSE.NAME))
+				.setWarehouse( new Warehouse()
+					.setId( r.getValue(INVOICE_DETAIL.WORKPLACE) )
+					.setName(getValue(r,WAREHOUSE.NAME)))
 				.setSource(InvoiceSource.safeValueOf(r.getValue(INVOICE_DETAIL.SOURCE)))
 				.setSourceId(getValue(r, INVOICE_DETAIL.SOURCE_ID))
 				.setPrepayment(getBoolean(r, INVOICE_DETAIL.PREPAYMENT))

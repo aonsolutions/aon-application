@@ -1,5 +1,6 @@
 package com.esferalia.aon.occam.impl.jooq.dao.invoice;
 
+import static com.esferalia.aon.jooq.tables.Cnae2009.CNAE2009;
 import static com.esferalia.aon.jooq.tables.EnterpriseActivity.ENTERPRISE_ACTIVITY;
 import static com.esferalia.aon.jooq.tables.Iae.IAE;
 import static com.esferalia.aon.jooq.tables.Invoice.INVOICE;
@@ -51,7 +52,6 @@ import com.esferalia.aon.occam.api.model.finance.Finance;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceBreakdown;
 import com.esferalia.aon.occam.api.model.finance.InvoiceFilter;
-import com.esferalia.aon.occam.api.model.finance.InvoiceFiscal;
 import com.esferalia.aon.occam.api.model.finance.InvoiceMin;
 import com.esferalia.aon.occam.api.model.finance.InvoiceProperties;
 import com.esferalia.aon.occam.api.model.finance.InvoiceTrackingStatus;
@@ -61,7 +61,6 @@ import com.esferalia.aon.occam.api.model.invoice.InvoiceErrorMessages;
 import com.esferalia.aon.occam.api.model.registry.CreditorFull;
 import com.esferalia.aon.occam.api.model.registry.CustomerFull;
 import com.esferalia.aon.occam.api.model.registry.SupplierFull;
-import com.esferalia.aon.occam.api.model.security.Scope;
 import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.occam.api.model.type.DocumentType;
 import com.esferalia.aon.occam.api.model.type.FinanceStatus;
@@ -107,11 +106,6 @@ public class InvoiceDAO {
 	private static class InvoicePropertiesDAO implements InvoiceProperties {
 		
 		private static final long serialVersionUID = -5116444114505029655L;
-		
-		public Select<Record> build(SelectJoinStep<Record> select, InvoiceFilter filter) {
-			FilterDAO filterDAO = (FilterDAO) filter.filter(this);
-			return filterDAO.build(select);
-		}
 		
 		public Condition[] getConditions(InvoiceFilter filter) {
 			if (filter == null) {
@@ -203,6 +197,8 @@ public class InvoiceDAO {
 				,INVOICE.SCOPE
 				,INVOICE.SECURITY_LEVEL
 				,INVOICE.STATUS
+				,INVOICE.RECTIFICATION_TYPE
+				,INVOICE.RECTIFICATION_INVOICE
 				,INVOICE.TOTAL
 			)
 			.select(
@@ -213,6 +209,7 @@ public class InvoiceDAO {
 			.from(INVOICE)
 			.leftOuterJoin(ENTERPRISE_ACTIVITY).on(INVOICE.ACTIVITY.eq(ENTERPRISE_ACTIVITY.ID))
 			.leftOuterJoin(IAE).on(IAE.ID.equal(ENTERPRISE_ACTIVITY.IAE))
+			.leftOuterJoin(CNAE2009).on(CNAE2009.ID.eq(ENTERPRISE_ACTIVITY.CNAE2009))
 			;		
 	}
 	
@@ -239,31 +236,29 @@ public class InvoiceDAO {
 			.leftOuterJoin(INVOICE_FISCAL).on(INVOICE_FISCAL.INVOICE.equal(INVOICE.ID))
 			.leftOuterJoin(ENTERPRISE_ACTIVITY).on(INVOICE.ACTIVITY.eq(ENTERPRISE_ACTIVITY.ID))
 			.leftOuterJoin(IAE).on(IAE.ID.equal(ENTERPRISE_ACTIVITY.IAE))
+			.leftOuterJoin(CNAE2009).on(CNAE2009.ID.eq(ENTERPRISE_ACTIVITY.CNAE2009))
 			.leftOuterJoin(RECTIFICATION_INVOICE).on(INVOICE.RECTIFICATION_INVOICE.equal(RECTIFICATION_INVOICE.ID));
 	}
 	
-	public static Optional<Invoice> get(AONContext ctx, Integer id) {
+	public static Optional<InvoiceMin> get(AONContext ctx, Integer id) {
 		ctx.checkRead();
-		return getInvoiceSelect(ctx )
+		return getInvoiceMinSelect(ctx)
+			.where(INVOICE.ID.eq(id))
+			.fetch()
+			.stream()
+			.map( new InvoiceMinFiller() )
+			.findFirst();
+	}
+	
+	public static Optional<Invoice> getFull(AONContext ctx, Integer id) {
+		ctx.checkRead();
+		return getInvoiceSelect(ctx)
 			.where(INVOICE.ID.eq(id))
 			.fetch()
 			.stream()
 			.map( new InvoiceFiller() )
+			.map( i -> fullInvoiceBuilder(ctx, i) )
 			.findFirst();
-	}
-	
-	public static Stream<Invoice> getStream(AONContext ctx, InvoiceFilter filter){
-		ctx.checkRead();
-		return INVOICE_PROPERTIES.build(getInvoiceSelect(ctx), filter)
-			.fetch()
-			.stream()
-			.map(new InvoiceFiller());
-	}
-
-	public static Optional<Invoice> getFull(AONContext ctx, Integer id) {
-		ctx.checkRead();
-		return  get(ctx, id)
-			.map( i -> fullInvoiceBuilder(ctx, i) );
 	}
 
 	public static int getNextNumber(AONContext ctx, Byte[] types, String series ) {
@@ -428,7 +423,7 @@ public class InvoiceDAO {
 	}
 	
 	private static final BiConsumer<AONContext, Invoice> BUILD_ADDRESS = (ctx, invoice) -> invoice.setAddress(InvoiceAddressDAO.get(ctx, invoice));
-	private static final BiConsumer<AONContext, Invoice> BUILD_DETAILS = (ctx, invoice) -> invoice.setDetails(InvoiceDetailDAO.getList(ctx,invoice.getId()));
+	private static final BiConsumer<AONContext, Invoice> BUILD_DETAILS = (ctx, invoice) -> invoice.setDetails(InvoiceDetailDAO.list(ctx,invoice.getId()));
 	
 	private static final BiConsumer<AONContext, Invoice> BUILD_TAX_BREAKDOWN = (ctx, invoice) -> 
 		AonCollectionUtils.stream(invoice.getDetails())
@@ -584,7 +579,7 @@ public class InvoiceDAO {
 		InvoiceDetailDAO.save(ctx, invoice);
 		InvoiceFiscalDAO.save(ctx, invoice);
 		AonCollectionUtils.stream(invoice.getFinances())
-			.forEach( finance -> FinanceDAO.saveFinance(ctx, invoice, finance));
+			.forEach( finance -> FinanceDAO.saveFinance(ctx, invoice));
 		insertInvoiceAttach( ctx, invoice);
 		return invoice;
 	}
@@ -677,7 +672,7 @@ public class InvoiceDAO {
 	
 	private static void onDeleteRectifier(AONContext ctx, Invoice invoice) {
 		if (invoice.isRectifier() && invoice.getRectificationInvoiceId() != null) {
-			final Invoice rectified = get(ctx, invoice.getRectificationInvoiceId())
+			final InvoiceMin rectified = get(ctx, invoice.getRectificationInvoiceId())
 					.orElseThrow( () -> new AonCoreException(AonError.INVOICE_RECTIFIED_NOT_FOUND.getMessage()));
 			if (rectified.getRectificationInvoiceId() != null &&
 				AonNumberUtils.equals(invoice.getId(), rectified.getRectificationInvoiceId())) {
@@ -697,7 +692,7 @@ public class InvoiceDAO {
 				
 				rectified.setRectificationType(RectificationType.NONE);  // Si no entra en el buble, no quedan facturas rectificativas.
 				
-				getStream(ctx, p -> p.getDomainProperty().eq(ctx.getDomainId())
+				stream(ctx, p -> p.getDomainProperty().eq(ctx.getDomainId())
 					.and(p.getRectificationInvoiceProperty().eq(invoice.getRectificationInvoiceId()))
 					.and(p.getIdProperty().ne(invoice.getId()))
 				)
@@ -705,10 +700,10 @@ public class InvoiceDAO {
 					if (rectified.getRectificationInvoiceId() == null) {
 						// Primera iteracion.
 						rectified.setRectificationType(RectificationType.RECTIFIED);							
-						rectified.setRectificationInvoice(new InvoiceMin().setId(rectifier.getId()));
+						rectified.setRectificationInvoiceId(rectifier.getId());
 					} else {
 						// Segunda iteracion y sucesivas. Hay mas de una, debe continuar a null.
-						rectified.setRectificationInvoice(null);
+						rectified.setRectificationInvoiceId(null);
 					}
 				});
 				

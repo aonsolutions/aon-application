@@ -274,7 +274,7 @@ public class SellerDAO {
 		}
 		
 		public static Seller build(Record r, Registry registry) {
-			Seller seller = new Seller()
+			return new Seller()
 				.copy(RegistryFiller.build(r, registry))
 				.setId(getValue(r, SELLER.REGISTRY))
 				.setDomain(getValue(r, SELLER.DOMAIN))
@@ -289,8 +289,6 @@ public class SellerDAO {
 					? TaskHolderFiller.build(r, TASK_HOLDER_ALIAS)
 					: new TaskHolder().setRegistry(getValue(r, SELLER.TASK_HOLDER)))
 				;
-			
-			return seller;
 		}
 
 	}

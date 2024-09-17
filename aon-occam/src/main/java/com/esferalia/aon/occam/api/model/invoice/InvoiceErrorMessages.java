@@ -48,7 +48,9 @@ public enum InvoiceErrorMessages implements Serializable {
 	C200("No se puede Contabilizar. Hay un descuadre entre el total factura y la suma total de los vencimientos."),
 	
 	
-	C500("Error desconocido");
+	C500("Error desconocido"),
+	C510("El dominio de la tabla {0} no coincide con el de la tabla {1}."),
+	C511("El relación entre la tabla {0} y la tabla {1} es incoherente."),
 	
 	;
 	private String message;

@@ -3,7 +3,6 @@ package com.esferalia.aon.occam.impl.jooq.dao.invoice;
 import static com.esferalia.aon.jooq.tables.Account.ACCOUNT;
 import static com.esferalia.aon.jooq.tables.Brand.BRAND;
 import static com.esferalia.aon.jooq.tables.InvestAsset.INVEST_ASSET;
-import static com.esferalia.aon.jooq.tables.Invoice.INVOICE;
 import static com.esferalia.aon.jooq.tables.InvoiceDetail.INVOICE_DETAIL;
 import static com.esferalia.aon.jooq.tables.InvoiceDetailAccount.INVOICE_DETAIL_ACCOUNT;
 import static com.esferalia.aon.jooq.tables.InvoiceTax.INVOICE_TAX;
@@ -30,11 +29,8 @@ import org.jooq.SelectOnConditionStep;
 
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Account;
-import com.esferalia.aon.occam.api.model.Workplace;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceDetail;
-import com.esferalia.aon.occam.api.model.product.Item;
-import com.esferalia.aon.occam.api.model.registry.Seller;
 import com.esferalia.aon.occam.api.model.type.InvoiceSource;
 import com.esferalia.aon.occam.api.model.type.InvoiceSource.IInvoiceSourceVisitor;
 import com.esferalia.aon.occam.api.model.type.InvoiceType;
@@ -44,8 +40,8 @@ import com.esferalia.aon.occam.impl.jooq.dao.InvestAssetDAO.InvestAssetFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.ItemDAO.ItemFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.SellerDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.SellerDAO.SellerFiller;
+import com.esferalia.aon.occam.impl.jooq.dao.WarehouseDAO.WarehouseFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.WorkplaceDAO.WorkplaceFiller;
-import com.esferalia.aon.occam.impl.jooq.dao.invoice.InvoiceDAO.InvoiceFiller;
 import com.esferalia.aon.watson.AonError;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.util.AonCollectionUtils;
@@ -70,6 +66,7 @@ class InvoiceDetailDAO {
           .leftOuterJoin(PROJECT).on(INVOICE_DETAIL.PROJECT.eq(PROJECT.ID))
           .leftOuterJoin(PCATEGORY).on(PRODUCT.CATEGORY.eq(PCATEGORY.ID))
           .leftOuterJoin(BRAND).on(PRODUCT.BRAND.eq(BRAND.ID))
+          .leftOuterJoin(SELLER).on(SELLER.REGISTRY.eq(INVOICE_DETAIL.SELLER))
           .leftOuterJoin(SellerDAO.SELLER_ALIAS).on(SellerDAO.SELLER_ALIAS.ID.eq(INVOICE_DETAIL.SELLER))
           .leftOuterJoin(WAREHOUSE).on(WAREHOUSE.ID.eq(INVOICE_DETAIL.WAREHOUSE))
           .leftOuterJoin(WORKPLACE).on(WORKPLACE.ID.eq(INVOICE_DETAIL.WORKPLACE))
@@ -86,8 +83,9 @@ class InvoiceDetailDAO {
 			.map(new InvoiceDetailFiller());
 	}
 
-    static List<InvoiceDetail> getList(AONContext ctx, Integer invoiceId) {
+    static List<InvoiceDetail> list(AONContext ctx, Integer invoiceId) {
 		return stream(ctx, invoiceId)
+			.map(id -> id.setInvoiceTaxes( InvoiceTaxDAO.list(ctx, id.getId())))
 			.collect(Collectors.toCollection(LinkedList::new));
 	}    
     
@@ -111,34 +109,23 @@ class InvoiceDetailDAO {
 			return new InvoiceDetail()
 				.setId(getValue(r, INVOICE_DETAIL.ID))
 				.setDomain(getValue(r, INVOICE_DETAIL.DOMAIN))
-				.setInvoice(checkField(r, INVOICE.ID)
-					? InvoiceFiller.build(r)
-					: new Invoice().setId(r.getValue(INVOICE_DETAIL.INVOICE)))
+				.setInvoice(new Invoice().setId(r.getValue(INVOICE_DETAIL.INVOICE)))
 				.setProject(getValue(r, INVOICE_DETAIL.PROJECT))
 				.setProjectName(getValue(r, PROJECT.NAME))
+				.setInvestAsset( getOpt(r, INVEST_ASSET.ID).map(i -> InvestAssetFiller.build(r)).orElse(null))
+				.setSeller( getOpt(r, SELLER.REGISTRY).map(i -> SellerFiller.build(r, SellerDAO.SELLER_ALIAS)).orElse(null))
+				.setItem( getOpt(r, ITEM.ID).map( i -> ItemFiller.build(r) ).orElse(null))
 				.setLine(getValue(r, INVOICE_DETAIL.LINE))
 				.setDescription(getValue(r, INVOICE_DETAIL.DESCRIPTION ))
 				.setQuantity(getValue(r, INVOICE_DETAIL.QUANTITY))
 				.setPrice(getValue(r, INVOICE_DETAIL.PRICE))
 				.setDiscountExpression(getValue(r, INVOICE_DETAIL.DISCOUNT_EXPR))
 				.setTaxableBase(getValue(r, INVOICE_DETAIL.TAXABLE_BASE))
-				.setItem(checkField(r, ITEM.ID)
-						? ItemFiller.build(r)
-						: new Item().setId(getValue(r, INVOICE_DETAIL.ITEM)))
-				.setSeller(checkField(r, SELLER.REGISTRY) 
-						? SellerFiller.build(r)
-						: new Seller().setId(getValue(r, INVOICE_DETAIL.SELLER)))
-				.setWorkplace(checkField(r, WORKPLACE.ID) 
-						? WorkplaceFiller.build(r)
-						: new Workplace().setId(getValue(r, INVOICE_DETAIL.WORKPLACE)))
-				.setWarehouse(getValue(r, INVOICE_DETAIL.WAREHOUSE))
-				.setWarehouseName(getString(r, WAREHOUSE.NAME))
-				.setExpAccount( checkField(r, ACCOUNT.ID)
-					? FullAccountFiller.build(r)
-					: null )
-				.setInvestAsset(checkField(r, INVEST_ASSET.ID)
-						? InvestAssetFiller.build(r)
-						: null )
+				.setTaxes(getValue(r, INVOICE_DETAIL.TAXES))
+				.setPrepayment(getBoolean(r, INVOICE_DETAIL.PREPAYMENT))
+				.setWorkplace(getOpt(r, WORKPLACE.ID).map(w -> WorkplaceFiller.build(r)).orElse(null))
+				.setWarehouse(getOpt(r, WAREHOUSE.ID).map(w -> WarehouseFiller.build(r)).orElse(null))
+				.setExpAccount( getOpt(r, ACCOUNT.ID).map(a -> FullAccountFiller.build(r)).orElse(null))
 				.setSource(InvoiceSource.safeValueOf(getValue(r, INVOICE_DETAIL.SOURCE)))
 				.setSourceId(getValue(r, INVOICE_DETAIL.SOURCE_ID));
 		}
@@ -169,8 +156,8 @@ class InvoiceDetailDAO {
 			? update(ctx, invoiceDetail)
 			: insert(ctx, invoice, invoiceDetail);
 		
-		if (invoiceDetail.getInvoice().getType() != InvoiceType.UNDEDUCTIBLE && !invoiceDetail.isPrepayment()) {
-			InvoiceTaxDAO.save(ctx, invoiceDetail.getInvoiceTaxes(), invoiceDetail);	
+		if (invoice.getType() != InvoiceType.UNDEDUCTIBLE && !invoiceDetail.isPrepayment()) {
+			InvoiceTaxDAO.save(ctx, invoice, invoiceDetail);	
 		} else {
 			ctx.log().debug("\t\tSKIPPING INVOICE TAX CREATION ({0})",(invoiceDetail.isPrepayment()? "PREPAYMENT": "UNDEDUCTIBLE INVOICE"));
 		}
@@ -197,7 +184,7 @@ class InvoiceDetailDAO {
 			.set(INVOICE_DETAIL.PREPAYMENT, AonEnumUtils.getByte(invoiceDetail.isPrepayment())) 
 			.set(INVOICE_DETAIL.SELLER, invoiceDetail.getSeller() == null ? null : invoiceDetail.getSeller().getId())
 			.set(INVOICE_DETAIL.WORKPLACE, invoiceDetail.getWorkplace() == null ? null : invoiceDetail.getWorkplace().getId())
-			.set(INVOICE_DETAIL.WAREHOUSE, invoiceDetail.getWarehouse())
+			.set(INVOICE_DETAIL.WAREHOUSE, invoiceDetail.getWarehouse() == null ? null : invoiceDetail.getWarehouse().getId())
 			.set(INVOICE_DETAIL.MODIFICATION_USER ,ctx.getUser())
 			.set(INVOICE_DETAIL.MODIFICATION_DATE, new Timestamp( System.currentTimeMillis()))
 			.where(INVOICE_DETAIL.ID.eq(invoiceDetail.getId()))
@@ -230,7 +217,7 @@ class InvoiceDetailDAO {
 			.set(INVOICE_DETAIL.PREPAYMENT, AonEnumUtils.getByte(invoiceDetail.isPrepayment())) 
 			.set(INVOICE_DETAIL.SELLER, invoiceDetail.getSeller() == null ? null : invoiceDetail.getSeller().getId())
 			.set(INVOICE_DETAIL.WORKPLACE, invoiceDetail.getWorkplace() == null ? null : invoiceDetail.getWorkplace().getId())
-			.set(INVOICE_DETAIL.WAREHOUSE, invoiceDetail.getWarehouse())
+			.set(INVOICE_DETAIL.WAREHOUSE, invoiceDetail.getWarehouse() == null ? null : invoiceDetail.getWarehouse().getId())
 			.set(INVOICE_DETAIL.CREATION_USER ,ctx.getUser())
 			.set(INVOICE_DETAIL.CREATION_DATE, new Timestamp( System.currentTimeMillis()))
 			.set(INVOICE_DETAIL.MODIFICATION_USER ,ctx.getUser())

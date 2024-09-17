@@ -6,14 +6,18 @@ import java.util.function.BiConsumer;
 
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.finance.Finance;
+import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.PayMethod;
 import com.esferalia.aon.occam.api.model.registry.Registry;
+import com.esferalia.aon.occam.api.model.type.FinanceStatus;
 import com.esferalia.aon.occam.api.model.type.InvoiceType;
 import com.esferalia.aon.occam.api.model.type.SecurityLevel;
 import com.esferalia.aon.occam.impl.jooq.dao.PayMethodDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.SecurityDAO;
 import com.esferalia.aon.watson.error.AonCoreException;
+import com.esferalia.aon.watson.util.AonCollectionUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
+import com.esferalia.aon.watson.util.Pair;
 
 public class FinanceAutoComplete {
 
@@ -145,5 +149,40 @@ public class FinanceAutoComplete {
 			.andThen(COMPLETE_PAYMETHOD)
 			.accept(finance, ctx);
 	}
-
+	
+	private static final BiConsumer<AONContext,Pair<Invoice,Finance>> COMPLETE_NEW_FINANCES = (ctx,pair) -> {
+		Finance finance = pair.getRight();
+		if (finance.getId() == null ) {
+			Invoice inv = pair.getLeft();
+			finance
+				.setInvoice(inv)
+				.setDomain(inv.getDomain())
+				.setRegistry(new Registry().setId(inv.getRegistry()))
+				.setRegistryDocument(inv.getRegistryDocument())
+				.setRegistryDocumentType(inv.getRegistryDocumentType())
+				.setRegistryDocumentCountry(inv.getRegistryDocumentCountry())
+				.setRegistryName(inv.getRegistryName())
+				.setScope(inv.getScope())
+				.setSecurityLevel(inv.getSecurityLevel())
+				.setConcept(inv.getDocumentNumber())
+				.setFinanceStatus(FinanceStatus.PENDING);
+		}
+	};
+	
+	private static final BiConsumer<AONContext,Pair<Invoice,Finance>> COMPLETE_SAVED_FINANCES = (ctx,pair) -> {
+		Finance finance = pair.getRight();
+		if (finance.getId() != null ) {
+			Invoice inv = pair.getLeft();
+			finance
+			.setSecurityLevel(inv.getSecurityLevel())
+			.setConcept(inv.getDocumentNumber());
+		}
+	};
+	
+	public static void completeFinanceFromInvoice(AONContext ctx, Pair<Invoice,Finance> pair) throws AonCoreException {
+		COMPLETE_NEW_FINANCES
+			.andThen(COMPLETE_SAVED_FINANCES)
+			.accept(ctx,pair);
+	}
+	
 }
