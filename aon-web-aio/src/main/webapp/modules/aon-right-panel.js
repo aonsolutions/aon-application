@@ -113,7 +113,6 @@ export class AonRightPanel extends AonElement {
         let content = this.createDiv(this.CONTENT);
     
         rightPanel.appendChild(content);
-
     }
 
     setTitle(title){
@@ -178,7 +177,8 @@ export class AonRightPanel extends AonElement {
     }
 
     isClose() {
-        return this.getRightPanel().style.marginRight == "-360px";
+		return  !this.getRightPanel().classList.contains("open");
+		//return this.getRightPanel().style.marginRight == "-360px";
     }
 
     isOpen(){

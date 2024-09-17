@@ -2138,6 +2138,8 @@ label.rating:hover {
   height: 32px;
   cursor: pointer;
   padding: 0px 0px 0px 68px;
+  margin-left: 60px;
+  position: relative;
   background-position: center;
   background-repeat: no-repeat;
   background-image: url("../assets/aon-white-logo.svg");
@@ -4479,3 +4481,5 @@ font-weight: 600;
           -o-transition: margin-right 0.3s linear;
              transition: margin-right 0.3s linear;
 }
+
+

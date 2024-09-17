@@ -266,8 +266,9 @@ export class AonNewMenu extends AonElement {
         if(this.isApp(app) || excludedApps.includes(app.app)){
 			if(app.app != "new"){
 				this.dispatchEvent(new CustomEvent(EVENT.AON_APPLICATION_SELECT, { detail }));	
+				this.setSelectedMenuSidenav(app);
 			}
-			this.setSelectedMenuSidenav(app);
+			
 		}
 		if(app.app != "new"){
 			let appsDiv = this.getElement("aonMenuLeftop-applications");
@@ -313,6 +314,10 @@ export class AonNewMenu extends AonElement {
 		header.className = 'aonHeader aonHeaderStart';
 		let applications = this.getElement('applications');
 		applications.className = 'aonMenuLeftopStart';
+
+		if(LS.isOnlyOne()&& LS.isLeftMenu()){
+			this.showSideNav();
+		}
 
 	}
 
@@ -482,23 +487,20 @@ export class AonNewMenu extends AonElement {
 		let sidenav = this.getElement(this.AON_MENU_SIDENAV);
 		let menulist = this.getElement("aonMenuList");
 		let rootPanel = this.getElement("rootPanel");
-		let aonlogo = this.getElement("aonLogo");
-	
-		// Añadir transición de forma directa en JavaScript
-		sidenav.style.transition = 'width 0.3s ease';
-		rootPanel.style.transition = 'margin-left 0.3s ease';
-		// aonlogo.style.transition = 'left 0.3s ease';
-	
-		// Mostrar el sidenav de forma suave
+
+		// let aonlogo = this.getElement("aonLogo");		
+		// let icon = this.getElement("aonMenuLeftop");
+
 		sidenav.style.width = '68px';
 		sidenav.style.display = "";  // Asegurarse de que esté visible
 	
 		menulist.style.visibility = "visible";
-	
-		// Mover suavemente el logo
-		aonlogo.style.left = '60px';
-		aonlogo.style.position = 'relative';
-	
+		
+		// aonlogo.style.left = '60px';
+		// aonlogo.style.position = 'relative';
+
+		// icon.style.visibility = "visible";
+
 		rootPanel.style.marginLeft = '68px';
 	}
 	
@@ -519,15 +521,11 @@ export class AonNewMenu extends AonElement {
 	
 		// Ocultar el sidenav de forma suave
 		sidenav.style.width = '0px';
-	
-		// Retrasar el cambio de display a none hasta que la animación termine
-		setTimeout(() => {
-			sidenav.style.display = "none";
-		}, 300);  // La duración de la animación en milisegundos
-	
-		// // Resetear la posición del logo
-		// aonlogo.style.left = '0px';
-		// aonlogo.style.position = 'relative';
+
+		sidenav.style.display = "none";
+		aonlogo.style.position = "relative";
+		// icon.style.visibility = "hidden";
+		// aonlogo.style.left = '60px';
 	
 		rootPanel.style.marginLeft = '0px';
 	}
@@ -545,7 +543,11 @@ export class AonNewMenu extends AonElement {
 
 		let a = this.createElement(TAG.A);
 		a.addEventListener(EVENT.CLICK, () => {
-			this.appSelection(app);
+			// if(app.app === "new") {
+
+			// } else {
+				this.appSelection(app);
+			// }
 		});
 		a.classList.add('aonMenuApp');
 

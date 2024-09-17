@@ -9,7 +9,7 @@ import { AonMobileList } from "../../../components/aon-mobile-list.js";
 import { AonTable } from "../../../components/aon-table.js";
 import { AonDateUtils } from "../../utils/AonDateUtils.js";
 import { PAYROLL } from "../../../services/app.js";
-
+import * as LS from "../../../services/localStorageService.js";
 
 export class AonMovementsList extends AonElement {
   TABLE_ID;
@@ -278,8 +278,11 @@ export class AonMovementsList extends AonElement {
     } else {
       tipo_mov = `${tipo_mov} Consolidada`;
     }
+
+    if(LS.isDarkBetaTheme()) color = 'var(--aonNewWhite)';
+
     let span = this.createElement(TAG.SPAN);
-    span.style.fontWeight = 600;
+    span.style.fontWeight = "bold";
     span.style.color = color;
     span.innerText = tipo_mov;
     return {
