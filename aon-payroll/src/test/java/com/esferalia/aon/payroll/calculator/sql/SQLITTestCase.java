@@ -4649,6 +4649,66 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 	}
 
 	@Test
+	public void testPaternityITPartialIII() throws ExpressionException, SQLException,
+			SalaryException {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+		
+		
+
+		//@formatter:off
+		ContractRecord contract = newContract(aonContext, 
+		getFirstDayOfMonth(getToday()),
+		new HashMap<String,String>(){
+			{
+				put(MONTH_DAYS.getName(), "30.00");
+				put(PARTIAL_FACTOR.getName(), "0.75");
+			}
+		},
+		new String[] {
+		"250.00 * DIAS_TRABAJADOS / DIAS_MES" ,
+		"1500.00 * DIAS_TRABAJADOS / DIAS_MES",
+		}, 
+		new String[] {						
+		"BASE_CGC * 0.10", 
+		"BASE_CGP * 0.05",
+		"BASE_IRPF * PORCENTAJE_IRPF/100" 
+		}, null);
+		//@formatter:on
+		
+		Date startITDate = getToday() ;
+		Date endITDate = add(startITDate, Calendar.MONTH, 5);
+		
+		addIT(aonContext, contract, LeaveType.PATERNITY, startITDate,endITDate, 1750.00/30);
+		addData(aonContext, contract, startITDate, endITDate, ContextVariable.PATERNITY_FACTOR, 0.50);
+		
+		Date startDate = getFirstDayOfMonth(add(startITDate,MONTH,1));
+		Date endDate = getLastDayOfMonth(startDate);
+
+
+		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
+				connection, startDate, endDate, endDate, contract);
+		SmartContractSalaryCalculator<Salary> calculator = new SmartContractSalaryCalculator<Salary>();
+
+		calculator.setSalaryBuilder(new SalaryBuilder(){
+			@Override
+			public void addPayment(Double amount, Double quote, Double tax, String description,
+					java.util.Date startDate, java.util.Date endDate, IPayment payment,
+					Map<String, ITimedVariable<?>> context) {
+				super.addPayment(amount, quote, tax, description, startDate, endDate, payment, context);
+				System.out.println(description + "[" + startDate + ", " + endDate +"]: " + amount );
+			}
+		});
+		Salary salary = calculator.calculate(ctx);
+		
+		int monthDays = get( endDate, Calendar.DAY_OF_MONTH );
+		
+		org.junit.Assert.assertEquals( 1750.00 * 0.75 * 0.50 , salary.getTotalPayment(), DELTA);
+		
+		
+	}
+
+	@Test
 	public void testRedefinedIRPFIT() throws ExpressionException, SQLException,
 			SalaryException {
 		Connection connection = getConnection();
