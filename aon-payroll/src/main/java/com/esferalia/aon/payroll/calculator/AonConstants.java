@@ -7,6 +7,7 @@ import java.util.List;
 import com.esferalia.aon.payroll.enumeration.CCCType;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.payroll.enumeration.DismissalType;
+import com.esferalia.aon.payroll.enumeration.LeaveType;
 import com.esferalia.aon.payroll.enumeration.OffType;
 import com.esferalia.aon.payroll.enumeration.certificados.TLDCAUSS;
 import com.esferalia.aon.salary.enumeration.PaymentType;
@@ -104,6 +105,7 @@ public class AonConstants {
 	@Variable(ContextVariable.ASSIMILATE)
 	public static CCCType ASSIMILATE = CCCType.ASSIMILATEDS;
 
+
 	// ------------------------------------------------------------------------
 	// 
 	// ------------------------------------------------------------------------
@@ -122,6 +124,15 @@ public class AonConstants {
 					e.printStackTrace();
 				}
 			}
+		}
+		
+		for ( LeaveType leaveType : LeaveType.values() ) {
+			try {
+				context.setVariable(leaveType.name(), leaveType, startDate, endDate);
+			} catch (IllegalArgumentException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} 
 		}
 	}
 	

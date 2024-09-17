@@ -130,6 +130,9 @@ export class AonHelp extends AonElement {
 				  helpContent.appendChild(divInfo);
 			}
 		);
+
+		let openButton = this.getElement("openNotificationButton");
+		openButton.style.display = "none";
 	
 	}
 

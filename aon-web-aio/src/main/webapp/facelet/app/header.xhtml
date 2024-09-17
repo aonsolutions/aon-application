@@ -50,17 +50,31 @@
 	}
 	
 	.aon-finding-title-internal {
-		color: white;
 	    height: 32px;
 	    display: flex;
 	    padding: 0 12px;
 	    margin: 0px 2px;
-	    font-weight: 400;
 	    border-radius: 28px;
 	    align-items: center;
-	    background-color: black;
-	  	text-transform: capitalize;
+	  	text-transform: uppercase;
+	  	
+		color: #4b4b4b;
+		font-weight: bold;
+    	font-size: 1.2em;	  	
+
+		background: none;
     }
+    
+    .aon-finding-title-toolbar > table {
+    	width: 100%;
+    	border-bottom: solid #c4c4c4 1px;
+    }
+    
+    .aon-finding-title-toolbar > table > tbody > tr {
+    	display: flex;
+    	align-items: center;
+    	flex-direction: row-reverse;
+    } 
     	
 	.aon-finding-subtitle-internal,
 	.aon-finding-toolbar-item {
@@ -226,11 +240,19 @@
     	background: none;
 	}
 	.aon-finding-toolbar{
+		min-height: 37px;
     	background: none;
 	}
 
 	.aon-finding-title-toolbar {
 		padding: 4px 0px;
+		background: #fff;
+		border-top:none;
+		border-left:none;
+		border-right:none;
+
+    	min-height: 50px;
+    	border-bottom: none;
 	}	
 	
 	.aon-dataScroller {
@@ -244,14 +266,13 @@
 	}
 	
 	.aon-finding-toolbar-item {
-    	border-right: #ddd 1px solid;
+    	border-right: none;
 	}
 	
 	.aon-header-domain-title {
 		font-weight: normal;
 	}
 	
-	.aon-finding-title-toolbar,
 	.gwt-Selector .gwt-MenuBar-horizontal,
 	.gwt-Selector .gwt-StackLayoutPanel .gwt-StackLayoutPanelHeader {
 		background: #fff;
@@ -1059,33 +1080,84 @@
 
 	.aon-finding-toolbar-item-group {
 	    padding: 0px 0;
+	    display: flex;
+	    align-items: center;
 	}
 
-	.aon-finding-toolbar-item.aon-icon-new,
-	.aon-finding-toolbar-item.aon-icon-csv,
-	.aon-finding-toolbar-item.aon-icon-pdf,
-	.aon-finding-toolbar-item.aon-icon-info,
-	.aon-finding-toolbar-item.aon-icon-excel,
-	.aon-finding-toolbar-item.aon-icon-audit,
-	.aon-finding-toolbar-item.aon-icon-reset,
-	.aon-finding-toolbar-item.aon-icon-accept,
-	.aon-finding-toolbar-item.aon-icon-cancel,
-	.aon-finding-toolbar-item.aon-icon-rubber,
-	.aon-finding-toolbar-item.aon-icon-search,
-	.aon-finding-toolbar-item.aon-icon-delete,
-	.aon-finding-toolbar-item.aon-icon-invoice,
-	.aon-finding-toolbar-item.aon-icon-webmail2,
-	.aon-finding-toolbar-item.aon-icon-import-excel-trans,
-	.aon-finding-toolbar-item.aon-icon-export-excel-trans
+	input.aon-finding-toolbar-item.aon-icon-new,
+	input.aon-finding-toolbar-item.aon-icon-csv,
+	input.aon-finding-toolbar-item.aon-icon-pdf,
+	input.aon-finding-toolbar-item.aon-icon-info,
+	input.aon-finding-toolbar-item.aon-icon-excel,
+	input.aon-finding-toolbar-item.aon-icon-audit,
+	input.aon-finding-toolbar-item.aon-icon-reset,
+	input.aon-finding-toolbar-item.aon-icon-accept,
+	input.aon-finding-toolbar-item.aon-icon-cancel,
+	input.aon-finding-toolbar-item.aon-icon-rubber,
+	input.aon-finding-toolbar-item.aon-icon-search,
+	input.aon-finding-toolbar-item.aon-icon-delete,
+	input.aon-finding-toolbar-item.aon-icon-invoice,
+	input.aon-finding-toolbar-item.aon-icon-webmail2,
+	input.aon-finding-toolbar-item.aon-icon-import-excel-trans,
+	input.aon-finding-toolbar-item.aon-icon-export-excel-trans
 	{
-		min-height:24px;
-		padding-top:4px;
-		padding-bottom:4px;
-		padding-left:24px; !important;
-		background-position-y : center;
+	    width:32px;
+		height:32px;
+	    padding: 8px;
+	    border-radius: 50%;
+	    color: transparent;
+	    display: inline-block;
+	    background-color: transparent;
+	    background-position: center center;	
+    }
+	
+	a.aon-finding-toolbar-item.aon-icon-new,
+	a.aon-finding-toolbar-item.aon-icon-csv,
+	a.aon-finding-toolbar-item.aon-icon-pdf,
+	a.aon-finding-toolbar-item.aon-icon-info,
+	a.aon-finding-toolbar-item.aon-icon-excel,
+	a.aon-finding-toolbar-item.aon-icon-audit,
+	a.aon-finding-toolbar-item.aon-icon-reset,
+	a.aon-finding-toolbar-item.aon-icon-accept,
+	a.aon-finding-toolbar-item.aon-icon-cancel,
+	a.aon-finding-toolbar-item.aon-icon-rubber,
+	a.aon-finding-toolbar-item.aon-icon-search,
+	a.aon-finding-toolbar-item.aon-icon-delete,
+	a.aon-finding-toolbar-item.aon-icon-invoice,
+	a.aon-finding-toolbar-item.aon-icon-webmail2,
+	a.aon-finding-toolbar-item.aon-icon-import-excel-trans,
+	a.aon-finding-toolbar-item.aon-icon-export-excel-trans
+	{
+		height: 24px;
+	    width: 24px;
+	    padding: 8px;
+	    border-radius: 50%;
+	    color: transparent;
+	    display: inline-block;
+	    background-color: transparent;
+	    background-position: center center;	
+    }
+
+	.aon-finding-toolbar-item.aon-icon-new:hover,
+	.aon-finding-toolbar-item.aon-icon-csv:hover,
+	.aon-finding-toolbar-item.aon-icon-pdf:hover,
+	.aon-finding-toolbar-item.aon-icon-info:hover,
+	.aon-finding-toolbar-item.aon-icon-excel:hover,
+	.aon-finding-toolbar-item.aon-icon-audit:hover,
+	.aon-finding-toolbar-item.aon-icon-reset:hover,
+	.aon-finding-toolbar-item.aon-icon-accept:hover,
+	.aon-finding-toolbar-item.aon-icon-cancel:hover,
+	.aon-finding-toolbar-item.aon-icon-rubber:hover,
+	.aon-finding-toolbar-item.aon-icon-search:hover,
+	.aon-finding-toolbar-item.aon-icon-delete:hover,
+	.aon-finding-toolbar-item.aon-icon-invoice:hover,
+	.aon-finding-toolbar-item.aon-icon-webmail2:hover,
+	.aon-finding-toolbar-item.aon-icon-import-excel-trans:hover,
+	.aon-finding-toolbar-item.aon-icon-export-excel-trans:hover{
+		background-color: #eee
 	}
 	
-	.aon-finding-toolbar-item.aon-icon-info,
+	.aon-finding-toolbar-item.aon-icon-info 
 	.aon-finding-toolbar-item.aon-icon-audit,
 	.aon-finding-toolbar-item.aon-icon-webmail2
 	{

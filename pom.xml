@@ -531,7 +531,8 @@
 					</dependency>
 				</dependencies>
 			</plugin>
-
+			<!--
+			Disabled, for GitHub Actions
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-deploy-plugin</artifactId>
@@ -549,6 +550,7 @@
 					</dependency>
 				</dependencies>
 			</plugin>
+			-->
 
 			<!-- Para añadir la carpeta de los fuentes generados como source folder. -->
 			<plugin>
@@ -606,6 +608,12 @@
 			</plugin>
 		</plugins>
 	</build>
-	
+  	<distributionManagement>
+		<repository>
+			<id>github</id>
+			<name>GitHub Packages</name>
+			<url>https://maven.pkg.github.com/aonsolutions/aon-application</url>
+    		</repository>
+	</distributionManagement>	
 </project>
 
