@@ -68,5 +68,12 @@ jobs:
     - name: Build with Maven
       run: mvn -B -Dgwt.working=true -T 1C clean install
 
+    - name: Build TEST Docker images
+      if: github.ref == 'refs/heads/master'
+      run: |
+        docker build --no-cache -t aonsolutions/aon-application:test .
+        docker build --no-cache -t aonsolutions/aon-db-up2date:test ./aon-db-up2date
+        
+
 
 
