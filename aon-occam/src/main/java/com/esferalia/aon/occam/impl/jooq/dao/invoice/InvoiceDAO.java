@@ -29,9 +29,7 @@ import org.jooq.Condition;
 import org.jooq.Field;
 import org.jooq.Record;
 import org.jooq.Record1;
-import org.jooq.Select;
 import org.jooq.SelectConditionStep;
-import org.jooq.SelectJoinStep;
 import org.jooq.SelectOnConditionStep;
 import org.jooq.impl.DSL;
 import org.json.JSONObject;
@@ -405,7 +403,9 @@ public class InvoiceDAO {
 				.setRegistryName(getValue(r,inv.RNAME))
 				.setScope(getValue(r, inv.SCOPE))
 				.setSecurityLevel(AonEnumUtils.enumValue(SecurityLevel.class, getValue(r,inv.SECURITY_LEVEL)))
-				.setRecorded(getValue(r,inv.STATUS) != null && r.getValue(inv.STATUS) == 1 )	
+				.setRecorded(getBoolean(r,inv.STATUS))	
+				.setRectificationType(AonEnumUtils.enumValue(RectificationType.class, r.getValue(inv.RECTIFICATION_TYPE)))
+				.setRectificationInvoiceId(getValue(r,inv.RECTIFICATION_INVOICE))
 				.setTotal(getValue(r,inv.TOTAL))	
 				;
 		}
@@ -442,12 +442,6 @@ public class InvoiceDAO {
 				.orElse(null)
 		);
 
-//	private static final BiConsumer<AONContext, Invoice> BUILD_RECTIFICATION_INVOICE_DATA = (ctx, invoice) -> {
-//		if(invoice.getRectificationInvoiceId() != null) {
-//			invoice.setRectificationInvoice(get(ctx, invoice.getRectificationInvoiceId()).orElse(null) ); 
-//		}
-//	};
-	
 	public static Invoice save(AONContext ctx, Invoice invoice) {
 		return save(ctx, invoice, false);
 	}

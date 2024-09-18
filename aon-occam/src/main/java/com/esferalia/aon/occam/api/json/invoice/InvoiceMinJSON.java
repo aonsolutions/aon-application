@@ -2,6 +2,7 @@ package com.esferalia.aon.occam.api.json.invoice;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -15,6 +16,7 @@ import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.occam.api.model.type.DocumentType;
 import com.esferalia.aon.occam.api.model.type.InvoiceTransactionType;
 import com.esferalia.aon.occam.api.model.type.InvoiceType;
+import com.esferalia.aon.occam.api.model.type.RectificationType;
 import com.esferalia.aon.watson.server.AonDateUtils;
 
 public class InvoiceMinJSON {
@@ -65,6 +67,8 @@ public class InvoiceMinJSON {
 			.setScope(JsonUtils.getInteger(json, IJsonNames.SCOPE))
 			.setConfidential(JsonUtils.getboolean(json, IJsonNames.CONFIDENTIAL))
 			.setRecorded(JsonUtils.getboolean(json, IJsonNames.RECORDED))
+			.setRectificationType(RectificationType.safeValueOf(JsonUtils.getString(json, IJsonNames.RECTIFICATION_TYPE)))
+			.setRectificationInvoiceId(JsonUtils.getInteger(json, IJsonNames.RECTIFICATION_INVOICE))
 			.setTotal(JsonUtils.getdouble(json, IJsonNames.TOTAL))
 			;
 	}
@@ -98,6 +102,8 @@ public class InvoiceMinJSON {
 			.put(IJsonNames.CONFIDENTIAL, invoice.isConfidential())
 			.put(IJsonNames.RECORDED, invoice.isRecorded())
 			.put(IJsonNames.TOTAL, invoice.getTotal())
+			.put(IJsonNames.RECTIFICATION_TYPE, Optional.ofNullable(invoice.getRectificationType()).map(e -> e.getDescription()).orElse(null))
+			.put(IJsonNames.RECTIFICATION_INVOICE, invoice.getRectificationInvoiceId())
 			.put(IJsonNames.SCOPE, invoice.getScope())
 		;
 	}

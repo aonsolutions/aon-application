@@ -2,6 +2,8 @@ package com.esferalia.aon.occam.api.model.type;
 
 import java.io.Serializable;
 
+import com.esferalia.aon.watson.util.AonStringUtils;
+
 public enum RectificationType implements Serializable {
 
 	NONE("Ninguno"),
@@ -32,5 +34,14 @@ public enum RectificationType implements Serializable {
 		if (i < 0 || i >= RectificationType.values().length) return null;
 		return RectificationType.values()[i];
 	}
+	public static RectificationType safeValueOf( String i ) {
+		if(AonStringUtils.isBlank(i)) return null;
+		for (RectificationType rs : values()) {
+			if(i.equalsIgnoreCase(rs.name()))
+				return rs;
+		}
+		return null;
+	}
+
 	
 }
