@@ -31,8 +31,8 @@ jobs:
         
     - name: Set up MySQL
       run: |
-        cat /etc/mysql/conf.d/*
-        cat /etc/mysql/mysql.conf.d/*
+        grep bind-address /etc/mysql/conf.d/*
+        grep bind-address /etc/mysql/mysql.conf.d/*
         lss
         sudo systemctl start mysql.service
         sudo mysql -u root --password=root -v  <<-EOSQL
