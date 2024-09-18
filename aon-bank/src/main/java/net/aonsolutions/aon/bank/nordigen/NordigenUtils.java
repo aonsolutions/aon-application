@@ -2,6 +2,8 @@ package net.aonsolutions.aon.bank.nordigen;
 
 import static net.aonsolutions.aon.bank.nordigen.NordigenConstants.RADD_INFO_REQUISITION_ATTRIBUTE_PATTERN;
 
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -16,6 +18,8 @@ import com.esferalia.aon.occam.api.model.finance.nordigen.NordigenBalanceType;
 import com.esferalia.aon.occam.api.model.finance.nordigen.NordigenBankAccount;
 import com.esferalia.aon.occam.api.model.finance.nordigen.NordigenBankStatement;
 import com.esferalia.aon.occam.api.model.finance.nordigen.NordigenRequisitionStatus;
+import com.esferalia.aon.occam.api.AON;
+import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.esferalia.aon.occam.api.json.nordigen.NordigenAccountBalanceJSON;
 import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.finance.BankStatement;
@@ -23,6 +27,8 @@ import com.esferalia.aon.occam.api.model.finance.nordigen.NordigenAccessToken;
 import com.esferalia.aon.occam.api.model.finance.nordigen.NordigenAccountBalance;
 import com.esferalia.aon.occam.api.model.finance.nordigen.NordigenRequisition;
 import com.esferalia.aon.occam.api.model.registry.RegistryAddInfo;
+import com.esferalia.aon.occam.api.model.registry.RegistryBank;
+import com.esferalia.aon.occam.impl.jooq.dao.NordigenDAO;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
@@ -70,6 +76,9 @@ public class NordigenUtils {
 		return null;
 	}
 	
+	
+	
+	// NUEVOS METODOS PROCESAR INFO DE BANCOS
 	public static boolean isTokenExpired(NordigenAccessToken token) {
 		Date today = new Date();
 		long tokenExpirationTime = token.getCreationDate().getTime() + token.getAccessExpires() * 1000;
@@ -93,8 +102,6 @@ public class NordigenUtils {
 		return token;
 	}
 	
-	// NUEVOS METODOS PROCESAR INFO DE BANCOS
-
 	public static JSONObject movementsToJson(List<NordigenBankStatement> movements,
 			NordigenBankAccount nordigenTrueAccount) {
 		JSONArray movementsJsonArray = new JSONArray();
@@ -140,17 +147,13 @@ public class NordigenUtils {
 		return bankJson;
 	}
 
-	public static JSONArray convertAccountsMovementsToJsonArray(List<NordigenBankAccount> linkedAccountList,
-			NordigenAccessToken token, Occam occam) throws Exception {
+	public static JSONArray convertAccountsMovementsToJsonArray(List<NordigenBankAccount> linkedAccountList, NordigenAccessToken token, Occam occam) throws Exception {
 		JSONArray movementsJsonArray = new JSONArray();
-
 		for (NordigenBankAccount account : linkedAccountList) {
 			NordigenBankAccount nordigenTrueAccount = AonNordigen.setBankAccountValues(occam, token, account);
 			Date lastAccessedDate = nordigenTrueAccount.getLastMovementDate();
 			boolean linked = nordigenTrueAccount.isLinked();
-
-			List<NordigenBankStatement> movements = AonNordigen.getMovements(token, occam, nordigenTrueAccount,
-					lastAccessedDate, linked);
+			List<NordigenBankStatement> movements = AonNordigen.getMovements(token, occam, nordigenTrueAccount, lastAccessedDate, linked);
 			JSONObject movementsJson = movementsToJson(movements, nordigenTrueAccount);
 			movementsJsonArray.put(movementsJson);
 		}
@@ -159,10 +162,8 @@ public class NordigenUtils {
 	}
 
 	//MOVIMIENTOS
-	public static JSONArray convertAcccountMovementsToJsonArray(List<NordigenBankAccount> linkedAccountList, Integer id,
-			NordigenAccessToken token, Occam occam) {
+	public static JSONArray convertAcccountMovementsToJsonArray(List<NordigenBankAccount> linkedAccountList, Integer id, NordigenAccessToken token, Occam occam) {
 		JSONArray movementsJsonArray = new JSONArray();
-
 		linkedAccountList.stream().filter(account -> account.getRbank().getId().equals(id)).findFirst().ifPresent(account -> {
 			try {
 				NordigenBankAccount nordigenTrueAccount = AonNordigen.setBankAccountValues(occam, token, account);
@@ -183,7 +184,6 @@ public class NordigenUtils {
 	public static JSONArray processAccountBalances(List<NordigenBankAccount> linkedAccountList,
 			NordigenAccessToken token, Occam occam) throws Exception {
 		JSONArray balancesArray = new JSONArray();
-
 		for (NordigenBankAccount account : linkedAccountList) {
 			NordigenBankAccount nordigenTrueAccount = AonNordigen.setBankAccountValues(occam, token, account);
 			List<NordigenAccountBalance> balances = nordigenTrueAccount.getBalances();
@@ -199,27 +199,21 @@ public class NordigenUtils {
 	public static JSONArray processSingleAccountBalance(List<NordigenBankAccount> linkedAccountList, Integer id,
 			NordigenAccessToken token, Occam occam) throws Exception {
 		JSONArray result = new JSONArray();
-
 		linkedAccountList.stream().filter(account -> account.getRbank().getId().equals(id)).findFirst().ifPresent(account -> {
 			try {
 				NordigenBankAccount nordigenTrueAccount = AonNordigen.setBankAccountValues(occam, token, account);
 				List<NordigenAccountBalance> balances = nordigenTrueAccount.getBalances();
-
 				JSONObject balanceObject = new JSONObject();
 				balanceObject.put("iban", account.getIban());
 				balanceObject.put("balances", NordigenAccountBalanceJSON.to(balances));
-
 				result.put(balanceObject);
 			} catch (Exception e) {
 				throw new RuntimeException("Error al procesar la cuenta", e);
 			}
 		});
-
 		return result;
 	}
 	
-	
-
 	public static void processAccountLinking(List<NordigenBankAccount> rAccounts, Integer id,
 			NordigenAccessToken token, JSONObject jsonLink, Occam occam) throws Exception {
 		for (NordigenBankAccount account : rAccounts) {

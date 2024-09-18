@@ -90,6 +90,7 @@ import com.esferalia.aon.occam.impl.jooq.dao.DomainLinkedDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.GeoZoneDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.MarketingCampaignDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.NewsletterDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.NordigenDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.QuestionDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.RDirStaffDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.RegistryAddressDAO;
@@ -677,6 +678,11 @@ public class RegistryImpl implements IRegistry{
 	@Override
 	public void deleteRegistryBank(AONContext ctx, Integer id) {
 		ctx.getDslContext().transaction(configuration -> RegistryBankDAO.delete(ctx, id));
+	}
+	
+	@Override
+	public boolean compareBalanceDate(AONContext ctx, Integer variable) {
+		return ctx.getDslContext().transactionResult(configuration -> NordigenDAO.compareBalanceDate(ctx, variable));
 	}
 
 	// -------------------- RPAYMETHOD
