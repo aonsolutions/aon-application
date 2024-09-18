@@ -4,8 +4,6 @@ import { CSS, EVENT, MATERIAL_ICONS, MSG, TAG } from 'aonsolutions/environments/
 import { AonDesktop } from 'aonsolutions/modules/company/aon-desktop.js';
 import * as LS from 'aonsolutions/services/localStorageService.js';
 import { AonDialogMenu } from 'aonsolutions/components/aon-dialog-menu.js';
-import { waitEl } from 'aonsolutions/services/utils.js';
-
 
 export class AonParent extends AonElement {
 
@@ -312,21 +310,6 @@ export class AonParent extends AonElement {
 				});
 			}
 		}, 100); 
-		
-		if(LS.isLeftMenu()) {
-			console.log("AON_MENU_SIDENAV : " + aonMenu.AON_MENU_SIDENAV);
-			waitEl("#" + aonMenu.AON_MENU_SIDENAV).then(aonMenuLeftop=>{
-		        aonMenu.showSideNav();
-				aonMenu.removeMenuOverHandlers();
-		    }); 
-		} else {
-			console.log("AonParent waitEl : " + aonMenu.AON_MENU_SIDENAV);
-			waitEl("#" + aonMenu.AON_MENU_SIDENAV).then(aonMenuLeftop=>{
-		        aonMenu.hideSideNav();
-				aonMenu.addMenuOverHandlers();
-		    });  
-			
-		}
 	}
 	
 
@@ -450,23 +433,6 @@ export class AonParent extends AonElement {
 
 			this.rootPanel(aonDesktop);
 		});
-		
-		if(LS.isLeftMenu()) {
-			console.log("AonParent companySelection showSideNavMenu : " + aonMenu.AON_MENU_SIDENAV);
-			waitEl("#" + aonMenu.AON_MENU_SIDENAV).then(aonMenuLeftop=>{
-				console.log("AonParent companySelection waitElEND");
-		        aonMenu.showSideNav();
-				aonMenu.removeMenuOverHandlers();
-		    });  
-			
-		} else {
-			console.log("AonParent companySelection waitEl : " + aonMenu.AON_MENU_SIDENAV);
-			waitEl("#" + aonMenu.AON_MENU_SIDENAV).then(aonMenuLeftop=>{
-		        aonMenu.hideSideNav();
-				aonMenu.addMenuOverHandlers();
-		    });  
-			
-		}
 	}
 
 
