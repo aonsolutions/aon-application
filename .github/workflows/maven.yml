@@ -31,7 +31,7 @@ jobs:
         
     - name: Set up MySQL
       run: |
-        sed -i "s/\(bind-address.*\)=.*/\1= 0.0.0.0/" /etc/mysql/mysql.conf.d/mysqld.cnf
+        sudo sed -i "s/\(bind-address.*\)=.*/\1= 0.0.0.0/" /etc/mysql/mysql.conf.d/mysqld.cnf
         sudo systemctl start mysql.service
         sudo mysql -u root --password=root -v  <<-EOSQL
         --
