@@ -45,6 +45,9 @@ jobs:
         CREATE USER 'dbuser'@'localhost' IDENTIFIED WITH mysql_native_password BY 'serubd2000' ;
         GRANT ALL ON *.* TO 'dbuser'@'localhost';
         EOSQL
+        DB_HOST=$(ip addr show docker0 | grep -oP 'inet \K[0-9\.]+')
+        DB_FILE=$(find aon-htmlunit/src -name "test-aonsolutions-org.sql")
+        mysql -h ${DB_HOST} -u dbuser --password=serubd2000 < ${DB_FILE}
 
     - name: Configure AWS credentials
       uses: aws-actions/configure-aws-credentials@v1
@@ -64,9 +67,6 @@ jobs:
         useSSL=false
         sessionVariables=SQL_SAFE_UPDATES=1
         EOF
-        DB_HOST=$(ip addr show docker0 | grep -oP 'inet \K[0-9\.]+')
-        DB_FILE=$(find aon-htmlunit/src -name "test-aonsolutions-org.sql")
-        mysql -h ${DB_HOST} -u dbuser --password=serubd2000 < ${DB_FILE}
 
     - name: Build with Maven
       run: mvn -B -Dgwt.working=true -T 1C clean install
