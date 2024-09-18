@@ -31,8 +31,7 @@ jobs:
         
     - name: Set up MySQL
       run: |
-        grep bind-address /etc/mysql/mysql.conf.d/*
-        lss
+        sed -i "s/\(bind-address.*\)=.*/\1= 0.0.0.0/" /etc/mysql/mysql.conf.d/mysqld.cnf
         sudo systemctl start mysql.service
         sudo mysql -u root --password=root -v  <<-EOSQL
         --
@@ -65,6 +64,9 @@ jobs:
         useSSL=false
         sessionVariables=SQL_SAFE_UPDATES=1
         EOF
+        DB_HOST=$(ip addr show docker0 | grep -oP 'inet \K[0-9\.]+')
+        DB_FILE=$(find aon-htmlunit/src -name "test-aonsolutions-org.sql")
+        mysql -h ${DB_HOST} -u dbuser --password=serubd2000 < ${DB_FILE}
 
     - name: Build with Maven
       run: mvn -B -Dgwt.working=true -T 1C clean install
