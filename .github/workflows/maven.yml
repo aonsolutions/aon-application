@@ -19,6 +19,12 @@ jobs:
 
     runs-on: ubuntu-latest
 
+    permissions:
+      contents: read
+      packages: write
+      attestations: write
+      id-token: write
+
     steps:
     - uses: actions/checkout@v4
 
@@ -45,10 +51,14 @@ jobs:
         CREATE USER 'dbuser'@'localhost' IDENTIFIED WITH mysql_native_password BY 'serubd2000' ;
         GRANT ALL ON *.* TO 'dbuser'@'localhost';
         EOSQL
-        DB_HOST=$(ip addr show docker0 | grep -oP 'inet \K[0-9\.]+')
-        DB_FILE=$(find aon-htmlunit/src -name "test-aonsolutions-org.sql")
-        mysql -h ${DB_HOST} -u dbuser --password=serubd2000 < ${DB_FILE}
 
+    - name: Login to GitHub Container Registry
+      uses: docker/login-action@v3
+      with:
+        registry: ghcr.io
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+  
     - name: Configure AWS credentials
       uses: aws-actions/configure-aws-credentials@v1
       with:
@@ -71,12 +81,28 @@ jobs:
     - name: Build with Maven
       run: mvn -B -Dgwt.working=true -T 1C clean install
 
-    - name: Build Docker images for integration testing
+    # - name: Build Docker images for integration testing
+    #  if: github.ref == 'refs/heads/master'
+    #  run: |
+    #    docker build --no-cache -t aonsolutions/aon-application:test .
+    #    docker build --no-cache -t aonsolutions/aon-db-up2date:test ./aon-db-up2date
+    
+    - name: Build and push Docker aon-application image
       if: github.ref == 'refs/heads/master'
-      run: |
-        docker build --no-cache -t aonsolutions/aon-application:test .
-        docker build --no-cache -t aonsolutions/aon-db-up2date:test ./aon-db-up2date
+      uses: docker/build-push-action@v6
+      with:
+        context: .
+        push: true
+        tags: aonsolutions/aon-application:dev
 
+    - name: Build and push Docker aon-db-up2date image
+      if: github.ref == 'refs/heads/master'
+      uses: docker/build-push-action@v6
+      with:
+        context: ./aon-db-up2date
+        push: true
+        tags: aonsolutions/aon-db-up2date:dev
+    
     - name: Setup environment for integration testing
       if: github.ref == 'refs/heads/master'
       run: |
