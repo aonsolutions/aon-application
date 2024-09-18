@@ -496,6 +496,8 @@ export class AonNewMenu extends AonElement {
 		let aonMenuLeftop = this.getElement(this.AON_MENU_LEFTOP);
 		let aonMenuSidenav = this.getElement(this.AON_MENU_SIDENAV);
 		
+		console.log("addMenuOverHandlers");
+		
 		// Eventos para el botón
 		aonMenuLeftop.addEventListener('mouseover', this.openMenuPanelHandler);
 	
@@ -509,12 +511,18 @@ export class AonNewMenu extends AonElement {
 		let aonMenuLeftop = this.getElement(this.AON_MENU_LEFTOP);
 		let aonMenuSidenav = this.getElement(this.AON_MENU_SIDENAV);
 		
+		/*
 		if(this.openMenuPanelHandler){
+			console.log("removeMenuOverHandlers openMenuPanelHandler");
 		 	aonMenuLeftop.removeEventListener('mouseover', this.openMenuPanelHandler);
 	    	aonMenuSidenav.removeEventListener('mouseover', this.openMenuPanelHandler);
 		}
+		*/
 		
-		if(this.closeMenuPanelHandler) document.removeEventListener('mouseover', this.closeMenuPanelHandler);
+		if(this.closeMenuPanelHandler) {
+			console.log("removeMenuOverHandlers closeMenuPanelHandler");
+			document.removeEventListener('mouseover', this.closeMenuPanelHandler);
+		}
 			
 	}
 
@@ -527,6 +535,7 @@ export class AonNewMenu extends AonElement {
 		let rootPanel = this.getElement("rootPanel");
 		
 		if(!LS.isLeftMenu()){
+			console.log("add mouseover to DOCUMENT");
 			document.addEventListener('mouseover', this.closeMenuPanelHandler);
 			rootPanel.style.marginLeft = "0";
 		} else {
@@ -555,6 +564,20 @@ export class AonNewMenu extends AonElement {
 		let newDialogDialogMenuContent = this.getElement("newDialogDialogMenuContent");
 		
 		if(!LS.isLeftMenu() && event){
+			/*
+			console.log(event.target);
+			
+			console.log(aonMenuLeftop);
+			console.log(aonMenuSidenav);
+			console.log(menuNewOptionsDialog);
+			console.log(newDialogDialogMenuContent);
+			
+			console.log("!aonMenuLeftop.contains(event.target) : " + !aonMenuLeftop.contains(event.target));
+			console.log("!aonMenuSidenav.contains(event.target) : " + !aonMenuSidenav.contains(event.target));
+			console.log("(!menuNewOptionsDialog || !menuNewOptionsDialog.contains(event.target)) : " + (!menuNewOptionsDialog || !menuNewOptionsDialog.contains(event.target)));
+			console.log("(!newDialogDialogMenuContent || !newDialogDialogMenuContent.contains(event.target)) : " + (!newDialogDialogMenuContent || !newDialogDialogMenuContent.contains(event.target)));
+			*/
+			
 			if (!aonMenuLeftop.contains(event.target) && 
 				!aonMenuSidenav.contains(event.target) && 
 				(!menuNewOptionsDialog || !menuNewOptionsDialog.contains(event.target)) && 
@@ -565,21 +588,34 @@ export class AonNewMenu extends AonElement {
 					if(newDialogMenu) newDialogMenu.close();
 				}
 				
+				console.log("remove mouseover to DOCUMENT");
+				
 				document.removeEventListener('mouseover', this.closeMenuPanelHandler);
+			
+				if(LS.isTopMenu())
+					this.reloadTopNav();
+			
+				let sidenav = this.getElement(this.AON_MENU_SIDENAV);
+				if(sidenav){
+					sidenav.style.width = '0';
+					sidenav.style.display = "none";
+				}
 			}
 		} else {
 			let rootPanel = this.getElement("rootPanel");
 			rootPanel.style.marginLeft = "0";
-		}
-		
-		if(LS.isTopMenu())
+			
+			if(LS.isTopMenu())
 				this.reloadTopNav();
 		
-		let sidenav = this.getElement(this.AON_MENU_SIDENAV);
-		if(sidenav){
-			sidenav.style.width = '0';
-			sidenav.style.display = "none";
+			let sidenav = this.getElement(this.AON_MENU_SIDENAV);
+			if(sidenav){
+				sidenav.style.width = '0';
+				sidenav.style.display = "none";
+			}
 		}
+		
+		
 		
 		/*
 		this.sideNavTimeout = setTimeout(() => {
