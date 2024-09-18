@@ -79,7 +79,7 @@ jobs:
       run: |
         DB_HOST=$(ip addr show docker0 | grep -oP 'inet \K[0-9\.]+')
         DB_FILE=$(find aon-htmlunit/src -name "test-aonsolutions-org.sql")
-        mysql -h ${DB_HOST} -u dbuser --password=serubd2000 < $(DB_FILE)
+        mysql -h ${DB_HOST} -u dbuser --password=serubd2000 < ${DB_FILE}
         docker run -e DB_USER=dbuser -e DB_PASSWD=serubd2000 -e DB_HOST=${DB_HOST} aonsolutions/aon-db-up2date:test
         docker run -d -p 8080:8080 -e DB_USER=dbuser -e DB_PASSWD=serubd2000 -e DB_HOST=${DB_HOST} aonsolutions/aon-application:test
         sudo tee -a /etc/hosts >/dev/null <<-EOF
