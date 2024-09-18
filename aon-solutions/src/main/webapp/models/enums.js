@@ -164,21 +164,6 @@ export const MONTHS =[
 	DECEMBER
 ];
 
-export const MONTHS_ABR =[
-	"Ene",
-	"Feb",
-	"Mar",
-	"Abr",
-	"May",
-	"Jun",
-	"Jul",
-	"Ago",
-	"Sep",
-	"Oct",
-	"Nov",
-	"Dic"
-];
-
 export const InvestAssetType = {
 	PREMISES: {
 		id: 'PREMISES',
