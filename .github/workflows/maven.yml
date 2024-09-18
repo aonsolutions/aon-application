@@ -32,6 +32,8 @@ jobs:
         
     - name: Set up MySQL
       run: |
+        cat /etc/mysql/my.cnf
+        lss
         sudo systemctl start mysql.service
         sudo mysql -u root --password=root -v  <<-EOSQL
         --
