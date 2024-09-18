@@ -31,7 +31,6 @@ jobs:
         
     - name: Set up MySQL
       run: |
-        grep bind-address /etc/mysql/conf.d/*
         grep bind-address /etc/mysql/mysql.conf.d/*
         lss
         sudo systemctl start mysql.service
