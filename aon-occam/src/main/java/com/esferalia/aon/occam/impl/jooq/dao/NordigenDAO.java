@@ -7,12 +7,23 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import org.joda.time.Days;
+import org.joda.time.LocalDate;
+import org.jooq.DatePart;
 import org.jooq.InsertValuesStep11;
 import org.jooq.Record;
+import org.jooq.Record1;
+import org.jooq.Result;
+import org.jooq.SelectConditionStep;
+import org.jooq.impl.DSL;
+import org.jooq.impl.QOM.Inline;
+import org.jooq.impl.QOM.TimestampDiff;
 
 import com.esferalia.aon.jooq.tables.records.BankStatementRecord;
 import com.esferalia.aon.occam.api.AONContext;
@@ -132,7 +143,6 @@ public class NordigenDAO {
 			remainder += AonNumberUtils.zeroIfNull(real.getBalanceAmount().getAmount());
 		}
 		
-		
 		ctx.getDslContext().update(RBANK)
 			.set(RBANK.BALANCE, AonNumberUtils.zeroIfNull(balance))
 			.set(RBANK.AVAILABLE_BALANCE, AonNumberUtils.zeroIfNull(remainder))
@@ -247,8 +257,26 @@ public class NordigenDAO {
 		return bs;
 	}
 	
-	
-
+	public static boolean compareBalanceDate(AONContext ctx , Integer variable) {
+	    AtomicBoolean result = new AtomicBoolean(false);
+	    Date today = new Date();
+	    Timestamp todayTS = new Timestamp(today.getTime());
+	    AtomicInteger atomicVariable = variable != null && variable != 0 ? new AtomicInteger(variable* 60 * 60 * 1000) : new AtomicInteger(86400000);
+	    ctx.getDslContext()
+	        .select(DSL.timestampDiff(DatePart.MILLISECOND, RBANK.BALANCE_DATE, todayTS))
+	        .from(RBANK)
+	        .where(RBANK.DOMAIN.eq(ctx.getDomainId())
+	        		.and(RBANK.BALANCE_DATE.isNotNull())
+	        		.and(RBANK.REQUISITION.isNotNull()))	            
+	        .fetch()
+	        .stream()
+	        .forEach(r -> {
+	            if ((Integer) r.getValue(0) >= atomicVariable.get()) {
+	                result.set(true);
+	            }
+	        });
+	    return result.get();
+	}
 	// ***********************************************************************************
 	// ***********************************************************************************
 	// ***********************************************************************************
