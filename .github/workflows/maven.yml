@@ -29,7 +29,6 @@ jobs:
         java-version: '21'
         distribution: 'temurin'
         cache: maven
-        server-id: github
         
     - name: Set up MySQL
       run: |
@@ -65,29 +64,9 @@ jobs:
         useSSL=false
         sessionVariables=SQL_SAFE_UPDATES=1
         EOF
-    # - name: Set Timezone ${{env.TZ}}
-    #  run: export TZ=${{env.TZ}}
-
-    - name: Get changed projects
-      run: |
-        export PROJECTS=$(\
-        git diff --name-only origin/master |\
-        cut -d/ -f1 | sort -u |\
-        while read module; \
-          do  [ -f $module/pom.xml ] && echo $module; \
-        done |\
-        sed -e '$ ! s/$/,/g' | tr -d '\n')
-        echo "PROJECTS=${PROJECTS}" >> $GITHUB_ENV
-
-    - name: Publish to GitHub Packages Apache Maven
-      if: github.ref == 'refs/heads/master'
-      run: mvn -B clean deploy
-      env:
-        GITHUB_TOKEN: ${{ github.token }}
 
     - name: Build with Maven
-      if: github.ref != 'refs/heads/master'
-      run: mvn -B -pl ${PROJECTS:=.} -amd -Dgwt.working=true -Dgithub.actions=true -DskipApiTests=true clean install
-      env:
-        GITHUB_TOKEN: ${{ github.token }}
+      run: mvn -B -Dgwt.working=true -T 4 clean install
+
+
 
