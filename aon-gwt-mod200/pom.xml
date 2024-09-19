@@ -32,7 +32,7 @@
             <compileSourcesArtifact>com.esferalia.aon:aon.occam.mod200</compileSourcesArtifact>
           </compileSourcesArtifacts>
           <extraJvmArgs>-Xmx3072M</extraJvmArgs>
-          <localWorkers>4</localWorkers>
+          <localWorkers>1</localWorkers>
         </configuration>
         <executions>
           <execution>

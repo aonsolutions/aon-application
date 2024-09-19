@@ -15,7 +15,10 @@ import static com.esferalia.aon.payroll.enumeration.ContextVariable.PARTIAL_FACT
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.PATERNITY_FACTOR;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.QUOTE_DAYS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.SALARY_DAYS;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.STRIKE_DAYS;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.STRIKE_FACTOR;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.TC2;
+import static com.esferalia.aon.salary.expression.ExpressionContext.getCurrentBindings;
 import static com.esferalia.aon.watson.server.AonDateUtils.getDaysBetweenDates;
 import static com.esferalia.aon.watson.util.AonDateUtils.getMax;
 import static java.util.Calendar.DAY_OF_MONTH;
@@ -40,6 +43,7 @@ import com.esferalia.aon.salary.expression.ITimedResult;
 import com.esferalia.aon.salary.expression.ITimedVariable;
 import com.esferalia.aon.salary.expression.Period;
 import com.esferalia.aon.watson.server.AonDateUtils;
+import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class ContractLeaveLoader {
@@ -538,8 +542,20 @@ public class ContractLeaveLoader {
 	
 								ExpressionContext.getCurrentBindings()
 								.get(factorVariable, value -> value, 1.00);
-	
-								return getQuoteDays(exprCtx, workedPeriod) * (1.00 - value);
+								
+								double partialFactor =
+								ExpressionContext.getCurrentBindings()
+								.get(ContextVariable.PARTIAL_FACTOR, value ->  ( value instanceof Number number) ? number.doubleValue() : 1.00 , 1.00);
+								
+								Date lastDayOfMonth = AonDateUtils.getMonthLastDay(period.getEnd());
+								double realMonthDays =  AonDateUtils.getDay(lastDayOfMonth) * 1.00 ; 
+								
+								double ctxMonthDays =
+								ExpressionContext.getCurrentBindings()
+								.get(ContextVariable.MONTH_DAYS, value ->  ( value instanceof Number number) ? number.doubleValue() : realMonthDays , realMonthDays );
+								
+								double quoteDays = getQuoteDays(exprCtx, workedPeriod);
+								return Math.min(quoteDays, ctxMonthDays ) * (1.00 - value) * partialFactor;
 							}
 						});
 						exprCtx.putVariable(ContextVariable.WORKED_FACTOR, new ITimedVariable<Double>() {
@@ -637,6 +653,7 @@ public class ContractLeaveLoader {
 
 	// ---------------------------------------------------------------- Private
 	
+
 
 	protected double getQuoteDays(ExpressionContext ctx, Period p) {
 
