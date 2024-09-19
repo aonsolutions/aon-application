@@ -362,6 +362,7 @@ public class InvoiceDAO {
 				.setRetentionQuota(r.getValue(inv.RETENTION_QUOTA))	
 				.setTotal(r.getValue(inv.TOTAL))	
 				.setComments(r.getValue(inv.COMMENTS))
+				.setRemarks(r.getValue(inv.REMARKS))
 				.setFiscal(InvoiceFiscalDAO.InvoiceFiscalFiller.buildInvoiceFiscal(r))
 				.setSeller(getValue(r, inv.SELLER))
 				.setCreationDate(r.getValue(inv.CREATION_DATE))
@@ -451,10 +452,11 @@ public class InvoiceDAO {
 	
 	public static Invoice save(AONContext ctx, Invoice invoice, boolean returnFullInvoice) {
 		ctx.checkWrite();
-		Optional.ofNullable(invoice.getId())
-			.ifPresentOrElse(
-				id -> update(ctx, invoice)
-			   ,() -> insert(ctx, invoice));
+		if (invoice.getId() == null) {
+			insert(ctx, invoice);
+		} else {
+			update(ctx, invoice);
+		}
 		if (returnFullInvoice) {
 			return getFull(ctx, invoice.getId() )
 				.orElseThrow(() -> {
@@ -763,9 +765,7 @@ public class InvoiceDAO {
 	}
 	
 	private static void saveInvoiceTracking(AONContext ctx, Invoice invoice, InvoiceTrackingStatus status) {
-		invoice.setComments(null);
-		invoice.setRemarks(null);
-		JSONObject json = InvoiceJSON.toJSON(invoice);
+		JSONObject json = InvoiceJSON.toJSON(invoice, true);
 		ctx.getDslContext().insertInto(INVOICE_TRACKING)
 			.set(INVOICE_TRACKING.ID, invoice.getId())
 			.set(INVOICE_TRACKING.DOMAIN, invoice.getDomain())

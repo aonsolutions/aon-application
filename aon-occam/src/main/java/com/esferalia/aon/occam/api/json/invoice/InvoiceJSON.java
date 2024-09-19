@@ -98,6 +98,10 @@ public class InvoiceJSON {
 	}
 	
 	public static JSONObject toJSON(Invoice invoice) {
+		return toJSON(invoice, false); 
+	}
+	
+	public static JSONObject toJSON(Invoice invoice, boolean skipComments) {
 		if (invoice == null) return null;
 		String date = AonDateUtils.format(invoice.getIssueDate(), AonDateUtils.DATE_TIME_FORMAT_AUX);
 		
@@ -123,7 +127,6 @@ public class InvoiceJSON {
 			.put(IJsonNames.RECTIFIED, invoice.isRectified())
 			.put(IJsonNames.RECTIFIER, invoice.isRectifier())
 			.put(IJsonNames.RECTIFICATION_INVOICE, InvoiceMinJSON.toJSON(invoice.getRectificationInvoice().orElse(null)) )
-			//.put(IJsonNames.COMMENTS, invoice.getComments())
 			.put(IJsonNames.TOTAL, invoice.getTotal())
 			.put(IJsonNames.SENDER,RegistryJSON.toJSON(invoice.getRegistryData()))
 			.put(IJsonNames.RECEIVER, RegistryJSON.toJSON(invoice.getRegistryData()))
@@ -132,6 +135,12 @@ public class InvoiceJSON {
 			.put(IJsonNames.FINANCES, FinanceJSON.toJSON(invoice.getFinances()))
 			.put(IJsonNames.ACTIVITY, EnterpriseActivityJSON.toJSON(invoice.getActivity().orElse(null)))
 			.put(IJsonNames.SCOPE, ScopeJSON.toJSON(invoice.getScope()));
+		
+		if (!skipComments) {
+			json			
+			.put(IJsonNames.COMMENTS, invoice.getComments())
+			.put(IJsonNames.REMARKS, invoice.getRemarks());
+		}
 		
 		String category = AonCollectionUtils.stream(invoice.getDetails())
 			.filter( det -> det.getExpAccount() != null)

@@ -18,7 +18,6 @@ import static com.esferalia.aon.jooq.tables.Workplace.WORKPLACE;
 import java.sql.Timestamp;
 import java.text.MessageFormat;
 import java.util.LinkedList;
-import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -83,7 +82,7 @@ class InvoiceDetailDAO {
 			.map(new InvoiceDetailFiller());
 	}
 
-    static List<InvoiceDetail> list(AONContext ctx, Integer invoiceId) {
+    static LinkedList<InvoiceDetail> list(AONContext ctx, Integer invoiceId) {
 		return stream(ctx, invoiceId)
 			.map(id -> id.setInvoiceTaxes( InvoiceTaxDAO.list(ctx, id.getId())))
 			.collect(Collectors.toCollection(LinkedList::new));
@@ -155,7 +154,7 @@ class InvoiceDetailDAO {
 	}
 
 	static InvoiceDetail save(AONContext ctx, Invoice invoice, InvoiceDetail invoiceDetail) {
-		invoiceDetail = (invoiceDetail.getId() != null && get(ctx, invoiceDetail.getId()).isEmpty())
+		invoiceDetail = (invoiceDetail.getId() != null)
 			? update(ctx, invoiceDetail)
 			: insert(ctx, invoice, invoiceDetail);
 		

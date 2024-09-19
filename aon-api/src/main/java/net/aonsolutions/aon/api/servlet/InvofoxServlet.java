@@ -636,7 +636,7 @@ public class InvofoxServlet extends AonApiHttpServlet {
 					detail.addInvoiceTax(invoiceTax);
 				}
 				return detail;
-			}).toList());
+			}).collect(Collectors.toCollection(LinkedList::new)));
 		}
 		return invoice;
 

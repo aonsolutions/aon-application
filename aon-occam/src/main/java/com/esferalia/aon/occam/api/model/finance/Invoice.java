@@ -92,7 +92,7 @@ public class Invoice implements Serializable, HasAudit {
 	private Date modificationDate;
 
 
-	private List<InvoiceDetail> details;
+	private LinkedList<InvoiceDetail> details;
 	private TaxBreakdown taxBreakdown;
 	private List<Finance> finances;
 	private InvoiceFiscal fiscal;
@@ -496,13 +496,13 @@ public class Invoice implements Serializable, HasAudit {
 		return this;
 	}
 	
-	public List<InvoiceDetail> getDetails() {
+	public LinkedList<InvoiceDetail> getDetails() {
 		if(details == null) {
 			details = new LinkedList<>();
 		}
 		return details;
 	}
-	public Invoice setDetails(List<InvoiceDetail> details) {
+	public Invoice setDetails(LinkedList<InvoiceDetail> details) {
 		this.details = details;
 		return this;
 	}

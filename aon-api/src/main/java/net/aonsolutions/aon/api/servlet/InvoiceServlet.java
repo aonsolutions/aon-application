@@ -11,6 +11,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -332,7 +333,7 @@ public class InvoiceServlet extends AonApiHttpServlet{
 			r.setId(null);
 			r.setInvoiceTaxes(r.getInvoiceTaxes().stream().map(tax -> tax.setId(null)).toList());
 			return r;
-		}).toList());
+		}).collect(Collectors.toCollection(LinkedList::new)));
 		// ----------
 		
 		Rawdoc rawdoc = new Rawdoc()

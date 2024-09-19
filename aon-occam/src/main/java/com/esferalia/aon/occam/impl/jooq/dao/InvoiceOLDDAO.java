@@ -1173,7 +1173,7 @@ public class InvoiceOLDDAO {
 						.and(p.getIdProperty().ne(invoice.getId()))
 					)
 					.forEach( rectifier -> {
-						if (rectified.getRectificationInvoice() == null) {
+						if (rectified.getRectificationInvoice().isEmpty()) {
 							// Primera iteracion.
 							rectified.setRectificationType(RectificationType.RECTIFIED);							
 							rectified.setRectificationInvoice(new InvoiceMin().setId(rectifier.getId()));

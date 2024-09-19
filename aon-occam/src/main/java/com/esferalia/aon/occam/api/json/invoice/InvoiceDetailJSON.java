@@ -26,7 +26,7 @@ public class InvoiceDetailJSON {
 	
 	}
 	
-	public static List<InvoiceDetail> fromJSON(JSONArray json) {
+	public static LinkedList<InvoiceDetail> fromJSON(JSONArray json) {
 		LinkedList<InvoiceDetail> list = new LinkedList<>();
 		for(Integer i = 0; i < json.length(); i++) {
 			list.add(fromJSON(json.getJSONObject(i)).setLine(i.shortValue()));

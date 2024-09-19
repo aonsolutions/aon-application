@@ -9,7 +9,6 @@ import com.esferalia.aon.occam.api.model.Filter.RegistryAddressFilter;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.registry.RegistryAddress;
-import com.esferalia.aon.occam.api.model.type.FinanceStatus;
 import com.esferalia.aon.occam.api.model.type.InvoiceType;
 import com.esferalia.aon.occam.api.model.type.RectificationType;
 import com.esferalia.aon.occam.api.model.type.SecurityLevel;
@@ -18,9 +17,11 @@ import com.esferalia.aon.occam.api.model.type.WithholdingType;
 import com.esferalia.aon.occam.impl.jooq.dao.RegistryAddressDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.RegistryDAO;
 import com.esferalia.aon.watson.error.AonCoreException;
+import com.esferalia.aon.watson.mutable.MutableInt;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonCollectionUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
+import com.fasterxml.jackson.annotation.JsonTypeInfo.Id;
 
 
 class InvoiceAutoComplete {
@@ -194,8 +195,19 @@ class InvoiceAutoComplete {
 			.flatMap(id -> AonCollectionUtils.stream(id.getInvoiceTaxes()))
 			.filter(it -> it.getWithholdingType() == null )
 			.forEach( it -> it.setWithholdingType(WithholdingType.PROFESSIONAL));
+		
+	private static final BiConsumer<AONContext,Invoice> ENSURE_DETAILS_LINE = (ctx,inv) -> {
+		MutableInt line = new MutableInt(1);  
+		AonCollectionUtils.stream(inv.getDetails())
+			.filter(d -> !d.isDeleted())
+			.forEach(d -> {
+				d.setLine(line.shortValue());
+				line.add(1);
+			});
+	};
 
 	static void completeInvoice(AONContext ctx,Invoice inv) throws AonCoreException {
+		
 		COMPLETE_DOMAIN
 		.andThen(COMPLETE_SALES_SERIES)
 		.andThen(COMPLETE_PURCHASE_EXPENSES_SERIES)
@@ -210,6 +222,7 @@ class InvoiceAutoComplete {
 		.andThen(COMPLETE_VAT_DEDUCTION_TYPE)
 		.andThen(COMPLETE_IRPF_PROFESSIONAL)
 		.andThen(COMPLETE_FIRST_FINANCE)
+		.andThen(ENSURE_DETAILS_LINE)
 		.accept(ctx,inv);
 	}
 	

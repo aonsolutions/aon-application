@@ -122,7 +122,7 @@ public class InvoiceDetailOLDDAO {
     }
 	
     @Deprecated
-	static List<InvoiceDetail> getFullList(AONContext ctx, InvoiceDetailFilter filter) {  
+	static LinkedList<InvoiceDetail> getFullList(AONContext ctx, InvoiceDetailFilter filter) {  
         return getFullStream(ctx, filter).collect(Collectors.toCollection(LinkedList::new));
     }
 	
@@ -139,7 +139,7 @@ public class InvoiceDetailOLDDAO {
 	}
 	
     @Deprecated
-	static List<InvoiceDetail> save(AONContext ctx, Invoice invoice, List<InvoiceDetail> invoiceDetails) {
+	static LinkedList<InvoiceDetail> save(AONContext ctx, Invoice invoice, List<InvoiceDetail> invoiceDetails) {
 		LinkedList<InvoiceDetail> list = new LinkedList<>();
 		invoiceDetails.stream().forEach(invoiceDetail -> 
 			list.add(save(ctx, invoice, invoiceDetail)));
