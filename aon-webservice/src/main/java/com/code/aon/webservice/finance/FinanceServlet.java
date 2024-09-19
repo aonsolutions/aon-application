@@ -18,6 +18,7 @@ import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Filter;
 import com.esferalia.aon.occam.api.model.Properties.ItemProperties;
 import com.esferalia.aon.occam.api.model.Properties.ProductProperties;
+import com.esferalia.aon.occam.api.model.finance.InvoiceFlatProperties;
 import com.esferalia.aon.occam.api.model.finance.InvoicePropertiesOLD;
 import com.esferalia.aon.occam.api.model.type.AppParam;
 import com.esferalia.aon.occam.api.model.type.BillingPeriod;
@@ -351,7 +352,7 @@ public class FinanceServlet extends HttpServlet{
 				f -> invoiceFilter(domain, map, f),
 				f -> productFilter(domain, map, f),
 				f -> itemFilter(domain, map, f))
-			.forEach(detail -> array.put(ToJSON.invoiceDetailFullToJSON(detail)));
+			.forEach(detail -> array.put(ToJSON.invoiceFlatFullToJSON(detail)));
     	return array;
     }
     
@@ -383,24 +384,7 @@ public class FinanceServlet extends HttpServlet{
     }
     
     private JSONArray getBoughtProductList(Domain domain, String login, Integer registryId){
-    	JSONArray array = new JSONArray();
-    	AON.getBoughtProductStream(domain.getName(), domain.getId(), login,
-    			f -> f.getRegistryProperty().eq(registryId))
-    		.sorted((e1, e2) -> e2.getInvoice().getIssueDate().compareTo(e1.getInvoice().getIssueDate()))
-    		.forEach(id -> {
-    			JSONObject json = ToJSON.boughtProductToJSON(id);
-    			JSONArray ar = new JSONArray();
-    			if(id.getItem().getProduct().getCode() != null){
-    				AON.getInvoiceDetails(domain.getName(), domain.getId(), login,
-    						f2-> f2.getProductCodeProperty().eq(id.getItem().getProduct().getCode())
-    						.and(f2.getRegistryProperty().eq(id.getInvoice().getRegistry())))
-    				.sorted((e1, e2) -> e2.getInvoice().getIssueDate().compareTo(e1.getInvoice().getIssueDate()))
-    				.forEach(id2 -> ar .put(ToJSON.boughtProductToJSON(id2)));
-    			}
-    			json.put("array", ar);
-    			array.put(json);
-    		});
-    	return array;
+    	return new JSONArray();
     }
     
     private JSONArray getBillingPeriodList(){
@@ -411,17 +395,17 @@ public class FinanceServlet extends HttpServlet{
     	return array;
     }
      
-    public static Filter invoiceFilter(Domain domain, Map<String, String[]> filterMap, InvoicePropertiesOLD f) {
+    public static Filter invoiceFilter(Domain domain, Map<String, String[]> filterMap, InvoiceFlatProperties f) {
 		Filter filter = f.getDomainProperty().eq(domain.getId());
 		
 		if(filterMap.containsKey(MSG.FROM)){
 			Date date = AonDateUtils.getDateWithoutTime(new Date(Long.parseLong(filterMap.get(MSG.FROM)[0])));
-			filter = filter.and(f.getStartIssueDateProperty().ge(AonDateUtils.toSql(date)));
+			filter = filter.and(f.getIssueDateProperty().ge(AonDateUtils.toSql(date)));
 		}
 
 		if(filterMap.containsKey(MSG.TO)){
 			Date date = AonDateUtils.getDateWithoutTime(new Date(Long.parseLong(filterMap.get(MSG.TO)[0])));
-			filter = filter.and(f.getEndIssueDateProperty().le(AonDateUtils.toSql(date)));
+			filter = filter.and(f.getIssueDateProperty().le(AonDateUtils.toSql(date)));
 		}
 		
 		if(filterMap.containsKey(MSG.TYPE)){

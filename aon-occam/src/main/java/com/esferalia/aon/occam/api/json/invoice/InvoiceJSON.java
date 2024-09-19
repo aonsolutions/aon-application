@@ -130,7 +130,7 @@ public class InvoiceJSON {
 			.put(IJsonNames.TAXES, InvoiceBreakdownJSON.toJSON(invoice.getBreakdown()))
 			.put(IJsonNames.DETAILS, InvoiceDetailJSON.toJSON(invoice.getDetails()))
 			.put(IJsonNames.FINANCES, FinanceJSON.toJSON(invoice.getFinances()))
-			.put(IJsonNames.ACTIVITY, EnterpriseActivityJSON.toJSON(invoice.getActivity()))
+			.put(IJsonNames.ACTIVITY, EnterpriseActivityJSON.toJSON(invoice.getActivity().orElse(null)))
 			.put(IJsonNames.SCOPE, ScopeJSON.toJSON(invoice.getScope()));
 		
 		String category = AonCollectionUtils.stream(invoice.getDetails())
@@ -168,9 +168,9 @@ public class InvoiceJSON {
 	public static JSONObject toMinimalJSON(Invoice inv) {
 		return new JSONObject()
 			.put(IJsonNames.ID, inv.getId())				
-			.put(IJsonNames.ACTIVITY, inv.getActivity()==null?null:inv.getActivity().getId())
-			.putOpt(IJsonNames.ACTIVITY_DESCRIPTION, inv.getActivity()==null?null:inv.getActivity().getDescription())
-			.putOpt(IJsonNames.EPIGRAPH, inv.getActivity()==null?null:inv.getActivity().getEpigraph())
+			.putOpt(IJsonNames.ACTIVITY, inv.getActivity().map(a -> a.getId()).orElse(null))
+			.putOpt(IJsonNames.ACTIVITY_DESCRIPTION, inv.getActivity().map(a -> a.getDescription()).orElse(null))
+			.putOpt(IJsonNames.EPIGRAPH, inv.getActivity().map(a -> a.getEpigraph()).orElse(null)) 
 			.put(IJsonNames.INVOICE_TYPE, inv.getType()==null?null:inv.getType().ordinal() )
 			.put(IJsonNames.DOCUMENT_NUMBER, inv.getDocumentNumber() )
 			.put(IJsonNames.REFERENCE_CODE, inv.getReferenceCode() )

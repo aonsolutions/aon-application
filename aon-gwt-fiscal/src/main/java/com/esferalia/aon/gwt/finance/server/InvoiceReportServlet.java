@@ -12,6 +12,7 @@ import com.esferalia.aon.gwt.fiscal.shared.IRequestParamsNames;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.Filter;
 import com.esferalia.aon.occam.api.model.Occam;
+import com.esferalia.aon.occam.api.model.finance.InvoiceFlatExtended;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceDetailExtended;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.type.InvoiceType;
@@ -139,13 +140,13 @@ public class InvoiceReportServlet extends HttpServlet {
 				.setDomain(domainId)
 				.setUser(login);
 			
-			Stream<InvoiceDetailExtended> stream = AON.getInvoiceDetailsExtended(occam,
+			Stream<InvoiceFlatExtended> stream = AON.getInvoiceFlatsExtended(occam,
 					p -> {
 						Filter f = p.getDomainProperty().eq(domainId)
 							.and(types.length==0?p.getIdProperty().isNotNull():p.getTypeProperty().in(types))
 							.and(registryId == null?p.getRegistryProperty().isNotNull():p.getRegistryProperty().eq(registryId))
-							.and(p.getStartIssueDateProperty().ge(fromDate))
-							.and(p.getEndIssueDateProperty().le(toDate))
+							.and(p.getIssueDateProperty().ge(fromDate))
+							.and(p.getIssueDateProperty().le(toDate))
 							.and(productId == null?p.getIdProperty().isNotNull():p.getProductProperty().eq(productId))
 							.and(categories.length==0?p.getIdProperty().isNotNull():p.getProductCategoryProperty().in(categories))
 							.and(brands.length==0?p.getIdProperty().isNotNull():p.getProductBrandProperty().in(brands))

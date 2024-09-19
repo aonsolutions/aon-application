@@ -27,7 +27,9 @@ public class InvoiceRecorderDAO {
 	}
 	
 	public static AccountEntry getEntryBase(AONContext ctx, AonConfiguration aonCtx, Invoice invoice) {
-		EnterpriseActivity ea = !invoice.getActivity().isEmpty() ? invoice.getActivity() : aonCtx.getMainActivity();
+		EnterpriseActivity ea = !invoice.getActivity().isPresent() 
+			? invoice.getActivity().get() 
+			: aonCtx.getMainActivity();
 		Integer activity = (ea==null?null:ea.getId());
 		Integer periodId = null;
 		if (invoice.getIssueDate() != null) {

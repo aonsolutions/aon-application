@@ -2198,7 +2198,6 @@ public class InvoiceTemplate {
 				.setInvoice(original.getInvoice());
 		newInvoiceDetail.setInvestAsset(original.getInvestAsset().orElse(null));
 		newInvoiceDetail.setProject(original.getProject());
-		newInvoiceDetail.setProjectName(original.getProjectName());
 		newInvoiceDetail.setSeller(original.getSeller());
 		newInvoiceDetail.setItem(original.getItem());
 		newInvoiceDetail.setLine(original.getLine());

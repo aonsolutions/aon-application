@@ -12,12 +12,17 @@ import org.apache.poi.ss.usermodel.IndexedColors;
 import org.apache.poi.ss.util.CellUtil;
 import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 
-import com.esferalia.aon.occam.api.model.finance.InvoiceDetail;
-import com.esferalia.aon.occam.api.model.invoice.InvoiceDetailExtended;
+import com.esferalia.aon.occam.api.model.finance.InvoiceFlat;
+import com.esferalia.aon.occam.api.model.finance.InvoiceFlatExtended;
+import com.esferalia.aon.occam.api.model.product.Brand;
+import com.esferalia.aon.occam.api.model.product.Item;
+import com.esferalia.aon.occam.api.model.product.Product;
+import com.esferalia.aon.occam.api.model.product.ProductCategory;
+import com.esferalia.aon.occam.api.model.registry.Seller;
 import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
-public class InvoiceExcelAction extends AbsExcelAction implements Consumer<InvoiceDetailExtended> {
+public class InvoiceExcelAction extends AbsExcelAction implements Consumer<InvoiceFlatExtended> {
 	
     
     private List<String> tags; 
@@ -161,8 +166,8 @@ public class InvoiceExcelAction extends AbsExcelAction implements Consumer<Invoi
 	}
 	
 	@Override
-	public void accept(InvoiceDetailExtended detailExtended ) {
-		InvoiceDetail detail = detailExtended.getDetail();
+	public void accept(InvoiceFlatExtended detailExtended ) {
+		InvoiceFlat detail = detailExtended.getInvoiceFlat();
 		row = sheet.createRow(rowCount++);
 		cellCount = 0;
 		alignCenter( addCell( detail.getInvoice().getType().getDescription() ) );
@@ -176,13 +181,13 @@ public class InvoiceExcelAction extends AbsExcelAction implements Consumer<Invoi
 		alignCenter( addCell( detail.getInvoice().getRegistryDocumentCountry() ));
 		addCell( detail.getInvoice().getRegistryDocument() );
 		addCell( detail.getInvoice().getRegistryName() );
-		addCell( detail.getInvoice().getAddress().getCity());
-		addCell( detail.getInvoice().getAddress().getZip());
-		addCell( detail.getInvoice().getAddress().getProvince());
+		addCell( detail.getCity());
+		addCell( detail.getZip());
+		addCell( detail.getGeozoneName());
 		 
-		addCell( detail.getItem()!= null ? detail.getItem().getProduct().getCode() : null );
-		addCell( detail.getItem()!= null ? detail.getItem().getProduct().getCategory().getName() : null );
-		addCell( detail.getItem()!= null ? detail.getItem().getProduct().getBrand().getName() : null );
+		addCell( detail.getProduct().map(Product::getCode).orElse(null) );
+		addCell( detail.getCategory().map(ProductCategory::getName).orElse(null) );
+		addCell( detail.getBrand().map(Brand::getName).orElse(null) );
 		addCell( AonStringUtils.abbreviate(detail.getDescription(), 60) ) ;
 		addCell( detail.getQuantity() );
 		addCell( detail.getPrice() );
@@ -192,13 +197,13 @@ public class InvoiceExcelAction extends AbsExcelAction implements Consumer<Invoi
 				?0.0
 				:AonMathUtils.round( detail.getTaxableBase() / detail.getQuantity()) );
 
-		addCell( detail.getItem()!= null ? detail.getItem().getPurchasePrice()  : null );
-		addCell( detail.getItem()!= null ? detail.getItem().getPrice()  : null );
+		addCell( detail.getItem().map(Item::getPurchasePrice).orElse(null) ); 
+		addCell( detail.getItem().map(Item::getPrice).orElse(null) ); 
 		
-		addCell( detail.getInvoice().getScope().getDescription());
+		addCell( detail.getScopeName());
 		addCell( detail.getWorkplace() == null ? null : detail.getWorkplace().getDescription() );
 		addCell( detail.getProjectName() );
-		addCell( detail.getSeller()!=null? detail.getSeller().getName() : null );
+		addCell( detail.getSeller().map(Seller::getName).orElse(null) ); 
 		addCell( detailExtended.getSellerSupport()!=null? detailExtended.getSellerSupport() : null );
 		
 		String segments = "";
@@ -209,8 +214,7 @@ public class InvoiceExcelAction extends AbsExcelAction implements Consumer<Invoi
 		}
 		addCell(segments);
 		
-		Integer productId = detail.getItem()!= null 
-				? detail.getItem().getProduct().getId() : null;
+		Integer productId = detail.getProduct().map(Product::getId).orElse(null);
 		if (tags != null && productTags != null && productId != null)  {
 			String[] tagArray = productTags.get(productId);
 			for (String tag : tags) {

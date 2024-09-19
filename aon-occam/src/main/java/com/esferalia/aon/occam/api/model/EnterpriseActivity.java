@@ -61,6 +61,9 @@ public class EnterpriseActivity implements Serializable {
 	public String getEpigraph() {
 		return getIae().getEpigraph();
 	}
+	public String getFullEpigraph() {
+		return getIae().getFullEpigraph();
+	}
 
 	public EnterpriseActivity setEpigraph(String epigraph) {
 		getIae().setEpigraph(epigraph);

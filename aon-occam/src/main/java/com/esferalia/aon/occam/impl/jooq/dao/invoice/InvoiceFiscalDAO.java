@@ -90,8 +90,8 @@ public class InvoiceFiscalDAO {
 				@Override 
 				public void visitVatGeneral() {
 					boolean assigned = false;
-					if (invoice.getActivity() != null) {
-						EnterpriseActivity act = ctx.getConfiguration().getActivity(invoice.getActivity().getId());
+					if (invoice.getActivity().isPresent() ) {
+						EnterpriseActivity act = ctx.getConfiguration().getActivity(invoice.getActivity().get().getId());
 						if (act != null && act.getVatRegime() != null) {
 							invoice.ensureFiscal().setVatRegime(VATTaxRegime.VAT_GENERAL, (act.getVatRegime() == VATRegime.GENERAL) );
 							assigned = true;
@@ -110,8 +110,8 @@ public class InvoiceFiscalDAO {
 				@Override
 				public void visitVatSimplified() {
 					boolean assigned = false;
-					if (invoice.getActivity() != null) {
-						EnterpriseActivity act = ctx.getConfiguration().getActivity(invoice.getActivity().getId());
+					if (invoice.getActivity().isPresent()) {
+						EnterpriseActivity act = ctx.getConfiguration().getActivity(invoice.getActivity().get().getId());
 						if (act != null && act.getVatRegime() != null) {
 							invoice.ensureFiscal().setVatRegime(VATTaxRegime.VAT_SIMPLIFIED, (act.getVatRegime() == VATRegime.SIMPLIFIED) );
 							assigned = true;

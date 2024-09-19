@@ -36,6 +36,7 @@ import com.esferalia.aon.occam.api.model.Properties.ItemProperties;
 import com.esferalia.aon.occam.api.model.Properties.ProductProperties;
 import com.esferalia.aon.occam.api.model.Properties.PurchaseProperties;
 import com.esferalia.aon.occam.api.model.Properties.SalesProperties;
+import com.esferalia.aon.occam.api.model.finance.InvoiceFlatProperties;
 import com.esferalia.aon.occam.api.model.finance.InvoicePropertiesOLD;
 import com.esferalia.aon.occam.api.model.management.Purchase;
 import com.esferalia.aon.occam.api.model.management.PurchaseDetail;
@@ -957,14 +958,14 @@ public class WarehouseServlet extends HttpServlet{
 		}
 		return filter;
     }
-	private static Filter invoiceFilter(Domain domain, Map<String, String[]> filterMap, InvoicePropertiesOLD f) {
+	private static Filter invoiceFilter(Domain domain, Map<String, String[]> filterMap, InvoiceFlatProperties f) {
 		Filter filter = f.getDomainProperty().eq(domain.getId());
 		filter.page(1).perPage(1000);
 		if(filterMap.containsKey(MSG.FROM)){
-			filter = filter.and(f.getStartIssueDateProperty().ge(new java.sql.Date(Long.parseLong(filterMap.get(MSG.FROM)[0]))));
+			filter = filter.and(f.getIssueDateProperty().ge(new java.sql.Date(Long.parseLong(filterMap.get(MSG.FROM)[0]))));
 		}
 		if(filterMap.containsKey(MSG.TO)){
-			filter = filter.and(f.getEndIssueDateProperty().le(new java.sql.Date(Long.parseLong(filterMap.get(MSG.TO)[0]))));
+			filter = filter.and(f.getIssueDateProperty().le(new java.sql.Date(Long.parseLong(filterMap.get(MSG.TO)[0]))));
 		}
 		if(filterMap.containsKey(MSG.CUSTOMER)){
 			Integer[] ids = Arrays.stream(filterMap.get(MSG.CUSTOMER)).mapToInt(Integer::parseInt).boxed().toArray(Integer[]::new);

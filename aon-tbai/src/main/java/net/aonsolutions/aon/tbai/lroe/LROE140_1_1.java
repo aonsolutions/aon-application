@@ -64,9 +64,9 @@ public class LROE140_1_1 extends LROE140 {
 		RentaIngresosType renta = new RentaIngresosType();
 		DetalleRentaIngresosType detalleRenta = new DetalleRentaIngresosType();
 		detalleRenta.setCriterioCobrosYPagos(invoice.isVatAccrualPayment() ? SiNoEnum.S : SiNoEnum.N);
-		if(invoice.getEpigraph().equals("183320")) invoice.setEpigraph("183321");
-		if(invoice.getEpigraph().equals("183310")) invoice.setEpigraph("183311");
-		detalleRenta.setEpigrafe(invoice.getEpigraph());
+//		if(invoice.getEpigraph().equals("183320")) invoice.setEpigraph("183321");
+//		if(invoice.getEpigraph().equals("183310")) invoice.setEpigraph("183311");
+		detalleRenta.setEpigrafe(checkEpigraph( invoice.getEpigraph()) );
 		detalleRenta.setIngresoAComputarIRPFDiferenteBaseImpoIVA(SiNoEnum.N);
 		//detalleRenta.setImporteIngresoIRPF();
 		renta.getDetalleRenta().add(detalleRenta);
@@ -76,6 +76,12 @@ public class LROE140_1_1 extends LROE140 {
 		proba.setIngresos(ingresos);
 		return proba;
 	}
+	private String checkEpigraph( String epigraph) {
+		if("183320".equals(epigraph)) return "183321";
+		if("183310".equals(epigraph)) return "183311";
+		return epigraph;
+	}
+
 	
 	public LROEResponse alta(TbaiConfiguration tbaiConfiguration, Person person, Invoice invoice, byte[] tbai) throws StatusCodeException {
 		try {
@@ -210,9 +216,9 @@ public class LROE140_1_1 extends LROE140 {
 		FiltroConsultaIngresosConFacturaType filtro = new FiltroConsultaIngresosConFacturaType(); 
 		filtro.setCabeceraFactura(buildCabeceraFactura(invoice));
 		filtro.setDestinatario(buildDestinatario(invoice));
-		if(invoice.getEpigraph().equals("183320")) invoice.setEpigraph("183321");
-		if(invoice.getEpigraph().equals("183310")) invoice.setEpigraph("183311");
-		filtro.setEpigrafe(invoice.getEpigraph());
+//		if(invoice.getEpigraph().equals("183320")) invoice.setEpigraph("183321");
+//		if(invoice.getEpigraph().equals("183310")) invoice.setEpigraph("183311");
+		filtro.setEpigrafe( checkEpigraph( invoice.getEpigraph()) );
 		filtro.setEstado(EstadoRegistroConsultaEnum.CORRECTO);
 		filtro.setNumPaginaConsulta(1);
 		lroe.setFiltroConsultaIngresosConSG(filtro);

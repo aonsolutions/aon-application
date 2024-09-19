@@ -199,18 +199,18 @@ public class CommissionServlet extends HttpServlet{
 		
 		JSONObject idcJson = new JSONObject();
 		idcJson.put("id", idc.getId());
-		idcJson.put("date", idc.getInvoiceDetail().getInvoice().getIssueDate());
-		idcJson.put("seller", idc.getInvoiceDetail().getInvoice().getSellerName());	
-		Double p = idc.getInvoiceDetail().getPrice()* idc.getInvoiceDetail().getQuantity();
-		Double discount = idc.getInvoiceDetail().getDiscount();
+		idcJson.put("date", idc.getInvoiceFlat().getInvoice().getIssueDate());
+		idcJson.put("seller", idc.getInvoiceFlat().getInvoice().getSellerName());	
+		Double p = idc.getInvoiceFlat().getPrice()* idc.getInvoiceFlat().getQuantity();
+		Double discount = idc.getInvoiceFlat().getDiscount();
 		idcJson.put("base", AonMathUtils.round(p - (p*discount/100)));
 		idcJson.put("amount", AonMathUtils.round(idc.getAmount()));
 		idcJson.put("percentage", AonMathUtils.round(idc.getCommission()));
 		idcJson.put("status", idc.getStatus().getName());
-		idcJson.put("product", idc.getInvoiceDetail().getDescription());
+		idcJson.put("product", idc.getInvoiceFlat().getDescription());
 		
-		String series = idc.getInvoiceDetail().getInvoice().getSeries();
-		Integer number = idc.getInvoiceDetail().getInvoice().getNumber();
+		String series = idc.getInvoiceFlat().getInvoice().getSeries();
+		Integer number = idc.getInvoiceFlat().getInvoice().getNumber();
 		 
 		idcJson.put("description", series + "/" + ceros(number.toString(),6));
 		
@@ -312,21 +312,21 @@ public class CommissionServlet extends HttpServlet{
 		.forEach(r -> {
 			JSONObject json = new JSONObject();
 			json.put("id", r.getId());
-			json.put("date", AonDateUtils.simpleFormat(r.getInvoiceDetail().getInvoice().getIssueDate()));
-			json.put("seller", r.getInvoiceDetail().getInvoice().getSellerName());	
-			Double p = r.getInvoiceDetail().getPrice()* r.getInvoiceDetail().getQuantity();
-			Double discount = r.getInvoiceDetail().getDiscount();
+			json.put("date", AonDateUtils.simpleFormat(r.getInvoiceFlat().getInvoice().getIssueDate()));
+			json.put("seller", r.getInvoiceFlat().getInvoice().getSellerName());	
+			Double p = r.getInvoiceFlat().getPrice()* r.getInvoiceFlat().getQuantity();
+			Double discount = r.getInvoiceFlat().getDiscount();
 			json.put("base", AonMathUtils.round(p - (p*discount/100)));
 			json.put("amount", AonMathUtils.round(r.getAmount()));
 			json.put("percentage", AonMathUtils.round(r.getCommission()));
 			json.put("status", r.getStatus().getName());
-			json.put("product", r.getInvoiceDetail().getDescription());
+			json.put("product", r.getInvoiceFlat().getDescription());
 			
-			String series = r.getInvoiceDetail().getInvoice().getSeries();
-			Integer number = r.getInvoiceDetail().getInvoice().getNumber();
+			String series = r.getInvoiceFlat().getInvoice().getSeries();
+			Integer number = r.getInvoiceFlat().getInvoice().getNumber();
 					 
 			json.put("description", series + "/" + ceros(number.toString(),6));
-			json.put("invoice", ToJSON.invoiceToJSON(r.getInvoiceDetail().getInvoice()));
+			json.put("invoice", ToJSON.invoiceToJSON(r.getInvoiceFlat().getInvoice()));
 
 			array.put(json);
 		});

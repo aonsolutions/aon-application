@@ -22,6 +22,7 @@ import org.apache.commons.cli.PosixParser;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.finance.InvoiceDetail;
+import com.esferalia.aon.occam.api.model.finance.InvoiceFlat;
 import com.esferalia.aon.occam.api.model.product.OldItem;
 import com.esferalia.aon.occam.api.model.product.OldProduct;
 import com.esferalia.aon.occam.api.model.warehouse.IncomeDetail;
@@ -56,7 +57,7 @@ public class CalculatePurchasePrice {
 		if(product.isInventoriable() && product.isManufactured()) 
 			return item.getPurchasePrice();
 							
-		LinkedList<InvoiceDetail> invoiceList = AON.getLastInvoiceDetailListUntilDate(domain.getName(), domain.getId(), user, item, months, workplaceId, warehouseId, inventoryDate);
+		LinkedList<InvoiceFlat> invoiceList = AON.getLastInvoiceDetailListUntilDate(domain.getName(), domain.getId(), user, item, months, workplaceId, warehouseId, inventoryDate);
 		LinkedList<IncomeDetail> incomeList = AON.getLastIncomeDetailListUntilDate(domain.getName(), domain.getId(), user, item, months, workplaceId, warehouseId, inventoryDate);
 		
 		Double invoiceSum = invoiceList.stream().mapToDouble(x -> x.getPrice() * (1 -(x.getDiscount()/100.0)) * Math.abs(x.getQuantity())).sum();
@@ -76,7 +77,7 @@ public class CalculatePurchasePrice {
 		OldProduct product =  AON.getProduct(domain.getName(), domain.getId(), login, item.getProductId());
 		if((product.isInventoriable() && product.isManufactured())) 
 			return item.getPurchasePrice();
-		LinkedList<InvoiceDetail> invoiceList = AON.getInvoiceDetailListUntilDate(domain.getName(), domain.getId(), user, item, workplaceId, warehouseId, inventoryDate);
+		LinkedList<InvoiceFlat> invoiceList = AON.getInvoiceDetailListUntilDate(domain.getName(), domain.getId(), user, item, workplaceId, warehouseId, inventoryDate);
 		LinkedList<IncomeDetail> incomeList = AON.getIncomeDetailListUntilDate(domain.getName(), domain.getId(), user, item, workplaceId, warehouseId, inventoryDate);
 		
 		LinkedList<Fifo> fifoList = new LinkedList<Fifo>();
@@ -89,7 +90,7 @@ public class CalculatePurchasePrice {
 		Double quantity2 = Math.abs(quantity) ;
 		while(q < quantity2 &&  qError == 0.0){
 			
-			InvoiceDetail invoiceDetail = invoiceList.size() > i  ? invoiceList.get(i) : null;
+			InvoiceFlat invoiceDetail = invoiceList.size() > i  ? invoiceList.get(i) : null;
 			IncomeDetail incomeDetail = incomeList.size() > j ? incomeList.get(j) : null;
 			
 			if((invoiceDetail!= null && incomeDetail == null) ||(invoiceDetail!= null &&
@@ -172,7 +173,7 @@ public class CalculatePurchasePrice {
 		}
 			
 		// COMPRAS (Facturas)
-		InvoiceDetail invoiceDetail = AON.getLastInvoiceDetailUntilDate(domain.getName(), item.getDomain(), user, item, workplaceId, warehouseId, inventoryDate);
+		InvoiceFlat invoiceDetail = AON.getLastInvoiceDetailUntilDate(domain.getName(), item.getDomain(), user, item, workplaceId, warehouseId, inventoryDate);
 		Double price2 = 0.0;
 		Date date2 = new Date();
 		if(invoiceDetail.getId() != null){

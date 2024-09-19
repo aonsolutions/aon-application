@@ -2,6 +2,7 @@ package com.esferalia.aon.occam.impl.jooq.dao;
 
 import static com.esferalia.aon.jooq.tables.Account.ACCOUNT;
 import static com.esferalia.aon.jooq.tables.Brand.BRAND;
+import static com.esferalia.aon.jooq.tables.InvestAsset.INVEST_ASSET;
 import static com.esferalia.aon.jooq.tables.Invoice.INVOICE;
 import static com.esferalia.aon.jooq.tables.InvoiceDetail.INVOICE_DETAIL;
 import static com.esferalia.aon.jooq.tables.Item.ITEM;
@@ -11,7 +12,6 @@ import static com.esferalia.aon.jooq.tables.Project.PROJECT;
 import static com.esferalia.aon.jooq.tables.Seller.SELLER;
 import static com.esferalia.aon.jooq.tables.Warehouse.WAREHOUSE;
 import static com.esferalia.aon.jooq.tables.Workplace.WORKPLACE;
-import static com.esferalia.aon.jooq.tables.InvestAsset.INVEST_ASSET;
 
 import java.sql.Timestamp;
 import java.util.LinkedList;
@@ -27,8 +27,8 @@ import org.jooq.SelectSeekStep1;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Filter.InvoiceDetailFilter;
 import com.esferalia.aon.occam.api.model.Filter.Property;
-import com.esferalia.aon.occam.api.model.Properties.InvoiceDetailProperties;
 import com.esferalia.aon.occam.api.model.InvestAsset;
+import com.esferalia.aon.occam.api.model.Properties.InvoiceDetailProperties;
 import com.esferalia.aon.occam.api.model.Workplace;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceDetail;
@@ -39,7 +39,6 @@ import com.esferalia.aon.occam.api.model.type.InvoiceType;
 import com.esferalia.aon.occam.api.model.warehouse.Warehouse;
 import com.esferalia.aon.occam.impl.jooq.dao.AccountDAO.FullAccountFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.InvestAssetDAO.InvestAssetFiller;
-import com.esferalia.aon.occam.impl.jooq.dao.InvoiceOLDDAO.InvoiceFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.ItemDAO.ItemFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.SellerDAO.SellerFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.WarehouseDAO.WarehouseFiller;
@@ -140,20 +139,20 @@ public class InvoiceDetailOLDDAO {
 	}
 	
     @Deprecated
-	static List<InvoiceDetail> save(AONContext ctx, List<InvoiceDetail> invoiceDetails) {
+	static List<InvoiceDetail> save(AONContext ctx, Invoice invoice, List<InvoiceDetail> invoiceDetails) {
 		LinkedList<InvoiceDetail> list = new LinkedList<>();
 		invoiceDetails.stream().forEach(invoiceDetail -> 
-			list.add(save(ctx, invoiceDetail)));
+			list.add(save(ctx, invoice, invoiceDetail)));
 		return list;
 	}
 	
     @Deprecated
-	static InvoiceDetail save(AONContext ctx, InvoiceDetail invoiceDetail) {
+	static InvoiceDetail save(AONContext ctx, Invoice invoice, InvoiceDetail invoiceDetail) {
 		invoiceDetail = (invoiceDetail.getId() != null && get(ctx, invoiceDetail.getId()).getId() != null)
 			? update(ctx, invoiceDetail)
 			: insert(ctx, invoiceDetail);
 		
-		if (invoiceDetail.getInvoice().getType() != InvoiceType.UNDEDUCTIBLE && !invoiceDetail.isPrepayment()) {
+		if (invoice.getType() != InvoiceType.UNDEDUCTIBLE && !invoiceDetail.isPrepayment()) {
 			InvoiceTaxOLDDAO.save(ctx, invoiceDetail.getInvoiceTaxes(), invoiceDetail);	
 		} else {
 			ctx.log().debug("\t\tSKIPPING INVOICE TAX CREATION ({0})",(invoiceDetail.isPrepayment()? "PREPAYMENT": "UNDEDUCTIBLE INVOICE"));
@@ -166,7 +165,7 @@ public class InvoiceDetailOLDDAO {
 	private static InvoiceDetail update(AONContext ctx, InvoiceDetail invoiceDetail) {
 		ctx.getDslContext().update(INVOICE_DETAIL)
 		.set(INVOICE_DETAIL.DOMAIN, invoiceDetail.getDomain())
-		.set(INVOICE_DETAIL.INVOICE, invoiceDetail.getInvoice().getId())
+		.set(INVOICE_DETAIL.INVOICE, invoiceDetail.getInvoice())
 		.set(INVOICE_DETAIL.INVEST_ASSET, invoiceDetail.getInvestAsset().map(ias -> ias.getId()).orElse(null))
 		.set(INVOICE_DETAIL.PROJECT, invoiceDetail.getProject())
 		.set(INVOICE_DETAIL.LINE, invoiceDetail.getLine())
@@ -194,7 +193,7 @@ public class InvoiceDetailOLDDAO {
 	private static InvoiceDetail insert(AONContext ctx, InvoiceDetail invoiceDetail) {
 		Integer id = ctx.getDslContext().insertInto(INVOICE_DETAIL)
 			.set(INVOICE_DETAIL.DOMAIN, invoiceDetail.getDomain())
-			.set(INVOICE_DETAIL.INVOICE, invoiceDetail.getInvoice().getId())
+			.set(INVOICE_DETAIL.INVOICE, invoiceDetail.getInvoice())
 			.set(INVOICE_DETAIL.INVEST_ASSET, invoiceDetail.getInvestAsset().map(ias -> ias.getId()).orElse(null))
 			.set(INVOICE_DETAIL.PROJECT, invoiceDetail.getProject())
 			.set(INVOICE_DETAIL.LINE, invoiceDetail.getLine())
@@ -233,11 +232,8 @@ public class InvoiceDetailOLDDAO {
 			return new InvoiceDetail()
 					.setId(getValue(r, INVOICE_DETAIL.ID))
 					.setDomain(getValue(r, INVOICE_DETAIL.DOMAIN))
-					.setInvoice(checkField(r, INVOICE.ID)
-						? InvoiceFiller.build(r)
-						: new Invoice().setId(r.getValue(INVOICE_DETAIL.INVOICE)))
+					.setInvoice(getValue(r, INVOICE.ID))
 					.setProject(getValue(r, INVOICE_DETAIL.PROJECT))
-					.setProjectName(getValue(r, PROJECT.NAME))
 					.setLine(getValue(r, INVOICE_DETAIL.LINE))
 					.setDescription(getValue(r, INVOICE_DETAIL.DESCRIPTION ))
 					.setQuantity(getValue(r, INVOICE_DETAIL.QUANTITY))

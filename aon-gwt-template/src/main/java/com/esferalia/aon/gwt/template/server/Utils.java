@@ -29,6 +29,7 @@ import com.esferalia.aon.gwt.template.shared.TemplateInfo;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.ApplicationParameter;
 import com.esferalia.aon.occam.api.model.finance.InvoiceDetail;
+import com.esferalia.aon.occam.api.model.finance.InvoiceFlat;
 import com.esferalia.aon.occam.api.model.product.OldItem;
 import com.esferalia.aon.occam.api.model.type.AppParam;
 import com.esferalia.aon.occam.api.model.warehouse.IncomeDetail;
@@ -409,7 +410,7 @@ public class Utils {
 		}
 			
 		// COMPRAS (Facturas)
-		InvoiceDetail invoiceDetail = AON.getLastInvoiceDetailUntilDate(domainName, item.getDomain(), user, item, workplaceId, warehouseId, inventoryDate);
+		InvoiceFlat invoiceDetail = AON.getLastInvoiceDetailUntilDate(domainName, item.getDomain(), user, item, workplaceId, warehouseId, inventoryDate);
 		Double price2 = 0.0;
 		Date date2 = new Date();
 		if(invoiceDetail.getId() != null){
@@ -431,7 +432,7 @@ public class Utils {
 					
 		Integer domainId = item.getDomain();
 		ApplicationParameter ap = AON.getApplicationParameter(domainName, domainId, user, AppParam.AON_PRODUCT_AVERAGE_MONTHS);
-		LinkedList<InvoiceDetail> invoiceList = AON.getLastInvoiceDetailListUntilDate(domainName, domainId, user, item, ap.getValue(), workplaceId, warehouseId, inventoryDate);
+		LinkedList<InvoiceFlat> invoiceList = AON.getLastInvoiceDetailListUntilDate(domainName, domainId, user, item, ap.getValue(), workplaceId, warehouseId, inventoryDate);
 		LinkedList<IncomeDetail> incomeList = AON.getLastIncomeDetailListUntilDate(domainName, domainId, user, item, ap.getValue(), workplaceId, warehouseId, inventoryDate);
 		
 		Double invoiceSum = invoiceList.stream().mapToDouble(x -> x.getPrice() * (1 -(x.getDiscount()/100.0)) * Math.abs(x.getQuantity())).sum();
@@ -451,7 +452,7 @@ public class Utils {
 			return item.getPurchasePrice();
 		
 		Integer domainId = item.getDomain();
-		LinkedList<InvoiceDetail> invoiceList = AON.getInvoiceDetailListUntilDate(domainName, domainId, user, item, workplaceId, warehouseId, inventoryDate);
+		LinkedList<InvoiceFlat> invoiceList = AON.getInvoiceDetailListUntilDate(domainName, domainId, user, item, workplaceId, warehouseId, inventoryDate);
 		LinkedList<IncomeDetail> incomeList = AON.getIncomeDetailListUntilDate(domainName, domainId, user, item, workplaceId, warehouseId, inventoryDate);
 		
 		LinkedList<Fifo> fifoList = new LinkedList<Fifo>();
@@ -463,7 +464,7 @@ public class Utils {
 		Double quantity2 = Math.abs(quantity) ;
 		while(q < quantity2 &&  qError == 0.0){
 			
-			InvoiceDetail invoiceDetail = invoiceList.size() > i  ? invoiceList.get(i) : null;
+			InvoiceFlat invoiceDetail = invoiceList.size() > i  ? invoiceList.get(i) : null;
 			IncomeDetail incomeDetail = incomeList.size() > j ? incomeList.get(j) : null;
 			
 			if((invoiceDetail!= null && incomeDetail == null) ||(invoiceDetail!= null &&

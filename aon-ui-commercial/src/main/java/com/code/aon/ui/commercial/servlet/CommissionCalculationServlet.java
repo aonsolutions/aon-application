@@ -28,9 +28,13 @@ import com.esferalia.aon.occam.api.model.commission.InvoiceDetailCommissionStatu
 import com.esferalia.aon.occam.api.model.commission.OfferDetailCommission;
 import com.esferalia.aon.occam.api.model.commission.OfferDetailCommissionStatus;
 import com.esferalia.aon.occam.api.model.finance.InvoiceDetail;
+import com.esferalia.aon.occam.api.model.finance.InvoiceFlat;
+import com.esferalia.aon.occam.api.model.finance.InvoiceFlatProperties;
 import com.esferalia.aon.occam.api.model.finance.InvoicePropertiesOLD;
 import com.esferalia.aon.occam.api.model.management.OfferDetail;
 import com.esferalia.aon.occam.api.model.management.OfferProperties;
+import com.esferalia.aon.occam.api.model.product.Item;
+import com.esferalia.aon.occam.api.model.product.ProductCategory;
 import com.esferalia.aon.occam.api.model.registry.Seller;
 import com.esferalia.aon.occam.api.model.type.InvoiceType;
 import com.esferalia.aon.watson.server.AonDateUtils;
@@ -224,7 +228,7 @@ public class CommissionCalculationServlet extends HttpServlet implements Seriali
 			if(idc == null) {
 				idc = new InvoiceDetailCommission()
 					.setDomain(domain.getId())
-					.setInvoiceDetail(id)
+					.setInvoiceFlat(id)
 					.setStatus(InvoiceDetailCommissionStatus.PENDING);
 			}
 			
@@ -241,12 +245,12 @@ public class CommissionCalculationServlet extends HttpServlet implements Seriali
 		});
 	}
 	
-	private Stream<InvoiceDetail> getInvoiceDetailStream(Domain domain, String login){
-		Stream<InvoiceDetail> strm = AON.getInvoiceDetails(domain.getName(), domain.getId(), login, f -> invoiceDetailFilter(domain, f));
+	private Stream<InvoiceFlat> getInvoiceDetailStream(Domain domain, String login){
+		Stream<InvoiceFlat> strm = AON.getInvoiceFlats(domain.getName(), domain.getId(), login, f -> invoiceFlatFilter(domain, f));
 		return strm;
 	}
 	
-	public Filter invoiceDetailFilter(Domain domain, InvoicePropertiesOLD f) {
+	public Filter invoiceFlatFilter(Domain domain, InvoiceFlatProperties f) {
 		Filter filter = f.getDomainProperty().eq(domain.getId())
 				.and(f.getTypeProperty().eq(InvoiceType.SALES.value()));
 		
@@ -260,10 +264,10 @@ public class CommissionCalculationServlet extends HttpServlet implements Seriali
 			filter = filter.and(f.getSeriesProperty().eq(getSeries()));
 		}
 		if(getFromDate() != null) {
-			filter = filter.and(f.getStartIssueDateProperty().ge(getFromDate()));
+			filter = filter.and(f.getIssueDateProperty().ge(getFromDate()));
 		}
 		if(getToDate() != null) {
-			filter = filter.and(f.getStartIssueDateProperty().le(getToDate()));
+			filter = filter.and(f.getIssueDateProperty().le(getToDate()));
 		}
 		if(getFromNumber() != null) {
 			filter = filter.and(f.getNumberProperty().ge(getFromNumber()));
@@ -356,10 +360,10 @@ public class CommissionCalculationServlet extends HttpServlet implements Seriali
 		return commission;
 	}
 	
-	public double getCommission(Domain domain, String login, InvoiceDetail id) {
+	public double getCommission(Domain domain, String login, InvoiceFlat id) {
 		Double commission = 0.0;
-		if(id != null && id.getSeller() != null) {
-			Seller seller = AON.getSeller(domain.getName(), domain.getId(), login, f -> f.getRegistryProperty().eq(id.getSeller().getId()));			
+		if(id != null && id.getSeller().isPresent() ) {
+			Seller seller = AON.getSeller(domain.getName(), domain.getId(), login, f -> f.getRegistryProperty().eq(id.getSeller().get().getId()));			
 			CommissionType commissionType = AON.getCommissionTypeStream(domain.getName(), domain.getId(), login, f -> f.getIdProperty().eq(seller.getCommissionType().getId()))
 					.findFirst().orElse(null); 
 	
@@ -375,7 +379,7 @@ public class CommissionCalculationServlet extends HttpServlet implements Seriali
 				for(CommissionTypeCommission ctc : ctcList) {
 					LinkedList<CommissionItem> ciList = AON.getCommissionItemStream(domain.getName(), domain.getId(), login,
 						f -> f.getCommissionProperty().eq(ctc.getCommission())
-						.and(f.getItemProperty().eq(id.getItem().getId()))
+						.and(f.getItemProperty().eq(id.getItem().map(Item::getId).orElse(null)))
 						.and(f.getQuantityProperty().le(id.getQuantity())))
 						.collect(Collectors.toCollection(LinkedList::new));
 					for(CommissionItem ci : ciList) {
@@ -384,7 +388,7 @@ public class CommissionCalculationServlet extends HttpServlet implements Seriali
 				
 					LinkedList<CommissionCategory> ccList = AON.getCommissionCategoryStream(domain.getName(), domain.getId(), login,
 						f -> f.getCommissionProperty().eq(ctc.getCommission())
-						.and(f.getCategoryProperty().eq(id.getItem().getProduct().getCategory().getId()))
+						.and(f.getCategoryProperty().eq(id.getCategory().map(ProductCategory::getId).orElse(null)))
 						.and(f.getQuantityProperty().le(id.getQuantity())))
 						.collect(Collectors.toCollection(LinkedList::new));
 					for(CommissionCategory cc : ccList) {
@@ -407,7 +411,7 @@ public class CommissionCalculationServlet extends HttpServlet implements Seriali
 		return CommonUtil.round(price, 4);
 	}
 	
-	public double getBasePrice(InvoiceDetail id) {
+	public double getBasePrice(InvoiceFlat id) {
 		Double price = (id.getPrice() + id.getTaxes()) * id.getQuantity();
 		DiscountExpression de = new DiscountExpression(id.getDiscountExpression().getDiscountExpr());
 		if (de.getDiscounts() != null) {

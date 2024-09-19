@@ -58,6 +58,7 @@ import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.esferalia.aon.occam.api.model.Series;
 import com.esferalia.aon.occam.api.model.finance.InvoiceDetail;
+import com.esferalia.aon.occam.api.model.finance.InvoiceFlat;
 import com.esferalia.aon.occam.api.model.warehouse.IncomeDetail;
 import com.esferalia.aon.occam.api.model.warehouse.WarehouseTransferDetail;
 import com.esferalia.aon.occam.api.model.warehouse.WarehouseTransferSource;
@@ -618,7 +619,7 @@ public class InventoryController extends BasicController implements IAuditableCo
 		}
 			
 		// COMPRAS (Facturas)
-		InvoiceDetail invoiceDetail = AON.getLastInvoiceDetailUntilDate(domainName, item.getDomain(), user, OccamClassesTransform.getItem(item), workplaceId, warehouseId, inventoryDate);
+		InvoiceFlat invoiceDetail = AON.getLastInvoiceDetailUntilDate(domainName, item.getDomain(), user, OccamClassesTransform.getItem(item), workplaceId, warehouseId, inventoryDate);
 		Double price2 = 0.0;
 		Date date2 = new Date();
 		if(invoiceDetail.getId() != null){
@@ -643,7 +644,7 @@ public class InventoryController extends BasicController implements IAuditableCo
 		
 		ApplicationParameter ap = AppParamUtil.getParameter(AppParam.AON_PRODUCT_AVERAGE_MONTHS);
 
-		LinkedList<InvoiceDetail> invoiceList = AON.getLastInvoiceDetailListUntilDate(domainName, domainId, user, OccamClassesTransform.getItem(item), ap.getValue(), workplaceId, warehouseId, inventoryDate);
+		LinkedList<InvoiceFlat> invoiceList = AON.getLastInvoiceDetailListUntilDate(domainName, domainId, user, OccamClassesTransform.getItem(item), ap.getValue(), workplaceId, warehouseId, inventoryDate);
 		LinkedList<IncomeDetail> incomeList = AON.getLastIncomeDetailListUntilDate(domainName, domainId, user, OccamClassesTransform.getItem(item), ap.getValue(), workplaceId, warehouseId, inventoryDate);
 		
 		Double invoiceSum = invoiceList.stream().mapToDouble(x -> x.getPrice() * (1 -(x.getDiscount()/100.0)) * Math.abs(x.getQuantity())).sum();
@@ -664,7 +665,7 @@ public class InventoryController extends BasicController implements IAuditableCo
 		
 		String domainName = AonUtil.getDomainName();
 		Integer domainId = item.getDomain();
-		LinkedList<InvoiceDetail> invoiceList = AON.getInvoiceDetailListUntilDate(domainName, domainId, user, OccamClassesTransform.getItem(item), workplaceId, warehouseId, inventoryDate);
+		LinkedList<InvoiceFlat> invoiceList = AON.getInvoiceDetailListUntilDate(domainName, domainId, user, OccamClassesTransform.getItem(item), workplaceId, warehouseId, inventoryDate);
 		LinkedList<IncomeDetail> incomeList = AON.getIncomeDetailListUntilDate(domainName, domainId, user, OccamClassesTransform.getItem(item), workplaceId, warehouseId, inventoryDate);
 		
 		LinkedList<Fifo> fifoList = new LinkedList<InventoryController.Fifo>();
@@ -676,7 +677,7 @@ public class InventoryController extends BasicController implements IAuditableCo
 		Double quantity2 = Math.abs(quantity) ;
 		while(q < quantity2 &&  qError == 0.0){
 			
-			InvoiceDetail invoiceDetail = invoiceList.size() > i  ? invoiceList.get(i) : null;
+			InvoiceFlat invoiceDetail = invoiceList.size() > i  ? invoiceList.get(i) : null;
 			IncomeDetail incomeDetail = incomeList.size() > j ? incomeList.get(j) : null;
 			
 			if((invoiceDetail!= null && incomeDetail == null) ||(invoiceDetail!= null &&

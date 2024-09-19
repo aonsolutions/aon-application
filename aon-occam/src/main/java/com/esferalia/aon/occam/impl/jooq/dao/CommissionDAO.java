@@ -168,7 +168,7 @@ public class CommissionDAO {
 	public static InvoiceDetailCommission insertInvoiceDetailCommission(AONContext ctx, InvoiceDetailCommission idc) {
 		Integer id = ctx.getDslContext().insertInto(INVOICE_DETAIL_COMMISSION)
 				.set(INVOICE_DETAIL_COMMISSION.DOMAIN, idc.getDomain())
-				.set(INVOICE_DETAIL_COMMISSION.INVOICE_DETAIL, idc.getInvoiceDetail().getId())
+				.set(INVOICE_DETAIL_COMMISSION.INVOICE_DETAIL, idc.getInvoiceFlat().getId())
 				.set(INVOICE_DETAIL_COMMISSION.AMOUNT, idc.getAmount())
 				.set(INVOICE_DETAIL_COMMISSION.COMMISSION, idc.getCommission())
 				.set(INVOICE_DETAIL_COMMISSION.PAY_DATE, idc.getPayDate() != null ? AonDateUtils.toSql(idc.getPayDate()) : null)
@@ -181,7 +181,7 @@ public class CommissionDAO {
 	public static InvoiceDetailCommission updateInvoiceDetailCommission(AONContext ctx, InvoiceDetailCommission idc) {
 		return ctx.getDslContext().update(INVOICE_DETAIL_COMMISSION)
 				.set(INVOICE_DETAIL_COMMISSION.DOMAIN, idc.getDomain())
-				.set(INVOICE_DETAIL_COMMISSION.INVOICE_DETAIL, idc.getInvoiceDetail().getId())
+				.set(INVOICE_DETAIL_COMMISSION.INVOICE_DETAIL, idc.getInvoiceFlat().getId())
 				.set(INVOICE_DETAIL_COMMISSION.AMOUNT, idc.getAmount())
 				.set(INVOICE_DETAIL_COMMISSION.COMMISSION, idc.getCommission())
 				.set(INVOICE_DETAIL_COMMISSION.PAY_DATE, idc.getPayDate() != null ? AonDateUtils.toSql(idc.getPayDate()) : null)

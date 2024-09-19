@@ -471,7 +471,7 @@ public class InvoiceDAO {
 		int i = ctx.getDslContext()
 			.update(INVOICE)
 			.set(INVOICE.DOMAIN, invoice.getDomain() )
-			.set(INVOICE.ACTIVITY, invoice.getActivity().getId() )
+			.set(INVOICE.ACTIVITY, invoice.getActivity().map(a -> a.getId()).orElse(null) )
 			.set(INVOICE.INVEST_ASSET, invoice.getInvestAsset() )
 			.set(INVOICE.PROJECT, invoice.getProject() )
 			.set(INVOICE.SERIES, invoice.getSeries() )
@@ -525,7 +525,7 @@ public class InvoiceDAO {
 		InvoiceRecord rec = ctx.getDslContext()
 			.insertInto(INVOICE)
 			.set(INVOICE.DOMAIN, invoice.getDomain() )
-			.set(INVOICE.ACTIVITY, invoice.getActivity().getId())
+			.set(INVOICE.ACTIVITY, invoice.getActivity().map(a -> a.getId()).orElse(null) )
 			.set(INVOICE.INVEST_ASSET, invoice.getInvestAsset() )
 			.set(INVOICE.PROJECT, invoice.getProject() )
 			.set(INVOICE.SERIES, invoice.getSeries() )
@@ -569,7 +569,8 @@ public class InvoiceDAO {
 			.returning(INVOICE.ID)
 			.fetchOne();
 		invoice.setId(rec.getValue(INVOICE.ID));
-		ctx.log().debug("INSERT INVOICE invoice: {0} Act: {1}",invoice.getId(),invoice.getActivity());
+		ctx.log().debug("INSERT INVOICE invoice: {0} Act: {1}",invoice.getId(),
+				invoice.getActivity().map(a -> a.getId()).orElse(null));
 		InvoiceDetailDAO.save(ctx, invoice);
 		InvoiceFiscalDAO.save(ctx, invoice);
 		AonCollectionUtils.stream(invoice.getFinances())

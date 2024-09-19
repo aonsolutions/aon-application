@@ -109,9 +109,8 @@ class InvoiceDetailDAO {
 			return new InvoiceDetail()
 				.setId(getValue(r, INVOICE_DETAIL.ID))
 				.setDomain(getValue(r, INVOICE_DETAIL.DOMAIN))
-				.setInvoice(new Invoice().setId(r.getValue(INVOICE_DETAIL.INVOICE)))
+				.setInvoice(getValue(r,INVOICE_DETAIL.INVOICE))
 				.setProject(getValue(r, INVOICE_DETAIL.PROJECT))
-				.setProjectName(getValue(r, PROJECT.NAME))
 				.setInvestAsset( getOpt(r, INVEST_ASSET.ID).map(i -> InvestAssetFiller.build(r)).orElse(null))
 				.setSeller( getOpt(r, SELLER.REGISTRY).map(i -> SellerFiller.build(r, SellerDAO.SELLER_ALIAS)).orElse(null))
 				.setItem( getOpt(r, ITEM.ID).map( i -> ItemFiller.build(r) ).orElse(null))
@@ -127,7 +126,11 @@ class InvoiceDetailDAO {
 				.setWarehouse(getOpt(r, WAREHOUSE.ID).map(w -> WarehouseFiller.build(r)).orElse(null))
 				.setExpAccount( getOpt(r, ACCOUNT.ID).map(a -> FullAccountFiller.build(r)).orElse(null))
 				.setSource(InvoiceSource.safeValueOf(getValue(r, INVOICE_DETAIL.SOURCE)))
-				.setSourceId(getValue(r, INVOICE_DETAIL.SOURCE_ID));
+				.setSourceId(getValue(r, INVOICE_DETAIL.SOURCE_ID))
+				.setCreationDate(r.getValue(INVOICE_DETAIL.CREATION_DATE))
+				.setCreationUser(r.getValue(INVOICE_DETAIL.CREATION_USER))
+				.setModificationDate(r.getValue(INVOICE_DETAIL.MODIFICATION_DATE))
+				.setModificationUser(r.getValue(INVOICE_DETAIL.MODIFICATION_USER));
 		}
 	}
 
@@ -168,7 +171,7 @@ class InvoiceDetailDAO {
 	private static InvoiceDetail update(AONContext ctx, InvoiceDetail invoiceDetail) {
 		ctx.getDslContext().update(INVOICE_DETAIL)
 			.set(INVOICE_DETAIL.DOMAIN, invoiceDetail.getDomain())
-			.set(INVOICE_DETAIL.INVOICE, invoiceDetail.getInvoice().getId())
+			.set(INVOICE_DETAIL.INVOICE, invoiceDetail.getInvoice())
 			.set(INVOICE_DETAIL.INVEST_ASSET, invoiceDetail.getInvestAsset().map(ias -> ias.getId()).orElse(null))
 			.set(INVOICE_DETAIL.PROJECT, invoiceDetail.getProject())
 			.set(INVOICE_DETAIL.LINE, invoiceDetail.getLine())
@@ -194,14 +197,15 @@ class InvoiceDetailDAO {
 
 
 	private static InvoiceDetail insert(AONContext ctx, Invoice invoice, InvoiceDetail invoiceDetail) {
+		// TODO InvoiceDetailAutoComplete
 		if (AonStringUtils.isBlank(invoiceDetail.getDescription()) && invoiceDetail.getSource() == InvoiceSource.ACCOUNT) {
 			invoiceDetail.setDescription(MessageFormat.format(DETAIL_MSG, invoice.getReferenceCode(), invoice.getIssueDate()));	
 		}
-		invoiceDetail.setInvoice(invoice);
+		invoiceDetail.setInvoice(invoice.getId());
 		InvoiceDetailValidation.validate(ctx, invoiceDetail);
 		Integer id = ctx.getDslContext().insertInto(INVOICE_DETAIL)
 			.set(INVOICE_DETAIL.DOMAIN, invoiceDetail.getDomain())
-			.set(INVOICE_DETAIL.INVOICE, invoiceDetail.getInvoice().getId())
+			.set(INVOICE_DETAIL.INVOICE, invoiceDetail.getInvoice())
 			.set(INVOICE_DETAIL.INVEST_ASSET, invoiceDetail.getInvestAsset().map(ias -> ias.getId()).orElse(null))
 			.set(INVOICE_DETAIL.PROJECT, invoiceDetail.getProject())
 			.set(INVOICE_DETAIL.LINE, invoiceDetail.getLine())

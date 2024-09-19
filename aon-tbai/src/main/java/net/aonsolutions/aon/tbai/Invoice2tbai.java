@@ -419,8 +419,13 @@ public class Invoice2tbai {
 		} else {
 			SujetaType sujeta = new SujetaType();
 		
-			boolean exempt = invoice.getActivity().getVatRegime().isExempt() || invoice.isIntracommunity() 
-					|| invoice.isExtracommunity() || invoice.isCanCeuMel();
+			boolean exempt = invoice.getActivity()
+						.map(a -> a.getVatRegime())
+						.map(v -> v.isExempt())
+						.orElse( false )
+					|| invoice.isIntracommunity() 
+					|| invoice.isExtracommunity() 
+					|| invoice.isCanCeuMel();
 			
 			NoExentaType noExenta = new NoExentaType();
 			DetalleNoExentaType detalleNoExenta = new DetalleNoExentaType();
@@ -463,8 +468,8 @@ public class Invoice2tbai {
 				detalleExenta.setBaseImponible(doubleToString(AonMathUtils.round(r.getBase())));
 				detalleExenta.setCausaExencion(CausaExencionType.E_6);
 				
-				if(invoice.getActivity().getVatExemptionCause() != null) {
-					VATExemptionCause cause = invoice.getActivity().getVatExemptionCause();
+				if(invoice.getActivity().map(a -> a.getVatExemptionCause()).isPresent()) {
+					VATExemptionCause cause = invoice.getActivity().map(a -> a.getVatExemptionCause()).get();
 					detalleExenta.setCausaExencion(CausaExencionType.fromValue(cause.name()));
 				}
 				

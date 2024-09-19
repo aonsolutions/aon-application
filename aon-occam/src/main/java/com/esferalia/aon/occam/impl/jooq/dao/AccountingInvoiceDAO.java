@@ -53,8 +53,8 @@ import com.esferalia.aon.occam.api.model.type.InvoiceSource;
 import com.esferalia.aon.occam.api.model.type.InvoiceTransactionType;
 import com.esferalia.aon.occam.api.model.type.InvoiceType;
 import com.esferalia.aon.occam.api.model.type.MimeType;
-import com.esferalia.aon.occam.impl.jooq.dao.AccountDAO.FullAccountFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.accounting.InvoiceRegistryInitializer;
+import com.esferalia.aon.occam.impl.jooq.dao.invoice.InvoiceDAO;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.server.io.AonIOUtils;
@@ -105,7 +105,7 @@ public class AccountingInvoiceDAO {
 			.findFirst()
 			.orElse( Integer.MIN_VALUE );
 		if (invoiceId != null && invoiceId != Integer.MIN_VALUE) {
-			Invoice invoice = InvoiceOLDDAO.getInvoice(ctx, invoiceId);
+			Invoice invoice = InvoiceDAO.getFull(ctx, invoiceId).orElse(null);
 			if (invoice != null) {
 				final AccountingInvoice ai = new AccountingInvoice();
 				ai.setAccountEntry(AccountEntryDAO.getAccountEntry(ctx, accountEntry));
@@ -115,7 +115,6 @@ public class AccountingInvoiceDAO {
 					ai.setManualConcept(AonStringUtils.substringBetween(concept,"[","]"));
 				}
 				ai.setInvoice(invoice);
-				ai.getInvoice().setDetails(new LinkedList<InvoiceDetail>());
 				
 				AccountingRegistry reg = AccountingRegistryDAO.getAccountingRegistries(ctx
 						, filter -> filter.getIdProperty().eq(invoice.getRegistry()))
@@ -123,32 +122,14 @@ public class AccountingInvoiceDAO {
 						.findFirst()
 						.orElse(null);
 				ai.setRegistry(reg);
-				InvoiceOLDDAO.getInvoiceDetails(ctx, f -> f.getIdProperty().eq( invoice.getId() ))
+				AonCollectionUtils.stream(invoice.getDetails())
 					.forEach( det -> {
-						ai.getInvoice().getDetails().add( det );
 						ai.setAccountSource(ai.isAccountSource() || (det.getSource() == InvoiceSource.ACCOUNT));
 						// ¿Más de uno? --> No se soporta
 						ai.setWorkplace(det.getWorkplace()==null? null : det.getWorkplace().getId());
 						// -----------------
-						ctx.getDslContext()
-							.select(EXP_ACCOUNT.fields()) 
-						.from( INVOICE_DETAIL_ACCOUNT )
-						.join( EXP_ACCOUNT ).on( INVOICE_DETAIL_ACCOUNT.ACCOUNT.eq(EXP_ACCOUNT.ID))
-						.where(INVOICE_DETAIL_ACCOUNT.INVOICE_DETAIL.equal(det.getId()))
-						.limit(1)
-						.fetch()
-						.stream()
-						.map( accRec -> FullAccountFiller.build(accRec, EXP_ACCOUNT))
-						.forEach( expAccount -> {
-							ai.setPrepayments(ai.hasPrepayments() || det.isPrepayment());
-							if (ai.isUndeductible() || det.isPrepayment()) {
-								fillNoInvoiceTax(ai, det , expAccount);
-							} else {
-								fillInvoiceTax(ctx, config, ai, det, expAccount);
-							}
-						}
-					);
-				});
+						ai.setPrepayments(ai.hasPrepayments() || det.isPrepayment());
+					});
 				if (ai.getInvoice().isDUAAllowed()) {
 					fillDUAInfo(ctx, ai);
 				}

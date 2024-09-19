@@ -1,6 +1,7 @@
 package com.esferalia.aon.occam.api.model.finance;
 
 import java.io.Serializable;
+import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
@@ -8,6 +9,7 @@ import java.util.stream.Collectors;
 
 import com.esferalia.aon.occam.api.model.Account;
 import com.esferalia.aon.occam.api.model.DiscountExpression;
+import com.esferalia.aon.occam.api.model.HasAudit;
 import com.esferalia.aon.occam.api.model.InvestAsset;
 import com.esferalia.aon.occam.api.model.Workplace;
 import com.esferalia.aon.occam.api.model.management.OfferDetail;
@@ -22,7 +24,7 @@ import com.esferalia.aon.occam.api.model.warehouse.IncomeDetail;
 import com.esferalia.aon.occam.api.model.warehouse.Warehouse;
 import com.esferalia.aon.watson.util.AonCollectionUtils;
 
-public class InvoiceDetail implements Serializable {
+public class InvoiceDetail implements Serializable, HasAudit {
 
 	private static final long serialVersionUID = 7597157186868662372L;
 
@@ -32,16 +34,11 @@ public class InvoiceDetail implements Serializable {
 	
 	private Integer id;
 	private Integer domain;
-	private Invoice invoice;
-	
-	private Integer project;
-	private String projectName;
-
+	private Integer invoice;
 	private InvestAsset investAsset;
-	private Seller seller;
-	private Item item;
-	
+	private Integer project;
 	private short line;
+	private Item item;
 	private String description;
 	private double quantity;
 	private double price;
@@ -49,15 +46,23 @@ public class InvoiceDetail implements Serializable {
 	private double taxableBase;
 	private double taxes;
 	private boolean prepayment;
-	private Warehouse warehouse;
+
+	private Seller seller;
 	private Workplace workplace;
+	private Warehouse warehouse;
+	
+	private InvoiceSource source;
+	private Integer sourceId;
+
+	private String creationUser;
+	private Date creationDate;
+	private String modificationUser;
+	private Date modificationDate;
+
 	private Account expAccount;
 	
 	private List<InvoiceTax> invoiceTaxes;
 	
-	// SOURCE INFO
-	private InvoiceSource source;
-	private Integer sourceId;
 	private PurchaseDetail purchaseDetail;
 	private SalesDetail salesDetail;
 	private DeliveryDetail deliveryDetail;
@@ -80,27 +85,11 @@ public class InvoiceDetail implements Serializable {
 		return this;
 	}
 	
-	public Invoice getInvoice() {
+	public Integer getInvoice() {
 		return invoice;
 	}
-	public InvoiceDetail setInvoice(Invoice invoice) {
+	public InvoiceDetail setInvoice(Integer invoice) {
 		this.invoice = invoice;
-		return this;
-	}
-	
-	public Integer getProject() {
-		return project;
-	}
-	public InvoiceDetail setProject(Integer project) {
-		this.project = project;
-		return this;
-	}
-	
-	public String getProjectName() {
-		return projectName;
-	}
-	public InvoiceDetail setProjectName(String projectName) {
-		this.projectName = projectName;
 		return this;
 	}
 	
@@ -113,19 +102,11 @@ public class InvoiceDetail implements Serializable {
 		return this;
 	}
 	
-	public Seller getSeller() {
-		return seller;
+	public Integer getProject() {
+		return project;
 	}
-	public InvoiceDetail setSeller(Seller seller) {
-		this.seller = seller;
-		return this;
-	}
-
-	public Item getItem() {
-		return item;
-	}
-	public InvoiceDetail setItem(Item item) {
-		this.item = item;
+	public InvoiceDetail setProject(Integer project) {
+		this.project = project;
 		return this;
 	}
 	
@@ -136,7 +117,14 @@ public class InvoiceDetail implements Serializable {
 		this.line = line;
 		return this;
 	}
-
+	
+	public Item getItem() {
+		return item;
+	}
+	public InvoiceDetail setItem(Item item) {
+		this.item = item;
+		return this;
+	}
 	
 	public String getDescription() {
 		return description;
@@ -183,11 +171,7 @@ public class InvoiceDetail implements Serializable {
 		setDiscountExpression(new DiscountExpression(discount));
 		return this;
 	}
-
-	public double getAmount() {
-		return getPrice() * getQuantity() * (1 - getDiscount()/100);
-	}
-
+	
 	public double getTaxableBase() {
 		return taxableBase;
 	}
@@ -203,12 +187,28 @@ public class InvoiceDetail implements Serializable {
 		this.taxes = taxes;
 		return this;
 	}
-
+	
 	public boolean isPrepayment() {
 		return prepayment;
 	}
 	public InvoiceDetail setPrepayment(boolean prepayment) {
 		this.prepayment = prepayment;
+		return this;
+	}
+	
+	public Seller getSeller() {
+		return seller;
+	}
+	public InvoiceDetail setSeller(Seller seller) {
+		this.seller = seller;
+		return this;
+	}
+	
+	public Workplace getWorkplace() {
+		return workplace;
+	}
+	public InvoiceDetail setWorkplace(Workplace workplace) {
+		this.workplace = workplace;
 		return this;
 	}
 
@@ -219,24 +219,6 @@ public class InvoiceDetail implements Serializable {
 		this.warehouse = warehouse;
 		return this;
 	}
-    
-	public Workplace getWorkplace() {
-		return workplace;
-	}
-	
-	public InvoiceDetail setWorkplace(Workplace workplace) {
-		this.workplace = workplace;
-		return this;
-	}
-
-	public Account getExpAccount() {
-		if (expAccount == null) expAccount = new Account();
-		return expAccount;
-	}
-	public InvoiceDetail setExpAccount(Account expAccount) {
-		this.expAccount = expAccount;
-		return this;
-	}
 	
 	public InvoiceSource getSource() {
 		return source;
@@ -244,9 +226,6 @@ public class InvoiceDetail implements Serializable {
 	public InvoiceDetail setSource(InvoiceSource source) {
 		this.source = source;
 		return this;
-	}
-	public boolean isAccountSource() {
-		return this.getSource() == InvoiceSource.ACCOUNT;
 	}
 	
 	public Integer getSourceId() {
@@ -257,40 +236,55 @@ public class InvoiceDetail implements Serializable {
 		return this;
 	}
 	
-	public PurchaseDetail getPurchaseDetail() {
-		return purchaseDetail;
+	// ---------------------------------------------------------- AUDIT
+	@Override
+	public String getCreationUser() {
+		return creationUser;
 	}
-	public void setPurchaseDetail(PurchaseDetail purchaseDetail) {
-		this.purchaseDetail = purchaseDetail;
+	public InvoiceDetail setCreationUser(String creationUser) {
+		this.creationUser = creationUser;
+		return this;
 	}
+	@Override
+	public Date getCreationDate() {
+		return creationDate;
+	}
+	public InvoiceDetail setCreationDate(Date creationDate) {
+		this.creationDate = creationDate;
+		return this;
+	}
+	@Override
+	public String getModificationUser() {
+		return modificationUser;
+	}
+	public InvoiceDetail setModificationUser(String modificationUser) {
+		this.modificationUser = modificationUser;
+		return this;
+	}
+	@Override
+	public Date getModificationDate() {
+		return modificationDate;
+	}
+	public InvoiceDetail setModificationDate(Date modificationDate) {
+		this.modificationDate = modificationDate;
+		return this;
+	}
+	
+	
+	public Account getExpAccount() {
+		if (expAccount == null) expAccount = new Account();
+		return expAccount;
+	}
+	public InvoiceDetail setExpAccount(Account expAccount) {
+		this.expAccount = expAccount;
+		return this;
+	}
+	
 
-	public SalesDetail getSalesDetail() {
-		return salesDetail;
-	}
-	public void setSalesDetail(SalesDetail salesDetail) {
-		this.salesDetail = salesDetail;
+	public boolean isAccountSource() {
+		return this.getSource() == InvoiceSource.ACCOUNT;
 	}
 	
-	public DeliveryDetail getDeliveryDetail() {
-		return deliveryDetail;
-	}
-	public void setDeliveryDetail(DeliveryDetail deliveryDetail) {
-		this.deliveryDetail = deliveryDetail;
-	}
-	
-	public IncomeDetail getIncomeDetail() {
-		return incomeDetail;
-	}
-	public void setIncomeDetail(IncomeDetail incomeDetail) {
-		this.incomeDetail = incomeDetail;
-	}
-	
-	public OfferDetail getOfferDetail() {
-		return offerDetail;
-	}
-	public void setOfferDetail(OfferDetail offerDetail) {
-		this.offerDetail = offerDetail;
-	}
 	
 	public List<InvoiceTax> getInvoiceTaxes() {
 		if(invoiceTaxes == null) {
@@ -401,7 +395,6 @@ public class InvoiceDetail implements Serializable {
 			.setInvoice ( getInvoice() )
 			.setInvestAsset( getInvestAsset().orElse(null) )
 			.setProject ( getProject() )
-			.setProjectName ( getProjectName() )
 			.setSeller ( getSeller() )
 			.setItem ( getItem() )
 			.setLine ( getLine() )
@@ -426,5 +419,48 @@ public class InvoiceDetail implements Serializable {
 		
 	}
 
+	public PurchaseDetail getPurchaseDetail() {
+		return purchaseDetail;
+	}
+
+	public void setPurchaseDetail(PurchaseDetail purchaseDetail) {
+		this.purchaseDetail = purchaseDetail;
+	}
+
+	public SalesDetail getSalesDetail() {
+		return salesDetail;
+	}
+
+	public void setSalesDetail(SalesDetail salesDetail) {
+		this.salesDetail = salesDetail;
+	}
+
+	public DeliveryDetail getDeliveryDetail() {
+		return deliveryDetail;
+	}
+
+	public void setDeliveryDetail(DeliveryDetail deliveryDetail) {
+		this.deliveryDetail = deliveryDetail;
+	}
+
+	public IncomeDetail getIncomeDetail() {
+		return incomeDetail;
+	}
+
+	public void setIncomeDetail(IncomeDetail incomeDetail) {
+		this.incomeDetail = incomeDetail;
+	}
+
+	public OfferDetail getOfferDetail() {
+		return offerDetail;
+	}
+
+	public void setOfferDetail(OfferDetail offerDetail) {
+		this.offerDetail = offerDetail;
+	}
 		
+//	public double getAmount() {
+//		return getPrice() * getQuantity() * (1 - getDiscount() / 100);
+//	}
+	
 }

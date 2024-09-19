@@ -42,6 +42,9 @@ import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceCommunicationTracking;
 import com.esferalia.aon.occam.api.model.finance.InvoiceDetail;
 import com.esferalia.aon.occam.api.model.finance.InvoiceFilterOLD;
+import com.esferalia.aon.occam.api.model.finance.InvoiceFlat;
+import com.esferalia.aon.occam.api.model.finance.InvoiceFlatExtended;
+import com.esferalia.aon.occam.api.model.finance.InvoiceFlatFilter;
 import com.esferalia.aon.occam.api.model.finance.InvoiceInfo;
 import com.esferalia.aon.occam.api.model.finance.InvoiceSeries;
 import com.esferalia.aon.occam.api.model.finance.InvoiceTax;
@@ -83,6 +86,7 @@ import com.esferalia.aon.occam.impl.jooq.dao.SiiConfigurationDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.TbaiConfigurationDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.invoice.InvoiceCommunicationTrackingDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.invoice.InvoiceFiscalDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.invoice.InvoiceFlatDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.invoice.InvoiceInfoDAO;
 
 public class FinanceImpl implements IFinance {
@@ -153,7 +157,7 @@ public class FinanceImpl implements IFinance {
 	}
 		
 	@Override
-	public Stream<InvoiceDetail> getInvoiceMovements(AONContext ctx, InvoiceFilterOLD filter, ProductFilter pFilter, ItemFilter iFilter) {
+	public Stream<InvoiceFlat> getInvoiceMovements(AONContext ctx, InvoiceFlatFilter filter, ProductFilter pFilter, ItemFilter iFilter) {
 		return InvoiceOLDDAO.getInvoiceDetails(ctx, filter, pFilter, iFilter);
 	}
 
@@ -172,43 +176,43 @@ public class FinanceImpl implements IFinance {
 	// ------------------------------------- INVOICE DETAIL
 	
 	@Override
-	public Stream<InvoiceDetail> getInvoiceDetails(AONContext ctx, InvoiceFilterOLD filter) {
-		return InvoiceOLDDAO.getInvoiceDetails(ctx, filter);
+	public Stream<InvoiceFlat> getInvoiceFlats(AONContext ctx, InvoiceFlatFilter filter) {
+		return InvoiceFlatDAO.getInvoiceFlats(ctx, filter);
 	}
 	
 	@Override
-	public Stream<InvoiceDetailExtended> getInvoiceDetailsExtended(AONContext ctx, InvoiceFilterOLD filter, IDAOCallback callback) {
-		return InvoiceOLDDAO.getInvoiceDetailsExtended(ctx, filter, callback);
+	public Stream<InvoiceFlatExtended> getInvoiceFlatsExtended(AONContext ctx, InvoiceFlatFilter filter, IDAOCallback callback) {
+		return InvoiceFlatDAO.getInvoiceFlatsExtended(ctx, filter, callback);
 	}
 
 	@Override
-	public InvoiceDetail getLastInvoiceDetail(AONContext ctx, OldItem item, Integer workplaceId, Integer warehouseId) {
+	public InvoiceFlat getLastInvoiceDetail(AONContext ctx, OldItem item, Integer workplaceId, Integer warehouseId) {
 		return InvoiceOLDDAO.getLastInvoiceDetail(ctx, item, workplaceId, warehouseId);
 	}
 	
 	@Override
-	public InvoiceDetail getLastInvoiceDetailUntilDate(AONContext ctx, OldItem item, Integer workplaceId, Integer warehouseId, Date date) {
+	public InvoiceFlat getLastInvoiceDetailUntilDate(AONContext ctx, OldItem item, Integer workplaceId, Integer warehouseId, Date date) {
 		return InvoiceOLDDAO.getLastInvoiceDetailUntilDate(ctx, item, workplaceId, warehouseId, date);
 	}
 	
 	@Override
-	public LinkedList<InvoiceDetail> getLastInvoiceDetailList(AONContext ctx, OldItem item, Date startDate, Integer workplaceId, Integer warehouseId) {
+	public LinkedList<InvoiceFlat> getLastInvoiceDetailList(AONContext ctx, OldItem item, Date startDate, Integer workplaceId, Integer warehouseId) {
 		return InvoiceOLDDAO.getLastInvoiceDetailList(ctx, item, startDate, workplaceId, warehouseId);
 	}
 
 	@Override
-	public LinkedList<InvoiceDetail> getLastInvoiceDetailListUntilDate(AONContext ctx, OldItem item, Date startDate, Integer workplaceId, Integer warehouseId, Date date) {
+	public LinkedList<InvoiceFlat> getLastInvoiceDetailListUntilDate(AONContext ctx, OldItem item, Date startDate, Integer workplaceId, Integer warehouseId, Date date) {
 		return InvoiceOLDDAO.getLastInvoiceDetailListUntilDate(ctx, item, startDate, workplaceId, warehouseId, date);
 	}
 	
 	@Override
-	public LinkedList<InvoiceDetail> getInvoiceDetailList(AONContext ctx, OldItem item, Integer workplaceId,
+	public LinkedList<InvoiceFlat> getInvoiceDetailList(AONContext ctx, OldItem item, Integer workplaceId,
 			Integer warehouseId) {
 		return InvoiceOLDDAO.getInvoiceDetailList(ctx, item, workplaceId, warehouseId);
 	}
 	
 	@Override
-	public LinkedList<InvoiceDetail> getInvoiceDetailListUntilDate(AONContext ctx, OldItem item, Integer workplaceId,
+	public LinkedList<InvoiceFlat> getInvoiceDetailListUntilDate(AONContext ctx, OldItem item, Integer workplaceId,
 			Integer warehouseId, Date date) {
 		return InvoiceOLDDAO.getInvoiceDetailListUntilDate(ctx, item, workplaceId, warehouseId, date);
 	}
@@ -402,12 +406,6 @@ public class FinanceImpl implements IFinance {
 	public Integer getItemIdByProductCode(CloseableAONContext ctx, int domainId, String productCode) {
 		return ctx.getDslContext().transactionResult(configuration
 				-> FeeDAO.getItemIdByProductCode(ctx, domainId, productCode));
-	}
-
-	@Override
-	public Stream<InvoiceDetail> getBoughtProductStream(AONContext ctx, InvoiceFilterOLD filter) {
-		return ctx.getDslContext().transactionResult(configuration
-				-> InvoiceOLDDAO.getBoughtProductStream(ctx, filter));
 	}
 
 	@Override

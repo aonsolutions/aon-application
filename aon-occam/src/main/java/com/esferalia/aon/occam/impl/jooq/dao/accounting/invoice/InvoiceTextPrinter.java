@@ -431,12 +431,7 @@ public class InvoiceTextPrinter {
 			buf.append(VERTICAL_BAR);
 			buf.append(AonStringUtils.spaces(5));
 			buf.append(AonStringUtils.rightPad("Actividad .................: " 
-					+ (invoice.getActivity() != null && invoice.getActivity().getId() != null
-						?(invoice.getActivity().getEpigraph() 
-						 + " "
-						 +invoice.getActivity().getDescription())
-					:"TODAS")
-					,87));
+					+ invoice.getActivity().map(a -> (a.getEpigraph() + " " +a.getDescription())).orElse("TODAS"),87));
 			buf.append(VERTICAL_BAR);
 			buf.append(AonStringUtils.spaces(getLineSize() - buf.length()));			
 			out.println(buf.toString());

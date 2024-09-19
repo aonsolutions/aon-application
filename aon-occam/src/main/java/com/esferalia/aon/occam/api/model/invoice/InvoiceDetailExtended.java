@@ -5,6 +5,7 @@ import java.util.List;
 
 import com.esferalia.aon.occam.api.model.finance.InvoiceDetail;
 
+@Deprecated
 public class InvoiceDetailExtended implements Serializable {
 
 	private static final long serialVersionUID = -1426818107053877548L;

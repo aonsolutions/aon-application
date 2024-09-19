@@ -388,7 +388,7 @@ public class InvoiceBeanVetoListener extends ManagerBeanVetoListenerAdapter {
 	
 	private void removeInvoiceDetailCommission(Invoice invoice) {
 		String domainName = AON.getDomain(HibernateUtil.getSessionFactoryName(), invoice.getDomain()).getName();
-		Integer[] ids = AON.getInvoiceDetails(domainName, invoice.getDomain(), "", f-> f.getIdProperty().eq(invoice.getId()))
+		Integer[] ids = AON.getInvoiceFlats(domainName, invoice.getDomain(), "", f-> f.getIdProperty().eq(invoice.getId()))
 				.map(r -> r.getId()).toArray(Integer[]::new);
 		AON.deleteInvoiceDetailCommission(domainName, invoice.getDomain(), "", f -> f.getInvoiceDetailProperty()
 				.in(ids));

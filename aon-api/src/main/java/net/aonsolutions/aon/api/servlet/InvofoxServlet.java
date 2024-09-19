@@ -625,10 +625,14 @@ public class InvofoxServlet extends AonApiHttpServlet {
 			}).toList());
 			invoice.setDetails(invoice.getDetails().stream().map(detail -> {
 				if (detail.getInvoiceTaxes().isEmpty()) {
-					InvoiceTax invoiceTax = new InvoiceTax().setTaxType(TaxType.VAT).setBase(detail.getAmount())
-							.setPercentage(21.0).setQuota(AonMathUtils.round(detail.getAmount() * 0.21))
+					double amount = detail.getPrice() * detail.getQuantity() * (1 - detail.getDiscount() / 100);
+					InvoiceTax invoiceTax = new InvoiceTax()
+							.setTaxType(TaxType.VAT)
+							.setBase(amount)
+							.setPercentage(21.0)
+							.setQuota(AonMathUtils.round(amount * 0.21))
 							.setVatDeductionType(VatDeductionType.WITH_RIGHT).setDeductiblePercent(100)
-							.setDeductibleQuota(AonMathUtils.round(detail.getAmount() * 0.21));
+							.setDeductibleQuota(AonMathUtils.round(amount * 0.21));
 					detail.addInvoiceTax(invoiceTax);
 				}
 				return detail;
@@ -758,7 +762,7 @@ public class InvofoxServlet extends AonApiHttpServlet {
 	}
 
 	private static Invoice fillActivity(AONContext ctx, Invoice invoice) {
-		if (invoice.getActivity() == null || invoice.getActivity().isEmpty()) {
+		if (invoice.getActivity().isEmpty()) {
 			AonConfiguration config = AON.getConfiguration(ctx);
 			invoice.setActivity(config.getMainActivity());
 		}

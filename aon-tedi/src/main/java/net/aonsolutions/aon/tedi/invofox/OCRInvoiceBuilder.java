@@ -720,7 +720,7 @@ public class OCRInvoiceBuilder {
      					.setPrice(prep)
      					.setPrepayment(true)
     				   	.setDiscount(0.0)
-    				   	.setInvoice(invoice)
+    				   	.setInvoice(invoice.getId())
     				   	.setTaxableBase(prep)
     				   	.setLine(size.shortValue());
 	     			fillDetailSource(detail);

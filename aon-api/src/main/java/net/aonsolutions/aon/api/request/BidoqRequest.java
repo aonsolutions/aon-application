@@ -242,7 +242,7 @@ public class BidoqRequest {
 					//	.setInvestAsset(investAsset)
 						.setSource(InvoiceSource.ACCOUNT)
 						.setTaxableBase(detail.optDouble("base"))
-						.setInvoice(ai.getInvoice())
+						.setInvoice(ai.getInvoice().getId())
 						.setLine(Short.parseShort(key))
 						.setPrepayment("5600".equals(account.substring(0, 4)) || "5660".equals(account.substring(0, 4)))
 						.setPrice(detail.optDouble("price"))

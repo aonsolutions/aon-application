@@ -177,7 +177,7 @@ public class InvoiceAutoCompleteOLD {
 	 */
 	@Deprecated
 	public static final BiConsumer<Invoice,AonConfigurationContext> COMPLETE_ACTIVITY = (inv,ctx) -> {
-		if (inv.getActivity() == null
+		if (inv.getActivity().isEmpty()
 			&& ctx.getConfiguration() != null 
 			&& ctx.getConfiguration().getActivities() != null 
 			&& ctx.getConfiguration().getActivities().size() == 1) {
@@ -505,7 +505,7 @@ public class InvoiceAutoCompleteOLD {
 						.setDescription(acc == null || AonStringUtils.isBlank(acc.getDescription()) 
 								? "IVA " + b.getPercentage() : acc.getDescription())
 						.setDomain(inv.getDomain())
-						.setInvoice(inv)
+						.setInvoice(inv.getId())
 						.setInvoiceTaxes(invoiceTax)
 						.setPrice(base)
 						.setQuantity(1)
@@ -726,7 +726,8 @@ public class InvoiceAutoCompleteOLD {
 			Double taxableBase = inv.getBreakdown().stream().filter(f -> TaxType.VAT.equals(f.getTaxType()))
 					.mapToDouble(r -> r.getBase()).sum();
 			double prepayment = inv.getDetails().stream().filter(f -> f.isPrepayment())
-					.mapToDouble(r -> r.getAmount()).sum();
+					.mapToDouble(r -> r.getPrice() * r.getQuantity() * (1 - r.getDiscount()/100))
+					.sum();
 			inv.setTaxableBase(AonMathUtils.round(taxableBase + prepayment));
 		} 
 		

@@ -134,12 +134,12 @@ public class Rawdoc2AccountingInvoice {
 						
 			ai.setAccountEntry(InvoiceRecorderDAO.getEntryBase(ctx, aonConfig, ai.getInvoice()));
 			
-			if (invoice.getActivity() == null || invoice.getActivity().isEmpty()) {
+			if (invoice.getActivity().isPresent()) {
+				ai.getAccountEntry().setActivity(invoice.getActivity().get().getId());
+				ai.getAccountEntry().setActivityDescription(invoice.getActivity().get().getDescription());
+			} else {
 				ai.getAccountEntry().setActivity(null);
 				ai.getAccountEntry().setActivityDescription(null);
-			} else {
-				ai.getAccountEntry().setActivity(invoice.getActivity().getId());
-				ai.getAccountEntry().setActivityDescription(invoice.getActivity().getDescription());
 			}
 			
 			

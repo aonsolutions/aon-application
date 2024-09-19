@@ -14,7 +14,7 @@ import com.esferalia.aon.occam.api.model.Filter.PurchaseFilter;
 import com.esferalia.aon.occam.api.model.Filter.SalesFilter;
 import com.esferalia.aon.occam.api.model.OldTask;
 import com.esferalia.aon.occam.api.model.finance.FinanceFilter;
-import com.esferalia.aon.occam.api.model.finance.InvoiceFilterOLD;
+import com.esferalia.aon.occam.api.model.finance.InvoiceFlatFilter;
 import com.esferalia.aon.occam.api.model.stat.StatData;
 import com.esferalia.aon.occam.api.model.stat.StatParams;
 import com.esferalia.aon.occam.impl.jooq.dao.StatDAO;
@@ -43,25 +43,25 @@ public class StatsImpl implements IStats {
 
 	@Override
 	public StatData<Integer, String, Double> getProductStat(AONContext ctx, ProductFilter productFilter,
-			ItemFilter itemFilter, InvoiceFilterOLD invoiceFilter, DeliveryFilter deliveryFilter, SalesFilter salesFilter,
+			ItemFilter itemFilter, InvoiceFlatFilter invoiceFlatFilter, DeliveryFilter deliveryFilter, SalesFilter salesFilter,
 			PurchaseFilter purchaseFilter) {
-		return StatDAO.getProductStat(ctx, productFilter, itemFilter, invoiceFilter, deliveryFilter, salesFilter,
+		return StatDAO.getProductStat(ctx, productFilter, itemFilter, invoiceFlatFilter, deliveryFilter, salesFilter,
 				purchaseFilter);
 	}
 
 	@Override
 	public StatData<Integer, String, Double> getProductMovements(AONContext ctx, ProductFilter productFilter,
-			ItemFilter itemFilter, InvoiceFilterOLD invoiceFilter, DeliveryFilter deliveryFilter,
+			ItemFilter itemFilter, InvoiceFlatFilter invoiceFlatFilter, DeliveryFilter deliveryFilter,
 			IncomeFilter incomeFilter) {
-		return StatDAO.getWarehouseProductMovements(ctx, productFilter, itemFilter, invoiceFilter, deliveryFilter,
+		return StatDAO.getWarehouseProductMovements(ctx, productFilter, itemFilter, invoiceFlatFilter, deliveryFilter,
 				incomeFilter);
 	}
 	
 	@Override
 	public StatData<Integer, String, Double> getItemMovements(AONContext ctx, ProductFilter productFilter,
-			ItemFilter itemFilter, InvoiceFilterOLD invoiceFilter, DeliveryFilter deliveryFilter,
+			ItemFilter itemFilter, InvoiceFlatFilter invoiceFlatFilter, DeliveryFilter deliveryFilter,
 			IncomeFilter incomeFilter) {
-		return StatDAO.getWarehouseItemMovements(ctx, productFilter, itemFilter, invoiceFilter, deliveryFilter,
+		return StatDAO.getWarehouseItemMovements(ctx, productFilter, itemFilter, invoiceFlatFilter, deliveryFilter,
 				incomeFilter);
 	}
 

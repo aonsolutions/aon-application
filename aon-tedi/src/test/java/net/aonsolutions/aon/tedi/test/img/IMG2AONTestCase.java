@@ -4,6 +4,7 @@ package net.aonsolutions.aon.tedi.test.img;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -66,8 +67,9 @@ public class IMG2AONTestCase extends AbstractTediTest {
 //			assertEquals(file + " Invoice domain does not match: ", DOMAIN_ID.intValue() , inv.getDomain());
 			
 			// Activity
-			assertNotNull(inv.getActivity(),file + "Null Activity!");
-			assertNull(inv.getActivity().getId(),file + "Not Null Activity ID!");
+			assertNotNull(inv.getActivity().orElse(null),file + "Null Activity!");
+			assertNull(inv.getActivity().map(a -> a.getId()).orElse(null),file + "Not Null Activity ID!");
+			
 			// Epigraph
 			assertNull(inv.getEpigraph(),file + "Not Null Epigraph!");
 			// InvestAsset

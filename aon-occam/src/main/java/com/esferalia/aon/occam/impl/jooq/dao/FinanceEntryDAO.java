@@ -11,6 +11,7 @@ import static com.esferalia.aon.jooq.tables.PayMethod.PAY_METHOD;
 import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
 import static com.esferalia.aon.jooq.tables.Scope.SCOPE;
 
+import java.util.Optional;
 import java.util.stream.Stream;
 
 import com.esferalia.aon.occam.api.AONContext;
@@ -231,8 +232,12 @@ public class FinanceEntryDAO {
 			.setPeriod(period.getId())
 			.setEntryDate(tracking.getTrackingDate())
 			.setEntryType(entryType)
-			.setActivity(finance.getInvoice()==null && finance.getInvoice().getActivity() == null
-				? null : finance.getInvoice().getActivity().getId())
+			.setActivity(
+					Optional.ofNullable(finance.getInvoice())
+						.flatMap(Invoice::getActivity)
+						.map(a -> a.getId())
+						.orElse(null)
+						)
 			.setSecurityLevel(finance.getSecurityLevel());
 		FinanceEntry financeEntry = new FinanceEntry();
 		financeEntry.setAccountEntry(ae);

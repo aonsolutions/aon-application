@@ -94,10 +94,12 @@ public class TbaiMain {
 				    		? new Person().copy(company) 
 				    		: AON.getPerson(company.getDomain(), "", f -> f.getIdProperty().eq(company.getId()));
                     EnterpriseActivity ea = AON.getEnterpriseActivity(company.getDomain().getName(),
-                        company.getDomain().getId(), "", invoice.getActivity().getId());
+                        company.getDomain().getId(), "", invoice.getActivity().map( a -> a.getId()).orElse(null));
                     if(ea == null || ea.getId() == null) {
-                        ea = AON.getEnterpriseActivities(company.getDomain().getName(),
-                            company.getDomain().getId(), "").filter(f -> f.isPrincipal()).findFirst().orElse(new EnterpriseActivity());
+                        ea = AON.getEnterpriseActivities(company.getDomain().getName(),company.getDomain().getId(), "")
+                    		.filter(f -> f.isPrincipal())
+                        	.findFirst()
+                        	.orElse(new EnterpriseActivity());
                     }
                     invoice.setEpigraph(ea.getIae().getFullEpigraph());
                     LROE140_1_1 lroe140 = new LROE140_1_1();
@@ -199,7 +201,7 @@ public class TbaiMain {
 				    		: AON.getPerson(company.getDomain(), "", f -> f.getIdProperty().eq(company.getId()));
 
 					EnterpriseActivity ea = AON.getEnterpriseActivity(company.getDomain().getName(),
-                        company.getDomain().getId(), "", invoice.getActivity().getId());
+                        company.getDomain().getId(), "", invoice.getActivity().map(a -> a.getId()).orElse(null) );
                     if(ea == null || ea.getId() == null) {
                         ea = AON.getEnterpriseActivities(company.getDomain().getName(),
                             company.getDomain().getId(), "").filter(f -> f.isPrincipal()).findFirst().orElse(new EnterpriseActivity());

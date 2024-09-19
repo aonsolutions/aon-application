@@ -38,6 +38,9 @@ import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceCommunicationTracking;
 import com.esferalia.aon.occam.api.model.finance.InvoiceDetail;
 import com.esferalia.aon.occam.api.model.finance.InvoiceFilterOLD;
+import com.esferalia.aon.occam.api.model.finance.InvoiceFlat;
+import com.esferalia.aon.occam.api.model.finance.InvoiceFlatExtended;
+import com.esferalia.aon.occam.api.model.finance.InvoiceFlatFilter;
 import com.esferalia.aon.occam.api.model.finance.InvoiceInfo;
 import com.esferalia.aon.occam.api.model.finance.InvoiceSeries;
 import com.esferalia.aon.occam.api.model.finance.InvoiceTax;
@@ -102,25 +105,24 @@ public interface IFinance {
 	Invoice updateInvoice(AONContext ctx, Invoice invoice);
 	Invoice updateInvoice(AONContext ctx, Invoice invoice, boolean only);
 	Stream<Invoice> getSiiInvoiceStream(AONContext ctx, InvoiceFilterOLD filter, Boolean pending,  Boolean aceptada, Boolean aceptadaErrores, Boolean incorrecta, Boolean anulada, String sii);
-	Stream<InvoiceDetail> getInvoiceMovements(AONContext ctx, InvoiceFilterOLD filter, ProductFilter pFilter,
-			ItemFilter iFilter);
-	Stream<InvoiceDetail> getInvoiceDetails(AONContext ctx,InvoiceFilterOLD filter);
-	Stream<InvoiceDetailExtended> getInvoiceDetailsExtended(AONContext ctx,InvoiceFilterOLD filter, IDAOCallback callback);
-	InvoiceDetail getLastInvoiceDetail(AONContext ctx, OldItem item, Integer workplaceId, Integer warehouseId);
-	InvoiceDetail getLastInvoiceDetailUntilDate(AONContext ctx, OldItem item, Integer workplaceId, Integer warehouseId, Date date);
-	LinkedList<InvoiceDetail> getLastInvoiceDetailList(AONContext ctx, OldItem item, Date startDate, Integer workplaceId, Integer warehouseId);
-	LinkedList<InvoiceDetail> getLastInvoiceDetailListUntilDate(AONContext ctx, OldItem item, Date startDate, Integer workplaceId, Integer warehouseId, Date date);
-	LinkedList<InvoiceDetail> getInvoiceDetailList(AONContext ctx, OldItem item, Integer workplaceId, Integer warehouseId);
-	LinkedList<InvoiceDetail> getInvoiceDetailListUntilDate(AONContext ctx, OldItem item, Integer workplaceId, Integer warehouseId, Date date);
+	Stream<InvoiceFlat> getInvoiceMovements(AONContext ctx, InvoiceFlatFilter filter, ProductFilter pFilter, ItemFilter iFilter);
+	
+	Stream<InvoiceFlat> getInvoiceFlats(AONContext ctx,InvoiceFlatFilter filter);
+	Stream<InvoiceFlatExtended> getInvoiceFlatsExtended(AONContext ctx,InvoiceFlatFilter filter, IDAOCallback callback);
 	Integer getInvoiceNextNumber(AONContext ctx, Byte[] types, String series);
 	Integer getInvoiceMinNumber(AONContext ctx, InvoiceType type, String series);
 	Integer getInvoiceMinNumber(AONContext ctx, Byte[] types, String series);
-	
-	Stream<InvoiceDetail> getBoughtProductStream(AONContext ctx, InvoiceFilterOLD filter);
-	
 	void rectifyInvoice(AONContext ctx, Integer rectifierInvoice, Integer rectifiedInvoice);
-	
 	InvoiceCounter getInvoiceCounter(AONContext ctx);
+
+	// 	**************************************** REVIEW!!!
+	InvoiceFlat getLastInvoiceDetail(AONContext ctx, OldItem item, Integer workplaceId, Integer warehouseId);
+	InvoiceFlat getLastInvoiceDetailUntilDate(AONContext ctx, OldItem item, Integer workplaceId, Integer warehouseId, Date date);
+	LinkedList<InvoiceFlat> getLastInvoiceDetailList(AONContext ctx, OldItem item, Date startDate, Integer workplaceId, Integer warehouseId);
+	LinkedList<InvoiceFlat> getLastInvoiceDetailListUntilDate(AONContext ctx, OldItem item, Date startDate, Integer workplaceId, Integer warehouseId, Date date);
+	LinkedList<InvoiceFlat> getInvoiceDetailList(AONContext ctx, OldItem item, Integer workplaceId, Integer warehouseId);
+	LinkedList<InvoiceFlat> getInvoiceDetailListUntilDate(AONContext ctx, OldItem item, Integer workplaceId, Integer warehouseId, Date date);
+	// 	**************************************** REVIEW!!!
 	
 	// 	***********************************************
 	// 	*************************** INVOICING GROUP ***

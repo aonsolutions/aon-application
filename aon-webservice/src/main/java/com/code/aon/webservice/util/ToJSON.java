@@ -20,6 +20,8 @@ import com.esferalia.aon.occam.api.model.attachment.RegistryAttachmentType;
 import com.esferalia.aon.occam.api.model.fee.Fee;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceDetail;
+import com.esferalia.aon.occam.api.model.finance.InvoiceFlat;
+import com.esferalia.aon.occam.api.model.finance.InvoiceMin;
 import com.esferalia.aon.occam.api.model.management.Purchase;
 import com.esferalia.aon.occam.api.model.management.PurchaseDetail;
 import com.esferalia.aon.occam.api.model.management.Sales;
@@ -28,6 +30,7 @@ import com.esferalia.aon.occam.api.model.office.Tag;
 import com.esferalia.aon.occam.api.model.product.Item;
 import com.esferalia.aon.occam.api.model.product.OldItem;
 import com.esferalia.aon.occam.api.model.product.OldProduct;
+import com.esferalia.aon.occam.api.model.product.Product;
 import com.esferalia.aon.occam.api.model.product.ProductCategory;
 import com.esferalia.aon.occam.api.model.project.ProjectCommercial;
 import com.esferalia.aon.occam.api.model.registry.Category;
@@ -214,23 +217,29 @@ public class ToJSON {
 		return json;
 	}
 	
+	public static JSONObject invoiceMinToJSON(InvoiceMin invoice) {
+		JSONObject json = new JSONObject();
+		json.put(MSG.ID, invoice.getId());
+		json.put(MSG.DOMAIN, invoice.getDomain());
+		json.put(MSG.REGISTRY, invoice.getRegistry());
+		json.put("registry_name", invoice.getRegistryName());
+		json.put("registry_document", invoice.getRegistryDocument());
+		json.put("registry_document_country", invoice.getRegistryDocumentCountry());
+		json.put("registry_document_type", invoice.getRegistryDocumentType());
+		json.put("reference_code", invoice.getReferenceCode());
+		json.put("type", invoice.getType().getDescription());
+		json.put("issue_date", AonDateUtils.format(invoice.getIssueDate(), "dd-MM-yyyy"));
+		json.put("tax_date", AonDateUtils.format(invoice.getTaxDate(), "dd-MM-yyyy"));
+		return json;
+	}
+
 	public static JSONObject invoiceDetailFullToJSON(InvoiceDetail invoiceDetail){
 		JSONObject json = new JSONObject();
 		if(invoiceDetail != null){
 			json.put(MSG.ID, invoiceDetail.getId());
 			json.put(MSG.DOMAIN, invoiceDetail.getDomain());
 			json.put(MSG.PROJECT, invoiceDetail.getProject());
-			json.put(MSG.INVOICE,
-					new JSONObject()
-					.put(MSG.ID, invoiceDetail.getInvoice().getId())
-					.put(MSG.REGISTRY, new JSONObject()
-										.put(MSG.ID, invoiceDetail.getInvoice().getRegistry())
-										.put(MSG.NAME, invoiceDetail.getInvoice().getRegistryName()))
-					.put("registry_name", invoiceDetail.getInvoice().getRegistryName())
-					.put(MSG.REFERENCE_CODE, invoiceDetail.getInvoice().getReferenceCode())
-					.put(MSG.SERIES, invoiceDetail.getInvoice().getSeries())
-					.put(MSG.NUMBER, invoiceDetail.getInvoice().getNumber())
-					.put(MSG.ISSUE_DATE, AonDateUtils.dateTimeFormat(invoiceDetail.getInvoice().getIssueDate())));
+			json.put(MSG.INVOICE, invoiceDetail.getInvoice() );
 			json.put(MSG.LINE, invoiceDetail.getLine());
 			json.put(MSG.ITEM, invoiceDetail.getItem().getId());
 			json.put(MSG.DESCRIPTION, invoiceDetail.getDescription());
@@ -241,6 +250,33 @@ public class ToJSON {
 		return json;
 	}
 	
+	public static JSONObject invoiceFlatFullToJSON(InvoiceFlat invoiceFlat){
+		JSONObject json = new JSONObject();
+		if(invoiceFlat != null){
+			json.put(MSG.ID, invoiceFlat.getId());
+			json.put(MSG.DOMAIN, invoiceFlat.getDomain());
+			json.put(MSG.PROJECT, invoiceFlat.getProject());
+			json.put(MSG.INVOICE,
+					new JSONObject()
+					.put(MSG.ID, invoiceFlat.getInvoice().getId())
+					.put(MSG.REGISTRY, new JSONObject()
+						.put(MSG.ID, invoiceFlat.getInvoice().getRegistry())
+						.put(MSG.NAME, invoiceFlat.getInvoice().getRegistryName()))
+					.put("registry_name", invoiceFlat.getInvoice().getRegistryName())
+					.put(MSG.REFERENCE_CODE, invoiceFlat.getInvoice().getReferenceCode())
+					.put(MSG.SERIES, invoiceFlat.getInvoice().getSeries())
+					.put(MSG.NUMBER, invoiceFlat.getInvoice().getNumber())
+					.put(MSG.ISSUE_DATE, AonDateUtils.dateTimeFormat(invoiceFlat.getInvoice().getIssueDate())));
+			json.put(MSG.LINE, invoiceFlat.getLine());
+			json.put(MSG.ITEM, invoiceFlat.getItem().map(Item::getId).orElse(null));
+			json.put(MSG.DESCRIPTION, invoiceFlat.getDescription());
+			json.put(MSG.QUANTITY, invoiceFlat.getQuantity());
+			json.put(MSG.PRICE, invoiceFlat.getPrice());
+			json.put(MSG.DISCOUNT_EXPR, invoiceFlat.getDiscountExpression().getDiscountExpr());
+		}
+		return json;
+	}
+
 	public static JSONObject feeToJSON(Fee fee) {
 		JSONObject json = new JSONObject();
 		json.put(MSG.ID, fee.getId());
@@ -257,17 +293,17 @@ public class ToJSON {
 		return json;
 	}
 
-	public static JSONObject boughtProductToJSON(InvoiceDetail id) {
+	public static JSONObject boughtProductToJSON(InvoiceFlat id) {
 		JSONObject json = new JSONObject();
 		json.put(MSG.ID, id.getId());
 		json.put(MSG.DOMAIN, id.getDomain());
 		json.put(MSG.DESCRIPTION, id.getDescription());
-		json.put(MSG.NAME, id.getItem().getProduct().getName());
+		json.put(MSG.NAME, id.getProduct().map(Product::getName).orElse(null));
 		json.put("quantity", id.getQuantity());
 		json.put("price", id.getPrice());
 		json.put("discount", id.getDiscount());
 		json.put("date", AonDateUtils.simpleFormat(id.getInvoice().getIssueDate()));
-		json.put("code", id.getItem().getProduct().getCode());
+		json.put("code", id.getProduct().map(Product::getCode).orElse(null)); 
 		json.put("total", AonMathUtils.round(id.getQuantity()*id.getPrice() * ((id.getDiscount()/100) + 1)));
 		json.put("reference_code", id.getInvoice().getReferenceCode());
 		return json;

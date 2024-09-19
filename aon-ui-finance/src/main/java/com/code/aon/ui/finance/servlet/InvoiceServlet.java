@@ -83,6 +83,7 @@ import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.attachment.AttachType;
 import com.esferalia.aon.occam.api.model.attachment.RegistryAttachmentType;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
+import com.esferalia.aon.occam.api.model.finance.InvoiceFlat;
 import com.esferalia.aon.occam.api.model.registry.RAddress;
 import com.esferalia.aon.occam.api.model.type.AppParam;
 import com.esferalia.aon.watson.server.AonDateUtils;
@@ -193,7 +194,7 @@ public class InvoiceServlet extends HttpServlet{
 					.and(f.getRegistryProperty().eq(Integer.parseInt(registry))));
 		
 			
-			Set<InvoiceDetail> invoiceDetail = AON.getInvoiceDetails(domain.getName(), domain.getId(), login,
+			Set<InvoiceDetail> invoiceDetail = AON.getInvoiceFlats(domain.getName(), domain.getId(), login,
 					f-> f.getIdProperty().eq(inv.getId()))
 					.map(new InvoiceDetailFiller()).collect(Collectors.toCollection(HashSet::new));
 			
@@ -602,10 +603,10 @@ public class InvoiceServlet extends HttpServlet{
 	}
 	
 
-	public static class InvoiceDetailFiller implements Function<com.esferalia.aon.occam.api.model.finance.InvoiceDetail, InvoiceDetail> {
+	public static class InvoiceDetailFiller implements Function<InvoiceFlat, InvoiceDetail> {
 
 		@Override
-		public InvoiceDetail apply(com.esferalia.aon.occam.api.model.finance.InvoiceDetail id) {
+		public InvoiceDetail apply(InvoiceFlat id) {
 			InvoiceDetail invoiceDetail =  new InvoiceDetail();
 			invoiceDetail.setDescription(id.getDescription());
 
@@ -621,26 +622,26 @@ public class InvoiceServlet extends HttpServlet{
 			invoiceDetail.setInvestAsset(ia);
 			
 			//invoiceDetail.setInvoice(invoice);
-			
 			Item item = new Item();
-			item.setId(id.getItem().getId());
-			item.setDetail(id.getItem().getDetail());
-			item.setDetail2(id.getItem().getDetail2());
-			item.setDetail3(id.getItem().getDetail3());
-			item.setPurchasePrice(id.getItem().getPurchasePrice());
-			item.setPrice(id.getItem().getPrice());
-			item.setDescription(id.getItem().getDescription());
-			
 			Product product = new Product();
-			product.setId(id.getItem().getProduct().getId());
-			product.setName(id.getItem().getProduct().getName());
-			product.setCode(id.getItem().getProduct().getCode());
-			
-			ProductCategory productCategory = new ProductCategory();
-			productCategory.setName(id.getItem().getProduct().getCategory().getName());
-			product.setCategory(productCategory);
-			
 			item.setProduct(product);
+			ProductCategory productCategory = new ProductCategory();
+			product.setCategory(productCategory);
+			id.getItem().ifPresent( i -> {
+				item.setId(i.getId());
+				item.setDetail(i.getDetail());
+				item.setDetail2(i.getDetail2());
+				item.setDetail3(i.getDetail3());
+				item.setPurchasePrice(i.getPurchasePrice());
+				item.setPrice(i.getPrice());
+				item.setDescription(i.getDescription());
+				
+				product.setId(i.getProduct().getId());
+				product.setName(i.getProduct().getName());
+				product.setCode(i.getProduct().getCode());
+				
+				productCategory.setName(i.getProduct().getCategory().getName());
+			});
 			
 			invoiceDetail.setItem(item);
 			

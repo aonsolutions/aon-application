@@ -67,6 +67,7 @@ import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
+import com.esferalia.aon.occam.api.model.finance.InvoiceFlat;
 import com.esferalia.aon.occam.api.model.registry.RAddress;
 import com.esferalia.aon.occam.api.model.type.AppParam;
 import com.esferalia.aon.watson.server.AonDateUtils;
@@ -168,7 +169,7 @@ public class SaleInvoiceServlet extends HttpServlet{
 		
 		Invoice inv = AON.getInvoice(domain.getName(), domain.getId(), login, f -> 
 				f.getIdProperty().eq(Integer.parseInt(invoiceId)));
-		Set<InvoiceDetail> invoiceDetail = AON.getInvoiceDetails(domain.getName(), domain.getId(), login,
+		Set<InvoiceDetail> invoiceDetail = AON.getInvoiceFlats(domain.getName(), domain.getId(), login,
 				f-> f.getIdProperty().eq(inv.getId()))
 				.map(new InvoiceDetailFiller())
 				.collect(Collectors.toCollection(HashSet::new));
@@ -368,10 +369,10 @@ public class SaleInvoiceServlet extends HttpServlet{
 	// FILLER
 	//
 	
-	public static class InvoiceDetailFiller implements Function<com.esferalia.aon.occam.api.model.finance.InvoiceDetail, InvoiceDetail> {
+	public static class InvoiceDetailFiller implements Function<InvoiceFlat, InvoiceDetail> {
 
 		@Override
-		public InvoiceDetail apply(com.esferalia.aon.occam.api.model.finance.InvoiceDetail id) {
+		public InvoiceDetail apply(InvoiceFlat id) {
 			InvoiceDetail invoiceDetail =  new InvoiceDetail();
 			invoiceDetail.setDescription(id.getDescription());
 
@@ -386,22 +387,22 @@ public class SaleInvoiceServlet extends HttpServlet{
 			ia.setId(id.getInvestAsset().map( ias -> ias.getId()).orElse(null));
 			invoiceDetail.setInvestAsset(ia);
 			
-			if(id.getItem()!=null){
+			if(id.getItem().isPresent()){
 				Item item = new Item();
-				item.setId(id.getItem().getId());
-				item.setDetail(id.getItem().getDetail());
-				item.setDetail2(id.getItem().getDetail2());
-				item.setDetail3(id.getItem().getDetail3());
-				item.setPurchasePrice(id.getItem().getPurchasePrice());
-				item.setPrice(id.getItem().getPrice());
-				item.setDescription(id.getItem().getDescription());
+				item.setId(id.getItem().get().getId());
+				item.setDetail(id.getItem().get().getDetail());
+				item.setDetail2(id.getItem().get().getDetail2());
+				item.setDetail3(id.getItem().get().getDetail3());
+				item.setPurchasePrice(id.getItem().get().getPurchasePrice());
+				item.setPrice(id.getItem().get().getPrice());
+				item.setDescription(id.getItem().get().getDescription());
 				
 				Product product = new Product();
-				product.setId(id.getItem().getProduct().getId());
-				product.setName(id.getItem().getProduct().getName());
-				product.setCode(id.getItem().getProduct().getCode());
+				product.setId(id.getItem().get().getProduct().getId());
+				product.setName(id.getItem().get().getProduct().getName());
+				product.setCode(id.getItem().get().getProduct().getCode());
 				ProductCategory productCategory = new ProductCategory();
-				productCategory.setName(id.getItem().getProduct().getCategory().getName());
+				productCategory.setName(id.getItem().get().getProduct().getCategory().getName());
 				product.setCategory(productCategory);
 				item.setProduct(product);
 				
@@ -572,7 +573,7 @@ public class SaleInvoiceServlet extends HttpServlet{
 			
 			Invoice inv = AON.getInvoice(domain.getName(), domain.getId(), login, f -> 
 					f.getIdProperty().eq(Integer.parseInt(invoiceId)));
-			Set<InvoiceDetail> invoiceDetail = AON.getInvoiceDetails(domain.getName(), domain.getId(), login,
+			Set<InvoiceDetail> invoiceDetail = AON.getInvoiceFlats(domain.getName(), domain.getId(), login,
 					f-> f.getIdProperty().eq(inv.getId()))
 					.map(new InvoiceDetailFiller())
 					.collect(Collectors.toCollection(HashSet::new));

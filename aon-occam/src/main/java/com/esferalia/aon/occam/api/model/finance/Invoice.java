@@ -39,7 +39,6 @@ public class Invoice implements Serializable, HasAudit {
 	private Integer id;
 	private Integer domain;
 	private EnterpriseActivity activity;
-	private String epigraph;
 	private Integer investAsset;
 	private Integer project;
 	private String series;
@@ -126,23 +125,26 @@ public class Invoice implements Serializable, HasAudit {
 		this.domain = domain;
 		return this;
 	}
-	public EnterpriseActivity getActivity() {
-		if(activity == null) {
-			activity = new EnterpriseActivity();
-		}
-		return activity;
+	public Optional<EnterpriseActivity> getActivity() {
+		return Optional.ofNullable(activity);
 	}
 	public Invoice setActivity(EnterpriseActivity activity) {
 		this.activity = activity;
 		return this;
 	}
+	
 	public String getEpigraph() {
-		return epigraph;
+		return getActivity().map(a -> a.getEpigraph()).orElse(null);
 	}
+	public String getFullEpigraph() {
+		return getActivity().map(a -> a.getFullEpigraph()).orElse(null);
+	}
+	@Deprecated
 	public Invoice setEpigraph(String epigraph) {
-		this.epigraph = epigraph;
+		getActivity().ifPresent(a -> a.setEpigraph(epigraph));
 		return this;
 	}
+	
 	public Integer getInvestAsset() {
 		return investAsset;
 	}

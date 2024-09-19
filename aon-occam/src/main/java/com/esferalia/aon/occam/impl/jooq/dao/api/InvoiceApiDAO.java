@@ -250,7 +250,7 @@ public class InvoiceApiDAO {
 		public InvoiceDetail apply(Record record) {
 			InvoiceDetail invoiceDetail = new InvoiceDetail()
 				.setId(record.getValue(INVOICE_DETAIL.ID))
-				.setInvoice(new Invoice().setId(record.getValue(INVOICE_DETAIL.INVOICE)))
+				.setInvoice(record.getValue(INVOICE_DETAIL.INVOICE))
 				.setProject( record.getValue( INVOICE_DETAIL.PROJECT ))
 				.setLine(record.getValue( INVOICE_DETAIL.LINE ))
 				.setDescription(record.getValue( INVOICE_DETAIL.DESCRIPTION ))

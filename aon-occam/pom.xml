@@ -59,6 +59,7 @@
 							<rule>
 								<element>PACKAGE</element>
 								<includes>
+									<include>com.esferalia.aon.occam.api.model.finance</include>
 									<include>com.esferalia.aon.occam.impl.jooq.dao.invoice</include>
 								</includes>
 							</rule>

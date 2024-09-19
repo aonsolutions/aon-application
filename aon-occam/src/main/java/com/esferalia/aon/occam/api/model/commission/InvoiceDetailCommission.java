@@ -3,7 +3,7 @@ package com.esferalia.aon.occam.api.model.commission;
 import java.io.Serializable;
 import java.util.Date;
 
-import com.esferalia.aon.occam.api.model.finance.InvoiceDetail;
+import com.esferalia.aon.occam.api.model.finance.InvoiceFlat;
 
 public class InvoiceDetailCommission implements Serializable {
 
@@ -11,7 +11,7 @@ public class InvoiceDetailCommission implements Serializable {
 	
 	private Integer id;
 	private Integer domain;
-	private InvoiceDetail invoiceDetail;
+	private InvoiceFlat invoiceFlat;
 	private Double commission;
 	private Double amount;
 	private InvoiceDetailCommissionStatus status;
@@ -31,11 +31,11 @@ public class InvoiceDetailCommission implements Serializable {
 		this.domain = domain;
 		return this;
 	}
-	public InvoiceDetail getInvoiceDetail() {
-		return invoiceDetail;
+	public InvoiceFlat getInvoiceFlat() {
+		return invoiceFlat;
 	}
-	public InvoiceDetailCommission setInvoiceDetail(InvoiceDetail invoiceDetail) {
-		this.invoiceDetail = invoiceDetail;
+	public InvoiceDetailCommission setInvoiceFlat(InvoiceFlat invoiceDetail) {
+		this.invoiceFlat = invoiceDetail;
 		return this;
 	}
 	public Double getCommission() {

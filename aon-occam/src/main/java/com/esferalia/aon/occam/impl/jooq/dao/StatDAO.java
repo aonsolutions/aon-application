@@ -53,8 +53,9 @@ import com.esferalia.aon.occam.api.model.OldTask;
 import com.esferalia.aon.occam.api.model.Properties.FeeProperties;
 import com.esferalia.aon.occam.api.model.Workplace;
 import com.esferalia.aon.occam.api.model.finance.FinanceFilter;
-import com.esferalia.aon.occam.api.model.finance.InvoiceDetail;
-import com.esferalia.aon.occam.api.model.finance.InvoiceFilterOLD;
+import com.esferalia.aon.occam.api.model.finance.InvoiceFlat;
+import com.esferalia.aon.occam.api.model.finance.InvoiceFlatFilter;
+import com.esferalia.aon.occam.api.model.product.Item;
 import com.esferalia.aon.occam.api.model.product.ProductCategory;
 import com.esferalia.aon.occam.api.model.stat.IStatFilterItemVisitor;
 import com.esferalia.aon.occam.api.model.stat.StatData;
@@ -77,9 +78,10 @@ import com.esferalia.aon.occam.impl.jooq.dao.FinanceDAO.FinancePropertiesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.ProductOldDAO.ItemPropertiesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.ProductOldDAO.ProductPropertiesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.IncomePropertiesDAO;
-import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.InvoicePropertiesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.PurchasePropertiesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.SalesDAO.SalesPropertiesDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.invoice.InvoiceFlatDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.invoice.InvoiceFlatDAO.InvoiceFlatPropertiesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.stat.DirectSalesChartTypeVisitor;
 import com.esferalia.aon.occam.impl.jooq.dao.stat.FeeChartTypeVisitor;
 import com.esferalia.aon.occam.impl.jooq.dao.stat.InvoiceChartTypeVisitor;
@@ -132,7 +134,7 @@ public class StatDAO {
 					.setLabel(tag.getName())
 					.setType(StatFilterType.PRODUCT_TAG))); 
 
-		RegistryOldDAO.getSegments(ctx).forEach( seg -> 
+		SegmentDAO.stream(ctx, ctx.getDomainId()).forEach( seg -> 
 	 		params.getFilterItems().add(new StatFilterItem()
 	 				.setId(AonNumberUtils.toString(seg.getId()))
 	 				.setLabel(seg.getName() + " ("+seg.getId()+")")
@@ -300,11 +302,11 @@ public class StatDAO {
 		for (StatFilterItem item : params.getFilterItems() ) {
 			item.getType().visit(visitor,item);
 		}
-		Stream<InvoiceDetail> stream = InvoiceOLDDAO.getInvoiceDetailsExtended(ctx, 
+		Stream<InvoiceFlat> stream = InvoiceFlatDAO.getInvoiceFlatsExtended(ctx, 
 				p -> p.getDomainProperty().eq(ctx.getDomainId())
 				.and(scopes==null?null:p.getScopeProperty().in(scopes))							
-				.and(params.getFrom()==null?null:p.getStartIssueDateProperty().ge(params.getFrom()))
-				.and(params.getTo()==null?null:p.getEndIssueDateProperty().le(params.getTo()))
+				.and(params.getFrom()==null?null:p.getIssueDateProperty().ge(params.getFrom()))
+				.and(params.getTo()==null?null:p.getIssueDateProperty().le(params.getTo()))
 				.and(params.getRegistry()==null?null:p.getRegistryProperty().eq(params.getRegistry()))
 				.and(params.getProduct()==null?null:p.getProductProperty().eq(params.getProduct()))
 				.and((types==null||types.isEmpty())?null:p.getTypeProperty().in(types.toArray(new Byte[types.size()])))
@@ -314,15 +316,17 @@ public class StatDAO {
 				.and((sellers==null||sellers.isEmpty())?null:p.getSellerProperty().in(sellers.toArray(new Integer[sellers.size()])))
 				.and(p.getProductTypeProperty().ne(ProductType.PREPAYMENT.value()))
 			,callback)
-			.map( d -> d.getDetail() )
+			.map( d -> d.getInvoiceFlat() )
 			// Filtro de product TAGS
 			.filter( det ->  tags.isEmpty() 
-					|| det.getItem() == null 
-					|| det.getItem().getProduct() == null 
+					|| det.getItem().isPresent() 
 					|| ctx.getDslContext().fetchExists( ctx.getDslContext()
 						.select()
 						.from(PRODUCT_TAG)
-						.where(PRODUCT_TAG.PRODUCT.eq(det.getItem().getProduct().getId()))
+						.where(PRODUCT_TAG.PRODUCT.eq(det.getItem()
+								.map(Item::getProduct)
+								.get()
+								.getId()))
 						.and(PRODUCT_TAG.TAG.in(tags)))
 					)
 			// Filtro de Registry Segments
@@ -352,7 +356,7 @@ public class StatDAO {
 	public static final String PRODUCT_PENDING_PURCHASES = "Recibir";
 	public static final String PRODUCT_PENDING_SALES = "Servir";
 	
-	private static final InvoicePropertiesDAO INVOICE_PROPERTIES = new InvoicePropertiesDAO();
+	private static final InvoiceFlatPropertiesDAO INVOICE_PROPERTIES = new InvoiceFlatPropertiesDAO();
 	private static final DeliveryPropertiesDAO DELIVERY_PROPERTIES = new DeliveryPropertiesDAO();
 	private static final IncomePropertiesDAO INCOME_PROPERTIES = new IncomePropertiesDAO();
 	private static final ProductPropertiesDAO PRODUCT_PROPERTIES = new ProductPropertiesDAO();
@@ -363,10 +367,10 @@ public class StatDAO {
 	private static final FinancePropertiesDAO FINANCE_PROPERTIES = new FinancePropertiesDAO();
 	
 	public static StatData<Integer, String, Double> getProductStat(AONContext ctx, ProductFilter productFilter,
-			ItemFilter itemFilter, InvoiceFilterOLD invoiceFilter, DeliveryFilter deliveryFilter,
+			ItemFilter itemFilter, InvoiceFlatFilter invoiceFlatFilter, DeliveryFilter deliveryFilter,
 			SalesFilter salesFilter, PurchaseFilter purchaseFilter) {
 		
-		Map<Integer, Double> outputs = getOutputs(ctx, ITEM.PRODUCT, productFilter, itemFilter, invoiceFilter, deliveryFilter);
+		Map<Integer, Double> outputs = getOutputs(ctx, ITEM.PRODUCT, productFilter, itemFilter, invoiceFlatFilter, deliveryFilter);
 		Map<Integer, Double> pendingSales = getPendingSales(ctx, ITEM.PRODUCT, productFilter, salesFilter);
 		Map<Integer, Double> pendingPurchases = getPendingPurchases(ctx, ITEM.PRODUCT, productFilter, purchaseFilter);
 		Map<Integer, Double> stock = getProductStock(ctx, productFilter);
@@ -383,11 +387,11 @@ public class StatDAO {
 	}
 	
 	public static StatData<Integer, String, Double> getWarehouseProductMovements(AONContext ctx,
-			ProductFilter productFilter, ItemFilter itemFilter, InvoiceFilterOLD invoiceFilter,
+			ProductFilter productFilter, ItemFilter itemFilter, InvoiceFlatFilter invoiceFlatFilter,
 			DeliveryFilter deliveryFilter, IncomeFilter incomeFilter) {
 
-		Map<Integer, Double> outputs = getOutputs(ctx, ITEM.PRODUCT, productFilter, itemFilter, invoiceFilter, deliveryFilter);
-		Map<Integer, Double> inputs = getInputs(ctx, ITEM.PRODUCT, productFilter, itemFilter, invoiceFilter, incomeFilter);
+		Map<Integer, Double> outputs = getOutputs(ctx, ITEM.PRODUCT, productFilter, itemFilter, invoiceFlatFilter, deliveryFilter);
+		Map<Integer, Double> inputs = getInputs(ctx, ITEM.PRODUCT, productFilter, itemFilter, invoiceFlatFilter, incomeFilter);
 
 		final StatData<Integer, String, Double> stat = new StatData<>();
 		for (Integer key : outputs.keySet())
@@ -399,11 +403,11 @@ public class StatDAO {
 	}
 	
 	public static StatData<Integer, String, Double> getWarehouseItemMovements(AONContext ctx,
-			ProductFilter productFilter, ItemFilter itemFilter, InvoiceFilterOLD invoiceFilter,
+			ProductFilter productFilter, ItemFilter itemFilter, InvoiceFlatFilter invoiceFlatFilter,
 			DeliveryFilter deliveryFilter, IncomeFilter incomeFilter) {
 
-		Map<Integer, Double> outputs = getOutputs(ctx, ITEM.ID, productFilter, itemFilter, invoiceFilter, deliveryFilter);
-		Map<Integer, Double> inputs = getInputs(ctx, ITEM.ID, productFilter, itemFilter, invoiceFilter, incomeFilter);
+		Map<Integer, Double> outputs = getOutputs(ctx, ITEM.ID, productFilter, itemFilter, invoiceFlatFilter, deliveryFilter);
+		Map<Integer, Double> inputs = getInputs(ctx, ITEM.ID, productFilter, itemFilter, invoiceFlatFilter, incomeFilter);
 
 		final StatData<Integer, String, Double> stat = new StatData<>();
 		for (Integer key : outputs.keySet())
@@ -474,7 +478,7 @@ public class StatDAO {
 	}
 	
 	private static Map<Integer, Double> getOutputs(AONContext ctx, TableField<ItemRecord, Integer> selectField,
-			ProductFilter productFilter, ItemFilter itemFilter, InvoiceFilterOLD invoiceFilter, DeliveryFilter deliveryFilter) {
+			ProductFilter productFilter, ItemFilter itemFilter, InvoiceFlatFilter invoiceFlatFilter, DeliveryFilter deliveryFilter) {
 		Collection<Condition> deliveryConditions = new ArrayList<Condition>();
 		deliveryConditions.addAll(Arrays.asList(DELIVERY_PROPERTIES.getConditions(deliveryFilter)));
 		deliveryConditions.addAll(Arrays.asList(PRODUCT_PROPERTIES.getConditions(productFilter)));
@@ -490,7 +494,7 @@ public class StatDAO {
 			.orderBy(ITEM.PRODUCT);
 		
 		Collection<Condition> invoiceConditions = new ArrayList<Condition>();
-		invoiceConditions.addAll(Arrays.asList(INVOICE_PROPERTIES.getConditions(invoiceFilter)));
+		invoiceConditions.addAll(Arrays.asList(INVOICE_PROPERTIES.getConditions(invoiceFlatFilter)));
 		invoiceConditions.addAll(Arrays.asList(PRODUCT_PROPERTIES.getConditions(productFilter)));
 		invoiceConditions.addAll(Arrays.asList(ITEM_PROPERTIES.getConditions(itemFilter)));
 		SelectSeekStep1<Record2<Integer, BigDecimal>, Integer> invoiceSelect = ctx.getDslContext()
@@ -519,7 +523,7 @@ public class StatDAO {
 	}
 	
 	private static Map<Integer, Double> getInputs(AONContext ctx, TableField<ItemRecord, Integer> selectField,
-			ProductFilter productFilter, ItemFilter itemFilter, InvoiceFilterOLD invoiceFilter, IncomeFilter incomeFilter) {
+			ProductFilter productFilter, ItemFilter itemFilter, InvoiceFlatFilter invoiceFlatFilter, IncomeFilter incomeFilter) {
 		Collection<Condition> deliveryConditions = new ArrayList<Condition>();
 		deliveryConditions.addAll(Arrays.asList(INCOME_PROPERTIES.getConditions(incomeFilter)));
 		deliveryConditions.addAll(Arrays.asList(PRODUCT_PROPERTIES.getConditions(productFilter)));
@@ -535,7 +539,7 @@ public class StatDAO {
 			.orderBy(ITEM.PRODUCT);
 		
 		Collection<Condition> invoiceConditions = new ArrayList<Condition>();
-		invoiceConditions.addAll(Arrays.asList(INVOICE_PROPERTIES.getConditions(invoiceFilter)));
+		invoiceConditions.addAll(Arrays.asList(INVOICE_PROPERTIES.getConditions(invoiceFlatFilter)));
 		invoiceConditions.addAll(Arrays.asList(PRODUCT_PROPERTIES.getConditions(productFilter)));
 		invoiceConditions.addAll(Arrays.asList(ITEM_PROPERTIES.getConditions(itemFilter)));
 		SelectSeekStep1<Record2<Integer, BigDecimal>, Integer> invoiceSelect = ctx.getDslContext()

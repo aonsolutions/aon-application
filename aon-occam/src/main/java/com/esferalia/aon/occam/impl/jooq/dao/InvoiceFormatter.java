@@ -5,7 +5,7 @@ import java.text.MessageFormat;
 import java.text.SimpleDateFormat;
 import java.util.LinkedList;
 
-import com.esferalia.aon.occam.api.model.finance.InvoiceDetail;
+import com.esferalia.aon.occam.api.model.finance.InvoiceFlat;
 import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
@@ -25,7 +25,7 @@ public class InvoiceFormatter {
 	static final String DIV_MSG_BOLD_BORDER_BOTTOM = "<div style=\"border-bottom:solid black 1px;\"><b>{0}</b></div>";
 	static final String DIV_MSG_BOLD_BLUE= "<div style=\"color: blue;\"><b>{0}</b></div>";
 	
-	public static String formatInvoices(String title, String subtitle, LinkedList<InvoiceDetail> list) {
+	public static String formatInvoices(String title, String subtitle, LinkedList<InvoiceFlat> list) {
 		StringBuilder buf = new StringBuilder();
 		String header = AonStringUtils.repeat(" ", 2)
 				+ AonStringUtils.rightPad("FACTURA",15)
@@ -58,7 +58,7 @@ public class InvoiceFormatter {
 			buf.append(MessageFormat.format(DIV_MSG,AonStringUtils.repeat(" ", header.length())));
 		}
 		double sumBase = 0.0;
-		for (InvoiceDetail det : list) {
+		for (InvoiceFlat det : list) {
 			sumBase = sumBase + det.getTaxableBase();
 			double price = AonMathUtils.isZero( det.getQuantity())
 					?0.0
@@ -73,20 +73,13 @@ public class InvoiceFormatter {
 								:det.getInvoice().getRegistryDocument()
 							,10)
 					+ AonStringUtils.rightPad(AonStringUtils.abbreviate(det.getInvoice().getRegistryName(),29),30)
-					+ AonStringUtils.rightPad(AonStringUtils.substring(AonStringUtils.trimToEmpty( det.getInvoice().getAddress().getProvince()),0,5),6)
-					+ AonStringUtils.rightPad(AonStringUtils.substring(AonStringUtils.trimToEmpty( det.getInvoice().getScope().getDescription()),0,5),6)
-					+ AonStringUtils.rightPad(AonStringUtils.abbreviate( (det.getSeller()!=null? det.getSeller().getName():AonStringUtils.SPACE) ,14),15)
+					+ AonStringUtils.rightPad(AonStringUtils.substring(AonStringUtils.trimToEmpty( det.getGeozoneName()),0,5),6)
+					+ AonStringUtils.rightPad(AonStringUtils.substring(AonStringUtils.trimToEmpty( det.getScopeName()),0,5),6)
+					+ AonStringUtils.rightPad(AonStringUtils.abbreviate(det.getSeller().map(s -> s.getName()).orElse(AonStringUtils.SPACE) ,14),15)
 					+ AonStringUtils.SPACE
 					+ AonStringUtils.rightPad(AonStringUtils.abbreviate(det.getWorkplace() == null? null : det.getWorkplace().getDescription() ,14),15)
-					+ AonStringUtils.rightPad(AonStringUtils.abbreviate(
-							AonStringUtils.removeTabsAndNewLine( det.getDescription() )
-							 
-							,19),20)
-					+ AonStringUtils.rightPad(AonStringUtils.abbreviate(
-							det.getItem()!=null
-							?AonStringUtils.trimToEmpty( det.getItem().getProduct().getCategory().getName() )
-							:AonStringUtils.SPACE,19)
-							,20)
+					+ AonStringUtils.rightPad(AonStringUtils.abbreviate(AonStringUtils.removeTabsAndNewLine( det.getDescription() ),19),20)
+					+ AonStringUtils.rightPad(AonStringUtils.abbreviate(AonStringUtils.trimToEmpty( det.getCategory().map(c -> c.getName()).orElse(AonStringUtils.SPACE)),19),20)
 					+ AonStringUtils.leftPad(DEC.format(det.getQuantity()),10)
 					+ AonStringUtils.leftPad(DEC.format(price),15)
 					+ AonStringUtils.leftPad(DEC.format(det.getTaxableBase()),15)

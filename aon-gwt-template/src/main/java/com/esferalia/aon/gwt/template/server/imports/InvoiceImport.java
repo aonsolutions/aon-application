@@ -1432,7 +1432,7 @@ public class InvoiceImport extends ImportUtils{
 				.setDomain(ai.getInvoice().getDomain())
 				.setConfidential(false)
 				.setEntryDate(ai.getInvoice().getIssueDate())
-				.setActivity(ai.getInvoice().getActivity().getId())
+				.setActivity(ai.getInvoice().getActivity().map(a -> a.getId()).orElse(null))
 				.setComments(ai.getInvoice().getComments())
 				.setDirty(false);
 		ai.getInvoice().getType().visit(ai.getInvoice(),  new IInvoiceTypeVisitor<Void>() {

@@ -62,6 +62,7 @@ import com.esferalia.aon.occam.api.model.commission.OfferDetailCommission;
 import com.esferalia.aon.occam.api.model.commission.OfferDetailCommissionStatus;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceDetail;
+import com.esferalia.aon.occam.api.model.finance.InvoiceFlat;
 import com.esferalia.aon.occam.api.model.finance.InvoiceMin;
 import com.esferalia.aon.occam.api.model.fiscal.IrpfData;
 import com.esferalia.aon.occam.api.model.management.OfferDetail;
@@ -788,7 +789,7 @@ public class FillerDAO {
 				.setSellerName(r.getValue(REGISTRY.NAME));
 			
 			
-			InvoiceDetail id = new InvoiceDetail()
+			InvoiceFlat id = new InvoiceFlat()
 					.setDescription(r.getValue(INVOICE_DETAIL.DESCRIPTION))
 					.setDiscountExpression(r.getValue(INVOICE_DETAIL.DISCOUNT_EXPR))
 					.setDomain(r.getValue(INVOICE_DETAIL.DOMAIN))
@@ -801,7 +802,7 @@ public class FillerDAO {
 			return new InvoiceDetailCommission()
 					.setId(r.getValue(INVOICE_DETAIL_COMMISSION.ID))
 					.setDomain(r.getValue(INVOICE_DETAIL_COMMISSION.DOMAIN))
-					.setInvoiceDetail(id)
+					.setInvoiceFlat(id)
 					.setStatus(InvoiceDetailCommissionStatus.safeValueOf(r.getValue(INVOICE_DETAIL_COMMISSION.STATUS)))
 					.setPayDate(r.getValue(INVOICE_DETAIL_COMMISSION.PAY_DATE))
 					.setCommission(r.getValue(INVOICE_DETAIL_COMMISSION.COMMISSION))
