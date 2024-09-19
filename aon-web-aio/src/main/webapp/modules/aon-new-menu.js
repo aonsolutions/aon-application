@@ -262,6 +262,11 @@ export class AonNewMenu extends AonElement {
 			app,
 			sidenav
 		};
+<<<<<<< HEAD
+=======
+		
+		
+>>>>>>> e9550fe011c216a0a5f76619e3346dbd4f0b2f1f
 
         if(this.isApp(app) || excludedApps.includes(app.app)){
 			if(app.app != "new"){
@@ -667,7 +672,7 @@ export class AonNewMenu extends AonElement {
 						// Cerrar el menú si el ratón sale completamente del sidenav
 						side.addEventListener("mouseleave", (event) => {
 							// Verificar si el ratón no va al div (solo cerrar si se sale de ambos)
-							if (!div.contains(event.relatedTarget)) {
+							if (!div.contains(event.relatedTarget) && !this.getApplication().getOptionDialog()) {
 								LS.setLeftMenu(false);
 								this.hideSideNav();
 							}
@@ -678,7 +683,6 @@ export class AonNewMenu extends AonElement {
 				// Cerrar el menú si el ratón sale completamente del div
 				div.addEventListener("mouseleave", (event) => {
 					let side = this.getElement(this.AON_MENU_SIDENAV);
-		
 					// Verificar si el ratón no va al sidenav (solo cerrar si se sale de ambos)
 					if (side && !side.contains(event.relatedTarget)) {
 						LS.setLeftMenu(false);
