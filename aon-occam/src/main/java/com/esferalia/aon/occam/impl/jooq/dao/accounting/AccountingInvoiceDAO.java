@@ -127,6 +127,39 @@ public class AccountingInvoiceDAO {
 				.findFirst();
 	}
 	
+	public static void saveInvoiceDetailAccount(AONContext ctx, InvoiceDetail invoiceDetail) {
+		ctx.getDslContext()
+			.delete(INVOICE_DETAIL_ACCOUNT)
+			.where(INVOICE_DETAIL_ACCOUNT.INVOICE_DETAIL.eq(invoiceDetail.getId()))
+			.and(INVOICE_DETAIL_ACCOUNT.DOMAIN.eq(invoiceDetail.getDomain()))
+			.execute();
+		ctx.log().debug("\tDELETE INVOICE_DETAIL_ACCOUNT");
+		ctx.getDslContext().insertInto(INVOICE_DETAIL_ACCOUNT)
+			.set(INVOICE_DETAIL_ACCOUNT.DOMAIN, invoiceDetail.getDomain())
+			.set(INVOICE_DETAIL_ACCOUNT.INVOICE_DETAIL, invoiceDetail.getId())
+			.set(INVOICE_DETAIL_ACCOUNT.ACCOUNT, invoiceDetail.getExpAccount().getId())
+			.execute();
+		ctx.log().debug("\tINSERT INVOICE_DETAIL_ACCOUNT");
+	}
+
+	public static void saveInvoiceTaxAccount(AONContext ctx, Invoice invoice, InvoiceDetail invoiceDetail, InvoiceTax invoiceTax) {
+		if (invoiceDetail.isTaxEnabled(invoice) ) {
+			Integer accountId = Optional.ofNullable( invoice.isSales()?invoiceTax.getOutputAccount():invoiceTax.getInputAccount() )
+					.map( Account::getId )
+					.orElse( invoiceDetail.getExpAccount().getId() );
+			ctx.getDslContext().insertInto(INVOICE_TAX_ACCOUNT)
+				.set(INVOICE_TAX_ACCOUNT.DOMAIN,invoiceDetail.getDomain())
+				.set(INVOICE_TAX_ACCOUNT.INVOICE_TAX, invoiceDetail.getId())
+				.set(INVOICE_TAX_ACCOUNT.ACCOUNT, accountId )
+			.execute();
+			ctx.log().debug("\t\tINSERT INVOICE_TAX_ACCOUNT");
+		} else {
+			ctx.log().debug("\t\tSKIPPING INVOICE TAX ACCOUNT CREATION ({0})",
+					(invoiceDetail.isPrepayment()?"PREPAYMENT":"UNDEDUCTIBLE INVOICE"));
+		}
+	}
+	
+	
 	public static Optional<Account> getInvoiceTaxAccount(AONContext ctx, Integer invoiceTaxId) {
 		return ctx.getDslContext()
 				.select()

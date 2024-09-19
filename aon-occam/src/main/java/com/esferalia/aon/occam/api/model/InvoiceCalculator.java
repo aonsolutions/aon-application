@@ -128,7 +128,6 @@ public class InvoiceCalculator	 {
 		if (!vat.isQuotaEdited()) {
 			vat.setQuota(AonMathUtils.round(vat.getBase() * vat.getPercentage() / 100 ));
 		}
-		 // Recargo de equivalencia.
 		if (inv.isSurcharge()) {
 			if (!vat.isSurchargeQuotaEdited()) {
 				vat.setSurchargeQuota( AonMathUtils.round(vat.getBase() * vat.getSurcharge() / 100 ));	
@@ -152,11 +151,9 @@ public class InvoiceCalculator	 {
 	}
 	
 	private static void calculateWithholdingDetail(Invoice inv, InvoiceDetail detail) {
-		if (inv.isWithholding() 
-			&& !inv.isWithholdingFarmer() 
+		if (inv.isWithholding() && !inv.isWithholdingFarmer() 
 			&& detail.getWithholdingTax().isPresent()
 			&& inv.getWithholding().isPresent()) {
-			
 			double base = detail.getTaxableBase();
 			double percentage = inv.getWithholding().get().getPercentage();
 			double quota = AonMathUtils.round( base * percentage / 100, 2);
@@ -170,11 +167,9 @@ public class InvoiceCalculator	 {
 	}
 	
 	private static void calculateWithholdingFarmerDetail(Invoice inv, InvoiceDetail detail) {
-		if (inv.isWithholding() 
-			&& inv.isWithholdingFarmer() 
+		if (inv.isWithholding() && inv.isWithholdingFarmer() 
 			&& detail.getWithholdingTax().isPresent()) {
 				InvoiceTax vat = detail.ensureVatTax();	
-				detail.ensureVatTax().setBase(detail.getTaxableBase());
 				detail.ensureVatTax().setBase(detail.getTaxableBase() + vat.getQuota() + (inv.isSurcharge()?vat.getSurchargeQuota():0.0));
 			}
 	}

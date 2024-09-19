@@ -39,6 +39,7 @@ import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.json.invoice.InvoiceJSON;
 import com.esferalia.aon.occam.api.model.Account;
 import com.esferalia.aon.occam.api.model.EnterpriseActivity;
+import com.esferalia.aon.occam.api.model.InvoiceCalculator;
 import com.esferalia.aon.occam.api.model.Filter.Property;
 import com.esferalia.aon.occam.api.model.Rawdoc;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
@@ -468,6 +469,7 @@ public class InvoiceDAO {
 	private static Invoice update(AONContext ctx, Invoice invoice) {
 		InvoiceValidation.validate(ctx, invoice);
 		InvoiceAutoComplete.completeInvoice(ctx, invoice);
+		InvoiceCalculator.calculate(invoice);
 		int i = ctx.getDslContext()
 			.update(INVOICE)
 			.set(INVOICE.DOMAIN, invoice.getDomain() )

@@ -52,11 +52,21 @@ class InvoiceTaxDAO {
 	}
 	
 	private static InvoiceTax save(AONContext ctx, Invoice invoice, InvoiceDetail detail, InvoiceTax invoiceTax) {
-		InvoiceTaxAutoComplete.complete(ctx, invoice, detail, invoiceTax);
-		InvoiceTaxValidation.validate(ctx, invoice, detail, invoiceTax);
-		invoiceTax = invoiceTax.getId() != null 
-			? update(ctx, invoiceTax)
-			: insert(ctx, invoiceTax);
+		if (detail.isTaxEnabled(invoice) ) {
+			InvoiceTaxAutoComplete.complete(ctx, invoice, detail, invoiceTax);
+			InvoiceTaxValidation.validate(ctx, invoice, detail, invoiceTax);
+			invoiceTax = invoiceTax.getId() != null 
+				? update(ctx, invoiceTax)
+				: insert(ctx, invoiceTax);
+		} else {
+			if (invoiceTax.getId() != null) {
+				delete(ctx, invoiceTax.getId());
+				ctx.log().debug("\t\tDELETE INVOICE TAX NO TAX ALLOWED");
+			} else {
+				ctx.log().debug("\t\tSKIPPING INVOICE TAX CREATION ({0})",(detail.isPrepayment()? "PREPAYMENT": "UNDEDUCTIBLE INVOICE"));
+			}
+		}
+
 		return invoiceTax;
 	}
 	
@@ -76,6 +86,7 @@ class InvoiceTaxDAO {
 			.set(INVOICE_TAX.DEDUCTIBLE_QUOTA ,invoiceTax.getDeductibleQuota())
 			.where(INVOICE_TAX.ID.eq(invoiceTax.getId()))
 			.execute();
+		ctx.log().debug("\t\tUPDATE INVOICE TAX");
 		return invoiceTax;
 	}
 	
@@ -94,6 +105,7 @@ class InvoiceTaxDAO {
 			.set(INVOICE_TAX.DEDUCTIBLE_PERCENT,invoiceTax.getDeductiblePercent())
 			.set(INVOICE_TAX.DEDUCTIBLE_QUOTA ,invoiceTax.getDeductibleQuota())
 			.returning(INVOICE_TAX.ID).fetchOne().getId();
+		ctx.log().debug("\t\tINSERT INVOICE TAX");
 		return invoiceTax.setId(id);
 	}	
 

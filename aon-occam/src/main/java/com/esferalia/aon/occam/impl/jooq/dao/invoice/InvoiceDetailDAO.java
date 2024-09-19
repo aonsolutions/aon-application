@@ -16,7 +16,6 @@ import static com.esferalia.aon.jooq.tables.Warehouse.WAREHOUSE;
 import static com.esferalia.aon.jooq.tables.Workplace.WORKPLACE;
 
 import java.sql.Timestamp;
-import java.text.MessageFormat;
 import java.util.LinkedList;
 import java.util.Optional;
 import java.util.function.Function;
@@ -27,7 +26,6 @@ import org.jooq.Record;
 import org.jooq.SelectOnConditionStep;
 
 import com.esferalia.aon.occam.api.AONContext;
-import com.esferalia.aon.occam.api.model.Account;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceDetail;
 import com.esferalia.aon.occam.api.model.type.InvoiceSource;
@@ -41,16 +39,15 @@ import com.esferalia.aon.occam.impl.jooq.dao.SellerDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.SellerDAO.SellerFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.WarehouseDAO.WarehouseFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.WorkplaceDAO.WorkplaceFiller;
+import com.esferalia.aon.occam.impl.jooq.dao.accounting.AccountingInvoiceDAO;
 import com.esferalia.aon.watson.AonError;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.util.AonCollectionUtils;
 import com.esferalia.aon.watson.util.AonEnumUtils;
 import com.esferalia.aon.watson.util.AonMathUtils;
-import com.esferalia.aon.watson.util.AonStringUtils;
 
 class InvoiceDetailDAO {
 
-	private static final String DETAIL_MSG = "Fra. n\u00AA: {0} del {1,date,dd/MM/yyyy}. ";
    
     private InvoiceDetailDAO() {
      
@@ -155,19 +152,14 @@ class InvoiceDetailDAO {
 
 	static InvoiceDetail save(AONContext ctx, Invoice invoice, InvoiceDetail invoiceDetail) {
 		invoiceDetail = (invoiceDetail.getId() != null)
-			? update(ctx, invoiceDetail)
+			? update(ctx, invoice, invoiceDetail)
 			: insert(ctx, invoice, invoiceDetail);
-		
-		if (invoice.getType() != InvoiceType.UNDEDUCTIBLE && !invoiceDetail.isPrepayment()) {
-			InvoiceTaxDAO.save(ctx, invoice, invoiceDetail);	
-		} else {
-			ctx.log().debug("\t\tSKIPPING INVOICE TAX CREATION ({0})",(invoiceDetail.isPrepayment()? "PREPAYMENT": "UNDEDUCTIBLE INVOICE"));
-		}
-	
 		return invoiceDetail;
 	}
 	
-	private static InvoiceDetail update(AONContext ctx, InvoiceDetail invoiceDetail) {
+	private static InvoiceDetail update(AONContext ctx, Invoice invoice, InvoiceDetail invoiceDetail) {
+		InvoiceDetailAutoComplete.complete(ctx, invoice, invoiceDetail);
+		InvoiceDetailValidation.validate(ctx, invoiceDetail);
 		ctx.getDslContext().update(INVOICE_DETAIL)
 			.set(INVOICE_DETAIL.DOMAIN, invoiceDetail.getDomain())
 			.set(INVOICE_DETAIL.INVOICE, invoiceDetail.getInvoice())
@@ -191,16 +183,13 @@ class InvoiceDetailDAO {
 			.set(INVOICE_DETAIL.MODIFICATION_DATE, new Timestamp( System.currentTimeMillis()))
 			.where(INVOICE_DETAIL.ID.eq(invoiceDetail.getId()))
 			.execute();
+		InvoiceTaxDAO.save(ctx, invoice, invoiceDetail);
 		return invoiceDetail;
 	}
 
 
 	private static InvoiceDetail insert(AONContext ctx, Invoice invoice, InvoiceDetail invoiceDetail) {
-		// TODO InvoiceDetailAutoComplete
-		if (AonStringUtils.isBlank(invoiceDetail.getDescription()) && invoiceDetail.getSource() == InvoiceSource.ACCOUNT) {
-			invoiceDetail.setDescription(MessageFormat.format(DETAIL_MSG, invoice.getReferenceCode(), invoice.getIssueDate()));	
-		}
-		invoiceDetail.setInvoice(invoice.getId());
+		InvoiceDetailAutoComplete.complete(ctx, invoice, invoiceDetail);
 		InvoiceDetailValidation.validate(ctx, invoiceDetail);
 		Integer id = ctx.getDslContext().insertInto(INVOICE_DETAIL)
 			.set(INVOICE_DETAIL.DOMAIN, invoiceDetail.getDomain())
@@ -227,11 +216,13 @@ class InvoiceDetailDAO {
 			.set(INVOICE_DETAIL.MODIFICATION_DATE, new Timestamp( System.currentTimeMillis()))
 			.returning(INVOICE_DETAIL.ID).fetchOne().getId();
 		ctx.log().debug("\tINSERT INVOICE_DETAIL detalles invoice: {0}",invoiceDetail.getId());
-		afterInsertDetail(ctx, invoice, invoiceDetail);
-		return invoiceDetail.setId(id);
+		invoiceDetail.setId(id);
+		InvoiceTaxDAO.save(ctx, invoice, invoiceDetail);
+		afterInsert(ctx, invoice, invoiceDetail);
+		return invoiceDetail;
 	}
 
-	private static void afterInsertDetail(AONContext ctx, Invoice invoice, InvoiceDetail detail) {
+	private static void afterInsert(AONContext ctx, Invoice invoice, InvoiceDetail detail) {
 		detail.getSource().visit(detail, new IInvoiceSourceVisitor() {
 			
 			private static final long serialVersionUID = -9008741708561768671L;
@@ -246,36 +237,10 @@ class InvoiceDetailDAO {
 			@Override public void visitDirectExpense(InvoiceDetail detail) {/* nothing */ }
 			@Override public void visitDelivery(InvoiceDetail detail) {/* nothing */ }
 			
-			private boolean areTaxesEnabled(InvoiceDetail detail) {
-				return (invoice != null
-					 && invoice.getType() != InvoiceType.UNDEDUCTIBLE 
-					 && !detail.isPrepayment());
-			}
-			
 			private void saveAcountingTables(InvoiceDetail detail) {
-				ctx.getDslContext().insertInto(INVOICE_DETAIL_ACCOUNT)
-					.set(INVOICE_DETAIL_ACCOUNT.DOMAIN, detail.getDomain())
-					.set(INVOICE_DETAIL_ACCOUNT.INVOICE_DETAIL, detail.getId())
-					.set(INVOICE_DETAIL_ACCOUNT.ACCOUNT, detail.getExpAccount().getId())
-					.execute();
-				if (areTaxesEnabled( detail )) {
-					ctx.log().debug("\tINSERT INVOICE_DETAIL_ACCOUNT");
-					AonCollectionUtils.stream( detail.getInvoiceTaxes() )
-						.forEach( tax -> {
-							Integer accountId = Optional.ofNullable( invoice.isSales()?tax.getOutputAccount():tax.getInputAccount() )
-								.map( Account::getId )
-								.orElse( detail.getExpAccount().getId() );
-							ctx.getDslContext().insertInto(INVOICE_TAX_ACCOUNT)
-								.set(INVOICE_TAX_ACCOUNT.DOMAIN,detail.getDomain())
-								.set(INVOICE_TAX_ACCOUNT.INVOICE_TAX, tax.getId())
-								.set(INVOICE_TAX_ACCOUNT.ACCOUNT, accountId )
-							.execute();
-							ctx.log().debug("\t\tINSERT INVOICE_TAX_ACCOUNT");
-						});
-				} else {
-					ctx.log().debug("\t\tSKIPPING INVOICE TAX ACCOUNT CREATION ({0})",
-						(detail.isPrepayment()?"PREPAYMENT":"UNDEDUCTIBLE INVOICE"));
-				}
+				AccountingInvoiceDAO.saveInvoiceDetailAccount(ctx, detail);
+				AonCollectionUtils.stream( detail.getInvoiceTaxes() )
+					.forEach( tax -> AccountingInvoiceDAO.saveInvoiceTaxAccount(ctx,invoice, detail, tax));
 			}
 			
 			@Override 
