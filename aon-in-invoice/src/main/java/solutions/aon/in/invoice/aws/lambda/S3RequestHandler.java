@@ -80,6 +80,7 @@ public class S3RequestHandler implements RequestHandler<Object, String> {
 
     static void handleS3EventObject(S3EventObject s3EventObject) {
     	try {
+    		s3EventObject.setDocument(s3EventObject.getDocument().trim());
     		if(isImage(s3EventObject)) {
     			byte[] image = download(s3EventObject);
     			byte[] pdf = imageToPdf(image);
