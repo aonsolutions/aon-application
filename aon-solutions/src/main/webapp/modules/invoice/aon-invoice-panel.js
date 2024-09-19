@@ -41,6 +41,7 @@ import "../../components/aon-application.js";
 import "../../components/aon-dialog-menu.js";
 
 import { getCounter, addCounter, clearCounter } from "./InvoiceCounter.js";
+import { AonFutureTax } from "../fiscal/tax/aon-future-tax.js";
 
 export class AonInvoicePanel extends AonElement {
   selectedOption;
@@ -780,11 +781,9 @@ export class AonInvoicePanel extends AonElement {
       let toolbar = this.getElement(aonInvoice.TOOLBAR);
       toolbar.option = option.name;
       this.selectedOption = option;
-
       if(option.id === OPTION.FISCAL_DRAFT.id){
-          console.log("--------- Fiscal Draft ---------");
-          // TODO CREAR UN COMPONENTE !!!!!!!!!
           await this.getFiscalModelDraft();
+
       }
     }
   }
@@ -792,210 +791,12 @@ export class AonInvoicePanel extends AonElement {
   async getFiscalModelDraft() {
     let aonInvoice = this.getApplication();
 
-    const datos = await this.getModelsFiscal();
+    let futureFiscalFilter = await FiscalUtils.getFutureFiscalFilter();
 
-    console.log("getFiscalModelDraft");
-    console.log(datos);
-
-    let orderDatos = [];
-    if (datos) {
-      orderDatos = sortBy(datos, "year", "desc").map((model) =>
-        FiscalUtils.getModelNew(model)
-      );
-    }
-
-    const result = orderDatos.filter(function (a) {
-      var key = a.year + "|" + a.period;
-      if (!this[key]) {
-        this[key] = true;
-        return true;
-      }
-    }, Object.create(null));
-
-    result.sort(function (a, b) {
-      var aSize = a.year;
-      var bSize = b.year;
-      var aLow = a.period;
-      var bLow = b.period;
-
-      if (aSize == bSize) {
-        return aLow < bLow ? -1 : aLow > bLow ? 1 : 0;
-      } else {
-        return aSize < bSize ? -1 : 1;
-      }
-    });
-
-    let resultReverse = result.reverse();
-
-    if (resultReverse || resultReverse.length !== 0) {
-      let lastPeriod;
-      let period;
-      let periodText;
-      let year;
-
-      if (resultReverse[0].period == "T1") {
-        period = "T2";
-        periodText = "2º Trim. " + resultReverse[0].year;
-        year = resultReverse[0].year;
-        lastPeriod = new Date(resultReverse[0].year + "-" + "03-31");
-      } else if (resultReverse[0].period == "T2") {
-        period = "T3";
-        periodText = "3º Trim. " + resultReverse[0].year;
-        year = resultReverse[0].year;
-        lastPeriod = new Date(resultReverse[0].year + "-" + "06-30");
-      } else if (resultReverse[0].period == "T3") {
-        period = "T4";
-        periodText = "4º Trim. " + resultReverse[0].year;
-        year = resultReverse[0].year;
-        lastPeriod = new Date(resultReverse[0].year + "-" + "09-30");
-      } else {
-        period = "T1";
-        periodText = "1º Trim. " + (resultReverse[0].year + 1);
-        year = resultReverse[0].year + 1;
-        lastPeriod = new Date(resultReverse[0].year + "-" + "12-31");
-      }
-
-      let fiscalFilter = {
-        year: year,
-        period: period,
-        title: periodText,
-        periodText: periodText,
-      };
-
-      let aonTable = new AonTable();
-      aonTable.id = "fiscalDraftTable";
-      aonInvoice.setContent(aonTable);
-
-      await this.getTableDesk(fiscalFilter);
-
-    }
-  }
-
-  async getTableDesk(fiscalFilter) {
-    const aonTable = this.getElement("fiscalDraftTable");
-    if (aonTable) {
-      aonTable.removeColumns();
-      aonTable.addColumn("", "string", "lettersHtml", "6%");
-      aonTable.addColumn("Modelo", "", "modelText", "20%");
-      aonTable.addColumn("Hacienda", "", "hacienda", "10%");
-      aonTable.addColumn("Ejercicio", "", "year", "10%");
-      aonTable.addColumn("Periodo", "", "periodText", "10%");
-      aonTable.addColumn("Estado", "string", "statusHtml", "10%");
-      aonTable.addColumn("Importe", "number", "resultFormat", "8%");
-      aonTable.addColumn("", "icon", "icon", "5%");
-
-      try {
-        const resp = await this.getData(fiscalFilter);
-
-        console.log("Get Data AonTax");
-        console.log(resp);
-
-        aonTable.removeRows();
-
-        if (resp.length) {
-          resp.forEach((res) => {
-            aonTable.addRow(res);
-          });
-
-          let elementHTML = document.createElement(TAG.DIV);
-          elementHTML.style.alignItems = "center";
-          elementHTML.style.fontWeight = "bold";
-          elementHTML.style.maxWidth = "6rem";
-          elementHTML.title = "Borrador";
-
-          let description = document.createElement(TAG.SPAN);
-          description.innerText = "Total";
-          elementHTML.appendChild(description);
-
-          const statusHtml = elementHTML.innerHTML;
-
-          let row = aonTable.addRow({
-            statusHtml: statusHtml,
-            statusText: "Total",
-            resultFormat: this.getTotal(resp),
-          });
-          row.style.fontWeight = "600";
-        } else {
-          aonTable.empty();
-        }
-      } catch (e) {
-        console.log(e);
-      }
-    }
-  }
-
-  getTotal(models) {
-    let total = models.reduce((t, model) => t + model.result, 0);
-    return formatNumber(total, 2, "EUR");
-  }
-
-  async getData(fiscalFilter) {
-    const estimationModels = await getEstimationModelsFiscal(fiscalFilter);
-
-	console.log("getData Invoice");
-	console.log(estimationModels);
-
-    let estimationModelDatos = estimationModels
-      .filter(
-        (estimationModel) =>
-          estimationModel.amount && estimationModel.amount > 0
-      )
-      .map((estimationModel) =>
-        this.formatEstimationModel(estimationModel, fiscalFilter)
-      );
-    return estimationModelDatos;
-  }
-
-  formatEstimationModel(model, estimationFilter) {
-    const newModel = ""; //Empty
-
-    let elementHTML = document.createElement(TAG.DIV);
-    elementHTML.style.alignItems = "center";
-    elementHTML.style.fontWeight = "bold";
-    elementHTML.style.maxWidth = "6rem";
-    elementHTML.title = "Borrador";
-
-    let description = document.createElement(TAG.SPAN);
-    description.innerText = "Borrador";
-    elementHTML.appendChild(description);
-
-    const statusHtml = elementHTML.outerHTML;
-
-    return {
-      ...model,
-      resultFormat: !isNaN(model.amount)
-        ? formatNumber(model.amount, 2, "EUR")
-        : null,
-      periodText: estimationFilter.periodText,
-      modelText: model.description,
-      year: estimationFilter.year,
-      hacienda: model.hacienda, // Alava, AEAT...
-      result: model.amount,
-      statusHtml,
-      statusText: "Borrador",
-      newModel,
-    };
-  }
-
-  async getModelsFiscal() {
-    try {
-      const datos = await getModelsFiscal();
-
-      if (datos) {
-        let sortData = sortBy(datos, "year", "desc")
-          .sort((a, b) => a.period.localeCompare(b.period))
-          // .filter(({ status }) => status !== "PENDING")
-          .map((model) => FiscalUtils.getModelNew(model));
-
-        return sortData;
-      }
-    } catch (error) {
-      console.error(error);
-      this.showError(error);
-    }
+    let aonFutureTax =  new AonFutureTax(INVOICE, futureFiscalFilter);
+    aonInvoice.setContent(aonFutureTax);    
   }
 }
-
 if (!window.customElements.get(TAG.AON_INVOICE_PANEL)) {
   window.customElements.define(TAG.AON_INVOICE_PANEL, AonInvoicePanel);
 }

@@ -1217,7 +1217,6 @@ public abstract class ContrataEmployee extends ResizeComposite {
 
 	private ContrataEmployeeObject contrataEmployeeObject;
 	private Integer contractId;
-	private EmployeeContractInfo contract;
 
 	private AonToolbarButton listEmployees;
 	private HTMLPanel employeeContractButtons;
@@ -1605,9 +1604,6 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		initializeIdcDateListBox();
 
 		loadWindow(s -> {
-			
-			this.contract = this.contrataEmployeeObject.getContractEmployeeInfo();
-			
 			// EmployeeContractButtons
 			getContractListCount(count -> {
 				if(toolbar.getWidgetIndex(nextContract) < 0){
@@ -1625,7 +1621,7 @@ public abstract class ContrataEmployee extends ResizeComposite {
 					toolbar.add(nextContract);
 				}
 				
-				sellerIteration.setText((null == contract ? "ND" : (position + 1)) + " / " + count);
+				sellerIteration.setText((position + 1) + " / " + count);
 				previusContract.setEnabled(position > 0);
 				nextContract.setEnabled(position < (count - 1));
 				
@@ -1634,6 +1630,38 @@ public abstract class ContrataEmployee extends ResizeComposite {
 			});
 			
 			tabLayOutPanel.selectTab(selectedTab, true);
+			
+			employeeCalendar.initializeYearLB(calendarYaerLB, contrataEmployeeDialogObject.getContractStartDate());
+			employeeCalendar.setYearLB(calendarYaerLB);
+			
+			success.accept("");
+		});
+	}
+	
+	// For new create contracts
+	public void setContrataEmployeeObject(ContrataEmployeeObject contrataEmployeeDialogObject, Integer contractId, int selectedTab, Consumer<String> success) {
+
+		this.contractId = contractId;
+		this.contrataEmployeeObject = contrataEmployeeDialogObject;
+		this.position = -1;
+		
+		this.tabLayOutPanel.selectTab(0, false);
+		
+		// Get Idc Dates
+		initializeIdcDateListBox();
+
+		loadWindow(s -> {
+			
+			// EmployeeContractButtons
+			if(toolbar.getWidgetIndex(nextContract) < 0){
+				sellerIteration = new Label();
+				toolbar.add(sellerIteration);
+				
+				nextContract = new AonToolbarButton("Siguiente Agente Comercial", AON.CSS.aonIconRight());
+				toolbar.add(nextContract);
+			}
+			
+			hideNavegationOptions();
 			
 			employeeCalendar.initializeYearLB(calendarYaerLB, contrataEmployeeDialogObject.getContractStartDate());
 			employeeCalendar.setYearLB(calendarYaerLB);
