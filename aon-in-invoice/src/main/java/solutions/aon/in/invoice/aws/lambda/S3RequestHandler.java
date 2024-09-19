@@ -17,15 +17,22 @@ import org.json.JSONObject;
 
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.RequestHandler;
-import com.esferalia.aon.occam.api.json.NewsJSON;
+import com.esferalia.aon.occam.api.json.JsonUtils;
+import com.esferalia.aon.occam.api.model.IJsonNames;
 import com.esferalia.aon.occam.api.model.Workgroup;
+import com.esferalia.aon.occam.api.model.aonsolutions.DomainUserRoles;
 import com.esferalia.aon.occam.api.model.finance.InvofoxConfiguration;
 import com.esferalia.aon.occam.api.model.task.Task;
 import com.esferalia.aon.occam.api.model.task.TaskWorkflow;
 import com.esferalia.aon.occam.api.model.task.TaskWorkflowType;
+import com.esferalia.aon.occam.api.model.type.RawdocStatus;
+import com.esferalia.aon.watson.server.AonDateUtils;
 
 import net.aonsolutions.aon.api.AonInvofox;
+import net.aonsolutions.aon.api.AonSecurity;
 import net.aonsolutions.aon.api.AonTask;
+import net.aonsolutions.aon.in.pdf.maker.exception.CanNotCreatePdfException;
+import net.aonsolutions.aon.in.pdf.maker.image.ImageToPdf;
 import solutions.aon.aws.s3.S3EventObject;
 import solutions.aon.in.invoice.aws.lambda.Invofox.DocumentType;
 
@@ -36,7 +43,7 @@ public class S3RequestHandler implements RequestHandler<Object, String> {
     static final String LOAD_S3 = "loadS3";
     static final String LOAD_TASK = "loadTask";
     static final String LOAD_BATCH = "loadBatch";
-    
+    static final String RAWDOC = "rawdoc";
     static final int MAX_SLEEP_TIME = 2000;
     static final String LOAD_BATCH_WAIT_ID = "loadBatchId";
     
@@ -47,84 +54,123 @@ public class S3RequestHandler implements RequestHandler<Object, String> {
 
     @Override
     public String handleRequest(Object input, Context context) {
+    	List<S3EventObject> s3EventObjects = getS3EventObjects(input);
+    	s3EventObjects.forEach( S3RequestHandler::handleS3EventObject );
 	
-	List<S3EventObject> s3EventObjects = getS3EventObjects(input);
-	s3EventObjects.forEach( S3RequestHandler::handleS3EventObject );
-	
-	return "That's all folks :-)";
+    	return "That's all folks :-)";
     }
     
     static JSONObject newLoadBatchTask(String loadBatchId) {
-	JSONObject loadBatchTaskJSON = new JSONObject();
-	loadBatchTaskJSON.put(LOAD_BATCH, Collections.singletonMap(_ID, loadBatchId));
-	return loadBatchTaskJSON;
+    	JSONObject loadBatchTaskJSON = new JSONObject();
+    	loadBatchTaskJSON.put(LOAD_BATCH, Collections.singletonMap(_ID, loadBatchId));
+    	return loadBatchTaskJSON;
     }
 
     static String getLoadBatchId(JSONObject loadBatchTaskJSON ) {
-	JSONObject loadBatchJSON = loadBatchTaskJSON.getJSONObject(LOAD_BATCH);
-	return loadBatchJSON.getString(_ID);
+    	JSONObject loadBatchJSON = loadBatchTaskJSON.getJSONObject(LOAD_BATCH);
+    	return loadBatchJSON.getString(_ID);
     }
 
     static JSONObject newLoadBatchTask(JSONObject loadBatchJSON, JSONObject taskJSON) {
-	JSONObject loadBatchTaskJSON = new JSONObject();
-	loadBatchTaskJSON.put(LOAD_BATCH, loadBatchJSON);
-	loadBatchTaskJSON.put(LOAD_TASK, taskJSON );
-	return loadBatchTaskJSON;
+    	JSONObject loadBatchTaskJSON = new JSONObject();
+    	loadBatchTaskJSON.put(LOAD_BATCH, loadBatchJSON);
+    	loadBatchTaskJSON.put(LOAD_TASK, taskJSON );
+    	return loadBatchTaskJSON;
     }
 
     static void handleS3EventObject(S3EventObject s3EventObject) {
-	
-	try {
-	    InvofoxConfiguration invofoxConfiguration = getInvofoxConfiguration(s3EventObject);
-	    String companyId =  getCompanyId(invofoxConfiguration, s3EventObject);
-	    String downloadURL = getDowloadURL(s3EventObject); 
-	    JSONObject loadBatchTaskJSON = getLoadBatchTask(invofoxConfiguration, companyId, s3EventObject);
-	    String loadBatchId = getLoadBatchId(loadBatchTaskJSON);
-	    
-	    JSONObject clientData = 
-	    new JSONObject()
-	    .put(LOAD_S3, new JSONObject()
-		    .put("key", s3EventObject.getKey())
-		    .put("user", s3EventObject.getUser())
-		    .put("domain", s3EventObject.getDomain())
-		    .put("bucket", s3EventObject.getBucket())
-		 )
-	    .put(LOAD_TASK, new JSONObject()
-		    .put("id", loadBatchTaskJSON.getJSONObject(LOAD_TASK).getInt("id"))
-		    )
-	    ;
-	    
-	    loadDocuments(invofoxConfiguration, DocumentType.INVOICE, companyId, loadBatchId, clientData,  downloadURL);
-	    
-	    documentSent(s3EventObject, loadBatchTaskJSON, downloadURL);
-	    
-	} catch (URISyntaxException e) {
-	    e.printStackTrace();
-	} catch (InterruptedException e) {
-	    e.printStackTrace();
-	} catch (NoSuchCompanyException e) {
-	    e.printStackTrace();
-	} catch (IOException e) {
-	    e.printStackTrace();
-	} catch (Exception e) {
-	    e.printStackTrace();
-	} 
+    	try {
+    		if(isImage(s3EventObject)) {
+    			byte[] image = download(s3EventObject);
+    			byte[] pdf = imageToPdf(image);
+
+    			// sign PDF. 
+    			// Certificate cert = null; // TODO
+    			// byte[] signedPdf = PdfSigner.sign(cert, pdf);
+    			
+    			// save PDF IN S3.
+    			s3EventObject.setKey(s3EventObject.getKey().replace(".jpg", ".pdf"));
+    			s3EventObject.setFileName(s3EventObject.getFileName().replace(".jpg", ".pdf"));
+    			
+    			solutions.aon.aws.s3.S3.upload(s3EventObject.getBucket(), s3EventObject.getKey(), pdf);
+    		}    		
+    		DomainUserRoles dur = getDomainUserRoles(s3EventObject);
+    		if(dur.isInvofox()) {
+        		Integer rawdocId = createRawdoc(s3EventObject, RawdocStatus.PROCESSING);
+    			InvofoxConfiguration invofoxConfiguration = getInvofoxConfiguration(s3EventObject);
+        		String companyId =  getCompanyId(invofoxConfiguration, s3EventObject);
+        		String downloadURL = getDowloadURL(s3EventObject); 
+        		JSONObject loadBatchTaskJSON = getLoadBatchTask(invofoxConfiguration, companyId, s3EventObject);
+        		String loadBatchId = getLoadBatchId(loadBatchTaskJSON);
+
+        		JSONObject clientData = new JSONObject()
+       				.put(LOAD_S3, new JSONObject()
+       					.put("key", s3EventObject.getKey())
+       					.put("user", s3EventObject.getUser())
+       					.put("domain", s3EventObject.getDomain())
+       					.put("bucket", s3EventObject.getBucket()))
+       				.put(LOAD_TASK, new JSONObject()
+       					.put("id", loadBatchTaskJSON.getJSONObject(LOAD_TASK).getInt("id")))
+       				.put(RAWDOC, rawdocId);
+    	    
+        		loadDocuments(invofoxConfiguration, DocumentType.INVOICE, companyId, loadBatchId, clientData,  downloadURL);
+    	    
+        		documentSent(s3EventObject, loadBatchTaskJSON, downloadURL);
+    		} else {
+        		createRawdoc(s3EventObject, RawdocStatus.INBOX);
+    		}
+    	} catch (URISyntaxException e) {
+    		e.printStackTrace();
+    	} catch (InterruptedException e) {
+    		e.printStackTrace();
+    	} catch (NoSuchCompanyException e) {
+    		e.printStackTrace();
+    	} catch (IOException e) {
+    		e.printStackTrace();
+    	} catch (Exception e) {
+    		e.printStackTrace();
+    	} 
+    }
+
+    static DomainUserRoles getDomainUserRoles(S3EventObject s3Object) throws URISyntaxException, IOException, InterruptedException {
+    	return AonSecurity.getDomainUserRoles(s3Object.getDomain(), s3Object.getUser());
     }
     
     static InvofoxConfiguration getInvofoxConfiguration(S3EventObject s3Object) throws URISyntaxException, IOException, InterruptedException {
-	return AonInvofox.getInvofoxConfiguration(s3Object.getDomain(), s3Object.getUser());
+    	return AonInvofox.getInvofoxConfiguration(s3Object.getDomain(), s3Object.getUser());
+    }
+    
+    static boolean isImage(S3EventObject s3EventObject) {
+    	String contentType = solutions.aon.aws.s3.S3.getContentType(s3EventObject.getBucket(), s3EventObject.getKey());
+    	return contentType.toLowerCase().contains("image");
+    }
+    
+    static byte[] imageToPdf(byte[] image) throws IOException, CanNotCreatePdfException {
+		Map<String, String> metadata = new HashMap<String, String>();
+		metadata.put("ref_homologation", "000000");
+		metadata.put("software_name", "Aon Solutions");
+		metadata.put("software_version", "9.23");
+		metadata.put("timestamp", AonDateUtils.format(new Date(), "hh:mm dd/MM/yyyy"));
+
+		try (ImageToPdf imageToPdf = new ImageToPdf(image, metadata)) {
+			return imageToPdf.toByteArray();
+		}
     }
     
     static String getDowloadURL(S3EventObject s3Object) {
-	return S3.getDownloadURL(s3Object.getBucket(), s3Object.getKey()).toExternalForm();
+    	return S3.getDownloadURL(s3Object.getBucket(), s3Object.getKey()).toExternalForm();
     }
 
+    static byte[] download(S3EventObject s3Object) throws IOException {
+    	return solutions.aon.aws.s3.S3.download(s3Object.getBucket(), s3Object.getKey());
+	}
+    
     static String getLoadBatchKey(S3EventObject s3Object) {
-	return s3Object.getPrefix() + "/" + s3Object.getDomain() + "/" + s3Object.getDocument() + "/" + s3Object.getUser() + "/" + s3Object.getJob() + "/" + "loadbatch";
+    	return s3Object.getPrefix() + "/" + s3Object.getDomain() + "/" + s3Object.getDocument() + "/" + s3Object.getUser() + "/" + s3Object.getJob() + "/" + "loadbatch";
     }
 
     public static String getCompanyId(InvofoxConfiguration invofoxConfiguration, S3EventObject s3EventObject) throws URISyntaxException, IOException, InterruptedException {
-	return getCompanyId(invofoxConfiguration.getApiKey(), invofoxConfiguration.getApiUrl(), s3EventObject);
+    	return getCompanyId(invofoxConfiguration.getApiKey(), invofoxConfiguration.getApiUrl(), s3EventObject);
     }
 
     public static String getCompanyId(String invofoxApiKey, String invofoxApiUrl, S3EventObject s3EventObject) throws URISyntaxException, IOException, InterruptedException {
@@ -197,7 +243,7 @@ public class S3RequestHandler implements RequestHandler<Object, String> {
     }
     
     protected static JSONObject loadDocuments(InvofoxConfiguration invofoxConfiguration, DocumentType type, String companyId, String loadBatchId, JSONObject clientData , String ...downloadURLs) throws URISyntaxException, IOException, InterruptedException {
-	return Invofox.loadDocuments(invofoxConfiguration.getApiKey(), invofoxConfiguration.getApiUrl(), DocumentType.INVOICE, companyId, loadBatchId, clientData,  downloadURLs);
+    	return Invofox.loadDocuments(invofoxConfiguration.getApiKey(), invofoxConfiguration.getApiUrl(), DocumentType.INVOICE, companyId, loadBatchId, clientData,  downloadURLs);
     }
     
     
@@ -318,6 +364,21 @@ public class S3RequestHandler implements RequestHandler<Object, String> {
 //	  ]
 //	}    
 
+    private static Integer createRawdoc(S3EventObject s3EventObject, RawdocStatus rawdocStatus) throws URISyntaxException, IOException, InterruptedException  {
+    	JSONObject json = new JSONObject();
+    	JSONObject file = new JSONObject();
+    	file.put("s3Bucket", s3EventObject.getBucket());
+    	file.put("s3Key", s3EventObject.getKey()); 
+    	file.put("url", getDowloadURL(s3EventObject));
+    	file.put("path", getDowloadURL(s3EventObject));
+    	String contentType = solutions.aon.aws.s3.S3.getContentType(s3EventObject.getBucket(), s3EventObject.getKey());
+    	file.put("content_type", contentType);
+    	json.put(IJsonNames.FILE, file);
+    	json.put(IJsonNames.STATUS, rawdocStatus.getTediName());
+		JSONObject resp = AonInvofox.createRawdoc(s3EventObject.getDomain(), s3EventObject.getUser(), json);
+    	return JsonUtils.getInteger(resp, IJsonNames.ID);
+	}
+    
     public static void main(String[] args) throws URISyntaxException, IOException, InterruptedException, NoSuchCompanyException, ParseException {
 //      handleObject("aon-upload-post",  "");
     }

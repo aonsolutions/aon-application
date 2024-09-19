@@ -9,7 +9,6 @@ export class AonUploadToast extends AonElement {
 
 	files;
 	JOB_ID;
-	dur;
 	invofoxConfiguration;
 
 	get id() {
@@ -40,7 +39,7 @@ export class AonUploadToast extends AonElement {
 		card.title = MSG.UPLOAD_FILE;		
 		this.appendChild(card);
 		card.addTitleButton(MSG.CLOSE, MATERIAL_ICONS.CLOSE, false, () => this.close());
-
+		
 		card.style.minHeight = '100px';
 		card.style.width = '400px';
 		card.style.position = 'absolute';
@@ -48,11 +47,11 @@ export class AonUploadToast extends AonElement {
 		card.style.bottom = '10px';
 		card.style.right = '25px';
 		
-
 		let ul = this.createElement(TAG.UL);
 		ul.id = this.id + 'List';
-		ul.className = 'aonUl';
-		// div.appendChild(ul)
+		ul.classList.add(CSS.AON_UL);
+		ul.classList.add(CSS.AON_UL_UPLOAD_TOAST);
+
 		card.setContent(ul);
 	}
 
@@ -120,17 +119,11 @@ export class AonUploadToast extends AonElement {
 
 	upload(type, file, data, success, error) {
 		if("invoice" === type){
-			if(this.isInvofox()) {
-				s3UploadInvoice(file, this.JOB_ID, data, success, error);
-			} else {
-				uploadInvoice2(file, success, error);
-			}
+			s3UploadInvoice(file, this.JOB_ID, data, success, error);
  		} else if("documental" === type) {
 			uploadDocument(file, data, success, error);
 		}
-
 	}
-
 
 	getTypeIcon(type) {
 		if(type.includes('pdf')) {
@@ -146,23 +139,7 @@ export class AonUploadToast extends AonElement {
 		} else {
 		  return 'aon_file'
 		}
-	  }
-
-
-	setDur(dur) {
-		this.dur = dur;
 	}
-
-	getDur() {
-		return this.dur;
-	}
-	
-	isInvofox() {
-		console.log(JSON.stringify(this.dur));
-		console.log(this.dur.isInvofox());
-		return this.dur.isInvofox();
-	}
-
 }
 if(!window.customElements.get(TAG.AON_UPLOAD_TOAST)){
 	window.customElements.define(TAG.AON_UPLOAD_TOAST,  AonUploadToast);

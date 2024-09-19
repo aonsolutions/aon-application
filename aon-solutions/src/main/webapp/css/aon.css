@@ -124,6 +124,11 @@
   margin: 0;
 }
 
+.aonUlUploadToast {
+  max-height: 275px;
+  overflow-y: scroll;
+}
+
 .aonAppLi:hover {
   /* background-color: var(--aonLightGray); */
   background-color: var(--aonLightBlue);
