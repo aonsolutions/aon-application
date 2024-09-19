@@ -83,6 +83,7 @@ import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.server.io.AonIOUtils;
 import com.esferalia.aon.watson.server.io.DataUrl;
 import com.esferalia.aon.watson.server.io.DataUrlSerializer;
+import com.esferalia.aon.watson.util.AonArrayUtils;
 import com.esferalia.aon.watson.util.AonCollectionUtils;
 import com.esferalia.aon.watson.util.AonEnumUtils;
 import com.esferalia.aon.watson.util.AonMathUtils;
@@ -316,7 +317,7 @@ public class InvoiceDAO {
 
 		@Override
 		public Invoice  apply(Record r) {
-			return build(r, INVOICE);
+			return build(r);
 		}
 
 	    public static Invoice build(Record r) {
@@ -376,7 +377,7 @@ public class InvoiceDAO {
 
 		@Override
 		public InvoiceMin apply(Record r) {
-			return build(r, INVOICE);
+			return build(r);
 		}
 
 	    public static InvoiceMin build(Record r) {
@@ -584,32 +585,27 @@ public class InvoiceDAO {
 	private static void insertInvoiceAttach(AONContext ctx, Invoice invoice) {
 		if (invoice.getAttach().isPresent()) {
 			try {
+				InvoiceAttachAutoComplete.completeInvoiceAttach(ctx, invoice);
 				Attach attach = invoice.getAttach().get();
-				attach.setDomain(new Domain().setId(invoice.getDomain()));
-				attach.setAttachModule(invoice.getId());
-				attach.setAttachType( AttachType.INVOICE );
-				attach.setType( InvoiceAttachmentType.INVOICE.value() );
-				attach.setDate(invoice.getIssueDate());
 				attach.setDescription("Factura");
-				if (attach.getData() == null) {
-					if (attach.getAttachURL() != null) {
-						if ( invoice.isFromRawdoc()) {
-							Rawdoc rawdoc = RawdocDAO.getFull(ctx, invoice.getRawdocId());
-							if (rawdoc != null) attach.setData( rawdoc.getData() );
-						} else {
-							URI uri = new URI(attach.getAttachURL());
-							URLConnection conn = uri.toURL().openConnection();
-							conn.connect();
-							try (InputStream in = new BufferedInputStream(conn.getInputStream()))  {
-								attach.setData( AonIOUtils.toByteArray(in) );
-							}
+				
+				if (attach.getData() == null && attach.getAttachURL() != null) {
+					if ( invoice.isFromRawdoc()) {
+						Rawdoc rawdoc = RawdocDAO.getFull(ctx, invoice.getRawdocId());
+						if (rawdoc != null) attach.setData( rawdoc.getData() );
+					} else {
+						URI uri = new URI(attach.getAttachURL());
+						URLConnection conn = uri.toURL().openConnection();
+						conn.connect();
+						try (InputStream in = new BufferedInputStream(conn.getInputStream()))  {
+							attach.setData( AonIOUtils.toByteArray(in) );
 						}
 					}
-				} else {
-					if ( !invoice.isFromRawdoc()) {
-						String data = new String(attach.getData());
-						// Si se cambia este método de sitio, se debería tener en cuenta  
-						// que attach.data puede ser ya binario y no necesite unserialize.
+				}
+				
+				if (attach.getData() != null && !invoice.isFromRawdoc()) {
+					String data = new String(attach.getData(),0,4);
+					if (AonStringUtils.startsWith(data, "data:")) {
 						DataUrlSerializer serializer = new DataUrlSerializer();
 						DataUrl unserialized = serializer.unserialize(data);
 						attach.setData( unserialized.getData() );
@@ -622,6 +618,7 @@ public class InvoiceDAO {
 				
 				if (attach.getData() != null) {
 					Integer attachId = AttachmentDAO.insertInvoiceAttach(ctx, attach);
+					attach.setId(attachId);
 					ctx.log().debug("INSERT INVOICE ATTACH (invoice: {0} id : {1})",attach.getAttachModule(),attachId);
 				} else {
 					ctx.log().debug("INSERT INVOICE ATTACH (NO NEEDED - NO DATA)");

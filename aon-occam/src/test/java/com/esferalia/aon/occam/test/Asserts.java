@@ -236,6 +236,13 @@ public class Asserts {
 		}
 	}
 	
+	public static void assertEqualsDomainId(Domain expected, Domain actual) {
+		assertEqualsNulls( "Domain", expected, actual);
+		if (expected != null ) {
+			assertEquals(expected.getId(), actual.getId(),"Id");
+		}
+	}
+
 	private static void assertEqualsDomain(Domain expected, Domain actual) {
 		assertEqualsNulls( "Domain", expected, actual);
 		if (expected != null) {
@@ -951,11 +958,11 @@ public class Asserts {
 			assertEquals(expected.getAttachModule(), actual.getAttachModule(),"AttachModule");
 			assertEquals(expected.getAttachURL(), actual.getAttachURL(),"AttachURL");
 			assertEquals(expected.getId(), actual.getId(),"Id");
-			assertEqualsDomain(expected.getDomain(), actual.getDomain());
+			assertEqualsDomainId(expected.getDomain(), actual.getDomain());
 			assertEquals(expected.getMimeType(), actual.getMimeType(),"MimeType");
 			assertEquals(expected.getDescription(), actual.getDescription(),"Description");
 			// private byte[] data;
-			assertEquals(expected.getDate(), actual.getDate(),"Date");
+			assertEqualsDate("Date",expected.getDate(), actual.getDate());
 			assertEquals(expected.getType(), actual.getType(),"Type");
 			assertEquals(expected.getDriveId(), actual.getDriveId(),"DriveId");
 			assertEquals(expected.getScope(), actual.getScope(),"Scope"); 

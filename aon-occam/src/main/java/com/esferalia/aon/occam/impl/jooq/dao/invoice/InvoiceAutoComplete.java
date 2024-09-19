@@ -21,7 +21,6 @@ import com.esferalia.aon.watson.mutable.MutableInt;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonCollectionUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
-import com.fasterxml.jackson.annotation.JsonTypeInfo.Id;
 
 
 class InvoiceAutoComplete {
@@ -206,6 +205,11 @@ class InvoiceAutoComplete {
 			});
 	};
 
+	private static final BiConsumer<AONContext,Invoice> COMPLETE_ATTACH = (ctx,inv) -> {
+		inv.getAttach().ifPresent( a -> a.setAttachModule(inv.getId()));
+	};
+
+		
 	static void completeInvoice(AONContext ctx,Invoice inv) throws AonCoreException {
 		
 		COMPLETE_DOMAIN
@@ -222,6 +226,7 @@ class InvoiceAutoComplete {
 		.andThen(COMPLETE_VAT_DEDUCTION_TYPE)
 		.andThen(COMPLETE_IRPF_PROFESSIONAL)
 		.andThen(COMPLETE_FIRST_FINANCE)
+		.andThen(COMPLETE_ATTACH)
 		.andThen(ENSURE_DETAILS_LINE)
 		.accept(ctx,inv);
 	}
