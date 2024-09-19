@@ -262,11 +262,6 @@ export class AonNewMenu extends AonElement {
 			app,
 			sidenav
 		};
-		
-		if(app.app == "new"){
-			LS.setLeftMenu(true);
-			this.showSideNav();
-		}
 
         if(this.isApp(app) || excludedApps.includes(app.app)){
 			if(app.app != "new"){
