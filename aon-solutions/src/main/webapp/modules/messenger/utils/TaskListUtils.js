@@ -466,7 +466,6 @@ const getAssined = (res, domainId) => {
 
 const getSender = (res, document, documentTh) => {
   let sender = "";
-  /*
   if (res.registry && res.registry.name && document !== res.registry.document) {
     sender = `${res.registry.name} ${sender}`;
   } else if (res.sender && res.sender.name && documentTh !== res.sender.document) {
@@ -476,15 +475,6 @@ const getSender = (res, document, documentTh) => {
     sender = res.workgroup.description;
   } else {
     sender = "SIN GRUPO ASIGNADO";
-  }
-  */
-
-  if (res.registry && res.registry.name) {
-    sender = `${res.registry.name}`;
-  } else if (res.sender && res.sender.name) {
-    sender = `${res.sender.name}`;
-  } else {
-    sender = "SYSTEM";
   }
 
   return sender;

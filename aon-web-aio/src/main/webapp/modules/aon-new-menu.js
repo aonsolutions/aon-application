@@ -61,10 +61,6 @@ export class AonNewMenu extends AonElement {
 	AON_MENU_SIDENAV;
 	AON_MENU_APP_OPTIONS;
 	CLOSE;
-	
-	sideNavTimeout;
-	closeMenuPanelHandler;
-	openMenuPanelHandler;
 
 	get id() {
 		return this.getAttribute(CONSTANT.ID);
@@ -290,6 +286,7 @@ export class AonNewMenu extends AonElement {
 		aonMenuLefttop.className = CSS.AON_MENU_LEFTOP;
 		this.appendChild(aonMenuLefttop);
 		aonMenuLefttop.classList.add("aonNewMenuLeftTop");
+		this.buildMenuLeftop();
 		// let icon = this.getElement("aonMenuLeftop");
 		aonMenuLefttop.style.visibility = "visible";
 
@@ -310,23 +307,21 @@ export class AonNewMenu extends AonElement {
 		this.getRootPanel().style.marginTop = '1px'; //'69px';
 		this.buildMenuTopnav();
 
-		this.buildMenuLeftop();
 		
+
 		let header = this.getElement('aonHeaderWeb');
 		header.className = 'aonHeader aonHeaderStart';
 		let applications = this.getElement('applications');
 		applications.className = 'aonMenuLeftopStart';
-		
-		this.closeMenuPanelHandler = this.hideSideNav.bind(this);
-		this.openMenuPanelHandler = this.showSideNav.bind(this);
-		
-		if(LS.isLeftMenu())
-			this.showSideNav.bind(this);
+
+		if(LS.isOnlyOne()&& LS.isLeftMenu()){
+			this.showSideNav();
+		}
+
 	}
 
 	buildMenuLeftop() {
 		let aonMenuLeftop = this.getElement(this.AON_MENU_LEFTOP);
-		let aonMenuSidenav = this.getElement(this.AON_MENU_SIDENAV);
 
 		let div = this.createElement(TAG.DIV);
 		div.classList.add("aonNewMenuLeftTopDiv");
@@ -339,17 +334,6 @@ export class AonNewMenu extends AonElement {
 		div.appendChild(appDiv);
 
 		aonMenuLeftop.appendChild(div);
-		
-		// Añadir solo el evento si el Menu Izquierdo NO siempre visible
-		if(!LS.isLeftMenu()){
-			// Eventos para el botón
-			this.closeMenuPanelHandler = this.hideSideNav.bind(this);
-		    aonMenuLeftop.addEventListener('mouseover', this.showSideNav.bind(this));
-		
-		    // Eventos para el menú
-		    aonMenuSidenav.addEventListener('mouseover', this.showSideNav.bind(this));
-		    //aonMenuSidenav.addEventListener('mouseout', this.hideSideNav.bind(this));	
-		}
 	}
 
 	overrideDefault( app, suffix ){
@@ -491,185 +475,47 @@ export class AonNewMenu extends AonElement {
 		let topnav = this.getElement(this.AON_MENU_TOPNAV);
 		return topnav.style.height == '68px';
 	}
-	
-	addMenuOverHandlers(){
-		let aonMenuLeftop = this.getElement(this.AON_MENU_LEFTOP);
-		let aonMenuSidenav = this.getElement(this.AON_MENU_SIDENAV);
-		
-		console.log("addMenuOverHandlers");
-		
-		// Eventos para el botón
-		aonMenuLeftop.addEventListener('mouseover', this.openMenuPanelHandler);
-	
-	    // Eventos para el menú
-	    aonMenuSidenav.addEventListener('mouseover', this.openMenuPanelHandler);
-	    //aonMenuSidenav.addEventListener('mouseout', this.hideSideNav.bind(this));	
-		
-	}
-	
-	removeMenuOverHandlers(){
-		let aonMenuLeftop = this.getElement(this.AON_MENU_LEFTOP);
-		let aonMenuSidenav = this.getElement(this.AON_MENU_SIDENAV);
-		
-		/*
-		if(this.openMenuPanelHandler){
-			console.log("removeMenuOverHandlers openMenuPanelHandler");
-		 	aonMenuLeftop.removeEventListener('mouseover', this.openMenuPanelHandler);
-	    	aonMenuSidenav.removeEventListener('mouseover', this.openMenuPanelHandler);
-		}
-		*/
-		
-		if(this.closeMenuPanelHandler) {
-			console.log("removeMenuOverHandlers closeMenuPanelHandler");
-			document.removeEventListener('mouseover', this.closeMenuPanelHandler);
-		}
-			
-	}
 
 	showSideNav() {
-		//let welcome = this.getElement("aonCompanyTabFilter");
-		//if(!LS.isLeftMenu() || welcome) return;
-		
-		console.log("showSideNav");
-		
-		let rootPanel = this.getElement("rootPanel");
-		
-		if(!LS.isLeftMenu()){
-			console.log("add mouseover to DOCUMENT");
-			document.addEventListener('mouseover', this.closeMenuPanelHandler);
-			rootPanel.style.marginLeft = "0";
-		} else {
-			rootPanel.style.marginLeft = "5rem";
-		}
-		
-		if(this.sideNavTimeout) clearTimeout(this.sideNavTimeout);
-		
 		if(LS.isTopMenu())
 			this.reloadTopNav();
 
 		let sidenav = this.getElement(this.AON_MENU_SIDENAV);
-		if(sidenav){
-			sidenav.style.width = '5rem';
-			sidenav.style.display = "";
-		}
+		let menulist = this.getElement("aonMenuList");
+		let rootPanel = this.getElement("rootPanel");
+		// let aonlogo = this.getElement("aonLogo");		
+		// let icon = this.getElement("aonMenuLeftop");
+
+		sidenav.style.width = '68px';
+		sidenav.style.display = "";
+		
+		menulist.style.visibility = "visible";
+		
+		// aonlogo.style.left = '60px';
+		// aonlogo.style.position = 'relative';
+
+		// icon.style.visibility = "visible";
+
+		rootPanel.style.marginLeft = '68px';
 	}
 
-	hideSideNav(event){
-		console.log("hideSideNav");
-		
-		let aonMenuLeftop = this.getElement(this.AON_MENU_LEFTOP);
-		let aonMenuSidenav = this.getElement(this.AON_MENU_SIDENAV);
-		
-		let menuNewOptionsDialog = this.getElement("aonDesktopMainOptionDialogDialogMenu");
-		let newDialogDialogMenuContent = this.getElement("newDialogDialogMenuContent");
-		
-		if(!LS.isLeftMenu() && event){
-			/*
-			console.log(event.target);
-			
-			console.log(aonMenuLeftop);
-			console.log(aonMenuSidenav);
-			console.log(menuNewOptionsDialog);
-			console.log(newDialogDialogMenuContent);
-			
-			console.log("!aonMenuLeftop.contains(event.target) : " + !aonMenuLeftop.contains(event.target));
-			console.log("!aonMenuSidenav.contains(event.target) : " + !aonMenuSidenav.contains(event.target));
-			console.log("(!menuNewOptionsDialog || !menuNewOptionsDialog.contains(event.target)) : " + (!menuNewOptionsDialog || !menuNewOptionsDialog.contains(event.target)));
-			console.log("(!newDialogDialogMenuContent || !newDialogDialogMenuContent.contains(event.target)) : " + (!newDialogDialogMenuContent || !newDialogDialogMenuContent.contains(event.target)));
-			*/
-			
-			if (!aonMenuLeftop.contains(event.target) && 
-				!aonMenuSidenav.contains(event.target) && 
-				(!menuNewOptionsDialog || !menuNewOptionsDialog.contains(event.target)) && 
-				(!newDialogDialogMenuContent || !newDialogDialogMenuContent.contains(event.target))) {
-				
-				if(this.getApplication()){
-					let newDialogMenu =  this.getApplication().getOptionDialog();
-					if(newDialogMenu) newDialogMenu.close();
-				}
-				
-				console.log("remove mouseover to DOCUMENT");
-				
-				document.removeEventListener('mouseover', this.closeMenuPanelHandler);
-			
-				if(LS.isTopMenu())
-					this.reloadTopNav();
-			
-				let sidenav = this.getElement(this.AON_MENU_SIDENAV);
-				if(sidenav){
-					sidenav.style.width = '0';
-					sidenav.style.display = "none";
-				}
-			}
-		} else {
-			let rootPanel = this.getElement("rootPanel");
-			rootPanel.style.marginLeft = "0";
-			
-			if(LS.isTopMenu())
-				this.reloadTopNav();
-		
-			let sidenav = this.getElement(this.AON_MENU_SIDENAV);
-			if(sidenav){
-				sidenav.style.width = '0';
-				sidenav.style.display = "none";
-			}
-		}
-		
-		
-		
-		/*
-		this.sideNavTimeout = setTimeout(() => {
-			
-			let aonMenuLeftop = this.getElement(this.AON_MENU_LEFTOP);
-			let aonMenuSidenav = this.getElement(this.AON_MENU_SIDENAV);
-			
-			let menuNewOptionsDialog = this.getElement("aonDesktopMainOptionDialogDialogMenu");
-			let newDialogDialogMenuContent = this.getElement("newDialogDialogMenuContent");
-			//let newDialog = this.getElement("newDialog");
-			
-			
-			console.log(event.target);
-			
-			console.log(aonMenuLeftop);
-			console.log(aonMenuSidenav);
-			console.log(menuNewOptionsDialog);
-			console.log(newDialogDialogMenuContent);
-			
-			console.log("!aonMenuLeftop.contains(event.target) : " + !aonMenuLeftop.contains(event.target));
-			console.log("!aonMenuSidenav.contains(event.target) : " + !aonMenuSidenav.contains(event.target));
-			console.log("(!menuNewOptionsDialog || !menuNewOptionsDialog.contains(event.target)) : " + (!menuNewOptionsDialog || !menuNewOptionsDialog.contains(event.target)));
-			console.log("(!newDialogDialogMenuContent || !newDialogDialogMenuContent.contains(event.target)) : " + (!newDialogDialogMenuContent || !newDialogDialogMenuContent.contains(event.target)));
-			
-			
-			if(!LS.isLeftMenu() && event){
-				if (!aonMenuLeftop.contains(event.target) && 
-					!aonMenuSidenav.contains(event.target) && 
-					(!menuNewOptionsDialog || !menuNewOptionsDialog.contains(event.target)) && 
-					(!newDialogDialogMenuContent || !newDialogDialogMenuContent.contains(event.target))) {
-					
-					if(this.getApplication()){
-						let newDialogMenu =  this.getApplication().getOptionDialog();
-						if(newDialogMenu) newDialogMenu.close();
-					}
-					
-					document.removeEventListener('mouseover', this.closeMenuPanelHandler);
-				}
-			} else {
-				let rootPanel = this.getElement("rootPanel");
-				rootPanel.style.marginLeft = "0";
-			}
-			
-			if(LS.isTopMenu())
-					this.reloadTopNav();
-			
-			let sidenav = this.getElement(this.AON_MENU_SIDENAV);
-			if(sidenav){
-				sidenav.style.width = '0';
-				sidenav.style.display = "none";
-			}
-			
-        }, 500); // Delay de 500ms
-        */
+	hideSideNav(){
+		if(LS.isTopMenu())
+			this.reloadTopNav();
+
+		let sidenav = this.getElement(this.AON_MENU_SIDENAV);
+		let rootPanel = this.getElement("rootPanel");
+		let menulist = this.getElement("aonMenuList");
+		let aonlogo = this.getElement("aonLogo");
+		let icon = this.getElement("aonMenuLeftop");
+		sidenav.style.width = '0px';
+		sidenav.style.display = "none";
+		aonlogo.style.position = "relative";
+		// icon.style.visibility = "hidden";
+		// aonlogo.style.left = '60px';
+	
+		rootPanel.style.marginLeft = '0px';
+		//menulist.style.visibility = "hidden";
 	}
 
 	showMenuButton() {
@@ -1014,6 +860,7 @@ export class AonNewMenu extends AonElement {
 	}
 
 	close() {
+		this.hideSideNav();
 		this.hideTopNav();
 	}
 
@@ -1021,6 +868,10 @@ export class AonNewMenu extends AonElement {
 		if(LS.isTopMenu()){
 			this.showTopNav();
 		}
+
+		if(LS.isLeftMenu()){
+			this.showSideNav();
+		} 
 	}
 
 	isExpanded() {
@@ -1158,7 +1009,7 @@ export class AonNewMenu extends AonElement {
 	}
 	
 	showNewDialogMenu(el){
-		let newDialogMenu = this.getApplication().getOptionDialog();
+		let newDialogMenu =  this.getApplication().getOptionDialog();
 
 		let newMenuOptions = [];
 		if(this.getDur().isInvoice()){
@@ -1241,12 +1092,6 @@ export class AonNewMenu extends AonElement {
 		
 		newDialogMenu.open();
 		
-		// Need for auto hide menuPanel
-		let aonDesktopMainOptionDialogDialogMenu = this.getElement("aonDesktopMainOptionDialogDialogMenu");
-		if(aonDesktopMainOptionDialogDialogMenu){
-			aonDesktopMainOptionDialogDialogMenu.style.width = "30rem";
-			aonDesktopMainOptionDialogDialogMenu.style.height = "18rem";
-		}
 	}
 	
 	async isElementLoaded(selector){

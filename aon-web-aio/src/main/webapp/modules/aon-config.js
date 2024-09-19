@@ -65,7 +65,7 @@ export class AonConfig extends AonElement {
 
         let sideNavTitle = this.createSpan(); 
         sideNavTitle.className =  `${CSS.AON_CONFIG_SIDE_NAV}Title`;
-        sideNavTitle.innerHTML = "Menú lateral (siempre visible)";
+        sideNavTitle.innerHTML = MSG.PORTAL_MENU;
         sideNavDiv.appendChild(sideNavTitle);
 
         let sideNavSwitch = new AonSwitch();
@@ -171,13 +171,11 @@ export class AonConfig extends AonElement {
         sideNavSwitch.addEventListener(EVENT.CHANGE, () => {
             LS.setLeftMenu(sideNavSwitch.checked);
             if(LS.isLeftMenu()) {
-				aonMenu.showSideNav();
-				aonMenu.removeMenuOverHandlers();
-			}
-            else {
-				aonMenu.hideSideNav();
-				aonMenu.addMenuOverHandlers();
-			}
+                aonMenu.showSideNav();
+            } else {
+                aonMenu.hideSideNav();
+            };
+            
         });
 
         appsSwitch.addEventListener(EVENT.CHANGE, () => {

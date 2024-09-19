@@ -9,7 +9,6 @@ import { AonRightPanel } from './aon-right-panel.js';
 import { AonLoginPanel } from './aon-login-panel.js';
 import { AonNotificationPanel } from './aon-notification-panel.js';
 import { clearAuth } from 'aonsolutions/services/service.js';
-import { waitEl } from 'aonsolutions/services/utils.js';
 
 import { AonNewMobileHeader } from 'aonsolutions/modules/aon-new-mobile-header.js';
 import { AonMobileMenu } from 'aonsolutions/modules/aon-mobile-menu.js';
@@ -257,19 +256,6 @@ export class AonHome extends AonElement {
 					document.addEventListener('click', this.closeRightPanelHandler); // Agregar evento de cerrar al hacer 
 				}
 			});
-		}
-		
-		if(LS.isLeftMenu()) {
-			console.log("AonHome showSideNavMenu");
-			aonMenu.showSideNav();
-			aonMenu.removeMenuOverHandlers();
-		} else {
-			console.log("AonHome waitEl : " + aonMenu.AON_MENU_SIDENAV);
-			waitEl("#" + aonMenu.AON_MENU_SIDENAV).then(aonMenuLeftop=>{
-		        aonMenu.hideSideNav();
-				aonMenu.addMenuOverHandlers();
-		    });  
-			
 		}
 	}
 	

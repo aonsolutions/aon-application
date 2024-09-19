@@ -844,7 +844,8 @@ color: #5f6368;
   display: flex;
   height: 40px;
   border-bottom: 1px solid #ddd;
-  margin: 0 1em;
+  margin-right: 1.5em;
+  margin-left: 1.5em;
 }
 
 .aonSecondaryToolbarTitle {
@@ -931,18 +932,16 @@ background-color: var(--aonLightGray);
 }
 
 .aonMenuSidenav {
-  width: 5rem;
-  left: 0px;
-  font-size: 10px;
-  background-color: var(--aonRightPanelColor);
-  top: 48px;
+  z-index: 2;
+  height: 100%;
+  width: 60px;
   position: fixed;
-  z-index: 1000000;
-  height: calc(100vh - 49px);
-  overflow: hidden;
-  overflow-y: hidden;
-  border: 1px solid rgba(0,0,0,0.1);
-  overflow-y: auto;
+  top: 48px;
+  left: 0px;
+  overflow-x: hidden;
+  font-size: 10px;
+  border-right: none;
+  background-color: #f0f0f0;
  
 }
 
@@ -951,7 +950,7 @@ background-color: var(--aonLightGray);
     left: 0;
     z-index: 8;
     height: 48px;
-    width: 5rem;
+    width: 68px;
     position: fixed;
     overflow-x: hidden;
     font-size: 10px;
@@ -2099,23 +2098,12 @@ label.rating:hover {
 
 .aonMessengerCardRow, .aonDocumentalCardRow{
   display: flex;
-  flex-direction: column;
+  justify-content: space-between;
   width: 100%;
   border-bottom: 1px solid rgb(221, 221, 221);
   padding: .5rem 0;
-  cursor: pointer; 
-}
-
-.aonMessengerCardRowContent, .aonDocumentalCardRowContent{
-  display: flex;
+  cursor: pointer;
   align-items: center;
-  width: 100%;
-}
-
-.aonDocumentalCardRowContent{
-border-bottom: 1px solid rgb(221, 221, 221);
-  padding: .5rem 0;
-  cursor: pointer; 
 }
 
 .aonMessengerCardRow:hover{
@@ -2123,12 +2111,12 @@ border-bottom: 1px solid rgb(221, 221, 221);
   border-bottom: 1px solid var(--aonMessenger);
 }
 
-.aonDocumentalCardRowContent:hover{
+.aonDocumentalCardRow:hover{
   border-top: 1px solid var(--aonDocumental);
   border-bottom: 1px solid var(--aonDocumental);
 }
 
-.aonEllipsis {
+.aonDocumentalEllipsis {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -2150,7 +2138,7 @@ border-bottom: 1px solid rgb(221, 221, 221);
   height: 32px;
   cursor: pointer;
   padding: 0px 0px 0px 68px;
-  margin-left: 5rem;
+  margin-left: 60px;
   position: relative;
   background-position: center;
   background-repeat: no-repeat;
@@ -2164,7 +2152,7 @@ border-bottom: 1px solid rgb(221, 221, 221);
 }
 
 .aonHeaderApp {
-  margin-left: 5rem;
+  margin-left: 49px;
   /* min-width: 120px;
   display: none; */
 }      
@@ -2226,6 +2214,13 @@ size: 32px;
 #divCol > div{
   display: flex;
   justify-content: center;
+}
+
+.aonEllipsis {
+  text-overflow: ellipsis;
+  overflow: hidden;
+  max-width: 17rem;
+  white-space: nowrap;
 }
 
 /*
@@ -2412,6 +2407,22 @@ size: 32px;
   .aonUploadPanel, .aonFastAccess{
       flex-direction: row;
   }
+
+  .aonDocumentalCardRow > .aonFlex > .aonDocumentalEllipsis{
+      max-width: 21rem;
+  }
+}
+
+/* Medium devices (landscape tablets, 768px and up) */
+/* @media only screen and (min-width: 768px) {} */
+@media only screen and (min-width: 768px) {
+  .aonMessengerCardRow > .aonFlex > .aonFlexColumn > .aonEllipsis{
+      max-width: 8rem;
+  }
+
+  .aonDocumentalCardRow > .aonFlex > .aonDocumentalEllipsis{
+      max-width: 10rem;
+  }
 }
 
 /* Large devices (laptops/desktops, 992px and up) */
@@ -2419,6 +2430,14 @@ size: 32px;
   .aonDashboardCard{
       width: auto;
       min-width: 22rem;
+  }
+
+  .aonDocumentalCardRow > .aonFlex > .aonDocumentalEllipsis{
+    max-width: 13rem;
+  }
+  
+  .aonMessengerCardRow > .aonFlex > .aonFlexColumn > .aonEllipsis{
+      max-width: 10rem;
   }
 
   .aonNewLogo{
@@ -2434,6 +2453,30 @@ size: 32px;
   }
 }
 
+@media only screen and (min-width: 1000px) {
+  .aonMessengerCardRow > .aonFlex > .aonFlexColumn > .aonEllipsis{
+      max-width: 15rem;
+  }
+}
+
+@media only screen and (min-width: 1230px) {
+  .aonMessengerCardRow > .aonFlex > .aonFlexColumn > .aonEllipsis{
+      max-width: 11rem;
+  }
+}
+
+@media only screen and (min-width: 1441px) {
+  .aonMessengerCardRow > .aonFlex > .aonFlexColumn > .aonEllipsis{
+      max-width: 15rem;
+  }
+}
+
+@media only screen and (min-width: 1920px) {
+  .aonMessengerCardRow > .aonFlex > .aonFlexColumn > .aonEllipsis{
+      max-width: 25rem;
+  }
+}
+
 /* Extra large devices (large laptops and desktops, 1200px and up) */
 /* @media only screen and (min-width: 1200px) {} */
 @media only screen and (min-width: 1000px) {
@@ -2445,6 +2488,8 @@ size: 32px;
     margin-left: 4.5rem;
   }
 }
+
+
 
 .lds-ring {
   display: inline-block;
@@ -3218,7 +3263,9 @@ color: var(--aonWhite);
 }
 
 #bankCardTable,
-#fiscalCardTable {
+#fiscalCardTable,
+#documentalCardTable,
+#messengerCardTable {
 	gap: .5rem !important;
 }
 
@@ -3822,7 +3869,7 @@ color: var(--aonWhite);
 }
 
 .aonNewMenuLeftTop{
-  width: 5rem;
+  width: 68px;
   visibility: hidden;
 }
 
@@ -3842,7 +3889,7 @@ align-items: center;
 }
 
 .aonNewMenuLeftTopAppDiv{
-  width: 5rem;
+  width: 68px;
 background-color: transparent;
 cursor: pointer;
 }
@@ -4135,7 +4182,7 @@ font-weight: 600;
 .aonMessengerCardDate{
   text-align: right;
   color: rgb(120, 120, 133);
-  font-size: 0.7rem;
+  font-size: 0.8rem;
 }
 
 .accountingChatLegend {
