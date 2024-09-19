@@ -88,11 +88,24 @@ export class AonJsfApp extends AonElement {
 	
 }
 
+/*
+	Management
+*/
+
 export class AonJsfSale extends AonJsfApp {
 	
 	constructor() {
 		super();
 		this.setViewId('/facelet/app/sale.xhtml');
+	}
+	
+}
+
+export class AonJsfPurchase extends AonJsfApp {
+	
+	constructor() {
+		super();
+		this.setViewId('/facelet/app/purchase.xhtml');
 	}
 	
 }
@@ -169,11 +182,84 @@ export class AonJsfExpenseInvoice extends AonJsfApp {
 	}
 }
 
+export class AonJsfUndeductibleInvoice extends AonJsfApp {
+	
+	constructor() {
+		super();
+		this.setViewId('/facelet/app/undeductibleInvoice.xhtml');
+	}
+}
+
+
 export class AonJsfInvoicePrint extends AonJsfApp {
 	
 	constructor() {
 		super();
 		this.setViewId('/facelet/app/invoicePrint.xhtml');
+	}
+}
+
+export class AonJsfInvoiceRemove extends AonJsfApp {
+	
+	constructor() {
+		super();
+		this.setViewId('/facelet/app/invoiceRemove.xhtml');
+	}
+}
+
+export class AonJsfInvoiceDelivery extends AonJsfApp {
+	
+	constructor() {
+		super();
+		this.setViewId('/facelet/app/invoiceDelivery.xhtml');
+	}
+}
+
+export class AonJsfFinanceCharge extends AonJsfApp {
+	
+	constructor() {
+		super();
+		this.setViewId('/facelet/app/financeCharge.xhtml');
+	}
+}
+
+export class AonJsfFinancePayment extends AonJsfApp {
+	
+	constructor() {
+		super();
+		this.setViewId('/facelet/app/financePayment.xhtml');
+	}
+}
+
+export class AonJsfPayMethod extends AonJsfApp {
+	
+	constructor() {
+		super();
+		this.setViewId('/facelet/app/payMethod.xhtml');
+	}
+}
+
+export class AonJsfProductCategory extends AonJsfApp {
+	
+	constructor() {
+		super();
+		this.setViewId('/facelet/app/productCategory.xhtml');
+	}
+}
+
+export class AonJsfSegment extends AonJsfApp {
+	
+	constructor() {
+		super();
+		this.setViewId('/facelet/app/segment.xhtml');
+	}
+}
+
+export class AonJsfGeotree extends AonJsfApp {
+	
+	constructor() {
+		super();
+		this.setViewId('/facelet/app/geotree.xhtml');
 	}
 }
 
@@ -183,6 +269,10 @@ if(!window.customElements.get(TAG.AON_JSF_APP)){
 
 if(!window.customElements.get(TAG.AON_JSF_SALE)){
 	window.customElements.define(TAG.AON_JSF_SALE, AonJsfSale);
+}
+
+if(!window.customElements.get(TAG.AON_JSF_PURCHASE)){
+	window.customElements.define(TAG.AON_JSF_PURCHASE, AonJsfPurchase);
 }
 
 if(!window.customElements.get(TAG.AON_JSF_EXPENSE)){
@@ -212,11 +302,46 @@ if(!window.customElements.get(TAG.AON_JSF_SALE_INVOICE)){
 if(!window.customElements.get(TAG.AON_JSF_PURCHASE_INVOICE)){
 	window.customElements.define(TAG.AON_JSF_PURCHASE_INVOICE, AonJsfPurchaseInvoice);
 }
-
 if(!window.customElements.get(TAG.AON_JSF_EXPENSE_INVOICE)){
 	window.customElements.define(TAG.AON_JSF_EXPENSE_INVOICE, AonJsfExpenseInvoice);
 }
 
+if(!window.customElements.get(TAG.AON_JSF_UNDEDUCTIBLE_INVOICE)){
+	window.customElements.define(TAG.AON_JSF_UNDEDUCTIBLE_INVOICE, AonJsfUndeductibleInvoice);
+}
+
 if(!window.customElements.get(TAG.AON_JSF_INVOICE_PRINT)){
 	window.customElements.define(TAG.AON_JSF_INVOICE_PRINT, AonJsfInvoicePrint);
+}
+
+if(!window.customElements.get(TAG.AON_JSF_INVOICE_REMOVE)){
+	window.customElements.define(TAG.AON_JSF_INVOICE_REMOVE, AonJsfInvoiceRemove);
+}
+
+if(!window.customElements.get(TAG.AON_JSF_INVOICE_DELIVERY)){
+	window.customElements.define(TAG.AON_JSF_INVOICE_DELIVERY, AonJsfInvoiceDelivery);
+}
+
+if(!window.customElements.get(TAG.AON_JSF_FINANCE_CHARGE)){
+	window.customElements.define(TAG.AON_JSF_FINANCE_CHARGE, AonJsfFinanceCharge);
+}
+
+if(!window.customElements.get(TAG.AON_JSF_FINANCE_PAYMENT)){
+	window.customElements.define(TAG.AON_JSF_FINANCE_PAYMENT, AonJsfFinancePayment);
+}
+
+if(!window.customElements.get(TAG.AON_JSF_PAY_METHOD)){
+	window.customElements.define(TAG.AON_JSF_PAY_METHOD, AonJsfPayMethod);
+}
+
+if(!window.customElements.get(TAG.AON_JSF_PRODUCT_CATEGORY)){
+	window.customElements.define(TAG.AON_JSF_PRODUCT_CATEGORY, AonJsfProductCategory);
+}
+
+if(!window.customElements.get(TAG.AON_JSF_SEGMENT)){
+	window.customElements.define(TAG.AON_JSF_SEGMENT, AonJsfSegment);
+}
+
+if(!window.customElements.get(TAG.AON_JSF_GEOTREE)){
+	window.customElements.define(TAG.AON_JSF_GEOTREE, AonJsfGeotree);
 }

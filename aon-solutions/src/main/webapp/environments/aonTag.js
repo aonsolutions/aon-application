@@ -210,6 +210,8 @@ export const AON_CONFIG = 'aon-config';
 
 export const AON_RIGHT_PANEL = 'aon-right-panel';
 
+export const AON_JSF_APP = 'aon-jsf-app' ;
+
 export const AON_ACCOUNTING_MENU = 'aon-accounting-menu';
 
 export const AON_SUITE_MENU = 'aon-suite-menu';
@@ -220,6 +222,27 @@ export const AON_GROUPWARE_MENU = 'aon-groupware-menu';
 
 export const AON_MANAGEMENT_MENU = 'aon-management-menu';
 
+export const AON_JSF_PRODUCT = 'aon-jsf-product' ;
+export const AON_JSF_SALE = 'aon-jsf-sale' ;
+export const AON_JSF_PURCHASE = 'aon-jsf-purchase' ;
+export const AON_JSF_EXPENSE = 'aon-jsf-expense' ;
+export const AON_JSF_CUSTOMER = 'aon-jsf-customer' ;
+export const AON_JSF_CREDITOR = 'aon-jsf-creditor' ;
+export const AON_JSF_SUPPLIER = 'aon-jsf-supplier' ;
+export const AON_JSF_INVOICE_PRINT = 'aon-jsf-invoice-print' ;
+export const AON_JSF_INVOICE_REMOVE = 'aon-jsf-invoice-remove' ;
+export const AON_JSF_INVOICE_DELIVERY = 'aon-jsf-invoice-delivery' ;
+export const AON_JSF_SALE_INVOICE = 'aon-jsf-sale-invoice' ;
+export const AON_JSF_EXPENSE_INVOICE = 'aon-jsf-expense-invoice' ;
+export const AON_JSF_PURCHASE_INVOICE = 'aon-jsf-purchase-invoice' ;
+export const AON_JSF_UNDEDUCTIBLE_INVOICE = 'aon-jsf-undeductible-invoice' ;
+export const AON_JSF_FINANCE_CHARGE = 'aon-jsf-finance-charge' ;
+export const AON_JSF_FINANCE_PAYMENT = 'aon-jsf-finance-payment' ;
+export const AON_JSF_PAY_METHOD = 'aon-jsf-pay-method' ;
+export const AON_JSF_PRODUCT_CATEGORY = 'aon-jsf-product-category' ;
+export const AON_JSF_SEGMENT = 'aon-jsf-segment' ;
+export const AON_JSF_GEOTREE = 'aon-jsf-geotree' ;
+
 export const AON_TREASURY_MENU = 'aon-treasury-menu';
 
 export const AON_WAREHOUSE_MENU = 'aon-warehouse-menu';
@@ -229,28 +252,6 @@ export const AON_FISCAL_MENU = 'aon-fiscal-menu';
 export const AON_PAYROLL_MENU = 'aon-payroll-menu';
 
 export const AON_MARKETING_MENU = 'aon-marketing-menu';
-
-export const AON_JSF_APP = 'aon-jsf-app' ;
-
-export const AON_JSF_PRODUCT = 'aon-jsf-product' ;
-
-export const AON_JSF_SALE = 'aon-jsf-sale' ;
-
-export const AON_JSF_EXPENSE = 'aon-jsf-expense' ;
-
-export const AON_JSF_CUSTOMER = 'aon-jsf-customer' ;
-
-export const AON_JSF_CREDITOR = 'aon-jsf-creditor' ;
-
-export const AON_JSF_SUPPLIER = 'aon-jsf-supplier' ;
-
-export const AON_JSF_INVOICE_PRINT = 'aon-jsf-invoice-print' ;
-
-export const AON_JSF_SALE_INVOICE = 'aon-jsf-sale-invoice' ;
-
-export const AON_JSF_EXPENSE_INVOICE = 'aon-jsf-expense-invoice' ;
-
-export const AON_JSF_PURCHASE_INVOICE = 'aon-jsf-purchase-invoice' ;
 
 export const AON_ACADEMY_MENU = 'aon-academy-menu';
 
