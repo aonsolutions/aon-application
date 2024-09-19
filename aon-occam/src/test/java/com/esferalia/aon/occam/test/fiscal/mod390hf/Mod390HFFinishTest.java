@@ -28,7 +28,7 @@ class Mod390HFFinishTest extends AbstractOccamTest {
 	@Test
 	void testFinalize() {
 		Integer creditorId = null;
-		Creditor ar = getConfiguration().fiscal().getAdmonCreditor();
+		Creditor ar = ctx.getConfiguration().fiscal().getAdmonCreditor();
 		if ( ar != null) {
 			creditorId = ar.getId();
 		}

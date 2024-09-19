@@ -206,7 +206,15 @@ public enum InvoiceErrorKey implements Serializable {
 		public <T> void visit(InvoiceErrorKeyVisitor<T> visitor, T t) {
 			visitor.visitPayMethod(t);
 		}
-	};
+	}
+	,
+	ATTACH ("Documento adjunto") {
+		@Override
+		public <T> void visit(InvoiceErrorKeyVisitor<T> visitor, T t) {
+			visitor.visitAttach(t);
+		}
+	}
+	;
 
 	private String description;
 

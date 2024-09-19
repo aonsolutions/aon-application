@@ -420,9 +420,13 @@ public class TediContextVisitor implements InvoiceErrorKeyVisitor<ICallback> {
 	}
 	
 	@Override
-        public void visitTaxRate(ICallback callback ) {
+	public void visitTaxRate(ICallback callback ) {
 	}
-        
+	
+	@Override
+	public void visitAttach(ICallback t) {
+	}
+
 	@Override
 	public void visitTaxBase(ICallback callback ) {
 	}

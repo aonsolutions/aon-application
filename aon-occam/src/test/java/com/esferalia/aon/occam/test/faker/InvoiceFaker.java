@@ -10,6 +10,7 @@ import java.util.stream.Collectors;
 
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.esferalia.aon.occam.api.model.Customer;
 import com.esferalia.aon.occam.api.model.EnterpriseActivity;
 import com.esferalia.aon.occam.api.model.Occam;
@@ -822,6 +823,54 @@ public class InvoiceFaker {
 			.setIssueDate(AonRandom.getYearDay(new Date()));
 		InvoiceFaker.fillRetentionParams(ctx, params, wt);
 		return InvoiceFakerTypes.SALES_RETENTION.get(params);
+	}
+
+	public static void randomUpdate(CloseableAONContext ctx, Invoice inv) {
+		
+		if (AonRandom.gt(90)) inv.setComments( AonRandom.lorem(50, 100)  );
+		if (AonRandom.gt(90)) inv.setRemarks( AonRandom.lorem(50, 100)  );
+		if (AonRandom.gt(90)) inv.setActivity( AonRandom.getRandomActivity(ctx) );
+		if (AonRandom.gt(90)) inv.setInvestAsset( AonRandom.getRandomInvestAssetId(ctx) );
+		if (AonRandom.gt(90)) inv.setSeries(AonRandom.string(5));
+		if (AonRandom.gt(90)) inv.setNumber(AonRandom.getInt(0, 500000));
+		if (AonRandom.gt(90)) inv.setReferenceCode(AonRandom.string(15));
+		if (AonRandom.gt(90)) inv.setIssueDate( AonRandom.getPastDate(-1));
+		if (AonRandom.gt(90)) inv.setTaxDate( AonRandom.getPastDate(-1));
+		if (AonRandom.gt(90)) inv.setConfidential( !inv.isConfidential() );
+		if (AonRandom.gt(90)) inv.setRegistryDocument(AonRandom.string(9));
+		if (AonRandom.gt(90)) inv.setRegistryDocumentType(AonRandom.getRandomDocumentType());
+		if (AonRandom.gt(90)) inv.setRegistryDocumentCountry(AonRandom.getRandomCountry());
+		if (AonRandom.gt(90)) inv.setRegistryName(AonRandom.name(-1, 40));
+		
+//		private Integer project;
+//		private Integer registryAddress;
+//		private RegistryAddress address;
+//		
+//		private Integer registry;
+//		private Account registryAccount;
+//		
+//		private Scope scope;
+//		private InvoiceType type;
+//		private InvoiceTransactionType transaction;
+//		private boolean recorded;
+//		private boolean surcharge;
+//		private boolean withholding;
+//		private boolean withholdingFarmer;
+//		private boolean vatAccrualPayment;
+//		private boolean investment;
+//		private boolean service;
+//		private boolean advance;
+//		private boolean signed;
+//		private boolean annulled;
+//		private double taxableBase;
+//		private double vatQuota;
+//		private double retentionQuota;
+//		private double total;
+//		private Integer posShift;
+//		private Integer seller;
+//		private String sellerName;
+		
+		
 	}
 }
 

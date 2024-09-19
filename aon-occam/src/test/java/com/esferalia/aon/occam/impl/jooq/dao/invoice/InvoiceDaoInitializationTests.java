@@ -64,7 +64,7 @@ public class InvoiceDaoInitializationTests extends AbstractOccamTest {
 	void testRandomInitialize() {
 		InvoiceType type = AonRandom.getRandomInvoiceType();
 		Integer registry = AonRandom.getRandomInvoiceRegistry( ctx, type);
-		EnterpriseActivity activity = AonRandom.getRandomActivity( ctx, getConfiguration());
+		EnterpriseActivity activity = AonRandom.getRandomActivity( ctx);
 		Date issueDate = AonRandom.gt(10)?getTestDate():null;
 		Integer activityId = Optional.ofNullable(activity).map(a -> a.getId()).orElse(null);
 		Invoice invoice = AonRandom.gt(5)

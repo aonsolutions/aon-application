@@ -15,13 +15,10 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.RepetitionInfo;
 import org.junit.jupiter.api.TestInfo;
 
-import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
-import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.watson.server.AonObjectUtils;
@@ -31,7 +28,6 @@ import com.mysql.jdbc.Driver;
 public abstract class AbstractOccamTest {
 
 	protected static CloseableAONContext ctx;
-	private static AonConfiguration config;
 	protected static Integer DOMAIN_ID;
 
 	protected static String DOMAIN_NAME = System.getProperty("domainName", "occamtest.aonsolutions.test");	
@@ -53,12 +49,12 @@ public abstract class AbstractOccamTest {
 				.setUser(USER);
 	}
 	
-	protected static AonConfiguration getConfiguration() {
-		if (config == null) {
-			config = AON.getConfiguration(ctx);
-		}
-		return config;
-	}
+//	protected static AonConfiguration getConfiguration() {
+//		if (config == null) {
+//			config = AON.getConfiguration(ctx);
+//		}
+//		return config;
+//	}
 	
 	@BeforeAll
 	public static void beforeClass() throws ClassNotFoundException, SQLException {

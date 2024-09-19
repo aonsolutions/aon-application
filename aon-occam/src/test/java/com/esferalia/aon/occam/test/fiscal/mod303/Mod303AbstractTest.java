@@ -39,7 +39,7 @@ public abstract class Mod303AbstractTest extends AbstractOccamTest {
 	
 	private void ensureCreditor() {
 		if (creditorId == null) {
-			Creditor ar = getConfiguration().fiscal().getAdmonCreditor();
+			Creditor ar = ctx.getConfiguration().fiscal().getAdmonCreditor();
 			if ( ar != null) {
 				creditorId = ar.getId();
 			}

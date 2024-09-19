@@ -35,5 +35,5 @@ public interface InvoiceErrorKeyVisitor<T> {
 	void visitBasesQuotas(T t);
 	void visitPayMethod(T t);
 	void visitTotal(T t);
-	
+	void visitAttach(T t);	
 }

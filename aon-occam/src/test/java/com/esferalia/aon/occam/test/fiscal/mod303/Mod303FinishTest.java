@@ -27,7 +27,7 @@ class Mod303FinishTest extends Mod303AbstractTest {
 	@Test
 	void testFinalize() {
 		Integer creditorId = null;
-		Creditor ar = getConfiguration().fiscal().getAdmonCreditor();
+		Creditor ar = ctx.getConfiguration().fiscal().getAdmonCreditor();
 		if ( ar != null) {
 			creditorId = ar.getId();
 		}

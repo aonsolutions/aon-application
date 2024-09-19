@@ -34,6 +34,8 @@ class InvoiceDaoSettersTest extends AbstractOccamTest {
 		Optional<Invoice> newInvoiceOpt = InvoiceDAO.getFull(ctx, invoice.getId());
 		assertTrue(newInvoiceOpt.isPresent());
 		Asserts.assertEqualsFullInvoice(invoice, newInvoiceOpt.get());
+		
+		InvoiceDAO.delete(ctx,invoice.getId());
 	}
 	
 	@RepeatedTest( 5 )
@@ -43,6 +45,8 @@ class InvoiceDaoSettersTest extends AbstractOccamTest {
 		Invoice newInvoice = InvoiceDAO.saveAndGet(ctx,invoice);
 		assertNotNull(newInvoice);
 		Asserts.assertEqualsFullInvoice(invoice, newInvoice);
+		
+		InvoiceDAO.delete(ctx,invoice.getId());
 	}
 
 	@RepeatedTest( 10 )
@@ -55,13 +59,15 @@ class InvoiceDaoSettersTest extends AbstractOccamTest {
 		Invoice newInvoice = newInvoiceOpt.get();
 		Asserts.assertEqualsFullInvoice(invoice, newInvoice);
 		
-		newInvoice.setComments("Comentario");
+		InvoiceFaker.randomUpdate(ctx, newInvoice);
 		
 		InvoiceDAO.save(ctx,newInvoice);
 		Optional<Invoice> updInvoiceOpt = InvoiceDAO.getFull(ctx, newInvoice.getId());
 		assertTrue(updInvoiceOpt.isPresent());
 		Invoice updInvoice = updInvoiceOpt.get();
 		Asserts.assertEqualsFullInvoice(newInvoice, updInvoice);
+		
+		InvoiceDAO.delete(ctx,invoice.getId());
 
 	}
 	

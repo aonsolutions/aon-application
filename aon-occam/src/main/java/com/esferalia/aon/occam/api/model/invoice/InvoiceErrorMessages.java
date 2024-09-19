@@ -34,6 +34,7 @@ public enum InvoiceErrorMessages implements Serializable {
 	C018("No se ha podido determinar el tipo de factura"),
 	C019("La fecha del vencimiento no es correcta."),
 	C020("La suma de los vencimiento no coincide con el total factura."),
+	C021("Se ha producido un error al grabar el documento adjunto de la factura"),
 	
 	C050("No es posible borrar la factura porque est\u00E1 rectificada. Borre primero la factura rectificativa."),
 	C051("No es posible borrar la factura porque est\u00E1 vinculada a un documento DUA."),

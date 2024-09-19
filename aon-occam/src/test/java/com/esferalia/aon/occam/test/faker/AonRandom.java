@@ -10,14 +10,12 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
 
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Account;
 import com.esferalia.aon.occam.api.model.AccountFilter;
 import com.esferalia.aon.occam.api.model.AccountPeriod;
-import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.Customer;
 import com.esferalia.aon.occam.api.model.EnterpriseActivity;
 import com.esferalia.aon.occam.api.model.Filter.CreditorFilter;
@@ -27,6 +25,7 @@ import com.esferalia.aon.occam.api.model.Filter.RegistryFilter;
 import com.esferalia.aon.occam.api.model.Filter.RegistryMediaFilter;
 import com.esferalia.aon.occam.api.model.Filter.SupplierFilter;
 import com.esferalia.aon.occam.api.model.GeoZone;
+import com.esferalia.aon.occam.api.model.InvestAsset;
 import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.accounting.BalanceType;
 import com.esferalia.aon.occam.api.model.finance.EnumVisitors.IInvoiceTypeVisitor;
@@ -72,7 +71,6 @@ import com.esferalia.aon.occam.impl.jooq.dao.AccountDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.AccountPeriodDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.AccountingInvoiceDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.AccountingRegistryDAO;
-import com.esferalia.aon.occam.impl.jooq.dao.CompanyDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.CreditorDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.CustomerDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.FinanceTrackingDAO;
@@ -345,15 +343,6 @@ public class AonRandom {
 		return gt(nullThreshold)
 			?AccountPeriodDAO.getRandom(ctx, null )
 			:null;
-	}
-	
-	public static EnterpriseActivity getRandomActivity(AONContext ctx) {
-		boolean mainActivity =  gt(85);
-		LinkedList<EnterpriseActivity> list = CompanyDAO.getEnterpriseActivities(ctx, ctx.getDomainId(), null)
-			.filter(act -> act.isPrincipal() == mainActivity)
-			.collect(Collectors.toCollection(LinkedList::new));
-		if ( list == null || list.isEmpty()) return new EnterpriseActivity();
-		return list.get( AonRandom.getInt(0, list.size() -1));
 	}
 	
 	public static Administration getRandomAdministration() {
@@ -788,16 +777,27 @@ public class AonRandom {
 			}
 		});
 	}
-	public static EnterpriseActivity getRandomActivity(AONContext ctx, AonConfiguration configuration) {
+	public static Integer getRandomInvestAssetId(AONContext ctx) {
+		InvestAsset ia = getRandomInvestAsset(ctx);
+		return ia == null? null : ia.getId();
+	}
+	
+	public static InvestAsset getRandomInvestAsset(AONContext ctx) {
+		LinkedList<InvestAsset> list = ctx.getConfiguration().getInvestAssets(); 
+		if ( list == null || list.isEmpty()) return null;
+		return list.get( AonRandom.getInt(0, list.size() -1));
+	}
+	
+	public static EnterpriseActivity getRandomActivity(AONContext ctx) {
 		EnterpriseActivity activity = null;
-		if (AonCollectionUtils.isNotEmpty( configuration.getActivities())) {
+		if (AonCollectionUtils.isNotEmpty( ctx.getConfiguration().getActivities())) {
 			int w = AonRandom.getInt(0, 100);
 			if (w > 10) {
 				if (w > 80) {
-					activity = Optional.of( configuration.getMainActivity() ).orElse(null);
+					activity = Optional.of( ctx.getConfiguration().getMainActivity() ).orElse(null);
 				} else {
-					int i = AonRandom.getInt(0, configuration.getActivities().size() - 1);
-					activity = configuration.getActivities().get(i); 
+					int i = AonRandom.getInt(0, ctx.getConfiguration().getActivities().size() - 1);
+					activity = ctx.getConfiguration().getActivities().get(i); 
 				}
 			}
 		}
