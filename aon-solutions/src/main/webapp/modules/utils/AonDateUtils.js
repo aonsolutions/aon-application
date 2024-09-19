@@ -170,4 +170,36 @@ export const AonDateUtils = {
     let seconds = Math.floor(time / 1000);
     return addZero(hours, 2) + ":" + addZero(minutes, 2) + ":" + addZero(seconds, 2);
   },
+  parseStr: function (dateStr) {
+      if(dateStr.includes('/')){
+        let dateArr = dateStr.split('/');
+        let a = dateArr[0].length === 1 
+            ? '0' + dateArr[0] : dateArr[0];
+        let b = dateArr[1].length === 1 
+            ? '0' + dateArr[1] : dateArr[1];
+        let c = dateArr[2];
+        dateStr = a + b + c;       
+      } 
+      
+      if(dateStr.includes('-')){
+        let dateArr = dateStr.split('-');
+        let a = dateArr[0].length === 1 
+            ? '0' + dateArr[0] : dateArr[0];
+        let b = dateArr[1].length === 1 
+            ? '0' + dateArr[1] : dateArr[1];
+        let c = dateArr[2];
+        dateStr = a + b + c;       
+      } 
+ 
+      let day = dateStr.substring(0, 2);
+      let month = dateStr.substring(2, 4);
+      let year = dateStr.substring(4);
+
+      if(Number(month) > 12 || Number(day) > 31 || year.length > 4){
+        return this.date;
+      } else {
+        let d = month + '/' + day + '/' + year;
+        return new Date(d);
+      }
+  }
 }
