@@ -167,11 +167,11 @@
       <version>3.17</version>
       <scope>compile</scope>
     </dependency>
-    <dependency>
-  	  <groupId>com.esferalia.aon</groupId>
+    <!--dependency>
+   	<groupId>com.esferalia.aon</groupId>
       <artifactId>aon.dsi.nominas</artifactId>
       <version>${project.version}</version>
       <scope>compile</scope>    	
-    </dependency>
+    </dependency-->
   </dependencies>
 </project>
