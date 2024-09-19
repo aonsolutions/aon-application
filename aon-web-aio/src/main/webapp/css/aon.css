@@ -844,8 +844,7 @@ color: #5f6368;
   display: flex;
   height: 40px;
   border-bottom: 1px solid #ddd;
-  margin-right: 1.5em;
-  margin-left: 1.5em;
+  margin: 0 1em;
 }
 
 .aonSecondaryToolbarTitle {
@@ -2098,12 +2097,23 @@ label.rating:hover {
 
 .aonMessengerCardRow, .aonDocumentalCardRow{
   display: flex;
-  justify-content: space-between;
+  flex-direction: column;
   width: 100%;
   border-bottom: 1px solid rgb(221, 221, 221);
   padding: .5rem 0;
-  cursor: pointer;
+  cursor: pointer; 
+}
+
+.aonMessengerCardRowContent, .aonDocumentalCardRowContent{
+  display: flex;
   align-items: center;
+  width: 100%;
+}
+
+.aonDocumentalCardRowContent{
+border-bottom: 1px solid rgb(221, 221, 221);
+  padding: .5rem 0;
+  cursor: pointer; 
 }
 
 .aonMessengerCardRow:hover{
@@ -2111,12 +2121,12 @@ label.rating:hover {
   border-bottom: 1px solid var(--aonMessenger);
 }
 
-.aonDocumentalCardRow:hover{
+.aonDocumentalCardRowContent:hover{
   border-top: 1px solid var(--aonDocumental);
   border-bottom: 1px solid var(--aonDocumental);
 }
 
-.aonDocumentalEllipsis {
+.aonEllipsis {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -2214,13 +2224,6 @@ size: 32px;
 #divCol > div{
   display: flex;
   justify-content: center;
-}
-
-.aonEllipsis {
-  text-overflow: ellipsis;
-  overflow: hidden;
-  max-width: 17rem;
-  white-space: nowrap;
 }
 
 /*
@@ -2407,22 +2410,6 @@ size: 32px;
   .aonUploadPanel, .aonFastAccess{
       flex-direction: row;
   }
-
-  .aonDocumentalCardRow > .aonFlex > .aonDocumentalEllipsis{
-      max-width: 21rem;
-  }
-}
-
-/* Medium devices (landscape tablets, 768px and up) */
-/* @media only screen and (min-width: 768px) {} */
-@media only screen and (min-width: 768px) {
-  .aonMessengerCardRow > .aonFlex > .aonFlexColumn > .aonEllipsis{
-      max-width: 8rem;
-  }
-
-  .aonDocumentalCardRow > .aonFlex > .aonDocumentalEllipsis{
-      max-width: 10rem;
-  }
 }
 
 /* Large devices (laptops/desktops, 992px and up) */
@@ -2430,14 +2417,6 @@ size: 32px;
   .aonDashboardCard{
       width: auto;
       min-width: 22rem;
-  }
-
-  .aonDocumentalCardRow > .aonFlex > .aonDocumentalEllipsis{
-    max-width: 13rem;
-  }
-  
-  .aonMessengerCardRow > .aonFlex > .aonFlexColumn > .aonEllipsis{
-      max-width: 10rem;
   }
 
   .aonNewLogo{
@@ -2453,30 +2432,6 @@ size: 32px;
   }
 }
 
-@media only screen and (min-width: 1000px) {
-  .aonMessengerCardRow > .aonFlex > .aonFlexColumn > .aonEllipsis{
-      max-width: 15rem;
-  }
-}
-
-@media only screen and (min-width: 1230px) {
-  .aonMessengerCardRow > .aonFlex > .aonFlexColumn > .aonEllipsis{
-      max-width: 11rem;
-  }
-}
-
-@media only screen and (min-width: 1441px) {
-  .aonMessengerCardRow > .aonFlex > .aonFlexColumn > .aonEllipsis{
-      max-width: 15rem;
-  }
-}
-
-@media only screen and (min-width: 1920px) {
-  .aonMessengerCardRow > .aonFlex > .aonFlexColumn > .aonEllipsis{
-      max-width: 25rem;
-  }
-}
-
 /* Extra large devices (large laptops and desktops, 1200px and up) */
 /* @media only screen and (min-width: 1200px) {} */
 @media only screen and (min-width: 1000px) {
@@ -2488,8 +2443,6 @@ size: 32px;
     margin-left: 4.5rem;
   }
 }
-
-
 
 .lds-ring {
   display: inline-block;
@@ -3263,9 +3216,7 @@ color: var(--aonWhite);
 }
 
 #bankCardTable,
-#fiscalCardTable,
-#documentalCardTable,
-#messengerCardTable {
+#fiscalCardTable {
 	gap: .5rem !important;
 }
 
@@ -4182,7 +4133,7 @@ font-weight: 600;
 .aonMessengerCardDate{
   text-align: right;
   color: rgb(120, 120, 133);
-  font-size: 0.8rem;
+  font-size: 0.7rem;
 }
 
 .accountingChatLegend {
