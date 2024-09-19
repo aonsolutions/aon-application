@@ -16,6 +16,7 @@ import { SigninSidenav } from "../timecontrol/signinEnums.js";
 import * as GWT from "../../gwt/gwt.js";
 import { RETENTION_PANEL, VAT_PANEL } from "./FiscalOptions.js";
 import * as LS from "../../services/localStorageService.js";
+import { AonFutureTax } from "./tax/aon-future-tax.js";
 
 export class AonFiscal extends AonElement {
   AON_FISCAL;
@@ -373,12 +374,14 @@ export class AonFiscal extends AonElement {
         if(this._filter.estimationFilter){
           this._filter.estimationFilter = undefined;
           this.addBackgroundSidenav();
+          this.showView(FISCAL_VIEWS.AON_TAX);
         } else {
           this._filter.estimationFilter = {year: year, period: period, title: periodText, periodText: periodText};
           this._filter.model = undefined;
+          this.showView(FISCAL_VIEWS.AON_FUTURE_TAX);
         }
         // this._filter.estimationFilter = {year: year, period: period, title: periodText, periodText: periodText};
-        this.showView(FISCAL_VIEWS.AON_TAX);
+        
       },
     };
 
@@ -433,6 +436,9 @@ export class AonFiscal extends AonElement {
       switch (view) {
         case FISCAL_VIEWS.AON_TAX:
           aonView = new AonTax();
+          break;
+        case FISCAL_VIEWS.AON_FUTURE_TAX:
+          aonView = new AonFutureTax(FISCAL, this._filter.estimationFilter);
           break;
         case FISCAL_VIEWS.VAT_PANEL:
           GWT.load(GWT.VAT_REPORT, this.applicationEl.CONTENT);
