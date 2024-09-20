@@ -652,39 +652,40 @@ export class AonNewMenu extends AonElement {
 				div.addEventListener("mouseenter", () => {
 					LS.setLeftMenu(true);
 					this.showSideNav();
-		
+
 					// Obtener el sidenav cuando el menú está visible
 					let side = this.getElement(this.AON_MENU_SIDENAV);
-		
+					let checked = this.getElement("aonConfigSideSwitch");
 					// Asegurarse de que el side existe antes de añadir eventos
-					if (side) {
+					if (side && checked.checked == "false") {
 						// Mantener el menú abierto mientras el ratón está en el sidenav
 						side.addEventListener("mouseenter", () => {
 							LS.setLeftMenu(true);
 							this.showSideNav();
 						});
-		
+
 						// Cerrar el menú si el ratón sale completamente del sidenav
 						side.addEventListener("mouseleave", (event) => {
 							// Verificar si el ratón no va al div (solo cerrar si se sale de ambos)
-							if (!div.contains(event.relatedTarget)) {
+							if (!div.contains(event.relatedTarget) && checked.checked == "false") {
 								LS.setLeftMenu(false);
 								this.hideSideNav();
 							}
 						});
 					}
 				});
-		
+
 				// Cerrar el menú si el ratón sale completamente del div
 				div.addEventListener("mouseleave", (event) => {
 					let side = this.getElement(this.AON_MENU_SIDENAV);
-		
+					let checked = this.getElement("aonConfigSideSwitch");
+
 					// Verificar si el ratón no va al sidenav (solo cerrar si se sale de ambos)
-					if (side && !side.contains(event.relatedTarget)) {
+					if (side && !side.contains(event.relatedTarget) && checked.checked == "false") {
 						LS.setLeftMenu(false);
 						this.hideSideNav();
 					}
-				});
+				});	
 			}
 		}
 	
