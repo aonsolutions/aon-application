@@ -87,14 +87,14 @@ jobs:
       with:
         context: .
         push: true
-        tags: ghcr.io/${{ github.repository_owner }}/aon-application:${BRANCH_NAME}
+        tags: ghcr.io/${{ github.repository_owner }}/aon-application:${{ env.BRANCH_NAME }}
 
     - name: Build and push Docker aon-db-up2date image
       uses: docker/build-push-action@v6
       with:
         context: ./aon-db-up2date
         push: true
-        tags: ghcr.io/${{ github.repository_owner }}/aon-db-up2date:${BRANCH_NAME}
+        tags: ghcr.io/${{ github.repository_owner }}/aon-db-up2date:${{ env.BRANCH_NAME }}
     
     - name: Setup environment for integration testing
       if: github.ref == 'refs/heads/master'
@@ -136,7 +136,7 @@ jobs:
       with:
         context: .
         push: true
-        tags: ghcr.io/${{ github.repository_owner }}/aon-application:${BRANCH_NAME}
+        tags: ghcr.io/${{ github.repository_owner }}/aon-application:${{ env.BRANCH_NAME }}
 
     - name: Build and push production Docker aon-solutions image
       if: github.ref == 'refs/heads/master'
@@ -145,7 +145,7 @@ jobs:
         context: .
         file: ./aon-solutions/Dockerfile
         push: true
-        tags: ghcr.io/${{ github.repository_owner }}/aon-solutions:${BRANCH_NAME}
+        tags: ghcr.io/${{ github.repository_owner }}/aon-solutions:${{ env.BRANCH_NAME }}
 
 
 
