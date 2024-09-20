@@ -29,7 +29,6 @@ import com.esferalia.aon.occam.api.model.AccountEntry;
 import com.esferalia.aon.occam.api.model.AccountingDUAInfo;
 import com.esferalia.aon.occam.api.model.AccountingDUAInvoice;
 import com.esferalia.aon.occam.api.model.AccountingInvoice;
-import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.finance.Finance;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceDetail;
@@ -47,7 +46,6 @@ import com.esferalia.aon.occam.impl.jooq.dao.AccountDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.AccountDAO.FullAccountFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.AccountEntryDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.AccountingRegistryDAO;
-import com.esferalia.aon.occam.impl.jooq.dao.ConfigurationDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.CreditorDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.CustomerDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.OCRDAO;
@@ -174,12 +172,12 @@ public class AccountingInvoiceDAO {
 				.findFirst();
 	}
 
-	public static AccountingInvoice save(final AONContext ctx, AonConfiguration config, final AccountingInvoice accInvoice) {
+	public static AccountingInvoice save(final AONContext ctx, final AccountingInvoice accInvoice) {
 		checkRegistryAccount(ctx,accInvoice);
 		if (accInvoice.getAccountEntry().getId() == null) {
-			accInvoice.setAccountEntries( insert(ctx,config,accInvoice) );	
+			accInvoice.setAccountEntries( insert(ctx,accInvoice) );	
 		} else {
-			accInvoice.setAccountEntries( update(ctx,config,accInvoice) );
+			accInvoice.setAccountEntries( update(ctx,accInvoice) );
 		}
 		return accInvoice;
 	}
@@ -189,28 +187,21 @@ public class AccountingInvoiceDAO {
 	}
 	
 	public static AccountingInvoice initializeInvoice(final AONContext ctx , final InvoiceType type, final Integer registry, final Date issueDate) {
-		final AonConfiguration config = ConfigurationDAO.getAccountingConfiguration(ctx,issueDate);
-		return initializeInvoice(ctx, config, type, registry, Optional.ofNullable( config.getMainActivity() ).map(a -> a.getId()).orElse(null), new Date());
+		return initializeInvoice(ctx
+			, type
+			, registry
+			, Optional.ofNullable( ctx.getConfiguration().getMainActivity() ).map(a -> a.getId()).orElse(null)
+			, new Date());
 	}
 
 	public static AccountingInvoice initializeInvoice(final AONContext ctx, final InvoiceType type, final Integer registry, final Integer activity, final Date issueDate) {
-		final AonConfiguration config = ConfigurationDAO.getAccountingConfiguration(ctx,issueDate);
-		return initializeInvoice(ctx
-				, config
-				, type
-				, registry
-				, activity
-				, issueDate);
-	}
-	
-	public static AccountingInvoice initializeInvoice(final AONContext ctx, final AonConfiguration config, final InvoiceType type, final Integer registry, final Integer activity, final Date issueDate) {
 		AccountingRegistry reg =  
-				AccountingRegistryDAO.getAccountingRegistries(ctx, filter -> filter.getIdProperty().eq(registry))
-					.filter(f -> AccountingRegistryType.getFor(type).equals(f.getType()))
-					.findFirst()
-					.orElseThrow(() -> new AonCoreException(
-							MessageFormat.format("No se pudo encontrar al titular de factura \"{0}\"", registry)));
-		return initializeInvoice(ctx, config, type, reg, activity, issueDate);
+			AccountingRegistryDAO.getAccountingRegistries(ctx, filter -> filter.getIdProperty().eq(registry))
+				.filter(f -> AccountingRegistryType.getFor(type).equals(f.getType()))
+				.findFirst()
+				.orElseThrow(() -> new AonCoreException(
+						MessageFormat.format("No se pudo encontrar al titular de factura \"{0}\"", registry)));
+		return initializeInvoice(ctx, type, reg, activity, issueDate);
 	}
 	
 	public static AccountingInvoice initializeInvoice(final AONContext ctx, final InvoiceType type, final AccountingRegistry reg) {
@@ -218,56 +209,60 @@ public class AccountingInvoiceDAO {
 	}
 	
 	public static AccountingInvoice initializeInvoice(final AONContext ctx , final InvoiceType type, final AccountingRegistry reg, final Date issueDate) {
-		final AonConfiguration config = ConfigurationDAO.getAccountingConfiguration(ctx,issueDate);
-		return initializeInvoice(ctx, config, type, reg, Optional.ofNullable( config.getMainActivity() ).map(a -> a.getId()).orElse(null), issueDate);
+		return initializeInvoice(ctx
+			, type
+			, reg
+			, Optional.ofNullable( ctx.getConfiguration().getMainActivity() ).map(a -> a.getId()).orElse(null)
+			, issueDate);
 	}
 	
-	public static AccountingInvoice initializeInvoice(final AONContext ctx, final AonConfiguration config , final InvoiceType type, AccountingRegistry reg, final Integer activity, final Date issueDate) {
+	public static AccountingInvoice initializeInvoice(final AONContext ctx, final InvoiceType type, AccountingRegistry reg, final Integer activity, final Date issueDate) {
 		checkTBAIForSales( ctx, type);	
 		AccountingInvoice ai = new AccountingInvoice()
 			.setRegistry(reg)
-			.setWorkplace(config.getFirstWorkplace().map(w -> w.getId()).orElse(null))
+			.setWorkplace(ctx.getConfiguration().getFirstWorkplace().map(w -> w.getId()).orElse(null))
 			.setAuthFinanceCalculation(true)
 			.setInvoice( InvoiceDAO.initialize(ctx, ctx.getDomainId(), type, reg.getId(), issueDate,activity))
 		;
 		ai.setSuggestedAccounts(getSuggestedAccounts(ctx , ai.getInvoice().getDomain(), ai.getRegistry().getId(), reg.getType().getInvoiceType()));
-		ai.getInvoice().addDetail(createNewInvoiceDetail(ai, config));
+		InvoiceDetail id = createNewInvoiceDetail(ctx ,ai);
+		ai.getInvoice().addDetail(id);
 		return ai;
 	}
 
-	private static InvoiceDetail createNewInvoiceDetail(AccountingInvoice ai,AonConfiguration config) {
+	private static InvoiceDetail createNewInvoiceDetail(final AONContext ctx,AccountingInvoice ai) {
 		InvoiceDetail detail = new InvoiceDetail()
 			.setSource(InvoiceSource.ACCOUNT);
 		
-		if (config.getDefaultVatPercent() != null) {
+		if (ctx.getConfiguration().getDefaultVatPercent() != null) {
 			if (ai.isSales() && !ai.isNational()) {
 				detail.ensureVatTax().setPercentage(0.0);
 			} else {
-				detail.ensureVatTax().setPercentage(config.getDefaultVatPercent().getPercentage());
+				detail.ensureVatTax().setPercentage(ctx.getConfiguration().getDefaultVatPercent().getPercentage());
 			}
 			if (ai.isSurcharge()) {
-				detail.ensureVatTax().setSurcharge(config.getDefaultVatPercent().getSurcharge());	
+				detail.ensureVatTax().setSurcharge(ctx.getConfiguration().getDefaultVatPercent().getSurcharge());	
 			}
-			detail.ensureVatTax().setInputAccount( config.getDefaultVatPercent().getPurchaseAccount());
-			detail.ensureVatTax().setOutputAccount( config.getDefaultVatPercent().getSalesAccount());
+			detail.ensureVatTax().setInputAccount( ctx.getConfiguration().getDefaultVatPercent().getPurchaseAccount());
+			detail.ensureVatTax().setOutputAccount( ctx.getConfiguration().getDefaultVatPercent().getSalesAccount());
 		}
 		if (detail.ensureVatTax().getInputAccount() == null) {
-			detail.ensureVatTax().setInputAccount( config.accounting().getDefaultPaidVatAccount());
+			detail.ensureVatTax().setInputAccount( ctx.getConfiguration().accounting().getDefaultPaidVatAccount());
 		}
 		if (detail.ensureVatTax().getOutputAccount() == null) {
-			detail.ensureVatTax().setOutputAccount( config.accounting().getDefaultChargedVatAccount()) ;
+			detail.ensureVatTax().setOutputAccount( ctx.getConfiguration().accounting().getDefaultChargedVatAccount()) ;
 		}
-		if (config.accounting().getVatNegativeAdjustAccount() != null) {
-			detail.ensureVatTax().setAdjAccount( config.accounting().getVatNegativeAdjustAccount());
+		if (ctx.getConfiguration().accounting().getVatNegativeAdjustAccount() != null) {
+			detail.ensureVatTax().setAdjAccount( ctx.getConfiguration().accounting().getVatNegativeAdjustAccount());
 		}
-		if (config.accounting().getDirectTaxAdjustAccount() != null) {
-			detail.ensureVatTax().setAdjDirectTaxAccount( config.accounting().getDirectTaxAdjustAccount());
+		if (ctx.getConfiguration().accounting().getDirectTaxAdjustAccount() != null) {
+			detail.ensureVatTax().setAdjDirectTaxAccount( ctx.getConfiguration().accounting().getDirectTaxAdjustAccount());
 		}
 		if (ai.isSales()) {
-			detail.setExpAccount(config.accounting().getDefaultSalesAccount());
+			detail.setExpAccount(ctx.getConfiguration().accounting().getDefaultSalesAccount());
 		}
 		if (ai.isPurchase()) {
-			detail.setExpAccount(config.accounting().getDefaultPurchaseAccount());
+			detail.setExpAccount(ctx.getConfiguration().accounting().getDefaultPurchaseAccount());
 		}
 		if ( ai.isWithholding() ) {
 			detail.addWithholdingTax(ai.getInvoice());
@@ -338,10 +333,9 @@ public class AccountingInvoiceDAO {
 		}
 		
 		if (!ai.isUndeductible()) {
-			final AonConfiguration config = ConfigurationDAO.getAccountingConfiguration(ctx);
 			AonCollectionUtils.stream(ai.getInvoice().getDetails())
 				.filter(d -> !d.isPrepayment())
-				.forEach(d -> fillInvoiceTax(ctx, config, ai, d));
+				.forEach(d -> fillInvoiceTax(ctx, ai, d));
 		}
 		return ai;
 	}
@@ -418,14 +412,14 @@ public class AccountingInvoiceDAO {
 		}
 	}
 	
-	private static void fillInvoiceTax(AONContext ctx, AonConfiguration config, AccountingInvoice ai, InvoiceDetail invoiceDetail) {
+	private static void fillInvoiceTax(AONContext ctx, AccountingInvoice ai, InvoiceDetail invoiceDetail) {
 		// *********************
 		// Al no guardar el porcentaje de imposición directa en BD, se "supone" su activación en función
 		// de la existencia de la cuenta en apuntes.
 		// Si la cuenta ha cambiad, el apunte fallará....
 		// Si el porcentaje de invest_asset ha cambiado, el apunte fallará-
 		boolean directTaxEnabledPre = false;
-		Account directTaxAccount = config.accounting().getDirectTaxAdjustAccount();
+		Account directTaxAccount = ctx.getConfiguration().accounting().getDirectTaxAdjustAccount();
 		if (directTaxAccount != null && ai.getAccountEntry() != null) {
 			directTaxEnabledPre = AonCollectionUtils.stream(ai.getAccountEntry().getDetails())
 				.anyMatch( aed -> AonNumberUtils.equals(aed.getAccount(),directTaxAccount.getId()));
@@ -440,7 +434,7 @@ public class AccountingInvoiceDAO {
 
 		Double  directTaxPercent = Double.valueOf(0);
 		if (directTaxEnabled && investAsset != null) {
-			directTaxPercent = AonCollectionUtils.stream( config.getInvestAssets() )
+			directTaxPercent = AonCollectionUtils.stream( ctx.getConfiguration().getInvestAssets() )
 				.filter( ia -> AonNumberUtils.equals(ia.getId(),investAsset))
 				.map( ia -> ia.getRetentionPercent())
 				.findFirst()
@@ -453,14 +447,14 @@ public class AccountingInvoiceDAO {
 		}
 		if (!ai.isSales()) {
 			vat.setInputAccount(vatAccount);
-			if (ai.isOutputVatEnabled() && config.accounting().getDefaultChargedVatAccount() != null) {
-				vat.setOutputAccount(config.accounting().getDefaultChargedVatAccount());
+			if (ai.isOutputVatEnabled() && ctx.getConfiguration().accounting().getDefaultChargedVatAccount() != null) {
+				vat.setOutputAccount(ctx.getConfiguration().accounting().getDefaultChargedVatAccount());
 			}
-			if (investAsset != null && config.accounting().getVatNegativeAdjustAccount() != null) {
-				vat.setAdjAccount(config.accounting().getVatNegativeAdjustAccount());
+			if (investAsset != null && ctx.getConfiguration().accounting().getVatNegativeAdjustAccount() != null) {
+				vat.setAdjAccount(ctx.getConfiguration().accounting().getVatNegativeAdjustAccount());
 			}
-			if (investAsset != null && directTaxEnabled && config.accounting().getDirectTaxAdjustAccount() != null) {
-				vat.setAdjDirectTaxAccount(config.accounting().getDirectTaxAdjustAccount());
+			if (investAsset != null && directTaxEnabled && ctx.getConfiguration().accounting().getDirectTaxAdjustAccount() != null) {
+				vat.setAdjDirectTaxAccount(ctx.getConfiguration().accounting().getDirectTaxAdjustAccount());
 			}
 		}
 	}
@@ -511,7 +505,7 @@ public class AccountingInvoiceDAO {
 		}
 	}
 	
-	private static LinkedList<AccountEntry> insert(final AONContext ctx, AonConfiguration config, final AccountingInvoice accInvoice) {
+	private static LinkedList<AccountEntry> insert(final AONContext ctx, final AccountingInvoice accInvoice) {
 		try {
 			ctx.log().debug("------ [START] INSERT INVOICE");
 			LinkedList<AccountEntry> entries = new LinkedList<>();
@@ -613,7 +607,7 @@ public class AccountingInvoiceDAO {
 	}
 	
 	
-	private static LinkedList<AccountEntry> update(final AONContext ctx, AonConfiguration config, final AccountingInvoice accInvoice) {
+	private static LinkedList<AccountEntry> update(final AONContext ctx, final AccountingInvoice accInvoice) {
 		return null;
 //		try {
 //			ctx.log().debug("------ [START] UPDATE INVOICE");

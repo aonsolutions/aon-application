@@ -1689,48 +1689,35 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 		label0.getElement().getStyle().setMarginLeft(50, Unit.PX);
 		headerPanel4.add(label0);
 
-		invoiceTotal.addKeyUpHandler( new KeyUpHandler() {
-			public void onKeyUp(KeyUpEvent event) {
-				if (event.getNativeKeyCode() == KeyCodes.KEY_F9) {
-					repeatLastInvoice(invoiceCallback, new ISelectionCallback() {
+		invoiceTotal.addKeyUpHandler( event -> {
+			if (event.getNativeKeyCode() == KeyCodes.KEY_F9) {
+				repeatLastInvoice(invoiceCallback, new ISelectionCallback() {
 
-						@Override
-						public void onSuccess() {
-						}
+					@Override
+					public void onSuccess() {
+					}
 
-						@Override
-						public void onFailure() {
-							invoiceCallback.getModule().onError(AON.MSG.invoiceNotFound());
-						}
-						
-					});
-				}
+					@Override
+					public void onFailure() {
+						invoiceCallback.getModule().onError(AON.MSG.invoiceNotFound());
+					}
+					
+				});
 			}
 		});
-		invoiceTotal.addValueChangeHandler(new ValueChangeHandler<Double>() {
-			@Override
-			public void onValueChange(ValueChangeEvent<Double> event) {
-				if (AonNumberUtils.isNumber(invoiceTotal.getText())) {
-					if (invoiceTotal.getValue() == null) invoiceTotal.setValue(0.0, false);
-					
-					InvoiceCalculator.reverseCalculate(invoiceCallback.getInvoice().getInvoice(),invoiceTotal.getValue());
-					vatPanel.populateFirstVat( new EditableInvoicePanelCallback(invoiceCallback) );
-					withholdingPanel.setValue( invoiceCallback.getInvoice().getWithholdingData() );
-					financePanel.invoiceTotalChanged( invoiceCallback );
-					
-					invoiceCallback.paintEntry();
-					invoiceCallback.getInvoice().getAccountEntry().setDirty(true);
-					invoiceCallback.getModule().refreshIdLabel();
-					Scheduler.get().scheduleDeferred(new ScheduledCommand() {
-						public void execute() {
-							if (invoiceTotal.getValue() != null && invoiceTotal.getValue() != 0) {
-//								fastSave.setEnabled(true);
-//								fastSave.setFocus(true);
-							} else {
-								vatPanel.setFocus(true);
-							}
-					}});
-				}
+		invoiceTotal.addValueChangeHandler(event -> {
+			if (AonNumberUtils.isNumber(invoiceTotal.getText())) {
+				if (invoiceTotal.getValue() == null) invoiceTotal.setValue(0.0, false);
+				
+				InvoiceCalculator.reverseCalculate(invoiceCallback.getInvoice().getInvoice(),invoiceTotal.getValue());
+				vatPanel.populateFirstVat( new EditableInvoicePanelCallback(invoiceCallback) );
+				withholdingPanel.setValue( invoiceCallback.getInvoice().getWithholdingData() );
+				financePanel.invoiceTotalChanged( invoiceCallback );
+				
+				invoiceCallback.paintEntry();
+				invoiceCallback.getInvoice().getAccountEntry().setDirty(true);
+				invoiceCallback.getModule().refreshIdLabel();
+				Scheduler.get().scheduleDeferred(() -> vatPanel.setFocus(true));
 			}
 		});
 		invoiceTotal.setVisibleLength(12);

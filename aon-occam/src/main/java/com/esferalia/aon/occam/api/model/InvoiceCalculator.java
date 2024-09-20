@@ -183,7 +183,9 @@ public class InvoiceCalculator	 {
 	
 	public static void reverseCalculate(Invoice inv, InvoiceDetail det, double total) {
 		if ( det.isPrepayment() || !inv.isVatEnabled() ) {
-			det.setTaxableBase(total);
+			det.setPrice(total);
+			det.setQuantity(1.0);
+			det.setDiscount(0.0);
 			det.deleteVatTax();
 			det.deleteWithholdingTax();
 		} else {
@@ -195,7 +197,10 @@ public class InvoiceCalculator	 {
 				withholdingPerc = inv.getWithholding().map( w -> w.getPercentage()).orElse(0.0);
 			}
 			double tb = reverseCalculate(vatPerc, surchargePerc, withholdingPerc, total);
-			vat.setBase(tb);
+			det.setPrice(tb);
+			det.setTaxes(0.0);
+			det.setQuantity(1.0);
+			det.setDiscount(0.0);
 			calculateDetail(inv,det);
 			calculate(inv);
 		}

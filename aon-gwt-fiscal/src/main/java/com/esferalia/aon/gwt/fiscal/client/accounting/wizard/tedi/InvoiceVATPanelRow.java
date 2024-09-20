@@ -285,6 +285,9 @@ class InvoiceVATPanelRow extends AonDisplayGridRow implements Focusable, HasSele
 			}
 		});
 		taxableBase.addValueChangeHandler(event -> {
+			callback.getVat(vatIdx).setPrice( event.getValue() );
+			callback.getVat(vatIdx).setQuantity(1.0);
+			callback.getVat(vatIdx).setDiscount(0.0);
 			callback.getVat(vatIdx).setTaxableBase( event.getValue() );
 			checkCalculate(callback, vatIdx, vatPercent);
 		});
@@ -600,7 +603,7 @@ class InvoiceVATPanelRow extends AonDisplayGridRow implements Focusable, HasSele
 	}
 
 	void populate(IEditableInvoicePanelCallback callback, final int vatIdx) {
-		taxableBase.setValue( callback.getVat(vatIdx).ensureVatTax().getBase() , false);
+		taxableBase.setValue( callback.getVat(vatIdx).getTaxableBase() , false);
 		vatPercent.setValue( callback.getVat(vatIdx).ensureVatTax().getPercentage() , false);
 		vatQuota.setValue( callback.getVat(vatIdx).ensureVatTax().getQuota() , false);
 		surchargePercent.setValue( callback.getVat(vatIdx).ensureVatTax().getSurcharge() , false);

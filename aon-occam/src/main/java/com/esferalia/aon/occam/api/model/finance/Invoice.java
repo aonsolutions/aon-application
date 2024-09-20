@@ -510,21 +510,13 @@ public class Invoice implements Serializable, HasAudit {
 			.collect(Collectors.toCollection(LinkedList::new));
 		return this;
 	}
-//	public Invoice setDetails(LinkedList<InvoiceDetail> details) {
-//		this.details = details;
-//		return this;
-//	}
+
 	public Invoice addDetail(InvoiceDetail detail) {
-		if(details == null) {
-			details = new LinkedList<>();
-		}
+		if(details == null) details = new LinkedList<>();
 		details.add(detail);
+		AonCollectionUtils.stream(detail.getInvoiceTaxes()).forEach(this::addTax);
 		return this;
 	}
-	public Optional<InvoiceDetail> getFirstDetail() {
-		return getDetails().stream().findFirst();
-	}
-	
 
 	/**
 	 * @deprecated This method will be removed use getBreakdowns(), getVats() or getWithHolding()

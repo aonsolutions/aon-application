@@ -14,7 +14,6 @@ import com.esferalia.aon.occam.api.model.finance.EnumVisitors.IInvoiceTypeVisito
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.registry.AccountingRegistry;
 import com.esferalia.aon.occam.api.model.type.InvoiceType;
-import com.esferalia.aon.occam.impl.jooq.dao.ConfigurationDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.accounting.AccountingInvoiceDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.accounting.InvoiceRecorder;
 import com.esferalia.aon.occam.impl.jooq.dao.accounting.invoice.InvoiceTextPrinter;
@@ -22,14 +21,15 @@ import com.esferalia.aon.occam.test.AbstractOccamTest;
 import com.esferalia.aon.occam.test.Asserts;
 import com.esferalia.aon.occam.test.accounting.entry.AccountEntryPrinter;
 import com.esferalia.aon.occam.test.faker.AonRandom;
+import com.esferalia.aon.watson.util.AonCollectionUtils;
 
 
-public class AccountingInvoiceDAOTest extends AbstractOccamTest {
+class AccountingInvoiceDAOTest extends AbstractOccamTest {
 
 	@Test
 //	@Repeat( 10 )
-	public void testNew() {
-		AonConfiguration config = ConfigurationDAO.getAccountingConfiguration(ctx);
+	void testNew() {
+		AonConfiguration config = ctx.getConfiguration();
 		Integer mainActivityId = Optional.ofNullable( config.getMainActivity() ).map(a -> a.getId()).orElse(null);
 		Date issueDate = AonRandom.getPastDate(-1);
 		AccountingRegistry ar = AonRandom.getAccountingRegistry(ctx);
@@ -38,7 +38,7 @@ public class AccountingInvoiceDAOTest extends AbstractOccamTest {
 			if (type == InvoiceType.EXPENSES && AonRandom.gt(80)) {
 				type = InvoiceType.UNDEDUCTIBLE;
 			}
-			AccountingInvoice ai = AccountingInvoiceDAO.initializeInvoice(ctx, config, type, ar, mainActivityId, issueDate);
+			AccountingInvoice ai = AccountingInvoiceDAO.initializeInvoice(ctx, type, ar, mainActivityId, issueDate);
 			// ai.setAccountEntry(getEntryBase(ctx, config,ai));
 			double total = AonRandom.getDouble(-1, -1000, 50000, 2);
 			InvoiceCalculator.reverseCalculate(ai.getInvoice(), total );
@@ -68,8 +68,8 @@ public class AccountingInvoiceDAOTest extends AbstractOccamTest {
 				
 			});
 			
-			ai.getInvoice()
-				.getFirstDetail()
+			AonCollectionUtils.stream(ai.getInvoice().getDetails())
+				.findAny()
 				.orElseThrow(() -> new IllegalStateException("No hay detalles"))
 				.setExpAccount(expAccount);
 			ai.setAccountEntry(InvoiceRecorder.getInvoiceEntry(ctx, ai.getInvoice() ));

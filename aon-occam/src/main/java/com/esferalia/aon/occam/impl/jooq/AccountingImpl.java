@@ -62,7 +62,6 @@ import com.esferalia.aon.occam.impl.jooq.dao.AccountingRegistryDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.AccountingUtilitiesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.AmortizationTypeDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.AnalyticalAccountingDAO;
-import com.esferalia.aon.occam.impl.jooq.dao.ConfigurationDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.FinanceDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.FinanceEntryDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.SalaryDAO;
@@ -305,11 +304,8 @@ public class AccountingImpl implements IAccounting {
 
 	@Override
 	public AccountingInvoice save(final AONContext ctx, AccountingInvoice invoice) {
-		final Date atDate = (invoice.getInvoice() == null? null : invoice.getInvoice().getIssueDate());
 		return ctx.getDslContext().transactionResult(
-			configuration -> com.esferalia.aon.occam.impl.jooq.dao.accounting.AccountingInvoiceDAO.save(ctx
-				, ConfigurationDAO.getConfiguration(ctx, atDate)
-				, invoice)
+			configuration -> com.esferalia.aon.occam.impl.jooq.dao.accounting.AccountingInvoiceDAO.save(ctx, invoice)
 		 );		
 	}
 
