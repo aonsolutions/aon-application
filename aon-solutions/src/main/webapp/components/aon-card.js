@@ -138,6 +138,7 @@ export class AonCard extends AonElement {
 		aib.id = id;
 		aib.icon = icon;
 		aib.title = name;
+		if(LS.isDarkBetaTheme()) aib.color = "var(--aonNewWhite)";
 		aib.addEventListener(EVENT.CLICK, fn);
 		aib.background = background;
 		aib.style.position = "relative";
@@ -164,6 +165,11 @@ export class AonCard extends AonElement {
 
 	getCardTitle2(){
 		return this.getElement(this.TITLE_SECTION2);
+	}
+
+	clearContent() {
+		this.clear();
+		// this.getContent().appendChild(el);
 	}
 
 	setContent(el) {

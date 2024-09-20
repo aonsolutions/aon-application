@@ -15,6 +15,7 @@ import { AonDateUtils } from "../../utils/AonDateUtils.js";
 import { MESSENGER_VIEWS, TAG_TYPE, TASK_SOURCE, TASK_STATUS } from "../MessengerEnums.js";
 import { TaskCreationUtils } from "./TaskCreationUtils.js";
 import { TaskUtils } from "./TaskUtils.js";
+import * as LS from '../../../services/localStorageService.js';
 
 
 // ------------DESKTOP
@@ -361,12 +362,13 @@ const getAssignedHtml = (res, domainId) => {
     display: "flex",
     gap: "4px",
   });
-
+  
   if (workgroupDescription) {
-    const color = person ? "949393" : "FF6F1D";
+    let color = person ? "949393" : "FF6F1D";
+    if(LS.isDarkBetaTheme()) color = "var(--aonNewWhite)";
     const divOne = setStyles(document.createElement(TAG.DIV), {
-      border: `2px solid #${color}`,
-      color: `#${color}`,
+      border: `2px solid var(--aonMessenger)`,
+      color: `var(--aonMessenger)`,
       borderRadius: "29px",
       height: "23px",
       lineHeight: "21px",
@@ -389,9 +391,11 @@ const getAssignedHtml = (res, domainId) => {
   }
 
   if (person) {
+    let color = CSS.variable(COLORS.AON_BLACK);
+    if(LS.isDarkBetaTheme()) color = "var(--aonNewWhite)";
     const divTwo = setStyles(document.createElement(TAG.DIV), {
-      border: `2px solid ${CSS.variable(COLORS.AON_BLACK)}`,
-      color: CSS.variable(COLORS.AON_BLACK),
+      border: `2px solid ${color}`,
+      color: color,
       borderRadius: "29px",
       height: "23px",
       lineHeight: "21px",
@@ -407,9 +411,11 @@ const getAssignedHtml = (res, domainId) => {
   }
 
   if (!workgroupDescription && !person) {
-    const divOne = setStyles(document.createElement(TAG.DIV), {
-      border: `2px solid ${CSS.variable(COLORS.MATERIAL_RED)}`,
-      color: CSS.variable(COLORS.MATERIAL_RED),
+    let color = CSS.variable(COLORS.MATERIAL_RED);
+    if(LS.isDarkBetaTheme()) color = "var(--aonNewWhite)";
+   const divOne = setStyles(document.createElement(TAG.DIV), {
+      border: `2px solid ${color}`,
+      color: color,
       borderRadius: "29px",
       height: "23px",
       lineHeight: "21px",
@@ -460,6 +466,7 @@ const getAssined = (res, domainId) => {
 
 const getSender = (res, document, documentTh) => {
   let sender = "";
+  /*
   if (res.registry && res.registry.name && document !== res.registry.document) {
     sender = `${res.registry.name} ${sender}`;
   } else if (res.sender && res.sender.name && documentTh !== res.sender.document) {
@@ -469,6 +476,15 @@ const getSender = (res, document, documentTh) => {
     sender = res.workgroup.description;
   } else {
     sender = "SIN GRUPO ASIGNADO";
+  }
+  */
+
+  if (res.registry && res.registry.name) {
+    sender = `${res.registry.name}`;
+  } else if (res.sender && res.sender.name) {
+    sender = `${res.sender.name}`;
+  } else {
+    sender = "SYSTEM";
   }
 
   return sender;

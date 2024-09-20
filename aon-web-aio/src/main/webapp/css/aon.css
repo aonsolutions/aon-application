@@ -141,6 +141,16 @@
   --aonHomeImg: black;
 
   --aonTaxBuildPrintRes: grey;
+  
+  --aonNewWhite: #EEEEEE;
+	
+  --aonMenuSidenav: true;
+	
+  /*
+  false or undefined same effect
+  */
+  --aonMenuTopnav: false;
+  --aonConfigSwitchApps: false;
 
 }
 
@@ -458,10 +468,11 @@ color: var(--aonSearchButton);
  
   /*background-color: #FAF9F8;*/
   box-shadow: var(--shadow4,0 0 2px var(--colorNeutralShadowAmbient,rgba(0,0,0,.12)),0 0px 4px var(--colorNeutralShadowKey,rgba(0,0,0,.14)));
+  border-left: 1px solid rgba(0,0,0,0.1);
 }
 
 .rightPanel {
-    width: 320px;
+    width: 360px;
     background-color: var(--aonRightPanelColor);
     top: 48px;
     right: 0;
@@ -470,8 +481,22 @@ color: var(--aonSearchButton);
     height: calc(100vh - 49px);
     overflow: hidden;
     border: 1px solid rgba(0,0,0,0.1);
-    visibility: hidden;
+    border-top: 0px;
     overflow-y: auto;
+}
+
+.toolbarSidenavPanel{
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	gap: 1rem;
+	margin-bottom: 1rem;
+}
+
+.toolbarSidenavTitlePanel{
+	display: flex;
+	align-items: center;
+	gap: .5rem;
 }
 
 h1 {
@@ -705,7 +730,7 @@ color: #5f6368;
   border-top: 0px;
   border-left: 0px;
   border-right: 0px;
-  border-bottom: 1px solid #E1DFDD;
+  border-bottom: 1px solid #e1e1e3;
   border-radius: 0px;
   margin: 0px;
   cursor: pointer;
@@ -821,8 +846,7 @@ color: #5f6368;
   display: flex;
   height: 40px;
   border-bottom: 1px solid #ddd;
-  margin-right: 1.5em;
-  margin-left: 1.5em;
+  margin: 0 1em;
 }
 
 .aonSecondaryToolbarTitle {
@@ -909,16 +933,18 @@ background-color: var(--aonLightGray);
 }
 
 .aonMenuSidenav {
-  z-index: 2;
-  height: 100%;
-  width: 60px;
-  position: fixed;
-  top: 48px;
+  width: 5rem;
   left: 0px;
-  overflow-x: hidden;
   font-size: 10px;
-  border-right: none;
-  background-color: #f0f0f0;
+  background-color: var(--aonHeaderBackgroundColor);
+  top: 48px;
+  position: fixed;
+  z-index: 1000000;
+  height: calc(100vh - 49px);
+  overflow: hidden;
+  overflow-y: hidden;
+  /* border: 1px solid rgba(0,0,0,0.1); */
+  overflow-y: auto;
  
 }
 
@@ -927,7 +953,7 @@ background-color: var(--aonLightGray);
     left: 0;
     z-index: 8;
     height: 48px;
-    width: 68px;
+    width: 5rem;
     position: fixed;
     overflow-x: hidden;
     font-size: 10px;
@@ -1747,6 +1773,18 @@ margin-top: 20px;
   background: #FF9002;
 }
 
+.profile-avatar-letters{
+  background-color: var(--aonBlue);
+  color: var(--aonNewWhite);
+  width: 6rem;
+  height: 6rem;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 2rem;
+}
+
 .profile-letters{
   border: 2px solid #949393;
   color: #949393;
@@ -1840,6 +1878,7 @@ margin-top: 20px;
   justify-content: center;
   align-items: center;
   flex-direction: column;
+  gap: 1rem;
 }
 
 .aonBlock {
@@ -2062,12 +2101,23 @@ label.rating:hover {
 
 .aonMessengerCardRow, .aonDocumentalCardRow{
   display: flex;
-  justify-content: space-between;
+  flex-direction: column;
   width: 100%;
   border-bottom: 1px solid rgb(221, 221, 221);
-  padding: .6rem 0px;
-  cursor: pointer;
+  padding: .5rem 0;
+  cursor: pointer; 
+}
+
+.aonMessengerCardRowContent, .aonDocumentalCardRowContent{
+  display: flex;
   align-items: center;
+  width: 100%;
+}
+
+.aonDocumentalCardRowContent{
+border-bottom: 1px solid rgb(221, 221, 221);
+  padding: .5rem 0;
+  cursor: pointer; 
 }
 
 .aonMessengerCardRow:hover{
@@ -2075,18 +2125,15 @@ label.rating:hover {
   border-bottom: 1px solid var(--aonMessenger);
 }
 
-.aonDocumentalCardRow:hover{
+.aonDocumentalCardRowContent:hover{
   border-top: 1px solid var(--aonDocumental);
   border-bottom: 1px solid var(--aonDocumental);
 }
 
-.aonDocumentalEllipsis {
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
+.aonEllipsis {
   overflow: hidden;
-  max-width: 13rem;
   text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .aonBadge{
@@ -2105,6 +2152,8 @@ label.rating:hover {
   height: 32px;
   cursor: pointer;
   padding: 0px 0px 0px 68px;
+  margin-left: 5rem;
+  position: relative;
   background-position: center;
   background-repeat: no-repeat;
   background-image: url("../assets/aon-white-logo.svg");
@@ -2117,7 +2166,7 @@ label.rating:hover {
 }
 
 .aonHeaderApp {
-  margin-left: 49px;
+  margin-left: 5rem;
   /* min-width: 120px;
   display: none; */
 }      
@@ -2179,13 +2228,6 @@ size: 32px;
 #divCol > div{
   display: flex;
   justify-content: center;
-}
-
-.aonEllipsis {
-  text-overflow: ellipsis;
-  overflow: hidden;
-  max-width: 13rem;
-  white-space: nowrap;
 }
 
 /*
@@ -2367,53 +2409,18 @@ size: 32px;
   background-color: #ddd;
 }
 
-
-/* Extra small devices (phones, 600px and down) */
-@media only screen and (max-width: 600px) {
-  /*
-  POR ESTO NO SE PINTA LA EMPRESA EN LA APP MOVIL ...
-
-  #aonHeaderCompany{
-      display: none !important;
-  } */
-}
-
 /* Small devices (portrait tablets and large phones, 600px and up) */
 @media only screen and (min-width: 600px) {
   .aonUploadPanel, .aonFastAccess{
       flex-direction: row;
   }
-
-  .aonDocumentalCardRow > .aonFlex > .aonDocumentalEllipsis{
-      max-width: 21rem;
-  }
-}
-
-/* Medium devices (landscape tablets, 768px and up) */
-/* @media only screen and (min-width: 768px) {} */
-@media only screen and (min-width: 768px) {
-  .aonMessengerCardRow > .aonFlex > .aonFlexColumn > .aonEllipsis{
-      max-width: 25rem;
-  }
-
-  .aonDocumentalCardRow > .aonFlex > .aonDocumentalEllipsis{
-      max-width: 30rem;
-  }
 }
 
 /* Large devices (laptops/desktops, 992px and up) */
 @media only screen and (min-width: 854px) {
-  #messengerCard{
-    /*min-width: 42.2rem;*/
-  }
-
   .aonDashboardCard{
       width: auto;
       min-width: 22rem;
-  }
-
-  .aonDocumentalCardRow > .aonFlex > .aonDocumentalEllipsis{
-    max-width: 14rem;
   }
 
   .aonNewLogo{
@@ -2429,18 +2436,6 @@ size: 32px;
   }
 }
 
-@media only screen and (min-width: 1230px) {
-  .aonMessengerCardRow > .aonFlex > .aonFlexColumn > .aonEllipsis{
-      max-width: 27rem;
-  }
-}
-
-@media only screen and (min-width: 1441px) {
-  .aonMessengerCardRow > .aonFlex > .aonFlexColumn > .aonEllipsis{
-      max-width: 39rem;
-  }
-}
-
 /* Extra large devices (large laptops and desktops, 1200px and up) */
 /* @media only screen and (min-width: 1200px) {} */
 @media only screen and (min-width: 1000px) {
@@ -2452,8 +2447,6 @@ size: 32px;
     margin-left: 4.5rem;
   }
 }
-
-
 
 .lds-ring {
   display: inline-block;
@@ -3180,18 +3173,18 @@ color: var(--aonWhite);
   border-top: 1px solid rgba(0,0,0,.08);
   color: inherit;
   background-color: rgba(0,0,0,.04);
-  height: 43px;
+  height: 45px;
   cursor: pointer;
   transition: background-color 0.1s;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  padding: 0 1rem;
 }
 
 .divLogout:hover{
   border-top: 1px solid rgba(0,0,0,.08);
-  color: inherit;
   background-color: rgba(0,0,0,.1);
-  height: 43px;
-  cursor: pointer;
-  transition: background-color 0.1s;
 }
 
 .divInfo{
@@ -3202,14 +3195,14 @@ color: var(--aonWhite);
 }
 
 .helpCardText{
-  padding-top: 5px;
-  padding-left: 10px;
-  margin-top: 14px;
   border-radius: 5px;
-  padding-bottom: 5px;
   cursor: pointer;
   display: flex;
-  transition: background-color 0.2s;
+  padding: .5rem 1rem;
+  transition: background-color .2s;
+  width: 100%;
+  gap: .5rem;
+  align-items: center;
 }
 
 .helpCardText:hover{
@@ -3224,6 +3217,11 @@ color: var(--aonWhite);
 
 .fiscalCardTerritory{
   color: rgb(120,20,133);
+}
+
+#bankCardTable,
+#fiscalCardTable {
+	gap: .5rem !important;
 }
 
 .graphicsDashBoardSummary{
@@ -3246,45 +3244,16 @@ color: var(--aonWhite);
 
 .rightPanelEditButton{
   cursor: pointer;
-  position: fixed;
-  visibility: hidden;
-  right: 277px;
-  top: 58px;
+  display: none;
 }
 
 .rightPanelButtons{
   cursor: pointer;
-  position: fixed;
-  visibility: hidden;
-  right: 280px;
-  margin-top: 8px;
+  display: none;
 }
 
 .rightPanelCloseButton{
   cursor: pointer;
-  position: absolute;
-  right: 10px;
-  margin-top: 8px;
-}
-
-.aonHelpSpan{
-  margin-left: 10px;
-}
-
-.aonHelpI{
-  margin-right: 5px;
-  vertical-align: middle;
-}
-
-.aonHelpSpan2{
-  margin-top: 2px;
-}
-
-.rightPanelSwitchSupportButton{
-  margin-left: 10px;
-  right: 30px;
-  position: absolute;
-  top: 70px;
 }
 
 .rightPanelAboutContactCard{
@@ -3390,15 +3359,15 @@ color: var(--aonWhite);
 }
 
 .userPanelDivUserInfo{
-  margin-left: 34px;
-  margin-top: -22px;
   max-width: 205px;
-  margin-bottom: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: .3rem;
 }
 
 .userPanelNameInfoDiv{
-  margin-top: 5px;
   display: flex;
+  gap: .5rem;
 }
 
 .userPanelNameSpan{
@@ -3407,9 +3376,6 @@ color: var(--aonWhite);
 }
 
 .userPanelInfoI{
-  margin-right: 5px;
-  vertical-align: middle;
-  margin-top: 0px;
   font-size: 18px;
 }
 
@@ -3418,21 +3384,17 @@ color: var(--aonWhite);
 }
 
 .userPanelInfoLinkDiv{
-  margin-top: 8px;
   display: flex;
-  margin-left: 15px;
+  align-items: center;
+  gap: .5rem;
 }
 
 .userPanelInfoLinkI{
-  margin-right: 5px;
-  vertical-align: middle;
-  margin-top: 0px;
   font-size: 24px;
 }
 
 .userPanelInfoLinkSpan{
   font-size: 12px;
-  margin-top: 3px;
 }
 
 .userPanelImage{
@@ -3442,10 +3404,6 @@ color: var(--aonWhite);
   border: none;
   background-color: var(--aonBlue);
   color: white;
-}
-
-.notificationPanelGeneralDiv{
-  margin-top: -55px;
 }
 
 .notificationPanelAllDiv{
@@ -3522,7 +3480,7 @@ color: var(--aonWhite);
   top: 100px;
   position: relative;
   font-size: 18px;
-  margin-left: 15px;
+  margin-left: 30px;
 }
 
 .suiteMenuNewButton{
@@ -3866,7 +3824,7 @@ color: var(--aonWhite);
 }
 
 .aonNewMenuLeftTop{
-  width: 68px;
+  width: 5rem;
   visibility: hidden;
 }
 
@@ -3886,7 +3844,7 @@ align-items: center;
 }
 
 .aonNewMenuLeftTopAppDiv{
-  width: 68px;
+  width: 5rem;
 background-color: transparent;
 cursor: pointer;
 }
@@ -3998,10 +3956,11 @@ display: block;
 .aonConfigBrand,
 .aonConfigTopNav,
 .aonConfigSideNav {
-height: 38px;
-display: flex;
-margin-left: 10px;
-margin-right: 20px;
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	gap: 1rem;
+	padding: .5rem 1rem;
 }
 
 .aonConfigApps,
@@ -4011,13 +3970,6 @@ margin-right: 20px;
 display: none;
 }
 
-.aonConfigAppsTitle,
-.aonConfigDarkTitle,
-.aonConfigBrandTitle,
-.aonConfigTopNavTitle,
-.aonConfigSideNavTitle {
-flex-grow: 2;
-}
 
 .aonCardsPanel {
 	display: grid !important;
@@ -4029,19 +3981,11 @@ flex-grow: 2;
   .aonCardsPanel {
 	grid-template-columns: repeat(2, minmax(0px, 1fr));
   }
-  
-  .aonCardsPanel #messengerCard {
-	grid-column: span 2;
-  }
 }
 
 @media (1230px <= width) {
   .aonCardsPanel {
 	grid-template-columns: repeat(3, minmax(0px, 1fr));
-  }
-  
-  .aonCardsPanel #messengerCard {
-	grid-column: span 2;
   }
 }
 
@@ -4193,7 +4137,7 @@ font-weight: 600;
 .aonMessengerCardDate{
   text-align: right;
   color: rgb(120, 120, 133);
-  font-size: 0.8rem;
+  font-size: 0.7rem;
 }
 
 .accountingChatLegend {
@@ -4223,10 +4167,246 @@ font-weight: 600;
   color: #5f6368;
 }
 
+.aonInvoiceHomeDiv {
+  display: grid;
+  grid-template-columns: 150px 150px;
+  gap: 5px;
+  flex: 1;
+  padding: 0px;
+}
+
+.aonInvoiceHomePendingRecordsDiv{
+  border: 1px solid #ebebeb;
+  display: flex;
+  flex-direction: column;
+	justify-content: center;
+  gap: 3px;
+	text-align: center;
+	padding: 8px;
+	flex: 1;
+	border-radius: 5px;
+  cursor: pointer;
+	margin-bottom: 3px;
+	grid-column:  1 / -1;
+  background-color: transparent;
+}
+
+.aonInvoiceHomePendingRecordsDiv:hover{
+  background-color: #f1f1f1;
+}
+
+.aonInvoiceHomePendingRecordNumber {
+  font-weight: bold;
+  font-size: 36px;
+  line-height: 47px;
+  color: var(--aonGreen);
+}
+
 .aonInvoiceHomePendingRecordName {
   font-weight:  normal;
 	color:  gray;
 	line-height:  21px;
+}
+
+.aonInvoiceHomePendingDiv {
+  border: 1px solid #ebebeb;
+  flex-direction: column;
+  justify-content: center;
+  gap: 3px;
+  text-align: center;
+  padding: 8px;
+  display: flex;
+  border-radius: 5px;
+  margin-bottom: 3px;
+  grid-column: 1 / -1;
+}
+
+.aonInvoiceHomePendingNameRow {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: left;
+}
+
+.aonInvoiceHomePendingName {
+  font-weight: normal;
+  color: gray;
+	line-height: 21px;
+	flex-wrap: wrap;
+	flex-basis: 33.33%;
+	flex-grow: 3;
+}
+
+.aonInvoiceHomePendingCounterRow {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: left;
+}
+
+.aonInvoiceHomePendingIssuedDiv {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 8px;
+  text-align: center;
+  padding: 8px;
+  flex-wrap: wrap;
+  flex-basis: 33%;
+  flex-grow: 1;
+  border-radius: 5px;
+  cursor: pointer;
+	margin-bottom: 3px;
+  background-color: transparent;
+}
+
+.aonInvoiceHomePendingIssuedDiv:hover{
+  background-color: #f1f1f1;
+}
+
+.aonInvoiceHomePendingIssuedNumber {
+  font-weight: bold;
+  font-size: 36px;
+  line-height: 47px;
+  color: var(--aonOrange);
+}
+
+.aonInvoiceHomePendingIssuedName{
+  font-weight: normal;
+  color: gray;
+  line-height: 21px;
+}
+
+.aonInvoiceHomePendingReceivedDiv {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 8px;
+  text-align: center;
+  padding: 8px;
+  flex-wrap: wrap;
+  flex-basis: 33%;
+  flex-grow: 1;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-bottom: 3px;
+  margin-left: 3px;
+  background-color: transparent;
+}
+
+.aonInvoiceHomePendingReceivedDiv:hover{
+  background-color: #f1f1f1;
+}
+
+.aonInvoiceHomePendingReceivedNumber {
+  font-weight: bold;
+  font-size: 36px;
+  line-height: 47px;
+  color: var(--aonOrange);
+}
+
+.aonInvoiceHomePendingReceivedName {
+  font-weight: normal;
+  color: gray;
+  line-height: 21px;
+}
+
+.aonInvoiceHomePendingTicketDiv {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 8px;
+  text-align: center;
+  padding: 8px;
+  flex-wrap: wrap;
+  flex-basis: 33%;
+  flex-grow: 1;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-bottom: 3px;
+  margin-left: 3px;
+  background-color: transparent;
+}
+
+.aonInvoiceHomePendingTicketDiv:hover {
+  background-color: #f1f1f1;
+}
+
+.aonInvoiceHomePendingTicketNumber {
+  font-weight: bold;
+  font-size: 36px;
+  line-height: 47px;
+  color: var(--aonOrange);
+}
+
+.aonInvoiceHomePendingTicketName {
+  font-weight: normal;
+  color: gray;
+  line-height: 21px;
+}
+
+.aonInvoiceHomeRejectedDiv {
+  border: 1px solid #ebebeb;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 3px;
+  text-align: center;
+  padding: 8px;
+  flex: 1;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-bottom: 3px;
+  background-color: transparent;
+}
+
+.aonInvoiceHomeRejectedDiv:hover{
+  background-color: #f1f1f1;
+}
+
+.aonInvoiceHomeRejectedNumber{
+  font-weight: bold;
+  font-size: 36px;
+  line-height: 47px;
+  color: var(--aonRed);
+}
+
+.aonInvoiceHomeRejectedName {
+  font-weight: normal;
+  color: gray;
+  line-height: 21px;
+}
+
+.aonInvoiceHomeTrashDiv {
+  border: 1px solid #ebebeb;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 3px;
+  text-align: center;
+  padding: 8px;
+  flex: 1;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-bottom: 3px;
+  background-color: transparent;
+}
+
+.aonInvoiceHomeTrashDiv:hover {
+  background-color: #f1f1f1;
+}
+
+.aonInvoiceHomeTrashNumber {
+  font-weight: bold;
+  font-size: 36px;
+  line-height: 47px;
+  color: var(--aonGray);
+}
+
+.aonInvoiceHomeTrashName {
+  font-weight: normal;
+  color: gray;
+  line-height: 21px;
 }
 
 .aonNewDesktopBeta {
@@ -4236,3 +4416,23 @@ font-weight: 600;
 .aonNewDesktopNormal {
   display: block;
 }
+
+.hiddenSidenav {
+    margin-right: -360px;
+    -webkit-transition: margin-right 0.3s linear;
+       -moz-transition: margin-right 0.3s linear;
+        -ms-transition: margin-right 0.3s linear;
+         -o-transition: margin-right 0.3s linear;
+            transition: margin-right 0.3s linear;
+}
+
+.hiddenSidenav.open {
+     margin-right: 0px;
+     -webkit-transition: margin-right 0.3s linear;
+        -moz-transition: margin-right 0.3s linear;
+         -ms-transition: margin-right 0.3s linear;
+          -o-transition: margin-right 0.3s linear;
+             transition: margin-right 0.3s linear;
+}
+
+

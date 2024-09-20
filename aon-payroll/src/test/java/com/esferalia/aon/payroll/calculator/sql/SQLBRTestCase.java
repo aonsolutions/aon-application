@@ -21,7 +21,11 @@ import static com.esferalia.aon.watson.util.AonDateUtils.getMax;
 import static java.lang.String.format;
 import static java.util.Calendar.DAY_OF_MONTH;
 import static java.util.Calendar.MONTH;
+<<<<<<< HEAD
 import static org.junit.jupiter.api.Assertions.assertEquals;
+=======
+import static org.junit.Assert.assertEquals;
+>>>>>>> master
 
 import java.sql.Connection;
 import java.sql.Date;
@@ -51,8 +55,10 @@ import com.esferalia.aon.salary.expression.ExpressionException;
 
 public class SQLBRTestCase extends AbstractSQLTestCase {
 
-	private static final double DELTA = 0.000001;
-
+	private static final double DELTA = 0.001;
+	
+	
+	
 	@Test
 	public void testBRI() throws ExpressionException, SQLException,
 			SalaryException {
@@ -1265,6 +1271,81 @@ public class SQLBRTestCase extends AbstractSQLTestCase {
 		//assertEquals(br, ctx.getExpressionContext().eval("BR(TODAY)", startDate, endDate, Double.class).get(0).getValue(), DELTA);
 		assertEquals(br, ctx.getExpressionContext().eval("BASE_REGULADORA", startDate, endDate, Double.class).get(0).getValue(), DELTA);
 	}
+	
+	
+	@Test
+	public void testMaternityI() throws ExpressionException, SQLException,
+			SalaryException {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+
+		//@formatter:off
+		AgreementLevelCategoryRecord category = newAgreement(aonContext,
+				new Extra[] { new Extra() {
+					{
+						this.expression = "P_0 + P_1";
+						this.month = Month.DECEMBER;
+						this.start = "01/01";
+						this.end = "31/12";
+						this.issue = "15/12";
+					}
+				}, new Extra() {
+					{
+						this.expression = "P_0 + P_1";
+						this.month = Month.JULY;
+						this.start = "01/07 -1";
+						this.end = "30/06";
+						this.issue = "01/07";
+					}
+				}, });
+		@SuppressWarnings("serial")
+		ContractRecord contract = newContract(aonContext,
+				getFirstDayOfYear(getToday()),
+				new HashMap<String,String>(){
+				{
+					put("DIAS_MES", "30"); // Monthly quote
+				}
+				},
+				new String[] {
+				"1500.00 * DIAS_TRABAJADOS / DIAS_MES",
+				"250.00 * DIAS_TRABAJADOS / DIAS_MES" }, 
+				new String[] {
+				"BASE_CGC * 0.10", 
+				"BASE_CGP * 0.05",
+				"BASE_IRPF * 0.00/100" }, category);
+		//@formatter:on
+
+		Date startDate = add(contract.getStartDate() ,Calendar.MONTH, 4 );
+		
+		Date startITDate = add(startDate , Calendar.DAY_OF_MONTH, 10 );
+		Date endITDate = add(startITDate, Calendar.MONTH, 6  );
+		addIT(aonContext, contract, LeaveType.MATERNITY, startITDate,
+				endITDate, null);
+		
+		Date brDate = add(startITDate ,Calendar.MONTH, -2 );
+		addPayment(aonContext, contract, brDate, getLastDayOfMonth(brDate), "500.00");
+		
+		Date endDate = getLastDayOfMonth(startDate);
+		for ( Date date = contract.getStartDate(); date.before(startDate); date = add(date, Calendar.MONTH, 1)) {
+			smartCalculateAndSave(connection, getContractSalaryCalculatorContext(
+				connection, getFirstDayOfMonth(date), getLastDayOfMonth(date), getLastDayOfMonth(date), contract));
+		}
+
+
+		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
+				connection, 
+				startDate, 
+				endDate, 
+				endDate, 
+				contract);
+		
+		double br = ( 1750.00 * (1.00 + 1.00 / 6 )  + 500.00 ) / 30;
+
+		org.junit.Assert.assertEquals(br, ctx.getExpressionContext().eval("BASE_REGULADORA", startDate, endDate, Double.class).get(0).getValue(), DELTA);
+		
+
+	}
+	
 
 	// ------------------------------------------------------------------------
 

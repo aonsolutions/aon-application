@@ -404,21 +404,47 @@ public abstract class ContractEmployeeUI extends ResizeComposite {
 		getSplitLayoutPanel().setWidgetSize(getFootPanel(), 25);
 		
 		// Load info and fill fields
-		ContractParams params = getContractParams();
-		params.setOffset(getPosition());
-		params.setLimit(1); 
+		ContractParams newContractParams = new ContractParams( getContractParams() );
 		
-		this.contrataEmployeeObject.getContract(params,
-				r -> {
-					// Init toolbar
-					getToolbar().setTitle(this.contrataEmployeeObject.getEmployeeFullName());		
-					employee.initializeView();
-					initLogicWindow();
-					initializeIdcMonthListBox();
-					initExistingEmployee(this.contrataEmployeeObject.getContractData().hasPayroll());
-					success.accept(this.contrataEmployeeObject.getContractEmployeeInfo());
-				}
-		);
+		// For new create contracts
+		if(getPosition() == -1) {
+			newContractParams
+				.setContract(contractId)
+				.setOffset(0)
+				.setLimit(1);
+			
+			this.contrataEmployeeObject.getContract(newContractParams,
+					employeeContractInfo -> {
+						// Init toolbar
+						contrataEmployeeObject.setEmployeeContractInfo(employeeContractInfo);
+						getToolbar().setTitle(this.contrataEmployeeObject.getEmployeeFullName());		
+						employee.initializeView();
+						initLogicWindow();
+						initializeIdcMonthListBox();
+						initExistingEmployee(this.contrataEmployeeObject.getContractData().hasPayroll());
+						success.accept(this.contrataEmployeeObject.getContractEmployeeInfo());
+					}
+			);
+		} 
+		// Contracts
+		else {
+			newContractParams
+				.setOffset(getPosition())
+				.setLimit(1); 
+			
+			this.contrataEmployeeObject.getContract(newContractParams,
+					employeeContractInfo -> {
+						// Init toolbar
+						contrataEmployeeObject.setEmployeeContractInfo(employeeContractInfo);
+						getToolbar().setTitle(this.contrataEmployeeObject.getEmployeeFullName());		
+						employee.initializeView();
+						initLogicWindow();
+						initializeIdcMonthListBox();
+						initExistingEmployee(this.contrataEmployeeObject.getContractData().hasPayroll());
+						success.accept(this.contrataEmployeeObject.getContractEmployeeInfo());
+					}
+			);
+		}
 		
 	}
 	

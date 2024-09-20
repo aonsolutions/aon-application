@@ -51,6 +51,7 @@ import static com.esferalia.aon.payroll.enumeration.ContextVariable.SLD_H04;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.SLD_H06;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.STRIKE_FACTOR;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.STRUCTURAL_OVERTIME_BASE;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.SUM;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.SUNDAY_HOURS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.TC2;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.THURSDAY_HOURS;
@@ -1045,16 +1046,17 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 					    ExpressionContext irpfExpressionContext = new ExpressionContext(expressionContext) ;
 					    ContextFunctions.loadFunctions(irpfExpressionContext, deductionStart, deductionEnd);
 					    
-					    for ( ContextVariable irpfVar : new ContextVariable  [] {
-						    TMP_IN_KIND,
-						    IRPF_PERCENT, 
-						    IRPF_CTA_ESP, 
-						    IRPF_BASE, 
-						    BASE_CTA_ESP,
-						    INKIND_IRPF_BASE, 
-						    MONEY_IRPF_BASE } ) {
+					    for ( String irpfVar : new String  [] {
+					    	SUM,
+						    TMP_IN_KIND.getName(),
+						    IRPF_PERCENT.getName(), 
+						    IRPF_CTA_ESP.getName(), 
+						    IRPF_BASE.getName(), 
+						    BASE_CTA_ESP.getName(),
+						    INKIND_IRPF_BASE.getName(), 
+						    MONEY_IRPF_BASE.getName() } ) {
 
-						     irpfExpressionContext.getVariables(irpfVar.getName()).stream()
+						     irpfExpressionContext.getVariables(irpfVar).stream()
 						    .filter( v -> v.getPeriod().getEnd().compareTo(irpfPeriod.getStart()) <= 0)
         					    .sorted( (v1, v2) -> v2.getPeriod().compareTo(v1.getPeriod()))
         					    .map( v -> 
@@ -1084,7 +1086,7 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
                 						public Object getValue(Period period) {
                 						    return v.getValue(v.getPeriod());
                 						}
-        					    }).findFirst().ifPresent( v -> irpfExpressionContext.putVariable(irpfVar.getName(), v) );
+        					    }).findFirst().ifPresent( v -> irpfExpressionContext.putVariable(irpfVar, v) );
     					    }
 
 					    expressionContext = irpfExpressionContext;

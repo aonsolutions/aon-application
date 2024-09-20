@@ -539,17 +539,17 @@ export class AonHeader extends AonElement {
 
 	buildLogo() {
 
-		// aonLogo.addEventListener('click', () => {
-		// 	if(LS.getDomainId()){
-		// 		this.rootPanelHtml(this.isMobile()
-		// 			? '<aon-mobile-desktop id="aonDesktop"></aon-mobile-desktop>'
-		// 			: '<aon-desktop id="aonDesktop"></aon-desktop>');
-		// 		let aonDesktop = this.getElement('aonDesktop');
-		// 		aonDesktop.setAttribute('company', this.getAttribute('company'));
-		// 	} else {
-		// 		this.rootPanel(new AonParent());
-		// 	}
-		// })
+		aonLogo.addEventListener('click', () => {
+			if(LS.getDomainId()){
+				this.rootPanelHtml(this.isMobile()
+					? '<aon-mobile-desktop id="aonDesktop"></aon-mobile-desktop>'
+					: '<aon-desktop id="aonDesktop"></aon-desktop>');
+				let aonDesktop = this.getElement('aonDesktop');
+				aonDesktop.setAttribute('company', this.getAttribute('company'));
+			} else {
+				this.rootPanel(new AonParent());
+			}
+		})
 	}
 
 	aonConfiguration() {
@@ -571,7 +571,8 @@ export class AonHeader extends AonElement {
 		aonHeaderHelp.style.display = company ? 'block' : 'none';
 
 		let aonHeaderSearch = this.getElement(this.AON_HEADER_SEARCH);
-		aonHeaderSearch.style.display = company ? 'none' : 'flex';
+		// aonHeaderSearch.style.display = company ? 'none' : 'flex';
+		aonHeaderSearch.style.display = 'flex';
 		if(!LS.isNewTheme() && !this.newTheme)
 			aonHeaderSearch.style.marginLeft = '33px';
 
@@ -583,6 +584,7 @@ export class AonHeader extends AonElement {
 
 		let aonHeaderCompanyName = this.getElement(this.AON_HEADER_COMPANY_NAME);
 		aonHeaderCompanyName.innerHTML = company ? company.name : '';
+
 
 		if(onlyOne) {
 			// aonHeaderHome.style.right = '140px';

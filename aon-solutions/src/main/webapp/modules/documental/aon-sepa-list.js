@@ -66,8 +66,8 @@ export class AonSepaList extends AonElement {
 
     aonDocumentalSepaTable.addColumn(MSG.DATE, "date", "issueDate", "20%");
     aonDocumentalSepaTable.addColumn(MSG.NAME, "string", "description", "40%");
-    aonDocumentalSepaTable.addColumn(MSG.AMOUNT, "number", "amount", "15%");
     aonDocumentalSepaTable.addColumn("Nóminas", "string", "details", "15%");
+    aonDocumentalSepaTable.addColumn(MSG.AMOUNT, "number", "amount", "15%");
     aonDocumentalSepaTable.addColumn("", "icons", "icons", "10%");
 
     this.init();

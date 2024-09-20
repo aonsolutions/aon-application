@@ -266,8 +266,9 @@ export class AonNewMenu extends AonElement {
         if(this.isApp(app) || excludedApps.includes(app.app)){
 			if(app.app != "new"){
 				this.dispatchEvent(new CustomEvent(EVENT.AON_APPLICATION_SELECT, { detail }));	
+				this.setSelectedMenuSidenav(app);
 			}
-			this.setSelectedMenuSidenav(app);
+			
 		}
 		if(app.app != "new"){
 			let appsDiv = this.getElement("aonMenuLeftop-applications");
@@ -312,6 +313,10 @@ export class AonNewMenu extends AonElement {
 		header.className = 'aonHeader aonHeaderStart';
 		let applications = this.getElement('applications');
 		applications.className = 'aonMenuLeftopStart';
+
+		if(LS.isOnlyOne()&& LS.isLeftMenu()){
+			this.showSideNav();
+		}
 
 	}
 
@@ -478,7 +483,7 @@ export class AonNewMenu extends AonElement {
 		let sidenav = this.getElement(this.AON_MENU_SIDENAV);
 		let menulist = this.getElement("aonMenuList");
 		let rootPanel = this.getElement("rootPanel");
-		let aonlogo = this.getElement("aonLogo");		
+		// let aonlogo = this.getElement("aonLogo");		
 		// let icon = this.getElement("aonMenuLeftop");
 
 		sidenav.style.width = '68px';
@@ -486,8 +491,8 @@ export class AonNewMenu extends AonElement {
 		
 		menulist.style.visibility = "visible";
 		
-		aonlogo.style.left = '60px';
-		aonlogo.style.position = 'relative';
+		// aonlogo.style.left = '60px';
+		// aonlogo.style.position = 'relative';
 
 		// icon.style.visibility = "visible";
 
@@ -507,7 +512,7 @@ export class AonNewMenu extends AonElement {
 		sidenav.style.display = "none";
 		aonlogo.style.position = "relative";
 		// icon.style.visibility = "hidden";
-		aonlogo.style.left = '60px';
+		// aonlogo.style.left = '60px';
 	
 		rootPanel.style.marginLeft = '0px';
 		//menulist.style.visibility = "hidden";
@@ -1036,6 +1041,7 @@ export class AonNewMenu extends AonElement {
 					input.className = CSS.AON_NONE;
 					input.addEventListener(EVENT.CHANGE, ({target}) => uploadDocuments(input, target.files, this.getDur() ) );
 					input.click();
+					this.appSelection(Apps.DOCUMENTAL);
 				}
 			});
 		}
@@ -1047,6 +1053,7 @@ export class AonNewMenu extends AonElement {
 					let aonMessengerChat = new AonMessenger();	
 					aonMessengerChat.data = {source:TASK_SOURCE.QUERY};
 					this.rootPanel(aonMessengerChat);
+					this.appSelection(Apps.MESSENGER);
 				}
 			});
 		}
@@ -1071,6 +1078,8 @@ export class AonNewMenu extends AonElement {
 							});
 						});
 					});
+					this.appSelection(Apps.MESSENGER);
+
 				}
 			});
 		}

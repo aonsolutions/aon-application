@@ -127,15 +127,14 @@ export class AonConfig extends AonElement {
         this.appendChild(themesCard);
 
         let themesCardDiv = this.getElement(themesCard.CARD);
-        themesCardDiv.style.boxShadow = '0 2px 4px rgba(0,0,0,.1)';
-        themesCardDiv.style.backgroundColor = "var(--aonCardColor)";
-        themesCardDiv.style.borderRadius = '2px';
+        themesCardDiv.style.boxShadow = 'none';
 
         let themesDiv = this.createDiv();
         themesDiv.appendChild(this.buildThemeData("Estándar", '/css/theme/aon.css'));
         themesDiv.appendChild(this.buildThemeData("Clásico",'/css/theme/classic.css'));
         themesDiv.appendChild(this.buildThemeData("Moderno",'/css/theme/modern.css'));
         themesDiv.appendChild(this.buildThemeData("Oscuro",'/css/theme/dark.css'));
+        //themesDiv.appendChild(this.buildThemeData("Oscuro (Beta)",'/css/theme/darkBeta.css'));
         themesCard.setContent(themesDiv);
 
         let langCard = new AonCard();
@@ -145,9 +144,7 @@ export class AonConfig extends AonElement {
         this.appendChild(langCard);
 
         let langCardDiv = this.getElement(langCard.CARD);
-        langCardDiv.style.boxShadow = '0 2px 4px rgba(0,0,0,.1)';
-        langCardDiv.style.backgroundColor = "var(--aonCardColor)"
-        langCardDiv.style.borderRadius = '2px';
+        langCardDiv.style.boxShadow = 'none';
 
         let langsDiv = this.createDiv();
         langsDiv.appendChild(this.buildLanguageData(MSG.SPANISH , Language.SPANISH));
@@ -201,6 +198,8 @@ export class AonConfig extends AonElement {
             LS.setWhiteBrand(brandSwitch.checked);
         })
 
+        let openButton = this.getElement("openNotificationButton");
+		openButton.style.display = "none";
         
     }
 

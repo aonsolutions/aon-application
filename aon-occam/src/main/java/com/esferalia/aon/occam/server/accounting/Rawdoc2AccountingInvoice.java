@@ -70,13 +70,16 @@ public class Rawdoc2AccountingInvoice {
 			invoice = AON_SOLUTIONS.getInvoice(domainName, domainId, login, invoice.getId());
 		}
 		AccountingInvoice ai = tedi2Aon(domain, user, invoice, json); 
+		
+		
 		if(rawdoc != null && rawdoc.getId() != null) {
-			Attach attach = new Attach();
+			Attach attach = ai.getAttach() != null ? ai.getAttach() : new Attach();
 			attach.setId(rawdoc.getId());
-			attach.setAttachType(AttachType.INVOICE);
-			attach.setMimeType( rawdoc.getMimeType() );
-			attach.setData(rawdoc.getData());
-			attach.setAttachURL("RAWDOC");
+			if(rawdoc.getData() != null) {
+				attach.setAttachType(AttachType.INVOICE);
+				attach.setMimeType( rawdoc.getMimeType() );
+				attach.setData(rawdoc.getData());
+			}
 			ai.setAttach(attach);
 			ai.getInvoice().setRawdocId(rawdoc.getId());
 		}
@@ -142,7 +145,6 @@ public class Rawdoc2AccountingInvoice {
 				ai.getAccountEntry().setActivityDescription(null);
 			}
 			
-			
 			fillAttach( ctx, ai, ti);
 			return ai;
 		}
@@ -151,9 +153,8 @@ public class Rawdoc2AccountingInvoice {
 	private static AccountingInvoice fillAttach(AONContext ctx, AccountingInvoice ai,  JSONObject ti) {
 		JSONObject file = ti.optJSONObject("file");
 		if (file != null) {
-			String s3Key = file.optString("s3Key");
 			String url = file.optString("url");
-			if (AonStringUtils.isNotBlank(url) && AonStringUtils.isNotBlank(s3Key)) {
+			if (AonStringUtils.isNotBlank(url)) {
 				Attach attach = new Attach()
 					.setAttachType(AttachType.INVOICE)
 					.setAttachURL( url );

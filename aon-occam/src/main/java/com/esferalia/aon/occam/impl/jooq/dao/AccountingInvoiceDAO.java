@@ -974,6 +974,8 @@ public class AccountingInvoiceDAO {
 //		for (InvoiceVAT vat :  accInvoice.getVats()) {
 //			InvoiceDetail detail = vat.getInvoiceDetail() != null
 //				? vat.getInvoiceDetail() 
+//					.setAccount(vat.getInvoiceDetail().getAccount() != null
+//						? vat.getInvoiceDetail().getAccount() : vat.getExpAccountId())
 //				: new InvoiceDetail()
 //					.setDomain(accInvoice.getInvoice().getDomain())
 //					.setInvoice(accInvoice.getInvoice())

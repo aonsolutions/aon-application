@@ -635,7 +635,7 @@ public class ComunicaServlet extends AonApiHttpServlet{
 			if(null != workplace) {
 				PayrollWorkplace parollWorkplace = AON.getPayrollWorkpalce(domain.getName(), domain.getId(), user.getLogin(), f -> f.getDomainProperty().eq(domain.getId()).and(f.getWorkplaceProperty().eq(workplace.getId())));
 			
-				if(null != parollWorkplace.getAgreement()) {
+				if(null != parollWorkplace && null != parollWorkplace.getAgreement()) {
 					try (CloseableAONContext ctx = AONContext.getAONContext(domain.getName(), domain.getId(), user.getLogin())) {
 						AgreementRecord agreementRecord = ctx.getDslContext().selectFrom(AGREEMENT)
 							.where(AGREEMENT.ID.eq(parollWorkplace.getAgreement()))

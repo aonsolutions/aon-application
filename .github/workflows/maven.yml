@@ -1,0 +1,132 @@
+
+name: Java CI with Maven
+
+on:
+  # push:
+  #   branches: [ "master" ]
+  pull_request:
+    # By default, a workflow only runs when a pull_request event's activity type
+    # is opened, synchronize, or reopened. types: [opened, synchronize, reopened]
+    branches: [ "master" ]
+  workflow_dispatch:
+
+env:
+  TZ: Europe/Madrid
+  AWS_REGION: eu-west-1
+  
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+      packages: write
+      attestations: write
+      id-token: write
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Set up JDK 21
+      uses: actions/setup-java@v4
+      with:
+        java-version: '21'
+        distribution: 'temurin'
+        cache: maven
+        
+    - name: Set up MySQL
+      run: |
+        sudo sed -i "s/\(bind-address.*\)=.*/\1= 0.0.0.0/" /etc/mysql/mysql.conf.d/mysqld.cnf
+        sudo systemctl start mysql.service
+        sudo mysql -u root --password=root -v  <<-EOSQL
+        --
+        SET GLOBAL sql_mode = '';
+        SET GLOBAL time_zone = '+01:00';
+        --
+        CREATE USER 'dbuser'@'%' IDENTIFIED WITH mysql_native_password BY 'serubd2000' ;
+        GRANT ALL ON *.* TO 'dbuser'@'%' ;
+        --
+        -- default privileges include a row with Host='localhost' and User=''. 
+        CREATE USER 'dbuser'@'localhost' IDENTIFIED WITH mysql_native_password BY 'serubd2000' ;
+        GRANT ALL ON *.* TO 'dbuser'@'localhost';
+        EOSQL
+
+    - name: Login to GitHub Container Registry
+      uses: docker/login-action@v3
+      with:
+        registry: ghcr.io
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+  
+    - name: Configure AWS credentials
+      uses: aws-actions/configure-aws-credentials@v1
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: ${{ env.AWS_REGION }}
+
+    - name: Create connection file
+      run: |
+        sudo mkdir /etc/aon-aio
+        sudo tee -a /etc/aon-aio/connection >/dev/null <<-EOF
+        driverClass=com.mysql.cj.jdbc.Driver
+        jdbcUrl=jdbc:mysql://127.0.0.1:3306
+        user=dbuser
+        password=serubd2000
+        useSSL=false
+        sessionVariables=SQL_SAFE_UPDATES=1
+        EOF
+
+    - name: Build with Maven
+      run: mvn -B -Dgwt.working=true -T 1C clean install
+
+    - name: Build and push Docker aon-application image
+      if: github.ref == 'refs/heads/master'
+      uses: docker/build-push-action@v6
+      with:
+        context: .
+        push: true
+        tags: ghcr.io/${{ github.repository_owner }}/aon-application:dev
+
+    - name: Build and push Docker aon-db-up2date image
+      if: github.ref == 'refs/heads/master'
+      uses: docker/build-push-action@v6
+      with:
+        context: ./aon-db-up2date
+        push: true
+        tags: ghcr.io/${{ github.repository_owner }}/aon-db-up2date:dev
+    
+    - name: Setup environment for integration testing
+      if: github.ref == 'refs/heads/master'
+      run: |
+        DB_HOST=$(ip addr show docker0 | grep -oP 'inet \K[0-9\.]+')
+        DB_FILE=$(find aon-htmlunit/src -name "test-aonsolutions-org.sql")
+        mysql -h ${DB_HOST} -u dbuser --password=serubd2000 < ${DB_FILE}
+        docker run -e DB_USER=dbuser -e DB_PASSWD=serubd2000 -e DB_HOST=${DB_HOST} ghcr.io/${{ github.repository_owner }}/aon-db-up2date:dev
+        docker run -d -p 8080:8080 -e DB_USER=dbuser -e DB_PASSWD=serubd2000 -e DB_HOST=${DB_HOST} ghcr.io/${{ github.repository_owner }}/aon-application:dev
+        sudo tee -a /etc/hosts >/dev/null <<-EOF
+        127.0.0.1    payroll-test.aonsolutions.org
+        127.0.0.1    tgss-payroll-test.aonsolutions.org
+        127.0.0.1    home-payroll-test.aonsolutions.org
+        127.0.0.1    agrarian-payroll-test.aonsolutions.org
+        127.0.0.1    general-payroll-test.aonsolutions.org
+        127.0.0.1    trainning-payroll-test.aonsolutions.org
+        EOF
+    
+    - name: Running integration tests
+      if: github.ref == 'refs/heads/master'
+      run: |
+        mvn -B \
+        -Dintegration.test.user=admin \
+        -Dintegration.test.password=org \
+        -Dintegration.test.payroll.url=http://payroll-test.aonsolutions.org:8080/ \
+        -Dintegration.test.general.payroll.url=http://general-payroll-test.aonsolutions.org:8080/ \
+        -Dintegration.test.agrarian.payroll.url=http://agrarian-payroll-test.aonsolutions.org:8080/ \
+        -Dintegration.test.trainning.payroll.url=http://trainning-payroll-test.aonsolutions.org:8080/ \
+        -Dintegration.test.home.payroll.url=http://home-payroll-test.aonsolutions.org:8080/ \
+        -f aon-htmlunit/pom.xml integration-test
+        
+
+
+

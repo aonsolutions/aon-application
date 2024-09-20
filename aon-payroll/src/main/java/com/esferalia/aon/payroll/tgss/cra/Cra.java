@@ -218,7 +218,6 @@ public class Cra {
 					Record salaryPaymentTypeRecord = dslContext.select(SALARY_PAYMENT.TYPE).from(SALARY_PAYMENT)
 							.where(SALARY_PAYMENT.SALARY.eq(salaryId))
 							.and(SALARY_PAYMENT.AMOUNT.gt(0.00))
-//							.and(SALARY_PAYMENT.PAYMENT_CONCEPT.isNull().or(SALARY_PAYMENT.PAYMENT_CONCEPT.eq("PPE")))
 							.limit(1)
 							.fetchOne();
 					
@@ -374,7 +373,7 @@ public class Cra {
 					
 						Result<Record> salaryPayments = dslContext.select().from(SALARY_PAYMENT)
 								.where(SALARY_PAYMENT.SALARY.eq(salaryId))
-								.and(SALARY_PAYMENT.PAYMENT_CONCEPT.isNull().or(SALARY_PAYMENT.PAYMENT_CONCEPT.ne("PPE")))
+								.and(SALARY_PAYMENT.PAYMENT_CONCEPT.isNull().or(SALARY_PAYMENT.PAYMENT_CONCEPT.ne("PPE").and(SALARY_PAYMENT.PAYMENT_CONCEPT.ne("PREST_IT"))))
 								.and(SALARY_PAYMENT.TYPE.ne((byte)6))
 								.fetch();
 						
@@ -442,10 +441,10 @@ public class Cra {
 		// Prepare CRES
 		JSONArray cres = new JSONArray();
 		
-		// GET Salaries_Payment from Salary to get CRA type 
+		// GET Salaries_Payment from Salary to get CRA type (skip PPE & PREST_IT)
 		Result<Record> salaryPaymentRecords = dslContext.select().from(SALARY_PAYMENT)
 				.where(SALARY_PAYMENT.SALARY.eq(salaryRecord.get(SALARY.ID)))
-				.and(SALARY_PAYMENT.PAYMENT_CONCEPT.isNull().or(SALARY_PAYMENT.PAYMENT_CONCEPT.ne("PPE")))
+				.and(SALARY_PAYMENT.PAYMENT_CONCEPT.isNull().or(SALARY_PAYMENT.PAYMENT_CONCEPT.ne("PPE").and(SALARY_PAYMENT.PAYMENT_CONCEPT.ne("PREST_IT"))))
 				.orderBy(SALARY_PAYMENT.TYPE)
 				.fetch();
 		

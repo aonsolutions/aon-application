@@ -428,6 +428,7 @@ public class InvoiceAutoCompleteOLD {
 		
 		if(inv.getAddress() != null && inv.getAddress().getId() == null && !inv.getAddress().isEmpty()) {
 			inv.getAddress().setRegistry(inv.getRegistry());
+			if(inv.getAddress().getDomain() == null) inv.getAddress().setDomain(inv.getDomain());
 			RegistryAddress raddress = RegistryAddressDAO.save(ctx.getContext(), inv.getAddress());
 			inv.setRegistryAddress(raddress.getId());
 			inv.setAddress(raddress);
