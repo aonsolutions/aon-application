@@ -647,17 +647,17 @@ export class AonNewMenu extends AonElement {
 		
 		a.appendChild(div);
 		if (app.app == "applications" && this.isCSSLoaded("beta.css")) {
-			if (!LS.isLeftMenu()) {
+			if (!LS.isLeftMenu() && LS.isCompanySelected()) {
 				// Mostrar el menú cuando el ratón entra en el div
 				div.addEventListener("mouseenter", () => {
-					LS.setLeftMenu(true);
-					this.showSideNav();
-
+					if(!LS.isPortalChecked()){
+						LS.setLeftMenu(true);
+						this.showSideNav();
+					}
 					// Obtener el sidenav cuando el menú está visible
 					let side = this.getElement(this.AON_MENU_SIDENAV);
-					let checked = this.getElement("aonConfigSideSwitch");
 					// Asegurarse de que el side existe antes de añadir eventos
-					if (side && checked.checked == "false") {
+					if (side && !LS.isPortalChecked() && LS.isCompanySelected()) {
 						// Mantener el menú abierto mientras el ratón está en el sidenav
 						side.addEventListener("mouseenter", () => {
 							LS.setLeftMenu(true);
@@ -667,7 +667,7 @@ export class AonNewMenu extends AonElement {
 						// Cerrar el menú si el ratón sale completamente del sidenav
 						side.addEventListener("mouseleave", (event) => {
 							// Verificar si el ratón no va al div (solo cerrar si se sale de ambos)
-							if (!div.contains(event.relatedTarget) && checked.checked == "false") {
+							if (!div.contains(event.relatedTarget) && !LS.isPortalChecked() && LS.isCompanySelected()) {
 								LS.setLeftMenu(false);
 								this.hideSideNav();
 							}
@@ -681,7 +681,7 @@ export class AonNewMenu extends AonElement {
 					let checked = this.getElement("aonConfigSideSwitch");
 
 					// Verificar si el ratón no va al sidenav (solo cerrar si se sale de ambos)
-					if (side && !side.contains(event.relatedTarget) && checked.checked == "false") {
+					if (side && !side.contains(event.relatedTarget) && !LS.isPortalChecked() && LS.isCompanySelected()) {
 						LS.setLeftMenu(false);
 						this.hideSideNav();
 					}
