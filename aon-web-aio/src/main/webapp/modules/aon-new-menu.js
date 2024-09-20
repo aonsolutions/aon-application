@@ -1100,6 +1100,7 @@ export class AonNewMenu extends AonElement {
 					input.className = CSS.AON_NONE;
 					input.addEventListener(EVENT.CHANGE, ({target}) => uploadDocuments(input, target.files, this.getDur() ) );
 					input.click();
+					this.appSelection(Apps.DOCUMENTAL);
 				}
 			});
 		}
@@ -1111,6 +1112,7 @@ export class AonNewMenu extends AonElement {
 					let aonMessengerChat = new AonMessenger();	
 					aonMessengerChat.data = {source:TASK_SOURCE.QUERY};
 					this.rootPanel(aonMessengerChat);
+					this.appSelection(Apps.MESSENGER);
 				}
 			});
 		}
@@ -1135,6 +1137,8 @@ export class AonNewMenu extends AonElement {
 							});
 						});
 					});
+					this.appSelection(Apps.MESSENGER);
+
 				}
 			});
 		}

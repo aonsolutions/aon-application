@@ -43,10 +43,12 @@ import com.google.gwt.dom.client.NativeEvent;
 import com.google.gwt.dom.client.Style.FontWeight;
 import com.google.gwt.dom.client.Style.TextAlign;
 import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.http.client.URL;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.DeckPanel;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.FormPanel;
@@ -263,7 +265,6 @@ public class MainContrataContract extends MainEntryPoint {
 
 		@Override
 		protected void onContractSelectionChange(EmployeeContractInfo employeeContractInfo, Integer position) {
-//			Window.alert("[ " + position + " ] " + employeeContractInfo.getEmployeeInfo().getFullName());
 			loadEmployee(employeeContractInfo, position, mainContrataContractObject.getEmployeesList().size(), tabLayOutPanel.getSelectedIndex());
 		}
 
@@ -429,20 +430,17 @@ public class MainContrataContract extends MainEntryPoint {
 				contrataEmployee.setHasCertificateSEPE(mainContrataContractObject.hasCertificateSEPE());
 				contrataEmployee.setIsComunica(mainContrataContractObject.isComunica());
 				contrataEmployee.setHasPayroll(mainContrataContractObject.hasPayroll());
-
-				Integer selectedEmployeeIdx = getContractListPosition(contractId);
+				contrataEmployee.setChanges(true);
 
 				ContrataEmployeeObject contrataEmployeeDialogObject = new ContrataEmployeeObject();
 				contrataEmployeeDialogObject.setActivitiesCCC(mainContrataContractObject.getEnterpriseContext().getActivitiesCCC());
 				contrataEmployeeDialogObject.setWorkplaces(mainContrataContractObject.getEnterpriseContext().getWorkplaces());
 				contrataEmployeeDialogObject.setAgreements(mainContrataContractObject.getEnterpriseContext().getAgreements());
 				contrataEmployeeDialogObject.setPayMethodsMap(mainContrataContractObject.getEnterpriseContext().getPayMethods());
-				contrataEmployee.setChanges(true);
+				
 				contrataEmployee.setContrataEmployeeObject(
 						contrataEmployeeDialogObject, 
 						contractId,
-						selectedEmployeeIdx, 
-						mainContrataContractObject.getEmployeesList().size(), 
 						0,
 						s -> deckPanel.showWidget(1));
 			}
@@ -551,7 +549,9 @@ public class MainContrataContract extends MainEntryPoint {
 		
 		employeesDockLayoutPanel.getSearchTextBox().addKeyUpHandler(e -> {
 			String value = employeesDockLayoutPanel.getSearchTextBox().getValue();
-			if(AonStringUtils.isNotBlank(value) && value.length() > 3) {
+			if(e.getNativeKeyCode() == KeyCodes.KEY_ENTER || e.getNativeKeyCode() == KeyCodes.KEY_MAC_ENTER) return;
+			
+			if(AonStringUtils.isNotBlank(value) && value.length() > 2) {
 				mainContrataContractObject.resetEmployeesList();
 				offset = 0;
 				params.setDescription(value);

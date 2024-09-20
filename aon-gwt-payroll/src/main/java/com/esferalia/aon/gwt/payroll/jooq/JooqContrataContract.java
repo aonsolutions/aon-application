@@ -57,6 +57,7 @@ import com.esferalia.aon.gwt.payroll.shared.JourneyDuration;
 import com.esferalia.aon.jooq.tables.records.ContractInfoRecord;
 import com.esferalia.aon.jooq.tables.records.ContractRecord;
 import com.esferalia.aon.occam.api.model.ContractParams;
+import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class JooqContrataContract {
@@ -609,6 +610,9 @@ public class JooqContrataContract {
 		
 		Condition condition = paramsToCondition(params);
 		
+//		System.out.println(condition);
+//		System.out.println("Offset : " + params.getOffset() + "\nLimit : " + params.getLimit());
+		
 		SelectOnConditionStep<Record> select = dslContext.select()
 			.from(CONTRACT)
 			.join(PERSON).on(PERSON.REGISTRY.eq(CONTRACT.PERSON))
@@ -629,14 +633,14 @@ public class JooqContrataContract {
 		
 		if(params.isAsc()) {
 			if(AonStringUtils.equals(params.getOrderBy(), "name"))
-				select.orderBy(REGISTRY.NAME);
+				select.orderBy(REGISTRY.NAME, CONTRACT.START_DATE.desc());
 			else if(AonStringUtils.equals(params.getOrderBy(), "document"))
-				select.orderBy(REGISTRY.DOCUMENT);
+				select.orderBy(REGISTRY.DOCUMENT, CONTRACT.START_DATE.desc());
 		} else {
 			if(AonStringUtils.equals(params.getOrderBy(), "name"))
-				select.orderBy(REGISTRY.NAME.desc());
+				select.orderBy(REGISTRY.NAME.desc(), CONTRACT.START_DATE.desc());
 			else if(AonStringUtils.equals(params.getOrderBy(), "document"))
-				select.orderBy(REGISTRY.DOCUMENT.desc());
+				select.orderBy(REGISTRY.DOCUMENT.desc(), CONTRACT.START_DATE.desc());
 		}
 		
 		List<Record> contracts = select
@@ -777,34 +781,42 @@ public class JooqContrataContract {
 	private static Condition paramsToCondition(ContractParams params) {
 		Condition condition = CONTRACT.DOMAIN.eq(params.getDomain());
 		
-		if(AonStringUtils.isNotBlank(params.getDescription())) {
-			condition = condition.and(
-					REGISTRY.NAME.like("%" + params.getDescription() + "%")
-					.or(REGISTRY.DOCUMENT.like("%" + params.getDescription() + "%"))
-					.or(PERSON.SOCIAL_SECURITY_NUM.like("%" + params.getDescription() + "%"))
-			);
-		}
-		
-		if(null != params.getActive()) {
-			if(params.getActive() == (byte) 0) // Inactive
-				condition = condition.and(CONTRACT.END_DATE.isNotNull().and(CONTRACT.END_DATE.lt(parseDate(new java.util.Date()))));
-			else if(params.getActive() == (byte) 1) // Active
-				condition = condition.and(CONTRACT.END_DATE.isNull().or(CONTRACT.END_DATE.ge(parseDate(new java.util.Date()))));
-		}
-		
-		if(AonStringUtils.isNotBlank(params.getTc2())) {
-			if(AonStringUtils.equalsIgnoreCase(params.getTc2(), "RETA")) condition = condition.and(CONTRACT.SS_REGIME.eq((byte)3));
-			else condition = condition.and(CONTRACT_DATA.EXPRESSION.eq("\"" + params.getTc2() + "\""));
-		}
+		if(null != params.getContract()) {
+			condition = condition.and(CONTRACT.ID.eq(params.getContract()));
+		} else {
+			if(AonStringUtils.isNotBlank(params.getDescription())) {
+				condition = condition.and(
+						REGISTRY.NAME.like("%" + params.getDescription() + "%")
+						.or(REGISTRY.DOCUMENT.like("%" + params.getDescription() + "%"))
+						.or(PERSON.SOCIAL_SECURITY_NUM.like("%" + params.getDescription() + "%"))
+				);
+			}
 			
-		if(null != params.getWorkplace())
-			condition = condition.and(CONTRACT.WORKPLACE.eq(params.getWorkplace()));
-		
-		if(null != params.getFrom())
-			condition = condition.and(CONTRACT.START_DATE.ge(parseDate(params.getFrom())));
-		
-		if(null != params.getTo())
-			condition = condition.and(CONTRACT.START_DATE.le(parseDate(params.getTo())));
+			if(null != params.getActive()) {
+				if(params.getActive() == (byte) 0) // Inactive
+					condition = condition.and(CONTRACT.END_DATE.isNotNull().and(CONTRACT.END_DATE.lt(parseDate(new java.util.Date()))));
+				else if(params.getActive() == (byte) 1) { // Active
+					java.util.Date lastMonthPeriod = new java.util.Date();
+					lastMonthPeriod = AonDateUtils.addMonths(lastMonthPeriod, -1);
+
+					condition = condition.and(CONTRACT.END_DATE.isNull().or(CONTRACT.END_DATE.ge(parseDate(lastMonthPeriod))));
+				}
+			}
+			
+			if(AonStringUtils.isNotBlank(params.getTc2())) {
+				if(AonStringUtils.equalsIgnoreCase(params.getTc2(), "RETA")) condition = condition.and(CONTRACT.SS_REGIME.eq((byte)3));
+				else condition = condition.and(CONTRACT_DATA.EXPRESSION.eq("\"" + params.getTc2() + "\""));
+			}
+				
+			if(null != params.getWorkplace())
+				condition = condition.and(CONTRACT.WORKPLACE.eq(params.getWorkplace()));
+			
+			if(null != params.getFrom())
+				condition = condition.and(CONTRACT.START_DATE.ge(parseDate(params.getFrom())));
+			
+			if(null != params.getTo())
+				condition = condition.and(CONTRACT.START_DATE.le(parseDate(params.getTo())));
+		}
 		
 		return condition;
 	}
