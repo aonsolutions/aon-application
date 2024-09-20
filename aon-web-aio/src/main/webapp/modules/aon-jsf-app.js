@@ -327,6 +327,77 @@ export class AonJsfInvoicingGroup extends AonJsfApp {
 	}
 }
 
+export class AonJsfInvoiceSigner extends AonJsfApp {
+	
+	constructor() {
+		super();
+		this.setViewId('/facelet/app/invoiceSigner.xhtml');
+	}
+}
+
+export class AonJsfFinancePrint extends AonJsfApp {
+	
+	constructor() {
+		super();
+		this.setViewId('/facelet/app/financePrint.xhtml');
+	}
+}
+
+export class AonJsfFinanceChequing extends AonJsfApp {
+	
+	constructor() {
+		super();
+		this.setViewId('/facelet/app/financeChequing.xhtml');
+	}
+}
+
+export class AonJsfCashFlowForecast extends AonJsfApp {
+	
+	constructor() {
+		super();
+		this.setViewId('/facelet/app/cashFlowForecast.xhtml');
+	}
+}
+
+export class AonJsfCashFlowForecastReport extends AonJsfApp {
+	
+	constructor() {
+		super();
+		this.setViewId('/facelet/app/cashFlowForecastReport.xhtml');
+	}
+}
+
+export class AonJsfFeeInvoicing extends AonJsfApp {
+	
+	constructor() {
+		super();
+		this.setViewId('/facelet/app/feeInvoicing.xhtml');
+	}
+}
+
+export class AonJsfFeePreInvoicing extends AonJsfApp {
+	
+	constructor() {
+		super();
+		this.setViewId('/facelet/app/feePreInvoicing.xhtml');
+	}
+}
+
+export class AonJsfFeePrint extends AonJsfApp {
+	
+	constructor() {
+		super();
+		this.setViewId('/facelet/app/feePrint.xhtml');
+	}
+}
+
+export class AonJsfFeeAssigment extends AonJsfApp {
+	
+	constructor() {
+		super();
+		this.setViewId('/facelet/app/feeAssigment.xhtml');
+	}
+}
 if(!window.customElements.get(TAG.AON_JSF_APP)){
 	window.customElements.define(TAG.AON_JSF_APP, AonJsfApp);
 }
@@ -440,4 +511,41 @@ if(!window.customElements.get(TAG.AON_JSF_INCREASE_ITEM)){
 
 if(!window.customElements.get(TAG.AON_JSF_INVOICING_GROUP)){
 	window.customElements.define(TAG.AON_JSF_INVOICING_GROUP, AonJsfInvoicingGroup);
+}
+
+if(!window.customElements.get(TAG.AON_JSF_INVOICE_SIGNER)){
+	window.customElements.define(TAG.AON_JSF_INVOICE_SIGNER, AonJsfInvoiceSigner);
+}
+
+if(!window.customElements.get(TAG.AON_JSF_FINANCE_PRINT)){
+	window.customElements.define(TAG.AON_JSF_FINANCE_PRINT, AonJsfFinancePrint);
+}
+
+if(!window.customElements.get(TAG.AON_JSF_FINANCE_CHEQUING)){
+	window.customElements.define(TAG.AON_JSF_FINANCE_CHEQUING, AonJsfFinanceChequing);
+}
+
+if(!window.customElements.get(TAG.AON_JSF_CASHFLOW_FORECAST)){
+	window.customElements.define(TAG.AON_JSF_CASHFLOW_FORECAST, AonJsfCashFlowForecast);
+}
+
+if(!window.customElements.get(TAG.AON_JSF_CASHFLOW_FORECAST_REPORT)){
+	window.customElements.define(TAG.AON_JSF_CASHFLOW_FORECAST_REPORT, AonJsfCashFlowForecastReport);
+}
+
+if(!window.customElements.get(TAG.AON_JSF_FEE_PRINT)){
+	window.customElements.define(TAG.AON_JSF_FEE_PRINT, AonJsfFeePrint);
+}
+
+if(!window.customElements.get(TAG.AON_JSF_FEE_INVOICING)){
+	window.customElements.define(TAG.AON_JSF_FEE_INVOICING, AonJsfFeeInvoicing);
+}
+
+if(!window.customElements.get(TAG.AON_JSF_FEE_PRE_INVOICING)){
+	window.customElements.define(TAG.AON_JSF_FEE_PRE_INVOICING, AonJsfFeePreInvoicing);
+}
+
+
+if(!window.customElements.get(TAG.AON_JSF_FEE_ASSIGNMENT)){
+	window.customElements.define(TAG.AON_JSF_FEE_ASSIGNMENT, AonJsfFeeAssigment);
 }

@@ -253,6 +253,15 @@ export const AON_JSF_BANK_STATEMENT = 'aon-jsf-bank-statement' ;
 export const AON_JSF_PREPAYMENT = 'aon-jsf-prepayment' ;
 export const AON_JSF_INCREASE_ITEM = 'aon-jsf-increase-item' ;
 export const AON_JSF_INVOICING_GROUP = 'aon-jsf-invoicing-group' ;
+export const AON_JSF_INVOICE_SIGNER = 'aon-jsf-invoice-signer' ;
+export const AON_JSF_FINANCE_PRINT = 'aon-jsf-finance-print' ;
+export const AON_JSF_FINANCE_CHEQUING = 'aon-jsf-finance-chequing' ;
+export const AON_JSF_CASHFLOW_FORECAST = 'aon-jsf-cashflow-forecast' ;
+export const AON_JSF_CASHFLOW_FORECAST_REPORT = 'aon-jsf-cashflow-forecast-report' ;
+export const AON_JSF_FEE_PRINT = 'aon-jsf-fee-print' ;
+export const AON_JSF_FEE_ASSIGNMENT = 'aon-jsf-fee-assignment' ;
+export const AON_JSF_FEE_INVOICING = 'aon-jsf-fee-invoicing' ;
+export const AON_JSF_FEE_PRE_INVOICING = 'aon-jsf-fee-pre-invoicing' ;
 
 export const AON_WAREHOUSE_MENU = 'aon-warehouse-menu';
 
