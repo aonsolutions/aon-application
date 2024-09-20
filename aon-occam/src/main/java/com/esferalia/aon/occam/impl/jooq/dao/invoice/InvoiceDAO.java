@@ -423,7 +423,10 @@ public class InvoiceDAO {
 	}
 	
 	private static final BiConsumer<AONContext, Invoice> BUILD_ADDRESS = (ctx, invoice) -> invoice.setAddress(InvoiceAddressDAO.get(ctx, invoice));
-	private static final BiConsumer<AONContext, Invoice> BUILD_DETAILS = (ctx, invoice) -> invoice.setDetails(InvoiceDetailDAO.list(ctx,invoice.getId()));
+	private static final BiConsumer<AONContext, Invoice> BUILD_DETAILS = (ctx, invoice) -> {
+		invoice.deleteDetails();
+		InvoiceDetailDAO.stream(ctx,invoice.getId()).forEach(d -> invoice.addDetail(d));
+	};
 	
 	private static final BiConsumer<AONContext, Invoice> BUILD_TAX_BREAKDOWN = (ctx, invoice) -> 
 		AonCollectionUtils.stream(invoice.getDetails())

@@ -6,6 +6,7 @@ import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import com.esferalia.aon.occam.api.model.Account;
 import com.esferalia.aon.occam.api.model.EnterpriseActivity;
@@ -502,10 +503,17 @@ public class Invoice implements Serializable, HasAudit {
 		}
 		return details;
 	}
-	public Invoice setDetails(LinkedList<InvoiceDetail> details) {
-		this.details = details;
+	public Invoice deleteDetails() {
+		getDetails().stream().forEach( d -> d.setDeleted(true));
+		details = getDetails().stream()
+			.filter( d -> d.getId() != null)
+			.collect(Collectors.toCollection(LinkedList::new));
 		return this;
 	}
+//	public Invoice setDetails(LinkedList<InvoiceDetail> details) {
+//		this.details = details;
+//		return this;
+//	}
 	public Invoice addDetail(InvoiceDetail detail) {
 		getDetails().add(detail);
 		return this;

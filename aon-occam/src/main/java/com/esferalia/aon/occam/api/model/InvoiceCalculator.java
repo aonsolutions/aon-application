@@ -356,7 +356,9 @@ public class InvoiceCalculator	 {
 				);
 			}
 		}
-		ai.getInvoice().setDetails(vats);
+		ai.getInvoice().deleteDetails();
+		vats.stream()
+			.forEach(d -> ai.getInvoice().addDetail(d));
 	}
 
 	public static double getQuotaGap(InvoiceWithholding invoiceWitholding, Double quota) {

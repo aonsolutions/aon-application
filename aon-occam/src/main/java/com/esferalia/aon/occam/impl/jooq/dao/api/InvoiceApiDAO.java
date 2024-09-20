@@ -225,8 +225,8 @@ public class InvoiceApiDAO {
 
 			try (CloseableAONContext ctx = AONContext.getAONContext(aonCtx.getDomainName(),aonCtx.getDomainId(), aonCtx.getUser())){
 
-				invoice.setDetails(getInvoiceDetails(ctx, invoice.getId())
-					.collect(Collectors.toCollection(LinkedList::new)));
+				getInvoiceDetails(ctx, invoice.getId())
+					.forEach(d -> invoice.addDetail(d) );
 			
 				invoice.setFinances(FinanceDAO.getFinanceStream(ctx, f -> f.getInvoiceProperty().eq(invoice.getId()))
 					.collect(Collectors.toCollection(LinkedList::new)));

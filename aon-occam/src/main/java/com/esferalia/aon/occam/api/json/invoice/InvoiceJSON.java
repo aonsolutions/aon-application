@@ -46,7 +46,7 @@ public class InvoiceJSON {
 		JSONObject addressJSON = JsonUtils.getJSONObject(registryJSON, IJsonNames.ADDRESS);
 		RegistryAddress raddress = RegistryAddressJSON.fromJSON(addressJSON);
 		if(raddress.getRegistry() == null) raddress.setRegistry(registry.getId());
-		return new Invoice()
+		Invoice invoice = new Invoice()
 				.setId(JsonUtils.getInteger(json, IJsonNames.ID))
 				.setDomain(JsonUtils.getInteger(json, IJsonNames.DOMAIN))
 				.setType(type)
@@ -77,10 +77,12 @@ public class InvoiceJSON {
 				.setRegistryAddress(raddress.getId())
 				.setAddress(raddress)
 				.setBreakdown(InvoiceBreakdownJSON.fromJSON(JsonUtils.getJSONArray(json, IJsonNames.TAXES)))
-				.setDetails(InvoiceDetailJSON.fromJSON(JsonUtils.getJSONArray(json, IJsonNames.DETAILS)))
 				.setFinances(FinanceJSON.fromJSON(JsonUtils.getJSONArray(json, IJsonNames.FINANCES)))
 				.setTediCategory(JsonUtils.getString(json, IJsonNames.CATEGORY))
 				.setActivity(EnterpriseActivityJSON.fromJSON(JsonUtils.getJSONObject(json, IJsonNames.ACTIVITY)));
+		AonCollectionUtils.stream( InvoiceDetailJSON.fromJSON(JsonUtils.getJSONArray(json, IJsonNames.DETAILS)))
+			.forEach(d -> invoice.addDetail(d) );;
+		return invoice;
 	}
 
 	private static RectificationType getRectificationType(JSONObject json) {

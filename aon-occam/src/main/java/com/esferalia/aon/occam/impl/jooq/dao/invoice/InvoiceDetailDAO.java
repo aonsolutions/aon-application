@@ -70,7 +70,7 @@ class InvoiceDetailDAO {
           ;
 	}
 
-    private static Stream<InvoiceDetail> stream(AONContext ctx, Integer invoiceId) {
+    private static Stream<InvoiceDetail> basicStream(AONContext ctx, Integer invoiceId) {
 		return select(ctx)
 			.where(INVOICE_DETAIL.INVOICE.eq(invoiceId))
 			.orderBy(INVOICE_DETAIL.LINE)
@@ -79,10 +79,9 @@ class InvoiceDetailDAO {
 			.map(new InvoiceDetailFiller());
 	}
 
-    static LinkedList<InvoiceDetail> list(AONContext ctx, Integer invoiceId) {
-		return stream(ctx, invoiceId)
-			.map(id -> id.setInvoiceTaxes( InvoiceTaxDAO.list(ctx, id.getId())))
-			.collect(Collectors.toCollection(LinkedList::new));
+    static Stream<InvoiceDetail> stream(AONContext ctx, Integer invoiceId) {
+		return basicStream(ctx, invoiceId)
+			.map(id -> id.setInvoiceTaxes( InvoiceTaxDAO.list(ctx, id.getId())));
 	}    
     
 	static Optional<InvoiceDetail> get(AONContext ctx, Integer detailId) {
@@ -261,7 +260,7 @@ class InvoiceDetailDAO {
 	}
 
 	static void deleteInvoice(AONContext ctx, Integer invoice) {
-		stream(ctx, invoice)
+		basicStream(ctx, invoice)
 			.forEach(detail -> deleteDetail(ctx, detail));
 	}
 

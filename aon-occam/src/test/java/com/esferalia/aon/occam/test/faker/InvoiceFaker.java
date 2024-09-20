@@ -468,7 +468,9 @@ public class InvoiceFaker {
 	
 	public static Invoice fill( InvoiceFakerParams params , Invoice invoice) {
 		checkInvoice( invoice );
-		invoice.setDetails( getInvoiceDetails(params, invoice ));
+		invoice.deleteDetails();
+		AonCollectionUtils.stream(getInvoiceDetails(params, invoice ))
+			.forEach(d -> invoice.addDetail(d));
 		calculate(invoice);
 		invoice.setFinances(FinanceDAO.getFinancesForInvoice(params.getCtx(), invoice));
 		return invoice;

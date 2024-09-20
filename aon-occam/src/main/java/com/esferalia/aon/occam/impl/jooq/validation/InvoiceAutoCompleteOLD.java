@@ -464,7 +464,6 @@ public class InvoiceAutoCompleteOLD {
 	public static final BiConsumer<Invoice,AonConfigurationContext> COMPLETE_DETAILS = (inv,ctx) -> {
 		if((inv.getDetails() == null || inv.getDetails().isEmpty()) && inv.getBreakdown() != null) {	
 			
-			LinkedList<InvoiceDetail> invoiceDetails = new LinkedList<>();
 			InvoiceBreakdown ret = inv.getBreakdown().stream().filter(f -> TaxType.RETENTION.equals(f.getTaxType())).findFirst().orElse(null);
 			inv.getBreakdown().stream().filter(f -> TaxType.VAT.equals(f.getTaxType())).forEach(b -> {
 				LinkedList<InvoiceTax> invoiceTax = new LinkedList<>();
@@ -515,9 +514,8 @@ public class InvoiceAutoCompleteOLD {
 						.setWorkplace(ctx.getConfiguration().getWorkplaces() != null
 							? ctx.getConfiguration().getWorkplaces().getFirst() 
 							: null);
-				invoiceDetails.add(id);
+				inv.addDetail(id);
 			});
-			inv.setDetails(invoiceDetails);
 		}
 		inv.getDetails().stream().forEach(detail -> {
 			

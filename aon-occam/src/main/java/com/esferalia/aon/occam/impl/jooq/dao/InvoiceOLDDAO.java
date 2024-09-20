@@ -136,6 +136,7 @@ import com.esferalia.aon.watson.AonError;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.mutable.MutableInt;
 import com.esferalia.aon.watson.server.AonDateUtils;
+import com.esferalia.aon.watson.util.AonCollectionUtils;
 import com.esferalia.aon.watson.util.AonEnumUtils;
 import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
@@ -441,7 +442,9 @@ public class InvoiceOLDDAO {
 		if(invoice != null) {
 			invoice.setRegistryData( RegistryDAO.get(ctx, invoice.getRegistry()));
 			invoice.setAddress(InvoiceAddressDAO.get(ctx, invoice));
-			invoice.setDetails(InvoiceDetailOLDDAO.getFullList(ctx, f -> f.getInvoiceProperty().eq(id)));
+			invoice.deleteDetails();
+			AonCollectionUtils.stream(InvoiceDetailOLDDAO.getFullList(ctx, f -> f.getInvoiceProperty().eq(id)))
+				.forEach(d -> invoice.addDetail(d));
 //			invoice.setDetails(getInvoiceDetails(ctx, prop -> prop.getIdProperty().eq(id))
 //			.collect(Collectors.toCollection(LinkedList::new)));
 			for(Integer i = 0; i < invoice.getDetails().size(); i++) {
@@ -934,10 +937,15 @@ public class InvoiceOLDDAO {
 	
 	@Deprecated
 	public static Invoice save(AONContext ctx, Invoice invoice) {
-		invoice = invoice.getId() != null
-			? update(ctx, invoice)
-			: insert(ctx, invoice);
-		invoice.setDetails(InvoiceDetailOLDDAO.save(ctx, invoice, invoice.getDetails()));
+		if (invoice.getId() != null) {
+			update(ctx, invoice);
+		} else {
+			insert(ctx, invoice);
+		}
+		LinkedList<InvoiceDetail> list = InvoiceDetailOLDDAO.save(ctx, invoice, invoice.getDetails());
+		invoice.deleteDetails();
+		AonCollectionUtils.stream(list)
+			.forEach(d -> invoice.addDetail(d));
 		return invoice;
 	}
 	
@@ -1194,19 +1202,18 @@ public class InvoiceOLDDAO {
 				}
 			}
 		}
-		invoice.setDetails(
-			ctx.getDslContext()
-				.select(INVOICE_DETAIL.ID,INVOICE_DETAIL.DOMAIN,INVOICE_DETAIL.SOURCE) 
-				.from( INVOICE_DETAIL )
-				.where(INVOICE_DETAIL.INVOICE.eq(invoice.getId()))
-				.fetch()
-				.stream()
-				.map( rec -> new InvoiceDetail()
-					.setId(rec.getValue(INVOICE_DETAIL.ID))
-					.setDomain(rec.getValue(INVOICE_DETAIL.DOMAIN))
-					.setSource(AonEnumUtils.enumValue(InvoiceSource.class,rec.getValue(INVOICE_DETAIL.SOURCE))))
-				.collect(Collectors.toCollection(LinkedList::new))
-				);
+		invoice.deleteDetails();
+		ctx.getDslContext()
+			.select(INVOICE_DETAIL.ID,INVOICE_DETAIL.DOMAIN,INVOICE_DETAIL.SOURCE) 
+			.from( INVOICE_DETAIL )
+			.where(INVOICE_DETAIL.INVOICE.eq(invoice.getId()))
+			.fetch()
+			.stream()
+			.map( rec -> new InvoiceDetail()
+				.setId(rec.getValue(INVOICE_DETAIL.ID))
+				.setDomain(rec.getValue(INVOICE_DETAIL.DOMAIN))
+				.setSource(AonEnumUtils.enumValue(InvoiceSource.class,rec.getValue(INVOICE_DETAIL.SOURCE))))
+			.forEach(d -> invoice.addDetail(d));
 		
 		deleteDetails(ctx, config, invoice);
 		
