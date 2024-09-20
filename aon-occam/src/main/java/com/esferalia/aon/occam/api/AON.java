@@ -5477,6 +5477,12 @@ public class AON {
 		}
 	}
 	
+	public static boolean compareBalanceDate(Domain domain, String login, Integer variable) {
+		try(CloseableAONContext ctx = AONContext.getAONContext(domain, login)){
+			return getRegistry().compareBalanceDate(ctx, variable);
+		}
+	}
+	
 	// ------------------------------------- RPAYMETHOD
 	
 	/**
