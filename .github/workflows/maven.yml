@@ -13,6 +13,7 @@ on:
 env:
   TZ: Europe/Madrid
   AWS_REGION: eu-west-1
+  BRANCH_NAME: ${{ github.head_ref || github.ref_name }} 
   
 jobs:
   build:
@@ -82,20 +83,18 @@ jobs:
       run: mvn -B -Dgwt.working=true -T 1C clean install
 
     - name: Build and push Docker aon-application image
-      if: github.ref == 'refs/heads/master'
       uses: docker/build-push-action@v6
       with:
         context: .
         push: true
-        tags: ghcr.io/${{ github.repository_owner }}/aon-application:dev
+        tags: ghcr.io/${{ github.repository_owner }}/aon-application:${BRANCH_NAME}
 
     - name: Build and push Docker aon-db-up2date image
-      if: github.ref == 'refs/heads/master'
       uses: docker/build-push-action@v6
       with:
         context: ./aon-db-up2date
         push: true
-        tags: ghcr.io/${{ github.repository_owner }}/aon-db-up2date:dev
+        tags: ghcr.io/${{ github.repository_owner }}/aon-db-up2date:${BRANCH_NAME}
     
     - name: Setup environment for integration testing
       if: github.ref == 'refs/heads/master'
@@ -103,8 +102,8 @@ jobs:
         DB_HOST=$(ip addr show docker0 | grep -oP 'inet \K[0-9\.]+')
         DB_FILE=$(find aon-htmlunit/src -name "test-aonsolutions-org.sql")
         mysql -h ${DB_HOST} -u dbuser --password=serubd2000 < ${DB_FILE}
-        docker run -e DB_USER=dbuser -e DB_PASSWD=serubd2000 -e DB_HOST=${DB_HOST} ghcr.io/${{ github.repository_owner }}/aon-db-up2date:dev
-        docker run -d -p 8080:8080 -e DB_USER=dbuser -e DB_PASSWD=serubd2000 -e DB_HOST=${DB_HOST} ghcr.io/${{ github.repository_owner }}/aon-application:dev
+        docker run -e DB_USER=dbuser -e DB_PASSWD=serubd2000 -e DB_HOST=${DB_HOST} ghcr.io/${{ github.repository_owner }}/aon-db-up2date:${BRANCH_NAME}
+        docker run -d -p 8080:8080 -e DB_USER=dbuser -e DB_PASSWD=serubd2000 -e DB_HOST=${DB_HOST} ghcr.io/${{ github.repository_owner }}/aon-application:${BRANCH_NAME}
         sudo tee -a /etc/hosts >/dev/null <<-EOF
         127.0.0.1    payroll-test.aonsolutions.org
         127.0.0.1    tgss-payroll-test.aonsolutions.org
@@ -127,6 +126,26 @@ jobs:
         -Dintegration.test.home.payroll.url=http://home-payroll-test.aonsolutions.org:8080/ \
         -f aon-htmlunit/pom.xml integration-test
         
+    - name: Build production version with Maven
+      if: github.ref == 'refs/heads/master'
+      run: mvn -B --resume-from aon-js-payroll -Drpm.release=false -DskipTests=true clean install
+
+    - name: Build and push production Docker aon-application image
+      if: github.ref == 'refs/heads/master'
+      uses: docker/build-push-action@v6
+      with:
+        context: .
+        push: true
+        tags: ghcr.io/${{ github.repository_owner }}/aon-application:${BRANCH_NAME}
+
+    - name: Build and push production Docker aon-solutions image
+      if: github.ref == 'refs/heads/master'
+      uses: docker/build-push-action@v6
+      with:
+        context: .
+        file: ./aon-solutions/Dockerfile
+        push: true
+        tags: ghcr.io/${{ github.repository_owner }}/aon-solutions:${BRANCH_NAME}
 
 
 
