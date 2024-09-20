@@ -392,14 +392,14 @@ public class ACCOUNTING {
 		}
 	}
 	
-	public static AccountingInvoice removeInvoiceAttach(String domainName, int domain, String user, Integer invoiceId) {
-		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domain, user)) {
+	public static AccountingInvoice removeInvoiceAttach(Occam occam, Integer invoiceId) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(occam)) {
 			return getAccounting().removeInvoiceAttach(ctx, invoiceId);
 		}
 	}
 
-	public static AccountingInvoice addInvoiceAttach(String domainName, int domain, String user, AccountingInvoice ai) {
-		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domain, user)) {	
+	public static AccountingInvoice addInvoiceAttach(Occam occam, AccountingInvoice ai) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(occam)) {	
 			return getAccounting().addInvoiceAttach(ctx, ai);
 		}
 	}
@@ -430,8 +430,8 @@ public class ACCOUNTING {
 		}
 	}
 
-	public static AccountingInvoice save(String domainName, int domain, String user, AccountingInvoice invoice) {
-		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domain, user)) {
+	public static AccountingInvoice save(Occam occam, AccountingInvoice invoice) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(occam)) {
 			return getAccounting().save(ctx, invoice);
 		}
 	}

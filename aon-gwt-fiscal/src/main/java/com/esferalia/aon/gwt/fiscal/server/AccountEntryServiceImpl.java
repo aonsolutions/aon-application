@@ -111,13 +111,13 @@ public class AccountEntryServiceImpl extends AonStatelessRemoteServiceServlet im
 	}
 
 	@Override
-	public AccountingInvoice removeInvoiceAttach(String domainName, int domain, String user, Integer invoiceId) throws AonCoreException {
-		return ACCOUNTING.removeInvoiceAttach(domainName, domain, user, invoiceId);
+	public AccountingInvoice removeInvoiceAttach(Occam occam, Integer invoiceId) throws AonCoreException {
+		return ACCOUNTING.removeInvoiceAttach(occam, invoiceId);
 	}
 
 	@Override
-	public AccountingInvoice addInvoiceAttach(String domainName, int domain, String user, AccountingInvoice ai) throws AonCoreException {
-		return ACCOUNTING.addInvoiceAttach(domainName, domain, user, ai);
+	public AccountingInvoice addInvoiceAttach(Occam occam, AccountingInvoice ai) throws AonCoreException {
+		return ACCOUNTING.addInvoiceAttach(occam, ai);
 	}
 
 	@Override
@@ -141,8 +141,8 @@ public class AccountEntryServiceImpl extends AonStatelessRemoteServiceServlet im
 	}
 
 	@Override
-	public AccountingInvoice save(String domainName, int domain, String user, AccountingInvoice invoice) throws AonCoreException {
-		return ACCOUNTING.save(domainName, domain, user, invoice);
+	public AccountingInvoice save(Occam occam, AccountingInvoice invoice) throws AonCoreException {
+		return ACCOUNTING.save(occam, invoice);
 	}
 
 	@Override

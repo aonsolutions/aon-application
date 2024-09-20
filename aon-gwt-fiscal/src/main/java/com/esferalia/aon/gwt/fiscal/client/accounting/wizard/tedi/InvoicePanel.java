@@ -327,9 +327,7 @@ public class InvoicePanel extends WizardContentBase<AccountingInvoice> implement
 	@Override
 	public void removeAttach(final AsyncCallback<IAccountEntryWrapper> cbk) {
 		Integer invoiceId = getWrapper().getInvoice().getId();
-		getAccountEntryService().removeInvoiceAttach(getCallback().getCurrentDomainName()
-				, getCallback().getCurrentDomainId()
-				, getCallback().getCurrentUser()
+		getAccountEntryService().removeInvoiceAttach(getCallback().getOccam()
 				, invoiceId , new AsyncCallback<AccountingInvoice>() {
 
 			@Override
@@ -358,9 +356,7 @@ public class InvoicePanel extends WizardContentBase<AccountingInvoice> implement
 
 	@Override
 	public void save(final AsyncCallback<IAccountEntryWrapper> cbk) {
-		getAccountEntryService().save(getCallback().getCurrentDomainName()
-				, getCallback().getCurrentDomainId()
-				, getCallback().getCurrentUser()
+		getAccountEntryService().save(getCallback().getOccam()
 				, getWrapper(), new AsyncCallback<AccountingInvoice>() {
 
 			@Override
@@ -479,11 +475,14 @@ public class InvoicePanel extends WizardContentBase<AccountingInvoice> implement
 		}
 	}
 
+	@Override
 	public void entryDateChanged(Date entryDate) {
 		getWrapper().getInvoice().setIssueDate(entryDate);
 	}
+	@Override
 	public void activityChanged(Integer activty) {
 	}
+	@Override
 	public void confidentialChanged(boolean confidential) {
 	}
 	
@@ -515,6 +514,7 @@ public class InvoicePanel extends WizardContentBase<AccountingInvoice> implement
 			fileSelect.ensureDebugId("fileSelect");
 			fileSelect.getElement().getStyle().setDisplay(Style.Display.NONE);
 			fileSelect.addChangeHandler(new ChangeHandler() {
+				@Override
 				public void onChange(ChangeEvent event) {
 					event.preventDefault();
 					fileSelectHandler(fileSelect.getElement());
@@ -541,9 +541,7 @@ public class InvoicePanel extends WizardContentBase<AccountingInvoice> implement
 		setDocument(invoiceCallback, doc, name, type,false);
 		AccountingInvoice ai = getWrapper();
 		if (ai.isDocumentAttached()) {
-			getAccountEntryService().addInvoiceAttach(getCallback().getCurrentDomainName()
-					, getCallback().getCurrentDomainId()
-					, getCallback().getCurrentUser()
+			getAccountEntryService().addInvoiceAttach(getCallback().getOccam()
 					, getWrapper() , new AsyncCallback<AccountingInvoice>() {
 
 				@Override

@@ -115,15 +115,15 @@ public class AccountEntryServiceAsyncDecorator implements AccountEntryServiceAsy
 	}
 
 	@Override
-	public void removeInvoiceAttach(String domainName, int domain, String user, Integer invoiceId, AsyncCallback<AccountingInvoice> callback) {
+	public void removeInvoiceAttach(Occam occam, Integer invoiceId, AsyncCallback<AccountingInvoice> callback) {
 		AON.start();
-		fsa.removeInvoiceAttach(domainName, domain, user, invoiceId, new AsyncCallbackWrapper<>(callback));
+		fsa.removeInvoiceAttach(occam, invoiceId, new AsyncCallbackWrapper<>(callback));
 	}
 	
 	@Override
-	public void addInvoiceAttach(String domainName, int domain, String user, AccountingInvoice ai, AsyncCallback<AccountingInvoice> callback) {
+	public void addInvoiceAttach(Occam occam, AccountingInvoice ai, AsyncCallback<AccountingInvoice> callback) {
 		AON.start();
-		fsa.addInvoiceAttach(domainName, domain, user, ai, new AsyncCallbackWrapper<>(callback));
+		fsa.addInvoiceAttach(occam, ai, new AsyncCallbackWrapper<>(callback));
 	}
 
 	@Override
@@ -139,9 +139,9 @@ public class AccountEntryServiceAsyncDecorator implements AccountEntryServiceAsy
 	}
 
 	@Override
-	public void save(String domainName, int domain, String user, AccountingInvoice invoice, AsyncCallback<AccountingInvoice> callback) {
+	public void save(Occam occam, AccountingInvoice invoice, AsyncCallback<AccountingInvoice> callback) {
 		AON.start();
-		fsa.save(domainName, domain, user, invoice, new AsyncCallbackWrapper<>(callback));
+		fsa.save(occam, invoice, new AsyncCallbackWrapper<>(callback));
 	}
 
 	@Override

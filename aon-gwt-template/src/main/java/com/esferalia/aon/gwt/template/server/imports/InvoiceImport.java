@@ -38,6 +38,7 @@ import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.EnterpriseActivity;
 import com.esferalia.aon.occam.api.model.Filter.RegistryAddressFilter;
 import com.esferalia.aon.occam.api.model.GeoZone;
+import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.finance.BankAccount;
 import com.esferalia.aon.occam.api.model.finance.EnumVisitors.IInvoiceTypeVisitor;
 import com.esferalia.aon.occam.api.model.finance.Finance;
@@ -621,7 +622,11 @@ public class InvoiceImport extends ImportUtils{
 			error.setLine(i);
 			return error;
 		}
-
+		Occam occam = new Occam()
+			.setDomainName(domain.getName())
+			.setDomain(domain.getId())
+			.setUser(user.getLogin());
+				
 		AonConfiguration aonCtx = AON.getConfiguration(domain.getName(), domain.getId(), user.getLogin());
 	
 		PayMethod pm = aonCtx.getPayMethods() != null && !aonCtx.getPayMethods().isEmpty() ? aonCtx.getPayMethods().get(0) : new PayMethod(); 
@@ -772,7 +777,7 @@ public class InvoiceImport extends ImportUtils{
 				} 
 			}
 
-			ai = ACCOUNTING.save(domain.getName(), domain.getId(), user.getLogin(), ai);
+			ai = ACCOUNTING.save(occam, ai);
 
 			if(financeAccount == null || financeAccount.getId() == null){
 				if(ivs.get(i).getFinances().isEmpty()) {
@@ -921,7 +926,10 @@ public class InvoiceImport extends ImportUtils{
 	
 	public static Error insertInvoice(Domain domain, User user, Integer i, InvoiceImportClass iic) {
 		Error error = new Error().setError(true);
-
+		Occam occam = new Occam()
+			.setDomainName(domain.getName())
+			.setDomain(domain.getId())
+			.setUser(user.getLogin());
 		AonConfiguration aonCtx = AON.getConfiguration(domain.getName(), domain.getId(), user.getLogin());
 	
 		PayMethod pm = aonCtx.getPayMethods() != null && !aonCtx.getPayMethods().isEmpty() ? aonCtx.getPayMethods().get(0) : new PayMethod(); 
@@ -1107,7 +1115,7 @@ public class InvoiceImport extends ImportUtils{
 				} 
 			}
 
-			ai = ACCOUNTING.save(domain.getName(), domain.getId(), user.getLogin(), ai);
+			ai = ACCOUNTING.save(occam, ai);
 
 			if(financeAccount == null || financeAccount.getId() == null) {
 				if(iic.getFinances().isEmpty()) {
