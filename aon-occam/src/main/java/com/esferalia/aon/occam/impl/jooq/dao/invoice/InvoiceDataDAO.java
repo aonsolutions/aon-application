@@ -18,7 +18,6 @@ import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceData;
 import com.esferalia.aon.occam.impl.jooq.dao.Filler;
 import com.esferalia.aon.occam.impl.jooq.dao.FilterDAO;
-import com.esferalia.aon.occam.impl.jooq.dao.InvoiceDAO;
 import com.esferalia.aon.watson.AonError;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.server.AonDateUtils;
@@ -65,11 +64,12 @@ public class InvoiceDataDAO {
 	
 	public static InvoiceData save(AONContext ctx, InvoiceData invoiceData) {
 		InvoiceDataValidation.validate(ctx, invoiceData);
-		Invoice inv = InvoiceDAO.getInvoice(ctx, invoiceData.getInvoice());
-		if(inv != null && inv.getId() != null) {
-			invoiceData = invoiceData.getId() != null 
-					? update(ctx, invoiceData)
-					: insert(ctx, invoiceData);
+		if (InvoiceDAO.get(ctx, invoiceData.getInvoice()).isPresent()) {
+			if (invoiceData.getId() != null) {
+				update(ctx, invoiceData);
+			} else {
+				insert(ctx, invoiceData);
+			}
 		}
 		return invoiceData;
 	}

@@ -4701,7 +4701,7 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 		
 		int monthDays = get( endDate, Calendar.DAY_OF_MONTH );
 		
-		org.junit.Assert.assertEquals( 1750.00 * 0.75 * 0.50 , salary.getTotalPayment(), DELTA);
+		assertEquals( 1750.00 * 0.75 * 0.50 , salary.getTotalPayment(), DELTA);
 		
 		
 	}

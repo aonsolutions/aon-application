@@ -21,11 +21,7 @@ import static com.esferalia.aon.watson.util.AonDateUtils.getMax;
 import static java.lang.String.format;
 import static java.util.Calendar.DAY_OF_MONTH;
 import static java.util.Calendar.MONTH;
-<<<<<<< HEAD
 import static org.junit.jupiter.api.Assertions.assertEquals;
-=======
-import static org.junit.Assert.assertEquals;
->>>>>>> master
 
 import java.sql.Connection;
 import java.sql.Date;
@@ -1341,7 +1337,7 @@ public class SQLBRTestCase extends AbstractSQLTestCase {
 		
 		double br = ( 1750.00 * (1.00 + 1.00 / 6 )  + 500.00 ) / 30;
 
-		org.junit.Assert.assertEquals(br, ctx.getExpressionContext().eval("BASE_REGULADORA", startDate, endDate, Double.class).get(0).getValue(), DELTA);
+		assertEquals(br, ctx.getExpressionContext().eval("BASE_REGULADORA", startDate, endDate, Double.class).get(0).getValue(), DELTA);
 		
 
 	}
