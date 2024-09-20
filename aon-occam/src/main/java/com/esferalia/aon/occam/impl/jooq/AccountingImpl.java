@@ -271,7 +271,8 @@ public class AccountingImpl implements IAccounting {
 		if (registry.getType() == null) {
 			throw new AonCoreException("No se puede inicializar una factura sin tipo");
 		}
-		return AccountingInvoiceDAO.initializeInvoice(ctx, registry.getType().getInvoiceType(), registry.getId(), activity, issueDate);
+		return com.esferalia.aon.occam.impl.jooq.dao.accounting.AccountingInvoiceDAO
+				.initializeInvoice(ctx, registry.getType().getInvoiceType(), registry.getId(), activity, issueDate);
 	}
 
 	@Override

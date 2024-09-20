@@ -231,10 +231,7 @@ public class InvoiceBuilder {
 				InvoiceDetail id = new InvoiceDetail()
 					.setSource(InvoiceSource.ACCOUNT)
 					.setLine( (short) (1));
-				if (result.getInvoice().getDetails() == null) {
-					result.getInvoice().setDetails( new LinkedList<InvoiceDetail>());
-				}
-				result.getInvoice().getDetails().add(id);
+				result.getInvoice().addDetail(id);
 				TediInvoiceDetailTransfer.toAon(result,tid,id);
 			}
 		}),
@@ -301,10 +298,7 @@ public class InvoiceBuilder {
 						InvoiceDetail id = new InvoiceDetail()
 								.setSource(InvoiceSource.ACCOUNT)
 								.setLine( (short) (1 + i));
-						if (result.getInvoice().getDetails() == null) {
-							result.getInvoice().setDetails( new LinkedList<InvoiceDetail>());
-						}
-						result.getInvoice().getDetails().add(id);
+						result.getInvoice().addDetail(id);
 						TediInvoiceDetailTransfer.toAon(result,tid,id);
 					}
 					
@@ -366,10 +360,7 @@ public class InvoiceBuilder {
 											.setDeductibleQuota( ib.getQuota() )
 											); 
 							}
-							if (result.getInvoice().getDetails() == null) {
-								result.getInvoice().setDetails( new LinkedList<InvoiceDetail>());
-							}
-							result.getInvoice().getDetails().add(id);
+							result.getInvoice().addDetail(id);
 						}
 					}
 				}

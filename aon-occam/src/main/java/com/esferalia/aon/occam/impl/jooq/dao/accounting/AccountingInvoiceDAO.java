@@ -50,10 +50,10 @@ import com.esferalia.aon.occam.impl.jooq.dao.AccountingRegistryDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.ConfigurationDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.CreditorDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.CustomerDAO;
-import com.esferalia.aon.occam.impl.jooq.dao.InvoiceOLDDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.OCRDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.SupplierDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.TbaiConfigurationDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.invoice.InvoiceDAO;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonCollectionUtils;
@@ -79,7 +79,8 @@ public class AccountingInvoiceDAO {
 			.stream()
 			.map(rec -> rec.getValue(ACCOUNT_ENTRY_INVOICE.INVOICE))
 			.findFirst()
-			.map( invoiceIdOpt -> InvoiceOLDDAO.getFullInvoice(ctx, invoiceIdOpt))
+			.map( invoiceId -> InvoiceDAO.getFull(ctx, invoiceId)
+				.orElseThrow(() -> new AonCoreException("No se pudo encontrar la factura")))
 			.map( invoice -> new AccountingInvoice().setInvoice(invoice))
 			.map( ai -> ai.fillAccountEntry(AccountEntryDAO.getAccountEntry(ctx, accountEntryId)))
 			.map( ai -> fillAccountingInvoice(ctx, ai) )
@@ -87,7 +88,8 @@ public class AccountingInvoiceDAO {
 	}
 	
 	public static Optional<AccountingInvoice> getFromInvoice(final AONContext ctx, final Integer invoiceId) {
-		return getFromInvoice(ctx, InvoiceOLDDAO.getFullInvoice(ctx, invoiceId));
+		return getFromInvoice(ctx, InvoiceDAO.getFull(ctx, invoiceId)
+				.orElseThrow(() -> new AonCoreException("No se pudo encontrar la factura")));
 	}
 	
 	public static Optional<AccountingInvoice> getFromInvoice(final AONContext ctx, final Invoice invoice) {
@@ -226,7 +228,7 @@ public class AccountingInvoiceDAO {
 			.setRegistry(reg)
 			.setWorkplace(config.getFirstWorkplace().map(w -> w.getId()).orElse(null))
 			.setAuthFinanceCalculation(true)
-//			.setInvoice( InvoiceOLDDAO.initialize(ctx, ctx.getDomainId(), config, type, activity, issueDate))
+			.setInvoice( InvoiceDAO.initialize(ctx, ctx.getDomainId(), type, reg.getId(), issueDate,activity))
 		;
 		ai.setSuggestedAccounts(getSuggestedAccounts(ctx , ai.getInvoice().getDomain(), ai.getRegistry().getId(), reg.getType().getInvoiceType()));
 		ai.getInvoice().addDetail(createNewInvoiceDetail(ai, config));
@@ -513,7 +515,7 @@ public class AccountingInvoiceDAO {
 		try {
 			ctx.log().debug("------ [START] INSERT INVOICE");
 			LinkedList<AccountEntry> entries = new LinkedList<>();
-			InvoiceOLDDAO.save(ctx, accInvoice.getInvoice());
+			InvoiceDAO.save(ctx, accInvoice.getInvoice());
 			
 //			if (accInvoice.isDuaLinked()) {
 //				insertInvoiceDUA( ctx, config, accInvoice);

@@ -497,11 +497,11 @@ public class Invoice implements Serializable, HasAudit {
 		return this;
 	}
 	
-	public LinkedList<InvoiceDetail> getDetails() {
+	public List<InvoiceDetail> getDetails() {
 		if(details == null) {
 			details = new LinkedList<>();
 		}
-		return details;
+		return Collections.unmodifiableList(details);
 	}
 	public Invoice deleteDetails() {
 		getDetails().stream().forEach( d -> d.setDeleted(true));
@@ -515,7 +515,10 @@ public class Invoice implements Serializable, HasAudit {
 //		return this;
 //	}
 	public Invoice addDetail(InvoiceDetail detail) {
-		getDetails().add(detail);
+		if(details == null) {
+			details = new LinkedList<>();
+		}
+		details.add(detail);
 		return this;
 	}
 	public Optional<InvoiceDetail> getFirstDetail() {

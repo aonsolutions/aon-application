@@ -579,16 +579,16 @@ public class TediParser {
 	private static Consumer<TediParserContext> INVOICE_DETAILS = (ctx) -> {
 		TediResult result = ctx.getTediResult();
 		if(!ctx.getTediResult().getInv().getDetails().isEmpty()) {
-			result.getInvoice().setDetails(ctx.getTediResult().getInv().getDetails());
+			ctx.getTediResult().getInv().getDetails()
+				.stream()
+				.forEach(d -> result.getInvoice().addDetail(d));
 		} else if ( result.getTedi().getDetails() != null) {
-			if (result.getInvoice().getDetails() == null) {
-				result.getInvoice().setDetails( new LinkedList<>());
-			}
+			result.getInvoice().deleteDetails();
 			for ( int i = 0; i < result.getTedi().getDetails().size(); i++) {
 				TediInvoiceDetail tediDetail = result.getTedi().getDetails().get(i);
 				InvoiceDetail aonDetail = new InvoiceDetail()
 					.setLine( (short) (1 + i));
-				result.getInvoice().getDetails().add(aonDetail);
+				result.getInvoice().addDetail(aonDetail);
 				toAccountingInvoiceDetail( ctx, tediDetail, aonDetail);
 			}
 		}
@@ -686,8 +686,8 @@ public class TediParser {
 						.setDiscountExpression("0.0")
 						.setTaxableBase(ib.getBase())
 						;
-					result.getInvoice().setDetails( new LinkedList<InvoiceDetail>());
-					result.getInvoice().getDetails().add(id);
+					result.getInvoice().deleteDetails();
+					result.getInvoice().addDetail(id);
 					id.addInvoiceTax( new InvoiceTax()
 						.setTaxType( TaxType.VAT )
 						.setBase( ib.getBase() )
@@ -778,10 +778,7 @@ public class TediParser {
 					.setSurcharge(null);
 			InvoiceDetail aonDetail = new InvoiceDetail()
 					.setLine( (short) (1));
-			if (result.getInvoice().getDetails() == null) {
-				result.getInvoice().setDetails( new LinkedList<InvoiceDetail>());
-			}
-			result.getInvoice().getDetails().add(aonDetail);
+			result.getInvoice().addDetail(aonDetail);
 			toAccountingInvoiceDetail( ctx, tediDetail,aonDetail);
 		}
 	};

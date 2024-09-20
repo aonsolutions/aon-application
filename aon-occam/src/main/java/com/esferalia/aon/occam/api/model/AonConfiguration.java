@@ -207,6 +207,12 @@ public class AonConfiguration implements Serializable {
 		return AonCollectionUtils.stream(getWorkplaces() )
 			.findFirst();
 	}
+	public Optional<Workplace> getWorkplaceIfOnlyOne() {
+		if (AonCollectionUtils.size(getWorkplaces() ) == 1) {
+			return getFirstWorkplace(); 
+		}
+		return Optional.empty();
+	}
 	public AonConfiguration setWorkplaces(LinkedList<Workplace> workplaces) {
 		this.workplaces = workplaces;
 		return this;

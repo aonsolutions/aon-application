@@ -24,7 +24,10 @@ public class InvoiceDetailAutoComplete {
 		if (AonStringUtils.isBlank(detail.getDescription()) && detail.getSource() == InvoiceSource.ACCOUNT) {
 			detail.setDescription(MessageFormat.format(DETAIL_MSG, invoice.getReferenceCode(), invoice.getIssueDate()));	
 		}
-		
+		if (detail.getWorkplace() == null ||  detail.getWorkplace().getId() == null) {
+			ctx.getConfiguration().getWorkplaceIfOnlyOne()
+				.ifPresent( w -> detail.setWorkplace(w));
+		}
 	}
 
 

@@ -496,7 +496,7 @@ public class InvoiceOLDDAO {
 			invoice.setFinances( FinanceDAO.getFinanceStream(ctx, prop -> prop.getInvoiceProperty().eq(id))
 					.collect(Collectors.toCollection(LinkedList::new))
 					);
-			fillBreakdown(ctx, invoice, true);
+//			fillBreakdown(ctx, invoice, true);
 		
 			if (invoice.getRectificationInvoiceId() != null) {
 				invoice.setRectificationInvoice(

@@ -71,9 +71,9 @@ public class AccountingInvoiceDAO {
 		
 	}
 	
-	private static final com.esferalia.aon.jooq.tables.Account DUT_ACCOUNT = ACCOUNT.as("DUT_ACCOUNT");
-	private static final com.esferalia.aon.jooq.tables.Account EXP_ACCOUNT = ACCOUNT.as("EXP_ACCOUNT");
-	private static final com.esferalia.aon.jooq.tables.Account VAT_ACCOUNT = ACCOUNT.as("VAT_ACCOUNT");
+//	private static final com.esferalia.aon.jooq.tables.Account DUT_ACCOUNT = ACCOUNT.as("DUT_ACCOUNT");
+//	private static final com.esferalia.aon.jooq.tables.Account EXP_ACCOUNT = ACCOUNT.as("EXP_ACCOUNT");
+//	private static final com.esferalia.aon.jooq.tables.Account VAT_ACCOUNT = ACCOUNT.as("VAT_ACCOUNT");
 	
 	public static AccountingInvoice getAccountingInvoiceFromInvoice(final AONContext ctx, final Integer invoiceId) {
 		Integer entryId = ctx.getDslContext()
@@ -307,8 +307,6 @@ public class AccountingInvoiceDAO {
 	}
 	
 	public static AccountingInvoice initializeInvoice(final AONContext ctx, final InvoiceType type, final Integer registry, final Integer activity, final Date issueDate) {
-//		checkTBAIForSales( ctx, type);	
-//		
 //		AccountingRegistry reg =  AccountingRegistryDAO.getAccountingRegistries(ctx
 //					, filter -> filter.getIdProperty().eq(registry))
 //				.filter(f -> AccountingRegistryType.getFor(type).equals(f.getType()))
