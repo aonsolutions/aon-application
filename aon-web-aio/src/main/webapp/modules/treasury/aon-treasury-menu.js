@@ -1,6 +1,7 @@
 import { MSG, CSS, EVENT, TAG } from 'aonsolutions/environments/environments.js'; 
 import { AonSuiteMenu } from '../aon-suite-menu.js';
 import * as GWT from 'aonsolutions/gwt/gwt.js';
+import * as JSF from '../aon-jsf-app.js';
 
 export class AonTreasuryMenu extends AonSuiteMenu {
 
@@ -34,10 +35,10 @@ export class AonTreasuryMenu extends AonSuiteMenu {
         };
         this.selectOptions= [{
             title: "Remesa de cobro",
-            action: () => alert("description")
+            action: () => this.rootPanel(new JSF.AonJsfFBatchCharge())
         },{
             title: "Remesa de pago",
-            action: () => alert("description")
+            action: () => this.rootPanel(new JSF.AonJsfFBatchPayment())
         },{
             title: "Vencimiento", 
             action: () => alert("description")
@@ -50,34 +51,34 @@ export class AonTreasuryMenu extends AonSuiteMenu {
             options: [ {
                 description: "Gestión de Cobros",
                 title: "Gestión de Cobros",
-                action: () => alert("description")
+                action: () => this.rootPanel(new JSF.AonJsfFinanceCharge())
             },{
                 description: "Remesas de Cobro",
                 title: "Remesas de Cobro",
-                action: () => alert("description")
+                action: () => this.rootPanel(new JSF.AonJsfFBatchCharge())
             },{
                 description: "Orden de domiciliación de adeudo directo SEPA",
                 title: "Orden de domiciliación de adeudo directo SEPA",
-                action: () => alert("description")
+                action: () => this.rootPanel(new JSF.AonJsfSddMandate())
             }]
         },{
             title: 'Pagos',
             options: [{
                 description: "Gestión de Pagos",
                 title: "Gestión de Pagos",
-                action: () => alert("description")
+                action: () => this.rootPanel(new JSF.AonJsfFinancePayment())
             },{
                 description: "Remesas de Pago",
                 title: "Remesas de Pago",
-                action: () => alert("description")
+                action: () => this.rootPanel(new JSF.AonJsfFBatchPayment())
             },{
-                description: "Remesas de Pago",
+                description: "Remesas de Pago (Nuevo)",
                 title: "Remesas de Pago",
-                action: () => alert("description")
+                action: () => GWT.iLoad(GWT.FBATCH_PAYMENT_TREASURY)
             },{
                 description: "Impresión de Pagarés",
                 title: "Impresión de Pagarés",
-                action: () => alert("description")
+                action: () => this.rootPanel(new JSF.AonJsfFPaymentPrint())
             }]
         },{
             title: 'Previsión',
@@ -99,15 +100,15 @@ export class AonTreasuryMenu extends AonSuiteMenu {
             options: [{
                 description: "Conciliador Bancario",
                 title: "Conciliador Bancario",
-                action: () => alert("description")
+                action: () => this.rootPanel(new JSF.AonJsfBankStatement())
             },{
                 description: "Agregador Bancario",
                 title: "Agregador Bancario",
-                action: () => alert("description")
+                action: () => GWT.iLoad(GWT.NORDIGEN)
             },{
                 description: "Gestión de Suplidos",
                 title: "Gestión de Suplidos",
-                action: () => alert("description")
+                action: () => this.rootPanel(new JSF.AonJsfPrepayment())
             }]
         },{
             title: 'Cuotas',
@@ -137,11 +138,11 @@ export class AonTreasuryMenu extends AonSuiteMenu {
             options: [{
                 description: "Recargos en Facturas",
                 title: "Recargos en Facturas",
-                action: () => alert("description")
+                action: () => this.rootPanel(new JSF.AonJsfIncreaseItem())
             },{
                 description: "Grupos de Facturación",
                 title: "Grupos de Facturación",
-                action: () => alert("description")
+                action: () => this.rootPanel(new JSF.AonJsfInvoicingGroup())
             },{
                 description: "Firma de Facturas",
                 title: "Firma de Facturas",

@@ -231,6 +231,22 @@ export class AonJsfFinancePayment extends AonJsfApp {
 	}
 }
 
+export class AonJsfFBatchCharge extends AonJsfApp {
+	
+	constructor() {
+		super();
+		this.setViewId('/facelet/app/fbatchCharge.xhtml');
+	}
+}
+
+export class AonJsfFBatchPayment extends AonJsfApp {
+	
+	constructor() {
+		super();
+		this.setViewId('/facelet/app/fbatchPayment.xhtml');
+	}
+}
+
 export class AonJsfPayMethod extends AonJsfApp {
 	
 	constructor() {
@@ -260,6 +276,54 @@ export class AonJsfGeotree extends AonJsfApp {
 	constructor() {
 		super();
 		this.setViewId('/facelet/app/geotree.xhtml');
+	}
+}
+
+export class AonJsfSddMandate extends AonJsfApp {
+	
+	constructor() {
+		super();
+		this.setViewId('/facelet/app/sddMandate.xhtml');
+	}
+}
+
+export class AonJsfFPaymentPrint extends AonJsfApp {
+	
+	constructor() {
+		super();
+		this.setViewId('/facelet/app/fPaymentPrint.xhtml');
+	}
+}
+
+export class AonJsfBankStatement extends AonJsfApp {
+	
+	constructor() {
+		super();
+		this.setViewId('/facelet/app/bankStatement.xhtml');
+	}
+}
+
+export class AonJsfPrepayment extends AonJsfApp {
+	
+	constructor() {
+		super();
+		this.setViewId('/facelet/app/prepayment.xhtml');
+	}
+}
+
+export class AonJsfIncreaseItem extends AonJsfApp {
+	
+	constructor() {
+		super();
+		this.setViewId('/facelet/app/increaseItem.xhtml');
+	}
+}
+
+export class AonJsfInvoicingGroup extends AonJsfApp {
+	
+	constructor() {
+		super();
+		this.setViewId('/facelet/app/invoicingGroup.xhtml');
 	}
 }
 
@@ -344,4 +408,36 @@ if(!window.customElements.get(TAG.AON_JSF_SEGMENT)){
 
 if(!window.customElements.get(TAG.AON_JSF_GEOTREE)){
 	window.customElements.define(TAG.AON_JSF_GEOTREE, AonJsfGeotree);
+}
+
+if(!window.customElements.get(TAG.AON_JSF_FBATCH_CHARGE)){
+	window.customElements.define(TAG.AON_JSF_FBATCH_CHARGE, AonJsfFBatchCharge);
+}
+
+if(!window.customElements.get(TAG.AON_JSF_FBATCH_PAYMENT)){
+	window.customElements.define(TAG.AON_JSF_FBATCH_PAYMENT, AonJsfFBatchPayment);
+}
+
+if(!window.customElements.get(TAG.AON_JSF_SDD_MANDATE)){
+	window.customElements.define(TAG.AON_JSF_SDD_MANDATE, AonJsfSddMandate);
+}
+
+if(!window.customElements.get(TAG.AON_JSF_FPAYMENT_PRINT)){
+	window.customElements.define(TAG.AON_JSF_FPAYMENT_PRINT, AonJsfFPaymentPrint);
+}
+
+if(!window.customElements.get(TAG.AON_JSF_BANK_STATEMENT)){
+	window.customElements.define(TAG.AON_JSF_BANK_STATEMENT, AonJsfBankStatement);
+}
+
+if(!window.customElements.get(TAG.AON_JSF_PREPAYMENT)){
+	window.customElements.define(TAG.AON_JSF_PREPAYMENT, AonJsfPrepayment);
+}
+
+if(!window.customElements.get(TAG.AON_JSF_INCREASE_ITEM)){
+	window.customElements.define(TAG.AON_JSF_INCREASE_ITEM, AonJsfIncreaseItem);
+}
+
+if(!window.customElements.get(TAG.AON_JSF_INVOICING_GROUP)){
+	window.customElements.define(TAG.AON_JSF_INVOICING_GROUP, AonJsfInvoicingGroup);
 }

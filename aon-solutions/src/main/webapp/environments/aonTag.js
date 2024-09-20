@@ -245,6 +245,15 @@ export const AON_JSF_GEOTREE = 'aon-jsf-geotree' ;
 
 export const AON_TREASURY_MENU = 'aon-treasury-menu';
 
+export const AON_JSF_FBATCH_CHARGE = 'aon-jsf-fbatch-charge' ;
+export const AON_JSF_FBATCH_PAYMENT = 'aon-jsf-fbatch-payment' ;
+export const AON_JSF_SDD_MANDATE = 'aon-jsf-sdd-mandate' ;
+export const AON_JSF_FPAYMENT_PRINT = 'aon-jsf-payment-print' ;
+export const AON_JSF_BANK_STATEMENT = 'aon-jsf-bank-statement' ;
+export const AON_JSF_PREPAYMENT = 'aon-jsf-prepayment' ;
+export const AON_JSF_INCREASE_ITEM = 'aon-jsf-increase-item' ;
+export const AON_JSF_INVOICING_GROUP = 'aon-jsf-invoicing-group' ;
+
 export const AON_WAREHOUSE_MENU = 'aon-warehouse-menu';
 
 export const AON_FISCAL_MENU = 'aon-fiscal-menu';

@@ -471,5 +471,9 @@ export const ACCOUNT_OPERATION_STATEMENT = {
   entryPoint: 'AccountOperatingReport'
 };
 
+export const FBATCH_PAYMENT_TREASURY = {
+  module: GWT_FISCAL,
+  entryPoint: 'FBatchPaymentTreasury'
+};
 
 
