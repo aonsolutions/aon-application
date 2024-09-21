@@ -147,5 +147,10 @@ jobs:
         push: true
         tags: ghcr.io/${{ github.repository_owner }}/aon-solutions:${{ env.BRANCH_NAME }}
 
+    - name: Publish WAR to GitHub Packages
+      if: github.ref == 'refs/heads/master'
+      run: mvn -B -pl aon-web-aio -Dgithub.actions=true deploy
+      env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
 
