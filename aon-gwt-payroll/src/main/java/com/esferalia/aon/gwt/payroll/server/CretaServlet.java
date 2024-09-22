@@ -411,12 +411,14 @@ public class CretaServlet extends HttpServlet
 		String desdeAnho = req.getParameter(CretaService.Parameter.DESDE_ANHO.name());
 		String hastaMes = req.getParameter(CretaService.Parameter.HASTA_MES.name());
 		String hastaAnho = req.getParameter(CretaService.Parameter.HASTA_ANHO.name());
+		String controlMes = req.getParameter(CretaService.Parameter.CTRL_MES.name());
+		String controlAnho = req.getParameter(CretaService.Parameter.CTRL_ANHO.name());
 		String autorizado = req.getParameter(CretaService.Parameter.AUTORIZADO.name());
 		boolean aceptarBasesAnteriores = AonStringUtils.equalsIgnoreCase("on",
 				req.getParameter(CretaService.Parameter.ACEPTAR_BASES_ANTERIORES.name()));
 		boolean solicitudRecepcionRNT = AonStringUtils.equalsIgnoreCase("on",
 				req.getParameter(CretaService.Parameter.SOLICITUD_RECEPCION_RNT.name()));
-		Borrador.generate(autorizado, desdeMes, desdeAnho, hastaMes, hastaAnho, tipo, aceptarBasesAnteriores, solicitudRecepcionRNT, cccs, resp.getOutputStream());
+		Borrador.generate(autorizado, desdeMes, desdeAnho, hastaMes, hastaAnho, controlMes, controlAnho, tipo, aceptarBasesAnteriores, solicitudRecepcionRNT, cccs, resp.getOutputStream());
 	}
 
 	@Override
