@@ -46,6 +46,7 @@ import { AonUploadToast } from '../../components/aon-upload-toast.js';
 import { AonDashboardChargePayments } from '../accounting/aon-dashboard-charge-payments.js';
 import { AonDialog } from '../../components/aon-dialog.js';
 import { AonMarketing } from '../marketing/aon-marketing.js';
+import { MessegerUtils } from '../messenger/utils/MessengerUtils.js';
 
 export class AonDesktop extends AonElement {
 
@@ -650,6 +651,11 @@ export class AonDesktop extends AonElement {
 
 			messengerCard.setContent(aonMessengerCard);
 			
+			let messages = await MessegerUtils.getMeseggers();
+			let messageBadge = MessegerUtils.getMessageBadge(messages.length);
+			messageBadge.addEventListener(EVENT.CLICK, () => this.appSelection(Apps.MESSENGER.app));
+			messengerCard.addSection2(messageBadge);
+
 			messengerCard.firstChild.style.minHeight = "28rem";
 			messengerCard.firstChild.children.item(1).style.height = "22.5rem";
 			messengerCard.firstChild.style.margin = '0';
