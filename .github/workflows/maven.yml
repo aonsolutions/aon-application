@@ -14,6 +14,7 @@ env:
   TZ: Europe/Madrid
   AWS_REGION: eu-west-1
   BRANCH_NAME: ${{ github.head_ref || github.ref_name }} 
+  SKIP_TESTS: ${{ github.ref_name == 'cadizbay' && true || false }}
   
 jobs:
   build:
@@ -87,7 +88,7 @@ jobs:
         EOF
 
     - name: Build with Maven
-      run: mvn -B -Dgwt.working=true -T 1C clean install
+      run: mvn -B -Dgwt.working=true -DskipTests=${SKIP_TESTS} -T 1C clean install
 
     - name: Build and push Docker aon-application image
       uses: docker/build-push-action@v6
@@ -165,6 +166,12 @@ jobs:
       run : |
         aws ecs update-service --region=eu-south-2 --cluster AON --service AON-SOLUTIONS --force-new-deployment
         aws ecs update-service --region=eu-south-2 --cluster AON --service AON-APPLICATION --force-new-deployment
+
+    - name: Deploy to Amazon ECS CADIZ
+      if: github.ref == 'refs/heads/cadizbay'
+      run : |
+        aws ecs update-service --region=eu-south-2 --cluster AON --service CADIZ-SOLUTIONS --force-new-deployment
+        aws ecs update-service --region=eu-south-2 --cluster AON --service CADIZ-APPLICATION --force-new-deployment
         
 
 
