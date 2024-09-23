@@ -32,6 +32,7 @@ public class AlcatrazDAO {
 		private Integer invoice;
 		private Integer finance;
 		private Integer financeTracking;
+		private Integer salary;
 		
 		public Integer getInvoice() {
 			return invoice;
@@ -46,6 +47,14 @@ public class AlcatrazDAO {
 		}
 		public Alcatraz setFinance(Integer finance) {
 			this.finance = finance;
+			return this;
+		}
+		
+		public Integer getSalary() {
+			return salary;
+		}
+		public Alcatraz setSalary(Integer salary) {
+			this.salary = salary;
 			return this;
 		}
 		
@@ -228,6 +237,21 @@ public class AlcatrazDAO {
 			.fetch()
 			.stream()
 			.map(rec -> new FiscalModelFiller<FiscalModel>().apply(rec,FiscalModel::new))
+			.collect(Collectors.toCollection(LinkedList::new))
+		;
+	}
+	
+	public static List<Alcatraz> getAlcatrazByFsModel(AONContext ctx, Integer fsModelId) {
+		return ctx.getDslContext()
+			.select()
+			.from(ALCATRAZ)
+			.where(ALCATRAZ.FS_MODEL.eq(fsModelId))
+			.fetch()
+			.stream()
+			.map(rec -> new Alcatraz()
+					.setInvoice(rec.get(ALCATRAZ.INVOICE))
+					.setSalary(rec.get(ALCATRAZ.SALARY))
+			)
 			.collect(Collectors.toCollection(LinkedList::new))
 		;
 	}
