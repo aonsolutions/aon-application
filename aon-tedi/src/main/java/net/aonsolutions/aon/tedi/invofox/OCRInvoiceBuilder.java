@@ -577,14 +577,12 @@ public class OCRInvoiceBuilder {
 		BigDecimal percentage = uniqueVatPercent.orElse( ocrLine.getTaxRate().flatMap( d -> d.getValue() ).orElse(null) );
 		BigDecimal quota = ocrLine.getTaxAmount().flatMap( d -> d.getValue() ).orElse(null);
 		if ( AonMathUtils.isNotZero(taxableBase) && AonMathUtils.isNotZero(percentage) && AonMathUtils.isNotZero(quota)) {
-		    InvoiceTax vat = new InvoiceTax().setDomain(detail.getDomain()).setTaxType(TaxType.VAT)
-			    .setVatDeductionType(VatDeductionType.WITH_RIGHT);
-			vat.setBase( AonNumberUtils.zeroIfNull(taxableBase));
-			vat.setPercentage( AonNumberUtils.zeroIfNull(percentage));
-			vat.setQuota( AonNumberUtils.zeroIfNull(quota));
-			vat.setDeductibleQuota( AonNumberUtils.zeroIfNull(quota));
-			
-			detail.addInvoiceTax(vat);
+			detail.ensureVatTax(invoice)
+			    .setVatDeductionType(VatDeductionType.WITH_RIGHT)
+				.setBase( AonNumberUtils.zeroIfNull(taxableBase))
+				.setPercentage( AonNumberUtils.zeroIfNull(percentage))
+				.setQuota( AonNumberUtils.zeroIfNull(quota))
+				.setDeductibleQuota( AonNumberUtils.zeroIfNull(quota));
 		}
 	}
 
@@ -607,14 +605,12 @@ public class OCRInvoiceBuilder {
 		BigDecimal percentage = uniqueVatPercent.orElse( ocrBreakdown.getTaxRate().flatMap( d -> d.getValue() ).orElse(null) );
 		BigDecimal quota = ocrBreakdown.getTaxAmount().flatMap( d -> d.getValue() ).orElse(null);
 		if ( AonMathUtils.isNotZero(taxableBase) && AonMathUtils.isNotZero(percentage) && AonMathUtils.isNotZero(quota)) {
-		    InvoiceTax vat = new InvoiceTax().setDomain(detail.getDomain()).setTaxType(TaxType.VAT)
-			    .setVatDeductionType(VatDeductionType.WITH_RIGHT);
-			vat.setBase( AonNumberUtils.zeroIfNull(taxableBase));
-			vat.setPercentage( AonNumberUtils.zeroIfNull(percentage));
-			vat.setQuota( AonNumberUtils.zeroIfNull(quota));
-			vat.setDeductibleQuota( AonNumberUtils.zeroIfNull(quota));
-			
-			detail.addInvoiceTax(vat);
+			detail.ensureVatTax(invoice)
+			    .setVatDeductionType(VatDeductionType.WITH_RIGHT)
+				.setBase( AonNumberUtils.zeroIfNull(taxableBase))
+				.setPercentage( AonNumberUtils.zeroIfNull(percentage))
+				.setQuota( AonNumberUtils.zeroIfNull(quota))
+				.setDeductibleQuota( AonNumberUtils.zeroIfNull(quota));
 		}
 	}
 

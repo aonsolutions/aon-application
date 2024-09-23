@@ -232,32 +232,33 @@ public class AccountingInvoiceDAO {
 	}
 
 	private static InvoiceDetail createNewInvoiceDetail(final AONContext ctx,AccountingInvoice ai) {
+		Invoice inv = ai.getInvoice();
 		InvoiceDetail detail = new InvoiceDetail()
 			.setSource(InvoiceSource.ACCOUNT);
 		
 		if (ctx.getConfiguration().getDefaultVatPercent() != null) {
 			if (ai.isSales() && !ai.isNational()) {
-				detail.ensureVatTax().setPercentage(0.0);
+				detail.ensureVatTax(inv).setPercentage(0.0);
 			} else {
-				detail.ensureVatTax().setPercentage(ctx.getConfiguration().getDefaultVatPercent().getPercentage());
+				detail.ensureVatTax(inv).setPercentage(ctx.getConfiguration().getDefaultVatPercent().getPercentage());
 			}
 			if (ai.isSurcharge()) {
-				detail.ensureVatTax().setSurcharge(ctx.getConfiguration().getDefaultVatPercent().getSurcharge());	
+				detail.ensureVatTax(inv).setSurcharge(ctx.getConfiguration().getDefaultVatPercent().getSurcharge());	
 			}
-			detail.ensureVatTax().setInputAccount( ctx.getConfiguration().getDefaultVatPercent().getPurchaseAccount());
-			detail.ensureVatTax().setOutputAccount( ctx.getConfiguration().getDefaultVatPercent().getSalesAccount());
+			detail.ensureVatTax(inv).setInputAccount( ctx.getConfiguration().getDefaultVatPercent().getPurchaseAccount());
+			detail.ensureVatTax(inv).setOutputAccount( ctx.getConfiguration().getDefaultVatPercent().getSalesAccount());
 		}
-		if (detail.ensureVatTax().getInputAccount() == null) {
-			detail.ensureVatTax().setInputAccount( ctx.getConfiguration().accounting().getDefaultPaidVatAccount());
+		if (detail.ensureVatTax(inv).getInputAccount() == null) {
+			detail.ensureVatTax(inv).setInputAccount( ctx.getConfiguration().accounting().getDefaultPaidVatAccount());
 		}
-		if (detail.ensureVatTax().getOutputAccount() == null) {
-			detail.ensureVatTax().setOutputAccount( ctx.getConfiguration().accounting().getDefaultChargedVatAccount()) ;
+		if (detail.ensureVatTax(inv).getOutputAccount() == null) {
+			detail.ensureVatTax(inv).setOutputAccount( ctx.getConfiguration().accounting().getDefaultChargedVatAccount()) ;
 		}
 		if (ctx.getConfiguration().accounting().getVatNegativeAdjustAccount() != null) {
-			detail.ensureVatTax().setAdjAccount( ctx.getConfiguration().accounting().getVatNegativeAdjustAccount());
+			detail.ensureVatTax(inv).setAdjAccount( ctx.getConfiguration().accounting().getVatNegativeAdjustAccount());
 		}
 		if (ctx.getConfiguration().accounting().getDirectTaxAdjustAccount() != null) {
-			detail.ensureVatTax().setAdjDirectTaxAccount( ctx.getConfiguration().accounting().getDirectTaxAdjustAccount());
+			detail.ensureVatTax(inv).setAdjDirectTaxAccount( ctx.getConfiguration().accounting().getDirectTaxAdjustAccount());
 		}
 		if (ai.isSales()) {
 			detail.setExpAccount(ctx.getConfiguration().accounting().getDefaultSalesAccount());
@@ -428,7 +429,7 @@ public class AccountingInvoiceDAO {
 		final boolean directTaxEnabled = directTaxEnabledPre;
 		// *********************
 		
-		InvoiceTax vat = invoiceDetail.ensureVatTax();
+		InvoiceTax vat = invoiceDetail.ensureVatTax( ai.getInvoice() );
 		Account vatAccount = getInvoiceTaxAccount(ctx, invoiceDetail.getVatTax().get().getId()).orElse(null);
 		
 		Integer investAsset = invoiceDetail.getInvestAsset().map(ia -> ia.getId()).orElse(null);

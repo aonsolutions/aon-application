@@ -11,6 +11,7 @@ import com.esferalia.aon.occam.api.model.AccountingDUAInfo;
 import com.esferalia.aon.occam.api.model.AccountingDUAInvoice;
 import com.esferalia.aon.occam.api.model.AccountingInvoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceDetail;
+import com.esferalia.aon.watson.mutable.MutableInt;
 import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.google.gwt.dom.client.Style.BorderStyle;
@@ -296,78 +297,79 @@ public class InvoiceDUAPanel extends AonDisplayTable implements HasSelectionHand
 	}
 	
 	public void paintVats(IInvoicePanelCallback callback) {
-		int row = 2;
-		while (tab47.getRowCount() > row) {
+		MutableInt row = new MutableInt(2);
+		while (tab47.getRowCount() > row.getValue()) {
 			tab47.removeRow(tab47.getRowCount()-1);
 		}
 		for( InvoiceDetail vat : callback.getInvoice().getDuaInvoice().getInfo().getDuaDetails()) {
-			int col=0;
+			MutableInt col= new MutableInt(0);
 			Label label = new Label("[B00] " + AON.MSG.vat());
-			tab47.setWidget(row, col, label);
-			++col;
+			tab47.setWidget(row.getValue(), col.getValue(), label);
+			col.increment();
 			
 			DoubleBox vatBase = new DoubleBox(10);
 			DoubleBox vatPercent = new DoubleBox(5);
 			DoubleBox vatTotal = new DoubleBox(10);
-			vatBase.setValue(vat.ensureVatTax().getBase());
-			vatPercent.setValue(vat.ensureVatTax().getPercentage());
-			vatTotal.setValue(vat.ensureVatTax().getQuota());
-
-			vatBase.addValueChangeHandler( event -> {
-				vat.ensureVatTax().setBase(vatBase.getValue()== null? 0 : vatBase.getValue());
-				SelectionEvent.fire(InvoiceDUAPanel.this, callback);
-			});
-			vatBase.addStyleName(AON.AON_CSS.aonMarginRight());
-			tab47.setWidget(row, col, vatBase);
-			++col;
-			
-			vatPercent.addValueChangeHandler( event -> {
-				vat.ensureVatTax().setPercentage(vatPercent.getValue() == null? 0 : vatPercent.getValue());
-				SelectionEvent.fire(InvoiceDUAPanel.this, callback);
-			});
-			vatPercent.addStyleName(AON.AON_CSS.aonMarginRight());
-			tab47.setWidget(row, col, vatPercent);
-			++col;
-			
-			vatTotal.addValueChangeHandler( event -> {
-				vat.ensureVatTax().setQuota(vatTotal.getValue() == null? 0 : vatTotal.getValue());
-				SelectionEvent.fire(InvoiceDUAPanel.this, callback);
-			});
-			vatTotal.addStyleName(AON.AON_CSS.aonMarginRight());
-			tab47.setWidget(row, col, vatTotal);
-			row++;
-			if ( AonMathUtils.isNotZero( vat.ensureVatTax().getSurcharge() ) ) {
-				col=0;
-				
-				label = new Label("[B01] " + AON.MSG.re());
-				tab47.setWidget(row, col, label);
-				++col;
-				
-				DoubleBox rePercent = new DoubleBox(5);
-				DoubleBox reTotal = new DoubleBox(10);
-				rePercent.setValue(vat.ensureVatTax().getSurcharge());
-				reTotal.setValue(vat.ensureVatTax().getSurchargeQuota());
-
-				++col;
-				
-				rePercent.addValueChangeHandler( event -> {
-					vat.ensureVatTax().setSurcharge(rePercent.getValue() == null? 0 : rePercent.getValue());
+			vat.getVatTax().ifPresent( vatTax -> {
+				vatBase.setValue(vatTax.getBase());
+				vatPercent.setValue(vatTax.getPercentage());
+				vatTotal.setValue(vatTax.getQuota());
+	
+				vatBase.addValueChangeHandler( event -> {
+					vatTax.setBase(vatBase.getValue()== null? 0 : vatBase.getValue());
 					SelectionEvent.fire(InvoiceDUAPanel.this, callback);
 				});
-				rePercent.addStyleName(AON.AON_CSS.aonMarginRight());
-				tab47.setWidget(row, col, rePercent);
-				++col;
+				vatBase.addStyleName(AON.AON_CSS.aonMarginRight());
+				tab47.setWidget(row.getValue(), col.getValue(), vatBase);
+				col.increment();
 				
-				reTotal.addValueChangeHandler( event -> {
-					vat.ensureVatTax().setSurchargeQuota(reTotal.getValue() == null? 0 : reTotal.getValue());
+				vatPercent.addValueChangeHandler( event -> {
+					vatTax.setPercentage(vatPercent.getValue() == null? 0 : vatPercent.getValue());
 					SelectionEvent.fire(InvoiceDUAPanel.this, callback);
 				});
-				reTotal.addStyleName(AON.AON_CSS.aonMarginRight());
-				tab47.setWidget(row, col, reTotal);
+				vatPercent.addStyleName(AON.AON_CSS.aonMarginRight());
+				tab47.setWidget(row.getValue(), col.getValue(), vatPercent);
+				col.increment();
 				
-				row++;
-			}
+				vatTotal.addValueChangeHandler( event -> {
+					vatTax.setQuota(vatTotal.getValue() == null? 0 : vatTotal.getValue());
+					SelectionEvent.fire(InvoiceDUAPanel.this, callback);
+				});
+				vatTotal.addStyleName(AON.AON_CSS.aonMarginRight());
+				tab47.setWidget(row.getValue(), col.getValue(), vatTotal);
+				row.increment();
 				
+				if ( AonMathUtils.isNotZero( vatTax.getSurcharge() ) ) {
+					col.setValue(0);
+					
+					Label label0 = new Label("[B01] " + AON.MSG.re());
+					tab47.setWidget(row.getValue(), col.getValue(), label0);
+					col.increment();
+					
+					DoubleBox rePercent = new DoubleBox(5);
+					DoubleBox reTotal = new DoubleBox(10);
+					rePercent.setValue(vatTax.getSurcharge());
+					reTotal.setValue(vatTax.getSurchargeQuota());
+	
+					col.increment();
+					
+					rePercent.addValueChangeHandler( event -> {
+						vatTax.setSurcharge(rePercent.getValue() == null? 0 : rePercent.getValue());
+						SelectionEvent.fire(InvoiceDUAPanel.this, callback);
+					});
+					rePercent.addStyleName(AON.AON_CSS.aonMarginRight());
+					tab47.setWidget(row.getValue(), col.getValue(), rePercent);
+					col.increment();
+					
+					reTotal.addValueChangeHandler( event -> {
+						vatTax.setSurchargeQuota(reTotal.getValue() == null? 0 : reTotal.getValue());
+						SelectionEvent.fire(InvoiceDUAPanel.this, callback);
+					});
+					reTotal.addStyleName(AON.AON_CSS.aonMarginRight());
+					tab47.setWidget(row.getValue(), col.getValue(), reTotal);
+					row.increment();
+				}
+			});				
 		}
 	}
 

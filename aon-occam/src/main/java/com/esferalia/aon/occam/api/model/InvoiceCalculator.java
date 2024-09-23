@@ -131,7 +131,7 @@ public class InvoiceCalculator	 {
 	}
 	
 	private static void calculateVatDetail(Invoice inv, InvoiceDetail detail) {
-		InvoiceTax vat = detail.ensureVatTax();
+		InvoiceTax vat = detail.ensureVatTax(inv);
 		if (!vat.isQuotaEdited()) {
 			vat.setQuota(AonMathUtils.round(vat.getBase() * vat.getPercentage() / 100 ));
 		}
@@ -183,7 +183,7 @@ public class InvoiceCalculator	 {
 		if (inv.isWithholding()  && inv.isWithholdingFarmer()) {
 				InvoiceWithholding wd = inv.ensureWithholdingData();
 				InvoiceTax irpf = detail.ensureWithholdingTax(inv);
-				InvoiceTax vat = detail.ensureVatTax();
+				InvoiceTax vat = detail.ensureVatTax(inv);
 				
 				irpf.setBase(detail.getTaxableBase() + vat.getQuota() + (inv.isSurcharge()?vat.getSurchargeQuota():0.0));
 				irpf.setPercentage( wd.getPercentage() );
@@ -213,7 +213,7 @@ public class InvoiceCalculator	 {
 			det.deleteVatTax();
 			det.deleteWithholdingTax();
 		} else {
-			InvoiceTax vat = det.ensureVatTax();
+			InvoiceTax vat = det.ensureVatTax(inv);
 			double vatPerc = vat.getPercentage();
 			double surchargePerc = vat.getSurcharge();
 			double withholdingPerc = 0.0;
@@ -335,6 +335,7 @@ public class InvoiceCalculator	 {
 		if (duaInvoice != null) {
 			ai.setPrepayments(true);
 			double totalQuota = 0;
+			Invoice di = duaInvoice.getAccountingInvoice().getInvoice();
 			if (duaInvoice.getInfo() != null && duaInvoice.getInfo().isAuthCalcEnabled()) {
 				// (1) Se hace un mapa con las bases y los porcentajes de iva.
 				LinkedList<InvoiceDetail> duaVats = new LinkedList<>();
@@ -347,21 +348,21 @@ public class InvoiceCalculator	 {
 					
 					vat.setTaxableBase((duaInvoice.getInfo().getStatisticalValue() * factor) + (duaInvoice.getInfo().getDutyTotal() * factor));
 					LOGGER.info("(" + duaInvoice.getInfo().getStatisticalValue()+" * "+ factor+") + ("+duaInvoice.getInfo().getDutyTotal()+" * "+factor+")");
-					double vatQuota = AonMathUtils.round( vat.getTaxableBase() * vat.ensureVatTax().getPercentage() / 100 );
-					vat.ensureVatTax().setBase(vat.getTaxableBase());
-					vat.ensureVatTax().setQuota(vatQuota);
-					double vatSurchargeQuota = AonMathUtils.round( vat.getTaxableBase() * vat.ensureVatTax().getSurcharge() / 100 );
-					vat.ensureVatTax().setSurchargeQuota(vatSurchargeQuota);
-					vat.ensureVatTax().setDeductibleQuota(AonMathUtils.round(vatQuota + vatSurchargeQuota));
-					totalQuota = AonMathUtils.round(totalQuota + vat.ensureVatTax().getDeductibleQuota());
+					double vatQuota = AonMathUtils.round( vat.getTaxableBase() * vat.ensureVatTax(di).getPercentage() / 100 );
+					vat.ensureVatTax(di).setBase(vat.getTaxableBase());
+					vat.ensureVatTax(di).setQuota(vatQuota);
+					double vatSurchargeQuota = AonMathUtils.round( vat.getTaxableBase() * vat.ensureVatTax(di).getSurcharge() / 100 );
+					vat.ensureVatTax(di).setSurchargeQuota(vatSurchargeQuota);
+					vat.ensureVatTax(di).setDeductibleQuota(AonMathUtils.round(vatQuota + vatSurchargeQuota));
+					totalQuota = AonMathUtils.round(totalQuota + vat.ensureVatTax(di).getDeductibleQuota());
 				}
 				duaInvoice.getInfo().setDuaDetails(duaVats);
 			} else {
 				for (InvoiceDetail vat : duaInvoice.getInfo().getDuaDetails() ) {
-					double vatQuota = vat.ensureVatTax().getQuota();
-					double vatSurchargeQuota = vat.ensureVatTax().getSurchargeQuota();
-					vat.ensureVatTax().setDeductibleQuota(AonMathUtils.round(vatQuota + vatSurchargeQuota));
-					totalQuota = AonMathUtils.round(totalQuota + vat.ensureVatTax().getDeductibleQuota());
+					double vatQuota = vat.ensureVatTax(di).getQuota();
+					double vatSurchargeQuota = vat.ensureVatTax(di).getSurchargeQuota();
+					vat.ensureVatTax(di).setDeductibleQuota(AonMathUtils.round(vatQuota + vatSurchargeQuota));
+					totalQuota = AonMathUtils.round(totalQuota + vat.ensureVatTax(di).getDeductibleQuota());
 				}
 			}
 			if (AonMathUtils.isNotZero( totalQuota )) {

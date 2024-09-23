@@ -381,47 +381,47 @@ public class AccountingInvoiceDAO {
 		return null;
 	}
 
-	private static InvoiceDetail createNewInvoiceVAT(AccountingInvoice ai,AonConfiguration config) {
-		InvoiceDetail vat = new InvoiceDetail();
-		Account inputVatAccount = null;
-		Account outputVatAccount = null;
-		vat = new InvoiceDetail()
-			.setSource(InvoiceSource.ACCOUNT)
-			.addVatTax();
-		if (config.getDefaultVatPercent() != null) {
-			if (ai.isSales() && !ai.isNational()) {
-				vat.ensureVatTax().setPercentage(0.0);
-			} else {
-				vat.ensureVatTax().setPercentage(config.getDefaultVatPercent().getPercentage());
-			}
-			if (ai.isSurcharge()) {
-				vat.ensureVatTax().setSurcharge(config.getDefaultVatPercent().getSurcharge());	
-			}
-			inputVatAccount = config.getDefaultVatPercent().getPurchaseAccount();
-			outputVatAccount = config.getDefaultVatPercent().getSalesAccount();
-		}
-		if (inputVatAccount == null) inputVatAccount = config.accounting().getDefaultPaidVatAccount();
-		if (inputVatAccount != null) {
-			vat.ensureVatTax().setInputAccount(inputVatAccount);
-		}
-		if (outputVatAccount== null) outputVatAccount = config.accounting().getDefaultChargedVatAccount();
-		if (outputVatAccount != null) {
-			vat.ensureVatTax().setOutputAccount(outputVatAccount);
-		}
-		if (config.accounting().getVatNegativeAdjustAccount() != null) {
-			vat.ensureVatTax().setAdjAccount( config.accounting().getVatNegativeAdjustAccount());
-		}
-		if (config.accounting().getDirectTaxAdjustAccount() != null) {
-			vat.ensureVatTax().setAdjDirectTaxAccount( config.accounting().getDirectTaxAdjustAccount());
-		}
-		if (ai.isSales() && config.accounting().getDefaultSalesAccount() != null) {
-			vat.setExpAccount(config.accounting().getDefaultSalesAccount());
-		}
-		if (ai.isPurchase() && config.accounting().getDefaultPurchaseAccount() != null) {
-			vat.setExpAccount(config.accounting().getDefaultPurchaseAccount());
-		}
-		return vat;
-	}
+//	private static InvoiceDetail createNewInvoiceVAT(AccountingInvoice ai,AonConfiguration config) {
+//		InvoiceDetail vat = new InvoiceDetail();
+//		Account inputVatAccount = null;
+//		Account outputVatAccount = null;
+//		vat = new InvoiceDetail()
+//			.setSource(InvoiceSource.ACCOUNT);
+//		vat.ensureVatTax(ai.getInvoice());
+//		if (config.getDefaultVatPercent() != null) {
+//			if (ai.isSales() && !ai.isNational()) {
+//				vat.ensureVatTax(ai.getInvoice()).setPercentage(0.0);
+//			} else {
+//				vat.ensureVatTax(ai.getInvoice()).setPercentage(config.getDefaultVatPercent().getPercentage());
+//			}
+//			if (ai.isSurcharge()) {
+//				vat.ensureVatTax(ai.getInvoice()).setSurcharge(config.getDefaultVatPercent().getSurcharge());	
+//			}
+//			inputVatAccount = config.getDefaultVatPercent().getPurchaseAccount();
+//			outputVatAccount = config.getDefaultVatPercent().getSalesAccount();
+//		}
+//		if (inputVatAccount == null) inputVatAccount = config.accounting().getDefaultPaidVatAccount();
+//		if (inputVatAccount != null) {
+//			vat.ensureVatTax(ai.getInvoice()).setInputAccount(inputVatAccount);
+//		}
+//		if (outputVatAccount== null) outputVatAccount = config.accounting().getDefaultChargedVatAccount();
+//		if (outputVatAccount != null) {
+//			vat.ensureVatTax(ai.getInvoice()).setOutputAccount(outputVatAccount);
+//		}
+//		if (config.accounting().getVatNegativeAdjustAccount() != null) {
+//			vat.ensureVatTax(ai.getInvoice()).setAdjAccount( config.accounting().getVatNegativeAdjustAccount());
+//		}
+//		if (config.accounting().getDirectTaxAdjustAccount() != null) {
+//			vat.ensureVatTax(ai.getInvoice()).setAdjDirectTaxAccount( config.accounting().getDirectTaxAdjustAccount());
+//		}
+//		if (ai.isSales() && config.accounting().getDefaultSalesAccount() != null) {
+//			vat.setExpAccount(config.accounting().getDefaultSalesAccount());
+//		}
+//		if (ai.isPurchase() && config.accounting().getDefaultPurchaseAccount() != null) {
+//			vat.setExpAccount(config.accounting().getDefaultPurchaseAccount());
+//		}
+//		return vat;
+//	}
 
 	private static Stream<Account> getSuggestedAccountsStream(AONContext ctx, Integer registry, InvoiceType type) {
 		AggregateFunction<Integer> count = DSL.count(ACCOUNT.ID);

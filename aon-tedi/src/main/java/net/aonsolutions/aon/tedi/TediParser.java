@@ -559,18 +559,16 @@ public class TediParser {
 			double quota = AonMathUtils.round( base * percent / 100 );
 			double surchargeQuota = AonMathUtils.round( base * surcharge / 100 );
 			double deductibleQuota = AonMathUtils.round( quota + surchargeQuota );
-			ctx.getAonDetail().addInvoiceTax( 
-					new InvoiceTax()
-					.setTaxType( TaxType.VAT )
-					.setBase( base )
-					.setPercentage( percent )
-					.setQuota( quota )
-					.setSurcharge( surcharge )
-					.setSurchargeQuota( surchargeQuota )
-					.setVatDeductionType( VatDeductionType.WITH_RIGHT )
-					.setDeductiblePercent( 100.0 )
-					.setDeductibleQuota( deductibleQuota )
-					); 
+			ctx.getAonDetail().ensureVatTax(ctx.getTediResult().getInvoice() )
+				.setBase( base )
+				.setPercentage( percent )
+				.setQuota( quota )
+				.setSurcharge( surcharge )
+				.setSurchargeQuota( surchargeQuota )
+				.setVatDeductionType( VatDeductionType.WITH_RIGHT )
+				.setDeductiblePercent( 100.0 )
+				.setDeductibleQuota( deductibleQuota )
+			; 
 		}
 	};
 	
@@ -594,36 +592,36 @@ public class TediParser {
 		}
 	};
 	
-	private static Consumer<TediParserContext> INVOICE_VAT_BREAKDOWN = (ctx) -> {
-		TediResult result = ctx.getTediResult();
-		if ( result.getTedi().getTaxes() != null) {
-//			if (result.getInvoice().getBreakdown() == null) {
-//				result.getInvoice().setBreakdown( new LinkedList<InvoiceBreakdown>());
+//	private static Consumer<TediParserContext> INVOICE_VAT_BREAKDOWN = (ctx) -> {
+//		TediResult result = ctx.getTediResult();
+//		if ( result.getTedi().getTaxes() != null) {
+////			if (result.getInvoice().getBreakdown() == null) {
+////				result.getInvoice().setBreakdown( new LinkedList<InvoiceBreakdown>());
+////			}
+//			for ( TediInvoiceTax tediTax : result.getTedi().getTaxes()) {
+//				if (tediTax.getTaxType() == TediTaxType.IVA) {
+//					double base = result.getInvoice().isUndeductible()
+//							?AonMathUtils.round(AonNumberUtils.zeroIfNull(AonNumberUtils.zeroIfNull(tediTax.getBase()) + AonNumberUtils.zeroIfNull(tediTax.getQuota())))
+//							:AonNumberUtils.zeroIfNull(tediTax.getBase());
+//					double percent = result.getInvoice().isUndeductible()
+//							?0.0
+//							:AonNumberUtils.zeroIfNull(tediTax.getPercentage());
+//					double quota = result.getInvoice().isUndeductible()
+//							?0.0
+//							:AonNumberUtils.zeroIfNull(tediTax.getQuota());
+//					InvoiceBreakdown ib = new InvoiceBreakdown()
+//						.setTaxType(TaxType.VAT)
+//						.setBase( base )
+//						.setPercentage( percent )
+//						.setQuota( quota )
+//						.setSurcharge( result.getInvoice().isUndeductible()?0.0:AonNumberUtils.todouble( tediTax.getSurcharge()) )
+//						.setSurchargeQuota( result.getInvoice().isUndeductible()?0.0:AonNumberUtils.todouble( tediTax.getSurchargeQuota()));
+////					result.getInvoice().getBreakdown().add(ib);
+//					result.getInvoice().addBreakdown(ib);
+//				}
 //			}
-			for ( TediInvoiceTax tediTax : result.getTedi().getTaxes()) {
-				if (tediTax.getTaxType() == TediTaxType.IVA) {
-					double base = result.getInvoice().isUndeductible()
-							?AonMathUtils.round(AonNumberUtils.zeroIfNull(AonNumberUtils.zeroIfNull(tediTax.getBase()) + AonNumberUtils.zeroIfNull(tediTax.getQuota())))
-							:AonNumberUtils.zeroIfNull(tediTax.getBase());
-					double percent = result.getInvoice().isUndeductible()
-							?0.0
-							:AonNumberUtils.zeroIfNull(tediTax.getPercentage());
-					double quota = result.getInvoice().isUndeductible()
-							?0.0
-							:AonNumberUtils.zeroIfNull(tediTax.getQuota());
-					InvoiceBreakdown ib = new InvoiceBreakdown()
-						.setTaxType(TaxType.VAT)
-						.setBase( base )
-						.setPercentage( percent )
-						.setQuota( quota )
-						.setSurcharge( result.getInvoice().isUndeductible()?0.0:AonNumberUtils.todouble( tediTax.getSurcharge()) )
-						.setSurchargeQuota( result.getInvoice().isUndeductible()?0.0:AonNumberUtils.todouble( tediTax.getSurchargeQuota()));
-//					result.getInvoice().getBreakdown().add(ib);
-					result.getInvoice().addBreakdown(ib);
-				}
-			}
-		}
-	};
+//		}
+//	};
 	
 	private static Consumer<TediParserContext> INVOICE_IRPF_BREAKDOWN = (ctx) -> {
 		TediResult result = ctx.getTediResult();
@@ -632,37 +630,29 @@ public class TediParser {
 //				if (result.getInvoice().getBreakdown() == null) {
 //					result.getInvoice().setBreakdown( new LinkedList<InvoiceBreakdown>());
 //				}
-				InvoiceBreakdown irpfTax = null;
 				for ( TediInvoiceTax tediTax : result.getTedi().getTaxes()) {
 					if (tediTax.getTaxType() == TediTaxType.IRPF) {
-						double base = AonNumberUtils.zeroIfNull(tediTax.getBase());
 						double percent = AonNumberUtils.zeroIfNull(tediTax.getPercentage());
-						double quota = AonNumberUtils.zeroIfNull(tediTax.getQuota());
-						irpfTax = new InvoiceBreakdown()
-							.setTaxType(tediTax.getTaxType() == TediTaxType.IVA? TaxType.VAT : TaxType.RETENTION )
-							.setBase( base )
-							.setPercentage( percent )
-							.setQuota( quota );
-						//result.getInvoice().getBreakdown().add(irpfTax);
-						result.getInvoice().addBreakdown(irpfTax);
-						break; // TODO ¿¿¿En Tedi solo puede haber un IRPF???
+						result.getInvoice().setWithholding( true );
+						InvoiceWithholding wd = result.getInvoice().ensureWithholdingData()
+							.setPercentage( percent );
+						break; 
 					}
 				}
-				if (irpfTax != null && result.getInvoice().getDetails() != null) {
+				result.getInvoice().getWithholding()
+				.ifPresent( wd -> {
 					for ( InvoiceDetail id : result.getInvoice().getDetails()) {
-						double irpfQuota = AonMathUtils.round(id.getTaxableBase() * irpfTax.getPercentage() / 100);
-						id.addInvoiceTax( 
-							new InvoiceTax()
-								.setTaxType( TaxType.RETENTION )
-								.setBase( id.getTaxableBase() )
-								.setPercentage( irpfTax.getPercentage() )
-								.setQuota( irpfQuota )
-								.setWithholdingType( WithholdingType.PROFESSIONAL )
-								.setDeductiblePercent( 100.0 )
-								.setDeductibleQuota( irpfQuota )
-							); 
+						double irpfQuota = AonMathUtils.round(id.getTaxableBase() * wd.getPercentage() / 100);
+						id.ensureWithholdingTax(result.getInvoice() )
+							.setBase( id.getTaxableBase() )
+							.setPercentage( wd.getPercentage() )
+							.setQuota( irpfQuota )
+							.setWithholdingType( WithholdingType.PROFESSIONAL )
+							.setDeductiblePercent( 100.0 )
+							.setDeductibleQuota( irpfQuota )
+						; 
 					}
-				}
+				});
 			}
 		}
 	};
@@ -688,8 +678,7 @@ public class TediParser {
 						;
 					result.getInvoice().deleteDetails();
 					result.getInvoice().addDetail(id);
-					id.addInvoiceTax( new InvoiceTax()
-						.setTaxType( TaxType.VAT )
+					id.ensureVatTax( result.getInvoice() )
 						.setBase( ib.getBase() )
 						.setPercentage( ib.getPercentage() )
 						.setQuota( ib.getQuota() )
@@ -698,23 +687,21 @@ public class TediParser {
 						.setVatDeductionType( VatDeductionType.WITH_RIGHT )
 						.setDeductiblePercent( 100.0 )
 						.setDeductibleQuota( ib.getQuota() )
-						);
+					;
 				}
 			}
 			if (irpfTax != null && result.getInvoice().getDetails() != null) {
 				result.getInvoice().getBreakdown().add(irpfTax);
 				for ( InvoiceDetail id : result.getInvoice().getDetails()) {
 					double irpfQuota = AonMathUtils.round(id.getTaxableBase() * irpfTax.getPercentage() / 100);
-					id.addInvoiceTax( 
-							new InvoiceTax()
-								.setTaxType( TaxType.RETENTION )
-								.setBase( id.getTaxableBase() )
-								.setPercentage( irpfTax.getPercentage() )
-								.setQuota( irpfQuota )
-								.setWithholdingType( WithholdingType.PROFESSIONAL )
-								.setDeductiblePercent( 100.0 )
-								.setDeductibleQuota( irpfQuota )
-							); 
+					id.ensureWithholdingTax(result.getInvoice())  
+						.setBase( id.getTaxableBase() )
+						.setPercentage( irpfTax.getPercentage() )
+						.setQuota( irpfQuota )
+						.setWithholdingType( WithholdingType.PROFESSIONAL )
+						.setDeductiblePercent( 100.0 )
+						.setDeductibleQuota( irpfQuota )
+					; 
 				}
 			}
 
@@ -808,7 +795,7 @@ public class TediParser {
 		.andThen(INVOICE_REFERENCE_CODE)
 		.andThen(INVOICE_ADDRESS)
 		.andThen(INVOICE_DETAILS)
-		.andThen(INVOICE_VAT_BREAKDOWN)
+		//.andThen(INVOICE_VAT_BREAKDOWN)
 		.andThen(INVOICE_IRPF_BREAKDOWN)
 		.andThen(GENERATE_INVOICE_TAXES_IF_NEEDED)
 //		.andThen(INVOICE_TAXES)

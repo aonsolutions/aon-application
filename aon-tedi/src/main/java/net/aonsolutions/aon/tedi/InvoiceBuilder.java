@@ -168,18 +168,16 @@ public class InvoiceBuilder {
 				double quota = AonMathUtils.round( base * percent / 100 );
 				double surchargeQuota = AonMathUtils.round( base * surcharge / 100 );
 				double deductibleQuota = AonMathUtils.round( quota );
-				aon.addInvoiceTax( 
-					new InvoiceTax()
-						.setTaxType( TaxType.VAT )
-						.setBase( base )
-						.setPercentage( percent )
-						.setQuota( quota )
-						.setSurcharge( surcharge )
-						.setSurchargeQuota( surchargeQuota )
-						.setVatDeductionType( VatDeductionType.WITH_RIGHT )
-						.setDeductiblePercent( 100.0 )
-						.setDeductibleQuota( deductibleQuota )
-						); 
+				aon.ensureVatTax(result.getInv()) 
+					.setBase( base )
+					.setPercentage( percent )
+					.setQuota( quota )
+					.setSurcharge( surcharge )
+					.setSurchargeQuota( surchargeQuota )
+					.setVatDeductionType( VatDeductionType.WITH_RIGHT )
+					.setDeductiblePercent( 100.0 )
+					.setDeductibleQuota( deductibleQuota )
+					; 
 			}
 		}),
 		;
@@ -347,18 +345,16 @@ public class InvoiceBuilder {
 									.setTaxableBase(ib.getBase())
 									;
 							if (tit.getTaxType() == TediTaxType.IVA) {
-								id.addInvoiceTax( 
-										new InvoiceTax()
-											.setTaxType( TaxType.VAT )
-											.setBase( ib.getBase() )
-											.setPercentage( ib.getPercentage() )
-											.setQuota( ib.getQuota() )
-											.setSurcharge( ib.getSurcharge() )
-											.setSurchargeQuota( ib.getSurchargeQuota() )
-											.setVatDeductionType( VatDeductionType.WITH_RIGHT )
-											.setDeductiblePercent( 100.0 )
-											.setDeductibleQuota( ib.getQuota() )
-											); 
+								id.ensureVatTax(result.getInv())
+									.setBase( ib.getBase() )
+									.setPercentage( ib.getPercentage() )
+									.setQuota( ib.getQuota() )
+									.setSurcharge( ib.getSurcharge() )
+									.setSurchargeQuota( ib.getSurchargeQuota() )
+									.setVatDeductionType( VatDeductionType.WITH_RIGHT )
+									.setDeductiblePercent( 100.0 )
+									.setDeductibleQuota( ib.getQuota() )
+								; 
 							}
 							result.getInvoice().addDetail(id);
 						}
@@ -368,16 +364,14 @@ public class InvoiceBuilder {
 					result.getInvoice().getBreakdown().add(irpfTax);
 					for ( InvoiceDetail id : result.getInvoice().getDetails()) {
 						double irpfQuota = AonMathUtils.round(id.getTaxableBase() * irpfTax.getPercentage() / 100);
-						id.addInvoiceTax( 
-								new InvoiceTax()
-									.setTaxType( TaxType.RETENTION )
-									.setBase( id.getTaxableBase() )
-									.setPercentage( irpfTax.getPercentage() )
-									.setQuota( irpfQuota )
-									.setWithholdingType( WithholdingType.PROFESSIONAL )
-									.setDeductiblePercent( 100.0 )
-									.setDeductibleQuota( irpfQuota )
-									); 
+						id.ensureWithholdingTax(result.getInv())
+							.setBase( id.getTaxableBase() )
+							.setPercentage( irpfTax.getPercentage() )
+							.setQuota( irpfQuota )
+							.setWithholdingType( WithholdingType.PROFESSIONAL )
+							.setDeductiblePercent( 100.0 )
+							.setDeductibleQuota( irpfQuota )
+							; 
 					}
 				}
 			}

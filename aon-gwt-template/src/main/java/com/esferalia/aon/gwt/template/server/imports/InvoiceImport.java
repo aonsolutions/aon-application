@@ -683,7 +683,7 @@ public class InvoiceImport extends ImportUtils{
 					.setTaxableBase(detBase)
 					.setExpAccount(expAccount);
 				if(!invoice.isUndeductible()) {
-					vat.ensureVatTax()
+					vat.ensureVatTax(invoice)
 						.setVatDeductionType(VatDeductionType.WITH_RIGHT)
 						.setBase(detBase)
 						.setPercentage(ivs.get(j).getPercentage() != null? ivs.get(j).getPercentage() : 0.0)
@@ -1027,7 +1027,7 @@ public class InvoiceImport extends ImportUtils{
 					.setTaxableBase(detBase)
 					.setExpAccount(expAccount);
 				if(!invoice.isUndeductible()) {
-					vat.ensureVatTax()
+					vat.ensureVatTax(invoice)
 					.setVatDeductionType(VatDeductionType.WITH_RIGHT)
 					.setBase(aux.getBase() != null 
 							? aux.getBase() : 0.0)

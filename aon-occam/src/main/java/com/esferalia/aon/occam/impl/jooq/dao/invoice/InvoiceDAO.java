@@ -39,19 +39,19 @@ import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.json.invoice.InvoiceJSON;
 import com.esferalia.aon.occam.api.model.Account;
 import com.esferalia.aon.occam.api.model.EnterpriseActivity;
-import com.esferalia.aon.occam.api.model.InvoiceCalculator;
 import com.esferalia.aon.occam.api.model.Filter.Property;
+import com.esferalia.aon.occam.api.model.InvoiceCalculator;
 import com.esferalia.aon.occam.api.model.Rawdoc;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.attachment.InvoiceAttachmentType;
 import com.esferalia.aon.occam.api.model.finance.EnumVisitors.IInvoiceTypeVisitor;
 import com.esferalia.aon.occam.api.model.finance.Finance;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
-import com.esferalia.aon.occam.api.model.finance.InvoiceBreakdown;
 import com.esferalia.aon.occam.api.model.finance.InvoiceFilter;
 import com.esferalia.aon.occam.api.model.finance.InvoiceMin;
 import com.esferalia.aon.occam.api.model.finance.InvoiceProperties;
 import com.esferalia.aon.occam.api.model.finance.InvoiceTrackingStatus;
+import com.esferalia.aon.occam.api.model.finance.InvoiceWithholding;
 import com.esferalia.aon.occam.api.model.finance.TbaiConfiguration;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceErrorKey;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceErrorMessages;
@@ -932,23 +932,21 @@ public class InvoiceDAO {
 
 	private static void initializeWithholding(AONContext ctx, Invoice inv) {
 		if (inv.isWithholding()) {
-			Account withholdingAccount = null;
-			InvoiceBreakdown withholdingBreakdown = new InvoiceBreakdown();
+			Account wa = null;
+			InvoiceWithholding iw = inv.ensureWithholdingData();
 			if (ctx.getConfiguration().getDefaultWithholdingPercent() != null) {
-				withholdingBreakdown.setPercentage(ctx.getConfiguration().getDefaultWithholdingPercent().getPercentage());
-				withholdingBreakdown.setWithholdingType(ctx.getConfiguration().getDefaultWithholdingPercent().getWithholdingType());
-				withholdingAccount = (inv.isSales())
+				iw.setPercentage(ctx.getConfiguration().getDefaultWithholdingPercent().getPercentage());
+				iw.setWithholdingType(ctx.getConfiguration().getDefaultWithholdingPercent().getWithholdingType());
+				wa = (inv.isSales())
 					?ctx.getConfiguration().getDefaultWithholdingPercent().getSalesAccount()
 					:ctx.getConfiguration().getDefaultWithholdingPercent().getPurchaseAccount();
 			}
-			if (withholdingAccount == null) {
-				withholdingAccount = inv.isSales()
+			if (wa == null) {
+				wa = inv.isSales()
 					?ctx.getConfiguration().accounting().getDefaultPaidRetAccount()
 					:ctx.getConfiguration().accounting().getDefaultChargedRetAccount(); 
 			}
-			Account wa = withholdingAccount;
-			inv.addBreakdown(withholdingBreakdown);
-			inv.getWithholding().ifPresent( wb -> wb.setAccount(wa));
+			iw.setAccount(wa);
 		}
 	}
 	

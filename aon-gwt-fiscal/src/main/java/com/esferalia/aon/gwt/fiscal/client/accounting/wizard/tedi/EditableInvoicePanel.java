@@ -42,6 +42,7 @@ import com.esferalia.aon.occam.api.model.Workplace;
 import com.esferalia.aon.occam.api.model.finance.EnumVisitors.IInvoiceTransactionTypeVisitor;
 import com.esferalia.aon.occam.api.model.finance.InvoiceDetail;
 import com.esferalia.aon.occam.api.model.finance.InvoiceRectificationData;
+import com.esferalia.aon.occam.api.model.finance.InvoiceTax;
 import com.esferalia.aon.occam.api.model.finance.InvoiceWithholding;
 import com.esferalia.aon.occam.api.model.registry.AccountingRegistry;
 import com.esferalia.aon.occam.api.model.registry.AccountingRegistryType;
@@ -158,6 +159,9 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 	protected static interface IEditableInvoicePanelCallback extends IInvoicePanelCallback {
 		void enableInvoiceTotal(boolean b);
 		InvoiceDetail getVat(final int vatIdx);
+		default InvoiceTax getVatTax(final int vatIdx) {
+			return this.getVat(vatIdx).ensureVatTax(this.getInvoice().getInvoice());
+		}
 	}
 	
 	protected class EditableInvoicePanelCallback implements IEditableInvoicePanelCallback {

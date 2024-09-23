@@ -58,7 +58,6 @@ import com.esferalia.aon.occam.api.model.type.InvoiceTransactionType;
 import com.esferalia.aon.occam.api.model.type.InvoiceType;
 import com.esferalia.aon.occam.api.model.type.RectificationType;
 import com.esferalia.aon.occam.api.model.type.RegistryStatus;
-import com.esferalia.aon.occam.api.model.type.TaxType;
 import com.esferalia.aon.occam.api.model.type.VatDeductionType;
 import com.esferalia.aon.occam.api.model.type.WithholdingType;
 import com.esferalia.aon.watson.server.AonDateUtils;
@@ -822,20 +821,17 @@ public class ServalInvoiceImport extends ImportUtils{
 						.setPrice(AonMathUtils.round((taxableBase / quantity) , 4))
 						.setDiscountExpression("0.0")
 						.setTaxableBase(taxableBase)
-//						.setPrepayment("5600".equals(aux.getAccount().substring(0, 4)) || "5660".equals(aux.getAccount().substring(0, 4)))
 						.setSource(InvoiceSource.DIRECT_INVOICE);
 				
-				InvoiceTax vat = new InvoiceTax()
-						.setDomain(detail.getDomain())
-						.setTaxType(TaxType.VAT)
-						.setBase(aux.getBase() != null ? aux.getBase() : 0.0)
-						.setPercentage(aux.getPercentage() != null ? aux.getPercentage() : 0.0)
-						.setQuota(aux.getQuota() != null ? aux.getQuota() : 0.0)
-						.setSurcharge(aux.getRePercentage() != null ? aux.getRePercentage() : 0.0)
-						.setSurchargeQuota(aux.getReQuota() != null ? aux.getReQuota() : 0.0)
-						.setVatDeductionType(VatDeductionType.WITH_RIGHT)
-						.setDeductiblePercent(100.0)
-						.setDeductibleQuota(aux.getQuota() != null ? aux.getQuota() : 0.0);
+				InvoiceTax vat = detail.ensureVatTax(invoice)
+					.setBase(aux.getBase() != null ? aux.getBase() : 0.0)
+					.setPercentage(aux.getPercentage() != null ? aux.getPercentage() : 0.0)
+					.setQuota(aux.getQuota() != null ? aux.getQuota() : 0.0)
+					.setSurcharge(aux.getRePercentage() != null ? aux.getRePercentage() : 0.0)
+					.setSurchargeQuota(aux.getReQuota() != null ? aux.getReQuota() : 0.0)
+					.setVatDeductionType(VatDeductionType.WITH_RIGHT)
+					.setDeductiblePercent(100.0)
+					.setDeductibleQuota(aux.getQuota() != null ? aux.getQuota() : 0.0);
 				
 				if(invoice.isUndeductible()) {
 					vat.setBase(aux.getTotal());
@@ -845,19 +841,14 @@ public class ServalInvoiceImport extends ImportUtils{
 					vat.setSurcharge(0.0);
 					vat.setSurchargeQuota(0.0);
 				}
-				detail.addInvoiceTax(vat);
 				
 				if(invoice.isWithholding()) {
-					InvoiceTax wh = new InvoiceTax()
-						.setDomain(invoice.getDomain())
-						.setTaxType(TaxType.RETENTION)
+					detail.ensureWithholdingTax(invoice) 
 						.setWithholdingType(getWithholdingType(iic.getRetentionKey(), iic.getAccount()))
 						.setBase(retBase)
 						.setPercentage(retPercentage)
 						.setQuota(retQuota)
-//						.setAccount(retentionAccount.getId())
-						;
-					detail.addInvoiceTax(wh);
+					;
 				}
 				
 				double retentionQuota = aux.getRetentionQuota() != null ? aux.getRetentionQuota() : 0.0;

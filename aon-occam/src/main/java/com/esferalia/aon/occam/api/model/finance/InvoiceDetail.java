@@ -297,7 +297,10 @@ public class InvoiceDetail implements Serializable, HasAudit {
 		this.invoiceTaxes = invoiceTaxes;
 		return this;
 	}
-	public InvoiceDetail addInvoiceTax(InvoiceTax invoiceTax) {
+	private InvoiceDetail addInvoiceTax(Invoice invoice, InvoiceTax invoiceTax) {
+		invoice.getTaxBreakdown()
+			.ifPresent(tb -> tb.add(invoiceTax));
+		;
 		getInvoiceTaxes().add(invoiceTax);
 		return this;
 	}
@@ -309,18 +312,14 @@ public class InvoiceDetail implements Serializable, HasAudit {
 			.filter(it -> it.isVatType())
 			.findFirst();
 	}
-	public InvoiceTax ensureVatTax() {
-		if (!getVatTax().isPresent()) {
-			addVatTax();
-		}
-		return getVatTax().get();
+	public InvoiceTax ensureVatTax(Invoice invoice) {
+		return getVatTax().orElseGet(() -> addVatTax(invoice).getVatTax().orElse(null) );
 	}
-	public InvoiceDetail addVatTax() {
-		return addInvoiceTax( new InvoiceTax()
+	private InvoiceDetail addVatTax(Invoice invoice ) {
+		return addInvoiceTax(invoice, new InvoiceTax()
 			.setDomain(this.domain)
 			.setInvoiceDetail(this.id)
 			.setTaxType(TaxType.VAT)
-			.setBase(this.taxableBase)
 		);
 	}
 	public InvoiceDetail deleteVatTax() {
@@ -342,11 +341,10 @@ public class InvoiceDetail implements Serializable, HasAudit {
 	public InvoiceDetail addWithholdingTax( Invoice inv ) {
 		InvoiceWithholding wd = inv.getWithholding()
 			.orElseGet( inv::ensureWithholdingData );
-		return addInvoiceTax( new InvoiceTax()
+		return addInvoiceTax( inv, new InvoiceTax()
 			.setDomain(this.domain)
 			.setInvoiceDetail(this.id)
 			.setTaxType(TaxType.RETENTION)
-			.setBase(this.taxableBase)
 			.setWithholdingType( wd.getWithholdingType() )
 			.setPercentage( wd.getPercentage() )
 		);

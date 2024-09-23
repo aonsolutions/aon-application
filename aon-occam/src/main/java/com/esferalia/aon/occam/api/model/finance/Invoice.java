@@ -831,7 +831,7 @@ public class Invoice implements Serializable, HasAudit {
 		return this;
 	}
 	
-	public Invoice addBreakdown(InvoiceBreakdown ib) {
+	private Invoice addBreakdown(InvoiceBreakdown ib) {
 		ensureTaxBreakdown().add(ib);
 		return this;
 	}
