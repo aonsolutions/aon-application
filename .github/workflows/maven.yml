@@ -94,7 +94,7 @@ jobs:
       uses: docker/build-push-action@v6
       with:
         context: .
-        load: false
+        load: true
         tags: ghcr.io/${{ github.repository_owner }}/aon-application:${{ env.BRANCH_NAME }}
 
     - name: Build Docker aon-db-up2date image
@@ -140,7 +140,7 @@ jobs:
       run: mvn -B --resume-from aon-js-payroll -Drpm.release=false -DskipTests=true clean install
 
     - name: Build and push Docker aon-application image
-      if: github.ref == 'refs/heads/master'
+      uses: docker/build-push-action@v6
       with:
         context: .
         push: true
@@ -154,6 +154,7 @@ jobs:
         tags: ghcr.io/${{ github.repository_owner }}/aon-db-up2date:${{ env.BRANCH_NAME }}
 
     - name: Build and push Docker aon-solutions image
+      uses: docker/build-push-action@v6
       with:
         context: .
         file: ./aon-solutions/Dockerfile
