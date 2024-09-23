@@ -3,13 +3,12 @@ package net.aonsolutions.aon.tedi;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.Company;
+import com.esferalia.aon.occam.api.model.Occam;
 
 public class TediContext {
 	
 	private AONContext aonContext;
-	private String domainName;
-	private Integer domain;
-	private String user;
+	private Occam occam;
 	private AonConfiguration aonConfiguration;
 
 	public AONContext getAONContext() {
@@ -20,32 +19,23 @@ public class TediContext {
 		this.aonContext = aonContext;
 		return this;
 	}
+	
+	public Occam getOccam() {
+		return occam;
+	}
+	public TediContext setOccam(Occam occam) {
+		this.occam = occam;
+		return this;
+	}
 
 	public String getDomainName() {
-		return domainName;
+		return occam.getDomainName();
 	}
-
-	public TediContext setDomainName(String domainName) {
-		this.domainName = domainName;
-		return this;
-	}
-
 	public Integer getDomain() {
-		return domain;
+		return occam.getDomain();
 	}
-
-	public TediContext setDomain(Integer domain) {
-		this.domain = domain;
-		return this;
-	}
-
 	public String getUser() {
-		return user;
-	}
-
-	public TediContext setUser(String user) {
-		this.user = user;
-		return this;
+		return occam.getUser();
 	}
 
 	public AonConfiguration getAonConfiguration() {

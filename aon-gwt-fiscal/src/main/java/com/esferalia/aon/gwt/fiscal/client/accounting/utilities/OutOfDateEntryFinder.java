@@ -193,6 +193,7 @@ class OutOfDateEntryFinder extends OptionBase {
 		entryDialog.show();
 	}
 	
+	@Override
 	protected Widget getToolbarPanel() {		
 		 
 		AonToolbar toolbarPanel = new AonToolbar(getOptionDescription());

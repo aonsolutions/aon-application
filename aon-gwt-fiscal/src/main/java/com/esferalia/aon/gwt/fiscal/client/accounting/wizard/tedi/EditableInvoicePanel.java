@@ -75,7 +75,6 @@ import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.logging.client.ConsoleLogHandler;
-import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
@@ -190,21 +189,6 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 		}
 
 		@Override
-		public String getCurrentDomainName() {
-			return invoiceCallback.getCurrentDomainName();
-		}
-
-		@Override
-		public int getCurrentDomainId() {
-			return invoiceCallback.getCurrentDomainId();
-		}
-
-		@Override
-		public String getCurrentUser() {
-			return invoiceCallback.getCurrentUser();
-		}
-
-		@Override
 		public AccountEntryModule getModule() {
 			return invoiceCallback.getModule();
 		}
@@ -284,6 +268,7 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 		registryBox.addStyleName(AON.CSS.aonFlexGrow1());
 		
 		registryBox.addKeyUpHandler( new KeyUpHandler() {
+			@Override
 			public void onKeyUp(KeyUpEvent event) {
 				if (event.getNativeKeyCode() == KeyCodes.KEY_F9) {
 					if ( registryBox.getId() == null) {
@@ -325,10 +310,9 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 				
 				@Override
 				public void onClick(ClickEvent event) {
-					ACCOUNT_ENTRY_SERVICE.getAccountingInvoiceFromInvoice(invoiceCallback.getCurrentDomainName()
-							,invoiceCallback.getCurrentDomainId(),invoiceCallback.getCurrentUser()
-							,invoiceCallback.getInvoice().getDuaNationalInvoice()
-							,new AsyncCallback<AccountingInvoice>() {
+					ACCOUNT_ENTRY_SERVICE.getAccountingInvoiceFromInvoice(invoiceCallback.getOccam()
+						,invoiceCallback.getInvoice().getDuaNationalInvoice()
+						,new AsyncCallback<AccountingInvoice>() {
 						
 						@Override
 						public void onSuccess(AccountingInvoice result) {
@@ -362,11 +346,9 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 				
 				@Override
 				public void onClick(ClickEvent event) {
-					ACCOUNT_ENTRY_SERVICE.getAccountingInvoiceFromInvoice(invoiceCallback.getCurrentDomainName()
-							,invoiceCallback.getCurrentDomainId()
-							,invoiceCallback.getCurrentUser()
-							,invoiceCallback.getInvoice().getDuaInvoice().getAccountingInvoice().getInvoice().getId()
-							,new AsyncCallback<AccountingInvoice>() {
+					ACCOUNT_ENTRY_SERVICE.getAccountingInvoiceFromInvoice(invoiceCallback.getOccam()
+						,invoiceCallback.getInvoice().getDuaInvoice().getAccountingInvoice().getInvoice().getId()
+						,new AsyncCallback<AccountingInvoice>() {
 						
 						@Override
 						public void onSuccess(AccountingInvoice result) {
@@ -415,9 +397,7 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 					
 					@Override
 					public void onClick(ClickEvent event) {
-						ACCOUNT_ENTRY_SERVICE.getAccountingInvoiceFromInvoice(invoiceCallback.getCurrentDomainName()
-								,invoiceCallback.getCurrentDomainId()
-								,invoiceCallback.getCurrentUser()
+						ACCOUNT_ENTRY_SERVICE.getAccountingInvoiceFromInvoice(invoiceCallback.getOccam()
 								,invoiceCallback.getInvoice().getInvoice().getRectificationInvoiceId()
 								,new AsyncCallback<AccountingInvoice>() {
 							
@@ -495,11 +475,7 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 							dialog.center();
 							dialog.show();
 							
-							Scheduler.get().scheduleDeferred(new Command() {
-								public void execute() {
-									rectPanel.setFocus(true);
-								}
-							});		
+							Scheduler.get().scheduleDeferred(() -> rectPanel.setFocus(true));		
 							
 						}
 					});
@@ -920,37 +896,37 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 
 	private void repeatLastInvoice(InvoicePanelCallback invoiceCallback, final ISelectionCallback cbk) {
 		Integer registryId = invoiceCallback.getInvoice().getRegistry().getId();
-		ACCOUNT_ENTRY_SERVICE.getRegistryLastAccountingInvoice(invoiceCallback.getCurrentDomainName()
-				,invoiceCallback.getCurrentDomainId(),invoiceCallback.getCurrentUser(), registryId
-				,new AsyncCallback<AccountingInvoice>() {
-						@Override
-						public void onSuccess(AccountingInvoice result) {
-							if (result == null) {
-								invoiceCallback.getModule().onError("No se ha encontrado ninguna factura");
-							} else {
-								result.setAccountEntry(invoiceCallback.getInvoice().getAccountEntry());
-								result.getInvoice().setIssueDate(invoiceCallback.getModule().getEntryDate());
-								result.getInvoice().setTaxDate(invoiceCallback.getModule().getEntryDate());
-								if (!result.getInvoice().isSales()) {
-									result.getInvoice().setReferenceCode(referenceCode.getValue());
-								}
-								if (result.getInvoice().hasFinances()) {
-									result.getInvoice().getFinances().get(0).setDueDate(invoiceCallback.getModule().getEntryDate());
-									// TODO Manage due dates for all finances.
-								}
-								result.getInvoice().setId(null);
-								SelectionEvent.<AccountingInvoice>fire( EditableInvoicePanel.this, result);
-								
-							}
-							if (cbk != null) {
-								cbk.onSuccess();
-							}							
+		ACCOUNT_ENTRY_SERVICE.getRegistryLastAccountingInvoice(invoiceCallback.getOccam()
+			, registryId
+			,new AsyncCallback<AccountingInvoice>() {
+				@Override
+				public void onSuccess(AccountingInvoice result) {
+					if (result == null) {
+						invoiceCallback.getModule().onError("No se ha encontrado ninguna factura");
+					} else {
+						result.setAccountEntry(invoiceCallback.getInvoice().getAccountEntry());
+						result.getInvoice().setIssueDate(invoiceCallback.getModule().getEntryDate());
+						result.getInvoice().setTaxDate(invoiceCallback.getModule().getEntryDate());
+						if (!result.getInvoice().isSales()) {
+							result.getInvoice().setReferenceCode(referenceCode.getValue());
 						}
+						if (result.getInvoice().hasFinances()) {
+							result.getInvoice().getFinances().get(0).setDueDate(invoiceCallback.getModule().getEntryDate());
+							// TODO Manage due dates for all finances.
+						}
+						result.getInvoice().setId(null);
+						SelectionEvent.<AccountingInvoice>fire( EditableInvoicePanel.this, result);
 						
-						@Override
-						public void onFailure(Throwable caught) {
-							invoiceCallback.getModule().onError("No se ha encontrado ninguna factura");
-						}
+					}
+					if (cbk != null) {
+						cbk.onSuccess();
+					}							
+				}
+				
+				@Override
+				public void onFailure(Throwable caught) {
+					invoiceCallback.getModule().onError("No se ha encontrado ninguna factura");
+				}
 			});
 	}
 
@@ -1919,6 +1895,7 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 		invoicePanel.setVisible(true);
 		
 		Scheduler.get().scheduleDeferred(new ScheduledCommand() {
+			@Override
 			public void execute() {
 				if (invoiceCallback.getInvoice().isSales()) {
 					series.setFocus(true);
@@ -2102,18 +2079,16 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 
 		ocrFileSelect.ensureDebugId("ocrFileSelect");
 		ocrFileSelect.getElement().getStyle().setDisplay(Style.Display.NONE);
-		ocrFileSelect.addChangeHandler(new ChangeHandler() {
-			public void onChange(ChangeEvent event) {
+		ocrFileSelect.addChangeHandler(event -> {
+			filedrag.clear();
+			if ( invoiceCallback.getConfiguration().isOCRActive() ) {
+				filedrag.add(getSplashWidget());
+			} else {
 				filedrag.clear();
-				if ( invoiceCallback.getConfiguration().isOCRActive() ) {
-					filedrag.add(getSplashWidget());
-				} else {
-					filedrag.clear();
-					registryBox.setFocus(true);
-				}
-				event.preventDefault();
-				fileSelectHandler(ocrFileSelect.getElement());
+				registryBox.setFocus(true);
 			}
+			event.preventDefault();
+			fileSelectHandler(ocrFileSelect.getElement());
 		});
 			
 		if (!invoiceCallback.getConfiguration().isOCRActive()) {

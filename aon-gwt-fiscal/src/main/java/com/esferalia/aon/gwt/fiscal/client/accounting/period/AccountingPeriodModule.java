@@ -37,7 +37,6 @@ import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.safehtml.client.SafeHtmlTemplates;
 import com.google.gwt.safehtml.shared.SafeHtml;
-import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
@@ -128,11 +127,7 @@ public class AccountingPeriodModule extends MainEntryPoint {
 		container = new AonCards();;
 		centerLayoutPanel.setWidget(container );
 		splitLayoutPanel.add(centerLayoutPanel);
-		Scheduler.get().scheduleDeferred(new Command() {
-	        public void execute() {
-	        	search(opt);		
-	        }
-	    });		
+		Scheduler.get().scheduleDeferred(() -> search(opt));		
 	}
 
 	private Widget getToolbarPanel(final AccountingPeriodModuleOptions opt) {

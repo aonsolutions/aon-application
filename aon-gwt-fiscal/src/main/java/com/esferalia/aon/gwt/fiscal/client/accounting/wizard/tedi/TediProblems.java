@@ -79,20 +79,18 @@ public class TediProblems extends ScrollPanel {
 
 						@Override
 						public void onAccept(TediResult result) {
-							TEDI_SERVICE.validateInvoice(callback.getCurrentDomainName(),
-								callback.getCurrentUser(), callback.getCurrentDomainId(), result
-								, new AsyncCallback<TediResult>() {
-									
-									@Override
-									public void onSuccess(TediResult result) {
-										callback.onChanged(result);
-									}
-									
-									@Override
-									public void onFailure(Throwable caught) {
-										callback.onError(caught);
-									}
-								});
+							TEDI_SERVICE.validateInvoice(callback.getOccam(), result , new AsyncCallback<TediResult>() {
+								
+								@Override
+								public void onSuccess(TediResult result) {
+									callback.onChanged(result);
+								}
+								
+								@Override
+								public void onFailure(Throwable caught) {
+									callback.onError(caught);
+								}
+							});
 						}
 					});
 				}

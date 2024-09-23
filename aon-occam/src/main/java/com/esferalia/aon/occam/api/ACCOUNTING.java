@@ -257,9 +257,8 @@ public class ACCOUNTING {
 	 	);
 	}
 
-	public static AccountEntry save(String domainName, int domain, String user,
-			AccountEntry ae) {
-		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domain, user)) {
+	public static AccountEntry save(Occam occam, AccountEntry ae) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(occam)) {
 			Integer id = getAccounting().save(ctx, ae);
 			AccountEntry saved = getAccounting().getAccountEntry(ctx, id);
 			return saved;
@@ -302,9 +301,8 @@ public class ACCOUNTING {
 		return getAccounting().existsAnyEntry(ctx, period, accountEntryType);
 	}
 
-	public static void deleteAccountEntry(String domainName, int domain,
-			String user, Integer id) {
-		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domain, user)) {
+	public static void deleteAccountEntry(Occam occam, Integer id) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(occam)) {
 			getAccounting().delete(ctx, id);
 		}
 	}
@@ -417,9 +415,8 @@ public class ACCOUNTING {
 		}
 	}
 
-	public static AccountingInvoice getAccountingInvoiceFromInvoice(String domainName, int domain, String user,
-			 Integer invoiceId) {
-		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domain, user)) {
+	public static AccountingInvoice getAccountingInvoiceFromInvoice(Occam occam, Integer invoiceId) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(occam)) {
 			return getAccounting().getAccountingInvoiceFromInvoice(ctx, invoiceId);
 		}
 	}
@@ -460,9 +457,8 @@ public class ACCOUNTING {
 	}
 
 
-	public static AccountingInvoice getRegistryLastAccountingInvoice(String domainName, int domain, String userLogin,
-			Integer registryId) {
-		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domain, userLogin)) {
+	public static AccountingInvoice getRegistryLastAccountingInvoice(Occam occam, Integer registryId) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(occam)) {
 			return getAccounting().getRegistryLastAccountingInvoice(ctx, registryId);
 		}
 	}
@@ -487,14 +483,14 @@ public class ACCOUNTING {
 		}
 	}
 
-	public static LinkedList<SalaryEntry> getSalaryEntries(String domainName, int domain, String userLogin, Date from, Date to) {
-		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domain, userLogin)) {
+	public static LinkedList<SalaryEntry> getSalaryEntries(Occam occam, Date from, Date to) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(occam)) {
 			return getAccounting().getSalaryEntries(ctx, from, to);
 		}
 	}
 
-	public static String getSalaryFormatted(String domainName, int domain, String userLogin, Date from, Date to) {
-		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domain, userLogin)) {
+	public static String getSalaryFormatted(Occam occam, Date from, Date to) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(occam)) {
 			return getAccounting().getSalaryFormatted(ctx, from, to);
 		}
 	}

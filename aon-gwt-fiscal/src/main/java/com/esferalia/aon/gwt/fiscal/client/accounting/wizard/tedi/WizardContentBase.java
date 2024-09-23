@@ -28,6 +28,7 @@ public abstract class WizardContentBase<T extends IAccountEntryWrapper> extends 
 		return SERVICE;
 	}
 	
+	@Override
 	public AonConfiguration getConfiguration() {
 		return getCallback().getConfiguration();
 	}
@@ -48,8 +49,7 @@ public abstract class WizardContentBase<T extends IAccountEntryWrapper> extends 
 	
 	@Override
 	public void save(final AsyncCallback<IAccountEntryWrapper> callback) {
-		getAccountEntryService().save(getCallback().getCurrentDomainName(), getCallback().getCurrentDomainId()
-			, getCallback().getCurrentUser(), getWrapper().getAccountEntry()
+		getAccountEntryService().save(getCallback().getOccam(), getWrapper().getAccountEntry()
 			, new AsyncCallback<AccountEntry>() {
 
 			@Override
@@ -74,23 +74,20 @@ public abstract class WizardContentBase<T extends IAccountEntryWrapper> extends 
 		// pantalla.
 		// Es lo mismo que un reset().
 		if (getWrapper().getAccountEntry().getId() != null) {
-			getAccountEntryService().deleteAccountEntry(getCallback().getCurrentDomainName()
-					, getCallback().getCurrentDomainId()
-					, getCallback().getCurrentUser()
-					, getWrapper().getAccountEntry().getId(),
-					new AsyncCallbackWrapper<Void>(callback) {
-
-						@Override
-						public void onSuccess(Void result) {
-							callback.onSuccess(result);
-						}
-
-						@Override
-						public void onFailure(Throwable caught) {
-							callback.onFailure(caught);
-						}
-
-					});
+			getAccountEntryService().deleteAccountEntry(getCallback().getOccam(), getWrapper().getAccountEntry().getId(),
+				new AsyncCallbackWrapper<Void>(callback) {
+	
+					@Override
+					public void onSuccess(Void result) {
+						callback.onSuccess(result);
+					}
+	
+					@Override
+					public void onFailure(Throwable caught) {
+						callback.onFailure(caught);
+					}
+	
+				});
 		} else {
 			callback.onSuccess(null);
 		}

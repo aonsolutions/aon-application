@@ -14,6 +14,7 @@ import com.esferalia.aon.occam.api.json.JsonUtils;
 import com.esferalia.aon.occam.api.model.AccountingInvoice;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.IJsonNames;
+import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.Rawdoc;
 import com.esferalia.aon.occam.api.model.RawdocDomainData;
 import com.esferalia.aon.occam.api.model.RawdocParams;
@@ -23,7 +24,6 @@ import com.esferalia.aon.occam.api.model.attachment.InvoiceAttachmentType;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.tedi.TediResult;
 import com.esferalia.aon.occam.api.model.type.MimeType;
-import com.esferalia.aon.occam.impl.jooq.dao.AttachmentDAO;
 import com.esferalia.aon.occam.server.accounting.Rawdoc2AccountingInvoice;
 import com.esferalia.aon.watson.error.AonCoreException;
 
@@ -78,10 +78,12 @@ public class RawdocServiceImpl extends AonStatelessRemoteServiceServlet implemen
 					+ "/" +  params;
 		}
 		try {
-			TediContext tctx = new TediContext()
+			Occam occam = new Occam()
 				.setDomainName(domainName)
 				.setDomain(domain)
 				.setUser(user);
+			TediContext tctx = new TediContext()
+				.setOccam(occam);
 			TediResult result = TEDI.fromRawdoc(tctx, rawdocId );
 			result.getAccountingInvoice()
 				.getInvoice().setRawdocId(rawdocId);

@@ -12,6 +12,7 @@ import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.occam.api.model.type.InvoiceSource;
 import com.esferalia.aon.occam.api.model.type.RectificationType;
 import com.esferalia.aon.occam.api.model.type.TaxType;
+import com.esferalia.aon.watson.util.AonCollectionUtils;
 import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.dom.client.Style.Unit;
@@ -190,7 +191,7 @@ public class AonInvoiceViewer extends SimpleLayoutPanel {
 		breakdownContainer.setStyleName(AON.CSS.aonMarginTop());
 		breakdownContainer.addStyleName(AON.CSS.aonBorderBottom());
 		breakdownContainer.addStyleName(AON.CSS.aonPadding());
-		if (!invoice.getBreakdown().isEmpty()) {
+		if (AonCollectionUtils.isNotEmpty( invoice.getBreakdowns() )) {
 			AonDisplayGrid tab = new AonDisplayGrid();
 			tab.addStyleName(AON.CSS.aonBlockRight());
 			tab.addHeaderRow()
@@ -199,7 +200,7 @@ public class AonInvoiceViewer extends SimpleLayoutPanel {
 				.addCell(new Label( AON.MSG.percent() ), AON.CSS.aonTextRight(),AON.CSS.aonWidth120())
 				.addCell(new Label( AON.MSG.quota() ), AON.CSS.aonTextRight(),AON.CSS.aonWidth120())
 			;
-			for (InvoiceBreakdown detail : invoice.getBreakdown()) {
+			for (InvoiceBreakdown detail : invoice.getBreakdowns()) {
 				String typeLabel = detail.getTaxType().getName();
 				if (detail.getTaxType() == TaxType.RETENTION && detail.getWithholdingType() != null) {
 					typeLabel = typeLabel + " (" + detail.getWithholdingType().getAbbreviatedDescription() + ")";

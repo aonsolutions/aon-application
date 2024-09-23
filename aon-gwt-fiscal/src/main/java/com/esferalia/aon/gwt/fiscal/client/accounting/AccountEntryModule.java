@@ -61,10 +61,7 @@ import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler;
-import com.google.gwt.core.client.Scheduler.ScheduledCommand;
 import com.google.gwt.dom.client.Style.Unit;
-import com.google.gwt.event.dom.client.BlurEvent;
-import com.google.gwt.event.dom.client.BlurHandler;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -123,9 +120,6 @@ public class AccountEntryModule extends MainEntryPoint {
 	private AccountEntry base;
 
 	public interface IAccountEntryModuleCallback {
-		@Deprecated String getCurrentDomainName();
-		@Deprecated int getCurrentDomainId();
-		@Deprecated String getCurrentUser();
 		Occam getOccam();
 		AonConfiguration getConfiguration();
 		AccountEntryModule getModule();
@@ -181,20 +175,6 @@ public class AccountEntryModule extends MainEntryPoint {
 		@Override
 		public Occam getOccam() {
 			return AccountEntryModule.this.getOptions().getOccam();
-		}
-		@Override
-		public String getCurrentDomainName() {
-			return AccountEntryModule.this.getOptions().getDomainName();
-		}
-
-		@Override
-		public int getCurrentDomainId() {
-			return AccountEntryModule.this.getOptions().getDomain();
-		}
-
-		@Override
-		public String getCurrentUser() {
-			return AccountEntryModule.this.getOptions().getUser();
 		}
 	};
 
@@ -292,18 +272,7 @@ public class AccountEntryModule extends MainEntryPoint {
 			entryType.addItem(et.getDescription());
 		}
 		
-		entryType.addBlurHandler(new BlurHandler() {
-			
-			@Override
-			public void onBlur(BlurEvent event) {
-				Scheduler.get().scheduleDeferred(new ScheduledCommand() {
-					public void execute() {
-						LOGGER.info("BLUR entryType ");
-						AccountEntryModule.this.getWizardContent().setFocus(true);
-					}
-				});
-			}
-		});
+		entryType.addBlurHandler(event -> Scheduler.get().scheduleDeferred(() -> AccountEntryModule.this.getWizardContent().setFocus(true)));
 		
 		if (getOptions().getConfiguration() != null) {
 			loadModule();
@@ -532,11 +501,7 @@ public class AccountEntryModule extends MainEntryPoint {
 		commentPanel.add(buttons);
 		toast.add(commentPanel);
 
-		Scheduler.get().scheduleDeferred(new ScheduledCommand() {
-			public void execute() {
-				comment.setFocus(true);
-			}
-		});
+		Scheduler.get().scheduleDeferred(() -> comment.setFocus(true));
 		
 		
 		toast.center();
@@ -674,18 +639,13 @@ public class AccountEntryModule extends MainEntryPoint {
 				reset();
 				
 				if (getOptions().isSessionLogTabVisible()) {
-					Scheduler.get().scheduleDeferred(new ScheduledCommand() {
-						public void execute() {
-							tabLayout.selectTab( getSessionLogTabIndex() );					}
-					});
+					Scheduler.get().scheduleDeferred(() -> tabLayout.selectTab( getSessionLogTabIndex() ));
 				}
 
-				Scheduler.get().scheduleDeferred(new ScheduledCommand() {
-					public void execute() {
-						entryDate.setFocus(true);
-						entryDate.hideDatePicker();
-						entryDate.getTextBox().selectAll();
-					}
+				Scheduler.get().scheduleDeferred(() -> {
+					entryDate.setFocus(true);
+					entryDate.hideDatePicker();
+					entryDate.getTextBox().selectAll();
 				});
 				if (getOptions().hasExternalCallback()) {
 					getOptions().getExternalCallback().onChange(result);
@@ -713,20 +673,16 @@ public class AccountEntryModule extends MainEntryPoint {
 
 				@Override
 				public void onAnimationComplete() {
-					Scheduler.get().scheduleDeferred(new ScheduledCommand() {
-						public void execute() {
-							tabLayout.selectTab( AccountEntryModule.this.getJournalTabIndex() );
-							journalPanel.setFocus(true);
-						}
+					Scheduler.get().scheduleDeferred(() -> {
+						tabLayout.selectTab( AccountEntryModule.this.getJournalTabIndex() );
+						journalPanel.setFocus(true);
 					});
 				}
 			});
 		} else {
-			Scheduler.get().scheduleDeferred(new ScheduledCommand() {
-				public void execute() {
-					tabLayout.selectTab(AccountEntryModule.this.getJournalTabIndex());
-					journalPanel.setFocus(true);
-				}
+			Scheduler.get().scheduleDeferred(() -> {
+				tabLayout.selectTab(AccountEntryModule.this.getJournalTabIndex());
+				journalPanel.setFocus(true);
 			});
 		}
 	}
@@ -742,12 +698,10 @@ public class AccountEntryModule extends MainEntryPoint {
 			@Override
 			public void onAccept() {
 				reset();
-				Scheduler.get().scheduleDeferred(new ScheduledCommand() {
-					public void execute() {
-						entryDate.setFocus(true);
-						entryDate.hideDatePicker();
-						entryDate.getTextBox().selectAll();
-					}
+				Scheduler.get().scheduleDeferred(() -> {
+					entryDate.setFocus(true);
+					entryDate.hideDatePicker();
+					entryDate.getTextBox().selectAll();
 				});
 			}
 		});
@@ -875,11 +829,7 @@ public class AccountEntryModule extends MainEntryPoint {
 					
 					@Override
 					public void onSuccess() {
-						Scheduler.get().scheduleDeferred(new ScheduledCommand() {
-							public void execute() {
-								AccountEntryModule.this.wizardContent.setFocus(true);
-							}
-						});
+						Scheduler.get().scheduleDeferred(() -> AccountEntryModule.this.wizardContent.setFocus(true));
 					}
 					
 					@Override
@@ -923,15 +873,13 @@ public class AccountEntryModule extends MainEntryPoint {
 			@Override
 			public void onSuccess() {
 				syncCurrent();
-				Scheduler.get().scheduleDeferred(new ScheduledCommand() {
-					public void execute() {
-						if (first.getValue() == 0) {
-							wizardContent.setFocus(true);
-						} else {
-							entryDate.setFocus(true);
-							entryDate.hideDatePicker();
-							entryDate.getTextBox().selectAll();
-						}
+				Scheduler.get().scheduleDeferred(() -> {
+					if (first.getValue() == 0) {
+						wizardContent.setFocus(true);
+					} else {
+						entryDate.setFocus(true);
+						entryDate.hideDatePicker();
+						entryDate.getTextBox().selectAll();
 					}
 				});
 			}

@@ -46,7 +46,7 @@ public class AccountEntryTest extends AbstractOccamTest {
 		ae.addDetail( getAccountEntryDetail(622581,"475100000","Hacienda Pública, acreedora por retenciones practicadas.","Nominas febrero",0,79.51,null,null,null,null) );
 		ae.addDetail( getAccountEntryDetail(622558,"465000000","Remuneraciones pendientes de pago.","Nominas febrero",0,2648.7,null,null,null,null) );
 		for (int i = 0; i < 1000 ; i++) {
-			ACCOUNTING.save(DOMAIN_NAME, DOMAIN_ID, USER, ae);
+			ACCOUNTING.save(getOccam(), ae);
 		}
 		System.out.println( (((new Date()).getTime() - now.getTime() )) + " Ms. ");
 		

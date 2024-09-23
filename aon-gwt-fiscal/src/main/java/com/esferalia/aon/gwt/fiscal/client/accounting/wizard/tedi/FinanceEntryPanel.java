@@ -411,12 +411,15 @@ public class FinanceEntryPanel extends WizardContentBase<FinanceEntry> implement
 		return super.addHandler(handler, SelectionEvent.getType());
 	}
 	
+	@Override
 	public void entryDateChanged(Date entryDate) {
 		getWrapper().getAccountEntry().setEntryDate(entryDate);
 	}
+	@Override
 	public void activityChanged(Integer activty) {
 		getWrapper().getAccountEntry().setActivity(activty);
 	}
+	@Override
 	public void confidentialChanged(boolean confidential) {
 		getWrapper().getAccountEntry().setConfidential(confidential);
 	}

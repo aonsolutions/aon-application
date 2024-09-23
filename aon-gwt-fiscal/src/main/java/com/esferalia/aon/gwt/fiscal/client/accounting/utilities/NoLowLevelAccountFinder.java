@@ -54,6 +54,7 @@ class NoLowLevelAccountFinder extends OptionBase {
 		return AonStringUtils.BULLET + " Chequeo de cuentas contables sin niveles inferiores.";
 	}
 
+	@Override
 	protected Widget getToolbarPanel() {
 		AonToolbar toolbarPanel = new AonToolbar(getOptionDescription());
 		final AonToolbarButton refresh = new AonToolbarButton( AON.MSG.refresh(), AON.CSS.aonIconRefresh());

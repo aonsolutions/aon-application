@@ -13,6 +13,7 @@ import org.junit.jupiter.api.Test;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.Customer;
 import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.registry.Creditor;
 import com.esferalia.aon.occam.api.model.type.InvoiceType;
 import com.esferalia.aon.occam.impl.jooq.dao.ConfigurationDAO;
@@ -22,7 +23,6 @@ import com.esferalia.aon.occam.impl.jooq.dao.CustomerDAO;
 import es.translogia.tedi.ewok.TediInvoice;
 import es.translogia.tedi.ewok.TediInvoiceTax;
 import es.translogia.tedi.ewok.TediTaxType;
-import es.translogia.tedi.json.TediInvoiceJSON;
 import net.aonsolutions.aon.tedi.TediContext;
 import net.aonsolutions.aon.tedi.TediInvoiceBuilder;
 import net.aonsolutions.aon.tedi.test.AbstractTediTest;
@@ -101,10 +101,11 @@ public class TediInvoicePDFParserAonDemoTestCase extends AbstractTediTest {
 		out.append("\n");
 		
 		TediContext tctx = new TediContext()
+			.setOccam(new Occam()
 				.setDomain(DOMAIN_ID)
 				.setDomainName(DOMAIN_NAME)
-				.setAONContext ( ctx )
-				;
+				)
+			.setAONContext ( ctx );
 		AonConfiguration configuration = ConfigurationDAO.getConfiguration(tctx.getAONContext()); 
 		tctx.setAonConfiguration(configuration);
 		//tctx.getAonConfiguration().getCompany().setDocument(sales?template.getReceiverDocument():template.getReceiverDocument());
@@ -338,10 +339,11 @@ public class TediInvoicePDFParserAonDemoTestCase extends AbstractTediTest {
 		out.append("\n");
 		
 		TediContext tctx = new TediContext()
+			.setOccam(new Occam()
 				.setDomain(DOMAIN_ID)
 				.setDomainName(DOMAIN_NAME)
-				.setAONContext ( ctx )
-				;
+				)
+			.setAONContext ( ctx );
 		AonConfiguration configuration = ConfigurationDAO.getConfiguration(tctx.getAONContext()); 
 		tctx.setAonConfiguration(configuration);
 		//tctx.getAonConfiguration().getCompany().setDocument(sales?template.getReceiverDocument():template.getReceiverDocument());

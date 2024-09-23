@@ -24,8 +24,6 @@ import com.google.gwt.core.client.JsArray;
 import com.google.gwt.core.client.JsonUtils;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.event.dom.client.ScrollEvent;
-import com.google.gwt.event.dom.client.ScrollHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.http.client.URL;
 import com.google.gwt.logging.client.ConsoleLogHandler;
@@ -71,22 +69,19 @@ public class LedgerPanel extends ScrollPanel implements HasAccountEntrySelection
 
 		setWidget(container);
 		
-		addScrollHandler(new ScrollHandler() {
-
-			public void onScroll(ScrollEvent event) {
-				// ------------------------------------ Ignore scroll up.
-				int oldScrollPos = lastScrollPos;
-				lastScrollPos = getVerticalScrollPosition();
-				if (oldScrollPos >= lastScrollPos) {
-					return;
-				}
-				// -----------------------------------------------------
-				if (isSearchEnabled()) {
-					int maxScrollTop = getWidget().getOffsetHeight() - getOffsetHeight();
-					if (lastScrollPos >= maxScrollTop) {
-						disableSearch();
-						search(options,params, offset.getValue(),limit, null);
-					}
+		addScrollHandler(event -> {
+			// ------------------------------------ Ignore scroll up.
+			int oldScrollPos = lastScrollPos;
+			lastScrollPos = getVerticalScrollPosition();
+			if (oldScrollPos >= lastScrollPos) {
+				return;
+			}
+			// -----------------------------------------------------
+			if (isSearchEnabled()) {
+				int maxScrollTop = getWidget().getOffsetHeight() - getOffsetHeight();
+				if (lastScrollPos >= maxScrollTop) {
+					disableSearch();
+					search(options,params, offset.getValue(),limit, null);
 				}
 			}
 		});
@@ -236,6 +231,8 @@ public class LedgerPanel extends ScrollPanel implements HasAccountEntrySelection
 											.setDomain( options.getDomain() );
 									AccountEntrySelectionEvent.fire(LedgerPanel.this, ae, new ModuleCallback() {
 										
+										private static final long serialVersionUID = -4006957117894259420L;
+
 										@Override
 										public void onRemove(IAccountEntryWrapper removed) {
 											int scrollPosition = LedgerPanel.this.getVerticalScrollPosition();

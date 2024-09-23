@@ -470,9 +470,9 @@ public class InvoiceDAO {
 	}
 
 	private static Invoice update(AONContext ctx, Invoice invoice) {
-		InvoiceValidation.validate(ctx, invoice);
 		InvoiceAutoComplete.completeInvoice(ctx, invoice);
 		InvoiceCalculator.calculate(invoice);
+		InvoiceValidation.validate(ctx, invoice);
 		int i = ctx.getDslContext()
 			.update(INVOICE)
 			.set(INVOICE.DOMAIN, invoice.getDomain() )
@@ -526,6 +526,7 @@ public class InvoiceDAO {
 	private static Invoice insert(AONContext ctx, Invoice invoice) {
 		ctx.checkWrite();
 		InvoiceAutoComplete.completeInvoice(ctx, invoice);
+		InvoiceCalculator.calculate(invoice);
 		InvoiceValidation.validate(ctx, invoice);
 		InvoiceRecord rec = ctx.getDslContext()
 			.insertInto(INVOICE)

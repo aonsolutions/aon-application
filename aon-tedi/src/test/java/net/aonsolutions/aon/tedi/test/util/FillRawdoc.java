@@ -7,6 +7,7 @@ import java.util.Locale;
 
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
+import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.Rawdoc;
 import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.occam.api.model.type.RawdocNature;
@@ -152,9 +153,11 @@ public class FillRawdoc {
 				ByteArrayOutputStream output = new ByteArrayOutputStream();
 				AonIOUtils.copy(input, output);
 				TediContext tctx = new TediContext()
-						.setDomain(DOMAIN_ID)
-						.setDomainName(DOMAIN_NAME)
-						.setUser(USER)
+						.setOccam( new Occam()
+							.setDomain(DOMAIN_ID)
+							.setDomainName(DOMAIN_NAME)
+							.setUser(USER)
+						)
 						.setAONContext(ctx)
 						.setAonConfiguration(aonConfiguration);
 				Rawdoc rawdoc = new Rawdoc()

@@ -491,6 +491,7 @@ class AccountChanger extends OptionBase {
 		return AonStringUtils.BULLET + " Cambio de cuenta contable";
 	}
 
+	@Override
 	protected Widget getToolbarPanel() {
 		AonToolbar toolbar = new AonToolbar(getOptionDescription());
 		

@@ -4,7 +4,6 @@ package net.aonsolutions.aon.tedi.test.img;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -12,6 +11,7 @@ import java.util.Date;
 
 import org.junit.jupiter.api.Test;
 
+import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.tedi.TediResult;
@@ -47,10 +47,11 @@ public class IMG2AONTestCase extends AbstractTediTest {
 		out.append("\n");
 		
 		TediContext tctx = new TediContext()
+			.setOccam(new Occam()
 				.setDomain(DOMAIN_ID)
 				.setDomainName(DOMAIN_NAME)
-				.setAONContext ( ctx )
-				;
+				)
+			.setAONContext ( ctx );
 		tctx.setAonConfiguration(ConfigurationDAO.getConfiguration(tctx.getAONContext()));
 		tctx.getAonConfiguration().getCompany().setDocument("B01487271");
 		

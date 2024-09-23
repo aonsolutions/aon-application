@@ -45,27 +45,27 @@ public class Manual extends WizardContentBase<AccountEntryWrapper> {
 	public void select(final Integer id,final IAccountEntryWrapper wrp,final ISelectionCallback cbk) {
 		getCallback().getModule().onClearSessionLog();
 		if (id != null) {
-			getAccountEntryService().getAccountEntry(getCallback().getCurrentDomainName(),
-					getCallback().getCurrentDomainId(),getCallback().getCurrentUser(), id ,
-					new AsyncCallback<AccountEntry>() {
-						@Override
-						public void onSuccess(AccountEntry result) {
-							if (result != null) {
-								select(new AccountEntryWrapper( result ),cbk);
+			getAccountEntryService().getAccountEntry(getCallback().getOccam(), id ,
+				new AsyncCallback<AccountEntry>() {
+					@Override
+					public void onSuccess(AccountEntry result) {
+						if (result != null) {
+							select(new AccountEntryWrapper( result ),cbk);
+						} else {
+							if (wrp != null && wrp.getAccountEntry() != null) {
+								getCallback().getModule().recoverDeletedEntry(wrp);
 							} else {
-								if (wrp != null && wrp.getAccountEntry() != null) {
-									getCallback().getModule().recoverDeletedEntry(wrp);
-								} else {
-									getCallback().getModule().onError("Asiento no encontrado");
-								}
+								getCallback().getModule().onError("Asiento no encontrado");
 							}
 						}
+					}
 
-						@Override
-						public void onFailure(Throwable caught) {
-							getCallback().getModule().onError(caught.getMessage());
-						}
-					});
+					@Override
+					public void onFailure(Throwable caught) {
+						getCallback().getModule().onError(caught.getMessage());
+					}
+				}
+			);
 		} else {
 			if (wrp != null) {
 				select( wrp ,cbk);
@@ -162,13 +162,13 @@ public class Manual extends WizardContentBase<AccountEntryWrapper> {
 
 	private AccountEntryWrapper create(AccountEntry base) {
 		return new AccountEntryWrapper( new AccountEntry()
-				.setPeriod(base.getPeriod())
-				.setEntryType(AccountEntryType.MANUAL)
-				.setDomain(getCallback().getCurrentDomainId())
-				.setConfidential(false)
-				.setEntryDate(base.getEntryDate())
-				.setActivity(base.getActivity())
-				.setJournal(null));
+			.setPeriod(base.getPeriod())
+			.setEntryType(AccountEntryType.MANUAL)
+			.setDomain(getCallback().getOccam().getDomain())
+			.setConfidential(false)
+			.setEntryDate(base.getEntryDate())
+			.setActivity(base.getActivity())
+			.setJournal(null));
 	}
 	
 	@Override
@@ -197,12 +197,15 @@ public class Manual extends WizardContentBase<AccountEntryWrapper> {
 		if (table!=null) table.setFocus(b);
 	}
 
+	@Override
 	public void entryDateChanged(Date entryDate) {
 		getWrapper().getAccountEntry().setEntryDate(entryDate);
 	}
+	@Override
 	public void activityChanged(Integer activty) {
 		getWrapper().getAccountEntry().setActivity(activty);
 	}
+	@Override
 	public void confidentialChanged(boolean confidential) {
 		getWrapper().getAccountEntry().setConfidential(confidential);
 	}

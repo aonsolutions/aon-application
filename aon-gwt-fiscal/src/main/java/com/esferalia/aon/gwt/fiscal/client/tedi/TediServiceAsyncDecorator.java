@@ -2,6 +2,7 @@ package com.esferalia.aon.gwt.fiscal.client.tedi;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.AsyncCallbackWrapper;
+import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.tedi.TediResult;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
@@ -14,16 +15,14 @@ public class TediServiceAsyncDecorator implements TediServiceAsync {
 	}
 	
 	@Override
-	public void parseInvoice(String domainName, String user, int domain, String fileName, String content,
-			AsyncCallback<TediResult> callback) {
+	public void parseInvoice(Occam occam, String fileName, String content, AsyncCallback<TediResult> callback) {
 		AON.start();
-		fsa.parseInvoice(domainName, user, domain, fileName , content, new AsyncCallbackWrapper<TediResult>(callback));		
+		fsa.parseInvoice(occam, fileName , content, new AsyncCallbackWrapper<TediResult>(callback));		
 	}
 
 	@Override
-	public void validateInvoice(String domainName, String user, int domain, TediResult result,
-			AsyncCallback<TediResult> callback) {
+	public void validateInvoice(Occam occam, TediResult result, AsyncCallback<TediResult> callback) {
 		AON.start();
-		fsa.validateInvoice(domainName, user, domain, result, new AsyncCallbackWrapper<TediResult>(callback));
+		fsa.validateInvoice(occam, result, new AsyncCallbackWrapper<TediResult>(callback));
 	}
 }

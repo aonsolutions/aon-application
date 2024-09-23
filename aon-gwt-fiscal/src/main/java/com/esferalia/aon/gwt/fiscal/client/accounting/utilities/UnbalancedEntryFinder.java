@@ -157,6 +157,7 @@ class UnbalancedEntryFinder extends OptionBase {
 			.setTrialBalanceFromPreviewEnabled(false)
 			.setExternalCallback( new ModuleCallback() {
 			
+				private static final long serialVersionUID = 4093595781052911800L;
 				@Override public void onRemove(IAccountEntryWrapper removed) {
 					entryDialog.hide();
 				}
@@ -173,6 +174,7 @@ class UnbalancedEntryFinder extends OptionBase {
 		entryDialog.show();
 	}
 	
+	@Override
 	protected Widget getToolbarPanel() {
 		AonToolbar toolbarPanel = new AonToolbar(getOptionDescription());
 		final AonToolbarButton refresh = new AonToolbarButton(AON.MSG.refresh(),AON.CSS.aonIconRefresh());

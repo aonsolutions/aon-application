@@ -1791,10 +1791,10 @@ public class Asserts {
 	public static void assertEqualsInvoiceData(InvoiceData expected, InvoiceData actual) {
 		assertEqualsNulls( "InvoiceData", expected, actual);
 		if (expected != null ) {
-			assertEquals("Domain", expected.getDomain(), actual.getDomain());
-			assertEquals("Invoice",expected.getInvoice(), actual.getInvoice());
-			assertEquals("Name", expected.getName(), actual.getName());
-			assertEquals("Value", expected.getValue(), actual.getValue());
+			assertEquals(expected.getDomain(), actual.getDomain(),"Domain");
+			assertEquals(expected.getInvoice(), actual.getInvoice(),"Invoice");
+			assertEquals(expected.getName(), actual.getName(),"Name");
+			assertEquals(expected.getValue(), actual.getValue(),"Value");
 //			assertEquals("StartDate",  expected.getStartDate(), actual.getStartDate());
 //			assertEquals("EndDate", expected.getEndDate(), actual.getEndDate());
 		}

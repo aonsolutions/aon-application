@@ -11,7 +11,6 @@ import com.esferalia.aon.occam.api.model.accounting.utilities.IAccUtilitiesItem;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler;
-import com.google.gwt.core.client.Scheduler.ScheduledCommand;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -170,11 +169,7 @@ class InputVatRegenerator extends OptionBase {
 								showInfoPanel(result.getItems().get(0).getMessage());
 							}
 							run();
-							Scheduler.get().scheduleDeferred(new ScheduledCommand() {
-								public void execute() {
-									popup.hide();
-								}
-							});
+							Scheduler.get().scheduleDeferred(() -> popup.hide());
 						}
 					});
 				}

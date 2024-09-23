@@ -464,7 +464,7 @@ public class SalaryEntryPanel extends WizardContentBase<SalaryEntry> {
 	}
 
 	private AonAccountBox createAccountBox() {
-		 return new AonAccountBox(getCallback().getCurrentDomainName(), getCallback().getCurrentDomainId(), getCallback().getCurrentUser());
+		 return new AonAccountBox(getCallback().getOccam());
 	}
 
 	@Override
@@ -490,7 +490,7 @@ public class SalaryEntryPanel extends WizardContentBase<SalaryEntry> {
 		ai.setAccountEntry(new AccountEntry()
 			.setEntryType(AccountEntryType.SALARY)
 			.setPeriod(base.getPeriod())
-			.setDomain(getCallback().getCurrentDomainId())
+			.setDomain(getCallback().getOccam().getDomain())
 			.setConfidential(base.isConfidential())
 			.setEntryDate(base.getEntryDate())
 			.setActivity(base.getActivity())
@@ -876,9 +876,8 @@ public class SalaryEntryPanel extends WizardContentBase<SalaryEntry> {
 		tab.addStyleName(AON.CSS.aonMarginTop());
 		
 		centerPanel.add(tab);
-		getAccountEntryService().getSalaryEntries(getCallback().getCurrentDomainName()
-				,getCallback().getCurrentDomainId(),getCallback().getCurrentUser() ,start, end
-				, new AsyncCallback<LinkedList<SalaryEntry>>() {
+		getAccountEntryService().getSalaryEntries(getCallback().getOccam() ,start, end
+			, new AsyncCallback<LinkedList<SalaryEntry>>() {
 					
 			@Override
 			public void onSuccess(LinkedList<SalaryEntry> result) {
@@ -901,9 +900,7 @@ public class SalaryEntryPanel extends WizardContentBase<SalaryEntry> {
 						reportButton.setTitle(AON.MSG.informationBreakdown());
 						reportButton.addClickHandler(event -> 
 							getAccountEntryService().getSalaryFormatted(
-								getCallback().getCurrentDomainName()
-								, getCallback().getCurrentDomainId()
-								, getCallback().getCurrentUser()
+								getCallback().getOccam()
 								, entry.getAccountEntry().getEntryDate()
 								, entry.getAccountEntry().getEntryDate()
 							,new AsyncCallback<String>() {
@@ -942,12 +939,8 @@ public class SalaryEntryPanel extends WizardContentBase<SalaryEntry> {
 
 									@Override
 									public void onAccept() {
-										getAccountEntryService().deleteAccountEntry(
-												getCallback().getCurrentDomainName()
-												, getCallback().getCurrentDomainId()
-												, getCallback().getCurrentUser()
-												, entry.getAccountEntry().getId(),
-												new AsyncCallback<Void>() {
+										getAccountEntryService().deleteAccountEntry(getCallback().getOccam(), entry.getAccountEntry().getId(),
+											new AsyncCallback<Void>() {
 
 											@Override
 											public void onSuccess(Void result) {
@@ -1015,12 +1008,15 @@ public class SalaryEntryPanel extends WizardContentBase<SalaryEntry> {
 		concept.setFocus(b);
 	}
 
+	@Override
 	public void entryDateChanged(Date entryDate) {
 		getWrapper().getAccountEntry().setEntryDate(entryDate);
 	}
+	@Override
 	public void activityChanged(Integer activty) {
 		getWrapper().getAccountEntry().setActivity(activty);
 	}
+	@Override
 	public void confidentialChanged(boolean confidential) {
 		getWrapper().getAccountEntry().setConfidential(confidential);
 	}

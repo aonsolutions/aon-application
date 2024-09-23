@@ -150,7 +150,7 @@ class OCRInvoiceBuilderRegistry {
 							.setAlias(ar.getAlias())
 							.setNationality(ar.getNationality())
 						);
-					ar.getType().visit(ar, new InvoiceRegistryInitializer(aonCtx, invoice, config));
+					ar.getType().visit(new InvoiceRegistryInitializer(aonCtx, invoice, config, ar));
 					
 					if(invoice.getAddress() == null || invoice.getAddress().isEmpty()) {
 						RegistryAddress address = RegistryAddressDAO.getMain(aonCtx, ar.getId());

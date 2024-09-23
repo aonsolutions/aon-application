@@ -126,6 +126,7 @@ public class InvestAssetPanel extends ScrollPanel implements HasSelectionHandler
 		
 		addScrollHandler(new ScrollHandler() {
 
+			@Override
 			public void onScroll(ScrollEvent event) {
 				// ------------------------------------ Ignore scroll up.
 				int oldScrollPos = lastScrollPos;

@@ -48,6 +48,16 @@ public class AccountEntryServiceImpl extends AonStatelessRemoteServiceServlet im
 	}
 
 	@Override
+	public AccountEntry save(Occam occam, AccountEntry ae) throws AonCoreException {
+		return ACCOUNTING.save(occam, ae);
+	}
+
+	@Override
+	public void deleteAccountEntry(Occam occam, Integer id) {
+		ACCOUNTING.deleteAccountEntry(occam, id);
+	}
+
+	@Override
 	public FinanceEntry getFinanceEntry(Occam occam, Integer accountEntry) {
 		return ACCOUNTING.getFinanceEntry(occam, accountEntry);
 	}
@@ -63,9 +73,30 @@ public class AccountEntryServiceImpl extends AonStatelessRemoteServiceServlet im
 	}
 	
 	@Override
+	public AccountingInvoice getAccountingInvoiceFromInvoice(Occam occam, Integer invoiceId) throws AonCoreException {
+		return ACCOUNTING.getAccountingInvoiceFromInvoice(occam, invoiceId);
+	}
+
+	@Override
+	public AccountingInvoice getRegistryLastAccountingInvoice(Occam occam, Integer registryId) {
+		return ACCOUNTING.getRegistryLastAccountingInvoice(occam, registryId);
+	}
+
+	@Override
 	public AccountEntry getAccountEntry(Occam occam, AonConfiguration config, Invoice invoice) throws AonCoreException {
 		return ACCOUNTING.getAccountEntry(occam, config, invoice);
 	}
+	
+	@Override
+	public LinkedList<SalaryEntry> getSalaryEntries(Occam occam, Date from, Date to) {
+		return ACCOUNTING.getSalaryEntries(occam, from, to);
+	}
+
+	@Override
+	public String getSalaryFormatted(Occam occam, Date from, Date to) {
+		return ACCOUNTING.getSalaryFormatted(occam, from, to);
+	}
+	
 	// *************************************	
 	// *************************************	
 	// *************************************	
@@ -76,30 +107,10 @@ public class AccountEntryServiceImpl extends AonStatelessRemoteServiceServlet im
 		return ACCOUNTING.getAccountEntries(domainName, domain, user, params, offset, limit);
 	}
 
-	@Override
-	public AccountEntry getAccountEntry(String domainName, int domain, String user, int id) throws AonCoreException {
-		return ACCOUNTING.getAccountEntry(domainName, domain, user, id);
-	}
-
-	@Override
-	public AccountEntry save(String domainName, int domain, String user, AccountEntry ae) throws AonCoreException {
-		return ACCOUNTING.save(domainName, domain, user, ae);
-	}
-
-	@Override
-	public LinkedList<SalaryEntry> getSalaryEntries(String domainName, int domain, String user, Date from, Date to) {
-		return ACCOUNTING.getSalaryEntries(domainName, domain, user, from, to);
-	}
-
-	@Override
-	public String getSalaryFormatted(String domainName, int domain, String user, Date from, Date to) {
-		return ACCOUNTING.getSalaryFormatted(domainName, domain, user, from, to);
-	}
-
-	@Override
-	public void deleteAccountEntry(String domainName, int domain, String user, Integer id) {
-		ACCOUNTING.deleteAccountEntry(domainName, domain, user, id);
-	}
+//	@Override
+//	public AccountEntry getAccountEntry(String domainName, int domain, String user, int id) throws AonCoreException {
+//		return ACCOUNTING.getAccountEntry(domainName, domain, user, id);
+//	}
 
 	@Override
 	public AccountingInvoice removeInvoiceAttach(Occam occam, Integer invoiceId) throws AonCoreException {
@@ -117,18 +128,8 @@ public class AccountEntryServiceImpl extends AonStatelessRemoteServiceServlet im
 	}
 
 	@Override
-	public AccountingInvoice getAccountingInvoiceFromInvoice(String domainName, int domain, String user, Integer invoiceId) throws AonCoreException {
-		return ACCOUNTING.getAccountingInvoiceFromInvoice(domainName, domain, user, invoiceId);
-	}
-
-	@Override
 	public LinkedList<AccountingInvoice> getPendingImportAccountingInvoices(Occam occam, String query) throws AonCoreException {
 		return ACCOUNTING.getPendingImportAccountingInvoices(occam, query);
-	}
-
-	@Override
-	public AccountingInvoice getRegistryLastAccountingInvoice(String domainName, int domain, String user, Integer registryId) {
-		return ACCOUNTING.getRegistryLastAccountingInvoice(domainName, domain, user, registryId);
 	}
 
 	@Override

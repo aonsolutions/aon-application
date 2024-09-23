@@ -7,6 +7,7 @@ import jakarta.servlet.annotation.WebServlet;
 
 import com.esferalia.aon.gwt.common.server.AonStatelessRemoteServiceServlet;
 import com.esferalia.aon.gwt.fiscal.client.tedi.TediService;
+import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.tedi.TediResult;
 import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.watson.error.AonCoreException;
@@ -25,13 +26,13 @@ public class TediServiceImpl extends AonStatelessRemoteServiceServlet implements
 	private static final long serialVersionUID = -2121272613749054639L;
 
 	@Override
-	public TediResult parseInvoice(String domainName, String user, int domain, String fileName, String content) throws AonCoreException {
+	public TediResult parseInvoice(Occam occam, String fileName, String content) throws AonCoreException {
 		try {
 			IDataUrlSerializer serializer = new DataUrlSerializer();
 			DataUrl unserialized = serializer.unserialize(content);
 			ByteArrayInputStream input = new ByteArrayInputStream(unserialized.getData());
 			String extension = AonStringUtils.substringAfterLast(fileName, ".");
-			TediResult result = TEDI.parse(new TediContext().setDomainName(domainName).setDomain(domain).setUser(user), input, MimeType.getByExtension(extension));
+			TediResult result = TEDI.parse(new TediContext().setOccam(occam), input, MimeType.getByExtension(extension));
 			result.getAccountingInvoice()
 				.setTediParsed(true);
 			return result;
@@ -45,9 +46,9 @@ public class TediServiceImpl extends AonStatelessRemoteServiceServlet implements
 	}
 	
 	@Override
-	public TediResult validateInvoice(String domainName, String user, int domain, TediResult result ) throws AonCoreException {
+	public TediResult validateInvoice(Occam occam, TediResult result ) throws AonCoreException {
 		try {
-			return TEDI.validateInvoice(new TediContext().setDomainName(domainName).setDomain(domain).setUser(user), result);
+			return TEDI.validateInvoice(new TediContext().setOccam(occam), result);
 		} catch ( TediException t) {
 			t.printStackTrace();
 			throw new AonCoreException(t);

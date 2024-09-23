@@ -72,6 +72,7 @@ public class MainEntryPoint implements EntryPoint {
 	//
 	private enum ConsoleEntryPoint {
 		ConsoleModule {
+			@Override
 			void run() {
 				com.esferalia.aon.gwt.fiscal.client.console.ConsoleModule.run();
 			}
@@ -85,21 +86,25 @@ public class MainEntryPoint implements EntryPoint {
 	//
 	private enum FiscalEntryPoint {
 		Model111 {
+			@Override
 			void run() {
 				com.esferalia.aon.gwt.fiscal.client.mod111.Model111.run();
 			}
 		},
 		Model115 {
+			@Override
 			void run() {
 				com.esferalia.aon.gwt.fiscal.client.mod115.Model115.run();
 			}
 		},
 		Model123 {
+			@Override
 			void run() {
 				com.esferalia.aon.gwt.fiscal.client.mod123.Model123.run();
 			}
 		},
 		Model130 {
+			@Override
 			void run() {
 				com.esferalia.aon.gwt.fiscal.client.mod130.Model130.run();
 			}
@@ -184,11 +189,13 @@ public class MainEntryPoint implements EntryPoint {
 	//
 	private enum AccountingEntryPoint {
 		AccountingOperationReport {
+			@Override
 			void run() {
 				com.esferalia.aon.gwt.fiscal.client.report.OperationReport.run();
 			}
 		},
 		IRPFReport {
+			@Override
 			void run() {
 				com.esferalia.aon.gwt.fiscal.client.invoice.irpf.IRPFReport.run();
 			}

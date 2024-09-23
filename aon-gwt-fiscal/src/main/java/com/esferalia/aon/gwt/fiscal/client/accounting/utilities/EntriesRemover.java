@@ -15,14 +15,14 @@ import com.esferalia.aon.gwt.common.client.widget.DateBoxEx;
 import com.esferalia.aon.gwt.common.client.widget.DoubleBox;
 import com.esferalia.aon.gwt.common.client.widget.IntegerBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonConfirmDialog;
-import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomPopup;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonConfirmDialog.AonConfirmDialogCallback;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomPopup;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonSearchPanelButton;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonTableButton;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
-import com.esferalia.aon.gwt.fiscal.client.accounting.AccountEntryModuleOptions;
 import com.esferalia.aon.gwt.fiscal.client.accounting.AccountEntryModule;
+import com.esferalia.aon.gwt.fiscal.client.accounting.AccountEntryModuleOptions;
 import com.esferalia.aon.gwt.fiscal.client.accounting.AccountEntryService;
 import com.esferalia.aon.gwt.fiscal.client.accounting.AccountEntryServiceAsync;
 import com.esferalia.aon.gwt.fiscal.client.accounting.AccountEntryServiceAsyncDecorator;
@@ -33,6 +33,7 @@ import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.EnterpriseActivity;
 import com.esferalia.aon.occam.api.model.IAccountEntryWrapper;
+import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.accounting.utilities.AccUtilitiesRemoveEntryItem;
 import com.esferalia.aon.occam.api.model.accounting.utilities.AccUtilitiesResult;
 import com.esferalia.aon.occam.api.model.accounting.utilities.IAccUtilitiesItem;
@@ -612,6 +613,7 @@ class EntriesRemover extends OptionBase {
 		return AonStringUtils.BULLET + " Borrado de apuntes manuales";
 	}
 
+	@Override
 	protected Widget getToolbarPanel() {
 		AonToolbar toolbar = new AonToolbar(getOptionDescription());
 		
@@ -681,7 +683,11 @@ class EntriesRemover extends OptionBase {
 							for (IAccUtilitiesItem item : EntriesRemover.this.result.getItems()) {
 								AccUtilitiesRemoveEntryItem it = (AccUtilitiesRemoveEntryItem) item;
 								if (it.isSelected()) {
-									ACCOUNT_ENTRY_SERVICE.deleteAccountEntry(domainName, it.getDomain(), EntriesRemover.this.user, it.getEntryId(), new AsyncCallback<Void>() {
+									Occam occam = new Occam()
+										.setDomainName(domainName)
+										.setDomain(it.getDomain())
+										.setUser(EntriesRemover.this.user);
+									ACCOUNT_ENTRY_SERVICE.deleteAccountEntry(occam, it.getEntryId(), new AsyncCallback<Void>() {
 										
 										@Override
 										public void onFailure(Throwable caught) {
@@ -799,6 +805,7 @@ class EntriesRemover extends OptionBase {
 			.setTrialBalanceFromPreviewEnabled(false)
 			.setExternalCallback( new ModuleCallback() {
 			
+				private static final long serialVersionUID = 1496949140384557847L;
 				@Override public void onRemove(IAccountEntryWrapper removed) {
 					entryDialog.hide();
 				}
@@ -886,7 +893,11 @@ class EntriesRemover extends OptionBase {
 						
 						@Override
 						public void onAccept() {
-							ACCOUNT_ENTRY_SERVICE.deleteAccountEntry(domainName, item.getDomain(), EntriesRemover.this.user, item.getEntryId(), new AsyncCallback<Void>() {
+							Occam occam = new Occam()
+								.setDomainName(domainName)
+								.setDomain(item.getDomain())
+								.setUser(EntriesRemover.this.user);
+							ACCOUNT_ENTRY_SERVICE.deleteAccountEntry(occam, item.getEntryId(), new AsyncCallback<Void>() {
 
 								@Override
 								public void onFailure(Throwable caught) {

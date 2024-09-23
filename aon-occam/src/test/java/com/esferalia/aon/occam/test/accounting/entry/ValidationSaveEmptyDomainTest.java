@@ -17,7 +17,7 @@ public class ValidationSaveEmptyDomainTest extends AbstractOccamTest {
 	public void testEmptyDomain() {
 		AccountEntry accountEntry = new AccountEntry();
 		assertThrows(AonCoreException.class, () ->
-			ACCOUNTING.save(DOMAIN_NAME, DOMAIN_ID, USER, accountEntry));
+			ACCOUNTING.save(getOccam(), accountEntry));
 	}
 	
 }

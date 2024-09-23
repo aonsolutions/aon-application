@@ -10,6 +10,7 @@ import com.esferalia.aon.gwt.fiscal.client.FinanceServiceAsync;
 import com.esferalia.aon.gwt.fiscal.client.FinanceServiceAsyncDecorator;
 import com.esferalia.aon.gwt.fiscal.client.widget.RegistryBankListBox;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
+import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.finance.Finance;
 import com.esferalia.aon.occam.api.model.finance.PayMethod;
 import com.esferalia.aon.occam.api.model.registry.RegistryBank;
@@ -17,14 +18,10 @@ import com.esferalia.aon.occam.api.model.type.PayMethodType;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler;
-import com.google.gwt.core.client.Scheduler.ScheduledCommand;
 import com.google.gwt.dom.client.Style.Unit;
-import com.google.gwt.event.dom.client.ChangeEvent;
-import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.KeyCodes;
-import com.google.gwt.event.dom.client.KeyUpEvent;
 import com.google.gwt.event.dom.client.KeyUpHandler;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
@@ -45,9 +42,7 @@ public class FinanceBankPanel extends SimplePanel implements Focusable {
 
 	private static FinanceServiceAsync FINANCE_SERVICE;
 	
-	private String domainName;
-	private int domain;
-	private String user;
+	private Occam occam;
 	private AonConfiguration config;
 	private InlineLabel registryBankIcon = new InlineLabel();
 	private RegistryBankListBox registryBankListBox;
@@ -56,12 +51,7 @@ public class FinanceBankPanel extends SimplePanel implements Focusable {
 	private ListBox payMethodBox;
 	private Finance financeData;	
 	
-	public void show(final String domainName
-			, final int domain
-			, final String user
-			, final AonConfiguration config
-			, final Finance oriData
-			, final FinanceBankPanelCallback callback) {
+	public void show(final Occam occam, final AonConfiguration config, final Finance oriData, final FinanceBankPanelCallback callback) {
 		setWidth("700px");
 		setHeight("200px");
 		
@@ -82,9 +72,7 @@ public class FinanceBankPanel extends SimplePanel implements Focusable {
 			this.financeData.setBic(oriData.getBic());
 		}
 		
-		this.domainName = domainName;
-		this.domain = domain;
-		this.user = user;
+		this.occam = occam;
 		this.config = config;
 		this.registryBankListBox = new RegistryBankListBox();
 		this.bankAccountBox = new AonBankAccountBox( financeData.getBankAccount() );
@@ -98,12 +86,9 @@ public class FinanceBankPanel extends SimplePanel implements Focusable {
 		FlowPanel tablePanel = new FlowPanel();
 		tablePanel.setStyleName(AON.CSS.aonScrollArea());
 		
-		KeyUpHandler keyUpHandler = new KeyUpHandler() {
-			@Override
-			public void onKeyUp(KeyUpEvent event) {
-				if (event.getNativeKeyCode() == KeyCodes.KEY_ESCAPE) {
-					callback.onCancel();	
-				}
+		KeyUpHandler keyUpHandler = event -> {
+			if (event.getNativeKeyCode() == KeyCodes.KEY_ESCAPE) {
+				callback.onCancel();	
 			}
 		};
 
@@ -126,23 +111,20 @@ public class FinanceBankPanel extends SimplePanel implements Focusable {
 				payMethodBox.setSelectedIndex( payMethodBox.getItemCount() - 1);
 			}
 		}
-		payMethodBox.addChangeHandler(new ChangeHandler() {
-			@Override
-			public void onChange(ChangeEvent event) {
-				int idx = payMethodBox.getSelectedIndex();
-				idx = idx - 1;
-				if (idx > 0 ) {
-					PayMethod payMethod = config.getPayMethods().get(idx);
-					FinanceBankPanel.this.financeData.setPayMethod(payMethod.getId());
-					FinanceBankPanel.this.financeData.setPayMethodName(payMethod.getName());
-					FinanceBankPanel.this.financeData.setPayMethodType(payMethod.getType());
-					refreshBankAccountPanel(payMethod.getType());
-				} else {
-					FinanceBankPanel.this.financeData.setPayMethod(null);
-					FinanceBankPanel.this.financeData.setPayMethodName(null);
-					FinanceBankPanel.this.financeData.setPayMethodType(null);
-					refreshBankAccountPanel(null);
-				}
+		payMethodBox.addChangeHandler(event -> {
+			int idx = payMethodBox.getSelectedIndex();
+			idx = idx - 1;
+			if (idx > 0 ) {
+				PayMethod payMethod = config.getPayMethods().get(idx);
+				FinanceBankPanel.this.financeData.setPayMethod(payMethod.getId());
+				FinanceBankPanel.this.financeData.setPayMethodName(payMethod.getName());
+				FinanceBankPanel.this.financeData.setPayMethodType(payMethod.getType());
+				refreshBankAccountPanel(payMethod.getType());
+			} else {
+				FinanceBankPanel.this.financeData.setPayMethod(null);
+				FinanceBankPanel.this.financeData.setPayMethodName(null);
+				FinanceBankPanel.this.financeData.setPayMethodType(null);
+				refreshBankAccountPanel(null);
 			}
 		});
 		table.setWidget(row,1,payMethodBox);
@@ -165,18 +147,14 @@ public class FinanceBankPanel extends SimplePanel implements Focusable {
 		registryBankIcon.setStyleName(AON.CSS.aonTabIcon());
 		row1.add(registryBankIcon);
 		registryBankListBox.addKeyUpHandler(keyUpHandler);
-		registryBankListBox.addChangeHandler( new ChangeHandler() {
-			
-			@Override
-			public void onChange(ChangeEvent event) {
-				RegistryBank rbank = registryBankListBox.getValue();
-				if (rbank == null) {
-					FinanceBankPanel.this.financeData.setBankAccount(null);
-					bankAccountBox.setValue(null);
-				} else {
-					FinanceBankPanel.this.financeData.setBankAccount(rbank.getBankAccount());
-					bankAccountBox.setValue(rbank.getBankAccount());
-				}
+		registryBankListBox.addChangeHandler( event -> {
+			RegistryBank rbank = registryBankListBox.getValue();
+			if (rbank == null) {
+				FinanceBankPanel.this.financeData.setBankAccount(null);
+				bankAccountBox.setValue(null);
+			} else {
+				FinanceBankPanel.this.financeData.setBankAccount(rbank.getBankAccount());
+				bankAccountBox.setValue(rbank.getBankAccount());
 			}
 		});
 		bankAccountBox.addKeyUpHandler(keyUpHandler);
@@ -230,11 +208,7 @@ public class FinanceBankPanel extends SimplePanel implements Focusable {
     	rootPanel.add(buttons);
 		setWidget(rootPanel);
 		
-		Scheduler.get().scheduleDeferred(new ScheduledCommand() {
-			public void execute() {
-				payMethodBox.setFocus(true);
-			}
-		});
+		Scheduler.get().scheduleDeferred(() -> payMethodBox.setFocus(true));
 
 	}
 	
@@ -252,7 +226,11 @@ public class FinanceBankPanel extends SimplePanel implements Focusable {
 				registryBankIcon.removeStyleName(AON.CSS.aonIconHome());
 				registryBankIcon.addStyleName(AON.CSS.aonIconEmployee());
 				registryBankIcon.setTitle("Bancos definidos de \"" + this.financeData.getRegistryName() + "\"");
-				FINANCE_SERVICE.getRegistryBanks(domainName, domain, user, this.financeData.getRegistry().getId(), new AsyncCallback<LinkedList<RegistryBank>>() {
+				FINANCE_SERVICE.getRegistryBanks(
+					occam.getDomainName()
+					, occam.getDomain()
+					, occam.getUser()
+					, this.financeData.getRegistry().getId(), new AsyncCallback<LinkedList<RegistryBank>>() {
 					
 					@Override
 					public void onSuccess(LinkedList<RegistryBank> result) {
@@ -269,7 +247,10 @@ public class FinanceBankPanel extends SimplePanel implements Focusable {
 				registryBankIcon.addStyleName(AON.CSS.aonIconHome());
 				registryBankIcon.setTitle("Bancos definidos de \"" + config.getCompany().getName() + "\"");
 				registryBankIcon.removeStyleName(AON.CSS.aonIconEmployee());
-				FINANCE_SERVICE.getCompanyBanks(domainName, domain, user, new AsyncCallback<LinkedList<RegistryBank>>() {
+				FINANCE_SERVICE.getCompanyBanks(
+						occam.getDomainName(), 
+						occam.getDomain(), 
+						occam.getUser(), new AsyncCallback<LinkedList<RegistryBank>>() {
 					
 					@Override
 					public void onSuccess(LinkedList<RegistryBank> result) {

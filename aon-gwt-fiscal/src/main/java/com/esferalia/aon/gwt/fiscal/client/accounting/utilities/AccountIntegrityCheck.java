@@ -54,6 +54,7 @@ class AccountIntegrityCheck extends OptionBase {
 		return AonStringUtils.BULLET + " Chequeo de integridad cuentas contables.";
 	}
 
+	@Override
 	protected Widget getToolbarPanel() {
 		AonToolbar toolbarPanel = new AonToolbar(getOptionDescription());
 		final AonToolbarButton refresh = new AonToolbarButton( AON.MSG.refresh(), AON.CSS.aonIconRefresh());

@@ -2,11 +2,9 @@ package com.esferalia.aon.gwt.fiscal.client.accounting;
 
 import java.util.Date;
 import java.util.LinkedList;
-import java.util.List;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.AsyncCallbackWrapper;
-import com.esferalia.aon.occam.api.model.Account;
 import com.esferalia.aon.occam.api.model.AccountEntry;
 import com.esferalia.aon.occam.api.model.AccountEntryParams;
 import com.esferalia.aon.occam.api.model.AccountingInvoice;
@@ -15,13 +13,10 @@ import com.esferalia.aon.occam.api.model.FinanceEntry;
 import com.esferalia.aon.occam.api.model.IAccountEntryWrapper;
 import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.SalaryEntry;
-import com.esferalia.aon.occam.api.model.accounting.AmortizationType;
-import com.esferalia.aon.occam.api.model.accounting.AmortizationTypeParams;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceRectificationData;
 import com.esferalia.aon.occam.api.model.registry.AccountingRegistry;
 import com.esferalia.aon.occam.api.model.type.AccountEntryUpdate;
-import com.esferalia.aon.watson.error.AonCoreException;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public class AccountEntryServiceAsyncDecorator implements AccountEntryServiceAsync {
@@ -64,6 +59,18 @@ public class AccountEntryServiceAsyncDecorator implements AccountEntryServiceAsy
 	}
 	
 	@Override
+	public void save(Occam occam, AccountEntry ae, AsyncCallback<AccountEntry> callback) {
+		AON.start();
+		fsa.save(occam, ae, new AsyncCallbackWrapper<>(callback));
+	}
+
+	@Override
+	public void deleteAccountEntry(Occam occam, Integer id, AsyncCallback<Void> callback) {
+		AON.start();
+		fsa.deleteAccountEntry(occam, id, new AsyncCallbackWrapper<>(callback));
+	}
+	
+	@Override
 	public void getFinanceEntry(Occam occam, Integer accountEntry, AsyncCallback<FinanceEntry> callback) {
 		AON.start();
 		fsa.getFinanceEntry(occam, accountEntry, new AsyncCallbackWrapper<>(callback));
@@ -82,10 +89,36 @@ public class AccountEntryServiceAsyncDecorator implements AccountEntryServiceAsy
 	}
 	
 	@Override
+	public void getAccountingInvoiceFromInvoice(Occam occam, Integer invoiceId, AsyncCallback<AccountingInvoice> callback) {
+		AON.start();
+		fsa.getAccountingInvoiceFromInvoice(occam, invoiceId, new AsyncCallbackWrapper<>(callback));
+	}
+	
+	@Override
+	public void getRegistryLastAccountingInvoice(Occam occam, Integer registryId, AsyncCallback<AccountingInvoice> callback) {
+		AON.start();
+		fsa.getRegistryLastAccountingInvoice(occam, registryId, new AsyncCallbackWrapper<>(callback));
+	}
+	
+	@Override
 	public void getAccountEntry(Occam occam, AonConfiguration config, Invoice invoice, AsyncCallback<AccountEntry> callback) {
 		AON.start();
 		fsa.getAccountEntry(occam, config, invoice, new AsyncCallbackWrapper<>(callback));
 	}
+
+	@Override
+	public void getSalaryEntries(Occam occam, Date from, Date to, AsyncCallback<LinkedList<SalaryEntry>> callback) {
+		AON.start();
+		fsa.getSalaryEntries(occam, from, to, new AsyncCallbackWrapper<>(callback));
+	}
+
+	@Override
+	public void getSalaryFormatted(Occam occam, Date from, Date to, AsyncCallback<String> callback) {
+		AON.start();
+		fsa.getSalaryFormatted(occam, from, to, new AsyncCallbackWrapper<>(callback));
+	}
+	
+	
 	// *************************************	
 	// *************************************	
 	// *************************************	
@@ -96,23 +129,11 @@ public class AccountEntryServiceAsyncDecorator implements AccountEntryServiceAsy
 		fsa.getAccountEntries(domainName, domain, user, params, offset, limit, new AsyncCallbackWrapper<>(callback));
 	}
 
-	@Override
-	public void getAccountEntry(String domainName, int domain, String user, int id, AsyncCallback<AccountEntry> callback) {
-		AON.start();
-		fsa.getAccountEntry(domainName, domain, user, id, new AsyncCallbackWrapper<>(callback));
-	}
-
-	@Override
-	public void save(String domainName, int domain, String user, AccountEntry ae, AsyncCallback<AccountEntry> callback) {
-		AON.start();
-		fsa.save(domainName, domain, user, ae, new AsyncCallbackWrapper<>(callback));
-	}
-
-	@Override
-	public void deleteAccountEntry(String domainName, int domain, String user, Integer id, AsyncCallback<Void> callback) {
-		AON.start();
-		fsa.deleteAccountEntry(domainName, domain, user, id, new AsyncCallbackWrapper<>(callback));
-	}
+//	@Override
+//	public void getAccountEntry(String domainName, int domain, String user, int id, AsyncCallback<AccountEntry> callback) {
+//		AON.start();
+//		fsa.getAccountEntry(domainName, domain, user, id, new AsyncCallbackWrapper<>(callback));
+//	}
 
 	@Override
 	public void removeInvoiceAttach(Occam occam, Integer invoiceId, AsyncCallback<AccountingInvoice> callback) {
@@ -133,35 +154,10 @@ public class AccountEntryServiceAsyncDecorator implements AccountEntryServiceAsy
 	}
 
 	@Override
-	public void getAccountingInvoiceFromInvoice(String domainName, int domain, String user, Integer invoiceId, AsyncCallback<AccountingInvoice> callback) {
-		AON.start();
-		fsa.getAccountingInvoiceFromInvoice(domainName, domain, user, invoiceId, new AsyncCallbackWrapper<>(callback));
-	}
-
-	@Override
 	public void save(Occam occam, AccountingInvoice invoice, AsyncCallback<AccountingInvoice> callback) {
 		AON.start();
 		fsa.save(occam, invoice, new AsyncCallbackWrapper<>(callback));
 	}
-
-	@Override
-	public void getRegistryLastAccountingInvoice(String domainName, int domain, String user, Integer registryId, AsyncCallback<AccountingInvoice> callback) {
-		AON.start();
-		fsa.getRegistryLastAccountingInvoice(domainName, domain, user, registryId, new AsyncCallbackWrapper<>(callback));
-	}
-
-	@Override
-	public void getSalaryEntries(String domainName, int domain, String user, Date from, Date to, AsyncCallback<LinkedList<SalaryEntry>> callback) {
-		AON.start();
-		fsa.getSalaryEntries(domainName, domain, user, from, to, new AsyncCallbackWrapper<>(callback));
-	}
-
-	@Override
-	public void getSalaryFormatted(String domainName, int domain, String user, Date from, Date to, AsyncCallback<String> callback) {
-		AON.start();
-		fsa.getSalaryFormatted(domainName, domain, user, from, to, new AsyncCallbackWrapper<>(callback));
-	}
-
 
 	@Override
 	public void updateSpecial(String domainName, int domain, String user, AccountEntryUpdate operation, IAccountEntryWrapper wrapper, AsyncCallback<IAccountEntryWrapper> callback) {

@@ -20,7 +20,7 @@ public class ValidationSaveEmptyPeriodTest extends AbstractOccamTest {
 		accountEntry.setDomain(ctx.getDomainId());
 		accountEntry.setEntryDate( AonDateUtils.getDate(1974, 5, 4) );
 		assertThrows(AonCoreException.class, () ->
-			ACCOUNTING.save(DOMAIN_NAME, DOMAIN_ID, USER, accountEntry));
+			ACCOUNTING.save(getOccam(), accountEntry));
 
 	}
 }

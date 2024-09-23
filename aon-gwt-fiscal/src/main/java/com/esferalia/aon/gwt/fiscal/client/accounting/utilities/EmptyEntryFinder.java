@@ -14,6 +14,7 @@ import com.esferalia.aon.gwt.fiscal.client.accounting.AccountEntryServiceAsync;
 import com.esferalia.aon.gwt.fiscal.client.accounting.AccountEntryServiceAsyncDecorator;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.IAccountEntryWrapper;
+import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.accounting.utilities.AccUtilitiesEmptyEntryItem;
 import com.esferalia.aon.occam.api.model.accounting.utilities.AccUtilitiesResult;
 import com.esferalia.aon.occam.api.model.accounting.utilities.IAccUtilitiesItem;
@@ -70,6 +71,7 @@ class EmptyEntryFinder extends OptionBase {
 		return AonStringUtils.BULLET + " Buscador de apuntes sin l\u00EDneas";
 	}
 
+	@Override
 	protected Widget getToolbarPanel() {
 		AonToolbar toolbarPanel = new AonToolbar(getOptionDescription());
 		final AonToolbarButton refresh = new AonToolbarButton(AON.MSG.refresh(),AON.CSS.aonIconRefresh());
@@ -181,6 +183,8 @@ class EmptyEntryFinder extends OptionBase {
 			.setTrialBalanceFromPreviewEnabled(false)
 			.setExternalCallback( new ModuleCallback() {
 			
+				private static final long serialVersionUID = -36801840335426246L;
+				
 				@Override public void onRemove(IAccountEntryWrapper removed) {
 					entryDialog.hide();
 				}
@@ -260,7 +264,11 @@ class EmptyEntryFinder extends OptionBase {
 						
 						@Override
 						public void onAccept() {
-							ACCOUNT_ENTRY_SERVICE.deleteAccountEntry(domainName, item.getDomain(), EmptyEntryFinder.this.user, item.getEntryId(), new AsyncCallback<Void>() {
+							Occam occam = new Occam()
+								.setDomainName(domainName)
+								.setDomain(item.getDomain())
+								.setUser(EmptyEntryFinder.this.user);
+							ACCOUNT_ENTRY_SERVICE.deleteAccountEntry(occam, item.getEntryId(), new AsyncCallback<Void>() {
 
 								@Override
 								public void onFailure(Throwable caught) {

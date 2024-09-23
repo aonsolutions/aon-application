@@ -1,26 +1,12 @@
 package com.esferalia.aon.gwt.fiscal.client.accounting;
 
-import java.util.Date;
-import java.util.LinkedList;
 import java.util.List;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.AsyncCallbackWrapper;
 import com.esferalia.aon.occam.api.model.Account;
-import com.esferalia.aon.occam.api.model.AccountEntry;
-import com.esferalia.aon.occam.api.model.AccountEntryParams;
-import com.esferalia.aon.occam.api.model.AccountingInvoice;
-import com.esferalia.aon.occam.api.model.AonConfiguration;
-import com.esferalia.aon.occam.api.model.FinanceEntry;
-import com.esferalia.aon.occam.api.model.IAccountEntryWrapper;
-import com.esferalia.aon.occam.api.model.Occam;
-import com.esferalia.aon.occam.api.model.SalaryEntry;
 import com.esferalia.aon.occam.api.model.accounting.AmortizationType;
 import com.esferalia.aon.occam.api.model.accounting.AmortizationTypeParams;
-import com.esferalia.aon.occam.api.model.finance.Invoice;
-import com.esferalia.aon.occam.api.model.finance.InvoiceRectificationData;
-import com.esferalia.aon.occam.api.model.registry.AccountingRegistry;
-import com.esferalia.aon.occam.api.model.type.AccountEntryUpdate;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 

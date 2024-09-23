@@ -55,6 +55,7 @@ class InvoiceIntegrityCheck extends OptionBase {
 		return AonStringUtils.BULLET + " Chequeo de integridad de tipos de facturas.";
 	}
 
+	@Override
 	protected Widget getToolbarPanel() {
 		AonToolbar toolbar = new AonToolbar(getOptionDescription());
 		final AonToolbarButton refresh = new AonToolbarButton(AON.MSG.refresh(),AON.CSS.aonIconRefresh());

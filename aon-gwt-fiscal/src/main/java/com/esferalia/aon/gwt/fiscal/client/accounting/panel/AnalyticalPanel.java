@@ -37,7 +37,6 @@ import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.logging.client.ConsoleLogHandler;
-import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
@@ -329,12 +328,10 @@ public class AnalyticalPanel extends ScrollPanel implements HasSelectionHandlers
 					percentLabel.setVisible(false);
 					percentBox.setVisible(true);
 	
-					Scheduler.get().scheduleDeferred(new Command() {
-				        public void execute() {
-				        	percentBox.selectAll();
-				        	percentBox.setFocus(true);
-				        }
-				    });		
+					Scheduler.get().scheduleDeferred(() -> {
+						percentBox.selectAll();
+						percentBox.setFocus(true);
+					});		
 				}
 			});
 			percentPanel.add(percentBox);
@@ -482,11 +479,7 @@ public class AnalyticalPanel extends ScrollPanel implements HasSelectionHandlers
 		dialog.center();
 		dialog.show();
 		
-		Scheduler.get().scheduleDeferred(new Command() {
-	        public void execute() {
-	        	costCenterPanel.setFocus(true);
-	        }
-	    });		
+		Scheduler.get().scheduleDeferred(() -> costCenterPanel.setFocus(true));		
 	}
 
 	@Override

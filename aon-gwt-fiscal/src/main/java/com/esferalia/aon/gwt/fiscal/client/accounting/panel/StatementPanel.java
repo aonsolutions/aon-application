@@ -305,6 +305,8 @@ public class StatementPanel extends ScrollPanel implements HasAccountEntrySelect
 										.setDomain( options.getDomain());
 								AccountEntrySelectionEvent.fire(StatementPanel.this, ae, new ModuleCallback() {
 									
+									private static final long serialVersionUID = -6091728695323581159L;
+
 									@Override
 									public void onRemove(IAccountEntryWrapper removed) {
 										int scrollPosition = StatementPanel.this.getVerticalScrollPosition();

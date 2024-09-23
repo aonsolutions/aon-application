@@ -51,6 +51,7 @@ import com.esferalia.aon.occam.impl.jooq.dao.CustomerDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.OCRDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.SupplierDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.TbaiConfigurationDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.accounting.invoice.InvoiceTextPrinter;
 import com.esferalia.aon.occam.impl.jooq.dao.invoice.InvoiceDAO;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.server.AonDateUtils;
@@ -65,7 +66,6 @@ public class AccountingInvoiceDAO {
 	private static final com.esferalia.aon.jooq.tables.Account VAT_ACCOUNT = ACCOUNT.as("VAT_ACCOUNT");
 
 	private AccountingInvoiceDAO() {
-		
 	}
 	
 	public static Optional<AccountingInvoice> getFromAccountEntry(final AONContext ctx, final Integer accountEntryId) {
@@ -87,7 +87,7 @@ public class AccountingInvoiceDAO {
 	
 	public static Optional<AccountingInvoice> getFromInvoice(final AONContext ctx, final Integer invoiceId) {
 		return getFromInvoice(ctx, InvoiceDAO.getFull(ctx, invoiceId)
-				.orElseThrow(() -> new AonCoreException("No se pudo encontrar la factura")));
+			.orElseThrow(() -> new AonCoreException("No se pudo encontrar la factura")));
 	}
 	
 	public static Optional<AccountingInvoice> getFromInvoice(final AONContext ctx, final Invoice invoice) {
@@ -117,14 +117,14 @@ public class AccountingInvoiceDAO {
 
 	public static Optional<Account> getInvoiceDetailAccount(AONContext ctx, Integer invoiceDetailId) {
 		return ctx.getDslContext()
-				.select()
-				.from(ACCOUNT)
-				.join(INVOICE_DETAIL_ACCOUNT).on(INVOICE_DETAIL_ACCOUNT.ACCOUNT.eq(ACCOUNT.ID))
-				.where(INVOICE_DETAIL_ACCOUNT.INVOICE_DETAIL.eq(invoiceDetailId)).limit(1)
-				.fetch()
-				.stream()
-				.map(new FullAccountFiller())
-				.findFirst();
+			.select()
+			.from(ACCOUNT)
+			.join(INVOICE_DETAIL_ACCOUNT).on(INVOICE_DETAIL_ACCOUNT.ACCOUNT.eq(ACCOUNT.ID))
+			.where(INVOICE_DETAIL_ACCOUNT.INVOICE_DETAIL.eq(invoiceDetailId)).limit(1)
+			.fetch()
+			.stream()
+			.map(new FullAccountFiller())
+			.findFirst();
 	}
 	
 	public static void saveInvoiceDetailAccount(AONContext ctx, InvoiceDetail invoiceDetail) {
@@ -227,6 +227,7 @@ public class AccountingInvoiceDAO {
 		ai.setSuggestedAccounts(getSuggestedAccounts(ctx , ai.getInvoice().getDomain(), ai.getRegistry().getId(), reg.getType().getInvoiceType()));
 		InvoiceDetail id = createNewInvoiceDetail(ctx ,ai);
 		ai.getInvoice().addDetail(id);
+		InvoiceTextPrinter.print(ai.getInvoice());
 		return ai;
 	}
 
@@ -510,31 +511,32 @@ public class AccountingInvoiceDAO {
 			ctx.log().debug("------ [START] INSERT INVOICE");
 			LinkedList<AccountEntry> entries = new LinkedList<>();
 			InvoiceDAO.save(ctx, accInvoice.getInvoice());
-			
 //			if (accInvoice.isDuaLinked()) {
 //				insertInvoiceDUA( ctx, config, accInvoice);
 //			}
-			
 			recordInvoice( ctx, accInvoice, entries);
-			
-			if ( accInvoice.isTediParsed() ) {
-				try {
-					new Thread( () -> {
-							ctx.log().info("OPENING Thread");		
-							OCRDAO.teachReferenceCode(ctx.getUser(), accInvoice.getInvoice().getRegistryDocument(), accInvoice.getInvoice().getReferenceCode());
-						}).start();
-				} catch (Exception t) {
-					t.printStackTrace();
-					ctx.log().info("ERROR");
-				}
-			}
-			
+			teachAonOcr( ctx, accInvoice);
+			InvoiceTextPrinter.print(accInvoice.getInvoice());
 			ctx.log().debug("------ [END OK] INSERT INVOICE");
 			return entries;
 		} catch (Exception t) {
 			t.printStackTrace();
 			ctx.log().debug("------ [END FAIL] INSERT INVOICE [{0}]",t.getMessage());
 			throw t;
+		}
+	}
+
+	private static void teachAonOcr(AONContext ctx, AccountingInvoice accInvoice) {
+		if ( accInvoice.isTediParsed() ) {
+			try {
+				new Thread( () -> {
+						ctx.log().info("OPENING Thread");		
+						OCRDAO.teachReferenceCode(ctx.getUser(), accInvoice.getInvoice().getRegistryDocument(), accInvoice.getInvoice().getReferenceCode());
+					}).start();
+			} catch (Exception t) {
+				t.printStackTrace();
+				ctx.log().info("ERROR");
+			}
 		}
 	}
 

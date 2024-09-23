@@ -11,6 +11,7 @@ import java.util.Date;
 
 import org.junit.jupiter.api.Test;
 
+import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.impl.jooq.dao.ConfigurationDAO;
 
 import es.translogia.tedi.ewok.TediInvoice;
@@ -73,10 +74,11 @@ public class TediInvoiceIMGParserAonDemoTestCase  extends AbstractTediTest {
 		out.append("\n");
 		
 		TediContext tctx = new TediContext()
+			.setOccam(new Occam()
 				.setDomain(DOMAIN_ID)
 				.setDomainName(DOMAIN_NAME)
-				.setAONContext ( ctx )
-				;
+				)
+			.setAONContext ( ctx );
 		tctx.setAonConfiguration(ConfigurationDAO.getConfiguration(tctx.getAONContext()));
 		tctx.getAonConfiguration().getCompany().setDocument("B01487271");
 		

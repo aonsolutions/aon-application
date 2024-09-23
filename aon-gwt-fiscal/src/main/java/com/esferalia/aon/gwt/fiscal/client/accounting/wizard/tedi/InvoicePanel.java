@@ -136,19 +136,10 @@ public class InvoicePanel extends WizardContentBase<AccountingInvoice> implement
 		LOGGER.info("Editing invoice as account source");
 		centerContainer.clear();
 		EditableInvoicePanel eip = new EditableInvoicePanel(invoiceCallback);
-		eip.addSelectionHandler(new SelectionHandler<AccountingInvoice>() {
-			@Override
-			public void onSelection(SelectionEvent<AccountingInvoice> event) {
-				SelectionEvent.<AccountingInvoice>fire( InvoicePanel.this, event.getSelectedItem());
-			}
-		});
-		eip.addSelectionHandler(new AccountEntrySelectionHandler() {
-			
-			@Override
-			public void onSelection(AccountEntrySelectionEvent event) {
-				AccountEntrySelectionEvent.fire( InvoicePanel.this, event.getSelectedItem(), null);
-			}
-		});
+		eip.addSelectionHandler((SelectionHandler<AccountingInvoice>) event -> 
+			SelectionEvent.<AccountingInvoice>fire( InvoicePanel.this, event.getSelectedItem()));
+		eip.addSelectionHandler((AccountEntrySelectionHandler) event -> 
+			AccountEntrySelectionEvent.fire( InvoicePanel.this, event.getSelectedItem(), null));
 		focusableWidget = eip;
 		centerContainer.setWidget( eip );
 		Scheduler.get().scheduleDeferred(() -> eip.setFocus(true));
@@ -390,21 +381,6 @@ public class InvoicePanel extends WizardContentBase<AccountingInvoice> implement
 		@Override
 		public Occam getOccam() {
 			return getCallback().getOccam();
-		}
-		@Override
-		@Deprecated
-		public String getCurrentDomainName() {
-			return getCallback().getCurrentDomainName();
-		}
-		@Override
-		@Deprecated
-		public int getCurrentDomainId() {
-			return getCallback().getCurrentDomainId();
-		}
-		@Override
-		@Deprecated
-		public String getCurrentUser() {
-			return getCallback().getCurrentUser();
 		}
 		@Override
 		public AccountingInvoice getInvoice() {
@@ -649,8 +625,7 @@ public class InvoicePanel extends WizardContentBase<AccountingInvoice> implement
 			
 			if ( allowParse && invoiceCallback.getConfiguration().isOCRActive() ) {
 				final MimeType attachMimeType = mimeType;
-				TEDI_SERVICE.parseInvoice(invoiceCallback.getCurrentDomainName(), invoiceCallback.getCurrentUser(), 
-					invoiceCallback.getCurrentDomainId(), name, doc, new AsyncCallback<TediResult>() {
+				TEDI_SERVICE.parseInvoice(invoiceCallback.getOccam(), name, doc, new AsyncCallback<TediResult>() {
 					
 					@Override
 					public void onSuccess(TediResult result) {
@@ -709,9 +684,6 @@ public class InvoicePanel extends WizardContentBase<AccountingInvoice> implement
 		    @Override public AccountEntryModuleOptions getModuleOptions() {return getCallback().getModuleOptions();}
 		    @Override public AccountEntryModule getModule() {return getCallback().getModule();}
 		    @Override public Occam getOccam() { return getCallback().getOccam();}
-		    @Override @Deprecated public String getCurrentUser() {return getCallback().getCurrentUser();}
-		    @Override @Deprecated public String getCurrentDomainName() {return getCallback().getCurrentDomainName();}
-		    @Override @Deprecated public int getCurrentDomainId() {return getCallback().getCurrentDomainId();}
 		    @Override public AonConfiguration getConfiguration() {return getCallback().getConfiguration();}
 		    
 		    @Override

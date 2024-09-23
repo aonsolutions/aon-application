@@ -400,6 +400,10 @@ public class DiaryImport extends ImportUtils {
 		Error error = new Error().setError(true);
 		
 		try {
+			Occam occam = new Occam()
+				.setDomain(domain.getId())
+				.setDomainName(domain.getName())
+				.setUser(user.getLogin());
 			
 			AccountPeriod ap = ACCOUNTING.getAccountPeriod(domain.getName(), domain.getId(), "", ae.getEntry().getEntryDate());
 			if(ap == null) { 
@@ -435,14 +439,14 @@ public class DiaryImport extends ImportUtils {
 					f.getDomainProperty().eq(domain.getId())
 					.and(f.getReferenceCodeProperty().eq(docNumber)));
 				if(invoice != null && invoice.getId() != null) {
-					AccountingInvoice ai = ACCOUNTING.getAccountingInvoiceFromInvoice(domain.getName(), domain.getId(), user.getLogin(), invoice.getId());
+					AccountingInvoice ai = ACCOUNTING.getAccountingInvoiceFromInvoice(occam, invoice.getId());
 					if(ai != null) {
 						throw new Exception("Ya existe un asiento de la factura " + invoice.getReferenceCode());
 					}
 				}
 			}
 		
-			ACCOUNTING.save(domain.getName(), domain.getId(), user.getLogin(), ae.getEntry());	
+			ACCOUNTING.save(occam, ae.getEntry());	
 		} catch (Exception e) {
 			e.printStackTrace();
 			error.setError(false);
@@ -456,9 +460,9 @@ public class DiaryImport extends ImportUtils {
 		Account acc = ACCOUNTING.getAccount(domain.getName(), domain.getId(), user.getLogin(), accountCode);
 		if(acc == null) {
 			Occam occam = new Occam()
-							.setDomain(domain.getId())
-							.setDomainName(domain.getName())
-							.setUser(user.getLogin());
+				.setDomain(domain.getId())
+				.setDomainName(domain.getName())
+				.setUser(user.getLogin());
 			
 			Account account = new Account()
 					.setCode(ae.getEntry().getDetails().get(i).getAccountCode())
