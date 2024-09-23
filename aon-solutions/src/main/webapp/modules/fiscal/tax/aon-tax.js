@@ -13,7 +13,7 @@ import {
   getAeatCertificates,
 } from "../../../services/service.js";
 import { getEstimationModelsFiscal } from "../../../services/fiscalService.js";
-import { CONST_FISCAL } from "../FiscalEnums.js";
+import { CONST_FISCAL, FISCAL_VIEWS } from "../FiscalEnums.js";
 import { AonCheckbox } from "../../../components/aon-checkbox.js";
 import { AonSelect } from "../../../components/aon-select.js";
 import { AonInput } from "../../../components/aon-input.js";
@@ -33,6 +33,7 @@ import { FISCAL } from "../../../services/app.js";
 import * as LS from "../../../services/localStorageService.js";
 import { AonNumber } from "../../../components/aon-number.js";
 import { AonDate } from "../../../components/aon-date.js";
+import { AonTaxDetail } from "./aon-tax-detail.js";
 
 export class AonTax extends AonElement {
   ERROR_TEMPLATE_START =
@@ -143,7 +144,7 @@ export class AonTax extends AonElement {
         aonTable.addColumn("Estado", "", "statusText", "12%");
       }
       aonTable.addColumn("Importe", "number", "resultFormat", "15%");
-      aonTable.addColumn("", "icon", "icon", "5%");
+      aonTable.addColumn('', 'icons', 'icons', '5%');
 
       try {
         const resp = await this.getData();
@@ -151,8 +152,11 @@ export class AonTax extends AonElement {
 
         if (resp.length) {
           resp.forEach((res) => {
-            this.buildPrint(res);
-            aonTable.addRow(res, () => this.openDialog(res));
+            this.buildButtons(res);
+            aonTable.addRow(res, () => {
+              if(!["123", "130", "131", "202"].includes(res.newModel))
+                this.getApplication().setContent(new AonTaxDetail(res, "tax"));
+            } /*this.openDialog(res)*/);
           });
 
           let elementHTML = document.createElement(TAG.DIV);
@@ -214,24 +218,16 @@ export class AonTax extends AonElement {
     let filter = applicationParent._filter;
     let datos = await applicationParent.getModelsFiscal();
 
-    if (filter.estimationFilter) {
-      const estimationModels = await getEstimationModelsFiscal(filter.estimationFilter);
-      console.log("estimationModels");
-      console.log(estimationModels);
-      let estimationModelDatos = estimationModels.filter((estimationModel) => estimationModel.amount && estimationModel.amount != 0).map((estimationModel) => this.formatEstimationModel(estimationModel, filter.estimationFilter))
-      return estimationModelDatos;
-    } else {
-      if (filter.year) {
-        datos = datos.filter(({ year }) => year == filter.year);
-      }
+    if (filter.year) {
+      datos = datos.filter(({ year }) => year == filter.year);
+    }
 
-      if (filter.period) {
-        datos = datos.filter(({ period }) => period == filter.period);
-      }
+    if (filter.period) {
+      datos = datos.filter(({ period }) => period == filter.period);
+    }
 
-      if (filter.model) {
-        datos = datos.filter(({ model, administration }) => FiscalUtils.getModelNumber(administration, model) == filter.model);
-      }
+    if (filter.model) {
+      datos = datos.filter(({ model, administration }) => FiscalUtils.getModelNumber(administration, model) == filter.model);
     }
 
     console.log("AON_TAX");
@@ -239,38 +235,6 @@ export class AonTax extends AonElement {
     console.log(datos);
 
     return datos;
-  }
-
-  formatEstimationModel(model, estimationFilter) {
-    const newModel = ""; //Empty
-
-    let elementHTML = document.createElement(TAG.DIV);
-    elementHTML.style.alignItems = "center";
-    elementHTML.style.fontWeight = "bold";
-    elementHTML.style.maxWidth = "6rem";
-    elementHTML.title = "Borrador";
-    
-    let description = document.createElement(TAG.SPAN);
-    description.innerText = "Borrador";
-    elementHTML.appendChild(description);
-
-    const statusHtml = elementHTML.outerHTML;
-
-    return {
-      ...model,
-      resultFormat: !isNaN(model.amount)
-        ? formatNumber(model.amount, 2, "EUR")
-        : null,
-      periodText: estimationFilter.periodText,
-      modelText: model.description,
-      year : estimationFilter.year,
-      hacienda : model.hacienda, // Alava, AEAT...
-      result : model.amount,
-      statusHtml,
-      lettersHtml : `<div style="font-weight: bold;">Precálculo</div>`,
-      statusText : "Borrardor",
-      newModel
-    };
   }
 
   getTotal(models) {
@@ -624,6 +588,32 @@ export class AonTax extends AonElement {
     res.icon = MATERIAL_ICONS.PDF;
     res.icon_color = "var(--aonTaxBuildPrintRes)";
     res.fn = () => this.getPdf(res);
+  }
+
+  buildButtons(res) {
+    let icons = [];
+
+    if(["FINISHED", "SENT"].includes(res.status)){
+      let icon = {
+        icon: MATERIAL_ICONS.PDF,
+        title: MSG.SHOW_FILE,
+        color: "var(--aonTaxBuildPrintRes)",
+        fn : () => this.getPdf(res)
+      };
+      icons.push(icon);
+    }
+
+    if(["CUSTOMER_CHECK"].includes(res.status)){
+      let icon = {
+        icon: MATERIAL_ICONS.ACCOUNT_BALANCE,
+        title: "Domiciliación",
+        color: "var(--aonTaxBuildPrintRes)",
+        fn : () => this.openDialog(res)
+      };
+      icons.push(icon);
+    }
+
+    res.icons = icons;
   }
 
   async save(resp) {

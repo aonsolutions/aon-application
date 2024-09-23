@@ -128,7 +128,9 @@ public class IrpfSummary implements Serializable {
 			}
 			toAdd.setBase( toAdd.getBase() + br.getBase()); 
 			toAdd.setQuota( toAdd.getQuota() + br.getQuota());
-			toAdd.setDeductibleQuota( toAdd.getDeductibleQuota() + br.getDeductibleQuota());				
+			toAdd.setDeductibleQuota( toAdd.getDeductibleQuota() + br.getDeductibleQuota());
+			toAdd.setSalary(br.getSalary());
+			toAdd.setInvoice(br.getInvoice());
 		}
 	}
 }

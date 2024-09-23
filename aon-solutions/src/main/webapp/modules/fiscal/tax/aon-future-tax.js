@@ -12,6 +12,7 @@ import { AonTable } from "../../../components/aon-table.js";
 import { FiscalUtils } from "../FiscalUtils.js";
 import * as LS from "../../../services/localStorageService.js";
 import { FISCAL_VIEWS } from "../FiscalEnums.js";
+import { AonTaxDetail } from "./aon-tax-detail.js";
 
 export class AonFutureTax extends AonElement {
 
@@ -111,7 +112,10 @@ export class AonFutureTax extends AonElement {
         if (resp.length) {
           resp.forEach((res) => {
             this.buildPrint(res);
-            aonTable.addRow(res, () => this.openDialog(res));
+            aonTable.addRow(res, () => {
+              this.getApplication().setContent(new AonTaxDetail(res, "future"));
+              //this.openDialog(res);
+            });
           });
 
           let elementHTML = document.createElement(TAG.DIV);
@@ -197,6 +201,7 @@ export class AonFutureTax extends AonElement {
       periodText: this.filter.periodText,
       modelText: model.description,
       year : this.filter.year,
+      period : this.filter.period,
       hacienda : model.hacienda, // Alava, AEAT...
       result : model.amount,
       statusHtml,
