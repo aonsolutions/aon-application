@@ -80,7 +80,8 @@ public class S3RequestHandler implements RequestHandler<Object, String> {
 
     static void handleS3EventObject(S3EventObject s3EventObject) {
     	try {
-    		s3EventObject.setDocument(s3EventObject.getDocument().trim());
+    		s3EventObject.setDocument(s3EventObject.getDocument() != null
+   				? s3EventObject.getDocument().trim() : s3EventObject.getDocument());
     		if(isImage(s3EventObject)) {
     			byte[] image = download(s3EventObject);
     			byte[] pdf = imageToPdf(image);
@@ -97,7 +98,12 @@ public class S3RequestHandler implements RequestHandler<Object, String> {
     		}    		
     		DomainUserRoles dur = getDomainUserRoles(s3EventObject);
     		if(dur.isInvofox()) {
-        		Integer rawdocId = createRawdoc(s3EventObject, RawdocStatus.PROCESSING);
+        		Integer rawdocId = null;
+        		try {
+        			rawdocId = createRawdoc(s3EventObject, RawdocStatus.PROCESSING);
+        		} catch (Exception e) {
+        			e.printStackTrace();
+				}
     			InvofoxConfiguration invofoxConfiguration = getInvofoxConfiguration(s3EventObject);
         		String companyId =  getCompanyId(invofoxConfiguration, s3EventObject);
         		String downloadURL = getDowloadURL(s3EventObject); 
