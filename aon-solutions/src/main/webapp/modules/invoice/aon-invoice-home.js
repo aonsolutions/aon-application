@@ -12,7 +12,6 @@ import { getCounter } from './InvoiceCounter.js';
 import * as OPTION from './InvoiceOptions.js';
 import * as LS from '../../services/localStorageService.js';
 import { AonUploadToast } from "../../components/aon-upload-toast.js";
-import { getInvofoxConfiguration } from "../../services/invoiceService.js";
 
 export class AonInvoiceHome extends AonElement {
 
@@ -81,36 +80,16 @@ export class AonInvoiceHome extends AonElement {
     }
 
 	uploadInvoiceHome(input, files) {
-		if(this.getDur().isInvofox()) {
-			getInvofoxConfiguration().then(r => {
-				let uploadToast = this.getElement('aonUploadToast');
-				if(!uploadToast){ 
-					uploadToast = new AonUploadToast();
-					uploadToast.invofoxConfiguration = r;
-					uploadToast.setDur(this.getDur());
-					this.appendChild(uploadToast);
-				}
-				let data = {
-					uploaded : 0
-				}
-				for (let file of files) {
-					uploadToast.addFile("invoice", file, data);
-				}
-			});
-		}else {
-			let uploadToast = this.getElement('aonUploadToast');
-			if(!uploadToast){ 
-				uploadToast = new AonUploadToast();
-				uploadToast.invofoxConfiguration = r;
-				uploadToast.setDur(this.getDur());
-				this.appendChild(uploadToast);
-			}
-			let data = {
-				uploaded : 0
-			}
-			for (let file of files) {
-				uploadToast.addFile("invoice", file, data);
-			}
+		let uploadToast = this.getElement('aonUploadToast');
+		if(!uploadToast){ 
+			uploadToast = new AonUploadToast();
+			this.appendChild(uploadToast);
+		}
+		let data = {
+			uploaded : 0
+		}
+		for (let file of files) {
+			uploadToast.addFile("invoice", file, data);
 		}
 	}
 
@@ -360,7 +339,7 @@ export class AonInvoiceHome extends AonElement {
 
 		let trashName = this.createDiv();
 		trashName.id = 'trashName';
-		trashName.innerHTML = MSG.IN_TRASH + "**";
+		trashName.innerHTML = MSG.IN_TRASH;
 		trashName.classList.add("aonInvoiceHomeTrashName");
 		trashDiv.appendChild(trashName);
 		

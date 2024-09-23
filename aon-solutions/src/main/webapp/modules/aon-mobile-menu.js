@@ -499,7 +499,6 @@ export class AonMobileMenu extends AonElement {
       let uploadToast = this.getElement('aonUploadToast');
 		  if(!uploadToast){ 
 			  uploadToast = new AonUploadToast();
-		  	uploadToast.setDur(this.getDur());
 	  		this.appendChild(uploadToast);
   		}
 		  let data = {

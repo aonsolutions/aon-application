@@ -5080,11 +5080,11 @@ public class AON {
 	// ********************************************
 	
 	public static void deleteElaborationPackage(Domain domain, User user, Integer id) {
-		deleteElaboration(domain.getName(), domain.getId(), user.getLogin(), id);
+		deleteElaborationPackage(domain.getName(), domain.getId(), user.getLogin(), id);
 	}
 	
 	public static void deleteElaborationPackage(Domain domain, String login, Integer id) {
-		deleteElaboration(domain.getName(), domain.getId(), login, id);
+		deleteElaborationPackage(domain.getName(), domain.getId(), login, id);
 	}
 	
 	public static void deleteElaborationPackage(String domainName, Integer domainId, String login, Integer id) {

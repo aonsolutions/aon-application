@@ -9,7 +9,6 @@ export class AonUploadToast extends AonElement {
 
 	files;
 	JOB_ID;
-	invofoxConfiguration;
 
 	get id() {
 		return this.getAttribute(CONSTANT.ID);
