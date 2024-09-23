@@ -2,8 +2,8 @@
 name: Java CI with Maven
 
 on:
-  # push:
-  #   branches: [ "master" ]
+  push:
+    branches: [ "master" ]
   pull_request:
     # By default, a workflow only runs when a pull_request event's activity type
     # is opened, synchronize, or reopened. types: [opened, synchronize, reopened]
@@ -66,7 +66,14 @@ jobs:
         aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         aws-region: ${{ env.AWS_REGION }}
-
+        
+    - name: Install AWS CLI v2
+      run: |
+        curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o /tmp/awscliv2.zip
+        unzip -q /tmp/awscliv2.zip -d /tmp
+        sudo /tmp/aws/install --bin-dir /usr/local/bin --install-dir /usr/local/aws-cli --update
+        aws --version
+          
     - name: Create connection file
       run: |
         sudo mkdir /etc/aon-aio
@@ -152,5 +159,12 @@ jobs:
       run: mvn -B -pl aon-web-aio -Dgithub.actions=true deploy
       env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Deploy to Amazon ECS AON 
+      if: github.ref == 'refs/heads/master'
+      run : |
+        aws ecs update-service --region=eu-south-2 --cluster AON --service AON-SOLUTIONS --force-new-deployment
+        aws ecs update-service --region=eu-south-2 --cluster AON --service AON-APPLICATION --force-new-deployment
+        
 
 
