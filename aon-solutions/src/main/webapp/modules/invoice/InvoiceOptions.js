@@ -6,6 +6,12 @@ import * as GWT from "../../gwt/gwt.js";
     GWT.load(option, application.CONTENT);
   }
 
+  export const newInvoice = (type) => {
+    let application = document.querySelector(TAG.AON_APPLICATION);
+    let parent = application.getParent();
+    parent.aonInvoice(type)
+  }
+
   export const invoiceList = (filter, invofoxFilter) => {
     let application = document.querySelector(TAG.AON_APPLICATION);
     let parent = application.getParent();
@@ -349,8 +355,40 @@ import * as GWT from "../../gwt/gwt.js";
     },
   ];
 
+
+  export const NEW_ISSUED_INVOICE = {
+    name: MSG.ISSUEDS,
+    title: MSG.ISSUEDS,
+    icon: MATERIAL_ICONS.UNARCHIVE,
+    permission: true,
+    backgroundColor: "#4472C4",
+    fn: () => newInvoice("emitida")
+  };
+
+  export const NEW_RECEIVED_INVOICE = {
+    name: MSG.RECEIVEDS,
+    title: MSG.RECEIVEDS,
+    icon: MATERIAL_ICONS.ARCHIVE,
+    permission: true,
+    backgroundColor: "#4472C4",
+    fn: () => newInvoice("recibida")
+  };
+
+  export const NEW_TICKET = {
+    name: MSG.TICKET,
+    title: MSG.TICKET,
+    icon: MATERIAL_ICONS.RECEIPT,
+    permission: true,
+    backgroundColor: "#4472C4",
+    fn: () => newInvoice("ticket")
+  };
+
   // ********************    
 
   export const getOptions = () => {
     return [INVOICES, MANAGEMENT];
+  }
+
+  export const getNewOptions = () => {
+    return [NEW_ISSUED_INVOICE, NEW_RECEIVED_INVOICE, NEW_TICKET];
   }
