@@ -305,23 +305,25 @@ public class ContractServlet extends AonApiHttpServlet {
 	}
 	
 	private File getSalaryPdf(AonApiData api) throws Exception {
-		int entepriseId = api.getData().optInt("enterpriseId");
 		LOGGER.info("[GET] SALARY PDF");
+		
+		Company company = AON.getCompany(api.getDomain().getName(), api.getDomain().getId(), "", f->f.getDomainProperty().eq(api.getDomain().getId()));
+		
 		JSONObject params = api.getData();
 		Integer salaryId = params.optInt("salaryId");
-		Integer enterpriseId = params.optInt("enterpriseId");
+//		Integer enterpriseId = params.optInt("enterpriseId");
 //		String salaryType = params.optString("type");
 		String salaryReport = null;
 		try {			
-			salaryReport = PayrollServletUtils.getSalaryReport(api.getDomain().getName(), enterpriseId, SalaryType.SALARY);
+			salaryReport = PayrollServletUtils.getSalaryReport(api.getDomain().getName(), company.getId(), SalaryType.SALARY);
 		} catch (Exception e) {
 		}
 		
 		File file = File.createTempFile("nomina", "");
 		if (AonStringUtils.equalsIgnoreCase(salaryReport, SalaryTemplate.AON_SOLUTIONS_DEFAULT.getValue())) {
-			JooqPayrollBuilder.generateClassicPayroll(entepriseId > 0 ? entepriseId : null, api.getDomain().getName(), new FileOutputStream(file), Optional.empty(), salaryId);
+			JooqPayrollBuilder.generateClassicPayroll(company.getId() > 0 ? company.getId() : null, api.getDomain().getName(), new FileOutputStream(file), Optional.empty(), salaryId);
 		} else {
-			JooqPayrollBuilder.generatePayroll(entepriseId > 0 ? entepriseId : null, api.getDomain().getName(), new FileOutputStream(file), Optional.empty(), salaryId);			
+			JooqPayrollBuilder.generatePayroll(company.getId() > 0 ? company.getId() : null, api.getDomain().getName(), new FileOutputStream(file), Optional.empty(), salaryId);			
 		}
 		
 		return file;
