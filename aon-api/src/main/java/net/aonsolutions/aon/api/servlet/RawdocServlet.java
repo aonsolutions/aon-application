@@ -37,7 +37,7 @@ import net.aonsolutions.aon.tedi.TediContext;
 import solutions.aon.aws.s3.S3;
 
 @SuppressWarnings("serial")
-@WebServlet(name = "RawdocServlet", urlPatterns = {"/ms/api/rawdocs/*"})
+@WebServlet(name = "RawdocServlet", urlPatterns = {"/ms/api/rawdoc/*"})
 public class RawdocServlet extends AonApiHttpServlet {
 		
 	private static final Logger LOGGER  = Logger.getLogger(RawdocServlet.class.getName());
