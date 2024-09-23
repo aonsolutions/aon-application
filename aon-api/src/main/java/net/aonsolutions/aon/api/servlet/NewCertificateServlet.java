@@ -289,13 +289,17 @@ public class NewCertificateServlet extends AonApiHttpServlet {
 		JSONObject json = new JSONObject();
 		json.put(IJsonNames.ID, c.getId());
 		json.put(IJsonNames.TYPE, c.getType());
-		json.put(IJsonNames.NAME, c.getCertificateInfo().getName());
-		json.put(IJsonNames.END_DATE, c.getCertificateInfo().getToDate().getTime());
-		json.put(IJsonNames.REPRESENTATION, c.getCertificateInfo().getEnterprise());
+		if (c.getCertificateInfo() != null) {
+			json.put(IJsonNames.NAME, c.getCertificateInfo().getName());
+			json.put(IJsonNames.DOCUMENT, c.getCertificateInfo().getDocument());
+			json.put(IJsonNames.REPRESENTATION, c.getCertificateInfo().getEnterprise());
+			if (c.getCertificateInfo().getToDate() != null && c.getCertificateInfo().getFromDate() != null) {
+				json.put(IJsonNames.END_DATE, c.getCertificateInfo().getToDate().getTime());
+				json.put(IJsonNames.START_DATE, c.getCertificateInfo().getFromDate().getTime());
+			}
+		}
 		json.put(IJsonNames.TYPE, c.getConfidential());
-		json.put(IJsonNames.ALIAS, c.getDescription());
-		json.put(IJsonNames.START_DATE, c.getCertificateInfo().getFromDate().getTime());
-		json.put(IJsonNames.DOCUMENT, c.getCertificateInfo().getDocument());
+		json.put(IJsonNames.ALIAS, c.getDescription());	
 		json.put(IJsonNames.OWNER, c.getOwner());
 		for(int i = 0; i < c.getTags().size(); i++) {
 			if(c.getTags().get(i).name().equals("SEPE")) json.put("sepe", true);
