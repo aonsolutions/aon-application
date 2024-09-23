@@ -140,6 +140,7 @@ export const AON_DOCUMENTAL_CARD_ROW = 'aonDocumentalCardRow';
 export const AON_MESSENGER_CARD_ROW_CONTENT = 'aonMessengerCardRowContent';
 export const AON_DOCUMENTAL_CARD_ROW_CONTENT = 'aonDocumentalCardRowContent';
 export const AON_BADGE = 'aonBadge';
+export const AON_MESSENGER_OPEN_MESSAGES = 'aonMessegerOpenMessages';
 export const AON_MESSENGER_BADGE = 'aonMessegerCardBadge';
 export const AON_DASHBOARD_CARD = 'aonDashboardCard';
 
