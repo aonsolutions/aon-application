@@ -21,6 +21,7 @@ import com.esferalia.aon.occam.api.model.ApplicationParameter;
 import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.EnterpriseActivity;
+import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.finance.Finance;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.fiscal.VatContext;
@@ -295,8 +296,8 @@ public class FacturasEmitidas extends SIIBuilt {
 				fet.setBaseImponibleACoste(Double.toString(AonMathUtils.round(base)));
 			}			
 			// DESCRIPCION OPERACION 
-			
-			AccountingInvoice ai = ACCOUNTING.getAccountingInvoiceFromInvoice(domain.getName(), domain.getId(), login, invoiceId);
+			Occam occam = new Occam().setDomainName(domain.getName()).setDomain(domain.getId()).setUser(login);
+			AccountingInvoice ai = ACCOUNTING.getAccountingInvoiceFromInvoice(occam, invoiceId);
 			String str = "";
 			if(ai != null && ai.getAccountEntry() != null && ai.getAccountEntry().getDetails() != null){
 				for(AccountEntryDetail aed : ai.getAccountEntry().getDetails()){

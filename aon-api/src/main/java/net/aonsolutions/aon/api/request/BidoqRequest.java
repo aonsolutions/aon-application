@@ -27,6 +27,7 @@ import com.esferalia.aon.occam.api.model.Customer;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.EnterpriseActivity;
 import com.esferalia.aon.occam.api.model.GeoZone;
+import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.Workplace;
 import com.esferalia.aon.occam.api.model.aonsolutions.DomainUserRoles;
 import com.esferalia.aon.occam.api.model.finance.BankAccount;
@@ -176,7 +177,6 @@ public class BidoqRequest {
 			invoice.setTotal(selfInvoice.optDouble("total"));
 			invoice.setWithholding(false);
 			invoice.setSurcharge(false);
-			invoice.setDetails(new LinkedList<InvoiceDetail>());
 			AccountingRegistry ar = getRegistry(aonCtx, domain, user, InvoiceType.SALES.equals(invoice.getType()) ? selfInvoice.optJSONObject("receiver"): selfInvoice.optJSONObject("sender"), invoice.getType(), invoice.getTransaction() );			
 			invoice.setRegistry(ar.getId());
 			ai.setRegistry(ar);
@@ -253,7 +253,7 @@ public class BidoqRequest {
 						.setPrepayment("5600".equals(account.substring(0, 4)) || "5660".equals(account.substring(0, 4)) || detail.optBoolean("suplidos"));
 				
 				double detBase = detail.optDouble("base");
-				id.ensureVatTax()
+				id.ensureVatTax(ai.getInvoice())
 					.setInvoiceDetail(id.getId())	
 					.setVatDeductionType(VatDeductionType.WITH_RIGHT)
 					.setBase(detBase)
@@ -294,7 +294,7 @@ public class BidoqRequest {
 					}						
 				
 			
-				if(id.ensureVatTax().getSurcharge() > 0 ){ 	
+				if(id.ensureVatTax(ai.getInvoice()).getSurcharge() > 0 ){ 	
 					ai.getInvoice().setSurcharge(true);
 				}
 			
@@ -368,7 +368,11 @@ public class BidoqRequest {
 					}
 				}
 			}
-			ai = ACCOUNTING.save(domain.getName(), domain.getId(), user.getLogin(), ai);
+			Occam occam = new Occam()
+				.setDomainName(domain.getName())
+				.setDomain(domain.getId())
+				.setUser(user.getLogin()); 
+			ai = ACCOUNTING.save(occam, ai);
 		} catch (Exception e) {
 			e.printStackTrace();
 			rawdoc(domain, user, selfInvoice, e.getMessage());
@@ -1354,8 +1358,11 @@ public class BidoqRequest {
 		}
 
 		ai.setAccountEntry(getEntryBase(domain, user.getLogin(), aonCtx, ai));
-
-		ai = ACCOUNTING.save(domain.getName(), domain.getId(), user.getLogin(), ai);
+		Occam occam = new Occam()
+				.setDomainName(domain.getName())
+				.setDomain(domain.getId())
+				.setUser(user.getLogin()); 
+		ai = ACCOUNTING.save(occam, ai);
 		return ai;
 	}
 	

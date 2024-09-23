@@ -633,27 +633,26 @@ public class InvofoxServlet extends AonApiHttpServlet {
 		OCRInvoiceBuilder.fillRetentionQuota(ocrInvoice, invoice);
 
 		if (invoice.mustApplyISP()) {
-			invoice.setBreakdown(invoice.getBreakdown().stream().map(r -> {
-				if (r.getPercentage() == 0.0) {
-					r.setPercentage(21.0);
-					r.setQuota(AonMathUtils.round(r.getBase() * 0.21));
-				}
-				return r;
-			}).toList());
-			invoice.setDetails(invoice.getDetails().stream().map(detail -> {
-				if (detail.getInvoiceTaxes().isEmpty()) {
+//			invoice.setBreakdown(invoice.getBreakdown().stream().map(r -> {
+//				if (r.getPercentage() == 0.0) {
+//					r.setPercentage(21.0);
+//					r.setQuota(AonMathUtils.round(r.getBase() * 0.21));
+//				}
+//				return r;
+//			}).toList());
+			invoice.getDetails()
+				.stream()
+				.filter(detail -> detail.isTaxEnabled(invoice))
+				.filter(detail -> detail.getInvoiceTaxes().isEmpty())
+				.forEach(detail -> {
 					double amount = detail.getPrice() * detail.getQuantity() * (1 - detail.getDiscount() / 100);
-					InvoiceTax invoiceTax = new InvoiceTax()
-							.setTaxType(TaxType.VAT)
-							.setBase(amount)
-							.setPercentage(21.0)
-							.setQuota(AonMathUtils.round(amount * 0.21))
-							.setVatDeductionType(VatDeductionType.WITH_RIGHT).setDeductiblePercent(100)
-							.setDeductibleQuota(AonMathUtils.round(amount * 0.21));
-					detail.addInvoiceTax(invoiceTax);
-				}
-				return detail;
-			}).collect(Collectors.toCollection(LinkedList::new)));
+					detail.ensureVatTax(invoice)
+						.setBase(amount)
+						.setPercentage(21.0)
+						.setQuota(AonMathUtils.round(amount * 0.21))
+						.setVatDeductionType(VatDeductionType.WITH_RIGHT).setDeductiblePercent(100)
+						.setDeductibleQuota(AonMathUtils.round(amount * 0.21));
+				});
 		}
 		return invoice;
 

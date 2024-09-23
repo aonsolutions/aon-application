@@ -313,11 +313,11 @@ public class InvoiceServlet extends AonApiHttpServlet{
 
 		// ids to null
 		invoice.setId(null);
-		invoice.setDetails(invoice.getDetails().stream().map(r -> {
+		invoice.getDetails().stream().map(r -> {
 			r.setId(null);
 			r.setInvoiceTaxes(r.getInvoiceTaxes().stream().map(tax -> tax.setId(null)).toList());
 			return r;
-		}).collect(Collectors.toCollection(LinkedList::new)));
+		});
 		// ----------
 		
 		Rawdoc rawdoc = new Rawdoc()

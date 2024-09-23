@@ -16,6 +16,7 @@ import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.json.JsonUtils;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.IJsonNames;
+import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.Rawdoc;
 import com.esferalia.aon.occam.api.model.attachment.AttachType;
 import com.esferalia.aon.occam.api.model.tedi.TediResult;
@@ -212,9 +213,10 @@ public class RawdocServlet extends AonApiHttpServlet {
 		    if(api.getDur().isOcr()) {
 		    	InputStream input = new ByteArrayInputStream(fileData);
 		    	TediContext tctx = new TediContext()
-		    		.setDomainName(domain.getName())
-		    		.setDomain(domain.getId())
-		    		.setUser(login);
+	    			.setOccam( new Occam()
+			    		.setDomainName(domain.getName())
+			    		.setDomain(domain.getId())
+			    		.setUser(login));
 		    	try {
 		    		TediResult r = TEDI.parse(tctx, input, MimeType.get(contentType));
 		    		json = tediParse(TediInvoiceJSON.toJSON(r.getTedi()), json);

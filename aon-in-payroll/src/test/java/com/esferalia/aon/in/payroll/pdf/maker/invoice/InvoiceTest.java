@@ -673,7 +673,7 @@ public class InvoiceTest {
 //		details.add(shortDetail4);
 //		details.add(shortDetail5);		
 		
-		invoice.setDetails(details);
+		details.stream().forEach(d -> invoice.addDetail(d));
 		
 		/** PRINT CONFIGURATIONS */
 		ByteArrayOutputStream os;
@@ -1552,9 +1552,9 @@ public class InvoiceTest {
 //		details.add(shortDetail3);
 //		details.add(shortDetail4);
 //		details.add(shortDetail5);		
-		
-		invoice.setDetails(details);
-		invoice2.setDetails(details2);
+
+		details.stream().forEach(d -> invoice.addDetail(d));
+		details2.stream().forEach(d -> invoice2.addDetail(d));
 		
 		/** PRINT CONFIGURATIONS */
 		ByteArrayOutputStream os;
