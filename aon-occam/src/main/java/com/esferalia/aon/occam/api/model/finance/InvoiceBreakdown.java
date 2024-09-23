@@ -182,11 +182,4 @@ public class InvoiceBreakdown implements Serializable {
 			.setVatDeductionType(it.getVatDeductionType());
 	}
 	
-	public InvoiceBreakdown calculate() {
-		return 
-			 setQuota( AonMathUtils.round( getBase() * getPercentage() / 100 , 2))
-			.setSurchargeQuota( AonMathUtils.round(getBase() * getSurcharge() / 100 ) )
-			;
-		
-	}
 }

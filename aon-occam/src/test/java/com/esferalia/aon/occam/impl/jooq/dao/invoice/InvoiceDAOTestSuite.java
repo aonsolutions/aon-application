@@ -7,6 +7,7 @@ import org.junit.platform.suite.api.Suite;
 @Suite
 @SelectClasses({
 	InvoiceMinJSONTest.class,
+	InvoiceCalculatorTest.class,
 	InvoiceValidationTests.class,
 	InvoiceDaoInitializationTests.class,
 	InvoiceDaoGettersTest.class,

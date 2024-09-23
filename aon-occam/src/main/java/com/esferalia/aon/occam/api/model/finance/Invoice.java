@@ -11,6 +11,7 @@ import java.util.stream.Collectors;
 import com.esferalia.aon.occam.api.model.Account;
 import com.esferalia.aon.occam.api.model.EnterpriseActivity;
 import com.esferalia.aon.occam.api.model.HasAudit;
+import com.esferalia.aon.occam.api.model.InvoiceCalculator;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceError;
 import com.esferalia.aon.occam.api.model.registry.Registry;
@@ -24,6 +25,7 @@ import com.esferalia.aon.occam.api.model.type.RectificationType;
 import com.esferalia.aon.occam.api.model.type.SecurityLevel;
 import com.esferalia.aon.occam.api.model.type.TaxType;
 import com.esferalia.aon.occam.api.model.type.WithholdingType;
+//import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.util.AonCollectionUtils;
 import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
@@ -512,10 +514,17 @@ public class Invoice implements Serializable, HasAudit {
 	}
 
 	public Invoice addDetail(InvoiceDetail detail) {
+		if (detail.isTaxEnabled(this) && AonCollectionUtils.isEmpty(detail.getInvoiceTaxes())) {
+			throw new InvoiceException(this,"La línea de factura no tiene impuestos aplicados.");
+		}
 		if(details == null) details = new LinkedList<>();
 		details.add(detail);
-		AonCollectionUtils.stream(detail.getInvoiceTaxes()).forEach(this::addTax);
-		return this;
+		AonCollectionUtils.stream(detail.getInvoiceTaxes()).forEach(it -> addTax(detail, it ));
+		return calculate();
+	}
+	
+	public Invoice calculate() {
+		return InvoiceCalculator.calculate(this);
 	}
 
 	/**
@@ -806,24 +815,22 @@ public class Invoice implements Serializable, HasAudit {
 	public Optional<TaxBreakdown> getTaxBreakdown() {
 		return Optional.ofNullable(taxBreakdown);
 	}
-	public Invoice setTaxBreakdown(TaxBreakdown taxBreakdown) {
-		this.taxBreakdown = taxBreakdown;
-		return this;
-	}
-	public Invoice calculateTaxBreakdown() {
-		ensureTaxBreakdown().calculate();
+	public Invoice clearTaxBreakdown() {
+		ensureTaxBreakdown().clear();
 		return this;
 	}
 	private TaxBreakdown ensureTaxBreakdown() {
 		if (this.taxBreakdown == null) {
-			setTaxBreakdown( new TaxBreakdown());
+			this.taxBreakdown = new TaxBreakdown();
 		}
 		return this.taxBreakdown;
 	}
-	public Invoice addTax(InvoiceTax it) {
+	
+	private Invoice addTax(InvoiceDetail detail, InvoiceTax it) {
 		ensureTaxBreakdown().add(it);
 		return this;
 	}
+	
 	public Invoice addBreakdown(InvoiceBreakdown ib) {
 		ensureTaxBreakdown().add(ib);
 		return this;
@@ -838,6 +845,7 @@ public class Invoice implements Serializable, HasAudit {
 	public Optional<InvoiceWithholding> getWithholding() {
 		return this.getTaxBreakdown().flatMap( itb -> itb.getInvoiceWithholding() );
 	}
+	
 	public InvoiceWithholding ensureWithholdingData() {
 		return getWithholding()
 			.orElseGet( () -> {

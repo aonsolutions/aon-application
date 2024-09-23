@@ -17,6 +17,7 @@ import com.esferalia.aon.occam.api.model.Options;
 import com.esferalia.aon.occam.api.model.finance.Finance;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceCommunicationType;
+import com.esferalia.aon.occam.api.model.finance.InvoiceException;
 import com.esferalia.aon.occam.api.model.finance.InvoiceInfo;
 import com.esferalia.aon.occam.api.model.finance.TbaiConfiguration;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModel;
@@ -28,7 +29,6 @@ import com.esferalia.aon.occam.impl.jooq.dao.InvoiceSIIDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.TbaiConfigurationDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.fiscal.AlcatrazDAO;
 import com.esferalia.aon.watson.AonError;
-import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
@@ -45,7 +45,7 @@ public class InvoiceValidation {
 	private static final BiConsumer<AONContext,Invoice> EMPTY_DOMAIN = (ctx,inv) -> {
 		if (inv.getDomain() == null || inv.getDomain() == 0) {
 			inv.addMessage( InvoiceErrorMessages.C001.err(InvoiceErrorKey.DOMAIN) );
-			throw new AonCoreException(AonError.INVOICE_SAVE_ERROR.getMessage());
+			throw new InvoiceException(inv,AonError.INVOICE_SAVE_ERROR.getMessage());
 		}
 	};
 	
@@ -55,7 +55,7 @@ public class InvoiceValidation {
 	private static final BiConsumer<AONContext,Invoice> EMPTY_DATE = (ctx,inv) -> {
 		if (inv.getIssueDate() == null) {
 			inv.addMessage( InvoiceErrorMessages.C001.err(InvoiceErrorKey.ISSUE_DATE) );
-			throw new AonCoreException(AonError.INVOICE_SAVE_ERROR.getMessage());
+			throw new InvoiceException(inv,AonError.INVOICE_SAVE_ERROR.getMessage());
 		}
 	};
 
@@ -65,7 +65,7 @@ public class InvoiceValidation {
 	private static final BiConsumer<AONContext,Invoice> EMPTY_TAX_DATE = (ctx,inv) -> {
 		if (inv.getTaxDate() == null) {
 			inv.addMessage( InvoiceErrorMessages.C001.err(InvoiceErrorKey.TAX_DATE) );
-			throw new AonCoreException(AonError.INVOICE_SAVE_ERROR.getMessage());
+			throw new InvoiceException(inv,AonError.INVOICE_SAVE_ERROR.getMessage());
 		}
 	};
 
@@ -75,7 +75,7 @@ public class InvoiceValidation {
 	private static final BiConsumer<AONContext,Invoice> EMPTY_INVOICE_TYPE = (ctx,inv) -> {
 		if (inv.getType() == null) {
 			inv.addMessage( InvoiceErrorMessages.C001.err(InvoiceErrorKey.TYPE) );
-			throw new AonCoreException(AonError.INVOICE_SAVE_ERROR.getMessage());
+			throw new InvoiceException(inv,AonError.INVOICE_SAVE_ERROR.getMessage());
 		}
 	};
 	
@@ -85,7 +85,7 @@ public class InvoiceValidation {
 	private static final BiConsumer<AONContext,Invoice> EMPTY_INVOICE_REGISTRY = (ctx,inv) -> {
 		if (inv.getRegistry() == null ) {
 			inv.addMessage( InvoiceErrorMessages.C001.err(InvoiceErrorKey.REGISTRY) );
-			throw new AonCoreException(AonError.INVOICE_SAVE_ERROR.getMessage());
+			throw new InvoiceException(inv,AonError.INVOICE_SAVE_ERROR.getMessage());
 		}
 	};
 	
@@ -95,7 +95,7 @@ public class InvoiceValidation {
 	private static final BiConsumer<AONContext,Invoice> EMPTY_INVOICE_SCOPE = (ctx,inv) -> {
 		if (inv.getScope() == null || inv.getScope().getId() == null ) {
 			inv.addMessage( InvoiceErrorMessages.C001.err(InvoiceErrorKey.SCOPE) );
-			throw new AonCoreException(AonError.INVOICE_SAVE_ERROR.getMessage());
+			throw new InvoiceException(inv,AonError.INVOICE_SAVE_ERROR.getMessage());
 		}
 	};
 	
@@ -105,7 +105,7 @@ public class InvoiceValidation {
 	private static final BiConsumer<AONContext,Invoice> EMPTY_REFERENCE_CODE = (ctx,inv) -> {
 		if (!inv.isSales() && AonStringUtils.isBlank( inv.getReferenceCode()) ) {
 			inv.addMessage( InvoiceErrorMessages.C001.err(InvoiceErrorKey.REFERENCE_CODE) );
-			throw new AonCoreException(AonError.INVOICE_SAVE_ERROR.getMessage());
+			throw new InvoiceException(inv,AonError.INVOICE_SAVE_ERROR.getMessage());
 		}
 	};
 
@@ -115,7 +115,7 @@ public class InvoiceValidation {
 	private static final BiConsumer<AONContext,Invoice> EMPTY_TRANSACTION = (ctx,inv) -> {
 		if (inv.getTransaction() == null) {
 			inv.addMessage( InvoiceErrorMessages.C001.err(InvoiceErrorKey.TRANSACTION) );
-			throw new AonCoreException(AonError.INVOICE_SAVE_ERROR.getMessage());
+			throw new InvoiceException(inv,AonError.INVOICE_SAVE_ERROR.getMessage());
 		}
 	};
 
@@ -134,7 +134,7 @@ public class InvoiceValidation {
 					.and(inv.getId() == null ? DSL.trueCondition() : INVOICE.ID.ne(inv.getId()))
 					.and(INVOICE.TYPE.eq(inv.getType().value())))) {
 			inv.addMessage( InvoiceErrorMessages.C005.err(InvoiceErrorKey.DUPLICATED_SERIES_NUMBER) );
-			throw new AonCoreException(AonError.INVOICE_SAVE_ERROR.getMessage());
+			throw new InvoiceException(inv,AonError.INVOICE_SAVE_ERROR.getMessage());
 		}
 	};
 
@@ -155,7 +155,7 @@ public class InvoiceValidation {
 			)
 		) {
 			inv.addMessage( InvoiceErrorMessages.C006.err(InvoiceErrorKey.DUPLICATED_REFERENCE_CODE) );
-			throw new AonCoreException(AonError.INVOICE_SAVE_ERROR.getMessage());
+			throw new InvoiceException(inv,AonError.INVOICE_SAVE_ERROR.getMessage());
 		}
 	};
 
@@ -168,7 +168,7 @@ public class InvoiceValidation {
 		Date deadline = ctx.getConfiguration().getOperationsDeadline();
 		if (AonDateUtils.isAfter(deadline, inv.getIssueDate())) {
 			inv.addMessage( InvoiceErrorMessages.C007.err(InvoiceErrorKey.ISSUE_DATE) );
-			throw new AonCoreException(AonError.INVOICE_SAVE_ERROR.getMessage());
+			throw new InvoiceException(inv,AonError.INVOICE_SAVE_ERROR.getMessage());
 		}
 	};
 	
@@ -180,7 +180,7 @@ public class InvoiceValidation {
 		int invoiceYear = AonDateUtils.getYear(inv.getIssueDate());
 		if (invoiceYear < (thisYear-10) || invoiceYear > (thisYear+1)) {
 			inv.addMessage( InvoiceErrorMessages.C008.err(InvoiceErrorKey.ISSUE_DATE) );
-			throw new AonCoreException(AonError.INVOICE_SAVE_ERROR.getMessage());
+			throw new InvoiceException(inv,AonError.INVOICE_SAVE_ERROR.getMessage());
 		}
 	};
 	
@@ -198,7 +198,7 @@ public class InvoiceValidation {
 			}
 			if (!AonMathUtils.equals(inv.getTotal(), financesTotal )) {
 				inv.addMessage( InvoiceErrorMessages.C020.err(InvoiceErrorKey.FINANCE_TOTAL_AMOUNT) );
-				throw new AonCoreException(AonError.INVOICE_SAVE_ERROR.getMessage());
+				throw new InvoiceException(inv,AonError.INVOICE_SAVE_ERROR.getMessage());
 			}
 		}
 	};
@@ -209,7 +209,7 @@ public class InvoiceValidation {
 	private static final BiConsumer<AONContext,Invoice> RECTIFIED_INVOICE = (ctx,inv) -> {
 		if (inv.isRectified()) {
 			inv.addMessage( InvoiceErrorMessages.C050.err( InvoiceErrorKey.GENERIC) );
-			throw new AonCoreException(AonError.INVOICE_SAVE_DELETE_ERROR.getMessage());
+			throw new InvoiceException(inv,AonError.INVOICE_SAVE_DELETE_ERROR.getMessage());
 		}
 	};
 
@@ -224,7 +224,7 @@ public class InvoiceValidation {
 					.where(INVOICE_DUA.DOMAIN.eq(inv.getDomain()))
 					.and(INVOICE_DUA.INVOICE_IMPORT.eq(inv.getId() )))) {
 			inv.addMessage( InvoiceErrorMessages.C051.err( InvoiceErrorKey.GENERIC) );
-			throw new AonCoreException(AonError.INVOICE_SAVE_DELETE_ERROR.getMessage());
+			throw new InvoiceException(inv,AonError.INVOICE_SAVE_DELETE_ERROR.getMessage());
 		}
 	};
 	
@@ -241,7 +241,7 @@ public class InvoiceValidation {
 					.collect(StringBuilder::new, StringBuilder::append , StringBuilder::append )
 					.toString(); 
 				inv.addMessage( InvoiceErrorMessages.C052.err( InvoiceErrorKey.GENERIC, message ) );
-				throw new AonCoreException(AonError.INVOICE_SAVE_DELETE_ERROR.format( message ));
+				throw new InvoiceException(inv,AonError.INVOICE_SAVE_DELETE_ERROR.format( message ));
 			}
 		}
 	};
@@ -252,7 +252,7 @@ public class InvoiceValidation {
 	private static final BiConsumer<AONContext,Invoice> ALCATRAZ = (ctx,inv) -> {
 		if (inv.getId() != null && AlcatrazDAO.isInvoiceAlcatrazed(ctx, inv.getId() )) {
 			inv.addMessage( InvoiceErrorMessages.C056.err( InvoiceErrorKey.GENERIC) );
-			throw new AonCoreException(AonError.INVOICE_SAVE_DELETE_ERROR.getMessage());
+			throw new InvoiceException(inv,AonError.INVOICE_SAVE_DELETE_ERROR.getMessage());
 		}
 	};
 
@@ -265,7 +265,7 @@ public class InvoiceValidation {
 			.isPresent()) {
 			
 			inv.addMessage( InvoiceErrorMessages.C052.err( InvoiceErrorKey.GENERIC) );
-			throw new AonCoreException(AonError.INVOICE_SAVE_DELETE_ERROR.getMessage());
+			throw new InvoiceException(inv,AonError.INVOICE_SAVE_DELETE_ERROR.getMessage());
 		}
 	};
 	
@@ -287,12 +287,12 @@ public class InvoiceValidation {
 			String type = dr.getDetails().stream().filter(f -> f.getDataVariable().equals("type")).map(DataResponseDetail::getDataValue).findFirst().orElse("alta");
 			if(dr.getId() != null && "alta".equalsIgnoreCase(type) && accepted) {
 				inv.addMessage( InvoiceErrorMessages.C053.err( InvoiceErrorKey.GENERIC) );
-				throw new AonCoreException(AonError.INVOICE_SAVE_DELETE_ERROR.getMessage());
+				throw new InvoiceException(inv,AonError.INVOICE_SAVE_DELETE_ERROR.getMessage());
 			}
 		}
 	};
 
-	static void validate(AONContext ctx, Invoice inv) throws AonCoreException {
+	static void validate(AONContext ctx, Invoice inv) throws InvoiceException {
 		EMPTY_DOMAIN
 		.andThen(EMPTY_DATE)
 		.andThen(EMPTY_TAX_DATE)

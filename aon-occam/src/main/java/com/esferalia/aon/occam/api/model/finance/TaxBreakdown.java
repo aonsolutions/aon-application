@@ -22,6 +22,10 @@ public class TaxBreakdown implements Serializable {
 	public boolean isNotEmpty() {
 		return !isEmpty();
 	}
+	public List<InvoiceBreakdown> clear() {
+		ibs.clear();
+		return ibs; 
+	}
 
 	public List<InvoiceBreakdown> getBreakdown() {
 		return ibs;
@@ -31,12 +35,9 @@ public class TaxBreakdown implements Serializable {
 	}
 	
 	public TaxBreakdown add(InvoiceBreakdown ib) {
-		Optional<InvoiceBreakdown> oib = get( ib );
-		if (oib.isPresent()) {
-			oib.get().add(ib);
-		} else {
-			ibs.add( ib );
-		}
+		get( ib ).ifPresentOrElse(
+			ib0 -> ib0.add(ib)
+			,() -> ibs.add( ib ));
 		return this;
 	}
 	
@@ -62,11 +63,6 @@ public class TaxBreakdown implements Serializable {
 			.findFirst();
 	}
 	
-	public TaxBreakdown calculate() {
-		AonCollectionUtils.stream( getVats() ).forEach(ib -> ib.calculate());
-		return this;
-	}
-	
 	public double getVatBase() {
 		return AonMathUtils.round( AonCollectionUtils.stream( getVats() ).mapToDouble( t -> t.getBase() ).sum() , 4); 
 	}
@@ -74,18 +70,16 @@ public class TaxBreakdown implements Serializable {
 		return AonMathUtils.round( AonCollectionUtils.stream( getVats() ).mapToDouble( t -> t.getQuota() ).sum() , 2); 
 	}
 	public double getRetentionBase() {
-		Optional<InvoiceWithholding> oiw = getInvoiceWithholding();
-		if (oiw.isPresent()) {
-			return AonMathUtils.round(oiw.get().getBase(), 4);
-		}
-		return 0.0;
+		return getInvoiceWithholding()
+			.map( iw -> AonMathUtils.round(iw.getBase(), 4))
+			.orElse(0.0)
+		;
 	}
 	public double getRetentionQuota() {
-		Optional<InvoiceWithholding> oiw = getInvoiceWithholding();
-		if (oiw.isPresent()) {
-			return AonMathUtils.round(oiw.get().getQuota(), 2);
-		}
-		return 0.0;
+		return getInvoiceWithholding()
+			.map( iw -> AonMathUtils.round(iw.getQuota(), 2))
+			.orElse(0.0)
+		;
 	}
 	public double getResult() {
 		return AonMathUtils.round(getVatQuota() - getRetentionQuota());

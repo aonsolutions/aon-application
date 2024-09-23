@@ -686,7 +686,7 @@ public class AonRandom {
 			}
 
 			private Invoice getRetentionInvoice( final WithholdingType wt) {
-				return InvoiceFaker.getSalesRetentionInvoice( ctx, occam, wt);
+				return InvoiceFaker.getSalesRetentionInvoice( ctx, wt);
 			}
 			
 		},null);

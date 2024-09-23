@@ -5,6 +5,7 @@ import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.Optional;
 
+import com.esferalia.aon.occam.api.model.finance.Finance;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceBreakdown;
 import com.esferalia.aon.occam.api.model.finance.InvoiceDetail;
@@ -347,6 +348,59 @@ public class InvoiceTextPrinter {
 		return this;
 	}
 
+	
+	private InvoiceTextPrinter finances(Invoice invoice, PrintStream out) {
+		StringBuilder buf = new StringBuilder();
+		buf.append(AonStringUtils.SPACE);
+		buf.append(TOP_LEFT_CORNER);
+		buf.append(AonStringUtils.repeat(HORIZONTAL_BAR, getLineSize() - buf.length()));
+		buf.append(TOP_RIGHT_CORNER);
+		out.println(buf.toString());
+
+		buf = new StringBuilder();
+		buf.append(AonStringUtils.SPACE);
+		buf.append(VERTICAL_BAR);
+		buf.append(AonStringUtils.SPACE);
+		buf.append(AonStringUtils.rightPad("FECHA", 10));
+		buf.append(AonStringUtils.SPACE);
+		buf.append(AonStringUtils.leftPad("IMPORTE", 17));
+		buf.append(AonStringUtils.SPACE);
+		buf.append(AonStringUtils.leftPad(" ", getLineSize() - buf.length()));
+		buf.append(VERTICAL_BAR);
+		out.println(buf.toString());
+
+		buf = new StringBuilder();
+		buf.append(AonStringUtils.SPACE);
+		buf.append(VERTICAL_RIGHT_BAR);
+		buf.append(AonStringUtils.repeat(HORIZONTAL_BAR, getLineSize() - buf.length()));
+		buf.append(VERTICAL_LEFT_BAR);
+		out.println(buf.toString());
+
+		AonCollectionUtils.stream(invoice.getFinances()).forEach(f -> finance(f, out));
+
+		buf = new StringBuilder();
+		buf.append(AonStringUtils.SPACE);
+		buf.append(LOWER_LEFT_CORNER);
+		buf.append(AonStringUtils.repeat(HORIZONTAL_BAR, getLineSize() - buf.length()));
+		buf.append(LOWER_RIGHT_CORNER);
+		out.println(buf.toString());
+		return this;
+	}
+
+	private void finance(Finance finance, PrintStream out) {
+		StringBuilder buf = new StringBuilder();
+		buf.append(AonStringUtils.SPACE);
+		buf.append(VERTICAL_BAR);
+		buf.append(AonStringUtils.SPACE);
+		buf.append(AonStringUtils.center(DATE_FORMAT.format(finance.getDueDate()), 10));
+		buf.append(AonStringUtils.SPACE);
+		buf.append(AonStringUtils.leftPad(FMT1.format(finance.getAmount()), 17));
+		buf.append(AonStringUtils.SPACE);
+		buf.append(AonStringUtils.leftPad(" ", getLineSize() - buf.length()));
+		buf.append(VERTICAL_BAR);
+		out.println(buf.toString());
+	}
+	
 	private InvoiceTextPrinter fiscal(Invoice invoice, PrintStream out) {
 		InvoiceFiscal invoiceFiscal = invoice.getFiscal();
 		if (invoiceFiscal != null) {
@@ -551,6 +605,7 @@ public class InvoiceTextPrinter {
 			.vatBreakdown(invoice, out)
 			.withholding(invoice, out)
 			.totals(invoice, out)
+			.finances(invoice, out)
 			.fiscal(invoice, out)
 			.messages(invoice, out);
 		out.flush();

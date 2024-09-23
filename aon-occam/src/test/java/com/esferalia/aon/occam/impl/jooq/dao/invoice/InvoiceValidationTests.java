@@ -11,6 +11,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Date;
 import java.util.LinkedList;
@@ -20,6 +21,7 @@ import org.junit.jupiter.api.Test;
 
 import com.esferalia.aon.occam.api.model.finance.Finance;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
+import com.esferalia.aon.occam.api.model.finance.InvoiceException;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceErrorKey;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceErrorMessages;
 import com.esferalia.aon.occam.api.model.security.Scope;
@@ -30,7 +32,6 @@ import com.esferalia.aon.occam.test.AbstractOccamTest;
 import com.esferalia.aon.occam.test.Asserts;
 import com.esferalia.aon.occam.test.faker.InvoiceFaker;
 import com.esferalia.aon.watson.AonError;
-import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonCollectionUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
@@ -42,8 +43,8 @@ class InvoiceValidationTests extends AbstractOccamTest {
 	void testValidationSaveNullDomain() {
 		Invoice invoice = InvoiceFaker.getRandom(ctx);
 		invoice.setDomain(null);
-		AonCoreException e = assertThrows(AonCoreException.class, () -> InvoiceValidation.validate(ctx, invoice));
-		assertEquals(AonError.INVOICE_SAVE_ERROR.getMessage(), e.getMessage());
+		InvoiceException e = assertThrows(InvoiceException.class, () -> InvoiceValidation.validate(ctx, invoice));
+		assertStarts(AonError.INVOICE_SAVE_ERROR.getMessage(), e.getMessage());
 		assertInvoiceErrorMessage(invoice, InvoiceErrorMessages.C001, InvoiceErrorKey.DOMAIN);
 	}
 	
@@ -51,8 +52,8 @@ class InvoiceValidationTests extends AbstractOccamTest {
 	void testValidationSaveEmptyDomain() {
 		Invoice invoice = InvoiceFaker.getRandom(ctx);
 		invoice.setDomain(0);
-		AonCoreException e1 = assertThrows(AonCoreException.class, () -> InvoiceValidation.validate(ctx, invoice));
-		assertEquals(AonError.INVOICE_SAVE_ERROR.getMessage(), e1.getMessage());
+		InvoiceException e1 = assertThrows(InvoiceException.class, () -> InvoiceValidation.validate(ctx, invoice));
+		assertStarts(AonError.INVOICE_SAVE_ERROR.getMessage(), e1.getMessage());
 		assertInvoiceErrorMessage(invoice, InvoiceErrorMessages.C001, InvoiceErrorKey.DOMAIN);
 	}
 	
@@ -60,8 +61,8 @@ class InvoiceValidationTests extends AbstractOccamTest {
 	void testValidationSaveEmptyIssueDate() {
 		Invoice invoice = InvoiceFaker.getRandom(ctx);
 		invoice.setIssueDate(null);
-		AonCoreException e = assertThrows(AonCoreException.class, () -> InvoiceValidation.validate(ctx, invoice));
-		assertEquals(AonError.INVOICE_SAVE_ERROR.getMessage(), e.getMessage());
+		InvoiceException e = assertThrows(InvoiceException.class, () -> InvoiceValidation.validate(ctx, invoice));
+		assertStarts(AonError.INVOICE_SAVE_ERROR.getMessage(), e.getMessage());
 		assertInvoiceErrorMessage(invoice, InvoiceErrorMessages.C001, InvoiceErrorKey.ISSUE_DATE);
 	}
 
@@ -69,8 +70,8 @@ class InvoiceValidationTests extends AbstractOccamTest {
 	void testValidationSaveEmptyTaxDate() {
 		Invoice invoice = InvoiceFaker.getRandom(ctx);
 		invoice.setTaxDate(null);
-		AonCoreException e = assertThrows(AonCoreException.class, () -> InvoiceValidation.validate(ctx, invoice));
-		assertEquals(AonError.INVOICE_SAVE_ERROR.getMessage(), e.getMessage());
+		InvoiceException e = assertThrows(InvoiceException.class, () -> InvoiceValidation.validate(ctx, invoice));
+		assertStarts(AonError.INVOICE_SAVE_ERROR.getMessage(), e.getMessage());
 		assertInvoiceErrorMessage(invoice, InvoiceErrorMessages.C001, InvoiceErrorKey.TAX_DATE);
 	}
 	
@@ -79,8 +80,8 @@ class InvoiceValidationTests extends AbstractOccamTest {
 	void testValidationSaveEmptyInvoiceType() {
 		Invoice invoice = InvoiceFaker.getRandom(ctx);
 		invoice.setType(null);
-		AonCoreException e = assertThrows(AonCoreException.class, () -> InvoiceValidation.validate(ctx, invoice));
-		assertEquals(AonError.INVOICE_SAVE_ERROR.getMessage(), e.getMessage());
+		InvoiceException e = assertThrows(InvoiceException.class, () -> InvoiceValidation.validate(ctx, invoice));
+		assertStarts(AonError.INVOICE_SAVE_ERROR.getMessage(), e.getMessage());
 		assertInvoiceErrorMessage(invoice, InvoiceErrorMessages.C001, InvoiceErrorKey.TYPE);
 	}
 	
@@ -89,8 +90,8 @@ class InvoiceValidationTests extends AbstractOccamTest {
 	void testValidationSaveEmptyRegistry() {
 		Invoice invoice = InvoiceFaker.getRandom(ctx);
 		invoice.setRegistry(null);
-		AonCoreException e = assertThrows(AonCoreException.class, () -> InvoiceValidation.validate(ctx, invoice));
-		assertEquals(AonError.INVOICE_SAVE_ERROR.getMessage(), e.getMessage());
+		InvoiceException e = assertThrows(InvoiceException.class, () -> InvoiceValidation.validate(ctx, invoice));
+		assertStarts(AonError.INVOICE_SAVE_ERROR.getMessage(), e.getMessage());
 		assertInvoiceErrorMessage(invoice, InvoiceErrorMessages.C001, InvoiceErrorKey.REGISTRY);
 	}
 
@@ -98,8 +99,8 @@ class InvoiceValidationTests extends AbstractOccamTest {
 	void testValidationSaveEmptyScope() {
 		Invoice invoice = InvoiceFaker.getRandom(ctx);
 		invoice.setScope(null);
-		AonCoreException e = assertThrows(AonCoreException.class, () -> InvoiceValidation.validate(ctx, invoice));
-		assertEquals(AonError.INVOICE_SAVE_ERROR.getMessage(), e.getMessage());
+		InvoiceException e = assertThrows(InvoiceException.class, () -> InvoiceValidation.validate(ctx, invoice));
+		assertStarts(AonError.INVOICE_SAVE_ERROR.getMessage(), e.getMessage());
 		assertInvoiceErrorMessage(invoice, InvoiceErrorMessages.C001, InvoiceErrorKey.SCOPE);
 	}
 
@@ -107,8 +108,8 @@ class InvoiceValidationTests extends AbstractOccamTest {
 	void testValidationSaveEmptyScopeId() {
 		Invoice invoice = InvoiceFaker.getRandom(ctx);
 		invoice.setScope(new Scope());
-		AonCoreException e = assertThrows(AonCoreException.class, () -> InvoiceValidation.validate(ctx, invoice));
-		assertEquals(AonError.INVOICE_SAVE_ERROR.getMessage(), e.getMessage());
+		InvoiceException e = assertThrows(InvoiceException.class, () -> InvoiceValidation.validate(ctx, invoice));
+		assertStarts(AonError.INVOICE_SAVE_ERROR.getMessage(), e.getMessage());
 		assertInvoiceErrorMessage(invoice, InvoiceErrorMessages.C001, InvoiceErrorKey.SCOPE);
 		
 	}
@@ -117,8 +118,8 @@ class InvoiceValidationTests extends AbstractOccamTest {
 	void testValidationSaveNullReferenceCode() {
 		Invoice invoice = InvoiceFaker.getPurchaseNational(ctx);
 		invoice.setReferenceCode(null);
-		AonCoreException e = assertThrows(AonCoreException.class, () -> InvoiceValidation.validate(ctx, invoice));
-		assertEquals(AonError.INVOICE_SAVE_ERROR.getMessage(), e.getMessage());
+		InvoiceException e = assertThrows(InvoiceException.class, () -> InvoiceValidation.validate(ctx, invoice));
+		assertStarts(AonError.INVOICE_SAVE_ERROR.getMessage(), e.getMessage());
 		assertInvoiceErrorMessage(invoice, InvoiceErrorMessages.C001, InvoiceErrorKey.REFERENCE_CODE);
 	}
 	
@@ -126,8 +127,8 @@ class InvoiceValidationTests extends AbstractOccamTest {
 	void testValidationSaveEmptyReferenceCode() {
 		Invoice invoice = InvoiceFaker.getPurchaseNational(ctx);
 		invoice.setReferenceCode("");
-		AonCoreException e = assertThrows(AonCoreException.class, () -> InvoiceValidation.validate(ctx, invoice));
-		assertEquals(AonError.INVOICE_SAVE_ERROR.getMessage(), e.getMessage());
+		InvoiceException e = assertThrows(InvoiceException.class, () -> InvoiceValidation.validate(ctx, invoice));
+		assertStarts(AonError.INVOICE_SAVE_ERROR.getMessage(), e.getMessage());
 		assertInvoiceErrorMessage(invoice, InvoiceErrorMessages.C001, InvoiceErrorKey.REFERENCE_CODE);
 	}
 	
@@ -135,8 +136,8 @@ class InvoiceValidationTests extends AbstractOccamTest {
 	void testValidationSaveEmptyTransaction() {
 		Invoice invoice = InvoiceFaker.getRandom(ctx);
 		invoice.setTransaction(null);
-		AonCoreException e = assertThrows(AonCoreException.class, () -> InvoiceValidation.validate(ctx, invoice));
-		assertEquals(AonError.INVOICE_SAVE_ERROR.getMessage(), e.getMessage());
+		InvoiceException e = assertThrows(InvoiceException.class, () -> InvoiceValidation.validate(ctx, invoice));
+		assertStarts(AonError.INVOICE_SAVE_ERROR.getMessage(), e.getMessage());
 		assertInvoiceErrorMessage(invoice, InvoiceErrorMessages.C001, InvoiceErrorKey.TRANSACTION);
 	}
 	
@@ -150,8 +151,8 @@ class InvoiceValidationTests extends AbstractOccamTest {
 		assertDoesNotThrow( () -> InvoiceValidation.validate(ctx, newInvoice));
 		
 		newInvoice.setId(null);
-		AonCoreException e = assertThrows(AonCoreException.class, () -> InvoiceValidation.validate(ctx, newInvoice));
-		assertEquals(AonError.INVOICE_SAVE_ERROR.getMessage(), e.getMessage());
+		InvoiceException e = assertThrows(InvoiceException.class, () -> InvoiceValidation.validate(ctx, newInvoice));
+		assertStarts(AonError.INVOICE_SAVE_ERROR.getMessage(), e.getMessage());
 		assertInvoiceErrorMessage(invoice, InvoiceErrorMessages.C005, InvoiceErrorKey.DUPLICATED_SERIES_NUMBER);
 	}
 	
@@ -166,8 +167,8 @@ class InvoiceValidationTests extends AbstractOccamTest {
 		assertDoesNotThrow( () -> InvoiceValidation.validate(ctx, newInvoice));		
 		
 		newInvoice.setId(null);
-		AonCoreException e = assertThrows(AonCoreException.class, () -> InvoiceValidation.validate(ctx, newInvoice));
-		assertEquals(AonError.INVOICE_SAVE_ERROR.getMessage(), e.getMessage());
+		InvoiceException e = assertThrows(InvoiceException.class, () -> InvoiceValidation.validate(ctx, newInvoice));
+		assertStarts(AonError.INVOICE_SAVE_ERROR.getMessage(), e.getMessage());
 		assertInvoiceErrorMessage(invoice, InvoiceErrorMessages.C005, InvoiceErrorKey.DUPLICATED_SERIES_NUMBER);
 	}
 
@@ -180,8 +181,8 @@ class InvoiceValidationTests extends AbstractOccamTest {
 		newInvoice.setId(null)
 			.setSeries(null)
 			.setNumber(0);
-		AonCoreException e = assertThrows(AonCoreException.class, () -> InvoiceValidation.validate(ctx, newInvoice));
-		assertEquals(AonError.INVOICE_SAVE_ERROR.getMessage(), e.getMessage());
+		InvoiceException e = assertThrows(InvoiceException.class, () -> InvoiceValidation.validate(ctx, newInvoice));
+		assertStarts(AonError.INVOICE_SAVE_ERROR.getMessage(), e.getMessage());
 		assertInvoiceErrorMessage(invoice, InvoiceErrorMessages.C006, InvoiceErrorKey.DUPLICATED_REFERENCE_CODE );
 	}
 	
@@ -192,8 +193,8 @@ class InvoiceValidationTests extends AbstractOccamTest {
 			Invoice invoice = InvoiceFaker.getRandom(ctx);
 			Date newDeadline =  AonDateUtils.addDays(invoice.getIssueDate(), 1 );
 			ctx.getConfiguration().setOperationsDeadline( newDeadline );
-			AonCoreException e = assertThrows(AonCoreException.class, () -> InvoiceValidation.validate(ctx, invoice));
-			assertEquals(AonError.INVOICE_SAVE_ERROR.getMessage(), e.getMessage());
+			InvoiceException e = assertThrows(InvoiceException.class, () -> InvoiceValidation.validate(ctx, invoice));
+			assertStarts(AonError.INVOICE_SAVE_ERROR.getMessage(), e.getMessage());
 			assertInvoiceErrorMessage(invoice, InvoiceErrorMessages.C007, InvoiceErrorKey.ISSUE_DATE );
 		} finally {
 			ctx.getConfiguration().setOperationsDeadline( deadline);
@@ -206,8 +207,8 @@ class InvoiceValidationTests extends AbstractOccamTest {
 		Invoice invoice = InvoiceFaker.getRandom(ctx);
 		Date issueDate = AonDateUtils.addYears( new Date(), -11 );  
 		invoice.setIssueDate( issueDate );
-		AonCoreException e = assertThrows(AonCoreException.class, () -> InvoiceValidation.validate(ctx, invoice));
-		assertEquals(AonError.INVOICE_SAVE_ERROR.getMessage(), e.getMessage());
+		InvoiceException e = assertThrows(InvoiceException.class, () -> InvoiceValidation.validate(ctx, invoice));
+		assertStarts(AonError.INVOICE_SAVE_ERROR.getMessage(), e.getMessage());
 		assertInvoiceErrorMessage(invoice, InvoiceErrorMessages.C008, InvoiceErrorKey.ISSUE_DATE );
 	}
 	
@@ -216,8 +217,8 @@ class InvoiceValidationTests extends AbstractOccamTest {
 		Invoice invoice = InvoiceFaker.getRandom(ctx);
 		Date issueDate = AonDateUtils.addYears( new Date(), 2 );  
 		invoice.setIssueDate( issueDate );
-		AonCoreException e = assertThrows(AonCoreException.class, () -> InvoiceValidation.validate(ctx, invoice));
-		assertEquals(AonError.INVOICE_SAVE_ERROR.getMessage(), e.getMessage());
+		InvoiceException e = assertThrows(InvoiceException.class, () -> InvoiceValidation.validate(ctx, invoice));
+		assertStarts(AonError.INVOICE_SAVE_ERROR.getMessage(), e.getMessage());
 		assertInvoiceErrorMessage(invoice, InvoiceErrorMessages.C008, InvoiceErrorKey.ISSUE_DATE );
 	}
 	
@@ -241,8 +242,8 @@ class InvoiceValidationTests extends AbstractOccamTest {
 		AonCollectionUtils.stream(invoice.getFinances())
 			.findFirst()
 			.map(f -> f.setAmount(f.getAmount() + 1));
-		AonCoreException e = assertThrows(AonCoreException.class, () -> InvoiceValidation.validate(ctx, invoice));
-		assertEquals(AonError.INVOICE_SAVE_ERROR.getMessage(), e.getMessage());
+		InvoiceException e = assertThrows(InvoiceException.class, () -> InvoiceValidation.validate(ctx, invoice));
+		assertStarts(AonError.INVOICE_SAVE_ERROR.getMessage(), e.getMessage());
 		assertInvoiceErrorMessage(invoice, InvoiceErrorMessages.C020, InvoiceErrorKey.FINANCE_TOTAL_AMOUNT );
 	}
 
@@ -262,8 +263,8 @@ class InvoiceValidationTests extends AbstractOccamTest {
 	void testValidationRectifiedDeletion() {
 		Invoice invoice = InvoiceFaker.getRandom(ctx);
 		invoice.setRectificationType( RectificationType.RECTIFIED );
-		AonCoreException e = assertThrows(AonCoreException.class, () -> InvoiceValidation.validateDeletion(ctx, invoice));
-		assertEquals(AonError.INVOICE_SAVE_DELETE_ERROR.getMessage(), e.getMessage());
+		InvoiceException e = assertThrows(InvoiceException.class, () -> InvoiceValidation.validateDeletion(ctx, invoice));
+		assertStarts(AonError.INVOICE_SAVE_DELETE_ERROR.getMessage(), e.getMessage());
 		assertInvoiceErrorMessage(invoice, InvoiceErrorMessages.C050, InvoiceErrorKey.GENERIC );
 	}
 
@@ -284,8 +285,8 @@ class InvoiceValidationTests extends AbstractOccamTest {
 				.set(ALCATRAZ.DOMAIN, newInvoice.getDomain())
 				.set(ALCATRAZ.INVOICE, newInvoice.getId())
 				.execute();
-			AonCoreException e = assertThrows(AonCoreException.class, () -> InvoiceValidation.validateDeletion(ctx, invoice));
-			assertEquals(AonError.INVOICE_SAVE_DELETE_ERROR.getMessage(), e.getMessage());
+			InvoiceException e = assertThrows(InvoiceException.class, () -> InvoiceValidation.validateDeletion(ctx, invoice));
+			assertStarts(AonError.INVOICE_SAVE_DELETE_ERROR.getMessage(), e.getMessage());
 			assertInvoiceErrorMessage(invoice, InvoiceErrorMessages.C056, InvoiceErrorKey.GENERIC );
 		} finally {
 			ctx.getDslContext()
@@ -296,6 +297,10 @@ class InvoiceValidationTests extends AbstractOccamTest {
 		
 	}
 	
+	private void assertStarts(String aonError, String exceptionMessage) {
+		assertTrue(AonStringUtils.startsWith(exceptionMessage, aonError));
+	}
+
 	private void assertInvoiceErrorMessage(Invoice invoice, InvoiceErrorMessages msg, InvoiceErrorKey key) {
 		Asserts.assertNotEmptyCollection("Empty Messages", invoice.getMessages());
 		InvoiceTextPrinter.printMessages(System.out, invoice);

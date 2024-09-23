@@ -17,25 +17,104 @@ import org.junit.jupiter.api.Test;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.type.MimeType;
+import com.esferalia.aon.occam.impl.jooq.dao.accounting.invoice.InvoiceTextPrinter;
 import com.esferalia.aon.occam.test.AbstractOccamTest;
 import com.esferalia.aon.occam.test.Asserts;
+import com.esferalia.aon.occam.test.faker.AonRandom;
 import com.esferalia.aon.occam.test.faker.InvoiceFaker;
 import com.esferalia.aon.watson.server.io.AonIOUtils;
 
 
 class InvoiceDaoSettersTest extends AbstractOccamTest {
+	private void assertInvoice(Invoice invoice) {
+		assertInvoice(invoice, false);
+	}
 	
+	private void assertInvoice(Invoice invoice, boolean print) {
+		invoice = InvoiceDAO.validate(ctx,invoice);
+		if (print) {
+			InvoiceTextPrinter.print(invoice);
+		}
+		InvoiceDAO.save(ctx,invoice);
+		Optional<Invoice> newInvoiceOpt = InvoiceDAO.getFull(ctx, invoice.getId());
+		assertTrue(newInvoiceOpt.isPresent());
+		if (print) {
+			InvoiceTextPrinter.print(newInvoiceOpt.get());
+		}
+		Asserts.assertEqualsFullInvoice(invoice, newInvoiceOpt.get());
+		InvoiceDAO.delete(ctx,invoice.getId());
+	}
+	
+	@Test
+	void testSalesNational() {
+		Invoice invoice = InvoiceFaker.getSalesNational(ctx);
+		assertInvoice(invoice);
+	}
+	@Test
+	void testExpensesNational() {
+		Invoice invoice = InvoiceFaker.getExpensesNational(ctx);
+		assertInvoice(invoice);
+	}
+	@Test
+	void testPurchaseNational() {
+		Invoice invoice = InvoiceFaker.getPurchaseNational(ctx);
+		assertInvoice(invoice);
+	}
+	@Test
+	void testPurchaseExtracommunity() {
+		Invoice invoice = InvoiceFaker.getPurchaseExtracommunity(ctx);
+		assertInvoice(invoice);
+	}
+	@Test
+	void testPurchaseExtracommunityVatImport() {
+		Invoice invoice = InvoiceFaker.getPurchaseExtracommunityVatImport(ctx);
+		assertInvoice(invoice);
+	}
+	@Test
+	void testPurchaseCanCeu() {
+		Invoice invoice = InvoiceFaker.getPurchaseCanCeu(ctx);
+		assertInvoice(invoice);
+	}
+	@Test
+	void testSalesCanCeuService() {
+		Invoice invoice = InvoiceFaker.getSalesCanCeuService(ctx);
+		assertInvoice(invoice);
+	}
+	@Test
+	void testSalesCanCeu() {
+		Invoice invoice = InvoiceFaker.getSalesCanCeu(ctx);
+		assertInvoice(invoice);
+	}
+	@Test
+	void testPurchaseCanCeuVatImport() {
+		Invoice invoice = InvoiceFaker.getPurchaseCanCeuVatImport(ctx);	
+		assertInvoice(invoice);
+	}
+	@Test
+	void testExpensesRetention() {
+		Invoice invoice = InvoiceFaker.getExpensesRetention(ctx);	
+		assertInvoice(invoice);
+	}
+	@Test
+	void testPurchaseFarmerRetention() {
+		Invoice invoice = InvoiceFaker.getPurchaseFarmerRetention(ctx);	
+		assertInvoice(invoice);
+	}
+	@Test
+	void testSalesFarmerRetention() {
+		Invoice invoice = InvoiceFaker.getSalesFarmerRetention(ctx);
+		assertInvoice(invoice, true);
+	}
+	@Test
+	void testSalesRetentionInvoice() {
+		Invoice invoice = InvoiceFaker.getSalesRetentionInvoice( ctx, AonRandom.getRandomWithholdingType());
+		assertInvoice(invoice);
+	}
 	
 	@RepeatedTest( 5 )
 	void testInsertInvoice() {
 		Invoice invoice = InvoiceFaker.getRandom(ctx);
-		invoice = InvoiceDAO.validate(ctx,invoice);
-		InvoiceDAO.save(ctx,invoice);
-		Optional<Invoice> newInvoiceOpt = InvoiceDAO.getFull(ctx, invoice.getId());
-		assertTrue(newInvoiceOpt.isPresent());
-		Asserts.assertEqualsFullInvoice(invoice, newInvoiceOpt.get());
-		
-		InvoiceDAO.delete(ctx,invoice.getId());
+		assertInvoice(invoice);
 	}
 	
 	@RepeatedTest( 5 )
@@ -45,7 +124,6 @@ class InvoiceDaoSettersTest extends AbstractOccamTest {
 		Invoice newInvoice = InvoiceDAO.saveAndGet(ctx,invoice);
 		assertNotNull(newInvoice);
 		Asserts.assertEqualsFullInvoice(invoice, newInvoice);
-		
 		InvoiceDAO.delete(ctx,invoice.getId());
 	}
 

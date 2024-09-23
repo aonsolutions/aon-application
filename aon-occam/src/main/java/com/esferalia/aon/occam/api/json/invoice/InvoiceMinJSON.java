@@ -53,7 +53,7 @@ public class InvoiceMinJSON {
 			.setActivityEpigraph(JsonUtils.getString(json, IJsonNames.EPIGRAPH))
 			.setActivityName(JsonUtils.getString(json, IJsonNames.ACTIVITY_DESCRIPTION))
 			.setType(InvoiceType.safeValueOf(JsonUtils.getString(json, IJsonNames.TYPE)))
-			.setSeries(JsonUtils.getString(json, IJsonNames.SERIE))
+			.setSeries(JsonUtils.getString(json, IJsonNames.SERIES))
 			.setNumber(JsonUtils.getInt(json, IJsonNames.NUMBER))
 			.setReferenceCode(JsonUtils.getString(json, IJsonNames.REFERENCE_CODE))
 			.setIssueDate(JsonUtils.getDate(json, IJsonNames.ISSUE_DATE))

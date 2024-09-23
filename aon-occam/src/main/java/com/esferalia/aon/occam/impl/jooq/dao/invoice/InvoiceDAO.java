@@ -415,23 +415,24 @@ public class InvoiceDAO {
 		if (invoice == null) return null;
 		BUILD_ADDRESS
 			.andThen(BUILD_DETAILS)
-			.andThen(BUILD_TAX_BREAKDOWN)
+//			.andThen(BUILD_TAX_BREAKDOWN)
 			.andThen(BUILD_FINANCES)
 			.andThen(BUILD_ATTACH)
 			.accept(ctx,invoice);
-		return invoice.calculateTaxBreakdown();
+		//return invoice.calculateTaxBreakdown();
+		return invoice;
 	}
 	
 	private static final BiConsumer<AONContext, Invoice> BUILD_ADDRESS = (ctx, invoice) -> invoice.setAddress(InvoiceAddressDAO.get(ctx, invoice));
 	private static final BiConsumer<AONContext, Invoice> BUILD_DETAILS = (ctx, invoice) -> {
 		invoice.deleteDetails();
-		InvoiceDetailDAO.stream(ctx,invoice.getId()).forEach(d -> invoice.addDetail(d));
+		InvoiceDetailDAO.stream(ctx,invoice.getId()).forEach(invoice::addDetail);
 	};
 	
-	private static final BiConsumer<AONContext, Invoice> BUILD_TAX_BREAKDOWN = (ctx, invoice) -> 
-		AonCollectionUtils.stream(invoice.getDetails())
-			.flatMap(detail -> AonCollectionUtils.stream(detail.getInvoiceTaxes()))
-			.forEach( it -> invoice.addTax(it));
+//	private static final BiConsumer<AONContext, Invoice> BUILD_TAX_BREAKDOWN = (ctx, invoice) -> 
+//		AonCollectionUtils.stream(invoice.getDetails())
+//			.flatMap(detail -> AonCollectionUtils.stream(detail.getInvoiceTaxes()))
+//			.forEach( it -> invoice.addTax(it));
 
 	private static final BiConsumer<AONContext, Invoice> BUILD_FINANCES = (ctx, invoice) -> invoice.setFinances(FinanceDAO.getInvoiceFinances(ctx, invoice.getId()));
 	
@@ -937,8 +938,8 @@ public class InvoiceDAO {
 				withholdingBreakdown.setPercentage(ctx.getConfiguration().getDefaultWithholdingPercent().getPercentage());
 				withholdingBreakdown.setWithholdingType(ctx.getConfiguration().getDefaultWithholdingPercent().getWithholdingType());
 				withholdingAccount = (inv.isSales())
-						?ctx.getConfiguration().getDefaultWithholdingPercent().getSalesAccount()
-						:ctx.getConfiguration().getDefaultWithholdingPercent().getPurchaseAccount();
+					?ctx.getConfiguration().getDefaultWithholdingPercent().getSalesAccount()
+					:ctx.getConfiguration().getDefaultWithholdingPercent().getPurchaseAccount();
 			}
 			if (withholdingAccount == null) {
 				withholdingAccount = inv.isSales()

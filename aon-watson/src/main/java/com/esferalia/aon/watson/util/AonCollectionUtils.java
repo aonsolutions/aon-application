@@ -4,6 +4,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.DoubleStream;
 import java.util.stream.Stream;
 
 public class AonCollectionUtils {
@@ -67,6 +68,10 @@ public class AonCollectionUtils {
 		return map.values().stream();
 	}
 
+	public static DoubleStream stream( double[] array) {
+		if (array == null) return DoubleStream.empty();
+		return Arrays.stream(array);
+	}
 	public static <T> Stream<T> stream( T[] array) {
 		if (array == null) return Stream.empty();
 		return Arrays.stream(array);

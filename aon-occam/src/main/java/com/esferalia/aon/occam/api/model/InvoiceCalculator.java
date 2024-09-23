@@ -7,9 +7,7 @@ import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceBreakdown;
 import com.esferalia.aon.occam.api.model.finance.InvoiceDetail;
 import com.esferalia.aon.occam.api.model.finance.InvoiceTax;
-// import com.esferalia.aon.occam.api.model.finance.InvoiceVAT;
 import com.esferalia.aon.occam.api.model.finance.InvoiceWithholding;
-import com.esferalia.aon.occam.api.model.type.WithholdingType;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.mutable.MutableDouble;
 import com.esferalia.aon.watson.mutable.MutableObject;
@@ -23,12 +21,18 @@ public class InvoiceCalculator	 {
 	private InvoiceCalculator() {
 	}
 
-	public static void calculate(Invoice inv) {
+	public static Invoice calculate(Invoice inv) {
+		inv.clearTaxBreakdown(); 
+		
 		AonCollectionUtils.stream(inv.getDetails())
 			.forEach(det -> calculateDetail(inv, det ));
-
+		
 		settleVatAmounts(inv);
 		settleWithholdingAmounts(inv);
+		
+		inv.setTaxableBase(0.0);
+		inv.setVatQuota(0.0);
+		inv.setRetentionQuota(0.0);
 		
 		for (InvoiceDetail det :  inv.getDetails() ) {
 			inv.setTaxableBase(AonMathUtils.round(AonMathUtils.round( inv.getTaxableBase() + det.getTaxableBase(), 4)));
@@ -40,6 +44,12 @@ public class InvoiceCalculator	 {
 			.orElse(0.0)
 		);
 		inv.setTotal(inv.getTaxableBase() + inv.getTaxBreakdown().map( b -> b.getResult() ).orElse(0.0));
+		
+		if (inv.hasFinances() && inv.getFinances().size() == 1 && inv.getFinances().get(0).isPending()) {
+			inv.getFinances().get(0).setAmount( inv.getTotal());
+		}
+		
+		return inv;
 	}
 	
 	private static void settleVatAmounts(Invoice inv) {
@@ -100,13 +110,10 @@ public class InvoiceCalculator	 {
 	}
 
 	public static void calculateDetail(Invoice inv, InvoiceDetail detail) {
-		double base = (detail.getPrice() + detail.getTaxes()) * detail.getQuantity();
-		if (detail.getDiscountExpression().getDiscounts() != null) {
-			for (int i = 0;i<detail.getDiscountExpression().getDiscounts().length;i++) {
-				base = base * ( 1 - detail.getDiscountExpression().getDiscounts()[i] /100);
-			}
-		}
-		detail.setTaxableBase(AonMathUtils.round(base, 4));
+		MutableDouble base = new MutableDouble((detail.getPrice() + detail.getTaxes()) * detail.getQuantity());
+		AonCollectionUtils.stream(detail.getDiscountExpression().getDiscounts())
+			.forEach( d -> base.setValue( base.getValue() * ( 1 - d /100)));
+		detail.setTaxableBase(AonMathUtils.round(base.getValue(), 4));
 		
 		if (detail.isPrepayment()) {
 			calculatePrepaymentDetail(inv, detail);			
@@ -151,26 +158,43 @@ public class InvoiceCalculator	 {
 	}
 	
 	private static void calculateWithholdingDetail(Invoice inv, InvoiceDetail detail) {
-		if (inv.isWithholding() && !inv.isWithholdingFarmer() 
-			&& detail.getWithholdingTax().isPresent()
-			&& inv.getWithholding().isPresent()) {
-			double base = detail.getTaxableBase();
-			double percentage = inv.getWithholding().get().getPercentage();
-			double quota = AonMathUtils.round( base * percentage / 100, 2);
-			WithholdingType wt = inv.getWithholding().get().getWithholdingType();
-			detail.ensureWithholdingTax(inv).setBase(base);
-			detail.ensureWithholdingTax(inv).setPercentage( percentage );
-			detail.ensureWithholdingTax(inv).setPercentage( quota );
-			detail.ensureWithholdingTax(inv).setWithholdingType(wt);
+		if (inv.isWithholding() && !inv.isWithholdingFarmer()) {
+			InvoiceWithholding wd = inv.ensureWithholdingData();
+			InvoiceTax irpf = detail.ensureWithholdingTax(inv);
+			irpf.setBase(detail.getTaxableBase());
+			irpf.setPercentage( wd.getPercentage() );
+			irpf.setQuota( AonMathUtils.round( irpf.getBase() * irpf.getPercentage() / 100, 2) );
+			irpf.setWithholdingType(wd.getWithholdingType());
+			if ( detail.getInvestAsset().isPresent()) {
+				if (!irpf.isDeductibleQuotaEdited()) {
+					irpf.setDeductibleQuota( AonMathUtils.round( irpf.getQuota() * irpf.getDirectTaxPercent() / 100 ));
+				}
+			} else {
+				irpf.setDeductiblePercent(100.0);
+				irpf.setDeductibleQuota( irpf.getQuota() );
+				irpf.setDirectTaxPercent(0.0);
+				irpf.setDeductibleQuotaEdited(false);
+			}
 			
 		}
 	}
 	
 	private static void calculateWithholdingFarmerDetail(Invoice inv, InvoiceDetail detail) {
-		if (inv.isWithholding() && inv.isWithholdingFarmer() 
-			&& detail.getWithholdingTax().isPresent()) {
-				InvoiceTax vat = detail.ensureVatTax();	
-				detail.ensureVatTax().setBase(detail.getTaxableBase() + vat.getQuota() + (inv.isSurcharge()?vat.getSurchargeQuota():0.0));
+		if (inv.isWithholding()  && inv.isWithholdingFarmer()) {
+				InvoiceWithholding wd = inv.ensureWithholdingData();
+				InvoiceTax irpf = detail.ensureWithholdingTax(inv);
+				InvoiceTax vat = detail.ensureVatTax();
+				
+				irpf.setBase(detail.getTaxableBase() + vat.getQuota() + (inv.isSurcharge()?vat.getSurchargeQuota():0.0));
+				irpf.setPercentage( wd.getPercentage() );
+				irpf.setQuota( AonMathUtils.round( irpf.getBase() * irpf.getPercentage() / 100, 2) );
+				irpf.setWithholdingType(wd.getWithholdingType());
+				
+				irpf.setDeductiblePercent(100.0);
+				irpf.setDeductibleQuota( irpf.getQuota() );
+				irpf.setDirectTaxPercent(0.0);
+				irpf.setDeductibleQuotaEdited(false);
+				
 			}
 	}
 
