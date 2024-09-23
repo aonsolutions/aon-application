@@ -19,6 +19,7 @@ import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.Customer;
 import com.esferalia.aon.occam.api.model.Filter.FeeFilter;
 import com.esferalia.aon.occam.api.model.Filter.InvoiceCommunicationTrackingFilter;
+import com.esferalia.aon.occam.api.model.Filter.InvoiceDataFilter;
 import com.esferalia.aon.occam.api.model.Filter.InvoiceInfoFilter;
 import com.esferalia.aon.occam.api.model.Filter.ItemFilter;
 import com.esferalia.aon.occam.api.model.Filter.PayMethodFilter;
@@ -40,6 +41,7 @@ import com.esferalia.aon.occam.api.model.finance.FinanceTracking;
 import com.esferalia.aon.occam.api.model.finance.InvofoxConfiguration;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceCommunicationTracking;
+import com.esferalia.aon.occam.api.model.finance.InvoiceData;
 import com.esferalia.aon.occam.api.model.finance.InvoiceDetail;
 import com.esferalia.aon.occam.api.model.finance.InvoiceFilter;
 import com.esferalia.aon.occam.api.model.finance.InvoiceInfo;
@@ -84,6 +86,7 @@ import com.esferalia.aon.occam.impl.jooq.dao.SettleSalariesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.SiiConfigurationDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.TbaiConfigurationDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.invoice.InvoiceCommunicationTrackingDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.invoice.InvoiceDataDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.invoice.InvoiceInfoDAO;
 
 public class FinanceImpl implements IFinance {
@@ -782,6 +785,24 @@ public class FinanceImpl implements IFinance {
 				configuration -> InvoiceCommunicationTrackingDAO.delete(ctx, invoiceId));
 	}
 
+	@Override
+	public Stream<InvoiceData> getInvoiceDataStream(AONContext ctx, InvoiceDataFilter filter) {
+		return ctx.getDslContext().transactionResult(
+				configuration -> InvoiceDataDAO.getStream(ctx, filter));
+	}
+	
+	@Override
+	public InvoiceData getInvoiceData(AONContext ctx, InvoiceDataFilter filter) {
+		return ctx.getDslContext().transactionResult(
+				configuration -> InvoiceDataDAO.get(ctx, filter));
+	}
+	
+	@Override
+	public InvoiceData saveInvoiceData(AONContext ctx, InvoiceData invoiceData) {
+		return ctx.getDslContext().transactionResult(
+				configuration -> InvoiceDataDAO.save(ctx, invoiceData));				
+	}
+	
 	@Override
 	public InvoiceInfo getInvoiceInfo(AONContext ctx, InvoiceInfoFilter filter) {
 		return ctx.getDslContext().transactionResult(

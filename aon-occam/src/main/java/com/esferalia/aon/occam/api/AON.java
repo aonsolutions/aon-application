@@ -87,6 +87,7 @@ import com.esferalia.aon.occam.api.model.Filter.IncomeFilter;
 import com.esferalia.aon.occam.api.model.Filter.InventoryDetailFilter;
 import com.esferalia.aon.occam.api.model.Filter.InvestAssetFilter;
 import com.esferalia.aon.occam.api.model.Filter.InvoiceCommunicationTrackingFilter;
+import com.esferalia.aon.occam.api.model.Filter.InvoiceDataFilter;
 import com.esferalia.aon.occam.api.model.Filter.InvoiceDetailCommissionFilter;
 import com.esferalia.aon.occam.api.model.Filter.InvoiceInfoFilter;
 import com.esferalia.aon.occam.api.model.Filter.ItemAddInfoFilter;
@@ -203,6 +204,7 @@ import com.esferalia.aon.occam.api.model.finance.FinanceTracking;
 import com.esferalia.aon.occam.api.model.finance.InvofoxConfiguration;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceCommunicationTracking;
+import com.esferalia.aon.occam.api.model.finance.InvoiceData;
 import com.esferalia.aon.occam.api.model.finance.InvoiceDetail;
 import com.esferalia.aon.occam.api.model.finance.InvoiceFilter;
 import com.esferalia.aon.occam.api.model.finance.InvoiceInfo;
@@ -5049,11 +5051,11 @@ public class AON {
 	// ********************************************
 	
 	public static void deleteElaborationPackage(Domain domain, User user, Integer id) {
-		deleteElaboration(domain.getName(), domain.getId(), user.getLogin(), id);
+		deleteElaborationPackage(domain.getName(), domain.getId(), user.getLogin(), id);
 	}
 	
 	public static void deleteElaborationPackage(Domain domain, String login, Integer id) {
-		deleteElaboration(domain.getName(), domain.getId(), login, id);
+		deleteElaborationPackage(domain.getName(), domain.getId(), login, id);
 	}
 	
 	public static void deleteElaborationPackage(String domainName, Integer domainId, String login, Integer id) {
@@ -8063,6 +8065,24 @@ public class AON {
 	public static void saveFacturaeCodeAsignacion(Domain domain, User user, Integer invoice, Integer registry, String code) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(domain, user)) {
 			getFinance().saveFacturaeCodeAsignacion(ctx, invoice, registry, code);
+		}
+	}
+	
+	public static Stream<InvoiceData> getInvoiceDataStream(Domain domain, User user, InvoiceDataFilter filter) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domain, user)) {
+			return getFinance().getInvoiceDataStream(ctx, filter);
+		}
+	}
+	
+	public static InvoiceData getInvoiceData(Domain domain, User user, InvoiceDataFilter filter) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domain, user)) {
+			return getFinance().getInvoiceData(ctx, filter);
+		}
+	}
+
+	public static InvoiceData saveInvoiceData(Domain domain, User user, InvoiceData invoiceData) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domain, user)) {
+			return getFinance().saveInvoiceData(ctx, invoiceData);
 		}
 	}
 	

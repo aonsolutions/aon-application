@@ -39,7 +39,6 @@ import { getModelsFiscal } from '../../services/service.js';
 import { sortBy } from '../../services/utils.js';
 import { FiscalUtils } from '../fiscal/FiscalUtils.js';
 import { AonBankCard } from '../accounting/aon-bank-card.js';
-import { AonDashboardUploadButton } from '../../components/aon-dashboard-upload-button.js';
 import { AonDocumentalCard } from '../documental/aon-documental-card.js';
 import { AonCompanyCostsCard, paintCompanyCostPieChart } from '../laboral/company/aon-company-costs-card.js';
 import { AonUploadToast } from '../../components/aon-upload-toast.js';
@@ -350,7 +349,6 @@ export class AonDesktop extends AonElement {
 		  let uploadToast = this.getElement('aonUploadToast');
 		  if(!uploadToast){ 
 			  uploadToast = new AonUploadToast();
-			  uploadToast.setDur(this.getDur());
 			  this.appendChild(uploadToast);
 		  }
 		  for (let file of files) {
@@ -364,7 +362,6 @@ export class AonDesktop extends AonElement {
 		let uploadToast = this.getElement('aonUploadToast');
 		if(!uploadToast){ 
 			uploadToast = new AonUploadToast();
-			uploadToast.setDur(this.getDur());
 			this.appendChild(uploadToast);
 		}
 		let data = {
