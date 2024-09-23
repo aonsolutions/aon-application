@@ -208,7 +208,7 @@ public class InvoicesServlet extends AonApiHttpServlet {
     }
     
     private static JSONObject saveInvoice(AonApiData api) {
-        return InvoiceServlet.setInvoice(api);
+        return RawdocServlet.setInvoice(api);
     }
 
     private static JSONObject acceptInvoice(AonApiData api) {

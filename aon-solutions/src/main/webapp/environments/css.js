@@ -4,6 +4,7 @@ export const MATERIAL_SYMBOLS_OUTLINED = "material-symbols-outlined";
 
 // aon.css
 export const AON_UL = 'aonUl';
+export const AON_UL_UPLOAD_TOAST = 'aonUlUploadToast';
 export const AON_APP_LI = 'aonAppLi';
 export const AON_LINK = 'aonLink';
 export const AON_BUTTON = 'aonButton';

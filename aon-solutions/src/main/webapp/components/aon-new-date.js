@@ -1,4 +1,3 @@
-import {AonElement} from './AonElement.js';
 import { CONSTANT, CSS, EVENT, MATERIAL_ICONS, MSG, TAG } from '../environments/environments.js';
 import { AonNewInput } from './aon-new-input.js';
 import { AonIconButton } from './aon-icon-button.js';
@@ -12,6 +11,7 @@ export class AonNewDate extends AonNewInput {
   year;
 
   INPUT;
+  
   SPAN;
   DATEPICKER;
   DATEPICKER_PREVIOUS;
@@ -352,7 +352,10 @@ export class AonNewDate extends AonNewInput {
       input.value = this.addZero(this.day) + '/' + (this.addZero(this.month + 1)) + '/' + this.year;
       this.buildCalendar();
     } else if(date){
-      this.date = new Date(Date.parse(date));
+      let dateParse = Date.parse(date);
+      this.date = isNaN(dateParse) 
+        ? AonDateUtils.parseStr(date) 
+        : new Date(dateParse);
       this.day = this.date.getDate();
       this.month = this.date.getMonth();
       this.year = this.date.getFullYear();
@@ -373,7 +376,10 @@ export class AonNewDate extends AonNewInput {
       this.value = this.year + '-' + (this.addZero(this.month + 1)) + '-' + this.addZero(this.day);
       input.value = this.addZero(this.day) + '/' + (this.addZero(this.month + 1)) + '/' + this.year;
     } else if(value){
-      this.date = new Date(Date.parse(value));
+      let dateParse = Date.parse(date);
+      this.date = isNaN(dateParse) 
+        ? AonDateUtils.parseStr(date) 
+        : new Date(dateParse);
       this.day = this.date.getDate();
       this.month = this.date.getMonth();
       this.year = this.date.getFullYear();
@@ -415,39 +421,6 @@ export class AonNewDate extends AonNewInput {
       this.removeAttribute(CONSTANT.HIDDEN);
     }
   }
-
-  // parseDateStr(dateStr) {
-  //     if(dateStr.includes('/')){
-  //       let dateArr = dateStr.split('/');
-  //       let a = dateArr[0].length === 1 
-  //           ? '0' + dateArr[0] : dateArr[0];
-  //       let b = dateArr[1].length === 1 
-  //           ? '0' + dateArr[1] : dateArr[1];
-  //       let c = dateArr[2];
-  //       dateStr = a + b + c;       
-  //     } 
-      
-  //     if(dateStr.includes('-')){
-  //       let dateArr = dateStr.split('-');
-  //       let a = dateArr[0].length === 1 
-  //           ? '0' + dateArr[0] : dateArr[0];
-  //       let b = dateArr[1].length === 1 
-  //           ? '0' + dateArr[1] : dateArr[1];
-  //       let c = dateArr[2];
-  //       dateStr = a + b + c;       
-  //     } 
- 
-  //     let day = dateStr.substring(0, 2);
-  //     let month = dateStr.substring(2, 4);
-  //     let year = dateStr.substring(4);
-
-  //     if(Number(month) > 12 || Number(day) > 31 || year.length > 4){
-  //       return this.date;
-  //     } else {
-  //       let d = month + '/' + day + '/' + year;
-  //       return new Date(d);
-  //     }
-  // }
 
   clear(){
     

@@ -13,6 +13,8 @@ public class OCRClientData implements Serializable {
 	
 	private OCRS3Object s3Object;
 	
+	private Integer rawdoc;
+	
 	public Optional<String> getFilename() {
 		return Optional.ofNullable(filename);
 	}
@@ -46,5 +48,13 @@ public class OCRClientData implements Serializable {
 	    return Optional.ofNullable(s3Object);
 	}
 	
+	public Integer getRawdoc() {
+		return rawdoc;
+	}
+	
+	public OCRClientData setRawdoc(Integer rawdoc) {
+		this.rawdoc = rawdoc;
+		return this;
+	}
 	
 }
