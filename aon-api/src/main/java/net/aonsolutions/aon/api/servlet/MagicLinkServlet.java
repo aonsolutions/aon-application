@@ -65,7 +65,7 @@ public class MagicLinkServlet extends AonApiHttpServlet {
 			if(auth.isEmpty()) {
 	             throw new AonApiException(AonApiError.NOT_EXIST_USER.getMessage());
 			}
-			Date expireDate = AonDateUtils.addDays(new Date(), 1);
+			Date expireDate = !AonStringUtils.isBlank(urlPortal) ? AonDateUtils.addMinutes(new Date(), 25) : AonDateUtils.addDays(new Date(), 1) ;
 			String token = AonToken.build(auth, expireDate);
 			String magicLink = !AonStringUtils.isBlank(urlPortal) ? urlPortal + "?token=" + token : "https://"+ url + "?token=" + token; 
 			sendGmail(auth, magicLink, expireDate);
