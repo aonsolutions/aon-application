@@ -147,6 +147,7 @@ public final class OCRNames {
 	// ---------------------------------------------------------------------------------------------	[Q] 
 	public static final String QUANTITY = "quantity";
 	// ---------------------------------------------------------------------------------------------	[R] 
+	public static final String RAWDOC = "rawdoc";
 	public static final String RE_AMOUNT = "reAmount";
 	public static final String RE_RATE = "reRate";
 	public static final String READINGS  = "readings";

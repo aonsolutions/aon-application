@@ -1,5 +1,6 @@
 import { TAG } from "../../environments/environments.js";
-import { formatNumber } from "../../services/utils.js";
+import { getModelsFiscal } from "../../services/fiscalService.js";
+import { formatNumber, sortBy } from "../../services/utils.js";
 import { TAX_ENUMS } from "./FiscalEnums.js";
 
 const createImgAdmin = (administration) => {
@@ -180,11 +181,93 @@ const groupBy = (list, keyGetter) =>{
   return map;
 }
 
+const getFutureFiscalFilter = async () => {
+    const datos = await getModelsFiscalData();
+
+    let orderDatos = [];
+    if (datos)
+      orderDatos = sortBy(datos, "year", "desc").map((model) => getModelNew(model) );
+
+    const result = orderDatos.filter(function (a) {
+      var key = a.year + "|" + a.period;
+      if (!this[key]) {
+        this[key] = true;
+        return true;
+      }
+    }, Object.create(null));
+
+    result.sort(function (a, b) {
+      var aSize = a.year;
+      var bSize = b.year;
+      var aLow = a.period;
+      var bLow = b.period;
+
+      if (aSize == bSize) {
+        return aLow < bLow ? -1 : aLow > bLow ? 1 : 0;
+      } else {
+        return aSize < bSize ? -1 : 1;
+      }
+    });
+
+    let resultReverse = result.reverse();
+
+    if (resultReverse || resultReverse.length !== 0) {
+      let period;
+      let periodText;
+      let year;
+
+      if (resultReverse[0].period == "T1") {
+        period = "T2";
+        periodText = "2º Trim. " + resultReverse[0].year;
+        year = resultReverse[0].year;
+      } else if (resultReverse[0].period == "T2") {
+        period = "T3";
+        periodText = "3º Trim. " + resultReverse[0].year;
+        year = resultReverse[0].year;
+      } else if (resultReverse[0].period == "T3") {
+        period = "T4";
+        periodText = "4º Trim. " + resultReverse[0].year;
+        year = resultReverse[0].year;
+      } else {
+        period = "T1";
+        periodText = "1º Trim. " + (resultReverse[0].year + 1);
+        year = resultReverse[0].year + 1;
+      }
+
+      return {
+        year: year,
+        period: period,
+        title: periodText,
+        periodText: periodText,
+      };
+    
+    } else return null;
+}
+
+const getModelsFiscalData = async () => {
+  try {
+    const datos = await getModelsFiscal();
+
+    if (datos) {
+      let sortData = sortBy(datos, "year", "desc")
+        .sort((a, b) => a.period.localeCompare(b.period))
+        // .filter(({ status }) => status !== "PENDING")
+        .map((model) => FiscalUtils.getModelNew(model));
+
+      return sortData;
+    }
+  } catch (error) {
+    console.error(error);
+    this.showError(error);
+  }
+}
+
 export const FiscalUtils = {
     createImgAdmin,
     getPathImg,
     getModelNumberHtml,
     getModelNumber,
     getModelNew,
-    groupBy
+    groupBy,
+    getFutureFiscalFilter
 }

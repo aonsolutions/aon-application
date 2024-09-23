@@ -98,6 +98,11 @@
 			<scope>test</scope>
 		</dependency>
 
+		<dependency>
+			<groupId>com.esferalia.aon</groupId>
+			<artifactId>aon.occam</artifactId>
+			<version>9.23-SNAPSHOT</version>
+		</dependency>
 	</dependencies>
 
   <profiles>
@@ -225,6 +230,13 @@
 			<version>${project.version}</version>
 			<scope>compile</scope>
 		</dependency>
+		<dependency>
+			<groupId>net.aonsolutions</groupId>
+			<artifactId>aon.sign</artifactId>
+			<version>${project.version}</version>
+			<scope>compile</scope>
+		</dependency>
+		
 		<!-- excluded from jar --> 
 <!--        <dependency>
             <groupId>net.aonsolutions</groupId>

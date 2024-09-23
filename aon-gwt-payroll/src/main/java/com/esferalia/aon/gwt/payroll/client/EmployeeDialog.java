@@ -391,6 +391,8 @@ public abstract class EmployeeDialog extends AonCustomDialog {
 	
 	private EmployeeDialogObject employeeDialogObject;
 	
+	private Button acceptBtnDialog;
+	
 	// ------------------------------------------------- Constructor
 	
 	protected EmployeeDialog(Boolean hideEmployeePanel) {
@@ -668,10 +670,12 @@ public abstract class EmployeeDialog extends AonCustomDialog {
 		
 		buttonsPanel.add(closeBtnDialog);
 		
-		Button acceptBtnDialog = new Button();
+		acceptBtnDialog = new Button();
 		acceptBtnDialog.setStyleName(AON.CSS.aonOkButtonSmall());
 		acceptBtnDialog.setText( AON.MSG.accept());
-		acceptBtnDialog.addClickHandler(e -> onAcceptDialog());
+		acceptBtnDialog.addClickHandler(e -> {
+			onAcceptDialog();
+		});
 		
 		buttonsPanel.add(acceptBtnDialog);
 	}
@@ -681,6 +685,7 @@ public abstract class EmployeeDialog extends AonCustomDialog {
 	}
 	
 	private void onAcceptDialog() {
+		acceptBtnDialog.setEnabled(false);
 		if(employee.checkIfNewEmployeeIsPossible()) {
 			this.employeeDialogObject.createEmployeeContract(
 					contractId -> { 
@@ -693,7 +698,8 @@ public abstract class EmployeeDialog extends AonCustomDialog {
 						 }, 
 					t -> {}
 			);
-		}
+		} else
+			acceptBtnDialog.setEnabled(true);
 	}
 	
 }
