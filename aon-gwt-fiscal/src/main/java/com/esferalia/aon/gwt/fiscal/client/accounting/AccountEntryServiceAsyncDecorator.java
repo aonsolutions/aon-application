@@ -175,42 +175,4 @@ public class AccountEntryServiceAsyncDecorator implements AccountEntryServiceAsy
 		fsa.getAvailableAccountEntryUpdates(domainName, domain, user, wrapper, new AsyncCallbackWrapper<>(callback));
 	}
 	
-	// AMORTIZATION TYPE
-
-	@Override
-	public void getFixedAssetAccounts(String domainName, int domain, String user, AsyncCallback<List<Account>> callback) throws AonCoreException {
-		AON.start();
-		fsa.getFixedAssetAccounts(domainName, domain, user, new AsyncCallbackWrapper<>(callback));
-	}
-
-	@Override
-	public void getAccumulatedAccounts(String domainName, int domain, String user, AsyncCallback<List<Account>> callback) throws AonCoreException {
-		AON.start();
-		fsa.getAccumulatedAccounts(domainName, domain, user, new AsyncCallbackWrapper<>(callback));
-	}
-
-	@Override
-	public void getAllocationAccounts(String domainName, int domain, String user, AsyncCallback<List<Account>> callback) throws AonCoreException {
-		AON.start();
-		fsa.getAllocationAccounts(domainName, domain, user, new AsyncCallbackWrapper<>(callback));
-	}
-
-	@Override
-	public void getAmortizationTypeList(String domainName, int domain, String user, AmortizationTypeParams params, AsyncCallback<List<AmortizationType>> callback) throws AonCoreException {
-		AON.start();
-		fsa.getAmortizationTypeList(domainName, domain, user, params, new AsyncCallbackWrapper<>(callback));
-	}
-
-	@Override
-	public void deleteAmortizationTypes(String domainName, int domain, String user, List<Integer> deleteIds, AsyncCallback<Void> callback) throws AonCoreException {
-		AON.start();
-		fsa.deleteAmortizationTypes(domainName, domain, user, deleteIds, new AsyncCallbackWrapper<>(callback));
-	}
-	
-	@Override
-	public void saveAmortizationType(String domainName, int domain, String user, AmortizationType amortizationType, AsyncCallback<Void> callback) throws AonCoreException {
-		AON.start();
-		fsa.saveAmortizationType(domainName, domain, user, amortizationType, new AsyncCallbackWrapper<>(callback));
-	}
-	
 }

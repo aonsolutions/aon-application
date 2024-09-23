@@ -54,13 +54,4 @@ public interface AccountEntryService extends RemoteService {
 	IAccountEntryWrapper  updateSpecial(String domainName, int domain, String user, AccountEntryUpdate operation, IAccountEntryWrapper wrapper) throws AonCoreException;
 	LinkedList<AccountEntryUpdate> getAvailableAccountEntryUpdates(String domainName, int domain, String user, IAccountEntryWrapper wrapper) throws AonCoreException;
 
-	// AMORTIZATION TYPE
-	List<Account> getFixedAssetAccounts(String domainName, int domain, String user) throws AonCoreException;
-	List<Account> getAccumulatedAccounts(String domainName, int domain, String user) throws AonCoreException;
-	List<Account> getAllocationAccounts(String domainName, int domain, String user) throws AonCoreException;
-
-	List<AmortizationType> getAmortizationTypeList(String domainName, int domain, String user, AmortizationTypeParams params) throws AonCoreException;
-	void deleteAmortizationTypes(String domainName, int domain, String user, List<Integer> deleteIds) throws AonCoreException;
-	void saveAmortizationType(String domainName, int domain, String user, AmortizationType amortizationType) throws AonCoreException;
-	
 }

@@ -48,7 +48,7 @@ import com.google.gwt.user.client.ui.Widget;
 public class AmortizationType extends MainEntryPoint {
 
 	// Services
-	private static AccountEntryServiceAsync SERVICE;
+	private static AmortizationServiceAsync SERVICE;
 	private static CommonServiceAsync COMMON_SERVICE;
 
 	// Options Config
@@ -107,8 +107,8 @@ public class AmortizationType extends MainEntryPoint {
 	public void onModuleLoad(final RegistryModuleOptions opt) {
 		AON.ensureInjected();
 
-		AccountEntryServiceAsync accountEntryServiceAsync = GWT.create(AccountEntryService.class);
-		SERVICE = new AccountEntryServiceAsyncDecorator(accountEntryServiceAsync);
+		AmortizationServiceAsync amortizationServiceAsync = GWT.create(AmortizationService.class);
+		SERVICE = new AmortizationServiceAsyncDecorator(amortizationServiceAsync);
 
 		CommonServiceAsync commonServiceRaw = GWT.create(CommonService.class);
 		COMMON_SERVICE = new CommonServiceAsyncDecorator(commonServiceRaw);

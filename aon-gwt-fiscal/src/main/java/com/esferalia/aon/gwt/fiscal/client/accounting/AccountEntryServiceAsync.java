@@ -53,13 +53,4 @@ public interface AccountEntryServiceAsync {
 	void updateSpecial(String domainName, int domain, String user, AccountEntryUpdate operation, IAccountEntryWrapper wrapper, AsyncCallback<IAccountEntryWrapper> callback);
 	void getAvailableAccountEntryUpdates(String domainName, int domain, String user, IAccountEntryWrapper wrapper, AsyncCallback<LinkedList<AccountEntryUpdate>> callback);
 
-	// AMORTIZATION TYPE
-	void getFixedAssetAccounts(String domainName, int domain, String user, AsyncCallback<List<Account>> asyncCallback) throws AonCoreException;
-	void getAccumulatedAccounts(String domainName, int domain, String user, AsyncCallback<List<Account>> asyncCallback) throws AonCoreException;
-	void getAllocationAccounts(String domainName, int domain, String user, AsyncCallback<List<Account>> asyncCallback) throws AonCoreException;
-
-	void getAmortizationTypeList(String domainName, int domain, String user, AmortizationTypeParams params,AsyncCallback<List<AmortizationType>> asyncCallback) throws AonCoreException;
-	void deleteAmortizationTypes(String domainName, int domain, String user, List<Integer> deleteIds, AsyncCallback<Void> asyncCallback) throws AonCoreException;
-	void saveAmortizationType(String domainName, int domain, String user, AmortizationType amortizationType, AsyncCallback<Void> asyncCallback) throws AonCoreException;
-
 }
