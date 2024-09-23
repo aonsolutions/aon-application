@@ -884,11 +884,10 @@ color: #5f6368;
   height: 54px;
   font-size: 12px;
   color: rgb(95, 99, 104);
-  padding-bottom: 8px;
   border-bottom: 1px solid #ddd;
-  padding-left: 8px;
   text-align: inherit;
   box-sizing: border-box;
+  padding: .5rem;
 }
 
 .aonTable tbody {
@@ -927,7 +926,7 @@ background-color: var(--aonLightGray);
 }
 
 .aonTable td {
-  padding-left: 8px;
+  padding: 0 .5rem;
 }
 
 .aonMenuSidenav {
@@ -2082,19 +2081,6 @@ label.rating:hover {
   padding: revert;
 }
 
-.aonMessengerCardButton{
-  align-items: center;
-  gap: 1rem;
-  cursor: pointer;
-  padding: .5rem;
-  border-radius: 5px;
-  transition: linear;
-}
-
-.aonMessengerCardButton:hover{
-  border: 1px solid var(--aonMessenger);
-}
-
 .aonMessengerCardRow, .aonDocumentalCardRow{
   display: flex;
   flex-direction: column;
@@ -2108,6 +2094,26 @@ label.rating:hover {
   display: flex;
   align-items: center;
   width: 100%;
+}
+
+.aonMessegerOpenMessages{
+	display: flex;
+	gap: .5rem;
+	align-items: center;
+	cursor: pointer;
+	font-size: .8rem;
+	font-weight: 600;
+	color: var(--aonMessenger);
+}
+
+.aonMessegerCardBadge{
+  background-color: var(--aonMessenger);
+  border-radius: 50%;
+  color: #fff;
+  height: 30px;
+  padding: .4rem;
+  text-align: center;
+  width: 30px;
 }
 
 .aonDocumentalCardRowContent{
