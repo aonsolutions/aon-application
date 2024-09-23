@@ -1205,9 +1205,8 @@ export class AonInvoice extends AonElement {
 			if(this.autosave) this.save();
 		});
 
-		date.value = this.invoice.date;
 		dateSpan.appendChild(date);
-		date.value = this.invoice.date;
+		date.setDate(this.invoice.date);
 	
 		// ----- TOTAL
 
@@ -2286,9 +2285,8 @@ export class AonInvoice extends AonElement {
 			this.invoice.setFinance(finance, i);
 			if(this.autosave) this.save();
 		});
-		date.value = finance.due_date;
 		table.addCell(date);
-		date.value = finance.due_date;
+		date.setDate(finance.due_date);
 
 		table.addRow(); // ----- ROW 2
 
@@ -2361,9 +2359,8 @@ export class AonInvoice extends AonElement {
 			this.invoice.setFinance(finance, i);
 			if(this.autosave) this.save();
 		});
-		date.value = finance.due_date;
 		table.addCell(date);
-		date.value = finance.due_date;
+		date.setDate(finance.due_date);
 
 		// ----- FINANCE AMOUNT
 
@@ -2412,9 +2409,8 @@ export class AonInvoice extends AonElement {
 			this.invoice.setFinance(finance, i);
 			if(this.autosave) this.save();
 		});
-		date.value = finance.due_date;
 		let dateCell = table.addCell(date);
-		date.value = finance.due_date;
+		date.setDate(finance.due_date);
 		dateCell.style.width = '15%';
 
 		// ----- FINANCE PAYMETHOD

@@ -5,6 +5,7 @@ import static com.esferalia.aon.jooq.tables.InvoiceData.INVOICE_DATA;
 import java.sql.Date;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
+import java.util.stream.Stream;
 
 import org.jooq.Condition;
 import org.jooq.Record;
@@ -56,6 +57,11 @@ public class InvoiceDataDAO {
 				.where(INVOICE_DATA_PROPERTIES.getConditions(filter));
 	}
 	
+	public static Stream<InvoiceData> getStream(AONContext ctx, InvoiceDataFilter filter) {
+		return select(ctx, filter)
+			.fetch().stream().map(new InvoiceDataFiller());
+	}
+	
 	public static InvoiceData get(AONContext ctx, InvoiceDataFilter filter) {
 		return select(ctx, filter).limit(1)
 			.fetch().stream().map(new InvoiceDataFiller())
@@ -80,9 +86,7 @@ public class InvoiceDataDAO {
 		.set(INVOICE_DATA.INVOICE, invoiceData.getInvoice())
 		.set(INVOICE_DATA.NAME, invoiceData.getName())
 		.set(INVOICE_DATA.VALUE, invoiceData.getValue())
-		.set(INVOICE_DATA.START_DATE,invoiceData.getStartDate() != null
-			? AonDateUtils.toSql(invoiceData.getStartDate())
-			: AonDateUtils.toSql(new java.util.Date()))
+		.set(INVOICE_DATA.START_DATE, AonDateUtils.toSql(new java.util.Date()))
 		.set(INVOICE_DATA.END_DATE,AonDateUtils.toSql(invoiceData.getEndDate()))
 		.where(INVOICE_DATA.ID.eq(invoiceData.getId()))
 		.execute();
@@ -95,9 +99,7 @@ public class InvoiceDataDAO {
 				.set(INVOICE_DATA.INVOICE, invoiceData.getInvoice())
 				.set(INVOICE_DATA.NAME, invoiceData.getName())
 				.set(INVOICE_DATA.VALUE, invoiceData.getValue())
-				.set(INVOICE_DATA.START_DATE,invoiceData.getStartDate() != null
-					? AonDateUtils.toSql(invoiceData.getStartDate())
-					: AonDateUtils.toSql(new java.util.Date()))
+				.set(INVOICE_DATA.START_DATE, AonDateUtils.toSql(invoiceData.getStartDate()))
 				.set(INVOICE_DATA.END_DATE,AonDateUtils.toSql(invoiceData.getEndDate()))
 			.returning(INVOICE_DATA.ID).fetchOne().getId();
 		return invoiceData.setId(id);
@@ -159,11 +161,17 @@ public class InvoiceDataDAO {
 				throw new AonCoreException(AonError.EMPTY_DATA.format("value")) ;
 		};
 		
+		public static final BiConsumer<AONContext, InvoiceData> AUTOCOMPLETE_START_DATE = (ctx, invoiceData) -> {
+			if (invoiceData.getStartDate() == null) 
+				invoiceData.setStartDate(new java.util.Date());
+		};
+		
 		public static void validate(AONContext ctx, InvoiceData invoiceData) throws AonCoreException {
 				EMPTY_DOMAIN
 				.andThen(EMPTY_INVOICE)
 				.andThen(EMPTY_NAME)
 				.andThen(EMPTY_VALUE)
+				.andThen(AUTOCOMPLETE_START_DATE)
 				.accept(ctx, invoiceData);
 		}	
 	}

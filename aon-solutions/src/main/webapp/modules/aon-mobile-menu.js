@@ -11,7 +11,7 @@ import * as UA from '../services/userAgentService.js';
 import { AonNotification } from "./notification/aon-notification.js";
 import { AonApps } from "./aon-apps.js";
 import { AonNotificationIcon } from "./notification/aon-notification-icon.js";
-import { uploadInvoice, uploadInvoices } from "./invoice/InvoiceUtils.js";
+import { uploadInvoices } from "./invoice/InvoiceUtils.js";
 import { uploadDocuments } from "./documental/DocumentalUtils.js";
 import { AonDialog } from "../components/aon-dialog.js";
 import { AonInvoicePanel } from "./invoice/aon-invoice-panel.js";
@@ -23,6 +23,7 @@ import { openCamera, openBarcode } from "../services/actionService.js";
 import { AonImageEditor } from "../components/aon-image-editor.js";
 
 import * as WAREHOUSE_OPTION from './warehouse/WarehouseOptions.js';
+import { AonUploadToast } from "../components/aon-upload-toast.js";
 
 export class AonMobileMenu extends AonElement {
 
@@ -101,22 +102,9 @@ export class AonMobileMenu extends AonElement {
       if(this.SELECTED == "documental"){
         this.saveDocumentFile(files[0]);
       } else {
-        if(this.isBeta()) {
           getReader(files[0]).then(file => {
-            let editor = new AonImageEditor();
-            editor.setImage("data:image/jpeg;base64,"+ file.content);
-            editor.addEventListener(EVENT.CROPPER, (e) => {
-                alert("RECORTADA!!");
-               // SUBIR IMAGEN RECORTADA A S3;
-            });
-            this.rootPanel(editor);
+            this.buildInvoiceImageEditor(file);
           }).catch(()=>null);
-        } else {
-          uploadInvoices(inputCamera, files).then(invoices => {
-            if(invoices && invoices.length>0) 
-              this.goInvoice(invoices[0]);
-          });
-        }
       }
     });
 
@@ -186,8 +174,6 @@ export class AonMobileMenu extends AonElement {
       color: 'white',
       background: '#002469',
       fn: () => {
-        // if(LS.getCompany() && btnAdd.icon)
-        //   btnAdd.icon = MATERIAL_ICONS.CLOSE;
         this.add();
       }
     });
@@ -197,12 +183,6 @@ export class AonMobileMenu extends AonElement {
       icon: 'notifications',
       fn: () => this.notification()
     });
-
-    // this.addMenuButton({
-    //   name: 'User',
-    //   icon: 'person',
-    //   fn: () => this.user()
-    // });
 
     this.addMenuButton({
       name: 'Exit',
@@ -239,7 +219,6 @@ export class AonMobileMenu extends AonElement {
           this.getElement(button.BUTTON).style.bottom = '5px';
           this.getElement(button.AON_ICON).size = "20";
         }
-
         return button;
       }
     }
@@ -288,8 +267,8 @@ export class AonMobileMenu extends AonElement {
 
 
     const newInvoice = {
-      title:"Nueva factura",
-      icon: 'add',
+      title: MSG.NEW_INVOICE,
+      icon: CONSTANT.ADD,
       permission: isInvoice,
       backgroundColor: "#4472C4",
       fn :  () => {
@@ -303,8 +282,8 @@ export class AonMobileMenu extends AonElement {
     };
 
     const uploadInvoice = {
-      title:"Subir factura",
-      icon: 'upload',
+      title: MSG.UPLOAD_INVOICE,
+      icon: CONSTANT.UPLOAD,
       permission: isInvoice,
       backgroundColor: "#4472C4",
       fn :  (ev) => {
@@ -316,7 +295,7 @@ export class AonMobileMenu extends AonElement {
     };
 
     const photoInvoice = {
-      title:"Foto factura",
+      title: "Foto factura",
       icon: 'photo_camera',
       permission: isInvoice,
       backgroundColor: "#4472C4",
@@ -327,13 +306,7 @@ export class AonMobileMenu extends AonElement {
             this.SELECTED = "invoice";
             let ionicData = { action: MOBILE_ACTION.CAMERA, id: this.INPUT_CAMERA, selector: 'aon-new-mobile-menu' };
             openCamera(ionicData, (result) => {
-              let editor = new AonImageEditor();
-              editor.setImage("data:image/jpeg;base64,"+ result.photo);
-              editor.addEventListener(EVENT.CROPPER, (e) => {
-                alert("RECORTADA!!");
-                // SUBIR IMAGEN RECORTADA A S3;
-              });
-              this.rootPanel(editor);
+              this.buildInvoiceImageEditor(result);
             });
           } else this.openCamera("invoice");
         }
@@ -341,8 +314,8 @@ export class AonMobileMenu extends AonElement {
     };
 
     const newMessenger = {
-      title:"Nueva solicitud",
-      icon: 'add',
+      title: MSG.NEW_REQUEST,
+      icon: CONSTANT.ADD,
       permission: isMessenger,
       backgroundColor: "#1fd8b9",
       fn :  () => {
@@ -516,23 +489,26 @@ export class AonMobileMenu extends AonElement {
   receiveAppImage(file) {
     if(this.SELECTED == "documental"){
       this.saveDocumentFile(file);
-    } else {
-        if(this.isBeta()) {
-          let editor = new AonImageEditor();
-          editor.setImage("data:image/jpeg;base64,"+ file.content);
-          editor.addEventListener(EVENT.CROPPER, (e) => {
-            alert("RECORTADA!!");
-            // SUBIR IMAGEN RECORTADA A S3;
-          });
-          this.rootPanel(editor); 
-        } else {
-          uploadInvoice(file).then(f=>{
-            this.goInvoice(f);
-            this.showMessage("Factura registrada");
-            });
-        }
-    }
+    } else this.buildInvoiceImageEditor(file);
 	}
+
+  buildInvoiceImageEditor(file) {
+    let editor = new AonImageEditor();
+    editor.setImage("data:image/jpeg;base64,"+ file.content);
+    editor.addEventListener(EVENT.CROPPER, (e) => {
+      let uploadToast = this.getElement('aonUploadToast');
+		  if(!uploadToast){ 
+			  uploadToast = new AonUploadToast();
+		  	uploadToast.setDur(this.getDur());
+	  		this.appendChild(uploadToast);
+  		}
+		  let data = {
+			  uploaded : 0
+		  } 
+			uploadToast.addFile("invoice", e.detail, data);
+		});
+    this.rootPanel(editor); 
+  }
 
   saveDocumentFile(file){
     let type = this.getDur().isDocumentalManager() || this.getDur().isDocumentalPortal()  ? 'enterprise' : 'employee';

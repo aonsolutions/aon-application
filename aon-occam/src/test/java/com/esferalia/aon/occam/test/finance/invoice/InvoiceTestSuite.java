@@ -15,7 +15,8 @@ import com.esferalia.aon.occam.test.product.TargetItemTest;
 	ValidationSaveEmptyInvoiceTypeTest.class,
 	ValidationSaveEmptyRegistryTest.class,
 	InsertInvoiceTest.class,
-	TargetItemTest.class
+	TargetItemTest.class,
+	InvoiceDataTest.class
 //	DeleteAllInvoicesTest.class,
 })
 public class InvoiceTestSuite {

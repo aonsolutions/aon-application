@@ -135,8 +135,35 @@ class OCRInvoiceBuilderRegistry {
 					}
 				}
 				return;
+			} else if(registries.size() == 2) {
+				AccountingRegistry ar = registries.get(0);
+				AccountingRegistry ar2 = registries.get(1);
+				if(ar.getId().equals(ar2.getId())) {
+					invoice.setRegistry(ar.getId())
+						.setTransaction(ar.getTransaction())
+						.setRegistryData( new Registry( )
+							.setId(ar.getId())
+							.setDocument(ar.getDocument())
+							.setDocumentType(ar.getDocumentType())
+							.setDocumentCountry(ar.getDocumentCountry())
+							.setName(ar.getName())
+							.setAlias(ar.getAlias())
+							.setNationality(ar.getNationality())
+						);
+					ar.getType().visit(ar, new InvoiceRegistryInitializer(aonCtx, invoice, config));
+					
+					if(invoice.getAddress() == null || invoice.getAddress().isEmpty()) {
+						RegistryAddress address = RegistryAddressDAO.getMain(aonCtx, ar.getId());
+						if(address != null && !address.isEmpty()) {
+							invoice.setAddress(address);
+							invoice.setRegistryAddress(address.getId());
+						}
+					}
+					return;
+				} else throw new OCRTooManyOwnersException(); 
+
 			} else {
-			    	throw new OCRTooManyOwnersException ();
+				throw new OCRTooManyOwnersException();
 			}
 		} else {
 		    throw new OCROwnerNotFoundException();
