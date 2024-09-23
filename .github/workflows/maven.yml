@@ -3,11 +3,11 @@ name: Java CI with Maven
 
 on:
   push:
-    branches: [ "master" ]
+    branches: [ "master" , "cadizbay" ]
   pull_request:
     # By default, a workflow only runs when a pull_request event's activity type
     # is opened, synchronize, or reopened. types: [opened, synchronize, reopened]
-    branches: [ "master" ]
+    branches: [ "master" , "cadizbay" ]
   workflow_dispatch:
 
 env:
@@ -103,6 +103,13 @@ jobs:
         context: ./aon-db-up2date
         push: true
         tags: ghcr.io/${{ github.repository_owner }}/aon-db-up2date:${{ env.BRANCH_NAME }}
+
+    - name: Build and push Docker aon-solutions image
+      uses: docker/build-push-action@v6
+      with:
+        context: .
+        push: true
+        tags: ghcr.io/${{ github.repository_owner }}/aon-solutions:${{ env.BRANCH_NAME }}
     
     - name: Setup environment for integration testing
       if: github.ref == 'refs/heads/master'
@@ -154,6 +161,12 @@ jobs:
         file: ./aon-solutions/Dockerfile
         push: true
         tags: ghcr.io/${{ github.repository_owner }}/aon-solutions:${{ env.BRANCH_NAME }}
+
+    - name: Build AWS lambda Functions
+      if: github.ref == 'refs/heads/master'
+      run : |
+        mvn -B -Daws.lambda=true -DskipTests=true -pl aon-in-invoice clean install
+        mvn -B -Daws.lambda=true -DskipTests=true -pl aon-in-payroll clean install
 
     - name: Publish WAR to GitHub Packages
       if: github.ref == 'refs/heads/master'
