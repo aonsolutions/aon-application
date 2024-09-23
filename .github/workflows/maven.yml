@@ -90,26 +90,20 @@ jobs:
     - name: Build with Maven
       run: mvn -B -Dgwt.working=true -DskipTests=${SKIP_TESTS} -T 1C clean install
 
-    - name: Build and push Docker aon-application image
+    - name: Build Docker aon-application image
       uses: docker/build-push-action@v6
       with:
         context: .
-        push: true
+        load: false
         tags: ghcr.io/${{ github.repository_owner }}/aon-application:${{ env.BRANCH_NAME }}
 
-    - name: Build and push Docker aon-db-up2date image
+    - name: Build Docker aon-db-up2date image
       uses: docker/build-push-action@v6
       with:
         context: ./aon-db-up2date
-        push: true
+        load: true
         tags: ghcr.io/${{ github.repository_owner }}/aon-db-up2date:${{ env.BRANCH_NAME }}
 
-    - name: Build and push Docker aon-solutions image
-      uses: docker/build-push-action@v6
-      with:
-        context: .
-        push: true
-        tags: ghcr.io/${{ github.repository_owner }}/aon-solutions:${{ env.BRANCH_NAME }}
     
     - name: Setup environment for integration testing
       if: github.ref == 'refs/heads/master'
@@ -145,17 +139,21 @@ jobs:
       if: github.ref == 'refs/heads/master'
       run: mvn -B --resume-from aon-js-payroll -Drpm.release=false -DskipTests=true clean install
 
-    - name: Build and push production Docker aon-application image
+    - name: Build and push Docker aon-application image
       if: github.ref == 'refs/heads/master'
-      uses: docker/build-push-action@v6
       with:
         context: .
         push: true
         tags: ghcr.io/${{ github.repository_owner }}/aon-application:${{ env.BRANCH_NAME }}
 
-    - name: Build and push production Docker aon-solutions image
-      if: github.ref == 'refs/heads/master'
+    - name: Build and push Docker aon-db-up2date image
       uses: docker/build-push-action@v6
+      with:
+        context: ./aon-db-up2date
+        push: true
+        tags: ghcr.io/${{ github.repository_owner }}/aon-db-up2date:${{ env.BRANCH_NAME }}
+
+    - name: Build and push Docker aon-solutions image
       with:
         context: .
         file: ./aon-solutions/Dockerfile
