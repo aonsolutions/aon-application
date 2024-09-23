@@ -173,6 +173,25 @@ jobs:
       env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
+    - name: Login to Amazon ECR
+      id: login-ecr
+      uses: aws-actions/amazon-ecr-login@v1
+
+    - name: Tag, and push images to Amazon ECR
+      if: github.ref == 'refs/heads/master'
+      id: build-image
+      env:
+        ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+        IMAGE_TAG: snapshot
+      run: |
+        # Tag docker images and push it to ECR so that it can be deployed to ECS.
+        docker tag ghcr.io/${{ github.repository_owner }}/aon-solutions:${{ env.BRANCH_NAME }} $ECR_REGISTRY/aon-solutions:$IMAGE_TAG 
+        docker tag ghcr.io/${{ github.repository_owner }}/aon-application:${{ env.BRANCH_NAME }} $ECR_REGISTRY/aon-application:$IMAGE_TAG 
+        docker tag ghcr.io/${{ github.repository_owner }}/aonaon-db-up2date:${{ env.BRANCH_NAME }} $ECR_REGISTRY/aon-db-up2date:$IMAGE_TAG 
+        docker push $ECR_REGISTRY/aon-solutions:$IMAGE_TAG 
+        docker push $ECR_REGISTRY/aon-application:$IMAGE_TAG 
+        docker push $ECR_REGISTRY/aon-db-up2date:$IMAGE_TAG 
+        
     - name: Deploy to Amazon ECS AON 
       if: github.ref == 'refs/heads/master'
       run : |
