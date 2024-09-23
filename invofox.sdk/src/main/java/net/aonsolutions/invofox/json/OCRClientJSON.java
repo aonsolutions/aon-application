@@ -31,7 +31,7 @@ public class OCRClientJSON {
 			.setKey(OCRJSONUtils.getString(json, OCRNames.KEY))
 			.setValue(OCRJSONUtils.getString(json, OCRNames.VALUE))
 			.setS3Object(OCRS3ObjectJSON.from(OCRJSONUtils.getObject(json, OCRNames.LOAD_S3)))
-		;
+			.setRawdoc(OCRJSONUtils.getInteger(json, OCRNames.RAWDOC));
 	}
 	
 	public static JSONArray to(List<OCRClientData> list) {

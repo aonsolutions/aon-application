@@ -32,6 +32,7 @@ import com.esferalia.aon.occam.api.model.Workplace;
 import com.esferalia.aon.occam.api.model.finance.BankAccount;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceBreakdown;
+import com.esferalia.aon.occam.api.model.finance.InvoiceData;
 import com.esferalia.aon.occam.api.model.finance.InvoiceFiscal;
 import com.esferalia.aon.occam.api.model.finance.InvoiceSeries;
 import com.esferalia.aon.occam.api.model.finance.PayMethod;
@@ -1236,6 +1237,19 @@ public class Asserts {
 			assertEquals("FromNumber", expected.getFromNumber(), actual.getFromNumber());
 			assertEquals("ToNumber", expected.getToNumber(), actual.getToNumber());
 			assertEquals("Count", expected.getCount(), actual.getCount());
+		}
+	}
+	
+	public static void assertEqualsInvoiceData(InvoiceData expected, InvoiceData actual) {
+		assertEqualsNulls( "InvoiceData", expected, actual);
+		if (expected != null ) {
+			assertEquals("Domain", expected.getDomain(), actual.getDomain());
+			assertEquals("Invoice",expected.getInvoice(), actual.getInvoice());
+			assertEquals("Name", expected.getName(), actual.getName());
+			assertEquals("Value", expected.getValue(), actual.getValue());
+//			assertEquals("StartDate",  expected.getStartDate(), actual.getStartDate());
+//			assertEquals("EndDate", expected.getEndDate(), actual.getEndDate());
+			
 		}
 	}
 }

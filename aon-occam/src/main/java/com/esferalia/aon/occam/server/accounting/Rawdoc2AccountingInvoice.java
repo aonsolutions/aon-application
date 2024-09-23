@@ -75,13 +75,15 @@ public class Rawdoc2AccountingInvoice {
 		}
 		AccountingInvoice ai = tedi2Aon(domain, user, invoice, json); 
 		
-		if(rawdoc != null && rawdoc.getId() != null && rawdoc.getData() != null) {
-			Attach attach = new Attach();
+		
+		if(rawdoc != null && rawdoc.getId() != null) {
+			Attach attach = ai.getAttach() != null ? ai.getAttach() : new Attach();
 			attach.setId(rawdoc.getId());
-			attach.setAttachType(AttachType.INVOICE);
-			attach.setMimeType( rawdoc.getMimeType() );
-			attach.setData(rawdoc.getData());
-			attach.setAttachURL("RAWDOC");
+			if(rawdoc.getData() != null) {
+				attach.setAttachType(AttachType.INVOICE);
+				attach.setMimeType( rawdoc.getMimeType() );
+				attach.setData(rawdoc.getData());
+			}
 			ai.setAttach(attach);
 			ai.setFromRawdoc(true);
 		}

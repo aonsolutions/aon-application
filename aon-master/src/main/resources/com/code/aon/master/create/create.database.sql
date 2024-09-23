@@ -4704,6 +4704,7 @@ CREATE TABLE `invoice_doc` (
   `description` varchar(64) CHARACTER SET latin1 COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Descripcion del Archivo Adjunto',
   `type` tinyint DEFAULT '0' COMMENT 'Tipo de Archivo Adjunto',
   `attach_date` date DEFAULT NULL COMMENT 'Fecha del Archivo Adjunto',
+  `s3_bucket` varchar(128) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Amazon S3 Bucket',
   `s3_key` varchar(1024) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Amazon S3 Object key',
   PRIMARY KEY (`id`),
   KEY `IDX_INVOICE_DOC_INVOICE` (`invoice`),

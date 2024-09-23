@@ -48,7 +48,9 @@ export class AonDocumentalCard extends AonElement {
     this.style.height = "100%";
 
     let cardContent = this.createElement(TAG.DIV);
-    cardContent.className = CSS.AON_FLEX_COLUMN;
+    cardContent.style.display = "flex";
+    cardContent.style.flexDirection = "column";
+    cardContent.style.justifyContent = "center";
     cardContent.id = "documentalCardTable";
     this.appendChild(cardContent);
 
@@ -78,24 +80,27 @@ export class AonDocumentalCard extends AonElement {
       let documentalCard = this.getElement("documentalCard");
       documentalCard.style.display = "none";
     } else {
-      let maxLength = documents.length > 5 ? 5 : documents.length;
+      let maxLength = documents.length > 7 ? 7 : documents.length;
 
       for (let index = 0; index < maxLength; index++) {
         const document = documents[index];
         
         let row = this.createElement(TAG.DIV);
-        row.className = CSS.AON_DOCUMENTAL_CARD_ROW;
+        row.className = CSS.AON_DOCUMENTAL_CARD_ROW_CONTENT;
         row.addEventListener(EVENT.CLICK, () => {
           this.goDocumentalDocument(document);
         });
 
         let leftContent = this.createElement(TAG.DIV);
         leftContent.className = CSS.AON_FLEX;
-        leftContent.style.alignContent = "center";
-        leftContent.style.flexDirection = "column";
+        leftContent.style.alignItems = "center";
+        leftContent.style.flexGrow = "1";
+        leftContent.style.minWidth = "0";
+        leftContent.style.marginRight = ".5rem";
+        leftContent.style.gap = ".5rem";
 
         let description = this.createElement(TAG.SPAN);
-        description.className = CSS.AON_DOCUMENTAL_ELLIPSIS;
+        description.className = CSS.AON_ELLIPSIS;
         description.style.fontSize = ".9rem";
         description.style.color = "var(--aonDocumental)";
         description.style.fontWeight = "500";
@@ -104,9 +109,11 @@ export class AonDocumentalCard extends AonElement {
         leftContent.appendChild(description);
 
         let rightContent = this.createElement(TAG.DIV);
-        rightContent.className = CSS.AON_FLEX_COLUMN;
-        rightContent.style.alignItems = "end";
-        rightContent.style.gap = "0";
+        rightContent.style.display = "flex";
+        rightContent.style.flexDirection = "column";
+        rightContent.style.width = "5.5rem";
+        rightContent.style.textAlign = "right";
+        rightContent.style.flexShrink = "0";
 
         let date = this.createElement(TAG.SPAN);
         date.classList.add("aonDocumentalCardDate");

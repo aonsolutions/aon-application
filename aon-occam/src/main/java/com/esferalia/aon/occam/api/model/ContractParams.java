@@ -19,11 +19,39 @@ public class ContractParams implements Serializable{
 	private Date from;
 	private Date to;
 	
+	private Integer contract;
+	
 	private int limit;
 	private int offset;
 	
 	private String orderBy;
 	private boolean asc = true;
+	
+	public ContractParams() {
+		super();
+	}
+	
+	public ContractParams(ContractParams params) {
+		this.domainName = params.getDomainName();
+		this.domain = params.getDomain();
+		this.user = params.getUser();
+		
+		this.description = params.getDescription();
+		
+		this.active = params.getActive();
+		this.tc2 = params.getTc2();
+		this.workplace = params.getWorkplace();
+		this.from = params.getFrom();
+		this.to = params.getTo();
+		
+		this.contract = params.getContract();
+		
+		this.limit = params.getLimit();
+		this.offset = params.getOffset();
+		
+		this.orderBy = params.getOrderBy();
+		this.asc = params.isAsc();
+	}
 	
 	public String getDomainName() {
 		return domainName;
@@ -89,6 +117,13 @@ public class ContractParams implements Serializable{
 		this.to = to;
 		return this;
 	}
+	public Integer getContract() {
+		return contract;
+	}
+	public ContractParams setContract(Integer contract) {
+		this.contract = contract;
+		return this;
+	}
 	public int getLimit() {
 		return limit;
 	}
@@ -116,6 +151,14 @@ public class ContractParams implements Serializable{
 	public ContractParams setAsc(boolean asc) {
 		this.asc = asc;
 		return this;
+	}
+
+	@Override
+	public String toString() {
+		return "ContractParams [\ndomainName=" + domainName + ",\ndomain=" + domain + ",\nuser=" + user + ",\ndescription="
+				+ description + ",\nactive=" + active + ",\ntc2=" + tc2 + ",\nworkplace=" + workplace + ",\nfrom=" + from
+				+ ",\nto=" + to + ",\ncontract=" + contract + ",\nlimit=" + limit + ",\noffset=" + offset + ",\norderBy="
+				+ orderBy + ",\nasc=" + asc + "\n]";
 	}
 	
 }

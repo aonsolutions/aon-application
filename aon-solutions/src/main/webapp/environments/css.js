@@ -4,6 +4,7 @@ export const MATERIAL_SYMBOLS_OUTLINED = "material-symbols-outlined";
 
 // aon.css
 export const AON_UL = 'aonUl';
+export const AON_UL_UPLOAD_TOAST = 'aonUlUploadToast';
 export const AON_APP_LI = 'aonAppLi';
 export const AON_LINK = 'aonLink';
 export const AON_BUTTON = 'aonButton';
@@ -135,11 +136,12 @@ export const AON_DESKTOP_MENU_CLASSIC_OPTION_AON = 'aonDesktopMenuClassicOptionA
 export const AON_NOTIFICATION_CONTENT = 'aonNotificationContent';
 export const AON_NOTIFICATION_CONTENT_BETA = 'aonNotificationContentBeta';
 export const AON_ELLIPSIS = 'aonEllipsis';
-export const AON_DOCUMENTAL_ELLIPSIS = 'aonDocumentalEllipsis';
-export const AON_MESSENGER_CARD_BUTTON = 'aonMessengerCardButton';
 export const AON_MESSENGER_CARD_ROW = 'aonMessengerCardRow';
 export const AON_DOCUMENTAL_CARD_ROW = 'aonDocumentalCardRow';
+export const AON_MESSENGER_CARD_ROW_CONTENT = 'aonMessengerCardRowContent';
+export const AON_DOCUMENTAL_CARD_ROW_CONTENT = 'aonDocumentalCardRowContent';
 export const AON_BADGE = 'aonBadge';
+export const AON_MESSENGER_BADGE = 'aonMessegerCardBadge';
 export const AON_DASHBOARD_CARD = 'aonDashboardCard';
 
 export const AON_PARENT_DIV = 'aonParentDiv';

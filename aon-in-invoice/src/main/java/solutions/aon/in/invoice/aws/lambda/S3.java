@@ -19,17 +19,16 @@ import com.amazonaws.services.s3.model.S3ObjectSummary;
 
 public class S3 {
     
-    private static final AmazonS3 AMAZON_S3 = 
-AmazonS3ClientBuilder.standard().build();
+    private static final AmazonS3 AMAZON_S3 = AmazonS3ClientBuilder.standard().build();
     
     private static int JSON_INDENT_FACTOR = 1;
     
     private static AmazonS3 getAmazonS3(String bukectName) {
-	return AMAZON_S3;
+    	return AMAZON_S3;
     }
     
     public static String getCompanyName(String bucketName, String key) {
-	return getAmazonS3(bucketName).getObjectMetadata(bucketName, key).getUserMetadata().getOrDefault("company-name", "");
+    	return getAmazonS3(bucketName).getObjectMetadata(bucketName, key).getUserMetadata().getOrDefault("company-name", "");
     }
 
     public static JSONObject getLoadBatchTask(String bucketName, String key) throws NoSuchLoadBatchException{

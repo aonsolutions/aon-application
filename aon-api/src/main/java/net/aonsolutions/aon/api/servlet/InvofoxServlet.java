@@ -34,6 +34,7 @@ import com.esferalia.aon.occam.api.model.Rawdoc;
 import com.esferalia.aon.occam.api.model.finance.EnumVisitors.IInvoiceTypeVisitor;
 import com.esferalia.aon.occam.api.model.finance.InvofoxConfiguration;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
+import com.esferalia.aon.occam.api.model.finance.InvoiceData;
 import com.esferalia.aon.occam.api.model.finance.InvoiceTax;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceError;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceErrorContext;
@@ -185,7 +186,7 @@ public class InvofoxServlet extends AonApiHttpServlet {
 		
 		if(rawdoc == null) {
 			json = getDocument(api.getDomain(), api.getUser(), documentId);
-
+			Integer id = JsonUtils.getInteger(json, IJsonNames.ID);
 			RawdocType type = json.opt("type") != null && json.optString("type").equalsIgnoreCase("emitida") 
 					? RawdocType.OUTPUT : RawdocType.INPUT;
 			String ocrStatus = JsonUtils.getString(json, IJsonNames.STATUS);
@@ -195,6 +196,7 @@ public class InvofoxServlet extends AonApiHttpServlet {
 
 			
 			rawdoc = new Rawdoc()
+				.setId(id)
 				.setDomain(api.getDomain().getId())
 				.setNature(RawdocNature.INVOICE)
 				.setType(type)
@@ -263,11 +265,21 @@ public class InvofoxServlet extends AonApiHttpServlet {
 				OCRSeverity publicState = ocrDocument.getPublicState().orElse(null);
 				if (inv != null && publicState != null && OCRSeverity.approved.equals(publicState)
 						&& inv.getTediCategory() != null) {
+					Integer rawdocId = getRawdocId(ocrDocument);
 					inv = AON.acceptInvoice(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(),
-							inv, null);
+							inv, rawdocId);
 					if (inv != null && inv.getId() != null) {
 						api.getData().put("file", getFileJSON(ocrDocument));
 						InvoiceServlet.processInvoiceFile(api, inv);
+
+						InvoiceData invoiceData = new InvoiceData()
+								.setDomain(api.getDomain().getId())
+								.setInvoice(inv.getId())
+								.setName("INVOFOX_ID")
+								.setValue(documentId)
+								.setStartDate(new Date());
+						AON.saveInvoiceData(api.getDomain(), api.getUser(), invoiceData);
+						
 						exportDocument(api, documentId);
 					}
 
@@ -313,6 +325,7 @@ public class InvofoxServlet extends AonApiHttpServlet {
 					.map(InvoiceJSON::toJSON)
 					.map(invoice -> invoice.put("token", token))
 					.map(invoice -> invoice.put("file", getFileJSON(ocrDocument)))
+					.map(invoice -> invoice.put("id", getRawdocId(ocrDocument)))
 					.map(invoice -> invoice.put("messages", getMessages(ocrDocument, company)))
 					.map(invoice -> invoice.put("status", toString(ocrDocument.getPublicState().orElse(OCRSeverity.error))))
 					.map(invoice -> invoice.put("insight", new JSONObject().put("invofoxId", ocrDocument.getId().orElse(""))))
@@ -664,7 +677,15 @@ public class InvofoxServlet extends AonApiHttpServlet {
 				}))));
 		return jsonObject;
 	}
-
+	
+	private static final Integer getRawdocId(OCRDocument ocrDocument) {
+		Integer rawdoc = null;
+		if(ocrDocument.getClientData().isPresent()) {
+			rawdoc = ocrDocument.getClientData().get().getRawdoc();
+		}
+		return rawdoc;
+	}
+	
 	private static final Invoice fillFinances(AONContext ctx, OCRInvoice ocrInvoice, Invoice invoice) {
 		OCRInvoiceBuilder.fillFinances(ctx, ocrInvoice, invoice);
 		return invoice;

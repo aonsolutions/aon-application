@@ -28,7 +28,7 @@ export const getReader = (file) =>  new Promise((resolve) => {
  * @returns Promise<String>
  */
 export const getBase64FromUrl = async (url, contentType)=> {
-  const data = await fetch(url,{
+  const data = await fetch(url, {
     headers: {'Content-Type': contentType}
   });
   const blob = await data.blob();
@@ -191,3 +191,12 @@ export const now = () => {
   
   return yyyy + '-' + mm + '-' + dd;
 }
+
+export const ramdomString = (length) => {
+  const keys = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+  let ramdomString = "";
+  for (let i = 0; i < length; i++) {  
+      ramdomString += keys.charAt(Math.floor(Math.random() * keys.length));
+  }
+  return ramdomString;
+};

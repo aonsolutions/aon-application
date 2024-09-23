@@ -1,27 +1,10 @@
 import { AonElement } from "../../components/AonElement.js";
-import {
-  insertInvoice,
-  mobileAction,
-  MOBILE_ACTION,
-  selfconta,
-  downloadInvoiceExcel,
-  getInvoice,
-  getRawdocCount,
-  getInvofoxCount,
-  invoiceDuplicateFix,
-} from "../../services/service.js";
+import { insertInvoice, mobileAction, MOBILE_ACTION, selfconta, downloadInvoiceExcel, getInvoice, getRawdocCount, getInvofoxCount, invoiceDuplicateFix } from "../../services/service.js";
 import { Invoice } from "./Invoice.js";
 import { AonInvoice } from "./aon-invoice.js";
 import { AonMobileInvoice } from "./aon-mobile-invoice.js";
-import {
-  MSG,
-  MATERIAL_ICONS,
-  CONSTANT,
-  EVENT,
-  TAG,
-} from "../../environments/environments.js";
+import { MSG, MATERIAL_ICONS, CONSTANT, EVENT, TAG } from "../../environments/environments.js";
 import { downscaleImage } from "../../services/compressImg.js";
-import { getReader } from "../../services/utils.js";
 import { AonProductList } from "../product/aon-product-list.js";
 import { AonMobileProductList } from "../product/aon-mobile-product-list.js";
 import { Apps, INVOICE } from "../../services/app.js";
@@ -44,18 +27,12 @@ import { AonInvoiceList } from "./aon-invoice-list.js";
 import { AonMobileInvoiceList } from "./aon-mobile-invoice-list.js";
 import { AonInvoiceHome } from "./aon-invoice-home.js";
 
-import { FISCAL_VIEWS } from "../fiscal/FiscalEnums.js";
 import { FiscalUtils } from "../fiscal/FiscalUtils.js";
-import { AonTax } from "../fiscal/tax/aon-tax.js";
-import {
-  getModelsFiscal,
-  getEstimationModelsFiscal,
-} from "../../services/fiscalService.js";
+import { getModelsFiscal, getEstimationModelsFiscal } from "../../services/fiscalService.js";
 import { AonTable } from "../../components/aon-table.js";
 import { formatNumber } from "../../services/utils.js";
 import { sortBy } from "../../services/utils.js";
 
-import * as GWT from "../../gwt/gwt.js";
 import * as ACTION from "../actions.js";
 import * as OPTION from "./InvoiceOptions.js";
 
@@ -64,6 +41,7 @@ import "../../components/aon-application.js";
 import "../../components/aon-dialog-menu.js";
 
 import { getCounter, addCounter, clearCounter } from "./InvoiceCounter.js";
+import { AonFutureTax } from "../fiscal/tax/aon-future-tax.js";
 
 export class AonInvoicePanel extends AonElement {
   selectedOption;
@@ -147,146 +125,89 @@ export class AonInvoicePanel extends AonElement {
 
     let input = this.getElement(this.INPUT_FILE);
     input.addEventListener(EVENT.CHANGE, () =>
-      this.preview(input, input.files)
+      this.upload(input.files)
     );
 
     let inputCamera = this.getElement(this.INPUT_CAMERA);
     inputCamera.addEventListener(EVENT.CHANGE, ({ target }) =>
-      this.preview(inputCamera, target.files)
+      this.upload(target.files)
     );
 
     aonInvoice.addEventListener(EVENT.AON_APPLICATION_DROP, (e) =>
-      this.preview(aonInvoice, e.detail)
+      this.upload(e.detail)
     );
 
     if (this.isMobile()) {
       aonInvoice.addFloatOption(ACTION.ADD_INVOICE, () => this.addInvoice());
     }
-    this.buildToolbarOptions();
+    this.buildInvoiceToolbarOptions();
 
-    this.appendChild(input);
     this.buildSidenavOptions();
     if (this.invoice && this.invoice.type) {
       this.aonInvoice(this.invoice.type, this.invoice);
     } else if (this.value) {
       this.aonInvoiceById(this.value);
     } else this.aonInvoiceHome();
-    // else this.selectOption(this.option);
 
-    const buildEvent = new CustomEvent(EVENT.BUILD, { panel: this });
-    this.dispatchEvent(buildEvent);
+    this.dispatchEvent(new CustomEvent(EVENT.BUILD, { panel: this }));
   }
 
-  buildToolbarOptions() {
+  buildInvoiceToolbarOptions(acceptedInvoices) {
+    this.clearToolbar();
+    this.getApplication().addToolbarOption("Add", "add", () => this.addInvoice());
+    this.getApplication().addToolbarOption("Refresh", "refresh", () => this.refreshInvoicePanel());
+    this.getApplication().addToolbarOption("Upload", "file_upload", () => this.addInvoiceFile());
+ 
+    if(acceptedInvoices) this.getApplication().addToolbarOption2(SigninSidenav.EXCEL, () => this.downloadInvoiceExcel());
+    this.buildToolbarSearchOption(acceptedInvoices);
+  }
+
+  buildProductToolbarOptions() {
+    this.clearToolbar();
+    this.getApplication().addToolbarOption("Add", "add", () => this.addProduct());
+    this.buildToolbarSearchOption();
+  }
+
+  buildExpenseToolbarOptions() {
+    this.clearToolbar();
+    this.getApplication().addToolbarOption("Add", "add", () => this.addExpense());
+    this.buildToolbarSearchOption();
+  }
+
+  buildInvestToolbarOptions() {
+    this.clearToolbar();
+    this.getApplication().addToolbarOption("Add", "add", () => this.addInvest());
+    this.buildToolbarSearchOption();
+  }
+
+  buildCustomerToolbarOptions() {
+    this.clearToolbar();
+    this.getApplication().addToolbarOption("Add", "add", () => this.addCustomer());
+    this.buildToolbarSearchOption();
+  }
+
+  buildSupplierToolbarOptions() {
+    this.clearToolbar();
+    this.getApplication().addToolbarOption("Add", "add", () => this.addSupplier());
+    this.buildToolbarSearchOption();
+  }
+
+  buildCreditorToolbarOptions() {
+    this.clearToolbar();
+    this.getApplication().addToolbarOption("Add", "add", () => this.addCreditor());
+    this.buildToolbarSearchOption();
+  }
+
+  clearToolbar() {
     let toolbar = this.getElement(aonInvoice.TOOLBAR);
     toolbar.removeButtons();
-    if (!this.isMobile()) {
-      if (this.selectedOption && OPTION.PRODUCT.id === this.selectedOption.id) {
-        this.getApplication().addToolbarOption("Add", "add", () =>
-          this.addProduct()
-        );
-      } else if (
-        this.selectedOption &&
-        OPTION.EXPENSES.id === this.selectedOption.id
-      ) {
-        this.getApplication().addToolbarOption("Add", "add", () =>
-          this.addExpense()
-        );
-      } else if (
-        this.selectedOption &&
-        OPTION.REGISTRY_CUSTOMER.id === this.selectedOption.id
-      ) {
-        this.getApplication().addToolbarOption("Add", "add", () =>
-          this.addCustomer()
-        );
-      } else if (
-        this.selectedOption &&
-        OPTION.REGISTRY_SUPPLIER.id === this.selectedOption.id
-      ) {
-        this.getApplication().addToolbarOption("Add", "add", () =>
-          this.addSupplier()
-        );
-      } else if (
-        this.selectedOption &&
-        OPTION.REGISTRY_CREDITOR.id === this.selectedOption.id
-      ) {
-        this.getApplication().addToolbarOption("Add", "add", () =>
-          this.addCreditor()
-        );
-      } else if (
-        this.selectedOption &&
-        OPTION.INVEST.id === this.selectedOption.id
-      ) {
-        this.getApplication().addToolbarOption("Add", "add", () =>
-          this.addInvest()
-        );
-      } else {
-        this.getApplication().addToolbarOption("Add", "add", () =>
-          this.addInvoice()
-        );
-        this.getApplication().addToolbarOption("Refresh", "refresh", () =>
-          this.refreshInvoicePanel()
-        );
-        this.getApplication().addToolbarOption("Upload", "file_upload", () =>
-          this.addInvoiceFile()
-        );
-        if (
-          this.selectedOption &&
-          (OPTION.INVOICE_ISSUED.id === this.selectedOption.id ||
-            OPTION.INVOICE_RECEIVED.id === this.selectedOption.id ||
-            OPTION.INVOICE_TICKET.id === this.selectedOption.id)
-        ) {
-          this.getApplication().addToolbarOption2(SigninSidenav.EXCEL, () =>
-            this.downloadInvoiceExcel()
-          );
-        }
-      }
-      if (this.isConsole()) {
-        this.getApplication().addToolbarOption("FIX", "healing", () =>
-          invoiceDuplicateFix()
-        );
-      }
-    }
+  }
+
+  buildToolbarSearchOption(acceptedInvoices) {
     const btnSearch = this.getApplication().addSearchOption();
     let searchFn = (event) => this.search(event.detail);
-    // btnSearch.addEventListener(EVENT.SEARCH, searchFn);
     btnSearch.addEventListener(EVENT.SEARCH_NEW, searchFn);
-
-    if (
-      this.selectedOption &&
-      (OPTION.INVOICE_ISSUED.id === this.selectedOption.id ||
-        OPTION.INVOICE_RECEIVED.id === this.selectedOption.id ||
-        OPTION.INVOICE_TICKET.id === this.selectedOption.id)
-    ) {
-      // ADD ADVANCED SEARCH
-
-      let options = [
-        {
-          type: CONSTANT.DATE,
-          name: "startDate",
-          id: "startDate",
-          title: MSG.FROM,
-        },
-        {
-          type: CONSTANT.DATE,
-          name: "endDate",
-          id: "endDate",
-          title: MSG.TO,
-        },
-        {
-          type: CONSTANT.SELECT,
-          name: "recorded",
-          id: "recorded",
-          title: MSG.STATUS,
-          options: JSON.stringify([
-            { name: "-", value: undefined },
-            { name: MSG.PENDING, value: "PENDING" },
-            { name: MSG.ACCOUNTED, value: "SCORED" },
-          ]),
-        },
-      ];
-      btnSearch.buildOptionsFilter(options); //INPUTS
-    }
+    if(acceptedInvoices) btnSearch.buildOptionsFilter(OPTION.INVOICE_SEARCH_OPTIONS);
   }
 
   downloadInvoiceExcel() {
@@ -352,67 +273,37 @@ export class AonInvoicePanel extends AonElement {
       }
       this.updateCounterSpan(OPTION.INVOICE_TICKET);
 
-      if (
-        r &&
-        r.rawdoc &&
-        r.rawdoc.inbox &&
-        r.rawdoc.inbox.count &&
-        r.rawdoc.inbox.count > 0
-      ) {
+      if (r && r.rawdoc && r.rawdoc.inbox && r.rawdoc.inbox.count && r.rawdoc.inbox.count > 0) {
         addCounter(OPTION.INVOICE_PENDINGS, r.rawdoc.inbox.count);
       }
       this.updateCounterSpan(OPTION.INVOICE_PENDINGS);
 
-      if (
-        r &&
-        r.rawdoc &&
-        r.rawdoc.inbox &&
-        r.rawdoc.inbox.OUTPUT &&
-        r.rawdoc.inbox.OUTPUT > 0
-      ) {
+      if (r && r.rawdoc && r.rawdoc.inbox && r.rawdoc.inbox.OUTPUT && r.rawdoc.inbox.OUTPUT > 0) {
         addCounter(OPTION.RAWDOC_INBOX_ISSUED, r.rawdoc.inbox.OUTPUT);
       }
       this.updateCounterSpan(OPTION.RAWDOC_INBOX_ISSUED);
 
-      if (
-        r &&
-        r.rawdoc &&
-        r.rawdoc.inbox &&
-        r.rawdoc.inbox.INPUT &&
-        r.rawdoc.inbox.INPUT > 0
-      ) {
+      if (r && r.rawdoc && r.rawdoc.inbox && r.rawdoc.inbox.INPUT && r.rawdoc.inbox.INPUT > 0) {
         addCounter(OPTION.RAWDOC_INBOX_RECEIVED, r.rawdoc.inbox.INPUT);
       }
       this.updateCounterSpan(OPTION.RAWDOC_INBOX_RECEIVED);
 
-      if (
-        r &&
-        r.rawdoc &&
-        r.rawdoc.inbox &&
-        r.rawdoc.inbox.TICKET &&
-        r.rawdoc.inbox.TICKET > 0
-      ) {
+      if (r && r.rawdoc && r.rawdoc.inbox && r.rawdoc.inbox.TICKET && r.rawdoc.inbox.TICKET > 0) {
         addCounter(OPTION.RAWDOC_INBOX_TICKET, r.rawdoc.inbox.TICKET);
       }
+      this.updateCounterSpan(OPTION.RAWDOC_INBOX_TICKET);
 
-      if (
-        r &&
-        r.rawdoc &&
-        r.rawdoc.rejected &&
-        r.rawdoc.rejected.count &&
-        r.rawdoc.rejected.count > 0
-      ) {
+      if (r && r.rawdoc && r.rawdoc.processing && r.rawdoc.processing.count && r.rawdoc.processing.count > 0) {
+        addCounter(OPTION.RAWDOC_PROCESSING, r.rawdoc.processing.count);
+      }
+      this.updateCounterSpan(OPTION.RAWDOC_PROCESSING);
+
+      if (r && r.rawdoc && r.rawdoc.rejected && r.rawdoc.rejected.count && r.rawdoc.rejected.count > 0) {
         addCounter(OPTION.RAWDOC_REJECT, r.rawdoc.rejected.count);
       }
       this.updateCounterSpan(OPTION.RAWDOC_REJECT);
 
-      if (
-        r &&
-        r.rawdoc &&
-        r.rawdoc.draft &&
-        r.rawdoc.draft.count &&
-        r.rawdoc.draft.count > 0
-      ) {
+      if (r && r.rawdoc && r.rawdoc.draft && r.rawdoc.draft.count && r.rawdoc.draft.count > 0) {
         addCounter(OPTION.RAWDOC_DRAFT, r.rawdoc.draft.count);
       }
       this.updateCounterSpan(OPTION.RAWDOC_DRAFT);
@@ -537,35 +428,17 @@ export class AonInvoicePanel extends AonElement {
 
   search(detail) {
     let value = detail.search;
-    if (
-      this.selectedOption &&
-      OPTION.REGISTRY_CREDITOR.id === this.selectedOption.id
-    ) {
+    if (this.selectedOption && OPTION.REGISTRY_CREDITOR.id === this.selectedOption.id) {
       this.aonCreditorList({ page: 1, perPage: 50, value });
-    } else if (
-      this.selectedOption &&
-      OPTION.REGISTRY_SUPPLIER.id === this.selectedOption.id
-    ) {
+    } else if (this.selectedOption && OPTION.REGISTRY_SUPPLIER.id === this.selectedOption.id) {
       this.aonSupplierList({ page: 1, perPage: 50, value });
-    } else if (
-      this.selectedOption &&
-      OPTION.REGISTRY_CUSTOMER.id === this.selectedOption.id
-    ) {
+    } else if (this.selectedOption && OPTION.REGISTRY_CUSTOMER.id === this.selectedOption.id) {
       this.aonCustomerList({ page: 1, perPage: 50, value });
-    } else if (
-      this.selectedOption &&
-      OPTION.PRODUCT.id === this.selectedOption.id
-    ) {
+    } else if (this.selectedOption && OPTION.PRODUCT.id === this.selectedOption.id) {
       this.aonProductList({ expense: false, value });
-    } else if (
-      this.selectedOption &&
-      OPTION.EXPENSES.id === this.selectedOption.id
-    ) {
+    } else if (this.selectedOption && OPTION.EXPENSES.id === this.selectedOption.id) {
       this.aonProductList({ expense: true, value });
-    } else if (
-      this.selectedOption &&
-      OPTION.INVEST.id === this.selectedOption.id
-    ) {
+    } else if (this.selectedOption && OPTION.INVEST.id === this.selectedOption.id) {
       this.aonInvestList({ value });
     } else {
       this.filter.description = value;
@@ -601,7 +474,7 @@ export class AonInvoicePanel extends AonElement {
         : new AonCustomerList();
       customerList.id = this.CUSTOMER_LIST;
       customerList.filter = filter;
-      aonInvoice.setContent(customerList);
+      this.getApplication().setContent(customerList);
     }
   }
 
@@ -615,7 +488,7 @@ export class AonInvoicePanel extends AonElement {
         : new AonSupplierList();
       supplierList.id = this.SUPPLIER_LIST;
       supplierList.filter = filter;
-      aonInvoice.setContent(supplierList);
+      this.getApplication().setContent(supplierList);
     }
   }
 
@@ -629,7 +502,7 @@ export class AonInvoicePanel extends AonElement {
         : new AonCreditorList();
       creditorList.id = this.CREDITOR_LIST;
       creditorList.filter = filter;
-      aonInvoice.setContent(creditorList);
+      this.getApplication().setContent(creditorList);
     }
   }
 
@@ -643,7 +516,7 @@ export class AonInvoicePanel extends AonElement {
         : new AonProductList();
       productList.id = this.PRODUCT_LIST;
       productList.filter = filter;
-      aonInvoice.setContent(productList);
+      this.getApplication().setContent(productList);
     }
   }
 
@@ -655,7 +528,7 @@ export class AonInvoicePanel extends AonElement {
       investList = new AonInvestList();
       investList.id = this.INVEST_LIST;
       investList.filter = filter;
-      aonInvoice.setContent(investList);
+      this.getApplication().setContent(investList);
     }
   }
 
@@ -862,8 +735,7 @@ export class AonInvoicePanel extends AonElement {
     this.getElement(this.INPUT_FILE).click();
   }
 
-  preview(el, files) {
-    if (this.getDur().hasInvofox()) {
+  upload(files) {
       let uploadToast = this.getElement("aonUploadToast");
       if (!uploadToast) {
         uploadToast = new AonUploadToast();
@@ -874,40 +746,6 @@ export class AonInvoicePanel extends AonElement {
       for (let file of files) {
         uploadToast.addFile("invoice", file, data);
       }
-    } else {
-      for (let i = 0; i < files.length; i++) {
-        getReader(files[i]).then((f) => {
-          this.attach(f);
-        });
-      }
-    }
-  }
-
-  async attach(file) {
-    if (file) {
-      const data = {
-        file,
-        invoice: new Invoice().setType("recibida"),
-      };
-      if (this.isMobile()) {
-        if (data.file.contentType.indexOf("image") >= 0) {
-          //compress 500kB / file, 500kb, quality default 0.9, maxResolution 1280
-          data.file = await downscaleImage(
-            data.file,
-            undefined,
-            undefined,
-            undefined
-          );
-        }
-      }
-      let aonInvoice = document.getElementById("aonInvoice");
-      aonInvoice.startLoader();
-      insertInvoice(data).then((r) => {
-        this.aonInvoiceList({ status: "inbox" });
-        aonInvoice.stopLoader();
-        //this.getInvoice().id = r.id;
-      });
-    }
   }
 
   aonInvoice(type, invoice) {
@@ -943,146 +781,9 @@ export class AonInvoicePanel extends AonElement {
       let toolbar = this.getElement(aonInvoice.TOOLBAR);
       toolbar.option = option.name;
       this.selectedOption = option;
-      this.buildToolbarOptions();
-      switch (option.id) {
-        case OPTION.CREATE_INVOICE_ISSUED.id:
-          this.aonInvoice("emitida");
-          break;
-        case OPTION.CREATE_INVOICE_RECEIVED.id:
-          this.aonInvoice("recibida");
-          break;
-        case OPTION.CREATE_INVOICE_TICKET.id:
-          this.aonInvoice("ticket");
-          break;
-        case OPTION.RAWDOC_INBOX.id:
-          this.aonInvoiceList({ status: CONSTANT.INBOX });
-          break;
-        case OPTION.RAWDOC_INBOX_ISSUED.id:
-          this.aonInvoiceList(
-            { status: CONSTANT.INBOX, type: "emitida" },
-            {
-              status: CONSTANT.OCR_INBOX,
-              page: 0,
-              perPage: 50,
-              publicStatus: [CONSTANT.APPROVED, CONSTANT.PENDING_CORRECTION],
-              type: ["invoice", "ticket"],
-              companyActsLike: "issuer",
-            }
-          );
-          break;
-        case OPTION.RAWDOC_INBOX_RECEIVED.id:
-          this.aonInvoiceList(
-            { status: CONSTANT.INBOX, type: "recibida" },
-            {
-              status: CONSTANT.OCR_INBOX,
-              page: 0,
-              perPage: 50,
-              publicStatus: [CONSTANT.APPROVED, CONSTANT.PENDING_CORRECTION],
-              type: ["invoice"],
-              companyActsLike: "ne+issuer",
-            }
-          );
-          break;
-        case OPTION.RAWDOC_INBOX_TICKET.id:
-          this.aonInvoiceList(
-            { status: CONSTANT.INBOX, type: "ticket" },
-            {
-              status: CONSTANT.OCR_INBOX,
-              page: 0,
-              perPage: 50,
-              publicStatus: [CONSTANT.APPROVED, CONSTANT.PENDING_CORRECTION],
-              type: ["ticket"],
-              companyActsLike: "ne+issuer",
-            }
-          );
-          break;
-        case OPTION.RAWDOC_REJECT.id:
-          this.aonInvoiceList(
-            { status: CONSTANT.REJECTED },
-            {
-              status: CONSTANT.OCR_INBOX,
-              page: 0,
-              perPage: 50,
-              publicStatus: [CONSTANT.PENDING_DECISSION, CONSTANT.REJECTED],
-              type: ["invoice", "ticket"],
-            }
-          );
-          break;
-        case OPTION.RAWDOC_DRAFT.id:
-          this.aonInvoiceList(
-            { status: CONSTANT.DRAFT },
-            {
-              status: CONSTANT.OCR_INBOX,
-              page: 0,
-              perPage: 50,
-              publicStatus: [CONSTANT.DISCARDED],
-            }
-          );
-          break;
-        case OPTION.INVOICE_ISSUED.id:
-          this.aonInvoiceList({
-            status: "accounting",
-            type: "sales",
-            page: 1,
-            per_page: 50,
-          });
-          break;
-        case OPTION.INVOICE_RECEIVED.id:
-          this.aonInvoiceList({
-            status: "accounting",
-            type: "purchase,expenses",
-            page: 1,
-            per_page: 50,
-          });
-          break;
-        case OPTION.INVOICE_TICKET.id:
-          this.aonInvoiceList({
-            status: "accounting",
-            type: "ticket",
-            page: 1,
-            per_page: 50,
-          });
-          break;
-        case OPTION.REGISTRY_CUSTOMER.id:
-          this.aonCustomerList();
-          break;
-        case OPTION.REGISTRY_SUPPLIER.id:
-          this.aonSupplierList();
-          break;
-        case OPTION.REGISTRY_CREDITOR.id:
-          this.aonCreditorList();
-          break;
-        case OPTION.CONCEPTS.id:
-          break;
-        case OPTION.PRODUCT.id:
-          this.aonProductList({ expense: false });
-          break;
-        case OPTION.EXPENSES.id:
-          this.aonProductList({ expense: true });
-          break;
-        case OPTION.INVEST.id:
-          this.aonInvestList({});
-          break;
-        case OPTION.REGISTRY.id:
-          break;
-        case OPTION.CHARGES_PAYMENTS.id:
-          GWT.load(GWT.FINANCE, this.getApplication().CONTENT);
-          break;
-        case OPTION.VAT_PANEL.id:
-          GWT.load(GWT.VAT_REPORT, this.getApplication().CONTENT);
-          break;
-        case OPTION.RETENTION_PANEL.id:
-          GWT.load(GWT.IRPF_REPORT, this.getApplication().CONTENT);
-          break;
-        case OPTION.FISCAL_DRAFT.id:
-          console.log("--------- Fiscal Draft ---------");
+      if(option.id === OPTION.FISCAL_DRAFT.id){
           await this.getFiscalModelDraft();
-          // let aonInvoice = this.getApplication();
-          // aonInvoice.setContent(component);
-          break;
-        default:
-          this.aonInvoiceList({ status: CONSTANT.INBOX });
-          break;
+
       }
     }
   }
@@ -1090,210 +791,12 @@ export class AonInvoicePanel extends AonElement {
   async getFiscalModelDraft() {
     let aonInvoice = this.getApplication();
 
-    const datos = await this.getModelsFiscal();
+    let futureFiscalFilter = await FiscalUtils.getFutureFiscalFilter();
 
-    console.log("getFiscalModelDraft");
-    console.log(datos);
-
-    let orderDatos = [];
-    if (datos) {
-      orderDatos = sortBy(datos, "year", "desc").map((model) =>
-        FiscalUtils.getModelNew(model)
-      );
-    }
-
-    const result = orderDatos.filter(function (a) {
-      var key = a.year + "|" + a.period;
-      if (!this[key]) {
-        this[key] = true;
-        return true;
-      }
-    }, Object.create(null));
-
-    result.sort(function (a, b) {
-      var aSize = a.year;
-      var bSize = b.year;
-      var aLow = a.period;
-      var bLow = b.period;
-
-      if (aSize == bSize) {
-        return aLow < bLow ? -1 : aLow > bLow ? 1 : 0;
-      } else {
-        return aSize < bSize ? -1 : 1;
-      }
-    });
-
-    let resultReverse = result.reverse();
-
-    if (resultReverse || resultReverse.length !== 0) {
-      let lastPeriod;
-      let period;
-      let periodText;
-      let year;
-
-      if (resultReverse[0].period == "T1") {
-        period = "T2";
-        periodText = "2º Trim. " + resultReverse[0].year;
-        year = resultReverse[0].year;
-        lastPeriod = new Date(resultReverse[0].year + "-" + "03-31");
-      } else if (resultReverse[0].period == "T2") {
-        period = "T3";
-        periodText = "3º Trim. " + resultReverse[0].year;
-        year = resultReverse[0].year;
-        lastPeriod = new Date(resultReverse[0].year + "-" + "06-30");
-      } else if (resultReverse[0].period == "T3") {
-        period = "T4";
-        periodText = "4º Trim. " + resultReverse[0].year;
-        year = resultReverse[0].year;
-        lastPeriod = new Date(resultReverse[0].year + "-" + "09-30");
-      } else {
-        period = "T1";
-        periodText = "1º Trim. " + (resultReverse[0].year + 1);
-        year = resultReverse[0].year + 1;
-        lastPeriod = new Date(resultReverse[0].year + "-" + "12-31");
-      }
-
-      let fiscalFilter = {
-        year: year,
-        period: period,
-        title: periodText,
-        periodText: periodText,
-      };
-
-      let aonTable = new AonTable();
-      aonTable.id = "fiscalDraftTable";
-      aonInvoice.setContent(aonTable);
-
-      await this.getTableDesk(fiscalFilter);
-
-    }
-  }
-
-  async getTableDesk(fiscalFilter) {
-    const aonTable = this.getElement("fiscalDraftTable");
-    if (aonTable) {
-      aonTable.removeColumns();
-      aonTable.addColumn("", "string", "lettersHtml", "6%");
-      aonTable.addColumn("Modelo", "", "modelText", "20%");
-      aonTable.addColumn("Hacienda", "", "hacienda", "10%");
-      aonTable.addColumn("Ejercicio", "", "year", "10%");
-      aonTable.addColumn("Periodo", "", "periodText", "10%");
-      aonTable.addColumn("Estado", "string", "statusHtml", "10%");
-      aonTable.addColumn("Importe", "number", "resultFormat", "8%");
-      aonTable.addColumn("", "icon", "icon", "5%");
-
-      try {
-        const resp = await this.getData(fiscalFilter);
-
-        console.log("Get Data AonTax");
-        console.log(resp);
-
-        aonTable.removeRows();
-
-        if (resp.length) {
-          resp.forEach((res) => {
-            aonTable.addRow(res);
-          });
-
-          let elementHTML = document.createElement(TAG.DIV);
-          elementHTML.style.alignItems = "center";
-          elementHTML.style.fontWeight = "bold";
-          elementHTML.style.maxWidth = "6rem";
-          elementHTML.title = "Borrador";
-
-          let description = document.createElement(TAG.SPAN);
-          description.innerText = "Total";
-          elementHTML.appendChild(description);
-
-          const statusHtml = elementHTML.innerHTML;
-
-          let row = aonTable.addRow({
-            statusHtml: statusHtml,
-            statusText: "Total",
-            resultFormat: this.getTotal(resp),
-          });
-          row.style.fontWeight = "600";
-        } else {
-          aonTable.empty();
-        }
-      } catch (e) {
-        console.log(e);
-      }
-    }
-  }
-
-  getTotal(models) {
-    let total = models.reduce((t, model) => t + model.result, 0);
-    return formatNumber(total, 2, "EUR");
-  }
-
-  async getData(fiscalFilter) {
-    const estimationModels = await getEstimationModelsFiscal(fiscalFilter);
-
-	console.log("getData Invoice");
-	console.log(estimationModels);
-
-    let estimationModelDatos = estimationModels
-      .filter(
-        (estimationModel) =>
-          estimationModel.amount && estimationModel.amount > 0
-      )
-      .map((estimationModel) =>
-        this.formatEstimationModel(estimationModel, fiscalFilter)
-      );
-    return estimationModelDatos;
-  }
-
-  formatEstimationModel(model, estimationFilter) {
-    const newModel = ""; //Empty
-
-    let elementHTML = document.createElement(TAG.DIV);
-    elementHTML.style.alignItems = "center";
-    elementHTML.style.fontWeight = "bold";
-    elementHTML.style.maxWidth = "6rem";
-    elementHTML.title = "Borrador";
-
-    let description = document.createElement(TAG.SPAN);
-    description.innerText = "Borrador";
-    elementHTML.appendChild(description);
-
-    const statusHtml = elementHTML.outerHTML;
-
-    return {
-      ...model,
-      resultFormat: !isNaN(model.amount)
-        ? formatNumber(model.amount, 2, "EUR")
-        : null,
-      periodText: estimationFilter.periodText,
-      modelText: model.description,
-      year: estimationFilter.year,
-      hacienda: model.hacienda, // Alava, AEAT...
-      result: model.amount,
-      statusHtml,
-      statusText: "Borrardor",
-      newModel,
-    };
-  }
-
-  async getModelsFiscal() {
-    try {
-      const datos = await getModelsFiscal();
-
-      if (datos) {
-        let sortData = sortBy(datos, "year", "desc")
-          .sort((a, b) => a.period.localeCompare(b.period))
-          // .filter(({ status }) => status !== "PENDING")
-          .map((model) => FiscalUtils.getModelNew(model));
-
-        return sortData;
-      }
-    } catch (error) {
-      console.error(error);
-      this.showError(error);
-    }
+    let aonFutureTax =  new AonFutureTax(INVOICE, futureFiscalFilter);
+    aonInvoice.setContent(aonFutureTax);    
   }
 }
-
 if (!window.customElements.get(TAG.AON_INVOICE_PANEL)) {
   window.customElements.define(TAG.AON_INVOICE_PANEL, AonInvoicePanel);
 }

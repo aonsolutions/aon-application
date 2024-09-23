@@ -1,5 +1,4 @@
 import * as LS from '../services/localStorageService.js';
-import { remove } from '../services/request.js';
 
 export class RegistryPaymethod {
 

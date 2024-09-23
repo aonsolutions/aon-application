@@ -67,7 +67,7 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 import es.translogia.tedi.ewok.TediPayMethod;
 import es.translogia.tedi.json.TediJSONUtils;
 import net.aonsolutions.aon.api.ewok.AonApiData;
-import net.aonsolutions.aon.api.servlet.InvoiceServlet;
+import net.aonsolutions.aon.api.servlet.RawdocServlet;
 
 public class BidoqRequest {
 	
@@ -1110,7 +1110,7 @@ public class BidoqRequest {
 				.setUser(user)
 				.setData(json)
 				.setDur(new DomainUserRoles());
-		InvoiceServlet.setInvoice(api);
+		RawdocServlet.setInvoice(api);
 	}
 	
 	private static JSONObject selfconta2Tedi(User user, JSONObject invoice, String error) {
