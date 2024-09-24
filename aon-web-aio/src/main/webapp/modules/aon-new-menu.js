@@ -55,6 +55,7 @@ const OPENED = 'opened';
 const APP = 'app';
 
 
+
 export class AonNewMenu extends AonElement {
 	AON_MENU_TOPNAV;
 	AON_MENU_LEFTOP;
@@ -701,34 +702,50 @@ export class AonNewMenu extends AonElement {
 
 	controlSideNav() {
 		const div = this.getElement("aonMenuLeftop");
-	
+
 		if (this.isCSSLoaded("beta.css")) {
+
 			div.addEventListener("mouseenter", () => {
-				const side = this.getElement(this.AON_MENU_SIDENAV); // Obtener el side en este momento
+				const side = this.getElement("aonMenuSidenav");
 				if (LS.isCompanySelected()){
 					this.showSideNav();
-					// Añadir listener al panel solo si se ha abierto
-					side.addEventListener("mouseenter", () => {
-						// El cursor está en el panel, mantenerlo abierto
-						this.showSideNav();
-					});
-	
-					if (!LS.isPortalChecked()) {
-						// Listener de mouseleave que se activará solo si el panel fue abierto
-						side.addEventListener("mouseleave", (event) => {
-								this.hideSideNav();
-							}
-						);
-					}
 				}
+
+				side.addEventListener("mouseenter", () => {
+					this.showSideNav();
+				});
+	
+				side.addEventListener("mouseleave", (ev) => {
+					if(!this.isElementAt(ev,side) && !LS.isPortalChecked()){
+						this.hideSideNav();
+					}
+				});
 			});
 	
-			div.addEventListener("mouseleave", (event) => {
-				if (!LS.isPortalChecked) {
+			div.addEventListener("mouseleave", (ev) => {
+				const side = this.getElement("aonMenuSidenav");
+				if(!this.isElementAt(ev,side) && !LS.isPortalChecked()){
 					this.hideSideNav();
 				}
+				
 			});
+
 		}
+	}
+
+
+	isElementAt(ev, el){
+		const viewportX = ev.clientX;
+		const viewportY = ev.clientY;
+		let elements = document.elementsFromPoint(viewportX, viewportY);
+		for ( let element of elements ){
+			console.log(element.tagName + ": "  + (element === el));
+			if ( element === el ){
+				return true;
+			}
+				
+		}		
+		return false;
 	}
 	
 	
