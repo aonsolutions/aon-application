@@ -47,7 +47,9 @@ public class GenerateTokenServlet extends AonApiHttpServlet {
         try {
             AonApiData api = initialize(req, false);
     		if(AonStringUtils.isBlank(req.getPathInfo())) {
-                Object object = new AonRouting(api)
+    			JSONObject json = new JSONObject(decode(req.getParameter("json").getBytes()));
+    			api.setData(json);
+    			Object object = new AonRouting(api)
                 		.addRoute(GENERATE_TOKEN, GenerateTokenServlet::generateToken)
                 		.apply();
                 

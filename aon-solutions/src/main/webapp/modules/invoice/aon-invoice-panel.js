@@ -590,34 +590,7 @@ export class AonInvoicePanel extends AonElement {
 
     let d = document.getElementById("aonDialogAddOption");
 
-    const newEmitida = {
-      name: MSG.ISSUEDS,
-      title: MSG.ISSUEDS,
-      icon: MATERIAL_ICONS.UNARCHIVE,
-      permission: true,
-      backgroundColor: "#4472C4",
-      fn: () => this.aonInvoice("emitida"),
-    };
-
-    const newRecibidas = {
-      name: MSG.RECEIVEDS,
-      title: MSG.RECEIVEDS,
-      icon: MATERIAL_ICONS.ARCHIVE,
-      permission: true,
-      backgroundColor: "#4472C4",
-      fn: () => this.aonInvoice("recibida"),
-    };
-
-    const newTicket = {
-      name: MSG.TICKET,
-      title: MSG.TICKET,
-      icon: MATERIAL_ICONS.RECEIPT,
-      permission: true,
-      backgroundColor: "#4472C4",
-      fn: () => this.aonInvoice("ticket"),
-    };
-
-    let options = [newEmitida, newRecibidas, newTicket];
+    let options = OPTION.getNewOptions();
     if (ayudat) {
       let importSelfconta = {
         name: "Importación Selfconta",
@@ -739,7 +712,6 @@ export class AonInvoicePanel extends AonElement {
       let uploadToast = this.getElement("aonUploadToast");
       if (!uploadToast) {
         uploadToast = new AonUploadToast();
-        uploadToast.setDur(this.getDur());
         this.appendChild(uploadToast);
       }
       let data = { uploaded: 0 };

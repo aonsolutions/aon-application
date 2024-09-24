@@ -53,11 +53,21 @@ const getMeseggers = async () => {
 };
 
 const getMessageBadge = (messageLenght) => {
+  let badgePanel = document.createElement(TAG.DIV);
+  badgePanel.className = CSS.AON_MESSENGER_OPEN_MESSAGES;
+
+  let badgeText = document.createElement(TAG.SPAN);
+  badgeText.innerHTML = "Pendientes";
+  badgeText.title = "Ver solicitudes pendientes";
+  badgePanel.appendChild(badgeText);
+
   let badge = document.createElement(TAG.SPAN);
   badge.className = CSS.AON_MESSENGER_BADGE;
   badge.innerHTML = messageLenght;
-  badge.title = "Ver solicitudes recibidas";
-  return badge;
+  badge.title = "Ver solicitudes pendientes";
+  badgePanel.appendChild(badge);
+
+  return badgePanel;
 };
 
 export const MessegerUtils = {

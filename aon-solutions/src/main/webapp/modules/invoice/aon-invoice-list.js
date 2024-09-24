@@ -17,6 +17,7 @@ import { formatNumber } from '../../services/utils.js';
 import * as LS from '../../services/localStorageService.js';
 import { INVOICE } from '../../services/app.js';
 import { AonTable } from '../../components/aon-table.js';
+import { AonDateUtils } from '../utils/AonDateUtils.js';
 
 export class AonInvoiceList extends AonElement {
 

@@ -144,7 +144,7 @@ public class GeneralEnterpriseTest {
 		setValue("enterpriseZipAddressTB", "28822");
 		
 		// Province Madrid
-		Assert.assertEquals(((HtmlSelect)getElementById("enterpriseProvinceAddressTB")).getSelectedIndex(), 29);
+		wait4SelectedIndex("enterpriseProvinceAddressTB", 29);
 		
 		// UndoAll
 		((HtmlButton)getElementById("undoAllButton")).click();
@@ -155,7 +155,7 @@ public class GeneralEnterpriseTest {
 		wait4Class("enterpriseDocumentTB", "documentError");
 		wait4DivText("enterpriseDocumentType", "");
 		wait4InputText("enterpriseZipAddressTB", "");
-		Assert.assertEquals(((HtmlSelect)getElementById("enterpriseProvinceAddressTB")).getSelectedIndex(), 0);
+		wait4SelectedIndex("enterpriseProvinceAddressTB", 0);
 		
 	}
 
@@ -204,5 +204,11 @@ public class GeneralEnterpriseTest {
 		wait4(htmlPage,
 				htmlPage -> !htmlPage.getElementById(GWT_DEBUG_ID_PREFIX +id).getAttribute("class").contains(clazz));
 	}
+	
+	protected static void wait4SelectedIndex(String id, int index) throws InterruptedException {
+		wait4(htmlPage, 
+				htmlPage -> ((HtmlSelect)htmlPage.getElementById(GWT_DEBUG_ID_PREFIX + id)).getSelectedIndex() == index );
+	}
+	
 	
 }

@@ -484,7 +484,7 @@ const getSender = (res, document, documentTh) => {
   } else if (res.sender && res.sender.name) {
     sender = `${res.sender.name}`;
   } else {
-    sender = "SYSTEM";
+    sender = "System";
   }
 
   return sender;

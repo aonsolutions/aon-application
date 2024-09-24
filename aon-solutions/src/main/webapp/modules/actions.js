@@ -111,6 +111,13 @@ export const DOWNLOAD_PDF = {
     aonIcon: AON_ICONS.AON_PDF
 };
 
+export const DOWNLOAD_PDF_2 = {
+    id: CONSTANT.DOWNLOAD.initCap(),
+    name: MSG.DOWNLOAD,
+    title: MSG.DOWNLOAD,
+    icon: MATERIAL_ICONS.PDF
+};
+
 export const DOWNLOAD_FILE = {
     id: CONSTANT.DOWNLOAD_FILE.initCap(),
     name: MSG.DOWNLOAD_FILE,
@@ -118,11 +125,25 @@ export const DOWNLOAD_FILE = {
     icon: MATERIAL_ICONS.FILE_DOWNLOAD
   }
 
+export const ACCOUNT_BALANCE = {
+    id: CONSTANT.BANK.initCap(),
+    name: "Domiciliación",
+    title: "Domiciliación",
+    icon: MATERIAL_ICONS.ACCOUNT_BALANCE
+  }
+
 export const DOWNLOAD_INVOICE = {
     id: CONSTANT.DOWNLOAD_INVOICE.initCap(),
     name: MSG.DOWNLOAD_INVOICE,
     title: MSG.DOWNLOAD_INVOICE,
     icon: MATERIAL_ICONS.FILE_DOWNLOAD
+};
+
+export const DOWNLOAD_EXCEL_INVOICE = {
+    id: CONSTANT.DOWNLOAD_EXCEL_INVOICE.initCap(),
+    name: MSG.DOWNLOAD_EXCEL_INVOICE,
+    title: MSG.DOWNLOAD_EXCEL_INVOICE,
+    aonIcon: "aon_excel"
 };
 
 export const DUPLICATE = {
