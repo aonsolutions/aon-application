@@ -530,8 +530,7 @@ public abstract class Employee extends ResizeComposite {
 	@UiHandler("secondSurname")
 	void onSecondSurnameChangeValue(ChangeEvent event) {
 		String secondSurnameStr = this.secondSurname.getValue().trim();
-		if (AonStringUtils.isNotBlank(secondSurnameStr))
-			onEmployeeSecondSurnameChange(secondSurnameStr);
+		onEmployeeSecondSurnameChange(secondSurnameStr);
 	}
 
 	@UiHandler("ssRegimeType")
