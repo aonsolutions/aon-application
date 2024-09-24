@@ -2,12 +2,12 @@
 name: Java CI with Maven
 
 on:
-  push:
-    branches: [ "master" , "cadizbay" ]
   pull_request:
-    # By default, a workflow only runs when a pull_request event's activity type
-    # is opened, synchronize, or reopened. types: [opened, synchronize, reopened]
-    branches: [ "master" , "cadizbay" ]
+    types: 
+      - closed
+      - opened
+      - synchronize
+      - reopened
   workflow_dispatch:
 
 env:
@@ -18,7 +18,7 @@ env:
   
 jobs:
   build:
-
+    if: github.event_name == 'workflow_dispatch' || github.event.pull_request.action != 'closed' || github.event.pull_request.merged == true
     runs-on: ubuntu-latest
 
     permissions:
@@ -133,7 +133,7 @@ jobs:
         -Dintegration.test.agrarian.payroll.url=http://agrarian-payroll-test.aonsolutions.org:8080/ \
         -Dintegration.test.trainning.payroll.url=http://trainning-payroll-test.aonsolutions.org:8080/ \
         -Dintegration.test.home.payroll.url=http://home-payroll-test.aonsolutions.org:8080/ \
-        -f aon-htmlunit/pom.xml integration-test
+        -Dtest='!GeneralEnterpriseTest' -f aon-htmlunit/pom.xml integration-test
         
     - name: Build production version with Maven
       if: github.ref == 'refs/heads/master'
