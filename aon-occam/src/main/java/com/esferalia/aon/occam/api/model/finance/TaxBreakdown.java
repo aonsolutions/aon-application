@@ -35,9 +35,12 @@ public class TaxBreakdown implements Serializable {
 	}
 	
 	public TaxBreakdown add(InvoiceBreakdown ib) {
-		get( ib ).ifPresentOrElse(
-			ib0 -> ib0.add(ib)
-			,() -> ibs.add( ib ));
+		Optional<InvoiceBreakdown> oib = get( ib );
+		if (oib.isPresent()) {
+			oib.get().add(ib);
+		} else {
+			ibs.add( ib );
+		}
 		return this;
 	}
 	
