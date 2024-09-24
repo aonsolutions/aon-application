@@ -232,7 +232,6 @@ public class InvoicePanel extends WizardContentBase<AccountingInvoice> implement
 
 	private void _paintEntry() {
 		getAccountEntryService().getAccountEntry(getCallback().getOccam()
-			, getCallback().getConfiguration()
 			, getWrapper().getInvoice() , new AsyncCallback<AccountEntry>() {
 
 			@Override

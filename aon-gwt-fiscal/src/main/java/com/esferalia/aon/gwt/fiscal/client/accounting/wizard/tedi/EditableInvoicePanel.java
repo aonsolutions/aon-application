@@ -158,10 +158,8 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 	
 	protected static interface IEditableInvoicePanelCallback extends IInvoicePanelCallback {
 		void enableInvoiceTotal(boolean b);
-		InvoiceDetail getVat(final int vatIdx);
-		default InvoiceTax getVatTax(final int vatIdx) {
-			return this.getVat(vatIdx).ensureVatTax(this.getInvoice().getInvoice());
-		}
+		InvoiceDetail getDetail(final int vatIdx);
+		InvoiceTax getVatTax(final int vatIdx);
 	}
 	
 	protected class EditableInvoicePanelCallback implements IEditableInvoicePanelCallback {
@@ -213,8 +211,13 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 		}
 		
 		@Override
-		public InvoiceDetail getVat(final int vatIdx) {
-			return getInvoice().getInvoice().getDetails().get(vatIdx);
+		public InvoiceDetail getDetail(final int detailIdx) {
+			return getInvoice().getInvoice().getDetails().get(detailIdx);
+		}
+		
+		@Override
+		public InvoiceTax getVatTax(final int detailIdx) {
+			return this.getDetail(detailIdx).ensureVatTax(getInvoice().getInvoice());
 		}
 
 		@Override

@@ -12,6 +12,8 @@ public class InvoiceTax implements Serializable {
 
 	private static final long serialVersionUID = 7037774854336091259L;
 
+	private boolean deleted;
+
 	private Integer id;
 	private Integer domain;
 	private Integer invoiceDetail;
@@ -241,10 +243,19 @@ public class InvoiceTax implements Serializable {
 		return this.getTaxType() == TaxType.RETENTION;
 	}
 	
+	public boolean isDeleted() {
+		return deleted;
+	}
+	public InvoiceTax setDeleted( boolean deleted) {
+		this.deleted = deleted;
+		return this;
+	}
+	
 	public InvoiceTax copy() {
 		return new InvoiceTax()
 			.setId ( getId() )
 			.setDomain ( getDomain() )
+			.setDeleted(isDeleted()) 
 			.setTaxType(taxType)
 			.setBase(base)
 			.setPercentage(percentage)

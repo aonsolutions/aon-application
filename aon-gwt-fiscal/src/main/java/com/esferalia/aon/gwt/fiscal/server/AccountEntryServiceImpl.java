@@ -83,8 +83,8 @@ public class AccountEntryServiceImpl extends AonStatelessRemoteServiceServlet im
 	}
 
 	@Override
-	public AccountEntry getAccountEntry(Occam occam, AonConfiguration config, Invoice invoice) throws AonCoreException {
-		return ACCOUNTING.getAccountEntry(occam, config, invoice);
+	public AccountEntry getAccountEntry(Occam occam, Invoice invoice) throws AonCoreException {
+		return ACCOUNTING.getAccountEntry(occam, invoice);
 	}
 	
 	@Override

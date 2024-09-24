@@ -104,7 +104,9 @@ class InvoiceTaxDAO {
 			.set(INVOICE_TAX.WITHHOLDING_TYPE,invoiceTax.getWithholdingType().value())
 			.set(INVOICE_TAX.DEDUCTIBLE_PERCENT,invoiceTax.getDeductiblePercent())
 			.set(INVOICE_TAX.DEDUCTIBLE_QUOTA ,invoiceTax.getDeductibleQuota())
-			.returning(INVOICE_TAX.ID).fetchOne().getId();
+			.returning(INVOICE_TAX.ID)
+			.fetchOne()
+			.getId();
 		ctx.log().debug("\t\tINSERT INVOICE TAX");
 		return invoiceTax.setId(id);
 	}	

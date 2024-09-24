@@ -503,7 +503,8 @@ public class Invoice implements Serializable, HasAudit {
 		if(details == null) {
 			details = new LinkedList<>();
 		}
-		return Collections.unmodifiableList(details);
+		// return Collections.unmodifiableList(details);
+		return details;
 	}
 	public Invoice deleteDetails() {
 		getDetails().stream().forEach( d -> d.setDeleted(true));
@@ -838,7 +839,7 @@ public class Invoice implements Serializable, HasAudit {
 		return this.taxBreakdown;
 	}
 	
-	private Invoice addTax(InvoiceDetail detail, InvoiceTax it) {
+	public Invoice addTax(InvoiceDetail detail, InvoiceTax it) {
 		ensureTaxBreakdown().add(it);
 		return this;
 	}

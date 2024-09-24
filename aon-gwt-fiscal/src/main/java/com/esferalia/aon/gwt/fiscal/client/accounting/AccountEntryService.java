@@ -36,7 +36,7 @@ public interface AccountEntryService extends RemoteService {
 	AccountingInvoice getAccountingInvoiceFromInvoice(Occam occam, Integer invoiceId) throws AonCoreException;
 	AccountingInvoice getRegistryLastAccountingInvoice(Occam occam, Integer registryId) throws AonCoreException;
 
-	AccountEntry getAccountEntry(Occam occam, AonConfiguration config, Invoice invoice) throws AonCoreException; 	
+	AccountEntry getAccountEntry(Occam occam, Invoice invoice) throws AonCoreException; 	
 
 	AccountingInvoice addInvoiceAttach(Occam occam, AccountingInvoice ai) throws AonCoreException;
 	AccountingInvoice removeInvoiceAttach(Occam occam, Integer invoiceId) throws AonCoreException;

@@ -1,5 +1,7 @@
 package com.esferalia.aon.gwt.fiscal.client.accounting.wizard.tedi;
 
+import java.util.logging.Logger;
+
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonAccountBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonConfirmDialog;
@@ -34,7 +36,9 @@ import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.Widget;
 
 class InvoiceVATPanelRow extends AonDisplayGridRow implements Focusable, HasSelectionHandlers<Account>, HasValueChangeHandlers<InvoiceDetail> {
-	
+
+	private static final Logger LOGGER = Logger.getLogger(InvoiceVATPanelRow.class.getName());
+
 	class InvestAssetListBox extends ListBox {
 		private InvestAssetListBox(final IEditableInvoicePanelCallback callback) {
 			setWidth("90px");
@@ -94,6 +98,8 @@ class InvoiceVATPanelRow extends AonDisplayGridRow implements Focusable, HasSele
 	InvoiceVATPanelRow(InvoiceVATPanel tab, final int rowIndex, final IEditableInvoicePanelCallback callback, final int vatIdx, boolean focus) {
 		this.vatPanel = tab;
 		this.rowIndex = rowIndex;
+		
+		LOGGER.info(callback.getInvoice().getInvoice().toString() + " --- " + callback.getDetail(vatIdx).toString() + " ----- " + callback.getVatTax(vatIdx).toString());
 		
 		defineExpAccount(callback,vatIdx);
 		defineTaxableBase(callback,vatIdx);
@@ -265,30 +271,30 @@ class InvoiceVATPanelRow extends AonDisplayGridRow implements Focusable, HasSele
 	private void defineExpAccount(final IEditableInvoicePanelCallback callback, final int vatIdx) {
 		expAccount = new AonAccountBox(callback.getOccam(), false);
 		expAccount.setAccount(
-			callback.getVat(vatIdx).getExpAccount(),
+			callback.getDetail(vatIdx).getExpAccount(),
 			(callback.getInvoice().getRegistry() != null && callback.getInvoice().getRegistry().getId() != null));
 		expAccount.addSelectionHandler( event -> {
 			Account a = event.getSelectedItem();
-			callback.getVat(vatIdx).setExpAccount(a);
+			callback.getDetail(vatIdx).setExpAccount(a);
 			SelectionEvent.<Account>fire(this, a);
 		});
 	}
 	
 	private void defineTaxableBase(IEditableInvoicePanelCallback callback, final int vatIdx) {
 		taxableBase = new AonDoubleBox(12,4);
-		taxableBase.setValue(callback.getVat(vatIdx).getTaxableBase());
+		taxableBase.setValue(callback.getDetail(vatIdx).getTaxableBase());
 		taxableBase.addKeyUpHandler( event -> {
 			if (event.getNativeKeyCode() == KeyCodes.KEY_F9) {
-				InvoiceCalculator.reverseCalculate(callback.getInvoice().getInvoice(),callback.getVat(vatIdx), taxableBase.getValue());
+				InvoiceCalculator.reverseCalculate(callback.getInvoice().getInvoice(),callback.getDetail(vatIdx), taxableBase.getValue());
 				populate(callback, vatIdx);
-				ValueChangeEvent.fire(this, callback.getVat(vatIdx) );
+				ValueChangeEvent.fire(this, callback.getDetail(vatIdx) );
 			}
 		});
 		taxableBase.addValueChangeHandler(event -> {
-			callback.getVat(vatIdx).setPrice( event.getValue() );
-			callback.getVat(vatIdx).setQuantity(1.0);
-			callback.getVat(vatIdx).setDiscount(0.0);
-			callback.getVat(vatIdx).setTaxableBase( event.getValue() );
+			callback.getDetail(vatIdx).setPrice( event.getValue() );
+			callback.getDetail(vatIdx).setQuantity(1.0);
+			callback.getDetail(vatIdx).setDiscount(0.0);
+			callback.getDetail(vatIdx).setTaxableBase( event.getValue() );
 			checkCalculate(callback, vatIdx, vatPercent);
 		});
 	}
@@ -300,7 +306,7 @@ class InvoiceVATPanelRow extends AonDisplayGridRow implements Focusable, HasSele
 		vatPercent.addValueChangeHandler(event -> {
 			callback.getVatTax(vatIdx).setPercentage( event.getValue() );
 			checkCalculate(callback, vatIdx, vatQuota);
-			ValueChangeEvent.fire(this, callback.getVat(vatIdx) );
+			ValueChangeEvent.fire(this, callback.getDetail(vatIdx) );
 		});
 	}
 	
@@ -316,7 +322,7 @@ class InvoiceVATPanelRow extends AonDisplayGridRow implements Focusable, HasSele
 			}
 			callback.getVatTax(vatIdx).setQuota(event.getValue() );
 			calculate(callback, vatIdx);
-			ValueChangeEvent.fire(this, callback.getVat(vatIdx) );
+			ValueChangeEvent.fire(this, callback.getDetail(vatIdx) );
 		});
 		vatQuota.addBlurHandler(event -> decorateVatQuota(callback, vatIdx));
 		decorateVatQuota(callback, vatIdx);
@@ -329,7 +335,7 @@ class InvoiceVATPanelRow extends AonDisplayGridRow implements Focusable, HasSele
 		surchargePercent.addValueChangeHandler(event -> {
 			callback.getVatTax(vatIdx).setSurcharge(event.getValue() );
 			checkCalculate(callback, vatIdx, surchargeQuota);
-			ValueChangeEvent.fire(this, callback.getVat(vatIdx) );
+			ValueChangeEvent.fire(this, callback.getDetail(vatIdx) );
 		});
 	}
 
@@ -345,7 +351,7 @@ class InvoiceVATPanelRow extends AonDisplayGridRow implements Focusable, HasSele
 			}
 			callback.getVatTax(vatIdx).setSurchargeQuota(event.getValue() );
 			calculate(callback, vatIdx);
-			ValueChangeEvent.fire(this, callback.getVat(vatIdx) );
+			ValueChangeEvent.fire(this, callback.getDetail(vatIdx) );
 		});
 		surchargeQuota.addBlurHandler(event -> decorateSurchargeQuota(callback, vatIdx));
 		decorateSurchargeQuota(callback, vatIdx);
@@ -353,23 +359,23 @@ class InvoiceVATPanelRow extends AonDisplayGridRow implements Focusable, HasSele
 
 	private void defineInvestAsset(IEditableInvoicePanelCallback callback, final int vatIdx) {
 		investAsset = new InvestAssetListBox( callback ); 
-		investAsset.setValue(callback, callback.getVat(vatIdx)
+		investAsset.setValue(callback, callback.getDetail(vatIdx)
 				.getInvestAsset()
 				.map(ias -> ias.getId())
 				.orElse(null));
 		investAsset.addChangeHandler(event -> {
 			if (investAsset.getValue(callback) == null) {
-				callback.getVat(vatIdx).setInvestAsset( null );
+				callback.getDetail(vatIdx).setInvestAsset( null );
 				callback.getVatTax(vatIdx).setDeductiblePercent(100.0);
 				callback.getVatTax(vatIdx).setDirectTaxPercent(100.0);
 			} else {
-				callback.getVat(vatIdx).setInvestAsset( investAsset.getValue(callback) );
+				callback.getDetail(vatIdx).setInvestAsset( investAsset.getValue(callback) );
 				callback.getVatTax(vatIdx).setDeductiblePercent(investAsset.getValue(callback).getVatPercent());
 				callback.getVatTax(vatIdx).setDirectTaxPercent(investAsset.getValue(callback).getRetentionPercent());
 			}
 			calculate(callback, vatIdx);
 			vatPanel.paint(callback);
-			ValueChangeEvent.fire(this, callback.getVat(vatIdx) );
+			ValueChangeEvent.fire(this, callback.getDetail(vatIdx) );
 		});
 	}
 	
@@ -380,7 +386,7 @@ class InvoiceVATPanelRow extends AonDisplayGridRow implements Focusable, HasSele
 		inputVatAccount.addSelectionHandler( event -> {
 			Account a = event.getSelectedItem();
 			callback.getVatTax(vatIdx).setInputAccount(a);
-			ValueChangeEvent.fire(this, callback.getVat(vatIdx) );
+			ValueChangeEvent.fire(this, callback.getDetail(vatIdx) );
 		});
 	}
 	
@@ -391,32 +397,32 @@ class InvoiceVATPanelRow extends AonDisplayGridRow implements Focusable, HasSele
 		outputVatAccount.addSelectionHandler( event -> {
 			Account a = event.getSelectedItem();
 			callback.getVatTax(vatIdx).setOutputAccount(a);
-			ValueChangeEvent.fire(this, callback.getVat(vatIdx) );
+			ValueChangeEvent.fire(this, callback.getDetail(vatIdx) );
 		});
 	}
 
 	private void defineWithholding(IEditableInvoicePanelCallback callback, final int vatIdx) {
 		withholding  = new CheckBox();
-		withholding.setValue(callback.getVat(vatIdx).getWithholdingTax().isPresent());
+		withholding.setValue(callback.getDetail(vatIdx).getWithholdingTax().isPresent());
 		withholding.addClickHandler( event -> {
 			if (withholding.getValue().booleanValue()) {
-				callback.getVat(vatIdx).addWithholdingTax( callback.getInvoice().getInvoice() );
+				callback.getDetail(vatIdx).addWithholdingTax( callback.getInvoice().getInvoice() );
 			} else {
-				callback.getVat(vatIdx).deleteWithholdingTax();
+				callback.getDetail(vatIdx).deleteWithholdingTax();
 			}
 			checkCalculate(callback, vatIdx, null);
-			ValueChangeEvent.fire(this, callback.getVat(vatIdx) );
+			ValueChangeEvent.fire(this, callback.getDetail(vatIdx) );
 		});
 	}
 
 	private void definePrepayment(IEditableInvoicePanelCallback callback, final int vatIdx) {
 		prepayment  = new CheckBox();
-		prepayment.setValue(callback.getVat(vatIdx).isPrepayment());
+		prepayment.setValue(callback.getDetail(vatIdx).isPrepayment());
 		prepayment.addClickHandler( event -> {
-			callback.getVat(vatIdx).setPrepayment(prepayment.getValue());
+			callback.getDetail(vatIdx).setPrepayment(prepayment.getValue());
 			enableRowElements( callback, vatIdx );
 			checkCalculate(callback, vatIdx, null);
-			ValueChangeEvent.fire(this, callback.getVat(vatIdx) );
+			ValueChangeEvent.fire(this, callback.getDetail(vatIdx) );
 		});
 	}
 
@@ -428,7 +434,7 @@ class InvoiceVATPanelRow extends AonDisplayGridRow implements Focusable, HasSele
 				cd.confirm(AON.MSG.confirmDeleteAction(), AON.MSG.deleteAction(),() -> {
 					callback.getInvoice().getInvoice().getDetails().remove( vatIdx );
 					vatPanel.paint(callback);
-					ValueChangeEvent.fire(this, callback.getVat(vatIdx) );
+					ValueChangeEvent.fire(this, callback.getDetail(vatIdx) );
 				});
 			} else {
 				callback.getModule().onError("Al menos debe haber una l\u00EDnea.");
@@ -446,7 +452,7 @@ class InvoiceVATPanelRow extends AonDisplayGridRow implements Focusable, HasSele
 			if (AonMathUtils.isLessThan(p,0)) p = 0.0;
 			callback.getVatTax(vatIdx).setDeductiblePercent( p );
 			checkCalculate(callback, vatIdx,dedQuota);
-			ValueChangeEvent.fire(this, callback.getVat(vatIdx) );
+			ValueChangeEvent.fire(this, callback.getDetail(vatIdx) );
 		});
 	}
 	
@@ -462,7 +468,7 @@ class InvoiceVATPanelRow extends AonDisplayGridRow implements Focusable, HasSele
 			}
 			callback.getVatTax(vatIdx).setDeductibleQuota(event.getValue() );
 			calculate(callback, vatIdx);
-			ValueChangeEvent.fire(this, callback.getVat(vatIdx) );
+			ValueChangeEvent.fire(this, callback.getDetail(vatIdx) );
 		});
 		dedQuota.addBlurHandler(event -> decorateDeductibleQuota(callback, vatIdx));
 		decorateDeductibleQuota(callback, vatIdx);
@@ -481,7 +487,7 @@ class InvoiceVATPanelRow extends AonDisplayGridRow implements Focusable, HasSele
 		adjAccount.addSelectionHandler( event -> {
 			Account a = event.getSelectedItem();
 			callback.getVatTax(vatIdx).setAdjAccount(a);
-			ValueChangeEvent.fire(this, callback.getVat(vatIdx) );
+			ValueChangeEvent.fire(this, callback.getDetail(vatIdx) );
 		});
 	}
 
@@ -495,7 +501,7 @@ class InvoiceVATPanelRow extends AonDisplayGridRow implements Focusable, HasSele
 			if (p < 0) p = 0.0;
 			callback.getVatTax(vatIdx).setDirectTaxPercent( p );
 			checkCalculate(callback, vatIdx, directTaxNoDedExpenses);
-			ValueChangeEvent.fire(this, callback.getVat(vatIdx) );
+			ValueChangeEvent.fire(this, callback.getDetail(vatIdx) );
 		});
 	}
 	
@@ -572,7 +578,7 @@ class InvoiceVATPanelRow extends AonDisplayGridRow implements Focusable, HasSele
 						toFocus.selectAll();
 						toFocus.setFocus(true);
 					}
-					ValueChangeEvent.fire(InvoiceVATPanelRow.this, callback.getVat(vatIdx) );
+					ValueChangeEvent.fire(InvoiceVATPanelRow.this, callback.getDetail(vatIdx) );
 				}
 				
 				@Override
@@ -589,21 +595,24 @@ class InvoiceVATPanelRow extends AonDisplayGridRow implements Focusable, HasSele
 						toFocus.selectAll();
 						toFocus.setFocus(true);
 					}
-					ValueChangeEvent.fire(InvoiceVATPanelRow.this, callback.getVat(vatIdx) );
+					ValueChangeEvent.fire(InvoiceVATPanelRow.this, callback.getDetail(vatIdx) );
 				}
 			});
 		} else {
 			calculate(callback, vatIdx);
-			ValueChangeEvent.fire(this, callback.getVat(vatIdx) );
+			ValueChangeEvent.fire(this, callback.getDetail(vatIdx) );
 		}
 	}
 	protected void calculate(IEditableInvoicePanelCallback callback, final int vatIdx) {
-		InvoiceCalculator.calculateDetail(callback.getInvoice().getInvoice(),callback.getVat(vatIdx));
+		InvoiceCalculator.calculateDetail(callback.getInvoice().getInvoice(),callback.getDetail(vatIdx));
 		populate(callback, vatIdx);
 	}
 
 	void populate(IEditableInvoicePanelCallback callback, final int vatIdx) {
-		taxableBase.setValue( callback.getVat(vatIdx).getTaxableBase() , false);
+		
+		LOGGER.info(callback.getInvoice().getInvoice().toString() + " --- " + callback.getDetail(vatIdx).toString() + " ----- " + callback.getVatTax(vatIdx).toString());
+		
+		taxableBase.setValue( callback.getDetail(vatIdx).getTaxableBase() , false);
 		vatPercent.setValue( callback.getVatTax(vatIdx).getPercentage() , false);
 		vatQuota.setValue( callback.getVatTax(vatIdx).getQuota() , false);
 		surchargePercent.setValue( callback.getVatTax(vatIdx).getSurcharge() , false);
@@ -614,7 +623,7 @@ class InvoiceVATPanelRow extends AonDisplayGridRow implements Focusable, HasSele
 		directTaxPercent.setValue( callback.getVatTax(vatIdx).getDirectTaxPercent() , false);
 		directTaxNoDedExpenses.setValue( callback.getVatTax(vatIdx).getDirectTaxNoDedExpenses() , false);
 		directTaxDedExpenses.setValue( callback.getVatTax(vatIdx).getDirectTaxDedExpenses() , false);
-		withholding.setValue(callback.getVat(vatIdx).getWithholdingTax().isPresent() , false);
+		withholding.setValue(callback.getDetail(vatIdx).getWithholdingTax().isPresent() , false);
 	}
 
 	void withholdingChanged(Boolean value) {

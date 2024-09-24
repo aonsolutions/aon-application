@@ -22,7 +22,6 @@ import com.esferalia.aon.occam.api.model.AccountTrialBalanceReport;
 import com.esferalia.aon.occam.api.model.AccountingAnalyticalReport;
 import com.esferalia.aon.occam.api.model.AccountingInvoice;
 import com.esferalia.aon.occam.api.model.AccountingReportParams;
-import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Filter.AccountEntryFilter;
 import com.esferalia.aon.occam.api.model.Filter.AccountingRegistryFilter;
@@ -764,12 +763,6 @@ public class ACCOUNTING {
 			return InvoiceRecorder.getInvoiceEntry(ctx, invoice);
 		}
 	}
-	public static AccountEntry getAccountEntry(Occam occam, AonConfiguration config, Invoice invoice) {
-		try (CloseableAONContext ctx = AONContext.getAONContext(occam)) {
-			return InvoiceRecorder.getInvoiceEntry(ctx, config, invoice);
-		}
-	}
-
 	
 
 }

@@ -23,26 +23,30 @@ public class InvoiceCalculator	 {
 
 	public static Invoice calculate(Invoice inv) {
 		inv.clearTaxBreakdown(inv); 
-		
-		AonCollectionUtils.stream(inv.getDetails())
-			.forEach(det -> calculateDetail(inv, det ));
-		
-		settleVatAmounts(inv);
-		settleWithholdingAmounts(inv);
-		
 		inv.setTaxableBase(0.0);
 		inv.setVatQuota(0.0);
 		inv.setRetentionQuota(0.0);
 		
-		for (InvoiceDetail det :  inv.getDetails() ) {
-			inv.setTaxableBase(AonMathUtils.round(AonMathUtils.round( inv.getTaxableBase() + det.getTaxableBase(), 4)));
-		}
+		AonCollectionUtils.stream(inv.getDetails())
+			.filter(det -> !det.isDeleted() )
+			.forEach(det -> {
+				calculateDetail(inv, det );
+				inv.setTaxableBase(AonMathUtils.round(AonMathUtils.round( inv.getTaxableBase() + det.getTaxableBase(), 4)));
+				AonCollectionUtils.stream(det.getInvoiceTaxes())
+					.filter(it -> !it.isDeleted() )
+					.forEach(it -> inv.addTax(det, it));
+		});
+		
+		settleVatAmounts(inv);
+		settleWithholdingAmounts(inv);
+		
 		inv.setVatQuota(inv.getTaxBreakdown().map( b -> b.getVatQuota() ).orElse(0.0));
 		inv.setRetentionQuota(inv.getTaxBreakdown()
 			.flatMap( b -> b.getInvoiceWithholding())
 			.map( w -> w.getQuota())
 			.orElse(0.0)
 		);
+		System.out.println( "Result ..: " + inv.getTaxBreakdown().map( b -> b.getResult() ).orElse(0.0) ); 
 		inv.setTotal(inv.getTaxableBase() + inv.getTaxBreakdown().map( b -> b.getResult() ).orElse(0.0));
 		
 		if (inv.hasFinances() && inv.getFinances().size() == 1 && inv.getFinances().get(0).isPending()) {
@@ -118,6 +122,13 @@ public class InvoiceCalculator	 {
 		MutableDouble base = new MutableDouble((detail.getPrice() + detail.getTaxes()) * detail.getQuantity());
 		AonCollectionUtils.stream(detail.getDiscountExpression().getDiscounts())
 			.forEach( d -> base.setValue( base.getValue() * ( 1 - d /100)));
+		
+		LOGGER.info(inv.toString() + " --- " + detail.toString());
+		LOGGER.info("Det Price ..: " +  detail.getPrice());
+		LOGGER.info("Det Taxes .: " + detail.getTaxes());
+		LOGGER.info("Det Quantity .: " + detail.getQuantity());
+		LOGGER.info("Det Base .: " + base );
+		
 		detail.setTaxableBase(AonMathUtils.round(base.getValue(), 4));
 		
 		if (detail.isPrepayment()) {
@@ -137,6 +148,7 @@ public class InvoiceCalculator	 {
 	
 	private static void calculateVatDetail(Invoice inv, InvoiceDetail detail) {
 		InvoiceTax vat = detail.ensureVatTax(inv);
+		vat.setBase(detail.getTaxableBase() );
 		if (!vat.isQuotaEdited()) {
 			vat.setQuota(AonMathUtils.round(vat.getBase() * vat.getPercentage() / 100 ));
 		}
@@ -204,10 +216,12 @@ public class InvoiceCalculator	 {
 	}
 
 	public static void reverseCalculate(Invoice inv, double total) {
-		InvoiceDetail det = AonCollectionUtils.stream(inv.getDetails())
-			.findFirst()
-			.orElseThrow( () -> new AonCoreException("No hay detalles de fatura") ); 
-		reverseCalculate(inv, det, total);
+		if (AonCollectionUtils.size(inv.getDetails()) == 1) {
+			InvoiceDetail det = AonCollectionUtils.stream(inv.getDetails())
+					.findFirst()
+					.orElseThrow( () -> new AonCoreException("No hay detalles de factura") ); 
+			reverseCalculate(inv, det, total);
+		}
 	}
 	
 	public static void reverseCalculate(Invoice inv, InvoiceDetail det, double total) {
@@ -218,9 +232,8 @@ public class InvoiceCalculator	 {
 			det.deleteVatTax();
 			det.deleteWithholdingTax();
 		} else {
-			InvoiceTax vat = det.ensureVatTax(inv);
-			double vatPerc = vat.getPercentage();
-			double surchargePerc = vat.getSurcharge();
+			double vatPerc = det.ensureVatTax(inv).getPercentage();
+			double surchargePerc = det.ensureVatTax(inv).getSurcharge();
 			double withholdingPerc = 0.0;
 			if (inv.isWithholding()) {
 				withholdingPerc = inv.getWithholding().map( w -> w.getPercentage()).orElse(0.0);

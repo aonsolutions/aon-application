@@ -1,6 +1,5 @@
 package com.esferalia.aon.occam.impl.jooq.dao.invoice;
 
-import static com.esferalia.aon.jooq.tables.Account.ACCOUNT;
 import static com.esferalia.aon.jooq.tables.Brand.BRAND;
 import static com.esferalia.aon.jooq.tables.InvestAsset.INVEST_ASSET;
 import static com.esferalia.aon.jooq.tables.InvoiceDetail.INVOICE_DETAIL;
@@ -16,10 +15,8 @@ import static com.esferalia.aon.jooq.tables.Warehouse.WAREHOUSE;
 import static com.esferalia.aon.jooq.tables.Workplace.WORKPLACE;
 
 import java.sql.Timestamp;
-import java.util.LinkedList;
 import java.util.Optional;
 import java.util.function.Function;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.jooq.Record;
@@ -30,8 +27,6 @@ import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceDetail;
 import com.esferalia.aon.occam.api.model.type.InvoiceSource;
 import com.esferalia.aon.occam.api.model.type.InvoiceSource.IInvoiceSourceVisitor;
-import com.esferalia.aon.occam.api.model.type.InvoiceType;
-import com.esferalia.aon.occam.impl.jooq.dao.AccountDAO.FullAccountFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.Filler;
 import com.esferalia.aon.occam.impl.jooq.dao.InvestAssetDAO.InvestAssetFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.ItemDAO.ItemFiller;
@@ -76,7 +71,8 @@ class InvoiceDetailDAO {
 			.orderBy(INVOICE_DETAIL.LINE)
 			.fetch()
 			.stream()
-			.map(new InvoiceDetailFiller());
+			.map(new InvoiceDetailFiller())
+			.map(d -> d.setExpAccount(AccountingInvoiceDAO.getInvoiceDetailAccount(ctx, d.getId()).orElse(null)));		
 	}
 
     static Stream<InvoiceDetail> stream(AONContext ctx, Integer invoiceId) {
@@ -119,7 +115,6 @@ class InvoiceDetailDAO {
 				.setPrepayment(getBoolean(r, INVOICE_DETAIL.PREPAYMENT))
 				.setWorkplace(getOpt(r, WORKPLACE.ID).map(w -> WorkplaceFiller.build(r)).orElse(null))
 				.setWarehouse(getOpt(r, WAREHOUSE.ID).map(w -> WarehouseFiller.build(r)).orElse(null))
-				.setExpAccount( getOpt(r, ACCOUNT.ID).map(a -> FullAccountFiller.build(r)).orElse(null))
 				.setSource(InvoiceSource.safeValueOf(getValue(r, INVOICE_DETAIL.SOURCE)))
 				.setSourceId(getValue(r, INVOICE_DETAIL.SOURCE_ID))
 				.setCreationDate(r.getValue(INVOICE_DETAIL.CREATION_DATE))

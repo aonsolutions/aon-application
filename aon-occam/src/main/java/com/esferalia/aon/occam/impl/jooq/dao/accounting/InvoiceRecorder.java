@@ -10,7 +10,6 @@ import com.esferalia.aon.occam.api.model.Account;
 import com.esferalia.aon.occam.api.model.AccountEntry;
 import com.esferalia.aon.occam.api.model.AccountEntryDetail;
 import com.esferalia.aon.occam.api.model.AccountPeriod;
-import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.finance.EnumVisitors.IInvoiceTypeVisitor;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceDetail;
@@ -18,7 +17,6 @@ import com.esferalia.aon.occam.api.model.finance.InvoiceTax;
 import com.esferalia.aon.occam.api.model.finance.InvoiceWithholding;
 import com.esferalia.aon.occam.api.model.type.AccountEntryType;
 import com.esferalia.aon.occam.impl.jooq.dao.AccountPeriodDAO;
-import com.esferalia.aon.occam.impl.jooq.dao.ConfigurationDAO;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
@@ -35,14 +33,8 @@ public class InvoiceRecorder {
 	private static final String ABONO = "ABONO";
 
 	public static AccountEntry getInvoiceEntry(AONContext ctx, Invoice invoice) {
-		AonConfiguration config = ConfigurationDAO.getConfiguration(ctx, invoice.getIssueDate());
-		return getInvoiceEntry(ctx, config, invoice); 
-	}
-
-	public static AccountEntry getInvoiceEntry(AONContext ctx, AonConfiguration config, Invoice invoice) {
-		AccountEntry ae = fillAccountEntry( ctx, config, invoice);
+		AccountEntry ae = fillAccountEntry( ctx, invoice);
 		LinkedHashMap<Integer,AccountEntryDetail> map = new LinkedHashMap<>();
-		
 		REGISTRY
 			.andThen(INPUT_VAT)
 			.andThen(OUTPUT_VAT)
@@ -66,7 +58,7 @@ public class InvoiceRecorder {
 	// ******************************************* [PRIVATE] ***
 	// *********************************************************
 
-	private static AccountEntry fillAccountEntry(AONContext ctx, AonConfiguration config, Invoice invoice) {
+	private static AccountEntry fillAccountEntry(AONContext ctx, Invoice invoice) {
 		if (invoice == null) throw new AonCoreException("La factura no puede ser NULL");
 		if (invoice.getType() == null) throw new AonCoreException("La factura debe tener tipo");
 		if (invoice.getIssueDate() == null) throw new AonCoreException("La factura debe tener fecha");
@@ -74,7 +66,7 @@ public class InvoiceRecorder {
 		if (invoice.getRegistry() == null) throw new AonCoreException("La factura debe tener titular");
 		if (AonNumberUtils.equals(invoice.getDomain(), 0)) throw new AonCoreException("La factura debe tener dominio");
 		
-		Integer activityId = Optional.ofNullable(config.getMainActivity()).map(a -> a.getId()).orElse(null);
+		Integer activityId = Optional.ofNullable(ctx.getConfiguration().getMainActivity()).map(a -> a.getId()).orElse(null);
 		AccountPeriod period = AccountPeriodDAO.ensurePeriod(ctx, invoice.getDomain(), invoice.getIssueDate());
 		AccountEntry accountEntry = new AccountEntry()
 			.setPeriod(period.getId())
@@ -113,6 +105,7 @@ public class InvoiceRecorder {
 			?invoice.getRegistryAccount().getId() 
 			:null;
 	}
+	
 	private static String obtainRegistryAccountCode(Invoice invoice) {
 		String code = "?????????";
 		if (invoice.getRegistryAccount() != null) {
@@ -181,7 +174,11 @@ public class InvoiceRecorder {
 			fillBalancingAccount(detail,invoice);
 			map.put(registryAccountId,detail);
 		}
-		detail.setDebit(amount);
+		if (invoice.isSales()) {
+			detail.addDebit( amount );
+		} else {
+			detail.addCredit( amount );
+		}
 	};
 	
 	private static final BiConsumer<Invoice, LinkedHashMap<Integer,AccountEntryDetail>> INPUT_VAT = (invoice, map) -> {

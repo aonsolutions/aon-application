@@ -101,9 +101,9 @@ public class AccountEntryServiceAsyncDecorator implements AccountEntryServiceAsy
 	}
 	
 	@Override
-	public void getAccountEntry(Occam occam, AonConfiguration config, Invoice invoice, AsyncCallback<AccountEntry> callback) {
+	public void getAccountEntry(Occam occam, Invoice invoice, AsyncCallback<AccountEntry> callback) {
 		AON.start();
-		fsa.getAccountEntry(occam, config, invoice, new AsyncCallbackWrapper<>(callback));
+		fsa.getAccountEntry(occam, invoice, new AsyncCallbackWrapper<>(callback));
 	}
 
 	@Override

@@ -149,7 +149,7 @@ public class AccountingInvoiceDAO {
 					.orElse( invoiceDetail.getExpAccount().getId() );
 			ctx.getDslContext().insertInto(INVOICE_TAX_ACCOUNT)
 				.set(INVOICE_TAX_ACCOUNT.DOMAIN,invoiceDetail.getDomain())
-				.set(INVOICE_TAX_ACCOUNT.INVOICE_TAX, invoiceDetail.getId())
+				.set(INVOICE_TAX_ACCOUNT.INVOICE_TAX, invoiceTax.getId())
 				.set(INVOICE_TAX_ACCOUNT.ACCOUNT, accountId )
 			.execute();
 			ctx.log().debug("\t\tINSERT INVOICE_TAX_ACCOUNT");
@@ -466,19 +466,19 @@ public class AccountingInvoiceDAO {
 			accInvoice.getRegistry().getType().visit(new AccountingRegistryTypeVisitor() {
 				@Override
 				public void visitSupplier() {
-					Account account = createAccountAndFill(accInvoice.getRegistry());
+					Account account = createAccountAndFill(accInvoice);
 					SupplierDAO.updateSupplierAccount(ctx, accInvoice.getRegistry().getId(),account.getId());
 				}
 				
 				@Override
 				public void visitCustomer() {
-					Account account = createAccountAndFill(accInvoice.getRegistry());
+					Account account = createAccountAndFill(accInvoice);
 					CustomerDAO.updateCustomerAccount(ctx, accInvoice.getRegistry().getId(),account.getId());
 				}
 				
 				@Override
 				public void visitCreditor() {
-					Account account = createAccountAndFill(accInvoice.getRegistry());
+					Account account = createAccountAndFill(accInvoice);
 					CreditorDAO.updateCreditorAccount(ctx, accInvoice.getRegistry().getId(),account.getId());
 				}
 				
@@ -487,7 +487,8 @@ public class AccountingInvoiceDAO {
 					visitCreditor();
 				}
 				
-				private Account createAccountAndFill(AccountingRegistry reg) {
+				private Account createAccountAndFill(AccountingInvoice accInvoice) {
+					AccountingRegistry reg = accInvoice.getRegistry();
 					String code = AccountDAO.getNextAccountCode(ctx, reg.getType().getAccountPrefix());
 					Account account = new Account()
 						.setDomain(accInvoice.getInvoice().getDomain())
@@ -499,7 +500,8 @@ public class AccountingInvoiceDAO {
 					account = AccountDAO.insert(ctx, account);
 					reg.setAccountId(account.getId());
 					reg.setAccountCode(account.getCode());
-					reg.setAccountDescription(account.getDescription());		
+					reg.setAccountDescription(account.getDescription());
+					accInvoice.getInvoice().setRegistryAccount(account);	
 					return account;
 					
 				}

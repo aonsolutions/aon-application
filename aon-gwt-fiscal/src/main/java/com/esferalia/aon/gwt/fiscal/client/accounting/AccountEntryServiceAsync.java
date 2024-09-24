@@ -33,7 +33,7 @@ public interface AccountEntryServiceAsync {
 	void getAccountingInvoiceFromInvoice(Occam occam, Integer invoiceId, AsyncCallback<AccountingInvoice> callback);
 	void getRegistryLastAccountingInvoice(Occam occam, Integer registryId, AsyncCallback<AccountingInvoice> asyncCallback);
 	
-	void getAccountEntry(Occam occam, AonConfiguration config, Invoice invoice, AsyncCallback<AccountEntry> callback);
+	void getAccountEntry(Occam occam, Invoice invoice, AsyncCallback<AccountEntry> callback);
 
 	void addInvoiceAttach(Occam occam, AccountingInvoice ai, AsyncCallback<AccountingInvoice> callback);
 	void removeInvoiceAttach(Occam occam, Integer invoiceId, AsyncCallback<AccountingInvoice> callback);
