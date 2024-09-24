@@ -486,3 +486,9 @@ export const CUSTOMER_FEE = {
   module: GWT_FISCAL,
   entryPoint: 'customerFee'
 };
+
+export const COMMISSION_CALC = {
+  module: GWT_AIO,
+  entryPoint: 'commission_calculate',
+  subEntryPoint: 'commission_calculate'
+};
