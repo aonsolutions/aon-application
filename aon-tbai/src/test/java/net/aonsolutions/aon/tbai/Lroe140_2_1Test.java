@@ -87,7 +87,7 @@ public class Lroe140_2_1Test {
 		tax.setTaxType(TaxType.VAT);
 		tax.setVatDeductionType(VatDeductionType.WITH_RIGHT);
 		invoiceDetail.getInvoiceTaxes().add(tax);
-		invoice.getDetails().add(invoiceDetail);
+		invoice.addDetail(invoiceDetail);
 		
 		
 //		InvoiceBreakdown ib = new InvoiceBreakdown();
