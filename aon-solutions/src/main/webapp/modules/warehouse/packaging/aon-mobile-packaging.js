@@ -224,7 +224,7 @@ export class AonMobilePackaging extends AonElement {
 			product.value = val || '';
 			container.setOptions(r.containers);
 			lote.value = r.item.serialNumber;
-			date.setValue(r.item.serialDate);
+			date.setDate(r.item.serialDate);
 			container.value = r.containers[0].id;
 			this.item = r.item.id;
 			this.contenedor = container.value;

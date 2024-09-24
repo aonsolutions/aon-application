@@ -324,6 +324,7 @@ public class RawdocServlet extends AonApiHttpServlet {
 			f.put("content_type", contentType);
 			f.put("s3Bucket", rawdoc.getS3Bucket());
 			f.put("s3Key", rawdoc.getS3Key());
+		    json.put("file", f);
 		} else if(rawdoc.getMimeType() != null){
 			JSONObject data = new JSONObject();
 			data.put("domain_name", api.getDomain().getName());
