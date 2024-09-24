@@ -453,7 +453,6 @@ export class AonDocumental extends AonElement {
           let uploadToast = this.getElement('aonUploadToast');
           if(!uploadToast){ 
             uploadToast = new AonUploadToast();
-            uploadToast.setDur(this.getDur());
             this.appendChild(uploadToast);
           }
           for (let file of files) {

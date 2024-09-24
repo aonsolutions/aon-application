@@ -4,6 +4,7 @@ import Cropper from 'cropperjs';
 import 'cropperjs/dist/cropper.min.css';
 import '../css/aon-image-editor.css';
 import { AonIconButton } from './aon-icon-button.js';
+import { ramdomString } from '../services/utils.js';
 
 export class AonImageEditor extends AonElement {
     
@@ -117,13 +118,11 @@ export class AonImageEditor extends AonElement {
                 width: cropBoxData.width,
                 height: cropBoxData.height,
             });
+            canvas.toBlob((blob) => {
+                let file = new File([blob], `${ramdomString(10)}.jpg`, { type: "image/jpeg" });
+                this.dispatchEvent(new CustomEvent(EVENT.CROPPER, {detail:file}));
+            }, 'image/jpeg');
 
-            const croppedImageUrl = canvas.toDataURL('image/jpeg');
-            const base64 = croppedImageUrl.replace(/^data:image\/?[A-z]*;base64,/);
-            this.dispatchEvent(new CustomEvent(EVENT.CROPPER));
-
-            // this.querySelector('#cropped-image').src = croppedImageUrl;
-            // this.querySelector('#result-container').style.display = 'block';
             this.closeCropper();
         }
     }

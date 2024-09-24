@@ -46,10 +46,10 @@ export class AonManagementMenu extends AonSuiteMenu {
             action: () => this.rootPanel(new JSF.AonJsfPurchaseInvoice())
         },{
             title: "Gasto no deducible en IVA", 
-            action: () => alert("description")
+            action: () => this.rootPanel(new JSF.AonJsfUndeductibleInvoice())
         },{
             title: "Cliente", 
-            action: () => alert("description")
+            action: () => this.rootPanel(new JSF.AonJsfCustomer())
         }];
         this.options = [{
             title: 'Ventas',
@@ -72,7 +72,7 @@ export class AonManagementMenu extends AonSuiteMenu {
             },{
                 description: "Facturación masiva de Albaranes",
                 title: "Facturación masiva de Albaranes",
-                action: () => alert("description")
+                action: () => this.rootPanel(new JSF.AonJsfInvoiceDelivery())
             }]
         },{
             title: 'Compras',
@@ -87,7 +87,7 @@ export class AonManagementMenu extends AonSuiteMenu {
             },{
                 description: "Pedidos de Compra",
                 title: "Facturas de Compra",
-                action: () => alert("description")
+                action: () => this.rootPanel(new JSF.AonJsfPurchase())
             }]
         },{
             title: 'Gastos',
@@ -102,53 +102,53 @@ export class AonManagementMenu extends AonSuiteMenu {
             },{
                 description: "Gastos no Deducibles en IVA",
                 title: "Gastos no Deducibles en IVA",
-                action: () => alert("description")
+                action: () => this.rootPanel(new JSF.AonJsfUndeductibleInvoice())
             }]
         },{
             title: 'Tesorería',
             options: [{
                 description: "Gestión de Cobros",
                 title: "Gestión de Cobros",
-                action: () => alert("description")
+                action: () => this.rootPanel(new JSF.AonJsfFinanceCharge())
             },{
                 description: "Gestión de Pagos",
                 title: "Gestión de Cobros",
-                action: () => alert("description")
+                action: () => this.rootPanel(new JSF.AonJsfFinancePayment())
             },{
                 description: "Cartera de cobros y pagos",
                 title: "Cartera de cobros y pagos",
-                action: () => alert("description")
+                action: () => GWT.iLoad(GWT.FINANCE)
             },{
                 description: "Formas de Pago",
                 title: "Formas de Pago",
-                action: () => alert("description")
+                action: () => this.rootPanel(new JSF.AonJsfPayMethod())
             },{
                 description: "Borrado de Facturas",
                 title: "Borrado de Facturas",
-                action: () => alert("description")
+                action: () => this.rootPanel(new JSF.AonJsfInvoiceRemove())
             },{
                 description: "Estadisticas Globales",
                 title: "Estadisticas Globales",
-                action: () => alert("description")
+                action: () => GWT.iLoad(GWT.INVOICE_STAT)
             }]
         },{
             title: 'Impuestos',
             options: [{
                 description: "Panel de control de IVA",
                 title: "Panel de control de IVA",
-                action: () => alert("description")
+                action: () => GWT.iLoad(GWT.VAT_REPORT)
             },{
                 description: "Panel de Control de IRPF",
                 title: "Panel de Control de IRPF",
-                action: () => alert("description")
+                action: () => GWT.iLoad(GWT.IRPF_REPORT)
             },{
                 description: "SII - Suministro Inmediato de Información",
                 title: "SII - Suministro Inmediato de Información",
-                action: () => alert("description")
+                action: () => GWT.iLoad(GWT.MODEL_SII)
             },{
                 description: "Modelo 347 - Declaración anual operaciones con terceras personas.",
                 title: "Modelo 347 - Declaración anual operaciones con terceras personas.",
-                action: () => alert("description")
+                action: () => GWT.iLoad(GWT.MODEL_347)
             }]
         },{
             title: 'Maestros',
@@ -163,15 +163,15 @@ export class AonManagementMenu extends AonSuiteMenu {
             },{
                 description: "Categorías",
                 title: "Categorías",
-                action: () => alert("description")
+                action: () => this.rootPanel(new JSF.AonJsfProductCategory())
             },{
                 description: "Pais/Provincia",
                 title: "Pais/Provincia",
-                action: () => alert("description")
+                action: () => this.rootPanel(new JSF.AonJsfGeotree())
             },{
                 description: "Segmentación",
                 title: "Segmentación",
-                action: () => alert("description")
+                action: () => this.rootPanel(new JSF.AonJsfSegment())
             }]
         }];
     }

@@ -17,6 +17,7 @@ import { formatNumber } from '../../services/utils.js';
 import * as LS from '../../services/localStorageService.js';
 import { INVOICE } from '../../services/app.js';
 import { AonTable } from '../../components/aon-table.js';
+import { AonDateUtils } from '../utils/AonDateUtils.js';
 
 export class AonInvoiceList extends AonElement {
 
@@ -86,6 +87,12 @@ export class AonInvoiceList extends AonElement {
 		}
 		invoice.paymethod = invoice.finances && invoice.finances.length > 0
 			? this.getPaymethod(invoice.finances[0].paymethod) : '';
+
+		let dateParse = Date.parse(invoice.date);
+		invoice.date = isNaN(dateParse) 
+			? AonDateUtils.parseStr(invoice.date) 
+			: new Date(dateParse);
+
 		let date = new Date(invoice.date);
 		let day = date.getDate();
 		let month = date.getMonth() + 1;

@@ -16,10 +16,10 @@ public class InvofoxConfigurationJSON {
 		return new InvofoxConfiguration()
 			.setPersonalized(JsonUtils.getboolean(json, IJsonNames.PERSONALIZED))
 			.setApiKey(JsonUtils.getString(json, IJsonNames.API_KEY))
+			.setApiUrl(JsonUtils.getString(json, IJsonNames.API_URL))
 			.setEnvironment(JsonUtils.getString(json, IJsonNames.ENVIRONMENT))
 			.setAutoAccept(JsonUtils.getboolean(json, IJsonNames.AUTO_ACCEPT))
-			.setAutoRecord(JsonUtils.getboolean(json, IJsonNames.AUTO_RECORD))
-			;
+			.setAutoRecord(JsonUtils.getboolean(json, IJsonNames.AUTO_RECORD));
 
 	}
 	
@@ -27,10 +27,12 @@ public class InvofoxConfigurationJSON {
 		return new JSONObject()
 			.put(IJsonNames.PERSONALIZED, config.isPersonalized())
 			.put(IJsonNames.API_KEY, config.getApiKey())
+			.put(IJsonNames.API_URL, config.getApiUrl())
 			.put(IJsonNames.ENVIRONMENT, config.getEnvironment())
 			.put(IJsonNames.AUTO_ACCEPT, config.isAutoAccept())
 			.put(IJsonNames.AUTO_RECORD, config.isAutoRecord())
 			.put(IJsonNames.LOGIN_REQUIRED, config.isLoginRequired());
+	
 	}
 	
 }

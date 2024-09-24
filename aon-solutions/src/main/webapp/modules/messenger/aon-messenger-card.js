@@ -51,25 +51,9 @@ export class AonMessengerCard extends AonElement {
   paintView() {
     let cardContent = this.createElement(TAG.DIV);
     cardContent.className = CSS.AON_FLEX_COLUMN;
-    cardContent.style.justifyContent = "space-between";
     cardContent.style.height = "100%";
-    cardContent.style.alignItems = "flex-start";
-    cardContent.id = "messengerCard";
-    
-    let tableContent = this.createElement(TAG.DIV);
-    tableContent.className = CSS.AON_FLEX_COLUMN;
-    tableContent.style.width = "100%";
-    tableContent.style.gap = "0";
-    tableContent.id = "messengerCardTable";
-
-    let showAllMessage = this.createElement(TAG.DIV);
-    showAllMessage.className = CSS.AON_FLEX;
-    showAllMessage.classList.add(CSS.AON_MESSENGER_CARD_BUTTON);
-    showAllMessage.id = "messengerCardMessage";
-    showAllMessage.addEventListener(EVENT.CLICK, this.clickEvent);
-
-    cardContent.appendChild(tableContent);
-    cardContent.appendChild(showAllMessage);
+    cardContent.style.gap = "0";
+    cardContent.id = "messengerCardTable";
 
     this.appendChild(cardContent);
   }
@@ -77,7 +61,6 @@ export class AonMessengerCard extends AonElement {
   buildToolbar() {
     this.getMeseggers().then(messengers => {
       this.getTable(this.getDataDesktop(messengers));
-      this.getMessage(messengers.length);
     });
   }
 
@@ -266,7 +249,7 @@ export class AonMessengerCard extends AonElement {
     } else if (res.sender && res.sender.name) {
       senderText = `${res.sender.name}`;
     } else {
-      senderText = "SYSTEM";
+      senderText = "System";
     }
 
     sender.innerHTML = senderText;
@@ -289,7 +272,7 @@ export class AonMessengerCard extends AonElement {
 
   getTable(messengers) {
     let content = this.getElement("messengerCardTable");
-    let maxIndex = messengers.length > 4 ? 4 : messengers.length;
+    let maxIndex = messengers.length > 5 ? 5 : messengers.length;
     
     for (let index = 0; index < maxIndex; index++) {
       const messenger = messengers[index];
@@ -334,22 +317,6 @@ export class AonMessengerCard extends AonElement {
       let messengerCard = this.getElement("messengerCard");
       messengerCard.style.display = "none";
     }
-  }
-
-  getMessage(messageLenght) {
-    let message = this.getElement("messengerCardMessage");
-
-    let showAll = this.createElement(TAG.SPAN);
-    showAll.style.color = "var(--aonMessenger)";
-    showAll.style.fontWeight = "500";
-    showAll.innerHTML = "Ver todos los mensajes";
-
-    let budget = this.createElement(TAG.SPAN);
-    budget.className = CSS.AON_BADGE;
-    budget.innerHTML = messageLenght;
-
-    message.appendChild(showAll);
-    message.appendChild(budget);
   }
 
 }
