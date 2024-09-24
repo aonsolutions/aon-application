@@ -2,12 +2,16 @@
 name: Java CI with Maven
 
 on:
+  push:
+    branches: 
+      - master
+      - cadizbay
+      - macleod
   pull_request:
-    types: 
-      - closed
-      - opened
-      - synchronize
-      - reopened
+    branches: 
+      - master
+      - cadizbay
+      - macleod
   workflow_dispatch:
 
 env:
@@ -18,7 +22,6 @@ env:
   
 jobs:
   build:
-    if: github.event_name == 'workflow_dispatch' || github.event.pull_request.action != 'closed' || github.event.pull_request.merged == true
     runs-on: ubuntu-latest
 
     permissions:
@@ -230,7 +233,7 @@ jobs:
     # - name: Deploy to Amazon ECS CADIZ
     #  if: github.ref == 'refs/heads/cadizbay'
     #  run : |
-    #    aws ecs update-service --region=eu-south-2 --cluster AON --service CADIZ-SOLUTIONS --force-new-deployment
+    #   aws ecs update-service --region=eu-south-2 --cluster AON --service CADIZ-SOLUTIONS --force-new-deployment
     #   aws ecs update-service --region=eu-south-2 --cluster AON --service CADIZ-APPLICATION --force-new-deployment
         
 
