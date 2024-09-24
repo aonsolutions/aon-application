@@ -187,7 +187,7 @@ jobs:
         # Tag docker images and push it to ECR so that it can be deployed to ECS.
         docker tag ghcr.io/${{ github.repository_owner }}/aon-solutions:${{ env.BRANCH_NAME }} $ECR_REGISTRY/aon-solutions:$IMAGE_TAG 
         docker tag ghcr.io/${{ github.repository_owner }}/aon-application:${{ env.BRANCH_NAME }} $ECR_REGISTRY/aon-application:$IMAGE_TAG 
-        docker tag ghcr.io/${{ github.repository_owner }}/aonaon-db-up2date:${{ env.BRANCH_NAME }} $ECR_REGISTRY/aon-db-up2date:$IMAGE_TAG 
+        docker tag ghcr.io/${{ github.repository_owner }}/aon-db-up2date:${{ env.BRANCH_NAME }} $ECR_REGISTRY/aon-db-up2date:$IMAGE_TAG 
         docker push $ECR_REGISTRY/aon-solutions:$IMAGE_TAG 
         docker push $ECR_REGISTRY/aon-application:$IMAGE_TAG 
         docker push $ECR_REGISTRY/aon-db-up2date:$IMAGE_TAG 
