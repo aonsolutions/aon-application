@@ -88,11 +88,9 @@ jobs:
         EOF
 
     - name: Build with Maven
-      if: false
       run: mvn -B -Dgwt.working=true -DskipTests=${SKIP_TESTS} -T 1C clean install
 
     - name: Build Docker aon-application image
-      if: false
       uses: docker/build-push-action@v6
       with:
         context: .
@@ -100,7 +98,6 @@ jobs:
         tags: ghcr.io/${{ github.repository_owner }}/aon-application:${{ env.BRANCH_NAME }}
 
     - name: Build Docker aon-db-up2date image
-      if: false
       uses: docker/build-push-action@v6
       with:
         context: ./aon-db-up2date
@@ -109,7 +106,7 @@ jobs:
 
     
     - name: Setup environment for integration testing
-      if: false && github.ref == 'refs/heads/master'
+      if: github.ref == 'refs/heads/master'
       run: |
         DB_HOST=$(ip addr show docker0 | grep -oP 'inet \K[0-9\.]+')
         DB_FILE=$(find aon-htmlunit/src -name "test-aonsolutions-org.sql")
@@ -126,7 +123,7 @@ jobs:
         EOF
     
     - name: Running integration tests
-      if: false && github.ref == 'refs/heads/master'
+      if: github.ref == 'refs/heads/master'
       run: |
         mvn -B \
         -Dintegration.test.user=admin \
@@ -139,11 +136,10 @@ jobs:
         -Dtest='!GeneralEnterpriseTest' -f aon-htmlunit/pom.xml integration-test
         
     - name: Build production version with Maven
-      if: false && github.ref == 'refs/heads/master'
+      if: github.ref == 'refs/heads/master'
       run: mvn -B --resume-from aon-js-payroll -Drpm.release=false -DskipTests=true clean install
 
     - name: Build and push Docker aon-application image
-      if: false
       uses: docker/build-push-action@v6
       with:
         context: .
@@ -151,7 +147,6 @@ jobs:
         tags: ghcr.io/${{ github.repository_owner }}/aon-application:${{ env.BRANCH_NAME }}
 
     - name: Build and push Docker aon-db-up2date image
-      if: false
       uses: docker/build-push-action@v6
       with:
         context: ./aon-db-up2date
@@ -159,7 +154,6 @@ jobs:
         tags: ghcr.io/${{ github.repository_owner }}/aon-db-up2date:${{ env.BRANCH_NAME }}
 
     - name: Build and push Docker aon-solutions image
-      if: false
       uses: docker/build-push-action@v6
       with:
         context: .
@@ -168,23 +162,23 @@ jobs:
         tags: ghcr.io/${{ github.repository_owner }}/aon-solutions:${{ env.BRANCH_NAME }}
 
     - name: Build AWS lambda Functions
-      if: false && github.ref == 'refs/heads/master'
+      if: github.ref == 'refs/heads/master'
       run : |
         mvn -B -Daws.lambda=true -DskipTests=true -pl aon-in-invoice clean install
         mvn -B -Daws.lambda=true -DskipTests=true -pl aon-in-payroll clean install
 
     - name: Publish WAR to GitHub Packages
-      if: false && github.ref == 'refs/heads/master'
+      if: github.ref == 'refs/heads/master'
       run: mvn -B -pl aon-web-aio -Dgithub.actions=true deploy
       env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-    - name: Pull images from GitHub Container Registry
-      if: github.ref == 'refs/heads/master'
-      run: |
-        docker pull ghcr.io/${{ github.repository_owner }}/aon-solutions:${{ env.BRANCH_NAME }}
-        docker pull ghcr.io/${{ github.repository_owner }}/aon-application:${{ env.BRANCH_NAME }}
-        docker pull ghcr.io/${{ github.repository_owner }}/aon-db-up2date:${{ env.BRANCH_NAME }}
+    # - name: Pull images from GitHub Container Registry
+    #   if: github.ref == 'refs/heads/master'
+    #   run: |
+    #     docker pull ghcr.io/${{ github.repository_owner }}/aon-solutions:${{ env.BRANCH_NAME }}
+    #     docker pull ghcr.io/${{ github.repository_owner }}/aon-application:${{ env.BRANCH_NAME }}
+    #     docker pull ghcr.io/${{ github.repository_owner }}/aon-db-up2date:${{ env.BRANCH_NAME }}
 
     - name: Login to Amazon ECR (Ireland)
       id: login-ecr-ireland
