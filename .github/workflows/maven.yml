@@ -188,7 +188,7 @@ jobs:
       uses: aws-actions/amazon-ecr-login@v1
 
     - name: Tag, and push images to Amazon ECR (Ireland)
-      if: github.ref == 'refs/heads/master'
+      if: github.ref == 'refs/heads/master' || github.ref == 'refs/heads/macleod'
       env:
         ECR_REGISTRY: ${{ steps.login-ecr-ireland.outputs.registry }}
         IMAGE_TAG: snapshot
@@ -212,7 +212,7 @@ jobs:
         AWS_REGION: eu-south-2
 
     - name: Tag, and push images to Amazon ECR (Spain)
-      if: github.ref == 'refs/heads/master'
+      if: github.ref == 'refs/heads/master' || github.ref == 'refs/heads/cadizbay'
       env:
         ECR_REGISTRY: ${{ steps.login-ecr-spain.outputs.registry }}
         IMAGE_TAG: snapshot
