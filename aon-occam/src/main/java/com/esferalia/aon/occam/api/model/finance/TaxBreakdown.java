@@ -54,7 +54,13 @@ public class TaxBreakdown implements Serializable {
 			.collect(Collectors.toCollection(LinkedList::new));
 				
 	}
-
+	void clearWithholding() {
+		ibs
+			.stream()
+			.filter(ib -> ib.isWithholding() )
+			.forEach(ib -> ibs.remove(ib));
+	}
+	
 	public Optional<InvoiceWithholding> getInvoiceWithholding() {
 		return ibs.stream()
 			.filter(ib -> ib.isWithholding() )

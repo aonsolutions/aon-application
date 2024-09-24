@@ -103,7 +103,7 @@ class InvoiceDaoSettersTest extends AbstractOccamTest {
 	@Test
 	void testSalesFarmerRetention() {
 		Invoice invoice = InvoiceFaker.getSalesFarmerRetention(ctx);
-		assertInvoice(invoice, true);
+		assertInvoice(invoice );
 	}
 	@Test
 	void testSalesRetentionInvoice() {

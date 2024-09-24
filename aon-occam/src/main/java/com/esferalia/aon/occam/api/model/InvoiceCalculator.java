@@ -22,7 +22,7 @@ public class InvoiceCalculator	 {
 	}
 
 	public static Invoice calculate(Invoice inv) {
-		inv.clearTaxBreakdown(); 
+		inv.clearTaxBreakdown(inv); 
 		
 		AonCollectionUtils.stream(inv.getDetails())
 			.forEach(det -> calculateDetail(inv, det ));
@@ -85,10 +85,10 @@ public class InvoiceCalculator	 {
 	}
 
 	private static void settleWithholdingAmounts(Invoice inv) {
-		if (inv.isWithholding()
-		 && inv.getWithholding().isPresent()) {
-			InvoiceWithholding iw = inv.getWithholding().get(); 
+		if (inv.isWithholding() && inv.getWithholding().isPresent()) {
+			InvoiceWithholding iw = inv.getWithholding().get();
 			MutableObject<InvoiceTax> lastInvoiceTax = new MutableObject<>();
+			
 			MutableDouble quotaSum = new MutableDouble(0.0);
 			MutableDouble deductibleQuotaSum = new MutableDouble(0.0);
 			for (InvoiceDetail det :  inv.getDetails() ) {
@@ -98,13 +98,18 @@ public class InvoiceCalculator	 {
 					deductibleQuotaSum.setValue(AonMathUtils.round(deductibleQuotaSum.getValue() + it.getDeductibleQuota()));
 				});
 			}
-			InvoiceTax last = lastInvoiceTax.getValue();
-			if (last != null) {
-				double gap = AonMathUtils.round( iw.getQuota() - quotaSum.getValue() );
-				if ( AonMathUtils.isNotZero( gap )) {
-					last.setQuota( AonMathUtils.round( last.getQuota() - gap));	
+			if ( AonMathUtils.isNotZero( iw.getQuota() )) {
+				InvoiceTax last = lastInvoiceTax.getValue();
+				if (last != null) {
+					double gap = AonMathUtils.round( iw.getQuota() - quotaSum.getValue() );
+					if ( AonMathUtils.isNotZero( gap )) {
+						last.setQuota( AonMathUtils.round( last.getQuota() - gap));	
+					}
 				}
+			} else {
+				iw.setQuota( quotaSum.getValue() );	
 			}
+			
 			iw.setDeductibleQuota( deductibleQuotaSum.getValue() );
 		}
 	}

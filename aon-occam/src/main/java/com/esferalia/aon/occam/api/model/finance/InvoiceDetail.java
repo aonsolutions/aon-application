@@ -315,7 +315,7 @@ public class InvoiceDetail implements Serializable, HasAudit {
 	public InvoiceTax ensureVatTax(Invoice invoice) {
 		return getVatTax().orElseGet(() -> addVatTax(invoice).getVatTax().orElse(null) );
 	}
-	private InvoiceDetail addVatTax(Invoice invoice ) {
+	public InvoiceDetail addVatTax(Invoice invoice ) {
 		return addInvoiceTax(invoice, new InvoiceTax()
 			.setDomain(this.domain)
 			.setInvoiceDetail(this.id)

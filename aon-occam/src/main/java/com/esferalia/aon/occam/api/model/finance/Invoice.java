@@ -514,9 +514,9 @@ public class Invoice implements Serializable, HasAudit {
 	}
 
 	public Invoice addDetail(InvoiceDetail detail) {
-		if (detail.isTaxEnabled(this) && AonCollectionUtils.isEmpty(detail.getInvoiceTaxes())) {
-			throw new InvoiceException(this,"La línea de factura no tiene impuestos aplicados.");
-		}
+//		if (detail.isTaxEnabled(this) && AonCollectionUtils.isEmpty(detail.getInvoiceTaxes())) {
+//			throw new InvoiceException(this,"La línea de factura no tiene impuestos aplicados.");
+//		}
 		if(details == null) details = new LinkedList<>();
 		details.add(detail);
 		AonCollectionUtils.stream(detail.getInvoiceTaxes()).forEach(it -> addTax(detail, it ));
@@ -815,8 +815,20 @@ public class Invoice implements Serializable, HasAudit {
 	public Optional<TaxBreakdown> getTaxBreakdown() {
 		return Optional.ofNullable(taxBreakdown);
 	}
-	public Invoice clearTaxBreakdown() {
+	public Invoice clearTaxBreakdown( Invoice invoice ) {
 		ensureTaxBreakdown().clear();
+		if (invoice.isWithholding() ) {
+			AonCollectionUtils.stream(getDetails())
+				.flatMap(d -> AonCollectionUtils.stream(d.getInvoiceTaxes()) )
+				.filter( it -> it.isWithholdingType() )
+				.findFirst()
+				.ifPresent( it -> invoice.setWithholding(
+					new InvoiceWithholding()
+						.setWithholdingType(it.getWithholdingType())
+						.setPercentage(it.getPercentage())
+					)
+				);
+		}
 		return this;
 	}
 	private TaxBreakdown ensureTaxBreakdown() {
@@ -845,17 +857,27 @@ public class Invoice implements Serializable, HasAudit {
 	public Optional<InvoiceWithholding> getWithholding() {
 		return this.getTaxBreakdown().flatMap( itb -> itb.getInvoiceWithholding() );
 	}
+	public InvoiceWithholding setWithholding(InvoiceWithholding iw) {
+		ensureTaxBreakdown().clearWithholding();
+		addBreakdown(
+			new InvoiceBreakdown()
+				.setTaxType(TaxType.RETENTION)
+				.setWithholdingType(iw.getWithholdingType())
+				.setPercentage(iw.getPercentage())
+			);
+		return getWithholding().orElse(null);
+	}
 	
 	public InvoiceWithholding ensureWithholdingData() {
 		return getWithholding()
 			.orElseGet( () -> {
-				addBreakdown(new InvoiceBreakdown()
+				addBreakdown(
+					new InvoiceBreakdown()
 						.setTaxType(TaxType.RETENTION)
 						.setWithholdingType(WithholdingType.PROFESSIONAL)
-					)
-					.setWithholding(true);
-					AonCollectionUtils.stream(getDetails())
-						.forEach(d -> d.ensureWithholdingTax( Invoice.this ));
+						)
+				.setWithholding(true);
+				AonCollectionUtils.stream(getDetails()).forEach(d -> d.ensureWithholdingTax( Invoice.this ));
 				return getWithholding().orElse(null); 
 			});
 	}
