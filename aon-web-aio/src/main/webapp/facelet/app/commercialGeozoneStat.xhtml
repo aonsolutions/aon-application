@@ -11,9 +11,10 @@
 		<aon:commandButton 
 			id="appButton" 
 			style="display: none; " 
-			action="sales_list"
-			actionListener="#{sales.onSearch}"
+			action="commercial_geozone_stat_search"
+			actionListener="#{commercialStat.onReset}"
 		>
+		<aon:actionListener method="#{commercialStat.onGeozoneType}"/>
 		</aon:commandButton>
 	</aon:form>
 	
