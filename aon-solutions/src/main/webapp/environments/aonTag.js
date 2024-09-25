@@ -219,6 +219,28 @@ export const AON_SUITE_MENU = 'aon-suite-menu';
 export const AON_COMMERCIAL_MENU = 'aon-commercial-menu';
 
 export const AON_GROUPWARE_MENU = 'aon-groupware-menu';
+export const AON_JSF_SELLER = 'aon-jsf-seller' ;
+export const AON_JSF_TARGET = 'aon-jsf-target' ;
+export const AON_JSF_TARGET_DEDUPLICATION = 'aon-jsf-target-deduplication' ;
+
+export const AON_JSF_PROJECT_COMMERCIAL = 'aon-jsf-project-commercial' ;
+export const AON_JSF_COMMERCIAL_TERM = 'aon-jsf-commercial-term' ;
+export const AON_JSF_COMMERCIAL_TRACKING = 'aon-jsf-commercial-tracking' ;
+export const AON_JSF_COMMERCIAL_ACTIVITY = 'aon-jsf-commercial-activity' ;
+export const AON_JSF_COMMERCIAL_STAT_SELLER = 'aon-jsf-commercial-stat-seller' ;
+export const AON_JSF_COMMERCIAL_STAT_TARGET = 'aon-jsf-commercial-stat-target' ;
+export const AON_JSF_COMMERCIAL_STAT_PRODUCT = 'aon-jsf-commercial-stat-product' ;
+export const AON_JSF_COMMERCIAL_STAT_CATEGORY = 'aon-jsf-commercial-stat-category' ;
+export const AON_JSF_COMMERCIAL_SELLER_STAT = 'aon-jsf-commercial-seller-stat' ;
+export const AON_JSF_COMMERCIAL_TARGET_STAT = 'aon-jsf-commercial-target-stat' ;
+export const AON_JSF_COMMERCIAL_PRODUCT_STAT = 'aon-jsf-commercial-product-stat' ;
+export const AON_JSF_COMMERCIAL_CATEGORY_STAT = 'aon-jsf-commercial-category-stat' ;
+export const AON_JSF_COMMERCIAL_GEOZONE_STAT = 'aon-jsf-commercial-geozone-stat' ;
+export const AON_JSF_OFFER = 'aon-jsf-offer' ;
+export const AON_JSF_OFFER_DETAIL_COMMISSION = 'aon-jsf-offer-detail-commission' ;
+export const AON_JSF_COMMISSION = 'aon-jsf-commission' ;
+export const AON_JSF_COMMISSION_CALC = 'aon-jsf-commission-calc' ;
+export const AON_JSF_COMMISSION_TYPE = 'aon-jsf-commission-type' ;
 
 export const AON_MANAGEMENT_MENU = 'aon-management-menu';
 
