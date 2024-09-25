@@ -35,6 +35,7 @@ import com.esferalia.aon.occam.api.model.finance.EnumVisitors.IInvoiceTypeVisito
 import com.esferalia.aon.occam.api.model.finance.InvofoxConfiguration;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceData;
+import com.esferalia.aon.occam.api.model.finance.InvoiceDataNames;
 import com.esferalia.aon.occam.api.model.finance.InvoiceTax;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceError;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceErrorContext;
@@ -266,6 +267,7 @@ public class InvofoxServlet extends AonApiHttpServlet {
 				if (inv != null && publicState != null && OCRSeverity.approved.equals(publicState)
 						&& inv.getTediCategory() != null) {
 					Integer rawdocId = getRawdocId(ocrDocument);
+					
 					inv = AON.acceptInvoice(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(),
 							inv, rawdocId);
 					if (inv != null && inv.getId() != null) {
@@ -275,7 +277,7 @@ public class InvofoxServlet extends AonApiHttpServlet {
 						InvoiceData invoiceData = new InvoiceData()
 								.setDomain(api.getDomain().getId())
 								.setInvoice(inv.getId())
-								.setName("INVOFOX_ID")
+								.setName(InvoiceDataNames.INVOFOX_ID.name())
 								.setValue(documentId)
 								.setStartDate(new Date());
 						AON.saveInvoiceData(api.getDomain(), api.getUser(), invoiceData);

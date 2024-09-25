@@ -26,6 +26,7 @@ import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.occam.impl.jooq.dao.AttachmentDAO;
 import com.esferalia.aon.occam.server.accounting.Rawdoc2AccountingInvoice;
 import com.esferalia.aon.watson.error.AonCoreException;
+import com.esferalia.aon.watson.util.AonStringUtils;
 
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -53,7 +54,9 @@ public class RawdocServiceImpl extends AonStatelessRemoteServiceServlet implemen
 	@Override
 	public TediResult parse(String domainName, int domain, String user, Integer rawdocId) throws AonCoreException {
 		String url = null;
-		if (AON.rawdocHasData(domainName, domain,user,rawdocId)) {
+		Rawdoc rawdoc = AON.getRawdocFull(domainName, domain, user, rawdocId);
+		
+		if (rawdoc.getData() != null) {
 //			StringBuilder baseURL = new StringBuilder();
 //			baseURL.append( getThreadLocalRequest().getContextPath() );
 // ---------------------
@@ -77,6 +80,11 @@ public class RawdocServiceImpl extends AonStatelessRemoteServiceServlet implemen
 					+ "/" + user 
 					+ "/" +  params;
 		}
+		
+		if(!AonStringUtils.isBlank(rawdoc.getS3Key())) {
+			url = S3.getURL(rawdoc.getS3Bucket(), rawdoc.getS3Key()).toExternalForm();
+		}
+		
 		try {
 			TediContext tctx = new TediContext()
 				.setDomainName(domainName)

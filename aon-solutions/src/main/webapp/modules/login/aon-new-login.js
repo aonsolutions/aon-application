@@ -383,19 +383,9 @@ export class AonNewLogin extends AonElement {
         LS.removeDomain();
         this.getModule().buildHome();
         this.getModule().startLoading();
-        // LS.setLanguage(Language.SPANISH);
-
-        // Already set in css
-		//LS.setLeftMenu(true);
-        //LS.setTopMenu(false);
-        //LS.setAppMenu(false);
 		
         getCompanies().then(companies => {
           this.getModule().stopLoading();
-          
-          //if(companies.length > 0){
-          //  this.companySelection(companies[0], true);
-          //} 
           
           if(companies.length === 1){
             this.companySelection(companies[0], true);
@@ -405,10 +395,6 @@ export class AonNewLogin extends AonElement {
               ? new AonMobileParent()
               : new AonParent());
           }
-          
-          // this.getElement("aonLogin").style.display = 'none';
-          // let homeDiv = this.getElement("aonHomeDiv");
-          // homeDiv.style.display = 'block';
         });
       })
       .catch((e) => {

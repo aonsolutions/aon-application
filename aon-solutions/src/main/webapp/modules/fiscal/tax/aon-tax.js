@@ -12,7 +12,6 @@ import {
   setModelStatus,
   getAeatCertificates,
 } from "../../../services/service.js";
-import { getEstimationModelsFiscal } from "../../../services/fiscalService.js";
 import { CONST_FISCAL, FISCAL_VIEWS } from "../FiscalEnums.js";
 import { AonCheckbox } from "../../../components/aon-checkbox.js";
 import { AonSelect } from "../../../components/aon-select.js";
@@ -29,7 +28,6 @@ import { AonTable } from "../../../components/aon-table.js";
 import { FiscalUtils } from "../FiscalUtils.js";
 import { AonAutosizeTextarea } from "../../../components/aon-autosize-textarea.js";
 import { DataAttachSource } from "../../../models/DataAttachSource.js";
-import { FISCAL } from "../../../services/app.js";
 import * as LS from "../../../services/localStorageService.js";
 import { AonNumber } from "../../../components/aon-number.js";
 import { AonDate } from "../../../components/aon-date.js";
@@ -114,7 +112,6 @@ export class AonTax extends AonElement {
   paintView() {
     let aonTable = this.isMobile() ? new AonMobileList() : new AonTable();
     aonTable.id = this.TABLE_ID;
-    aonTable.setApp(FISCAL);
     this.appendChild(aonTable);
   }
 
