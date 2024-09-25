@@ -14,12 +14,11 @@ import {
 } from "../../environments/environments.js";
 import * as ACTION from "../actions.js";
 import * as LS from "../../services/localStorageService.js";
-import { PAYROLL } from "../../services/app.js";
-import { AonTable } from "../../components/aon-table.js";
 import { formatNumber } from "../../services/utils.js";
 import { AonToolbar } from "../../components/aon-toolbar.js";
 import { ToolbarType } from "../../models/enums.js";
 import { AonSepaList } from "./aon-sepa-list.js";
+import { createList } from "../../components/CreateComponent.js";
 
 export class AonSepa extends AonElement {
   more;
@@ -73,9 +72,7 @@ export class AonSepa extends AonElement {
 	if(this.sepaDoc.rattach) toolbar.addButton2(ACTION.DOWNLOAD_FILE, () => this.downloadSepaFile());
     toolbar.addButton2(ACTION.BACK, () => this.back());
 
-    let aonDocumentalSepa = new AonTable();
-    aonDocumentalSepa.id = this.TABLE;
-    aonDocumentalSepa.setApp(PAYROLL);
+    let aonDocumentalSepa = createList(this.TABLE);
     this.appendChild(aonDocumentalSepa);
 
 	let aonDocumentalSepaBody = aonDocumentalSepa.getElementsByTagName('tbody')[0];

@@ -8,7 +8,6 @@ import { PRESENCE_FILTER, SigninSidenav } from "../../timecontrol/signinEnums.js
 import { AonMobileList } from "../../../components/aon-mobile-list.js";
 import { AonTable } from "../../../components/aon-table.js";
 import { AonDateUtils } from "../../utils/AonDateUtils.js";
-import { PAYROLL } from "../../../services/app.js";
 import * as LS from "../../../services/localStorageService.js";
 
 export class AonMovementsList extends AonElement {
@@ -65,7 +64,6 @@ export class AonMovementsList extends AonElement {
   paintView() {
     let aonTable = this.isMobile() ? new AonMobileList() : new AonTable();
     aonTable.id = this.TABLE_ID;
-    aonTable.setApp(PAYROLL);
     this.appendChild(aonTable);
   }
 

@@ -13,7 +13,6 @@ import { CONSTANT } from "../../../environments/environments.js";
 import { AonMobileList } from "../../../components/aon-mobile-list.js";
 import { AonTable } from "../../../components/aon-table.js";
 import { AonDateUtils } from "../../utils/AonDateUtils.js";
-import { PAYROLL } from "../../../services/app.js";
 
 
 export class AonCtaList extends AonElement {
@@ -56,7 +55,6 @@ export class AonCtaList extends AonElement {
     this.getApplication().removeToolbarOptions();        
     let aonTable = this.isMobile() ? new AonMobileList() : new AonTable();
     aonTable.id = this.TABLE_ID;
-    aonTable.setApp(PAYROLL);
     this.appendChild(aonTable);
   }
 

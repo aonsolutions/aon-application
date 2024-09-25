@@ -41,7 +41,7 @@ export class AonNewDate extends AonNewInput {
     this.DATEPICKER_YEAR = this.DATEPICKER + 'Year';
     this.DATEPICKER_DAYS = this.DATEPICKER + 'Days';
 
-    this.date = new Date(Date.now());
+    this.date =  this.date || new Date(Date.now());
     this.day = this.date.getDate();
     this.month = this.date.getMonth();
     this.year = this.date.getFullYear();
@@ -49,7 +49,6 @@ export class AonNewDate extends AonNewInput {
   }
 
   buildDate() {
-    this.setValue(this.value);
     let rootDiv = this.getElement(this.ROOT);
     rootDiv.style.minWidth = '75px';
     this.addIcon(MATERIAL_ICONS.CALENDAR_TODAY, undefined, () => this.openDatepicker());
@@ -74,7 +73,7 @@ export class AonNewDate extends AonNewInput {
       const day = parseInt(values[0]);
        
       const d = new Date(year, month, day);
-        
+      
       if (!isNaN(d)) {          
         this.setDate(d);
         const dates = [d.getDate(), d.getMonth() + 1, d.getFullYear()];
@@ -109,7 +108,6 @@ export class AonNewDate extends AonNewInput {
     return str;
   }
   
-
   buildDatepicker() {
     let rootDiv = this.getElement(this.ROOT);
 
@@ -343,53 +341,16 @@ export class AonNewDate extends AonNewInput {
 
   setDate(date) {
     let input = this.getElement(this.INPUT);
-    if(date instanceof Date) {
-      this.date = date;
-      this.day = this.date.getDate();
-      this.month = this.date.getMonth();
-      this.year = this.date.getFullYear();
-      this.value = this.year + '-' + (this.addZero(this.month + 1)) + '-' + this.addZero(this.day);
-      input.value = this.addZero(this.day) + '/' + (this.addZero(this.month + 1)) + '/' + this.year;
-      this.buildCalendar();
-    } else if(date){
-      let dateParse = Date.parse(date);
-      this.date = isNaN(dateParse) 
-        ? AonDateUtils.parseStr(date) 
-        : new Date(dateParse);
-      this.day = this.date.getDate();
-      this.month = this.date.getMonth();
-      this.year = this.date.getFullYear();
-      this.value = this.year + '-' + (this.addZero(this.month + 1)) + '-' + this.addZero(this.day);
-      input.value = this.addZero(this.day) + '/' + (this.addZero(this.month + 1)) + '/' + this.year;
-      this.buildCalendar();
-    }
-    this.dispatchEvent(new CustomEvent(EVENT.CHANGE, {detail: this.date}));
+    this.date = (date instanceof Date)
+      ? date : AonDateUtils.parse(date);
+    if(input) input.value = AonDateUtils.formatDate(this.date, '/');
+    let datepickerDays = this.getElement(this.DATEPICKER_DAYS);    
+    if(datepickerDays) this.buildCalendar();
+    if(input && datepickerDays) this.dispatchEvent(new CustomEvent(EVENT.CHANGE, {detail: this.date}));
   }
 
   setValue(value) {
-    let input = this.getElement(this.INPUT);
-    if(value instanceof Date) {
-      this.date = value;
-      this.day = this.date.getDate();
-      this.month = this.date.getMonth();
-      this.year = this.date.getFullYear();
-      this.value = this.year + '-' + (this.addZero(this.month + 1)) + '-' + this.addZero(this.day);
-      input.value = this.addZero(this.day) + '/' + (this.addZero(this.month + 1)) + '/' + this.year;
-    } else if(value){
-      let dateParse = Date.parse(date);
-      this.date = isNaN(dateParse) 
-        ? AonDateUtils.parseStr(date) 
-        : new Date(dateParse);
-      this.day = this.date.getDate();
-      this.month = this.date.getMonth();
-      this.year = this.date.getFullYear();
-      this.value = this.year + '-' + (this.addZero(this.month + 1)) + '-' + this.addZero(this.day);
-      input.value = this.addZero(this.day) + '/' + (this.addZero(this.month + 1)) + '/' + this.year;
-    }
-  }
-
-  addZero(d){
-    return d.toString().padStart(2, "0");
+    this.setDate(value);
   }
 
   focus() {
@@ -427,9 +388,12 @@ export class AonNewDate extends AonNewInput {
   }
 
   getValue() {
-    return this.value;
-  }
+    return AonDateUtils.formatDate(this.date);
+  } 
   
+  getDateValue() {
+    return AonDateUtils.formatDate(this.date, 'yyyy-MM-dd');
+  }
 
 }
 if(!window.customElements.get(TAG.AON_NEW_DATE)){

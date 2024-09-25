@@ -6,14 +6,25 @@ export const AonDateUtils = {
   /**
    *
    * @param {Date} date
-   * @return {String} dd-MM-yyyy
+   * @return {String} dd/MM/yyyy
   */
-  formatDate: function (d) {
+  formatDate: function (d, format) {
+    format = format || 'dd/MM/yyyy';
     const date = new Date(d);
     const day = addZero(date.getDate(), 2);
     const month = addZero(date.getMonth() + 1, 2);
     const year = date.getFullYear();
-    return day + "/" + month + "/" + year;
+
+    switch (format) {
+      case 'dd-MM-yyyy':
+        return day + "-" + month + '-' + year;
+      case 'yyyy-MM-dd':
+        return year + "-" + month + '-' + day;
+      case 'yyyy/MM/dd':
+        return year + "/" + month + '/' + day;
+      default:
+        return day + "/" + month + '/' + year;
+    }
   },
   /**
    *
@@ -196,38 +207,23 @@ export const AonDateUtils = {
     let seconds = Math.floor(time / 1000);
     return addZero(hours, 2) + ":" + addZero(minutes, 2) + ":" + addZero(seconds, 2);
   },
-
-  parseStr: function (dateStr) {
-      if(dateStr.includes('/')){
-        let dateArr = dateStr.split('/');
-        let a = dateArr[0].length === 1 
-            ? '0' + dateArr[0] : dateArr[0];
-        let b = dateArr[1].length === 1 
-            ? '0' + dateArr[1] : dateArr[1];
-        let c = dateArr[2];
-        dateStr = a + b + c;       
-      } 
-      
-      if(dateStr.includes('-')){
-        let dateArr = dateStr.split('-');
-        let a = dateArr[0].length === 1 
-            ? '0' + dateArr[0] : dateArr[0];
-        let b = dateArr[1].length === 1 
-            ? '0' + dateArr[1] : dateArr[1];
-        let c = dateArr[2];
-        dateStr = a + b + c;       
-      } 
- 
-      let day = dateStr.substring(0, 2);
-      let month = dateStr.substring(2, 4);
-      let year = dateStr.substring(4);
-
-      if(Number(month) > 12 || Number(day) > 31 || year.length > 4){
-        return this.date;
-      } else {
-        let d = month + '/' + day + '/' + year;
-        return new Date(d);
-      }
+  parse: function(dateStr) {
+    dateStr = dateStr.replaceAll('"', '');
+    let dateParse = Date.parse(dateStr);
+    if(isNaN(dateParse)) {
+      dateParse = Date.parse(dateStr.substring(0,10))
+    } 
+    if(isNaN(dateParse) && (dateStr.includes('/') || dateStr.includes('-'))) {
+      let dateArr = dateStr.includes('/') ? dateStr.split('/') : dateStr.split('-');
+      let a = dateArr[0].length === 4 
+      ? addZero(dateArr[2], 2) : addZero(dateArr[0], 2);
+      let b = addZero(dateArr[2], 2);
+      let c = dateArr[0].length === 4 
+          ? dateArr[0] : dateArr[2].substring(0, 4);
+      dateStr = a + '/' + b + '/' + c;
+      dateParse = Date.parse(dateStr);
+    }
+    return new Date(dateParse);
   },
   /**
    *

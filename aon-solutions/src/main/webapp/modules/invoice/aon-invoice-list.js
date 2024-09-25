@@ -8,16 +8,13 @@ import { Invoice, getDocumentNumber } from './Invoice.js';
 
 import {addInvoices, setInvoices, setIndex} from './InvoiceCache.js';
 
-import '../../components/aon-table.js';
-
 import { CONSTANT, MATERIAL_ICONS, MSG, TAG } from '../../environments/environments.js';
 
 import * as ACTION from '../actions.js';
 import { formatNumber } from '../../services/utils.js';
 import * as LS from '../../services/localStorageService.js';
-import { INVOICE } from '../../services/app.js';
-import { AonTable } from '../../components/aon-table.js';
 import { AonDateUtils } from '../utils/AonDateUtils.js';
+import { createList } from '../../components/CreateComponent.js';
 
 export class AonInvoiceList extends AonElement {
 
@@ -50,32 +47,48 @@ export class AonInvoiceList extends AonElement {
 	}
 
  	build() {
-		let aonInvoiceTable = new AonTable();
-		aonInvoiceTable.id = this.TABLE;
-		aonInvoiceTable.selectable = 'true';
-		aonInvoiceTable.setApp(INVOICE);
-		this.appendChild(aonInvoiceTable);
-		aonInvoiceTable.addColumn(MSG.DATE, 'date', 'dateTable', '120px');
-		if (this.getFilter().status === 'accounting' && this.getFilter().type != 'sales') {
-			aonInvoiceTable.addColumn(MSG.INVOICE_DOCUMENT_NUMBER, 'string', 'documentNumber', '150px');
+		if(this.isProcessing()) this.buildProcessing();
+		else {
+			let aonInvoiceTable = createList(this.TABLE); 
+			aonInvoiceTable.selectable = 'true';
+			this.appendChild(aonInvoiceTable);
+			aonInvoiceTable.addColumn(MSG.DATE, 'date', 'dateTable', '120px');
+			if (this.getFilter().status === 'accounting' && this.getFilter().type != 'sales') {
+				aonInvoiceTable.addColumn(MSG.INVOICE_DOCUMENT_NUMBER, 'string', 'documentNumber', '150px');
+			}
+			aonInvoiceTable.addColumn(MSG.INVOICE_NUMBER, 'string', 'reference', '150px');
+			aonInvoiceTable.addColumn(MSG.HOLDER, 'string', 'name', 'auto');
+			aonInvoiceTable.addColumn(MSG.AMOUNT, 'number', 'totalParse', '100px');
+			aonInvoiceTable.addColumn('', 'icons', 'icons', '100px');
+	
+			this.init();
+			aonInvoiceTable.addEventListener('more', () => {
+				if(this.more)
+					this.loadMore();
+			});
+	
+			aonInvoiceTable.addEventListener('select', () => {
+				if(aonInvoiceTable.selected.length === 1) {
+					this.addInvoiceActions();
+				} else if(aonInvoiceTable.selected.length === 0){
+					this.removeInvoiceActions();
+				}
+			});			
 		}
-		aonInvoiceTable.addColumn(MSG.INVOICE_NUMBER, 'string', 'reference', '150px');
-		aonInvoiceTable.addColumn(MSG.HOLDER, 'string', 'name', 'auto');
-		aonInvoiceTable.addColumn(MSG.AMOUNT, 'number', 'totalParse', '100px');
+	}
+
+	buildProcessing() {
+		let aonInvoiceTable = createList(this.TABLE); 
+		aonInvoiceTable.selectable = 'true';
+		this.appendChild(aonInvoiceTable);
+		aonInvoiceTable.addColumn(MSG.DATE, 'date', 'dateTable', '120px');;
+		aonInvoiceTable.addColumn(MSG.NAME, 'string', 'name', 'auto');
 		aonInvoiceTable.addColumn('', 'icons', 'icons', '100px');
 
 		this.init();
 		aonInvoiceTable.addEventListener('more', () => {
 			if(this.more)
 				this.loadMore();
-		});
-
-		aonInvoiceTable.addEventListener('select', () => {
-			if(aonInvoiceTable.selected.length === 1) {
-				this.addInvoiceActions();
-			} else if(aonInvoiceTable.selected.length === 0){
-				this.removeInvoiceActions();
-			}
 		});
 	}
 
@@ -87,25 +100,27 @@ export class AonInvoiceList extends AonElement {
 		}
 		invoice.paymethod = invoice.finances && invoice.finances.length > 0
 			? this.getPaymethod(invoice.finances[0].paymethod) : '';
-
-		let dateParse = Date.parse(invoice.date);
-		invoice.date = isNaN(dateParse) 
-			? AonDateUtils.parseStr(invoice.date) 
-			: new Date(dateParse);
-
-		let date = new Date(invoice.date);
-		let day = date.getDate();
-		let month = date.getMonth() + 1;
-		let year = date.getFullYear();
-		invoice.dateTable = day.toString().zeros(2) + '/' + month.toString().zeros(2) + '/' + year.toString();
+		invoice.date = AonDateUtils.parse(invoice.date);
+		invoice.dateTable = AonDateUtils.formatDate(invoice.date);
 		invoice.documentNumber =  getDocumentNumber(invoice);
 		invoice.totalParse = formatNumber(invoice.total, 2, "EUR");
 		invoice.icons = this.buildRowIcons(invoice); 
-		aonInvoiceTable.addRow(invoice, () => this.aonInvoice(invoice, idx), (e) => this.aonInvoiceContextMenu(e, invoice, idx));
+		this.getTable().addRow(invoice, () => this.aonInvoice(invoice, idx), (e) => this.aonInvoiceContextMenu(e, invoice, idx));
 	}
 
+	paintProcessingRow(idx, invoice) {
+		if(invoice.file) {
+			let key = invoice.file.s3Key;
+			let keyValues = key.split("/");
+			invoice.name = keyValues[keyValues.length - 1];
+		}
+		if(!invoice.name) invoice.name = '';
+
+		this.getTable().addRow(invoice, () => {}, () => {});
+	}
+		
 	loadMore() {
-		let aonInvoiceTable = document.getElementById('aonInvoiceTable');
+		let aonInvoiceTable = this.getTable();
 		let filter = this.getFilter();
 		
 		if(aonInvoiceTable && filter.page && filter.status === 'accounting') {
@@ -139,7 +154,7 @@ export class AonInvoiceList extends AonElement {
 				invoice.dateTable = day.toString().zeros(2) + '/' + month.toString().zeros(2) + '/' + year.toString();
 				invoice.totalParse = formatNumber(invoice.total, 2, "EUR");
 				invoice.icons = this.buildRowIcons(invoice);
-				aonInvoiceTable.addRow(invoice, () => {
+				this.getTable().addRow(invoice, () => {
 					getInvofoxDocument(invoice.id).then( doc => {
 						this.aonInvoice(doc, i);
 					}); 
@@ -150,7 +165,7 @@ export class AonInvoiceList extends AonElement {
 
 	init() {
 		this.more = true;
-		let aonInvoiceTable = document.getElementById('aonInvoiceTable');
+		let aonInvoiceTable = this.getTable();
 		if(aonInvoiceTable) {
 			getInvoices(this.getFilter()).then(invoices => {
 				if(!this.getDur().isInvoiceManager() && !this.getDur().isInvoicePortal()) {
@@ -167,7 +182,8 @@ export class AonInvoiceList extends AonElement {
 				aonInvoiceTable.selected = [];
 				this.removeInvoiceActions();
 				invoices.forEach((invoice, i) => {
-					this.paintAccountingRow(i, invoice);
+					if(this.isProcessing()) this.paintProcessingRow(i, invoice);
+					else this.paintAccountingRow(i, invoice);
 				});
 			});
 
@@ -316,7 +332,7 @@ export class AonInvoiceList extends AonElement {
 
 	deleteInvoices() {
 		let cont = 0;
-		let aonInvoiceTable = document.getElementById('aonInvoiceTable');
+		let aonInvoiceTable = this.getTable();
 		aonInvoiceTable.selected.forEach((invoice, i) => {
 			invoice.status = CONSTANT.DRAFT;
 			insertInvoice(invoice).then(() => {
@@ -329,20 +345,19 @@ export class AonInvoiceList extends AonElement {
 	}
 
 	deleteForeverInvoices() {
-		let aonInvoiceTable = document.getElementById('aonInvoiceTable');
 		let aonInvoice = this.getElement('aonInvoice');
 		let d = document.getElementById(aonInvoice.DIALOG);
 		d.clear();
 		if(!this.isMobile()) d.width = '400px';
 		d.setTitle(MSG.DELETE_FOREVER);
 		d.setContentHTML('Estás seguro de eliminar las facturas seleccionadas');
-		d.addAcceptAction(() => deleteRawdocInvoices(aonInvoiceTable.selected.map(r => r.id)).then(() => this.init()));
+		d.addAcceptAction(() => deleteRawdocInvoices(this.getTable().selected.map(r => r.id)).then(() => this.init()));
 		d.open();
 	}
 
 	rejectInvoices() {
 		let cont = 0;
-		let aonInvoiceTable = document.getElementById('aonInvoiceTable');
+		let aonInvoiceTable = this.getTable();
 		aonInvoiceTable.selected.forEach((invoice, i) => {
 			invoice.status = CONSTANT.REJECTED;
 			insertInvoice(invoice).then(() => {
@@ -355,12 +370,11 @@ export class AonInvoiceList extends AonElement {
 	}
 
 	downloadInvoices() {
-		let aonInvoiceTable = document.getElementById('aonInvoiceTable');
 		let data = {
 			domainId: localStorage.getItem('aon_domain_id'),
 			domainName: localStorage.getItem('aon_domain_name'),
 			domainLogin: localStorage.getItem('aon_domain_login'),
-			ids: aonInvoiceTable.selected.map(r => r.id),
+			ids: this.getTable().selected.map(r => r.id),
 			status: this.getFilter().status
 		};
 		let json = btoa(JSON.stringify(data));
@@ -376,10 +390,9 @@ export class AonInvoiceList extends AonElement {
 		d.setContentHTML('<aon-input id="sendInvoicesMail" description="Email"></aon-input>');
 		d.addAcceptAction(() => {
 			let mail = this.getElement('sendInvoicesMail');
-			let aonInvoiceTable = document.getElementById('aonInvoiceTable');
 			let message = {
 				to: mail.value,
-				invoices: aonInvoiceTable.selected
+				invoices: this.getTable().selected
 			};
 			sendInvoiceMail(message).then(() => {});
 		});
@@ -387,7 +400,6 @@ export class AonInvoiceList extends AonElement {
 	}
 
 	recordInvoices() {
-		let aonInvoiceTable = document.getElementById('aonInvoiceTable');
 		let aonInvoice = this.getElement('aonInvoice');
 		let d = document.getElementById(aonInvoice.DIALOG);
 		d.clear();
@@ -396,7 +408,7 @@ export class AonInvoiceList extends AonElement {
 		d.setContentHTML('Estás seguro de aceptar y contabilizar las facturas seleccionadas');
 		d.addAcceptAction(() => {
 			let data = {
-				invoices:aonInvoiceTable.selected.map(r => r.id)			
+				invoices:this.getTable().selected.map(r => r.id)			
 			}
 			recordInvoices(data).then(() => this.init())
 		});
@@ -421,8 +433,7 @@ export class AonInvoiceList extends AonElement {
 		d.setContent(certSelect);
 		d.addAcceptAction(() => {
 			this.getApplication().startLoader();
-			let aonInvoiceTable = document.getElementById('aonInvoiceTable');
-			let data = {invoices: aonInvoiceTable.selected}
+			let data = {invoices: this.getTable().selected}
 			data.cert = certSelect.value;
 			nullInvoices(data).then(r => {
 				this.getApplication().stopLoader(); 
@@ -437,7 +448,7 @@ export class AonInvoiceList extends AonElement {
 
 	restoreInvoices() {
 		let cont = 0;
-		let aonInvoiceTable = document.getElementById('aonInvoiceTable');
+		let aonInvoiceTable = this.getTable();
 		aonInvoiceTable.selected.forEach((invoice, i) => {
 			invoice.status = CONSTANT.INBOX;
 			insertInvoice(invoice).then(() => {
@@ -459,6 +470,14 @@ export class AonInvoiceList extends AonElement {
 		aonInvoice.removeToolbarOption(ACTION.DELETE_FOREVER);
 		aonInvoice.removeToolbarOption(ACTION.DOWNLOAD_INVOICE);
 		aonInvoice.removeToolbarOption(ACTION.SEND_INVOICE);
+	}
+
+	getTable(){
+		return this.getElement(this.TABLE);
+	}
+
+	isProcessing() {
+		return this.getFilter().status &&  this.getFilter().status === 'processing';
 	}
 
 	getPaymethod(paymethod) {
@@ -486,8 +505,7 @@ export class AonInvoiceList extends AonElement {
 	}
 
 	aonInvoiceContextMenu(e, invoice, i) {
-		let aonInvoiceTable = document.getElementById('aonInvoiceTable');
-		const number = aonInvoiceTable.selected.length;
+		const number = this.getTable().selected.length;
 		
 		let inv = new Invoice(invoice);
 	

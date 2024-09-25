@@ -158,7 +158,7 @@ export class AonMobilePackaging extends AonElement {
 		let date = createDate(this.PACKAGING_PRODUCT_SERIAL_DATE, "Fecha Lote");
 		date.addEventListener(EVENT.CHANGE, (e) => {
 			if(this.packaging.item)
-				this.packaging.item.serialDate = date.value;
+				this.packaging.item.serialDate = date.getDateValue();
 		});
 		table.addCell(date);
 
