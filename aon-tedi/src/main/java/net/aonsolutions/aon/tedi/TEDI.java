@@ -118,15 +118,17 @@ public class TEDI {
 			if (rawdoc == null) {
 				throw new TediException("No se ha encontrado el documento " + rawdocId + "en el dominio " + "( " + ctx.getDomainId() + " - " + ctx.getDomainName() +")");
 			}
-			
+
 			if(rawdoc.getData() == null && !AonStringUtils.isBlank(rawdoc.getS3Key())) {
 				byte[] data = S3.download(rawdoc.getS3Bucket(), rawdoc.getS3Key());
 				rawdoc.setData(data);
 				rawdoc.setMimeType(MimeType.PDF);
+				rawdoc.setJson(null);
 			}
 			TediResult result = null;
 			if ( AonStringUtils.isBlank( rawdoc.getJson() )) {
-				rawdoc = RawdocDAO.getFull(ctx, rawdocId);
+				if(rawdoc.getData() == null)
+					rawdoc = RawdocDAO.getFull(ctx, rawdocId);
 				result = parse(tctx, new ByteArrayInputStream(rawdoc.getData()), rawdoc.getMimeType());
 			} else {
 				result = TediParser.toFullInvoice(ctx, tctx.getAonConfiguration(), rawdoc);
