@@ -15,6 +15,7 @@ import com.esferalia.aon.occam.impl.jooq.dao.ConfigurationDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.RawdocDAO;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
+import solutions.aon.aws.s3.S3;
 import solutions.aon.in.invoice.img.InvoiceIMGException;
 import solutions.aon.in.invoice.img.InvoiceIMGParser;
 import solutions.aon.in.invoice.pdf.InvoicePDFException;
@@ -116,6 +117,12 @@ public class TEDI {
 			Rawdoc rawdoc = RawdocDAO.get(ctx, rawdocId);
 			if (rawdoc == null) {
 				throw new TediException("No se ha encontrado el documento " + rawdocId + "en el dominio " + "( " + ctx.getDomainId() + " - " + ctx.getDomainName() +")");
+			}
+			
+			if(rawdoc.getData() == null && !AonStringUtils.isBlank(rawdoc.getS3Key())) {
+				byte[] data = S3.download(rawdoc.getS3Bucket(), rawdoc.getS3Key());
+				rawdoc.setData(data);
+				rawdoc.setMimeType(MimeType.PDF);
 			}
 			TediResult result = null;
 			if ( AonStringUtils.isBlank( rawdoc.getJson() )) {
