@@ -567,6 +567,118 @@ export class AonJsfCommercialGeozoneStat extends AonJsfApp {
 	}
 }
 
+export class AonJsfNews extends AonJsfApp {
+	
+	constructor() {
+		super();
+		this.setViewId('/facelet/app/news.xhtml');
+	}
+}
+
+export class AonJsfNewsletter extends AonJsfApp {
+	
+	constructor() {
+		super();
+		this.setViewId('/facelet/app/newsletter.xhtml');
+	}
+}
+
+export class AonJsfMessages extends AonJsfApp {
+	
+	constructor() {
+		super();
+		this.setViewId('/facelet/app/messages.xhtml');
+	}
+}
+
+export class AonJsfHtmlTemplate extends AonJsfApp {
+	
+	constructor() {
+		super();
+		this.setViewId('/facelet/app/htmlTemplate.xhtml');
+	}
+}
+
+export class AonJsfMarketingTemplate extends AonJsfApp {
+	
+	constructor() {
+		super();
+		this.setViewId('/facelet/app/marketingTemplate.xhtml');
+	}
+}
+
+export class AonJsfCompanyImages extends AonJsfApp {
+	
+	constructor() {
+		super();
+		this.setViewId('/facelet/app/companyImages.xhtml');
+	}
+}
+
+export class AonJsfMailProcess extends AonJsfApp {
+	
+	constructor() {
+		super();
+		this.setViewId('/facelet/app/mailProcess.xhtml');
+	}
+}
+
+export class AonJsfCommunicationCenter extends AonJsfApp {
+	
+	constructor() {
+		super();
+		this.setViewId('/facelet/app/communicationCenter.xhtml');
+	}
+}
+
+export class AonJsfMarketingCampaign extends AonJsfApp {
+	
+	constructor() {
+		super();
+		this.setViewId('/facelet/app/marketingCampaign.xhtml');
+	}
+}
+
+export class AonJsfSurvey extends AonJsfApp {
+	
+	constructor() {
+		super();
+		this.setViewId('/facelet/app/survey.xhtml');
+	}
+}
+
+export class AonJsfSurveyResponse extends AonJsfApp {
+	
+	constructor() {
+		super();
+		this.setViewId('/facelet/app/surveyResponse.xhtml');
+	}
+}
+
+export class AonJsfProject extends AonJsfApp {
+	
+	constructor() {
+		super();
+		this.setViewId('/facelet/app/project.xhtml');
+	}
+}
+
+export class AonJsfProjectType extends AonJsfApp {
+	
+	constructor() {
+		super();
+		this.setViewId('/facelet/app/projectType.xhtml');
+	}
+}
+
+export class AonJsfActivityType extends AonJsfApp {
+	
+	constructor() {
+		super();
+		this.setViewId('/facelet/app/activityType.xhtml');
+	}
+}
+
 if(!window.customElements.get(TAG.AON_JSF_APP)){
 	window.customElements.define(TAG.AON_JSF_APP, AonJsfApp);
 }
@@ -802,3 +914,61 @@ if(!window.customElements.get(TAG.AON_JSF_COMMISSION_CALC)){
 if(!window.customElements.get(TAG.AON_JSF_COMMISSION_TYPE)){
 	window.customElements.define(TAG.AON_JSF_COMMISSION_TYPE, AonJsfCommissionType);
 }
+
+if(!window.customElements.get(TAG.AON_JSF_MESSAGES)){
+	window.customElements.define(TAG.AON_JSF_MESSAGES, AonJsfMessages);
+}
+
+if(!window.customElements.get(TAG.AON_JSF_NEWS)){
+	window.customElements.define(TAG.AON_JSF_NEWS, AonJsfNews);
+}
+
+if(!window.customElements.get(TAG.AON_JSF_NEWSLETTER)){
+	window.customElements.define(TAG.AON_JSF_NEWSLETTER, AonJsfNewsletter);
+}
+
+if(!window.customElements.get(TAG.AON_JSF_HTML_TEMPLATE)){
+	window.customElements.define(TAG.AON_JSF_HTML_TEMPLATE, AonJsfHtmlTemplate);
+}
+
+if(!window.customElements.get(TAG.AON_JSF_MARKETING_TEMPLATE)){
+	window.customElements.define(TAG.AON_JSF_MARKETING_TEMPLATE, AonJsfMarketingTemplate);
+}
+
+if(!window.customElements.get(TAG.AON_JSF_COMPANY_IMAGES)){
+	window.customElements.define(TAG.AON_JSF_COMPANY_IMAGES, AonJsfCompanyImages);
+}
+
+if(!window.customElements.get(TAG.AON_JSF_MAIL_PROCESS)){
+	window.customElements.define(TAG.AON_JSF_MAIL_PROCESS, AonJsfMailProcess);
+}
+
+if(!window.customElements.get(TAG.AON_JSF_MARKETING_CAMPAIGN)){
+	window.customElements.define(TAG.AON_JSF_MARKETING_CAMPAIGN, AonJsfMarketingCampaign);
+}
+
+if(!window.customElements.get(TAG.AON_JSF_COMMUNICATION_CENTER)){
+	window.customElements.define(TAG.AON_JSF_COMMUNICATION_CENTER, AonJsfCommunicationCenter);
+}
+
+if(!window.customElements.get(TAG.AON_JSF_SURVEY)){
+	window.customElements.define(TAG.AON_JSF_SURVEY, AonJsfSurvey);
+}
+
+if(!window.customElements.get(TAG.AON_JSF_SURVEY_RESPONSE)){
+	window.customElements.define(TAG.AON_JSF_SURVEY_RESPONSE, AonJsfSurveyResponse);
+}
+
+if(!window.customElements.get(TAG.AON_JSF_PROJECT)){
+	window.customElements.define(TAG.AON_JSF_PROJECT, AonJsfProject);
+}
+
+if(!window.customElements.get(TAG.AON_JSF_PROJECT_TYPE)){
+	window.customElements.define(TAG.AON_JSF_PROJECT_TYPE, AonJsfProjectType);
+}
+
+if(!window.customElements.get(TAG.AON_JSF_ACTIVITY_TYPE)){
+	window.customElements.define(TAG.AON_JSF_ACTIVITY_TYPE, AonJsfActivityType);
+}
+
+
