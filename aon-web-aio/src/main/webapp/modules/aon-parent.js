@@ -310,7 +310,11 @@ export class AonParent extends AonElement {
 				});
 			}
 		}, 100); 
-	}
+		if(!LS.isOnlyOne())
+			LS.setCompanySelected(false);
+		else 
+			LS.setCompanySelected(true);
+		}
 	
 
 	loadMore() {
@@ -412,6 +416,7 @@ export class AonParent extends AonElement {
 		aonHeaderCompany.style.display = 'block';
 
 		if(!onlyOne){ 
+			LS.setCompanySelected(true);
 			let aonHeaderCompanyList = this.getElement(BASE_ID + 'CompanyList');
 			aonHeaderCompanyList.style.display = 'block';
 			let aonHeaderCompanyListButton = this.getElement(BASE_ID + 'CompanyListButton');

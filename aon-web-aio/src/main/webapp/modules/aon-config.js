@@ -170,6 +170,7 @@ export class AonConfig extends AonElement {
 
         sideNavSwitch.addEventListener(EVENT.CHANGE, () => {
             LS.setLeftMenu(sideNavSwitch.checked);
+            LS.setPortalChecked(sideNavSwitch.checked);
             if(LS.isLeftMenu()) {
                 aonMenu.showSideNav();
             } else {
