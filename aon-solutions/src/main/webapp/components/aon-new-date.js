@@ -349,8 +349,8 @@ export class AonNewDate extends AonNewInput {
     if(input && datepickerDays) this.dispatchEvent(new CustomEvent(EVENT.CHANGE, {detail: this.date}));
   }
 
-  setValue(value) {
-    this.setDate(value);
+  setValue(value) { 
+
   }
 
   focus() {
