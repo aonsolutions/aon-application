@@ -217,6 +217,9 @@ export const AON_ACCOUNTING_MENU = 'aon-accounting-menu';
 export const AON_SUITE_MENU = 'aon-suite-menu';
 
 export const AON_GROUPWARE_MENU = 'aon-groupware-menu';
+export const AON_JSF_PROJECT = 'aon-jsf-project' ;
+export const AON_JSF_PROJECT_TYPE = 'aon-jsf-project-type' ;
+export const AON_JSF_ACTIVITY_TYPE = 'aon-jsf-activity-type' ;
 
 export const AON_COMMERCIAL_MENU = 'aon-commercial-menu';
 export const AON_JSF_SELLER = 'aon-jsf-seller' ;

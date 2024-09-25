@@ -655,6 +655,30 @@ export class AonJsfSurveyResponse extends AonJsfApp {
 	}
 }
 
+export class AonJsfProject extends AonJsfApp {
+	
+	constructor() {
+		super();
+		this.setViewId('/facelet/app/project.xhtml');
+	}
+}
+
+export class AonJsfProjectType extends AonJsfApp {
+	
+	constructor() {
+		super();
+		this.setViewId('/facelet/app/projectType.xhtml');
+	}
+}
+
+export class AonJsfActivityType extends AonJsfApp {
+	
+	constructor() {
+		super();
+		this.setViewId('/facelet/app/activityType.xhtml');
+	}
+}
+
 if(!window.customElements.get(TAG.AON_JSF_APP)){
 	window.customElements.define(TAG.AON_JSF_APP, AonJsfApp);
 }
@@ -933,6 +957,18 @@ if(!window.customElements.get(TAG.AON_JSF_SURVEY)){
 
 if(!window.customElements.get(TAG.AON_JSF_SURVEY_RESPONSE)){
 	window.customElements.define(TAG.AON_JSF_SURVEY_RESPONSE, AonJsfSurveyResponse);
+}
+
+if(!window.customElements.get(TAG.AON_JSF_PROJECT)){
+	window.customElements.define(TAG.AON_JSF_PROJECT, AonJsfProject);
+}
+
+if(!window.customElements.get(TAG.AON_JSF_PROJECT_TYPE)){
+	window.customElements.define(TAG.AON_JSF_PROJECT_TYPE, AonJsfProjectType);
+}
+
+if(!window.customElements.get(TAG.AON_JSF_ACTIVITY_TYPE)){
+	window.customElements.define(TAG.AON_JSF_ACTIVITY_TYPE, AonJsfActivityType);
 }
 
 
