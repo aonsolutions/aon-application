@@ -47,7 +47,7 @@ export class AonTab extends AonElement {
 
     printOption(option, i) {
         let span = this.createElement(TAG.SPAN);
-        span.id = this.SPAN + i;
+        span.id = option.id || this.SPAN + i;
         span.innerHTML = option.title;
         span.style.padding = '10px';
         span.style.paddingBottom = '5px';

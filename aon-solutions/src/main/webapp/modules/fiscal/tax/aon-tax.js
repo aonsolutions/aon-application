@@ -12,7 +12,6 @@ import {
   setModelStatus,
   getAeatCertificates,
 } from "../../../services/service.js";
-import { getEstimationModelsFiscal } from "../../../services/fiscalService.js";
 import { CONST_FISCAL, FISCAL_VIEWS } from "../FiscalEnums.js";
 import { AonCheckbox } from "../../../components/aon-checkbox.js";
 import { AonSelect } from "../../../components/aon-select.js";
@@ -144,7 +143,7 @@ export class AonTax extends AonElement {
         aonTable.addColumn("Estado", "", "statusText", "12%");
       }
       aonTable.addColumn("Importe", "number", "resultFormat", "15%");
-      aonTable.addColumn('', 'icons', 'icons', '5%');
+      aonTable.addColumn('', 'icons', 'icons', '100px');
 
       try {
         const resp = await this.getData();
@@ -613,6 +612,14 @@ export class AonTax extends AonElement {
       icons.push(icon);
     }
 
+    let icon = {
+      icon: MATERIAL_ICONS.LIST_ALT,
+      title: "Ver facturas y nóminas incluidas",
+      color: "var(--aonTaxBuildPrintRes)",
+      fn : () => this.getApplication().setContent(new AonTaxDetail(res, "tax"))
+    };
+    icons.push(icon);
+    
     res.icons = icons;
   }
 

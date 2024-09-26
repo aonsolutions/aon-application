@@ -7,18 +7,24 @@ import {
   getFiscalModelsInvoinces,
   getEstimationModelsFiscalInvoinces,
   downloadInvoices,
-  downloadInvoiceExcel,
-  getSalaryPdf
+  getFiscalModelsSalaries,
+  getEstimationModelsFiscalSalaries,
+  getFiscalModelsInvoincesCount,
+  getFiscalModelsSalariesCount,
+  getEstimationModelsFiscalInvoincesCount,
+  getEstimationModelsFiscalSalariesCount,
+  getFiscalModelsInvoincesExcel,
+  getEstimationModelsFiscalInvoincesExcel
 } from "../../../services/service.js";
 import { DomainUserRoles } from "../../../models/DomainUserRoles.js";
 
 import "../../../components/aon-table.js";
 
-import { EVENT, MSG, TAG } from "../../../environments/environments.js";
+import { EVENT, MATERIAL_ICONS, MSG, TAG } from "../../../environments/environments.js";
 import * as ACTION from "../../actions.js";
 import { FISCAL } from "../../../services/app.js";
 import { AonTable } from "../../../components/aon-table.js";
-import { formatNumber, serializeForm } from "../../../services/utils.js";
+import { formatNumber, serializeForm, waitEl } from "../../../services/utils.js";
 import { AonToolbar } from "../../../components/aon-toolbar.js";
 import { ToolbarType } from "../../../models/enums.js";
 import { DataAttachSource } from "../../../models/DataAttachSource.js";
@@ -33,11 +39,15 @@ import { CONST_FISCAL } from "../FiscalEnums.js";
 import { getDocumentNumber } from "../../invoice/Invoice.js";
 import { AonTab } from "../../../components/aon-tab.js";
 import { AonFutureTax } from "./aon-future-tax.js";
+import { AonViewer } from "../../../components/aon-viewer.js";
+import * as LS from '../../../services/localStorageService.js';
 
 export class AonTaxDetail extends AonElement {
   TOOLBAR;
   TABS;
+  MAIN_CONTENT;
   CONTENT;
+  FILE;
   INVOICE_TABLE;
   SALARY_TABLE;
 
@@ -46,9 +56,15 @@ export class AonTaxDetail extends AonElement {
   tax;
   type;
 
+  moreSalary;
+  moreInvoice;
+
   // List of data
   salaries;
   invoices;
+
+  filterSalary;
+  filterInvoice;
 
   /**
    * 
@@ -74,9 +90,14 @@ export class AonTaxDetail extends AonElement {
   initialize() {
     this.TOOLBAR = "taxDetailToolbar";
     this.TABS = "aonTaxDetailTabs";
+    this.MAIN_CONTENT = "aonTaxDetailMainContent";
     this.CONTENT = "aonTaxDetailContent";
+    this.FILE = "aonTaxDetailFile";
     this.INVOICE_TABLE = "aonTaxDetailTable";
     this.SALARY_TABLE = "aonSalaryDetailTable";
+
+    this.moreSalary = true;
+    this.moreInvoice = true;
   }
 
   build() {
@@ -113,14 +134,33 @@ export class AonTaxDetail extends AonElement {
   }
 
   initContent(){
+    let contentDiv = this.createElement(TAG.DIV);
+    contentDiv.id = this.MAIN_CONTENT;
+		contentDiv.style.width = "100%";
+    contentDiv.style.display = "flex";    
+
     let content = this.createElement(TAG.DIV);
 		content.id = this.CONTENT;
 		content.style.width = "100%";
-		this.appendChild(content);
+    contentDiv.appendChild(content);
+
+    let fileDiv = this.createElement(TAG.DIV);
+		fileDiv.id = this.FILE;
+    fileDiv.style.display = 'none';
+    fileDiv.style.position = "relative";
+    contentDiv.appendChild(fileDiv);
+
+    this.appendChild(contentDiv);
   }
 
   createInvoiceTable(){
     this.removeInvoiceActions();
+    this.hideFile();
+
+    if(this.invoices && this.invoices.length > 0){
+      let toolbar = this.getElement(this.TOOLBAR);
+      toolbar.addButton2End(ACTION.DOWNLOAD_EXCEL_INVOICE, () => this.downloadInvoiceExcel());
+    }
 
     let content = this.getElement(this.CONTENT);
 		this.clearElement(content);
@@ -134,10 +174,11 @@ export class AonTaxDetail extends AonElement {
     let aonTaxDetailTableBody = aonTaxDetailTable.getElementsByTagName("tbody")[0];
     aonTaxDetailTableBody.style.height = "calc(100vh - 240px)";
 
-    aonTaxDetailTable.addColumn(MSG.DATE, 'date', 'dateTable', '120px');
-    aonTaxDetailTable.addColumn(MSG.INVOICE_NUMBER, 'string', 'reference', '200px');
+    aonTaxDetailTable.addColumn(MSG.DATE, 'date', 'dateTable', '90px');
+    aonTaxDetailTable.addColumn(MSG.INVOICE_NUMBER, 'string', 'reference', '150px');
     aonTaxDetailTable.addColumn(MSG.HOLDER, 'string', 'name', 'auto');
     aonTaxDetailTable.addColumn(MSG.AMOUNT, 'number', 'totalParse', '100px');
+    aonTaxDetailTable.addColumn('', 'icons', 'icons', '5%');
 
     aonTaxDetailTable.addEventListener('select', () => {
 			if(aonTaxDetailTable.selected.length === 1) {
@@ -147,8 +188,16 @@ export class AonTaxDetail extends AonElement {
 			}
 		});
 
+    aonTaxDetailTable.addEventListener('more', async () => {
+			if(this.moreInvoice){
+        this.getApplication().startLoader();
+				await this.loadMoreInvoice();
+        this.getApplication().stopLoader();
+      }
+		});
+
     if(this.invoices){
-      this.invoices.forEach(invoice => {
+      this.invoices.forEach((invoice, index) => {
         if(!invoice.name){
           invoice.name = invoice.type === 'emitida'
             ? (invoice.receiver ? invoice.receiver.name : '')
@@ -162,20 +211,173 @@ export class AonTaxDetail extends AonElement {
         invoice.documentNumber =  getDocumentNumber(invoice);
         invoice.totalParse = formatNumber(invoice.total, 2, "EUR");
 
-        aonTaxDetailTable.addRow(invoice, () => {});
+        let icons = [];
+        let icon = {
+          icon: MATERIAL_ICONS.VISIBILITY,
+          title: MSG.SHOW_FILE,
+          color: "var(--aonTaxBuildPrintRes)",
+          fn : async () => {
+            this.getApplication().startLoader();
+            await this.showFile('invoice', invoice, index);
+            this.getApplication().stopLoader();
+          }
+        };
+        icons.push(icon);
+        invoice.icons = icons;
+
+        aonTaxDetailTable.addRow(invoice, async () => {
+          this.getApplication().startLoader();
+          await this.showFile('invoice', invoice, index);
+          this.getApplication().stopLoader();
+        });
       });
     }
+  }
+
+  async loadMoreInvoice() {
+    let aonTaxDetailTable = this.getElement(this.INVOICE_TABLE);
+    
+    this.filterInvoice.page = this.filterInvoice.page + 1;
+
+    let modelData;
+    if(this.type == "tax"){
+      console.log("this.filterInvoice");
+      console.log(this.filterInvoice);
+      
+      modelData = await getFiscalModelsInvoinces(this.filterInvoice);
+
+    } else if(this.type == "future"){
+      modelData = await getEstimationModelsFiscalInvoinces(this.filterInvoice);
+    }
+
+    if(!modelData.invoice || modelData.invoice.length == 0){
+      console.log("---- END INVOICE -----");
+      this.moreInvoice = false;
+    }
+    
+    this.invoices.push( ...modelData.invoice );
+
+    modelData.invoice.forEach((invoice, index) => {
+      index = this.invoices.length - modelData.invoice.length + index;
+      if(!invoice.name){
+        invoice.name = invoice.type === 'emitida'
+          ? (invoice.receiver ? invoice.receiver.name : '')
+          : (invoice.sender ? invoice.sender.name : '');
+      }
+      let date = new Date(invoice.date);
+      let day = date.getDate();
+      let month = date.getMonth() + 1;
+      let year = date.getFullYear();
+      invoice.dateTable = day.toString().zeros(2) + '/' + month.toString().zeros(2) + '/' + year.toString();
+      invoice.documentNumber =  getDocumentNumber(invoice);
+      invoice.totalParse = formatNumber(invoice.total, 2, "EUR");
+
+      let icons = [];
+      let icon = {
+        icon: MATERIAL_ICONS.VISIBILITY,
+        title: MSG.SHOW_FILE,
+        color: "var(--aonTaxBuildPrintRes)",
+        fn : async () => {
+          this.getApplication().startLoader();
+          await this.showFile('invoice', invoice, index);
+          this.getApplication().stopLoader();
+        }
+      };
+      icons.push(icon);
+      invoice.icons = icons;
+
+      aonTaxDetailTable.addRow(invoice, async () => {
+        this.getApplication().startLoader();
+        await this.showFile('invoice', invoice, index);
+        this.getApplication().stopLoader();
+      });
+    });
+  }
+  
+
+  hideFile(){
+    let fileDiv = this.getElement(this.FILE);
+		let contentDiv = this.getElement(this.CONTENT);
+
+    fileDiv.style.display = 'none';
+    contentDiv.style.width = '100%';
+  }
+  
+  async showFile(type, file, index){
+    //this.getApplication().startLoader();
+
+    console.log("---- SHOW FILE -----");
+    console.log(file);
+    console.log(index);
+
+    let visibilityButtonId = type === 'invoice' ? 'aonTaxDetailTableIcon' : 'aonSalaryDetailTableIcon'; 
+    
+    let visibilityButton = this.visibilityOffButton(visibilityButtonId, index);
+
+		let visible = 'visibility_off' === visibilityButton.innerHTML;
+		
+    let fileDiv = this.getElement(this.FILE);
+		let contentDiv = this.getElement(this.CONTENT);
+
+		if(visible) {
+			visibilityButton.innerHTML = 'visibility';
+			fileDiv.style.display = 'none';
+			contentDiv.style.width = '100%';
+		} else {
+			visibilityButton.innerHTML = 'visibility_off';
+			fileDiv.style.display = 'block';
+			fileDiv.style.width = '50%';
+			contentDiv.style.width = '50%';
+			
+      this.clearElement(fileDiv);
+
+			let json = {
+				id: file.id,
+				source: type,
+				domain_id: LS.getDomainId(),
+				domain_name: LS.getDomainName(),
+				login: LS.getDomainLogin()
+			};
+
+      let url = type === 'invoice' ? '/ms/api/download_invoice_pdf' : 'ms/api/salary_exporter/salary';
+
+			let viewer = new AonViewer();
+			viewer.type = 'application/pdf';
+			viewer.file = `${url}?json=` + btoa(JSON.stringify(json));
+			viewer.width = fileDiv.offsetWidth;
+			/*
+      viewer.addEventListener(EVENT.SEND_MAIL, () => this.sendInvoice());
+			viewer.addEventListener(EVENT.PRINT_IMAGE, () => { getInvofoxTextContent(this.getInvoice().insight.invofoxId).then(t => viewer.printImageTextLayer(t)); } );
+			viewer.addEventListener(EVENT.PRINT_PDF_PAGE, (e) => { if ( !e.detail.text ) getInvofoxTextContent(this.getInvoice().insight.invofoxId).then(t => viewer.printPdfTextLayer(e.detail.page, t)); } );
+			*/
+      fileDiv.appendChild(viewer);
+
+      await waitEl("#aonViewerCanvasIFrame");
+      viewer.removeButton("aonViewerButtonsDivEmailSpan");
+		}
+	}
+
+  visibilityOffButton(id, index){
+    let visibilityButtons = this.querySelectorAll(`#${id}0`);
+    visibilityButtons.forEach((visibilityButton, i) => {
+      if(i !== index) visibilityButton.innerHTML = 'visibility';
+    });
+
+    return visibilityButtons[index];
   }
 
   addInvoiceActions(){
     let toolbar = this.getElement(this.TOOLBAR);
     toolbar.addButton2End(ACTION.DOWNLOAD_INVOICE, () => this.downloadInvoices());
-    toolbar.addButton2End(ACTION.DOWNLOAD_EXCEL_INVOICE, () => this.downloadInvoiceExcel());
   }
 
   removeInvoiceActions(){
     let toolbar = this.getElement(this.TOOLBAR);
     toolbar.removeButton(ACTION.DOWNLOAD_INVOICE.id);
+  }
+
+  removeInvoiceExcelAction(){
+    let toolbar = this.getElement(this.TOOLBAR);
     toolbar.removeButton(ACTION.DOWNLOAD_EXCEL_INVOICE.id);
   }
 
@@ -194,18 +396,39 @@ export class AonTaxDetail extends AonElement {
 
   downloadInvoiceExcel() {
     let aonInvoiceTable = this.getElement(this.INVOICE_TABLE);
+    /*
     let data = {
       domainId: localStorage.getItem("aon_domain_id"),
       domainName: localStorage.getItem("aon_domain_name"),
       domainLogin: localStorage.getItem("aon_domain_login"),
       ids: aonInvoiceTable.selected.map((r) => r.id)
     };
+
     let json = btoa(JSON.stringify(data));
     downloadInvoiceExcel(json);
+    */
+
+   let filter = {
+      ...this.filterInvoice,
+      ids: aonInvoiceTable.selected.map((r) => r.id),
+      domainId: localStorage.getItem("aon_domain_id"),
+      domainName: localStorage.getItem("aon_domain_name"),
+      domainLogin: localStorage.getItem("aon_domain_login"),
+    }
+
+    let json = btoa(JSON.stringify(filter));
+
+    if(this.type == "tax"){  
+      getFiscalModelsInvoincesExcel(json);
+    }else if(this.type == "future"){
+      getEstimationModelsFiscalInvoincesExcel(json);
+    }
   }
 
   createSalaryTable(){
     this.removeInvoiceActions();
+    this.removeInvoiceExcelAction();
+    this.hideFile();
     
     let content = this.getElement(this.CONTENT);
 		this.clearElement(content);
@@ -221,24 +444,86 @@ export class AonTaxDetail extends AonElement {
     aonSalaryDetailTable.addColumn(MSG.DATE, 'date', 'endDate', '120px');
     aonSalaryDetailTable.addColumn(MSG.EMPLOYEE, 'string', 'employeeName', 'auto');
     aonSalaryDetailTable.addColumn(MSG.AMOUNT, 'number', 'totalParse', '100px');
+    aonSalaryDetailTable.addColumn('', 'icons', 'icons', '5%');
+    aonSalaryDetailTable.addEventListener('more', async () => {
+			if(this.moreSalary){
+        this.getApplication().startLoader();
+        await this.loadMoreSalary();
+        this.getApplication().stopLoader();
+      }
+		});
 
     if(this.salaries){
-      this.salaries.forEach(salary => {
+      this.salaries.forEach((salary, index) => {
         salary.totalParse = formatNumber(salary.totalLiquid, 2, "EUR");
-        aonSalaryDetailTable.addRow(salary, () => this.getSalary({salaryId : salary.id}));
+
+        let icons = [];
+        let icon = {
+          icon: MATERIAL_ICONS.VISIBILITY,
+          title: MSG.SHOW_FILE,
+          color: "var(--aonTaxBuildPrintRes)",
+          fn : async () => {
+            this.getApplication().startLoader();
+            await this.showFile('salary', salary, index)
+            this.getApplication().stopLoader();
+          }
+        };
+        icons.push(icon);
+        salary.icons = icons;
+
+        aonSalaryDetailTable.addRow(salary, async () => {
+          this.getApplication().startLoader();
+          await this.showFile('salary', salary, index)
+          this.getApplication().stopLoader();
+        });
       });
     }
   }
 
-  async getSalary(data){
-    this.getApplication().startLoading();
-    try {
-      await getSalaryPdf(data);
-    } catch (error) {
-      this.showToast(error);
+  async loadMoreSalary() {
+		let aonSalaryDetailTable = this.getElement(this.SALARY_TABLE);
+    
+    this.filterSalary.page = this.filterSalary.page + 1;
+
+    let modelData;
+    if(this.type == "tax"){
+      modelData = await getFiscalModelsSalaries(this.filterSalary);
+
+    } else if(this.type == "future"){
+      modelData = await getEstimationModelsFiscalSalaries(this.filterSalary);
     }
-		this.getApplication().stopLoading();
-  }
+
+    if(!modelData.salary || modelData.salary.length == 0)
+      this.moreSalary = false;
+    
+    this.salaries.push( ...modelData.salary );
+
+    modelData.salary.forEach((salary, index) => {
+      index = this.salaries.length - modelData.salary.length + index;
+
+      salary.totalParse = formatNumber(salary.totalLiquid, 2, "EUR");
+
+      let icons = [];
+      let icon = {
+        icon: MATERIAL_ICONS.VISIBILITY,
+        title: MSG.SHOW_FILE,
+        color: "var(--aonTaxBuildPrintRes)",
+        fn : async () => {
+          this.getApplication().startLoader();
+          await this.showFile('salary', salary, index);
+          this.getApplication().stopLoader();
+        }
+      };
+      icons.push(icon);
+      salary.icons = icons;
+
+      aonSalaryDetailTable.addRow(salary, async () => {
+        this.getApplication().startLoader();
+        await this.showFile('salary', salary, index);
+        this.getApplication().stopLoader();
+      });
+    });
+	}
 
   async init() {
     this.getApplication().startLoader();
@@ -248,67 +533,84 @@ export class AonTaxDetail extends AonElement {
     console.log(aonTab);
            
     if(this.type == "tax"){
-      let filter = { fsModel : this.tax.id };
-  
-      getFiscalModelsInvoinces(filter).then(modelData => {
+      this.filterInvoice = { fsModel : this.tax.id, page: 0 };
+      this.filterSalary = { fsModel : this.tax.id, page: 0 };
 
-        this.salaries = modelData.salary;
-        this.invoices = modelData.invoice;
+      let modelData = await getFiscalModelsInvoinces(this.filterInvoice);
 
-        console.log("getFiscalModelsInvoinces");
-        console.log(this.salaries);
-        console.log(this.invoices);
+      this.invoices = modelData.invoice;
+      if(!this.invoices || this.invoices.length < 100) this.moreInvoice = false;
       
-        if(this.invoices && this.invoices.length > 0)
-          aonTab.addOption({ title: `${MSG.INVOICES} (${this.invoices.length})`, fn: () => this.createInvoiceTable()});
-
-        if(this.salaries && this.salaries.length > 0)
-          aonTab.addOption({ title: `Nóminas (${this.salaries.length})`, fn: () => this.createSalaryTable()})
-
-        if(this.invoices && this.invoices.length > 0)
-          this.createInvoiceTable();
-        else  if(this.salaries && this.salaries.length > 0)
-          this.createSalaryTable();
-        
-        this.getApplication().stopLoader();
-      });
-
-    } else if(this.type == "future"){
-      let filter = {
-        year : this.tax.year,
-        period : this.tax.period,
-        type : this.getTypeByDescription(this.tax.description)
+      console.log("getFiscalModelsInvoinces");
+      console.log(this.invoices);
+    
+      if(this.invoices && this.invoices.length > 0){
+        let invoiceCount = await getFiscalModelsInvoincesCount(this.filterInvoice);
+        aonTab.addOption({ id : 'aonInvoiceTab', title: `${MSG.INVOICES} (${invoiceCount.count})`, fn: () => this.createInvoiceTable()});
       }
 
-      getEstimationModelsFiscalInvoinces(filter).then(modelData => {
+      modelData = await getFiscalModelsSalaries(this.filterSalary);
 
-        this.salaries = modelData.salary;
-        this.invoices = modelData.invoice;
+      this.salaries = modelData.salary;
+      if(!this.salaries || this.salaries.length < 100) this.moreSalary = false;
 
-        console.log("getEstimationModelsFiscalInvoinces");
-        console.log(this.salaries);
-        console.log(this.invoices);
+      console.log("getFiscalModelsSalaries");
+      console.log(this.salaries);
+    
+      if(this.salaries && this.salaries.length > 0){
+        let salaryCount = await getFiscalModelsSalariesCount(this.filterSalary);
+        aonTab.addOption({ id : 'aonSalaryTab', title: `Nóminas (${salaryCount.count})`, fn: () => this.createSalaryTable()})
+      }
 
-        if(this.invoices && this.invoices.length > 0)
-          aonTab.addOption({ title: `${MSG.INVOICES} (${this.invoices.length})`, fn: () => this.createInvoiceTable()});
+    } else if(this.type == "future"){
+      this.filterInvoice = {
+        year : this.tax.year,
+        period : this.tax.period,
+        type : this.getTypeByDescription(this.tax.description),
+        page: 0
+      }
 
-        if(this.salaries && this.salaries.length > 0)
-          aonTab.addOption({ title: `Nóminas (${this.salaries.length})`, fn: () => this.createSalaryTable()})
-       
-        if(this.invoices && this.invoices.length > 0)
-          this.createInvoiceTable();
-        else  if(this.salaries && this.salaries.length > 0)
-          this.createSalaryTable();
+      this.filterSalary  = {
+        year : this.tax.year,
+        period : this.tax.period,
+        type : this.getTypeByDescription(this.tax.description),
+        page: 0
+      }
 
-        // if(filter.type == "IRPF_ALAVA" || filter.type == "IRPF_BIZKAIA"  || filter.type == "IRPF_GIPUZKOA"  || filter.type == "IRPF_NAVARRA"  || filter.type == "IRPF_AEAT"){
-        //   this.createSalaryTable();
-        // } else {
-        //   this.createInvoiceTable();
-        // }
+      let modelData = await getEstimationModelsFiscalInvoinces(this.filterInvoice);
 
-        this.getApplication().stopLoader();
-      });
+      this.invoices = modelData.invoice;
+      // VAT problems
+      //if(!this.invoices || this.invoices.length < 100) this.moreInvoice = false;
+
+      console.log("getEstimationModelsFiscalInvoinces");
+      console.log(this.invoices);
+
+      if(this.invoices && this.invoices.length > 0){
+        let invoiceCount = await getEstimationModelsFiscalInvoincesCount(this.filterInvoice);
+        aonTab.addOption({ id : 'aonInvoiceTab', title: `${MSG.INVOICES} (${invoiceCount.count})`, fn: () => this.createInvoiceTable()});
+      }
+
+      modelData = await getEstimationModelsFiscalSalaries(this.filterSalary);
+
+      this.salaries = modelData.salary;
+      if(!this.salaries || this.salaries.length < 100) this.moreSalary = false;
+
+      console.log("getEstimationModelsFiscalSalaries");
+      console.log(this.salaries);
+
+      if(this.salaries && this.salaries.length > 0){
+        let salaryCount = await getEstimationModelsFiscalSalariesCount(this.filterSalary);
+        aonTab.addOption({ id : 'aonSalaryTab', title: `Nóminas (${salaryCount.count})`, fn: () => this.createSalaryTable()});
+      }
     }
+
+    if(this.invoices && this.invoices.length > 0)
+      this.createInvoiceTable();
+    else  if(this.salaries && this.salaries.length > 0)
+      this.createSalaryTable();
+
+    this.getApplication().stopLoader();
 
   }
 
