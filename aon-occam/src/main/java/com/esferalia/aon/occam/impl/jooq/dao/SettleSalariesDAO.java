@@ -70,6 +70,10 @@ public class SettleSalariesDAO {
 	// ------------------- CREATE VENCIMIENTOS
 	
 	public static void createSettleSalaries(CloseableAONContext ctx, Date date) {
+		
+		Date endDate = date;
+		Date startDate = AonDateUtils.getMonthFirstDay(date);
+		
 		Result<Record> salaries = ctx.getDslContext().select().from(SALARY)
 				.join(CONTRACT).on(CONTRACT.ID.eq(SALARY.CONTRACT))
 				.join(WORKPLACE).on(WORKPLACE.ID.eq(CONTRACT.WORKPLACE))
@@ -77,7 +81,8 @@ public class SettleSalariesDAO {
 				.join(RPAYMETHOD).on(RPAYMETHOD.REGISTRY.eq(CONTRACT.PERSON))
 				.leftOuterJoin(RBANK).on(RBANK.ID.eq(RPAYMETHOD.RBANK))
 				.where(SALARY.DOMAIN.eq(ctx.getDomainId()))
-				.and(SALARY.CHARGE_DATE.eq(parseToSQLDate(date)))
+				.and(SALARY.CHARGE_DATE.between(parseToSQLDate(startDate), parseToSQLDate(endDate)))
+//				.and(SALARY.CHARGE_DATE.eq(parseToSQLDate(date)))
 				.and(SALARY.TYPE.lt((byte)4)) // Nomina, Extra, Finiquito, Atraso
 //				.and(SALARY.TOTAL_LIQUID.ne(0.00))
 				.orderBy(SALARY.START_DATE, SALARY.CHARGE_DATE)
