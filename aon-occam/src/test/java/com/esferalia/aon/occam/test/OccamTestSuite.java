@@ -5,6 +5,7 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 
+import com.esferalia.aon.occam.api.model.invoice.InvoiceTestSuite;
 import com.esferalia.aon.occam.test.accounting.AccountingTestSuite;
 import com.esferalia.aon.occam.test.accounting.account.AccountTestSuite;
 import com.esferalia.aon.occam.test.delivery.DeliveryTest;
@@ -52,7 +53,10 @@ import com.esferalia.aon.occam.test.workgroup.WorkgroupTestSuite;
 //	AnalyticalAccountingTestSuite.class,
 	OfferTest.class,
 	DeliveryTest.class,
-	MarketingTestSuite.class
+	MarketingTestSuite.class,
+	
+	// Nuevos cambios en Occam
+	InvoiceTestSuite.class
 })
 public class OccamTestSuite {
 

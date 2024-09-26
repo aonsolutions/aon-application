@@ -29,6 +29,8 @@ public final class IJsonNames {
 	public static final String ACTIVITY_DESCRIPTION = "activityDescription";
 	public static final String ADDRESS = "address";
 	public static final String ADDRESS2 = "address2";
+	public static final String ADJ_ACCOUNT = "adjAccount";
+	public static final String ADJ_DIRECT_TAX_ACCOUNT = "adjDirectTaxAccount";
 	public static final String ADJUST = "adjust";
 	public static final String ADMINISTRATION = "administration";
 	public static final String ADMINISTRATIVE = "administrative";
@@ -39,6 +41,7 @@ public final class IJsonNames {
 	public static final String AMORTIZATION_INITIAL_DATE = "amortizationInitialDate";
 	public static final String AMOUNT = "amount";
 	public static final String AMOUNT_347 = "amount347";
+	public static final String ANNULLED = "annulled";
 	public static final String AON_CUSTOMER = "aonCustomer";
 	public static final String AON_STATUS = "aonStatus";
 	public static final String AP1 = "ap1";
@@ -154,6 +157,7 @@ public final class IJsonNames {
 	public static final String DEBIT = "debit";
 	public static final String DEDUCTIBLE_PERCENT = "deductiblePercent";
 	public static final String DEDUCTIBLE_QUOTA = "deductibleQuota";
+	public static final String DEDUCTIBLE_QUOTA_EDITED = "deductibleQuotaEdited";
 	public static final String DEFAULT_CERTIFICATE = "defaultCertificate";
 	public static final String DEFINED_USERS = "definedUsers";
 	public static final String DELETE = "delete";
@@ -175,6 +179,7 @@ public final class IJsonNames {
 	public static final String DETAILED = "detailed";
 	public static final String DETAILS = "details";
 	public static final String DEVICES = "devices";
+	public static final String DIRECT_TAX_PERCENT = "directTaxPercent";
 	public static final String DIRTY = "dirty";
 	public static final String DISABLE_DOMAIN_MANAGEMENT = "disableDomainManagement";
 	public static final String DISCOUNT = "discount";
@@ -218,6 +223,7 @@ public final class IJsonNames {
 	public static final String EPIGRAPH_SECTION = "epigraphSection";
 	public static final String ERROR = "error";
 	public static final String ERRORS = "errors";
+	public static final String EXP_ACCOUNT = "expAccount";
 	public static final String EXPENSES = "expenses";
 	public static final String EXPENSES_FIXED = "expensesFixed";
 	public static final String EXPENSES_PERCENT = "expensesPercent";
@@ -280,6 +286,7 @@ public final class IJsonNames {
 	public static final String INGENET = "ingenet";
 	public static final String INIT_ACTION = "initAction";
 	public static final String INITIATION_DATE = "initiationDate";
+	public static final String INPUT_ACCOUNT = "inputAccount";
 	public static final String INSIDE_PERIOD = "insidePeriod";
 	public static final String INTE = "inte";
 	public static final String INTERNET = "internet";
@@ -290,6 +297,8 @@ public final class IJsonNames {
 	public static final String INVESTMENT = "investment";
 	public static final String INVOICING_GROUP = "invoicingGroup";
 	public static final String INVOICE = "invoice";
+	public static final String INVOICE_DETAIL = "invoiceDetail";
+	public static final String INVOICE_TAXES = "invoiceTaxes";
 	public static final String INVOICE_TYPE = "invoiceType";
 	public static final String INVOICE_TYPE_EXPENSES = "invoiceTypeExpenses";
 	public static final String INVOICE_TYPE_PURCHASES = "invoiceTypePurchases";
@@ -391,6 +400,7 @@ public final class IJsonNames {
 	public static final String ORDER_STATUS_PENDING = "orderStatusPending";
 	public static final String ORDER_STATUS_SERVED = "orderStatusServed";
 	public static final String OUTPUT = "output";
+	public static final String OUTPUT_ACCOUNT = "outputAccount";
 	public static final String OWNER = "owner";
 	// ---------------------------------------------------------------------------------------------	[P] 
 	public static final String PACKAGED = "packaged";
@@ -476,6 +486,8 @@ public final class IJsonNames {
 	public static final String QUESTION = "question";
 	public static final String QUESTION_ALIAS = "questionAlias";
 	public static final String QUOTA = "quota";
+	public static final String QUOTA_EDITED = "quotaEdited";
+	
 	// ---------------------------------------------------------------------------------------------	[R] 
 	public static final String RATE = "rate";
 	public static final String RATTACH = "rattach";
@@ -484,6 +496,7 @@ public final class IJsonNames {
 	public static final String RECEIVER = "receiver";
 	public static final String RECORD_DATA = "recordData";
 	public static final String RECORD_DATE = "recordDate";
+	public static final String RECORDED = "recorded";
 	public static final String RECTIFICATION = "rectification";
 	public static final String RECTIFICATION_INVOICE = "rectificationInvoice";
 	public static final String RECTIFICATION_TYPE = "rectificationType";
@@ -494,6 +507,8 @@ public final class IJsonNames {
 	public static final String REG_CONTABLE_DATE = "regContableDate";
 	public static final String REGIME = "regime";
 	public static final String REGISTRATION = "registration";
+	public static final String REGISTRY_ACCOUNT = "registryAccount";
+	public static final String REGISTRY_ADDRESS = "registryAddress";
 	public static final String REGISTRY_DATE = "registryDate";
 	public static final String REGISTRY_DOCUMENT = "registryDocument";
 	public static final String REGISTRY_DOCUMENT_TYPE = "registryDocumentType";
@@ -511,6 +526,7 @@ public final class IJsonNames {
 	public static final String RESUME = "resume";
 	public static final String RETENTION = "retention";
 	public static final String RETENTION_PERCENT = "retentionPercent";
+	public static final String RETENTION_QUOTA = "retentionQuota";
 	public static final String RETURNED = "returned";
 	public static final String REVERSE_ORDER = "reverseOrder";
 	public static final String RNAME = "rname";
@@ -531,6 +547,7 @@ public final class IJsonNames {
 	public static final String SCOPE = "scope";
 	public static final String SECTION = "section";
 	public static final String SECURITY_LEVEL = "securityLevel";
+	public static final String SELECTED = "selected";
 	public static final String SELECTED_ACCOUNT = "selectedAccount";
 	public static final String SELECTED_ACTIVITY = "selectedActivity";
 	public static final String SELECTED_PERIOD = "selectedPeriod";
@@ -564,6 +581,7 @@ public final class IJsonNames {
 	public static final String SHOW_COVER = "showCover";
 	public static final String SII_STATUS = "siiStatus";
 	public static final String SIGNATURE = "signature";
+	public static final String SIGNED = "signed";
 	public static final String SIZE = "size";
 	public static final String SOURCE = "source";
 	public static final String SOURCE_ID = "source_id";
@@ -582,6 +600,7 @@ public final class IJsonNames {
 	public static final String SURCHARGE_QUOTA = "surcharge_quota";
 	public static final String SURCHARGEQUOTA = "surchargeQuota";
 	public static final String SURCHARGE = "surcharge";
+	public static final String SURCHARGE_QUOTA_EDITED = "surchargeQuotaEdited";
 	public static final String SURNAME = "surname";
 	public static final String SEARCH = "search";
 	// ---------------------------------------------------------------------------------------------	[T] 
@@ -593,6 +612,8 @@ public final class IJsonNames {
 	public static final String TASK_HOLDERS = "taskHolders";
 	public static final String TAXES = "taxes";
 	public static final String TAX = "tax";
+	public static final String TAX_TYPE = "taxType";	
+	public static final String TAXABLE_BASE = "taxableBase";
 	public static final String TAG = "tag";
 	public static final String TAX_DATE = "taxDate";
 	public static final String TECHNICAL = "technical";
@@ -633,6 +654,7 @@ public final class IJsonNames {
 	public static final String VAT_IMPORTATION = "vatImportation";
 	public static final String VAT_PARAMS = "vatParams";
 	public static final String VAT_PERCENT = "vatPercent";
+	public static final String VAT_QUOTA = "vatQuota";
 	public static final String VAT_REGIME = "vatRegime";
 	public static final String VAT_EXEMPTION_CAUSE = "vatExemptionCause";
 	public static final String VAT_SUMMARY_TYPE = "vatSummaryType";
@@ -642,6 +664,7 @@ public final class IJsonNames {
 	public static final String WAREHOUSE = "warehouse";
 	public static final String WEB = "web";
 	public static final String WITHHOLDING = "withholding";
+	public static final String WITHHOLDING_ACCOUNT = "withholdingAccount";
 	public static final String WITHHOLDING_FARMER = "withholdingFarmer";
 	public static final String WITHHOLDING_PERCENTAGE = "withholding_percentage";
 	public static final String WITHHOLDING_QUOTA = "withholding_quota";
@@ -656,5 +679,5 @@ public final class IJsonNames {
 	public static final String YEAR = "year";
 	// ---------------------------------------------------------------------------------------------	[Z] 
 	public static final String ZIP = "zip";
-	
+
 }
