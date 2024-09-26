@@ -4,20 +4,29 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.Map.Entry;
+import java.util.Optional;
+import java.util.Random;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 import org.json.JSONObject;
 
 import com.esferalia.aon.occam.api.AON;
+import com.esferalia.aon.occam.api.AON_SOLUTIONS;
+import com.esferalia.aon.occam.api.json.UserJSON;
+import com.esferalia.aon.occam.api.model.ApplicationParameter;
+import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.GeoZone;
 import com.esferalia.aon.occam.api.model.MarketingAction;
 import com.esferalia.aon.occam.api.model.MarketingAction.MarketingSellerDistribution;
 import com.esferalia.aon.occam.api.model.MarketingActionTarget;
+import com.esferalia.aon.occam.api.model.Person;
+import com.esferalia.aon.occam.api.model.Workplace;
 import com.esferalia.aon.occam.api.model.aonsolutions.AonLanguage;
+import com.esferalia.aon.occam.api.model.aonsolutions.AonRole;
+import com.esferalia.aon.occam.api.model.aonsolutions.UserAppRole;
 import com.esferalia.aon.occam.api.model.project.ProjectCommercial;
 import com.esferalia.aon.occam.api.model.registry.NoteType;
 import com.esferalia.aon.occam.api.model.registry.Project;
@@ -25,24 +34,34 @@ import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.registry.RegistryAddress;
 import com.esferalia.aon.occam.api.model.registry.RegistryMedia;
 import com.esferalia.aon.occam.api.model.registry.RegistryNote;
+import com.esferalia.aon.occam.api.model.registry.RegistryRelationship;
 import com.esferalia.aon.occam.api.model.registry.Seller;
 import com.esferalia.aon.occam.api.model.registry.Target;
+import com.esferalia.aon.occam.api.model.security.Auth;
+import com.esferalia.aon.occam.api.model.security.Scope;
 import com.esferalia.aon.occam.api.model.security.User;
+import com.esferalia.aon.occam.api.model.security.UserScope;
+import com.esferalia.aon.occam.api.model.security.UserToolbar;
 import com.esferalia.aon.occam.api.model.task.TaskHolder;
+import com.esferalia.aon.occam.api.model.type.AppParam;
 import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.occam.api.model.type.DocumentType;
+import com.esferalia.aon.occam.api.model.type.DomainType;
 import com.esferalia.aon.occam.api.model.type.MediaType;
 import com.esferalia.aon.occam.api.model.type.SecurityLevel;
 import com.esferalia.aon.occam.api.model.type.StreetType;
 import com.esferalia.aon.watson.error.AonCoreException;
+import com.esferalia.aon.watson.util.AonDocumentUtil;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import net.aonsolutions.aon.api.error.AonApiException;
 import net.aonsolutions.aon.api.ewok.AonApiData;
 import net.aonsolutions.aon.api.servlet.AonApiHttpServlet;
 import net.aonsolutions.aon.api.servlet.AonRouting;
+import net.aonsolutions.aon.api.servlet.Utils;
 
 @SuppressWarnings("serial")
 @WebServlet(name = "AonApiActionTargetServlet", urlPatterns = {"/ms/api/action-target/*"})
@@ -57,6 +76,7 @@ public class ActionTargetServlet extends AonApiHttpServlet {
 		LOGGER.info("[" + req.getMethod() + "] " + req.getRequestURI());
 		
 		try {
+			
 			AonApiData api = initialize(req);
 			
 			Object object = new AonRouting(api)
@@ -64,64 +84,47 @@ public class ActionTargetServlet extends AonApiHttpServlet {
 				.apply();
 			
 			response(req, resp, object);
+			
 		} catch (Exception e) {
 			error(req, resp, e);
 		}
 	}
 
 	public static JSONObject saveActionTarget(AonApiData api) {
-		JSONObject actionTargetJson = api.getData().optJSONObject("actionTarget");
-		JSONObject targetJson = actionTargetJson.optJSONObject("target");
-		JSONObject marketingActionJson = actionTargetJson.optJSONObject("marketingAction");
+		// ActionTarget
+		ActionTarget actionTarget = new ActionTarget(api.getData());
 		
-		// Marketing Action Target
-		Integer actionId = Integer.parseInt(marketingActionJson.getString("id"));
-		Integer workgroupId = AonStringUtils.isBlank(marketingActionJson.getString("workgroup")) ? null : Integer.parseInt(marketingActionJson.getString("workgroup"));
-		MarketingSellerDistribution sellerDistribution = AonStringUtils.isBlank(marketingActionJson.getString("sellerDistribution")) ? MarketingSellerDistribution.MANUAL : MarketingSellerDistribution.getSellerDistribution(Integer.parseInt(marketingActionJson.getString("sellerDistribution")));
-		Integer sellerId = AonStringUtils.isBlank(marketingActionJson.getString("seller")) ? null : Integer.parseInt(marketingActionJson.getString("seller"));
-		MarketingAction marketingAction = AON.getMarketingAction(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), actionId);
+		// Marketing Action 
+		MarketingAction ma = AON.getMarketingAction(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), actionTarget.getMarketingAction().getId());
+		actionTarget.setMarketingAction(ma);
 		
-		// Target
-		String name = targetJson.getString("name");
-		String documentType = targetJson.getString("documentType");
-		String documentCountry = targetJson.getString("documentCountry");
-		String document = targetJson.getString("document");
-		
-		String streetType = targetJson.getString("streetType");
-		String address = targetJson.getString("address");
-		String number = targetJson.getString("number");
-		String zip = targetJson.getString("zip");
-		String geozoneCode = targetJson.getString("geozoneCode");
-		String city = targetJson.getString("city");
-		
-		String phone = targetJson.getString("phone");
-		String email = targetJson.getString("email");
-		
-		String comments = targetJson.getString("comments");
+		// Save Target
 
 		Target target = new Target()
 				.copy(
 					new Registry()
 						.setDomain(api.getDomain())
-						.setName(name)
-						.setDocumentType(DocumentType.values()[Integer.parseInt(documentType)])
-						.setDocumentCountry(Country.safeValueOf(documentCountry))
-						.setDocument(document)
-						.setNationality(Country.safeValueOf(documentCountry))
+						.setName(actionTarget.getTarget().getName())
+						.setDocumentType(DocumentType.values()[Integer.parseInt(actionTarget.getTarget().getDocumentType())])
+						.setDocumentCountry(Country.safeValueOf(actionTarget.getTarget().getDocumentCountry()))
+						.setDocument(actionTarget.getTarget().getDocument())
+						.setNationality(Country.safeValueOf(actionTarget.getTarget().getDocumentCountry()))
 						
 				)
-				.setScope(marketingAction.getMarketingCampaign().getScope())
+				.setScope(actionTarget.getMarketingAction().getMarketingCampaign().getScope())
 				;
 		
 		target = AON.save(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), target);
 		
-		if(AonStringUtils.isNotBlank(comments)) {
+		// Save Registry Note (Observacion)
+		
+		if(AonStringUtils.isNotBlank(actionTarget.getTarget().getComments())) {
 			RegistryNote note = new RegistryNote()
 					.setDomain(target.getDomain().getId())
 					.setRegistry(target.getId())
 					.setDescription("Observaci\u00f3n")
 					.setNoteDate(new Date())
-					.setComments(comments)
+					.setComments(actionTarget.getTarget().getComments())
 					.setNoteType(NoteType.OBSERVATION)
 					.setSecurityLevel(SecurityLevel.OFFICIAL)
 					;
@@ -129,21 +132,23 @@ public class ActionTargetServlet extends AonApiHttpServlet {
 			AON.saveRegistryNote(api.getDomain(), api.getUser().getLogin(), note);
 		}
 		
+		// Save Registry Address
+		
 		Integer raddressId = null;
-		if(AonStringUtils.isNotBlank(address)) {
-			Optional<GeoZone> geozoneOpt = AON.geozoneStream(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), f -> f.getDomainProperty().eq(api.getDomain().getId()).and(f.getCodeProperty().eq(geozoneCode))).findFirst();			
+		if(AonStringUtils.isNotBlank(actionTarget.getTarget().getAddress())) {
+			Optional<GeoZone> geozoneOpt = AON.geozoneStream(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), f -> f.getDomainProperty().eq(api.getDomain().getId()).and(f.getCodeProperty().eq(actionTarget.getTarget().getGeozoneCode()))).findFirst();			
 			
 			RegistryAddress registryAddress = new RegistryAddress()
 					.setDomain(target.getDomain().getId())
 					.setRegistry(target.getId())
 					.setMain(true)
-					.setStreetType(StreetType.getForAeatCode(streetType, AonLanguage.SPANISH))
-					.setAddress(address)
-					.setNumber(number)
-					.setZip(zip)
-					.setCity(city)
+					.setStreetType(StreetType.getForAeatCode(actionTarget.getTarget().getStreetType(), AonLanguage.SPANISH))
+					.setAddress(actionTarget.getTarget().getAddress())
+					.setNumber(actionTarget.getTarget().getNumber())
+					.setZip(actionTarget.getTarget().getZip())
+					.setCity(actionTarget.getTarget().getCity())
 					.setGeozone(geozoneOpt.isPresent() ? geozoneOpt.get().getId() : null)
-					.setGeozoneCode(geozoneCode)
+					.setGeozoneCode(actionTarget.getTarget().getGeozoneCode())
 					.setGeozoneName(geozoneOpt.isPresent() ? geozoneOpt.get().getName() : null)
 					;
 			
@@ -151,52 +156,60 @@ public class ActionTargetServlet extends AonApiHttpServlet {
 			raddressId = registryAddress.getId();
 		}
 		
-		if(AonStringUtils.isNotBlank(phone)) {
-			RegistryMedia registryMediaPhone = new RegistryMedia()
-					.setDomain(target.getDomain().getId())
-					.setRegistry(target.getId())
-					.setMedia(MediaType.CELLULAR)
-					.setValue(phone)
-					.setCommercial(true)
-					.setRaddress(raddressId)
-					;
-			
-			AON.save(api.getDomain(), api.getUser().getLogin(), registryMediaPhone);
-					
-		}
+		// Save Registry Media
 		
-		if(AonStringUtils.isNotBlank(email)) {
-			RegistryMedia registryMediaEmail = new RegistryMedia()
-					.setDomain(target.getDomain().getId())
-					.setRegistry(target.getId())
-					.setMedia(MediaType.EMAIL)
-					.setValue(email)
-					.setCommercial(true)
-					.setRaddress(raddressId)
-					;
-			
-			AON.save(api.getDomain(), api.getUser().getLogin(), registryMediaEmail);
-		}
+		saveMedia(api, target.getDomain().getId(), target.getId(), MediaType.CELLULAR, actionTarget.getTarget().getPhone(), raddressId);
+		saveMedia(api, target.getDomain().getId(), target.getId(), MediaType.EMAIL, actionTarget.getTarget().getEmail(), raddressId);
 		
-		// Marketing Action Target
+		// Save Marketing Action Target
 		
 		MarketingActionTarget mkActionTarget = new MarketingActionTarget()
 				.copy(target)
 				.setActionTargetDomain(target.getDomain().getId())
-				.setMarketingAction(new MarketingAction().setId(actionId))
+				.setMarketingAction(new MarketingAction().setId(actionTarget.getMarketingAction().getId()))
 				.setActionTargetStatus((byte)0)
-				.setComments(comments)
+				.setComments(actionTarget.getTarget().getComments())
 				;
 		
 		AON.saveMarketingActionTarget(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), mkActionTarget);
 		
 		// Create Operacion Comercial
-		if(sellerDistribution == MarketingSellerDistribution.MANUAL  && null != sellerId) {
+		
+		createCommercialOperation(api, actionTarget, target, mkActionTarget);
+		
+		// Create Enterprise
+		
+		createEnterprise(api, actionTarget, target);
+		
+		// Return data
+		
+		return api.getData();
+	}
+	
+	private static void saveMedia(AonApiData api, Integer domain, Integer registry, MediaType mediaType, String value, Integer raddress) {
+		if(AonStringUtils.isNotBlank(value)) {
+			RegistryMedia registryMedia = new RegistryMedia()
+					.setDomain(domain)
+					.setRegistry(registry)
+					.setMedia(mediaType)
+					.setValue(value)
+					.setCommercial(true)
+					.setRaddress(raddress)
+					;
+			
+			AON.save(api.getDomain(), api.getUser().getLogin(), registryMedia);
+		}
+	}
+	
+	private static void createCommercialOperation(AonApiData api, ActionTarget actionTarget, Target target, MarketingActionTarget mkActionTarget) {
+		// Create Operacion Comercial
+		
+		if(actionTarget.getMarketingAction().getSellerDistribution() == MarketingSellerDistribution.MANUAL  && null != actionTarget.getMarketingAction().getSeller()) {
 			ProjectCommercial projectCommercial = new ProjectCommercial()
 					.copy(new Project()
 						.setDomain(target.getDomain())
 						.setRegistry(target.get())
-						.setName(marketingAction.getDescription())
+						.setName(actionTarget.getMarketingAction().getDescription())
 						.setDate(new Date())
 						.setTas(false)
 						.setCommercial(true)
@@ -204,8 +217,8 @@ public class ActionTargetServlet extends AonApiHttpServlet {
 						.setActive(true)
 					)
 					.setTarget(target.getId())
-					.setSeller(sellerId)
-					.setComments(comments)
+					.setSeller(actionTarget.getMarketingAction().getSeller())
+					.setComments(actionTarget.getTarget().getComments())
 					.setSource((byte)8) // Marketing
 					.setStatus((byte)0)
 					.setStatusDate(new Date())
@@ -215,14 +228,14 @@ public class ActionTargetServlet extends AonApiHttpServlet {
 			
 			mkActionTarget.setActionTargetStatus((byte)6); // Enviado
 			AON.saveMarketingActionTarget(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), mkActionTarget);
-		} else if(sellerDistribution == MarketingSellerDistribution.AUTOMATIC && null != workgroupId) {
-			Seller nextSeller = getNextLinealSellerByWorkgroup(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), workgroupId);
+		} else if(actionTarget.getMarketingAction().getSellerDistribution() == MarketingSellerDistribution.AUTOMATIC && null != actionTarget.getMarketingAction().getWorkgroup().getId()) {
+			Seller nextSeller = getNextLinealSellerByWorkgroup(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), actionTarget.getMarketingAction().getWorkgroup().getId());
 			if(null != nextSeller) {
 				ProjectCommercial projectCommercial = new ProjectCommercial()
 						.copy(new Project()
 							.setDomain(target.getDomain())
 							.setRegistry(target.get())
-							.setName(marketingAction.getDescription())
+							.setName(actionTarget.getMarketingAction().getDescription())
 							.setDate(new Date())
 							.setTas(false)
 							.setCommercial(true)
@@ -231,7 +244,7 @@ public class ActionTargetServlet extends AonApiHttpServlet {
 						)
 						.setTarget(target.getId())
 						.setSeller(nextSeller.getId())
-						.setComments(comments)
+						.setComments(actionTarget.getTarget().getComments())
 						.setSource((byte)8) // Marketing
 						.setStatus((byte)0)
 						.setStatusDate(new Date())
@@ -243,8 +256,6 @@ public class ActionTargetServlet extends AonApiHttpServlet {
 				AON.saveMarketingActionTarget(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), mkActionTarget);
 			}
 		}
-		
-		return api.getData();
 	}
 	
 	private static Seller getNextLinealSellerByWorkgroup(String domainName, int domain, String user, int workgroup) throws AonCoreException {
@@ -273,4 +284,360 @@ public class ActionTargetServlet extends AonApiHttpServlet {
 			return null;
 		}
 	}
+	
+	private static void createEnterprise(AonApiData api, ActionTarget actionTarget, Target target) {
+		try {
+			if(actionTarget.isTrial()) {
+				System.out.println("----------------------- Create Enterprise -----------------------");
+				
+				Company company = new Company();
+				company.setName(actionTarget.getTarget().getName());
+				company.setDocument(actionTarget.getTarget().getDocument());
+				company.setLegalPerson(AonDocumentUtil.isValidCIF(company.getDocument()));
+				
+				checkCompany(api, company);
+				
+				Domain parent = api.getDomain().isParent() ? 
+						api.getDomain() : 
+						AON.getDomain(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), f->f.getIdProperty().eq(api.getDomain().getParentId()));
+						
+				String domainName = company.getDocument() + "-" + parent.getName();
+				Domain d = new Domain()
+					.setName(domainName.toLowerCase())
+					.setDescription(company.getName())
+					.setOwner(api.getDomain().getOwner())
+					.setParentId(parent.getId())
+					.setActive(true)
+					.setDomainType(DomainType.ENTERPRISE)
+					.setEnableHeredity(true)
+					.setDomainManagement(false);
+				
+				Domain domain = AON_SOLUTIONS.insertDomain(api.getDomain(), api.getUser(), d, company);
+				Company c = AON.getCompany(domain.getName(), domain.getId(), api.getUser().getLogin(), f -> f.getDomainProperty().eq(domain.getId()));
+				
+				Integer comapnyRaddressId = null;
+				if(AonStringUtils.isNotBlank(actionTarget.getTarget().getAddress())) {
+					Optional<GeoZone> geozoneOpt = AON.geozoneStream(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), f -> f.getDomainProperty().eq(api.getDomain().getId()).and(f.getCodeProperty().eq(actionTarget.getTarget().getGeozoneCode()))).findFirst();			
+					
+					RegistryAddress registryAddress = new RegistryAddress()
+							.setDomain(domain.getId())
+							.setRegistry(c.getId())
+							.setMain(true)
+							.setStreetType(StreetType.getForAeatCode(actionTarget.getTarget().getStreetType(), AonLanguage.SPANISH))
+							.setAddress(actionTarget.getTarget().getAddress())
+							.setNumber(actionTarget.getTarget().getNumber())
+							.setZip(actionTarget.getTarget().getZip())
+							.setCity(actionTarget.getTarget().getCity())
+							.setGeozone(geozoneOpt.isPresent() ? geozoneOpt.get().getId() : null)
+							.setGeozoneCode(actionTarget.getTarget().getGeozoneCode())
+							.setGeozoneName(geozoneOpt.isPresent() ? geozoneOpt.get().getName() : null)
+							;
+					
+					registryAddress = AON.save(api.getDomain(), api.getUser().getLogin(), registryAddress);
+					comapnyRaddressId = registryAddress.getId();
+				}
+				
+				saveMedia(api, domain.getId(), c.getId(), MediaType.CELLULAR, actionTarget.getTarget().getPhone(), comapnyRaddressId);
+				saveMedia(api, domain.getId(), c.getId(), MediaType.EMAIL, actionTarget.getTarget().getEmail(), comapnyRaddressId);
+				
+				RegistryAddress raddress = AON.getRegistryAddress(domain, new User(), f-> f.getDomainProperty().eq(domain.getId()).and(f.getTypeProperty().eq((byte)0)));
+				
+				if(raddress!=null && raddress.getId()!=null) {
+					
+					Workplace workplace = new Workplace()
+						.setActive(true)
+						.setDescription("PRINCIPAL")
+						.setDomain(domain.getId())
+						.setEnterprise(c.getId())
+						.setAddress(raddress.getId());
+					
+					AON.saveWorkplace(domain, new User(), workplace);
+				}
+				
+				// Create Registry Relationship
+				RegistryRelationship rrelationship = new RegistryRelationship();
+				rrelationship.setDomain(target.getDomain());
+				rrelationship.setRegistry(target.getId());
+				rrelationship.setRelatedRegistry(c.getId());
+				rrelationship.setComments(c.getDomain().getName());
+				
+				AON_SOLUTIONS.saveRegistryRelationship( api.getDomain(), api.getUser(), rrelationship);
+				
+				ApplicationParameter trailParam = new ApplicationParameter()
+						.setDomain(domain.getId())
+						.setName(AppParam.TRIAL)
+						.setValue("50")
+						;
+				
+				AON.insertApplicationParameter(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), trailParam);
+				
+				// Create Default User
+				createDefaultUser(api, c, target, actionTarget);
+				
+				System.out.println("----------------------- Create Enterprise (END) -----------------------");
+				
+			}
+
+		} catch (Exception e) {
+			System.out.println("Error create enterprise : " + e.getMessage());
+		}
+	}
+	
+	private static void checkCompany(AonApiData api, Company company) throws AonApiException {
+		if(AonStringUtils.isBlank(company.getDocument())) {
+			throw new AonApiException("El documento de la empresa est?vac?.");
+		}
+		
+		if(!AonDocumentUtil.isValid(company.getDocument())) {
+			throw new AonApiException("El documento de la empresa no es v?ido");
+		}
+		
+		if(AonStringUtils.isBlank(company.getName())) {
+			throw new AonApiException("El nombre de la empresa est?vac?");
+		}
+		Company c = AON.getCompany(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), f -> f.getDocumentProperty().eq(company.getDocument()));
+		if(c.getId() != null) {
+			throw new AonApiException("Ya existe una empresa con el mismo documento");
+		}
+	}
+	
+	private static void createDefaultUser(AonApiData api, Company company, Target target, ActionTarget actionTarget) throws Exception {
+		Domain domain = company.getDomain();
+		
+		if(Utils.isEmail(actionTarget.getTarget().getEmail())) {
+			
+			String login = ramdonLogin();
+			String pass = null;
+			
+			Auth  authx = new Auth().setDocument(target.getDocument());
+			if(!AonStringUtils.isBlank(authx.getDocument())) {
+				for (Auth r : AON_SOLUTIONS.getAuths(f -> f.getDocumentProperty().eq(authx.getDocument()))) {
+					
+					User user = AON.getDomainUserStream(domain.getName(), domain.getId(), "", 
+						f -> f.getAuthProperty().eq(r.getAuth())).findFirst().orElse(new User());
+					
+					if(user != null && user.getId() != null)
+						throw new Exception("El documento introducido ya está asociado a otro usuario.");
+				}
+			}
+			
+			Auth auth = AON_SOLUTIONS.getAuth(actionTarget.getTarget().getEmail());
+			if(auth.getUuid() == null)
+				auth = createAuth(domain, target, login, pass, actionTarget.getTarget().getEmail(), actionTarget.getTarget().getPhone());
+			
+			byte[] a = auth.getAuth();
+
+			User user = AON.getDomainUserStream(api.getDomain().getName(), api.getDomain().getId(), "", 
+					f ->  f.getAuthProperty().eq(a)).findFirst().orElse(new User());
+					
+			if(user != null && user.getId() != null)
+				throw new Exception("El mail introducido ya está asociado a otro usuario.");
+			
+			if(auth.getAuth() != null) {
+				if(user == null || user.getId() == null) {
+					user = createUser(company, auth, login, target.getName());
+				}
+				
+				setUserAppRole(domain, user);
+				if(api.getDomain().isChild() || api.getDomain().isStandalone()) {
+					saveTaskHolder(domain, user);
+				}
+			}
+			
+		} else {
+			throw new Exception("El email no es correcto.");
+		}
+	}
+	
+	private static String ramdonLogin() {
+		Random rnd = new Random();
+		Integer i = rnd.nextInt(100000000-10000000+1)+10000000;
+		return i.toString();	
+	}
+	
+	private static Auth createAuth(Domain domain, Target target, String login, String pass, String email, String phone) {
+		if(pass == null) {
+			pass = Utils.createPasswordHash(email, login);
+		}
+		Auth auth = new Auth()
+			.setEmail(email)
+			.setPassword(pass)
+			.setName(target.getName())
+			.setSurname(null)
+			.setDocument(target.getDocument())
+			.setPhone(phone);
+		
+		auth = AON_SOLUTIONS.insertAuth(domain.getName(), domain.getId(), auth);
+		
+		return auth;
+	}
+	
+	private static User createUser(Company company, Auth auth, String login, String name) {
+		Domain domain = company.getDomain();
+		
+		User user = new User()
+			.setAuth(auth)
+			.setActive(true)
+			.setDomain(domain.getId())
+			.setLogin(login)
+			.setName(AonStringUtils.isNotBlank(name) ? name : login)
+			.setShared(false)
+			.setEnterprise(company.getId())
+			.setToolbar(UserToolbar.GOOGLE);
+		
+		if(auth.getDocument() != null) {
+			String document = auth.getDocument();
+			
+			if(!AonStringUtils.isBlank(document) && AonDocumentUtil.isValid(document)) {
+				Integer registryId = null;
+				Optional<Person> p = AON.getPerson(domain.getName(), domain.getId(), user.getLogin(), 
+						f -> f.getDomainProperty().eq(domain.getId()).and(f.getDocumentProperty().eq(document)));
+				
+				if(p.isPresent() && p.get().getId() != null)
+					registryId = p.get().getId();
+				
+				if(registryId == null) {
+					Registry r = AON.getRegistry(domain.getName(), domain.getId(), "", 
+							f -> f.getDomainProperty().eq(domain.getId()).and(f.getDocumentProperty().eq(document)));
+					registryId = r.getId();
+				}
+				
+				user.setRegistry(new Registry().setId(registryId));
+			}
+		}
+		
+		user = AON.save(domain.getName(), domain.getId(), "", user);
+		
+		AON.updateUserPassword(domain.getName(), domain.getId(), user.getLogin(), user.getId(), auth.getPassword());
+		
+		Scope s = getScope(company.getDomain(), user);
+		
+		if(s != null) {
+			AON.insertUserScope(domain.getName(), domain.getId(), user.getLogin(), new UserScope()
+					.setDomain(domain.getId())
+					.setScope(s.getId())
+					.setUserId(user.getId()));
+		}
+		if(domain.getScope() != null) {
+			AON.insertUserScope(domain.getName(), domain.getId(), user.getLogin(), new UserScope()
+					.setDomain(domain.getId())
+					.setScope(domain.getScope())
+					.setUserId(user.getId()));
+		}
+		
+		ApplicationParameter a = AON.getApplicationParameter(domain.getName(), domain.getId(), user.getLogin(), AppParam.AON_PORTAL);
+		ApplicationParameter appParam = new ApplicationParameter()
+				.setDomain(domain.getId())
+				.setValue("288")
+				.setName(AppParam.AON_PORTAL.getValue());
+
+		if(a == null || a.getId() == null)
+			AON.insertApplicationParameter(domain.getName(), domain.getId(), user.getLogin(), appParam);
+	
+		AON_SOLUTIONS.saveUserFinancePortal(domain, user.getLogin(), user.getId());		
+		
+		return user;
+	}
+	
+	private static void setUserAppRole(Domain domain, User user){
+		String login = user.getLogin();
+		Integer userId = user.getId();
+
+		LinkedList<AonRole> aRoles = AON_SOLUTIONS.getUserAppRole(domain.getName(), domain.getId(), "", f -> f.getUserIdProperty().eq(userId))
+				.map(r -> r.getRole()).collect(Collectors.toCollection(LinkedList::new));
+		
+		LinkedList<AonRole> tRoles = new LinkedList<AonRole>();
+		tRoles.add(AonRole.ENTERPRISE);
+
+		AonRole.stream().forEach(role -> {	
+			if(aRoles.contains(role) && !tRoles.contains(role)) {
+				AON_SOLUTIONS.deleteUserAppRole(domain.getName(), domain.getId(), login, f -> 
+					f.getDomainProperty().eq(domain.getId())
+					.and(f.getUserIdProperty().eq(userId))
+					.and(f.getRoleProperty().eq(role.value())));
+			}
+			if(!aRoles.contains(role) && tRoles.contains(role)) {
+				AON_SOLUTIONS.insertUserAppRole(domain.getName(), domain.getId(), "", new UserAppRole()
+						.setApp(null)
+						.setDomain(domain.getId())
+						.setRole(role)
+						.setUser(userId));
+			}
+		});
+	}
+	
+	private static JSONObject saveTaskHolder(Domain domain, User user) {
+		Integer userId = user.getId();
+		
+		TaskHolder th = AON.getTaskHolder(domain.getName(), domain.getId(), "", f -> f.getDomainProperty().eq(domain.getId()).and(f.getUserIdProperty().eq(userId)));
+		
+		if(th == null || th.getId() == null) {
+			User u = AON.getUser(domain.getName(), domain.getId(), "", f -> f.getIdProperty().eq(userId));
+			Auth a = AON_SOLUTIONS.getAuth(domain.getName(), domain.getId(), u.getAuth().getAuth());
+
+			Registry r = null;
+			if(!AonStringUtils.isBlank(a.getDocument())) {
+				r = AON.getRegistry(domain.getName(), domain.getId(), "", f -> 
+				f.getDomainProperty().eq(domain.getId())
+				.and(f.getDocumentProperty().eq(a.getDocument())));
+			}
+			if(r == null || r.getId() == null) {
+				r = AON.save(domain.getName(), domain.getId(), "", new Registry()
+						.setDocument(a.getDocument())
+						.setName(a.getName()+ " "+ a.getSurname())
+						.setAlias(a.getName())
+						.setDomain(domain));
+			}
+			Integer registryId = r.getId();
+			th = AON.getTaskHolder(domain.getName(), domain.getId(), "", f -> f.getDomainProperty().eq(domain.getId()).and(f.getIdProperty().eq(registryId)));
+			if(th != null && th.getId() != null) {
+				th.setActive(true);
+				if(th.getUserId() == null)  
+					th.setUserId(userId);
+			} else {
+				th = new TaskHolder().copy(r)
+					.setActive(true)
+					.setUserId(userId);
+			}
+		} else if(!th.isActive()) {
+			th.setActive(true);
+		}
+		
+		th = AON.save(domain.getName(), domain.getId(), user.getLogin(), th);
+		
+		if(user != null && th != null && th.getId() != null) {
+			user.setRegistry(new Registry().setId(th.getId()));
+			user = AON.save(domain.getName(), domain.getId(), user.getLogin(), user);
+		}
+		
+		return UserJSON.toJSON(user);
+	}
+	
+	private static Scope getScope(Domain domain, User user) {
+		
+		Scope s = AON.getScopeStream(domain.getName(), domain.getId(), user.getLogin(),
+				f -> f.getDomainProperty().eq(domain.getId()).and(f.getDescriptionProperty().eq("GENERAL")))
+				.findFirst().orElse(null);
+		
+		if(s == null && domain.getParentId() != null) {
+			s =   AON.getScopeStream(domain.getName(), domain.getId(), user.getLogin(),
+					f -> f.getDomainProperty().eq(domain.getParentId()).and(f.getDescriptionProperty().eq("GENERAL")))
+					.findFirst().orElse(null);
+		}
+		
+		if(s== null){
+			s = AON.getScopeStream(domain.getName(), domain.getId(), user.getLogin(),
+					f -> f.getDomainProperty().eq(domain.getId()))
+					.findFirst().orElse(null);
+		}
+		
+		if(s == null && domain.getParentId() != null) {
+			s = AON.getScopeStream(domain.getName(), domain.getId(), user.getLogin(),
+					f -> f.getDomainProperty().eq(domain.getParentId()))
+					.findFirst().orElse(null);
+		}
+		
+		return s;
+	}
+	
 }
