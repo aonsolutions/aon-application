@@ -271,6 +271,7 @@ public enum AppParam {
 	, SIG_DOMAIN_NAME
 	, SIG_DOMAIN_ID
 	, SIG_LOGIN
+	, TRIAL
 	;
 	
 	public String getValue() {
