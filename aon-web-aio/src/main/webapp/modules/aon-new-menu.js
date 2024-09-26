@@ -515,9 +515,9 @@ export class AonNewMenu extends AonElement {
 	
 		sidenav.style.width = '0px';
 	
-		setTimeout(() => {
-			sidenav.style.display = "none";
-		}, 300); 
+		// setTimeout(() => {
+		// 	sidenav.style.display = "none";
+		// }, 300); 
 	
 		// // Resetear la posición del logo
 		// aonlogo.style.left = '0px';
@@ -662,33 +662,39 @@ export class AonNewMenu extends AonElement {
 					this.showSideNav();
 				}
 
-				side.addEventListener("mouseenter", () => {
-					const dialog = this.getElement("sideNavDialogMenuContent");
-					this.showSideNav();
-
-					dialog.addEventListener("mouseleave", (ev) => {
-						dialog.close();
-				});
-				});
+				// side.addEventListener("mouseenter", () => {
+				// 	this.showSideNav();
+				// });
 	
-				side.addEventListener("mouseleave", (ev) => {
-					const dialog = this.getElement("sideNavDialogMenuContent");
-					if(!this.isElementAt(ev,dialog) && !LS.isPortalChecked()){
-						this.hideSideNav();
-						dialog.close();
-					}
-				});
-				
+				// side.addEventListener("mouseleave", (ev) => {
+				// 	const dialog = this.getElement("aonDesktopMainOptionDialog");
+				// 	const content = this.getElement("sideNavDialogMenuContent");
+				// 	if(!this.isElementAt(ev,content) && !LS.isPortalChecked()){
+				// 		this.hideSideNav();
+				// 		dialog.close();
+				// 	}
+				// });
+							
 				
 			});
-	
-			div.addEventListener("mouseleave", (ev) => {
-				const side = this.getElement("aonMenuSidenav");
-				if(!this.isElementAt(ev,side) && !LS.isPortalChecked()){
+
+			document.addEventListener("click", (event) => {
+				// Verificamos si el clic ocurrió fuera del sidenav
+				const buttonNew = this.getElement("new");
+
+				if (!buttonNew.contains(event.target) && !LS.isPortalChecked()) {
+					// Si se clicó fuera del sidenav, lo ocultamos
 					this.hideSideNav();
 				}
-				
 			});
+	
+			// div.addEventListener("mouseleave", (ev) => {
+			// 	const side = this.getElement("aonMenuSidenav");
+			// 	if(!this.isElementAt(ev,side) && !LS.isPortalChecked()){
+			// 		this.hideSideNav();
+			// 	}
+				
+			// });
 		}
 	}
 
@@ -1169,8 +1175,7 @@ export class AonNewMenu extends AonElement {
 		
 		newDialogMenu.setMenuOptions(newMenuOptions, top, left);
 		newDialogMenu.open();
-		let content = this.getElement(newDialogMenu.CONTENT);
-		content.id = "sideNavDialogMenuContent";
+		
 
 		
 	}
