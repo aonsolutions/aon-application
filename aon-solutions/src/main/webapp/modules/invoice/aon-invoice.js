@@ -1198,15 +1198,14 @@ export class AonInvoice extends AonElement {
 		div.appendChild(dateSpan);
 
 		let date = createDate(this.DATE, MSG.DATE);
-		if(this.invoice.isReadonly())
-			date.readonly = this.invoice.isReadonly();
+		date.setDate(this.invoice.date);
+		if(this.invoice.isReadonly()) date.readonly = this.invoice.isReadonly();
 		date.addEventListener(EVENT.CHANGE, () => {
-			this.invoice.setDate(date.value);
+			this.invoice.setDate(date.getDateValue());
 			if(this.autosave) this.save();
 		});
-
 		dateSpan.appendChild(date);
-		date.setDate(this.invoice.date);
+
 	
 		// ----- TOTAL
 
@@ -2279,14 +2278,14 @@ export class AonInvoice extends AonElement {
 
 		let date = createDate(this.FINANCE_DUE_DATE + 'Dialog' + i, MSG.DATE); //MSG.DUE_DATE;
 		date.readonly = this.invoice.isReadonly();
+		date.setDate(finance.due_date);
 		date.addEventListener(EVENT.CHANGE, () => {
-			finance.due_date = date.value;
+			finance.due_date = date.getDateValue();
 			this.setFocus(date.id);
 			this.invoice.setFinance(finance, i);
 			if(this.autosave) this.save();
 		});
 		table.addCell(date);
-		date.setDate(finance.due_date);
 
 		table.addRow(); // ----- ROW 2
 
@@ -2353,14 +2352,14 @@ export class AonInvoice extends AonElement {
 
 		let date = createDate(this.FINANCE_DUE_DATE + i, MSG.DATE); //MSG.DUE_DATE;
 		date.readonly = this.invoice.isReadonly();
+		date.setDate(finance.due_date);
 		date.addEventListener(EVENT.CHANGE, () => {
-			finance.due_date = date.value;
+			finance.due_date = date.getDateValue();
 			this.setFocus(date.id);
 			this.invoice.setFinance(finance, i);
 			if(this.autosave) this.save();
 		});
 		table.addCell(date);
-		date.setDate(finance.due_date);
 
 		// ----- FINANCE AMOUNT
 
@@ -2403,14 +2402,14 @@ export class AonInvoice extends AonElement {
 
 		let date = createDate(this.FINANCE_DUE_DATE + i, MSG.DATE); //MSG.DUE_DATE;
 		date.readonly = this.invoice.isReadonly();
+		date.setDate(finance.due_date);
 		date.addEventListener(EVENT.CHANGE, () => {
-			finance.due_date = date.value;
+			finance.due_date = date.getDateValue();
 			this.setFocus(date.id);
 			this.invoice.setFinance(finance, i);
 			if(this.autosave) this.save();
 		});
 		let dateCell = table.addCell(date);
-		date.setDate(finance.due_date);
 		dateCell.style.width = '15%';
 
 		// ----- FINANCE PAYMETHOD

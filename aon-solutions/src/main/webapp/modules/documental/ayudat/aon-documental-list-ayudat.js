@@ -8,7 +8,6 @@ import { newComponent } from '../../../services/utilsComponents.js';
 import { DOCUMENTAL_VIEWS } from '../DocumentalEnums.js';
 import * as ACTION from '../../actions.js';
 import { AonDateUtils } from '../../utils/AonDateUtils.js';
-import { DOCUMENTAL } from '../../../services/app.js';
 
 export class AonDocumentalListAyudat extends AonElement {
     _tags;
@@ -56,7 +55,6 @@ export class AonDocumentalListAyudat extends AonElement {
         const content = this.getApplication().getContent();
         let aonTable = this.isMobile() ? new AonMobileList() : new AonTable();
         aonTable.id = this.TABLE_ID;
-        aonTable.setApp(DOCUMENTAL);
         content.appendChild(aonTable);
 
         const input = newComponent({

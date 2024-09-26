@@ -6,6 +6,7 @@ import { getElaboration, getElaborations, getWarehouses } from '../../../service
 import { AonMobileElaboration } from './aon-mobile-elaboration.js';
 import { addElements, setElements } from './ElementCache.js';
 import { elaborationStatuses } from '../../../models/elaboration/elaborationStatus.js';
+import { createList } from '../../../components/CreateComponent.js';
 
 export class AonElaborationList extends AonElement {
 
@@ -41,10 +42,8 @@ export class AonElaborationList extends AonElement {
 	}
 
  	build() {
-		let aonTable = new AonTable();
-		aonTable.id = this.TABLE;
+		let aonTable = createList(this.TABLE);
 		aonTable.selectable = 'true';
-		aonTable.setApp(WAREHOUSE);
 		this.appendChild(aonTable);
 		aonTable.addColumn(MSG.DATE, 'date', 'dateTable', '10%');
 		aonTable.addColumn(MSG.REFERENCE, 'string', 'reference', '15%');

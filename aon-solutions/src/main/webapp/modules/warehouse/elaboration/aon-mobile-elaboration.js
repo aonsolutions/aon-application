@@ -152,7 +152,7 @@ export class AonMobileElaboration extends AonElement {
 		table.addCell(serialNumber);
 
 		let serialDate = createDate(this.ELABORATION_SERIAL_DATE, "Fecha Lote");
-		serialDate.value = this.elaboration.detail.item.serialDate;
+		serialDate.setDate(this.elaboration.detail.item.serialDate);
 		table.addCell(serialDate);
 	}
 

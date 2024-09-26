@@ -1,6 +1,7 @@
 import { MSG, CSS, EVENT, TAG } from 'aonsolutions/environments/environments.js'; 
 import { AonSuiteMenu } from '../aon-suite-menu.js';
 import * as GWT from 'aonsolutions/gwt/gwt.js';
+import * as JSF from '../aon-jsf-app.js';
 
 export class AonCommercialMenu extends AonSuiteMenu {
 
@@ -34,123 +35,123 @@ export class AonCommercialMenu extends AonSuiteMenu {
         };
         this.selectOptions= [{
             title: "Cliente potencial",
-            action: () => alert("description")
+            action: () => this.rootPanel(new JSF.AonJsfTarget())
         },{
             title: "Operación comercial",
-            action: () => alert("description")
+            action: () => this.rootPanel(new JSF.AonJsfProjectCommercial())
         },{
             title: "Presupuesto", 
-            action: () => alert("description")
+            action: () => this.rootPanel(new JSF.AonJsfOffer())
         }];
         this.options = [{
             title: 'Actividad Comercial',
             options: [ {
                 description: "Operación Comercial",
                 title: "Operación Comercial",
-                action: () => alert("description")
+                action: () => this.rootPanel(new JSF.AonJsfProjectCommercial())
             },{
                 description: "Agenda Comercial",
                 title: "Agenda Comercial",
-                action: () => alert("description")
+                action: () => this.rootPanel(new JSF.AonJsfCommercialTracking())
             },{
                 description: "Tipos de Actividades Comerciales",
                 title: "Agenda Comercial",
-                action: () => alert("description")
+                action: () => this.rootPanel(new JSF.AonJsfCommercialActivity())
             }]
         },{
             title: 'Presupuestos',
             options: [{
                 description: "Presupuesto de Ventas",
                 title: "Presupuesto de Ventas",
-                action: () => alert("description")
+                action: () => this.rootPanel(new JSF.AonJsfOffer())
             },{
                 description: "Pedidos de Venta",
                 title: "Pedidos de Venta",
-                action: () => alert("description")
+                action: () => this.rootPanel(new JSF.AonJsfSale())
             },{
                 description: "Condiciones Comerciales",
                 title: "Condiciones Comerciales",
-                action: () => alert("description")
+                action: () => this.rootPanel(new JSF.AonJsfCommercialTerm())
             }]
         },{
             title: 'Maestros',
             options: [{
                 description: "Agentes Comerciales",
                 title: "Agentes Comerciales",
-                action: () => alert("description")
+                action: () => this.rootPanel(new JSF.AonJsfSeller())
             },{
                 description: "Clientes Potenciales",
                 title: "Clientes Potenciales",
-                action: () => alert("description")
+                action: () => this.rootPanel(new JSF.AonJsfTarget())
             },{
                 description: "Deduplicación de Clientes Potenciales",
                 title: "Deduplicación de Clientes Potenciales",
-                action: () => alert("description")
+                action: () => this.rootPanel(new JSF.AonJsfTargetDeduplication())
             }]
         },{
             title: 'Cuadro de Mando',
             options: [{
                 description: "CM de Agentes Comerciales",
                 title: "CM de Agentes Comerciales",
-                action: () => alert("description")
+                action: () => this.rootPanel(new JSF.AonJsfCommercialStatSeller())
             },{
                 description: "CM de Clientes Potenciales",
                 title: "CM de Clientes Potenciales",
-                action: () => alert("description")
+                action: () => this.rootPanel(new JSF.AonJsfCommercialStatTarget())
             },{
                 description: "CM de Productos",
                 title: "CM de Productos",
-                action: () => alert("description")
+                action: () => this.rootPanel(new JSF.AonJsfCommercialStatProduct())
             },{
                 description: "CM de Categorias",
                 title: "CM de Categorias",
-                action: () => alert("description")
+                action: () => this.rootPanel(new JSF.AonJsfCommercialStatCategory())
             }]
         },{
             title: 'Informes',
             options: [{
                 description: "Presupuestos por Categoria y Producto",
                 title: "Presupuestos por Categoria y Producto",
-                action: () => alert("description")
+                action: () => this.rootPanel(new JSF.AonJsfCommercialCategoryStat())
             },{
                 description: "Presupuestos por Zona",
                 title: "Presupuestos por Zona",
-                action: () => alert("description")
+				action: () => this.rootPanel(new JSF.AonJsfCommercialGeozoneStat())
             },{
                 description: "Presupuestos por Agente Comercial",
                 title: "Presupuestos por Agente Comercial",
-                action: () => alert("description")
+				action: () => this.rootPanel(new JSF.AonJsfCommercialSellerStat())
             },{
                 description: "Presupuestos por Cliente Potencial",
                 title: "Presupuestos por Cliente Potencial",
-                action: () => alert("description")
+				action: () => this.rootPanel(new JSF.AonJsfCommercialTargetStat())
             },{
                 description: "Presupuestos por Producto",
                 title: "Presupuestos por Producto",
-                action: () => alert("description")
+                action: () => this.rootPanel(new JSF.AonJsfCommercialProductStat())
             }]
         },{
             title: 'Comisiones',
             options: [{
                 description: "Comisiones",
                 title: "Comisiones",
-                action: () => alert("description")
+                action: () => GWT.iLoad(GWT.COMMISSION_CALC)
             },{
                 description: "Cálculo de Comisiones",
                 title: "Cálculo de Comisiones",
-                action: () => alert("description")
+                action: () => this.rootPanel(new JSF.AonJsfCommissionCalc())
             },{
                 description: "Control de Comisiones Calculadas",
                 title: "Control de Comisiones Calculadas",
-                action: () => alert("description")
+                action: () => this.rootPanel(new JSF.AonJsfOfferDetailCommission())
             },{
                 description: "Tipos de Comisión",
                 title: "Tipos de Comisión",
-                action: () => alert("description")
+                action: () => this.rootPanel(new JSF.AonJsfCommissionType())
             },{
                 description: "Definición de tramos de comisiones",
                 title: "Definición de tramos de comisiones",
-                action: () => alert("description")
+                action: () => this.rootPanel(new JSF.AonJsfCommission())
             }]
         }];
     }

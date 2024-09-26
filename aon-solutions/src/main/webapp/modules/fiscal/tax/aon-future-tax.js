@@ -76,7 +76,6 @@ export class AonFutureTax extends AonElement {
   paintView() {
     let aonTable = this.isMobile() ? new AonMobileList() : new AonTable();
     aonTable.id = this.TABLE_ID;
-    aonTable.setApp(this.app);
     this.appendChild(aonTable);
   }
 

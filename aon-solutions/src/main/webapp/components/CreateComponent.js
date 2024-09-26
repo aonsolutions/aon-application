@@ -17,6 +17,7 @@ import { AonNewSelect } from "./aon-new-select.js";
 import { AonNewTextarea } from "./aon-new-textarea.js";
 import { AonEmail } from "./aon-email.js";
 import { AonQuantity } from "./aon-quantity.js";
+import { AonTable } from "./aon-table.js";
 
 export const createAonElement = (el, id, title, parent) => {
   el.id = id || '';
@@ -48,6 +49,10 @@ export const createNumber = (id, title, parent) => {
 
 export const createSelect = (id, title, parent) => {
   return createAonElement(new AonNewSelect(), id, title, parent); // AonSelect
+}
+
+export const createList = (id, parent) => {
+  return createAonElement(new AonTable(), id, '', parent);
 }
 
 export const createTable = (id, parent) => {

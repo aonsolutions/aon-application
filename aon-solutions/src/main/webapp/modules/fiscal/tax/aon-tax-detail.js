@@ -23,7 +23,6 @@ import "../../../components/aon-table.js";
 import { EVENT, MATERIAL_ICONS, MSG, TAG } from "../../../environments/environments.js";
 import * as ACTION from "../../actions.js";
 import { FISCAL } from "../../../services/app.js";
-import { AonTable } from "../../../components/aon-table.js";
 import { formatNumber, serializeForm, waitEl } from "../../../services/utils.js";
 import { AonToolbar } from "../../../components/aon-toolbar.js";
 import { ToolbarType } from "../../../models/enums.js";
@@ -41,6 +40,7 @@ import { AonTab } from "../../../components/aon-tab.js";
 import { AonFutureTax } from "./aon-future-tax.js";
 import { AonViewer } from "../../../components/aon-viewer.js";
 import * as LS from '../../../services/localStorageService.js';
+import { createList } from "../../../components/CreateComponent.js";
 
 export class AonTaxDetail extends AonElement {
   TOOLBAR;
@@ -165,9 +165,7 @@ export class AonTaxDetail extends AonElement {
     let content = this.getElement(this.CONTENT);
 		this.clearElement(content);
 
-    let aonTaxDetailTable = new AonTable();
-    aonTaxDetailTable.id = this.INVOICE_TABLE;
-    aonTaxDetailTable.setApp(FISCAL);
+    let aonTaxDetailTable = createList(this.INVOICE_TABLE);
     aonTaxDetailTable.selectable = 'true';
     content.appendChild(aonTaxDetailTable);
 
@@ -433,9 +431,7 @@ export class AonTaxDetail extends AonElement {
     let content = this.getElement(this.CONTENT);
 		this.clearElement(content);
 
-    let aonSalaryDetailTable = new AonTable();
-    aonSalaryDetailTable.id = this.SALARY_TABLE;
-    aonSalaryDetailTable.setApp(FISCAL);
+    let aonSalaryDetailTable = createList(this.SALARY_TABLE);
     content.appendChild(aonSalaryDetailTable);
 
     let aonSalaryDetailTableBody = aonSalaryDetailTable.getElementsByTagName("tbody")[0];
