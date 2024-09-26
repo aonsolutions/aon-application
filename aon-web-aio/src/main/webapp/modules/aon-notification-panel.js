@@ -201,6 +201,11 @@ export class AonNotificationPanel extends AonElement {
             aonHeader.setVisibleLogo(false);
             aonHeader.setVisibleApp(true);
             this.goNotification(res);
+            this.goAonNotification();
+            let rightPanel = document.querySelector('aon-right-panel'); 
+            if (rightPanel) {
+                rightPanel.close(); 
+            }
         });
         
         span.addEventListener(EVENT.CLICK, (event) => {

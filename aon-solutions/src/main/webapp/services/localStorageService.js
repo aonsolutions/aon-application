@@ -20,6 +20,8 @@ export const LEFT_MENU = 'aonMenuSidenav';
 export const APP_MENU = 'aonConfigSwitchApps';
 export const DARK_MENU = 'aonConfigDarkSwitch';
 export const WHITE_BRAND = 'aonConfigWhiteBrandSwitch';
+export const COMPANY_SELECTED = 'companySelected';
+export const PORTAL_CHECKED = "portalChecked"
 
 export const THEME = 'aonTheme';
 export const AON_THEME = '/css/theme/aon.css';
@@ -85,6 +87,32 @@ export const getLeftMenu = () => {
 
 export const setLeftMenu = (value) => {
     set(LEFT_MENU,value);
+} 
+
+export const isCompanySelected = () => {
+    let aon = getCompanySelected();
+    return CONSTANT.TRUE == aon;
+}
+
+export const getCompanySelected = () => {
+    return get(COMPANY_SELECTED);
+}
+
+export const setCompanySelected = (value) => {
+    set(COMPANY_SELECTED ,value);
+} 
+
+export const isPortalChecked = () => {
+    let aon = getPortalChecked();
+    return CONSTANT.TRUE == aon;
+}
+
+export const getPortalChecked = () => {
+    return get(PORTAL_CHECKED);
+}
+
+export const setPortalChecked = (value) => {
+    set(PORTAL_CHECKED ,value);
 } 
 
 export const isAppMenu = () => {
