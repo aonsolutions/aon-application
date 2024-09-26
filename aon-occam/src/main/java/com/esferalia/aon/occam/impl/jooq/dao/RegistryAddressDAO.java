@@ -227,11 +227,6 @@ public class RegistryAddressDAO {
 	}
 	
 	public static Stream<RegistryAddress> getStream(AONContext ctx, RegistryAddressFilter filter) {
-		
-		System.out.println("ADDRESSES getStream");
-		System.out.println(select(ctx,filter)
-				.getSQL().toString());
-		
 		return select(ctx,filter)
 			.fetch()
 			.stream()

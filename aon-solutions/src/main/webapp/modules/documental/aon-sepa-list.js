@@ -14,10 +14,9 @@ import {
   MSG,
 } from "../../environments/environments.js";
 import * as LS from "../../services/localStorageService.js";
-import { PAYROLL } from "../../services/app.js";
-import { AonTable } from "../../components/aon-table.js";
 import { formatNumber } from "../../services/utils.js";
 import { AonSepa } from "./aon-sepa.js";
+import { createList } from "../../components/CreateComponent.js";
 
 export class AonSepaList extends AonElement {
   more;
@@ -59,9 +58,7 @@ export class AonSepaList extends AonElement {
   }
 
   build() {
-    let aonDocumentalSepaTable = new AonTable();
-    aonDocumentalSepaTable.id = this.TABLE;
-    aonDocumentalSepaTable.setApp(PAYROLL);
+    let aonDocumentalSepaTable = createList(this.TABLE);
     this.appendChild(aonDocumentalSepaTable);
 
     aonDocumentalSepaTable.addColumn(MSG.DATE, "date", "issueDate", "20%");

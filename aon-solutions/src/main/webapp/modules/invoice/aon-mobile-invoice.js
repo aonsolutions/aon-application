@@ -190,12 +190,13 @@ export class AonMobileInvoice extends AonInvoice {
 
 		let date = createDate(this.DATE, MSG.DATE);
 		date.readonly = this.invoice.isReadonly();
+		date.setDate(this.invoice.date);
 		date.addEventListener(EVENT.CHANGE, () => {
-			this.invoice.setDate(date.value);
+			this.invoice.setDate(date.getDateValue());
 			if(this.autosave) this.save();
 		});
 		table.addCell(date);
-		date.value = this.invoice.date;
+
 		// ----- TOTAL
 
 		let total = createNumber(this.TOTAL, MSG.TOTAL);
@@ -830,14 +831,14 @@ export class AonMobileInvoice extends AonInvoice {
 
 		let date = createDate(this.FINANCE_DUE_DATE + i, MSG.DATE);
 		date.readonly = this.invoice.isReadonly();
+		date.setDate(finance.due_date);
 		date.addEventListener(EVENT.CHANGE, () => {
-			finance.due_date = date.value;
+			finance.due_date = date.getDateValue();
 			this.setFocus(date.id);
 			this.invoice.setFinance(finance, i);
 			if(this.autosave) this.save();
 		});
 		table.addCell(date);
-		date.value = finance.due_date;
 
 		// ----- FINANCE AMOUNT
 		
@@ -901,15 +902,15 @@ export class AonMobileInvoice extends AonInvoice {
 
 		let date = createDate(this.FINANCE_DUE_DATE + 'Dialog' + i, MSG.DATE);
 		date.readonly = this.invoice.isReadonly();
+		date.setDate(finance.due_date);
 		date.addEventListener(EVENT.CHANGE, () => {
-			finance.due_date = date.value;
+			finance.due_date = date.getDateValue();
 			this.setFocus(date.id);
 			this.invoice.setFinance(finance, i);
 			if(this.autosave) this.save();
 		});
 		table.addCell(date);
-		date.value = finance.due_date;
-		
+
 		table.addRow(); // ----- ROW 2
 
 		// ----- FINANCE PAYMETHOD

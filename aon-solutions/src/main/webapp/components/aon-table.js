@@ -6,11 +6,10 @@ import { AonDialogMenu } from "./aon-dialog-menu.js";
 import { AonIcon } from "./aon-icon.js";
 import { AonDateUtils } from "../modules/utils/AonDateUtils.js";
 import * as LS from "../services/localStorageService.js";
-import { formatNumber } from "../services/utils.js";
 
 
 export class AonTable extends AonElement {
-  app;
+  
   columns;
   selected;
   selectedAll;
@@ -143,7 +142,6 @@ export class AonTable extends AonElement {
         });
       });
     }
-
   }
 
   addColumn(name, type, id, width, textAlign) {
@@ -193,16 +191,6 @@ export class AonTable extends AonElement {
       tr.style.border = '1px solid #ddd';
       tr.style.borderRadius = '5px';
     }  
-    // if(this.getApp() && LS.isNewTheme()) {
-    //   tr.addEventListener(EVENT.MOUSEOVER, () => {
-    //     tr.style.backgroundColor = this.getApp().backgroundColor || '#eaf1fb'; 
-    //   });
-
-    //   tr.addEventListener(EVENT.MOUSELEAVE, () => {
-    //     tr.style.backgroundColor = 'transparent'; 
-    //   });
-    // }
-
     
     if(this.selectedColor){
       tr.addEventListener(EVENT.CLICK, () => this.addBackgroundTr(tr, "#d3e3fd"));
@@ -461,15 +449,6 @@ export class AonTable extends AonElement {
       tr.remove();
     }
   }
-
-  getApp() {
-    return this.app;
-  }
-
-  setApp(app) {
-    this.app = app;
-  }
-
 }
 if(!window.customElements.get('aon-table')){
   window.customElements.define("aon-table", AonTable);

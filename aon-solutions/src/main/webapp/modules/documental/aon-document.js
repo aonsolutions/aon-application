@@ -115,7 +115,7 @@ export class AonDocument extends AonElement {
     tdDate.setAttribute('colspan', '1');
 		tr.appendChild(tdDate);
 
-    let date = createDate(this.DATE, MSG.DATE, tdDate);
+    let date = createDate(this.DATE, MSG.DATE);
     if(!this.getDur().isDocumentalManager() && !this.getDur().isDocumentalPortal()){
       date.readonly = 'true';
     }
@@ -123,6 +123,7 @@ export class AonDocument extends AonElement {
       let d = this.document.date.split('/');
       date.setDate(new Date(d[2], d[1] - 1, d[0]));
     }
+    tdDate.appendChild(date);
 
     let tdConfidential = this.createElement(TAG.TD);
     tdConfidential.setAttribute('colspan', '1');
