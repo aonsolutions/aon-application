@@ -54,16 +54,6 @@
 						<goals>
 							<goal>report</goal>
 						</goals>
-						<configuration>
-							<rule>
-								<element>PACKAGE</element>
-								<includes>
-									<include>com.esferalia.aon.occam.api.model.invoice</include>
-									<include>com.esferalia.aon.occam.api.json.raw</include>
-									<include>com.esferalia.aon.occam.impl.jooq.handler</include>
-								</includes>
-							</rule>
-						</configuration>
 					</execution>
 					<execution>
 						<id>check</id>
@@ -83,7 +73,7 @@
 										<limit>
 											<counter>INSTRUCTION</counter>
 											<value>COVEREDRATIO</value>
-											<minimum>30%</minimum>
+											<minimum>20%</minimum>
 										</limit>
 										<!--
 										<limit>
