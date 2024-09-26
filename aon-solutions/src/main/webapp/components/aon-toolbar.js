@@ -250,6 +250,32 @@ export class AonToolbar extends AonElement {
 		return aib;
 	}
 
+	addButton2End(action, fn) {
+		const id = this.TOOL_SECTION + action.id + 'Button';
+		let aib = new AonIconButton();
+		aib.id = id;
+		if(!this.getElement(id)){
+
+			let span = this.createElement(TAG.SPAN);
+
+			aib.title = action.name;
+			aib.addEventListener(EVENT.CLICK, fn);
+			if(action.aonIcon){
+				aib.aonIcon = action.aonIcon;
+			} else 
+				aib.icon = action.icon;
+			
+			span.appendChild(aib);
+
+			let aonMenu = this.getElement('aonMenu');
+			let toolSection = this.getElement(this.TOOL_SECTION);
+			toolSection.style.paddingRight = (aonMenu && aonMenu.getAttribute('opened')) || this.isMobile() ? '0px' : '40px';
+			toolSection.style.marginBottom = '2px';
+			toolSection.appendChild(span);
+		}
+		return aib;
+	}
+
 	addButtonAfter(action, fn , after) {
 		const id = this.TOOL_SECTION + action.id + 'Button';
 		let aib = new AonIconButton();

@@ -12,6 +12,7 @@ import { AonTable } from "../../../components/aon-table.js";
 import { FiscalUtils } from "../FiscalUtils.js";
 import * as LS from "../../../services/localStorageService.js";
 import { FISCAL_VIEWS } from "../FiscalEnums.js";
+import { AonTaxDetail } from "./aon-tax-detail.js";
 
 export class AonFutureTax extends AonElement {
 
@@ -75,7 +76,6 @@ export class AonFutureTax extends AonElement {
   paintView() {
     let aonTable = this.isMobile() ? new AonMobileList() : new AonTable();
     aonTable.id = this.TABLE_ID;
-    aonTable.setApp(this.app);
     this.appendChild(aonTable);
   }
 
@@ -102,7 +102,7 @@ export class AonFutureTax extends AonElement {
         aonTable.addColumn("Estado", "", "statusText", "12%");
       }
       aonTable.addColumn("Importe", "number", "resultFormat", "15%");
-      aonTable.addColumn("", "icon", "icon", "5%");
+      aonTable.addColumn("", "icons", "icons", "100px");
 
       try {
         const resp = await this.getData();
@@ -110,8 +110,11 @@ export class AonFutureTax extends AonElement {
 
         if (resp.length) {
           resp.forEach((res) => {
-            this.buildPrint(res);
-            aonTable.addRow(res, () => this.openDialog(res));
+            this.buildIcons(res);
+            aonTable.addRow(res, () => {
+              this.getApplication().setContent(new AonTaxDetail(res, "future"));
+              //this.openDialog(res);
+            });
           });
 
           let elementHTML = document.createElement(TAG.DIV);
@@ -197,6 +200,7 @@ export class AonFutureTax extends AonElement {
       periodText: this.filter.periodText,
       modelText: model.description,
       year : this.filter.year,
+      period : this.filter.period,
       hacienda : model.hacienda, // Alava, AEAT...
       result : model.amount,
       statusHtml,
@@ -258,12 +262,26 @@ export class AonFutureTax extends AonElement {
     return div;
   }
 
-  buildPrint(res) {
-    if (!["FINISHED", "SENT"].includes(res.status)) return;
+  buildIcons(res) {
+    let icons = [];
 
-    res.icon = MATERIAL_ICONS.PDF;
-    res.icon_color = "var(--aonTaxBuildPrintRes)";
-    res.fn = () => this.getPdf(res);
+    if (["FINISHED", "SENT"].includes(res.status)) {
+      let icon = {
+        icon: MATERIAL_ICONS.PDF,
+        color: "var(--aonTaxBuildPrintRes)",
+        fn : () => this.getPdf(res)
+      };
+      icons.push(icon);
+    };
+
+    let icon = {
+      icon: MATERIAL_ICONS.LIST_ALT,
+      title: "Ver facturas y nóminas incluidas",
+      color: "var(--aonTaxBuildPrintRes)",
+      fn : () => this.getApplication().setContent(new AonTaxDetail(res, "future"))
+    };
+    icons.push(icon);
+    res.icons = icons;
   }
 
 }

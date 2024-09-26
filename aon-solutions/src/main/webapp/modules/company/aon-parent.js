@@ -380,6 +380,7 @@ export class AonParent extends AonElement {
 		li.style.backgroundColor = company.parent ? '#E1ECFF' : color;
 		li.addEventListener(EVENT.CLICK, () => {
 			this.companySelection(company, false);
+			LS.setPortalChecked(LS.isLeftMenu());
 		});
 
 		li.addEventListener(EVENT.MOUSEOVER, () => {

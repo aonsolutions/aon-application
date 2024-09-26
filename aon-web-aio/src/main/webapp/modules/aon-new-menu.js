@@ -55,6 +55,7 @@ const OPENED = 'opened';
 const APP = 'app';
 
 
+
 export class AonNewMenu extends AonElement {
 	AON_MENU_TOPNAV;
 	AON_MENU_LEFTOP;
@@ -294,6 +295,7 @@ export class AonNewMenu extends AonElement {
 		let aonMenuSidenav = this.createElement(TAG.DIV);
 		aonMenuSidenav.id = this.AON_MENU_SIDENAV;
 		aonMenuSidenav.className = CSS.AON_MENU_SIDENAV;
+		aonMenuSidenav.classList.add("hiddenMenuLeft");
 		this.appendChild(aonMenuSidenav);
 		aonMenuSidenav.classList.add("aonNewMenuSideNav");
 		this.getRootPanel().style.marginLeft = '0px';
@@ -307,16 +309,11 @@ export class AonNewMenu extends AonElement {
 		this.getRootPanel().style.marginTop = '1px'; //'69px';
 		this.buildMenuTopnav();
 
-		
-
 		let header = this.getElement('aonHeaderWeb');
 		header.className = 'aonHeader aonHeaderStart';
 		let applications = this.getElement('applications');
 		applications.className = 'aonMenuLeftopStart';
 
-		if(LS.isOnlyOne()&& LS.isLeftMenu()){
-			this.showSideNav();
-		}
 
 	}
 
@@ -410,16 +407,18 @@ export class AonNewMenu extends AonElement {
 			div.appendChild(appElement);
 		}
 		
-		if(!LS.isLeftMenu()){
-			// for (let item in MENU_APPS) {
-			// 	if (this.isApp(MENU_APPS[item])){
-			// 		div.appendChild(this.buildTopApp(MENU_APPS[item]));
-			// 	}
-					
-					
-			// }
+		// if(!LS.isLeftMenu() && this.isCSSLoaded("beta.css")){
+		// 	for (let item in MENU_APPS) {
+		// 		let app = MENU_APPS[item];
+		// 		if(app.app!= "home" && app.app!= "new"){
+		// 			if (this.isApp(MENU_APPS[item])){
+		// 				div.appendChild(this.buildTopApp(MENU_APPS[item]));
+		// 			}
+		// 		}
+						
+		// 	}
 			
-		}
+		// }
 
 		this.clearElement(aonMenuTopnav);
 		aonMenuTopnav.appendChild(div);
@@ -477,46 +476,56 @@ export class AonNewMenu extends AonElement {
 	}
 
 	showSideNav() {
-		if(LS.isTopMenu())
+		if (LS.isTopMenu())
 			this.reloadTopNav();
-
+	
 		let sidenav = this.getElement(this.AON_MENU_SIDENAV);
 		let menulist = this.getElement("aonMenuList");
 		let rootPanel = this.getElement("rootPanel");
-		// let aonlogo = this.getElement("aonLogo");		
-		// let icon = this.getElement("aonMenuLeftop");
-
+		let aonlogo = this.getElement("aonLogo");
+	
+		sidenav.style.transition = 'width 0.3s ease';
+		rootPanel.style.transition = 'margin-left 0.3s ease';
+		// aonlogo.style.transition = 'left 0.3s ease';
+	
 		sidenav.style.width = '68px';
-		sidenav.style.display = "";
-		
+		sidenav.style.display = "";  
+	
 		menulist.style.visibility = "visible";
-		
+	
 		// aonlogo.style.left = '60px';
 		// aonlogo.style.position = 'relative';
-
-		// icon.style.visibility = "visible";
-
+	
 		rootPanel.style.marginLeft = '68px';
 	}
+	
 
-	hideSideNav(){
-		if(LS.isTopMenu())
+	hideSideNav() {
+		if (LS.isTopMenu())
 			this.reloadTopNav();
-
+	
 		let sidenav = this.getElement(this.AON_MENU_SIDENAV);
 		let rootPanel = this.getElement("rootPanel");
 		let menulist = this.getElement("aonMenuList");
 		let aonlogo = this.getElement("aonLogo");
-		let icon = this.getElement("aonMenuLeftop");
+	
+		sidenav.style.transition = 'width 0.3s ease';
+		rootPanel.style.transition = 'margin-left 0.3s ease';
+		// aonlogo.style.transition = 'left 0.3s ease';
+	
 		sidenav.style.width = '0px';
-		sidenav.style.display = "none";
-		aonlogo.style.position = "relative";
-		// icon.style.visibility = "hidden";
-		// aonlogo.style.left = '60px';
+	
+		// setTimeout(() => {
+		// 	sidenav.style.display = "none";
+		// }, 300); 
+	
+		// // Resetear la posición del logo
+		// aonlogo.style.left = '0px';
+		// aonlogo.style.position = 'relative';
 	
 		rootPanel.style.marginLeft = '0px';
-		//menulist.style.visibility = "hidden";
 	}
+	
 
 	showMenuButton() {
 		let aonMenuSidenav = this.getElement(this.AON_MENU_SIDENAV);
@@ -630,15 +639,91 @@ export class AonNewMenu extends AonElement {
 			div.appendChild(span);
 		}
 		
-		// if(welcome && app.app == "applications"){
-		// 	div.addEventListener("click", (event) => {
-		// 		event.preventDefault(); 
-		// 		event.stopPropagation();
-		// 	});
-		// }
-		
 		a.appendChild(div);
+
+		if (app.app == "applications"){
+			this.controlSideNav();
+		}
+		
+
 		return a;
+	}
+
+	controlSideNav() {
+		const div = this.getElement("aonMenuLeftop");
+		
+
+		if (this.isCSSLoaded("beta.css")) {
+
+			div.addEventListener("mouseenter", () => {
+				const side = this.getElement("aonMenuSidenav");
+
+				if (LS.isCompanySelected()){
+					this.showSideNav();
+				}
+
+				// side.addEventListener("mouseenter", () => {
+				// 	this.showSideNav();
+				// });
+	
+				// side.addEventListener("mouseleave", (ev) => {
+				// 	const dialog = this.getElement("aonDesktopMainOptionDialog");
+				// 	const content = this.getElement("sideNavDialogMenuContent");
+				// 	if(!this.isElementAt(ev,content) && !LS.isPortalChecked()){
+				// 		this.hideSideNav();
+				// 		dialog.close();
+				// 	}
+				// });
+							
+				
+			});
+
+			document.addEventListener("click", (event) => {
+				// Verificamos si el clic ocurrió fuera del sidenav
+				const buttonNew = this.getElement("new");
+
+				if (!buttonNew.contains(event.target) && !LS.isPortalChecked()) {
+					// Si se clicó fuera del sidenav, lo ocultamos
+					this.hideSideNav();
+				}
+			});
+	
+			// div.addEventListener("mouseleave", (ev) => {
+			// 	const side = this.getElement("aonMenuSidenav");
+			// 	if(!this.isElementAt(ev,side) && !LS.isPortalChecked()){
+			// 		this.hideSideNav();
+			// 	}
+				
+			// });
+		}
+	}
+
+
+	isElementAt(ev, el){
+		const viewportX = ev.clientX;
+		const viewportY = ev.clientY;
+		let elements = document.elementsFromPoint(viewportX, viewportY);
+		for ( let element of elements ){
+			console.log(element.tagName + ": "  + (element === el));
+			if ( element === el ){
+				return true;
+			}
+				
+		}		
+		return false;
+	}
+	
+	
+	
+	
+
+	isCSSLoaded(cssFileName) {
+		for (let sheet of document.styleSheets) {
+			if (sheet.href && sheet.href.includes(cssFileName)) {
+				return true;
+			}
+		}
+		return false;
 	}
 	
 	getCssVariable( variable ){
@@ -1089,8 +1174,9 @@ export class AonNewMenu extends AonElement {
 		const left = el.getBoundingClientRect().right;
 		
 		newDialogMenu.setMenuOptions(newMenuOptions, top, left);
-		
 		newDialogMenu.open();
+		
+
 		
 	}
 	

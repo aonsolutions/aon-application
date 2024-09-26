@@ -227,7 +227,6 @@ public class RegistryAddressDAO {
 	}
 	
 	public static Stream<RegistryAddress> getStream(AONContext ctx, RegistryAddressFilter filter) {
-				
 		return select(ctx,filter)
 			.fetch()
 			.stream()

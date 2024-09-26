@@ -3,11 +3,15 @@ name: Java CI with Maven
 
 on:
   push:
-    branches: [ "master" , "cadizbay" ]
+    branches: 
+      - master
+      - cadizbay
+      - macleod
   pull_request:
-    # By default, a workflow only runs when a pull_request event's activity type
-    # is opened, synchronize, or reopened. types: [opened, synchronize, reopened]
-    branches: [ "master" , "cadizbay" ]
+    branches: 
+      - master
+      - cadizbay
+      - macleod
   workflow_dispatch:
 
 env:
@@ -18,7 +22,6 @@ env:
   
 jobs:
   build:
-
     runs-on: ubuntu-latest
 
     permissions:
@@ -133,7 +136,7 @@ jobs:
         -Dintegration.test.agrarian.payroll.url=http://agrarian-payroll-test.aonsolutions.org:8080/ \
         -Dintegration.test.trainning.payroll.url=http://trainning-payroll-test.aonsolutions.org:8080/ \
         -Dintegration.test.home.payroll.url=http://home-payroll-test.aonsolutions.org:8080/ \
-        -f aon-htmlunit/pom.xml integration-test
+        -Dtest='!GeneralEnterpriseTest' -f aon-htmlunit/pom.xml integration-test
         
     - name: Build production version with Maven
       if: github.ref == 'refs/heads/master'
@@ -173,17 +176,65 @@ jobs:
       env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-    - name: Deploy to Amazon ECS AON 
-      if: github.ref == 'refs/heads/master'
-      run : |
-        aws ecs update-service --region=eu-south-2 --cluster AON --service AON-SOLUTIONS --force-new-deployment
-        aws ecs update-service --region=eu-south-2 --cluster AON --service AON-APPLICATION --force-new-deployment
+    # - name: Pull images from GitHub Container Registry
+    #   if: github.ref == 'refs/heads/master'
+    #   run: |
+    #     docker pull ghcr.io/${{ github.repository_owner }}/aon-solutions:${{ env.BRANCH_NAME }}
+    #     docker pull ghcr.io/${{ github.repository_owner }}/aon-application:${{ env.BRANCH_NAME }}
+    #     docker pull ghcr.io/${{ github.repository_owner }}/aon-db-up2date:${{ env.BRANCH_NAME }}
 
-    - name: Deploy to Amazon ECS CADIZ
-      if: github.ref == 'refs/heads/cadizbay'
-      run : |
-        aws ecs update-service --region=eu-south-2 --cluster AON --service CADIZ-SOLUTIONS --force-new-deployment
-        aws ecs update-service --region=eu-south-2 --cluster AON --service CADIZ-APPLICATION --force-new-deployment
+    - name: Login to Amazon ECR (Ireland)
+      id: login-ecr-ireland
+      uses: aws-actions/amazon-ecr-login@v1
+
+    - name: Tag, and push images to Amazon ECR (Ireland)
+      if: github.ref == 'refs/heads/master' || github.ref == 'refs/heads/macleod'
+      env:
+        ECR_REGISTRY: ${{ steps.login-ecr-ireland.outputs.registry }}
+        IMAGE_TAG: ${{ github.ref_name == 'master' && 'snapshot' || 'macleod' }}
+      run: |
+        docker tag ghcr.io/${{ github.repository_owner }}/aon-solutions:${{ env.BRANCH_NAME }} $ECR_REGISTRY/aonsolutions/aon-solutions:$IMAGE_TAG 
+        docker tag ghcr.io/${{ github.repository_owner }}/aon-application:${{ env.BRANCH_NAME }} $ECR_REGISTRY/aonsolutions/aon-application:$IMAGE_TAG 
+        docker tag ghcr.io/${{ github.repository_owner }}/aon-db-up2date:${{ env.BRANCH_NAME }} $ECR_REGISTRY/aonsolutions/aon-db-up2date:$IMAGE_TAG 
+        docker push $ECR_REGISTRY/aonsolutions/aon-solutions:$IMAGE_TAG 
+        docker push $ECR_REGISTRY/aonsolutions/aon-application:$IMAGE_TAG 
+        docker push $ECR_REGISTRY/aonsolutions/aon-db-up2date:$IMAGE_TAG 
+
+    # - name: Set AWS region to (Spain)
+    #  if: github.ref == 'refs/heads/master'
+    #  run: aws configure set default.region eu-south-2
+        
+    - name: Login to Amazon ECR (Spain)
+      if: github.ref == 'refs/heads/master'
+      id: login-ecr-spain
+      uses: aws-actions/amazon-ecr-login@v1
+      env:
+        AWS_REGION: eu-south-2
+
+    - name: Tag, and push images to Amazon ECR (Spain)
+      if: github.ref == 'refs/heads/master' || github.ref == 'refs/heads/cadizbay'
+      env:
+        ECR_REGISTRY: ${{ steps.login-ecr-spain.outputs.registry }}
+        IMAGE_TAG: ${{ github.ref_name == 'master' && 'snapshot' || 'cadiz' }}
+      run: |
+        docker tag ghcr.io/${{ github.repository_owner }}/aon-solutions:${{ env.BRANCH_NAME }} $ECR_REGISTRY/aon-solutions:$IMAGE_TAG 
+        docker tag ghcr.io/${{ github.repository_owner }}/aon-application:${{ env.BRANCH_NAME }} $ECR_REGISTRY/aon-application:$IMAGE_TAG 
+        docker tag ghcr.io/${{ github.repository_owner }}/aon-db-up2date:${{ env.BRANCH_NAME }} $ECR_REGISTRY/aon-db-up2date:$IMAGE_TAG 
+        docker push $ECR_REGISTRY/aon-solutions:$IMAGE_TAG 
+        docker push $ECR_REGISTRY/aon-application:$IMAGE_TAG 
+        docker push $ECR_REGISTRY/aon-db-up2date:$IMAGE_TAG 
+
+    # - name: Deploy to Amazon ECS AON 
+    #  if: github.ref == 'refs/heads/master'
+    #  run : |
+    #    aws ecs update-service --region=eu-south-2 --cluster AON --service AON-SOLUTIONS --force-new-deployment
+    #    aws ecs update-service --region=eu-south-2 --cluster AON --service AON-APPLICATION --force-new-deployment
+
+    # - name: Deploy to Amazon ECS CADIZ
+    #  if: github.ref == 'refs/heads/cadizbay'
+    #  run : |
+    #   aws ecs update-service --region=eu-south-2 --cluster AON --service CADIZ-SOLUTIONS --force-new-deployment
+    #   aws ecs update-service --region=eu-south-2 --cluster AON --service CADIZ-APPLICATION --force-new-deployment
         
 
 

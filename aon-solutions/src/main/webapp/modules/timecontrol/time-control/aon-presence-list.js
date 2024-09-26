@@ -73,7 +73,6 @@ export class AonPresenceList extends AonElement {
   paintView() {
     let aonTable = this.isMobile() ? new AonMobileList() : new AonTable();
     aonTable.id = this.TABLE_ID;
-    aonTable.setApp(TIMECONTROL)
     this.appendChild(aonTable);
   }
 
