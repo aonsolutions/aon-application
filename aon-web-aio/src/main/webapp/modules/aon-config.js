@@ -161,20 +161,24 @@ export class AonConfig extends AonElement {
 
       
         if(LS.isTopMenu()) {
-                    aonMenu.showTopNav();
-                } else {
-                    aonMenu.hideTopNav();
-                };
+                aonMenu.showTopNav();
+            } else {
+                aonMenu.hideTopNav();
+            };
                 
-            });
+        });
 
         sideNavSwitch.addEventListener(EVENT.CHANGE, () => {
+            let welcome = this.getElement("aonCompanyTabFilter");
             LS.setLeftMenu(sideNavSwitch.checked);
-            if(LS.isLeftMenu()) {
-                aonMenu.showSideNav();
-            } else {
-                aonMenu.hideSideNav();
-            };
+            LS.setPortalChecked(sideNavSwitch.checked);
+            if(!welcome){
+                if(LS.isLeftMenu()) {
+                    aonMenu.showSideNav();
+                } else {
+                    aonMenu.hideSideNav();
+                };
+            }
             
         });
 
