@@ -81,6 +81,10 @@ public class AonNumberUtils {
 		}
 		return null;
 	}
+	public static Short toShort(Number number) {
+		if (number == null) return null; 
+		return Short.valueOf( number.shortValue());
+	}
 
 	public static Double toDouble(Number number) {
 		if (number == null) return null; 
