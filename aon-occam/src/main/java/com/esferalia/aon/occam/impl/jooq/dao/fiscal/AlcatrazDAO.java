@@ -256,4 +256,76 @@ public class AlcatrazDAO {
 		;
 	}
 	
+	public static List<Alcatraz> getAlcatrazInvoicesByFsModel(AONContext ctx, Integer fsModelId) {
+		return ctx.getDslContext()
+			.select()
+			.from(ALCATRAZ)
+			.where(ALCATRAZ.FS_MODEL.eq(fsModelId))
+			.and(ALCATRAZ.INVOICE.isNotNull())
+			.fetch()
+			.stream()
+			.map(rec -> new Alcatraz()
+					.setInvoice(rec.get(ALCATRAZ.INVOICE))
+					.setSalary(rec.get(ALCATRAZ.SALARY))
+			)
+			.collect(Collectors.toCollection(LinkedList::new))
+		;
+	}
+	
+	public static List<Alcatraz> getAlcatrazInvoicesByFsModel(AONContext ctx, Integer fsModelId, Integer offset) {
+		return ctx.getDslContext()
+			.select()
+			.from(ALCATRAZ)
+			.where(ALCATRAZ.FS_MODEL.eq(fsModelId))
+			.and(ALCATRAZ.INVOICE.isNotNull())
+			.limit(100)
+			.offset(offset)
+			.fetch()
+			.stream()
+			.map(rec -> new Alcatraz()
+					.setInvoice(rec.get(ALCATRAZ.INVOICE))
+					.setSalary(rec.get(ALCATRAZ.SALARY))
+			)
+			.collect(Collectors.toCollection(LinkedList::new))
+		;
+	}
+	
+	public static Integer getAlcatrazInvoicesCountByFsModel(AONContext ctx, Integer fsModelId) {
+		return ctx.getDslContext()
+			.selectCount()
+			.from(ALCATRAZ)
+			.where(ALCATRAZ.FS_MODEL.eq(fsModelId))
+			.and(ALCATRAZ.INVOICE.isNotNull())
+			.fetchOne()
+			.value1();
+	}
+	
+	public static List<Alcatraz> getAlcatrazSalariesByFsModel(AONContext ctx, Integer fsModelId, Integer offset) {
+		return ctx.getDslContext()
+			.select()
+			.from(ALCATRAZ)
+			.where(ALCATRAZ.FS_MODEL.eq(fsModelId))
+			.and(ALCATRAZ.SALARY.isNotNull())
+			.limit(100)
+			.offset(offset)
+			.fetch()
+			.stream()
+			.map(rec -> new Alcatraz()
+					.setInvoice(rec.get(ALCATRAZ.INVOICE))
+					.setSalary(rec.get(ALCATRAZ.SALARY))
+			)
+			.collect(Collectors.toCollection(LinkedList::new))
+		;
+	}
+	
+	public static Integer getAlcatrazSalariesCountByFsModel(AONContext ctx, Integer fsModelId) {
+		return ctx.getDslContext()
+			.selectCount()
+			.from(ALCATRAZ)
+			.where(ALCATRAZ.FS_MODEL.eq(fsModelId))
+			.and(ALCATRAZ.SALARY.isNotNull())
+			.fetchOne()
+			.value1();
+	}
+	
 }
