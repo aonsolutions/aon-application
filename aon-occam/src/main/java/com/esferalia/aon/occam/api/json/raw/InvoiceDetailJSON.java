@@ -1,8 +1,6 @@
 package com.esferalia.aon.occam.api.json.raw;
 
-import java.util.LinkedList;
 import java.util.List;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.json.JSONArray;
@@ -15,7 +13,6 @@ import com.esferalia.aon.occam.api.model.invoice.Invoice;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceDetail;
 import com.esferalia.aon.occam.api.model.type.InvoiceSource;
 import com.esferalia.aon.watson.server.AonDateUtils;
-import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class InvoiceDetailJSON {
 	
@@ -23,25 +20,8 @@ public class InvoiceDetailJSON {
 	
 	}
 	
-	public static Stream<InvoiceDetail> stream(Invoice invoice,JSONArray jsonArray) {
-		if (jsonArray == null) return null;
-		return JsonUtils.stream(jsonArray)
-			.map(json -> fromJSON(invoice, json) );
-		
-	}
-	
-	public static List<InvoiceDetail> fromJSON(Invoice invoice, JSONArray jsonArray) {
-		return stream(invoice, jsonArray)
-			.collect(Collectors.toCollection(LinkedList::new));
-	}
-	
-	public static InvoiceDetail fromString(Invoice invoice, String text) {
-		if (AonStringUtils.isBlank(text)) return null;
-		return fromJSON(invoice, new JSONObject(text)); 
-	}
-	
 	public static InvoiceDetail fromJSON(Invoice invoice, JSONObject json) {
-		if (json == null) return null;
+		if (JsonUtils.isEmpty(json)) return null;
 		InvoiceDetail detail =  new InvoiceDetail()
 			.setSelected(JsonUtils.getboolean(json, IJsonNames.SELECTED))
 			.setId(JsonUtils.getInteger(json, IJsonNames.ID))
@@ -85,6 +65,7 @@ public class InvoiceDetailJSON {
 	}
 	
 	public static JSONObject toJSON(InvoiceDetail detail) {
+		if (detail == null) return null;
 		return new JSONObject()
 			.put(IJsonNames.ID, detail.isSelected())
 			.put(IJsonNames.ID, detail.getId())

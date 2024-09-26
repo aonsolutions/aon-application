@@ -1,11 +1,5 @@
 package com.esferalia.aon.occam.api.json.raw;
 
-import java.util.LinkedList;
-import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
-import org.json.JSONArray;
 import org.json.JSONObject;
 
 import com.esferalia.aon.occam.api.json.AccountJSON;
@@ -27,29 +21,13 @@ public class InvoiceJSON {
 	private InvoiceJSON() {
 	}
 	
-	public static Stream<Invoice> stream(JSONArray jsonArray) {
-		return JsonUtils.stream(jsonArray)
-			.map(InvoiceJSON::fromJSON);
-		
-	}
-	
-	public static List<Invoice> fromJSON(JSONArray jsonArray) {
-		return stream(jsonArray)
-			.collect(Collectors.toCollection(LinkedList::new));
-	}
-
-	public static Invoice fromString(String text) {
-		JSONObject json = new JSONObject(text);
-		return fromJSON(json); 
-	}
-
 	public static Invoice fromJSON(String json) {
 		if (AonStringUtils.isBlank(json)) return null;
 		return fromJSON(new JSONObject(json));
 	}
 	
 	public static Invoice fromJSON(JSONObject json) {
-		if (json == null) return null;
+		if (JsonUtils.isEmpty(json)) return null;
 		Invoice invoice =  new Invoice()
 			.setSelected( JsonUtils.getBoolean(json, IJsonNames.SELECTED))
 			.setId(JsonUtils.getInteger(json, IJsonNames.ID))
@@ -117,11 +95,6 @@ public class InvoiceJSON {
 		return invoice;
 	}
 	
-	public static JSONArray toJSON(List<Invoice> invoices) {
-		JSONArray array = new JSONArray();
-		invoices.stream().forEach(invoice -> array.put(toJSON(invoice)));
-		return array;
-	}
 	public static JSONObject toJSON(Invoice invoice) {
 		return toJSON(invoice, false);
 	}

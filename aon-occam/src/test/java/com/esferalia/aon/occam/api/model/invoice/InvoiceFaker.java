@@ -264,11 +264,8 @@ public class InvoiceFaker {
 				return fill(ctx, 
 					getHeader(ctx)
 						.setTransaction(InvoiceTransactionType.NATIONAL)
-						.setWithholding( 
-							new InvoiceWithholding()
-								.setPercentage(getRetentionPercent())
-								.setWithholdingType(WithholdingType.PROFESSIONAL)
-							,false)
+						.setWithholding( true )
+						.setWithholdingFarmer( false)
 				);
 			}
 		},
@@ -281,11 +278,8 @@ public class InvoiceFaker {
 				return fill(ctx, 
 					getHeader(ctx)
 						.setTransaction(InvoiceTransactionType.NATIONAL)
-						.setWithholding( 
-							new InvoiceWithholding()
-								.setPercentage(getRetentionPercent())
-								.setWithholdingType(WithholdingType.PROFESSIONAL)
-							,false)
+						.setWithholding( true )
+						.setWithholdingFarmer( false)
 				);
 			}
 		},
@@ -299,11 +293,8 @@ public class InvoiceFaker {
 				return fill(ctx, 
 					getHeader(ctx)
 						.setTransaction(InvoiceTransactionType.NATIONAL)
-						.setWithholding( 
-							new InvoiceWithholding()
-								.setPercentage(getRetentionPercent())
-								.setWithholdingType(WithholdingType.FARMER)
-							,true)
+						.setWithholding( true )
+						.setWithholdingFarmer( true )
 				);
 			}
 		},
@@ -317,11 +308,8 @@ public class InvoiceFaker {
 				return fill(ctx, 
 					getHeader(ctx)
 						.setTransaction(InvoiceTransactionType.NATIONAL)
-						.setWithholding( 
-							new InvoiceWithholding()
-								.setPercentage(getRetentionPercent())
-								.setWithholdingType(WithholdingType.FARMER)
-							,true)
+						.setWithholding( true )
+						.setWithholdingFarmer( true )
 				);
 			}
 		},
@@ -421,6 +409,7 @@ public class InvoiceFaker {
 		
 		Invoice fill( AONContext ctx, Invoice invoice) {
 			checkInvoice( invoice );
+			System.out.println( this.name() + " ---> " + invoice.isWithholding() );
 			IntStream.range(1, 15)
 				.mapToObj( i -> getInvoiceDetail( ctx, invoice, i))
 				.forEach( d -> invoice.addDetail(d));
@@ -463,7 +452,27 @@ public class InvoiceFaker {
 					visitExtracommunity();
 				}
 			});
-			
+			if (invoice.isWithholding() && !invoice.isWithholdingFarmer()) {
+				invoice.setWithholding( 
+					new InvoiceWithholding()
+						.setPercentage(getRetentionPercent())
+						.setWithholdingType( AonRandom.getRandomWithholdingType())
+				);
+				invoice.getWithholding()
+					.map(w -> w.getWithholdingType())
+					.ifPresent(wt -> {
+						if (wt == WithholdingType.FARMER) {
+							invoice.setWithholdingFarmer(true);			
+						}
+					});
+			}
+			if (invoice.isWithholding() && invoice.isWithholdingFarmer()) {
+				invoice.setWithholding( 
+					new InvoiceWithholding()
+						.setPercentage(getRetentionPercent())
+						.setWithholdingType(WithholdingType.FARMER)
+				);
+			}
 		}
 		
 		private InvoiceDetail getInvoiceDetail(AONContext ctx, Invoice invoice, int i) {
