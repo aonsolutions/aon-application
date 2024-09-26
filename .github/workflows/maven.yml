@@ -191,7 +191,7 @@ jobs:
       if: github.ref == 'refs/heads/master' || github.ref == 'refs/heads/macleod'
       env:
         ECR_REGISTRY: ${{ steps.login-ecr-ireland.outputs.registry }}
-        IMAGE_TAG: snapshot
+        IMAGE_TAG: ${{ github.ref_name == 'master' && 'snapshot' || 'macleod' }}
       run: |
         docker tag ghcr.io/${{ github.repository_owner }}/aon-solutions:${{ env.BRANCH_NAME }} $ECR_REGISTRY/aonsolutions/aon-solutions:$IMAGE_TAG 
         docker tag ghcr.io/${{ github.repository_owner }}/aon-application:${{ env.BRANCH_NAME }} $ECR_REGISTRY/aonsolutions/aon-application:$IMAGE_TAG 
@@ -215,7 +215,7 @@ jobs:
       if: github.ref == 'refs/heads/master' || github.ref == 'refs/heads/cadizbay'
       env:
         ECR_REGISTRY: ${{ steps.login-ecr-spain.outputs.registry }}
-        IMAGE_TAG: snapshot
+        IMAGE_TAG: ${{ github.ref_name == 'master' && 'snapshot' || 'cadiz' }}
       run: |
         docker tag ghcr.io/${{ github.repository_owner }}/aon-solutions:${{ env.BRANCH_NAME }} $ECR_REGISTRY/aon-solutions:$IMAGE_TAG 
         docker tag ghcr.io/${{ github.repository_owner }}/aon-application:${{ env.BRANCH_NAME }} $ECR_REGISTRY/aon-application:$IMAGE_TAG 
