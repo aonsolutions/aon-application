@@ -468,9 +468,9 @@ public class Up2Date {
         // AgreementUpdateHideMessage.AGREEMENTUPDATEHIDEMESSAGE,
         // AgreementUpdateHideToDisable.AGREEMENTUPDATEHIDETODISABLE,
         
-        InKindDeductionUpdate.INKIND_DEDUCTION_UPDATE,
+        // InKindDeductionUpdate.INKIND_DEDUCTION_UPDATE,
         // InvoiceDataCreation.INVOICE_DATA_CREATION,
-        InvoiceDocAddS3Bucket.INVOICEDOC_ADDS3BUCKET
+        // InvoiceDocAddS3Bucket.INVOICEDOC_ADDS3BUCKET
 	};
 
     // ------------------------------------------------------------------------
