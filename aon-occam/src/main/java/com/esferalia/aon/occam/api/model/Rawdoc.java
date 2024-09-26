@@ -14,7 +14,7 @@ import es.translogia.tedi.ewok.TediInvoice;
 public class Rawdoc implements Serializable {
 
 	private static final long serialVersionUID = -3954007129622239737L;
-	private static final String BUCKET = "aon-rawdoc";
+	private static final String BUCKET = "aon-upload-post"; //"aon-rawdoc";
 
 	private Integer id;
 	private Integer domain;

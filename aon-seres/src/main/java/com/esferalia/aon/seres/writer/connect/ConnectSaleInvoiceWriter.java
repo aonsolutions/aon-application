@@ -100,9 +100,9 @@ public class ConnectSaleInvoiceWriter {
 				new Date()));
 		rectl.setFecha_horaDelMensaje(SeresUtils.dateTimeFormat().format(
 				new Date()));
-
+		Delivery delivery = obtainDelivery(invoice);
 		try {
-			rectl.sincc = createSINCCRecord(invoice, detailList);
+			rectl.sincc = createSINCCRecord(invoice, delivery);
 		} catch (Exception e) {
 			LOGGER.error(e.getMessage());
 		}
@@ -129,7 +129,7 @@ public class ConnectSaleInvoiceWriter {
 		try {
 			String customerPackage = ediCodes.getCustomerInvoicePackage() != null
 					? ediCodes.getCustomerInvoicePackage() : ediCodes.getCustomerPackage();
-			rectl.sinclList = createSINCLList(detailList, customerPackage);
+			rectl.sinclList = createSINCLList(detailList, delivery, customerPackage);
 		} catch (Exception e) {
 			LOGGER.error(e.getMessage());
 		}
@@ -155,7 +155,7 @@ public class ConnectSaleInvoiceWriter {
 	/**
 	 * Cabecera
 	 */
-	private SINCC createSINCCRecord(Invoice invoice, List<InvoiceDetail> detailList) {
+	private SINCC createSINCCRecord(Invoice invoice, Delivery delivery) {
 		List<Finance> financeList = getFinances(invoice);
 		SINCC sincc = new SINCC();
 		if((invoice.getRectificationInvoice()!=null && invoice.getRectificationInvoice().getId()!=null) || invoice.getTotal() < 0)
@@ -165,12 +165,17 @@ public class ConnectSaleInvoiceWriter {
 		sincc.setFuncionDelMensaje_7_31_5_(null);
 		sincc.setFechaDeFactura(Integer.valueOf(SeresUtils.dateFormat().format(invoice
 				.getIssueDate())));
-		sincc.setFechaDeAlbaran(null);
+
+		if(delivery != null && delivery.getId() != null) {
+			sincc.setFechaDeAlbaran(SeresUtils.dateFormat().format(delivery.getIssueTime()));			
+			sincc.setNumeroDeAlbaran_DQ_(delivery.getReferenceCode());
+			sincc.setFecha_horaEfectivaDelServicio_2_(SeresUtils.dateFormat().format(delivery.getIssueTime()));
+		}
 		sincc.setModoDePago(null);
 		sincc.setRazonDeCargoOAbono(null);
 		sincc.setCriterioDeModificacion(null);
 		sincc.setNumeroDePedido_ON_(obtainSalesNumber(invoice));
-		sincc.setNumeroDeAlbaran_DQ_(obtainDeliveryNumber(invoice));
+
 		sincc.setCalificadorDocumentoRectificado_Sustituido(null);
 		sincc.setDocumentoRectificado_Sustituido(null);
 		sincc.setNumeroDeContrato_acuerdo_CT_(null);
@@ -201,8 +206,6 @@ public class ConnectSaleInvoiceWriter {
 		sincc.setTotalMinoracionesDelImporteBruto_260_(null);
 		sincc.setPeriodoImposicionesFactura_325_(null);
 		sincc.setFechaPedido(null);
-		sincc.setFecha_horaEfectivaDelServicio_2_(SeresUtils.dateFormat().format(
-				obtainDelivery(invoice).getIssueTime()));
 		sincc.setNumeroConfirmacionDeEntrega(null);
 		return sincc;
 	}
@@ -343,11 +346,11 @@ public class ConnectSaleInvoiceWriter {
 		return list;
 	}
 
-	private List<SINCL> createSINCLList(List<InvoiceDetail> detailList, String customerPackage) {
+	private List<SINCL> createSINCLList(List<InvoiceDetail> detailList, Delivery delivery, String customerPackage) {
 		List<SINCL> list = new ArrayList<>();
 		detailList.forEach(detail -> {
 			if(detail.getTaxableBase()!=0.0){
-				list.add(createSINCLRecord(detail, detailList.indexOf(detail)+1, customerPackage));
+				list.add(createSINCLRecord(detail, delivery, detailList.indexOf(detail)+1, customerPackage));
 			}
 		});
 		return list;
@@ -514,7 +517,7 @@ public class ConnectSaleInvoiceWriter {
 	/**
 	 * Línea detalle
 	 */
-	private SINCL createSINCLRecord(InvoiceDetail detail, int lineNumber, String customerPackage) {
+	private SINCL createSINCLRecord(InvoiceDetail detail, Delivery delivery, int lineNumber, String customerPackage) {
 		detail.fillTaxDataInDetail();
 		Item item = detail.getItem();
 		Integer customerId = detail.getInvoice().getRegistry().getId();
@@ -581,7 +584,8 @@ public class ConnectSaleInvoiceWriter {
 		sincl.setPorcentajeOtroTipoDeImpuesto(null);
 		sincl.setImporteOtroTipoDeImpuesto(null);
 		sincl.setNumeroPedido_ON_(isDia(detail.getInvoice().getRegistry())? null : obtainSalesNumber(detail));
-		sincl.setNumeroDeAlbaran_DQ_(isDia(detail.getInvoice().getRegistry())? null : obtainDeliveryNumber(detail));
+		if(!isDia(detail.getInvoice().getRegistry()) && delivery != null && delivery.getId() != null)
+			sincl.setNumeroDeAlbaran_DQ_(delivery.getReferenceCode());
 		sincl.setNumeroDeEmbalajes(null);
 		sincl.setTipoDeEmbalaje(null);
 		sincl.setImporteTotalBrutoDeLaLineaDeDetalle(CommonUtil.round(detail.getTotalSalesPrice(), 3));
@@ -685,29 +689,6 @@ public class ConnectSaleInvoiceWriter {
 					}
 				}
 				return null;
-			}
-		} catch (ManagerBeanException e) {
-			LOGGER.error(e.getMessage());
-		}
-		return null;
-	}
-
-	private String obtainDeliveryNumber(Invoice invoice) {
-		List<InvoiceDetail> list = invoice.getDetailList().stream()
-				.map(to -> ((InvoiceDetail) to)).collect(Collectors.toList());
-		if (!list.isEmpty()) {
-			InvoiceDetail detail = list.get(0);
-			return obtainDeliveryNumber(detail);
-		}
-		return null;
-	}
-
-	private String obtainDeliveryNumber(InvoiceDetail invoiceDetail) {
-		try {
-			if (invoiceDetail.getSource() == InvoiceSource.DELIVERY) {
-				IManagerBean deliveryDetailBean = BeanManager.getManagerBean(DeliveryDetail.class);
-				DeliveryDetail deliveryDetail = (DeliveryDetail)deliveryDetailBean.get(invoiceDetail.getSourceId());
-				return deliveryDetail.getDelivery().getReferenceCode();
 			}
 		} catch (ManagerBeanException e) {
 			LOGGER.error(e.getMessage());

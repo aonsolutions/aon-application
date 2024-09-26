@@ -32,6 +32,7 @@ public class AlcatrazDAO {
 		private Integer invoice;
 		private Integer finance;
 		private Integer financeTracking;
+		private Integer salary;
 		
 		public Integer getInvoice() {
 			return invoice;
@@ -46,6 +47,14 @@ public class AlcatrazDAO {
 		}
 		public Alcatraz setFinance(Integer finance) {
 			this.finance = finance;
+			return this;
+		}
+		
+		public Integer getSalary() {
+			return salary;
+		}
+		public Alcatraz setSalary(Integer salary) {
+			this.salary = salary;
 			return this;
 		}
 		
@@ -230,6 +239,93 @@ public class AlcatrazDAO {
 			.map(rec -> new FiscalModelFiller<FiscalModel>().apply(rec,FiscalModel::new))
 			.collect(Collectors.toCollection(LinkedList::new))
 		;
+	}
+	
+	public static List<Alcatraz> getAlcatrazByFsModel(AONContext ctx, Integer fsModelId) {
+		return ctx.getDslContext()
+			.select()
+			.from(ALCATRAZ)
+			.where(ALCATRAZ.FS_MODEL.eq(fsModelId))
+			.fetch()
+			.stream()
+			.map(rec -> new Alcatraz()
+					.setInvoice(rec.get(ALCATRAZ.INVOICE))
+					.setSalary(rec.get(ALCATRAZ.SALARY))
+			)
+			.collect(Collectors.toCollection(LinkedList::new))
+		;
+	}
+	
+	public static List<Alcatraz> getAlcatrazInvoicesByFsModel(AONContext ctx, Integer fsModelId) {
+		return ctx.getDslContext()
+			.select()
+			.from(ALCATRAZ)
+			.where(ALCATRAZ.FS_MODEL.eq(fsModelId))
+			.and(ALCATRAZ.INVOICE.isNotNull())
+			.fetch()
+			.stream()
+			.map(rec -> new Alcatraz()
+					.setInvoice(rec.get(ALCATRAZ.INVOICE))
+					.setSalary(rec.get(ALCATRAZ.SALARY))
+			)
+			.collect(Collectors.toCollection(LinkedList::new))
+		;
+	}
+	
+	public static List<Alcatraz> getAlcatrazInvoicesByFsModel(AONContext ctx, Integer fsModelId, Integer offset) {
+		return ctx.getDslContext()
+			.select()
+			.from(ALCATRAZ)
+			.where(ALCATRAZ.FS_MODEL.eq(fsModelId))
+			.and(ALCATRAZ.INVOICE.isNotNull())
+			.limit(100)
+			.offset(offset)
+			.fetch()
+			.stream()
+			.map(rec -> new Alcatraz()
+					.setInvoice(rec.get(ALCATRAZ.INVOICE))
+					.setSalary(rec.get(ALCATRAZ.SALARY))
+			)
+			.collect(Collectors.toCollection(LinkedList::new))
+		;
+	}
+	
+	public static Integer getAlcatrazInvoicesCountByFsModel(AONContext ctx, Integer fsModelId) {
+		return ctx.getDslContext()
+			.selectCount()
+			.from(ALCATRAZ)
+			.where(ALCATRAZ.FS_MODEL.eq(fsModelId))
+			.and(ALCATRAZ.INVOICE.isNotNull())
+			.fetchOne()
+			.value1();
+	}
+	
+	public static List<Alcatraz> getAlcatrazSalariesByFsModel(AONContext ctx, Integer fsModelId, Integer offset) {
+		return ctx.getDslContext()
+			.select()
+			.from(ALCATRAZ)
+			.where(ALCATRAZ.FS_MODEL.eq(fsModelId))
+			.and(ALCATRAZ.SALARY.isNotNull())
+			.limit(100)
+			.offset(offset)
+			.fetch()
+			.stream()
+			.map(rec -> new Alcatraz()
+					.setInvoice(rec.get(ALCATRAZ.INVOICE))
+					.setSalary(rec.get(ALCATRAZ.SALARY))
+			)
+			.collect(Collectors.toCollection(LinkedList::new))
+		;
+	}
+	
+	public static Integer getAlcatrazSalariesCountByFsModel(AONContext ctx, Integer fsModelId) {
+		return ctx.getDslContext()
+			.selectCount()
+			.from(ALCATRAZ)
+			.where(ALCATRAZ.FS_MODEL.eq(fsModelId))
+			.and(ALCATRAZ.SALARY.isNotNull())
+			.fetchOne()
+			.value1();
 	}
 	
 }

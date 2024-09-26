@@ -40,6 +40,7 @@ import com.esferalia.aon.gwt.common.shared.NumberUtils;
 import com.esferalia.aon.gwt.common.shared.StringUtils;
 import com.esferalia.aon.gwt.payroll.client.SalaryDraftObject.Calculate;
 import com.esferalia.aon.gwt.payroll.client.SalaryDraftObject.CalculateCallback;
+import com.esferalia.aon.gwt.payroll.client.SalaryDraftObject.SyncCalsCallback;
 import com.esferalia.aon.gwt.payroll.shared.Bonus;
 import com.esferalia.aon.gwt.payroll.shared.CompositeBonus;
 import com.esferalia.aon.gwt.payroll.shared.CompositeDeduction;
@@ -80,7 +81,6 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.core.client.Scheduler.ScheduledCommand;
-import com.google.gwt.dom.client.NodeList;
 import com.google.gwt.dom.client.Style.BorderStyle;
 import com.google.gwt.dom.client.Style.Display;
 import com.google.gwt.dom.client.Style.FontWeight;
@@ -1489,6 +1489,16 @@ public class SalaryDraft extends ResizeComposite
 				}
 			});
 		}
+		
+		public void setDownloadFromAgreementButton(HasClickHandlers deleteButton) {
+			deleteButton.addClickHandler(new ClickHandler() {
+				@Override
+				public void onClick(ClickEvent event) {
+					String newExpression = item.getExpression().replaceAll("DISABLE\\(.*\\);\\s", "/*ENABLE_FROM_HIDE_AGREEMENT*//**/ ");
+					onDownloadFromAgreement(item, newExpression);
+				}
+			});
+		}
 
 		public void setEnableAgreementButton(HasClickHandlers deleteButton) {
 			deleteButton.addClickHandler(new ClickHandler() {
@@ -1536,6 +1546,8 @@ public class SalaryDraft extends ResizeComposite
 		abstract void onRemove(I item, String expression);
 
 		abstract void onRecover(I item, String expression);
+		
+		abstract void onDownloadFromAgreement(I item, String expression);
 		
 		abstract void onIssueDateChange(I item, Short month);
 
@@ -1669,6 +1681,13 @@ public class SalaryDraft extends ResizeComposite
 		void onRecover(Payment payment, String expression) {
 			payment.setScope(Scope.SALARY);
 			payment.setExpression(expression);
+			salaryDraftObject.recover(payment, SalaryDraft.this);
+		}
+		
+		@Override
+		void onDownloadFromAgreement(Payment payment, String newExpression) {
+			payment.setScope(Scope.SALARY);
+			payment.setExpression(newExpression);
 			salaryDraftObject.recover(payment, SalaryDraft.this);
 		}
 		
@@ -1942,7 +1961,10 @@ public class SalaryDraft extends ResizeComposite
 		@Override
 		void onRecover(Deduction item, String expression) {
 		}
-		
+
+		@Override
+		void onDownloadFromAgreement(Deduction item, String expression) {
+		}		
 
 		private Deduction getConcept() {
 			if (item.getName() == null)
@@ -2035,6 +2057,10 @@ public class SalaryDraft extends ResizeComposite
 
 		@Override
 		void onRecover(Bonus item, String expression) {
+		}
+
+		@Override
+		void onDownloadFromAgreement(Bonus item, String expression) {
 		}
 	}
 
@@ -2856,6 +2882,8 @@ public class SalaryDraft extends ResizeComposite
 	@UiField
 	CheckBox tgssCheck;
 	@UiField
+	Button tgssButton;
+	@UiField
 	CheckBox costsCheck;
 	@UiField
 	CheckBox eventsCheck;
@@ -2876,6 +2904,7 @@ public class SalaryDraft extends ResizeComposite
 	@UiField
 	Button printPreviewButton;
 	
+
 
 	@UiField
 	MyStyle style;
@@ -3759,9 +3788,6 @@ public class SalaryDraft extends ResizeComposite
 			visibleContext.addAll(partialVariables.stream().map( v -> DelegateVariable.getVariable(v, Scope.CONTRACT)).collect(Collectors.toList()));
 		}
 		
-		
-		
-		
 		//dumpContext(constants, Scope.CONTRACT, true, null);
 		
 		if (contextMenuShowed)
@@ -3786,8 +3812,18 @@ public class SalaryDraft extends ResizeComposite
 		eventsTableSpace.setVisible(eventsTable.isVisible()/*eventsTable.getRowCount() > 0*/);
 		showPaymentsEvents(eventsTable.isVisible());
 		
+		// disabledPaymentsCheck
+		disabledPaymentsCheck.setVisible(hasDisabledPayments());
 		
 		resizeContentPanel();
+	}
+
+	private boolean hasDisabledPayments() {
+		for(PaymentChangeHandler<?> paymentChangeHandler : paymentChangeHandlers) {
+			if(!isEnabled(paymentChangeHandler.item)) return true;
+		}
+		
+		return false;
 	}
 
 	public Stream<String> getValuesOf(String name) {
@@ -4144,9 +4180,39 @@ public class SalaryDraft extends ResizeComposite
 	void onTgssCheckChanged(ValueChangeEvent<Boolean> event) {
 		showTimeRulePanel();
 		showDbTimeRulePanel();
+		tgssButton.setVisible(event.getValue());
 		setSsVisible(hasSsSalary() && event.getValue());
 	}
 	
+	@UiHandler("tgssButton")
+	void onTgssButtonClick(ClickEvent event) {
+		salaryDraftObject.syncCalcs(new SyncCalsCallback() {
+			
+			String title = "Sincronizando C\u00E1lculos";
+			
+			@Override
+			public void onSyncStart(SalaryDraftObject object) {
+				showLoading(title);
+			}
+			
+			@Override
+			public void onSyncProgress(SalaryDraftObject object) {
+				//showLoading("");
+			}
+			
+			@Override
+			public void onSyncFinish(SalaryDraftObject object) {
+				SalaryDraft.this.calculate();
+				showSuccess(title, "Completada");
+			}
+			
+			@Override
+			public void onSyncFailure(Throwable throwable) {
+				showError(title, throwable.getMessage());
+			}
+		});
+	}
+
 	private void syncSalarySelect() {
 		salaryDraftObject.getExtras(new AsyncCallback<List<Extra>>() {
 			@Override
@@ -4950,6 +5016,7 @@ public class SalaryDraft extends ResizeComposite
 
 		Scope itemScope = item.getScope();
 		
+//		Window.alert(item.getDescription() + "\n" + item.getExpression() + "\nisEditable : " + isEditable + "\nitemScope : " + itemScope +  "\nitemScope.compareTo(Scope.AGREEMENT) == 0 : " + (itemScope.compareTo(Scope.AGREEMENT) == 0) + "\nitem.isDefinedAt(Scope.AGREEMENT) : " + item.isDefinedAt(Scope.AGREEMENT) + "\nisEnable(item) : " + isEnable(item));
 		
 		if ( isExtra() 
 			/*|| isSettle() */ ) {
@@ -4966,6 +5033,16 @@ public class SalaryDraft extends ResizeComposite
 			buttonsPanel.add(deleteButton);
 			handler.setDeleteButton(deleteButton);
 			deleteButton.ensureDebugId("agreement-button-" + row );
+		}
+		else if (itemScope.compareTo(Scope.CONTRACT) == 0 
+				&& item.isDefinedAt(Scope.AGREEMENT)
+				&& isEnable(item) ) {
+			//info("SETDISABLEAGREEMENTBUTTON:" + item.getDescription() + "," + item.getExpression() +", " + item.getScope());
+			Button agreementButton = getEnableButton();
+			agreementButton.setTabIndex(Short.MAX_VALUE);
+			buttonsPanel.add(agreementButton);
+			handler.setDisableButton(agreementButton);
+			agreementButton.ensureDebugId("agreement-button-" + row );
 		}
 		else if (itemScope.compareTo(Scope.AGREEMENT) > 0 
 			&& item.isDefinedAt(Scope.AGREEMENT)
@@ -4985,6 +5062,16 @@ public class SalaryDraft extends ResizeComposite
 			agreementButton.setTabIndex(Short.MAX_VALUE);
 			buttonsPanel.add(agreementButton);
 			handler.setDisableAgreementButton(agreementButton);
+			agreementButton.ensureDebugId("agreement-button-" + row );
+			paymentsTable.getRowFormatter().addStyleName(row, "aon-Disabled");
+		}
+		else if (itemScope.compareTo(Scope.AGREEMENT) == 0 
+				&& isDisable(item) ) {
+			//info("SETDISABLEAGREEMENTBUTTON:" + item.getDescription() + "," + item.getExpression() +", " + item.getScope());
+			Button agreementButton = getDisableButton();
+			agreementButton.setTabIndex(Short.MAX_VALUE);
+			buttonsPanel.add(agreementButton);
+			handler.setDownloadFromAgreementButton(agreementButton);
 			agreementButton.ensureDebugId("agreement-button-" + row );
 			paymentsTable.getRowFormatter().addStyleName(row, "aon-Disabled");
 		}
@@ -5038,7 +5125,7 @@ public class SalaryDraft extends ResizeComposite
 		} // highlight dirty, not saved items.
 		
 	}
-
+	
 	private void addBonusAmountItem(Widget amountWidget, HorizontalPanel amountsPanel) {
 		HorizontalPanel minusPanel = new HorizontalPanel();
 		minusPanel.getElement().getStyle()
@@ -7724,6 +7811,14 @@ public class SalaryDraft extends ResizeComposite
 
 	private static <T extends Item<?>> boolean isRemove(T item) {
 		return StringUtils.equalsIgnoreCase("REMOVE()", item.getExpression());
+	}
+	
+	protected static <T extends Item<?>> boolean isDisable(T item) {
+		return AonStringUtils.equalsIgnoreCase("DISABLE()", item.getExpression()) || AonStringUtils.startsWithAny(item.getExpression(), "DISABLE();");
+	}
+	
+	protected static <T extends Item<?>> boolean isEnable(T item) {
+		return AonStringUtils.containsIgnoreCase(item.getExpression(), "ENABLE_FROM_HIDE_AGREEMENT");
 	}
 
 	private static <T extends Item<?>> boolean isCgcBaseDeduction(T item) {

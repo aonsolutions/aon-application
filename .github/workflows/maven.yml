@@ -1,0 +1,239 @@
+
+name: Java CI with Maven
+
+on:
+  push:
+    branches: 
+      - master
+      - cadizbay
+      - macleod
+  pull_request:
+    branches: 
+      - master
+      - cadizbay
+      - macleod
+  workflow_dispatch:
+
+env:
+  TZ: Europe/Madrid
+  AWS_REGION: eu-west-1
+  BRANCH_NAME: ${{ github.head_ref || github.ref_name }} 
+  SKIP_TESTS: ${{ github.ref_name == 'cadizbay' && true || false }}
+  
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+      packages: write
+      attestations: write
+      id-token: write
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Set up JDK 21
+      uses: actions/setup-java@v4
+      with:
+        java-version: '21'
+        distribution: 'temurin'
+        cache: maven
+        
+    - name: Set up MySQL
+      run: |
+        sudo sed -i "s/\(bind-address.*\)=.*/\1= 0.0.0.0/" /etc/mysql/mysql.conf.d/mysqld.cnf
+        sudo systemctl start mysql.service
+        sudo mysql -u root --password=root -v  <<-EOSQL
+        --
+        SET GLOBAL sql_mode = '';
+        SET GLOBAL time_zone = '+01:00';
+        --
+        CREATE USER 'dbuser'@'%' IDENTIFIED WITH mysql_native_password BY 'serubd2000' ;
+        GRANT ALL ON *.* TO 'dbuser'@'%' ;
+        --
+        -- default privileges include a row with Host='localhost' and User=''. 
+        CREATE USER 'dbuser'@'localhost' IDENTIFIED WITH mysql_native_password BY 'serubd2000' ;
+        GRANT ALL ON *.* TO 'dbuser'@'localhost';
+        EOSQL
+
+    - name: Login to GitHub Container Registry
+      uses: docker/login-action@v3
+      with:
+        registry: ghcr.io
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+  
+    - name: Configure AWS credentials
+      uses: aws-actions/configure-aws-credentials@v1
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: ${{ env.AWS_REGION }}
+        
+    - name: Install AWS CLI v2
+      run: |
+        curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o /tmp/awscliv2.zip
+        unzip -q /tmp/awscliv2.zip -d /tmp
+        sudo /tmp/aws/install --bin-dir /usr/local/bin --install-dir /usr/local/aws-cli --update
+        aws --version
+          
+    - name: Create connection file
+      run: |
+        sudo mkdir /etc/aon-aio
+        sudo tee -a /etc/aon-aio/connection >/dev/null <<-EOF
+        driverClass=com.mysql.cj.jdbc.Driver
+        jdbcUrl=jdbc:mysql://127.0.0.1:3306
+        user=dbuser
+        password=serubd2000
+        useSSL=false
+        sessionVariables=SQL_SAFE_UPDATES=1
+        EOF
+
+    - name: Build with Maven
+      run: mvn -B -Dgwt.working=true -DskipTests=${SKIP_TESTS} -T 1C clean install
+
+    - name: Build Docker aon-application image
+      uses: docker/build-push-action@v6
+      with:
+        context: .
+        load: true
+        tags: ghcr.io/${{ github.repository_owner }}/aon-application:${{ env.BRANCH_NAME }}
+
+    - name: Build Docker aon-db-up2date image
+      uses: docker/build-push-action@v6
+      with:
+        context: ./aon-db-up2date
+        load: true
+        tags: ghcr.io/${{ github.repository_owner }}/aon-db-up2date:${{ env.BRANCH_NAME }}
+
+    
+    - name: Setup environment for integration testing
+      if: github.ref == 'refs/heads/master'
+      run: |
+        DB_HOST=$(ip addr show docker0 | grep -oP 'inet \K[0-9\.]+')
+        DB_FILE=$(find aon-htmlunit/src -name "test-aonsolutions-org.sql")
+        mysql -h ${DB_HOST} -u dbuser --password=serubd2000 < ${DB_FILE}
+        docker run -e DB_USER=dbuser -e DB_PASSWD=serubd2000 -e DB_HOST=${DB_HOST} ghcr.io/${{ github.repository_owner }}/aon-db-up2date:${BRANCH_NAME}
+        docker run -d -p 8080:8080 -e DB_USER=dbuser -e DB_PASSWD=serubd2000 -e DB_HOST=${DB_HOST} ghcr.io/${{ github.repository_owner }}/aon-application:${BRANCH_NAME}
+        sudo tee -a /etc/hosts >/dev/null <<-EOF
+        127.0.0.1    payroll-test.aonsolutions.org
+        127.0.0.1    tgss-payroll-test.aonsolutions.org
+        127.0.0.1    home-payroll-test.aonsolutions.org
+        127.0.0.1    agrarian-payroll-test.aonsolutions.org
+        127.0.0.1    general-payroll-test.aonsolutions.org
+        127.0.0.1    trainning-payroll-test.aonsolutions.org
+        EOF
+    
+    - name: Running integration tests
+      if: github.ref == 'refs/heads/master'
+      run: |
+        mvn -B \
+        -Dintegration.test.user=admin \
+        -Dintegration.test.password=org \
+        -Dintegration.test.payroll.url=http://payroll-test.aonsolutions.org:8080/ \
+        -Dintegration.test.general.payroll.url=http://general-payroll-test.aonsolutions.org:8080/ \
+        -Dintegration.test.agrarian.payroll.url=http://agrarian-payroll-test.aonsolutions.org:8080/ \
+        -Dintegration.test.trainning.payroll.url=http://trainning-payroll-test.aonsolutions.org:8080/ \
+        -Dintegration.test.home.payroll.url=http://home-payroll-test.aonsolutions.org:8080/ \
+        -Dtest='!GeneralEnterpriseTest' -f aon-htmlunit/pom.xml integration-test
+        
+    - name: Build production version with Maven
+      if: github.ref == 'refs/heads/master'
+      run: mvn -B --resume-from aon-js-payroll -Drpm.release=false -DskipTests=true clean install
+
+    - name: Build and push Docker aon-application image
+      uses: docker/build-push-action@v6
+      with:
+        context: .
+        push: true
+        tags: ghcr.io/${{ github.repository_owner }}/aon-application:${{ env.BRANCH_NAME }}
+
+    - name: Build and push Docker aon-db-up2date image
+      uses: docker/build-push-action@v6
+      with:
+        context: ./aon-db-up2date
+        push: true
+        tags: ghcr.io/${{ github.repository_owner }}/aon-db-up2date:${{ env.BRANCH_NAME }}
+
+    - name: Build and push Docker aon-solutions image
+      uses: docker/build-push-action@v6
+      with:
+        context: .
+        file: ./aon-solutions/Dockerfile
+        push: true
+        tags: ghcr.io/${{ github.repository_owner }}/aon-solutions:${{ env.BRANCH_NAME }}
+
+    - name: Build AWS lambda Functions
+      if: github.ref == 'refs/heads/master'
+      run : |
+        mvn -B -Daws.lambda=true -DskipTests=true -pl aon-in-invoice clean install
+        mvn -B -Daws.lambda=true -DskipTests=true -pl aon-in-payroll clean install
+
+    - name: Publish WAR to GitHub Packages
+      if: github.ref == 'refs/heads/master'
+      run: mvn -B -pl aon-web-aio -Dgithub.actions=true deploy
+      env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+    # - name: Pull images from GitHub Container Registry
+    #   if: github.ref == 'refs/heads/master'
+    #   run: |
+    #     docker pull ghcr.io/${{ github.repository_owner }}/aon-solutions:${{ env.BRANCH_NAME }}
+    #     docker pull ghcr.io/${{ github.repository_owner }}/aon-application:${{ env.BRANCH_NAME }}
+    #     docker pull ghcr.io/${{ github.repository_owner }}/aon-db-up2date:${{ env.BRANCH_NAME }}
+
+    - name: Login to Amazon ECR (Ireland)
+      id: login-ecr-ireland
+      uses: aws-actions/amazon-ecr-login@v1
+
+    - name: Tag, and push images to Amazon ECR (Ireland)
+      if: github.ref == 'refs/heads/master' || github.ref == 'refs/heads/macleod'
+      env:
+        ECR_REGISTRY: ${{ steps.login-ecr-ireland.outputs.registry }}
+        IMAGE_TAG: ${{ github.ref_name == 'master' && 'snapshot' || 'macleod' }}
+      run: |
+        docker tag ghcr.io/${{ github.repository_owner }}/aon-solutions:${{ env.BRANCH_NAME }} $ECR_REGISTRY/aonsolutions/aon-solutions:$IMAGE_TAG 
+        docker tag ghcr.io/${{ github.repository_owner }}/aon-application:${{ env.BRANCH_NAME }} $ECR_REGISTRY/aonsolutions/aon-application:$IMAGE_TAG 
+        docker tag ghcr.io/${{ github.repository_owner }}/aon-db-up2date:${{ env.BRANCH_NAME }} $ECR_REGISTRY/aonsolutions/aon-db-up2date:$IMAGE_TAG 
+        docker push $ECR_REGISTRY/aonsolutions/aon-solutions:$IMAGE_TAG 
+        docker push $ECR_REGISTRY/aonsolutions/aon-application:$IMAGE_TAG 
+        docker push $ECR_REGISTRY/aonsolutions/aon-db-up2date:$IMAGE_TAG 
+
+    # - name: Set AWS region to (Spain)
+    #  if: github.ref == 'refs/heads/master'
+    #  run: aws configure set default.region eu-south-2
+        
+    - name: Login to Amazon ECR (Spain)
+      id: login-ecr-spain
+      uses: aws-actions/amazon-ecr-login@v1
+      env:
+        AWS_REGION: eu-south-2
+
+    - name: Tag, and push images to Amazon ECR (Spain)
+      if: github.ref == 'refs/heads/master' || github.ref == 'refs/heads/cadizbay'
+      env:
+        ECR_REGISTRY: ${{ steps.login-ecr-spain.outputs.registry }}
+        IMAGE_TAG: ${{ github.ref_name == 'master' && 'snapshot' || 'cadiz' }}
+      run: |
+        docker tag ghcr.io/${{ github.repository_owner }}/aon-solutions:${{ env.BRANCH_NAME }} $ECR_REGISTRY/aon-solutions:$IMAGE_TAG 
+        docker tag ghcr.io/${{ github.repository_owner }}/aon-application:${{ env.BRANCH_NAME }} $ECR_REGISTRY/aon-application:$IMAGE_TAG 
+        docker tag ghcr.io/${{ github.repository_owner }}/aon-db-up2date:${{ env.BRANCH_NAME }} $ECR_REGISTRY/aon-db-up2date:$IMAGE_TAG 
+        docker push $ECR_REGISTRY/aon-solutions:$IMAGE_TAG 
+        docker push $ECR_REGISTRY/aon-application:$IMAGE_TAG 
+        docker push $ECR_REGISTRY/aon-db-up2date:$IMAGE_TAG 
+
+    # - name: Deploy to Amazon ECS AON 
+    #  if: github.ref == 'refs/heads/master'
+    #  run : |
+    #    aws ecs update-service --region=eu-south-2 --cluster AON --service AON-SOLUTIONS --force-new-deployment
+    #    aws ecs update-service --region=eu-south-2 --cluster AON --service AON-APPLICATION --force-new-deployment
+
+    # - name: Deploy to Amazon ECS CADIZ
+    #  if: github.ref == 'refs/heads/cadizbay'
+    #  run : |
+    #   aws ecs update-service --region=eu-south-2 --cluster AON --service CADIZ-SOLUTIONS --force-new-deployment
+    #   aws ecs update-service --region=eu-south-2 --cluster AON --service CADIZ-APPLICATION --force-new-deployment
+        
+
+

@@ -1,7 +1,7 @@
 import { MSG, CSS, EVENT, TAG } from 'aonsolutions/environments/environments.js'; 
 import { AonSuiteMenu } from '../aon-suite-menu.js';
 import * as GWT from 'aonsolutions/gwt/gwt.js';
-import { AonJsfCustomer, AonJsfCreditor,AonJsfExpense, AonJsfProduct, AonJsfSupplier} from '../aon-jsf-app.js';
+import * as JSF from '../aon-jsf-app.js';
 
 
 
@@ -37,141 +37,141 @@ export class AonManagementMenu extends AonSuiteMenu {
         };
         this.selectOptions= [{
             title: "Factura de venta",
-            action: () => alert("description")
+            action: () => this.rootPanel(new JSF.AonJsfSaleInvoice())
         },{
             title: "Factura de gastos",
-            action: () => alert("description")
+            action: () => this.rootPanel(new JSF.AonJsfExpenseInvoice())
         },{
             title: "Factura de compras", 
-            action: () => alert("description")
+            action: () => this.rootPanel(new JSF.AonJsfPurchaseInvoice())
         },{
             title: "Gasto no deducible en IVA", 
-            action: () => alert("description")
+            action: () => this.rootPanel(new JSF.AonJsfUndeductibleInvoice())
         },{
             title: "Cliente", 
-            action: () => alert("description")
+            action: () => this.rootPanel(new JSF.AonJsfCustomer())
         }];
         this.options = [{
             title: 'Ventas',
             options: [ {
                 description: "Clientes",
                 title: "Clientes",
-                action: () => this.rootPanel(new AonJsfCustomer())
+                action: () => this.rootPanel(new JSF.AonJsfCustomer())
             },{
                 description: "Facturas de Venta",
                 title: "Facturas de Venta",
-                action: () => alert("description")
+                action: () => this.rootPanel(new JSF.AonJsfSaleInvoice())
             },{
                 description: "Impresión / eMail de Facturas",
                 title: "Impresión / eMail de Facturas",
-                action: () => alert("description")
+                action: () => this.rootPanel(new JSF.AonJsfInvoicePrint())
             },{
                 description: "Pedidos de Venta",
                 title: "Pedidos de Venta",
-                action: () => alert("description")
+                action: () => this.rootPanel(new JSF.AonJsfSale())
             },{
                 description: "Facturación masiva de Albaranes",
                 title: "Facturación masiva de Albaranes",
-                action: () => alert("description")
+                action: () => this.rootPanel(new JSF.AonJsfInvoiceDelivery())
             }]
         },{
             title: 'Compras',
             options: [{
                 description: "Proveedores",
                 title: "Proveedores",
-                action: () => this.rootPanel(new AonJsfSupplier())
+                action: () => this.rootPanel(new JSF.AonJsfSupplier())
             },{
                 description: "Facturas de Compra",
                 title: "Facturas de Compra",
-                action: () => alert("description")
+                action: () => this.rootPanel(new JSF.AonJsfPurchaseInvoice())
             },{
                 description: "Pedidos de Compra",
                 title: "Facturas de Compra",
-                action: () => alert("description")
+                action: () => this.rootPanel(new JSF.AonJsfPurchase())
             }]
         },{
             title: 'Gastos',
             options: [{
                 description: "Acreedores",
                 title: "Acreedores",
-                action: () => this.rootPanel(new AonJsfCreditor())
+                action: () => this.rootPanel(new JSF.AonJsfCreditor())
             },{
                 description: "Facturas de Gastos",
                 title: "Facturas de Gastos",
-                action: () => alert("description")
+                action: () => this.rootPanel(new JSF.AonJsfExpenseInvoice())
             },{
                 description: "Gastos no Deducibles en IVA",
                 title: "Gastos no Deducibles en IVA",
-                action: () => alert("description")
+                action: () => this.rootPanel(new JSF.AonJsfUndeductibleInvoice())
             }]
         },{
             title: 'Tesorería',
             options: [{
                 description: "Gestión de Cobros",
                 title: "Gestión de Cobros",
-                action: () => alert("description")
+                action: () => this.rootPanel(new JSF.AonJsfFinanceCharge())
             },{
                 description: "Gestión de Pagos",
                 title: "Gestión de Cobros",
-                action: () => alert("description")
+                action: () => this.rootPanel(new JSF.AonJsfFinancePayment())
             },{
                 description: "Cartera de cobros y pagos",
                 title: "Cartera de cobros y pagos",
-                action: () => alert("description")
+                action: () => GWT.iLoad(GWT.FINANCE)
             },{
                 description: "Formas de Pago",
                 title: "Formas de Pago",
-                action: () => alert("description")
+                action: () => this.rootPanel(new JSF.AonJsfPayMethod())
             },{
                 description: "Borrado de Facturas",
                 title: "Borrado de Facturas",
-                action: () => alert("description")
+                action: () => this.rootPanel(new JSF.AonJsfInvoiceRemove())
             },{
                 description: "Estadisticas Globales",
                 title: "Estadisticas Globales",
-                action: () => alert("description")
+                action: () => GWT.iLoad(GWT.INVOICE_STAT)
             }]
         },{
             title: 'Impuestos',
             options: [{
                 description: "Panel de control de IVA",
                 title: "Panel de control de IVA",
-                action: () => alert("description")
+                action: () => GWT.iLoad(GWT.VAT_REPORT)
             },{
                 description: "Panel de Control de IRPF",
                 title: "Panel de Control de IRPF",
-                action: () => alert("description")
+                action: () => GWT.iLoad(GWT.IRPF_REPORT)
             },{
                 description: "SII - Suministro Inmediato de Información",
                 title: "SII - Suministro Inmediato de Información",
-                action: () => alert("description")
+                action: () => GWT.iLoad(GWT.MODEL_SII)
             },{
                 description: "Modelo 347 - Declaración anual operaciones con terceras personas.",
                 title: "Modelo 347 - Declaración anual operaciones con terceras personas.",
-                action: () => alert("description")
+                action: () => GWT.iLoad(GWT.MODEL_347)
             }]
         },{
             title: 'Maestros',
             options: [{
                 description: "Productos",
                 title: "Productos",
-                action: () => this.rootPanel(new AonJsfProduct())
+                action: () => this.rootPanel(new JSF.AonJsfProduct())
             },{
                 description: "Gastos",
                 title: "Gastos",
-                action: () => this.rootPanel(new AonJsfExpense())
+                action: () => this.rootPanel(new JSF.AonJsfExpense())
             },{
                 description: "Categorías",
                 title: "Categorías",
-                action: () => alert("description")
+                action: () => this.rootPanel(new JSF.AonJsfProductCategory())
             },{
                 description: "Pais/Provincia",
                 title: "Pais/Provincia",
-                action: () => alert("description")
+                action: () => this.rootPanel(new JSF.AonJsfGeotree())
             },{
                 description: "Segmentación",
                 title: "Segmentación",
-                action: () => alert("description")
+                action: () => this.rootPanel(new JSF.AonJsfSegment())
             }]
         }];
     }

@@ -354,6 +354,43 @@ public class InvoiceAutoComplete {
 						.copy(registry).setScope(inv.getScope()));
 			}	
 		}
+		
+		if(inv.getRegistry() == null && inv.getRegistryData() != null && inv.getRegistryData().getId() == null && !AonStringUtils.isBlank(inv.getRegistryData().getName()) && 
+				AonStringUtils.isBlank(inv.getRegistryData().getDocument())) {
+			inv.getRegistryData().setDomain(new Domain().setId(inv.getDomain()));
+			if(InvoiceType.SALES.equals(inv.getType())) {
+				Domain d = new Domain().setId(inv.getDomain());
+				Registry reg = new Registry()
+						.setDomain(d)
+						.setName(inv.getRegistryName());
+				Registry registry = RegistryDAO.save(ctx.getContext(), reg);
+				Customer customer = new Customer()
+						.copy(registry.getId() != null ? registry : inv.getRegistryData()
+						.setId(registry.getId()))
+						.setScope(inv.getScope());
+				Account account = new Account()
+						.setDomain(inv.getDomain())
+						.setCode(AccountDAO.getNextAccountCode(ctx.getContext(), "4300"))
+						.setAlias(customer.getAlias())
+						.setDescription(customer.getName())
+						.setActive(true);
+				account = AccountDAO.save(ctx.getContext(), account);
+				customer.setAccount(account.getId());
+				Customer c = CustomerDAO.save(ctx.getContext(), customer);
+				if(c.getId() != null) {
+					inv.setRegistry(c.getId());
+					inv.setRegistryData(c);
+					if(!inv.getAddress().isEmpty()) {
+						RegistryAddress raddress = RegistryAddressDAO.save(ctx.getContext(), inv.getAddress()
+							.setId(null)
+							.setDomain(c.getDomain().getId())
+							.setRegistry(c.getId()));
+						inv.setRegistryAddress(raddress.getId());
+						inv.setAddress(raddress);
+					}
+				}
+			}			
+		}
 	
 		Integer registryId = inv.getRegistryData().getId() != null
 				? inv.getRegistryData().getId() : inv.getRegistry();
@@ -414,6 +451,7 @@ public class InvoiceAutoComplete {
 		
 		if(inv.getAddress() != null && inv.getAddress().getId() == null && !inv.getAddress().isEmpty()) {
 			inv.getAddress().setRegistry(inv.getRegistry());
+			if(inv.getAddress().getDomain() == null) inv.getAddress().setDomain(inv.getDomain());
 			RegistryAddress raddress = RegistryAddressDAO.save(ctx.getContext(), inv.getAddress());
 			inv.setRegistryAddress(raddress.getId());
 			inv.setAddress(raddress);

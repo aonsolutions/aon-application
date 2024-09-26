@@ -225,19 +225,20 @@ public class RegistryBankDAO {
 			.map(new RegistryBankFiller());
 	}
 	
+	
 	public static RegistryBank save(AONContext ctx, RegistryBank rbank) {
-		RegistryBankAutoComplete.autoComplete(ctx, rbank);
-		RegistryBankValidation.validate(ctx, rbank);
-		ctx.checkWrite();
-		if(rbank.getId() != null && rbank.isRemoved()) { 
-			delete(ctx, rbank.getId());
-			return rbank;
+			RegistryBankAutoComplete.autoComplete(ctx, rbank);
+			RegistryBankValidation.validate(ctx, rbank);
+			ctx.checkWrite();
+			if(rbank.getId() != null && rbank.isRemoved()) { 
+				delete(ctx, rbank.getId());
+				return rbank;
+			}
+			if(!rbank.isDirty()) return rbank;
+			return (rbank.getId() == null)
+					? insert(ctx, rbank)
+					: update(ctx, rbank);
 		}
-		if(!rbank.isDirty()) return rbank;
-		return (rbank.getId() == null)
-				? insert(ctx, rbank)
-				: update(ctx, rbank);
-	}
 	
 	private static RegistryBank insert(AONContext ctx, RegistryBank rbank){
 		Integer id = ctx.getDslContext().insertInto(RBANK)

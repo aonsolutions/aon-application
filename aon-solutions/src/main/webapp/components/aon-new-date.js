@@ -1,4 +1,3 @@
-import {AonElement} from './AonElement.js';
 import { CONSTANT, CSS, EVENT, MATERIAL_ICONS, MSG, TAG } from '../environments/environments.js';
 import { AonNewInput } from './aon-new-input.js';
 import { AonIconButton } from './aon-icon-button.js';
@@ -12,6 +11,7 @@ export class AonNewDate extends AonNewInput {
   year;
 
   INPUT;
+  
   SPAN;
   DATEPICKER;
   DATEPICKER_PREVIOUS;
@@ -41,7 +41,7 @@ export class AonNewDate extends AonNewInput {
     this.DATEPICKER_YEAR = this.DATEPICKER + 'Year';
     this.DATEPICKER_DAYS = this.DATEPICKER + 'Days';
 
-    this.date = new Date(Date.now());
+    this.date =  this.date || new Date(Date.now());
     this.day = this.date.getDate();
     this.month = this.date.getMonth();
     this.year = this.date.getFullYear();
@@ -49,7 +49,6 @@ export class AonNewDate extends AonNewInput {
   }
 
   buildDate() {
-    this.setValue(this.value);
     let rootDiv = this.getElement(this.ROOT);
     rootDiv.style.minWidth = '75px';
     this.addIcon(MATERIAL_ICONS.CALENDAR_TODAY, undefined, () => this.openDatepicker());
@@ -74,7 +73,7 @@ export class AonNewDate extends AonNewInput {
       const day = parseInt(values[0]);
        
       const d = new Date(year, month, day);
-        
+      
       if (!isNaN(d)) {          
         this.setDate(d);
         const dates = [d.getDate(), d.getMonth() + 1, d.getFullYear()];
@@ -109,7 +108,6 @@ export class AonNewDate extends AonNewInput {
     return str;
   }
   
-
   buildDatepicker() {
     let rootDiv = this.getElement(this.ROOT);
 
@@ -343,47 +341,16 @@ export class AonNewDate extends AonNewInput {
 
   setDate(date) {
     let input = this.getElement(this.INPUT);
-    if(date instanceof Date) {
-      this.date = date;
-      this.day = this.date.getDate();
-      this.month = this.date.getMonth();
-      this.year = this.date.getFullYear();
-      this.value = this.year + '-' + (this.addZero(this.month + 1)) + '-' + this.addZero(this.day);
-      input.value = this.addZero(this.day) + '/' + (this.addZero(this.month + 1)) + '/' + this.year;
-      this.buildCalendar();
-    } else if(date){
-      this.date = new Date(Date.parse(date));
-      this.day = this.date.getDate();
-      this.month = this.date.getMonth();
-      this.year = this.date.getFullYear();
-      this.value = this.year + '-' + (this.addZero(this.month + 1)) + '-' + this.addZero(this.day);
-      input.value = this.addZero(this.day) + '/' + (this.addZero(this.month + 1)) + '/' + this.year;
-      this.buildCalendar();
-    }
-    this.dispatchEvent(new CustomEvent(EVENT.CHANGE, {detail: this.date}));
+    this.date = (date instanceof Date)
+      ? date : AonDateUtils.parse(date);
+    if(input) input.value = AonDateUtils.formatDate(this.date, '/');
+    let datepickerDays = this.getElement(this.DATEPICKER_DAYS);    
+    if(datepickerDays) this.buildCalendar();
+    if(input && datepickerDays) this.dispatchEvent(new CustomEvent(EVENT.CHANGE, {detail: this.date}));
   }
 
-  setValue(value) {
-    let input = this.getElement(this.INPUT);
-    if(value instanceof Date) {
-      this.date = value;
-      this.day = this.date.getDate();
-      this.month = this.date.getMonth();
-      this.year = this.date.getFullYear();
-      this.value = this.year + '-' + (this.addZero(this.month + 1)) + '-' + this.addZero(this.day);
-      input.value = this.addZero(this.day) + '/' + (this.addZero(this.month + 1)) + '/' + this.year;
-    } else if(value){
-      this.date = new Date(Date.parse(value));
-      this.day = this.date.getDate();
-      this.month = this.date.getMonth();
-      this.year = this.date.getFullYear();
-      this.value = this.year + '-' + (this.addZero(this.month + 1)) + '-' + this.addZero(this.day);
-      input.value = this.addZero(this.day) + '/' + (this.addZero(this.month + 1)) + '/' + this.year;
-    }
-  }
+  setValue(value) { 
 
-  addZero(d){
-    return d.toString().padStart(2, "0");
   }
 
   focus() {
@@ -416,47 +383,17 @@ export class AonNewDate extends AonNewInput {
     }
   }
 
-  // parseDateStr(dateStr) {
-  //     if(dateStr.includes('/')){
-  //       let dateArr = dateStr.split('/');
-  //       let a = dateArr[0].length === 1 
-  //           ? '0' + dateArr[0] : dateArr[0];
-  //       let b = dateArr[1].length === 1 
-  //           ? '0' + dateArr[1] : dateArr[1];
-  //       let c = dateArr[2];
-  //       dateStr = a + b + c;       
-  //     } 
-      
-  //     if(dateStr.includes('-')){
-  //       let dateArr = dateStr.split('-');
-  //       let a = dateArr[0].length === 1 
-  //           ? '0' + dateArr[0] : dateArr[0];
-  //       let b = dateArr[1].length === 1 
-  //           ? '0' + dateArr[1] : dateArr[1];
-  //       let c = dateArr[2];
-  //       dateStr = a + b + c;       
-  //     } 
- 
-  //     let day = dateStr.substring(0, 2);
-  //     let month = dateStr.substring(2, 4);
-  //     let year = dateStr.substring(4);
-
-  //     if(Number(month) > 12 || Number(day) > 31 || year.length > 4){
-  //       return this.date;
-  //     } else {
-  //       let d = month + '/' + day + '/' + year;
-  //       return new Date(d);
-  //     }
-  // }
-
   clear(){
     
   }
 
   getValue() {
-    return this.value;
-  }
+    return AonDateUtils.formatDate(this.date);
+  } 
   
+  getDateValue() {
+    return AonDateUtils.formatDate(this.date, 'yyyy-MM-dd');
+  }
 
 }
 if(!window.customElements.get(TAG.AON_NEW_DATE)){

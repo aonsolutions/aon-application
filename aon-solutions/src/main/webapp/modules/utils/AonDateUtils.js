@@ -1,19 +1,30 @@
 import { MSG } from "../../environments/environments.js";
-import { DAYS, MONTHS } from "../../models/enums.js";
+import { DAYS, MONTHS, MONTHS_ABR } from "../../models/enums.js";
 import { addZero } from "../../services/utils.js";
 
 export const AonDateUtils = {
   /**
    *
    * @param {Date} date
-   * @return {String} dd-MM-yyyy
+   * @return {String} dd/MM/yyyy
   */
-  formatDate: function (d) {
+  formatDate: function (d, format) {
+    format = format || 'dd/MM/yyyy';
     const date = new Date(d);
     const day = addZero(date.getDate(), 2);
     const month = addZero(date.getMonth() + 1, 2);
     const year = date.getFullYear();
-    return day + "/" + month + "/" + year;
+
+    switch (format) {
+      case 'dd-MM-yyyy':
+        return day + "-" + month + '-' + year;
+      case 'yyyy-MM-dd':
+        return year + "-" + month + '-' + day;
+      case 'yyyy/MM/dd':
+        return year + "/" + month + '/' + day;
+      default:
+        return day + "/" + month + '/' + year;
+    }
   },
   /**
    *
@@ -129,6 +140,17 @@ export const AonDateUtils = {
   /**
    *
    * @param {Date} date
+   * @return {String} MONTH yyyy
+  */
+  getDayMonthAbr: function (d) {
+    const date = new Date(d);
+    const day = addZero(date.getDate(), 2);
+    const month = MONTHS_ABR[date.getMonth()];
+    return day + " " + month;
+  },
+  /**
+   *
+   * @param {Date} date
    * @return {String} dd-MONTH OR OTHER YEAR dd-mm-yyyy
   */
   getDayMonthOrFull: function (d) {
@@ -137,6 +159,21 @@ export const AonDateUtils = {
 
     if (date.getFullYear() === now.getFullYear()){
       return this.lastThreeDayStr(date) || this.getDayMonth(date);
+    }
+
+    return this.formatDate(date);
+  },
+  /**
+   *
+   * @param {Date} date
+   * @return {String} dd-MONTH OR OTHER YEAR dd-mm-yyyy
+  */
+  getDayMonthOrFullShort: function (d) {
+    const date = new Date(d);
+    const now = new Date();
+
+    if (date.getFullYear() === now.getFullYear()){
+      return this.lastThreeDayStr(date) || this.getDayMonthAbr(date);
     }
 
     return this.formatDate(date);
@@ -170,4 +207,41 @@ export const AonDateUtils = {
     let seconds = Math.floor(time / 1000);
     return addZero(hours, 2) + ":" + addZero(minutes, 2) + ":" + addZero(seconds, 2);
   },
+  parse: function(dateStr) {
+    dateStr = dateStr.replaceAll('"', '');
+    let dateParse = Date.parse(dateStr);
+    if(isNaN(dateParse)) {
+      dateParse = Date.parse(dateStr.substring(0,10))
+    } 
+    if(isNaN(dateParse) && (dateStr.includes('/') || dateStr.includes('-'))) {
+      let dateArr = dateStr.includes('/') ? dateStr.split('/') : dateStr.split('-');
+      let a = dateArr[0].length === 4 
+      ? addZero(dateArr[2], 2) : addZero(dateArr[0], 2);
+      let b = addZero(dateArr[2], 2);
+      let c = dateArr[0].length === 4 
+          ? dateArr[0] : dateArr[2].substring(0, 4);
+      dateStr = a + '/' + b + '/' + c;
+      dateParse = Date.parse(dateStr);
+    }
+    return new Date(dateParse);
+  },
+  /**
+   *
+   * @param {Date} date
+   * @return {String} H:M
+  */
+  timeParserHHMM: function (time) {
+    let date = new Date();
+    date.setTime(time);
+     // Extraer horas y minutos
+    let hours = date.getHours();
+    let minutes = date.getMinutes();
+    
+    // Agregar un 0 al inicio si es necesario para formato de dos dígitos
+    hours = hours < 10 ? '0' + hours : hours;
+    minutes = minutes < 10 ? '0' + minutes : minutes;
+
+    // Retornar en formato hh:mm
+    return `${hours}:${minutes}`;
+  }
 }

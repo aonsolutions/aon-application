@@ -45,9 +45,9 @@ export const ACCOUNT_MODULE = {
   entryPoint: 'AccountModule'
 };
 
-export const ACCOUNT_OPERATING_REPORT = {
+export const ACCOUNT_OPERATION_REPORT = {
   module: GWT_FISCAL,
-  entryPoint: 'AccountOperatingReport'
+  entryPoint: 'AccountingOperationReport'
 };
 
 export const ACCOUNT_TRIAL_BALANCE_REPORT = {
@@ -97,19 +97,29 @@ export const AMORTIZATION_TYPE = {
 
 export const DEPOSIT = {
   module: GWT_AIO,
-  entryPoint: 'deposit'
+  entryPoint: 'deposit',
+  subEntryPoint: 'deposit_new'
 };
 
 export const EMPLOYEES = {
   title:'Integral de Nóminas',
   module: GWT_PAYROLL,
-  entryPoint: 'EmployeeTree'
+  entryPoint: 'EmployeeTree',
+  javaScripts : [
+	`${GWT_PAYROLL}/codemirror/addon/merge/diff_match_patch.js`,
+	`${GWT_PAYROLL}/codemirror/lib/codemirrorcompressed.js`
+	]
 };
 
 export const CONVENIOS = {
   title: 'Convenios',
   module: GWT_PAYROLL,
-  entryPoint: 'MainAgreement'
+  entryPoint: 'MainAgreement',
+  javaScripts : [
+  `${GWT_PAYROLL}/codemirror/addon/merge/diff_match_patch.js`,
+  `${GWT_PAYROLL}/codemirror/lib/codemirrorcompressed.js`
+  ]
+  
 };
 
 export const PAYROLL_CONFIG = {
@@ -196,7 +206,7 @@ export const MAIN_SALARY_PRINT = {
 export const ACTIVITY_SUMMARY = {
   title: 'Activity Summary',
   module: GWT_PAYROLL,
-  entryPoint: 'AcitivitySummary'
+  entryPoint: 'ActivitySummary'
 };
 
 export const MASSIVE_FIE = {
@@ -316,7 +326,7 @@ export const MODEL_193 = {
 export const MODEL_200 = {
   title:"Model 200",
   name: "Model 200",
-  module: GWT_FISCAL,
+  module: "aon_gwt_mod200",
   entryPoint: 'Model200'
 };
 
@@ -419,3 +429,66 @@ export const QUESTION = {
   module: GWT_AIO,
   entryPoint: 'QuestionModule',
 }
+
+export const CONTRACT_MEDIA = {
+  module: GWT_AIO,
+  entryPoint: 'templates',
+  subEntryPoint: 'contract_media'
+};
+
+export const BATCH_PAYROLL = {
+  module: GWT_FISCAL,
+  entryPoint: 'FBatchPaymentPayroll'
+};
+
+export const FINANCE_PAYROLL = {
+  module: GWT_FISCAL,
+  entryPoint: 'FinancePayroll'
+};
+
+export const INVEST_ASSET = {
+  module: GWT_FISCAL,
+  entryPoint: 'InvestAssetModule'
+};
+
+export const ACCOUNTING_UTILITIES = {
+  module: GWT_FISCAL,
+  entryPoint: 'AccountingUtilities'
+};
+
+export const FINANCE_UTILITIES = {
+  module: GWT_FISCAL,
+  entryPoint: 'FinanceUtilities'
+};
+
+export const PAY_METHOD = {
+  module: GWT_FISCAL,
+  entryPoint: 'PayMethod'
+};
+
+export const ACCOUNT_OPERATION_STATEMENT = {
+  module: GWT_FISCAL,
+  entryPoint: 'AccountOperatingReport'
+};
+
+export const FBATCH_PAYMENT_TREASURY = {
+  module: GWT_FISCAL,
+  entryPoint: 'FBatchPaymentTreasury'
+};
+
+export const FEE_PROJECTION = {
+  module: GWT_AIO,
+  entryPoint: 'fee',
+  subEntryPoint: 'feeProjection'
+};
+
+export const CUSTOMER_FEE = {
+  module: GWT_FISCAL,
+  entryPoint: 'customerFee'
+};
+
+export const COMMISSION_CALC = {
+  module: GWT_AIO,
+  entryPoint: 'commission_calculate',
+  subEntryPoint: 'commission_calculate'
+};

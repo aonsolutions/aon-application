@@ -1,5 +1,65 @@
-import { CONSTANT, MATERIAL_ICONS, MSG } from "../../environments/environments.js"
-import * as UA from '../../services/userAgentService.js';
+import { CONSTANT, MATERIAL_ICONS, MSG, TAG } from "../../environments/environments.js"
+import * as GWT from "../../gwt/gwt.js";
+
+  export const gwtLoad = (option) => {
+    let application = document.querySelector(TAG.AON_APPLICATION);
+    GWT.load(option, application.CONTENT);
+  }
+
+  export const newInvoice = (type) => {
+    let application = document.querySelector(TAG.AON_APPLICATION);
+    let parent = application.getParent();
+    parent.aonInvoice(type)
+  }
+
+  export const invoiceList = (filter, invofoxFilter) => {
+    let application = document.querySelector(TAG.AON_APPLICATION);
+    let parent = application.getParent();
+    parent.buildInvoiceToolbarOptions(filter && filter.status === 'accounting');
+    parent.aonInvoiceList(filter, invofoxFilter);
+  }
+
+  export const customerList = (filter) => {
+    let application = document.querySelector(TAG.AON_APPLICATION);
+    let parent = application.getParent();
+    parent.buildCustomerToolbarOptions();
+    parent.aonCustomerList(filter);
+  }
+
+  export const supplierList = (filter) => {
+    let application = document.querySelector(TAG.AON_APPLICATION);
+    let parent = application.getParent();
+    parent.buildSupplierToolbarOptions();
+    parent.aonSupplierList(filter);
+  }
+
+  export const creditorList = (filter) => {
+    let application = document.querySelector(TAG.AON_APPLICATION);
+    let parent = application.getParent();
+    parent.buildCreditorToolbarOptions();
+    parent.aonCreditorList(filter);
+  }
+
+  export const productList = (filter) => {
+    let application = document.querySelector(TAG.AON_APPLICATION);
+    let parent = application.getParent();
+    parent.buildProductToolbarOptions();
+    parent.aonProductList(filter);
+  }
+
+  export const expenseList = (filter) => {
+    let application = document.querySelector(TAG.AON_APPLICATION);
+    let parent = application.getParent();
+    parent.buildExpenseToolbarOptions();
+    parent.aonProductList(filter);
+  }
+
+  export const investList = (filter) => {
+    let application = document.querySelector(TAG.AON_APPLICATION);
+    let parent = application.getParent();
+    parent.buildInvestToolbarOptions();
+    parent.aonInvestList(filter);
+  }
 
   export const CREATE_INVOICE_ISSUED = {
     id: CONSTANT.CREATE_INVOICE_ISSUED.initCap(),
@@ -25,19 +85,37 @@ import * as UA from '../../services/userAgentService.js';
   export const INVOICE_ISSUED = {
     id: CONSTANT.INVOICE_ISSUED.initCap(),
     name: MSG.ISSUEDS,
-    icon: MATERIAL_ICONS.UNARCHIVE
+    icon: MATERIAL_ICONS.UNARCHIVE,
+    fn: () => invoiceList({
+      status: "accounting",
+      type: "sales",
+      page: 1,
+      per_page: 50,
+    })
   }
 
   export const INVOICE_RECEIVED = {
     id: CONSTANT.INVOICE_RECEIVED.initCap(),
     name: MSG.RECEIVEDS,
-    icon: MATERIAL_ICONS.ARCHIVE
+    icon: MATERIAL_ICONS.ARCHIVE,
+    fn: () => invoiceList({
+      status: "accounting",
+      type: "purchase,expenses",
+      page: 1,
+      per_page: 50,
+    })
   }
 
   export const INVOICE_TICKET = {
     id: CONSTANT.INVOICE_TICKET.initCap(),
     name: MSG.TICKET,
-    icon: MATERIAL_ICONS.RECEIPT
+    icon: MATERIAL_ICONS.RECEIPT,
+    fn: () => invoiceList({
+      status: "accounting",
+      type: "ticket",
+      page: 1,
+      per_page: 50,
+    })
   }
 
   // RAWDOC & INVOFOX
@@ -45,19 +123,46 @@ import * as UA from '../../services/userAgentService.js';
   export const RAWDOC_INBOX_ISSUED = {
     id: CONSTANT.RAWDOC_INBOX_ISSUED.initCap(),
     name: MSG.ISSUEDS,
-    icon: MATERIAL_ICONS.UNARCHIVE
+    icon: MATERIAL_ICONS.UNARCHIVE,
+    fn: () => invoiceList({ status: CONSTANT.INBOX, type: "emitida" },
+      {
+        status: CONSTANT.OCR_INBOX,
+        page: 0,
+        perPage: 50,
+        publicStatus: [CONSTANT.APPROVED, CONSTANT.PENDING_CORRECTION],
+        type: ["invoice", "ticket"],
+        companyActsLike: "issuer",
+      })
   }
 
   export const RAWDOC_INBOX_RECEIVED = {
     id: CONSTANT.RAWDOC_INBOX_RECEIVED.initCap(),
     name: MSG.RECEIVEDS,
-    icon: MATERIAL_ICONS.ARCHIVE
+    icon: MATERIAL_ICONS.ARCHIVE,
+    fn: () => invoiceList({ status: CONSTANT.INBOX, type: "recibida" },
+      {
+        status: CONSTANT.OCR_INBOX,
+        page: 0,
+        perPage: 50,
+        publicStatus: [CONSTANT.APPROVED, CONSTANT.PENDING_CORRECTION],
+        type: ["invoice"],
+        companyActsLike: "ne+issuer",
+      })
   }
 
   export const RAWDOC_INBOX_TICKET = {
     id: CONSTANT.RAWDOC_INBOX_TICKET.initCap(),
     name: MSG.TICKET,
-    icon: MATERIAL_ICONS.RECEIPT
+    icon: MATERIAL_ICONS.RECEIPT,
+    fn: () => invoiceList({ status: CONSTANT.INBOX, type: "ticket" },
+      {
+        status: CONSTANT.OCR_INBOX,
+        page: 0,
+        perPage: 50,
+        publicStatus: [CONSTANT.APPROVED, CONSTANT.PENDING_CORRECTION],
+        type: ["ticket"],
+        companyActsLike: "ne+issuer",
+      })
   }
 
   export const RAWDOC_INBOX = {
@@ -68,16 +173,40 @@ import * as UA from '../../services/userAgentService.js';
     options: [RAWDOC_INBOX_ISSUED, RAWDOC_INBOX_RECEIVED, RAWDOC_INBOX_TICKET]
   }
 
+  export const RAWDOC_PROCESSING = {
+    id: CONSTANT.RAWDOC_PROCESSING.initCap(),
+    name: MSG.PROCCESSING,
+    icon: MATERIAL_ICONS.SCHEDULE,
+    fn: () => invoiceList({ status: CONSTANT.PROCESSING })
+  }
+
   export const RAWDOC_REJECT = {
     id: CONSTANT.RAWDOC_REJECT.initCap(),
     name: MSG.REJECTEDS,
-    icon: MATERIAL_ICONS.REPORT
+    icon: MATERIAL_ICONS.REPORT,
+    fn: () => invoiceList( { status: CONSTANT.REJECTED },
+      {
+        status: CONSTANT.OCR_INBOX,
+        page: 0,
+        perPage: 50,
+        publicStatus: [CONSTANT.PENDING_DECISSION, CONSTANT.REJECTED],
+        type: ["invoice", "ticket"],
+      }
+    )
   }
   
   export const RAWDOC_DRAFT = {
     id: CONSTANT.RAWDOC_DRAFT.initCap(),
     name: MSG.TRASH,
-    icon: MATERIAL_ICONS.DELETE
+    icon: MATERIAL_ICONS.DELETE,
+    fn: () => invoiceList( { status: CONSTANT.DRAFT },
+      {
+        status: CONSTANT.OCR_INBOX,
+        page: 0,
+        perPage: 50,
+        publicStatus: [CONSTANT.DISCARDED],
+      }
+    )
   }
 
   export const INVOICE_PENDINGS = {
@@ -95,7 +224,7 @@ import * as UA from '../../services/userAgentService.js';
     title: MSG.INVOICES,
     name: MSG.INVOICES,
     options: [INVOICE_ISSUED, INVOICE_RECEIVED, INVOICE_TICKET,
-      INVOICE_PENDINGS, RAWDOC_REJECT, RAWDOC_DRAFT]
+      INVOICE_PENDINGS, RAWDOC_PROCESSING, RAWDOC_REJECT, RAWDOC_DRAFT]
   }
 
   // ********************
@@ -105,19 +234,22 @@ import * as UA from '../../services/userAgentService.js';
   export const REGISTRY_CUSTOMER = {
     id: CONSTANT.REGISTRY_CUSTOMER.initCap(),
     name: MSG.CUSTOMERS,
-    icon: MATERIAL_ICONS.CONTACT_PAGE
+    icon: MATERIAL_ICONS.CONTACT_PAGE,
+    fn: () => customerList()
   }
   
   export const REGISTRY_SUPPLIER = {
     id: CONSTANT.REGISTRY_SUPPLIER.initCap(),
     name: MSG.SUPPLIERS,
-    icon: MATERIAL_ICONS.CONTACT_PAGE
+    icon: MATERIAL_ICONS.CONTACT_PAGE,
+    fn: () => supplierList()
   }
   
   export const REGISTRY_CREDITOR = {
     id: CONSTANT.REGISTRY_CREDITOR.initCap(),
     name: MSG.CREDITORS,
-    icon: MATERIAL_ICONS.CONTACT_PAGE
+    icon: MATERIAL_ICONS.CONTACT_PAGE,
+    fn: () => creditorList()
   }
 
   export const REGISTRY = {
@@ -131,37 +263,49 @@ import * as UA from '../../services/userAgentService.js';
   export const PRODUCT = {
     id: CONSTANT.PRODUCT.initCap(),
     name: MSG.PRODUCTS,
-    icon: MATERIAL_ICONS.INVENTORY_2
+    icon: MATERIAL_ICONS.INVENTORY_2,
+    fn: () => productList({ expense: false })
   }
 
   export const EXPENSES = {
     id: CONSTANT.EXPENSES.initCap(),
     name: MSG.EXPENSES,
-    icon: MATERIAL_ICONS.INVENTORY_2
+    icon: MATERIAL_ICONS.INVENTORY_2,
+    fn: () => expenseList({ expense: true })
   }
 
   export const CHARGES_PAYMENTS = {
     id: CONSTANT.CHARGES_PAYMENTS.initCap(),
     name: MSG.CHARGES_AND_PAYMENTS,
-    icon: MATERIAL_ICONS.PAYMENT
+    icon: MATERIAL_ICONS.PAYMENT,
+    fn: () => gwtLoad(GWT.FINANCE)
   }
 
   export const VAT_PANEL = {
     id: CONSTANT.VAT_PANEL.initCap(),
     name: MSG.VAT_PANEL,
-    icon: MATERIAL_ICONS.PAYMENT
+    icon: MATERIAL_ICONS.PAYMENT,
+    fn: () => gwtLoad(GWT.VAT_REPORT)
   }
 
   export const RETENTION_PANEL = {
     id: CONSTANT.RETENTION_PANEL.initCap(),
     name: MSG.RETENTION_PANEL,
+    icon: MATERIAL_ICONS.PAYMENT,
+    fn: () => gwtLoad(GWT.IRPF_REPORT)
+  }
+
+  export const FISCAL_DRAFT = {
+    id: "fiscalModelDraft",
+    name: "Precálculo Impuestos",
     icon: MATERIAL_ICONS.PAYMENT
   }
 
   export const INVEST = {
     id: CONSTANT.INVEST_ASSET.initCap(),
     name: MSG.INVEST_ASSET,
-    icon: MATERIAL_ICONS.INVENTORY_2
+    icon: MATERIAL_ICONS.INVENTORY_2,
+    fn: () => investList({})
   }
   
   export const CONCEPTS = {
@@ -178,14 +322,73 @@ import * as UA from '../../services/userAgentService.js';
     id: CONSTANT.MANAGEMENT.initCap(),
     title: MSG.MANAGEMENT,
     name: MSG.MANAGEMENT,
-    options:[ REGISTRY, CONCEPTS, CHARGES_PAYMENTS, VAT_PANEL, RETENTION_PANEL ]
+    options:[ REGISTRY, CONCEPTS, CHARGES_PAYMENTS, /*VAT_PANEL, RETENTION_PANEL,*/ FISCAL_DRAFT ]
     //  UA.isMobile() ? 
       
       // : [ REGISTRY, PRODUCT ]
   }
 
+
+  export const INVOICE_SEARCH_OPTIONS = [
+    {
+      type: CONSTANT.DATE,
+      name: "startDate",
+      id: "startDate",
+      title: MSG.FROM,
+    },
+    {
+      type: CONSTANT.DATE,
+      name: "endDate",
+      id: "endDate",
+      title: MSG.TO,
+    },
+    {
+      type: CONSTANT.SELECT,
+      name: "recorded",
+      id: "recorded",
+      title: MSG.STATUS,
+      options: JSON.stringify([
+        { name: "-", value: undefined },
+        { name: MSG.PENDING, value: "PENDING" },
+        { name: MSG.ACCOUNTED, value: "SCORED" },
+      ]),
+    },
+  ];
+
+
+  export const NEW_ISSUED_INVOICE = {
+    name: MSG.ISSUEDS,
+    title: MSG.ISSUEDS,
+    icon: MATERIAL_ICONS.UNARCHIVE,
+    permission: true,
+    backgroundColor: "#4472C4",
+    fn: () => newInvoice("emitida")
+  };
+
+  export const NEW_RECEIVED_INVOICE = {
+    name: MSG.RECEIVEDS,
+    title: MSG.RECEIVEDS,
+    icon: MATERIAL_ICONS.ARCHIVE,
+    permission: true,
+    backgroundColor: "#4472C4",
+    fn: () => newInvoice("recibida")
+  };
+
+  export const NEW_TICKET = {
+    name: MSG.TICKET,
+    title: MSG.TICKET,
+    icon: MATERIAL_ICONS.RECEIPT,
+    permission: true,
+    backgroundColor: "#4472C4",
+    fn: () => newInvoice("ticket")
+  };
+
   // ********************    
 
-  export const getOptions = (dur) => {
+  export const getOptions = () => {
     return [INVOICES, MANAGEMENT];
+  }
+
+  export const getNewOptions = () => {
+    return [NEW_ISSUED_INVOICE, NEW_RECEIVED_INVOICE, NEW_TICKET];
   }

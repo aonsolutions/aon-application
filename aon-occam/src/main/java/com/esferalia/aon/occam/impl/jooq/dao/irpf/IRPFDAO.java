@@ -210,6 +210,33 @@ public class IRPFDAO {
 		return stream;
 	}
 	
+	public static Stream<IrpfBreakdown> getInvoicesIrpfBreakdown(final AONContext ctx, IRPFParams params, Integer offset) {
+		Stream<IrpfBreakdown> stream = getInvoiceIrpBreakdownSelect(ctx)
+				.where(IRPF_PROPERTIES.getConditions(p -> getIRPFFilter(p, params)))
+				.and(INVOICE_TAX.TAX_TYPE.equal(TaxType.RETENTION.value()))
+				.orderBy( getOrderBy(params) )
+				.limit(100)
+				.offset(offset)
+				.fetch()
+				.stream()
+				.map( new IrpfInvoiceBreakdownFiller() ); 
+		
+		if (params.getGroupedBy() == IRPFParamsGroupedBy.INVOICE) {
+			return stream
+				.collect( new InvoiceCollector(params) )
+				.values()
+				.stream()
+				;
+		} else  if (params.getGroupedBy() == IRPFParamsGroupedBy.REGISTRY) {
+			return stream
+				.collect( new NifCollector(params) )
+				.values()
+				.stream()
+				;
+		}
+		return stream;
+	}
+	
 	public static Stream<IrpfBreakdown> getOutputInvoicesIrpfBreakdown(final AONContext ctx, final FiscalModel fm) {
 		IRPFParams params = new IRPFParams()
 			.setDomain(fm.getDomain())
@@ -361,6 +388,15 @@ public class IRPFDAO {
 			.join(WORKPLACE).on(CONTRACT.WORKPLACE.equal(WORKPLACE.ID))
 			.leftJoin(CONTRACT_DATA).on(SALARY.CONTRACT.equal(CONTRACT_DATA.CONTRACT).and(CONTRACT_DATA.NAME.equal("IRPF_TYPE")));
 	}
+	
+	private static SelectOnConditionStep<Record1<Integer>> getSalaryIrpfBreakdownCountSelect(final AONContext ctx) {
+		return ctx.getDslContext()
+			.selectCount()
+			.from(SALARY)
+			.join(CONTRACT).on(SALARY.CONTRACT.equal(CONTRACT.ID))
+			.join(WORKPLACE).on(CONTRACT.WORKPLACE.equal(WORKPLACE.ID))
+			.leftJoin(CONTRACT_DATA).on(SALARY.CONTRACT.equal(CONTRACT_DATA.CONTRACT).and(CONTRACT_DATA.NAME.equal("IRPF_TYPE")));
+	}
 
 	private static Field<java.sql.Date> getSalaryDateField(final ISalaryFiscalModel fm) {
 		return (fm.mustUseChargeDate()?SALARY.CHARGE_DATE:SALARY.ISSUE_DATE);
@@ -431,6 +467,57 @@ public class IRPFDAO {
 			.flatMap(List::stream);
 	}
 	
+	public static Stream<IrpfBreakdown> getNotInModelSalaryIrpfBreakdown(final AONContext ctx, final ISalaryFiscalModel fm, Integer offset) {
+		Table<Record1<Integer>> modelSalary = ctx.getDslContext().select( ALCATRAZ_SALARY_ID )
+			.from(ALCATRAZ)
+			.join(FS_MODEL).on(FS_MODEL.ID.equal(ALCATRAZ.FS_MODEL))
+			.where(FS_MODEL.DOMAIN.eq(fm.getDomain()))
+			.and(FS_MODEL.YEAR.eq(fm.getYear()))
+			.and(FS_MODEL.ADMINISTRATION.eq(fm.getAdministration().value()))
+			.and(FS_MODEL.MODEL.eq(fm.getModel().getValue()))
+			.asTable("modelSalary")
+		;
+		return getSalaryIrpfBreakdownSelect(ctx)
+			 .leftAntiJoin(modelSalary).on(ALCATRAZ_SALARY_ID.equal(SALARY.ID))
+			.where(SALARY.DOMAIN.equal(fm.getDomain()))
+				.and(getSalaryDateField(fm).between(getStartDate(fm),getEndDate(fm)))
+				.and(SALARY.IRPF_BASE.ne( 0.0 ))
+				.and(WORKPLACE.ECONOMICAGREEMENT.equal(fm.getAdministration().value()))
+				.and(SALARY.TYPE.in(SalaryType.IRPF_SALARIES )) // Skip SLD ( L00, L13... )
+				.and(CONTRACT_DATA.EXPRESSION.isNull().or(CONTRACT_DATA.EXPRESSION.ne("\"3\"")))  // No tener en cuenta los no residentes
+			.orderBy(getSalaryDateField(fm),SALARY.ID,SALARY.EMPLOYEE_DOCUMENT)
+			.limit(100)
+			.offset(offset)
+			.fetch()
+			.stream()
+			.map(rec -> new IrpfSalaryBreakdownFiller().apply(rec) )
+			.flatMap(List::stream);
+	}
+	
+	public static Integer getNotInModelSalaryIrpfBreakdownCount(final AONContext ctx, final ISalaryFiscalModel fm) {
+		Table<Record1<Integer>> modelSalary = ctx.getDslContext().select( ALCATRAZ_SALARY_ID )
+			.from(ALCATRAZ)
+			.join(FS_MODEL).on(FS_MODEL.ID.equal(ALCATRAZ.FS_MODEL))
+			.where(FS_MODEL.DOMAIN.eq(fm.getDomain()))
+			.and(FS_MODEL.YEAR.eq(fm.getYear()))
+			.and(FS_MODEL.ADMINISTRATION.eq(fm.getAdministration().value()))
+			.and(FS_MODEL.MODEL.eq(fm.getModel().getValue()))
+			.asTable("modelSalary")
+		;
+		return getSalaryIrpfBreakdownCountSelect(ctx)
+			.leftAntiJoin(modelSalary).on(ALCATRAZ_SALARY_ID.equal(SALARY.ID))
+			.where(SALARY.DOMAIN.equal(fm.getDomain()))
+			.and(getSalaryDateField(fm).between(getStartDate(fm),getEndDate(fm)))
+			.and(SALARY.IRPF_BASE.ne( 0.0 ))
+			.and(WORKPLACE.ECONOMICAGREEMENT.equal(fm.getAdministration().value()))
+			.and(SALARY.TYPE.in(SalaryType.IRPF_SALARIES )) // Skip SLD ( L00, L13... )
+			.and(SALARY.ID.isNotNull())
+			.and(CONTRACT_DATA.EXPRESSION.isNull().or(CONTRACT_DATA.EXPRESSION.ne("\"3\"")))  // No tener en cuenta los no residentes
+			.orderBy(getSalaryDateField(fm),SALARY.ID,SALARY.EMPLOYEE_DOCUMENT)
+			.fetchOne()
+			.value1();
+	}
+	
 	public static Stream<IrpfBreakdown> getModelSalaryIrpfBreakdown(final AONContext ctx, final ISalaryFiscalModel fm) {
 		return getSalaryIrpfBreakdownSelect(ctx)
 			.innerJoin(ALCATRAZ).on(ALCATRAZ.SALARY.equal(SALARY.ID))
@@ -499,6 +586,13 @@ public class IRPFDAO {
 		IrpfSummary summary = new IrpfSummary();
 		params.setGroupedBy(null);
 		getInvoicesIrpfBreakdown(ctx, params).forEach(summary::add);
+		return summary;
+	}
+	
+	public static IrpfSummary getIRPFSummary(AONContext ctx, IRPFParams params, Integer offset) {
+		IrpfSummary summary = new IrpfSummary();
+		params.setGroupedBy(null);
+		getInvoicesIrpfBreakdown(ctx, params, offset).forEach(summary::add);
 		return summary;
 	}
 	

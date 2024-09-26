@@ -2,25 +2,15 @@ import {AonElement} from '../../../components/AonElement.js';
 import { ToolbarType} from '../../../models/enums.js';
 
 import {AonToolbar} from "../../../components/aon-toolbar.js";
-import {AonCard} from "../../../components/aon-card.js";
 
 import {CONSTANT, MATERIAL_ICONS, MSG, TAG, EVENT} from '../../../environments/environments.js'; 
 import {getPackaging, mobileAction, MOBILE_ACTION, savePackaging, openFileUrl} from '../../../services/service.js';
 
 import * as ACTION from '../../actions.js';
-import { AonNewInput } from '../../../components/aon-new-input.js';
-import { AonNewSelect } from '../../../components/aon-new-select.js';
-
-import { AonNewNumber } from '../../../components/aon-new-number.js';
-
-import { AonViewer } from '../../../components/aon-viewer.js';
 import { AonBasicTable } from '../../../components/aon-basic-table.js';
-import { AonNewSuggestion } from '../../../components/aon-new-suggestion.js';
-
 import * as LS from '../../../services/localStorageService.js';
-import { AonNewDate } from '../../../components/aon-new-date.js';
-import { AonQuantity } from '../../../components/aon-quantity.js';
 import { getWarehouses } from '../../../services/warehouseService.js';
+import { createCard, createDate, createInput, createQuantity, createSelect } from '../../../components/CreateComponent.js';
 
 export class AonMobilePackaging extends AonElement {
 
@@ -124,8 +114,7 @@ export class AonMobilePackaging extends AonElement {
 	}
 
 	buildPackaging(parent){
-		let card = this.createCard(this.PACKAGING_CARD, MSG.PACKAGING);
-		parent.appendChild(card);
+		let card = createCard(this.PACKAGING_CARD, MSG.PACKAGING, parent);
 
 		let table = new AonBasicTable();
 		table.id = this.PACKAGING_TABLE;
@@ -133,7 +122,7 @@ export class AonMobilePackaging extends AonElement {
 
 		table.addRow();
 
-		let product = this.createInput(this.PACKAGING_PRODUCT, "Contenido");
+		let product = createInput(this.PACKAGING_PRODUCT, "Contenido");
 		table.addCell(product, 2);
 		// product.addIconButton(MATERIAL_ICONS.QR_CODE_SCANNER, () => this.openBarcode());
 		product.addIcon(MATERIAL_ICONS.QR_CODE_SCANNER, undefined, () => this.openBarcode());
@@ -159,23 +148,23 @@ export class AonMobilePackaging extends AonElement {
 
 		table.addRow();
 
-		let lote = this.createInput(this.PACKAGING_PRODUCT_SERIAL_NUMBER, "Nº Lote");
+		let lote = createInput(this.PACKAGING_PRODUCT_SERIAL_NUMBER, "Nº Lote");
 		lote.addEventListener(EVENT.CHANGE, (e) => {
 			if(this.packaging.item)
 				this.packaging.item.serialNumber = lote.value;
 		});
 		table.addCell(lote);
 
-		let date = this.createDate(this.PACKAGING_PRODUCT_SERIAL_DATE, "Fecha Lote");
+		let date = createDate(this.PACKAGING_PRODUCT_SERIAL_DATE, "Fecha Lote");
 		date.addEventListener(EVENT.CHANGE, (e) => {
 			if(this.packaging.item)
-				this.packaging.item.serialDate = date.value;
+				this.packaging.item.serialDate = date.getDateValue();
 		});
 		table.addCell(date);
 
 		table.addRow();	
 
-		let quantity = this.createQuantity(this.PACKAGING_QUANTITY, MSG.QUANTITY);
+		let quantity = createQuantity(this.PACKAGING_QUANTITY, MSG.QUANTITY);
 		quantity.addEventListener(EVENT.CHANGE, () => {
 			quantity.setQuantityFormat(quantity.value);
 		});
@@ -183,7 +172,7 @@ export class AonMobilePackaging extends AonElement {
 		
 		table.addRow();
 
-		let container = this.createSelect(this.PACKAGING_CONTAINER, "Contenedor");
+		let container = createSelect(this.PACKAGING_CONTAINER, "Contenedor");
 		container.setAlias("id", "name");
 
 		container.addEventListener(EVENT.SELECT, (event) => {
@@ -201,7 +190,7 @@ export class AonMobilePackaging extends AonElement {
 
 		table.addRow();
 		if(this.warehouses.length > 1) {
-			let warehouse = this.createSelect(this.PACKAGING_WAREHOUSE, MSG.WAREHOUSE);
+			let warehouse = createSelect(this.PACKAGING_WAREHOUSE, MSG.WAREHOUSE);
 			warehouse.setAlias("id", "name");
 			warehouse.setOptions(this.warehouses);
 			warehouse.value = this.warehouses[0].id;
@@ -212,7 +201,7 @@ export class AonMobilePackaging extends AonElement {
 
 			table.addRow();
 		}
-		let copies = this.createInput(this.PACKAGING_COPIES, "Copias");
+		let copies = createInput(this.PACKAGING_COPIES, "Copias");
 		copies.value = 1;
 
 		table.addCell(copies, 2);
@@ -235,7 +224,7 @@ export class AonMobilePackaging extends AonElement {
 			product.value = val || '';
 			container.setOptions(r.containers);
 			lote.value = r.item.serialNumber;
-			date.setValue(r.item.serialDate);
+			date.setDate(r.item.serialDate);
 			container.value = r.containers[0].id;
 			this.item = r.item.id;
 			this.contenedor = container.value;
@@ -247,7 +236,10 @@ export class AonMobilePackaging extends AonElement {
 	}
 
 	openBarcode() {
-		mobileAction({ action: MOBILE_ACTION.BARCODE, selector: 'aon-mobile-packaging' });
+		let ionicData = { action: MOBILE_ACTION.BARCODE, selector: 'aon-mobile-packaging' };
+		if(UA.isAndroidApp()) {
+			openBarcode(ionicData, (result) => console.log("aon mobile packaging - openbarcode - " + result.code));
+		} else mobileAction(ionicData);
 	}
 
 	setBarcodeData(barcodeStr) {
@@ -267,8 +259,7 @@ export class AonMobilePackaging extends AonElement {
 	}
 
 	buildTag(parent){
-		// let card = this.createCard(this.TAG_CARD, MSG.TAG);
-		// parent.appendChild(card);
+		// let card = createCard(this.TAG_CARD, MSG.TAG, parent);
 
 		// let div = this.createElement(TAG.DIV);
 
@@ -337,60 +328,6 @@ export class AonMobilePackaging extends AonElement {
 				this.buildTag(div);
 			});
 		}
-	}
-
-	// Create Components
-
-	createCard(id, title) {
-		let card = new AonCard();
-		card.id = id;
-		card.title = title;
-		return card;
-	}
-
-	createSelect(id, title) {
-		let select = new AonNewSelect();
-		select.id = id;
-		select.title = title;
-		return select;
-	}
-
-	createInput(id, title) {
-		let select = new AonNewInput();
-		select.id = id;
-		select.description = title;
-		select.title = title;
-		return select;
-	}
-
-	createQuantity(id, title) {
-		let quantity = new AonQuantity();
-		quantity.id = id;
-		quantity.description = title;
-		quantity.title = title;
-		return quantity;
-	}
-
-	createDate(id, title) {
-		let date = new AonNewDate();
-		date.id = id;
-		date.title = title;
-		return date;
-	}
-
-	createSuggestion(id, title) {
-		let suggestion = new AonNewSuggestion();
-		suggestion.id = id;
-		suggestion.title = title;
-		return suggestion;
-	}
-
-	createNumber(id, title) {
-		let number = new AonNewNumber();
-		number.id = id;
-		number.description = title;
-		number.title = title;
-		return number;
 	}
 }
 

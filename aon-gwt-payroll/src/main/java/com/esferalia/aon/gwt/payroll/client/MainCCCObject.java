@@ -60,6 +60,51 @@ public class MainCCCObject {
 		});
 	}
 	
+	public void deleteCCC(Integer cccId, Consumer<Void> success, Consumer<Throwable> failure) {
+		impl.deleteCCC(cccId, new AsyncCallback<Void>() {
+			
+			@Override
+			public void onSuccess(Void result) {
+				success.accept(result);
+			}
+			
+			@Override
+			public void onFailure(Throwable caught) {
+				failure.accept(caught);
+			}
+		});
+	}
+	
+	public void saveCCC(EnterpriseCCC ccc, Consumer<EnterpriseCCC> success, Consumer<Throwable> failure) {
+		impl.saveCCC(ccc, new AsyncCallback<EnterpriseCCC>() {
+			
+			@Override
+			public void onSuccess(EnterpriseCCC result) {
+				success.accept(result);
+			}
+			
+			@Override
+			public void onFailure(Throwable caught) {
+				failure.accept(caught);
+			}
+		});
+	}
+	
+	public void saveActivity(Activity activity, Consumer<Void> success, Consumer<Throwable> failure) {
+		impl.saveActivity(activity, new AsyncCallback<Void>() {
+			
+			@Override
+			public void onSuccess(Void result) {
+				success.accept(result);
+			}
+			
+			@Override
+			public void onFailure(Throwable caught) {
+				failure.accept(caught);
+			}
+		});
+	}
+	
 	public void setMainCCCInfo(Consumer<Void> success, Consumer<Throwable> failure) {
 		impl.saveActivities(activities, new AsyncCallback<Void>() {
 			
@@ -119,11 +164,6 @@ public class MainCCCObject {
 	
 	public void insertActivity(Activity activity) {
 		this.activities.add(activity);
-	}
-
-	public void deleteCCC(Integer cccId) {
-		Optional<EnterpriseCCC> deleteCCC = getCCCs().stream().filter(ccc -> ccc.getId().equals(cccId)).findFirst();
-		if(deleteCCC.isPresent()) deleteCCC.get().setDeleted(true);
 	}
 	
 	public Pair<String, String> getPrincipalAccount() {

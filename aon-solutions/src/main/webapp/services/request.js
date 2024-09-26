@@ -1,8 +1,9 @@
-import { CONSTANT, MSG, SIG_DOMAIN_ID, SIG_DOMAIN_NAME, SIG_SESSION_ID } from "../environments/environments.js";
+import { CONSTANT, MSG } from "../environments/environments.js";
 import { extensionsEnums } from "./extensionsEnums.js";
 
+import * as LS from './localStorageService.js';
+
 const formatParams = (params) => {
-  
   let arrays = Object.keys(params).filter((key) => Array.isArray(params[key]));
   let primitives = Object.keys(params).filter((key) => !Array.isArray(params[key]));
   	
@@ -13,23 +14,28 @@ const formatParams = (params) => {
   );
 };
 
+export const getDefaultSessionData = () => {
+    return {
+      session_id: LS.getToken(),
+      domain_name: LS.getDomainName(),
+      domain_id: LS.getDomainId(),
+      domain_login: LS.getDomainLogin()
+    }
+}
 
-export const getToken = () => localStorage.getItem("aon_session_id");
+export const getProSessionData = () => {
+  return {
+    session_id: 'AONd95770f269e711eb94390242ac130002',
+  }
+}
 
-export const domainId = () =>  localStorage.getItem("aon_domain_id") ? localStorage.getItem("aon_domain_id") : localStorage.getItem("company")
-? JSON.parse(localStorage.getItem("company")).id: "";
-
-export const domainName = () => localStorage.getItem("aon_domain_name") ? localStorage.getItem("aon_domain_name") : localStorage.getItem("company")
-? JSON.parse(localStorage.getItem("company")).domain : "";
-
-export const domainLogin = () => localStorage.getItem("aon_domain_login") || "";
-
-const xmlHttpRequestAon = (method, url, token, sendData) =>{
+const xmlHttpRequestAon = (method, url, sessionData, sendData) =>{
+  sessionData = sessionData || getDefaultSessionData();
   let header = {
-    "session_id": token,
-    "domain_id": domainId(),
-    "domain_name": domainName(),
-    "domain_login": domainLogin(),
+    "session_id": sessionData.session_id,
+    "domain_id": sessionData.domain_id,
+    "domain_name": sessionData.domain_name,
+    "domain_login": sessionData.domain_login,
     "Content-Type": "application/json;charset=UTF-8",
     "Access-Control-Allow-Origin": "*"
   }
@@ -39,15 +45,6 @@ const xmlHttpRequestAon = (method, url, token, sendData) =>{
 const xmlHttpRequestXml = (method, url, sendData) =>{
   const header = {
     "Content-Type": "text/xml",
-    "Access-Control-Allow-Origin": "*"
-  }
-  return xmlHttpRequest(method, url, header, sendData);
-}
-
-const xmlHttpRequestInvofox = (method, url, sendData) =>{
-  const header = {
-    "x-api-key": "$2b$10$ZyMOXKSmPwl4VUFk76wFWuK9aCDsXRiaxytOwpqk3gK.epVl6Mfwi",
-    "Content-Type": "application/json;charset=UTF-8",
     "Access-Control-Allow-Origin": "*"
   }
   return xmlHttpRequest(method, url, header, sendData);
@@ -63,73 +60,20 @@ const xmlHttpRequest = (method, url, header, sendData) =>{
   return xhr;
 }
 
-export const requestInvofox = (method, url, sendData, fn) => {
-  try {
-    let xhr = xmlHttpRequestInvofox(method, url, sendData);
-    xhr.send(JSON.stringify(sendData));
-    xhr.onload = () => {
-      if (xhr.status != 200) {
-        // analyze HTTP status of the response
-        console.error(`Error ${xhr.status}: ${xhr.statusText}`); // e.g. 404: Not Found
-        fn(undefined, xhr.response);
-      } else {
-        // show the result
-        console.debug(`Done, got ${xhr.response.length} bytes`); // responseText is the server
-        let response = !xhr.response ? "[]" : xhr.response;
-        fn(response);
-      }
-    };
-    xhr.onprogress = (event) => {
-      if (event.lengthComputable) {
-        console.debug(`Received ${event.loaded} of ${event.total} bytes`);
-      } else {
-        console.debug(`Received ${event.loaded} bytes`); // no Content-Length
-      }
-    };
-    xhr.onerror = () => {
-      console.error("Request failed");
-    };
-  } catch (error) {
-    console.error("error");
-    fn(undefined, error);
-  }
-}
-
-export const request = (method, url, token, sendData, fn) => {
-  try {
-    let xhr = xmlHttpRequestAon(method, url, token, sendData);
-    xhr.send(JSON.stringify(sendData));
-    xhr.onload = () => {
-      if (xhr.status != 200) {
-        // analyze HTTP status of the response
-        console.error(`Error ${xhr.status}: ${xhr.statusText}`); // e.g. 404: Not Found
-        fn(undefined, xhr.response);
-      } else {
-        // show the result
-        console.debug(`Done, got ${xhr.response.length} bytes`); // responseText is the server
-        let response = !xhr.response ? "[]" : xhr.response;
-        fn(response);
-      }
-    };
-    xhr.onprogress = (event) => {
-      if (event.lengthComputable) {
-        console.debug(`Received ${event.loaded} of ${event.total} bytes`);
-      } else {
-        console.debug(`Received ${event.loaded} bytes`); // no Content-Length
-      }
-    };
-    xhr.onerror = () => {
-      console.error("Request failed");
-    };
-  } catch (error) {
-    console.error("error");
-    fn(undefined, error);
-  }
+export const request = (method, url, sessionData, sendData, fn) => {
+  sessionData = sessionData || getDefaultSessionData();
+  let xhr = xmlHttpRequestAon(method, url, sessionData, sendData);
+  requestXhr(xhr, JSON.stringify(sendData), fn);
 };
 
 export const requestXml = (method, url, sendData, fn) => {
+  let xhr = xmlHttpRequestXml(method, url, sendData);
+  requestXhr(xhr, sendData, fn)
+};
+
+
+export const requestXhr = (xhr, sendData, fn) => {
   try {
-    let xhr = xmlHttpRequestXml(method, url, sendData);
     xhr.send(sendData);
     xhr.onload = () => {
       if (xhr.status != 200) {
@@ -159,85 +103,9 @@ export const requestXml = (method, url, sendData, fn) => {
   }
 };
 
-export const requestSig = (method, url, token, sendData, fn) => {
-  try {
-    let xhr = new XMLHttpRequest();
-    if (sendData && method === "GET") url = url + formatParams(sendData); //send params url method GET
-    xhr.open(method, url);
-    xhr.setRequestHeader("session_id", token);
-    xhr.setRequestHeader("domain_id", SIG_DOMAIN_ID);
-    xhr.setRequestHeader("domain_name", SIG_DOMAIN_NAME);
-    xhr.setRequestHeader("domain_login", domainLogin());
-    xhr.send(JSON.stringify(sendData));
-    xhr.onload = () => {
-      if (xhr.status != 200) {
-        // analyze HTTP status of the response
-        console.error(`Error ${xhr.status}: ${xhr.statusText}`); // e.g. 404: Not Found
-        fn(undefined, xhr.response);
-      } else {
-        // show the result
-        console.debug(`Done, got ${xhr.response.length} bytes`); // responseText is the server
-        let response = !xhr.response ? "[]" : xhr.response;
-        fn(response);
-      }
-    };
-    xhr.onprogress = (event) => {
-      if (event.lengthComputable) {
-        console.debug(`Received ${event.loaded} of ${event.total} bytes`);
-      } else {
-        console.debug(`Received ${event.loaded} bytes`); // no Content-Length
-      }
-    };
-    xhr.onerror = () => {
-      console.error("Request failed");
-    };
-  } catch (error) {
-    console.error("error");
-    fn(undefined, error);
-  }
-};
-
-export const requestPro = (method, url, sendData, fn) => {
-  try {
-    let xhr = new XMLHttpRequest();
-    if (sendData && method === "GET") url = url + formatParams(sendData); //send params url method GET
-    xhr.open(method, url);
-    xhr.setRequestHeader("session_id", "AONd95770f269e711eb94390242ac130002");
-    xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
-    xhr.setRequestHeader("Access-Control-Allow-Origin", "*");
-    xhr.send(JSON.stringify(sendData));
-    xhr.onload = () => {
-      if (xhr.status != 200) {
-        // analyze HTTP status of the response
-        console.error(`Error ${xhr.status}: ${xhr.statusText}`); // e.g. 404: Not Found
-        fn(undefined, xhr.response);
-      } else {
-        // show the result
-        console.debug(`Done, got ${xhr.response.length} bytes`); // responseText is the server
-        let response = !xhr.response ? "[]" : xhr.response;
-        fn(response);
-      }
-    };
-    xhr.onprogress = (event) => {
-      if (event.lengthComputable) {
-        console.debug(`Received ${event.loaded} of ${event.total} bytes`);
-      } else {
-        console.debug(`Received ${event.loaded} bytes`); // no Content-Length
-      }
-    };
-    xhr.onerror = () => {
-      console.error("Request failed");
-    };
-  } catch (error) {
-    console.error("error");
-    fn(undefined, error);
-  }
-};
-
-
 export const requestFile = (method, url, sendData, fn) => {
   try {
-    const xhr = xmlHttpRequestAon(method, url, getToken(), sendData);
+    const xhr = xmlHttpRequestAon(method, url, getDefaultSessionData(), sendData);
     xhr.onreadystatechange = () =>  {
        if(xhr.readyState == 2 && xhr.status == 200) {xhr.responseType = "blob";}
     }
@@ -259,31 +127,10 @@ export const requestFile = (method, url, sendData, fn) => {
 
 };
 
-export const get = (url, data) => {
+export const get = (url, data, sessionData) => {
   return new Promise((resolve, reject) => {
-    request("GET", url, getToken(), data, (result, error) => {
-      try{
-        if (error) reject(error);
-        else resolve(JSON.parse(result));
-      } catch(e){reject(e);}
-    });
-  });
-};
-
-export const getInvofox = (url, data) => {
-  return new Promise((resolve, reject) => {
-    requestInvofox("GET", url, data, (result, error) => {
-      try{
-        if (error) reject(error);
-        else resolve(JSON.parse(result));
-      } catch(e){reject(e);}
-    });
-  });
-};
-
-export const postInvofox = (url, data) => {
-  return new Promise((resolve, reject) => {
-    requestInvofox("POST", url, data, (result, error) => {
+    sessionData = sessionData || getDefaultSessionData();
+    request("GET", url, sessionData, data, (result, error) => {
       try{
         if (error) reject(error);
         else resolve(JSON.parse(result));
@@ -293,30 +140,13 @@ export const postInvofox = (url, data) => {
 };
 
 export const getPro = (url, data) => {
-  return new Promise((resolve, reject) => {
-    requestPro("GET", url, data, (result, error) => {
-      try{
-        if (error) reject(error);
-        else resolve(JSON.parse(result));
-      } catch(e){reject(e);}
-    });
-  });
+  return get(url, data, getProSessionData());
 };
 
-export const getSig = (url, data) => {
+export const post = (url, data, sessionData) => {
   return new Promise((resolve, reject) => {
-    requestSig("GET", url, SIG_SESSION_ID, data, (result, error) => {
-      try{
-        if (error) reject(error);
-        else resolve(JSON.parse(result));
-      } catch(e){reject(e);}
-    });
-  });
-};
-
-export const post = (url, data) => {
-  return new Promise((resolve, reject) => {
-    request("POST", url, getToken(), data, (result, error) => {
+    sessionData = sessionData || getDefaultSessionData();
+    request("POST", url, sessionData, data, (result, error) => {
       try{
         if (error) reject(error);
         else resolve(JSON.parse(result));
@@ -326,14 +156,7 @@ export const post = (url, data) => {
 };
 
 export const postPro = (url, data) => {
-  return new Promise((resolve, reject) => {
-    requestPro("POST", url, data, (result, error) => {
-      try{
-        if (error) reject(error);
-        else resolve(JSON.parse(result));
-      } catch(e){reject(e);}
-    });
-  });
+  return post(url, data, getProSessionData());
 };
 
 export const postXml = (url, data) => {
@@ -347,9 +170,10 @@ export const postXml = (url, data) => {
   });
 };
 
-export const put = (url, data) => {
+export const put = (url, data, sessionData) => {
   return new Promise((resolve, reject) => {
-    request("PUT", url, getToken(), data, (result, error) => {
+    sessionData = sessionData || getDefaultSessionData();
+    request("PUT", url, sessionData, data, (result, error) => {
       try{
         if (error) reject(error);
         else resolve(JSON.parse(result));
@@ -359,19 +183,13 @@ export const put = (url, data) => {
 };
 
 export const putPro = (url, data) => {
-  return new Promise((resolve, reject) => {
-    requestPro("PUT", url, data, (result, error) => {
-      try{
-        if (error) reject(error);
-        else resolve(JSON.parse(result));
-      } catch(e){reject(e);}
-    });
-  });
+  return put(url, data, getProSessionData());
 };
 
-export const remove = (url, data) => {
+export const remove = (url, data, sessionData) => {
   return new Promise((resolve, reject) => {
-    request("DELETE", url, getToken(), data, (result, error) => {
+    sessionData = sessionData || getDefaultSessionData();
+    request("DELETE", url, sessionData, data, (result, error) => {
       try{
         if (error) reject(error);
         else resolve(JSON.parse(result));
@@ -381,14 +199,7 @@ export const remove = (url, data) => {
 };
 
 export const removePro = (url, data) => {
-  return new Promise((resolve, reject) => {
-    requestPro("DELETE", url, data, (result, error) => {
-      try{
-        if (error) reject(error);
-        else resolve(JSON.parse(result));
-      } catch(e){reject(e);}
-    });
-  });
+  return remove(url, data, getProSessionData());
 };
 
 const blobToBase64 = blob => new Promise((resolve, reject) => {

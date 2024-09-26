@@ -1,6 +1,7 @@
-import { post, get, remove, put, getInvofox, getSig } from "./request.js";
+import { post, get, remove, put } from "./request.js";
 import { openFileUrl } from "./fileService.js";
 import { API_URL, SIG_URL } from "../environments/environments.js";
+import { generateTokenSig } from "./userService.js";
 
 // PRINT CONFIGURATION
 export const getInvoiceConfiguration = (data) =>  get(`${API_URL}/invoice/configuration`, data);
@@ -19,7 +20,7 @@ export const getRawdocCount = (data) => get(`${API_URL}/invoices/count`, data);
 
 export const getInvoices = (data) => get(`${API_URL}/invoice`, data);
 
-export const getSigInvoices = (data) => getSig(`${SIG_URL}/${API_URL}/invoice`, data);
+export const getSigInvoices = async(data) => get(`${SIG_URL}/${API_URL}/invoice`, data, await generateTokenSig({}));
 
 export const insertInvoice = (data) => post(`${API_URL}/invoice`, data);
 
@@ -49,9 +50,6 @@ export const signInvoice = (id) => put(`${API_URL}/invoice/sign`, {id});
 export const downloadFacturae = (data) => 
     openFileUrl(`${API_URL}/face?id=${data.id}&domainName=${data.domainName}&domainId=${data.domainId}&cert=${data.cert}&legalLiterals=${data.legalLiterals}`);
 export const getTbaiHistory = (invoice) => post(`${API_URL}/tbai/history`, {invoice});
-
-
-// export const getInvofoxDocuments = (data) => getInvofox("https://prod.kinequo.com/backends/midas/documents", data);
 
 export const getInvofoxDocuments = (data) => get(`${API_URL}/invofox`, data);
 export const getInvofoxCount = (data) => get(`${API_URL}/invofox/count`, data);

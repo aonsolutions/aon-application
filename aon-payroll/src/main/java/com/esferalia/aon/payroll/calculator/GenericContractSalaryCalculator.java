@@ -51,6 +51,7 @@ import static com.esferalia.aon.payroll.enumeration.ContextVariable.SLD_H04;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.SLD_H06;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.STRIKE_FACTOR;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.STRUCTURAL_OVERTIME_BASE;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.SUM;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.SUNDAY_HOURS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.TC2;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.THURSDAY_HOURS;
@@ -111,6 +112,7 @@ import com.esferalia.aon.salary.enumeration.PaymentTypeVisitor;
 import com.esferalia.aon.salary.enumeration.SalaryType;
 import com.esferalia.aon.salary.enumeration.SalaryTypeVisitor;
 import com.esferalia.aon.salary.expression.CheckException;
+import com.esferalia.aon.salary.expression.DisableException;
 import com.esferalia.aon.salary.expression.ExpressionContext;
 import com.esferalia.aon.salary.expression.ExpressionContext.ExpressionExceptionWrapper;
 import com.esferalia.aon.salary.expression.ExpressionContext.RemoveVariableError;
@@ -287,6 +289,8 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 		public void onRemove(IContractDeduction payment);
 
 		public void onRemove(IContractPayment payment);
+		
+		public void onDisable(IContractPayment payment);
 
 		public void onCheckError(IContractPayment payment, String message);
 
@@ -340,6 +344,10 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 
 		@Override
 		public void onRemove(IContractPayment payment) {
+		}
+		
+		@Override
+		public void onDisable(IContractPayment payment) {
 		}
 
 		@Override
@@ -1038,16 +1046,17 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 					    ExpressionContext irpfExpressionContext = new ExpressionContext(expressionContext) ;
 					    ContextFunctions.loadFunctions(irpfExpressionContext, deductionStart, deductionEnd);
 					    
-					    for ( ContextVariable irpfVar : new ContextVariable  [] {
-						    TMP_IN_KIND,
-						    IRPF_PERCENT, 
-						    IRPF_CTA_ESP, 
-						    IRPF_BASE, 
-						    BASE_CTA_ESP,
-						    INKIND_IRPF_BASE, 
-						    MONEY_IRPF_BASE } ) {
+					    for ( String irpfVar : new String  [] {
+					    	SUM,
+						    TMP_IN_KIND.getName(),
+						    IRPF_PERCENT.getName(), 
+						    IRPF_CTA_ESP.getName(), 
+						    IRPF_BASE.getName(), 
+						    BASE_CTA_ESP.getName(),
+						    INKIND_IRPF_BASE.getName(), 
+						    MONEY_IRPF_BASE.getName() } ) {
 
-						     irpfExpressionContext.getVariables(irpfVar.getName()).stream()
+						     irpfExpressionContext.getVariables(irpfVar).stream()
 						    .filter( v -> v.getPeriod().getEnd().compareTo(irpfPeriod.getStart()) <= 0)
         					    .sorted( (v1, v2) -> v2.getPeriod().compareTo(v1.getPeriod()))
         					    .map( v -> 
@@ -1077,7 +1086,7 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
                 						public Object getValue(Period period) {
                 						    return v.getValue(v.getPeriod());
                 						}
-        					    }).findFirst().ifPresent( v -> irpfExpressionContext.putVariable(irpfVar.getName(), v) );
+        					    }).findFirst().ifPresent( v -> irpfExpressionContext.putVariable(irpfVar, v) );
     					    }
 
 					    expressionContext = irpfExpressionContext;
@@ -1865,6 +1874,9 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 			if (AonStringUtils.isNotBlank(e.getMessage()))
 				onCheckError(e.getMessage());
 			addResult(expressionContext, name, start, end, 0.00);
+		} catch (DisableException e) {
+			onDisable(contractPayment);
+			addResult(expressionContext, name, start, end, 0.00);
 		} catch (RemoveException e) {
 			onRemove(contractPayment);
 			addResult(expressionContext, name, start, end, 0.00);
@@ -2386,6 +2398,12 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 	protected void onRemove(IContractPayment payment) {
 		if (listener != null) {
 			listener.onRemove(payment);
+		}
+	}
+	
+	protected void onDisable(IContractPayment payment) {
+		if (listener != null) {
+			listener.onDisable(payment);
 		}
 	}
 

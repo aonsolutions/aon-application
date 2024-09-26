@@ -1,5 +1,5 @@
 import { AonElement } from 'aonsolutions/components/AonElement.js';
-import { Apps, HomeApps, MenuApps, AuxApps, MENU_APPS, TOP_MENU_APPS, AON_APPS, NEW, HOME, APPS, APPLICATIONS} from '../services/app.js';
+import { Apps, HomeApps, MenuApps, AuxApps, DESKTOP_APPS, MENU_APPS, TOP_MENU_APPS, AON_APPS, NEW, HOME, AON_CLASSIC, APPS, APPLICATIONS } from '../services/app.js';
 import {COMMERCE, OFFICE, GARAGE, ACADEMY} from  "aonsolutions/services/app.js";
 import {ACCOUNTING_MENU, COMMERCIAL_MENU, GROUPWARE_MENU, MANAGEMENT_MENU, TREASURY_MENU, WAREHOUSE_MENU, FISCAL_MENU, PAYROLL_MENU, MARKETING_MENU} from "../services/app.js"
 import { MSG, CONSTANT, AON_ICONS, CSS, EVENT, MATERIAL_ICONS, TAG } from 'aonsolutions/environments/environments.js';
@@ -53,6 +53,7 @@ import { AonGarageMenu } from './garage/aon-garage-menu.js';
 const ID = 'id';
 const OPENED = 'opened';
 const APP = 'app';
+
 
 
 export class AonNewMenu extends AonElement {
@@ -120,10 +121,16 @@ export class AonNewMenu extends AonElement {
 	}
 
 	init() {
+		
 		this.setAttribute('opened', true);
-		this.buildDur().then(()=> {
-			this.build();
-		})
+		
+		return new Promise((resolve, reject) => {
+			this.buildDur().then(()=> {
+				this.build();
+				resolve();
+			});
+		});
+
 		
 		//if(localStorage.getItem('aon_domain_id') && localStorage.getItem('company')){
 		//	getDomainUserRoles({}).then(r => {
@@ -137,8 +144,12 @@ export class AonNewMenu extends AonElement {
 		let apps = this.getElement("applications");
 		apps.className = '';
 		const excludedApps = ['commerce', 'garage', 'academy', 'office'];
+		const portalApps = DESKTOP_APPS.filter( app => this.isApp(app) ); 
+		const portalNoApps = DESKTOP_APPS.filter( app => !this.isApp(app) ); 
+		const suiteApps = TOP_MENU_APPS.filter(app => this.isApp(app));
+		const suiteNoApps = TOP_MENU_APPS.filter(app => !this.isApp(app));
 		if (!this.isApp(app) && !excludedApps.includes(app.app)) {
-			this.rootPanel(new AonNewDesktop(MENU_APPS, AON_APPS));
+			this.rootPanel(new AonNewDesktop(portalApps,portalNoApps,suiteApps,suiteNoApps));
 			let headerapp = this.getElement("aonHeaderApp");
 			headerapp.style.display = "none";
 			let logo = this.getElement("aonLogo");
@@ -157,6 +168,9 @@ export class AonNewMenu extends AonElement {
 				case HOME.app:
 					this.rootPanel(new AonDesktop());
 					break;
+				case AON_CLASSIC.app:
+					open('https://' + localStorage.getItem('aon_domain_name') + '/login?token=' + localStorage.getItem('aon_session_id'))
+					return;
 				case Apps.CONSOLE.app:
 					this.rootPanel(new AonConsole());
 					break;
@@ -239,7 +253,7 @@ export class AonNewMenu extends AonElement {
 					this.rootPanel(new AonGarageMenu());
 					break;
 				default/*Apps.HOME*/:
-					this.rootPanel(new AonNewDesktop(MENU_APPS, AON_APPS));
+					this.rootPanel(new AonNewDesktop(portalApps, portalNoApps, suiteApps, suiteNoApps));
 					break;
 		}
 		
@@ -251,14 +265,19 @@ export class AonNewMenu extends AonElement {
 		};
 
         if(this.isApp(app) || excludedApps.includes(app.app)){
-//			if(!(!this.isApp(app) && !excludedApps.includes(app.app))){
-			this.dispatchEvent(new CustomEvent(EVENT.AON_APPLICATION_SELECT, { detail }));
+			if(app.app != "new"){
+				this.dispatchEvent(new CustomEvent(EVENT.AON_APPLICATION_SELECT, { detail }));	
+				this.setSelectedMenuSidenav(app);
+			}
+			
 		}
-		
-		let appsDiv = this.getElement("aonMenuLeftop-applications");
-		appsDiv.style.removeProperty('background-color'); 
-		let appName = app.app[0].toUpperCase() + app.app.slice(1);
-		appsDiv.className = `${CSS.AON_MENU_LEFTOP} ${CSS.AON_MENU_LEFTOP}${appName}`
+		if(app.app != "new"){
+			let appsDiv = this.getElement("aonMenuLeftop-applications");
+			appsDiv.style.removeProperty('background-color'); 
+			let appName = app.app[0].toUpperCase() + app.app.slice(1);
+			appsDiv.className = `${CSS.AON_MENU_LEFTOP} ${CSS.AON_MENU_LEFTOP}${appName}`	
+		}
+	
 	}
 	
 
@@ -269,10 +288,14 @@ export class AonNewMenu extends AonElement {
 		this.appendChild(aonMenuLefttop);
 		aonMenuLefttop.classList.add("aonNewMenuLeftTop");
 		this.buildMenuLeftop();
+		// let icon = this.getElement("aonMenuLeftop");
+		aonMenuLefttop.style.visibility = "visible";
+
 
 		let aonMenuSidenav = this.createElement(TAG.DIV);
 		aonMenuSidenav.id = this.AON_MENU_SIDENAV;
 		aonMenuSidenav.className = CSS.AON_MENU_SIDENAV;
+		aonMenuSidenav.classList.add("hiddenMenuLeft");
 		this.appendChild(aonMenuSidenav);
 		aonMenuSidenav.classList.add("aonNewMenuSideNav");
 		this.getRootPanel().style.marginLeft = '0px';
@@ -286,18 +309,11 @@ export class AonNewMenu extends AonElement {
 		this.getRootPanel().style.marginTop = '1px'; //'69px';
 		this.buildMenuTopnav();
 
-		if(LS.isTopMenu() && false ){
-			this.showTopNav();
-		}
-
-		if(LS.isLeftMenu()){
-			this.showSideNav();
-		} 
-
 		let header = this.getElement('aonHeaderWeb');
 		header.className = 'aonHeader aonHeaderStart';
 		let applications = this.getElement('applications');
 		applications.className = 'aonMenuLeftopStart';
+
 
 	}
 
@@ -317,6 +333,12 @@ export class AonNewMenu extends AonElement {
 		aonMenuLeftop.appendChild(div);
 	}
 
+	overrideDefault( app, suffix ){
+		app.logo = this.getCssVariable(`${app.app}SideNavLogo`) || app.logo;
+		app.icon = this.getCssVariable(`${app.app}SideNavIcon`) || app.icon;
+		app.symbol = this.getCssVariable(`${app.app}SideNavSymbol`) || app.symbol;
+	}
+
 	buildMenuSidenav() {
 		let aonMenuSidenav = this.getElement(this.AON_MENU_SIDENAV);
 		let ul = this.createElement(TAG.UL);
@@ -330,8 +352,12 @@ export class AonNewMenu extends AonElement {
 				let li = this.createElement(TAG.LI);
 				li.id = `aonMenuList-${app.app}`;
 				li.classList.add("aonNewMenuSideNavLi");
-				li.appendChild(this.buildApp(app,undefined,true));
 
+				app.cssLogo = this.getCssVariable(`${app.app}SideNavLogo`) ;
+				app.cssIcon = this.getCssVariable(`${app.app}SideNavIcon`) ;
+				app.cssSymbol = this.getCssVariable(`${app.app}SideNavSymbol`);
+				
+				li.appendChild(this.buildApp(app,{color: `var(--aonSidenavIconColor, ${app.newColor || app.color})`}));
 				ul.appendChild(li);
 			}
 		}
@@ -344,7 +370,7 @@ export class AonNewMenu extends AonElement {
 		aonMenuSidenav.appendChild(ul);
 
 	}
-
+	
 	buildMenuTopnav() {
 		const showAllApps = LS.isAppMenu();
 		let aonMenuTopnav = this.getElement(this.AON_MENU_TOPNAV);
@@ -365,6 +391,11 @@ export class AonNewMenu extends AonElement {
 					continue;
 				} else {
 					let appElement = this.buildTopApp(app);
+
+					// app.cssLogo = this.getCssVariable(`${app.app}TopNavLogo`);
+					// app.cssIcon = this.getCssVariable(`${app.app}TopNavIcon`);
+					// app.cssSymbol = this.getCssVariable(`${app.app}TopNavSymbol`);
+
 					appElement.classList.add("aonNewMenuTopNavAppElement");
 					app.color = "var(--aonTopMenuNotAvailable)";
 					div.appendChild(appElement);
@@ -375,7 +406,20 @@ export class AonNewMenu extends AonElement {
 			let appElement = this.buildTopApp(app);
 			div.appendChild(appElement);
 		}
-	
+		
+		// if(!LS.isLeftMenu() && this.isCSSLoaded("beta.css")){
+		// 	for (let item in MENU_APPS) {
+		// 		let app = MENU_APPS[item];
+		// 		if(app.app!= "home" && app.app!= "new"){
+		// 			if (this.isApp(MENU_APPS[item])){
+		// 				div.appendChild(this.buildTopApp(MENU_APPS[item]));
+		// 			}
+		// 		}
+						
+		// 	}
+			
+		// }
+
 		this.clearElement(aonMenuTopnav);
 		aonMenuTopnav.appendChild(div);
 	}
@@ -390,11 +434,11 @@ export class AonNewMenu extends AonElement {
 		let appDiv = this.createElement(TAG.DIV);
 		appDiv.id = `aonMenuBar-${app.app}`;
 		appDiv.classList.add("aonNewMenuTopAppDivApp");
-		appDiv.appendChild(this.buildApp(app,undefined,false));
+		appDiv.appendChild(this.buildApp(app,undefined));
 	
 		return appDiv;
 	}
-
+	
 	showTopNav() {	
 		let topnav = this.getElement(this.AON_MENU_TOPNAV);
 		let rootPanel = this.getElement("rootPanel");
@@ -422,50 +466,66 @@ export class AonNewMenu extends AonElement {
 			rightPanel.style.height = `calc(100vh - 49px)`;
 		}
 		rootPanel.style.marginTop = "1px";
+	
 		rootPanel.style.height = `calc(100vh - 50px)`;
 	}
 
-	showSideNav() {
-		if(LS.isTopMenu())
-			this.reloadTopNav();
+	isTopNavVisible() {
+		let topnav = this.getElement(this.AON_MENU_TOPNAV);
+		return topnav.style.height == '68px';
+	}
 
+	showSideNav() {
+		if (LS.isTopMenu())
+			this.reloadTopNav();
+	
 		let sidenav = this.getElement(this.AON_MENU_SIDENAV);
 		let menulist = this.getElement("aonMenuList");
 		let rootPanel = this.getElement("rootPanel");
-		let aonlogo = this.getElement("aonLogo");		
-		let icon = this.getElement("aonMenuLeftop");
-
+		let aonlogo = this.getElement("aonLogo");
+	
+		sidenav.style.transition = 'width 0.3s ease';
+		rootPanel.style.transition = 'margin-left 0.3s ease';
+		// aonlogo.style.transition = 'left 0.3s ease';
+	
 		sidenav.style.width = '68px';
-		sidenav.style.display = "";
-		
+		sidenav.style.display = "";  
+	
 		menulist.style.visibility = "visible";
-		
-		aonlogo.style.left = '52px';
-		aonlogo.style.position = 'relative';
-
-		icon.style.visibility = "visible";
-
+	
+		// aonlogo.style.left = '60px';
+		// aonlogo.style.position = 'relative';
+	
 		rootPanel.style.marginLeft = '68px';
 	}
+	
 
-	hideSideNav(){
-		if(LS.isTopMenu())
+	hideSideNav() {
+		if (LS.isTopMenu())
 			this.reloadTopNav();
-
+	
 		let sidenav = this.getElement(this.AON_MENU_SIDENAV);
 		let rootPanel = this.getElement("rootPanel");
 		let menulist = this.getElement("aonMenuList");
 		let aonlogo = this.getElement("aonLogo");
-		let icon = this.getElement("aonMenuLeftop");
+	
+		sidenav.style.transition = 'width 0.3s ease';
+		rootPanel.style.transition = 'margin-left 0.3s ease';
+		// aonlogo.style.transition = 'left 0.3s ease';
+	
 		sidenav.style.width = '0px';
-		sidenav.style.display = "none";
-		aonlogo.style.position = "relative";
-		// icon.style.visibility = "hidden";
-		aonlogo.style.left = '52px';
+	
+		// setTimeout(() => {
+		// 	sidenav.style.display = "none";
+		// }, 300); 
+	
+		// // Resetear la posición del logo
+		// aonlogo.style.left = '0px';
+		// aonlogo.style.position = 'relative';
 	
 		rootPanel.style.marginLeft = '0px';
-		//menulist.style.visibility = "hidden";
 	}
+	
 
 	showMenuButton() {
 		let aonMenuSidenav = this.getElement(this.AON_MENU_SIDENAV);
@@ -475,11 +535,11 @@ export class AonNewMenu extends AonElement {
 		}
 	}
 
-	buildApp(app, style, sidenav) {
+	buildApp(app, style) {
 
 		let a = this.createElement(TAG.A);
 		a.addEventListener(EVENT.CLICK, () => {
-			this.appSelection(app, sidenav);
+			this.appSelection(app);
 		});
 		a.classList.add('aonMenuApp');
 
@@ -503,13 +563,56 @@ export class AonNewMenu extends AonElement {
 		div.style.flexDirection = style?.flexDirection || 'column';
 		div.style.transition = 'background-color 0.2s';
 		div.style.cursor = "pointer";
-		// div.style.backgroundColor =  
+		if (!LS.isLeftMenu()) {
+			div.style.marginTop = "0px";
+		}
 		div.title = app.title;
 		let header = this.getElement("aonHeaderWeb");
 		let welcome = this.getElement("aonCompanyTabFilter");
+
 		
-		
-		if ((!sidenav && app.symbol) || (sidenav && !app.icon && app.symbol)) {
+		if (app.cssIcon) {
+			const appColor = app.newColor || app.color;
+			let aonIcon = new AonIcon();
+			aonIcon.id = `aonMenuListAppImgTop-${app.app}`;
+			aonIcon.icon =  app.cssIcon;
+			aonIcon.color = style?.color || appColor;
+			if (app.app == "accounting"){
+				aonIcon.size = "26px";
+			}else {
+				aonIcon.size = "32px";
+			}
+			div.appendChild(aonIcon);
+		} else if (app.cssSymbol) {
+			let icon = this.createElement(TAG.SPAN);
+			icon.id = `aonMenuListAppImgTop-${app.app}`;
+			icon.classList.add(CSS.MATERIAL_SYMBOLS_OUTLINED);
+			icon.innerHTML = app.cssSymbol;
+			if(app.newColor || app.color) {
+				icon.style.color = app.newColor || app.color;
+			}
+			icon.classList.add("aonNewMenuAppIcon");
+			div.appendChild(icon);
+		} else if (app.cssLogo) {
+			let img = this.createElement(TAG.IMG);
+			img.id = `aonMenuListAppImgTop-${app.app}`;
+			img.classList.add("aonNewMenuAppImg");
+			img.src = app.cssLogo;
+			img.title = app.title;
+			div.appendChild(img);
+		} else if (app.icon) {
+			const appColor = app.newColor || app.color;
+			let aonIcon = new AonIcon();
+			aonIcon.id = `aonMenuListAppImgTop-${app.app}`;
+			aonIcon.icon = app.newIcon || app.icon;
+			aonIcon.color = style?.color || appColor;
+			if (app.app == "accounting"){
+				aonIcon.size = "26px";
+			}else {
+				aonIcon.size = "32px";
+			}
+			div.appendChild(aonIcon);
+		} else if (app.symbol) {
 			let icon = this.createElement(TAG.SPAN);
 			icon.id = `aonMenuListAppImgTop-${app.app}`;
 			icon.classList.add(CSS.MATERIAL_SYMBOLS_OUTLINED);
@@ -519,14 +622,6 @@ export class AonNewMenu extends AonElement {
 			}
 			icon.classList.add("aonNewMenuAppIcon");
 			div.appendChild(icon);
-		} else if (app.icon) {
-			const appColor = app.newColor || app.color;
-			let aonIcon = new AonIcon();
-			aonIcon.id = `aonMenuListAppImgTop-${app.app}`;
-			aonIcon.icon = app.newIcon || app.icon;
-			aonIcon.color = style?.color || appColor;
-			aonIcon.size = "32px";
-			div.appendChild(aonIcon);
 		} else if (app.logo) {
 			let img = this.createElement(TAG.IMG);
 			img.id = `aonMenuListAppImgTop-${app.app}`;
@@ -536,27 +631,103 @@ export class AonNewMenu extends AonElement {
 			div.appendChild(img);
 		}
 
-		if (app.title) {
-			// let titles = app.title.match(/\b\w+\b/g);
-			// for (let i = 0; i < 2; i++) {
-				let span = this.createElement(TAG.SPAN);
-				span.id = `aonMenuListAppTitle-${app.app}`;//-${i}`;
-				span.classList.add("aonNewMenuAppSpan");
-				if (MenuApps.TIMECONTROL.app === app.app) {
-					app.title = 'Ctr. Horario'
-				}
-				span.innerHTML = app.title; // titles.length > i ? titles[i] : '&nbsp;';
-				div.appendChild(span);
-			// }
+		if (app.description) {
+			let span = this.createElement(TAG.SPAN);
+			span.id = `aonMenuListAppTitle-${app.app}`;//-${i}`;
+			span.classList.add("aonNewMenuAppSpan");
+			span.innerHTML = app.description; 
+			div.appendChild(span);
 		}
-		if(welcome && app.app == "applications"){
-			div.addEventListener("click", (event) => {
-				event.preventDefault(); 
-				event.stopPropagation();
-			});
-		}
+		
 		a.appendChild(div);
+
+		if (app.app == "applications"){
+			this.controlSideNav();
+		}
+		
+
 		return a;
+	}
+
+	controlSideNav() {
+		const div = this.getElement("aonMenuLeftop");
+		
+
+		if (this.isCSSLoaded("beta.css")) {
+
+			div.addEventListener("mouseenter", () => {
+				const side = this.getElement("aonMenuSidenav");
+
+				if (LS.isCompanySelected()){
+					this.showSideNav();
+				}
+
+				// side.addEventListener("mouseenter", () => {
+				// 	this.showSideNav();
+				// });
+	
+				// side.addEventListener("mouseleave", (ev) => {
+				// 	const dialog = this.getElement("aonDesktopMainOptionDialog");
+				// 	const content = this.getElement("sideNavDialogMenuContent");
+				// 	if(!this.isElementAt(ev,content) && !LS.isPortalChecked()){
+				// 		this.hideSideNav();
+				// 		dialog.close();
+				// 	}
+				// });
+							
+				
+			});
+
+			document.addEventListener("click", (event) => {
+				// Verificamos si el clic ocurrió fuera del sidenav
+				const buttonNew = this.getElement("new");
+
+				if (!buttonNew.contains(event.target) && !LS.isPortalChecked()) {
+					// Si se clicó fuera del sidenav, lo ocultamos
+					this.hideSideNav();
+				}
+			});
+	
+			// div.addEventListener("mouseleave", (ev) => {
+			// 	const side = this.getElement("aonMenuSidenav");
+			// 	if(!this.isElementAt(ev,side) && !LS.isPortalChecked()){
+			// 		this.hideSideNav();
+			// 	}
+				
+			// });
+		}
+	}
+
+
+	isElementAt(ev, el){
+		const viewportX = ev.clientX;
+		const viewportY = ev.clientY;
+		let elements = document.elementsFromPoint(viewportX, viewportY);
+		for ( let element of elements ){
+			console.log(element.tagName + ": "  + (element === el));
+			if ( element === el ){
+				return true;
+			}
+				
+		}		
+		return false;
+	}
+	
+	
+	
+	
+
+	isCSSLoaded(cssFileName) {
+		for (let sheet of document.styleSheets) {
+			if (sheet.href && sheet.href.includes(cssFileName)) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	getCssVariable( variable ){
+		return getComputedStyle(document.body).getPropertyValue(`--${variable}`);		
 	}
 
 	buildAppMenu(app) {
@@ -774,6 +945,16 @@ export class AonNewMenu extends AonElement {
 		this.hideTopNav();
 	}
 
+	open() {
+		if(LS.isTopMenu()){
+			this.showTopNav();
+		}
+
+		if(LS.isLeftMenu()){
+			this.showSideNav();
+		} 
+	}
+
 	isExpanded() {
 		return this.expanded;
 	}
@@ -840,10 +1021,8 @@ export class AonNewMenu extends AonElement {
 			return this.getDur().isFiscal();
 		else if (MenuApps.PAYROLL.app === app.app)
 			return this.getDur().isPayroll();
-		else if (MenuApps.COMUNICA.app === app.app)
-			return !this.getDur().isPayroll() && this.getDur().isComunica();
-		else if (MenuApps.AON_SALTRA.app === app.app)
-			return !this.getDur().isPayroll() && !this.getDur().isComunica() && this.getDur().isSaltra();
+		else if (MenuApps.COMUNICA.app === app.app) 
+			return !this.getDur().isPayroll() && (this.getDur().isComunica() || this.getDur().isSaltra());			
 		else if (MenuApps.DOCUMENTAL.app === app.app)
 			return this.getDur().isDocumental();
 		else if (MenuApps.TIMECONTROL.app === app.app)
@@ -852,6 +1031,8 @@ export class AonNewMenu extends AonElement {
 			return this.getDur().isInvoice();
 		else if (MenuApps.MESSENGER.app === app.app)
 			return this.getDur().isMessenger();
+		else if (AON_CLASSIC.app === app.app)
+			return this.getDur().isAon();
 		else if (NEW.app === app.app)
 			return this.getDur().isAon()
 				|| this.getDur().isInvoice()
@@ -909,7 +1090,6 @@ export class AonNewMenu extends AonElement {
 	}
 	
 	showNewDialogMenu(el){
-		
 		let newDialogMenu =  this.getApplication().getOptionDialog();
 
 		let newMenuOptions = [];
@@ -946,17 +1126,19 @@ export class AonNewMenu extends AonElement {
 					input.className = CSS.AON_NONE;
 					input.addEventListener(EVENT.CHANGE, ({target}) => uploadDocuments(input, target.files, this.getDur() ) );
 					input.click();
+					this.appSelection(Apps.DOCUMENTAL);
 				}
 			});
 		}
 		if(this.getDur().isMessenger()){
 			newMenuOptions.push({
 				icon: 'add_comment',
-				name: 'CREAR CONSULTA',
+				name: 'Crear Consulta',
 				fn: () => {
 					let aonMessengerChat = new AonMessenger();	
 					aonMessengerChat.data = {source:TASK_SOURCE.QUERY};
 					this.rootPanel(aonMessengerChat);
+					this.appSelection(Apps.MESSENGER);
 				}
 			});
 		}
@@ -981,6 +1163,8 @@ export class AonNewMenu extends AonElement {
 							});
 						});
 					});
+					this.appSelection(Apps.MESSENGER);
+
 				}
 			});
 		}
@@ -990,8 +1174,9 @@ export class AonNewMenu extends AonElement {
 		const left = el.getBoundingClientRect().right;
 		
 		newDialogMenu.setMenuOptions(newMenuOptions, top, left);
-		
 		newDialogMenu.open();
+		
+
 		
 	}
 	
@@ -1015,10 +1200,21 @@ export class AonNewMenu extends AonElement {
 		invoicePanel.addEventListener(EVENT.BUILD, () => invoicePanel.aonInvoice(invoice) );
 		this.rootPanel(invoicePanel);
 		this.setAppClassName(Apps.INVOICE);
+		this.setSelectedMenuSidenav(Apps.INVOICE);
 		this.dispatchEvent(new CustomEvent(EVENT.AON_APPLICATION_SELECT, { detail : { app: Apps.INVOICE } }));		
 	}
 	
-
+	setSelectedMenuSidenav(app) {
+		const aonMenuSidenav = this.getElement(this.AON_MENU_SIDENAV);
+		const aonMenuSidenavLis = aonMenuSidenav.getElementsByTagName(TAG.LI);
+		for ( const aonMenuSidenavLi of aonMenuSidenavLis  ) {
+			if ( aonMenuSidenavLi.id === `aonMenuList-${app?.app}` ) {
+				aonMenuSidenavLi.classList.add("aonMenuSidenavLiSeleted");
+			} else {
+				aonMenuSidenavLi.classList.remove("aonMenuSidenavLiSeleted");
+			}
+		}
+	}
 }
 if (!window.customElements.get(TAG.AON_NEW_MENU)) {
 	window.customElements.define(TAG.AON_NEW_MENU, AonNewMenu);

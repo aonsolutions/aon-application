@@ -39,13 +39,13 @@ import { getModelsFiscal } from '../../services/service.js';
 import { sortBy } from '../../services/utils.js';
 import { FiscalUtils } from '../fiscal/FiscalUtils.js';
 import { AonBankCard } from '../accounting/aon-bank-card.js';
-import { AonDashboardUploadButton } from '../../components/aon-dashboard-upload-button.js';
 import { AonDocumentalCard } from '../documental/aon-documental-card.js';
 import { AonCompanyCostsCard, paintCompanyCostPieChart } from '../laboral/company/aon-company-costs-card.js';
 import { AonUploadToast } from '../../components/aon-upload-toast.js';
 import { AonDashboardChargePayments } from '../accounting/aon-dashboard-charge-payments.js';
 import { AonDialog } from '../../components/aon-dialog.js';
 import { AonMarketing } from '../marketing/aon-marketing.js';
+import { MessegerUtils } from '../messenger/utils/MessengerUtils.js';
 
 export class AonDesktop extends AonElement {
 
@@ -349,7 +349,6 @@ export class AonDesktop extends AonElement {
 		  let uploadToast = this.getElement('aonUploadToast');
 		  if(!uploadToast){ 
 			  uploadToast = new AonUploadToast();
-			  uploadToast.setDur(this.getDur());
 			  this.appendChild(uploadToast);
 		  }
 		  for (let file of files) {
@@ -363,7 +362,6 @@ export class AonDesktop extends AonElement {
 		let uploadToast = this.getElement('aonUploadToast');
 		if(!uploadToast){ 
 			uploadToast = new AonUploadToast();
-			uploadToast.setDur(this.getDur());
 			this.appendChild(uploadToast);
 		}
 		let data = {
@@ -407,72 +405,6 @@ export class AonDesktop extends AonElement {
 			upload.appendChild(uploadInv);
 		}
 
-		/*
-		// Fast Access Buttons Panel
-		let fastAccessButtons = this.createElement(TAG.DIV);
-		fastAccessButtons.className = CSS.AON_FAST_ACCESS;
-		fastAccessButtons.id = "fastAccessButtons";
-		dashboard.appendChild(fastAccessButtons);
-
-		if(this.getDur().isInvoice()){
-			let newInvoice = new AonDashboardButton();
-			newInvoice.setId('newInvoice');
-			newInvoice.setIcon('note_add');
-			newInvoice.setMessage(MSG.NEW_INVOICE);
-			newInvoice.addEventListener(EVENT.CLICK, () => {
-				this.addInvoice(newInvoice, dashboard);
-			});
-			fastAccessButtons.appendChild(newInvoice);
-		}
-
-		if(this.getDur().isDocumental()){
-			let newDocument = new AonDashboardUploadButton();
-			newDocument.setId('newDocument');
-			newDocument.setIcon('post_add');
-			newDocument.setMessage(MSG.NEW_DOCUMENT);
-			fastAccessButtons.appendChild(newDocument);
-		}
-
-		if(this.getDur().isMessenger()){
-			let newRequest = new AonDashboardButton();
-			newRequest.setId('newRequest');
-			newRequest.setIcon('add_comment');
-			newRequest.setMessage('CREAR CONSULTA');
-			newRequest.addEventListener(EVENT.CLICK, () => {
-				let aonMessengerChat = new AonMessenger();	
-				aonMessengerChat.data = {source:TASK_SOURCE.QUERY};
-				this.rootPanel(aonMessengerChat);
-			});
-			fastAccessButtons.appendChild(newRequest);
-		}
-
-		if(this.getDur().isAon()){
-			let newEmployee = new AonDashboardButton();
-			newEmployee.setId('newEmployee');
-			newEmployee.setIcon('person_add');
-			newEmployee.setMessage(MSG.NEW_EMPLOYEE);
-			newEmployee.addEventListener(EVENT.CLICK, () => {
-				let aonMessengerChat = new AonMessenger();	
-				aonMessengerChat.data = {source:TASK_SOURCE.REQUEST};
-				this.rootPanel(aonMessengerChat);
-
-				this.isElementLoaded("#sourceTask").then(sourceTaskSelect => {
-					console.log(sourceTaskSelect);
-					sourceTaskSelect.value = "request";
-					this.isElementLoaded("#processType").then(processTypeSelect => {
-						console.log(processTypeSelect);
-						processTypeSelect.value = "2";
-						this.isElementLoaded("#aonMessengerToolbarHeaderTitleSectionMenuIconButton").then(sidenavBtn => {
-							console.log(sidenavBtn);
-							sidenavBtn.click();
-						});
-					});
-				});
-			});
-			fastAccessButtons.appendChild(newEmployee);
-		}
-
-		*/
 		// Cards Panel
 		let cardsPanel = this.createElement(TAG.DIV);
 		cardsPanel.className = CSS.AON_CARDS_PANEL;
@@ -494,16 +426,25 @@ export class AonDesktop extends AonElement {
 			timecontrolCard.getCardTitle1().style.cursor = 'pointer';
 
 			getTimeControl().then(r => {
-				let div = this.createElement(TAG.DIV);
-				timecontrolCard.setContent(div)
+				let staticsDiv = this.createElement(TAG.DIV);
+				staticsDiv.style.height = "14rem";
+				staticsDiv.style.minWidth = "15rem";
+				staticsDiv.style.maxWidth = "25rem";
+				staticsDiv.style.margin = "0 auto";
+				staticsDiv.innerHTML = '',
+				staticsDiv.appendChild(new AonStatistics());
+
 				let aonSign = new AonSign();
-				div.appendChild(new AonStatistics());
-				div.appendChild(aonSign);
+
+				timecontrolCard.clearContent();
+				timecontrolCard.setContent(staticsDiv);
+				timecontrolCard.setContent(aonSign);
 
 				aonSign.buildSignin(r);
 				let aonHeader = this.getElement('aonHeader');
 				aonHeader.timeControlStatus(r);
-				timecontrolCard.firstChild.style.minHeight = "420px";
+
+				timecontrolCard.firstChild.style.minHeight = "28rem";
 				timecontrolCard.firstChild.style.margin = '0';
 			});
 
@@ -532,8 +473,8 @@ export class AonDesktop extends AonElement {
 			pygCard.setContent(aonDashboardGraphicsTrial);
 			pygCard.addTitleButton(MSG.OPTIONS, MATERIAL_ICONS.MORE_VERT, false, () => this.filterPyG(pygCard));
 			pygCard.firstChild.style.marginLeft = '0';
-			pygCard.firstChild.style.minHeight = "420px";
-			pygCard.firstChild.children.item(1).style.height = "315px";
+			pygCard.firstChild.style.minHeight = "28rem";
+			pygCard.firstChild.children.item(1).style.height = "22.5rem";
 			pygCard.firstChild.style.margin = '0';
 
 			pygCard.addEventListener(EVENT.CLICK_TITLE, () => {
@@ -556,8 +497,8 @@ export class AonDesktop extends AonElement {
 			cypCard.setContent(new AonDashboardChargePayments("current_month"));
 			cypCard.addTitleButton(MSG.OPTIONS, MATERIAL_ICONS.MORE_VERT, false, () => this.filterCyP(cypCard));
 			cypCard.firstChild.style.marginLeft = '0';
-			cypCard.firstChild.style.minHeight = "420px";
-			cypCard.firstChild.children.item(1).style.height = "315px";
+			cypCard.firstChild.style.minHeight = "28rem";
+			cypCard.firstChild.children.item(1).style.height = "22.5rem";
 			cypCard.firstChild.style.margin = '0';
 
 			cypCard.addEventListener(EVENT.CLICK_TITLE, () => {
@@ -587,16 +528,15 @@ export class AonDesktop extends AonElement {
 			payrollCard.setContent(aonCompanyCostsCard);
 			await paintCompanyCostPieChart();
 			payrollCard.addTitleButton(MSG.OPTIONS, MATERIAL_ICONS.MORE_VERT, false, () => this.filterPayrollStatics(payrollCard));
-			payrollCard.firstChild.style.minHeight = "420px";
-			payrollCard.firstChild.children.item(1).style.height = "315px";
+			payrollCard.firstChild.style.minHeight = "28rem";
+			payrollCard.firstChild.children.item(1).style.height = "22.5rem";
 			payrollCard.firstChild.style.margin = '0';
 		} else if(this.getDur().isPayroll()) {
 			// Nominas
 			let payrollCard = new AonCard(() => this.appSelection(Apps.PAYROLL.app));
 			payrollCard.classList.add(CSS.AON_DASHBOARD_CARD);
 			payrollCard.id = "payroll";
-			// payrollCard.title = "Nóminas";
-			payrollCard.message = "Nóminas";
+			payrollCard.message = MSG.PAYSHEETS;
 			payrollCard.setApp(Apps.PAYROLL);
 			payrollCard.addEventListener(EVENT.CLICK_TITLE ,() => this.appSelection(Apps.PAYROLL.app));
 			cardsPanel.appendChild(payrollCard);
@@ -605,8 +545,8 @@ export class AonDesktop extends AonElement {
 			let aonPayrollCard = new AonPayrollCard();
 			payrollCard.setContent(aonPayrollCard);
 			
-			payrollCard.firstChild.style.minHeight = "420px";
-			payrollCard.firstChild.children.item(1).style.height = "315px";
+			payrollCard.firstChild.style.minHeight = "28rem";
+			payrollCard.firstChild.children.item(1).style.height = "22.5rem";
 			payrollCard.firstChild.style.margin = '0';
 		}
 
@@ -615,8 +555,7 @@ export class AonDesktop extends AonElement {
 			let bankCard = new AonCard();
 			bankCard.classList.add(CSS.AON_DASHBOARD_CARD);
 			bankCard.id = "bankCard";
-			// bankCard.title = "Bancos";
-			bankCard.message = "Bancos";
+			bankCard.message = MSG.BANKS;
 			bankCard.setApp(Apps.ACCOUNTING);
 			bankCard.addEventListener(EVENT.CLICK_TITLE, () => {
 				this.appSelection(Apps.ACCOUNTING.app);
@@ -631,8 +570,8 @@ export class AonDesktop extends AonElement {
 			let aonBankCard = new AonBankCard(company.registry);
 			bankCard.setContent(aonBankCard);
 			
-			bankCard.firstChild.style.minHeight = "420px";
-			bankCard.firstChild.children.item(1).style.height = "315px";
+			bankCard.firstChild.style.minHeight = "28rem";
+			bankCard.firstChild.children.item(1).style.height = "22.5rem";
 			bankCard.firstChild.style.margin = '0';
 		}
 
@@ -641,10 +580,13 @@ export class AonDesktop extends AonElement {
 			let fiscalCard = new AonCard();
 			fiscalCard.classList.add(CSS.AON_DASHBOARD_CARD);
 			fiscalCard.id = "fiscalCard";
-			// fiscalCard.title = "Impuestos";
-			fiscalCard.message = "Impuestos";
+			fiscalCard.message = MSG.TAXES;
 			fiscalCard.setApp(Apps.FISCAL);
-			fiscalCard.addEventListener(EVENT.CLICK_TITLE, () => this.appSelection(Apps.FISCAL.app));
+			fiscalCard.addEventListener(EVENT.CLICK_TITLE, async () => {
+				// this.appSelection(Apps.FISCAL.app);
+				let fiscalFilter = await aonFiscalCard.getFilter();
+				this.appSelectionFilter(Apps.FISCAL.app, fiscalFilter);
+			});
 			cardsPanel.appendChild(fiscalCard);
 			fiscalCard.getCardTitle1().style.cursor = 'pointer';
 			fiscalCard.insertAdjacentHTML( 'beforeend', "<aon-dialog-menu id='aonCardFiscalOption'> </aon-dialog-menu>" );
@@ -663,8 +605,8 @@ export class AonDesktop extends AonElement {
 			fiscalCard.addSection2(spanPeriod);
 			
 			fiscalCard.addTitleButton(MSG.OPTIONS, MATERIAL_ICONS.MORE_VERT, false, () => this.filterFiscal(fiscalCard));
-			fiscalCard.firstChild.style.minHeight = "420px";
-			fiscalCard.firstChild.children.item(1).style.height = "315px";
+			fiscalCard.firstChild.style.minHeight = "28rem";
+			fiscalCard.firstChild.children.item(1).style.height = "22.5rem";
 			fiscalCard.firstChild.style.margin = '0';
 
 			await this.filterFutureFiscal();
@@ -686,8 +628,8 @@ export class AonDesktop extends AonElement {
 			let aonBankCard = new AonDocumentalCard();
 			documentalCard.setContent(aonBankCard);
 			
-			documentalCard.firstChild.style.minHeight = "420px";
-			documentalCard.firstChild.children.item(1).style.height = "315px";
+			documentalCard.firstChild.style.minHeight = "28rem";
+			documentalCard.firstChild.children.item(1).style.height = "22.5rem";
 			documentalCard.firstChild.style.margin = '0';
 		}
 
@@ -697,7 +639,7 @@ export class AonDesktop extends AonElement {
 			messengerCard.classList.add(CSS.AON_DASHBOARD_CARD);
 			messengerCard.id = "messengerCard";
 			// messengerCard.title = "Solicitudes";
-			messengerCard.message = "Solicitudes";
+			messengerCard.message = MSG.REQUESTS;
 			messengerCard.setApp(Apps.MESSENGER);
 			messengerCard.addEventListener(EVENT.CLICK_TITLE, () => this.appSelection(Apps.MESSENGER.app));
 			cardsPanel.appendChild(messengerCard);
@@ -706,8 +648,13 @@ export class AonDesktop extends AonElement {
 
 			messengerCard.setContent(aonMessengerCard);
 			
-			messengerCard.firstChild.style.minHeight = "420px";
-			messengerCard.firstChild.children.item(1).style.height = "315px";
+			let messages = await MessegerUtils.getMeseggers();
+			let messageBadge = MessegerUtils.getMessageBadge(messages.length);
+			messageBadge.addEventListener(EVENT.CLICK, () => this.appSelection(Apps.MESSENGER.app));
+			messengerCard.addSection2(messageBadge);
+
+			messengerCard.firstChild.style.minHeight = "28rem";
+			messengerCard.firstChild.children.item(1).style.height = "22.5rem";
 			messengerCard.firstChild.style.margin = '0';
 		}
 	}
@@ -1348,6 +1295,9 @@ export class AonDesktop extends AonElement {
 					const payroll = new AonLaboral(filter);
 					payroll.title = MSG.PAYROLL;
 					this.rootPanel(payroll);
+					break;
+				case Apps.FISCAL.app:
+					this.rootPanel(new AonFiscal(filter));
 					break;
 			}
 	}

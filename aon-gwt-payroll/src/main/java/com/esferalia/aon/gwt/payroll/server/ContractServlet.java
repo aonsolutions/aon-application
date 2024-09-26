@@ -12,11 +12,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.logging.Logger;
 
-import jakarta.servlet.annotation.MultipartConfig;
-import jakarta.servlet.annotation.WebServlet;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -56,9 +51,12 @@ import com.esferalia.aon.occam.api.model.security.Auth;
 import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.salary.enumeration.SalaryType;
 import com.esferalia.aon.watson.server.AonDateUtils;
-import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
+import jakarta.servlet.annotation.MultipartConfig;
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import net.aonsolutions.aon.api.error.AonApiError;
 import net.aonsolutions.aon.api.error.AonApiException;
 import net.aonsolutions.aon.api.ewok.AonApiData;
@@ -303,27 +301,29 @@ public class ContractServlet extends AonApiHttpServlet {
 			filter.setEnterpriseId(companyId.get().intValue());
 		}
 
-		return JooqPayrollSalaries.getSalaries(conn, api.getDomain().getId(), filter);
+		return JooqPayrollSalaries.getSalaries(conn, api.getDomain().getId(), api.getUser().getId(), filter);
 	}
 	
 	private File getSalaryPdf(AonApiData api) throws Exception {
-		int entepriseId = api.getData().optInt("enterpriseId");
 		LOGGER.info("[GET] SALARY PDF");
+		
+		Company company = AON.getCompany(api.getDomain().getName(), api.getDomain().getId(), "", f->f.getDomainProperty().eq(api.getDomain().getId()));
+		
 		JSONObject params = api.getData();
 		Integer salaryId = params.optInt("salaryId");
-		Integer enterpriseId = params.optInt("enterpriseId");
+//		Integer enterpriseId = params.optInt("enterpriseId");
 //		String salaryType = params.optString("type");
 		String salaryReport = null;
 		try {			
-			salaryReport = PayrollServletUtils.getSalaryReport(api.getDomain().getName(), enterpriseId, SalaryType.SALARY);
+			salaryReport = PayrollServletUtils.getSalaryReport(api.getDomain().getName(), company.getId(), SalaryType.SALARY);
 		} catch (Exception e) {
 		}
 		
 		File file = File.createTempFile("nomina", "");
 		if (AonStringUtils.equalsIgnoreCase(salaryReport, SalaryTemplate.AON_SOLUTIONS_DEFAULT.getValue())) {
-			JooqPayrollBuilder.generateClassicPayroll(entepriseId > 0 ? entepriseId : null, api.getDomain().getName(), new FileOutputStream(file), Optional.empty(), salaryId);
+			JooqPayrollBuilder.generateClassicPayroll(company.getId() > 0 ? company.getId() : null, api.getDomain().getName(), new FileOutputStream(file), Optional.empty(), salaryId);
 		} else {
-			JooqPayrollBuilder.generatePayroll(entepriseId > 0 ? entepriseId : null, api.getDomain().getName(), new FileOutputStream(file), Optional.empty(), salaryId);			
+			JooqPayrollBuilder.generatePayroll(company.getId() > 0 ? company.getId() : null, api.getDomain().getName(), new FileOutputStream(file), Optional.empty(), salaryId);			
 		}
 		
 		return file;
@@ -368,7 +368,7 @@ public class ContractServlet extends AonApiHttpServlet {
 		try(Connection conn = AonServletUtils.getConnection(api.getDomain().getName())){
 			SalaryInfoFilter filter = getFilter(api.getData());
 			if(companyId.isPresent()) filter.setEnterpriseId(companyId.get().intValue());
-			SalaryInfo salaryInfo = JooqPayrollSalaries.getSalariesDateEnd(conn,  api.getDomain().getId(), filter);
+			SalaryInfo salaryInfo = JooqPayrollSalaries.getSalariesDateEnd(conn,  api.getDomain().getId(), api.getUser().getId(), filter);
 			date = salaryInfo.getEndDate();
 			if(date == null) date = new Date();
 		}

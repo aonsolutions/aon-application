@@ -334,6 +334,9 @@ public abstract class AgreementPaymentWizard extends AonCustomDialog {
 
 	@UiField(provided = true)
 	TextBox paymentExpression;
+	
+	@UiField
+	ListBox salaryTypeLB;
 
 	@UiField
 	HTMLPanel taxedPanel;
@@ -453,6 +456,7 @@ public abstract class AgreementPaymentWizard extends AonCustomDialog {
 		initPaymentCRAType();
 		initTaxedAndQuoteLB();
 		initMonthLB();
+		initSalaryTypeLB();
 		showFirstPage();
 
 		// Fire SALARIO_BASE
@@ -983,6 +987,19 @@ public abstract class AgreementPaymentWizard extends AonCustomDialog {
 		monthEndLB.addItem("Diciembre", "DICIEMBRE");
 		monthEndLB.addChangeHandler(e -> createUpdatePayment());
 
+	}
+	
+	private void initSalaryTypeLB() {
+		salaryTypeLB.addStyleName("aon-selectOneMenu");
+		salaryTypeLB.getElement().getStyle().setWidth(100, Unit.PCT);
+		salaryTypeLB.setHeight("1.5rem");
+		salaryTypeLB.getElement().getStyle().setProperty("border", "1px solid rgb(137, 136, 136)");
+		
+		salaryTypeLB.clear();
+		salaryTypeLB.addItem("N\u00f3mina", Salary.Type.SALARY.ordinal() + "");
+		salaryTypeLB.addItem("Extra", Salary.Type.EXTRA.ordinal() + "");
+		salaryTypeLB.addItem("Finiquito", Salary.Type.SETTLE.ordinal() + "");
+		salaryTypeLB.addItem("Atraso", Salary.Type.DELAY.ordinal() + "");
 	}
 
 	private Short getMonth() {
@@ -1665,6 +1682,7 @@ public abstract class AgreementPaymentWizard extends AonCustomDialog {
 				onExtraAccept(paymentExtra, extra);
 			} else if (AonStringUtils.equalsIgnoreCase(paymentType.getSelectedItemText(), "MEJORA_IT")) {
 				List<Payment> gtzdoPayments = gtzdoWizard.createPayments();
+				gtzdoPayments.forEach(gtzdoPayment -> gtzdoPayment.setSalaryType(Salary.Type.values()[Integer.parseInt(salaryTypeLB.getSelectedValue())]));
 				onGtzdoAccept(gtzdoPayments);
 			} else {
 				createPayment();
@@ -1686,7 +1704,8 @@ public abstract class AgreementPaymentWizard extends AonCustomDialog {
 		payment.setIrpfExpression(getTaxedExpression());
 		payment.setQuoteExpression(getQuoteExpression());
 		payment.setType(paymentTypeListBox.getSelected());
-		payment.setSalaryType(Salary.Type.SALARY);
+		payment.setSalaryType(Salary.Type.values()[Integer.parseInt(salaryTypeLB.getSelectedValue())]);
+//		payment.setSalaryType(Salary.Type.SALARY);
 		payment.setName(paymentConcept.getValue());
 		payment.setMonth(getMonth());
 	}
@@ -1759,7 +1778,8 @@ public abstract class AgreementPaymentWizard extends AonCustomDialog {
 		paymentExtra.setQuoteExpression("_P");
 		paymentExtra.setType(paymentTypeListBox.getSelected());
 		// Si tiene agreement extra es SalaryType EXTRA si no, es SALARY
-		paymentExtra.setSalaryType(Salary.Type.EXTRA);
+//		paymentExtra.setSalaryType(Salary.Type.EXTRA);
+		paymentExtra.setSalaryType(Salary.Type.values()[Integer.parseInt(salaryTypeLB.getSelectedValue())]);
 		paymentExtra.setName(paymentConcept.getValue());
 
 //		try {

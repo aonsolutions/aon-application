@@ -11,21 +11,17 @@ import * as ACTION from '../actions.js';
 
 import { AonBasicTable } from '../../components/aon-basic-table.js';
 import { AonIconButton } from '../../components/aon-icon-button.js';
-import { AonTabs } from '../../components/aon-tabs.js';
 import { AonTab } from '../../components/aon-tab.js';
 
-import { getDeliveries, getDelivery } from '../../services/warehouseService.js';
-import { acceptDeliveryPackaging, getDeliveryPackaging, getItem, getPackaging, getProducts, saveDeliveryPackaging } from '../../services/productService.js';
+import { getDelivery } from '../../services/warehouseService.js';
+import { acceptDeliveryPackaging, getDeliveryPackaging, getProducts, saveDeliveryPackaging } from '../../services/productService.js';
 import { AonDialog } from '../../components/aon-dialog.js';
 import { getSalesDetails } from '../../services/salesService.js';
-import { A } from '../../environments/aonTag.js';
-
-import * as WAREHOUSE_OPTION from '../warehouse/WarehouseOptions.js';
 import { AonMobileDeliveryPackagingList } from './aon-mobile-delivery-packaging-list.js';
 import { AonNewSelect } from '../../components/aon-new-select.js';
-import { AonNewInput } from '../../components/aon-new-input.js';
-import { AonNewNumber } from '../../components/aon-new-number.js';
-import { CONTACT } from '../../environments/msg-en.js';
+import * as UA from '../../services/userAgentService.js';
+import { openBarcode } from '../../services/actionService.js';
+import { createCard, createInput } from '../../components/CreateComponent.js';
 
 export class AonDelivery extends AonElement {
 
@@ -116,13 +112,11 @@ export class AonDelivery extends AonElement {
 	}
 
 	buildDeliveryGeneral(parent) {
-		let card = this.createCard(this.DELIVERY_CARD, 'Datos Albarán');
-		parent.appendChild(card);
+		createCard(this.DELIVERY_CARD, 'Datos Albarán', parent);
 	}
 
 	buildDeliveryDetail(parent) {
-		let card = this.createCard(this.DELIVERY_DETAIL_CARD, 'Detalles');
-		parent.appendChild(card);
+		let card = createCard(this.DELIVERY_DETAIL_CARD, 'Detalles', parent);
 
 		let table = new AonBasicTable();
 		table.id = this.DETAIL_TABLE;
@@ -201,38 +195,6 @@ export class AonDelivery extends AonElement {
 		}
 	}
 
-	// Create Components
-
-	createCard(id, title) {
-		let card = new AonCard();
-		card.id = id;
-		card.title = title;
-		return card;
-	}
-
-	createSelect(id, title) {
-		let select = new AonNewSelect();
-		select.id = id;
-		select.title = title;
-		return select;
-	}
-
-	createInput(id, title) {
-		let input = new AonNewInput();
-		input.id = id;
-		input.description = title;
-		input.title = title;
-		return input;
-	}
-
-	createNumber(id, title) {
-		let number = new AonNewNumber();
-		number.id = id;
-		number.description = title;
-		number.title = title;
-		return number;
-	}
-
 	addPackaging() {
 		this.getApplication().removeFloatOption();
 		this.clear();
@@ -298,7 +260,7 @@ export class AonDelivery extends AonElement {
 
 	buildProductPackaging(table, table2) {
 		table.addRow();
-		let product = this.createInput(this.PACKAGING_PRODUCT, MSG.CONTAINER + ' (SSCC)');
+		let product = createInput(this.PACKAGING_PRODUCT, MSG.CONTAINER + ' (SSCC)');
 		product.id = this.DELIVERY_PRODUCT;
 		table.addCell(product);
 		product.addIcon(MATERIAL_ICONS.QR_CODE_SCANNER, undefined, () => this.openBarcode(product));	
@@ -390,9 +352,7 @@ export class AonDelivery extends AonElement {
 
 	buildNewPackaging(table, table2) {
 		table.addRow();
-		let envaseSelect = new AonNewSelect();
-		envaseSelect.id = this.id + 'DialogEnvase';
-		envaseSelect.title = 'Nuevo Envase';
+		let envaseSelect = createSelect(this.id + 'DialogEnvase', 'Nuevo Envase');
 		envaseSelect.addEventListener(EVENT.SELECT, () => {
 			let cont = 1;
 			while(table.rows > cont) {
@@ -490,7 +450,7 @@ export class AonDelivery extends AonElement {
 	
 		table.addRow();
 	
-		let product = this.createInput(this.PACKAGING_SOURCE_PRODUCT, "Envase Origen");
+		let product = createInput(this.PACKAGING_SOURCE_PRODUCT, "Envase Origen");
 		product.id = id + 'Envase';
 		table.addCell(product);
 		product.addIcon(MATERIAL_ICONS.QR_CODE_SCANNER, undefined,() => this.openBarcode(product));
@@ -578,7 +538,10 @@ export class AonDelivery extends AonElement {
 	barcodeId;
 	openBarcode(element) {
 		this.barcodeId = element.id;
-		mobileAction({ action: MOBILE_ACTION.BARCODE, selector: TAG.AON_MOBILE_DELIVERY });
+		let ionicData = { action: MOBILE_ACTION.BARCODE, selector: TAG.AON_MOBILE_DELIVERY };
+		if(UA.isAndroidApp()) {
+			openBarcode(ionicData, (result) => element.value = result.code);
+		} else mobileAction(ionicData);
 	}
 
 	setBarcodeData(barcodeStr) {

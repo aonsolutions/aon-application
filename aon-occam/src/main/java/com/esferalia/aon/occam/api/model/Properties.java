@@ -1,6 +1,7 @@
 package com.esferalia.aon.occam.api.model;
 
 import java.sql.Date;
+
 import java.sql.Timestamp;
 
 import com.esferalia.aon.occam.api.model.Filter.Property;
@@ -1767,6 +1768,7 @@ public interface Properties {
 		Property<Byte> getNatureProperty();
 		Property<Byte> getTypeProperty();
 		Property<Byte> getStatusProperty();
+		Property<String> getJsonProperty();
 		Property<Timestamp> getCreationDateProperty();
 		Property<String> getCreationUserProperty();
 		Property<Timestamp> getModificationDateProperty();
@@ -1889,6 +1891,16 @@ public interface Properties {
 		Property<Byte> getTypeProperty();
 		Property<Byte> getStatusProperty();
 	}
+
+	public interface InvoiceDataProperties {
+		Property<Integer> getIdProperty();
+		Property<Integer> getDomainProperty();
+		Property<Integer> getInvoiceProperty();
+		Property<String> getNameProperty();
+		Property<String> getValueProperty();
+		Property<Date> getStartDateProperty();
+		Property<Date> getEndDateProperty();
+	}
 	
 	public interface InvoiceBatchProperties {
 		Property<Integer> getIdProperty();
@@ -1949,5 +1961,16 @@ public interface Properties {
 		Property<Byte> getActiveProperty();
 		Property<String> getDescriptionProperty();
 		Property<Integer> getScopeProperty();
+	}
+	
+	public interface NordigenBankStatementProperties{
+		Property<Integer> getIdProperty();
+		Property<Integer> getDomainProperty();
+		Property<String> getDescriptionProperty();
+		Property<Byte> getStatusProperty();
+		Property<Double> getAmountProperty();
+		Property<java.util.Date> getOperationDateProperty();
+		Property<String> getAmountStringProperty();
+		Property<String> getOperationDateStringProperty();
 	}
 }

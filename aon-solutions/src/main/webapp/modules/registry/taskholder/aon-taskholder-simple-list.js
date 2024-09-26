@@ -47,8 +47,8 @@ export class AonTaskHolderSimpleList extends AonSimpleList {
 
     addRow(user, i) {
         let liValue = {
-            icon: MATERIAL_ICONS.PERSON,
-            title: user.name,
+            icon: user.task_holder_workgroup_type && user.task_holder_workgroup_type == "ADMIN" ? MATERIAL_ICONS.MANAGE_ACCOUNTS : MATERIAL_ICONS.PERSON,
+            title: user.task_holder ? user.task_holder.name : user.name,
             // subtitle:  user.email
         }
         this.addLi(liValue, i, () => {}, this.option.icon, () => this.option.fn(user));

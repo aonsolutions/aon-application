@@ -21,8 +21,7 @@
 					</ui:include>								
 				</aon:if>			
 				<aon:if test="#{!customer.nevv}">
-					<aon:div 
-					style="#{ app.standAlone ? 'display: grid; grid-template-columns: repeat(2, minmax(0, 1fr));' : '' }" >
+					<aon:div >
 					<aon:panelGrid id="dataTable" columns="4" 
 						styleClass="aon-width-all aonCard"
 						columnClasses="aon-panelGrid-odd aon-width-140,

@@ -252,6 +252,8 @@ export const LINK_DOMAINS = 'Vincular Dominis amb Clients';
 export const LINK_DOMAIN_QUESTION = "Voleu desvincular aquest client del domini?";
 export const LOADING = 'Carregant';
 export const LOCATION = 'Ubicació';
+export const LOGIN = 'Inici de sessió';
+export const LOGIN_SUBTITLE = 'Introduïu les vostres credencials';
 
 // ----- M
 
@@ -267,6 +269,7 @@ export const MOVED_TO_TRASH = `S'ha moguda a la paperera`;
 export const MY_DATA = 'Les Meves Dades';
 export const MY_MANAGER = 'El meu Gestor';
 export const MY_USER = 'Mi Usuari';
+export const MAGIC_LINK = 'Enviament d´enllaç d´accés per email';
 
 // ----- N
 
@@ -402,7 +405,7 @@ export const SHARED = 'Compartides';
 export const SHOW_FILE = 'Mostrar Fitxer';
 export const SIDE_MENU = 'Menú lateral';
 export const SIGN_IN = 'Iniciar Sessió';
-export const SIGN_IN_WITHOUT_PASSWORD = 'Iniciar Sessió sense Contrasenya';
+export const SIGN_IN_WITHOUT_PASSWORD = 'Sense Contrasenya';
 export const SIGN_IN_WITH_CERTIFICATE = 'Iniciar Sessió amb Certificat';
 export const SII = 'SII';
 export const SII_TICKETBAI = 'SII / TicketBAI';
@@ -419,7 +422,7 @@ export const SUPPORT = 'Suport';
 export const SURCHARGE = 'Recàrrec';
 export const SURNAME = 'Cognoms';
 export const SYSTEM_MESSAGES =  'Missatges de Sistema';
-export const SELECT_LANGUAGE = "Seleccionar idioma";
+export const SELECT_LANGUAGE = "Selecció d'idioma";
 export const SELECT_COMPANY_TYPE = "Seleccionar tipus d'empresa";
 
 // ----- T
@@ -428,6 +431,7 @@ export const TAG = 'Etiqueta';
 export const TAGS = 'Etiquetes';
 export const TAX = 'Impost';
 export const TAX_BASE = 'Base Imposable';
+export const TAXES = 'Impostos';
 export const TAXES_DETAIL = 'Detall Impostos'
 export const TEST_ENVIRONMENT = 'Entorn de Proves'; 
 export const TICKET = 'Tiquet';
@@ -479,6 +483,7 @@ export const VIEW_PAYROLLS = "Ver nóminas";
 export const WAREHOUSE = 'Magatzem';
 export const WAREHOUSES = 'Magatzems';
 export const WEB = 'Web';
+export const WELCOME_TO_AON_SOLUTIONS = 'Us donem la benvinguda a aon Solutions'
 export const WITHHOLDING = 'Retenció';
 export const WORKGROUP = 'Grup de treball';
 export const WORKSHOPS = 'Tallers';

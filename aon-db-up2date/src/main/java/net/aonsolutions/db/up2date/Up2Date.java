@@ -19,14 +19,8 @@ import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
-import net.aonsolutions.db.up2date.finance.AnnuledInvoiceCreation;
-import net.aonsolutions.db.up2date.fiscal.AlterFsMod2002023;
-import net.aonsolutions.db.up2date.fiscal.AlterFsMod200Registry2023;
-import net.aonsolutions.db.up2date.marketing.AddColumnMarketingActionTag;
-import net.aonsolutions.db.up2date.payroll.CleanDuplicatesPayrollWorkplace;
-import net.aonsolutions.db.up2date.task.AddColumnTaskHolderWorkgroupDatesType;
-import net.aonsolutions.db.up2date.tgss.MEIFellows2024Remove;
-import net.aonsolutions.db.up2date.warehouse.ElaborationSerialNumberUpdate;
+import net.aonsolutions.db.up2date.doc.InvoiceDocAddS3Bucket;
+import net.aonsolutions.db.up2date.payroll.InKindDeductionUpdate;
 
 public class Up2Date {
 
@@ -372,7 +366,7 @@ public class Up2Date {
 	    // DomainAonCustomer.DOMAIN_AON_CUSTOMER,
 	    // FixBofFormTDistan.FIXBOFFORMTDISTAN,
 	    // PermissionUnPaidDaysFix.PERMISSIONNOTPAIDDAYSFIX,
-	    // NoteInsert.NOTEINSERT,
+//	     NoteInsert.NOTEINSERT,
 	    // SuspendJobAndSalaryDaysInsert.SUSPENDJOBANDSALARYDAYSINSERT,
 	    // RealDecreeLaw012023Insert.REALDECREELAW012023INSERT,
 	    // RealDecreeLaw012023421Fix.REALDECREELAW012023421FIX,
@@ -428,7 +422,7 @@ public class Up2Date {
     	// RItemAddCustomerFeeColumn.RITEM_ADD_CUSTOMER_FEE_COLUMN,
 		// RItemAddSellerColumn.RITEM_ADD_SELLER_COLUMN,
 		// InvoiceDocCreate.INVOICEDOCCREATE,
-		// RawdocAddColumS3Key.RAWDOC_ADD_COLUMN_S3_KEY,
+//		 RawdocAddColumS3Key.RAWDOC_ADD_COLUMN_S3_KEY,
 		// BasesMin2024UpdateIV.BASESMIN2024UPDATEIV,
 		// HomeBases2024Update.HOMEBASES2024UPDATEIV,
 		// Art1512024Update.ART1512024UPDATE,
@@ -438,37 +432,45 @@ public class Up2Date {
 		// FellowsPercentages2024Update.FELLOWSPERCENTAGES2023UPDATE,
 		// RefreshMod131Result.REFRESH_MOD131_RESULT
     		
-    	//AgriculturalBases2024Update.AGRICULTURALBASES2024UPDATE,	
-		//InvoiceDuplicateFix.INVOICE_DUPLICATE_FIX,
-        //UdpateDomainApp.UPDATE_DOMAIN_APP,
-        //AlterRitemEdiSalesCode.ALTER_RITEM_EDI_SALES_CODE,
-        //PPEUpdate.PPE_UPDATE,
-		//InvoiceInfoAddAudit.INVOICE_INFO_ADD_AUDIT
-		//AddColumnMarketingCampaignBudget.ADD_COLUMN_MARKETING_CAMPAIGN_BUDGET,
-		//AddColumnMarketingActionBudget.ADD_COLUMN_MARKETING_ACTION_BUDGET,
+    	// AgriculturalBases2024Update.AGRICULTURALBASES2024UPDATE,	
+		// InvoiceDuplicateFix.INVOICE_DUPLICATE_FIX,
+        // UdpateDomainApp.UPDATE_DOMAIN_APP,
+        // AlterRitemEdiSalesCode.ALTER_RITEM_EDI_SALES_CODE,
+        // PPEUpdate.PPE_UPDATE,
+		// InvoiceInfoAddAudit.INVOICE_INFO_ADD_AUDIT
+		// AddColumnMarketingCampaignBudget.ADD_COLUMN_MARKETING_CAMPAIGN_BUDGET,
+		// AddColumnMarketingActionBudget.ADD_COLUMN_MARKETING_ACTION_BUDGET,
 
-		MEIFellows2024Remove.MEIFELLOWSREMOVE,
+		// MEIFellows2024Remove.MEIFELLOWSREMOVE,
         
-		//AddColumnMarketingCampaignExpense.ADD_COLUMN_MARKETING_CAMPAIGN_EXPENSE,
-        //AddColumnMarketingActionExpense.ADD_COLUMN_MARKETING_ACTION_EXPENSE,
-        //AddColumnMarketingCampaignWorkgroup.ADD_COLUMN_MARKETING_CAMPAIGN_WORKGROUP,
-        //AddColumnMarketingActionWorkgroup.ADD_COLUMN_MARKETING_ACTION_WORKGROUP,
-        //AddColumnMarketingCampaignTaskHolder.ADD_COLUMN_MARKETING_CAMPAIGN_TASK_HOLDER,
-        //AddColumnMarketingActionTaskHolder.ADD_COLUMN_MARKETING_ACTION_TASK_HOLDER,
+		// AddColumnMarketingCampaignExpense.ADD_COLUMN_MARKETING_CAMPAIGN_EXPENSE,
+        // AddColumnMarketingActionExpense.ADD_COLUMN_MARKETING_ACTION_EXPENSE,
+        // AddColumnMarketingCampaignWorkgroup.ADD_COLUMN_MARKETING_CAMPAIGN_WORKGROUP,
+        // AddColumnMarketingActionWorkgroup.ADD_COLUMN_MARKETING_ACTION_WORKGROUP,
+        // AddColumnMarketingCampaignTaskHolder.ADD_COLUMN_MARKETING_CAMPAIGN_TASK_HOLDER,
+        // AddColumnMarketingActionTaskHolder.ADD_COLUMN_MARKETING_ACTION_TASK_HOLDER,
         
-        //AddColumnMarketingActionTargetProject.ADD_COLUMN_MARKETING_ACTION_TARGET_PROJECT,
-        //AddColumnMarketingActionTargetAudit.ADD_COLUMN_MARKETING_ACTION_TARGET_AUDIT,
-        //AddColumnSellerTaskHolder.ADD_COLUMN_SELLER_TASK_HOLDER,
+        // AddColumnMarketingActionTargetProject.ADD_COLUMN_MARKETING_ACTION_TARGET_PROJECT,
+        // AddColumnMarketingActionTargetAudit.ADD_COLUMN_MARKETING_ACTION_TARGET_AUDIT,
+        // AddColumnSellerTaskHolder.ADD_COLUMN_SELLER_TASK_HOLDER,
 		
-        CleanDuplicatesPayrollWorkplace.CLEAN_DUPLICATE_PAYROLL_WORKPLACE, 
-        AnnuledInvoiceCreation.ANNULED_INVOICE_CREATION,
-       // AddColumnMarketingActionTag.ADD_COLUMN_MARKETING_ACTION_TAG,
+        // CleanDuplicatesPayrollWorkplace.CLEAN_DUPLICATE_PAYROLL_WORKPLACE, 
+        // AnnuledInvoiceCreation.ANNULED_INVOICE_CREATION,
+        // AddColumnMarketingActionTag.ADD_COLUMN_MARKETING_ACTION_TAG,
         
-        AlterFsMod2002023.ALTER_FS_MODEL200_2023,
-        AlterFsMod200Registry2023.ALTER_FS_MODEL200_REGISTRY_2023,
-        ElaborationSerialNumberUpdate.ELABORATION_SERIAL_NUMBER_UPDATE,
+        // AlterFsMod2002023.ALTER_FS_MODEL200_2023,
+        // AlterFsMod200Registry2023.ALTER_FS_MODEL200_REGISTRY_2023,
+        // ElaborationSerialNumberUpdate.ELABORATION_SERIAL_NUMBER_UPDATE,
         
-        AddColumnTaskHolderWorkgroupDatesType.ADD_COLUMN_TASK_HOLDER_WORKGROUP_DATES_TYPE
+        // AddColumnTaskHolderWorkgroupDatesType.ADD_COLUMN_TASK_HOLDER_WORKGROUP_DATES_TYPE,
+        // InsertIAE864.INSERT_IAE_864,
+        
+        // AgreementUpdateHideMessage.AGREEMENTUPDATEHIDEMESSAGE,
+        // AgreementUpdateHideToDisable.AGREEMENTUPDATEHIDETODISABLE,
+        
+        InKindDeductionUpdate.INKIND_DEDUCTION_UPDATE,
+        // InvoiceDataCreation.INVOICE_DATA_CREATION,
+        InvoiceDocAddS3Bucket.INVOICEDOC_ADDS3BUCKET
 	};
 
     // ------------------------------------------------------------------------
@@ -500,7 +502,7 @@ public class Up2Date {
 
 	CommandLineParser parser = new GnuParser();
 	try {
-	    Class.forName("com.mysql.jdbc.Driver");
+	    Class.forName("com.mysql.cj.jdbc.Driver");
 	    CommandLine commandLine = parser.parse(options, args);
 
 	    String host = commandLine.getOptionValue(hostOption.getLongOpt());

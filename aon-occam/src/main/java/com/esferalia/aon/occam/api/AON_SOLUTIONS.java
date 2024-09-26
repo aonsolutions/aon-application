@@ -526,12 +526,6 @@ public class AON_SOLUTIONS {
 			return getApi().getInvoiceExpDate(ctx, id);
 		} 
 	}
-	
-	public static List<Invoice> getTbaiDeletedInvoices(String domainName, Integer domainId, String login) {
-		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
-			return getApi().getTbaiDeletedInvoices(ctx);
-		} 
-	}
 
 	public static TaskHolder getTaskHolder(AonToken aonToken) {
 		TaskHolder taskHolder = null;

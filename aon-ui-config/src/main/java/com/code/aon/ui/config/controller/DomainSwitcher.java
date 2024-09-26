@@ -16,6 +16,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
@@ -28,8 +29,8 @@ import org.hibernate.Hibernate;
 import org.hibernate.Query;
 import org.hibernate.SQLQuery;
 import org.jooq.Condition;
+import org.jooq.Field;
 import org.jooq.Record;
-import org.jooq.Record1;
 import org.jooq.SelectJoinStep;
 import org.jooq.SelectOnConditionStep;
 import org.jooq.Table;
@@ -294,6 +295,7 @@ public class DomainSwitcher extends AbstractDomainSwitcher implements
 		return scopes;
 	}
 	
+	
 	private <T extends SelectJoinStep<?>> T filterByInvoiceStatus(T selectJoinStep ) {
 		if ( isShowPending() ) {
 			selectJoinStep = filterByInvoiceStatus(selectJoinStep, RawdocStatus.INBOX);
@@ -309,11 +311,13 @@ public class DomainSwitcher extends AbstractDomainSwitcher implements
 
 	private <T extends SelectJoinStep<?>> T filterByInvoiceStatus(T selectJoinStep, RawdocStatus rawdocStatus) {
 		
-		Table<Record1<Integer>> subTable = 
+		Table<?> subTable = 
 		DSL
-		.select(RAWDOC.DOMAIN)
+		.select(RAWDOC.DOMAIN
+		,DSL.count(RAWDOC.ID).as(rawdocStatus.name()))
 		.from(RAWDOC)
-		.where(RAWDOC.STATUS.eq((byte)rawdocStatus.ordinal()))
+		.innerJoin(DOMAIN).on(RAWDOC.DOMAIN.eq(DOMAIN.ID))
+		.where(RAWDOC.STATUS.eq((byte)rawdocStatus.ordinal()).and(getDomainCondition()))
 		.groupBy(RAWDOC.DOMAIN)
 		.asTable(rawdocStatus.name());
 		
@@ -321,12 +325,15 @@ public class DomainSwitcher extends AbstractDomainSwitcher implements
 	}
 
 	private <T extends SelectJoinStep<?>> T filterByInvoiceStatus(T selectJoinStep, InvoiceStatus invoiceStatus) {
-		
-		Table<Record1<Integer>> subTable = 
+
+		Table<?> subTable = 
 		DSL
-		.select(INVOICE.DOMAIN)
+		.select(
+		INVOICE.DOMAIN
+		,DSL.count(INVOICE.ID).as(invoiceStatus.name()))
 		.from(INVOICE)
-		.where(INVOICE.STATUS.eq((byte)invoiceStatus.ordinal()))
+		.innerJoin(DOMAIN).on(INVOICE.DOMAIN.eq(DOMAIN.ID))
+		.where(INVOICE.STATUS.eq((byte)InvoiceStatus.PENDING.ordinal()).and(getDomainCondition()))
 		.groupBy(INVOICE.DOMAIN)
 		.asTable(invoiceStatus.name());
 		
@@ -370,7 +377,6 @@ public class DomainSwitcher extends AbstractDomainSwitcher implements
 		}
 		return condition;
 	}
-
 
 	private void initializeModel() {
 		
@@ -419,6 +425,7 @@ public class DomainSwitcher extends AbstractDomainSwitcher implements
 					
 					
 					domainData.setLogo(TOOLBAR_LOGO_DEFAULT);
+
 //							byte logo [] = r.get(RATTACH.DATA);
 //							if ( logo == null || ArrayUtils.isEmpty(logo) ) {
 //								domainData.setLogo(TOOLBAR_LOGO_DEFAULT);
@@ -429,6 +436,18 @@ public class DomainSwitcher extends AbstractDomainSwitcher implements
 //								domainData.setLogo(String.format("data:%s;base64,%s", mimeType.getName(),
 //										Base64.getEncoder().encodeToString(logo)));
 //							}
+					for ( RawdocStatus status: RawdocStatus.values() ) {
+						Field<Integer> statusField = r.field(status.name(), Integer.class);
+						if ( statusField != null ) {
+							domainData.setRawdocCount(status, r.get(statusField));
+						}
+					}
+					for ( InvoiceStatus status: InvoiceStatus.values() ) {
+						Field<Integer> statusField = r.field(status.name(), Integer.class);
+						if ( statusField != null ) {
+							domainData.setInvoiceCount(status, r.get(status.name(), Integer.class));
+						}
+					}
 					
 					domains.add(domainData);
 					
@@ -819,6 +838,7 @@ public class DomainSwitcher extends AbstractDomainSwitcher implements
 		
 		setShowPending(false);
 		setShowReject(false);
+		setShowUnaccount(false);
 
 		setShowInactive(true);
 		setModel(null);
@@ -898,18 +918,21 @@ public class DomainSwitcher extends AbstractDomainSwitcher implements
 			
 			this.pending = 
 					ctx.getDslContext().select(DOMAIN.ID)
-					.from(DOMAIN).innerJoin(RAWDOC).on(DOMAIN.ID.eq(RAWDOC.DOMAIN))
-					.where(getDomainCondition().and(RAWDOC.STATUS.eq((byte)RawdocStatus.INBOX.ordinal()))).limit(COUNT_LIMIT+1).fetch(DOMAIN.ID).size();
+					.from(DOMAIN)
+					.innerJoin(RAWDOC).on(DOMAIN.ID.eq(RAWDOC.DOMAIN))
+					.where(getCurrentDomainCondition().and(RAWDOC.STATUS.eq((byte)RawdocStatus.INBOX.ordinal()))).limit(COUNT_LIMIT+1).fetch(DOMAIN.ID).size();
 			
 			this.reject = 
 					ctx.getDslContext().select(DOMAIN.ID)
-					.from(DOMAIN).innerJoin(RAWDOC).on(DOMAIN.ID.eq(RAWDOC.DOMAIN))
-					.where(getDomainCondition().and(RAWDOC.STATUS.eq((byte)RawdocStatus.REJECTED.ordinal()))).limit(COUNT_LIMIT+1).fetch(DOMAIN.ID).size();
+					.from(DOMAIN)
+					.innerJoin(RAWDOC).on(DOMAIN.ID.eq(RAWDOC.DOMAIN))
+					.where(getCurrentDomainCondition().and(RAWDOC.STATUS.eq((byte)RawdocStatus.REJECTED.ordinal()))).limit(COUNT_LIMIT+1).fetch(DOMAIN.ID).size();
 
 			this.unaccount = 
 					ctx.getDslContext().select(DOMAIN.ID)
-					.from(DOMAIN).innerJoin(INVOICE).on(DOMAIN.ID.eq(INVOICE.DOMAIN))
-					.where(getDomainCondition().and(INVOICE.STATUS.eq((byte)InvoiceStatus.PENDING.ordinal()))).limit(COUNT_LIMIT+1).fetch(DOMAIN.ID).size();
+					.from(DOMAIN)
+					.innerJoin(INVOICE).on(DOMAIN.ID.eq(INVOICE.DOMAIN))
+					.where(getCurrentDomainCondition().and(INVOICE.STATUS.eq((byte)InvoiceStatus.PENDING.ordinal()))).limit(COUNT_LIMIT+1).fetch(DOMAIN.ID).size();
 			return this.pending + this.reject  + this.unaccount;
 		}
 	}
@@ -951,6 +974,10 @@ public class DomainSwitcher extends AbstractDomainSwitcher implements
 		return getDomainName();
 	}
 	
+
+	private Condition getCurrentDomainCondition() {
+		return Objects.equals(parentDomain, domainId) ? getDomainCondition() : DOMAIN.ID.eq(getDomainId());
+	}
 
 	private static DomainType getSafeDomainType( Byte b ) {
 		if (b == null) return null;

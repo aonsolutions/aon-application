@@ -28,6 +28,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.stream.Collectors;
 
 import org.jooq.Record;
 
@@ -189,12 +190,14 @@ public class SistemaREDServlet extends HttpServlet implements SistemaREDService 
 		Integer domainId = AonServletUtils.getDomainID(domainName);
 		Integer parentDomainId = AonServletUtils.getParentDomainID(domainName);
 		
+		//String [] ccs = req.getParameterMap().getOrDefault(Parameter.CCC.name(), new String [0]);
+		String [] nafs = req.getParameterMap().getOrDefault(Parameter.NAF.name(), new String [0]);
+
 		try ( Connection connection = getConnection(req)){
 				cccs = JooqEnterprise.getCCCs(connection, domainId);
 				Integer userId = AonServletUtils.getUserID(connection, userLogin, domainId, parentDomainId);
 				certificate = AON.getCertificate(domainName, domainId, userLogin, userId, "TGSS");		
 		}
-		
 		
 		CalcsCallback calcsCallback = new CalcsCallback() {
 			int cccEmployees = 0;
@@ -233,6 +236,10 @@ public class SistemaREDServlet extends HttpServlet implements SistemaREDService 
 			}
 		};
 		
+		cccs = cccs.stream()
+		.collect(Collectors.groupingBy(ccc -> ccc.getRegime() + ccc.getCode(), Collectors.reducing((ccc1, ccc2 ) -> ccc1 ))).values().stream()
+		.filter(Optional::isPresent).map(Optional::get).toList();	
+		
 		resp.getWriter().print("[");
 		for ( CCC ccc: cccs ) {
 			
@@ -248,6 +255,7 @@ public class SistemaREDServlet extends HttpServlet implements SistemaREDService 
 					ccc.getCode(), 
 					startDate, 
 					endDate,
+					nafs,
 					calcsCallback
 				);
 				
@@ -262,6 +270,7 @@ public class SistemaREDServlet extends HttpServlet implements SistemaREDService 
 					ccc.getCode(), 
 					startDate, 
 					LiquidationType.L03_COMP_ABONO_SALARIOS_CARACTER_RETROACTIV,
+					nafs,
 					calcsCallback
 					);
 

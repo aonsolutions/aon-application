@@ -1,4 +1,4 @@
-import { request, put, get, getToken} from "./request.js";
+import { request, put, get, getDefaultSessionData} from "./request.js";
 import { API } from "../environments/environments.js";
 import * as LS from './localStorageService.js';
 
@@ -23,7 +23,7 @@ export const getCompanies = () => {
     if (companies) {
       resolve(companies);
     } else {
-      request("GET", API.COMPANY, getToken(), undefined, (r, error) => {
+      request("GET", API.COMPANY, getDefaultSessionData(), undefined, (r, error) => {
           if (error) {
             reject(error);
           } else {
@@ -124,7 +124,7 @@ export const getDomainApps = (domain) => {
       request(
         "GET",
         API.COMPANY_APP,
-        getToken(),
+        getDefaultSessionData(),
         undefined,
         (result, error) => {
           if (!d) {

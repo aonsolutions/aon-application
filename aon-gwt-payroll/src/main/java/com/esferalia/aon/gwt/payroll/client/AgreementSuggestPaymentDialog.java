@@ -29,6 +29,7 @@ import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.HTMLPanel;
+import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.MultiWordSuggestOracle;
 import com.google.gwt.user.client.ui.SuggestBox;
 import com.google.gwt.user.client.ui.SuggestOracle.Suggestion;
@@ -88,6 +89,9 @@ public abstract class AgreementSuggestPaymentDialog extends AonCustomDialog {
 	@UiField
 	TextArea paymentExpressionTB;
 	
+	@UiField 
+	ListBox paymentSalaryTypeLB;
+	
 	@UiField
 	HTMLPanel buttonsPanel;
 	
@@ -122,6 +126,7 @@ public abstract class AgreementSuggestPaymentDialog extends AonCustomDialog {
 		paymentSuggestionDisplay = new PaymentSuggestionDisplay();
 		
 		initializePaymentType();
+		initializeSalaryType();
 		
 		impl.getAvailablePayments(Integer.MAX_VALUE, new AsyncCallback<List<Payment>>() {
 			
@@ -138,6 +143,20 @@ public abstract class AgreementSuggestPaymentDialog extends AonCustomDialog {
 		});
 	}
 	
+	private void initializeSalaryType() {
+		paymentSalaryTypeLB.addStyleName("aon-selectOneMenu");
+		paymentSalaryTypeLB.getElement().getStyle().setWidth(100, Unit.PCT);
+		paymentSalaryTypeLB.setHeight("1.5rem");
+		paymentSalaryTypeLB.getElement().getStyle().setProperty("border", "1px solid rgb(137, 136, 136)");
+		
+		paymentSalaryTypeLB.clear();
+		paymentSalaryTypeLB.addItem("N\u00f3mina", Salary.Type.SALARY.ordinal() + "");
+		paymentSalaryTypeLB.addItem("Extra", Salary.Type.EXTRA.ordinal() + "");
+		paymentSalaryTypeLB.addItem("Finiquito", Salary.Type.SETTLE.ordinal() + "");
+		paymentSalaryTypeLB.addItem("Atraso", Salary.Type.DELAY.ordinal() + "");
+		paymentSalaryTypeLB.addChangeHandler(e -> payment.setSalaryType(Salary.Type.values()[Integer.parseInt(paymentSalaryTypeLB.getSelectedValue())]));
+	}
+
 	@UiHandler("paymentDescriptionTB")
 	void onPaymentDescriptionChange(ValueChangeEvent<String> event) {
 		setPaymentDescription(event.getValue());
@@ -157,6 +176,8 @@ public abstract class AgreementSuggestPaymentDialog extends AonCustomDialog {
 		int newPaymentId = rand.nextInt(1000) * -1;
 		if(newPaymentId > 0) newPaymentId = newPaymentId * -1;
 		this.payment.setId(newPaymentId);
+		
+		this.payment.setSalaryType(Salary.Type.SALARY);
 		
 		Date defaultStartDate = new Date(1970 - 1900, 0, 1);
 		payment.setStartDate(defaultStartDate);

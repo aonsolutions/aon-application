@@ -16,6 +16,7 @@ import com.esferalia.aon.gwt.payroll.shared.ContractJourneyDuration;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeContractInfo;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeInfo;
 import com.esferalia.aon.gwt.payroll.shared.JourneyDuration;
+import com.esferalia.aon.occam.api.model.ContractParams;
 import com.esferalia.aon.occam.api.model.type.ContractType;
 import com.esferalia.aon.occam.api.model.type.ContractType.ContractTypeRecord;
 import com.esferalia.aon.watson.util.AonNumberUtils;
@@ -403,17 +404,47 @@ public abstract class ContractEmployeeUI extends ResizeComposite {
 		getSplitLayoutPanel().setWidgetSize(getFootPanel(), 25);
 		
 		// Load info and fill fields
-		this.contrataEmployeeObject.getEmployeeContract(contractId,
-				r -> {
-					// Init toolbar
-					getToolbar().setTitle(this.contrataEmployeeObject.getEmployeeFullName());		
-					employee.initializeView();
-					initLogicWindow();
-					initializeIdcMonthListBox();
-					initExistingEmployee(this.contrataEmployeeObject.getContractData().hasPayroll());
-					success.accept(this.contrataEmployeeObject.getContractEmployeeInfo());
-				}, t -> {}
-		);
+		ContractParams newContractParams = new ContractParams( getContractParams() );
+		
+		// For new create contracts
+		if(getPosition() == -1) {
+			newContractParams
+				.setContract(contractId)
+				.setOffset(0)
+				.setLimit(1);
+			
+			this.contrataEmployeeObject.getContract(newContractParams,
+					employeeContractInfo -> {
+						// Init toolbar
+						contrataEmployeeObject.setEmployeeContractInfo(employeeContractInfo);
+						getToolbar().setTitle(this.contrataEmployeeObject.getEmployeeFullName());		
+						employee.initializeView();
+						initLogicWindow();
+						initializeIdcMonthListBox();
+						initExistingEmployee(this.contrataEmployeeObject.getContractData().hasPayroll());
+						success.accept(this.contrataEmployeeObject.getContractEmployeeInfo());
+					}
+			);
+		} 
+		// Contracts
+		else {
+			newContractParams
+				.setOffset(getPosition())
+				.setLimit(1); 
+			
+			this.contrataEmployeeObject.getContract(newContractParams,
+					employeeContractInfo -> {
+						// Init toolbar
+						contrataEmployeeObject.setEmployeeContractInfo(employeeContractInfo);
+						getToolbar().setTitle(this.contrataEmployeeObject.getEmployeeFullName());		
+						employee.initializeView();
+						initLogicWindow();
+						initializeIdcMonthListBox();
+						initExistingEmployee(this.contrataEmployeeObject.getContractData().hasPayroll());
+						success.accept(this.contrataEmployeeObject.getContractEmployeeInfo());
+					}
+			);
+		}
 		
 	}
 	
@@ -780,5 +811,7 @@ public abstract class ContractEmployeeUI extends ResizeComposite {
 	protected abstract void showWarningMessage(String title, String message);
 	protected abstract void showAfiOption();
 	protected abstract void hideAfiOption();
+	protected abstract ContractParams getContractParams();
+	protected abstract Integer getPosition();
 	
 }

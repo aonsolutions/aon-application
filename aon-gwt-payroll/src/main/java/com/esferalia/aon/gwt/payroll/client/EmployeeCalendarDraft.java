@@ -460,9 +460,7 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 		hourMenuItem.setEnabled(false);
 		hourButton.setEnabled(false);	
 		
-		//#ifndef env.SNAPSHOT
 		saveButton.setVisible(false);
-		//#endif
 		
 		//TODO: para probar el boton de guardar del calendario -> saveButton.setVisible(true);
 		saveButton.setVisible(true);

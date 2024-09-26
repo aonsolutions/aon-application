@@ -8,7 +8,7 @@ import java.util.List;
 import com.esferalia.aon.occam.api.model.Workgroup;
 import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.task.TaskHolder;
-import com.esferalia.aon.occam.api.model.type.AonRole;
+import com.esferalia.aon.occam.api.model.type.OldAonRole;
 
 
 public class User implements Serializable {
@@ -22,7 +22,7 @@ public class User implements Serializable {
 	private String login;
 	private boolean active;
     private Registry registry;
-    private AonRole[] userRoles;
+    private OldAonRole[] userRoles;
     private Date expirationDate;
     private UserToolbar toolbar;
     private List<Workgroup> workgroups;
@@ -99,10 +99,10 @@ public class User implements Serializable {
 		return this;
 	}
 	
-	public AonRole[] getUserRoles() {
+	public OldAonRole[] getUserRoles() {
 		return userRoles;
 	}
-	public User setRoles(AonRole[] userRoles) {
+	public User setRoles(OldAonRole[] userRoles) {
 		this.userRoles = userRoles;
 		return this;
 	}
@@ -192,75 +192,75 @@ public class User implements Serializable {
 	}
 	
 	public boolean hasAdminRole() {
-		return hasRole(AonRole.ADMIN);  
+		return hasRole(OldAonRole.ADMIN);  
 	}
 	public boolean hasGuestRole() {
-		return hasRole(AonRole.GUEST);  
+		return hasRole(OldAonRole.GUEST);  
 	}
 	public boolean hasConfigRole() {
-		return hasAdminRole() || hasRole(AonRole.CONFIG);  
+		return hasAdminRole() || hasRole(OldAonRole.CONFIG);  
 	}
 	public boolean hasAuditorRole() {
-		return hasAdminRole() || hasRole(AonRole.AUDITOR);  
+		return hasAdminRole() || hasRole(OldAonRole.AUDITOR);  
 	}
 	public boolean hasConfidentialityRole() {
-		return hasAdminRole() || hasRole(AonRole.CONFIDENTIALITY);  
+		return hasAdminRole() || hasRole(OldAonRole.CONFIDENTIALITY);  
 	}
 	public boolean hasProductRole() {
-		return hasAdminRole() || hasRole(AonRole.PRODUCT);  
+		return hasAdminRole() || hasRole(OldAonRole.PRODUCT);  
 	}
 	public boolean hasCommercialRole() {
-		return hasAdminRole() || hasRole(AonRole.COMMERCIAL);  
+		return hasAdminRole() || hasRole(OldAonRole.COMMERCIAL);  
 	}
 	public boolean hasSaleRole() {
-		return hasAdminRole() || hasRole(AonRole.SALE);  
+		return hasAdminRole() || hasRole(OldAonRole.SALE);  
 	}
 	public boolean hasPurchaseRole() {
-		return hasAdminRole() || hasRole(AonRole.PURCHASE);  
+		return hasAdminRole() || hasRole(OldAonRole.PURCHASE);  
 	}
 	public boolean hasWarehouseRole() {
-		return hasAdminRole() || hasRole(AonRole.WAREHOUSE);  
+		return hasAdminRole() || hasRole(OldAonRole.WAREHOUSE);  
 	}
 	public boolean hasAccountingRole() {
-		return hasAdminRole() || hasRole(AonRole.ACCOUNTING);  
+		return hasAdminRole() || hasRole(OldAonRole.ACCOUNTING);  
 	}
 	public boolean hasFinanceRole() {
-		return hasAdminRole() || hasRole(AonRole.FINANCE);  
+		return hasAdminRole() || hasRole(OldAonRole.FINANCE);  
 	}
 	public boolean hasStatisticsRole() {
-		return hasAdminRole() || hasRole(AonRole.STATISTICS);  
+		return hasAdminRole() || hasRole(OldAonRole.STATISTICS);  
 	}
 	public boolean hasTaskMonitoringRole() {
-		return hasAdminRole() || hasRole(AonRole.TASK_MONITORING);  
+		return hasAdminRole() || hasRole(OldAonRole.TASK_MONITORING);  
 	}
 	public boolean hasESignatureRole() {
-		return hasAdminRole() || hasRole(AonRole.E_SIGNATURE);  
+		return hasAdminRole() || hasRole(OldAonRole.E_SIGNATURE);  
 	}
 	public boolean hasSysAdminRole() {
-		return hasAdminRole() || hasRole(AonRole.SYS_ADMIN);  
+		return hasAdminRole() || hasRole(OldAonRole.SYS_ADMIN);  
 	}
 	public boolean hasTGCRole() {
-		return hasAdminRole() || hasRole(AonRole.TGC);  
+		return hasAdminRole() || hasRole(OldAonRole.TGC);  
 	}
 	public boolean hasDOCUMENTRole() {
-		return hasAdminRole() || hasRole(AonRole.DOCUMENT);  
+		return hasAdminRole() || hasRole(OldAonRole.DOCUMENT);  
 	}
 	public boolean hasDocumentManagerRole() {
-		return hasAdminRole() || hasRole(AonRole.DOCUMENT_MANAGER);  
+		return hasAdminRole() || hasRole(OldAonRole.DOCUMENT_MANAGER);  
 	}
 	public boolean hasPayrollRole() {
-		return hasAdminRole() || hasRole(AonRole.PAYROLL);  
+		return hasAdminRole() || hasRole(OldAonRole.PAYROLL);  
 	}
 	public boolean hasFiscalRole() {
-		return hasAdminRole() || hasRole(AonRole.FISCAL);  
+		return hasAdminRole() || hasRole(OldAonRole.FISCAL);  
 	}
 	public boolean hasAccountingManagerRole() {
-		return hasAdminRole() || hasRole(AonRole.ACCOUNTING_MANAGER);  
+		return hasAdminRole() || hasRole(OldAonRole.ACCOUNTING_MANAGER);  
 	}
 	
-	public boolean hasRole(AonRole role) {
+	public boolean hasRole(OldAonRole role) {
 		if (getUserRoles() != null) {
-			for (AonRole r : getUserRoles()) {
+			for (OldAonRole r : getUserRoles()) {
 				if (r == role) {
 					return true;
 				}

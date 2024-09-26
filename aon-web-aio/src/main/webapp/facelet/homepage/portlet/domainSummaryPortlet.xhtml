@@ -1,0 +1,65 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:f="http://java.sun.com/jsf/core">
+
+	<aon:div id="summaryControlPortlet" styleClass="aon-portlet">
+		<aon:div 
+		style="cursor:pointer;" 
+		styleClass="aon-portlet-title" 
+		id="summaryControlPortletButton"
+		onclick="javascript:expandMenuPortlet(this)">
+			<aon:outputText 
+			value="expand_more"
+			styleClass="material-icons aon-vertical-middle" />
+			<aon:outputText value="RESUMEN DE ACTIVIDADES" />
+		</aon:div>
+		
+		<aon:div styleClass="aon-portlet-body aon-box-outstanding2" >
+			<aon:div 
+				id="summaryMenuPortlet" >
+				<aon:div styleClass="aon-direct-access-list">
+					<aon:div styleClass="aon-direct-access-list-element aon-align-left">
+						
+						<aon:commandLink id="pendingInvoiceDomainEnterprise"
+							styleClass="aon-width-all aon-black"
+						>
+							<aon:outputText styleClass="material-icons  aon-vertical-middle" value="inbox" />
+							<aon:outputText value=" Facturas Pendientes" />
+							<aon:outputText styleClass="aon-float-right" value="#{domainSwitcher.pending}" />
+							
+						</aon:commandLink> 	
+						
+					</aon:div>
+					<aon:div styleClass="aon-direct-access-list-element aon-align-left">
+						<aon:commandLink id="rejectInvoiceDomainEnterprise"
+							styleClass="aon-width-all aon-black"
+						>
+							<aon:outputText styleClass="material-icons  aon-vertical-middle aon-black" value="report" />
+							<aon:outputText value=" Facturas Rechazadas" />
+							<aon:outputText styleClass="aon-float-right" value="#{domainSwitcher.reject}"/>
+						</aon:commandLink> 	
+					</aon:div>
+					<aon:div styleClass="aon-direct-access-list-element aon-align-left">
+						<aon:commandLink id="unaccountInvoiceDomainEnterprise"
+							styleClass="aon-width-all aon-black"
+							action="invoiceRecorder_list-accounting"
+							actionListener="#{invoiceRecorder.onEditSearch}"
+						>
+							<aon:outputText styleClass="material-icons  aon-vertical-middle aon-black" value="label_important" />
+							<aon:outputText value=" Facturas Sin Contabilizar" />
+							<aon:outputText styleClass="aon-float-right" value="#{domainSwitcher.unaccount}"/>
+						</aon:commandLink> 	
+					</aon:div>
+				</aon:div>
+			</aon:div>		
+		</aon:div>		
+
+	</aon:div>
+
+
+</ui:composition>

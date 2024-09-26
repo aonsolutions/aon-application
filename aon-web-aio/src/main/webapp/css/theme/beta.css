@@ -1,0 +1,26 @@
+@import url(aon.css);
+
+:root {
+	--aonMenuTopnav: true;
+}
+	
+.aonConfigTopNav {
+  display: flex;
+}
+
+#_aonMenuBar-treasuryMenu,
+#aonMenuBar-comercialMenu,
+#aonMenuBar-warehouseMenu,
+#aonMenuBar-groupwareMenu,
+#_aonMenuBar-managementMenu,
+#aonMenuBar-marketingMenu {
+  display: none;
+}
+
+.aonNewDesktopBeta {
+  display: block;
+}
+
+.aonNewDesktopNormal {
+  display: none;
+}

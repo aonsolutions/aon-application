@@ -57,7 +57,6 @@ import com.code.aon.ui.loader.Loader;
 import com.code.aon.ui.loader.LoaderParams;
 import com.code.aon.ui.loader.controller.AonZipLoaderController.HTMLLogger;
 import com.code.aon.ui.util.AonUtil;
-import com.esferalia.aon.dsi.nominas.Traspaso;
 import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.server.io.AonFileUtils;
@@ -392,7 +391,8 @@ public class ZippedMultiLoad {
 //			log.info("PARENT_DOMAIN_NAME = " + domainName);
 //			log.info("PARENT_DOMAIN_ID = " + parentDomain);
 //			Traspaso.execute(destinationFolder.toString(), connection, parentDomain, log);
-			Traspaso.execute(destinationFolder.toString(), domainName, parentDomain, user, log);
+//			Traspaso.execute(destinationFolder.toString(), domainName, parentDomain, user, log);
+			throw new Exception("Datos no soportados");
 		} catch (Exception e) {
 			log.error(MessageFormat.format("Error durante la carga de datos. {0}",e.getMessage()));
 		} finally {

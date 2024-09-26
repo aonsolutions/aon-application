@@ -210,17 +210,80 @@ export const AON_CONFIG = 'aon-config';
 
 export const AON_RIGHT_PANEL = 'aon-right-panel';
 
+export const AON_JSF_APP = 'aon-jsf-app' ;
+
 export const AON_ACCOUNTING_MENU = 'aon-accounting-menu';
 
 export const AON_SUITE_MENU = 'aon-suite-menu';
 
-export const AON_COMMERCIAL_MENU = 'aon-commercial-menu';
-
 export const AON_GROUPWARE_MENU = 'aon-groupware-menu';
+export const AON_JSF_PROJECT = 'aon-jsf-project' ;
+export const AON_JSF_PROJECT_TYPE = 'aon-jsf-project-type' ;
+export const AON_JSF_ACTIVITY_TYPE = 'aon-jsf-activity-type' ;
+
+export const AON_COMMERCIAL_MENU = 'aon-commercial-menu';
+export const AON_JSF_SELLER = 'aon-jsf-seller' ;
+export const AON_JSF_TARGET = 'aon-jsf-target' ;
+export const AON_JSF_TARGET_DEDUPLICATION = 'aon-jsf-target-deduplication' ;
+export const AON_JSF_PROJECT_COMMERCIAL = 'aon-jsf-project-commercial' ;
+export const AON_JSF_COMMERCIAL_TERM = 'aon-jsf-commercial-term' ;
+export const AON_JSF_COMMERCIAL_TRACKING = 'aon-jsf-commercial-tracking' ;
+export const AON_JSF_COMMERCIAL_ACTIVITY = 'aon-jsf-commercial-activity' ;
+export const AON_JSF_COMMERCIAL_STAT_SELLER = 'aon-jsf-commercial-stat-seller' ;
+export const AON_JSF_COMMERCIAL_STAT_TARGET = 'aon-jsf-commercial-stat-target' ;
+export const AON_JSF_COMMERCIAL_STAT_PRODUCT = 'aon-jsf-commercial-stat-product' ;
+export const AON_JSF_COMMERCIAL_STAT_CATEGORY = 'aon-jsf-commercial-stat-category' ;
+export const AON_JSF_COMMERCIAL_SELLER_STAT = 'aon-jsf-commercial-seller-stat' ;
+export const AON_JSF_COMMERCIAL_TARGET_STAT = 'aon-jsf-commercial-target-stat' ;
+export const AON_JSF_COMMERCIAL_PRODUCT_STAT = 'aon-jsf-commercial-product-stat' ;
+export const AON_JSF_COMMERCIAL_CATEGORY_STAT = 'aon-jsf-commercial-category-stat' ;
+export const AON_JSF_COMMERCIAL_GEOZONE_STAT = 'aon-jsf-commercial-geozone-stat' ;
+export const AON_JSF_OFFER = 'aon-jsf-offer' ;
+export const AON_JSF_OFFER_DETAIL_COMMISSION = 'aon-jsf-offer-detail-commission' ;
+export const AON_JSF_COMMISSION = 'aon-jsf-commission' ;
+export const AON_JSF_COMMISSION_CALC = 'aon-jsf-commission-calc' ;
+export const AON_JSF_COMMISSION_TYPE = 'aon-jsf-commission-type' ;
 
 export const AON_MANAGEMENT_MENU = 'aon-management-menu';
+export const AON_JSF_PRODUCT = 'aon-jsf-product' ;
+export const AON_JSF_SALE = 'aon-jsf-sale' ;
+export const AON_JSF_PURCHASE = 'aon-jsf-purchase' ;
+export const AON_JSF_EXPENSE = 'aon-jsf-expense' ;
+export const AON_JSF_CUSTOMER = 'aon-jsf-customer' ;
+export const AON_JSF_CREDITOR = 'aon-jsf-creditor' ;
+export const AON_JSF_SUPPLIER = 'aon-jsf-supplier' ;
+export const AON_JSF_INVOICE_PRINT = 'aon-jsf-invoice-print' ;
+export const AON_JSF_INVOICE_REMOVE = 'aon-jsf-invoice-remove' ;
+export const AON_JSF_INVOICE_DELIVERY = 'aon-jsf-invoice-delivery' ;
+export const AON_JSF_SALE_INVOICE = 'aon-jsf-sale-invoice' ;
+export const AON_JSF_EXPENSE_INVOICE = 'aon-jsf-expense-invoice' ;
+export const AON_JSF_PURCHASE_INVOICE = 'aon-jsf-purchase-invoice' ;
+export const AON_JSF_UNDEDUCTIBLE_INVOICE = 'aon-jsf-undeductible-invoice' ;
+export const AON_JSF_FINANCE_CHARGE = 'aon-jsf-finance-charge' ;
+export const AON_JSF_FINANCE_PAYMENT = 'aon-jsf-finance-payment' ;
+export const AON_JSF_PAY_METHOD = 'aon-jsf-pay-method' ;
+export const AON_JSF_PRODUCT_CATEGORY = 'aon-jsf-product-category' ;
+export const AON_JSF_SEGMENT = 'aon-jsf-segment' ;
+export const AON_JSF_GEOTREE = 'aon-jsf-geotree' ;
 
 export const AON_TREASURY_MENU = 'aon-treasury-menu';
+export const AON_JSF_FBATCH_CHARGE = 'aon-jsf-fbatch-charge' ;
+export const AON_JSF_FBATCH_PAYMENT = 'aon-jsf-fbatch-payment' ;
+export const AON_JSF_SDD_MANDATE = 'aon-jsf-sdd-mandate' ;
+export const AON_JSF_FPAYMENT_PRINT = 'aon-jsf-payment-print' ;
+export const AON_JSF_BANK_STATEMENT = 'aon-jsf-bank-statement' ;
+export const AON_JSF_PREPAYMENT = 'aon-jsf-prepayment' ;
+export const AON_JSF_INCREASE_ITEM = 'aon-jsf-increase-item' ;
+export const AON_JSF_INVOICING_GROUP = 'aon-jsf-invoicing-group' ;
+export const AON_JSF_INVOICE_SIGNER = 'aon-jsf-invoice-signer' ;
+export const AON_JSF_FINANCE_PRINT = 'aon-jsf-finance-print' ;
+export const AON_JSF_FINANCE_CHEQUING = 'aon-jsf-finance-chequing' ;
+export const AON_JSF_CASHFLOW_FORECAST = 'aon-jsf-cashflow-forecast' ;
+export const AON_JSF_CASHFLOW_FORECAST_REPORT = 'aon-jsf-cashflow-forecast-report' ;
+export const AON_JSF_FEE_PRINT = 'aon-jsf-fee-print' ;
+export const AON_JSF_FEE_ASSIGNMENT = 'aon-jsf-fee-assignment' ;
+export const AON_JSF_FEE_INVOICING = 'aon-jsf-fee-invoicing' ;
+export const AON_JSF_FEE_PRE_INVOICING = 'aon-jsf-fee-pre-invoicing' ;
 
 export const AON_WAREHOUSE_MENU = 'aon-warehouse-menu';
 
@@ -229,27 +292,22 @@ export const AON_FISCAL_MENU = 'aon-fiscal-menu';
 export const AON_PAYROLL_MENU = 'aon-payroll-menu';
 
 export const AON_MARKETING_MENU = 'aon-marketing-menu';
-
-export const AON_JSF_APP = 'aon-jsf-app' ;
-
-export const AON_JSF_PRODUCT = 'aon-jsf-product' ;
-
-export const AON_JSF_EXPENSE = 'aon-jsf-expense' ;
-
-export const AON_JSF_CUSTOMER = 'aon-jsf-customer' ;
-
-export const AON_JSF_CREDITOR = 'aon-jsf-creditor' ;
-
-export const AON_JSF_SUPPLIER = 'aon-jsf-supplier' ;
-
-export const AON_JSF_SALE_INVOICE = 'aon-jsf-sale-invoice' ;
-
-export const AON_JSF_EXPENSE_INVOICE = 'aon-jsf-expense-invoice' ;
-
-export const AON_JSF_PURCHASE_INVOICE = 'aon-jsf-purchase-invoice' ;
+export const AON_JSF_MESSAGES = 'aon-jsf-messages' ;
+export const AON_JSF_NEWS = 'aon-jsf-news' ;
+export const AON_JSF_NEWSLETTER = 'aon-jsf-newsletter' ;
+export const AON_JSF_HTML_TEMPLATE = 'aon-jsf-html-template' ;
+export const AON_JSF_MARKETING_TEMPLATE = 'aon-jsf-marketing-template' ;
+export const AON_JSF_COMPANY_IMAGES = 'aon-jsf-company-images' ;
+export const AON_JSF_MAIL_PROCESS = 'aon-jsf-mail-process' ;
+export const AON_JSF_MARKETING_CAMPAIGN = 'aon-jsf-marketing-campaign' ;
+export const AON_JSF_COMMUNICATION_CENTER = 'aon-jsf-communication-center' ;
+export const AON_JSF_SURVEY = 'aon-jsf-survey' ;
+export const AON_JSF_SURVEY_RESPONSE = 'aon-jsf-survey-response' ;
 
 export const AON_ACADEMY_MENU = 'aon-academy-menu';
 
 export const AON_COMMERCE_MENU = 'aon-commerce-menu';
 
 export const AON_GARAGE_MENU = 'aon-garage-menu';
+
+export const AON_IMAGE_EDITOR = 'aon-image-editor';

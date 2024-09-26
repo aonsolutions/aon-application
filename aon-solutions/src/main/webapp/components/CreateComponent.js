@@ -8,7 +8,68 @@ import { AonToolbar } from "./aon-toolbar.js";
 import { CONSTANT, CSS, TAG } from "../environments/environments.js";
 import { setAttributes, setClasses, setEvents } from "../services/utilsComponents.js";
 import { AonNumber } from "./aon-number.js";
+import { AonNewInput } from "./aon-new-input.js";
+import { AonNewDate } from "./aon-new-date.js";
+import { AonBasicTable } from "./aon-basic-table.js";
+import { AonNewSuggestion } from "./aon-new-suggestion.js";
+import { AonNewNumber } from "./aon-new-number.js";
+import { AonNewSelect } from "./aon-new-select.js";
+import { AonNewTextarea } from "./aon-new-textarea.js";
+import { AonEmail } from "./aon-email.js";
+import { AonQuantity } from "./aon-quantity.js";
+import { AonTable } from "./aon-table.js";
 
+export const createAonElement = (el, id, title, parent) => {
+  el.id = id || '';
+  el.title = title || '';
+  el.description = title || '';
+  if(parent) parent.appendChild(el);
+  return el;
+}
+
+export const createCard = (id, title, parent) => {
+  return createAonElement(new AonCard(), id, title, parent);
+}
+
+export const createInput = (id, title, parent) => {
+  return createAonElement(new AonNewInput(), id, title, parent); // AonInput
+}
+
+export const createEmail = (id, title, parent) => {
+  return createAonElement(new AonEmail(), id, title, parent);
+}
+
+export const createDate = (id, title, parent) => {
+  return createAonElement(new AonNewDate(), id, title, parent); // AonDate
+}
+
+export const createNumber = (id, title, parent) => {
+  return createAonElement(new AonNewNumber(), id, title, parent); // AonNumber
+}
+
+export const createSelect = (id, title, parent) => {
+  return createAonElement(new AonNewSelect(), id, title, parent); // AonSelect
+}
+
+export const createList = (id, parent) => {
+  return createAonElement(new AonTable(), id, '', parent);
+}
+
+export const createTable = (id, parent) => {
+  return createAonElement(new AonBasicTable(), id, '', parent);
+}
+
+export const createSuggestion = (id, title, parent) => {
+  return createAonElement(new AonNewSuggestion(), id, title, parent); // AonSuggestion
+}
+
+export const createTextarea = (id, title, parent) => {
+  return createAonElement(new AonNewTextarea(), id, title, parent); // AonAutosizeTextarea
+}
+
+export const createQuantity = (id, title, parent) => {
+  return createAonElement(new AonQuantity(), id, title, parent); // AonAutosizeTextarea
+}
 
 /**
  * 
@@ -123,7 +184,6 @@ const createAonDate = ({attributes, events}, parent) => {
   if(parent) parent.appendChild(input);
   return input;
 }
-
 
 /**
  * 

@@ -5,8 +5,15 @@ export const AON_TAX = {
     id: 'TAX'
 };
 
+export const AON_FUTURE_TAX = {
+  name: 'Precálculo Impuestos',
+  icon: 'assignment',
+  id: 'FUTURE_TAX'
+};
+
 export const FiscalOptions = {
-    AON_TAX
+    AON_TAX,
+    AON_FUTURE_TAX
 };
 
 export const FISCAL_VIEWS = {
@@ -14,6 +21,7 @@ export const FISCAL_VIEWS = {
   AON_FISCAL: "aonFiscal",
   VAT_PANEL: "vatPanel",
   IRPF_REPORT: "irpfReport",
+  AON_FUTURE_TAX:"aonFutureTax"
 }
 
 const TAX_MODEL_NUMBER  = {
@@ -85,13 +93,15 @@ const TAX_TYPE = {
   TO_DEDUCE:"A deducir",  //  Nada
   COMPENSATE:"A compensar", //  Nada
   PAYBACK:"A devolver", // Banco
-  PAYBACK_CCT:"Devolución a anotar en CCT"  // Nada
+  PAYBACK_CCT:"Devolución a anotar en CCT",  // Nada
+  DEFERRAL: "Solicitud de aplazamiento"
 }
 
 export const CONST_FISCAL = {
   DEPOSIT: "DEPOSIT",
   BANK: "BANK",
-  PAYBACK: "PAYBACK"
+  PAYBACK: "PAYBACK",
+  DEFERRAL: "DEFERRAL"
 }
 
 

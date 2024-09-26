@@ -5,6 +5,8 @@ import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
 import static com.esferalia.aon.jooq.tables.TaskHolder.TASK_HOLDER;
 import static com.esferalia.aon.jooq.tables.Workgroup.WORKGROUP;
 
+import static com.esferalia.aon.occam.impl.jooq.dao.TaskHolderDAO.TASK_HOLDER_ALIAS;
+
 import java.sql.Timestamp;
 import java.util.LinkedList;
 import java.util.List;
@@ -64,7 +66,7 @@ public class ProjectHolderDAO {
 				.from(PROJECT_HOLDER)
 				.leftOuterJoin(WORKGROUP).on(PROJECT_HOLDER.WORKGROUP.eq(WORKGROUP.ID))
 				.leftOuterJoin(TASK_HOLDER).on(PROJECT_HOLDER.TASK_HOLDER.eq(TASK_HOLDER.REGISTRY))
-				.leftOuterJoin(REGISTRY).on(PROJECT_HOLDER.TASK_HOLDER.eq(REGISTRY.ID))
+				.leftOuterJoin(TASK_HOLDER_ALIAS).on(PROJECT_HOLDER.TASK_HOLDER.eq(TASK_HOLDER_ALIAS.ID))
 				.where(PROJECT_HOLDER_PROPERTIES.getConditions(filter));
 	}
 	
@@ -155,7 +157,7 @@ public class ProjectHolderDAO {
 						? WorkgroupFiller.build(r)
 						: new Workgroup().setId(r.getValue(PROJECT_HOLDER.WORKGROUP)))
 					.setTaskHolder(checkField(r, TASK_HOLDER.REGISTRY)
-						? TaskHolderFiller.build(r, null)
+						? TaskHolderFiller.build(r)
 						: new TaskHolder().setRegistry(r.getValue(PROJECT_HOLDER.TASK_HOLDER)))
 					.setDirty(false);
 		}

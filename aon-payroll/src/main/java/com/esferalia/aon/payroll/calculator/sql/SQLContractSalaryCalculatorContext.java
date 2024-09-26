@@ -3981,6 +3981,16 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 	    };
 	}
 
+	public Object br(Date date, LeaveType leaveType) throws ExpressionException, SQLException, SalaryException {
+		switch (leaveType) {
+		case MATERNITY , PATERNITY : {
+			return br(add(date, Calendar.MONTH, -1));
+		}
+		default:
+			return this.br(date);
+		}
+	}
+
 	public Object br(Date date) throws ExpressionException, SQLException, SalaryException {
 		
 		double br = getSavedBr(date);
@@ -5549,7 +5559,10 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 	    
 	    // QUOTE_DAYS = DO_DAYS 
 	    ctx.removeVariable(QUOTE_DAYS);
-	    doDays.forEach(p -> ctx.putVariable(QUOTE_DAYS, new ITimedVariable<Double>() {
+	    
+	    
+	    Stream.concat(doDays.stream(), leaves.stream())
+	    .forEach(p -> ctx.putVariable(QUOTE_DAYS, new ITimedVariable<Double>() {
 		@Override
 		public Period getPeriod() {
 		    return p;
@@ -5561,6 +5574,7 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 		}
 
 	    }));
+	    
 	    // WORK_DAYS = DO_DAYS 
 	    ctx.removeVariable(WORKED_DAYS);
 	    doDays.forEach(p -> ctx.putVariable(WORKED_DAYS, new ITimedVariable<Double>() {

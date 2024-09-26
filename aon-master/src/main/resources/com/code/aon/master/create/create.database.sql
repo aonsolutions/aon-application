@@ -4674,6 +4674,25 @@ CREATE TABLE `invoice_attach` (
 ) ENGINE=InnoDB  DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Archivos Adjuntos de Facturas';
 
 #
+# Table structure for table `invoice_data`
+#
+
+CREATE TABLE IF NOT EXISTS `invoice_data` (
+ `id` int(4) NOT NULL AUTO_INCREMENT COMMENT 'Identificador unico',
+ `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
+ `invoice` int(4) NOT NULL COMMENT 'Identificador de la Factura',
+ `name` varchar(32) CHARACTER SET latin1 COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Nombre',
+ `value` varchar(128) CHARACTER SET latin1 COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Valor',
+ `start_date` date NOT NULL COMMENT 'Fecha de inicio',
+ `end_date` date DEFAULT NULL COMMENT 'Fecha de finalizacion',
+ PRIMARY KEY (`id`),
+ KEY `IDX_INVOICE_DATA_DOMAIN` (`domain`),
+ KEY `IDX_INVOICE_DATA_INVOICE` (`invoice`),
+ CONSTRAINT `FK_INVOICE_DATA_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
+ CONSTRAINT `FK_INVOICE_DATA_INVOICE` FOREIGN KEY (`invoice`) REFERENCES `invoice` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Datos adicionales de la factura.';
+
+#
 # Table structure for table `invoice_doc`
 #
 
@@ -4685,6 +4704,7 @@ CREATE TABLE `invoice_doc` (
   `description` varchar(64) CHARACTER SET latin1 COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Descripcion del Archivo Adjunto',
   `type` tinyint DEFAULT '0' COMMENT 'Tipo de Archivo Adjunto',
   `attach_date` date DEFAULT NULL COMMENT 'Fecha del Archivo Adjunto',
+  `s3_bucket` varchar(128) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Amazon S3 Bucket',
   `s3_key` varchar(1024) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Amazon S3 Object key',
   PRIMARY KEY (`id`),
   KEY `IDX_INVOICE_DOC_INVOICE` (`invoice`),

@@ -4,6 +4,7 @@ import { AonTable } from '../../../components/aon-table.js';
 import { getSellers, getRSellers } from '../../../services/commercialService.js';
 import { AonSellerAdd } from './aon-seller-add.js';
 import { AonItemAdd } from '../target/item/aon-item-add.js';
+import * as ACTION from '../../actions.js';
 
 export class AonSellerList extends AonElement {
 	more;
@@ -28,7 +29,6 @@ export class AonSellerList extends AonElement {
 	build() {
 		this.TABLE = new AonTable();
 		this.TABLE.id = 'aonSellerListTable';
-		this.TABLE.selectedColor = true;
 
 		this.TABLE.style.width = "100%";
 
@@ -49,7 +49,6 @@ export class AonSellerList extends AonElement {
 
 	buildTable(){
 		this.appendChild(this.TABLE);
-		// this.TABLE.addColumn(MSG.CODE, 'string', 'productCode', '30%');
 		this.TABLE.addColumn(MSG.NAME, 'string', 'sellerName', '30%');
 		this.TABLE.addColumn(MSG.CATEGORY, 'string', 'rsellerType', '20%');
 		this.TABLE.addColumn(MSG.STATUS, 'string', 'statusText', '10%');
@@ -84,7 +83,7 @@ export class AonSellerList extends AonElement {
 				if(items.length > 0)
 					this.more = true;
 				items.forEach((item) => {
-					this.buildIconRemove(item);
+					item.option = this.getOptions(item);
 					this.TABLE.addRow(item, () => {
 						// this.openDialogItems(item);
 					});
@@ -99,7 +98,7 @@ export class AonSellerList extends AonElement {
 			.then(items => {
 				this.TABLE.removeRows();
 				items.forEach((item) => {
-					this.buildIconRemove(item);
+					item.option = this.getOptions(item);
 					this.TABLE.addRow(item, () => {
 						// this.openDialogItems(item);
 					});
@@ -108,16 +107,58 @@ export class AonSellerList extends AonElement {
 		}
 	}
 
-	buildIconRemove(res){
-		res.icon = MATERIAL_ICONS.DELETE;
-		res.icon_color = "grey";
-		res.fn = () => this.onRemoveItem(res);
+	getOptions(res) {
+		let option = [
+			{
+				...ACTION.EDIT,
+				fn: () => this.openDialogItems(res)
+			},
+			{
+				...ACTION.DELETE,
+				fn: () => this.onRemoveItem(res)
+			}
+		];
+
+		return option;
 	}
 
 	async getData(filter){
+		let rsellerTypePriority = {
+			SOPORTE: 1,
+			COMERCIAL: 2
+		};
+
 		try {
 			const data = await getRSellers(filter);
 			return data
+			.sort((a, b) => {
+				// Primero compara por prioridad de statusText
+				if (rsellerTypePriority[a.type] < rsellerTypePriority[b.type]) {
+					return -1;
+				}
+				if (rsellerTypePriority[a.type] > rsellerTypePriority[b.type]) {
+					return 1;
+				}
+				
+				// Si el statusText es el mismo, compara por endDate
+				if (a.end_date == null && b.end_date != null) {
+					return -1;
+				}
+				if (a.end_date != null && b.end_date == null) {
+					return 1;
+				}
+				if (a.end_date != null && b.end_date != null) {
+					if (new Date(a.end_date) > new Date(b.end_date)) {
+					return -1;
+					}
+					if (new Date(a.end_date) < new Date(b.end_date)) {
+					return 1;
+					}
+				}
+
+				// Si el statusText y el endDate son los mismos, compara alfabéticamente por sellerName
+				return a.seller.name.localeCompare(b.seller.name);
+			})
 			.map(rseller =>{
 				let s = rseller.seller;
 				s.sellerName = s.name;
@@ -127,12 +168,20 @@ export class AonSellerList extends AonElement {
 				s.rsellerType = rseller.type;
 				s.rsellerId = rseller.id;
 				s.rseller = JSON.parse(JSON.stringify(rseller)); // clone object
+				s.color = this.getColor(rseller);
 				return s;
 			});
 		} catch (error) {
 			this.showError(error);
 		}
 		return [];
+	}
+
+	getColor(rseller){
+		if(rseller.status == "ACTIVE" && (rseller.end_date && new Date(rseller.end_date) <= new Date()))
+			return "orange";
+		else
+			return "black";
 	}
 
 	getFilter() {
@@ -151,11 +200,18 @@ export class AonSellerList extends AonElement {
 		dialog.autoclose = false;
 		dialog.width = '40%';
 		dialog.clear();
-		dialog.setTitle(MSG.ASSIGN + " " + MSG.CONTRACTED_PRODUCTS);
+		dialog.setTitle(MSG.ASSIGN + " Agente");
 	
 		const aonTargetItemAdd = new AonSellerAdd();
 		if (selectedItem) {
-			aonTargetItemAdd.setSelectedRSeller(selectedItem.ritem);
+			aonTargetItemAdd.setSelectedRSeller(selectedItem);
+		} else {
+			aonTargetItemAdd.setSelectedRSeller({
+				rseller : {
+					registry : this.registry.id
+				},
+				statusText : "ACTIVE"
+			});
 		}
 	
 		dialog.setContent(aonTargetItemAdd);
@@ -165,11 +221,13 @@ export class AonSellerList extends AonElement {
 	
 			application.startLoading();
 	
-			await aonTargetItemAdd.save().catch(err=> this.showError(err));
+			await aonTargetItemAdd.save().then(success => {
+				if(success){
+					this.init();
+					dialog.close();
+				}
+			}).catch(err=> this.showError(err));
 
-			this.init();
-
-			dialog.close();
 			application.stopLoading();
 	
 		}, MSG.SAVE);
@@ -178,7 +236,7 @@ export class AonSellerList extends AonElement {
 	}
 
 	onRemoveItem(item) {
-		this.getApplication().confirmDialog(MSG.DELETE, MSG.DELETE_CONFIRM, async ()=>{
+		this.getApplication().confirmDialog(MSG.DELETE, MSG.DELETE_CONFIRM + " el agente " + item.rseller.seller.name, async ()=>{
 			this.getApplication().startLoading();
 
 			try {

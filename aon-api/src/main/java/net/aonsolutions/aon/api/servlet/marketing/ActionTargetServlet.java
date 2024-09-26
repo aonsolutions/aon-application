@@ -248,7 +248,7 @@ public class ActionTargetServlet extends AonApiHttpServlet {
 	}
 	
 	private static Seller getNextLinealSellerByWorkgroup(String domainName, int domain, String user, int workgroup) throws AonCoreException {
-		List<TaskHolder> taskHolders = AON.getTaskHolderWorkgroupStream(new Domain().setName(domainName).setId(domain), new User().setLogin(user), f -> f.getDomainProperty().eq(domain), workgroup).filter(taskHolder -> taskHolder.isActive()).collect(Collectors.toList());
+		List<TaskHolder> taskHolders = AON.getTaskHolderWorkgroupStream(new Domain().setName(domainName).setId(domain), new User().setLogin(user), f -> f.getDomainProperty().eq(domain), workgroup, 0, Integer.MAX_VALUE).filter(taskHolder -> taskHolder.isActive()).collect(Collectors.toList());
 		Integer[] taskHolderIds = new Integer[taskHolders.size()];
 		taskHolders.stream().map(taskHolder -> taskHolder.getId()).collect(Collectors.toList()).toArray(taskHolderIds);
 		LinkedList<Seller> sellerList = AON.getSellerList(domainName, domain, user, f -> f.getStatusProperty().eq((byte)0).and(f.getTaskHolderProperty().in(taskHolderIds)));

@@ -2,25 +2,16 @@ import {AonElement} from '../../../components/AonElement.js';
 import { ToolbarType} from '../../../models/enums.js';
 
 import {AonToolbar} from "../../../components/aon-toolbar.js";
-import {AonCard} from "../../../components/aon-card.js";
 
 import {CONSTANT, EVENT, MATERIAL_ICONS, MSG, TAG } from '../../../environments/environments.js'; 
 
 import * as ACTION from '../../actions.js';
-import { AonInput } from '../../../components/aon-input.js';
-import { AonSelect } from '../../../components/aon-select.js';
-
-import { AonNumber } from '../../../components/aon-number.js';
 import { Elaboration } from '../../../models/elaboration/Elaboration.js';
 import { AonTabs } from '../../../components/aon-tabs.js';
 import { AonBasicTable } from '../../../components/aon-basic-table.js';
 import { AonIconButton } from '../../../components/aon-icon-button.js';
 import { AonMobilePackageList } from './aon-mobile-package-list.js';
-import { AonDate } from '../../../components/aon-date.js';
-import { AonNewDate } from '../../../components/aon-new-date.js';
-import { AonNewInput } from '../../../components/aon-new-input.js';
-import { AonNewSelect } from '../../../components/aon-new-select.js';
-import { AonNewNumber } from '../../../components/aon-new-number.js';
+import { createCard, createDate, createInput } from '../../../components/CreateComponent.js';
 
 export class AonMobileElaboration extends AonElement {
 
@@ -138,8 +129,7 @@ export class AonMobileElaboration extends AonElement {
 		this.buildElaborationComposition(parent);
 	}
 	buildElaborationGeneral(parent){
-		let card = this.createCard(this.ELABORATION_CARD, MSG.ELABORATION);
-		parent.appendChild(card);
+		let card = createCard(this.ELABORATION_CARD, MSG.ELABORATION, parent);
 
 		let table = new AonBasicTable();
 		table.id = this.ELABORATION_TABLE;
@@ -147,28 +137,27 @@ export class AonMobileElaboration extends AonElement {
 
 		table.addRow();
 
-		let product = this.createInput(this.ELABORATION_PRODUCT, MSG.PRODUCT);
+		let product = createInput(this.ELABORATION_PRODUCT, MSG.PRODUCT);
 		product.value = this.elaboration.detail.item.name;
 		table.addCell(product);
 
-		let quantity = this.createInput(this.ELABORATION_QUANTITY, MSG.QUANTITY);
+		let quantity = createInput(this.ELABORATION_QUANTITY, MSG.QUANTITY);
 		quantity.value = this.elaboration.detail.quantity;
 		table.addCell(quantity);
 
 		table.addRow();
 
-		let serialNumber = this.createInput(this.ELABORATION_SERIAL_NUMBER, "Nº Lote");
+		let serialNumber = createInput(this.ELABORATION_SERIAL_NUMBER, "Nº Lote");
 		serialNumber.value = this.elaboration.detail.item.serialNumber;
 		table.addCell(serialNumber);
 
-		let serialDate = this.createDate(this.ELABORATION_SERIAL_DATE, "Fecha Lote");
-		serialDate.value = this.elaboration.detail.item.serialDate;
+		let serialDate = createDate(this.ELABORATION_SERIAL_DATE, "Fecha Lote");
+		serialDate.setDate(this.elaboration.detail.item.serialDate);
 		table.addCell(serialDate);
 	}
 
 	buildElaborationComposition(parent){
-		let card = this.createCard(this.COMPOSITION_CARD, MSG.COMPOSITION);
-		parent.appendChild(card);
+		let card = createCard(this.COMPOSITION_CARD, MSG.COMPOSITION, parent);
 
 		let div = this.createElement(TAG.DIV);
 		card.setContent(div);
@@ -179,11 +168,11 @@ export class AonMobileElaboration extends AonElement {
 		
 		this.elaboration.detail.composition.forEach((composition, i) => {
 			table.addRow();
-			let comp1 = this.createInput(this.COMPOSITION_ITEM + i, "Producto");
+			let comp1 = createInput(this.COMPOSITION_ITEM + i, "Producto");
 			comp1.value = composition.item.description;
 			table.addCell(comp1);
 
-			let comp2 = this.createInput(this.COMPOSITION_QUANTITY + i, "Cantidad");
+			let comp2 = createInput(this.COMPOSITION_QUANTITY + i, "Cantidad");
 			comp2.value = composition.quantity;
 			table.addCell(comp2);
 		});
@@ -234,45 +223,6 @@ export class AonMobileElaboration extends AonElement {
 	
 	setElaboration(elaboration) {
 		this.elaboration = new Elaboration(elaboration);
-	}
-
-	// Create Components
-
-	createCard(id, title) {
-		let card = new AonCard();
-		card.id = id;
-		card.title = title;
-		return card;
-	}
-
-	createSelect(id, title) {
-		let select = new AonNewSelect();
-		select.id = id;
-		select.title = title;
-		return select;
-	}
-
-	createInput(id, title) {
-		let select = new AonNewInput();
-		select.id = id;
-		select.description = title;
-		select.title = title;
-		return select;
-	}
-
-	createDate(id, title) {
-		let date = new AonNewDate();
-		date.id = id;
-		date.title = title;
-		return date;
-	}
-
-	createNumber(id, title) {
-		let number = new AonNewNumber();
-		number.id = id;
-		number.description = title;
-		number.title = title;
-		return number;
 	}
 }
 

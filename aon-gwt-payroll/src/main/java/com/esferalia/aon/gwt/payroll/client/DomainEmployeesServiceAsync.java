@@ -454,11 +454,11 @@ public class DomainEmployeesServiceAsync {
 	// ----- Payroll Salaries
 	
 	public void getSalariesDates(SalaryInfoFilter filter, AsyncCallback<Period> callback) {
-		employeesServiceAsync.getSalariesDates(getCurrentDomainName(), filter, callback);
+		employeesServiceAsync.getSalariesDates(getCurrentDomainName(), getCurrentUser(), filter, callback);
 	}
 	
 	public void getSalaries(SalaryInfoFilter filter, AsyncCallback<List<SalaryInfo>> callback) {
-		employeesServiceAsync.getSalaries(getCurrentDomainName(), filter, callback);
+		employeesServiceAsync.getSalaries(getCurrentDomainName(), getCurrentUser(), filter, callback);
 	}
 	
 	public void deleteSalaries(ArrayList<Integer> ids, AsyncCallback<Void> callback) {
@@ -466,11 +466,11 @@ public class DomainEmployeesServiceAsync {
 	}
 	
 	public void getWorkplaceActiveEmployees(Integer workplaceId, AsyncCallback<WorkplaceEmployees> callback) {
-		employeesServiceAsync.getWorkplaceActiveEmployees(getCurrentDomainName(), workplaceId, callback);
+		employeesServiceAsync.getWorkplaceActiveEmployees(getCurrentDomainName(), getCurrentUser(), workplaceId, callback);
 	}
 	
 	public void getEnterpriseActiveEmployees(Integer enterpriseId, AsyncCallback<List<EmployeeInfo>> callback) {
-		employeesServiceAsync.getEnterpriseActiveEmployees(getCurrentDomainName(), enterpriseId, callback);
+		employeesServiceAsync.getEnterpriseActiveEmployees(getCurrentDomainName(), getCurrentUser(), enterpriseId, callback);
 	}
 	
 	// ----- New employee calendar

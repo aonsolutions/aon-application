@@ -79,6 +79,7 @@ export class AonMobileDesktop extends AonElement {
 			divParent.style.overflowX = 'hidden';
 			divParent.style.display = "flex";
 			divParent.style.flexDirection = "column";
+			divParent.style.paddingBottom = "1rem";
 			this.appendChild(divParent);
 			let notice = undefined;
 			if(localStorage.getItem('company')) {
@@ -189,6 +190,7 @@ export class AonMobileDesktop extends AonElement {
 			div.appendChild(titleA);
 
 			let ul = this.createElement(TAG.UL);
+			ul.id = this.PENDING_TASK + "Ul";
 			ul.classList.add(CSS.AON_UL);
 			ul.classList.add(CSS.AON_CLIP);
 			div.appendChild(ul);
@@ -257,15 +259,36 @@ export class AonMobileDesktop extends AonElement {
 
 			let div3 = this.getElement(this.TIMECONTROL_SIGN) || this.createElement(TAG.DIV);
 			div3.id = this.TIMECONTROL_SIGN;
-			div3.style.marginLeft = '25px';
 			if(this.isMobile()){
-				// div3.style.marginTop = "auto";
-				div3.style.marginBottom = "10px";
 				div3.style.borderTop = '1px solid #ddd';
 				this.clearElement(div3);
 				div3.appendChild(this.createTitleTime());
 			}
-			div3.appendChild(new AonStatistics());
+
+			let staticsDiv = this.createElement(TAG.DIV);
+			staticsDiv.style.height = "15rem";
+			staticsDiv.style.minWidth = "10rem";
+			staticsDiv.style.maxWidth = "20rem";
+			staticsDiv.style.margin = "0 auto";
+
+			// Make static smaller if pendingTask exists
+			if(this.isMobile()){
+				let pendingTask = this.getElement(this.PENDING_TASK);
+				if(pendingTask){
+					let pendingTaskUl = this.getElement(this.PENDING_TASK + "Ul");
+					if(pendingTaskUl){
+						if(pendingTaskUl.childElementCount == 3)
+							staticsDiv.style.height = "10rem";
+						else if(pendingTaskUl.childElementCount == 2) {
+							staticsDiv.style.height = "12rem";
+						}
+					}
+				}
+			}
+
+			staticsDiv.appendChild(new AonStatistics());
+
+			div3.appendChild(staticsDiv);
 			let aonSign = new AonSign();
 			aonSign.setTimeControl(r);
 			div3.appendChild(aonSign);

@@ -207,6 +207,75 @@ export class AonAccounting extends AonElement {
 				}
 			});
 		}
+		if(!this.isMobile()) {
+			options.push({
+				id: 'extracto',
+				name: "Extracto de cuenta",
+				icon: MATERIAL_ICONS.LIST_ALT,
+				fn: () => {
+					this.getApplication().removeSidenavById(CONSTANT.OPTIONS);
+					this.clearElementById(this.getApplication().getContent().id);
+					GWT.load(GWT.STATEMENT_REPORT, this.getApplication().CONTENT);
+					this.loader(`#${this.getApplication().getContent().id} .aon_toolbar`);
+				}
+			});
+			options.push({
+				id: 'cuentapyg1',
+				name: "Cuenta Explotación (P y G)",
+				icon: MATERIAL_ICONS.LIST_ALT,
+				fn: () => {
+					this.getApplication().removeSidenavById(CONSTANT.OPTIONS);
+					this.clearElementById(this.getApplication().getContent().id);
+					GWT.load(GWT.ACCOUNT_OPERATION_STATEMENT, this.getApplication().CONTENT);
+					this.loader(`#${this.getApplication().getContent().id} .aon_toolbar`);
+				}
+			});
+			options.push({
+				id: 'balanceSS',
+				name: "Balance de Sumas y Saldos",
+				icon: MATERIAL_ICONS.LIST_ALT,
+				fn: () => {
+					this.getApplication().removeSidenavById(CONSTANT.OPTIONS);
+					this.clearElementById(this.getApplication().getContent().id);
+					GWT.load(GWT.ACCOUNT_TRIAL_BALANCE_REPORT, this.getApplication().CONTENT);
+					this.loader(`#${this.getApplication().getContent().id} .aon_toolbar`);
+				}
+			});
+			options.push({
+				id: 'listadoD',
+				name: "Diario de Movimientos",
+				icon: MATERIAL_ICONS.LIST_ALT,
+				fn: () => {
+					this.getApplication().removeSidenavById(CONSTANT.OPTIONS);
+					this.clearElementById(this.getApplication().getContent().id);
+					GWT.load(GWT.JOURNAL_REPORT, this.getApplication().CONTENT);
+					this.loader(`#${this.getApplication().getContent().id} .aon_toolbar`);
+				}
+			});
+			options.push({
+				id: 'listadoM',
+				name: "Listado Mayor de Cuentas",
+				icon: MATERIAL_ICONS.LIST_ALT,
+				fn: () => {
+					this.getApplication().removeSidenavById(CONSTANT.OPTIONS);
+					this.clearElementById(this.getApplication().getContent().id);
+					GWT.load(GWT.LEDGER_REPORT, this.getApplication().CONTENT);
+					this.loader(`#${this.getApplication().getContent().id} .aon_toolbar`);
+				}
+			});
+			options.push({
+				id: 'balanceO',
+				name: "Balances oficiales",
+				icon: MATERIAL_ICONS.LIST_ALT,
+				fn: () => {
+					this.getApplication().removeSidenavById(CONSTANT.OPTIONS);
+					this.clearElementById(this.getApplication().getContent().id);
+					GWT.load(GWT.ACCOUNT_BALANCE_REPORT, this.getApplication().CONTENT);
+					this.loader(`#${this.getApplication().getContent().id} .aon_toolbar`);
+				}
+			});
+		}
+		
 		let data1 = {
 			id: CONSTANT.ACCOUNTING,
 			name: MSG.ACCOUNTING,

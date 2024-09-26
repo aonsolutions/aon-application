@@ -71,7 +71,7 @@ public class NordigenAccountBalanceJSON {
 		return new JSONObject()
 			.put("balanceAmount", NordigenJSONUtils.accountAmountToJSON(balance.getBalanceAmount()))
 			.put("balanceType", balance.getBalanceType() != null ? balance.getBalanceType().getValue() : null)
-			.put("referenceDate", NordigenJSONUtils.formatDate(balance.getReferenceDate()))
-			.put("originalJson", balance.getOriginalJson());
+			.put("referenceDate", NordigenJSONUtils.formatDate(balance.getReferenceDate()));
+//			.put("originalJson", balance.getOriginalJson());
 	}
 }

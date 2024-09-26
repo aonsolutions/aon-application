@@ -107,8 +107,6 @@ public class JooqIT {
 	    ContractData COEFICIENTE_MATERNIDAD = CONTRACT_DATA.as("coeficiente_maternidad");
 	    ContractData TIPO_SOLICITANTE_MAT_PAT = CONTRACT_DATA.as("tipo_solicitante_mat_pat");
 	    
-	    
-	    
 	    Date today = new Date(new java.util.Date().getTime());
 	    
 	    Cursor<Record> cursor =
@@ -177,6 +175,18 @@ public class JooqIT {
 			
 			//contractInfo.setEnterpriseName(r.get(ENTERPRISE_REGISTRY.NAME));
 			//contractInfo.setEnterpriseCIF(r.get(ENTERPRISE_REGISTRY.DOCUMENT));
+			
+			Result<Record> contractTypeRecords = dslContext.select().from(CONTRACT_DATA)
+				.where(CONTRACT_DATA.CONTRACT.eq(r.get(CONTRACT.ID)))
+				.and(CONTRACT_DATA.NAME.eq("TC2"))
+				.and(CONTRACT_DATA.START_DATE.le(today))
+				.and(CONTRACT_DATA.END_DATE.ge(today).or(CONTRACT_DATA.END_DATE.isNull()))
+				.orderBy(CONTRACT_DATA.START_DATE.desc())
+				.fetch();
+			
+			if(!contractTypeRecords.isEmpty())
+				contractInfo.setContractType(contractTypeRecords.getFirst().get(CONTRACT_DATA.EXPRESSION));
+			
 			
 			Optional.ofNullable(r.get(ENTERPRISE_CCC.ID))
 			.ifPresent( contractInfo::setCccId);

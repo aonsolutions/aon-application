@@ -119,15 +119,15 @@ export class AonBankCard extends AonElement {
         leftContent.style.flexDirection = "column";
 
         let description = this.createElement(TAG.SPAN);
-        description.style.fontSize = banks.length > 4 ? "1rem" : "1.2rem";
-        description.style.color = "rgb(0, 36, 105)";
+        description.style.fontSize = "1rem";
+        description.style.color = "var(--aonAccounting)";
         description.style.fontWeight = "500";
         description.innerHTML = bank.alias;
         leftContent.appendChild(description);
 
         let date = this.createElement(TAG.SPAN);
-        date.style.color = "rgb(120, 120, 133)";
-        date.style.fontSize = banks.length > 4 ? ".7rem" : ".8rem";
+        date.classList.add("aonBankCardDate");
+        date.style.fontSize = ".7rem";
         date.innerHTML = this.formatDateShort(bank.balanceDate);
         date.title = this.formatDate(bank.balanceDate);
         leftContent.appendChild(date);
@@ -169,7 +169,7 @@ export class AonBankCard extends AonElement {
 
         let description = this.createElement(TAG.SPAN);
         description.style.fontSize = "1rem";
-        description.style.color = "rgb(0, 36, 105)";
+        description.style.color = "var(--aonAccounting)";
         description.style.fontWeight = "500";
         description.innerHTML = "Otros";
         leftContent.appendChild(description);

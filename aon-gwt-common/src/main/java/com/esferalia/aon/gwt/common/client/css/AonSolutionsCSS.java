@@ -859,6 +859,12 @@ public interface AonSolutionsCSS extends CssResource {
 	@ClassName("aon_item_flex")
 	String aonItemFlex();
 	
+	@ClassName("aon_custom_table_header")
+	String aonCustomTableHeader();
+	
+	@ClassName("aon_custom_table_cell_header")
+	String aonCustomTableCellHeader();
+	
 	@ClassName("aon_utility_option")
 	String aonUtilityOption();
 	
@@ -876,6 +882,9 @@ public interface AonSolutionsCSS extends CssResource {
 	
 	@ClassName("aon_custom_text_box")
 	String aonCustomTextBox();
+	
+	@ClassName("aon_custom_text_box_no_border")
+	String aonCustomTextBoxNoBorder();
 	
 	@ClassName("aon_custom_text_box_title")
 	String aonCustomTextBoxTitle();

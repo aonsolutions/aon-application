@@ -21,6 +21,7 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Label;
@@ -67,6 +68,9 @@ public abstract class PayrollEmailDialog extends AonCustomDialog {
 	
 	@UiField
 	TextBox cco;
+	
+	@UiField
+	CheckBox passwordCheck;
 	
 	@UiField
 	HTMLPanel textAreaPanel;
@@ -128,6 +132,16 @@ public abstract class PayrollEmailDialog extends AonCustomDialog {
 				sendToMessage.setVisible(false);
 				sendToEnterpriseManagmentMessage.setVisible(false);
 				messageVariablesPanel.setVisible(false);
+				passwordCheck.addValueChangeHandler(e -> impl.getPayrollEmailBody(type, params, passwordCheck.getValue(), new AsyncCallback<String>() {
+
+					@Override
+					public void onFailure(Throwable caught) { }
+
+					@Override
+					public void onSuccess(String emailBody) {
+						richTextArea.setHTML(emailBody);
+					}
+				}));
 				loadInfo(type, params);
 				break;
 			case ENTERPRISE_MANAGEMENT:
@@ -150,6 +164,16 @@ public abstract class PayrollEmailDialog extends AonCustomDialog {
 							dialog.warning();
 							return;
 						}
+						passwordCheck.addValueChangeHandler(e -> impl.getPayrollEmailBody(type, params, passwordCheck.getValue(), new AsyncCallback<String>() {
+
+							@Override
+							public void onFailure(Throwable caught) { }
+
+							@Override
+							public void onSuccess(String emailBody) {
+								richTextArea.setHTML(emailBody);
+							}
+						}));
 						loadInfo(type, params);
 					}
 					
@@ -189,7 +213,7 @@ public abstract class PayrollEmailDialog extends AonCustomDialog {
 					public void onSuccess(String sendToEmail) {
 						sendTo.setText(sendToEmail);
 						
-						impl.getPayrollEmailBody(type, params, new AsyncCallback<String>() {
+						impl.getPayrollEmailBody(type, params, passwordCheck.getValue(), new AsyncCallback<String>() {
 
 							@Override
 							public void onFailure(Throwable caught) { }
@@ -257,6 +281,10 @@ public abstract class PayrollEmailDialog extends AonCustomDialog {
 	
 	public String getBody() {
 		return this.richTextArea.getHTML();
+	}
+	
+	public boolean isPassword() {
+		return this.passwordCheck.getValue();
 	}
 	
 	// ------------------------------------------------------- Buttons panel

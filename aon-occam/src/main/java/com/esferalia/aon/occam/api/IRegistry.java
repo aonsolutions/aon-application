@@ -222,6 +222,7 @@ public interface IRegistry {
 	public Stream<RegistryBank> getRegistryBankStream(AONContext ctx, RegistryBankFilter filter);
 	public RegistryBank saveRegistryBank(AONContext ctx, RegistryBank rbank);
 	public void deleteRegistryBank(AONContext ctx, Integer id);
+	public boolean compareBalanceDate(AONContext ctx, Integer variable);
 	
 	// ------------------- RPAYMETHOD
 	public RegistryPayMethod getRegistryPayMethod(AONContext ctx, RegistryPayMethodFilter filter, Options...options);

@@ -10,6 +10,7 @@ import java.util.stream.Collectors;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import com.code.aon.product.enumeration.ProductStatus;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AON_SOLUTIONS;
 import com.esferalia.aon.occam.api.json.CustomerJSON;
@@ -368,7 +369,7 @@ public class ProductServlet extends AonApiHttpServlet {
 	
 	private long getProductsCount(AonApiData api) {
 		return AON_SOLUTIONS.getProductCount(api.getDomain().getName(), api.getDomain().getId(),api.getUser().getLogin(), f -> newProductFilter(api, f));
-	}
+	} 
 	
 	
 	private Filter newProductFilter(AonApiData api, ProductProperties f) {
@@ -390,6 +391,9 @@ public class ProductServlet extends AonApiHttpServlet {
 		if(!AonStringUtils.isEmpty(api.getData().optString("kind"))) {
 			filter = filter.and(f.getKindProperty().eq(ProductKind.safeValueOf(api.getData().optString("kind")).value())
 					.or(f.getKindProperty().eq(ProductKind.SALE_PURCHASE.value())));
+		}
+		if(!AonStringUtils.isEmpty(api.getData().optString(IJsonNames.STATUS))) {
+			filter = filter.and(f.getStatusProperty().eq((byte)ProductStatus.valueOf(api.getData().optString(IJsonNames.STATUS)).ordinal()));
 		}
 		return filter;
 	}
@@ -440,6 +444,10 @@ public class ProductServlet extends AonApiHttpServlet {
 		if(api.getData().opt(IJsonNames.TYPE) !=null) {
 			ProductType type = ProductType.safeValueOf(JsonUtils.getString(api.getData(), IJsonNames.TYPE));
 			filter = filter.and(f.getTypeProperty().eq(type.value()));
+		}
+		
+		if(api.getData().opt(IJsonNames.ID) != null) {
+			filter = filter.and(f.getIdProperty().eq(api.getData().optInt(IJsonNames.ID)));
 		}
 		
 		return filter;

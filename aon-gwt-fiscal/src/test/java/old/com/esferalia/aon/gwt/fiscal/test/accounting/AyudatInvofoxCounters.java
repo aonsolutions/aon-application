@@ -90,6 +90,7 @@ public class AyudatInvofoxCounters {
 		;
 	}
 	private static class Invofox {
+		private String companyId;
 		private String name;
 		private String document;
 		private double pendingCorrection;
@@ -100,6 +101,22 @@ public class AyudatInvofoxCounters {
 		private double exported;
 		private double error;
 		private double total;
+		
+		private double processed;	
+		private double automated;
+		private double clientDiscarded;	
+		private double duplicated;
+		private double usedClassifier;	
+		private double usedSplitter;
+
+		
+		public String getCompanyId() {
+			return companyId;
+		}
+		public Invofox setCompanyId(String companyId) {
+			this.companyId = companyId;
+			return this;
+		}
 		public String getName() {
 			return name;
 		}
@@ -178,6 +195,49 @@ public class AyudatInvofoxCounters {
 			this.total = total;
 			return this;
 		}
+		public double getProcessed() {
+			return processed;
+		}
+		public Invofox setProcessed(double processed) {
+			this.processed = processed;
+			return this;
+		}
+		public double getAutomated() {
+			return automated;
+		}
+		public Invofox setAutomated(double automated) {
+			this.automated = automated;
+			return this;
+		}
+		public double getClientDiscarded() {
+			return clientDiscarded;
+		}
+		public Invofox setClientDiscarded(double clientDiscarded) {
+			this.clientDiscarded = clientDiscarded;
+			return this;
+		}
+		public double getDuplicated() {
+			return duplicated;
+		}
+		public Invofox setDuplicated(double duplicated) {
+			this.duplicated = duplicated;
+			return this;
+		}
+		public double getUsedClassifier() {
+			return usedClassifier;
+		}
+		public Invofox setUsedClassifier(double usedClassifier) {
+			this.usedClassifier = usedClassifier;
+			return this;
+		}
+		public double getUsedSplitter() {
+			return usedSplitter;
+		}
+		public Invofox setUsedSplitter(double usedSplitter) {
+			this.usedSplitter = usedSplitter;
+			return this;
+		}
+	
 		
 	}
 	
@@ -297,44 +357,59 @@ public class AyudatInvofoxCounters {
 	}
 	
 	private static void readExcel() throws FileNotFoundException, IOException {
-		FileOutputStream fos = new FileOutputStream( "/home/ecastellano/TRABAJO/INVOFOX/USAGE/June_2024.xlsx" );
+		FileOutputStream fos = new FileOutputStream( "/home/ecastellano/TRABAJO/INVOFOX/USAGE/August 2024.xlsx" );
 		ExcelAction action = new ExcelAction( );
 		action.initialize("USAGE");
-		String f = "/home/ecastellano/TRABAJO/INVOFOX/USAGE/INVOFOX_usage_june_2024.xlsx";
+		String f = "/home/ecastellano/TRABAJO/INVOFOX/USAGE/AonDocsPerCompany.xlsx";
 		try (FileInputStream fis = new FileInputStream(f)) {
 			try (XSSFWorkbook workbook = new XSSFWorkbook(fis)){
-				XSSFSheet sheet = workbook.getSheetAt(0);
+				XSSFSheet sheet = workbook.getSheetAt(1);
 				Iterator<Row> rowIterator = sheet.iterator();
 				int line = 0;
 				while (rowIterator.hasNext()) {
+					System.out.print("Line ..: " + line);
 					Row row =  rowIterator.next();
-					if (line > 2) {
-						Invofox invofox = new Invofox()
-							.setName( row.getCell( 0 ).getStringCellValue())
-							.setDocument(row.getCell( 1 ).getStringCellValue())
-							.setPendingCorrection(row.getCell( 2 ).getNumericCellValue())
-							.setPendingDecission(row.getCell( 3 ).getNumericCellValue())
-							.setApproved(row.getCell( 4 ).getNumericCellValue())
-							.setRejected(row.getCell( 5 ).getNumericCellValue())
-							.setDiscarded(row.getCell( 6 ).getNumericCellValue())
-							.setExported(row.getCell( 7 ).getNumericCellValue())
-							.setError(row.getCell( 8 ).getNumericCellValue())
-							.setTotal(row.getCell( 9 ).getNumericCellValue())
-							;	
-						
-						boolean exists = domains.stream()
-							.filter( d -> AonStringUtils.equalsIgnoreCase(invofox.getDocument(), d.getDocument() ))
-							.findAny()
-							.isPresent();
-						
-						if (!exists) {
-							System.out.println( invofox.getDocument() );
-						}
-						domains.stream()
+					if (line > 0) {
+						String document = row.getCell( 2, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK ).getStringCellValue();
+						if (AonStringUtils.isNotBlank( document )) {
+							Invofox invofox = new Invofox()
+									.setCompanyId( row.getCell( 0 , Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getStringCellValue())
+									.setName( row.getCell( 1, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK ).getStringCellValue())
+									.setDocument(document)
+									
+//							.setPendingCorrection(row.getCell( 3 ).getNumericCellValue())
+//							.setPendingDecission(row.getCell( 4 ).getNumericCellValue())
+//							.setApproved(row.getCell( 5 ).getNumericCellValue())
+//							.setRejected(row.getCell( 6 ).getNumericCellValue())
+//							.setDiscarded(row.getCell( 7 ).getNumericCellValue())
+//							.setExported(row.getCell( 8 ).getNumericCellValue())
+//							.setError(row.getCell( 9 ).getNumericCellValue())
+//							.setTotal(row.getCell( 10 ).getNumericCellValue())
+									
+									.setProcessed( row.getCell( 3 ).getNumericCellValue() )	
+									.setAutomated(row.getCell( 4 ).getNumericCellValue()) 	
+									.setClientDiscarded(row.getCell( 5 ).getNumericCellValue())	
+									.setDuplicated(row.getCell( 6 ).getNumericCellValue())	
+									.setUsedClassifier(row.getCell( 7 ).getNumericCellValue())	
+									.setUsedSplitter(row.getCell( 8 ).getNumericCellValue())
+									
+									;	
+							
+							boolean exists = domains.stream()
+									.filter( d -> AonStringUtils.equalsIgnoreCase(invofox.getDocument(), d.getDocument() ))
+									.findAny()
+									.isPresent();
+							
+							if (!exists) {
+								System.out.println( invofox.getDocument() );
+							}
+							domains.stream()
 							.filter( d -> AonStringUtils.equalsIgnoreCase(invofox.getDocument(), d.getDocument() ))
 							.forEach( d -> action.accept(d, invofox ))
-						;
+							;
+						}
 					}
+					System.out.println();
 					line++;
 				}
 			}
@@ -393,14 +468,12 @@ public class AyudatInvofoxCounters {
 			String[] columns = new String[] {
 				"Company Name"
 				,"TaxId"						
-				,"Pending Correction"
-				,"Pending Decission"
-				,"Approved"
-				,"Rejected"
-				,"Discarded"
-				,"Exported"
-				,"Error"	
-				,"Total"
+				,"Processed"
+				,"Automated"
+				,"ClientDiscarded"	
+				,"Duplicated"
+				,"UsedClassifier"	
+				,"UsedSplitter"
 				,"BD"
 				,"COMPANY ID"
 				,"COMPANY NIF"
@@ -415,6 +488,7 @@ public class AyudatInvofoxCounters {
 				,"PARENT aonCustomer"
 			};
 			
+						
 			for (String c : columns) {
 				CellUtil.createCell(row, cellCount, c, headerStyle);
 				sheet.setDefaultColumnStyle(cellCount, defaultStyle);
@@ -427,14 +501,13 @@ public class AyudatInvofoxCounters {
 			cellCount = 0;
 			addCell(invofox.getName());
 			addCell(invofox.getDocument());
-			addCell(invofox.getPendingCorrection());
-			addCell(invofox.getPendingDecission());
-			addCell(invofox.getApproved());
-			addCell(invofox.getRejected());
-			addCell(invofox.getDiscarded());
-			addCell(invofox.getExported());
-			addCell(invofox.getError());
-			addCell(invofox.getTotal());
+			
+			addCell(invofox.getProcessed());
+			addCell(invofox.getAutomated());
+			addCell(invofox.getClientDiscarded());	
+			addCell(invofox.getDuplicated());
+			addCell(invofox.getUsedClassifier());	
+			addCell(invofox.getUsedSplitter());
 			
 			addCell(domain.getSchema());
 			addCell(domain.getRegistry());

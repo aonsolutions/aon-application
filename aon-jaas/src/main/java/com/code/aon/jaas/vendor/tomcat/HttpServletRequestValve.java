@@ -15,6 +15,7 @@ import org.apache.catalina.valves.ValveBase;
 
 public class HttpServletRequestValve extends ValveBase {
 
+	private static final String DOMAIN_PROPERTY = "com.code.aon.jaas.domain";
 	private static final String SESSION_PROPERTY = "com.code.aon.jaas.session";
 	
 	/** ThreadLocal to save the HttpServletRequest. */
@@ -88,4 +89,8 @@ public class HttpServletRequestValve extends ValveBase {
 		return IDN.toUnicode(getHttpServletRequest().getServerName());
 	}
 	
+	public static String getDomainName() {
+		String domainName = getHttpServletRequest().getParameter(DOMAIN_PROPERTY);
+		return domainName != null ? domainName : getServerName();
+	}
 }

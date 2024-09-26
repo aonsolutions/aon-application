@@ -16,6 +16,7 @@ import { SigninSidenav } from "../timecontrol/signinEnums.js";
 import * as GWT from "../../gwt/gwt.js";
 import { RETENTION_PANEL, VAT_PANEL } from "./FiscalOptions.js";
 import * as LS from "../../services/localStorageService.js";
+import { AonFutureTax } from "./tax/aon-future-tax.js";
 
 export class AonFiscal extends AonElement {
   AON_FISCAL;
@@ -23,8 +24,15 @@ export class AonFiscal extends AonElement {
   BANKS = [];
   dur;
   _filter;
-  constructor() {
+
+  firstTime = false;
+
+  constructor(filter) {
     super();
+    if(filter){
+      this.firstTime = true;
+      this._filter = filter;
+    }
   }
 
   connectedCallback() {
@@ -37,11 +45,13 @@ export class AonFiscal extends AonElement {
 
   initialize() {
     this.AON_FISCAL = FISCAL_VIEWS.AON_FISCAL;
-    this._filter = {
-      year: undefined,
-      period: undefined,
-      model: undefined,
-    };
+    if(!this._filter){
+      this._filter = {
+        year: undefined,
+        period: undefined,
+        model: undefined,
+      };
+    }
   }
 
   getDur() {
@@ -70,7 +80,6 @@ export class AonFiscal extends AonElement {
       application.addMobileSidenavHeader(FISCAL);
     } else {
       if (!LS.isNewTheme()) {
-        console.log("buildToolbaroldtheme");
         application.addToolbarOption2(VAT_PANEL, () => {
           application.closeSidenav();
           this.showView(FISCAL_VIEWS.VAT_PANEL);
@@ -86,7 +95,7 @@ export class AonFiscal extends AonElement {
 
     this.getModelsFiscal().then(async (mdls) => {
       let firstYear = this.getFirstYear(mdls);
-      if (firstYear) {
+      if (firstYear && !this._filter.year) {
         this._filter.year = firstYear;
       }
 
@@ -98,6 +107,7 @@ export class AonFiscal extends AonElement {
         clickable: true,
         fn: () => {
           this._filter.year = year;
+          this._filter.estimationFilter = undefined;
           this.addBackgroundSidenav();
 
           this.checkAviablePeriodsForYear();
@@ -117,19 +127,22 @@ export class AonFiscal extends AonElement {
 
       application.addSelectSidenav(data);
 
-
       // Show aviable periods for default year
       await this.checkAviablePeriodsForYear();
 
+      console.log("getModelsNoRepeat");
+      console.log(this.getModelsNoRepeat(mdls));
+      
       let models = this.getModelsNoRepeat(mdls).map((model) => ({
         ...FiscalOptions.AON_TAX,
-        id: model.model,
+        id: FiscalUtils.getModelNumber(model.administration, model.model),
         icon: undefined,
-        img: FiscalUtils.getPathImg(model.administration),
-        name: model.modelText,
+        // img: FiscalUtils.getPathImg(model.administration),
+        html: FiscalUtils.getModelNumberHtml(model.administration, model.model),
+        name: model.modelText === "IRPF Trabajo y Profesionales" ? "IRPF Trabajo/Profesionales" : model.modelText,
         fn: () => {
-          this._filter.model =
-            this._filter.model === model.model ? undefined : model.model;
+          this._filter.model = this._filter.model === FiscalUtils.getModelNumber(model.administration, model.model) ? undefined : FiscalUtils.getModelNumber(model.administration, model.model);
+          this._filter.estimationFilter = undefined;
           this.addBackgroundSidenav();
           this.showView(FISCAL_VIEWS.AON_TAX);
         },
@@ -144,26 +157,53 @@ export class AonFiscal extends AonElement {
       };
       application.addSidenavOptions3(data3);
 
-      RETENTION_PANEL.fn = () => {
-        application.closeSidenav();
-        this.showView(FISCAL_VIEWS.IRPF_REPORT);
-      };
+      // RETENTION_PANEL.fn = () => {
+      //   application.closeSidenav();
+      //   this.showView(FISCAL_VIEWS.IRPF_REPORT);
+      // };
 
-      VAT_PANEL.fn = () => {
-        application.closeSidenav();
-        this.showView(FISCAL_VIEWS.VAT_PANEL);
-      };
+      // VAT_PANEL.fn = () => {
+      //   application.closeSidenav();
+      //   this.showView(FISCAL_VIEWS.VAT_PANEL);
+      // };
+
+      let futurePeriod = await this.filterFutureFiscal();
+
       let data4 = {
         id: "panels",
-        title: "Paneles",
-        name: "Paneles",
+        title: "Precálculo",
+        name: "Precálculo",
         app: FISCAL,
-        options: [VAT_PANEL, RETENTION_PANEL],
+        options: [futurePeriod],
+        // options: [VAT_PANEL, RETENTION_PANEL],
       };
 
       application.addSidenavOptions3(data4);
 
       this.showView(FISCAL_VIEWS.AON_TAX);
+
+      if(this.firstTime){
+        this.firstTime = false;
+
+        if(this._filter.future){
+          this._filter.period = undefined;
+          let aonFiscalSidenavEjercicioSelect = this.getElement("aonFiscalSidenavEjercicioSelect");
+          aonFiscalSidenavEjercicioSelect.value = '"Todos"';
+
+          let futureButton = this.getElement("aonFiscalSidenavFuture");
+          futureButton.click();
+        } else {
+
+          console.log("fistTime");
+          console.log(this._filter);
+
+          let aonFiscalSidenavModeloSelect = this.getElement("aonFiscalSidenavPeriodoSelect");
+          aonFiscalSidenavModeloSelect.value = this._filter.year;
+  
+          let aonFiscalSidenavEjercicioSelect = this.getElement("aonFiscalSidenavEjercicioSelect");
+          aonFiscalSidenavEjercicioSelect.value = this._filter.period ? '"' + this._filter.period + '"' : '"Todos"'; 
+        }
+      }
 
     });
   }
@@ -172,10 +212,11 @@ export class AonFiscal extends AonElement {
     if (!this.MODELS.length) {
       try {
         const datos = await getModelsFiscal();
+
         if (datos) {
           this.MODELS = sortBy(datos, "year", "desc")
             .sort((a, b) => a.period.localeCompare(b.period))
-            .filter(({ status }) => status !== "PENDING")
+            // .filter(({ status }) => status !== "PENDING")
             .map((model) => FiscalUtils.getModelNew(model));
         }
       } catch (error) {
@@ -210,7 +251,7 @@ export class AonFiscal extends AonElement {
 
   getModelsNoRepeat(models) {
     return models.filter(
-      (v, i) => models.findIndex((v2) => v2.model === v.model) === i
+      (v, i) => models.findIndex((v2) => v2.model === v.model && v2.administration === v.administration) === i
     );
   }
 
@@ -247,9 +288,11 @@ export class AonFiscal extends AonElement {
           id: period,
           icon: MATERIAL_ICONS.EVENT,
           name: TAX_ENUMS.TAX_PERIOD[period],
+          value: period,
           clickable: true,
           fn: () => {
             this._filter.period = period;
+            this._filter.estimationFilter = undefined;
             this.addBackgroundSidenav();
             this.showView(FISCAL_VIEWS.AON_TAX);
           },
@@ -263,16 +306,17 @@ export class AonFiscal extends AonElement {
         id: "Todos",
         fn: () => {
           this._filter.period = undefined;
+          this._filter.estimationFilter = undefined;
           this.addBackgroundSidenav();
           this.showView(FISCAL_VIEWS.AON_TAX);
         },
       };
       periods.unshift(allPeriod);
 
-      if (this._filter.year == new Date().getFullYear()) {
-        let futurePeriod = await this.filterFutureFiscal();
-        periods.push(futurePeriod);
-      }
+      // if (this._filter.year == new Date().getFullYear()) {
+      //   let futurePeriod = await this.filterFutureFiscal();
+      //   periods.push(futurePeriod);
+      // }
 
       let data2 = {
         parent: "Periodo",
@@ -301,35 +345,43 @@ export class AonFiscal extends AonElement {
 
     if (result[0].period == "T1") {
       period = "T2";
-      periodText = "2º Trim.";
+      periodText = "2º Trim. " + result[0].year;
       year = result[0].year;
       lastPeriod = new Date(result[0].year + "-" + "03-31");
     } else if (result[0].period == "T2") {
       period = "T3";
-      periodText = "3º Trim.";
+      periodText = "3º Trim. " + result[0].year;
       year = result[0].year;
       lastPeriod = new Date(result[0].year + "-" + "06-30");
     } else if (result[0].period == "T3") {
       period = "T4";
-      periodText = "4º Trim.";
+      periodText = "4º Trim. " + result[0].year;
       year = result[0].year;
       lastPeriod = new Date(result[0].year + "-" + "09-30");
     } else {
       period = "T1";
-      periodText = "1º Trim.";
+      periodText = "1º Trim. " + (result[0].year + 1);
       year = result[0].year + 1;
       lastPeriod = new Date(result[0].year + "-" + "12-31");
     }
 
     let futurePeriod = {
-      name: "Borrador " + periodText,
+      name: periodText,
       icon: MATERIAL_ICONS.EVENT,
       clickable: true,
-      id: "Borrador" + periodText,
+      id: "Future",
       fn: () => {
-        this._filter.period = "future";
-        this._filter.estimationFilter = {year: year, period: period, title: "Borrador " + periodText, periodText: periodText};
-        this.showView(FISCAL_VIEWS.AON_TAX);
+        if(this._filter.estimationFilter){
+          this._filter.estimationFilter = undefined;
+          this.addBackgroundSidenav();
+          this.showView(FISCAL_VIEWS.AON_TAX);
+        } else {
+          this._filter.estimationFilter = {year: year, period: period, title: periodText, periodText: periodText};
+          this._filter.model = undefined;
+          this.showView(FISCAL_VIEWS.AON_FUTURE_TAX);
+        }
+        // this._filter.estimationFilter = {year: year, period: period, title: periodText, periodText: periodText};
+        
       },
     };
 
@@ -384,6 +436,9 @@ export class AonFiscal extends AonElement {
       switch (view) {
         case FISCAL_VIEWS.AON_TAX:
           aonView = new AonTax();
+          break;
+        case FISCAL_VIEWS.AON_FUTURE_TAX:
+          aonView = new AonFutureTax(FISCAL, this._filter.estimationFilter);
           break;
         case FISCAL_VIEWS.VAT_PANEL:
           GWT.load(GWT.VAT_REPORT, this.applicationEl.CONTENT);

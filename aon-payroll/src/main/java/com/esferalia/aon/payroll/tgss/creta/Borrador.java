@@ -128,12 +128,18 @@ public class Borrador {
 				.toString(Calendar.getInstance().get(Calendar.YEAR));
 		String hastaMes = Integer
 				.toString(Calendar.getInstance().get(Calendar.MONTH) + 1);
+		String controlAnho = Integer
+				.toString(Calendar.getInstance().get(Calendar.YEAR));
+		String controlMes = Integer
+				.toString(Calendar.getInstance().get(Calendar.MONTH) + 1);
 
 		//@formatter:off
 		Option fromYear =  getFromYearOption(desdeAnho);
 		Option fromMonth =  getFromMonthOption(desdeMes);
 		Option toYear =  getToYearOption(hastaAnho);
 		Option toMonth =  getToMonthOption(hastaMes);
+		Option ctrlYear =  getToYearOption(hastaAnho);
+		Option ctrlMonth =  getToMonthOption(hastaMes);
 		Option ccc =  getCCCOption();
 		Option authorized =  getAuthorizedOption();
 		Option type =  getTypeOption(tipo);
@@ -165,6 +171,8 @@ public class Borrador {
 			desdeAnho = cmd.getOptionValue(fromYear.getLongOpt(), desdeAnho);
 			hastaMes = cmd.getOptionValue(toMonth.getLongOpt(), hastaMes);
 			hastaAnho = cmd.getOptionValue(toYear.getLongOpt(), hastaAnho);
+			controlMes = cmd.getOptionValue(ctrlMonth.getLongOpt(), hastaMes);
+			controlAnho = cmd.getOptionValue(ctrlYear.getLongOpt(), hastaAnho);
 			tipo = cmd.getOptionValue(type.getLongOpt(), tipo);
 			String cccs[] = cmd.getOptionValues(ccc.getLongOpt());
 			String autorizado = cmd.getOptionValue(authorized.getLongOpt());
@@ -174,7 +182,7 @@ public class Borrador {
 			boolean solicitudRecepcionRNT = !cmd
 					.hasOption(skipPrevBases.getLongOpt());
 
-			generate(autorizado, desdeMes, desdeAnho, hastaMes, hastaAnho, tipo, aceptarBasesAnteriores, solicitudRecepcionRNT, cccs,
+			generate(autorizado, desdeMes, desdeAnho, hastaMes, hastaAnho, controlMes, controlAnho, tipo, aceptarBasesAnteriores, solicitudRecepcionRNT, cccs,
 					System.out);
 
 		} catch (ParseException e) {
@@ -188,8 +196,10 @@ public class Borrador {
 
 	}
 
-	public static void generate(String autorizado, String desdeMes, String desdeAnho,
+	public static void generate(String autorizado, 
+			String desdeMes, String desdeAnho,
 			String hastaMes, String hastaAnho,
+			String controlMes, String controlAnho,
 			String tipo, boolean aceptarBasesAnteriores, boolean solicitudRecepcionRNT, String cccs[],
 			OutputStream os) throws JAXBException {
 
@@ -198,12 +208,14 @@ public class Borrador {
 		int fromYear = Integer.parseInt(desdeAnho);
 		Month toMonth = Month.of(Integer.parseInt(hastaMes));
 		int toYear = Integer.parseInt(hastaAnho);
+		Month ctrlMonth = Month.of(Integer.parseInt(controlMes));
+		int ctrlYear = Integer.parseInt(controlAnho);
 
-		generate(authorized, fromMonth, fromYear, toMonth, toYear,tipo, aceptarBasesAnteriores, solicitudRecepcionRNT, cccs, os);
+		generate(authorized, fromMonth, fromYear, toMonth, toYear,ctrlMonth, ctrlYear, tipo, aceptarBasesAnteriores, solicitudRecepcionRNT, cccs, os);
 	}
 
 	public static void generate(int autorizado, Month desdeMes, int desdeAnho, Month hastaMes, int hastaAnho,
-			String tipo, boolean aceptarBasesAnteriores, boolean solicitudRecepcionRNT, String cccs[],
+			Month controlMes, int controlAnho, String tipo, boolean aceptarBasesAnteriores, boolean solicitudRecepcionRNT, String cccs[],
 			OutputStream os) throws JAXBException {
 
 		SolicitudBorradorBuilder builder = new SolicitudBorradorBuilder()
@@ -220,6 +232,8 @@ public class Borrador {
 			.setAnhoDesde(desdeAnho)
 			.setMesHasta(hastaMes)
 			.setAnhoHasta(hastaAnho)
+			.setMesControl(controlMes)
+			.setAnhoControl(controlAnho)
 			.addLiquidacion()
 			;
 		}

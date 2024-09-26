@@ -18,6 +18,7 @@ import com.esferalia.aon.occam.api.json.JsonUtils;
 import com.esferalia.aon.occam.api.json.WorkplaceJSON;
 import com.esferalia.aon.occam.api.model.AuxSalaryInfo;
 import com.esferalia.aon.occam.api.model.ContractExtendedData;
+import com.esferalia.aon.occam.api.model.EnterpriseActivity;
 import com.esferalia.aon.occam.api.model.Filter;
 import com.esferalia.aon.occam.api.model.IJsonNames;
 import com.esferalia.aon.occam.api.model.Properties.ContractExtendedDataProperties;
@@ -70,7 +71,6 @@ public class ContractServlet extends AonApiHttpServlet {
 				.addRoute(WORKPLACE,ContractServlet::getWorkplaceList)
 				.addRoute(CCC, ContractServlet::getCccList)
 				.apply();
-			
 			response(req, resp, object);
 		} catch (Exception e) {
 			error(req, resp, e);
@@ -97,13 +97,42 @@ public class ContractServlet extends AonApiHttpServlet {
 				api.getUser().getLogin(), 
 				f -> f.getDomainProperty().eq(api.getDomain().getId())
 				).forEach(e -> {
+					EnterpriseActivity act = AON.getEnterpriseActivity(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), e.getEnterpriseActivity());
 					JSONObject json = new JSONObject();
 					json.put(IJsonNames.ID, e.getId());
 					json.put(IJsonNames.CODE, e.getCcc());
 					json.put(IJsonNames.DESCRIPTION, CCCType.values()[e.getType()]);
+					json.put(IJsonNames.ACTIVITY, act.getDescription());
+					json.put(IJsonNames.REGIME, getCCCRegimeCode(e.getType()));
+					json.put("geozone", e.getGeozoneDescription());
 					array.put(json);
 				});
 		return array;
+	}
+	
+	private static String getCCCRegimeCode(Byte cccRegime) {
+		switch (cccRegime) {
+		case 0:
+			return "0111";
+		case 1:
+			return "0111";
+		case 2:
+			return "0111";
+		case 3:
+			return "0111";
+		case 4:
+			return "0111";
+		case 5:
+			return "0111";
+		case 6:
+			return "0138";
+		case 7:
+			return "0163";
+		case 8:
+			return "0112";
+		default:
+			return "0111";
+		}
 	}
 	
 	private static JSONArray getContractList(AonApiData api) {

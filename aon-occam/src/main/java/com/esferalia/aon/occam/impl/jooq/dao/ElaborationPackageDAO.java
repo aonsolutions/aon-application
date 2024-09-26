@@ -2,7 +2,6 @@ package com.esferalia.aon.occam.impl.jooq.dao;
 
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.ElaborationDetail;
-import com.esferalia.aon.occam.api.model.ElaborationDetailComposition;
 import com.esferalia.aon.occam.api.model.ElaborationDetailType;
 import com.esferalia.aon.occam.api.model.warehouse.Stock;
 import com.esferalia.aon.occam.impl.jooq.validation.ElaborationPackageValidation;
@@ -46,14 +45,18 @@ public class ElaborationPackageDAO {
 		ElaborationDetailDAO.delete(ctx, id);
 		
 		ItemCompositionDAO.delete(ctx, f -> f.getItemProperty().eq(elaborationPackage.getItem().getId()));
+
+		Stock packageStock = WarehouseDAO.getStock(ctx, f -> f.getItemProperty().eq(elaborationPackage.getItem().getId()));
+		WarehouseDAO.deleteStock(ctx, packageStock.getId());
 		
 		ItemDAO.delete(ctx, elaborationPackage.getItem().getId());
 		
 		elaborationPackage.getComposition().stream().forEach(composition -> {
 			//UPDATE STOCK. Subtrack removed quantity.
-			Stock stock = WarehouseDAO.getStock(ctx, f-> f.getItemProperty().eq(elaborationPackage.getItem().getId())
+			Stock stock = WarehouseDAO.getStock(ctx, f-> 
+					f.getItemProperty().eq(composition.getItem().getId())
 					.and(f.getWarehouseProperty().eq(elaborationPackage.getWarehouse().getId())));
-			if(stock != null) {
+			if(stock != null && stock.getId() != null) {
 				stock.setQuantity(stock.getQuantity() - composition.getQuantity());
 				WarehouseDAO.saveStock(ctx, stock);
 			}

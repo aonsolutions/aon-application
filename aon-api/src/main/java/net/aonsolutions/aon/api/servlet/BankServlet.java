@@ -1,26 +1,37 @@
 package net.aonsolutions.aon.api.servlet;
 
-import java.util.ArrayList;
+import java.io.IOException;
 import java.util.Date;
 import java.util.List;
-import java.util.logging.Logger;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
+import com.esferalia.aon.occam.api.json.AccountJSON;
+import com.esferalia.aon.occam.api.json.JsonUtils;
 import com.esferalia.aon.occam.api.json.RegistryBankJSON;
-import com.esferalia.aon.occam.api.json.nordigen.NordigenAccountBalanceJSON;
+import com.esferalia.aon.occam.api.model.Account;
+import com.esferalia.aon.occam.api.model.Company;
+import com.esferalia.aon.occam.api.model.Filter;
+import com.esferalia.aon.occam.api.model.IJsonNames;
+import com.esferalia.aon.occam.api.model.Properties.NordigenBankStatementProperties;
 import com.esferalia.aon.occam.api.model.Occam;
+import com.esferalia.aon.occam.api.model.finance.BankAccount;
 import com.esferalia.aon.occam.api.model.finance.nordigen.NordigenAccessToken;
-import com.esferalia.aon.occam.api.model.finance.nordigen.NordigenAccountBalance;
 import com.esferalia.aon.occam.api.model.finance.nordigen.NordigenBankAccount;
-import com.esferalia.aon.occam.api.model.finance.nordigen.NordigenBankStatement;
 import com.esferalia.aon.occam.api.model.finance.nordigen.NordigenConfiguration;
 import com.esferalia.aon.occam.api.model.finance.nordigen.NordigenInstitution;
-import com.esferalia.aon.occam.api.model.finance.nordigen.NordigenRequisition;
+import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.registry.RegistryBank;
+import com.esferalia.aon.occam.api.model.type.StatementStatus;
+import com.esferalia.aon.occam.impl.jooq.dao.RegistryBankDAO.RegistryBankFiller;
+import com.esferalia.aon.watson.util.AonStringUtils;
 
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -29,56 +40,70 @@ import net.aonsolutions.aon.api.error.AonApiError;
 import net.aonsolutions.aon.api.error.AonApiException;
 import net.aonsolutions.aon.api.ewok.AonApiData;
 import net.aonsolutions.aon.bank.nordigen.AonNordigen;
+import net.aonsolutions.aon.bank.nordigen.NordigenUtils;
 
 @SuppressWarnings("serial")
 @WebServlet(name = "BankServlet", urlPatterns = { "/ms/api/bank/*" })
 public class BankServlet extends AonApiHttpServlet {
 
 	private static final Logger LOGGER = Logger.getLogger(BankServlet.class.getName());
+
 	private static Occam occam = new Occam();
 
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) {
-		LOGGER.info("AON API NORDIGEN BANK SERVLET - GET METHOD");
-		get(req, resp);
+		String iban = req.getParameter("iban");
+		try {
+			get(req, resp);
+		} catch (Exception e) {
+			LOGGER.log(Level.SEVERE, "Error occurred during GET request processing. IBAN: " + iban, e);
+			resp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+
+			try {
+				resp.getWriter().write("An unexpected error occurred while processing your request.");
+			} catch (IOException ioException) {
+				LOGGER.log(Level.SEVERE, "Error writing error response", ioException);
+			}
+		}
 	}
 
 	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp) {
 		LOGGER.info("AON API NORDIGEN BANK SERVLET - POST METHOD");
-		doPost(req, resp);
+		post(req, resp);
 	}
 
 	private void get(HttpServletRequest req, HttpServletResponse resp) {
 		try {
 			AonApiData api = initialize(req);
 			switch (api.getPath()) {
-			case "/allAccounts":
-				response(req, resp, getAllAccounts(api));
+			// Lista de bancos
+			case "/banks":
+				response(req, resp, getBanks(api));
 				break;
-			case "/oneBank":
-				response(req, resp, getBank(api, req.getParameter("iban")));
+			// Un banco
+			case "/bank":
+				response(req, resp, getBank(api));
 				break;
+			// Link para vincular con Nordigen
 			case "/link":
-				response(req, resp, getUrlForLinkBankToNordigen(api, req.getParameter("iban")));
+				response(req, resp, getUrlForLinkBankToNordigen(api));
 				break;
-			case "/unlinkedAccounts":
-				response(req, resp, getUnlinkedAccounts(api));
-				break;
-			case "/linkedAccounts":
-				response(req, resp, getLinkedAccounts(api));
-				break;
+			// Balances desde Nordigen
 			case "/balances":
 				response(req, resp, getBalances(api));
 				break;
-			case "/balancesOneAccount":
-				response(req, resp, getBalancesOfOneAccountByIban(api, req.getParameter("iban")));
-				break;
+			// Movimientos desde Nordigen
 			case "/movements":
 				response(req, resp, getMovements(api));
 				break;
-			case "/movementsOneAccount":
-				response(req, resp, getMovementsOfOneAccountByIban(api, req.getParameter("iban")));
+			// Movimientos desde bbdd
+			case "/movementsBD":
+				response(req, resp, getMovementsFromBD(api));
+				break;
+			//Compara la fecha de actualizacion con la fecha actual o la que decida el usuario
+			case "/compareDate":
+				response(req, resp, compareDate(api));
 				break;
 			default:
 				throw new AonApiException(AonApiError.ROUTE_ERROR.getMessage());
@@ -88,249 +113,347 @@ public class BankServlet extends AonApiHttpServlet {
 		}
 	}
 
-	private static JSONArray getBank(AonApiData api, String iban) {
-		occam.setDomain(api.getDomain().getId()).setDomainName(api.getDomain().getName())
-				.setUser(api.getUser().getLogin());
-		NordigenConfiguration nc;
-		JSONObject jsonBank = new JSONObject();
-		JSONArray arrayBank = new JSONArray();
-		List<NordigenBankAccount> accounts = new ArrayList<>();
-		NordigenBankAccount bank;
+	private void post(HttpServletRequest req, HttpServletResponse resp) {
 		try {
-			nc = AonNordigen.getConfiguration(occam);
-			accounts = nc.getAccounts();
-			for (int i = 0; i < accounts.size(); i++) {
-				bank = accounts.get(i);
-				if (bank.getIban().equals(iban)) {
-					jsonBank = RegistryBankJSON.toJSON(bank.getRbank());
-				}
+			AonApiData api = initialize(req);
+			switch (api.getPath()) {
+			// Introduce los movimientos obtenidos de Nordigen a BD
+			case "/movements":
+				response(req, resp, insertMovesIntoBD(api, req));
+				break;
+			// Introduce los balances obtenidos de Nordigen a BD
+			case "/balances":
+				response(req, resp, insertBalancesIntoBD(api, req));
+				break;
+			//Nuevo banco
+			case "/":
+				response(req,resp, create(api));
+				break;
+			//Actualizar banco cambiar a put
+			case "/update":
+				response(req,resp, update(api));
+				break;
+			//Borrar un banco por el identificador dado
+			case "/delete":
+				response(req,resp, delete(api));
+				break;
+			default:
+				throw new AonApiException(AonApiError.ROUTE_ERROR.getMessage());
 			}
-			arrayBank.put(getLogoBankOfOneAccountByIban(occam, iban));
-			arrayBank.put(jsonBank);
 		} catch (Exception e) {
-			return new JSONArray();
+			error(req, resp, e);
 		}
-		return arrayBank;
+	}
+	
+	private static JSONObject create(AonApiData api) {
+		RegistryBank bank = new RegistryBank();
+		Company company = AON.getCompanyForDomain(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin());
+		bank.setDomain(api.getDomain().getId())
+		.setRegistry(company.get().getId())
+		.setBankAccount(new BankAccount(api.getData().optString("iban")))
+		.setBic(api.getData().getString("swiftBic"))
+		.setSuffix(api.getData().optString(IJsonNames.SUFIX))
+		.setAlias(api.getData().optString(IJsonNames.NAME))
+		.setActive(api.getData().getBoolean(IJsonNames.ACTIVE));
+		AON.saveRegistryBank(api.getDomain(), api.getUser().getLogin(), bank);
+		return  RegistryBankJSON.toJSON(bank);
+	}
+	
+	private static JSONObject update(AonApiData api) {
+		RegistryBank bank = AON.getRegistryBank(api.getDomain(), api.getUser().getLogin(),
+				f -> f.getIdProperty().eq(api.getData().getInt(IJsonNames.ID)));
+		bank.setBankAccount(new BankAccount(api.getData().optString("iban")))
+		.setBic(api.getData().getString("swiftBic"))
+		.setSuffix(api.getData().optString(IJsonNames.SUFIX))
+		.setAlias(api.getData().optString(IJsonNames.NAME))
+		.setActive(api.getData().getBoolean(IJsonNames.ACTIVE));
+		AON.saveRegistryBank(api.getDomain(), api.getUser().getLogin(), bank);
+		return  RegistryBankJSON.toJSON(bank);
+	}
+	
+	private static boolean delete(AonApiData api) {
+		int bankId = api.getData().getInt(IJsonNames.ID);
+		try {
+			AON.deleteRegistryBank(api.getDomain(), api.getUser().getLogin() , bankId);
+			return true;
+		} catch (Exception e) {
+			return false;
+		}
 	}
 
-	private static JSONObject getLogoBankOfOneAccountByIban(Occam occam, String iban) {
-		NordigenConfiguration nc;
-		List<NordigenBankAccount> accounts = new ArrayList<>();
-		NordigenBankAccount bank;
-		JSONObject jsonLogo = new JSONObject();
+	private static boolean insertMovesIntoBD(AonApiData api, HttpServletRequest request) {
 		try {
-			nc = AonNordigen.getConfiguration(occam);
+			String idParam = request.getParameter("id");
+			int id = Integer.parseInt(idParam);
+
+			occam.setDomain(api.getDomain().getId()).setDomainName(api.getDomain().getName())
+					.setUser(api.getUser().getLogin());
+			NordigenConfiguration nc = AonNordigen.getConfiguration(occam);
 			NordigenAccessToken token = nc.getToken();
-			accounts = nc.getAccounts();
-			for (int i = 0; i < accounts.size(); i++) {
-				bank = accounts.get(i);
-				if (bank.getIban().equals(iban)) {
-					String bic = bank.getRbank().getBic().substring(0, 7);
-					List<NordigenInstitution> nordigenInstitutions = AonNordigen.getInstitutionsByBic(token, bic);
-					jsonLogo.put("logo", nordigenInstitutions.get(0).getLogo());
+			token = NordigenUtils.handleToken(token);
+			List<NordigenBankAccount> lista = nc.getAccounts();
+			NordigenBankAccount bank2 = new NordigenBankAccount();
+
+			for (int i = 0; i < lista.size(); i++) {
+				if (lista.get(i).getRbank().getId().equals(id)) {
+					bank2 = AonNordigen.setBankAccountValues(occam, token, lista.get(i));
 				}
 			}
+			AonNordigen.insertStatements(occam, bank2);
+			return true;
 		} catch (Exception e) {
-			return new JSONObject().put("logo", "");
+			return false;
 		}
-		return jsonLogo;
+	}
+
+	private static boolean insertBalancesIntoBD(AonApiData api, HttpServletRequest request) {
+		try {
+			String idParam = request.getParameter("id");
+			int id = Integer.parseInt(idParam);
+			NordigenBankAccount bank = new NordigenBankAccount();
+			occam.setDomain(api.getDomain().getId()).setDomainName(api.getDomain().getName())
+					.setUser(api.getUser().getLogin());
+			NordigenConfiguration nc = AonNordigen.getConfiguration(occam);
+			List<NordigenBankAccount> lista = nc.getAccounts();
+			for (int i = 0; i < lista.size(); i++) {
+				if (lista.get(i).getRbank().getId().equals(id)) {
+					bank = lista.get(i);
+				}
+			}
+			AonNordigen.updateAccountBalances(bank, occam);
+			return true;
+		} catch (Exception e) {
+			return false;
+		}
+	}
+
+	private static JSONArray getMovementsFromBD(AonApiData api) {
+		occam.setDomain(api.getDomain().getId()).setDomainName(api.getDomain().getName())
+				.setUser(api.getUser().getLogin());
+		JSONArray array = new JSONArray();
+		int page = api.getData().optInt("page");
+		int perPage = api.getData().optInt("perPage");
+		BankStatementFilter filter = new BankStatementFilter().setId(api.getData().optInt(IJsonNames.ID))
+				.setTo(JsonUtils.getDate(api.getData(), IJsonNames.TO))
+				.setFrom(JsonUtils.getDate(api.getData(), IJsonNames.FROM))
+				.setAmount(api.getData().optString(IJsonNames.AMOUNT))
+				.setDescription(api.getData().optString(IJsonNames.DESCRIPTION))
+				.setStatus(!AonStringUtils.isBlank(api.getData().optString("status"))
+						? StatementStatus.valueOf(api.getData().optString("status")).value()
+						: null);
+		AonNordigen.getMovementsFromBD(occam, f -> statementsFilter(f, api.getDomain().getId(), filter), page, perPage)
+				.forEach(bankStatement -> array.put(NordigenUtils.bankStatementJSON(bankStatement)));
+		return array;
+	}
+
+	private static JSONArray getBanks(AonApiData api) {
+		Company company = AON.getCompany(api.getDomain(), api.getUser(),
+				f -> f.getDomainProperty().eq(api.getDomain().getId()));
+		occam.setDomain(api.getDomain().getId()).setDomainName(api.getDomain().getName())
+				.setUser(api.getUser().getLogin());
+		NordigenConfiguration nc = AonNordigen.getConfiguration(occam);
+		NordigenAccessToken token = nc.getToken();
+		token = NordigenUtils.handleToken(token);
+		List<NordigenInstitution> instList = AonNordigen.getAllInstitutions(token);
+		List<RegistryBank> bankList = AON.getRegistryBanks(api.getDomain(), api.getUser(), company.getId());
+		JSONArray resultArray = new JSONArray();
+		for (RegistryBank bank : bankList) {
+			JSONObject bankJson = RegistryBankJSON.toJSON(bank);
+			String bankBic = bank.getBic();
+			if (bankBic != null) {
+				for (NordigenInstitution institution : instList) {
+					String instBic = institution.getBic();
+					if (instBic.equals(bankBic.replace("XXX", ""))) {
+						bankJson.put("logo", institution.getLogo());
+						break;
+					}
+				}
+			}
+			resultArray.put(bankJson);
+		}
+		return resultArray;
+	}
+	
+	private static JSONObject getBank(AonApiData api) {
+		int id = api.getData().optInt("id");
+		occam.setDomain(api.getDomain().getId()).setDomainName(api.getDomain().getName())
+				.setUser(api.getUser().getLogin());
+		RegistryBank bank = AON.getRegistryBank(occam, f -> f.getIdProperty().eq(id));
+		JSONObject bankJson = RegistryBankJSON.toJSON(bank);
+		NordigenConfiguration nc = AonNordigen.getConfiguration(occam);
+		NordigenAccessToken token = nc.getToken();
+		token = NordigenUtils.handleToken(token);
+		List<NordigenInstitution> instList = AonNordigen.getAllInstitutions(token);
+		String bankBic = bank.getBic();
+		if (bankBic != null) {
+			for (NordigenInstitution institution : instList) {
+				String instBic = institution.getBic();
+				if (instBic.equals(bankBic.replace("XXX", ""))) {
+					bankJson.put("logo", institution.getLogo());
+					break;
+				}
+			}
+		}
+		return bankJson;
+	}
+
+	private static JSONObject getUrlForLinkBankToNordigen(AonApiData api) {
+		JSONObject jsonLink = new JSONObject();
+		int id = api.getData().optInt("id");
+		try {
+			occam.setDomain(api.getDomain().getId()).setDomainName(api.getDomain().getName())
+					.setUser(api.getUser().getLogin());
+			try (CloseableAONContext ctx = AONContext.getAONContext(occam)) {
+				NordigenConfiguration nc = AonNordigen.getConfiguration(occam);
+				NordigenAccessToken token = nc.getToken();
+				token = NordigenUtils.handleToken(token);
+				List<NordigenBankAccount> rAccounts = nc.getAccounts();
+				NordigenUtils.processAccountLinking(rAccounts, id, token, jsonLink, occam);
+			}
+		} catch (Exception e) {
+//			NordigenUtils.logException(e);
+		}
+		return jsonLink;
 	}
 
 	private static JSONArray getBalances(AonApiData api) {
-		occam.setDomain(api.getDomain().getId()).setDomainName(api.getDomain().getName())
-				.setUser(api.getUser().getLogin());
-		List<NordigenAccountBalance> balances = new ArrayList<>();
-		JSONArray balancesArray = new JSONArray();
-		JSONObject object = new JSONObject();
 		try {
+			occam.setDomain(api.getDomain().getId()).setDomainName(api.getDomain().getName())
+					.setUser(api.getUser().getLogin());
 			NordigenConfiguration nc = AonNordigen.getConfiguration(occam);
 			NordigenAccessToken token = nc.getToken();
-			NordigenBankAccount nordigenAccount;
+			token = NordigenUtils.handleToken(token);
 			List<NordigenBankAccount> linkedAccountList = nc.getLinkedAccounts();
-			NordigenBankAccount nordigenTrueAccount;
-			ArrayList<String> ibans = new ArrayList<>();
-			for (int i = 0; i < linkedAccountList.size(); i++) {
-				ibans.add(linkedAccountList.get(i).getIban());
-				if (linkedAccountList.get(i).getIban().equals(ibans.get(i))) {
-					nordigenAccount = linkedAccountList.get(i);
-					nordigenTrueAccount = AonNordigen.setBankAccountValues(occam, token, nordigenAccount);
-					balances = nordigenTrueAccount.getBalances();
-					object.put("all balances", NordigenAccountBalanceJSON.to(balances));
-					balancesArray.put(object);
-				}
-			}
+			return NordigenUtils.processAccountBalances(linkedAccountList, token, occam);
 		} catch (Exception e) {
+//			NordigenUtils.logException(e);
 			return new JSONArray();
 		}
-
-		return balancesArray;
 	}
-
-	private static JSONArray getBalancesOfOneAccountByIban(AonApiData api, String iban) {
-		occam.setDomain(api.getDomain().getId()).setDomainName(api.getDomain().getName())
-				.setUser(api.getUser().getLogin());
-		List<NordigenAccountBalance> balances;
-		NordigenConfiguration nc = AonNordigen.getConfiguration(occam);
-		NordigenAccessToken token = nc.getToken();
-		NordigenBankAccount nordigenAccount;
-		List<NordigenBankAccount> linkedAccountList = nc.getLinkedAccounts();
-		NordigenBankAccount nordigenTrueAccount = new NordigenBankAccount();
-		ArrayList<String> ibans = new ArrayList<>();
-		for (int i = 0; i < linkedAccountList.size(); i++) {
-			ibans.add(linkedAccountList.get(i).getIban());
-			if (linkedAccountList.get(i).getIban().equals(iban)) {
-				nordigenAccount = linkedAccountList.get(i);
-				nordigenTrueAccount = AonNordigen.setBankAccountValues(occam, token, nordigenAccount);
-				break;
-			}
-		}
-		balances = nordigenTrueAccount.getBalances();
-		return NordigenAccountBalanceJSON.to(balances);
+	
+	private static boolean compareDate(AonApiData api) {
+		Integer variable = api.getData().optInt("variable");
+		return AON.compareBalanceDate(api.getDomain(), api.getUser().getLogin(), variable);
 	}
 
 	private static JSONArray getMovements(AonApiData api) {
-		occam.setDomain(api.getDomain().getId()).setDomainName(api.getDomain().getName())
-				.setUser(api.getUser().getLogin());
-		JSONObject movementsJson;
-		JSONArray movementsJsonArray = new JSONArray();
-		List<NordigenBankStatement> movements;
-		NordigenBankAccount nordigenTrueAccount;
-		NordigenConfiguration nc = AonNordigen.getConfiguration(occam);
-		NordigenAccessToken token = nc.getToken();
-		List<NordigenBankAccount> linkedAccountList = nc.getLinkedAccounts();
-		for (NordigenBankAccount account : linkedAccountList) {
-			nordigenTrueAccount = AonNordigen.setBankAccountValues(occam, token, account);
-			Date lastAccessedDate = nordigenTrueAccount.getMetadata().getLastAccessed();
-			boolean linked = nordigenTrueAccount.isLinked();
-			movements = AonNordigen.getMovements(token, occam, nordigenTrueAccount, lastAccessedDate, linked);
-			movementsJson = movementsToJson(movements, nordigenTrueAccount);
-			movementsJsonArray.put(movementsJson);
-			//905325d3-bc92-47b4-801e-84b39461ffa7 
-		}
-
-		return movementsJsonArray;
-	}
-
-	private static JSONArray getMovementsOfOneAccountByIban(AonApiData api, String iban) {
-		occam.setDomain(api.getDomain().getId()).setDomainName(api.getDomain().getName())
-				.setUser(api.getUser().getLogin());
-		JSONObject movementsJson;
-		List<NordigenBankStatement> movements;
-		JSONArray movementsJsonArray = new JSONArray();
-		NordigenBankAccount nordigenTrueAccount;
-		NordigenConfiguration nc = AonNordigen.getConfiguration(occam);
-		NordigenAccessToken token = nc.getToken();
-		NordigenBankAccount nordigenAccount;
-		List<NordigenBankAccount> linkedAccountList = nc.getLinkedAccounts();
-		for (int i = 0; i < linkedAccountList.size(); i++) {
-
-			if (linkedAccountList.get(i).getIban().equals(iban)) {
-				nordigenAccount = linkedAccountList.get(i);
-				nordigenTrueAccount = AonNordigen.setBankAccountValues(occam, token, nordigenAccount);
-				Date lastAccessedDate = nordigenTrueAccount.getMetadata().getLastAccessed();
-				boolean linked = nordigenTrueAccount.isLinked();
-				movements = AonNordigen.getMovements(token, occam, nordigenTrueAccount, lastAccessedDate, linked);
-				movementsJson = movementsToJson(movements, nordigenTrueAccount);
-				movementsJsonArray.put(movementsJson);
-			}
-		}
-		return movementsJsonArray;
-	}
-
-	private static JSONArray getAllAccounts(AonApiData api) {
-		Occam occam = new Occam();
-		occam.setDomain(api.getDomain().getId()).setDomainName(api.getDomain().getName())
-				.setUser(api.getUser().getLogin());
 		try {
+			occam.setDomain(api.getDomain().getId()).setDomainName(api.getDomain().getName())
+					.setUser(api.getUser().getLogin());
+
 			NordigenConfiguration nc = AonNordigen.getConfiguration(occam);
-			JSONArray array = new JSONArray();
-			List<NordigenBankAccount> accounts = nc.getAccounts();
-			for (int i = 0; i < accounts.size(); i++) {
-				RegistryBank bank = accounts.get(i).getRbank();
-				if(accounts.get(i).isLinked()) {				
-				array.put(RegistryBankJSON.toJSON(bank).put("logo",
-						getLogoBankOfOneAccountByIban(occam, bank.getBankAccount().getIban()).optString("logo")).put("SyncStatus", "sync"));
-				}else {
-				array.put(RegistryBankJSON.toJSON(bank).put("logo",
-						getLogoBankOfOneAccountByIban(occam, bank.getBankAccount().getIban()).optString("logo")).put("SyncStatus", ""));
-				}
-			}
-			return array;
+			NordigenAccessToken token = nc.getToken();
+			token = NordigenUtils.handleToken(token);
+			List<NordigenBankAccount> linkedAccountList = nc.getLinkedAccounts();
+			return NordigenUtils.convertAccountsMovementsToJsonArray(linkedAccountList, token, occam);
 		} catch (Exception e) {
+//			NordigenUtils.logException(e);
 			return new JSONArray();
 		}
-	
 	}
 
-	private JSONArray getLinkedAccounts(AonApiData api) {
-		occam.setDomain(api.getDomain().getId()).setDomainName(api.getDomain().getName())
-				.setUser(api.getUser().getLogin());
-		NordigenConfiguration nc;
-		List<NordigenBankAccount> linkedAccounts;
-		JSONArray array = new JSONArray();
-			nc = AonNordigen.getConfiguration(occam);
-			linkedAccounts = nc.getLinkedAccounts();
-			for (int i = 0; i < linkedAccounts.size(); i++) {
-				RegistryBank bank = linkedAccounts.get(i).getRbank();
-				array.put(RegistryBankJSON.toJSON(bank).put("SyncStatus", "sync"));
-			}
-		return array;
-	}
+	private static class BankStatementFilter {
 
-	private static JSONArray getUnlinkedAccounts(AonApiData api) {
-		occam.setDomain(api.getDomain().getId()).setDomainName(api.getDomain().getName())
-				.setUser(api.getUser().getLogin());
-		NordigenConfiguration nc;
-		List<NordigenBankAccount> unLinkedAccounts;
-			nc = AonNordigen.getConfiguration(occam);
-			unLinkedAccounts = nc.getUnlinkedAccounts();
-			JSONArray array = new JSONArray();
-			for (int i = 0; i < unLinkedAccounts.size(); i++) {
-				RegistryBank bank = unLinkedAccounts.get(i).getRbank();
-				array.put(RegistryBankJSON.toJSON(bank).put("SyncStatus", ""));
-			}
-		return array;
-	}
+		int id;
+		int domain;
+		String description;
+		Byte status;
+		String amount;
+		Date from;
+		Date to;
 
-	private static JSONObject getUrlForLinkBankToNordigen(AonApiData api, String iban) {
-		occam.setDomain(api.getDomain().getId()).setDomainName(api.getDomain().getName())
-				.setUser(api.getUser().getLogin());
-		String link = "";
-		JSONObject jsonLink = new JSONObject();
-		List<NordigenBankAccount> rAccounts = new ArrayList<>();
-		NordigenConfiguration nc;
-		try (CloseableAONContext ctx = AONContext.getAONContext(occam)) {
-			nc = AonNordigen.getConfiguration(occam);
-			NordigenAccessToken token = nc.getToken();
-			rAccounts = nc.getAccounts();
-			for (int i = 0; i < rAccounts.size(); i++) {
-				NordigenBankAccount account = nc.getAccounts().get(i);
-				if (account.isLinked() && account.getIban().equals(iban)) {
-					jsonLink.put("link", "ya esta linkeada!");
-				} else if (!account.isLinked() && account.getIban().equals(iban)) {
-					NordigenRequisition requistion = AonNordigen.addAccount(token, occam, account);
-					link = requistion.getLink();
-					jsonLink.put("link", link);
-				}
-			}
-			return jsonLink;
+		public Date getFrom() {
+			return from;
+		}
+
+		public BankStatementFilter setFrom(Date from) {
+			this.from = from;
+			return this;
+		}
+
+		public Date getTo() {
+			return to;
+		}
+
+		public BankStatementFilter setTo(Date to) {
+			this.to = to;
+			return this;
+		}
+
+		public int getId() {
+			return id;
+		}
+
+		public BankStatementFilter setId(int id) {
+			this.id = id;
+			return this;
+		}
+
+		public int getDomain() {
+			return domain;
+		}
+
+		public BankStatementFilter setDomain(int domain) {
+			this.domain = domain;
+			return this;
+		}
+
+		public String getDescription() {
+			return description;
+		}
+
+		public BankStatementFilter setDescription(String description) {
+			this.description = description;
+			return this;
+		}
+
+		public Byte getStatus() {
+			return status;
+		}
+
+		public BankStatementFilter setStatus(Byte status) {
+			this.status = status;
+			return this;
+		}
+
+		public String getAmount() {
+			return amount;
+		}
+
+		public BankStatementFilter setAmount(String amount) {
+			this.amount = amount;
+			return this;
 		}
 	}
 
-	private static JSONObject movementsToJson(List<NordigenBankStatement> movements, NordigenBankAccount nordigenTrueAccount) {
-		JSONArray movementsJsonArray = new JSONArray();
-		for (NordigenBankStatement movement : movements) {
-			JSONObject movementJson = new JSONObject();
-			movementJson.put("operationDate", movement.getOperationDate());
-			movementJson.put("description", movement.getDescription());
-			movementJson.put("status", movement.getStatus());
-			movementJson.put("amount", movement.getAmount());
-			movementJson.put("totalAmount", movement.getCurrentBalance());
-			movementJson.put("iban", nordigenTrueAccount.getIban());
-			movementsJsonArray.put(movementJson);
+	public static Filter statementsFilter(NordigenBankStatementProperties f, Integer domainId,
+			BankStatementFilter statementFilter) {
+		Filter filter = f.getDomainProperty().eq(domainId);
+
+		if (statementFilter.getId() != 0) {
+			filter = filter.and(f.getIdProperty().like(statementFilter.getId()));
 		}
-		JSONObject movementsJson = new JSONObject();
-		movementsJson.put("movements", movementsJsonArray);
-		return movementsJson;
+
+		if (statementFilter.getTo() != null) {
+			filter = filter.and(f.getOperationDateProperty().le(statementFilter.getTo()));
+		}
+
+		if (statementFilter.getFrom() != null) {
+			filter = filter.and(f.getOperationDateProperty().ge(statementFilter.getFrom()));
+		}
+
+		if (statementFilter.getAmount() != null && !AonStringUtils.isBlank(statementFilter.getAmount())) {
+			filter = filter.and(f.getAmountStringProperty().like("%" + statementFilter.getAmount() + "%"));
+		}
+
+		if (statementFilter.getDescription() != null && !AonStringUtils.isBlank(statementFilter.getDescription())) {
+			filter = filter.and(f.getDescriptionProperty().like("%" + statementFilter.getDescription() + "%"));
+		}
+
+		if (statementFilter.getStatus() != null) {
+			filter = filter.and(f.getStatusProperty().eq(statementFilter.getStatus()));
+		}
+
+		return filter;
 	}
 }

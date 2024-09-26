@@ -89,9 +89,9 @@ import com.esferalia.aon.occam.api.model.product.Tax;
 import com.esferalia.aon.occam.api.model.project.ProjectCommercial;
 import com.esferalia.aon.occam.api.model.registry.Seller;
 import com.esferalia.aon.occam.api.model.security.User;
-import com.esferalia.aon.occam.api.model.type.AonRole;
 import com.esferalia.aon.occam.api.model.type.DataResponseSource;
 import com.esferalia.aon.occam.api.model.type.MimeType;
+import com.esferalia.aon.occam.api.model.type.OldAonRole;
 import com.esferalia.aon.occam.api.model.type.ProductType;
 import com.esferalia.aon.occam.api.model.type.TagType;
 import com.esferalia.aon.occam.api.model.type.TaxType;
@@ -2292,10 +2292,10 @@ public class TemplatesServlet extends AonStatelessRemoteServiceServlet implement
 
 	public LinkedList<String> getProductRoles(Domain domain, User user) {
 		LinkedList<String> list = new LinkedList<String>();
-		for (AonRole role : user.getUserRoles()) {
-			if(role.equals(AonRole.PURCHASE))
+		for (OldAonRole role : user.getUserRoles()) {
+			if(role.equals(OldAonRole.PURCHASE))
 				list.add("Compra");
-			if(role.equals(AonRole.SALE))
+			if(role.equals(OldAonRole.SALE))
 				list.add("Venta");
 		}
 		return list;

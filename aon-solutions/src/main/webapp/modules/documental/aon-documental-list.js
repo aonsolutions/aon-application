@@ -7,8 +7,7 @@ import '../../components/aon-table.js';
 import { CONSTANT, MSG } from '../../environments/environments.js';
 import * as ACTION from '../actions.js';
 import * as LS from '../../services/localStorageService.js';
-import { DOCUMENTAL } from '../../services/app.js';
-import { AonTable } from '../../components/aon-table.js';
+import { createList } from '../../components/CreateComponent.js';
 
 export class AonDocumentalList extends AonElement {
 
@@ -51,10 +50,8 @@ export class AonDocumentalList extends AonElement {
 	}
 
  	build() {
-		let aonDocumentalTable =  new AonTable();
-		aonDocumentalTable.id = this.TABLE;
+		let aonDocumentalTable = createList(this.TABLE);
 		aonDocumentalTable.selectable = 'true';
-		aonDocumentalTable.setApp(DOCUMENTAL);
 		this.appendChild(aonDocumentalTable);
 
 		aonDocumentalTable.addColumn(MSG.DATE, 'date', 'date', '20%');

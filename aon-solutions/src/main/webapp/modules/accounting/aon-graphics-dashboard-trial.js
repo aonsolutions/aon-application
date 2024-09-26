@@ -1,5 +1,5 @@
 import { AonElement } from "../../components/AonElement.js";
-import { CSS, TAG, EVENT } from "../../environments/environments.js";
+import { TAG } from "../../environments/environments.js";
 import { isEmptyObject } from "../../services/utils.js";
 import { getAccounting, getPeriods } from "../../services/accountingService.js";
 import * as UTILS from "./AccountingUtils.js";
@@ -405,6 +405,8 @@ export class AonDashboardGraphicsTrial extends AonElement {
   }
 
   drawBarChart(canvas) {
+    let colorGrid = LS.isDarkTheme() ? "#ffffff" : "#bdbdbd";
+    
     const dataChart = {
       labels: [
         "Vtas./Ing.",
@@ -461,10 +463,28 @@ export class AonDashboardGraphicsTrial extends AonElement {
         maintainAspectRatio: false,
         scales: {
           x: {
-            stacked: true,
+            grid: {
+              display : false
+            },
+            border : {
+              color : colorGrid
+            },
+            ticks : {
+              color : colorGrid
+            },
+            stacked: true
           },
           y: {
-            stacked: true,
+            grid: {
+              display : false
+            },
+            border : {
+              color :  colorGrid
+            },
+            ticks : {
+              color : colorGrid
+            },
+            stacked: true
           },
         },
         plugins: {

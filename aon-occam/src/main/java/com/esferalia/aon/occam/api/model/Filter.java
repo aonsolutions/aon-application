@@ -740,6 +740,11 @@ public interface Filter extends Serializable{
 	public interface InvoiceInfoFilter{
 		Filter filter(InvoiceInfoProperties properties);
 	}
+	
+	@FunctionalInterface
+	public interface InvoiceDataFilter{
+		Filter filter(InvoiceDataProperties properties);
+	}
 
 	@FunctionalInterface
 	public interface InvoiceCommunicationTrackingFilter{
@@ -779,6 +784,10 @@ public interface Filter extends Serializable{
 	@FunctionalInterface
 	public interface MarketingCampaignFilter{
 		Filter filter(MarketingCampaignProperties properties);
+	}
+	@FunctionalInterface
+	public interface NordigenBankStatementFilter{
+		Filter filter(NordigenBankStatementProperties properties);
 	}
 	
 }

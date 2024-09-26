@@ -13,6 +13,7 @@
   --aonGray: gray;
   --aonHeaderButtonColor: rgb(95, 99, 104);
   --aonLightGray: #f1f1f1;
+  --aonLightGray2: #f6f6f6;
   --aonDarkGray: #5F6368;
   --aonBlack: #212529;
   --aonWhite: #ffffff;
@@ -34,16 +35,16 @@
   --aonInvoice: #4F91FF;
   --aonInvoiceBackground: #ebf2ff;
 
-  --aonDocumental: #EF6292;
+  --aonDocumental: #75163F;/* #EF6292; */
   --aonDocumentalBackground: #fdedf2;
 
-  --aonPayroll: #33A9A9;
+  --aonPayroll: #e2001a; /* #33A9A9;*/
   --aonPayrollBackground: #e8f5f5;
 
   --aonFiscal: #FB982E;
   --aonFiscalBackground: #fef3e7;
 
-  --aonMessenger: #f6655a;
+	--aonMessenger: #33A9A9; /* #f6655a;*/
   --aonMessengerBackground: #feedec;
 
   --aonTimecontrol: #D1C36D;
@@ -121,6 +122,11 @@
   list-style: none;
   padding: 0;
   margin: 0;
+}
+
+.aonUlUploadToast {
+  max-height: 275px;
+  overflow-y: scroll;
 }
 
 .aonAppLi:hover {
@@ -207,6 +213,13 @@
 .aonButton[disabled], .aonButton:disabled {
   cursor: not-allowed;
   background-color: #cccccc !important;
+}
+
+.aonTimeControlButton {
+  padding: .5rem 1rem;
+  font-size: .8rem;
+  width: 6rem;
+  height: 2.5rem;
 }
 
 .aonDashboardButton{
@@ -441,7 +454,7 @@
 }
 
 .sidenavHover:hover{
-  background-color: var(--aonLightBlue);
+  background-color: var(--aonLightGray2);
 }
 
 
@@ -694,11 +707,10 @@
   height: 48px;
   font-size: 12px;
   color: rgb(95, 99, 104);
-  padding-bottom: 8px;
   border-bottom: 1px solid #ddd;
-  padding-left: 8px;
   text-align: inherit;
   box-sizing: border-box;
+  padding: .5rem;
 }
 
 .aonTable tbody {
@@ -725,8 +737,7 @@
 }
 
 .aonTable tbody tr:hover {
-  /* background-color: var(--aonLightGray); */
-  background-color: var(--aonLightBlue);
+  background-color: var(--aonLightGray);
 }
 
 .aonTable tbody tr:active {
@@ -734,7 +745,7 @@
 }
 
 .aonTable td {
-  padding-left: 8px;
+  padding: 0 .5rem;
 }
 
 .aonMenuSidenav {
@@ -948,8 +959,14 @@
   margin: 0;
   padding: 0 26px;
   cursor: pointer;
-  border-radius: 20px;
+  border-top-right-radius: 50px;
+  border-bottom-right-radius: 50px;
 }
+
+.aonAppMenuSidenavListSelected {
+	font-weight: bold;
+	background-color: #f6f6f6;
+}   
 
 .aonAppMenuSidenavListBeta {
   line-height: 30px;
@@ -1103,7 +1120,7 @@
   /*transform: translateY(0);
   opacity: 1;*/
   font-size: 1.8rem;
-  color: var(--aonFiscal);
+  color: var(--aonFiscal) !important;
 }
 
 .aonCard:hover .aonCardTotal{
@@ -1425,12 +1442,24 @@
   background: #FF9002;
 }
 
+.profile-avatar-letters{
+  background-color: var(--aonBlue);
+  color: var(--aonNewWhite);
+  width: 6rem;
+  height: 6rem;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 2rem;
+}
+
 .profile-letters{
-  border: 2px solid #949393;
+  border: 1px solid #949393;
   color: #949393;
   border-radius: 19.98px;
   height: 30px;
-  line-height: 28px;
+  line-height: 30px;
   width: 30px;
   display: block;
   font-size: 15px;
@@ -1441,7 +1470,7 @@
 
 .profile-letters.size{
   height: 35px;
-  line-height: 32px;
+  line-height: 35px;
   width: 35px;
 }
 
@@ -1725,19 +1754,6 @@ label.rating:hover {
   padding: revert;
 }
 
-.aonMessengerCardButton{
-  align-items: center;
-  gap: 1rem;
-  cursor: pointer;
-  padding: .5rem;
-  border-radius: 5px;
-  transition: linear;
-}
-
-.aonMessengerCardButton:hover{
-  border: 1px solid rgb(246, 101, 90);
-}
-
 .aonMessengerCardRow, .aonDocumentalCardRow{
   display: flex;
   justify-content: space-between;
@@ -1776,6 +1792,19 @@ label.rating:hover {
   text-align: center;
   background-color: rgba(246, 101, 90, 0.7);
   font-weight: 600;
+}
+
+.aonMessegerCardBadge{
+  background-color: var(--aonMessenger);
+  border-radius: 50%;
+  color: #fff;
+  font-weight: 600;
+  height: 30px;
+  padding: .4rem;
+  text-align: center;
+  width: 30px;
+  font-size: .8rem;
+  cursor: pointer;
 }
 
 .aonNewLogo{
@@ -2183,3 +2212,262 @@ label.rating:hover {
 	content: 'administración@aonSolutions.es';	
 }
 
+.messageContent * {
+	font-size: 11px;
+}
+
+#aonLoginLanguageSpanToolbar{
+  font-size: 12px;
+  color: var(--gray-50);
+}
+
+.aonLoginInfo {
+    color: #666;
+    padding: 15px;
+    font-size: 9px;
+    margin-top :10px;
+    border-top: 1px solid #ddd;
+}
+
+
+.aonInvoiceHomeDiv {
+  display: grid;
+  grid-template-columns: 150px 150px;
+  gap: 5px;
+  flex: 1;
+  padding: 0px;
+}
+
+.aonInvoiceHomePendingRecordsDiv{
+  border: 1px solid #ebebeb;
+  display: flex;
+  flex-direction: column;
+	justify-content: center;
+  gap: 3px;
+	text-align: center;
+	padding: 8px;
+	flex: 1;
+	border-radius: 5px;
+  cursor: pointer;
+	margin-bottom: 3px;
+	grid-column:  1 / -1;
+  background-color: transparent;
+}
+
+.aonInvoiceHomePendingRecordsDiv:hover{
+  background-color: #f1f1f1;
+}
+
+.aonInvoiceHomePendingRecordNumber {
+  font-weight: bold;
+  font-size: 36px;
+  line-height: 47px;
+  color: var(--aonGreen);
+}
+
+.aonInvoiceHomePendingRecordName {
+  font-weight:  normal;
+	color:  gray;
+	line-height:  21px;
+}
+
+.aonInvoiceHomePendingDiv {
+  border: 1px solid #ebebeb;
+  flex-direction: column;
+  justify-content: center;
+  gap: 3px;
+  text-align: center;
+  padding: 8px;
+  display: flex;
+  border-radius: 5px;
+  margin-bottom: 3px;
+  grid-column: 1 / -1;
+}
+
+.aonInvoiceHomePendingNameRow {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: left;
+}
+
+.aonInvoiceHomePendingName {
+  font-weight: normal;
+  color: gray;
+	line-height: 21px;
+	flex-wrap: wrap;
+	flex-basis: 33.33%;
+	flex-grow: 3;
+}
+
+.aonInvoiceHomePendingCounterRow {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: left;
+}
+
+.aonInvoiceHomePendingIssuedDiv {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 8px;
+  text-align: center;
+  padding: 8px;
+  flex-wrap: wrap;
+  flex-basis: 33%;
+  flex-grow: 1;
+  border-radius: 5px;
+  cursor: pointer;
+	margin-bottom: 3px;
+  background-color: transparent;
+}
+
+.aonInvoiceHomePendingIssuedDiv:hover{
+  background-color: #f1f1f1;
+}
+
+.aonInvoiceHomePendingIssuedNumber {
+  font-weight: bold;
+  font-size: 36px;
+  line-height: 47px;
+  color: var(--aonOrange);
+}
+
+.aonInvoiceHomePendingIssuedName{
+  font-weight: normal;
+  color: gray;
+  line-height: 21px;
+}
+
+.aonInvoiceHomePendingReceivedDiv {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 8px;
+  text-align: center;
+  padding: 8px;
+  flex-wrap: wrap;
+  flex-basis: 33%;
+  flex-grow: 1;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-bottom: 3px;
+  margin-left: 3px;
+  background-color: transparent;
+}
+
+.aonInvoiceHomePendingReceivedDiv:hover{
+  background-color: #f1f1f1;
+}
+
+.aonInvoiceHomePendingReceivedNumber {
+  font-weight: bold;
+  font-size: 36px;
+  line-height: 47px;
+  color: var(--aonOrange);
+}
+
+.aonInvoiceHomePendingReceivedName {
+  font-weight: normal;
+  color: gray;
+  line-height: 21px;
+}
+
+.aonInvoiceHomePendingTicketDiv {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 8px;
+  text-align: center;
+  padding: 8px;
+  flex-wrap: wrap;
+  flex-basis: 33%;
+  flex-grow: 1;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-bottom: 3px;
+  margin-left: 3px;
+  background-color: transparent;
+}
+
+.aonInvoiceHomePendingTicketDiv:hover {
+  background-color: #f1f1f1;
+}
+
+.aonInvoiceHomePendingTicketNumber {
+  font-weight: bold;
+  font-size: 36px;
+  line-height: 47px;
+  color: var(--aonOrange);
+}
+
+.aonInvoiceHomePendingTicketName {
+  font-weight: normal;
+  color: gray;
+  line-height: 21px;
+}
+
+.aonInvoiceHomeRejectedDiv {
+  border: 1px solid #ebebeb;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 3px;
+  text-align: center;
+  padding: 8px;
+  flex: 1;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-bottom: 3px;
+  background-color: transparent;
+}
+
+.aonInvoiceHomeRejectedDiv:hover{
+  background-color: #f1f1f1;
+}
+
+.aonInvoiceHomeRejectedNumber{
+  font-weight: bold;
+  font-size: 36px;
+  line-height: 47px;
+  color: var(--aonRed);
+}
+
+.aonInvoiceHomeRejectedName {
+  font-weight: normal;
+  color: gray;
+  line-height: 21px;
+}
+
+.aonInvoiceHomeTrashDiv {
+  border: 1px solid #ebebeb;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 3px;
+  text-align: center;
+  padding: 8px;
+  flex: 1;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-bottom: 3px;
+  background-color: transparent;
+}
+
+.aonInvoiceHomeTrashDiv:hover {
+  background-color: #f1f1f1;
+}
+
+.aonInvoiceHomeTrashNumber {
+  font-weight: bold;
+  font-size: 36px;
+  line-height: 47px;
+  color: var(--aonGray);
+}
+
+.aonInvoiceHomeTrashName {
+  font-weight: normal;
+  color: gray;
+  line-height: 21px;
+}

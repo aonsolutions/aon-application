@@ -44,7 +44,7 @@ public class JooqTimeControlTemplate {
 			Registry worker = REGISTRY.as("worker");
 			
 			Stream<Record7<String, String, String, String, String, String, String>> queryStream = aonContext.getDslContext()
-			.select(ent.NAME, ent.DOCUMENT, worker.DOCUMENT, worker.NAME, PERSON.SOCIAL_SECURITY_NUM, CONTRACT_DATA.NAME, CONTRACT_DATA.EXPRESSION)
+			.selectDistinct(ent.NAME, ent.DOCUMENT, worker.DOCUMENT, worker.NAME, PERSON.SOCIAL_SECURITY_NUM, CONTRACT_DATA.NAME, CONTRACT_DATA.EXPRESSION)
 			.from(CONTRACT)
 			.innerJoin(CONTRACT_DATA).onKey()
 			.innerJoin(WORKPLACE).onKey()

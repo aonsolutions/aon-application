@@ -151,7 +151,7 @@ public class TimeControlServlet extends AonApiHttpServlet{
 		TaskHolder taskHolder = AON.getTaskHolder(domain.getName(), domain.getId(), user.getLogin(), f -> 
 				f.getDomainProperty().eq(domain.getId())
 				.and(f.getUserIdProperty().eq(user.getId())));
-		return getTimeControl(taskHolder);
+		return getTimeControl(domain, user, taskHolder);
 	}
 	
 	private JSONObject getTimeControl(AonApiData api, AonToken aonToken, Integer taskHolderId) {
@@ -168,7 +168,7 @@ public class TimeControlServlet extends AonApiHttpServlet{
 				.and(f.getActiveProperty().eq((byte) 1)
 				.and(f.getTypeProperty().eq(TaskHolderType.INTERNAL.value()))));
 		}
-		return getTimeControl(taskHolder);
+		return getTimeControl(api.getDomain(), api.getUser(), taskHolder);
 	}
 	
 	private JSONObject saveTimeControl(AonApiData api) {
@@ -193,13 +193,13 @@ public class TimeControlServlet extends AonApiHttpServlet{
 		return json;
 	}
 	
-	private JSONObject getTimeControl(TaskHolder taskHolder) throws AonApiException {
+	private JSONObject getTimeControl(Domain domain , User user, TaskHolder taskHolder) throws AonApiException {
 		Date startDate = AonDateUtils.getDateWithoutTime(new Date());
 		Date endDate = AonDateUtils.addDays(startDate, 1);
 		endDate = AonDateUtils.addSeconds(endDate, -1);
 
 		if(taskHolder != null && taskHolder.getId() != null) {
-			return AON_SOLUTIONS.getTaskHolderTimeControl(taskHolder.getDomain(), "", taskHolder.getId(), startDate, endDate)
+			return AON_SOLUTIONS.getTaskHolderTimeControl(domain, user.getLogin(), taskHolder.getId(), startDate, endDate)
 					.toJSON();
 		} else {
 			throw new AonApiException("No existe Task Holder asociado al usuario.");

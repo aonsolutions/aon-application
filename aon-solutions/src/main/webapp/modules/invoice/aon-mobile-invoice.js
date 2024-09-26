@@ -1,13 +1,7 @@
 import { AonBasicTable } from '../../components/aon-basic-table.js';
 import { AonCard } from '../../components/aon-card.js';
-import { AonDate } from '../../components/aon-date.js';
 import { AonDialog } from '../../components/aon-dialog.js';
 import { AonIconButton } from '../../components/aon-icon-button.js';
-import { AonInput } from '../../components/aon-input.js';
-import { AonNumber } from '../../components/aon-number.js';
-import { AonRegistry } from '../../components/aon-registry.js';
-import { AonSelect } from '../../components/aon-select.js';
-import { AonSuggestion } from '../../components/aon-suggestion.js';
 import { AonSwitch } from '../../components/aon-switch.js';
 import { AonToolbar } from '../../components/aon-toolbar.js';
 import { AonViewer } from '../../components/aon-viewer.js';
@@ -22,14 +16,18 @@ import { TaxIVAPercentage, TaxType, Transactions } from './invoiceEnums.js';
 import * as LS from '../../services/localStorageService.js';
 
 import {INVOICE} from  '../../services/app.js';
+import { AonCustomerSuggestion } from '../registry/customer/aon-customer-suggestion.js';
+import { AonRegistrySuggestion } from '../registry/aon-registry-suggestion.js';
+import { getWorkplaces } from '../../services/workplaceService.js';
+import { createCard, createDate, createInput, createNumber, createSelect, createSuggestion, createTable } from '../../components/CreateComponent.js';
 
 export class AonMobileInvoice extends AonInvoice {
 
   	constructor () {
     	super();
-  	}	
+  	}	 
 
-	initialize(){
+	initialize() {
 		super.initialize();
 		this.DIALOG =  CONSTANT.AON_INVOICE + 'Dialog';
 		this.FINANCE_OPTIONS =  this.FINANCE + CONSTANT.OPTIONS.initCap();
@@ -155,9 +153,7 @@ export class AonMobileInvoice extends AonInvoice {
 
 			// ----- SERIE
 
-			let serie = new AonInput();
-			serie.id = this.SERIE;
-			serie.description = MSG.SERIE;
+			let serie = createInput(this.SERIE, MSG.SERIE);
 			table.addCell(serie);
 			serie.readonly = this.invoice.isReadonly();
 			serie.value = this.invoice.serie;
@@ -168,11 +164,9 @@ export class AonMobileInvoice extends AonInvoice {
 
 			// ----- NUMBER
 
-			let number = new AonInput();
-			number.id = this.NUMBER;
-			number.description = MSG.NUMBER;
+			let number = createInput(this.NUMBER, MSG.NUMBER);
 			number.value = this.invoice.number;
-			
+
 			table.addCell(number);
 			number.readonly = CONSTANT.READONLY;
 			number.disabled = CONSTANT.TRUE;			
@@ -180,9 +174,7 @@ export class AonMobileInvoice extends AonInvoice {
 
 			// ----- REFERENCE
 			
-			let reference = new AonInput();
-			reference.id = this.REFERENCE;
-			reference.description = MSG.REFERENCE;
+			let reference = createInput(this.REFERENCE, MSG.REFERENCE);
 			reference.readonly = this.invoice.isReadonly();
 			reference.addEventListener(EVENT.CHANGE, () => {
 				this.invoice.setReference(reference.value);
@@ -196,22 +188,18 @@ export class AonMobileInvoice extends AonInvoice {
 
 		// ----- DATE
 
-		let date = new AonDate();
-		date.id = this.DATE;
-		date.title = MSG.DATE;
-
+		let date = createDate(this.DATE, MSG.DATE);
 		date.readonly = this.invoice.isReadonly();
+		date.setDate(this.invoice.date);
 		date.addEventListener(EVENT.CHANGE, () => {
-			this.invoice.setDate(date.value);
+			this.invoice.setDate(date.getDateValue());
 			if(this.autosave) this.save();
 		});
 		table.addCell(date);
-		date.value = this.invoice.date;
+
 		// ----- TOTAL
 
-		let total = new AonNumber();
-		total.id = this.TOTAL;
-		total.description = MSG.TOTAL;
+		let total = createNumber(this.TOTAL, MSG.TOTAL);
 		total.format = CONSTANT.TRUE;
 		total.decimals = "2";
 		total.addEventListener(EVENT.CHANGE, () => {
@@ -230,29 +218,36 @@ export class AonMobileInvoice extends AonInvoice {
 
 		// ----- REGISTRY
 
-		let registry = new AonRegistry();
-		registry.id = this.REGISTRY;
-		registry.types = this.invoice.getRegistryType();
-		registry.value = this.invoice.getRegistry();
-		registry.setRegistry(this.invoice.getRegistry());
-		registry.readonly = this.invoice.isReadonly();
-		registry.addEventListener(EVENT.CHANGE, () => {
-			this.invoice.setRegistry(registry.getRegistry());
-			if(this.autosave) this.save();
-		});
-		registry.addEventListener(EVENT.SELECT, () => {
-			this.invoice.setRegistry(registry.getRegistry());
-			if(this.autosave) this.save();
-		});
-		table.addCell(registry, '2');
+		if(this.invoice.isEmitida()) {
+			let customer = new AonCustomerSuggestion();	
+			customer.id = this.REGISTRY;
+			customer.showAddress = true;
+			customer.readonly = this.invoice.isReadonly();
+			customer.setCustomer(this.invoice.getRegistry());
+			customer.addEventListener(EVENT.SELECT_REGISTRY, () => this.onChangeRegistry(customer.getCustomer()));
+			customer.addEventListener(EVENT.CUSTOMER_CHANGE, () => {
+				this.invoice.receiver.address = customer.getCustomer().address;
+			});
+			table.addCell(customer, '2');	
+		} else {
+			let registry = new AonRegistrySuggestion();
+			registry.id = this.REGISTRY;
+			registry.showAddress = true;
+			registry.types = this.invoice.getRegistryType();
+			// registry.value = this.invoice.getRegistry();
+			registry.setRegistry(this.invoice.getRegistry());
+			registry.addEventListener(EVENT.SELECT_REGISTRY, () => this.onChangeRegistry(registry.getRegistry()));
+			registry.addEventListener(EVENT.CUSTOMER_CHANGE, () => {
+				this.invoice.receiver.address = registry.getRegistry().address;
+			});
+			table.addCell(registry, '2');
+		}
 
-		table.addRow(); // ----- ROW 4 
+		table.addRow(); // ----- ROW 4
 
 		// ----- CATEGORY
 
-		let category = new AonSelect();
-		category.id = this.CATEGORY;
-		category.title = MSG.CATEGORY;
+		let category = createSelect(this.CATEGORY, MSG.CATEGORY);
 		category.autocomplete = true;
 		category.readonly = this.invoice.isReadonly();
 		category.addEventListener(EVENT.SELECT, () => {
@@ -270,34 +265,53 @@ export class AonMobileInvoice extends AonInvoice {
 
 		// ----- PAYMETHOD
 
-		let paymethod = new AonSelect();
-		paymethod.id = this.PAYMETHOD;
-		paymethod.title = MSG.PAYMETHOD;
-		paymethod.autocomplete = true;
-		paymethod.readonly = this.invoice.isReadonly();
-		paymethod.addEventListener(EVENT.SELECT, () => {
-			this.invoice.setPaymethod(paymethod.value);
-			this.setFocus(paymethod.id);
-			this.reload();
-			if(this.autosave) this.save();
-		});
-		table.addCell(paymethod, '2');
+		// let paymethod = createSelect(this.PAYMETHOD, MSG.PAYMETHOD);
+		// paymethod.autocomplete = true;
+		// paymethod.readonly = this.invoice.isReadonly();
+		// paymethod.addEventListener(EVENT.SELECT, () => {
+		// 	this.invoice.setPaymethod(paymethod.value);
+		// 	this.setFocus(paymethod.id);
+		// 	this.reload();
+		// 	if(this.autosave) this.save();
+		// });
+		// table.addCell(paymethod, '2');
 		
-		getPaymethods({}).then(paymethods => {
-			let pms = paymethods.map(pm => {return {name: pm.name, value: pm.id};});
-			paymethod.options = JSON.stringify(pms);
-			if(this.invoice.finances.length === 1) {
-				paymethod.value = this.invoice.finances[0].paymethod;
+		// getPaymethods({}).then(paymethods => {
+		// 	let pms = paymethods.map(pm => {return {name: pm.name, value: pm.id};});
+		// 	paymethod.options = JSON.stringify(pms);
+		// 	if(this.invoice.finances.length === 1) {
+		// 		paymethod.value = this.invoice.finances[0].paymethod;
+		// 	}
+		// });
+
+		// ----- WORKPLACES
+
+		getWorkplaces().then(r => {
+			if(!this.invoice.workplace && r.length > 0) {
+				this.invoice.setWorkplace(r[0].id);
 			}
+			if(r.length > 1) {
+				table.addRow();
+				let workplaces = r.map(w => {return {name: w.description, value: w.id};});
+				let workplace = createSelect(this.WORKPLACE, MSG.WORKPLACE);
+				workplace.autocomplete = true;
+				workplace.readonly = this.invoice.isReadonly();
+				workplace.options = JSON.stringify(workplaces);
+				workplace.value = this.invoice.getWorkplace();
+				workplace.addEventListener(EVENT.SELECT, () => {
+					this.invoice.setWorkplace(workplace.value);
+					if(this.autosave) this.save();
+				});
+				table.addCell(workplace, this.invoice.isEmitida() ? '4' : '6');
+			} else if(r.length === 1) this.invoice.setWorkplace(r[0].id);
+		}).catch(e => {
+			console.error(e);
 		});
 	}	
 
 	buildTaxCard(parent) {
-		let card = new AonCard();
-		card.id = this.TAX;
-		card.title = MSG.TAXES_DETAIL;
+		let card = createCard(this.TAX, MSG.TAXES_DETAIL, parent);
 		card.style.width = '50%';
-		parent.appendChild(card);
 
 		let dialog = this.getElement(this.DIALOG_BLANK);
 		card.addTitleButton(MSG.OPTIONS, MATERIAL_ICONS.MORE_VERT, false, () => {
@@ -372,9 +386,7 @@ export class AonMobileInvoice extends AonInvoice {
 
 		// ----- TRANSACTION TYPE
 
-		let transaction = new AonSelect();
-		transaction.id = this.TRANSACTION_TYPE;
-		transaction.title = MSG.TRANSACTION_TYPE;
+		let transaction = createSelect(this.TRANSACTION_TYPE, MSG.TRANSACTION_TYPE);
 		transaction.options = JSON.stringify(Transactions);
 		transaction.value = this.invoice.transaction;
 		transaction.readonly = this.invoice.isReadonly();
@@ -391,9 +403,7 @@ export class AonMobileInvoice extends AonInvoice {
 
 		// ----- ACTIVITY TYPE
 
-		let activity = new AonSelect();
-		activity.id = this.ACTIVITY;
-		activity.title = MSG.ACTIVITY;
+		let activity = createSelect(this.ACTIVITY, MSG.ACTIVITY);
 		activity.readonly = this.invoice.isReadonly();
 		activity.addEventListener(EVENT.SELECT, () => {
 			this.invoice.setActivity(activity.value);
@@ -447,9 +457,7 @@ export class AonMobileInvoice extends AonInvoice {
 
 		// ----- TAXES
 		
-		let taxesTable = new AonBasicTable();
-		taxesTable.id = this.TAX_TABLE2;
-		card.addContent(taxesTable);
+		let taxesTable = createTable(this.TAX_TABLE2, card.getContent());
 
 		if(this.invoice.isEmitida() && !this.invoice.isNacional()) {
 			this.invoice.taxes = [];
@@ -521,15 +529,12 @@ export class AonMobileInvoice extends AonInvoice {
 	}
 
 	buildDetailCard(parent) {
-		let card = new AonCard();
-		card.id = this.DETAIL;
-		card.title = MSG.INVOICE_CONCEPTS;
-		parent.appendChild(card);
+		let card = this.getElement(this.DETAIL);
+		if(!card) card = createCard(this.DETAIL, MSG.INVOICE_CONCEPTS, parent);
 
-		let table = new AonBasicTable();
-		table.id = this.DETAIL_TABLE;
-		card.setContent(table);
-
+		let table = this.getElement(this.DETAIL_TABLE);
+		if(!table) table = createTable(this.DETAIL_TABLE, card.getContent());
+		table.removeRows();
 		for(let i = 0; i < this.invoice.details.length; i++) {
 			let detail = this.invoice.details[i];
 			this.printDetail(table, detail, i);
@@ -538,8 +543,9 @@ export class AonMobileInvoice extends AonInvoice {
 		let div = this.createElement(TAG.DIV);
 		card.addContent(div);
 
-		if(!this.invoice.isReadonly()) {
-			let addButton = new AonIconButton();
+		let addButton = this.getElement(this.DETAIL_ADD);
+		if(!this.invoice.isReadonly() && !addButton) {
+			addButton = new AonIconButton();
 			addButton.id = this.DETAIL_ADD;
 			addButton.title = MSG.ADD_DETAIL;
 			addButton.icon = MATERIAL_ICONS.ADD;
@@ -561,9 +567,7 @@ export class AonMobileInvoice extends AonInvoice {
 
 		// ----- DETAIL CONCEPT | DESCRIPTION | PRODUCT
 		
-		let description = new AonSuggestion();
-		description.id = this.DETAIL_DESCRIPTION + i;
-		description.title = MSG.CONCEPT;
+		let description = createSuggestion(this.DETAIL_DESCRIPTION + i, MSG.CONCEPT);
 		description.addEventListener(EVENT.KEYUP, () => {
 			if(description.value.length > 2) {
 				let data = { value: description.value};
@@ -597,9 +601,7 @@ export class AonMobileInvoice extends AonInvoice {
 
 		// ----- DETAIL AMOUNT
 		
-		let amount = new AonNumber();
-		amount.id = this.DETAIL_AMOUNT + i;
-		amount.description = MSG.AMOUNT;
+		let amount = createNumber(this.DETAIL_AMOUNT + i, MSG.AMOUNT);
 		amount.format = CONSTANT.TRUE;
 		amount.decimals = "2";
 		amount.value = detail.amount;
@@ -641,22 +643,16 @@ export class AonMobileInvoice extends AonInvoice {
 			
 		});
 		
-
 		let div = this.createElement(TAG.DIV);
 		div.style.margin = '15px';
 		dialog.setContent(div);
 
-		let table = new AonBasicTable();
-		table.id = this.DIALOG + 'Detail';
-		div.appendChild(table);
-
+		let table = createTable(this.DIALOG + 'Detail', div);
 		table.addRow(); // ----- ROW 1
 
 		// ----- DETAIL CONCEPT | DESCRIPTION | PRODUCT
 		
-		let description = new AonSuggestion();
-		description.id = this.DETAIL_DESCRIPTION + 'Dialog' + i;
-		description.title = MSG.CONCEPT;
+		let description = createSuggestion(this.DETAIL_DESCRIPTION + 'Dialog' + i, MSG.CONCEPT);
 		description.addEventListener(EVENT.KEYUP, () => {
 			if(description.value.length > 2) {
 				let data = { value: description.value};
@@ -692,9 +688,7 @@ export class AonMobileInvoice extends AonInvoice {
 
 		// ----- DETAIL QUANTITY
 
-		let quantity = new AonNumber();
-		quantity.id = this.DETAIL_QUANTITY + 'Dialog' + i;
-		quantity.description = MSG.QUANTITY;
+		let quantity = createNumber(this.DETAIL_QUANTITY + 'Dialog' + i, MSG.QUANTITY);
 		quantity.format = CONSTANT.TRUE;
 		quantity.decimals = "2";
 		quantity.addEventListener(EVENT.CHANGE, () => {
@@ -710,9 +704,7 @@ export class AonMobileInvoice extends AonInvoice {
 	
 		// ----- DETAIL PRICE
 	
-		let price = new AonNumber();
-		price.id = this.DETAIL_PRICE + 'Dialog' + i;
-		price.description = MSG.PRICE;
+		let price = createNumber(this.DETAIL_PRICE + 'Dialog' + i, MSG.PRICE);
 		price.format = CONSTANT.TRUE;
 		price.decimals = "2";
 		price.addEventListener(EVENT.CHANGE, () => {
@@ -730,9 +722,7 @@ export class AonMobileInvoice extends AonInvoice {
 
 		// ----- DETAIL DISCOUNT
 		
-		let discount = new AonNumber();
-		discount.id = this.DETAIL_DISCOUNT + 'Dialog' + i;
-		discount.description = '%Dto'//MSG.DISCOUNT;
+		let discount = createNumber(this.DETAIL_DISCOUNT + 'Dialog', '%Dto');//MSG.DISCOUNT
 		discount.format = CONSTANT.TRUE;
 		discount.decimals = "2";
 		discount.addEventListener(EVENT.CHANGE, () => {
@@ -748,9 +738,7 @@ export class AonMobileInvoice extends AonInvoice {
 
 		// ----- DETAIL AMOUNT
 		
-		let amount = new AonNumber();
-		amount.id = this.DETAIL_AMOUNT + 'Dialog' + i;
-		amount.description = MSG.AMOUNT;
+		let amount = createNumber(this.DETAIL_AMOUNT + 'Dialog' + i, MSG.AMOUNT);
 		amount.format = CONSTANT.TRUE;
 		amount.decimals = "2";
 		amount.value = detail.amount;
@@ -777,9 +765,7 @@ export class AonMobileInvoice extends AonInvoice {
 
 		// ----- DETAIL VAT
 	
-		let vat = new AonSelect();
-		vat.id = this.DETAIL_VAT + 'Dialog' + i;
-		vat.title = '%IVA';
+		let vat = createNumber(this.DETAIL_VAT + 'Dialog' + i, '%IVA');
 		vat.options = JSON.stringify(TaxIVAPercentage);
 		if(detail.prepayment === undefined) detail.prepayment = false;
 		vat.readonly = this.invoice.isReadonly() || detail.prepayment;
@@ -804,15 +790,13 @@ export class AonMobileInvoice extends AonInvoice {
 	}
 
 	buildFinanceCard(parent) {
-		let card = new AonCard();
-		card.id = this.FINANCE;
-		card.title = MSG.EXPIRATIONS;
-		parent.appendChild(card);
+		let card = this.getElement(this.FINANCE);
+		if(!card) card = createCard(this.FINANCE, MSG.EXPIRATIONS, parent);
+		
+		let table = this.getElement(this.FINANCE_TABLE);
+		if(!table) table = createTable(this.FINANCE_TABLE, card.getContent());
 
-		let table = new AonBasicTable();
-		table.id = this.FINANCE_TABLE;
-		card.setContent(table);
-
+		table.removeRows();
 		for(let i = 0; i < this.invoice.finances.length; i++) {
 			let finance = this.invoice.finances[i];
 			this.printFinance(table, finance, i);
@@ -821,8 +805,9 @@ export class AonMobileInvoice extends AonInvoice {
 		let div = this.createElement(TAG.DIV);
 		card.addContent(div);
 
-		if(!this.invoice.isReadonly()) {
-			let addButton = new AonIconButton();
+		let addButton = this.getElement(this.FINANCE_ADD);
+		if(!this.invoice.isReadonly() && !addButton) {
+			addButton = new AonIconButton();
 			addButton.id = this.FINANCE_ADD;
 			addButton.title = MSG.ADD_FINANCE;
 			addButton.icon = MATERIAL_ICONS.ADD;
@@ -844,24 +829,20 @@ export class AonMobileInvoice extends AonInvoice {
 		
 		// ----- FINANCE DUE DATE
 
-		let date = new AonDate();
-		date.id = this.FINANCE_DUE_DATE + i;
-		date.title = MSG.DATE; //MSG.DUE_DATE;
+		let date = createDate(this.FINANCE_DUE_DATE + i, MSG.DATE);
 		date.readonly = this.invoice.isReadonly();
+		date.setDate(finance.due_date);
 		date.addEventListener(EVENT.CHANGE, () => {
-			finance.due_date = date.value;
+			finance.due_date = date.getDateValue();
 			this.setFocus(date.id);
 			this.invoice.setFinance(finance, i);
 			if(this.autosave) this.save();
 		});
 		table.addCell(date);
-		date.value = finance.due_date;
 
 		// ----- FINANCE AMOUNT
 		
-		let amount = new AonNumber();
-		amount.id = this.FINANCE_AMOUNT + i;
-		amount.description = MSG.AMOUNT;
+		let amount = createNumber(this.FINANCE_AMOUNT + i, MSG.AMOUNT);
 		amount.format = CONSTANT.TRUE;
 		amount.decimals = "2";
 		amount.readonly = this.invoice.isReadonly();
@@ -913,34 +894,28 @@ export class AonMobileInvoice extends AonInvoice {
 		div.style.margin = '15px';
 		dialog.setContent(div);
 
-		let table = new AonBasicTable();
-		table.id = this.DIALOG + 'Detail';
-		div.appendChild(table);
+		let table = createTable(this.DIALOG + 'Detail', div);
 
 		table.addRow(); // ----- ROW 1
 
 		// ----- FINANCE DUE DATE
 
-		let date = new AonDate();
-		date.id = this.FINANCE_DUE_DATE + 'Dialog' + i;
-		date.title = MSG.DATE; //MSG.DUE_DATE;
+		let date = createDate(this.FINANCE_DUE_DATE + 'Dialog' + i, MSG.DATE);
 		date.readonly = this.invoice.isReadonly();
+		date.setDate(finance.due_date);
 		date.addEventListener(EVENT.CHANGE, () => {
-			finance.due_date = date.value;
+			finance.due_date = date.getDateValue();
 			this.setFocus(date.id);
 			this.invoice.setFinance(finance, i);
 			if(this.autosave) this.save();
 		});
 		table.addCell(date);
-		date.value = finance.due_date;
-		
+
 		table.addRow(); // ----- ROW 2
 
 		// ----- FINANCE PAYMETHOD
 
-		let paymethod = new AonSelect();
-		paymethod.id =this.FINANCE_PAYMETHOD + 'Dialog' + i;
-		paymethod.title = MSG.PAYMETHOD;
+		let paymethod = createSelect(this.FINANCE_PAYMETHOD + 'Dialog' + i, MSG.PAYMETHOD);
 		paymethod.autocomplete = true;
 		// paymethod.options = JSON.stringify(Paymethods);
 		paymethod.readonly = this.invoice.isReadonly();
@@ -963,9 +938,7 @@ export class AonMobileInvoice extends AonInvoice {
 
 		// ----- FINANCE BANK ACCOUNT | RBANK
 		
-		let bankAccount = new AonSuggestion();
-		bankAccount.id = this.FINANCE_BANK_ACCOUNT + 'Dialog' + i;
-		bankAccount.title = 'Cuenta Bancaria'; //MSG.BANK_ACCOUNT;
+		let bankAccount = createSuggestion(this.FINANCE_BANK_ACCOUNT + 'Dialog' + i, MSG.BANK_ACCOUNT);
 		bankAccount.readonly = this.invoice.isReadonly();
 
 		bankAccount.addEventListener(EVENT.KEYUP, () => {
@@ -990,9 +963,7 @@ export class AonMobileInvoice extends AonInvoice {
 
 		// ----- FINANCE AMOUNT
 	
-		let amount = new AonNumber();
-		amount.id = this.FINANCE_AMOUNT + 'Dialog' +  i;
-		amount.description = MSG.AMOUNT;
+		let amount = createNumber(this.FINANCE_AMOUNT + 'Dialog' +  i, MSG.AMOUNT);
 		amount.format = CONSTANT.TRUE;
 		amount.decimals = "2";
 		amount.readonly = this.invoice.isReadonly();
@@ -1120,7 +1091,6 @@ export class AonMobileInvoice extends AonInvoice {
 			d.open();
 		});
 	  }
-
 }
 if(!window.customElements.get(TAG.AON_MOBILE_INVOICE)){
 	window.customElements.define(TAG.AON_MOBILE_INVOICE, AonMobileInvoice);

@@ -11,6 +11,7 @@ import org.junit.runners.Suite.SuiteClasses;
 	ValidationSaveEmptyType.class,
 	CRUDETest.class,
 	CRUDEExistingRegistryTest.class,
+	TaskHolderTest.class
 })
 public class TaskHolderTestSuite {
 

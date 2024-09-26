@@ -12,16 +12,11 @@
 			<ui:param name="controller" value="#{lookup}"/>
 		</aon:if>
 		
-		<aon:div 
-		style="#{ app.standAlone ? 'display: grid; grid-template-columns: repeat(2, minmax(0, 1fr));' : '' }" >
+		<aon:div>
 			<aon:panelGrid 
 			columns="2" 
 			styleClass="aonCard"
 			columnClasses="aon-panelGrid-odd aon-width-150, aon-panelGrid-even aon-width-500">
-				<aon:if test="#{app.standAlone}">
-					<aon:outputText styleClass="aonCardTitle" value="" />
-					<aon:outputText styleClass="aonCardTitle" value="Datos Generales" />
-				</aon:if>
 				<ui:include src="/com/code/aon/ui/customer/facelet/customer/formContent.xhtml" >
 					<ui:param name="skipId" value="#{true}" />
 				</ui:include>
@@ -35,36 +30,14 @@
 					</aon:selectOneMenu>
 				</aon:if>
 				
-				<aon:if test="#{!app.standAlone}">
-					<ui:include src="/com/code/aon/ui/registry/facelet/lookup/registry/formAddressMedia.xhtml">
-						<ui:param name="controllerLookupListener" value="#{customerForm}"/>
-					</ui:include>
-				</aon:if>
+				<ui:include src="/com/code/aon/ui/registry/facelet/lookup/registry/formAddressMedia.xhtml">
+					<ui:param name="controllerLookupListener" value="#{customerForm}"/>
+				</ui:include>
 			</aon:panelGrid>
 
-			<aon:if test="#{app.standAlone}">
-				<aon:panelGrid 
-				columns="2" 
-				styleClass="aonCard"
-				style="margin-bottom:auto;"
-				columnClasses="aon-panelGrid-odd aon-width-150, aon-panelGrid-even aon-width-500"
-				>
-					<aon:if test="#{app.standAlone}">
-						<aon:outputText styleClass="aonCardTitle" value="" />
-						<aon:outputText styleClass="aonCardTitle" value="Datos de Contacto" />
-					</aon:if>
-					<ui:include src="/com/code/aon/ui/registry/facelet/lookup/registry/formAddressMedia.xhtml">
-						<ui:param name="controllerLookupListener" value="#{customerForm}"/>
-					</ui:include>
-				</aon:panelGrid>
-			</aon:if>
 
 			<aon:if test="#{aonConfiguration.bean.customer.showFinanceData}">
 				<aon:div styleClass="aonCard" >
-					<aon:if test="#{app.standAlone}">
-						<aon:outputText styleClass="aonCardTitle" value="Datos Financieros" />
-					</aon:if>
-
 					<ui:include src="/com/code/aon/ui/registry/facelet/lookup/registry/formPayMethod.xhtml">
 						<ui:param name="controllerLookupListener" value="#{customerForm}"/>
 					</ui:include>

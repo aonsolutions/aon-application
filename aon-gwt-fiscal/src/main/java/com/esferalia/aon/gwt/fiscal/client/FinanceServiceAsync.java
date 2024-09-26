@@ -5,6 +5,7 @@ import java.util.LinkedList;
 
 import com.esferalia.aon.occam.api.model.FBatchParams;
 import com.esferalia.aon.occam.api.model.FinanceParams;
+import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.finance.FBatch;
 import com.esferalia.aon.occam.api.model.finance.Finance;
 import com.esferalia.aon.occam.api.model.finance.FinanceTracking;
@@ -16,6 +17,7 @@ public interface FinanceServiceAsync {
 
 	// --------------------------------------------------------------- INVOICE SERIES
 	void getInvoiceNextNumber(String domainName, Integer domainId, String  user, Byte[] types, String series, AsyncCallback<Integer> callback);
+	void getInvoiceNextNumber(Occam occam, Byte[] types, String series, AsyncCallback<Integer> callback);
 	
 	// --------------------------------------------------------------- REGISTRY BANKS
 	void getCompanyBanks(String domainName, int domainId, String user, AsyncCallback<LinkedList<RegistryBank>> callback);

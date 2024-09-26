@@ -11,6 +11,7 @@ import static com.esferalia.aon.jooq.tables.SalaryDeduction.SALARY_DEDUCTION;
 import static com.esferalia.aon.jooq.tables.SalaryPayment.SALARY_PAYMENT;
 import static com.esferalia.aon.jooq.tables.Workplace.WORKPLACE;
 import static com.esferalia.aon.watson.util.AonNumberUtils.zeroIfNull;
+import static com.esferalia.aon.watson.util.AonStringUtils.isEmpty;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -62,6 +63,8 @@ import com.esferalia.aon.salary.enumeration.SalaryTypeVisitor;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 
 public class JooqEnterpriseSalaryBuilder {
+	
+	private static final Locale LOCALE_ES = new Locale("es");
 	
 	private static final String FUNDAE = "BONIFICACION_FORMACION_CONTINUA";
 	
@@ -647,8 +650,12 @@ public class JooqEnterpriseSalaryBuilder {
 			
 			EnterprisePayrollEntry entry = new EnterprisePayrollEntry(
 					enterpriseEntryType
+					, r.get(SALARY.SOCIAL_SECURITY_NUMBER)
+					, r.get(SALARY.CCC)
+					, r.get(SALARY.START_DATE)
+					, r.get(SALARY.END_DATE)
 					, r.get(SALARY.EMPLOYEE_NAME)
-					, salaryType.getName(new Locale("es"))
+					, salaryType.getName(LOCALE_ES)
 					, r.get(SALARY.TOTAL_PAYMENT)
 					, r.get(SALARY.SOCIAL_SECURITY_CONTRIBUTIONS)
 					, r.get(SALARY.TOTAL_IRPF)
@@ -709,9 +716,10 @@ public class JooqEnterpriseSalaryBuilder {
 			if (!map.containsKey(r.get(WORKPLACE.DESCRIPTION)))
 				map.put(r.get(WORKPLACE.DESCRIPTION), new LinkedHashMap<>());
 			
-			String key  = String.format("%s-%s-%3$td-%3$tm-%3$tY",
-			r.get(CONTRACT.ID)/*!AonStringUtils.isEmpty(r.get(SALARY.SOCIAL_SECURITY_NUMBER)) ? r.get(SALARY.SOCIAL_SECURITY_NUMBER) : r.get(SALARY.EMPLOYEE_DOCUMENT)*/, 
+			String key  = String.format("%s-%s-%3$td-%3$tm-%4$tY-%4$td-%4$tm-%3$tY",
+			isEmpty(r.get(SALARY.SOCIAL_SECURITY_NUMBER)) ? r.get(CONTRACT.ID) : r.get(SALARY.SOCIAL_SECURITY_NUMBER) , 
 			getSalaryTypeKey(salaryType),
+			r.get(SALARY.START_DATE),
 			r.get(SALARY.END_DATE)
 			);
 			
@@ -722,6 +730,7 @@ public class JooqEnterpriseSalaryBuilder {
 		return map;
 	}
 	
+	private static Locale ES = new Locale("es");
 	
 	private static Map<String, Map<String, EnterprisePayrollEntry>> getEnterprisePayrollsByEmployee(DSLContext ctx, Condition condition, Optional<Map<Integer, Map<String, Map<String, List<ContractData>>>>> optContractDatas)
 			throws IOException {
@@ -744,6 +753,7 @@ public class JooqEnterpriseSalaryBuilder {
 		.from(SALARY_PAYMENT)
 		.innerJoin(SALARY).onKey()
 		.innerJoin(CONTRACT).onKey()
+		.innerJoin(PERSON).on(PERSON.REGISTRY.eq(CONTRACT.PERSON))
 		.innerJoin(WORKPLACE).onKey()
 		.innerJoin(ENTERPRISE).onKey()
 		.where(condition)
@@ -760,6 +770,7 @@ public class JooqEnterpriseSalaryBuilder {
 		.from(SALARY_PAYMENT)
 		.innerJoin(SALARY).onKey()
 		.innerJoin(CONTRACT).onKey()
+		.innerJoin(PERSON).on(PERSON.REGISTRY.eq(CONTRACT.PERSON))
 		.innerJoin(WORKPLACE).onKey()
 		.innerJoin(ENTERPRISE).onKey()
 		.where(condition)
@@ -825,8 +836,12 @@ public class JooqEnterpriseSalaryBuilder {
 			
 			EnterprisePayrollEntry entry = new EnterprisePayrollEntry(
 					enterpriseEntryType
+					, r.get(SALARY.SOCIAL_SECURITY_NUMBER)
+					, r.get(SALARY.CCC)
+					, r.get(SALARY.START_DATE)
+					, r.get(SALARY.END_DATE)
 					, r.get(SALARY.EMPLOYEE_NAME)
-					, null
+					, salaryType.getName(ES) 
 					, r.get(SALARY.TOTAL_PAYMENT)
 					, r.get(SALARY.SOCIAL_SECURITY_CONTRIBUTIONS)
 					, r.get(SALARY.TOTAL_IRPF)
@@ -998,8 +1013,12 @@ public class JooqEnterpriseSalaryBuilder {
 			
 			EnterprisePayrollEntry entry = new EnterprisePayrollEntry(
 					enterpriseEntryType
+					, r.get(SALARY.SOCIAL_SECURITY_NUMBER)
+					, r.get(SALARY.CCC)
+					, r.get(SALARY.START_DATE)
+					, r.get(SALARY.END_DATE)
 					, r.get(SALARY.EMPLOYEE_NAME)
-					, null
+					, salaryType.getName(LOCALE_ES)
 					, r.get(SALARY.TOTAL_PAYMENT)
 					, r.get(SALARY.SOCIAL_SECURITY_CONTRIBUTIONS)
 					, r.get(SALARY.TOTAL_IRPF)

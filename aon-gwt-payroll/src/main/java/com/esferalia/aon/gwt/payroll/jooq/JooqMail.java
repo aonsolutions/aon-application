@@ -28,6 +28,7 @@ import org.jooq.conf.Settings;
 import org.jooq.impl.DSL;
 
 import com.esferalia.aon.gwt.payroll.client.PayrollEmailDialog.Type;
+import com.esferalia.aon.gwt.payroll.shared.Mail;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.MailAccount;
 import com.esferalia.aon.occam.api.model.MailAccountType;
@@ -135,14 +136,14 @@ public class JooqMail {
 	
 	// ---------------------------------------------- Email body
 	
-	public static String getPayrollEmailBody(Connection connection, Type type, HashMap<String, String> params) {
-		return getPayrollEmailBodyDB(DSL.using(connection, getDefaultSettings()), type, params);
+	public static String getPayrollEmailBody(Connection connection, Type type, HashMap<String, String> params, boolean isPassword) {
+		return getPayrollEmailBodyDB(DSL.using(connection, getDefaultSettings()), type, params, isPassword);
 	}
 	
-	private static String getPayrollEmailBodyDB(DSLContext dslContext, Type type, HashMap<String, String> params) {	
+	private static String getPayrollEmailBodyDB(DSLContext dslContext, Type type, HashMap<String, String> params, boolean isPassword) {	
 		switch (type) {
 		case ENTERPRISE:
-			return getEnterpriseBody(dslContext, params);
+			return getEnterpriseBody(dslContext, params, isPassword);
 		case EMPLOYEE:
 			return getEmployeeBody();
 		case ENTERPRISE_MANAGEMENT:
@@ -152,7 +153,7 @@ public class JooqMail {
 		}	
 	}
 	
-	private static String getEnterpriseBody(DSLContext dslContext, HashMap<String, String> params) {
+	private static String getEnterpriseBody(DSLContext dslContext, HashMap<String, String> params, boolean isPassword) {
 		String html = "";
 		
 		html += "<div style=\"font-family: \"Arial\"; font-size: small; letter-spacing: 2px; word-spacing: 0px; color: #000000; font-weight: normal; text-decoration: none; font-style: normal; font-variant: normal; text-transform: none;\">";
@@ -174,7 +175,7 @@ public class JooqMail {
 		html += "<p>Para descargar y visualizar el documento adjunto, por favor haga click en el siguiente enlace:</p>";
 		
 //		html += generateForm(params);
-		html += generateAnchor(params);
+		html += generateAnchor(params, isPassword);
 
 		html += "<p>Este archivo est&aacute; en formato PDF Adobe y se puede leer usando Acrobat Reader. Si no tiene instalado el Acrobat Reader pulse aqu&iacute; para conseguir su copia gratuita: http://get.adobe.com/es/reader. Para cualquier aclaraci&oacute;n sobre el documento adjunto p&oacute;ngase en contacto con nosotros.</p>";
 		html += " <a style=\"font-weight: bold;\">" + getEnterpriseInfo(dslContext, Integer.parseInt(params.get("enterprise"))) + "</a>";
@@ -297,11 +298,11 @@ public class JooqMail {
 	
 	// ---------------------------------------------- Send Email
 	
-	public static String sendPayrollEmail(Connection connection, Integer domainId, Type type,  HashMap<String, String> params, String from, String to, String cc, String cco, String bodyHTML) throws IllegalArgumentException {
-		return sendPayrollEmailDB(DSL.using(connection, getDefaultSettings()), domainId, type, params, from, to, cc, cco, bodyHTML);
+	public static String sendPayrollEmail(Connection connection, Integer domainId, Type type,  HashMap<String, String> params, Mail mail) throws IllegalArgumentException {
+		return sendPayrollEmailDB(DSL.using(connection, getDefaultSettings()), domainId, type, params, mail);
 	}
 	
-	private static String sendPayrollEmailDB(DSLContext dslContext, Integer domainId, Type type, HashMap<String, String> params, String from, String to, String cc, String cco, String bodyHTML) throws IllegalArgumentException {
+	private static String sendPayrollEmailDB(DSLContext dslContext, Integer domainId, Type type, HashMap<String, String> params, Mail mail) throws IllegalArgumentException {
 		String message = "";
 		String enterpriseName = dslContext.select(REGISTRY.NAME).from(REGISTRY)
 				.where(REGISTRY.ID.eq(
@@ -310,13 +311,13 @@ public class JooqMail {
 		
 		switch (type) {
 		case EMPLOYEE:
-			message = sendEmployeesEmail(dslContext, params, from, enterpriseName, to, cc, cco, bodyHTML);
+			message = sendEmployeesEmail(dslContext, params, mail, enterpriseName);
 			break;
 		case ENTERPRISE:
-			message = sendEmail(dslContext, from, enterpriseName, to, cc, cco, bodyHTML);
+			message = sendEmail(dslContext, mail, mail.getBodyHTML(), enterpriseName);
 			break;
 		case ENTERPRISE_MANAGEMENT:
-			message = sendEnterpriseManagementEmail(dslContext, params, from, to, cc, cco, bodyHTML);
+			message = sendEnterpriseManagementEmail(dslContext, params, mail);
 			break;
 		default:
 			break;
@@ -325,7 +326,7 @@ public class JooqMail {
 		return message;
 	}
 	
-	private static String sendEnterpriseManagementEmail(DSLContext dslContext, HashMap<String, String> params, String mailAccountId, String to, String cc, String cco, String bodyHTML) throws IllegalArgumentException {
+	private static String sendEnterpriseManagementEmail(DSLContext dslContext, HashMap<String, String> params, Mail mail) throws IllegalArgumentException {
 		ArrayList<Integer> salaryIds = getSalaryIds(params);
 		HashSet<Integer> enterpriseIds = getEnterpriseIds(params);
 		
@@ -342,6 +343,8 @@ public class JooqMail {
 					.fetchOne();
 			
 			String emailTo = enterpriseEmailRecord.get(ENTERPRISE_DATA.EXPRESSION);
+			mail.setTo(emailTo);
+			
 			String enterpriseName = enterpriseRecord.get(REGISTRY.NAME);
 			
 			Result<Record> salariesRecords = dslContext.select().from(SALARY)
@@ -349,18 +352,19 @@ public class JooqMail {
 					.and(SALARY.ID.in(salaryIds))
 					.fetch();
 			
-			String parseHTMLBody = parseEnterpriseManagementHTMLBody(bodyHTML, salariesRecords, params, enterpriseId, enterpriseName, dslContext);
+			String parseHTMLBody = parseEnterpriseManagementHTMLBody(mail.getBodyHTML(), salariesRecords, params, enterpriseId, enterpriseName, mail.isPassword(), dslContext);
+			mail.setBodyHTML(parseHTMLBody);
 			
 			if(parseHTMLBody.length() == 0)
 				throw new IllegalArgumentException("No se ha encontrado la variable NOMBRE_EMPRESA, NOMINA_TRABAJDORES y/o INFORMACION_EMPRESA");
 			
-			sendEmail(dslContext, mailAccountId, enterpriseName, emailTo, cc, cco, parseHTMLBody);
+			sendEmail(dslContext, mail, parseHTMLBody, enterpriseName);
 		}
 		
 		return "Email(s) enviado(s) correctamente.";
 	}
 
-	private static String sendEmployeesEmail(DSLContext dslContext, HashMap<String, String> params, String mailAccountId, String enterpriseName, String to, String cc, String cco, String bodyHTML) throws IllegalArgumentException {
+	private static String sendEmployeesEmail(DSLContext dslContext, HashMap<String, String> params, Mail mail, String enterpriseName) throws IllegalArgumentException {
 		ArrayList<Integer> salaryIds = getSalaryIds(params);
 		ArrayList<Integer> visitedContracts = new ArrayList<Integer>();
 		
@@ -381,15 +385,16 @@ public class JooqMail {
 						).fetchOne();
 				
 				String emailTo = rMediaEmailRecord.get(RMEDIA.VALUE);
+				mail.setTo(emailTo);
 				
 				Result<Record> salariesRecords = dslContext.select().from(SALARY).where(SALARY.CONTRACT.eq(contractId)).and(SALARY.ID.in(salaryIds)).fetch();
 				
-				String parseHTMLBody = parseHTMLBody(bodyHTML, salariesRecords, params, dslContext);
+				String parseHTMLBody = parseHTMLBody(mail.getBodyHTML(), salariesRecords, params, mail.isPassword(), dslContext);
 				
 				if(parseHTMLBody.length() == 0)
 					throw new IllegalArgumentException("No se ha encontrado la variable NOMBRE_EMPLEADO, PERIODOS_NOMINA y/o INFORMACION_EMPRESA");
 				
-				sendEmail(dslContext, mailAccountId, enterpriseName, emailTo, cc, cco, parseHTMLBody);
+				sendEmail(dslContext, mail, parseHTMLBody, enterpriseName);
 				
 				visitedContracts.add(contractId);
 			}
@@ -399,9 +404,9 @@ public class JooqMail {
 		return "Email(s) enviado(s) correctamente.";
 	}
 
-	private static String sendEmail(DSLContext dslContext, String mailAccountId, String enterpriseName, String to, String cc, String cco, String bodyHTML) throws IllegalArgumentException {
+	private static String sendEmail(DSLContext dslContext, Mail mail, String body, String enterpriseName) throws IllegalArgumentException {
 		Record mailAccountRecord = dslContext.select().from(MAIL_ACCOUNT)
-				.where(MAIL_ACCOUNT.ID.eq(Integer.parseInt(mailAccountId))).fetchOne();
+				.where(MAIL_ACCOUNT.ID.eq(Integer.parseInt(mail.getFrom()))).fetchOne();
 		
 		if(null != mailAccountRecord) {
 			String from = mailAccountRecord.get(MAIL_ACCOUNT.EMAIL);
@@ -409,10 +414,10 @@ public class JooqMail {
 			SESMessage msg = new SESMessage()
 					.setAlias(enterpriseName)
 					.setReplyTo(from)
-					.setTo(to)
+					.setTo(mail.getTo())
 					.setSubject("N\u00d3MINAS " + enterpriseName)
-					.setBody(bodyHTML);
-			if(AonStringUtils.isNotBlank(cc)) msg.setBcc(cc);
+					.setBody(body);
+			if(AonStringUtils.isNotBlank(mail.getCc())) msg.setBcc(mail.getCc());
 			SES.sendEmail(msg);
 			
 		} else {
@@ -424,11 +429,11 @@ public class JooqMail {
 	
 	// ---------------------------------------------- Send Email (Auxiliar methods)
 	
-	private static String parseEnterpriseManagementHTMLBody(String bodyHTML, Result<Record> salariesRecords, HashMap<String, String> params, Integer enterpriseId, String enterpriseName, DSLContext dslContext) {
+	private static String parseEnterpriseManagementHTMLBody(String bodyHTML, Result<Record> salariesRecords, HashMap<String, String> params, Integer enterpriseId, String enterpriseName, boolean isPassword, DSLContext dslContext) {
 		
 		// GENERATE URL
 		params.put("enterprise", enterpriseId.toString());
-		String payrollsAnchor = generateEnterprisePayrollsAnchor(params, salariesRecords);
+		String payrollsAnchor = generateEnterprisePayrollsAnchor(params, salariesRecords, isPassword);
 		
 		String enterpriseNames = "<a style=\"font-weight: bold;\">NOMBRE_EMPRESA</a>";
 		String payrollPeriods = "<li style=\"font-weight: bold;\">NOMINA_TRABAJDORES</li>";
@@ -454,10 +459,10 @@ public class JooqMail {
 		return html;
 	}
 	
-	private static String parseHTMLBody(String bodyHTML, Result<Record> salariesRecords, HashMap<String, String> params, DSLContext dslContext) {
+	private static String parseHTMLBody(String bodyHTML, Result<Record> salariesRecords, HashMap<String, String> params, boolean isPassword, DSLContext dslContext) {
 		
 		// GENERATE URL
-		String payrollsAnchor = generateEmployeePayrollsAnchor(params, salariesRecords);
+		String payrollsAnchor = generateEmployeePayrollsAnchor(params, salariesRecords, isPassword);
 		
 		String employeeName = "<a style=\"font-weight: bold;\">NOMBRE_EMPLEADO</a>";
 		String payrollPeriods = "<li style=\"font-weight: bold;\">PERIODOS_NOMINA</li>";
@@ -483,7 +488,7 @@ public class JooqMail {
 		return html;
 	}
 	
-	private static String generateAnchor(HashMap<String, String> params) {
+	private static String generateAnchor(HashMap<String, String> params, boolean isPassword) {
 		String html = "";
 		String parameters = "";
 		
@@ -502,7 +507,8 @@ public class JooqMail {
 				parameters += entry.getKey() + "=" + entry.getValue() + "&";
 		}
 		
-//		parameters += "pwdEnt=true";
+		if(isPassword)
+			parameters += "pwdEnt=true";
 		
 //		if(AonStringUtils.isNotBlank(parameters)) parameters = parameters.substring(0, parameters.length() - 1);
 		
@@ -513,7 +519,7 @@ public class JooqMail {
 		return html;
 	}
 	
-	private static String generateEnterprisePayrollsAnchor(HashMap<String, String> params, Result<Record> salariesRecords) {
+	private static String generateEnterprisePayrollsAnchor(HashMap<String, String> params, Result<Record> salariesRecords, boolean isPassword) {
 		String html = "";
 		String parameters = "";
 		
@@ -529,7 +535,8 @@ public class JooqMail {
 		for(Record salaryRecord : salariesRecords)
 			parameters += "id=" + salaryRecord.get(SALARY.ID) + "&";
 		
-//		parameters += "pwdEnt=true";
+		if(isPassword)
+			parameters += "pwdEnt=true";
 		
 //		if(AonStringUtils.isNotBlank(parameters)) parameters = parameters.substring(0, parameters.length() - 1);
 		
@@ -540,7 +547,7 @@ public class JooqMail {
 		return html;
 	}
 	
-	private static String generateEmployeePayrollsAnchor(HashMap<String, String> params, Result<Record> salariesRecords) {
+	private static String generateEmployeePayrollsAnchor(HashMap<String, String> params, Result<Record> salariesRecords, boolean isPassword) {
 		String html = "";
 		String parameters = "";
 		
@@ -556,7 +563,8 @@ public class JooqMail {
 		for(Record salaryRecord : salariesRecords)
 			parameters += "id=" + salaryRecord.get(SALARY.ID) + "&";
 		
-//		parameters += "pwdEmpl=true";
+		if(isPassword)
+			parameters += "pwdEmpl=true";
 		
 //		if(AonStringUtils.isNotBlank(parameters)) parameters = parameters.substring(0, parameters.length() - 1);
 		
