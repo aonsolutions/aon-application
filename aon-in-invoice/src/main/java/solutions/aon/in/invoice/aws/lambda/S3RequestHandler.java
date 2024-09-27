@@ -83,18 +83,22 @@ public class S3RequestHandler implements RequestHandler<Object, String> {
     		s3EventObject.setDocument(s3EventObject.getDocument() != null
    				? s3EventObject.getDocument().trim() : s3EventObject.getDocument());
     		if(isImage(s3EventObject)) {
-    			byte[] image = download(s3EventObject);
-    			byte[] pdf = imageToPdf(image);
+    			try {
+        			byte[] image = download(s3EventObject);
+        			byte[] pdf = imageToPdf(image);
 
-    			// sign PDF. 
-    			// Certificate cert = null; // TODO
-    			// byte[] signedPdf = PdfSigner.sign(cert, pdf);
-    			
-    			// save PDF IN S3.
-    			s3EventObject.setKey(s3EventObject.getKey().replace(".jpg", ".pdf"));
-    			s3EventObject.setFileName(s3EventObject.getFileName().replace(".jpg", ".pdf"));
-    			
-    			solutions.aon.aws.s3.S3.upload(s3EventObject.getBucket(), s3EventObject.getKey(), pdf);
+        			// sign PDF. 
+        			// Certificate cert = null; // TODO
+        			// byte[] signedPdf = PdfSigner.sign(cert, pdf);
+        			
+        			// save PDF IN S3.
+        			s3EventObject.setKey(s3EventObject.getKey().replace(".jpg", ".pdf"));
+        			s3EventObject.setFileName(s3EventObject.getFileName().replace(".jpg", ".pdf"));
+        			
+        			solutions.aon.aws.s3.S3.upload(s3EventObject.getBucket(), s3EventObject.getKey(), pdf);	
+    			} catch (Exception e) {
+    				e.printStackTrace();
+				}
     		}    		
     		DomainUserRoles dur = getDomainUserRoles(s3EventObject);
     		if(dur.isInvofox()) {
@@ -388,6 +392,34 @@ public class S3RequestHandler implements RequestHandler<Object, String> {
     
     public static void main(String[] args) throws URISyntaxException, IOException, InterruptedException, NoSuchCompanyException, ParseException {
 //      handleObject("aon-upload-post",  "");
+    	String bucket = "";
+    	String key = "invoices/pruebacarga-newsuite.aonsolutions.org/B01487271/app/20240923055153/00_(sep. 2024) Factura iDENDA.pdf";
+    	S3EventObject s3EventObject = new S3EventObject();
+    	s3EventObject.setBucket(bucket);
+    	s3EventObject.setDomain("b72384936-ayudat.aibanez.net");
+    	s3EventObject.setUser("albertocastro");
+    	s3EventObject.setDocument("b72384936");
+    	s3EventObject.setKey(key);
+
+    	JSONObject json = new JSONObject();
+    	JSONObject file = new JSONObject();
+    	file.put("s3Bucket", bucket);
+    	file.put("s3Key", key); 
+//    	file.put("url", getDowloadURL(s3EventObject));
+//    	file.put("path", getDowloadURL(s3EventObject));
+//    	String contentType = solutions.aon.aws.s3.S3.getContentType(s3EventObject.getBucket(), s3EventObject.getKey());
+    	file.put("content_type", "application/pdf");
+    	json.put(IJsonNames.FILE, file);
+    	json.put(IJsonNames.STATUS, RawdocStatus.PROCESSING.getTediName());
+		JSONObject resp = AonInvofox.createRawdoc(s3EventObject.getDomain(), s3EventObject.getUser(), json);
+
+		InvofoxConfiguration invofoxConfiguration = getInvofoxConfiguration(s3EventObject);
+		String companyId =  getCompanyId(invofoxConfiguration, s3EventObject);
+
+		System.out.println(companyId);
+		System.out.println(invofoxConfiguration.getApiKey());
+		System.out.println(invofoxConfiguration.getApiUrl());
+		System.out.println(resp.toString());
     }
     
 }

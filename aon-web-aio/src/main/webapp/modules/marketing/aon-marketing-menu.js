@@ -1,6 +1,8 @@
 import { MSG, CSS, EVENT, TAG } from 'aonsolutions/environments/environments.js'; 
 import { AonSuiteMenu } from '../aon-suite-menu.js';
 import * as GWT from 'aonsolutions/gwt/gwt.js';
+import * as JSF from '../aon-jsf-app.js';
+
 
 export class AonMarketingMenu extends AonSuiteMenu {
 
@@ -44,60 +46,60 @@ export class AonMarketingMenu extends AonSuiteMenu {
             options: [ {
                 description: "Mensajes",
                 title: "Mensajes",
-                action: () => alert("description")
+                action: () => this.rootPanel(new JSF.AonJsfMessages)
             },{
                 description: "Noticias",
                 title: "Noticias",
-                action: () => alert("description")
+                action: () => this.rootPanel(new JSF.AonJsfNews())
             },{
                 description: "Boletines",
                 title: "Boletines",
-                action: () => alert("description")
+                action: () => this.rootPanel(new JSF.AonJsfNewsletter())
             }]
         },{
             title: 'Comunicaciones',
             options: [{
                 description: "Campañas",
                 title: "Campañas",
-                action: () => alert("description")
+                action: () => this.rootPanel(new JSF.AonJsfMarketingCampaign())
             },{
                 description: "Communication Center",
                 title: "Communication Center",
-                action: () => alert("description")
+                action: () => this.rootPanel(new JSF.AonJsfCommunicationCenter())
             }]
         },{
             title: 'Cuestionarios',
             options: [{
                 description: "Preguntas",
                 title: "Preguntas",
-                action: () => alert("description")
+                action: () => GWT.iLoad(GWT.QUESTION)
             },{
                 description: "Cuestionarios",
                 title: "Cuestionarios",
-                action: () => alert("description")
+                action: () => this.rootPanel(new JSF.AonJsfSurvey())
             },{
                 description: "Respuestas de Cuestionarios",
                 title: "Respuestas de Cuestionarios",
-                action: () => alert("description")
+                action: () => this.rootPanel(new JSF.AonJsfSurveyResponse())
             }]
         },{
             title: 'Plantillas',
             options: [{
                 description: "Cabeceras y Pies de Plantilla",
                 title: "Cabeceras y Pies de Plantilla",
-                action: () => alert("description")
+                action: () => this.rootPanel(new JSF.AonJsfHtmlTemplate())
             },{
                 description: "Plantillas de Correos",
                 title: "Plantillas de Correos",
-                action: () => alert("description")
+                action: () => this.rootPanel(new JSF.AonJsfMarketingTemplate())
             },{
                 description: "Imagenes",
                 title: "Imagenes",
-                action: () => alert("description")
+                action: () => this.rootPanel(new JSF.AonJsfCompanyImages())
             },{
                 description: "Personalización de Envio Email",
                 title: "Personalización de Envio Email",
-                action: () => alert("description")
+                action: () => this.rootPanel(new JSF.AonJsfMailProcess())
             }]
         }];
     }

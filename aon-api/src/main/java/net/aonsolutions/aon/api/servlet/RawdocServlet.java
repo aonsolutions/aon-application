@@ -37,7 +37,7 @@ import net.aonsolutions.aon.tedi.TediContext;
 import solutions.aon.aws.s3.S3;
 
 @SuppressWarnings("serial")
-@WebServlet(name = "RawdocServlet", urlPatterns = {"/ms/api/rawdocs/*"})
+@WebServlet(name = "RawdocServlet", urlPatterns = {"/ms/api/rawdoc/*"})
 public class RawdocServlet extends AonApiHttpServlet {
 		
 	private static final Logger LOGGER  = Logger.getLogger(RawdocServlet.class.getName());
@@ -186,9 +186,12 @@ public class RawdocServlet extends AonApiHttpServlet {
 		
 		Integer id = json.opt("id") !=null ? json.optInt("id") : null;
 		RawdocStatus status = RawdocStatus.safeValueOf(json.optString("status")); 
+		
 		RawdocType type = json.opt("type") != null && json.optString("type").equalsIgnoreCase("emitida") 
 				? RawdocType.OUTPUT : RawdocType.INPUT;
-
+		if(!JsonUtils.has(json, IJsonNames.TYPE)) 
+			json.put(IJsonNames.TYPE, "recibida");
+		
 		Rawdoc rawdoc = new Rawdoc()
 				.setId(id)
 				.setDomain(domain.getId())
@@ -199,7 +202,25 @@ public class RawdocServlet extends AonApiHttpServlet {
 		if(JsonUtils.has(json, IJsonNames.FILE)) {
 			JSONObject fileJSON =  JsonUtils.getJSONObject(json, IJsonNames.FILE);
 			rawdoc.setS3Key(JsonUtils.getString(fileJSON, IJsonNames.S3_KEY));
-		}
+			
+			// TEDI PARSER!!!		    
+		    if(api.getDur().isOcr() && !AonStringUtils.isBlank(rawdoc.getS3Key())) {
+		    	try {
+		    		byte[] data = S3.download(rawdoc.getS3Bucket(), rawdoc.getS3Key());
+			    	
+			    	InputStream input = new ByteArrayInputStream(data);
+			    	TediContext tctx = new TediContext()
+			    		.setDomainName(domain.getName())
+			    		.setDomain(domain.getId())
+			    		.setUser(login);
+			    	
+		    		TediResult r = TEDI.parse(tctx, input, MimeType.PDF);
+		    		json = tediParse(TediInvoiceJSON.toJSON(r.getTedi()), json);
+		    	} catch (Exception e) {
+		    		e.printStackTrace();
+		    	}
+		    }
+		} 
 		
 		if(file != null) {
 			String base64 = file.optString("content");
@@ -320,10 +341,11 @@ public class RawdocServlet extends AonApiHttpServlet {
 			JSONObject f = new JSONObject();
 			f.put("url", url.toExternalForm());
 			f.put("path", url.toExternalForm());
-			String contentType = S3.getContentType(rawdoc.getS3Bucket(), rawdoc.getS3Key());
-			f.put("content_type", contentType);
+			//String contentType = S3.getContentType(rawdoc.getS3Bucket(), rawdoc.getS3Key());
+			f.put("content_type", "application/pdf");
 			f.put("s3Bucket", rawdoc.getS3Bucket());
 			f.put("s3Key", rawdoc.getS3Key());
+		    json.put("file", f);
 		} else if(rawdoc.getMimeType() != null){
 			JSONObject data = new JSONObject();
 			data.put("domain_name", api.getDomain().getName());
@@ -338,6 +360,13 @@ public class RawdocServlet extends AonApiHttpServlet {
 		    f.put("path", url);
 		    f.put("content_type", rawdoc.getMimeType().getName());
 		    json.put("file", f);
+		}
+		if(!JsonUtils.has(json, IJsonNames.TYPE)) {
+			json.put(IJsonNames.TYPE, RawdocType.OUTPUT.equals(rawdoc.getType()) ? "emitida": "recibida");
+		}
+		
+		if(!JsonUtils.has(json, IJsonNames.DATE)) {
+			json.put(IJsonNames.DATE, AonDateUtils.format(new Date(), AonDateUtils.SIMPLE_DATE_FORMAT4));
 		}
 		JSONArray log = new JSONArray(rawdoc.getLog() != null ? rawdoc.getLog() : "[]");
 		json.put("remarks", log);

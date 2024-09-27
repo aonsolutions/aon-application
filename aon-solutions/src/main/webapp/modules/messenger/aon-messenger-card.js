@@ -249,7 +249,7 @@ export class AonMessengerCard extends AonElement {
     } else if (res.sender && res.sender.name) {
       senderText = `${res.sender.name}`;
     } else {
-      senderText = "SYSTEM";
+      senderText = "System";
     }
 
     sender.innerHTML = senderText;

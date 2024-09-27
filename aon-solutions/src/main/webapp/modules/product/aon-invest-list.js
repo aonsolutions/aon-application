@@ -1,12 +1,11 @@
-import {AonElement} from '../../components/AonElement.js';
-import {getInvestAssets, getUserRoles} from  '../../services/service.js';
-import {setList, setIndex, addList, getFilter, setFilter, getList} from './cache.js';
+import { AonElement} from '../../components/AonElement.js';
+import { getInvestAssets } from  '../../services/service.js';
+import { setList, setIndex, addList, getFilter, setFilter, getList } from './cache.js';
 
 import { AonInvest } from './aon-invest.js';
 import { CONSTANT, EVENT, MSG, TAG } from '../../environments/environments.js';
-import { AonTable } from '../../components/aon-table.js';
 import { InvestAssetRegime, InvestAssetType } from '../../models/enums.js';
-import { INVOICE } from '../../services/app.js';
+import { createList } from '../../components/CreateComponent.js';
 
 export class AonInvestList extends AonElement {
 
@@ -46,9 +45,7 @@ export class AonInvestList extends AonElement {
 	}
 
 	build() {
-		let table = this.createAonElement(new AonTable(), this.TABLE);
-		table.setApp(INVOICE);
-
+		let table = createList(this.TABLE);
 		this.appendChild(table);
 
 		const btnSearch = this.getApplication().addSearchOption();

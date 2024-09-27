@@ -1,8 +1,8 @@
 import { AonElement } from '../../components/AonElement.js';
-import { getInvoices, getSigInvoices } from '../../services/service.js';
+import { getSigInvoices } from '../../services/service.js';
 
 
-import {addInvoices, setInvoices, setIndex} from '../invoice/InvoiceCache.js';
+import { addInvoices, setInvoices } from '../invoice/InvoiceCache.js';
 
 import '../../components/aon-table.js';
 
@@ -10,7 +10,6 @@ import { CONSTANT, MSG } from '../../environments/environments.js';
 
 import { formatNumber } from '../../services/utils.js';
 import * as LS from '../../services/localStorageService.js';
-import { INVOICE } from '../../services/app.js';
 import { AonTable } from '../../components/aon-table.js';
 
 export class AonBookingInvoiceList extends AonElement {
@@ -51,7 +50,6 @@ export class AonBookingInvoiceList extends AonElement {
 		let aonInvoiceTable =  new AonTable();
 		aonInvoiceTable.id = 'aonInvoiceTable';
 		aonInvoiceTable.selectable = 'true';
-		aonInvoiceTable.setApp(INVOICE);
 		this.appendChild(aonInvoiceTable);
 		aonInvoiceTable.addColumn(MSG.DATE, 'date', 'dateTable', '10%');
 		aonInvoiceTable.addColumn(MSG.INVOICE_NUMBER, 'string', 'reference', '35%');

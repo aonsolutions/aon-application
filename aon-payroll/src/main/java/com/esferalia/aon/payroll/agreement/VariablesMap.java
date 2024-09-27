@@ -807,6 +807,7 @@ public class VariablesMap implements Serializable {
 		variablesMap.put("DIETA_PERNOCTA_SERVICIOS_REGULARES_DIARIO", "D_PERNOCTA_SR_D");
 		variablesMap.put("DIETA_TERRITORIO_NACIONAL_DIARIO", "DIETA_TERRIT_NAC");
 		variablesMap.put("DIETA_TERRITORIO_NACIONAL_MENSUAL", "DIETA_TERRIT_NAC");
+		variablesMap.put("DIETA_TIR_DIARIO", "TIR_D");
 		variablesMap.put("DIETA_TRANSPORTE_URBANO_DIARIO", "D_TRANSPORTE_URBANO_D");
 		variablesMap.put("DIETA_TRASLADO_EMPRESA_ANUAL", "TRASLADO_EMPRESA_A");
 		variablesMap.put("DIETA_TRASLADO_EMPRESA_DIARIO", "TRASLADO_EMPRESA_D");
@@ -1260,6 +1261,7 @@ public class VariablesMap implements Serializable {
 		variablesMap.put("PLUS_25_DE_DICIEMBRE_MENSUAL", "PLUS_25_DICIEMBRE_M");
 		variablesMap.put("PLUS_31_DE_DICIEMBRE_DIARIO", "PLUS_31_DICIEMBRE_D");
 		variablesMap.put("PLUS_31_DE_DICIEMBRE_HORAS", "PLUS_31_DIC");
+		variablesMap.put("PLUS_ABASTOS_MENSUAL", "ABASTOS_M");
 		variablesMap.put("PLUS_ACERCAMIENTO_ANUAL", "PLUS_ACERCAMIENTO_ANUAL");
 		variablesMap.put("PLUS_ACTIVIDAD_ANUAL", "ACTIVIDAD_A");
 		variablesMap.put("PLUS_ACTIVIDAD_DIARIO", "ACTIVIDAD_D");
@@ -1272,8 +1274,9 @@ public class VariablesMap implements Serializable {
 		variablesMap.put("PLUS_AEROPUERTO_MENSUAL", "AEROPUERTO_M");
 		variablesMap.put("PLUS_AEROPUERTO_HORAS", "AEROPUERTO_H");
 		variablesMap.put("PLUS_ALMACEN_DIARIO", "ALMACEN_D");
-		variablesMap.put("PLUS_ALTURA_MENSUAL", "PLUS_ALTURA");
-		variablesMap.put("PLUS_ALTURA_DIARIO", "PLUS_ALTURA");
+		variablesMap.put("PLUS_ALTURA_ANUAL", "ALTURA_A");
+		variablesMap.put("PLUS_ALTURA_MENSUAL", "ALTURA_M");
+		variablesMap.put("PLUS_ALTURA_DIARIO", "ALTURA_D");
 		variablesMap.put("PLUS_ANTIGUEDAD_3_AÑOS_ANUAL", "ANTIGUEDAD_3");
 		variablesMap.put("PLUS_ASIDUIDAD_ANUAL", "PLUS_ASIDUIDAD");
 		variablesMap.put("PLUS_ASIDUIDAD_DIARIO", "PLUS_ASIDUIDAD");
@@ -1307,7 +1310,8 @@ public class VariablesMap implements Serializable {
 		variablesMap.put("PLUS_CARGA_Y_DESCARGA_DIARIO", "CARGA_DESCARGA_D");
 		variablesMap.put("PLUS_CARGA_Y_DESCARGA_HORAS", "CARGA_DESCARGA_H");
 		variablesMap.put("PLUS_CARGA_Y_DESCARGA_EQUIPAJE_ESPECIAL_HORAS", "CD_EQUIP_ESP_H");
-		variablesMap.put("PLUS_CARRETILLERO_MENSUAL", "P_CARRETILLERO_M");
+		variablesMap.put("PLUS_CARRETILLERO_MENSUAL", "CARRETILLERO_M");
+		variablesMap.put("PLUS_CARRETILLERO_HORAS", "CARRETILLERO_H");
 		variablesMap.put("PLUS_CASEROS_DIARIO", "PLUS_CASEROS");
 		variablesMap.put("PLUS_CENTRAL_NUCLEAR_MENSUAL", "CENTRAL_NUCLEAR_M");
 		variablesMap.put("PLUS_CENTROS_COMERCIALES_MENSUAL", "PLUS_CC");

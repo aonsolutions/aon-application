@@ -1,6 +1,7 @@
 import { MSG, CSS, EVENT, TAG } from 'aonsolutions/environments/environments.js'; 
 import { AonSuiteMenu } from '../aon-suite-menu.js';
 import * as GWT from 'aonsolutions/gwt/gwt.js';
+import * as JSF from '../aon-jsf-app.js';
 
 export class AonGroupwareMenu extends AonSuiteMenu {
 
@@ -50,15 +51,15 @@ export class AonGroupwareMenu extends AonSuiteMenu {
             options: [ {
                 description: "Expedientes",
                 title: "Expedientes",
-                action: () => alert("description")
+                action: () => this.rootPanel(new JSF.AonJsfProject)
             },{
                 description: "Tipo de Expediente",
                 title: "Tipo de Expediente",
-                action: () => alert("description")
+                action: () => this.rootPanel(new JSF.AonJsfProjectType)
             },{
                 description: "Tipo de Actividad",
                 title: "Tipo de Actividad",
-                action: () => alert("description")
+                action: () => this.rootPanel(new JSF.AonJsfActivityType)
             }]
         },{
             title: 'Procesos',

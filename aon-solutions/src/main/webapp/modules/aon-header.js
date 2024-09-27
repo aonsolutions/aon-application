@@ -368,6 +368,8 @@ export class AonHeader extends AonElement {
 				aonMenu.close();
 			}
 
+			LS.setCompanySelected(false);
+
 			let aonHeaderCompanyList = this.getElement(this.BASE_ID + 'CompanyList');
 			aonHeaderCompanyList.style.display = 'none';
 
