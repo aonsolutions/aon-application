@@ -6,16 +6,11 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
-
-import jakarta.servlet.RequestDispatcher;
-import jakarta.servlet.ServletException;
-import jakarta.servlet.annotation.WebServlet;
-import jakarta.servlet.http.HttpServlet;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
+import java.util.Optional;
 
 import org.jooq.Condition;
 import org.jooq.impl.DSL;
+import org.json.JSONObject;
 
 import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.company.enumeration.SalaryTemplate;
@@ -26,16 +21,28 @@ import com.esferalia.aon.gwt.common.server.AonServletUtils;
 import com.esferalia.aon.gwt.payroll.report.StatelessReportManager;
 import com.esferalia.aon.gwt.payroll.server.PayrollServletUtils.SiteFilter;
 import com.esferalia.aon.gwt.payroll.shared.PayrollPrintService;
+import com.esferalia.aon.in.payroll.pdf.jooq.JooqPayrollBuilder;
 import com.esferalia.aon.jooq.tables.Salary;
 import com.esferalia.aon.jooq.tables.Workplace;
+import com.esferalia.aon.occam.api.AON;
+import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.salary.enumeration.SalaryType;
 import com.esferalia.aon.ui.payroll.utils.ReportUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.api.client.util.Base64;
 
+import jakarta.servlet.RequestDispatcher;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import net.aonsolutions.aon.api.ewok.IConstants;
+
 @SuppressWarnings("serial")
 @WebServlet(name = "Salary-PDF", 
 	urlPatterns = { 
+			"/ms/api/salary_exporter/*",
 			"/aon_gwt_aio/salary_exporter/*",
 			"/aon_gwt_payroll/salary_exporter/*" 
 	})
@@ -56,7 +63,23 @@ public class SalaryPDFServlet extends HttpServlet {
 	
 	
 	@Override
-	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException {
+		String path = req.getPathInfo();
+		
+		try {
+			
+			if(AonStringUtils.equalsIgnoreCase(path, "/")) getSalaryAttachPdf(req, resp);
+			else if(AonStringUtils.equalsIgnoreCase(path, "/salary")) getSalaryPdf(req, resp)	;
+			else getSalaryAttachPdf(req, resp);
+		
+		} catch (Exception e) {
+			System.err.println(e.getMessage());
+			throw new ServletException(e);
+		}
+		
+	}
+
+	private void getSalaryAttachPdf(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		String domain = req.getServerName();
 		String requestURI = req.getRequestURI();
 		String extension = AonServletUtils.getExtn(requestURI);
@@ -117,6 +140,37 @@ public class SalaryPDFServlet extends HttpServlet {
 		}
 	}
 
+	private void getSalaryPdf(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+		String param = req.getParameter("json");
+		param = new String(java.util.Base64.getDecoder().decode(param));
+		JSONObject json = new JSONObject(param);
+
+		String domainName = json.optString("domain_name");
+		Integer domainId = json.optInt("domain_id");
+		
+		Integer salaryId = json.optInt("id");
+		
+		Company company = AON.getCompany(domainName, domainId, "", f->f.getDomainProperty().eq(domainId));
+		
+		String salaryReport = null;
+		try {			
+			salaryReport = PayrollServletUtils.getSalaryReport(domainName, company.getId(), SalaryType.SALARY);
+		} catch (Exception e) {}
+		
+		if (AonStringUtils.equalsIgnoreCase(salaryReport, SalaryTemplate.AON_SOLUTIONS_DEFAULT.getValue()))
+			JooqPayrollBuilder.generateClassicPayroll(company.getId() > 0 ? company.getId() : null, domainName, resp.getOutputStream(), Optional.empty(), salaryId);
+		else
+			JooqPayrollBuilder.generatePayroll(company.getId() > 0 ? company.getId() : null, domainName, resp.getOutputStream(), Optional.empty(), salaryId);
+		
+		resp.addHeader(IConstants.ACCESS_CONTROL_ALLOW_ORIGIN, "*");
+		resp.addHeader(IConstants.ACCESS_CONTROL_ALLOW_METHODS, "POST, GET, OPTIONS, PUT, DELETE, HEAD");
+		resp.addHeader(IConstants.ACCESS_CONTROL_ALLOW_HEADERS, "*");
+		resp.addHeader(IConstants.ACCESS_CONTROL_MAX_AGE, "1728000");
+		
+        resp.setContentType(com.esferalia.aon.occam.api.model.type.MimeType.PDF.getName());
+		resp.setHeader(IConstants.CONTENT_DISPOSITION, "inline; filename=\"" + "nomina" + "." + com.esferalia.aon.occam.api.model.type.MimeType.PDF.getExtension() +"\";");
+		resp.flushBuffer();
+	}
 
 
 	private Condition getConditionSalaryIds(String[] ids, Integer selectedSalaries) {

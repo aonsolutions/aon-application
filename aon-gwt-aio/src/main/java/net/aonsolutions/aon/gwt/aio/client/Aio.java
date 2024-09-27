@@ -333,7 +333,7 @@ public class Aio implements EntryPoint {
 			break;
 			
 		case Modules.MARKETING_CAMPAIGN_MODULE:
-			GWT.runAsync(QuestionModule.class, new RunAsyncCallback() {
+			GWT.runAsync(MarketingCompaignModule.class, new RunAsyncCallback() {
 
 				@Override
 				public void onFailure(Throwable reason) {
@@ -349,7 +349,7 @@ public class Aio implements EntryPoint {
 			break;
 		
 		case Modules.SELLER_MODULE:
-			GWT.runAsync(QuestionModule.class, new RunAsyncCallback() {
+			GWT.runAsync(SellerModule.class, new RunAsyncCallback() {
 
 				@Override
 				public void onFailure(Throwable reason) {

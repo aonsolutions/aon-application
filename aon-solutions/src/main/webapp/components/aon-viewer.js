@@ -122,6 +122,11 @@ export class AonViewer extends AonElement {
 		div.innerHTML = '';
 	}
 
+	removeButton(id) {
+		let div = this.getElement(this.AON_VIEWER_DIV);
+		div.removeChild(this.getElement(id));
+	}
+
 	buildButtons() {
 		let div = this.getElement(this.AON_VIEWER_DIV);
 		div.style.zIndex = "3";
@@ -133,6 +138,7 @@ export class AonViewer extends AonElement {
 		div.style.top = "1%";
 		div.style.height = "80%";
 		let mail = this.createElement(TAG.SPAN);
+		mail.id = "aonViewerButtonsDivEmailSpan";
 		let aibm = new AonIconButton();
 		aibm.id = "aonViewerButtonsDivEmail";
 		aibm.icon = "email";

@@ -3,9 +3,8 @@ import { AonTable } from '../../components/aon-table.js';
 
 import { CONSTANT, EVENT, MSG, MATERIAL_ICONS, TAG } from '../../environments/environments.js';
 import { getDeliveries, getDelivery } from '../../services/warehouseService.js';
-import { AonMobileDelivery } from './aon-mobile-delivery.js';
-import { WAREHOUSE } from '../../services/app.js';
 import { AonDelivery } from './aon-delivery.js';
+import { createList } from '../../components/CreateComponent.js';
 
 export class AonDeliveryList extends AonElement {
 
@@ -70,8 +69,7 @@ export class AonDeliveryList extends AonElement {
     }
 
 	build() {
-		let table = this.createAonElement(new AonTable(), this.TABLE);
-		table.setApp(WAREHOUSE);
+		let table = createList(this.TABLE);
         table.selectable = 'true';
 		this.appendChild(table);
 

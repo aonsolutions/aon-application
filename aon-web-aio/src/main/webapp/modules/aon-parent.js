@@ -349,6 +349,8 @@ export class AonParent extends AonElement {
 		li.className = 'aonLiBeta' ;
 		li.addEventListener(EVENT.CLICK, () => {
 			this.companySelection(company, false);
+			let portal = LS.isLeftMenu();
+			LS.setPortalChecked(portal);
 		});
 
 		let span = this.createElement(TAG.SPAN);

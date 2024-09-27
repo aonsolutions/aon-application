@@ -1278,8 +1278,8 @@ public class AonFaker {
 		return new InvoiceData()
 			.setDomain(domain)
 			.setInvoice(invoice)
-			.setName(faker.beer().name())
-			.setValue(faker.beer().style())
+			.setName( AonStringUtils.abbreviate(faker.beer().name(), 32)) 
+			.setValue(AonStringUtils.abbreviate(faker.beer().style(), 128))
 			.setStartDate(new Date())
 			.setEndDate(new Date());
 	}

@@ -7,7 +7,6 @@ import { AonMobileList } from "../../../components/aon-mobile-list.js";
 import { AonTable } from "../../../components/aon-table.js";
 import { AonDateUtils } from "../../utils/AonDateUtils.js";
 import { AonSwitch } from "../../../components/aon-switch.js";
-import { PAYROLL } from "../../../services/app.js";
 
 export class AonContractList extends AonElement {
   TABLE_ID;
@@ -47,7 +46,6 @@ export class AonContractList extends AonElement {
   paintView() {
     let aonTable = this.isMobile() ? new AonMobileList() : new AonTable();
     aonTable.id = this.TABLE_ID;
-    aonTable.setApp(PAYROLL);
     this.appendChild(aonTable);
   }
 

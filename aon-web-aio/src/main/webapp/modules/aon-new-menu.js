@@ -379,7 +379,6 @@ export class AonNewMenu extends AonElement {
 	
 		if (!LS.isLeftMenu()) {
 			div.appendChild(this.buildTopApp(HOME));
-			div.appendChild(this.buildTopApp(NEW));
 		}
 	
 		const excludedApps = ['commerce', 'garage', 'academy', 'office'];
@@ -408,18 +407,18 @@ export class AonNewMenu extends AonElement {
 			div.appendChild(appElement);
 		}
 		
-		if(!LS.isLeftMenu() && this.isCSSLoaded("beta.css")){
-			for (let item in MENU_APPS) {
-				let app = MENU_APPS[item];
-				if(app.app!= "home" && app.app!= "new"){
-					if (this.isApp(MENU_APPS[item])){
-						div.appendChild(this.buildTopApp(MENU_APPS[item]));
-					}
-				}
+		// if(!LS.isLeftMenu() && this.isCSSLoaded("beta.css")){
+		// 	for (let item in MENU_APPS) {
+		// 		let app = MENU_APPS[item];
+		// 		if(app.app!= "home" && app.app!= "new"){
+		// 			if (this.isApp(MENU_APPS[item])){
+		// 				div.appendChild(this.buildTopApp(MENU_APPS[item]));
+		// 			}
+		// 		}
 						
-			}
+		// 	}
 			
-		}
+		// }
 
 		this.clearElement(aonMenuTopnav);
 		aonMenuTopnav.appendChild(div);
@@ -516,9 +515,9 @@ export class AonNewMenu extends AonElement {
 	
 		sidenav.style.width = '0px';
 	
-		setTimeout(() => {
-			sidenav.style.display = "none";
-		}, 300); 
+		// setTimeout(() => {
+		// 	sidenav.style.display = "none";
+		// }, 300); 
 	
 		// // Resetear la posición del logo
 		// aonlogo.style.left = '0px';
@@ -640,96 +639,62 @@ export class AonNewMenu extends AonElement {
 			div.appendChild(span);
 		}
 		
-		// if(welcome && app.app == "applications"){
-		// 	div.addEventListener("click", (event) => {
-		// 		event.preventDefault(); 
-		// 		event.stopPropagation();
-		// 	});
-		// }
-		
 		a.appendChild(div);
-		// if (app.app == "applications" && this.isCSSLoaded("beta.css")) {
-		// 	if (!LS.isLeftMenu() && LS.isCompanySelected()) {
-		// 		// Mostrar el menú cuando el ratón entra en el div
-		// 		div.addEventListener("mouseenter", () => {
-		// 			if(!LS.isPortalChecked()){
-		// 				LS.setLeftMenu(true);
-		// 				this.showSideNav();
-		// 			}
-		// 			// Obtener el sidenav cuando el menú está visible
-		// 			let side = this.getElement(this.AON_MENU_SIDENAV);
-		// 			// Asegurarse de que el side existe antes de añadir eventos
-		// 			if (side && !LS.isPortalChecked() && LS.isCompanySelected()) {
-		// 				// Mantener el menú abierto mientras el ratón está en el sidenav
-		// 				side.addEventListener("mouseenter", () => {
-		// 					LS.setLeftMenu(true);
-		// 					this.showSideNav();
-		// 				});
-
-		// 				// Cerrar el menú si el ratón sale completamente del sidenav
-		// 				side.addEventListener("mouseleave", (event) => {
-		// 					// Verificar si el ratón no va al div (solo cerrar si se sale de ambos)
-		// 					if (!div.contains(event.relatedTarget) && !LS.isPortalChecked() && LS.isCompanySelected()) {
-		// 						LS.setLeftMenu(false);
-		// 						this.hideSideNav();
-		// 					}
-		// 				});
-		// 			}
-		// 		});
-
-		// 		// Cerrar el menú si el ratón sale completamente del div
-		// 		div.addEventListener("mouseleave", (event) => {
-		// 			let side = this.getElement(this.AON_MENU_SIDENAV);
-		// 			let checked = this.getElement("aonConfigSideSwitch");
-
-		// 			// Verificar si el ratón no va al sidenav (solo cerrar si se sale de ambos)
-		// 			if (side && !side.contains(event.relatedTarget) && !LS.isPortalChecked() && LS.isCompanySelected()) {
-		// 				LS.setLeftMenu(false);
-		// 				this.hideSideNav();
-		// 			}
-		// 		});	
-		// 	}
-		// }
 
 		if (app.app == "applications"){
 			this.controlSideNav();
 		}
 		
 
-	
 		return a;
 	}
 
 	controlSideNav() {
 		const div = this.getElement("aonMenuLeftop");
+		
 
 		if (this.isCSSLoaded("beta.css")) {
 
 			div.addEventListener("mouseenter", () => {
 				const side = this.getElement("aonMenuSidenav");
+
 				if (LS.isCompanySelected()){
 					this.showSideNav();
 				}
 
-				side.addEventListener("mouseenter", () => {
-					this.showSideNav();
-				});
+				// side.addEventListener("mouseenter", () => {
+				// 	this.showSideNav();
+				// });
 	
-				side.addEventListener("mouseleave", (ev) => {
-					if(!this.isElementAt(ev,side) && !LS.isPortalChecked()){
-						this.hideSideNav();
-					}
-				});
-			});
-	
-			div.addEventListener("mouseleave", (ev) => {
-				const side = this.getElement("aonMenuSidenav");
-				if(!this.isElementAt(ev,side) && !LS.isPortalChecked()){
-					this.hideSideNav();
-				}
+				// side.addEventListener("mouseleave", (ev) => {
+				// 	const dialog = this.getElement("aonDesktopMainOptionDialog");
+				// 	const content = this.getElement("sideNavDialogMenuContent");
+				// 	if(!this.isElementAt(ev,content) && !LS.isPortalChecked()){
+				// 		this.hideSideNav();
+				// 		dialog.close();
+				// 	}
+				// });
+							
 				
 			});
 
+			document.addEventListener("click", (event) => {
+				// Verificamos si el clic ocurrió fuera del sidenav
+				const buttonNew = this.getElement("new");
+
+				if (!buttonNew.contains(event.target) && !LS.isPortalChecked()) {
+					// Si se clicó fuera del sidenav, lo ocultamos
+					this.hideSideNav();
+				}
+			});
+	
+			// div.addEventListener("mouseleave", (ev) => {
+			// 	const side = this.getElement("aonMenuSidenav");
+			// 	if(!this.isElementAt(ev,side) && !LS.isPortalChecked()){
+			// 		this.hideSideNav();
+			// 	}
+				
+			// });
 		}
 	}
 
@@ -1209,8 +1174,9 @@ export class AonNewMenu extends AonElement {
 		const left = el.getBoundingClientRect().right;
 		
 		newDialogMenu.setMenuOptions(newMenuOptions, top, left);
-		
 		newDialogMenu.open();
+		
+
 		
 	}
 	
