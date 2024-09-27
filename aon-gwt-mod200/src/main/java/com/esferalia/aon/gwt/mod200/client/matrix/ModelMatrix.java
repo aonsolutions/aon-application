@@ -1,4 +1,4 @@
-package com.esferalia.aon.gwt.fiscal.client.matrix;
+package com.esferalia.aon.gwt.mod200.client.matrix;
 
 
 import java.util.logging.Logger;
@@ -11,7 +11,7 @@ import com.esferalia.aon.gwt.common.client.RootLayoutPanel;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonMinimizePanel;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonSearchPanelButton;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonTabLayoutPanel;
-import com.esferalia.aon.gwt.fiscal.client.MainEntryPoint;
+import com.esferalia.aon.gwt.mod200.client.MainEntryPoint;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalMatrixParams;
 import com.esferalia.aon.watson.util.AonStringUtils;
@@ -38,11 +38,11 @@ public class ModelMatrix extends MainEntryPoint {
 		LOGGER.addHandler( new ConsoleLogHandler() );
 	}
 
-	protected static final FiscalModelServiceAsync SERVICE;
+//	protected static final FiscalModelServiceAsync SERVICE;
 	private static final CommonServiceAsync COMMON_SERVICE;
 	static {
-		FiscalModelServiceAsync serviceRaw = GWT.create(FiscalModelService.class);
-		SERVICE = new FiscalModelServiceAsyncDecorator(serviceRaw);
+//		FiscalModelServiceAsync serviceRaw = GWT.create(FiscalModelService.class);
+//		SERVICE = new FiscalModelServiceAsyncDecorator(serviceRaw);
 		
 		CommonServiceAsync commonServiceRaw = GWT.create(CommonService.class);
 		COMMON_SERVICE = new CommonServiceAsyncDecorator(commonServiceRaw); 

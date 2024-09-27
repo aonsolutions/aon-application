@@ -1,4 +1,4 @@
-package com.esferalia.aon.gwt.fiscal.client.matrix;
+package com.esferalia.aon.gwt.mod200.client.matrix;
 
 import java.util.ArrayList;
 import java.util.Arrays;

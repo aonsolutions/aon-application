@@ -1,4 +1,4 @@
-package com.esferalia.aon.gwt.fiscal.client.matrix;
+package com.esferalia.aon.gwt.mod200.client.matrix;
 
 import java.util.logging.Logger;
 
@@ -459,7 +459,7 @@ class ModelMatrixFilterPanel extends AonDisplayTable implements HasValueChangeHa
 
 //		cleanViewers();
 		XMLHttpRequest xhr = XMLHttpRequest.create();
-		xhr.open(FormPanel.METHOD_POST, GWT.getHostPageBaseURL() +"aon_gwt_fiscal/ms/MatrixSendAEAT");
+		xhr.open(FormPanel.METHOD_POST, GWT.getHostPageBaseURL() +"aon_gwt_mod200/ms/MatrixSendAEAT");
 		xhr.setRequestHeader(AonHttpUtils.CONTENT_TYPE,AonHttpUtils.APPLICATION_FORM_URLENCODED);
 		xhr.setOnReadyStateChange(xhreq -> {
 			int state = xhreq.getReadyState();
