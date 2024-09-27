@@ -23,6 +23,7 @@ import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.time.Duration;
 import java.util.Date;
+import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.TreeMap;
@@ -62,6 +63,7 @@ import com.esferalia.aon.occam.api.model.attachment.RegistryAttachmentType;
 import com.esferalia.aon.occam.api.model.finance.BankAccount;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalMatrixParams;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModel;
+import com.esferalia.aon.occam.api.model.fiscal.FiscalModelDetail;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModelType;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModelUtils;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalStatus;
@@ -150,6 +152,8 @@ public class FiscalServlet extends AonApiHttpServlet{
 				responseFile(resp, "filename", getFiscalExcel(api), MimeType.MS_EXCEL_2007);
 			} else if ( AonStringUtils.endsWith(api.getPath(), "/one") ) {
 				response(req, resp, getFiscalById(api));
+			} else if ( AonStringUtils.endsWith(api.getPath(), "/detail") ) {
+				response(req, resp, getFiscalDetailById(api));
 			} else {
 				throw new AonApiException(AonApiError.ROUTE_ERROR.getMessage());
 			}
@@ -183,10 +187,44 @@ public class FiscalServlet extends AonApiHttpServlet{
 			FiscalModelType modelType = FiscalModelType.safeValueByName(type);
 			FiscalModel fs;
 			if(id != null && id != 0 && modelType != null) {
-				fs = getModel(ctx, FiscalModelType.M131, id);
+				fs = getModel(ctx, modelType, id);
 				return FiscalModelJSON.toJSON(fs);
 			} else {
 				throw new AonApiException("Error al obtener el modelo.");
+			}
+		} catch(Exception e) {
+			throw new AonApiException(e.getMessage());
+		}
+	}
+	
+	private JSONArray getFiscalDetailById(AonApiData api) {
+		try {			
+			CloseableAONContext ctx;
+			ctx = AONContext.getAONContext(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin());
+			Integer id = api.getData().optInt(IJsonNames.ID);
+			String type = api.getData().optString(IJsonNames.TYPE);
+			FiscalModelType modelType = FiscalModelType.safeValueByName(type);
+			FiscalModel fs;
+			JSONArray array = new JSONArray();
+			if(id != null && id != 0 && modelType != null) {
+				fs = getModel(ctx, modelType, id);
+				LinkedHashMap<String, FiscalModelDetail> map = fs.getMap();
+				for(var element : map.entrySet()) {
+					JSONObject json = new JSONObject();
+					json.put("id" , element.getValue().getId());
+					json.put("expression" , element.getValue().getExpression());
+					json.put("description" , element.getValue().getDescription());
+					json.put("type" , element.getValue().getType());
+					json.put("acumulated_amount" , element.getValue().getAccumulatedAmount());
+					json.put("declared_amount" , element.getValue().getDeclaredAmount());
+					json.put("resultamount" , element.getValue().getResultAmount());
+					json.put("adjust_amount" , element.getValue().getAdjustAmount());
+					json.put("amount" , element.getValue().getAmount());
+					array.put(json);
+				}
+				return array;
+			} else {
+				throw new AonApiException("Error al obtener los detalles del modelo.");
 			}
 		} catch(Exception e) {
 			throw new AonApiException(e.getMessage());
