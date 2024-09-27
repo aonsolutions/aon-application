@@ -76,4 +76,7 @@ public enum InvoiceSource implements Serializable {
 		}
 		return null;
 	}
+	public static String safeValueOf(InvoiceSource t) {
+		return t == null ? null : t.name();
+	}
 }

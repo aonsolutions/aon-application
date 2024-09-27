@@ -54,4 +54,18 @@ public enum VatDeductionType implements Serializable {
 		}
 		return WITH_RIGHT;
 	}
+
+	public static VatDeductionType safeValue(String str) {
+		if(AonStringUtils.isBlank(str)) return null;
+		for (VatDeductionType rs : values()) {
+			if(rs.name().equalsIgnoreCase(str) 
+				|| rs.getAbbr().equalsIgnoreCase(str)
+				|| rs.getName().equalsIgnoreCase(str))
+				return rs;
+		}
+		return null;
+	}
+	public static String safeValueOf(VatDeductionType t) {
+		return t == null ? null : t.name() ;
+	}
 }
