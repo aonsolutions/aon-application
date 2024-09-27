@@ -2158,7 +2158,7 @@ border-bottom: 1px solid rgb(221, 221, 221);
   height: 32px;
   cursor: pointer;
   padding: 0px 0px 0px 68px;
-  margin-left: 5rem;
+  margin-left: 60px;
   position: relative;
   background-position: center;
   background-repeat: no-repeat;
@@ -2173,7 +2173,7 @@ border-bottom: 1px solid rgb(221, 221, 221);
 }
 
 .aonHeaderApp {
-  margin-left: 5rem;
+  margin-left: 60px;
   /* min-width: 120px;
   display: none; */
 }      
@@ -3161,6 +3161,10 @@ color: var(--aonWhite);
   margin-top: 6px;
 }
 
+#aonHeaderHelp {
+	display: block;
+}
+
 #aonHeaderCompanyList:hover,
 #aonHeaderHelp:hover,
 #aonHeaderConfig:hover,
@@ -3173,6 +3177,8 @@ color: var(--aonWhite);
 
 #applications {
   color: white;
+  width: 64px;
+  margin-left: 4px;
 }
 
 #applications:hover{
@@ -3835,7 +3841,6 @@ color: var(--aonWhite);
 }
 
 .aonNewMenuLeftTop{
-  width: 5rem;
   visibility: hidden;
 }
 
