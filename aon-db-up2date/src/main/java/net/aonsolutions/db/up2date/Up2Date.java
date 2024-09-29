@@ -21,6 +21,7 @@ import org.apache.commons.cli.ParseException;
 
 import net.aonsolutions.db.up2date.doc.InvoiceDocAddS3Bucket;
 import net.aonsolutions.db.up2date.payroll.InKindDeductionUpdate;
+import net.aonsolutions.db.up2date.urlshortener.UrlShortenCreation;
 
 public class Up2Date {
 
@@ -471,6 +472,8 @@ public class Up2Date {
         // InKindDeductionUpdate.INKIND_DEDUCTION_UPDATE,
         // InvoiceDataCreation.INVOICE_DATA_CREATION,
         // InvoiceDocAddS3Bucket.INVOICEDOC_ADDS3BUCKET
+    		
+    	UrlShortenCreation.URLSHORTEN_CREATION
 	};
 
     // ------------------------------------------------------------------------

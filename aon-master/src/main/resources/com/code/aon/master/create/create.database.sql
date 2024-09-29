@@ -8931,6 +8931,25 @@ CREATE TABLE `training_course` (
 ) ENGINE=InnoDB  DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Cursos de los Centros Formativos';
 
 #
+# Table structure for table `url_shorten`
+#
+
+CREATE TABLE IF NOT EXISTS  `url_shorten`(
+  `id` int NOT NULL AUTO_INCREMENT COMMENT 'ID unico de la url',
+  `domain` int NOT NULL COMMENT 'Dominio',
+  `url` TEXT NOT NULL COMMENT 'URL original',
+  `uuid` varchar(128) NOT NULL COMMENT 'Identificador unico de la URL',
+  `count` int NOT NULL DEFAULT 0 COMMENT 'Peticiones',
+  `expiration_date` datetime DEFAULT NULL COMMENT 'Fecha de caducidad' ,
+  `creation_date` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT 'Fecha de creacion',
+  PRIMARY KEY (`id`),
+  KEY `IDX_URL_SHORTEN_DOMAIN` (`domain`),
+  UNIQUE KEY `IDX_URL_SHORTEN_UUID` (`uuid`),
+  CONSTRAINT `FK_URL_SHORTEN_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='URLs ofuscadas';
+
+
+#
 # Table structure for table `user`
 #
 
