@@ -2,6 +2,8 @@ package net.aonsolutions.aon.tedi;
 
 import static com.esferalia.aon.jooq.tables.Invoice.INVOICE;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.LinkedList;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
@@ -428,6 +430,16 @@ public class TediParser {
 		else ctx.getTediResult().getInvoice().setIssueDate(ctx.getTediResult().getInv().getIssueDate());
 	};
 	
+	private static Consumer<TediParserContext> INVOICE_ENSURE_ISSUE_DATE = (ctx) -> {
+		if (ctx.getTediResult().getInvoice().getIssueDate() == null
+			&& ctx.getTediResult().getInvoice().getRegistry() != null) {
+			ctx.getTediResult().getInvoice().setIssueDate( new Date());
+			ctx.getTediResult().add( InvoiceErrorMessages.C003.inf(InvoiceErrorKey.ISSUE_DATE
+					,InvoiceErrorKey.ISSUE_DATE.getDescription()
+					, new SimpleDateFormat("dd/MM/yyyy").format(new Date())));
+		}
+	};
+
 	private static Consumer<TediParserContext> INVOICE_TAX_DATE = (ctx) -> {
 		if(ctx.getTediResult().getTedi().getDate() != null) 
 			ctx.getTediResult().getInvoice().setTaxDate(ctx.getTediResult().getTedi().getDate());
@@ -853,6 +865,7 @@ public class TediParser {
 		.andThen(INVOICE_EMITIDA_REGISTRY)
 		.andThen(INVOICE_RECIBIDA_REGISTRY)
 		.andThen(INVOICE_TICKET_REGISTRY)
+		.andThen(INVOICE_ENSURE_ISSUE_DATE)
 		.andThen(INVOICE_SERIES)
 		.andThen(INVOICE_NUMBER)
 		.andThen(INVOICE_REFERENCE_CODE)

@@ -72,6 +72,7 @@
 	<table-filter match-name="sales_info" exclude="true" />
 	<table-filter match-name="delivery_info" exclude="true" />
 
+	<table-filter match-name="url_shorten" exclude="true" />	
 	<!--  ***************** -->
 	<!--  MAPPING DE TABLAS -->
 	<!--  ***************** -->

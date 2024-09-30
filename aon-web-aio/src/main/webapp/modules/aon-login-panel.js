@@ -52,7 +52,7 @@ export class AonLoginPanel extends AonElement {
 		this.rightPanel = this.getElement("aonRightPanel"); 
 		this.rightPanel.style.boxShadow = "0 24px 54px rgba(0,0,0,.15),0 4.5px 13.5px rgba(0,0,0,.08)";
 		this.rightPanel.style.marginTop = '0px';
-		this.rightPanel.style.height = '235px';
+		this.rightPanel.style.height = '234px';
 		
 		let loginContent = this.createDiv("loginContent", "aonFlexColumn");
 

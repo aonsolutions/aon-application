@@ -434,7 +434,7 @@ export class AonParent extends AonElement {
 			aonShowMenu.style.display = 'block';
 		}
 		let aonHeaderHelp = this.getElement(BASE_ID + 'Help');
-		aonHeaderHelp.style.display = 'block';
+		// aonHeaderHelp.style.display = 'block';
 
 		let aonHeaderSearch = this.getElement(BASE_ID + 'Search');
 		aonHeaderSearch.style.display = 'none';
