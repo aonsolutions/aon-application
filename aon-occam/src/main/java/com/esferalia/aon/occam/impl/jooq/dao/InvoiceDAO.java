@@ -34,6 +34,7 @@ import java.util.Collection;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -414,6 +415,14 @@ public class InvoiceDAO {
 					RegistryDAO.getRegistrySellerNames(ctx, d.getInvoice().getRegistry(), d.getInvoice().getIssueDate())
 						.collect(Collectors.joining(", ")))
 			);
+	}
+	
+	public static ArrayList<Invoice> getFullInvoiceList(AONContext ctx, List<Integer> ids) {
+		ArrayList<Invoice> invoices = new ArrayList<Invoice>();
+		
+		ids.forEach(id -> invoices.add( getFullInvoice(ctx, id) ));
+		
+		return invoices;
 	}
 
 	public static Invoice getFullInvoice(AONContext ctx, Integer id) {

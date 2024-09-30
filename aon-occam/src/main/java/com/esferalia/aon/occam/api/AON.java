@@ -215,6 +215,7 @@ import com.esferalia.aon.occam.api.model.finance.PayMethod;
 import com.esferalia.aon.occam.api.model.finance.SiiConfiguration;
 import com.esferalia.aon.occam.api.model.finance.TbaiConfiguration;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModel;
+import com.esferalia.aon.occam.api.model.fiscal.Mod303;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceDetailExtended;
 import com.esferalia.aon.occam.api.model.management.Offer;
 import com.esferalia.aon.occam.api.model.management.OfferDetail;
@@ -1926,6 +1927,12 @@ public class AON {
 	public static LinkedList<Invoice> getInvoiceList(String domainName, Integer domainId, String login, InvoiceFilter filter){
 		return getInvoiceStream(domainName, domainId, login, filter)
 			.collect(Collectors.toCollection(LinkedList::new));
+	}
+	
+	public static List<Invoice> getFullInvoiceList(String domainName, int domainId, String login, List<Integer> ids) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)) {
+			return getFinance().getFullInvoiceList(ctx, ids);
+		}
 	}
 	
 	public static Invoice getInvoice(Occam occam, Integer invoiceId){

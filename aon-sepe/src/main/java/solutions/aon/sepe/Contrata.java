@@ -582,14 +582,14 @@ public class Contrata {
 				form.getInputByName("mesfechaini").setValueAttribute(startDate[1]);
 				form.getInputByName("anniofechaini").setValueAttribute(startDate[2]);
 
+				setOccupation(cto, form);
+
 				// NIVEL FORMATIVO
 				if (cto.getCodFormativo() != null && cto.getCodFormativo() > 0) {
 					htmlPage = ((HtmlSelect) form.querySelector("select[name=codnivelformativo]"))
 							.setSelectedAttribute(cto.getCodFormativo().toString(), true);
 					form = HtmlUnitToolkit.wait4(htmlPage, p -> p.getFormByName("datos")).orElseThrow();
 				}
-
-				setOccupation(cto, form);
 
 				if (cto.getCodPaisWork() != null) {
 					((HtmlSelect) form.querySelector("select[name=codpais]"))

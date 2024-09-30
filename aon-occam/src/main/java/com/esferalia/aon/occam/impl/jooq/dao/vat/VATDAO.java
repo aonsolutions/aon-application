@@ -166,12 +166,14 @@ public class VATDAO  {
 			.map(new VatContextFiller());
 	}
 	
-	private static Stream<VatContext> getCommonVatBreakdown(AONContext ctx, AccountingReportParams params, Integer offset) {
+	private static Stream<VatContext> getCommonVatBreakdown(AONContext ctx, AccountingReportParams params, List<Byte> invoiceTypes, Integer offset) {
 		return getCommonSelect(ctx, params)
 			.and(INVOICE_TAX.DOMAIN.equal(ctx.getDomainId()))
 			.and(INVOICE_TAX.TAX_TYPE.equal( TaxType.VAT.value() ))
 			.and(INVOICE.TAX_DATE.between( AonDateUtils.toSql(params.getFromDate()), AonDateUtils.toSql(params.getToDate())))
 			.and(INVOICE.VAT_ACCRUAL_PAYMENT.equal( FALSE_BYTE ))	// No Criterio de Caja.
+			.and(INVOICE.TYPE.in(invoiceTypes))
+			.and(INVOICE.ID.isNotNull())
 			.orderBy( InvoiceDAO.getOrderedType(),INVOICE.SERIES,INVOICE.NUMBER )
 			.limit(100)
 			.offset(offset)
@@ -180,13 +182,14 @@ public class VATDAO  {
 			.map(new VatContextFiller());
 	}
 	
-	private static Integer getCommonVatBreakdownCount(AONContext ctx, AccountingReportParams params) {
+	private static Integer getCommonVatBreakdownCount(AONContext ctx, AccountingReportParams params, List<Byte> invoiceTypes) {
 		return getCommonCountSelect(ctx, params)
 			.and(INVOICE_TAX.DOMAIN.equal(ctx.getDomainId()))
 			.and(INVOICE_TAX.TAX_TYPE.equal( TaxType.VAT.value() ))
 			.and(INVOICE.TAX_DATE.between( AonDateUtils.toSql(params.getFromDate()), AonDateUtils.toSql(params.getToDate())))
 			.and(INVOICE.VAT_ACCRUAL_PAYMENT.equal( FALSE_BYTE ))	// No Criterio de Caja.
 			.and(INVOICE.ID.isNotNull())
+			.and(INVOICE.TYPE.in(invoiceTypes))
 			.orderBy( InvoiceDAO.getOrderedType(),INVOICE.SERIES,INVOICE.NUMBER)
 			.fetchOne()
 			.value1();
@@ -257,7 +260,7 @@ public class VATDAO  {
 			.map(new VatContextCritCajaFiller())
 			;
 	}
-	private static Stream<VatContext> getCritCajaVatBreakdown(AONContext ctx, AccountingReportParams params, Integer offset) {
+	private static Stream<VatContext> getCritCajaVatBreakdown(AONContext ctx, AccountingReportParams params, List<Byte> invoiceTypes, Integer offset) {
 		java.sql.Date prevYearFirstDay = AonDateUtils.toSql( AonDateUtils.getYearFirstDay(params.getFromDate()) );
 		return getCritCajaSelect(ctx, params)
 			.and(INVOICE_TAX.DOMAIN.equal(ctx.getDomainId()))
@@ -266,6 +269,8 @@ public class VATDAO  {
 			.and(INVOICE_TAX.TAX_TYPE.equal( TaxType.VAT.value() ))
 			.and(INVOICE.TAX_DATE.ge(prevYearFirstDay))
 			.and(INVOICE.VAT_ACCRUAL_PAYMENT.equal( TRUE_BYTE ))
+			.and(INVOICE.TYPE.in(invoiceTypes))
+			.and(INVOICE.ID.isNotNull())
 			.orderBy( InvoiceDAO.getOrderedType(),INVOICE.SERIES,INVOICE.NUMBER )
 			.limit(100)
 			.offset(offset)
@@ -275,7 +280,7 @@ public class VATDAO  {
 			;
 	}
 	
-	private static Integer getCritCajaVatBreakdownCount(AONContext ctx, AccountingReportParams params) {
+	private static Integer getCritCajaVatBreakdownCount(AONContext ctx, AccountingReportParams params, List<Byte> invoiceTypes) {
 		java.sql.Date prevYearFirstDay = AonDateUtils.toSql( AonDateUtils.getYearFirstDay(params.getFromDate()) );
 		return getCritCajaSelectCount(ctx, params)
 			.and(INVOICE_TAX.DOMAIN.equal(ctx.getDomainId()))
@@ -285,6 +290,7 @@ public class VATDAO  {
 			.and(INVOICE.TAX_DATE.ge(prevYearFirstDay))
 			.and(INVOICE.VAT_ACCRUAL_PAYMENT.equal( TRUE_BYTE ))
 			.and(INVOICE.ID.isNotNull())
+			.and(INVOICE.TYPE.in(invoiceTypes))
 			.orderBy( InvoiceDAO.getOrderedType(),INVOICE.SERIES,INVOICE.NUMBER )
 			.fetchOne()
 			.value1()
@@ -508,7 +514,8 @@ public class VATDAO  {
 				.setQuota(quota)
 				.setSurchargeQuota(surchargeQuota)
 				.setDeductibleQuota(deductibleQuota)
-				.setAmount347( vat.isOtherISP() || ((vat.isExtracommunityPurchase() || vat.isExtracommunityExpenses()) && vat.isService()) ? base : (base + quota + surchargeQuota) );
+				.setAmount347( vat.isOtherISP() || ((vat.isExtracommunityPurchase() || vat.isExtracommunityExpenses()) && vat.isService()) ? base : (base + quota + surchargeQuota) )
+				.setInvoice(rec.getValue(INVOICE.ID));
 //				.setAmount347(!vat.isOtherISP()
 //					?(base + quota + surchargeQuota)
 //					:base);
@@ -869,15 +876,15 @@ public class VATDAO  {
 			).flatMap(vt -> vt);
 	}
 
-	public static Stream<VatContext> getVatBreakdown(AONContext ctx, AccountingReportParams params, Integer offset) {
+	public static Stream<VatContext> getVatBreakdown(AONContext ctx, AccountingReportParams params, List<Byte> invoiceTypes, Integer offset) {
 		return Stream.of(
-			 getCommonVatBreakdown(ctx,params,offset)
-			,getCritCajaVatBreakdown(ctx,params,offset))
+			 getCommonVatBreakdown(ctx,params,invoiceTypes,offset)
+			,getCritCajaVatBreakdown(ctx,params,invoiceTypes,offset))
 			.flatMap(vt -> vt);
 	}
 	
-	public static Integer getVatBreakdownCount(AONContext ctx, AccountingReportParams params) {
-		return getCommonVatBreakdownCount(ctx,params) + getCritCajaVatBreakdownCount(ctx,params);
+	public static Integer getVatBreakdownCount(AONContext ctx, AccountingReportParams params, List<Byte> invoiceTypes) {
+		return getCommonVatBreakdownCount(ctx,params,invoiceTypes) + getCritCajaVatBreakdownCount(ctx,params,invoiceTypes);
 	}
 	
 	// *************************************

@@ -117,7 +117,7 @@ public class Certificado {
 
 				DomNode btMasCert = htmlPage.querySelector("[name=btMasCert]");
 
-				if (btnGenerarPdf != null && (btMasCert == null || fecha == null)) {
+				if (btnGenerarPdf != null /*&& (btMasCert == null || fecha == null)*/) {
 					page = ((HtmlSubmitInput) btnGenerarPdf).click();
 				} else {
 					htmlPage = ((HtmlSubmitInput) btMasCert).click();

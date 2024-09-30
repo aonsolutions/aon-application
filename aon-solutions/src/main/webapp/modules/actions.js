@@ -118,6 +118,13 @@ export const DOWNLOAD_PDF_2 = {
     icon: MATERIAL_ICONS.PDF
 };
 
+export const CLOSE_PDF = {
+    id: "closePdf",
+    name: MSG.CLOSE + " PDF",
+    title: MSG.CLOSE + " PDF",
+    icon: MATERIAL_ICONS.VISIBILITY_OFF
+};
+
 export const DOWNLOAD_FILE = {
     id: CONSTANT.DOWNLOAD_FILE.initCap(),
     name: MSG.DOWNLOAD_FILE,
