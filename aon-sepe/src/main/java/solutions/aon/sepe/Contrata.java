@@ -6,8 +6,6 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.security.KeyStore;
 import java.security.cert.X509Certificate;
 import java.time.temporal.ChronoUnit;
@@ -26,12 +24,8 @@ import org.htmlunit.CollectingAlertHandler;
 import org.htmlunit.ElementNotFoundException;
 import org.htmlunit.FailingHttpStatusCodeException;
 import org.htmlunit.Page;
-import org.htmlunit.ScriptException;
 import org.htmlunit.WebClient;
-import org.htmlunit.WebRequest;
-import org.htmlunit.WebResponse;
-import org.htmlunit.WebWindowEvent;
-import org.htmlunit.WebWindowListener;
+import org.htmlunit.html.DisabledElement;
 import org.htmlunit.html.DomNode;
 import org.htmlunit.html.DomNodeList;
 import org.htmlunit.html.HtmlCheckBoxInput;
@@ -48,8 +42,6 @@ import org.htmlunit.html.HtmlTable;
 import org.htmlunit.html.HtmlTableCell;
 import org.htmlunit.html.HtmlTableRow;
 import org.htmlunit.html.HtmlTextArea;
-import org.htmlunit.javascript.JavaScriptErrorListener;
-import org.htmlunit.util.WebConnectionWrapper;
 
 import aon.sepe.exceptions.invalidData.InvalidDataException;
 import aon.sepe.objects.Contract;
@@ -582,14 +574,16 @@ public class Contrata {
 				form.getInputByName("mesfechaini").setValueAttribute(startDate[1]);
 				form.getInputByName("anniofechaini").setValueAttribute(startDate[2]);
 
+				setOccupation(cto, form);
+
 				// NIVEL FORMATIVO
 				if (cto.getCodFormativo() != null && cto.getCodFormativo() > 0) {
-					htmlPage = ((HtmlSelect) form.querySelector("select[name=codnivelformativo]"))
-							.setSelectedAttribute(cto.getCodFormativo().toString(), true);
+					HtmlSelect htmlSelect = ((HtmlSelect) form.querySelector("select[name=codnivelformativo]"));
+					htmlSelect.removeAttribute(DisabledElement.ATTRIBUTE_DISABLED);
+					htmlPage = htmlSelect.setSelectedAttribute(cto.getCodFormativo().toString(), true);
 					form = HtmlUnitToolkit.wait4(htmlPage, p -> p.getFormByName("datos")).orElseThrow();
 				}
 
-				setOccupation(cto, form);
 
 				if (cto.getCodPaisWork() != null) {
 					((HtmlSelect) form.querySelector("select[name=codpais]"))
@@ -2307,12 +2301,15 @@ public class Contrata {
 			if (ocupacion != null) {
 				((HtmlInput) ocupacion).setValue(cto.getCodOccupation());
 				((HtmlInput) ocupacion).setValueAttribute(cto.getCodOccupation());
+				((HtmlInput) ocupacion).removeAttribute(DisabledElement.ATTRIBUTE_DISABLED);
+
 			}
 
 			DomNode cocupacion = form.querySelector("[name=\"cocupacion\"]");
 			if (cocupacion != null) {
 				((HtmlInput) cocupacion).setValue(cto.getCodOccupation());
 				((HtmlInput) cocupacion).setValueAttribute(cto.getCodOccupation());
+				((HtmlInput) cocupacion).removeAttribute(DisabledElement.ATTRIBUTE_DISABLED);
 			}
 		}
 	}
