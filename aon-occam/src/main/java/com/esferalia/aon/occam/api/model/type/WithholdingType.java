@@ -234,6 +234,21 @@ public enum WithholdingType implements Serializable {
 		return PROFESSIONAL;
 	}
 	
+	public static WithholdingType safeValue(String str) {
+		if(AonStringUtils.isBlank(str)) return null;
+		for (WithholdingType rs : values()) {
+			if(rs.name().equalsIgnoreCase(str) 
+				|| rs.getAbbreviatedDescription().equalsIgnoreCase(str)
+				|| rs.getDescription().equalsIgnoreCase(str))
+				return rs;
+		}
+		return null;
+	}
+
+	public static String safeValueOf(WithholdingType t) {
+		return t == null ? null : t.name();
+	}
+
 	public static String safeToString(WithholdingType type) {
 		return (type==null?"NULL": type.toString());
 	}

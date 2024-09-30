@@ -4,7 +4,6 @@ package com.esferalia.aon.occam.test.finance.invoice;
 import org.junit.Test;
 
 import com.esferalia.aon.occam.api.AON;
-import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.test.AbstractOccamTest;
 import com.esferalia.aon.occam.test.Asserts;
@@ -17,8 +16,7 @@ public class InsertInvoiceFiscalTest extends AbstractOccamTest {
 
 	@Test
 	public void testRandomInvoiceInsert() {
-		AonConfiguration config = AON.getConfiguration(ctx,null);
-		InvoiceFakerParams params = new InvoiceFakerParams(ctx, config).setIssueDate(AonRandom.today());
+		InvoiceFakerParams params = new InvoiceFakerParams(ctx).setIssueDate(AonRandom.today());
 		Invoice invoice = InvoiceFaker.getRandom(params);
 		Invoice inserted = AON.insertInvoice(DOMAIN_NAME, DOMAIN_ID, USER, invoice);
 		System.out.println(  inserted.getId() );

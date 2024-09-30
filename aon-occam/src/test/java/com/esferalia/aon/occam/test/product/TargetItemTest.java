@@ -9,7 +9,6 @@ import java.util.List;
 import org.junit.Test;
 
 import com.esferalia.aon.occam.api.AON;
-import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.Customer;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
@@ -37,8 +36,6 @@ public class TargetItemTest extends AbstractOccamTest {
 	@Test
 	@Repeat(10)
 	public void test() {
-			AonConfiguration config = AON.getConfiguration(ctx,null);
-			
 			boolean repeat;
 			Product product = null;
 			do {			
@@ -58,7 +55,7 @@ public class TargetItemTest extends AbstractOccamTest {
 			Item thumaDree = ItemDAO.save(ctx, newitem);
 			
 			
-			InvoiceFakerParams params = new InvoiceFakerParams(ctx, config).setIssueDate(AonRandom.today());
+			InvoiceFakerParams params = new InvoiceFakerParams(ctx).setIssueDate(AonRandom.today());
 			Invoice inserted = AON.insertInvoice(DOMAIN_NAME, DOMAIN_ID, USER, InvoiceFaker.getRandom(params));
 			
 			List<InvoiceDetail> dets = inserted.getDetails();
