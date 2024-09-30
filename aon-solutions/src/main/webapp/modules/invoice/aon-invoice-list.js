@@ -11,7 +11,7 @@ import {addInvoices, setInvoices, setIndex} from './InvoiceCache.js';
 import { CONSTANT, MATERIAL_ICONS, MSG, TAG } from '../../environments/environments.js';
 
 import * as ACTION from '../actions.js';
-import { formatNumber } from '../../services/utils.js';
+import { formatNumber, isBase64 } from '../../services/utils.js';
 import * as LS from '../../services/localStorageService.js';
 import { AonDateUtils } from '../utils/AonDateUtils.js';
 import { createList } from '../../components/CreateComponent.js';
@@ -112,7 +112,14 @@ export class AonInvoiceList extends AonElement {
 		if(invoice.file) {
 			let key = invoice.file.s3Key;
 			let keyValues = key.split("/");
-			invoice.name = keyValues[keyValues.length - 1];
+			let value = keyValues[keyValues.length - 1];
+			let base64 = value.split("_")[1];
+			let re = /(?:\.([^.]+))?$/;
+			let ext = re.exec(base64)[0];
+			base64 = base64.replace(ext, '');
+			if(isBase64(base64)) {
+				invoice.name = atob(base64) + ext;;
+			} else invoice.name = value;
 		}
 		if(!invoice.name) invoice.name = '';
 
