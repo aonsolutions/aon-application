@@ -12,6 +12,9 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.Map;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
+
 import com.esferalia.aon.occam.api.model.Account;
 import com.esferalia.aon.occam.api.model.AccountOperatingAccount;
 import com.esferalia.aon.occam.api.model.AccountOperatingReport;
@@ -81,6 +84,7 @@ import com.esferalia.aon.occam.api.model.task.TaskHolder;
 import com.esferalia.aon.occam.api.model.warehouse.Delivery;
 import com.esferalia.aon.occam.api.model.warehouse.DeliveryDetail;
 import com.esferalia.aon.watson.server.AonDateUtils;
+import com.esferalia.aon.watson.util.AonCollectionUtils;
 
 public class Asserts {
 	
@@ -1251,5 +1255,29 @@ public class Asserts {
 //			assertEquals("EndDate", expected.getEndDate(), actual.getEndDate());
 			
 		}
+	}
+	
+	public static void assertNotEmptyKeys(String parent, JSONObject json) {
+		if ( AonCollectionUtils.isEmpty( json.keySet() )) {
+			fail(parent + " is empty");
+		}
+		for (String name : json.keySet()) {
+			String current = parent + ">" + name;
+			JSONArray a = json.optJSONArray(name);
+			if (a != null) {
+				if ( a.length() == 0 ) {
+					fail("Array ..: " + current + " is empty");		
+				} 
+				for ( int i = 0; i < a.length(); i++) {
+					assertNotEmptyKeys( current + "["+i+"]" , a.getJSONObject(i));
+				}
+			} else {
+				JSONObject j = json.optJSONObject(name);
+				if (j != null) {
+					assertNotEmptyKeys( current , j);
+				}
+			}
+		}
+		
 	}
 }

@@ -29,7 +29,7 @@ public class Mod390HFPreapare390InsertTest extends AbstractOccamTest {
 		
 		int times = AonRandom.getInt(1, 100);
 		for (int count = 0; count <times; count++) {
-			InvoiceFakerParams params = new InvoiceFakerParams(ctx,getConfiguration()).setIssueDate( AonRandom.getRandomYearDay( year ) );
+			InvoiceFakerParams params = new InvoiceFakerParams(ctx).setIssueDate( AonRandom.getRandomYearDay( year ) );
 			AON.insertInvoice(getOccam(),InvoiceFaker.getRandom(params));
 		}
 		

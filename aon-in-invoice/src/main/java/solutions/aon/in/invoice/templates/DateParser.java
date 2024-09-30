@@ -68,7 +68,11 @@ public class DateParser {
 	}
 
 	private static Date getDate(int day, int month, int year) {
-		return Date.from(LocalDateTime.of(year, month, day, 0, 0).atZone(ZoneId.systemDefault()).toInstant());
+		try {
+			return Date.from(LocalDateTime.of(year, month, day, 0, 0).atZone(ZoneId.systemDefault()).toInstant());
+		} catch (IllegalArgumentException e) {
+			return null;
+		}
 	}
 
 	private static String substr(String str, int start, int length) {

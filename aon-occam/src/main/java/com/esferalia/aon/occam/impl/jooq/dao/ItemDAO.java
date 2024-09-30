@@ -186,7 +186,6 @@ public class ItemDAO {
 	
 	public static Stream<RitemRecord> getRItemRecordStream(AONContext ctx, RegistryItemFilter filter){
 		ctx.checkRead();
-		System.out.println(ctx.getDslContext().select().from(RITEM).where(RITEM_PROPERTIES.getConditions(filter)).getSQL().toString());
 		return ctx.getDslContext().select().from(RITEM).where(RITEM_PROPERTIES.getConditions(filter))
 				.fetchStreamInto(RITEM);
 	}

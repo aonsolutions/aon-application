@@ -307,6 +307,12 @@ export class AonParent extends AonElement {
 					let companyyy = this.getElement("aonHeaderCompanyList");
 					companyy.style.display = "block";
 					companyyy.style.display = "block";
+					let logo = this.getElement("aonLogo");
+					logo.addEventListener("click", function handleClick() {
+						companyy.style.display = "none";
+						companyyy.style.display = "none";
+						logo.removeEventListener("click", handleClick); 
+					});
 				});
 			}
 		}, 100); 
@@ -401,7 +407,7 @@ export class AonParent extends AonElement {
 			aonShowMenu.style.display = 'block';
 		}
 		let aonHeaderHelp = this.getElement(BASE_ID + 'Help');
-		aonHeaderHelp.style.display = 'block';
+		// aonHeaderHelp.style.display = 'block';
 
 		// let aonHeaderSearch = this.getElement(BASE_ID + 'Search');
 		// aonHeaderSearch.style.display = 'none';

@@ -6510,6 +6510,8 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 				Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId, "SEPE");
 				byte [] pdfBytes = Sepe.certEnterprisePdf(new ByteArrayInputStream(certificate.getData()),
 						certificate.getPassword(), certificate.getType(), nif, endDate);
+				
+				if(null == pdfBytes) throw new IllegalArgumentException("No se ha podido obtener el certific@2 SEPE.");
 
 				JooqContractAttach.setCertifica2PDF(connection, domainId, contractId, pdfBytes);
 				base64Pdf = Base64.getEncoder().encodeToString(pdfBytes);

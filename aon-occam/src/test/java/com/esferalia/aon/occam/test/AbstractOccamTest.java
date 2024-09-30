@@ -16,7 +16,6 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Rule;
 
-import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
@@ -30,7 +29,6 @@ import net.aonsolutions.core.pool.AonConnectionException;
 public abstract class AbstractOccamTest {
 
 	protected static CloseableAONContext ctx;
-	private static AonConfiguration config;
 	protected static Integer DOMAIN_ID;
 
 	protected static String DOMAIN_NAME = System.getProperty("domainName", "occamtest.aonsolutions.test");	
@@ -56,10 +54,7 @@ public abstract class AbstractOccamTest {
 	}
 	
 	protected static AonConfiguration getConfiguration() {
-		if (config == null) {
-			config = AON.getConfiguration(ctx);
-		}
-		return config;
+		return ctx.getConfig();
 	}
 	
 	@BeforeClass

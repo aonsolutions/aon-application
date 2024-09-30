@@ -404,7 +404,7 @@ public class Contrata {
 				if(null != ide) {
 					form.getInputByName("tipoidcontrato0").setValue(ide.substring(0, 1));
 					form.getInputByName("provinciaid0").setValue(ide.substring(1, 3));
-					form.getInputByName("a�oid0").setValue(ide.substring(3, 7));
+					form.getInputByName("añoid0").setValue(ide.substring(3, 7));
 					form.getInputByName("numeroid0").setValue(ide.substring(7, 14));
 					form.getInputByName("transformaid0").setValue(ide.substring(14));
 				}
@@ -583,7 +583,6 @@ public class Contrata {
 					htmlPage = htmlSelect.setSelectedAttribute(cto.getCodFormativo().toString(), true);
 					form = HtmlUnitToolkit.wait4(htmlPage, p -> p.getFormByName("datos")).orElseThrow();
 				}
-
 
 				if (cto.getCodPaisWork() != null) {
 					((HtmlSelect) form.querySelector("select[name=codpais]"))
@@ -830,7 +829,7 @@ public class Contrata {
 
 			// For contract 502 check if duration equals or less than 90 days
 			try {
-				if((contract.equals("502") || contract.equals("402")) && htmlPage.querySelector("#avisos > div > p:last-child").getVisibleText().equals("1. Obligatorio indicar si el contrato tiene duraci�n igual o inferior a 90 d�as.")) {
+				if((contract.equals("502") || contract.equals("402")) && htmlPage.querySelector("#avisos > div > p:last-child").getVisibleText().equals("1. Obligatorio indicar si el contrato tiene duración igual o inferior a 90 días.")) {
 					htmlPage = htmlPage.getElementById("volver").click();
 					form = HtmlUnitToolkit.wait4(htmlPage, p -> p.getFormByName("datos")).orElseThrow();
 					
@@ -2331,11 +2330,11 @@ public class Contrata {
 		
 		String href = null;
 
-		if(Arrays.asList("421", "450").contains(codCto)) { // Formación en alternancia tiempo completo
+		if(Arrays.asList("421", "450").contains(codCto)) { // FormaciÃ³n en alternancia tiempo completo
 			href = "/ccomunicacto/comunicacto/jsp/atraves_comunicacion2.jsp?com=6";
-		} else if(codCto.equals("420")) { //Formativo para la obtención de la práctica profesional tiempo completo
+		} else if(codCto.equals("420")) { //Formativo para la obtenciÃ³n de la prÃ¡ctica profesional tiempo completo
 			href = "/ccomunicacto/comunicacto/jsp/atraves_comunicacion2.jsp?com=7";
-		} else if(Arrays.asList("520", "550").contains(codCto)) { // Formativo para la obtención de la práctica profesional tiempo parcial
+		} else if(Arrays.asList("520", "550").contains(codCto)) { // Formativo para la obtenciÃ³n de la prÃ¡ctica profesional tiempo parcial
 			href = "/ccomunicacto/comunicacto/jsp/atraves_comunicacion2.jsp?com=8";
 		} else {
 			String oneCodCto = codCto.substring(0, 1);

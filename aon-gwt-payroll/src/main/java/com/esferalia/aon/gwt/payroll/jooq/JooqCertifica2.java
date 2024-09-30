@@ -184,7 +184,7 @@ public class JooqCertifica2 {
 		Double totalCgc = 0.00;
 		Double totalCgp = 0.00;
 		
-		Integer idx = 73;
+		Integer idx = 138;
 		for(Map<String, String> quoteData : certifica2Info.getQuoteDataList()) {
 			fieldMap.put(checkIdx(idx), quoteData.get("anioCtz"));
 			idx++;
@@ -206,18 +206,18 @@ public class JooqCertifica2 {
 			
 		}
 		
-		fieldMap.put("0109", certifica2Info.getSettleQuoteDays().toString());
-		fieldMap.put("01010", certifica2Info.getBaseCgc().toString());
-		fieldMap.put("01011", certifica2Info.getBaseUnemployment().toString());
+		fieldMap.put("0186", certifica2Info.getSettleQuoteDays().toString());
+		fieldMap.put("0187", certifica2Info.getBaseCgc().toString());
+		fieldMap.put("0188", certifica2Info.getBaseUnemployment().toString());
 		
 
 		totalDays += certifica2Info.getSettleQuoteDays();
 		totalCgc += certifica2Info.getBaseCgc();
 		totalCgp += certifica2Info.getBaseUnemployment();
 		
-		fieldMap.put("01017", totalDays.toString());
-		fieldMap.put("01018", totalCgc.toString());
-		fieldMap.put("01019", totalCgp.toString());
+		fieldMap.put("0190", totalDays.toString());
+		fieldMap.put("0191", totalCgc.toString());
+		fieldMap.put("0192", totalCgp.toString());
 		
 		fieldMap.put("01021", certifica2Info.getGeozone());
 		
