@@ -9,7 +9,6 @@ import static org.junit.Assert.assertThrows;
 import org.junit.Test;
 
 import com.esferalia.aon.occam.api.AON;
-import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceData;
@@ -28,8 +27,7 @@ public class InvoiceDataTest extends AbstractOccamTest {
 
 	@Test
 	public void test() {
-		AonConfiguration config = AON.getConfiguration(ctx,null);
-		InvoiceFakerParams params = new InvoiceFakerParams(ctx, config).setIssueDate(AonRandom.today());
+		InvoiceFakerParams params = new InvoiceFakerParams(ctx).setIssueDate(AonRandom.today());
 		Invoice invoice = InvoiceFaker.getRandom(params);
 		invoice = AON.insertInvoice(DOMAIN_NAME, DOMAIN_ID, USER, invoice);
 		

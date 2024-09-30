@@ -13,7 +13,6 @@ import java.util.stream.Collectors;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Account;
 import com.esferalia.aon.occam.api.model.AccountPeriod;
-import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.Customer;
 import com.esferalia.aon.occam.api.model.EnterpriseActivity;
 import com.esferalia.aon.occam.api.model.Filter.CreditorFilter;
@@ -75,7 +74,7 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 import com.github.javafaker.Faker;
 
 public class AonRandom {
-	private static Faker faker = new Faker( new Locale("es"));
+	private static Faker faker = new Faker( Locale.of("es"));
 	
     public static boolean gt( int threshold) {
 		return faker.random().nextInt(0,100) >= threshold;
@@ -534,7 +533,7 @@ public class AonRandom {
 			:null;
 	}
 
-	public static Invoice generateRandomRetentionInvoice(final AONContext ctx, final Occam occam, final AonConfiguration configuration, WithholdingType withholdingType) {
+	public static Invoice generateRandomRetentionInvoice(final AONContext ctx, final Occam occam, WithholdingType withholdingType) {
 		Invoice inv = withholdingType.visit(new IWithholdingTypeVisitor<Invoice>() {
 
 			@Override public Invoice visitProfessional(Invoice i) { return getRetentionInvoice( WithholdingType.PROFESSIONAL);   }
@@ -560,20 +559,20 @@ public class AonRandom {
 			
 			@Override
 			public Invoice visitFarmer(Invoice t) {
-				InvoiceFakerParams params = new InvoiceFakerParams(ctx,configuration)
+				InvoiceFakerParams params = new InvoiceFakerParams(ctx)
 					.setIssueDate(AonRandom.getYearDay(new Date()));
 				return InvoiceFaker.getPurchaseFarmerRetention(params);
 			}
 
 			private Invoice getRetentionInvoice( final WithholdingType wt) {
-				return InvoiceFaker.getRetentionInvoice( ctx, occam, configuration, wt);
+				return InvoiceFaker.getRetentionInvoice( ctx, occam, wt);
 			}
 			
 		},null);
 		return inv;
 	}
 
-	public static Invoice generateRandomSalesRetentionInvoice(final AONContext ctx, final Occam occam, final AonConfiguration configuration, WithholdingType withholdingType) {
+	public static Invoice generateRandomSalesRetentionInvoice(final AONContext ctx, final Occam occam, WithholdingType withholdingType) {
 		Invoice inv = withholdingType.visit(new IWithholdingTypeVisitor<Invoice>() {
 
 			@Override public Invoice visitProfessional(Invoice i) { return getRetentionInvoice( WithholdingType.PROFESSIONAL);   }
@@ -599,13 +598,13 @@ public class AonRandom {
 			
 			@Override
 			public Invoice visitFarmer(Invoice t) {
-				InvoiceFakerParams params = new InvoiceFakerParams(ctx,configuration)
+				InvoiceFakerParams params = new InvoiceFakerParams(ctx)
 					.setIssueDate(AonRandom.getYearDay(new Date()));
 				return InvoiceFaker.getSalesFarmerRetention(params);
 			}
 
 			private Invoice getRetentionInvoice( final WithholdingType wt) {
-				return InvoiceFaker.getSalesRetentionInvoice( ctx, occam, configuration, wt);
+				return InvoiceFaker.getSalesRetentionInvoice( ctx, occam, wt);
 			}
 			
 		},null);
