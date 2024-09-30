@@ -510,6 +510,7 @@ public final class IJsonNames {
 	public static final String RESULT = "result";
 	public static final String RESUME = "resume";
 	public static final String RETENTION = "retention";
+	public static final String RETENTION_QUOTA = "retentionQuota";
 	public static final String RETENTION_PERCENT = "retentionPercent";
 	public static final String RETURNED = "returned";
 	public static final String REVERSE_ORDER = "reverseOrder";
@@ -595,6 +596,7 @@ public final class IJsonNames {
 	public static final String TAX = "tax";
 	public static final String TAG = "tag";
 	public static final String TAX_DATE = "taxDate";
+	public static final String TAXABLE_BASE = "taxableBase";
 	public static final String TECHNICAL = "technical";
 	public static final String TEST = "test";
 	public static final String TEXT_COLOR = "textColor";
@@ -631,6 +633,7 @@ public final class IJsonNames {
 	public static final String VAT_ACCRUAL_REGIME = "vatAccrualRegime";
 	public static final String VAT_DEDUCTION_TYPE = "vatDeductionType";
 	public static final String VAT_IMPORTATION = "vatImportation";
+	public static final String VAT_QUOTA =  "vatQuota";
 	public static final String VAT_PARAMS = "vatParams";
 	public static final String VAT_PERCENT = "vatPercent";
 	public static final String VAT_REGIME = "vatRegime";

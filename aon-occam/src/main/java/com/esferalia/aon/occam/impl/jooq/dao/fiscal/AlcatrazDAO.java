@@ -4,6 +4,7 @@ import static com.esferalia.aon.jooq.tables.Alcatraz.ALCATRAZ;
 import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
 import static com.esferalia.aon.jooq.tables.Finance.FINANCE;
 import static com.esferalia.aon.jooq.tables.FsModel.FS_MODEL;
+import static com.esferalia.aon.jooq.tables.Invoice.INVOICE;
 import static com.esferalia.aon.jooq.tables.PayMethod.PAY_METHOD;
 import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
 import static com.esferalia.aon.jooq.tables.Scope.SCOPE;
@@ -19,6 +20,7 @@ import org.jooq.exception.DataAccessException;
 
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModel;
+import com.esferalia.aon.occam.api.model.type.InvoiceType;
 import com.esferalia.aon.occam.impl.jooq.dao.fiscal.FiscalModelDAO.FiscalModelFiller;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.util.AonNumberUtils;
@@ -256,12 +258,14 @@ public class AlcatrazDAO {
 		;
 	}
 	
-	public static List<Alcatraz> getAlcatrazInvoicesByFsModel(AONContext ctx, Integer fsModelId) {
+	public static List<Alcatraz> getAlcatrazInvoicesByFsModel(AONContext ctx, Integer fsModelId, List<Byte> types) {
 		return ctx.getDslContext()
 			.select()
 			.from(ALCATRAZ)
+			.join(INVOICE).on(INVOICE.ID.eq(ALCATRAZ.INVOICE))
 			.where(ALCATRAZ.FS_MODEL.eq(fsModelId))
 			.and(ALCATRAZ.INVOICE.isNotNull())
+			.and(INVOICE.TYPE.in(types))
 			.fetch()
 			.stream()
 			.map(rec -> new Alcatraz()
@@ -272,12 +276,14 @@ public class AlcatrazDAO {
 		;
 	}
 	
-	public static List<Alcatraz> getAlcatrazInvoicesByFsModel(AONContext ctx, Integer fsModelId, Integer offset) {
+	public static List<Alcatraz> getAlcatrazInvoicesByFsModel(AONContext ctx, Integer fsModelId, List<Byte> types, Integer offset) {
 		return ctx.getDslContext()
 			.select()
 			.from(ALCATRAZ)
+			.join(INVOICE).on(INVOICE.ID.eq(ALCATRAZ.INVOICE))
 			.where(ALCATRAZ.FS_MODEL.eq(fsModelId))
 			.and(ALCATRAZ.INVOICE.isNotNull())
+			.and(INVOICE.TYPE.in(types))
 			.limit(100)
 			.offset(offset)
 			.fetch()
@@ -290,15 +296,18 @@ public class AlcatrazDAO {
 		;
 	}
 	
-	public static Integer getAlcatrazInvoicesCountByFsModel(AONContext ctx, Integer fsModelId) {
+	public static Integer getAlcatrazInvoicesCountByFsModel(AONContext ctx, Integer fsModelId, List<Byte> types) {
 		return ctx.getDslContext()
 			.selectCount()
 			.from(ALCATRAZ)
+			.join(INVOICE).on(INVOICE.ID.eq(ALCATRAZ.INVOICE))
 			.where(ALCATRAZ.FS_MODEL.eq(fsModelId))
 			.and(ALCATRAZ.INVOICE.isNotNull())
+			.and(INVOICE.TYPE.in(types))
 			.fetchOne()
 			.value1();
 	}
+	
 	
 	public static List<Alcatraz> getAlcatrazSalariesByFsModel(AONContext ctx, Integer fsModelId, Integer offset) {
 		return ctx.getDslContext()

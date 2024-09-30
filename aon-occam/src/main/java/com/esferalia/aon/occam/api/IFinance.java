@@ -96,6 +96,7 @@ public interface IFinance {
 	Invoice validateInvoice(AONContext ctx, Invoice invoice, Integer rawdocId);
 
 	Invoice getFullInvoice(AONContext ctx, Integer id);
+	List<Invoice>getFullInvoiceList(AONContext ctx, List<Integer> ids);
 	Stream<Invoice> getInvoiceHeaders(AONContext ctx, AccountingReportParams params, int offset, int limit);
 	Stream<Invoice> getInvoiceHeaders(AONContext ctx, InvoiceFilter filter, int offset, int limit);
 	Stream<Invoice> getInvoiceStream(AONContext ctx, InvoiceFilter filter);
