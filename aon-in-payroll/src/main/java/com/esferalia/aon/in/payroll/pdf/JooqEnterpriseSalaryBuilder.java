@@ -724,7 +724,7 @@ public class JooqEnterpriseSalaryBuilder {
 			);
 			
 			Map<String, EnterprisePayrollEntry> eMap = map.get(r.get(WORKPLACE.DESCRIPTION));
-			eMap.put(key, entry);
+			eMap.merge(key, entry, EnterprisePayrollEntry::merge );
 		});
 			
 		return map;
