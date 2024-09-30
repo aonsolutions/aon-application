@@ -1,5 +1,9 @@
 package com.esferalia.aon.occam.api;
 
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
@@ -332,13 +336,18 @@ import com.esferalia.aon.occam.impl.jooq.SecurityImpl;
 import com.esferalia.aon.occam.impl.jooq.StatsImpl;
 import com.esferalia.aon.occam.impl.jooq.SystemImpl;
 import com.esferalia.aon.occam.impl.jooq.TaskImpl;
+import com.esferalia.aon.occam.impl.jooq.URLShortenerImpl;
 import com.esferalia.aon.occam.impl.jooq.WarehouseImpl;
 import com.esferalia.aon.occam.server.fbatch.FBatchUtils;
 import com.esferalia.aon.occam.server.finance.FinanceUtils;
 import com.esferalia.aon.occam.server.rawdoc.RawdocUtils;
 import com.esferalia.aon.occam.server.registry.RegistryUtils;
 import com.esferalia.aon.watson.error.AonCoreException;
+import com.esferalia.aon.watson.server.http.AonURIBuilder;
 import com.esferalia.aon.watson.util.AonStringUtils;
+
+import net.aonsolutions.core.pool.AonConnectionException;
+import net.aonsolutions.core.pool.AonDataSource;
 
 public class AON {
 	
@@ -445,6 +454,10 @@ public class AON {
 	
 	private static INews getNews() {
 		return new NewsImpl();
+	}
+
+	private static IURLShortener getURLShortener() {
+		return new URLShortenerImpl();
 	}
 
 	// ********************************************
@@ -8560,4 +8573,34 @@ public class AON {
 		}
 	}
 	
+	
+
+	public static  String getURL(String shortUrl ){
+		return getURL(URI.create(shortUrl));
+	}
+
+	public static  String getURL(URI shortUri ) {
+		Map<String, String[]> parameterMap = new AonURIBuilder(shortUri).getQueryParamsMap();
+		String domain = parameterMap.getOrDefault("domain", new String[] {shortUri.getHost()})[0];
+		try ( Connection connection = AonDataSource.getInstance().getConnection(domain) ) {
+			return getURLShortener().getURL(new AONContext(connection), shortUri.toString());
+		} catch (SQLException | AonConnectionException e) {
+			throw new RuntimeException(e);
+		} 
+	}
+
+	public static  String getShortURL(String path, String url ) {
+		return getShortURL(path, URI.create(url));
+	}
+	
+	public static  String getShortURL(String path, URI uri)  {
+		new AonURIBuilder(uri).getQueryParams();
+		Map<String, String[]> parameterMap = new AonURIBuilder(uri).getQueryParamsMap();
+		String domain = parameterMap.getOrDefault("domain", new String[] {uri.getHost()})[0];
+		try ( Connection connection = AonDataSource.getInstance().getConnection(domain) ) {
+			return getURLShortener().getShortURL(new AONContext(connection), path, uri.toString(), null);
+		} catch (SQLException | AonConnectionException e) {
+			throw new RuntimeException(e);
+		} 
+	}
 }
