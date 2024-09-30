@@ -307,6 +307,12 @@ export class AonParent extends AonElement {
 					let companyyy = this.getElement("aonHeaderCompanyList");
 					companyy.style.display = "block";
 					companyyy.style.display = "block";
+					let logo = this.getElement("aonLogo");
+					logo.addEventListener("click", function handleClick() {
+						companyy.style.display = "none";
+						companyyy.style.display = "none";
+						logo.removeEventListener("click", handleClick); 
+					});
 				});
 			}
 		}, 100); 
