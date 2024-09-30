@@ -24,7 +24,6 @@
 				const fileOrder = ('0' + uploadCount++ ).slice(-2);  
 				const s3Prefix = '#{s3Prefix}';
 				var filename = file.name;
-				window.alert(s3Prefix);
 			    if(s3Prefix == 'invoices') {
 					var re = /(?:\.([^.]+))?$/;
 				    var ext = re.exec(file.name)[0];
