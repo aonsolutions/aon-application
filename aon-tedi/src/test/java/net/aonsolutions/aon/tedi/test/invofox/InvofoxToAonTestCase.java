@@ -6,7 +6,6 @@ import org.junit.jupiter.api.Test;
 
 import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
-import com.esferalia.aon.occam.impl.jooq.dao.accounting.invoice.InvoiceTextPrinter;
 
 import net.aonsolutions.aon.tedi.invofox.OCRInvoiceBuilder;
 import net.aonsolutions.aon.tedi.invofox.OCRResult;
@@ -32,7 +31,6 @@ public class InvofoxToAonTestCase extends AbstractTediTest {
 		System.out.println( OCRDocumentResponseJSON.to(document).toString(1) );
 		OCRResult result = OCRInvoiceBuilder.toInvoice(ctx, document.getDocument().get() );
 		Invoice invoice = result.getInvoice();
-		InvoiceTextPrinter.print( invoice );
 	}
 	
 	@Test
