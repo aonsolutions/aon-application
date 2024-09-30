@@ -457,7 +457,6 @@ color: var(--aonSearchButton);
 
 .rootPanel {
   z-index: 3;
-  padding-left: 2px;
   background-color: #fafafa;
 
   position: relative;
