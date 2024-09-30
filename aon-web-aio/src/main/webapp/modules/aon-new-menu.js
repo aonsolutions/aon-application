@@ -653,7 +653,7 @@ export class AonNewMenu extends AonElement {
 		const div = this.getElement("aonMenuLeftop");
 		
 
-		if (this.isCSSLoaded("beta.css")) {
+		//if (this.isCSSLoaded("beta.css")) {
 
 			div.addEventListener("mouseenter", () => {
 				const side = this.getElement("aonMenuSidenav");
@@ -695,7 +695,7 @@ export class AonNewMenu extends AonElement {
 			// 	}
 				
 			// });
-		}
+		//}
 	}
 
 
