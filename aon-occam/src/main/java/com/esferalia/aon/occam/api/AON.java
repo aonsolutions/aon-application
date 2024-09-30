@@ -1311,18 +1311,22 @@ public class AON {
 
 	// ------------------------------------ PRODUCT
 
+	@Deprecated
 	public static OldProduct getProduct(String domainName, Integer domainId, String login, Integer productId) {
 		return getProduct(domainName, domainId, login, f -> f.getIdProperty().eq(productId));
 	}
-	
+
+	@Deprecated
 	public static OldProduct getProduct(String domainName, Integer domainId, String login, ProductFilter filter) {
 		return getProductStream(domainName, domainId, login, filter).findFirst().orElse(new OldProduct());
 	}
 
+	@Deprecated
 	public static LinkedList<OldProduct> getProductList(String domainName, Integer domainId, String login, ProductFilter filter){
 		return getProductStream(domainName, domainId, login, filter).collect(Collectors.toCollection(LinkedList::new));
 	}
 	
+	@Deprecated
 	public static Stream<OldProduct> getProductStream(String domainName, Integer domainId, String login, ProductFilter filter){
 		CloseableAONContext ctx = null;
 		try{
@@ -1333,6 +1337,7 @@ public class AON {
 		}
 	}
 	
+	@Deprecated
 	public static OldProduct insertProduct(String domainName, Integer domainId, String login, OldProduct p) {
 		CloseableAONContext ctx = null;
 		try{
@@ -1343,23 +1348,28 @@ public class AON {
 		}
 	}
 	
+	@Deprecated
 	public static void insert(AONContext ctx,OldProduct p) {
 		getProduct().insert(ctx, p);
 	}
 
+	@Deprecated
 	public static LinkedList<OldProduct> insert(AONContext ctx, 
 			Stream<OldProduct> ps) {
 		return getProduct().insert(ctx, ps);
 	}
 
+	@Deprecated
 	public static void update(AONContext ctx, OldProduct p) {
 		getProduct().update(ctx, p);
 	}
 
+	@Deprecated
 	public static void delete(AONContext ctx, OldProduct p) {
 		getProduct().delete(ctx, p);
 	}
 
+	@Deprecated
 	public static void delete(AONContext ctx, Stream<OldProduct> ps) {
 		getProduct().delete(ctx, ps);
 	}
@@ -8191,14 +8201,25 @@ public class AON {
 	}
 	
 	// ---------------- Enterprise Data
+
+	public static EnterpriseData getEnterpriseData(Domain domain, User user, EnterpriseDataFilter filter) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domain, user)) {
+			return getEnterprise().getEnterpriseData(ctx, filter);
+		}
+	}
+	
+	public static EnterpriseData saveEnterpriseData(Domain domain, User user, EnterpriseData enterpriseData) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domain, user)) {
+			return getEnterprise().saveEnterpriseData(ctx, enterpriseData);
+		}
+	}
 	
 	public static LinkedList<EnterpriseData> getEnterpriseDataList(String domainName, Integer domainId, String login, EnterpriseDataFilter filter) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)) {
 			return getEnterprise().getEnterpriseDataList(ctx, filter);
 		}
 	}
-
-
+	
 	public static void insertEnterpriseData(String domainName, Integer domainId, String login, List<EnterpriseData> enterpriseData) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)) {
 			getEnterprise().insertEnterpriseData(ctx, enterpriseData);
