@@ -311,9 +311,8 @@
 	
 	.aon-table-row-hover ,
 	.aon-dataTable-row-odd1:hover,
-	.aon-dataTable-row-even1:hover { 
-		background-color: transparent !important;
-		box-shadow: inset 1px 0 0 #dadce0,inset -1px 0 0 #dadce0,0 1px 2px 0 rgba(60,64,67,.3),0 1px 3px 1px rgba(60,64,67,.15);
+	.aon-dataTable-row-even1:hover {
+		background-color: #f1f1f1 !important;
 	}
 	
 	.aon-panelGrid-search {
@@ -443,9 +442,14 @@
     	border-top-color: #ddd;
 	}
 	
-	.aon-editDataTable-header,
+	.aon-editDataTable-header {
+    	border: none;
+    	background-image: none;
+    	background-color: transparent;
+	}
+	
 	.aon-editDataTable-footer{
-    	border: #ddd 1px solid;
+    	border: none;
     	background-image: none;
     	background-color: #f6f6f6;
 	}
@@ -537,6 +541,11 @@
 		margin-bottom: 68px;
 	}
  */	
+	.aon-dataTable,
+	.aon-editDataTable {
+		border-collapse: separate;
+		border-spacing: 0px 6px;
+	}
 	
 	.aon-dataTable,
 	.aon-dataTable tr ,
@@ -547,7 +556,9 @@
 	}
 	
 	.aon-dataTable td,
+	.aon-dataTable th,
 	.aon-editDataTable td,
+	.aon-editDataTable th,
 	.aon-dataTable-header th,
 	.aon-editDataTable-header th
 	 {
@@ -556,15 +567,47 @@
     	padding-bottom: 0.5em;
 		border-left: none;
 		border-right: none;
-		border-top: none;
-		border-bottom: none;
     	box-shadow: none; 
+    	
+    	height: 40px;
+
 	}	
-	.aon-dataTable table td {
-    	box-shadow: none;
+	
+	.aon-dataTable td,
+	.aon-editDataTable td {
+		border-top: 1px solid #ddd;    	
+		border-bottom: 1px solid #ddd;
+	}
+	.aon-dataTable tr td:first-child,
+	.aon-editDataTable tr td:first-child {
+		border-left: 1px solid #ddd;
+		border-radius: 6px 0px 0px 6px;    	
+	}
+	
+	.aon-dataTable tr td:last-child,
+	.aon-editDataTable tr td:last-child {
+		border-right: 1px solid #ddd;    	
+		border-radius: 0px 6px 6px 0px;    	
 	}
 
-	.aon-dataTable .rich-table-thead {
+	.aon-dataTable th,
+	.aon-editDataTable th,
+	.aon-dataTable-header th,
+	.aon-editDataTable-header th{
+		border-bottom: 1px solid #ddd !important;
+	}
+	
+	.aon-dataTable table td {
+    	box-shadow: none;
+		border-left: none;
+		border-right: none;
+		border-top: none;
+		border-bottom: 1px solid #ddd;
+	}
+
+	.aon-dataTable,
+	.aon-editDataTable,
+	.rich-table-thead {
 		border-bottom: none;
 	}
 
@@ -573,11 +616,11 @@
 	{
 		border: #ccc 1px solid;
 	}
-
-	.gwt-Selector .aon-dataTable td,
-	.gwt-Selector .aon-editDataTable td,
-	.gwt-Selector .aon-dataTable-header th,
-	.gwt-Selector .aon-editDataTable-header th
+	
+	.aon-dataTable td,
+	.aon-editDataTable td,
+	.aon-dataTable-header th,
+	.aon-editDataTable-header th
 	 {
 		color: #5f6368;
     	font-size: 12px;
@@ -597,6 +640,10 @@
     	font-weight: 500;
 		text-transform: capitalize;
     	border-bottom: #ccc 1px solid;
+
+		color: #5f6368;
+    	font-size: 12px;
+    	font-family: Noto Sans,sans-serif !important;
 	}
 	
 	.aon-dataTable .aon-icon-rowSelector,
@@ -958,8 +1005,9 @@
 	}
 	
 	.aon-icon-shield {
-		background-size: 22px;
-		background-image: url('data:image/svg+xml;utf-8,&lt;svg xmlns="http://www.w3.org/2000/svg" height="22px" viewBox="0 -960 960 960" width="22px" fill="--var(aonIconColor,black)"&gt;&lt;path d="M466-320h28v-222h-28v222Zm14-280q8.5 0 14.25-5.75T500-620q0-8.5-5.75-14.25T480-640q-8.5 0-14.25 5.75T460-620q0 8.5 5.75 14.25T480-600Zm0 466q-115-36-191.5-142T212-516v-208l268-100 268 100v208q0 134-76.5 240T480-134Zm0-30q104-33 172-132t68-220v-189l-240-89-240 89v189q0 121 68 220t172 132Zm0-315Z"/&gt;&lt;/svg&gt;');
+		background-size: 24px;
+		background-position: center  !important;
+		background: url('data:image/svg+xml;utf-8,&lt;svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="--var(aonIconColor,black)"&gt;&lt;path d="M466-320h28v-222h-28v222Zm14-280q8.5 0 14.25-5.75T500-620q0-8.5-5.75-14.25T480-640q-8.5 0-14.25 5.75T460-620q0 8.5 5.75 14.25T480-600Zm0 466q-115-36-191.5-142T212-516v-208l268-100 268 100v208q0 134-76.5 240T480-134Zm0-30q104-33 172-132t68-220v-189l-240-89-240 89v189q0 121 68 220t172 132Zm0-315Z"/&gt;&lt;/svg&gt;') -0px -0px  no-repeat; 
 	}
 	
 	input[type=button].aon-icon-page {
