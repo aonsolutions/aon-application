@@ -71,7 +71,6 @@ public class Mod130ScriptTest extends AbstractOccamTest {
 										
 										@Override 
 										public String visitComputeKey() {
-											System.out.println(key + " --> " + info);
 											return null;
 										}
 										
