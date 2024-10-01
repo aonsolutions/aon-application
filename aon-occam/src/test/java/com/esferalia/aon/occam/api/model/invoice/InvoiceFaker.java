@@ -25,6 +25,7 @@ import com.esferalia.aon.occam.api.model.type.TaxType;
 import com.esferalia.aon.occam.api.model.type.WithholdingType;
 import com.esferalia.aon.occam.impl.jooq.handler.FinanceHandler;
 import com.esferalia.aon.occam.test.faker.AonRandom;
+import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.github.javafaker.Faker;
 
@@ -540,7 +541,7 @@ public class InvoiceFaker {
 		}
 		
 		private InvoiceTax getVatInvoiceTax(Invoice invoice, InvoiceDetail detail) {
-			double vatPercent = getVatPercent( AonRandom.number(0, 100));
+			double vatPercent = getVatPercent( invoice, AonRandom.number(0, 100));
 			return new InvoiceTax()
 				.setTaxType(TaxType.VAT)
 				.setBase(detail.getTaxableBase())
@@ -551,22 +552,27 @@ public class InvoiceFaker {
 			 
 		}
 		
-		private double getVatPercent(int x) {
+		private static double getVatPercent(Invoice invoice, int x) {
+			Date octoberFirst = AonDateUtils.getDate(2024, 9,1);
+			boolean previous = AonDateUtils.compare(invoice.getIssueDate(), octoberFirst) == -1; 
 			if ( x >= 0 && x <= 50) return 21.0;
 			if ( x > 50 && x <= 75) return 10.0;
-			if ( x > 75 && x <= 95) return 4.0;
-			if ( x > 95 && x <= 98) return 5.0;
+			if ( x > 75 && x <= 90) return 4.0;
+			if ( x > 90 && x <= 95) return previous?0.0:2.0;
+			if ( x > 95 && x <= 98) return previous?5.0:7.5;
 			return 0.0;
 		}
 		
-		private double getSurchargePercent(double vatPercent) {
+		private static double getSurchargePercent(double vatPercent) {
 			if (vatPercent == 21) return 5.2;
 			else if (vatPercent == 10) return 1.4;
+			else if (vatPercent == 7.5) return 1;
+			else if (vatPercent == 5) return 0.62;
 			else if (vatPercent == 4) return 0.5;
+			else if (vatPercent == 2) return 0.26;
 			else {
 				int x = AonRandom.number(0, 100);
 				if ( x <= 70) return 1.75; 
-				if ( x <= 90) return 0.62;
 				return 0.0;
 			}
 		}
