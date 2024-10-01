@@ -51,12 +51,14 @@ public class URLShortenerImpl implements IURLShortener {
 		AonURIBuilder aonURIBuilder = 
 		new AonURIBuilder(URI.create(url));
 		
+		String domainName = aonURIBuilder.getQueryParamsMap().getOrDefault("domain",
+				new String[] { aonURIBuilder.getHost() })[0];		
 		
 		int domain = 
 		ctx.getDslContext()
 		.select()
 		.from(DOMAIN)
-		.where(DOMAIN.NAME.eq(aonURIBuilder.getHost()))
+		.where(DOMAIN.NAME.eq(domainName))
 		.fetchOne(DOMAIN.ID);
 
 		String uuid = generateUUID();
@@ -73,7 +75,7 @@ public class URLShortenerImpl implements IURLShortener {
 		.set(URL_SHORTEN.EXPIRATION_DATE, expirationTime)
 		.execute();
 		
-		return aonURIBuilder.setPathSegments(path, uuid).clearParameters().clearFragment().toString();
+		return aonURIBuilder.setHost(domainName).setPathSegments(path, uuid).clearParameters().clearFragment().toString();
 		
 	}
 	
