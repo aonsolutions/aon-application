@@ -1784,8 +1784,8 @@ margin-top: 20px;
 }
 
 .profile-letters{
-  border: 2px solid #949393;
-  color: #949393;
+  border: 2px solid var(--aonFiscal);
+  color: var(--aonFiscal);
   border-radius: 19.98px;
   height: 30px;
   line-height: 28px;

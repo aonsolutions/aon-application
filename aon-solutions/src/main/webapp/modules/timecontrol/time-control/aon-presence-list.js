@@ -173,7 +173,8 @@ export class AonPresenceList extends AonElement {
         resp.map((res) => {
           let lastStatus = res.last_date ? `${res.textStatus} ${AonDateUtils.setDateTimestampDay(res.last_date)}` : null;
           res.lastStatus = lastStatus;
-          aonTable.addRow(res, (el) => this.aonEvent(el, res));
+          let tr = aonTable.addRow(res, (el) => this.aonEvent(el, res));
+          tr.id = "aonTimeControlRow";
         });
       } catch (e) {
         console.log(e);
