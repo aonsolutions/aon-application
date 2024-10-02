@@ -1,7 +1,7 @@
 import { AonElement } from 'aonsolutions/components/AonElement.js';
 import { Apps, HomeApps, MenuApps, AuxApps, DESKTOP_APPS, MENU_APPS, TOP_MENU_APPS, AON_APPS, NEW, HOME, AON_CLASSIC, APPS, APPLICATIONS } from '../services/app.js';
 import {COMMERCE, OFFICE, GARAGE, ACADEMY} from  "aonsolutions/services/app.js";
-import {ACCOUNTING_MENU, COMMERCIAL_MENU, GROUPWARE_MENU, MANAGEMENT_MENU, TREASURY_MENU, WAREHOUSE_MENU, FISCAL_MENU, PAYROLL_MENU, MARKETING_MENU} from "../services/app.js"
+import {ACCOUNTING_MENU, COMMERCIAL_MENU, GROUPWARE_MENU, MANAGEMENT_MENU, TREASURY_MENU, WAREHOUSE_MENU, FISCAL_MENU, PAYROLL_MENU, MARKETING_MENU, CONFIGURATION_MENU} from "../services/app.js"
 import { MSG, CONSTANT, AON_ICONS, CSS, EVENT, MATERIAL_ICONS, TAG } from 'aonsolutions/environments/environments.js';
 import { AonDocumental } from 'aonsolutions/modules/documental/aon-documental.js';
 import 'aonsolutions/modules/project/aon-project-panel.js';
@@ -43,6 +43,7 @@ import { AonMarketingMenu } from './marketing/aon-marketing-menu.js';
 import { AonAcademyMenu } from './academy/aon-academy-menu.js';
 import { AonCommerceMenu } from './commerce/aon-commerce-menu.js';
 import { AonGarageMenu } from './garage/aon-garage-menu.js';
+import { AonConfigurationMenu } from './configuration/aon-configuration-menu.js';
 
 
 //	Falla la compilación por esta línea que no se usa. REVISAR!!
@@ -242,6 +243,9 @@ export class AonNewMenu extends AonElement {
 					break;
 				case MARKETING_MENU.app:
 					this.rootPanel(new AonMarketingMenu());
+					break;
+				case CONFIGURATION_MENU.app:
+					this.rootPanel(new AonConfigurationMenu());
 					break;
 				case ACADEMY.app:
 					this.rootPanel(new AonAcademyMenu());
@@ -1014,6 +1018,8 @@ export class AonNewMenu extends AonElement {
 			return this.getDur().isPayroll();
 		if (MARKETING_MENU.app === app.app)
 			return this.getDur().isMarketing();
+		if (CONFIGURATION_MENU.app === app.app)
+			return this.getDur().isAdmin();
 		
 		if (MenuApps.ACCOUNTING.app === app.app)
 			return this.getDur().isAccounting();

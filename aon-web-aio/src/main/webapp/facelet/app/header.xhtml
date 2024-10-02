@@ -311,9 +311,8 @@
 	
 	.aon-table-row-hover ,
 	.aon-dataTable-row-odd1:hover,
-	.aon-dataTable-row-even1:hover { 
-		background-color: transparent !important;
-		box-shadow: inset 1px 0 0 #dadce0,inset -1px 0 0 #dadce0,0 1px 2px 0 rgba(60,64,67,.3),0 1px 3px 1px rgba(60,64,67,.15);
+	.aon-dataTable-row-even1:hover {
+		background-color: #f1f1f1 !important;
 	}
 	
 	.aon-panelGrid-search {
@@ -443,9 +442,14 @@
     	border-top-color: #ddd;
 	}
 	
-	.aon-editDataTable-header,
+	.aon-editDataTable-header {
+    	border: none;
+    	background-image: none;
+    	background-color: transparent;
+	}
+	
 	.aon-editDataTable-footer{
-    	border: #ddd 1px solid;
+    	border: none;
     	background-image: none;
     	background-color: #f6f6f6;
 	}
@@ -537,6 +541,11 @@
 		margin-bottom: 68px;
 	}
  */	
+	.aon-dataTable,
+	.aon-editDataTable {
+		border-collapse: separate;
+		border-spacing: 0px 6px;
+	}
 	
 	.aon-dataTable,
 	.aon-dataTable tr ,
@@ -547,7 +556,9 @@
 	}
 	
 	.aon-dataTable td,
+	.aon-dataTable th,
 	.aon-editDataTable td,
+	.aon-editDataTable th,
 	.aon-dataTable-header th,
 	.aon-editDataTable-header th
 	 {
@@ -556,15 +567,47 @@
     	padding-bottom: 0.5em;
 		border-left: none;
 		border-right: none;
-		border-top: none;
-		border-bottom: none;
-    	box-shadow: inset 0 -1px 0 0 rgba(100,121,143,0.122);
+    	box-shadow: none; 
+    	
+    	height: 40px;
+
 	}	
-	.aon-dataTable table td {
-    	box-shadow: none;
+	
+	.aon-dataTable td,
+	.aon-editDataTable td {
+		border-top: 1px solid #ddd;    	
+		border-bottom: 1px solid #ddd;
+	}
+	.aon-dataTable tr td:first-child,
+	.aon-editDataTable tr td:first-child {
+		border-left: 1px solid #ddd;
+		border-radius: 6px 0px 0px 6px;    	
+	}
+	
+	.aon-dataTable tr td:last-child,
+	.aon-editDataTable tr td:last-child {
+		border-right: 1px solid #ddd;    	
+		border-radius: 0px 6px 6px 0px;    	
 	}
 
-	.aon-dataTable .rich-table-thead {
+	.aon-dataTable th,
+	.aon-editDataTable th,
+	.aon-dataTable-header th,
+	.aon-editDataTable-header th{
+		border-bottom: 1px solid #ddd !important;
+	}
+	
+	.aon-dataTable table td {
+    	box-shadow: none;
+		border-left: none;
+		border-right: none;
+		border-top: none;
+		border-bottom: 1px solid #ddd;
+	}
+
+	.aon-dataTable,
+	.aon-editDataTable,
+	.rich-table-thead {
 		border-bottom: none;
 	}
 
@@ -573,12 +616,16 @@
 	{
 		border: #ccc 1px solid;
 	}
-
-	.gwt-Selector .aon-dataTable td,
-	.gwt-Selector .aon-editDataTable td,
-	.gwt-Selector .aon-dataTable-header th,
-	.gwt-Selector .aon-editDataTable-header th
+	
+	.aon-dataTable td,
+	.aon-editDataTable td,
+	.aon-dataTable-header th,
+	.aon-editDataTable-header th
 	 {
+		color: #5f6368;
+    	font-size: 12px;
+    	font-family: Noto Sans,sans-serif !important;
+
     	padding-left: 1.0em;
 
     	padding-top: 0.25em;
@@ -590,7 +637,13 @@
 	.aon-editDataTable-header {
 		text-align: left;
     	background: none;
+    	font-weight: 500;
+		text-transform: capitalize;
     	border-bottom: #ccc 1px solid;
+
+		color: #5f6368;
+    	font-size: 12px;
+    	font-family: Noto Sans,sans-serif !important;
 	}
 	
 	.aon-dataTable .aon-icon-rowSelector,
@@ -941,9 +994,20 @@
 		background-image: url('data:image/svg+xml;utf-8,&lt;svg width="24px" height="24px" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"&gt;&lt;path d="M3 23h18V6.709L15.29 1H3zM15 2h.2L20 6.8V7h-5zM4 2h10v6h6v14H4zm13.324 11.819l-.167-.004a12.208 12.208 0 0 0-2.469.338 24.235 24.235 0 0 1-2.344-2.728 11.894 11.894 0 0 0 .697-4.028 1.432 1.432 0 0 0-.928-1.237 1.37 1.37 0 0 0-.461-.08 1.524 1.524 0 0 0-1.014.398c-.836.75-.752 2.316.226 4.187.042.081.084.175.13.276a1.939 1.939 0 0 0 .323.561c-.334 1.046-.803 2.182-1.216 3.184l-.252.694a9.195 9.195 0 0 0-1.36.607c-1.673.959-2.683 1.849-2.17 3.08a1.147 1.147 0 0 0 .88.716 1.315 1.315 0 0 0 .23.02 2.343 2.343 0 0 0 1.623-.813 10.846 10.846 0 0 0 1.467-2.83c1.074-.37 2.484-.74 3.784-1.04a7.526 7.526 0 0 0 2.876 1.87 2.144 2.144 0 0 0 .426.045 1.347 1.347 0 0 0 1.088-.489 1.652 1.652 0 0 0 .136-1.703 1.707 1.707 0 0 0-1.505-1.024zM9.44 16.474c-.395.94-1.057 2.513-1.842 2.513a.655.655 0 0 1-.154-.018.624.624 0 0 1-.372-.58c.001-.285.195-1.033 1.972-1.815.096-.042.202-.094.314-.15l.13-.063zm1.84-9.28a.557.557 0 0 1 .367-.153.418.418 0 0 1 .144.024.627.627 0 0 1 .355.54 8.16 8.16 0 0 1-.47 2.71l-.01-.02c-.797-1.525-.794-2.736-.387-3.102zm-.424 8.02l1.17-2.792a69.42 69.42 0 0 0 1.709 1.937c-.947.21-2.358.678-2.88.854zm7.094.67a.552.552 0 0 1-.485.22 3.2 3.2 0 0 1-1.94-1.154l.178-.032a7.814 7.814 0 0 1 1.292-.168.894.894 0 0 1 .96.522.646.646 0 0 1-.005.613z"/&gt;&lt;path fill="none" d="M0 0h24v24H0z"/&gt;&lt;/svg&gt;');
 	}
 
+	.aon-icon-csv{
+		background-size: 24px;
+		background-image: url('data:image/svg+xml;utf-8,&lt;svg width="800px" height="800px" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"&gt;&lt;path d="M15.29 1H3v11h1V2h10v6h6v14H4v-3H3v4h18V6.709zM20 7h-5V2h.2L20 6.8zm-4.96 11l2.126-5H16.08l-1.568 3.688L12.966 13h-1.084l2.095 5zM7 14.349v.302A1.35 1.35 0 0 0 8.349 16H9.65a.349.349 0 0 1 .349.349v.302A.349.349 0 0 1 9.65 17H7v1h2.651A1.35 1.35 0 0 0 11 16.651v-.302A1.35 1.35 0 0 0 9.651 15H8.35a.349.349 0 0 1-.35-.349v-.302A.349.349 0 0 1 8.349 14H11v-1H8.349A1.35 1.35 0 0 0 7 14.349zm-5 .692v.918A2.044 2.044 0 0 0 4.041 18H6v-1H4.041A1.042 1.042 0 0 1 3 15.959v-.918A1.042 1.042 0 0 1 4.041 14H6v-1H4.041A2.044 2.044 0 0 0 2 15.041z"/&gt;&lt;path fill="none" d="M0 0h24v24H0z"/&gt;&lt;/svg&gt;');
+	}
+
 	.aon-icon-page{
 		background-size: 24px;
 		background-image: url('data:image/svg+xml;utf-8,&lt;svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="--var(aonIconColor,black)"&gt;&lt;path d="M272-132q-26 0-43-17t-17-43v-576q0-26 17-43t43-17h314l162 162v474q0 26-17 43t-43 17H272Zm300-520v-148H272q-12 0-22 10t-10 22v576q0 12 10 22t22 10h416q12 0 22-10t10-22v-460H572ZM240-800v148-148 640-640Z"/&gt;&lt;/svg&gt;');
+	}
+	
+	.aon-icon-shield {
+		background-size: 24px;
+		background-position: center  !important;
+		background: url('data:image/svg+xml;utf-8,&lt;svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="--var(aonIconColor,black)"&gt;&lt;path d="M466-320h28v-222h-28v222Zm14-280q8.5 0 14.25-5.75T500-620q0-8.5-5.75-14.25T480-640q-8.5 0-14.25 5.75T460-620q0 8.5 5.75 14.25T480-600Zm0 466q-115-36-191.5-142T212-516v-208l268-100 268 100v208q0 134-76.5 240T480-134Zm0-30q104-33 172-132t68-220v-189l-240-89-240 89v189q0 121 68 220t172 132Zm0-315Z"/&gt;&lt;/svg&gt;') -0px -0px  no-repeat; 
 	}
 	
 	input[type=button].aon-icon-page {
@@ -1060,6 +1124,11 @@
 		background-image: url(#{aonResource.resolve['/images/aon-icon-tgss.png']});
 	}
 	
+	.aon-icon-statistics {
+		padding: 24px;
+		background-image: url('data:image/svg+xml;utf-8,&lt;svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="--var(aonIconColor,black)"&gt;&lt;path d="M132-172v-28h696v28H132Zm40-108v-188h68v188h-68Zm182 0v-388h68v388h-68Zm183 0v-268h68v268h-68Zm183 0v-508h68v508h-68Z"/&gt;&lt;/svg&gt;');
+	}
+
 	.aon-icon-mail-save {
 		padding: 24px;
 		background-image: url('data:image/svg+xml;utf-8,&lt;svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="--var(aonIconColor,black)"&gt;&lt;path d="M480-342 356-466l20-20 90 90v-352h28v352l90-90 20 20-124 124ZM272-212q-26 0-43-17t-17-43v-90h28v90q0 12 10 22t22 10h416q12 0 22-10t10-22v-90h28v90q0 26-17 43t-43 17H272Z"/&gt;&lt;/svg&gt;'); ;

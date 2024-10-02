@@ -679,6 +679,38 @@ export class AonJsfActivityType extends AonJsfApp {
 	}
 }
 
+export class AonJsfMailContact extends AonJsfApp {
+	
+	constructor() {
+		super();
+		this.setViewId('/facelet/app/mailContact.xhtml');
+	}
+}
+
+export class AonJsfMailAccount extends AonJsfApp {
+	
+	constructor() {
+		super();
+		this.setViewId('/facelet/app/mailAccount.xhtml');
+	}
+}
+
+export class AonJsfMailSignature extends AonJsfApp {
+	
+	constructor() {
+		super();
+		this.setViewId('/facelet/app/mailSignature.xhtml');
+	}
+}
+
+export class AonJsfGlobalConfig extends AonJsfApp {
+	
+	constructor() {
+		super();
+		this.setViewId('/facelet/app/globalConfig.xhtml');
+	}
+}
+
 if(!window.customElements.get(TAG.AON_JSF_APP)){
 	window.customElements.define(TAG.AON_JSF_APP, AonJsfApp);
 }
@@ -969,6 +1001,22 @@ if(!window.customElements.get(TAG.AON_JSF_PROJECT_TYPE)){
 
 if(!window.customElements.get(TAG.AON_JSF_ACTIVITY_TYPE)){
 	window.customElements.define(TAG.AON_JSF_ACTIVITY_TYPE, AonJsfActivityType);
+}
+
+if(!window.customElements.get(TAG.AON_JSF_MAIL_CONTACT)){
+	window.customElements.define(TAG.AON_JSF_MAIL_CONTACT, AonJsfMailContact);
+}
+
+if(!window.customElements.get(TAG.AON_JSF_MAIL_ACCOUNT)){
+	window.customElements.define(TAG.AON_JSF_MAIL_ACCOUNT, AonJsfMailAccount);
+}
+
+if(!window.customElements.get(TAG.AON_JSF_MAIL_SIGNATURE)){
+	window.customElements.define(TAG.AON_JSF_MAIL_SIGNATURE, AonJsfMailSignature);
+}
+
+if(!window.customElements.get(TAG.AON_JSF_GLOBAL_CONFIG)){
+	window.customElements.define(TAG.AON_JSF_GLOBAL_CONFIG, AonJsfGlobalConfig);
 }
 
 

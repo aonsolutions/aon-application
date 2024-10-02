@@ -32,32 +32,40 @@ import com.esferalia.aon.watson.server.AonObjectUtils;
 import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
-class Mod303NAVARRA2023Declaration extends Mod303NAVARRA {
+class Mod303NAVARRA2024T3Declaration extends Mod303NAVARRA {
 	
-	protected Mod303NAVARRA2023Declaration() {
+	protected Mod303NAVARRA2024T3Declaration() {
+		
 		
 	}
 	
 	public static final double PERCENT_21 = 21.0;
 	public static final double PERCENT_10 = 10.0;
+	public static final double PERCENT_75 = 7.5;
 	public static final double PERCENT_4 = 4.0;
 	public static final double PERCENT_5 = 5.0;
+	public static final double PERCENT_2 = 2.0;
 	public static final double PERCENT_0 = 0.0;
+	
 	public static final double SURCHARGE_PERCENT_52 = 5.2;
 	public static final double SURCHARGE_PERCENT_175 = 1.75;
 	public static final double SURCHARGE_PERCENT_14 = 1.4;
 	public static final double SURCHARGE_PERCENT_05 = 0.5;
 	public static final double SURCHARGE_PERCENT_062 = 0.62;
 	public static final double SURCHARGE_PERCENT_0 = 0.0;
+	public static final double SURCHARGE_PERCENT_1 = 1;
+	public static final double SURCHARGE_PERCENT_026 = 0.26;
 	
 	public static boolean accept(Mod303 mod) {
 		return mod.isNavarra() 
-			&& (mod.getYear() == 2023
+			&& (mod.getYear() > 2024
 			|| (mod.getYear() == 2024
-			&& (mod.getPeriod() == Period.M01 || mod.getPeriod() == Period.M02 || mod.getPeriod() == Period.M03 
-			 || mod.getPeriod() == Period.M04 || mod.getPeriod() == Period.M05 || mod.getPeriod() == Period.M06 
-			 || mod.getPeriod() == Period.M07 || mod.getPeriod() == Period.M08   
-			 || mod.getPeriod() == Period.T1 || mod.getPeriod() == Period.T2)
+			&& (mod.getPeriod() == Period.M09 
+ 			 || mod.getPeriod() == Period.M10 
+			 || mod.getPeriod() == Period.M11   
+			 || mod.getPeriod() == Period.M12
+			 || mod.getPeriod() == Period.T3
+			 || mod.getPeriod() == Period.T4)
 		   ))
 		;
 	}
@@ -77,7 +85,7 @@ class Mod303NAVARRA2023Declaration extends Mod303NAVARRA {
 		 CM_020(Mod303Key.CM_020)
 		,CM_021(Mod303Key.CM_021)
 		,NF_I00(Mod303Key.NF_I00
-			 ,null,null,Mod303NAVARRA2023Declaration::addDeponentDocument,null,null)
+			 ,null,null,Mod303NAVARRA2024T3Declaration::addDeponentDocument,null,null)
 		,NF_I01(Mod303Key.NF_I01)
 
 		// ---------------------------------------------------------------
@@ -380,7 +388,10 @@ class Mod303NAVARRA2023Declaration extends Mod303NAVARRA {
 	}
 	private static boolean hasPercent4(VatContext vat) {
 		return vat.getPercentage() ==  PERCENT_4
-			|| vat.getPercentage() ==  PERCENT_5; 	
+			|| vat.getPercentage() ==  PERCENT_5
+			|| vat.getPercentage() ==  PERCENT_2
+			|| vat.getPercentage() ==  PERCENT_75
+			; 	
 	}
 	private static boolean isIntracommunitySales(VatContext vat) {
 		return vat.isVatGeneralRegime(VATRegime.GENERAL) && !vat.isVatSurchargeRegime() && vat.isIntracommunitySales();	
@@ -416,9 +427,13 @@ class Mod303NAVARRA2023Declaration extends Mod303NAVARRA {
 		return vat.getSurchargePercent() ==  SURCHARGE_PERCENT_14;
 	}
 	private static boolean hasSurchargePercent05(VatContext vat) {
-		return vat.getSurchargePercent() ==  SURCHARGE_PERCENT_05
+		return 
+			   vat.getSurchargePercent() ==  SURCHARGE_PERCENT_0
+			|| vat.getSurchargePercent() ==  SURCHARGE_PERCENT_026
+			|| vat.getSurchargePercent() ==  SURCHARGE_PERCENT_05
 			|| vat.getSurchargePercent() ==  SURCHARGE_PERCENT_062
-			|| vat.getSurchargePercent() ==  SURCHARGE_PERCENT_0;
+			|| vat.getSurchargePercent() ==  SURCHARGE_PERCENT_1
+			;
 	}
 	private static boolean adqIntracomunitariasFilter(VatContext vat) {
 		return vat.isVatGeneralRegime(VATRegime.GENERAL) 
