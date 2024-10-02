@@ -11,6 +11,7 @@ import { AonBasicTable } from '../../../components/aon-basic-table.js';
 import * as LS from '../../../services/localStorageService.js';
 import { getWarehouses } from '../../../services/warehouseService.js';
 import { createCard, createDate, createInput, createQuantity, createSelect } from '../../../components/CreateComponent.js';
+import { openBarcode } from '../../../services/actionService.js';
 
 export class AonMobilePackaging extends AonElement {
 
@@ -124,8 +125,9 @@ export class AonMobilePackaging extends AonElement {
 
 		let product = createInput(this.PACKAGING_PRODUCT, "Contenido");
 		table.addCell(product, 2);
-		// product.addIconButton(MATERIAL_ICONS.QR_CODE_SCANNER, () => this.openBarcode());
 		product.addIcon(MATERIAL_ICONS.QR_CODE_SCANNER, undefined, () => this.openBarcode());
+		// product.addIconButton(MATERIAL_ICONS.QR_CODE_SCANNER, () => this.openBarcode());
+
 
 
 		// product.addEventListener(EVENT.AON_KEYUP, (e) => {
@@ -139,7 +141,6 @@ export class AonMobilePackaging extends AonElement {
 		// 		}).catch(e => this.showError(e));
 		// 	  }
 		// });
-
 
 		// product.addEventListener(EVENT.SELECT,(e) => {
 		// 	let desc = this.getElement(this.PACKAGING_PRODUCT_DESC);
