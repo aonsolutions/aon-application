@@ -3003,7 +3003,10 @@ border-left: 2px solid var(--aonMessenger);
 .aonMenuLeftopNotification {
   background-color: var(--aonBlue);
 }
-
+.aonHeaderConfigurationMenu,
+.aonMenuLeftTopConfigurationMenu {
+  background-color: black;
+}
 
 .aonHeaderNote .material-icons,
 .aonHeaderFiscal .material-icons,
