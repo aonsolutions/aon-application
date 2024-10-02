@@ -174,8 +174,15 @@ public class AppParamDAO {
 	
 	public static ApplicationParameter insertApplicationParameter(AONContext ctx, ApplicationParameter applicationParameter) {
 		return ctx.getDslContext()
-			.insertInto(APP_PARAM, APP_PARAM.DOMAIN, APP_PARAM.NAME, APP_PARAM.VALUE)
-			.values(ctx.getDomainId(), applicationParameter.getName(), applicationParameter.getValue())
+			.insertInto(
+					APP_PARAM, 
+					APP_PARAM.DOMAIN, 
+					APP_PARAM.NAME, 
+					APP_PARAM.VALUE)
+			.values(
+					null != applicationParameter.getDomain() ? applicationParameter.getDomain() : ctx.getDomainId(), 
+					applicationParameter.getName(), 
+					applicationParameter.getValue())
 			.returning().fetch().stream().map(new ApplicationParameterFiller()).findFirst().orElse(new ApplicationParameter());
 	}
 	
