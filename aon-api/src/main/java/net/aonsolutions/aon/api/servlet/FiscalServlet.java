@@ -23,6 +23,7 @@ import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.time.Duration;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -59,6 +60,7 @@ import com.esferalia.aon.occam.api.json.JsonUtils;
 import com.esferalia.aon.occam.api.json.invoice.InvoiceJSON;
 import com.esferalia.aon.occam.api.model.AccountingReportParams;
 import com.esferalia.aon.occam.api.model.CertificateInfo;
+import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.DomainGserviceaccount;
 import com.esferalia.aon.occam.api.model.IJsonNames;
 import com.esferalia.aon.occam.api.model.Occam;
@@ -68,6 +70,7 @@ import com.esferalia.aon.occam.api.model.attachment.AttachType;
 import com.esferalia.aon.occam.api.model.attachment.RegistryAttachmentType;
 import com.esferalia.aon.occam.api.model.finance.BankAccount;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
+import com.esferalia.aon.occam.api.model.finance.TbaiConfiguration;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalMatrixParams;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModel;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModelType;
@@ -136,8 +139,10 @@ import jakarta.servlet.http.HttpServletResponse;
 import net.aonsolutions.aon.api.error.AonApiError;
 import net.aonsolutions.aon.api.error.AonApiException;
 import net.aonsolutions.aon.api.ewok.AonApiData;
+import net.aonsolutions.aon.api.ewok.IConstants;
 import net.aonsolutions.aon.api.excel.InvoiceExcelExport;
 import net.aonsolutions.aon.google.apis.drive.AonDrive;
+import net.aonsolutions.aon.tbai.TbaiData;
 
 @WebServlet(name = "AonFiscalServlet", urlPatterns = {"/ms/api/fiscal/*"})
 public class FiscalServlet extends AonApiHttpServlet{
@@ -285,7 +290,24 @@ public class FiscalServlet extends AonApiHttpServlet{
 			List<Invoice> invoices = new ArrayList<Invoice>();
 			invoices = AON.getFullInvoiceList(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), invoiceIdsArr);
 			
-			JSONArray invoicesArr = InvoiceJSON.toJSON(invoices);
+			JSONArray invoicesArr = new JSONArray();
+			
+			invoices.forEach(invoice -> {
+				JSONObject invoiceJson = InvoiceJSON.toJSON(invoice);
+				
+				TbaiConfiguration tbai = AON.getTbaiConfiguration(api.getDomain(), api.getUser().getLogin());
+				if(tbai.isActive()) {	
+					String tbaiUrl = TbaiData.getInstance(tbai).getTbaiUrl(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), invoice.getId());
+					if(!AonStringUtils.isBlank(tbaiUrl)) {
+						invoiceJson.put("tbai", true);
+						invoiceJson.put("tbaiUrl", tbaiUrl);
+					}
+				}
+				invoiceJson.put(IJsonNames.FILE, buildInvoiceFileJSON(api.getDomain(), api.getUser().getLogin(), invoice));
+				
+				invoicesArr.put(invoiceJson);
+			});
+			
 			
 			return invoicesArr;
 		} 
@@ -841,7 +863,24 @@ public class FiscalServlet extends AonApiHttpServlet{
 		List<Invoice> invoices = new ArrayList<Invoice>();
 		invoices = AON.getFullInvoiceList(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), invoiceIdsArr);
 		
-		JSONArray invoicesArr = InvoiceJSON.toJSON(invoices);
+		JSONArray invoicesArr = new JSONArray();
+		
+		invoices.forEach(invoice -> {
+			JSONObject invoiceJson = InvoiceJSON.toJSON(invoice);
+			
+			TbaiConfiguration tbai = AON.getTbaiConfiguration(api.getDomain(), api.getUser().getLogin());
+			if(tbai.isActive()) {	
+				String tbaiUrl = TbaiData.getInstance(tbai).getTbaiUrl(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), invoice.getId());
+				if(!AonStringUtils.isBlank(tbaiUrl)) {
+					invoiceJson.put("tbai", true);
+					invoiceJson.put("tbaiUrl", tbaiUrl);
+				}
+			}
+			invoiceJson.put(IJsonNames.FILE, buildInvoiceFileJSON(api.getDomain(), api.getUser().getLogin(), invoice));
+			
+			invoicesArr.put(invoiceJson);
+		});
+		
 		
 		return invoicesArr;
 	}
@@ -1028,7 +1067,21 @@ public class FiscalServlet extends AonApiHttpServlet{
 			List<Invoice> invoices = new ArrayList<Invoice>();
 			invoices = AON.getFullInvoiceList(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), invoiceIdsArr);
 			
-			invoicesArr = InvoiceJSON.toJSON(invoices);
+			invoices.forEach(invoice -> {
+				JSONObject invoiceJson = InvoiceJSON.toJSON(invoice);
+				
+				TbaiConfiguration tbai = AON.getTbaiConfiguration(api.getDomain(), api.getUser().getLogin());
+				if(tbai.isActive()) {	
+					String tbaiUrl = TbaiData.getInstance(tbai).getTbaiUrl(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), invoice.getId());
+					if(!AonStringUtils.isBlank(tbaiUrl)) {
+						invoiceJson.put("tbai", true);
+						invoiceJson.put("tbaiUrl", tbaiUrl);
+					}
+				}
+				invoiceJson.put(IJsonNames.FILE, buildInvoiceFileJSON(api.getDomain(), api.getUser().getLogin(), invoice));
+				
+				invoicesArr.put(invoiceJson);
+			});
 		}
 		
 		return invoicesArr;
@@ -1143,6 +1196,44 @@ public class FiscalServlet extends AonApiHttpServlet{
 			.put("type", salaryInfo.getSalaryType().name())
 			.put("startDate",  AonDateUtils.format( salaryInfo.getStartDate(), FORMAT_DATE))
 	        .put("endDate",  AonDateUtils.format( salaryInfo.getEndDate(), FORMAT_DATE));
+	}
+	
+
+	
+	public static JSONObject buildInvoiceFileJSON(Domain domain, String login, Invoice invoice) {
+		Attach invoiceAttach = AON.getAttach(domain.getName(), domain.getId(), login,
+				f -> f.getAttachModuleProperty().eq(invoice.getId())
+				, AttachType.INVOICE);
+
+		JSONObject json = new JSONObject();
+		if(invoiceAttach != null && invoiceAttach.getId() != null) {
+			JSONObject data = new JSONObject();
+			data.put(IConstants.DOMAIN_NAME, domain.getName());
+			data.put(IConstants.DOMAIN_ID, domain.getId());
+			data.put(IJsonNames.ID, invoiceAttach.getId());
+			data.put(IConstants.ATTACH_TYPE, AttachType.INVOICE.getName());
+			String result = Base64.getEncoder().encodeToString(data.toString().getBytes(StandardCharsets.UTF_8));
+			String path = "/ms/api/file/" +  result;	
+			String url = "https://" + domain.getName() + path; 
+		    json.put(IJsonNames.URL, url);
+		    json.put(IJsonNames.PATH, path);
+		    json.put(IConstants.CONTENT_TYPE, invoiceAttach.getMimeType().getName());
+		} else {
+			JSONObject data = new JSONObject();
+			data.put(IConstants.DOMAIN_NAME, domain.getName());
+			data.put(IConstants.DOMAIN_ID, domain.getId());
+			data.put(IJsonNames.ID, invoice.getId());
+			data.put(IConstants.SOURCE, "invoice");
+			data.put(IJsonNames.LOGIN, login);
+		
+			String result = Base64.getEncoder().encodeToString(data.toString().getBytes(StandardCharsets.UTF_8));
+			String path = "/ms/api/download_invoice_pdf?json=" +  result;
+			String url = "https://" + domain.getName() + path;
+		    json.put(IJsonNames.URL, url);
+		    json.put(IJsonNames.PATH, path);
+		    json.put(IConstants.CONTENT_TYPE, MimeType.PDF.getName());
+		}
+		return json;
 	}
 	
 	class SalaryFiscalModel implements ISalaryFiscalModel{
