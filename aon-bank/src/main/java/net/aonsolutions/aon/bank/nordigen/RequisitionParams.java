@@ -4,7 +4,7 @@ import org.json.JSONObject;
 
 import com.esferalia.aon.occam.api.model.aonsolutions.AonLanguage;
 
-class RequisitionParams {
+public class RequisitionParams {
 	private String redirect;
 	private String institutionId;
 	private String agreement;

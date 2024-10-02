@@ -71,7 +71,7 @@ import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.server.http.AonURIBuilder;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
-class NordigenAPI {
+public class NordigenAPI {
 	private static final Logger LOGGER = Logger.getLogger(NordigenAPI.class.getName()); 
 	
 	static final String SECRET_ID = "f3559685-bbec-45c4-9dfa-f01721e7190e";
@@ -222,21 +222,21 @@ class NordigenAPI {
 			.header(CONTENT_TYPE_PARAM, APPLICATION_JSON);
 	}
 	
-	static NordigenAccessToken newAccessToken() throws NordigenException {
+	public static NordigenAccessToken newAccessToken() throws NordigenException {
 		return post(TOKEN_URL + NEW_URL 
 			, getLoginJSON()
 			, req -> fillRequestHeaders(req)
 			, NordigenAccessTokenJSON::from );
 	}
 	
-	static NordigenAccessToken refreshAccessToken(String refreshToken) throws NordigenException {
+	public static NordigenAccessToken refreshAccessToken(String refreshToken) throws NordigenException {
 		return post(TOKEN_URL + REFRESH_URL 
 			, new JSONObject().put(REFRESH_PARAM, refreshToken)
 			, req -> fillRequestHeaders(req)
 			, NordigenAccessTokenJSON::from );
 	}
 	
-	static NordigenInstitution getInstitution(String token, String id) throws NordigenException {
+	public static NordigenInstitution getInstitution(String token, String id) throws NordigenException {
 		return get(INSTITUTIONS_URL + (AonStringUtils.isBlank(id) ? "null" : id) + "/" 
 			, new JSONObject()
 			, req -> req
@@ -261,7 +261,7 @@ class NordigenAPI {
 			,NordigenAgreementsJSON::from);
 	}
 	
-	static NordigenAgreement createEndUserAgreement(String token, Integer maxHistoricalDays, Integer accessValidForDays
+	public static NordigenAgreement createEndUserAgreement(String token, Integer maxHistoricalDays, Integer accessValidForDays
 			,NordigenAccessScope[] accessScopes, String institutionId) throws NordigenException {
 		
 		JSONObject paramJson = new JSONObject()
@@ -286,7 +286,7 @@ class NordigenAPI {
 			,NordigenAgreementJSON::from);
 	}
 
-	static NordigenAgreement getEndUserAgreement(String token, String id) throws NordigenException {
+	public static NordigenAgreement getEndUserAgreement(String token, String id) throws NordigenException {
 		return  get(AGREEMENTS_URL + ENDUSER_URL + id + "/" 
 			, null
 			, req -> req
@@ -321,7 +321,7 @@ class NordigenAPI {
 			,NordigenInstitutionJSON::fromArray);
 	}
 
-	static NordigenRequisition createRequisition(String token, RequisitionParams params) throws NordigenException {
+	public static NordigenRequisition createRequisition(String token, RequisitionParams params) throws NordigenException {
 		return createRequisition(token, params.toJSON());
 	}
 	
@@ -344,7 +344,7 @@ class NordigenAPI {
 			,NordigenRequisitionJSON::from);
 	}
 	
-	static NordigenResponse deleteRequisition(String token, String id) throws NordigenException {
+	public static NordigenResponse deleteRequisition(String token, String id) throws NordigenException {
 		return  delete(REQUISITIONS_URL + id + "/"
 			, null
 			, req -> req
@@ -353,7 +353,7 @@ class NordigenAPI {
 			,NordigenResponseJSON::from);
 	}
 
-	static NordigenRequisitions getRequisitions(String token, Integer limit, Integer offset) throws NordigenException {
+	public static NordigenRequisitions getRequisitions(String token, Integer limit, Integer offset) throws NordigenException {
 		return getRequisitions(token
 			, new JSONObject()
 				.put(LIMIT_PARAM, limit)
@@ -369,7 +369,7 @@ class NordigenAPI {
 			,NordigenRequisitionsJSON::from);
 	}
 	
-	static NordigenAccountMetadata getAccountMetadata(String token, String id) throws NordigenException {
+	public static NordigenAccountMetadata getAccountMetadata(String token, String id) throws NordigenException {
 		return get(ACCOUNTS_URL + id + "/",
 			null
 			, req -> req
@@ -379,7 +379,7 @@ class NordigenAPI {
 		);
 	}
 	
-	static LinkedList<NordigenAccountBalance> getBalances(String token, String id) throws NordigenException {
+	public static LinkedList<NordigenAccountBalance> getBalances(String token, String id) throws NordigenException {
 		return get(ACCOUNTS_URL + id + "/balances/"
 			, null
 			, req -> req
@@ -389,7 +389,7 @@ class NordigenAPI {
 	}
 	
 
-	static NordigenAccountDetail getDetail(String token, String id) throws NordigenException {
+	public static NordigenAccountDetail getDetail(String token, String id) throws NordigenException {
 		return get(ACCOUNTS_URL + id + "/details/"
 			, null
 			, req -> req
@@ -398,7 +398,7 @@ class NordigenAPI {
 			, NordigenAccountDetailJSON::fromAccount);
 	}
 	
-	static NordigenAccountTransactions getTransactions(String token, String id, Date dateFrom, Date dateTo) throws NordigenException {
+	public static NordigenAccountTransactions getTransactions(String token, String id, Date dateFrom, Date dateTo) throws NordigenException {
 		JSONObject jsonParams = new JSONObject();
 		if (dateFrom != null) {
 			jsonParams.putOnce(DATE_FROM_PARAM, AonDateUtils.format(dateFrom, SIMPLE_DATE_FORMAT4));

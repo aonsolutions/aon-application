@@ -26,6 +26,11 @@ import com.esferalia.aon.occam.api.model.finance.nordigen.NordigenInstitution;
 import com.esferalia.aon.occam.api.model.finance.nordigen.NordigenRequisition;
 import com.esferalia.aon.occam.api.model.type.Country;
 
+import net.aonsolutions.aon.bank.nordigen.utils.NordigenAgreementUtils;
+import net.aonsolutions.aon.bank.nordigen.utils.NordigenInstitutionUtils;
+import net.aonsolutions.aon.bank.nordigen.utils.NordigenRequisitionUtils;
+import net.aonsolutions.aon.bank.nordigen.utils.NordigenTokenUtils;
+
 public class NordigenTestCase {
 	
 	private static NordigenAccessToken nordigenToken;
@@ -62,7 +67,7 @@ public class NordigenTestCase {
 	
 	@BeforeAll
 	public static void initialize() throws Exception {
-		nordigenToken = AonNordigen.getNewAccessToken();
+		nordigenToken = NordigenTokenUtils.getNewAccessToken();
 	}
 	
 	@BeforeEach
@@ -74,7 +79,7 @@ public class NordigenTestCase {
 	@Test
 	void testObtainNewAccessToken() {
 		try {
-			NordigenAccessToken token = AonNordigen.getNewAccessToken();
+			NordigenAccessToken token = NordigenTokenUtils.getNewAccessToken();
 			assertNotNull(token, "Null token");
 			assertNotNull(token.getAccess(), "Null access");
 			assertNotNull(token.getAccessExpires(), "Null access expires");
@@ -92,7 +97,7 @@ public class NordigenTestCase {
 		String originalAccess = nordigenToken.getAccess();
 		Date originalRefreshDate = nordigenToken.getRefreshDate();
 		
-		AonNordigen.refreshToken(nordigenToken);
+		NordigenTokenUtils.refreshToken(nordigenToken);
 		
 		assertNotNull(nordigenToken, "Null token");
 		assertNotNull(nordigenToken.getAccess(), "Null access");
@@ -130,7 +135,7 @@ public class NordigenTestCase {
 	@Test
 	void testGetCaixabankInstitution() {
 		try {
-			NordigenInstitution caixaBank = AonNordigen.getInstitution(nordigenToken, "CAIXABANK_CAIXESBB");
+			NordigenInstitution caixaBank = NordigenInstitutionUtils.getInstitution(nordigenToken, "CAIXABANK_CAIXESBB");
 			assertNotNull(caixaBank);
 			assertNotNull(caixaBank.getCountries(), "Null countries");
 			assertNotNull(caixaBank.getId(), "Null ID");
@@ -146,12 +151,12 @@ public class NordigenTestCase {
 	@Test
 	void testCrdAgreements() {
 		try {
-			NordigenAgreement agreement = AonNordigen.createAgreement(nordigenToken, "CAIXABANK_CAIXESBB");
+			NordigenAgreement agreement = NordigenAgreementUtils.createAgreement(nordigenToken, "CAIXABANK_CAIXESBB");
 			//COMENTADO PORQUE LA API NO OBTIENE LOS "SCOPES" CUANDO SE CREA
 //			assertAgreement(agreement);
 			Integer expectedHistoricalDays = 90;
 			assertEquals(expectedHistoricalDays, agreement.getMaxHistoricalDays());
-			NordigenAgreement gottenAgreement = AonNordigen.getAgreement(nordigenToken, agreement.getId());
+			NordigenAgreement gottenAgreement = NordigenAgreementUtils.getAgreement(nordigenToken, agreement.getId());
 			assertAgreement(gottenAgreement);
 			AonNordigen.deleteAgreement(nordigenToken, agreement);
 			
@@ -163,12 +168,12 @@ public class NordigenTestCase {
 	@Test
 	void testCrdRequisitions() {
 		try {
-			NordigenAgreement agreement = AonNordigen.createAgreement(nordigenToken, "CAIXABANK_CAIXESBB");
+			NordigenAgreement agreement = NordigenAgreementUtils.createAgreement(nordigenToken, "CAIXABANK_CAIXESBB");
 			NordigenRequisition requisition = AonNordigen.createRequisition(nordigenToken, agreement, "https://aonsolutions.org/");
 			assertRequisition(requisition);
 			AonNordigen.getRequisition(nordigenToken, requisition.getId());
 			assertRequisition(requisition);
-			AonNordigen.deleteRequisition(nordigenToken, requisition);
+			NordigenRequisitionUtils.deleteRequisition(nordigenToken, requisition);
 		} catch (Exception e) {
 			fail(e.getMessage());
 		}
@@ -176,7 +181,7 @@ public class NordigenTestCase {
 	
 	@Test
 	void testAllRequisitionss() {
-		List<NordigenRequisition> requisitions = AonNordigen.getAllRequisitions(nordigenToken);
+		List<NordigenRequisition> requisitions = NordigenRequisitionUtils.getAllRequisitions(nordigenToken);
 		assertNotNull(requisitions);
 		assertTrue(requisitions.size() > 0 );
 	}

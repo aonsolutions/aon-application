@@ -2,20 +2,31 @@ package net.aonsolutions.aon.bank.nordigen;
 
 import static net.aonsolutions.aon.bank.nordigen.NordigenConstants.RADD_INFO_REQUISITION_ATTRIBUTE_PATTERN;
 
+
 import java.util.List;
 import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import com.esferalia.aon.occam.api.model.finance.nordigen.NordigenBalanceType;
+
 import com.esferalia.aon.occam.api.model.finance.nordigen.NordigenRequisitionStatus;
+
+import com.esferalia.aon.occam.api.AON;
+
+import com.esferalia.aon.occam.api.model.Occam;
+
 import com.esferalia.aon.occam.api.model.finance.nordigen.NordigenAccountBalance;
+
 import com.esferalia.aon.occam.api.model.finance.nordigen.NordigenRequisition;
 import com.esferalia.aon.occam.api.model.registry.RegistryAddInfo;
+import com.esferalia.aon.occam.api.model.registry.RegistryBank;
+
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class NordigenUtils {
+	
 	public static Integer getRbankIdFromRaddinfo(RegistryAddInfo raddinfo) {
 		if (raddinfo == null) {
 			return null;
@@ -53,4 +64,7 @@ public class NordigenUtils {
 		return null;
 	}
 	
+	public static RegistryBank updateRbank(Occam occam, RegistryBank rbank) {
+		return AON.saveRegistryBank(occam, rbank);
+	}
 }
