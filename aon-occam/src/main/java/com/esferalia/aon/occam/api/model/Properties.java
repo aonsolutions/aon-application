@@ -1942,4 +1942,11 @@ public interface Properties {
 		Property<String> getDescriptionProperty();
 		Property<Integer> getScopeProperty();
 	}
+	
+	public interface LogDataProperties {
+		Property<Integer> getIdProperty();
+		Property<Integer> getDomainProperty();
+		Property<Date> getDateProperty();
+		Property<String> getMessageProperty();
+	}
 }

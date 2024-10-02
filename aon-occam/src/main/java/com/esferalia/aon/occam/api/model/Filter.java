@@ -781,4 +781,8 @@ public interface Filter extends Serializable{
 		Filter filter(MarketingCampaignProperties properties);
 	}
 	
+	@FunctionalInterface
+	public interface LogDataFilter{
+		Filter filter(LogDataProperties properties);
+	}
 }

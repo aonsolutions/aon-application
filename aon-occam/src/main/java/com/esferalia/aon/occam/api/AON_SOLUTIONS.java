@@ -19,6 +19,8 @@ import com.esferalia.aon.occam.api.json.ProductJSON;
 import com.esferalia.aon.occam.api.json.invoice.InvoiceJSON;
 import com.esferalia.aon.occam.api.model.AonCompany;
 import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.occam.api.model.LogData;
+import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.Filter.AuthAttachFilter;
 import com.esferalia.aon.occam.api.model.Filter.AuthFilter;
 import com.esferalia.aon.occam.api.model.Filter.CategoryFilter;
@@ -28,6 +30,7 @@ import com.esferalia.aon.occam.api.model.Filter.DomainAppFilter;
 import com.esferalia.aon.occam.api.model.Filter.ItemFilter;
 import com.esferalia.aon.occam.api.model.Filter.JobTypeFilter;
 import com.esferalia.aon.occam.api.model.Filter.LocationFilter;
+import com.esferalia.aon.occam.api.model.Filter.LogDataFilter;
 import com.esferalia.aon.occam.api.model.Filter.NewsFilter;
 import com.esferalia.aon.occam.api.model.Filter.NoteFilter;
 import com.esferalia.aon.occam.api.model.Filter.NotificationFilter;
@@ -77,6 +80,7 @@ import com.esferalia.aon.occam.impl.jooq.AttachmentImpl;
 import com.esferalia.aon.occam.impl.jooq.CategoryImpl;
 import com.esferalia.aon.occam.impl.jooq.CommonImpl;
 import com.esferalia.aon.occam.impl.jooq.FinanceImpl;
+import com.esferalia.aon.occam.impl.jooq.LogDataImpl;
 import com.esferalia.aon.occam.impl.jooq.NewsImpl;
 import com.esferalia.aon.occam.impl.jooq.NoteImpl;
 import com.esferalia.aon.occam.impl.jooq.NotificationImpl;
@@ -150,6 +154,10 @@ public class AON_SOLUTIONS {
 	
 	private static IRelationship getRelationship() {
 		return new RelationshipImpl();
+	}
+	
+	private static ILogData getILogData() {
+		return new LogDataImpl();
 	}
 
 	public static AuthAttach getAuthAttach(Auth auth, AuthAttachFilter filter) { 
@@ -1185,6 +1193,42 @@ public class AON_SOLUTIONS {
 		try (CloseableAONContext ctx = AONContext.getAONContext(domain, user)){		
 			InvoiceDuplicateFixDAO.invoiceDuplicateFix(ctx);
 			InvoiceDuplicateFixDAO.invoiceIrpfDuplicateFix(ctx);
+		}
+	}
+	
+	public static void insertLogData(String domainName,Integer domainId, String login, LogData data) {
+		try {
+			CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login);
+			getILogData().insertLogData(ctx, data);
+		} catch (Exception e) {
+			throw e;
+		}
+	}
+	
+	public static void insertLogData(Occam occam, LogData data) {
+		try {
+			CloseableAONContext ctx = AONContext.getAONContext(occam.getDomainName(),occam.getDomain(), occam.getUser());
+			getILogData().insertLogData(ctx, data);
+		} catch (Exception e) {
+			throw e;
+		}
+	}
+	
+	public static LogData getLogData(String domainName,Integer domainId, String login, LogDataFilter filter) {
+		try {
+			CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login);
+			return getILogData().getLogData(ctx, filter);
+		} catch (Exception e) {
+			throw e;
+		}
+	}
+	
+	public static void deleteLogData(String domainName,Integer domainId, String login, LogDataFilter filter) {
+		try {
+			CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login);
+			getILogData().deleteLogData(ctx, filter);
+		} catch (Exception e) {
+			throw e;
 		}
 	}
 }

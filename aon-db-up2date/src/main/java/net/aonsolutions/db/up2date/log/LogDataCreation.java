@@ -34,12 +34,15 @@ public class LogDataCreation implements Update{
 	}
 	
 	private void createLogData(DSLContext dslContext) {
-		String sql = "CREATE_TABLE IF NOT EXISTS `log_data `("
-				+"`id` int (5) NOT NULL AUTO_INCREMENT COMMENT 'Identificador unico',"				
+		String sql = "CREATE TABLE IF NOT EXISTS `log_data`("
+				+"`id` int NOT NULL AUTO_INCREMENT COMMENT 'Identificador unico',"
+				+"`domain` int NOT NULL COMMENT 'Identificador dominio',"
 				+"`date` date NOT NULL COMMENT 'Fecha del error',"
-				+"`stacktrace` text NOT NULL COMMENT 'Traza del error',"
+				+"`message` text NOT NULL COMMENT 'Mensaje',"
 				+"PRIMARY KEY (`id`),"
+				+"KEY `IDX_LOG_DATA_DOMAIN` (`domain`),"
 				+"KEY `IDX_LOG_DATA_DATE` (`date`),"
+				+"CONSTRAINT `FK_LOG_DATA_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`)"
 				+"  ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Historico de errores.';"
 				;
 		dslContext.execute(sql);

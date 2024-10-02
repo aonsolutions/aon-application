@@ -14,7 +14,9 @@ import org.json.JSONObject;
 
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.AON_SOLUTIONS;
 import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
+import com.esferalia.aon.occam.api.model.LogData;
 import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.aonsolutions.AonLanguage;
 import com.esferalia.aon.occam.api.model.finance.nordigen.NordigenAccessToken;
@@ -36,6 +38,7 @@ import com.esferalia.aon.occam.api.model.finance.nordigen.NordigenResponse;
 import com.esferalia.aon.occam.api.model.registry.RegistryBank;
 import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.occam.impl.jooq.dao.BankStatementDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.LogDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.NordigenDAO;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.server.AonDateUtils;
@@ -60,6 +63,7 @@ public class AonNordigen  {
 				.setToken(AonNordigen.getNewAccessToken())
 				.setAccounts(NordigenDAO.getAllAccounts(ctx));
 		} catch ( AonCoreException ex) {
+			AON_SOLUTIONS.insertLogData(occam, new LogData(occam.getDomain(), ex));
 			throw new NordigenException(ex.getMessage());
 		}
 	}
@@ -245,6 +249,7 @@ public class AonNordigen  {
 								account.setInstitution(getInstitution(token, account.getRequisition().getInstitutionId()));
 							}
 						} catch (Exception e) {
+							AON_SOLUTIONS.insertLogData(occam, new LogData(occam.getDomain(), e));
 							e.printStackTrace();
 							account.addLog(e.getMessage());
 						}
@@ -268,6 +273,7 @@ public class AonNordigen  {
 								account.setBalances(getAccountBalances(token, accountId));
 								account.setNotInsertedMovements(getNotInsertedTransactions(token, account));
 							} catch (Exception e) {
+								AON_SOLUTIONS.insertLogData(occam, new LogData(occam.getDomain(), e));
 								e.printStackTrace();
 								account.addLog(e.getMessage());
 							}
@@ -284,6 +290,7 @@ public class AonNordigen  {
 			return NordigenDAO.updateRegistryBank(ctx, account);
 		} catch (InterruptedException e) {
 			Thread.currentThread().interrupt();
+			AON_SOLUTIONS.insertLogData(occam, new LogData(occam.getDomain(), e));
 			throw new AonCoreException(e);
 		}
 	}
@@ -357,6 +364,7 @@ public class AonNordigen  {
 			try {				
 				AonNordigen.deleteRequisition(token, requisition);
 			} catch (Exception e) {
+				AON_SOLUTIONS.insertLogData(occam, new LogData(occam.getDomain(), e));
 				requisitionDeleted = false;
 			}
 		}
@@ -436,7 +444,6 @@ public class AonNordigen  {
 					list.addAll(nordigenBankAccount.getNotInsertedMovements());
 					list.addAll(AonNordigen.getStoredBankStatements(occam, nordigenBankAccount.getRbank(), endDate));
 				}
-				
 			}
 			List<NordigenBankStatement> orderedList = list.stream().filter(Objects::nonNull).collect(Collectors.toList());
 			List<NordigenAccountBalance> balances = nordigenBankAccount.getBalances();
@@ -450,13 +457,16 @@ public class AonNordigen  {
 			}
 			return orderedList;
 		} catch (NordigenException e) {
+			AON_SOLUTIONS.insertLogData(occam, new LogData(occam.getDomain(), e));
 			throw e;
 		} catch (Exception e) {
+			AON_SOLUTIONS.insertLogData(occam, new LogData(occam.getDomain(), e));
 			throw mapException(e);
 		}
 	}
 
 	public static NordigenRequisition addAccount(NordigenAccessToken token, Occam occam, NordigenBankAccount nordigenBankAccount) {
+		
 		RegistryBank rbank = nordigenBankAccount.getRbank();
 		Pattern bicPattern = Pattern.compile("^(?<bic>.*?)X*$", Pattern.CASE_INSENSITIVE);
 		Matcher bicMatcher = bicPattern.matcher(AonStringUtils.trimToEmpty(rbank.getBic()));
@@ -487,8 +497,20 @@ public class AonNordigen  {
 		
 		NordigenAgreement agreement = AonNordigen.createAgreement(token, inst != null ? inst.getId() : institutionId);
 		NordigenRequisition requisition = AonNordigen.createRequisition(token, agreement, "https://" + occam .getDomainName() + "/ms/api/task-evaluation/rbank?rbank=" + (rbank != null ? ""+rbank.getId() : ""));
+		
 		AonNordigen.updateRequisitionId(occam, requisition, rbank.getId());
 		
+		String msg = "El usuario" + occam.getUser() 
+		+ "del dominio " + occam.getDomainName() 
+		+" vinculo el banco con id : " 
+		+ nordigenBankAccount.getRbank().getId() 
+		+ " y su requisition es: "+ requisition.getId() 
+		;
+		
+		LogData data = new LogData(occam.getDomain(), msg);
+		
+		AON_SOLUTIONS.insertLogData(occam.getDomainName(), occam.getDomain(), occam.getUser(), data);
+
 		return requisition;
 	}
 
@@ -518,6 +540,9 @@ public class AonNordigen  {
 	private static NordigenAccountMetadata getNordigenAccountMetadata(NordigenAccessToken token, NordigenRequisition requisition, RegistryBank rbank) {
 		if (requisition != null && rbank != null && rbank.getBankAccount() != null) {
 			String iban = rbank.getBankAccount().getIban();
+			Occam occam = new Occam();
+			occam.setDomain(rbank.getDomain());
+
 			if (AonStringUtils.isBlank(iban)) {
 				return null;
 			}
@@ -531,7 +556,9 @@ public class AonNordigen  {
 							return metadata;
 						}
 					} catch (Exception e) {
-						
+						//Replantear
+//						AON_SOLUTIONS.insertLogData(occam, new LogData(rbank.getDomain(), e));
+
 					}
 				}
 			}
