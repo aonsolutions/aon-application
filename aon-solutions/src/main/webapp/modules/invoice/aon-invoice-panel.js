@@ -1,5 +1,5 @@
 import { AonElement } from "../../components/AonElement.js";
-import { insertInvoice, mobileAction, MOBILE_ACTION, selfconta, downloadInvoiceExcel, getInvoice, getRawdocCount, getInvofoxCount, invoiceDuplicateFix } from "../../services/service.js";
+import { insertInvoice, mobileAction, MOBILE_ACTION, selfconta, downloadInvoiceExcel, getInvoice, getRawdocCount, getInvofoxCount, invoiceDuplicateFix, refreshProcessing } from "../../services/service.js";
 import { Invoice } from "./Invoice.js";
 import { AonInvoice } from "./aon-invoice.js";
 import { AonMobileInvoice } from "./aon-mobile-invoice.js";
@@ -143,12 +143,13 @@ export class AonInvoicePanel extends AonElement {
     this.dispatchEvent(new CustomEvent(EVENT.BUILD, { panel: this }));
   }
 
-  buildInvoiceToolbarOptions(acceptedInvoices) {
+  buildInvoiceToolbarOptions(acceptedInvoices, processing) {
     this.clearToolbar();
     if(!this.isMobile()) {
       this.getApplication().addToolbarOption2(ACTION.ADD_INVOICE, () => this.addInvoice());
       this.getApplication().addToolbarOption("Refresh", "refresh", () => this.refreshInvoicePanel());
       this.getApplication().addToolbarOption("Upload", "file_upload", () => this.addInvoiceFile());
+      if(processing) this.getApplication().addToolbarOption("Sync", "sync", () => this.refreshProcessing()); 
  
       if(acceptedInvoices) this.getApplication().addToolbarOption2(SigninSidenav.EXCEL, () => this.downloadInvoiceExcel());
     } else {
@@ -743,6 +744,13 @@ export class AonInvoicePanel extends AonElement {
     this.buildInvoiceToolbarOptions();
     this.buildCounter();
     this.aonInvoiceHome();
+  }
+
+  refreshProcessing() {
+    refreshProcessing({}).then(r => {
+      this.buildCounter();
+      this.aonInvoiceList({status: CONSTANT.PROCESSING});
+    }).catch(e => console.log(e));
   }
 
   addInvoiceFile() {

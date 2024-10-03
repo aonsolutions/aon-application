@@ -3,7 +3,7 @@ import { AonSelect } from '../../components/aon-select.js';
 
 import { Paymethods } from '../../services/paymethod.js';
 import { getInvoices, getInvoice, insertInvoice, deleteRawdocInvoices,
-	 sendInvoiceMail, downloadInvoices, getAeatCertificates, getInvofoxDocuments, getInvofoxDocument, recordInvoices } from '../../services/service.js';
+	 sendInvoiceMail, downloadInvoices, getAeatCertificates, recordInvoices } from '../../services/service.js';
 import { Invoice, getDocumentNumber } from './Invoice.js';
 
 import {addInvoices, setInvoices, setIndex} from './InvoiceCache.js';
@@ -19,8 +19,7 @@ import { createList } from '../../components/CreateComponent.js';
 export class AonInvoiceList extends AonElement {
 
 	more;
-	filter;
-	invofoxFilter;
+	filter;	
 	TABLE;
 
 	get id() {
@@ -141,33 +140,7 @@ export class AonInvoiceList extends AonElement {
 					this.paintAccountingRow(i, invoice);
 				});
 			});
-		} else if(aonInvoiceTable && this.invofoxFilter && this.getDur().isInvofox()) {
-			this.invofoxFilter.page = this.invofoxFilter.page + 1;
-			this.buildInvofox();
 		}
-	}
-
-	buildInvofox() {
-		getInvofoxDocuments(this.invofoxFilter).then(r => {
-			if(r.length == 0)
-				this.more = false;
-			addInvoices(r);
-			r.forEach((invoice, i) => {	
-				let date = new Date(invoice.date);
-				let day = date.getDate();
-				let month = date.getMonth() + 1;
-				let year = date.getFullYear();
-				invoice.referenceTable = invoice.reference;
-				invoice.dateTable = day.toString().zeros(2) + '/' + month.toString().zeros(2) + '/' + year.toString();
-				invoice.totalParse = formatNumber(invoice.total, 2, "EUR");
-				invoice.icons = this.buildRowIcons(invoice);
-				this.getTable().addRow(invoice, () => {
-					getInvofoxDocument(invoice.id).then( doc => {
-						this.aonInvoice(doc, i);
-					}); 
-				},() => {});
-			});
-		});
 	}
 
 	init() {
@@ -193,10 +166,6 @@ export class AonInvoiceList extends AonElement {
 					else this.paintAccountingRow(i, invoice);
 				});
 			});
-
-			if(this.invofoxFilter && this.getDur().isInvofox()) {
-				this.buildInvofox();	
-			} 
 		}
 	}
 
@@ -582,9 +551,6 @@ export class AonInvoiceList extends AonElement {
 	    	}
 		} else {
 			actions = [send, download];
-			//actions = this.isBeta() 
-			//	? [deleteTBAI, send, download]
-			//	: [send, download];
 		}
 	  	if(!inv.file && !inv.isEmitida() && number === 1){
 	  		actions.push(addFile);
