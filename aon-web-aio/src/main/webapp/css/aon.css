@@ -145,6 +145,8 @@
   --aonNewWhite: #EEEEEE;
 	
   --aonMenuSidenav: true;
+
+  --aonLegendColor: black;
 	
   /*
   false or undefined same effect
@@ -1783,9 +1785,14 @@ margin-top: 20px;
   font-size: 2rem;
 }
 
+#aonTimeControlTableDiv {
+  border: 2px solid var(--aonTimecontrol) !important;
+  color: var(--aonTimecontrol) !important;
+}
+
 .profile-letters{
-  border: 2px solid #949393;
-  color: #949393;
+  border: 2px solid var(--aonFiscal);
+  color: var(--aonFiscal);
   border-radius: 19.98px;
   height: 30px;
   line-height: 28px;
@@ -4161,7 +4168,7 @@ font-weight: 600;
 }
 
 .accountingChatLegend {
-  color: black;
+  color: var(--aonLegendColor);
 }
 
 .aonSignDivLastTime {
@@ -4455,4 +4462,7 @@ font-weight: 600;
              transition: margin-right 0.3s linear;
 }
 
+.aonAccountingChart {
+	color: black;
+}
 

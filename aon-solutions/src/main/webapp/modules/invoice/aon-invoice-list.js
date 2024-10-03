@@ -105,7 +105,8 @@ export class AonInvoiceList extends AonElement {
 		invoice.documentNumber =  getDocumentNumber(invoice);
 		invoice.totalParse = formatNumber(invoice.total, 2, "EUR");
 		invoice.icons = this.buildRowIcons(invoice); 
-		this.getTable().addRow(invoice, () => this.aonInvoice(invoice, idx), (e) => this.aonInvoiceContextMenu(e, invoice, idx));
+		let tr = this.getTable().addRow(invoice, () => this.aonInvoice(invoice, idx), (e) => this.aonInvoiceContextMenu(e, invoice, idx));
+		tr.id = "aonInvoiceRow";
 	}
 
 	paintProcessingRow(idx, invoice) {
@@ -123,7 +124,8 @@ export class AonInvoiceList extends AonElement {
 		}
 		if(!invoice.name) invoice.name = '';
 
-		this.getTable().addRow(invoice, () => {}, () => {});
+		let tr = this.getTable().addRow(invoice, () => {}, () => {});
+		tr.id = "aonInvoiceRow";
 	}
 		
 	loadMore() {
@@ -161,11 +163,12 @@ export class AonInvoiceList extends AonElement {
 				invoice.dateTable = day.toString().zeros(2) + '/' + month.toString().zeros(2) + '/' + year.toString();
 				invoice.totalParse = formatNumber(invoice.total, 2, "EUR");
 				invoice.icons = this.buildRowIcons(invoice);
-				this.getTable().addRow(invoice, () => {
+				let tr = this.getTable().addRow(invoice, () => {
 					getInvofoxDocument(invoice.id).then( doc => {
 						this.aonInvoice(doc, i);
 					}); 
 				},() => {});
+				tr.id = "aonInvoiceRow";
 			});
 		});
 	}
