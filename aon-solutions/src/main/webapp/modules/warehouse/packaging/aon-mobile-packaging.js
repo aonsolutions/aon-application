@@ -1,17 +1,16 @@
 import {AonElement} from '../../../components/AonElement.js';
 import { ToolbarType} from '../../../models/enums.js';
-
 import {AonToolbar} from "../../../components/aon-toolbar.js";
-
 import {CONSTANT, MATERIAL_ICONS, MSG, TAG, EVENT} from '../../../environments/environments.js'; 
 import {getPackaging, mobileAction, MOBILE_ACTION, savePackaging, openFileUrl} from '../../../services/service.js';
-
-import * as ACTION from '../../actions.js';
 import { AonBasicTable } from '../../../components/aon-basic-table.js';
-import * as LS from '../../../services/localStorageService.js';
 import { getWarehouses } from '../../../services/warehouseService.js';
 import { createCard, createDate, createInput, createQuantity, createSelect } from '../../../components/CreateComponent.js';
 import { openBarcode } from '../../../services/actionService.js';
+
+import * as ACTION from '../../actions.js';
+import * as LS from '../../../services/localStorageService.js';
+import * as UA from '../../../services/userAgentService.js';
 
 export class AonMobilePackaging extends AonElement {
 
@@ -237,9 +236,9 @@ export class AonMobilePackaging extends AonElement {
 	}
 
 	openBarcode() {
-		let ionicData = { action: MOBILE_ACTION.BARCODE, selector: 'aon-mobile-packaging' };
+		let ionicData = { action: MOBILE_ACTION.BARCODE, selector: TAG.AON_MOBILE_PACKAGING };
 		if(UA.isAndroidApp()) {
-			openBarcode(ionicData, (result) => console.log("aon mobile packaging - openbarcode - " + result.code));
+		 	openBarcode(ionicData, (result) => console.log("aon mobile packaging - openbarcode - " + result.code));
 		} else mobileAction(ionicData);
 	}
 

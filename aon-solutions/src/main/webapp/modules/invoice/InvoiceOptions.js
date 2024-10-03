@@ -12,11 +12,11 @@ import * as GWT from "../../gwt/gwt.js";
     parent.aonInvoice(type)
   }
 
-  export const invoiceList = (filter, invofoxFilter) => {
+  export const invoiceList = (filter) => {
     let application = document.querySelector(TAG.AON_APPLICATION);
     let parent = application.getParent();
-    parent.buildInvoiceToolbarOptions(filter && filter.status === 'accounting');
-    parent.aonInvoiceList(filter, invofoxFilter);
+    parent.buildInvoiceToolbarOptions(filter && filter.status === 'accounting', filter && filter.status === CONSTANT.PROCESSING);
+    parent.aonInvoiceList(filter);
   }
 
   export const customerList = (filter) => {
@@ -118,51 +118,27 @@ import * as GWT from "../../gwt/gwt.js";
     })
   }
 
-  // RAWDOC & INVOFOX
+  // RAWDOC 
 
   export const RAWDOC_INBOX_ISSUED = {
     id: CONSTANT.RAWDOC_INBOX_ISSUED.initCap(),
     name: MSG.ISSUEDS,
     icon: MATERIAL_ICONS.UNARCHIVE,
-    fn: () => invoiceList({ status: CONSTANT.INBOX, type: "emitida" },
-      {
-        status: CONSTANT.OCR_INBOX,
-        page: 0,
-        perPage: 50,
-        publicStatus: [CONSTANT.APPROVED, CONSTANT.PENDING_CORRECTION],
-        type: ["invoice", "ticket"],
-        companyActsLike: "issuer",
-      })
+    fn: () => invoiceList({ status: CONSTANT.INBOX, type: "emitida" })
   }
 
   export const RAWDOC_INBOX_RECEIVED = {
     id: CONSTANT.RAWDOC_INBOX_RECEIVED.initCap(),
     name: MSG.RECEIVEDS,
     icon: MATERIAL_ICONS.ARCHIVE,
-    fn: () => invoiceList({ status: CONSTANT.INBOX, type: "recibida" },
-      {
-        status: CONSTANT.OCR_INBOX,
-        page: 0,
-        perPage: 50,
-        publicStatus: [CONSTANT.APPROVED, CONSTANT.PENDING_CORRECTION],
-        type: ["invoice"],
-        companyActsLike: "ne+issuer",
-      })
+    fn: () => invoiceList({ status: CONSTANT.INBOX, type: "recibida" })
   }
 
   export const RAWDOC_INBOX_TICKET = {
     id: CONSTANT.RAWDOC_INBOX_TICKET.initCap(),
     name: MSG.TICKET,
     icon: MATERIAL_ICONS.RECEIPT,
-    fn: () => invoiceList({ status: CONSTANT.INBOX, type: "ticket" },
-      {
-        status: CONSTANT.OCR_INBOX,
-        page: 0,
-        perPage: 50,
-        publicStatus: [CONSTANT.APPROVED, CONSTANT.PENDING_CORRECTION],
-        type: ["ticket"],
-        companyActsLike: "ne+issuer",
-      })
+    fn: () => invoiceList({ status: CONSTANT.INBOX, type: "ticket" })
   }
 
   export const RAWDOC_INBOX = {
@@ -184,29 +160,14 @@ import * as GWT from "../../gwt/gwt.js";
     id: CONSTANT.RAWDOC_REJECT.initCap(),
     name: MSG.REJECTEDS,
     icon: MATERIAL_ICONS.REPORT,
-    fn: () => invoiceList( { status: CONSTANT.REJECTED },
-      {
-        status: CONSTANT.OCR_INBOX,
-        page: 0,
-        perPage: 50,
-        publicStatus: [CONSTANT.PENDING_DECISSION, CONSTANT.REJECTED],
-        type: ["invoice", "ticket"],
-      }
-    )
+    fn: () => invoiceList( { status: CONSTANT.REJECTED })
   }
   
   export const RAWDOC_DRAFT = {
     id: CONSTANT.RAWDOC_DRAFT.initCap(),
     name: MSG.TRASH,
     icon: MATERIAL_ICONS.DELETE,
-    fn: () => invoiceList( { status: CONSTANT.DRAFT },
-      {
-        status: CONSTANT.OCR_INBOX,
-        page: 0,
-        perPage: 50,
-        publicStatus: [CONSTANT.DISCARDED],
-      }
-    )
+    fn: () => invoiceList( { status: CONSTANT.DRAFT })
   }
 
   export const INVOICE_PENDINGS = {
@@ -322,10 +283,7 @@ import * as GWT from "../../gwt/gwt.js";
     id: CONSTANT.MANAGEMENT.initCap(),
     title: MSG.MANAGEMENT,
     name: MSG.MANAGEMENT,
-    options:[ REGISTRY, CONCEPTS, CHARGES_PAYMENTS, /*VAT_PANEL, RETENTION_PANEL,*/ FISCAL_DRAFT ]
-    //  UA.isMobile() ? 
-      
-      // : [ REGISTRY, PRODUCT ]
+    options:[ REGISTRY, CONCEPTS, CHARGES_PAYMENTS, FISCAL_DRAFT ]
   }
 
 
