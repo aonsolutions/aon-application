@@ -731,13 +731,13 @@ public class PackagingDAO {
 	}
 	
 	private static String calculateSerialNumber(String barcode) {
+		Integer year = AonDateUtils.getYear(new Date());
+		String init = year.toString().substring(2,4);
 		if(barcode.length() > 14) {
 			Barcode b = new Barcode().setValue(barcode).setType(BarcodeType.GS1_128);
-			Integer year = AonDateUtils.getYear(new Date());
-			String init = year.toString().substring(2,4);
 			return init + b.parseGS1128().get(GS1128Codes.CODE_10);
 		}
-		return ""; //"22" + Integer.toString(AonDateUtils.getDayOfYear(new Date()));
+		return init + Integer.toString(AonDateUtils.getDayOfYear(new Date()));
 	}
 	
 	private static Date calculateSerialDate(String barcode) {

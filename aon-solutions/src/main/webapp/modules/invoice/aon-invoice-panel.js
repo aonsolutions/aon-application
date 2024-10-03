@@ -28,10 +28,6 @@ import { AonMobileInvoiceList } from "./aon-mobile-invoice-list.js";
 import { AonInvoiceHome } from "./aon-invoice-home.js";
 
 import { FiscalUtils } from "../fiscal/FiscalUtils.js";
-import { getModelsFiscal, getEstimationModelsFiscal } from "../../services/fiscalService.js";
-import { AonTable } from "../../components/aon-table.js";
-import { formatNumber } from "../../services/utils.js";
-import { sortBy } from "../../services/utils.js";
 
 import * as ACTION from "../actions.js";
 import * as OPTION from "./InvoiceOptions.js";
@@ -136,12 +132,7 @@ export class AonInvoicePanel extends AonElement {
     aonInvoice.addEventListener(EVENT.AON_APPLICATION_DROP, (e) =>
       this.upload(e.detail)
     );
-
-    if (this.isMobile()) {
-      aonInvoice.addFloatOption(ACTION.ADD_INVOICE, () => this.addInvoice());
-    }
     this.buildInvoiceToolbarOptions();
-
     this.buildSidenavOptions();
     if (this.invoice && this.invoice.type) {
       this.aonInvoice(this.invoice.type, this.invoice);
@@ -154,47 +145,96 @@ export class AonInvoicePanel extends AonElement {
 
   buildInvoiceToolbarOptions(acceptedInvoices) {
     this.clearToolbar();
-    this.getApplication().addToolbarOption("Add", "add", () => this.addInvoice());
-    this.getApplication().addToolbarOption("Refresh", "refresh", () => this.refreshInvoicePanel());
-    this.getApplication().addToolbarOption("Upload", "file_upload", () => this.addInvoiceFile());
+    if(!this.isMobile()) {
+      this.getApplication().addToolbarOption2(ACTION.ADD_INVOICE, () => this.addInvoice());
+      this.getApplication().addToolbarOption("Refresh", "refresh", () => this.refreshInvoicePanel());
+      this.getApplication().addToolbarOption("Upload", "file_upload", () => this.addInvoiceFile());
  
-    if(acceptedInvoices) this.getApplication().addToolbarOption2(SigninSidenav.EXCEL, () => this.downloadInvoiceExcel());
+      if(acceptedInvoices) this.getApplication().addToolbarOption2(SigninSidenav.EXCEL, () => this.downloadInvoiceExcel());
+    } else {
+      this.getApplication().removeFloatOption();
+      this.getApplication().addFloatOption(ACTION.ADD_INVOICE, () => this.addInvoice());
+    } 
     this.buildToolbarSearchOption(acceptedInvoices);
   }
 
   buildProductToolbarOptions() {
     this.clearToolbar();
-    this.getApplication().addToolbarOption("Add", "add", () => this.addProduct());
+    if(!this.isMobile()) {
+      this.getApplication().addToolbarOption2(ACTION.ADD_PRODUCT, () => this.addProduct());
+    } 
+    // TODO ACTIVAR CUANDO ESTE LA OPCIÓN DE AÑADIR PRODUCTO EN EL MÓVIL
+    // else {
+    //   this.getApplication().removeFloatOption();
+    //   this.getApplication().addFloatOption(ACTION.ADD_PRODUCT, () => this.addProduct());
+    // }
+
     this.buildToolbarSearchOption();
   }
 
   buildExpenseToolbarOptions() {
     this.clearToolbar();
-    this.getApplication().addToolbarOption("Add", "add", () => this.addExpense());
+    if(!this.isMobile()) {
+      this.getApplication().addToolbarOption2(ACTION.ADD_EXPENSE, () => this.addExpense());
+    } 
+    // TODO ACTIVAR CUANDO ESTE LA OPCIÓN DE AÑADIR GASTO EN EL MÓVIL
+    // else {
+    //   this.getApplication().removeFloatOption();
+    //   this.getApplication().addFloatOption(ACTION.ADD_EXPENSE, () => this.addExpense());
+    // }
     this.buildToolbarSearchOption();
   }
 
   buildInvestToolbarOptions() {
     this.clearToolbar();
-    this.getApplication().addToolbarOption("Add", "add", () => this.addInvest());
+    if(!this.isMobile()) {
+      this.getApplication().addToolbarOption2(ACTION.ADD_INVEST_ASSET, () => this.addInvest());
+    } 
+    // TODO ACTIVAR CUANDO ESTE LA OPCIÓN DE AÑADIR BIEN AFECTO EN EL MÓVIL
+    // else {
+    //   this.getApplication().removeFloatOption();
+    //   this.getApplication().addFloatOption(ACTION.ADD_INVEST_ASSET, () => this.addInvest());
+    // }
+
     this.buildToolbarSearchOption();
   }
 
   buildCustomerToolbarOptions() {
     this.clearToolbar();
-    this.getApplication().addToolbarOption("Add", "add", () => this.addCustomer());
+    if(!this.isMobile()) {
+      this.getApplication().addToolbarOption2(ACTION.ADD_CUSTOMER, () => this.addCustomer());
+    }
+    // TODO ACTIVAR CUANDO ESTE LA OPCIÓN DE AÑADIR CLIENTE EN EL MÓVIL
+    // else {
+    //   this.getApplication().removeFloatOption();
+    //   this.getApplication().addFloatOption(ACTION.ADD_CUSTOMER, () => this.addCustomer());
+    // }
     this.buildToolbarSearchOption();
   }
 
   buildSupplierToolbarOptions() {
     this.clearToolbar();
-    this.getApplication().addToolbarOption("Add", "add", () => this.addSupplier());
+    if(!this.isMobile()) {
+      this.getApplication().addToolbarOption2(ACTION.ADD_SUPPLIER, () => this.addSupplier());
+    }
+    // TODO ACTIVAR CUANDO ESTE LA OPCIÓN DE AÑADIR PROVEEDOR EN EL MÓVIL
+    // else {
+    //   this.getApplication().removeFloatOption();
+    //   this.getApplication().addFloatOption(ACTION.ADD_SUPPLIER, () => this.addSupplier());
+    // }
     this.buildToolbarSearchOption();
   }
 
   buildCreditorToolbarOptions() {
     this.clearToolbar();
-    this.getApplication().addToolbarOption("Add", "add", () => this.addCreditor());
+    if(!this.isMobile()) {
+      this.getApplication().addToolbarOption("Add", "add", () => this.addCreditor());
+    }
+    // TODO ACTIVAR CUANDO ESTE LA OPCIÓN DE AÑADIR ACREEDOR EN EL MÓVIL
+    // else {
+    //   this.getApplication().removeFloatOption();
+    //   this.getApplication().addFloatOption(ACTION.ADD_CREDITOR, () => this.addCreditor());
+    // }
     this.buildToolbarSearchOption();
   }
 
@@ -700,6 +740,7 @@ export class AonInvoicePanel extends AonElement {
   }
 
   refreshInvoicePanel() {
+    this.buildInvoiceToolbarOptions();
     this.buildCounter();
     this.aonInvoiceHome();
   }
