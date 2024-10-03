@@ -289,8 +289,8 @@ export class AonInvoiceList extends AonElement {
 			//aonInvoice.addToolbarOption2(ACTION.DELETE_TO_TRASH, () => this.deleteInvoices());
 			//aonInvoice.addToolbarOption2(ACTION.REJECT_INVOICE, () => this.rejectInvoices());
 			toolbar.addSeparator();
-			aonInvoice.addToolbarOption2(ACTION.DOWNLOAD_INVOICE, () => this.downloadInvoices());
-			aonInvoice.addToolbarOption2(ACTION.SEND_INVOICE, () => this.sendInvoices());
+			// aonInvoice.addToolbarOption2(ACTION.DOWNLOAD_INVOICE, () => this.downloadInvoices());
+			// aonInvoice.addToolbarOption2(ACTION.SEND_INVOICE, () => this.sendInvoices());
 		} else if(this.getFilter().status === CONSTANT.REFUSED || this.getFilter().status === CONSTANT.REJECTED){
 			//aonInvoice.addToolbarOption2(ACTION.DELETE_TO_TRASH, () => this.deleteInvoices());
 			//aonInvoice.addToolbarOption2(ACTION.RESTORE_INVOICE, () => this.restoreInvoices());
