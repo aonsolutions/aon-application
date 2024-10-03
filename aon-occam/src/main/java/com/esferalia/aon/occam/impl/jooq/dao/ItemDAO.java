@@ -133,8 +133,8 @@ public class ItemDAO {
 			.where(ITEM_PROPERTIES.getConditions(filter));
 	}
 	
-	public static Item get(AONContext ctx, Integer id){
-        return get(ctx, f -> f.getIdProperty().eq(id));
+	public static Item get(AONContext ctx, Integer id, Options... options){
+        return get(ctx, f -> f.getIdProperty().eq(id), options);
     }
 	
 	public static Item get(AONContext ctx, ItemFilter filter, Options... options){
