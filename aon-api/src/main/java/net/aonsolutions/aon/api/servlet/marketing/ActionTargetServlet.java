@@ -197,7 +197,7 @@ public class ActionTargetServlet extends AonApiHttpServlet {
 		}
 		
 		// Send mail
-		sendTrailEnterpriseMail();
+		sendTrailEnterpriseMail(actionTarget.getTarget().getEmail());
 		
 		// Return data
 		
@@ -651,13 +651,14 @@ public class ActionTargetServlet extends AonApiHttpServlet {
 		return s;
 	}
 	
-	private static void sendTrailEnterpriseMail() {
+	private static void sendTrailEnterpriseMail(String targetEmail) {
 		String fromTo = "booking@aonsolutions.es";
 		
 		SESMessage msg = new SESMessage()
 				.setAlias(enterpriseNameMail)
 				.setReplyTo(fromTo)
-				.setTo(fromTo)
+				.setTo(targetEmail)
+				.setBcc(fromTo)
 				.setSubject(enterpriseNameMail + " (TRIAL)")
 				.setBody(createBody());
 		
