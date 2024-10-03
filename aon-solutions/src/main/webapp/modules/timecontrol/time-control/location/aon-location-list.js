@@ -95,8 +95,8 @@ export class AonLocationList extends AonElement {
         aonTable.removeRows();
         resp.map((res) => {
           let tr = aonTable.addRow({ ...res }, (el) => this.add(el, res));
+          tr.id = "aonTimeControlRow";
         });
-        tr.id = "aonTimeControlRow";
       } catch (e) {
         console.log(e);
       }

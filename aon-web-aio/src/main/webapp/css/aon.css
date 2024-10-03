@@ -1783,6 +1783,11 @@ margin-top: 20px;
   font-size: 2rem;
 }
 
+#aonTimeControlTableDiv {
+  border: 2px solid var(--aonTimecontrol) !important;
+  color: var(--aonTimecontrol) !important;
+}
+
 .profile-letters{
   border: 2px solid var(--aonFiscal);
   color: var(--aonFiscal);
@@ -4453,4 +4458,7 @@ font-weight: 600;
              transition: margin-right 0.3s linear;
 }
 
+.aonAccountingChart {
+	color: black;
+}
 

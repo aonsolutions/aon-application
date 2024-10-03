@@ -253,6 +253,7 @@ export class AonPresenceList extends AonElement {
               const lettersName = StringTwoLetters(name);
               
               const div = this.createElement(TAG.DIV);
+              div.id = "aonTimeControlTableDiv";
               div.classList.add("profile-letters", newStatus);
               div.innerText = lettersName;
 
