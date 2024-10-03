@@ -28,6 +28,7 @@ import { AonWarehouse } from 'aonsolutions/modules/warehouse/aon-warehouse.js';
 import * as OPTION from 'aonsolutions/modules/invoice/InvoiceOptions.js';
 import { TASK_SOURCE } from 'aonsolutions/modules/messenger/MessengerEnums.js';
 import { uploadDocuments } from "aonsolutions/modules/documental/DocumentalUtils.js";
+import { uploadInvoices } from "aonsolutions/modules/invoice/InvoiceUtils.js"
 
 
 import { AonNewDesktop } from './aon-new-desktop.js';
@@ -1123,17 +1124,36 @@ export class AonNewMenu extends AonElement {
 		}
 		if(this.getDur().isDocumental()){
 			newMenuOptions.push({
+				fn: () => {},
 				icon: 'post_add',
-				name: MSG.NEW_DOCUMENT,
-				fn: () => {
-					let input = this.createElement(TAG.INPUT);
-					input.type = CONSTANT.FILE;
-					input.accept = this.accept;
-					input.className = CSS.AON_NONE;
-					input.addEventListener(EVENT.CHANGE, ({target}) => uploadDocuments(input, target.files, this.getDur() ) );
-					input.click();
-					this.appSelection(Apps.DOCUMENTAL);
-				}
+				name: "Subir Documento",
+				options: [
+					{
+						name: "Archivo Documental",
+						icon: MATERIAL_ICONS.CLOUD_UPLOAD,
+						fn: () => {
+							let input = this.createElement(TAG.INPUT);
+							input.type = CONSTANT.FILE;
+							input.accept = this.accept;
+							input.className = CSS.AON_NONE;
+							input.addEventListener(EVENT.CHANGE, ({target}) => uploadDocuments(input, target.files, this.getDur() ) );
+							input.click();
+							this.appSelection(Apps.DOCUMENTAL);
+						}
+					}, {
+						name: "Factura",
+						icon: MATERIAL_ICONS.CLOUD_UPLOAD,
+						fn: () => {
+							let input = this.createElement(TAG.INPUT);
+							input.type = CONSTANT.FILE;
+							input.accept = this.accept;
+							input.className = CSS.AON_NONE;
+							input.addEventListener(EVENT.CHANGE, ({target}) => uploadInvoices(input, target.files) );
+							input.click();
+							this.appSelection(Apps.INVOICE);
+						}
+					}
+				]
 			});
 		}
 		if(this.getDur().isMessenger()){
