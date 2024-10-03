@@ -8116,6 +8116,12 @@ public class AON {
 		}
 	}
 	
+	public static void deleteInvoiceData(String schema, Integer invoiceId) {
+		try(CloseableAONContext ctx = AONContext.getAONContext(schema)){
+			getFinance().deleteInvoiceData(ctx, invoiceId);
+		}
+	}	
+	
 	public static InvoiceInfo getInvoiceInfo(Domain domain, User user, InvoiceInfoFilter filter) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(domain, user)) {
 			return getFinance().getInvoiceInfo(ctx, filter);
