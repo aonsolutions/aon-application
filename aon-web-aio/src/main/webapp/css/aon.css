@@ -145,6 +145,8 @@
   --aonNewWhite: #EEEEEE;
 	
   --aonMenuSidenav: true;
+
+  --aonLegendColor: black;
 	
   /*
   false or undefined same effect
@@ -4166,7 +4168,7 @@ font-weight: 600;
 }
 
 .accountingChatLegend {
-  color: black;
+  color: var(--aonLegendColor);
 }
 
 .aonSignDivLastTime {

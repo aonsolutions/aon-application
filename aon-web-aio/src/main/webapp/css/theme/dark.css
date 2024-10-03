@@ -79,6 +79,8 @@
 
 	--aonTaxBuildPrintRes: white;
 
+	--aonLegendColor: white;
+
 }
 
 
@@ -601,8 +603,9 @@ h1 {
 }
 
 .accountingChatLegend {
-	color: white;
+	color: var(--aonLegendColor);
 }
+
 .aonAccountingChart {
 	color: white;
 }
