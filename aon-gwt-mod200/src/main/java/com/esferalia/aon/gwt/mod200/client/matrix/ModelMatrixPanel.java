@@ -58,7 +58,9 @@ public class ModelMatrixPanel extends FlowPanel {
 	private static final String FIXED = "fixed";
 	
 	private static final String[] MONTHS = new String[]{"ENE","FEB","MAR","ABR","MAY","JUN","JUL","AGO","SEP","OCT","NOV","DIC"};
+	// FALTA - INDICAR TAMBIEN 1P,2P Y 3P
 	private static final String[] QUARS = new String[]{"1\u00BA TRIM","2\u00BA TRIM","3\u00BA TRIM","4\u00BA TRIM"};
+//	private static final String[] QUARS = new String[]{"1T/1P","2T","3T/2P","4T/3P"};
 	
 	private FiscalMatrixParams params;
 	private AonSearchPanelButton refreshButton;
@@ -275,13 +277,13 @@ public class ModelMatrixPanel extends FlowPanel {
 					// Si se está filtrando por solo un periodo, añadir celdas con Resultado, Tipo Declaración, IBAN/NRC y check para marcar (si está habilitada la presentación).
 					if (params.getPeriod() != null) {
 						boolean checkBoxEnabled = true;
-						// Resultado, Tipo, IBAN/NRC, solo si no son anuales
-						if (params.getPeriod() != Period.YEAR) {
+						// Resultado, Tipo, IBAN/NRC, solo si no son anuales o modelo 200
+						if (params.getPeriod() != Period.YEAR || cloned.getModel() == FiscalModelType.M200) {							
 							Label ibanNrcLabel = new Label();
 							if (cloned.getDeclarationResultType() != null) {
 								if (cloned.getDeclarationResultType() == FiscalModelDeclarationType.DEPOSIT) {
 									ibanNrcLabel.setText(cloned.getNrc());
-								} else {									
+								} else if (cloned.getDeclarationResultType() != FiscalModelDeclarationType.PAYBACK_RENOUNCE) {									
 									ibanNrcLabel.setText(cloned.getIban());
 								}								
 								// Si está habilitada la presentación múltiple, comprobar si tiene IBAN o NRC en aquellos modelos que deberían tenerlo o si es aplazamiento
@@ -306,6 +308,12 @@ public class ModelMatrixPanel extends FlowPanel {
 							row.addCell( new Label( cloned.getDeclarationResult() == null ? "" : AON.FMT.format(cloned.getDeclarationResult()) ), AON.CSS.aonBorderBottom(), AON.CSS.aonTextRight(), AON.CSS.aonWidth80(), AON.CSS.aonPaddingRight() )
 							   .addCell( new Label( cloned.getDeclarationResultType() == null ? "" : cloned.getDeclarationResultType().getDescription() ), AON.CSS.aonBorderBottom(), AON.CSS.aonTextLeft(), AON.CSS.aonWidth170())
 							   .addCell( ibanNrcLabel, AON.CSS.aonBorderBottom(), AON.CSS.aonTextLeft(), AON.CSS.aonWidth170() );
+						} else {
+							if (params.getPeriod() != Period.YEAR || (params.getModel() == null || params.getModel() == FiscalModelType.M200)) {
+								row.addCell( new Label(""), AON.CSS.aonBorderBottom(), AON.CSS.aonTextLeft(), AON.CSS.aonWidth80(), AON.CSS.aonPaddingRight())
+								   .addCell( new Label(""), AON.CSS.aonBorderBottom(), AON.CSS.aonTextLeft(), AON.CSS.aonWidth170())
+								   .addCell( new Label(""), AON.CSS.aonBorderBottom(), AON.CSS.aonTextLeft(), AON.CSS.aonWidth170());
+							}
 						}
 						
 						// Si está habilitada la presentacion múltiple, se añade un checkbox para poder seleccionar la fila
@@ -349,7 +357,9 @@ public class ModelMatrixPanel extends FlowPanel {
 		cell.addStyleName( AON.CSS.aonBorderBottom() );
 		cell.addStyleName( AON.CSS.aonTextCenter() );
 		cell.getElement().getStyle().setBackgroundColor(FiscalModelUtils.getStatusBckColorRGB( FiscalStatus.MISSING ));
+		// FALTA - QUE NO APAREZCA EL MODELO 202 DEL 2T
 		if (params.getStatus() == null && params.getPeriod() == null) {
+		//if (params.getStatus() == null && params.getPeriod() == null && !(model.getModel()==FiscalModelType.M202 && model.getPeriod() == Period.T2) ) {
 			AonTableButton addButton = new AonTableButton(AON.MSG.newAction(), AON.CSS.aonIconAdd());
 			cell.add(addButton);		
 			addButton.addClickHandler(event -> model.getModel().visit(new MatrixNewModelVisitor(options.getConfiguration(),model
@@ -574,8 +584,10 @@ public class ModelMatrixPanel extends FlowPanel {
 		return table;
 	}
 	
-	private void addOnePeriodCells(AonDisplayTableRow row) {
-		if (params.getPeriod() != Period.YEAR) {
+	private void addOnePeriodCells(AonDisplayTableRow row) {		
+		// FALTA - AHORA CON EL MODELO 200 QUE ES ANUAL, TAMBIEN APARECE EL RESULTADO ... 
+		//if (params.getPeriod() != Period.YEAR) {
+		if (params.getPeriod() != Period.YEAR || (params.getModel() == null || params.getModel() == FiscalModelType.M200)) {
 			row.addCell(new InlineLabel( AON.MSG.result() ), AON.CSS.aonBorderBottom(), AON.CSS.aonTextCenter(), AON.CSS.aonWidth80() )
 			   .addCell(new InlineLabel( AON.MSG.declarationType() ), AON.CSS.aonBorderBottom(), AON.CSS.aonTextCenter(), AON.CSS.aonWidth170())
                .addCell(new InlineLabel( "IBAN / NRC" ), AON.CSS.aonBorderBottom(), AON.CSS.aonTextCenter(), AON.CSS.aonWidth170());

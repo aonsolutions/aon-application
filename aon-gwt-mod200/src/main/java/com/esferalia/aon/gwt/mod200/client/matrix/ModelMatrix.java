@@ -89,14 +89,14 @@ public class ModelMatrix extends MainEntryPoint {
 		ModelMatrixFilterPanel filterPanel = new ModelMatrixFilterPanel(options);
 		filterPanel.addValueChangeHandler( event -> search( options, event.getValue(), filterPanel.getRefreshButton() ));
 		if (options.isCompactMode()) {			
-			ScrollPanel mainScroll = new ScrollPanel();
+			//ScrollPanel mainScroll = new ScrollPanel();
 			FlowPanel contentPanel = new FlowPanel();
-			mainScroll.setWidget(contentPanel);
+			//mainScroll.setWidget(contentPanel);
 			contentPanel.add(filterPanel);
-			dataPanel = new FlowPanel();			
-			if (!options.isCompactMode()) {
+			dataPanel = new FlowPanel();
+			//if (!options.isCompactMode()) {
 				dataPanel.setHeight( "320px" );
-			}
+			//}
 			dataPanel.getElement().getStyle().setOverflowY(Overflow.SCROLL);
 			contentPanel.add(dataPanel);
 			options.getParentWidget().add(contentPanel);

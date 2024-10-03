@@ -9,6 +9,7 @@ import com.esferalia.aon.occam.api.model.fiscal.Mod193;
 import com.esferalia.aon.occam.api.model.fiscal.Mod347;
 import com.esferalia.aon.occam.api.model.fiscal.Mod349;
 import com.esferalia.aon.occam.api.model.fiscal.Mod390;
+import com.esferalia.aon.occam.mod200.api.model.Mod200;
 
 public class MatrixUtils {
 
@@ -92,6 +93,7 @@ public class MatrixUtils {
 		to.setId(from.getId());
 		to.setDomain(from.getDomain());
 		to.setYear(from.getYear());
+		to.setPeriod(from.getPeriod());
 		to.setAdministration(from.getAdministration());
 		to.setStatus(from.getStatus());
 		to.setReplacement(from.isReplacement());
@@ -101,6 +103,18 @@ public class MatrixUtils {
 	}
 
 	public static void map(IFiscalModel from,Mod347 to) {
+		to.setId(from.getId());
+		to.setDomain(from.getDomain());
+		to.setYear(from.getYear());
+		to.setAdministration(from.getAdministration());
+		to.setStatus(from.getStatus());
+		to.setReplacement(from.isReplacement());
+		to.setComplementary(from.isComplementary());
+		to.setDocument(from.getDocument());
+		to.setName(from.getName());
+	}
+	
+	public static void map(IFiscalModel from,Mod200 to) {
 		to.setId(from.getId());
 		to.setDomain(from.getDomain());
 		to.setYear(from.getYear());

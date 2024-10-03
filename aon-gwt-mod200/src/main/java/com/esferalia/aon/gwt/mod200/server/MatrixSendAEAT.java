@@ -20,7 +20,7 @@ public class MatrixSendAEAT extends HttpServlet {
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		try {
 			AEATParams aeatParams = ModelAdmonUtils.getAEATParams(req);
-			ModelAdmonUtils.sendFromMatrix(resp, aeatParams);
+			Model200AdmonUtils.sendFromMatrix(resp, aeatParams);  
 		} catch (Exception e) {
 			ModelAdmonUtils.giveExceptionBack(resp, e.getMessage());
 		}

@@ -26,6 +26,7 @@ import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.text.MessageFormat;
 import java.time.Duration;
+import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
 
@@ -41,6 +42,7 @@ import javax.xml.bind.Unmarshaller;
 import org.jooq.tools.json.ParseException;
 import org.json.JSONObject;
 
+import com.esferalia.aon.gwt.fiscal.server.fiscal.ModelAdmonUtils;
 import com.esferalia.aon.gwt.mod200.server.aeat.RespuestaCorrecta;
 import com.esferalia.aon.gwt.mod200.server.aeat.ServicioConsultasDirectas;
 import com.esferalia.aon.gwt.mod200.shared.IRequestParamsNames;
@@ -51,12 +53,15 @@ import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.attachment.AttachType;
 import com.esferalia.aon.occam.api.model.attachment.DataAttachSource;
 import com.esferalia.aon.occam.api.model.attachment.RegistryAttachmentType;
+import com.esferalia.aon.occam.api.model.fiscal.FiscalModelType;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModelUtils;
 import com.esferalia.aon.occam.api.model.fiscal.IFiscalModel;
 import com.esferalia.aon.occam.api.model.fiscal.aeat.AEATParams;
 import com.esferalia.aon.occam.api.model.fiscal.aeat.AEATResponse;
 import com.esferalia.aon.occam.api.model.type.DataResponseSource;
 import com.esferalia.aon.occam.api.model.type.MimeType;
+import com.esferalia.aon.occam.api.model.type.Period;
+import com.esferalia.aon.occam.mod200.api.MODEL200;
 import com.esferalia.aon.occam.mod200.api.MODEL2002022;
 import com.esferalia.aon.occam.mod200.api.MODEL2002023;
 import com.esferalia.aon.occam.mod200.api.model.mod200_2022.Mod2002022;
@@ -272,12 +277,19 @@ public class Model200AdmonUtils {
 		}
 	}
 
-	private static AEATResponse manageWrongResponse(HttpServletResponse resp, AEATResponse response) {
+	private static AEATResponse manageWrongResponse(HttpServletResponse resp, AEATResponse response, AEATParams aeatParams) {
 		if (response.getErrores() == null || response.getErrores().isEmpty()) {
-			Model200AdmonUtils.giveExceptionBack(resp,"La Agencia Tributaria ha devuelto un error, pero no se han encontrado mensajes del mismo.");			
+			if (aeatParams.getSelected() == null)
+				Model200AdmonUtils.giveExceptionBack(resp,"La Agencia Tributaria ha devuelto un error, pero no se han encontrado mensajes del mismo.");
+			else 
+				aeatParams.getErrores().add("La Agencia Tributaria ha devuelto un error, pero no se han encontrado mensajes del mismo.");
 		} else {
-			String[] array = response.getErrores().toArray(new String[0]);
-			Model200AdmonUtils.giveExceptionBack(resp, true, array);
+			if (aeatParams.getSelected() == null) {
+				String[] array = response.getErrores().toArray(new String[0]);
+				Model200AdmonUtils.giveExceptionBack(resp, true, array);
+			} else {
+				aeatParams.getErrores().addAll(response.getErrores());				
+			}	
 		}
 		return response;
 	}
@@ -392,7 +404,7 @@ public class Model200AdmonUtils {
 		if (response.isCorrect()) {
 			manageRightResponse(resp,aeatParams,fm,new String(body));		
 		} else {
-			manageWrongResponse(resp, response);
+			manageWrongResponse(resp, response, aeatParams);
 		}
 	}
 	private static void manageRightResponse(HttpServletResponse resp, AEATParams aeatParams, IFiscalModel fm, String aeatResponse) {
@@ -408,7 +420,9 @@ public class Model200AdmonUtils {
 			Mod2002023 mod = (Mod2002023) fm;
 			MODEL2002023.aeatPresentation(occam, mod, aeatResponse);
 		}
-		giveDataResponseDataBack(resp, aeatParams, fm);
+		// Se muestra el PDF solo si no es presentación multiple
+		if (aeatParams.getSelected() == null)
+			giveDataResponseDataBack(resp, aeatParams, fm);
 	}
 	
 	public static void send(HttpServletResponse resp, AEATParams aeatParams, IFiscalModel model) {
@@ -450,22 +464,34 @@ public class Model200AdmonUtils {
 				.send(request, HttpResponse.BodyHandlers.ofByteArray());
 			
 			if (response.statusCode() == 302) {
-				Model200AdmonUtils.giveRedirectBack( resp,response,httpClient );
+				if (aeatParams.getSelected() == null)
+					Model200AdmonUtils.giveRedirectBack( resp,response,httpClient );
+				else 
+					aeatParams.getErrores().add("Redirect code");
 			} else {
 				String ct = Model200AdmonUtils.getContentTypeHeader(response);
 				if (AonStringUtils.contains(ct, MimeType.JSON.getName())) {
 					Model200AdmonUtils.manageJSONContent( resp, aeatParams, model ,response.body() );
 				} else if (AonStringUtils.contains(ct, MimeType.HTML.getName())) {
-					Model200AdmonUtils.giveBase64Back(resp, response.body(), MimeType.HTML);
+					if (aeatParams.getSelected() == null)
+					   Model200AdmonUtils.giveBase64Back(resp, response.body(), MimeType.HTML);
+					else 
+					   aeatParams.getErrores().add(new String(response.body()));
 				} else {	
-					Model200AdmonUtils.giveExceptionBack(resp,"No se ha encontrado una respuesta válida por parte de la Agencia Tributaria.");
+					if (aeatParams.getSelected() == null)
+						Model200AdmonUtils.giveExceptionBack(resp,"No se ha encontrado una respuesta válida por parte de la Agencia Tributaria.");
+					else 
+						aeatParams.getErrores().add("No se ha encontrado una respuesta válida por parte de la Agencia Tributaria.");
 				}
 			}
 		} catch (InterruptedException e) {
 			// Restore interrupted state...
 			Thread.currentThread().interrupt();
 		} catch (AonCoreException | KeyManagementException | KeyStoreException | NoSuchAlgorithmException | CertificateException | IOException | UnrecoverableKeyException e) {
-			Model200AdmonUtils.giveExceptionBack(resp,e.getMessage());
+			if (aeatParams.getSelected() == null)
+				Model200AdmonUtils.giveExceptionBack(resp,e.getMessage());
+			else
+				aeatParams.getErrores().add(e.getMessage());
 		}
 	}
 
@@ -529,5 +555,172 @@ public class Model200AdmonUtils {
 			Model200AdmonUtils.giveExceptionBack(resp,e.getMessage());
 		}
 	}
+	
+	// PRESENTACION MULTIPLE DE MODELOS DESDE LA MATRIZ
+//	public static void sendFromMatrixMod200(HttpServletResponse resp, AEATParams aeatParams, ArrayList<ArrayList<String>> erroresGlobal) {
+//		
+////		// DENTRO DE AEATPARAMS ESTARA EL ARRAY CON LOS MODELOS SELECCIONADOS MXXX_ID
+////		// RECORRER EL ARRAY, PARA CADA ELEMENTO EXTRAER EL MODELO Y EL ID
+////		// SEGUN EL MODELO LEER EL MODELO CON EL ID LLAMANDO AL GET CORRESPONDIENTE
+////		// UNA VEZ QUE TENEMOS EL MODELO, LLAMAR A SEND CON EL MODELO O A SENDTGVIONLINE SI ES INFORMATIVA (180, 190, ...)
+////		// CONTROLAR EN SEND COMO SE ARMAN LAS RESPUESTAS PUES EN ESTE CASO SE DEVOLVERA UNA PAGINA CON TODOS LOS 
+////		//   ERRORES DE TODAS LAS DECLARACIONES, POR ESO ANTES DE CADA DECLARACION HAY QUE PONER EL DNI Y EL 
+////		//   NOMBRE DE LA DECLARACION
+////		// A LA VUELTA SE MOSTRARA LA WEB CON LOS RESULTADOS Y SE REFRESCARA LA PANTALLA
+//		
+//		// Errores de todos los modelos
+//		//ArrayList<ArrayList<String>> erroresGlobal = new ArrayList<>();
+//		
+//		for (String s : aeatParams.getSelected()) {
+//			String name = s.split("_")[0];
+//			FiscalModelType modelType = null;
+//			if (AonStringUtils.isNotBlank(name)) {
+//				for (FiscalModelType t : FiscalModelType.values()) {
+//					if (AonStringUtils.equals(name, t.name()))
+//						modelType = t;
+//				}				
+//				
+//				int idModel = AonNumberUtils.toint(s.split("_")[1]);
+//				
+//				if (modelType != null && idModel != 0 && modelType == FiscalModelType.M200) {
+//					aeatParams.setMod(idModel);
+//					//IFiscalModel model = getModel(aeatParams, modelType);
+//					Occam occam = new Occam()
+//							.setDomainName(aeatParams.getDomainName())
+//							.setDomain(aeatParams.getDomainId())
+//							.setUser(aeatParams.getUser());
+//					IFiscalModel model = MODEL200.getMod200(occam, ModelAdmonUtils.getFiscalModelId(aeatParams));
+//				    if (model != null) {
+//				    	aeatParams.setErrores(new ArrayList<>());
+//				    	aeatParams.getErrores().add(model.getModel() + " - " + model.getYear() + " - " + model.getDocument() + " - " + model.getFullName());				    	
+//					    aeatParams.setNrc(model.getNrc());
+//					    
+//					    send(resp, aeatParams, model);
+//						
+//				    	erroresGlobal.add(aeatParams.getErrores());				    	
+//				    }
+//				}
+//			}
+//		}
+//		
+//		giveMultipleResult(resp, erroresGlobal);
+//		
+//	}
+	
+	public static void sendFromMatrix(HttpServletResponse resp, AEATParams aeatParams) {
+		
+//		// DENTRO DE AEATPARAMS ESTARA EL ARRAY CON LOS MODELOS SELECCIONADOS MXXX_ID
+//		// RECORRER EL ARRAY, PARA CADA ELEMENTO EXTRAER EL MODELO Y EL ID
+//		// SEGUN EL MODELO LEER EL MODELO CON EL ID LLAMANDO AL GET CORRESPONDIENTE
+//		// UNA VEZ QUE TENEMOS EL MODELO, LLAMAR A SEND CON EL MODELO O A SENDTGVIONLINE SI ES INFORMATIVA (180, 190, ...)
+//		// CONTROLAR EN SEND COMO SE ARMAN LAS RESPUESTAS PUES EN ESTE CASO SE DEVOLVERA UNA PAGINA CON TODOS LOS 
+//		//   ERRORES DE TODAS LAS DECLARACIONES, POR ESO ANTES DE CADA DECLARACION HAY QUE PONER EL DNI Y EL 
+//		//   NOMBRE DE LA DECLARACION
+//		// A LA VUELTA SE MOSTRARA LA WEB CON LOS RESULTADOS Y SE REFRESCARA LA PANTALLA
+		
+		// Errores de todos los modelos
+		ArrayList<ArrayList<String>> erroresGlobal = new ArrayList<>();
+		
+		for (String s : aeatParams.getSelected()) {
+			String name = s.split("_")[0];
+			FiscalModelType modelType = null;
+			if (AonStringUtils.isNotBlank(name)) {
+				for (FiscalModelType t : FiscalModelType.values()) {
+					if (AonStringUtils.equals(name, t.name()))
+						modelType = t;
+				}				
+				
+				int idModel = AonNumberUtils.toint(s.split("_")[1]);
+				
+				if (modelType != null && idModel != 0 ) {
+					aeatParams.setMod(idModel);
+					IFiscalModel model = getModel(aeatParams, modelType);			    
+				    if (model != null) {
+				    	aeatParams.setErrores(new ArrayList<>());
+				    	aeatParams.getErrores().add(model.getModel() + " - " + model.getYear() + ( model.getPeriod() == Period.YEAR ? "" : " - " + model.getPeriod().getDescription() ) + " - " + model.getDocument() + " - " + model.getFullName());
+				    	
+				    	if (modelType == FiscalModelType.M200) {
+					    	aeatParams.setNrc(model.getNrc());
+					    	send(resp, aeatParams, model);
+				    	}
+						if (modelType.isInformative() && modelType != FiscalModelType.M390) {
+							ModelAdmonUtils.sendOnlineTGVI(resp, aeatParams, model);
+						} else {
+					    	aeatParams.setNrc(model.getNrc());
+					    	ModelAdmonUtils.send(resp, aeatParams, model);
+						}
+						
+				    	erroresGlobal.add(aeatParams.getErrores());				    	
+				    }
+				}
+			}
+		}
+		
+		giveMultipleResult(resp, erroresGlobal);
+				
+	}	
+	
+	private static IFiscalModel getModel(AEATParams aeatParams, FiscalModelType modelType) {
+		
+		Occam occam = new Occam()
+				.setDomainName(aeatParams.getDomainName())
+				.setDomain(aeatParams.getDomainId())
+				.setUser(aeatParams.getUser());
+		
+		IFiscalModel model = null;
+		
+		if (modelType == FiscalModelType.M200) {
+			model = MODEL200.getMod200(occam, ModelAdmonUtils.getFiscalModelId(aeatParams));	
+		} else {
+			model = ModelAdmonUtils.getModel(aeatParams, modelType);
+		}
+		
+		return model;	
+		
+	}
+	
+	private static synchronized void giveMultipleResult(HttpServletResponse resp, ArrayList<ArrayList<String>> erroresGlobal) {
+		StringBuilder buff = new StringBuilder();
+		buff.append(ERROR_TEMPLATE_START);		
+		buff.append("<ul style=\""
+					+"background-attachment: scroll;"
+					+"background-clip: border-box;"
+					+"background-position: 3px 2px;"
+					+"background-repeat: no-repeat;"
+					+"background-size: auto auto;"
+					+"background-color: lavender;"
+					+"font-size: small;"
+					+"font-family: arial, 'lucida Grande', 'Trebuchet MS', sans-serif;"
+					+"font-weight: bold;"
+					+"border: solid black 1px;"
+					+"padding-top: 20px;"
+					+"padding-bottom: 20px;"
+					+"\">");
+	
+		for (ArrayList<String> al : erroresGlobal) {
+			buff.append("<li>");			
+			buff.append(al.get(0));
+			
+			if (al.size() == 1) {				
+				buff.append("<ul style='margin-top: 5px;margin-bottom: 10px;font-weight: normal;color: green;'>");
+				buff.append(MessageFormat.format(ERROR_TEMPLATE_BODY, "No se encontraron errores."));				
+			} else {			
+				buff.append("<ul style='margin-top: 5px;margin-bottom: 10px;font-weight: normal;color: red;'>");
+				for (int i = 1; i < al.size(); i++) {
+					if ("keystore password was incorrect".equals(al.get(i))) {
+						buff.append(MessageFormat.format(ERROR_TEMPLATE_BODY, "La contraseña no es correcta."));	
+					} else {
+						buff.append(MessageFormat.format(ERROR_TEMPLATE_BODY, al.get(i)));					
+					}
+				}
+			}			
+			
+			buff.append("</ul>");
+			buff.append("</li>");
+		}		
+		buff.append("</ul>");
+		buff.append(ERROR_TEMPLATE_END);
+		giveBase64Back(resp, buff.toString().getBytes(StandardCharsets.UTF_8), MimeType.HTML);
+	}		
 
 }

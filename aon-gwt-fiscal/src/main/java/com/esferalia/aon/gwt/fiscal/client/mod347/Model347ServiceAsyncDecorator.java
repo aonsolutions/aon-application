@@ -32,9 +32,9 @@ public class Model347ServiceAsyncDecorator implements Model347ServiceAsync {
 	}
 	
 	@Override
-	public void initialize(Occam occam, AsyncCallback<Mod347> callback) {
+	public void initialize(Occam occam, int year, AsyncCallback<Mod347> callback) {
 		AON.start();
-		fsa.initialize(occam, new AsyncCallbackWrapper<>(callback));
+		fsa.initialize(occam, year, new AsyncCallbackWrapper<>(callback));
 	}
 	@Override
 	public void reset(Occam occam, Mod347 model, AsyncCallback<Mod347> callback) {

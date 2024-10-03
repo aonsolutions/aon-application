@@ -13,7 +13,7 @@ public interface IMODEL347 {
 
 	public LinkedList<Mod347> getMod347s(AONContext ctx,int domain);
 	public Mod347 get(AONContext ctx,Integer id);
-	public Mod347 initialize(AONContext ctx);
+	public Mod347 initialize(AONContext ctx, int year);
 	public Mod347 reset(AONContext ctx, Mod347 mod347);
 	public Mod347 save(AONContext ctx,Mod347 mod347);
 	public void delete(AONContext ctx,Mod347 mod347);
