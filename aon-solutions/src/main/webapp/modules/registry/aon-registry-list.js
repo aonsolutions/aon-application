@@ -69,7 +69,8 @@ export class AonRegistryList extends AonElement {
 						registry.statusText = MSG[registry.status];
 					} 
 
-					this.TABLE.addRow(registry, () => this.buildRegistry(registry));
+					let tr = this.TABLE.addRow(registry, () => this.buildRegistry(registry));
+					tr.id = "aonInvoiceRow";
 				});
 			});
 		}
@@ -90,7 +91,8 @@ export class AonRegistryList extends AonElement {
 						registry.link = registry.isRelationship ? "Si" : "No";
 					}
 
-					this.TABLE.addRow(registry, () => this.buildRegistry(registry));
+					let tr = this.TABLE.addRow(registry, () => this.buildRegistry(registry));
+					tr.id = "aonInvoiceRow";
 				});
 			});	
 		}

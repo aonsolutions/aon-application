@@ -164,13 +164,14 @@ export class AonEventList extends AonElement {
         const resp = await this.getData();
         aonTable.removeRows();
         resp.map((res) => {
-          aonTable.addRow(
+          let tr = aonTable.addRow(
             {
               ...res,
               status: res.textStatus
             },
             (el) => this.aonEvent(el, res)
           );
+          tr.id = "aonTimeControlRow";
         });
       } catch (e) {
         console.log("error",e);
@@ -232,7 +233,7 @@ export class AonEventList extends AonElement {
               const newStatus = r.status.toLowerCase();
               const textStatus = getStatus(newStatus);
               const numbDate   = this.getTimeNumber(group.value, r.start_date);
-              const lettersHtml = `<div class="profile-letters ${ numbDate ? "font": ""} out">${group.name.substr(0,1)+numbDate}</div>`;
+              const lettersHtml = `<div id= "aonTimeControlTableDiv" class="profile-letters ${ numbDate ? "font": ""} out">${group.name.substr(0,1)+numbDate}</div>`;
 
               const nameLocation = r.last_location && r.last_location.name ? r.last_location.name : "";
 
