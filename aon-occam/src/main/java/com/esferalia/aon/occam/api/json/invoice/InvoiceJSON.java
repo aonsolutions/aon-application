@@ -150,6 +150,18 @@ public class InvoiceJSON {
 			.put(IJsonNames.ACTIVITY, EnterpriseActivityJSON.toJSON(invoice.getActivity()))
 			.put(IJsonNames.SCOPE, ScopeJSON.toJSON(invoice.getScope()));
 		
+		if(invoice.isRectifier() || invoice.isRectified()) {
+			String rectificationInvoiceDate = AonDateUtils.format(invoice.getRectificationInvoiceDate() , AonDateUtils.DATE_TIME_FORMAT_AUX);
+
+			JSONObject rectificationInvoice = new JSONObject()
+					.put(IJsonNames.ID, invoice.getRectificationInvoice())
+					.put(IJsonNames.SERIES, invoice.getRectificationInvoiceSeries())
+					.put(IJsonNames.NUMBER, invoice.getRectificationInvoiceNumber())
+					.put(IJsonNames.DATE, rectificationInvoiceDate);
+			
+			json.put(IJsonNames.RECTIFICATION_INVOICE, rectificationInvoice);
+		}
+		
 		if(!invoice.getDetails().isEmpty()) {
 			json.put(IJsonNames.CATEGORY, invoice.getDetails().get(0).getAccountCode());
 		}
