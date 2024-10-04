@@ -397,6 +397,7 @@ public class RawdocServlet extends AonApiHttpServlet {
 			
 			ea = new EnterpriseData()
 					.setDomain(api.getDomain().getId())
+					.setName("INVOFOX")
 					.setEnterprise(cp.getId())
 					.setExpression(count.toString())
 					.setStartDate(startDate)

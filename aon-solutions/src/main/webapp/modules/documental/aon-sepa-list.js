@@ -95,10 +95,11 @@ export class AonSepaList extends AonElement {
 
       if (sepaDocumentsFormat.length == 0) this.more = false;
       sepaDocumentsFormat.forEach((doc, i) => {
-        aonDocumentalSepaTable.addRow(
+        let tr = aonDocumentalSepaTable.addRow(
           doc,
           () => this.getApplication().setContent(new AonSepa(doc))
         );
+        tr.id = "aonPayrollRow";
       });
     }
   }
@@ -120,10 +121,11 @@ export class AonSepaList extends AonElement {
 
       aonDocumentalSepaTable.removeRows();
       sepaDocumentsFormat.forEach((doc, i) => {
-        aonDocumentalSepaTable.addRow(
+        let row = aonDocumentalSepaTable.addRow(
           doc,
           () => this.getApplication().setContent(new AonSepa(doc))
         );
+        row.id = "aonPayrollRow";
       });
     }
   }

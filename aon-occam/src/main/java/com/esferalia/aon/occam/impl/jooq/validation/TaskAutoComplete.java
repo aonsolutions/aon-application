@@ -137,6 +137,7 @@ public class TaskAutoComplete {
 		.select()
 		.from(DOMAIN)
 		.where(DOMAIN.NAME.eq(name))
+		.limit(1)
 		.fetchOptionalInto(DOMAIN)
 		;
 	}
@@ -151,6 +152,7 @@ public class TaskAutoComplete {
 		.on(PROJECT.DOMAIN.eq(DOMAIN.ID))
 		.where(DOMAIN.NAME.eq(domainName))
 		.and(PROJECT.NAME.eq(projectName).or(PROJECT.ALIAS.eq(projectName)))
+		.limit(1)
 		.fetchOptionalInto(PROJECT)
 		.or(() -> 
 		aonContext
@@ -163,6 +165,7 @@ public class TaskAutoComplete {
 		.on(DOMAIN.ID.eq(PROJECT.DOMAIN))
 		.where(DOMAIN.NAME.eq(domainName))
 		.and(PROJECT.NAME.eq(projectName).or(PROJECT.ALIAS.eq(projectName)))
+		.limit(1)
 		.fetchOptionalInto(PROJECT)
 		)
 		;
@@ -178,6 +181,7 @@ public class TaskAutoComplete {
 		.on(WORKGROUP.DOMAIN.eq(DOMAIN.ID))
 		.where(DOMAIN.NAME.eq(domainName))
 		.and(WORKGROUP.DESCRIPTION.eq(workGroupDescription))
+		.limit(1)
 		.fetchOptionalInto(WORKGROUP)
 		// try at parent domain
 		.or( () ->
@@ -191,6 +195,7 @@ public class TaskAutoComplete {
 		.on(WORKGROUP.DOMAIN.eq(PARENT_DOMAIN.ID))
 		.where(DOMAIN.NAME.eq(domainName))
 		.and(WORKGROUP.DESCRIPTION.eq(workGroupDescription))
+		.limit(1)
 		.fetchOptionalInto(WORKGROUP)
 		)
 		// try at insert new one 
@@ -228,6 +233,7 @@ public class TaskAutoComplete {
 		.and(USER.DOMAIN.eq(TASK_HOLDER.DOMAIN)))
 		.where(USER.LOGIN.eq(userLogin))
 		.and(DOMAIN.NAME.eq(domainName))
+		.limit(1)
 		.fetchOptionalInto(TASK_HOLDER)
 		// try at parent domain
 		.or( () ->
@@ -244,6 +250,7 @@ public class TaskAutoComplete {
         		.and(USER.DOMAIN.eq(TASK_HOLDER.DOMAIN)))
         		.where(USER.LOGIN.eq(userLogin))
         		.and(DOMAIN.NAME.eq(domainName))
+        		.limit(1)
         		.fetchOptionalInto(TASK_HOLDER)
 		)
 		// try at insert new one
@@ -290,6 +297,7 @@ public class TaskAutoComplete {
 		.on(USER.REGISTRY.eq(REGISTRY.ID))
 		.where(USER.LOGIN.eq(userLogin))
 		.and(DOMAIN.NAME.eq(domainName))
+		.limit(1)
 		.fetchOptionalInto(REGISTRY)
 		// try at parent domain
 		.or( () ->
@@ -305,6 +313,7 @@ public class TaskAutoComplete {
         		.on(USER.REGISTRY.eq(REGISTRY.ID))
         		.where(USER.LOGIN.eq(userLogin))
         		.and(DOMAIN.NAME.eq(domainName))
+        		.limit(1)
         		.fetchOptionalInto(REGISTRY)
 		)
 		// try at insert new one

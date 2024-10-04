@@ -173,10 +173,7 @@ const paintCompanyCostPieChart = async () => {
       title = `${title} ${startDateText} - ${endDateText}`;
     }
 
-    if(LS.isDarkTheme())
-      title = `${title}<br> ${workplaceText} <span style="color:white;font-weight:600;">${formatNumber(total, 2, "EUR")}<span>`;
-    else
-      title = `${title}<br> ${workplaceText} <span style="color:black;font-weight:600;">${formatNumber(total, 2, "EUR")}<span>`;
+    title = `${title}<br> ${workplaceText} <span id= "aonCompanyCostCardSpan" style="color:black;font-weight:600;">${formatNumber(total, 2, "EUR")}<span>`;
 
     let divTitle = document.getElementById("aon-company-costs-cardtitleDiv");
     divTitle.innerHTML = title;

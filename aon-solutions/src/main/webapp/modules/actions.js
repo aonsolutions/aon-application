@@ -28,6 +28,48 @@ export const ADD_INVOICE = {
     icon: MATERIAL_ICONS.ADD
 };
 
+export const ADD_PRODUCT = {
+    id: CONSTANT.ADD_PRODUCT.initCap(),
+    name: MSG.ADD_PRODUCT,
+    title: MSG.ADD_PRODUCT,
+    icon: MATERIAL_ICONS.ADD
+};
+
+export const ADD_EXPENSE = {
+    id: CONSTANT.ADD_EXPENSE.initCap(),
+    name: MSG.ADD_EXPENSE,
+    title: MSG.ADD_EXPENSE,
+    icon: MATERIAL_ICONS.ADD
+};
+
+export const ADD_INVEST_ASSET = {
+    id: CONSTANT.ADD_INVEST_ASSET.initCap(),
+    name: MSG.ADD_INVEST_ASSET,
+    title: MSG.ADD_INVEST_ASSET,
+    icon: MATERIAL_ICONS.ADD
+};
+
+export const ADD_CUSTOMER = {
+    id: CONSTANT.ADD_CUSTOMER.initCap(),
+    name: MSG.ADD_CUSTOMER,
+    title: MSG.ADD_CUSTOMER,
+    icon: MATERIAL_ICONS.ADD
+};
+
+export const ADD_SUPPLIER = {
+    id: CONSTANT.ADD_SUPPLIER.initCap(),
+    name: MSG.ADD_SUPPLIER,
+    title: MSG.ADD_SUPPLIER,
+    icon: MATERIAL_ICONS.ADD
+};
+
+export const ADD_CREDITOR = {
+    id: CONSTANT.ADD_CREDITOR.initCap(),
+    name: MSG.ADD_CREDITOR,
+    title: MSG.ADD_CREDITOR,
+    icon: MATERIAL_ICONS.ADD
+};
+
 export const BACK = {
     id: CONSTANT.BACK.initCap(),
     name: MSG.BACK,
