@@ -122,7 +122,7 @@ export class AonConfig extends AonElement {
 
         let themesCard = new AonCard();
         themesCard.id = this.THEMES_CARD;
-        themesCard.title = "Selección de tema";
+        themesCard.title = MSG.THEME_SELECTION;
         themesCard.className = "rightPanelLangCard";
         this.appendChild(themesCard);
 
@@ -130,10 +130,10 @@ export class AonConfig extends AonElement {
         themesCardDiv.style.boxShadow = 'none';
 
         let themesDiv = this.createDiv();
-        themesDiv.appendChild(this.buildThemeData("Estándar", '/css/theme/aon.css'));
-        themesDiv.appendChild(this.buildThemeData("Clásico",'/css/theme/classic.css'));
-        themesDiv.appendChild(this.buildThemeData("Moderno",'/css/theme/modern.css'));
-        themesDiv.appendChild(this.buildThemeData("Oscuro",'/css/theme/dark.css'));
+        themesDiv.appendChild(this.buildThemeData(MSG.STANDARD, '/css/theme/aon.css'));
+        themesDiv.appendChild(this.buildThemeData(MSG.CLASSIC,'/css/theme/classic.css'));
+        themesDiv.appendChild(this.buildThemeData(MSG.MODERN,'/css/theme/modern.css'));
+        themesDiv.appendChild(this.buildThemeData(MSG.DARK,'/css/theme/dark.css'));
         //themesDiv.appendChild(this.buildThemeData("Oscuro (Beta)",'/css/theme/darkBeta.css'));
         themesCard.setContent(themesDiv);
 

@@ -68,7 +68,7 @@ export class AonHelp extends AonElement {
 		let span2 = this.createDiv();
 		span2.className = CSS.AON_CARD_TEXT;
         span2.classList.add("aonHelpSpan2");
-		span2.innerHTML = "Índice contenidos";
+		span2.innerHTML = MSG.CONTENT_INDEX;
 		div.appendChild(span2);
 		helpContent.appendChild(div);
 

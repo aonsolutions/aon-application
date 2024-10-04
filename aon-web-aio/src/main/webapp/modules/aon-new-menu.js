@@ -1125,12 +1125,12 @@ export class AonNewMenu extends AonElement {
 		if(this.getDur().isDocumental()){
 			newMenuOptions.push({
 				fn: () => {},
-				icon: 'post_add',
+				icon: MATERIAL_ICONS.CLOUD_UPLOAD,
 				name: MSG.UPLOAD_DOCUMENT,
 				options: [
 					{
 						name: MSG.DOCUMENTAL_FILE,
-						icon: MATERIAL_ICONS.CLOUD_UPLOAD,
+						icon: 'post_add',
 						fn: () => {
 							let input = this.createElement(TAG.INPUT);
 							input.type = CONSTANT.FILE;
@@ -1141,8 +1141,8 @@ export class AonNewMenu extends AonElement {
 							this.appSelection(Apps.DOCUMENTAL);
 						}
 					}, {
-						name: "Factura",
-						icon: MATERIAL_ICONS.CLOUD_UPLOAD,
+						name: MSG.INVOICE,
+						icon: 'post_add',
 						fn: () => {
 							let input = this.createElement(TAG.INPUT);
 							input.type = CONSTANT.FILE;
@@ -1159,7 +1159,7 @@ export class AonNewMenu extends AonElement {
 		if(this.getDur().isMessenger()){
 			newMenuOptions.push({
 				icon: 'add_comment',
-				name: 'Crear Consulta',
+				name: MSG.CREATE_QUERY,
 				fn: () => {
 					let aonMessengerChat = new AonMessenger();	
 					aonMessengerChat.data = {source:TASK_SOURCE.QUERY};
