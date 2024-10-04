@@ -138,6 +138,9 @@ public class InvoiceJSON {
 			.put(IJsonNames.RECTIFIED, invoice.isRectified())
 			.put(IJsonNames.RECTIFIER, invoice.isRectifier())
 			//.put(IJsonNames.COMMENTS, invoice.getComments())
+			.put(IJsonNames.TAXABLE_BASE, invoice.getTaxableBase())
+			.put(IJsonNames.VAT_QUOTA, invoice.getVatQuota())
+			.put(IJsonNames.RETENTION_QUOTA, invoice.getRetentionQuota())
 			.put(IJsonNames.TOTAL, invoice.getTotal())
 			.put(IJsonNames.SENDER,RegistryJSON.toJSON(invoice.getRegistryData()))
 			.put(IJsonNames.RECEIVER, RegistryJSON.toJSON(invoice.getRegistryData()))
@@ -146,6 +149,18 @@ public class InvoiceJSON {
 			.put(IJsonNames.FINANCES, FinanceJSON.toJSON(invoice.getFinances()))
 			.put(IJsonNames.ACTIVITY, EnterpriseActivityJSON.toJSON(invoice.getActivity()))
 			.put(IJsonNames.SCOPE, ScopeJSON.toJSON(invoice.getScope()));
+		
+		if(invoice.isRectifier() || invoice.isRectified()) {
+			String rectificationInvoiceDate = AonDateUtils.format(invoice.getRectificationInvoiceDate() , AonDateUtils.DATE_TIME_FORMAT_AUX);
+
+			JSONObject rectificationInvoice = new JSONObject()
+					.put(IJsonNames.ID, invoice.getRectificationInvoice())
+					.put(IJsonNames.SERIES, invoice.getRectificationInvoiceSeries())
+					.put(IJsonNames.NUMBER, invoice.getRectificationInvoiceNumber())
+					.put(IJsonNames.DATE, rectificationInvoiceDate);
+			
+			json.put(IJsonNames.RECTIFICATION_INVOICE, rectificationInvoice);
+		}
 		
 		if(!invoice.getDetails().isEmpty()) {
 			json.put(IJsonNames.CATEGORY, invoice.getDetails().get(0).getAccountCode());

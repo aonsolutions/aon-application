@@ -14,7 +14,9 @@ import org.json.JSONObject;
 
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.json.JsonUtils;
+import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.occam.api.model.EnterpriseData;
 import com.esferalia.aon.occam.api.model.IJsonNames;
 import com.esferalia.aon.occam.api.model.Rawdoc;
 import com.esferalia.aon.occam.api.model.attachment.AttachType;
@@ -24,6 +26,7 @@ import com.esferalia.aon.occam.api.model.type.RawdocNature;
 import com.esferalia.aon.occam.api.model.type.RawdocStatus;
 import com.esferalia.aon.occam.api.model.type.RawdocType;
 import com.esferalia.aon.watson.server.AonDateUtils;
+import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 import es.translogia.tedi.json.TediInvoiceJSON;
@@ -186,6 +189,10 @@ public class RawdocServlet extends AonApiHttpServlet {
 		
 		Integer id = json.opt("id") !=null ? json.optInt("id") : null;
 		RawdocStatus status = RawdocStatus.safeValueOf(json.optString("status")); 
+		
+		if(RawdocStatus.PROCESSING.equals(status)) {
+			addCount(api);
+		}
 		
 		RawdocType type = json.opt("type") != null && json.optString("type").equalsIgnoreCase("emitida") 
 				? RawdocType.OUTPUT : RawdocType.INPUT;
@@ -371,5 +378,36 @@ public class RawdocServlet extends AonApiHttpServlet {
 		JSONArray log = new JSONArray(rawdoc.getLog() != null ? rawdoc.getLog() : "[]");
 		json.put("remarks", log);
 		return json;
+	}
+	
+	public static JSONObject addCount(AonApiData api) {
+		Integer count = 1;
+		
+		java.sql.Date startDate = AonDateUtils.toSql(AonDateUtils.getMonthFirstDay(new Date()));
+		java.sql.Date endDate = AonDateUtils.toSql(AonDateUtils.getMonthLastDay(new Date()));
+		
+		EnterpriseData ea = AON.getEnterpriseData(api.getDomain(), api.getUser(), f -> 
+			f.getDomainProperty().eq(api.getDomain().getId())
+			.and(f.getNameProperty().eq("INVOFOX"))
+			.and(f.getStartDateProperty().eq(startDate))
+			.and(f.getEndDateProperty().eq(endDate)));
+		
+		if(ea == null || ea.getId() == null) {
+			Company cp = AON.getCompany(api.getDomain(), api.getUser(), f -> f.getDomainProperty().eq(api.getDomain().getId()));
+			
+			ea = new EnterpriseData()
+					.setDomain(api.getDomain().getId())
+					.setName("INVOFOX")
+					.setEnterprise(cp.getId())
+					.setExpression(count.toString())
+					.setStartDate(startDate)
+					.setEndDate(endDate);
+		} else {
+			count = count + AonNumberUtils.toInteger(ea.getExpression());
+			ea.setExpression(count.toString());
+		}
+		
+		ea = AON.saveEnterpriseData(api.getDomain(), api.getUser(), ea);
+		return new JSONObject();
 	}
 }

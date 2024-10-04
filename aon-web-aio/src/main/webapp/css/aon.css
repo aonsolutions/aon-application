@@ -145,6 +145,8 @@
   --aonNewWhite: #EEEEEE;
 	
   --aonMenuSidenav: true;
+
+  --aonLegendColor: black;
 	
   /*
   false or undefined same effect
@@ -802,7 +804,7 @@ color: #5f6368;
 .aonToolbar {
   display: flex;
   height: 40px;
-  padding: 0 16px;
+  padding-left: 16px;
   font-size: 16px;
   border: 0px none;
   background-color: #fafafa;
@@ -1783,9 +1785,14 @@ margin-top: 20px;
   font-size: 2rem;
 }
 
+#aonTimeControlTableDiv {
+  border: 2px solid var(--aonTimecontrol) !important;
+  color: var(--aonTimecontrol) !important;
+}
+
 .profile-letters{
-  border: 2px solid #949393;
-  color: #949393;
+  border: 2px solid var(--aonFiscal);
+  color: var(--aonFiscal);
   border-radius: 19.98px;
   height: 30px;
   line-height: 28px;
@@ -3003,7 +3010,10 @@ border-left: 2px solid var(--aonMessenger);
 .aonMenuLeftopNotification {
   background-color: var(--aonBlue);
 }
-
+.aonHeaderConfigurationMenu,
+.aonMenuLeftTopConfigurationMenu {
+  background-color: black;
+}
 
 .aonHeaderNote .material-icons,
 .aonHeaderFiscal .material-icons,
@@ -3196,6 +3206,8 @@ color: var(--aonWhite);
   display: flex;
   align-items: center;
   padding: 0 1rem;
+  position: absolute;
+  bottom: 0px;
 }
 
 .divLogout:hover{
@@ -4156,7 +4168,7 @@ font-weight: 600;
 }
 
 .accountingChatLegend {
-  color: black;
+  color: var(--aonLegendColor);
 }
 
 .aonSignDivLastTime {
@@ -4450,4 +4462,7 @@ font-weight: 600;
              transition: margin-right 0.3s linear;
 }
 
+.aonAccountingChart {
+	color: black;
+}
 

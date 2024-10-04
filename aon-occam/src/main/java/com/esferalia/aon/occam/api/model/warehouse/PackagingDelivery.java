@@ -1,5 +1,6 @@
 package com.esferalia.aon.occam.api.model.warehouse;
 
+import java.util.LinkedList;
 import java.util.List;
 
 public class PackagingDelivery {
@@ -32,6 +33,9 @@ public class PackagingDelivery {
 	}
 
 	public List<PackagingDeliveryContent> getContent() {
+		if(content == null) {
+			content = new LinkedList<>();
+		}
 		return content;
 	}
 

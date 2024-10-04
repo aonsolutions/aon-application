@@ -1,7 +1,7 @@
 import { AonElement } from 'aonsolutions/components/AonElement.js';
 import { Apps, HomeApps, MenuApps, AuxApps, DESKTOP_APPS, MENU_APPS, TOP_MENU_APPS, AON_APPS, NEW, HOME, AON_CLASSIC, APPS, APPLICATIONS } from '../services/app.js';
 import {COMMERCE, OFFICE, GARAGE, ACADEMY} from  "aonsolutions/services/app.js";
-import {ACCOUNTING_MENU, COMMERCIAL_MENU, GROUPWARE_MENU, MANAGEMENT_MENU, TREASURY_MENU, WAREHOUSE_MENU, FISCAL_MENU, PAYROLL_MENU, MARKETING_MENU} from "../services/app.js"
+import {ACCOUNTING_MENU, COMMERCIAL_MENU, GROUPWARE_MENU, MANAGEMENT_MENU, TREASURY_MENU, WAREHOUSE_MENU, FISCAL_MENU, PAYROLL_MENU, MARKETING_MENU, CONFIGURATION_MENU} from "../services/app.js"
 import { MSG, CONSTANT, AON_ICONS, CSS, EVENT, MATERIAL_ICONS, TAG } from 'aonsolutions/environments/environments.js';
 import { AonDocumental } from 'aonsolutions/modules/documental/aon-documental.js';
 import 'aonsolutions/modules/project/aon-project-panel.js';
@@ -28,6 +28,7 @@ import { AonWarehouse } from 'aonsolutions/modules/warehouse/aon-warehouse.js';
 import * as OPTION from 'aonsolutions/modules/invoice/InvoiceOptions.js';
 import { TASK_SOURCE } from 'aonsolutions/modules/messenger/MessengerEnums.js';
 import { uploadDocuments } from "aonsolutions/modules/documental/DocumentalUtils.js";
+import { uploadInvoices } from "aonsolutions/modules/invoice/InvoiceUtils.js"
 
 
 import { AonNewDesktop } from './aon-new-desktop.js';
@@ -43,6 +44,7 @@ import { AonMarketingMenu } from './marketing/aon-marketing-menu.js';
 import { AonAcademyMenu } from './academy/aon-academy-menu.js';
 import { AonCommerceMenu } from './commerce/aon-commerce-menu.js';
 import { AonGarageMenu } from './garage/aon-garage-menu.js';
+import { AonConfigurationMenu } from './configuration/aon-configuration-menu.js';
 
 
 //	Falla la compilación por esta línea que no se usa. REVISAR!!
@@ -242,6 +244,9 @@ export class AonNewMenu extends AonElement {
 					break;
 				case MARKETING_MENU.app:
 					this.rootPanel(new AonMarketingMenu());
+					break;
+				case CONFIGURATION_MENU.app:
+					this.rootPanel(new AonConfigurationMenu());
 					break;
 				case ACADEMY.app:
 					this.rootPanel(new AonAcademyMenu());
@@ -653,7 +658,7 @@ export class AonNewMenu extends AonElement {
 		const div = this.getElement("aonMenuLeftop");
 		
 
-		if (this.isCSSLoaded("beta.css")) {
+		//if (this.isCSSLoaded("beta.css")) {
 
 			div.addEventListener("mouseenter", () => {
 				const side = this.getElement("aonMenuSidenav");
@@ -695,7 +700,7 @@ export class AonNewMenu extends AonElement {
 			// 	}
 				
 			// });
-		}
+		//}
 	}
 
 
@@ -1014,6 +1019,8 @@ export class AonNewMenu extends AonElement {
 			return this.getDur().isPayroll();
 		if (MARKETING_MENU.app === app.app)
 			return this.getDur().isMarketing();
+		if (CONFIGURATION_MENU.app === app.app)
+			return this.getDur().isAdmin();
 		
 		if (MenuApps.ACCOUNTING.app === app.app)
 			return this.getDur().isAccounting();
@@ -1117,17 +1124,36 @@ export class AonNewMenu extends AonElement {
 		}
 		if(this.getDur().isDocumental()){
 			newMenuOptions.push({
+				fn: () => {},
 				icon: 'post_add',
-				name: MSG.NEW_DOCUMENT,
-				fn: () => {
-					let input = this.createElement(TAG.INPUT);
-					input.type = CONSTANT.FILE;
-					input.accept = this.accept;
-					input.className = CSS.AON_NONE;
-					input.addEventListener(EVENT.CHANGE, ({target}) => uploadDocuments(input, target.files, this.getDur() ) );
-					input.click();
-					this.appSelection(Apps.DOCUMENTAL);
-				}
+				name: "Subir Documento",
+				options: [
+					{
+						name: "Archivo Documental",
+						icon: MATERIAL_ICONS.CLOUD_UPLOAD,
+						fn: () => {
+							let input = this.createElement(TAG.INPUT);
+							input.type = CONSTANT.FILE;
+							input.accept = this.accept;
+							input.className = CSS.AON_NONE;
+							input.addEventListener(EVENT.CHANGE, ({target}) => uploadDocuments(input, target.files, this.getDur() ) );
+							input.click();
+							this.appSelection(Apps.DOCUMENTAL);
+						}
+					}, {
+						name: "Factura",
+						icon: MATERIAL_ICONS.CLOUD_UPLOAD,
+						fn: () => {
+							let input = this.createElement(TAG.INPUT);
+							input.type = CONSTANT.FILE;
+							input.accept = this.accept;
+							input.className = CSS.AON_NONE;
+							input.addEventListener(EVENT.CHANGE, ({target}) => uploadInvoices(input, target.files) );
+							input.click();
+							this.appSelection(Apps.INVOICE);
+						}
+					}
+				]
 			});
 		}
 		if(this.getDur().isMessenger()){

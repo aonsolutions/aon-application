@@ -1,46 +1,95 @@
 package com.esferalia.aon.in.payroll.pdf.maker.enterprisepayroll.beans;
 
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.reflect.Field;
 import java.util.Date;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 public class EnterprisePayrollEntry {
-	String naf;
-	String ccc;
-	Date startDate;
-	Date endDate;
 	
-	boolean mergedSS;
-
-	Optional<String> empleado;
-	Optional<String> tipo;
-	Optional<Double> devengado;
-	Optional<Double> ssTrab;
-	Optional<Double> irpf;
-	Optional<Double> deducciones;
-	Optional<Double> liquido;
-	Optional<Double> inKind;
-	Optional<Double> ssEmpr;
-	Optional<Double> costeTotal;
-	Optional<Double> ssTotal;
-	Optional<Double> bonificaciones;
-	Optional<Double> fundae;
-
-	Optional<String> empleadoSS;
-	Optional<String> tipoSS;
-	Optional<Double> devengadoSS;
-	Optional<Double> ssTrabSS;
-	Optional<Double> irpfSS;
-	Optional<Double> deduccionesSS;
-	Optional<Double> liquidoSS;
-	Optional<Double> inKindSS;
-	Optional<Double> ssEmprSS;
-	Optional<Double> costeTotalSS;
-	Optional<Double> ssTotalSS;
-	Optional<Double> bonificacionesSS;
-
 	public static enum EnterpriseEntryType {
 		AON_SYSTEM, SEG_SOCIAL
+	}
+	
+	@Retention(RetentionPolicy.RUNTIME)
+	@interface DataField {
+		
+	}
+	
+	@Retention(RetentionPolicy.RUNTIME)
+	@interface AmountField {
+		
+	}
+
+
+	@DataField
+	String naf;
+	@DataField
+	String ccc;
+	@DataField
+	Date startDate;
+	@DataField
+	Date endDate;
+	
+	@DataField
+	boolean mergedSS;
+
+	@DataField
+	Optional<String> empleado;
+	@DataField
+	Optional<String> tipo;
+	@AmountField
+	Optional<Double> devengado;
+	@AmountField
+	Optional<Double> ssTrab;
+	@AmountField
+	Optional<Double> irpf;
+	@AmountField
+	Optional<Double> deducciones;
+	@AmountField
+	Optional<Double> liquido;
+	@AmountField
+	Optional<Double> inKind;
+	@AmountField
+	Optional<Double> ssEmpr;
+	@AmountField
+	Optional<Double> costeTotal;
+	@AmountField
+	Optional<Double> ssTotal;
+	@AmountField
+	Optional<Double> bonificaciones;
+	@AmountField
+	Optional<Double> fundae;
+
+	@DataField
+	Optional<String> empleadoSS;
+	@DataField
+	Optional<String> tipoSS;
+	@AmountField
+	Optional<Double> devengadoSS;
+	@AmountField
+	Optional<Double> ssTrabSS;
+	@AmountField
+	Optional<Double> irpfSS;
+	@AmountField
+	Optional<Double> deduccionesSS;
+	@AmountField
+	Optional<Double> liquidoSS;
+	@AmountField
+	Optional<Double> inKindSS;
+	@AmountField
+	Optional<Double> ssEmprSS;
+	@AmountField
+	Optional<Double> costeTotalSS;
+	@AmountField
+	Optional<Double> ssTotalSS;
+	@AmountField
+	Optional<Double> bonificacionesSS;
+
+	private EnterprisePayrollEntry() {
 	}
 
 	public EnterprisePayrollEntry(
@@ -416,5 +465,43 @@ public class EnterprisePayrollEntry {
 				empleadoSS, tipoSS, devengadoSS, ssTrabSS, irpfSS, deduccionesSS, liquidoSS, ssEmprSS, costeTotalSS,
 				ssTotalSS, fundae, inKind);
 	}
+	
+	
+	public static EnterprisePayrollEntry merge ( EnterprisePayrollEntry entry1, EnterprisePayrollEntry entry2) {
+		EnterprisePayrollEntry entry = new EnterprisePayrollEntry();
+		Stream.of(EnterprisePayrollEntry.class.getDeclaredFields())
+		.filter( f -> f.isAnnotationPresent(DataField.class))
+		.forEach(f ->  { 
+			try {
+				f.set(entry, f.get(entry1));
+			} catch (IllegalArgumentException | IllegalAccessException e) {
+				throw new RuntimeException(e);
+			} 
+		});
+		Stream.of(EnterprisePayrollEntry.class.getDeclaredFields())
+		.filter( f -> f.isAnnotationPresent(AmountField.class))
+		.forEach(f ->  { 
+			try {
+				Optional<Double> value1 = (Optional<Double> )f.get(entry1);
+				Optional<Double> value2 = (Optional<Double> )f.get(entry2);
+				if ( value1.isPresent() ) {
+					if ( value2.isPresent() ) {
+						f.set(entry, Optional.of( value1.get() + value2.get()));
+					} else {
+						f.set(entry, Optional.of( value1.get()));
+					}
+				} else if ( value2.isPresent() ) {
+					f.set(entry, Optional.of( value2.get()));
+				} else {
+					f.set(entry, Optional.empty());
+				}
+			} catch (IllegalArgumentException | IllegalAccessException e) {
+				throw new RuntimeException(e);
+			} 
+		});
+
+		return entry;
+	}
+	
 
 }

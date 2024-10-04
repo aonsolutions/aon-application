@@ -111,10 +111,12 @@ export class AonFutureTax extends AonElement {
         if (resp.length) {
           resp.forEach((res) => {
             this.buildIcons(res);
-            aonTable.addRow(res, () => {
+            let tr = aonTable.addRow(res, () => {
               this.getApplication().setContent(new AonTaxDetail(res, "future"));
               //this.openDialog(res);
             });
+
+            tr.id = "aonFiscalRow";
           });
 
           let elementHTML = document.createElement(TAG.DIV);
@@ -135,6 +137,7 @@ export class AonFutureTax extends AonElement {
             resultFormat: this.getTotal(resp),
           });
           row.style.fontWeight = "600";
+          row.id = "aonFiscalRow";
         } else {
           aonTable.empty();
         }

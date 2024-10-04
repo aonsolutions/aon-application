@@ -210,10 +210,11 @@ public class IRPFDAO {
 		return stream;
 	}
 	
-	public static Stream<IrpfBreakdown> getInvoicesIrpfBreakdown(final AONContext ctx, IRPFParams params, Integer offset) {
+	public static Stream<IrpfBreakdown> getInvoicesIrpfBreakdown(final AONContext ctx, IRPFParams params, List<Byte> invoiceTypes, Integer offset) {
 		Stream<IrpfBreakdown> stream = getInvoiceIrpBreakdownSelect(ctx)
 				.where(IRPF_PROPERTIES.getConditions(p -> getIRPFFilter(p, params)))
 				.and(INVOICE_TAX.TAX_TYPE.equal(TaxType.RETENTION.value()))
+				.and(INVOICE.TYPE.in(invoiceTypes))
 				.orderBy( getOrderBy(params) )
 				.limit(100)
 				.offset(offset)
@@ -589,10 +590,17 @@ public class IRPFDAO {
 		return summary;
 	}
 	
-	public static IrpfSummary getIRPFSummary(AONContext ctx, IRPFParams params, Integer offset) {
+	public static IrpfSummary getIRPFSummary(AONContext ctx, IRPFParams params, List<Byte> invoiceTypes) {
 		IrpfSummary summary = new IrpfSummary();
 		params.setGroupedBy(null);
-		getInvoicesIrpfBreakdown(ctx, params, offset).forEach(summary::add);
+		getInvoicesIrpfBreakdown(ctx, params, invoiceTypes, 0).forEach(summary::add);
+		return summary;
+	}
+	
+	public static IrpfSummary getIRPFSummary(AONContext ctx, IRPFParams params, List<Byte> invoiceTypes, Integer offset) {
+		IrpfSummary summary = new IrpfSummary();
+		params.setGroupedBy(null);
+		getInvoicesIrpfBreakdown(ctx, params, invoiceTypes, offset).forEach(summary::add);
 		return summary;
 	}
 	

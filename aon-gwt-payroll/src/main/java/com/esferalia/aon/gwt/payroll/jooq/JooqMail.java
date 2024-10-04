@@ -1,5 +1,6 @@
 package com.esferalia.aon.gwt.payroll.jooq;
 
+import static com.esferalia.aon.gwt.payroll.client.EnterprisesService.URL_SHORTENER_PATH;
 import static com.esferalia.aon.jooq.tables.Contract.CONTRACT;
 import static com.esferalia.aon.jooq.tables.Enterprise.ENTERPRISE;
 import static com.esferalia.aon.jooq.tables.EnterpriseData.ENTERPRISE_DATA;
@@ -27,6 +28,7 @@ import org.jooq.Result;
 import org.jooq.conf.Settings;
 import org.jooq.impl.DSL;
 
+import com.esferalia.aon.gwt.payroll.client.EnterprisesService;
 import com.esferalia.aon.gwt.payroll.client.PayrollEmailDialog.Type;
 import com.esferalia.aon.gwt.payroll.shared.Mail;
 import com.esferalia.aon.occam.api.AON;
@@ -512,7 +514,10 @@ public class JooqMail {
 		
 //		if(AonStringUtils.isNotBlank(parameters)) parameters = parameters.substring(0, parameters.length() - 1);
 		
-		html += "	<a href=\"" + params.get("url") + "?" + parameters + "\" target=\"_blank\" style=\"font-weight: bold; text-decoration: none; color: black; border: 1px solid; border-radius: 5px; padding: .5rem;\">DESCARGAR NOMINAS</a>";
+		String url = params.get("url") + "?" + parameters ;
+		String shortUrl = AON.getShortURL(URL_SHORTENER_PATH, url);
+
+		html += "	<a href=\"" + shortUrl + "\" target=\"_blank\" style=\"font-weight: bold; text-decoration: none; color: black; border: 1px solid; border-radius: 5px; padding: .5rem;\">DESCARGAR NOMINAS</a>";
 		
 		html += "</div>";
 		
@@ -539,8 +544,10 @@ public class JooqMail {
 			parameters += "pwdEnt=true";
 		
 //		if(AonStringUtils.isNotBlank(parameters)) parameters = parameters.substring(0, parameters.length() - 1);
+		String url = params.get("url") + "?" + parameters ;
+		String shortUrl = AON.getShortURL(EnterprisesService.URL_SHORTENER_PATH, url);
 		
-		html += "	<a href=\"" + params.get("url") + "?" + parameters + "\" target=\"_blank\" style=\"font-weight: bold; text-decoration: none; color: black; border: 1px solid; border-radius: 5px; padding: .5rem;\">DESCARGAR NOMINAS</a>";
+		html += "	<a href=\"" + shortUrl + "\" target=\"_blank\" style=\"font-weight: bold; text-decoration: none; color: black; border: 1px solid; border-radius: 5px; padding: .5rem;\">DESCARGAR NOMINAS</a>";
 		
 		html += "</div>";
 		
@@ -568,7 +575,10 @@ public class JooqMail {
 		
 //		if(AonStringUtils.isNotBlank(parameters)) parameters = parameters.substring(0, parameters.length() - 1);
 		
-		html += "	<a href=\"" + params.get("url") + "?" + parameters + "\" target=\"_blank\" style=\"font-weight: bold; text-decoration: none; color: black; border: 1px solid; border-radius: 5px; padding: .5rem;\">DESCARGAR NOMINAS</a>";
+		String url = params.get("url") + "?" + parameters ;
+		String shortUrl = AON.getShortURL(EnterprisesService.URL_SHORTENER_PATH, url);
+		
+		html += "	<a href=\"" + shortUrl + "\" target=\"_blank\" style=\"font-weight: bold; text-decoration: none; color: black; border: 1px solid; border-radius: 5px; padding: .5rem;\">DESCARGAR NOMINAS</a>";
 		
 		html += "</div>";
 		

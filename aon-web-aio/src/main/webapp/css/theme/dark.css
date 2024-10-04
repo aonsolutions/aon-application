@@ -79,6 +79,8 @@
 
 	--aonTaxBuildPrintRes: white;
 
+	--aonLegendColor: white;
+
 }
 
 
@@ -94,6 +96,10 @@ input:-webkit-autofill:active  {
 .aonBody{
 	background-color: var(--aonContentBeta);
 	color: white;
+}
+
+.aonDashboardButton {
+	border: solid 0.05rem grey;
 }
 
 .aonDashboardButton i {
@@ -567,6 +573,18 @@ h1 {
 	color: white;
 }
 
+.aonCard {
+	border: 1px solid grey;
+}
+
+.aonUpload {
+	border: 2px dashed grey;
+}
+
+.aonUpload:hover {
+	border-color: white;
+}
+
 .aonAppLi{
 	background-color: var(--aonCardColor);
 }
@@ -580,8 +598,15 @@ h1 {
 }
 
 .aonUl,
-.accountingChatLegend,
 .aonSearchInput {
+	color: white;
+}
+
+.accountingChatLegend {
+	color: var(--aonLegendColor);
+}
+
+.aonAccountingChart {
 	color: white;
 }
 
@@ -637,12 +662,20 @@ h1 {
 	color:  white;  
 }
 
+.aonInvoiceHomePendingRecordsDiv {
+	border: 1px solid grey;
+}
+
 .aonInvoiceHomePendingRecordsDiv:hover{
 	background-color: black;
 }
 
 .aonInvoiceHomePendingName {
 	color: white;
+}
+
+.aonInvoiceHomePendingDiv {
+	border: 1px solid grey;
 }
 
 .aonInvoiceHomePendingIssuedDiv:hover{
@@ -677,8 +710,16 @@ h1 {
 	color: white;
 }
 
+.aonInvoiceHomeRejectedDiv {
+	border: 1px solid grey;
+}
+
 .aonInvoiceHomeTrashDiv:hover {
 	background-color: black;
+}
+
+.aonInvoiceHomeTrashDiv {
+	border: 1px solid grey;
 }
   
 .aonInvoiceHomeTrashNumber {
@@ -688,6 +729,17 @@ h1 {
 .aonInvoiceHomeTrashName {
 	color: white;
 }
+
+#aonCompanyCostCardSpan {
+	color: white !important;
+}
+
+#aonTimeControlTableDiv  {
+	border: 2px solid white !important;
+  	color: white !important;
+}
+
+
 
 /**
 Important. Keep this rule at the end of file 

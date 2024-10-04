@@ -6,10 +6,14 @@ import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Stream;
 
 import com.esferalia.aon.watson.server.http.HTTP.NameValuePair;
+import com.esferalia.aon.watson.util.AonArrayUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 
@@ -459,6 +463,12 @@ public class AonURIBuilder {
         return this;
     }
 
+    public AonURIBuilder clearFragment() {
+        this.fragment = null;
+        this.encodedFragment = null;
+        return this;
+    }
+
     /**
      * @since 4.3
      */
@@ -523,8 +533,20 @@ public class AonURIBuilder {
     }
 
     public List<NameValuePair> getQueryParams() {
-        return this.queryParams != null ? new ArrayList<NameValuePair>(this.queryParams) : Collections.<NameValuePair>emptyList();
+        return this.queryParams != null ? new ArrayList<>(this.queryParams) : Collections.emptyList();
     }
+
+    public Map<String, String[]> getQueryParamsMap() {
+    	if ( this.queryParams == null ) {
+    		return Collections.emptyMap();
+    	}
+    	Map<String, String[]> paramsMap = new HashMap<>();
+    	for (NameValuePair param : queryParams) {
+			paramsMap.merge(param.getName(),new String[] {param.getValue()},(arr1, arr2) -> Stream.concat(Stream.of(arr1), Stream.of(arr2)).toArray(String[]::new));
+		}
+    	
+    	return paramsMap;
+   }
 
     public String getFragment() {
         return this.fragment;
@@ -534,5 +556,6 @@ public class AonURIBuilder {
     public String toString() {
         return buildString();
     }
+    
 
 }

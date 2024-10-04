@@ -65,3 +65,5 @@ export const getChargePayments = (data) => get(`${API_URL}/charge_payments`, dat
 
 
 export const invoiceDuplicateFix = (data) => post(`${API_URL}/invoices/invoiceduplicatefix`, data);
+
+export const refreshProcessing = (data) => post(`${API_URL}/invofox/refresh_processing`, data)

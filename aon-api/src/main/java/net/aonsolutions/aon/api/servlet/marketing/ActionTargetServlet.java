@@ -1,4 +1,6 @@
 package net.aonsolutions.aon.api.servlet.marketing;
+
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -62,6 +64,8 @@ import net.aonsolutions.aon.api.ewok.AonApiData;
 import net.aonsolutions.aon.api.servlet.AonApiHttpServlet;
 import net.aonsolutions.aon.api.servlet.AonRouting;
 import net.aonsolutions.aon.api.servlet.Utils;
+import solutions.aon.aws.ses.SES;
+import solutions.aon.aws.ses.SESMessage;
 
 @SuppressWarnings("serial")
 @WebServlet(name = "AonApiActionTargetServlet", urlPatterns = {"/ms/api/action-target/*"})
@@ -70,6 +74,14 @@ public class ActionTargetServlet extends AonApiHttpServlet {
 	private static final Logger LOGGER  = Logger.getLogger(ActionTargetServlet.class.getName());
 	
 	public static final String ACTION_TAGET = "/";
+	
+	// Mail
+	private static List<String> errors = new ArrayList<String>();
+	private static String enterpriseNameMail;
+	private static String urlMail;
+	private static String userMail;
+	private static String userLogingMail;
+	private static String passwordMail;
 
 	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp) {
@@ -178,8 +190,14 @@ public class ActionTargetServlet extends AonApiHttpServlet {
 		createCommercialOperation(api, actionTarget, target, mkActionTarget);
 		
 		// Create Enterprise
+		try {
+			createEnterprise(api, actionTarget, target);
+		} catch (Exception e) {
+			errors.add(e.getMessage());
+		}
 		
-		createEnterprise(api, actionTarget, target);
+		// Send mail
+		sendTrailEnterpriseMail(actionTarget.getTarget().getEmail());
 		
 		// Return data
 		
@@ -285,102 +303,103 @@ public class ActionTargetServlet extends AonApiHttpServlet {
 		}
 	}
 	
-	private static void createEnterprise(AonApiData api, ActionTarget actionTarget, Target target) {
-		try {
-			if(actionTarget.isTrial()) {
-				System.out.println("----------------------- Create Enterprise -----------------------");
-				
-				Company company = new Company();
-				company.setName(actionTarget.getTarget().getName());
-				company.setDocument(actionTarget.getTarget().getDocument());
-				company.setLegalPerson(AonDocumentUtil.isValidCIF(company.getDocument()));
-				
-				checkCompany(api, company);
-				
-				Domain parent = api.getDomain().isParent() ? 
-						api.getDomain() : 
-						AON.getDomain(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), f->f.getIdProperty().eq(api.getDomain().getParentId()));
-						
-				String domainName = company.getDocument() + "-" + parent.getName();
-				Domain d = new Domain()
-					.setName(domainName.toLowerCase())
-					.setDescription(company.getName())
-					.setOwner(api.getDomain().getOwner())
-					.setParentId(parent.getId())
-					.setActive(true)
-					.setDomainType(DomainType.ENTERPRISE)
-					.setEnableHeredity(true)
-					.setDomainManagement(false);
-				
-				Domain domain = AON_SOLUTIONS.insertDomain(api.getDomain(), api.getUser(), d, company);
-				Company c = AON.getCompany(domain.getName(), domain.getId(), api.getUser().getLogin(), f -> f.getDomainProperty().eq(domain.getId()));
-				
-				Integer comapnyRaddressId = null;
-				if(AonStringUtils.isNotBlank(actionTarget.getTarget().getAddress())) {
-					Optional<GeoZone> geozoneOpt = AON.geozoneStream(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), f -> f.getDomainProperty().eq(api.getDomain().getId()).and(f.getCodeProperty().eq(actionTarget.getTarget().getGeozoneCode()))).findFirst();			
+	private static void createEnterprise(AonApiData api, ActionTarget actionTarget, Target target) throws Exception {
+		
+		if(actionTarget.isTrial()) {
+			System.out.println("----------------------- Create Enterprise -----------------------");
+			
+			enterpriseNameMail = actionTarget.getTarget().getName();
+			
+			Company company = new Company();
+			company.setName(actionTarget.getTarget().getName());
+			company.setDocument(actionTarget.getTarget().getDocument());
+			company.setLegalPerson(AonDocumentUtil.isValidCIF(company.getDocument()));
+			
+			checkCompany(api, company);
+			
+			Domain parent = api.getDomain().isParent() ? 
+					api.getDomain() : 
+					AON.getDomain(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), f->f.getIdProperty().eq(api.getDomain().getParentId()));
 					
-					RegistryAddress registryAddress = new RegistryAddress()
-							.setDomain(domain.getId())
-							.setRegistry(c.getId())
-							.setMain(true)
-							.setStreetType(StreetType.getForAeatCode(actionTarget.getTarget().getStreetType(), AonLanguage.SPANISH))
-							.setAddress(actionTarget.getTarget().getAddress())
-							.setNumber(actionTarget.getTarget().getNumber())
-							.setZip(actionTarget.getTarget().getZip())
-							.setCity(actionTarget.getTarget().getCity())
-							.setGeozone(geozoneOpt.isPresent() ? geozoneOpt.get().getId() : null)
-							.setGeozoneCode(actionTarget.getTarget().getGeozoneCode())
-							.setGeozoneName(geozoneOpt.isPresent() ? geozoneOpt.get().getName() : null)
-							;
-					
-					registryAddress = AON.save(api.getDomain(), api.getUser().getLogin(), registryAddress);
-					comapnyRaddressId = registryAddress.getId();
-				}
+			String domainName = company.getDocument() + "-" + parent.getName();
+			Domain d = new Domain()
+				.setName(domainName.toLowerCase())
+				.setDescription(company.getName())
+				.setOwner(api.getDomain().getOwner())
+				.setParentId(parent.getId())
+				.setActive(true)
+				.setDomainType(DomainType.ENTERPRISE)
+				.setEnableHeredity(true)
+				.setDomainManagement(false);
+			
+			Domain domain = AON_SOLUTIONS.insertDomain(api.getDomain(), api.getUser(), d, company);
+			Company c = AON.getCompany(domain.getName(), domain.getId(), api.getUser().getLogin(), f -> f.getDomainProperty().eq(domain.getId()));
+			
+			urlMail = domain.getName();
+			
+			Integer comapnyRaddressId = null;
+			if(AonStringUtils.isNotBlank(actionTarget.getTarget().getAddress())) {
+				Optional<GeoZone> geozoneOpt = AON.geozoneStream(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), f -> f.getDomainProperty().eq(api.getDomain().getId()).and(f.getCodeProperty().eq(actionTarget.getTarget().getGeozoneCode()))).findFirst();			
 				
-				saveMedia(api, domain.getId(), c.getId(), MediaType.CELLULAR, actionTarget.getTarget().getPhone(), comapnyRaddressId);
-				saveMedia(api, domain.getId(), c.getId(), MediaType.EMAIL, actionTarget.getTarget().getEmail(), comapnyRaddressId);
-				
-				RegistryAddress raddress = AON.getRegistryAddress(domain, new User(), f-> f.getDomainProperty().eq(domain.getId()).and(f.getTypeProperty().eq((byte)0)));
-				
-				if(raddress!=null && raddress.getId()!=null) {
-					
-					Workplace workplace = new Workplace()
-						.setActive(true)
-						.setDescription("PRINCIPAL")
+				RegistryAddress registryAddress = new RegistryAddress()
 						.setDomain(domain.getId())
-						.setEnterprise(c.getId())
-						.setAddress(raddress.getId());
-					
-					AON.saveWorkplace(domain, new User(), workplace);
-				}
-				
-				// Create Registry Relationship
-				RegistryRelationship rrelationship = new RegistryRelationship();
-				rrelationship.setDomain(target.getDomain());
-				rrelationship.setRegistry(target.getId());
-				rrelationship.setRelatedRegistry(c.getId());
-				rrelationship.setComments(c.getDomain().getName());
-				
-				AON_SOLUTIONS.saveRegistryRelationship( api.getDomain(), api.getUser(), rrelationship);
-				
-				ApplicationParameter trailParam = new ApplicationParameter()
-						.setDomain(domain.getId())
-						.setName(AppParam.TRIAL)
-						.setValue("50")
+						.setRegistry(c.getId())
+						.setMain(true)
+						.setStreetType(StreetType.getForAeatCode(actionTarget.getTarget().getStreetType(), AonLanguage.SPANISH))
+						.setAddress(actionTarget.getTarget().getAddress())
+						.setNumber(actionTarget.getTarget().getNumber())
+						.setZip(actionTarget.getTarget().getZip())
+						.setCity(actionTarget.getTarget().getCity())
+						.setGeozone(geozoneOpt.isPresent() ? geozoneOpt.get().getId() : null)
+						.setGeozoneCode(actionTarget.getTarget().getGeozoneCode())
+						.setGeozoneName(geozoneOpt.isPresent() ? geozoneOpt.get().getName() : null)
 						;
 				
-				AON.insertApplicationParameter(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), trailParam);
-				
-				// Create Default User
-				createDefaultUser(api, c, target, actionTarget);
-				
-				System.out.println("----------------------- Create Enterprise (END) -----------------------");
-				
+				registryAddress = AON.save(api.getDomain(), api.getUser().getLogin(), registryAddress);
+				comapnyRaddressId = registryAddress.getId();
 			}
-
-		} catch (Exception e) {
-			System.out.println("Error create enterprise : " + e.getMessage());
+			
+			saveMedia(api, domain.getId(), c.getId(), MediaType.CELLULAR, actionTarget.getTarget().getPhone(), comapnyRaddressId);
+			saveMedia(api, domain.getId(), c.getId(), MediaType.EMAIL, actionTarget.getTarget().getEmail(), comapnyRaddressId);
+			
+			RegistryAddress raddress = AON.getRegistryAddress(domain, new User(), f-> f.getDomainProperty().eq(domain.getId()).and(f.getTypeProperty().eq((byte)0)));
+			
+			if(raddress!=null && raddress.getId()!=null) {
+				
+				Workplace workplace = new Workplace()
+					.setActive(true)
+					.setDescription("PRINCIPAL")
+					.setDomain(domain.getId())
+					.setEnterprise(c.getId())
+					.setAddress(raddress.getId());
+				
+				AON.saveWorkplace(domain, new User(), workplace);
+			}
+			
+			// Create Registry Relationship
+			RegistryRelationship rrelationship = new RegistryRelationship();
+			rrelationship.setDomain(target.getDomain());
+			rrelationship.setRegistry(target.getId());
+			rrelationship.setRelatedRegistry(c.getId());
+			rrelationship.setComments(c.getDomain().getName());
+			
+			AON_SOLUTIONS.saveRegistryRelationship( api.getDomain(), api.getUser(), rrelationship);
+			
+			ApplicationParameter trailParam = new ApplicationParameter()
+					.setDomain(domain.getId())
+					.setName(AppParam.TRIAL)
+					.setValue("50")
+					;
+			
+			AON.insertApplicationParameter(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), trailParam);
+			
+			// Create Default User
+			createDefaultUser(api, c, target, actionTarget);
+			
+			System.out.println("----------------------- Create Enterprise (END) -----------------------");
+			
 		}
+
 	}
 	
 	private static void checkCompany(AonApiData api, Company company) throws AonApiException {
@@ -395,10 +414,6 @@ public class ActionTargetServlet extends AonApiHttpServlet {
 		if(AonStringUtils.isBlank(company.getName())) {
 			throw new AonApiException("El nombre de la empresa est?vac?");
 		}
-		Company c = AON.getCompany(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), f -> f.getDocumentProperty().eq(company.getDocument()));
-		if(c.getId() != null) {
-			throw new AonApiException("Ya existe una empresa con el mismo documento");
-		}
 	}
 	
 	private static void createDefaultUser(AonApiData api, Company company, Target target, ActionTarget actionTarget) throws Exception {
@@ -409,6 +424,7 @@ public class ActionTargetServlet extends AonApiHttpServlet {
 			String login = ramdonLogin();
 			String pass = null;
 			
+			/*
 			Auth  authx = new Auth().setDocument(target.getDocument());
 			if(!AonStringUtils.isBlank(authx.getDocument())) {
 				for (Auth r : AON_SOLUTIONS.getAuths(f -> f.getDocumentProperty().eq(authx.getDocument()))) {
@@ -417,35 +433,30 @@ public class ActionTargetServlet extends AonApiHttpServlet {
 						f -> f.getAuthProperty().eq(r.getAuth())).findFirst().orElse(new User());
 					
 					if(user != null && user.getId() != null)
-						throw new Exception("El documento introducido ya está asociado a otro usuario.");
+						throw new Exception("El documento (" + target.getDocument() + ") introducido ya está asociado a otro usuario.");
 				}
 			}
+			*/
 			
 			Auth auth = AON_SOLUTIONS.getAuth(actionTarget.getTarget().getEmail());
 			if(auth.getUuid() == null)
 				auth = createAuth(domain, target, login, pass, actionTarget.getTarget().getEmail(), actionTarget.getTarget().getPhone());
 			
-			byte[] a = auth.getAuth();
-
-			User user = AON.getDomainUserStream(api.getDomain().getName(), api.getDomain().getId(), "", 
-					f ->  f.getAuthProperty().eq(a)).findFirst().orElse(new User());
-					
-			if(user != null && user.getId() != null)
-				throw new Exception("El mail introducido ya está asociado a otro usuario.");
-			
 			if(auth.getAuth() != null) {
-				if(user == null || user.getId() == null) {
-					user = createUser(company, auth, login, target.getName());
-				}
+				User user = createUser(company, auth, login, target.getName());
+				userMail = company.getDocument();
+				userLogingMail = user.getLogin();
+				passwordMail = user.getLogin();
 				
 				setUserAppRole(domain, user);
-				if(api.getDomain().isChild() || api.getDomain().isStandalone()) {
+				
+				if(domain.isChild() || domain.isStandalone()) {
 					saveTaskHolder(domain, user);
 				}
 			}
 			
 		} else {
-			throw new Exception("El email no es correcto.");
+			throw new Exception("El email (" + actionTarget.getTarget().getEmail() + ") no tiene un formato correcto.");
 		}
 	}
 	
@@ -479,8 +490,8 @@ public class ActionTargetServlet extends AonApiHttpServlet {
 			.setAuth(auth)
 			.setActive(true)
 			.setDomain(domain.getId())
-			.setLogin(login)
-			.setName(AonStringUtils.isNotBlank(name) ? name : login)
+			.setLogin(company.getDocument())
+			.setName(AonStringUtils.isNotBlank(name) ? name :  company.getDocument())
 			.setShared(false)
 			.setEnterprise(company.getId())
 			.setToolbar(UserToolbar.GOOGLE);
@@ -638,6 +649,62 @@ public class ActionTargetServlet extends AonApiHttpServlet {
 		}
 		
 		return s;
+	}
+	
+	private static void sendTrailEnterpriseMail(String targetEmail) {
+		String fromTo = "booking@aonsolutions.es";
+		
+		SESMessage msg = new SESMessage()
+				.setAlias(enterpriseNameMail)
+				.setReplyTo(fromTo)
+				.setTo(targetEmail)
+				.setBcc(fromTo)
+				.setSubject(enterpriseNameMail + " (TRIAL)")
+				.setBody(createBody());
+		
+		String emailSent = SES.sendEmail(msg);
+		
+		System.out.println("Email sent : " + emailSent);
+	}
+	
+	private static String createBody() {
+		String body = "";
+		
+		body += "<div style=\"background-color: #ffffff; padding: 20px; border-radius: 10px; max-width: 600px; margin: 0 auto; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);\">\n"
+				+ "  <h2 style=\"text-align: center; color: #333;\">" + (errors.isEmpty() ? "Informaci\u00f3n de Creación de Empresa" : "Error Creaci\u00f3n de Empresa") + "</h2>\n"
+				+ "\n"
+				
+				+ "  <p style=\"font-size: 16px; color: #333;\"><strong>Nombre de la Empresa:</strong> <span id=\"nombre-empresa\">" + enterpriseNameMail + "</span></p>\n"
+				+ "\n"
+				+ "  <p style=\"font-size: 16px; color: #333;\"><strong>URL de la Empresa:</strong> <a href=\"" + urlMail + "\" id=\"url-empresa\" style=\"color: #007bff;\">" + urlMail + "</a></p>\n"
+				+ "\n"
+				+ "  <p style=\"font-size: 16px; color: #333;\"><strong>Auth:</strong> <span id=\"usuario\">" + userMail + "</span></p>\n"
+				+ "\n"
+				+ "  <p style=\"font-size: 16px; color: #333;\"><strong>Usuario:</strong> <span id=\"usuario\">" + userLogingMail + "</span></p>\n"
+				+ "\n"
+				+ "  <p style=\"font-size: 16px; color: #333;\"><strong>Contraseña:</strong> <span id=\"contraseña\">" + passwordMail + "</span></p>\n"
+				+ "\n"
+				;
+		
+		if(!errors.isEmpty()) {
+			body   += "  <p style=\"font-size: 16px; color: #333;\"><strong>Errores</strong></p>\n"
+					;
+			
+			for(String error : errors) {
+				body   += "  <div style=\"color: red; margin-bottom: 15px; font-size: 14px;\">\n"
+						+ "   " + error + "\n"
+						+ "  </div>\n"
+						+ "\n"
+						;
+			}
+		}
+		
+		body   += "  <p style=\"font-size: 12px; color: #666; text-align: center; margin-top: 20px;\">\n"
+				+ "    Si tienes alguna duda, por favor contacta con soporte (booking@aonsolutions.es).\n"
+				+ "  </p>\n"
+				+ "</div>";
+		
+		return body;
 	}
 	
 }
