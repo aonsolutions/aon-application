@@ -1785,14 +1785,15 @@ margin-top: 20px;
   font-size: 2rem;
 }
 
-#aonTimeControlTableDiv {
-  border: 2px solid var(--aonTimecontrol) !important;
-  color: var(--aonTimecontrol) !important;
-}
-
-.profile-letters{
+#aonFiscalTableDiv{
   border: 2px solid var(--aonFiscal);
   color: var(--aonFiscal);
+}
+
+
+.profile-letters{
+  border: 2px solid #949393;
+  color: #949393;
   border-radius: 19.98px;
   height: 30px;
   line-height: 28px;
@@ -1827,7 +1828,7 @@ margin-top: 20px;
 }
 
 
-.profile-letters.fin{
+.profile-letters.out{
   border: 2px solid #FF2D00;
   color: #FF2D00;
 }

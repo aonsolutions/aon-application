@@ -257,6 +257,7 @@ export class AonPresenceList extends AonElement {
               div.classList.add("profile-letters", newStatus);
               div.innerText = lettersName;
 
+
               const lettersHtml = div.outerHTML;
               const {name:textStatus} = getStatus(newStatus);
               let nameLocation = "";

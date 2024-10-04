@@ -554,7 +554,7 @@ h1 {
 	color: var(--aonContentBeta); 
 }
 
-.profile-letters {
+#aonFiscalTableDiv{
 	border: 2px solid white;
 	color: white;
 }
@@ -732,11 +732,6 @@ h1 {
 
 #aonCompanyCostCardSpan {
 	color: white !important;
-}
-
-#aonTimeControlTableDiv  {
-	border: 2px solid white !important;
-  	color: white !important;
 }
 
 
