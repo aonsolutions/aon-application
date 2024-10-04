@@ -21,6 +21,7 @@ import { DomainUserRoles } from "../../../models/DomainUserRoles.js";
 import "../../../components/aon-table.js";
 
 import {
+  CONSTANT,
   EVENT,
   MATERIAL_ICONS,
   MSG,
@@ -50,6 +51,7 @@ import { AonFutureTax } from "./aon-future-tax.js";
 import { AonViewer } from "../../../components/aon-viewer.js";
 import * as LS from "../../../services/localStorageService.js";
 import { createList } from "../../../components/CreateComponent.js";
+import { AonSearch } from "../../../components/aon-search.js";
 
 export class AonTaxDetail extends AonElement {
   TOOLBAR;
@@ -79,6 +81,10 @@ export class AonTaxDetail extends AonElement {
   salaries;
   receivedInvoices;
   issuedInvoices;
+
+  salariesCount;
+  receivedInvoicesCount;
+  issuedInvoicesCount;
 
   filterSalary;
   filterReceivedInvoice;
@@ -127,6 +133,10 @@ export class AonTaxDetail extends AonElement {
     this.moreReceivedInvoice = true;
     this.moreIssuedInvoice = true;
 
+    this.salariesCount = 0;
+    this.receivedInvoicesCount = 0;
+    this.issuedInvoicesCount = 0;
+
     this.receivedIndexes = 0;
     this.issuedIndexes = 0;
   }
@@ -152,12 +162,265 @@ export class AonTaxDetail extends AonElement {
       );
     }
 
+    // Search
+    this.createSearch();
+
     toolbar.addButton2(ACTION.BACK, () => this.back());
 
     this.initTabs();
     this.initContent();
 
     this.init();
+  }
+
+  createSearch(){
+    let toolbar = this.getElement(this.TOOLBAR);
+    let toolSection = toolbar.getToolSection();
+    let search = new AonSearch();
+    search.id = 'taxDetailToolbarHeaderTitleSectionSearch';
+    toolSection.appendChild(search);
+
+    const searchFn = (event) => this.dispatchEvent(new CustomEvent(EVENT.SEARCH,{detail: event.detail}));
+    search.addEventListener(EVENT.SEARCH, searchFn);
+
+    let startDate = {
+      type: CONSTANT.DATE,
+      name: "startDate",
+      id: "startDate",
+      title: MSG.FROM,
+    };
+
+    let endDate = {
+      type: CONSTANT.DATE,
+      name: "endDate",
+      id: "endDate",
+      title: MSG.TO,
+    };
+
+    let searchOptions = [startDate, endDate];
+
+    search.buildOptionsFilter(searchOptions);
+
+    let cleanFunc = async (event) => {
+      this.resetSearchFilter();
+      if(this.SELECTED_TYPE === 'invoice')
+        this.createInvoiceTable();
+      else if(this.SELECTED_TYPE === 'salary')
+        this.createSalaryTable();
+      this.updateCountFilter();
+    };
+    search.addEventListener(EVENT.RESET_FILTER, cleanFunc);
+
+    let searchTimeout;
+
+    let searchFunc = (event) => {
+      if(event.detail.event === "keyup" && event.detail.search.length < 3 && event.detail.search.length != 0)
+        return;
+
+      clearTimeout(searchTimeout);
+
+      searchTimeout = setTimeout(function() {
+        console.log(event.detail);
+
+        this.SELECTED_FILTER = {
+          ...this.SELECTED_FILTER,
+          startDate: event.detail.startDate,
+          endDate: event.detail.endDate,
+          search: event.detail.search
+        }
+        this.SELECTED_FILTER.page = 0;
+
+        if(this.SELECTED_TYPE === 'invoice'){
+          this.receivedIndexes = 0;
+          this.issuedIndexes = 0;
+          this.createInvoiceTable();
+        } else if(this.SELECTED_TYPE === 'salary'){
+          this.createSalaryTable();
+        }
+
+        this.updateCountFilter();
+      }.bind(this), 500); // Tiempo de espera (500 ms)
+    };
+    search.addEventListener(EVENT.SEARCH_NEW, searchFunc);
+  }
+
+  resetSearchFilter(){
+    console.log("CLEAR FILTER");
+    if(this.SELECTED_TYPE === 'invoice'){
+      this.receivedIndexes = 0;
+      this.issuedIndexes = 0;
+    } else if(this.SELECTED_TYPE === 'salary'){
+    }
+
+    let searchInput = this.getElement("taxDetailToolbarHeaderTitleSectionSearchSearchInput");
+    searchInput.value = "";
+
+    let startDateInput = this.getElement("startDate");
+    startDateInput.value = "";
+    startDateInput.firstChild.value = "";
+
+    let endDateInput = this.getElement("endDate");
+    endDateInput.value = "";
+    endDateInput.firstChild.value = "";
+
+    let aonSearch = this.getElement("taxDetailToolbarHeaderTitleSectionSearch");
+    aonSearch.buildBadge();
+
+    delete this.SELECTED_FILTER.search;
+    delete this.SELECTED_FILTER.startDate;
+    delete this.SELECTED_FILTER.endDate;
+    this.SELECTED_FILTER.page = 0;
+  }
+
+  async loadTable(){
+    console.log("--- loadTable ---");
+    console.log(this.SELECTED_FILTER);
+    
+    if(this.SELECTED_TYPE === 'invoice'){
+      if (this.type == "tax") {
+        if(this.SELECTED_INVOICE_TYPE == 'received'){
+          // ReceivedInvoice
+          console.log("ReceivedInvoice");
+          let receivedInvoice = await getFiscalModelsInvoinces(this.SELECTED_FILTER);
+          console.log(receivedInvoice);
+          this.receivedInvoices = receivedInvoice;
+
+          if (receivedInvoice && receivedInvoice.length > 0) {
+            let toolbar = this.getElement(this.TOOLBAR);
+            toolbar.addButton2End(ACTION.DOWNLOAD_EXCEL_INVOICE, () =>
+              this.downloadInvoiceExcel()
+            );
+          }
+
+          if (!this.receivedInvoices || this.receivedInvoices.length < 50)
+            this.moreReceivedInvoice = false;
+
+          console.log("createInvoiceRows");
+          console.log(this.receivedInvoices);
+          this.createInvoiceRows(this.receivedInvoices);
+          this.receivedIndexes = receivedInvoice.length;
+        } else if(this.SELECTED_INVOICE_TYPE == 'issued'){
+          // IssuedInvoice
+          let issuedInvoice = await getFiscalModelsInvoinces(this.SELECTED_FILTER);
+          this.issuedInvoices = issuedInvoice;
+
+          if (issuedInvoice && issuedInvoice.length > 0) {
+            let toolbar = this.getElement(this.TOOLBAR);
+            toolbar.addButton2End(ACTION.DOWNLOAD_EXCEL_INVOICE, () =>
+              this.downloadInvoiceExcel()
+            );
+          }
+
+          if (!this.issuedInvoices || this.issuedInvoices.length < 50)
+            this.moreIssuedInvoice = false;
+
+          this.createInvoiceRows(this.issuedInvoices);
+          this.issuedIndexes = issuedInvoice.length;
+        }
+      } else if (this.type == "future") {
+        if(this.SELECTED_INVOICE_TYPE == 'received'){
+          // ReceivedInvoice
+          let receivedInvoice = await getEstimationModelsFiscalInvoinces(this.SELECTED_FILTER);
+          this.receivedInvoices = receivedInvoice;
+
+          if (receivedInvoice && receivedInvoice.length > 0) {
+            let toolbar = this.getElement(this.TOOLBAR);
+            toolbar.addButton2End(ACTION.DOWNLOAD_EXCEL_INVOICE, () =>
+              this.downloadInvoiceExcel()
+            );
+          }
+
+          this.createInvoiceRows(this.receivedInvoices);
+          this.receivedIndexes = receivedInvoice.length;
+        } else if(this.SELECTED_INVOICE_TYPE == 'issued'){
+          // IssuedInvoice
+          let issuedInvoice = await getEstimationModelsFiscalInvoinces(this.SELECTED_FILTER);
+          this.issuedInvoices = issuedInvoice;
+
+          if (issuedInvoice && issuedInvoice.length > 0) {
+            let toolbar = this.getElement(this.TOOLBAR);
+            toolbar.addButton2End(ACTION.DOWNLOAD_EXCEL_INVOICE, () =>
+              this.downloadInvoiceExcel()
+            );
+          }
+
+          this.createInvoiceRows(this.issuedInvoices);
+          this.issuedIndexes = issuedInvoice.length;
+        }
+      }
+    } else if(this.SELECTED_TYPE === 'salary'){
+      if (this.type == "tax") {
+        // Salaies
+        let salaries = await getFiscalModelsSalaries(this.SELECTED_FILTER);
+        this.salaries = salaries;
+        if (!this.salaries || this.salaries.length < 100) this.moreSalary = false;
+        this.createSalaryRows(salaries);
+      } else if (this.type == "future") {
+        // Salaries
+        let salaries = await getEstimationModelsFiscalSalaries(this.SELECTED_FILTER);
+        this.salaries = salaries;
+        if (!this.salaries || this.salaries.length < 100) this.moreSalary = false;
+        this.createSalaryRows(salaries);
+      }
+    }
+  }
+
+  async updateCountFilter(){
+    console.log("--- updateCountFilter ---");
+    console.log(this.SELECTED_FILTER);
+    
+    if(this.SELECTED_TYPE === 'invoice'){
+      if (this.type == "tax") {
+        if(this.SELECTED_INVOICE_TYPE == 'received'){
+          // ReceivedInvoice
+          let recievedInvoiceCount = await getFiscalModelsInvoincesCount(this.SELECTED_FILTER);
+          if(recievedInvoiceCount){
+            let aonReceivedInvoiceTab = this.getElement("aonReceivedInvoiceTab");
+            aonReceivedInvoiceTab.innerHTML =  `F. Recibidas (${recievedInvoiceCount.count || 0})`;
+          }
+        } else if(this.SELECTED_INVOICE_TYPE == 'issued'){
+          // IssuedInvoice
+          let issuedInvoiceCount = await getFiscalModelsInvoincesCount(this.SELECTED_FILTER);
+          if(issuedInvoiceCount){
+            let aonIssuedInvoiceTab = this.getElement("aonIssuedInvoiceTab");
+            aonIssuedInvoiceTab.innerHTML = `F. Emitidas (${issuedInvoiceCount.count || 0})`;
+          }
+        }
+      } else if (this.type == "future") {
+        if(this.SELECTED_INVOICE_TYPE == 'received'){
+          // ReceivedInvoice
+          let recievedInvoiceCount = await getEstimationModelsFiscalInvoincesCount(this.SELECTED_FILTER);
+          if(recievedInvoiceCount){
+            let aonReceivedInvoiceTab = this.getElement("aonReceivedInvoiceTab");
+            aonReceivedInvoiceTab.innerHTML = `F. Recibidas (${recievedInvoiceCount.count || 0})`;
+          }
+        } else if(this.SELECTED_INVOICE_TYPE == 'issued'){
+          // IssuedInvoice
+          let issuedInvoiceCount = await getEstimationModelsFiscalInvoincesCount(this.SELECTED_FILTER);
+          if(issuedInvoiceCount){
+            let aonIssuedInvoiceTab = this.getElement("aonIssuedInvoiceTab");
+            console.log(aonIssuedInvoiceTab);
+            aonIssuedInvoiceTab.innerHTML = `F. Emitidas (${issuedInvoiceCount.count || 0})`;
+          }
+        }
+      }
+    } else if(this.SELECTED_TYPE === 'salary'){
+      if (this.type == "tax") {
+        // Salaies
+        let salaryCount = await getFiscalModelsSalariesCount(this.SELECTED_FILTER);
+        if(salaryCount){
+          let aonSalaryTab = this.getElement("aonSalaryTab");
+          aonSalaryTab.innerHTML =  `Nóminas (${salaryCount.count || 0})`;
+        }
+      } else if (this.type == "future") {
+        // Salaries
+        let salaryCount = await getEstimationModelsFiscalSalariesCount(this.SELECTED_FILTER);
+        if(salaryCount){
+          let aonSalaryTab = this.getElement("aonSalaryTab");
+          aonSalaryTab.innerHTML =  `Nóminas (${salaryCount.count || 0})`;
+        }
+      }
+    }
   }
 
   back() {
@@ -207,75 +470,69 @@ export class AonTaxDetail extends AonElement {
       this.filterReceivedInvoice = {
         fsModel: this.tax.id,
         invoiceType: "received",
+        limit: 50,
         page: 0,
       };
       this.filterIssuedInvoice = {
         fsModel: this.tax.id,
         invoiceType: "issued",
+        limit: 50,
         page: 0,
       };
-      this.filterSalary = { fsModel: this.tax.id, page: 0 };
+      this.filterSalary = { fsModel: this.tax.id, limit: 50, page: 0 };
 
       // ReceivedInvoice
-      let receivedInvoice = await getFiscalModelsInvoinces(
-        this.filterReceivedInvoice
-      );
-
-      this.receivedInvoices = receivedInvoice;
-      if (!this.receivedInvoices || this.receivedInvoices.length < 100)
-        this.moreReceivedInvoice = false;
-
-      if (this.receivedInvoices && this.receivedInvoices.length > 0) {
-        let recievedInvoiceCount = await getFiscalModelsInvoincesCount(
-          this.filterReceivedInvoice
-        );
+      let recievedInvoiceCount = await getFiscalModelsInvoincesCount(this.filterReceivedInvoice);
+      if(recievedInvoiceCount && recievedInvoiceCount.count !== 0){
+        this.receivedInvoicesCount = recievedInvoiceCount.count;
         aonTab.addOption({
           id: "aonReceivedInvoiceTab",
           title: `F. Recibidas (${recievedInvoiceCount.count})`,
-          fn: () => this.createReceivedInvoiceTable(),
+          fn: () => {
+            this.resetSearchFilter();
+            this.updateCountFilter();
+            this.createReceivedInvoiceTable();
+          },
         });
       }
 
       // IssuedInvoice
-      let issuedInvoice = await getFiscalModelsInvoinces(
-        this.filterIssuedInvoice
-      );
-
-      this.issuedInvoices = issuedInvoice;
-      if (!this.issuedInvoices || this.issuedInvoices.length < 100)
-        this.moreIssuedInvoice = false;
-
-      if (this.issuedInvoices && this.issuedInvoices.length > 0) {
-        let issuedInvoiceCount = await getFiscalModelsInvoincesCount(
-          this.filterIssuedInvoice
-        );
+      let issuedInvoiceCount = await getFiscalModelsInvoincesCount(this.filterIssuedInvoice);
+      if(issuedInvoiceCount && issuedInvoiceCount.count !== 0){
+        this.issuedInvoicesCount = issuedInvoiceCount.count;
         aonTab.addOption({
           id: "aonIssuedInvoiceTab",
           title: `F. Emitidas (${issuedInvoiceCount.count})`,
-          fn: () => this.createIssuedInvoiceTable(),
+          fn: () => {
+            this.resetSearchFilter();
+            this.updateCountFilter();
+            this.createIssuedInvoiceTable();
+          }
         });
       }
 
       // Salaies
-      let salaries = await getFiscalModelsSalaries(this.filterSalary);
-
-      this.salaries = salaries;
-      if (!this.salaries || this.salaries.length < 100) this.moreSalary = false;
-
-      if (this.salaries && this.salaries.length > 0) {
-        let salaryCount = await getFiscalModelsSalariesCount(this.filterSalary);
+      let salaryCount = await getFiscalModelsSalariesCount(this.filterSalary);
+      if(salaryCount && salaryCount.count !== 0){
+        this.salariesCount = salaryCount.count;
         aonTab.addOption({
           id: "aonSalaryTab",
           title: `Nóminas (${salaryCount.count})`,
-          fn: () => this.createSalaryTable(),
+          fn: () => {
+            this.resetSearchFilter();
+            this.updateCountFilter();
+            this.createSalaryPayrollTable();
+          }
         });
       }
+      
     } else if (this.type == "future") {
       this.filterReceivedInvoice = {
         year: this.tax.year,
         period: this.tax.period,
         type: this.getTypeByDescription(this.tax.description),
         invoiceType: "received",
+        limit: 50,
         page: 0,
       };
 
@@ -284,6 +541,7 @@ export class AonTaxDetail extends AonElement {
         period: this.tax.period,
         type: this.getTypeByDescription(this.tax.description),
         invoiceType: "issued",
+        limit: 50,
         page: 0,
       };
 
@@ -291,110 +549,93 @@ export class AonTaxDetail extends AonElement {
         year: this.tax.year,
         period: this.tax.period,
         type: this.getTypeByDescription(this.tax.description),
+        limit: 50,
         page: 0,
       };
 
       // ReceivedInvoice
-      let receivedInvoice = await getEstimationModelsFiscalInvoinces(
-        this.filterReceivedInvoice
-      );
-
-      this.receivedInvoices = receivedInvoice;
-
-      if (this.receivedInvoices && this.receivedInvoices.length > 0) {
-        let recievedInvoiceCount =
-          await getEstimationModelsFiscalInvoincesCount(
-            this.filterReceivedInvoice
-          );
+      let recievedInvoiceCount = await getEstimationModelsFiscalInvoincesCount(this.filterReceivedInvoice);
+      if(recievedInvoiceCount && recievedInvoiceCount.count && recievedInvoiceCount.count !== 0){
+        this.receivedInvoicesCount = recievedInvoiceCount.count;
         aonTab.addOption({
-          id: "aonInvoiceTab",
+          id: "aonReceivedInvoiceTab",
           title: `F. Recibidas (${recievedInvoiceCount.count})`,
-          fn: () => this.createReceivedInvoiceTable(),
+          fn: () => {
+            this.resetSearchFilter();
+            this.updateCountFilter();
+            this.createReceivedInvoiceTable();
+          }
         });
       }
-
+        
       // IssuedInvoice
-      let issuedInvoice = await getEstimationModelsFiscalInvoinces(
-        this.filterIssuedInvoice
-      );
-
-      this.issuedInvoices = issuedInvoice;
-
-      if (this.issuedInvoices && this.issuedInvoices.length > 0) {
-        let issuedInvoiceCount = await getEstimationModelsFiscalInvoincesCount(
-          this.filterIssuedInvoice
-        );
+      let issuedInvoiceCount = await getEstimationModelsFiscalInvoincesCount(this.filterIssuedInvoice);
+      if(issuedInvoiceCount && issuedInvoiceCount.count && issuedInvoiceCount.count !== 0){
+        this.issuedInvoicesCount = issuedInvoiceCount.count;
         aonTab.addOption({
-          id: "aonInvoiceTab",
+          id: "aonIssuedInvoiceTab",
           title: `F. Emitidas (${issuedInvoiceCount.count})`,
-          fn: () => this.createIssuedInvoiceTable(),
+          fn: () => {
+            this.resetSearchFilter();
+            this.updateCountFilter();
+            this.createIssuedInvoiceTable();
+          }
         });
       }
-
+     
       // Salaries
-      let salaries = await getEstimationModelsFiscalSalaries(this.filterSalary);
-
-      this.salaries = salaries;
-      if (!this.salaries || this.salaries.length < 100) this.moreSalary = false;
-
-      if (this.salaries && this.salaries.length > 0) {
-        let salaryCount = await getEstimationModelsFiscalSalariesCount(
-          this.filterSalary
-        );
+      let salaryCount = await getEstimationModelsFiscalSalariesCount(this.filterSalary);
+      if(salaryCount && salaryCount.count && salaryCount.count !== 0){
+        this.salariesCount = salaryCount.count;
         aonTab.addOption({
           id: "aonSalaryTab",
           title: `Nóminas (${salaryCount.count})`,
-          fn: () => this.createSalaryTable(),
+          fn: () => {
+            this.resetSearchFilter();
+            this.updateCountFilter();
+            this.createSalaryPayrollTable();
+          }
         });
       }
     }
 
-    console.log("init AonTaxDetail");
-    console.log("this.receivedInvoices");
-    console.log(this.receivedInvoices);
-    console.log("this.issuedInvoices");
-    console.log(this.issuedInvoices);
-    console.log("this.salaries");
-    console.log(this.salaries);
-
-    if (this.receivedInvoices && this.receivedInvoices.length > 0)
+    if (this.receivedInvoicesCount > 0)
       this.createReceivedInvoiceTable();
-    else if (this.issuedInvoices && this.issuedInvoices.length > 0)
+    else if (this.issuedInvoicesCount > 0)
       this.createIssuedInvoiceTable();
-    else if (this.salaries && this.salaries.length > 0)
-      this.createSalaryTable();
+    else if (this.salariesCount > 0)
+      this.createSalaryPayrollTable();
 
     this.getApplication().stopLoader();
   }
 
-  createReceivedInvoiceTable() {
+  async createReceivedInvoiceTable() {
+    this.getApplication().startLoader();
+
     this.SELECTED_FILTER = this.filterReceivedInvoice;
     this.SELECTED_TABLE = this.RECEIVED_INVOICE_TABLE;
     this.SELECTED_INVOICE_TYPE = 'received';
     this.SELECTED_TYPE = 'invoice';
 
-    this.createInvoiceTable(this.receivedInvoices);
+    await this.createInvoiceTable();
+    this.getApplication().stopLoader();
   }
 
-  createIssuedInvoiceTable() {
+  async createIssuedInvoiceTable() {
+    this.getApplication().startLoader();
+
     this.SELECTED_FILTER = this.filterIssuedInvoice;
     this.SELECTED_TABLE = this.ISSUED_INVOICE_TABLE;
     this.SELECTED_INVOICE_TYPE = 'issued';
     this.SELECTED_TYPE = 'invoice';
 
-    this.createInvoiceTable(this.issuedInvoices);
+    await this.createInvoiceTable();
+    this.getApplication().stopLoader();
   }
 
-  createInvoiceTable(invoices) {
+  async createInvoiceTable() {
     this.removeInvoiceActions();
     this.hideFile();
-
-    if (invoices && invoices.length > 0) {
-      let toolbar = this.getElement(this.TOOLBAR);
-      toolbar.addButton2End(ACTION.DOWNLOAD_EXCEL_INVOICE, () =>
-        this.downloadInvoiceExcel()
-      );
-    }
 
     let content = this.getElement(this.CONTENT);
     this.clearElement(content);
@@ -411,6 +652,8 @@ export class AonTaxDetail extends AonElement {
     invoiceTable.addColumn(MSG.HOLDER, "string", "name", "auto");
     invoiceTable.addColumn(MSG.BASE, "number", "baseParse", "100px");
     invoiceTable.addColumn("IVA", "number", "vatParse", "100px");
+    invoiceTable.addColumn("IRPF", "number", "irpfParse", "100px");
+    invoiceTable.addColumn("Exento", "number", "exemptParse", "100px");
     invoiceTable.addColumn(MSG.AMOUNT, "number", "totalParse", "100px");
     invoiceTable.addColumn("", "icons", "icons", "5%");
 
@@ -434,27 +677,17 @@ export class AonTaxDetail extends AonElement {
       this.getApplication().stopLoader();
     });
     
-    this.createInvoiceRows(invoices);
-
-    if(this.SELECTED_INVOICE_TYPE === 'received'){
-      this.receivedIndexes = invoices.length;
-    } else if(this.SELECTED_INVOICE_TYPE === 'issued'){
-      this.issuedIndexes = invoices.length;
-    }
+    await this.loadTable();
   }
 
   async loadMoreReceivedInvoice() {
-    this.filterReceivedInvoice.page = this.filterReceivedInvoice.page + 1;
+    this.SELECTED_FILTER.page = this.SELECTED_FILTER.page + 1;
 
     let receivedInvoices;
     if (this.type == "tax") {
-      receivedInvoices = await getFiscalModelsInvoinces(
-        this.filterReceivedInvoice
-      );
+      receivedInvoices = await getFiscalModelsInvoinces(this.SELECTED_FILTER);
     } else if (this.type == "future") {
-      receivedInvoices = await getEstimationModelsFiscalInvoinces(
-        this.filterReceivedInvoice
-      );
+      receivedInvoices = await getEstimationModelsFiscalInvoinces(this.SELECTED_FILTER);
     }
 
     if (!receivedInvoices || receivedInvoices.length == 0) {
@@ -470,15 +703,13 @@ export class AonTaxDetail extends AonElement {
   }
 
   async loadMoreIssuedInvoice() {
-    this.filterIssuedInvoice.page = this.filterIssuedInvoice.page + 1;
+    this.SELECTED_FILTER.page = this.SELECTED_FILTER.page + 1;
 
     let issuedInvoices;
     if (this.type == "tax") {
-      issuedInvoices = await getFiscalModelsInvoinces(this.filterIssuedInvoice);
+      issuedInvoices = await getFiscalModelsInvoinces(this.SELECTED_FILTER);
     } else if (this.type == "future") {
-      issuedInvoices = await getEstimationModelsFiscalInvoinces(
-        this.filterIssuedInvoice
-      );
+      issuedInvoices = await getEstimationModelsFiscalInvoinces(this.SELECTED_FILTER);
     }
 
     if (!issuedInvoices || issuedInvoices.length == 0) {
@@ -526,9 +757,45 @@ export class AonTaxDetail extends AonElement {
           "/" +
           year.toString();
         invoice.documentNumber = getDocumentNumber(invoice);
-        invoice.baseParse = formatNumber(invoice.taxableBase, 2, "EUR");
-        invoice.vatParse = formatNumber(invoice.vatQuota, 2, "EUR");
+       
+        // Base & VAT & IRFP
+        if(invoice.details){
+          let { taxableBase, vatQuota } = invoice.details.filter(detail => detail.percentage || detail.withholding_percentage).reduce((totals, detail) => {
+            totals.taxableBase += detail.amount || 0;
+            totals.vatQuota += detail.quota || 0;
+            return totals;
+          }, { taxableBase: 0, vatQuota: 0 });
+          invoice.baseParse = formatNumber(taxableBase, 2, "EUR");
+          invoice.vatParse = formatNumber(vatQuota, 2, "EUR");
+        } else {
+          invoice.baseParse = formatNumber(invoice.taxableBase, 2, "EUR");
+          invoice.vatParse = formatNumber(invoice.vatQuota, 2, "EUR");
+        }
+
+        // IRPF
+        if(invoice.details){
+          let { withholdingQuota } = invoice.details.filter(detail => detail.percentage || detail.withholding_percentage).reduce((totals, detail) => {
+            totals.withholdingQuota += detail.withholding_quota || 0;
+            return totals;
+          }, { withholdingQuota: 0});
+          invoice.irpfParse = formatNumber(withholdingQuota, 2, "EUR");
+        } else {
+          invoice.irpfParse = formatNumber(0, 2, "EUR");
+        }
+
+        // Exempt
+        if(invoice.details){
+          let { exemptQuota } = invoice.details.filter(detail => !detail.percentage && !detail.withholding_percentage).reduce((totals, detail) => {
+            totals.exemptQuota += detail.amount || 0;
+            return totals;
+          }, { exemptQuota: 0});
+          invoice.exemptParse = formatNumber(exemptQuota, 2, "EUR");
+        } else {
+          invoice.exemptParse = formatNumber(0, 2, "EUR");
+        }
+
         invoice.totalParse = formatNumber(invoice.total, 2, "EUR");
+
        
         let icons = [];
         let icon = {
@@ -553,12 +820,20 @@ export class AonTaxDetail extends AonElement {
     }
   }
 
-  createSalaryTable() {
+  async createSalaryPayrollTable() {
+    this.getApplication().startLoader();
+
     this.SELECTED_FILTER = this.filterSalary;
     this.SELECTED_TABLE = this.SALARY_TABLE;
     this.SELECTED_INVOICE_TYPE = undefined;
     this.SELECTED_TYPE = 'salary';
-    
+
+    await this.createSalaryTable();
+
+    this.getApplication().stopLoader();
+  }
+
+  async createSalaryTable() {
     this.removeInvoiceActions();
     this.removeInvoiceExcelAction();
     this.hideFile();
@@ -587,17 +862,17 @@ export class AonTaxDetail extends AonElement {
       }
     });
 
-    this.createSalaryRows(this.salaries);
+    await this.loadTable();
   }
 
   async loadMoreSalary() {
-    this.filterSalary.page = this.filterSalary.page + 1;
+    this.SELECTED_FILTER.page = this.SELECTED_FILTER.page + 1;
 
     let salaries;
     if (this.type == "tax") {
-      salaries = await getFiscalModelsSalaries(this.filterSalary);
+      salaries = await getFiscalModelsSalaries(this.SELECTED_FILTER);
     } else if (this.type == "future") {
-      salaries = await getEstimationModelsFiscalSalaries(this.filterSalary);
+      salaries = await getEstimationModelsFiscalSalaries(this.SELECTED_FILTER);
     }
 
     if (!salaries || salaries.length == 0) this.moreSalary = false;
@@ -702,6 +977,14 @@ export class AonTaxDetail extends AonElement {
       viewer.type = this.SELECTED_TYPE === "invoice" ? this.getInvoiceViewerType(file) : "application/pdf";
       viewer.file = this.SELECTED_TYPE === "invoice" ? this.getInvoiceViewerFile(file, json) : `ms/api/salary_exporter/salary?json=${btoa(JSON.stringify(json))}`;
       viewer.width = fileDiv.offsetWidth;
+
+      /*
+      console.log("--- aonTaxDetail ---");
+      console.log(file);
+			console.log(json);
+			console.log(viewer.type);
+			console.log(viewer.file);
+      */
       /*
       viewer.addEventListener(EVENT.SEND_MAIL, () => this.sendInvoice());
 			viewer.addEventListener(EVENT.PRINT_IMAGE, () => { getInvofoxTextContent(this.getInvoice().insight.invofoxId).then(t => viewer.printImageTextLayer(t)); } );
