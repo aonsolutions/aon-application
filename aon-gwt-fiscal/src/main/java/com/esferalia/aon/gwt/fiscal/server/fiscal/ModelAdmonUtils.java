@@ -1039,6 +1039,11 @@ public class ModelAdmonUtils {
 					return idenvio;
 				} else {
 					// codigo <> 0 indica que la operación ha generado algun error
+
+					// Si el mensaje está vacio, le asignamos el body de la response para que muestre algo del posible error
+					if (AonStringUtils.isEmpty(mensaje))
+						mensaje = new String(response.body());
+					
 					if (aeatParams.getSelected() == null)
 						ModelAdmonUtils.giveExceptionBack(resp, mensaje);
 					else 

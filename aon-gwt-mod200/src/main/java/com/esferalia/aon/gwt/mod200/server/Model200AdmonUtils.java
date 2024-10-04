@@ -64,6 +64,7 @@ import com.esferalia.aon.occam.api.model.type.Period;
 import com.esferalia.aon.occam.mod200.api.MODEL200;
 import com.esferalia.aon.occam.mod200.api.MODEL2002022;
 import com.esferalia.aon.occam.mod200.api.MODEL2002023;
+import com.esferalia.aon.occam.mod200.api.model.Mod200;
 import com.esferalia.aon.occam.mod200.api.model.mod200_2022.Mod2002022;
 import com.esferalia.aon.occam.mod200.api.model.mod200_2023.Mod2002023;
 import com.esferalia.aon.occam.mod200.server.format.mod200_2022.Mod2002022Writer;
@@ -557,66 +558,16 @@ public class Model200AdmonUtils {
 	}
 	
 	// PRESENTACION MULTIPLE DE MODELOS DESDE LA MATRIZ
-//	public static void sendFromMatrixMod200(HttpServletResponse resp, AEATParams aeatParams, ArrayList<ArrayList<String>> erroresGlobal) {
-//		
-////		// DENTRO DE AEATPARAMS ESTARA EL ARRAY CON LOS MODELOS SELECCIONADOS MXXX_ID
-////		// RECORRER EL ARRAY, PARA CADA ELEMENTO EXTRAER EL MODELO Y EL ID
-////		// SEGUN EL MODELO LEER EL MODELO CON EL ID LLAMANDO AL GET CORRESPONDIENTE
-////		// UNA VEZ QUE TENEMOS EL MODELO, LLAMAR A SEND CON EL MODELO O A SENDTGVIONLINE SI ES INFORMATIVA (180, 190, ...)
-////		// CONTROLAR EN SEND COMO SE ARMAN LAS RESPUESTAS PUES EN ESTE CASO SE DEVOLVERA UNA PAGINA CON TODOS LOS 
-////		//   ERRORES DE TODAS LAS DECLARACIONES, POR ESO ANTES DE CADA DECLARACION HAY QUE PONER EL DNI Y EL 
-////		//   NOMBRE DE LA DECLARACION
-////		// A LA VUELTA SE MOSTRARA LA WEB CON LOS RESULTADOS Y SE REFRESCARA LA PANTALLA
-//		
-//		// Errores de todos los modelos
-//		//ArrayList<ArrayList<String>> erroresGlobal = new ArrayList<>();
-//		
-//		for (String s : aeatParams.getSelected()) {
-//			String name = s.split("_")[0];
-//			FiscalModelType modelType = null;
-//			if (AonStringUtils.isNotBlank(name)) {
-//				for (FiscalModelType t : FiscalModelType.values()) {
-//					if (AonStringUtils.equals(name, t.name()))
-//						modelType = t;
-//				}				
-//				
-//				int idModel = AonNumberUtils.toint(s.split("_")[1]);
-//				
-//				if (modelType != null && idModel != 0 && modelType == FiscalModelType.M200) {
-//					aeatParams.setMod(idModel);
-//					//IFiscalModel model = getModel(aeatParams, modelType);
-//					Occam occam = new Occam()
-//							.setDomainName(aeatParams.getDomainName())
-//							.setDomain(aeatParams.getDomainId())
-//							.setUser(aeatParams.getUser());
-//					IFiscalModel model = MODEL200.getMod200(occam, ModelAdmonUtils.getFiscalModelId(aeatParams));
-//				    if (model != null) {
-//				    	aeatParams.setErrores(new ArrayList<>());
-//				    	aeatParams.getErrores().add(model.getModel() + " - " + model.getYear() + " - " + model.getDocument() + " - " + model.getFullName());				    	
-//					    aeatParams.setNrc(model.getNrc());
-//					    
-//					    send(resp, aeatParams, model);
-//						
-//				    	erroresGlobal.add(aeatParams.getErrores());				    	
-//				    }
-//				}
-//			}
-//		}
-//		
-//		giveMultipleResult(resp, erroresGlobal);
-//		
-//	}
-	
 	public static void sendFromMatrix(HttpServletResponse resp, AEATParams aeatParams) {
 		
-//		// DENTRO DE AEATPARAMS ESTARA EL ARRAY CON LOS MODELOS SELECCIONADOS MXXX_ID
-//		// RECORRER EL ARRAY, PARA CADA ELEMENTO EXTRAER EL MODELO Y EL ID
-//		// SEGUN EL MODELO LEER EL MODELO CON EL ID LLAMANDO AL GET CORRESPONDIENTE
-//		// UNA VEZ QUE TENEMOS EL MODELO, LLAMAR A SEND CON EL MODELO O A SENDTGVIONLINE SI ES INFORMATIVA (180, 190, ...)
-//		// CONTROLAR EN SEND COMO SE ARMAN LAS RESPUESTAS PUES EN ESTE CASO SE DEVOLVERA UNA PAGINA CON TODOS LOS 
-//		//   ERRORES DE TODAS LAS DECLARACIONES, POR ESO ANTES DE CADA DECLARACION HAY QUE PONER EL DNI Y EL 
-//		//   NOMBRE DE LA DECLARACION
-//		// A LA VUELTA SE MOSTRARA LA WEB CON LOS RESULTADOS Y SE REFRESCARA LA PANTALLA
+		// DENTRO DE AEATPARAMS ESTARA EL ARRAY CON LOS MODELOS SELECCIONADOS MXXX_ID
+		// RECORRER EL ARRAY, PARA CADA ELEMENTO EXTRAER EL MODELO Y EL ID
+		// SEGUN EL MODELO LEER EL MODELO CON EL ID LLAMANDO AL GET CORRESPONDIENTE
+		// UNA VEZ QUE TENEMOS EL MODELO, LLAMAR A SEND CON EL MODELO O A SENDTGVIONLINE SI ES INFORMATIVA (180, 190, ...)
+		// CONTROLAR EN SEND COMO SE ARMAN LAS RESPUESTAS PUES EN ESTE CASO SE DEVOLVERA UNA PAGINA CON TODOS LOS 
+		//   ERRORES DE TODAS LAS DECLARACIONES, POR ESO ANTES DE CADA DECLARACION HAY QUE PONER EL DNI Y EL 
+		//   NOMBRE DE LA DECLARACION
+		// A LA VUELTA SE MOSTRARA LA WEB CON LOS RESULTADOS Y SE REFRESCARA LA PANTALLA
 		
 		// Errores de todos los modelos
 		ArrayList<ArrayList<String>> erroresGlobal = new ArrayList<>();
@@ -643,7 +594,7 @@ public class Model200AdmonUtils {
 					    	aeatParams.setNrc(model.getNrc());
 					    	send(resp, aeatParams, model);
 				    	}
-						if (modelType.isInformative() && modelType != FiscalModelType.M390) {
+				    	else if (modelType.isInformative() && modelType != FiscalModelType.M390) {
 							ModelAdmonUtils.sendOnlineTGVI(resp, aeatParams, model);
 						} else {
 					    	aeatParams.setNrc(model.getNrc());
@@ -670,8 +621,17 @@ public class Model200AdmonUtils {
 		IFiscalModel model = null;
 		
 		if (modelType == FiscalModelType.M200) {
-			model = MODEL200.getMod200(occam, ModelAdmonUtils.getFiscalModelId(aeatParams));	
+			// La presentación múltiple del Modelo 200, solo se puede hacer a partir del 2022, que es cuando se introduce el estado en el modelo 200
+			Mod200 m200 = MODEL200.getMod200(occam, ModelAdmonUtils.getFiscalModelId(aeatParams));
+			if (m200 != null) {
+				if (m200.getYear() == 2023) {
+					model = MODEL2002023.getMod2002023ById(occam, m200.getId());
+				} else if (m200.getYear() == 2022) {
+					model = MODEL2002022.getMod2002022ById(occam, m200.getId());
+				}
+			}
 		} else {
+			// Resto de modelos
 			model = ModelAdmonUtils.getModel(aeatParams, modelType);
 		}
 		

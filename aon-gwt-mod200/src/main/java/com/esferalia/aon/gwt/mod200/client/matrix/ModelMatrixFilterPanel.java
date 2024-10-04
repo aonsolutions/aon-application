@@ -402,7 +402,7 @@ class ModelMatrixFilterPanel extends AonDisplayTable implements HasValueChangeHa
 					options.getConfiguration().getDomain().getId(),
 					options.getConfiguration().getUser().getLogin());
 			
-			// Pedir Certificado 
+			// Pedir Certificado (se usa el que está en aon-gwt-fiscal)
 			AonCertificationPopupParams params = new AonCertificationPopupParams()
 					.setDocument(options.getConfiguration().fiscal().getCertificateDocument())
 					.setName(options.getConfiguration().fiscal().getCertificateName())

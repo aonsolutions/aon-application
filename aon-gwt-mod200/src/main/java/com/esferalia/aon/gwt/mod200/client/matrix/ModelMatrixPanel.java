@@ -58,9 +58,7 @@ public class ModelMatrixPanel extends FlowPanel {
 	private static final String FIXED = "fixed";
 	
 	private static final String[] MONTHS = new String[]{"ENE","FEB","MAR","ABR","MAY","JUN","JUL","AGO","SEP","OCT","NOV","DIC"};
-	// FALTA - INDICAR TAMBIEN 1P,2P Y 3P
 	private static final String[] QUARS = new String[]{"1\u00BA TRIM","2\u00BA TRIM","3\u00BA TRIM","4\u00BA TRIM"};
-//	private static final String[] QUARS = new String[]{"1T/1P","2T","3T/2P","4T/3P"};
 	
 	private FiscalMatrixParams params;
 	private AonSearchPanelButton refreshButton;
@@ -357,9 +355,7 @@ public class ModelMatrixPanel extends FlowPanel {
 		cell.addStyleName( AON.CSS.aonBorderBottom() );
 		cell.addStyleName( AON.CSS.aonTextCenter() );
 		cell.getElement().getStyle().setBackgroundColor(FiscalModelUtils.getStatusBckColorRGB( FiscalStatus.MISSING ));
-		// FALTA - QUE NO APAREZCA EL MODELO 202 DEL 2T
 		if (params.getStatus() == null && params.getPeriod() == null) {
-		//if (params.getStatus() == null && params.getPeriod() == null && !(model.getModel()==FiscalModelType.M202 && model.getPeriod() == Period.T2) ) {
 			AonTableButton addButton = new AonTableButton(AON.MSG.newAction(), AON.CSS.aonIconAdd());
 			cell.add(addButton);		
 			addButton.addClickHandler(event -> model.getModel().visit(new MatrixNewModelVisitor(options.getConfiguration(),model
@@ -585,8 +581,7 @@ public class ModelMatrixPanel extends FlowPanel {
 	}
 	
 	private void addOnePeriodCells(AonDisplayTableRow row) {		
-		// FALTA - AHORA CON EL MODELO 200 QUE ES ANUAL, TAMBIEN APARECE EL RESULTADO ... 
-		//if (params.getPeriod() != Period.YEAR) {
+		// AHORA CON EL MODELO 200 QUE ES ANUAL, TAMBIEN APARECE EL RESULTADO ... 
 		if (params.getPeriod() != Period.YEAR || (params.getModel() == null || params.getModel() == FiscalModelType.M200)) {
 			row.addCell(new InlineLabel( AON.MSG.result() ), AON.CSS.aonBorderBottom(), AON.CSS.aonTextCenter(), AON.CSS.aonWidth80() )
 			   .addCell(new InlineLabel( AON.MSG.declarationType() ), AON.CSS.aonBorderBottom(), AON.CSS.aonTextCenter(), AON.CSS.aonWidth170())
