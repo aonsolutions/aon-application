@@ -292,7 +292,7 @@ export class AonTaxDetail extends AonElement {
             );
           }
 
-          if (!this.receivedInvoices || this.receivedInvoices.length < 50)
+          if (!this.receivedInvoices || this.receivedInvoices.length < 25)
             this.moreReceivedInvoice = false;
 
           console.log("createInvoiceRows");
@@ -311,7 +311,7 @@ export class AonTaxDetail extends AonElement {
             );
           }
 
-          if (!this.issuedInvoices || this.issuedInvoices.length < 50)
+          if (!this.issuedInvoices || this.issuedInvoices.length < 25)
             this.moreIssuedInvoice = false;
 
           this.createInvoiceRows(this.issuedInvoices);
@@ -470,16 +470,16 @@ export class AonTaxDetail extends AonElement {
       this.filterReceivedInvoice = {
         fsModel: this.tax.id,
         invoiceType: "received",
-        limit: 50,
+        limit: 25,
         page: 0,
       };
       this.filterIssuedInvoice = {
         fsModel: this.tax.id,
         invoiceType: "issued",
-        limit: 50,
+        limit: 25,
         page: 0,
       };
-      this.filterSalary = { fsModel: this.tax.id, limit: 50, page: 0 };
+      this.filterSalary = { fsModel: this.tax.id, limit: 25, page: 0 };
 
       // ReceivedInvoice
       let recievedInvoiceCount = await getFiscalModelsInvoincesCount(this.filterReceivedInvoice);
@@ -532,7 +532,7 @@ export class AonTaxDetail extends AonElement {
         period: this.tax.period,
         type: this.getTypeByDescription(this.tax.description),
         invoiceType: "received",
-        limit: 50,
+        limit: 25,
         page: 0,
       };
 
@@ -541,7 +541,7 @@ export class AonTaxDetail extends AonElement {
         period: this.tax.period,
         type: this.getTypeByDescription(this.tax.description),
         invoiceType: "issued",
-        limit: 50,
+        limit: 25,
         page: 0,
       };
 
@@ -549,7 +549,7 @@ export class AonTaxDetail extends AonElement {
         year: this.tax.year,
         period: this.tax.period,
         type: this.getTypeByDescription(this.tax.description),
-        limit: 50,
+        limit: 25,
         page: 0,
       };
 
@@ -600,11 +600,11 @@ export class AonTaxDetail extends AonElement {
     }
 
     if (this.receivedInvoicesCount > 0)
-      this.createReceivedInvoiceTable();
+      await this.createReceivedInvoiceTable();
     else if (this.issuedInvoicesCount > 0)
-      this.createIssuedInvoiceTable();
+      await this.createIssuedInvoiceTable();
     else if (this.salariesCount > 0)
-      this.createSalaryPayrollTable();
+      await this.createSalaryPayrollTable();
 
     this.getApplication().stopLoader();
   }
