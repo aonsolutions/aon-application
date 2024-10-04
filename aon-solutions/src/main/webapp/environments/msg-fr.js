@@ -142,6 +142,7 @@ export const DISCARDED = 'Descartadas';
 export const DOCUMENT = 'Documento';
 export const DOCUMENTS = 'Documentos';
 export const DOCUMENTARY = 'Documentaire';
+export const DOCUMENTAL_FILE = 'Dossier Documentaire';
 export const DOMAIN_SEARCH = "Búsqueda de dominio";
 export const DOWNLOAD = 'Descargar';
 export const DOWNLOAD_FILE = 'Descargar Fichero';
@@ -235,8 +236,8 @@ export const INVOICES = 'Facture';
 export const IRPF = 'IRPF';
 export const IS_REQUIRED = 'es obligatorio';
 export const IS_NOT_VALID_EMAIL = 'no es un email válido';
-export const ISSUED = 'Emitida';
-export const ISSUEDS = 'Emitidas';
+export const ISSUED = 'Émis';
+export const ISSUEDS = 'Émis';
 
 // ----- J
 
@@ -287,7 +288,7 @@ export const NEW_COMPANY = 'Nueva Empresa';
 export const NEW_DOCUMENT = 'Nuevo Documento';
 export const NEW_EMPLOYEE = 'Nuevo Empleado';
 export const NEW_EXPENSE = 'Nuevo Gasto';
-export const NEW_INVOICE = 'Nueva Factura';
+export const NEW_INVOICE = 'Nouvelle Facture';
 export const NEW_ISSUED_INVOICE = 'Nueva Factura Emitida';
 export const NEW_PRODUCT = 'Nuevo Producto';
 export const NEW_RECEIVED_INVOICE = 'Nueva Factura Recibida';
@@ -361,8 +362,8 @@ export const QUOTA = 'Cuota';
 // ----- R
 
 export const RADIO = "Radio";
-export const RECEIVED = 'Recibida';
-export const RECEIVEDS = 'Recibidas';
+export const RECEIVED = 'Reçue';
+export const RECEIVEDS = 'Reçus';
 export const RECENTS = 'Recientes';
 export const RECENTLY_OPENED = "Récemment ouvert";
 export const RECORD = 'Contabilizar';
@@ -428,6 +429,7 @@ export const SUPPLIED = 'Suplidos';
 export const SUPPLIER = 'Proveedor';
 export const SUPPLIERS = 'Proveedores';
 export const SUPPORT = 'Support';
+export const SUPPORTING_DOCUMENTS = 'Pièces Justificatives';
 export const SURCHARGE = 'Recargo';
 export const SURNAME = 'Apellidos';
 export const SYSTEM_MESSAGES = 'Mensajes del Sistema';
@@ -472,6 +474,7 @@ export const UPDATED_CONTRACT = "El contrato se ha modificado correctamente";
 export const UPLOAD = 'Subir';
 export const UPLOAD_FILE = 'Subir Fichero';
 export const UPLOAD_INVOICE = 'Subir Factura';
+export const UPLOAD_DOCUMENT = 'Télécharger un document';
 export const USER = 'Utilisateur';
 export const USER_DATA = 'Datos del Usuario';
 export const USER_MANAGEMENT = 'Gestión de Usuarios';

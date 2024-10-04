@@ -1107,15 +1107,15 @@ export class AonNewMenu extends AonElement {
 				name: MSG.NEW_INVOICE,
 				options : [
 					{
-						name: 'Emitidas',
+						name: MSG.ISSUEDS,
 						icon: MATERIAL_ICONS.UNARCHIVE,
 						fn: () => this.newInvoice('emitida')
 					}, {
-						name: 'Recibidas',
+						name: MSG.RECEIVEDS,
 						icon: MATERIAL_ICONS.ARCHIVE,
 						fn: () => this.newInvoice('recibida')
 					}, {
-						name: 'Tickets/Justificantes',
+						name: MSG.TICKETS+"/"+MSG.SUPPORTING_DOCUMENTS,
 						icon: MATERIAL_ICONS.RECEIPT,
 						fn: () => this.newInvoice('ticket')
 					}
@@ -1126,10 +1126,10 @@ export class AonNewMenu extends AonElement {
 			newMenuOptions.push({
 				fn: () => {},
 				icon: 'post_add',
-				name: "Subir Documento",
+				name: MSG.UPLOAD_DOCUMENT,
 				options: [
 					{
-						name: "Archivo Documental",
+						name: MSG.DOCUMENTAL_FILE,
 						icon: MATERIAL_ICONS.CLOUD_UPLOAD,
 						fn: () => {
 							let input = this.createElement(TAG.INPUT);

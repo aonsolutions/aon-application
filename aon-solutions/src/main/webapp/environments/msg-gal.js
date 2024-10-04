@@ -140,6 +140,7 @@ export const DEUTSCH = 'Alemán';
 export const DOCUMENT = 'Documento';
 export const DOCUMENTS = 'Documentos';
 export const DOCUMENTARY = 'Documental';
+export const DOCUMENTAL_FILE = 'Ficha Documental';
 export const DOMAIN_SEARCH = 'Procura de dominio';
 export const DOWNLOAD = 'Descargar';
 export const DOWNLOAD_FILE = 'Descargar Ficheiro';
@@ -232,8 +233,8 @@ export const INVOICES = 'Factures';
 export const IRPF = 'IRPF';
 export const IS_REQUIRED = 'é obrigatorio';
 export const IS_NOT_VALID_EMAIL = 'non é un correo electrónico válido';
-export const ISSUED = 'Emitida';
-export const ISSUEDS = 'Emitidas';
+export const ISSUED = 'Emitido';
+export const ISSUEDS = 'Emitido';
 
 
 // ----- J
@@ -423,6 +424,7 @@ export const SUPPLIED = 'Suplidos';
 export const SUPPLIER = 'Provedor';
 export const SUPPLIERS = 'Provedores';
 export const SUPPORT = 'Soporte';
+export const SUPPORTING_DOCUMENTS = 'Documentos Xustificativos';
 export const SURCHARGE = 'Recargo';
 export const SURNAME = 'Apelidos';
 export const SYSTEM_MESSAGES = 'Mesaxes do Sistema';
@@ -467,6 +469,7 @@ export const UPDATED_CONTRACT = 'El contrato se ha modificado correctamente';
 export const UPLOAD = 'Subir';
 export const UPLOAD_FILE = 'Subir Ficheiro';
 export const UPLOAD_INVOICE = 'Subir Factura';
+export const UPLOAD_DOCUMENT = 'Cargar Documento';
 export const USER = 'Usuario';
 export const USER_DATA = 'Datos do Usuario';
 export const USER_MANAGEMENT = 'Xestión de Usuarios';
