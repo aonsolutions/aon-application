@@ -139,6 +139,7 @@ export const DEUTSCH = 'Deuthsch';
 export const DOCUMENT = 'Dokument';
 export const DOCUMENTS = 'Documents';
 export const DOCUMENTARY = 'Documentary';
+export const DOCUMENTAL_FILE = 'Dokumentdatei';
 export const DOMAIN_SEARCH = 'Domänensuche';
 export const DOWNLOAD = 'Download';
 export const DOWNLOAD_FILE = 'Download File';
@@ -231,8 +232,8 @@ export const INVOICES = 'Rechnungen';
 export const IRPF = 'IRPF';
 export const IS_REQUIRED = 'ist erforderlich';
 export const IS_NOT_VALID_EMAIL = 'ist keine gültige email';
-export const ISSUED = 'Issued';
-export const ISSUEDS = 'Issued';
+export const ISSUED = 'Ausgegeben';
+export const ISSUEDS = 'Ausgegeben';
 
 // ----- J
 
@@ -354,8 +355,8 @@ export const QUOTA = 'Quota';
 // ----- R
 
 export const RADIO = "Radio";
-export const RECEIVED = 'Received';
-export const RECEIVEDS = 'Received';
+export const RECEIVED = 'Erhalten';
+export const RECEIVEDS = 'Erhält';
 export const RECENTS = 'Recents';
 export const RECENTLY_OPENED = "Vor kurzem eröffnet";
 export const RECORD = 'Record';
@@ -421,6 +422,7 @@ export const SUPPLIED = 'Supplied';
 export const SUPPLIER = 'Supplier';
 export const SUPPLIERS = 'Suppliers';
 export const SUPPORT = 'Support';
+export const SUPPORTING_DOCUMENTS = 'Belege';
 export const SURCHARGE = 'Surcharge';
 export const SURNAME = 'Surname';
 export const SYSTEM_MESSAGES = 'System Messages';
@@ -465,6 +467,7 @@ export const UPDATED_CONTRACT = "The contract has been modified successfully";
 export const UPLOAD = 'Hochladen';
 export const UPLOAD_FILE = 'Datei hochladen';
 export const UPLOAD_INVOICE = 'Rechnung Hochladen';
+export const UPLOAD_DOCUMENT = 'Dokument Hochladen';
 export const USER = 'Nutzername';
 export const USER_DATA = 'User Data';
 export const USER_MANAGEMENT = 'User Management';
