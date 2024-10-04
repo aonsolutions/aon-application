@@ -8,6 +8,7 @@ import static com.esferalia.aon.jooq.tables.Iae.IAE;
 import static com.esferalia.aon.jooq.tables.Invoice.INVOICE;
 import static com.esferalia.aon.jooq.tables.InvoiceDetail.INVOICE_DETAIL;
 import static com.esferalia.aon.jooq.tables.InvoiceTax.INVOICE_TAX;
+import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
 import static com.esferalia.aon.jooq.tables.Salary.SALARY;
 import static com.esferalia.aon.jooq.tables.Workplace.WORKPLACE;
 import static com.esferalia.aon.jooq.tables.ContractData.CONTRACT_DATA;
@@ -42,6 +43,7 @@ import com.esferalia.aon.occam.api.model.fiscal.IRPFParamsOrderBy;
 import com.esferalia.aon.occam.api.model.fiscal.ISalaryFiscalModel;
 import com.esferalia.aon.occam.api.model.fiscal.IrpfBreakdown;
 import com.esferalia.aon.occam.api.model.fiscal.IrpfSummary;
+import com.esferalia.aon.occam.api.model.invoice.InvoiceFilter;
 import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.occam.api.model.type.DocumentType;
 import com.esferalia.aon.occam.api.model.type.IRPFRegime;
@@ -56,6 +58,7 @@ import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.server.AonObjectUtils;
 import com.esferalia.aon.watson.util.AonEnumUtils;
 import com.esferalia.aon.watson.util.AonMathUtils;
+import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class IRPFDAO {
 	
@@ -210,14 +213,16 @@ public class IRPFDAO {
 		return stream;
 	}
 	
-	public static Stream<IrpfBreakdown> getInvoicesIrpfBreakdown(final AONContext ctx, IRPFParams params, List<Byte> invoiceTypes, Integer offset) {
+	public static Stream<IrpfBreakdown> getInvoicesIrpfBreakdown(final AONContext ctx, IRPFParams params, InvoiceFilter invoiceFilter) {
+		Condition condition = parseCondition(ctx, invoiceFilter);
+		
 		Stream<IrpfBreakdown> stream = getInvoiceIrpBreakdownSelect(ctx)
 				.where(IRPF_PROPERTIES.getConditions(p -> getIRPFFilter(p, params)))
 				.and(INVOICE_TAX.TAX_TYPE.equal(TaxType.RETENTION.value()))
-				.and(INVOICE.TYPE.in(invoiceTypes))
+				.and(condition)
 				.orderBy( getOrderBy(params) )
-				.limit(100)
-				.offset(offset)
+				.limit(invoiceFilter.getPerPage())
+				.offset(invoiceFilter.getPage())
 				.fetch()
 				.stream()
 				.map( new IrpfInvoiceBreakdownFiller() ); 
@@ -236,6 +241,30 @@ public class IRPFDAO {
 				;
 		}
 		return stream;
+	}
+	
+	private static Condition parseCondition(AONContext ctx, InvoiceFilter invoiceFilter) {
+		Condition condition = INVOICE.DOMAIN.eq(ctx.getDomainId());
+		
+		if(null != invoiceFilter.getTypesByte())
+			condition = condition.and(INVOICE.TYPE.in(invoiceFilter.getTypesByte()));
+		
+		if(null != invoiceFilter.getFrom())
+			condition = condition.and(INVOICE.ISSUE_DATE.ge(AonDateUtils.toSql(invoiceFilter.getFrom())));
+		
+		if(null != invoiceFilter.getTo())
+			condition = condition.and(INVOICE.ISSUE_DATE.le(AonDateUtils.toSql(invoiceFilter.getTo())));
+		
+		if(AonStringUtils.isNotBlank(invoiceFilter.getDescription())) {
+			condition = condition.and(
+					INVOICE.REFERENCE_CODE.like("%" + invoiceFilter.getDescription() + "%")
+					.or(INVOICE.RNAME.like("%" + invoiceFilter.getDescription() + "%"))
+					.or(INVOICE.SERIES.like("%" + invoiceFilter.getDescription() + "%"))
+					.or(INVOICE.RDOCUMENT.like("%" + invoiceFilter.getDescription() + "%"))
+			);
+		}
+		
+		return condition;
 	}
 	
 	public static Stream<IrpfBreakdown> getOutputInvoicesIrpfBreakdown(final AONContext ctx, final FiscalModel fm) {
@@ -386,6 +415,7 @@ public class IRPFDAO {
 				,CONTRACT_DATA.EXPRESSION)
 			.from(SALARY)
 			.join(CONTRACT).on(SALARY.CONTRACT.equal(CONTRACT.ID))
+			.join(REGISTRY).on(REGISTRY.ID.equal(CONTRACT.PERSON))
 			.join(WORKPLACE).on(CONTRACT.WORKPLACE.equal(WORKPLACE.ID))
 			.leftJoin(CONTRACT_DATA).on(SALARY.CONTRACT.equal(CONTRACT_DATA.CONTRACT).and(CONTRACT_DATA.NAME.equal("IRPF_TYPE")));
 	}
@@ -395,6 +425,7 @@ public class IRPFDAO {
 			.selectCount()
 			.from(SALARY)
 			.join(CONTRACT).on(SALARY.CONTRACT.equal(CONTRACT.ID))
+			.join(REGISTRY).on(REGISTRY.ID.equal(CONTRACT.PERSON))
 			.join(WORKPLACE).on(CONTRACT.WORKPLACE.equal(WORKPLACE.ID))
 			.leftJoin(CONTRACT_DATA).on(SALARY.CONTRACT.equal(CONTRACT_DATA.CONTRACT).and(CONTRACT_DATA.NAME.equal("IRPF_TYPE")));
 	}
@@ -468,7 +499,7 @@ public class IRPFDAO {
 			.flatMap(List::stream);
 	}
 	
-	public static Stream<IrpfBreakdown> getNotInModelSalaryIrpfBreakdown(final AONContext ctx, final ISalaryFiscalModel fm, Integer offset) {
+	public static Stream<IrpfBreakdown> getNotInModelSalaryIrpfBreakdown(final AONContext ctx, final ISalaryFiscalModel fm, InvoiceFilter invoiceFilter) {
 		Table<Record1<Integer>> modelSalary = ctx.getDslContext().select( ALCATRAZ_SALARY_ID )
 			.from(ALCATRAZ)
 			.join(FS_MODEL).on(FS_MODEL.ID.equal(ALCATRAZ.FS_MODEL))
@@ -478,24 +509,49 @@ public class IRPFDAO {
 			.and(FS_MODEL.MODEL.eq(fm.getModel().getValue()))
 			.asTable("modelSalary")
 		;
+		
+		Condition condition = parseSalaryCondition(ctx, invoiceFilter);
+		
 		return getSalaryIrpfBreakdownSelect(ctx)
 			 .leftAntiJoin(modelSalary).on(ALCATRAZ_SALARY_ID.equal(SALARY.ID))
 			.where(SALARY.DOMAIN.equal(fm.getDomain()))
-				.and(getSalaryDateField(fm).between(getStartDate(fm),getEndDate(fm)))
-				.and(SALARY.IRPF_BASE.ne( 0.0 ))
-				.and(WORKPLACE.ECONOMICAGREEMENT.equal(fm.getAdministration().value()))
-				.and(SALARY.TYPE.in(SalaryType.IRPF_SALARIES )) // Skip SLD ( L00, L13... )
-				.and(CONTRACT_DATA.EXPRESSION.isNull().or(CONTRACT_DATA.EXPRESSION.ne("\"3\"")))  // No tener en cuenta los no residentes
+			.and(getSalaryDateField(fm).between(getStartDate(fm),getEndDate(fm)))
+			.and(SALARY.IRPF_BASE.ne( 0.0 ))
+			.and(WORKPLACE.ECONOMICAGREEMENT.equal(fm.getAdministration().value()))
+			.and(SALARY.TYPE.in(SalaryType.IRPF_SALARIES )) // Skip SLD ( L00, L13... )
+			.and(CONTRACT_DATA.EXPRESSION.isNull().or(CONTRACT_DATA.EXPRESSION.ne("\"3\"")))  // No tener en cuenta los no residentes
+			.and(condition)
 			.orderBy(getSalaryDateField(fm),SALARY.ID,SALARY.EMPLOYEE_DOCUMENT)
-			.limit(100)
-			.offset(offset)
+			.limit(invoiceFilter.getPerPage())
+			.offset(invoiceFilter.getPage())
 			.fetch()
 			.stream()
 			.map(rec -> new IrpfSalaryBreakdownFiller().apply(rec) )
 			.flatMap(List::stream);
 	}
 	
-	public static Integer getNotInModelSalaryIrpfBreakdownCount(final AONContext ctx, final ISalaryFiscalModel fm) {
+	private static Condition parseSalaryCondition(AONContext ctx, InvoiceFilter invoiceFilter) {
+		Condition condition = SALARY.DOMAIN.eq(ctx.getDomainId());
+		
+		if(null != invoiceFilter.getFrom())
+			condition = condition.and(SALARY.ISSUE_DATE.ge(AonDateUtils.toSql(invoiceFilter.getFrom())));
+		
+		if(null != invoiceFilter.getTo())
+			condition = condition.and(SALARY.ISSUE_DATE.le(AonDateUtils.toSql(invoiceFilter.getTo())));
+		
+		if(AonStringUtils.isNotBlank(invoiceFilter.getDescription())) {
+			condition = condition.and(
+					SALARY.EMPLOYEE_NAME.like("%" + invoiceFilter.getDescription() + "%")
+					.or(SALARY.EMPLOYEE_DOCUMENT.like("%" + invoiceFilter.getDescription() + "%"))
+					.or(REGISTRY.NAME.like("%" + invoiceFilter.getDescription() + "%"))
+					.or(REGISTRY.DOCUMENT.like("%" + invoiceFilter.getDescription() + "%"))
+			);
+		}
+		
+		return condition;
+	}
+	
+	public static Integer getNotInModelSalaryIrpfBreakdownCount(final AONContext ctx, final ISalaryFiscalModel fm, InvoiceFilter invoiceFilter) {
 		Table<Record1<Integer>> modelSalary = ctx.getDslContext().select( ALCATRAZ_SALARY_ID )
 			.from(ALCATRAZ)
 			.join(FS_MODEL).on(FS_MODEL.ID.equal(ALCATRAZ.FS_MODEL))
@@ -505,6 +561,9 @@ public class IRPFDAO {
 			.and(FS_MODEL.MODEL.eq(fm.getModel().getValue()))
 			.asTable("modelSalary")
 		;
+		
+		Condition condition = parseSalaryCondition(ctx, invoiceFilter);
+		
 		return getSalaryIrpfBreakdownCountSelect(ctx)
 			.leftAntiJoin(modelSalary).on(ALCATRAZ_SALARY_ID.equal(SALARY.ID))
 			.where(SALARY.DOMAIN.equal(fm.getDomain()))
@@ -514,6 +573,7 @@ public class IRPFDAO {
 			.and(SALARY.TYPE.in(SalaryType.IRPF_SALARIES )) // Skip SLD ( L00, L13... )
 			.and(SALARY.ID.isNotNull())
 			.and(CONTRACT_DATA.EXPRESSION.isNull().or(CONTRACT_DATA.EXPRESSION.ne("\"3\"")))  // No tener en cuenta los no residentes
+			.and(condition)
 			.orderBy(getSalaryDateField(fm),SALARY.ID,SALARY.EMPLOYEE_DOCUMENT)
 			.fetchOne()
 			.value1();
@@ -590,17 +650,10 @@ public class IRPFDAO {
 		return summary;
 	}
 	
-	public static IrpfSummary getIRPFSummary(AONContext ctx, IRPFParams params, List<Byte> invoiceTypes) {
+	public static IrpfSummary getIRPFSummary(AONContext ctx, IRPFParams params, InvoiceFilter invoiceFilter) {
 		IrpfSummary summary = new IrpfSummary();
 		params.setGroupedBy(null);
-		getInvoicesIrpfBreakdown(ctx, params, invoiceTypes, 0).forEach(summary::add);
-		return summary;
-	}
-	
-	public static IrpfSummary getIRPFSummary(AONContext ctx, IRPFParams params, List<Byte> invoiceTypes, Integer offset) {
-		IrpfSummary summary = new IrpfSummary();
-		params.setGroupedBy(null);
-		getInvoicesIrpfBreakdown(ctx, params, invoiceTypes, offset).forEach(summary::add);
+		getInvoicesIrpfBreakdown(ctx, params, invoiceFilter).forEach(summary::add);
 		return summary;
 	}
 	

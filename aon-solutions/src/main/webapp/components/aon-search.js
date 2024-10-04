@@ -160,6 +160,8 @@ export class AonSearch extends AonElement {
 				...this.getValues()
 			}
 		}));
+		
+		this.buildBadge();
 	}
 
 	buildBadge(){
