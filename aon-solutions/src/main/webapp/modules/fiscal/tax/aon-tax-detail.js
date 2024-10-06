@@ -242,7 +242,7 @@ export class AonTaxDetail extends AonElement {
       }.bind(this), 500); // Tiempo de espera (500 ms)
     };
     search.addEventListener(EVENT.SEARCH_NEW, searchFunc);
-    search.openSearch(false);
+    search.openSearch();
     search.querySelector("input").focus();
   }
 
