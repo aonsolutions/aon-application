@@ -179,7 +179,7 @@ public class VATDAO  {
 			.and(INVOICE.VAT_ACCRUAL_PAYMENT.equal( FALSE_BYTE ))	// No Criterio de Caja.
 			.and(INVOICE.ID.isNotNull())
 			.and(condition)
-			.orderBy( InvoiceDAO.getOrderedType(),INVOICE.SERIES,INVOICE.NUMBER )
+			.orderBy( INVOICE.ISSUE_DATE, INVOICE.REFERENCE_CODE, INVOICE.RNAME )
 			.limit(invoiceFilter.getPerPage())
 			.offset(invoiceFilter.getPage())
 			.fetch()
@@ -304,7 +304,7 @@ public class VATDAO  {
 			.and(INVOICE.VAT_ACCRUAL_PAYMENT.equal( TRUE_BYTE ))
 			.and(INVOICE.ID.isNotNull())
 			.and(condition)
-			.orderBy( InvoiceDAO.getOrderedType(),INVOICE.SERIES,INVOICE.NUMBER )
+			.orderBy( INVOICE.ISSUE_DATE, INVOICE.REFERENCE_CODE, INVOICE.RNAME )
 			.limit(invoiceFilter.getPerPage())
 			.offset(invoiceFilter.getPage())
 			.fetch()
