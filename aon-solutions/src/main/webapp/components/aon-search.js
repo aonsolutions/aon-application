@@ -215,7 +215,7 @@ export class AonSearch extends AonElement {
 		}
 	}
 
-	openSearch(underline = true){
+	openSearch(){
 		let span = this.getElement(this.SPAN);
 		let advancedButton = this.getElement(this.ADVANCED_BUTTON);
 		let input = this.getElement(this.SEARCH_INPUT);
@@ -230,7 +230,7 @@ export class AonSearch extends AonElement {
 			}
 			input.style.display = 'block';
 			advancedButton.style.display = 'block';
-			if(underline) span.style.borderBottom = '2px solid #002469';
+			span.style.borderBottom = '2px solid #002469';
 		}
 	}
 

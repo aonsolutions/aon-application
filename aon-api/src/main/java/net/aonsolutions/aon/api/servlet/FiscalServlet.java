@@ -299,7 +299,6 @@ public class FiscalServlet extends AonApiHttpServlet{
 			invoiceFilter.setPage(offset);
 			
 			List<Alcatraz> alcatrazList = AlcatrazDAO.getAlcatrazInvoicesByFsModel(ctx, fsModelId, invoiceFilter);
-			System.out.println("alcatrazList size : " + alcatrazList.size());
 			
 			// Invoices
 			LinkedHashSet<Integer> invoiceIds = alcatrazList.stream().map(Alcatraz::getInvoice).filter(Objects::nonNull).collect(Collectors.toCollection(LinkedHashSet::new));
@@ -637,11 +636,7 @@ public class FiscalServlet extends AonApiHttpServlet{
 			// IRPF PROFESIONAL
 			IrpfSummaryGroup professionalIRPFMap = irpfSummary.getMap().get(WithholdingTypeGroup.PROFESIONAL);
 			TreeMap<Double, IrpfSummaryPercent> professionalMap = null == professionalIRPFMap ? null : professionalIRPFMap.getMap().get(WithholdingType.PROFESSIONAL).getMap();
-			System.out.println("----------- PROFESIONAL");
-			Double professionalAmount = null == professionalMap ? 0.00 : professionalMap.values().stream().mapToDouble(irpfSummaryPercent -> {
-				System.out.println("Salaries : " + irpfSummaryPercent.getSalaries() + ", Invoices : " + irpfSummaryPercent.getInvoices() + ", Quota : " + irpfSummaryPercent.getInput().getQuota());
-				return irpfSummaryPercent.getInput().getQuota();
-			}).sum();
+			Double professionalAmount = null == professionalMap ? 0.00 : professionalMap.values().stream().mapToDouble(irpfSummaryPercent -> null == irpfSummaryPercent.getInput() ? 0.00 : irpfSummaryPercent.getInput().getQuota()).sum();
 			
 			JSONObject irpfProfessionalJson = new JSONObject();
 			irpfProfessionalJson.put("description", "IRPF Profesional");
@@ -651,11 +646,7 @@ public class FiscalServlet extends AonApiHttpServlet{
 			// IRPF ARRENDAMIENTO
 			IrpfSummaryGroup rentingIRPFlMap = irpfSummary.getMap().get(WithholdingTypeGroup.CAPITAL_INMOBILIARIO);
 			TreeMap<Double, IrpfSummaryPercent> rentinglMap = null == rentingIRPFlMap ? null : rentingIRPFlMap.getMap().get(WithholdingType.RENTING).getMap();
-			System.out.println("----------- ARRENDAMIENTO");
-			Double rentingAmount = null == rentinglMap ? 0.00 : rentinglMap.values().stream().mapToDouble(irpfSummaryPercent -> { 
-				System.out.println("Salaries : " + irpfSummaryPercent.getSalaries() + ", Invoices : " + irpfSummaryPercent.getInvoices() + ", Quota : " + irpfSummaryPercent.getInput().getQuota());
-				return irpfSummaryPercent.getInput().getQuota();
-			}).sum();
+			Double rentingAmount = null == rentinglMap ? 0.00 : rentinglMap.values().stream().mapToDouble(irpfSummaryPercent -> null == irpfSummaryPercent.getInput() ? 0.00 : irpfSummaryPercent.getInput().getQuota()).sum();
 			
 			JSONObject irpfRentingJson = new JSONObject();
 			irpfRentingJson.put("description", "IRPF Arrendamiento");
@@ -988,10 +979,8 @@ public class FiscalServlet extends AonApiHttpServlet{
 	
 		LinkedHashSet<Integer> invoicesIds = new LinkedHashSet<Integer>();
 		
-		invoicesIds.addAll(vatSummaryEstimation.map(vatSummary -> vatSummary.getInvoice()).filter(Objects::nonNull).collect(Collectors.toList()));
+		invoicesIds.addAll(vatSummaryEstimation.map(vatSummary ->vatSummary.getInvoice()).filter(Objects::nonNull).collect(Collectors.toList()));
 		List<Integer> invoiceIdsArr = new ArrayList<>(invoicesIds);
-		
-		System.out.println("invoicesIds size : " + invoicesIds.size());
 		
 		List<Invoice> invoices = new ArrayList<Invoice>();
 		invoices = AON.getFullInvoiceList(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), invoiceIdsArr);
@@ -1313,9 +1302,6 @@ public class FiscalServlet extends AonApiHttpServlet{
 		LinkedHashSet<Integer> profesionalInvoicesIds = new LinkedHashSet<>();
 		if(null != map)
 			map.values().stream().forEach(irpfSummaryPercent -> profesionalInvoicesIds.addAll( irpfSummaryPercent.getInvoices() ));
-		
-		System.out.println("getIRPFEstimationCount");
-		System.out.println(profesionalInvoicesIds);
 		
 		return profesionalInvoicesIds.size();
 	}

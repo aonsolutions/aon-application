@@ -11,7 +11,6 @@ import static com.esferalia.aon.jooq.tables.InvoiceDetail.INVOICE_DETAIL;
 import static com.esferalia.aon.jooq.tables.InvoiceDua.INVOICE_DUA;
 import static com.esferalia.aon.jooq.tables.InvoiceFiscal.INVOICE_FISCAL;
 import static com.esferalia.aon.jooq.tables.InvoiceTax.INVOICE_TAX;
-import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -144,6 +143,7 @@ public class VATDAO  {
 			;
 	}
 	
+	
 	private static SelectOnConditionStep<Record1<Integer>> getCommonCountSelect(AONContext ctx) {
 		return ctx.getDslContext()
 			.select(DSL.countDistinct(INVOICE.ID))
@@ -179,6 +179,7 @@ public class VATDAO  {
 			.and(INVOICE.VAT_ACCRUAL_PAYMENT.equal( FALSE_BYTE ))	// No Criterio de Caja.
 			.and(INVOICE.ID.isNotNull())
 			.and(condition)
+			.groupBy(INVOICE.ID)
 			.orderBy( INVOICE.ISSUE_DATE, INVOICE.REFERENCE_CODE, INVOICE.RNAME )
 			.limit(invoiceFilter.getPerPage())
 			.offset(invoiceFilter.getPage())
@@ -304,6 +305,7 @@ public class VATDAO  {
 			.and(INVOICE.VAT_ACCRUAL_PAYMENT.equal( TRUE_BYTE ))
 			.and(INVOICE.ID.isNotNull())
 			.and(condition)
+			.groupBy(INVOICE.ID)
 			.orderBy( INVOICE.ISSUE_DATE, INVOICE.REFERENCE_CODE, INVOICE.RNAME )
 			.limit(invoiceFilter.getPerPage())
 			.offset(invoiceFilter.getPage())
