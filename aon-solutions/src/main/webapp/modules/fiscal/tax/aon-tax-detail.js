@@ -50,7 +50,7 @@ import { AonTab } from "../../../components/aon-tab.js";
 import { AonFutureTax } from "./aon-future-tax.js";
 import { AonViewer } from "../../../components/aon-viewer.js";
 import * as LS from "../../../services/localStorageService.js";
-import { createList } from "../../../components/CreateComponent.js";
+import { createFetchingList } from "../../../components/CreateComponent.js";
 import { AonSearch } from "../../../components/aon-search.js";
 
 export class AonTaxDetail extends AonElement {
@@ -174,11 +174,11 @@ export class AonTaxDetail extends AonElement {
   }
 
   createSearch(){
-    let toolbar = this.getElement(this.TOOLBAR);
-    let toolSection = toolbar.getToolSection();
+    let toolSection = this.getElement("taxDetailToolbarHeaderTitleSection");
+
     let search = new AonSearch();
     search.id = 'taxDetailToolbarHeaderTitleSectionSearch';
-    toolSection.appendChild(search);
+    toolSection.insertBefore(search, toolSection.firstChild);
 
     const searchFn = (event) => this.dispatchEvent(new CustomEvent(EVENT.SEARCH,{detail: event.detail}));
     search.addEventListener(EVENT.SEARCH, searchFn);
@@ -242,6 +242,8 @@ export class AonTaxDetail extends AonElement {
       }.bind(this), 500); // Tiempo de espera (500 ms)
     };
     search.addEventListener(EVENT.SEARCH_NEW, searchFunc);
+    search.openSearch(false);
+    search.querySelector("input").focus();
   }
 
   resetSearchFilter(){
@@ -249,8 +251,11 @@ export class AonTaxDetail extends AonElement {
     if(this.SELECTED_TYPE === 'invoice'){
       this.receivedIndexes = 0;
       this.issuedIndexes = 0;
-    } else if(this.SELECTED_TYPE === 'salary'){
     }
+
+    this.moreSalary = true;
+    this.moreReceivedInvoice = true;
+    this.moreIssuedInvoice = true;
 
     let searchInput = this.getElement("taxDetailToolbarHeaderTitleSectionSearchSearchInput");
     searchInput.value = "";
@@ -292,7 +297,7 @@ export class AonTaxDetail extends AonElement {
             );
           }
 
-          if (!this.receivedInvoices || this.receivedInvoices.length < 50)
+          if (!this.receivedInvoices || this.receivedInvoices.length < 25)
             this.moreReceivedInvoice = false;
 
           console.log("createInvoiceRows");
@@ -311,7 +316,7 @@ export class AonTaxDetail extends AonElement {
             );
           }
 
-          if (!this.issuedInvoices || this.issuedInvoices.length < 50)
+          if (!this.issuedInvoices || this.issuedInvoices.length < 25)
             this.moreIssuedInvoice = false;
 
           this.createInvoiceRows(this.issuedInvoices);
@@ -470,16 +475,16 @@ export class AonTaxDetail extends AonElement {
       this.filterReceivedInvoice = {
         fsModel: this.tax.id,
         invoiceType: "received",
-        limit: 50,
+        limit: 25,
         page: 0,
       };
       this.filterIssuedInvoice = {
         fsModel: this.tax.id,
         invoiceType: "issued",
-        limit: 50,
+        limit: 25,
         page: 0,
       };
-      this.filterSalary = { fsModel: this.tax.id, limit: 50, page: 0 };
+      this.filterSalary = { fsModel: this.tax.id, limit: 25, page: 0 };
 
       // ReceivedInvoice
       let recievedInvoiceCount = await getFiscalModelsInvoincesCount(this.filterReceivedInvoice);
@@ -532,7 +537,7 @@ export class AonTaxDetail extends AonElement {
         period: this.tax.period,
         type: this.getTypeByDescription(this.tax.description),
         invoiceType: "received",
-        limit: 50,
+        limit: 25,
         page: 0,
       };
 
@@ -541,7 +546,7 @@ export class AonTaxDetail extends AonElement {
         period: this.tax.period,
         type: this.getTypeByDescription(this.tax.description),
         invoiceType: "issued",
-        limit: 50,
+        limit: 25,
         page: 0,
       };
 
@@ -549,7 +554,7 @@ export class AonTaxDetail extends AonElement {
         year: this.tax.year,
         period: this.tax.period,
         type: this.getTypeByDescription(this.tax.description),
-        limit: 50,
+        limit: 25,
         page: 0,
       };
 
@@ -599,18 +604,43 @@ export class AonTaxDetail extends AonElement {
       }
     }
 
-    if (this.receivedInvoicesCount > 0)
-      this.createReceivedInvoiceTable();
-    else if (this.issuedInvoicesCount > 0)
-      this.createIssuedInvoiceTable();
-    else if (this.salariesCount > 0)
-      this.createSalaryPayrollTable();
+    this.getApplication().stopLoader();
 
+    if (this.receivedInvoicesCount > 0)
+      await this.createReceivedInvoiceTable();
+    else if (this.issuedInvoicesCount > 0)
+      await this.createIssuedInvoiceTable();
+    else if (this.salariesCount > 0)
+      await this.createSalaryPayrollTable();
+
+  }
+
+  startLoader(){
+    let aonReceivedInvoiceTab = this.getElement("aonReceivedInvoiceTab");
+    let aonIssuedInvoiceTab = this.getElement("aonIssuedInvoiceTab");
+    let aonSalaryTab = this.getElement("aonSalaryTab");
+
+    if(aonReceivedInvoiceTab) aonReceivedInvoiceTab.classList.add('blocked');
+    if(aonIssuedInvoiceTab) aonIssuedInvoiceTab.classList.add('blocked');
+    if(aonSalaryTab) aonSalaryTab.classList.add('blocked');
+
+    this.getApplication().startLoader();
+  }
+
+  stopLoader(){
+    let aonReceivedInvoiceTab = this.getElement("aonReceivedInvoiceTab");
+    let aonIssuedInvoiceTab = this.getElement("aonIssuedInvoiceTab");
+    let aonSalaryTab = this.getElement("aonSalaryTab");
+
+    if(aonReceivedInvoiceTab) aonReceivedInvoiceTab.classList.remove('blocked');
+    if(aonIssuedInvoiceTab) aonIssuedInvoiceTab.classList.remove('blocked');
+    if(aonSalaryTab) aonSalaryTab.classList.remove('blocked');
+    
     this.getApplication().stopLoader();
   }
 
   async createReceivedInvoiceTable() {
-    this.getApplication().startLoader();
+    this.startLoader()
 
     this.SELECTED_FILTER = this.filterReceivedInvoice;
     this.SELECTED_TABLE = this.RECEIVED_INVOICE_TABLE;
@@ -618,11 +648,11 @@ export class AonTaxDetail extends AonElement {
     this.SELECTED_TYPE = 'invoice';
 
     await this.createInvoiceTable();
-    this.getApplication().stopLoader();
+    this.stopLoader()
   }
 
   async createIssuedInvoiceTable() {
-    this.getApplication().startLoader();
+    this.startLoader()
 
     this.SELECTED_FILTER = this.filterIssuedInvoice;
     this.SELECTED_TABLE = this.ISSUED_INVOICE_TABLE;
@@ -630,7 +660,7 @@ export class AonTaxDetail extends AonElement {
     this.SELECTED_TYPE = 'invoice';
 
     await this.createInvoiceTable();
-    this.getApplication().stopLoader();
+    this.stopLoader()
   }
 
   async createInvoiceTable() {
@@ -640,8 +670,9 @@ export class AonTaxDetail extends AonElement {
     let content = this.getElement(this.CONTENT);
     this.clearElement(content);
 
-    let invoiceTable = createList(this.SELECTED_TABLE);
+    let invoiceTable = createFetchingList(this.SELECTED_TABLE);
     invoiceTable.selectable = "true";
+    invoiceTable.selectedColor = true;
     content.appendChild(invoiceTable);
 
     let invoiceTableBody = invoiceTable.getElementsByTagName("tbody")[0];
@@ -654,7 +685,7 @@ export class AonTaxDetail extends AonElement {
     invoiceTable.addColumn("IVA", "number", "vatParse", "100px");
     invoiceTable.addColumn("IRPF", "number", "irpfParse", "100px");
     invoiceTable.addColumn("Exento", "number", "exemptParse", "100px");
-    invoiceTable.addColumn(MSG.AMOUNT, "number", "totalParse", "100px");
+    invoiceTable.addColumn(MSG.TOTAL, "number", "totalParse", "100px");
     invoiceTable.addColumn("", "icons", "icons", "5%");
 
     invoiceTable.addEventListener("select", () => {
@@ -666,7 +697,9 @@ export class AonTaxDetail extends AonElement {
     });
 
     invoiceTable.addEventListener("more", async () => {
-      this.getApplication().startLoader();
+      console.log("More EVENT");
+      
+      this.startLoader()
       
       if(this.SELECTED_INVOICE_TYPE === 'received' && this.moreReceivedInvoice){
         await this.loadMoreReceivedInvoice();
@@ -674,7 +707,9 @@ export class AonTaxDetail extends AonElement {
         await this.loadMoreIssuedInvoice();
       }
 
-      this.getApplication().stopLoader();
+      this.stopLoader()
+
+      invoiceTable.setFetchingData(false);
     });
     
     await this.loadTable();
@@ -765,6 +800,10 @@ export class AonTaxDetail extends AonElement {
             totals.vatQuota += detail.quota || 0;
             return totals;
           }, { taxableBase: 0, vatQuota: 0 });
+
+          if(taxableBase == 0) taxableBase = invoice.taxableBase;
+          if(vatQuota == 0) vatQuota = invoice.vatQuota;
+
           invoice.baseParse = formatNumber(taxableBase, 2, "EUR");
           invoice.vatParse = formatNumber(vatQuota, 2, "EUR");
         } else {
@@ -778,6 +817,9 @@ export class AonTaxDetail extends AonElement {
             totals.withholdingQuota += detail.withholding_quota || 0;
             return totals;
           }, { withholdingQuota: 0});
+
+          if(withholdingQuota == 0) withholdingQuota = invoice.retentionQuota;
+
           invoice.irpfParse = formatNumber(withholdingQuota, 2, "EUR");
         } else {
           invoice.irpfParse = formatNumber(0, 2, "EUR");
@@ -803,25 +845,28 @@ export class AonTaxDetail extends AonElement {
           title: MSG.SHOW_FILE,
           color: "var(--aonTaxBuildPrintRes)",
           fn: async () => {
-            this.getApplication().startLoader();
+            this.startLoader()
             await this.showFile(invoice, index);
-            this.getApplication().stopLoader();
+            this.stopLoader()
           },
         };
         icons.push(icon);
         invoice.icons = icons;
 
-        invoiceTable.addRow(invoice, async () => {
-          this.getApplication().startLoader();
+        let tr = invoiceTable.addRow(invoice, async () => {
+          this.startLoader()
           await this.showFile(invoice, index);
-          this.getApplication().stopLoader();
+          this.stopLoader()
         });
+
+        // Add count title to CheckBox
+        tr.firstChild.firstChild.title = `Seleccionar fila ${index + 1}`
       });
     }
   }
 
   async createSalaryPayrollTable() {
-    this.getApplication().startLoader();
+    this.startLoader()
 
     this.SELECTED_FILTER = this.filterSalary;
     this.SELECTED_TABLE = this.SALARY_TABLE;
@@ -830,7 +875,7 @@ export class AonTaxDetail extends AonElement {
 
     await this.createSalaryTable();
 
-    this.getApplication().stopLoader();
+    this.stopLoader()
   }
 
   async createSalaryTable() {
@@ -841,24 +886,25 @@ export class AonTaxDetail extends AonElement {
     let content = this.getElement(this.CONTENT);
     this.clearElement(content);
 
-    let aonSalaryDetailTable = createList(this.SALARY_TABLE);
+    let aonSalaryDetailTable = createFetchingList(this.SALARY_TABLE);
+    aonSalaryDetailTable.selectedColor = true;
     content.appendChild(aonSalaryDetailTable);
 
-    let aonSalaryDetailTableBody =
-      aonSalaryDetailTable.getElementsByTagName("tbody")[0];
+    let aonSalaryDetailTableBody =aonSalaryDetailTable.getElementsByTagName("tbody")[0];
     aonSalaryDetailTableBody.style.height = "calc(100vh - 240px)";
 
     aonSalaryDetailTable.addColumn(MSG.DATE, "date", "endDate", "120px");
     aonSalaryDetailTable.addColumn(MSG.EMPLOYEE, "string", "employeeName", "auto");
-    aonSalaryDetailTable.addColumn("Devengos", "number", "paymentParse", "100px");
+    aonSalaryDetailTable.addColumn("Bruto", "number", "paymentParse", "100px");
     aonSalaryDetailTable.addColumn("Deducciones", "number", "deductionParse", "100px");
-    aonSalaryDetailTable.addColumn(MSG.AMOUNT, "number", "totalParse", "100px");
+    aonSalaryDetailTable.addColumn("IRPF", "number", "irpfParse", "100px");
+    aonSalaryDetailTable.addColumn("Neto", "number", "totalParse", "100px");
     aonSalaryDetailTable.addColumn("", "icons", "icons", "5%");
     aonSalaryDetailTable.addEventListener("more", async () => {
       if (this.moreSalary) {
-        this.getApplication().startLoader();
+        this.startLoader()
         await this.loadMoreSalary();
-        this.getApplication().stopLoader();
+        this.stopLoader()
       }
     });
 
@@ -890,6 +936,7 @@ export class AonTaxDetail extends AonElement {
 
         salary.paymentParse = formatNumber(salary.totalPayment, 2, "EUR");
         salary.deductionParse = formatNumber(salary.totalDeduction, 2, "EUR");
+        salary.irpfParse =  formatNumber(salary.irpf, 2, "EUR");
         salary.totalParse = formatNumber(salary.totalLiquid, 2, "EUR");
 
         let icons = [];
@@ -898,18 +945,18 @@ export class AonTaxDetail extends AonElement {
           title: MSG.SHOW_FILE,
           color: "var(--aonTaxBuildPrintRes)",
           fn: async () => {
-            this.getApplication().startLoader();
+            this.startLoader()
             await this.showFile(salary, index);
-            this.getApplication().stopLoader();
+            this.stopLoader()
           },
         };
         icons.push(icon);
         salary.icons = icons;
 
         aonSalaryTable.addRow(salary, async () => {
-          this.getApplication().startLoader();
+          this.startLoader()
           await this.showFile(salary, index);
-          this.getApplication().stopLoader();
+          this.stopLoader()
         });
       });
     }
@@ -927,6 +974,9 @@ export class AonTaxDetail extends AonElement {
     if(this.SELECTED_TABLE){
       let visibilityButtons = this.querySelectorAll(`#${this.SELECTED_TABLE}Icon0`);
       visibilityButtons.forEach((visibilityButton, i) => visibilityButton.innerHTML = "visibility");
+
+      let table = this.getElement(this.SELECTED_TABLE);
+      if(table) table.addBackgroundTr();
     }
     
     fileDiv.style.display = "none";
@@ -934,7 +984,7 @@ export class AonTaxDetail extends AonElement {
   }
 
   async showFile(file, index) {
-    //this.getApplication().startLoader();
+    //this.startLoader()
 
     console.log("---- SHOW FILE -----");
     console.log(file);

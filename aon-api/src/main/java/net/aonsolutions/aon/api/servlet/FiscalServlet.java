@@ -26,7 +26,7 @@ import java.util.ArrayList;
 import java.util.Base64;
 import java.util.Comparator;
 import java.util.Date;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
@@ -299,15 +299,14 @@ public class FiscalServlet extends AonApiHttpServlet{
 			invoiceFilter.setPage(offset);
 			
 			List<Alcatraz> alcatrazList = AlcatrazDAO.getAlcatrazInvoicesByFsModel(ctx, fsModelId, invoiceFilter);
+			System.out.println("alcatrazList size : " + alcatrazList.size());
 			
 			// Invoices
-			HashSet<Integer> invoiceIds = alcatrazList.stream().map(Alcatraz::getInvoice).filter(Objects::nonNull).collect(Collectors.toCollection(HashSet::new));
+			LinkedHashSet<Integer> invoiceIds = alcatrazList.stream().map(Alcatraz::getInvoice).filter(Objects::nonNull).collect(Collectors.toCollection(LinkedHashSet::new));
 			List<Integer> invoiceIdsArr = new ArrayList<>(invoiceIds);
 			 
 			List<Invoice> invoices = new ArrayList<Invoice>();
 			invoices = AON.getFullInvoiceList(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), invoiceIdsArr);
-			
-			invoices.sort(Comparator.comparing(Invoice::getIssueDate).thenComparing(i -> i.getRegistryData().getName()));
 			
 			JSONArray invoicesArr = new JSONArray();
 			invoices.forEach(invoice -> {
@@ -395,7 +394,6 @@ public class FiscalServlet extends AonApiHttpServlet{
 		invoiceFilter.setPerPage(Integer.MAX_VALUE);
 		invoiceFilter.setPage(0);
 		
-		
 		Integer domainId = JsonUtils.getInteger(json, IJsonNames.DOMAIN_ID);
 		String domainName = JsonUtils.getString(json, IJsonNames.DOMAIN_NAME);
 		String login = JsonUtils.getString(json, IJsonNames.DOMAIN_LOGIN);
@@ -407,11 +405,12 @@ public class FiscalServlet extends AonApiHttpServlet{
 			
 			if(ids.isEmpty()) {
 				alcatrazList = AlcatrazDAO.getAlcatrazInvoicesByFsModel(ctx, fsModelId, invoiceFilter);
-				HashSet<Integer> invoiceIds = alcatrazList.stream().map(Alcatraz::getInvoice).filter(Objects::nonNull).collect(Collectors.toCollection(HashSet::new));
+				LinkedHashSet<Integer> invoiceIds = alcatrazList.stream().map(Alcatraz::getInvoice).filter(Objects::nonNull).collect(Collectors.toCollection(LinkedHashSet::new));
 				invoiceIds.forEach(invoiceId -> invoices.add( AON_SOLUTIONS.getInvoice(domainName, domainId, login, invoiceId) ) );
 				
 			} else {
-				ids.forEach(invoiceId -> invoices.add( AON_SOLUTIONS.getInvoice(domainName, domainId, login, invoiceId) ) );	
+				ids.forEach(invoiceId -> invoices.add( AON_SOLUTIONS.getInvoice(domainName, domainId, login, invoiceId) ) );
+				invoices.sort(Comparator.comparing(Invoice::getIssueDate).thenComparing(Invoice::getReferenceCode).thenComparing(Invoice::getRegistryName));
 			}
 			
 			// Invoices
@@ -444,13 +443,13 @@ public class FiscalServlet extends AonApiHttpServlet{
 			List<Alcatraz> alcatrazList = AlcatrazDAO.getAlcatrazSalariesByFsModel(ctx, fsModelId, invoiceFilter);
 			
 			// Salaries
-			HashSet<Integer> salaryIds = alcatrazList.stream().map(Alcatraz::getSalary).filter(Objects::nonNull).collect(Collectors.toCollection(HashSet::new));
+			LinkedHashSet<Integer> salaryIds = alcatrazList.stream().map(Alcatraz::getSalary).filter(Objects::nonNull).collect(Collectors.toCollection(LinkedHashSet::new));
 			
 			Integer[] salariesIdsArr = new Integer[salaryIds.size()];
 			salaryIds.toArray(salariesIdsArr); // fill the array
 			
 			Stream<Salary> salaries = AON.getSalaries(ctx, f -> f.getIdProperty().in(salariesIdsArr));
-			List<Salary> salariesList = salaries.toList();
+			List<Salary> salariesList = salaries.sorted(Comparator.comparing(Salary::getEndDate).thenComparing(Salary::getEmployeeName)).toList();
 			
 			JSONArray salariesArr = new JSONArray();
 			salariesList.forEach(salary -> salariesArr.put(toJSONSalaryInfo(salary)));
@@ -987,7 +986,7 @@ public class FiscalServlet extends AonApiHttpServlet{
 		accountingReportParams.setToDate(endDate);
 		Stream<VatContext> vatSummaryEstimation = VATDAO.getVatBreakdown(ctx, accountingReportParams, invoiceFilter);
 	
-		HashSet<Integer> invoicesIds = new HashSet<Integer>();
+		LinkedHashSet<Integer> invoicesIds = new LinkedHashSet<Integer>();
 		
 		invoicesIds.addAll(vatSummaryEstimation.map(vatSummary -> vatSummary.getInvoice()).filter(Objects::nonNull).collect(Collectors.toList()));
 		List<Integer> invoiceIdsArr = new ArrayList<>(invoicesIds);
@@ -1054,7 +1053,7 @@ public class FiscalServlet extends AonApiHttpServlet{
 			accountingReportParams.setToDate(endDate);
 			Stream<VatContext> vatSummaryEstimation = VATDAO.getVatBreakdown(ctx, accountingReportParams, invoiceFilter);
 		
-			HashSet<Integer> invoicesIds = new HashSet<Integer>();
+			LinkedHashSet<Integer> invoicesIds = new LinkedHashSet<Integer>();
 			invoicesIds.addAll(vatSummaryEstimation.map(vatSummary -> vatSummary.getInvoice()).filter(Objects::nonNull).collect(Collectors.toList()));
 			List<Integer> invoiceIdsArr = new ArrayList<>(invoicesIds);
 			
@@ -1063,6 +1062,7 @@ public class FiscalServlet extends AonApiHttpServlet{
 		} else {
 			List<Integer> invoiceIdsArr = new ArrayList<>(ids);
 			invoices = AON.getFullInvoiceList(ctx.getDomainName(), ctx.getDomainId(), ctx.getUser(), invoiceIdsArr);
+			invoices.sort(Comparator.comparing(Invoice::getIssueDate).thenComparing(Invoice::getReferenceCode).thenComparing(Invoice::getRegistryName));
 		}
 		
 		return invoices;
@@ -1120,13 +1120,13 @@ public class FiscalServlet extends AonApiHttpServlet{
 		
 		// IRPF SALARIES
 		Stream<IrpfBreakdown> irpfSalaries = IRPFDAO.getNotInModelSalaryIrpfBreakdown(ctx, salaryFiscalModel, invoiceFilter);
-		HashSet<Integer> salariesIds = irpfSalaries.map(irpfSalary -> irpfSalary.getSalary()).filter(Objects::nonNull).collect(Collectors.toCollection(HashSet::new));
+		LinkedHashSet<Integer> salariesIds = irpfSalaries.map(irpfSalary -> irpfSalary.getSalary()).filter(Objects::nonNull).collect(Collectors.toCollection(LinkedHashSet::new));
 		
 		Integer[] salariesIdsArr = new Integer[salariesIds.size()];
 		salariesIds.toArray(salariesIdsArr); // fill the array
 		
 		Stream<Salary> salaries = AON.getSalaries(ctx, f -> f.getIdProperty().in(salariesIdsArr));
-		List<Salary> salariesList = salaries.toList();
+		List<Salary> salariesList = salaries.sorted(Comparator.comparing(Salary::getEndDate).thenComparing(Salary::getEmployeeName)).toList();
 		
 		JSONArray salariesJsonArr = new JSONArray();
 		salariesList.forEach(salary -> salariesJsonArr.put(toJSONSalaryInfo(salary)));
@@ -1194,7 +1194,7 @@ public class FiscalServlet extends AonApiHttpServlet{
 		JSONArray invoicesArr = new JSONArray();
 		
 		if(null != map) {
-			HashSet<Integer> profesionalInvoicesIds = new HashSet<>();
+			LinkedHashSet<Integer> profesionalInvoicesIds = new LinkedHashSet<>();
 			map.values().stream().forEach(irpfSummaryPercent -> profesionalInvoicesIds.addAll( irpfSummaryPercent.getInvoices() ));
 			List<Integer> invoiceIdsArr = new ArrayList<>(profesionalInvoicesIds);
 			
@@ -1260,7 +1260,7 @@ public class FiscalServlet extends AonApiHttpServlet{
 			IrpfSummaryGroup irpfSummaryGroup = irpfSummary.getMap().get(withholdingTypeGroup);
 			TreeMap<Double, IrpfSummaryPercent> map = null == irpfSummaryGroup ? null : irpfSummaryGroup.getMap().get(withholdingType).getMap();
 			
-			HashSet<Integer> profesionalInvoicesIds = new HashSet<>();
+			LinkedHashSet<Integer> profesionalInvoicesIds = new LinkedHashSet<>();
 			map.values().stream().forEach(irpfSummaryPercent -> profesionalInvoicesIds.addAll( irpfSummaryPercent.getInvoices() ));
 			List<Integer> invoiceIdsArr = new ArrayList<>(profesionalInvoicesIds);
 			
@@ -1268,6 +1268,7 @@ public class FiscalServlet extends AonApiHttpServlet{
 		} else {
 			List<Integer> invoiceIdsArr = new ArrayList<>(ids);
 			invoices = AON.getFullInvoiceList(ctx.getDomainName(), ctx.getDomainId(), ctx.getUser(), invoiceIdsArr);
+			invoices.sort(Comparator.comparing(Invoice::getIssueDate).thenComparing(Invoice::getReferenceCode).thenComparing(Invoice::getRegistryName));
 		}
 		
 		return invoices;
@@ -1309,7 +1310,7 @@ public class FiscalServlet extends AonApiHttpServlet{
 		IrpfSummaryGroup irpfSummaryGroup = irpfSummary.getMap().get(withholdingTypeGroup);
 		TreeMap<Double, IrpfSummaryPercent> map = null == irpfSummaryGroup ? null : irpfSummaryGroup.getMap().get(withholdingType).getMap();
 		
-		HashSet<Integer> profesionalInvoicesIds = new HashSet<>();
+		LinkedHashSet<Integer> profesionalInvoicesIds = new LinkedHashSet<>();
 		if(null != map)
 			map.values().stream().forEach(irpfSummaryPercent -> profesionalInvoicesIds.addAll( irpfSummaryPercent.getInvoices() ));
 		
@@ -1327,6 +1328,7 @@ public class FiscalServlet extends AonApiHttpServlet{
 			.put("totalDeduction", salaryInfo.getTotalDeduction())
 			.put("totalLiquid", salaryInfo.getTotalLiquid())
 			.put("totalPayment", salaryInfo.getTotalPayment())
+			.put("irpf", salaryInfo.getTotalIrpf())
 			.put("type", salaryInfo.getSalaryType().name())
 			.put("startDate",  AonDateUtils.format( salaryInfo.getStartDate(), FORMAT_DATE))
 	        .put("endDate",  AonDateUtils.format( salaryInfo.getEndDate(), FORMAT_DATE));

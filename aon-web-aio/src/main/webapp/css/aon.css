@@ -4466,3 +4466,7 @@ font-weight: 600;
 	color: black;
 }
 
+.blocked {
+   pointer-events: none;  /* Deshabilita la interacción con el mouse */
+ }
+

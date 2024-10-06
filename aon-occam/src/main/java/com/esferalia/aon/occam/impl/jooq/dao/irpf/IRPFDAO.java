@@ -220,7 +220,7 @@ public class IRPFDAO {
 				.where(IRPF_PROPERTIES.getConditions(p -> getIRPFFilter(p, params)))
 				.and(INVOICE_TAX.TAX_TYPE.equal(TaxType.RETENTION.value()))
 				.and(condition)
-				.orderBy( getOrderBy(params) )
+				.orderBy( INVOICE.ISSUE_DATE, INVOICE.REFERENCE_CODE, INVOICE.RNAME )
 				.limit(invoiceFilter.getPerPage())
 				.offset(invoiceFilter.getPage())
 				.fetch()
