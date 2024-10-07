@@ -1,5 +1,5 @@
 import { AonElement } from 'aonsolutions/components/AonElement.js';
-import { Apps, HomeApps, MenuApps, AuxApps, DESKTOP_APPS, MENU_APPS, TOP_MENU_APPS, AON_APPS, NEW, HOME, AON_CLASSIC, APPS, APPLICATIONS } from '../services/app.js';
+import { Apps, HomeApps, MenuApps, AuxApps, DESKTOP_APPS, MENU_APPS, TOP_MENU_APPS, AON_APPS, NEW, HOME, AON_CLASSIC, APPS, APPLICATIONS, NEW_APPS } from '../services/app.js';
 import {COMMERCE, OFFICE, GARAGE, ACADEMY} from  "aonsolutions/services/app.js";
 import {ACCOUNTING_MENU, COMMERCIAL_MENU, GROUPWARE_MENU, MANAGEMENT_MENU, TREASURY_MENU, WAREHOUSE_MENU, FISCAL_MENU, PAYROLL_MENU, MARKETING_MENU, CONFIGURATION_MENU} from "../services/app.js"
 import { MSG, CONSTANT, AON_ICONS, CSS, EVENT, MATERIAL_ICONS, TAG } from 'aonsolutions/environments/environments.js';
@@ -164,6 +164,9 @@ export class AonNewMenu extends AonElement {
 
 		} else {
 			switch (app.app) {
+				case NEW_APPS:
+					this.rootPanel(new AonNewDesktop(portalApps, portalNoApps, suiteApps, suiteNoApps));
+					break;
 				case NEW.app:
 					this.showNewDialogMenu(this.getElement(app.app));
 					break;
@@ -718,10 +721,6 @@ export class AonNewMenu extends AonElement {
 		return false;
 	}
 	
-	
-	
-	
-
 	isCSSLoaded(cssFileName) {
 		for (let sheet of document.styleSheets) {
 			if (sheet.href && sheet.href.includes(cssFileName)) {
@@ -1107,41 +1106,20 @@ export class AonNewMenu extends AonElement {
 				name: MSG.NEW_INVOICE,
 				options : [
 					{
-						name: 'Emitidas',
+						name: MSG.ISSUEDS,
 						icon: MATERIAL_ICONS.UNARCHIVE,
 						fn: () => this.newInvoice('emitida')
 					}, {
-						name: 'Recibidas',
+						name: MSG.RECEIVEDS,
 						icon: MATERIAL_ICONS.ARCHIVE,
-						fn: () => this.newInvoice('recibida')
+						fn: () => this.newInvoice('recibida')					
 					}, {
-						name: 'Tickets/Justificantes',
+						name: MSG.TICKETS+"/"+MSG.SUPPORTING_DOCUMENTS,
 						icon: MATERIAL_ICONS.RECEIPT,
 						fn: () => this.newInvoice('ticket')
-					}
-				]
-			});
-		}
-		if(this.getDur().isDocumental()){
-			newMenuOptions.push({
-				fn: () => {},
-				icon: 'post_add',
-				name: "Subir Documento",
-				options: [
-					{
-						name: "Archivo Documental",
-						icon: MATERIAL_ICONS.CLOUD_UPLOAD,
-						fn: () => {
-							let input = this.createElement(TAG.INPUT);
-							input.type = CONSTANT.FILE;
-							input.accept = this.accept;
-							input.className = CSS.AON_NONE;
-							input.addEventListener(EVENT.CHANGE, ({target}) => uploadDocuments(input, target.files, this.getDur() ) );
-							input.click();
-							this.appSelection(Apps.DOCUMENTAL);
-						}
+						
 					}, {
-						name: "Factura",
+						name: MSG.UPLOAD_INVOICE,
 						icon: MATERIAL_ICONS.CLOUD_UPLOAD,
 						fn: () => {
 							let input = this.createElement(TAG.INPUT);
@@ -1152,14 +1130,30 @@ export class AonNewMenu extends AonElement {
 							input.click();
 							this.appSelection(Apps.INVOICE);
 						}
+						
 					}
 				]
+			});
+		}
+		if(this.getDur().isDocumental()){
+			newMenuOptions.push({
+				fn: () => {
+					let input = this.createElement(TAG.INPUT);
+					input.type = CONSTANT.FILE;
+					input.accept = this.accept;
+					input.className = CSS.AON_NONE;
+					input.addEventListener(EVENT.CHANGE, ({target}) => uploadDocuments(input, target.files) );
+					input.click();
+					this.appSelection(Apps.DOCUMENTAL);
+				},
+				icon: MATERIAL_ICONS.CLOUD_UPLOAD,
+				name: MSG.UPLOAD_DOCUMENT,
 			});
 		}
 		if(this.getDur().isMessenger()){
 			newMenuOptions.push({
 				icon: 'add_comment',
-				name: 'Crear Consulta',
+				name: MSG.CREATE_QUERY,
 				fn: () => {
 					let aonMessengerChat = new AonMessenger();	
 					aonMessengerChat.data = {source:TASK_SOURCE.QUERY};
