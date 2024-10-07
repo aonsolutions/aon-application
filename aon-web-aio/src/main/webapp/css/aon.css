@@ -2832,6 +2832,16 @@ background-color: var(--aonBlue);
 background-color: var(--aonBlue);
 }
 
+.aonHeaderApps,
+.aonMenuLeftopApps {
+  background-color: var(--aonBlue);
+}
+
+#aonMenuList-apps.aonMenuSidenavLiSeleted {
+  margin-left: 2px;
+  border-left: 2px solid var(--aonBlue);
+}
+
 .aonNewMenuSideNavLi {
 margin-left: 2px;
 border-left: 2px solid transparent;
@@ -3041,6 +3051,7 @@ border-left: 2px solid var(--aonMessenger);
 .aonHeaderConfigurationMenu .material-icons,
 .aonHeaderNotification .material-icons,
 .aonHeaderHome .material-icons,
+.aonHeaderApps .material-icons,
 .aonHeaderStart .material-icons,
 .aonHeaderApplications .material-icons  {
 color: var(--aonWhite);
@@ -3099,6 +3110,7 @@ color: var(--aonWhite);
 .aonMenuLeftopAccountingMenu .material-symbols-outlined,
 .aonMenuLeftopNotification .material-symbols-outlined,
 .aonMenuLeftopHome .material-symbols-outlined,
+.aonMenuLeftopApps .material-symbols-outlined,
 .aonMenuLeftopStart .material-symbols-outlined,
 .aonMenuLeftopApplications .material-symbols-outlined {
 color: var(--aonWhite);
@@ -3131,6 +3143,7 @@ color: var(--aonWhite);
 .aonHeaderConfigurationMenu #aonHeaderCompanyName,
 .aonHeaderNotification #aonHeaderCompanyName,
 .aonHeaderHome  #aonHeaderCompanyName,
+.aonHeaderApps #aonHeaderCompanyName,
 .aonHeaderApplications  #aonHeaderCompanyName,
 .aonHeaderStart #aonHeaderCompanyName {
 color: var(--aonWhite);
@@ -3140,6 +3153,7 @@ color: var(--aonWhite);
 
 #new:hover,
 #home:hover,
+#apps:hover,
 #invoice:hover,
 #comunica:hover,
 #documental:hover,
@@ -3168,13 +3182,13 @@ color: var(--aonWhite);
   /*transition: background-color 0.2s;*/
 }
 
-#home {
+/* #home {
   margin-top: 6px;
-}
+} */
 
-#new {
+/* #apps {
   margin-top: 6px;
-}
+} */
 
 #aonHeaderHelp {
 	display: block;

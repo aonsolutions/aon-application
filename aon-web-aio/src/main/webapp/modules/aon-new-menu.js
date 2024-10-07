@@ -384,9 +384,13 @@ export class AonNewMenu extends AonElement {
 		let aonMenuTopnav = this.getElement(this.AON_MENU_TOPNAV);
 		let div = this.createElement(TAG.DIV);
 		div.classList.add("aonNewMenuTopNavDiv");
+		div.id = "aonTopMenuDiv";
+
+		let sidenav = this.getElement("aonMenuSidenav");
 	
-		if (!LS.isLeftMenu()) {
-			div.appendChild(this.buildTopApp(HOME));
+		if (!LS.isPortalChecked()) {
+			let topMenuHome = div.appendChild(this.buildTopApp(HOME));
+			topMenuHome.id = "topMenuHome";
 		}
 	
 		const excludedApps = ['commerce', 'garage', 'academy', 'office'];
@@ -491,6 +495,7 @@ export class AonNewMenu extends AonElement {
 		let menulist = this.getElement("aonMenuList");
 		let rootPanel = this.getElement("rootPanel");
 		let aonlogo = this.getElement("aonLogo");
+		let apps = this.getElement("apps");
 	
 		sidenav.style.transition = 'width 0.3s ease';
 		rootPanel.style.transition = 'margin-left 0.3s ease';
@@ -498,6 +503,8 @@ export class AonNewMenu extends AonElement {
 	
 		sidenav.style.width = '68px';
 		sidenav.style.display = "";  
+		sidenav.style.marginTop = "6px";
+		apps.style.marginTop = "6px";
 	
 		menulist.style.visibility = "visible";
 	
@@ -668,22 +675,8 @@ export class AonNewMenu extends AonElement {
 
 				if (LS.isCompanySelected()){
 					this.showSideNav();
+					this.getElement("topMenuHome").style.display = "none";
 				}
-
-				// side.addEventListener("mouseenter", () => {
-				// 	this.showSideNav();
-				// });
-	
-				// side.addEventListener("mouseleave", (ev) => {
-				// 	const dialog = this.getElement("aonDesktopMainOptionDialog");
-				// 	const content = this.getElement("sideNavDialogMenuContent");
-				// 	if(!this.isElementAt(ev,content) && !LS.isPortalChecked()){
-				// 		this.hideSideNav();
-				// 		dialog.close();
-				// 	}
-				// });
-							
-				
 			});
 
 			document.addEventListener("click", (event) => {
@@ -696,14 +689,6 @@ export class AonNewMenu extends AonElement {
 				}
 			});
 	
-			// div.addEventListener("mouseleave", (ev) => {
-			// 	const side = this.getElement("aonMenuSidenav");
-			// 	if(!this.isElementAt(ev,side) && !LS.isPortalChecked()){
-			// 		this.hideSideNav();
-			// 	}
-				
-			// });
-		//}
 	}
 
 
