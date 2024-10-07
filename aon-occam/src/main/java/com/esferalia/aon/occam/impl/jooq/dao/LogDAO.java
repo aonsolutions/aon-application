@@ -10,6 +10,7 @@ import static com.esferalia.aon.jooq.tables.LogData.LOG_DATA;
 
 import java.sql.Date;
 import java.util.function.Function;
+import java.util.stream.Stream;
 
 import org.jooq.Condition;
 import org.jooq.Record;
@@ -79,6 +80,15 @@ public class LogDAO {
 				.fetch().stream().map(new LogDataFiller())
 				.findFirst()
 				.orElse(new LogData());
+	}
+	
+	public static Stream<LogData>selectAll(AONContext ctx){
+		return ctx.getDslContext()
+				.select()
+				.from(LOG_DATA)
+				.fetch()
+				.stream()
+				.map(new LogDataFiller());
 	}
 	
 	public static void delete(AONContext ctx, LogDataFilter filter) {

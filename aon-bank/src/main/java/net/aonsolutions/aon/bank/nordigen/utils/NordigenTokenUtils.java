@@ -25,5 +25,29 @@ public class NordigenTokenUtils {
 		return token.refreshAccessToken( NordigenAPI.refreshAccessToken(token.getRefresh()) )
 			.setRefreshDate(new Date());
 	}
+	
+	// NUEVOS METODOS PROCESAR TOKEN NORDIGEN
+	public static boolean isTokenExpired(NordigenAccessToken token) {
+		Date today = new Date();
+		long tokenExpirationTime = token.getCreationDate().getTime() + token.getAccessExpires() * 1000;
+        return today.getTime() > tokenExpirationTime;	    
+	}
+	
+	public static boolean isRefreshTokenExpired(NordigenAccessToken token) {
+		Date today = new Date();
+		long tokenRefreshExpirationTime = token.getRefreshDate().getTime() + token.getRefreshExpires() * 1000;
+        return today.getTime() > tokenRefreshExpirationTime;	    
+	}
+	
+	public static NordigenAccessToken handleToken(NordigenAccessToken token) {
+		if (isTokenExpired(token)) {
+			if (!isRefreshTokenExpired(token)) {
+				return NordigenAPI.refreshAccessToken(token.getRefresh());
+			}else {
+				return NordigenAPI.newAccessToken();
+			}
+		}
+		return token;
+	}
 
 }

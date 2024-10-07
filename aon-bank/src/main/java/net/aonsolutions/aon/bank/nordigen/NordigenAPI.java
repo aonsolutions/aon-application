@@ -305,7 +305,7 @@ public class NordigenAPI {
 			,NordigenResponseJSON::from);
 	}
 
-	static List<NordigenInstitution> getInstitutions(String token, Country country, Boolean paymentsEnabled) throws NordigenException {
+	public static List<NordigenInstitution> getInstitutions(String token, Country country, Boolean paymentsEnabled) throws NordigenException {
 		return  getInstitutions(token
 			, new JSONObject()
 				.put(COUNTRY_PARAM, country != null ? country.getIso2() : null)

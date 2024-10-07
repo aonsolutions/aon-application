@@ -1231,4 +1231,13 @@ public class AON_SOLUTIONS {
 			throw e;
 		}
 	}
+	
+	public static Stream<LogData> getLogsStream(String domainName, Integer domainId, String login){
+		try {
+			CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login);
+			return getILogData().getLogsTream(ctx);
+		} catch (Exception e) {
+			throw e;
+		}
+	}
 }
