@@ -142,7 +142,7 @@ public class SES {
         }
     }
     
-    public static void sendEmail(MimeMessage message) throws MessagingException, IOException{	
+    public static void sendEmail(String domain, MimeMessage message) throws MessagingException, IOException{	
     	try {
             // Instantiate an Amazon SES client, which will make the service 
             // call with the supplied AWS credentials.
@@ -155,10 +155,10 @@ public class SES {
             
             SendRawEmailRequest rawEmailRequest = new SendRawEmailRequest(rawMessage);
             client.sendRawEmail(rawEmailRequest);
-            LOGGER.info(EMAIL_SENT);
+            LOGGER.info(EMAIL_SENT + " from " + domain);
         } catch (Exception e) {
             // Display an error if something goes wrong.
-        	LOGGER.warning(EMAIL_NOT_SENT);
+        	LOGGER.warning(EMAIL_NOT_SENT + " from " + domain);
 			e.printStackTrace();
         }
     }
