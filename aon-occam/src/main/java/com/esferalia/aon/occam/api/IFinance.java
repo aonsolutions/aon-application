@@ -261,6 +261,7 @@ public interface IFinance {
 	public Stream<InvoiceData> getInvoiceDataStream(AONContext ctx, InvoiceDataFilter filter);
 	public InvoiceData getInvoiceData(AONContext ctx, InvoiceDataFilter filter);
 	public InvoiceData saveInvoiceData(AONContext ctx, InvoiceData invoiceData);
+	public void deleteInvoiceData(AONContext ctx, Integer invoiceId);
 	
 	public InvoiceInfo getInvoiceInfo(AONContext ctx, InvoiceInfoFilter filter);
 	public InvoiceInfo saveInvoiceInfo(AONContext ctx, InvoiceInfo invoiceInfo);

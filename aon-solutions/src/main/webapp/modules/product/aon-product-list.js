@@ -47,7 +47,8 @@ export class AonProductList extends AonElement {
 					p[CONSTANT.CATEGORY_NAME] = p.category.name || '';
 					return p;
 				}).forEach((product, i) => {
-					table.addRow(product, () => this.aonProduct(product));
+					let tr = table.addRow(product, () => this.aonProduct(product));
+					tr.id = "aonInvoiceRow";
 				});
 			});
 		}

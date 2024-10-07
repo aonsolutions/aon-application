@@ -76,4 +76,10 @@ public class RawdocServiceAsyncDecorator implements RawdocServiceAsync {
 		fsa.processInvoiceFile(domainName, domain, user, jsonStr, invoice, new AsyncCallbackWrapper<Boolean>(callback));
 	}
 	
+	@Override
+	public void getS3Url(Rawdoc rawdoc, AsyncCallback<String> callback) {
+		AON.start();
+		fsa.getS3Url(rawdoc, new AsyncCallbackWrapper<String>(callback));
+	}
+	
 }

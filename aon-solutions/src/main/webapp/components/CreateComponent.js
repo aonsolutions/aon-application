@@ -55,6 +55,10 @@ export const createList = (id, parent) => {
   return createAonElement(new AonTable(), id, '', parent);
 }
 
+export const createFetchingList = (id, parent) => {
+  return createAonElement(new AonTable(true), id, '', parent);
+}
+
 export const createTable = (id, parent) => {
   return createAonElement(new AonBasicTable(), id, '', parent);
 }

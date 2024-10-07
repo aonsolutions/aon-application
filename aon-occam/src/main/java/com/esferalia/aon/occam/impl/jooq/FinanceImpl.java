@@ -826,6 +826,12 @@ public class FinanceImpl implements IFinance {
 		ctx.getDslContext().transaction(
 				configuration -> InvoiceInfoDAO.delete(ctx, f -> f.getInvoiceProperty().eq(invoiceId)));
 	}
+	
+	@Override
+	public void deleteInvoiceData(AONContext ctx, Integer invoiceId) {
+		ctx.getDslContext().transaction(
+				configuration -> InvoiceDataDAO.delete(ctx, f -> f.getInvoiceProperty().eq(invoiceId)));
+	}
 
 	@Override
 	public Stream<InvoiceCommunicationTracking> getInvoiceCommunicationTrackingStream(AONContext ctx, InvoiceCommunicationTrackingFilter filter) {

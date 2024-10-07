@@ -90,9 +90,10 @@ public class TbaiMain {
 					info = lroe240.buildInfo(OperacionEnum.A_00, lroe240.getEjercicio(tbaiConfiguration, invoice));
 					lroeResponse = lroe240.alta(company, tbaiConfiguration, invoice, xml);
 				} else {
-				    Person person = AonDocumentUtil.isAssetCommunity(company.getDocument())
+				    Person person = AonDocumentUtil.isAssetCommunity(company.getDocument()) || AonDocumentUtil.isCivilSociety(company.getDocument())
 				    		? new Person().copy(company) 
 				    		: AON.getPerson(company.getDomain(), "", f -> f.getIdProperty().eq(company.getId()));
+				    if(person.getId() == null) person = new Person().copy(company);
                     EnterpriseActivity ea = AON.getEnterpriseActivity(company.getDomain().getName(),
                         company.getDomain().getId(), "", invoice.getActivity().getId());
                     if(ea == null || ea.getId() == null) {
@@ -194,11 +195,12 @@ public class TbaiMain {
 					info = lroe240.buildInfo(OperacionEnum.A_00, lroe240.getEjercicio(tbaiConfiguration, invoice));
 					lroeResponse = lroe240.alta(company, tbaiConfiguration, invoice, xml);
 				} else {
-					Person person = AonDocumentUtil.isAssetCommunity(company.getDocument())
+					Person person = AonDocumentUtil.isAssetCommunity(company.getDocument()) || AonDocumentUtil.isCivilSociety(company.getDocument())
 				    		? new Person().copy(company) 
 				    		: AON.getPerson(company.getDomain(), "", f -> f.getIdProperty().eq(company.getId()));
+				    if(person.getId() == null) person = new Person().copy(company);
 
-					EnterpriseActivity ea = AON.getEnterpriseActivity(company.getDomain().getName(),
+				    EnterpriseActivity ea = AON.getEnterpriseActivity(company.getDomain().getName(),
                         company.getDomain().getId(), "", invoice.getActivity().getId());
                     if(ea == null || ea.getId() == null) {
                         ea = AON.getEnterpriseActivities(company.getDomain().getName(),
