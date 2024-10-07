@@ -306,7 +306,8 @@ h1 {
 .aonHeaderAccountingMenu, .aonMenuLeftopAccountingMenu,
 .aonHeaderFiscalMenu, .aonMenuLeftopFiscalMenu,
 .aonHeaderPayrollMenu, .aonMenuLeftopPayrollMenu,
-.aonHeaderMarketingMenu, .aonMenuLeftopMarketingMenu {
+.aonHeaderMarketingMenu, .aonMenuLeftopMarketingMenu,
+.aonHeaderConfigurationMenu, .aonMenuLeftTopConfigurationMenu {
 	background-color: var(--aonHeaderBackgroundColor);
 }
 
