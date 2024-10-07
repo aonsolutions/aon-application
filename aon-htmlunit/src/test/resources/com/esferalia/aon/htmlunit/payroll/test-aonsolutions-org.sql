@@ -6208,7 +6208,7 @@ CREATE TABLE `fs_model200` (
   `modification_user` varchar(16) CHARACTER SET latin1 COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Usuario de modificacion',
   `modification_date` datetime DEFAULT NULL COMMENT 'Fecha de modificacion',
   `fs_model` int DEFAULT NULL COMMENT 'Identificador de fs_model',
-  `nrs_anexoVI` varchar(22) COLLATE latin1_spanish_ci DEFAULT NULL,
+  `nrs_anexoVI` varchar(22) CHARACTER SET latin1 COLLATE latin1_spanish_ci DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `IDX_FS_MODEL200_DOMAIN` (`domain`),
   KEY `IDX_FS_MODEL200_ENTERPRISE` (`enterprise`),
@@ -7413,6 +7413,7 @@ CREATE TABLE `invoice_doc` (
   `description` varchar(64) CHARACTER SET latin1 COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Descripcion del Archivo Adjunto',
   `type` tinyint DEFAULT '0' COMMENT 'Tipo de Archivo Adjunto',
   `attach_date` date DEFAULT NULL COMMENT 'Fecha del Archivo Adjunto',
+  `s3_bucket` varchar(128) CHARACTER SET latin1 COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Amazon S3 Bucket',
   `s3_key` varchar(1024) CHARACTER SET latin1 COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Amazon S3 Object key',
   PRIMARY KEY (`id`),
   KEY `IDX_INVOICE_DOC_INVOICE` (`invoice`),
@@ -14753,4 +14754,4 @@ USE `test-aonsolutions-org`;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2024-09-05 12:56:17
+-- Dump completed on 2024-09-26 18:02:08

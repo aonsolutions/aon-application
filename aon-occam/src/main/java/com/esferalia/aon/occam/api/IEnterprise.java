@@ -22,8 +22,12 @@ public interface IEnterprise {
 	public EnterpriseCCC getEnterpriseCCC(AONContext ctx, EnterpriseCCCFilter filter);
 	
 	//---------ENTEPRISE_DATA--------
+
+	public EnterpriseData getEnterpriseData(AONContext ctx, EnterpriseDataFilter filter);
 	
 	public LinkedList<EnterpriseData> getEnterpriseDataList(AONContext ctx, EnterpriseDataFilter filter);
+	
+	public EnterpriseData saveEnterpriseData(AONContext ctx, EnterpriseData enterpriseData);
 	
 	public void insertEnterpriseData(AONContext ctx, List<EnterpriseData> enterpriseData);
 	

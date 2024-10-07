@@ -307,10 +307,20 @@ export class AonParent extends AonElement {
 					let companyyy = this.getElement("aonHeaderCompanyList");
 					companyy.style.display = "block";
 					companyyy.style.display = "block";
+					let logo = this.getElement("aonLogo");
+					logo.addEventListener("click", function handleClick() {
+						companyy.style.display = "none";
+						companyyy.style.display = "none";
+						logo.removeEventListener("click", handleClick); 
+					});
 				});
 			}
 		}, 100); 
-	}
+		if(!LS.isOnlyOne())
+			LS.setCompanySelected(false);
+		else 
+			LS.setCompanySelected(true);
+		}
 	
 
 	loadMore() {
@@ -345,6 +355,8 @@ export class AonParent extends AonElement {
 		li.className = 'aonLiBeta' ;
 		li.addEventListener(EVENT.CLICK, () => {
 			this.companySelection(company, false);
+			let portal = LS.isLeftMenu();
+			LS.setPortalChecked(portal);
 		});
 
 		let span = this.createElement(TAG.SPAN);
@@ -395,7 +407,7 @@ export class AonParent extends AonElement {
 			aonShowMenu.style.display = 'block';
 		}
 		let aonHeaderHelp = this.getElement(BASE_ID + 'Help');
-		aonHeaderHelp.style.display = 'block';
+		// aonHeaderHelp.style.display = 'block';
 
 		// let aonHeaderSearch = this.getElement(BASE_ID + 'Search');
 		// aonHeaderSearch.style.display = 'none';
@@ -412,6 +424,7 @@ export class AonParent extends AonElement {
 		aonHeaderCompany.style.display = 'block';
 
 		if(!onlyOne){ 
+			LS.setCompanySelected(true);
 			let aonHeaderCompanyList = this.getElement(BASE_ID + 'CompanyList');
 			aonHeaderCompanyList.style.display = 'block';
 			let aonHeaderCompanyListButton = this.getElement(BASE_ID + 'CompanyListButton');

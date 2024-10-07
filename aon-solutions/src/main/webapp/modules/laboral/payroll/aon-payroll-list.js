@@ -149,7 +149,8 @@ export class AonPayrollList extends AonElement {
         resp.map((res) => {
           res.startDateP =  AonDateUtils.formatDate(res.startDate);
           res.endDateP   = AonDateUtils.formatDate(res.endDate);
-          aonTable.addRow(res, (el) => this.aonEvent(el, res));
+          let tr = aonTable.addRow(res, (el) => this.aonEvent(el, res));
+          tr.id = "aonPayrollRow";
         });
       } catch (e) {
         console.log(e);

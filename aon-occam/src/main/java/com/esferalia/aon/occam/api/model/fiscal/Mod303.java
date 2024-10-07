@@ -1,6 +1,7 @@
 package com.esferalia.aon.occam.api.model.fiscal;
 
 import java.io.Serializable;
+import java.util.HashMap;
 import java.util.LinkedList;
 
 import com.esferalia.aon.occam.api.model.type.FiscalModelDeclarationType;
@@ -18,6 +19,8 @@ public class Mod303 extends FiscalModel implements Serializable {
 	
 	private LinkedList<Mod303ActivityFarmer> activityFarmerList;
 	private LinkedList<Mod303Activity> activityList;
+	
+	private HashMap<String, Double> tempMap = new HashMap<>();
 	
 	public Mod303() {
 		super();
@@ -208,4 +211,9 @@ public class Mod303 extends FiscalModel implements Serializable {
 		this.invoicesBound = invoicesBound;
 		return this;
 	}
+	
+	public HashMap<String, Double> getTempMap() {
+		return tempMap;
+	}
+	
 }

@@ -5,7 +5,6 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import org.junit.Assert;
 import org.junit.Test;
@@ -65,7 +64,6 @@ public class EmployeeTestSuite extends AbstractOccamTest  {
 		addDatas.forEach(( name, datas ) -> {
 		    datas.forEach( data -> {
 			    getDatas.get(name).forEach( getData-> {
-				System.out.println( name + " : " + data.getExpression() +" (" + getData.getExpression() + ")");
 				Assert.assertEquals(data.getEndDate(), getData.getEndDate());
 				Assert.assertEquals(data.getStartDate(), getData.getStartDate());
 				Assert.assertEquals(data.getExpression(), getData.getExpression());
@@ -111,7 +109,6 @@ public class EmployeeTestSuite extends AbstractOccamTest  {
 		addDatas.forEach(( name, datas ) -> {
 		    datas.forEach( data -> {
 			newDatas.get(name).forEach( newData-> {
-				System.out.println( name + " : " + data.getExpression() +" (" + newData.getExpression() + ")");
 				Assert.assertEquals(data.getEndDate(), newData.getEndDate());
 				Assert.assertEquals(data.getStartDate(), newData.getStartDate());
 				if ( name.equals("TC2")) {

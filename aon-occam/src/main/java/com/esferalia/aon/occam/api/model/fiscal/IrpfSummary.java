@@ -1,6 +1,7 @@
 package com.esferalia.aon.occam.api.model.fiscal;
 
 import java.io.Serializable;
+import java.util.HashSet;
 import java.util.TreeMap;
 
 import com.esferalia.aon.occam.api.model.type.WithholdingType;
@@ -85,6 +86,9 @@ public class IrpfSummary implements Serializable {
 		private double percent;
 		private IrpfBreakdown output;
 		private IrpfBreakdown input;
+		
+		private HashSet<Integer> salaries = new HashSet<>();
+		private HashSet<Integer> invoices = new HashSet<>();
 
 		public double getPercent() {
 			return percent;
@@ -113,6 +117,14 @@ public class IrpfSummary implements Serializable {
 			return this;
 		}
 		
+		public HashSet<Integer> getSalaries() {
+			return salaries;
+		}
+
+		public HashSet<Integer> getInvoices() {
+			return invoices;
+		}
+
 		public void add(IrpfBreakdown br) {
 			IrpfBreakdown toAdd = br.isSales()?output:input;
 			if ( toAdd == null ) {
@@ -129,8 +141,12 @@ public class IrpfSummary implements Serializable {
 			toAdd.setBase( toAdd.getBase() + br.getBase()); 
 			toAdd.setQuota( toAdd.getQuota() + br.getQuota());
 			toAdd.setDeductibleQuota( toAdd.getDeductibleQuota() + br.getDeductibleQuota());
-			toAdd.setSalary(br.getSalary());
-			toAdd.setInvoice(br.getInvoice());
+			
+			// Add salaries & invoices for Estimation Invoice
+			if(!br.isSales()) { // Only input
+				if(null != br.getSalary()) salaries.add(br.getSalary());
+				if(null != br.getInvoice()) invoices.add(br.getInvoice());
+			}
 		}
 	}
 }

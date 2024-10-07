@@ -15,6 +15,7 @@ import com.esferalia.aon.gwt.fiscal.client.MainEntryPoint;
 import com.esferalia.aon.gwt.fiscal.client.model.IFiscalModelCallback;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.fiscal.Mod303;
+import com.esferalia.aon.occam.api.model.type.Period;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.RunAsyncCallback;
 import com.google.gwt.dom.client.Style.Unit;
@@ -352,10 +353,44 @@ public class Model303 extends MainEntryPoint {
 	}
 
 	enum Mod303Declarations {
+		AEAT_2024_T3 {
+			@Override
+			public boolean accept(Mod303 mod303) {
+				return (mod303.isAEAT() && mod303.getYear() > 2024)
+					|| (mod303.isAEAT() && mod303.getYear() == 2024
+					&& ( 
+						mod303.getPeriod() == Period.M09
+					 || mod303.getPeriod() == Period.M10
+					 || mod303.getPeriod() == Period.M11
+					 || mod303.getPeriod() == Period.M12
+					 || mod303.getPeriod() == Period.T3
+					 || mod303.getPeriod() == Period.T4
+					));
+			}
+
+			@Override
+			public Widget getDeclarationWidget(Mod303 mod303, Model303Callback cbk) {
+				return new Model303AEAT2024T3(mod303,cbk);
+			}
+		},
 		AEAT_2023 {
 			@Override
 			public boolean accept(Mod303 mod303) {
-				return (mod303.isAEAT() && mod303.getYear() >= 2023);
+				return 
+				   (mod303.isAEAT() && mod303.getYear() == 2023)
+				|| (mod303.isAEAT() && mod303.getYear() == 2024
+					&& (mod303.getPeriod() == Period.M01
+					 || mod303.getPeriod() == Period.M02
+					 || mod303.getPeriod() == Period.M03
+					 || mod303.getPeriod() == Period.M04
+					 || mod303.getPeriod() == Period.M05
+					 || mod303.getPeriod() == Period.M06
+					 || mod303.getPeriod() == Period.M07
+					 || mod303.getPeriod() == Period.M08
+					 || mod303.getPeriod() == Period.T1
+					 || mod303.getPeriod() == Period.T2
+				))
+				;
 			}
 
 			@Override

@@ -35,7 +35,16 @@ class Mod303ARABA2023Declaration extends Mod303ARABA {
 	public static final double SURCHARGE_PERCENT_52 = 5.2;
 	
 	public static boolean accept(Mod303 mod) {
-		return  mod.isAraba() && mod.getYear() >= 2023 && mod.getPeriod() != Period.T4;
+		return mod.isAraba() 
+			&& mod.getPeriod() != Period.T4
+			&& mod.getPeriod() != Period.M12
+			&& (mod.getYear() == 2023
+			|| (mod.getYear() == 2024
+			&& (mod.getPeriod() == Period.M01 || mod.getPeriod() == Period.M02 || mod.getPeriod() == Period.M03 
+			 || mod.getPeriod() == Period.M04 || mod.getPeriod() == Period.M05 || mod.getPeriod() == Period.M06 
+			 || mod.getPeriod() == Period.M07 || mod.getPeriod() == Period.M08   
+			 || mod.getPeriod() == Period.T1 || mod.getPeriod() == Period.T2)
+		   ));
 	}
 	private static final Mod303Key[] PRORATE_KEYS = new Mod303Key[]{
 		 Mod303Key.AR_C030,Mod303Key.AR_C031,Mod303Key.AR_C032

@@ -141,7 +141,7 @@ export class AonTax extends AonElement {
         aonTable.addColumn("Estado", "", "statusText", "12%");
       }
       aonTable.addColumn("Importe", "number", "resultFormat", "15%");
-      aonTable.addColumn('', 'icons', 'icons', '5%');
+      aonTable.addColumn('', 'icons', 'icons', '100px');
 
       try {
         const resp = await this.getData();
@@ -150,10 +150,12 @@ export class AonTax extends AonElement {
         if (resp.length) {
           resp.forEach((res) => {
             this.buildButtons(res);
-            aonTable.addRow(res, () => {
+            let tr = aonTable.addRow(res, () => {
               if(!["123", "130", "131", "202"].includes(res.newModel))
                 this.getApplication().setContent(new AonTaxDetail(res, "tax"));
             } /*this.openDialog(res)*/);
+
+            tr.id = "aonFiscalRow";
           });
 
           let elementHTML = document.createElement(TAG.DIV);
@@ -174,6 +176,7 @@ export class AonTax extends AonElement {
             resultFormat: this.getTotal(resp),
           });
           row.style.fontWeight = "600";
+          row.id = "aonFiscalRow";
         } else {
           aonTable.empty();
         }
@@ -610,6 +613,16 @@ export class AonTax extends AonElement {
       icons.push(icon);
     }
 
+    if(!["123", "130", "131", "202"].includes(res.newModel)){
+      let icon = {
+        icon: MATERIAL_ICONS.LIST_ALT,
+        title: "Ver facturas y nóminas incluidas",
+        color: "var(--aonTaxBuildPrintRes)",
+        fn : () => this.getApplication().setContent(new AonTaxDetail(res, "tax"))
+      };
+      icons.push(icon);
+    }
+    
     res.icons = icons;
   }
 

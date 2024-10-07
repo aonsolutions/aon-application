@@ -102,7 +102,7 @@ export class AonFutureTax extends AonElement {
         aonTable.addColumn("Estado", "", "statusText", "12%");
       }
       aonTable.addColumn("Importe", "number", "resultFormat", "15%");
-      aonTable.addColumn("", "icon", "icon", "5%");
+      aonTable.addColumn("", "icons", "icons", "100px");
 
       try {
         const resp = await this.getData();
@@ -110,11 +110,13 @@ export class AonFutureTax extends AonElement {
 
         if (resp.length) {
           resp.forEach((res) => {
-            this.buildPrint(res);
-            aonTable.addRow(res, () => {
+            this.buildIcons(res);
+            let tr = aonTable.addRow(res, () => {
               this.getApplication().setContent(new AonTaxDetail(res, "future"));
               //this.openDialog(res);
             });
+
+            tr.id = "aonFiscalRow";
           });
 
           let elementHTML = document.createElement(TAG.DIV);
@@ -135,6 +137,7 @@ export class AonFutureTax extends AonElement {
             resultFormat: this.getTotal(resp),
           });
           row.style.fontWeight = "600";
+          row.id = "aonFiscalRow";
         } else {
           aonTable.empty();
         }
@@ -262,12 +265,26 @@ export class AonFutureTax extends AonElement {
     return div;
   }
 
-  buildPrint(res) {
-    if (!["FINISHED", "SENT"].includes(res.status)) return;
+  buildIcons(res) {
+    let icons = [];
 
-    res.icon = MATERIAL_ICONS.PDF;
-    res.icon_color = "var(--aonTaxBuildPrintRes)";
-    res.fn = () => this.getPdf(res);
+    if (["FINISHED", "SENT"].includes(res.status)) {
+      let icon = {
+        icon: MATERIAL_ICONS.PDF,
+        color: "var(--aonTaxBuildPrintRes)",
+        fn : () => this.getPdf(res)
+      };
+      icons.push(icon);
+    };
+
+    let icon = {
+      icon: MATERIAL_ICONS.LIST_ALT,
+      title: "Ver facturas y nóminas incluidas",
+      color: "var(--aonTaxBuildPrintRes)",
+      fn : () => this.getApplication().setContent(new AonTaxDetail(res, "future"))
+    };
+    icons.push(icon);
+    res.icons = icons;
   }
 
 }

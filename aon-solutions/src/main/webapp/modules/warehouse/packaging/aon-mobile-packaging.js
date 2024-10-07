@@ -1,16 +1,16 @@
 import {AonElement} from '../../../components/AonElement.js';
 import { ToolbarType} from '../../../models/enums.js';
-
 import {AonToolbar} from "../../../components/aon-toolbar.js";
-
 import {CONSTANT, MATERIAL_ICONS, MSG, TAG, EVENT} from '../../../environments/environments.js'; 
 import {getPackaging, mobileAction, MOBILE_ACTION, savePackaging, openFileUrl} from '../../../services/service.js';
-
-import * as ACTION from '../../actions.js';
 import { AonBasicTable } from '../../../components/aon-basic-table.js';
-import * as LS from '../../../services/localStorageService.js';
 import { getWarehouses } from '../../../services/warehouseService.js';
 import { createCard, createDate, createInput, createQuantity, createSelect } from '../../../components/CreateComponent.js';
+import { openBarcode } from '../../../services/actionService.js';
+
+import * as ACTION from '../../actions.js';
+import * as LS from '../../../services/localStorageService.js';
+import * as UA from '../../../services/userAgentService.js';
 
 export class AonMobilePackaging extends AonElement {
 
@@ -124,8 +124,9 @@ export class AonMobilePackaging extends AonElement {
 
 		let product = createInput(this.PACKAGING_PRODUCT, "Contenido");
 		table.addCell(product, 2);
-		// product.addIconButton(MATERIAL_ICONS.QR_CODE_SCANNER, () => this.openBarcode());
 		product.addIcon(MATERIAL_ICONS.QR_CODE_SCANNER, undefined, () => this.openBarcode());
+		// product.addIconButton(MATERIAL_ICONS.QR_CODE_SCANNER, () => this.openBarcode());
+
 
 
 		// product.addEventListener(EVENT.AON_KEYUP, (e) => {
@@ -139,7 +140,6 @@ export class AonMobilePackaging extends AonElement {
 		// 		}).catch(e => this.showError(e));
 		// 	  }
 		// });
-
 
 		// product.addEventListener(EVENT.SELECT,(e) => {
 		// 	let desc = this.getElement(this.PACKAGING_PRODUCT_DESC);
@@ -209,21 +209,21 @@ export class AonMobilePackaging extends AonElement {
 	}
 
 	changeProduct() {
-		const product = this.getElement(this.PACKAGING_PRODUCT);
+		let product = this.getElement(this.PACKAGING_PRODUCT);
 		this.barcode = product.value;
 		let data = { barcode: product.value};
 		getPackaging(data).then(r => {
-			const container = this.getElement(this.PACKAGING_CONTAINER);
-			const lote = this.getElement(this.PACKAGING_PRODUCT_SERIAL_NUMBER);
-			const date = this.getElement(this.PACKAGING_PRODUCT_SERIAL_DATE);
-			const quantity = this.getElement(this.PACKAGING_QUANTITY);
+			let container = this.getElement(this.PACKAGING_CONTAINER);
+			let lote = this.getElement(this.PACKAGING_PRODUCT_SERIAL_NUMBER);
+			let date = this.getElement(this.PACKAGING_PRODUCT_SERIAL_DATE);
+			let quantity = this.getElement(this.PACKAGING_QUANTITY);
 
 			this.packaging = r;
 			this.packaging.warehouse = this.warehouses[0];
 			let val = r.base.description || r.base.name;
-			product.value = val || '';
+			product.setValue(val || '');
 			container.setOptions(r.containers);
-			lote.value = r.item.serialNumber;
+			lote.setValue(r.item.serialNumber);
 			date.setDate(r.item.serialDate);
 			container.value = r.containers[0].id;
 			this.item = r.item.id;
@@ -236,9 +236,9 @@ export class AonMobilePackaging extends AonElement {
 	}
 
 	openBarcode() {
-		let ionicData = { action: MOBILE_ACTION.BARCODE, selector: 'aon-mobile-packaging' };
+		let ionicData = { action: MOBILE_ACTION.BARCODE, selector: TAG.AON_MOBILE_PACKAGING };
 		if(UA.isAndroidApp()) {
-			openBarcode(ionicData, (result) => console.log("aon mobile packaging - openbarcode - " + result.code));
+		 	openBarcode(ionicData, (result) => console.log("aon mobile packaging - openbarcode - " + result.code));
 		} else mobileAction(ionicData);
 	}
 

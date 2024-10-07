@@ -134,6 +134,7 @@ public class InvoiceBeanVetoListener extends ManagerBeanVetoListenerAdapter {
 				removeInvoiceAddress(invoice);
 				removeInvoiceFiscal(invoice);
 				removeInvoiceInfo(invoice);
+				removeInvoiceData(invoice);
 				removeInvoiceCommunicationTracking(invoice);
 				if (invoice.isRectifier() && invoice.getRectificationInvoice() != null) {
 					updateRectifiedInvoices(invoice);
@@ -380,6 +381,10 @@ public class InvoiceBeanVetoListener extends ManagerBeanVetoListenerAdapter {
 	
 	private void removeInvoiceInfo(Invoice invoice) {
 		AON.deleteInvoiceInfo(HibernateUtil.getSessionFactoryName(), invoice.getId());
+	}
+	
+	private void removeInvoiceData(Invoice invoice) {
+		AON.deleteInvoiceData(HibernateUtil.getSessionFactoryName(), invoice.getId());
 	}
 	
 	private void removeInvoiceCommunicationTracking(Invoice invoice) {

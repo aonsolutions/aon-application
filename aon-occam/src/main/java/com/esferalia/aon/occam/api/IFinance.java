@@ -96,6 +96,7 @@ public interface IFinance {
 	Invoice validateInvoice(AONContext ctx, Invoice invoice, Integer rawdocId);
 
 	Invoice getFullInvoice(AONContext ctx, Integer id);
+	List<Invoice>getFullInvoiceList(AONContext ctx, List<Integer> ids);
 	Stream<Invoice> getInvoiceHeaders(AONContext ctx, AccountingReportParams params, int offset, int limit);
 	Stream<Invoice> getInvoiceHeaders(AONContext ctx, InvoiceFilter filter, int offset, int limit);
 	Stream<Invoice> getInvoiceStream(AONContext ctx, InvoiceFilter filter);
@@ -260,6 +261,7 @@ public interface IFinance {
 	public Stream<InvoiceData> getInvoiceDataStream(AONContext ctx, InvoiceDataFilter filter);
 	public InvoiceData getInvoiceData(AONContext ctx, InvoiceDataFilter filter);
 	public InvoiceData saveInvoiceData(AONContext ctx, InvoiceData invoiceData);
+	public void deleteInvoiceData(AONContext ctx, Integer invoiceId);
 	
 	public InvoiceInfo getInvoiceInfo(AONContext ctx, InvoiceInfoFilter filter);
 	public InvoiceInfo saveInvoiceInfo(AONContext ctx, InvoiceInfo invoiceInfo);
