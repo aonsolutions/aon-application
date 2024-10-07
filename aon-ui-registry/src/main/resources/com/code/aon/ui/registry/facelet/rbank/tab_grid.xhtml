@@ -92,6 +92,27 @@
 					</f:facet>
 				</aon:column>
 				
+				<aon:column styleClass="aon-editDataTable-textColumn aon-width-50">
+    				<f:facet name="header">
+        				<aon:outputLabel for="RegistryBank_requisition" value="#{bundle.aon_requisition}" />
+    				</f:facet>
+
+    			<aon:outputText value="#{empty to.requisition ? 'no vinculado' : to.requisition}" rendered="#{formList}" />
+
+    			<aon:inputText id="RegistryBank_requisition"
+        			value="#{empty to.requisition ? 'no vinculado' : to.requisition}"
+        			readonly="true" 
+        			rendered="#{formEdit}" />
+
+			    <f:facet name="footer">
+			        <aon:inputText id="RegistryBank_requisition-new"
+			            value="#{empty controller.to.requisition ? 'no vinculado' : controller.to.requisition}"
+			            readonly="true" 
+			            rendered="#{formNew}" />
+			    </f:facet>
+				</aon:column>
+
+				
 				<aon:if test="#{aonRole.accountingOperator}">	
 					<aon:column styleClass="aon-editDataTable-textColumn aon-width-150">
 						<f:facet name="header">
