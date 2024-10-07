@@ -12,7 +12,11 @@ export class AonTable extends AonElement {
   
   columns;
   selected;
+  selectedTr;
   selectedAll;
+
+  checkFetch;
+  isFetchingData;
 
   THEADER;
   TBODY;
@@ -33,8 +37,10 @@ export class AonTable extends AonElement {
     this.setAttribute("selectable", selectable);
   }
 
-  constructor() {
+  constructor(checkFetch) {
     super();
+    this.checkFetch = checkFetch;
+    this.isFetchingData = false;
   }
 
   connectedCallback() {
@@ -82,17 +88,36 @@ export class AonTable extends AonElement {
       }
     }
 
-    tbody.addEventListener("scroll", ({target}) => {
-      const scrollTop = target.scrollTop;
-      const offsetHeight = target.offsetHeight;
-      const physicalSize = target.scrollHeight;
-      const maxScrollPosition = physicalSize - offsetHeight;
-
-      if (scrollTop >= maxScrollPosition) {
-        this.dispatchEvent(new CustomEvent(EVENT.MORE));
-      }
-    });
+    if(this.checkFetch){
+      tbody.addEventListener("scroll", ({target}) => {
+        const scrollTop = target.scrollTop;
+        const offsetHeight = target.offsetHeight;
+        const physicalSize = target.scrollHeight;
+        const maxScrollPosition = physicalSize - offsetHeight;
+  
+        if (scrollTop >= maxScrollPosition && !this.isFetchingData) {
+          this.isFetchingData = true;
+          this.dispatchEvent(new CustomEvent(EVENT.MORE));
+        }
+      });
+    } else {
+      tbody.addEventListener("scroll", ({target}) => {
+        const scrollTop = target.scrollTop;
+        const offsetHeight = target.offsetHeight;
+        const physicalSize = target.scrollHeight;
+        const maxScrollPosition = physicalSize - offsetHeight;
+  
+        if (scrollTop >= maxScrollPosition ) {
+          this.dispatchEvent(new CustomEvent(EVENT.MORE));
+        }
+      });
+    }
+    
   }
+
+  setFetchingData(fetching){
+    this.isFetchingData = fetching;
+  } 
 
   initialize() {
     this.columns = [];
@@ -336,6 +361,7 @@ export class AonTable extends AonElement {
         if(value[id] !== undefined && value[id].includes('-')){
           td.style.color = "green";
         }
+        td.addEventListener(EVENT.CLICK, fn);
       } 
       else {
         td.innerHTML = value[id] !== undefined? value[id] : "";
@@ -415,10 +441,11 @@ export class AonTable extends AonElement {
     .forEach(el => {
       el.style.backgroundColor = "#ffffff";
     });
-
-    if(tr){
+    
+    if(tr && this.selectedTr !== tr){
+      this.selectedTr = tr;
       tr.style.backgroundColor = color;
-    }
+    } else this.selectedTr = undefined;
   }
 
 

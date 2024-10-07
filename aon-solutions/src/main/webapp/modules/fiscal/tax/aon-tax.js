@@ -613,13 +613,15 @@ export class AonTax extends AonElement {
       icons.push(icon);
     }
 
-    let icon = {
-      icon: MATERIAL_ICONS.LIST_ALT,
-      title: "Ver facturas y nóminas incluidas",
-      color: "var(--aonTaxBuildPrintRes)",
-      fn : () => this.getApplication().setContent(new AonTaxDetail(res, "tax"))
-    };
-    icons.push(icon);
+    if(!["123", "130", "131", "202"].includes(res.newModel)){
+      let icon = {
+        icon: MATERIAL_ICONS.LIST_ALT,
+        title: "Ver facturas y nóminas incluidas",
+        color: "var(--aonTaxBuildPrintRes)",
+        fn : () => this.getApplication().setContent(new AonTaxDetail(res, "tax"))
+      };
+      icons.push(icon);
+    }
     
     res.icons = icons;
   }

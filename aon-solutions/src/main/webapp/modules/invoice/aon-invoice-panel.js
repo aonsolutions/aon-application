@@ -240,6 +240,7 @@ export class AonInvoicePanel extends AonElement {
   }
 
   clearToolbar() {
+    let aonInvoice = this.getApplication();
     let toolbar = this.getElement(aonInvoice.TOOLBAR);
     toolbar.removeButtons();
   }
@@ -615,11 +616,11 @@ export class AonInvoicePanel extends AonElement {
 
   addInvoice() {
     let ayudat = this.getDur().isSelfconta();
-    let aonInvoice = this.getElement("aonInvoice");
+    let aonInvoice = this.getApplication();
     let aonInvoiceToolbar = this.getElement(aonInvoice.TOOLBAR);
     let button = this.isMobile()
       ? this.getElement("aonInvoiceAddInvoiceButton")
-      : this.getElement(aonInvoiceToolbar.TOOL_SECTION + "AddButton");
+      : this.getElement(aonInvoiceToolbar.TOOL_SECTION + ACTION.ADD_INVOICE.id + "Button");
 
     let height = window.innerHeight;
     let top = button.getBoundingClientRect().top;
@@ -798,6 +799,7 @@ export class AonInvoicePanel extends AonElement {
   }
 
   async selectOption(option) {
+    let aonInvoice = this.getApplication();
     if (option) {
       let toolbar = this.getElement(aonInvoice.TOOLBAR);
       toolbar.option = option.name;
