@@ -43,6 +43,8 @@ public class Mod200 implements IFiscalModel, HasAudit {
 	
 	private Double amount;	
 	
+	private String nrc;
+	
 	@Override
 	public Integer getId() {
 		return id;
@@ -254,7 +256,18 @@ public class Mod200 implements IFiscalModel, HasAudit {
 	public Mod200 setAmount(Double amount) {
 		this.amount = amount;
 		return this;
-	}	
+	}
+	
+	// FALTA - VER SI ES NECESARIO CONTROLAR QUE DEVUELVA CADENA VACIA
+	@Override
+	public String getNrc() {		
+		return nrc;
+	}
+	@Override
+	public Mod200 setNrc(String nrc) {
+		this.nrc = nrc;
+		return this;
+	}
 	
 	public boolean isNew() {
 		return id==null;
@@ -288,5 +301,6 @@ public class Mod200 implements IFiscalModel, HasAudit {
 	public double getResult() {
 		return getDeclarationResult();
 	}
+	
 	
 }
