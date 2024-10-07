@@ -3990,11 +3990,10 @@ display: block;
 	padding: .5rem 1rem;
 }
 
-.aonConfigApps,
 .aonConfigDark,
 .aonConfigBrand,
 .aonConfigTopNav {
-display: none;
+  display: none;
 }
 
 
