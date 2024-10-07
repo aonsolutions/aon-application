@@ -3,8 +3,13 @@ package com.esferalia.aon.occam.impl.jooq.dao;
 import static com.esferalia.aon.jooq.tables.AppParam.APP_PARAM;
 import static com.esferalia.aon.jooq.tables.Company.COMPANY;
 import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
+import static com.esferalia.aon.jooq.tables.FsModel200.FS_MODEL200;
 import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
 
+import java.util.function.Function;
+import java.util.stream.Stream;
+
+import org.jooq.Record;
 import org.jooq.impl.DSL;
 import org.json.JSONArray;
 
@@ -13,14 +18,15 @@ import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.json.FiscalMenuItemJSON;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Filter;
+import com.esferalia.aon.occam.api.model.IJsonNames;
 import com.esferalia.aon.occam.api.model.Properties.FiscalModelProperties;
 import com.esferalia.aon.occam.api.model.finance.EnumVisitors.IFiscalModelTypeVisitor;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalMatrixParams;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModel;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModelType;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalStatus;
+import com.esferalia.aon.occam.api.model.type.Administration;
 import com.esferalia.aon.occam.api.model.type.FiscalModelDeclarationType;
-import com.esferalia.aon.occam.api.model.type.Mod131Key;
 import com.esferalia.aon.occam.api.model.type.Mod202Key;
 import com.esferalia.aon.occam.api.model.type.Period;
 import com.esferalia.aon.occam.impl.jooq.dao.fiscal.FiscalModelDAO;
@@ -29,6 +35,7 @@ import com.esferalia.aon.occam.impl.jooq.dao.fiscal.mod184.Mod184DAO;
 import com.esferalia.aon.occam.impl.jooq.dao.fiscal.mod190.Mod190DAO;
 import com.esferalia.aon.occam.impl.jooq.dao.fiscal.mod193.Mod193DAO;
 import com.esferalia.aon.occam.impl.jooq.dao.fiscal.mod390.Mod390DAO;
+import com.esferalia.aon.watson.util.AonEnumUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class FiscalMenuDAO {
@@ -81,11 +88,6 @@ public class FiscalMenuDAO {
 						.filter( fm -> fm.getModel() != FiscalModelType.M200 )  // Tampoco se coge el modelo 200 de fs_model
 						.filter( fm -> fm.getModel() != FiscalModelType.M390_HF || (fm.getModel() == FiscalModelType.M390_HF && (params.getModel() == null || params.getModel() == FiscalModelType.M390_HF)) )
 						.peek( fm -> {
-							// FALTA - AUN NO ESTA HECHO EL REFACTOR DEL MODELO 131 POR AHORA LES ASIGNO AQUI ESTAS PROPIEDADES 
-							if (fm.getModel() == FiscalModelType.M131) {
-								fm.setDeclarationResult(fm.getAmount(Mod131Key.C15));
-								fm.setDeclarationResultType(FiscalModelDeclarationType.safeValueOf(fm.getDescription(Mod131Key.CT_TIP)));																		
-							}
 							// FALTA - AUN NO ESTA HECHO EL REFACTOR DEL MODELO 202 POR AHORA LES ASIGNO AQUI ESTAS PROPIEDADES
 							if (fm.getModel() == FiscalModelType.M202) {
 								fm.setDeclarationResult(fm.getAmount(Mod202Key.X00) == 0 ? fm.getAmount(Mod202Key.C03) : fm.getAmount(Mod202Key.C34));
@@ -194,17 +196,14 @@ public class FiscalMenuDAO {
 				@Override 
 				public void visitM200() {
 					if (params.accept( FiscalModelType.M200 )) {
-						//Mod200DAO.getHeaders(ctx, domain.getId(), params.getScope())
-						// FALTA - POR AHORA EL MODELO 200 NO APARECE EN LA MATRIZ, PORQUE NO SE PUEDE HACER NADA CON EL DESDE LA MATRIZ
-//						getHeadersMod200(ctx, domain.getId(), params.getScope())
-//							.filter( mod -> mod.getYear()== params.getYear())
-//							.filter( mod -> params.getAdministration() == null || mod.getAdministration() == params.getAdministration())
-//							.filter( mod -> AonStringUtils.isBlank(params.getDeclared()) 
-//									|| AonStringUtils.containsIgnoreCase(params.getDeclared(), mod.getName()) )
-//							.filter( mod -> params.getStatus() == null || mod.getStatus() == params.getStatus() )
-//							.filter( mod -> params.getPeriod() == null || mod.getPeriod() == params.getPeriod())
-//							.map( FiscalMenuItemJSON::toJSON )
-//							.forEach( allModels::put );
+						getHeadersMod200(ctx, domain.getId(), params.getScope())
+							.filter( mod -> mod.getYear() == params.getYear())  
+							.filter( mod -> params.getAdministration() == null || mod.getAdministration() == params.getAdministration())							
+							.filter( mod -> AonStringUtils.isBlank(params.getDeclared()) || AonStringUtils.containsIgnoreCase(mod.getName(), params.getDeclared()) || AonStringUtils.containsIgnoreCase(mod.getDocument(), params.getDeclared()) )
+							.filter( mod -> params.getStatus() == null || mod.getStatus() == params.getStatus() )
+							.filter( mod -> params.getPeriod() == null || mod.getPeriod() == params.getPeriod())
+							.map( mod -> FiscalMenuItemJSON.toJSON(mod).put(IJsonNames.IBAN, mod.getIban()) )  // MOD200 AUN NO USA FINANCE						
+							.forEach( allModels::put );
 					}
 				}
 			};
@@ -241,7 +240,7 @@ public class FiscalMenuDAO {
 			.fetch()
 			.stream()
 			.filter(rec -> AonStringUtils.containsAny(rec.getValue(APP_PARAM.VALUE), "YQM"))
-			.filter(rec -> fromAppParamName(rec.getValue(APP_PARAM.NAME)) != FiscalModelType.M200) // Ignorar el Modelo 200, no se puede hacer nada con él desde la matriz 
+//			.filter(rec -> fromAppParamName(rec.getValue(APP_PARAM.NAME)) != FiscalModelType.M200) // Ignorar el Modelo 200, no se puede hacer nada con él desde la matriz 
 			.map( rec -> new FiscalModel()
 					.setDomain(rec.getValue(DOMAIN.ID))
 					.setDomainName(rec.getValue(DOMAIN.DESCRIPTION))
@@ -296,64 +295,73 @@ public class FiscalMenuDAO {
 			
 		return prop;
 	}
+	
+	private static Stream<FiscalModel> getHeadersMod200(AONContext ctx, int domain, Integer scope) {
+		ctx.checkRead();
+		return ctx.getDslContext()
+			.select(FS_MODEL200.fields())
+			.select(DOMAIN.DESCRIPTION)
+			.from(FS_MODEL200)
+			.join(DOMAIN).on(FS_MODEL200.DOMAIN.equal(DOMAIN.ID))
+			.where(FS_MODEL200.DOMAIN.equal(domain).or(DOMAIN.PARENT.equal(domain)))
+			.and( scope == null ? DSL.trueCondition() : DOMAIN.SCOPE.equal(scope))
+			//.orderBy(FS_MODEL200.YEAR.desc(),FS_MODEL200.NAME.asc())
+			.orderBy(FS_MODEL200.YEAR.desc(), FS_MODEL200.NAME.asc(), FS_MODEL200.ID.desc())
+			.fetch()
+			.stream()
+			.map( new Mod200Filler() )
+			;
+	}	
+	
+	private static class Mod200Filler implements Function<Record,FiscalModel> {
 
-	
-// FALTA - EL MODELO 200 AUN NO ESTA EN LA MATRIZ ADEMAS EL MODELO 20O ESTA SEPARADO AHORA EN PROYECTOS DISTINTOS	
-//	private static Stream<FiscalModel> getHeadersMod200(AONContext ctx, int domain, Integer scope) {
-//		ctx.checkRead();
-//		return ctx.getDslContext()
-//			.select(FS_MODEL200.fields())
-//			.select(DOMAIN.DESCRIPTION)
-//			.from(FS_MODEL200)
-//			.join(DOMAIN).on(FS_MODEL200.DOMAIN.equal(DOMAIN.ID))
-//			.where(FS_MODEL200.DOMAIN.equal(domain).or(DOMAIN.PARENT.equal(domain)))
-//			.and( scope == null ? DSL.trueCondition() : DOMAIN.SCOPE.equal(scope))
-//			.orderBy(FS_MODEL200.YEAR.desc(),FS_MODEL200.NAME.asc())
-//			.fetch()
-//			.stream()
-//			.map( new Mod200Filler() )
-//			;
-//	}
-	
-//	private static class Mod200Filler implements Function<Record,FiscalModel> {
-//
-//		@Override
-//		public FiscalModel apply(Record record) {
-//			return new FiscalModel() 
-//				.setId(record.getValue(FS_MODEL200.ID))
-//				.setDomain(record.getValue(FS_MODEL200.DOMAIN))
-//				.setDomainName(record.getValue(DOMAIN.DESCRIPTION))
-//				.setYear(record.getValue(FS_MODEL200.YEAR))
-//				.setAdministration(Administration.safeValueOf(record.getValue(FS_MODEL200.ADMINISTRATION)))
-//				
-//				// TODO - Support
-//				.setStatus( FiscalStatus.PENDING )
-//				
-//				// TODO - Support
-//				.setFinance(null)
-//				
-//				.setComplementary( AonEnumUtils.getBoolean( record.getValue(FS_MODEL200.COMPLEMENTARY)))
-//				.setReplacement( false )
-//				.setNumber(record.getValue(FS_MODEL200.RECEIPT ))
-//				.setReplacedNumber(record.getValue(FS_MODEL200.COMPLEMENTARY_RECEIPT))
-//				.setComments(record.getValue(FS_MODEL200.COMMENTS ))
-//				.setDocument(record.getValue(FS_MODEL200.DOCUMENT ))
-//				.setName(record.getValue(FS_MODEL200.NAME))
-////				.setResultType(record.getValue(FS_MODEL200.RESULT_TYPE))
-////				.setResult(record.getValue(FS_MODEL200.AMOUNT) == null? 0.0 : record.getValue(FS_MODEL200.AMOUNT) )
-//				.setDeclarationResultType(FiscalModelDeclarationType.safeValueOf(record.getValue(FS_MODEL200.RESULT_TYPE)))
-//				.setDeclarationResult(record.getValue(FS_MODEL200.AMOUNT) == null? 0.0 : record.getValue(FS_MODEL200.AMOUNT) )
-//
-//				// TODO - Support
-//				.setCreationUser(null)
-//				.setCreationDate(null)
-//				.setModificationUser(null)
-//				.setModificationDate(null)
-//				
-//				.setModel(FiscalModelType.M200)
-//				.setPeriod(Period.YEAR)
-//			;
-//		}
-//	}
+		@Override
+		public FiscalModel apply(Record record) {
+			FiscalModel fm = new FiscalModel();
+			fm.setModel(FiscalModelType.M200)
+					.setPeriod(Period.YEAR)
+					.setId(record.getValue(FS_MODEL200.ID))
+					.setDomain(record.getValue(FS_MODEL200.DOMAIN))
+					.setDomainName(record.getValue(DOMAIN.DESCRIPTION))
+					.setYear(record.getValue(FS_MODEL200.YEAR))
+					.setAdministration(Administration.safeValueOf(record.getValue(FS_MODEL200.ADMINISTRATION)))
+					.setStatus(FiscalStatus.safeValueOf(record.getValue(FS_MODEL200.STATUS)))
+					.setFinance(null)
+					.setComplementary( AonEnumUtils.getBoolean( record.getValue(FS_MODEL200.COMPLEMENTARY)))
+					.setReplacement( false )
+					.setNumber(record.getValue(FS_MODEL200.RECEIPT ))
+					.setReplacedNumber(record.getValue(FS_MODEL200.COMPLEMENTARY_RECEIPT))
+					.setComments(record.getValue(FS_MODEL200.COMMENTS ))
+					.setDocument(record.getValue(FS_MODEL200.DOCUMENT ))
+					.setName(record.getValue(FS_MODEL200.NAME))
+					.setCreationUser(record.getValue(FS_MODEL200.CREATION_USER))
+					.setCreationDate(record.getValue(FS_MODEL200.CREATION_DATE))
+					.setModificationUser(record.getValue(FS_MODEL200.MODIFICATION_USER))
+					.setModificationDate(record.getValue(FS_MODEL200.MODIFICATION_DATE))
+					
+					.setDeclarationResultType(FiscalModelDeclarationType.safeValueOf(getDeclarationResultTypeMod200(record.getValue(FS_MODEL200.RESULT_TYPE),record.getValue(FS_MODEL200.PAY_TYPE),record.getValue(FS_MODEL200.DEV_TYPE))))
+					.setDeclarationResult(record.getValue(FS_MODEL200.AMOUNT) == null ? 0.0 : (AonStringUtils.equals(record.getValue(FS_MODEL200.RESULT_TYPE),"D") ? (-1)*record.getValue(FS_MODEL200.AMOUNT) : record.getValue(FS_MODEL200.AMOUNT)))
+					.setIban(record.getValue(FS_MODEL200.IBAN))
+					// FALTA - NRC
+//					.setNrc("")		
+				;
+			return fm;
+			
+		}
+
+		private String getDeclarationResultTypeMod200(String resultType, String payType, String devType) {
+			if (AonStringUtils.equals(resultType,"N") || AonStringUtils.equals(resultType,"C")) {
+				return "N"; // Resultado cero
+			} else if (AonStringUtils.equals(resultType,"I")) {
+				if (AonStringUtils.equals(payType,"H"))
+					return "I";     // Efectivo (obsoleto), se devuelve como ingreso, como no tendrá NRC, no dejará presentarlo 
+				else 
+					return payType; // Ingreso (I), Domiciliación (U), Anotación CCT (G)
+			} else if (AonStringUtils.equals(resultType,"D")) {
+				return devType; // Devolución (D), Renuncia (R), Anotación CCT (V)
+			}			
+			return null;
+		}
+	}
 
 }

@@ -65,12 +65,16 @@ public class Model390 extends MainEntryPoint {
 		}
 		@Override
 		public void onCancel(Mod390 mod390) {
-			cleanErrorMessage();
-			cleanAndClose();
-			declarationContainer.setWidget(model390Table);
-			model390Table.refresh( new Model390Callback());
-			tabLayout.selectTab(INFORMATION_TAB);
-			closeFootPanel();
+			if (getOptions().isBackButtonVisible() && getOptions().hasExternalCallback()) {
+				getOptions().getExternalCallback().onExit(mod390);
+			} else {
+				cleanErrorMessage();
+				cleanAndClose();
+				declarationContainer.setWidget(model390Table);
+				model390Table.refresh( new Model390Callback());
+				tabLayout.selectTab(INFORMATION_TAB);
+				closeFootPanel();
+			}
 		}
 		@Override
 		public void onNew() {
@@ -79,7 +83,7 @@ public class Model390 extends MainEntryPoint {
 		@Override
 		public void onRemove(Mod390 model) {
 			if (getOptions().isBackButtonVisible() && getOptions().hasExternalCallback()) {
-				getOptions().getExternalCallback().onExit(model);
+				getOptions().getExternalCallback().onRemove(model);
 			} else {
 				onCancel(model);
 			}

@@ -1,4 +1,4 @@
-package com.esferalia.aon.gwt.fiscal.client.matrix;
+package com.esferalia.aon.gwt.mod200.client.matrix;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -275,13 +275,13 @@ public class ModelMatrixPanel extends FlowPanel {
 					// Si se está filtrando por solo un periodo, añadir celdas con Resultado, Tipo Declaración, IBAN/NRC y check para marcar (si está habilitada la presentación).
 					if (params.getPeriod() != null) {
 						boolean checkBoxEnabled = true;
-						// Resultado, Tipo, IBAN/NRC, solo si no son anuales
-						if (params.getPeriod() != Period.YEAR) {
+						// Resultado, Tipo, IBAN/NRC, solo si no son anuales o modelo 200
+						if (params.getPeriod() != Period.YEAR || cloned.getModel() == FiscalModelType.M200) {							
 							Label ibanNrcLabel = new Label();
 							if (cloned.getDeclarationResultType() != null) {
 								if (cloned.getDeclarationResultType() == FiscalModelDeclarationType.DEPOSIT) {
 									ibanNrcLabel.setText(cloned.getNrc());
-								} else {									
+								} else if (cloned.getDeclarationResultType() != FiscalModelDeclarationType.PAYBACK_RENOUNCE) {									
 									ibanNrcLabel.setText(cloned.getIban());
 								}								
 								// Si está habilitada la presentación múltiple, comprobar si tiene IBAN o NRC en aquellos modelos que deberían tenerlo o si es aplazamiento
@@ -306,6 +306,12 @@ public class ModelMatrixPanel extends FlowPanel {
 							row.addCell( new Label( cloned.getDeclarationResult() == null ? "" : AON.FMT.format(cloned.getDeclarationResult()) ), AON.CSS.aonBorderBottom(), AON.CSS.aonTextRight(), AON.CSS.aonWidth80(), AON.CSS.aonPaddingRight() )
 							   .addCell( new Label( cloned.getDeclarationResultType() == null ? "" : cloned.getDeclarationResultType().getDescription() ), AON.CSS.aonBorderBottom(), AON.CSS.aonTextLeft(), AON.CSS.aonWidth170())
 							   .addCell( ibanNrcLabel, AON.CSS.aonBorderBottom(), AON.CSS.aonTextLeft(), AON.CSS.aonWidth170() );
+						} else {
+							if (params.getPeriod() != Period.YEAR || (params.getModel() == null || params.getModel() == FiscalModelType.M200)) {
+								row.addCell( new Label(""), AON.CSS.aonBorderBottom(), AON.CSS.aonTextLeft(), AON.CSS.aonWidth80(), AON.CSS.aonPaddingRight())
+								   .addCell( new Label(""), AON.CSS.aonBorderBottom(), AON.CSS.aonTextLeft(), AON.CSS.aonWidth170())
+								   .addCell( new Label(""), AON.CSS.aonBorderBottom(), AON.CSS.aonTextLeft(), AON.CSS.aonWidth170());
+							}
 						}
 						
 						// Si está habilitada la presentacion múltiple, se añade un checkbox para poder seleccionar la fila
@@ -574,8 +580,9 @@ public class ModelMatrixPanel extends FlowPanel {
 		return table;
 	}
 	
-	private void addOnePeriodCells(AonDisplayTableRow row) {
-		if (params.getPeriod() != Period.YEAR) {
+	private void addOnePeriodCells(AonDisplayTableRow row) {		
+		// AHORA CON EL MODELO 200 QUE ES ANUAL, TAMBIEN APARECE EL RESULTADO ... 
+		if (params.getPeriod() != Period.YEAR || (params.getModel() == null || params.getModel() == FiscalModelType.M200)) {
 			row.addCell(new InlineLabel( AON.MSG.result() ), AON.CSS.aonBorderBottom(), AON.CSS.aonTextCenter(), AON.CSS.aonWidth80() )
 			   .addCell(new InlineLabel( AON.MSG.declarationType() ), AON.CSS.aonBorderBottom(), AON.CSS.aonTextCenter(), AON.CSS.aonWidth170())
                .addCell(new InlineLabel( "IBAN / NRC" ), AON.CSS.aonBorderBottom(), AON.CSS.aonTextCenter(), AON.CSS.aonWidth170());

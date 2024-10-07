@@ -12,9 +12,10 @@ import com.esferalia.aon.occam.api.model.fiscal.FiscalStatus;
 import com.esferalia.aon.occam.api.model.fiscal.Mod349;
 import com.esferalia.aon.occam.api.model.fiscal.Mod349Detail;
 import com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo;
+import com.esferalia.aon.occam.api.model.type.Period;
 import com.esferalia.aon.watson.error.AonCoreException;
 
-@WebServlet(name = "Mod349 Servlet", urlPatterns = { "/aon_gwt_fiscal/ms/Mod349" })
+@WebServlet(name = "Mod349 Servlet", urlPatterns = { "/aon_gwt_fiscal/ms/Mod349", "/aon_gwt_mod200/ms/Mod349" })
 public class Mod349ServiceImpl extends AonStatelessRemoteServiceServlet implements Model349Service {
 
 	private static final long serialVersionUID = -5770724790111604698L;
@@ -24,8 +25,8 @@ public class Mod349ServiceImpl extends AonStatelessRemoteServiceServlet implemen
 	}
 	
 	@Override
-	public Mod349 initialize(Occam occam) {
-		return MODEL349.initialize(occam);
+	public Mod349 initialize(Occam occam, int year, Period period) {
+		return MODEL349.initialize(occam, year, period);
 	}
 
 	@Override

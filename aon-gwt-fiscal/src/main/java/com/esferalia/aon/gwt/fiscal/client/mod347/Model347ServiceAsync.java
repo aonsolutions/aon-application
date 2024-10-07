@@ -13,7 +13,7 @@ public interface Model347ServiceAsync {
 	
 	void getMod347s(Occam occam, AsyncCallback<LinkedList<Mod347>> callback);
 	void get(Occam occam, Integer id, AsyncCallback<Mod347> callback);
-	void initialize(Occam occam, AsyncCallback<Mod347> callback);
+	void initialize(Occam occam, int year, AsyncCallback<Mod347> callback);
 	void reset(Occam occam, Mod347 model, AsyncCallback<Mod347> asyncCallback);
 	void save(Occam occam, Mod347 mod347, AsyncCallback<Mod347> callback);
 	void delete(Occam occam, Mod347 mod347,AsyncCallback<Void> callback);

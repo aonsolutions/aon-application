@@ -27,7 +27,6 @@ import java.security.cert.X509Certificate;
 import java.text.MessageFormat;
 import java.text.SimpleDateFormat;
 import java.time.Duration;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Base64;
 import java.util.Date;
@@ -1040,6 +1039,11 @@ public class ModelAdmonUtils {
 					return idenvio;
 				} else {
 					// codigo <> 0 indica que la operación ha generado algun error
+
+					// Si el mensaje está vacio, le asignamos el body de la response para que muestre algo del posible error
+					if (AonStringUtils.isEmpty(mensaje))
+						mensaje = new String(response.body());
+					
 					if (aeatParams.getSelected() == null)
 						ModelAdmonUtils.giveExceptionBack(resp, mensaje);
 					else 
@@ -1461,56 +1465,56 @@ public class ModelAdmonUtils {
 	}
 
 	// PRESENTACION MULTIPLE DE MODELOS DESDE LA MATRIZ
-	public static void sendFromMatrix(HttpServletResponse resp, AEATParams aeatParams) {
-		
-//		// DENTRO DE AEATPARAMS ESTARA EL ARRAY CON LOS MODELOS SELECCIONADOS MXXX_ID
-//		// RECORRER EL ARRAY, PARA CADA ELEMENTO EXTRAER EL MODELO Y EL ID
-//		// SEGUN EL MODELO LEER EL MODELO CON EL ID LLAMANDO AL GET CORRESPONDIENTE
-//		// UNA VEZ QUE TENEMOS EL MODELO, LLAMAR A SEND CON EL MODELO O A SENDTGVIONLINE SI ES INFORMATIVA (180, 190, ...)
-//		// CONTROLAR EN SEND COMO SE ARMAN LAS RESPUESTAS PUES EN ESTE CASO SE DEVOLVERA UNA PAGINA CON TODOS LOS 
-//		//   ERRORES DE TODAS LAS DECLARACIONES, POR ESO ANTES DE CADA DECLARACION HAY QUE PONER EL DNI Y EL 
-//		//   NOMBRE DE LA DECLARACION
-//		// A LA VUELTA SE MOSTRARA LA WEB CON LOS RESULTADOS Y SE REFRESCARA LA PANTALLA
-		
-		// Errores de todos los modelos
-		ArrayList<ArrayList<String>> erroresGlobal = new ArrayList<>();
-		
-		for (String s : aeatParams.getSelected()) {
-			String name = s.split("_")[0];
-			FiscalModelType modelType = null;
-			if (AonStringUtils.isNotBlank(name)) {
-				for (FiscalModelType t : FiscalModelType.values()) {
-					if (AonStringUtils.equals(name, t.name()))
-						modelType = t;
-				}				
-				
-				int idModel = AonNumberUtils.toint(s.split("_")[1]);
-				
-				if (modelType != null && idModel != 0) {
-					aeatParams.setMod(idModel);
-					IFiscalModel model = getModel(aeatParams, modelType);			    
-				    if (model != null) {
-				    	aeatParams.setErrores(new ArrayList<>());
-				    	aeatParams.getErrores().add(model.getModel() + " - " + model.getYear() + ( model.getPeriod() == Period.YEAR ? "" : " - " + model.getPeriod().getDescription() ) + " - " + model.getDocument() + " - " + model.getFullName());
-				    	
-						if (modelType.isInformative() && modelType != FiscalModelType.M390) {
-							sendOnlineTGVI(resp, aeatParams, model);
-						} else {
-					    	aeatParams.setNrc(model.getNrc());
-					    	send(resp, aeatParams, model);
-						}
-						
-				    	erroresGlobal.add(aeatParams.getErrores());				    	
-				    }
-				}
-			}
-		}
-		
-		giveMultipleResult(resp, erroresGlobal);
-		
-	}	
+//	public static ArrayList<ArrayList<String>> sendFromMatrix(HttpServletResponse resp, AEATParams aeatParams) {
+//		
+////		// DENTRO DE AEATPARAMS ESTARA EL ARRAY CON LOS MODELOS SELECCIONADOS MXXX_ID
+////		// RECORRER EL ARRAY, PARA CADA ELEMENTO EXTRAER EL MODELO Y EL ID
+////		// SEGUN EL MODELO LEER EL MODELO CON EL ID LLAMANDO AL GET CORRESPONDIENTE
+////		// UNA VEZ QUE TENEMOS EL MODELO, LLAMAR A SEND CON EL MODELO O A SENDTGVIONLINE SI ES INFORMATIVA (180, 190, ...)
+////		// CONTROLAR EN SEND COMO SE ARMAN LAS RESPUESTAS PUES EN ESTE CASO SE DEVOLVERA UNA PAGINA CON TODOS LOS 
+////		//   ERRORES DE TODAS LAS DECLARACIONES, POR ESO ANTES DE CADA DECLARACION HAY QUE PONER EL DNI Y EL 
+////		//   NOMBRE DE LA DECLARACION
+////		// A LA VUELTA SE MOSTRARA LA WEB CON LOS RESULTADOS Y SE REFRESCARA LA PANTALLA
+//		
+//		// Errores de todos los modelos
+//		ArrayList<ArrayList<String>> erroresGlobal = new ArrayList<>();
+//		
+//		for (String s : aeatParams.getSelected()) {
+//			String name = s.split("_")[0];
+//			FiscalModelType modelType = null;
+//			if (AonStringUtils.isNotBlank(name)) {
+//				for (FiscalModelType t : FiscalModelType.values()) {
+//					if (AonStringUtils.equals(name, t.name()))
+//						modelType = t;
+//				}				
+//				
+//				int idModel = AonNumberUtils.toint(s.split("_")[1]);
+//				
+//				if (modelType != null && idModel != 0 && modelType != FiscalModelType.M200) {
+//					aeatParams.setMod(idModel);
+//					IFiscalModel model = getModel(aeatParams, modelType);			    
+//				    if (model != null) {
+//				    	aeatParams.setErrores(new ArrayList<>());
+//				    	aeatParams.getErrores().add(model.getModel() + " - " + model.getYear() + ( model.getPeriod() == Period.YEAR ? "" : " - " + model.getPeriod().getDescription() ) + " - " + model.getDocument() + " - " + model.getFullName());
+//				    	
+//						if (modelType.isInformative() && modelType != FiscalModelType.M390) {
+//							sendOnlineTGVI(resp, aeatParams, model);
+//						} else {
+//					    	aeatParams.setNrc(model.getNrc());
+//					    	send(resp, aeatParams, model);
+//						}
+//						
+//				    	erroresGlobal.add(aeatParams.getErrores());				    	
+//				    }
+//				}
+//			}
+//		}
+//		
+////		giveMultipleResult(resp, erroresGlobal);
+//		return erroresGlobal;		
+//	}	
 	
-	private static IFiscalModel getModel(AEATParams aeatParams, FiscalModelType modelType) {
+	public static IFiscalModel getModel(AEATParams aeatParams, FiscalModelType modelType) {
 		
 		Occam occam = new Occam()
 				.setDomainName(aeatParams.getDomainName())
@@ -1580,48 +1584,48 @@ public class ModelAdmonUtils {
 		
 	}
 	
-	public static synchronized void giveMultipleResult(HttpServletResponse resp, ArrayList<ArrayList<String>> erroresGlobal) {
-		StringBuilder buff = new StringBuilder();
-		buff.append(ERROR_TEMPLATE_START);		
-		buff.append("<ul style=\""
-					+"background-attachment: scroll;"
-					+"background-clip: border-box;"
-					+"background-position: 3px 2px;"
-					+"background-repeat: no-repeat;"
-					+"background-size: auto auto;"
-					+"background-color: lavender;"
-					+"font-size: small;"
-					+"font-family: arial, 'lucida Grande', 'Trebuchet MS', sans-serif;"
-					+"font-weight: bold;"
-					+"border: solid black 1px;"
-					+"padding-top: 20px;"
-					+"padding-bottom: 20px;"
-					+"\">");
-	
-		for (ArrayList<String> al : erroresGlobal) {
-			buff.append("<li>");			
-			buff.append(al.get(0));
-			
-			if (al.size() == 1) {				
-				buff.append("<ul style='margin-top: 5px;margin-bottom: 10px;font-weight: normal;color: green;'>");
-				buff.append(MessageFormat.format(ERROR_TEMPLATE_BODY, "No se encontraron errores."));				
-			} else {			
-				buff.append("<ul style='margin-top: 5px;margin-bottom: 10px;font-weight: normal;color: red;'>");
-				for (int i = 1; i < al.size(); i++) {
-					if ("keystore password was incorrect".equals(al.get(i))) {
-						buff.append(MessageFormat.format(ERROR_TEMPLATE_BODY, "La contraseña no es correcta."));	
-					} else {
-						buff.append(MessageFormat.format(ERROR_TEMPLATE_BODY, al.get(i)));					
-					}
-				}
-			}			
-			
-			buff.append("</ul>");
-			buff.append("</li>");
-		}		
-		buff.append("</ul>");
-		buff.append(ERROR_TEMPLATE_END);
-		giveBase64Back(resp, buff.toString().getBytes(StandardCharsets.UTF_8), MimeType.HTML);
-	}		
+//	public static synchronized void giveMultipleResult(HttpServletResponse resp, ArrayList<ArrayList<String>> erroresGlobal) {
+//		StringBuilder buff = new StringBuilder();
+//		buff.append(ERROR_TEMPLATE_START);		
+//		buff.append("<ul style=\""
+//					+"background-attachment: scroll;"
+//					+"background-clip: border-box;"
+//					+"background-position: 3px 2px;"
+//					+"background-repeat: no-repeat;"
+//					+"background-size: auto auto;"
+//					+"background-color: lavender;"
+//					+"font-size: small;"
+//					+"font-family: arial, 'lucida Grande', 'Trebuchet MS', sans-serif;"
+//					+"font-weight: bold;"
+//					+"border: solid black 1px;"
+//					+"padding-top: 20px;"
+//					+"padding-bottom: 20px;"
+//					+"\">");
+//	
+//		for (ArrayList<String> al : erroresGlobal) {
+//			buff.append("<li>");			
+//			buff.append(al.get(0));
+//			
+//			if (al.size() == 1) {				
+//				buff.append("<ul style='margin-top: 5px;margin-bottom: 10px;font-weight: normal;color: green;'>");
+//				buff.append(MessageFormat.format(ERROR_TEMPLATE_BODY, "No se encontraron errores."));				
+//			} else {			
+//				buff.append("<ul style='margin-top: 5px;margin-bottom: 10px;font-weight: normal;color: red;'>");
+//				for (int i = 1; i < al.size(); i++) {
+//					if ("keystore password was incorrect".equals(al.get(i))) {
+//						buff.append(MessageFormat.format(ERROR_TEMPLATE_BODY, "La contraseña no es correcta."));	
+//					} else {
+//						buff.append(MessageFormat.format(ERROR_TEMPLATE_BODY, al.get(i)));					
+//					}
+//				}
+//			}			
+//			
+//			buff.append("</ul>");
+//			buff.append("</li>");
+//		}		
+//		buff.append("</ul>");
+//		buff.append(ERROR_TEMPLATE_END);
+//		giveBase64Back(resp, buff.toString().getBytes(StandardCharsets.UTF_8), MimeType.HTML);
+//	}		
 
 }
