@@ -47,6 +47,13 @@ export const AON_CLASSIC = {
 	logo: "../assets/aon.png",
 };
 
+export const NEW_APPS = {
+	app: CONSTANT.APPS,
+	title: MSG.APPLICATIONS,
+	description: MSG.APPLICATIONS,
+	symbol: MATERIAL_ICONS.APPS
+}
+
 export const AON_APPS = [ 
 	APP.AON_SOLUTIONS, 
 	APP.BIDOQ, 
@@ -56,6 +63,7 @@ export const AON_APPS = [
 
 export const MENU_APPS = [
   HOME,
+  NEW_APPS,
   NEW,
   APP.INVOICE,
   APP.DOCUMENTAL,

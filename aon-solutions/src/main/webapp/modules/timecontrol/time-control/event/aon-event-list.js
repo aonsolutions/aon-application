@@ -233,7 +233,7 @@ export class AonEventList extends AonElement {
               const newStatus = r.status.toLowerCase();
               const textStatus = getStatus(newStatus);
               const numbDate   = this.getTimeNumber(group.value, r.start_date);
-              const lettersHtml = `<div id= "aonTimeControlTableDiv" class="profile-letters ${ numbDate ? "font": ""} out">${group.name.substr(0,1)+numbDate}</div>`;
+              const lettersHtml = `<div id = "aonTimeControlTableDiv" class="profile-letters ${ numbDate ? "font": ""} ${newStatus}">${group.name.substr(0,1)+numbDate}</div>`;
 
               const nameLocation = r.last_location && r.last_location.name ? r.last_location.name : "";
 
