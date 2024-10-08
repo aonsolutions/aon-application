@@ -1,0 +1,120 @@
+package net.aonsolutions.db.up2date.tgss;
+
+import static com.esferalia.aon.jooq.tables.SystemData.SYSTEM_DATA;
+
+import java.sql.Connection;
+import java.sql.Date;
+import java.util.Calendar;
+
+import org.jooq.DSLContext;
+import org.jooq.InsertValuesStep7;
+import org.jooq.SQLDialect;
+import org.jooq.UpdateConditionStep;
+import org.jooq.conf.ParamType;
+import org.jooq.conf.Settings;
+import org.jooq.impl.DSL;
+
+import com.esferalia.aon.jooq.tables.records.SystemDataRecord;
+
+import net.aonsolutions.db.up2date.Update;
+
+public class Artist2024Update implements Update {
+	
+	public static Artist2024Update ARTIST2024UPDATE = new Artist2024Update();
+
+	private Artist2024Update() {
+		super();
+	}
+
+	@Override
+	public void upgrade(Connection connection) {
+		Settings settings ; 
+		DSLContext dslContext;
+		
+		settings = new Settings();
+		settings.setRenderSchema(false);
+		settings.setParamType(ParamType.INLINED);
+
+		// Establish context
+		dslContext = DSL.using(connection, SQLDialect.MARIADB, settings);
+		
+		// START_DATE 01/01/2024
+		Calendar calendar = Calendar.getInstance();
+		calendar.set(Calendar.MILLISECOND, 0);
+		calendar.set(Calendar.SECOND, 0);
+		calendar.set(Calendar.MINUTE, 0);
+		calendar.set(Calendar.HOUR_OF_DAY, 0);
+		calendar.set(Calendar.DAY_OF_MONTH, 1);
+		calendar.set(Calendar.MONTH, Calendar.JANUARY);
+		calendar.set(Calendar.YEAR, 2024);
+		
+		Date start2024Date = new Date(calendar.getTimeInMillis());
+
+		boolean upgraded = dslContext.fetchCount(
+				dslContext.select().from(SYSTEM_DATA)
+					.where(SYSTEM_DATA.DOMAIN.eq(-108))
+					.and(SYSTEM_DATA.START_DATE.eq(start2024Date))
+				) >= 1;
+
+		// IF ALREADY EXISTS
+				
+		if ( upgraded ) 
+			return;
+		
+		// DOMAIN = -108, ARTIST
+		
+		calendar.set(Calendar.DAY_OF_MONTH, 31);
+		calendar.set(Calendar.MONTH, Calendar.DECEMBER);
+		calendar.set(Calendar.YEAR, 2023);
+		Date end2023Date = new Date(calendar.getTimeInMillis());
+
+		UpdateConditionStep<SystemDataRecord> close2021BasesMin =
+		dslContext
+		.update(SYSTEM_DATA)
+		.set(SYSTEM_DATA.END_DATE, end2023Date)
+		.where(SYSTEM_DATA.DOMAIN.eq(-108))
+		.and(SYSTEM_DATA.NAME.in("BASE_CGC_MIN", "BASE_CGC_MAX_DIA", "BASE_CGC_MAX_MES"))
+		.and(SYSTEM_DATA.END_DATE.isNull())
+		;
+
+		InsertValuesStep7<SystemDataRecord, Integer, String, String, Date, Date, Byte, String> insert2022Artist =
+			dslContext.insertInto(
+				SYSTEM_DATA, 
+				SYSTEM_DATA.DOMAIN, 
+				SYSTEM_DATA.NAME, 
+				SYSTEM_DATA.
+				EXPRESSION, 
+				SYSTEM_DATA.START_DATE, 
+				SYSTEM_DATA.END_DATE, 
+				SYSTEM_DATA.READ_ONLY, 
+				SYSTEM_DATA.COMMENTS)
+				.values(-108, "BASE_CGC_MIN", "["
+						+ "\"01\":61.58, "
+						+ "\"02\":51.07, "
+						+ "\"03\":44.43, "
+						+ "\"05\":44.10, "
+						+ "\"07\":44.10][GRUPO_COTIZACION] * DIAS_NOMINA", start2024Date, (Date) null, (byte) 1, (String) null)
+				.values(-108, "BASE_CGC_MAX_DIA", "(($ in [ "
+						+ "[534.00,314.00], "
+						+ "[961.00,396.00], "
+						+ "[1698.00,473.00], "
+						+ "[Double.MAX_VALUE,628.00] ] if $[0] >= BASE_CGC_BRUTA/DIAS_NOMINA)[0][1]) * DIAS_NOMINA", start2024Date, (Date) null, (byte) 1, (String) null)
+				.values(-108, "BASE_CGC_MAX_MES", "MAX(4720.5 - SUM(\"BASE_CGC\"), 0)", start2024Date, (Date) null, (byte) 1, (String) null)
+			;
+		
+		
+		// DISABLED FOREING_KEY FOR INSERT
+		
+		dslContext.transaction( (config) -> {
+			
+			dslContext.execute("SET FOREIGN_KEY_CHECKS=0;");
+			
+			close2021BasesMin.execute();
+			insert2022Artist.execute();
+			
+			dslContext.execute("SET FOREIGN_KEY_CHECKS=1;");
+
+		});
+	}
+
+}

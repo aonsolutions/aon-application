@@ -695,4 +695,9 @@
 		<role-name>CallCenterManager</role-name>
 	</security-role>
 
+	<error-page>
+	    <error-code>410</error-code>
+	    <location>/410.html</location>
+	</error-page>
+
 </web-app>
