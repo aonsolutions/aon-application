@@ -141,6 +141,16 @@ export class AonInvoicePanel extends AonElement {
     } else this.aonInvoiceHome();
 
     this.dispatchEvent(new CustomEvent(EVENT.BUILD, { panel: this }));
+
+    let upload = this.getElement("aonInvoiceToolbarHeaderToolSectionUploadButton");
+    upload.title = MSG.UPLOAD_INVOICE;
+
+    let refresh = this.getElement("aonInvoiceToolbarHeaderToolSectionRefreshButton");
+    refresh.title = MSG.REFRESH;
+
+    let reprocess = this.getElement("aonInvoiceToolbarHeaderToolSectionSyncButton");
+    reprocess.title = MSG.REPROCESS;
+
   }
 
   buildInvoiceToolbarOptions(acceptedInvoices, processing) {

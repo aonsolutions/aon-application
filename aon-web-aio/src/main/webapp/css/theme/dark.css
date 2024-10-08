@@ -285,6 +285,7 @@ h1 {
 
 .aonHeaderStart, .aonMenuLeftopStart,
 .aonHeaderHome, .aonMenuLeftopHome,
+.aonHeaderApps, .aonMenuLeftopApps,
 .aonHeaderApplications, .aonMenuLeftopApplications,
 .aonHeaderNote, .aonMenuLeftopNote,
 .aonHeaderFiscal, .aonMenuLeftopFiscal,
@@ -306,7 +307,8 @@ h1 {
 .aonHeaderAccountingMenu, .aonMenuLeftopAccountingMenu,
 .aonHeaderFiscalMenu, .aonMenuLeftopFiscalMenu,
 .aonHeaderPayrollMenu, .aonMenuLeftopPayrollMenu,
-.aonHeaderMarketingMenu, .aonMenuLeftopMarketingMenu {
+.aonHeaderMarketingMenu, .aonMenuLeftopMarketingMenu,
+.aonHeaderConfigurationMenu, .aonMenuLeftTopConfigurationMenu {
 	background-color: var(--aonHeaderBackgroundColor);
 }
 
@@ -554,7 +556,7 @@ h1 {
 	color: var(--aonContentBeta); 
 }
 
-.profile-letters {
+#aonFiscalTableDiv{
 	border: 2px solid white;
 	color: white;
 }
@@ -732,11 +734,6 @@ h1 {
 
 #aonCompanyCostCardSpan {
 	color: white !important;
-}
-
-#aonTimeControlTableDiv  {
-	border: 2px solid white !important;
-  	color: white !important;
 }
 
 
