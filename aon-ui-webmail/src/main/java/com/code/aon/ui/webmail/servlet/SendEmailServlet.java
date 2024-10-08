@@ -4,17 +4,6 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.Base64;
 
-import jakarta.mail.Address;
-import jakarta.mail.MessagingException;
-import jakarta.mail.Message.RecipientType;
-import jakarta.mail.internet.InternetAddress;
-import jakarta.mail.internet.MimeMessage;
-import jakarta.servlet.ServletException;
-import jakarta.servlet.annotation.WebServlet;
-import jakarta.servlet.http.HttpServlet;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -32,6 +21,16 @@ import com.esferalia.aon.occam.api.model.MailAccount;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.type.MimeType;
 
+import jakarta.mail.Address;
+import jakarta.mail.Message.RecipientType;
+import jakarta.mail.MessagingException;
+import jakarta.mail.internet.InternetAddress;
+import jakarta.mail.internet.MimeMessage;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import solutions.aon.aws.ses.SES;
 
 @SuppressWarnings("serial")
@@ -166,7 +165,7 @@ public class SendEmailServlet extends HttpServlet{
 	            message.addRecipient(RecipientType.BCC, replyTo);
 	            Address[] addresses = {replyTo};
 	            message.setReplyTo(addresses);
-	            SES.sendEmail(message);
+	            SES.sendEmail(domain.getName(), message);
 	    	} else {
 	    		server.sendMessage(sentMessage);
 	    	}
