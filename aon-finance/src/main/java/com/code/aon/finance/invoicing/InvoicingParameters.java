@@ -52,6 +52,11 @@ public class InvoicingParameters implements Serializable {
 	private boolean invoiceRecordable;
 	private String invoiceComments;
 	
+	private String domainName;
+	private Integer domainId;
+	private String login;
+	private boolean tbai;
+	
 	public InvoicingGroup getInvoicingGroup() {
 		return invoicingGroup;
 	}
@@ -202,6 +207,38 @@ public class InvoicingParameters implements Serializable {
 
 	public void setInvoiceRecordable(boolean invoiceRecordable) {
 		this.invoiceRecordable = invoiceRecordable;
+	}
+	
+	public String getDomainName() {
+		return domainName;
+	}
+	
+	public void setDomainName(String domainName) {
+		this.domainName = domainName;
+	}
+	
+	public Integer getDomainId() {
+		return domainId;
+	}
+	
+	public void setDomainId(Integer domainId) {
+		this.domainId = domainId;
+	}
+	
+	public String getLogin() {
+		return login;
+	}
+	
+	public void setLogin(String login) {
+		this.login = login;
+	}
+	
+	public boolean isTbai() {
+		return tbai;
+	}
+
+	public void setTbai(boolean tbai) {
+		this.tbai = tbai;
 	}
 
 	public String getInvoiceComments() {
