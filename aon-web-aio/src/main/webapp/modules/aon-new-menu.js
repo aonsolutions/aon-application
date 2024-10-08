@@ -321,8 +321,6 @@ export class AonNewMenu extends AonElement {
 		header.className = 'aonHeader aonHeaderStart';
 		let applications = this.getElement('applications');
 		applications.className = 'aonMenuLeftopStart';
-
-
 	}
 
 	buildMenuLeftop() {
