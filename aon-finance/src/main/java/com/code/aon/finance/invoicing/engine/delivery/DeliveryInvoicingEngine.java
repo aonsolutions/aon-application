@@ -42,6 +42,7 @@ import com.code.aon.warehouse.Delivery;
 import com.code.aon.warehouse.DeliveryDetail;
 import com.code.aon.warehouse.enumeration.DeliveryStatus;
 import com.esferalia.aon.entity.IEntityAlias;
+import com.esferalia.aon.occam.api.AON;
 
 public class DeliveryInvoicingEngine implements IInvoicingEngine, Serializable {
 	
@@ -289,7 +290,8 @@ public class DeliveryInvoicingEngine implements IInvoicingEngine, Serializable {
 					} else {
 						getInvoicingDAO().getCollection().remove(invoice);
 						BeanManager.getManagerBean(Invoice.class).remove(invoice);
-						number--;
+						if(params.isTbai()) number++;
+						else number--;
 					}
 					
 					if (getInvoicingDAO().getCollection().size() % 10 == 0) {
@@ -302,7 +304,9 @@ public class DeliveryInvoicingEngine implements IInvoicingEngine, Serializable {
 				invoice = getInvoicingDAO().insertInvoice(invoice);
 				getInvoicingFeedBack().addMessage("\t" + "Invoice: " + invoice.getReferenceCode());
 
-				number = invoice.getNumber() + 1;
+				number = params.isTbai() 
+					? invoice.getNumber() - 1
+					: invoice.getNumber() + 1;
 				detailLine = 0;
 				previousDelivery = delivery;
 			}
@@ -388,7 +392,9 @@ public class DeliveryInvoicingEngine implements IInvoicingEngine, Serializable {
 		Invoice invoice = new Invoice();
 		invoice.setProject(delivery.getProject());
 		invoice.setSeries((params.getInvoiceSeries()==null) ? null : params.getInvoiceSeries().getCode());
-		invoice.setNumber(calculateNextNumber(params.getInvoiceSeries(), number));
+		invoice.setNumber(params.isTbai()
+				? AON.getInvoiceMinNumber(params.getDomainName(), params.getDomainId(), params.getLogin(), com.esferalia.aon.occam.api.model.type.InvoiceType.SALES, params.getInvoiceSeries().getCode())
+				: calculateNextNumber(params.getInvoiceSeries(), number));
 		invoice.setRegistry(delivery.getInvoicingCustomer().getRegistry());
 		invoice.setRegistryDocument(delivery.getInvoicingCustomer().getRegistry().getDocument());
 		invoice.setRegistryDocumentType(delivery.getInvoicingCustomer().getRegistry().getDocumentType());
