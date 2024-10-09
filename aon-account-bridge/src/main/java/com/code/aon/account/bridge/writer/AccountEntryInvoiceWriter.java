@@ -254,7 +254,9 @@ public class AccountEntryInvoiceWriter implements Serializable {
 			InvoiceDetail invoiceDetail = (InvoiceDetail) to;
 			Account account = null;
 			if (invoiceDetail.getItem() != null) {
-				account = (invoice.isSales()) ? invoiceDetail.getItem().getProduct().getSalesAccount() : invoiceDetail.getItem().getProduct().getPurchaseAccount();
+				account = (invoice.isSales()) 
+					? invoiceDetail.getItem().getProduct().getSalesAccount() 
+					: invoiceDetail.getItem().getProduct().getPurchaseAccount();
 				if (account == null && invoiceDetail.getItem().getProduct().getType() == ProductType.EXPENSE) {
 					throw new ManagerBeanException("El gasto \"" + invoiceDetail.getDescription() + "\" no tiene cuenta contable asociada.");
 				}
@@ -263,7 +265,23 @@ public class AccountEntryInvoiceWriter implements Serializable {
 				if (invoiceDetail.isPrepayment()) {
 					account = obtainPrepaymentDefaultAccount();
 				} else {
-					account = (invoice.isSales()) ? obtainSalesDefaultAccount() : obtainPurchaseDefaultAccount();
+					if (invoice.isSales()) {
+						account = obtainSalesDefaultAccount();
+					} else if (invoice.isPurchase()) {
+						account = obtainPurchaseDefaultAccount();	
+					} else {
+						IManagerBean invoiceDetailAccountBean = BeanManager.getManagerBean(InvoiceDetailAccount.class);
+						Criteria crit = new Criteria();
+						crit.addEqualExpression(invoiceDetailAccountBean.getFieldName(IEntityAlias.INVOICE_DETAIL_ACCOUNT_INVOICE_DETAIL_ID), invoiceDetail.getId());
+						List<ITransferObject> listAccounts = invoiceDetailAccountBean.getList(crit);
+						if ( listAccounts != null && listAccounts.size() > 0) {
+							InvoiceDetailAccount toAccount = (InvoiceDetailAccount) listAccounts.get(0);
+							account = toAccount.getAccount();
+						}
+						if (account == null) {
+							account = obtainPurchaseDefaultAccount();
+						}
+					}
 				}
 			}
 			double base = invoiceDetail.getTaxableBase();
