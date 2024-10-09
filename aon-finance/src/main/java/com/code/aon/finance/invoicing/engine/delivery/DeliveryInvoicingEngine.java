@@ -42,7 +42,6 @@ import com.code.aon.warehouse.Delivery;
 import com.code.aon.warehouse.DeliveryDetail;
 import com.code.aon.warehouse.enumeration.DeliveryStatus;
 import com.esferalia.aon.entity.IEntityAlias;
-import com.esferalia.aon.occam.api.AON;
 
 public class DeliveryInvoicingEngine implements IInvoicingEngine, Serializable {
 	
@@ -392,9 +391,7 @@ public class DeliveryInvoicingEngine implements IInvoicingEngine, Serializable {
 		Invoice invoice = new Invoice();
 		invoice.setProject(delivery.getProject());
 		invoice.setSeries((params.getInvoiceSeries()==null) ? null : params.getInvoiceSeries().getCode());
-		invoice.setNumber(params.isTbai()
-				? AON.getInvoiceMinNumber(params.getDomainName(), params.getDomainId(), params.getLogin(), com.esferalia.aon.occam.api.model.type.InvoiceType.SALES, params.getInvoiceSeries().getCode())
-				: calculateNextNumber(params.getInvoiceSeries(), number));
+		invoice.setNumber( calculateNextNumber(params.getInvoiceSeries(), number, params.isTbai()));
 		invoice.setRegistry(delivery.getInvoicingCustomer().getRegistry());
 		invoice.setRegistryDocument(delivery.getInvoicingCustomer().getRegistry().getDocument());
 		invoice.setRegistryDocumentType(delivery.getInvoicingCustomer().getRegistry().getDocumentType());
@@ -409,7 +406,8 @@ public class DeliveryInvoicingEngine implements IInvoicingEngine, Serializable {
 		return invoice;
 	}
 
-	private int calculateNextNumber(Series series, int number) throws ManagerBeanException {
+	private int calculateNextNumber(Series series, int number, boolean tbai ) throws ManagerBeanException {
+		if (tbai) return number;
 		IManagerBean invoiceBean = BeanManager.getManagerBean(Invoice.class);
 		number = (number == 0 ? 1 : number);
 		while (true) {
