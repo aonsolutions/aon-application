@@ -349,7 +349,7 @@ public class Mod2002023DAO  {
 			 .set(FS_MODEL200.CREATION_DATE, AonDateUtils.toTimestamp(mod200.getCreationDate()))
 			 .set(FS_MODEL200.FS_MODEL, mod200.getFsModel())
 			 .set(FS_MODEL200.NRS_ANEXOVI, mod200.getNrsAnexoVI())
-//			 .set(FS_MODEL200.NRC,mod200.getNrc()) // FALTA
+			 .set(FS_MODEL200.NRC,mod200.getNrc()) 
 			 .returning()
 			 .fetchOne();
 		mod200.setId(record.getValue(FS_MODEL200.ID));
@@ -729,7 +729,7 @@ public class Mod2002023DAO  {
 		 .set(FS_MODEL200.MODIFICATION_DATE, AonDateUtils.toTimestamp(mod200.getModificationDate()))
 		 .set(FS_MODEL200.FS_MODEL, mod200.getFsModel())
 		 .set(FS_MODEL200.NRS_ANEXOVI, mod200.getNrsAnexoVI())
-//		 .set(FS_MODEL200.NRC,mod200.getNrc()) // FALTA
+		 .set(FS_MODEL200.NRC,mod200.getNrc())
 		 .where(FS_MODEL200.ID.equal(mod200.getId()))
 		 .execute();
 		ctx.log().info("\t\t MOD 200 UPDATED (" + mod200.getId() + ")");
@@ -875,7 +875,7 @@ public class Mod2002023DAO  {
 		mod200.setModificationDate(record.getModificationDate());
 	    mod200.setFsModel(record.getFsModel());
 	    mod200.setNrsAnexoVI(record.getNrsAnexovi());
-	    // mod200.setNrc(record.getNrc()); // FALTA
+	    mod200.setNrc(record.getNrc()); 
 		return mod200;
 	}
 	
@@ -1298,6 +1298,7 @@ public class Mod2002023DAO  {
 				ctx.getDslContext().update(FS_MODEL200)
 					.set(FS_MODEL200.RECEIPT, response.getJustificante())
 					.set(FS_MODEL200.STATUS, FiscalStatus.SENT.value())
+					.set(FS_MODEL200.NRC, mod.getNrc()) 
 					.where(FS_MODEL200.ID.equal(mod.getId()))
 					.execute();
 				return getById(ctx, mod.getId());

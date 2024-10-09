@@ -258,7 +258,6 @@ public class Mod200 implements IFiscalModel, HasAudit {
 		return this;
 	}
 	
-	// FALTA - VER SI ES NECESARIO CONTROLAR QUE DEVUELVA CADENA VACIA
 	@Override
 	public String getNrc() {		
 		return nrc;

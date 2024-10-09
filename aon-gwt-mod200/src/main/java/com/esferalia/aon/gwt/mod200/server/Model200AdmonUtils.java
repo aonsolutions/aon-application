@@ -345,7 +345,6 @@ public class Model200AdmonUtils {
 		buff.append("</style>");
 		buff.append("<body>");
 		buff.append("<div id=\"aeat\">La Agencia Tributaria devolvió el siguiente mensaje:</div>");
-		//buff.append("<table id=\"response\">");
 		
 		String labelTD = "<tr><td id=\"label\">{0}</td>"; 
 		String valueTD = "<td>{0}</td></tr>";
@@ -377,7 +376,6 @@ public class Model200AdmonUtils {
 			}
 			buff.append("</table>");
 		}
-		//buff.append("</table>");
 		buff.append("</body></html>");
 		return buff;
 	}
@@ -400,15 +398,30 @@ public class Model200AdmonUtils {
 		return output.toByteArray();
 	}
 
-	public static void manageJSONContent(HttpServletResponse resp, AEATParams aeatParams, IFiscalModel fm, byte[] body) {
+	public static void manageJSONContent(HttpServletResponse resp, AEATParams aeatParams, IFiscalModel model, byte[] body) {
+
+		// Asignar NRC al modelo para que se grabe cuando se marque como presentado o si la presentación genera error, que se grabe el modelo solo si el NRC se ha modificado
+		boolean saveNrc = AonStringUtils.notEquals(model.getNrc(), aeatParams.getNrc());
+		model.setNrc(aeatParams.getNrc());
+		
 		AEATResponse response = AEATJson.toJSON(body); 
 		if (response.isCorrect()) {
-			manageRightResponse(resp,aeatParams,fm,new String(body));		
+			manageRightResponse(resp,aeatParams,model,new String(body));		
 		} else {
-			manageWrongResponse(resp, response, aeatParams);
+			// Grabar NRC si se ha modificado
+			if (saveNrc) {
+				Occam occam = new Occam()
+						.setDomainName(aeatParams.getDomainName())
+						.setDomain(aeatParams.getDomainId())
+						.setUser(aeatParams.getUser());				
+				MODEL200.saveNrc(occam, model);
+			}
+			manageWrongResponse(resp, response, aeatParams);			
 		}
 	}
+
 	private static void manageRightResponse(HttpServletResponse resp, AEATParams aeatParams, IFiscalModel fm, String aeatResponse) {
+		
 		Occam occam = new Occam()
 				.setDomainName(aeatParams.getDomainName())
 				.setDomain(aeatParams.getDomainId())

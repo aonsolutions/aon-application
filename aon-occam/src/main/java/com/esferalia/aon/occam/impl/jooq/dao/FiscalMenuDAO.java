@@ -50,15 +50,6 @@ public class FiscalMenuDAO {
 	public static JSONArray  getDomainsModels(AONContext ctx, int domainId, FiscalMatrixParams params) {
 		final JSONArray allModels = new JSONArray();
 		Domain domain = null;
-//		if (params.getScope() == null) {
-//			domain = DomainDAO.getDomain(ctx, domainId);
-//		} else {
-//			// CREO QUE ES ESTE FILTRO EL QUE PUEDE HACER QUE NO SALGA NADA SI FILTRO POR AMBITO Y EL DOMINIO PADRE TIENE INDICADO UN AMBITO Y ES DISTINTO
-//			// AUNQUE IGUAL TAMPOCO TIENE MUCHO SENTIDO FILTRAR AQUI POR AMBITO, SI ESTOY EN EL DOMINIO PADRE LO QUE ME INTERESA SON LOS AMBITOS DE LOS MODELOS DE LOS HIJOS ENTIENDO
-//			domain = DomainDAO.getDomain(ctx, p ->
-//					p.getIdProperty().eq(domainId)
-//					.and( p.getScopeProperty().isNull().or(p.getScopeProperty().eq(params.getScope())) ));
-//		}
 		domain = DomainDAO.getDomain(ctx, domainId);
 		if (domain != null && domain.getId() != null) {
 			getDomainModels(ctx, domain, allModels, params);
@@ -240,7 +231,6 @@ public class FiscalMenuDAO {
 			.fetch()
 			.stream()
 			.filter(rec -> AonStringUtils.containsAny(rec.getValue(APP_PARAM.VALUE), "YQM"))
-//			.filter(rec -> fromAppParamName(rec.getValue(APP_PARAM.NAME)) != FiscalModelType.M200) // Ignorar el Modelo 200, no se puede hacer nada con él desde la matriz 
 			.map( rec -> new FiscalModel()
 					.setDomain(rec.getValue(DOMAIN.ID))
 					.setDomainName(rec.getValue(DOMAIN.DESCRIPTION))
@@ -305,7 +295,6 @@ public class FiscalMenuDAO {
 			.join(DOMAIN).on(FS_MODEL200.DOMAIN.equal(DOMAIN.ID))
 			.where(FS_MODEL200.DOMAIN.equal(domain).or(DOMAIN.PARENT.equal(domain)))
 			.and( scope == null ? DSL.trueCondition() : DOMAIN.SCOPE.equal(scope))
-			//.orderBy(FS_MODEL200.YEAR.desc(),FS_MODEL200.NAME.asc())
 			.orderBy(FS_MODEL200.YEAR.desc(), FS_MODEL200.NAME.asc(), FS_MODEL200.ID.desc())
 			.fetch()
 			.stream()
@@ -316,34 +305,32 @@ public class FiscalMenuDAO {
 	private static class Mod200Filler implements Function<Record,FiscalModel> {
 
 		@Override
-		public FiscalModel apply(Record record) {
+		public FiscalModel apply(Record rec) {
 			FiscalModel fm = new FiscalModel();
 			fm.setModel(FiscalModelType.M200)
 					.setPeriod(Period.YEAR)
-					.setId(record.getValue(FS_MODEL200.ID))
-					.setDomain(record.getValue(FS_MODEL200.DOMAIN))
-					.setDomainName(record.getValue(DOMAIN.DESCRIPTION))
-					.setYear(record.getValue(FS_MODEL200.YEAR))
-					.setAdministration(Administration.safeValueOf(record.getValue(FS_MODEL200.ADMINISTRATION)))
-					.setStatus(FiscalStatus.safeValueOf(record.getValue(FS_MODEL200.STATUS)))
+					.setId(rec.getValue(FS_MODEL200.ID))
+					.setDomain(rec.getValue(FS_MODEL200.DOMAIN))
+					.setDomainName(rec.getValue(DOMAIN.DESCRIPTION))
+					.setYear(rec.getValue(FS_MODEL200.YEAR))
+					.setAdministration(Administration.safeValueOf(rec.getValue(FS_MODEL200.ADMINISTRATION)))
+					.setStatus(FiscalStatus.safeValueOf(rec.getValue(FS_MODEL200.STATUS)))
 					.setFinance(null)
-					.setComplementary( AonEnumUtils.getBoolean( record.getValue(FS_MODEL200.COMPLEMENTARY)))
+					.setComplementary( AonEnumUtils.getBoolean( rec.getValue(FS_MODEL200.COMPLEMENTARY)))
 					.setReplacement( false )
-					.setNumber(record.getValue(FS_MODEL200.RECEIPT ))
-					.setReplacedNumber(record.getValue(FS_MODEL200.COMPLEMENTARY_RECEIPT))
-					.setComments(record.getValue(FS_MODEL200.COMMENTS ))
-					.setDocument(record.getValue(FS_MODEL200.DOCUMENT ))
-					.setName(record.getValue(FS_MODEL200.NAME))
-					.setCreationUser(record.getValue(FS_MODEL200.CREATION_USER))
-					.setCreationDate(record.getValue(FS_MODEL200.CREATION_DATE))
-					.setModificationUser(record.getValue(FS_MODEL200.MODIFICATION_USER))
-					.setModificationDate(record.getValue(FS_MODEL200.MODIFICATION_DATE))
-					
-					.setDeclarationResultType(FiscalModelDeclarationType.safeValueOf(getDeclarationResultTypeMod200(record.getValue(FS_MODEL200.RESULT_TYPE),record.getValue(FS_MODEL200.PAY_TYPE),record.getValue(FS_MODEL200.DEV_TYPE))))
-					.setDeclarationResult(record.getValue(FS_MODEL200.AMOUNT) == null ? 0.0 : (AonStringUtils.equals(record.getValue(FS_MODEL200.RESULT_TYPE),"D") ? (-1)*record.getValue(FS_MODEL200.AMOUNT) : record.getValue(FS_MODEL200.AMOUNT)))
-					.setIban(record.getValue(FS_MODEL200.IBAN))
-					// FALTA - NRC
-//					.setNrc("")		
+					.setNumber(rec.getValue(FS_MODEL200.RECEIPT ))
+					.setReplacedNumber(rec.getValue(FS_MODEL200.COMPLEMENTARY_RECEIPT))
+					.setComments(rec.getValue(FS_MODEL200.COMMENTS ))
+					.setDocument(rec.getValue(FS_MODEL200.DOCUMENT ))
+					.setName(rec.getValue(FS_MODEL200.NAME))
+					.setCreationUser(rec.getValue(FS_MODEL200.CREATION_USER))
+					.setCreationDate(rec.getValue(FS_MODEL200.CREATION_DATE))
+					.setModificationUser(rec.getValue(FS_MODEL200.MODIFICATION_USER))
+					.setModificationDate(rec.getValue(FS_MODEL200.MODIFICATION_DATE))
+					.setDeclarationResultType(FiscalModelDeclarationType.safeValueOf(getDeclarationResultTypeMod200(rec.getValue(FS_MODEL200.RESULT_TYPE),rec.getValue(FS_MODEL200.PAY_TYPE),rec.getValue(FS_MODEL200.DEV_TYPE))))
+					.setDeclarationResult(rec.getValue(FS_MODEL200.AMOUNT) == null ? 0.0 : (AonStringUtils.equals(rec.getValue(FS_MODEL200.RESULT_TYPE),"D") ? (-1)*rec.getValue(FS_MODEL200.AMOUNT) : rec.getValue(FS_MODEL200.AMOUNT)))
+					.setNrc(rec.getValue(FS_MODEL200.NRC))
+					.setIban(rec.getValue(FS_MODEL200.IBAN))
 				;
 			return fm;
 			
