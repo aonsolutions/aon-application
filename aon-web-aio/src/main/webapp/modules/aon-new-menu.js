@@ -9,6 +9,7 @@ import * as GWT from 'aonsolutions/gwt/gwt.js';
 import * as LS from 'aonsolutions/services/localStorageService.js';
 import { AonMessenger } from 'aonsolutions/modules/messenger/aon-messenger.js';
 import { AonIconButton } from 'aonsolutions/components/aon-icon-button.js';
+import { AonUploadToast } from "aonsolutions/components/aon-upload-toast.js";
 import { AonDialogMenu } from 'aonsolutions/components/aon-dialog-menu.js';
 import { AonFiscal } from 'aonsolutions/modules/fiscal/aon-fiscal.js';
 import { AonTimecontrol } from 'aonsolutions/modules/timecontrol/aon-timecontrol.js';
@@ -28,8 +29,6 @@ import { AonWarehouse } from 'aonsolutions/modules/warehouse/aon-warehouse.js';
 import * as OPTION from 'aonsolutions/modules/invoice/InvoiceOptions.js';
 import { TASK_SOURCE } from 'aonsolutions/modules/messenger/MessengerEnums.js';
 import { uploadDocuments } from "aonsolutions/modules/documental/DocumentalUtils.js";
-import { uploadInvoices } from "aonsolutions/modules/invoice/InvoiceUtils.js"
-
 
 import { AonNewDesktop } from './aon-new-desktop.js';
 import { AonAccountingMenu } from './accounting/aon-accounting-menu.js';
@@ -46,6 +45,7 @@ import { AonCommerceMenu } from './commerce/aon-commerce-menu.js';
 import { AonGarageMenu } from './garage/aon-garage-menu.js';
 import { AonConfigurationMenu } from './configuration/aon-configuration-menu.js';
 
+import { generateJobId } from 'aonsolutions/modules/invoice/InvoiceUtils.js';
 
 //	Falla la compilación por esta línea que no se usa. REVISAR!!
 // import { FISCAL } from '../../../../target/aon-aio/environments/msg-es.js';
@@ -1109,11 +1109,23 @@ export class AonNewMenu extends AonElement {
 							input.type = CONSTANT.FILE;
 							input.accept = this.accept;
 							input.className = CSS.AON_NONE;
-							input.addEventListener(EVENT.CHANGE, ({target}) => uploadInvoices(input, target.files) );
+							input.multiple = 'multiple';
+							
+							input.addEventListener(EVENT.CHANGE, ({target}) => {
+								let uploadToast = this.getElement('aonUploadToast');
+								if(!uploadToast){ 
+									uploadToast = new AonUploadToast();
+									this.getApplication().getContent().appendChild(uploadToast);
+								}
+								let data = { uploaded : 0 };
+								uploadToast.setJobId(generateJobId());
+								for (let file of target.files) {
+									uploadToast.addFile("invoice", file, data);
+								}			
+							});
 							input.click();
-							this.appSelection(Apps.INVOICE);
+							// this.appSelection(Apps.INVOICE);
 						}
-						
 					}
 				]
 			});
