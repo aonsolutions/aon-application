@@ -281,6 +281,11 @@ color: var(--aonSearchButton);
   padding: 0px 15px 15px 0px;
 }
 
+.aonUlUploadToast {
+  max-height: 275px;
+  overflow-y: scroll;
+}
+
 .aonAppLi:hover {
   /* background-color: var(--aonLightGray); */
   background-color: var(--aonLightBlue);

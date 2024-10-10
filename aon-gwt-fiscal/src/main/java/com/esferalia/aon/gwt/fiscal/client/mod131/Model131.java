@@ -101,17 +101,21 @@ public class Model131 extends MainEntryPoint {
 
 		@Override
 		public void onCancel(Mod131 model) {
-			cleanInfoPanel();
-			declarationContainer.setWidget(model131Table);
-			model131Table.refresh( new Model131Callback() );
-			tabLayout.selectTab(INFORMATION_TAB);
-			closeFootPanel();
+			if (getOptions().isBackButtonVisible() && getOptions().hasExternalCallback()) {
+				getOptions().getExternalCallback().onExit(model);
+			} else {
+				cleanInfoPanel();
+				declarationContainer.setWidget(model131Table);
+				model131Table.refresh( new Model131Callback() );
+				tabLayout.selectTab(INFORMATION_TAB);
+				closeFootPanel();
+			}
 		}
 
 		@Override
 		public void onRemove(Mod131 model) {
 			if (getOptions().isBackButtonVisible() && getOptions().hasExternalCallback()) {
-				getOptions().getExternalCallback().onExit(model);
+				getOptions().getExternalCallback().onRemove(model);
 			} else {
 				onCancel(model);
 			}

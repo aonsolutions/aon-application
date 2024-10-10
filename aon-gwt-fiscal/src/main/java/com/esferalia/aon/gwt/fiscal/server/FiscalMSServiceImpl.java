@@ -19,7 +19,7 @@ import com.esferalia.aon.occam.impl.jooq.dao.DataResponseDAO;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
-@WebServlet(name = "Aon MS Fiscal Servlet", urlPatterns = { "/aon_gwt_fiscal/ms/Fiscal" })
+@WebServlet(name = "Aon MS Fiscal Servlet", urlPatterns = { "/aon_gwt_fiscal/ms/Fiscal", "/aon_gwt_mod200/ms/Fiscal" })
 public class FiscalMSServiceImpl extends AonStatelessRemoteServiceServlet implements FiscalMSService {
 
 	private static final long serialVersionUID = 4908377540728384390L;

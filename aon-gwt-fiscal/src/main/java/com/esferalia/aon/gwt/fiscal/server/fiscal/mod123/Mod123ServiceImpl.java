@@ -16,7 +16,7 @@ import com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo;
 import com.esferalia.aon.occam.api.model.type.Mod123Key;
 import com.esferalia.aon.watson.error.AonCoreException;
 
-@WebServlet(name = "Mod123 Servlet", urlPatterns = { "/aon_gwt_fiscal/ms/Mod123" })
+@WebServlet(name = "Mod123 Servlet", urlPatterns = { "/aon_gwt_fiscal/ms/Mod123", "/aon_gwt_mod200/ms/Mod123" })
 public class Mod123ServiceImpl extends AonStatelessRemoteServiceServlet implements Mod123Service {
 
 	private static final long serialVersionUID = 9086155747294281837L;

@@ -1,4 +1,4 @@
-package com.esferalia.aon.gwt.fiscal.client.matrix;
+package com.esferalia.aon.gwt.mod200.client.matrix;
 
 import java.util.logging.Logger;
 
@@ -120,8 +120,7 @@ class ModelMatrixFilterPanel extends AonDisplayTable implements HasValueChangeHa
 		model.setStyleName(AON.CSS.aonMarginRight());
 		model.addItem(" TODOS ", "");
 		for (FiscalModelType m : FiscalModelType.values()) {
-			// FALTA - POR AHORA NO APARECE EL MODELO 200 EN LA MATRIZ 
-			if (m != FiscalModelType.M200 && m != FiscalModelType.M140 && m != FiscalModelType.M240 && m != FiscalModelType.SII && m != FiscalModelType.M303_RG && m != FiscalModelType.M303_RS && m != FiscalModelType.M310 && m != FiscalModelType.M311 && m != FiscalModelType.M340 ) {
+			if (m != FiscalModelType.M140 && m != FiscalModelType.M240 && m != FiscalModelType.SII && m != FiscalModelType.M303_RG && m != FiscalModelType.M303_RS && m != FiscalModelType.M310 && m != FiscalModelType.M311 && m != FiscalModelType.M340 ) {
 				model.addItem(AON.MSG.fiscalModelType(m), m.toString());
 			}
 		}
@@ -403,7 +402,7 @@ class ModelMatrixFilterPanel extends AonDisplayTable implements HasValueChangeHa
 					options.getConfiguration().getDomain().getId(),
 					options.getConfiguration().getUser().getLogin());
 			
-			// Pedir Certificado 
+			// Pedir Certificado (se usa el que está en aon-gwt-fiscal)
 			AonCertificationPopupParams params = new AonCertificationPopupParams()
 					.setDocument(options.getConfiguration().fiscal().getCertificateDocument())
 					.setName(options.getConfiguration().fiscal().getCertificateName())
@@ -459,7 +458,7 @@ class ModelMatrixFilterPanel extends AonDisplayTable implements HasValueChangeHa
 
 //		cleanViewers();
 		XMLHttpRequest xhr = XMLHttpRequest.create();
-		xhr.open(FormPanel.METHOD_POST, GWT.getHostPageBaseURL() +"aon_gwt_fiscal/ms/MatrixSendAEAT");
+		xhr.open(FormPanel.METHOD_POST, GWT.getHostPageBaseURL() +"aon_gwt_mod200/ms/MatrixSendAEAT");
 		xhr.setRequestHeader(AonHttpUtils.CONTENT_TYPE,AonHttpUtils.APPLICATION_FORM_URLENCODED);
 		xhr.setOnReadyStateChange(xhreq -> {
 			int state = xhreq.getReadyState();

@@ -9,6 +9,7 @@ import com.esferalia.aon.occam.api.model.fiscal.FiscalStatus;
 import com.esferalia.aon.occam.api.model.fiscal.Mod349;
 import com.esferalia.aon.occam.api.model.fiscal.Mod349Detail;
 import com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo;
+import com.esferalia.aon.occam.api.model.type.Period;
 import com.esferalia.aon.occam.impl.jooq.fiscal.MODEL349Impl;
 
 public class MODEL349 {
@@ -32,9 +33,9 @@ public class MODEL349 {
 		}
 	}
 
-	public static Mod349 initialize(Occam occam) {
+	public static Mod349 initialize(Occam occam, int year, Period period) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(occam)) {
-			return getImpl().initialize(ctx);
+			return getImpl().initialize(ctx, year, period);
 		}
 	}
 
