@@ -9,7 +9,10 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
@@ -30,6 +33,7 @@ import com.code.aon.common.ICollectionProvider;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.dao.hibernate.TypeResolver;
 import com.code.aon.common.domain.DomainManager;
 import com.code.aon.common.domain.IDomain;
 import com.code.aon.common.enumeration.IConfidentialable;
@@ -1580,6 +1584,51 @@ public class BasicController extends AbstractPojoController implements IControll
 		//pageModel.update(nextPage, getPageLimit());
 		setPage(nextPage);
 	}
+	
+	
+	public void addFilterExpression(ValueChangeEvent event) throws ManagerBeanException {
+		
+
+		clearCriteria();
+		Object newValue = event.getNewValue();
+
+		if (newValue != null && newValue.toString().trim().length() > 0   
+				&& this.model != null && this.model instanceof ExtendedPageDataModel extendedPageDataModel) {
+			
+			TypeResolver typeResolver = new TypeResolver(getPojo());
+
+			Optional<Expression> filterExpression = 
+			extendedPageDataModel.getVisibleFields().stream()
+			.map(BasicController::getProperty)
+			.filter(alias -> isString(typeResolver,alias))
+			.map( fieldName -> ExpressionUtilities.getLikeExpression(fieldName, String.format("%%%s%%",newValue)))
+			.map(e -> (Expression) e ).reduce(ExpressionUtilities::getOrExpression);
+			
+			filterExpression.ifPresent( getCriteria()::addExpression);
+			
+		}
+
+	}
+	
+	
+	private static boolean isString(TypeResolver typeResolver, String alias ) {
+		try {
+			return typeResolver.isString(typeResolver.getType(alias));
+		} catch (Exception e ) {
+		}
+		return false;
+	}
+	
+	private static String getProperty (String valueELExpr) {
+		try {
+			Matcher matcher = Pattern.compile("\\.(?<property>to\\.[\\w\\.]*)", Pattern.CASE_INSENSITIVE).matcher(valueELExpr);
+			return matcher.find()  ? matcher.group("property") : valueELExpr ;
+		} catch (Exception e ) {
+			return valueELExpr;
+		}
+	}
+	
+	
 	
 	
 }
