@@ -54,7 +54,9 @@ import com.esferalia.aon.occam.api.model.type.TaxType;
 import com.esferalia.aon.occam.api.model.type.VatDeductionType;
 import com.esferalia.aon.occam.impl.jooq.dao.AccountingInvoiceDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.InvofoxConfigurationDAO;
+import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonMathUtils;
+import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 import jakarta.servlet.annotation.WebServlet;
@@ -254,7 +256,42 @@ public class InvofoxServlet extends AonApiHttpServlet {
 			}
 		}
 		
+		String jobId = generateJobId();
+		AON.getRawdocStream(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), 
+				f -> f.getDomainProperty().eq(api.getDomain().getId())
+					.and(f.getStatusProperty().eq(RawdocStatus.PROCESSING.value())))
+		.forEach(r -> { 
+			Date date = AonDateUtils.addMinutes(new Date(), -10);
+			if(!AonStringUtils.isBlank(r.getS3Key()) && r.getCreationDate() != null && r.getCreationDate().before(date)) {
+				String[] keyParams = r.getS3Key().split("/"); 
+				StringBuilder newKey = new StringBuilder()
+						.append(keyParams[0] + "/")
+						.append(keyParams[1] + "/")
+						.append(keyParams[2] + "/")
+						.append(keyParams[3] + "/")
+						.append(jobId + "/")
+						.append(keyParams[5]);
+				
+				S3.copy(r.getS3Bucket(), r.getS3Bucket(), r.getS3Key(), newKey.toString());
+				
+				AON.rawdocDelete(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), r.getId());
+				// S3.delete(r.getS3Bucket(), r.getS3Key());
+			}
+		});
+		
 		return new JSONObject();
+	}
+	
+	private static String generateJobId() {
+		Date date = new Date();
+		StringBuilder builder = new StringBuilder();
+		builder.append(AonDateUtils.getYear(date));
+		builder.append(AonStringUtils.leftPad(AonNumberUtils.toString(AonDateUtils.getMonth(date) + 1), 2, '0'));
+		builder.append(AonStringUtils.leftPad(AonNumberUtils.toString(AonDateUtils.getDay(date)), 2, '0'));
+		builder.append(AonStringUtils.leftPad(AonNumberUtils.toString(AonDateUtils.getHour(date)), 2, '0'));
+		builder.append(AonStringUtils.leftPad(AonNumberUtils.toString(AonDateUtils.getMinute(date)), 2, '0'));
+		builder.append(AonStringUtils.leftPad(AonNumberUtils.toString(AonDateUtils.getSecond(date)), 2, '0'));
+		return builder.toString();
 	}
 	
 	private static RawdocStatus getRawdocStatus(String status) {
