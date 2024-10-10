@@ -148,10 +148,11 @@ export class AonConfig extends AonElement {
             let welcome = this.getElement("aonCompanyTabFilter");
             LS.setLeftMenu(sideNavSwitch.checked);
             LS.setPortalChecked(sideNavSwitch.checked);
+            let side = this.getElement("aonMenuSidenav");
             if(!welcome){
-                if(LS.isLeftMenu()) {
+                if(side.style.width == "0px") {
                     aonMenu.showSideNav();
-                } else {
+                } else if(side.style.width == "68px") {
                     aonMenu.hideSideNav();
                 };
             }
