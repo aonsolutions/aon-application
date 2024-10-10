@@ -67,7 +67,7 @@ public class Model390HF extends MainEntryPoint {
 		@Override
 		public void onRemove(Mod390HF mod390HF) {
 			if (getOptions().isBackButtonVisible() && getOptions().hasExternalCallback()) {
-				getOptions().getExternalCallback().onExit(mod390HF);
+				getOptions().getExternalCallback().onRemove(mod390HF);
 			} else {
 				onCancel(mod390HF);
 			}

@@ -1,67 +1,61 @@
 package com.esferalia.aon.gwt.mod200.client;
 
-import com.esferalia.aon.gwt.common.client.CommonService;
-import com.esferalia.aon.gwt.common.client.CommonServiceAsync;
-import com.esferalia.aon.gwt.common.client.CommonServiceAsyncDecorator;
+import com.esferalia.aon.gwt.mod200.client.matrix.ModelMatrix;
 import com.esferalia.aon.gwt.mod200.client.mod200.Model200;
-import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.Occam;
-import com.esferalia.aon.occam.api.model.config.ConfigParams;
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.RunAsyncCallback;
 import com.google.gwt.user.client.Window;
-import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public class MainEntryPoint implements EntryPoint {
 	
-	private static final String ERROR_MSG = "Error al cargar el Modelo 200";
-	private static AonConfiguration aonConfiguration;
-	
-	private static final CommonServiceAsync COMMON_SERVICE;
-	static {
-		CommonServiceAsync commonServiceRaw = GWT.create(CommonService.class);
-		COMMON_SERVICE = new CommonServiceAsyncDecorator(commonServiceRaw); 
-	}
+	private static final String ERROR_MSG = "Error al cargar";
+	private static final String ENTRY_POINT_PARAM = "entryPoint";
+	private static final String ELEMENT_TARGET_PARAM = "elementTarget";
+	private static final String FS_MODEL200_ENTRY_POINT = "Model200";
+	private static final String FS_MODEL_MATRIX_ENTRY_POINT = "ModelMatrix";
 	
 	@Override
 	public void onModuleLoad() {
-		if(getToken() != null) {
-			Occam occam = new Occam()
-				.setDomainName(getCurrentDomainName())
-				.setDomain(getCurrentDomain())
-				.setUser(getCurrentUser());
-			ConfigParams params = new ConfigParams().setToken(getToken());
-			COMMON_SERVICE.getAonConfiguration(occam, params, new AsyncCallback<AonConfiguration>() {
-				
-				@Override public void onSuccess(AonConfiguration config) {
-					selection(aonConfiguration);
-				}
-				
-				@Override public void onFailure(Throwable arg0) {
-					Window.alert(ERROR_MSG);
-				}
-			});
-		} else {
-			selection(null);
-		}		
+		String entryPoint = getParameter(GWT.getModuleName(), ENTRY_POINT_PARAM);	
+		String elementTarget = getParameter(GWT.getModuleName(), ELEMENT_TARGET_PARAM);
+		selection(entryPoint, elementTarget);
 	}
 	
-	private void selection(AonConfiguration aonConfiguration) {
-		GWT.runAsync(Model200.class, new RunAsyncCallback() {
+	private void selection(String entryPoint, String elementTarget) {
+		if (FS_MODEL200_ENTRY_POINT.equalsIgnoreCase(entryPoint)) {
+			GWT.runAsync(Model200.class, new RunAsyncCallback() {
 
-			@Override
-			public void onFailure(Throwable reason) {
-				Window.alert(ERROR_MSG);
-			}
+				@Override
+				public void onFailure(Throwable reason) {
+					Window.alert(ERROR_MSG);
+				}
 
-			@Override
-			public void onSuccess() {
-				Model200 model200 = new Model200();
-				model200.onModuleLoad();
-			}
-				
-		});
+				@Override
+				public void onSuccess() {
+					Model200 model200 = new Model200();
+					model200.onModuleLoad();
+				}
+					
+			});
+		}
+		else if (FS_MODEL_MATRIX_ENTRY_POINT.equalsIgnoreCase(entryPoint)) {
+			GWT.runAsync(ModelMatrix.class, new RunAsyncCallback() {
+
+				@Override
+				public void onFailure(Throwable reason) {
+					Window.alert(ERROR_MSG);
+				}
+
+				@Override
+				public void onSuccess() {
+					ModelMatrix modelMatrix = new ModelMatrix();
+					modelMatrix.onModuleLoad(elementTarget);
+				}
+			});
+		}
+		
 	}
 	
 	protected Occam getOccam() {
@@ -70,11 +64,6 @@ public class MainEntryPoint implements EntryPoint {
 			.setDomain(getCurrentDomain())
 			.setUser(getCurrentUser());
 	}
-	
-	public static native String getToken()
-	/*-{
-		return $wnd.localStorage.getItem("aon_session_id");
-	}-*/;
 	
 	public static native String getCurrentDomainName()
 	/*-{

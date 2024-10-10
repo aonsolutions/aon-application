@@ -26,10 +26,10 @@
           <webappDirectory>${project.build.outputDirectory}</webappDirectory>
           <compileSourcesArtifacts>
             <compileSourcesArtifact>com.esferalia.aon:aon.gwt.common</compileSourcesArtifact>
-            <!-- <compileSourcesArtifact>com.esferalia.aon:aon.gwt.api</compileSourcesArtifact> -->
-            <compileSourcesArtifact>com.esferalia.aon:aon.gwt.api</compileSourcesArtifact>            
+            <compileSourcesArtifact>com.esferalia.aon:aon.gwt.api</compileSourcesArtifact>
+            <compileSourcesArtifact>com.esferalia.aon:aon.gwt.fiscal</compileSourcesArtifact>            
             <compileSourcesArtifact>com.esferalia.aon:aon.occam</compileSourcesArtifact>
-            <compileSourcesArtifact>com.esferalia.aon:aon.occam.mod200</compileSourcesArtifact>
+            <compileSourcesArtifact>com.esferalia.aon:aon.occam.mod200</compileSourcesArtifact>            
           </compileSourcesArtifacts>
           <extraJvmArgs>-Xmx3072M</extraJvmArgs>
           <localWorkers>1</localWorkers>
@@ -286,6 +286,12 @@
 		<version>${project.version}</version>
 		<scope>compile</scope>
 	</dependency>
+	
+    <dependency>
+    	<groupId>com.esferalia.aon</groupId>
+    	<artifactId>aon.gwt.fiscal</artifactId>
+    	<version>${project.version}</version>
+    </dependency>
     
     <!--
     <dependency>

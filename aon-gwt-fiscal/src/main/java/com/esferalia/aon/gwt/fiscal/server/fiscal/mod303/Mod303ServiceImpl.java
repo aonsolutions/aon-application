@@ -16,7 +16,7 @@ import com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo;
 import com.esferalia.aon.occam.api.model.type.Mod303Key;
 import com.esferalia.aon.watson.error.AonCoreException;
 
-@WebServlet(name = "Mod303 Servlet", urlPatterns = { "/aon_gwt_fiscal/ms/Mod303" })
+@WebServlet(name = "Mod303 Servlet", urlPatterns = { "/aon_gwt_fiscal/ms/Mod303", "/aon_gwt_mod200/ms/Mod303" })
 public class Mod303ServiceImpl extends AonStatelessRemoteServiceServlet implements Mod303Service {
 
 	private static final long serialVersionUID = -1101706717961420535L;

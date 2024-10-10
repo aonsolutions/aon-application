@@ -24,8 +24,8 @@ public class MODEL347Impl implements IMODEL347 {
 	}
 
 	@Override
-	public Mod347 initialize(AONContext ctx) {
-		return Mod347DAO.initialize(ctx);		
+	public Mod347 initialize(AONContext ctx, int year) {
+		return Mod347DAO.initialize(ctx, year);		
 	}
 	@Override
 	public Mod347 reset(AONContext ctx, Mod347 mod347) {

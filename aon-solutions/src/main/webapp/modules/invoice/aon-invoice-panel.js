@@ -775,6 +775,7 @@ export class AonInvoicePanel extends AonElement {
         this.appendChild(uploadToast);
       }
       let data = { uploaded: 0 };
+      uploadToast.setJobId(generateJobId());
       for (let file of files) {
         uploadToast.addFile("invoice", file, data);
       }

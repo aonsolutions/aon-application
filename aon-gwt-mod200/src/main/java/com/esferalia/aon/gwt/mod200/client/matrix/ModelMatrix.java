@@ -1,7 +1,5 @@
-package com.esferalia.aon.gwt.fiscal.client.matrix;
+package com.esferalia.aon.gwt.mod200.client.matrix;
 
-
-import java.util.logging.Logger;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.CommonService;
@@ -11,14 +9,13 @@ import com.esferalia.aon.gwt.common.client.RootLayoutPanel;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonMinimizePanel;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonSearchPanelButton;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonTabLayoutPanel;
-import com.esferalia.aon.gwt.fiscal.client.MainEntryPoint;
+import com.esferalia.aon.gwt.mod200.client.MainEntryPoint;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalMatrixParams;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Overflow;
 import com.google.gwt.dom.client.Style.Unit;
-import com.google.gwt.logging.client.ConsoleLogHandler;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
@@ -33,17 +30,13 @@ import com.google.gwt.user.client.ui.SplitLayoutPanel;
 
 public class ModelMatrix extends MainEntryPoint {
 	
-	private static final Logger LOGGER = Logger.getLogger(ModelMatrix.class.getName());
-	static {
-		LOGGER.addHandler( new ConsoleLogHandler() );
-	}
+//	private static final Logger LOGGER = Logger.getLogger(ModelMatrix.class.getName());
+//	static {
+//		LOGGER.addHandler( new ConsoleLogHandler() );
+//	}
 
-	protected static final FiscalModelServiceAsync SERVICE;
 	private static final CommonServiceAsync COMMON_SERVICE;
 	static {
-		FiscalModelServiceAsync serviceRaw = GWT.create(FiscalModelService.class);
-		SERVICE = new FiscalModelServiceAsyncDecorator(serviceRaw);
-		
 		CommonServiceAsync commonServiceRaw = GWT.create(CommonService.class);
 		COMMON_SERVICE = new CommonServiceAsyncDecorator(commonServiceRaw); 
 	}
@@ -89,14 +82,10 @@ public class ModelMatrix extends MainEntryPoint {
 		ModelMatrixFilterPanel filterPanel = new ModelMatrixFilterPanel(options);
 		filterPanel.addValueChangeHandler( event -> search( options, event.getValue(), filterPanel.getRefreshButton() ));
 		if (options.isCompactMode()) {			
-			ScrollPanel mainScroll = new ScrollPanel();
 			FlowPanel contentPanel = new FlowPanel();
-			mainScroll.setWidget(contentPanel);
 			contentPanel.add(filterPanel);
-			dataPanel = new FlowPanel();			
-			if (!options.isCompactMode()) {
-				dataPanel.setHeight( "320px" );
-			}
+			dataPanel = new FlowPanel();
+     		dataPanel.setHeight( "320px" );
 			dataPanel.getElement().getStyle().setOverflowY(Overflow.SCROLL);
 			contentPanel.add(dataPanel);
 			options.getParentWidget().add(contentPanel);
@@ -109,6 +98,7 @@ public class ModelMatrix extends MainEntryPoint {
 			
 			AonMinimizePanel minimizePanel = getMinimizePanel();
 			minimizePanel.addStyleName("aon-Model-Info");
+			minimizePanel.setVisible(false);
 			splitLayoutPanel.addSouth(minimizePanel, 30);			
 			
 			dataPanel = new ScrollPanel();

@@ -290,6 +290,8 @@ public abstract class AonCertificationPopup extends AonCustomDialog {
 			.addCell(l2)
 			.addCell(password);
 
+		nrc.setVisibleLength(22);
+		nrc.setMaxLength(22);
 		nrc.setText(params.getNrc());
 		if (params.isShowNRC()) {
 			Label lx = new Label("NRC");

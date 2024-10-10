@@ -10,7 +10,7 @@ import com.esferalia.aon.occam.api.fiscal.MODEL390;
 import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.fiscal.Mod390;
 
-@WebServlet(name = "Mod390 Servlet", urlPatterns = { "/aon_gwt_fiscal/ms/Mod390" })
+@WebServlet(name = "Mod390 Servlet", urlPatterns = { "/aon_gwt_fiscal/ms/Mod390", "/aon_gwt_mod200/ms/Mod390" })
 public class Model390ServiceImpl extends AonStatelessRemoteServiceServlet implements Model390Service {
 
 	private static final long serialVersionUID = 5103358252992734363L;

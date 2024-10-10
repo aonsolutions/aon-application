@@ -14,7 +14,7 @@ import com.esferalia.aon.occam.api.model.fiscal.Mod347Declared;
 import com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo;
 import com.esferalia.aon.watson.error.AonCoreException;
 
-@WebServlet(name = "Mod347 Servlet", urlPatterns = { "/aon_gwt_fiscal/ms/Mod347" })
+@WebServlet(name = "Mod347 Servlet", urlPatterns = { "/aon_gwt_fiscal/ms/Mod347", "/aon_gwt_mod200/ms/Mod347" })
 public class Mod347ServiceImpl extends AonStatelessRemoteServiceServlet implements Model347Service {
 
 	private static final long serialVersionUID = -6895893410550617969L;
@@ -34,8 +34,8 @@ public class Mod347ServiceImpl extends AonStatelessRemoteServiceServlet implemen
 	}
 
 	@Override
-	public Mod347 initialize(Occam occam) {
-		return MODEL347.initialize(occam);
+	public Mod347 initialize(Occam occam, int year) {
+		return MODEL347.initialize(occam, year);
 	}
 	@Override
 	public Mod347 reset(Occam occam, Mod347 mod347) throws AonCoreException {
