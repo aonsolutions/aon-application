@@ -46,6 +46,7 @@ import { AonDashboardChargePayments } from '../accounting/aon-dashboard-charge-p
 import { AonDialog } from '../../components/aon-dialog.js';
 import { AonMarketing } from '../marketing/aon-marketing.js';
 import { MessegerUtils } from '../messenger/utils/MessengerUtils.js';
+import { generateJobId } from '../invoice/InvoiceUtils.js';
 
 export class AonDesktop extends AonElement {
 
