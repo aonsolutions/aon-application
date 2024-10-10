@@ -5,7 +5,9 @@ import java.util.LinkedList;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomDialog;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonDateBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonIbanTextBox;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonIntegerBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonTextBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonIbanTextBox.IbanSuggestion;
 import com.esferalia.aon.gwt.fiscal.client.FiscalMSService;
@@ -18,10 +20,12 @@ import com.esferalia.aon.occam.api.model.IIbanContainer;
 import com.esferalia.aon.occam.api.model.finance.BankAccount;
 import com.esferalia.aon.occam.api.model.finance.Finance;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModel;
+import com.esferalia.aon.occam.api.model.fiscal.FiscalModelType;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalStatus;
 import com.esferalia.aon.occam.api.model.registry.Creditor;
 import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.type.FiscalModelDeclarationType;
+import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
@@ -102,27 +106,51 @@ public class AonFinishDeclarationPopup<T extends FiscalModel,O extends FiscalMod
 		} else {
 			final AonCreditorBox creditorBox = new AonCreditorBox(callback.getOptions().getOccam());
 			final AonIbanTextBox iban = new AonIbanTextBox( new EnterpriseSuggestOracle<T,O>(callback) );
+			Label nrcLabel = new Label("NRC");
 			final AonTextBox nrc = new AonTextBox();
+			
+			FlexTable aplazaTable = new FlexTable();
+			Label aplazaLabel = new Label("Datos aplazamiento");
+			Label avisoLabel = new Label("En el caso de Solicitud de Aplazamiento, la presentaci\u00F3n del modelo debe hacerse de forma manual, desde la Oficina Virtual de la Agencia Tributaria, importando el fichero generado desde la aplicaci\u00F3n de AON. En este caso los datos IBAN, n\u00FAmero de plazos y fecha de primer plazo, se guardan en el modelo a t\u00EDtulo informativo, pues no se trasladan al fichero para su presentaci\u00F3n.");
+			AonIntegerBox plazos = new AonIntegerBox();
+			AonDateBox fechaPlazo = new AonDateBox();
+			
+			// TIPO 
+			
 			final ListBox listBox = new ListBox();
 			listBox.setSelectedIndex(0);
 			listBox.addItem(FiscalModelDeclarationType.DEPOSIT.getDescription(), FiscalModelDeclarationType.DEPOSIT.getValue());
 			listBox.addItem(FiscalModelDeclarationType.BANK.getDescription(), FiscalModelDeclarationType.BANK.getValue());
 			if (model.isAEAT()) {
 				listBox.addItem(FiscalModelDeclarationType.DEPOSIT_CCT.getDescription(), FiscalModelDeclarationType.DEPOSIT_CCT.getValue());
+				// Solicitud de Aplazamiento, solo a partir del 2024 y solo para determinados modelos (130, 131)
+				if (model.getYear() >= 2024 && (model.getModel() == FiscalModelType.M130 || model.getModel() == FiscalModelType.M131))
+					listBox.addItem(FiscalModelDeclarationType.DEFERRAL.getDescription(), FiscalModelDeclarationType.DEFERRAL.getValue());
 			}
 			listBox.addChangeHandler(event -> {
 				FiscalModelDeclarationType type = FiscalModelDeclarationType.safeValueOf(listBox.getSelectedValue());
 				model.setDeclarationResultType( type );
 				iban.setEnabled( type.isBankRequired() );
-				creditorBox.setEnabled(type.mustCreateFinance());
-				nrc.setEnabled(type == FiscalModelDeclarationType.DEPOSIT);
+				creditorBox.setEnabled(type.mustCreateFinance());				
 				if (type != FiscalModelDeclarationType.DEPOSIT) {
 					nrc.setValue("");
 					model.setNrc("");
 				}
+				nrcLabel.setVisible(type == FiscalModelDeclarationType.DEPOSIT);
+				nrc.setVisible(type == FiscalModelDeclarationType.DEPOSIT);
+				
+				if (type != FiscalModelDeclarationType.DEFERRAL) {
+					plazos.setValue(0);
+					fechaPlazo.setValue(null);
+				}
+				aplazaLabel.setVisible(type == FiscalModelDeclarationType.DEFERRAL);
+				aplazaTable.setVisible(type == FiscalModelDeclarationType.DEFERRAL);
+				avisoLabel.setVisible(type == FiscalModelDeclarationType.DEFERRAL);				
 			});
 			tab.setWidget(row, 1, listBox );
 			row++;
+			
+			// ACREEDOR
 			
 			tab.getFlexCellFormatter().addStyleName(row, 0, AON.CSS.aonTableLabel());
 			tab.setWidget(row, 0, new Label(AON.MSG.creditor()));
@@ -146,6 +174,8 @@ public class AonFinishDeclarationPopup<T extends FiscalModel,O extends FiscalMod
 			tab.setWidget(row, 1, creditorPanel);
 			row++;
 	
+			// IBAN
+			
 			tab.getFlexCellFormatter().addStyleName(row, 0, AON.CSS.aonTableLabel());
 			tab.setWidget(row, 0, new Label(AON.MSG.bankAccount()));
 			
@@ -161,18 +191,61 @@ public class AonFinishDeclarationPopup<T extends FiscalModel,O extends FiscalMod
 				model.getFinance().setBankAlias(cont.getAlias());
 				model.getFinance().setBic(cont.getBic());
 			});
+			row++;
 			
 			// NRC (Solo si el resultado es positivo)
-			if (model.getDeclarationResult() > 0) {
-				row++;
+			
+			if (model.getDeclarationResult() > 0) {				
 				tab.getFlexCellFormatter().addStyleName(row, 0, AON.CSS.aonTableLabel());
-				tab.setWidget(row, 0, new Label("NRC"));
+				tab.setWidget(row, 0, nrcLabel);
 				
 				nrc.setText(model.getNrc());
 				nrc.addValueChangeHandler(event -> {
 					model.setNrc(nrc.getValue());
 				});
 				tab.setWidget(row, 1, nrc);
+				row++;
+			}
+			
+			// DATOS DEL APLAZAMIENTO: Nº de Plazos, Fecha primer plazo y mensaje de aviso (solo si es positivo, a partir de 2024 y solo determinados modelos)
+			
+			if (model.getDeclarationResult() > 0 && model.getYear() >= 2024 && (model.getModel() == FiscalModelType.M130 || model.getModel() == FiscalModelType.M131)) {
+				avisoLabel.setVisible(false);			
+				aplazaLabel.setVisible(false);
+				aplazaTable.setVisible(false);
+				aplazaTable.getFlexCellFormatter().addStyleName(0, 0, AON.CSS.aonTabLabel());
+				aplazaTable.setWidget(0, 0, new Label("N\u00FAmero de plazos"));
+				plazos.setMaxLength(2);
+				plazos.setVisibleLength(2);
+				plazos.setValue(model.getPlazos());
+				plazos.addValueChangeHandler( event -> {
+					if (plazos.getValue() == null)
+						plazos.setValue(0);
+					model.setPlazos(plazos.getValue()); 	
+				});			
+				aplazaTable.setWidget(0, 1, plazos);
+			
+				aplazaTable.getFlexCellFormatter().addStyleName(0, 2, AON.CSS.aonTabLabel());
+				aplazaTable.setWidget(0, 2, new Label("Fecha del primer plazo"));
+				if (AonStringUtils.isNotEmpty(model.getFechaPlazo())) {
+					fechaPlazo.setValue(fechaPlazo.parse(model.getFechaPlazo(), false));
+				}			
+				fechaPlazo.addValueChangeHandler( event -> { 
+						model.setFechaPlazo(fechaPlazo.format());
+						// Aplazamiento, ponemos como fecha de vencimiento, la fecha de aplazamiento
+						if (model.getFinance() != null) 
+							model.getFinance().setDueDate(fechaPlazo.getValue());
+					});
+				aplazaTable.setWidget(0, 3, fechaPlazo);
+				
+				tab.getFlexCellFormatter().addStyleName(row, 0, AON.CSS.aonTableLabel());			
+				tab.setWidget(row, 0, aplazaLabel);
+				tab.setWidget(row, 1, aplazaTable);
+				row++;
+				
+				tab.getFlexCellFormatter().setColSpan(row, 0, 2);
+				tab.setWidget(row, 0, avisoLabel);			
+				row++;
 			}
 
 		}
