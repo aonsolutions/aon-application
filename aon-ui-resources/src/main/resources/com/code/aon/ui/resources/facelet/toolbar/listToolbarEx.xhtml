@@ -28,7 +28,9 @@
 					accesskey="#{bundle.aon_key_new}" />
 			</aon:if>	
 			
-			<ui:insert name="beforeSpinToolbarContent"/>
+			<aon:if test="#{!app.standAlone}">
+				<ui:insert name="beforeSpinToolbarContent"/>
+			</aon:if>	
 			
 			<aon:if test="#{showMoreMenu}">
 				
@@ -45,8 +47,12 @@
 						</f:facet>
 						<ui:insert name="moreMenuContent"/>
 						<aon:ifDefined name="additionalToolbarContent">
-							<rich:menuSeparator id="historyMenuSeparator" />		
+							<rich:menuSeparator/>		
 							<aon:insertMenuItems name="additionalToolbarContent"/>
+						</aon:ifDefined>
+						<aon:ifDefined name="beforeSpinToolbarContent">
+							<rich:menuSeparator/>		
+							<aon:insertMenuItems name="beforeSpinToolbarContent"/>
 						</aon:ifDefined>
 					</aon:dropDownMenu>
 					
@@ -81,8 +87,27 @@
 							</aon:panelGroup>	
 						</f:facet>
 						<aon:insertMenuItems name="additionalToolbarContent"/>
+						<aon:ifDefined name="beforeSpinToolbarContent">
+							<rich:menuSeparator />		
+							<aon:insertMenuItems name="beforeSpinToolbarContent"/>
+						</aon:ifDefined>
 					</aon:dropDownMenu>
 				</aon:ifDefined>
+
+				<aon:ifDefined name="beforeSpinToolbarContent">
+					<aon:dropDownMenu 
+						value="#{bundle.aon_more2}"
+						styleClass="aon-finding-toolbar-item aon-dropDownMenu"
+					 >
+						<f:facet name="label">
+							<aon:panelGroup>
+								<aon:outputText styleClass="material-symbols-outlined" value="more_vert" /> 
+							</aon:panelGroup>	
+						</f:facet>
+						<aon:insertMenuItems name="beforeSpinToolbarContent"/>
+					</aon:dropDownMenu>
+				</aon:ifDefined>
+
 			</aon:if>
 
 			<aon:if test="#{showFilterWidget}">
