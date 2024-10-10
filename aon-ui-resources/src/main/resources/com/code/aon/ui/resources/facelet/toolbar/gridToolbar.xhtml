@@ -22,6 +22,9 @@
 		<aon:methodParam name="removeAction" default="" />
 		<aon:methodParam name="cancelEditActionListener" default="#{controller.onCancel}" type="actionListener" />
 		<aon:methodParam name="cancelEditAction" default="" />			
+		<aon:valueParam name="showFilterWidget" default="#{app.standAlone}" />
+	    <aon:methodParam name="filterActionListener" default="#{controller.onSearch}" type="actionListener" />
+	    <aon:methodParam name="filterChangeListener" default="#{controller.addFilterExpression}" type="valueChangeListener" />
 	</ui:include>
 	
 </ui:composition>

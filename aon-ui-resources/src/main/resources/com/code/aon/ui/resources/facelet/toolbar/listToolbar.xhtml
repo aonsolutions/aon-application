@@ -12,6 +12,9 @@
 		<aon:valueParam name="resetLabel" default="#{bundle.aon_reset}" />		
 		<aon:methodParam name="resetActionListener" default="#{controller.onReset}" type="actionListener" />
 		<aon:methodParam name="resetAction" default="#{controller.beanName}_form" resolve="true" />									
+		<aon:valueParam name="showFilterWidget" default="#{app.standAlone}" />
+	    <aon:methodParam name="filterActionListener" default="#{controller.onSearch}" type="actionListener" />
+	    <aon:methodParam name="filterChangeListener" default="#{controller.addFilterExpression}" type="valueChangeListener" />
 	</ui:include>
 	
 </ui:composition>
