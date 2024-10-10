@@ -12,7 +12,7 @@ import com.esferalia.aon.occam.api.model.fiscal.FiscalStatus;
 import com.esferalia.aon.occam.api.model.fiscal.Mod193;
 import com.esferalia.aon.watson.error.AonCoreException;
 
-@WebServlet(name = "Mod193 Servlet", urlPatterns = { "/aon_gwt_fiscal/ms/Mod193" })
+@WebServlet(name = "Mod193 Servlet", urlPatterns = { "/aon_gwt_fiscal/ms/Mod193", "/aon_gwt_mod200/ms/Mod193" })
 public class Mod193ServiceImpl extends AonStatelessRemoteServiceServlet implements Model193Service {
 
 	private static final long serialVersionUID = -5473472061391413070L;

@@ -14,6 +14,7 @@ import com.esferalia.aon.gwt.fiscal.client.MainEntryPoint;
 import com.esferalia.aon.gwt.fiscal.client.model.IFiscalModelCallback;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.fiscal.Mod349;
+import com.esferalia.aon.occam.api.model.type.Period;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.RunAsyncCallback;
 import com.google.gwt.dom.client.Style.Unit;
@@ -83,7 +84,7 @@ public class Model349 extends MainEntryPoint {
 		
 		@Override
 		public void onNew() {
-			newModel(getOptions());
+			newModel(getOptions(), 0, null);
 		}
 
 		@Override
@@ -238,7 +239,8 @@ public class Model349 extends MainEntryPoint {
 		if (options.getFiscalModelId() != null ) {
 			onSelect(options,options.getFiscalModelId());
 		} else if (options.getNewModel() != null ) {
-			newModel(options); 
+//			newModel(options);
+			newModel(options, options.getNewModel().getYear(), options.getNewModel().getPeriod());
 		} else {
 			model349Table.refresh( new Model349Callback() );
 		}
@@ -337,9 +339,9 @@ public class Model349 extends MainEntryPoint {
 		}
 	}
 
-	private void newModel(Model349ModuleOptions options) {
+	private void newModel(Model349ModuleOptions options, int year, Period period) {
 		cleanErrorMessage();
-		SERVICE.initialize(options.getOccam(), new AsyncCallback<Mod349>() {
+		SERVICE.initialize(options.getOccam(), year, period, new AsyncCallback<Mod349>() {
 			@Override
 			public void onSuccess(Mod349 m349) {
 				cleanAndClose();

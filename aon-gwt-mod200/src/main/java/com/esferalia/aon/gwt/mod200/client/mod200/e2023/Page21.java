@@ -44,6 +44,7 @@ public class Page21 extends PageAbs {
 	AonDoubleBox amountP;
 	AonIbanTextBox ibanD;
 	AonIbanTextBox ibanP;
+	private AonTextBox nrc;
 	
 	public Page21( Model2002023PageCallback callback ) {
 		super(callback);
@@ -235,6 +236,25 @@ public class Page21 extends PageAbs {
 	
 		payPanel3.add(ibanP);
 		payPanel.add(payPanel3);
+				
+		FlowPanel payPanel4 = new FlowPanel();
+		payPanel4.addStyleName(AON.CSS.aonMarginLeft());
+		payPanel4.addStyleName(AON.CSS.aonMarginTop());
+		payPanel4.add(new InlineLabel("NRC"));
+		
+		nrc = new AonTextBox();
+		nrc.addStyleName(AON.CSS.aonMarginLeft());
+		nrc.setVisibleLength(22);
+		nrc.setMaxLength(22);
+		nrc.setValue(callback.getMod200Object().getMod200().getNrc());
+		nrc.addValueChangeHandler(event -> {
+					callback.getMod200Object().getMod200().setNrc(nrc.getValue());
+					callback.markAsDirty();
+		});
+		otherInputs.add(nrc);
+		
+		payPanel4.add(nrc);
+		payPanel.add(payPanel4);
 		
 		basePanel.add(payPanel);
 		

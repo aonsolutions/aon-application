@@ -199,10 +199,6 @@
 			<to-view-id>/com/esferalia/aon/gwt/fiscal/facelet/model/mod390HF.xhtml</to-view-id>
 		</navigation-case>
 		<navigation-case>
-			<from-outcome>gwt_modelMatrix</from-outcome>
-			<to-view-id>/com/esferalia/aon/gwt/fiscal/facelet/model/modelMatrix.xhtml</to-view-id>
-		</navigation-case>
-		<navigation-case>
 			<from-outcome>gwt_invoiceModelReport</from-outcome>
 			<to-view-id>/com/esferalia/aon/gwt/fiscal/facelet/model/InvoiceModelReport.xhtml</to-view-id>
 		</navigation-case>

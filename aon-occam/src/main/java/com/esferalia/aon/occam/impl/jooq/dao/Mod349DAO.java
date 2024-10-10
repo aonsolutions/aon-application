@@ -462,21 +462,24 @@ public class Mod349DAO {
 		   .otherwise(FS_MOD349_DETAIL.RECTIFIED_PERIOD);  					     // Mensual
 	}
 	
-	public static Mod349 initialize(AONContext ctx) {	
+	public static Mod349 initialize(AONContext ctx, int year, Period period) {	
 		
-		// Ponemos por defecto el año, segun la fecha actual, si estamos en enero ponemos
-		// el año anterior (se supone que queremos hacer el del ultimo periodo del año anterior)
-		// en caso contrario ponemos el año actual
-		Date today = new Date();
-		int year = AonDateUtils.getYear(today);		
-		if (AonDateUtils.getMonth(today) == 0) {
-			year = year - 1;			
+		if (year == 0) {
+			// Ponemos por defecto el año, segun la fecha actual, si estamos en enero ponemos
+			// el año anterior (se supone que queremos hacer el del ultimo periodo del año anterior)
+			// en caso contrario ponemos el año actual
+			Date today = new Date();
+			year = AonDateUtils.getYear(today);		
+			if (AonDateUtils.getMonth(today) == 0) {
+				year = year - 1;			
+			}
 		}
 		
 		AonConfiguration conf = ConfigurationDAO.getConfiguration(ctx);		
 		Mod349 mod349 = new Mod349();
 		mod349.setDomain(ctx.getDomainId());
 		mod349.setYear(year);		
+		mod349.setPeriod(period); 
 		mod349.setAdministration(conf.fiscal().getAdministration(Administration.COMMON_TERRITORY));
 		mod349.setNumber("3490000000001");
 		mod349.setDocument(conf.getCompany().getDocument());

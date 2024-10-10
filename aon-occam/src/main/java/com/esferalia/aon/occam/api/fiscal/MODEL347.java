@@ -33,9 +33,9 @@ public class MODEL347 {
 		}
 	}
 
-	public static Mod347 initialize(Occam occam) {
+	public static Mod347 initialize(Occam occam, int year) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(occam)) {
-			return getImpl().initialize(ctx);
+			return getImpl().initialize(ctx, year);
 		}
 	}
 
