@@ -4,11 +4,12 @@ import static com.code.aon.faces.controller.IRichConstants.EDIT_DATA_TABLE_ID;
 
 import java.io.IOException;
 
-import jakarta.el.ELException;
 import javax.faces.FacesException;
 import javax.faces.component.UIComponent;
 import javax.faces.component.UIData;
 import javax.faces.component.UIViewRoot;
+
+import org.richfaces.component.html.HtmlDataTable;
 
 import com.code.aon.faces.component.AonComponentHandler;
 import com.code.aon.faces.component.richfaces.dataTable.DataTableHandler;
@@ -17,6 +18,8 @@ import com.code.aon.ui.form.ExtendedPageDataModel;
 import com.sun.facelets.FaceletContext;
 import com.sun.facelets.tag.jsf.ComponentConfig;
 import com.sun.facelets.tag.jsf.ComponentSupport;
+
+import jakarta.el.ELException;
 
 public class EditDataTableHandler extends AonComponentHandler {
 
@@ -42,6 +45,10 @@ public class EditDataTableHandler extends AonComponentHandler {
 			UIComponent parent) {
 		UIViewRoot root = ComponentSupport.getViewRoot(ctx, c);
 		root.getAttributes().remove( EDIT_DATA_TABLE_ID );
+
+		if ( c instanceof HtmlDataTable htmlDataTable ) {
+			DataTableHandler.setVisibleColumns(ctx, htmlDataTable);
+		}
 	}
 	
 }

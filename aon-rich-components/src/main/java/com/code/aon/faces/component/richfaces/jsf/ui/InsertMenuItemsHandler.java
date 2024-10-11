@@ -23,6 +23,7 @@ import java.util.Objects;
 import java.util.Optional;
 
 import javax.faces.FacesException;
+import javax.faces.component.UICommand;
 import javax.faces.component.UIComponent;
 import javax.faces.component.html.HtmlCommandLink;
 
@@ -39,6 +40,7 @@ import com.sun.facelets.tag.TagConfig;
 import com.sun.facelets.tag.TagHandler;
 
 import jakarta.el.ELException;
+import jakarta.el.ValueExpression;
 
 /**
  */
@@ -69,15 +71,21 @@ public final class InsertMenuItemsHandler extends TagHandler implements Template
         boolean found = false;
         try {
 			UIComponent dropDownMenu = new DelegateUIComponent(parent) {
+				
+
 				@Override
 				public List<UIComponent> getChildren() {
 					return new DelegateList<>(super.getChildren()) {
 						@Override
 						public boolean add(UIComponent e) {
-							return (e instanceof HtmlCommandLink htmlCommandLink && super.add(createHtmlMenuItem(htmlCommandLink)))
-//									|| (e instanceof HtmlAjaxCommandLink htmlAjaxCommandLink && super.add(createHtmlMenuItem(htmlAjaxCommandLink)))
-									;
+							if ( stream().anyMatch( m -> AonStringUtils.equals(m.getId(), getMenuItemId(e))) ) 
+								return false;
+							
+							return (e instanceof UICommand uiCommand && super.add(createHtmlMenuItem(uiCommand, ctx)))
+									|| super.add(createHiddenHtmlMenuItem(e));
 						}
+
+						
 					};
 				}
 			};
@@ -102,7 +110,7 @@ public final class InsertMenuItemsHandler extends TagHandler implements Template
         return false;
     }
     
-    private static HtmlMenuItem  createHtmlMenuItem(HtmlCommandLink htmlCommandLink) {
+    private static HtmlMenuItem  createHtmlMenuItem( UICommand uiCommand, FaceletContext ctx) {
     	
 		//		<aon:htmlCommandLink id="itemCatalogueReport-excel-report" value="&#160;" 
 		//				target="_new" action="#{report.onExecute}"
@@ -112,44 +120,47 @@ public final class InsertMenuItemsHandler extends TagHandler implements Template
 		//				<f:param name="outputFormat" value="MS Excel" />
 		//		</aon:htmlCommandLink>
     	
-		//    	<aon:menuItem id="ProductHistory" 
-		//				action="product_stats" 
-    	//				actionListener="#{item.onProductHistory}"
-		//				value="#{bundle.aon_history}"
-		//				iconClass="aon-icon-task-assume">
-		//		</aon:menuItem>
-    	
-
-    	HtmlMenuItem htmlMenuItem = new HtmlMenuItem();
-    	htmlMenuItem.setIconStyle("display:none");
-
-    	htmlCommandLink.setId(null);
-    	if ( isBlank((String) htmlCommandLink.getValue())) {
-    		getDefaultValue(htmlCommandLink.getStyleClass())
-    		.ifPresent(htmlCommandLink::setValue);
-    	}
-    	htmlMenuItem.getChildren().add(htmlCommandLink);
-    	
-    	return htmlMenuItem;
-    }
-    
-    private static HtmlMenuItem  createHtmlMenuItem(HtmlAjaxCommandLink htmlCommandLink) {
 		//        <aon:commandLink 
 		//        		id="resume-expedient-export" 
 		//        		value="Analítica"
 		//                onclick="resumeExpedient('#{projectExport.code}', '#{projectExport.name}', '#{projectExport.alias}', '#{projectSearchListener.registry.id}', '#{projectSearchListene>
 		//                styleClass="aon-finding-toolbar-item aon-icon-excel">
 		//        </aon:commandLink>
-    	
+
+    	//    	<aon:menuItem id="ProductHistory" 
+		//				action="product_stats" 
+    	//				actionListener="#{item.onProductHistory}"
+		//				value="#{bundle.aon_history}"
+		//				iconClass="aon-icon-task-assume">
+		//		</aon:menuItem>
+
     	HtmlMenuItem htmlMenuItem = new HtmlMenuItem();
     	htmlMenuItem.setIconStyle("display:none");
+    	htmlMenuItem.setRendered(uiCommand.isRendered());
+    	htmlMenuItem.setId( getMenuItemId(uiCommand));
 
-    	htmlCommandLink.setId(null);
-    	htmlMenuItem.getChildren().add(htmlCommandLink);
+    	if ( isBlank((String) uiCommand.getValue())) {
+    		getDefaultValue(uiCommand, ctx)
+    		.ifPresent(uiCommand::setValue);
+    	}
+    	htmlMenuItem.getChildren().add(uiCommand);
     	
     	return htmlMenuItem;
     }
     
+    private static String getMenuItemId(UIComponent uiComponent ) {
+    	return uiComponent.getId() + "MenuItem";
+    }
+    
+    
+    private static HtmlMenuItem  createHiddenHtmlMenuItem(UIComponent uiComponent) {
+    	
+    	HtmlMenuItem htmlMenuItem = new HtmlMenuItem();
+    	htmlMenuItem.setStyle("display:none");
+    	htmlMenuItem.getChildren().add(uiComponent);
+    	
+    	return htmlMenuItem;
+    }
     
     
     
@@ -159,7 +170,8 @@ public final class InsertMenuItemsHandler extends TagHandler implements Template
     }
     
     
-    private static Optional<String> getDefaultValue(String styleClass) {
+    private static Optional<String> getDefaultValue(UICommand uiCommand, FaceletContext ctx) {
+    	String styleClass = getStyleClass(uiCommand, ctx);
     	Map<String,String> map = new HashMap<>();
     	map.put("aon-icon-pdf", "PDF");
     	map.put("aon-icon-excel", "Excel");
@@ -169,6 +181,33 @@ public final class InsertMenuItemsHandler extends TagHandler implements Template
 			}
 		}
     	return Optional.empty();
+    }
+    
+    
+    public static String getStyleClass( UIComponent uiComponent, FaceletContext ctx){
+    	
+    	if ( uiComponent instanceof HtmlCommandLink htmlCommandLink) {
+    		return htmlCommandLink.getStyleClass();
+    	} else if ( uiComponent instanceof HtmlAjaxCommandLink htmlAjaxCommandLink) {
+    		return htmlAjaxCommandLink.getStyleClass();
+    	}
+    		
+    	ValueExpression ve = uiComponent.getValueExpression("styleClass");
+    	if (ve != null) {
+    	    String value = null;
+    	    
+    	    try {
+    			value = (String) ve.getValue(ctx);
+    	    } catch (ELException e) {
+    			throw new FacesException(e);
+    	    }
+    	    
+    	    return value;
+    	} 
+
+        return null;
+    	
+
     }
     
     

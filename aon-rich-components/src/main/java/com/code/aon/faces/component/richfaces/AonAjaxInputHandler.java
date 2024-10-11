@@ -1,15 +1,17 @@
 package com.code.aon.faces.component.richfaces;
 
+import static com.code.aon.faces.component.richfaces.lookup.ILookupConstants.ALIAS;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import jakarta.el.ELException;
 import javax.faces.FacesException;
 import javax.faces.component.UIComponent;
 
 import org.ajax4jsf.taglib.html.facelets.AjaxSupportHandler;
 import org.apache.commons.lang.StringUtils;
+import org.richfaces.component.html.HtmlColumn;
 
 import com.code.aon.faces.component.AonComponentHandler;
 import com.code.aon.faces.component.AttributeInfo;
@@ -23,6 +25,8 @@ import com.sun.facelets.tag.MetaRuleset;
 import com.sun.facelets.tag.TagAttribute;
 import com.sun.facelets.tag.TagHandler;
 import com.sun.facelets.tag.jsf.ComponentConfig;
+
+import jakarta.el.ELException;
 
 public class AonAjaxInputHandler extends AonComponentHandler implements IRichFacesTags {
 
@@ -160,6 +164,20 @@ public class AonAjaxInputHandler extends AonComponentHandler implements IRichFac
 			config.setNextHandler(FaceletUtil.LEAF_HANDLER);
 			TagHandler ajaxSupportHandler = new AjaxSupportHandler(config);
 			ajaxSupportHandler.apply(ctx, c);
+		}
+	}
+	
+	@Override
+	protected void onComponentPopulated(FaceletContext ctx, UIComponent c, UIComponent parent) {
+		super.onComponentPopulated(ctx, c, parent);
+		
+		try {
+			TagAttribute valueTag = getAttribute("value");
+			if ( valueTag != null && parent instanceof HtmlColumn column) {
+				column.getAttributes().put(ALIAS, valueTag.getValue() );
+			}
+		} catch ( Exception e ) {
+			//TODO: Remove this
 		}
 	}
 	

@@ -38,6 +38,7 @@ import "../../components/aon-dialog-menu.js";
 
 import { getCounter, addCounter, clearCounter } from "./InvoiceCounter.js";
 import { AonFutureTax } from "../fiscal/tax/aon-future-tax.js";
+import { generateJobId } from "./InvoiceUtils.js";
 
 export class AonInvoicePanel extends AonElement {
   selectedOption;

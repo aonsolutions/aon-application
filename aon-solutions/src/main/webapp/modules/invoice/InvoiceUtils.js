@@ -86,7 +86,14 @@ export const s3UploadInvoice = (file, jobId, data, success, error) => {
     let filename = ext ? file.name.replace(ext, '') : file.name;
 
     let name = filename.length > 30 ? filename.substring(0,30) : filename;
-    let base64 = btoa(name) + (ext || '');
+    let base64 = name;
+
+    try{
+        base64 = btoa(name) + (ext || '');
+    } catch(e) {
+        base64 = btoa(encodeURIComponent(name)) + (ext || '');
+    } 
+
     formData.append('key', 
         'invoices'
         + `/${LS.getDomainName()}`
