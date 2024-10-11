@@ -1833,10 +1833,10 @@ margin-top: 20px;
 }
 
 
-.profile-letters.out{
+/* .profile-letters.out{
   border: 2px solid #FF2D00;
   color: #FF2D00;
-}
+} */
 
 .aonNone {
   display: none !important;
@@ -3158,6 +3158,7 @@ color: var(--aonWhite);
 
 #new:hover,
 #home:hover,
+#topMenuHome:hover,
 #apps:hover,
 #invoice:hover,
 #comunica:hover,
@@ -3187,13 +3188,13 @@ color: var(--aonWhite);
   /*transition: background-color 0.2s;*/
 }
 
-/* #home {
+#home {
   margin-top: 6px;
-} */
+}
 
-/* #apps {
+#apps {
   margin-top: 6px;
-} */
+}
 
 #aonHeaderHelp {
 	display: block;
