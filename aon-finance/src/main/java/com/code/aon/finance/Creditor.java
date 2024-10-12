@@ -1,7 +1,10 @@
 package com.code.aon.finance;
 
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
+
+import org.hibernate.annotations.Formula;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
@@ -27,6 +30,8 @@ public class Creditor extends CreditorDB implements IRegistry, ITaxInfo, IScopab
 	
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
+	private Date updateDate;
+	
 	private Set<RegistryAttachment> documents = new HashSet<RegistryAttachment>();
 	private Set<RegistryAddInfo> addInfos = new HashSet<RegistryAddInfo>();    
 
@@ -71,4 +76,12 @@ public class Creditor extends CreditorDB implements IRegistry, ITaxInfo, IScopab
 		return (getTransaction() == InvoiceTransactionType.INTRACOMMUNITY || getTransaction() == InvoiceTransactionType.EXTRACOMMUNITY);
 	}
 	
+    @Formula("IFNULL(modification_date, creation_date)")
+    public Date getUpdateDate() {
+    	return updateDate;
+    }
+    
+    public void setUpdateDate(Date updateDate) {
+		this.updateDate = updateDate;
+	}
 }
