@@ -711,6 +711,110 @@ export class AonJsfGlobalConfig extends AonJsfApp {
 	}
 }
 
+export class AonJsfTask extends AonJsfApp {
+	
+	constructor() {
+		super();
+		this.setViewId('/facelet/app/task.xhtml');
+	}
+}
+
+export class AonJsfGantt extends AonJsfApp {
+	
+	constructor() {
+		super();
+		this.setViewId('/facelet/app/gantt.xhtml');
+	}
+}
+
+export class AonJsfDailyTracking extends AonJsfApp {
+	
+	constructor() {
+		super();
+		this.setViewId('/facelet/app/dailyTracking.xhtml');
+	}
+}
+
+export class AonJsfDailyTrackingReport extends AonJsfApp {
+	
+	constructor() {
+		super();
+		this.setViewId('/facelet/app/dailyTrackingReport.xhtml');
+	}
+}
+
+export class AonJsfJobType extends AonJsfApp {
+	
+	constructor() {
+		super();
+		this.setViewId('/facelet/app/jobType.xhtml');
+	}
+}
+
+export class AonJsfProcess extends AonJsfApp {
+	
+	constructor() {
+		super();
+		this.setViewId('/facelet/app/process.xhtml');
+	}
+}
+
+export class AonJsfProcessTransactionType extends AonJsfApp {
+	
+	constructor() {
+		super();
+		this.setViewId('/facelet/app/processTransactionType.xhtml');
+	}
+}
+
+export class AonJsfProcessWizard extends AonJsfApp {
+	
+	constructor() {
+		super();
+		this.setViewId('/facelet/app/processWizard.xhtml');
+	}
+}
+
+export class AonJsfCampaign extends AonJsfApp {
+	
+	constructor() {
+		super();
+		this.setViewId('/facelet/app/campaign.xhtml');
+	}
+}
+
+export class AonJsfCampaignType extends AonJsfApp {
+	
+	constructor() {
+		super();
+		this.setViewId('/facelet/app/campaignType.xhtml');
+	}
+}
+
+export class AonJsfTaskHolder extends AonJsfApp {
+	
+	constructor() {
+		super();
+		this.setViewId('/facelet/app/taskHolder.xhtml');
+	}
+}
+
+export class AonJsfWorkgroup extends AonJsfApp {
+	
+	constructor() {
+		super();
+		this.setViewId('/facelet/app/workgroup.xhtml');
+	}
+}
+
+export class AonJsfCostProfile extends AonJsfApp {
+	
+	constructor() {
+		super();
+		this.setViewId('/facelet/app/costProfile.xhtml');
+	}
+}
+
 if(!window.customElements.get(TAG.AON_JSF_APP)){
 	window.customElements.define(TAG.AON_JSF_APP, AonJsfApp);
 }
@@ -1019,4 +1123,54 @@ if(!window.customElements.get(TAG.AON_JSF_GLOBAL_CONFIG)){
 	window.customElements.define(TAG.AON_JSF_GLOBAL_CONFIG, AonJsfGlobalConfig);
 }
 
+if(!window.customElements.get(TAG.AON_JSF_TASK)){
+	window.customElements.define(TAG.AON_JSF_TASK, AonJsfTask);
+}
 
+if(!window.customElements.get(TAG.AON_JSF_GANTT)){
+	window.customElements.define(TAG.AON_JSF_GANTT, AonJsfGantt);
+}
+
+if(!window.customElements.get(TAG.AON_JSF_DAILY_TRACKING)){
+	window.customElements.define(TAG.AON_JSF_DAILY_TRACKING, AonJsfDailyTracking);
+}
+
+if(!window.customElements.get(TAG.AON_JSF_DAILY_TRACKING_REPORT)){
+	window.customElements.define(TAG.AON_JSF_DAILY_TRACKING_REPORT, AonJsfDailyTrackingReport);
+}
+
+if(!window.customElements.get(TAG.AON_JSF_JOB_TYPE)){
+	window.customElements.define(TAG.AON_JSF_JOB_TYPE, AonJsfJobType);
+}
+
+if(!window.customElements.get(TAG.AON_JSF_PROCESS)){
+	window.customElements.define(TAG.AON_JSF_PROCESS, AonJsfProcess);
+}
+
+if(!window.customElements.get(TAG.AON_JSF_PROCESS_WIZARD)){
+	window.customElements.define(TAG.AON_JSF_PROCESS_WIZARD, AonJsfProcessWizard);
+}
+
+if(!window.customElements.get(TAG.AON_JSF_PROCESS_TRANSACTION_TYPE)){
+	window.customElements.define(TAG.AON_JSF_PROCESS_TRANSACTION_TYPE, AonJsfProcessTransactionType);
+}
+
+if(!window.customElements.get(TAG.AON_JSF_CAMPAIGN)){
+	window.customElements.define(TAG.AON_JSF_CAMPAIGN, AonJsfCampaign);
+}
+
+if(!window.customElements.get(TAG.AON_JSF_CAMPAIGN_TYPE)){
+	window.customElements.define(TAG.AON_JSF_CAMPAIGN_TYPE, AonJsfCampaignType);
+}
+
+if(!window.customElements.get(TAG.AON_JSF_TASK_HOLDER)){
+	window.customElements.define(TAG.AON_JSF_TASK_HOLDER, AonJsfTaskHolder);
+}
+
+if(!window.customElements.get(TAG.AON_JSF_WORKGROUP)){
+	window.customElements.define(TAG.AON_JSF_WORKGROUP, AonJsfWorkgroup);
+}
+
+if(!window.customElements.get(TAG.AON_JSF_COST_PROFILE)){
+	window.customElements.define(TAG.AON_JSF_COST_PROFILE, AonJsfCostProfile);
+}

@@ -11,9 +11,9 @@
 		<aon:commandButton 
 			id="appButton" 
 			style="display: none; " 
-			action="expenseItem-management"
+			action="campaign_search"
+			actionListener="#{campaign.onEditSearch}"
 		>
-			<f:setPropertyActionListener target="#{expenseItem.defaultOrder}" value="updateDate desc" />
 		</aon:commandButton>
 	</aon:form>
 	

@@ -11,9 +11,9 @@
 		<aon:commandButton 
 			id="appButton" 
 			style="display: none; " 
-			action="expenseItem-management"
+			action="dailyTracking_form"
+			actionListener="#{dailyTracking.onReset}"
 		>
-			<f:setPropertyActionListener target="#{expenseItem.defaultOrder}" value="updateDate desc" />
 		</aon:commandButton>
 	</aon:form>
 	
