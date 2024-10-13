@@ -103,22 +103,22 @@ export class AonConfigurationMenu extends AonSuiteMenu {
                 description: "Formas de Pago",
                 title: "Formas de Page",
                 action: () => this.rootPanel(new JSF.AonJsfPayMethod())
-            },{
+            }/*,{
                 description: "Asignación contable por tipo de forma de pago",
                 title: "Asignación contable por tipo de forma de pago",
                 action: () => alert("Asignación contable por tipo de forma de pago")
-            },{
+            }*/,{
                 description: "Conceptos Bancarios",
                 title: "Conceptos Bancarios",
-                action: () => alert("Conceptos Bancarios")
+				action: () => this.rootPanel(new JSF.AonJsfBankConcept())
             },{
                 description: "Series",
                 title: "Series",
-                action: () => alert("Series")
+				action: () => this.rootPanel(new JSF.AonJsfSeries())
             },{
                 description: "Impuestos",
                 title: "Impuestos",
-                action: () => alert("Impuestos")
+				action: () => this.rootPanel(new JSF.AonJsfTax())
             },{
                 description: "País/Provincia",
                 title: "País/Provincia",
@@ -133,46 +133,46 @@ export class AonConfigurationMenu extends AonSuiteMenu {
             options: [{
                 description: "Etiquetas de Productos",
                 title: "Etiquetas de Productos",
-                action: () => alert("Etiquetas de Productos")
-            },{
+				action: () => this.rootPanel(new JSF.AonJsfProductTag())
+            }/*,{
                 description: "Etiquetas de Formatos/Medidas",
                 title: "Etiquetas de Formatos/Medidas",
                 action: () => alert("Etiquetas de Formatos/Medidas")
-            },{
+            }*/,{
                 description: "Categorías",
                 title: "Categorías",
                 action: () => this.rootPanel(new JSF.AonJsfProductCategory())
             },{
                 description: "Marcas",
                 title: "Marcas",
-                action: () => alert("Marcas")
+				action: () => this.rootPanel(new JSF.AonJsfBrand())
             },{
                 description: "Tarifas",
                 title: "Tarifas",
-                action: () => alert("Tarifas")
+				action: () => this.rootPanel(new JSF.AonJsfTariff())
             },{
                 description: "Catálogos",
                 title: "Catálogos",
-				action: () => alert("Catálogos")
+				action: () => this.rootPanel(new JSF.AonJsfCatalogue())
             }]
         },{
             title: 'Conect@',
             options: [{
                 description: "Carga de datos desde ficheros Excel",
                 title: "Carga de datos desde ficheros Excel",
-                action: () => alert("Carga de datos desde ficheros Excel")
+				action: () => GWT.iLoad(GWT.IMPORT)
             },{
                 description: "Gestión Plantillas para carga de datos",
                 title: "Gestión Plantillas para carga de datos",
-                action: () => alert("Gestión Plantillas para carga de datos")
+				action: () => GWT.iLoad(GWT.TEMPLATE)
             },{
                 description: "Carga de datos desde ficheros CSV",
                 title: "Carga de datos desde ficheros CSV",
-                action: () => alert("Carga de datos desde ficheros CSV")
+				action: () => this.rootPanel(new JSF.AonJsfLoader())
             },{
                 description: "Descarga de datos en formato Excel",
                 title: "Descarga de datos en formato Excel",
-                action: () => alert("Descarga de datos en formato Excel")
+				action: () => GWT.iLoad(GWT.INVOICE_REPORT)
             }]
         }];
     }

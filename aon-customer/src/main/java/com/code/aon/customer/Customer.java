@@ -1,5 +1,6 @@
 package com.code.aon.customer;
 
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -11,6 +12,7 @@ import jakarta.persistence.Transient;
 
 import com.code.aon.AonVersion;
 
+import org.hibernate.annotations.Formula;
 import org.hibernate.annotations.Where;
 
 import com.code.aon.account.IAccount;
@@ -33,7 +35,9 @@ import com.esferalia.aon.entity.master.CustomerDB;
 public class Customer extends CustomerDB implements IRegistry, ITaxInfo, IScopable, IAccount, ITariffable, IAuditable {
 	
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
-
+	
+	private Date updateDate;
+	
 	private boolean skipUpdateTarget;
 
 	private Set<RegistryAttachment> documents = new HashSet<RegistryAttachment>();
@@ -125,4 +129,13 @@ public class Customer extends CustomerDB implements IRegistry, ITaxInfo, IScopab
 		return (getTransaction() == InvoiceTransactionType.INTRACOMMUNITY || getTransaction() == InvoiceTransactionType.EXTRACOMMUNITY);
 	}
 	
+    @Formula("IFNULL(modification_date, creation_date)")
+    public Date getUpdateDate() {
+    	return updateDate;
+    }
+    
+    public void setUpdateDate(Date updateDate) {
+		this.updateDate = updateDate;
+	}
+
 }
