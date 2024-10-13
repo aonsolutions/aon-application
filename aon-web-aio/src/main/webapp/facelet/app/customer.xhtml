@@ -8,11 +8,13 @@
 	xmlns:rich="http://richfaces.org/rich">
 	
 	<aon:form id="appForm" > 
+
 		<aon:commandButton 
 			id="appButton" 
 			style="display: none; " 
 			action="customer_list-management"
 		>
+			<aon:actionListener method="#{customer.onEditSearch}" />
 			<f:setPropertyActionListener target="#{customer.defaultOrder}" value="updateDate desc" />
 			<aon:actionListener method="#{customer.onSearch}" />
 		</aon:commandButton>
