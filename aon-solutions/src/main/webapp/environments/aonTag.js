@@ -330,5 +330,15 @@ export const AON_JSF_MAIL_CONTACT = 'aon-jsf-mail-contact' ;
 export const AON_JSF_MAIL_ACCOUNT = 'aon-jsf-mail-account' ;
 export const AON_JSF_MAIL_SIGNATURE = 'aon-jsf-mail-signature' ;
 export const AON_JSF_GLOBAL_CONFIG = 'aon-jsf-global-config' ;
+export const AON_JSF_PRODUCT_TAG = 'aon-jsf-product-tag' ;
+export const AON_JSF_PACKING_TAG = 'aon-jsf-packing-tag' ;
+export const AON_JSF_BRAND = 'aon-jsf-brand' ;
+export const AON_JSF_TARIFF = 'aon-jsf-tariff' ;
+export const AON_JSF_CATALOGUE = 'aon-jsf-catalogue' ;
+export const AON_JSF_TAX = 'aon-jsf-tax' ;
+export const AON_JSF_SERIES = 'aon-jsf-series' ;
+export const AON_JSF_RELATIONSHIP = 'aon-jsf-relationship' ;
+export const AON_JSF_BANK_CONCEPT = 'aon-jsf-bank-concept' ;
+export const AON_JSF_LOADER = 'aon-jsf-loader' ;
 
 
