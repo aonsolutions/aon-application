@@ -157,6 +157,7 @@ public final class InsertMenuItemsHandler extends TagHandler implements Template
     	
     	HtmlMenuItem htmlMenuItem = new HtmlMenuItem();
     	htmlMenuItem.setStyle("display:none");
+    	htmlMenuItem.setId( getMenuItemId(uiComponent));
     	htmlMenuItem.getChildren().add(uiComponent);
     	
     	return htmlMenuItem;
