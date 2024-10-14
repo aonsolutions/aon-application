@@ -13,7 +13,6 @@
 			style="display: none; " 
 			action="creditor_list-management"
 		>
-			<aon:actionListener method="#{creditor.onEditSearch}" />
 			<f:setPropertyActionListener target="#{creditor.defaultOrder}" value="updateDate desc" />
 			<aon:actionListener method="#{creditor.onSearch}" />
 		</aon:commandButton>

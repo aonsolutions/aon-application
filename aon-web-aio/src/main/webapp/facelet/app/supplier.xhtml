@@ -20,7 +20,6 @@
 			style="display: none; " 
 			action="supplier_list-management"
 		>
-			<aon:actionListener method="#{supplier.onEditSearch}" />
 			<f:setPropertyActionListener target="#{supplier.defaultOrder}" value="updateDate desc" />
 			<aon:actionListener method="#{supplier.onSearch}" />
 		</aon:commandButton>
