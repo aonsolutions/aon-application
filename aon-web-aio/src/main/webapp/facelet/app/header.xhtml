@@ -42,6 +42,107 @@
 		font-family: "Noto Sans", sans-serif !important;
 	}
 	
+	.rich-calendar-exterior {
+	    font-family: 'Roboto', sans-serif !important;
+	    font-size: 12px !important;
+	    border: none !important;
+	    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1) !important;
+	    max-width: 320px !important;
+	    padding: 10px !important;
+	}
+	
+	.rich-calendar-header {
+	    background-color: #4285F4 !important;
+	    color: white !important;
+	    font-weight: bold !important;
+	    padding: 8px !important;
+	    font-size: 14px !important;
+	    text-align: center !important;
+	}
+	
+	.rich-calendar-btn {
+	    background-color: transparent !important;
+	    border: none !important;
+	    color: #4285F4 !important;
+	    font-size: 14px !important;
+	    cursor: pointer !important;
+	    padding: 5px 8px !important;
+	    transition: background-color 0.2s ease !important;
+	}
+	
+	.rich-calendar-btn:hover {
+	    background-color: rgba(66, 133, 244, 0.1) !important;
+	}
+	
+	.rich-calendar-cell {
+	    width: 32px !important;
+	    height: 32px !important;
+	    text-align: center !important;
+	    vertical-align: middle !important;
+	    border-radius: 50% !important;
+	    transition: background-color 0.2s ease !important;
+	    font-size: 12px !important;
+	    line-height: 32px !important;
+	}
+	
+	.rich-calendar-cell:hover {
+	    background-color: #e3f2fd !important;
+	    cursor: pointer !important;
+	}
+	
+	.rich-calendar-selected {
+	    background-color: #4285F4 !important;
+	    color: white !important;
+	    font-weight: bold !important;
+	}
+	
+	/* Ocultar días fuera del mes actual */
+	.rich-calendar-boundary-dates {
+	    background-color: transparent !important;
+	    border: none !important;
+	    color: #4285F4 !important;
+	    font-size: 14px !important;
+	    cursor: pointer !important;
+	    padding: 5px 8px !important;
+	    transition: background-color 0.2s ease !important;
+	}
+	
+	tbody tr:last-chil{
+		display: none !important;
+	}
+	
+/* 	
+	tr td:first-child.rich-calendar-boundary-dates {
+	    display: none !important;
+	}
+	
+	
+	tr td:last-child.rich-calendar-boundary-dates {
+	    display: none !important;
+	} */
+	
+	/* Mejorar la apariencia de los botones de navegación del calendario */
+	.rich-calendar-prev-btn, .rich-calendar-next-btn {
+	    color: #4285F4 !important;
+	    font-size: 16px !important;
+	    padding: 5px !important;
+	    cursor: pointer !important;
+	    border: none !important;
+	    background-color: transparent !important;
+	    transition: transform 0.2s ease !important;
+	}
+	
+	.rich-calendar-prev-btn:hover, .rich-calendar-next-btn:hover {
+	    transform: scale(1.05) !important;
+	}
+	
+	.rich-calendar-popup {
+	    padding: 8px !important;
+	    border-radius: 8px !important;
+	    background-color: white !important;
+	    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15) !important;
+	}
+
 	.aonDataScroller {
 		position: inherit;
 	}
