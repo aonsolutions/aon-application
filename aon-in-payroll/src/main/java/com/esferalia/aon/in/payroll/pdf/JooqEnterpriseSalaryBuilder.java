@@ -94,7 +94,7 @@ public class JooqEnterpriseSalaryBuilder {
 			condition = WORKPLACE.ID.eq(workplaceId);
 		else
 			condition = ENTERPRISE.REGISTRY.eq(enterpriseId);
-		condition = condition.and(SALARY.CHARGE_DATE.between(new java.sql.Date(startDate.getTime())
+		condition = condition.and(SALARY.ISSUE_DATE.between(new java.sql.Date(startDate.getTime())
 				, new java.sql.Date(endDate.getTime())));
 		
 		Collection<Integer> typeInts = Arrays.stream(types).map(com.esferalia.aon.occam.api.model.type.SalaryType::ordinal).collect(Collectors.toList());
