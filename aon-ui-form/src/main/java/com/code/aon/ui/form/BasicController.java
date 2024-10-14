@@ -1588,12 +1588,14 @@ public class BasicController extends AbstractPojoController implements IControll
 	
 	public void addFilterExpression(ValueChangeEvent event) throws ManagerBeanException {
 		
-
+		if ( !reallyChanged(event)) 
+			return ;
+		
 		clearCriteria();
+		
 		Object newValue = event.getNewValue();
 
-		if (newValue != null && newValue.toString().trim().length() > 0   
-				&& this.model != null && this.model instanceof ExtendedPageDataModel extendedPageDataModel) {
+		if (isNotBlank(newValue) && this.model != null && this.model instanceof ExtendedPageDataModel extendedPageDataModel) {
 			
 			TypeResolver typeResolver = new TypeResolver(getPojo());
 
@@ -1610,6 +1612,17 @@ public class BasicController extends AbstractPojoController implements IControll
 
 	}
 	
+	private static boolean isNotBlank(Object str) {
+		return str != null && str.toString().trim().length() > 0;   		
+	}
+	
+	private static boolean reallyChanged(ValueChangeEvent event) {
+		String newValue = event.getNewValue() == null ? "": event.getNewValue().toString().trim() ; 
+		String oldValue = event.getOldValue() == null ? "": event.getOldValue().toString().trim() ; 
+		
+		return !newValue.equalsIgnoreCase(oldValue);
+
+	}
 	
 	private static boolean isString(TypeResolver typeResolver, String alias ) {
 		try {
