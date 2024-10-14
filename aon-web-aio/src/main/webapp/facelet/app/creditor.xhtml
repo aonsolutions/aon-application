@@ -12,8 +12,9 @@
 			id="appButton" 
 			style="display: none; " 
 			action="creditor_list-management"
-			actionListener="#{creditor.onSearch}"
 		>
+			<f:setPropertyActionListener target="#{creditor.defaultOrder}" value="updateDate desc" />
+			<aon:actionListener method="#{creditor.onSearch}" />
 		</aon:commandButton>
 	</aon:form>
 	
