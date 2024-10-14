@@ -711,6 +711,190 @@ export class AonJsfGlobalConfig extends AonJsfApp {
 	}
 }
 
+export class AonJsfTask extends AonJsfApp {
+	
+	constructor() {
+		super();
+		this.setViewId('/facelet/app/task.xhtml');
+	}
+}
+
+export class AonJsfGantt extends AonJsfApp {
+	
+	constructor() {
+		super();
+		this.setViewId('/facelet/app/gantt.xhtml');
+	}
+}
+
+export class AonJsfDailyTracking extends AonJsfApp {
+	
+	constructor() {
+		super();
+		this.setViewId('/facelet/app/dailyTracking.xhtml');
+	}
+}
+
+export class AonJsfDailyTrackingReport extends AonJsfApp {
+	
+	constructor() {
+		super();
+		this.setViewId('/facelet/app/dailyTrackingReport.xhtml');
+	}
+}
+
+export class AonJsfJobType extends AonJsfApp {
+	
+	constructor() {
+		super();
+		this.setViewId('/facelet/app/jobType.xhtml');
+	}
+}
+
+export class AonJsfProcess extends AonJsfApp {
+	
+	constructor() {
+		super();
+		this.setViewId('/facelet/app/process.xhtml');
+	}
+}
+
+export class AonJsfProcessTransactionType extends AonJsfApp {
+	
+	constructor() {
+		super();
+		this.setViewId('/facelet/app/processTransactionType.xhtml');
+	}
+}
+
+export class AonJsfProcessWizard extends AonJsfApp {
+	
+	constructor() {
+		super();
+		this.setViewId('/facelet/app/processWizard.xhtml');
+	}
+}
+
+export class AonJsfCampaign extends AonJsfApp {
+	
+	constructor() {
+		super();
+		this.setViewId('/facelet/app/campaign.xhtml');
+	}
+}
+
+export class AonJsfCampaignType extends AonJsfApp {
+	
+	constructor() {
+		super();
+		this.setViewId('/facelet/app/campaignType.xhtml');
+	}
+}
+
+export class AonJsfTaskHolder extends AonJsfApp {
+	
+	constructor() {
+		super();
+		this.setViewId('/facelet/app/taskHolder.xhtml');
+	}
+}
+
+export class AonJsfWorkgroup extends AonJsfApp {
+	
+	constructor() {
+		super();
+		this.setViewId('/facelet/app/workgroup.xhtml');
+	}
+}
+
+export class AonJsfCostProfile extends AonJsfApp {
+	
+	constructor() {
+		super();
+		this.setViewId('/facelet/app/costProfile.xhtml');
+	}
+}
+
+export class AonJsfBrand extends AonJsfApp {
+	
+	constructor() {
+		super();
+		this.setViewId('/facelet/app/brand.xhtml');
+	}
+}
+
+export class AonJsfProductTag extends AonJsfApp {
+	
+	constructor() {
+		super();
+		this.setViewId('/facelet/app/productTag.xhtml');
+	}
+}
+
+export class AonJsfPackingTag extends AonJsfApp {
+	
+	constructor() {
+		super();
+		this.setViewId('/facelet/app/packingTag.xhtml');
+	}
+}
+
+export class AonJsfTariff extends AonJsfApp {
+	
+	constructor() {
+		super();
+		this.setViewId('/facelet/app/tariff.xhtml');
+	}
+}
+
+export class AonJsfCatalogue extends AonJsfApp {
+	
+	constructor() {
+		super();
+		this.setViewId('/facelet/app/catalogue.xhtml');
+	}
+}
+
+export class AonJsfTax extends AonJsfApp {
+	
+	constructor() {
+		super();
+		this.setViewId('/facelet/app/tax.xhtml');
+	}
+}
+
+export class AonJsfSeries extends AonJsfApp {
+	
+	constructor() {
+		super();
+		this.setViewId('/facelet/app/series.xhtml');
+	}
+}
+
+export class AonJsfBankConcept extends AonJsfApp {
+	
+	constructor() {
+		super();
+		this.setViewId('/facelet/app/bankConcept.xhtml');
+	}
+}
+
+export class AonJsfRelationship extends AonJsfApp {
+	
+	constructor() {
+		super();
+		this.setViewId('/facelet/app/relationship.xhtml');
+	}
+}
+
+export class AonJsfLoader extends AonJsfApp {
+	
+	constructor() {
+		super();
+		this.setViewId('/facelet/app/loader.xhtml');
+	}
+}
+
 if(!window.customElements.get(TAG.AON_JSF_APP)){
 	window.customElements.define(TAG.AON_JSF_APP, AonJsfApp);
 }
@@ -1019,4 +1203,94 @@ if(!window.customElements.get(TAG.AON_JSF_GLOBAL_CONFIG)){
 	window.customElements.define(TAG.AON_JSF_GLOBAL_CONFIG, AonJsfGlobalConfig);
 }
 
+if(!window.customElements.get(TAG.AON_JSF_TASK)){
+	window.customElements.define(TAG.AON_JSF_TASK, AonJsfTask);
+}
 
+if(!window.customElements.get(TAG.AON_JSF_GANTT)){
+	window.customElements.define(TAG.AON_JSF_GANTT, AonJsfGantt);
+}
+
+if(!window.customElements.get(TAG.AON_JSF_DAILY_TRACKING)){
+	window.customElements.define(TAG.AON_JSF_DAILY_TRACKING, AonJsfDailyTracking);
+}
+
+if(!window.customElements.get(TAG.AON_JSF_DAILY_TRACKING_REPORT)){
+	window.customElements.define(TAG.AON_JSF_DAILY_TRACKING_REPORT, AonJsfDailyTrackingReport);
+}
+
+if(!window.customElements.get(TAG.AON_JSF_JOB_TYPE)){
+	window.customElements.define(TAG.AON_JSF_JOB_TYPE, AonJsfJobType);
+}
+
+if(!window.customElements.get(TAG.AON_JSF_PROCESS)){
+	window.customElements.define(TAG.AON_JSF_PROCESS, AonJsfProcess);
+}
+
+if(!window.customElements.get(TAG.AON_JSF_PROCESS_WIZARD)){
+	window.customElements.define(TAG.AON_JSF_PROCESS_WIZARD, AonJsfProcessWizard);
+}
+
+if(!window.customElements.get(TAG.AON_JSF_PROCESS_TRANSACTION_TYPE)){
+	window.customElements.define(TAG.AON_JSF_PROCESS_TRANSACTION_TYPE, AonJsfProcessTransactionType);
+}
+
+if(!window.customElements.get(TAG.AON_JSF_CAMPAIGN)){
+	window.customElements.define(TAG.AON_JSF_CAMPAIGN, AonJsfCampaign);
+}
+
+if(!window.customElements.get(TAG.AON_JSF_CAMPAIGN_TYPE)){
+	window.customElements.define(TAG.AON_JSF_CAMPAIGN_TYPE, AonJsfCampaignType);
+}
+
+if(!window.customElements.get(TAG.AON_JSF_TASK_HOLDER)){
+	window.customElements.define(TAG.AON_JSF_TASK_HOLDER, AonJsfTaskHolder);
+}
+
+if(!window.customElements.get(TAG.AON_JSF_WORKGROUP)){
+	window.customElements.define(TAG.AON_JSF_WORKGROUP, AonJsfWorkgroup);
+}
+
+if(!window.customElements.get(TAG.AON_JSF_COST_PROFILE)){
+	window.customElements.define(TAG.AON_JSF_COST_PROFILE, AonJsfCostProfile);
+}
+
+if(!window.customElements.get(TAG.AON_JSF_PRODUCT_TAG)){
+	window.customElements.define(TAG.AON_JSF_PRODUCT_TAG, AonJsfProductTag);
+}
+
+if(!window.customElements.get(TAG.AON_JSF_PACKING_TAG)){
+	window.customElements.define(TAG.AON_JSF_PACKING_TAG, AonJsfPackingTag);
+}
+
+if(!window.customElements.get(TAG.AON_JSF_BRAND)){
+	window.customElements.define(TAG.AON_JSF_BRAND, AonJsfBrand);
+}
+
+if(!window.customElements.get(TAG.AON_JSF_TARIFF)){
+	window.customElements.define(TAG.AON_JSF_TARIFF, AonJsfTariff);
+}
+
+if(!window.customElements.get(TAG.AON_JSF_CATALOGUE)){
+	window.customElements.define(TAG.AON_JSF_CATALOGUE, AonJsfCatalogue);
+}
+
+if(!window.customElements.get(TAG.AON_JSF_TAX)){
+	window.customElements.define(TAG.AON_JSF_TAX, AonJsfTax);
+}
+
+if(!window.customElements.get(TAG.AON_JSF_SERIES)){
+	window.customElements.define(TAG.AON_JSF_SERIES, AonJsfSeries);
+}
+
+if(!window.customElements.get(TAG.AON_JSF_BANK_CONCEPT)){
+	window.customElements.define(TAG.AON_JSF_BANK_CONCEPT, AonJsfBankConcept);
+}
+
+if(!window.customElements.get(TAG.AON_JSF_RELATIONSHIP)){
+	window.customElements.define(TAG.AON_JSF_RELATIONSHIP, AonJsfRelationship);
+}
+
+if(!window.customElements.get(TAG.AON_JSF_LOADER)){
+	window.customElements.define(TAG.AON_JSF_LOADER, AonJsfLoader);
+}

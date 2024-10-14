@@ -12,8 +12,9 @@
 			id="appButton" 
 			style="display: none; " 
 			action="supplier_list-management"
-			actionListener="#{supplier.onSearch}"
 		>
+			<f:setPropertyActionListener target="#{supplier.defaultOrder}" value="updateDate desc" />
+			<aon:actionListener method="#{supplier.onSearch}" />
 		</aon:commandButton>
 	</aon:form>
 	
