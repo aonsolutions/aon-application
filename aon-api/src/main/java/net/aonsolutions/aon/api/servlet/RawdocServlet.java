@@ -190,7 +190,7 @@ public class RawdocServlet extends AonApiHttpServlet {
 		Integer id = json.opt("id") !=null ? json.optInt("id") : null;
 		RawdocStatus status = RawdocStatus.safeValueOf(json.optString("status")); 
 		
-		if(RawdocStatus.PROCESSING.equals(status)) {
+		if(RawdocStatus.PROCESSING.equals(status) && api.getDur().isInvofox()) {
 			addCount(api);
 		}
 		
@@ -349,7 +349,8 @@ public class RawdocServlet extends AonApiHttpServlet {
 			f.put("url", url.toExternalForm());
 			f.put("path", url.toExternalForm());
 			//String contentType = S3.getContentType(rawdoc.getS3Bucket(), rawdoc.getS3Key());
-			f.put("content_type", "application/pdf");
+			f.put("content_type", rawdoc.getMimeType() != null && rawdoc.getMimeType().getName().contains("image")
+					? rawdoc.getMimeType().getName() : "application/pdf");
 			f.put("s3Bucket", rawdoc.getS3Bucket());
 			f.put("s3Key", rawdoc.getS3Key());
 		    json.put("file", f);

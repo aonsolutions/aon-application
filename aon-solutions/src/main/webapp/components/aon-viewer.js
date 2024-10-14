@@ -218,16 +218,25 @@ export class AonViewer extends AonElement {
 	}
 
 	printImage() {
-		let img = this.createElement(TAG.IMG);
-		img.id = this.AON_IMG_DIV;
-		img.style.width = '100%';
-		img.src = this.file;
-		img.onerror = () =>{
-			img.remove();
-			this.notSupport(this.type);
+		let iframeCanvas = this.getElement(this.AON_CANVAS_IFRAME);
+		if(iframeCanvas) {
+			iframeCanvas.style.width = '0px';
+			iframeCanvas.style.height = '0px';
 		}
-		this.appendChild(img);
-		this.dispatchEvent(new CustomEvent(EVENT.PRINT_IMAGE));
+
+		let img = this.getElement(this.AON_IMG_DIV);
+		if(!img) {
+			img = this.createElement(TAG.IMG);
+			img.id = this.AON_IMG_DIV;
+			img.style.width = '100%';
+			img.src = this.file;
+			img.onerror = () =>{
+				img.remove();
+				this.notSupport(this.type);
+			}
+			this.appendChild(img);
+			this.dispatchEvent(new CustomEvent(EVENT.PRINT_IMAGE));
+		}
 	}
 	
 	printImageTextLayer(textContent) {

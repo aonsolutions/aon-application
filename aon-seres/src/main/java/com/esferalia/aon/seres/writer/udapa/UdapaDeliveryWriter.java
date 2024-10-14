@@ -63,7 +63,7 @@ public class UdapaDeliveryWriter {
 		// TODO Auto-generated method stub
 		SEH1C seh1c = new SEH1C();
 		
-//		String referenceCode = isECI(delivery.getRegistry().getDocument()) 
+//		String referenceCode = SeresUtils.isECI(delivery.getRegistry().getDocument()) 
 //				? referenceCodeNumber(delivery.getReferenceCode()) : delivery.getReferenceCode();
 				
 		String referenceCode = delivery.getReferenceCode();
@@ -356,8 +356,4 @@ public class UdapaDeliveryWriter {
 		return builder.toString();
 	}
 	
-	private boolean isECI(String document) {
-		return "A28017895".equalsIgnoreCase(document);
-	}
-
 }
