@@ -1634,14 +1634,11 @@ public class BasicController extends AbstractPojoController implements IControll
 	
 	private static String getProperty (String valueELExpr) {
 		try {
-			Matcher matcher = Pattern.compile("\\.(?<property>to\\.[\\w\\.]*)", Pattern.CASE_INSENSITIVE).matcher(valueELExpr);
+			Matcher matcher = Pattern.compile("[{\\s\\.](?<property>to\\.[\\w\\.]*)", Pattern.CASE_INSENSITIVE).matcher(valueELExpr);
 			return matcher.find()  ? matcher.group("property") : valueELExpr ;
 		} catch (Exception e ) {
 			return valueELExpr;
 		}
 	}
-	
-	
-	
 	
 }
