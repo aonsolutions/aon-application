@@ -68,6 +68,9 @@ public class Certifica2Servlet extends HttpServlet {
 			
 			// Get suspensionReason
 			String suspensionReason = req.getParameter("suspensionReason");
+						
+			// Get ereCode
+			String ereCode = req.getParameter("ereCode");
 			
 			// Get Servlet outputStream
 			ServletOutputStream output = res.getOutputStream();	
@@ -84,7 +87,7 @@ public class Certifica2Servlet extends HttpServlet {
 				
 				// If not exist, create it and get it
 				if(null == data) {
-					JooqCertifica2.createCertifica2DBServlet(domainName, userLogin, contractId);
+					JooqCertifica2.createCertifica2DBServlet(domainName, userLogin, contractId, suspensionReasonCode, ereCode);
 					data = JooqCertifica2.getCertitica2Data(domainName, contractId);
 				}
 				
@@ -108,7 +111,7 @@ public class Certifica2Servlet extends HttpServlet {
 				res.setContentType(MimeType.MIME_PDF.getName());
 				res.setHeader("Content-disposition", "attachment; filename=\"Certifica2_" + document + ".pdf\"");
 				
-				data = JooqCertifica2.createCertEnterprisePDF(domainName, userLogin, contractId, suspensionReasonCode, suspensionReason);
+				data = JooqCertifica2.createCertEnterprisePDF(domainName, userLogin, contractId, suspensionReasonCode, suspensionReason, ereCode);
 			}
 			
 			res.setStatus(HttpServletResponse.SC_OK);
