@@ -7,12 +7,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-import jakarta.servlet.ServletException;
-import jakarta.servlet.annotation.WebServlet;
-import jakarta.servlet.http.HttpServlet;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.BorderStyle;
@@ -27,10 +21,16 @@ import com.code.aon.webservice.common.Utils;
 import com.code.aon.webservice.util.SecurityUtils;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.Domain;
-import com.esferalia.aon.occam.api.model.product.OldProduct;
+import com.esferalia.aon.occam.api.model.product.Product;
 import com.esferalia.aon.occam.api.model.stat.StatData;
 import com.esferalia.aon.occam.impl.jooq.dao.StatDAO;
 import com.esferalia.aon.watson.server.AonDateUtils;
+
+import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 
 @WebServlet(name = "stockForecastProjection", urlPatterns = { "/aon_gwt_aio/ms/download_stockForecast/*" })
@@ -170,13 +170,14 @@ public class StockForecastDownload extends HttpServlet {
 		StatData<Integer, String, Double> stat = WarehouseServlet.getStockForecastStatData(domain, login, filterMap);
 		
         Integer[] productIds = stat.getMap().keySet().toArray(new Integer[stat.getMap().keySet().size()]);
-    	Map<Integer, OldProduct> productMap = new HashMap<>();
-    	AON.getProductStream(domain.getName(), domain.getId(), login, f->f.getIdProperty().in(productIds)).forEach(product -> {
-    		productMap.put(product.getId(), product);
-    	});
+    	Map<Integer, Product> productMap = new HashMap<>();
+
+    	AON.getProductStream(domain, login,  f->f.getIdProperty().in(productIds))
+    		.forEach(product -> productMap.put(product.getId(), product));
+    
         for(Integer productId: productIds) {
 			if(stat.getMap().containsKey(productId)){
-				OldProduct product = productMap.get(productId);
+				Product product = productMap.get(productId);
 				String productName = product.getCode()+" / "+product.getName();
 				Double quantity = new Double(stat.get(productId, StatDAO.PRODUCT_OUTPUTS));
 				Double dailyQuantity = quantity / daysCount;
