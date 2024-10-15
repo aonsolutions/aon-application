@@ -525,18 +525,6 @@
       <version>${project.version}</version>
       <scope>compile</scope>
     </dependency>
-    <!--dependency>
-      <groupId>com.code.aon</groupId>
-      <artifactId>aon.conexflow</artifactId>
-      <version>${project.version}</version>
-      <scope>compile</scope>
-    </dependency>
-    <dependency>
-      <groupId>com.code.aon</groupId>
-      <artifactId>aon.hhg.webservice</artifactId>
-      <version>${project.version}</version>
-      <scope>compile</scope>
-    </dependency-->
     <dependency>
       <groupId>net.aonsolutions</groupId>
       <artifactId>aon.webservice</artifactId>
