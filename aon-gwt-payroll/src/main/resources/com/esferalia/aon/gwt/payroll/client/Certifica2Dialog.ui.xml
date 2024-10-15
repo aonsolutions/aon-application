@@ -28,7 +28,7 @@
 		.form {
 			display: flex;
 			flex-direction: column;
-			max-width: 550px;
+			max-width: 580px;
 			width: 100%;
 			gap: 5px;
 		}
@@ -55,6 +55,11 @@
 			display: flex;
 			justify-content: space-between;
 			margin-top: 15px;
+		}
+		
+		.textBox{
+			width: 60px;
+  			height: .8rem;
 		}
 		
 		.loadingPanel{
@@ -162,6 +167,21 @@
 				<g:HTMLPanel styleName="{style.flex}">
 					<g:Label styleName="{style.subTitle}">Código Suspensión:</g:Label>
 					<g:ListBox ui:field="suspensionCodeLB" styleName="{style.suspensionReasonWidth}" />
+				</g:HTMLPanel>
+			</g:HTMLPanel>
+			
+			<g:HTMLPanel styleName="{style.flex}" ui:field="ertePanel">
+				<g:HTMLPanel styleName="{style.flex}">
+					<g:Label styleName="{style.subTitle}">Nº ERTE:</g:Label>
+					<g:TextBox ui:field="erteCodeTB" styleName="{style.textBox}" />
+				</g:HTMLPanel>
+				<g:HTMLPanel styleName="{style.flex}">
+					<g:Label styleName="{style.subTitle}">Red. Jor. ERTE (%):</g:Label>
+					<g:TextBox ui:field="erteCoefTB" styleName="{style.textBox}" />
+				</g:HTMLPanel>
+				<g:HTMLPanel styleName="{style.flex}">
+					<g:Label styleName="{style.subTitle}">F. Fin ERTE:</g:Label>
+					<g:Label ui:field="erteEndL" />
 				</g:HTMLPanel>
 			</g:HTMLPanel>
 			

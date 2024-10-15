@@ -977,8 +977,9 @@ public abstract class ContrataEmployee extends ResizeComposite {
 				ctoExtension.setVisible(hasCertificateSEPE && hasExtensionComuniation);
 				
 				separatorCertifica.setVisible(null != endDate);
-				cetifica2.setVisible(null != endDate);
-				cetifica2PDF.setVisible(hasCertificateSEPE && null != endDate);
+				// Show always, for example for ERE/ERTE
+//				cetifica2.setVisible(null != endDate);
+				cetifica2PDF.setVisible(hasCertificateSEPE /*&& null != endDate*/);
 				
 				separatorAdds.setVisible(canExtension || canTransform || hasExtension || hasTransform);
 				contractExtension.setVisible(canExtension);

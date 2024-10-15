@@ -108,6 +108,11 @@ public class Certifica2Info implements Serializable {
 	private String profesionalCategory;
 	private String suspensionCode;
 	private String suspension;
+	
+	private String erteCode;
+	private String erteCoef;
+	private Date erteEnd;
+	
 	private Date startDate;
 	private Date endDate;
 	private Integer settleQuoteDays;
@@ -305,6 +310,30 @@ public class Certifica2Info implements Serializable {
 
 	public void setSuspension(String suspension) {
 		this.suspension = suspension;
+	}
+
+	public String getErteCode() {
+		return erteCode;
+	}
+
+	public void setErteCode(String erteCode) {
+		this.erteCode = erteCode;
+	}
+
+	public String getErteCoef() {
+		return erteCoef;
+	}
+
+	public void setErteCoef(String erteCoef) {
+		this.erteCoef = erteCoef;
+	}
+
+	public Date getErteEnd() {
+		return erteEnd;
+	}
+
+	public void setErteEnd(Date erteEnd) {
+		this.erteEnd = erteEnd;
 	}
 
 	public Date getStartDate() {
