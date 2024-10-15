@@ -985,19 +985,31 @@ class SistemaREDITPart extends ServicioREDPartUtils {
 		
 		
 		
-	public static void __main(String[] args) throws IOException, SegSocialException, ParseException, FailingHttpStatusCodeException, InterruptedException, TransformerException {
-		try ( InputStream is = new FileInputStream("/home/ndiaz/Documentos/pvasesores.p12");
-				FileOutputStream os = new FileOutputStream(File.createTempFile("tgss", ".pdf"))) {
-			Date startDate = new SimpleDateFormat("dd/MM/yyyy").parse("01/09/2023");
-			List<ITPart> itParts = getItsImpl(is, "7624", "PKCS12", "0111", "41017063249", Optional.empty(), Optional.of(startDate), Optional.of(new Date()), Optional.empty());
-			for (ITPart itPart : itParts) {
-				System.out.println(itPart);  
-			}
-			System.out.println( "---------------------------");
-			List<It> its = orderByIT(itParts);
-			for (It it: its) {
-				System.out.println(it);
-			}
+	public static void main(String[] args) throws IOException, SegSocialException, ParseException, FailingHttpStatusCodeException, InterruptedException, TransformerException {
+		try ( InputStream certificateIs = new FileInputStream("/home/rtrepiana/Downloads/carcellemorcillo.aonsolutions.org.p12")){
+			Date startDate = new SimpleDateFormat("dd/MM/yyyy").parse("26/09/2024");
+			SistemaREDITPart.registerItBajaImpl(
+					certificateIs,
+					"000000",
+					"PKCS12",
+					"0111", 
+					"50122070978",
+					"500073203489",
+					SistemaRED.Contingencies.ACCIDENT_LABORAL,
+					SistemaRED.SituationEmployee.ACTIVO,
+					startDate,
+					SistemaRED.ContractType.RESTO_Y_AUTONOMOS,
+					2115.46f,
+					31,
+					Optional.of(startDate),
+					Optional.empty(),
+					Optional.empty(),
+					Optional.empty(),
+					Optional.empty(),
+					Optional.of("NIVEL XII"),
+					Optional.of("Las propias de NIVEL XII")
+					);
+			
 		}
 	}
 }
