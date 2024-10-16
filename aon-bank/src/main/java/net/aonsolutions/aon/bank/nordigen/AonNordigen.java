@@ -2,10 +2,12 @@ package net.aonsolutions.aon.bank.nordigen;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -61,7 +63,6 @@ public class AonNordigen {
 			return new NordigenConfiguration().setConfiguration(AON.getConfiguration(ctx))
 					.setToken(AonNordigen.getNewAccessToken()).setAccounts(NordigenDAO.getAllAccounts(ctx));
 		} catch (AonCoreException ex) {
-//			NordigenUtils.logException(ex);
 			throw new NordigenException(ex.getMessage());
 		}
 	}
@@ -176,12 +177,11 @@ public class AonNordigen {
 		return NordigenAPI.getBalances(token.getAccess(), nordigenAccountId);
 	}
 
-	// NUEVOOOO
+	// NUEVO
 	public static void updateAccountBalances(NordigenBankAccount account, Occam occam) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(occam)) {
 			NordigenDAO.updateRegistryBank(ctx, account);
 		}
-
 	}
 
 	public static Stream<BankStatement> getMovementsFromBD(Occam occam, NordigenBankStatementFilter filter,
@@ -200,7 +200,6 @@ public class AonNordigen {
 		try {
 			return NordigenAPI.getTransactions(token.getAccess(), nordigenAccountId, null, null);
 		} catch (Exception e) {
-//			NordigenUtils.logException(e);
 			return null;
 		}
 	}
@@ -213,7 +212,6 @@ public class AonNordigen {
 					.map(st -> st.setPending(true)).collect(Collectors.toCollection(LinkedList::new));
 		}
 		return new LinkedList<>();
-
 	}
 
 //	private static List<NordigenBankStatement> getPendingAccountTransactions(NordigenBankAccount account, NordigenAccountTransactions transactions) {
@@ -265,7 +263,6 @@ public class AonNordigen {
 			NordigenBankAccount account) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(occam)) {
 			RegistryBank rbank = account.getRbank();
-//			RegistryBank rbank = null;
 			if (rbank.getRequisition() != null) {
 				String reqId = rbank.getRequisition();
 				if (AonStringUtils.isNotBlank(reqId)) {
@@ -283,7 +280,6 @@ public class AonNordigen {
 										getInstitution(token, account.getRequisition().getInstitutionId()));
 							}
 						} catch (Exception e) {
-//							NordigenUtils.logException(e);
 							e.printStackTrace();
 							account.addLog(e.getMessage());
 						}
@@ -425,7 +421,6 @@ public class AonNordigen {
 		try (CloseableAONContext ctx = AONContext.getAONContext(occam)) {
 			return NordigenDAO.getBankStatements(ctx, rbank, dateFrom, new Date());
 		}
-
 	}
 
 	public static RegistryBank updateRequisitionId(Occam occam, NordigenRequisition requisition, Integer rbank) {
@@ -462,7 +457,6 @@ public class AonNordigen {
 			List<NordigenBankStatement> list = new LinkedList<>();
 			if (nordigenBankAccount != null && nordigenBankAccount.getMetadata() != null) {
 				String id = nordigenBankAccount.getMetadata().getId();
-//				online = false;
 				if (online) {
 					NordigenAccountTransactions transactions = AonNordigen.getTransactions(token, id, endDate);
 					list.addAll(getPendingAccountTransactions(nordigenBankAccount, transactions));
@@ -487,7 +481,9 @@ public class AonNordigen {
 			}
 			List<NordigenBankStatement> orderedList = list.stream().filter(Objects::nonNull)
 					.collect(Collectors.toList());
+			
 			List<NordigenAccountBalance> balances = nordigenBankAccount.getBalances();
+
 			NordigenAccountBalance consolidado = AonNordigen.filterConsolidado(balances);
 
 			NordigenAccountBalance real = AonNordigen.filterReal(balances);
@@ -512,18 +508,14 @@ public class AonNordigen {
 	public static NordigenRequisition addAccount(NordigenAccessToken token, Occam occam,
 			NordigenBankAccount nordigenBankAccount) {
 		RegistryBank rbank = nordigenBankAccount.getRbank();
-
 		if (rbank.getBankAccount().getIban().equals("GL8262400000062409")
 				|| rbank.getBankAccount().getIban().equals("GL4076010000076016")) {
 			NordigenAgreement agreement = AonNordigen.createAgreement(token, "SANDBOXFINANCE_SFIN0000");
 			String redirect = "https://www.youtube.com/watch?v=dQw4w9WgXcQ";
-
 			NordigenRequisition requisition = AonNordigen.createRequisition(token, agreement, redirect);
 			AonNordigen.updateRequisitionId(occam, requisition, rbank.getId());
 			return requisition;
-
 		} else {
-
 			Pattern bicPattern = Pattern.compile("^(?<bic>.*?)X*$", Pattern.CASE_INSENSITIVE);
 			Matcher bicMatcher = bicPattern.matcher(AonStringUtils.trimToEmpty(rbank.getBic()));
 			StringBuilder bicBuilder = new StringBuilder();
@@ -535,7 +527,6 @@ public class AonNordigen {
 
 			List<NordigenInstitution> instList = AonNordigen.getInstitutions(token, null, null).stream()
 					.filter(inst -> AonStringUtils.equalsIgnoreCase(inst.getBic(), bic)).toList();
-
 			if (instList.isEmpty()) {
 				instList = AonNordigen.getInstitutionsByBic(token, bic);
 			}
@@ -565,6 +556,22 @@ public class AonNordigen {
 			return requisition;
 		}
 	}
+	
+	//NUEVO COMO IDEA YA QUE HACE FALTA VOLVER A HACER EL AGREEMENT TRAS LOS DIAS CONFIGURADOS
+	public static boolean handleAgreement(NordigenAccessToken token, NordigenRequisition requisition) {		
+		NordigenAgreement agreement = AonNordigen.getAgreement(token, requisition.getAgreement());
+		Date today = new Date();
+		Date created = agreement.getCreated();
+		long diffInMillies = today.getTime() - created.getTime();
+	    long daysBetween = TimeUnit.DAYS.convert(diffInMillies, TimeUnit.MILLISECONDS);
+		int daysToExpire = agreement.getAccessValidForDays() - (int)daysBetween;
+		if (daysToExpire <= 5) {
+			return true;
+		}else {
+			return false;
+		}
+	}
+	
 
 	// -----------------------------------------------------------------
 	// -------------------------------------------------------- [PRIVATE]
@@ -631,7 +638,6 @@ public class AonNordigen {
 		if (consolidado == null && balances.size() > 0) {
 			return balances.get(0);
 		}
-
 		return consolidado;
 	}
 
@@ -640,11 +646,9 @@ public class AonNordigen {
 
 		real = balances.stream().filter(bal -> !NordigenBalanceType.CLOSING_BOOKED.equals(bal.getBalanceType()))
 				.findFirst().orElse(null);
-
 		if (real == null) {
 			return filterConsolidado(balances);
 		}
-
 		return real;
 	}
 
