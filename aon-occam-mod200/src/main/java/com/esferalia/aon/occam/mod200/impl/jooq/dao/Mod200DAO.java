@@ -16,6 +16,7 @@ import org.jooq.exception.DataAccessException;
 
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalStatus;
+import com.esferalia.aon.occam.api.model.fiscal.IFiscalModel;
 import com.esferalia.aon.occam.api.model.type.Administration;
 import com.esferalia.aon.occam.mod200.api.model.Mod200;
 import com.esferalia.aon.occam.mod200.api.model.Mod200CompanyAdministrator;
@@ -46,33 +47,29 @@ public class Mod200DAO {
 	public static class Mod200Filler implements Function<Record,Mod200> {
 
 		@Override
-		public Mod200 apply(Record record) {
+		public Mod200 apply(Record rec) {
 			return new Mod200() 
-				.setId(record.getValue(FS_MODEL200.ID))
-				.setDomain(record.getValue(FS_MODEL200.DOMAIN))
-				.setDomainName(record.getValue(DOMAIN.DESCRIPTION))
-				.setYear(record.getValue(FS_MODEL200.YEAR))
-				.setAdministration(Administration.safeValueOf(record.getValue(FS_MODEL200.ADMINISTRATION)))
-				.setStatus(FiscalStatus.safeValueOf(record.getValue(FS_MODEL200.STATUS)))
-				
-				// TODO - Support
+				.setId(rec.getValue(FS_MODEL200.ID))
+				.setDomain(rec.getValue(FS_MODEL200.DOMAIN))
+				.setDomainName(rec.getValue(DOMAIN.DESCRIPTION))
+				.setYear(rec.getValue(FS_MODEL200.YEAR))
+				.setAdministration(Administration.safeValueOf(rec.getValue(FS_MODEL200.ADMINISTRATION)))
+				.setStatus(FiscalStatus.safeValueOf(rec.getValue(FS_MODEL200.STATUS)))
 				.setFinance(null)
-				
-				.setComplementary( AonEnumUtils.getBoolean( record.getValue(FS_MODEL200.COMPLEMENTARY)))
+				.setComplementary( AonEnumUtils.getBoolean( rec.getValue(FS_MODEL200.COMPLEMENTARY)))
 				.setReplacement( false )
-				.setNumber(record.getValue(FS_MODEL200.RECEIPT ))
-				.setReplacedNumber(record.getValue(FS_MODEL200.COMPLEMENTARY_RECEIPT))
-				.setComments(record.getValue(FS_MODEL200.COMMENTS ))
-				.setDocument(record.getValue(FS_MODEL200.DOCUMENT ))
-				.setName(record.getValue(FS_MODEL200.NAME))
-				.setResultType(record.getValue(FS_MODEL200.RESULT_TYPE))
-				.setAmount(record.getValue(FS_MODEL200.AMOUNT) == null? 0.0 : record.getValue(FS_MODEL200.AMOUNT) )
-				.setCreationUser(record.getValue(FS_MODEL200.CREATION_USER))
-				.setCreationDate(record.getValue(FS_MODEL200.CREATION_DATE))
-				.setModificationUser(record.getValue(FS_MODEL200.MODIFICATION_USER))
-				.setModificationDate(record.getValue(FS_MODEL200.MODIFICATION_DATE))
-				
-				.setFsModel(record.getValue(FS_MODEL200.FS_MODEL))
+				.setNumber(rec.getValue(FS_MODEL200.RECEIPT ))
+				.setReplacedNumber(rec.getValue(FS_MODEL200.COMPLEMENTARY_RECEIPT))
+				.setComments(rec.getValue(FS_MODEL200.COMMENTS ))
+				.setDocument(rec.getValue(FS_MODEL200.DOCUMENT ))
+				.setName(rec.getValue(FS_MODEL200.NAME))
+				.setResultType(rec.getValue(FS_MODEL200.RESULT_TYPE))
+				.setAmount(rec.getValue(FS_MODEL200.AMOUNT) == null? 0.0 : rec.getValue(FS_MODEL200.AMOUNT) )
+				.setCreationUser(rec.getValue(FS_MODEL200.CREATION_USER))
+				.setCreationDate(rec.getValue(FS_MODEL200.CREATION_DATE))
+				.setModificationUser(rec.getValue(FS_MODEL200.MODIFICATION_USER))
+				.setModificationDate(rec.getValue(FS_MODEL200.MODIFICATION_DATE))
+				.setFsModel(rec.getValue(FS_MODEL200.FS_MODEL))
 			;
 		}
 	}
@@ -114,6 +111,22 @@ public class Mod200DAO {
 		}
 	}
 	
+	public static void saveNrc(AONContext ctx, IFiscalModel mod200) {
+		try {
+			ctx.checkWrite();
+			if (mod200.getId() != null) {
+				ctx.getDslContext().update(FS_MODEL200)
+					.set(FS_MODEL200.NRC,mod200.getNrc())
+					.where(FS_MODEL200.ID.equal(mod200.getId()))
+					.execute();
+			}
+		} catch (DataAccessException t) {
+			throw new AonCoreException(t.getCause()!=null?t.getCause().getMessage():t.getMessage());
+		} catch (Exception t) {
+			throw new AonCoreException(t.getMessage());
+		}
+	}
+	
 	// Mantenimiento de la fila en fs_model (se utilizará a partir del ejercicio 2022)
 	
 	public static Integer saveFsModel(AONContext ctx, Mod200 mod200) {
@@ -139,7 +152,7 @@ public class Mod200DAO {
 	
 	private static Integer insertFsModel(AONContext ctx, Mod200 mod200) {
 		
-		Integer id = ctx.getDslContext()
+		return ctx.getDslContext()
 			.insertInto(FS_MODEL)
 				.set(FS_MODEL.DOMAIN, mod200.getDomain())
 				.set(FS_MODEL.YEAR, mod200.getYear())
@@ -183,7 +196,6 @@ public class Mod200DAO {
 			.returning(FS_MODEL.ID)
 			.fetchOne()
 			.getValue(FS_MODEL.ID);
-		return id;
 		
 	}	
 	

@@ -44,7 +44,7 @@ export class AonGroupwareMenu extends AonSuiteMenu {
             action: () => alert("description")
         },{
             title: "Expediente", 
-            action: () => alert("description")
+			action: () => this.rootPanel(new JSF.AonJsfProject)
         }];
         this.options = [{
             title: 'Expedientes',
@@ -66,67 +66,67 @@ export class AonGroupwareMenu extends AonSuiteMenu {
             options: [{
                 description: "Procesos",
                 title: "Procesos",
-                action: () => alert("description")
+				action: () => this.rootPanel(new JSF.AonJsfProcess)
             },{
                 description: "Tipos de Transiciones",
                 title: "Tipos de Transiciones",
-                action: () => alert("description")
+				action: () => this.rootPanel(new JSF.AonJsfProcessTransactionType)
             },{
                 description: "Lanzador de procesos",
                 title: "Lanzador de procesos",
-                action: () => alert("description")
+				action: () => this.rootPanel(new JSF.AonJsfProcessWizard)
             }]
         },{
             title: 'Tareas',
             options: [{
                 description: "Bandeja de tareas",
                 title: "Bandeja de tareas",
-                action: () => alert("description")
+                action: () => this.rootPanel(new JSF.AonJsfTask)
             },{
                 description: "Diagrama de Gantt",
                 title: "Diagrama de Gantt",
-                action: () => alert("description")
+				action: () => this.rootPanel(new JSF.AonJsfGantt)
             }]
         },{
             title: 'Campañas (Procesos Masivos)',
             options: [{
                 description: "Monitor de campañas",
                 title: "Monitor de campañas",
-                action: () => alert("description")
+				action: () => this.rootPanel(new JSF.AonJsfCampaign)
             },{
                 description: "Tipos de campañas",
                 title: "Tipos de campañas",
-                action: () => alert("description")
+				action: () => this.rootPanel(new JSF.AonJsfCampaignType)
             }]
         },{
             title: 'Partes de Trabajo',
             options: [{
                 description: "Partes de Trabajo",
                 title: "Partes de Trabajo",
-                action: () => alert("description")
+				action: () => this.rootPanel(new JSF.AonJsfDailyTracking)
             },{
                 description: "Informes",
                 title: "Informes",
-                action: () => alert("description")
+				action: () => this.rootPanel(new JSF.AonJsfDailyTrackingReport)
             },{
                 description: "Tipos de Trabajos",
                 title: "Tipos de Trabajos",
-                action: () => alert("description")
+				action: () => this.rootPanel(new JSF.AonJsfJobType)
             }]
         },{
             title: 'Operarios',
             options: [{
                 description: "Operarios",
                 title: "Operarios",
-                action: () => alert("description")
+				action: () => this.rootPanel(new JSF.AonJsfTaskHolder)
             },{
                 description: "Grupos de usuarios",
                 title: "Grupos de usuarios",
-                action: () => alert("description")
+				action: () => this.rootPanel(new JSF.AonJsfWorkgroup)
             },{
                 description: "Perfiles de coste",
                 title: "Perfiles de coste",
-                action: () => alert("description")
+				action: () => this.rootPanel(new JSF.AonJsfCostProfile)
             }]
         }];
     }

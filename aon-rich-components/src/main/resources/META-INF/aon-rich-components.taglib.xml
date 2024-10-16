@@ -49,7 +49,7 @@
 				com.code.aon.faces.OutputText
 			</component-type>
 			<handler-class>
-				com.code.aon.faces.component.AonComponentHandler
+				com.code.aon.faces.component.richfaces.outputText.OutputTextHandler
 			</handler-class>
 		</component>
 	</tag>
@@ -714,6 +714,18 @@
 		<tag-name>if</tag-name>
 		<handler-class>
 			com.code.aon.faces.component.richfaces.jstl.IfHandler
+		</handler-class>
+	</tag>
+	<tag>
+		<tag-name>ifDefined</tag-name>
+		<handler-class>
+			com.code.aon.faces.component.richfaces.jsf.ui.IfDefinedHandler
+		</handler-class>
+	</tag>
+	<tag>
+		<tag-name>insertMenuItems</tag-name>
+		<handler-class>
+			com.code.aon.faces.component.richfaces.jsf.ui.InsertMenuItemsHandler
 		</handler-class>
 	</tag>
 </facelet-taglib>

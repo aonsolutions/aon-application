@@ -3,6 +3,7 @@ package com.esferalia.aon.occam.mod200.impl.jooq;
 import java.util.LinkedList;
 
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.model.fiscal.IFiscalModel;
 import com.esferalia.aon.occam.mod200.api.IMODEL200;
 import com.esferalia.aon.occam.mod200.api.model.Mod200;
 import com.esferalia.aon.occam.mod200.impl.jooq.dao.Mod200DAO;
@@ -29,6 +30,11 @@ public class MODEL200Impl implements IMODEL200 {
 	@Override
 	public Mod200 saveComments(AONContext ctx, Mod200 mod200) {		
 		return Mod200DAO.saveComments(ctx, mod200);
+	}
+	
+	@Override
+	public void saveNrc(AONContext ctx, IFiscalModel mod200) {		
+		Mod200DAO.saveNrc(ctx, mod200);
 	}
 	
 }

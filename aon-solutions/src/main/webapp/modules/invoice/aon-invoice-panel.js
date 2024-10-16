@@ -1,5 +1,5 @@
 import { AonElement } from "../../components/AonElement.js";
-import { insertInvoice, mobileAction, MOBILE_ACTION, selfconta, downloadInvoiceExcel, getInvoice, getRawdocCount, getInvofoxCount, invoiceDuplicateFix } from "../../services/service.js";
+import { insertInvoice, mobileAction, MOBILE_ACTION, selfconta, downloadInvoiceExcel, getInvoice, getRawdocCount, getInvofoxCount, invoiceDuplicateFix, refreshProcessing } from "../../services/service.js";
 import { Invoice } from "./Invoice.js";
 import { AonInvoice } from "./aon-invoice.js";
 import { AonMobileInvoice } from "./aon-mobile-invoice.js";
@@ -28,10 +28,6 @@ import { AonMobileInvoiceList } from "./aon-mobile-invoice-list.js";
 import { AonInvoiceHome } from "./aon-invoice-home.js";
 
 import { FiscalUtils } from "../fiscal/FiscalUtils.js";
-import { getModelsFiscal, getEstimationModelsFiscal } from "../../services/fiscalService.js";
-import { AonTable } from "../../components/aon-table.js";
-import { formatNumber } from "../../services/utils.js";
-import { sortBy } from "../../services/utils.js";
 
 import * as ACTION from "../actions.js";
 import * as OPTION from "./InvoiceOptions.js";
@@ -42,6 +38,7 @@ import "../../components/aon-dialog-menu.js";
 
 import { getCounter, addCounter, clearCounter } from "./InvoiceCounter.js";
 import { AonFutureTax } from "../fiscal/tax/aon-future-tax.js";
+import { generateJobId } from "./InvoiceUtils.js";
 
 export class AonInvoicePanel extends AonElement {
   selectedOption;
@@ -136,12 +133,7 @@ export class AonInvoicePanel extends AonElement {
     aonInvoice.addEventListener(EVENT.AON_APPLICATION_DROP, (e) =>
       this.upload(e.detail)
     );
-
-    if (this.isMobile()) {
-      aonInvoice.addFloatOption(ACTION.ADD_INVOICE, () => this.addInvoice());
-    }
     this.buildInvoiceToolbarOptions();
-
     this.buildSidenavOptions();
     if (this.invoice && this.invoice.type) {
       this.aonInvoice(this.invoice.type, this.invoice);
@@ -150,55 +142,116 @@ export class AonInvoicePanel extends AonElement {
     } else this.aonInvoiceHome();
 
     this.dispatchEvent(new CustomEvent(EVENT.BUILD, { panel: this }));
+
+    let upload = this.getElement("aonInvoiceToolbarHeaderToolSectionUploadButton");
+    upload.title = MSG.UPLOAD_INVOICE;
+
+    let refresh = this.getElement("aonInvoiceToolbarHeaderToolSectionRefreshButton");
+    refresh.title = MSG.REFRESH;
+
+    let reprocess = this.getElement("aonInvoiceToolbarHeaderToolSectionSyncButton");
+    reprocess.title = MSG.REPROCESS;
+
   }
 
-  buildInvoiceToolbarOptions(acceptedInvoices) {
+  buildInvoiceToolbarOptions(acceptedInvoices, processing) {
     this.clearToolbar();
-    this.getApplication().addToolbarOption("Add", "add", () => this.addInvoice());
-    this.getApplication().addToolbarOption("Refresh", "refresh", () => this.refreshInvoicePanel());
-    this.getApplication().addToolbarOption("Upload", "file_upload", () => this.addInvoiceFile());
+    if(!this.isMobile()) {
+      this.getApplication().addToolbarOption2(ACTION.ADD_INVOICE, () => this.addInvoice());
+      this.getApplication().addToolbarOption("Refresh", "refresh", () => this.refreshInvoicePanel());
+      this.getApplication().addToolbarOption("Upload", "file_upload", () => this.addInvoiceFile());
+      if(processing) this.getApplication().addToolbarOption("Sync", "sync", () => this.refreshProcessing()); 
  
-    if(acceptedInvoices) this.getApplication().addToolbarOption2(SigninSidenav.EXCEL, () => this.downloadInvoiceExcel());
+      if(acceptedInvoices) this.getApplication().addToolbarOption2(SigninSidenav.EXCEL, () => this.downloadInvoiceExcel());
+    } else {
+      this.getApplication().removeFloatOption();
+      this.getApplication().addFloatOption(ACTION.ADD_INVOICE, () => this.addInvoice());
+    } 
     this.buildToolbarSearchOption(acceptedInvoices);
   }
 
   buildProductToolbarOptions() {
     this.clearToolbar();
-    this.getApplication().addToolbarOption("Add", "add", () => this.addProduct());
+    if(!this.isMobile()) {
+      this.getApplication().addToolbarOption2(ACTION.ADD_PRODUCT, () => this.addProduct());
+    } 
+    // TODO ACTIVAR CUANDO ESTE LA OPCIÓN DE AÑADIR PRODUCTO EN EL MÓVIL
+    // else {
+    //   this.getApplication().removeFloatOption();
+    //   this.getApplication().addFloatOption(ACTION.ADD_PRODUCT, () => this.addProduct());
+    // }
+
     this.buildToolbarSearchOption();
   }
 
   buildExpenseToolbarOptions() {
     this.clearToolbar();
-    this.getApplication().addToolbarOption("Add", "add", () => this.addExpense());
+    if(!this.isMobile()) {
+      this.getApplication().addToolbarOption2(ACTION.ADD_EXPENSE, () => this.addExpense());
+    } 
+    // TODO ACTIVAR CUANDO ESTE LA OPCIÓN DE AÑADIR GASTO EN EL MÓVIL
+    // else {
+    //   this.getApplication().removeFloatOption();
+    //   this.getApplication().addFloatOption(ACTION.ADD_EXPENSE, () => this.addExpense());
+    // }
     this.buildToolbarSearchOption();
   }
 
   buildInvestToolbarOptions() {
     this.clearToolbar();
-    this.getApplication().addToolbarOption("Add", "add", () => this.addInvest());
+    if(!this.isMobile()) {
+      this.getApplication().addToolbarOption2(ACTION.ADD_INVEST_ASSET, () => this.addInvest());
+    } 
+    // TODO ACTIVAR CUANDO ESTE LA OPCIÓN DE AÑADIR BIEN AFECTO EN EL MÓVIL
+    // else {
+    //   this.getApplication().removeFloatOption();
+    //   this.getApplication().addFloatOption(ACTION.ADD_INVEST_ASSET, () => this.addInvest());
+    // }
+
     this.buildToolbarSearchOption();
   }
 
   buildCustomerToolbarOptions() {
     this.clearToolbar();
-    this.getApplication().addToolbarOption("Add", "add", () => this.addCustomer());
+    if(!this.isMobile()) {
+      this.getApplication().addToolbarOption2(ACTION.ADD_CUSTOMER, () => this.addCustomer());
+    }
+    // TODO ACTIVAR CUANDO ESTE LA OPCIÓN DE AÑADIR CLIENTE EN EL MÓVIL
+    // else {
+    //   this.getApplication().removeFloatOption();
+    //   this.getApplication().addFloatOption(ACTION.ADD_CUSTOMER, () => this.addCustomer());
+    // }
     this.buildToolbarSearchOption();
   }
 
   buildSupplierToolbarOptions() {
     this.clearToolbar();
-    this.getApplication().addToolbarOption("Add", "add", () => this.addSupplier());
+    if(!this.isMobile()) {
+      this.getApplication().addToolbarOption2(ACTION.ADD_SUPPLIER, () => this.addSupplier());
+    }
+    // TODO ACTIVAR CUANDO ESTE LA OPCIÓN DE AÑADIR PROVEEDOR EN EL MÓVIL
+    // else {
+    //   this.getApplication().removeFloatOption();
+    //   this.getApplication().addFloatOption(ACTION.ADD_SUPPLIER, () => this.addSupplier());
+    // }
     this.buildToolbarSearchOption();
   }
 
   buildCreditorToolbarOptions() {
     this.clearToolbar();
-    this.getApplication().addToolbarOption("Add", "add", () => this.addCreditor());
+    if(!this.isMobile()) {
+      this.getApplication().addToolbarOption("Add", "add", () => this.addCreditor());
+    }
+    // TODO ACTIVAR CUANDO ESTE LA OPCIÓN DE AÑADIR ACREEDOR EN EL MÓVIL
+    // else {
+    //   this.getApplication().removeFloatOption();
+    //   this.getApplication().addFloatOption(ACTION.ADD_CREDITOR, () => this.addCreditor());
+    // }
     this.buildToolbarSearchOption();
   }
 
   clearToolbar() {
+    let aonInvoice = this.getApplication();
     let toolbar = this.getElement(aonInvoice.TOOLBAR);
     toolbar.removeButtons();
   }
@@ -574,11 +627,11 @@ export class AonInvoicePanel extends AonElement {
 
   addInvoice() {
     let ayudat = this.getDur().isSelfconta();
-    let aonInvoice = this.getElement("aonInvoice");
+    let aonInvoice = this.getApplication();
     let aonInvoiceToolbar = this.getElement(aonInvoice.TOOLBAR);
     let button = this.isMobile()
       ? this.getElement("aonInvoiceAddInvoiceButton")
-      : this.getElement(aonInvoiceToolbar.TOOL_SECTION + "AddButton");
+      : this.getElement(aonInvoiceToolbar.TOOL_SECTION + ACTION.ADD_INVOICE.id + "Button");
 
     let height = window.innerHeight;
     let top = button.getBoundingClientRect().top;
@@ -700,8 +753,16 @@ export class AonInvoicePanel extends AonElement {
   }
 
   refreshInvoicePanel() {
+    this.buildInvoiceToolbarOptions();
     this.buildCounter();
     this.aonInvoiceHome();
+  }
+
+  refreshProcessing() {
+    refreshProcessing({}).then(r => {
+      this.buildCounter();
+      this.aonInvoiceList({status: CONSTANT.PROCESSING});
+    }).catch(e => console.log(e));
   }
 
   addInvoiceFile() {
@@ -715,6 +776,7 @@ export class AonInvoicePanel extends AonElement {
         this.appendChild(uploadToast);
       }
       let data = { uploaded: 0 };
+      uploadToast.setJobId(generateJobId());
       for (let file of files) {
         uploadToast.addFile("invoice", file, data);
       }
@@ -749,6 +811,7 @@ export class AonInvoicePanel extends AonElement {
   }
 
   async selectOption(option) {
+    let aonInvoice = this.getApplication();
     if (option) {
       let toolbar = this.getElement(aonInvoice.TOOLBAR);
       toolbar.option = option.name;

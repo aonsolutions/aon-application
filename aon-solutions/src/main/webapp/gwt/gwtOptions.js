@@ -245,12 +245,14 @@ export const SECURITY_MANAGEMENT = {
 
 export const IMPORT = {
   module: GWT_AIO,
-  entryPoint: 'import'
+  entryPoint: 'templates',
+  subEntryPoint: 'import'
 };
 
 export const TEMPLATE = {
   module: GWT_AIO,
-  entryPoint: 'templates'
+  entryPoint: 'templates',
+  subEntryPoint: 'templates'
 };
 
 export const MODEL_111 = {
@@ -491,4 +493,9 @@ export const COMMISSION_CALC = {
   module: GWT_AIO,
   entryPoint: 'commission_calculate',
   subEntryPoint: 'commission_calculate'
+};
+
+export const INVOICE_REPORT = {
+  module: GWT_FISCAL,
+  entryPoint: 'InvoiceReport'
 };

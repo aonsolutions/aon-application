@@ -4014,6 +4014,7 @@ CREATE TABLE `fs_model200` (
   `modification_date` datetime DEFAULT NULL COMMENT 'Fecha de modificacion',
   `fs_model` int DEFAULT NULL COMMENT 'Identificador de fs_model',
   `nrs_anexoVI` varchar(22) CHARACTER SET latin1 COLLATE latin1_spanish_ci DEFAULT NULL,
+  `nrc` varchar(22) CHARACTER SET latin1 COLLATE latin1_spanish_ci DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `IDX_FS_MODEL200_DOMAIN` (`domain`),
   KEY `IDX_FS_MODEL200_ENTERPRISE` (`enterprise`),

@@ -91,6 +91,7 @@ public class DeliveryInvoicingProcess implements ILongProcess {
 			}
 			controller.getProgressionState().setProgressionCurrentValue(FINISH_VALUE);
 		} catch (Throwable e) {
+			e.printStackTrace();
 			try {
 				HibernateUtil.rollbackTransaction(sessionName);
 			} catch (DAOException daoe) {

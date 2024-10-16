@@ -190,7 +190,7 @@ public class RawdocServlet extends AonApiHttpServlet {
 		Integer id = json.opt("id") !=null ? json.optInt("id") : null;
 		RawdocStatus status = RawdocStatus.safeValueOf(json.optString("status")); 
 		
-		if(RawdocStatus.PROCESSING.equals(status)) {
+		if(RawdocStatus.PROCESSING.equals(status) && api.getDur().isInvofox()) {
 			addCount(api);
 		}
 		
@@ -211,7 +211,7 @@ public class RawdocServlet extends AonApiHttpServlet {
 			rawdoc.setS3Key(JsonUtils.getString(fileJSON, IJsonNames.S3_KEY));
 			
 			// TEDI PARSER!!!		    
-		    if(api.getDur().isOcr() && !AonStringUtils.isBlank(rawdoc.getS3Key())) {
+		    if(!api.getDur().isInvofox() && api.getDur().isOcr() && !AonStringUtils.isBlank(rawdoc.getS3Key())) {
 		    	try {
 		    		byte[] data = S3.download(rawdoc.getS3Bucket(), rawdoc.getS3Key());
 			    	
@@ -237,7 +237,7 @@ public class RawdocServlet extends AonApiHttpServlet {
 				.setMimeType(MimeType.get(contentType));
 
 			// TEDI PARSER!!!		    
-		    if(api.getDur().isOcr()) {
+		    if(!api.getDur().isInvofox() && api.getDur().isOcr()) {
 		    	InputStream input = new ByteArrayInputStream(fileData);
 		    	TediContext tctx = new TediContext()
 		    		.setDomainName(domain.getName())
@@ -349,7 +349,8 @@ public class RawdocServlet extends AonApiHttpServlet {
 			f.put("url", url.toExternalForm());
 			f.put("path", url.toExternalForm());
 			//String contentType = S3.getContentType(rawdoc.getS3Bucket(), rawdoc.getS3Key());
-			f.put("content_type", "application/pdf");
+			f.put("content_type", rawdoc.getMimeType() != null && rawdoc.getMimeType().getName().contains("image")
+					? rawdoc.getMimeType().getName() : "application/pdf");
 			f.put("s3Bucket", rawdoc.getS3Bucket());
 			f.put("s3Key", rawdoc.getS3Key());
 		    json.put("file", f);
@@ -397,6 +398,7 @@ public class RawdocServlet extends AonApiHttpServlet {
 			
 			ea = new EnterpriseData()
 					.setDomain(api.getDomain().getId())
+					.setName("INVOFOX")
 					.setEnterprise(cp.getId())
 					.setExpression(count.toString())
 					.setStartDate(startDate)

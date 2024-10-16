@@ -16,7 +16,7 @@ public interface Model347Service extends RemoteService {
 	
 	LinkedList<Mod347> getMod347s(Occam occam) throws AonCoreException;
 	Mod347 get(Occam occam,Integer id) throws AonCoreException;
-	Mod347 initialize(Occam occam) throws AonCoreException;
+	Mod347 initialize(Occam occam, int year) throws AonCoreException;
 	Mod347 reset(Occam occam, Mod347 model) throws AonCoreException;
 	Mod347 save(Occam occam,Mod347 mod347) throws AonCoreException;
 	void delete(Occam occam,Mod347 mod347) throws AonCoreException;

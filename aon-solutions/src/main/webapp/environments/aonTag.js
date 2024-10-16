@@ -220,6 +220,19 @@ export const AON_GROUPWARE_MENU = 'aon-groupware-menu';
 export const AON_JSF_PROJECT = 'aon-jsf-project' ;
 export const AON_JSF_PROJECT_TYPE = 'aon-jsf-project-type' ;
 export const AON_JSF_ACTIVITY_TYPE = 'aon-jsf-activity-type' ;
+export const AON_JSF_TASK = 'aon-jsf-task' ;
+export const AON_JSF_GANTT = 'aon-jsf-gantt' ;
+export const AON_JSF_DAILY_TRACKING = 'aon-jsf-daily-tracking' ;
+export const AON_JSF_DAILY_TRACKING_REPORT = 'aon-jsf-daily-tracking-report' ;
+export const AON_JSF_JOB_TYPE = 'aon-jsf-job-type' ;
+export const AON_JSF_PROCESS = 'aon-jsf-process' ;
+export const AON_JSF_PROCESS_WIZARD = 'aon-jsf-process-wizard' ;
+export const AON_JSF_PROCESS_TRANSACTION_TYPE = 'aon-jsf-process-transaction-type' ;
+export const AON_JSF_CAMPAIGN = 'aon-jsf-campaign' ;
+export const AON_JSF_CAMPAIGN_TYPE = 'aon-jsf-campaign-type' ;
+export const AON_JSF_TASK_HOLDER = 'aon-jsf-task-holder' ;
+export const AON_JSF_WORKGROUP = 'aon-jsf-workgroup' ;
+export const AON_JSF_COST_PROFILE = 'aon-jsf-cost-profile' ;
 
 export const AON_COMMERCIAL_MENU = 'aon-commercial-menu';
 export const AON_JSF_SELLER = 'aon-jsf-seller' ;
@@ -317,5 +330,15 @@ export const AON_JSF_MAIL_CONTACT = 'aon-jsf-mail-contact' ;
 export const AON_JSF_MAIL_ACCOUNT = 'aon-jsf-mail-account' ;
 export const AON_JSF_MAIL_SIGNATURE = 'aon-jsf-mail-signature' ;
 export const AON_JSF_GLOBAL_CONFIG = 'aon-jsf-global-config' ;
+export const AON_JSF_PRODUCT_TAG = 'aon-jsf-product-tag' ;
+export const AON_JSF_PACKING_TAG = 'aon-jsf-packing-tag' ;
+export const AON_JSF_BRAND = 'aon-jsf-brand' ;
+export const AON_JSF_TARIFF = 'aon-jsf-tariff' ;
+export const AON_JSF_CATALOGUE = 'aon-jsf-catalogue' ;
+export const AON_JSF_TAX = 'aon-jsf-tax' ;
+export const AON_JSF_SERIES = 'aon-jsf-series' ;
+export const AON_JSF_RELATIONSHIP = 'aon-jsf-relationship' ;
+export const AON_JSF_BANK_CONCEPT = 'aon-jsf-bank-concept' ;
+export const AON_JSF_LOADER = 'aon-jsf-loader' ;
 
 

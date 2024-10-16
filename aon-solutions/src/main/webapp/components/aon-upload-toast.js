@@ -124,6 +124,10 @@ export class AonUploadToast extends AonElement {
 		}
 	}
 
+	setJobId(jobId) {
+		this.JOB_ID = jobId;
+	}
+
 	getTypeIcon(type) {
 		if(type.includes('pdf')) {
 		  return 'aon_pdf';

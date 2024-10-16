@@ -38,6 +38,7 @@ import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.attachment.AttachType;
 import com.esferalia.aon.occam.api.model.security.CertificateType;
 import com.esferalia.aon.occam.api.model.security.User;
+import com.esferalia.aon.occam.api.model.type.SecurityLevel;
 import com.esferalia.aon.watson.error.AonCoreException;
 
 import net.esle.sinadura.core.certificado.Certificado;
@@ -220,7 +221,8 @@ public class CertificateController implements Serializable {
 	
 
 	public String getEntity() {
-		return entity;
+		return CATCERT_TSA_URL;
+		// return entity;
 	}
 
 	public void setEntity(String entity) {
@@ -329,13 +331,20 @@ public class CertificateController implements Serializable {
 		return AON.getUser(domainName, domainId, login, f -> f.getIdProperty().eq(userId));
 	}
 	
-	public static Filter certificateFilter(Domain domain, User user, CertificateProperties f) {
+	public Filter certificateFilter(Domain domain, User user, CertificateProperties f) {
 		Company company = AON.getCompanyForDomain(domain.getName(), domain.getId(), user.getLogin());
 		
 		Filter filter;
 		if(domain.getParentId() != null) {
-			Integer[] domains = {domain.getId(), domain.getParentId()};
-			filter = f.getDomainProperty().in(domains);
+			if(!user.getDomain().equals(domain.getParentId())) {
+				filter = (f.getDomainProperty().eq(domain.getId()).or(
+						f.getDomainProperty().eq(domain.getParentId())
+						.and(f.getSecurityLevelProperty().eq(SecurityLevel.OFFICIAL.value())))
+					);
+			} else {
+				Integer[] domains = {domain.getId(), domain.getParentId()};
+				filter = f.getDomainProperty().in(domains);
+			}
 		} else filter = f.getDomainProperty().eq(domain.getId());
     	
 		if(!user.getRegistry().isEmpty() && domain.getParentId() != null) {
@@ -350,7 +359,6 @@ public class CertificateController implements Serializable {
 			Integer[] registries = {company.getId(), parentCompany.getId()};
 			filter = filter.and(f.getRegistryProperty().in(registries));
 		} else filter = filter.and(f.getRegistryProperty().eq(company.getId()));
-		
 		
 		filter = filter.and(f.getTypeProperty().eq(CertificateType.AEAT.name()).or(f.getTypeProperty().isNull()));
 		

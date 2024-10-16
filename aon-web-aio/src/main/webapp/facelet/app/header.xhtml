@@ -91,7 +91,6 @@
 	}
 	
 	
-	.aon-dropDownMenu,
 	.aon_search_panel {
 		background-color: #f6f8fc !important;
 	}
@@ -245,6 +244,21 @@
     	background: none;
 	}
 
+	.aon-finding-filter-input {
+		height: 24px;
+		float: right;
+		border-top: none;
+		border-left: none;
+		border-right: none;
+		line-height: 24px;
+		padding-left: 28px;
+	}
+
+	.aon-finding-filter-toolbar{
+		height: 24px;
+		width: 100%;
+	}
+	
 	.aon-finding-title-toolbar {
 		padding: 4px 0px;
 		background: #fff;
@@ -361,9 +375,9 @@
 	}
 		
 	.rich-menu-list-border {
-    	border-color: #ddd;
-    	background-color: #ddd;
-    	box-shadow: 2px 2px 5px 1px #ddd;
+    	border-color: #eee;
+    	background-color: #fff;
+    	box-shadow: 2px 2px 4px 1px #eee;
 	}
 	
 	.rich-menu-list-bg {
@@ -372,10 +386,19 @@
     	background-image: none;
 	}
 	
-	.aon-dropDownMenu{
- 		font-size: 13px;
- 		font-weight: normal;
- 		background-color: #fff; 
+	.aon-finding-toolbar-item.aon-dropDownMenu{
+		width: 24px;
+		height: 24px;
+		padding: 3px;
+		border-radius: 50%;
+		display: inline-block;
+		background-size: 24px;
+		background-color: transparent;
+		background-position: center center; 		
+	}
+	
+	.aon-finding-toolbar-item.aon-dropDownMenu:hover{
+		background-color: #eee;
 	}
 	
 	.aon-dropDownMenu-item {
@@ -1133,6 +1156,11 @@
 		padding: 24px;
 		background-image: url('data:image/svg+xml;utf-8,&lt;svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="--var(aonIconColor,black)"&gt;&lt;path d="M480-342 356-466l20-20 90 90v-352h28v352l90-90 20 20-124 124ZM272-212q-26 0-43-17t-17-43v-90h28v90q0 12 10 22t22 10h416q12 0 22-10t10-22v-90h28v90q0 26-17 43t-43 17H272Z"/&gt;&lt;/svg&gt;'); ;
 	}
+	
+	.aon-icon-mailReply {
+		padding: 24px;
+		background-image: url('data:image/svg+xml;utf-8,&lt;svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="--var(aonIconColor,black)"&gt;&lt;path d="M192-212q-26 0-43-17t-17-43v-416q0-26 17-43t43-17h576q26 0 43 17t17 43v416q0 26-17 43t-43 17H192Zm288-274L160-698v426q0 14 9 23t23 9h576q14 0 23-9t9-23v-426L480-486Zm0-34 304-200H176l304 200ZM160-698v-22 448q0 14 9 23t23 9h-32v-458Z"/&gt;&lt;/svg&gt;'); ;
+	}
 
 	.aon-icon-audit {
 		background-size:cover;
@@ -1164,7 +1192,45 @@
 		background-image: url(#{aonResource.resolve['/images/aon-icon-tgss.png']});
 	}
 	
+	.aon-icon-task-assume {
+		background-size: 24px;
+		background-image: url('data:image/svg+xml;utf-8,&lt;svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="--var(aonIconColor,black)"&gt;&lt;path d="M160-200v-440 440Zm32 28q-26 0-43-17t-17-43v-376q0-26 17-43t43-17h180v-48q0-26 17-43t43-17h96q26 0 43 17t17 43v48h180q26 0 43 17t17 43v167q-7-4-13.5-7t-14.5-6v-154q0-14-9-23t-23-9H192q-14 0-23 9t-9 23v376q0 14 9 23t23 9h303q2 8 3.5 14.5T502-172H192Zm208-496h160v-48q0-14-9-23t-23-9h-96q-14 0-23 9t-9 23v48ZM720-92q-62 0-105-43t-43-105q0-62 43-105t105-43q62 0 105 43t43 105q0 62-43 105T720-92Zm14-154v-108h-28v120l80 80 20-20-72-72Z"/&gt;&lt;/svg&gt;') ;
+	}
+	
+	.aon-icon-tariff {
+		background-size: 24px;
+		background-image: url('data:image/svg+xml;utf-8,&lt;svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="--var(aonIconColor,black)"&gt;&lt;path d="M614-156q-100 0-186-57.5T304-386H160v-28h136q-3-12-4.5-32t-1.5-34q0-14 1.5-32.5T296-546H160v-28h144q33-104 118-167t192-63q53 0 96 14t90 44l-20 20q-41-26-83-38t-83-12q-104 0-178.5 59.5T334-574h254v28H326q-5 15-6.5 33.5T318-480q0 14 2.5 34.5T326-414h262v28H333q35 103 114 152.5T614-184q41 0 85.5-12.5T780-235l20 21q-48 32-91.5 45T614-156Z"/&gt;&lt;/svg&gt;') ;
+	}
+	
+	.aon-icon-catalogue {
+		background-size: 24px;
+		background-image: url('data:image/svg+xml;utf-8,&lt;svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="--var(aonIconColor,black)"&gt;&lt;path d="M554-580v-28q32-17 69.5-25.5T700-642q21 0 40 2.5t40 7.5v28q-20-6-38.5-8t-41.5-2q-39 0-76.5 8.5T554-580Zm0 218v-30q30-17 69-25.5t77-8.5q21 0 40 2.5t40 7.5v28q-20-6-38.5-8t-41.5-2q-39 0-76.5 9.5T554-362Zm0-108v-30q32-17 69.5-25.5T700-534q21 0 40 2.5t40 7.5v28q-20-6-38.5-8t-41.5-2q-39 0-76.5 9.5T554-470ZM260-318q54 0 105 12.5T466-264v-392q-44-33-98-49.5T260-722q-36 0-60.5 3.5T142-704q-12 4-17 11.5t-5 16.5v350q0 14 10 20.5t22 1.5q18-6 45-10t63-4Zm234 54q50-29 101-41.5T700-318q36 0 63 4t45 10q12 5 22-1.5t10-20.5v-350q0-9-5-16t-17-12q-33-11-57.5-14.5T700-722q-54 0-108 16.5T494-656v392Zm-14 40q-49-32-105-49t-115-17q-28 0-55 3.5T152-274q-22 8-41-6.5T92-320v-358q0-16 8.5-29.5T124-726q32-13 66.5-18.5T260-750q59 0 115 17.5T480-682q49-33 105-50.5T700-750q35 0 69.5 5.5T836-726q15 5 23.5 18.5T868-678v358q0 25-21 38.5t-45 5.5q-25-8-50.5-11t-51.5-3q-59 0-115 17t-105 49ZM293-501Z"/&gt;&lt;/svg&gt;') ;
+	}
 
+	.aon-icon-customer {
+		background-size: 24px;
+		background-image: url('data:image/svg+xml;utf-8,&lt;svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="--var(aonIconColor,black)"&gt;&lt;path d="M123-232v-52q0-26 13.5-43.5t36.45-28.59Q222-379 269.5-393.5 317-408 391-408t121.5 14.5q47.5 14.5 96.55 37.41Q632-345 645.5-327.5 659-310 659-284v52H123Zm616 0v-52q0-32-10.95-59.98Q717.11-371.96 697-392q23 6 45 15.5t45 20.5q23 11 36.5 30.16T837-284v52h-98ZM391-512q-44.55 0-76.27-31.72Q283-575.45 283-620t31.73-76.28Q346.45-728 391-728t76.27 31.72Q499-664.55 499-620t-31.73 76.28Q435.55-512 391-512Zm258-108q0 44.55-31.72 76.28Q585.55-512 541-512q18.32-22.76 28.16-50.51 9.84-27.74 9.84-57.61Q579-650 568.5-677 558-704 541-728q44.55 0 76.28 31.72Q649-664.55 649-620ZM151-260h480v-24q0-15-7.5-26T595-332q-42-23-90-35.5T391-380q-66 0-114 12.5T187-332q-21 11-28.5 22t-7.5 26v24Zm240-280q33 0 56.5-23.5T471-620q0-33-23.5-56.5T391-700q-33 0-56.5 23.5T311-620q0 33 23.5 56.5T391-540Zm0 280Zm0-360Z"/&gt;&lt;/svg&gt;') ;
+	}
+	
+	.aon-icon-supplier {
+		background-size: 24px;
+		background-image: url('data:image/svg+xml;utf-8,&lt;svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="--var(aonIconColor,black)"&gt;&lt;path d="M123-232v-52q0-26 13.5-43.5t36.45-28.59Q222-379 269.5-393.5 317-408 391-408t121.5 14.5q47.5 14.5 96.55 37.41Q632-345 645.5-327.5 659-310 659-284v52H123Zm616 0v-52q0-32-10.95-59.98Q717.11-371.96 697-392q23 6 45 15.5t45 20.5q23 11 36.5 30.16T837-284v52h-98ZM391-512q-44.55 0-76.27-31.72Q283-575.45 283-620t31.73-76.28Q346.45-728 391-728t76.27 31.72Q499-664.55 499-620t-31.73 76.28Q435.55-512 391-512Zm258-108q0 44.55-31.72 76.28Q585.55-512 541-512q18.32-22.76 28.16-50.51 9.84-27.74 9.84-57.61Q579-650 568.5-677 558-704 541-728q44.55 0 76.28 31.72Q649-664.55 649-620ZM151-260h480v-24q0-15-7.5-26T595-332q-42-23-90-35.5T391-380q-66 0-114 12.5T187-332q-21 11-28.5 22t-7.5 26v24Zm240-280q33 0 56.5-23.5T471-620q0-33-23.5-56.5T391-700q-33 0-56.5 23.5T311-620q0 33 23.5 56.5T391-540Zm0 280Zm0-360Z"/&gt;&lt;/svg&gt;') ;
+	}
+	
+	.aon-icon-documents {
+		background-size: 24px;
+		background-image: url('data:image/svg+xml;utf-8,&lt;svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="--var(aonIconColor,black)"&gt;&lt;path d="M272-132q-26 0-43-17t-17-43v-576q0-26 17-43t43-17h314l162 162v474q0 26-17 43t-43 17H272Zm0-28h416q12 0 22-10t10-22v-460H572v-148H272q-12 0-22 10t-10 22v576q0 12 10 22t22 10Zm208-81q51 0 85.5-38t34.5-91v-190h-28v190q0 41-26.5 71T480-269q-39 0-65.5-30T388-370v-218q0-18 11-31.5t28-13.5q17 0 28 13.5t11 31.5v218h28v-218q0-29-19-51t-48-22q-29 0-48 22t-19 51v218q0 53 34.5 91t85.5 38ZM240-800v148-148 640-640Z"/&gt;&lt;/svg&gt;') ;
+	}
+	
+	.aon-icon-addinfo {
+		background-size: 24px;
+		background-image: url('data:image/svg+xml;utf-8,&lt;svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="--var(aonIconColor,black)"&gt;&lt;path d="M206-172q-26 0-43-17t-17-43v-496q0-26 17-43t43-17h376v28H206q-12 0-22 10t-10 22v496q0 12 10 22t22 10h496q12 0 22-10t10-22v-376h28v376q0 26-17 43t-43 17H206Zm114-134v-28h268v28H320Zm0-120v-28h268v28H320Zm0-120v-28h268v28H320Zm386-106v-80h-80v-28h80v-80h28v80h80v28h-80v80h-28Z"/&gt;&lt;/svg&gt;') ;
+	}
+	
+	.aon-icon-alternative{
+		background-size: 24px;
+		background-image: url('data:image/svg+xml;utf-8,&lt;svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="--var(aonIconColor,black)"&gt;&lt;path d="m483-222 91-91-91-91-20 20 59 59q-52 0-91-11.5T370-370q-23-23-34.5-52T324-480q0-17 3.5-34t10.5-32l-22-18q-10 20-15 41.08T296-480q0 34.95 13.5 68.97Q323-377 349.5-350t73 40q46.5 13 95.5 13l-55 55 20 20Zm162-174q10-20 15-41.08t5-42.92q0-34.79-13.5-69.12Q638-583.45 611-610q-26-27-72.69-40-46.7-13-95.31-13l55-55-20-20-91 91 91 91 20-20-59-59q52 0 91 11.5t61.3 33.87q22.29 22.38 34 51.46Q637-509.08 637-480q0 17-3.5 34T623-414l22 18ZM480.17-132q-72.17 0-135.73-27.39-63.56-27.39-110.57-74.35-47.02-46.96-74.44-110.43Q132-407.65 132-479.83q0-72.17 27.39-135.73 27.39-63.56 74.35-110.57 46.96-47.02 110.43-74.44Q407.65-828 479.83-828q72.17 0 135.73 27.39 63.56 27.39 110.57 74.35 47.02 46.96 74.44 110.43Q828-552.35 828-480.17q0 72.17-27.39 135.73-27.39 63.56-74.35 110.57-46.96 47.02-110.43 74.44Q552.35-132 480.17-132Zm-.17-28q134 0 227-93t93-227q0-134-93-227t-227-93q-134 0-227 93t-93 227q0 134 93 227t227 93Zm0-320Z"/&gt;&lt;/svg&gt;') ;
+	}
 
 	.aon-direct-access-panel.aon-icon-sepe,
 	.aon-direct-access-panel.aon-icon-winsuite,
@@ -1262,6 +1328,36 @@
 		background-size:24px;
 	}
 	
+	.aon-dropDownMenu a.aon-finding-toolbar-item.aon-icon-new,
+	.aon-dropDownMenu a.aon-finding-toolbar-item.aon-icon-csv,
+	.aon-dropDownMenu a.aon-finding-toolbar-item.aon-icon-pdf,
+	.aon-dropDownMenu a.aon-finding-toolbar-item.aon-icon-info,
+	.aon-dropDownMenu a.aon-finding-toolbar-item.aon-icon-excel,
+	.aon-dropDownMenu a.aon-finding-toolbar-item.aon-icon-audit,
+	.aon-dropDownMenu a.aon-finding-toolbar-item.aon-icon-reset,
+	.aon-dropDownMenu a.aon-finding-toolbar-item.aon-icon-accept,
+	.aon-dropDownMenu a.aon-finding-toolbar-item.aon-icon-cancel,
+	.aon-dropDownMenu a.aon-finding-toolbar-item.aon-icon-rubber,
+	.aon-dropDownMenu a.aon-finding-toolbar-item.aon-icon-search,
+	.aon-dropDownMenu a.aon-finding-toolbar-item.aon-icon-delete,
+	.aon-dropDownMenu a.aon-finding-toolbar-item.aon-icon-invoice,
+	.aon-dropDownMenu a.aon-finding-toolbar-item.aon-icon-webmail2,
+	.aon-dropDownMenu input.aon-finding-toolbar-item.aon-icon-statistics,
+	.aon-dropDownMenu input.aon-finding-toolbar-item.aon-icon-mailReply,
+	.aon-dropDownMenu a.aon-finding-toolbar-item.aon-icon-import-excel-trans,
+	.aon-dropDownMenu a.aon-finding-toolbar-item.aon-icon-export-excel-trans
+	{
+		height: 24px;
+		width: 100%;
+	    color: #5f6368;
+	    line-height: 24px;
+		border-radius: 0px;
+	    display: inline-block;
+	    background-size: 24px;
+	    background-position: left;	
+	    padding: 0px 0px 0px 24px;
+	    background-color: transparent;
+    }
 
 	
 	.aon-editDataTable-button.aon-icon-new,
@@ -2177,6 +2273,12 @@
 	.rich-stglpanel {
 	  border: none;
 	}
+	
+	.rich-menu-item-icon {
+  		padding: 8px;
+  		margin-right: 0px;
+  		background-position: left;
+}	
 	
 	</style>
 

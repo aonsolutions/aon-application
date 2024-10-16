@@ -9,8 +9,8 @@ import com.esferalia.aon.gwt.common.client.widget.Upload;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonConfirmDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonConfirmDialog.AonConfirmDialogCallback;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonSplash;
-import com.esferalia.aon.gwt.mod200.client.AonCertificationPopup;
-import com.esferalia.aon.gwt.mod200.client.AonCertificationPopup.AonCertificationPopupParams;
+import com.esferalia.aon.gwt.fiscal.client.AonCertificationPopup;
+import com.esferalia.aon.gwt.fiscal.client.AonCertificationPopup.AonCertificationPopupParams;
 import com.esferalia.aon.gwt.mod200.shared.IRequestParamsNames;
 import com.esferalia.aon.gwt.mod200.shared.JsonParams;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalStatus;
@@ -305,7 +305,8 @@ public class Model200AdmonPanel extends DockLayoutPanel {
 			.setName(getCallback().getOptions().getConfiguration().fiscal().getCertificateName())
 			.setTestEnvironment(getCallback().getOptions().getConfiguration().fiscal().isTestEnvironment())
 			.setShowNRC(getCallback().getModel().isStrictToDeposit())
-			.setInfoMessage("Presentaci\u00F3n del Modelo 200");
+			.setInfoMessage("Presentaci\u00F3n del Modelo 200")
+			.setNrc(getCallback().getModel().getNrc());		    
 		AonCertificationPopup certPopup = new AonCertificationPopup(getAPI(), params) {
 			
 			@Override
@@ -351,14 +352,16 @@ public class Model200AdmonPanel extends DockLayoutPanel {
 		xhr.setRequestHeader(AonHttpUtils.CONTENT_TYPE,AonHttpUtils.APPLICATION_FORM_URLENCODED);
 		xhr.setOnReadyStateChange(xhreq -> {
 			int state = xhreq.getReadyState();
-			if (state == XMLHttpRequest.DONE) {
+			if (state == XMLHttpRequest.DONE) {				
 				ArrayBuffer buff = xhreq.getResponseArrayBuffer();
 				String contentTypeHeader = xhreq.getResponseHeader( AonHttpUtils.CONTENT_TYPE);
 				if (AonStringUtils.equals(MimeType.PDF.getName(), contentTypeHeader)) {
 					getCallback().sendSuccessfully();
 					Scheduler.get().scheduleDeferred(() -> showPDF( buff.toString() ));
 				} else {
-					showHtml( buff.toString() );
+//					showHtml( buff.toString() );	
+					getCallback().sendSuccessfully();
+					Scheduler.get().scheduleDeferred(() -> showHtml( buff.toString() ));
 				}
 				sending = false;
 				popup.hide();					

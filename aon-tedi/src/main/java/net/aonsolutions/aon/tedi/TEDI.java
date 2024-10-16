@@ -119,6 +119,7 @@ public class TEDI {
 				throw new TediException("No se ha encontrado el documento " + rawdocId + "en el dominio " + "( " + ctx.getDomainId() + " - " + ctx.getDomainName() +")");
 			}
 
+			String rawdocJson = rawdoc.getJson();
 			if(rawdoc.getData() == null && !AonStringUtils.isBlank(rawdoc.getS3Key())) {
 				byte[] data = S3.download(rawdoc.getS3Bucket(), rawdoc.getS3Key());
 				rawdoc.setData(data);
@@ -129,7 +130,12 @@ public class TEDI {
 			if ( AonStringUtils.isBlank( rawdoc.getJson() )) {
 				if(rawdoc.getData() == null)
 					rawdoc = RawdocDAO.getFull(ctx, rawdocId);
-				result = parse(tctx, new ByteArrayInputStream(rawdoc.getData()), rawdoc.getMimeType());
+				try {
+					result = parse(tctx, new ByteArrayInputStream(rawdoc.getData()), rawdoc.getMimeType());
+				} catch (Exception e) {
+					rawdoc.setJson(rawdocJson);
+					result = TediParser.toFullInvoice(ctx, tctx.getAonConfiguration(), rawdoc);
+				}
 			} else {
 				result = TediParser.toFullInvoice(ctx, tctx.getAonConfiguration(), rawdoc);
 			}

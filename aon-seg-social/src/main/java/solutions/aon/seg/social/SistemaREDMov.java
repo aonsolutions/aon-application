@@ -445,11 +445,25 @@ class SistemaREDMov {
 		}
 
 		if (pageResult.isHtmlPage()) {
-//			htmlPage = (HtmlPage) htmlPage;
+//			Toolkit.buildFile(((HtmlPage) pageResult).asXml().getBytes(), "/Users/svaldepenas/Desktop/alta_2.html");
+			
+			String messageResult = "";
+			
+			DomNode warning = ((HtmlPage) pageResult).querySelector("#Sub1001101047"); 
+			if(null != warning) {
+				DomNode warningMessage = ((HtmlPage) pageResult).querySelector("#Sub1201101047"); 
+				if(null != warningMessage && warningMessage.getTextContent().trim().length() > 0) {
+					messageResult += "\n" + warningMessage.getTextContent().trim();
+					throw new SegSocialException(messageResult + ". Tramite esta comunicaci\u00f3n manualmente.");
+				}
+			}
+			
 			DomNode message = ((HtmlPage) pageResult).querySelector("#DIL"); 
 			if(message!=null) {
-				throw new SegSocialException(message.getTextContent().trim());
+				messageResult += "\n" + message.getTextContent().trim();
+				throw new SegSocialException(messageResult);
 			}
+			
 		} else {
 			try {
 				return pageResult.getWebResponse().getContentAsStream().readAllBytes();

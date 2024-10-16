@@ -80,4 +80,6 @@ public interface IRichFacesTags {
 	
    	String PAGE = "page";
 	
+//	String FILTER_BY = "filterBy";
+	
 }

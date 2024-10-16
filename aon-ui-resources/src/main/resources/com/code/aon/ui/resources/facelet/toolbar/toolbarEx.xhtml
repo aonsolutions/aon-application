@@ -1,8 +1,10 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
-	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:x="http://java.sun.com/jsp/jstl/xml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:aon="http://www.code.es/aon-rich-components">
 
 	<aon:valueParam name="showTitle"
@@ -37,13 +39,39 @@
 			</aon:if>
 
 			<ui:insert name="toolbarActions" />
-			<aon:div id="#{toolbarID}"
-				styleClass="aon-finding-toolbar-item-group">
-				<ui:insert name="beforeToolbarContent" />
-				<ui:insert name="toolbarContent" />
-				<ui:insert name="additionalToolbarContent" />
+			<aon:div id="#{toolbarID}" styleClass="aon-finding-toolbar-item-group">
+				<ui:insert name="beforeToolbarContent"/>
+				<ui:insert name="toolbarContent"/>
 				<ui:insert name="showLogs" />
+
+<!--
+ 				<aon:if test="#{app.standAlone}">
+					
+					<aon:ifDefined name="additionalToolbarContent">
+
+						<aon:dropDownMenu 
+							value="#{bundle.aon_more2}"
+							styleClass="aon-finding-toolbar-item aon-dropDownMenu"
+						 >
+							<f:facet name="label">
+								<aon:panelGroup>
+									<aon:outputText styleClass="material-symbols-outlined" value="more_vert" /> 
+								</aon:panelGroup>	
+							</f:facet>
+							
+							<aon:insertMenuItems name="additionalToolbarContent"/>
+							
+						</aon:dropDownMenu>
+					
+					</aon:ifDefined>
+					
+				</aon:if>	
+ -->
+				<aon:if test="#{!app.standAlone}">
+					<ui:insert name="additionalToolbarContent"/>
+				</aon:if>
 			</aon:div>
+		
 		</h:panelGrid>
 	</aon:div>
 	<script type="text/javascript">

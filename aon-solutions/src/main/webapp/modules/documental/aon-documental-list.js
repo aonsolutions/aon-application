@@ -86,7 +86,8 @@ export class AonDocumentalList extends AonElement {
 				if(documents.length == 0)
 					this.more = false;
 				documents.forEach((doc, i) => {
-					aonDocumentalTable.addRow(doc, () => this.aonDocument(doc, i), (e) => this.aonDocumentContextMenu(e, doc, i));
+					let tr = aonDocumentalTable.addRow(doc, () => this.aonDocument(doc, i), (e) => this.aonDocumentContextMenu(e, doc, i));
+					tr.id = "aonDocumentalRow";
 				});
 			});
 		}
@@ -101,7 +102,8 @@ export class AonDocumentalList extends AonElement {
 				aonDocumentalTable.selected = [];
 				this.removeDocumentalActions();
 				documents.forEach((doc, i) => {
-					aonDocumentalTable.addRow(doc, () => this.aonDocument(doc, i), (e) => this.aonDocumentContextMenu(e, doc, i));
+					let tr = aonDocumentalTable.addRow(doc, () => this.aonDocument(doc, i), (e) => this.aonDocumentContextMenu(e, doc, i));
+					tr.id = "aonDocumentalRow";
 				});
 			});
 		}

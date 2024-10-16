@@ -11,6 +11,7 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonLayoutPanel;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonMinimizePanel;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonSplash;
 import com.esferalia.aon.gwt.fiscal.client.MainEntryPoint;
+import com.esferalia.aon.gwt.fiscal.client.model.AonJSFiscalModelUtils;
 import com.esferalia.aon.gwt.fiscal.client.model.IFiscalModelCallback;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.fiscal.Mod347;
@@ -84,7 +85,7 @@ public class Model347 extends MainEntryPoint {
 		
 		@Override
 		public void onNew() {
-			newModel(getOptions());
+			newModel(getOptions(), AonJSFiscalModelUtils.guessModelYear());
 		}
 
 		@Override
@@ -236,7 +237,8 @@ public class Model347 extends MainEntryPoint {
 		if (options.getFiscalModelId() != null ) {
 			onSelect(options,options.getFiscalModelId());
 		} else if (options.getNewModel() != null ) {
-			newModel(options); 
+//			newModel(options);
+			newModel(options, options.getNewModel().getYear());
 		} else {
 			model347Table.refresh(new Model347Callback());
 		}
@@ -339,9 +341,9 @@ public class Model347 extends MainEntryPoint {
 		}
 	}
 
-	private void newModel(Model347ModuleOptions options) {
+	private void newModel(Model347ModuleOptions options, int year) {
 		cleanErrorMessage();
-		SERVICE.initialize(options.getOccam(), new AsyncCallback<Mod347>() {
+		SERVICE.initialize(options.getOccam(), year, new AsyncCallback<Mod347>() {
 			@Override
 			public void onSuccess(Mod347 m347) {
 				cleanAndClose();

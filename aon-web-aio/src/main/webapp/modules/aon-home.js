@@ -8,6 +8,7 @@ import { AonHelp } from './aon-help.js';
 import { AonRightPanel } from './aon-right-panel.js';
 import { AonLoginPanel } from './aon-login-panel.js';
 import { AonNotificationPanel } from './aon-notification-panel.js';
+import { APPLICATIONS, APPS, NEW_APPS } from '../services/app.js';
 import { clearAuth } from 'aonsolutions/services/service.js';
 
 import { AonNewMobileHeader } from 'aonsolutions/modules/aon-new-mobile-header.js';
@@ -113,6 +114,16 @@ export class AonHome extends AonElement {
 				aonHeader.buildApp(app,sidenav);
 				aonHeader.setVisibleLogo(!appEl);
 				aonHeader.setVisibleApp(appEl);
+			} else if(app == APPS || app == APPLICATIONS){
+				let appEl = aonMenu.buildApp(NEW_APPS, 
+					{
+						height: '32px',
+						color: '#ffffff',
+						flexDirection: 'row'
+					}, sidenav);
+					aonHeader.buildApp(NEW_APPS,sidenav);
+					aonHeader.setVisibleLogo(!appEl);
+					aonHeader.setVisibleApp(NEW_APPS);
 			} else {
 				aonHeader.setVisibleApp(false);
 				aonHeader.setVisibleLogo(true);

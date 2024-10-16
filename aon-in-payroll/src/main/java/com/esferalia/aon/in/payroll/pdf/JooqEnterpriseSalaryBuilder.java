@@ -94,8 +94,16 @@ public class JooqEnterpriseSalaryBuilder {
 			condition = WORKPLACE.ID.eq(workplaceId);
 		else
 			condition = ENTERPRISE.REGISTRY.eq(enterpriseId);
-		condition = condition.and(SALARY.CHARGE_DATE.between(new java.sql.Date(startDate.getTime())
-				, new java.sql.Date(endDate.getTime())));
+		
+		condition = condition.and(
+				(
+						SALARY.TYPE.ne(com.esferalia.aon.occam.api.model.type.SalaryType.DELAY.value()).and(
+						SALARY.ISSUE_DATE.between(new java.sql.Date(startDate.getTime()), new java.sql.Date(endDate.getTime())))
+				).or(
+						SALARY.TYPE.eq(com.esferalia.aon.occam.api.model.type.SalaryType.DELAY.value()).and(
+						SALARY.CHARGE_DATE.between(new java.sql.Date(startDate.getTime()), new java.sql.Date(endDate.getTime())))
+				)
+		);
 		
 		Collection<Integer> typeInts = Arrays.stream(types).map(com.esferalia.aon.occam.api.model.type.SalaryType::ordinal).collect(Collectors.toList());
 		
@@ -110,9 +118,16 @@ public class JooqEnterpriseSalaryBuilder {
 			condition = WORKPLACE.ID.eq(workplaceId);
 		else
 			condition = ENTERPRISE.REGISTRY.eq(enterpriseId);
-		condition = condition.and(SALARY.CHARGE_DATE.between(new java.sql.Date(startDate.getTime())
-				, new java.sql.Date(endDate.getTime())));
 		
+		condition = condition.and(
+				(
+						SALARY.TYPE.ne(com.esferalia.aon.occam.api.model.type.SalaryType.DELAY.value()).and(
+						SALARY.ISSUE_DATE.between(new java.sql.Date(startDate.getTime()), new java.sql.Date(endDate.getTime())))
+				).or(
+						SALARY.TYPE.eq(com.esferalia.aon.occam.api.model.type.SalaryType.DELAY.value()).and(
+						SALARY.CHARGE_DATE.between(new java.sql.Date(startDate.getTime()), new java.sql.Date(endDate.getTime())))
+				)
+		);
 		
 		if (persons != null && persons.length > 0) {
 			Set<Integer> personIds = new LinkedHashSet<>();
@@ -209,7 +224,7 @@ public class JooqEnterpriseSalaryBuilder {
 			condition = WORKPLACE.ID.eq(workplaceId);
 		else
 			condition = ENTERPRISE.REGISTRY.eq(enterpriseId);
-		condition = condition.and(SALARY.CHARGE_DATE.between(new java.sql.Date(startDate.getTime())
+		condition = condition.and(SALARY.ISSUE_DATE.between(new java.sql.Date(startDate.getTime())
 				, new java.sql.Date(endDate.getTime())));
 		
 		
