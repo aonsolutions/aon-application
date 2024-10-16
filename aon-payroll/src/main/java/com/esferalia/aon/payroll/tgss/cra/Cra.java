@@ -177,11 +177,14 @@ public class Cra {
 					
 				});
 				
-				// Adding TRBS to DDE
-				dde.put("TRBS", trbs);
+				if(!trbs.isEmpty()) {
+					// Adding TRBS to DDE
+					dde.put("TRBS", trbs);
+					
+					// Adding DDE (Normal salaries) to MainCRAJSON 
+					ccci.put("DDE", dde);
+				}
 				
-				// Adding DDE (Normal salaries) to MainCRAJSON 
-				ccci.put("DDE", dde);
 			}
 			
 			// ----------- ATRASOS
