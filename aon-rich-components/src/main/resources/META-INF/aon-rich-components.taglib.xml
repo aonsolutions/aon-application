@@ -728,4 +728,20 @@
 			com.code.aon.faces.component.richfaces.jsf.ui.InsertMenuItemsHandler
 		</handler-class>
 	</tag>
+	<tag>
+		<tag-name>insert</tag-name>
+		<handler-class>
+			com.code.aon.faces.component.richfaces.jsf.ui.InsertHandler
+		</handler-class>
+	</tag>
+	<function>
+    	<function-name>isMenuItem</function-name>
+    	<function-class>
+    		com.code.aon.faces.component.richfaces.jsf.ui.InsertMenuItemsHandler
+    	</function-class>
+    	<function-signature>
+    		boolean isMenuItem(javax.faces.component.UIComponent)
+    	</function-signature>
+	</function>
+	
 </facelet-taglib>
