@@ -293,14 +293,20 @@ public class InvofoxWebhookHandler implements RequestHandler<Object, String> {
 
     	taskWorkflow.setCreationDate(new Date());
     	taskWorkflow.setCreationUser(userLogin);
-	
-    	JSONObject taskWorkflowJSON = AonTask.addTaskWorkflow(domainName, userLogin, taskWorkflow);
-    	State state = valueOf(publicState, State.unknown);
-    	if(publicState != null && State.approved.equals(state))
-    		AonInvofox.acceptInvofoxInvoice(domainName, userLogin, id);
-    	else if(publicState != null && (State.pendingCorrection.equals(state) || State.discarded.equals(state)
-    			|| State.pendingDecission.equals(state) || State.rejected.equals(state)))
-    		AonInvofox.rawdocInvofoxInvoice(domainName, userLogin, id);
+    	
+    	JSONObject taskWorkflowJSON = new JSONObject();
+    	try {
+    		State state = valueOf(publicState, State.unknown);
+    		if(publicState != null && State.approved.equals(state))
+    			AonInvofox.acceptInvofoxInvoice(domainName, userLogin, id);
+    		else if(publicState != null && (State.pendingCorrection.equals(state) || State.discarded.equals(state)
+    				|| State.pendingDecission.equals(state) || State.rejected.equals(state)))
+    			AonInvofox.rawdocInvofoxInvoice(domainName, userLogin, id);
+        	
+    		taskWorkflowJSON = AonTask.addTaskWorkflow(domainName, userLogin, taskWorkflow);
+    	} catch (Exception e) {
+    		e.printStackTrace();
+		}
     	
     	return taskWorkflowJSON.toString(1);
     }

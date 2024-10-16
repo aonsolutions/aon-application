@@ -8,7 +8,9 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 
 public enum AonSecrets implements Serializable {
 
-	AON_SECRET("aonsolutions/aonsecret");
+	AON_SECRET("aonsolutions/aonsecret"),
+	AON_CERT("aonsolutions/aoncert"),
+	AON_PASSWORD("");
 	
 	String description;
 	
