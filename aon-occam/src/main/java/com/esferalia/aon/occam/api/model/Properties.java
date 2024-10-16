@@ -1972,5 +1972,6 @@ public interface Properties {
 		Property<java.util.Date> getOperationDateProperty();
 		Property<String> getAmountStringProperty();
 		Property<String> getOperationDateStringProperty();
+		Property<String> getStatusStringProperty();
 	}
 }

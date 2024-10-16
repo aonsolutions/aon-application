@@ -7,16 +7,11 @@ import java.util.List;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
-import com.esferalia.aon.occam.api.json.AccountJSON;
 import com.esferalia.aon.occam.api.json.JsonUtils;
 import com.esferalia.aon.occam.api.json.RegistryBankJSON;
-import com.esferalia.aon.occam.api.model.Account;
 import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.Filter;
 import com.esferalia.aon.occam.api.model.IJsonNames;
@@ -27,10 +22,8 @@ import com.esferalia.aon.occam.api.model.finance.nordigen.NordigenAccessToken;
 import com.esferalia.aon.occam.api.model.finance.nordigen.NordigenBankAccount;
 import com.esferalia.aon.occam.api.model.finance.nordigen.NordigenConfiguration;
 import com.esferalia.aon.occam.api.model.finance.nordigen.NordigenInstitution;
-import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.registry.RegistryBank;
 import com.esferalia.aon.occam.api.model.type.StatementStatus;
-import com.esferalia.aon.occam.impl.jooq.dao.RegistryBankDAO.RegistryBankFiller;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 import jakarta.servlet.annotation.WebServlet;
@@ -46,30 +39,26 @@ import net.aonsolutions.aon.bank.nordigen.NordigenUtils;
 @WebServlet(name = "BankServlet", urlPatterns = { "/ms/api/bank/*" })
 public class BankServlet extends AonApiHttpServlet {
 
-	private static final Logger LOGGER = Logger.getLogger(BankServlet.class.getName());
-
 	private static Occam occam = new Occam();
 
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) {
-		String iban = req.getParameter("iban");
 		try {
 			get(req, resp);
 		} catch (Exception e) {
-			LOGGER.log(Level.SEVERE, "Error occurred during GET request processing. IBAN: " + iban, e);
+//			logger.log(Level.SEVERE, "Error occurred during GET request processing. e);
 			resp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 
 			try {
 				resp.getWriter().write("An unexpected error occurred while processing your request.");
 			} catch (IOException ioException) {
-				LOGGER.log(Level.SEVERE, "Error writing error response", ioException);
+//				logger.log(Level.SEVERE, "Error writing error response", ioException);
 			}
 		}
 	}
 
 	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp) {
-		LOGGER.info("AON API NORDIGEN BANK SERVLET - POST METHOD");
 		post(req, resp);
 	}
 
@@ -110,7 +99,7 @@ public class BankServlet extends AonApiHttpServlet {
 			}
 		} catch (Exception e) {
 			error(req, resp, e);
-		}
+        }
 	}
 
 	private void post(HttpServletRequest req, HttpServletResponse resp) {
@@ -145,26 +134,50 @@ public class BankServlet extends AonApiHttpServlet {
 		}
 	}
 	
-	private static JSONObject create(AonApiData api) {
-		RegistryBank bank = new RegistryBank();
-		Company company = AON.getCompanyForDomain(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin());
-		bank.setDomain(api.getDomain().getId())
-		.setRegistry(company.get().getId())
-		.setBankAccount(new BankAccount(api.getData().optString("iban")))
-		.setBic(api.getData().getString("swiftBic"))
-		.setSuffix(api.getData().optString(IJsonNames.SUFIX))
-		.setAlias(api.getData().optString(IJsonNames.NAME))
-		.setActive(api.getData().getBoolean(IJsonNames.ACTIVE));
-		AON.saveRegistryBank(api.getDomain(), api.getUser().getLogin(), bank);
-		return  RegistryBankJSON.toJSON(bank);
+	private static JSONObject create(AonApiData api) throws IllegalArgumentException {
+	    RegistryBank bank = new RegistryBank();
+	    
+	    Company company = AON.getCompanyForDomain(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin());
+	    if (company == null || company.get() == null) {
+	        throw new IllegalArgumentException("La compañía no puede ser nula.");
+	    }
+	    
+	    String iban = api.getData().optString("iban");
+	    if (iban == null || iban.isEmpty()) {
+	        throw new IllegalArgumentException("El IBAN no puede estar vacio.");
+	    }
+	    
+	    String bic = api.getData().optString("swiftBic");
+	    if (bic == null || bic.isEmpty()) {
+	        throw new IllegalArgumentException("El código SWIFT/BIC no puede estar vacio.");
+	    }
+	    
+	    String suffix = api.getData().optString(IJsonNames.SUFIX);
+
+	    String alias = api.getData().optString(IJsonNames.NAME);
+
+	    boolean active = api.getData().optBoolean(IJsonNames.ACTIVE); 
+
+	    bank.setDomain(api.getDomain().getId())
+	        .setRegistry(company.get().getId())
+	        .setBankAccount(new BankAccount(iban))
+	        .setBic(bic)
+	        .setSuffix(suffix)
+	        .setAlias(alias)
+	        .setActive(active);
+	    
+	    AON.saveRegistryBank(api.getDomain(), api.getUser().getLogin(), bank);
+	    
+	    return RegistryBankJSON.toJSON(bank);
 	}
+
 	
 	private static JSONObject update(AonApiData api) {
 		RegistryBank bank = AON.getRegistryBank(api.getDomain(), api.getUser().getLogin(),
 				f -> f.getIdProperty().eq(api.getData().getInt(IJsonNames.ID)));
-		bank.setBankAccount(new BankAccount(api.getData().optString("iban")))
-		.setBic(api.getData().getString("swiftBic"))
-		.setSuffix(api.getData().optString(IJsonNames.SUFIX))
+//		bank.setBankAccount(new BankAccount(api.getData().optString("iban")))
+//		.setBic(api.getData().getString("swiftBic"))
+		bank.setSuffix(api.getData().optString(IJsonNames.SUFIX))
 		.setAlias(api.getData().optString(IJsonNames.NAME))
 		.setActive(api.getData().getBoolean(IJsonNames.ACTIVE));
 		AON.saveRegistryBank(api.getDomain(), api.getUser().getLogin(), bank);
@@ -185,7 +198,6 @@ public class BankServlet extends AonApiHttpServlet {
 		try {
 			String idParam = request.getParameter("id");
 			int id = Integer.parseInt(idParam);
-
 			occam.setDomain(api.getDomain().getId()).setDomainName(api.getDomain().getName())
 					.setUser(api.getUser().getLogin());
 			NordigenConfiguration nc = AonNordigen.getConfiguration(occam);
@@ -240,7 +252,8 @@ public class BankServlet extends AonApiHttpServlet {
 				.setDescription(api.getData().optString(IJsonNames.DESCRIPTION))
 				.setStatus(!AonStringUtils.isBlank(api.getData().optString("status"))
 						? StatementStatus.valueOf(api.getData().optString("status")).value()
-						: null);
+						: null)
+				.setGlobal(api.getData().optString(IJsonNames.GLOBAL));
 		AonNordigen.getMovementsFromBD(occam, f -> statementsFilter(f, api.getDomain().getId(), filter), page, perPage)
 				.forEach(bankStatement -> array.put(NordigenUtils.bankStatementJSON(bankStatement)));
 		return array;
@@ -361,6 +374,7 @@ public class BankServlet extends AonApiHttpServlet {
 		String amount;
 		Date from;
 		Date to;
+		String global;
 
 		public Date getFrom() {
 			return from;
@@ -424,6 +438,17 @@ public class BankServlet extends AonApiHttpServlet {
 			this.amount = amount;
 			return this;
 		}
+
+		public String getGlobal() {
+			return global;
+		}
+
+		public BankStatementFilter setGlobal(String global) {
+			this.global = global;
+			return this;
+		}
+		
+		
 	}
 
 	public static Filter statementsFilter(NordigenBankStatementProperties f, Integer domainId,
@@ -453,7 +478,29 @@ public class BankServlet extends AonApiHttpServlet {
 		if (statementFilter.getStatus() != null) {
 			filter = filter.and(f.getStatusProperty().eq(statementFilter.getStatus()));
 		}
+		
+		if(statementFilter.getGlobal() != null && !AonStringUtils.isBlank(statementFilter.getGlobal())) {
+			
+			Filter filter2 = f.getAmountStringProperty().like("%" + statementFilter.getGlobal() + "%")
+					.or(f.getDescriptionProperty().like("%" + statementFilter.getGlobal() + "%"));
+			
+			Byte statusByte = getStatusByteFromString(statementFilter.getGlobal());
 
+			if (statusByte != null) {
+			    filter2 = filter2.or(f.getStatusStringProperty().eq(statusByte.toString())); 
+			}
+			
+			filter = filter.and(filter2);
+		}
 		return filter;
+	}
+	
+	public static Byte getStatusByteFromString(String statusString) {
+	    for (StatementStatus status : StatementStatus.values()) {
+	        if (status.getName().startsWith(statusString.toUpperCase())) {
+	            return status.value();
+	        }
+	    }
+	    return null;
 	}
 }

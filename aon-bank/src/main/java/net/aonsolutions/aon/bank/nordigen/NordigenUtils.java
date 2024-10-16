@@ -76,8 +76,6 @@ public class NordigenUtils {
 		return null;
 	}
 	
-	
-	
 	// NUEVOS METODOS PROCESAR INFO DE BANCOS
 	public static boolean isTokenExpired(NordigenAccessToken token) {
 		Date today = new Date();
@@ -130,23 +128,24 @@ public class NordigenUtils {
 		return statementJSON;
 	}
 
-	public static JSONObject nordigenBankToJson(NordigenBankAccount account) {
+//	public static JSONObject nordigenBankToJson(NordigenBankAccount account) {
+//
+//		JSONObject bankJson = new JSONObject();
+//		bankJson.put("iban", account.getIban());
+//		bankJson.put("alias", account.getBankAlias());
+//		bankJson.put("lastBalanceDate", account.getRbank().getBalanceDate());
+//		bankJson.put("amount", account.getRbank().getBalance());
+//		bankJson.put("lastMovementDate", account.getLastMovementDate());
+//		if (account.getInstitution() != null) {
+//			bankJson.put("logo", account.getInstitution().getLogo());
+//		}
+//		if (account.isLinked()) {
+//			bankJson.put("syncStatus", "linked");
+//		}
+//		return bankJson;
+//	}
 
-		JSONObject bankJson = new JSONObject();
-		bankJson.put("iban", account.getIban());
-		bankJson.put("alias", account.getBankAlias());
-		bankJson.put("lastBalanceDate", account.getRbank().getBalanceDate());
-		bankJson.put("amount", account.getRbank().getBalance());
-		bankJson.put("lastMovementDate", account.getLastMovementDate());
-		if (account.getInstitution() != null) {
-			bankJson.put("logo", account.getInstitution().getLogo());
-		}
-		if (account.isLinked()) {
-			bankJson.put("syncStatus", "linked");
-		}
-		return bankJson;
-	}
-
+	//revisar
 	public static JSONArray convertAccountsMovementsToJsonArray(List<NordigenBankAccount> linkedAccountList, NordigenAccessToken token, Occam occam) throws Exception {
 		JSONArray movementsJsonArray = new JSONArray();
 		for (NordigenBankAccount account : linkedAccountList) {
@@ -229,6 +228,8 @@ public class NordigenUtils {
 		}
 		jsonLink.put("link", "IBAN no encontrado");
 	}
+	
+	
 	
 //    private static final Logger LOGGER = configureLogger();
 //	
