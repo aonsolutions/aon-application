@@ -1,7 +1,7 @@
 import { AonElement } from 'aonsolutions/components/AonElement.js';
-import { Apps, HomeApps, MenuApps, AuxApps, DESKTOP_APPS, MENU_APPS, TOP_MENU_APPS, AON_APPS, NEW, HOME, AON_CLASSIC, APPS, APPLICATIONS } from '../services/app.js';
+import { Apps, HomeApps, MenuApps, AuxApps, DESKTOP_APPS, MENU_APPS, TOP_MENU_APPS, AON_APPS, NEW, HOME, AON_CLASSIC, APPS, APPLICATIONS, NEW_APPS } from '../services/app.js';
 import {COMMERCE, OFFICE, GARAGE, ACADEMY} from  "aonsolutions/services/app.js";
-import {ACCOUNTING_MENU, COMMERCIAL_MENU, GROUPWARE_MENU, MANAGEMENT_MENU, TREASURY_MENU, WAREHOUSE_MENU, FISCAL_MENU, PAYROLL_MENU, MARKETING_MENU} from "../services/app.js"
+import {ACCOUNTING_MENU, COMMERCIAL_MENU, GROUPWARE_MENU, MANAGEMENT_MENU, TREASURY_MENU, WAREHOUSE_MENU, FISCAL_MENU, PAYROLL_MENU, MARKETING_MENU, CONFIGURATION_MENU} from "../services/app.js"
 import { MSG, CONSTANT, AON_ICONS, CSS, EVENT, MATERIAL_ICONS, TAG } from 'aonsolutions/environments/environments.js';
 import { AonDocumental } from 'aonsolutions/modules/documental/aon-documental.js';
 import 'aonsolutions/modules/project/aon-project-panel.js';
@@ -9,6 +9,7 @@ import * as GWT from 'aonsolutions/gwt/gwt.js';
 import * as LS from 'aonsolutions/services/localStorageService.js';
 import { AonMessenger } from 'aonsolutions/modules/messenger/aon-messenger.js';
 import { AonIconButton } from 'aonsolutions/components/aon-icon-button.js';
+import { AonUploadToast } from "aonsolutions/components/aon-upload-toast.js";
 import { AonDialogMenu } from 'aonsolutions/components/aon-dialog-menu.js';
 import { AonFiscal } from 'aonsolutions/modules/fiscal/aon-fiscal.js';
 import { AonTimecontrol } from 'aonsolutions/modules/timecontrol/aon-timecontrol.js';
@@ -29,7 +30,6 @@ import * as OPTION from 'aonsolutions/modules/invoice/InvoiceOptions.js';
 import { TASK_SOURCE } from 'aonsolutions/modules/messenger/MessengerEnums.js';
 import { uploadDocuments } from "aonsolutions/modules/documental/DocumentalUtils.js";
 
-
 import { AonNewDesktop } from './aon-new-desktop.js';
 import { AonAccountingMenu } from './accounting/aon-accounting-menu.js';
 import { AonCommercialMenu } from './commercial/aon-commercial-menu.js';
@@ -43,7 +43,9 @@ import { AonMarketingMenu } from './marketing/aon-marketing-menu.js';
 import { AonAcademyMenu } from './academy/aon-academy-menu.js';
 import { AonCommerceMenu } from './commerce/aon-commerce-menu.js';
 import { AonGarageMenu } from './garage/aon-garage-menu.js';
+import { AonConfigurationMenu } from './configuration/aon-configuration-menu.js';
 
+import { generateJobId } from 'aonsolutions/modules/invoice/InvoiceUtils.js';
 
 //	Falla la compilación por esta línea que no se usa. REVISAR!!
 // import { FISCAL } from '../../../../target/aon-aio/environments/msg-es.js';
@@ -162,6 +164,9 @@ export class AonNewMenu extends AonElement {
 
 		} else {
 			switch (app.app) {
+				case NEW_APPS:
+					this.rootPanel(new AonNewDesktop(portalApps, portalNoApps, suiteApps, suiteNoApps));
+					break;
 				case NEW.app:
 					this.showNewDialogMenu(this.getElement(app.app));
 					break;
@@ -243,6 +248,9 @@ export class AonNewMenu extends AonElement {
 				case MARKETING_MENU.app:
 					this.rootPanel(new AonMarketingMenu());
 					break;
+				case CONFIGURATION_MENU.app:
+					this.rootPanel(new AonConfigurationMenu());
+					break;
 				case ACADEMY.app:
 					this.rootPanel(new AonAcademyMenu());
 					break;
@@ -313,8 +321,6 @@ export class AonNewMenu extends AonElement {
 		header.className = 'aonHeader aonHeaderStart';
 		let applications = this.getElement('applications');
 		applications.className = 'aonMenuLeftopStart';
-
-
 	}
 
 	buildMenuLeftop() {
@@ -376,9 +382,13 @@ export class AonNewMenu extends AonElement {
 		let aonMenuTopnav = this.getElement(this.AON_MENU_TOPNAV);
 		let div = this.createElement(TAG.DIV);
 		div.classList.add("aonNewMenuTopNavDiv");
+		div.id = "aonTopMenuDiv";
+
+		let sidenav = this.getElement("aonMenuSidenav");
 	
-		if (!LS.isLeftMenu()) {
-			div.appendChild(this.buildTopApp(HOME));
+		if (!LS.isPortalChecked()) {
+			let topMenuHome = div.appendChild(this.buildTopApp(HOME));
+			topMenuHome.id = "topMenuHome";
 		}
 	
 		const excludedApps = ['commerce', 'garage', 'academy', 'office'];
@@ -483,6 +493,7 @@ export class AonNewMenu extends AonElement {
 		let menulist = this.getElement("aonMenuList");
 		let rootPanel = this.getElement("rootPanel");
 		let aonlogo = this.getElement("aonLogo");
+		let apps = this.getElement("apps");
 	
 		sidenav.style.transition = 'width 0.3s ease';
 		rootPanel.style.transition = 'margin-left 0.3s ease';
@@ -490,6 +501,8 @@ export class AonNewMenu extends AonElement {
 	
 		sidenav.style.width = '68px';
 		sidenav.style.display = "";  
+		sidenav.style.marginTop = "6px";
+		apps.style.marginTop = "6px";
 	
 		menulist.style.visibility = "visible";
 	
@@ -653,29 +666,15 @@ export class AonNewMenu extends AonElement {
 		const div = this.getElement("aonMenuLeftop");
 		
 
-		if (this.isCSSLoaded("beta.css")) {
+		//if (this.isCSSLoaded("beta.css")) {
 
 			div.addEventListener("mouseenter", () => {
 				const side = this.getElement("aonMenuSidenav");
 
 				if (LS.isCompanySelected()){
 					this.showSideNav();
+					this.getElement("topMenuHome").style.display = "none";
 				}
-
-				// side.addEventListener("mouseenter", () => {
-				// 	this.showSideNav();
-				// });
-	
-				// side.addEventListener("mouseleave", (ev) => {
-				// 	const dialog = this.getElement("aonDesktopMainOptionDialog");
-				// 	const content = this.getElement("sideNavDialogMenuContent");
-				// 	if(!this.isElementAt(ev,content) && !LS.isPortalChecked()){
-				// 		this.hideSideNav();
-				// 		dialog.close();
-				// 	}
-				// });
-							
-				
 			});
 
 			document.addEventListener("click", (event) => {
@@ -688,14 +687,6 @@ export class AonNewMenu extends AonElement {
 				}
 			});
 	
-			// div.addEventListener("mouseleave", (ev) => {
-			// 	const side = this.getElement("aonMenuSidenav");
-			// 	if(!this.isElementAt(ev,side) && !LS.isPortalChecked()){
-			// 		this.hideSideNav();
-			// 	}
-				
-			// });
-		}
 	}
 
 
@@ -713,10 +704,6 @@ export class AonNewMenu extends AonElement {
 		return false;
 	}
 	
-	
-	
-	
-
 	isCSSLoaded(cssFileName) {
 		for (let sheet of document.styleSheets) {
 			if (sheet.href && sheet.href.includes(cssFileName)) {
@@ -1014,6 +1001,8 @@ export class AonNewMenu extends AonElement {
 			return this.getDur().isPayroll();
 		if (MARKETING_MENU.app === app.app)
 			return this.getDur().isMarketing();
+		if (CONFIGURATION_MENU.app === app.app)
+			return this.getDur().isAdmin();
 		
 		if (MenuApps.ACCOUNTING.app === app.app)
 			return this.getDur().isAccounting();
@@ -1100,40 +1089,66 @@ export class AonNewMenu extends AonElement {
 				name: MSG.NEW_INVOICE,
 				options : [
 					{
-						name: 'Emitidas',
+						name: MSG.ISSUEDS,
 						icon: MATERIAL_ICONS.UNARCHIVE,
 						fn: () => this.newInvoice('emitida')
 					}, {
-						name: 'Recibidas',
+						name: MSG.RECEIVEDS,
 						icon: MATERIAL_ICONS.ARCHIVE,
-						fn: () => this.newInvoice('recibida')
+						fn: () => this.newInvoice('recibida')					
 					}, {
-						name: 'Tickets/Justificantes',
+						name: MSG.TICKETS+"/"+MSG.SUPPORTING_DOCUMENTS,
 						icon: MATERIAL_ICONS.RECEIPT,
 						fn: () => this.newInvoice('ticket')
+						
+					}, {
+						name: MSG.UPLOAD_INVOICE,
+						icon: MATERIAL_ICONS.CLOUD_UPLOAD,
+						fn: () => {
+							let input = this.createElement(TAG.INPUT);
+							input.type = CONSTANT.FILE;
+							input.accept = this.accept;
+							input.className = CSS.AON_NONE;
+							input.multiple = 'multiple';
+							
+							input.addEventListener(EVENT.CHANGE, ({target}) => {
+								let uploadToast = this.getElement('aonUploadToast');
+								if(!uploadToast){ 
+									uploadToast = new AonUploadToast();
+									this.getApplication().getContent().appendChild(uploadToast);
+								}
+								let data = { uploaded : 0 };
+								uploadToast.setJobId(generateJobId());
+								for (let file of target.files) {
+									uploadToast.addFile("invoice", file, data);
+								}			
+							});
+							input.click();
+							// this.appSelection(Apps.INVOICE);
+						}
 					}
 				]
 			});
 		}
 		if(this.getDur().isDocumental()){
 			newMenuOptions.push({
-				icon: 'post_add',
-				name: MSG.NEW_DOCUMENT,
 				fn: () => {
 					let input = this.createElement(TAG.INPUT);
 					input.type = CONSTANT.FILE;
 					input.accept = this.accept;
 					input.className = CSS.AON_NONE;
-					input.addEventListener(EVENT.CHANGE, ({target}) => uploadDocuments(input, target.files, this.getDur() ) );
+					input.addEventListener(EVENT.CHANGE, ({target}) => uploadDocuments(input, target.files) );
 					input.click();
 					this.appSelection(Apps.DOCUMENTAL);
-				}
+				},
+				icon: MATERIAL_ICONS.CLOUD_UPLOAD,
+				name: MSG.UPLOAD_DOCUMENT,
 			});
 		}
 		if(this.getDur().isMessenger()){
 			newMenuOptions.push({
 				icon: 'add_comment',
-				name: 'Crear Consulta',
+				name: MSG.CREATE_QUERY,
 				fn: () => {
 					let aonMessengerChat = new AonMessenger();	
 					aonMessengerChat.data = {source:TASK_SOURCE.QUERY};

@@ -29,6 +29,7 @@ import com.esferalia.aon.occam.api.model.fiscal.modules.IFarmerIVA;
 import com.esferalia.aon.occam.api.model.fiscal.modules.Modules2018;
 import com.esferalia.aon.occam.api.model.type.AppParam;
 import com.esferalia.aon.occam.api.model.type.Mod303Key;
+import com.esferalia.aon.occam.api.model.type.Period;
 import com.esferalia.aon.occam.api.model.type.VATRegime;
 import com.esferalia.aon.occam.impl.jooq.dao.AppParamDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.ConfigurationDAO;
@@ -67,18 +68,23 @@ class Mod303AEAT2023Declaration extends Mod303AEAT {
 	private static final double PERCENT10 = 10.0;
 	private static final double PERCENT21 = 21.0;
 	
-	private static final double SURCHARGE_PERCENT_175 = 1.75;
-	
 	private static final double SURCHARGE_PERCENT_0 = 0.0;
 	private static final double SURCHARGE_PERCENT_05 = 0.5;
 	private static final double SURCHARGE_PERCENT_062 = 0.62;
-	
 	private static final double SURCHARGE_PERCENT_14 = 1.4;
-	
+	private static final double SURCHARGE_PERCENT_175 = 1.75;
 	private static final double SURCHARGE_PERCENT_52 = 5.2;
 	
 	public static boolean accept(Mod303 mod) {
-		return mod.isAEAT() && mod.getYear() >= 2023;	 
+		return mod.isAEAT() 
+			&& (mod.getYear() == 2023
+			|| (mod.getYear() == 2024
+				&& (mod.getPeriod() == Period.M01 || mod.getPeriod() == Period.M02 || mod.getPeriod() == Period.M03 
+				 || mod.getPeriod() == Period.M04 || mod.getPeriod() == Period.M05 || mod.getPeriod() == Period.M06 
+				 || mod.getPeriod() == Period.M07 || mod.getPeriod() == Period.M08   
+				 || mod.getPeriod() == Period.T1 || mod.getPeriod() == Period.T2)
+			   ))
+			;
 	}
 	
 	private static final Mod303Key[] COMPENSATION_EXPLAIN_KEYS = new Mod303Key[] { Mod303Key.CT_C110 };

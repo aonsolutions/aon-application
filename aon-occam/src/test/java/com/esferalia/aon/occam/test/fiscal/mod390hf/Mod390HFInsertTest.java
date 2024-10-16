@@ -66,10 +66,13 @@ public class Mod390HFInsertTest extends AbstractOccamTest {
 			double gpc077 =  gipuzkoa.getAmount(Mod390Key.GP_C077);	// Total - Cuota deducible
 			Asserts.assertEqualsDouble("Gipuzkoa cuota deducible y total deducible no coincide.", gpc029, gpc077);
 		}
-		
-		Asserts.assertEqualsDouble("Araba " + araba.getModelFullName() + ". Resultado no coincide.", bizkaia.getDeclarationResult(), araba.getDeclarationResult());
-		Asserts.assertEqualsDouble("Bizkaia " + bizkaia.getModelFullName() + ". Resultado no coincide.", araba.getDeclarationResult(), bizkaia.getDeclarationResult());
-		Asserts.assertEqualsDouble("Gipuzkoa " + gipuzkoa.getModelFullName() + ". Resultado no coincide.", bizkaia.getDeclarationResult(), gipuzkoa.getDeclarationResult());
+
+//
+//		Deshabilitados hasta que no salgan las especificaciones del modelo pra el 2014
+//
+//		Asserts.assertEqualsDouble("Araba " + araba.getModelFullName() + ". Resultado no coincide.", bizkaia.getDeclarationResult(), araba.getDeclarationResult());
+//		Asserts.assertEqualsDouble("Bizkaia " + bizkaia.getModelFullName() + ". Resultado no coincide.", araba.getDeclarationResult(), bizkaia.getDeclarationResult());
+//		Asserts.assertEqualsDouble("Gipuzkoa " + gipuzkoa.getModelFullName() + ". Resultado no coincide.", bizkaia.getDeclarationResult(), gipuzkoa.getDeclarationResult());
 		
 	}
 

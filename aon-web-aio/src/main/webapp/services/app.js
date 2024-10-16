@@ -47,6 +47,13 @@ export const AON_CLASSIC = {
 	logo: "../assets/aon.png",
 };
 
+export const NEW_APPS = {
+	app: CONSTANT.APPS,
+	title: MSG.APPLICATIONS,
+	description: MSG.APPLICATIONS,
+	symbol: MATERIAL_ICONS.APPS
+}
+
 export const AON_APPS = [ 
 	APP.AON_SOLUTIONS, 
 	APP.BIDOQ, 
@@ -56,6 +63,7 @@ export const AON_APPS = [
 
 export const MENU_APPS = [
   HOME,
+  NEW_APPS,
   NEW,
   APP.INVOICE,
   APP.DOCUMENTAL,
@@ -201,6 +209,18 @@ export const MARKETING_MENU = {
 	price: " ",
 };
 
+export const CONFIGURATION_MENU = {
+	app: "configurationMenu",
+	symbol: "construction",
+	title: MSG.CONFIGURATION,
+	description: MSG.CONFIGURATION,
+	subtitle: "Configuration",
+	color: "var(--aonTopMenuAvailable)",
+	style: "aonTopNavConfigurationButton",
+	apps: [],
+	price: " ",
+};
+
 
 export const TOP_MENU_APPS = [
 	APP.OFFICE,
@@ -217,6 +237,7 @@ export const TOP_MENU_APPS = [
 	FISCAL_MENU,
 	PAYROLL_MENU,
 	MARKETING_MENU,
+	CONFIGURATION_MENU,
 ];
 
 export default Apps;

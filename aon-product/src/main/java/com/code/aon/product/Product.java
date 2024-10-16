@@ -1,22 +1,17 @@
 package com.code.aon.product;
 
+import java.util.Date;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Entity;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.Table;
-import jakarta.persistence.Transient;
-import jakarta.persistence.UniqueConstraint;
-
 import org.apache.commons.lang.StringUtils;
 import org.hibernate.Hibernate;
 import org.hibernate.SQLQuery;
 import org.hibernate.Session;
+import org.hibernate.annotations.Formula;
 
 import com.code.aon.AonVersion;
 import com.code.aon.common.BeanManager;
@@ -34,12 +29,21 @@ import com.code.aon.ql.ProjectionList;
 import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.entity.master.ProductDB;
 
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Entity;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
+import jakarta.persistence.UniqueConstraint;
+
 @Entity
 @Table(name="product", uniqueConstraints = @UniqueConstraint(columnNames="code"))
 @Heritable
 public class Product extends ProductDB implements IAuditable {
 	
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
+	
+	private Date updateDate;
 
 	private Set<Item> items = new HashSet<Item>();
 	private Set<ProductTag> tags = new HashSet<ProductTag>();
@@ -224,5 +228,14 @@ public class Product extends ProductDB implements IAuditable {
     	}
     	return stock;
     }
+    
+    @Formula("IFNULL(modification_date, creation_date)")
+    public Date getUpdateDate() {
+    	return updateDate;
+    }
+    
+    public void setUpdateDate(Date updateDate) {
+		this.updateDate = updateDate;
+	}
 
 }

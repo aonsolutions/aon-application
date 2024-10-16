@@ -19,8 +19,9 @@ import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
-import net.aonsolutions.db.up2date.doc.InvoiceDocAddS3Bucket;
-import net.aonsolutions.db.up2date.payroll.InKindDeductionUpdate;
+import net.aonsolutions.db.up2date.tgss.Artist2024Update;
+import net.aonsolutions.db.up2date.finance.InvofoxEnterpriseDataFix;
+import net.aonsolutions.db.up2date.fiscal.AlterFsMod200Nrc;
 import net.aonsolutions.db.up2date.urlshortener.UrlShortenCreation;
 
 public class Up2Date {
@@ -473,7 +474,11 @@ public class Up2Date {
         // InvoiceDataCreation.INVOICE_DATA_CREATION,
         // InvoiceDocAddS3Bucket.INVOICEDOC_ADDS3BUCKET
     		
-    	UrlShortenCreation.URLSHORTEN_CREATION
+    	UrlShortenCreation.URLSHORTEN_CREATION,
+    	Artist2024Update.ARTIST2024UPDATE,
+    	InvofoxEnterpriseDataFix.INVOFOX_ENTERPRISE_DATA_FIX,
+    	AlterFsMod200Nrc.ALTER_FS_MODEL200_NRC
+    	
 	};
 
     // ------------------------------------------------------------------------

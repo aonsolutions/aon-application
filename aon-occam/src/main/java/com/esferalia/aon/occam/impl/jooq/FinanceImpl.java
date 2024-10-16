@@ -124,6 +124,12 @@ public class FinanceImpl implements IFinance {
 	}
 	
 	@Override
+	public List<Invoice> getFullInvoiceList(AONContext ctx, List<Integer> ids){
+		return ctx.getDslContext().transactionResult(
+				configuration -> InvoiceDAO.getFullInvoiceList(ctx, ids));
+	}
+	
+	@Override
 	public Invoice acceptInvoice(AONContext ctx, Invoice invoice, Integer rawdocId){
 		return ctx.getDslContext().transactionResult(
 				configuration -> InvoiceDAO.accept(ctx, invoice, rawdocId));
@@ -832,6 +838,12 @@ public class FinanceImpl implements IFinance {
 	public void deleteInvoiceInfo(AONContext ctx, Integer invoiceId) {
 		ctx.getDslContext().transaction(
 				configuration -> InvoiceInfoDAO.delete(ctx, f -> f.getInvoiceProperty().eq(invoiceId)));
+	}
+	
+	@Override
+	public void deleteInvoiceData(AONContext ctx, Integer invoiceId) {
+		ctx.getDslContext().transaction(
+				configuration -> InvoiceDataDAO.delete(ctx, f -> f.getInvoiceProperty().eq(invoiceId)));
 	}
 
 	@Override

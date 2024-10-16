@@ -527,8 +527,8 @@ public final class IJsonNames {
 	public static final String RESULT = "result";
 	public static final String RESUME = "resume";
 	public static final String RETENTION = "retention";
-	public static final String RETENTION_PERCENT = "retentionPercent";
 	public static final String RETENTION_QUOTA = "retentionQuota";
+	public static final String RETENTION_PERCENT = "retentionPercent";
 	public static final String RETURNED = "returned";
 	public static final String REVERSE_ORDER = "reverseOrder";
 	public static final String RNAME = "rname";

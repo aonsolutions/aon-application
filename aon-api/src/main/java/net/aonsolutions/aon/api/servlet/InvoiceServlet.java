@@ -53,6 +53,7 @@ import com.esferalia.aon.occam.api.model.finance.InvoiceStatus;
 import com.esferalia.aon.occam.api.model.finance.PrintInvoiceConfiguration;
 import com.esferalia.aon.occam.api.model.finance.SiiConfiguration;
 import com.esferalia.aon.occam.api.model.finance.TbaiConfiguration;
+import com.esferalia.aon.occam.api.model.invoice.InvoiceFilter;
 import com.esferalia.aon.occam.api.model.product.Tax;
 import com.esferalia.aon.occam.api.model.registry.CompanyFull;
 import com.esferalia.aon.occam.api.model.type.Administration;

@@ -9,6 +9,7 @@ import com.esferalia.aon.occam.api.model.fiscal.FiscalStatus;
 import com.esferalia.aon.occam.api.model.fiscal.Mod349;
 import com.esferalia.aon.occam.api.model.fiscal.Mod349Detail;
 import com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo;
+import com.esferalia.aon.occam.api.model.type.Period;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public class Model349ServiceAsyncDecorator implements Model349ServiceAsync {
@@ -44,9 +45,9 @@ public class Model349ServiceAsyncDecorator implements Model349ServiceAsync {
 	}
 
 	@Override
-	public void initialize(Occam occam, AsyncCallback<Mod349> callback) {
+	public void initialize(Occam occam, int year, Period period, AsyncCallback<Mod349> callback) {
 		AON.start();
-		fsa.initialize(occam, new AsyncCallbackWrapper<>(callback));
+		fsa.initialize(occam, year, period, new AsyncCallbackWrapper<>(callback));
 	}
 
 	@Override

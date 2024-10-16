@@ -12,6 +12,7 @@ import { getCounter } from './InvoiceCounter.js';
 import * as OPTION from './InvoiceOptions.js';
 import * as LS from '../../services/localStorageService.js';
 import { AonUploadToast } from "../../components/aon-upload-toast.js";
+import { generateJobId } from "./InvoiceUtils.js";
 
 export class AonInvoiceHome extends AonElement {
 
@@ -85,9 +86,8 @@ export class AonInvoiceHome extends AonElement {
 			uploadToast = new AonUploadToast();
 			this.appendChild(uploadToast);
 		}
-		let data = {
-			uploaded : 0
-		}
+		let data = { uploaded : 0 };
+		uploadToast.setJobId(generateJobId());
 		for (let file of files) {
 			uploadToast.addFile("invoice", file, data);
 		}

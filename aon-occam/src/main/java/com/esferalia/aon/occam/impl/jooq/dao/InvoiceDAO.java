@@ -34,6 +34,7 @@ import java.util.Collection;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -117,6 +118,7 @@ import com.esferalia.aon.occam.impl.jooq.dao.RegistryDAO.RegistryFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.SecurityDAO.ScopeFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.invoice.InvoiceAddressDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.invoice.InvoiceBatchDetailDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.invoice.InvoiceDataDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.invoice.InvoiceInfoDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.offer.OfferDetailDAO;
 import com.esferalia.aon.occam.impl.jooq.validation.InvoiceAutoComplete;
@@ -414,6 +416,14 @@ public class InvoiceDAO {
 					RegistryDAO.getRegistrySellerNames(ctx, d.getInvoice().getRegistry(), d.getInvoice().getIssueDate())
 						.collect(Collectors.joining(", ")))
 			);
+	}
+	
+	public static ArrayList<Invoice> getFullInvoiceList(AONContext ctx, List<Integer> ids) {
+		ArrayList<Invoice> invoices = new ArrayList<Invoice>();
+		
+		ids.forEach(id -> invoices.add( getFullInvoice(ctx, id) ));
+		
+		return invoices;
 	}
 
 	public static Invoice getFullInvoice(AONContext ctx, Integer id) {
@@ -1242,6 +1252,7 @@ public class InvoiceDAO {
 		InvoiceAddressDAO.delete(ctx, id);
 		InvoiceBatchDetailDAO.delete(ctx, f-> f.getInvoiceProperty().eq(id));
 		InvoiceInfoDAO.delete(ctx, f-> f.getInvoiceProperty().eq(id));
+		InvoiceDataDAO.delete(ctx, f-> f.getInvoiceProperty().eq(id));
 		
 		count = ctx.getDslContext()
 			.delete(INVOICE)

@@ -1,7 +1,5 @@
 package com.esferalia.aon.occam.test.fiscal.mod303;
 
-import static org.junit.Assert.assertThrows;
-
 import java.util.Arrays;
 
 import org.json.JSONArray;
@@ -67,6 +65,7 @@ import com.esferalia.aon.occam.api.model.fiscal.mod303.Model3032023BIZKAIAAdditi
 import com.esferalia.aon.occam.api.model.fiscal.mod303.Model3032023BIZKAIAScript;
 import com.esferalia.aon.occam.api.model.fiscal.mod303.Model3032023GIPUZKOAPrintScript;
 import com.esferalia.aon.occam.api.model.fiscal.mod303.Model3032023GIPUZKOARScript1;
+import com.esferalia.aon.occam.api.model.fiscal.mod303.Model3032024T3AEATGeneralRegimeScript1;
 import com.esferalia.aon.occam.api.model.type.Administration;
 import com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo;
 import com.esferalia.aon.occam.api.model.type.Mod303Key;
@@ -74,7 +73,6 @@ import com.esferalia.aon.occam.api.model.type.Period;
 import com.esferalia.aon.occam.impl.jooq.dao.fiscal.mod303.Mod303Declaration;
 import com.esferalia.aon.occam.test.faker.FiscalFaker;
 import com.esferalia.aon.occam.test.faker.FiscalFaker.FiscalFakerParams;
-import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
@@ -108,6 +106,7 @@ public class Mod303ScriptTest extends Mod303AbstractTest {
 		test( mod303, Model3032022AEATSimplifiedRegime4TScript.values() );
 		test( mod303, Model3032022AEATSimplifiedRegimeScript.values() );
 		test( mod303, Model3032023AEATGeneralRegimeScript1.values() );
+		test( mod303, Model3032024T3AEATGeneralRegimeScript1.values() );
 		test( mod303, Model3032023AEATPrintScript.values() );
 		test( mod303, Model3032023AEATResultScript.values() );
 	}
@@ -119,7 +118,7 @@ public class Mod303ScriptTest extends Mod303AbstractTest {
 				.setMonthly(true)
 				.setAdministration(Administration.GIPUZKOA);
 		
-		Period p = Period.getMonthlyPeriod(AonDateUtils.getMonth(params.getIssueDate()));
+//		Period p = Period.getMonthlyPeriod(AonDateUtils.getMonth(params.getIssueDate()));
 //		if (p.isLastPeriod()) {
 //			assertThrows(AonCoreException.class, () -> {
 //				FiscalFaker.getMod303(params);
@@ -148,7 +147,7 @@ public class Mod303ScriptTest extends Mod303AbstractTest {
 				.setMonthly(true)
 				.setAdministration(Administration.BIZKAIA);
 
-		Period p = Period.getMonthlyPeriod(AonDateUtils.getMonth(params.getIssueDate()));
+//		Period p = Period.getMonthlyPeriod(AonDateUtils.getMonth(params.getIssueDate()));
 //		if (p.isLastPeriod()) {
 //			assertThrows(AonCoreException.class, () -> {
 //				FiscalFaker.getMod303(params);
@@ -177,7 +176,7 @@ public class Mod303ScriptTest extends Mod303AbstractTest {
 				.setIssueDate(getTestDate())
 				.setMonthly(true)
 				.setAdministration(Administration.ALAVA);
-		Period p = Period.getMonthlyPeriod(AonDateUtils.getMonth(params.getIssueDate()));
+//		Period p = Period.getMonthlyPeriod(AonDateUtils.getMonth(params.getIssueDate()));
 //		if (p.isLastPeriod()) {
 //			assertThrows(AonCoreException.class, () -> {
 //				FiscalFaker.getMod303(params);

@@ -1,5 +1,9 @@
 package com.esferalia.aon.occam.api;
 
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
@@ -219,6 +223,7 @@ import com.esferalia.aon.occam.api.model.finance.PayMethod;
 import com.esferalia.aon.occam.api.model.finance.SiiConfiguration;
 import com.esferalia.aon.occam.api.model.finance.TbaiConfiguration;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModel;
+import com.esferalia.aon.occam.api.model.fiscal.Mod303;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceDetailExtended;
 import com.esferalia.aon.occam.api.model.management.Offer;
 import com.esferalia.aon.occam.api.model.management.OfferDetail;
@@ -335,13 +340,18 @@ import com.esferalia.aon.occam.impl.jooq.SecurityImpl;
 import com.esferalia.aon.occam.impl.jooq.StatsImpl;
 import com.esferalia.aon.occam.impl.jooq.SystemImpl;
 import com.esferalia.aon.occam.impl.jooq.TaskImpl;
+import com.esferalia.aon.occam.impl.jooq.URLShortenerImpl;
 import com.esferalia.aon.occam.impl.jooq.WarehouseImpl;
 import com.esferalia.aon.occam.server.fbatch.FBatchUtils;
 import com.esferalia.aon.occam.server.finance.FinanceUtils;
 import com.esferalia.aon.occam.server.rawdoc.RawdocUtils;
 import com.esferalia.aon.occam.server.registry.RegistryUtils;
 import com.esferalia.aon.watson.error.AonCoreException;
+import com.esferalia.aon.watson.server.http.AonURIBuilder;
 import com.esferalia.aon.watson.util.AonStringUtils;
+
+import net.aonsolutions.core.pool.AonConnectionException;
+import net.aonsolutions.core.pool.AonDataSource;
 
 public class AON {
 	
@@ -448,6 +458,10 @@ public class AON {
 	
 	private static INews getNews() {
 		return new NewsImpl();
+	}
+
+	private static IURLShortener getURLShortener() {
+		return new URLShortenerImpl();
 	}
 
 	// ********************************************
@@ -1315,18 +1329,22 @@ public class AON {
 
 	// ------------------------------------ PRODUCT
 
+	@Deprecated
 	public static OldProduct getProduct(String domainName, Integer domainId, String login, Integer productId) {
 		return getProduct(domainName, domainId, login, f -> f.getIdProperty().eq(productId));
 	}
-	
+
+	@Deprecated
 	public static OldProduct getProduct(String domainName, Integer domainId, String login, ProductFilter filter) {
 		return getProductStream(domainName, domainId, login, filter).findFirst().orElse(new OldProduct());
 	}
 
+	@Deprecated
 	public static LinkedList<OldProduct> getProductList(String domainName, Integer domainId, String login, ProductFilter filter){
 		return getProductStream(domainName, domainId, login, filter).collect(Collectors.toCollection(LinkedList::new));
 	}
 	
+	@Deprecated
 	public static Stream<OldProduct> getProductStream(String domainName, Integer domainId, String login, ProductFilter filter){
 		CloseableAONContext ctx = null;
 		try{
@@ -1337,6 +1355,7 @@ public class AON {
 		}
 	}
 	
+	@Deprecated
 	public static OldProduct insertProduct(String domainName, Integer domainId, String login, OldProduct p) {
 		CloseableAONContext ctx = null;
 		try{
@@ -1347,23 +1366,28 @@ public class AON {
 		}
 	}
 	
+	@Deprecated
 	public static void insert(AONContext ctx,OldProduct p) {
 		getProduct().insert(ctx, p);
 	}
 
+	@Deprecated
 	public static LinkedList<OldProduct> insert(AONContext ctx, 
 			Stream<OldProduct> ps) {
 		return getProduct().insert(ctx, ps);
 	}
 
+	@Deprecated
 	public static void update(AONContext ctx, OldProduct p) {
 		getProduct().update(ctx, p);
 	}
 
+	@Deprecated
 	public static void delete(AONContext ctx, OldProduct p) {
 		getProduct().delete(ctx, p);
 	}
 
+	@Deprecated
 	public static void delete(AONContext ctx, Stream<OldProduct> ps) {
 		getProduct().delete(ctx, ps);
 	}
@@ -1463,6 +1487,10 @@ public class AON {
 	}
 	
 	// ------------------------------------ NEW ITEM
+
+	public static Item getItem(Domain domain, String login, Integer id, Options...options) {
+		return getItem(domain, login, f -> f.getIdProperty().eq(id), options);
+	}
 	
 	public static Item getItem(Domain domain, String login, ItemFilter filter, Options...options) {
 		try (CloseableAONContext ctx =  AONContext.getAONContext(domain, login)){
@@ -1930,6 +1958,12 @@ public class AON {
 	public static LinkedList<Invoice> getInvoiceList(String domainName, Integer domainId, String login, InvoiceFilter filter){
 		return getInvoiceStream(domainName, domainId, login, filter)
 			.collect(Collectors.toCollection(LinkedList::new));
+	}
+	
+	public static List<Invoice> getFullInvoiceList(String domainName, int domainId, String login, List<Integer> ids) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)) {
+			return getFinance().getFullInvoiceList(ctx, ids);
+		}
 	}
 	
 	public static Invoice getInvoice(Occam occam, Integer invoiceId){
@@ -8217,6 +8251,12 @@ public class AON {
 		}
 	}
 	
+	public static void deleteInvoiceData(String schema, Integer invoiceId) {
+		try(CloseableAONContext ctx = AONContext.getAONContext(schema)){
+			getFinance().deleteInvoiceData(ctx, invoiceId);
+		}
+	}	
+	
 	public static InvoiceInfo getInvoiceInfo(Domain domain, User user, InvoiceInfoFilter filter) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(domain, user)) {
 			return getFinance().getInvoiceInfo(ctx, filter);
@@ -8322,14 +8362,25 @@ public class AON {
 	}
 	
 	// ---------------- Enterprise Data
+
+	public static EnterpriseData getEnterpriseData(Domain domain, User user, EnterpriseDataFilter filter) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domain, user)) {
+			return getEnterprise().getEnterpriseData(ctx, filter);
+		}
+	}
+	
+	public static EnterpriseData saveEnterpriseData(Domain domain, User user, EnterpriseData enterpriseData) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domain, user)) {
+			return getEnterprise().saveEnterpriseData(ctx, enterpriseData);
+		}
+	}
 	
 	public static LinkedList<EnterpriseData> getEnterpriseDataList(String domainName, Integer domainId, String login, EnterpriseDataFilter filter) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)) {
 			return getEnterprise().getEnterpriseDataList(ctx, filter);
 		}
 	}
-
-
+	
 	public static void insertEnterpriseData(String domainName, Integer domainId, String login, List<EnterpriseData> enterpriseData) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)) {
 			getEnterprise().insertEnterpriseData(ctx, enterpriseData);
@@ -8684,4 +8735,34 @@ public class AON {
 		}
 	}
 	
+	
+
+	public static  String getURL(String shortUrl ){
+		return getURL(URI.create(shortUrl));
+	}
+
+	public static  String getURL(URI shortUri ) {
+		Map<String, String[]> parameterMap = new AonURIBuilder(shortUri).getQueryParamsMap();
+		String domain = parameterMap.getOrDefault("domain", new String[] {shortUri.getHost()})[0];
+		try ( Connection connection = AonDataSource.getInstance().getConnection(domain) ) {
+			return getURLShortener().getURL(new AONContext(connection), shortUri.toString());
+		} catch (SQLException | AonConnectionException e) {
+			throw new RuntimeException(e);
+		} 
+	}
+
+	public static  String getShortURL(String path, String url ) {
+		return getShortURL(path, URI.create(url));
+	}
+	
+	public static  String getShortURL(String path, URI uri)  {
+		new AonURIBuilder(uri).getQueryParams();
+		Map<String, String[]> parameterMap = new AonURIBuilder(uri).getQueryParamsMap();
+		String domain = parameterMap.getOrDefault("domain", new String[] {uri.getHost()})[0];
+		try ( Connection connection = AonDataSource.getInstance().getConnection(domain) ) {
+			return getURLShortener().getShortURL(new AONContext(connection), path, uri.toString(), null);
+		} catch (SQLException | AonConnectionException e) {
+			throw new RuntimeException(e);
+		} 
+	}
 }

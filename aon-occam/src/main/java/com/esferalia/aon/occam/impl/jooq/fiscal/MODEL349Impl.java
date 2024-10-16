@@ -8,6 +8,7 @@ import com.esferalia.aon.occam.api.model.fiscal.FiscalStatus;
 import com.esferalia.aon.occam.api.model.fiscal.Mod349;
 import com.esferalia.aon.occam.api.model.fiscal.Mod349Detail;
 import com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo;
+import com.esferalia.aon.occam.api.model.type.Period;
 import com.esferalia.aon.occam.impl.jooq.dao.Mod349DAO;
 
 public class MODEL349Impl implements IMODEL349 {
@@ -23,8 +24,8 @@ public class MODEL349Impl implements IMODEL349 {
 	}
 
 	@Override
-	public Mod349 initialize(AONContext ctx) {
-		return Mod349DAO.initialize(ctx);		
+	public Mod349 initialize(AONContext ctx, int year, Period period) {
+		return Mod349DAO.initialize(ctx, year, period);		
 	}
 
 	@Override

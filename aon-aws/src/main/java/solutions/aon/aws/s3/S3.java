@@ -107,8 +107,12 @@ public class S3 {
 	}
 	
 	public static void copy(String fromBucket, String toBucket, String key) {
+		copy(fromBucket, toBucket, key, key);
+	}
+	
+	public static void copy(String fromBucket, String toBucket, String fromKey, String toKey) {
 		AmazonS3 s3 = connect();	
-		CopyObjectRequest copyRequest = new CopyObjectRequest(fromBucket, key, toBucket, key);
+		CopyObjectRequest copyRequest = new CopyObjectRequest(fromBucket, fromKey, toBucket, toKey);
 		s3.copyObject(copyRequest);
     }
 }

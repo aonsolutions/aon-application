@@ -185,7 +185,7 @@ public class ConnectSaleInvoiceWriter {
 			sincc.setFechaDeVencimientoUnico(Integer.valueOf(SeresUtils.dateFormat()
 					.format(financeList.get(0).getDueDate())));
 		}
-		if(isDia(invoice.getRegistry())) {
+		if(SeresUtils.isDia(invoice.getRegistryDocument())) {
 			Double total = CommonUtil.round(invoice.getTotal(), 2);
 			Double quota = CommonUtil.round(invoice.getVatQuota(), 2);
 			Double taxablebase = total-quota;
@@ -252,8 +252,8 @@ public class ConnectSaleInvoiceWriter {
 			? ediCodes.getMainEdiCodes().getCustomerEdiHeader() 
 			: ediCodes.getCustomerEdiHeader();
 		
-		String ediBY = isDia(customer) ? ediCodes.getCustomerEdiHeader() : ediCodes.getCustomerEdiInvoice();
-		String ediIV = isDia(customer) ? ediCodes.getCustomerEdiInvoice() : ediHeader;
+		String ediBY = SeresUtils.isDia(customer.getDocument()) ? ediCodes.getCustomerEdiHeader() : ediCodes.getCustomerEdiInvoice();
+		String ediIV = SeresUtils.isDia(customer.getDocument()) ? ediCodes.getCustomerEdiInvoice() : ediHeader;
 		List<SINCP> list = new ArrayList<>();
 		list.add(createSINCPRecord(SINCP.SINCP_2.PROVEEDOR__SU,
 				ediCodes.getCompanyEdiCode(), company, companyAddress, recordData));
@@ -261,7 +261,7 @@ public class ConnectSaleInvoiceWriter {
 		        ediCodes.getCompanyEdiCode(), company, companyAddress, recordData));
 		list.add(createSINCPRecord(SINCP.SINCP_2.PUNTO_DESTINO_DE_LA_MERCANCIA_DP,
 				ediCodes.getCustomerEdiPoint(), customer, invoiceAddress, null));
-//		if(!isECI(invoice.getRegistryDocument()) && !isEroski(invoice.getRegistryDocument())) {
+//		if(!SeresUtils.isECI(invoice.getRegistryDocument()) && !SeresUtils.isEroski(invoice.getRegistryDocument())) {
 //			list.add(createSINCPRecord(SINCP.SINCP_2.DESTINATARIO_FINAL_UC,
 //					ediCodes.getCustomerEdiHeader(), customer, invoiceAddress, null));
 //		}
@@ -583,8 +583,8 @@ public class ConnectSaleInvoiceWriter {
 		sincl.setCalificadorOtroTipoDeImpuesto(null);
 		sincl.setPorcentajeOtroTipoDeImpuesto(null);
 		sincl.setImporteOtroTipoDeImpuesto(null);
-		sincl.setNumeroPedido_ON_(isDia(detail.getInvoice().getRegistry())? null : obtainSalesNumber(detail));
-		if(!isDia(detail.getInvoice().getRegistry()) && delivery != null && delivery.getId() != null)
+		sincl.setNumeroPedido_ON_(SeresUtils.isDia(detail.getInvoice().getRegistryDocument())? null : obtainSalesNumber(detail));
+		if(!SeresUtils.isDia(detail.getInvoice().getRegistryDocument()) && delivery != null && delivery.getId() != null)
 			sincl.setNumeroDeAlbaran_DQ_(delivery.getReferenceCode());
 		sincl.setNumeroDeEmbalajes(null);
 		sincl.setTipoDeEmbalaje(null);
@@ -654,9 +654,9 @@ public class ConnectSaleInvoiceWriter {
 			}
 			sinci.setPorcentajeTipoDeImpuesto(CommonUtil.round(tax.getTaxPercent()));
 			sinci.setImporteTipoDeImpuesto(CommonUtil.round(tax.getBase() * tax.getTaxPercent()
-					/ 100, isDia(invoice.getRegistry()) ? 2 : 3));
+					/ 100, SeresUtils.isDia(invoice.getRegistryDocument()) ? 2 : 3));
 			sinci.setBaseImponible(CommonUtil.round(tax.getBase(),
-					isDia(invoice.getRegistry()) ? 2 : 3));
+					SeresUtils.isDia(invoice.getRegistryDocument()) ? 2 : 3));
 		}
 		return sinci;
 	}
@@ -789,19 +789,4 @@ public class ConnectSaleInvoiceWriter {
 		}
 		return null;
 	}
-	
-	private Boolean isDia(Registry registry) {
-		return "A80782519".equalsIgnoreCase(registry.getDocument());
-	}
-	
-	private boolean isECI(String document) {
-        return "A28017895".equalsIgnoreCase(document);
-    }
-	
-    public static boolean isEroski(String document) {
-        return "F20033361".equalsIgnoreCase(document)
-                || "B88512975".equalsIgnoreCase(document)
-                || "A08115032".equalsIgnoreCase(document)
-                || "A36651313".equalsIgnoreCase(document);
-   }
 }

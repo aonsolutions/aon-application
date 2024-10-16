@@ -440,6 +440,7 @@ const colChart = (div, data, selectedPeriod, isMobile, filter, aonIframe, leyend
           legendTr.appendChild(amountTd);
           legend.appendChild(legendTr);
           legend.style.width = isMobile ? "95%" : "43%";
+          legend.classList.add("aonAccountingChart");
         }
 
         let head = document.createElement("h1");

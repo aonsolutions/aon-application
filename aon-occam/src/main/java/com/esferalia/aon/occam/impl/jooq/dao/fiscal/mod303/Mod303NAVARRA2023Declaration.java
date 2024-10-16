@@ -22,6 +22,7 @@ import com.esferalia.aon.occam.api.model.fiscal.FiscalModel;
 import com.esferalia.aon.occam.api.model.fiscal.Mod303;
 import com.esferalia.aon.occam.api.model.fiscal.VatContext;
 import com.esferalia.aon.occam.api.model.type.Mod303Key;
+import com.esferalia.aon.occam.api.model.type.Period;
 import com.esferalia.aon.occam.api.model.type.VATRegime;
 import com.esferalia.aon.occam.impl.jooq.dao.CompanyDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.DomainDAO;
@@ -50,7 +51,15 @@ class Mod303NAVARRA2023Declaration extends Mod303NAVARRA {
 	public static final double SURCHARGE_PERCENT_0 = 0.0;
 	
 	public static boolean accept(Mod303 mod) {
-		return mod.isNavarra() && mod.getYear() >= 2023;
+		return mod.isNavarra() 
+			&& (mod.getYear() == 2023
+			|| (mod.getYear() == 2024
+			&& (mod.getPeriod() == Period.M01 || mod.getPeriod() == Period.M02 || mod.getPeriod() == Period.M03 
+			 || mod.getPeriod() == Period.M04 || mod.getPeriod() == Period.M05 || mod.getPeriod() == Period.M06 
+			 || mod.getPeriod() == Period.M07 || mod.getPeriod() == Period.M08   
+			 || mod.getPeriod() == Period.T1 || mod.getPeriod() == Period.T2)
+		   ))
+		;
 	}
 	
 	private static final Mod303Key[] PRORATE_KEYS = new Mod303Key[]{

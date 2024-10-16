@@ -11,7 +11,7 @@ import * as UA from '../services/userAgentService.js';
 import { AonNotification } from "./notification/aon-notification.js";
 import { AonApps } from "./aon-apps.js";
 import { AonNotificationIcon } from "./notification/aon-notification-icon.js";
-import { uploadInvoices } from "./invoice/InvoiceUtils.js";
+import { generateJobId, uploadInvoices } from "./invoice/InvoiceUtils.js";
 import { uploadDocuments } from "./documental/DocumentalUtils.js";
 import { AonDialog } from "../components/aon-dialog.js";
 import { AonInvoicePanel } from "./invoice/aon-invoice-panel.js";
@@ -501,9 +501,8 @@ export class AonMobileMenu extends AonElement {
 			  uploadToast = new AonUploadToast();
 	  		this.appendChild(uploadToast);
   		}
-		  let data = {
-			  uploaded : 0
-		  } 
+		  let data = { uploaded : 0 };
+      uploadToast.setJobId(generateJobId()); 
 			uploadToast.addFile("invoice", e.detail, data);
 		});
     this.rootPanel(editor); 

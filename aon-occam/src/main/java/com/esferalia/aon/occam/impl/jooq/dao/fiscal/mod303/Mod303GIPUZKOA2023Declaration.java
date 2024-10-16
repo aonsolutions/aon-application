@@ -53,7 +53,17 @@ class Mod303GIPUZKOA2023Declaration extends Mod303GIPUZKOA {
 	public static final double SURCHARGE_PERCENT_05 = 0.5;
 	
 	public static boolean accept(Mod303 mod) {
-		return mod.isGipuzkoa() && mod.getYear() >= 2023 && mod.getPeriod() != Period.T4;
+		return mod.isGipuzkoa() 
+			&& mod.getPeriod() != Period.T4
+			&& mod.getPeriod() != Period.M12
+			&& (mod.getYear() == 2023
+			|| (mod.getYear() == 2024
+			&& (mod.getPeriod() == Period.M01 || mod.getPeriod() == Period.M02 || mod.getPeriod() == Period.M03 
+			 || mod.getPeriod() == Period.M04 || mod.getPeriod() == Period.M05 || mod.getPeriod() == Period.M06 
+			 || mod.getPeriod() == Period.M07 || mod.getPeriod() == Period.M08   
+			 || mod.getPeriod() == Period.T1 || mod.getPeriod() == Period.T2)
+		   ))
+		;
 	}
 	private static final Mod303Key[] PRORATE_KEYS = new Mod303Key[]{
 		  Mod303Key.GP_C018

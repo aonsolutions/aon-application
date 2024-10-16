@@ -82,6 +82,15 @@ public class EnterpriseDataDAO {
 			.findFirst().orElse(new EnterpriseData());
 	}
 	
+	public static EnterpriseData save(AONContext ctx, EnterpriseData enterpriseData){
+		if(enterpriseData.getId() != null && enterpriseData.isRemoved()) {
+			delete(ctx, enterpriseData.getId());
+			return enterpriseData;
+		} else return enterpriseData.getId() == null 
+			? insert(ctx, enterpriseData)
+			: update(ctx, enterpriseData);		
+	}
+	
 	public static void save(AONContext ctx, List<EnterpriseData> enterpriseData){
 		for(EnterpriseData ctData: enterpriseData) {
 			if(ctData.getId() != null && ctData.isRemoved())
@@ -89,8 +98,7 @@ public class EnterpriseDataDAO {
 
 			if (ctData.getId() == null) insert(ctx, ctData);
 			else update(ctx, ctData);
-		}
-		
+		}	
 	}
 	
 	public static EnterpriseData insert(AONContext ctx, EnterpriseData ctData) {

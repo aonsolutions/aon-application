@@ -5925,7 +5925,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 	public void generateCertifaca2(String domainName, String userLogin, Integer contractId) throws IllegalArgumentException {
 		try (Connection connection = AonServletUtils.getConnection(domainName)) {
 			Integer domainId = AonServletUtils.getDomainID(domainName);
-			JooqCertifica2.createCertifica2DB(connection, domainName, userLogin, domainId, contractId, null);
+			JooqCertifica2.createCertifica2DB(connection, domainName, userLogin, domainId, contractId, null, null);
 		} catch (Exception e) {
 			throw new IllegalArgumentException(e);
 		}
@@ -5939,7 +5939,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 			if (AonStringUtils.isNotBlank(certifica2Info.getProfesionalCategory()))
 				JooqCertifica2.insertCNOToDB(connection, domainId, contractId, certifica2Info.getProfesionalCategory(),
 						certifica2Info.getStartDate(), certifica2Info.getEndDate());
-			JooqCertifica2.createCertifica2DB(connection, domainName, userLogin, domainId, contractId, certifica2Info.getSuspensionCode());
+			JooqCertifica2.createCertifica2DB(connection, domainName, userLogin, domainId, contractId, certifica2Info.getSuspensionCode(), certifica2Info.getErteCode());
 		} catch (Exception e) {
 			throw new IllegalArgumentException(e);
 		}
@@ -6510,6 +6510,8 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 				Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId, "SEPE");
 				byte [] pdfBytes = Sepe.certEnterprisePdf(new ByteArrayInputStream(certificate.getData()),
 						certificate.getPassword(), certificate.getType(), nif, endDate);
+				
+				if(null == pdfBytes) throw new IllegalArgumentException("No se ha podido obtener el certific@2 SEPE.");
 
 				JooqContractAttach.setCertifica2PDF(connection, domainId, contractId, pdfBytes);
 				base64Pdf = Base64.getEncoder().encodeToString(pdfBytes);
@@ -7180,7 +7182,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 			Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId, "SEPE");
 
 			// Create certificates
-			Certificates certificates = JooqCertifica2.createCertificates(connection, domainName, userLogin, contractId, certifica2Info.getSuspensionCode());
+			Certificates certificates = JooqCertifica2.createCertificates(connection, domainName, userLogin, contractId, certifica2Info.getSuspensionCode(), certifica2Info.getErteCode());
 
 			System.out.println(certificates.toString());
 
@@ -7343,7 +7345,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 	@Override
 	public Certifica2Info getCertifica2Info(String domainName, String userLogin, Integer contractId) throws IllegalArgumentException {
 		try (Connection connection = AonServletUtils.getConnection(domainName)) {
-			Certifica2Info certifica2Info = JooqCertifica2.getCertifica2Info(connection, domainName, userLogin, contractId, null);
+			Certifica2Info certifica2Info = JooqCertifica2.getCertifica2Info(connection, domainName, userLogin, contractId, null, null);
 			System.out.println(certifica2Info);
 			return certifica2Info;
 		} catch (Exception e) {

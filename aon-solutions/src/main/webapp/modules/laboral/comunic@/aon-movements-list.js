@@ -148,7 +148,8 @@ export class AonMovementsList extends AonElement {
           resp.map((res, idx) => {
             res.count = `<b>${idx+1}</b>`;
             res.option = this.getApplicationParent().getOptions({...res, checkIDC:true});
-            aonTable.addRow(res, () => this.aonMovement(res));
+            let tr = aonTable.addRow(res, () => this.aonMovement(res));
+            tr.id = "aonPayrollRow";
           });
         }
       } catch (e) {
