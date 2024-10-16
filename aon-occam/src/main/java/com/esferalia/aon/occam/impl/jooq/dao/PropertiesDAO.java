@@ -1705,6 +1705,11 @@ public class PropertiesDAO {
 		    );
 		}
 
+		@Override
+		public Property<String> getStatusStringProperty() {
+			return new FilterDAO.PropertyDAO<>(BankStatement.BANK_STATEMENT.STATUS.cast(SQLDataType.VARCHAR));
+		}
+
 	}
 
 }

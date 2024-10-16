@@ -240,7 +240,8 @@ public class BankServlet extends AonApiHttpServlet {
 				.setDescription(api.getData().optString(IJsonNames.DESCRIPTION))
 				.setStatus(!AonStringUtils.isBlank(api.getData().optString("status"))
 						? StatementStatus.valueOf(api.getData().optString("status")).value()
-						: null);
+						: null)
+				.setGlobal(api.getData().optString(IJsonNames.GLOBAL));
 		AonNordigen.getMovementsFromBD(occam, f -> statementsFilter(f, api.getDomain().getId(), filter), page, perPage)
 				.forEach(bankStatement -> array.put(NordigenUtils.bankStatementJSON(bankStatement)));
 		return array;
@@ -361,6 +362,7 @@ public class BankServlet extends AonApiHttpServlet {
 		String amount;
 		Date from;
 		Date to;
+		String global;
 
 		public Date getFrom() {
 			return from;
@@ -424,12 +426,24 @@ public class BankServlet extends AonApiHttpServlet {
 			this.amount = amount;
 			return this;
 		}
+
+		public String getGlobal() {
+			return global;
+		}
+
+		public BankStatementFilter setGlobal(String global) {
+			this.global = global;
+			return this;
+		}
+		
+		
 	}
 
 	public static Filter statementsFilter(NordigenBankStatementProperties f, Integer domainId,
 			BankStatementFilter statementFilter) {
 		Filter filter = f.getDomainProperty().eq(domainId);
 
+		System.out.println(statementFilter.getGlobal());
 		if (statementFilter.getId() != 0) {
 			filter = filter.and(f.getIdProperty().like(statementFilter.getId()));
 		}
@@ -453,7 +467,29 @@ public class BankServlet extends AonApiHttpServlet {
 		if (statementFilter.getStatus() != null) {
 			filter = filter.and(f.getStatusProperty().eq(statementFilter.getStatus()));
 		}
+		
+		if(statementFilter.getGlobal() != null && !AonStringUtils.isBlank(statementFilter.getGlobal())) {
+			
+			Filter filter2 = f.getAmountStringProperty().like("%" + statementFilter.getGlobal() + "%")
+					.or(f.getDescriptionProperty().like("%" + statementFilter.getGlobal() + "%"));
+			
+			Byte statusByte = getStatusByteFromString(statementFilter.getGlobal());
 
+			if (statusByte != null) {
+			    filter2 = filter2.or(f.getStatusStringProperty().eq(statusByte.toString())); 
+			}
+			
+			filter = filter.and(filter2);
+		}
 		return filter;
+	}
+	
+	public static Byte getStatusByteFromString(String statusString) {
+	    for (StatementStatus status : StatementStatus.values()) {
+	        if (status.getName().startsWith(statusString.toUpperCase())) {
+	            return status.value();
+	        }
+	    }
+	    return null;
 	}
 }
