@@ -1,6 +1,7 @@
 import { MSG, CSS, EVENT, TAG } from 'aonsolutions/environments/environments.js'; 
 import { AonSuiteMenu } from '../aon-suite-menu.js';
 import * as GWT from 'aonsolutions/gwt/gwt.js';
+import * as JSF from '../aon-jsf-app.js';
 
 export class AonAccountingMenu extends AonSuiteMenu {
 
@@ -48,23 +49,23 @@ export class AonAccountingMenu extends AonSuiteMenu {
 				description:"Mantenimiento de Apuntes",
 				title:"Mantenimiento de Apuntes",
 				action: () => GWT.iLoad(GWT.ACCOUNT_ENTRY)
-			},/*{
+			},{
 				description: "Apuntes de Amortizaciones",
 				title: "Apuntes de Amortizaciones",
-				action: () => alert("Apuntes de Amortizaciones")
+				action: () => this.rootPanel(new JSF.AonJsfPeriodAmortization)
 			},{
 				description: "Asientos de explotación, cierre y apertura",
 				title: "Asientos de explotación, cierre y apertura",
-				action: () => alert("Asientos de explotación, cierre y apertura")
+				action: () => this.rootPanel(new JSF.AonJsfEndPeriodEntries)
 			},{
 				description: "Contabilización de Facturas",
 				title: "Contabilización de Facturas",
-				action: () => alert("Contabilización de Facturas")
+				action: () => this.rootPanel(new JSF.AonJsfInvoiceRecorder)
 			},{
 				description: "Contabilización de Cobros y Pagos realizados",
 				title: "Contabilización de Cobros y Pagos realizados",
-				action: () => alert("Contabilización de Cobros y Pagos realizados")
-			},*/{
+				action: () => this.rootPanel(new JSF.AonJsfFinanceTrackingEntry)
+			},{
 				description: "Documentos Pendientes",
 				title: "Documentos Pendientes",
 				action: () => GWT.iLoad(GWT.RAWDOC)
@@ -95,11 +96,11 @@ export class AonAccountingMenu extends AonSuiteMenu {
 				description: "Balances oficiales",
 				title: "Balances oficiales",
 				action: () => GWT.iLoad(GWT.ACCOUNT_BALANCE_REPORT)
-			},{
+			}/*,{
 				description: "Cuenta de Explotación (P y G) ANALÍTICA",
 				title: "Cuenta de Explotación (P y G) ANALÍTICA",
 				action: () => GWT.iLoad(GWT.ACCOUNT_ANALYTICAL_REPORT)
-			}]
+			}*/]
 		},{
 			title: 'Tablas Auxiliares',
 			options: [{
@@ -110,11 +111,11 @@ export class AonAccountingMenu extends AonSuiteMenu {
 				description: "Conceptos Automáticos",
 				title: "Conceptos Automáticos",
 				action: () => alert("description")
-			},{
+			},*/{
 				description: "Centros de Costo",
 				title: "Centros de Costo",
-				action: () => alert("description")//GWT.iLoad(GWT.CostCenterModule)
-			},*/{
+				action: () => GWT.iLoad(GWT.COST_CENTER)
+			},{
 				description: "Ejercicios Contables",
 				title: "Ejercicios Contables",
 				action: () => GWT.iLoad(GWT.ACCOUNTING_PERIOD)
@@ -133,11 +134,11 @@ export class AonAccountingMenu extends AonSuiteMenu {
 			}]
 		},{
 			title: 'Inmovilizado',
-			options: [/*{
+			options: [{
 				description: "Ficha de Amortización",
 				title: "Ficha de Amortización",
-				action: () => alert("description")
-			},*/{
+				action: () => this.rootPanel(new JSF.AonJsfAmortization)
+			},{
 				description: "Tabla de tipos de Amortización",
 				title: "Tabla de tipos de Amortización",
 				action: () => GWT.iLoad(GWT.AMORTIZATION_TYPE)
@@ -160,11 +161,11 @@ export class AonAccountingMenu extends AonSuiteMenu {
 				description: "Panel de Compras y Gastos/ Ventas e Ingresos",
 				title: "Panel de Compras y Gastos/ Ventas e Ingresos",
 				action: () => GWT.iLoad(GWT.ACCOUNT_OPERATION_REPORT)
-			}/*,{
+			},{
 				description: "Listado de Excel de Impuestos aplicados en Facturas",
 				title: "Listado de Excel de Impuestos aplicados en Facturas",
-				action: () => alert("description")
-			}*/]
+				action: () => this.rootPanel(new JSF.AonJsfInvoiceReport)
+			}]
 		},{
 			title: 'Utilidades',
 			options: [{

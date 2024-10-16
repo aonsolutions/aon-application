@@ -911,6 +911,54 @@ export class AonJsfIrpfData extends AonJsfApp {
 	}
 }
 
+export class AonJsfAmortization extends AonJsfApp {
+	
+	constructor() {
+		super();
+		this.setViewId('/facelet/app/amortization.xhtml');
+	}
+}
+
+export class AonJsfPeriodAmortization extends AonJsfApp {
+	
+	constructor() {
+		super();
+		this.setViewId('/facelet/app/periodAmortization.xhtml');
+	}
+}
+
+export class AonJsfEndPeriodEntries extends AonJsfApp {
+	
+	constructor() {
+		super();
+		this.setViewId('/facelet/app/endPeriodEntries.xhtml');
+	}
+}
+
+export class AonJsfInvoiceReport extends AonJsfApp {
+	
+	constructor() {
+		super();
+		this.setViewId('/facelet/app/invoiceReport.xhtml');
+	}
+}
+
+export class AonJsfInvoiceRecorder extends AonJsfApp {
+	
+	constructor() {
+		super();
+		this.setViewId('/facelet/app/invoiceRecorder.xhtml');
+	}
+}
+
+export class AonJsfFinanceTrackingEntry extends AonJsfApp {
+	
+	constructor() {
+		super();
+		this.setViewId('/facelet/app/financeTrackingEntry.xhtml');
+	}
+}
+
 if(!window.customElements.get(TAG.AON_JSF_APP)){
 	window.customElements.define(TAG.AON_JSF_APP, AonJsfApp);
 }
@@ -1317,4 +1365,28 @@ if(!window.customElements.get(TAG.AON_JSF_CONTRACT_BATCH)){
 
 if(!window.customElements.get(TAG.AON_JSF_IRPF_DATA)){
 	window.customElements.define(TAG.AON_JSF_IRPF_DATA, AonJsfIrpfData);
+}
+
+if(!window.customElements.get(TAG.AON_JSF_AMORTIZATION)){
+	window.customElements.define(TAG.AON_JSF_AMORTIZATION, AonJsfAmortization);
+}
+
+if(!window.customElements.get(TAG.AON_JSF_PERIOD_AMORTIZATION)){
+	window.customElements.define(TAG.AON_JSF_PERIOD_AMORTIZATION, AonJsfPeriodAmortization);
+}
+
+if(!window.customElements.get(TAG.AON_JSF_END_PERIOD_ENTRIES)){
+	window.customElements.define(TAG.AON_JSF_END_PERIOD_ENTRIES, AonJsfEndPeriodEntries);
+}
+
+if(!window.customElements.get(TAG.AON_JSF_INVOICE_REPORT)){
+	window.customElements.define(TAG.AON_JSF_INVOICE_REPORT, AonJsfInvoiceReport);
+}
+
+if(!window.customElements.get(TAG.AON_JSF_INVOICE_RECORDER)){
+	window.customElements.define(TAG.AON_JSF_INVOICE_RECORDER, AonJsfInvoiceRecorder);
+}
+
+if(!window.customElements.get(TAG.AON_JSF_FINANCE_TRACKING_ENTRY)){
+	window.customElements.define(TAG.AON_JSF_FINANCE_TRACKING_ENTRY, AonJsfFinanceTrackingEntry);
 }
