@@ -11,6 +11,8 @@
 	<aon:valueParam name="showTitle" default="#{(toolbarTitle!=null) and (!skipToolbarTitle)}" />
 	<aon:valueParam name="showDescription" default="#{(toolbarDescription!=null) and (!skipToolbarDescription)}" />
 	<aon:valueParam name="showMainStyleClass" default="#{showTitle or showDescription}" />
+	<aon:valueParam name="showFilterWidget" default="#{false}" />
+		
 
 	<aon:div styleClass="#{(innerToolbar)?'aon-toolbar':'aon-finding-title-toolbar'}">
 		<h:panelGrid columns="3" cellspacing="0" cellpadding="0"
