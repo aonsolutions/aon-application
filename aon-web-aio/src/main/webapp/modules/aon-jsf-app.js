@@ -895,6 +895,22 @@ export class AonJsfLoader extends AonJsfApp {
 	}
 }
 
+export class AonJsfContractBatch extends AonJsfApp {
+	
+	constructor() {
+		super();
+		this.setViewId('/facelet/app/contractBatch.xhtml');
+	}
+}
+
+export class AonJsfIrpfData extends AonJsfApp {
+	
+	constructor() {
+		super();
+		this.setViewId('/facelet/app/irpfData.xhtml');
+	}
+}
+
 if(!window.customElements.get(TAG.AON_JSF_APP)){
 	window.customElements.define(TAG.AON_JSF_APP, AonJsfApp);
 }
@@ -1293,4 +1309,12 @@ if(!window.customElements.get(TAG.AON_JSF_RELATIONSHIP)){
 
 if(!window.customElements.get(TAG.AON_JSF_LOADER)){
 	window.customElements.define(TAG.AON_JSF_LOADER, AonJsfLoader);
+}
+
+if(!window.customElements.get(TAG.AON_JSF_CONTRACT_BATCH)){
+	window.customElements.define(TAG.AON_JSF_CONTRACT_BATCH, AonJsfContractBatch);
+}
+
+if(!window.customElements.get(TAG.AON_JSF_IRPF_DATA)){
+	window.customElements.define(TAG.AON_JSF_IRPF_DATA, AonJsfIrpfData);
 }
