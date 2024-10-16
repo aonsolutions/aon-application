@@ -5,12 +5,17 @@
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:aon="http://www.code.es/aon-rich-components">
 
-	<aon:valueParam name="showTitle" default="#{(toolbarTitle!=null) and (!skipToolbarTitle)}" />
-	<aon:valueParam name="showDescription" default="#{(toolbarDescription!=null) and (!skipToolbarDescription)}" />
-	<aon:valueParam name="showMainStyleClass" default="#{showTitle or showDescription}" />
+	<aon:valueParam name="showTitle"
+		default="#{(toolbarTitle!=null) and (!skipToolbarTitle)}" />
+	<aon:valueParam name="showDescription"
+		default="#{(toolbarDescription!=null) and (!skipToolbarDescription)}" />
+	<aon:valueParam name="showMainStyleClass"
+		default="#{showTitle or showDescription}" />
+	<aon:valueParam name="showLogs" default="#{logs != null}" />
 
-	<aon:div styleClass="#{(innerToolbar)?'aon-toolbar':'aon-finding-title-toolbar'}">
-		<h:panelGrid columns="3" cellspacing="0" cellpadding="0"
+	<aon:div
+		styleClass="#{(innerToolbar)?'aon-toolbar':'aon-finding-title-toolbar'}">
+		<h:panelGrid columns="4" cellspacing="0" cellpadding="0"
 			columnClasses="#{showTitle?'aon-finding-title,':''}#{showDescription?'aon-finding-subtitle,':''}#{showMainStyleClass?'aon-finding-toolbar':''}">
 
 			<aon:if test="#{showTitle}">
@@ -21,16 +26,38 @@
 
 			<aon:if test="#{showDescription}">
 				<aon:div styleClass="aon-finding-subtitle-internal">
-					<aon:outputText value="#{toolbarDescription}" />			
+					<aon:outputText value="#{toolbarDescription}" />
 				</aon:div>
 			</aon:if>
-			<ui:insert name="toolbarActions"/>
-			<aon:div id="#{toolbarID}" styleClass="aon-finding-toolbar-item-group">
-				<ui:insert name="beforeToolbarContent"/>
-				<ui:insert name="toolbarContent"/>
-				<ui:insert name="additionalToolbarContent"/>
+
+			<aon:if test="#{showLogs}">
+    			<aon:div styleClass="aon-finding-subtitle-internal">
+        	<a href="#" onclick="redirectToLogs()">Logs bancarios</a>
+    			</aon:div>    			
+			</aon:if>
+
+			<ui:insert name="toolbarActions" />
+			<aon:div id="#{toolbarID}"
+				styleClass="aon-finding-toolbar-item-group">
+				<ui:insert name="beforeToolbarContent" />
+				<ui:insert name="toolbarContent" />
+				<ui:insert name="additionalToolbarContent" />
+				<ui:insert name="showLogs" />
 			</aon:div>
 		</h:panelGrid>
 	</aon:div>
-	
+	<script type="text/javascript">
+    			function redirectToLogs() {
+       	 		var token = localStorage.getItem('aon_session_id');
+       			var document = localStorage.getItem('aon_domain_document');
+ 				var domainId = localStorage.getItem('aon_domain_id');
+    
+        		if (token) {
+            		window.location.href = '/ms/api/viewLogs?token=' + encodeURIComponent(token) + '&amp;domainId=' + domainId + '&amp;document=' + document;
+        		} else {
+            		alert("No se encontró un token en el almacenamiento local");
+        		}
+    		}
+	</script>
 </ui:composition>
+
