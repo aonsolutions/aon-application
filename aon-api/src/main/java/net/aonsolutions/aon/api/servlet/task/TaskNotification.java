@@ -32,6 +32,7 @@ import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.task.Task;
 import com.esferalia.aon.occam.api.model.task.TaskWorkflow;
 import com.esferalia.aon.occam.api.model.task.TaskWorkflowType;
+import com.esferalia.aon.watson.util.AonStringUtils;
 
 import net.aonsolutions.aon.api.ewok.AonApiData;
 import net.aonsolutions.aon.api.model.mail.TaskMail;
@@ -60,7 +61,7 @@ public class TaskNotification {
 			LOGGER.info("onOpenNotification");
 			String body = "Solicitud Abierta";
 			Auth auth = AON_SOLUTIONS.getAuth(workflow.getEmail());
-			if(auth!=null && auth.getName()!=null && !auth.getName().isEmpty()) {
+			if(auth!=null && !AonStringUtils.isBlank(auth.getName())) {
 				body += " por <b>" +auth.getName()+"</b>.";
 			}
 
@@ -103,7 +104,7 @@ public class TaskNotification {
 		if(isAllowed(api, task, TaskUtils.isExternal(task, api.getDomain()) ? APP_REQUESTS_EXT_COMMENT: APP_REQUESTS_INT_COMMENT)) {
 			String body = "Han comentado la Solicitud";
 			Auth auth = AON_SOLUTIONS.getAuth(workflow.getEmail());
-			if(auth!=null && !auth.getName().isEmpty()) 
+			if(auth!=null && !AonStringUtils.isBlank(auth.getName())) 
 				body = "<b>"+auth.getName() +"</b> ha comentado: <br>" + workflow.getComment();
 
 			sendNotificationWorkflow(api, task, workflow, body);
@@ -166,7 +167,7 @@ public class TaskNotification {
 	public static void onCloseNotification(AonApiData api, Task task, TaskWorkflow workflow){
 		LOGGER.info("onCloseNotification");
 		if( isAllowed(api, task, TaskUtils.isExternal(task, api.getDomain()) ? APP_REQUESTS_EXT_CLOSED: APP_REQUESTS_INT_CLOSED)) {
-			String body = workflow.getComment()!=null &&  Boolean.FALSE.equals(workflow.getComment().isEmpty()) ? workflow.getComment() :"Solicitud Cerrada." ;
+			String body = workflow.getComment()!=null &&  !AonStringUtils.isBlank(workflow.getComment()) ? workflow.getComment() :"Solicitud Cerrada." ;
 			sendNotificationWorkflow(api, task, workflow, body);
 		}
 	}
@@ -189,7 +190,7 @@ public class TaskNotification {
 			) {
 				
 				Auth auth = AON_SOLUTIONS.getAuth(gtaskId.get());
-				if(!auth.getEmail().isEmpty()) {	
+				if(!AonStringUtils.isBlank(auth.getEmail())) {	
 					
 					if( isAllowed(api, task, AppParamsRequest.APP_REQUESTS_EMAIL_RATING ) ) {
 						LOGGER.info("External Evaluation");					
@@ -335,7 +336,7 @@ public class TaskNotification {
 					.setLogo(logo);
 
                     JSONObject auth = TaskUtils.parseAuth(task);
-					if(!auth.optString(IJsonNames.EMAIL).isEmpty()) {
+					if(!AonStringUtils.isBlank(auth.optString(IJsonNames.EMAIL))) {
 						tm.setContact(auth.optString(IJsonNames.EMAIL));
 					}
 			
