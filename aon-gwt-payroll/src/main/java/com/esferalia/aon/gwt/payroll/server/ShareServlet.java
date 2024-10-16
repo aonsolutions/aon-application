@@ -389,7 +389,13 @@ public class ShareServlet extends HttpServlet implements ShareService {
 			while ((output = br.readLine()) != null) {
 				response = output;	
 			}	
-			return new JSONObject(response).getString("message");
+			
+			if(AonStringUtils.startsWith(response, "[")) {
+				JSONArray arr = new JSONArray(response);
+				JSONObject obj = arr.getJSONObject(0);
+				return obj.getString("message");
+			} else
+				return new JSONObject(response).getString("message");
 		} catch (Throwable  e) {
 			e.printStackTrace();
 			return e.getMessage();
