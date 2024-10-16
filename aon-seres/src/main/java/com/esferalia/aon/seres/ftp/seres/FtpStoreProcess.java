@@ -7,7 +7,6 @@ import java.io.InputStream;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.Map;
 import java.util.logging.Level;
 
@@ -19,7 +18,6 @@ import com.code.aon.AonVersion;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.DataResponse;
 import com.esferalia.aon.occam.api.model.DataResponseDetail;
-import com.esferalia.aon.occam.api.model.MailAccount;
 import com.esferalia.aon.occam.api.model.type.DataResponseSource;
 import com.esferalia.aon.seres.ftp.SeresFtpConnectionProvider;
 import com.esferalia.aon.watson.server.io.AonFileUtils;
@@ -148,12 +146,12 @@ public class FtpStoreProcess implements ILongProcess, Serializable {
 		AON.insertDataResponseDetail(domainName, domainId, loggedUser, drd);
 
 		if( !level.equals(Level.INFO) ) {
-			sendEmail(domainName, domainId, loggedUser, "ERROR", "Envio al FTP de Seresnet", "Envio NO correcto: "+referenceCode, null, null, RECIPIENTS_TO_FAILURES);
+			sendEmail("ERROR", "Envio al FTP de Seresnet", "Envio NO correcto: "+referenceCode, null, null, RECIPIENTS_TO_FAILURES);
 		}
 	}
 	
 
-	protected void sendEmail(String domainName, Integer domainId, String loggedUser, String logLevel, String subject, String content, String attachName,
+	protected void sendEmail(String logLevel, String subject, String content, String attachName,
 			String attachValue, String... recipients) {
 		try {
 			File file = null;
@@ -176,19 +174,10 @@ public class FtpStoreProcess implements ILongProcess, Serializable {
 		}
 	}
 	
-
-	
-	public MailAccount getAdminMailAccount(String domainName, Integer domainId, String login) {
-		LinkedList<MailAccount> list = AON.getMailAccountList(domainName, domainId, login, 
-				f -> f.getDomainProperty().eq(0));
-		return list!=null && !list.isEmpty()?list.getFirst():null;
-	}
-	
 	public enum ResponseMessageType {
 		COMMIT, RESPONSE;
 	}
 
-	
 	public class SeresFtpProcessThread implements Runnable {
 		private ILongProcess longProcess;
 		private Thread thread;
