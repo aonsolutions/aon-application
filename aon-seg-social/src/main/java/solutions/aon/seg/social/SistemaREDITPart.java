@@ -26,6 +26,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
 
 import org.apache.http.impl.client.CloseableHttpClient;
+import org.htmlunit.ElementNotFoundException;
 import org.htmlunit.FailingHttpStatusCodeException;
 import org.htmlunit.Page;
 import org.htmlunit.StringWebResponse;
@@ -393,8 +394,8 @@ class SistemaREDITPart extends ServicioREDPartUtils {
 
 			htmlPage = fillGeneralData(htmlPage, regime, ccc, naf, startdate, contingency, situationEmployee, BAJA);
 
-			HtmlForm form = (HtmlForm) wait4(htmlPage, p -> p.getElementById("FORMULARIO_4")).orElseThrow(()-> new SegSocialException(TRY_AGAIN));
 			
+			HtmlForm form = (HtmlForm) wait4(htmlPage, p -> p.getElementById("FORMULARIO_4")).orElseThrow(()-> new SegSocialException(TRY_AGAIN));
 			if (job.isPresent()) {		
 				HtmlInput jobInput = form.getInputByName("puestoTrabajo");
 				jobInput.focus();
@@ -411,7 +412,7 @@ class SistemaREDITPart extends ServicioREDPartUtils {
 				htmlPage = HtmlUnitToolkit.selectOption(htmlPage, "tipoContrato", "1");
 				
 
-				wait4(htmlPage, p -> form.getInputByName("sumaBaseCot"))
+				wait4(htmlPage, p -> p.getElementById("sumaBaseCot"))
 				.orElseThrow(() -> new SegSocialException(TRY_AGAIN));
 
 				break;
@@ -419,7 +420,7 @@ class SistemaREDITPart extends ServicioREDPartUtils {
 				webClient.waitForBackgroundJavaScript(5000);
 				htmlPage = HtmlUnitToolkit.selectOption(htmlPage, "tipoContrato", "2");
 
-				wait4(htmlPage, p -> form.getInputByName("BaseCot"))
+				wait4(htmlPage, p -> p.getElementById("BaseCot"))
 				.orElseThrow(() -> new SegSocialException(TRY_AGAIN));
 
 				break;
@@ -428,9 +429,10 @@ class SistemaREDITPart extends ServicioREDPartUtils {
 			
 
 			if(fATEP.isPresent()) {
-				DomNode inputATEP = form.getInputByName("fechaATEP");
-				if(null != inputATEP) {
-					((HtmlInput)inputATEP).setValue(Toolkit.formatDate(fATEP.get(), DATE_FORMAT).get());
+				try {
+					HtmlInput inputATEP = form.getInputByName("fechaATEP");
+					inputATEP.setValue(Toolkit.formatDate(fATEP.get(), DATE_FORMAT).get());
+				} catch ( ElementNotFoundException e ) {
 				}
 			}
 
