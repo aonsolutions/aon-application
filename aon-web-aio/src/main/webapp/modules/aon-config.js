@@ -134,24 +134,31 @@ export class AonConfig extends AonElement {
 
         topNavSwitch.addEventListener(EVENT.CHANGE, () => {
             LS.setTopMenu(topNavSwitch.checked);
-
-      
-        if(LS.isTopMenu()) {
-                aonMenu.showTopNav();
-            } else {
-                aonMenu.hideTopNav();
-            };
-                
-        });
+            let content = this.getElement("aonDesktopMainContent");
+            let topnav = this.getElement("aonMenuTopnav");
+            let height = topnav.style.height;
+            if(height == "68px")
+                content.style.height = "calc(100vh - 61px)";
+            else if (height == "0px")
+                content.style.height = "calc(100vh - 115px)";
+            
+            if(LS.isTopMenu()) {
+                    aonMenu.showTopNav();
+                } else {
+                    aonMenu.hideTopNav();
+                };
+                    
+            });
 
         sideNavSwitch.addEventListener(EVENT.CHANGE, () => {
             let welcome = this.getElement("aonCompanyTabFilter");
             LS.setLeftMenu(sideNavSwitch.checked);
             LS.setPortalChecked(sideNavSwitch.checked);
+            let side = this.getElement("aonMenuSidenav");
             if(!welcome){
-                if(LS.isLeftMenu()) {
+                if(side.style.width == "0px") {
                     aonMenu.showSideNav();
-                } else {
+                } else if(side.style.width == "68px") {
                     aonMenu.hideSideNav();
                 };
             }
