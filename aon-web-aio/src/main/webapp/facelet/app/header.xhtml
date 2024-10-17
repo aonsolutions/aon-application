@@ -42,107 +42,103 @@
 		font-family: "Noto Sans", sans-serif !important;
 	}
 	
-	.rich-calendar-exterior {
-	    font-family: 'Roboto', sans-serif !important;
-	    font-size: 12px !important;
-	    border: none !important;
-	    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1) !important;
-	    max-width: 320px !important;
-	    padding: 10px !important;
+	.aon-panelGrid-search table{
+		background-color: #F8F9FA !important
 	}
 	
-	.rich-calendar-header {
-	    background-color: #4285F4 !important;
-	    color: white !important;
-	    font-weight: bold !important;
-	    padding: 8px !important;
-	    font-size: 14px !important;
-	    text-align: center !important;
-	}
-	
-	.rich-calendar-btn {
-	    background-color: transparent !important;
-	    border: none !important;
-	    color: #4285F4 !important;
-	    font-size: 14px !important;
-	    cursor: pointer !important;
-	    padding: 5px 8px !important;
-	    transition: background-color 0.2s ease !important;
-	}
-	
-	.rich-calendar-btn:hover {
-	    background-color: rgba(66, 133, 244, 0.1) !important;
-	}
-	
-	.rich-calendar-cell {
-	    width: 32px !important;
-	    height: 32px !important;
-	    text-align: center !important;
-	    vertical-align: middle !important;
-	    border-radius: 50% !important;
-	    transition: background-color 0.2s ease !important;
-	    font-size: 12px !important;
-	    line-height: 32px !important;
-	}
-	
-	.rich-calendar-cell:hover {
-	    background-color: #e3f2fd !important;
-	    cursor: pointer !important;
-	}
-	
-	.rich-calendar-selected {
-	    background-color: #4285F4 !important;
-	    color: white !important;
-	    font-weight: bold !important;
-	}
-	
-	/* Ocultar días fuera del mes actual */
 	.rich-calendar-boundary-dates {
-	    background-color: transparent !important;
-	    border: none !important;
-	    color: #4285F4 !important;
-	    font-size: 14px !important;
-	    cursor: pointer !important;
-	    padding: 5px 8px !important;
-	    transition: background-color 0.2s ease !important;
+		color: #F8F9FA !important;
+		pointer-events: none !important; 
 	}
 	
-	tbody tr:last-chil{
+	#aonContent\:financeSearch\:Finance_dueDate-ToWeekNum6{
 		display: none !important;
 	}
 	
-/* 	
-	tr td:first-child.rich-calendar-boundary-dates {
-	    display: none !important;
+	.rich-calendar-week{
+		color: #F8F9FA !important;
+		background-color: #F8F9FA !important;
+		border: 0px !important;
 	}
 	
-	
-	tr td:last-child.rich-calendar-boundary-dates {
-	    display: none !important;
-	} */
-	
-	/* Mejorar la apariencia de los botones de navegación del calendario */
-	.rich-calendar-prev-btn, .rich-calendar-next-btn {
-	    color: #4285F4 !important;
+	.rich-calendar-header {
+	    background-color: #D4CFC7 !important;
+	    color: rgb(66,66,66) !important;
+	    font-weight: bold !important;
 	    font-size: 16px !important;
-	    padding: 5px !important;
-	    cursor: pointer !important;
-	    border: none !important;
+	    text-align: center !important;
+	    padding: 10px !important;
+	    border-bottom: 1px solid #ddd !important;
+	}
+	
+	.rich-calendar-tool-btn {
 	    background-color: transparent !important;
-	    transition: transform 0.2s ease !important;
+	    border: none !important;
+	    color: rgb(66,66,66) !important;
+	    cursor: pointer !important;
+	    font-size: 16px !important;
 	}
 	
-	.rich-calendar-prev-btn:hover, .rich-calendar-next-btn:hover {
-	    transform: scale(1.05) !important;
+	
+	.rich-calendar-tool-close {
+	    display: none !important; 
 	}
 	
-	.rich-calendar-popup {
+	
+	.rich-calendar-days {
+	    background-color: #f8f9fa !important;
+	    color: #555 !important;
+	    font-weight: 600 !important;
+	    font-size: 14px !important;
+	    text-align: center !important;
 	    padding: 8px !important;
-	    border-radius: 8px !important;
-	    background-color: white !important;
-	    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15) !important;
+	    border-bottom: 1px solid #ddd !important;
+	}
+	
+	
+	.rich-calendar-days-boundary {
+	    color: #ccc !important; 
+	    pointer-events: none !important; 
 	}
 
+	.rich-calendar-cell {
+	    color: #333;
+	    font-size: 14px !important;
+	    padding: 10px !important;
+	    text-align: center !important;
+  		border: 0px !important;
+	    border-radius: 25px !important;  
+	    cursor: pointer !important;
+	    background-color: #F8F9FA ;
+	}
+	
+	.rich-calendar-cell:hover {
+	    background-color: #7F91B3 !important;
+	}
+	
+	.rich-calendar-cell-selected {
+	    background-color: #007bff !important;
+	    color: #fff !important;
+	}
+	
+	.rich-calendar-today {
+	  background-color: #002469;
+	  color: white !important;
+	  font-weight: bold;
+	}
+	
+	.rich-calendar-weekends {
+	    color: #ff0000 !important;
+	}
+	
+/* 	.rich-calendar-holly{
+		background-color: #B2BCD1 !important;
+	} */
+	
+	.rich-calendar-toolfooter{
+		display: none !important;
+	}
+	
 	.aonDataScroller {
 		position: inherit;
 	}
