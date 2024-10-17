@@ -179,7 +179,7 @@ export class AonApplication extends AonElement {
       if(height == "68px")
         content.style.height = "calc(100vh - 115px)";
       else if (height == "0px")
-        content.style.height = "calc(100vh - 61px)";
+        content.style.height = "calc(100vh - 48px)";
 
     }
 

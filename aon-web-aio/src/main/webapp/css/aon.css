@@ -1158,7 +1158,7 @@ background-color: var(--aonLightGray);
   width: 100%;
   display: block;
   transition: 0.5s;
-  height: calc(100vh - 102px);
+  /* height: calc(100vh - 48px); */
   overflow-y: auto;
   border-radius: 0px;
   background-color: var(--aonContentBeta);
