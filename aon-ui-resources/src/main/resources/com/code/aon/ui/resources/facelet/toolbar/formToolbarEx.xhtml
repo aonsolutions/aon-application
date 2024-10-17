@@ -82,6 +82,10 @@
 				<ui:insert name="beforeSpinToolbarContent"/>
 			</aon:if>	
 			
+			<aon:if test="#{app.standAlone}">
+				<aon:insert name="beforeSpinToolbarContent" filter="#{!aon:isMenuItem(el)}"/>
+			</aon:if>	
+
 			<aon:if test="#{showMoreMenu}">
  				<aon:if test="#{app.standAlone}">
 					

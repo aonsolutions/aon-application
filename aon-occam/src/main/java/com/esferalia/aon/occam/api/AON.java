@@ -1483,6 +1483,10 @@ public class AON {
 	}
 	
 	// ------------------------------------ NEW ITEM
+
+	public static Item getItem(Domain domain, String login, Integer id, Options...options) {
+		return getItem(domain, login, f -> f.getIdProperty().eq(id), options);
+	}
 	
 	public static Item getItem(Domain domain, String login, ItemFilter filter, Options...options) {
 		try (CloseableAONContext ctx =  AONContext.getAONContext(domain, login)){
