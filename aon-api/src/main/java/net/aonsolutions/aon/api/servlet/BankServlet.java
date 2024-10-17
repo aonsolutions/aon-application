@@ -126,6 +126,9 @@ public class BankServlet extends AonApiHttpServlet {
 			case "/delete":
 				response(req,resp, delete(api));
 				break;
+			case "/unlink":
+				response(req,resp,deleteRequisitionByRbank(api));
+				break;
 			default:
 				throw new AonApiException(AonApiError.ROUTE_ERROR.getMessage());
 			}
@@ -156,7 +159,7 @@ public class BankServlet extends AonApiHttpServlet {
 
 	    String alias = api.getData().optString(IJsonNames.NAME);
 
-	    boolean active = api.getData().optBoolean(IJsonNames.ACTIVE); 
+//	    boolean active = api.getData().optBoolean(IJsonNames.ACTIVE); 
 
 	    bank.setDomain(api.getDomain().getId())
 	        .setRegistry(company.get().getId())
@@ -164,7 +167,7 @@ public class BankServlet extends AonApiHttpServlet {
 	        .setBic(bic)
 	        .setSuffix(suffix)
 	        .setAlias(alias)
-	        .setActive(active);
+	        .setActive(true);
 	    
 	    AON.saveRegistryBank(api.getDomain(), api.getUser().getLogin(), bank);
 	    
@@ -327,6 +330,23 @@ public class BankServlet extends AonApiHttpServlet {
 //			NordigenUtils.logException(e);
 		}
 		return jsonLink;
+	}
+	
+	private static boolean deleteRequisitionByRbank(AonApiData api) {
+		String id = api.getRequest().getParameter("id");
+		int idParsed = Integer.parseInt(id);
+		try {
+			occam.setDomain(api.getDomain().getId()).setDomainName(api.getDomain().getName())
+			.setUser(api.getUser().getLogin());
+			NordigenConfiguration nc = AonNordigen.getConfiguration(occam);
+			NordigenAccessToken token = nc.getToken();
+			token = NordigenUtils.handleToken(token);
+			AonNordigen.deleteRequisitionByRbank(token, occam, idParsed);
+			return true;
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return false;
 	}
 
 	private static JSONArray getBalances(AonApiData api) {
