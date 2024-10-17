@@ -295,8 +295,8 @@ export class AonTax extends AonElement {
     divOne.appendChild(divTextTwo);
     div.appendChild(divOne);
     
-    // Esto no aparece en el modelo 303 a ingresar, pues en el 303 se deja elegir el tipo de ingreso que se quiere hacer (para poder indicar aplazamiento) 
-    if (resp.model != "IVA" || resp.result <= 0)
+    // Esto no aparece en los modelos 303, 130 y 131, a ingresar, pues se deja elegir el tipo de ingreso que se quiere hacer (para poder indicar aplazamiento) 
+    if ((resp.model != "IVA" && resp.model != "130" && resp.model != "131") || resp.result <= 0)
 	    if(resp.typeText){
 	      const divK =  this.createElement(TAG.DIV);
 	      divK.classList.add("aonFlexBetween", "colorGrey", "aonFontWeight-700");
@@ -312,8 +312,8 @@ export class AonTax extends AonElement {
     form.id = `${this.id}Form`;
     div.appendChild(form);
     
-    // Para el Modelo 303 a ingresar, se deja elegir el tipo de ingreso
-    if (resp.model == "IVA" && resp.result > 0) {
+    // Para los modelos 303, 130 y 131, a ingresar, se deja elegir el tipo de ingreso (para poder seleccionar aplazamiento)
+    if ((resp.model == "IVA" || resp.model == "130" || resp.model == "131") && resp.result > 0) {
 	    let types = [
 			{ value: 'DEPOSIT', name: 'Ingreso'}, 
 			{ value: 'BANK', name: 'Domiciliación'}, 

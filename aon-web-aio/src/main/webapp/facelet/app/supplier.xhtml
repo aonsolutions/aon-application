@@ -8,6 +8,13 @@
 	xmlns:rich="http://richfaces.org/rich">
 	
 	<aon:form id="appForm" > 
+
+		<aon:selectManyCheckbox
+			style="display: none; " 
+			value="#{customerSearch.customerStatuses}">
+			<f:selectItems value="#{customerCollections.customerStatuses}"/>
+		</aon:selectManyCheckbox>							
+
 		<aon:commandButton 
 			id="appButton" 
 			style="display: none; " 
