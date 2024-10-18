@@ -90,6 +90,9 @@ public class BankServlet extends AonApiHttpServlet {
 			case "/movementsBD":
 				response(req, resp, getMovementsFromBD(api));
 				break;
+			case "/movementsCount":
+				response(req,resp, getMovementsCount(api));
+				break;
 			//Compara la fecha de actualizacion con la fecha actual o la que decida el usuario
 			case "/compareDate":
 				response(req, resp, compareDate(api));
@@ -261,6 +264,14 @@ public class BankServlet extends AonApiHttpServlet {
 				.forEach(bankStatement -> array.put(NordigenUtils.bankStatementJSON(bankStatement)));
 		return array;
 	}
+	
+	private static long getMovementsCount(AonApiData api) {
+		int id = api.getData().optInt("id");
+		occam.setDomain(api.getDomain().getId()).setDomainName(api.getDomain().getName())
+		.setUser(api.getUser().getLogin());
+		RegistryBank bank = AON.getRegistryBank(occam, f -> f.getIdProperty().eq(id));
+		return AonNordigen.getBankMovementsCount(occam, bank);
+	}
 
 	private static JSONArray getBanks(AonApiData api) {
 		Company company = AON.getCompany(api.getDomain(), api.getUser(),
@@ -333,6 +344,7 @@ public class BankServlet extends AonApiHttpServlet {
 	}
 	
 	private static boolean deleteRequisitionByRbank(AonApiData api) {
+		
 		String id = api.getRequest().getParameter("id");
 		int idParsed = Integer.parseInt(id);
 		try {
