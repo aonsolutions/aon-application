@@ -382,6 +382,8 @@ public class BankServlet extends AonApiHttpServlet {
 	}
 
 	private static JSONArray getMovements(AonApiData api) {
+		int id = api.getData().optInt("id");
+
 		try {
 			occam.setDomain(api.getDomain().getId()).setDomainName(api.getDomain().getName())
 					.setUser(api.getUser().getLogin());
@@ -390,7 +392,8 @@ public class BankServlet extends AonApiHttpServlet {
 			NordigenAccessToken token = nc.getToken();
 			token = NordigenUtils.handleToken(token);
 			List<NordigenBankAccount> linkedAccountList = nc.getLinkedAccounts();
-			return NordigenUtils.convertAccountsMovementsToJsonArray(linkedAccountList, token, occam);
+			return NordigenUtils.convertAcccountMovementsToJsonArray(linkedAccountList, id, token, occam);
+//			return NordigenUtils.convertAccountsMovementsToJsonArray(linkedAccountList, token, occam);
 		} catch (Exception e) {
 //			NordigenUtils.logException(e);
 			return new JSONArray();

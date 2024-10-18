@@ -102,6 +102,7 @@ public class NordigenDAO {
 		.select()
 		.from(BANK_STATEMENT)
 		.where(STATEMENT_PROPERTIES.getConditions(filter))
+		.orderBy(BANK_STATEMENT.OPERATION_DATE.desc())
 		.limit(perPage).offset(perPage * (page -1))
 		.fetch()
 		.stream()
