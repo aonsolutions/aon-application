@@ -589,12 +589,16 @@
     <dependency>
       <groupId>org.openid4java</groupId>
       <artifactId>openid4java</artifactId>
-      <version>0.9.7</version>
+      <version>1.0.0</version>
       <scope>compile</scope>
       <exclusions>
 		  <exclusion>
 	          <groupId>xml-apis</groupId>
 	          <artifactId>xml-apis</artifactId>
+		  </exclusion>
+		  <exclusion>
+		  	<groupId>org.apache.httpcomponents</groupId>
+		  	<artifactId>httpclient</artifactId>
 		  </exclusion>
       </exclusions>
     </dependency>
@@ -659,13 +663,13 @@
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-api</artifactId>
-      <version>1.8.0-beta2</version>
+      <version>1.7.36</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-jcl</artifactId>
-      <version>1.7.25</version>
+      <version>1.7.36</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
