@@ -58,7 +58,7 @@ public class InvoiceIMGParser {
 		if (doc != null 
 			&& doc.bytes() != null 
 			&& (doc.bytes().asByteBuffer().position() + doc.bytes().asByteBuffer().remaining()) > (10*1024*1024)) {
-			throw new InvoiceIMGException("Las imagenes a analizar, no pueden superar los 10MB de tamaño");		
+			throw new InvoiceIMGException("Las imagenes a analizar, no pueden superar los 5MB de tamaño");		
 		}
 
 		TextractClient client = TextractClient.builder().region(Region.EU_WEST_1).build();
@@ -66,38 +66,35 @@ public class InvoiceIMGParser {
 		
 		DetectDocumentTextResponse detectDocumentTextResult = client.detectDocumentText(detectDocumentTextRequest);
 		
-		
-		detectDocumentTextResult.blocks().stream()
-		.filter(b -> b.text() != null )
-		.filter(b -> b.blockType().equals("LINE"))
-		.forEach(b -> {
-			
-		});
-		
-		Block blocks[] = detectDocumentTextResult.blocks()
-			.stream()
-			.filter(b -> b.text() != null )
-			.filter(b -> b.blockType().equals("LINE"))
+		Block[] blocks = detectDocumentTextResult.blocks().stream()
+			.filter(b -> b.text() != null)
+			.filter(b -> "LINE".equals(b.blockType().name()))
 			.toArray(Block[]::new);
 		
 		String text = null;
 		if (blocks != null && blocks.length > 0 ) {
-			LinkedList<Block> lines = new LinkedList<Block>();
+			LinkedList<Block> lines = new LinkedList<>();
 			for ( int i = 0; i < 1 ; i++  ) {
 				lines.add(blocks[i]);
 			}			
 			for ( int i = 1; i < blocks.length; i++  ) {
 				Block block = blocks[i];
 				Block line = lines.peekLast();
-				if (intersects(line, block))
-					line = Block.builder().text(line.text() + " " + block.text()).blockType(line.blockType()).build();
-				else lines.add(block);
+				if (intersects(line, block)) {
+					Block newLine = Block.builder()
+						.text(line.text() + " " + block.text())
+						.geometry(line.geometry())
+						.blockType(line.blockType())
+						.build();
+					lines.remove(line);
+					lines.add(newLine);
+				} else lines.add(block);
 			}
 			text = lines.stream().map(b -> b.text()).collect(Collectors.joining("\r\n"));
 		}
 		return text;
 	}
-
+	
 //	private static int compare(Block b1, Block b2) {
 //		return compare(b1.getGeometry().getBoundingBox(), b2.getGeometry().getBoundingBox());
 //	}

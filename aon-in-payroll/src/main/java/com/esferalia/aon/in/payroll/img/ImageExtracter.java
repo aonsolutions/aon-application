@@ -50,14 +50,12 @@ class ImageExtracter implements IPersonDocumentExtracter {
 		DetectDocumentTextRequest detectDocumentTextRequest = DetectDocumentTextRequest.builder().document(doc).build();
 		DetectDocumentTextResponse detectDocumentTextResult = client.detectDocumentText(detectDocumentTextRequest);
 
-		detectDocumentTextResult.blocks().stream().filter(b -> b.text() != null)
-				.filter(b -> b.blockType().equals("LINE")).forEach(b -> {
-
-				});
-
-		Block[] blocks = detectDocumentTextResult.blocks().stream().filter(b -> b.text() != null)
-				.filter(b -> b.blockType().equals("LINE")).toArray(Block[]::new);
-
+		
+		Block[] blocks = detectDocumentTextResult.blocks().stream()
+				.filter(b -> b.text() != null)
+				.filter(b -> "LINE".equals(b.blockType().name()))
+				.toArray(Block[]::new);
+		
 		String extract = null;
  
 		if (blocks != null && blocks.length > 0) {
@@ -68,12 +66,17 @@ class ImageExtracter implements IPersonDocumentExtracter {
 			for (int i = 1; i < blocks.length; i++) {
 				Block block = blocks[i];
 				Block line = lines.peekLast();
-				if (intersects(line, block))
-					line = Block.builder().text(line.text() + " " + block.text()).blockType(line.blockType()).build();
-				else lines.add(block);
+				if (intersects(line, block)) {
+					Block newLine = Block.builder()
+							.text(line.text() + " " + block.text())
+							.geometry(line.geometry())
+							.blockType(line.blockType())
+							.build();
+					lines.remove(line);
+					lines.add(newLine);
+				} else lines.add(block);
 				extract = lines.stream().map(Block::text).collect(Collectors.joining("\r\n"));
 			}
-
 		}
 		return extract;
 	}
