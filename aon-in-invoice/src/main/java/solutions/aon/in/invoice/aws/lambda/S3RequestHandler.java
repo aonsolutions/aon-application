@@ -36,6 +36,7 @@ import net.aonsolutions.aon.api.AonTask;
 import net.aonsolutions.aon.in.pdf.maker.exception.CanNotCreatePdfException;
 import net.aonsolutions.aon.in.pdf.maker.image.ImageToPdf;
 import net.aonsolutions.aon.sign.PdfSigner;
+import solutions.aon.aws.s3.S3;
 import solutions.aon.aws.s3.S3EventObject;
 import solutions.aon.aws.secrets.SECRETS;
 import solutions.aon.in.invoice.aws.lambda.Invofox.DocumentType;
@@ -180,11 +181,11 @@ public class S3RequestHandler implements RequestHandler<Object, String> {
     }
     
     static String getDowloadURL(S3EventObject s3Object) {
-    	return S3.getDownloadURL(s3Object.getBucket(), s3Object.getKey()).toExternalForm();
+    	return S3.getURL(s3Object.getBucket(), s3Object.getKey()).toExternalForm();
     }
 
     static byte[] download(S3EventObject s3Object) throws IOException {
-    	return solutions.aon.aws.s3.S3.download(s3Object.getBucket(), s3Object.getKey());
+    	return S3.download(s3Object.getBucket(), s3Object.getKey());
 	}
     
     static String getLoadBatchKey(S3EventObject s3Object) {
@@ -215,7 +216,7 @@ public class S3RequestHandler implements RequestHandler<Object, String> {
      */
     static String getCompanyName(S3EventObject s3EventObject) {
 	try {
-	    return S3.getCompanyName(s3EventObject.getBucket(), s3EventObject.getKey());
+	    return S3Invoice.getCompanyName(s3EventObject.getBucket(), s3EventObject.getKey());
 	} catch ( Exception e ) {
 	    e.printStackTrace();
 	    return s3EventObject.getDomain() ;
@@ -234,12 +235,12 @@ public class S3RequestHandler implements RequestHandler<Object, String> {
 	    String loadBatchId  = LOAD_BATCH_WAIT_ID;
 	    while (LOAD_BATCH_WAIT_ID.equals(loadBatchId)) {
 		Thread.sleep(Math.min(s3EventObject.getOrder() * 1000L, MAX_SLEEP_TIME)); 
-		loadBatchTaskJSON = S3.getLoadBatchTask(s3EventObject.getBucket(), loadBatchKey);
+		loadBatchTaskJSON = S3Invoice.getLoadBatchTask(s3EventObject.getBucket(), loadBatchKey);
 		loadBatchId = getLoadBatchId(loadBatchTaskJSON);
 	    }
 	} catch (NoSuchLoadBatchException e) {
 	    // Write semaphore, if present other lambdas must wait.  
-	    S3.setLoadBatchTask(s3EventObject.getBucket(), loadBatchKey, loadBatchTaskJSON);
+	    S3Invoice.setLoadBatchTask(s3EventObject.getBucket(), loadBatchKey, loadBatchTaskJSON);
 	    
 	    JSONObject loadBatchJSON = Invofox.newLoadBatch(invofoxApiKey, invofoxApiUrl, companyId);
 	    // new issue for this batch, and don't wait for it
@@ -258,7 +259,7 @@ public class S3RequestHandler implements RequestHandler<Object, String> {
 	    }
 	    
 	    loadBatchTaskJSON = newLoadBatchTask(loadBatchJSON, taskJSON);
-	    S3.setLoadBatchTask(s3EventObject.getBucket(), loadBatchKey, loadBatchTaskJSON);
+	    S3Invoice.setLoadBatchTask(s3EventObject.getBucket(), loadBatchKey, loadBatchTaskJSON);
 	    
 	}
 	return loadBatchTaskJSON;
@@ -296,7 +297,7 @@ public class S3RequestHandler implements RequestHandler<Object, String> {
 	
 	params.put("creationDate", format(new Date(), ""));
 	
-	String companyName = S3.getCompanyName(s3Bucket, s3Key);
+	String companyName = S3Invoice.getCompanyName(s3Bucket, s3Key);
 
 	params.put("companyName", InvofoxWebhookHandler.getOrDefault(companyName, "") );
 	

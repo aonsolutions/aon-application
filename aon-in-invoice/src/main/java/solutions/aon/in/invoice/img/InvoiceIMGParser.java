@@ -4,18 +4,16 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.ByteBuffer;
 import java.util.LinkedList;
 import java.util.stream.Collectors;
 
-import com.amazonaws.regions.Regions;
-import com.amazonaws.services.textract.AmazonTextract;
-import com.amazonaws.services.textract.AmazonTextractClientBuilder;
-import com.amazonaws.services.textract.model.Block;
-import com.amazonaws.services.textract.model.DetectDocumentTextRequest;
-import com.amazonaws.services.textract.model.DetectDocumentTextResult;
-import com.amazonaws.services.textract.model.Document;
-
+import software.amazon.awssdk.core.SdkBytes;
+import software.amazon.awssdk.regions.Region;
+import software.amazon.awssdk.services.textract.TextractClient;
+import software.amazon.awssdk.services.textract.model.Block;
+import software.amazon.awssdk.services.textract.model.DetectDocumentTextRequest;
+import software.amazon.awssdk.services.textract.model.DetectDocumentTextResponse;
+import software.amazon.awssdk.services.textract.model.Document;
 import solutions.aon.in.invoice.InvoiceBuilder;
 import solutions.aon.in.invoice.UnknownInvoiceException;
 import solutions.aon.in.invoice.templates.Templates;
@@ -33,7 +31,8 @@ public class InvoiceIMGParser {
 
 	public static void parse( InputStream is , InvoiceBuilder<?> handler) throws InvoiceIMGException {
 		try {
-			parser(new Document().withBytes(ByteBuffer.wrap(is.readAllBytes())), handler);
+			Document document = Document.builder().bytes(SdkBytes.fromByteArray(is.readAllBytes())).build();
+			parser(document, handler);
 		} catch (IOException e) {
 			throw new InvoiceIMGException(e);
 		} catch (UnknownInvoiceException e) {
@@ -42,7 +41,8 @@ public class InvoiceIMGParser {
 	}
 
 	public static String extract( byte[] bytes ) throws InvoiceIMGException {
-		return extract(new Document().withBytes(ByteBuffer.wrap(bytes)));
+		Document document = Document.builder().bytes(SdkBytes.fromByteArray(bytes)).build();
+		return extract(document);
 	}
 	
 	
@@ -54,33 +54,30 @@ public class InvoiceIMGParser {
 
 
 	private static String extract(Document doc) {
+		;
 		if (doc != null 
-			&& doc.getBytes() != null 
-			&& (doc.getBytes().position() + doc.getBytes().remaining()) > (10*1024*1024)) {
+			&& doc.bytes() != null 
+			&& (doc.bytes().asByteBuffer().position() + doc.bytes().asByteBuffer().remaining()) > (10*1024*1024)) {
 			throw new InvoiceIMGException("Las imagenes a analizar, no pueden superar los 10MB de tamaño");		
 		}
 
-		AmazonTextract client = AmazonTextractClientBuilder
-			.standard()
-			.withRegion(Regions.EU_WEST_1)
-			.build();
-		DetectDocumentTextRequest detectDocumentTextRequest = 
-		new DetectDocumentTextRequest().withDocument(doc);
+		TextractClient client = TextractClient.builder().region(Region.EU_WEST_1).build();
+		DetectDocumentTextRequest detectDocumentTextRequest = DetectDocumentTextRequest.builder().document(doc).build();
 		
-		DetectDocumentTextResult detectDocumentTextResult = client.detectDocumentText(detectDocumentTextRequest);
+		DetectDocumentTextResponse detectDocumentTextResult = client.detectDocumentText(detectDocumentTextRequest);
 		
 		
-		detectDocumentTextResult.getBlocks().stream()
-		.filter(b -> b.getText() != null )
-		.filter(b -> b.getBlockType().equals("LINE"))
+		detectDocumentTextResult.blocks().stream()
+		.filter(b -> b.text() != null )
+		.filter(b -> b.blockType().equals("LINE"))
 		.forEach(b -> {
 			
 		});
 		
-		Block blocks[] = detectDocumentTextResult.getBlocks()
+		Block blocks[] = detectDocumentTextResult.blocks()
 			.stream()
-			.filter(b -> b.getText() != null )
-			.filter(b -> b.getBlockType().equals("LINE"))
+			.filter(b -> b.text() != null )
+			.filter(b -> b.blockType().equals("LINE"))
 			.toArray(Block[]::new);
 		
 		String text = null;
@@ -92,12 +89,11 @@ public class InvoiceIMGParser {
 			for ( int i = 1; i < blocks.length; i++  ) {
 				Block block = blocks[i];
 				Block line = lines.peekLast();
-				if ( intersects(line, block)) 
-					line.setText(line.getText() + " " + block.getText() );
-				else 
-					lines.add(block);
+				if (intersects(line, block))
+					line = Block.builder().text(line.text() + " " + block.text()).blockType(line.blockType()).build();
+				else lines.add(block);
 			}
-			text = lines.stream().map(b -> b.getText()).collect(Collectors.joining("\r\n"));
+			text = lines.stream().map(b -> b.text()).collect(Collectors.joining("\r\n"));
 		}
 		return text;
 	}
@@ -128,10 +124,10 @@ public class InvoiceIMGParser {
 	
 	private static boolean intersects(Block b1, Block b2) {
 		
-		float top1 = b1.getGeometry().getBoundingBox().getTop();
-		float height1 = b1.getGeometry().getBoundingBox().getHeight();
+		float top1 = b1.geometry().boundingBox().top();
+		float height1 = b1.geometry().boundingBox().height();
 		
-		float top2 =  b2.getGeometry().getBoundingBox().getTop();
+		float top2 =  b2.geometry().boundingBox().top();
 		if ( Math.abs(top2 -top1 ) <= height1 /2.00)
 			return true;
 		

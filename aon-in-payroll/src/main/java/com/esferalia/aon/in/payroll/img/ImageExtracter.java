@@ -2,21 +2,21 @@ package com.esferalia.aon.in.payroll.img;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.nio.ByteBuffer;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.stream.Collectors;
 
 import javax.imageio.ImageIO;
 
-import com.amazonaws.regions.Regions;
-import com.amazonaws.services.textract.AmazonTextract;
-import com.amazonaws.services.textract.AmazonTextractClientBuilder;
-import com.amazonaws.services.textract.model.Block;
-import com.amazonaws.services.textract.model.DetectDocumentTextRequest;
-import com.amazonaws.services.textract.model.DetectDocumentTextResult;
-import com.amazonaws.services.textract.model.Document;
 import com.esferalia.aon.in.payroll.img.PersonDocumentExtracters.IPersonDocumentExtracter;
+
+import software.amazon.awssdk.core.SdkBytes;
+import software.amazon.awssdk.regions.Region;
+import software.amazon.awssdk.services.textract.TextractClient;
+import software.amazon.awssdk.services.textract.model.Block;
+import software.amazon.awssdk.services.textract.model.DetectDocumentTextRequest;
+import software.amazon.awssdk.services.textract.model.DetectDocumentTextResponse;
+import software.amazon.awssdk.services.textract.model.Document;
 
 class ImageExtracter implements IPersonDocumentExtracter {
 
@@ -37,29 +37,26 @@ class ImageExtracter implements IPersonDocumentExtracter {
 
 	private String extractImage(byte[] bytes) {
 		PersonDocumentParserValidation.validateBytes(bytes);
-		return extract(new Document().withBytes(ByteBuffer.wrap(bytes)));
+		Document document = Document.builder().bytes(SdkBytes.fromByteArray(bytes)).build();
+		return extract(document);
 	}
 
 	private String extract(Document doc) {
 
-		AmazonTextract client = AmazonTextractClientBuilder
-			.standard()
-			.withRegion(Regions.EU_WEST_1)
-			.build();
-
+		TextractClient client = TextractClient.builder().region(Region.EU_WEST_1).build();
+		PersonDocumentParserValidation.validateDoc(null);
 		PersonDocumentParserValidation.validateDoc(doc);
 
-		DetectDocumentTextRequest detectDocumentTextRequest = new DetectDocumentTextRequest().withDocument(doc);
+		DetectDocumentTextRequest detectDocumentTextRequest = DetectDocumentTextRequest.builder().document(doc).build();
+		DetectDocumentTextResponse detectDocumentTextResult = client.detectDocumentText(detectDocumentTextRequest);
 
-		DetectDocumentTextResult detectDocumentTextResult = client.detectDocumentText(detectDocumentTextRequest);
-
-		detectDocumentTextResult.getBlocks().stream().filter(b -> b.getText() != null)
-				.filter(b -> b.getBlockType().equals("LINE")).forEach(b -> {
+		detectDocumentTextResult.blocks().stream().filter(b -> b.text() != null)
+				.filter(b -> b.blockType().equals("LINE")).forEach(b -> {
 
 				});
 
-		Block[] blocks = detectDocumentTextResult.getBlocks().stream().filter(b -> b.getText() != null)
-				.filter(b -> b.getBlockType().equals("LINE")).toArray(Block[]::new);
+		Block[] blocks = detectDocumentTextResult.blocks().stream().filter(b -> b.text() != null)
+				.filter(b -> b.blockType().equals("LINE")).toArray(Block[]::new);
 
 		String extract = null;
  
@@ -72,10 +69,9 @@ class ImageExtracter implements IPersonDocumentExtracter {
 				Block block = blocks[i];
 				Block line = lines.peekLast();
 				if (intersects(line, block))
-					line.setText(line.getText() + " " + block.getText());
-				else
-					lines.add(block);
-				extract = lines.stream().map(Block::getText).collect(Collectors.joining("\r\n"));
+					line = Block.builder().text(line.text() + " " + block.text()).blockType(line.blockType()).build();
+				else lines.add(block);
+				extract = lines.stream().map(Block::text).collect(Collectors.joining("\r\n"));
 			}
 
 		}
@@ -83,11 +79,10 @@ class ImageExtracter implements IPersonDocumentExtracter {
 	}
 
 	private static boolean intersects(Block b1, Block b2) {
-		float top1 = b1.getGeometry().getBoundingBox().getTop();
-		float height1 = b1.getGeometry().getBoundingBox().getHeight();
-		float top2 = b2.getGeometry().getBoundingBox().getTop();
+		float top1 = b1.geometry().boundingBox().top();
+		float height1 = b1.geometry().boundingBox().height();
+		float top2 = b2.geometry().boundingBox().top();
 
 		return (Math.abs(top2 - top1) <= height1 / 2.00);
-
 	}
 }
