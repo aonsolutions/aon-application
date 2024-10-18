@@ -10,6 +10,15 @@ public class S3Doc<T extends Enum<?>> extends Doc<T> {
 	private String s3Bucket;
 	private String s3Key;
 	
+	public String getAonTable() {
+		return aonTable;
+	}
+	
+	public S3Doc<T> setAonTable(String aonTable) {
+		this.aonTable = aonTable;
+		return this;
+	}
+	
 	public String getS3Bucket() {
 		return s3Bucket;
 	}
