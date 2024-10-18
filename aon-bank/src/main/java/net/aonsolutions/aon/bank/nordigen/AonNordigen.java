@@ -190,6 +190,12 @@ public class AonNordigen {
 			return NordigenDAO.getMovementsFromDB(ctx, filter, page, perPage);
 		}
 	}
+	
+	public static long getBankMovementsCount(Occam occam, RegistryBank rbank) {
+		try(CloseableAONContext ctx = AONContext.getAONContext(occam)){
+			return NordigenDAO.getBankMovementsCount(ctx, rbank);
+		}
+	}
 
 //	private static NordigenAccountDetail getAccountDetail(NordigenAccessToken token, String nordigenAccountId) {
 //		return NordigenAPI.getDetail(token.getAccess(), nordigenAccountId);

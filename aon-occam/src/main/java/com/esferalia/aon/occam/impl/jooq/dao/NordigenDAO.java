@@ -108,6 +108,15 @@ public class NordigenDAO {
 		.map(new BankStatementFiller());
 	}
 	
+	public static long getBankMovementsCount(AONContext ctx, RegistryBank rbank) {
+		return ctx.getDslContext().select()
+				.from(BANK_STATEMENT)
+				.where(BANK_STATEMENT.RBANK.eq(rbank.getId()))
+				.fetch()
+				.stream()
+				.count();
+	}
+	
 	static class BankStatementFiller extends Filler implements Function<Record, BankStatement>{
 
 		@Override
@@ -188,7 +197,7 @@ public class NordigenDAO {
 				, BANK_STATEMENT.REFERENCE1
 				, BANK_STATEMENT.REFERENCE2
 				);
-		
+
 		List<NordigenBankStatement> bankStatements = account.getNotInsertedMovements();		
 		
 		if (bankStatements != null) {
@@ -196,12 +205,11 @@ public class NordigenDAO {
 			for (NordigenBankStatement bankStatement : bankStatements) {
 				if (!bankStatement.isPending() 
 					&& bankStatement.getOperationDate() != null
-					&& AonDateUtils.isLessThanToday( bankStatement.getOperationDate()) ) {
-					
+					&& AonDateUtils.isLessThanToday( bankStatement.getOperationDate()))
+				{
 					bankStatement.setLotNumber(lotNumber);
 					// BankStatement Validation
 					BankStatementValidator.validate(ctx, bankStatement);
-					
 					query = query.values(bankStatement.getDomain()
 						,bankStatement.getRegistryBank() != null ? bankStatement.getRegistryBank().getId() : null
 						,bankStatement.getLotNumber()
@@ -213,12 +221,12 @@ public class NordigenDAO {
 						,bankStatement.getStatus().value()
 						,bankStatement.getReference1()
 						,bankStatement.getReference2());
-				}
-				
+				}				
 			}
 		}
 		
 		final InsertValuesStep11<BankStatementRecord, Integer, Integer, Integer, java.sql.Date, Byte, Byte, Double, String, Byte, String, String> finalQuery = query;
+		System.out.println(ctx.getDslContext().transactionResult(cnf -> finalQuery.execute()));
 		return ctx.getDslContext().transactionResult(cnf -> finalQuery.execute());
 	}
 
