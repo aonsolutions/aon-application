@@ -226,7 +226,6 @@ public class NordigenDAO {
 		}
 		
 		final InsertValuesStep11<BankStatementRecord, Integer, Integer, Integer, java.sql.Date, Byte, Byte, Double, String, Byte, String, String> finalQuery = query;
-		System.out.println(ctx.getDslContext().transactionResult(cnf -> finalQuery.execute()));
 		return ctx.getDslContext().transactionResult(cnf -> finalQuery.execute());
 	}
 
