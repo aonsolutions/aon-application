@@ -10,6 +10,7 @@ import java.util.Optional;
 import java.util.Random;
 import java.util.Set;
 import java.util.TreeMap;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 import com.esferalia.aon.gwt.common.client.AON;
@@ -763,7 +764,11 @@ public abstract class AgreementPreview extends Composite {
 									resetSelectedDate();
 									showLoading("Guardando convenio " + toolbar.getTitle() + " ...");
 									setHasChange(false);
-									onSaved();
+									String shownVar = agreement.getShownVariables();
+									onSaved(f -> {
+										agreement.setShowVariables(shownVar);
+										createSalaryTable();
+									});
 								}
 							});
 						});
@@ -832,24 +837,53 @@ public abstract class AgreementPreview extends Composite {
 			variablesVisivility = new AonToolbarSmallButton("Mostrar/Ocultar variables", AON.CSS.aonIconVisibility());
 			variablesVisivility.addClickHandler(click -> {
 				AgreementVariablesDialog dialog = new AgreementVariablesDialog(agreement.getAllVariables(),
-						agreement.getVariablesByDate(selectedDate)) {
+						agreement.getVariablesByDate(selectedDate), agreement.getNoConceptVariables()) {
 
 					@Override
 					protected void onAccept(String variablesType, Set<String> variables) {
 						switch (variablesType) {
-						case "VALUES":
-							agreement.setFilteredValuesVariables();
-							break;
-						case "NO_VALUES":
-							agreement.setFilteredNoValuesVariables();
-							break;
-						case "ALL":
-							agreement.setFilteredAllVariables();
-							break;
-						default:
-							agreement.setFilteredVariables(variables);
-							break;
+							case "VALUES":
+								agreement.setFilteredValuesVariables();
+								break;
+							case "NO_VALUES":
+								agreement.setFilteredNoValuesVariables();
+								break;
+							case "ALL":
+								agreement.setFilteredAllVariables();
+								break;
+							case "NO_CONCEPT":
+								agreement.setFilteredNoConceptVariables();
+								break;
+							default:
+								agreement.setFilteredVariables(variables);
+								break;
 						}
+						createSalaryTable();
+						
+					}
+
+					@Override
+					protected void onDelete(Set<String> deleteVariables) {
+						Set<LevelData> levelDatas = agreement.getLevelDatasMap().get(0).stream().filter(levelData -> deleteVariables.contains(levelData.getName())).collect(Collectors.toSet());
+						levelDatas.forEach(levelData -> agreement.updateLevelData(0, levelData.getId(), ""));
+						showLoading("Guardando convenio " + toolbar.getTitle() + " ...");
+						setHasChange(false);
+						onSaved(f -> {
+							agreement.setFilteredNoConceptVariables();
+							createSalaryTable();
+						});
+					}
+
+					@Override
+					protected void onCreateVariabel(String variablesType, String newVariable) {
+						agreement.createLevelData(0, newVariable, "", agreement.getDates().stream().findFirst().get());
+						showLoading("Guardando convenio " + toolbar.getTitle() + " ...");
+						setHasChange(false);
+						onSaved(f -> {
+							agreement.setFilteredNoConceptVariables();
+							createSalaryTable();
+						});
+						agreement.setFilteredNoConceptVariables();
 						createSalaryTable();
 					}
 				};
@@ -2539,7 +2573,11 @@ public abstract class AgreementPreview extends Composite {
 		saveBtn.addClickHandler(e -> {
 			showLoading("Guardando convenio " + toolbar.getTitle() + " ...");
 			setHasChange(false);
-			onSaved();
+			String shownVar = agreement.getShownVariables();
+			onSaved(f -> {
+				agreement.setShowVariables(shownVar);
+				createSalaryTable();
+			});
 		});
 
 		toolbar.add(saveBtn);
@@ -3015,7 +3053,7 @@ public abstract class AgreementPreview extends Composite {
 
 	// ------------------------------------------ Abstract methods
 
-	public abstract void onSaved();
+	public abstract void onSaved(Consumer<Void> finish);
 
 	// ------------------------------------------------- Aon Messages panel
 
