@@ -138,9 +138,11 @@ export class AonConfig extends AonElement {
             let topnav = this.getElement("aonMenuTopnav");
             let height = topnav.style.height;
             if(height == "68px")
-                content.style.height = "calc(100vh - 61px)";
+                content.style.height = "calc(100vh - 48px)";
+
             else if (height == "0px")
                 content.style.height = "calc(100vh - 115px)";
+
             
             if(LS.isTopMenu()) {
                     aonMenu.showTopNav();

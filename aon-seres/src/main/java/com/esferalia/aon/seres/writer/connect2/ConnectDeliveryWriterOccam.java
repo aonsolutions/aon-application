@@ -508,9 +508,11 @@ public class ConnectDeliveryWriterOccam  implements Serializable {
 		seh1l.setDiferenciaEnCantidadPedida_21_(null);
 		seh1l.setCodigoDiscrepancia(null);
 		seh1l.setPesoTotalNetoDeLaLinea_AAI_AAF_(quantity * detail.getItem().getPackMeasurement());
-		seh1l.setPesoTotalBrutoDeLaLinea_AAI_AAB_(null);
+		seh1l.setPesoTotalBrutoDeLaLinea_AAI_AAB_(quantity * detail.getItem().getPackMeasurement());
 		if(detail.getItem().getPackMeasurementTag()!=null && detail.getItem().getPackMeasurementTag().getName()!=null) {
-			seh1l.setUnidadDeMedidaPeso(StringUtils.substring(detail.getItem().getPackMeasurementTag().getName(), 0, 3).toUpperCase());
+			String packMeasurement = detail.getItem().getPackMeasurementTag().getName();
+			if("KG".equalsIgnoreCase(packMeasurement)) packMeasurement = "KGM";
+			seh1l.setUnidadDeMedidaPeso(StringUtils.substring(packMeasurement, 0, 3).toUpperCase());
 		}
 		seh1l.setDimensionDeTemperatura1_TC_(null);
 		seh1l.setDimensionDeTemperatura2(null);
@@ -616,7 +618,9 @@ public class ConnectDeliveryWriterOccam  implements Serializable {
 		seh1l.setPesoTotalNetoDeLaLinea_AAI_AAF_(quantity * item.getPackMeasurement());
 		seh1l.setPesoTotalBrutoDeLaLinea_AAI_AAB_(quantity * item.getPackMeasurement());
 		if(item.getPackMeasurementTag()!=null && item.getPackMeasurementTag().getName()!=null) {
-			seh1l.setUnidadDeMedidaPeso(StringUtils.substring(item.getPackMeasurementTag().getName(), 0, 3).toUpperCase());
+			String packMeasurement = item.getPackMeasurementTag().getName();
+			if("KG".equalsIgnoreCase(packMeasurement)) packMeasurement = "KGM";
+			seh1l.setUnidadDeMedidaPeso(StringUtils.substring(packMeasurement, 0, 3).toUpperCase());
 		}
 		seh1l.setDimensionDeTemperatura1_TC_(null);
 		seh1l.setDimensionDeTemperatura2(null);
