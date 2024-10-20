@@ -510,3 +510,8 @@ export const ACCOUNT_OPERATING_REPORT = {
   entryPoint: 'AccountOperatingReport'
 };
 
+export const MARKETING_CAMPAIGN = {
+  module: GWT_AIO,
+  entryPoint: 'MarketingCampaign'
+};
+
