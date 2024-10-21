@@ -107,8 +107,8 @@ public class AonMathUtils {
 	public static boolean isZero(double value) {
 		return round( value ) == 0.0;
 	}
-	public static boolean isZero(Integer value) {
-		return value != null && value == 0;
+	public static boolean isNullOrZero(Integer value) {
+		return value == null || value == 0;
 	}
 
 	/**
