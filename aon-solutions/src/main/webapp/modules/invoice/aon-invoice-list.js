@@ -80,8 +80,9 @@ export class AonInvoiceList extends AonElement {
 		let aonInvoiceTable = createList(this.TABLE); 
 		aonInvoiceTable.selectable = 'true';
 		this.appendChild(aonInvoiceTable);
-		aonInvoiceTable.addColumn(MSG.DATE, 'date', 'dateTable', '120px');;
+		aonInvoiceTable.addColumn(MSG.DATE, 'date', 'creation_date', '120px');;
 		aonInvoiceTable.addColumn(MSG.NAME, 'string', 'name', 'auto');
+		aonInvoiceTable.addColumn(MSG.USER, 'string', 'creation_user', '120px');
 		aonInvoiceTable.addColumn('', 'icons', 'icons', '100px');
 
 		this.init();
