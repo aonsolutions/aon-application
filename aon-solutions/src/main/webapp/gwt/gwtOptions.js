@@ -499,3 +499,19 @@ export const INVOICE_REPORT = {
   module: GWT_FISCAL,
   entryPoint: 'InvoiceReport'
 };
+
+export const COST_CENTER = {
+  module: GWT_FISCAL,
+  entryPoint: 'CostCenterModule'
+};
+
+export const ACCOUNT_OPERATING_REPORT = {
+  module: GWT_FISCAL,
+  entryPoint: 'AccountOperatingReport'
+};
+
+export const MARKETING_CAMPAIGN = {
+  module: GWT_AIO,
+  entryPoint: 'MarketingCampaign'
+};
+

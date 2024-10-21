@@ -30,6 +30,11 @@ public class Certificates {
 	private Integer daysCtzVc; // Dias cotizados vacaciones
 	private Double bcccVc; // Base cotizacion vacaciones 0.00
 	private Double bcdVc; // 0.00
+	
+	// ERE
+	private String ereCode;
+	private Date ereEnd;
+	private String ereCoef;
 
 	// DATA EMPLOYEE
 	private String employeeName;
@@ -149,6 +154,18 @@ public class Certificates {
 		return quoteData;
 	}
 
+	public String getEreCode() {
+		return ereCode;
+	}
+
+	public Date getEreEnd() {
+		return ereEnd;
+	}
+
+	public String getEreCoef() {
+		return ereCoef;
+	}
+
 	@Override
 	public String toString() {
 		return "Certificates [\n\tregimen=" + regimen + ",\n\tctaCti=" + ctaCti + ",\n\tipf=" + ipf + ",\n\tipfManager="
@@ -191,6 +208,11 @@ public class Certificates {
 		private Double bcdVc;
 		private Integer durationContract;
 		private List<QuoteData> quoteData;
+		
+		// ERE
+		private String ereCode;
+		private Date ereEnd;
+		private String ereCoef;
 
 		// DATA EMPLOYEE
 		private String employeeName;
@@ -333,6 +355,21 @@ public class Certificates {
 			return this;
 		}
 
+		public CertificatesBuilder setEreCode(String ereCode) {
+			this.ereCode = ereCode;
+			return this;
+		}
+
+		public CertificatesBuilder setEreEnd(Date ereEnd) {
+			this.ereEnd = ereEnd;
+			return this;
+		}
+
+		public CertificatesBuilder setEreCoef(String ereCoef) {
+			this.ereCoef = ereCoef;
+			return this;
+		}
+
 		@Deprecated
 		public CertificatesBuilder setDataCtz(List<Map<String, String>> dataCtz) {
 			List<QuoteData> quoteDatas = new LinkedList<>();
@@ -377,6 +414,9 @@ public class Certificates {
 			ct.employeeSurname = this.employeeSurname;
 			ct.employeeSecondSurname = this.employeeSecondSurname;
 			ct.naf = this.naf;
+			ct.ereCode = this.ereCode;
+			ct.ereEnd = this.ereEnd;
+			ct.ereCoef = this.ereCoef;
 			return ct;
 		}
 	}

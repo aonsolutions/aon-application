@@ -104,31 +104,29 @@ public class JooqCertifica2 {
 	// -----------------------------------------------------
 	// createCertifica2DB@2Info
 
-	public static void createCertifica2DBServlet(String domainName, String user, Integer contractId) {
+	public static void createCertifica2DBServlet(String domainName, String user, Integer contractId, String suspensionReason, String ereCode) {
 		try (Connection connection = AonServletUtils.getConnection(domainName)) {
 			Integer domainId = AonServletUtils.getDomainID(domainName);
-			createCertifica2DB(connection, domainName, user, domainId, contractId, null);
+			createCertifica2DB(connection, domainName, user, domainId, contractId, suspensionReason, ereCode);
 		} catch (Exception e) {
 			// Not use here
 		}
 	}
 
-	public static void createCertifica2DB(Connection connection, String domainName, String user, Integer domainId, Integer contractId,
-			String suspensionCode) {
+	public static void createCertifica2DB(Connection connection, String domainName, String user, Integer domainId, Integer contractId, String suspensionCode, String ereCode) {
 		DSLContext dslContext = DSL.using(connection, getDefaultSettings());
-		com.esferalia.aon.gwt.payroll.shared.Certifica2Info certifica2Info = getCertifica2Info(dslContext, domainName, user, contractId,
-				suspensionCode);
-		saveCertifica2Info(dslContext, domainName, user, domainId, contractId, certifica2Info.getSuspensionCode());
+		com.esferalia.aon.gwt.payroll.shared.Certifica2Info certifica2Info = getCertifica2Info(dslContext, domainName, user, contractId, suspensionCode, ereCode);
+		saveCertifica2Info(dslContext, domainName, user, domainId, contractId, certifica2Info.getSuspensionCode(), ereCode);
 	}
 	
-	public static byte[] createCertEnterprisePDF(String domainName, String user, Integer contractId, String suspensionReasonCode, String suspensionReason) {
+	public static byte[] createCertEnterprisePDF(String domainName, String user, Integer contractId, String suspensionReasonCode, String suspensionReason, String ereCode) {
 		try (Connection connection = AonServletUtils.getConnection(domainName)) {
 			DSLContext dslContext = DSL.using(connection, getDefaultSettings());
 			
 			if (AonStringUtils.isBlank(suspensionReasonCode))
 				suspensionReasonCode = getsuspensionReasonCodeDB(dslContext, contractId);
 
-			com.esferalia.aon.gwt.payroll.shared.Certifica2Info certifica2Info = getCertifica2Info(dslContext, domainName, user, contractId, suspensionReasonCode);
+			com.esferalia.aon.gwt.payroll.shared.Certifica2Info certifica2Info = getCertifica2Info(dslContext, domainName, user, contractId, suspensionReasonCode, ereCode);
 			
 			// Set suspensionCode and reason
 			certifica2Info.setSuspensionCode(suspensionReasonCode);
@@ -179,6 +177,15 @@ public class JooqCertifica2 {
 		fieldMap.put("058", dayDateFormat.format(certifica2Info.getEndDate()));
 		fieldMap.put("059", monthDateFormat.format(certifica2Info.getEndDate()));
 		fieldMap.put("060", yearDateFormat.format(certifica2Info.getEndDate()));
+		
+		if(AonStringUtils.isNotBlank(certifica2Info.getErteCode())) {
+			fieldMap.put("061", dayDateFormat.format(certifica2Info.getErteEnd()));
+			fieldMap.put("062", monthDateFormat.format(certifica2Info.getErteEnd()));
+			fieldMap.put("063", yearDateFormat.format(certifica2Info.getErteEnd()));
+			
+			fieldMap.put("064", certifica2Info.getErteCode());
+			fieldMap.put("642", certifica2Info.getErteCoef());
+		}
 		
 		Double totalDays = 0.00;
 		Double totalCgc = 0.00;
@@ -320,13 +327,13 @@ public class JooqCertifica2 {
 	// ----------------------------------------------------- getCertific@2Info
 
 	public static com.esferalia.aon.gwt.payroll.shared.Certifica2Info getCertifica2Info(Connection connection,
-			String domainName, String user, Integer contractId, String suspensionReasonCode) throws IllegalArgumentException {
+			String domainName, String user, Integer contractId, String suspensionReasonCode, String ereCode) throws IllegalArgumentException {
 		DSLContext dslContext = DSL.using(connection, getDefaultSettings());
-		return getCertifica2Info(dslContext, domainName, user, contractId, suspensionReasonCode);
+		return getCertifica2Info(dslContext, domainName, user, contractId, suspensionReasonCode, ereCode);
 	}
 
 	private static com.esferalia.aon.gwt.payroll.shared.Certifica2Info getCertifica2Info(DSLContext dslContext,
-			String domainName, String user, Integer contractId, String suspensionReasonCode) throws IllegalArgumentException {
+			String domainName, String user, Integer contractId, String suspensionReasonCode, String ereCode) throws IllegalArgumentException {
 
 		com.esferalia.aon.gwt.payroll.shared.Certifica2Info certifica2Info = new com.esferalia.aon.gwt.payroll.shared.Certifica2Info();
 
@@ -337,7 +344,7 @@ public class JooqCertifica2 {
 		Integer enterpriseCCCId = contractRecord.get(CONTRACT.ENTERPRISE_CCC);
 		Integer enterpriseActivityId = contractRecord.get(CONTRACT.ENTERPRISE_ACTIVITY);
 		
-		getContractData(dslContext, certifica2Info, contractRecord, suspensionReasonCode);
+		getContractData(dslContext, certifica2Info, contractRecord, suspensionReasonCode, ereCode);
 
 		// Representative Data
 
@@ -367,7 +374,7 @@ public class JooqCertifica2 {
 
 	private static void getContractData(DSLContext dslContext,
 			com.esferalia.aon.gwt.payroll.shared.Certifica2Info certifica2Info, Record contractRecord,
-			String suspensionReasonCode) throws IllegalArgumentException {
+			String suspensionReasonCode, String ereCode) throws IllegalArgumentException {
 
 		Integer contractId = contractRecord.get(CONTRACT.ID);
 		Integer personId = contractRecord.get(CONTRACT.PERSON);
@@ -375,8 +382,24 @@ public class JooqCertifica2 {
 		Date startDate = null != contractRecord.get(CONTRACT.SENIORITY_DATE) ? contractRecord.get(CONTRACT.SENIORITY_DATE) : contractRecord.get(CONTRACT.START_DATE);
 		Date endDate = contractRecord.get(CONTRACT.END_DATE);
 
-		if (null == endDate)
-			throw new IllegalArgumentException("No existe fecha fin para este contrato");
+		Result<Record> ereRecords = null;
+		
+		if (null == endDate) {
+			Date currentDate = new Date(new java.util.Date().getTime());
+			Date previusCurrentDate = new Date(DateUtils.addDays2Date(currentDate, -15).getTime());
+			
+			ereRecords = dslContext.select().from(CONTRACT_DATA)
+					.where(CONTRACT_DATA.CONTRACT.eq(contractId))
+					.and(CONTRACT_DATA.NAME.eq("COEFICIENTE_ERE"))
+					.and(CONTRACT_DATA.START_DATE.ge(previusCurrentDate))
+					.orderBy(CONTRACT_DATA.START_DATE)
+					.fetch();
+			
+			if(null == ereRecords || ereRecords.isEmpty())
+				throw new IllegalArgumentException("No existe fecha fin para este contrato");
+			
+			endDate = ereRecords.get(0).get(CONTRACT_DATA.START_DATE);
+		}
 
 		int contractDuration = getDaysBetween(startDate, endDate);
 
@@ -427,7 +450,8 @@ public class JooqCertifica2 {
 			cnoCode = normalizeString(cnoTypeList.get(0));
 			cno = dslContext.select(CNO.TITLE).from(CNO).where(CNO.CODE.eq(cnoCode)).fetchOne(CNO.TITLE);
 		}
-
+		
+		// certifica2Info
 		certifica2Info.setDocument(dni);
 		certifica2Info.setSSNumber(ssNum);
 		certifica2Info.setName(name);
@@ -440,8 +464,26 @@ public class JooqCertifica2 {
 		certifica2Info.setCnoCode(cnoCode);
 		certifica2Info.setCno(cno);
 		certifica2Info.setSuspensionCode(suspensionReasonCode);
-		certifica2Info.setStartDate(startDate);
-		certifica2Info.setEndDate(endDate);
+		
+		if(null != ereRecords) {
+			// Get last ere date for ereEndDate
+			Date ereStartDate = ereRecords.get(0).get(CONTRACT_DATA.START_DATE);
+			Date ereEndDate = ereRecords.get(ereRecords.size() - 1).get(CONTRACT_DATA.END_DATE);
+			String ereCoef = ereRecords.get(0).get(CONTRACT_DATA.EXPRESSION);
+			Double parseEreCoef = Double.parseDouble(ereCoef) * 100;
+			
+			certifica2Info.setStartDate(startDate);
+			certifica2Info.setEndDate(ereStartDate);
+			certifica2Info.setErteCoef(parseEreCoef.intValue() + "");
+			certifica2Info.setErteEnd(ereEndDate);
+			certifica2Info.setErteCode(ereCode);
+			
+			certifica2Info.setSuspensionCode("17");
+		} else {
+			certifica2Info.setStartDate(startDate);
+			certifica2Info.setEndDate(endDate);
+		}
+
 	}
 
 	private static Integer getEnterpriseData(DSLContext dslContext,
@@ -822,12 +864,12 @@ public class JooqCertifica2 {
 	// DB
 
 	private static void saveCertifica2Info(DSLContext dslContext, String domainName, String user, Integer domainId, Integer contractId,
-			String suspensionReasonCode) throws IllegalArgumentException {
+			String suspensionReasonCode, String ereCode) throws IllegalArgumentException {
 		if (AonStringUtils.isBlank(suspensionReasonCode))
 			suspensionReasonCode = getsuspensionReasonCodeDB(dslContext, contractId);
 
 		com.esferalia.aon.gwt.payroll.shared.Certifica2Info certifica2Info = getCertifica2Info(dslContext, domainName, user, contractId,
-				suspensionReasonCode);
+				suspensionReasonCode, ereCode);
 
 		// ByteArrayOutputStream
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
@@ -926,6 +968,13 @@ public class JooqCertifica2 {
 		trabajadorType.setFechaAltaEmpresa(fullDateFormat.format(certifica2Info.getStartDate()));
 		trabajadorType.setCodCausaSuspension(certifica2Info.getSuspensionCode());
 		trabajadorType.setFechaSuspensionExtincion(fullDateFormat.format(certifica2Info.getEndDate()));
+		
+		if(AonStringUtils.isNotBlank(certifica2Info.getErteCode())) {
+			trabajadorType.setERE(StringUtils.leftPad(certifica2Info.getErteCode(), 9, '0'));
+			if(!AonStringUtils.equalsIgnoreCase(certifica2Info.getErteCoef(), "100")) trabajadorType.setPorcentualReduccionERE(StringUtils.rightPad(certifica2Info.getErteCoef(), 4, '0'));
+			trabajadorType.setFechaFinSuspension(fullDateFormat.format(certifica2Info.getErteEnd()));
+		}
+		
 		trabajadorType.setDiasSalarioTramitacion("00000");
 
 		if (AonStringUtils.equalsIgnoreCase(certifica2Info.getRegime(), "0163")) {
@@ -1023,10 +1072,10 @@ public class JooqCertifica2 {
 	// ----------------------------------------------------- createCertificates
 	// (Comunic@)
 
-	public static Certificates createCertificates(Connection connection, String domainName, String user, Integer contractId, String suspensionCode) {
+	public static Certificates createCertificates(Connection connection, String domainName, String user, Integer contractId, String suspensionCode, String ereCode) {
 		DSLContext dslContext = DSL.using(connection, getDefaultSettings());
 		com.esferalia.aon.gwt.payroll.shared.Certifica2Info certifica2Info = getCertifica2Info(dslContext, domainName, user, contractId,
-				suspensionCode);
+				suspensionCode, ereCode);
 		return createCertificates(certifica2Info);
 	}
 
@@ -1055,7 +1104,10 @@ public class JooqCertifica2 {
 			.setfSTd(certifica2Info.getEndDate())
 			.setDaysCtzVc(certifica2Info.getSettleQuoteDays())
 			.setBcccVc(certifica2Info.getBaseCgc())
-			.setBcdVc(certifica2Info.getBaseUnemployment());
+			.setBcdVc(certifica2Info.getBaseUnemployment())
+			.setEreCode(AonStringUtils.leftPad(certifica2Info.getErteCode(), 9, '0'))
+			.setEreCoef(certifica2Info.getErteCoef())
+			.setEreEnd(certifica2Info.getErteEnd());
 
 		List<QuoteData> quoteDatas = new ArrayList<>();
 

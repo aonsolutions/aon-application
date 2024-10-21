@@ -377,6 +377,7 @@ export class AonHeader extends AonElement {
 			this.removeAttribute('user');
 
 			LS.removeDomain();
+			LS.removeCompany();
 
 			clearDurum();
 			this.rootPanel(new AonParent());

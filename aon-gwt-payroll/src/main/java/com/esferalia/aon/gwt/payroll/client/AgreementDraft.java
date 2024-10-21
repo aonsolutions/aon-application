@@ -1635,7 +1635,7 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 		// Visibility Variables
 		AonToolbarSmallButton variablesVisivility = new AonToolbarSmallButton("Mostrar/Ocultar variables", AON.CSS.aonIconVisibility());
 		variablesVisivility.addClickHandler(click -> {
-			new AgreementVariablesDialog(agreementDraftObject.getAllVariables(), agreementDraftObject.getShownVariables()) {
+			new AgreementVariablesDialog(agreementDraftObject.getAllVariables(), agreementDraftObject.getShownVariables(), null) {
 				
 				@Override
 				protected void onAccept(String variablesType, Set<String> variables) {
@@ -1654,6 +1654,18 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 							break;
 					}
 					reloadSalaryTable();
+				}
+
+				@Override
+				protected void onDelete(Set<String> deleteVariables) {
+					// TODO Auto-generated method stub
+					
+				}
+
+				@Override
+				protected void onCreateVariabel(String variablesType, String value) {
+					// TODO Auto-generated method stub
+					
 				}
 			};
 		});

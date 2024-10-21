@@ -359,6 +359,19 @@ public class Certificado {
 				formTermination.getInputByName("orDatosTrabajador.srMesFechaInicioSuspension").setValue(fST[1]);
 				formTermination.getInputByName("orDatosTrabajador.srAnyoFechaInicioSuspension").setValue(fST[2]);
 				
+				if(null != certificates.getEreCode() && !certificates.getEreCode().equals("000000000")) {
+					String[] ereDateF = Toolkit.formatDate(certificates.getEreEnd());
+					
+					formTermination.getInputByName("orDatosTrabajador.srDiaFechaFinSuspension").setValue(ereDateF[0]);
+					formTermination.getInputByName("orDatosTrabajador.srMesFechaFinSuspension").setValue(ereDateF[1]);
+					formTermination.getInputByName("orDatosTrabajador.srAnyoFechaFinSuspension").setValue(ereDateF[2]);
+					
+					formTermination.getInputByName("orDatosTrabajador.srNumeroERE").setValue(certificates.getEreCode().substring(0, 5));
+					formTermination.getInputByName("orDatosTrabajador.srAnyoERE").setValue(certificates.getEreCode().substring(5, 9));
+					
+					formTermination.getInputByName("orDatosTrabajador.srPorcentualERE").setValue(certificates.getEreCoef());
+				}
+				
 				htmlPage = ((HtmlSubmitInput) htmlPage
 						.querySelector("form[name=BeanMecanizacionOLIPre] input[name=btSiguiente]")).click();
 				handleSepeExceptions(htmlPage);
