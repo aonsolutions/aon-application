@@ -1,6 +1,5 @@
 package solutions.aon.aws.secrets;
 
-import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.secretsmanager.SecretsManagerClient;
 import software.amazon.awssdk.services.secretsmanager.model.CreateSecretRequest;
 import software.amazon.awssdk.services.secretsmanager.model.DeleteSecretRequest;
@@ -12,12 +11,12 @@ public class SECRETS {
 	private static final String AON_SECRET = "aonsolutions/aonsecret";
 	private static final String AON_CERT = "aonsolutions/aoncert";
 	
-	private static SecretsManagerClient getClient() {
-		return SecretsManagerClient.create();
+	private SECRETS() {
+	
 	}
 	
-	private static SecretsManagerClient getClient(Region region) {
-		return SecretsManagerClient.builder().region(region).build();
+	private static SecretsManagerClient getClient() {
+		return SecretsManagerClient.create();
 	}
 	
 	public static String getValue(String secretId) {
@@ -26,7 +25,6 @@ public class SECRETS {
 			return client.getSecretValue(request).secretString();
 		}
 	}
-	
 	
 	public static String create(String secretId, String secret) {
 		try (SecretsManagerClient client = getClient()) {
@@ -60,9 +58,5 @@ public class SECRETS {
 	
 	private static boolean canDelete(String secretId) {
 		return !AON_SECRET.equalsIgnoreCase(secretId) && !AON_CERT.equalsIgnoreCase(secretId);
-	}
-	
-	public static void main(String[] args) {
-		System.out.println(getValue("aonsolutions/aonsecret"));
 	}
 }

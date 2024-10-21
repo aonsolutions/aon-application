@@ -4,11 +4,11 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.stream.Collectors;
 
 import software.amazon.awssdk.core.SdkBytes;
-import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.textract.TextractClient;
 import software.amazon.awssdk.services.textract.model.Block;
 import software.amazon.awssdk.services.textract.model.DetectDocumentTextRequest;
@@ -20,6 +20,14 @@ import solutions.aon.in.invoice.templates.Templates;
 
 public class InvoiceIMGParser {
 
+	private InvoiceIMGParser() {
+		
+	}
+	
+	private static TextractClient getClient() {
+		return TextractClient.create();
+	}
+	
 	public static void parse( File file , InvoiceBuilder<?> handler) throws InvoiceIMGException {
 		try (InputStream is = new FileInputStream(file)) {
 			parse(is, handler);
@@ -45,7 +53,6 @@ public class InvoiceIMGParser {
 		return extract(document);
 	}
 	
-	
 	private static void parser(Document doc , InvoiceBuilder<?> handler) throws InvoiceIMGException, IOException, UnknownInvoiceException {
 		String text = extract(doc);
 		Templates.parse(text, handler);		
@@ -54,14 +61,13 @@ public class InvoiceIMGParser {
 
 
 	private static String extract(Document doc) {
-		;
 		if (doc != null 
 			&& doc.bytes() != null 
 			&& (doc.bytes().asByteBuffer().position() + doc.bytes().asByteBuffer().remaining()) > (10*1024*1024)) {
 			throw new InvoiceIMGException("Las imagenes a analizar, no pueden superar los 5MB de tamaño");		
 		}
 
-		TextractClient client = TextractClient.builder().region(Region.EU_WEST_1).build();
+		TextractClient client = getClient();
 		DetectDocumentTextRequest detectDocumentTextRequest = DetectDocumentTextRequest.builder().document(doc).build();
 		
 		DetectDocumentTextResponse detectDocumentTextResult = client.detectDocumentText(detectDocumentTextRequest);
@@ -74,9 +80,8 @@ public class InvoiceIMGParser {
 		String text = null;
 		if (blocks != null && blocks.length > 0 ) {
 			LinkedList<Block> lines = new LinkedList<>();
-			for ( int i = 0; i < 1 ; i++  ) {
-				lines.add(blocks[i]);
-			}			
+			lines.addAll(Arrays.asList(blocks));
+
 			for ( int i = 1; i < blocks.length; i++  ) {
 				Block block = blocks[i];
 				Block line = lines.peekLast();
@@ -90,51 +95,17 @@ public class InvoiceIMGParser {
 					lines.add(newLine);
 				} else lines.add(block);
 			}
-			text = lines.stream().map(b -> b.text()).collect(Collectors.joining("\r\n"));
+			text = lines.stream().map(Block::text).collect(Collectors.joining("\r\n"));
 		}
 		return text;
 	}
-	
-//	private static int compare(Block b1, Block b2) {
-//		return compare(b1.getGeometry().getBoundingBox(), b2.getGeometry().getBoundingBox());
-//	}
-	
-//	private static int compare(BoundingBox b1, BoundingBox b2) {
-//		float top = b1.getTop() - b2.getTop();
-//		if ( top < 0 ) 
-//			return -1;
-//		if ( top > 0 )
-//			return 1;
-//		
-//		float left = b1.getLeft() - b2.getLeft();
-//		if ( left < 0 ) 
-//			return -1;
-//		if ( left > 0 )
-//			return 1;
-//		
-//		return 0;
-//	}
-	
-//	private static float getTop(Block b) {
-//		return b.getGeometry().getBoundingBox().getTop();
-//	}
-	
+
 	private static boolean intersects(Block b1, Block b2) {
-		
 		float top1 = b1.geometry().boundingBox().top();
 		float height1 = b1.geometry().boundingBox().height();
 		
 		float top2 =  b2.geometry().boundingBox().top();
-		if ( Math.abs(top2 -top1 ) <= height1 /2.00)
-			return true;
 		
-//		float bottom2 =  top2 + b2.getGeometry().getBoundingBox().getHeight();
-//		if ( bottom2 >= top1 && bottom2 <= bottom1)
-//			return true;
-		
-		return false;
+		return Math.abs(top2 -top1 ) <= height1 /2.00;
 	}
-	
-	
-
 }

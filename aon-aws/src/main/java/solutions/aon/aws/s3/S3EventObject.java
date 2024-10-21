@@ -27,8 +27,8 @@ public class S3EventObject {
     private String fileName;
     private String contentType;
         
-    private static Date getEventTime(Map<String, ?> record) {
-	String eventTime =  (String) record.get("eventTime");
+    private static Date getEventTime(Map<String, ?> r) {
+	String eventTime =  (String) r.get("eventTime");
 	try {
 	    return new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS").parse(eventTime);
 	} catch (ParseException e) {

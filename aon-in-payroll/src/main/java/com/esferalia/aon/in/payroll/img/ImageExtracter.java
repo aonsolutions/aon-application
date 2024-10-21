@@ -42,9 +42,7 @@ class ImageExtracter implements IPersonDocumentExtracter {
 	}
 
 	private String extract(Document doc) {
-
 		TextractClient client = TextractClient.builder().region(Region.EU_WEST_1).build();
-		PersonDocumentParserValidation.validateDoc(null);
 		PersonDocumentParserValidation.validateDoc(doc);
 
 		DetectDocumentTextRequest detectDocumentTextRequest = DetectDocumentTextRequest.builder().document(doc).build();
