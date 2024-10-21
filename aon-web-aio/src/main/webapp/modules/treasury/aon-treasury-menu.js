@@ -90,11 +90,11 @@ export class AonTreasuryMenu extends AonSuiteMenu {
                 description: "Listado de Previsión",
                 title: "Listado de Previsión",
                 action: () => this.rootPanel(new JSF.AonJsfCashFlowForecastReport())
-            },{
+            }/*,{
                 description: "Proyección de Cuotas",
                 title: "Proyección de Cuotas",
                 action: () => GWT.iLoad(GWT.FEE_PROJECTION)
-            }]
+            }*/]
         },{
             title: 'Movimientos Bancarios',
             options: [{
