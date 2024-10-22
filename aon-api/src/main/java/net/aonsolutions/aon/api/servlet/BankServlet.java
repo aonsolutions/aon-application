@@ -110,9 +110,9 @@ public class BankServlet extends AonApiHttpServlet {
 			AonApiData api = initialize(req);
 			switch (api.getPath()) {
 			// Introduce los movimientos obtenidos de Nordigen a BD
-			case "/movements":
-				response(req, resp, insertMovesIntoBD(api, req));
-				break;
+//			case "/movements":
+//				response(req, resp, insertMovesIntoBD(api, req));
+//				break;
 			// Introduce los balances obtenidos de Nordigen a BD
 			case "/balances":
 				response(req, resp, insertBalancesIntoBD(api, req));
@@ -200,29 +200,29 @@ public class BankServlet extends AonApiHttpServlet {
 		}
 	}
 
-	private static boolean insertMovesIntoBD(AonApiData api, HttpServletRequest request) {
-		try {
-			String idParam = request.getParameter("id");
-			int id = Integer.parseInt(idParam);
-			occam.setDomain(api.getDomain().getId()).setDomainName(api.getDomain().getName())
-					.setUser(api.getUser().getLogin());
-			NordigenConfiguration nc = AonNordigen.getConfiguration(occam);
-			NordigenAccessToken token = nc.getToken();
-			token = NordigenUtils.handleToken(token);
-			List<NordigenBankAccount> lista = nc.getAccounts();
-			NordigenBankAccount bank2 = new NordigenBankAccount();
-
-			for (int i = 0; i < lista.size(); i++) {
-				if (lista.get(i).getRbank().getId().equals(id)) {
-					bank2 = AonNordigen.setBankAccountValues(occam, token, lista.get(i));
-				}
-			}
-			AonNordigen.insertStatements(occam, bank2);
-			return true;
-		} catch (Exception e) {
-			return false;
-		}
-	}
+//	private static boolean insertMovesIntoBD(AonApiData api, HttpServletRequest request) {
+//		try {
+//			String idParam = request.getParameter("id");
+//			int id = Integer.parseInt(idParam);
+//			occam.setDomain(api.getDomain().getId()).setDomainName(api.getDomain().getName())
+//					.setUser(api.getUser().getLogin());
+//			NordigenConfiguration nc = AonNordigen.getConfiguration(occam);
+//			NordigenAccessToken token = nc.getToken();
+//			token = NordigenUtils.handleToken(token);
+//			List<NordigenBankAccount> lista = nc.getAccounts();
+//			NordigenBankAccount bank2 = new NordigenBankAccount();
+//
+//			for (int i = 0; i < lista.size(); i++) {
+//				if (lista.get(i).getRbank().getId().equals(id)) {
+//					bank2 = AonNordigen.setBankAccountValues(occam, token, lista.get(i));
+//				}
+//			}
+//			AonNordigen.insertStatements(occam, bank2);
+//			return true;
+//		} catch (Exception e) {
+//			return false;
+//		}
+//	}
 
 	private static boolean insertBalancesIntoBD(AonApiData api, HttpServletRequest request) {
 		try {
@@ -384,19 +384,15 @@ public class BankServlet extends AonApiHttpServlet {
 
 	private static JSONArray getMovements(AonApiData api) {
 		int id = api.getData().optInt("id");
-
 		try {
 			occam.setDomain(api.getDomain().getId()).setDomainName(api.getDomain().getName())
 					.setUser(api.getUser().getLogin());
-
 			NordigenConfiguration nc = AonNordigen.getConfiguration(occam);
 			NordigenAccessToken token = nc.getToken();
 			token = NordigenUtils.handleToken(token);
 			List<NordigenBankAccount> linkedAccountList = nc.getLinkedAccounts();
 			return NordigenUtils.convertAcccountMovementsToJsonArray(linkedAccountList, id, token, occam);
-//			return NordigenUtils.convertAccountsMovementsToJsonArray(linkedAccountList, token, occam);
 		} catch (Exception e) {
-//			NordigenUtils.logException(e);
 			return new JSONArray();
 		}
 	}
