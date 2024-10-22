@@ -80,8 +80,9 @@ public class InvoiceIMGParser {
 		String text = null;
 		if (blocks != null && blocks.length > 0 ) {
 			LinkedList<Block> lines = new LinkedList<>();
-			lines.addAll(Arrays.asList(blocks));
-
+			for ( int i = 0; i < 1 ; i++  ) {
+				lines.add(blocks[i]);
+			}			
 			for ( int i = 1; i < blocks.length; i++  ) {
 				Block block = blocks[i];
 				Block line = lines.peekLast();
