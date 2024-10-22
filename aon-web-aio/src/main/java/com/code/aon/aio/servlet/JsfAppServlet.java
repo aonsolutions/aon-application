@@ -68,7 +68,6 @@ public class JsfAppServlet extends HttpServlet {
 
 	private void initDesktopController(HttpServletRequest req) {
 		AppController appController =  (AppController) AonUtil.getRegisteredBean(AppController.CONTROLLER_NAME);
-		appController.setStandAlone(true);
 		appController.setViewId(req.getParameter(VIEW_ID));
 		appController.setAction(req.getParameter(ACTION));
 		appController.setActionListener(req.getParameter(ACTION_LISTENER));
