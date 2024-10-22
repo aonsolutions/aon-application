@@ -233,7 +233,10 @@ public class LROE140_2_1 extends LROE140 {
 			
 			if(r.getBienAfectoIRPFYOIVA() == null && !AonStringUtils.isBlank(detail.getAccountCode()) && detail.getAccountCode().length() >= 3) {
 				String concept = detail.getAccountCode().substring(0,3);
-				if("642".equals(concept)) concept = "64201"; // TODO o "64202" ???
+				if("642".equals(concept)) {
+					String aux = detail.getAccountCode().substring(0,4);
+					concept = "6421".equals(aux) ? "64201" : "64202";
+				}
 				r.setConcepto(concept);
 				double importeGastoIRPF = AonMathUtils.round(tax.getBase() * tax.getDeductiblePercent() / 100);
 				r.setImporteGastoIRPF(Double.toString(importeGastoIRPF));
