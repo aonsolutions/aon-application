@@ -174,7 +174,7 @@ export class AonNewMenu extends AonElement {
 					this.rootPanel(new AonDesktop());
 					break;
 				case AON_CLASSIC.app:
-					open('https://' + localStorage.getItem('aon_domain_name') + '/login?token=' + localStorage.getItem('aon_session_id'))
+					open(location.protocol + '//' + localStorage.getItem('aon_domain_name') + ( location.port ? ":" + location.port : ""   ) + '/login?token=' + localStorage.getItem('aon_session_id'))
 					return;
 				case Apps.CONSOLE.app:
 					this.rootPanel(new AonConsole());
