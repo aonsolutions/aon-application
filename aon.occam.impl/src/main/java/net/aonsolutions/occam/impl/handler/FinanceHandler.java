@@ -48,7 +48,7 @@ import net.aonsolutions.occam.api.model.type.FinanceType;
 import net.aonsolutions.occam.api.model.type.InvoiceType;
 import net.aonsolutions.occam.api.model.type.SecurityLevel;
 import net.aonsolutions.occam.impl.AONContext;
-import net.aonsolutions.occam.impl.handler.InvoiceHandler.InvoiceFiller;
+import net.aonsolutions.occam.impl.handler.InvoiceHeaderHandler.InvoiceHeaderFiller;
 import net.aonsolutions.occam.impl.handler.PayMethodHandler.PayMethodFiller;
 
 class FinanceHandler {
@@ -61,41 +61,41 @@ class FinanceHandler {
 	protected static class FinancePropertiesDAO implements FinanceProperties {
 
 		Condition getConditions(FinanceFilter filter) {
-			FilterHandler filterDAO = (FilterHandler) filter.filter(this);
+			FilterImpl filterDAO = (FilterImpl) filter.filter(this);
 			if (filterDAO == null) return DSL.trueCondition();
 			return filterDAO.getCondition();
 		}
 
-		@Override public Property<Integer> getIdProperty() {return new FilterHandler.PropertyDAO<>(FINANCE.ID);}
-		@Override public Property<Integer> getDomainProperty() {return new FilterHandler.PropertyDAO<>(FINANCE.DOMAIN);}
-		@Override public Property<Integer> getScopeProperty() {return new FilterHandler.PropertyDAO<>(FINANCE.SCOPE);}
-		@Override public Property<Byte> getFinanceTypeProperty() {return new FilterHandler.PropertyDAO<>(FINANCE.PAYMENT);}
-		@Override public Property<Integer> getRegistryProperty() {return new FilterHandler.PropertyDAO<>(FINANCE.REGISTRY);}
-		@Override public Property<String> getRegistryDocumentProperty() {return new FilterHandler.PropertyDAO<>(FINANCE.RDOCUMENT);}
-		@Override public Property<Byte> getRegistryDocumentTypeProperty() {return new FilterHandler.PropertyDAO<>(FINANCE.RDOCUMENT_TYPE);}
-		@Override public Property<String> getRegistryDocumentCountryProperty() {return new FilterHandler.PropertyDAO<>(FINANCE.RDOCUMENT_COUNTRY);}
-		@Override public Property<String> getRegistryNameProperty() {return new FilterHandler.PropertyDAO<>(FINANCE.RNAME);}
-		@Override public Property<Double> getAmountProperty() {return new FilterHandler.PropertyDAO<>(FINANCE.AMOUNT);}
-		@Override public Property<Double> getExpensesProperty() {return new FilterHandler.PropertyDAO<>(FINANCE.EXPENSES);}
-		@Override public Property<String> getConceptProperty() {return new FilterHandler.PropertyDAO<>(FINANCE.CONCEPT);}
-		@Override public Property<Integer> getInvoiceProperty() {return new FilterHandler.PropertyDAO<>(FINANCE.INVOICE);}
-		@Override public Property<Date> getDueDateProperty() {return new FilterHandler.DatePropertyDAO(FINANCE.DUE_DATE);}
-		@Override public Property<Integer> getPayMethodProperty() {return new FilterHandler.PropertyDAO<>(FINANCE.PAY_METHOD);}
-		@Override public Property<String> getBankAccountProperty() {return new FilterHandler.PropertyDAO<>(FINANCE.BANK_ACCOUNT);}
-		@Override public Property<String> getBankAliasProperty() {return new FilterHandler.PropertyDAO<>(FINANCE.BANK_ALIAS);}
-		@Override public Property<String> getBicProperty() {return new FilterHandler.PropertyDAO<>(FINANCE.BIC);}
-		@Override public Property<String> getChequeNumberProperty() {return new FilterHandler.PropertyDAO<>(FINANCE.CHEQUE_NUMBER);}
-		@Override public Property<Byte> getStatusProperty() {return new FilterHandler.PropertyDAO<>(FINANCE.STATUS);}
-		@Override public Property<Byte> getConfidentialProperty() {return new FilterHandler.PropertyDAO<>(FINANCE.SECURITY_LEVEL);}
-		@Override public Property<String> getRemarksProperty() {return new FilterHandler.PropertyDAO<>(FINANCE.REMARKS);}
-		@Override public Property<String> getInvoiceReferenceCodeProperty() {return new FilterHandler.PropertyDAO<>(INVOICE.REFERENCE_CODE);}
-		@Override public Property<Date> getInvoiceDateProperty() {return new FilterHandler.DatePropertyDAO(INVOICE.ISSUE_DATE);}
-		@Override public Property<Byte> getPayMethodTypeProperty() {return new FilterHandler.PropertyDAO<>(PAY_METHOD.TYPE);}
-		@Override public Property<Byte> getPayrollProperty() {return new FilterHandler.PropertyDAO<>(FINANCE.PAYROLL);}
-		@Override public Property<String> getCreationUserProperty() {return new FilterHandler.PropertyDAO<>(FINANCE.CREATION_USER);}
-		@Override public Property<Timestamp> getCreationDateProperty() {return new FilterHandler.PropertyDAO<>(FINANCE.CREATION_DATE );}
-		@Override public Property<String> getModificationUserProperty() {return new FilterHandler.PropertyDAO<>(FINANCE.MODIFICATION_USER);}
-		@Override public Property<Timestamp> getModificationDateProperty() {return new FilterHandler.PropertyDAO<>(FINANCE.MODIFICATION_DATE);}
+		@Override public Property<Integer> getIdProperty() {return new FilterImpl.PropertyDAO<>(FINANCE.ID);}
+		@Override public Property<Integer> getDomainProperty() {return new FilterImpl.PropertyDAO<>(FINANCE.DOMAIN);}
+		@Override public Property<Integer> getScopeProperty() {return new FilterImpl.PropertyDAO<>(FINANCE.SCOPE);}
+		@Override public Property<Byte> getFinanceTypeProperty() {return new FilterImpl.PropertyDAO<>(FINANCE.PAYMENT);}
+		@Override public Property<Integer> getRegistryProperty() {return new FilterImpl.PropertyDAO<>(FINANCE.REGISTRY);}
+		@Override public Property<String> getRegistryDocumentProperty() {return new FilterImpl.PropertyDAO<>(FINANCE.RDOCUMENT);}
+		@Override public Property<Byte> getRegistryDocumentTypeProperty() {return new FilterImpl.PropertyDAO<>(FINANCE.RDOCUMENT_TYPE);}
+		@Override public Property<String> getRegistryDocumentCountryProperty() {return new FilterImpl.PropertyDAO<>(FINANCE.RDOCUMENT_COUNTRY);}
+		@Override public Property<String> getRegistryNameProperty() {return new FilterImpl.PropertyDAO<>(FINANCE.RNAME);}
+		@Override public Property<Double> getAmountProperty() {return new FilterImpl.PropertyDAO<>(FINANCE.AMOUNT);}
+		@Override public Property<Double> getExpensesProperty() {return new FilterImpl.PropertyDAO<>(FINANCE.EXPENSES);}
+		@Override public Property<String> getConceptProperty() {return new FilterImpl.PropertyDAO<>(FINANCE.CONCEPT);}
+		@Override public Property<Integer> getInvoiceProperty() {return new FilterImpl.PropertyDAO<>(FINANCE.INVOICE);}
+		@Override public Property<Date> getDueDateProperty() {return new FilterImpl.DatePropertyDAO(FINANCE.DUE_DATE);}
+		@Override public Property<Integer> getPayMethodProperty() {return new FilterImpl.PropertyDAO<>(FINANCE.PAY_METHOD);}
+		@Override public Property<String> getBankAccountProperty() {return new FilterImpl.PropertyDAO<>(FINANCE.BANK_ACCOUNT);}
+		@Override public Property<String> getBankAliasProperty() {return new FilterImpl.PropertyDAO<>(FINANCE.BANK_ALIAS);}
+		@Override public Property<String> getBicProperty() {return new FilterImpl.PropertyDAO<>(FINANCE.BIC);}
+		@Override public Property<String> getChequeNumberProperty() {return new FilterImpl.PropertyDAO<>(FINANCE.CHEQUE_NUMBER);}
+		@Override public Property<Byte> getStatusProperty() {return new FilterImpl.PropertyDAO<>(FINANCE.STATUS);}
+		@Override public Property<Byte> getConfidentialProperty() {return new FilterImpl.PropertyDAO<>(FINANCE.SECURITY_LEVEL);}
+		@Override public Property<String> getRemarksProperty() {return new FilterImpl.PropertyDAO<>(FINANCE.REMARKS);}
+		@Override public Property<String> getInvoiceReferenceCodeProperty() {return new FilterImpl.PropertyDAO<>(INVOICE.REFERENCE_CODE);}
+		@Override public Property<Date> getInvoiceDateProperty() {return new FilterImpl.DatePropertyDAO(INVOICE.ISSUE_DATE);}
+		@Override public Property<Byte> getPayMethodTypeProperty() {return new FilterImpl.PropertyDAO<>(PAY_METHOD.TYPE);}
+		@Override public Property<Byte> getPayrollProperty() {return new FilterImpl.PropertyDAO<>(FINANCE.PAYROLL);}
+		@Override public Property<String> getCreationUserProperty() {return new FilterImpl.PropertyDAO<>(FINANCE.CREATION_USER);}
+		@Override public Property<Timestamp> getCreationDateProperty() {return new FilterImpl.PropertyDAO<>(FINANCE.CREATION_DATE );}
+		@Override public Property<String> getModificationUserProperty() {return new FilterImpl.PropertyDAO<>(FINANCE.MODIFICATION_USER);}
+		@Override public Property<Timestamp> getModificationDateProperty() {return new FilterImpl.PropertyDAO<>(FINANCE.MODIFICATION_DATE);}
 	}
 	// ---------------------------------------------------------- ORDER
 	enum FinanceOrder {
@@ -146,7 +146,7 @@ class FinanceHandler {
 				.setAmount(getValue(r,FINANCE.AMOUNT))
 				.setExpenses(getValue(r,FINANCE.EXPENSES))
 				.setConcept(getValue(r,FINANCE.CONCEPT))
-				.setInvoice(InvoiceFiller.build(r)) 
+				.setInvoice(InvoiceHeaderFiller.build(r)) 
 				.setDueDate(getValue(r,FINANCE.DUE_DATE))
 				.setPayMethod(PayMethodFiller.build(r))
 				.setBankAccount( new BankAccount(getValue(r,FINANCE.BANK_ACCOUNT)) )
@@ -220,7 +220,7 @@ class FinanceHandler {
 	// ------------------- FINANCE --- ESCRITURA -------------------
 	// -------------------------------------------------------------
 	static void save(AONContext ctx, int domain, Invoice invoice) {
-		AonCollectionUtils.stream( invoice.getFinances() )
+		invoice.financeStream()
  			.forEach( finance -> {
 				if ( !finance.isFullPending()) {
 					ctx.log().debug("** FINANCE NOT SAVED [NOT PENDING]");
@@ -260,7 +260,7 @@ class FinanceHandler {
 		ctx.checkWrite();
 		FinanceAutoComplete.completeFinance(ctx, finance);
 		FinanceValidation.validateSave(ctx, finance);
-		FinanceRecord record = ctx.getDslContext()
+		FinanceRecord r = ctx.getDslContext()
 			.insertInto(FINANCE)
 				.set(FINANCE.DOMAIN,finance.getDomain())
 				.set(FINANCE.PAYMENT, FinanceType.value(finance.getFinanceType()))
@@ -293,8 +293,8 @@ class FinanceHandler {
 				.set(FINANCE.CREATION_DATE, new Timestamp( System.currentTimeMillis()) )
 				.returning(FINANCE.ID)
 				.fetchOne();
-		ctx.log().debug("INSERT FINANCE id: " + record.getValue(FINANCE.ID));		
-		return record.getValue(FINANCE.ID); 
+		ctx.log().debug("INSERT FINANCE id: " + r.getValue(FINANCE.ID));		
+		return r.getValue(FINANCE.ID); 
 	}
 	
 	private static void update(AONContext ctx, Finance finance) {
@@ -399,9 +399,8 @@ class FinanceHandler {
 		/**
 		 * Se rellena el nivel de seguridad. 
 		 */
-		private static final BiConsumer<Finance,AONContext> COMPLETE_SECURITY_LEVEL_IF_EMPTY = (finance,ctx) -> {
+		private static final BiConsumer<Finance,AONContext> COMPLETE_SECURITY_LEVEL_IF_EMPTY = (finance,ctx) -> 
 			finance.getInvoice().ifPresent( i -> finance.setConfidential( i.isConfidential()) );
-		};
 		
 		/**
 		 * Se rellena el nivel de seguridad. 
@@ -461,16 +460,16 @@ class FinanceHandler {
 			if (finance.getId() == null ) {
 				Invoice inv = pair.getLeft();
 				finance
-					.setInvoice(inv)
+					.setInvoice(inv.getHeader())
 					.setDomain(inv.getDomain())
-					.setRegistry(inv.getRegistry())
-					.setRegistryDocument(inv.getRegistryDocument())
-					.setRegistryDocumentType(inv.getRegistryDocumentType())
-					.setRegistryDocumentCountry(inv.getRegistryDocumentCountry())
-					.setRegistryName(inv.getRegistryName())
-					.setScope(inv.getScope())
-					.setConfidential(inv.isConfidential())
-					.setConcept(inv.getDocumentNumber())
+					.setRegistry(inv.getHeader().getRegistry())
+					.setRegistryDocument(inv.getHeader().getRegistryDocument())
+					.setRegistryDocumentType(inv.getHeader().getRegistryDocumentType())
+					.setRegistryDocumentCountry(inv.getHeader().getRegistryDocumentCountry())
+					.setRegistryName(inv.getHeader().getRegistryName())
+					.setScope(inv.getHeader().getScope())
+					.setConfidential(inv.getHeader().isConfidential())
+					.setConcept(inv.getHeader().getDocumentNumber())
 					.setFinanceStatus(FinanceStatus.PENDING);
 			}
 		};
@@ -480,8 +479,8 @@ class FinanceHandler {
 			if (finance.getId() != null ) {
 				Invoice inv = pair.getLeft();
 				finance
-					.setConfidential(inv.isConfidential())
-					.setConcept(inv.getDocumentNumber());
+					.setConfidential(inv.getHeader().isConfidential())
+					.setConcept(inv.getHeader().getDocumentNumber());
 			}
 		};
 		
@@ -496,16 +495,16 @@ class FinanceHandler {
 	// -------------------------------------------------------------
 	// ------ FINANCE --- CALCULO EN FUNCION DE RPAYMETHOD ---------
 	// -------------------------------------------------------------
-	static LinkedList<Finance> getFinancesForInvoice(AONContext ctx, Invoice invoice) {
+	static Stream<Finance> getFinancesForInvoice(AONContext ctx, Invoice invoice) {
 		LinkedList<Finance> finances = new LinkedList<>();
-		Optional<RegistryPayMethod> rpm = RegistryPayMethodHandler.getByRegistry(ctx, invoice.getRegistry());
+		Optional<RegistryPayMethod> rpm = RegistryPayMethodHandler.getByRegistry(ctx, invoice.getHeader().getRegistry());
 		Optional<RegistryBank> rBank = rpm.flatMap(r -> r.getRegistryBank());
-		Date date = invoice.getIssueDate();
+		Date date = invoice.getHeader().getIssueDate();
 		short numberOfPymnts = rpm.map(r -> r.getNumberOfPymnts()).orElse( (short) 1 );
 		int daysToFirstPymnt = rpm.map(r -> r.getDaysToFirstPymnt()).orElse( (short) 0 ); 
 		int daysBetwenPymnts = rpm.map(r -> r.getDaysBetwenPymnts()).orElse( (short) 0 );
 		Optional<PayMethod> payMethod = rpm.flatMap(r -> r.getPayMethod());
-		double paymentPrice = AonMathUtils.round(invoice.getTotal() / numberOfPymnts);
+		double paymentPrice = AonMathUtils.round(invoice.getHeader().getTotal() / numberOfPymnts);
 		for (int i = 0; i < numberOfPymnts; i++) {
 			int days = (i==0?daysToFirstPymnt:daysBetwenPymnts);
 			date = (rpm.isEmpty()
@@ -514,11 +513,11 @@ class FinanceHandler {
 			Finance finance = buildFinance(invoice, date, payMethod , rBank, paymentPrice );  
 			finances.add(finance);
 		}
-		double lastPaymentPrice = AonMathUtils.round(invoice.getTotal() - (paymentPrice * (numberOfPymnts - 1)));
+		double lastPaymentPrice = AonMathUtils.round(invoice.getHeader().getTotal() - (paymentPrice * (numberOfPymnts - 1)));
 		if ( !AonMathUtils.equals(paymentPrice, lastPaymentPrice)) {
 			finances.getLast().setAmount(lastPaymentPrice);
 		}
-		return finances;
+		return AonCollectionUtils.stream(finances);
 	}
 	
 	private static Date calculatePaymentDate(int daysNumber, String paymentDays, Date date) {
@@ -551,24 +550,24 @@ class FinanceHandler {
 			, double amount) {
 		return  new Finance()
 			.setDomain(invoice.getDomain())
-			.setFinanceType(invoice.isSales() ? FinanceType.COLLECTION : FinanceType.PAYMENT )
-			.setRegistry( invoice.getRegistry() )
-			.setRegistryName(invoice.getRegistryName())
-			.setRegistryDocument(invoice.getRegistryDocument())
-			.setRegistryDocumentType(invoice.getRegistryDocumentType())
-			.setRegistryDocumentCountry(invoice.getRegistryDocumentCountry())
-			.setRegistryAccount( invoice.getRegistryAccount().orElse(null) )
+			.setFinanceType(invoice.getHeader().isSales() ? FinanceType.COLLECTION : FinanceType.PAYMENT )
+			.setRegistry( invoice.getHeader().getRegistry() )
+			.setRegistryName(invoice.getHeader().getRegistryName())
+			.setRegistryDocument(invoice.getHeader().getRegistryDocument())
+			.setRegistryDocumentType(invoice.getHeader().getRegistryDocumentType())
+			.setRegistryDocumentCountry(invoice.getHeader().getRegistryDocumentCountry())
+			.setRegistryAccount( invoice.getHeader().getRegistryAccount().orElse(null) )
 			.setAmount(amount)
-			.setConcept(invoice.getDocumentNumber())
-			.setInvoice(invoice)
+			.setConcept(invoice.getHeader().getDocumentNumber())
+			.setInvoice(invoice.getHeader())
 			.setDueDate(date)
 			.setPayMethod(payMethod.orElse(null))
 			.setBankAccount(rBank.flatMap( rb -> rb.getBankAccount()).orElse(null))
 			.setBankAlias(rBank.map( rb -> rb.getAlias()).orElse(null))
 			.setBic(rBank.map( rb -> rb.getBic()).orElse(null))
 			.setFinanceStatus(FinanceStatus.PENDING)
-			.setConfidential(invoice.isConfidential())
-			.setScope(invoice.getScope())
+			.setConfidential(invoice.getHeader().isConfidential())
+			.setScope(invoice.getHeader().getScope())
 		;
 	}
 

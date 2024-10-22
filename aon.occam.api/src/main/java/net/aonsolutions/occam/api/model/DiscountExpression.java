@@ -51,7 +51,7 @@ public class DiscountExpression implements Serializable {
 
 	public DiscountExpression setDiscount(double discount) {
 		setDiscountExpr(AonNumberUtils.toString(discount));
-		return null;
+		return this;
 	}
 	
 }

@@ -18,7 +18,7 @@ import com.esferalia.aon.watson.util.AonNumberUtils;
 
 import net.aonsolutions.occam.api.model.Filter;
 
-class FilterHandler  implements Filter {
+class FilterImpl  implements Filter {
 	
 	private static final long serialVersionUID = 6914118541297474140L;
 
@@ -36,60 +36,60 @@ class FilterHandler  implements Filter {
 		}
 		
 		@Override
-		public FilterHandler  eq(T t) {
-			return new FilterHandler (field.eq(t));
+		public FilterImpl  eq(T t) {
+			return new FilterImpl (field.eq(t));
 		}
 
 		@Override
-		public FilterHandler  ne(T t) {
-			return new FilterHandler (field.ne(t));
+		public FilterImpl  ne(T t) {
+			return new FilterImpl (field.ne(t));
 		}
 
 		@Override
-		public FilterHandler  le(T t) {
-			return new FilterHandler (field.le(t));
+		public FilterImpl  le(T t) {
+			return new FilterImpl (field.le(t));
 		}
 
 		@Override
-		public FilterHandler  lt(T t) {
-			return new FilterHandler (field.lt(t));
+		public FilterImpl  lt(T t) {
+			return new FilterImpl (field.lt(t));
 		}
 
 		@Override
-		public FilterHandler  gt(T t) {
-			return new FilterHandler (field.gt(t));
+		public FilterImpl  gt(T t) {
+			return new FilterImpl (field.gt(t));
 		}
 
 		@Override
-		public FilterHandler  ge(T t) {
-			return new FilterHandler (field.ge(t));
+		public FilterImpl  ge(T t) {
+			return new FilterImpl (field.ge(t));
 		}
 		
 		@Override
 		public Filter in(T[] t) {
-			return new FilterHandler (field.in(t));
+			return new FilterImpl (field.in(t));
 		}
 
 		@Override
-		public FilterHandler  isNull() {
-			return new FilterHandler (field.isNull());
+		public FilterImpl  isNull() {
+			return new FilterImpl (field.isNull());
 		}
 
 		@Override
 		public Filter isNotNull() {
-			return new FilterHandler (field.isNotNull());
+			return new FilterImpl (field.isNotNull());
 		}
 
 		@Override
 		public Filter like(T t) {
 			if (t instanceof String) {
-				return new FilterHandler (field.like( (String) t));
+				return new FilterImpl (field.like( (String) t));
 			} else if ( t instanceof byte[]) {
-				return new FilterHandler (field.like(new String((byte[])t)));
+				return new FilterImpl (field.like(new String((byte[])t)));
 			} else if ( t instanceof Integer) {
-				return new FilterHandler (field.like("%"+ AonNumberUtils.toString((Integer) t) +"%"));
+				return new FilterImpl (field.like("%"+ AonNumberUtils.toString((Integer) t) +"%"));
 			} else if ( t instanceof Double) {
-				return new FilterHandler (field.like("%"+ AonNumberUtils.toString((Double) t) +"%"));
+				return new FilterImpl (field.like("%"+ AonNumberUtils.toString((Double) t) +"%"));
 			} else {
 				throw new UnsupportedOperationException();				
 			}
@@ -101,17 +101,17 @@ class FilterHandler  implements Filter {
 		    String str = t.toString();
 		    String mode = str.contains("*") ?  "BOOLEAN" : "NATURAL LANGUAGE";
 		    Name name = field.getQualifiedName();
-		    return new FilterHandler ( DSL.condition("match({0}) against({1} IN "+ mode +" MODE)", name, val));
+		    return new FilterImpl ( DSL.condition("match({0}) against({1} IN "+ mode +" MODE)", name, val));
 		}
 
 		@Override
 		public Filter between(T min, T max) {
-			return new FilterHandler (field.between(min, max));
+			return new FilterImpl (field.between(min, max));
 		}
 
 		@Override
 		public Filter notIn(T[] t) {
-			return new FilterHandler (field.notIn(t));
+			return new FilterImpl (field.notIn(t));
 		}
 	}
 
@@ -129,48 +129,48 @@ class FilterHandler  implements Filter {
 		}
 		
 		@Override
-		public FilterHandler  eq(Date date) {
-			return new FilterHandler (field.eq(new java.sql.Date(date.getTime())));
+		public FilterImpl  eq(Date date) {
+			return new FilterImpl (field.eq(new java.sql.Date(date.getTime())));
 		}
 
 		@Override
-		public FilterHandler  ne(Date date) {
-			return new FilterHandler (field.ne(new java.sql.Date(date.getTime())));
+		public FilterImpl  ne(Date date) {
+			return new FilterImpl (field.ne(new java.sql.Date(date.getTime())));
 		}
 
 		@Override
-		public FilterHandler  le(Date date) {
-			return new FilterHandler (field.le(new java.sql.Date(date.getTime())));
+		public FilterImpl  le(Date date) {
+			return new FilterImpl (field.le(new java.sql.Date(date.getTime())));
 		}
 
 		@Override
-		public FilterHandler  lt(Date date) {
-			return new FilterHandler (field.lt(new java.sql.Date(date.getTime())));
+		public FilterImpl  lt(Date date) {
+			return new FilterImpl (field.lt(new java.sql.Date(date.getTime())));
 		}
 
 		@Override
-		public FilterHandler  gt(Date date) {
-			return new FilterHandler (field.gt(new java.sql.Date(date.getTime())));
+		public FilterImpl  gt(Date date) {
+			return new FilterImpl (field.gt(new java.sql.Date(date.getTime())));
 		}
 
 		@Override
-		public FilterHandler  ge(Date date) {
-			return new FilterHandler (field.ge(new java.sql.Date(date.getTime())));
+		public FilterImpl  ge(Date date) {
+			return new FilterImpl (field.ge(new java.sql.Date(date.getTime())));
 		}
 
 		@Override
 		public Filter in(Date[] t) {
-			return new FilterHandler (field.in( Arrays.asList(t)));
+			return new FilterImpl (field.in( Arrays.asList(t)));
 		}
 
 		@Override
-		public FilterHandler  isNull() {
-			return new FilterHandler (field.isNotNull());
+		public FilterImpl  isNull() {
+			return new FilterImpl (field.isNotNull());
 		}
 
 		@Override
 		public Filter isNotNull() {
-			return new FilterHandler (field.isNotNull());
+			return new FilterImpl (field.isNotNull());
 		}
 		@Override
 		public Filter like(Date date) {
@@ -184,12 +184,12 @@ class FilterHandler  implements Filter {
 
 		@Override
 		public Filter between(Date min, Date max) {
-			return new FilterHandler (field.between(new java.sql.Date(min.getTime()), new java.sql.Date(max.getTime())));
+			return new FilterImpl (field.between(new java.sql.Date(min.getTime()), new java.sql.Date(max.getTime())));
 		}
 
 		@Override
 		public Filter notIn(Date[] t) {
-			return new FilterHandler (field.notIn(Arrays.asList(t)));
+			return new FilterImpl (field.notIn(Arrays.asList(t)));
 		}
 		
 	}
@@ -208,48 +208,48 @@ class FilterHandler  implements Filter {
 		}
 		
 		@Override
-		public FilterHandler  eq(Timestamp date) {
-			return new FilterHandler (field.eq(date));
+		public FilterImpl  eq(Timestamp date) {
+			return new FilterImpl (field.eq(date));
 		}
 
 		@Override
-		public FilterHandler  ne(Timestamp date) {
-			return new FilterHandler (field.ne(date));
+		public FilterImpl  ne(Timestamp date) {
+			return new FilterImpl (field.ne(date));
 		}
 
 		@Override
-		public FilterHandler  le(Timestamp date) {
-			return new FilterHandler (field.le(date));
+		public FilterImpl  le(Timestamp date) {
+			return new FilterImpl (field.le(date));
 		}
 
 		@Override
-		public FilterHandler  lt(Timestamp date) {
-			return new FilterHandler (field.lt(date));
+		public FilterImpl  lt(Timestamp date) {
+			return new FilterImpl (field.lt(date));
 		}
 
 		@Override
-		public FilterHandler  gt(Timestamp date) {
-			return new FilterHandler (field.gt(date));
+		public FilterImpl  gt(Timestamp date) {
+			return new FilterImpl (field.gt(date));
 		}
 
 		@Override
-		public FilterHandler  ge(Timestamp date) {
-			return new FilterHandler (field.ge(date));
+		public FilterImpl  ge(Timestamp date) {
+			return new FilterImpl (field.ge(date));
 		}
 
 		@Override
 		public Filter in(Timestamp[] t) {
-			return new FilterHandler (field.in( Arrays.asList(t)));
+			return new FilterImpl (field.in( Arrays.asList(t)));
 		}
 
 		@Override
-		public FilterHandler  isNull() {
-			return new FilterHandler (field.isNotNull());
+		public FilterImpl  isNull() {
+			return new FilterImpl (field.isNotNull());
 		}
 
 		@Override
 		public Filter isNotNull() {
-			return new FilterHandler (field.isNotNull());
+			return new FilterImpl (field.isNotNull());
 		}
 		@Override
 		public Filter like(Timestamp date) {
@@ -263,12 +263,12 @@ class FilterHandler  implements Filter {
 
 		@Override
 		public Filter between(Timestamp min, Timestamp max) {
-			return new FilterHandler (field.between(min, max));
+			return new FilterImpl (field.between(min, max));
 		}
 
 		@Override
 		public Filter notIn(Timestamp[] t) {
-			return new FilterHandler (field.notIn(Arrays.asList(t)));
+			return new FilterImpl (field.notIn(Arrays.asList(t)));
 		}
 		
 	}
@@ -289,32 +289,32 @@ class FilterHandler  implements Filter {
 		}
 
 		@Override
-		public FilterHandler  eq(Boolean t) {
-			return new FilterHandler ( t ? field.eq(value) : field.ne(value));
+		public FilterImpl  eq(Boolean t) {
+			return new FilterImpl ( t ? field.eq(value) : field.ne(value));
 		}
 
 		@Override
-		public FilterHandler  ne(Boolean t) {
-			return new FilterHandler ( t ? field.ne(value) : field.ne(value));
+		public FilterImpl  ne(Boolean t) {
+			return new FilterImpl ( t ? field.ne(value) : field.ne(value));
 		}
 
 		@Override
-		public FilterHandler  le(Boolean t) {
+		public FilterImpl  le(Boolean t) {
 			throw new UnsupportedOperationException();
 		}
 
 		@Override
-		public FilterHandler  lt(Boolean t) {
+		public FilterImpl  lt(Boolean t) {
 			throw new UnsupportedOperationException();
 		}
 
 		@Override
-		public FilterHandler  gt(Boolean t) {
+		public FilterImpl  gt(Boolean t) {
 			throw new UnsupportedOperationException();
 		}
 
 		@Override
-		public FilterHandler  ge(Boolean t) {
+		public FilterImpl  ge(Boolean t) {
 			throw new UnsupportedOperationException();
 		}
 
@@ -324,13 +324,13 @@ class FilterHandler  implements Filter {
 		}
 
 		@Override
-		public FilterHandler  isNull() {
-			return new FilterHandler ( field.isNull());
+		public FilterImpl  isNull() {
+			return new FilterImpl ( field.isNull());
 		}
 
 		@Override
-		public FilterHandler  isNotNull() {
-			return new FilterHandler ( field.isNotNull());
+		public FilterImpl  isNotNull() {
+			return new FilterImpl ( field.isNotNull());
 		}
 
 		@Override
@@ -364,37 +364,37 @@ class FilterHandler  implements Filter {
 		}
 		
 		@Override
-		public FilterHandler  eq(Optional<Boolean> t) {
+		public FilterImpl  eq(Optional<Boolean> t) {
 			return t.map( v -> eq(v)).orElse(isNull());
 		}
 		
 		@Override
-		public FilterHandler  eq(Boolean t) {
-			return new FilterHandler ( t ? field.isNull() : field.isNotNull());
+		public FilterImpl  eq(Boolean t) {
+			return new FilterImpl ( t ? field.isNull() : field.isNotNull());
 		}
 
 		@Override
-		public FilterHandler  ne(Boolean t) {
-			return new FilterHandler ( t ? field.isNotNull() : field.isNull());
+		public FilterImpl  ne(Boolean t) {
+			return new FilterImpl ( t ? field.isNotNull() : field.isNull());
 		}
 
 		@Override
-		public FilterHandler  le(Boolean t) {
+		public FilterImpl  le(Boolean t) {
 			throw new UnsupportedOperationException();
 		}
 
 		@Override
-		public FilterHandler  lt(Boolean t) {
+		public FilterImpl  lt(Boolean t) {
 			throw new UnsupportedOperationException();
 		}
 
 		@Override
-		public FilterHandler  gt(Boolean t) {
+		public FilterImpl  gt(Boolean t) {
 			throw new UnsupportedOperationException();
 		}
 
 		@Override
-		public FilterHandler  ge(Boolean t) {
+		public FilterImpl  ge(Boolean t) {
 			throw new UnsupportedOperationException();
 		}
 
@@ -404,13 +404,13 @@ class FilterHandler  implements Filter {
 		}
 
 		@Override
-		public FilterHandler  isNull() {
-			return new FilterHandler ( field.isNull());
+		public FilterImpl  isNull() {
+			return new FilterImpl ( field.isNull());
 		}
 
 		@Override
 		public Filter isNotNull() {
-			return new FilterHandler ( field.isNotNull());
+			return new FilterImpl ( field.isNotNull());
 		}
 
 		@Override
@@ -436,27 +436,27 @@ class FilterHandler  implements Filter {
 
 	private Condition condition;
 	
-	public FilterHandler (Condition condition) {
+	FilterImpl (Condition condition) {
 		this.condition = condition;
 	}
 
-	public Condition getCondition() {
+	protected Condition getCondition() {
 		return condition;
 	}
 
 	@Override
 	public Filter or(Filter filter) {
-		return (filter == null)?this:new FilterHandler (condition.or(((FilterHandler )filter).condition));	
+		return (filter == null)?this:new FilterImpl (condition.or(((FilterImpl )filter).condition));	
 	}
 
 	@Override
 	public Filter and(Filter filter) {
-		return (filter == null)?this:new FilterHandler (condition.and(((FilterHandler )filter).condition));
+		return (filter == null)?this:new FilterImpl (condition.and(((FilterImpl )filter).condition));
 	}
 	
 	@Override
 	public Filter not(Filter filter) {
-		return (filter == null)?this:new FilterHandler (condition.not());
+		return (filter == null)?this:new FilterImpl (condition.not());
 	}
 	
 	Select<Record> build(SelectJoinStep<Record> select) {

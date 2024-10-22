@@ -1,9 +1,15 @@
 package net.aonsolutions.occam.api.model;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 import org.junit.jupiter.api.Test;
 import com.esferalia.aon.watson.util.AonCollectionUtils;
@@ -28,7 +34,9 @@ class AccountPeriodTest {
 			.setCreationDate(expected.getCreationDate())
 			.setModificationUser(expected.getModificationUser())
 			.setModificationDate(expected.getModificationDate())
-			.setDefaultPeriod(expected.isDefaultPeriod());
+			.setDefaultPeriod(expected.isDefaultPeriod())
+			.setSelected(expected.isSelected())
+			.setDeleted(expected.isDeleted())
 		;
 		AonAsserts.assertClassEquals(expected, actual);
 	}
@@ -88,4 +96,35 @@ class AccountPeriodTest {
 		ent.setStatus( AccountPeriodStatus.ACTIVE );
 		assertTrue( ent.isDirty(AccountPeriodMetadata.STATUS) );
 	}
+	
+	@Test
+	void testAccountPeriodEquals() {
+		AccountPeriod a1 = new AccountPeriod().setId(1);
+		assertEquals(a1,a1);
+		assertNotEquals(a1,null);
+		assertNotEquals(null,a1);
+		assertNotEquals(a1,new Object());
+		assertNotEquals(a1,new AccountPeriod());
+		
+		AccountPeriod a2 = new AccountPeriod().setId(1);
+		assertEquals(a1,a2);
+		
+		AccountPeriod a3 = new AccountPeriod().setId(3);
+		assertNotEquals(a1,a3);
+	}
+
+	
+	@Test
+	void testHashcode() {
+	    List<AccountPeriod> objects = new ArrayList<>();
+	    for (int i = 0; i < 1000; i++) {
+	        objects.add(new AccountPeriod().setId(i));
+	    }
+	    Set<Integer> hashCodes = new HashSet<>();
+	    for (AccountPeriod obj : objects) {
+	        hashCodes.add(obj.hashCode());
+	    }
+	    assertEquals(objects.size(), hashCodes.size(), 10);
+	}
+	
 }

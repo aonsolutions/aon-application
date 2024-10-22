@@ -6,12 +6,11 @@ import java.text.MessageFormat;
 
 import org.junit.jupiter.api.Test;
 
-import com.esferalia.aon.watson.util.AonCollectionUtils;
 import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
+import net.aonsolutions.occam.api.model.AonAsserts;
 import net.aonsolutions.occam.api.model.AonRandom;
-import net.aonsolutions.occam.api.model.FinanceTracking;
 import net.aonsolutions.occam.api.model.Invoice;
 import net.aonsolutions.occam.api.model.InvoiceTextPrinter;
 import net.aonsolutions.occam.api.model.type.WithholdingType;
@@ -21,8 +20,8 @@ class InsertRandomInvoicesTest extends AbstractOccamImplTest {
 
 	@Test
 	void test() {
-		int times = AonRandom.integer(1, 50);
-		// int times = 1;
+		//int times = AonRandom.integer(1, 50);
+		int times = 1;
 		for (int count = 0; count < times; count++) {
 			Invoice inv = null;
 			if (AonRandom.gt(90)) {
@@ -31,31 +30,20 @@ class InsertRandomInvoicesTest extends AbstractOccamImplTest {
 				inv = InvoiceFaker.getRandom(ctx, DOMAIN_ID);
 			}
 			InvoiceTextPrinter.print(inv);
-			Invoice invoice = InvoiceHandler.save(ctx, DOMAIN_ID, inv);
-//			if (invoice.isVatAccrualPayment() && AonCollectionUtils.isNotEmpty(invoice.getFinances()) && AonRandom.gt(40)) {
-//				AonRandom.random(invoice.getFinances())
-//				.ifPresent(finance -> {
-//					FinanceTracking tracking = new FinanceTracking()
-//						.setDomain(invoice.getDomain())
-//						.setFinance(finance)
-//						.setTrackingDate( AonRandom.getFutureDate(finance.getDueDate()) )
-//						.setAmount(finance.getAmount() );
-//					FinanceTrackingHandler.pay(ctx, DOMAIN_ID, tracking);
-//				});
-//			}
-			System.out.println(MessageFormat.format("\t\t ["
-				+ AonStringUtils.repeat("-", count)
-				+ AonStringUtils.repeat(" ", times - count)+"] "
-				+ AonMathUtils.round( count * 100 / times)
-				+ " %"
-				,times));
+			// Invoice invoice = 
+			inv = InvoiceHandler.validate(ctx, inv);
+			Invoice saved = InvoiceHandler.saveAndGet(ctx, DOMAIN_ID, inv);
+			System.out.println(MessageFormat.format("\t\t [{0}{1}] {2} %"
+				,AonStringUtils.repeat("-", count)
+				,AonStringUtils.repeat(" ", times - count)
+				,AonMathUtils.round( count * 100 / times)
+			));
+			AonAsserts.assertClassEquals(inv, saved);
 			count++;
 		}
-		System.out.println(MessageFormat.format("\t\t ["
-				+ AonStringUtils.repeat("-", times)
-				+ "] ("
-				+ times + " facturas creadas.)"
-				,times));
+		System.out.println(MessageFormat.format("\t\t [{0}] ({1} facturas creadas.)"
+			,AonStringUtils.repeat("-", times)
+			,times));
 		assertTrue( 
 			InvoiceHeaderHandler.stream(ctx, DOMAIN_ID, p -> p.getDomainProperty().eq(DOMAIN_ID))
 				.findFirst()

@@ -161,7 +161,7 @@ final class IJsonNames {
 	private static final String DEFAULT_CERTIFICATE = "defaultCertificate";
 	static final String DEFINED_USERS = "definedUsers";
 	private static final String DELETE = "delete";
-	private static final String DELETED = "deleted";
+	static final String DELETED = "deleted";
 	private static final String DELIVERY = "delivery";
 	private static final String DELIVERY_DATE = "deliveryDate";
 	static final String DELIVERY_GROUPED = "deliveryGrouped";

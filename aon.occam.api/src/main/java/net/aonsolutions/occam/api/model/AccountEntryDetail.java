@@ -1,9 +1,11 @@
 package net.aonsolutions.occam.api.model;
 
 import java.sql.Timestamp;
+import java.util.Objects;
 import java.util.Optional;
 
 import com.esferalia.aon.watson.util.AonMathUtils;
+import com.esferalia.aon.watson.util.AonObjectUtils;
 
 import net.aonsolutions.occam.api.model.metadata.AccountEntryDetailMetadata;
 
@@ -12,8 +14,6 @@ public class AccountEntryDetail extends AonEntity<AccountEntryDetailMetadata> im
 	
 	private static final long serialVersionUID = -1136927363787696049L;
 
-	private boolean deleted;
-	
 	private Integer id;
 	private Integer domain;
 	private Integer accountEntry;
@@ -41,11 +41,15 @@ public class AccountEntryDetail extends AonEntity<AccountEntryDetailMetadata> im
 		return this; 
 	}
 
-	public boolean isDeleted() {
-		return deleted;
-	}
+	@Override
 	public AccountEntryDetail setDeleted(boolean deleted) {
-		this.deleted = deleted;
+		super.setDeleted(deleted);
+		return this;
+	}
+
+	@Override
+	public AccountEntryDetail setSelected(boolean selected) {
+		super.setSelected(selected);
 		return this;
 	}
 
@@ -239,24 +243,42 @@ public class AccountEntryDetail extends AonEntity<AccountEntryDetailMetadata> im
 		return this;
 	}
 
-	static AccountEntryDetail clone(AccountEntryDetail detail) {
-		return new AccountEntryDetail()
-			.setDeleted(detail.deleted)
-			.setId(detail.id)
-			.setDomain(detail.domain)
-			.setAccountEntry(detail.accountEntry)
-			.setAccount(detail.account)
-			.setLine(detail.line)
-			.setConcept(detail.concept)
-			.setDebit(detail.debit)
-			.setCredit(detail.credit)
-			.setBalancingAccount(detail.balancingAccount)
-			.setDocumentNumber(detail.documentNumber)
-			.setCreationUser(detail.creationUser)
-			.setCreationDate(detail.creationDate)
-			.setModificationUser(detail.modificationUser)
-			.setModificationDate(detail.modificationDate)
+	@Override
+	public boolean equals(Object obj) {
+		if (obj == this) return true;
+		if (obj instanceof AccountEntryDetail other) {
+			return AonObjectUtils.equals( this.getUuid(),other.getUuid() );
+		}
+	    return false;
+	}
+	
+	@Override
+	public int hashCode() {
+	    return 31 * 7 + Objects.requireNonNullElse(getUuid(), 0).hashCode();
+	}
+	
+	static AccountEntryDetail clone(AccountEntryDetail ori) {
+		AccountEntryDetail cloned = new AccountEntryDetail()
+			.setId(ori.id)
+			.setDomain(ori.domain)
+			.setAccountEntry(ori.accountEntry)
+			.setAccount(ori.account)
+			.setLine(ori.line)
+			.setConcept(ori.concept)
+			.setDebit(ori.debit)
+			.setCredit(ori.credit)
+			.setBalancingAccount(ori.balancingAccount)
+			.setDocumentNumber(ori.documentNumber)
+			.setCreationUser(ori.creationUser)
+			.setCreationDate(ori.creationDate)
+			.setModificationUser(ori.modificationUser)
+			.setModificationDate(ori.modificationDate)
+			.setDeleted(ori.isDeleted())
+			.setSelected(ori.isSelected())
 		;
+		cloned.markAsClean();
+		ori.dirtySetStream().forEach(cloned::markAsDirty); 
+		return cloned;
 	}
 	
 }

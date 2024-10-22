@@ -1,42 +1,79 @@
 package net.aonsolutions.occam.api.model;
 
+import java.io.Serializable;
+import java.util.LinkedHashSet;
 import java.util.LinkedList;
+import java.util.Objects;
 import java.util.Optional;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import com.esferalia.aon.watson.util.AonCollectionUtils;
 import com.esferalia.aon.watson.util.AonMathUtils;
+import com.esferalia.aon.watson.util.AonObjectUtils;
 
+import net.aonsolutions.occam.api.model.metadata.InvoiceMetadata;
 import net.aonsolutions.occam.api.model.type.VATTaxRegime;
 import net.aonsolutions.occam.api.model.type.WithholdingType;
 
-public class Invoice extends InvoiceHeader {
+public class Invoice extends AonEntity<InvoiceMetadata> implements Serializable {
 	
 	private static final long serialVersionUID = 8897444490096530091L;
 	private static final double REG_IMPORT_MAX_VALUE  = 150.0;
 	
-	private boolean selected;
-	
-	private LinkedList<InvoiceError> messages;
-
+	private InvoiceHeader header;
 	private InvoiceHeader rectificationInvoice;
 	private InvoiceAddress invoiceAddress;
-	private LinkedList<InvoiceDetail> details;
+	private LinkedHashSet<InvoiceDetail> details;
+	private LinkedHashSet<Finance> finances;
 	private TaxBreakdown taxBreakdown;
-	private LinkedList<Finance> finances;
 	private InvoiceFiscal fiscal;
 	// private InvoiceInfo invoiceInfo;
 	private Attach attach;
-	
+	private LinkedList<InvoiceError> messages;
 	private Integer rawdocId;
-
-	public boolean isSelected() {
-		return selected;
+	
+	public Invoice() {
+		this.header = new InvoiceHeader();
 	}
-	public Invoice setSelected(boolean selected) {
-		this.selected = selected;
+
+	@Override
+	protected Object getUuid() {
+		return getId();
+	}
+	
+	@Override
+	public Invoice markAsClean() {
+		super.markAsClean();
+		return this; 
+	}
+	
+	@Override
+	public Invoice setDeleted(boolean deleted) {
+		super.setDeleted(deleted);
 		return this;
+	}
+	@Override
+	public Invoice setSelected(boolean selected) {
+		super.setSelected(selected);
+		return this;
+	}
+	
+	public InvoiceHeader getHeader() {
+		return header;
+	}
+	public Invoice setHeader(InvoiceHeader header) {
+		this.header = header;
+		return this;
+	}
+	public Integer getId() {
+		return header.getId();
+	}
+	public Invoice setId(Integer id) {
+		header.setId(id);
+		return this;
+	}
+	public Integer getDomain() {
+		return header.getDomain();
 	}
 	
 	public Optional<InvoiceHeader> getRectificationInvoice() {
@@ -66,47 +103,50 @@ public class Invoice extends InvoiceHeader {
 		return this.rawdocId != null;
 	}
 
-	public Stream<InvoiceDetail> deletedDetailStream() {
-		return AonCollectionUtils.stream(details)
-			.filter(InvoiceDetail::isDeleted);
-	}
 	public Stream<InvoiceDetail> detailStream() {
-		Stream<InvoiceDetail> s = 
-		AonCollectionUtils.stream(details)
-			.filter(InvoiceDetail::isNotDeleted);
-		return s;
+		return AonCollectionUtils.stream(details);
 	}
+	
+	public Optional<InvoiceDetail> deleteDetail( InvoiceDetail detail ) {
+		return detailStream()
+			.filter(d -> d.equals(detail))
+			.map(d -> d.setDeleted(true))
+			.findFirst();
+	}
+	
 	public Invoice deleteDetails() {
-		detailStream().forEach( d -> d.setDeleted(true));
-		details = detailStream()
-			.filter( d -> d.getId() != null)
-			.collect(Collectors.toCollection(LinkedList::new));
+		detailStream()
+			.forEach( d -> d.setDeleted(true));
 		refreshTaxBreakdown();
 		return this;
 	}
 	
+	public int getDetailsSize() {
+		return (int) detailStream()
+			.filter( d -> d.isNotDeleted())
+			.count();
+	}
 	public Invoice addDetail(InvoiceDetail detail) {
-		if (details == null) details = new LinkedList<>();
+		if (details == null) details = new LinkedHashSet<>();
 		details.add(detail);
 		return this;
 	}
 	
-	public LinkedList<Finance> getFinances() {
-		return finances;
-	}
-	public Invoice setFinances(LinkedList<Finance> finances) {
-		this.finances = finances;
-		return this;
+	public Stream<Finance> financeStream() {
+		return AonCollectionUtils.stream(finances);
 	}
 	public Invoice addFinance(Finance finance) {
-		if (getFinances() == null) {
-			setFinances(new LinkedList<>());
-		}
-		getFinances().add(finance);
+		if (finances == null) finances = new LinkedHashSet<>();
+		finances.add(finance);
 		return this;
 	}
+	public int getFinancesSize() {
+		return (int) financeStream()
+			.filter( d -> d.isNotDeleted())
+			.count();
+	}
 	public boolean hasFinances() {
-		return getFinances() != null && !getFinances().isEmpty(); 
+		return getFinancesSize() > 0; 
 	}
 	
 	public Optional<InvoiceFiscal> getFiscal() {
@@ -154,6 +194,19 @@ public class Invoice extends InvoiceHeader {
 		this.messages = new LinkedList<>();		
 	}
 
+	@Override
+	public boolean equals(Object obj) {
+		if (obj == this) return true;
+		if (obj instanceof Invoice other) {
+			return AonObjectUtils.equals( this.getUuid(),other.getUuid() );
+		}
+	    return false;
+	}
+	
+	@Override
+	public int hashCode() {
+	    return 31 * 7 + Objects.requireNonNullElse(getUuid(), 0).hashCode();
+	}
 	
 	// ----------- VAT REGIMES
 	
@@ -194,8 +247,8 @@ public class Invoice extends InvoiceHeader {
 	}
 	
 	public Invoice disableWithholding() {
-		setWithholding(false);
-		setWithholdingFarmer(false);
+		header.setWithholding(false);
+		header.setWithholdingFarmer(false);
 		ensureTaxBreakdown().setInvoiceWithholding(null);
 		return this;
 	}
@@ -209,8 +262,8 @@ public class Invoice extends InvoiceHeader {
 			iw = new InvoiceWithholding()
 				.setWithholdingType(WithholdingType.PROFESSIONAL);
 		}
-		setWithholding(true);
-		setWithholdingFarmer(iw.getWithholdingType() == WithholdingType.FARMER);
+		header.setWithholding(true);
+		header.setWithholdingFarmer(iw.getWithholdingType() == WithholdingType.FARMER);
 		ensureTaxBreakdown().setInvoiceWithholding(iw);
 		detailStream()
 			.forEach(invDet -> invDet.enableWithholding(this));
@@ -218,14 +271,14 @@ public class Invoice extends InvoiceHeader {
 	}
 	
 	public boolean isOutputVatEnabled() {
-		return !isUndeductible() && (
-			(isSales() && isNational())		// Venta Nacional
-			|| mustApplyISP());					// Aplicar la inversión de sujeto pasivo.	
+		return !header.isUndeductible() &&				// No Undeductible 
+			((header.isSales() && header.isNational())	// Venta Nacional
+			|| header.mustApplyISP());					// Aplicar la inversión de sujeto pasivo.	
 	}
 	public boolean isVatImportationAvailable() {
-		return (isExtracommunity() || isCanCeuMel()) 
-				&& (isPurchase() || isExpenses()) 	 
-				&& !isService()
+		return (header.isExtracommunity() || header.isCanCeuMel()) 
+				&& (header.isPurchase() || header.isExpenses()) 	 
+				&& !header.isService()
 			;
 	}
 	
@@ -234,12 +287,12 @@ public class Invoice extends InvoiceHeader {
 	}
 	
 	public boolean isInputVatEnabled() {
-		return !isUndeductible() 
-			&& ((isPurchase() && isNational())						// Compra nacional 
-			|| (isExpenses() && isNational())						// Gasto nacional
+		return !header.isUndeductible() 
+			&& ((header.isPurchase() && header.isNational())						// Compra nacional 
+			|| (header.isExpenses() && header.isNational())						// Gasto nacional
 			|| (isVatImportationAvailable() && isVatImportation()	// Regimen importacioon
 				&& isVatImportationAmountValid())
-			|| mustApplyISP());										// Aplicar la inversión de sujeto pasivo.	
+			|| header.mustApplyISP());										// Aplicar la inversión de sujeto pasivo.	
 	}
 	
 	public boolean isVatImportationAmountValid() {
@@ -257,10 +310,6 @@ public class Invoice extends InvoiceHeader {
 				.mapToDouble( InvoiceDetail::getTaxableBase )
 				.sum() 
 			, REG_IMPORT_MAX_VALUE );
-	}
-	
-	public double getOtherAmount() {
-		return AonMathUtils.round( getTotal() - getTaxableBase() - getVatQuota() + getRetentionQuota() );
 	}
 
 }

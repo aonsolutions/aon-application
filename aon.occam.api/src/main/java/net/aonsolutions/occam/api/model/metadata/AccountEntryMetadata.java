@@ -12,7 +12,8 @@ public enum AccountEntryMetadata implements Serializable {
 	,JOURNAL { @Override public <T> T visit(AccountEntryMetadataVisitor<T> v) { return v.visitJournal();} }
 	,SECURITY_LEVEL { @Override public <T> T visit(AccountEntryMetadataVisitor<T> v) { return v.visitSecurityLevel();} }
 	,COMMENTS { @Override public <T> T visit(AccountEntryMetadataVisitor<T> v) { return v.visitComments();} }
-	,	;
+	,DETAILS { @Override public <T> T visit(AccountEntryMetadataVisitor<T> v) { return v.visitDetails();} }
+	;
 
 	public abstract <T> T visit(AccountEntryMetadataVisitor<T> v);
 	public static interface AccountEntryMetadataVisitor<T> {
@@ -25,5 +26,6 @@ public enum AccountEntryMetadata implements Serializable {
 		T visitJournal();
 		T visitSecurityLevel();
 		T visitComments();
+		T visitDetails();
 	}
 }

@@ -4,6 +4,7 @@ import static com.esferalia.aon.jooq.tables.Cnae2009.CNAE2009;
 import static com.esferalia.aon.jooq.tables.EnterpriseActivity.ENTERPRISE_ACTIVITY;
 import static com.esferalia.aon.jooq.tables.Iae.IAE;
 import static com.esferalia.aon.jooq.tables.Invoice.INVOICE;
+import static net.aonsolutions.occam.impl.handler.SellerHandler.REGISTRY_SELLER;
 
 import java.util.Optional;
 import java.util.stream.Stream;
@@ -25,6 +26,7 @@ import net.aonsolutions.occam.api.model.type.RectificationType;
 import net.aonsolutions.occam.api.model.type.SecurityLevel;
 import net.aonsolutions.occam.impl.AONContext;
 import net.aonsolutions.occam.impl.handler.ActivityHandler.ActivityFiller;
+import net.aonsolutions.occam.impl.handler.SellerHandler.SellerFiller;
 
 class InvoiceHeaderHandler {
 	
@@ -80,24 +82,42 @@ class InvoiceHeaderHandler {
 	    	return new InvoiceHeader()
 				.setId(getValue(r,inv.ID))
 				.setDomain(getValue(r,inv.DOMAIN))
-				.setActivity(ActivityFiller.build(r))	
-				.setType(InvoiceType.value(getValue(r,inv.TYPE)).orElse(null))
+				.setType(InvoiceType.value(getValue(r, inv.TYPE)).orElse(null))
 				.setSeries(getValue(r,inv.SERIES))
 				.setNumber(getValue(r,inv.NUMBER))
 				.setReferenceCode(getValue(r,inv.REFERENCE_CODE))
-				.setTransaction(InvoiceTransactionType.value(getValue(r,inv.TRANSACTION)).orElse(null))
 				.setIssueDate(getValue(r,inv.ISSUE_DATE))
 				.setTaxDate(getValue(r,inv.TAX_DATE))
-				.setRegistry(getValue(r,inv.REGISTRY))
+				.setConfidential(SecurityLevel.confidential(getValue(r,inv.SECURITY_LEVEL)))
+				.setRegistry( getValue(r,inv.REGISTRY))
 				.setRegistryDocument(getValue(r,inv.RDOCUMENT))
-				.setRegistryDocumentType(DocumentType.value(getValue(r,inv.RDOCUMENT_TYPE)).orElse(null))
+				.setRegistryDocumentType(DocumentType.value(getValue(r, inv.RDOCUMENT_TYPE)).orElse(null))
 				.setRegistryDocumentCountry(Country.value(getValue(r,inv.RDOCUMENT_COUNTRY)).orElse(null))
 				.setRegistryName(getValue(r,inv.RNAME))
-				.setConfidential(SecurityLevel.confidential(getValue(r,inv.SECURITY_LEVEL)))
-				.setRecorded(getBoolean(r,inv.STATUS))	
-				.setRectificationType(RectificationType.value(getValue(r,inv.RECTIFICATION_TYPE)).orElse(null))
+				.setScope(getValue(r,inv.SCOPE))
+				.setActivity(ActivityFiller.build(r))	
+				.setProject(getValue(r,inv.PROJECT))
+				.setRectificationType(RectificationType.value(getValue(r, inv.RECTIFICATION_TYPE)).orElse(null))
 				.setRectificationInvoiceId(getValue(r,inv.RECTIFICATION_INVOICE))
+				.setTransaction(InvoiceTransactionType.value(getValue(r,inv.TRANSACTION)).orElse(null))
+				.setRecorded(getBoolean(r,inv.STATUS))	
+				.setSurcharge(getBoolean(r,inv.SURCHARGE))	
+				.setWithholding(getBoolean(r,inv.WITHHOLDING))	
+				.setWithholdingFarmer(getBoolean(r,inv.WITHHOLDING_FARMER))	
+				.setVatAccrualPayment(getBoolean(r,inv.VAT_ACCRUAL_PAYMENT))	
+				.setInvestment(getBoolean(r,inv.INVESTMENT))	
+				.setService(getBoolean(r,inv.SERVICE))	
+				.setTaxableBase(getValue(r,inv.TAXABLE_BASE))	
+				.setVatQuota(getValue(r,inv.VAT_QUOTA))	
+				.setRetentionQuota(getValue(r,inv.RETENTION_QUOTA))	
 				.setTotal(getValue(r,inv.TOTAL))	
+				.setComments(getValue(r,inv.COMMENTS))
+				.setRemarks(getValue(r,inv.REMARKS))
+				.setSeller(SellerFiller.build(r, REGISTRY_SELLER))
+				.setCreationDate(getValue(r,inv.CREATION_DATE))
+				.setCreationUser(getValue(r,inv.CREATION_USER))
+				.setModificationDate(getValue(r,inv.MODIFICATION_DATE))
+				.setModificationUser(getValue(r,inv.MODIFICATION_USER))
 			;
 		}
 	}

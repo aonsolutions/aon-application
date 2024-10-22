@@ -28,6 +28,8 @@ import com.esferalia.aon.jooq.tables.records.AccountEntryDetailRecord;
 import com.esferalia.aon.jooq.tables.records.AccountEntryRecord;
 import com.esferalia.aon.watson.AonError;
 import com.esferalia.aon.watson.error.AonCoreException;
+import com.esferalia.aon.watson.mutable.MutableBoolean;
+import com.esferalia.aon.watson.mutable.MutableDouble;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.server.AonEnumUtils;
 import com.esferalia.aon.watson.util.AonMathUtils;
@@ -49,7 +51,7 @@ import net.aonsolutions.occam.impl.handler.AccountHandler.AccountFiller;
 import net.aonsolutions.occam.impl.handler.AccountPeriodHandler.AccountPeriodFiller;
 import net.aonsolutions.occam.impl.handler.ActivityHandler.ActivityFiller;
 
-public class AccountEntryHandler {
+class AccountEntryHandler {
 	private AccountEntryHandler() {
 	}
 	
@@ -61,24 +63,24 @@ public class AccountEntryHandler {
 	private static class AccountEntryPropertiesHandler implements AccountEntryProperties {
 
 		private Condition getCondition(AccountEntryFilter filter) {
-			FilterHandler filterHandler = (FilterHandler) filter.filter(this);
+			FilterImpl filterHandler = (FilterImpl) filter.filter(this);
 			if (filterHandler == null) return DSL.trueCondition();
 			return filterHandler.getCondition();
 		}
 
-		@Override public Property<Integer> getIdProperty() {return new FilterHandler.PropertyDAO<>(ACCOUNT_ENTRY.ID);}
-		@Override public Property<Integer> getJournalProperty() {return new FilterHandler.PropertyDAO<>(ACCOUNT_ENTRY.JOURNAL);}
-		@Override public Property<Integer> getActivityProperty() {return new FilterHandler.PropertyDAO<>(ACCOUNT_ENTRY.ACTIVITY);}
-		@Override public Property<Integer> getDomainProperty() {return new FilterHandler.PropertyDAO<>(ACCOUNT_ENTRY.DOMAIN);}
-		@Override public Property<Integer> getAccountPeriodProperty() {return new FilterHandler.PropertyDAO<>(ACCOUNT_ENTRY.ACCOUNT_PERIOD);}
-		@Override public Property<Date> getEntryDateProperty() {return new FilterHandler.DatePropertyDAO(ACCOUNT_ENTRY.ENTRY_DATE);}
-		@Override public Property<Byte> getEntryTypeProperty() {return new FilterHandler.PropertyDAO<>(ACCOUNT_ENTRY.ENTRY_TYPE);}
-		@Override public Property<Byte> getConfidentialProperty() {return new FilterHandler.PropertyDAO<>(ACCOUNT_ENTRY.SECURITY_LEVEL);}
-		@Override public Property<String> getCommentsProperty() {return new FilterHandler.PropertyDAO<>(ACCOUNT_ENTRY.COMMENTS);}
-		@Override public Property<Timestamp> getCreationDateProperty() {return new FilterHandler.TimestampPropertyDAO(ACCOUNT_ENTRY.CREATION_DATE);}
-		@Override public Property<String> getCreationUserProperty() {return new FilterHandler.PropertyDAO<>(ACCOUNT_ENTRY.CREATION_USER);}
-		@Override public Property<Timestamp> getModificationDateProperty() {return new FilterHandler.TimestampPropertyDAO(ACCOUNT_ENTRY.MODIFICATION_DATE);}
-		@Override public Property<String> getModificationUserProperty() {return new FilterHandler.PropertyDAO<>(ACCOUNT_ENTRY.MODIFICATION_USER);}
+		@Override public Property<Integer> getIdProperty() {return new FilterImpl.PropertyDAO<>(ACCOUNT_ENTRY.ID);}
+		@Override public Property<Integer> getJournalProperty() {return new FilterImpl.PropertyDAO<>(ACCOUNT_ENTRY.JOURNAL);}
+		@Override public Property<Integer> getActivityProperty() {return new FilterImpl.PropertyDAO<>(ACCOUNT_ENTRY.ACTIVITY);}
+		@Override public Property<Integer> getDomainProperty() {return new FilterImpl.PropertyDAO<>(ACCOUNT_ENTRY.DOMAIN);}
+		@Override public Property<Integer> getAccountPeriodProperty() {return new FilterImpl.PropertyDAO<>(ACCOUNT_ENTRY.ACCOUNT_PERIOD);}
+		@Override public Property<Date> getEntryDateProperty() {return new FilterImpl.DatePropertyDAO(ACCOUNT_ENTRY.ENTRY_DATE);}
+		@Override public Property<Byte> getEntryTypeProperty() {return new FilterImpl.PropertyDAO<>(ACCOUNT_ENTRY.ENTRY_TYPE);}
+		@Override public Property<Byte> getConfidentialProperty() {return new FilterImpl.PropertyDAO<>(ACCOUNT_ENTRY.SECURITY_LEVEL);}
+		@Override public Property<String> getCommentsProperty() {return new FilterImpl.PropertyDAO<>(ACCOUNT_ENTRY.COMMENTS);}
+		@Override public Property<Timestamp> getCreationDateProperty() {return new FilterImpl.TimestampPropertyDAO(ACCOUNT_ENTRY.CREATION_DATE);}
+		@Override public Property<String> getCreationUserProperty() {return new FilterImpl.PropertyDAO<>(ACCOUNT_ENTRY.CREATION_USER);}
+		@Override public Property<Timestamp> getModificationDateProperty() {return new FilterImpl.TimestampPropertyDAO(ACCOUNT_ENTRY.MODIFICATION_DATE);}
+		@Override public Property<String> getModificationUserProperty() {return new FilterImpl.PropertyDAO<>(ACCOUNT_ENTRY.MODIFICATION_USER);}
 	}
 
 //	private static final AccountEntryDetailPropertiesHandler ACCOUNT_ENTRY_DETAIL_PROPERTIES = new AccountEntryDetailPropertiesHandler();
@@ -193,7 +195,7 @@ public class AccountEntryHandler {
 				.fetch()
 				.stream()
 				.map( new AccountEntryFiller() )
-				.map( ae -> ae.setDetails(
+				.map( ae -> {
 					ctx.getDslContext().select()
 						.from(ACCOUNT_ENTRY_DETAIL)
 						.join(DET_ACCOUNT).on(DET_ACCOUNT.ID.eq(ACCOUNT_ENTRY_DETAIL.ACCOUNT))
@@ -203,8 +205,10 @@ public class AccountEntryHandler {
 						.fetch()
 						.stream()
 						.map( new AccountEntryDetailFiller() )
-						.collect(Collectors.toCollection(LinkedList::new))
-					))
+						.forEach( aed -> ae.addDetail(aed))
+					;
+					return ae;
+				})
 			;
 	}
 	
@@ -275,7 +279,8 @@ public class AccountEntryHandler {
 		InsertSetStep<AccountEntryDetailRecord> insert = ctx.getDslContext().insertInto(ACCOUNT_ENTRY_DETAIL);
 		InsertSetMoreStep<AccountEntryDetailRecord>  insertMore = null;
 		int line = 0;
-		for (AccountEntryDetail detail : ae.getDetails()) {
+		LinkedList<AccountEntryDetail> details = ae.detailStream().collect(Collectors.toCollection(LinkedList::new)); 
+		for (AccountEntryDetail detail : details ) {
 			AccountEntryValidation.validateDetail(ctx, domain, detail);
 			if (insertMore != null) {
 				insert = insertMore.newRecord();
@@ -322,7 +327,8 @@ public class AccountEntryHandler {
 	
 	private static void updateDetails(AONContext ctx, int domain, AccountEntry ae) {
 		int line = 0;
-		for (AccountEntryDetail detail : ae.getDetails()) {
+		LinkedList<AccountEntryDetail> details = ae.detailStream().collect(Collectors.toCollection(LinkedList::new));
+		for (AccountEntryDetail detail : details) {
 			if (!detail.isDeleted()) {
 				++line;
 				AccountEntryValidation.validateDetail(ctx, domain, detail);
@@ -1392,21 +1398,22 @@ public class AccountEntryHandler {
 		 * El apunte debe estar cuadrado.
 		 */
 		private static final Consumer<Context> ENTRY_SETTLED = c -> {
-			double sumD = 0.0;
-			double sumC = 0.0;
-			boolean empty = true;
-			for (AccountEntryDetail aed : c.entry.getDetails()) {
-				if (!aed.isDeleted()) {
-					sumD = AonMathUtils.sum(sumD, aed.getDebit());	
-					sumC = AonMathUtils.sum(sumC, aed.getCredit());
-					empty = false;
+			MutableDouble sumD = new MutableDouble(0.0);
+			MutableDouble sumC = new MutableDouble(0.0);
+			MutableBoolean empty = new MutableBoolean(true);
+			c.entry.detailStream()
+				.filter( aed -> !aed.isDeleted())
+				.forEach( aed -> {
+					sumD.setValue( AonMathUtils.sum(sumD.getValue(), aed.getDebit()));	
+					sumC.setValue( AonMathUtils.sum(sumC.getValue(), aed.getCredit()));
+					empty.setValue( false );
 				}
-			}
-			if (empty) {
+			);
+			if (empty.getValue()) {
 				throw new AonCoreException(AonError.ACCOUNT_ENTRY_EMPTY_DETAILS.getMessage());
 			}
 			
-			if (!AonMathUtils.isZero( AonMathUtils.round(sumD - sumC))) {
+			if (!AonMathUtils.isZero( AonMathUtils.round(sumD.getValue() - sumC.getValue()))) {
 				throw new AonCoreException(AonError.ACCOUNT_ENTRY_NO_SETTLED.getMessage());
 			}
 		};

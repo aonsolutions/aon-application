@@ -19,6 +19,7 @@ import net.aonsolutions.occam.api.model.Invoice;
 import net.aonsolutions.occam.api.model.InvoiceAddress;
 import net.aonsolutions.occam.api.model.InvoiceBuilder;
 import net.aonsolutions.occam.api.model.InvoiceCalculator;
+import net.aonsolutions.occam.api.model.InvoiceHeader;
 import net.aonsolutions.occam.api.model.Registry;
 import net.aonsolutions.occam.api.model.Supplier;
 import net.aonsolutions.occam.api.model.type.InvoiceSource;
@@ -43,7 +44,7 @@ public class InvoiceFaker {
 			@Override
 			public Invoice get( AONContext ctx, int domain) {
 				Invoice inv = getHeader(ctx,domain);
-				inv.setTransaction(InvoiceTransactionType.NATIONAL);
+				inv.getHeader().setTransaction(InvoiceTransactionType.NATIONAL);
 				return fill(ctx, inv );
 			}
 		},
@@ -55,8 +56,8 @@ public class InvoiceFaker {
 			@Override
 			public Invoice get( AONContext ctx, int domain) {
 				Invoice inv = getHeader(ctx,domain);
-				inv.setTransaction(InvoiceTransactionType.NATIONAL);
-				inv.setSurcharge(true);
+				inv.getHeader().setTransaction(InvoiceTransactionType.NATIONAL);
+				inv.getHeader().setSurcharge(true);
 				return fill(ctx, inv);
 			}
 		},
@@ -68,7 +69,7 @@ public class InvoiceFaker {
 			@Override
 			public Invoice get( AONContext ctx, int domain) {
 				Invoice inv = getHeader(ctx,domain);
-				inv.setTransaction(InvoiceTransactionType.CAN_CEU_MEL);
+				inv.getHeader().setTransaction(InvoiceTransactionType.CAN_CEU_MEL);
 				return fill(ctx, inv);
 			}
 		},
@@ -80,8 +81,8 @@ public class InvoiceFaker {
 			@Override
 			public Invoice get( AONContext ctx, int domain) {
 				Invoice inv = getHeader(ctx,domain);
-				inv.setTransaction(InvoiceTransactionType.CAN_CEU_MEL);
-				inv.setService(true);
+				inv.getHeader().setTransaction(InvoiceTransactionType.CAN_CEU_MEL);
+				inv.getHeader().setService(true);
 				return fill(ctx, inv);
 			}
 		},
@@ -93,8 +94,8 @@ public class InvoiceFaker {
 			@Override
 			public Invoice get( AONContext ctx, int domain) {
 				Invoice inv = getHeader(ctx,domain);
-				inv.setTransaction(InvoiceTransactionType.NATIONAL);
-				inv.setVatAccrualPayment(true);
+				inv.getHeader().setTransaction(InvoiceTransactionType.NATIONAL);
+				inv.getHeader().setVatAccrualPayment(true);
 				return fill(ctx, inv);
 			}
 		},
@@ -106,8 +107,8 @@ public class InvoiceFaker {
 			@Override
 			public Invoice get( AONContext ctx, int domain) {
 				Invoice inv = getHeader(ctx,domain);
-				inv.setTransaction(InvoiceTransactionType.NATIONAL);
-				inv.setVatAccrualPayment(false);
+				inv.getHeader().setTransaction(InvoiceTransactionType.NATIONAL);
+				inv.getHeader().setVatAccrualPayment(false);
 				return fill(ctx,inv );
 			}
 		},
@@ -119,8 +120,8 @@ public class InvoiceFaker {
 			@Override
 			public Invoice get( AONContext ctx, int domain) {
 				Invoice inv = getHeader(ctx,domain);
-				inv.setTransaction(InvoiceTransactionType.NATIONAL);
-				inv.setService(true);
+				inv.getHeader().setTransaction(InvoiceTransactionType.NATIONAL);
+				inv.getHeader().setService(true);
 				return fill(ctx,inv);
 			}
 		},
@@ -132,8 +133,8 @@ public class InvoiceFaker {
 			@Override
 			public Invoice get( AONContext ctx, int domain) {
 				Invoice inv = getHeader(ctx,domain);
-				inv.setTransaction(InvoiceTransactionType.NATIONAL);
-				inv.setVatAccrualPayment(true);
+				inv.getHeader().setTransaction(InvoiceTransactionType.NATIONAL);
+				inv.getHeader().setVatAccrualPayment(true);
 				return fill(ctx,inv );
 			}
 		},
@@ -145,7 +146,7 @@ public class InvoiceFaker {
 			@Override
 			public Invoice get( AONContext ctx, int domain) {
 				Invoice inv = getHeader(ctx,domain);
-				inv.setTransaction(InvoiceTransactionType.INTRACOMMUNITY);
+				inv.getHeader().setTransaction(InvoiceTransactionType.INTRACOMMUNITY);
 				return fill(ctx, inv );
 			}
 		},
@@ -157,7 +158,7 @@ public class InvoiceFaker {
 			@Override
 			public Invoice get( AONContext ctx, int domain) {
 				Invoice inv = getHeader(ctx,domain);
-				inv.setTransaction(InvoiceTransactionType.OTHER_ISP);
+				inv.getHeader().setTransaction(InvoiceTransactionType.OTHER_ISP);
 				return fill(ctx,inv);
 			}
 		},
@@ -169,7 +170,7 @@ public class InvoiceFaker {
 			@Override
 			public Invoice get( AONContext ctx, int domain) {
 				Invoice inv = getHeader(ctx,domain);
-				inv.setTransaction(InvoiceTransactionType.EXTRACOMMUNITY);
+				inv.getHeader().setTransaction(InvoiceTransactionType.EXTRACOMMUNITY);
 				inv.setVatImportation(false);
 				return fill(ctx,inv );
 			}
@@ -182,7 +183,7 @@ public class InvoiceFaker {
 			@Override
 			public Invoice get( AONContext ctx, int domain) {
 				Invoice inv = getHeader(ctx,domain);
-				inv.setTransaction(InvoiceTransactionType.EXTRACOMMUNITY);
+				inv.getHeader().setTransaction(InvoiceTransactionType.EXTRACOMMUNITY);
 				inv.setVatImportation(true);
 				return fill(ctx,inv);
 			}
@@ -195,7 +196,7 @@ public class InvoiceFaker {
 			@Override
 			public Invoice get( AONContext ctx, int domain) {
 				Invoice inv = getHeader(ctx,domain);
-				inv.setTransaction(InvoiceTransactionType.CAN_CEU_MEL);
+				inv.getHeader().setTransaction(InvoiceTransactionType.CAN_CEU_MEL);
 				inv.setVatImportation(false);
 				return fill(ctx, inv);
 			}
@@ -208,7 +209,7 @@ public class InvoiceFaker {
 			@Override
 			public Invoice get( AONContext ctx, int domain) {
 				Invoice inv = getHeader(ctx,domain);
-				inv.setTransaction(InvoiceTransactionType.CAN_CEU_MEL);
+				inv.getHeader().setTransaction(InvoiceTransactionType.CAN_CEU_MEL);
 				inv.setVatImportation(true);
 				return fill(ctx, inv );
 			}
@@ -222,7 +223,7 @@ public class InvoiceFaker {
 			@Override
 			public Invoice get( AONContext ctx, int domain) {
 				Invoice inv = getHeader(ctx,domain);
-				inv.setTransaction(InvoiceTransactionType.NATIONAL);
+				inv.getHeader().setTransaction(InvoiceTransactionType.NATIONAL);
 				inv.setVatImportation(true);
 				return fill(ctx, inv );
 			}
@@ -235,8 +236,8 @@ public class InvoiceFaker {
 			@Override
 			public Invoice get( AONContext ctx, int domain) {
 				Invoice inv = getHeader(ctx,domain);
-				inv.setTransaction(InvoiceTransactionType.NATIONAL);
-				inv.setVatAccrualPayment(true);
+				inv.getHeader().setTransaction(InvoiceTransactionType.NATIONAL);
+				inv.getHeader().setVatAccrualPayment(true);
 				return fill(ctx, inv );
 			}
 		},
@@ -248,9 +249,9 @@ public class InvoiceFaker {
 			@Override
 			public Invoice get( AONContext ctx, int domain) {
 				Invoice inv = getHeader(ctx,domain);
-				inv.setTransaction(InvoiceTransactionType.NATIONAL);
-				inv.setWithholding( true );
-				inv.setWithholdingFarmer( false);
+				inv.getHeader().setTransaction(InvoiceTransactionType.NATIONAL);
+				inv.getHeader().setWithholding( true );
+				inv.getHeader().setWithholdingFarmer( false);
 				return fill(ctx, inv );
 			}
 		},
@@ -261,9 +262,9 @@ public class InvoiceFaker {
 			@Override
 			public Invoice get( AONContext ctx, int domain) {
 				Invoice inv = getHeader(ctx,domain);
-				inv.setTransaction(InvoiceTransactionType.NATIONAL);
-				inv.setWithholding( true );
-				inv.setWithholdingFarmer( false);
+				inv.getHeader().setTransaction(InvoiceTransactionType.NATIONAL);
+				inv.getHeader().setWithholding( true );
+				inv.getHeader().setWithholdingFarmer( false);
 				return fill(ctx, inv);
 			}
 		},
@@ -275,9 +276,9 @@ public class InvoiceFaker {
 			@Override
 			public Invoice get( AONContext ctx, int domain) {
 				Invoice inv = getHeader(ctx,domain);
-				inv.setTransaction(InvoiceTransactionType.NATIONAL);
-				inv.setWithholding( true );
-				inv.setWithholdingFarmer( true );
+				inv.getHeader().setTransaction(InvoiceTransactionType.NATIONAL);
+				inv.getHeader().setWithholding( true );
+				inv.getHeader().setWithholdingFarmer( true );
 				return fill(ctx,inv);
 			}
 		},
@@ -289,9 +290,9 @@ public class InvoiceFaker {
 			@Override
 			public Invoice get( AONContext ctx, int domain) {
 				Invoice inv = getHeader(ctx,domain);
-				inv.setTransaction(InvoiceTransactionType.NATIONAL);
-				inv.setWithholding( true );
-				inv.setWithholdingFarmer( true );
+				inv.getHeader().setTransaction(InvoiceTransactionType.NATIONAL);
+				inv.getHeader().setWithholding( true );
+				inv.getHeader().setWithholdingFarmer( true );
 				return fill(ctx,inv);
 			}
 		},
@@ -308,7 +309,9 @@ public class InvoiceFaker {
 			Date issueDate = faker.date().past(10, TimeUnit.DAYS);
 			Activity activity = AonDBRandom.getActivity(ctx, domain);
 			Invoice invoice = new Invoice();
-			invoice.setDomain( domain )
+			InvoiceHeader header = new InvoiceHeader();
+			invoice.setHeader(header);
+			header.setDomain( domain )
 				.setIssueDate( issueDate )
 				.setTaxDate( issueDate )
 				.setType( getType() )
@@ -317,14 +320,14 @@ public class InvoiceFaker {
 				.setSeller( AonRandom.gt(90) ? AonDBRandom.getSeller(ctx, domain) : null)
 			;
 			
-			invoice.getType().visit(new InvoiceTypeVisitor<Void>() {
+			header.getType().visit(new InvoiceTypeVisitor<Void>() {
 				
 				private Void fillRegistryData(Registry reg) {
-					invoice.setRegistry(reg.getId());
-					invoice.setRegistryDocumentType(reg.getDocumentType());
-					invoice.setRegistryDocumentCountry(reg.getDocumentCountry());
-					invoice.setRegistryDocument(reg.getDocument());
-					invoice.setRegistryName(reg.getName());
+					header.setRegistry(reg.getId());
+					header.setRegistryDocumentType(reg.getDocumentType());
+					header.setRegistryDocumentCountry(reg.getDocumentCountry());
+					header.setRegistryDocument(reg.getDocument());
+					header.setRegistryName(reg.getName());
 					return null;
 				}
 				
@@ -332,17 +335,17 @@ public class InvoiceFaker {
 				public Void visitSales() {
 					Customer customer = AonDBRandom.getCustomer( ctx, domain );
 					fillRegistryData(customer);
-					invoice.setSeries(ctx.getApplicationParameters(domain).getDefaultInvoiceSeries().orElse(null));
-					invoice.setNumber( InvoiceHandler.getNextNumber(ctx, domain, new Byte[]{invoice.getType().value()}, invoice.getSeries()));
+					header.setSeries(ctx.getApplicationParameters(domain).getDefaultInvoiceSeries().orElse(null));
+					header.setNumber( InvoiceHandler.getNextNumber(ctx, domain, new Byte[]{header.getType().value()}, header.getSeries()));
 					
-					invoice.setScope(customer.getScope());
-					invoice.setTransaction( customer.getTransaction() );
+					header.setScope(customer.getScope());
+					header.setTransaction( customer.getTransaction() );
 					
-					invoice.setService( AonRandom.gt(80) );
-					invoice.setVatAccrualPayment(invoice.isNational() && ctx.getCompany(domain).get().isVatAccrualPayment());
-					invoice.setSurcharge(customer.isSurcharge());
-					invoice.setWithholding(customer.isWithholding() && ctx.getCompany(domain).get().isWithholding());
-					invoice.setWithholdingFarmer(false);
+					header.setService( AonRandom.gt(80) );
+					header.setVatAccrualPayment(header.isNational() && ctx.getCompany(domain).get().isVatAccrualPayment());
+					header.setSurcharge(customer.isSurcharge());
+					header.setWithholding(customer.isWithholding() && ctx.getCompany(domain).get().isWithholding());
+					header.setWithholdingFarmer(false);
 					return null;
 				}
 				
@@ -350,15 +353,15 @@ public class InvoiceFaker {
 				public Void visitPurchase() {
 					Supplier supplier = AonDBRandom.getSupplier( ctx, domain );
 					fillRegistryData(supplier);
-					invoice.setReferenceCode(AonRandom.uuid(32));
-					invoice.setScope(supplier.getScope());
-					invoice.setTransaction(supplier.getTransaction());
+					header.setReferenceCode(AonRandom.uuid(32));
+					header.setScope(supplier.getScope());
+					header.setTransaction(supplier.getTransaction());
 					
-					invoice.setService( AonRandom.gt(40) );
-					invoice.setVatAccrualPayment(invoice.isNational() && supplier.isVatAccrualPayment());
-					invoice.setSurcharge(ctx.getCompany(domain).get().isSurcharge());
-					invoice.setWithholding(supplier.isWithholding());
-					invoice.setWithholdingFarmer(supplier.isWithholdingFarmer());
+					header.setService( AonRandom.gt(40) );
+					header.setVatAccrualPayment(header.isNational() && supplier.isVatAccrualPayment());
+					header.setSurcharge(ctx.getCompany(domain).get().isSurcharge());
+					header.setWithholding(supplier.isWithholding());
+					header.setWithholdingFarmer(supplier.isWithholdingFarmer());
 					return null;
 				}
 				
@@ -366,26 +369,26 @@ public class InvoiceFaker {
 				public Void visitExpenses() {
 					Creditor creditor = AonDBRandom.getCreditor( ctx, domain);
 					fillRegistryData(creditor);
-					invoice.setReferenceCode(AonRandom.uuid(32));
-					invoice.setScope(creditor.getScope());
-					invoice.setTransaction( creditor.getTransaction() );
+					header.setReferenceCode(AonRandom.uuid(32));
+					header.setScope(creditor.getScope());
+					header.setTransaction( creditor.getTransaction() );
 					
-					invoice.setService( AonRandom.gt(50) );
-					invoice.setVatAccrualPayment(invoice.isNational() && creditor.isVatAccrualPayment());
-					invoice.setSurcharge(false);
-					invoice.setWithholding(creditor.isWithholding());
-					invoice.setWithholdingFarmer(false);
+					header.setService( AonRandom.gt(50) );
+					header.setVatAccrualPayment(header.isNational() && creditor.isVatAccrualPayment());
+					header.setSurcharge(false);
+					header.setWithholding(creditor.isWithholding());
+					header.setWithholdingFarmer(false);
 					return null;
 				}
 				@Override
 				public Void visitUndeductible() {
 					visitExpenses();
 					
-					invoice.setSurcharge(false);
-					invoice.setWithholding(false);
-					invoice.setWithholdingFarmer(false);
-					invoice.setVatAccrualPayment(false);
-					invoice.setService( true );
+					header.setSurcharge(false);
+					header.setWithholding(false);
+					header.setWithholdingFarmer(false);
+					header.setVatAccrualPayment(false);
+					header.setService( true );
 					return null;
 				}
 			});
@@ -397,18 +400,19 @@ public class InvoiceFaker {
 			IntStream.range(1, 15)
 				.forEach( i -> addInvoiceDetail( ctx, invoice));
 			invoice.setInvoiceAddress( getInvoiceAddress(ctx, invoice));
-			invoice.setFinances(FinanceHandler.getFinancesForInvoice(ctx, invoice));
+			FinanceHandler.getFinancesForInvoice(ctx, invoice)
+				.forEach( f -> invoice.addFinance(f));
 			return InvoiceCalculator.calculate(invoice);
 		}
 		
 		private void checkInvoice(Invoice invoice) {
-			invoice.getTransaction().visit( new InvoiceTransactionTypeVisitor<Void>() {
+			invoice.getHeader().getTransaction().visit( new InvoiceTransactionTypeVisitor<Void>() {
 				
 				@Override
 				public Void visitOtherISP() {
 					invoice.setVatImportation(false);
-					invoice.setWithholding(false);
-					invoice.setWithholdingFarmer(false);
+					invoice.getHeader().setWithholding(false);
+					invoice.getHeader().setWithholdingFarmer(false);
 					return null;
 				}
 				
@@ -421,17 +425,17 @@ public class InvoiceFaker {
 				@Override
 				public Void visitIntracommunity() {
 					invoice.setVatImportation(false);
-					invoice.setWithholding(false);
-					invoice.setWithholdingFarmer(false);
-					invoice.setVatAccrualPayment(false);
+					invoice.getHeader().setWithholding(false);
+					invoice.getHeader().setWithholdingFarmer(false);
+					invoice.getHeader().setVatAccrualPayment(false);
 					return null;
 				}
 				
 				@Override
 				public Void visitExtracommunity() {
-					invoice.setWithholding(false);
-					invoice.setWithholdingFarmer(false);
-					invoice.setVatAccrualPayment(false);
+					invoice.getHeader().setWithholding(false);
+					invoice.getHeader().setWithholdingFarmer(false);
+					invoice.getHeader().setVatAccrualPayment(false);
 					return null;
 				}
 				
@@ -442,10 +446,10 @@ public class InvoiceFaker {
 				}
 			});
 			
-			if (invoice.isWithholding()) {
+			if (invoice.getHeader().isWithholding()) {
 				WithholdingType wt = AonRandom.getEnum( WithholdingType.class);
-				wt = invoice.isWithholdingFarmer()? WithholdingType.FARMER: wt;
-				invoice.setWithholdingFarmer( wt == WithholdingType.FARMER);
+				wt = invoice.getHeader().isWithholdingFarmer()? WithholdingType.FARMER: wt;
+				invoice.getHeader().setWithholdingFarmer( wt == WithholdingType.FARMER);
 				new InvoiceBuilder()
 					.invoice(invoice)
 					.setWithholdingPercent(getRetentionPercent())
@@ -469,14 +473,14 @@ public class InvoiceFaker {
 					.setPrice(AonRandom.getDouble(0, 100, basePrecision))
 					.setPrepayment(AonRandom.gt(95))
 					.setSource(InvoiceSource.DIRECT_INVOICE)
-					.setSeller(invoice.getSeller().orElse(null))
+					.setSeller(invoice.getHeader().getSeller().orElse(null))
 					.setInvestAsset( AonRandom.gt(90) 
 						? AonDBRandom.getInvestAsset(ctx, invoice.getDomain()) 
 						: null)
 					.ifTaxEnabled( b -> {
 						double vatPercent = getVatPercent( AonRandom.integer(0, 100));
 						b.setVatPercent(vatPercent);
-						b.setSurchargePercent( invoice.isSurcharge()
+						b.setSurchargePercent( invoice.getHeader().isSurcharge()
 								?getSurchargePercent( vatPercent ):0.0);
 					})
 			;

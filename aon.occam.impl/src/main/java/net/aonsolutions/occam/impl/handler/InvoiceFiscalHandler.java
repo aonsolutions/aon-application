@@ -18,7 +18,7 @@ import net.aonsolutions.occam.api.model.type.VATTaxRegime;
 import net.aonsolutions.occam.api.model.type.VATTaxRegime.VATTaxRegimeVisitor;
 import net.aonsolutions.occam.impl.AONContext;
 
-public class InvoiceFiscalHandler {
+class InvoiceFiscalHandler {
 	
 	private InvoiceFiscalHandler() {
 	}
@@ -31,25 +31,33 @@ public class InvoiceFiscalHandler {
 		}
 		
 		static InvoiceFiscal build(final Record r) {
-			return new InvoiceFiscal()
-				.setInvoice(r.getValue(INVOICE_FISCAL.INVOICE))
-				.setDomain(r.getValue(INVOICE_FISCAL.DOMAIN))
-				.setIssueDate(r.getValue(INVOICE_FISCAL.ISSUE_DATE))
-				.setTaxDate(r.getValue(INVOICE_FISCAL.TAX_DATE))
+			InvoiceFiscal inf =  new InvoiceFiscal()
+				.setInvoice(getValue(r, INVOICE_FISCAL.INVOICE))
+				.setDomain(getValue(r, INVOICE_FISCAL.DOMAIN))
+				.setIssueDate(getValue(r, INVOICE_FISCAL.ISSUE_DATE))
+				.setTaxDate(getValue(r, INVOICE_FISCAL.TAX_DATE))
 				.setExpDate(getValue(r, INVOICE_FISCAL.EXP_DATE))
-				.setVatRegime(VATTaxRegime.VAT_GENERAL, AonEnumUtils.getBoolean(r.getValue(INVOICE_FISCAL.VAT_GENERAL)))
-				.setVatRegime(VATTaxRegime.VAT_SURCHARGE, AonEnumUtils.getBoolean(r.getValue(INVOICE_FISCAL.VAT_SURCHARGE)))
-				.setVatRegime(VATTaxRegime.VAT_SIMPLIFIED, AonEnumUtils.getBoolean(r.getValue(INVOICE_FISCAL.VAT_SIMPLIFIED)))
-				.setVatRegime(VATTaxRegime.VAT_ACCRUAL_PAYMENT, AonEnumUtils.getBoolean(r.getValue(INVOICE_FISCAL.VAT_ACCRUAL_PAYMENT)))
-				.setVatRegime(VATTaxRegime.VAT_REBU_OPERATION, AonEnumUtils.getBoolean(r.getValue(INVOICE_FISCAL.VAT_REBU_OPERATION)))
-				.setVatRegime(VATTaxRegime.VAT_REBU_PROFIT, AonEnumUtils.getBoolean(r.getValue(INVOICE_FISCAL.VAT_REBU_PROFIT)))
-				.setVatRegime(VATTaxRegime.VAT_TRAVEL_AGENCY, AonEnumUtils.getBoolean(r.getValue(INVOICE_FISCAL.VAT_TRAVEL_AGENCY)))
-				.setVatRegime(VATTaxRegime.VAT_AGRICULTURE, AonEnumUtils.getBoolean(r.getValue(INVOICE_FISCAL.VAT_AGRICULTURE)))
-				.setVatRegime(VATTaxRegime.VAT_GOLD, AonEnumUtils.getBoolean(r.getValue(INVOICE_FISCAL.VAT_GOLD)))
-				.setVatRegime(VATTaxRegime.VAT_UNION_EXTERNAL, AonEnumUtils.getBoolean(r.getValue(INVOICE_FISCAL.VAT_UNION_EXTERNAL)))
-				.setVatRegime(VATTaxRegime.VAT_UNION, AonEnumUtils.getBoolean(r.getValue(INVOICE_FISCAL.VAT_UNION)))
-				.setVatRegime(VATTaxRegime.VAT_IMPORTATION, AonEnumUtils.getBoolean(r.getValue(INVOICE_FISCAL.VAT_IMPORTATION)))
 			;
+			VATTaxRegimeVisitor<Void> visitor = new VATTaxRegimeVisitor<Void>() {
+				@Override public Void visitVatGeneral() {inf.setVatRegime(VATTaxRegime.VAT_GENERAL, AonEnumUtils.getBoolean(getValue(r, INVOICE_FISCAL.VAT_GENERAL)));return null;}
+				@Override public Void visitVatSurcharge() {inf.setVatRegime(VATTaxRegime.VAT_SURCHARGE, AonEnumUtils.getBoolean(getValue(r, INVOICE_FISCAL.VAT_SURCHARGE)));return null;}
+				@Override public Void visitVatSimplified() {inf.setVatRegime(VATTaxRegime.VAT_SIMPLIFIED, AonEnumUtils.getBoolean(getValue(r, INVOICE_FISCAL.VAT_SIMPLIFIED)));return null;}
+				@Override public Void visitVatAccrualPayment() {inf.setVatRegime(VATTaxRegime.VAT_ACCRUAL_PAYMENT, AonEnumUtils.getBoolean(getValue(r, INVOICE_FISCAL.VAT_ACCRUAL_PAYMENT)));return null;}
+				@Override public Void visitVatRebuOperation() {inf.setVatRegime(VATTaxRegime.VAT_REBU_OPERATION, AonEnumUtils.getBoolean(getValue(r, INVOICE_FISCAL.VAT_REBU_OPERATION)));return null;}
+				@Override public Void visitVatRebuProfit() {inf.setVatRegime(VATTaxRegime.VAT_REBU_PROFIT, AonEnumUtils.getBoolean(getValue(r, INVOICE_FISCAL.VAT_REBU_PROFIT)));return null;}
+				@Override public Void visitVatTravelAgency() {inf.setVatRegime(VATTaxRegime.VAT_TRAVEL_AGENCY, AonEnumUtils.getBoolean(getValue(r, INVOICE_FISCAL.VAT_TRAVEL_AGENCY)));return null;}
+				@Override public Void visitVatAgriculture() {inf.setVatRegime(VATTaxRegime.VAT_AGRICULTURE, AonEnumUtils.getBoolean(getValue(r, INVOICE_FISCAL.VAT_AGRICULTURE)));return null;}
+				@Override public Void visitVatGold() {inf.setVatRegime(VATTaxRegime.VAT_GOLD, AonEnumUtils.getBoolean(getValue(r, INVOICE_FISCAL.VAT_GOLD)));return null;}
+				@Override public Void visitVatUnionExternal() {inf.setVatRegime(VATTaxRegime.VAT_UNION_EXTERNAL, AonEnumUtils.getBoolean(getValue(r, INVOICE_FISCAL.VAT_UNION_EXTERNAL)));return null;}
+				@Override public Void visitVatUnion() {inf.setVatRegime(VATTaxRegime.VAT_UNION, AonEnumUtils.getBoolean(getValue(r, INVOICE_FISCAL.VAT_UNION)));return null;}
+				@Override public Void visitVatImportation() {inf.setVatRegime(VATTaxRegime.VAT_IMPORTATION, AonEnumUtils.getBoolean(getValue(r, INVOICE_FISCAL.VAT_IMPORTATION)));return null;}
+				@Override public Void visitVatExempt() {inf.setVatRegime(VATTaxRegime.VAT_EXEMPT, false);return null;}
+			};
+			for (VATTaxRegime vatTaxRegime : VATTaxRegime.values()) {
+				vatTaxRegime.visit(visitor);	
+			}
+			return inf;
+			
 		}
 	}
 	
@@ -78,8 +86,8 @@ public class InvoiceFiscalHandler {
 		private static final BiConsumer<AONContext,Invoice> COMPLETE_INVOICE_DATA = (ctx,invoice) -> {
 			invoice.ensureFiscal().setInvoice( invoice.getId() );
 			invoice.ensureFiscal().setDomain( invoice.getDomain() );
-			invoice.ensureFiscal().setIssueDate( invoice.getIssueDate() );
-			invoice.ensureFiscal().setTaxDate( invoice.getTaxDate() );
+			invoice.ensureFiscal().setIssueDate( invoice.getHeader().getIssueDate() );
+			invoice.ensureFiscal().setTaxDate( invoice.getHeader().getTaxDate() );
 		};
 		
 		private static final BiConsumer<AONContext,Invoice> COMPLETE_VAT_TAX_REGIME = (ctx,invoice) -> {
@@ -87,7 +95,7 @@ public class InvoiceFiscalHandler {
 				
 				@Override 
 				public Void visitVatGeneral() {
-					invoice.getActivity()
+					invoice.getHeader().getActivity()
 						.filter(act -> act.getVatRegime() != null)
 						.ifPresentOrElse( 
 							act -> invoice.ensureFiscal().setVatRegime(VATTaxRegime.VAT_GENERAL, (act.getVatRegime() == VATRegime.GENERAL))
@@ -98,24 +106,25 @@ public class InvoiceFiscalHandler {
 				
 				@Override
 				public Void visitVatSurcharge() {
-					invoice.ensureFiscal().setVatRegime(VATTaxRegime.VAT_SURCHARGE, invoice.isSurcharge());
+					invoice.ensureFiscal().setVatRegime(VATTaxRegime.VAT_SURCHARGE, invoice.getHeader().isSurcharge());
 					return null;
 				}
 				
 				@Override
 				public Void visitVatSimplified() {
-					invoice.getActivity()
-					.filter(act -> act.getVatRegime() != null)
-					.ifPresentOrElse( 
-						act -> invoice.ensureFiscal().setVatRegime(VATTaxRegime.VAT_SIMPLIFIED, (act.getVatRegime() == VATRegime.SIMPLIFIED))
-						,() -> invoice.ensureFiscal().setVatRegime(VATTaxRegime.VAT_SIMPLIFIED, false )
-					);
+					invoice.getHeader().getActivity()
+						.filter(act -> act.getVatRegime() != null)
+						.ifPresentOrElse( 
+								act -> invoice.ensureFiscal().setVatRegime(VATTaxRegime.VAT_SIMPLIFIED, (act.getVatRegime() == VATRegime.SIMPLIFIED))
+								,() -> invoice.ensureFiscal().setVatRegime(VATTaxRegime.VAT_SIMPLIFIED, false )
+						)
+					;
 					return null;
 				}
 				
 				@Override
 				public Void visitVatAccrualPayment() {
-					invoice.ensureFiscal().setVatRegime(VATTaxRegime.VAT_ACCRUAL_PAYMENT, invoice.isVatAccrualPayment());
+					invoice.ensureFiscal().setVatRegime(VATTaxRegime.VAT_ACCRUAL_PAYMENT, invoice.getHeader().isVatAccrualPayment());
 					return null;
 				}
 				
@@ -139,7 +148,7 @@ public class InvoiceFiscalHandler {
 				
 				@Override
 				public Void visitVatAgriculture() {
-					invoice.ensureFiscal().setVatRegime(VATTaxRegime.VAT_ACCRUAL_PAYMENT, invoice.isWithholdingFarmer());
+					invoice.ensureFiscal().setVatRegime(VATTaxRegime.VAT_AGRICULTURE, invoice.getHeader().isWithholdingFarmer());
 					return null;
 				}
 				
@@ -173,6 +182,7 @@ public class InvoiceFiscalHandler {
 
 				@Override
 				public Void visitVatExempt() {
+					invoice.ensureFiscal().setVatRegime(VATTaxRegime.VAT_EXEMPT, false);
 					return null;
 				}
 			};

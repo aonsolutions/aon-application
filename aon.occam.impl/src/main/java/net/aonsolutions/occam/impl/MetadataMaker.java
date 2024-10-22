@@ -1,12 +1,13 @@
 package net.aonsolutions.occam.impl;
 
-import static com.esferalia.aon.jooq.tables.EnterpriseActivity.ENTERPRISE_ACTIVITY;
+import static com.esferalia.aon.jooq.tables.Finance.FINANCE;
+
 
 import java.io.PrintStream;
 
 import org.jooq.Table;
 
-import com.esferalia.aon.jooq.tables.EnterpriseActivity;
+import com.esferalia.aon.jooq.tables.Finance;
 import com.esferalia.aon.watson.util.AonCollectionUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.esferalia.aon.watson.util.AonWordUtils;
@@ -86,7 +87,7 @@ public class MetadataMaker<T extends Table<?>> {
 	}
 
 	public static void main(String[] args) {
-		MetadataMaker<EnterpriseActivity> mm = new MetadataMaker<>(ENTERPRISE_ACTIVITY);
+		MetadataMaker<Finance> mm = new MetadataMaker<>(FINANCE);
 		mm.make();
 	}
 }

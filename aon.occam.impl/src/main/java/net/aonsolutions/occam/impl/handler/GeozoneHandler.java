@@ -26,16 +26,16 @@ class GeozoneHandler {
 	private static class GeozonePropertiesHandler implements GeozoneProperties {
 		private Condition getConditions(GeozoneFilter filter) {
 			if (filter == null) return DSL.trueCondition();
-			FilterHandler filterHandler = (FilterHandler) filter.filter(this);
+			FilterImpl filterHandler = (FilterImpl) filter.filter(this);
 			if (filterHandler == null) return DSL.trueCondition();
 			return filterHandler.getCondition();
 		}
 		
-		@Override public Property<Integer> 	getIdProperty() 	{return new FilterHandler.PropertyDAO<>(GEOZONE.ID);}
-		@Override public Property<Integer> 	getDomainProperty() {return new FilterHandler.PropertyDAO<>(GEOZONE.DOMAIN);}
-		@Override public Property<String> 	getCodeProperty() 	{return new FilterHandler.PropertyDAO<>(GEOZONE.CODE);}
-		@Override public Property<String> 	getNameProperty() 	{return new FilterHandler.PropertyDAO<>(GEOZONE.NAME);}
-		@Override public Property<Byte> 	getSystemProperty() {return new FilterHandler.PropertyDAO<>(GEOZONE.SYSTEM);}
+		@Override public Property<Integer> 	getIdProperty() 	{return new FilterImpl.PropertyDAO<>(GEOZONE.ID);}
+		@Override public Property<Integer> 	getDomainProperty() {return new FilterImpl.PropertyDAO<>(GEOZONE.DOMAIN);}
+		@Override public Property<String> 	getCodeProperty() 	{return new FilterImpl.PropertyDAO<>(GEOZONE.CODE);}
+		@Override public Property<String> 	getNameProperty() 	{return new FilterImpl.PropertyDAO<>(GEOZONE.NAME);}
+		@Override public Property<Byte> 	getSystemProperty() {return new FilterImpl.PropertyDAO<>(GEOZONE.SYSTEM);}
 	}
 	
 	static class GeozoneFiller extends Filler<Geozone> {

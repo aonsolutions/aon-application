@@ -32,6 +32,8 @@ class ActivityTest {
 			.setStartDate(expected.getStartDate())
 			.setEndDate(expected.getEndDate())
 			.setMain(expected.isMain())
+			.setDeleted(expected.isDeleted())
+			.setSelected(expected.isSelected())
 		;
 		AonAsserts.assertClassEquals(expected, actual);
 	}

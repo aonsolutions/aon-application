@@ -54,20 +54,20 @@ class AccountHandler {
 		
 		private Condition getCondition(AccountFilter filter) {
 			if (filter==null) return DSL.trueCondition();
-			FilterHandler filterDAO = (FilterHandler) filter.filter(this);
+			FilterImpl filterDAO = (FilterImpl) filter.filter(this);
 			if (filterDAO == null) return DSL.trueCondition();
 			return filterDAO.getCondition();
 		}
 		
-		@Override public Property<Integer> getIdProperty() {return new FilterHandler.PropertyDAO<>(ACCOUNT.ID);}
-		@Override public Property<Integer> getDomainProperty() {return new FilterHandler.PropertyDAO<>(ACCOUNT.DOMAIN);}
-		@Override public Property<String> getCodeProperty() {return new FilterHandler.PropertyDAO<>(ACCOUNT.CODE);}
-		@Override public Property<String> getDescriptionProperty() {return new FilterHandler.PropertyDAO<>(ACCOUNT.DESCRIPTION);}
-		@Override public Property<String> getAliasProperty() {return new FilterHandler.PropertyDAO<>(ACCOUNT.ALIAS);}
-		@Override public Property<Byte> getEntryEnabledProperty() {return new FilterHandler.PropertyDAO<>(ACCOUNT.ENTRYENABLED);}
-		@Override public Property<Byte> getActiveProperty() {return new FilterHandler.PropertyDAO<>(ACCOUNT.ACTIVE);}
-		@Override public Property<Byte> getLevelProperty() {return new FilterHandler.PropertyDAO<>(ACCOUNT.LEVEL);}
-		@Override public Property<String> getCostCenterProperty() {return new FilterHandler.PropertyDAO<>(ACCOUNT.COST_CENTER);}
+		@Override public Property<Integer> getIdProperty() {return new FilterImpl.PropertyDAO<>(ACCOUNT.ID);}
+		@Override public Property<Integer> getDomainProperty() {return new FilterImpl.PropertyDAO<>(ACCOUNT.DOMAIN);}
+		@Override public Property<String> getCodeProperty() {return new FilterImpl.PropertyDAO<>(ACCOUNT.CODE);}
+		@Override public Property<String> getDescriptionProperty() {return new FilterImpl.PropertyDAO<>(ACCOUNT.DESCRIPTION);}
+		@Override public Property<String> getAliasProperty() {return new FilterImpl.PropertyDAO<>(ACCOUNT.ALIAS);}
+		@Override public Property<Byte> getEntryEnabledProperty() {return new FilterImpl.PropertyDAO<>(ACCOUNT.ENTRYENABLED);}
+		@Override public Property<Byte> getActiveProperty() {return new FilterImpl.PropertyDAO<>(ACCOUNT.ACTIVE);}
+		@Override public Property<Byte> getLevelProperty() {return new FilterImpl.PropertyDAO<>(ACCOUNT.LEVEL);}
+		@Override public Property<String> getCostCenterProperty() {return new FilterImpl.PropertyDAO<>(ACCOUNT.COST_CENTER);}
 	}
 
 	static class AccountFiller extends Filler<Account> {

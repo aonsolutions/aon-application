@@ -25,75 +25,75 @@ public class InvoiceBuilder {
 	}
 	
 	public InvoiceBuilder setId(Integer id) {
-		this.invoice.setId(id);
+		this.invoice.getHeader().setId(id);
 		return this;
 	}
 	public InvoiceBuilder setDomain(Integer domain) {
-		this.invoice.setDomain(domain);
+		this.invoice.getHeader().setDomain(domain);
 		return this;
 	}
 	public InvoiceBuilder setActivity(Activity activity) {
-		this.invoice.setActivity(activity);
+		this.invoice.getHeader().setActivity(activity);
 		return this;
 	}
 	public InvoiceBuilder setProject(Integer project) {
-		this.invoice.setProject(project);
+		this.invoice.getHeader().setProject(project);
 		return this;
 	}
 	public InvoiceBuilder setType(InvoiceType type) {
-		this.invoice.setType(type);
+		this.invoice.getHeader().setType(type);
 		return this;
 	}
 	public InvoiceBuilder setSeries(String series) {
-		this.invoice.setSeries(series);
+		this.invoice.getHeader().setSeries(series);
 		return this;
 	}
 	public InvoiceBuilder setNumber(Integer number) {
-		this.invoice.setNumber(number);
+		this.invoice.getHeader().setNumber(number);
 		return this;
 	}
 	public InvoiceBuilder setReferenceCode(String referenceCode) {
-		this.invoice.setReferenceCode(referenceCode);
+		this.invoice.getHeader().setReferenceCode(referenceCode);
 		return this;
 	}
 	public InvoiceBuilder setTransaction(InvoiceTransactionType transaction) {
-		this.invoice.setTransaction(transaction);
+		this.invoice.getHeader().setTransaction(transaction);
 		return this;
 	}
 	public InvoiceBuilder setIssueDate(Date issueDate) {
-		this.invoice.setIssueDate(issueDate);
+		this.invoice.getHeader().setIssueDate(issueDate);
 		return this;
 	}
 	public InvoiceBuilder setTaxDate(Date taxDate) {
-		this.invoice.setTaxDate(taxDate);
+		this.invoice.getHeader().setTaxDate(taxDate);
 		return this;
 	}
 	public InvoiceBuilder setRegistry(Integer registry) {
-		this.invoice.setRegistry(registry);
+		this.invoice.getHeader().setRegistry(registry);
 		return this;
 	}
 	public InvoiceBuilder setRegistryDocument(String registryDocument) {
-		this.invoice.setRegistryDocument(registryDocument);
+		this.invoice.getHeader().setRegistryDocument(registryDocument);
 		return this;
 	}
 	public InvoiceBuilder setRegistryDocumentType(DocumentType registryDocumentType) {
-		this.invoice.setRegistryDocumentType(registryDocumentType);
+		this.invoice.getHeader().setRegistryDocumentType(registryDocumentType);
 		return this;
 	}
 	public InvoiceBuilder setRegistryDocumentCountry(Country registryDocumentCountry) {
-		this.invoice.setRegistryDocumentCountry(registryDocumentCountry);
+		this.invoice.getHeader().setRegistryDocumentCountry(registryDocumentCountry);
 		return this;
 	}
 	public InvoiceBuilder setRegistryName(String registryName) {
-		this.invoice.setRegistryName(registryName);
+		this.invoice.getHeader().setRegistryName(registryName);
 		return this;
 	}
 	public InvoiceBuilder setConfidential(boolean confidential) {
-		this.invoice.setConfidential(confidential);
+		this.invoice.getHeader().setConfidential(confidential);
 		return this;
 	}
 	public InvoiceBuilder setSurcharge(boolean surcharge) {
-		this.invoice.setSurcharge(surcharge);
+		this.invoice.getHeader().setSurcharge(surcharge);
 		return this;
 	}
 	public InvoiceBuilder setWithholding(boolean withholding) {
@@ -179,14 +179,14 @@ public class InvoiceBuilder {
 	public InvoiceBuilder setVatPercent(double percentage) {
 		detail
 			.getVatTax()
-			.orElse(detail.enableVatTax(invoice))
+			.orElse(detail.enableVatTax())
 			.setPercentage(percentage);
 		return this;
 	}
 	public InvoiceBuilder setSurchargePercent(double percentage) {
 		Optional<InvoiceTax> o = detail.getVatTax();
 		if (!o.isPresent()) {
-			detail.enableVatTax(invoice)
+			detail.enableVatTax()
 			.setSurcharge(percentage);
 		} else {
 			o.get().setSurcharge(percentage);
@@ -209,7 +209,7 @@ public class InvoiceBuilder {
 	}
 
 	public InvoiceBuilder ifWithholdingEnabled(Consumer<InvoiceBuilder> consumer) {
-		if (invoice.isWithholding()) {
+		if (invoice.getHeader().isWithholding()) {
 			consumer.accept(this);
 		}
 		return this;

@@ -18,7 +18,7 @@ import net.aonsolutions.occam.api.model.RegistryMedia;
 import net.aonsolutions.occam.api.model.type.MediaType;
 import net.aonsolutions.occam.impl.AONContext;
 
-class RegistryMediaHandler extends AbsHandler {
+class RegistryMediaHandler {
 	
 	private RegistryMediaHandler() {
 		
@@ -149,7 +149,7 @@ class RegistryMediaHandler extends AbsHandler {
 		};
 
 		static final BiConsumer<RegistryMedia,AONContext> OVERFLOW_VALUE = (media,ctx) -> {
-			if (overflows(RMEDIA.VALUE , media.getValue()))
+			if (HandlerUtils.overflows(RMEDIA.VALUE , media.getValue()))
 				throw new AonCoreException(AonError.INVALID_LENGTH.format( "Valor", RMEDIA.VALUE.getDataType().length() ));
 		};
 

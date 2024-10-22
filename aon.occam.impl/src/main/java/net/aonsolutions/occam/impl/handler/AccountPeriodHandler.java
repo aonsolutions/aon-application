@@ -31,16 +31,16 @@ class AccountPeriodHandler {
 
 		private Condition getCondition(AccountPeriodFilter filter) {
 			if (filter == null) return DSL.trueCondition();
-			FilterHandler filterHandler = (FilterHandler) filter.filter(this);
+			FilterImpl filterHandler = (FilterImpl) filter.filter(this);
 			if (filterHandler == null) return DSL.trueCondition();
 			return filterHandler.getCondition();
 		}
 
-		@Override public Property<Integer> getIdProperty() {return new FilterHandler.PropertyDAO<>(ACCOUNT_PERIOD.ID);}
-		@Override public Property<Integer> getDomainProperty() {return new FilterHandler.PropertyDAO<>(ACCOUNT_PERIOD.DOMAIN);}
-		@Override public Property<Date> getInitiationDateProperty() {return new FilterHandler.DatePropertyDAO(ACCOUNT_PERIOD.INITIATION_DATE);}
-		@Override public Property<Date> getDeadlineProperty() {return new FilterHandler.DatePropertyDAO(ACCOUNT_PERIOD.DEADLINE);}
-		@Override public Property<Byte> getStatusProperty() {return new FilterHandler.PropertyDAO<>(ACCOUNT_PERIOD.STATUS);}
+		@Override public Property<Integer> getIdProperty() {return new FilterImpl.PropertyDAO<>(ACCOUNT_PERIOD.ID);}
+		@Override public Property<Integer> getDomainProperty() {return new FilterImpl.PropertyDAO<>(ACCOUNT_PERIOD.DOMAIN);}
+		@Override public Property<Date> getInitiationDateProperty() {return new FilterImpl.DatePropertyDAO(ACCOUNT_PERIOD.INITIATION_DATE);}
+		@Override public Property<Date> getDeadlineProperty() {return new FilterImpl.DatePropertyDAO(ACCOUNT_PERIOD.DEADLINE);}
+		@Override public Property<Byte> getStatusProperty() {return new FilterImpl.PropertyDAO<>(ACCOUNT_PERIOD.STATUS);}
 	}
 
 	static class AccountPeriodFiller extends Filler<AccountPeriod> {

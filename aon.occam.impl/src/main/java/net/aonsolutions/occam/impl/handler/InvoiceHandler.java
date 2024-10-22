@@ -44,7 +44,6 @@ import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 import net.aonsolutions.occam.api.model.Account;
-import net.aonsolutions.occam.api.model.Attach;
 import net.aonsolutions.occam.api.model.DiscountExpression;
 import net.aonsolutions.occam.api.model.Filter.InvoiceFilter;
 import net.aonsolutions.occam.api.model.Filter.Property;
@@ -53,6 +52,7 @@ import net.aonsolutions.occam.api.model.Invoice;
 import net.aonsolutions.occam.api.model.InvoiceCalculator;
 import net.aonsolutions.occam.api.model.InvoiceDetail;
 import net.aonsolutions.occam.api.model.InvoiceErrorMessages;
+import net.aonsolutions.occam.api.model.InvoiceHeader;
 import net.aonsolutions.occam.api.model.InvoiceTax;
 import net.aonsolutions.occam.api.model.Properties.InvoiceProperties;
 import net.aonsolutions.occam.api.model.Seller;
@@ -64,7 +64,6 @@ import net.aonsolutions.occam.api.model.type.InvoiceAttachmentType;
 import net.aonsolutions.occam.api.model.type.InvoiceErrorKey;
 import net.aonsolutions.occam.api.model.type.InvoiceSource;
 import net.aonsolutions.occam.api.model.type.InvoiceSource.InvoiceSourceVisitor;
-import net.aonsolutions.occam.api.model.type.InvoiceTransactionType;
 import net.aonsolutions.occam.api.model.type.InvoiceType;
 import net.aonsolutions.occam.api.model.type.RectificationType;
 import net.aonsolutions.occam.api.model.type.SecurityLevel;
@@ -72,9 +71,8 @@ import net.aonsolutions.occam.api.model.type.TaxType;
 import net.aonsolutions.occam.api.model.type.VatDeductionType;
 import net.aonsolutions.occam.api.model.type.WithholdingType;
 import net.aonsolutions.occam.impl.AONContext;
-import net.aonsolutions.occam.impl.handler.ActivityHandler.ActivityFiller;
 import net.aonsolutions.occam.impl.handler.InvoiceFiscalHandler.InvoiceFiscalFiller;
-import net.aonsolutions.occam.impl.handler.SellerHandler.SellerFiller;
+import net.aonsolutions.occam.impl.handler.InvoiceHeaderHandler.InvoiceHeaderFiller;
 
 class InvoiceHandler {
 	
@@ -100,52 +98,52 @@ class InvoiceHandler {
 			if (filter == null) {
 				throw new AonCoreException( AonError.NULL_FILTER.getMessage());
 			}
-			FilterHandler filterHandler = (FilterHandler) filter.filter(this);
+			FilterImpl filterHandler = (FilterImpl) filter.filter(this);
 			if (filterHandler == null)return DSL.trueCondition();
 			return filterHandler.getCondition();
 		}
 		
-		@Override public Property<Integer> getIdProperty() {return new FilterHandler.PropertyDAO<>(INVOICE.ID);}
-		@Override public Property<Integer> getDomainProperty(){return new FilterHandler.PropertyDAO<>(INVOICE.DOMAIN);} 
-		@Override public Property<Integer> getActivityProperty(){return new FilterHandler.PropertyDAO<>(INVOICE.ACTIVITY);} 
-		@Override public Property<Integer> getInvestAssetProperty(){return new FilterHandler.PropertyDAO<>(INVOICE.INVEST_ASSET);}
-		@Override public Property<Integer> getProjectProperty(){return new FilterHandler.PropertyDAO<>(INVOICE.PROJECT);}
-		@Override public Property<String> getSeriesProperty() {return new FilterHandler.PropertyDAO<>(INVOICE.SERIES);} 
-		@Override public Property<Integer> getNumberProperty() {return new FilterHandler.PropertyDAO<>(INVOICE.NUMBER);} 
-		@Override public Property<String> getReferenceCodeProperty() {return new FilterHandler.PropertyDAO<>(INVOICE.REFERENCE_CODE);} 
-		@Override public Property<Integer> getRegistryProperty(){return new FilterHandler.PropertyDAO<>(INVOICE.REGISTRY);} 
-		@Override public Property<String> getRegistryDocumentProperty(){return new FilterHandler.PropertyDAO<>(INVOICE.RDOCUMENT);} 
-		@Override public Property<Byte> getRegistryDocumentTypeProperty() {return new FilterHandler.PropertyDAO<>(INVOICE.RDOCUMENT_TYPE);} 
-		@Override public Property<String> getRegistryDocumentCountryProperty(){return new FilterHandler.PropertyDAO<>(INVOICE.RDOCUMENT_COUNTRY);} 
-		@Override public Property<String> getRegistryNameProperty(){return new FilterHandler.PropertyDAO<>(INVOICE.RNAME);}
-		@Override public Property<Integer> getRegistryAddressProperty(){return new FilterHandler.PropertyDAO<>(INVOICE.RADDRESS);} 
-		@Override public Property<java.util.Date> getIssueDateProperty() {return new FilterHandler.DatePropertyDAO(INVOICE.ISSUE_DATE);} 
-		@Override public Property<java.util.Date> getTaxDateProperty() {return new FilterHandler.DatePropertyDAO(INVOICE.TAX_DATE);} 
-		@Override public Property<Byte> getSecurityLevelProperty() {return new FilterHandler.PropertyDAO<>(INVOICE.SECURITY_LEVEL);} 
-		@Override public Property<Byte> getStatusProperty() {return new FilterHandler.PropertyDAO<>(INVOICE.STATUS);} 
-		@Override public Property<Byte> getTypeProperty() {return new FilterHandler.PropertyDAO<>(INVOICE.TYPE);} 
-		@Override public Property<Byte> getSurchargeProperty() {return new FilterHandler.PropertyDAO<>(INVOICE.SURCHARGE);} 
-		@Override public Property<Byte> getWithholdingProperty() {return new FilterHandler.PropertyDAO<>(INVOICE.WITHHOLDING);} 
-		@Override public Property<Byte> getWithholdingFarmerProperty() {return new FilterHandler.PropertyDAO<>(INVOICE.WITHHOLDING_FARMER);}
-		@Override public Property<Byte> getVatAccrualPayment() {return new FilterHandler.PropertyDAO<>(INVOICE.VAT_ACCRUAL_PAYMENT);} 
-		@Override public Property<String> getCommentsProperty(){return new FilterHandler.PropertyDAO<>(INVOICE.COMMENTS);}
-		@Override public Property<String> getRemarksProperty(){return new FilterHandler.PropertyDAO<>(INVOICE.REMARKS);}
-		@Override public Property<Byte> getInvestmentProperty() {return new FilterHandler.PropertyDAO<>(INVOICE.INVESTMENT);} 
-		@Override public Property<Byte> getTransactionProperty() {return new FilterHandler.PropertyDAO<>(INVOICE.TRANSACTION);} 
-		@Override public Property<Byte> getSignedProperty() {return new FilterHandler.PropertyDAO<>(INVOICE.SIGNED);}
-		@Override public Property<Integer> getScopeProperty() {return new FilterHandler.PropertyDAO<>(INVOICE.SCOPE);} 
-		@Override public Property<Byte> getServiceProperty() {return new FilterHandler.PropertyDAO<>(INVOICE.SERVICE);}
-		@Override public Property<Byte> getRectificationTypeProperty() {return new FilterHandler.PropertyDAO<>(INVOICE.RECTIFICATION_TYPE);} 
-		@Override public Property<Integer> getRectificationInvoiceProperty() {return new FilterHandler.PropertyDAO<>(INVOICE.RECTIFICATION_INVOICE);} 
-		@Override public Property<Integer> getSellerProperty() {return new FilterHandler.PropertyDAO<>(INVOICE.SELLER);} 
-		@Override public Property<Double> getTaxableBaseProperty() {return new FilterHandler.PropertyDAO<>(INVOICE.TAXABLE_BASE);} 
-		@Override public Property<Double> getVatQuotaProperty() {return new FilterHandler.PropertyDAO<>(INVOICE.TOTAL);} 
-		@Override public Property<Double> getRetentionQuotaTotalProperty() {return new FilterHandler.PropertyDAO<>(INVOICE.TOTAL);} 
-		@Override public Property<Double> getTotalProperty() {return new FilterHandler.PropertyDAO<>(INVOICE.TOTAL);} 
-		@Override public Property<String> getCreationUserProperty() {return new FilterHandler.PropertyDAO<>(INVOICE.CREATION_USER);} 
-		@Override public Property<Timestamp> getCreationDateProperty() {return new FilterHandler.PropertyDAO<>(INVOICE.CREATION_DATE);} 
-		@Override public Property<Timestamp> getModificationDateProperty() {return new FilterHandler.PropertyDAO<>(INVOICE.MODIFICATION_DATE);} 
-		@Override public Property<String> getModificationUserProperty() {return new FilterHandler.PropertyDAO<>(INVOICE.MODIFICATION_USER);} 
+		@Override public Property<Integer> getIdProperty() {return new FilterImpl.PropertyDAO<>(INVOICE.ID);}
+		@Override public Property<Integer> getDomainProperty(){return new FilterImpl.PropertyDAO<>(INVOICE.DOMAIN);} 
+		@Override public Property<Integer> getActivityProperty(){return new FilterImpl.PropertyDAO<>(INVOICE.ACTIVITY);} 
+		@Override public Property<Integer> getInvestAssetProperty(){return new FilterImpl.PropertyDAO<>(INVOICE.INVEST_ASSET);}
+		@Override public Property<Integer> getProjectProperty(){return new FilterImpl.PropertyDAO<>(INVOICE.PROJECT);}
+		@Override public Property<String> getSeriesProperty() {return new FilterImpl.PropertyDAO<>(INVOICE.SERIES);} 
+		@Override public Property<Integer> getNumberProperty() {return new FilterImpl.PropertyDAO<>(INVOICE.NUMBER);} 
+		@Override public Property<String> getReferenceCodeProperty() {return new FilterImpl.PropertyDAO<>(INVOICE.REFERENCE_CODE);} 
+		@Override public Property<Integer> getRegistryProperty(){return new FilterImpl.PropertyDAO<>(INVOICE.REGISTRY);} 
+		@Override public Property<String> getRegistryDocumentProperty(){return new FilterImpl.PropertyDAO<>(INVOICE.RDOCUMENT);} 
+		@Override public Property<Byte> getRegistryDocumentTypeProperty() {return new FilterImpl.PropertyDAO<>(INVOICE.RDOCUMENT_TYPE);} 
+		@Override public Property<String> getRegistryDocumentCountryProperty(){return new FilterImpl.PropertyDAO<>(INVOICE.RDOCUMENT_COUNTRY);} 
+		@Override public Property<String> getRegistryNameProperty(){return new FilterImpl.PropertyDAO<>(INVOICE.RNAME);}
+		@Override public Property<Integer> getRegistryAddressProperty(){return new FilterImpl.PropertyDAO<>(INVOICE.RADDRESS);} 
+		@Override public Property<java.util.Date> getIssueDateProperty() {return new FilterImpl.DatePropertyDAO(INVOICE.ISSUE_DATE);} 
+		@Override public Property<java.util.Date> getTaxDateProperty() {return new FilterImpl.DatePropertyDAO(INVOICE.TAX_DATE);} 
+		@Override public Property<Byte> getSecurityLevelProperty() {return new FilterImpl.PropertyDAO<>(INVOICE.SECURITY_LEVEL);} 
+		@Override public Property<Byte> getStatusProperty() {return new FilterImpl.PropertyDAO<>(INVOICE.STATUS);} 
+		@Override public Property<Byte> getTypeProperty() {return new FilterImpl.PropertyDAO<>(INVOICE.TYPE);} 
+		@Override public Property<Byte> getSurchargeProperty() {return new FilterImpl.PropertyDAO<>(INVOICE.SURCHARGE);} 
+		@Override public Property<Byte> getWithholdingProperty() {return new FilterImpl.PropertyDAO<>(INVOICE.WITHHOLDING);} 
+		@Override public Property<Byte> getWithholdingFarmerProperty() {return new FilterImpl.PropertyDAO<>(INVOICE.WITHHOLDING_FARMER);}
+		@Override public Property<Byte> getVatAccrualPayment() {return new FilterImpl.PropertyDAO<>(INVOICE.VAT_ACCRUAL_PAYMENT);} 
+		@Override public Property<String> getCommentsProperty(){return new FilterImpl.PropertyDAO<>(INVOICE.COMMENTS);}
+		@Override public Property<String> getRemarksProperty(){return new FilterImpl.PropertyDAO<>(INVOICE.REMARKS);}
+		@Override public Property<Byte> getInvestmentProperty() {return new FilterImpl.PropertyDAO<>(INVOICE.INVESTMENT);} 
+		@Override public Property<Byte> getTransactionProperty() {return new FilterImpl.PropertyDAO<>(INVOICE.TRANSACTION);} 
+		@Override public Property<Byte> getSignedProperty() {return new FilterImpl.PropertyDAO<>(INVOICE.SIGNED);}
+		@Override public Property<Integer> getScopeProperty() {return new FilterImpl.PropertyDAO<>(INVOICE.SCOPE);} 
+		@Override public Property<Byte> getServiceProperty() {return new FilterImpl.PropertyDAO<>(INVOICE.SERVICE);}
+		@Override public Property<Byte> getRectificationTypeProperty() {return new FilterImpl.PropertyDAO<>(INVOICE.RECTIFICATION_TYPE);} 
+		@Override public Property<Integer> getRectificationInvoiceProperty() {return new FilterImpl.PropertyDAO<>(INVOICE.RECTIFICATION_INVOICE);} 
+		@Override public Property<Integer> getSellerProperty() {return new FilterImpl.PropertyDAO<>(INVOICE.SELLER);} 
+		@Override public Property<Double> getTaxableBaseProperty() {return new FilterImpl.PropertyDAO<>(INVOICE.TAXABLE_BASE);} 
+		@Override public Property<Double> getVatQuotaProperty() {return new FilterImpl.PropertyDAO<>(INVOICE.TOTAL);} 
+		@Override public Property<Double> getRetentionQuotaTotalProperty() {return new FilterImpl.PropertyDAO<>(INVOICE.TOTAL);} 
+		@Override public Property<Double> getTotalProperty() {return new FilterImpl.PropertyDAO<>(INVOICE.TOTAL);} 
+		@Override public Property<String> getCreationUserProperty() {return new FilterImpl.PropertyDAO<>(INVOICE.CREATION_USER);} 
+		@Override public Property<Timestamp> getCreationDateProperty() {return new FilterImpl.PropertyDAO<>(INVOICE.CREATION_DATE);} 
+		@Override public Property<Timestamp> getModificationDateProperty() {return new FilterImpl.PropertyDAO<>(INVOICE.MODIFICATION_DATE);} 
+		@Override public Property<String> getModificationUserProperty() {return new FilterImpl.PropertyDAO<>(INVOICE.MODIFICATION_USER);} 
 	}
 
 	static class InvoiceFiller extends Filler<Invoice> {
@@ -160,47 +158,9 @@ class InvoiceHandler {
 	    }
 	     
     	static Invoice build(Record r, com.esferalia.aon.jooq.tables.Invoice inv) {
-    		Invoice invoice = new Invoice(); 
-			invoice
-				.setId(getValue(r,inv.ID))
-				.setDomain(getValue(r,inv.DOMAIN))
-				.setType(InvoiceType.value(getValue(r, inv.TYPE)).orElse(null))
-				.setSeries(getValue(r,inv.SERIES))
-				.setNumber(getValue(r,inv.NUMBER))
-				.setReferenceCode(getValue(r,inv.REFERENCE_CODE))
-				.setIssueDate(getValue(r,inv.ISSUE_DATE))
-				.setTaxDate(getValue(r,inv.TAX_DATE))
-				.setConfidential(SecurityLevel.confidential(getValue(r,inv.SECURITY_LEVEL)))
-				.setRegistry( getValue(r,inv.REGISTRY))
-				.setRegistryDocument(getValue(r,inv.RDOCUMENT))
-				.setRegistryDocumentType(DocumentType.value(getValue(r, inv.RDOCUMENT_TYPE)).orElse(null))
-				.setRegistryDocumentCountry(Country.value(getValue(r,inv.RDOCUMENT_COUNTRY)).orElse(null))
-				.setRegistryName(getValue(r,inv.RNAME))
-				.setScope(getValue(r,inv.SCOPE))
-				.setActivity(ActivityFiller.build(r))	
-				.setProject(getValue(r,inv.PROJECT))
-				.setRectificationType(RectificationType.value(getValue(r, inv.RECTIFICATION_TYPE)).orElse(null))
-				.setRectificationInvoiceId(getValue(r,inv.RECTIFICATION_INVOICE))
-				.setTransaction(InvoiceTransactionType.value(getValue(r,inv.TRANSACTION)).orElse(null))
-				.setRecorded(getBoolean(r,inv.STATUS))	
-				.setSurcharge(getBoolean(r,inv.SURCHARGE))	
-				.setWithholding(getBoolean(r,inv.WITHHOLDING))	
-				.setWithholdingFarmer(getBoolean(r,inv.WITHHOLDING_FARMER))	
-				.setVatAccrualPayment(getBoolean(r,inv.VAT_ACCRUAL_PAYMENT))	
-				.setInvestment(getBoolean(r,inv.INVESTMENT))	
-				.setService(getBoolean(r,inv.SERVICE))	
-				.setTaxableBase(getValue(r,inv.TAXABLE_BASE))	
-				.setVatQuota(getValue(r,inv.VAT_QUOTA))	
-				.setRetentionQuota(getValue(r,inv.RETENTION_QUOTA))	
-				.setTotal(getValue(r,inv.TOTAL))	
-				.setComments(getValue(r,inv.COMMENTS))
-				.setRemarks(getValue(r,inv.REMARKS))
-				.setSeller(SellerFiller.build(r, REGISTRY_SELLER))
-				.setCreationDate(getValue(r,inv.CREATION_DATE))
-				.setCreationUser(getValue(r,inv.CREATION_USER))
-				.setModificationDate(getValue(r,inv.MODIFICATION_DATE))
-				.setModificationUser(getValue(r,inv.MODIFICATION_USER));
-			return invoice
+    		if (isNull(r,inv.ID)) return null;
+    		return new Invoice()
+				.setHeader(InvoiceHeaderFiller.build(r))	
 				.setFiscal(InvoiceFiscalFiller.build(r))
 			;
 		}
@@ -231,6 +191,13 @@ class InvoiceHandler {
 			.findFirst();
 	}
 
+	static Invoice validate(AONContext ctx, Invoice invoice) {
+		InvoiceAutoComplete.completeInvoice(ctx, invoice);
+		InvoiceCalculator.calculate(invoice);
+		InvoiceValidation.validate(ctx, invoice);
+		return invoice;
+	}
+	
 	static Invoice save(AONContext ctx, int domain, Invoice invoice) {
 		return save(ctx, domain, invoice, false);
 	}
@@ -240,11 +207,16 @@ class InvoiceHandler {
 	
 	private static Invoice save(AONContext ctx, int domain, Invoice invoice, boolean returnFullInvoice) {
 		ctx.checkWrite();
+		validate(ctx, invoice);
 		if (invoice.getId() == null) {
-			insert(ctx, domain, invoice);
+			insert(ctx, invoice);
 		} else {
-			update(ctx, domain, invoice);
+			update(ctx, invoice);
 		}
+		saveDetails(ctx, invoice);
+		InvoiceFiscalHandler.save(ctx, invoice);
+		invoice.financeStream()
+			.forEach( finance -> FinanceHandler.save(ctx, domain, invoice));
 		if (returnFullInvoice) {
 			return get(ctx, invoice.getDomain() , invoice.getId() )
 				.orElseThrow(() -> {
@@ -255,118 +227,108 @@ class InvoiceHandler {
 		return invoice;
 	}
 
-	private static Invoice update(AONContext ctx, int domain, Invoice invoice) {
-		InvoiceAutoComplete.completeInvoice(ctx, invoice);
-		InvoiceCalculator.calculate(invoice);
-		InvoiceValidation.validate(ctx, invoice);
+	private static Invoice update(AONContext ctx, Invoice invoice) {
+		InvoiceHeader header = invoice.getHeader();
 		int i = ctx.getDslContext()
 			.update(INVOICE)
-			.set(INVOICE.DOMAIN, invoice.getDomain() )
-			.set(INVOICE.ACTIVITY, invoice.getActivity().map(a -> a.getId()).orElse(null) )
+			.set(INVOICE.DOMAIN, header.getDomain() )
+			.set(INVOICE.ACTIVITY, header.getActivity().map(a -> a.getId()).orElse(null) )
 			//.set(INVOICE.INVEST_ASSET, invoice.getInvestAsset() )
-			.set(INVOICE.PROJECT, invoice.getProject() )
-			.set(INVOICE.SERIES, invoice.getSeries() )
-			.set(INVOICE.NUMBER, invoice.getNumber() )
-			.set(INVOICE.REFERENCE_CODE, invoice.getReferenceCode() )
-			.set(INVOICE.REGISTRY, invoice.getRegistry() )
-			.set(INVOICE.RDOCUMENT, invoice.getRegistryDocument() )
-			.set(INVOICE.RDOCUMENT_TYPE, DocumentType.value( invoice.getRegistryDocumentType()) )
-			.set(INVOICE.RDOCUMENT_COUNTRY, Country.value( invoice.getRegistryDocumentCountry()))
-			.set(INVOICE.RNAME, invoice.getRegistryName() )
+			.set(INVOICE.PROJECT, header.getProject() )
+			.set(INVOICE.SERIES, header.getSeries() )
+			.set(INVOICE.NUMBER, header.getNumber() )
+			.set(INVOICE.REFERENCE_CODE, header.getReferenceCode() )
+			.set(INVOICE.REGISTRY, header.getRegistry() )
+			.set(INVOICE.RDOCUMENT, header.getRegistryDocument() )
+			.set(INVOICE.RDOCUMENT_TYPE, DocumentType.value( header.getRegistryDocumentType()) )
+			.set(INVOICE.RDOCUMENT_COUNTRY, Country.value( header.getRegistryDocumentCountry()))
+			.set(INVOICE.RNAME, header.getRegistryName() )
 			// .set(INVOICE.RADDRESS, invoice.getRegistryAddress() )
-			.set(INVOICE.ISSUE_DATE, AonDateUtils.toSql( invoice.getIssueDate()) )
-			.set(INVOICE.TAX_DATE, AonDateUtils.toSql(invoice.getTaxDate()) )
-			.set(INVOICE.SECURITY_LEVEL, SecurityLevel.value( invoice.isConfidential() ) )
-			.set(INVOICE.STATUS, AonEnumUtils.getByte( invoice.isRecorded() ) )
-			.set(INVOICE.TYPE, InvoiceType.value( invoice.getType() ) )
-			.set(INVOICE.SURCHARGE, AonEnumUtils.getByte( invoice.isSurcharge() ))
-			.set(INVOICE.WITHHOLDING, AonEnumUtils.getByte( invoice.isWithholding() ))
-			.set(INVOICE.WITHHOLDING_FARMER, AonEnumUtils.getByte( invoice.isWithholdingFarmer() ))
-			.set(INVOICE.VAT_ACCRUAL_PAYMENT, AonEnumUtils.getByte( invoice.isVatAccrualPayment() ))
-			.set(INVOICE.INVESTMENT, AonEnumUtils.getByte( invoice.isInvestment() ) )
-			.set(INVOICE.TRANSACTION, AonEnumUtils.getByte( invoice.getTransaction() ) )
-			.set(INVOICE.SCOPE, invoice.getScope())
-			.set(INVOICE.SERVICE, AonEnumUtils.getByte(  invoice.isService() ) )
-			.set(INVOICE.RECTIFICATION_TYPE, RectificationType.value(invoice.getRectificationType()) )
-			.set(INVOICE.RECTIFICATION_INVOICE, invoice.getRectificationInvoiceId() )
+			.set(INVOICE.ISSUE_DATE, AonDateUtils.toSql( header.getIssueDate()) )
+			.set(INVOICE.TAX_DATE, AonDateUtils.toSql(header.getTaxDate()) )
+			.set(INVOICE.SECURITY_LEVEL, SecurityLevel.value( header.isConfidential() ) )
+			.set(INVOICE.STATUS, AonEnumUtils.getByte( header.isRecorded() ) )
+			.set(INVOICE.TYPE, InvoiceType.value( header.getType() ) )
+			.set(INVOICE.SURCHARGE, AonEnumUtils.getByte( header.isSurcharge() ))
+			.set(INVOICE.WITHHOLDING, AonEnumUtils.getByte( header.isWithholding() ))
+			.set(INVOICE.WITHHOLDING_FARMER, AonEnumUtils.getByte( header.isWithholdingFarmer() ))
+			.set(INVOICE.VAT_ACCRUAL_PAYMENT, AonEnumUtils.getByte( header.isVatAccrualPayment() ))
+			.set(INVOICE.INVESTMENT, AonEnumUtils.getByte( header.isInvestment() ) )
+			.set(INVOICE.TRANSACTION, AonEnumUtils.getByte( header.getTransaction() ) )
+			.set(INVOICE.SCOPE, header.getScope())
+			.set(INVOICE.SERVICE, AonEnumUtils.getByte(  header.isService() ) )
+			.set(INVOICE.RECTIFICATION_TYPE, RectificationType.value(header.getRectificationType()) )
+			.set(INVOICE.RECTIFICATION_INVOICE, header.getRectificationInvoiceId() )
 			//.set(INVOICE.ADVANCE, AonEnumUtils.getByte( invoice.isAdvance()) )
-			.set(INVOICE.SIGNED, AonEnumUtils.getByte( invoice.isSigned()) )
-			.set(INVOICE.TAXABLE_BASE, invoice.getTaxableBase() )
-			.set(INVOICE.VAT_QUOTA, invoice.getVatQuota() )
-			.set(INVOICE.RETENTION_QUOTA, invoice.getRetentionQuota() )
-			.set(INVOICE.TOTAL, invoice.getTotal() )
+			.set(INVOICE.SIGNED, AonEnumUtils.getByte( header.isSigned()) )
+			.set(INVOICE.TAXABLE_BASE, header.getTaxableBase() )
+			.set(INVOICE.VAT_QUOTA, header.getVatQuota() )
+			.set(INVOICE.RETENTION_QUOTA, header.getRetentionQuota() )
+			.set(INVOICE.TOTAL, header.getTotal() )
 			//.set(INVOICE.POS_SHIFT, invoice.getPosShift() )
-			.set(INVOICE.SELLER, invoice.getSeller().map(s -> s.getId()).orElse(null))
-			.set(INVOICE.COMMENTS, invoice.getComments() )
-			.set(INVOICE.REMARKS, invoice.getRemarks() )
+			.set(INVOICE.SELLER, header.getSeller().map(s -> s.getId()).orElse(null))
+			.set(INVOICE.COMMENTS, header.getComments() )
+			.set(INVOICE.REMARKS, header.getRemarks() )
 			.set(INVOICE.MODIFICATION_USER,ctx.getUser())
 			.set(INVOICE.MODIFICATION_DATE, new Timestamp( System.currentTimeMillis()) )
-			.where(INVOICE.ID.equal( invoice.getId()))
+			.where(INVOICE.ID.equal( header.getId()))
 			.execute();
-		ctx.log().debug("UPDATE INVOICE invoice: {0} ({1} rows)",invoice.getId(),i);
-		saveDetails(ctx, invoice);
-		InvoiceFiscalHandler.save(ctx, invoice);
+		ctx.log().debug("UPDATE INVOICE invoice: {0} ({1} rows)",header.getId(),i);
 		return invoice; 
 	}
 	
-	private static Invoice insert(AONContext ctx, int domain, Invoice invoice) {
+	private static Invoice insert(AONContext ctx, Invoice invoice) {
 		ctx.checkWrite();
-		InvoiceAutoComplete.completeInvoice(ctx, invoice);
-		InvoiceCalculator.calculate(invoice);
-		InvoiceValidation.validate(ctx, invoice);
+		InvoiceHeader header = invoice.getHeader();
 		InvoiceRecord rec = ctx.getDslContext()
 			.insertInto(INVOICE)
-			.set(INVOICE.DOMAIN, invoice.getDomain() )
-			.set(INVOICE.ACTIVITY, invoice.getActivity().map(a -> a.getId()).orElse(null) )
+			.set(INVOICE.DOMAIN, header.getDomain() )
+			.set(INVOICE.ACTIVITY, header.getActivity().map(a -> a.getId()).orElse(null) )
 			//.set(INVOICE.INVEST_ASSET, invoice.getInvestAsset() )
-			.set(INVOICE.PROJECT, invoice.getProject() )
-			.set(INVOICE.SERIES, invoice.getSeries() )
-			.set(INVOICE.NUMBER, invoice.getNumber() )
-			.set(INVOICE.REFERENCE_CODE, invoice.getReferenceCode() )
-			.set(INVOICE.REGISTRY, invoice.getRegistry() )
-			.set(INVOICE.RDOCUMENT, invoice.getRegistryDocument() )
-			.set(INVOICE.RDOCUMENT_TYPE, DocumentType.value(invoice.getRegistryDocumentType()) )
-			.set(INVOICE.RDOCUMENT_COUNTRY, Country.value( invoice.getRegistryDocumentCountry()))
-			.set(INVOICE.RNAME, invoice.getRegistryName() )
+			.set(INVOICE.PROJECT, header.getProject() )
+			.set(INVOICE.SERIES, header.getSeries() )
+			.set(INVOICE.NUMBER, header.getNumber() )
+			.set(INVOICE.REFERENCE_CODE, header.getReferenceCode() )
+			.set(INVOICE.REGISTRY, header.getRegistry() )
+			.set(INVOICE.RDOCUMENT, header.getRegistryDocument() )
+			.set(INVOICE.RDOCUMENT_TYPE, DocumentType.value(header.getRegistryDocumentType()) )
+			.set(INVOICE.RDOCUMENT_COUNTRY, Country.value( header.getRegistryDocumentCountry()))
+			.set(INVOICE.RNAME, header.getRegistryName() )
 			//.set(INVOICE.RADDRESS, invoice.getRegistryAddress() )
-			.set(INVOICE.ISSUE_DATE, AonDateUtils.toSql( invoice.getIssueDate()) )
-			.set(INVOICE.TAX_DATE, AonDateUtils.toSql(invoice.getTaxDate()) )
-			.set(INVOICE.SECURITY_LEVEL, SecurityLevel.value( invoice.isConfidential() ) )
-			.set(INVOICE.STATUS, AonEnumUtils.getByte( invoice.isRecorded() ) )
-			.set(INVOICE.TYPE, InvoiceType.value( invoice.getType() ) )
-			.set(INVOICE.SURCHARGE, AonEnumUtils.getByte( invoice.isSurcharge() ))
-			.set(INVOICE.WITHHOLDING, AonEnumUtils.getByte( invoice.isWithholding() ))
-			.set(INVOICE.WITHHOLDING_FARMER, AonEnumUtils.getByte( invoice.isWithholdingFarmer() ))
-			.set(INVOICE.VAT_ACCRUAL_PAYMENT, AonEnumUtils.getByte( invoice.isVatAccrualPayment() ))
-			.set(INVOICE.INVESTMENT, AonEnumUtils.getByte( invoice.isInvestment() ) )
-			.set(INVOICE.TRANSACTION, AonEnumUtils.getByte( invoice.getTransaction() ) )
-			.set(INVOICE.SCOPE, invoice.getScope() )
-			.set(INVOICE.SERVICE, AonEnumUtils.getByte(  invoice.isService() ) )
-			.set(INVOICE.RECTIFICATION_TYPE, RectificationType.value(invoice.getRectificationType()) )
-			.set(INVOICE.RECTIFICATION_INVOICE, invoice.getRectificationInvoiceId() )
+			.set(INVOICE.ISSUE_DATE, AonDateUtils.toSql( header.getIssueDate()) )
+			.set(INVOICE.TAX_DATE, AonDateUtils.toSql(header.getTaxDate()) )
+			.set(INVOICE.SECURITY_LEVEL, SecurityLevel.value( header.isConfidential() ) )
+			.set(INVOICE.STATUS, AonEnumUtils.getByte( header.isRecorded() ) )
+			.set(INVOICE.TYPE, InvoiceType.value( header.getType() ) )
+			.set(INVOICE.SURCHARGE, AonEnumUtils.getByte( header.isSurcharge() ))
+			.set(INVOICE.WITHHOLDING, AonEnumUtils.getByte( header.isWithholding() ))
+			.set(INVOICE.WITHHOLDING_FARMER, AonEnumUtils.getByte( header.isWithholdingFarmer() ))
+			.set(INVOICE.VAT_ACCRUAL_PAYMENT, AonEnumUtils.getByte( header.isVatAccrualPayment() ))
+			.set(INVOICE.INVESTMENT, AonEnumUtils.getByte( header.isInvestment() ) )
+			.set(INVOICE.TRANSACTION, AonEnumUtils.getByte( header.getTransaction() ) )
+			.set(INVOICE.SCOPE, header.getScope() )
+			.set(INVOICE.SERVICE, AonEnumUtils.getByte(  header.isService() ) )
+			.set(INVOICE.RECTIFICATION_TYPE, RectificationType.value(header.getRectificationType()) )
+			.set(INVOICE.RECTIFICATION_INVOICE, header.getRectificationInvoiceId() )
 			//.set(INVOICE.ADVANCE, AonEnumUtils.getByte( invoice.isAdvance()) )
-			.set(INVOICE.SIGNED, AonEnumUtils.getByte( invoice.isSigned()) )
-			.set(INVOICE.TAXABLE_BASE, invoice.getTaxableBase() )
-			.set(INVOICE.VAT_QUOTA, invoice.getVatQuota() )
-			.set(INVOICE.RETENTION_QUOTA, invoice.getRetentionQuota() )
-			.set(INVOICE.TOTAL, invoice.getTotal() )
+			.set(INVOICE.SIGNED, AonEnumUtils.getByte( header.isSigned()) )
+			.set(INVOICE.TAXABLE_BASE, header.getTaxableBase() )
+			.set(INVOICE.VAT_QUOTA, header.getVatQuota() )
+			.set(INVOICE.RETENTION_QUOTA, header.getRetentionQuota() )
+			.set(INVOICE.TOTAL, header.getTotal() )
 			//.set(INVOICE.POS_SHIFT, invoice.getPosShift() )
-			.set(INVOICE.SELLER, invoice.getSeller().map(s -> s.getId()).orElse(null))
-			.set(INVOICE.COMMENTS, invoice.getComments() )
-			.set(INVOICE.REMARKS, invoice.getRemarks() )
+			.set(INVOICE.SELLER, header.getSeller().map(s -> s.getId()).orElse(null))
+			.set(INVOICE.COMMENTS, header.getComments() )
+			.set(INVOICE.REMARKS, header.getRemarks() )
 			.set(INVOICE.CREATION_USER, ctx.getUser()) 
 			.set(INVOICE.CREATION_DATE, new Timestamp( System.currentTimeMillis()))
 			.set(INVOICE.MODIFICATION_USER, ctx.getUser()) 
 			.set(INVOICE.MODIFICATION_DATE, new Timestamp( System.currentTimeMillis()))
 			.returning(INVOICE.ID)
 			.fetchOne();
-		invoice.setId(rec.getValue(INVOICE.ID));
-		ctx.log().debug("INSERT INVOICE invoice: {0} Act: {1}",invoice.getId(),
-				invoice.getActivity().map(a -> a.getId()).orElse(null));
-		saveDetails(ctx, invoice);
-		InvoiceFiscalHandler.save(ctx, invoice);
-		AonCollectionUtils.stream(invoice.getFinances())
-			.forEach( finance -> FinanceHandler.save(ctx, domain, invoice));
+		header.setId(rec.getValue(INVOICE.ID));
+		ctx.log().debug("INSERT INVOICE invoice: {0} Act: {1}",header.getId(),
+				header.getActivity().map(a -> a.getId()).orElse(null));
 		insertInvoiceAttach( ctx, invoice);
 		return invoice;
 	}
@@ -435,7 +397,7 @@ class InvoiceHandler {
 		
 		// Se borran las las líneas marcadas como borradas
 		invoice.detailStream()
-			.filter(det -> det.isDeleted())
+			.filter(InvoiceDetail::isDeleted)
 			.map(det -> {			
 				// REPASAR ESTE COMPORTAMIENTO!!
 				// Si está marcado como borrado, porque el numero negativo???
@@ -504,11 +466,10 @@ class InvoiceHandler {
 	
 	private static InvoiceDetail saveDetail(AONContext ctx, Invoice invoice, InvoiceDetail invoiceDetail) {
 		InvoiceDetailAutoComplete.complete(ctx, invoice, invoiceDetail);
-		InvoiceDetailValidation.validate(ctx, invoice, invoiceDetail);
-		invoiceDetail = (invoiceDetail.getId() != null)
+		InvoiceDetailValidation.validate(invoiceDetail);
+		return (invoiceDetail.getId() != null)
 			? updateDetail(ctx, invoice, invoiceDetail)
 			: insertDetail(ctx, invoice, invoiceDetail);
-		return invoiceDetail;
 	}
 
 	private static InvoiceDetail updateDetail(AONContext ctx, Invoice invoice, InvoiceDetail invoiceDetail) {
@@ -624,7 +585,7 @@ class InvoiceHandler {
 
 			private void saveInvoiceTaxAccount(AONContext ctx, Invoice invoice, InvoiceDetail invoiceDetail, InvoiceTax invoiceTax) {
 				if (invoiceDetail.isTaxEnabled(invoice) ) {
-					Integer accountId = (invoice.isSales()
+					Integer accountId = (invoice.getHeader().isSales()
 								?invoiceTax.getOutputAccount()
 								:invoiceTax.getInputAccount() )
 							.map( Account::getId )
@@ -656,7 +617,7 @@ class InvoiceHandler {
 			detail.setDomain(invoice.getDomain());
 			
 			if (AonStringUtils.isBlank(detail.getDescription()) && detail.getSource() == InvoiceSource.ACCOUNT) {
-				detail.setDescription(MessageFormat.format(DETAIL_MSG, invoice.getReferenceCode(), invoice.getIssueDate()));	
+				detail.setDescription(MessageFormat.format(DETAIL_MSG, invoice.getHeader().getReferenceCode(), invoice.getHeader().getIssueDate()));	
 			}
 			if (detail.getWorkplace() == null) {
 				ctx.getDefaultWorkplace( invoice.getDomain() )
@@ -671,7 +632,7 @@ class InvoiceHandler {
 		private InvoiceDetailValidation() {
 		}
 
-		static void validate(AONContext ctx, Invoice invoice, InvoiceDetail detail) {
+		static void validate(InvoiceDetail detail) {
 			if (detail.getSource() == null ) {
 				throw new AonCoreException(AonError.INVOICE_EMPTY_SOURCE.getMessage());
 			}
@@ -693,8 +654,8 @@ class InvoiceHandler {
 	
 	private static InvoiceTax saveTax(AONContext ctx, Invoice invoice, InvoiceDetail detail, InvoiceTax invoiceTax) {
 		if (detail.isTaxEnabled(invoice) ) {
-			InvoiceTaxAutoComplete.complete(ctx, invoice, detail, invoiceTax);
-			InvoiceTaxValidation.validate(ctx, invoice, detail, invoiceTax);
+			InvoiceTaxAutoComplete.complete(detail, invoiceTax);
+			InvoiceTaxValidation.validate(invoice, detail, invoiceTax);
 			invoiceTax = invoiceTax.getId() != null 
 				? updateTax(ctx, invoiceTax)
 				: insertTax(ctx, invoiceTax);
@@ -770,7 +731,7 @@ class InvoiceHandler {
 		private InvoiceTaxAutoComplete() {
 		}
 		
-		static void complete(AONContext ctx, Invoice inv, InvoiceDetail detail, InvoiceTax tax) throws AonCoreException {
+		static void complete(InvoiceDetail detail, InvoiceTax tax) throws AonCoreException {
 			tax.setDomain(detail.getDomain())
 				.setInvoiceDetail(detail.getId());
 		}
@@ -781,7 +742,7 @@ class InvoiceHandler {
 		private InvoiceTaxValidation() {
 		}
 		
-		static void validate(AONContext ctx, Invoice inv, InvoiceDetail detail, InvoiceTax tax) throws AonCoreException {
+		static void validate(Invoice inv, InvoiceDetail detail, InvoiceTax tax) throws AonCoreException {
 			if ( AonNumberUtils.notEquals( detail.getId(), tax.getInvoiceDetail()) ) {
 				inv.addMessage( InvoiceErrorMessages.C511.err(InvoiceErrorKey.TAX_RATE, "InvoiceTax", "InvoiceDetail") );
 				throw new AonCoreException(AonError.INVOICE_SAVE_ERROR.getMessage());
@@ -800,61 +761,60 @@ class InvoiceHandler {
 	// ************* INVOICE ATTACH ********************
 	// *************************************************
 	private static void insertInvoiceAttach(AONContext ctx, Invoice invoice) {
-		if (invoice.getAttach().isPresent()) {
-			try {
-				InvoiceAttachAutoComplete.completeInvoiceAttach(ctx, invoice);
-				Attach attach = invoice.getAttach().get();
-				attach.setDescription("Factura");
-				
-				if (attach.getData() == null && attach.getAttachURL() != null) {
-					if ( invoice.isFromRawdoc()) {
-						RawdocHandler.getFull(ctx, invoice.getRawdocId())
-							.ifPresent( rawdoc -> attach.setData( rawdoc.getData() ));
-					} else {
-						URI uri = new URI(attach.getAttachURL());
-						URLConnection conn = uri.toURL().openConnection();
-						conn.connect();
-						try (InputStream in = new BufferedInputStream(conn.getInputStream()))  {
-							attach.setData( AonIOUtils.toByteArray(in) );
+		invoice.getAttach()
+			.ifPresent( attach -> {
+				try {
+					InvoiceAttachAutoComplete.completeInvoiceAttach(invoice);
+					attach.setDescription("Factura");
+					if (attach.getData() == null && attach.getAttachURL() != null) {
+						if ( invoice.isFromRawdoc()) {
+							RawdocHandler.getFull(ctx, invoice.getRawdocId())
+								.ifPresent( rawdoc -> attach.setData( rawdoc.getData() ));
+						} else {
+							URI uri = new URI(attach.getAttachURL());
+							URLConnection conn = uri.toURL().openConnection();
+							conn.connect();
+							try (InputStream in = new BufferedInputStream(conn.getInputStream()))  {
+								attach.setData( AonIOUtils.toByteArray(in) );
+							}
 						}
 					}
-				}
-				
-				if (attach.getData() != null && !invoice.isFromRawdoc()) {
-					String data = new String(attach.getData(),0,4);
-					if (AonStringUtils.startsWith(data, "data:")) {
-						DataUrlSerializer serializer = new DataUrlSerializer();
-						DataUrl unserialized = serializer.unserialize(data);
-						attach.setData( unserialized.getData() );
+					
+					if (attach.getData() != null && !invoice.isFromRawdoc()) {
+						String data = new String(attach.getData(),0,4);
+						if (AonStringUtils.startsWith(data, "data:")) {
+							DataUrlSerializer serializer = new DataUrlSerializer();
+							DataUrl unserialized = serializer.unserialize(data);
+							attach.setData( unserialized.getData() );
+						}
 					}
-				}
-				
-				if ( invoice.isFromRawdoc()) {
-					RawdocHandler.delete(ctx, invoice.getDomain(), invoice.getRawdocId());
-				}
-				
-				if (attach.getData() != null) {
-					Integer attachId = AttachmentHandler.insertInvoiceAttach(ctx, attach);
-					attach.setId(attachId);
-					ctx.log().debug("INSERT INVOICE ATTACH (invoice: {0} id : {1})",attach.getAttachModule(),attachId);
-				} else {
-					ctx.log().debug("INSERT INVOICE ATTACH (NO NEEDED - NO DATA)");
-				}
-			} catch (URISyntaxException | IOException e) {
-				invoice.addMessage( InvoiceErrorMessages.C021.err(InvoiceErrorKey.ATTACH) );
-				throw new AonCoreException("No se pudo grabar la factura",  e ); 
-			} 
-		}
-		
+					
+					if ( invoice.isFromRawdoc()) {
+						RawdocHandler.delete(ctx, invoice.getDomain(), invoice.getRawdocId());
+					}
+					
+					if (attach.getData() != null) {
+						Integer attachId = AttachmentHandler.insertInvoiceAttach(ctx, attach);
+						attach.setId(attachId);
+						ctx.log().debug("INSERT INVOICE ATTACH (invoice: {0} id : {1})",attach.getAttachModule(),attachId);
+					} else {
+						ctx.log().debug("INSERT INVOICE ATTACH (NO NEEDED - NO DATA)");
+					}
+				} catch (URISyntaxException | IOException e) {
+					invoice.addMessage( InvoiceErrorMessages.C021.err(InvoiceErrorKey.ATTACH) );
+					throw new AonCoreException("No se pudo grabar la factura",  e ); 
+				} 
+		});
 	}
 	
-	private class InvoiceAttachAutoComplete {
+	
+	private static class InvoiceAttachAutoComplete {
 		
-		static void completeInvoiceAttach(AONContext ctx,Invoice inv) throws AonCoreException {
+		static void completeInvoiceAttach(Invoice inv) throws AonCoreException {
 			inv.getAttach().ifPresent( a ->  a
 				.setDomain( inv.getDomain())
 				.setAttachModule(inv.getId())
-				.setDate(inv.getIssueDate())
+				.setDate(inv.getHeader().getIssueDate())
 				.setAttachType( AttachType.INVOICE )
 				.setType( InvoiceAttachmentType.INVOICE.value() )
 			);

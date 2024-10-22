@@ -23,8 +23,6 @@ public class InvoiceRegistry extends Registry implements Serializable {
 	private boolean withholdingFarmer;
 	private boolean vatAccrualPayment;
 
-	
-
 	public InvoiceType getType() {
 		return type;
 	}

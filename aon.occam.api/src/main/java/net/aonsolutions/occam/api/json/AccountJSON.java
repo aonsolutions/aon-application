@@ -23,6 +23,7 @@ public class AccountJSON {
 			.setActive(JsonUtils.getboolean(json, IJsonNames.ACTIVE))
 			.setCostCenter(JsonUtils.getString(json,IJsonNames.COST_CENTER))
 			.setSelected(JsonUtils.getboolean(json,IJsonNames.SELECTED))
+			.setDeleted(JsonUtils.getboolean(json,IJsonNames.DELETED))
 		;
 	}
 	
@@ -39,6 +40,7 @@ public class AccountJSON {
 			.put(IJsonNames.ACTIVE, account.isActive())
 			.put(IJsonNames.COST_CENTER, account.getCostCenter())
 			.put(IJsonNames.SELECTED, account.isSelected())
+			.put(IJsonNames.DELETED, account.isDeleted())
 		;
 	}
 

@@ -19,21 +19,21 @@ class TariffHandler {
 	}
 
 	private static final TariffPropertiesHandler TARIFF_PROPERTIES = new TariffPropertiesHandler();
-	protected static class TariffPropertiesHandler implements TariffProperties {
+	private static class TariffPropertiesHandler implements TariffProperties {
 		protected Condition getCondition(TariffFilter filter) {
 			if (filter == null) return DSL.trueCondition();
-			FilterHandler filterHandler = (FilterHandler) filter.filter(this);
+			FilterImpl filterHandler = (FilterImpl) filter.filter(this);
 			if (filterHandler == null) return DSL.trueCondition();
 			return filterHandler.getCondition();
 		}
 
-		@Override public Property<Integer> getIdProperty() {return new FilterHandler.PropertyDAO<>(TARIFF.ID);}
-		@Override public Property<Integer> getDomainProperty() {return new FilterHandler.PropertyDAO<>(TARIFF.DOMAIN);}
-		@Override public Property<String> getCodeProperty() {return new FilterHandler.PropertyDAO<>(TARIFF.CODE);}
-		@Override public Property<String> getNameProperty() {return new FilterHandler.PropertyDAO<>(TARIFF.NAME);}
-		@Override public Property<Byte> getPurchaseProperty() {return new FilterHandler.PropertyDAO<>(TARIFF.PURCHASE);}
-		@Override public Property<Double> getDiscountProperty() {return new FilterHandler.PropertyDAO<>(TARIFF.DISCOUNT);}
-		@Override public Property<Byte> getActiveProperty() {return new FilterHandler.PropertyDAO<>(TARIFF.ACTIVE);}
+		@Override public Property<Integer> getIdProperty() {return new FilterImpl.PropertyDAO<>(TARIFF.ID);}
+		@Override public Property<Integer> getDomainProperty() {return new FilterImpl.PropertyDAO<>(TARIFF.DOMAIN);}
+		@Override public Property<String> getCodeProperty() {return new FilterImpl.PropertyDAO<>(TARIFF.CODE);}
+		@Override public Property<String> getNameProperty() {return new FilterImpl.PropertyDAO<>(TARIFF.NAME);}
+		@Override public Property<Byte> getPurchaseProperty() {return new FilterImpl.PropertyDAO<>(TARIFF.PURCHASE);}
+		@Override public Property<Double> getDiscountProperty() {return new FilterImpl.PropertyDAO<>(TARIFF.DISCOUNT);}
+		@Override public Property<Byte> getActiveProperty() {return new FilterImpl.PropertyDAO<>(TARIFF.ACTIVE);}
 	}
 
 	static class TariffFiller extends Filler<Tariff> {

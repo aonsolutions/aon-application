@@ -1,10 +1,14 @@
 package net.aonsolutions.occam.api.model;
 
-import java.io.Serializable;
 import java.sql.Timestamp;
 import java.util.Date;
+import java.util.Objects;
 import java.util.Optional;
 
+import com.esferalia.aon.watson.util.AonMathUtils;
+import com.esferalia.aon.watson.util.AonObjectUtils;
+
+import net.aonsolutions.occam.api.model.metadata.InvoiceHeaderMetadata;
 import net.aonsolutions.occam.api.model.type.Country;
 import net.aonsolutions.occam.api.model.type.DocumentType;
 import net.aonsolutions.occam.api.model.type.InvoiceTransactionType;
@@ -12,7 +16,7 @@ import net.aonsolutions.occam.api.model.type.InvoiceType;
 import net.aonsolutions.occam.api.model.type.RectificationType;
 import net.aonsolutions.occam.api.model.util.InvoiceUtil;
 
-public class InvoiceHeader implements Serializable, HasAudit {
+public class InvoiceHeader extends AonEntity<InvoiceHeaderMetadata> implements HasAudit {
 	
 	private static final long serialVersionUID = 8998986993895056017L;
 	
@@ -63,10 +67,33 @@ public class InvoiceHeader implements Serializable, HasAudit {
 	private String modificationUser;
 	private Timestamp modificationDate;
 
+	@Override
+	protected Object getUuid() {
+		return getId();
+	}
+	@Override
+	public InvoiceHeader markAsClean() {
+		super.markAsClean();
+		return this; 
+	}
+	
+	@Override
+	public InvoiceHeader setSelected( boolean selected) {
+		super.setSelected(selected);
+		return this; 
+	}
+	
+	@Override
+	public InvoiceHeader setDeleted( boolean selected) {
+		super.setDeleted(selected);
+		return this; 
+	}
+
 	public Integer getId() {
 		return id;
 	}
 	public InvoiceHeader setId(Integer id) {
+		checkIfDirty( this.id,id, InvoiceHeaderMetadata.ID);
 		this.id = id;
 		return this;
 	}
@@ -75,6 +102,7 @@ public class InvoiceHeader implements Serializable, HasAudit {
 		return domain;
 	}
 	public InvoiceHeader setDomain(Integer domain) {
+		checkIfDirty( this.domain,domain, InvoiceHeaderMetadata.DOMAIN);
 		this.domain = domain;
 		return this;
 	}
@@ -83,6 +111,7 @@ public class InvoiceHeader implements Serializable, HasAudit {
 		return Optional.ofNullable(activity);
 	}
 	public InvoiceHeader setActivity(Activity activity) {
+		checkIfDirty( this.activity,activity, InvoiceHeaderMetadata.ACTIVITY);
 		this.activity = activity;
 		return this;
 	}
@@ -91,6 +120,7 @@ public class InvoiceHeader implements Serializable, HasAudit {
 		return project;
 	}
 	public InvoiceHeader setProject(Integer project) {
+		checkIfDirty( this.project,project, InvoiceHeaderMetadata.PROJECT);
 		this.project = project;
 		return this;
 	}
@@ -99,6 +129,7 @@ public class InvoiceHeader implements Serializable, HasAudit {
 		return type;
 	}
 	public InvoiceHeader setType(InvoiceType type) {
+		checkIfDirty( this.type,type, InvoiceHeaderMetadata.TYPE);
 		this.type = type;
 		return this;
 	}
@@ -107,6 +138,7 @@ public class InvoiceHeader implements Serializable, HasAudit {
 		return series;
 	}
 	public InvoiceHeader setSeries(String series) {
+		checkIfDirty( this.series,series, InvoiceHeaderMetadata.SERIES);
 		this.series = series;
 		return this;
 	}
@@ -115,6 +147,7 @@ public class InvoiceHeader implements Serializable, HasAudit {
 		return number;
 	}
 	public InvoiceHeader setNumber(Integer number) {
+		checkIfDirty( this.number,number, InvoiceHeaderMetadata.NUMBER);
 		this.number = number;
 		return this;
 	}
@@ -127,15 +160,16 @@ public class InvoiceHeader implements Serializable, HasAudit {
 		return referenceCode;
 	}
 	public InvoiceHeader setReferenceCode(String referenceCode) {
+		checkIfDirty( this.referenceCode,referenceCode, InvoiceHeaderMetadata.REFERENCE_CODE);
 		this.referenceCode = referenceCode;
 		return this;
 	}
-
 	
 	public InvoiceTransactionType getTransaction() {
 		return transaction;
 	}
 	public InvoiceHeader setTransaction(InvoiceTransactionType transaction) {
+		checkIfDirty( this.transaction,transaction, InvoiceHeaderMetadata.TRANSACTION);
 		this.transaction = transaction;
 		return this;
 	}
@@ -144,6 +178,7 @@ public class InvoiceHeader implements Serializable, HasAudit {
 		return issueDate;
 	}
 	public InvoiceHeader setIssueDate(Date issueDate) {
+		checkIfDirty( this.issueDate,issueDate, InvoiceHeaderMetadata.ISSUE_DATE);
 		this.issueDate = issueDate;
 		return this;
 	}
@@ -152,6 +187,7 @@ public class InvoiceHeader implements Serializable, HasAudit {
 		return taxDate;
 	}
 	public InvoiceHeader setTaxDate(Date taxDate) {
+		checkIfDirty( this.taxDate,taxDate, InvoiceHeaderMetadata.TAX_DATE);
 		this.taxDate = taxDate;
 		return this;
 	}
@@ -160,6 +196,7 @@ public class InvoiceHeader implements Serializable, HasAudit {
 		return registry;
 	}
 	public InvoiceHeader setRegistry(Integer registry) {
+		checkIfDirty( this.registry,registry, InvoiceHeaderMetadata.REGISTRY);
 		this.registry = registry;
 		return this;
 	}
@@ -168,6 +205,7 @@ public class InvoiceHeader implements Serializable, HasAudit {
 		return registryDocument;
 	}
 	public InvoiceHeader setRegistryDocument(String registryDocument) {
+		checkIfDirty( this.registryDocument,registryDocument, InvoiceHeaderMetadata.RDOCUMENT);
 		this.registryDocument = registryDocument;
 		return this;
 	}
@@ -176,6 +214,7 @@ public class InvoiceHeader implements Serializable, HasAudit {
 		return registryDocumentType;
 	}
 	public InvoiceHeader setRegistryDocumentType(DocumentType registryDocumentType) {
+		checkIfDirty( this.registryDocumentType,registryDocumentType, InvoiceHeaderMetadata.RDOCUMENT_TYPE);
 		this.registryDocumentType = registryDocumentType;
 		return this;
 	}
@@ -184,6 +223,7 @@ public class InvoiceHeader implements Serializable, HasAudit {
 		return registryDocumentCountry;
 	}
 	public InvoiceHeader setRegistryDocumentCountry(Country registryDocumentCountry) {
+		checkIfDirty( this.registryDocumentCountry,registryDocumentCountry, InvoiceHeaderMetadata.RDOCUMENT_COUNTRY);
 		this.registryDocumentCountry = registryDocumentCountry;
 		return this;
 	}
@@ -192,6 +232,7 @@ public class InvoiceHeader implements Serializable, HasAudit {
 		return registryName;
 	}
 	public InvoiceHeader setRegistryName(String registryName) {
+		checkIfDirty( this.registryName,registryName, InvoiceHeaderMetadata.RNAME);
 		this.registryName = registryName;
 		return this;
 	}
@@ -200,6 +241,7 @@ public class InvoiceHeader implements Serializable, HasAudit {
 		return confidential;
 	}
 	public InvoiceHeader setConfidential(boolean confidential) {
+		checkIfDirty( this.confidential,confidential, InvoiceHeaderMetadata.SECURITY_LEVEL);
 		this.confidential = confidential;
 		return this;
 	}
@@ -208,6 +250,7 @@ public class InvoiceHeader implements Serializable, HasAudit {
 		return recorded;
 	}
 	public InvoiceHeader setRecorded(boolean recorded) {
+		checkIfDirty( this.recorded,recorded, InvoiceHeaderMetadata.STATUS);
 		this.recorded = recorded;
 		return this;
 	}
@@ -216,6 +259,7 @@ public class InvoiceHeader implements Serializable, HasAudit {
 		return rectificationType;
 	}
 	public InvoiceHeader setRectificationType(RectificationType rectificationType) {
+		checkIfDirty( this.rectificationType,rectificationType, InvoiceHeaderMetadata.RECTIFICATION_TYPE);
 		this.rectificationType = rectificationType;
 		return this;
 	}
@@ -230,6 +274,7 @@ public class InvoiceHeader implements Serializable, HasAudit {
 		return rectificationInvoiceId;
 	}
 	public InvoiceHeader setRectificationInvoiceId(Integer rectificationInvoiceId) {
+		checkIfDirty( this.rectificationInvoiceId,rectificationInvoiceId, InvoiceHeaderMetadata.RECTIFICATION_INVOICE);
 		this.rectificationInvoiceId = rectificationInvoiceId;
 		return this;
 	}
@@ -238,6 +283,7 @@ public class InvoiceHeader implements Serializable, HasAudit {
 		return Optional.ofNullable(registryAccount);
 	}
 	public InvoiceHeader setRegistryAccount(Account registryAccount) {
+		checkIfDirty( this.rectificationInvoiceId,rectificationInvoiceId, InvoiceHeaderMetadata.ACCOUNT);
 		this.registryAccount = registryAccount;
 		return this;
 	}
@@ -246,6 +292,7 @@ public class InvoiceHeader implements Serializable, HasAudit {
 		return scope;
 	}
 	public InvoiceHeader setScope(Integer scope) {
+		checkIfDirty( this.scope,scope, InvoiceHeaderMetadata.SCOPE);
 		this.scope = scope;
 		return this;
 	}
@@ -254,6 +301,7 @@ public class InvoiceHeader implements Serializable, HasAudit {
 		return surcharge;
 	}
 	public InvoiceHeader setSurcharge(boolean surcharge) {
+		checkIfDirty( this.surcharge,surcharge, InvoiceHeaderMetadata.SURCHARGE);
 		this.surcharge = surcharge;
 		return this;
 	}
@@ -262,6 +310,7 @@ public class InvoiceHeader implements Serializable, HasAudit {
 		return withholding;
 	}
 	public InvoiceHeader setWithholding(boolean withholding) {
+		checkIfDirty( this.withholding,withholding, InvoiceHeaderMetadata.WITHHOLDING);
 		this.withholding = withholding;
 		return this;
 	}
@@ -270,6 +319,7 @@ public class InvoiceHeader implements Serializable, HasAudit {
 		return withholdingFarmer;
 	}
 	public InvoiceHeader setWithholdingFarmer(boolean withholdingFarmer) {
+		checkIfDirty( this.withholdingFarmer,withholdingFarmer, InvoiceHeaderMetadata.WITHHOLDING_FARMER );
 		this.withholdingFarmer = withholdingFarmer;
 		return this;
 	}
@@ -278,6 +328,7 @@ public class InvoiceHeader implements Serializable, HasAudit {
 		return vatAccrualPayment;
 	}
 	public InvoiceHeader setVatAccrualPayment(boolean vatAccrualPayment) {
+		checkIfDirty( this.vatAccrualPayment,vatAccrualPayment, InvoiceHeaderMetadata.VAT_ACCRUAL_PAYMENT );
 		this.vatAccrualPayment = vatAccrualPayment;
 		return this;
 	}
@@ -286,6 +337,7 @@ public class InvoiceHeader implements Serializable, HasAudit {
 		return investment;
 	}
 	public InvoiceHeader setInvestment(boolean investment) {
+		checkIfDirty( this.investment,investment, InvoiceHeaderMetadata.INVESTMENT );
 		this.investment = investment;
 		return this;
 	}
@@ -294,6 +346,7 @@ public class InvoiceHeader implements Serializable, HasAudit {
 		return service;
 	}
 	public InvoiceHeader setService(boolean service) {
+		checkIfDirty( this.service,service, InvoiceHeaderMetadata.SERVICE );
 		this.service = service;
 		return this;
 	}
@@ -302,6 +355,7 @@ public class InvoiceHeader implements Serializable, HasAudit {
 		return signed;
 	}
 	public InvoiceHeader setSigned(boolean signed) {
+		checkIfDirty( this.signed,signed, InvoiceHeaderMetadata.SIGNED);
 		this.signed = signed;
 		return this;
 	}
@@ -318,6 +372,7 @@ public class InvoiceHeader implements Serializable, HasAudit {
 		return taxableBase;
 	}
 	public InvoiceHeader setTaxableBase(double taxableBase) {
+		checkIfDirty( this.taxableBase,taxableBase, InvoiceHeaderMetadata.TAXABLE_BASE);
 		this.taxableBase = taxableBase;
 		return this;
 	}
@@ -326,6 +381,7 @@ public class InvoiceHeader implements Serializable, HasAudit {
 		return vatQuota;
 	}
 	public InvoiceHeader setVatQuota(double vatQuota) {
+		checkIfDirty( this.vatQuota,vatQuota, InvoiceHeaderMetadata.VAT_QUOTA);
 		this.vatQuota = vatQuota;
 		return this;
 	}
@@ -334,6 +390,7 @@ public class InvoiceHeader implements Serializable, HasAudit {
 		return retentionQuota;
 	}
 	public InvoiceHeader setRetentionQuota(double retentionQuota) {
+		checkIfDirty( this.retentionQuota,retentionQuota, InvoiceHeaderMetadata.RETENTION_QUOTA);
 		this.retentionQuota = retentionQuota;
 		return this;
 	}
@@ -342,14 +399,20 @@ public class InvoiceHeader implements Serializable, HasAudit {
 		return total;
 	}
 	public InvoiceHeader setTotal(double total) {
+		checkIfDirty( this.total,total, InvoiceHeaderMetadata.TOTAL);
 		this.total = total;
 		return this;
+	}
+	
+	public double getOtherAmount() {
+		return AonMathUtils.round( getTotal() - getTaxableBase() - getVatQuota() + getRetentionQuota() );
 	}
 	
 	public Optional<Seller> getSeller() {
 		return Optional.ofNullable(seller);
 	}
 	public InvoiceHeader setSeller(Seller seller) {
+		checkIfDirty( this.seller,seller, InvoiceHeaderMetadata.SELLER);
 		this.seller = seller;
 		return this;
 	}
@@ -358,6 +421,7 @@ public class InvoiceHeader implements Serializable, HasAudit {
 		return comments;
 	}
 	public InvoiceHeader setComments(String comments) {
+		checkIfDirty( this.comments,comments, InvoiceHeaderMetadata.COMMENTS);
 		this.comments = comments;
 		return this;
 	}
@@ -366,6 +430,7 @@ public class InvoiceHeader implements Serializable, HasAudit {
 		return remarks;
 	}
 	public InvoiceHeader setRemarks(String remarks) {
+		checkIfDirty( this.remarks,remarks, InvoiceHeaderMetadata.REMARKS);
 		this.remarks = remarks;
 		return this;
 	}
@@ -450,15 +515,28 @@ public class InvoiceHeader implements Serializable, HasAudit {
 	
 	public boolean mustApplyISP() {
 		return (isPurchase() && isIntracommunity())					// Compra intracomunitaria
+			|| (isExpenses() && isIntracommunity())					// Gasto intracomunitario
 			|| (isPurchase() && isIsp())							// Compra Inversion Sujeto Pasivo
+			|| (isExpenses() && isIsp())							// Gasto Inversion Sujeto Pasivo
 			|| (isPurchase() && isExtracommunity() && isService())	// Compra extracomunitaria de servicio
 			|| (isPurchase() && isCanCeuMel() && isService())		// Compra Canarias de servicio
-			|| (isExpenses() && isIntracommunity())					// Gasto intracomunitario
-			|| (isExpenses() && isIsp())							// Gasto Inversion Sujeto Pasivo
 			|| (isExpenses() && isExtracommunity())					// Gasto extracomunitario
 			|| (isExpenses() && isCanCeuMel());						// Gasto Canarias
 	}
 	
+	@Override
+	public boolean equals(Object obj) {
+		if (obj == this) return true;
+		if (obj instanceof InvoiceHeader other) {
+			return AonObjectUtils.equals( this.getUuid(),other.getUuid() );
+		}
+	    return false;
+	}
+	
+	@Override
+	public int hashCode() {
+	    return 31 * 7 + Objects.requireNonNullElse(getUuid(), 0).hashCode();
+	}
 	
 }
 

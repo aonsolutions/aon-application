@@ -24,7 +24,7 @@ import net.aonsolutions.occam.api.model.type.DocumentType;
 import net.aonsolutions.occam.api.model.type.SecurityLevel;
 import net.aonsolutions.occam.impl.AONContext;
 
-class RegistryHandler extends AbsHandler {
+class RegistryHandler {
 	
 	private RegistryHandler() {
 	}
@@ -34,20 +34,20 @@ class RegistryHandler extends AbsHandler {
 		
 		protected Condition[] getConditions(RegistryFilter filter) {
 			if (filter == null) return new Condition[0];
-			FilterHandler filterDAO = (FilterHandler) filter.filter(this);
+			FilterImpl filterDAO = (FilterImpl) filter.filter(this);
 			if (filterDAO == null) return new Condition[0];
 			return new Condition[] { filterDAO.getCondition() };
 		}
-		@Override public Property<Integer> getIdProperty() {return new FilterHandler.PropertyDAO<>(REGISTRY.ID);}
-		@Override public Property<Integer> getDomainProperty() {return new FilterHandler.PropertyDAO<>(REGISTRY.DOMAIN);}
-		@Override public Property<String> getDocumentProperty() {return new FilterHandler.PropertyDAO<>(REGISTRY.DOCUMENT);}
-		@Override public Property<Byte> getDocumentTypeProperty() {return new FilterHandler.PropertyDAO<>(REGISTRY.DOCUMENT_TYPE);}
-		@Override public Property<String> getDocumentCountryProperty() {return new FilterHandler.PropertyDAO<>(REGISTRY.DOCUMENT_COUNTRY);}
-		@Override public Property<String> getNameProperty() {return new FilterHandler.PropertyDAO<>(REGISTRY.NAME);}
-		@Override public Property<String> getAliasProperty() {return new FilterHandler.PropertyDAO<>(REGISTRY.ALIAS);}
-		@Override public Property<Byte> getTypeProperty() {return new FilterHandler.PropertyDAO<>(REGISTRY.TYPE);}
-		@Override public Property<String> getNationalityProperty() {return new FilterHandler.PropertyDAO<>(REGISTRY.NATIONALITY);}
-		@Override public Property<Byte> getSecurityLevelProperty() {return new FilterHandler.PropertyDAO<>(REGISTRY.SECURITY_LEVEL);}
+		@Override public Property<Integer> getIdProperty() {return new FilterImpl.PropertyDAO<>(REGISTRY.ID);}
+		@Override public Property<Integer> getDomainProperty() {return new FilterImpl.PropertyDAO<>(REGISTRY.DOMAIN);}
+		@Override public Property<String> getDocumentProperty() {return new FilterImpl.PropertyDAO<>(REGISTRY.DOCUMENT);}
+		@Override public Property<Byte> getDocumentTypeProperty() {return new FilterImpl.PropertyDAO<>(REGISTRY.DOCUMENT_TYPE);}
+		@Override public Property<String> getDocumentCountryProperty() {return new FilterImpl.PropertyDAO<>(REGISTRY.DOCUMENT_COUNTRY);}
+		@Override public Property<String> getNameProperty() {return new FilterImpl.PropertyDAO<>(REGISTRY.NAME);}
+		@Override public Property<String> getAliasProperty() {return new FilterImpl.PropertyDAO<>(REGISTRY.ALIAS);}
+		@Override public Property<Byte> getTypeProperty() {return new FilterImpl.PropertyDAO<>(REGISTRY.TYPE);}
+		@Override public Property<String> getNationalityProperty() {return new FilterImpl.PropertyDAO<>(REGISTRY.NATIONALITY);}
+		@Override public Property<Byte> getSecurityLevelProperty() {return new FilterImpl.PropertyDAO<>(REGISTRY.SECURITY_LEVEL);}
 	}
 
 	protected static class RegistryFiller extends Filler<Registry> {
@@ -198,17 +198,17 @@ class RegistryHandler extends AbsHandler {
 		};
 		
 		private static final BiConsumer<Registry,AONContext> OVERFLOW_DOCUMENT = (reg,ctx) -> {
-			if (overflows(REGISTRY.DOCUMENT, reg.getDocument())) 
+			if (HandlerUtils.overflows(REGISTRY.DOCUMENT, reg.getDocument())) 
 				throw new AonCoreException(AonError.REGISTRY_OVERFLOW_DOCUMENT.getMessage());
 		};
 		
 		private static final BiConsumer<Registry,AONContext> OVERFLOW_NAME = (reg,ctx) -> {
-			if (overflows(REGISTRY.NAME, reg.getName()))
+			if (HandlerUtils.overflows(REGISTRY.NAME, reg.getName()))
 				throw new AonCoreException(AonError.INVALID_LENGTH.format( "Nombre o raz\u00F3n social", REGISTRY.NAME.getDataType().length() ));
 		};
 		
 		private static final BiConsumer<Registry,AONContext> OVERFLOW_ALIAS = (reg,ctx) -> {
-			if (overflows(REGISTRY.ALIAS, reg.getAlias()))
+			if (HandlerUtils.overflows(REGISTRY.ALIAS, reg.getAlias()))
 				throw new AonCoreException(AonError.INVALID_LENGTH.format( "Alias", REGISTRY.ALIAS.getDataType().length() ));
 		};
 		

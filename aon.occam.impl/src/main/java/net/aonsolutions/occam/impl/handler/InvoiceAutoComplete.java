@@ -28,21 +28,21 @@ class InvoiceAutoComplete {
 	 * Se rellena el número de referencia para las facturas de ventas.
 	 */
 	private static final BiConsumer<AONContext,Invoice> COMPLETE_SALES_SERIES = (ctx,inv) -> {
-		if (inv.isSales()) {
-			if (AonStringUtils.isBlank(inv.getSeries())) {
-				inv.setSeries(null);
+		if (inv.getHeader().isSales()) {
+			if (AonStringUtils.isBlank(inv.getHeader().getSeries())) {
+				inv.getHeader().setSeries(null);
 			}
-			if (inv.getNumber() == 0) {
+			if (inv.getHeader().getNumber() == 0) {
 				Byte[] types = new Byte[]{InvoiceType.SALES.value()};
-				int number = InvoiceHandler.getNextNumber(ctx,inv.getDomain(), types, inv.getSeries());
-				inv.setNumber(number);
+				int number = InvoiceHandler.getNextNumber(ctx,inv.getDomain(), types, inv.getHeader().getSeries());
+				inv.getHeader().setNumber(number);
 			}
-			if(inv.getReferenceCode() == null || "".equals(inv.getReferenceCode())) {
-				String referenceCode = AonStringUtils.leftPad(Integer.toString(inv.getNumber()), 6, "0");
-				if (!AonStringUtils.isBlank(inv.getSeries())) {
-					referenceCode = inv.getSeries() + "/" + referenceCode;
+			if(inv.getHeader().getReferenceCode() == null || "".equals(inv.getHeader().getReferenceCode())) {
+				String referenceCode = AonStringUtils.leftPad(Integer.toString(inv.getHeader().getNumber()), 6, "0");
+				if (!AonStringUtils.isBlank(inv.getHeader().getSeries())) {
+					referenceCode = inv.getHeader().getSeries() + "/" + referenceCode;
 				}
-				inv.setReferenceCode(referenceCode);
+				inv.getHeader().setReferenceCode(referenceCode);
 			}
 		} 
 	};
@@ -51,12 +51,12 @@ class InvoiceAutoComplete {
 	 * Se rellena las serie y numero para las facturas de compras y gastos.
 	 */
 	private static final BiConsumer<AONContext,Invoice> COMPLETE_PURCHASE_EXPENSES_SERIES = (ctx,inv) -> {
-		if (inv.isPurchase() || inv.isExpenses()) {
-			inv.setSeries(Integer.toString(AonDateUtils.getYear(inv.getIssueDate())));
-			if (AonMathUtils.isNullOrZero(inv.getNumber())) {
+		if (inv.getHeader().isPurchase() || inv.getHeader().isExpenses()) {
+			inv.getHeader().setSeries(Integer.toString(AonDateUtils.getYear(inv.getHeader().getIssueDate())));
+			if (AonMathUtils.isNullOrZero(inv.getHeader().getNumber())) {
 				Byte[] types = new Byte[]{InvoiceType.PURCHASE.value(),InvoiceType.EXPENSES.value()};
-				int number = InvoiceHandler.getNextNumber(ctx, inv.getDomain(), types, inv.getSeries());
-				inv.setNumber(number);
+				int number = InvoiceHandler.getNextNumber(ctx, inv.getDomain(), types, inv.getHeader().getSeries());
+				inv.getHeader().setNumber(number);
 			}
 		} 
 	};
@@ -65,8 +65,8 @@ class InvoiceAutoComplete {
 	 * Se rellena las serie y numero para las facturas de compras y gastos.
 	 */
 	private static final BiConsumer<AONContext,Invoice> COMPLETE_UNDEDUCTIBLE_REFERENCE_CODE = (ctx,inv) -> {
-		if (inv.isUndeductible() && AonStringUtils.equalsIgnoreCase("<auto>",inv.getReferenceCode())) {
-			inv.setReferenceCode( inv.getDocumentNumber());
+		if (inv.getHeader().isUndeductible() && AonStringUtils.equalsIgnoreCase("<auto>",inv.getHeader().getReferenceCode())) {
+			inv.getHeader().setReferenceCode( inv.getHeader().getDocumentNumber());
 		} 
 	};
 
@@ -74,12 +74,12 @@ class InvoiceAutoComplete {
 	 * Se rellena las serie y numero para las facturas de compras y gastos.
 	 */
 	private static final BiConsumer<AONContext,Invoice> COMPLETE_UNDEDUCTIBLE_SERIES = (ctx,inv) -> {
-		if (inv.isUndeductible()) {
-			inv.setSeries(Integer.toString(AonDateUtils.getYear(inv.getIssueDate()==null?new Date():inv.getIssueDate())));
-			if (inv.getNumber() == 0) {
+		if (inv.getHeader().isUndeductible()) {
+			inv.getHeader().setSeries(Integer.toString(AonDateUtils.getYear(inv.getHeader().getIssueDate()==null?new Date():inv.getHeader().getIssueDate())));
+			if (inv.getHeader().getNumber() == 0) {
 				Byte[] types = new Byte[]{InvoiceType.UNDEDUCTIBLE.value()};
-				int number = InvoiceHandler.getNextNumber(ctx, inv.getDomain(), types, inv.getSeries());
-				inv.setNumber(number);
+				int number = InvoiceHandler.getNextNumber(ctx, inv.getDomain(), types, inv.getHeader().getSeries());
+				inv.getHeader().setNumber(number);
 			}
 		} 
 	};
@@ -88,15 +88,15 @@ class InvoiceAutoComplete {
 	 * Aseguramos la fecha de IVA..
 	 */
 	private static final BiConsumer<AONContext,Invoice> COMPLETE_TAX_DATE = (ctx,inv) -> {
-		if (inv.getTaxDate() == null) inv.setTaxDate(inv.getIssueDate());
+		if (inv.getHeader().getTaxDate() == null) inv.getHeader().setTaxDate(inv.getHeader().getIssueDate());
 	};
 	
 	/**
 	 * Aseguramos la Actividad.
 	 */
 	private static final BiConsumer<AONContext,Invoice> COMPLETE_ACTIVITY = (ctx,inv) -> {
-		if (inv.getActivity().isEmpty()) {
-			inv.setActivity( ctx.getDefaultActivity( inv.getDomain() ).orElse(null) );
+		if (inv.getHeader().getActivity().isEmpty()) {
+			inv.getHeader().setActivity( ctx.getDefaultActivity( inv.getDomain() ).orElse(null) );
 		}
 	};
 
@@ -105,8 +105,10 @@ class InvoiceAutoComplete {
 	 * Si solo hay un vencimiento, el importe será igual al total factura.
 	 */
 	private static final BiConsumer<AONContext,Invoice> COMPLETE_FIRST_FINANCE = (ctx,inv) -> {
-		if (inv.hasFinances() && inv.getFinances().size() == 1 && inv.getFinances().get(0).isPending()) {
-			inv.getFinances().get(0).setAmount( inv.getTotal());
+		if (inv.hasFinances() && inv.getFinancesSize() == 1) {
+			inv.financeStream()
+				.findFirst()
+				.ifPresent( f-> f.setAmount( inv.getHeader().getTotal()));
 		}
 	};
 
@@ -114,7 +116,7 @@ class InvoiceAutoComplete {
 	 * Aseguramos la fecha de IVA..
 	 */
 	private static final  BiConsumer<AONContext,Invoice> COMPLETE_RECTIFICATION_TYPE = (ctx,inv) -> {
-		if (inv.getRectificationType() == null) inv.setRectificationType(RectificationType.NONE);
+		if (inv.getHeader().getRectificationType() == null) inv.getHeader().setRectificationType(RectificationType.NONE);
 	};
 	
 	
@@ -122,22 +124,22 @@ class InvoiceAutoComplete {
 	 * Aseguramos el nombre del titular de la factura.
 	 */
 	private static final BiConsumer<AONContext,Invoice> ENSURE_REGISTRY_DATA = (ctx,inv) -> {
-		if (AonStringUtils.isBlank(inv.getRegistryName()) || AonStringUtils.isBlank(inv.getRegistryDocument())) {
-			inv.getType().visit( 
+		if (AonStringUtils.isBlank(inv.getHeader().getRegistryName()) || AonStringUtils.isBlank(inv.getHeader().getRegistryDocument())) {
+			inv.getHeader().getType().visit( 
 				new InvoiceTypeVisitor<Optional<? extends Registry>>() {
-					@Override public Optional<? extends Registry> visitPurchase() 	{return SupplierHandler.get(ctx, inv.getDomain(), inv.getRegistry());}
-					@Override public Optional<? extends Registry> visitSales() 		{return CustomerHandler.get(ctx, inv.getDomain(), inv.getRegistry());}
-					@Override public Optional<? extends Registry> visitExpenses() 	{return CreditorHandler.get(ctx, inv.getDomain(), inv.getRegistry());}
+					@Override public Optional<? extends Registry> visitPurchase() 	{return SupplierHandler.get(ctx, inv.getDomain(), inv.getHeader().getRegistry());}
+					@Override public Optional<? extends Registry> visitSales() 		{return CustomerHandler.get(ctx, inv.getDomain(), inv.getHeader().getRegistry());}
+					@Override public Optional<? extends Registry> visitExpenses() 	{return CreditorHandler.get(ctx, inv.getDomain(), inv.getHeader().getRegistry());}
 					@Override public Optional<? extends Registry> visitUndeductible(){return visitExpenses(); }
 			})
 			.ifPresent( registry -> {
-				if (AonStringUtils.isBlank(inv.getRegistryName())) {
-					inv.setRegistryName(registry.getName());
+				if (AonStringUtils.isBlank(inv.getHeader().getRegistryName())) {
+					inv.getHeader().setRegistryName(registry.getName());
 				}
-				if (AonStringUtils.isBlank(inv.getRegistryDocument())) {
-					inv.setRegistryDocumentType(registry.getDocumentType());
-					inv.setRegistryDocumentCountry(registry.getDocumentCountry());
-					inv.setRegistryDocument(registry.getDocument());
+				if (AonStringUtils.isBlank(inv.getHeader().getRegistryDocument())) {
+					inv.getHeader().setRegistryDocumentType(registry.getDocumentType());
+					inv.getHeader().setRegistryDocumentCountry(registry.getDocumentCountry());
+					inv.getHeader().setRegistryDocument(registry.getDocument());
 				}
 			});
 		}
@@ -145,7 +147,7 @@ class InvoiceAutoComplete {
 	
 	private static final BiConsumer<AONContext,Invoice> COMPLETE_REGISTRY_ADDRESS = (ctx,inv) -> {
 		if(inv.getInvoiceAddress().isEmpty()) {
-			RegistryAddressHandler.streamByRegistry(ctx, inv.getRegistry())
+			RegistryAddressHandler.streamByRegistry(ctx, inv.getHeader().getRegistry())
 				.filter( ra -> ra.isMain() )
 				.findFirst()
 				.map(InvoiceAddress::from)
@@ -163,9 +165,9 @@ class InvoiceAutoComplete {
 			});
 	};
 
-	private static final BiConsumer<AONContext,Invoice> COMPLETE_ATTACH = (ctx,inv) -> {
+	private static final BiConsumer<AONContext,Invoice> COMPLETE_ATTACH = (ctx,inv) -> 
 		inv.getAttach().ifPresent( a -> a.setAttachModule(inv.getId()));
-	};
+	
 
 		
 	static void completeInvoice(AONContext ctx,Invoice inv) throws AonCoreException {

@@ -2,7 +2,7 @@ package net.aonsolutions.occam.api.model;
 
 import java.io.Serializable;
 import java.util.Date;
-import java.util.HashMap;
+import java.util.EnumMap;
 
 import net.aonsolutions.occam.api.model.type.VATTaxRegime;
 
@@ -15,7 +15,7 @@ public class InvoiceFiscal implements Serializable {
 	private Date issueDate;
 	private Date taxDate;
 	private Date expDate;
-	private HashMap<VATTaxRegime,Boolean> vatRegimes;
+	private EnumMap<VATTaxRegime,Boolean> vatRegimes = new EnumMap<>(VATTaxRegime.class);
 	
 	
 	public Integer getInvoice() {
@@ -58,19 +58,12 @@ public class InvoiceFiscal implements Serializable {
 		return this;
 	}
 	
-	public HashMap<VATTaxRegime, Boolean> getVatRegimes() {
+	public EnumMap<VATTaxRegime,Boolean> getVatRegimes() {
 		return vatRegimes;
 	}
-	public InvoiceFiscal setVatRegimes(HashMap<VATTaxRegime, Boolean> vatRegimes) {
+	public InvoiceFiscal setVatRegimes(EnumMap<VATTaxRegime,Boolean> vatRegimes) {
 		this.vatRegimes = vatRegimes;
 		return this;
-	}
-	
-	private HashMap<VATTaxRegime, Boolean> ensureVatTaxRegime() {
-		if ( getVatRegimes() == null) {
-			setVatRegimes( new HashMap<>());
-		}
-		return getVatRegimes();
 	}
 	
 	public boolean isVatRegimeEnabled(VATTaxRegime vatRegime) {
@@ -79,7 +72,7 @@ public class InvoiceFiscal implements Serializable {
 			&& Boolean.TRUE.equals( getVatRegimes().get(vatRegime) )); 
 	}
 	public InvoiceFiscal setVatRegime(VATTaxRegime vatRegime, boolean value) {
-		ensureVatTaxRegime().put(vatRegime, value?Boolean.TRUE:Boolean.FALSE);
+		getVatRegimes().put(vatRegime, value?Boolean.TRUE:Boolean.FALSE);
 		return this;
 	}
 	

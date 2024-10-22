@@ -17,7 +17,7 @@ import net.aonsolutions.occam.api.model.Properties.CnaeProperties;
 import net.aonsolutions.occam.impl.AONContext;
 
 
-public class CnaeHandler extends AbsHandler {
+class CnaeHandler {
 	
 	private CnaeHandler() {
 	}
@@ -26,13 +26,13 @@ public class CnaeHandler extends AbsHandler {
 	private static class CnaePropertiesHandler implements CnaeProperties {
 		private Condition[] getConditions(CnaeFilter filter) {
 			if (filter == null) return new Condition[0];
-			FilterHandler filterDAO = (FilterHandler) filter.filter(this);
+			FilterImpl filterDAO = (FilterImpl) filter.filter(this);
 			if (filterDAO == null) return new Condition[0];
 			return new Condition[] { filterDAO.getCondition() };
 		}
-		@Override public Property<Integer> 	getIdProperty() 	{return new FilterHandler.PropertyDAO<>(CNAE.ID);}
-		@Override public Property<String> 	getCodeProperty() 	{return new FilterHandler.PropertyDAO<>(CNAE.CODE);}
-		@Override public Property<String> 	getTitleProperty() 	{return new FilterHandler.PropertyDAO<>(CNAE.TITLE);}
+		@Override public Property<Integer> 	getIdProperty() 	{return new FilterImpl.PropertyDAO<>(CNAE.ID);}
+		@Override public Property<String> 	getCodeProperty() 	{return new FilterImpl.PropertyDAO<>(CNAE.CODE);}
+		@Override public Property<String> 	getTitleProperty() 	{return new FilterImpl.PropertyDAO<>(CNAE.TITLE);}
 	}
 	
 	static class CnaeFiller extends Filler<Cnae> {

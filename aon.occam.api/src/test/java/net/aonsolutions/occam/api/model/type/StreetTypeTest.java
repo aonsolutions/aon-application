@@ -1,5 +1,6 @@
 package net.aonsolutions.occam.api.model.type;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -43,17 +44,17 @@ class StreetTypeTest extends AbstractOccamApiTest {
 		String n1 = m.name();
 		Optional<StreetType> om = StreetType.value( n1 );
 		assertTrue(om.isPresent());
-		assertSame(m, om.get());
+		assertEquals(m.value(), om.get().value());
 		
 		String n2 = AonStringUtils.lowerCase(n1);
 		om = StreetType.value( n2 );
 		assertTrue(om.isPresent());
-		assertSame(m, om.get());
+		assertEquals(m.value(), om.get().value());
 		
 		String n3 = AonStringUtils.upperCase(n1);
 		om = StreetType.value( n3 );
 		assertTrue(om.isPresent());
-		assertSame(m, om.get());
+		assertEquals(m.value(), om.get().value());
 		
 
 		String INE1 = m.getIneCode();

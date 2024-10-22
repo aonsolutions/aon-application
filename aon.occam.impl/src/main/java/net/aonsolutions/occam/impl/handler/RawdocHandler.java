@@ -5,11 +5,7 @@ import static com.esferalia.aon.jooq.tables.Rawdoc.RAWDOC;
 import java.util.Optional;
 
 import org.jooq.Record;
-import org.json.JSONObject;
 
-import com.esferalia.aon.watson.util.AonStringUtils;
-
-import net.aonsolutions.occam.api.model.Invoice;
 import net.aonsolutions.occam.api.model.Rawdoc;
 import net.aonsolutions.occam.api.model.type.MimeType;
 import net.aonsolutions.occam.api.model.type.RawdocNature;
@@ -17,7 +13,11 @@ import net.aonsolutions.occam.api.model.type.RawdocStatus;
 import net.aonsolutions.occam.api.model.type.RawdocType;
 import net.aonsolutions.occam.impl.AONContext;
 
-public class RawdocHandler {
+class RawdocHandler {
+	
+	private RawdocHandler() {
+		
+	}
 	
 	static Optional<Rawdoc> getFull(AONContext ctx, Integer id) {
 		return ctx.getDslContext()

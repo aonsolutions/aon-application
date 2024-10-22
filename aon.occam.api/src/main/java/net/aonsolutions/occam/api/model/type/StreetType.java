@@ -360,19 +360,19 @@ public enum StreetType implements Serializable {
 	public String getIneCode() {
 		return ineCode;
 	}
-
 	public String getAeatCode() {
 		return aeatCode;
 	}
-
 	public String getDescription() {
 		return description;
 	}
-	
 	public AonLanguage getLanguage() {
 		return language;
 	}
 	
+	public String value() {
+		return aeatCode;
+	}
 	
 	public static Optional<StreetType> valueOfIneCode( String s ) {
 		return AonCollectionUtils.stream(values())

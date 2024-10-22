@@ -15,7 +15,6 @@ import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
-import net.aonsolutions.occam.api.model.Finance;
 import net.aonsolutions.occam.api.model.FiscalModel;
 import net.aonsolutions.occam.api.model.Invoice;
 import net.aonsolutions.occam.api.model.InvoiceErrorMessages;
@@ -43,7 +42,7 @@ public class InvoiceValidation {
 	 * La fecha de la factura es un dato obligatorio.
 	 */
 	private static final BiConsumer<AONContext,Invoice> EMPTY_DATE = (ctx,inv) -> {
-		if (inv.getIssueDate() == null) {
+		if (inv.getHeader().getIssueDate() == null) {
 			inv.addMessage( InvoiceErrorMessages.C001.err(InvoiceErrorKey.ISSUE_DATE) );
 			throw new InvoiceException(inv,AonError.INVOICE_SAVE_ERROR.getMessage());
 		}
@@ -53,7 +52,7 @@ public class InvoiceValidation {
 	 * La fecha IVA de la factura es un dato obligatorio.
 	 */
 	private static final BiConsumer<AONContext,Invoice> EMPTY_TAX_DATE = (ctx,inv) -> {
-		if (inv.getTaxDate() == null) {
+		if (inv.getHeader().getTaxDate() == null) {
 			inv.addMessage( InvoiceErrorMessages.C001.err(InvoiceErrorKey.TAX_DATE) );
 			throw new InvoiceException(inv,AonError.INVOICE_SAVE_ERROR.getMessage());
 		}
@@ -63,7 +62,7 @@ public class InvoiceValidation {
 	 * El Tipo de la factura no puede ser null.
 	 */
 	private static final BiConsumer<AONContext,Invoice> EMPTY_INVOICE_TYPE = (ctx,inv) -> {
-		if (inv.getType() == null) {
+		if (inv.getHeader().getType() == null) {
 			inv.addMessage( InvoiceErrorMessages.C001.err(InvoiceErrorKey.TYPE) );
 			throw new InvoiceException(inv,AonError.INVOICE_SAVE_ERROR.getMessage());
 		}
@@ -73,7 +72,7 @@ public class InvoiceValidation {
 	 * El titular de la factura es un dato obligatorio.
 	 */
 	private static final BiConsumer<AONContext,Invoice> EMPTY_INVOICE_REGISTRY = (ctx,inv) -> {
-		if (inv.getRegistry() == null ) {
+		if (inv.getHeader().getRegistry() == null ) {
 			inv.addMessage( InvoiceErrorMessages.C001.err(InvoiceErrorKey.REGISTRY) );
 			throw new InvoiceException(inv,AonError.INVOICE_SAVE_ERROR.getMessage());
 		}
@@ -83,7 +82,7 @@ public class InvoiceValidation {
 	 * El ámbito de la factura es un dato obligatorio.
 	 */
 	private static final BiConsumer<AONContext,Invoice> EMPTY_INVOICE_SCOPE = (ctx,inv) -> {
-		if (inv.getScope() == null) {
+		if (inv.getHeader().getScope() == null) {
 			inv.addMessage( InvoiceErrorMessages.C001.err(InvoiceErrorKey.SCOPE) );
 			throw new InvoiceException(inv,AonError.INVOICE_SAVE_ERROR.getMessage());
 		}
@@ -93,7 +92,7 @@ public class InvoiceValidation {
 	 * Si la factura no es de ventas, el codigo de referencia debe tener valor.
 	 */
 	private static final BiConsumer<AONContext,Invoice> EMPTY_REFERENCE_CODE = (ctx,inv) -> {
-		if (!inv.isSales() && AonStringUtils.isBlank( inv.getReferenceCode()) ) {
+		if (!inv.getHeader().isSales() && AonStringUtils.isBlank( inv.getHeader().getReferenceCode()) ) {
 			inv.addMessage( InvoiceErrorMessages.C001.err(InvoiceErrorKey.REFERENCE_CODE) );
 			throw new InvoiceException(inv,AonError.INVOICE_SAVE_ERROR.getMessage());
 		}
@@ -103,7 +102,7 @@ public class InvoiceValidation {
 	 * Si la factura no es de ventas, el codigo de referencia debe tener valor.
 	 */
 	private static final BiConsumer<AONContext,Invoice> EMPTY_TRANSACTION = (ctx,inv) -> {
-		if (inv.getTransaction() == null) {
+		if (inv.getHeader().getTransaction() == null) {
 			inv.addMessage( InvoiceErrorMessages.C001.err(InvoiceErrorKey.TRANSACTION) );
 			throw new InvoiceException(inv,AonError.INVOICE_SAVE_ERROR.getMessage());
 		}
@@ -116,13 +115,13 @@ public class InvoiceValidation {
 		if (ctx.getDslContext().fetchExists( 
 				ctx.getDslContext().selectOne()
 					.from(INVOICE)
-					.where(INVOICE.DOMAIN.eq(inv.getDomain()))
-					.and(AonStringUtils.isBlank(inv.getSeries())
+					.where(INVOICE.DOMAIN.eq(inv.getHeader().getDomain()))
+					.and(AonStringUtils.isBlank(inv.getHeader().getSeries())
 						?INVOICE.SERIES.isNull().or(DSL.trim(INVOICE.SERIES).eq(""))
-						:INVOICE.SERIES.eq(inv.getSeries()))
-					.and(INVOICE.NUMBER.eq(inv.getNumber()))
-					.and(inv.getId() == null ? DSL.trueCondition() : INVOICE.ID.ne(inv.getId()))
-					.and(INVOICE.TYPE.eq(inv.getType().value())))) {
+						:INVOICE.SERIES.eq(inv.getHeader().getSeries()))
+					.and(INVOICE.NUMBER.eq(inv.getHeader().getNumber()))
+					.and(inv.getHeader().getId() == null ? DSL.trueCondition() : INVOICE.ID.ne(inv.getId()))
+					.and(INVOICE.TYPE.eq(inv.getHeader().getType().value())))) {
 			inv.addMessage( InvoiceErrorMessages.C005.err(InvoiceErrorKey.DUPLICATED_SERIES_NUMBER) );
 			throw new InvoiceException(inv,AonError.INVOICE_SAVE_ERROR.getMessage());
 		}
@@ -132,16 +131,16 @@ public class InvoiceValidation {
 	 * En facturas recibidas, el Domain/Registry/Numero Referencia no puede estar duplicado
 	 */
 	private static final BiConsumer<AONContext,Invoice> DUPLICATED_REFERENCE_CODE = (ctx,inv) -> {
-		if (inv.isNotSales() && 
+		if (inv.getHeader().isNotSales() && 
 			ctx.getDslContext().fetchExists( 
 				ctx.getDslContext().selectOne()
 				.from(INVOICE)
-				.where(INVOICE.DOMAIN.eq(inv.getDomain()))
-				.and(INVOICE.REGISTRY.eq(inv.getRegistry()))
-				.and(INVOICE.REFERENCE_CODE.eq(inv.getReferenceCode()))
-				.and(INVOICE.TYPE.eq(inv.getType().value()))
-				.and(inv.getId() == null ? DSL.trueCondition() : INVOICE.ID.ne(inv.getId()))					
-				.and(DSL.year(INVOICE.ISSUE_DATE).eq(AonDateUtils.getYear( inv.getIssueDate())))
+				.where(INVOICE.DOMAIN.eq(inv.getHeader().getDomain()))
+				.and(INVOICE.REGISTRY.eq(inv.getHeader().getRegistry()))
+				.and(INVOICE.REFERENCE_CODE.eq(inv.getHeader().getReferenceCode()))
+				.and(INVOICE.TYPE.eq(inv.getHeader().getType().value()))
+				.and(inv.getHeader().getId() == null ? DSL.trueCondition() : INVOICE.ID.ne(inv.getHeader().getId()))					
+				.and(DSL.year(INVOICE.ISSUE_DATE).eq(AonDateUtils.getYear( inv.getHeader().getIssueDate())))
 			)
 		) {
 			inv.addMessage( InvoiceErrorMessages.C006.err(InvoiceErrorKey.DUPLICATED_REFERENCE_CODE) );
@@ -155,9 +154,9 @@ public class InvoiceValidation {
 	 * 
 	 */
 	private static final BiConsumer<AONContext,Invoice> OPERATIONS_DEADLINE = (ctx,inv) -> {
-		ctx.getApplicationParameters(inv.getDomain()).getOperationsDeadline()
+		ctx.getApplicationParameters(inv.getHeader().getDomain()).getOperationsDeadline()
 			.ifPresent( deadline -> {
-				if (AonDateUtils.isAfter(deadline, inv.getIssueDate())) {
+				if (AonDateUtils.isAfter(deadline, inv.getHeader().getIssueDate())) {
 					inv.addMessage( InvoiceErrorMessages.C007.err(InvoiceErrorKey.ISSUE_DATE) );
 					throw new InvoiceException(inv,AonError.INVOICE_SAVE_ERROR.getMessage());
 				}
@@ -170,7 +169,7 @@ public class InvoiceValidation {
 	 */
 	private static final BiConsumer<AONContext,Invoice> CHECK_TEN_YEARS  = (ctx,inv) -> {
 		int thisYear = AonDateUtils.getYear(new Date());
-		int invoiceYear = AonDateUtils.getYear(inv.getIssueDate());
+		int invoiceYear = AonDateUtils.getYear(inv.getHeader().getIssueDate());
 		if (invoiceYear < (thisYear-10) || invoiceYear > (thisYear+1)) {
 			inv.addMessage( InvoiceErrorMessages.C008.err(InvoiceErrorKey.ISSUE_DATE) );
 			throw new InvoiceException(inv,AonError.INVOICE_SAVE_ERROR.getMessage());
@@ -182,14 +181,14 @@ public class InvoiceValidation {
 	 * Sólo se realiza en la creación de la factura.
 	 */
 	private static final BiConsumer<AONContext,Invoice> CHECK_FINANCES = (ctx,inv) -> {
-		if (inv.getFinances() != null && !inv.getFinances().isEmpty()) {
-			double financesTotal = 0.0;
-			for (Finance finance : inv.getFinances()) {
-				if (!finance.isDeleted()) {
-					financesTotal = AonMathUtils.round(financesTotal + finance.getAmount());
-				}
-			}
-			if (!AonMathUtils.equals(inv.getTotal(), financesTotal )) {
+		if (inv.getFinancesSize() > 0) {
+			double financesTotal = AonMathUtils.round( 
+				inv.financeStream()
+					.filter( f -> f.isNotDeleted())
+					.mapToDouble( f -> f.getAmount() )
+					.sum()
+			);
+			if (!AonMathUtils.equals(inv.getHeader().getTotal(), financesTotal )) {
 				inv.addMessage( InvoiceErrorMessages.C020.err(InvoiceErrorKey.FINANCE_TOTAL_AMOUNT) );
 				throw new InvoiceException(inv,AonError.INVOICE_SAVE_ERROR.getMessage());
 			}
@@ -200,7 +199,7 @@ public class InvoiceValidation {
 	 * Las facturas rectificadas no se pueden borrar.
 	 */
 	private static final BiConsumer<AONContext,Invoice> RECTIFIED_INVOICE = (ctx,inv) -> {
-		if (inv.isRectified()) {
+		if (inv.getHeader().isRectified()) {
 			inv.addMessage( InvoiceErrorMessages.C050.err( InvoiceErrorKey.GENERIC) );
 			throw new InvoiceException(inv,AonError.INVOICE_SAVE_DELETE_ERROR.getMessage());
 		}
@@ -210,7 +209,7 @@ public class InvoiceValidation {
 	 * Las facturas rectificadas no se pueden borrar.
 	 */
 	private static final BiConsumer<AONContext,Invoice> DUA_LINKED_INVOICE = (ctx,inv) -> {
-		if (inv.isDUALinkAllowed() && 
+		if (inv.getHeader().isDUALinkAllowed() && 
 			ctx.getDslContext().fetchExists( 
 				ctx.getDslContext().selectOne()
 					.from(INVOICE_DUA)

@@ -1,14 +1,13 @@
 package net.aonsolutions.occam.impl;
 
-import static com.esferalia.aon.jooq.tables.EnterpriseActivity.ENTERPRISE_ACTIVITY;
+import static com.esferalia.aon.jooq.tables.Finance.FINANCE;
 
 import java.io.PrintStream;
-import java.sql.Types;
 
 import org.jooq.Field;
 import org.jooq.Table;
 
-import com.esferalia.aon.jooq.tables.EnterpriseActivity;
+import com.esferalia.aon.jooq.tables.Finance;
 import com.esferalia.aon.watson.util.AonCollectionUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.esferalia.aon.watson.util.AonWordUtils;
@@ -167,11 +166,14 @@ public class BasicTestMaker<T extends Table<?>> {
 	}
 
 	private String value(Field<?> field) {
-		return "CHANGE_VALUE";
+		if ( field.getDataType().isNumeric()) return "1";
+		else if (field.getDataType().isString() ) return "\"1\"";
+		else if (field.getDataType().isDate() ) return "new Date()";
+		else throw new IllegalArgumentException("Añade el tipo que has encontrado!!");
 	}
 
 	public static void main(String[] args) {
-		BasicTestMaker<EnterpriseActivity> mm = new BasicTestMaker<>(ENTERPRISE_ACTIVITY);
+		BasicTestMaker<Finance> mm = new BasicTestMaker<>(FINANCE);
 		mm.make( true );
 	}
 }

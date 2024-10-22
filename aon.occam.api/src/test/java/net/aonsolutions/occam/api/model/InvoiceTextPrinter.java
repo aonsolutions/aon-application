@@ -66,20 +66,20 @@ public class InvoiceTextPrinter {
 		buf = new StringBuilder();
 		buf.append(AonStringUtils.SPACE);
 		buf.append(VERTICAL_BAR);
-		buf.append(AonStringUtils.center(invoice.getType().getAbbrDescription(), 8));
+		buf.append(AonStringUtils.center(invoice.getHeader().getType().getAbbrDescription(), 8));
 		buf.append(VERTICAL_BAR);
 		buf.append(" N\u00BA Fra: ");
-		buf.append(AonStringUtils.rightPad(invoice.getDocumentNumber(), 16));
+		buf.append(AonStringUtils.rightPad(invoice.getHeader().getDocumentNumber(), 16));
 		buf.append(VERTICAL_BAR);
 		buf.append(" Fecha: ");
-		buf.append(invoice.getIssueDate() == null ? "??/??/????" : DATE_FORMAT.format(invoice.getIssueDate()));
+		buf.append(invoice.getHeader().getIssueDate() == null ? "??/??/????" : DATE_FORMAT.format(invoice.getHeader().getIssueDate()));
 		buf.append(AonStringUtils.SPACE);
 		buf.append(VERTICAL_BAR);
 		buf.append(AonStringUtils.SPACE);
 		buf.append(" Documento: ");
-		buf.append(invoice.getRegistryDocumentCountry());
+		buf.append(invoice.getHeader().getRegistryDocumentCountry());
 		buf.append(AonStringUtils.HYPHEN);
-		buf.append(invoice.getRegistryDocument());
+		buf.append(invoice.getHeader().getRegistryDocument());
 		buf.append(AonStringUtils.SPACE);
 		buf.append(AonStringUtils.leftPad(" ", getLineSize() - buf.length()));
 		buf.append(VERTICAL_BAR);
@@ -91,12 +91,12 @@ public class InvoiceTextPrinter {
 		buf.append(AonStringUtils.spaces(8));
 		buf.append(VERTICAL_BAR);
 		buf.append(" Total : ");
-		buf.append(AonStringUtils.rightPad(FMT.format(invoice.getTotal()), 16));
+		buf.append(AonStringUtils.rightPad(FMT.format(invoice.getHeader().getTotal()), 16));
 		buf.append(VERTICAL_BAR);
 		buf.append(AonStringUtils.spaces(19));
 		buf.append(VERTICAL_BAR);
 		buf.append("  R. Social: ");
-		buf.append(AonStringUtils.abbreviate(invoice.getRegistryName(), 42));
+		buf.append(AonStringUtils.abbreviate(invoice.getHeader().getRegistryName(), 42));
 		buf.append(AonStringUtils.leftPad(" ", getLineSize() - buf.length()));
 		buf.append(VERTICAL_BAR);
 		out.println(buf.toString());
@@ -378,15 +378,15 @@ public class InvoiceTextPrinter {
 		buf = new StringBuilder();
 		buf.append(AonStringUtils.spaces(20));
 		buf.append(VERTICAL_BAR);
-		buf.append(AonStringUtils.center(FMT1.format(invoice.getTaxableBase()), 17));
+		buf.append(AonStringUtils.center(FMT1.format(invoice.getHeader().getTaxableBase()), 17));
 		buf.append(VERTICAL_BAR);
-		buf.append(AonStringUtils.center(FMT.format(invoice.getVatQuota()), 17));
+		buf.append(AonStringUtils.center(FMT.format(invoice.getHeader().getVatQuota()), 17));
 		buf.append(VERTICAL_BAR);
-		buf.append(AonStringUtils.center(FMT.format(invoice.getRetentionQuota()), 17));
+		buf.append(AonStringUtils.center(FMT.format(invoice.getHeader().getRetentionQuota()), 17));
 		buf.append(VERTICAL_BAR);
-		buf.append(AonStringUtils.center(FMT.format(invoice.getOtherAmount()), 17));
+		buf.append(AonStringUtils.center(FMT.format(invoice.getHeader().getOtherAmount()), 17));
 		buf.append(VERTICAL_BAR);
-		buf.append(ConsoleColors.whiteBold(AonStringUtils.center(FMT.format(invoice.getTotal()), 17)));
+		buf.append(ConsoleColors.whiteBold(AonStringUtils.center(FMT.format(invoice.getHeader().getTotal()), 17)));
 		buf.append(VERTICAL_BAR);
 		out.println(buf.toString());
 
@@ -435,7 +435,7 @@ public class InvoiceTextPrinter {
 		buf.append(VERTICAL_LEFT_BAR);
 		out.println(buf.toString());
 
-		AonCollectionUtils.stream(invoice.getFinances()).forEach(f -> finance(f, out));
+		invoice.financeStream().forEach(f -> finance(f, out));
 
 		buf = new StringBuilder();
 		buf.append(AonStringUtils.SPACE);
@@ -490,9 +490,9 @@ public class InvoiceTextPrinter {
 		buf.append(VERTICAL_BAR);
 		buf.append(AonStringUtils.spaces(5));
 		buf.append(AonStringUtils.center("Factura de "
-				+invoice.getType().getDescription()
+				+invoice.getHeader().getType().getDescription()
 				+ " "
-				+ invoice.getTransaction().getDescription()		
+				+ invoice.getHeader().getTransaction().getDescription()		
 				,87));
 		buf.append(VERTICAL_BAR);
 		buf.append(AonStringUtils.spaces(getLineSize() - buf.length()));			
@@ -503,7 +503,7 @@ public class InvoiceTextPrinter {
 		buf.append(VERTICAL_BAR);
 		buf.append(AonStringUtils.spaces(5));
 		buf.append(AonStringUtils.rightPad("Actividad .................: " 
-				+ invoice.getActivity()
+				+ invoice.getHeader().getActivity()
 					.map(a -> (a.getIae().map(i -> i.getEpigraph()).orElse("") 
 				+ " " 
 				+ a.getDescription())).orElse("TODAS"),87));
@@ -535,7 +535,7 @@ public class InvoiceTextPrinter {
 		buf.append(AonStringUtils.spaces(10));
 		buf.append(VERTICAL_BAR);
 		buf.append(AonStringUtils.spaces(5));
-		buf.append(AonStringUtils.rightPad(checkLabel("Retención", invoice.isWithholding()) ,87));
+		buf.append(AonStringUtils.rightPad(checkLabel("Retención", invoice.getHeader().isWithholding()) ,87));
 		buf.append(VERTICAL_BAR);
 		buf.append(AonStringUtils.spaces(getLineSize() - buf.length()));			
 		out.println(buf.toString());
@@ -544,7 +544,7 @@ public class InvoiceTextPrinter {
 		buf.append(AonStringUtils.spaces(10));
 		buf.append(VERTICAL_BAR);
 		buf.append(AonStringUtils.spaces(5));
-		buf.append(AonStringUtils.rightPad(checkLabel("Recargo Equivalencia", invoice.isSurcharge()) ,87));
+		buf.append(AonStringUtils.rightPad(checkLabel("Recargo Equivalencia", invoice.getHeader().isSurcharge()) ,87));
 		buf.append(VERTICAL_BAR);
 		buf.append(AonStringUtils.spaces(getLineSize() - buf.length()));			
 		out.println(buf.toString());
@@ -553,7 +553,7 @@ public class InvoiceTextPrinter {
 		buf.append(AonStringUtils.spaces(10));
 		buf.append(VERTICAL_BAR);
 		buf.append(AonStringUtils.spaces(5));
-		buf.append(AonStringUtils.rightPad(checkLabel("Servicio", invoice.isService()) ,87));
+		buf.append(AonStringUtils.rightPad(checkLabel("Servicio", invoice.getHeader().isService()) ,87));
 		buf.append(VERTICAL_BAR);
 		buf.append(AonStringUtils.spaces(getLineSize() - buf.length()));			
 		out.println(buf.toString());
@@ -562,7 +562,7 @@ public class InvoiceTextPrinter {
 		buf.append(AonStringUtils.spaces(10));
 		buf.append(VERTICAL_BAR);
 		buf.append(AonStringUtils.spaces(5));
-		buf.append(AonStringUtils.rightPad(checkLabel("Régimen agrario", invoice.isWithholdingFarmer()) ,87));
+		buf.append(AonStringUtils.rightPad(checkLabel("Régimen agrario", invoice.getHeader().isWithholdingFarmer()) ,87));
 		buf.append(VERTICAL_BAR);
 		buf.append(AonStringUtils.spaces(getLineSize() - buf.length()));			
 		out.println(buf.toString());
@@ -571,7 +571,7 @@ public class InvoiceTextPrinter {
 		buf.append(AonStringUtils.spaces(10));
 		buf.append(VERTICAL_BAR);
 		buf.append(AonStringUtils.spaces(5));
-		buf.append(AonStringUtils.rightPad(checkLabel("Régimen criterio de caja", invoice.isVatAccrualPayment()) ,87));
+		buf.append(AonStringUtils.rightPad(checkLabel("Régimen criterio de caja", invoice.getHeader().isVatAccrualPayment()) ,87));
 		buf.append(VERTICAL_BAR);
 		buf.append(AonStringUtils.spaces(getLineSize() - buf.length()));			
 		out.println(buf.toString());
@@ -580,7 +580,7 @@ public class InvoiceTextPrinter {
 		buf.append(AonStringUtils.spaces(10));
 		buf.append(VERTICAL_BAR);
 		buf.append(AonStringUtils.spaces(5));
-		buf.append(AonStringUtils.rightPad(checkLabel("Inversión", invoice.isInvestment()) ,87));
+		buf.append(AonStringUtils.rightPad(checkLabel("Inversión", invoice.getHeader().isInvestment()) ,87));
 		buf.append(VERTICAL_BAR);
 		buf.append(AonStringUtils.spaces(getLineSize() - buf.length()));			
 		out.println(buf.toString());

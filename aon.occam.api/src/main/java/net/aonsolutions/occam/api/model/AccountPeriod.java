@@ -35,6 +35,16 @@ public class AccountPeriod extends AonEntity<AccountPeriodMetadata> implements S
 		super.markAsClean();
 		return this; 
 	}
+	@Override
+	public AccountPeriod setSelected(boolean selected) {
+		super.setSelected(selected);
+		return this;
+	}
+	@Override
+	public AccountPeriod setDeleted(boolean deleted) {
+		super.setDeleted(deleted);
+		return this;
+	}
 	
 	public Integer getId() {
 		return this.id;
@@ -143,7 +153,7 @@ public class AccountPeriod extends AonEntity<AccountPeriodMetadata> implements S
 	@Override
 	public boolean equals(Object obj) {
 		if (obj == this) return true;
-		if (obj instanceof AccountEntry other) {
+		if (obj instanceof AccountPeriod other) {
 			return AonObjectUtils.equals( this.getUuid(),other.getUuid() );
 		}
 	    return false;

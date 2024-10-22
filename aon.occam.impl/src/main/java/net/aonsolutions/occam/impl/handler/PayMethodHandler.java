@@ -11,7 +11,7 @@ import net.aonsolutions.occam.api.model.PayMethod;
 import net.aonsolutions.occam.api.model.type.PayMethodType;
 import net.aonsolutions.occam.impl.AONContext;
 
-public class PayMethodHandler {
+class PayMethodHandler {
 
 	private PayMethodHandler() {
 	}

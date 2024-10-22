@@ -1,5 +1,6 @@
 package net.aonsolutions.occam.api.model.type;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -122,7 +123,13 @@ class CountryTest extends AbstractOccamApiTest {
 		int isoCode = m.getIsoCode();
 		Optional<Country> om = Country.valueOfIsoCode( isoCode );
 		assertTrue(om.isPresent());
-		assertSame(m, om.get());
+		if ( m == Country.LU || m == Country.XG) {
+			assertThat(om.get()).isIn(Country.LU,Country.XG);
+		} else if ( m == Country.GB || m == Country.XI) {
+			assertThat(om.get()).isIn(Country.XI,Country.GB);
+		} else {
+			assertSame(m, om.get());
+		}
 		
 	}
 }

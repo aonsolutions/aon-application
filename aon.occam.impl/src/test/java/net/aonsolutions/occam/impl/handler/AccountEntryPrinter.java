@@ -19,7 +19,7 @@ public class AccountEntryPrinter {
 		out.println(sep(abbrv));
 		out.println(toString(entry,abbrv));
 		out.println(sepInner(abbrv));
-		entry.getDetails().stream().forEach(det -> out.println(toString(det,abbrv)));
+		entry.detailStream().forEach(det -> out.println(toString(det,abbrv)));
 		out.println(sep(abbrv));
 		out.println();
 		out.flush();

@@ -69,8 +69,7 @@ class FinanceEntryHandler {
 				);
 		
 		entry.setAccountEntry(accountEntry);
-		accountEntry.getDetails()
-			.stream()
+		accountEntry.detailStream()
 			.forEach(detail -> {
 				if (AonStringUtils.startsWith(detail.getAccountCode(), "5")) {
 					entry.setBankAccount(detail.getAccount().orElse(null));

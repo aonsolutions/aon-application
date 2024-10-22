@@ -4,13 +4,11 @@ import org.jooq.Field;
 
 import com.esferalia.aon.watson.util.AonStringUtils;
 
-abstract class AbsHandler {
+class HandlerUtils {
 	
-	static Byte getByte(Boolean bool) {
-		if (bool == null) return null;
-		return (byte) (bool.booleanValue() ? 1 : 0); 
+	private HandlerUtils() {
 	}
-
+	
 	static boolean overflows( Field<String> field, String value) {
 		return (AonStringUtils.length(value) > field.getDataType().length() );
 	}

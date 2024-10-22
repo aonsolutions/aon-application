@@ -38,24 +38,24 @@ class CreditorHandler {
 	}
 	
 	private static final CreditorPropertiesHandler CREDITOR_PROPERTIES = new CreditorPropertiesHandler();
-	static class CreditorPropertiesHandler extends RegistryPropertiesHandler implements CreditorProperties {
+	private static class CreditorPropertiesHandler extends RegistryPropertiesHandler implements CreditorProperties {
 		
 		protected Condition getCondition(CreditorFilter filter) {
 			if (filter == null) return DSL.trueCondition();
-			FilterHandler filterDAO = (FilterHandler) filter.filter(this);
+			FilterImpl filterDAO = (FilterImpl) filter.filter(this);
 			return filterDAO.getCondition();
 		}
 		
-		@Override public Property<Byte> getWithholdingProperty() {return new FilterHandler.PropertyDAO<>(CREDITOR.WITHHOLDING);}
-		@Override public Property<Byte> getVatAccrualPaymentProperty() {return new FilterHandler.PropertyDAO<>(CREDITOR.VAT_ACCRUAL_PAYMENT);}
-		@Override public Property<Byte> getTransactionProperty() {return new FilterHandler.PropertyDAO<>(CREDITOR.TRANSACTION);}
-		@Override public Property<Byte> getStatusProperty() {return new FilterHandler.PropertyDAO<>(CREDITOR.STATUS);}
-		@Override public Property<Integer> getScopeProperty() {return new FilterHandler.PropertyDAO<>(CREDITOR.SCOPE);}
-		@Override public Property<Integer> getAccountProperty() { return new FilterHandler.PropertyDAO<>(CREDITOR.ACCOUNT);}
-		@Override public Property<String> getCreationUserProperty() {return new FilterHandler.PropertyDAO<>(CREDITOR.CREATION_USER);}
-		@Override public Property<Timestamp> getCreationDateProperty() {return new FilterHandler.PropertyDAO<>(CREDITOR.CREATION_DATE);}
-		@Override public Property<String> getModificationUserProperty() {return new FilterHandler.PropertyDAO<>(CREDITOR.MODIFICATION_USER);}
-		@Override public Property<Timestamp> getModificationDateProperty() {return new FilterHandler.PropertyDAO<>(CREDITOR.MODIFICATION_DATE);}
+		@Override public Property<Byte> getWithholdingProperty() {return new FilterImpl.PropertyDAO<>(CREDITOR.WITHHOLDING);}
+		@Override public Property<Byte> getVatAccrualPaymentProperty() {return new FilterImpl.PropertyDAO<>(CREDITOR.VAT_ACCRUAL_PAYMENT);}
+		@Override public Property<Byte> getTransactionProperty() {return new FilterImpl.PropertyDAO<>(CREDITOR.TRANSACTION);}
+		@Override public Property<Byte> getStatusProperty() {return new FilterImpl.PropertyDAO<>(CREDITOR.STATUS);}
+		@Override public Property<Integer> getScopeProperty() {return new FilterImpl.PropertyDAO<>(CREDITOR.SCOPE);}
+		@Override public Property<Integer> getAccountProperty() { return new FilterImpl.PropertyDAO<>(CREDITOR.ACCOUNT);}
+		@Override public Property<String> getCreationUserProperty() {return new FilterImpl.PropertyDAO<>(CREDITOR.CREATION_USER);}
+		@Override public Property<Timestamp> getCreationDateProperty() {return new FilterImpl.PropertyDAO<>(CREDITOR.CREATION_DATE);}
+		@Override public Property<String> getModificationUserProperty() {return new FilterImpl.PropertyDAO<>(CREDITOR.MODIFICATION_USER);}
+		@Override public Property<Timestamp> getModificationDateProperty() {return new FilterImpl.PropertyDAO<>(CREDITOR.MODIFICATION_DATE);}
 	}
 
 	

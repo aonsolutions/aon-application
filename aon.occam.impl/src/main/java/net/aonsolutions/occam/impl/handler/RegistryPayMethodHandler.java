@@ -14,7 +14,7 @@ import net.aonsolutions.occam.impl.AONContext;
 import net.aonsolutions.occam.impl.handler.PayMethodHandler.PayMethodFiller;
 import net.aonsolutions.occam.impl.handler.RegistryBankHandler.RegistryBankFiller;
 
-public class RegistryPayMethodHandler {
+class RegistryPayMethodHandler {
 	
 	private RegistryPayMethodHandler() {
 	}

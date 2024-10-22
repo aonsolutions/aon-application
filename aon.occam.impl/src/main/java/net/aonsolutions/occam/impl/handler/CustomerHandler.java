@@ -38,32 +38,32 @@ class CustomerHandler {
 	}
 	
 	private static final CustomerPropertiesHandler CUSTOMER_PROPERTIES = new CustomerPropertiesHandler();
-	static class CustomerPropertiesHandler extends RegistryPropertiesHandler implements CustomerProperties {
+	private static class CustomerPropertiesHandler extends RegistryPropertiesHandler implements CustomerProperties {
 		
 		protected Condition getCondition(CustomerFilter filter) {
 			if (filter == null) return DSL.trueCondition();
-			FilterHandler filterDAO = (FilterHandler) filter.filter(this);
+			FilterImpl filterDAO = (FilterImpl) filter.filter(this);
 			return filterDAO.getCondition();
 		}
 		
-		@Override public Property<Integer> getIdProperty() {return new FilterHandler.PropertyDAO<>(CUSTOMER.REGISTRY);}
-		@Override public Property<Integer> getDomainProperty() {return new FilterHandler.PropertyDAO<>(CUSTOMER.DOMAIN);}
-		@Override public Property<Integer> getTariffProperty() {return new FilterHandler.PropertyDAO<>(CUSTOMER.TARIFF);}
-		@Override public Property<Byte> getSurchargeProperty() {return new FilterHandler.PropertyDAO<>(CUSTOMER.SURCHARGE);}
-		@Override public Property<Byte> getWithholdingProperty() {return new FilterHandler.PropertyDAO<>(CUSTOMER.WITHHOLDING);}
-		@Override public Property<Byte> getTransactionProperty() {return new FilterHandler.PropertyDAO<>(CUSTOMER.TRANSACTION);}
-		@Override public Property<Byte> getStatusProperty() {return new FilterHandler.PropertyDAO<>(CUSTOMER.STATUS);}
-		@Override public Property<Integer> getScopeProperty() {return new FilterHandler.PropertyDAO<>(CUSTOMER.SCOPE);}
-		@Override public Property<Byte> getEInvoiceProperty() {return new FilterHandler.PropertyDAO<>(CUSTOMER.E_INVOICE);}
-		@Override public Property<Integer> getInvoicingGroupProperty() {return new FilterHandler.PropertyDAO<>(CUSTOMER.INVOICING_GROUP);}
-		@Override public Property<Byte> getProjectGroupedProperty() {return new FilterHandler.PropertyDAO<>(CUSTOMER.PROJECT_GROUPED);}
-		@Override public Property<Byte> getDeliveryGroupedProperty() {return new FilterHandler.PropertyDAO<>(CUSTOMER.DELIVERY_GROUPED);}
-		@Override public Property<Byte> getDeliveryValuatedProperty() {return new FilterHandler.PropertyDAO<>(CUSTOMER.DELIVERY_VALUATED);}
-		@Override public Property<Integer> getAccountProperty() {return new FilterHandler.PropertyDAO<>(CUSTOMER.ACCOUNT);}
-		@Override public Property<String> getCreationUserProperty() {return new FilterHandler.PropertyDAO<>(CUSTOMER.CREATION_USER);}
-		@Override public Property<Timestamp> getCreationDateProperty() {return new FilterHandler.PropertyDAO<>(CUSTOMER.CREATION_DATE);}
-		@Override public Property<String> getModificationUserProperty() {return new FilterHandler.PropertyDAO<>(CUSTOMER.MODIFICATION_USER);}
-		@Override public Property<Timestamp> getModificationDateProperty() {return new FilterHandler.PropertyDAO<>(CUSTOMER.MODIFICATION_DATE);}
+		@Override public Property<Integer> getIdProperty() {return new FilterImpl.PropertyDAO<>(CUSTOMER.REGISTRY);}
+		@Override public Property<Integer> getDomainProperty() {return new FilterImpl.PropertyDAO<>(CUSTOMER.DOMAIN);}
+		@Override public Property<Integer> getTariffProperty() {return new FilterImpl.PropertyDAO<>(CUSTOMER.TARIFF);}
+		@Override public Property<Byte> getSurchargeProperty() {return new FilterImpl.PropertyDAO<>(CUSTOMER.SURCHARGE);}
+		@Override public Property<Byte> getWithholdingProperty() {return new FilterImpl.PropertyDAO<>(CUSTOMER.WITHHOLDING);}
+		@Override public Property<Byte> getTransactionProperty() {return new FilterImpl.PropertyDAO<>(CUSTOMER.TRANSACTION);}
+		@Override public Property<Byte> getStatusProperty() {return new FilterImpl.PropertyDAO<>(CUSTOMER.STATUS);}
+		@Override public Property<Integer> getScopeProperty() {return new FilterImpl.PropertyDAO<>(CUSTOMER.SCOPE);}
+		@Override public Property<Byte> getEInvoiceProperty() {return new FilterImpl.PropertyDAO<>(CUSTOMER.E_INVOICE);}
+		@Override public Property<Integer> getInvoicingGroupProperty() {return new FilterImpl.PropertyDAO<>(CUSTOMER.INVOICING_GROUP);}
+		@Override public Property<Byte> getProjectGroupedProperty() {return new FilterImpl.PropertyDAO<>(CUSTOMER.PROJECT_GROUPED);}
+		@Override public Property<Byte> getDeliveryGroupedProperty() {return new FilterImpl.PropertyDAO<>(CUSTOMER.DELIVERY_GROUPED);}
+		@Override public Property<Byte> getDeliveryValuatedProperty() {return new FilterImpl.PropertyDAO<>(CUSTOMER.DELIVERY_VALUATED);}
+		@Override public Property<Integer> getAccountProperty() {return new FilterImpl.PropertyDAO<>(CUSTOMER.ACCOUNT);}
+		@Override public Property<String> getCreationUserProperty() {return new FilterImpl.PropertyDAO<>(CUSTOMER.CREATION_USER);}
+		@Override public Property<Timestamp> getCreationDateProperty() {return new FilterImpl.PropertyDAO<>(CUSTOMER.CREATION_DATE);}
+		@Override public Property<String> getModificationUserProperty() {return new FilterImpl.PropertyDAO<>(CUSTOMER.MODIFICATION_USER);}
+		@Override public Property<Timestamp> getModificationDateProperty() {return new FilterImpl.PropertyDAO<>(CUSTOMER.MODIFICATION_DATE);}
 	}
 
 	

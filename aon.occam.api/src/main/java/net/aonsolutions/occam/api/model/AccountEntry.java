@@ -5,7 +5,9 @@ import java.util.Date;
 import java.util.LinkedList;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Stream;
 
+import com.esferalia.aon.watson.util.AonCollectionUtils;
 import com.esferalia.aon.watson.util.AonObjectUtils;
 
 import net.aonsolutions.occam.api.model.metadata.AccountEntryMetadata;
@@ -41,7 +43,17 @@ public class AccountEntry extends AonEntity<AccountEntryMetadata> implements Has
 		super.markAsClean();
 		return this; 
 	}
-	
+	@Override
+	public AccountEntry setSelected(boolean selected) {
+		super.setSelected(selected);
+		return this;
+	}
+	@Override
+	public AccountEntry setDeleted(boolean selected) {
+		super.setDeleted(selected);
+		return this;
+	}
+
 	public Integer getId() {
 		return this.id;
 	}
@@ -136,41 +148,26 @@ public class AccountEntry extends AonEntity<AccountEntryMetadata> implements Has
 		return this;
 	}
 
-	public LinkedList<AccountEntryDetail> getDetails() {
-		if (this.details == null) {
-			this.details = new LinkedList<>();
-		}
-		return details;
-	}
-	public AccountEntry setDetails(LinkedList<AccountEntryDetail> details) {
-		checkIfDirty( this.details,details, AccountEntryMetadata.COMMENTS);
-		this.details = details;
-		return this;
+	public Stream<AccountEntryDetail> detailStream() {
+		return AonCollectionUtils.stream( details );
 	}
 	public AccountEntry addDetail( AccountEntryDetail detail) {
-		getDetails().add(detail);
+		if (this.details == null) this.details = new LinkedList<>();
+		markAsDirty(AccountEntryMetadata.DETAILS);
+		this.details.add(detail);
 		return this;
 	}
 	
 	public int getDetailsSize() {
-		int i = 0;
-		for (AccountEntryDetail aed : getDetails()) {
-			i = i + (aed.isDeleted() ? 0 : 1);
-		}
-		return i;
+		return (int) detailStream()
+			.filter(aed -> !aed.isDeleted())
+			.count();
 	}
 	
-	public AccountEntryDetail getLastDetail() {
-		AccountEntryDetail aed = null;
-		if (!getDetails().isEmpty()) {
-			for (int i = (getDetails().size() - 1); i >= 0; i--) {
-				aed = getDetails().get(i);
-				if (!aed.isDeleted()) {
-					break;
-				}
-			}
-		}
-		return aed;
+	public Optional<AccountEntryDetail> getLastDetail() {
+		return detailStream()
+			.filter(aed -> !aed.isDeleted())
+			.reduce( (a,b) -> b);
 	}
 	
 	// ---------------------------------------------------------- AUDIT
@@ -225,13 +222,7 @@ public class AccountEntry extends AonEntity<AccountEntryMetadata> implements Has
 	}
 	
 	static AccountEntry clone(AccountEntry ori) {
-		LinkedList<AccountEntryDetail> details = ori.details == null?null:new LinkedList<>();
-		if (details != null) {
-			for ( AccountEntryDetail detail : ori.details ) {
-				details.add(AccountEntryDetail.clone(detail));
-			}
-		}
-		return new AccountEntry()
+		AccountEntry newEntry = new AccountEntry() 
 			.setId(ori.id)
 			.setPeriod(ori.period)
 			.setDomain(ori.domain)
@@ -245,6 +236,14 @@ public class AccountEntry extends AonEntity<AccountEntryMetadata> implements Has
 			.setCreationDate(ori.creationDate)
 			.setModificationUser(ori.modificationUser)
 			.setModificationDate(ori.modificationDate)
-			.setDetails(details);
+			.setDeleted(ori.isDeleted())
+			.setSelected(ori.isSelected())
+		;
+		ori.detailStream()
+			.map(AccountEntryDetail::clone)
+			.forEach( newEntry::addDetail);
+		newEntry.markAsClean();
+		ori.dirtySetStream().forEach(newEntry::markAsDirty); 
+		return newEntry;
 	}
 }

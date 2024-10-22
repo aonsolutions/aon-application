@@ -16,12 +16,12 @@ import com.esferalia.aon.watson.util.AonCollectionUtils;
 
 public class AonAsserts {
 	private static final String[] SKIP_FIELDS = new String[] {
-		 "creationDate"
-		,"creationUser"
-		,"modificationDate"
-		,"modificationUser"
-		,"dirtySet"
-		,"selected"
+		 ".*creationDate"
+		,".*creationUser"
+		,".*modificationDate"
+		,".*modificationUser"
+		,".*dirtySet"
+		,".*selected"
 	};
 	
 	private static final Comparator<Date> SAME_DAY = (d1, d2) -> AonDateUtils.isSameDay(d1 , d2) ? 0 : 1;
@@ -46,7 +46,7 @@ public class AonAsserts {
 		if (expected != null) {
 			assertThat(expected)
 				.usingRecursiveComparison( )
-				.ignoringFields(skipFields)
+				.ignoringFieldsMatchingRegexes(skipFields)
 				.withComparatorForType(SAME_DAY, Date.class)
 			.isEqualTo(actual);
 		}

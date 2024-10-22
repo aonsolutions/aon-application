@@ -18,7 +18,7 @@ import net.aonsolutions.occam.api.model.RegistryBank;
 import net.aonsolutions.occam.impl.AONContext;
 import net.aonsolutions.occam.impl.handler.AccountHandler.AccountFiller;
 
-public class RegistryBankHandler {
+class RegistryBankHandler {
 
 	private RegistryBankHandler() {
 		

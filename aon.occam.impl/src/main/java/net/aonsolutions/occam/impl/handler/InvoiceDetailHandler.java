@@ -66,7 +66,7 @@ class InvoiceDetailHandler {
 		return basicStream(ctx, invoice.getId())
 			.map(id -> {
 				InvoiceTaxHandler.stream(ctx, id.getId())
-					.forEach(it -> id.addTax(invoice, it));
+					.forEach(id::addTax);
 				return id;
 			}
 		);

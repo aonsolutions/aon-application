@@ -109,5 +109,5 @@ public enum VATTaxRegime implements Serializable {
 		T visitVatImportation();
 		T visitVatExempt();
 	}
-	
+
 }

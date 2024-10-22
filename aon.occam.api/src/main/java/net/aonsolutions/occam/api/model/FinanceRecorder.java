@@ -2,8 +2,9 @@ package net.aonsolutions.occam.api.model;
 
 import java.io.Serializable;
 import java.util.LinkedHashMap;
-import java.util.LinkedList;
 
+import com.esferalia.aon.watson.mutable.MutableDouble;
+import com.esferalia.aon.watson.util.AonCollectionUtils;
 import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
@@ -186,8 +187,10 @@ public class FinanceRecorder {
 			}
 		}
 		
-		ae.setDetails(new LinkedList<>());
-		ae.getDetails().addAll(map.values());
+		
+		AonCollectionUtils.stream(map.values())
+			.forEach(aed -> ae.addDetail(aed));
+		
 		if ( financeEntry.getExpenses() != 0.0
 			&& financeEntry.getExpensesAccount() != null 
 			&& financeEntry.getExpensesAccount().getId() != null) {
@@ -201,7 +204,7 @@ public class FinanceRecorder {
 					.setBalancingAccount(financeEntry.getBankAccount())
 			;
 			detail.addDebit( financeEntry.getExpenses()  );
-			ae.getDetails().add(detail);
+			ae.addDetail(detail);
 		}
 		if ( financeEntry.getBankAccount() != null && financeEntry.getBankAccount().getId() != null) {
 			String concept = AonStringUtils.defaultIfBlank(financeEntry.getManualConcept(),"Apunte Tesorer\u00EDa");
@@ -218,14 +221,15 @@ public class FinanceRecorder {
 				.setBalancingAccount(balancingAccount)
 				.setDocumentNumber(documentNumber)
 				;
-			double debit = 0.0;
-			double credit = 0.0;
-			for ( AccountEntryDetail d : ae.getDetails() ) {
-				debit = AonMathUtils.round(debit + d.getDebit());
-				credit = AonMathUtils.round(credit + d.getCredit());
-			}
-			detail.setDebit( AonMathUtils.round( credit  - debit ));
-			ae.getDetails().add(detail);
+			MutableDouble debit = new MutableDouble(0.0);
+			MutableDouble  credit = new MutableDouble(0.0);
+			ae.detailStream()
+				.forEach(d -> {
+					debit.setValue( AonMathUtils.round(debit.getValue() + d.getDebit()));
+					credit.setValue( AonMathUtils.round(credit.getValue() + d.getCredit()));
+				});
+			detail.setDebit( AonMathUtils.round( credit.getValue()  - debit.getValue() ));
+			ae.addDetail(detail);
 		}
 		
 		return new AccountEntry[]{ae};

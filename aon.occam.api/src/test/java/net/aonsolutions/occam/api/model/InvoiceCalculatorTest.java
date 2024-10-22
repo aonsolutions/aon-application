@@ -75,7 +75,7 @@ class InvoiceCalculatorTest {
 			.build()
 		;
 		InvoiceCalculator.reverseCalculate(invoice, 121);
-		assertEquals(121, invoice.getTotal());
+		assertEquals(121, invoice.getHeader().getTotal());
 		InvoiceDetail detail = invoice.detailStream().findFirst().orElse(null);
 		assertNotNull(detail);
 		
@@ -112,7 +112,7 @@ class InvoiceCalculatorTest {
 			.build()
 		;
 		InvoiceCalculator.reverseCalculate(invoice, 121);
-		assertEquals(121, invoice.getTotal());
+		assertEquals(121, invoice.getHeader().getTotal());
 		InvoiceDetail detail = invoice.detailStream().findFirst().orElse(null);
 		assertNotNull(detail);
 		
@@ -188,7 +188,7 @@ class InvoiceCalculatorTest {
 		assertEquals(0.0, vat.getDirectTaxPercent());
 		assertEquals(22.40, iw.getDeductibleQuota());
 		
-		assertEquals(1097.6, invoice.getTotal());
+		assertEquals(1097.6, invoice.getHeader().getTotal());
 	}
 	
 	@Test

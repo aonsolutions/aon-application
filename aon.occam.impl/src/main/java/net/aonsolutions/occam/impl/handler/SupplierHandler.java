@@ -1,7 +1,6 @@
 package net.aonsolutions.occam.impl.handler;
 
 import static com.esferalia.aon.jooq.tables.Account.ACCOUNT;
-import static com.esferalia.aon.jooq.tables.Customer.CUSTOMER;
 import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
 import static com.esferalia.aon.jooq.tables.Supplier.SUPPLIER;
 
@@ -34,7 +33,7 @@ import net.aonsolutions.occam.impl.AONContext;
 import net.aonsolutions.occam.impl.handler.AccountHandler.AccountFiller;
 import net.aonsolutions.occam.impl.handler.RegistryHandler.RegistryPropertiesHandler;
 
-class SupplierHandler extends AbsHandler {
+class SupplierHandler {
 	private SupplierHandler() {
 	}
 	
@@ -43,23 +42,23 @@ class SupplierHandler extends AbsHandler {
 		
 		protected Condition getCondition(SupplierFilter filter) {
 			if (filter == null) return DSL.trueCondition();
-			FilterHandler filterDAO = (FilterHandler) filter.filter(this);
+			FilterImpl filterDAO = (FilterImpl) filter.filter(this);
 			return filterDAO.getCondition();
 		}
 		
-		@Override public Property<Integer> getTariffProperty(){return new FilterHandler.PropertyDAO<>(SUPPLIER.TARIFF);}
-		@Override public Property<Byte> getWithholdingProperty() {return new FilterHandler.PropertyDAO<>(SUPPLIER.WITHHOLDING);}
-		@Override public Property<Byte> getWithholdingFarmerProperty() {return new FilterHandler.PropertyDAO<>(SUPPLIER.WITHHOLDING_FARMER);}
-		@Override public Property<Byte> getVatAccrualPaymentProperty() {return new FilterHandler.PropertyDAO<>(SUPPLIER.VAT_ACCRUAL_PAYMENT);}
-		@Override public Property<Byte> getTransactionProperty() {return new FilterHandler.PropertyDAO<>(SUPPLIER.TRANSACTION);}
-		@Override public Property<Byte> getStatusProperty() {return new FilterHandler.PropertyDAO<>(SUPPLIER.STATUS);}
-		@Override public Property<Integer> getScopeProperty() {return new FilterHandler.PropertyDAO<>(SUPPLIER.SCOPE);}
-		@Override public Property<Byte> getPurchaseValuatedProperty() {return new FilterHandler.PropertyDAO<>(SUPPLIER.PURCHASE_VALUATED);}
-		@Override public Property<Integer> getAccountProperty() { return new FilterHandler.PropertyDAO<>(SUPPLIER.ACCOUNT);}
-		@Override public Property<String> getCreationUserProperty() {return new FilterHandler.PropertyDAO<>(SUPPLIER.CREATION_USER);}
-		@Override public Property<Timestamp> getCreationDateProperty() {return new FilterHandler.PropertyDAO<>(SUPPLIER.CREATION_DATE);}
-		@Override public Property<String> getModificationUserProperty() {return new FilterHandler.PropertyDAO<>(SUPPLIER.MODIFICATION_USER);}
-		@Override public Property<Timestamp> getModificationDateProperty() {return new FilterHandler.PropertyDAO<>(SUPPLIER.MODIFICATION_DATE);}
+		@Override public Property<Integer> getTariffProperty(){return new FilterImpl.PropertyDAO<>(SUPPLIER.TARIFF);}
+		@Override public Property<Byte> getWithholdingProperty() {return new FilterImpl.PropertyDAO<>(SUPPLIER.WITHHOLDING);}
+		@Override public Property<Byte> getWithholdingFarmerProperty() {return new FilterImpl.PropertyDAO<>(SUPPLIER.WITHHOLDING_FARMER);}
+		@Override public Property<Byte> getVatAccrualPaymentProperty() {return new FilterImpl.PropertyDAO<>(SUPPLIER.VAT_ACCRUAL_PAYMENT);}
+		@Override public Property<Byte> getTransactionProperty() {return new FilterImpl.PropertyDAO<>(SUPPLIER.TRANSACTION);}
+		@Override public Property<Byte> getStatusProperty() {return new FilterImpl.PropertyDAO<>(SUPPLIER.STATUS);}
+		@Override public Property<Integer> getScopeProperty() {return new FilterImpl.PropertyDAO<>(SUPPLIER.SCOPE);}
+		@Override public Property<Byte> getPurchaseValuatedProperty() {return new FilterImpl.PropertyDAO<>(SUPPLIER.PURCHASE_VALUATED);}
+		@Override public Property<Integer> getAccountProperty() { return new FilterImpl.PropertyDAO<>(SUPPLIER.ACCOUNT);}
+		@Override public Property<String> getCreationUserProperty() {return new FilterImpl.PropertyDAO<>(SUPPLIER.CREATION_USER);}
+		@Override public Property<Timestamp> getCreationDateProperty() {return new FilterImpl.PropertyDAO<>(SUPPLIER.CREATION_DATE);}
+		@Override public Property<String> getModificationUserProperty() {return new FilterImpl.PropertyDAO<>(SUPPLIER.MODIFICATION_USER);}
+		@Override public Property<Timestamp> getModificationDateProperty() {return new FilterImpl.PropertyDAO<>(SUPPLIER.MODIFICATION_DATE);}
 	}
 
 	

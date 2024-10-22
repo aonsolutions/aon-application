@@ -10,7 +10,7 @@ import org.jooq.SelectConditionStep;
 import net.aonsolutions.occam.api.model.Workplace;
 import net.aonsolutions.occam.impl.AONContext;
 
-public class WorkplaceHandler {
+class WorkplaceHandler {
 	
 	private WorkplaceHandler() {
 	

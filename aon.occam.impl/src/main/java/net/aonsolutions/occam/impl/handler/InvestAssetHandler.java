@@ -21,7 +21,7 @@ import net.aonsolutions.occam.api.model.type.InvestAssetType;
 import net.aonsolutions.occam.impl.AONContext;
 import net.aonsolutions.occam.impl.handler.ActivityHandler.ActivityFiller;
 
-public class InvestAssetHandler {
+class InvestAssetHandler {
 	private InvestAssetHandler() {
 		
 	}

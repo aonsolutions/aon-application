@@ -37,6 +37,16 @@ public class Activity extends AonEntity<ActivityMetadata> {
 		super.markAsClean();
 		return this; 
 	}
+	@Override
+	public Activity setSelected(boolean selected) {
+		super.setSelected(selected);
+		return this;
+	}
+	@Override
+	public Activity setDeleted(boolean selected) {
+		super.setDeleted(selected);
+		return this;
+	}
 
 	public Integer getId() {
 		return id;

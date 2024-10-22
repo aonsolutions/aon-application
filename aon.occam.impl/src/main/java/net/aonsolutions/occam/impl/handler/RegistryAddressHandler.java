@@ -27,7 +27,7 @@ import net.aonsolutions.occam.api.model.type.StreetType;
 import net.aonsolutions.occam.impl.AONContext;
 import net.aonsolutions.occam.impl.handler.GeozoneHandler.GeozoneFiller;
 
-public class RegistryAddressHandler {
+class RegistryAddressHandler {
 	private RegistryAddressHandler() {
 		
 	}

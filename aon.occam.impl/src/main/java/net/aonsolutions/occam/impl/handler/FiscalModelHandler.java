@@ -19,16 +19,12 @@ import net.aonsolutions.occam.api.model.type.Period;
 import net.aonsolutions.occam.impl.handler.FinanceHandler.FinanceFiller;
 
 
-public class FiscalModelHandler {
+class FiscalModelHandler {
 	
-	protected FiscalModelHandler() {
+	private FiscalModelHandler() {
 	}
 	
-	static class FiscalModelFiller<T extends FiscalModel>  implements BiFunction<Record,Supplier<T>,T> {
-		public FiscalModelFiller() {
-			// TODO Auto-generated constructor stub
-		}
-
+	 static class FiscalModelFiller<T extends FiscalModel>  implements BiFunction<Record,Supplier<T>,T> {
 		@Override
 		public T apply(Record rec,Supplier<T> modelSupplier) {
 			T model = modelSupplier.get();

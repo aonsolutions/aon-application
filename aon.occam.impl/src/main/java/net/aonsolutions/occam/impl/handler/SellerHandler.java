@@ -43,6 +43,7 @@ class SellerHandler {
 		}
 		
 		static Seller build(Record r, Registry registry) {
+			if (isNull(r,SELLER.REGISTRY)) return null;
 			return RegistryFiller.build(r, registry, Seller::new)
 				.setId(getValue(r, SELLER.REGISTRY))
 				.setScope(getValue(r, SELLER.SCOPE))

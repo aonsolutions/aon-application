@@ -16,13 +16,13 @@ public class InvoiceCalculator	 {
 	}
 
 	public static Invoice calculate(Invoice inv) {
-		if (inv.isWithholding() && inv.getWithholding().isEmpty()) {
+		if (inv.getHeader().isWithholding() && inv.getWithholding().isEmpty()) {
 			throw new AonCoreException(AonError.INVOICE_CALC_NO_WITHHOLDING_INFO.getMessage());
 		}
 		MutableDouble prepayments = new MutableDouble(0.0);
-		inv.setTaxableBase(0.0);
-		inv.setVatQuota(0.0);
-		inv.setRetentionQuota(0.0);
+		inv.getHeader().setTaxableBase(0.0);
+		inv.getHeader().setVatQuota(0.0);
+		inv.getHeader().setRetentionQuota(0.0);
 		
 		inv.detailStream()
 			.filter(det -> !det.isDeleted() )
@@ -31,7 +31,7 @@ public class InvoiceCalculator	 {
 				if ( det.isPrepayment() ) {
 					prepayments.setValue(AonMathUtils.round(AonMathUtils.round( prepayments.getValue() + det.getTaxableBase(), 4)));
 				} else {
-					inv.setTaxableBase(AonMathUtils.round(AonMathUtils.round( inv.getTaxableBase() + det.getTaxableBase(), 4)));
+					inv.getHeader().setTaxableBase(AonMathUtils.round(AonMathUtils.round( inv.getHeader().getTaxableBase() + det.getTaxableBase(), 4)));
 					
 				}
 		});
@@ -41,18 +41,23 @@ public class InvoiceCalculator	 {
 		settleVatAmounts(inv);
 		settleWithholdingAmounts(inv);
 		
-		inv.setVatQuota(inv.getTaxBreakdown().map( b -> b.getVatQuota() ).orElse(0.0));
-		inv.setRetentionQuota(inv.getTaxBreakdown()
+		inv.getHeader().setVatQuota(inv.getTaxBreakdown().map( b -> b.getVatQuota() ).orElse(0.0));
+		inv.getHeader().setRetentionQuota(inv.getTaxBreakdown()
 			.flatMap( b -> b.getInvoiceWithholding())
 			.map( w -> w.getQuota())
 			.orElse(0.0)
 
 		);
 		
-		inv.setTotal(inv.getTaxableBase() + prepayments.getValue() + inv.getTaxBreakdown().map( b -> b.getResult() ).orElse(0.0));
+		inv.getHeader().setTotal(
+				AonMathUtils.round(inv.getHeader().getTaxableBase() 
+					+ prepayments.getValue() 
+					+ inv.getTaxBreakdown().map( b -> b.getResult()).orElse(0.0)
+				)
+			);
 		
-		if (inv.hasFinances() && inv.getFinances().size() == 1 && inv.getFinances().get(0).isPending()) {
-			inv.getFinances().get(0).setAmount( inv.getTotal());
+		if (inv.hasFinances() && inv.getFinancesSize() == 1) {
+			inv.financeStream().findFirst().ifPresent( f-> f.setAmount( inv.getHeader().getTotal()));
 		}
 		
 		return inv;
@@ -88,7 +93,7 @@ public class InvoiceCalculator	 {
 					last.setQuota( AonMathUtils.round( last.getQuota() + gap));	
 					last.setDeductibleQuota( AonMathUtils.round( last.getQuota() + last.getSurchargeQuota() ));
 				}
-				if (inv.isSurcharge()) {
+				if (inv.getHeader().isSurcharge()) {
 					double surchargeGap = AonMathUtils.round( ib.getSurchargeQuota() - surchargeQuotaSum.getValue() );
 					if ( AonMathUtils.isNotZero( surchargeGap )) {
 						last.setSurchargeQuota( AonMathUtils.round( last.getSurchargeQuota() + surchargeGap));	
@@ -104,7 +109,7 @@ public class InvoiceCalculator	 {
 	}
 
 	private static void settleWithholdingAmounts(Invoice inv) {
-		if (inv.isWithholding() && inv.getWithholding().isPresent()) {
+		if (inv.getHeader().isWithholding() && inv.getWithholding().isPresent()) {
 			InvoiceWithholding iw = inv.getWithholding()
 				.orElseThrow( () -> new AonCoreException(AonError.INVOICE_CALC_NO_WITHHOLDING_INFO.getMessage()));
 			LinkedList<InvoiceTax> stack = new LinkedList<>();
@@ -161,12 +166,12 @@ public class InvoiceCalculator	 {
 	}
 	
 	private static void calculateVatDetail(Invoice inv, InvoiceDetail detail) {
-		InvoiceTax vat = detail.enableVatTax(inv);
+		InvoiceTax vat = detail.enableVatTax();
 		vat.setBase(detail.getTaxableBase() );
 		if (!vat.isQuotaEdited()) {
 			vat.setQuota(AonMathUtils.round(vat.getBase() * vat.getPercentage() / 100 ));
 		}
-		if (inv.isSurcharge()) {
+		if (inv.getHeader().isSurcharge()) {
 			if (!vat.isSurchargeQuotaEdited()) {
 				vat.setSurchargeQuota( AonMathUtils.round(vat.getBase() * vat.getSurcharge() / 100 ));	
 			}
@@ -192,7 +197,7 @@ public class InvoiceCalculator	 {
 		if (!ib.isQuotaEdited()) {
 			ib.setQuota(AonMathUtils.round(ib.getBase() * ib.getPercentage() / 100 ));
 		}
-		if (inv.isSurcharge()) {
+		if (inv.getHeader().isSurcharge()) {
 			if (!ib.isSurchargeQuotaEdited()) {
 				ib.setSurchargeQuota( AonMathUtils.round(ib.getBase() * ib.getSurcharge() / 100 ));	
 			}
@@ -203,7 +208,7 @@ public class InvoiceCalculator	 {
 		}
 	}
 	private static void calculateWithholdingBreakdown(Invoice inv, InvoiceWithholding iw) {
-		if (inv.isWithholding()) {
+		if (inv.getHeader().isWithholding()) {
 			if (!iw.isQuotaEdited()) {
 				iw.setQuota( AonMathUtils.round( iw.getBase() * iw.getPercentage() / 100, 2) );
 			}
@@ -213,7 +218,7 @@ public class InvoiceCalculator	 {
 
 	
 	private static void calculateWithholdingDetail(Invoice inv, InvoiceDetail detail) {
-		if (inv.isWithholding() && !inv.isWithholdingFarmer()) {
+		if (inv.getHeader().isWithholding() && !inv.getHeader().isWithholdingFarmer()) {
 			InvoiceWithholding wd = inv.getWithholding()
 				.orElseThrow( () -> new AonCoreException(AonError.INVOICE_CALC_NO_WITHHOLDING_INFO.getMessage()));
 			InvoiceTax irpf = detail.enableWithholding(inv);
@@ -236,13 +241,13 @@ public class InvoiceCalculator	 {
 	}
 	
 	private static void calculateWithholdingFarmerDetail(Invoice inv, InvoiceDetail detail) {
-		if (inv.isWithholding() && inv.isWithholdingFarmer()) {
+		if (inv.getHeader().isWithholding() && inv.getHeader().isWithholdingFarmer()) {
 			InvoiceWithholding wd = inv.getWithholding()
 					.orElseThrow( () -> new AonCoreException(AonError.INVOICE_CALC_NO_WITHHOLDING_INFO.getMessage()));
 			InvoiceTax irpf = detail.enableWithholding(inv);
-			InvoiceTax vat = detail.enableVatTax(inv);
+			InvoiceTax vat = detail.enableVatTax();
 				
-			irpf.setBase(detail.getTaxableBase() + vat.getQuota() + (inv.isSurcharge()?vat.getSurchargeQuota():0.0));
+			irpf.setBase(detail.getTaxableBase() + vat.getQuota() + (inv.getHeader().isSurcharge()?vat.getSurchargeQuota():0.0));
 			irpf.setPercentage( wd.getPercentage() );
 			irpf.setQuota( AonMathUtils.round( irpf.getBase() * irpf.getPercentage() / 100, 2) );
 			irpf.setWithholdingType(wd.getWithholdingType());
@@ -256,7 +261,7 @@ public class InvoiceCalculator	 {
 	}
 
 	public static void reverseCalculate(Invoice inv, double total) {
-		if (inv.isWithholdingFarmer()) throw new AonCoreException(AonError.INVOICE_CALC_REV_FARMER.getMessage());
+		if (inv.getHeader().isWithholdingFarmer()) throw new AonCoreException(AonError.INVOICE_CALC_REV_FARMER.getMessage());
 		long details = inv.detailStream().count();
 		if (details <= 0) throw new AonCoreException(AonError.INVOICE_CALC_REV_ZERO.getMessage());
 		if (details > 1) throw new AonCoreException(AonError.INVOICE_CALC_REV_MORE.getMessage());
@@ -276,11 +281,11 @@ public class InvoiceCalculator	 {
 			det.disableVat(inv);
 			det.disableWithholding(inv);
 		} else {
-			InvoiceTax it = det.enableVatTax(inv);
+			InvoiceTax it = det.enableVatTax();
 			double vatPerc = it.getPercentage();
 			double surchargePerc = it.getSurcharge();
 			double withholdingPerc = 0.0;
-			if (inv.isWithholding()) {
+			if (inv.getHeader().isWithholding()) {
 				withholdingPerc = inv.getWithholding().map( w -> w.getPercentage()).orElse(0.0);
 			}
 			double tb = reverseCalculate(vatPerc, surchargePerc, withholdingPerc, total);

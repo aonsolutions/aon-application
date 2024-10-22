@@ -18,7 +18,7 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 import net.aonsolutions.occam.api.model.RegistryDirStaff;
 import net.aonsolutions.occam.impl.AONContext;
 
-class RegistryDirStaffHandler extends AbsHandler {
+class RegistryDirStaffHandler {
 	
 	private static final String RDIRSTAFF_REGISTRY_LABEL = "Registry";
 	private static final String RDIRSTAFF_DOCUMENT_LABEL = "Documento";
@@ -55,14 +55,14 @@ class RegistryDirStaffHandler extends AbsHandler {
 				.set(RDIR_STAFF.REGISTRY,rDirStaff.getRegistry())
 				.set(RDIR_STAFF.DOCUMENT,rDirStaff.getDocument())
 				.set(RDIR_STAFF.NAME,rDirStaff.getName())
-				.set(RDIR_STAFF.SHAREHOLDER , getByte( rDirStaff.isShareHolder() ))
-				.set(RDIR_STAFF.REPRESENTATIVE , getByte( rDirStaff.isRepresentative()))
-				.set(RDIR_STAFF.DIRECTOR , getByte( rDirStaff.isDirector()))
+				.set(RDIR_STAFF.SHAREHOLDER , AonEnumUtils.getByte( rDirStaff.isShareHolder() ))
+				.set(RDIR_STAFF.REPRESENTATIVE , AonEnumUtils.getByte( rDirStaff.isRepresentative()))
+				.set(RDIR_STAFF.DIRECTOR , AonEnumUtils.getByte( rDirStaff.isDirector()))
 				.set(RDIR_STAFF.PERCENT_SHARE ,rDirStaff.getPercentShare())
 				.set(RDIR_STAFF.SHARE_NUMBER ,rDirStaff.getShareNumber())
 				.set(RDIR_STAFF.NOMINAL_VALUE ,rDirStaff.getNominalValue())
 				.set(RDIR_STAFF.DUE_DATE , AonDateUtils.toSql( rDirStaff.getDueDate()))
-				.set(RDIR_STAFF.REPRESENTATIVE_LABOR , getByte( rDirStaff.isRepresentativeLabor()))
+				.set(RDIR_STAFF.REPRESENTATIVE_LABOR , AonEnumUtils.getByte( rDirStaff.isRepresentativeLabor()))
 				.set(RDIR_STAFF.CHARGE_DESCRIPTION ,rDirStaff.getChargeDescription())
 			.returning(RDIR_STAFF.ID)
 			.fetchOne()

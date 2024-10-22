@@ -1,21 +1,21 @@
 package net.aonsolutions.occam.api.model;
 
-import java.io.Serializable;
 import java.sql.Timestamp;
 import java.util.Date;
+import java.util.Objects;
 import java.util.Optional;
 
+import com.esferalia.aon.watson.util.AonObjectUtils;
+
+import net.aonsolutions.occam.api.model.metadata.FinanceMetadata;
 import net.aonsolutions.occam.api.model.type.Country;
 import net.aonsolutions.occam.api.model.type.DocumentType;
 import net.aonsolutions.occam.api.model.type.FinanceStatus;
 import net.aonsolutions.occam.api.model.type.FinanceType;
 
-public class Finance implements Serializable, HasAudit {
+public class Finance extends AonEntity<FinanceMetadata> implements HasAudit {
 
 	private static final long serialVersionUID = -1224312562688230254L;
-	
-	private boolean selected;
-	private boolean deleted;
 	
 	private Integer id;
 	private Integer domain;
@@ -54,19 +54,24 @@ public class Finance implements Serializable, HasAudit {
 
 	private Date paidDate;
 
-	public boolean isSelected() {
-		return selected;
+	@Override
+	protected Object getUuid() {
+		return getId();
 	}
-	public Finance setSelected(boolean selected) {
-		this.selected = selected;
-		return this;
+	@Override
+	public Finance markAsClean() {
+		super.markAsClean();
+		return this; 
 	}
 	
-	public boolean isDeleted() {
-		return deleted;
+	@Override
+	public Finance setSelected(boolean selected) {
+		super.setSelected(selected);
+		return this;
 	}
+	@Override
 	public Finance setDeleted(boolean deleted) {
-		this.deleted = deleted;
+		super.setSelected(deleted);
 		return this;
 	}
 
@@ -74,6 +79,7 @@ public class Finance implements Serializable, HasAudit {
 		return id;
 	}
 	public Finance setId(Integer id) {
+		checkIfDirty( this.id,id, FinanceMetadata.ID);
 		this.id = id;
 		return this;
 	}
@@ -82,6 +88,7 @@ public class Finance implements Serializable, HasAudit {
 		return domain;
 	}
 	public Finance setDomain(Integer domain) {
+		checkIfDirty( this.domain,domain, FinanceMetadata.DOMAIN);
 		this.domain = domain;
 		return this;
 	}
@@ -91,17 +98,16 @@ public class Finance implements Serializable, HasAudit {
 		return financeType;
 	}
 	public Finance setFinanceType(FinanceType financeType) {
+		checkIfDirty( this.financeType,financeType, FinanceMetadata.TYPE);
 		this.financeType = financeType;
 		return this;
 	}
-//	public boolean isPayment() {
-//		return getFinanceType() == FinanceType.PAYMENT;
-//	}
 	
 	public Integer getRegistry() {
 		return registry;
 	}
 	public Finance setRegistry(Integer registry) {
+		checkIfDirty( this.registry,registry, FinanceMetadata.REGISTRY);
 		this.registry = registry;
 		return this;
 	}
@@ -110,6 +116,7 @@ public class Finance implements Serializable, HasAudit {
 		return registryDocument;
 	}
 	public Finance setRegistryDocument(String registryDocument) {
+		checkIfDirty( this.registryDocument,registryDocument, FinanceMetadata.RDOCUMENT );
 		this.registryDocument = registryDocument;
 		return this;
 	}
@@ -118,6 +125,7 @@ public class Finance implements Serializable, HasAudit {
 		return registryDocumentType;
 	}
 	public Finance setRegistryDocumentType(DocumentType registryDocumentType) {
+		checkIfDirty( this.registryDocumentType,registryDocumentType, FinanceMetadata.RDOCUMENT_TYPE );
 		this.registryDocumentType = registryDocumentType;
 		return this;
 	}
@@ -126,6 +134,7 @@ public class Finance implements Serializable, HasAudit {
 		return registryDocumentCountry;
 	}
 	public Finance setRegistryDocumentCountry(Country registryDocumentCountry) {
+		checkIfDirty( this.registryDocumentCountry,registryDocumentCountry, FinanceMetadata.RDOCUMENT_COUNTRY );
 		this.registryDocumentCountry = registryDocumentCountry;
 		return this;
 	}
@@ -134,6 +143,7 @@ public class Finance implements Serializable, HasAudit {
 		return registryName;
 	}
 	public Finance setRegistryName(String registryName) {
+		checkIfDirty( this.registryName,registryName, FinanceMetadata.RNAME );
 		this.registryName = registryName;
 		return this;
 	}
@@ -142,6 +152,7 @@ public class Finance implements Serializable, HasAudit {
 		return Optional.ofNullable(registryAccount);
 	}
 	public Finance setRegistryAccount(Account registryAccount) {
+		checkIfDirty( this.registryAccount,registryAccount, FinanceMetadata.REGISTRY_ACCOUNT);
 		this.registryAccount = registryAccount;
 		return this;
 	}
@@ -150,7 +161,7 @@ public class Finance implements Serializable, HasAudit {
 		return amount;
 	}
 	public Finance setAmount(double amount) {
-		
+		checkIfDirty( this.amount,amount, FinanceMetadata.AMOUNT);
 		this.amount = amount;
 		return this;
 	}
@@ -159,6 +170,7 @@ public class Finance implements Serializable, HasAudit {
 		return expenses;
 	}
 	public Finance setExpenses(double expenses) {
+		checkIfDirty( this.expenses,expenses, FinanceMetadata.EXPENSES);
 		this.expenses = expenses;
 		return this;
 	}
@@ -167,6 +179,7 @@ public class Finance implements Serializable, HasAudit {
 		return concept;
 	}
 	public Finance setConcept(String concept) {
+		checkIfDirty( this.concept,concept, FinanceMetadata.CONCEPT);
 		this.concept = concept;
 		return this;
 	}
@@ -175,6 +188,7 @@ public class Finance implements Serializable, HasAudit {
 		return Optional.ofNullable(invoice);
 	}
 	public Finance setInvoice(InvoiceHeader invoice) {
+		checkIfDirty( this.invoice,invoice, FinanceMetadata.INVOICE);
 		this.invoice = invoice;
 		return this;
 	}
@@ -183,6 +197,7 @@ public class Finance implements Serializable, HasAudit {
 		return dueDate;
 	}
 	public Finance setDueDate(Date dueDate) {
+		checkIfDirty( this.dueDate,dueDate, FinanceMetadata.DUE_DATE);
 		this.dueDate = dueDate;
 		return this;
 	}
@@ -191,6 +206,7 @@ public class Finance implements Serializable, HasAudit {
 		return Optional.ofNullable(payMethod);
 	}
 	public Finance setPayMethod(PayMethod payMethod) {
+		checkIfDirty( this.payMethod,payMethod, FinanceMetadata.PAY_METHOD);
 		this.payMethod = payMethod;
 		return this;
 	}
@@ -199,6 +215,7 @@ public class Finance implements Serializable, HasAudit {
 		return Optional.ofNullable(bankAccount);
 	}
 	public Finance setBankAccount(BankAccount bankAccount) {
+		checkIfDirty( this.bankAccount,bankAccount, FinanceMetadata.BANK_ACCOUNT);
 		this.bankAccount = bankAccount;
 		return this;
 	}
@@ -207,6 +224,7 @@ public class Finance implements Serializable, HasAudit {
 		return bankAlias;
 	}
 	public Finance setBankAlias(String bankAlias) {
+		checkIfDirty( this.bankAlias,bankAlias, FinanceMetadata.BANK_ALIAS);
 		this.bankAlias = bankAlias;
 		return this;
 	}
@@ -215,6 +233,7 @@ public class Finance implements Serializable, HasAudit {
 		return bic;
 	}
 	public Finance setBic(String bic) {
+		checkIfDirty( this.bic,bic, FinanceMetadata.BIC);
 		this.bic = bic;
 		return this;
 	}
@@ -223,6 +242,7 @@ public class Finance implements Serializable, HasAudit {
 		return chequeNumber;
 	}
 	public Finance setChequeNumber(String chequeNumber) {
+		checkIfDirty( this.chequeNumber,chequeNumber, FinanceMetadata.CHEQUE_NUMBER);
 		this.chequeNumber = chequeNumber;
 		return this;
 	}
@@ -231,6 +251,7 @@ public class Finance implements Serializable, HasAudit {
 		return financeStatus;
 	}
 	public Finance setFinanceStatus(FinanceStatus financeStatus) {
+		checkIfDirty( this.financeStatus,financeStatus, FinanceMetadata.STATUS);
 		this.financeStatus = financeStatus;
 		return this;
 	}
@@ -239,6 +260,7 @@ public class Finance implements Serializable, HasAudit {
 		return confidential;
 	}
 	public Finance setConfidential(boolean confidential) {
+		checkIfDirty( this.confidential,confidential, FinanceMetadata.SECURITY_LEVEL);
 		this.confidential = confidential;
 		return this;
 	}
@@ -247,6 +269,7 @@ public class Finance implements Serializable, HasAudit {
 		return remarks;
 	}
 	public Finance setRemarks(String remarks) {
+		checkIfDirty( this.remarks,remarks, FinanceMetadata.REMARKS);
 		this.remarks = remarks;
 		return this;
 	}
@@ -255,6 +278,7 @@ public class Finance implements Serializable, HasAudit {
 		return scope;
 	}
 	public Finance setScope(Integer scope) {
+		checkIfDirty( this.scope,scope, FinanceMetadata.SCOPE);
 		this.scope = scope;
 		return this;
 	}
@@ -263,6 +287,7 @@ public class Finance implements Serializable, HasAudit {
 		return manual;
 	}
 	public Finance setManual(boolean manual) {
+		checkIfDirty( this.manual,manual, FinanceMetadata.MANUAL);
 		this.manual = manual;
 		return this;
 	}
@@ -271,6 +296,7 @@ public class Finance implements Serializable, HasAudit {
 		return advance;
 	}
 	public Finance setAdvance(boolean advance) {
+		checkIfDirty( this.advance,advance, FinanceMetadata.ADVANCE);
 		this.advance = advance;
 		return this;
 	}
@@ -279,6 +305,7 @@ public class Finance implements Serializable, HasAudit {
 		return payroll;
 	}
 	public Finance setPayroll(boolean payroll) {
+		checkIfDirty( this.payroll,payroll, FinanceMetadata.PAYROLL);
 		this.payroll = payroll;
 		return this;
 	}
@@ -287,6 +314,7 @@ public class Finance implements Serializable, HasAudit {
 		return prepayment;
 	}
 	public Finance setPrepayment(boolean prepayment) {
+		checkIfDirty( this.prepayment,prepayment, FinanceMetadata.PREPAYMENT);
 		this.prepayment = prepayment;
 		return this;
 	}
@@ -295,6 +323,7 @@ public class Finance implements Serializable, HasAudit {
 		return sourceId;
 	}
 	public Finance setSourceId(Integer sourceId) {
+		checkIfDirty( this.sourceId,sourceId, FinanceMetadata.SOURCE_ID);
 		this.sourceId = sourceId;
 		return this;
 	}
@@ -303,7 +332,17 @@ public class Finance implements Serializable, HasAudit {
 		return financeGroup;
 	}
 	public Finance setFinanceGroup(Integer financeGroup) {
+		checkIfDirty( this.financeGroup,financeGroup, FinanceMetadata.FINANCE_GROUP);
 		this.financeGroup = financeGroup;
+		return this;
+	}
+	
+	public Optional<Date> getPaidDate() {
+		return Optional.ofNullable(paidDate);
+	}
+	public Finance setPaidDate(Date paidDate) {
+		checkIfDirty( this.paidDate,paidDate, FinanceMetadata.PAID_DATE);
+		this.paidDate = paidDate;
 		return this;
 	}
 	
@@ -344,12 +383,18 @@ public class Finance implements Serializable, HasAudit {
 		return this;
 	}
 
-	public Optional<Date> getPaidDate() {
-		return Optional.ofNullable(paidDate);
+	@Override
+	public boolean equals(Object obj) {
+		if (obj == this) return true;
+		if (obj instanceof Finance other) {
+			return AonObjectUtils.equals( this.getUuid(),other.getUuid() );
+		}
+	    return false;
 	}
-	public Finance setPaidDate(Date paidDate) {
-		this.paidDate = paidDate;
-		return this;
+	
+	@Override
+	public int hashCode() {
+	    return 31 * 7 + Objects.requireNonNullElse(getUuid(), 0).hashCode();
 	}
 
 	public boolean isFullPending() {

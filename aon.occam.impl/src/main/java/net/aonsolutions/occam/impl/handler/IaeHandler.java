@@ -16,7 +16,7 @@ import net.aonsolutions.occam.api.model.Iae;
 import net.aonsolutions.occam.api.model.Properties.IaeProperties;
 import net.aonsolutions.occam.impl.AONContext;
 
-class IaeHandler extends AbsHandler {
+class IaeHandler {
 	
 	private IaeHandler() {
 		
@@ -26,14 +26,14 @@ class IaeHandler extends AbsHandler {
 	private static class IaePropertiesHandler implements IaeProperties {
 		private Condition[] getConditions(IaeFilter filter) {
 			if (filter == null) return new Condition[0];
-			FilterHandler filterDAO = (FilterHandler) filter.filter(this);
+			FilterImpl filterDAO = (FilterImpl) filter.filter(this);
 			if (filterDAO == null) return new Condition[0];
 			return new Condition[] { filterDAO.getCondition() };
 		}
-		@Override public Property<Integer> 	getIdProperty() 		{return new FilterHandler.PropertyDAO<>(IAE.ID);}
-		@Override public Property<String> 	getSectionProperty() 	{return new FilterHandler.PropertyDAO<>(IAE.SECTION);}
-		@Override public Property<String> 	getEpigraphProperty() 	{return new FilterHandler.PropertyDAO<>(IAE.EPIGRAPH);}
-		@Override public Property<String> 	getTitleProperty() 		{return new FilterHandler.PropertyDAO<>(IAE.TITLE);}
+		@Override public Property<Integer> 	getIdProperty() 		{return new FilterImpl.PropertyDAO<>(IAE.ID);}
+		@Override public Property<String> 	getSectionProperty() 	{return new FilterImpl.PropertyDAO<>(IAE.SECTION);}
+		@Override public Property<String> 	getEpigraphProperty() 	{return new FilterImpl.PropertyDAO<>(IAE.EPIGRAPH);}
+		@Override public Property<String> 	getTitleProperty() 		{return new FilterImpl.PropertyDAO<>(IAE.TITLE);}
 	}
 	
 	static class IaeFiller extends Filler<Iae> {

@@ -39,6 +39,12 @@ public class Account extends AonEntity<AccountMetadata> {
 		return this; 
 	}
 	
+	@Override
+	public Account setDeleted( boolean selected) {
+		super.setDeleted(selected);
+		return this; 
+	}
+	
 	public Integer getId() {
 		return id;
 	}

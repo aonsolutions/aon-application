@@ -3,7 +3,9 @@ package net.aonsolutions.occam.api.model;
 import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.stream.Stream;
 
+import com.esferalia.aon.watson.util.AonCollectionUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 
 public abstract class AonEntity<T extends Enum<?>> implements Serializable {
@@ -12,6 +14,7 @@ public abstract class AonEntity<T extends Enum<?>> implements Serializable {
 	
 	private HashSet<T> dirtySet;
 	private boolean selected;
+	private boolean deleted;
 
 	public boolean isDirty() {
 		return !dirtySet().isEmpty();
@@ -26,6 +29,9 @@ public abstract class AonEntity<T extends Enum<?>> implements Serializable {
 		if (dirtySet == null) markAsClean();
 		return dirtySet;
 	}
+	public Stream<T> dirtySetStream() {
+		return AonCollectionUtils.stream(dirtySet());
+	}
 	
 	public AonEntity<T> markAsDirty(T key) {
 		dirtySet().add(key);
@@ -36,14 +42,6 @@ public abstract class AonEntity<T extends Enum<?>> implements Serializable {
 		return dirtySet().contains(key);
 	}
 
-	public boolean isSelected() {
-		return selected;
-	}
-	public AonEntity<T> setSelected(boolean selected) {
-		this.selected = selected;
-		return this;
-	}
-	
 	protected <R extends Enum<?>> boolean mustMarkAsDirty(AonEntity<R> original, AonEntity<R> toUpdate) {
 		if (toUpdate == null && original == null) return false;
 		if (toUpdate != null) return toUpdate.isDirty();
@@ -86,6 +84,25 @@ public abstract class AonEntity<T extends Enum<?>> implements Serializable {
 	}
 	private boolean notEquals(final Number n1, final Number n2) {
 		return !equals(n1, n2);
+	}
+
+	public boolean isSelected() {
+		return selected;
+	}
+	public AonEntity<T> setSelected(boolean selected) {
+		this.selected = selected;
+		return this;
+	}
+
+	public boolean isDeleted() {
+		return deleted;
+	}
+	public boolean isNotDeleted() {
+		return !deleted;
+	}
+	public AonEntity<T> setDeleted(boolean deleted) {
+		this.deleted = deleted;
+		return this;
 	}
 
 	protected abstract Object getUuid();

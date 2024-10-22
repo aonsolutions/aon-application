@@ -81,6 +81,9 @@ public class AonCollectionUtils {
 		return !isEmpty(array);
 	}
 
+	public static IntStream stream( int times) {
+		return IntStream.range(0, times);
+	}
 	public static IntStream stream( int[] array) {
 		if (array == null) return IntStream.empty();
 		return Arrays.stream(array);
