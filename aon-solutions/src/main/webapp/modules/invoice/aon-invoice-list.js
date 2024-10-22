@@ -8,7 +8,7 @@ import { Invoice, getDocumentNumber } from './Invoice.js';
 
 import {addInvoices, setInvoices, setIndex} from './InvoiceCache.js';
 
-import { CONSTANT, MATERIAL_ICONS, MSG, TAG } from '../../environments/environments.js';
+import { COLORS, CONSTANT, MATERIAL_ICONS, MSG, TAG } from '../../environments/environments.js';
 
 import * as ACTION from '../actions.js';
 import { formatNumber, isBase64 } from '../../services/utils.js';
@@ -58,7 +58,7 @@ export class AonInvoiceList extends AonElement {
 			aonInvoiceTable.addColumn(MSG.INVOICE_NUMBER, 'string', 'reference', '150px');
 			aonInvoiceTable.addColumn(MSG.HOLDER, 'string', 'name', 'auto');
 			aonInvoiceTable.addColumn(MSG.AMOUNT, 'number', 'totalParse', '100px');
-			aonInvoiceTable.addColumn('', 'icons', 'icons', '100px');
+			aonInvoiceTable.addColumn('', 'icons', 'icons', this.isInvoice() ? '100px' : '140px');
 	
 			this.init();
 			aonInvoiceTable.addEventListener('more', () => {
@@ -80,8 +80,9 @@ export class AonInvoiceList extends AonElement {
 		let aonInvoiceTable = createList(this.TABLE); 
 		aonInvoiceTable.selectable = 'true';
 		this.appendChild(aonInvoiceTable);
-		aonInvoiceTable.addColumn(MSG.DATE, 'date', 'dateTable', '120px');;
+		aonInvoiceTable.addColumn(MSG.DATE, 'date', 'creation_date', '120px');;
 		aonInvoiceTable.addColumn(MSG.NAME, 'string', 'name', 'auto');
+		aonInvoiceTable.addColumn(MSG.USER, 'string', 'creation_user', '120px');
 		aonInvoiceTable.addColumn('', 'icons', 'icons', '100px');
 
 		this.init();
@@ -196,6 +197,15 @@ export class AonInvoiceList extends AonElement {
 				icon: this.getOcrInvoiceStatusIcon(),
 				title: this.getOcrInvoiceStatusIconTitle(invoice),
 				color: this.getOcrInvoiceStatusIconColor(invoice)
+			};
+			icons.push(icon);
+		}
+
+		if(inv.isRawdoc()) {
+			let icon = {
+				icon: MATERIAL_ICONS.INFO,
+				title: invoice.creation_date + ' - ' + invoice.creation_user,
+				color: COLORS.AON_LIGHT_GRAY
 			};
 			icons.push(icon);
 		}
@@ -456,6 +466,10 @@ export class AonInvoiceList extends AonElement {
 
 	isProcessing() {
 		return this.getFilter().status &&  this.getFilter().status === 'processing';
+	}
+
+	isInvoice() {
+		return this.getFilter().status &&  this.getFilter().status === 'accounting';
 	}
 
 	getPaymethod(paymethod) {

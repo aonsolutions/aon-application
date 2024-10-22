@@ -402,11 +402,12 @@ public class MainAgreement extends MainEntryPoint implements Listener,
 			}
 			
 			@Override
-			public void onSaved() {
+			public void onSaved(Consumer<Void> finish) {
 				saveAgreement(agreementInfo -> {
 					agreementSelected = agreementInfo;
 					agreementPreview.setAgreementPreview(agreementSelected);
 					agreementPreview.showSuccess("Convenio", "Convenio guardado correctamente");
+					finish.accept(null);
 				}, error -> agreementPreview.showError("Error guardando", error.getMessage()));
 			}
 		};

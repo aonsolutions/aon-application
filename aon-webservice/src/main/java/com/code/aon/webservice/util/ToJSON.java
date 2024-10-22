@@ -257,22 +257,6 @@ public class ToJSON {
 		return json;
 	}
 
-	public static JSONObject boughtProductToJSON(InvoiceDetail id) {
-		JSONObject json = new JSONObject();
-		json.put(MSG.ID, id.getId());
-		json.put(MSG.DOMAIN, id.getDomain());
-		json.put(MSG.DESCRIPTION, id.getDescription());
-		json.put(MSG.NAME, id.getItem().getProduct().getName());
-		json.put("quantity", id.getQuantity());
-		json.put("price", id.getPrice());
-		json.put("discount", id.getDiscount());
-		json.put("date", AonDateUtils.simpleFormat(id.getInvoice().getIssueDate()));
-		json.put("code", id.getItem().getProduct().getCode());
-		json.put("total", AonMathUtils.round(id.getQuantity()*id.getPrice() * ((id.getDiscount()/100) + 1)));
-		json.put("reference_code", id.getInvoice().getReferenceCode());
-		return json;
-	}
-
 	public static JSONObject projectCommercialToJSON(ProjectCommercial project, Registry registry, Registry seller) {
 		JSONObject json = new JSONObject();
 		json.put(MSG.ID, project.getId());
@@ -309,15 +293,6 @@ public class ToJSON {
 		json.put(MSG.ID, pc.getId());
 		json.put(MSG.DOMAIN, pc.getDomain());
 		json.put(MSG.NAME, pc.getName());
-		return json;
-	}
-	
-	public static JSONObject productToJSON(OldProduct product) {
-		JSONObject json = new JSONObject();
-		json.put(MSG.ID, product.getId());
-		json.put(MSG.DOMAIN, product.getDomain());
-		json.put("code", product.getCode());
-		json.put(MSG.NAME, product.getName());
 		return json;
 	}
 

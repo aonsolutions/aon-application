@@ -3573,7 +3573,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 				}
 
 				@Override
-				public void onSaved() {
+				public void onSaved(Consumer<Void> finish) {
 					// TODO Auto-generated method stub
 				}};
 		

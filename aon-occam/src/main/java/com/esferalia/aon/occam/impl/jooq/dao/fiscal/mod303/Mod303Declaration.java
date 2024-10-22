@@ -457,9 +457,17 @@ public abstract class Mod303Declaration {
 		if (mod303.isDiffCalculationMandatory()) {
 			Mod303DAO.getPreviousEffectiveModels(ctx, mod303)
 				.flatMap(mod -> mod.getMap().values().stream())
-				.filter( source -> Mod303Key.getKey(source.getType()) != null && Mod303Key.getKey(source.getType()).isDiffEnabled())
+				.filter( source -> Mod303Key.getKey(source.getType()) != null 
+					&& Mod303Key.getKey(source.getType()).isDiffEnabled())
 				.forEach(source -> {
 					Mod303Key key = Mod303Key.getKey(source.getType());
+					
+					// ÑAPA! Debido al baile de casilla en el terce trimestre de 2024
+					if ( key == Mod303Key.CT_C167 && AonMathUtils.equals(1.75,source.getAmount())) {
+						source.setAmount(0.0);
+					}
+					// ----------------
+					
 					IMod303KeyDAO keyDAO = getKey(key);
 					if (keyDAO != null) {
 						FiscalModelDetail target = mod303.ensureDetail(key);

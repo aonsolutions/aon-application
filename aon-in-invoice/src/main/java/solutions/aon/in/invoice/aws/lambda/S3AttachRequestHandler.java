@@ -11,14 +11,8 @@ import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import javax.xml.bind.DatatypeConverter;
-
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.RequestStreamHandler;
-import com.amazonaws.services.s3.AmazonS3;
-import com.amazonaws.services.s3.AmazonS3ClientBuilder;
-import com.amazonaws.services.s3.model.S3Object;
-import com.amazonaws.services.s3.model.S3ObjectInputStream;
 
 import jakarta.mail.BodyPart;
 import jakarta.mail.MessagingException;
@@ -26,45 +20,41 @@ import jakarta.mail.Session;
 import jakarta.mail.internet.MimeBodyPart;
 import jakarta.mail.internet.MimeMessage;
 import jakarta.mail.internet.MimeMultipart;
+import solutions.aon.aws.s3.S3;
 
 public class S3AttachRequestHandler implements RequestStreamHandler {
     
     
     @Override
     public void handleRequest(InputStream input, OutputStream output, Context context) throws IOException{
-	try {
-	    String event = new String(input.readAllBytes());
+    	try {
+    		String event = new String(input.readAllBytes());
 	    
-	    String[] paths = getPaths(event);
-	    String bucket = paths[0];
-	    String messageId = paths[1];
-	    String attachId = paths[2];
+    		String[] paths = getPaths(event);
+    		String bucket = paths[0];
+    		String messageId = paths[1];
+    		String attachId = paths[2];
 
-	    AmazonS3 s3 = AmazonS3ClientBuilder.standard().build();
-	    S3Object s3Object = s3.getObject("aon-ses-inbox/" + bucket +"@aon.solutions", messageId);
-
-	    S3ObjectInputStream s3ObjectIs = s3Object.getObjectContent();
-	    Session session = Session.getDefaultInstance(System.getProperties());
-	    MimeMessage mimeMessage = new MimeMessage(session, s3ObjectIs);
+    		byte[] data = S3.download("aon-ses-inbox/" + bucket +"@aon.solutions", messageId);
+    	
+    		Session session = Session.getDefaultInstance(System.getProperties());
+    		MimeMessage mimeMessage = new MimeMessage(session, new ByteArrayInputStream(data));
 	    
-	    InputStream attachInput = getAttachContent(mimeMessage, attachId);
-	    byte [] buffer = new byte [1024];
-	    for( int read = attachInput.read(buffer); read > 1 ; read = attachInput.read(buffer) ) {
-		output.write(buffer, 0, read);
-	    }
+    		InputStream attachInput = getAttachContent(mimeMessage, attachId);
+    		byte [] buffer = new byte [1024];
+    		for( int read = attachInput.read(buffer); read > 1 ; read = attachInput.read(buffer) ) {
+    			output.write(buffer, 0, read);
+    		}
 	
-	} catch (MessagingException e) {
-	    throw new IOException(e);
-	} catch (NoSuchAlgorithmException e) {
-		// TODO Auto-generated catch block
-		e.printStackTrace();
-	} finally {
-	    output.close();
-	    input.close();
-	}
-
+    	} catch (MessagingException e) {
+    		throw new IOException(e);
+    	} catch (NoSuchAlgorithmException e) {
+    		e.printStackTrace();
+    	} finally {
+    		output.close();
+    		input.close();
+    	}
     }
-    
     
     private static String[] getPaths(String input) {
 	String path = getParam(input, "path");

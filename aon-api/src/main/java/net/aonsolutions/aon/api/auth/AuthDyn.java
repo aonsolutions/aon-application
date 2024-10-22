@@ -5,17 +5,20 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.amazonaws.services.dynamodbv2.model.AttributeValue;
 import com.esferalia.aon.occam.api.AON_SOLUTIONS;
 import com.esferalia.aon.occam.api.model.security.Auth;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.server.io.AonFileUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
+import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
+import software.amazon.awssdk.services.dynamodb.model.AttributeValue.Builder;
 import solutions.aon.aws.dynamodb.DYNAMODB;
 import solutions.aon.aws.s3.S3;
 
 public class AuthDyn {
+	
+	public static final String AUTH_ATTACH_BUCKET = "aon-auth-attach";
 	
 	private static final String TABLE = "auth";
 	private static final String EMAIL = "email";
@@ -42,48 +45,48 @@ public class AuthDyn {
 	public static Auth getAuthByUuid(String uuid) {
 		Map<String, AttributeValue> map = DYNAMODB.get(TABLE, UUID, uuid);
 		return map.isEmpty() ? new Auth() : new Auth()
-				.setEmail(map.get(EMAIL).getS())
-				.setDocument(map.get(DOCUMENT).getS())
-				.setPassword(map.get(PASSWORD).getS())
-				.setPhone(map.get(PHONE).getS())
-				.setName(map.get(NAME).getS())
-				.setSurname(map.get(SURNAME).getS())
-				.setUuid(map.get(UUID).getS());	
+				.setEmail(map.get(EMAIL).s())
+				.setDocument(map.get(DOCUMENT).s())
+				.setPassword(map.get(PASSWORD).s())
+				.setPhone(map.get(PHONE).s())
+				.setName(map.get(NAME).s())
+				.setSurname(map.get(SURNAME).s())
+				.setUuid(map.get(UUID).s());	
 	}
 	
 	public static Auth getAuth(String key, String value) {
 		Map<String, AttributeValue> map = DYNAMODB.get2(TABLE, key, value);
 		return map.isEmpty() ? new Auth() : new Auth()
-				.setEmail(map.get(EMAIL).getS())
-				.setDocument(map.get(DOCUMENT).getS())
-				.setPassword(map.get(PASSWORD).getS())
-				.setPhone(map.get(PHONE).getS())
-				.setName(map.get(NAME).getS())
-				.setSurname(map.get(SURNAME).getS())
-				.setUuid(map.get(UUID).getS());
+				.setEmail(map.get(EMAIL).s())
+				.setDocument(map.get(DOCUMENT).s())
+				.setPassword(map.get(PASSWORD).s())
+				.setPhone(map.get(PHONE).s())
+				.setName(map.get(NAME).s())
+				.setSurname(map.get(SURNAME).s())
+				.setUuid(map.get(UUID).s());
 	}
 	
 	public static Auth putAuth(Auth auth) {
 		checkTable();
 		Map<String, AttributeValue> map = new HashMap<>();
-		map.put(UUID, new AttributeValue(auth.getUuid()));
-		map.put(EMAIL, new AttributeValue(auth.getEmail()));
-		map.put(PASSWORD, new AttributeValue(auth.getPassword()));
-		if(!AonStringUtils.isBlank(auth.getDocument())) map.put(DOCUMENT, new AttributeValue(auth.getDocument()));
-		if(!AonStringUtils.isBlank(auth.getPhone())) map.put(PHONE, new AttributeValue(auth.getPhone()));
-		if(!AonStringUtils.isBlank(auth.getName())) map.put(NAME, new AttributeValue(auth.getName()));
-		if(!AonStringUtils.isBlank(auth.getSurname())) map.put(SURNAME, new AttributeValue(auth.getSurname()));
+		map.put(UUID, AttributeValue.builder().s(auth.getUuid()).build());
+		map.put(EMAIL, AttributeValue.builder().s(auth.getEmail()).build());
+		map.put(PASSWORD, AttributeValue.builder().s(auth.getPassword()).build());
+		if(!AonStringUtils.isBlank(auth.getDocument())) map.put(DOCUMENT, AttributeValue.builder().s(auth.getDocument()).build());
+		if(!AonStringUtils.isBlank(auth.getPhone())) map.put(PHONE, AttributeValue.builder().s(auth.getPhone()).build());
+		if(!AonStringUtils.isBlank(auth.getName())) map.put(NAME, AttributeValue.builder().s(auth.getName()).build());
+		if(!AonStringUtils.isBlank(auth.getSurname())) map.put(SURNAME, AttributeValue.builder().s(auth.getSurname()).build());
 		
 		if(!auth.getDevices().isEmpty()) {
-			AttributeValue devices = new AttributeValue();
+			Builder devices = AttributeValue.builder();
 			auth.getDevices().stream().forEach(r -> {
 				Map<String, AttributeValue> device = new HashMap<>();
-				device.put(TYPE, new AttributeValue(r.getDeviceType().name()));
-				device.put(TOKEN, new AttributeValue(r.getDeviceToken()));
-				device.put(DATE, new AttributeValue(AonDateUtils.DATE_TIME_FORMAT));
-				devices.setM(device);
+				device.put(TYPE, AttributeValue.builder().s(r.getDeviceType().name()).build());
+				device.put(TOKEN, AttributeValue.builder().s(r.getDeviceToken()).build());
+				device.put(DATE, AttributeValue.builder().s(AonDateUtils.DATE_TIME_FORMAT).build());
+				devices.m(device);
 			});
-			map.put(DEVICES, devices);
+			map.put(DEVICES, devices.build());
 		}
 		DYNAMODB.put(TABLE, map);
 		return auth;
@@ -101,7 +104,7 @@ public class AuthDyn {
 				try {
 					File file = File.createTempFile(AVATAR, auth.getAttach().getMimetype().getExtension());
 					AonFileUtils.writeByteArrayToFile(file, auth.getAttach().getData());
-					String fileId = S3.upload(S3.AUTH_ATTACH_BUCKET, auth.getUuid(), file);
+					String fileId = S3.upload(AUTH_ATTACH_BUCKET, auth.getUuid(), file);
 					auth.setAvatar(fileId);
 				} catch (IOException e) {
 					e.printStackTrace();

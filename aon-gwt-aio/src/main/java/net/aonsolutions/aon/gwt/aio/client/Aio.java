@@ -126,21 +126,6 @@ public class Aio implements EntryPoint {
 				}
 			});
 			break;
-//		case Modules.DOCUMENT:
-//			GWT.runAsync(Documental.class, new RunAsyncCallback() {
-//
-//				@Override
-//				public void onFailure(Throwable reason) {
-//					Window.alert("Error al cargar");
-//				}
-//
-//				@Override
-//				public void onSuccess() {
-//					documental = new Documental(aonData);
-//					documental.onModuleLoad();
-//				}
-//			});		
-//			break;
 		case Modules.STAT:
 			GWT.runAsync(MainEntryPoint.class, new RunAsyncCallback() {
 

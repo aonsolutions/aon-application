@@ -312,15 +312,6 @@
 	</servlet-mapping>
 
 	<!-- SignIn with Google Servlet -->
-	<servlet>
-		<servlet-name>OpenIDAuthServlet</servlet-name>
-		<servlet-class>com.code.aon.aio.servlet.OpenIDAuthServlet</servlet-class>
-	</servlet>
-	<servlet-mapping>
-		<servlet-name>OpenIDAuthServlet</servlet-name>
-		<url-pattern>/openid_auth/*</url-pattern>
-	</servlet-mapping>
-
 
 	<servlet>
 		<servlet-name>GoogleLoginCallbackServlet</servlet-name>

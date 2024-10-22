@@ -38,9 +38,12 @@
 		
 	</ui:Style>
 
-	<g:HTMLPanel styleName="{style.form}">
+	<g:HTMLPanel styleName="{style.flexColumn}">
+		<g:HTMLPanel ui:field="messagePanel" />
+		<g:HTMLPanel styleName="{style.form}">
 			<g:HTMLPanel ui:field="container" styleName="aon-width-all aon-height-all" />
 			<g:HTMLPanel ui:field="buttonsPanel" styleName="{style.buttonsPanel}" />
+		</g:HTMLPanel>
 	</g:HTMLPanel>
 
 </ui:UiBinder>
