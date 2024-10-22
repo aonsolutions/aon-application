@@ -66,13 +66,13 @@
 								</f:facet>
 								<aon:outputText value="#{to.probability}"
 									rendered="#{formList}" />
-								<rich:inputNumberSlider id="CommercialActivity_probability"
+								<aon:inputText id="CommercialActivity_probability"
 									value="#{controller.to.probability}" rendered="#{formEdit}"
-									minValue="0" maxValue="100" step="1"/>											
+									maxLength="3" size="3"/>											
 								<f:facet name="footer">
-									<rich:inputNumberSlider id="CommercialActivity_probability-New"
+									<aon:inputText id="CommercialActivity_probability-New"
 										value="#{controller.to.probability}" rendered="#{formNew}"
-										minValue="0" maxValue="100" step="1"/>											
+										maxLenght="3" size="3"/>											
 								</f:facet>
 							</aon:column>
 
