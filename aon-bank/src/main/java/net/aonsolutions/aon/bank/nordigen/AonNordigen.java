@@ -191,9 +191,9 @@ public class AonNordigen {
 		}
 	}
 	
-	public static long getBankMovementsCount(Occam occam, RegistryBank rbank) {
+	public static long getBankMovementsCount(Occam occam, NordigenBankStatementFilter filter) {
 		try(CloseableAONContext ctx = AONContext.getAONContext(occam)){
-			return NordigenDAO.getBankMovementsCount(ctx, rbank);
+			return NordigenDAO.getBankMovementsCount(ctx, filter);
 		}
 	}
 

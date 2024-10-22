@@ -109,10 +109,10 @@ public class NordigenDAO {
 		.map(new BankStatementFiller());
 	}
 	
-	public static long getBankMovementsCount(AONContext ctx, RegistryBank rbank) {
+	public static long getBankMovementsCount(AONContext ctx, NordigenBankStatementFilter filter) {
 		return ctx.getDslContext().select()
 				.from(BANK_STATEMENT)
-				.where(BANK_STATEMENT.RBANK.eq(rbank.getId()))
+				.where(STATEMENT_PROPERTIES.getConditions(filter))
 				.fetch()
 				.stream()
 				.count();

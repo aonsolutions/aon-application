@@ -181,9 +181,9 @@ public class BankServlet extends AonApiHttpServlet {
 	private static JSONObject update(AonApiData api) {
 		RegistryBank bank = AON.getRegistryBank(api.getDomain(), api.getUser().getLogin(),
 				f -> f.getIdProperty().eq(api.getData().getInt(IJsonNames.ID)));
-//		bank.setBankAccount(new BankAccount(api.getData().optString("iban")))
-//		.setBic(api.getData().getString("swiftBic"))
-		bank.setSuffix(api.getData().optString(IJsonNames.SUFIX))
+		bank.setBankAccount(new BankAccount(api.getData().optString("iban")))
+		.setBic(api.getData().getString("swiftBic"))
+		.setSuffix(api.getData().optString(IJsonNames.SUFIX))
 		.setAlias(api.getData().optString(IJsonNames.NAME))
 		.setActive(api.getData().getBoolean(IJsonNames.ACTIVE));
 		AON.saveRegistryBank(api.getDomain(), api.getUser().getLogin(), bank);
@@ -266,11 +266,12 @@ public class BankServlet extends AonApiHttpServlet {
 	}
 	
 	private static long getMovementsCount(AonApiData api) {
-		int id = api.getData().optInt("id");
 		occam.setDomain(api.getDomain().getId()).setDomainName(api.getDomain().getName())
 		.setUser(api.getUser().getLogin());
-		RegistryBank bank = AON.getRegistryBank(occam, f -> f.getIdProperty().eq(id));
-		return AonNordigen.getBankMovementsCount(occam, bank);
+		BankStatementFilter filter = new BankStatementFilter().setId(api.getData().optInt(IJsonNames.ID))
+				.setTo(JsonUtils.getDate(api.getData(), IJsonNames.TO))
+				.setFrom(JsonUtils.getDate(api.getData(), IJsonNames.FROM));
+		return AonNordigen.getBankMovementsCount(occam, f -> statementsFilter(f, api.getDomain().getId(), filter));
 	}
 
 	private static JSONArray getBanks(AonApiData api) {
