@@ -225,10 +225,25 @@ public class RegistryBankDAO {
 			.map(new RegistryBankFiller());
 	}
 	
+	private static boolean isIbanDuplicate(AONContext ctx, String iban) {
+	    return ctx.getDslContext()
+	              .fetchExists(ctx.getDslContext().selectOne()
+	                  .from(RBANK)
+	                  .where(RBANK.BANK_ACCOUNT.eq(iban)));
+	}
 	
+//	private static boolean isBankLinked(AONContext ctx, RegistryBank rbank) {
+//		return ctx.getDslContext()
+//				.fetchExists(ctx.getDslContext().selectOne()
+//						.from(RBANK)
+//						.where(RBANK.REQUISITION.eq(rbank.getRequisition())));
+//	}
+	
+
 	public static RegistryBank save(AONContext ctx, RegistryBank rbank) {
 			RegistryBankAutoComplete.autoComplete(ctx, rbank);
 			RegistryBankValidation.validate(ctx, rbank);
+			
 			ctx.checkWrite();
 			if(rbank.getId() != null && rbank.isRemoved()) { 
 				delete(ctx, rbank.getId());
@@ -241,6 +256,9 @@ public class RegistryBankDAO {
 		}
 	
 	private static RegistryBank insert(AONContext ctx, RegistryBank rbank){
+		if (isIbanDuplicate(ctx, rbank.getBankAccount().getIban())) {
+		     throw new IllegalArgumentException("IBAN duplicado: no se puede crear un banco con un IBAN ya existente.");
+		}
 		Integer id = ctx.getDslContext().insertInto(RBANK)
 			.set(RBANK.DOMAIN,rbank.getDomain())
 			.set(RBANK.REGISTRY,rbank.getRegistry())
@@ -259,7 +277,9 @@ public class RegistryBankDAO {
 		ctx.log().debug("INSERT REGISTRY BANK ( registry: {0}) id: {1}",rbank.getRegistry(),rbank.getId());
 		return rbank;
 	}
+	
 	private static RegistryBank update(AONContext ctx, RegistryBank rbank){
+		
 		int count = ctx.getDslContext().update(RBANK)
 				.set(RBANK.DOMAIN,rbank.getDomain())
 				.set(RBANK.REGISTRY,rbank.getRegistry())

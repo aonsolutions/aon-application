@@ -172,6 +172,7 @@ public class NordigenUtils {
 						lastAccessedDate, linked);
 				JSONObject movementsJson = movementsToJson(movements, nordigenTrueAccount);
 				movementsJsonArray.put(movementsJson);
+				AonNordigen.insertStatements(occam, account);
 			} catch (Exception e) {
 				throw new RuntimeException("Error al procesar la cuenta", e);
 			}
