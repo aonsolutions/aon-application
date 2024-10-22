@@ -4,12 +4,15 @@
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:x="http://java.sun.com/jsp/jstl/xml"
+	xmlns:a4j="http://richfaces.org/a4j"
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:aon="http://www.code.es/aon-rich-components">
 
 	<aon:valueParam name="showTitle" default="#{(toolbarTitle!=null) and (!skipToolbarTitle)}" />
 	<aon:valueParam name="showDescription" default="#{(toolbarDescription!=null) and (!skipToolbarDescription)}" />
 	<aon:valueParam name="showMainStyleClass" default="#{showTitle or showDescription}" />
+	<aon:valueParam name="showFilterWidget" default="#{false}" />
+		
 
 	<aon:div styleClass="#{(innerToolbar)?'aon-toolbar':'aon-finding-title-toolbar'}">
 		<h:panelGrid columns="3" cellspacing="0" cellpadding="0"
@@ -32,34 +35,50 @@
 				<ui:insert name="beforeToolbarContent"/>
 				<ui:insert name="toolbarContent"/>
 
-<!--
- 				<aon:if test="#{app.standAlone}">
-					
-					<aon:ifDefined name="additionalToolbarContent">
-
-						<aon:dropDownMenu 
-							value="#{bundle.aon_more2}"
-							styleClass="aon-finding-toolbar-item aon-dropDownMenu"
-						 >
-							<f:facet name="label">
-								<aon:panelGroup>
-									<aon:outputText styleClass="material-symbols-outlined" value="more_vert" /> 
-								</aon:panelGroup>	
-							</f:facet>
-							
-							<aon:insertMenuItems name="additionalToolbarContent"/>
-							
-						</aon:dropDownMenu>
-					
-					</aon:ifDefined>
-					
-				</aon:if>	
- -->
 				<aon:if test="#{!app.standAlone}">
 					<ui:insert name="additionalToolbarContent"/>
 				</aon:if>
+				<aon:if test="#{app.standAlone}">
+					<aon:insert name="additionalToolbarContent" /> 
+				</aon:if>
+
+				<aon:if test="#{showFilterWidget}">
+					<script type="text/javascript">
+		           	//<![CDATA[
+			         function moveAtEndFilterInput() {
+						let filterInput = #{rich:element(toolbarID.concat('-filter-input'))};
+						filterInput.focus();
+						filterInput.setSelectionRange(filterInput.value.length, filterInput.value.length);
+			         }
+	         		//]]>
+					</script>
+					<aon:div id="#{toolbarID}-filter" styleClass="aon-finding-filter-toolbar" >					 
+						<aon:inputText 
+						value=""
+						id="#{toolbarID}-filter-input"
+						placeholder="#{bundle.aon_filter}..."
+						valueChangeListener="#{filterChangeListener}"
+						styleClass="aon-finding-filter-input aon-inputText aon-icon-search"  
+						>
+							<a4j:support 
+							event="onkeyup"
+							requestDelay="500"
+							ajaxSingle="true"
+							limitToList="true"
+							reRender="aonContent"
+							ignoreDupResponses="true"
+							eventsQueue="#{toolbarID}FilterKeyUp"
+							oncomplete="javascript:moveAtEndFilterInput()"
+							onsubmit="if (window.event.which == 27 || window.event.which == 38 || window.event.which == 40) {return false;}"
+							>
+								<aon:actionListener method="#{filterActionListener}" />
+							</a4j:support> 
+						</aon:inputText>												
+	 				</aon:div>												
+	 			</aon:if>	
 			</aon:div>
 		
+
 		</h:panelGrid>
 	</aon:div>
 	

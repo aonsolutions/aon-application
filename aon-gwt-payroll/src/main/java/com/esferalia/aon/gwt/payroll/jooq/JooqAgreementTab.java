@@ -94,6 +94,14 @@ public class JooqAgreementTab {
 		
 		agreement.setAllVariables(allVariables);
 		
+		// No concept
+		Set<String> noConceptVariables = new HashSet<String>();
+		Set<String> agreementDataVariables = agreement.getLevelDatasMap().get(0).stream().map(levelData -> levelData.getName()).collect(Collectors.toSet());
+		for(String agreementDataVariable : agreementDataVariables) {
+			if(!agreement.getAllVariables().contains(agreementDataVariable)) noConceptVariables.add(agreementDataVariable);
+		}
+		agreement.setNoConceptVariables(noConceptVariables);
+		
 		return agreement;
 	}
 

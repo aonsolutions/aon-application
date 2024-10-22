@@ -174,7 +174,13 @@ export class AonApplication extends AonElement {
     if (this.hasAttribute("main")) {
       toolbar.style.display = "none";
       sidenav.style.height = "calc(100vh - 61px)";
-      content.style.height = "calc(100vh - 61px)";
+      let topnav = this.getElement("aonMenuTopnav");
+      let height = topnav.style.height;
+      if(height == "68px")
+        content.style.height = "calc(100vh - 115px)";
+      else if (height == "0px")
+        content.style.height = "calc(100vh - 48px)";
+
     }
 
     if (!localStorage.getItem("aon_solutions")) {

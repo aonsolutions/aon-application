@@ -15,21 +15,19 @@ package com.code.aon.faces.component.richfaces.jsf.ui;
  */
 
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Objects;
-import java.util.Optional;
 
 import javax.faces.FacesException;
 import javax.faces.component.UICommand;
 import javax.faces.component.UIComponent;
 import javax.faces.component.html.HtmlCommandLink;
+import javax.faces.component.html.HtmlOutputLink;
 
 import org.ajax4jsf.component.html.HtmlAjaxCommandLink;
 import org.richfaces.component.html.HtmlMenuItem;
 
+import com.code.aon.faces.component.util.FaceletUtil;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.sun.facelets.FaceletContext;
 import com.sun.facelets.FaceletException;
@@ -48,21 +46,26 @@ public final class InsertMenuItemsHandler extends TagHandler implements Template
 	
 	
 	private final String name;
+	private final String elVar;
+    private final TagAttribute filter ;
 
     /**
      * @param config
      */
     public InsertMenuItemsHandler(TagConfig config) {
         super(config);
-        TagAttribute attr = this.getAttribute("name");
-        if (attr != null) {
-            if (!attr.isLiteral()) {
-                throw new TagAttributeException(this.tag, attr, "Must be Literal");
+        this.elVar = "el";
+        TagAttribute nameAttr = this.getAttribute("name");
+        if (nameAttr != null) {
+            if (!nameAttr.isLiteral()) {
+                throw new TagAttributeException(this.tag, nameAttr, "Must be Literal");
             }
-            this.name = attr.getValue();
+            this.name = nameAttr.getValue();
         } else {
             this.name = null;
         }
+        this.filter = this.getAttribute("filter");
+        
     }
 
     public void apply(FaceletContext ctx, UIComponent parent)
@@ -78,15 +81,37 @@ public final class InsertMenuItemsHandler extends TagHandler implements Template
 					return new DelegateList<>(super.getChildren()) {
 						@Override
 						public boolean add(UIComponent e) {
-							if ( stream().anyMatch( m -> AonStringUtils.equals(m.getId(), getMenuItemId(e))) ) 
+							if ( !filter(e) )
 								return false;
 							
-							return (e instanceof UICommand uiCommand && super.add(createHtmlMenuItem(uiCommand, ctx)))
-									|| super.add(createHiddenHtmlMenuItem(e));
+							if ( exists(e) ) 
+								return false;
+							
+							if ( !isMenuItem(e))
+								return false;
+							
+							if (e instanceof UICommand uiCommand)
+								return super.add(createHtmlMenuItem(uiCommand));
+
+							if (e instanceof HtmlOutputLink outputLink)
+								return super.add(createHtmlMenuItem(outputLink));
+									
+							return super.add(createHiddenHtmlMenuItem(e));
 						}
 
+						private boolean exists(UIComponent e) {
+							return stream().anyMatch( m -> AonStringUtils.equals(m.getId(), getMenuItemId(e)));
+						}
 						
 					};
+				}
+
+
+				private boolean filter(UIComponent e) {
+					if ( filter == null )
+						return true;
+					ctx.setAttribute(elVar, e);
+					return FaceletUtil.getBoolean(ctx, InsertMenuItemsHandler.this.filter);
 				}
 			};
         	found = ctx.includeDefinition(dropDownMenu, this.name);
@@ -110,51 +135,38 @@ public final class InsertMenuItemsHandler extends TagHandler implements Template
         return false;
     }
     
-    private static HtmlMenuItem  createHtmlMenuItem( UICommand uiCommand, FaceletContext ctx) {
+    private static HtmlMenuItem  createHtmlMenuItem( UICommand uiCommand) {
     	
-		//		<aon:htmlCommandLink id="itemCatalogueReport-excel-report" value="&#160;" 
-		//				target="_new" action="#{report.onExecute}"
-		//				accesskey="#{bundle.aon_key_print}"
-		//				styleClass="aon-finding-toolbar-item aon-icon-excel">
-		//				<f:param name="reportKey" value="itemCatalogueReport" />
-		//				<f:param name="outputFormat" value="MS Excel" />
-		//		</aon:htmlCommandLink>
-    	
-		//        <aon:commandLink 
-		//        		id="resume-expedient-export" 
-		//        		value="Analítica"
-		//                onclick="resumeExpedient('#{projectExport.code}', '#{projectExport.name}', '#{projectExport.alias}', '#{projectSearchListener.registry.id}', '#{projectSearchListene>
-		//                styleClass="aon-finding-toolbar-item aon-icon-excel">
-		//        </aon:commandLink>
-
-    	//    	<aon:menuItem id="ProductHistory" 
-		//				action="product_stats" 
-    	//				actionListener="#{item.onProductHistory}"
-		//				value="#{bundle.aon_history}"
-		//				iconClass="aon-icon-task-assume">
-		//		</aon:menuItem>
 
     	HtmlMenuItem htmlMenuItem = new HtmlMenuItem();
     	htmlMenuItem.setIconStyle("display:none");
     	htmlMenuItem.setRendered(uiCommand.isRendered());
     	htmlMenuItem.setId( getMenuItemId(uiCommand));
 
-    	if ( isBlank((String) uiCommand.getValue())) {
-    		getDefaultValue(uiCommand, ctx)
-    		.ifPresent(uiCommand::setValue);
-    	}
     	htmlMenuItem.getChildren().add(uiCommand);
     	
     	return htmlMenuItem;
     }
     
+    private static HtmlMenuItem  createHtmlMenuItem( HtmlOutputLink htmlOutputLink) {
+    	
+
+    	HtmlMenuItem htmlMenuItem = new HtmlMenuItem();
+    	htmlMenuItem.setIconStyle("display:none");
+    	htmlMenuItem.setRendered(htmlOutputLink.isRendered());
+    	htmlMenuItem.setId( getMenuItemId(htmlOutputLink));
+
+    	htmlMenuItem.getChildren().add(htmlOutputLink);
+    	
+    	return htmlMenuItem;
+    }
+
     private static String getMenuItemId(UIComponent uiComponent ) {
     	return uiComponent.getId() + "MenuItem";
     }
     
     
     private static HtmlMenuItem  createHiddenHtmlMenuItem(UIComponent uiComponent) {
-    	
     	HtmlMenuItem htmlMenuItem = new HtmlMenuItem();
     	htmlMenuItem.setStyle("display:none");
     	htmlMenuItem.setId( getMenuItemId(uiComponent));
@@ -168,20 +180,6 @@ public final class InsertMenuItemsHandler extends TagHandler implements Template
     private static boolean isBlank(String html) {
     	String str = AonStringUtils.replace(html, Character.toString((char)160), "");
     	return  AonStringUtils.isBlank(str);
-    }
-    
-    
-    private static Optional<String> getDefaultValue(UICommand uiCommand, FaceletContext ctx) {
-    	String styleClass = getStyleClass(uiCommand, ctx);
-    	Map<String,String> map = new HashMap<>();
-    	map.put("aon-icon-pdf", "PDF");
-    	map.put("aon-icon-excel", "Excel");
-    	for (Entry<String,String> entry: map.entrySet()) {
-			if ( AonStringUtils.contains(styleClass, entry.getKey() )) {
-				return Optional.of(entry.getValue());
-			}
-		}
-    	return Optional.empty();
     }
     
     
@@ -211,5 +209,13 @@ public final class InsertMenuItemsHandler extends TagHandler implements Template
 
     }
     
+    public static boolean isMenuItem(UIComponent e) {
+    	if ( e instanceof UICommand uiCommand )
+    		return !isBlank((String) uiCommand.getValue());
+    	if ( e instanceof HtmlOutputLink outputLink)
+    		return outputLink.getChildCount() > 0;
+    	
+    	return false;
+    }
     
 }

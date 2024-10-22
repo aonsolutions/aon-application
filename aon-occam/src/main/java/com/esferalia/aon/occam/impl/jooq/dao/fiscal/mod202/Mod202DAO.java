@@ -252,7 +252,7 @@ public class Mod202DAO extends FiscalModelDAO {
 		,C29(Mod202Key.C29,(Mod202::isAEAT),null,"isMethodB()?C29:0.0",null)
 		,C30(Mod202Key.C30,(Mod202::isAEAT),null,"isMethodB()?C30:0.0",null)
 		,C31(Mod202Key.C31,(Mod202::isAEAT),null,"isMethodB()?C31:0.0",null)
-		,C32(Mod202Key.C32,(Mod202::isAEAT),null,"(((isMethodB1()?C18:(isMethodB2()?C26:0.0))-C27-C28)*C29/100)-C30-C31"
+		,C32(Mod202Key.C32,(Mod202::isAEAT),null,"((((isMethodB1()?C18:(isMethodB2()?C26:0.0))-C27-C28)*C29/100)-C30-C31)<0?0.0:((((isMethodB1()?C18:(isMethodB2()?C26:0.0))-C27-C28)*C29/100)-C30-C31)"
 			,"@if{X00 == 0 }"
 			+	"<li>Si la modalidad de c\u00E1lculo es A) :</li>"
 			+	"<li>Cero,<b>@{C32}</b></li>"

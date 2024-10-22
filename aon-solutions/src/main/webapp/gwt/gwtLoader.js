@@ -69,9 +69,15 @@
 	
 	const addScript = (document, type,  src) => {
 		let script = document.createElement(TAG.SRIPT);
-		script.src = src;
-		script.type = type;
+		script.type = src.type || type;
+		if ( src.src ) {
+			script.src = src.src;
+		}
+		if ( src.code ) {
+			script.appendChild(document.createTextNode(src.code));
+		}
 		document.head.appendChild(script);
+		
 	}
 	
 	

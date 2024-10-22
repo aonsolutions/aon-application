@@ -829,8 +829,9 @@ public class Contrata {
 
 			// For contract 502 check if duration equals or less than 90 days
 			try {
-				if((contract.equals("502") || contract.equals("402")) && htmlPage.querySelector("#avisos > div > p:last-child").getVisibleText().equals("1. Obligatorio indicar si el contrato tiene duración igual o inferior a 90 días.")) {
+				if((contract.equals("502") || contract.equals("402")) && htmlPage.querySelector("#avisos > div > p:last-child").getVisibleText().contains("Obligatorio indicar si el contrato tiene")) {
 					htmlPage = htmlPage.getElementById("volver").click();
+					
 					form = HtmlUnitToolkit.wait4(htmlPage, p -> p.getFormByName("datos")).orElseThrow();
 					
 					if(null != cto.getDateFinContract()) {
@@ -846,8 +847,6 @@ public class Contrata {
 			} catch (Exception e) {}
 			
 			// For contract 402 check if has writen contract
-			
-			
 			try {
 				if(contract.equals("402")) {
 					webClient.waitForBackgroundJavaScript(5000);
