@@ -216,7 +216,7 @@
 	
 	.rich-calendar-exterior {
 		scale: 0.9 !important;
-		background-color: #f8f9fa;
+		background-color: #fff;
 		box-shadow: rgb(0 0 0 / 20%) 0.5rem 0.5rem 2rem 0px;
 	}
 	
@@ -581,8 +581,12 @@
 	}
 	
 	.aon-panelGrid-search {
-    	background-color: #fff;
-    	border: #fff 1px solid;
+  		border-collapse: inherit;
+  		border: 1px solid #ddd;
+  		border-radius: 5px;
+  		background-color: white;
+  		padding: 10px;
+		min-width: fit-content;
 	}
 	
 	.aon-panelGrid-search-info {
@@ -712,6 +716,7 @@
   		border-radius: 5px;
   		background-color: white;
   		padding: 10px;
+		min-width: fit-content;
    	}
   	
   	.aon-group .aon-panelGrid,
@@ -1770,6 +1775,12 @@
 		text-align:center;
 	}
 	
+	div[id*="invoiceAttach-upload"] {
+		border-color: #fff;
+	} 
+	
+	
+	
 	.rich-fileupload-button, 
 	.rich-fileupload-button-dis, 
 	.rich-fileupload-button-light, 
@@ -1782,6 +1793,10 @@
     	background: none;
     	border-radius: 16px;
     	border: 1px solid #aaa;
+	}
+	
+	.rich-fileupload-button-content {
+		display: none;
 	}
 	
 	.rich-fileupload-button-light{
@@ -2636,6 +2651,11 @@
     	display: none;
 	}
 	
+	[id$="New"],
+	[id$="New"] .aon-group,
+	[id$="New"] .rich-stglpanel {
+    	min-width: fit-content;
+	}
 	
 	
 	</style>
