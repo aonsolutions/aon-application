@@ -46,13 +46,22 @@
 		background-color: #fff !important
 	}
 	
+	[id$="Editor"] {
+		scale: 0.9;
+	}
+	
 	.rich-calendar-boundary-dates {
 		color: #F8F9FA !important;
 		pointer-events: none !important; 
 	}
 	
-	#aonContent\:financeSearch\:Finance_dueDate-ToWeekNum6{
+	.rich-bottom-cell {
 		display: none !important;
+	}
+	
+	.rich-calendar-week,
+	.rich-calendar-days:not([id]) {
+		display: none;
 	}
 	
 	.rich-calendar-week{
@@ -62,21 +71,125 @@
 	}
 	
 	.rich-calendar-header {
-	    background-color: #D4CFC7 !important;
+	    background-color: #fff;
 	    color: rgb(66,66,66) !important;
 	    font-weight: bold !important;
 	    font-size: 16px !important;
 	    text-align: center !important;
 	    padding: 10px !important;
-	    border-bottom: 1px solid #ddd !important;
+	    border-bottom: 0px !important;
+	}
+	
+	.rich-calendar-tool{
+		font-weight: normal !important;
+	}
+	
+		
+	[id$=WeekDayCell0]{
+	    visibility: hidden; 
+	    position: relative; 
+	}
+	
+	[id$=WeekDayCell0]::before {
+	    content: "D"; 
+	    visibility: visible; 
+	    position: absolute;
+  		left: 18px;
+	}
+	
+	[id$=WeekDayCell1]{
+	    visibility: hidden; 
+	    position: relative; 
+	}
+	
+	[id$=WeekDayCell1]::before {
+	    content: "L"; 
+	    visibility: visible; 
+	    position: absolute;
+  		left: 18px;
+	}
+	
+	[id$=WeekDayCell2]{
+	    visibility: hidden; 
+	    position: relative; 
+	}
+	
+	[id$=WeekDayCell2]::before {
+	    content: "M"; 
+	    visibility: visible;
+	    position: absolute;
+  		left: 18px;
+	}
+	
+	[id$=WeekDayCell3]{
+	    visibility: hidden; 
+	    position: relative;
+	}
+	
+	[id$=WeekDayCell3]::before {
+	    content: "X"; 
+	    visibility: visible; 
+	    position: absolute;
+  		left: 18px;
+	}
+	
+	[id$=WeekDayCell4]{
+	    visibility: hidden; 
+	    position: relative; 
+	}
+	
+	[id$=WeekDayCell4]::before {
+	    content: "J";
+	    visibility: visible; 
+	    position: absolute;
+  		left: 18px;
+	}
+	
+	[id$=WeekDayCell5]{
+	    visibility: hidden; 
+	    position: relative; 
+	}
+	
+	[id$=WeekDayCell5]::before {
+	    content: "V"; 
+	    visibility: visible; 
+	    position: absolute;
+  		left: 18px;
+	}
+	
+	[id$=WeekDayCell6]{
+	    visibility: hidden;
+	    position: relative; 
+	}
+	
+	[id$=WeekDayCell6]::before {
+	    content: "S"; 
+	    visibility: visible; 
+	    position: absolute;
+  		left: 18px;
 	}
 	
 	.rich-calendar-tool-btn {
-	    background-color: transparent !important;
+	    background-color: #fff !important;
 	    border: none !important;
 	    color: rgb(66,66,66) !important;
 	    cursor: pointer !important;
 	    font-size: 16px !important;
+	}
+	
+	.rich-calendar-footer {
+		border-top: #F8F9FA !important
+	}
+	
+	.rich-calendar-tool,
+	.rich-calendar-month {
+		background-color: #F8F9FA ;
+		font-weight: normal;
+	}
+	
+	td.rich-calendar-tool:first-of-type,
+	td.rich-calendar-tool:nth-last-of-type(2) {
+		display: none;
 	}
 	
 	
@@ -87,7 +200,7 @@
 	
 	.rich-calendar-days {
 	    background-color: #f8f9fa !important;
-	    color: #555 !important;
+	    color: #D3D3D7 !important;
 	    font-weight: 600 !important;
 	    font-size: 14px !important;
 	    text-align: center !important;
@@ -100,6 +213,16 @@
 	    color: #ccc !important; 
 	    pointer-events: none !important; 
 	}
+	
+	.rich-calendar-exterior {
+		scale: 0.9 !important;
+		background-color: #fff;
+		box-shadow: rgb(0 0 0 / 20%) 0.5rem 0.5rem 2rem 0px;
+	}
+	
+	.rich-calendar-editor-shadow{
+		background: none;
+	}
 
 	.rich-calendar-cell {
 	    color: #333;
@@ -107,9 +230,9 @@
 	    padding: 10px !important;
 	    text-align: center !important;
   		border: 0px !important;
-	    border-radius: 25px !important;  
 	    cursor: pointer !important;
-	    background-color: #F8F9FA ;
+	    background-color: #fff ;
+	    clip-path: circle(48%);
 	}
 	
 	.rich-calendar-cell:hover {
@@ -128,7 +251,7 @@
 	}
 	
 	.rich-calendar-weekends {
-	    color: #ff0000 !important;
+	    color: #D3D3D7 !important;
 	}
 	
 /* 	.rich-calendar-holly{
@@ -137,6 +260,37 @@
 	
 	.rich-calendar-toolfooter{
 		display: none !important;
+	}
+	
+	.rich-calendar-editor-btn-selected{
+		background-color: #002469 !important;
+	}
+	
+	.rich-calendar-editor-btn-over,
+	.rich-calendar-editor-tool-over{
+		border: 0px !important;
+		background-color: #7F91B3 !important;
+	}
+	
+	.rich-calendar-time-btn {
+		background:#F8F9FA !important;
+	}
+	
+	.rich-calendar-date-layout-ok,
+	.rich-calendar-date-layout-cancel {
+		border: 0px !important;
+		background: none !important;
+	}
+	
+	.rich-calendar-date-layout {
+		width: 300px !important;
+		height: 265px !important;
+		background-color: #f8f9fa;
+  		border: 0px;
+	}
+	
+	.rich-calendar-editor-layout-shadow {
+		background-color: #F8F9FA !important;
 	}
 	
 	.aonDataScroller {
@@ -427,8 +581,12 @@
 	}
 	
 	.aon-panelGrid-search {
-    	background-color: #fff;
-    	border: #fff 1px solid;
+  		border-collapse: inherit;
+  		border: 1px solid #ddd;
+  		border-radius: 5px;
+  		background-color: white;
+  		padding: 10px;
+		min-width: fit-content;
 	}
 	
 	.aon-panelGrid-search-info {
@@ -444,6 +602,11 @@
 	.aon-panelGrid-search .rich-stglpanel-header {
     	background-image: none;
     	background-color: #f6f6f6;
+	}
+	
+	.rich-stglpanel-header {
+		background-image: none;
+    	background-color: #fafafa;
 	}
 	
 	.aon-commandButton {
@@ -553,7 +716,8 @@
   		border-radius: 5px;
   		background-color: white;
   		padding: 10px;
-  	}
+		min-width: fit-content;
+   	}
   	
   	.aon-group .aon-panelGrid,
   	.aon-panelGrid .aon-group{
@@ -1611,6 +1775,12 @@
 		text-align:center;
 	}
 	
+	div[id*="invoiceAttach-upload"] {
+		border-color: #fff;
+	} 
+	
+	
+	
 	.rich-fileupload-button, 
 	.rich-fileupload-button-dis, 
 	.rich-fileupload-button-light, 
@@ -1623,6 +1793,10 @@
     	background: none;
     	border-radius: 16px;
     	border: 1px solid #aaa;
+	}
+	
+	.rich-fileupload-button-content {
+		display: none;
 	}
 	
 	.rich-fileupload-button-light{
@@ -2477,6 +2651,11 @@
     	display: none;
 	}
 	
+	[id$="New"],
+	[id$="New"] .aon-group,
+	[id$="New"] .rich-stglpanel {
+    	min-width: fit-content;
+	}
 	
 	
 	</style>

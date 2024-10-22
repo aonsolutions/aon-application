@@ -15,6 +15,7 @@ package com.code.aon.faces.component.richfaces.jsf.ui;
  */
 
 import java.io.IOException;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
 
@@ -73,12 +74,13 @@ public final class InsertHandler extends TagHandler implements TemplateClient {
 					return new DelegateList<>(super.getChildren()) {
 						@Override
 						public boolean add(UIComponent e) {
-							return filter(e) && super.add(e);
+							return !exists(parent, e) && filter(e) && super.add(e);
 						}
 						
 					};
 				}
 				
+
 				private boolean filter(UIComponent e) {
 					if ( filter == null )
 						return true;
@@ -107,6 +109,18 @@ public final class InsertHandler extends TagHandler implements TemplateClient {
         return false;
     }
     
+	private static boolean exists(UIComponent parent, UIComponent e) {
+		if ( Objects.equals(parent.getId(), e.getId())) {
+			return true;
+		} else {
+			for ( UIComponent child: parent.getChildren() ) {
+				if ( exists(child, e)) {
+					return true;
+				}
+			}
+			return false;
+		}
+	}
    
     
 }

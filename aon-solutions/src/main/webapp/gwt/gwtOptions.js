@@ -106,8 +106,8 @@ export const EMPLOYEES = {
   module: GWT_PAYROLL,
   entryPoint: 'EmployeeTree',
   javaScripts : [
-	`${GWT_PAYROLL}/codemirror/addon/merge/diff_match_patch.js`,
-	`${GWT_PAYROLL}/codemirror/lib/codemirrorcompressed.js`
+	{ src: `${GWT_PAYROLL}/codemirror/addon/merge/diff_match_patch.js`},
+	{ src: `${GWT_PAYROLL}/codemirror/lib/codemirrorcompressed.js` }
 	]
 };
 
@@ -116,8 +116,8 @@ export const CONVENIOS = {
   module: GWT_PAYROLL,
   entryPoint: 'MainAgreement',
   javaScripts : [
-  `${GWT_PAYROLL}/codemirror/addon/merge/diff_match_patch.js`,
-  `${GWT_PAYROLL}/codemirror/lib/codemirrorcompressed.js`
+  { src: `${GWT_PAYROLL}/codemirror/addon/merge/diff_match_patch.js`},
+  { src: `${GWT_PAYROLL}/codemirror/lib/codemirrorcompressed.js`}
   ]
   
 };
@@ -386,7 +386,30 @@ export const INVOICE_STAT = {
   name: 'estadisticas',
   module: GWT_AIO,
   entryPoint: 'stat',
-  subEntryPoint: 'StatControlPanel'
+  subEntryPoint: 'StatControlPanel',
+  javaScripts : [
+	{ src: `https://www.google.com/jsapi`},
+	{ src: `${GWT_AIO}/bower_components/webcomponentsjs/webcomponents-lite.js`},
+	{ code: `
+		function drawChartsCallback(){
+		}
+		
+		function whenAvailable(name) {
+		    var interval = 100; // ms
+		    window.setTimeout(function() {
+		        if (window["google"]) {
+		            window["google"].load("visualization", "1", {'callback' : 'drawChartsCallback' ,'packages':["corechart","table","timeline"], 'language': 'es'});
+		        } else {
+		            whenAvailable(name);
+		        }
+		    }, interval);
+		}
+		
+		whenAvailable("google");
+		`
+	}
+  ]
+  
 }
 
 export const TASK_STAT = {
