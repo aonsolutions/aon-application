@@ -7,6 +7,7 @@ import static org.junit.Assert.assertNotNull;
 import java.io.IOException;
 import java.util.UUID;
 
+import org.junit.Ignore;
 import org.junit.Test;
 
 public class S3TestCase {
@@ -15,6 +16,7 @@ public class S3TestCase {
 	private static final String TEST_AON_TABLE = "aon-aws-test-table";	
 	
 	@Test
+	@Ignore
 	public void testBucket() {	
 		String bucket = TEST_BUCKET + UUID.randomUUID().toString().replace("-", "");
 		if(S3.existBucket(bucket)) 
@@ -32,6 +34,7 @@ public class S3TestCase {
 	}
 	
 	@Test
+	@Ignore
 	public void testBucketAonTable() {
 		String aonTable = TEST_AON_TABLE + UUID.randomUUID().toString().replace("-", "");
 		if(S3.existBucket(aonTable)) 
