@@ -442,13 +442,8 @@ public class AON_SOLUTIONS {
 		String domain = AONContext.getSchemaFirstDomain(schema);
 		if(!AonStringUtils.isBlank(domain)) {
 			try (CloseableAONContext ctx = AONContext.getAONContext(domain, 0, "")) {
-				if ( aonToken.getAuth() != null ) {
-					Stream<AonCompany> s = getRegistry().getCompanyStream(ctx, aonToken.getAuth(), page, perPage);
-					stream = Stream.concat(stream, s);
-				} else {
-					Stream<AonCompany> s = getRegistry().getCompanyStream(ctx, aonToken.getUser(), page, perPage);
-					stream = Stream.concat(stream, s);
-				}
+				Stream<AonCompany> s = getRegistry().getCompanyStream(ctx, aonToken.getAuth(), page, perPage);
+				stream = Stream.concat(stream, s);
 			}
 		} 
 		return stream;
@@ -462,13 +457,8 @@ public class AON_SOLUTIONS {
 			String domain = AONContext.getSchemaFirstDomain(schema);
 			if(!AonStringUtils.isBlank(domain)) {
 				try (CloseableAONContext ctx = AONContext.getAONContext(domain, 0, "")) {
-					if ( aonToken.getAuth() != null ) {
-						getRegistry().getCompanyStream(ctx, aonToken.getAuth(), filter, page, perPage)
-						.forEach(c-> list.add(c.setSchema(schema)));
-					} else {
-						getRegistry().getCompanyStream(ctx, aonToken.getUser(), filter, page, perPage)
-						.forEach(c-> list.add(c.setSchema(schema)));
-					}
+					getRegistry().getCompanyStream(ctx, aonToken.getAuth(), filter, page, perPage)
+					.forEach(c-> list.add(c.setSchema(schema)));
 				}
 			} 
 		}

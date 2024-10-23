@@ -6,10 +6,8 @@ import org.json.JSONObject;
 
 
 import com.esferalia.aon.occam.api.model.Occam;
-import com.esferalia.aon.occam.api.SECURITY;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Options;
-import com.esferalia.aon.occam.api.model.aonsolutions.AonToken;
 import com.esferalia.aon.occam.api.model.aonsolutions.DomainUserRoles;
 import com.esferalia.aon.occam.api.model.security.User;
 
@@ -66,7 +64,7 @@ public class AonApiData implements Serializable{
 	}
 
 	public Domain getDomain() {
-		return isValid(domain) ? domain : getDomain(token);
+		return domain;
 	}
 
 	public AonApiData setDomain(Domain domain) {
@@ -75,7 +73,7 @@ public class AonApiData implements Serializable{
 	}
 
 	public User getUser() {
-		return isValid(user) ? user : getUser(token);
+		return user;
 	}
 
 	public AonApiData setUser(User user) {
@@ -131,7 +129,6 @@ public class AonApiData implements Serializable{
 	public Occam getOccam() {
 		if (getDomain() == null) throw new IllegalStateException("Domain not set!");
 		if (getUser() == null) throw new IllegalStateException("User not set!");
-
 		return new Occam()
 			.setDomain(getDomain().getId())
 			.setDomainName(getDomain().getName())
@@ -143,38 +140,5 @@ public class AonApiData implements Serializable{
 		return "AONd95770f269e711eb94390242ac130002".equals(getToken());
 	}
 	
-	private static Domain getDomain(String token) {
-		if ( token == null )
-			return null;
-		AonToken aonToken = SECURITY.getAonToken(token);
-		Integer id = aonToken.getDomain();
-		String name = aonToken.getDomainName();
-		if ( id == null || name == null )
-			return null;
-		return new Domain().setId(id).setName(name);
-	}
-	
-	private static User getUser(String token) {
-		if ( token == null )
-			return null;
-		AonToken aonToken = SECURITY.getAonToken(token);
-		Integer id = aonToken.getUser();
-		String login = aonToken.getLogin();
-		if ( id == null || login == null )
-			return null;
-		return new User().setId(id).setLogin(login);
-	}
-	
-	private static boolean isValid(User user) {
-		return user != null 
-				&& user.getId() != null
-				&& user.getLogin() != null;
-	}
-
-	private static boolean isValid(Domain domain) {
-		return domain != null 
-				&& domain.getId() != null
-				&& domain.getName() != null;
-	}
 	
 }
