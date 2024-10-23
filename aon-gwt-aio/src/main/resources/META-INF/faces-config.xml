@@ -240,6 +240,13 @@
 			<to-view-id>/com/esferalia/aon/gwt/marketing/facelet/seller.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>
+	
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>gwt_sellerWorkloadModule</from-outcome>
+			<to-view-id>/com/esferalia/aon/gwt/marketing/facelet/seller_workload.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>
 
 </faces-config>
 		
