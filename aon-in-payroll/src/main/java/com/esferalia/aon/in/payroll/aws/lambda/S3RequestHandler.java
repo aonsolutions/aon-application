@@ -1,6 +1,5 @@
 package com.esferalia.aon.in.payroll.aws.lambda;
 
-import static java.lang.String.format;
 import static solutions.aon.aws.s3.S3EventObject.getS3EventObjects;
 
 import java.io.IOException;
@@ -12,14 +11,10 @@ import java.util.List;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.amazonaws.SdkClientException;
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.RequestHandler;
-import com.esferalia.aon.occam.api.model.Workgroup;
-import com.esferalia.aon.occam.api.model.task.Task;
 
 import net.aonsolutions.aon.api.AonTGSS;
-import net.aonsolutions.aon.api.AonTask;
 import solutions.aon.aws.s3.S3;
 import solutions.aon.aws.s3.S3EventObject;
 
@@ -115,7 +110,7 @@ public class S3RequestHandler implements RequestHandler<Object, String> {
 	    byte [] allBytes = S3.download(bucketName, key);
 	    String jsonString = new String ( allBytes, StandardCharsets.UTF_8 );
 	    return new JSONObject(jsonString);
-	} catch (SdkClientException | IOException e) {
+	} catch (Exception e) {
 	    throw new NoSuchLoadTaskException(key);
 	}  
     }
