@@ -2,18 +2,14 @@ package net.aonsolutions.storage.s3;
 
 import java.util.UUID;
 
-import com.amazonaws.event.ProgressEvent;
-import com.amazonaws.event.ProgressListener;
-import com.amazonaws.services.s3.AmazonS3;
-import com.amazonaws.services.s3.AmazonS3ClientBuilder;
-import com.amazonaws.services.s3.model.DeleteObjectsRequest;
+import software.amazon.awssdk.services.s3.S3Client;
+import software.amazon.awssdk.services.s3.model.DeleteObjectRequest;
+import software.amazon.awssdk.services.s3.model.DeleteObjectsRequest;
 
 public class Faqs {
 
 	public static void main(String[] args) {
-
-		AmazonS3 s3 = AmazonS3ClientBuilder.standard().build();
-
+		S3Client client = S3Client.create();
 //		AmazonS3 s3 = AmazonS3ClientBuilder.standard()
 //				.withEndpointConfiguration(new EndpointConfiguration("https://s3.fr-par.scw.cloud", "fr-par"))
 //				.withCredentials(new AWSStaticCredentialsProvider(
@@ -35,19 +31,13 @@ public class Faqs {
 //		s3.deleteObject("aon-contract-doc", "unknown");
 		String key = UUID.randomUUID().toString();
 		//s3.putObject("aon-contract-doc", key, "---");
-		s3.deleteObjects(
-		new DeleteObjectsRequest("aon-contract-doc")
-		.withKeys(key)
-//		.withGeneralProgressListener(new ProgressListener() {
-//			@Override
-//			public void progressChanged(ProgressEvent progressEvent) {
-//				System.out.println(progressEvent.getEventType().describeConstable().toString());
-//			}
-//			
-//		})
-		).getDeletedObjects()
+		
+		DeleteObjectsRequest request = DeleteObjectsRequest.builder()
+				.bucket("aon-contract-doc").build();
+
+		client.deleteObjects(request).deleted()
 		.forEach(d -> {
-			System.out.println(d.getKey() +" - " + d.getVersionId() +", " + d.getDeleteMarkerVersionId());
+			System.out.println(d.key() +" - " + d.versionId() +", " + d.deleteMarkerVersionId());
 		});
 		
 	}

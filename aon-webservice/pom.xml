@@ -72,14 +72,7 @@
     		<artifactId>json</artifactId>
     		<version>20230227</version>
 		</dependency>
-		
-		<dependency>
-    		<groupId>org.apache.httpcomponents</groupId>
-    		<artifactId>httpclient</artifactId>
-    		<version>4.5.6</version>
-    		<scope>provided</scope>
-		</dependency>
-		
+				
 		<dependency>
 			<groupId>org.apache.poi</groupId>
 			<artifactId>poi</artifactId>

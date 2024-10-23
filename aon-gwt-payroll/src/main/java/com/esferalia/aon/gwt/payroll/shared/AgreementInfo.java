@@ -280,7 +280,9 @@ public class AgreementInfo implements Serializable, HasId<Integer>, HasDomain<In
 		VALUES,
 		NO_VALUES,
 		ALL,
-		MANUAL
+		MANUAL,
+		NO_CONCEPT,
+		EDIT_VARIABLE
 	}
 	
 	private int id;
@@ -304,6 +306,7 @@ public class AgreementInfo implements Serializable, HasId<Integer>, HasDomain<In
 	
 	private Set<String> filteredVariables = new HashSet<>();
 	private Set<String> allVariables = new HashSet<>();
+	private Set<String> noConceptVariables = new HashSet<>();
 	private ShownVariables shownVariables = ShownVariables.VALUES;
 	
 	private Level selectedLevel;
@@ -406,6 +409,9 @@ public class AgreementInfo implements Serializable, HasId<Integer>, HasDomain<In
 			case ALL:
 				getAllVariables().stream().forEach(variable -> variables.add(variable));
 				break;
+			case NO_CONCEPT:
+				getNoConceptVariables().stream().forEach(variable -> variables.add(variable));
+				break;
 			default:
 				getAllVariables().stream().filter(variable -> this.filteredVariables.contains(variable)).forEach(variable -> variables.add(variable));
 				break;
@@ -454,8 +460,20 @@ public class AgreementInfo implements Serializable, HasId<Integer>, HasDomain<In
 		this.allVariables = variables;
 	}
 	
+	public Set<String> getNoConceptVariables() {
+		return noConceptVariables;
+	}
+	
+	public void setNoConceptVariables(Set<String> variables) {
+		this.noConceptVariables = variables;
+	}
+	
 	public String getShownVariables() {
 		return this.shownVariables.toString();
+	}
+	
+	public void setShowVariables(String shownVariable) {
+		this.shownVariables = ShownVariables.valueOf(shownVariable);
 	}
 
 	public void setFilteredVariables(Set<String> variables) {
@@ -473,6 +491,10 @@ public class AgreementInfo implements Serializable, HasId<Integer>, HasDomain<In
 
 	public void setFilteredAllVariables() {
 		this.shownVariables = ShownVariables.ALL;
+	}
+	
+	public void setFilteredNoConceptVariables() {
+		this.shownVariables = ShownVariables.NO_CONCEPT;
 	}
 
 	public Map<Integer, Set<String>> getCategoriesMap() {

@@ -39,8 +39,9 @@
 					<ui:insert name="additionalToolbarContent"/>
 				</aon:if>
 				<aon:if test="#{app.standAlone}">
-					<aon:insert name="additionalToolbarContent" filter="#{!aon:isMenuItem(el)}" />
+					<aon:insert name="additionalToolbarContent" /> 
 				</aon:if>
+
 				<aon:if test="#{showFilterWidget}">
 					<script type="text/javascript">
 		           	//<![CDATA[

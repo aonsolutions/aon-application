@@ -1,36 +1,21 @@
 package com.code.aon.webservice.issues;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.function.Function;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
-import jakarta.servlet.ServletException;
-import jakarta.servlet.annotation.WebServlet;
-import jakarta.servlet.http.HttpServlet;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-
-import org.apache.http.HttpResponse;
-import org.apache.http.NameValuePair;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.entity.UrlEncodedFormEntity;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.impl.client.HttpClientBuilder;
-import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.code.aon.webservice.common.Utils;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.MailAccount;
-import com.esferalia.aon.occam.api.model.Signature;
 import com.esferalia.aon.occam.api.model.OldTask;
+import com.esferalia.aon.occam.api.model.Signature;
 import com.esferalia.aon.occam.api.model.office.NotificationInfo;
 import com.esferalia.aon.occam.api.model.office.NotificationType;
 import com.esferalia.aon.occam.api.model.registry.Registry;
@@ -40,6 +25,14 @@ import com.esferalia.aon.occam.api.model.task.TaskComment;
 import com.esferalia.aon.occam.api.model.task.TaskEvent;
 import com.esferalia.aon.occam.api.model.type.AppParam;
 import com.esferalia.aon.watson.server.AonDateUtils;
+
+import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import solutions.aon.aws.ses.SES;
+import solutions.aon.aws.ses.SESMessage;
 
 @WebServlet(name = "NotificationGwtServlet2", urlPatterns = { "/notification/*",
 															  "/aon_gwt_aio/ms/notification/*"})
@@ -241,43 +234,22 @@ public class NotificationServlet extends HttpServlet{
 				+ "</div></div>";
 		
 			Boolean bool = ni.getMode().equals(1);
-			sendEmail(domain, login, ni.getMailAccount().getId(), getToEmails(domain, login, notificationInfo.getCompanyName(),bool, assignee), ni.getBcc(), title + " #" + notificationInfo.getNoticeId(), msg);
+			sendEmail(getToEmails(domain, login, notificationInfo.getCompanyName(),bool, assignee), ni.getBcc(), title + " #" + notificationInfo.getNoticeId(), msg);
 		}
 	}
 	
-	public void sendEmail(Domain domain, String login, Integer mailAccountId, String to, String bcc, String issue, String message){
+	public void sendEmail(List<String> to, String bcc, String issue, String message){
 		try {
-			JSONObject json = new JSONObject();
-			json.put("mailAccountId", mailAccountId)
-				.put("recipientsTo", to)
-				.put("content", message)
-				.put("subject", issue)
-				.put("login", login)
-				.put("domainName", domain.getName())
-				.put("domainId", domain.getId())
-				.put("md5", "")
-				.put("bcc", bcc);
+			SESMessage sesMessage = new SESMessage()
+					.setAlias("Aon Solutions Notification")
+					.setFrom("notification@aon.solutions")
+					.setTo(to)
+					.setBcc(bcc)
+					.setSubject(issue)
+					.setBody(message);
 			
-			sendPostHttpClient(domain.getName(),json);			
-		} catch (JSONException e) {
-			e.printStackTrace();
-		}
-	}
-	
-	protected void sendPostHttpClient(String domainName, JSONObject json) {
-		try{
-			//String url = "http://"+domainName+ ":8080/aon-aio/send_email/";
-			String url = "http://"+domainName+ "/send_email/";
-			System.out.println(url);
-			HttpClientBuilder base = HttpClientBuilder.create();
-			HttpClient client = base.build();
-			HttpPost post = new HttpPost(url);
-			List<NameValuePair> urlParameters =  new ArrayList<NameValuePair>();
-			urlParameters.add(new BasicNameValuePair("details", json.toString()));
-			post.setEntity(new UrlEncodedFormEntity(urlParameters));
-			HttpResponse resp = client.execute(post);
-			System.out.println(resp);
-		} catch (IOException e){
+			SES.sendEmail(sesMessage);
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
@@ -352,7 +324,6 @@ public class NotificationServlet extends HttpServlet{
 				.setSignatureList(getSignatureList(domain, login));
 	}
 	
-	
 	public void insertNotificationInfo(Domain domain, String login, NotificationInfo notificationInfo){
 		AON.insertNotificationInfo(domain.getName(), domain.getId(), login, notificationInfo);
 	}
@@ -384,25 +355,25 @@ public class NotificationServlet extends HttpServlet{
 		return AON.getCompanyForDomain(domain.getName(), domain.getId(), login).getName();
 	}
 	
-	private String getToEmails(Domain domain, String login, String name, Boolean send, Integer assignee){
+	private List<String> getToEmails(Domain domain, String login, String name, Boolean send, Integer assignee){
+		List<String> emails = new LinkedList<>();
 		if(assignee != null){
 			RegistryMedia rm = AON.getRMedia(domain.getName(), domain.getId(), login,
 				f -> f.getRegistryProperty().eq(assignee).and(f.getMediaProperty().eq((byte)4)));
-			return rm.getValue() != null ? rm.getValue() : "";
+			if(rm.getValue() != null) emails.add(rm.getValue());
+			return emails;
 		} 
 		
-		if(send) return ""; 
+		if(send) return emails; 
 		
 		Registry r = AON.getRegistry(domain.getName(), domain.getId(), login, f -> f.getNameProperty().eq(name).and(f.getDomainProperty().eq(domain.getId())));
 		LinkedList<RegistryMedia> l = AON.getRMediaList(domain.getName(), domain.getId(), login,
 				f -> f.getRegistryProperty().eq(r.getId()).and(f.getMediaProperty().eq((byte)4)));
 		
-		String emails = "";
 		for(RegistryMedia rm : l){
-			emails = emails + rm.getValue() +",";
+			emails.add(rm.getValue());
 		}
-		
-		System.out.println(emails);
+	
 		return emails;
 	}
 
