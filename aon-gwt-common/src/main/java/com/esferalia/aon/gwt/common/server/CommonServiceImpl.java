@@ -36,6 +36,7 @@ import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.Question;
 import com.esferalia.aon.occam.api.model.QuestionParams;
 import com.esferalia.aon.occam.api.model.SellerParams;
+import com.esferalia.aon.occam.api.model.SellerWorkloadParams;
 import com.esferalia.aon.occam.api.model.Survey;
 import com.esferalia.aon.occam.api.model.Workgroup;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
@@ -60,6 +61,7 @@ import com.esferalia.aon.occam.api.model.registry.RegistryAddress;
 import com.esferalia.aon.occam.api.model.registry.RegistryBank;
 import com.esferalia.aon.occam.api.model.registry.RegistryMedia;
 import com.esferalia.aon.occam.api.model.registry.Seller;
+import com.esferalia.aon.occam.api.model.registry.SellerWorkload;
 import com.esferalia.aon.occam.api.model.registry.Supplier;
 import com.esferalia.aon.occam.api.model.registry.SupplierFull;
 import com.esferalia.aon.occam.api.model.registry.Target;
@@ -652,5 +654,21 @@ public class CommonServiceImpl extends AonStatelessRemoteServiceServlet implemen
 	public List<Category> getAviableCategories(String domainName, Integer domain, String user) throws AonCoreException {
 		return AON_SOLUTIONS.getCategoryStream(new Domain().setName(domainName).setId(domain), new User().setLogin(user), f -> f.getDomainProperty().eq(domain)).collect(Collectors.toList());
 	}
+	
+	// **************************************************
+	// ********************************* [SELLER WORKLOAD]
+	// **************************************************
+
+	@Override
+	public List<SellerWorkload> getSellersWorkload(SellerWorkloadParams params) throws AonCoreException {
+		List<SellerWorkload> sellersWorkload =  AON.getSellerWorkloadList(params);
+		return sellersWorkload;
+	}
+	
+	@Override
+	public Integer getSellersWorkloadCount(SellerWorkloadParams params) throws AonCoreException {
+		return AON.getSellerWorkloadListCount(params);
+	}
+
 	
 }
