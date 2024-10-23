@@ -517,7 +517,8 @@ public class AonNordigen {
 		if (rbank.getBankAccount().getIban().equals("GL8262400000062409")
 				|| rbank.getBankAccount().getIban().equals("GL4076010000076016")) {
 			NordigenAgreement agreement = AonNordigen.createAgreement(token, "SANDBOXFINANCE_SFIN0000");
-			String redirect = "https://www.youtube.com/watch?v=dQw4w9WgXcQ";
+			String redirect = "https://" + occam.getDomainName() + "/ms/api/task-evaluation/rbank?rbank="
+					+ (rbank != null ? "" + rbank.getId() : "");
 			NordigenRequisition requisition = AonNordigen.createRequisition(token, agreement, redirect);
 			AonNordigen.updateRequisitionId(occam, requisition, rbank.getId());
 			return requisition;
@@ -571,6 +572,7 @@ public class AonNordigen {
 		long diffInMillies = today.getTime() - created.getTime();
 	    long daysBetween = TimeUnit.DAYS.convert(diffInMillies, TimeUnit.MILLISECONDS);
 		int daysToExpire = agreement.getAccessValidForDays() - (int)daysBetween;
+		
 		if (daysToExpire <= 5) {
 			return true;
 		}else {
