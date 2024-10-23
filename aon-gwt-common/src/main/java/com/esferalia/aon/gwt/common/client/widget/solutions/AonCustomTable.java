@@ -27,12 +27,57 @@ public class AonCustomTable extends HTMLPanel {
 		add(header);
 	}
 	
-	public void addHeader(Label label, String width) {
+	public Label addHeader(Label label, String width) {
 		addCellHeaderStyle(label);
 		label.getElement().getStyle().setProperty("width", width);
 		if(AonStringUtils.equalsIgnoreCase(width, "-moz-available"))
 			label.getElement().getStyle().setProperty("width", "-webkit-fill-available");
 		header.add(label);
+		return label;
+	}
+	
+	public Label addHeader(Label label, String width, String styles) {
+		addCellHeaderStyle(label);
+		label.getElement().getStyle().setProperty("width", width);
+		if(AonStringUtils.equalsIgnoreCase(width, "-moz-available"))
+			label.getElement().getStyle().setProperty("width", "-webkit-fill-available");
+		header.add(label);
+		addInlineStyle(label, styles);
+		return label;
+	}
+	
+	public void addInlineStyle(Label label, String styleString) {
+	    // Split the style string into individual properties (e.g., "text-align: right;")
+	    String[] styleProperties = styleString.split(";");
+	    
+	    for (String property : styleProperties) {
+	        // Split each property into key-value pairs (e.g., "text-align" and "right")
+	        String[] keyValue = property.split(":");
+	        
+	        if (keyValue.length == 2) {
+	            // Trim the key and value to remove any excess whitespace
+	            String key = keyValue[0].trim();
+	            String value = keyValue[1].trim();
+
+	            // Convert the CSS property (e.g., "text-align") to camelCase (e.g., "textAlign")
+	            String camelCaseKey = convertToCamelCase(key);
+
+	            // Set the style on the element
+	            label.getElement().getStyle().setProperty(camelCaseKey, value);
+	        }
+	    }
+	}
+	
+	private String convertToCamelCase(String cssProperty) {
+	    String[] parts = cssProperty.split("-");
+	    StringBuilder camelCaseProperty = new StringBuilder(parts[0]);
+	    
+	    for (int i = 1; i < parts.length; i++) {
+	        camelCaseProperty.append(Character.toUpperCase(parts[i].charAt(0)))
+	                         .append(parts[i].substring(1));
+	    }
+	    
+	    return camelCaseProperty.toString();
 	}
 	
 	public void addHeader(AonTableButton button, String width) {
