@@ -378,6 +378,9 @@ public class RawdocServlet extends AonApiHttpServlet {
 		}
 		JSONArray log = new JSONArray(rawdoc.getLog() != null ? rawdoc.getLog() : "[]");
 		json.put("remarks", log);
+		
+		json.put(IJsonNames.CREATION_USER, rawdoc.getCreationUser());
+		json.put(IJsonNames.CREATION_DATE, AonDateUtils.format(rawdoc.getCreationDate(), "dd/MM/yyyy"));
 		return json;
 	}
 	
