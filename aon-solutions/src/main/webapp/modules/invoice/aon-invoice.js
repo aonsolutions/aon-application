@@ -359,8 +359,7 @@ export class AonInvoice extends AonElement {
 		invoiceToolbar.addButton2(ACTION.PREVIOUS, () => this.previousInvoice());
 		invoiceToolbar.addSeparator();
 
-		if(!this.getInvoice().isOcrStatus(CONSTANT.REJECTED, CONSTANT.DISCARDED, CONSTANT.PENDING_DECISSION, CONSTANT.ERROR )
-			&& !this.getInvoice().isDraft()){
+		if(!this.getInvoice().isDraft() && !this.getInvoice().isRejected()){
 			invoiceToolbar.addButton('Options', 'more_vert', (e) => {
 				e.preventDefault();
 				let rect = e.target.getBoundingClientRect();
@@ -386,11 +385,13 @@ export class AonInvoice extends AonElement {
 				comment.fn = () => this.addInvoiceComment();
 				moreActions.push(comment);
 	
-				let send = ACTION.SEND_INVOICE;
-				send.permission = true;
-				send.backgroundColor = INVOICE.color;
-				send.fn = () => this.sendInvoice();
-				moreActions.push(send);
+				if(this.getInvoice().isEmitida()) {
+					let send = ACTION.SEND_INVOICE;
+					send.permission = true;
+					send.backgroundColor = INVOICE.color;
+					send.fn = () => this.sendInvoice();
+					moreActions.push(send);
+				}
 	
 				if(!this.getInvoice().isRawdoc()){
 					let rectify = ACTION.RECTIFY_INVOICE;

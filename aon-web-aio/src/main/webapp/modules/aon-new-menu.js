@@ -174,7 +174,7 @@ export class AonNewMenu extends AonElement {
 					this.rootPanel(new AonDesktop());
 					break;
 				case AON_CLASSIC.app:
-					open('https://' + localStorage.getItem('aon_domain_name') + '/login?token=' + localStorage.getItem('aon_session_id'))
+					open(location.protocol + '//' + localStorage.getItem('aon_domain_name') + ( location.port ? ":" + location.port : ""   ) + '/login?token=' + localStorage.getItem('aon_session_id'))
 					return;
 				case Apps.CONSOLE.app:
 					this.rootPanel(new AonConsole());
@@ -1128,7 +1128,6 @@ export class AonNewMenu extends AonElement {
 								}			
 							});
 							input.click();
-							// this.appSelection(Apps.INVOICE);
 						}
 					}
 				]
@@ -1143,7 +1142,6 @@ export class AonNewMenu extends AonElement {
 					input.className = CSS.AON_NONE;
 					input.addEventListener(EVENT.CHANGE, ({target}) => uploadDocuments(input, target.files) );
 					input.click();
-					this.appSelection(Apps.DOCUMENTAL);
 				},
 				icon: MATERIAL_ICONS.CLOUD_UPLOAD,
 				name: MSG.UPLOAD_DOCUMENT,
@@ -1157,11 +1155,10 @@ export class AonNewMenu extends AonElement {
 					let aonMessengerChat = new AonMessenger();	
 					aonMessengerChat.data = {source:TASK_SOURCE.QUERY};
 					this.rootPanel(aonMessengerChat);
-					this.appSelection(Apps.MESSENGER);
 				}
 			});
 		}
-		if(this.getDur().isAon()){
+		if(this.getDur().isPayroll()){
 			newMenuOptions.push({
 				icon: 'person_add',
 				name: MSG.NEW_EMPLOYEE,
@@ -1182,8 +1179,6 @@ export class AonNewMenu extends AonElement {
 							});
 						});
 					});
-					this.appSelection(Apps.MESSENGER);
-
 				}
 			});
 		}

@@ -49,6 +49,7 @@ import com.esferalia.aon.jooq.tables.records.ContractRecord;
 import com.esferalia.aon.jooq.tables.records.PaymentConceptRecord;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.model.type.ContractLeaveType;
 import com.esferalia.aon.payroll.IrpfOutcome;
 import com.esferalia.aon.payroll.Salary;
 import com.esferalia.aon.payroll.SalaryBuilder;
@@ -2452,6 +2453,49 @@ public class SQLExtraTestCase extends AbstractSQLTestCase {
 
 	}
 	
+	@Test
+	public void testUndefPaymentsWithPartialPaternity() throws ExpressionException,
+			SQLException, SalaryException {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+
+		// @formatter:on
+		ContractRecord contract = newContract(aonContext,
+				getFirstDayOfMonth(getToday()) 
+				,new HashMap<String, String>() {
+				} 
+				,new String[] {} 
+				,new String[] {} 
+				,null);
+		//@formatter:off
+		PaymentConceptRecord pagaExtra = addConcept(aonContext, "PAGA_EXTRA", PaymentType.CRA_0004);
+		PaymentConceptRecord salarioBase = addConcept(aonContext, "SALARIO_BASE", PaymentType.CRA_0001);
+
+		addPayment(aonContext, contract, salarioBase, String.format("1200.00 * %s / %s", WORKED_DAYS , MONTH_DAYS ));
+		addPayment(aonContext, contract, pagaExtra, "SALARIO_BASE  + PLUS_SALARIAL + PLUS_ANTIGUEDAD", "_P", PaymentType.CRA_0004);
+		addPayment(aonContext, contract, pagaExtra, "SALARIO_BASE  + PLUS_SALARIAL + PLUS_ANTIGUEDAD", "_P", PaymentType.CRA_0004);
+		
+
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(
+				CONTRACT.getName() + "." + CONTRACT.ID.getName(),
+				contract.getId());
+
+		Date startDate = getFirstDayOfMonth(getToday());
+		Date endDate = getLastDayOfMonth(startDate);
+
+		addIT(aonContext, contract, LeaveType.PATERNITY, startDate, endDate, null);
+		addData(aonContext, contract, startDate, endDate, ContextVariable.PATERNITY_FACTOR.getName(), "0.50");
+		
+		
+
+		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(connection, startDate, endDate, endDate, contract);
+
+		Salary salary = new SmartContractSalaryCalculator<Salary>(new SalaryBuilder()).calculate(ctx);
+		Assert.assertEquals(String.format("%s",TOTAL_PAYMENT), 600.00  + (600.00*2/12), salary.getTotalPayment(), DELTA);
+		Assert.assertEquals(String.format("%s",ContextVariable.CGC_BASE), 600.00  + (600.00*2/12), salary.getCommonBase(), DELTA);
+
+	}
 
 	@Test
 	public void testAutoProrrationI() throws ExpressionException,

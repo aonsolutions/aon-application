@@ -13,18 +13,18 @@ import javax.activation.DataHandler;
 import javax.activation.DataSource;
 import javax.activation.FileDataSource;
 
-import com.amazonaws.services.simpleemail.AmazonSimpleEmailService;
-import com.amazonaws.services.simpleemail.AmazonSimpleEmailServiceClientBuilder;
-import com.amazonaws.services.simpleemail.model.RawMessage;
-import com.amazonaws.services.simpleemail.model.SendEmailRequest;
-import com.amazonaws.services.simpleemail.model.SendRawEmailRequest;
-
 import jakarta.mail.MessagingException;
 import jakarta.mail.Session;
 import jakarta.mail.internet.InternetAddress;
 import jakarta.mail.internet.MimeBodyPart;
 import jakarta.mail.internet.MimeMessage;
 import jakarta.mail.internet.MimeMultipart;
+import software.amazon.awssdk.core.SdkBytes;
+import software.amazon.awssdk.regions.Region;
+import software.amazon.awssdk.services.ses.SesClient;
+import software.amazon.awssdk.services.ses.model.RawMessage;
+import software.amazon.awssdk.services.ses.model.SendEmailRequest;
+import software.amazon.awssdk.services.ses.model.SendRawEmailRequest;
 
 public class SES {
 	
@@ -123,14 +123,16 @@ public class SES {
 
             // Instantiate an Amazon SES client, which will make the service 
             // call with the supplied AWS credentials.
-            AmazonSimpleEmailService client = AmazonSimpleEmailServiceClientBuilder.standard().build();
-           
+            
+        	SesClient client = SesClient.builder().region(Region.EU_WEST_1).build();
+        	
             // Send the email.
             ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
             message.writeTo(outputStream);
-            RawMessage rawMessage = new RawMessage(ByteBuffer.wrap(outputStream.toByteArray()));
+            
+            RawMessage rawMessage = RawMessage.builder().data(SdkBytes.fromByteArray(outputStream.toByteArray())).build();
 
-            SendRawEmailRequest rawEmailRequest = new SendRawEmailRequest(rawMessage);
+            SendRawEmailRequest rawEmailRequest = SendRawEmailRequest.builder().rawMessage(rawMessage).build();
             client.sendRawEmail(rawEmailRequest);
             LOGGER.info(EMAIL_SENT);
             return "ok";
@@ -146,14 +148,13 @@ public class SES {
     	try {
             // Instantiate an Amazon SES client, which will make the service 
             // call with the supplied AWS credentials.
-            AmazonSimpleEmailService client = AmazonSimpleEmailServiceClientBuilder.standard().build();
+            SesClient client = SesClient.builder().region(Region.EU_WEST_1).build();
 
             // Send the email.
             ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
             message.writeTo(outputStream);
-            RawMessage rawMessage = new RawMessage(ByteBuffer.wrap(outputStream.toByteArray()));
-            
-            SendRawEmailRequest rawEmailRequest = new SendRawEmailRequest(rawMessage);
+            RawMessage rawMessage = RawMessage.builder().data(SdkBytes.fromByteArray(outputStream.toByteArray())).build();
+            SendRawEmailRequest rawEmailRequest = SendRawEmailRequest.builder().rawMessage(rawMessage).build();
             client.sendRawEmail(rawEmailRequest);
             LOGGER.info(EMAIL_SENT + " from " + domain);
         } catch (Exception e) {
@@ -186,20 +187,6 @@ public class SES {
     			.setSubject(subject)
     			.setBody(body);
     	return sendEmail(msg);
-    }
-    
-    public static String sendEmail(SendEmailRequest request) {
-    	try {
-            AmazonSimpleEmailService client = AmazonSimpleEmailServiceClientBuilder.standard().build();
-            
-            client.sendEmail(request);
-            LOGGER.info(EMAIL_SENT);
-            return "ok";
-        } catch (Exception e) {
-            LOGGER.warning(EMAIL_NOT_SENT);
-            e.printStackTrace();
-            return e.getMessage();
-        }
     }
     
     public static String sendEmailWithAttachment(String from, List<String> toList, String subject, String body, List<File> files) {	

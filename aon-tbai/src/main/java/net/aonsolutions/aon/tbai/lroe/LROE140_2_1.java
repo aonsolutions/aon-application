@@ -210,6 +210,7 @@ public class LROE140_2_1 extends LROE140 {
 			DetalleRentaIVAGastoType r = new DetalleRentaIVAGastoType();
 			if(invoice.getEpigraph().equals("183320")) invoice.setEpigraph("183321");
 			if(invoice.getEpigraph().equals("183310")) invoice.setEpigraph("183311");
+			if(invoice.getEpigraph().equals("184950")) invoice.setEpigraph("1849501"); // o 1849502 ??
 			r.setEpigrafe(invoice.getEpigraph());
 
 			r.setBaseImponible(Double.toString(tax.getBase()));	
@@ -232,7 +233,12 @@ public class LROE140_2_1 extends LROE140 {
 			}
 			
 			if(r.getBienAfectoIRPFYOIVA() == null && !AonStringUtils.isBlank(detail.getAccountCode()) && detail.getAccountCode().length() >= 3) {
-				r.setConcepto(detail.getAccountCode().substring(0,3));
+				String concept = detail.getAccountCode().substring(0,3);
+				if("642".equals(concept)) {
+					String aux = detail.getAccountCode().substring(0,4);
+					concept = "6421".equals(aux) ? "64201" : "64202";
+				}
+				r.setConcepto(concept);
 				double importeGastoIRPF = AonMathUtils.round(tax.getBase() * tax.getDeductiblePercent() / 100);
 				r.setImporteGastoIRPF(Double.toString(importeGastoIRPF));
 			}
@@ -371,6 +377,7 @@ public class LROE140_2_1 extends LROE140 {
 		filtro.setEmisorFacturaRecibida(buildEmisorAnulacion(invoice));
 		if(invoice.getEpigraph().equals("183320")) invoice.setEpigraph("183321");
 		if(invoice.getEpigraph().equals("183310")) invoice.setEpigraph("183311");
+		if(invoice.getEpigraph().equals("184950")) invoice.setEpigraph("1849501"); // o 1849502 ??
 		filtro.setEpigrafe(invoice.getEpigraph());
 		filtro.setEstado(EstadoRegistroConsultaEnum.CORRECTO);
 		filtro.setNumPaginaConsulta(1);

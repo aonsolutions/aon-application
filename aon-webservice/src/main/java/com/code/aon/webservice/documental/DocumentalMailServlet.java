@@ -2,28 +2,12 @@ package com.code.aon.webservice.documental;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
 import java.util.Base64;
 import java.util.LinkedList;
-import java.util.List;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
-import jakarta.servlet.ServletException;
-import jakarta.servlet.annotation.WebServlet;
-import jakarta.servlet.http.HttpServlet;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-
-import org.apache.http.NameValuePair;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.entity.UrlEncodedFormEntity;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.impl.client.HttpClientBuilder;
-import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.code.aon.webservice.common.MSG;
@@ -35,6 +19,14 @@ import com.esferalia.aon.occam.api.model.Signature;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.attachment.AttachType;
 import com.esferalia.aon.occam.api.model.security.User;
+
+import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import solutions.aon.aws.ses.SES;
+import solutions.aon.aws.ses.SESMessage;
 
 @WebServlet(name = "DocumentalNotification", urlPatterns = { "/documental_notification/*",
 															  "/aon_gwt_aio/ms/documental_notification/*"})
@@ -132,36 +124,16 @@ public class DocumentalMailServlet extends HttpServlet{
 	
 	public void sendEmail(Domain domain, String login, Integer mailAccountId, String to, String issue, String message, String scheme){
 		try {
-			JSONObject json = new JSONObject();
-			json.put("mailAccountId", mailAccountId)
-				.put("recipientsTo", to)
-				.put("content", message)
-				.put("subject", issue)
-				.put("login", login)
-				.put("domainName", domain.getName())
-				.put("domainId", domain.getId())
-				.put("md5", "")
-				.put("bcc", "");
-			
-			sendPostHttpClient(domain, login, json, scheme);			
-		} catch (JSONException e) {
-			LOGGER.log(Level.SEVERE, e.getMessage());
-		}
-	}
-	
-	protected void sendPostHttpClient(Domain domain, String login, JSONObject json, String scheme) {
-		try{
-			String url = scheme + "://"+domain.getName()+ "/send_email/";
-			System.out.println(url);
-			HttpClientBuilder base = HttpClientBuilder.create();
-			HttpClient client = base.build();
-			HttpPost post = new HttpPost(url);
-			List<NameValuePair> urlParameters =  new ArrayList<NameValuePair>();
-			urlParameters.add(new BasicNameValuePair("details", json.toString()));
-			post.setEntity(new UrlEncodedFormEntity(urlParameters));
-			client.execute(post);
-		} catch (IOException e){
-			LOGGER.log(Level.SEVERE, e.getMessage());
+			SESMessage sesMessage = new SESMessage()
+				.setAlias("Aon Solutions Notification")
+				.setFrom("notification@aon.solutions")
+				.setTo(to)
+				.setSubject(issue)
+				.setBody(message);
+		
+			SES.sendEmail(sesMessage);
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
 	}
 	
