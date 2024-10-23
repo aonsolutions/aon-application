@@ -134,23 +134,15 @@ export class AonConfig extends AonElement {
 
         topNavSwitch.addEventListener(EVENT.CHANGE, () => {
             LS.setTopMenu(topNavSwitch.checked);
-            let content = this.getElement("aonDesktopMainContent");
             let topnav = this.getElement("aonMenuTopnav");
-            let height = topnav.style.height;
-            if(height == "68px")
-                content.style.height = "calc(100vh - 48px)";
 
-            else if (height == "0px")
-                content.style.height = "calc(100vh - 115px)";
-
-            
             if(LS.isTopMenu()) {
-                    aonMenu.showTopNav();
-                } else {
-                    aonMenu.hideTopNav();
-                };
-                    
-            });
+            	aonMenu.showTopNav();
+            } else {
+                aonMenu.hideTopNav();
+            };
+			
+		});
 
         sideNavSwitch.addEventListener(EVENT.CHANGE, () => {
             let welcome = this.getElement("aonCompanyTabFilter");
