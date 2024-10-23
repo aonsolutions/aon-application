@@ -73,7 +73,7 @@ class AonJs(private val webView: WebView?, private val context: Context) : Compo
         val base64 = CameraActivity.imgBase64
         if(base64 != null){
             val base64JSON = JSONObject()
-            base64JSON.put("photo",base64)
+            base64JSON.put("content",base64)
             mainActivity?.runOnUiThread {
                 Log.v("TAG", "Foto: $base64")
                 webView?.evaluateJavascript("receiveImage(${base64JSON})", null)

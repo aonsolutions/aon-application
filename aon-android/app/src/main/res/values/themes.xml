@@ -1,5 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <!-- Tema personalizado para la Splash Screen -->
+    <style name="Theme.AonApp.Splash" parent="Theme.SplashScreen">
+        <!-- Imagen de fondo para la Splash Screen (asegúrate de que la imagen 'splash' esté en la carpeta 'drawable') -->
+        <item name="windowSplashScreenBackground">@drawable/splash</item>
+        <!-- Duración de la animación (0 para quitar animaciones) -->
+        <item name="windowSplashScreenAnimationDuration">0</item>
 
+        <!-- El tema que se aplica después de la Splash Screen -->
+        <item name="postSplashScreenTheme">@style/Theme.Camara2</item>
+    </style>
+
+    <!-- Tema principal de la aplicación después de la Splash Screen -->
     <style name="Theme.Camara2" parent="android:Theme.Material.Light.NoActionBar" />
 </resources>

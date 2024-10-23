@@ -22,27 +22,23 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.viewinterop.AndroidView
+import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import solutions.aon.aonapp.ui.theme.Camara2Theme
 
 const val PAGE_URL = "https://aonsolutions.org"
 
 class MainActivity : ComponentActivity() {
-    private val aonJs: AonJs by lazy { AonJs(null,this) }
+    private val aonJs: AonJs by lazy { AonJs(null, this) }
     private val locationPermissionRequest =
-        registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions())
-        { permissions ->
+        registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { permissions ->
             when {
                 permissions[Manifest.permission.ACCESS_FINE_LOCATION] == true -> {
-                    // Acceso preciso a la ubicación concedido.
                     aonJs.getPosition("{}")
                 }
-
                 permissions[Manifest.permission.ACCESS_COARSE_LOCATION] == true -> {
                     aonJs.getPosition("{}")
                 }
-
                 else -> {
-                    // No se concedió acceso a la ubicación.
                     Log.v("TAG", "Location permission not granted")
                 }
             }
@@ -50,16 +46,18 @@ class MainActivity : ComponentActivity() {
 
     @RequiresApi(Build.VERSION_CODES.M)
     override fun onCreate(savedInstanceState: Bundle?) {
+        installSplashScreen()
+        super.onCreate(savedInstanceState)
         locationPermissionRequest.launch(
             arrayOf(
                 Manifest.permission.ACCESS_FINE_LOCATION,
                 Manifest.permission.ACCESS_COARSE_LOCATION
             )
         )
-        super.onCreate(savedInstanceState)
+
+
         setContent {
             Camara2Theme {
-                // A surface container using the 'background' color from the theme
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
@@ -70,6 +68,7 @@ class MainActivity : ComponentActivity() {
         }
     }
 
+
     @SuppressLint("SetJavaScriptEnabled")
     @Composable
     fun WebViewScreen() {
@@ -77,7 +76,11 @@ class MainActivity : ComponentActivity() {
         AndroidView(
             factory = { context ->
                 WebView(context).apply {
-                    webViewClient = WebViewClient()
+                    webViewClient = object : WebViewClient() {
+                        override fun onPageFinished(view: WebView?, url: String?) {
+                            super.onPageFinished(view, url)
+                        }
+                    }
                     settings.javaScriptEnabled = true
                     settings.userAgentString = "solutions.aon.android"
                     settings.mixedContentMode = WebSettings.MIXED_CONTENT_ALWAYS_ALLOW
@@ -117,11 +120,7 @@ class MainActivity : ComponentActivity() {
     }
 
     private fun isColorDark(color: Int): Boolean {
-        // Calcula el brillo del color
         val darkness = 1 - (0.299 * Color.red(color) + 0.587 * Color.green(color) + 0.114 * Color.blue(color)) / 255
-        // Retorna true si el color es oscuro, false si es claro
         return darkness >= 0.5
     }
 }
-
-
