@@ -809,6 +809,8 @@ export class AonInvoicePanel extends AonElement {
 		  let data = { uploaded : 0 , prefix: 'CM'};
       uploadToast.setJobId(generateJobId()); 
 			uploadToast.addFile("invoice", e.detail, data);
+
+      this.rootPanel(new AonInvoicePanel());
 		});
     this.rootPanel(editor); 
   }

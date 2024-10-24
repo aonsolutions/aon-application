@@ -504,6 +504,8 @@ export class AonMobileMenu extends AonElement {
 		  let data = { uploaded: 0, prefix: 'CM' };
       uploadToast.setJobId(generateJobId()); 
 			uploadToast.addFile("invoice", e.detail, data);
+
+      this.home();
 		});
     this.rootPanel(editor); 
   }
