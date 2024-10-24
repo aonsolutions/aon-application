@@ -48,6 +48,7 @@ import com.esferalia.aon.occam.api.model.Person;
 import com.esferalia.aon.occam.api.model.Question;
 import com.esferalia.aon.occam.api.model.QuestionParams;
 import com.esferalia.aon.occam.api.model.SellerParams;
+import com.esferalia.aon.occam.api.model.SellerWorkloadParams;
 import com.esferalia.aon.occam.api.model.Survey;
 import com.esferalia.aon.occam.api.model.registry.Carrier;
 import com.esferalia.aon.occam.api.model.registry.Category;
@@ -73,6 +74,7 @@ import com.esferalia.aon.occam.api.model.registry.RegistrySeller;
 import com.esferalia.aon.occam.api.model.registry.RegistryType;
 import com.esferalia.aon.occam.api.model.registry.Segment;
 import com.esferalia.aon.occam.api.model.registry.Seller;
+import com.esferalia.aon.occam.api.model.registry.SellerWorkload;
 import com.esferalia.aon.occam.api.model.registry.Supplier;
 import com.esferalia.aon.occam.api.model.registry.SupplierFull;
 import com.esferalia.aon.occam.api.model.registry.Target;
@@ -149,6 +151,10 @@ public interface IRegistry {
 	public Seller saveSeller(CloseableAONContext ctx, Seller seller);
 	public void deleteSeller(CloseableAONContext ctx, Integer sellerId);
 	
+	// ------------------- SELLER WORKLOAD
+	public List<SellerWorkload> getSellerWorkloadList(CloseableAONContext ctx, SellerWorkloadParams params);
+	public Integer getSellerWorkloadListCount(CloseableAONContext ctx, SellerWorkloadParams params);
+	
 	// ------------------- RSELLER
 	public RegistrySeller getRegistrySeller(AONContext ctx, RegistrySellerFilter filter);
 	public Stream<RegistrySeller> getRegistrySellerStream(AONContext ctx, RegistrySellerFilter filter);
@@ -195,9 +201,6 @@ public interface IRegistry {
 	public Company saveCompany(AONContext ctx, Company company);
 	public Stream<RegistryItem> getRItemStream(AONContext ctx, RegistryItemFilter filter);
 	public Stream<RegistryItem> getRItemStream(AONContext ctx, RegistryItemFilter filter, int limit, int offset);
-
-	public Stream<AonCompany> getCompanyStream(AONContext ctx, Integer user, Integer page, Integer perPage);
-	public Stream<AonCompany> getCompanyStream(AONContext ctx, Integer user, CompanyFilter filter, Integer page, Integer perPage);
 
 	// ------------------- PERSON
 	public Stream<Person> getPersonStream(AONContext ctx, PersonFilter filter);
