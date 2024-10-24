@@ -88,4 +88,5 @@ dependencies {
 
     implementation("com.github.yalantis:ucrop:2.2.8")
     implementation("androidx.core:core-splashscreen:1.0.1")
+    implementation("androidx.compose.material:material-icons-extended:1.7.4")
 }

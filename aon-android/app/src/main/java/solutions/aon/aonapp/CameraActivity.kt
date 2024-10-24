@@ -13,10 +13,11 @@ import androidx.camera.core.ImageCapture
 import androidx.camera.core.ImageCaptureException
 import androidx.camera.view.LifecycleCameraController
 import androidx.camera.view.PreviewView
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material.icons.Icons
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Camera
+import androidx.compose.material.icons.filled.CameraAlt
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
@@ -24,12 +25,14 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
-import androidx.lifecycle.LifecycleOwner
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.isGranted
 import com.google.accompanist.permissions.rememberPermissionState
@@ -66,20 +69,38 @@ class CameraActivity : ComponentActivity() {
         LaunchedEffect(Unit) {
             permissionState.launchPermissionRequest()
         }
-        Scaffold(modifier = Modifier.fillMaxSize(), floatingActionButton = {
-            FloatingActionButton(onClick = {
-                val executor = ContextCompat.getMainExecutor(context)
-                takePicture(cameraController, executor, context)
-            }) {
-                Icon(Icons.Filled.Add, "Floating action button")
+        Scaffold(
+            modifier = Modifier.fillMaxSize(),
+            content = { padding ->
+                Box(modifier = Modifier.fillMaxSize()) {
+                    if (permissionState.status.isGranted) {
+                        CameraComposable(cameraController, lifecycle, modifier = Modifier.padding(padding))
+                    } else {
+                        Text(text = "Permiso Denegado", modifier = Modifier.padding(padding))
+                    }
+
+                    FloatingActionButton(
+                        onClick = {
+                            val executor = ContextCompat.getMainExecutor(context)
+                            takePicture(cameraController, executor, context)
+                        },
+                        shape = CircleShape,
+                        containerColor = Color.White,
+                        modifier = Modifier
+                            .size(80.dp)
+                            .aspectRatio(1f)
+                            .align(Alignment.BottomCenter)
+                            .padding(bottom = 32.dp)
+                    ) {
+                        Icon(
+                            imageVector = androidx.compose.material.icons.Icons.Filled.CameraAlt,
+                            contentDescription = "Tomar Foto",
+                            tint = Color.Black
+                        )
+                    }
+                }
             }
-        }) {
-            if (permissionState.status.isGranted) {
-                CameraComposable(cameraController, lifecycle, modifier = Modifier.padding(it))
-            } else {
-                Text(text = "Permiso Denegado", modifier = Modifier.padding(it))
-            }
-        }
+        )
     }
 
     private fun takePicture(cameraController: LifecycleCameraController, executor: Executor, context: Context) {
@@ -114,15 +135,10 @@ class CameraActivity : ComponentActivity() {
 
     private fun fileToBase64(file: File): String? {
         return try {
-            // Convertir el archivo a un Bitmap
             val bitmap = BitmapFactory.decodeFile(file.absolutePath)
-
-            // Comprimir el Bitmap a bytes y codificar a Base64
             val byteArrayOutputStream = ByteArrayOutputStream()
             bitmap.compress(Bitmap.CompressFormat.JPEG, 25, byteArrayOutputStream)
             val byteArray = byteArrayOutputStream.toByteArray()
-
-            // Codificar los bytes a Base64
             Base64.encodeToString(byteArray, Base64.NO_WRAP)
         } catch (e: Exception) {
             println("Error al convertir el archivo a Base64: ${e.message}")
@@ -133,7 +149,7 @@ class CameraActivity : ComponentActivity() {
     @Composable
     fun CameraComposable(
         cameraController: LifecycleCameraController,
-        lifecycle: LifecycleOwner,
+        lifecycle: androidx.lifecycle.LifecycleOwner,
         modifier: Modifier = Modifier,
     ) {
         cameraController.bindToLifecycle(lifecycle)

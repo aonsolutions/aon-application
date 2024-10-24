@@ -25,7 +25,7 @@ import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import solutions.aon.aonapp.ui.theme.Camara2Theme
 
-const val PAGE_URL = "https://aonsolutions.org"
+const val PAGE_URL = "http://192.168.2.45:8080/beta"
 
 class MainActivity : ComponentActivity() {
     private val aonJs: AonJs by lazy { AonJs(null, this) }
@@ -110,17 +110,13 @@ class MainActivity : ComponentActivity() {
         }
     }
 
-    fun changeStatusBarColorHex(colorHex: String) {
+    fun changeStatusBarColorHex(colorHex: String, dark: Boolean) {
         runOnUiThread {
             val color = Color.parseColor(colorHex)
             window?.statusBarColor = color
-            if (!isColorDark(color))
+            if (!dark)
                 window?.decorView?.systemUiVisibility = View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
         }
     }
 
-    private fun isColorDark(color: Int): Boolean {
-        val darkness = 1 - (0.299 * Color.red(color) + 0.587 * Color.green(color) + 0.114 * Color.blue(color)) / 255
-        return darkness >= 0.5
-    }
 }
