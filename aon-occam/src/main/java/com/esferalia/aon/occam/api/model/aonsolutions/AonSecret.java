@@ -12,8 +12,15 @@ import solutions.aon.aws.secrets.SECRETS;
 
 public class AonSecret {
 	
+	private static final String SECRET = "aonsecret";
+	
+	private AonSecret() {
+		
+	}
+	
 	public static String getAonSecret() {
-		return get(AonSecrets.AON_SECRET);
+		return SECRET;
+		// return get(AonSecrets.AON_SECRET);
 	}
 	
 	public static String get(AonSecrets secret) {
@@ -33,7 +40,6 @@ public class AonSecret {
 		return new JSONObject(value);
 	}
 	
-	
 	public static Certificate getAonCert() {
 		JSONObject json = getJSON(AonSecrets.AON_CERT.getDescription());
 		String cert = JsonUtils.getString(json, AonSecrets.AON_CERT.getName());
@@ -45,5 +51,4 @@ public class AonSecret {
 			.setData(data)
 			.setPassword(password);
 	}
-
 }

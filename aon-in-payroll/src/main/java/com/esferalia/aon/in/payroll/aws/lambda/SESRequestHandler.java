@@ -39,6 +39,8 @@ import org.jooq.conf.ParamType;
 import org.jooq.conf.Settings;
 import org.jooq.impl.DSL;
 
+import com.amazonaws.services.lambda.runtime.Context;
+import com.amazonaws.services.lambda.runtime.RequestHandler;
 import com.esferalia.aon.in.payroll.pdf.SalaryPDFParser;
 import com.esferalia.aon.in.payroll.pdf.jooq.DSLPDFSalaryBuilder;
 import com.esferalia.aon.jooq.tables.Domain;
@@ -220,12 +222,16 @@ public class SESRequestHandler implements RequestHandler<Object, String> {
     
     private static Optional<MimeMessage> handleMessage(String bucket, String key, Callback callback, Handler ...handlers ) {
     	MimeMessage mimeMessage = null;
-        byte[] data = S3.download(bucket, key);
-        try ( InputStream is = new ByteArrayInputStream(data)) {
-        	mimeMessage = handleMIME(is , callback, handlers );
-        } catch ( Exception e ) {
-        	e.printStackTrace();
-        }
+		try {
+			byte[] data = S3.download(bucket, key);
+			try ( InputStream is = new ByteArrayInputStream(data)) {
+				mimeMessage = handleMIME(is , callback, handlers );
+			} catch ( Exception e ) {
+				e.printStackTrace();
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
         return Optional.ofNullable(mimeMessage);
     }
     

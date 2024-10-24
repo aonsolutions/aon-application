@@ -24,6 +24,11 @@ import { AonParent } from "aonparent";
 import { AonIconButton } from "../../components/aon-icon-button.js";
 import { createInput } from "../../components/CreateComponent.js";
 
+import { changeUrl } from '../../services/actionService.js';
+
+
+import * as UA from '../../services/userAgentService.js';
+
 export class AonNewLogin extends AonElement {
   tag;
   userInput;
@@ -268,7 +273,7 @@ export class AonNewLogin extends AonElement {
     this.build();
     
     this.buildLogo();
-    if(!webkitRequestMobile() && this.isMobile()){ // si es app
+    if(!UA.isApp() && this.isMobile()){ // si es app
       this.buildAppLogo();
     } else {
       this.getElement('logosMobiles').style.display = 'none';
@@ -354,11 +359,12 @@ export class AonNewLogin extends AonElement {
     logoToolbar.addEventListener(EVENT.CLICK, ()=>{
       this.tag = this.tag + 1;
       if(this.tag >= 5){
-        const BASE_URL_MOBILE = hrefToolbar.includes("aonsolutions.org") ? "https://aon.solutions/" : "https://aonsolutions.org";
-        mobileAction({
-          action:MOBILE_ACTION.SET_BASE_URL,
-          BASE_URL_MOBILE
-        });
+        const url = hrefToolbar.includes("aonsolutions.org") ? "https://aon.solutions/" : "https://aonsolutions.org";
+        let ionicData = {
+          action: MOBILE_ACTION.SET_BASE_URL,
+          BASE_URL_MOBILE: url
+        }
+        changeUrl(ionicData, url);
         this.tag = 0;
       }
 		})
