@@ -76,8 +76,8 @@ export const s3UploadInvoices = (el, files, jobId) => {
 export const s3UploadInvoice = (file, jobId, data, success, error) => {
     let formData = new FormData();
     let xhr = new XMLHttpRequest();
-  
-  	let fileOrder = `0${data.uploaded}`.slice(-2);
+    let prefix = data.prefix || '';
+  	let fileOrder =  `${prefix}0${data.uploaded}`.slice(-2);
   	data.uploaded += 1;
    
     let re = /(?:\.([^.]+))?$/;

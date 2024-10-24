@@ -364,7 +364,7 @@ export class AonLogin extends AonElement {
     logo.addEventListener(EVENT.CLICK, ()=>{
       this.tag = this.tag + 1;
       if(this.tag >= 5){
-        const url = hrefToolbar.includes("aonsolutions.org") ? "https://aon.solutions/" : "https://aonsolutions.org";
+        const url = href.includes("aonsolutions.org") ? "https://aon.solutions/" : "https://aonsolutions.org";
         let ionicData = {
           action: MOBILE_ACTION.SET_BASE_URL,
           BASE_URL_MOBILE: url
