@@ -959,6 +959,118 @@ export class AonJsfFinanceTrackingEntry extends AonJsfApp {
 	}
 }
 
+export class AonJsfIncome extends AonJsfApp {
+	
+	constructor() {
+		super();
+		this.setViewId('/facelet/app/income.xhtml');
+	}
+}
+
+export class AonJsfDelivery extends AonJsfApp {
+	
+	constructor() {
+		super();
+		this.setViewId('/facelet/app/delivery.xhtml');
+	}
+}
+
+export class AonJsfWarehouseTransfer extends AonJsfApp {
+	
+	constructor() {
+		super();
+		this.setViewId('/facelet/app/warehouseTransfer.xhtml');
+	}
+}
+
+export class AonJsfOrderServer extends AonJsfApp {
+	
+	constructor() {
+		super();
+		this.setViewId('/facelet/app/orderServer.xhtml');
+	}
+}
+
+export class AonJsfOrderProposal extends AonJsfApp {
+	
+	constructor() {
+		super();
+		this.setViewId('/facelet/app/orderProposal.xhtml');
+	}
+}
+
+export class AonJsfStock extends AonJsfApp {
+	
+	constructor() {
+		super();
+		this.setViewId('/facelet/app/stock.xhtml');
+	}
+}
+
+export class AonJsfInventory extends AonJsfApp {
+	
+	constructor() {
+		super();
+		this.setViewId('/facelet/app/inventory.xhtml');
+	}
+}
+
+export class AonJsfInventoryClose extends AonJsfApp {
+	
+	constructor() {
+		super();
+		this.setViewId('/facelet/app/inventoryClose.xhtml');
+	}
+}
+
+export class AonJsfStockReportItem extends AonJsfApp {
+	
+	constructor() {
+		super();
+		this.setViewId('/facelet/app/stockReportItem.xhtml');
+	}
+}
+
+export class AonJsfStockReportWarehouse extends AonJsfApp {
+	
+	constructor() {
+		super();
+		this.setViewId('/facelet/app/stockReportWarehouse.xhtml');
+	}
+}
+
+export class AonJsfStockReportItemValued extends AonJsfApp {
+	
+	constructor() {
+		super();
+		this.setViewId('/facelet/app/stockReportItemValued.xhtml');
+	}
+}
+
+export class AonJsfStockReportWarehouseValued extends AonJsfApp {
+	
+	constructor() {
+		super();
+		this.setViewId('/facelet/app/stockReportWarehouseValued.xhtml');
+	}
+}
+
+export class AonJsfWarehouse extends AonJsfApp {
+	
+	constructor() {
+		super();
+		this.setViewId('/facelet/app/warehouse.xhtml');
+	}
+}
+
+export class AonJsfCarrier extends AonJsfApp {
+	
+	constructor() {
+		super();
+		this.setViewId('/facelet/app/carrier.xhtml');
+	}
+}
+
 if(!window.customElements.get(TAG.AON_JSF_APP)){
 	window.customElements.define(TAG.AON_JSF_APP, AonJsfApp);
 }
@@ -1389,4 +1501,60 @@ if(!window.customElements.get(TAG.AON_JSF_INVOICE_RECORDER)){
 
 if(!window.customElements.get(TAG.AON_JSF_FINANCE_TRACKING_ENTRY)){
 	window.customElements.define(TAG.AON_JSF_FINANCE_TRACKING_ENTRY, AonJsfFinanceTrackingEntry);
+}
+
+if(!window.customElements.get(TAG.AON_JSF_INCOME)){
+	window.customElements.define(TAG.AON_JSF_INCOME, AonJsfIncome);
+}
+
+if(!window.customElements.get(TAG.AON_JSF_DELIVERY)){
+	window.customElements.define(TAG.AON_JSF_DELIVERY, AonJsfDelivery);
+}
+
+if(!window.customElements.get(TAG.AON_JSF_WAREHOUSE_TRANSFER)){
+	window.customElements.define(TAG.AON_JSF_WAREHOUSE_TRANSFER, AonJsfWarehouseTransfer);
+}
+
+if(!window.customElements.get(TAG.AON_JSF_ORDER_SERVER)){
+	window.customElements.define(TAG.AON_JSF_ORDER_SERVER, AonJsfOrderServer);
+}
+
+if(!window.customElements.get(TAG.AON_JSF_STOCK)){
+	window.customElements.define(TAG.AON_JSF_INVENTORY, AonJsfStock);
+}
+
+if(!window.customElements.get(TAG.AON_JSF_INVENTORY)){
+	window.customElements.define(TAG.AON_JSF_INVENTORY, AonJsfInventory);
+}
+
+if(!window.customElements.get(TAG.AON_JSF_INVENTORY_CLOSE)){
+	window.customElements.define(TAG.AON_JSF_INVENTORY_CLOSE, AonJsfInventoryClose);
+}
+
+if(!window.customElements.get(TAG.AON_JSF_ORDER_PROPOSAL)){
+	window.customElements.define(TAG.AON_JSF_ORDER_PROPOSAL, AonJsfOrderProposal);
+}
+
+if(!window.customElements.get(TAG.AON_JSF_STOCK_REPORT_ITEM)){
+	window.customElements.define(TAG.AON_JSF_STOCK_REPORT_ITEM, AonJsfStockReportItem);
+}
+
+if(!window.customElements.get(TAG.AON_JSF_STOCK_REPORT_WAREHOUSE)){
+	window.customElements.define(TAG.AON_JSF_STOCK_REPORT_WAREHOUSE, AonJsfStockReportWarehouse);
+}
+
+if(!window.customElements.get(TAG.AON_JSF_STOCK_REPORT_ITEM_VALUED)){
+	window.customElements.define(TAG.AON_JSF_STOCK_REPORT_ITEM_VALUED, AonJsfStockReportItemValued);
+}
+
+if(!window.customElements.get(TAG.AON_JSF_STOCK_REPORT_WAREHOUSE_VALUED)){
+	window.customElements.define(TAG.AON_JSF_STOCK_REPORT_WAREHOUSE_VALUED, AonJsfStockReportWarehouseValued);
+}
+
+if(!window.customElements.get(TAG.AON_JSF_CARRIER)){
+	window.customElements.define(TAG.AON_JSF_CARRIER, AonJsfCarrier);
+}
+
+if(!window.customElements.get(TAG.AON_JSF_WAREHOUSE)){
+	window.customElements.define(TAG.AON_JSF_WAREHOUSE, AonJsfWarehouse);
 }

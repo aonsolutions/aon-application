@@ -10,13 +10,9 @@
 	<aon:form id="appForm" > 
 		<aon:commandButton 
 			id="appButton" 
+			action="warehouse"
 			style="display: none; " 
-			action="companyImages.initialAction"
 		>
-			<aon:actionListener method="#{domains.onSelect}" />
-			<aon:actionListener method="#{company.onLoad}" />
-			<aon:actionListener method="#{companyImages.onEditSearch}" />
-			<aon:actionListener method="#{companyImages.onSearch}" />
 		</aon:commandButton>
 	</aon:form>
 	
