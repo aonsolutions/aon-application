@@ -39,6 +39,8 @@ import "../../components/aon-dialog-menu.js";
 import { getCounter, addCounter, clearCounter } from "./InvoiceCounter.js";
 import { AonFutureTax } from "../fiscal/tax/aon-future-tax.js";
 import { generateJobId } from "./InvoiceUtils.js";
+import { getReader } from "../../services/utils.js";
+import { AonImageEditor } from "../../components/aon-image-editor.js";
 
 export class AonInvoicePanel extends AonElement {
   selectedOption;
@@ -127,7 +129,7 @@ export class AonInvoicePanel extends AonElement {
 
     let inputCamera = this.getElement(this.INPUT_CAMERA);
     inputCamera.addEventListener(EVENT.CHANGE, ({ target }) =>
-      this.upload(target.files)
+      this.uploadCamera(target.files)
     );
 
     aonInvoice.addEventListener(EVENT.AON_APPLICATION_DROP, (e) =>
@@ -674,7 +676,14 @@ export class AonInvoicePanel extends AonElement {
         icon: "camera_alt",
         permission: true,
         backgroundColor: "#4472C4",
-        fn: () => this.openCamera(),
+        fn: () => {
+          if(UA.isApp()) {
+            let ionicData = { action: MOBILE_ACTION.CAMERA, id: this.INPUT_CAMERA, selector: 'aon-invoice-panel' };
+            openCamera(ionicData, (result) => {
+              this.buildInvoiceImageEditor(result);
+            });
+          } else this.openCamera();
+        }
       };
       options.push(openCamera);
     }
@@ -780,6 +789,28 @@ export class AonInvoicePanel extends AonElement {
       for (let file of files) {
         uploadToast.addFile("invoice", file, data);
       }
+  }
+
+  uploadCamera(files) {
+    getReader(files[0]).then(file => {
+      this.buildInvoiceImageEditor(file);
+    }).catch(() => null);
+  } 
+
+  buildInvoiceImageEditor(file) {
+    let editor = new AonImageEditor();
+    editor.setImage("data:image/jpeg;base64,"+ file.content);
+    editor.addEventListener(EVENT.CROPPER, (e) => {
+      let uploadToast = this.getElement('aonUploadToast');
+		  if(!uploadToast){ 
+			  uploadToast = new AonUploadToast();
+	  		this.appendChild(uploadToast);
+  		}
+		  let data = { uploaded : 0 , prefix: 'CM'};
+      uploadToast.setJobId(generateJobId()); 
+			uploadToast.addFile("invoice", e.detail, data);
+		});
+    this.rootPanel(editor); 
   }
 
   aonInvoice(type, invoice) {

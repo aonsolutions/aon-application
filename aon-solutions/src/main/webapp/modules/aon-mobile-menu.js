@@ -302,7 +302,7 @@ export class AonMobileMenu extends AonElement {
       fn :  () => {
         if(isInvoice){
           dialog.close();
-          if(UA.isAndroidApp()) {
+          if(UA.isApp()) {
             this.SELECTED = "invoice";
             let ionicData = { action: MOBILE_ACTION.CAMERA, id: this.INPUT_CAMERA, selector: 'aon-new-mobile-menu' };
             openCamera(ionicData, (result) => {
@@ -501,7 +501,7 @@ export class AonMobileMenu extends AonElement {
 			  uploadToast = new AonUploadToast();
 	  		this.appendChild(uploadToast);
   		}
-		  let data = { uploaded : 0 };
+		  let data = { uploaded: 0, prefix: 'CM' };
       uploadToast.setJobId(generateJobId()); 
 			uploadToast.addFile("invoice", e.detail, data);
 		});
