@@ -7,7 +7,7 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonConfirmDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonConfirmDialog.AonConfirmDialogCallback;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonMessageDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonSplash;
-import com.esferalia.aon.gwt.common.client.widget.solutions.AonToast;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonToastModel;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
 import com.esferalia.aon.gwt.mod200.client.AonFiscalModelHeader;
@@ -59,7 +59,7 @@ public class Model2002021 extends DockLayoutPanel {
 	AonToolbarButton commentsButton;
 	AonToolbarButton auditButton;
 	
-	AonToast commentsToast = null;
+	AonToastModel commentsToast = null;
 
 	// Estado - SE EMPEZARA A USAR A PARTIR DEL 2022 
 //	AonToolbarButton markAsFinishedButton;
@@ -597,7 +597,7 @@ public class Model2002021 extends DockLayoutPanel {
 		commentsButton = new AonToolbarButton(AON.MSG.comments(), AON.CSS.aonIconNoComments());
 		commentsButton.addClickHandler( event -> {
 			if (commentsToast == null || commentsToast.getParent() == null) {
-				commentsToast = new AonToast();
+				commentsToast = new AonToastModel(this);
 				FlowPanel commentPanel = new FlowPanel();
 				commentPanel.setStyleName( FiscalModelUtils.getAdministrationBackgroundStyle(mod200Object.getMod200().getAdministration()) );
 				commentPanel.addStyleName(AON.CSS.aonHeightAll());

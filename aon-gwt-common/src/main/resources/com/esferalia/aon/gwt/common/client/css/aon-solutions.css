@@ -2144,6 +2144,16 @@
 	animation-iteration-count: 1;
 }
 
+.aon_toast_model {
+	position: absolute;
+	color: #333;
+	width: 300px;
+	background-color: #d8ecff;
+	border: 0.5px solid #999;
+	border-radius: 10px;
+	inset: 0px 50px auto auto !important;
+}
+
 .aon_toast .aon_widget_close {
 	border: 1px solid darkgray;
 }
