@@ -1,13 +1,13 @@
 package net.aonsolutions.occam.impl;
 
-import static com.esferalia.aon.jooq.tables.Finance.FINANCE;
+import static com.esferalia.aon.jooq.tables.InvoiceFiscal.INVOICE_FISCAL;
 
 import java.io.PrintStream;
 
 import org.jooq.Field;
 import org.jooq.Table;
 
-import com.esferalia.aon.jooq.tables.Finance;
+import com.esferalia.aon.jooq.tables.InvoiceFiscal;
 import com.esferalia.aon.watson.util.AonCollectionUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.esferalia.aon.watson.util.AonWordUtils;
@@ -41,11 +41,19 @@ public class BasicTestMaker<T extends Table<?>> {
 	private void make(boolean makeMetadataTest) {
 		println("package net.aonsolutions.occam.api.model;");
 		println();
+		println("import static org.junit.jupiter.api.Assertions.assertEquals;");
+		println("import static org.junit.jupiter.api.Assertions.assertNotEquals;");
 		println("import static org.junit.jupiter.api.Assertions.assertSame;");
 		if (makeMetadataTest) {
 			println("import static org.junit.jupiter.api.Assertions.assertTrue;");
 		}
 		
+		println();
+		println("import java.util.ArrayList;");
+		println("import java.util.HashSet;");
+		println("import java.util.List;");
+		println("import java.util.Set;");
+
 		println();
 		println("import org.junit.jupiter.api.Test;");
 		
@@ -162,6 +170,57 @@ public class BasicTestMaker<T extends Table<?>> {
 				println("\t}");
 			});
 		}
+		
+		println("\t@Test");
+		println("\tvoid test"
+			+ name( table.getName() )
+			+"Equals() {");
+		println("\t\t"
+			+ name( table.getName() )
+			+" a1 = new "
+			+ name( table.getName() )
+			+"().setId(1);");
+		println("\t\tassertEquals(a1,a1);");
+		println("\t\tassertNotEquals(a1,null);");
+		println("\t\tassertNotEquals(null,a1);");
+		println("\t\tassertNotEquals(a1,new Object());");
+		println("\t\tassertNotEquals(a1,new Account());");
+		println();
+		println("\t\t"
+			+ name( table.getName() )
+			+ " a2 = new "
+			+ name( table.getName() )
+			+"().setId(1);");
+		println("\t\tassertEquals(a1,a2);");
+			
+		println("\t\t"
+			+ name( table.getName() )
+			+ " a3 = new "
+			+ name( table.getName() )
+			+"().setId(3);");
+		println("\t\tassertNotEquals(a1,a3);");
+		println("\t}");
+		println();
+		
+		println("\t@Test");
+		println("\tvoid testHashcode() {");
+		println("\t\tList<"
+			+ name( table.getName() )
+			+ "> objects = new ArrayList<>();");
+		println("\t\tfor (int i = 0; i < 1000; i++) {");
+		println("\t\t\tobjects.add(new "
+				+ name( table.getName() )
+			+ "().setId(i));");
+		println("\t\t}");
+		println("\t\tSet<Integer> hashCodes = new HashSet<>();");
+		println("\t\tfor ("
+				+ name( table.getName() )
+				+ " obj : objects) {");
+		println("\t\t\thashCodes.add(obj.hashCode());");
+		println("\t\t}");
+		println("\t\tassertEquals(objects.size(), hashCodes.size(), 10);");
+		println("\t}");	
+		
 		println("}");
 	}
 
@@ -173,7 +232,7 @@ public class BasicTestMaker<T extends Table<?>> {
 	}
 
 	public static void main(String[] args) {
-		BasicTestMaker<Finance> mm = new BasicTestMaker<>(FINANCE);
+		BasicTestMaker<InvoiceFiscal> mm = new BasicTestMaker<>(INVOICE_FISCAL);
 		mm.make( true );
 	}
 }

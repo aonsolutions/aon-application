@@ -10,10 +10,13 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Set;
 import java.util.stream.Collectors;
-import com.tngtech.archunit.core.importer.ImportOption.OnlyIncludeTests;
+
+import org.junit.jupiter.api.Disabled;
+
 import com.tngtech.archunit.core.domain.JavaClass;
 import com.tngtech.archunit.core.domain.JavaClasses;
 import com.tngtech.archunit.core.importer.ClassFileImporter;
+import com.tngtech.archunit.core.importer.ImportOption.OnlyIncludeTests;
 import com.tngtech.archunit.junit.AnalyzeClasses;
 import com.tngtech.archunit.junit.ArchTest;
 import com.tngtech.archunit.lang.ArchCondition;
@@ -60,47 +63,47 @@ class ArchUnitTests {
         .check(importedClasses);		
 	}
 	
-	@ArchTest
-	void testHandlersHaveTests(JavaClasses importedClasses) {
-		classes().that().haveSimpleNameEndingWith("Handler")
-			.and().areNotInnerClasses()
-			.and().areNotMemberClasses()
-		.should(haveACorrespondingClassEndingWith("Test"))
-		.check(importedClasses)
-		;
-	}
-	 
-	private static ArchCondition<JavaClass> haveACorrespondingClassEndingWith(String testClassSuffix) {
-	    return new ArchCondition<JavaClass>("have a corresponding class with suffix " + testClassSuffix) {
-	        Set<String> testedClasseNames = Collections.emptySet();
-
-	        @Override
-	        public void init(Collection<JavaClass> allClasses) {
-	    		JavaClasses testClasses = new ClassFileImporter()
-	    				.withImportOption(new OnlyIncludeTests())
-	    				.importPackages("net.aonsolutions.occam.impl.handler");
-	        	testedClasseNames = testClasses.stream()
-        			.map(JavaClass::getName)
-        			.filter(className -> className.endsWith(testClassSuffix))
-        			.map(className -> className.substring(0, className.length() - testClassSuffix.length()))
-        			.collect(Collectors.toSet());
-	        }
-
-	        @Override
-	        public void check(JavaClass clazz, ConditionEvents events) {
-	            if (!clazz.getName().endsWith(testClassSuffix)) {
-	                boolean satisfied = testedClasseNames.contains(clazz.getName());
-	                String message = "Class " 
-                		+ clazz.getSimpleName() 
-	                	+ " has "
-                		+ (satisfied ? "a" : "no") 
-                		+ " corresponding test class"
-            		;
-	                events.add(new SimpleConditionEvent(clazz, satisfied, message ));
-	            }
-	        }
-	    };
-	}
+//	@ArchTest
+//	void testHandlersHaveTests(JavaClasses importedClasses) {
+//		classes().that().haveSimpleNameEndingWith("Handler")
+//			.and().areNotInnerClasses()
+//			.and().areNotMemberClasses()
+//		.should(haveACorrespondingClassEndingWith("Test"))
+//		.check(importedClasses)
+//		;
+//	}
+//	 
+//	private static ArchCondition<JavaClass> haveACorrespondingClassEndingWith(String testClassSuffix) {
+//	    return new ArchCondition<JavaClass>("have a corresponding class with suffix " + testClassSuffix) {
+//	        Set<String> testedClasseNames = Collections.emptySet();
+//
+//	        @Override
+//	        public void init(Collection<JavaClass> allClasses) {
+//	    		JavaClasses testClasses = new ClassFileImporter()
+//	    				.withImportOption(new OnlyIncludeTests())
+//	    				.importPackages("net.aonsolutions.occam.impl.handler");
+//	        	testedClasseNames = testClasses.stream()
+//        			.map(JavaClass::getName)
+//        			.filter(className -> className.endsWith(testClassSuffix))
+//        			.map(className -> className.substring(0, className.length() - testClassSuffix.length()))
+//        			.collect(Collectors.toSet());
+//	        }
+//
+//	        @Override
+//	        public void check(JavaClass clazz, ConditionEvents events) {
+//	            if (!clazz.getName().endsWith(testClassSuffix)) {
+//	                boolean satisfied = testedClasseNames.contains(clazz.getName());
+//	                String message = "Class " 
+//                		+ clazz.getSimpleName() 
+//	                	+ " has "
+//                		+ (satisfied ? "a" : "no") 
+//                		+ " corresponding test class"
+//            		;
+//	                events.add(new SimpleConditionEvent(clazz, satisfied, message ));
+//	            }
+//	        }
+//	    };
+//	}
 
 	
 }

@@ -139,7 +139,6 @@ class InvoiceCalculatorTest {
 		assertEquals(15.0, iw.getPercentage());
 		assertEquals(17.12, iw.getQuota());
 		assertSame(WithholdingType.PROFESSIONAL, iw.getWithholdingType());
-		assertEquals(0.0, vat.getDirectTaxPercent());
 		assertEquals(17.12, iw.getDeductibleQuota());
 	}
 	
@@ -185,7 +184,6 @@ class InvoiceCalculatorTest {
 		assertEquals(2.0, iw.getPercentage());
 		assertEquals(22.40, iw.getQuota());
 		assertSame(WithholdingType.FARMER, iw.getWithholdingType());
-		assertEquals(0.0, vat.getDirectTaxPercent());
 		assertEquals(22.40, iw.getDeductibleQuota());
 		
 		assertEquals(1097.6, invoice.getHeader().getTotal());

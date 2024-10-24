@@ -20,7 +20,7 @@ import net.aonsolutions.occam.api.model.type.FinanceType;
 import net.aonsolutions.occam.api.model.type.InvoiceType;
 import net.aonsolutions.occam.impl.AONContext;
 
-public class FinanceValidation {
+class FinanceValidation {
 	private FinanceValidation() {
 	}
 

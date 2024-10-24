@@ -11,7 +11,8 @@ abstract class Filler<T> implements Function<Record, T> {
 	}
 	
 	protected static boolean isNull(Record r , Field<?> f) {
-		return checkField(r,f) && getValue(r, f) == null; 
+		Object o = getValue(r, f);
+		return o == null; 
 	}
 	protected static boolean isNotNull(Record r , Field<?> f) {
 		return !isNull(r ,f);

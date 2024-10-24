@@ -61,6 +61,7 @@ class FinanceTest {
 			.setCreationDate(expected.getCreationDate())
 			.setModificationUser(expected.getModificationUser())
 			.setModificationDate(expected.getModificationDate())
+			.setDeleted(expected.isDeleted())
 		;
 		AonAsserts.assertClassEquals(expected, actual);
 	}

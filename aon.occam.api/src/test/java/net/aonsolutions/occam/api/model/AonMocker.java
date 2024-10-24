@@ -2,6 +2,9 @@ package net.aonsolutions.occam.api.model;
 
 import java.sql.Timestamp;
 
+import com.esferalia.aon.watson.util.AonCollectionUtils;
+
+import net.aonsolutions.occam.api.model.type.VATTaxRegime;
 import uk.co.jemos.podam.api.AttributeMetadata;
 import uk.co.jemos.podam.api.PodamFactory;
 import uk.co.jemos.podam.api.PodamFactoryImpl;
@@ -32,6 +35,12 @@ public class AonMocker {
 	
     public static <T> T mock(Class<T> clazz){
     	T t = FACTORY.manufacturePojo(clazz);
+    	
+    	if (t instanceof InvoiceFiscal invFiscal) {
+    		AonCollectionUtils.stream(VATTaxRegime.values())
+				.forEach( e -> invFiscal.setVatRegime(e, AonRandom.gt(50)))
+			;
+    	}
     	
     	if (t instanceof AonEntity) {
     		AonEntity<?> ent = (AonEntity<?>) t;

@@ -70,10 +70,10 @@ public class InvoiceDetail extends AonEntity<InvoiceDetailMetadata> implements H
 	}
 	
 	@Override
-	public InvoiceDetail setDeleted( boolean selected) {
+	public InvoiceDetail setDeleted( boolean deleted) {
 		// Las líneas de facturas se deben borrar desde la factura
-		// Usa Invoice.deleteDetail( InvoiceDetail detail )");
-		super.setDeleted(selected);
+		// Usar Invoice.deleteDetail( InvoiceDetail detail)
+		super.setDeleted(deleted);
 		return this; 
 	}
 
@@ -373,7 +373,7 @@ public class InvoiceDetail extends AonEntity<InvoiceDetailMetadata> implements H
 				.setDomain(this.domain)
 				.setInvoiceDetail(this.id)
 				.setTaxType(TaxType.RETENTION)
-				.setDirectTaxPercent(getInvestAsset().map( ia -> ia.getRetentionPercent() ).orElse(0.0))
+//				.setDirectTaxPercent(getInvestAsset().map( ia -> ia.getRetentionPercent() ).orElse(0.0))
 			;
 			addTax(it);
 			return it;

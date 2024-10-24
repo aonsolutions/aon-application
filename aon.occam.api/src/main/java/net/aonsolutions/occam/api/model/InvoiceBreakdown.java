@@ -1,9 +1,11 @@
 package net.aonsolutions.occam.api.model;
 
 import java.io.Serializable;
+import java.util.Objects;
 import java.util.Optional;
 
 import com.esferalia.aon.watson.util.AonMathUtils;
+import com.esferalia.aon.watson.util.AonObjectUtils;
 
 import net.aonsolutions.occam.api.model.type.TaxType;
 import net.aonsolutions.occam.api.model.type.VatDeductionType;
@@ -178,13 +180,24 @@ public class InvoiceBreakdown implements Serializable {
 
 	public InvoiceBreakdown add(InvoiceBreakdown ib) {
 		setBase( AonMathUtils.round(getBase() + ib.getBase(),4) );
-		if (AonMathUtils.isNotZero(ib.getQuota())) {
-			setQuota( AonMathUtils.round(getQuota() + ib.getQuota()) );	
+		
+		setQuotaEdited( isQuotaEdited() || ib.isQuotaEdited());
+		setSurchargeQuotaEdited( isSurchargeQuotaEdited() || ib.isSurchargeQuotaEdited());
+		setDeductibleQuotaEdited( isDeductibleQuotaEdited() || ib.isDeductibleQuotaEdited());
+		
+		if (!isQuotaEdited()) {
+			setQuota(AonMathUtils.round(getBase() * getPercentage() / 100 ));
+		} else {
+			setQuota( AonMathUtils.round(getQuota() + ib.getQuota()) );
 		}
-		if (AonMathUtils.isNotZero(ib.getSurchargeQuota())) {
+		if (!ib.isSurchargeQuotaEdited()) {
+			setSurchargeQuota(AonMathUtils.round(getBase() * getSurcharge() / 100 ));
+		} else {
 			setSurchargeQuota( AonMathUtils.round(getSurchargeQuota() + ib.getSurchargeQuota()) );
 		}
-		if (AonMathUtils.isNotZero(ib.getDeductibleQuota())) {
+		if (!isDeductibleQuotaEdited()) {
+			setDeductibleQuota(AonMathUtils.round(getQuota() + getSurchargeQuota()));
+		} else {
 			setDeductibleQuota( AonMathUtils.round(getDeductibleQuota() + ib.getDeductibleQuota()) );
 		}
 		return this;
@@ -202,6 +215,9 @@ public class InvoiceBreakdown implements Serializable {
 			.setWithholdingType(it.getWithholdingType())
 			.setVatDeductionType(it.getVatDeductionType())
 			.setWithholdingAccount(it.getWithholdingAccount().orElse(null))
+			.setQuotaEdited( AonMathUtils.isNotZero(it.getQuota()) )
+			.setSurchargeQuotaEdited( AonMathUtils.isNotZero(it.getSurchargeQuota()) )
+			.setDeductibleQuotaEdited( AonMathUtils.isNotZero(it.getDeductibleQuota()) )
 			;
 	}
 	
@@ -214,6 +230,43 @@ public class InvoiceBreakdown implements Serializable {
 			.setDeductibleQuota(iw.getDeductibleQuota())
 			.setWithholdingType(iw.getWithholdingType())
 			.setWithholdingAccount(iw.getAccount().orElse(null))
+			.setQuotaEdited( AonMathUtils.isNotZero(iw.getQuota()) )
+			.setDeductibleQuotaEdited( AonMathUtils.isNotZero(iw.getDeductibleQuota()) )
 			;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (obj == this) return true;
+		if (obj instanceof InvoiceBreakdown other) {
+			return AonObjectUtils.equals( this.taxType,other.taxType) 
+				&& AonObjectUtils.equals( this.base,other.base )
+				&& AonObjectUtils.equals( this.percentage,other.percentage )
+				&& AonObjectUtils.equals( this.quota,other.quota )
+				&& AonObjectUtils.equals( this.surcharge,other.surcharge)
+				&& AonObjectUtils.equals( this.surchargeQuota,other.surchargeQuota )
+				&& AonObjectUtils.equals( this.deductibleQuota,other.deductibleQuota )
+				&& AonObjectUtils.equals( this.withholdingType,other.withholdingType )
+				&& AonObjectUtils.equals( this.vatDeductionType,other.vatDeductionType )
+				&& AonObjectUtils.equals( this.withholdingAccount,other.withholdingAccount )
+			;
+		}
+	    return false;
+	}
+	
+	@Override
+	public int hashCode() {
+	    return 31 * 7
+    		+ Objects.requireNonNullElse(taxType, 0).hashCode()
+    		+ Objects.requireNonNullElse(base, 0).hashCode()
+    		+ Objects.requireNonNullElse(percentage, 0).hashCode()
+    		+ Objects.requireNonNullElse(quota, 0).hashCode()
+    		+ Objects.requireNonNullElse(surcharge, 0).hashCode()
+    		+ Objects.requireNonNullElse(surchargeQuota, 0).hashCode()
+    		+ Objects.requireNonNullElse(deductibleQuota, 0).hashCode()
+			+ Objects.requireNonNullElse(withholdingType, 0).hashCode()
+			+ Objects.requireNonNullElse(vatDeductionType, 0).hashCode()
+			+ Objects.requireNonNullElse(withholdingAccount, 0).hashCode()
+		;
 	}
 }

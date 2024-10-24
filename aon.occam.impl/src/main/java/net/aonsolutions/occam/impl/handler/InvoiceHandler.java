@@ -71,6 +71,7 @@ import net.aonsolutions.occam.api.model.type.TaxType;
 import net.aonsolutions.occam.api.model.type.VatDeductionType;
 import net.aonsolutions.occam.api.model.type.WithholdingType;
 import net.aonsolutions.occam.impl.AONContext;
+import net.aonsolutions.occam.impl.handler.FinanceHandler.FinanceAutoComplete;
 import net.aonsolutions.occam.impl.handler.InvoiceFiscalHandler.InvoiceFiscalFiller;
 import net.aonsolutions.occam.impl.handler.InvoiceHeaderHandler.InvoiceHeaderFiller;
 
@@ -145,7 +146,6 @@ class InvoiceHandler {
 		@Override public Property<Timestamp> getModificationDateProperty() {return new FilterImpl.PropertyDAO<>(INVOICE.MODIFICATION_DATE);} 
 		@Override public Property<String> getModificationUserProperty() {return new FilterImpl.PropertyDAO<>(INVOICE.MODIFICATION_USER);} 
 	}
-
 	static class InvoiceFiller extends Filler<Invoice> {
 
 		@Override
@@ -187,14 +187,19 @@ class InvoiceHandler {
 			.fetch()
 			.stream()
 			.map( new InvoiceFiller() )
-//			.map( i -> fullInvoiceBuilder(ctx, i) )
+			.map(i -> InvoiceDetailHandler.fillInvoice(ctx,i))
+			.map(i -> FinanceHandler.fillInvoice(ctx, domain, i))
+			.map(i -> InvoiceAddressHandler.fillInvoice(ctx, i))
+			.map(Invoice::refreshTaxBreakdown)
 			.findFirst();
 	}
 
-	static Invoice validate(AONContext ctx, Invoice invoice) {
+	static Invoice validate(AONContext ctx, int domain, Invoice invoice) {
 		InvoiceAutoComplete.completeInvoice(ctx, invoice);
 		InvoiceCalculator.calculate(invoice);
 		InvoiceValidation.validate(ctx, invoice);
+		invoice.financeStream()
+			.forEach(f -> FinanceAutoComplete.completeFinanceFromInvoice(ctx, domain, invoice, f));
 		return invoice;
 	}
 	
@@ -207,7 +212,7 @@ class InvoiceHandler {
 	
 	private static Invoice save(AONContext ctx, int domain, Invoice invoice, boolean returnFullInvoice) {
 		ctx.checkWrite();
-		validate(ctx, invoice);
+		validate(ctx, domain, invoice);
 		if (invoice.getId() == null) {
 			insert(ctx, invoice);
 		} else {
@@ -215,6 +220,7 @@ class InvoiceHandler {
 		}
 		saveDetails(ctx, invoice);
 		InvoiceFiscalHandler.save(ctx, invoice);
+		InvoiceAddressHandler.save(ctx, invoice);
 		invoice.financeStream()
 			.forEach( finance -> FinanceHandler.save(ctx, domain, invoice));
 		if (returnFullInvoice) {
@@ -831,8 +837,11 @@ class InvoiceHandler {
 			.orderBy( DSL.rand() )
 			.fetch()
 			.stream()
-			.map(new InvoiceFiller())
-//			.map( i -> fullInvoiceBuilder(ctx, i) )
+			.map( new InvoiceFiller() )
+			.map(i -> InvoiceDetailHandler.fillInvoice(ctx,i))
+			.map(i -> FinanceHandler.fillInvoice(ctx, domain, i))
+			.map(i -> InvoiceAddressHandler.fillInvoice(ctx, i))
+			.map(Invoice::refreshTaxBreakdown)
 			.findFirst();
 	}
 

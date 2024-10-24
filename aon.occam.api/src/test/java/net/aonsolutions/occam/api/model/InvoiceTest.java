@@ -85,7 +85,7 @@ class InvoiceTest {
 		inv.addDetail( d1 );
 		inv.addDetail( d1 );
 		inv.addDetail( d1 );
-		assertEquals( 1, inv.getDetailsSize() );
+		assertEquals( 3, inv.getDetailsSize() );
 	}
 
 	@Test
@@ -118,6 +118,60 @@ class InvoiceTest {
 		
 		inv.deleteDetails();
 		assertEquals( 0, inv.getDetailsSize() );
+
+		InvoiceDetail e1 = AonMocker.mock(InvoiceDetail.class).setDeleted(false);
+		inv.addDetail( e1 );
+		InvoiceDetail e2 = AonMocker.mock(InvoiceDetail.class).setDeleted(false);
+		inv.addDetail( e2 );
+		assertEquals( 2, inv.getDetailsSize() );
+	}
+	
+	@Test
+	void testAddFinances() {
+		Invoice inv = new Invoice();
+		Finance f1 = AonMocker.mock(Finance.class).setId(1).setDeleted(false);
+		inv.addFinance( f1 );
+		inv.addFinance( f1 );
+		inv.addFinance( f1 );
+		assertEquals( 3, inv.getFinancesSize() );
+	}
+	
+	@Test
+	void testDeleteFinances() {
+		Invoice inv = new Invoice();
+		Finance d1 = AonMocker.mock(Finance.class).setId(1).setDeleted(false);
+		inv.addFinance( d1 );
+		Finance d2 = AonMocker.mock(Finance.class).setId(2).setDeleted(false);
+		inv.addFinance( d2 );
+		Finance d3 = AonMocker.mock(Finance.class).setId(3).setDeleted(false);
+		inv.addFinance( d3 );
+		Finance d4 = AonMocker.mock(Finance.class).setId(4).setDeleted(false);
+		inv.addFinance( d4 );
+		Finance d5 = AonMocker.mock(Finance.class).setId(5).setDeleted(false);
+		inv.addFinance( d5 );
+		Finance d6 = AonMocker.mock(Finance.class).setId(6).setDeleted(false);
+		inv.addFinance( d6 );
+		assertEquals( 6, inv.getFinancesSize() );
+		
+		d3.setDeleted(true);
+		assertEquals( 5, inv.getFinancesSize() );
+		
+		Optional<Finance> deleted = inv.deleteFinance( d3 );
+		assertTrue(deleted.isPresent());
+		assertEquals( 5, inv.getFinancesSize() );
+		
+		deleted = inv.deleteFinance( d2 );
+		assertTrue(deleted.isPresent());
+		assertEquals( 4, inv.getFinancesSize() );
+		
+		inv.deleteFinances();
+		assertEquals( 0, inv.getFinancesSize() );
+
+		Finance e1 = AonMocker.mock(Finance.class).setDeleted(false);
+		inv.addFinance( e1 );
+		Finance e2 = AonMocker.mock(Finance.class).setDeleted(false);
+		inv.addFinance( e2 );
+		assertEquals( 2, inv.getFinancesSize() );
 	}
 	
 	

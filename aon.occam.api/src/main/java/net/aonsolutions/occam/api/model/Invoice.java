@@ -1,7 +1,6 @@
 package net.aonsolutions.occam.api.model;
 
 import java.io.Serializable;
-import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.Objects;
 import java.util.Optional;
@@ -23,8 +22,8 @@ public class Invoice extends AonEntity<InvoiceMetadata> implements Serializable 
 	private InvoiceHeader header;
 	private InvoiceHeader rectificationInvoice;
 	private InvoiceAddress invoiceAddress;
-	private LinkedHashSet<InvoiceDetail> details;
-	private LinkedHashSet<Finance> finances;
+	private LinkedList<InvoiceDetail> details;
+	private LinkedList<Finance> finances;
 	private TaxBreakdown taxBreakdown;
 	private InvoiceFiscal fiscal;
 	// private InvoiceInfo invoiceInfo;
@@ -127,7 +126,7 @@ public class Invoice extends AonEntity<InvoiceMetadata> implements Serializable 
 			.count();
 	}
 	public Invoice addDetail(InvoiceDetail detail) {
-		if (details == null) details = new LinkedHashSet<>();
+		if (details == null) details = new LinkedList<>();
 		details.add(detail);
 		return this;
 	}
@@ -136,17 +135,28 @@ public class Invoice extends AonEntity<InvoiceMetadata> implements Serializable 
 		return AonCollectionUtils.stream(finances);
 	}
 	public Invoice addFinance(Finance finance) {
-		if (finances == null) finances = new LinkedHashSet<>();
+		if (finances == null) finances = new LinkedList<>();
 		finances.add(finance);
 		return this;
 	}
 	public int getFinancesSize() {
 		return (int) financeStream()
-			.filter( d -> d.isNotDeleted())
+			.filter( f -> f.isNotDeleted())
 			.count();
 	}
 	public boolean hasFinances() {
 		return getFinancesSize() > 0; 
+	}
+	public Optional<Finance> deleteFinance( Finance finance) {
+		return financeStream()
+			.filter(d -> d.equals(finance))
+			.map(d -> d.setDeleted(true))
+			.findFirst();
+	}
+	public Invoice deleteFinances() {
+		financeStream()
+			.forEach( d -> d.setDeleted(true));
+		return this;
 	}
 	
 	public Optional<InvoiceFiscal> getFiscal() {
@@ -237,9 +247,9 @@ public class Invoice extends AonEntity<InvoiceMetadata> implements Serializable 
 		return this.taxBreakdown;
 	}
 	
-	public Stream<InvoiceBreakdown> getVats() {
+	public Stream<InvoiceBreakdown> vatStream() {
 		return this.getTaxBreakdown()
-			.map(itb -> itb.getVats() )
+			.map(itb -> itb.vatStream() )
 			.orElse(Stream.empty());
 	}
 	public Optional<InvoiceWithholding> getWithholding() {
@@ -299,7 +309,7 @@ public class Invoice extends AonEntity<InvoiceMetadata> implements Serializable 
 		if (this.getTaxBreakdown().isPresent()) {
 			return AonMathUtils.isLessThan(
 				this.getTaxBreakdown()
-					.map( tb -> tb.getVats())
+					.map( tb -> tb.vatStream())
 					.map( vats -> vats.mapToDouble( InvoiceBreakdown::getBase ).sum())
 					.orElse(Double.MAX_VALUE)
 				,Invoice.REG_IMPORT_MAX_VALUE );

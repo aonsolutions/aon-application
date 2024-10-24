@@ -1,10 +1,15 @@
 package net.aonsolutions.occam.impl.handler;
 
+import static com.esferalia.aon.jooq.tables.Cnae2009.CNAE2009;
+import static com.esferalia.aon.jooq.tables.EnterpriseActivity.ENTERPRISE_ACTIVITY;
 import static com.esferalia.aon.jooq.tables.Finance.FINANCE;
 import static com.esferalia.aon.jooq.tables.FinanceTracking.FINANCE_TRACKING;
+import static com.esferalia.aon.jooq.tables.Iae.IAE;
 import static com.esferalia.aon.jooq.tables.Invoice.INVOICE;
 import static com.esferalia.aon.jooq.tables.PayMethod.PAY_METHOD;
 import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
+import static com.esferalia.aon.jooq.tables.Seller.SELLER;
+import static net.aonsolutions.occam.impl.handler.SellerHandler.REGISTRY_SELLER;
 
 import java.sql.Timestamp;
 import java.util.Calendar;
@@ -12,6 +17,7 @@ import java.util.Date;
 import java.util.LinkedList;
 import java.util.Optional;
 import java.util.function.BiConsumer;
+import java.util.function.Consumer;
 import java.util.stream.Stream;
 
 import org.jooq.Condition;
@@ -29,7 +35,6 @@ import com.esferalia.aon.watson.util.AonEnumUtils;
 import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
-import com.esferalia.aon.watson.util.Pair;
 
 import net.aonsolutions.occam.api.model.BankAccount;
 import net.aonsolutions.occam.api.model.Filter.FinanceFilter;
@@ -134,6 +139,7 @@ class FinanceHandler {
 		}
 		
 		static Finance build(Record r) {
+			if (isNull(r,FINANCE.ID)) return null;
 			return new Finance()
 				.setId(getValue(r,FINANCE.ID))
 				.setDomain(getValue(r,FINANCE.DOMAIN))
@@ -149,7 +155,7 @@ class FinanceHandler {
 				.setInvoice(InvoiceHeaderFiller.build(r)) 
 				.setDueDate(getValue(r,FINANCE.DUE_DATE))
 				.setPayMethod(PayMethodFiller.build(r))
-				.setBankAccount( new BankAccount(getValue(r,FINANCE.BANK_ACCOUNT)) )
+				.setBankAccount( isNull(r,FINANCE.BANK_ACCOUNT)?null:new BankAccount(getValue(r,FINANCE.BANK_ACCOUNT)) )
 				.setBankAlias(getValue(r,FINANCE.BANK_ALIAS))
 				.setBic(getValue(r,FINANCE.BIC))
 				.setChequeNumber(getValue(r,FINANCE.CHEQUE_NUMBER))
@@ -167,7 +173,8 @@ class FinanceHandler {
 				.setCreationDate(getValue(r,FINANCE.CREATION_DATE))
 				.setModificationUser(getValue(r,FINANCE.MODIFICATION_USER))
 				.setModificationDate(getValue(r,FINANCE.MODIFICATION_DATE))
-				;
+				.markAsClean()
+			;
 		}
 	}
 	// -------------------------------------------------------------
@@ -184,6 +191,11 @@ class FinanceHandler {
 			.join(REGISTRY).on(FINANCE.REGISTRY.equal(REGISTRY.ID))
 			.leftOuterJoin(PAY_METHOD).on(FINANCE.PAY_METHOD.equal(PAY_METHOD.ID))
 			.leftOuterJoin(INVOICE).on(FINANCE.INVOICE.equal(INVOICE.ID))
+			.leftOuterJoin(ENTERPRISE_ACTIVITY).on(ENTERPRISE_ACTIVITY.ID.eq(INVOICE.ACTIVITY))
+			.leftOuterJoin(IAE).on(IAE.ID.equal(ENTERPRISE_ACTIVITY.IAE))
+			.leftOuterJoin(CNAE2009).on(CNAE2009.ID.eq(ENTERPRISE_ACTIVITY.CNAE2009))
+			.leftOuterJoin(SELLER).on(SELLER.REGISTRY.eq(INVOICE.SELLER))
+			.leftOuterJoin(REGISTRY_SELLER).on(REGISTRY_SELLER.ID.eq(SELLER.REGISTRY))
 			.where(FINANCE.DOMAIN.eq( domain ));
 	}
 	
@@ -214,6 +226,19 @@ class FinanceHandler {
 			.map( new FinanceFiller() )
 		;
 	}
+
+	static Invoice fillInvoice(AONContext ctx,int domain, Invoice invoice) {
+		invoice.deleteFinances();
+		select(ctx, domain) 
+			.and(FINANCE.INVOICE.eq(invoice.getId()))
+			.orderBy(FinanceOrder.CREATION_DATE_DESC.getFields())
+			.fetch()
+			.stream()
+			.map( new FinanceFiller() )
+			.forEach( invoice::addFinance )
+		;
+		return invoice;	
+	}
 	
 	
 	// -------------------------------------------------------------
@@ -238,7 +263,7 @@ class FinanceHandler {
 				
 				if ( AonMathUtils.isNotZero(finance.getAmount()) ) {
 					ctx.log().debug("** FINANCE READY TO SAVE");
-					FinanceAutoComplete.completeFinanceFromInvoice(ctx, new Pair<>(invoice, finance));
+					FinanceAutoComplete.completeFinanceFromInvoice(ctx, domain, invoice, finance);
 					Integer financeId = save(ctx, finance);
 					finance.setId(financeId);
 				} else {
@@ -361,7 +386,7 @@ class FinanceHandler {
 		}
 	}
 	
-	private class FinanceAutoComplete {
+	class FinanceAutoComplete {
 		private FinanceAutoComplete() {
 		}
 		
@@ -455,39 +480,37 @@ class FinanceHandler {
 				.accept(finance, ctx);
 		}
 		
-		private static final BiConsumer<AONContext,Pair<Invoice,Finance>> COMPLETE_NEW_FINANCES = (ctx,pair) -> {
-			Finance finance = pair.getRight();
-			if (finance.getId() == null ) {
-				Invoice inv = pair.getLeft();
-				finance
-					.setInvoice(inv.getHeader())
-					.setDomain(inv.getDomain())
-					.setRegistry(inv.getHeader().getRegistry())
-					.setRegistryDocument(inv.getHeader().getRegistryDocument())
-					.setRegistryDocumentType(inv.getHeader().getRegistryDocumentType())
-					.setRegistryDocumentCountry(inv.getHeader().getRegistryDocumentCountry())
-					.setRegistryName(inv.getHeader().getRegistryName())
-					.setScope(inv.getHeader().getScope())
-					.setConfidential(inv.getHeader().isConfidential())
-					.setConcept(inv.getHeader().getDocumentNumber())
+		private static final Consumer<FinanceInvoiceValidationContext> COMPLETE_NEW_FINANCES = ctx -> {
+			if (ctx.finance.getId() == null ) {
+				ctx.finance
+					.setInvoice(ctx.invoice.getHeader())
+					.setDomain(ctx.invoice.getDomain())
+					.setRegistry(ctx.invoice.getHeader().getRegistry())
+					.setRegistryDocument(ctx.invoice.getHeader().getRegistryDocument())
+					.setRegistryDocumentType(ctx.invoice.getHeader().getRegistryDocumentType())
+					.setRegistryDocumentCountry(ctx.invoice.getHeader().getRegistryDocumentCountry())
+					.setRegistryName(ctx.invoice.getHeader().getRegistryName())
+					.setScope(ctx.invoice.getHeader().getScope())
+					.setConfidential(ctx.invoice.getHeader().isConfidential())
+					.setConcept(ctx.invoice.getHeader().getDocumentNumber())
 					.setFinanceStatus(FinanceStatus.PENDING);
 			}
 		};
 		
-		private static final BiConsumer<AONContext,Pair<Invoice,Finance>> COMPLETE_SAVED_FINANCES = (ctx,pair) -> {
-			Finance finance = pair.getRight();
-			if (finance.getId() != null ) {
-				Invoice inv = pair.getLeft();
-				finance
-					.setConfidential(inv.getHeader().isConfidential())
-					.setConcept(inv.getHeader().getDocumentNumber());
+		private static final Consumer<FinanceInvoiceValidationContext> COMPLETE_SAVED_FINANCES = ctx -> {
+			if (ctx.finance.getId() != null ) {
+				ctx.finance
+					.setConfidential(ctx.invoice.getHeader().isConfidential())
+					.setConcept(ctx.invoice.getHeader().getDocumentNumber());
 			}
 		};
 		
-		static void completeFinanceFromInvoice(AONContext ctx, Pair<Invoice,Finance> pair) throws AonCoreException {
+		record FinanceInvoiceValidationContext(AONContext ctx, int domain, Invoice invoice, Finance finance) {}
+		static void completeFinanceFromInvoice(AONContext ctx, int domain, Invoice invoice, Finance finance) throws AonCoreException {
 			COMPLETE_NEW_FINANCES
 				.andThen(COMPLETE_SAVED_FINANCES)
-				.accept(ctx,pair);
+				.accept( new FinanceInvoiceValidationContext(ctx,domain,invoice,finance) )
+			;
 		}
 		
 	}

@@ -3,6 +3,7 @@
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
 
 import org.json.JSONObject;
 import org.junit.jupiter.api.RepeatedTest;
@@ -41,6 +42,17 @@ class AccountJsonTest  {
 		JSONObject to = new JSONObject();
 		Account geo = AccountJSON.fromJSON( to );
 		assertNull(geo);
+	}
+
+	@Test
+	void testFromSupplied() {
+		Account to = AonMocker.mock(Account.class);
+		JSONObject json = AccountJSON.toJSON(to);
+		assertNotNull(json);
+		Account supplied = new Account();
+		Account from = AccountJSON.fromJSON(json, () -> supplied);
+		assertSame(supplied, from);
+		AonAsserts.assertClassEquals( to, from);
 	}
 
 	@RepeatedTest( 20 )

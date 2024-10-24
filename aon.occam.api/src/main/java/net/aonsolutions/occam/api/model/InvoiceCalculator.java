@@ -64,12 +64,12 @@ public class InvoiceCalculator	 {
 	}
 	
 	private static void calculateTaxBreakdown(Invoice inv) {
-		inv.getTaxBreakdown().ifPresent(tb -> tb.getVats().forEach(ib -> calculateVatBreakdown(inv, ib)));
+		inv.getTaxBreakdown().ifPresent(tb -> tb.vatStream().forEach(ib -> calculateVatBreakdown(inv, ib)));
 		inv.getWithholding().ifPresent(iw -> calculateWithholdingBreakdown(inv, iw));
 	}
 
 	private static void settleVatAmounts(Invoice inv) {
-		inv.getVats()
+		inv.vatStream()
 		.forEach(ib -> {
 			LinkedList<InvoiceTax> stack = new LinkedList<>();
 			MutableDouble quotaSum = new MutableDouble(0.0);
@@ -90,8 +90,9 @@ public class InvoiceCalculator	 {
 				InvoiceTax last = stack.pop();
 				double gap = AonMathUtils.round( ib.getQuota() - quotaSum.getValue() );
 				if ( AonMathUtils.isNotZero( gap )) {
-					last.setQuota( AonMathUtils.round( last.getQuota() + gap));	
-					last.setDeductibleQuota( AonMathUtils.round( last.getQuota() + last.getSurchargeQuota() ));
+					double newQuota = AonMathUtils.round( last.getQuota() + gap); 
+					last.setQuota( newQuota );	
+					last.setDeductibleQuota( newQuota );
 				}
 				if (inv.getHeader().isSurcharge()) {
 					double surchargeGap = AonMathUtils.round( ib.getSurchargeQuota() - surchargeQuotaSum.getValue() );
@@ -168,28 +169,19 @@ public class InvoiceCalculator	 {
 	private static void calculateVatDetail(Invoice inv, InvoiceDetail detail) {
 		InvoiceTax vat = detail.enableVatTax();
 		vat.setBase(detail.getTaxableBase() );
-		if (!vat.isQuotaEdited()) {
-			vat.setQuota(AonMathUtils.round(vat.getBase() * vat.getPercentage() / 100 ));
-		}
+		vat.setQuota(AonMathUtils.round(vat.getBase() * vat.getPercentage() / 100 ));
 		if (inv.getHeader().isSurcharge()) {
-			if (!vat.isSurchargeQuotaEdited()) {
-				vat.setSurchargeQuota( AonMathUtils.round(vat.getBase() * vat.getSurcharge() / 100 ));	
-			}
+			vat.setSurchargeQuota( AonMathUtils.round(vat.getBase() * vat.getSurcharge() / 100 ));	
 		} else {
 			vat.setSurcharge( 0.0);
 			vat.setSurchargeQuota( 0.0);
-			vat.setSurchargeQuotaEdited( false );
 		}
 		
 		if ( detail.getInvestAsset().isPresent()) {
-			if (!vat.isDeductibleQuotaEdited()) {
-				vat.setDeductibleQuota( AonMathUtils.round( vat.getQuota() * vat.getDeductiblePercent() / 100 ));
-			}
+			vat.setDeductibleQuota( AonMathUtils.round( vat.getQuota() * vat.getDeductiblePercent() / 100 ));
 		} else {
 			vat.setDeductiblePercent(100.0);
 			vat.setDeductibleQuota( AonMathUtils.round( vat.getQuota() + vat.getSurchargeQuota()) );
-			vat.setDirectTaxPercent(0.0);
-			vat.setDeductibleQuotaEdited(false);
 		}
 	}
 	
@@ -205,6 +197,9 @@ public class InvoiceCalculator	 {
 			ib.setSurcharge( 0.0);
 			ib.setSurchargeQuota( 0.0);
 			ib.setSurchargeQuotaEdited( false );
+		}
+		if (!ib.isDeductibleQuotaEdited()) {
+			ib.setDeductibleQuota(AonMathUtils.round(ib.getQuota() + ib.getSurchargeQuota()));
 		}
 	}
 	private static void calculateWithholdingBreakdown(Invoice inv, InvoiceWithholding iw) {
@@ -226,17 +221,13 @@ public class InvoiceCalculator	 {
 			irpf.setPercentage( wd.getPercentage() );
 			irpf.setQuota( AonMathUtils.round( irpf.getBase() * irpf.getPercentage() / 100, 2) );
 			irpf.setWithholdingType(wd.getWithholdingType());
-			if ( detail.getInvestAsset().isPresent()) {
-				if (!irpf.isDeductibleQuotaEdited()) {
-					irpf.setDeductibleQuota( AonMathUtils.round( irpf.getQuota() * irpf.getDirectTaxPercent() / 100 ));
-				}
-			} else {
+//			if ( detail.getInvestAsset().isPresent()) {
+//				irpf.setDeductibleQuota( AonMathUtils.round( irpf.getQuota() * irpf.getDirectTaxPercent() / 100 ));
+//			} else {
 				irpf.setDeductiblePercent(100.0);
 				irpf.setDeductibleQuota( irpf.getQuota() );
-				irpf.setDirectTaxPercent(0.0);
-				irpf.setDeductibleQuotaEdited(false);
-			}
-			
+//				irpf.setDirectTaxPercent(0.0);
+//			}
 		}
 	}
 	
@@ -254,9 +245,6 @@ public class InvoiceCalculator	 {
 			
 			irpf.setDeductiblePercent(100.0);
 			irpf.setDeductibleQuota( irpf.getQuota() );
-			irpf.setDirectTaxPercent(0.0);
-			irpf.setDeductibleQuotaEdited(false);
-				
 		}
 	}
 
@@ -367,13 +355,13 @@ public class InvoiceCalculator	 {
 		return AonMathUtils.round(deductibleQuota - AonMathUtils.round(tax.getQuota() * tax.getDeductiblePercent() / 100));		
 	}
 	
-	public static double getDirectTaxNoDedExpenses(InvoiceTax vat) {
-		double percent = AonMathUtils.round(100 - vat.getDirectTaxPercent());
-		return AonMathUtils.round(vat.getBase() *  percent / 100);		
-	}
-	
-	public static double getDirectTaxNoDedExpensesGap(InvoiceTax vat, Double directTaxQuota) {
-		if (directTaxQuota == null) directTaxQuota = 0.0;
-		return AonMathUtils.round(directTaxQuota - getDirectTaxNoDedExpenses(vat));		
-	}
+//	public static double getDirectTaxNoDedExpenses(InvoiceTax vat) {
+//		double percent = AonMathUtils.round(100 - vat.getDirectTaxPercent());
+//		return AonMathUtils.round(vat.getBase() *  percent / 100);		
+//	}
+//	
+//	public static double getDirectTaxNoDedExpensesGap(InvoiceTax vat, Double directTaxQuota) {
+//		if (directTaxQuota == null) directTaxQuota = 0.0;
+//		return AonMathUtils.round(directTaxQuota - getDirectTaxNoDedExpenses(vat));		
+//	}
 }

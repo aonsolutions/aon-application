@@ -1,5 +1,7 @@
 package net.aonsolutions.occam.api.json;
 
+import java.util.function.Supplier;
+
 import org.json.JSONObject;
 
 import net.aonsolutions.occam.api.model.Account;
@@ -9,10 +11,13 @@ public class AccountJSON {
 	private AccountJSON() {
 		
 	}
-
 	public static Account fromJSON(JSONObject json) {
+		return fromJSON(json, Account::new );
+	}
+
+	public static Account fromJSON(JSONObject json, Supplier<Account> account) {
 		if (JsonUtils.isEmpty(json)) return null;
-		return new Account()
+		return account.get()
 			.setId(JsonUtils.getInteger( json, IJsonNames.ID ))
 			.setDomain(JsonUtils.getInteger( json, IJsonNames.DOMAIN ))
 			.setCode(JsonUtils.getString(json,IJsonNames.CODE))

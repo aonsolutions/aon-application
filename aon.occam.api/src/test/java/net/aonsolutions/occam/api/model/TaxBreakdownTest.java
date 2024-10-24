@@ -16,13 +16,13 @@ class TaxBreakdownTest {
 		InvoiceTax i3 = new InvoiceTax().setTaxType(TaxType.VAT).setPercentage(21.0).setSurcharge(5.2).setBase(100);
 		InvoiceTax i4 = new InvoiceTax().setTaxType(TaxType.VAT).setPercentage(10.0).setSurcharge(1.4).setBase(100);
 		tb.add(i1);
-		assertEquals(1, tb.getVats().count());
+		assertEquals(1, tb.vatStream().count());
 		tb.add(i2);
-		assertEquals(2, tb.getVats().count());
+		assertEquals(2, tb.vatStream().count());
 		tb.add(i3);
-		assertEquals(3, tb.getVats().count());
+		assertEquals(3, tb.vatStream().count());
 		tb.add(i4);
-		assertEquals(4, tb.getVats().count());
+		assertEquals(4, tb.vatStream().count());
 		
 				
 		

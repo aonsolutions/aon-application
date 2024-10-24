@@ -62,14 +62,16 @@ class InvoiceDetailHandler {
 			.map(d -> d.setExpAccount(AccountingInvoiceHandler.getInvoiceDetailAccount(ctx, d.getId()).orElse(null)));		
 	}
 
-    static Stream<InvoiceDetail> stream(AONContext ctx, Invoice invoice) {
-		return basicStream(ctx, invoice.getId())
+    static Invoice fillInvoice(AONContext ctx, Invoice invoice) {
+    	invoice.deleteDetails();
+		basicStream(ctx, invoice.getId())
 			.map(id -> {
-				InvoiceTaxHandler.stream(ctx, id.getId())
-					.forEach(id::addTax);
+				InvoiceTaxHandler.stream(ctx, id.getId()).forEach(id::addTax);
 				return id;
-			}
-		);
+			})
+			.forEach( id -> invoice.addDetail(id) )
+		;
+		return invoice;
 	}    
     
 	static Optional<InvoiceDetail> get(AONContext ctx, Integer detailId) {
@@ -113,7 +115,9 @@ class InvoiceDetailHandler {
 				.setCreationDate(r.getValue(INVOICE_DETAIL.CREATION_DATE))
 				.setCreationUser(r.getValue(INVOICE_DETAIL.CREATION_USER))
 				.setModificationDate(r.getValue(INVOICE_DETAIL.MODIFICATION_DATE))
-				.setModificationUser(r.getValue(INVOICE_DETAIL.MODIFICATION_USER));
+				.setModificationUser(r.getValue(INVOICE_DETAIL.MODIFICATION_USER))
+				.markAsClean()
+			;
 		}
 	}
 

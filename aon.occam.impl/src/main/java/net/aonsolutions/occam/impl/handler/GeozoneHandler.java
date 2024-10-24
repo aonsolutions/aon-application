@@ -50,6 +50,7 @@ class GeozoneHandler {
 		}
 		
 		public static Geozone build(Record r, com.esferalia.aon.jooq.tables.Geozone table) {
+			if (isNull(r, table.ID)) return null;
 			return new Geozone()
 				.setId(getValue(r, table.ID))
 				.setDomain(getValue(r, table.DOMAIN))

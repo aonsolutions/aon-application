@@ -22,7 +22,6 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 
 import net.aonsolutions.occam.api.model.Geozone;
 import net.aonsolutions.occam.api.model.RegistryAddress;
-import net.aonsolutions.occam.api.model.type.AonLanguage;
 import net.aonsolutions.occam.api.model.type.StreetType;
 import net.aonsolutions.occam.impl.AONContext;
 import net.aonsolutions.occam.impl.handler.GeozoneHandler.GeozoneFiller;
@@ -55,7 +54,7 @@ class RegistryAddressHandler {
 				.setRegistry(r.getValue(RADDRESS.REGISTRY))
 				.setMain(MAIN_ADDRESS.equals(r.getValue(RADDRESS.TYPE)))
 				.setRecipient(r.getValue(RADDRESS.RECIPIENT))
-				.setStreetType(StreetType.valueOfAeatCode(getValue(r,RADDRESS.STREET_TYPE), AonLanguage.SPANISH).orElse(null))
+				.setStreetType(StreetType.value(getValue(r,RADDRESS.STREET_TYPE)).orElse(null))
 				.setAddress(r.getValue(RADDRESS.ADDRESS))
 				.setNumber(r.getValue(RADDRESS.NUMBER))
 				.setAddress2(r.getValue(RADDRESS.ADDRESS2))

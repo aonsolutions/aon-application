@@ -2,11 +2,13 @@ package net.aonsolutions.occam.api.model;
 
 import java.io.Serializable;
 import java.util.LinkedList;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Stream;
 
 import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
+import com.esferalia.aon.watson.util.AonObjectUtils;
 
 public class TaxBreakdown implements Serializable {
 	
@@ -15,7 +17,7 @@ public class TaxBreakdown implements Serializable {
 	private InvoiceWithholding iw;
 	private LinkedList<InvoiceBreakdown> vats = new LinkedList<>();
 	
-	public Stream<InvoiceBreakdown> getVats() {
+	public Stream<InvoiceBreakdown> vatStream() {
 		return vats.stream()
 			.sorted((ib,ib1) -> AonNumberUtils.compare(ib.getPercentage(),ib1.getPercentage()));
 	}
@@ -32,7 +34,7 @@ public class TaxBreakdown implements Serializable {
 		vats = new LinkedList<>();
 		invoice.detailStream()
 			.flatMap(d -> d.taxStream()) 
-			.filter( it -> it.isNotDeleted() )
+			.filter( InvoiceTax::isNotDeleted )
 			.forEach( this::add );
 	}
 	
@@ -41,12 +43,7 @@ public class TaxBreakdown implements Serializable {
 	}
 	TaxBreakdown add(InvoiceBreakdown ib) {
 		if (ib.isVat()) {
-			Optional<InvoiceBreakdown> oib = get( ib );
-			if (oib.isPresent()) {
-				oib.get().add(ib);
-			} else {
-				vats.add( ib );
-			}
+			get( ib ).ifPresentOrElse(i -> i.add(ib), () -> vats.add( ib ));
 		}
 		if (ib.isWithholding()) {
 			if (iw == null) {
@@ -68,10 +65,10 @@ public class TaxBreakdown implements Serializable {
 	}
 
 	public double getVatBase() {
-		return AonMathUtils.round( getVats().mapToDouble( t -> t.getBase() ).sum() , 4); 
+		return AonMathUtils.round( vatStream().mapToDouble( t -> t.getBase() ).sum() , 4); 
 	}
 	public double getVatQuota() {
-		return AonMathUtils.round( getVats()
+		return AonMathUtils.round( vatStream()
 				.mapToDouble( t -> AonMathUtils.round(t.getQuota() + t.getSurchargeQuota()))
 				.sum() , 2); 
 	}
@@ -89,5 +86,25 @@ public class TaxBreakdown implements Serializable {
 	}
 	public double getResult() {
 		return AonMathUtils.round(getVatQuota() - getRetentionQuota());
+	}
+
+
+	@Override
+	public boolean equals(Object obj) {
+		if (obj == this) return true;
+		if (obj instanceof TaxBreakdown other) {
+			return AonObjectUtils.equals( this.iw,other.iw )
+				&& AonObjectUtils.equals( this.vats,other.vats )
+			;
+		}
+	    return false;
+	}
+	
+	@Override
+	public int hashCode() {
+	    return 31 * 7 
+    		+ Objects.requireNonNullElse(iw, 0).hashCode()
+    		+ Objects.requireNonNullElse(vats, 0).hashCode()
+		;
 	}
 }

@@ -16,7 +16,8 @@ import com.esferalia.aon.watson.util.AonCollectionUtils;
 
 public class AonAsserts {
 	private static final String[] SKIP_FIELDS = new String[] {
-		 ".*creationDate"
+		 ".*invoiceAddress.*parent"
+		,".*creationDate"
 		,".*creationUser"
 		,".*modificationDate"
 		,".*modificationUser"

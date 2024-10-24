@@ -4,9 +4,9 @@ import static net.aonsolutions.occam.api.model.type.AonLanguage.BASQUE;
 import static net.aonsolutions.occam.api.model.type.AonLanguage.CATALAN;
 import static net.aonsolutions.occam.api.model.type.AonLanguage.GALICIAN;
 import static net.aonsolutions.occam.api.model.type.AonLanguage.SPANISH;
-import static net.aonsolutions.occam.api.model.type.AonLanguage.VALENCIAN;
 
 import java.io.Serializable;
+import java.util.LinkedList;
 import java.util.Optional;
 
 import com.esferalia.aon.watson.util.AonCollectionUtils;
@@ -19,381 +19,401 @@ import com.esferalia.aon.watson.util.AonStringUtils;
  */
 public enum StreetType implements Serializable {
 	
-	ACCE 	("ACCE ","AC","ACCES", CATALAN),
-	ACCES	("ACCES","AC","ACCESO", SPANISH),
-	ACEQ 	("ACEQ ","AE","ACEQUIA", SPANISH),
-	ACERA	("ACERA","AA","ACERA", SPANISH),
-	ALAM 	("ALAM ","AL","ALAMEDA", SPANISH),
-	ALDAP	("ALDAP","CT","ALDAPA", BASQUE),
-	ALDEA	("ALDEA","AD","ALDEA", SPANISH),
-	ALQUE	("ALQUE","AQ","ALQUERIA", SPANISH),
-	ALTO 	("ALTO ","AT","ALTO", SPANISH),
-	ANDAD	("ANDAD","AN","ANDADOR", SPANISH),
-	ANGTA	("ANGTA","AG","ANGOSTA", SPANISH),
-	APDRO	("APDRO","AO","APEADERO", SPANISH),
-	APTES	("APTES","AP","APARTAMENTS", CATALAN),
-	APTOS	("APTOS","AP","APARTAMENTOS", SPANISH),
-	ARB  	("ARB  ","AB","ARBOLEDA", SPANISH),
-	ARRAL	("ARRAL","AR","ARRABAL", SPANISH),
-	ARREK	("ARREK","AY","ERREKA", BASQUE),
-	ARRY 	("ARRY ","AY","ARROYO", SPANISH),
-	ASSEG	("ASSEG","AS","ASSEGADOR", VALENCIAN),
-	ATAJO	("ATAJO","AJ","ATAJO", SPANISH),
-	ATAL 	("ATAL ","AJ","ATALL", CATALAN),
-	ATALL	("ATALL","AJ","ATALLO", GALICIAN),
-	ATZUC	("ATZUC","AZ","ATZUCAT", CATALAN),
-	AUTO 	("AUTO ","AU","AUTOPISTA", SPANISH),
-	AUTOV	("AUTOV","AI","AUTOVIA", SPANISH),
-	AUZO 	("AUZO ","BO","AUZO", BASQUE),
-	AUZOT	("AUZOT","BA","AUZOTEGI", BASQUE),
-	AUZUN	("AUZUN","BO","AUZUNEA", BASQUE),
-	AV   	("AV   ","AV","AV", null),
-	AVDA 	("AVDA ","AV","AVENIDA", SPANISH),
-	AVGDA	("AVGDA","AV","AVINGUDA", CATALAN),
-	AVIA 	("AVIA ","AI","AUTOVIA", CATALAN),
-	BALNR	("BALNR","BN","BALNEARIO", SPANISH),
-	BARDA	("BARDA","BA","BARRIADA", SPANISH),
-	BARRI	("BARRI","BO","BARRI", CATALAN),
-	BARRO	("BARRO","BO","BARRIO", SPANISH),
-	BDA  	("BDA  ","BJ","BAIXADA", GALICIAN),
-	BELNA	("BELNA","BE","BELENA", SPANISH),
-	BIDE 	("BIDE ","VI","BIDE", BASQUE),
-	BIDEB	("BIDEB","GL","BIDEBIETA", BASQUE),
-	BJADA	("BJADA","BJ","BAJADA", SPANISH),
-	BLOC 	("BLOC ","BL","BLOC", CATALAN),
-	BLQUE	("BLQUE","BL","BLOQUE", SPANISH),
-	BQLLO	("BQLLO","BQ","BARRANQUIL", SPANISH),
-	BRANC	("BRANC","BR","BARRANCO", SPANISH),
-	BRDLA	("BRDLA","BD","BARREDUELA", SPANISH),
-	BRZAL	("BRZAL","BZ","BRAZAL", SPANISH),
-	BSRIA	("BSRIA","BS","BASERRIA", BASQUE),
-	BULEV	("BULEV","BV","BULEVAR", SPANISH),
-	BV   	("BV   ","BV","BULEVAR", CATALAN),
-	C_H 	("C.H. ","KH","CMNO HONDO", SPANISH),
-	C_N 	("C.N. ","KN","CMNO NUEVO", SPANISH),
-	C_V 	("C.V. ","KV","CMNO VIEJO", SPANISH),
-	C   	("C/   ","C/","C/", SPANISH),
-	CNADA	("C\u00D1ADA","C\u00D1","CA\u00D1ADA", SPANISH),
-	CALLE	("CALLE","CL","CALLE", SPANISH),
-	CAMI 	("CAMI ","CM","CAMI", CATALAN),
-	CAMIN	("CAMIN","CM","CAMIN", null),
-	CAMPA	("CAMPA","CP","CAMPA", SPANISH),
-	CAMPG	("CAMPG","CG","CAMPING", SPANISH),
-	CAMPO	("CAMPO","CP","CAMPO", SPANISH),
-	CANNO	("CAN\u00D1O","K\u00D1","CANTI\u00D1O", GALICIAN),
-	CANAL	("CANAL","CA","CANAL", SPANISH),
-	CANT 	("CANT ","CQ","CANTON", SPANISH),
-	CANTI	("CANTI","QT","CANTINA", SPANISH),
-	CANTO	("CANTO","CQ","CANTO", CATALAN),
-	CANTR	("CANTR","QA","CANTERA", SPANISH),
-	CARRA	("CARRA","QD","CARRERADA", CATALAN),
-	CARRE	("CARRE","CL","CARRER", CATALAN),
-	CARRY	("CARRY","VR","CARRERANY", CATALAN),
-	CASA 	("CASA ","CS","CASA", SPANISH),
-	CBTIZ	("CBTIZ","CB","COBERTIZO", SPANISH),
-	CCVCN	("CCVCN","CV","CIRCUNVALACION", SPANISH),
-	CELLA	("CELLA","QN","CANELLA", null),
-	CERRO	("CERRO","CE","CERRO", SPANISH),
-	CHLET	("CHLET","CH","CHALET", SPANISH),
-	CINT 	("CINT ","CI","CINTURON", SPANISH),
-	CINY 	("CINY ","CI","CINYELL", CATALAN),
-	CIRCU	("CIRCU","CV","CIRCUNVALACION", null),
-	CJLA 	("CJLA ","CU","CALLEJUELA", SPANISH),
-	CJTO 	("CJTO ","CN","CONJUNTO", SPANISH),
-	CLEYA	("CLEYA","CY","CALEYA", SPANISH),
-	CLLJA	("CLLJA","CJ","CALLEJA", SPANISH),
-	CLLON	("CLLON","CK","CALLEJON", SPANISH),
-	CLLZO	("CLLZO","KZ","CALLIZO", SPANISH),
-	CLYON	("CLYON","KY","CALEYON", SPANISH),
-	CMNIO 	("CM\u00D1O ","CM","CAMI\u00D1O", GALICIAN),
-	CMNET	("CMNET","CM","CAMINET", CATALAN),
-	CMNO 	("CMNO ","CM","CAMINO", SPANISH),
-	CNLLA	("CNLLA","QN","CANELLA", SPANISH),
-	CNVT 	("CNVT ","CW","CONVENT", CATALAN),
-	CNVTO	("CNVTO","CW","CONVENTO", SPANISH),
-	COL  	("COL  ","CO","COLONIA", SPANISH),
-	COMPJ	("COMPJ","QJ","COMPLEJO", SPANISH),
-	COOP 	("COOP ","KP","COOPERATIVA", SPANISH),
-	COSTA	("COSTA","KO","COSTA", SPANISH),
-	COSTE	("COSTE","KR","COSTERA", SPANISH),
-	CRA  	("CRA  ","KA","CARRERA", SPANISH),
-	CRCRO	("CRCRO","CC","CRUCEIRO", GALICIAN),
-	CRLLO	("CRLLO","RL","CORRILLO", SPANISH),
-	CRO  	("CRO  ","QR","CARRERO", SPANISH),
-	CRRAL	("CRRAL","QL","CORRAL", SPANISH),
-	CRRCI	("CRRCI","KD","CORREDORCILLO", SPANISH),
-	CRRDA	("CRRDA","KD","CORREDOIRA", GALICIAN),
-	CRRDE	("CRRDE","KD","CORREDERA", SPANISH),
-	CRRDO	("CRRDO","KD","CORREDOR", SPANISH),
-	CRRIL	("CRRIL","KL","CARRIL", SPANISH),
-	CRRLO	("CRRLO","QO","CORRALILLO", SPANISH),
-	CRROL	("CRROL","RR","CORRIOL", CATALAN),
-	CRTIL	("CRTIL","QI","CARRETIL", SPANISH),
-	CRTJO	("CRTJO","KT","CORTIJO", SPANISH),
-	CSRIO	("CSRIO","CS","CASERIO", SPANISH),
-	CSTAN	("CSTAN","KS","COSTANILLA", SPANISH),
-	CTRA 	("CTRA ","CR","CARRETERA", SPANISH),
-	CTRIN	("CTRIN","QE","CARRETERIN", SPANISH),
-	CUADR	("CUADR","CD","CUADRA", SPANISH),
-	CUEVA	("CUEVA","QV","CUEVA/S", SPANISH),
-	CUSTA	("CUSTA","CT","CUESTA", SPANISH),
-	CXON 	("CXON ","CX","CALEXON", GALICIAN),
-	CZADA	("CZADA","CZ","CALZADA", SPANISH),
-	CZADS	("CZADS","C\u00C7","CALZADAS", SPANISH),
-	DEMAR	("DEMAR","DM","DEMARCACION", SPANISH),
-	DHSA 	("DHSA ","DH","DEHESA", SPANISH),
-	DISEM	("DISEM","DS","DISEMINADO", SPANISH),
-	DISSE	("DISSE","DS","DISSEMINAT", CATALAN),
-	DRERA	("DRERA","DR","DRE\u00C7ERA", CATALAN),
-	EDIFC	("EDIFC","ED","EDIFICIO/S", SPANISH),
-	EIRAD	("EIRAD","EI","EIRADO", GALICIAN),
-	EMPR 	("EMPR ","ER","EMPRESA", SPANISH),
-	ENTD 	("ENTD ","EP","ENTRADA", SPANISH),
-	EPTZA	("EPTZA","PZ","ENPARANTZA", BASQUE),
-	ERREB	("ERREB","AR","ERREBAL", BASQUE),
-	ERREP	("ERREP","CR","ERREPIDE", BASQUE),
-	ERRIB	("ERRIB","VG","ERRIBERA", BASQUE),
-	ESC  	("ESC  ","EC","ESCALA/S", SPANISH),
-	ESCA 	("ESCA ","EC","ESCALERA/S", SPANISH),
-	ESCAL	("ESCAL","EW","ESCALINATA", SPANISH),
-	ESLDA	("ESLDA","ES","ESPALDA", SPANISH),
-	ESPIG	("ESPIG","EG","ESPIGO", SPANISH),
-	ESTAC	("ESTAC","EN","ESTACIO", CATALAN),
-	ESTCN	("ESTCN","EN","ESTACION", SPANISH),
-	ESTDA	("ESTDA","EX","ESTRADA", SPANISH),
-	ETDEA	("ETDEA","AV","ETORBIDEA", BASQUE),
-	ETXAD	("ETXAD","GR","ETXADI", null),
-	ETXAR	("ETXAR","CK","ETXARTE", BASQUE),
-	EXPLA	("EXPLA","EZ","EXPLANADA", SPANISH),
-	EXTRM	("EXTRM","EM","EXTRAMUROS", SPANISH),
-	EXTRR	("EXTRR","ET","EXTRARRADIO", SPANISH),
-	FALDA	("FALDA","FD","FALDA", SPANISH),
-	FBRCA	("FBRCA","FC","FABRICA", SPANISH),
-	FINCA	("FINCA","FN","FINCA", SPANISH),
-	G_V 	("G.V. ","GV","GRAN VIA", SPANISH),
-	GAIN 	("GAIN ","AT","GAIN", BASQUE),
-	GALE 	("GALE ","GA","GALERIA", SPANISH),
-	GLLZO	("GLLZO","GZ","GALLIZO", SPANISH),
-	GORAB	("GORAB","SB","GORABIDE", BASQUE),
-	GRANJ	("GRANJ","GJ","GRANJA", SPANISH),
-	GRUP 	("GRUP ","GR","GRUP", CATALAN),
-	GRUPO	("GRUPO","GR","GRUPO/S", SPANISH),
-	GTA  	("GTA  ","GL","GLORIETA", SPANISH),
-	HEGI 	("HEGI ","HG","HEGI", BASQUE),
-	HIPOD	("HIPOD","HP","HIPODROMO", SPANISH),
-	HIRIB	("HIRIB","AV","HIRIBIDEA", SPANISH),
-	HONDA	("HONDA","PY","HONDARTZA", BASQUE),
-	HOYA 	("HOYA ","HY","HOYA", SPANISH),
-	ILLA 	("ILLA ","IL","ILLA", CATALAN),
-	INDA 	("INDA ","IN","INDA", SPANISH),
-	JARD 	("JARD ","JR","JARDI", CATALAN),
-	JDIN 	("JDIN ","JR","JARDIN", SPANISH),
-	JDINS	("JDINS","JR","JARDINES", null),
-	KAI  	("KAI  ","ML","KAI", BASQUE),
-	KALE 	("KALE ","CL","KALEA", BASQUE),
-	KARIK	("KARIK","CJ","KARRIK", BASQUE),
-	KARRE	("KARRE","KA","KARRERA", BASQUE),
-	KARRI	("KARRI","CL","KARRIKA", BASQUE),
-	KOSTA	("KOSTA","KO","KOSTA", BASQUE),
-	KRRIL	("KRRIL","KL","KARRIL", BASQUE),
-	LAGO 	("LAGO ","LA","LAGO", SPANISH),
-	LASTE	("LASTE","AJ","LASTERBIDE", BASQUE),
-	LDERA	("LDERA","LD","LADERA", SPANISH),
-	LEKU 	("LEKU ","LG","LEKU", BASQUE),
-	LLNRA	("LLNRA","LL","LLANURA", SPANISH),
-	LLOC 	("LLOC ","LG","LLOC", CATALAN),
-	LOMA 	("LOMA ","LM","LOMA", SPANISH),
-	LOMO 	("LOMO ","LO","LOMO", SPANISH),
-	LORAK	("LORAK","JR","LORATEGIAK", null),
-	LORAT	("LORAT","JR","LORATEGI", BASQUE),
-	LUGAR	("LUGAR","LG","LUGAR", SPANISH),
-	MALEC	("MALEC","MA","MALECON", SPANISH),
-	MASIA	("MASIA","MS","MASIA/S", SPANISH),
-	MAZO 	("MAZO ","MZ","MAZO", SPANISH),
-	MENDI	("MENDI","MT","MENDI", BASQUE),
-	MERC 	("MERC ","MC","MERCADO", SPANISH),
-	MERCT	("MERCT","MC","MERCAT", CATALAN),
-	MIRAD	("MIRAD","MD","MIRADOR", SPANISH),
-	MOLL 	("MOLL ","ML","MOLL", CATALAN),
-	MONTE	("MONTE","MT","MONTE", SPANISH),
-	MRDOR	("MRDOR","MD","MIRADOR", SPANISH),
-	MTRIO	("MTRIO","MO","MONASTERIO", SPANISH),
-	MUELL	("MUELL","ML","MUELLE", SPANISH),
-	NAVE 	("NAVE ","NV","NAVE/S", SPANISH),
-	NCLEO	("NCLEO","UN","NUCLEO", SPANISH),
-	NUDO 	("NUDO ","ND","NUDO", SPANISH),
-	ONDA 	("ONDA ","PY","ONDARTZA", BASQUE),
-	PAGO 	("PAGO ","PP","PAGO", SPANISH),
-	PALAC	("PALAC","PC","PALACIO", SPANISH),
-	PANT 	("PANT ","P ","PANTANO", SPANISH),
-	PARC 	("PARC ","PQ","PARC", CATALAN),
-	PARKE	("PARKE","PQ","PARKE", BASQUE),
-	PARTI	("PARTI","PF","PARTICULAR", SPANISH),
-	PAS  	("PAS  ","PA","PAS", SPANISH),
-	PASAI	("PASAI","PJ","PASAIA", BASQUE),
-	PASEA	("PASEA","PS","PASEABIDE", BASQUE),
-	PASEO	("PASEO","PS","PASEO", SPANISH),
-	PASSE	("PASSE","PS","PASSEIG", CATALAN),
-	PATIO	("PATIO","PK","PATIO", SPANISH),
-	PBDO 	("PBDO ","PB","POBLADO", SPANISH),
-	PBLO 	("PBLO ","PB","PUEBLO", SPANISH),
-	PDA  	("PDA  ","PV","PUJADA", SPANISH),
-	PDIS 	("PDIS ","P\u00C7","PASSADIS", CATALAN),
-	PG   	("PG   ","PG","PG", null),
-	PGIND	("PGIND","PG","POLIGONO INDUST", null),
-	PINAR	("PINAR","PN","PINAR", SPANISH),
-	PISTA	("PISTA","PI","PISTA", SPANISH),
-	PJDA 	("PJDA ","SU","PUJADA, SUBIDA", SPANISH),
-	PL   	("PL   ","PL","PL", SPANISH),
-	PLA  	("PLA  ","PW","PLA", null),
-	PLACA	("PLA\u00C7A","PZ","PLA\u00C7A", CATALAN),
-	PLAYA	("PLAYA","PY","PLAYA", SPANISH),
-	PLAZA	("PLAZA","PZ","PLAZA", SPANISH),
-	PLCET	("PLCET","PL","PLACETA", null),
-	PLLOP	("PLLOP","PX","PASILLO", null),
-	PLZLA	("PLZLA","PL","PLAZUELA", null),
-	PNTE 	("PNTE ","PT","PUENTE", SPANISH),
-	POLIG	("POLIG","PG","POLIGONO", SPANISH),
-	PONT 	("PONT ","PT","PONT", CATALAN),
-	PONTE	("PONTE","PT","PONTE", GALICIAN),
-	PORT 	("PORT ","PO","PORT", CATALAN),
-	PQUE 	("PQUE ","PQ","PARQUE", SPANISH),
-	PRANA	("PRA\u00D1A","P\u00D1","PRACI\u00D1A", GALICIAN),
-	PRAGE	("PRAGE","PE","PARATGE", CATALAN),
-	PRAIA	("PRAIA","PY","PRAIA", GALICIAN),
-	PRAJE	("PRAJE","PE","PARAJE", SPANISH),
-	PRAXE	("PRAXE","PE","PARAXE", GALICIAN),
-	PRAZA	("PRAZA","PZ","PRAZA", GALICIAN),
-	PROL 	("PROL ","PR","PROLONGACION", SPANISH),
-	PRTAL	("PRTAL","PH","PORTAL", SPANISH),
-	PRTCO	("PRTCO","PH","PORTICO", SPANISH),
-	PRZLA	("PRZLA","PL","PRAZUELA", null),
-	PSAJE	("PSAJE","PJ","PASAJE", SPANISH),
-	PSAXE	("PSAXE","PJ","PASAXE", GALICIAN),
-	PSLLO	("PSLLO","PX","PASILLO", SPANISH),
-	PSMAR	("PSMAR","PM","PASEO MARITIMO", SPANISH),
-	PTA  	("PTA  ","PU","PUERTA", SPANISH),
-	PTDA 	("PTDA ","PD","PARTIDA", SPANISH),
-	PTGE 	("PTGE ","PJ","PASSATGE", CATALAN),
-	PTILO	("PTILO","PO","PORTILLO", null),
-	PTLLO	("PTLLO","PO","PUERTILO", null),
-	PTO  	("PTO  ","PO","PUERTO", SPANISH),
-	PZO  	("PZO  ","P\u00C7","PASADIZO", SPANISH),
-	PZTA 	("PZTA ","PL","PLAZOLETA", null),
-	RABAL	("RABAL","AR","RABAL", SPANISH),
-	RACDA	("RACDA","RA","RACONADA",CATALAN),
-	RACO 	("RACO ","RC","RACO", CATALAN),
-	RAMAL	("RAMAL","RM","RAMAL", SPANISH),
-	RAMPA	("RAMPA","RP","RAMPA", SPANISH),
-	RAVAL	("RAVAL","AR","RAVAL", CATALAN),
-	RBLA 	("RBLA ","RB","RAMBLA", CATALAN),
-	RBRA 	("RBRA ","RI","RIBERA", SPANISH),
-	RCDA 	("RCDA ","RN","RINCONADA", SPANISH),
-	RCON 	("RCON ","RC","RINCON", SPANISH),
-	RENTO	("RENTO","RT","RENTO", SPANISH),
-	RESID	("RESID","RS","RESIDENCIAL", SPANISH),
-	RIERA	("RIERA","AY","RIERA", CATALAN),
-	RONDA	("RONDA","RD","RONDA",SPANISH),
-	RTDA 	("RTDA ","RO","ROTONDA", SPANISH),
-	RUA  	("RUA  ","RU","RUA", GALICIAN),
-	RUELA	("RUELA","CU","RUELA", GALICIAN),
-	RUERO	("RUERO","RE","RUEIRO", GALICIAN),
-	SANAT	("SANAT","SA","SANATORIO", SPANISH),
-	SANTU	("SANTU","ST","SANTUARIO", SPANISH),
-	SARBI	("SARBI","AC","SARBIDE", BASQUE),
-	SBIDA	("SBIDA","SB","SUBIDA", SPANISH),
-	SECT 	("SECT ","SC","SECTOR", SPANISH),
-	SEDER	("SEDER","SD","SENDER", CATALAN),
-	SEDRA	("SEDRA","SR","SENDERA", SPANISH),
-	SEKT 	("SEKT ","SC","SEKTORE", BASQUE),
-	SEND 	("SEND ","SN","SENDERO", SPANISH),
-	SENDA	("SENDA","SD","SENDA", SPANISH),
-	SVTIA	("SVTIA","CM","SERVENTIA", null),
-	TALDE	("TALDE","GR","TALDE", BASQUE),
-	TOKI 	("TOKI ","PE","TOKI", BASQUE),
-	TRANS	("TRANS","TS","TRANSITO", SPANISH),
-	TRAS 	("TRAS ","TA","TRASERA", SPANISH),
-	TRAV 	("TRAV ","TR","TRAVESSERA", CATALAN),
-	TRRNT	("TRRNT","TO","TORRENTE", SPANISH),
-	TRSSI	("TRSSI","TR","TRAVESSIA", CATALAN),
-	TRVA 	("TRVA ","TR","TRAVESIA", SPANISH),
-	TRVAL	("TRVAL","TV","TRANSVERSAL", SPANISH),
-	URB  	("URB  ","UR","URBANIZACION", SPANISH),
-	URBAT	("URBAT","UR","URBANITZACIO", CATALAN),
-	URBAZ	("URBAZ","UR","URBANIZAZIO", BASQUE),
-	VALLE	("VALLE","VA","VALLE", SPANISH),
-	VCTE 	("VCTE ","VD","VIADUCTE", CATALAN),
-	VCTO 	("VCTO ","VD","VIADUCTO", SPANISH),
-	VECIN	("VECIN","VC","VECINDARIO", SPANISH),
-	VEGA 	("VEGA ","VG","VEGA", SPANISH),
-	VENAT	("VENAT","VE","VEINAT", SPANISH),
-	VENLA	("VENLA","VN","VENELA", SPANISH),
-	VIA  	("VIA  ","VI","VIA", SPANISH),
-	VIAL 	("VIAL ","VL","VIAL", SPANISH),
-	VIANY	("VIANY","SN","VIARANY", CATALAN),
-	VILLA	("VILLA","V ","VILLA", SPANISH),
-	VREDA	("VREDA","VR","VEREDA", SPANISH),
-	VVDAS	("VVDAS","VV","VIVIENDAS", SPANISH),
-	XDIN 	("XDIN ","JR","XARDIN", GALICIAN),
-	ZEHAR	("ZEHAR","ZE","ZEARKALETA", BASQUE),
-	ZONA 	("ZONA ","ZO","ZONA", SPANISH),
-	ZUBI 	("ZUBI ","PT","ZUBI", BASQUE),
-	ZUHAI	("ZUHAI","AB","ZUHAIZTI", BASQUE),
-	ZUMAR	("ZUMAR","AL","ZUMARDI", BASQUE),
-	
-	XX	("XX","XX","XX", null),
-	ZZ	("ZZ","ZZ","ZZ", null),
+	AC	("ACCES","ACCESO", new StreeTypeI18N[] {
+		new StreeTypeI18N( CATALAN,"ACCE ","ACCES"),
+		new StreeTypeI18N( BASQUE,"SARBI","SARBIDE"),
+	}),
+	AE	("ACEQ ","ACEQUIA"),
+	AA	("ACERA","ACERA"),
+	AL	("ALAM ","ALAMEDA", new StreeTypeI18N[] {
+		new StreeTypeI18N( BASQUE,"ZUMAR","ZUMARDI"),
+	}),
+	AD	("ALDEA","ALDEA"),
+	AQ	("ALQUE","ALQUERIA"),
+	AT	("ALTO ","ALTO", new StreeTypeI18N[] {
+		new StreeTypeI18N( BASQUE,"GAIN ","GAIN"),
+	}),
+	AN	("ANDAD","ANDADOR"),
+	AG	("ANGTA","ANGOSTA"),
+	AO	("APDRO","APEADERO"),
+	AP	("APTOS","APARTAMENTOS", new StreeTypeI18N[] {
+		new StreeTypeI18N( CATALAN,"APTES","APARTAMENTS"),
+	}),
+	AB	("ARB  ","ARBOLEDA", new StreeTypeI18N[] {
+		new StreeTypeI18N( BASQUE,"ZUHAI","ZUHAIZTI"),
+	}),
+	AR	("ARRAL","ARRABAL", new StreeTypeI18N[] {
+		new StreeTypeI18N( BASQUE,"ERREB","ERREBAL"),
+		new StreeTypeI18N( SPANISH,"RABAL","RABAL"),
+		new StreeTypeI18N( CATALAN,"RAVAL","RAVAL"),
+	}),
+	AY	("ARRY ","ARROYO", new StreeTypeI18N[] {
+		new StreeTypeI18N( BASQUE,"ARREK","ERREKA"),
+		new StreeTypeI18N( CATALAN,"RIERA","RIERA"),
+	}),
+	AJ	("ATAJO","ATAJO", new StreeTypeI18N[] {
+		new StreeTypeI18N( CATALAN,"ATAL ","ATALL"),
+		new StreeTypeI18N( GALICIAN,"ATALL","ATALLO"),
+		new StreeTypeI18N( BASQUE,"LASTE","LASTERBIDE"),
+	}),
+	AU	("AUTO ","AUTOPISTA"),
+	AI	("AUTOV","AUTOVIA", new StreeTypeI18N[] {
+		new StreeTypeI18N( CATALAN,"AVIA ","AUTOVIA"),
+	}),
+	AV	("AVDA ","AVENIDA", new StreeTypeI18N[] {
+		new StreeTypeI18N( CATALAN,"AVGDA","AVINGUDA"),
+		new StreeTypeI18N( BASQUE,"ETDEA","ETORBIDEA"),
+		new StreeTypeI18N( BASQUE,"HIRIB","HIRIBIDEA"),
+	}),
+	BN	("BALNR","BALNEARIO"),
+	BA	("BARDA","BARRIADA", new StreeTypeI18N[] {
+		new StreeTypeI18N( BASQUE,"AUZOT","AUZOTEGI"),
+	}),
+	BO	("BARRO","BARRIO", new StreeTypeI18N[] {
+		new StreeTypeI18N( BASQUE,"AUZO ","AUZO"),
+		new StreeTypeI18N( BASQUE,"AUZUN","AUZUNEA"),
+		new StreeTypeI18N( CATALAN,"BARRI","BARRI"),
+	}),
+	BE	("BELNA","BELENA"),
+	BJ	("BJADA","BAJADA", new StreeTypeI18N[] {
+		new StreeTypeI18N( GALICIAN,"BDA  ","BAIXADA"),
+	}),
+	BL	("BLQUE","BLOQUE", new StreeTypeI18N[] {
+		new StreeTypeI18N( CATALAN,"BLOC ","BLOC"),
+	}),
+	BQ	("BQLLO","BARRANQUIL"),
+	BR	("BRANC","BARRANCO"),
+	BD	("BRDLA","BARREDUELA"),
+	BZ	("BRZAL","BRAZAL"),
+	BV	("BULEV","BULEVAR", new StreeTypeI18N[] {
+		new StreeTypeI18N( CATALAN,"BV   ","BULEVAR"),
+	}),
+	KH	("C.H. ","CMNO HONDO"),
+	KN	("C.N. ","CMNO NUEVO"),
+	KV	("C.V. ","CMNO VIEJO"),
+	CÑ	("CÑADA","CAÑADA"),
+	CL	("CALLE","CALLE", new StreeTypeI18N[] {
+		new StreeTypeI18N( CATALAN,"CARRE","CARRER"),
+		new StreeTypeI18N( BASQUE,"KALE ","KALEA"),
+		new StreeTypeI18N( BASQUE,"KARRI","KARRIKA"),
+	}),
+	CP	("CAMPA","CAMPA", new StreeTypeI18N[] {
+		new StreeTypeI18N( SPANISH,"CAMPO","CAMPO"),
+	}),
+	CG	("CAMPG","CAMPING"),
+	CA	("CANAL","CANAL"),
+	CQ	("CANT ","CANTON", new StreeTypeI18N[] {
+		new StreeTypeI18N( CATALAN,"CANTO","CANTO"),
+	}),
+	QT	("CANTI","CANTINA"),
+	QA	("CANTR","CANTERA"),
+	CS	("CASA ","CASA", new StreeTypeI18N[] {
+		new StreeTypeI18N( SPANISH,"CSRIO","CASERIO"),
+	}),
+	CB	("CBTIZ","COBERTIZO"),
+	CV	("CCVCN","CIRCUNVALACION"),
+	CE	("CERRO","CERRO"),
+	CH	("CHLET","CHALET"),
+	CI	("CINT ","CINTURON", new StreeTypeI18N[] {
+		new StreeTypeI18N( CATALAN,"CINY ","CINYELL"),
+	}),
+	CU	("CJLA ","CALLEJUELA", new StreeTypeI18N[] {
+		new StreeTypeI18N( GALICIAN,"RUELA","RUELA"),
+	}),
+	CN	("CJTO ","CONJUNTO"),
+	CY	("CLEYA","CALEYA"),
+	CJ	("CLLJA","CALLEJA", new StreeTypeI18N[] {
+		new StreeTypeI18N( BASQUE,"KARIK","KARRIK"),
+	}),
+	CK	("CLLON","CALLEJON", new StreeTypeI18N[] {
+		new StreeTypeI18N( BASQUE,"ETXAR","ETXARTE"),
+	}),
+	KZ	("CLLZO","CALLIZO"),
+	KY	("CLYON","CALEYON"),
+	CM	("CMNO ","CAMINO", new StreeTypeI18N[] {
+		new StreeTypeI18N( CATALAN,"CAMI ","CAMI"),
+		new StreeTypeI18N( GALICIAN,"CMÑO ","CAMIÑO"),
+		new StreeTypeI18N( CATALAN,"CMNET","CAMINET"),
+	}),
+	QN	("CNLLA","CANELLA"),
+	CW	("CNVTO","CONVENTO", new StreeTypeI18N[] {
+		new StreeTypeI18N( CATALAN,"CNVT ","CONVENT"),
+	}),
+	CO	("COL  ","COLONIA"),
+	QJ	("COMPJ","COMPLEJO"),
+	KP	("COOP ","COOPERATIVA"),
+	KO	("COSTA","COSTA", new StreeTypeI18N[] {
+		new StreeTypeI18N( BASQUE,"KOSTA","KOSTA"),
+	}),
+	KR	("COSTE","COSTERA"),
+	KA	("CRA  ","CARRERA", new StreeTypeI18N[] {
+		new StreeTypeI18N( BASQUE,"KARRE","KARRERA"),
+	}),
+	RL	("CRLLO","CORRILLO"),
+	QR	("CRO  ","CARRERO"),
+	QL	("CRRAL","CORRAL"),
+	KD	("CRRDO","CORREDOR", new StreeTypeI18N[] {
+		new StreeTypeI18N( SPANISH,"CRRCI","CORREDORCILLO"),
+		new StreeTypeI18N( GALICIAN,"CRRDA","CORREDOIRA"),
+		new StreeTypeI18N( SPANISH,"CRRDE","CORREDERA"),
+	}),
+	KL	("CRRIL","CARRIL", new StreeTypeI18N[] {
+		new StreeTypeI18N( BASQUE,"KRRIL","KARRIL"),
+	}),
+	QO	("CRRLO","CORRALILLO"),
+	QI	("CRTIL","CARRETIL"),
+	KT	("CRTJO","CORTIJO"),
+	KS	("CSTAN","COSTANILLA"),
+	CR	("CTRA ","CARRETERA", new StreeTypeI18N[] {
+		new StreeTypeI18N( BASQUE,"ERREP","ERREPIDE"),
+	}),
+	QE	("CTRIN","CARRETERIN"),
+	CD	("CUADR","CUADRA"),
+	QV	("CUEVA","CUEVA/S"),
+	CT	("CUSTA","CUESTA", new StreeTypeI18N[] {
+		new StreeTypeI18N( BASQUE,"ALDAP","ALDAPA"),
+	}),
+	CZ	("CZADA","CALZADA"),
+	CÇ	("CZADS","CALZADAS"),
+	DM	("DEMAR","DEMARCACION"),
+	DH	("DHSA ","DEHESA"),
+	DS	("DISEM","DISEMINADO", new StreeTypeI18N[] {
+		new StreeTypeI18N( CATALAN,"DISSE","DISSEMINAT"),
+	}),
+	ED	("EDIFC","EDIFICIO/S"),
+	ER	("EMPR ","EMPRESA"),
+	EP	("ENTD ","ENTRADA"),
+	EC	("ESCA ","ESCALERA/S", new StreeTypeI18N[] {
+		new StreeTypeI18N( SPANISH,"ESC  ","ESCALA/S"),
+	}),
+	EW	("ESCAL","ESCALINATA"),
+	ES	("ESLDA","ESPALDA"),
+	EG	("ESPIG","ESPIGO"),
+	EN	("ESTCN","ESTACION", new StreeTypeI18N[] {
+	new StreeTypeI18N( CATALAN,"ESTAC","ESTACIO"),
+	}),
+	EX	("ESTDA","ESTRADA"),
+	EZ	("EXPLA","EXPLANADA"),
+	EM	("EXTRM","EXTRAMUROS"),
+	ET	("EXTRR","EXTRARRADIO"),
+	FD	("FALDA","FALDA"),
+	FC	("FBRCA","FABRICA"),
+	FN	("FINCA","FINCA"),
+	GV	("G.V. ","GRAN VIA"),
+	GA	("GALE ","GALERIA"),
+	GZ	("GLLZO","GALLIZO"),
+	GJ	("GRANJ","GRANJA"),
+	GR	("GRUPO","GRUPO/S", new StreeTypeI18N[] {
+		new StreeTypeI18N( CATALAN,"GRUP ","GRUP"),
+		new StreeTypeI18N( BASQUE,"TALDE","TALDE"),
+	}),
+	GL	("GTA  ","GLORIETA", new StreeTypeI18N[] {
+		new StreeTypeI18N( BASQUE,"BIDEB","BIDEBIETA"),
+	}),
+	HP	("HIPOD","HIPODROMO"),
+	HY	("HOYA ","HOYA"),
+	IN	("INDA ","INDA"),
+	JR	("JDIN ","JARDIN", new StreeTypeI18N[] {
+		new StreeTypeI18N( CATALAN,"JARD ","JARDI"),
+		new StreeTypeI18N( BASQUE,"LORAT","LORATEGI"),
+		new StreeTypeI18N( GALICIAN,"XDIN ","XARDIN"),
+	}),
+	LA	("LAGO ","LAGO"),
+	LD	("LDERA","LADERA"),
+	LL	("LLNRA","LLANURA"),
+	LM	("LOMA ","LOMA"),
+	LO	("LOMO ","LOMO"),
+	LG	("LUGAR","LUGAR", new StreeTypeI18N[] {
+		new StreeTypeI18N( BASQUE,"LEKU ","LEKU"),
+		new StreeTypeI18N( CATALAN,"LLOC ","LLOC"),
+	}),
+	MA	("MALEC","MALECON"),
+	MS	("MASIA","MASIA/S"),
+	MZ	("MAZO ","MAZO"),
+	MC	("MERC ","MERCADO", new StreeTypeI18N[] {
+		new StreeTypeI18N( CATALAN,"MERCT","MERCAT"),
+	}),
+	MD	("MIRAD","MIRADOR", new StreeTypeI18N[] {
+		new StreeTypeI18N( SPANISH,"MRDOR","MIRADOR"),
+	}),
+	MT	("MONTE","MONTE", new StreeTypeI18N[] {
+		new StreeTypeI18N( BASQUE,"MENDI","MENDI"),
+	}),
+	MO	("MTRIO","MONASTERIO"),
+	ML	("MUELL","MUELLE", new StreeTypeI18N[] {
+		new StreeTypeI18N( BASQUE,"KAI  ","KAI"),
+		new StreeTypeI18N( CATALAN,"MOLL ","MOLL"),
+	}),
+	NV	("NAVE ","NAVE/S"),
+	UN	("NCLEO","NUCLEO"),
+	ND	("NUDO ","NUDO"),
+	PP	("PAGO ","PAGO"),
+	PC	("PALAC","PALACIO"),
+	P 	("PANT ","PANTANO"),
+	PF	("PARTI","PARTICULAR"),
+	PA	("PAS  ","PAS"),
+	PS	("PASEO","PASEO", new StreeTypeI18N[] {
+		new StreeTypeI18N( BASQUE,"PASEA","PASEABIDE"),
+		new StreeTypeI18N( CATALAN,"PASSE","PASSEIG"),
+	}),
+	PK	("PATIO","PATIO"),
+	PB	("PBLO ","PUEBLO", new StreeTypeI18N[] {
+		new StreeTypeI18N( SPANISH,"PBDO ","POBLADO"),
+	}),
+	PV	("PDA  ","PUJADA"),
+	PN	("PINAR","PINAR"),
+	PI	("PISTA","PISTA"),
+	SU	("PJDA ","PUJADA, SUBIDA"),
+	PL	("PL   ","PL"),
+	PY	("PLAYA","PLAYA", new StreeTypeI18N[] {
+		new StreeTypeI18N( BASQUE,"HONDA","HONDARTZA"),
+		new StreeTypeI18N( BASQUE,"ONDA ","ONDARTZA"),
+		new StreeTypeI18N( GALICIAN,"PRAIA","PRAIA"),
+	}),
+	PZ	("PLAZA","PLAZA", new StreeTypeI18N[] {
+		new StreeTypeI18N( BASQUE,"EPTZA","ENPARANTZA"),
+		new StreeTypeI18N( CATALAN,"PLAÇA","PLAÇA"),
+		new StreeTypeI18N( GALICIAN,"PRAZA","PRAZA"),
+	}),
+	PT	("PNTE ","PUENTE", new StreeTypeI18N[] {
+		new StreeTypeI18N( CATALAN,"PONT ","PONT"),
+		new StreeTypeI18N( GALICIAN,"PONTE","PONTE"),
+		new StreeTypeI18N( BASQUE,"ZUBI ","ZUBI"),
+	}),
+	PG	("POLIG","POLIGONO"),
+	PQ	("PQUE ","PARQUE", new StreeTypeI18N[] {
+		new StreeTypeI18N( CATALAN,"PARC ","PARC"),
+		new StreeTypeI18N( BASQUE,"PARKE","PARKE"),
+	}),
+	PE	("PRAJE","PARAJE", new StreeTypeI18N[] {
+		new StreeTypeI18N( CATALAN,"PRAGE","PARATGE"),
+		new StreeTypeI18N( GALICIAN,"PRAXE","PARAXE"),
+		new StreeTypeI18N( BASQUE,"TOKI ","TOKI"),
+	}),
+	PR	("PROL ","PROLONGACION"),
+	PH	("PRTAL","PORTAL", new StreeTypeI18N[] {
+		new StreeTypeI18N( SPANISH,"PRTCO","PORTICO"),
+	}),
+	PJ	("PSAJE","PASAJE", new StreeTypeI18N[] {
+		new StreeTypeI18N( BASQUE,"PASAI","PASAIA"),
+		new StreeTypeI18N( GALICIAN,"PSAXE","PASAXE"),
+		new StreeTypeI18N( CATALAN,"PTGE ","PASSATGE"),
+	}),
+	PX	("PSLLO","PASILLO"),
+	PM	("PSMAR","PASEO MARITIMO"),
+	PU	("PTA  ","PUERTA"),
+	PD	("PTDA ","PARTIDA"),
+	PO	("PTO  ","PUERTO", new StreeTypeI18N[] {
+		new StreeTypeI18N( CATALAN,"PORT ","PORT"),
+	}),
+	PÇ	("PZO  ","PASADIZO", new StreeTypeI18N[] {
+		new StreeTypeI18N( CATALAN,"PDIS ","PASSADIS"),
+	}),
+	RM	("RAMAL","RAMAL"),
+	RP	("RAMPA","RAMPA"),
+	RI	("RBRA ","RIBERA"),
+	RN	("RCDA ","RINCONADA"),
+	RC	("RCON ","RINCON", new StreeTypeI18N[] {
+		new StreeTypeI18N( CATALAN,"RACO ","RACO"),
+	}),
+	RT	("RENTO","RENTO"),
+	RS	("RESID","RESIDENCIAL"),
+	RD	("RONDA","RONDA"),
+	RO	("RTDA ","ROTONDA"),
+	SA	("SANAT","SANATORIO"),
+	ST	("SANTU","SANTUARIO"),
+	SB	("SBIDA","SUBIDA", new StreeTypeI18N[] {
+		new StreeTypeI18N( BASQUE,"GORAB","GORABIDE"),
+	}),
+	SC	("SECT ","SECTOR", new StreeTypeI18N[] {
+		new StreeTypeI18N( BASQUE,"SEKT ","SEKTORE"),
+	}),
+	SR	("SEDRA","SENDERA"),
+	SN	("SEND ","SENDERO", new StreeTypeI18N[] {
+		new StreeTypeI18N( CATALAN,"VIANY","VIARANY"),
+	}),
+	SD	("SENDA","SENDA", new StreeTypeI18N[] {
+		new StreeTypeI18N( CATALAN,"SEDER","SENDER"),
+	}),
+	TS	("TRANS","TRANSITO"),
+	TA	("TRAS ","TRASERA"),
+	TO	("TRRNT","TORRENTE"),
+	TR	("TRVA ","TRAVESIA", new StreeTypeI18N[] {
+		new StreeTypeI18N( CATALAN,"TRAV ","TRAVESSERA"),
+		new StreeTypeI18N( CATALAN,"TRSSI","TRAVESSIA"),
+	}),
+	TV	("TRVAL","TRANSVERSAL"),
+	UR	("URB  ","URBANIZACION", new StreeTypeI18N[] {
+		new StreeTypeI18N( CATALAN,"URBAT","URBANITZACIO"),
+		new StreeTypeI18N( BASQUE,"URBAZ","URBANIZAZIO"),
+	}),
+	VA	("VALLE","VALLE"),
+	VD	("VCTO ","VIADUCTO", new StreeTypeI18N[] {
+		new StreeTypeI18N( CATALAN,"VCTE ","VIADUCTE"),
+	}),
+	VC	("VECIN","VECINDARIO"),
+	VG	("VEGA ","VEGA", new StreeTypeI18N[] {
+		new StreeTypeI18N( BASQUE,"ERRIB","ERRIBERA"),
+	}),
+	VE	("VENAT","VEINAT"),
+	VN	("VENLA","VENELA"),
+	VI	("VIA  ","VIA", new StreeTypeI18N[] {
+		new StreeTypeI18N( BASQUE,"BIDE ","BIDE"),
+	}),
+	VL	("VIAL ","VIAL"),
+	V 	("VILLA","VILLA"),
+	VR	("VREDA","VEREDA", new StreeTypeI18N[] {
+		new StreeTypeI18N( CATALAN,"CARRY","CARRERANY"),
+	}),
+	VV	("VVDAS","VIVIENDAS"),
+	ZO	("ZONA ","ZONA"),
+	XX	("XX","XX"),
+	ZZ	("ZZ","ZZ"),
 	;
 	
-	private String ineCode;
-	private String aeatCode;
-	private String description;
-	private AonLanguage language;
+	public static record StreeTypeI18N( AonLanguage language, String ineCode, String description ) {};
 	
-	private StreetType(String ineCode, String aeatCode, String description, AonLanguage language) {
+	private String ineCode;
+	private String description;
+	private LinkedList<StreeTypeI18N> i18ns;
+	
+	private StreetType(String ineCode, String description) {
+		this( ineCode, description, null);
+	}
+	private StreetType(String ineCode, String description, StreeTypeI18N[] i18ns) {
 		this.ineCode = ineCode; 
-		this.aeatCode = aeatCode;
-		this.description = description; 
-		this.language = language;
+		this.description = description;
+		this.i18ns = new LinkedList<>();
+		this.i18ns.add(new StreeTypeI18N( SPANISH,ineCode,description));
+		AonCollectionUtils.stream(i18ns)
+			.forEach( i -> this.i18ns.add(i) );
 	}
 
 	public String getIneCode() {
 		return ineCode;
 	}
-	public String getAeatCode() {
-		return aeatCode;
-	}
 	public String getDescription() {
 		return description;
 	}
-	public AonLanguage getLanguage() {
-		return language;
-	}
 	
 	public String value() {
-		return aeatCode;
-	}
-	
-	public static Optional<StreetType> valueOfIneCode( String s ) {
-		return AonCollectionUtils.stream(values())
-			.filter( t -> AonStringUtils.equalsIgnoreCase(t.getIneCode(), s))
-			.findFirst();
-	}
-	public static Optional<StreetType> valueOfAeatCode( String s , AonLanguage lang) {
-		return AonCollectionUtils.stream(values())
-			.filter	( t -> AonStringUtils.equalsIgnoreCase(t.getAeatCode(), s)
-				&& ((  lang == null && t.getLanguage() == null) || (lang != null && t.getLanguage() == lang)))
-			.findFirst();
+		return name();
 	}
 	
 	public static Optional<StreetType> value( String s ) {
+		String code = ("C/".equals(s))?"CL":s; 
 		return AonCollectionUtils.stream(values())
-			.filter( t -> AonStringUtils.equalsIgnoreCase(t.name(), s)
-				|| AonStringUtils.equalsIgnoreCase(t.getDescription(), s))
+			.filter( t -> AonStringUtils.equalsIgnoreCase(t.name(), code))
+			.findFirst();
+	}
+	
+	public Optional<StreeTypeI18N> i18n( AonLanguage language ) {
+		return AonCollectionUtils.stream( this.i18ns )
+			.filter	( i -> i.language  == language )
 			.findFirst();
 	}
 	
 	public static String value( StreetType t ) {
-		return t == null ? null : t.getAeatCode();
+		return t == null ? null : t.name();
 	}
 }

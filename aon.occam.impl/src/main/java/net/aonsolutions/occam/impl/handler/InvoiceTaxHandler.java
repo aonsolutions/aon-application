@@ -132,7 +132,9 @@ class InvoiceTaxHandler {
 				.setVatDeductionType(VatDeductionType.value(getValue(r, INVOICE_TAX.VAT_DEDUCTION_TYPE)).orElse(null))
 				.setWithholdingType(WithholdingType.value(getValue(r, INVOICE_TAX.WITHHOLDING_TYPE)).orElse(null))
 				.setDeductiblePercent(getDouble(r, INVOICE_TAX.DEDUCTIBLE_PERCENT))
-				.setDeductibleQuota(getDouble(r, INVOICE_TAX.DEDUCTIBLE_QUOTA));
+				.setDeductibleQuota(getDouble(r, INVOICE_TAX.DEDUCTIBLE_QUOTA))
+				.markAsClean()
+			;
 		}
 	}
 	// --------------------------------------------------------------------------------	

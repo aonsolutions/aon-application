@@ -1,7 +1,11 @@
 package net.aonsolutions.occam.api.model;
 
 import java.io.Serializable;
+import java.util.Objects;
 import java.util.Optional;
+
+import com.esferalia.aon.watson.util.AonMathUtils;
+import com.esferalia.aon.watson.util.AonObjectUtils;
 
 import net.aonsolutions.occam.api.model.type.WithholdingType;
 
@@ -13,12 +17,14 @@ public class InvoiceWithholding implements Serializable {
 	private double base;
 	private double percentage;
 	private double quota;
+	private double directTaxPercent;
 	private double deductibleQuota;
 	private Account account;
+	private Account adjDirectTaxAccount;
 	
 	private boolean quotaEdited;
 	private boolean deductibleQuotaEdited;
-
+	
 	public WithholdingType getWithholdingType() {
 		return withholdingType;
 	}
@@ -59,6 +65,23 @@ public class InvoiceWithholding implements Serializable {
 		return this;
 	}
 	
+	public double getDirectTaxPercent() {
+		return directTaxPercent;
+	}
+	public InvoiceWithholding setDirectTaxPercent(double directTaxPercent) {
+		this.directTaxPercent = directTaxPercent;
+		return this;
+	}
+	
+	public double getDirectTaxNoDedExpenses() {
+		double percent = AonMathUtils.round(100 - this.directTaxPercent);
+		return AonMathUtils.round( this.base *  percent / 100);		
+	}
+	public double getDirectTaxDedExpenses() {
+		return AonMathUtils.round( getBase() - getDirectTaxNoDedExpenses() );
+	}
+
+
 	public Optional<Account> getAccount() {
 		return Optional.ofNullable(account);
 	}
@@ -66,7 +89,15 @@ public class InvoiceWithholding implements Serializable {
 		this.account = account;
 		return this;
 	}
-
+	
+	public Optional<Account> getAdjDirectTaxAccount() {
+		return Optional.ofNullable(adjDirectTaxAccount);
+	}
+	public InvoiceWithholding setAdjDirectTaxAccount(Account adjDirectTaxAccount) {
+		this.adjDirectTaxAccount = adjDirectTaxAccount;
+		return this;
+	}
+	
 	public boolean isQuotaEdited() {
 		return quotaEdited;
 	}
@@ -82,4 +113,36 @@ public class InvoiceWithholding implements Serializable {
 		this.deductibleQuotaEdited = deductibleQuotaEdited;
 		return this;
 	}
+	
+	@Override
+	public boolean equals(Object obj) {
+		if (obj == this) return true;
+		if (obj instanceof InvoiceWithholding other) {
+			return AonObjectUtils.equals( this.withholdingType,other.withholdingType )
+				&& AonObjectUtils.equals( this.base,other.base )
+				&& AonObjectUtils.equals( this.percentage,other.percentage )
+				&& AonObjectUtils.equals( this.quota,other.quota )
+				&& AonObjectUtils.equals( this.directTaxPercent,other.directTaxPercent )
+				&& AonObjectUtils.equals( this.deductibleQuota,other.deductibleQuota )
+				&& AonObjectUtils.equals( this.account,other.account )
+				&& AonObjectUtils.equals( this.adjDirectTaxAccount,other.adjDirectTaxAccount )
+			;
+		}
+	    return false;
+	}
+	
+	@Override
+	public int hashCode() {
+	    return 31 * 7 
+    		+ Objects.requireNonNullElse(withholdingType, 0).hashCode()
+    		+ Objects.requireNonNullElse(base, 0).hashCode()
+    		+ Objects.requireNonNullElse(percentage, 0).hashCode()
+    		+ Objects.requireNonNullElse(quota, 0).hashCode()
+    		+ Objects.requireNonNullElse(directTaxPercent, 0).hashCode()
+    		+ Objects.requireNonNullElse(deductibleQuota, 0).hashCode()
+			+ Objects.requireNonNullElse(account, 0).hashCode()
+			+ Objects.requireNonNullElse(adjDirectTaxAccount, 0).hashCode()
+		;
+	}
+	
 }

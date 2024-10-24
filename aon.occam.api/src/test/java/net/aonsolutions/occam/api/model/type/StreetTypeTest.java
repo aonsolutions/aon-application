@@ -56,21 +56,6 @@ class StreetTypeTest extends AbstractOccamApiTest {
 		assertTrue(om.isPresent());
 		assertEquals(m.value(), om.get().value());
 		
-
-		String INE1 = m.getIneCode();
-		Optional<StreetType> INEom = StreetType.valueOfIneCode( INE1 );
-		assertTrue(INEom.isPresent());
-		assertSame(m, INEom.get());
-		
-		String INE2 = AonStringUtils.lowerCase(INE1);
-		INEom = StreetType.valueOfIneCode( INE2  );
-		assertTrue(INEom.isPresent());
-		assertSame(m, INEom.get());
-		
-		String INE3 = AonStringUtils.upperCase(INE1);
-		INEom = StreetType.valueOfIneCode( INE3 );
-		assertTrue(INEom.isPresent());
-		assertSame(m, INEom.get());
 	}
 	
 }

@@ -71,7 +71,7 @@ public class Finance extends AonEntity<FinanceMetadata> implements HasAudit {
 	}
 	@Override
 	public Finance setDeleted(boolean deleted) {
-		super.setSelected(deleted);
+		super.setDeleted(deleted);
 		return this;
 	}
 

@@ -159,7 +159,7 @@ public class Activity extends AonEntity<ActivityMetadata> {
 	@Override
 	public boolean equals(Object obj) {
 		if (obj == this) return true;
-		if (obj instanceof Account other) {
+		if (obj instanceof Activity other) {
 			return AonObjectUtils.equals( this.getUuid(),other.getUuid() );
 		}
 	    return false;

@@ -107,10 +107,10 @@ class InvoiceHeaderHandler {
 				.setVatAccrualPayment(getBoolean(r,inv.VAT_ACCRUAL_PAYMENT))	
 				.setInvestment(getBoolean(r,inv.INVESTMENT))	
 				.setService(getBoolean(r,inv.SERVICE))	
-				.setTaxableBase(getValue(r,inv.TAXABLE_BASE))	
-				.setVatQuota(getValue(r,inv.VAT_QUOTA))	
-				.setRetentionQuota(getValue(r,inv.RETENTION_QUOTA))	
-				.setTotal(getValue(r,inv.TOTAL))	
+				.setTaxableBase(getDouble(r,inv.TAXABLE_BASE))	
+				.setVatQuota(getDouble(r,inv.VAT_QUOTA))	
+				.setRetentionQuota(getDouble(r,inv.RETENTION_QUOTA))	
+				.setTotal(getDouble(r,inv.TOTAL))	
 				.setComments(getValue(r,inv.COMMENTS))
 				.setRemarks(getValue(r,inv.REMARKS))
 				.setSeller(SellerFiller.build(r, REGISTRY_SELLER))
@@ -118,6 +118,7 @@ class InvoiceHeaderHandler {
 				.setCreationUser(getValue(r,inv.CREATION_USER))
 				.setModificationDate(getValue(r,inv.MODIFICATION_DATE))
 				.setModificationUser(getValue(r,inv.MODIFICATION_USER))
+				.markAsClean()
 			;
 		}
 	}

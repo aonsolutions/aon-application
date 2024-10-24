@@ -2,12 +2,17 @@ package net.aonsolutions.occam.api.model;
 
 import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
+import java.util.Arrays;
 import java.util.Date;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
+import com.esferalia.aon.watson.util.AonCollectionUtils;
 import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.github.javafaker.Faker;
@@ -239,21 +244,28 @@ public class AonRandom {
     // ---------------------------------- RANDOM ENUMS ----------
     // ---------------------------------------------------------- 
 	public static <E extends Enum<E>> E getEnum(Class<E> clazz) {
-		return getEnum( clazz, false, null);
+		return getEnum( clazz, false, null, e -> true);
 	}
 	public static <E extends Enum<E>> E getEnum(Class<E> clazz,int threshold) {
-		return getEnum( clazz, gt(threshold), null);
+		return getEnum( clazz, gt(threshold), null, e -> true);
+	}
+	public static <E extends Enum<E>> E getEnumFiltered(Class<E> clazz,int threshold, Predicate<E> filter) {
+		return getEnum( clazz, gt(threshold), null, filter );
 	}
 	public static <E extends Enum<E>> E getEnum(Class<E> clazz,boolean nullable) {
-		return getEnum( clazz, nullable?gt(50):false , null);
+		return getEnum( clazz, nullable?gt(50):false , null, e -> true);
 	}
 	public static <E extends Enum<E>> E getEnum(Class<E> clazz, int threshold, E defaultValue) {
-		return getEnum( clazz, gt(threshold), defaultValue);
+		return getEnum( clazz, gt(threshold), defaultValue, e -> true);
 	}
-	public static <E extends Enum<E>> E getEnum(Class<E> clazz,boolean nullable, E defaultValue) {
+	public static <E extends Enum<E>> E getEnum(Class<E> clazz,boolean nullable, E defaultValue, Predicate<E> filter) {
 		if (nullable) return defaultValue;
-		E[] values  = clazz.getEnumConstants();
-		return values[FAKER.random().nextInt(values.length)];
+		LinkedList<E> values = Arrays.stream(clazz.getEnumConstants())
+			.filter(filter)
+			.collect(Collectors.toCollection(LinkedList<E>::new));
+		return AonCollectionUtils.isNotEmpty(values)
+				? values.get(FAKER.random().nextInt(values.size()))
+				:null;
 	}
 
 }

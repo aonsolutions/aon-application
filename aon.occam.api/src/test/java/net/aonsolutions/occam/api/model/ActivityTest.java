@@ -1,9 +1,15 @@
 package net.aonsolutions.occam.api.model;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 import org.junit.jupiter.api.Test;
 import com.esferalia.aon.watson.util.AonCollectionUtils;
@@ -140,5 +146,35 @@ class ActivityTest {
 		Activity ent = new Activity();
 		ent.setMain(true);
 		assertTrue( ent.isDirty(ActivityMetadata.MAIN) );
+	}
+
+	@Test
+	void testActivityEquals() {
+		Activity a1 = new Activity().setId(1);
+		assertEquals(a1,a1);
+		assertNotEquals(a1,null);
+		assertNotEquals(null,a1);
+		assertNotEquals(a1,new Object());
+		assertNotEquals(a1,new Activity());
+		
+		Activity a2 = new Activity().setId(1);
+		assertEquals(a1,a2);
+		
+		Activity a3 = new Activity().setId(3);
+		assertNotEquals(a1,a3);
+	}
+
+	
+	@Test
+	void testHashcode() {
+	    List<Activity> objects = new ArrayList<>();
+	    for (int i = 0; i < 1000; i++) {
+	        objects.add(new Activity().setId(i));
+	    }
+	    Set<Integer> hashCodes = new HashSet<>();
+	    for (Activity obj : objects) {
+	        hashCodes.add(obj.hashCode());
+	    }
+	    assertEquals(objects.size(), hashCodes.size(), 10);
 	}
 }

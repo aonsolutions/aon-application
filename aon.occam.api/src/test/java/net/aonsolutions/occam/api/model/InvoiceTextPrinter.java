@@ -10,7 +10,9 @@ import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 import net.aonsolutions.occam.api.model.type.InvoiceErrorLevel;
+import net.aonsolutions.occam.api.model.type.StreetType;
 import net.aonsolutions.occam.api.model.type.TaxType;
+import net.aonsolutions.occam.api.model.type.VATTaxRegime;
 
 public class InvoiceTextPrinter {
 
@@ -115,6 +117,65 @@ public class InvoiceTextPrinter {
 		out.println(buf.toString());
 		return this;
 	}
+	
+	private InvoiceTextPrinter address(Invoice invoice, PrintStream out) {
+		StringBuilder buf = new StringBuilder();
+		buf.append(AonStringUtils.SPACE);
+		buf.append(TOP_LEFT_CORNER);
+		buf.append(AonStringUtils.repeat(HORIZONTAL_BAR, getLineSize() - buf.length()));
+		buf.append(TOP_RIGHT_CORNER);
+		out.println(buf.toString());
+		invoice.getInvoiceAddress()
+			.ifPresentOrElse(
+				ia -> {
+					StringBuilder buff = new StringBuilder();
+					buff.append(AonStringUtils.SPACE);
+					buff.append(VERTICAL_BAR);
+					buff.append(StreetType.value(ia.getStreetType()));
+					buff.append(AonStringUtils.SPACE);
+					buff.append(AonStringUtils.defaultIfBlank(ia.getAddress(), "[NO ADDR]"));
+					buff.append(AonStringUtils.SPACE);
+					buff.append(AonStringUtils.defaultIfBlank(ia.getNumber(), "[NO NUMB]"));
+					buff.append(AonStringUtils.SPACE);
+					buff.append(AonStringUtils.defaultIfBlank(ia.getAddress2(), "[NO ADD2]"));
+					buff.append(AonStringUtils.leftPad(" ", getLineSize() - buff.length()));
+					buff.append(VERTICAL_BAR);
+					out.println(buff.toString());
+					
+					buff = new StringBuilder();
+					buff.append(AonStringUtils.SPACE);
+					buff.append(VERTICAL_BAR);
+					buff.append(AonStringUtils.defaultIfBlank(ia.getZip(), "[NO ZIP]"));
+					buff.append(AonStringUtils.SPACE);
+					buff.append(AonStringUtils.defaultIfBlank(ia.getCity(), "[NO CITY]"));
+					buff.append(AonStringUtils.SPACE);
+					buff.append(AonStringUtils.defaultIfBlank(ia.getProvince(), "[NO PROV]"));
+					buff.append(AonStringUtils.SPACE);
+					buff.append(ia.getGeozone().map(Geozone::getName).orElse("[NO GEOZONE]"));
+					buff.append(AonStringUtils.SPACE);
+					buff.append(ia.getParent().map(Geozone::getName).orElse("[NO PARENT]"));
+					buff.append(AonStringUtils.leftPad(" ", getLineSize() - buff.length()));
+					buff.append(VERTICAL_BAR);
+					out.println(buff.toString());
+				}
+				,() -> {
+					StringBuilder buff = new StringBuilder();
+					buff.append(AonStringUtils.SPACE);
+					buff.append(VERTICAL_BAR);
+					buff.append(AonStringUtils.leftPad(" ", getLineSize() - buff.length()));
+					buff.append(VERTICAL_BAR);
+					out.println(buff.toString());
+				});
+		
+		buf = new StringBuilder();
+		buf.append(AonStringUtils.SPACE);
+		buf.append(LOWER_LEFT_CORNER);
+		buf.append(AonStringUtils.repeat(HORIZONTAL_BAR, getLineSize() - buf.length()));
+		buf.append(LOWER_RIGHT_CORNER);
+		out.println(buf.toString());
+		return this;
+	}
+
 
 	private InvoiceTextPrinter details(Invoice invoice, PrintStream out) {
 		StringBuilder buf = new StringBuilder();
@@ -233,14 +294,14 @@ public class InvoiceTextPrinter {
 
 	private InvoiceTextPrinter vatBreakdown(Invoice invoice, PrintStream out) {
 		StringBuilder buf = new StringBuilder();
-		buf.append(AonStringUtils.spaces(30));
+		buf.append(AonStringUtils.spaces(15));
 		buf.append(TOP_LEFT_CORNER);
 		buf.append(AonStringUtils.repeat(HORIZONTAL_BAR, getLineSize() - buf.length()));
 		buf.append(TOP_RIGHT_CORNER);
 		out.println(buf.toString());
 		
 		buf = new StringBuilder();
-		buf.append(AonStringUtils.spaces(30));
+		buf.append(AonStringUtils.spaces(15));
 		buf.append(VERTICAL_BAR);
 		buf.append(AonStringUtils.spaces(1));
 		buf.append(AonStringUtils.rightPad("IVA", 5));
@@ -249,21 +310,22 @@ public class InvoiceTextPrinter {
 		buf.append(AonStringUtils.leftPad("Cuota", 17));
 		buf.append(AonStringUtils.leftPad("% RE", 8));
 		buf.append(AonStringUtils.leftPad("Cuota RE", 17));
+		buf.append(AonStringUtils.leftPad("Cuota Ded", 17));
 		buf.append(AonStringUtils.leftPad(" ", getLineSize() - buf.length()));
 		buf.append(VERTICAL_BAR);
 		out.println(buf.toString());
 
 		buf = new StringBuilder();
-		buf.append(AonStringUtils.spaces(30));
+		buf.append(AonStringUtils.spaces(15));
 		buf.append(VERTICAL_RIGHT_BAR);
 		buf.append(AonStringUtils.repeat(HORIZONTAL_BAR, getLineSize() - buf.length()));
 		buf.append(VERTICAL_LEFT_BAR);
 		out.println(buf.toString());
 		
-		invoice.getVats().forEach(tax -> vatInvoiceBreakdown(tax, out));
+		invoice.vatStream().forEach(tax -> vatInvoiceBreakdown(tax, out));
 
 		buf = new StringBuilder();
-		buf.append(AonStringUtils.spaces(30));
+		buf.append(AonStringUtils.spaces(15));
 		buf.append(LOWER_LEFT_CORNER);
 		buf.append(AonStringUtils.repeat(HORIZONTAL_BAR, getLineSize() - buf.length()));
 		buf.append(LOWER_RIGHT_CORNER);
@@ -273,7 +335,7 @@ public class InvoiceTextPrinter {
 
 	private void vatInvoiceBreakdown(InvoiceBreakdown tax, PrintStream out) {
 		StringBuilder buf = new StringBuilder();
-		buf.append(AonStringUtils.spaces(30));
+		buf.append(AonStringUtils.spaces(15));
 		buf.append(VERTICAL_BAR);
 		buf.append(AonStringUtils.spaces(1));
 		buf.append(AonStringUtils.rightPad(tax.getTaxType().getName(), 5));
@@ -286,7 +348,7 @@ public class InvoiceTextPrinter {
 		buf.append(AonStringUtils.leftPad(FMT.format(tax.getSurcharge()), 7));
 		buf.append(AonStringUtils.PERCENT);
 		buf.append(AonStringUtils.leftPad(FMT.format(tax.getSurchargeQuota()), 17));
-		
+		buf.append(AonStringUtils.leftPad(FMT.format(tax.getDeductibleQuota()), 17));
 		buf.append(AonStringUtils.leftPad(" ", getLineSize() - buf.length()));
 		buf.append(VERTICAL_BAR);
 		out.println(buf.toString());
@@ -626,14 +688,14 @@ public class InvoiceTextPrinter {
 				buff.append(AonStringUtils.spaces(getLineSize() - buff.length()));			
 				out.println(buff.toString());
 
-				AonCollectionUtils.keysStream( invoiceFiscal.getVatRegimes() )
+				AonCollectionUtils.stream(VATTaxRegime.values())
 					.forEach( k -> {
 						StringBuilder b = new StringBuilder();
 						b.append(AonStringUtils.spaces(10));
 						b.append(VERTICAL_BAR);
 						b.append(AonStringUtils.spaces(5));
 						String name = AonStringUtils.abbreviateMiddle(k.getName(), " (..) ", 75); 
-						b.append(AonStringUtils.rightPad(checkLabel(name, invoiceFiscal.getVatRegimes().get(k) ) ,87));
+						b.append(AonStringUtils.rightPad(checkLabel(name, invoiceFiscal.isVatRegimeEnabled(k) ) ,87));
 						b.append(VERTICAL_BAR);
 						b.append(AonStringUtils.spaces(getLineSize() - b.length()));			
 						out.println(b.toString());
@@ -673,6 +735,7 @@ public class InvoiceTextPrinter {
 	public static void print(PrintStream out, Invoice invoice, boolean abbrv) {
 		new InvoiceTextPrinter(abbrv)
 			.header(invoice, out)
+			.address(invoice, out)
 			.details(invoice, out)
 			.vatBreakdown(invoice, out)
 			.withholding(invoice, out)
