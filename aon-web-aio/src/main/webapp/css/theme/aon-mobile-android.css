@@ -1,0 +1,22 @@
+:root{
+    --favicon: ../faviconColors.png;
+}
+
+.rootPanel {
+  z-index: 3;   
+  background-color: #fafafa;
+}
+
+.aonLoginForm{
+    margin-top: 50px;
+}
+
+#divCompanyLogoForm {
+    display:none;
+}
+
+.aonCardUploadToast {
+    width: 100%;
+    bottom: 60px;
+    right: 0px;
+}

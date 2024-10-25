@@ -225,7 +225,7 @@ export class AonNewMobileHeader extends AonElement {
 	companyOut() {
 		let ionicData = { action: "statusBar", statusBar: false};
 		if(UA.isAndroidApp()) {
-			changeStatusBarColor(ionicData, "white");
+			changeStatusBarColor(ionicData, "white", false);
 		} else mobileAction(ionicData);
 
 		this.parent = true;

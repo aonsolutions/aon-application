@@ -114,8 +114,13 @@ class MainActivity : ComponentActivity() {
         runOnUiThread {
             val color = Color.parseColor(colorHex)
             window?.statusBarColor = color
-            if (!dark)
+            if (dark) {
+                window?.decorView?.systemUiVisibility = 0
+            } else {
                 window?.decorView?.systemUiVisibility = View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
+            }
+
+
         }
     }
 
