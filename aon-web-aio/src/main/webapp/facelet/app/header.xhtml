@@ -50,6 +50,12 @@
 		scale: 0.9;
 	}
 	
+	.rich-calendar-time-layout, .rich-calendar-date-layout, .rich-calendar-time-layout input {
+	 	font-size: 13px;
+	  	font-family: lucida Grande,Trebuchet MS,Arial,sans-serif;
+	  	background-color: #fff !important;
+	}
+	
 	.rich-calendar-boundary-dates {
 		color: #F8F9FA !important;
 		pointer-events: none !important; 
@@ -2652,11 +2658,136 @@
 	}
 	
 	[id$="New"],
-	[id$="New"] .aon-group,
+	[id$="New"] .aon-group,a
 	[id$="New"] .rich-stglpanel {
     	min-width: fit-content;
 	}
 	
+	.richfacesSkin table.mceLayout tr.mceFirst {
+ 		border-top: 1px solid #C4C0B9;
+  		background-color: #fff;
+	}
+	#aonContent\:newsForm\:News_contentTextArea_cut,
+	#aonContent\:newsForm\:News_contentTextArea_copy,
+	#aonContent\:newsForm\:News_contentTextArea_paste,
+	#aonContent\:newsForm\:News_contentTextArea_pastetext,
+	#aonContent\:newsForm\:News_contentTextArea_pasteword,
+	#aonContent\:newsForm\:News_contentTextArea_undo,
+	#aonContent\:newsForm\:News_contentTextArea_redo,
+	#aonContent\:newsForm\:News_contentTextArea_search,
+	#aonContent\:newsForm\:News_contentTextArea_replace,
+	#aonContent\:newsForm\:News_contentTextArea_link,
+	#aonContent\:newsForm\:News_contentTextArea_unlink,
+	#aonContent\:newsForm\:News_contentTextArea_anchor,
+	#aonContent\:newsForm\:News_contentTextArea_image,
+	#aonContent\:newsForm\:News_contentTextArea_table,		
+	#aonContent\:newsForm\:News_contentTextArea_row_props,
+	#aonContent\:newsForm\:News_contentTextArea_cell_props,
+	#aonContent\:newsForm\:News_contentTextArea_row_before,
+	#aonContent\:newsForm\:News_contentTextArea_row_after,
+	#aonContent\:newsForm\:News_contentTextArea_delete_row,
+	#aonContent\:newsForm\:News_contentTextArea_col_before,
+	#aonContent\:newsForm\:News_contentTextArea_col_after,
+	#aonContent\:newsForm\:News_contentTextArea_delete_col,
+	#aonContent\:newsForm\:News_contentTextArea_split_cells,
+	#aonContent\:newsForm\:News_contentTextArea_merge_cells,
+	.mceToolbarStart, .mceToolbarEnd {
+  		display: none !important;
+	}
+	
+	.mceToolbar {
+    	background-color: #fff !important;
+    	padding: 4px !important;
+    	white-space: nowrap !important; 
+    	overflow-x: auto !important; 
+    	display: flex !important;  
+    	align-items: center !important;  
+	}
+
+	.mceButton {
+	    width: auto !important;
+	    height: auto !important;
+	    margin: 0 4px !important;
+	    padding: 2px !important;
+	    background-color: transparent !important;
+    	border: none !important;
+    	display: inline-block !important;
+	}
+	
+	
+	td a.mceButton.mceButtonEnabled:hover {
+	    background-color: #eee !important;
+	    cursor: pointer !important;
+	    border-radius: 50% !important;
+	}
+	
+	.mceSeparator {
+	    display: none !important;
+	}
+	
+	.mceToolbarStartButton {
+	    margin-left: 0 !important;
+	}
+	
+	.richfacesSkin .mceButton,
+	.richfacesSkin .mceSplitButton {
+		background-image: none !important;
+	}
+	
+	.richfacesSkin table {
+  		background: #fff;
+  		overflow-y: hidden;
+  	}
+  	
+  	.richfacesSkin .mceListBox .mceText {
+  		background: #fff;
+  		border: 1px solid #C4C0B9;
+  		border-radius: 10px;
+  		font-family: lucida Grande,Trebuchet MS,Arial,sans-serif;
+  	}
+  	
+  	td a.mceText:hover{
+  		background-color: #eee !important;
+	    cursor: pointer !important;
+  	}
+  	
+  	table[id*="font"] td.mceLast a,
+  	.richfacesSkin .mceSplitButton a.mceOpen,
+  	.richfacesSkin table.mceSplitButtonEnabled:hover a.mceAction, 
+  	.richfacesSkin .mceSplitButtonHover a.mceAction, 
+  	.richfacesSkin .mceSplitButtonSelected {
+  		background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAwAAAAICAYAAADN5B7xAAAAW0lEQVR4XmNgAIJr12/8B9H4AFxNd2//fw1t/f+bNm/FqWnjpi1gNT19E/4zTJoy7b+ali5OTTDFIDUgtWBBXJqwKoYBdE14FcMAsiaCimEApokoxTAAUohLMQD0yGO6tCDOwgAAAABJRU5ErkJggg==);
+		background-size: cover;
+	    background-repeat: no-repeat;
+	    background-position: center;
+	    background-size: 6px;
+  	}
+	
+	.richfacesSkin .mceMenu .mceMenuItemEnabled a:hover, 
+	.richfacesSkin .mceMenu .mceMenuItemActive,
+	.richfacesSkin .mceMenuItemTitle a {
+		background-color: #eee;
+	}
+	
+	.richfacesSkin .mceSplitButton a.mceAction,
+	a[id$="_open"] {
+		background-color: #fff;
+	}
+	 
+	a[id$="_open"]:hover {
+		background-color: #eee;
+		border-radius: 5px;
+	}
+	
+	table[id*="font"] a[id$="open"]{
+		display: none !important;
+	}
+	
+	.richfacesSkin table.mceSplitButtonEnabled:hover a.mceOpen, .richfacesSkin .mceSplitButtonHover a.mceOpen, .richfacesSkin .mceSplitButtonSelected a.mceOpen {
+  		background-position: center;
+	}
+	
+
 	
 	</style>
 
