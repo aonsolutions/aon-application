@@ -219,34 +219,48 @@ export class AonNewLogin extends AonElement {
     d.getContent().addEventListener(EVENT.MOUSELEAVE, () => d.close());
 
     let options = [{
-      name: "Castellano",
+      name: MSG.SPANISH,
+      title: MSG.SPANISH,
+      permission: true,
       image: '../assets/img/aonIconCastellano.png',
       fn: () => LS.setLanguage(Language.SPANISH)
     }, {
-      name: "English",
+      name: MSG.ENGLISH,
+      title: MSG.ENGLISH,
+      permission: true,
       image: '../assets/img/aonIconEnglish.png',
       fn: () => LS.setLanguage(Language.ENGLISH)
     }, {
-      name: "Français",
+      name: MSG.FRENCH,
+      title: MSG.FRENCH,
+      permission: true,
       image: '../assets/img/aonIconFrancais.png',
       fn: () => LS.setLanguage(Language.FRENCH)
     }, {
-      name: "Deutsch",
+      name: MSG.DEUTSCH,
+      title: MSG.DEUTSCH,
+      permission: true,
       image: '../assets/img/aonIconDeutsch.png',
       fn: () => LS.setLanguage(Language.DEUTSCH)
     }, {
-      name: "Euskara",
+      name: MSG.BASQUE,
+      title: MSG.BASQUE,
+      permission: true,
       image: '../assets/img/aonIconEuskera.png',
       fn: () => LS.setLanguage(Language.BASQUE)
     }, {
-      name: "Català",
+      name: MSG.CATALAN,
+      title: MSG.CATALAN,
+      permission: true,
       image: '../assets/img/aonIconCatala.png',
       fn: () => LS.setLanguage(Language.CATALAN)
     }, {
-      name: "Galego",
+      name: MSG.GALICIAN,
+      title: MSG.GALICIAN,
+      permission: true,
       image: '../assets/img/aonIconGalego.png',
       fn: () => LS.setLanguage(Language.GALICIAN)
-    } ];
+    }];
 
     d.setMenuOptions(options, top, left);
     d.open();
