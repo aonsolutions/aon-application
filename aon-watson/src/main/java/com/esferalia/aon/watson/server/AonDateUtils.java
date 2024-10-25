@@ -1391,4 +1391,10 @@ public class AonDateUtils {
 		}
 		return b == null ? -1 : a.compareTo(b);
 	}
+
+	public static boolean isAfter(Date first, Date second) {
+		if (first == null) return false;
+		if (second == null) return false;
+		return first.after(second);
+	}
 }

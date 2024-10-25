@@ -1,0 +1,79 @@
+package net.aonsolutions.occam.api.model.type;
+
+import java.util.Optional;
+
+import com.esferalia.aon.watson.util.AonStringUtils;
+
+public enum FiscalModelDeclarationType {
+
+	//-------------------------------------------------- FINANCE    -ASK BANK		
+	 NEGATIVE 	("N","Negativa, cero \u00F3 sin. act."	,false		,false)
+	,DEPOSIT  	("I","Ingreso"							,true		,true )
+	,BANK     	("U","Domiciliaci\u00F3n"				,true		,true )
+	,DEPOSIT_CCT("G","Ingreso a anotar en CCT"			,false		,false)
+	,TO_DEDUCE	("B","A deducir"						,false		,false)
+	
+	,COMPENSATE	("C", "A compensar"						,false		,false)
+	,PAYBACK	("D", "A devolver"						,true		,true )
+	,PAYBACK_CCT("V", "Devoluci\u00F3n a anotar en CCT"	,false		,false)
+	
+	// FALTA - SOLICITUD DE APLAZAMIENTO, POR AHORA LE PONGO GENERAR FINANCE Y PEDIR BANCO, HABRA QUE VER AL FINAL COMO HACEMOS LO DE FINANCE
+	,DEFERRAL ("A","Solicitud de aplazamiento"		,true		,true )	
+	;
+
+	private String value;
+	private String description;
+	private boolean mustCreateFinance;
+	private boolean bankRequired;
+
+	private FiscalModelDeclarationType(String value,String description,boolean mustCreateFinance,boolean bankRequired) {
+		this.value = value;
+		this.description = description;
+		this.mustCreateFinance = mustCreateFinance;
+		this.bankRequired = bankRequired;
+	}
+	
+	public String getValue() {
+		return value;
+	}
+	public String getDescription() {
+		return description;
+	}
+	public boolean mustCreateFinance() {
+		return mustCreateFinance;
+	}
+	public boolean isBankRequired() {
+		return bankRequired;
+	}
+	
+	public static Optional<FiscalModelDeclarationType> value( String value ) {
+		if(AonStringUtils.isBlank(value)) return Optional.empty();
+		for (FiscalModelDeclarationType t : FiscalModelDeclarationType.values()) {
+			if (t.getValue().equals(value)) return Optional.of(t);
+		}
+		return Optional.empty();
+	}
+
+	public static Optional<FiscalModelDeclarationType> value( Byte i ) {
+		if (i == null) return Optional.empty();
+		return value( i.intValue() ); 
+	}
+	public static Optional<FiscalModelDeclarationType> value( Integer i ) {
+		if (i == null) return Optional.empty();
+		if (i < 0 || i >= FiscalModelDeclarationType.values().length) return Optional.empty();
+		return Optional.of(FiscalModelDeclarationType.values()[i]);
+	}
+	
+	public static boolean isToDeposit(FiscalModelDeclarationType type ) {
+		return type != null && (type == DEPOSIT || type == BANK || type == DEPOSIT_CCT);
+	}
+	
+//	public static FiscalModelDeclarationType safeNameOf( String name ) {
+//		if (AonStringUtils.isBlank(name)) return null;
+//		for (FiscalModelDeclarationType t : FiscalModelDeclarationType.values()) {
+//			if (t.name().equals(name)) return t;
+//		}
+//		return null;
+//	}
+	
+}

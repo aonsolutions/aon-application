@@ -1,0 +1,107 @@
+package net.aonsolutions.occam.api.model;
+
+import java.io.Serializable;
+import java.text.MessageFormat;
+
+import net.aonsolutions.occam.api.model.type.InvoiceErrorKey;
+import net.aonsolutions.occam.api.model.type.InvoiceErrorLevel;
+
+public enum InvoiceErrorMessages implements Serializable {
+	// Á --> \u00C1 á --> \u00E1 
+	// É --> \u00C9 é --> \u00E9 
+	// Í --> \u00CD í --> \u00ED 
+	// Ó --> \u00D3 ó --> \u00F3 
+	// Ú --> \u00DA ú --> \u00FA ... acento
+	// Ü --> \u00DC ü --> \u00fc ... diéresis
+	// Ñ --> \u00D1 ñ --> \u00F1
+	// º --> \u00BA ª --> \u00AA 
+	// ¿ --> \u00BF
+	
+	C001("No se ha indicado el dato \"{0}\" y es obligatorio"),
+	C002("La longitud de el dato \"{0}\" supera los {1} caracteres m\u00E1ximos permitidos"),
+	C003("El sistema ha inicializado el dato \"{0}\" con el valor [{1}]"),
+	C004("Formato inv\u00E1lido en el dato \"{0}\""),
+	C005("Ya existe una factura con esa Serie/N\u00FAmero."),
+	C006("Ya existe una factura del titular con ese N\u00FAmero de referencia."),
+	C007("La fecha de la factura rebasa la fecha l\u00EDmite de operaciones indicada en la configuraci\u00F3n de empresa. "),
+	C008("El a\u00F1o de la factura no es v\u00E1lido, es muy anterior o muy posterior al actual"),
+	C009("No se ha encontrado un {0} v\u00E1lido para el titular \"{1}\""),
+	C010("La factura no tiene l\u00EDneas de detalle"),
+	C011("La factura tiene varios posibles titulares"),
+	C012("Apunte contable descuadrado"),
+	C013("Apunte contable vacio"),
+	C014("El importe del vencimiento no puede ser cero."),
+	C015("Cuenta Bancaria incorrecta."),
+	C016("No se ha podido determinar un centro de trabajo (workplace)"),
+	C017("No se han podido determinar bases y cuotas de la factura"),
+	C018("No se ha podido determinar el tipo de factura"),
+	C019("La fecha del vencimiento no es correcta."),
+	C020("La suma de los vencimiento no coincide con el total factura."),
+	C021("Se ha producido un error al grabar el documento adjunto de la factura"),
+	
+	C050("No es posible borrar la factura porque est\u00E1 rectificada. Borre primero la factura rectificativa."),
+	C051("No es posible borrar la factura porque est\u00E1 vinculada a un documento DUA."),
+	C052("No es posible borrar la factura porque est\u00E1 enviada al SII. Dar de baja la factura en el SII."),
+	C053("No es posible borrar la factura porque est\u00E1 enviada a Ticket Bai. Dar de baja la factura en Ticket Bai."),
+	C054("Imposible borrar o modificar, la factura ha sido declarada en modelos fiscales: {0}"),
+	C055("Imposible borrar o modificar, el vto. ha sido declarada en modelos fiscales: {0}"),
+	C056("Imposible borrar o modificar, la factura ha sido bloqueada (Alcatraz)"),
+	
+	
+	// Mensajes previos a la contabilización
+	C200("No se puede Contabilizar. Hay un descuadre entre el total factura y la suma total de los vencimientos."),
+	
+	
+	C500("Error desconocido"),
+	C510("El dominio de la tabla {0} no coincide con el de la tabla {1}."),
+	C511("El relación entre la tabla {0} y la tabla {1} es incoherente."),
+	
+	;
+	private String message;
+
+	private InvoiceErrorMessages(String message) {
+		this.message = message;
+	}
+	public String getMessage() {
+		return message;
+	}
+	
+	public String format(Object ... args ) {
+		return MessageFormat.format(getMessage(), args);
+	}
+	
+	public InvoiceError err(InvoiceErrorKey key) {
+		return err(key, key.getDescription(), null);
+	}
+	public InvoiceError err(InvoiceErrorKey key, Object ... args) {
+		return err( key, format(args), null);
+	}
+	public InvoiceError err(InvoiceErrorKey key, String message, Integer line) {
+		return add(key, InvoiceErrorLevel.ERR, message, line);
+	}
+	
+	public InvoiceError wrn(InvoiceErrorKey key) {
+		return err(key, key.getDescription(), null);
+	}
+	public InvoiceError wrn(InvoiceErrorKey key, Object ... args) {
+		return err( key, format(args), null);
+	}
+	public InvoiceError wrn(InvoiceErrorKey key, String message, Integer line) {
+		return add(key, InvoiceErrorLevel.WRN, message, line);
+	}
+		
+	public InvoiceError inf(InvoiceErrorKey key) {
+		return err(key, key.getDescription(), null);
+	}
+	public InvoiceError inf(InvoiceErrorKey key, Object ... args) {
+		return err( key, format(args), null);
+	}
+	public InvoiceError inf(InvoiceErrorKey key, String message, Integer line) {
+		return add(key, InvoiceErrorLevel.INF, message, line);
+	}
+	
+	public InvoiceError add(InvoiceErrorKey key, InvoiceErrorLevel level, String message, Integer line) {
+		return new InvoiceError(key, level, message, line);
+	}	
+	
+}

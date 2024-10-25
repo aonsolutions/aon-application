@@ -233,12 +233,7 @@ public class LROE140_2_1 extends LROE140 {
 			}
 			
 			if(r.getBienAfectoIRPFYOIVA() == null && !AonStringUtils.isBlank(detail.getAccountCode()) && detail.getAccountCode().length() >= 3) {
-				String concept = detail.getAccountCode().substring(0,3);
-				if("642".equals(concept)) {
-					String aux = detail.getAccountCode().substring(0,4);
-					concept = "6421".equals(aux) ? "64201" : "64202";
-				}
-				r.setConcepto(concept);
+				r.setConcepto(getConcept(detail.getAccountCode()));
 				double importeGastoIRPF = AonMathUtils.round(tax.getBase() * tax.getDeductiblePercent() / 100);
 				r.setImporteGastoIRPF(Double.toString(importeGastoIRPF));
 			}
@@ -257,6 +252,18 @@ public class LROE140_2_1 extends LROE140 {
 		}
 
 		return renta;
+	}
+	
+	private String getConcept(String account) {
+		String concept = account.substring(0,2);
+		if(!"65".equals(concept) && !"66".equals(concept) && !"67".equals(concept) && !"69".equals(concept)) {
+			concept = account.substring(0, 3);
+			if("642".equals(concept)) {
+				String aux = account.substring(0,4);
+				concept = "6421".equals(aux) ? "64201" : "64202";
+			}			
+		}
+		return concept;
 	}
 
 	public LROEResponse alta(TbaiConfiguration tbaiConfiguration, Person person, Invoice invoice) {
