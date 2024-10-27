@@ -96,6 +96,7 @@ public class S3RequestHandler implements RequestHandler<Object, String> {
         			try {
         				Certificate certificate = getAonCert();
         				pdf = PdfSigner.getInstance().sign(certificate, pdf);
+        				s3EventObject.setSigned(true);
         			} catch (Exception e) {
         				e.printStackTrace();
 					}
@@ -401,6 +402,9 @@ public class S3RequestHandler implements RequestHandler<Object, String> {
     	file.put("content_type", contentType);
     	json.put(IJsonNames.FILE, file);
     	json.put(IJsonNames.STATUS, rawdocStatus.getTediName());
+    	json.put("camera", s3EventObject.isCamera());
+    	json.put("signed", s3EventObject.isSigned());
+    	
 		JSONObject resp = AonInvofox.createRawdoc(s3EventObject.getDomain(), s3EventObject.getUser(), json);
     	return JsonUtils.getInteger(resp, IJsonNames.ID);
 	}
