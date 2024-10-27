@@ -15,6 +15,7 @@ import com.esferalia.aon.occam.api.AON_SOLUTIONS;
 import com.esferalia.aon.occam.api.SECURITY;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.aonsolutions.AonToken;
+import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.security.Auth;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.watson.util.AonStringUtils;
@@ -111,7 +112,24 @@ public class LoginServlet extends AonApiHttpServlet{
 				if(!user.getAuth().isEmpty()) {
 					auth = AON_SOLUTIONS.getAuth(user.getAuth().getAuth());
 					token = AonToken.build(auth, null);
-				} else token = AonToken.build(user, null, domain.getName());
+				} else {
+					try {
+						String userPassword = SECURITY.getUserPassword(domain.getName(), domain.getId(), user.getLogin(), user.getId());
+						auth = new Auth()
+								.setName(user.getName())
+								.setPassword(userPassword)
+								.setEmail(String.format("%s@%s", user.getLogin(), domain.getName()));
+						Registry userRegistry = user.getRegistry();
+						if ( userRegistry != null ) {
+							auth.setDocument(userRegistry.getDocument());
+						}
+						auth = AON_SOLUTIONS.insertAuth( domain.getName(), domain.getId(), auth );
+						AON_SOLUTIONS.assignAuthToUser(domain.getName(), domain.getId(), user, auth.getAuth());
+						token = AonToken.build(auth, null);
+					} catch ( Exception e ) {
+						token = AonToken.build(user, null, domain.getName());
+					}
+				} 
 			}
 		}
     	JSONObject object = new JSONObject();

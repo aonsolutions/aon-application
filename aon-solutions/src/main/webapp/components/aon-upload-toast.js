@@ -38,13 +38,7 @@ export class AonUploadToast extends AonElement {
 		card.title = MSG.UPLOAD_FILE;		
 		this.appendChild(card);
 		card.addTitleButton(MSG.CLOSE, MATERIAL_ICONS.CLOSE, false, () => this.close());
-		
-		card.style.minHeight = '100px';
-		card.style.width = '400px';
-		card.style.position = 'absolute';
-		card.style.zIndex = 3;
-		card.style.bottom = '10px';
-		card.style.right = '25px';
+		card.classList.add(CSS.AON_CARD_UPLOAD_TOAST);
 		
 		let ul = this.createElement(TAG.UL);
 		ul.id = this.id + 'List';

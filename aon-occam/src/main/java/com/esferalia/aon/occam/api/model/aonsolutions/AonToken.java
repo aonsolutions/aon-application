@@ -31,13 +31,6 @@ public class AonToken implements Serializable{
 	private byte[] auth;
 	private boolean expired;
 	
-	// For users without 'auth' . 
-	private Integer user;
-	private String login;
-	private Integer domain;
-	private String domainName;
-
-	
 	public String getSchema() {
 		return schema;
 	}
@@ -83,52 +76,8 @@ public class AonToken implements Serializable{
 		return this;
 	}
 	
-	
-	public Integer getUser() {
-		return user;
-	}
-
-	public AonToken setUser(Integer user) {
-		this.user = user;
-		return this;
-	}
-	
-	public String getLogin() {
-		return login;
-	}
-	
-	public AonToken setLogin(String login) {
-		this.login = login;
-		return this;
-	}
-	
-	
-	public Integer getDomain() {
-		return domain;
-	}
-	
-	public AonToken setDomain(Integer domain) {
-		this.domain = domain;
-		return this;
-	}
-	
-	public String getDomainName() {
-		return domainName;
-	}
-	
-	public AonToken setDomainName(String domainName) {
-		this.domainName = domainName;
-		return this;
-	}
-	
 	public JSONObject toJson() {
 		return new JSONObject()
-				
-				.put(IJsonNames.USER, getUser())
-				.put(IJsonNames.LOGIN, getLogin())
-				.put(IJsonNames.DOMAIN, getDomain())
-				.put(IJsonNames.DOMAIN, getDomainName())
-
 				.put(IJsonNames.SCHEMA, getSchema())
 				.put(IJsonNames.SCHEMA_FIRST_DOMAIN, getSchemaFirstDomain())
 				.put(IJsonNames.UUID, getUuid());
@@ -140,15 +89,9 @@ public class AonToken implements Serializable{
 
 	public static AonToken parse(JSONObject json) {
 		return new AonToken()
-				.setUser(JsonUtils.getInt(json, IJsonNames.USER))
-				.setLogin(JsonUtils.getString(json, IJsonNames.LOGIN))
-				.setDomain(JsonUtils.getInt(json, IJsonNames.DOMAIN))
-				.setDomainName(JsonUtils.getString(json, IJsonNames.DOMAIN_NAME))
-
-				.setUuid(JsonUtils.getString(json, IJsonNames.UUID))
 				.setSchema(JsonUtils.getString(json, IJsonNames.SCHEMA))
+				.setUuid(JsonUtils.getString(json, IJsonNames.UUID))
 				.setSchemaFirstDomain(JsonUtils.getString(json, IJsonNames.SCHEMA_FIRST_DOMAIN))
-				
 				.setExpired(JsonUtils.getboolean(json, "expired"));
 	}
 	
@@ -175,8 +118,7 @@ public class AonToken implements Serializable{
 			.put(IJsonNames.SCHEMA_FIRST_DOMAIN, domain)
 			.put(IJsonNames.USER, user.getId())
 			.put(IJsonNames.LOGIN, user.getLogin())
-			.put(IJsonNames.DOMAIN, user.getDomain())
-			.put(IJsonNames.DOMAIN_NAME, domain);
+			.put(IJsonNames.DOMAIN, user.getDomain());
 		return build(tokenObject, expireDate);
 	}
 	

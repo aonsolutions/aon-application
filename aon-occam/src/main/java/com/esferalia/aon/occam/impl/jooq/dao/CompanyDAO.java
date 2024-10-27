@@ -15,7 +15,6 @@ import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
 import static com.esferalia.aon.jooq.tables.Rmedia.RMEDIA;
 import static com.esferalia.aon.jooq.tables.Scope.SCOPE;
 import static com.esferalia.aon.jooq.tables.User.USER;
-import static com.esferalia.aon.jooq.tables.UserScope.USER_SCOPE;
 
 import java.util.Date;
 import java.util.LinkedList;
@@ -26,7 +25,6 @@ import java.util.stream.Stream;
 
 import org.jooq.Condition;
 import org.jooq.Record;
-import org.jooq.Record1;
 import org.jooq.Select;
 import org.jooq.SelectConditionStep;
 import org.jooq.SelectJoinStep;
@@ -35,7 +33,6 @@ import org.jooq.impl.DSL;
 
 import com.esferalia.aon.jooq.tables.Domain;
 import com.esferalia.aon.jooq.tables.Rmedia;
-import com.esferalia.aon.jooq.tables.UserScope;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.AonCompany;
 import com.esferalia.aon.occam.api.model.Company;
@@ -377,41 +374,6 @@ public class CompanyDAO {
 			.fetch().stream().map(new CompanyFiller());
 	}
 	
-	public static Stream<AonCompany> getCompanyStream(AONContext ctx, Integer user, Integer page, Integer perPage){
-		
-		
-		SelectConditionStep<Record1<Integer>> userScopes = 
-		DSL.select(USER_SCOPE.SCOPE).from(USER_SCOPE).where(USER_SCOPE.USER_ID.eq(user));
-		
-		
-		com.esferalia.aon.jooq.tables.Domain domain = DOMAIN.as("d");
-		com.esferalia.aon.jooq.tables.Domain parent = DOMAIN.as("p");
-		return ctx.getDslContext().select()
-			.from(COMPANY)
-			.join(REGISTRY).on(COMPANY.REGISTRY.eq(REGISTRY.ID))
-			.join(domain).on(COMPANY.DOMAIN.eq(domain.ID))
-			.join(USER).on(USER.DOMAIN.eq(domain.ID).or(USER.DOMAIN.eq(domain.PARENT)))
-			.leftOuterJoin(SCOPE).on(domain.SCOPE.eq(SCOPE.ID))
-			.leftOuterJoin(APP_PARAM).on(domain.ID.eq(APP_PARAM.DOMAIN).and(APP_PARAM.NAME.eq(AppParam.FS_DEFAULT_ADMINISTRATION.getValue())))
-			.leftOuterJoin(parent).on(domain.PARENT.eq(parent.ID))
-			.where(
-				USER.ID.eq(user)
-				.and(
-					domain.ID.in(USER.DOMAIN)
-					.or(
-						domain.PARENT.in(USER.DOMAIN)
-						.and(
-							domain.SCOPE.isNull()
-							.or(domain.SCOPE.in(userScopes))
-						)
-					)
-				)
-			)
-			.orderBy(REGISTRY.NAME)
-			.fetch().stream().map(new AonCompanyFiller());
-	}
-	
-
 	public static Stream<AonCompany> getCompanyStream(AONContext ctx, byte[] auth, Integer page, Integer perPage){
 		Integer[] userScopes = SecurityDAO.getAuthScopes(ctx, auth);
 		Integer[] domains = SecurityDAO.getAuthDomains(ctx, auth);
@@ -432,41 +394,6 @@ public class CompanyDAO {
 					domain.ID.in(domains)
 					.or(
 						domain.PARENT.in(domains)
-						.and(
-							domain.SCOPE.isNull()
-							.or(domain.SCOPE.in(userScopes))
-						)
-					)
-				)
-			)
-			.orderBy(REGISTRY.NAME)
-			.fetch().stream().map(new AonCompanyFiller());
-	}
-
-	public static Stream<AonCompany> getCompanyStream(AONContext ctx, Integer user, CompanyFilter filter, Integer page, Integer perPage){
-		
-		
-		SelectConditionStep<Record1<Integer>> userScopes = 
-		DSL.select(USER_SCOPE.SCOPE).from(USER_SCOPE).where(USER_SCOPE.USER_ID.eq(user));
-		
-		
-		com.esferalia.aon.jooq.tables.Domain domain = DOMAIN.as("d");
-		com.esferalia.aon.jooq.tables.Domain parent = DOMAIN.as("p");
-		return ctx.getDslContext().select()
-			.from(COMPANY)
-			.join(REGISTRY).on(COMPANY.REGISTRY.eq(REGISTRY.ID))
-			.join(domain).on(COMPANY.DOMAIN.eq(domain.ID))
-			.join(USER).on(USER.DOMAIN.eq(domain.ID).or(USER.DOMAIN.eq(domain.PARENT)))
-			.leftOuterJoin(SCOPE).on(domain.SCOPE.eq(SCOPE.ID))
-			.leftOuterJoin(APP_PARAM).on(domain.ID.eq(APP_PARAM.DOMAIN).and(APP_PARAM.NAME.eq(AppParam.FS_DEFAULT_ADMINISTRATION.getValue())))
-			.leftOuterJoin(parent).on(domain.PARENT.eq(parent.ID))
-			.where(COMPANY_PROPERTIES.getConditions(filter))
-			.and(
-				USER.ID.eq(user)
-				.and(
-					domain.ID.in(USER.DOMAIN)
-					.or(
-						domain.PARENT.in(USER.DOMAIN)
 						.and(
 							domain.SCOPE.isNull()
 							.or(domain.SCOPE.in(userScopes))
