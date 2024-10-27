@@ -30,6 +30,7 @@ import com.esferalia.aon.occam.api.model.Workgroup;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.commission.CommissionType;
 import com.esferalia.aon.occam.api.model.config.ConfigParams;
+import com.esferalia.aon.occam.api.model.fee.Fee;
 import com.esferalia.aon.occam.api.model.finance.FBatch;
 import com.esferalia.aon.occam.api.model.finance.PayMethod;
 import com.esferalia.aon.occam.api.model.fiscal.IFiscalModel;
@@ -248,5 +249,6 @@ public interface CommonServiceAsync {
 	
 	void getSellersWorkload(SellerWorkloadParams params, AsyncCallback<List<SellerWorkload>> asyncCallback) throws AonCoreException;
 	void getSellersWorkloadCount(SellerWorkloadParams params, AsyncCallback<Integer> asyncCallback) throws AonCoreException;
+	void getSellersWorkloadFees(SellerWorkloadParams params, AsyncCallback<List<Fee>> asyncCallback) throws AonCoreException;
 
 }

@@ -29,6 +29,7 @@ import com.esferalia.aon.occam.api.model.Workgroup;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.commission.CommissionType;
 import com.esferalia.aon.occam.api.model.config.ConfigParams;
+import com.esferalia.aon.occam.api.model.fee.Fee;
 import com.esferalia.aon.occam.api.model.finance.FBatch;
 import com.esferalia.aon.occam.api.model.finance.PayMethod;
 import com.esferalia.aon.occam.api.model.fiscal.IFiscalModel;
@@ -248,5 +249,6 @@ public interface CommonService extends RemoteService {
 	
 	List<SellerWorkload> getSellersWorkload(SellerWorkloadParams params) throws AonCoreException;
 	Integer getSellersWorkloadCount(SellerWorkloadParams params) throws AonCoreException;
+	List<Fee> getSellersWorkloadFees(SellerWorkloadParams params) throws AonCoreException;
 
 }
