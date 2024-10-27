@@ -26,6 +26,8 @@ public class S3EventObject {
     private String prefix;
     private String fileName;
     private String contentType;
+    private boolean camera;
+    private boolean signed;
         
     private static Date getEventTime(Map<String, ?> r) {
 	String eventTime =  (String) r.get("eventTime");
@@ -63,7 +65,8 @@ public class S3EventObject {
 			s3Object.setSize(objectSize);
 			s3Object.setBucket(bucketName);	
 
-			// key = <invoices>/<domain>/<document>/<user>/<job>/<order>_<filename>
+			// key = <invoices>/<domain>/<document>/<user>/<job>/<order>_?<CM>_<filename>
+			// ?<CM> --> identifica si viene o no de la camara.
 			String [] paths = objectKey.split("/");
 			s3Object.setPrefix(paths[0]);
 			s3Object.setDomain(paths[1]);
@@ -73,7 +76,8 @@ public class S3EventObject {
 			s3Object.setFileName(paths[5]);
 			s3Object.setOrder(Integer.parseInt(s3Object.getFileName().substring(0, 2)));
 	    
-	    
+			String[] array = s3Object.getFileName().split("_");
+			s3Object.setCamera(array.length > 2 && "CM".equals(array[1]));
 	    	Date eventTime = getEventTime(record);
 	    	s3Object.setTime(eventTime);
 	    	s3Objects.add(s3Object);
@@ -168,6 +172,22 @@ public class S3EventObject {
     public void setOrder(int order) {
     	this.order = order;
     }
+    
+    public boolean isCamera() {
+		return camera;
+	}
+    
+    public void setCamera(boolean camera) {
+		this.camera = camera;
+	}
+ 
+    public boolean isSigned() {
+		return signed;
+	}
+    
+    public void setSigned(boolean signed) {
+		this.signed = signed;
+	}
     
     public String getContentType() {
 		return contentType;
