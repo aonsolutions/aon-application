@@ -31,7 +31,6 @@ import com.esferalia.aon.gwt.payroll.shared.CategoryDraft;
 import com.esferalia.aon.gwt.payroll.shared.Cost;
 import com.esferalia.aon.gwt.payroll.shared.Employee;
 import com.esferalia.aon.gwt.payroll.shared.Enterprise;
-import com.esferalia.aon.gwt.payroll.shared.EnterpriseContext;
 import com.esferalia.aon.gwt.payroll.shared.Irpf;
 import com.esferalia.aon.gwt.payroll.shared.Predicate;
 import com.esferalia.aon.gwt.payroll.shared.Salary;
@@ -41,6 +40,7 @@ import com.esferalia.aon.gwt.payroll.shared.StatisticYears;
 import com.esferalia.aon.gwt.payroll.shared.Statistics;
 import com.esferalia.aon.gwt.payroll.shared.Workplace;
 import com.esferalia.aon.watson.util.AonStringUtils;
+import com.esferalia.aon.watson.util.AonWordUtils;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.Style.Overflow;
@@ -1931,7 +1931,7 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 		SafeHtmlBuilder builder = new SafeHtmlBuilder();
 		builder.append(AbstractImagePrototype.create(imageProto).getSafeHtml());
 		builder.append(' ');
-		builder.appendEscaped(title);
+		builder.appendEscaped(capitalize(title));
 		return builder.toSafeHtml();
 	}
 
@@ -1942,7 +1942,7 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 		SafeHtmlBuilder builder = new SafeHtmlBuilder();
 		builder.append(TEMPLATE.materialIcon(materialIcon));
 		builder.append(' ');
-		builder.appendEscaped(title);
+		builder.appendEscaped(capitalize(title));
 		return builder.toSafeHtml();
 	}
 
@@ -2917,5 +2917,30 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 		
 		showStaticEmployees();
 	}
+	
+	private static String capitalize(String str) {
+		if ( AonStringUtils.isBlank(str) )
+			return str;
+		
+		boolean capitalizeNext = true;
+		StringBuilder builder = new StringBuilder(str.length());
+		
+		for ( int i = 0; i < str.length(); i++ ) {
+			char ch = str.charAt(i);
+			if ( Character.isWhitespace(ch) 
+				|| ch == ',' || ch == '.') {
+				builder.append(ch);
+				capitalizeNext = true;
+			} else if ( capitalizeNext ) {
+				builder.append(Character.toUpperCase(ch));
+				capitalizeNext = false;
+			} else {
+				builder.append(Character.toLowerCase(ch));
+			}
+		}
+		return builder.toString();
+	}
+	
+	
 	
 }
