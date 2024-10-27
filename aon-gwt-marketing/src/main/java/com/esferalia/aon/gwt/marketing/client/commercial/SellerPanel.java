@@ -60,27 +60,32 @@ public abstract class SellerPanel extends ScrollPanel {
 	private Integer deleteIterator = 0;
 	
 	private static enum COLS {
-		  CHK(AonStringUtils.EMPTY					,"2rem" )
-		, DES(AON.MSG.name()						,"-moz-available")
-		, BUD(AON.MSG.alias()						,"50rem")
-		, DOC(AON.MSG.document()					,"20rem")
-		, TYP(AON.MSG.scope()						,"30rem")
-		, ACT("Estado"								,"5rem")
-		, BUT(AonStringUtils.EMPTY					,"5rem")
+		  CHK(AonStringUtils.EMPTY					,"2rem"				,"")
+		, DES(AON.MSG.name()						,"-moz-available"	,"min-width: 5rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
+		, BUD(AON.MSG.alias()						,"15rem"			,"")
+		, DOC(AON.MSG.document()					,"5rem"				,"")
+		, TYP(AON.MSG.scope()						,"10rem"			,"")
+		, ACT("Estado"								,"5rem"				,"")
+		, BUT(AonStringUtils.EMPTY					,"2rem"				,"")
 		;
 
 		String headerLabel;
 		String colWidth;
+		String styles;
 
-		private COLS(String headerLabel,String colWidth) {
+		private COLS(String headerLabel,String colWidth,String styles) {
 			this.headerLabel = headerLabel;
 			this.colWidth = colWidth;
+			this.styles = styles;
 		}
 		public String getColWidth() {
 			return colWidth;
 		}
 		public String getHeaderLabel() {
 			return headerLabel;
+		}
+		public String getStyles() {
+			return styles;
 		}
 	}
 
@@ -181,7 +186,7 @@ public abstract class SellerPanel extends ScrollPanel {
 				});
 				
 				tab.addHeader(checkAllButton, col.getColWidth());
-			} else tab.addHeader(new Label(col.getHeaderLabel()), col.getColWidth());
+			} else tab.addHeader(new Label(col.getHeaderLabel()), col.getColWidth(), col.getStyles());
 	}
 	
 	private void searchData() {
@@ -269,7 +274,11 @@ public abstract class SellerPanel extends ScrollPanel {
 		tab.addRow(row, checkButton, COLS.CHK.getColWidth());
 		
 		
-		tab.addRow(row, new Label(seller.getName()), COLS.DES.getColWidth());
+		Label name = new Label(seller.getName());
+		name.setTitle(seller.getName());
+		tab.addInlineStyle(name, COLS.DES.getStyles());
+		tab.addRow(row, name, COLS.DES.getColWidth());
+		
 		tab.addRow(row, new Label(seller.getAlias()), COLS.BUD.getColWidth());
 		tab.addRow(row, new Label(seller.getDocument()), COLS.DOC.getColWidth());
 		tab.addRow(row, new Label(seller.getScope() == null ? null : seller.getScope().getDescription()), COLS.TYP.getColWidth());
