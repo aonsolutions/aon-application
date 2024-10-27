@@ -8,6 +8,7 @@ public class SellerWorkloadParams extends SellerParams implements Serializable{
 	
 	private Byte customers;
 	private Byte period; // 0 == Mes acutal, 1 == 2 Meses, 2 == 3 Meses
+	private Integer seller;
 	
 	public SellerWorkloadParams() {
 		super();
@@ -28,6 +29,15 @@ public class SellerWorkloadParams extends SellerParams implements Serializable{
 
 	public SellerWorkloadParams setPeriod(Byte period) {
 		this.period = period;
+		return this;
+	}
+	
+	public Integer getSeller() {
+		return seller;
+	}
+
+	public SellerWorkloadParams setSeller(Integer seller) {
+		this.seller = seller;
 		return this;
 	}
 	

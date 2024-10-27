@@ -1,5 +1,6 @@
 package com.esferalia.aon.occam.impl.jooq.dao;
 
+import static com.esferalia.aon.jooq.tables.Customer.CUSTOMER;
 import static com.esferalia.aon.jooq.tables.CustomerFee.CUSTOMER_FEE;
 import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
 import static com.esferalia.aon.jooq.tables.Scope.SCOPE;
@@ -7,6 +8,7 @@ import static com.esferalia.aon.jooq.tables.Seller.SELLER;
 
 import java.sql.Date;
 import java.util.HashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -34,8 +36,11 @@ import com.esferalia.aon.occam.api.model.Filter.Property;
 import com.esferalia.aon.occam.api.model.Filter.SellerFilter;
 import com.esferalia.aon.occam.api.model.Properties.SellerProperties;
 import com.esferalia.aon.occam.api.model.SellerWorkloadParams;
+import com.esferalia.aon.occam.api.model.fee.Fee;
+import com.esferalia.aon.occam.api.model.registry.CustomerFeeParams;
 import com.esferalia.aon.occam.api.model.registry.SellerWorkload;
 import com.esferalia.aon.occam.api.model.security.Scope;
+import com.esferalia.aon.occam.api.model.type.SellerStatus;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
@@ -142,6 +147,46 @@ public class SellerWorkloadDAO {
 		return sellerCount == null ? 0 : sellerCount.value1();
 	}
 	
+	public static List<Fee>  getFeeList(CloseableAONContext ctx, SellerWorkloadParams params) {
+		Date start = getStartDatePeriod(params.getPeriod());
+	    Date end = getEndDatePeriod(params.getPeriod());
+	    
+	    LinkedHashSet<Integer> customerFeeIds = new LinkedHashSet<Integer>();
+
+	    // Utilizamos JOOQ para recalcular la fecha de facturación ajustada de manera compatible con ambos motores de base de datos
+	    Field<Date> recalculatedBillingDateAdjusted = DSL
+	        .when(CUSTOMER_FEE.PERIOD.eq((short) 1), DSL.dateSub(CUSTOMER_FEE.BILLING_DATE, 1, DatePart.MONTH))
+	        .when(CUSTOMER_FEE.PERIOD.eq((short) 2), DSL.dateSub(CUSTOMER_FEE.BILLING_DATE, 2, DatePart.MONTH))
+	        .when(CUSTOMER_FEE.PERIOD.eq((short) 3), DSL.dateSub(CUSTOMER_FEE.BILLING_DATE, 3, DatePart.MONTH))
+	        .when(CUSTOMER_FEE.PERIOD.eq((short) 4), DSL.dateSub(CUSTOMER_FEE.BILLING_DATE, 4, DatePart.MONTH))
+	        .when(CUSTOMER_FEE.PERIOD.eq((short) 5), DSL.dateSub(CUSTOMER_FEE.BILLING_DATE, 6, DatePart.MONTH))
+	        .when(CUSTOMER_FEE.PERIOD.eq((short) 6), DSL.dateSub(CUSTOMER_FEE.BILLING_DATE, 12, DatePart.MONTH))
+	        .otherwise(CUSTOMER_FEE.BILLING_DATE); // Si no hay período definido, no ajustamos la fecha
+
+	    while (start.before(end)) {
+	        // Realizamos la consulta con la lógica del ajuste de fechas incorporada
+	        Result<Record1<Integer>> result = ctx.getDslContext()
+	        	.selectDistinct(CUSTOMER_FEE.ID)
+	            .from(CUSTOMER_FEE)
+	            .join(CUSTOMER).on(CUSTOMER.REGISTRY.eq(CUSTOMER_FEE.CUSTOMER).and(CUSTOMER.STATUS.ne((byte)1)))
+	            .where(CUSTOMER_FEE.SELLER.eq(params.getSeller()))
+	            .and(CUSTOMER_FEE.DOMAIN.in(SecurityDAO.getInheritanceDomainIds(ctx)))
+	            .and(CUSTOMER_FEE.INITIAL_DATE.lessOrEqual(start))
+	            .and(CUSTOMER_FEE.FINAL_DATE.isNull().or(CUSTOMER_FEE.FINAL_DATE.greaterOrEqual(end)))
+	            .and(CUSTOMER_FEE.PERIOD.ne((short) 0))
+	            .and(recalculatedBillingDateAdjusted.lessOrEqual(start)) // Filtro por la fecha ajustada
+	            .fetch();
+	        
+	        customerFeeIds.addAll(result.getValues(CUSTOMER_FEE.ID));
+	    }
+	    
+	    CustomerFeeParams customerFeeParams = new CustomerFeeParams();
+	    customerFeeParams.setDomain(ctx.getDomainId());
+	    customerFeeParams.setFeeIds(customerFeeIds.toArray(new Integer[0]));
+	    
+	    return FeeDAO.getFeeList(ctx, customerFeeParams);
+	}
+	
 	private static void applyHavingCustomers(SelectHavingStep<?> select, SellerWorkloadParams params) {
 		if (params.getCustomers() != null) {
 	    	if (params.getCustomers() == 1) // Al menos un customer distinto
@@ -238,12 +283,13 @@ public class SellerWorkloadDAO {
 	                    CUSTOMER_FEE.PERIOD, 
 	                    CUSTOMER_FEE.CUSTOMER)
 	            .from(CUSTOMER_FEE)
+	            .join(CUSTOMER).on(CUSTOMER.REGISTRY.eq(CUSTOMER_FEE.CUSTOMER).and(CUSTOMER.STATUS.ne((byte)1)))
 	            .where(CUSTOMER_FEE.SELLER.eq(seller))
 	            .and(CUSTOMER_FEE.DOMAIN.in(SecurityDAO.getInheritanceDomainIds(ctx)))
 	            .and(CUSTOMER_FEE.INITIAL_DATE.lessOrEqual(start))
 	            .and(CUSTOMER_FEE.FINAL_DATE.isNull().or(CUSTOMER_FEE.FINAL_DATE.greaterOrEqual(end)))
 	            .and(CUSTOMER_FEE.PERIOD.ne((short) 0))
-	            .and(recalculatedBillingDateAdjusted.lessThan(start)) // Filtro por la fecha ajustada
+	            .and(recalculatedBillingDateAdjusted.lessOrEqual(start)) // Filtro por la fecha ajustada
 	            .fetch();
 
 	        // Inicializamos los valores para los cálculos
@@ -352,6 +398,7 @@ public class SellerWorkloadDAO {
 			SellerWorkload sellerWorkload = new SellerWorkload();
 			
 			sellerWorkload.setId(r.getValue(SELLER.REGISTRY));
+			sellerWorkload.setStatus(SellerStatus.safeValueOf(getValue(r, SELLER.STATUS)));
 			sellerWorkload.setName(r.getValue(SELLER_ALIAS.NAME));
 			sellerWorkload.setDocument(r.getValue(SELLER_ALIAS.DOCUMENT));
 			sellerWorkload.setScope(new Scope().setDescription(r.getValue(SCOPE.DESCRIPTION)));

@@ -961,6 +961,7 @@ public class VariablesMap implements Serializable {
 		variablesMap.put("HORA_COMPLEMENTARIA_FESTIVOS_HORAS", "HORA_COMPL_FEST");
 		variablesMap.put("HORAS_DE_PRESENCIA_HORAS", "PRESENCIA_H");
 		variablesMap.put("HORAS_DE_PRESENCIA_MENSUAL", "PRESENCIA_M");
+		variablesMap.put("HORA_ESTRUCTURAL_HORAS", "H_ESTRUCTURAL_H");
 		variablesMap.put("HORA_EXTRA_20_HORAS", "HORA_EXTRA_20_H");
 		variablesMap.put("HORA_EXTRA_75_HORAS", "HORA_EXTRA_75_H");
 		variablesMap.put("HORA_EXTRA_100_HORAS", "HORA_EXTRA_100_H");
@@ -1332,7 +1333,8 @@ public class VariablesMap implements Serializable {
 		variablesMap.put("PLUS_CASEROS_DIARIO", "PLUS_CASEROS");
 		variablesMap.put("PLUS_CENTRAL_NUCLEAR_MENSUAL", "CENTRAL_NUCLEAR_M");
 		variablesMap.put("PLUS_CENTROS_COMERCIALES_MENSUAL", "PLUS_CC");
-		variablesMap.put("PLUS_CENTROS_SANITARIOS_MENSUAL", "PLUS_C_SANITARIOS");
+		variablesMap.put("PLUS_CENTROS_SANITARIOS_ANUAL", "C_SANITARIOS_A");
+		variablesMap.put("PLUS_CENTROS_SANITARIOS_MENSUAL", "C_SANITARIOS_M");
 		variablesMap.put("PLUS_CENTRO_DE_SALUD_HORAS", "PLUS_CENT_SALUD_H");
 		variablesMap.put("PLUS_COBRANZA_HORAS", "PLUS_COBRANZA");
 		variablesMap.put("PLUS_COBRANZA_MENSUAL", "PLUS_COBRANZA");
@@ -1545,8 +1547,9 @@ public class VariablesMap implements Serializable {
 		variablesMap.put("PLUS_INTENSIDAD_MENSUAL", "INTENSIDAD_M");
 		variablesMap.put("PLUS_INVERNAL_DIARIO", "PLUS_INVERNAL");
 		variablesMap.put("PLUS_INVERNAL_MENSUAL", "PLUS_INVERNAL");
-		variablesMap.put("PLUS_JEFE_DE_EQUIPO_MENSUAL", "PLUS_JEFE_EQUIPO");
-		variablesMap.put("PLUS_JEFE_DE_EQUIPO_DIARIO", "PLUS_JEFE_EQUIPO");
+		variablesMap.put("PLUS_JEFE_DE_EQUIPO_ANUAL", "JEFE_EQUIPO_A");
+		variablesMap.put("PLUS_JEFE_DE_EQUIPO_MENSUAL", "JEFE_EQUIPO_M");
+		variablesMap.put("PLUS_JEFE_DE_EQUIPO_DIARIO", "JEFE_EQUIPO_D");
 		variablesMap.put("PLUS_JORNADA_6_DIAS_MENSUAL", "JORNADA_6_DIAS_M");
 		variablesMap.put("PLUS_LIMPIEZA_INDUSTRIAL_DIARIO", "LIMPIEZA_INDUSTRIAL_D");
 		variablesMap.put("PLUS_MANTENIMIENTO_MENSUAL", "MANTENIMIENTO_M");
