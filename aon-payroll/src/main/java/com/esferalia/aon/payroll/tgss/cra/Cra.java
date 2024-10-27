@@ -183,6 +183,10 @@ public class Cra {
 					
 					// Adding DDE (Normal salaries) to MainCRAJSON 
 					ccci.put("DDE", dde);
+				} else {
+					JSONObject err = new JSONObject();
+					err.put("ERR", "No hay ninguna nómina que proceda introducir para este periodo.");
+					errors.add(err);
 				}
 				
 			}
