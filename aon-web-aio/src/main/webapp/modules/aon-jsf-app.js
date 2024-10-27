@@ -395,7 +395,7 @@ export class AonJsfFeeAssigment extends AonJsfApp {
 	
 	constructor() {
 		super();
-		this.setViewId('/facelet/app/feeAssigment.xhtml');
+		this.setViewId('/facelet/app/feeAssignment.xhtml');
 	}
 }
 
