@@ -883,9 +883,9 @@
 		border-left: none;
 		border-right: none;
     	box-shadow: none; 
-    	
     	height: 40px;
-
+		vertical-align: middle;
+		text-align: left;
 	}	
 	
 	.aon-dataTable td,
@@ -1474,6 +1474,7 @@
 	.aon-icon-company {
 		background-size: 24px;
 		background-image: url('data:image/svg+xml;utf-8,&lt;svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="--var(aonIconColor,black)"&gt;&lt;path d="M240-200h156v-234h168v234h156v-360L480-742 240-560v360Zm-28 28v-402l268-203 268 203v402H536v-234H424v234H212Zm268-299Z"/&gt;&lt;/svg&gt;') ;
+		padding-left: 16px !important;
 	}
 
 	.aon-icon-file-entrance  {
@@ -1690,6 +1691,7 @@
 		padding-bottom:12px;
 		background-position-x : center;
 		background-position-y : center;
+		vertical-align: middle;
 	}
 	
 	.aon-panelGrid-odd .aon-icon-edit-add,
@@ -1730,7 +1732,7 @@
 	.aon-editDataTable-iconColumn .aon-icon-company{
 		padding-top:6px;
 		padding-left:24px;
-		padding-bottom:18px;
+		padding-bottom:6px;
 	}
 	
 	.aon-lookupButton-new {
@@ -2787,7 +2789,35 @@
   		background-position: center;
 	}
 	
+	.aon-table-row-link {
+	  background: transparent url(images/aon-icon/aon-icon-rowSelector.png) no-repeat scroll center left;
+	  margin: 0;
+	  padding: 0 10px 0 14px;
+	}
+	
+	[id*="invoiceFinances"],
+	[id$="selectButton"]{
+		padding-right: 15px !important;
+	}
 
+	.aon-text-right {
+		text-align: left;
+	}
+	
+	.aon-outputText {
+		float: left !important;
+	}
+	
+	[id*="j_id"]{
+		text-align: left !important;
+	}
+	
+	a[id*="targetDeduplicationData"],
+	a[id*="invoicingGroupDetailData"]{
+		padding-bottom: 22px;
+	}
+	
+	
 	
 	</style>
 
