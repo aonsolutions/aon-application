@@ -52,7 +52,7 @@ public class SECURITY {
 	
 	public static AonToken isAonTokenAndIsNotExpired(String token) {
 	    try {      
-	      JSONObject json = SECURITY.decodeJWT(token);
+	      JSONObject json = SECURITY.decodeJWT(token, AonSecret.getAonSecret());
 	      AonToken aonToken = AonToken.parse(json);
 	      if(!AonStringUtils.isBlank(aonToken.getUuid())) {
 	        aonToken.setAuth(hexStringToByteArray(aonToken.getUuid()));
