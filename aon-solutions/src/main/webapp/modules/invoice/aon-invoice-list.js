@@ -58,7 +58,7 @@ export class AonInvoiceList extends AonElement {
 			aonInvoiceTable.addColumn(MSG.INVOICE_NUMBER, 'string', 'reference', '150px');
 			aonInvoiceTable.addColumn(MSG.HOLDER, 'string', 'name', 'auto');
 			aonInvoiceTable.addColumn(MSG.AMOUNT, 'number', 'totalParse', '100px');
-			aonInvoiceTable.addColumn('', 'icons', 'icons', this.isInvoice() ? '100px' : '140px');
+			aonInvoiceTable.addColumn('', 'icons', 'icons', this.isInvoice() ? '140px' : '180px');
 	
 			this.init();
 			aonInvoiceTable.addEventListener('more', () => {
@@ -80,7 +80,7 @@ export class AonInvoiceList extends AonElement {
 		let aonInvoiceTable = createList(this.TABLE); 
 		aonInvoiceTable.selectable = 'true';
 		this.appendChild(aonInvoiceTable);
-		aonInvoiceTable.addColumn(MSG.DATE, 'date', 'creation_date', '120px');;
+		aonInvoiceTable.addColumn(MSG.DATE, 'date', 'creation_date', '120px');
 		aonInvoiceTable.addColumn(MSG.NAME, 'string', 'name', 'auto');
 		aonInvoiceTable.addColumn(MSG.USER, 'string', 'creation_user', '120px');
 		aonInvoiceTable.addColumn('', 'icons', 'icons', '100px');
@@ -106,6 +106,9 @@ export class AonInvoiceList extends AonElement {
 		invoice.totalParse = formatNumber(invoice.total, 2, "EUR");
 		invoice.icons = this.buildRowIcons(invoice); 
 		let tr = this.getTable().addRow(invoice, () => this.aonInvoice(invoice, idx), (e) => this.aonInvoiceContextMenu(e, invoice, idx));
+		if(invoice.altered) {
+			tr.style.backgroundColor = '#ffe3e3';
+		}
 		tr.id = "aonInvoiceRow";
 	}
 
@@ -114,12 +117,13 @@ export class AonInvoiceList extends AonElement {
 			let key = invoice.file.s3Key;
 			let keyValues = key.split("/");
 			let value = keyValues[keyValues.length - 1];
-			let base64 = value.split("_")[1];
+			let array = value.split("_");
+			let base64 = array[array.length - 1];
 			let re = /(?:\.([^.]+))?$/;
 			let ext = re.exec(base64)[0];
 			base64 = base64.replace(ext, '');
 			if(isBase64(base64)) {
-				invoice.name = atob(base64) + ext;;
+				invoice.name = atob(base64) + ext;
 			} else invoice.name = value;
 		}
 		if(!invoice.name) invoice.name = '';
@@ -200,6 +204,15 @@ export class AonInvoiceList extends AonElement {
 			};
 			icons.push(icon);
 		}
+
+		if(inv.isSigned()) {
+			let icon = {
+				icon: MATERIAL_ICONS.LICENSE,
+				title: '',
+				color: COLORS.AON_DARK_GRAY
+			};
+			icons.push(icon);			
+		} 
 
 		if(inv.isRawdoc()) {
 			let icon = {

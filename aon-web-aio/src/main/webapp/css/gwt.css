@@ -1,51 +1,44 @@
 /**
  * The file contains styles for GWT widgets in the 365 theme.
  */
- 
+@import url(/css/aon.css);
+
 @import url(/css/header.css);
- 
- 
- /*
-.gwt-Selector {
-  color: rgb(66, 66, 66);
-  text-rendering: optimizeLegibility;
-  
-  font-family: "Noto Sans", sans-serif !important;
-  font-optical-sizing: auto;
-  font-size: 14px !important;
-  font-weight: 400 !important;
-  font-style: normal;
-  font-variation-settings: "wdth" 100;
+
+#rootPanel>div {
+	margin-left: 0px;
 }
-*/
+
+.gwt-Selector {
+	color: #424242;
+	font-family: Noto Sans, sans-serif !important;
+	font-optical-sizing: auto;
+	font-size: 14px !important;
+	font-style: normal;
+	font-variation-settings: "wdth" 100;
+	font-weight: 400 !important;
+	text-rendering: optimizeLegibility;
+}
 
 .material-icons {
-  font-family: 'Material Symbols Outlined';
-  font-weight: normal;
-  font-style: normal;
-  font-size: 24px;
-  line-height: 1;
-  letter-spacing: normal;
-  text-transform: none;
-  display: inline-block;
-  white-space: nowrap;
-  word-wrap: normal;
-  direction: ltr;
-  -moz-font-feature-settings: 'liga';
-  -moz-osx-font-smoothing: grayscale;
-  font-variation-settings:
-  'FILL' 0,
-  'wght' 200,
-  'GRAD' 0,
-  'opsz' 24
+	font-family: 'Material Symbols Outlined';
+	font-weight: normal;
+	font-style: normal;
+	font-size: 24px;
+	line-height: 1;
+	letter-spacing: normal;
+	text-transform: none;
+	display: inline-block;
+	white-space: nowrap;
+	word-wrap: normal;
+	direction: ltr;
+	-moz-font-feature-settings: 'liga';
+	-moz-osx-font-smoothing: grayscale;
+	font-variation-settings: 'FILL' 0, 'wght' 200, 'GRAD' 0, 'opsz' 24
 }
 
 .material-symbols-outlined {
-  font-variation-settings:
-  'FILL' 0,
-  'wght' 200,
-  'GRAD' 0,
-  'opsz' 24
+	font-variation-settings: 'FILL' 0, 'wght' 200, 'GRAD' 0, 'opsz' 24
 }
 
 /*
@@ -108,37 +101,49 @@
 /*
  * Card
  */
-.aonCard {
-    margin: 10px;
-    border-radius: 5px;
-    padding: 15px 22px;
-   	background-color: #fff;
-    border: 1px solid #ebebeb;
-    color: rgb(66, 66, 66)
+.aonCard, .aonEmployeeCard, .aonEnterpriseCard {
+	font-size: 12px;
+	margin: 10px;
+	border-radius: 5px;
+	padding: 15px 22px;
+	background-color: #fff;
+	border: 1px solid #ebebeb;
+	color: rgb(66, 66, 66)
 }
 
-.aonCardTitle {
-    color: #262626;
-    display: flex;
-    font-size: 14px;
-    font-weight: 600;
-    margin-bottom: 15px;
+.aonCardTitle, .aonEmployeeCardTitle, .aonEnterpriseCardTitle {
+	color: #262626;
+	display: flex;
+	font-size: 14px;
+	font-weight: 600;
+	margin-bottom: 15px;
 }
 
-.aonCard select,
-.aonCard .aon-InputText,
-.aonCard .aon-selectOneMenu {
+.aonEmployeeCardLabel, .aonEnterpriseCardLabel {
+	background-color: #fff;
+}
+
+.aonEmployeeCardRequired, .aonEnterpriseCardRequired {
+	
+}
+
+.aon-ConfigContent, .aon-Model-Detail, .aon-MainTrash-Detail,
+	.aon-MainCreta-Details, .aon-MainAgreement-Detail,
+	.aon-EmployeeTree-EmployeeDetail {
+	background-color: #fafafa !important;
+}
+
+.aonCard select, .aonCard .aon-InputText, .aonCard .aon-selectOneMenu {
 	height: 35px;
-    font-size: 14px;
-    margin-left: 6px;
-    margin-right: 6px;
-    border-radius: 3px;
-    padding: 1px 2px 0px 15px;
-    border: 1px solid #d2d2d6;
+	font-size: 14px;
+	margin-left: 6px;
+	margin-right: 6px;
+	border-radius: 3px;
+	padding: 1px 2px 0px 15px;
+	border: 1px solid #d2d2d6;
 }
 
-.aonCard select,
-.aonCard .aon-selectOneMenu {
+.aonCard select, .aonCard .aon-selectOneMenu {
 	height: 38px;
 	padding-right: 40px;
 }
@@ -152,3 +157,102 @@
 	border: 1px solid rgb(221, 221, 221);
 }
 
+.gwt-Selector .gwt-SplitLayoutPanel-VDragger {
+	background-color: #fafafa !important;
+}
+
+.aon-MainCreta-Events *, .aon-EmployeeTree-Events * {
+	border-color: #fafafa !important;
+	background-color: #fafafa !important;
+}
+
+.aon-MainCreta-Enterprises .aon-SearchTextBox,
+	.aon-MainAgreement-Agreements .aon-SearchTextBox,
+	.aon-EmployeeTree-Employees .aon-SearchTextBox {
+	padding: 4px;
+	border-radius: 4px;
+	border: 1px solid #fafafa;
+	background-color: #ffffff;
+}
+
+.gwt-Selector .gwt-Tree .gwt-TreeItem {
+	font-size: 12px;
+	font-weight: 400;
+}
+
+/* .aon-EmployeeTree-Employees */
+.gwt-Selector .aon-EmployeeTree-Employees .gwt-Tree .gwt-TreeItem {
+	min-width: 260px;
+	position: relative;
+	padding: 4px 4px 4px 10px;
+	background-color: #fafafa;
+	border-top-right-radius: 8px;
+	border-bottom-right-radius: 8px;
+	border-top-left-radius: 0px;
+	border-bottom-left-radius: 0px;
+	border-color: transparent !important;
+	
+	text-transform: none;
+	color: var(--aonSuiteMenuTitle);
+	font-family: Noto Sans, sans-serif !important;
+}
+
+.gwt-Selector .aon-EmployeeTree-Employees .gwt-Tree .gwt-TreeItem-selected
+	{
+	font-weight: 700;
+	background: var(--aonLightGray) !important;
+	border-left: 2px solid var(--aonPayroll) !important;
+}
+
+.gwt-Selector .aon-EmployeeTree-Employees .gwt-Tree .gwt-TreeItem:hover
+	{
+	background-color: var(--aonLightGray2) !important;
+}
+
+.gwt-Selector .aon-EmployeeTree-Employees .gwt-Tree>div>table>tbody>tr:first-child>td:first-child img
+	{
+	left: 270px;
+	position: relative;
+}
+
+.gwt-Selector .aon-EmployeeTree-Employees .gwt-Tree>div>.gwt-TreeItem,
+	.gwt-Selector .aon-EmployeeTree-Employees .gwt-Tree>div>table .gwt-TreeItem
+	{
+	left: -19px;
+	font-size: 16px;
+	font-weight: 500;
+}
+
+.gwt-Selector .aon-EmployeeTree-Employees .gwt-Tree>div>.gwt-TreeItem>img,
+	.gwt-Selector .aon-EmployeeTree-Employees .gwt-Tree>div>.gwt-TreeItem>.material-icons,
+	.gwt-Selector .aon-EmployeeTree-Employees .gwt-Tree>div>table .gwt-TreeItem>img,
+	.gwt-Selector .aon-EmployeeTree-Employees .gwt-Tree>div>table .gwt-TreeItem>.material-icons
+	{
+	display: none;
+}
+
+.gwt-Selector .aon-EmployeeTree-Employees .gwt-Tree>div>div  .gwt-TreeItem
+	{
+	left: -35px;
+	padding-left: 16px;
+}
+
+.gwt-Selector .aon-EmployeeTree-Employees .gwt-Tree .gwt-TreeItem .material-icons[style]
+	{
+	color: var(--aonPayroll) !important;
+}
+
+.gwt-Selector .aon-EmployeeTree-Employees .gwt-Tree .gwt-TreeItem img {
+	filter: none;
+}
+
+.aon-Salary-DraftPanel {
+	padding: 10px;
+	border-radius: 4px;
+	background-color: #fff;
+}
+
+.aon-EmployeeTree-EmployeeDetail .aon-finding-title-toolbar {
+	background-color: #fafafa;
+	
+}
