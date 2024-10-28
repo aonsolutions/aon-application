@@ -478,7 +478,6 @@ public class Up2Date {
     	Artist2024Update.ARTIST2024UPDATE,
     	InvofoxEnterpriseDataFix.INVOFOX_ENTERPRISE_DATA_FIX,
     	AlterFsMod200Nrc.ALTER_FS_MODEL200_NRC
-    	
 	};
 
     // ------------------------------------------------------------------------
