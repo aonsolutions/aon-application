@@ -199,17 +199,15 @@ public abstract class SellerWorkloadModulePanel extends AonCustomDockLayout {
 	}
 	
 	public void getSellerListCount(Consumer<Integer> finish) {
-//		Window.alert("getSellerListCount");
 		if(null == sellerWorkloadPanel || null ==  sellerWorkloadPanel.getTable()) finish.accept(0);
 		
-//		Window.alert("getSellerListCount DB");
 		sellerWorkloadPanel.getSellerListCount(count -> {
 			finish.accept(count);
 		});
 	}
 
 	public Integer getSellerListPosition(Integer sellerId) {
-		return null == sellerId || null == sellerWorkloadPanel ? 0 : sellerWorkloadPanel.getSellerListPosition(sellerId);
+		return sellerWorkloadPanel.getSellerListPosition(sellerId);
 	}
 	
 	public SellerWorkloadParams getSellerListParams() {

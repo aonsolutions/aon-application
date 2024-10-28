@@ -2,13 +2,22 @@ package com.esferalia.aon.occam.impl.jooq.dao;
 
 import static com.esferalia.aon.jooq.tables.Customer.CUSTOMER;
 import static com.esferalia.aon.jooq.tables.CustomerFee.CUSTOMER_FEE;
+import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
+import static com.esferalia.aon.jooq.tables.InvoicingGroup.INVOICING_GROUP;
+import static com.esferalia.aon.jooq.tables.Item.ITEM;
+import static com.esferalia.aon.jooq.tables.Pcategory.PCATEGORY;
+import static com.esferalia.aon.jooq.tables.Product.PRODUCT;
 import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
+import static com.esferalia.aon.jooq.tables.Ritem.RITEM;
 import static com.esferalia.aon.jooq.tables.Scope.SCOPE;
 import static com.esferalia.aon.jooq.tables.Seller.SELLER;
+import static com.esferalia.aon.jooq.tables.Workplace.WORKPLACE;
+import static com.esferalia.aon.occam.impl.jooq.dao.CustomerDAO.CUSTOMER_ALIAS;
 
 import java.sql.Date;
 import java.util.HashMap;
-import java.util.LinkedHashSet;
+import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -27,6 +36,7 @@ import org.jooq.Result;
 import org.jooq.Select;
 import org.jooq.SelectHavingStep;
 import org.jooq.SelectJoinStep;
+import org.jooq.SelectOnConditionStep;
 import org.jooq.impl.DSL;
 
 import com.esferalia.aon.jooq.tables.Registry;
@@ -40,7 +50,9 @@ import com.esferalia.aon.occam.api.model.fee.Fee;
 import com.esferalia.aon.occam.api.model.registry.CustomerFeeParams;
 import com.esferalia.aon.occam.api.model.registry.SellerWorkload;
 import com.esferalia.aon.occam.api.model.security.Scope;
+import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.type.SellerStatus;
+import com.esferalia.aon.occam.impl.jooq.dao.FeeDAO.FeeFiller;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
@@ -129,7 +141,7 @@ public class SellerWorkloadDAO {
 		Date start = getStartDatePeriod(params.getPeriod());
 		Date end = getEndDatePeriod(params.getPeriod());
 		
-		SelectHavingStep<Record1<Integer>> select = ctx.getDslContext().selectCount()
+		SelectHavingStep<Record1<Integer>> select = ctx.getDslContext().selectDistinct(SELLER.REGISTRY)
 			.from(SELLER)
 	        .join(SELLER_ALIAS).on(SELLER_ALIAS.ID.eq(SELLER.REGISTRY))
 	        .join(SCOPE).on(SCOPE.ID.eq(SELLER.SCOPE))
@@ -142,16 +154,18 @@ public class SellerWorkloadDAO {
 		applyOrdering(select, params);
 		applyHavingCustomers(select, params);
 				
-		Record1<Integer> sellerCount = select.fetchOne();
+		Result<Record1<Integer>> sellerCount = select.fetch();
 					
-		return sellerCount == null ? 0 : sellerCount.value1();
+		return sellerCount.isEmpty() ? 0 : sellerCount.size();
 	}
 	
 	public static List<Fee>  getFeeList(CloseableAONContext ctx, SellerWorkloadParams params) {
+		Condition condition = createFeeCondition(ctx, params);
+		
 		Date start = getStartDatePeriod(params.getPeriod());
 	    Date end = getEndDatePeriod(params.getPeriod());
 	    
-	    LinkedHashSet<Integer> customerFeeIds = new LinkedHashSet<Integer>();
+	    HashSet<Integer> customerFeeIds = new HashSet<Integer>();
 
 	    // Utilizamos JOOQ para recalcular la fecha de facturación ajustada de manera compatible con ambos motores de base de datos
 	    Field<Date> recalculatedBillingDateAdjusted = DSL
@@ -169,22 +183,148 @@ public class SellerWorkloadDAO {
 	        	.selectDistinct(CUSTOMER_FEE.ID)
 	            .from(CUSTOMER_FEE)
 	            .join(CUSTOMER).on(CUSTOMER.REGISTRY.eq(CUSTOMER_FEE.CUSTOMER).and(CUSTOMER.STATUS.ne((byte)1)))
+	            .join(CUSTOMER_ALIAS).on(CUSTOMER.REGISTRY.eq(CUSTOMER_ALIAS.ID))
 	            .where(CUSTOMER_FEE.SELLER.eq(params.getSeller()))
 	            .and(CUSTOMER_FEE.DOMAIN.in(SecurityDAO.getInheritanceDomainIds(ctx)))
 	            .and(CUSTOMER_FEE.INITIAL_DATE.lessOrEqual(start))
 	            .and(CUSTOMER_FEE.FINAL_DATE.isNull().or(CUSTOMER_FEE.FINAL_DATE.greaterOrEqual(end)))
 	            .and(CUSTOMER_FEE.PERIOD.ne((short) 0))
 	            .and(recalculatedBillingDateAdjusted.lessOrEqual(start)) // Filtro por la fecha ajustada
+	            .and(condition)
+	            .offset(params.getOffset())
+				.limit(params.getLimit())
 	            .fetch();
 	        
 	        customerFeeIds.addAll(result.getValues(CUSTOMER_FEE.ID));
+	        
+	        // Sumamos un mes a la fecha de inicio
+	        start = AonDateUtils.toSql(AonDateUtils.addMonths(start, 1));
 	    }
 	    
 	    CustomerFeeParams customerFeeParams = new CustomerFeeParams();
 	    customerFeeParams.setDomain(ctx.getDomainId());
 	    customerFeeParams.setFeeIds(customerFeeIds.toArray(new Integer[0]));
+	    customerFeeParams.setCustomerName(params.getDescription());
+	    customerFeeParams.setProductName(params.getDescription());
 	    
-	    return FeeDAO.getFeeList(ctx, customerFeeParams);
+	    LinkedList<Fee> feeList = getFeeList(ctx, customerFeeParams);
+	    
+	    System.out.println("Offset : " + params.getOffset());
+	    System.out.println("Limit : " + params.getLimit());
+	    System.out.println(feeList.size());
+	    
+	    return feeList;
+	}
+
+	public static List<Integer> getFeeIdsList(CloseableAONContext ctx, SellerWorkloadParams params) {
+		Condition condition = createFeeCondition(ctx, params);
+		
+		Date start = getStartDatePeriod(params.getPeriod());
+	    Date end = getEndDatePeriod(params.getPeriod());
+	    
+	    HashSet<Integer> customerFeeIds = new HashSet<Integer>();
+
+	    // Utilizamos JOOQ para recalcular la fecha de facturación ajustada de manera compatible con ambos motores de base de datos
+	    Field<Date> recalculatedBillingDateAdjusted = DSL
+	        .when(CUSTOMER_FEE.PERIOD.eq((short) 1), DSL.dateSub(CUSTOMER_FEE.BILLING_DATE, 1, DatePart.MONTH))
+	        .when(CUSTOMER_FEE.PERIOD.eq((short) 2), DSL.dateSub(CUSTOMER_FEE.BILLING_DATE, 2, DatePart.MONTH))
+	        .when(CUSTOMER_FEE.PERIOD.eq((short) 3), DSL.dateSub(CUSTOMER_FEE.BILLING_DATE, 3, DatePart.MONTH))
+	        .when(CUSTOMER_FEE.PERIOD.eq((short) 4), DSL.dateSub(CUSTOMER_FEE.BILLING_DATE, 4, DatePart.MONTH))
+	        .when(CUSTOMER_FEE.PERIOD.eq((short) 5), DSL.dateSub(CUSTOMER_FEE.BILLING_DATE, 6, DatePart.MONTH))
+	        .when(CUSTOMER_FEE.PERIOD.eq((short) 6), DSL.dateSub(CUSTOMER_FEE.BILLING_DATE, 12, DatePart.MONTH))
+	        .otherwise(CUSTOMER_FEE.BILLING_DATE); // Si no hay período definido, no ajustamos la fecha
+
+	    while (start.before(end)) {
+	        // Realizamos la consulta con la lógica del ajuste de fechas incorporada
+	        Result<Record1<Integer>> result = ctx.getDslContext()
+	        	.selectDistinct(CUSTOMER_FEE.ID)
+	            .from(CUSTOMER_FEE)
+	            .join(CUSTOMER).on(CUSTOMER.REGISTRY.eq(CUSTOMER_FEE.CUSTOMER).and(CUSTOMER.STATUS.ne((byte)1)))
+	            .join(CUSTOMER_ALIAS).on(CUSTOMER.REGISTRY.eq(CUSTOMER_ALIAS.ID))
+	            .where(CUSTOMER_FEE.SELLER.eq(params.getSeller()))
+	            .and(CUSTOMER_FEE.DOMAIN.in(SecurityDAO.getInheritanceDomainIds(ctx)))
+	            .and(CUSTOMER_FEE.INITIAL_DATE.lessOrEqual(start))
+	            .and(CUSTOMER_FEE.FINAL_DATE.isNull().or(CUSTOMER_FEE.FINAL_DATE.greaterOrEqual(end)))
+	            .and(CUSTOMER_FEE.PERIOD.ne((short) 0))
+	            .and(recalculatedBillingDateAdjusted.lessOrEqual(start)) // Filtro por la fecha ajustada
+	            .and(condition)
+	            .fetch();
+	        
+	        customerFeeIds.addAll(result.getValues(CUSTOMER_FEE.ID));
+	        
+	        // Sumamos un mes a la fecha de inicio
+	        start = AonDateUtils.toSql(AonDateUtils.addMonths(start, 1));
+	    }
+	    
+	    System.out.println("getFeeIdsList size : " + customerFeeIds.size());
+	    
+	    return customerFeeIds.stream().collect(Collectors.toList());
+	}
+	
+	public static LinkedList<Fee> getFeeList(AONContext ctx, CustomerFeeParams customerFeeParams){
+		Condition condition = createFeeCondition(ctx, customerFeeParams);
+		
+		SelectOnConditionStep<Record> fromCustomerRecords = ctx.getDslContext().selectDistinct().from(CUSTOMER_FEE)
+				.join(DOMAIN).on(DOMAIN.ID.eq(CUSTOMER_FEE.DOMAIN))
+				.join(CUSTOMER).on(CUSTOMER.REGISTRY.eq(CUSTOMER_FEE.CUSTOMER))
+				.join(CUSTOMER_ALIAS).on(CUSTOMER.REGISTRY.eq(CUSTOMER_ALIAS.ID))
+				.join(ITEM).on(ITEM.ID.eq(CUSTOMER_FEE.ITEM))
+				.join(PRODUCT).on(PRODUCT.ID.eq(ITEM.PRODUCT))
+				.join(WORKPLACE).on(CUSTOMER_FEE.WORKPLACE.eq(WORKPLACE.ID))
+				.leftOuterJoin(PCATEGORY).on(PCATEGORY.ID.eq(PRODUCT.CATEGORY))
+				.leftOuterJoin(INVOICING_GROUP).on(INVOICING_GROUP.ID.eq(CUSTOMER_FEE.INVOICING_GROUP));
+			
+//		fromCustomerRecords = fromCustomerRecords.leftJoin(RITEM).on(RITEM.REGISTRY.eq(CUSTOMER_FEE.CUSTOMER).and(RITEM.ITEM.eq(CUSTOMER_FEE.ITEM)).and(RITEM.CUSTOMER_FEE.eq(CUSTOMER_FEE.ID)));
+		
+		Result<Record> feeRecords = fromCustomerRecords 
+				.where(condition)
+				.groupBy(CUSTOMER_FEE.ID)
+				.orderBy(CUSTOMER_FEE.CUSTOMER, CUSTOMER_FEE.DESCRIPTION)
+			.fetch();
+		
+		System.out.println("Customer Fee size : " + feeRecords.size());
+		
+		LinkedList<Fee> fees = feeRecords.stream().map(new FeeFiller()).collect(Collectors.toCollection(LinkedList::new));
+		
+		return fees;
+	}
+	
+	private static Condition createFeeCondition(AONContext ctx, CustomerFeeParams customerFeeParams) {
+		Condition condition = CUSTOMER_FEE.DOMAIN.eq(customerFeeParams.getDomain());
+		
+		User user = SecurityDAO.getUser(ctx);
+		if(user.getDomain() == ctx.getDomainId()) {
+			Integer[] userScopes = SecurityDAO.getUserScopes(ctx);
+			condition = condition.and(CUSTOMER.SCOPE.in(userScopes));
+		}
+		
+		if(null != customerFeeParams.getFeeIds() && customerFeeParams.getFeeIds().length > 0) {
+			condition = condition.and(CUSTOMER_FEE.ID.in(customerFeeParams.getFeeIds()));
+		}
+		
+		if(AonStringUtils.isNotBlank(customerFeeParams.getCustomerName()) || AonStringUtils.isNotBlank(customerFeeParams.getProductName())) {
+			condition = condition.and(CUSTOMER_ALIAS.NAME.likeIgnoreCase("%" + customerFeeParams.getCustomerName() + "%").or(CUSTOMER_FEE.DESCRIPTION.likeIgnoreCase("%" + customerFeeParams.getProductName() + "%")));
+		}
+		
+		return condition;
+	}
+	
+
+	
+	private static Condition createFeeCondition(CloseableAONContext ctx, SellerWorkloadParams params) {
+		Condition condition = CUSTOMER_FEE.DOMAIN.eq(params.getDomain());
+		
+		User user = SecurityDAO.getUser(ctx);
+		if(user.getDomain() == ctx.getDomainId()) {
+			Integer[] userScopes = SecurityDAO.getUserScopes(ctx);
+			condition = condition.and(CUSTOMER.SCOPE.in(userScopes));
+		}
+		
+		if(AonStringUtils.isNotBlank(params.getDescription())) {
+			condition = condition.and(CUSTOMER_ALIAS.NAME.likeIgnoreCase("%" + params.getDescription() + "%").or(CUSTOMER_FEE.DESCRIPTION.likeIgnoreCase("%" + params.getDescription() + "%")));
+		}
+		
+		return condition;
 	}
 	
 	private static void applyHavingCustomers(SelectHavingStep<?> select, SellerWorkloadParams params) {

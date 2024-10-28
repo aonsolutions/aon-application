@@ -5278,6 +5278,12 @@ public class AON {
 		}
 	}
 	
+	public static List<Integer> getSellersWorkloadFeesIds(SellerWorkloadParams params) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(params.getDomainName(), params.getDomain(), params.getUser())) {
+			return getRegistry().getSellersWorkloadFeesIds(ctx, params);
+		}
+	}
+	
 	// ------------------- RSELLER
 	public static RegistrySeller getRegistrySeller(Domain domain, String login, RegistrySellerFilter filter) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(domain, login)) {
