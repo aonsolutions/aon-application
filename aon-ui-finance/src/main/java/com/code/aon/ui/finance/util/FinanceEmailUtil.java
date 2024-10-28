@@ -353,7 +353,7 @@ public class FinanceEmailUtil extends CompanyEmailUtil implements IFinanceConsta
 		            message.addRecipient(RecipientType.BCC, replyTo);
 		            Address[] addresses = {replyTo};
 		            message.setReplyTo(addresses);
-		            SES.sendEmail(message);
+		            SES.sendEmail(AonUtil.getDomainName(), message);
 		    	} else {
 		    		aonMessage = getEmailSender().sendMessage(recipients, _subject, _content, MimeType.MIME_HTML, file, xml );
 					if ( saveSent ) {

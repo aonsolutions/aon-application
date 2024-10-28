@@ -42,6 +42,8 @@
 	<!-- <inherits name="com.esferalia.aon.occam.api.Occam" /> -->
 	<inherits name="com.esferalia.aon.occam.mod200.api.OccamMod200" />
 	
+	<inherits name="com.esferalia.aon.gwt.fiscal.Fiscal" />
+	
 	<!-- Include GWTUpload library -->
   	<inherits name="gwtupload.GWTUpload"/>
 	

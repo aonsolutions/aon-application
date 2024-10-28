@@ -34,6 +34,7 @@ import java.util.Collection;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -117,6 +118,7 @@ import com.esferalia.aon.occam.impl.jooq.dao.RegistryDAO.RegistryFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.SecurityDAO.ScopeFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.invoice.InvoiceAddressDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.invoice.InvoiceBatchDetailDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.invoice.InvoiceDataDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.invoice.InvoiceInfoDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.offer.OfferDetailDAO;
 import com.esferalia.aon.occam.impl.jooq.validation.InvoiceAutoComplete;
@@ -414,6 +416,14 @@ public class InvoiceDAO {
 					RegistryDAO.getRegistrySellerNames(ctx, d.getInvoice().getRegistry(), d.getInvoice().getIssueDate())
 						.collect(Collectors.joining(", ")))
 			);
+	}
+	
+	public static ArrayList<Invoice> getFullInvoiceList(AONContext ctx, List<Integer> ids) {
+		ArrayList<Invoice> invoices = new ArrayList<Invoice>();
+		
+		ids.forEach(id -> invoices.add( getFullInvoice(ctx, id) ));
+		
+		return invoices;
 	}
 
 	public static Invoice getFullInvoice(AONContext ctx, Integer id) {
@@ -1242,6 +1252,7 @@ public class InvoiceDAO {
 		InvoiceAddressDAO.delete(ctx, id);
 		InvoiceBatchDetailDAO.delete(ctx, f-> f.getInvoiceProperty().eq(id));
 		InvoiceInfoDAO.delete(ctx, f-> f.getInvoiceProperty().eq(id));
+		InvoiceDataDAO.delete(ctx, f-> f.getInvoiceProperty().eq(id));
 		
 		count = ctx.getDslContext()
 			.delete(INVOICE)
@@ -1251,7 +1262,7 @@ public class InvoiceDAO {
 
 		// ONLY IF IS TICKET BAI.
 		TbaiConfiguration tbaiConfiguration = TbaiConfigurationDAO.get(ctx);
-		if(tbaiConfiguration.isActive() && invoice.getNumber() > 0) {
+		if(tbaiConfiguration.isActive() && invoice.getNumber() > 0 && invoice.isSales()) {
 			saveInvoiceTracking(ctx, invoice, InvoiceTrackingStatus.DELETED);
 		}
 	}
@@ -1594,7 +1605,7 @@ public class InvoiceDAO {
 
 	public static void updateWithholdingType(AONContext ctx, Integer invoiceId, WithholdingType newType ) {
 		if (invoiceId == null)  throw new AonCoreException("El Identificador de factura no puede estar vacio");
-		if (newType == null) throw new AonCoreException("El nuevo tipo de retención no puede estar vacio");
+		if (newType == null) throw new AonCoreException("El nuevo tipo de retenciï¿½n no puede estar vacio");
 	
 		MutableInt sum = new MutableInt();
 		ctx.getDslContext().select(INVOICE_TAX.ID)
@@ -1620,7 +1631,7 @@ public class InvoiceDAO {
 		
 		if (params.getActivity() != null) {
 			if (AonMathUtils.isNegative(params.getActivity())) {
-				// Sólo las comunes. Los "sin activdad".
+				// Sï¿½lo las comunes. Los "sin activdad".
 				condition = condition.and( INVOICE.ACTIVITY.isNull());
 			} else {
 				condition = condition.and( INVOICE.ACTIVITY.eq( params.getActivity() ));

@@ -113,15 +113,29 @@ export class AonImageEditor extends AonElement {
 
     cropImage() {
         if (this.cropper) {
-            const cropBoxData = this.cropper.getCropBoxData();
+
+            // const cropBoxData = this.cropper.getCropBoxData();
+            // const canvas = this.cropper.getCroppedCanvas({
+            //     width: cropBoxData.width,
+            //     height: cropBoxData.height,
+            // });
+
+
+
             const canvas = this.cropper.getCroppedCanvas({
-                width: cropBoxData.width,
-                height: cropBoxData.height,
+                minWidth: 256,
+                minHeight: 256,
+                maxWidth: 4096,
+                maxHeight: 4096,
+                fillColor: '#fff',
+                imageSmoothingEnabled: true,
+                imageSmoothingQuality: 'high',
             });
+           
             canvas.toBlob((blob) => {
                 let file = new File([blob], `${ramdomString(10)}.jpg`, { type: "image/jpeg" });
                 this.dispatchEvent(new CustomEvent(EVENT.CROPPER, {detail:file}));
-            }, 'image/jpeg');
+            }, 'image/jpeg', 1);
 
             this.closeCropper();
         }

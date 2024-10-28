@@ -588,8 +588,8 @@ public class LroeModel240 extends DockLayoutPanel {
 											String message = "La factura " + reference + " se ha enviado correctamente.";
 											vp.add(getOkMessage(message));
 										} else {
-											if(result.getErrorCode().equals("AON_001")
-												|| result.getErrorCode().equals("B4_2000013")) {
+											if(result.getErrorCode() != null && (result.getErrorCode().equals("AON_001")
+												|| result.getErrorCode().equals("B4_2000013"))) {
 												vp.add(getActionErrorMessage(result, invoice));
 											} else vp.add(getErrorMessage("Factura " + reference + ": " + result.getErrorMessage()));
 										} 

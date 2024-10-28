@@ -1,16 +1,13 @@
 package com.esferalia.aon.occam.api.model.doc;
 
-import java.net.URL;
 import java.util.Date;
 
 import com.esferalia.aon.occam.api.model.attachment.InvoiceAttachmentType;
 import com.esferalia.aon.occam.api.model.type.MimeType;
 
-public class InvoiceDoc extends Doc<InvoiceAttachmentType> {
+public class InvoiceDoc extends S3Doc<InvoiceAttachmentType> {
 
-	private static final String BUCKET = "aon-invoice-doc";
 	private Integer invoice;
-	private String s3Key;
 	
 	public Integer getInvoice() {
 		return invoice;
@@ -21,16 +18,15 @@ public class InvoiceDoc extends Doc<InvoiceAttachmentType> {
 		return this;
 	}
 	
-	public String getS3Bucket() {
-		return BUCKET;
+	@Override
+	public InvoiceDoc setS3Bucket(String s3Key) {
+		super.setS3Key(s3Key);
+		return this;
 	}
 	
-	public String getS3Key() {
-		return s3Key;
-	}
-	
+	@Override
 	public InvoiceDoc setS3Key(String s3Key) {
-		this.s3Key = s3Key;
+		super.setS3Key(s3Key);
 		return this;
 	}
 	
@@ -69,16 +65,4 @@ public class InvoiceDoc extends Doc<InvoiceAttachmentType> {
 		super.setType(type);
 		return this;
 	}
-	
-	@Override
-	public URL getDownloadURL() {
-		return null;
-	}
-
-	@Override
-	public URL getDownloadURL(String contentDisposition) {
-		return null;
-	}
-	
-
 }

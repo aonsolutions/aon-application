@@ -9,7 +9,6 @@ import com.esferalia.aon.occam.api.model.RawdocParams;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.tedi.TediResult;
 import com.esferalia.aon.watson.error.AonCoreException;
-import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 
@@ -28,4 +27,5 @@ public interface RawdocService extends RemoteService {
 	AccountingInvoice getAccountingInvoice(String domainName, int domain, String user, String invoice);
 	Boolean processInvoiceFile(String domainName, int domain, String user, String jsonStr, Invoice invoice);
 
+	String getS3Url(Rawdoc rawdoc);
 }

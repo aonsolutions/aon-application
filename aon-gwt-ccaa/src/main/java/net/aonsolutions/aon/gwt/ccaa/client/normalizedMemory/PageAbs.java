@@ -105,7 +105,8 @@ public abstract class PageAbs extends ResizeComposite {
 	}
 
 	public boolean isPymes() {
-		return depositType == DepositType.PYMES;
+		return getDeposit() != null && !AonStringUtils.isBlank(getDeposit().getType())
+				&& getDeposit().getType().equalsIgnoreCase("Pymes");
 	}
 	
 	public Map<D2DepositKey, DoubleBox> getInputs() {

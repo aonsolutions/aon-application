@@ -51,7 +51,9 @@ import com.esferalia.aon.occam.api.model.Person;
 import com.esferalia.aon.occam.api.model.Question;
 import com.esferalia.aon.occam.api.model.QuestionParams;
 import com.esferalia.aon.occam.api.model.SellerParams;
+import com.esferalia.aon.occam.api.model.SellerWorkloadParams;
 import com.esferalia.aon.occam.api.model.Survey;
+import com.esferalia.aon.occam.api.model.fee.Fee;
 import com.esferalia.aon.occam.api.model.registry.Carrier;
 import com.esferalia.aon.occam.api.model.registry.Category;
 import com.esferalia.aon.occam.api.model.registry.CompanyFull;
@@ -76,6 +78,7 @@ import com.esferalia.aon.occam.api.model.registry.RegistrySeller;
 import com.esferalia.aon.occam.api.model.registry.RegistryType;
 import com.esferalia.aon.occam.api.model.registry.Segment;
 import com.esferalia.aon.occam.api.model.registry.Seller;
+import com.esferalia.aon.occam.api.model.registry.SellerWorkload;
 import com.esferalia.aon.occam.api.model.registry.Supplier;
 import com.esferalia.aon.occam.api.model.registry.SupplierFull;
 import com.esferalia.aon.occam.api.model.registry.Target;
@@ -153,6 +156,11 @@ public interface IRegistry {
 	public Integer getSellerListCount(CloseableAONContext ctx, SellerParams params);
 	public Seller saveSeller(CloseableAONContext ctx, Seller seller);
 	public void deleteSeller(CloseableAONContext ctx, Integer sellerId);
+	
+	// ------------------- SELLER WORKLOAD
+	public List<SellerWorkload> getSellerWorkloadList(CloseableAONContext ctx, SellerWorkloadParams params);
+	public Integer getSellerWorkloadListCount(CloseableAONContext ctx, SellerWorkloadParams params);
+	public List<Fee> getSellersWorkloadFees(CloseableAONContext ctx, SellerWorkloadParams params);
 	
 	// ------------------- RSELLER
 	public RegistrySeller getRegistrySeller(AONContext ctx, RegistrySellerFilter filter);

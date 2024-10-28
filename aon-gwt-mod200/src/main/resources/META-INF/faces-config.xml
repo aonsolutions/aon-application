@@ -2,11 +2,16 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-facesconfig_1_2.xsd">
 
-	<!-- =================== MODELO 200 ========================== -->
 	<navigation-rule>
+	    <!-- =================== MODELO 200 ========================== -->
 		<navigation-case>
 			<from-outcome>gwt_mod200</from-outcome>
 			<to-view-id>/com/esferalia/aon/gwt/mod200/facelet/model/mod200.xhtml</to-view-id>
+		</navigation-case>
+		<!-- =================== MATRIZ DE MODELOS FISCALES ========================== -->
+		<navigation-case>
+			<from-outcome>gwt_modelMatrix</from-outcome>
+			<to-view-id>/com/esferalia/aon/gwt/mod200/facelet/model/modelMatrix.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>
 

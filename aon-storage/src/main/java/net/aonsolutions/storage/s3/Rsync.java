@@ -11,20 +11,15 @@ import static com.esferalia.aon.jooq.tables.EnterpriseCcc.ENTERPRISE_CCC;
 import static com.esferalia.aon.jooq.tables.Person.PERSON;
 import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
@@ -38,16 +33,13 @@ import org.jooq.SQLDialect;
 import org.jooq.conf.Settings;
 import org.jooq.impl.DSL;
 
-import com.amazonaws.auth.AWSStaticCredentialsProvider;
-import com.amazonaws.auth.BasicAWSCredentials;
-import com.amazonaws.client.builder.AwsClientBuilder.EndpointConfiguration;
-import com.amazonaws.services.s3.AmazonS3;
-import com.amazonaws.services.s3.AmazonS3ClientBuilder;
-import com.amazonaws.services.s3.model.CopyObjectRequest;
-import com.amazonaws.services.s3.model.ObjectMetadata;
-import com.amazonaws.util.Base64;
 import com.esferalia.aon.jooq.Keys;
-import com.esferalia.aon.jooq.tables.ContractDoc;
+
+import software.amazon.awssdk.core.sync.RequestBody;
+import software.amazon.awssdk.services.s3.S3Client;
+import software.amazon.awssdk.services.s3.model.CopyObjectRequest;
+import software.amazon.awssdk.services.s3.model.HeadObjectRequest;
+import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 
 /**
  * @author rtrepiana
@@ -186,15 +178,10 @@ public class Rsync {
 			//settings.setParamType(ParamType.INLINED);
 			
 			DSLContext dslContext = DSL.using(connection, SQLDialect.MYSQL, settings);
-
-			AmazonS3 s3 = AmazonS3ClientBuilder
-					.standard()
-					//.withRegion(region)
-					.withEndpointConfiguration(new EndpointConfiguration(endpoint, region))
-					.withCredentials(new AWSStaticCredentialsProvider(new BasicAWSCredentials(accessKey, secretKey)))
-					.build();
 			
-			rSyncContractDoc(dslContext, where, s3, bucket);
+			S3Client client = S3Client.create();
+			
+			rSyncContractDoc(dslContext, where, client, bucket);
 			
 		} catch (ParseException e) {
 			// oops, something went wrong
@@ -204,7 +191,7 @@ public class Rsync {
 		}
 	}
 	
-	private static void rSyncContractDoc(DSLContext dslContext, String where, AmazonS3 s3, String bucket) {
+	private static void rSyncContractDoc(DSLContext dslContext, String where, S3Client client, String bucket) {
 
 		dslContext
 		.select()
@@ -227,7 +214,7 @@ public class Rsync {
 //			userData.put("EMPLOYEE",  r.get(PERSON.FIRST_SURNAME) +" "+ r.get(PERSON.SECOND_SURNAME) +", " + r.get(PERSON.NAME) );
 //			userData.put("ENTERPRISE",  r.get(DOMAIN.DESCRIPTION) );
 			try {
-				String s3Key = putAttach(s3, bucket, data, contentType, userData);
+				String s3Key = putAttach(client, bucket, data, contentType, userData);
 				
 				dslContext
 				.insertInto(CONTRACT_DOC)
@@ -259,31 +246,46 @@ public class Rsync {
 		;
 	}
 
-	private static String putAttach(AmazonS3 s3, String bucket, byte[] data, String contentType, Map<String, String> userMetaData) throws IOException, NoSuchAlgorithmException {
-		try (InputStream is = new ByteArrayInputStream(data)) {
+	private static String putAttach(S3Client client, String bucket, byte[] data, String contentType, Map<String, String> userMetaData) throws IOException, NoSuchAlgorithmException {
+		String sha1Hex = toHex(MessageDigest.getInstance("SHA1").digest(data));
 			
-			String sha1Hex = toHex(MessageDigest.getInstance("SHA1").digest(data));
-			
-			if ( s3.doesObjectExist(bucket, sha1Hex) ) {
-				ObjectMetadata metaData = s3.getObjectMetadata(bucket, sha1Hex);
-				userMetaData.forEach( (key,value) -> metaData.getUserMetadata().merge(key, value, Rsync::join ));
-				s3.copyObject(new CopyObjectRequest(bucket, sha1Hex, bucket, sha1Hex).withNewObjectMetadata(metaData));
-				
-				System.err.printf("Upps. Contract's attach already at '%s' [%s] (%s):-|\n" , bucket, sha1Hex, metaData.getUserMetadata());
-				
-				return sha1Hex;
-			}
+		if(doesObjectExist(client, bucket, sha1Hex)) {
+			HeadObjectRequest request = HeadObjectRequest.builder().bucket(bucket).key(sha1Hex).build();
+			Map<String, String> metaData = client.headObject(request).metadata();
+			metaData.forEach( (key,value) -> metaData.merge(key, value, Rsync::join));
 
-			String md5Base64 = Base64.encodeAsString(MessageDigest.getInstance("MD5").digest(data));
+			userMetaData.forEach( (key,value) -> metaData.merge(key, value, Rsync::join ));
+				
+			CopyObjectRequest copyRequest = CopyObjectRequest.builder()
+						.sourceBucket(bucket).sourceKey(sha1Hex)
+						.destinationBucket(bucket).destinationKey(sha1Hex)
+						.metadata(metaData)
+						.build();
+
+			client.copyObject(copyRequest);
+			System.err.printf("Upps. Contract's attach already at '%s' [%s] (%s):-|\n" , bucket, sha1Hex, metaData);
 			
-			ObjectMetadata metaData = new ObjectMetadata();
-			metaData.setContentMD5(md5Base64);
-			metaData.setContentLength(data.length);
-			metaData.setContentType(contentType);
-			metaData.setUserMetadata(userMetaData);
-			s3.putObject(bucket, sha1Hex, is, metaData);
 			return sha1Hex;
-		} 
+		}
+		String md5Base64 = Base64.getEncoder().encodeToString(MessageDigest.getInstance("MD5").digest(data));
+		
+		PutObjectRequest putRequest = PutObjectRequest.builder().bucket(bucket).key(sha1Hex)
+				.contentMD5(md5Base64)
+				.contentLength((long) data.length)
+				.contentType(contentType)
+				.metadata(userMetaData).build();
+		client.putObject(putRequest, RequestBody.fromBytes(data));
+		return sha1Hex; 
+	}
+	
+	private static boolean doesObjectExist(S3Client client, String bucketName, String s3Key) {
+		HeadObjectRequest request = HeadObjectRequest.builder().bucket(bucketName).key(s3Key).build();
+		try {
+			client.headObject(request);
+			return true;
+		} catch (Exception e) {
+			return false;
+		}
 	}
 	
 	private static String join(String s1, String s2) {

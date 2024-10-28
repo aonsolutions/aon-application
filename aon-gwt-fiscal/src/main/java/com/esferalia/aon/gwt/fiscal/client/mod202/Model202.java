@@ -107,7 +107,7 @@ public class Model202 extends MainEntryPoint {
 		@Override
 		public void onRemove(Mod202 model) {
 			if (getOptions().isBackButtonVisible() && getOptions().hasExternalCallback()) {
-				getOptions().getExternalCallback().onExit(model);
+				getOptions().getExternalCallback().onRemove(model);
 			} else {
 				onCancel(model);
 			}

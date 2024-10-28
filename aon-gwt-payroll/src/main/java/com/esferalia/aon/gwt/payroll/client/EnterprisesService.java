@@ -74,6 +74,8 @@ import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 @RemoteServiceRelativePath("enterprises")
 public interface EnterprisesService extends RemoteService {
 	
+	public static final String URL_SHORTENER_PATH = "laburr";
+	
 	Integer getDomain(String domain);
 	
 	Domain getDomain(String domain, String user);

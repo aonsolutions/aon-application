@@ -37,6 +37,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.Function;
@@ -714,7 +715,7 @@ public class SmartContractSalaryCalculator<T extends ISalary> extends GenericCon
 			
 			
 			if (paymentType == PaymentType.CRA_0004 
-				&& isAtIT(expressionContext, start, end)) {
+				&& isAtFullIT(expressionContext, start, end)) {
 				contractPayment = new DelegateContractPayment(contractPayment) {
 					@Override
 					public String getExpression() {
@@ -2209,10 +2210,21 @@ public class SmartContractSalaryCalculator<T extends ISalary> extends GenericCon
 		return ( IExtraPayment) payment;
 	}
 	
-	private static boolean isAtIT(ExpressionContext expressionContext, Date startDate, Date endDate) {
+	private static boolean isAtFullIT(ExpressionContext expressionContext, Date startDate, Date endDate) {
 		try {
 			List<Period> itPeriods = expressionContext.getPeriods(ContextVariable.LEAVE_DAYS);
-			return Period.sub(new Period(startDate, endDate), itPeriods).isEmpty();
+			boolean allTimeInIT = Period.sub(new Period(startDate, endDate), itPeriods).isEmpty();
+			if ( allTimeInIT ) {
+				for ( ContextVariable factorVar : new ContextVariable [] {ContextVariable.MATERNITY_FACTOR , ContextVariable.PATERNITY_FACTOR, ContextVariable.LEAVE_FACTOR } ) {
+					try {
+						return expressionContext.eval(factorVar.getName() , startDate, endDate, Number.class)
+						.stream().map(ITimedResult::getValue).allMatch( v -> v.doubleValue() == 1.00 );
+					} catch ( Exception e ) {
+					}
+				}
+				return true;
+			}
+			return false ;
 		} catch (Exception e) {
 			return false;
 		}

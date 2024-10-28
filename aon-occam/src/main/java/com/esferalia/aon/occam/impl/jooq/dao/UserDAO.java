@@ -159,15 +159,26 @@ public class UserDAO {
 				.setRegistry(checkField(r, REGISTRY.ID)
 				        ? RegistryFiller.build(r)
 				        : new Registry().setId(r.getValue(USER.REGISTRY)))
-				.setAuth(checkField(r, AUTH.ID) && getValue(r, AUTH.ID) != null
-						? AuthFiller.build(r)
-						: new Auth().setAuth(r.getValue(USER.AUTH)))
+				.setAuth(checkField(r, AUTH.ID) && r.getValue(AUTH.ID) != null
+						? AuthFiller.build(r).setUuid(hex(r.getValue(AUTH.ID)))
+						: new Auth().setAuth(r.getValue(USER.AUTH)).setUuid(hex(r.getValue(USER.AUTH))) )
 				.setShared(AonEnumUtils.getBoolean(r.getValue(USER.SHARED)))
 				.setToolbar(UserToolbar.safeValueOf(r.getValue(USER.TOOLBAR)))
 				.setEnterprise(r.getValue(USER.ENTERPRISE))
 				.setExpirationDate(getValue(r, USER.PASSWORDEXPIRATION));
 		}		
 	}
+	
+    public static String hex(byte[] bytes) {
+    	if ( bytes == null )
+    		return null;
+        StringBuilder result = new StringBuilder();
+        for (byte aByte : bytes) {
+            result.append(String.format("%02x", aByte));
+        }
+        return result.toString();
+    }
+    
 
 	
 }

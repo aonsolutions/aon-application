@@ -1,5 +1,6 @@
 package com.code.aon.supplier;
 
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -10,6 +11,7 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.persistence.Transient;
 
+import org.hibernate.annotations.Formula;
 import org.hibernate.annotations.Where;
 
 import com.code.aon.AonVersion;
@@ -36,7 +38,9 @@ import com.esferalia.aon.entity.master.SupplierDB;
 public class Supplier extends SupplierDB implements IRegistry, ITaxInfo, IScopable, IAccount, ITariffable, IAuditable {
 	
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
-
+	
+	private Date updateDate; 
+	
 	private Boolean surcharge;
 
 	private Set<RegistryAttachment> documents = new HashSet<RegistryAttachment>();
@@ -99,4 +103,12 @@ public class Supplier extends SupplierDB implements IRegistry, ITaxInfo, IScopab
 		return (getTransaction() == InvoiceTransactionType.INTRACOMMUNITY || getTransaction() == InvoiceTransactionType.EXTRACOMMUNITY);
 	}
 
+    @Formula("IFNULL(modification_date, creation_date)")
+    public Date getUpdateDate() {
+    	return updateDate;
+    }
+    
+    public void setUpdateDate(Date updateDate) {
+		this.updateDate = updateDate;
+	}
 }

@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.Writer;
 
 import com.esferalia.aon.occam.api.model.fiscal.Mod303;
+import com.esferalia.aon.occam.api.model.type.Period;
 import com.esferalia.aon.watson.error.AonCoreException;
 
 public class Mod303Writer {
@@ -25,7 +26,30 @@ public class Mod303Writer {
 	}
 	
 	private enum Writers {
-		 AEAT_2024		(mod303 -> (mod303.isAEAT() && mod303.getYear() >= 2024), Mod303WriterAEAT2024::new)
+		AEAT_2024_T3	(mod303 -> mod303.isAEAT() 
+		 && (
+			 (mod303.getYear() > 2024)
+		  || (mod303.getYear() == 2024 
+			 && (mod303.getPeriod() == Period.M09
+				|| mod303.getPeriod() == Period.M10
+				|| mod303.getPeriod() == Period.M11
+				|| mod303.getPeriod() == Period.M12
+				|| mod303.getPeriod() == Period.T3
+				|| mod303.getPeriod() == Period.T4)
+			 )
+		  ), Mod303WriterAEAT2024T3::new)
+		,AEAT_2024	(mod303 -> (mod303.isAEAT() && mod303.getYear() == 2024
+			 && (mod303.getPeriod() == Period.M01
+				|| mod303.getPeriod() == Period.M02
+				|| mod303.getPeriod() == Period.M03
+				|| mod303.getPeriod() == Period.M04
+				|| mod303.getPeriod() == Period.M05
+				|| mod303.getPeriod() == Period.M06
+				|| mod303.getPeriod() == Period.M07
+				|| mod303.getPeriod() == Period.M08
+				|| mod303.getPeriod() == Period.T1
+				|| mod303.getPeriod() == Period.T2) 
+			), Mod303WriterAEAT2024::new)
 		,ARABA_2023		(mod303 -> (mod303.isAraba() && mod303.getYear() >= 2023)	, Mod303WriterARABA2023::new)
 		,GIPUZKOA_2023	(mod303 -> (mod303.isGipuzkoa() && mod303.getYear() >= 2023), Mod303WriterGIPUZKOA2023::new)
 		,BIZKAIA_2023	(mod303 -> (mod303.isBizkaia() && mod303.getYear() >= 2023) 	, Mod303WriterBIZKAIA2023::new)

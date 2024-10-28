@@ -174,7 +174,6 @@ export class AonApplication extends AonElement {
     if (this.hasAttribute("main")) {
       toolbar.style.display = "none";
       sidenav.style.height = "calc(100vh - 61px)";
-      content.style.height = "calc(100vh - 61px)";
     }
 
     if (!localStorage.getItem("aon_solutions")) {

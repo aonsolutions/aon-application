@@ -71,7 +71,7 @@ const getModelNew = (model)=> {
 
   let hacienda = getModelTerritory(model.administration);
 
-  const lettersHtml = /*html*/`<div class="profile-letters size ${color}" title="${statusText}">${modelText}</div>`;
+  const lettersHtml = /*html*/`<div id="aonFiscalTableDiv" class="profile-letters size ${color}" title="${statusText}">${modelText}</div>`;
   
   return {
     ...model,

@@ -23,11 +23,13 @@ import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.Question;
 import com.esferalia.aon.occam.api.model.QuestionParams;
 import com.esferalia.aon.occam.api.model.SellerParams;
+import com.esferalia.aon.occam.api.model.SellerWorkloadParams;
 import com.esferalia.aon.occam.api.model.Survey;
 import com.esferalia.aon.occam.api.model.Workgroup;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.commission.CommissionType;
 import com.esferalia.aon.occam.api.model.config.ConfigParams;
+import com.esferalia.aon.occam.api.model.fee.Fee;
 import com.esferalia.aon.occam.api.model.finance.FBatch;
 import com.esferalia.aon.occam.api.model.finance.PayMethod;
 import com.esferalia.aon.occam.api.model.fiscal.IFiscalModel;
@@ -46,6 +48,7 @@ import com.esferalia.aon.occam.api.model.registry.RegistryAddress;
 import com.esferalia.aon.occam.api.model.registry.RegistryBank;
 import com.esferalia.aon.occam.api.model.registry.RegistryMedia;
 import com.esferalia.aon.occam.api.model.registry.Seller;
+import com.esferalia.aon.occam.api.model.registry.SellerWorkload;
 import com.esferalia.aon.occam.api.model.registry.Supplier;
 import com.esferalia.aon.occam.api.model.registry.SupplierFull;
 import com.esferalia.aon.occam.api.model.registry.Target;
@@ -665,6 +668,28 @@ public class CommonServiceAsyncDecorator implements CommonServiceAsync {
 	public void getAviableCategories(String domainName, Integer domain, String user, AsyncCallback<List<Category>> callback) throws AonCoreException {
 		AON.start();
 		serviceAsync.getAviableCategories(domainName, domain, user, new AsyncCallbackWrapper<>(callback));
+	}
+
+	// **************************************************
+	// ******************************** [SELLER WORKLOAD]
+	// **************************************************
+	
+	@Override
+	public void getSellersWorkload(SellerWorkloadParams params, AsyncCallback<List<SellerWorkload>> callback) throws AonCoreException {
+		AON.start();
+		serviceAsync.getSellersWorkload(params, new AsyncCallbackWrapper<>(callback));
+	}
+	
+	@Override
+	public void getSellersWorkloadCount(SellerWorkloadParams params, AsyncCallback<Integer> callback) throws AonCoreException {
+		AON.start();
+		serviceAsync.getSellersCount(params, new AsyncCallbackWrapper<>(callback));
+	}
+
+	@Override
+	public void getSellersWorkloadFees(SellerWorkloadParams params, AsyncCallback<List<Fee>> callback) throws AonCoreException {
+		AON.start();
+		serviceAsync.getSellersWorkloadFees(params, new AsyncCallbackWrapper<>(callback));
 	}
 
 }

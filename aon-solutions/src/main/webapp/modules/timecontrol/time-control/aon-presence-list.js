@@ -173,7 +173,15 @@ export class AonPresenceList extends AonElement {
         resp.map((res) => {
           let lastStatus = res.last_date ? `${res.textStatus} ${AonDateUtils.setDateTimestampDay(res.last_date)}` : null;
           res.lastStatus = lastStatus;
-          aonTable.addRow(res, (el) => this.aonEvent(el, res));
+          if(res.status == "in"){
+            let durationMs = this.timeStringToMs(res.duration);
+            let elapsedMs = new Date().getTime() - res.last_date;
+            durationMs += elapsedMs; // Sumar los milisegundos transcurridos a la duración
+            res.duration = this.msToTimeString(durationMs); // Convertir de vuelta a "minutos:segundos"
+          }
+          // alert(JSON.stringify(res));
+          let tr = aonTable.addRow(res, (el) => this.aonEvent(el, res));
+          tr.id = "aonTimeControlRow";
         });
       } catch (e) {
         console.log(e);
@@ -252,8 +260,10 @@ export class AonPresenceList extends AonElement {
               const lettersName = StringTwoLetters(name);
               
               const div = this.createElement(TAG.DIV);
+              div.id = "aonTimeControlTableDiv";
               div.classList.add("profile-letters", newStatus);
               div.innerText = lettersName;
+
 
               const lettersHtml = div.outerHTML;
               const {name:textStatus} = getStatus(newStatus);
@@ -331,7 +341,29 @@ export class AonPresenceList extends AonElement {
   
   aonEventAdd(){
     this.applicationParentEl.showView(SIGNIN_VIEWS.AON_EVENT_ADD, {date: new Date(), reload:true});
-  }  
+  } 
+  
+  timeStringToMs(duration) {
+    if (duration.length === 5) {
+      duration = "00:" + duration; // Añadir "00:" al principio para representar las horas
+    }
+    const parts = duration.split(":"); // Dividir la cadena en minutos y segundos
+    const hours = parseInt(parts[0], 10);
+    const minutes = parseInt(parts[0], 10); // Obtener los minutos
+    const seconds = parseInt(parts[1], 10); // Obtener los segundos
+    return (minutes * 60 + seconds) * 1000; // Convertir todo a milisegundos
+  }
+
+  msToTimeString(ms) {
+    const totalSeconds = Math.floor(ms / 1000);
+    const hours = Math.floor(totalSeconds / 3600);
+    const minutes = Math.floor((totalSeconds % 3600) / 60);
+    const seconds = totalSeconds % 60;
+    // Formatear con dos dígitos para horas, minutos y segundos
+    return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+  }
 }
+
+
 
 window.customElements.define("aon-presence-list", AonPresenceList);

@@ -1483,7 +1483,6 @@ public class InvoiceTemplate {
 		if (company != null && config.isCompany()) {
 			Company registry = company.getRegistry();
 			String companyName = registry != null ? AonStringUtils.trimToEmpty(registry.getName()) : "";
-			companyName = croppedString(companyName, 240, regularFont, 9);
 			String nif = registry != null ? AonStringUtils.trimToEmpty(registry.getDocument()) : "";
 			String address;
 			String zip = "";
@@ -1534,7 +1533,10 @@ public class InvoiceTemplate {
 			logoX = x;
 			logoY = tempY;
 
-			drawText(contents, companyName, x + 260, tempY + 35, config.getTheme().getTitleTextColor(), boldFont, 10);		
+			Integer companyNameFontSize = 10;
+			if(companyName.length() > 50) companyNameFontSize = 6;
+			else if(companyName.length() > 40) companyNameFontSize = 8;
+			drawText(contents, companyName, x + 260, tempY + 35, config.getTheme().getTitleTextColor(), boldFont, companyNameFontSize);		
 			
 			drawText(contents, "NIF:", x + 260, tempY + 22, config.getTheme().getTitleTextColor(), regularFont, 8);
 			

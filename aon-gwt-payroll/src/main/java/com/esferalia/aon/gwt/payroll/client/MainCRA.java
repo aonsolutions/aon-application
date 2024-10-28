@@ -1171,7 +1171,7 @@ public class MainCRA extends MainEntryPoint {
 			
 			onListCras();
 		}, f -> {
-			showError("Error CRA", f.getMessage().split(":")[1]);
+			showError("Error CRA", f.getMessage());
 		});
 	}
 

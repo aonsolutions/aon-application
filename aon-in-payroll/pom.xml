@@ -107,6 +107,11 @@
 	    <artifactId>jackson-dataformat-csv</artifactId>
 	    <version>2.12.1</version>
 	</dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <version>2.12.1</version>
+        </dependency>
 	<dependency>
 	    <groupId>org.apache.poi</groupId>
 	    <artifactId>poi</artifactId>
@@ -139,10 +144,10 @@
 		<scope>test</scope>
      </dependency>
  
- <dependency>
-			<groupId>com.amazonaws</groupId>
-			<artifactId>aws-java-sdk-textract</artifactId>
-			<version>1.11.935</version>
+		<dependency>
+   			<groupId>software.amazon.awssdk</groupId>
+    		<artifactId>textract</artifactId>
+    		<version>2.28.23</version>
 			<scope>compile</scope>
 		</dependency>
 	</dependencies>
@@ -209,34 +214,36 @@
 	    <dependency>
 	     <groupId>com.amazonaws</groupId>
 	      <artifactId>aws-lambda-java-core</artifactId>
-	      <version>1.2.1</version>
+	      <version>1.2.3</version>
 	    </dependency>
 	    <dependency>
 	      <groupId>com.amazonaws</groupId>
 	      <artifactId>aws-lambda-java-events</artifactId>
-	      <version>2.2.9</version>
+	      <version>3.14.0</version>
 	    </dependency>
 	    <dependency>
 	      <groupId>com.amazonaws</groupId>
 	      <artifactId>aws-lambda-java-log4j2</artifactId>
-	      <version>1.2.0</version>
+	      <version>1.6.0</version>
 	    </dependency>
 		<dependency>
-	      <groupId>com.amazonaws</groupId>
-	      <artifactId>aws-java-sdk-s3</artifactId>
-	      <version>1.11.795</version>
-		</dependency>
+    		<groupId>software.amazon.awssdk</groupId>
+		    <artifactId>s3</artifactId>
+		    <version>2.28.23</version>
+    		<scope>compile</scope>
+   	 	</dependency>
 		<dependency>
 		  <groupId>jakarta.mail</groupId>
 		  <artifactId>mail</artifactId>
 		  <version>1.4</version>
 		</dependency>
 		<dependency>
-            <groupId>com.amazonaws</groupId>
-            <artifactId>aws-java-sdk-textract</artifactId>
-            <version>1.11.935</version>
-            <scope>compile</scope>
-        </dependency>
+   			<groupId>software.amazon.awssdk</groupId>
+    		<artifactId>textract</artifactId>
+    		<version>2.28.23</version>
+			<scope>compile</scope>
+		</dependency>
+
 		<dependency>
 			<groupId>com.esferalia.aon</groupId>
 			<artifactId>aon.payroll</artifactId>
@@ -283,12 +290,12 @@
 		    		<artifactId>jackson-databind</artifactId>
 				</exclusion>
 				<exclusion>
-		    		<groupId>com.amazonaws</groupId>
-		    		<artifactId>aws-java-sdk-dynamodb</artifactId>
+		    		<groupId>software.amazon.awssdk</groupId>
+		    		<artifactId>dynamodb</artifactId>
 				</exclusion>
 				<exclusion>
-		    		<groupId>com.amazonaws</groupId>
-		    		<artifactId>aws-java-sdk-ses</artifactId>
+		    		<groupId>software.amazon.awssdk</groupId>
+		    		<artifactId>ses</artifactId>
 				</exclusion>
 			</exclusions>
         </dependency>
@@ -327,7 +334,7 @@
 		<dependency>
 			<groupId>org.htmlunit</groupId>
 			<artifactId>htmlunit</artifactId>
-			<version>3.5.0</version>
+			<version>4.4.0</version>
 			<scope>provided</scope>
 		</dependency>
 

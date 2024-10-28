@@ -1555,7 +1555,7 @@ public class JooqContrata {
 				Date end = getDateWithResettedHours(employeeContractInfo.getContractInfo().getEndDate(), false);
 				if( tc2.equals("402") && end!=null && CommonUtil.getDaysBetweenDates(start, end) <= 28){
 					datos = datos==null?new DATOSCOPIABASICATYPE():datos;
-					datos.setINDCONTRATOESCRITO("S");
+					datos.setINDCONTRATOESCRITO(employeeContractInfo.getContractSpecificData().getWritenContract() ? "S" : "N");
 				}
 			}
 			return datos;

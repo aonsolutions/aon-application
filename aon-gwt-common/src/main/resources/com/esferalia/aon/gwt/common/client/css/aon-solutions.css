@@ -1058,10 +1058,19 @@
 	border-bottom: 1px solid #ddd;
 	min-height: 2.5rem;
 	padding: 0 1rem;
+	gap: 0;
+}
+
+.aon_custom_row > * {
+	padding: 0 .5rem;
 }
 
 .aon_custom_row:hover{
 	background-color: #eaf1fb;
+}
+
+.aon_custom_row:hover div{
+	background-color: transparent !important;
 }
 
 .aon_custom_row_button, .aon_custom_card_button{
@@ -2217,6 +2226,11 @@
 	z-index : 1;
 	padding : 0 1rem;
 	border-bottom : 1px solid #ddd;
+	gap: 0;
+}
+
+.aon_custom_table_header > * {
+	padding: 0 .5rem;
 }
 
 .aon_custom_table_cell_header{

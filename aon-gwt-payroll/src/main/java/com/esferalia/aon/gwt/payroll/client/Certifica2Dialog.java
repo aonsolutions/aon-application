@@ -18,6 +18,7 @@ import com.esferalia.aon.occam.api.model.aonsolutions.DomainUserRoles;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler;
+import com.google.gwt.dom.client.Style.Display;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.resources.client.CssResource;
@@ -34,6 +35,7 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.MultiWordSuggestOracle;
 import com.google.gwt.user.client.ui.SuggestBox;
+import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 
 public class Certifica2Dialog extends AonCustomDialog {
@@ -98,6 +100,18 @@ public class Certifica2Dialog extends AonCustomDialog {
 	ListBox suspensionCodeLB;
 	
 	@UiField
+	HTMLPanel ertePanel;
+	
+	@UiField
+	TextBox erteCodeTB;
+	
+	@UiField
+	TextBox erteCoefTB;
+	
+	@UiField
+	Label erteEndL;
+	
+	@UiField
 	SuggestBox profesionalCategorySB;
 	
 	@UiField
@@ -149,6 +163,7 @@ public class Certifica2Dialog extends AonCustomDialog {
 	private Hidden endDateHidden;
 	private Hidden suspensionReasonCodeHidden;
 	private Hidden suspensionReasonHidden;
+	private Hidden ereCodeHidden;
 	
 	private Map<String, CNO> cnoMap;
 	
@@ -164,6 +179,13 @@ public class Certifica2Dialog extends AonCustomDialog {
 		
 		this.contractId = contractId;
 		this.cnoMap = new HashMap<>();
+		
+		// ERTE
+		this.ertePanel.getElement().getStyle().setDisplay(Display.NONE);
+		erteCodeTB.addValueChangeHandler(e -> {
+			certifica2Info.setErteCode(e.getValue());
+			ereCodeHidden.setValue(e.getValue());
+		});
 		
 		getToolbarPanel();
 		getButtonsPanel();
@@ -265,6 +287,11 @@ public class Certifica2Dialog extends AonCustomDialog {
 			certifica2Info.setSuspensionCode(this.suspensionCodeLB.getSelectedValue());
 			suspensionReasonCodeHidden.setValue(this.suspensionCodeLB.getSelectedValue());
 			suspensionReasonHidden.setValue(this.suspensionCodeLB.getSelectedItemText().split(" - ")[1]);
+			
+			if(AonStringUtils.equalsIgnoreCase(this.suspensionCodeLB.getSelectedValue(),"16") || AonStringUtils.equalsIgnoreCase(this.suspensionCodeLB.getSelectedValue(),"17") || AonStringUtils.equalsIgnoreCase(this.suspensionCodeLB.getSelectedValue(),"18"))
+				this.ertePanel.getElement().getStyle().clearDisplay();
+			else
+				this.ertePanel.getElement().getStyle().setDisplay(Display.NONE);
 		});
 	}
 	
@@ -305,6 +332,13 @@ public class Certifica2Dialog extends AonCustomDialog {
 		this.endDateL.setText(null == certifica2Info.getEndDate() ? "" : dateFormat.format(certifica2Info.getEndDate()));
 		this.contractDurationL.setText(certifica2Info.getContractDuration() + " d\u00EDa(s)");
 		setSelectedValueLB(this.suspensionCodeLB, certifica2Info.getSuspensionCode());
+		
+		if(AonStringUtils.equalsIgnoreCase(certifica2Info.getSuspensionCode(),"16") || AonStringUtils.equalsIgnoreCase(certifica2Info.getSuspensionCode(),"17") || AonStringUtils.equalsIgnoreCase(certifica2Info.getSuspensionCode(),"18")) {
+			this.ertePanel.getElement().getStyle().clearDisplay();
+			this.erteCoefTB.setValue(certifica2Info.getErteCoef());
+			this.erteEndL.setText(null == certifica2Info.getErteEnd() ? "" : dateFormat.format(certifica2Info.getErteEnd()));
+		}
+		
 		CNO cnoObj = cnoMap.get(certifica2Info.getProfesionalCategory());
 		if(null != cnoObj)
 			profesionalCategorySB.setText(cnoObj.getCode() + " - " + cnoObj.getTitle());
@@ -492,6 +526,10 @@ public class Certifica2Dialog extends AonCustomDialog {
 			messageL.setText("Generando Certific\u00402 PDF...");
 			messagesPanel.setVisible(true);
 			
+			suspensionReasonCodeHidden.setValue(this.suspensionCodeLB.getSelectedValue());
+			suspensionReasonHidden.setValue(this.suspensionCodeLB.getSelectedItemText().split(" - ")[1]);
+			ereCodeHidden.setValue(this.erteCodeTB.getValue());
+			
 			formPanelManual.submit();
 		});
 		
@@ -503,6 +541,9 @@ public class Certifica2Dialog extends AonCustomDialog {
 			
 			messageL.setText("Obteniendo Certific\u00402 PDF del SEPE...");
 			messagesPanel.setVisible(true);
+			
+			suspensionReasonCodeHidden.setValue(this.suspensionCodeLB.getSelectedValue());
+			ereCodeHidden.setValue(this.erteCodeTB.getValue());
 			
 			formPanelPDF.submit();
 		});
@@ -542,6 +583,8 @@ public class Certifica2Dialog extends AonCustomDialog {
 		Hidden contractIdHidden = new Hidden("contractId", contractId.toString());
 		Hidden fileTypeHidden = new Hidden("type", "XML");
 		documentHidden = new Hidden("document", "");
+		suspensionReasonCodeHidden = new Hidden("suspensionReasonCode", "");
+		ereCodeHidden = new Hidden("ereCode", "");
 		
 		//Add all to FlowPanel to add to FormPanel
 		FlowPanel flowPanel = new FlowPanel();
@@ -551,6 +594,8 @@ public class Certifica2Dialog extends AonCustomDialog {
 		flowPanel.add(contractIdHidden);
 		flowPanel.add(fileTypeHidden);
 		flowPanel.add(documentHidden);
+		flowPanel.add(suspensionReasonCodeHidden);
+		flowPanel.add(ereCodeHidden);
 		
 		formPanelXML.add(flowPanel);
 		formPanelXML.addSubmitCompleteHandler(e -> messagesPanel.setVisible(false));
@@ -569,6 +614,8 @@ public class Certifica2Dialog extends AonCustomDialog {
 		Hidden fileTypeHidden = new Hidden("type", "PDF");
 		documentHidden = new Hidden("document", "");
 		endDateHidden = new Hidden("endDate", "");
+		suspensionReasonCodeHidden = new Hidden("suspensionReasonCode", "");
+		ereCodeHidden = new Hidden("ereCode", "");
 		
 		//Add all to FlowPanel to add to FormPanel
 		FlowPanel flowPanel = new FlowPanel();
@@ -579,6 +626,8 @@ public class Certifica2Dialog extends AonCustomDialog {
 		flowPanel.add(fileTypeHidden);
 		flowPanel.add(documentHidden);
 		flowPanel.add(endDateHidden);
+		flowPanel.add(suspensionReasonCodeHidden);
+		flowPanel.add(ereCodeHidden);
 		
 		formPanelPDF.add(flowPanel);
 		formPanelPDF.addSubmitCompleteHandler(e -> messagesPanel.setVisible(false));
@@ -599,6 +648,7 @@ public class Certifica2Dialog extends AonCustomDialog {
 		endDateHidden = new Hidden("endDate", "");
 		suspensionReasonCodeHidden = new Hidden("suspensionReasonCode", "");
 		suspensionReasonHidden = new Hidden("suspensionReason", "");
+		ereCodeHidden = new Hidden("ereCode", "");
 		
 		//Add all to FlowPanel to add to FormPanel
 		FlowPanel flowPanel = new FlowPanel();
@@ -611,6 +661,7 @@ public class Certifica2Dialog extends AonCustomDialog {
 		flowPanel.add(endDateHidden);
 		flowPanel.add(suspensionReasonCodeHidden);
 		flowPanel.add(suspensionReasonHidden);
+		flowPanel.add(ereCodeHidden);
 		
 		formPanelManual.add(flowPanel);
 		formPanelManual.addSubmitCompleteHandler(e -> messagesPanel.setVisible(false));

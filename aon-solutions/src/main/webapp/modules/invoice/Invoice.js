@@ -30,6 +30,7 @@ export class Invoice {
   remarks;
   selfconta;
   insight;
+  signed;
 
   activity;
 
@@ -111,7 +112,7 @@ export class Invoice {
       this.selfconta = invoice.selfconta || false;
 
       this.activity = invoice.activity;
-
+      this.signed = invoice.signed;
       this.service = invoice.service || false;// boolean | servicio
       this.withholding = invoice.withholding || false; //this.isEmitida() ? company.withholding : false; // boolean | retencion 
       this.investment = invoice.investment || false; // boolean | bienes de inversion
@@ -178,6 +179,7 @@ export class Invoice {
       this.withholding = false; //this.isEmitida() ? company.withholding : false;
       this.creation_user = LS.getDomainLogin();
       this.tbai = false;
+      this.signed = false;
       this.tbaiUrl = '';
     }
     // getCompany().then(company => {
@@ -403,6 +405,10 @@ export class Invoice {
 
   isService() {
     return this.service && this.service != CONSTANT.FALSE;
+  }
+
+  isSigned() {
+    return this.signed;
   }
 
   isTbai() {

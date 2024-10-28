@@ -175,16 +175,20 @@ export const TaxWithholdingType = [
 export const TaxIVAPercentage = [
   {value:21.0, name:'21%'},
   {value:10.0, name:'10%'},
+  {value:7.5, name:'7,5%'},
   {value:5.0, name:'5%'},
   {value:4.0, name:'4%'},
+  {value:2.0, name:'2%'},
   {value:0.0, name:'0%'}
 ];
 
 export const TaxVatREPercentage = [
   {value:21.0, name:'21%+5,2%'},
   {value:10.0, name:'10%+1,4%'},
-  {value:4.0, name:'5%+0,5%'},
+  {value:7.5, name:'7.5%+1%'},
+  {value:5.0, name:'5%+0,6%'},
   {value:4.0, name:'4%+0,5%'},
+  {value:2.0, name:'2%+0,26%'},
   {value:0.0, name:'0%'}
 ];
 
@@ -226,6 +230,12 @@ export const getSurchargeByVat = (vat) => {
     return 1.4;
   } else if(vat == 4.0) {
     return 0.5;
+  } else if(vat == 5.0) {
+    return 0.6;
+  } else if(vat == 7.5) {
+    return 1;
+  } else if(vat == 2.0) {
+    return 0.26;
   } else return 0.0;
 };
 

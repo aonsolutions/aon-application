@@ -41,21 +41,41 @@ public abstract class Mod303Declaration {
 	public static final Date IVA_2021_CHANGE_DATE =  Date.from(LocalDateTime.of(2021, 7, 1, 0, 0).atZone(ZoneId.systemDefault()).toInstant());	
 
 	private enum Declarations {
-		 AEAT_2023 {
+		 AEAT_2024_T3 {
+			@Override boolean accept(Mod303 mod) { return Mod303AEAT2024T3Declaration.accept(mod);}
+			@Override Mod303Declaration get() {return new Mod303AEAT2024T3Declaration();}
+		}
+		,AEAT_2023 {
 			@Override boolean accept(Mod303 mod) { return Mod303AEAT2023Declaration.accept(mod);}
 			@Override Mod303Declaration get() {return new Mod303AEAT2023Declaration();}
+		}
+		,ARABA_2024_T3{
+			@Override boolean accept(Mod303 mod) { return Mod303ARABA2024T3Declaration.accept(mod);}
+			@Override Mod303Declaration get() {return new Mod303ARABA2024T3Declaration();}
 		}
 		,ARABA_2023{
 			@Override boolean accept(Mod303 mod) { return Mod303ARABA2023Declaration.accept(mod);}
 			@Override Mod303Declaration get() {return new Mod303ARABA2023Declaration();}
 		}
+		,BIZKAIA_2024_T4 {
+			@Override boolean accept(Mod303 mod) { return Mod303BIZKAIA2024T3Declaration.accept(mod);}
+			@Override Mod303Declaration get() {return new Mod303BIZKAIA2024T3Declaration();}
+		}
 		,BIZKAIA_2023 {
 			@Override boolean accept(Mod303 mod) { return Mod303BIZKAIA2023Declaration.accept(mod);}
 			@Override Mod303Declaration get() {return new Mod303BIZKAIA2023Declaration();}
 		}
+		,GIPUZKOA_2024_T3 {
+			@Override boolean accept(Mod303 mod) { return Mod303GIPUZKOA2024T3Declaration.accept(mod);}
+			@Override Mod303Declaration get() {return new Mod303GIPUZKOA2024T3Declaration();}
+		}
 		,GIPUZKOA_2023 {
 			@Override boolean accept(Mod303 mod) { return Mod303GIPUZKOA2023Declaration.accept(mod);}
 			@Override Mod303Declaration get() {return new Mod303GIPUZKOA2023Declaration();}
+		}
+		,NAVARRA_2024_T3{
+			@Override boolean accept(Mod303 mod) { return Mod303NAVARRA2024T3Declaration.accept(mod);}
+			@Override Mod303Declaration get() {return new Mod303NAVARRA2024T3Declaration();}
 		}
 		,NAVARRA_2023{
 			@Override boolean accept(Mod303 mod) { return Mod303NAVARRA2023Declaration.accept(mod);}
@@ -437,9 +457,17 @@ public abstract class Mod303Declaration {
 		if (mod303.isDiffCalculationMandatory()) {
 			Mod303DAO.getPreviousEffectiveModels(ctx, mod303)
 				.flatMap(mod -> mod.getMap().values().stream())
-				.filter( source -> Mod303Key.getKey(source.getType()) != null && Mod303Key.getKey(source.getType()).isDiffEnabled())
+				.filter( source -> Mod303Key.getKey(source.getType()) != null 
+					&& Mod303Key.getKey(source.getType()).isDiffEnabled())
 				.forEach(source -> {
 					Mod303Key key = Mod303Key.getKey(source.getType());
+					
+					// ÑAPA! Debido al baile de casilla en el terce trimestre de 2024
+					if ( key == Mod303Key.CT_C167 && AonMathUtils.equals(1.75,source.getAmount())) {
+						source.setAmount(0.0);
+					}
+					// ----------------
+					
 					IMod303KeyDAO keyDAO = getKey(key);
 					if (keyDAO != null) {
 						FiscalModelDetail target = mod303.ensureDetail(key);

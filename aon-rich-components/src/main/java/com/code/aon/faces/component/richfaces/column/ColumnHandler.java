@@ -22,7 +22,7 @@ import com.sun.facelets.tag.TagAttribute;
 import com.sun.facelets.tag.jsf.ComponentConfig;
 
 public class ColumnHandler extends ColumnTagHandler implements IRichFacesTags {
-
+	
 	public ColumnHandler(ComponentConfig config) {
 		super(config);
 	}
@@ -49,8 +49,9 @@ public class ColumnHandler extends ColumnTagHandler implements IRichFacesTags {
 		TagAttribute aliasTag = getAttribute(ALIAS);
 		if ( aliasTag != null ) {
 			HtmlColumn column = (HtmlColumn) c;
+			String alias = aliasTag.getValue(ctx); 
+			column.getAttributes().put(ALIAS, alias);
 			if ( column.isSortable() ) {
-				String alias = aliasTag.getValue(ctx); 
 				String sortBy = "#{'" + alias + "'}";
 				UIComponentTagUtils.setStringProperty(ctx.getFacesContext(), column, SORT_BY, sortBy);
 				ExtendedPageDataModel model = DataTableHandler.getModel(parent);
@@ -63,7 +64,7 @@ public class ColumnHandler extends ColumnTagHandler implements IRichFacesTags {
 					model.setSortable(true);
 				}
 			}
-		}
+		} 
 	}
 	
 }

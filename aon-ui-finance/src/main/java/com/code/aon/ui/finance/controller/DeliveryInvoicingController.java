@@ -119,14 +119,19 @@ public class DeliveryInvoicingController implements IFinanceConstants, Serializa
         	getParams().setInvoiceSeries(null);
         }
         if ( getParams().getInvoiceNumber() == 0 ) {
-        	boolean tbai = isTbai();
-    	    if(tbai) {
-    	        	String domainName = AonUtil.getDomainName();
-    				Integer domainId = DomainManager.getCurrentDomain();
-    				Integer number = AON.getInvoiceMinNumber(domainName, domainId, "", com.esferalia.aon.occam.api.model.type.InvoiceType.SALES, series.getCode());
-    				getParams().setInvoiceNumber(number);
-    	    } else getParams().setInvoiceNumber(obtainMaxNumber(series));
+        	getParams().setInvoiceNumber(obtainMaxNumber(series));
         }
+    	boolean tbai = isTbai();
+	    if(tbai) {
+	    	String domainName = AonUtil.getDomainName();
+			Integer domainId = DomainManager.getCurrentDomain();
+			Integer number = AON.getInvoiceMinNumber(domainName, domainId, "", com.esferalia.aon.occam.api.model.type.InvoiceType.SALES, series.getCode());
+			getParams().setInvoiceNumber(number);
+			getParams().setDomainId(domainId);
+			getParams().setDomainName(domainName);
+			getParams().setLogin("");
+			getParams().setTbai(tbai);
+	    } 
 	}	
 	
 	private boolean isSeriesConfidential(Series series) {

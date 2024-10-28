@@ -156,7 +156,7 @@ public class HtmlUnitToolkit {
 	public static WebClient getWebClientExplorer(final InputStream certificateInputStream, final String certificatePassword,
 			final String certificateType) throws InvalidCertificateException {
 		try {
-			WebClient webClient = new WebClient(BrowserVersion.INTERNET_EXPLORER);
+			WebClient webClient = new WebClient(BrowserVersion.EDGE);
 			disableLogging(webClient);
 			webClient.getOptions().setCssEnabled(false);
 			webClient.getOptions().setDownloadImages(false);
@@ -671,7 +671,6 @@ public class HtmlUnitToolkit {
 						return response;
 
 					} catch ( Exception e ) {
-						
 					}
 				}
 				

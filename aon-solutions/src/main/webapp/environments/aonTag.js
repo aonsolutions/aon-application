@@ -213,6 +213,12 @@ export const AON_RIGHT_PANEL = 'aon-right-panel';
 export const AON_JSF_APP = 'aon-jsf-app' ;
 
 export const AON_ACCOUNTING_MENU = 'aon-accounting-menu';
+export const AON_JSF_AMORTIZATION = 'aon-jsf-amortization' ;
+export const AON_JSF_PERIOD_AMORTIZATION = 'aon-jsf-period-amortization' ;
+export const AON_JSF_END_PERIOD_ENTRIES = 'aon-jsf-end-period-entries' ;
+export const AON_JSF_INVOICE_REPORT = 'aon-jsf-invoice-report' ;
+export const AON_JSF_INVOICE_RECORDER = 'aon-jsf-invoice-recorder' ;
+export const AON_JSF_FINANCE_TRACKING_ENTRY = 'aon-jsf-finance-tracking-entry' ;
 
 export const AON_SUITE_MENU = 'aon-suite-menu';
 
@@ -220,6 +226,19 @@ export const AON_GROUPWARE_MENU = 'aon-groupware-menu';
 export const AON_JSF_PROJECT = 'aon-jsf-project' ;
 export const AON_JSF_PROJECT_TYPE = 'aon-jsf-project-type' ;
 export const AON_JSF_ACTIVITY_TYPE = 'aon-jsf-activity-type' ;
+export const AON_JSF_TASK = 'aon-jsf-task' ;
+export const AON_JSF_GANTT = 'aon-jsf-gantt' ;
+export const AON_JSF_DAILY_TRACKING = 'aon-jsf-daily-tracking' ;
+export const AON_JSF_DAILY_TRACKING_REPORT = 'aon-jsf-daily-tracking-report' ;
+export const AON_JSF_JOB_TYPE = 'aon-jsf-job-type' ;
+export const AON_JSF_PROCESS = 'aon-jsf-process' ;
+export const AON_JSF_PROCESS_WIZARD = 'aon-jsf-process-wizard' ;
+export const AON_JSF_PROCESS_TRANSACTION_TYPE = 'aon-jsf-process-transaction-type' ;
+export const AON_JSF_CAMPAIGN = 'aon-jsf-campaign' ;
+export const AON_JSF_CAMPAIGN_TYPE = 'aon-jsf-campaign-type' ;
+export const AON_JSF_TASK_HOLDER = 'aon-jsf-task-holder' ;
+export const AON_JSF_WORKGROUP = 'aon-jsf-workgroup' ;
+export const AON_JSF_COST_PROFILE = 'aon-jsf-cost-profile' ;
 
 export const AON_COMMERCIAL_MENU = 'aon-commercial-menu';
 export const AON_JSF_SELLER = 'aon-jsf-seller' ;
@@ -286,10 +305,27 @@ export const AON_JSF_FEE_INVOICING = 'aon-jsf-fee-invoicing' ;
 export const AON_JSF_FEE_PRE_INVOICING = 'aon-jsf-fee-pre-invoicing' ;
 
 export const AON_WAREHOUSE_MENU = 'aon-warehouse-menu';
+export const AON_JSF_INCOME = 'aon-jsf-income' ;
+export const AON_JSF_DELIVERY = 'aon-jsf-delivery' ;
+export const AON_JSF_WAREHOUSE_TRANSFER = 'aon-jsf-warehouse-transfer' ;
+export const AON_JSF_ORDER_SERVER = 'aon-jsf-order-server' ;
+export const AON_JSF_INVENTORY = 'aon-jsf-inventory' ;
+export const AON_JSF_INVENTORY_CLOSE = 'aon-jsf-inventory-close' ;
+export const AON_JSF_STOCK = 'aon-jsf-stock' ;
+export const AON_JSF_ORDER_PROPOSAL = 'aon-jsf-order-proposal' ;
+export const AON_JSF_STOCK_REPORT_ITEM = 'aon-jsf-stock-report-item' ;
+export const AON_JSF_STOCK_REPORT_WAREHOUSE = 'aon-jsf-stock-report-warehouse' ;
+export const AON_JSF_STOCK_REPORT_ITEM_VALUED = 'aon-jsf-stock-report-item-valued' ;
+export const AON_JSF_STOCK_REPORT_WAREHOUSE_VALUED = 'aon-jsf-stock-report-warehouse-valued' ;
+export const AON_JSF_WAREHOUSE = 'aon-jsf-warehouse' ;
+export const AON_JSF_CARRIER = 'aon-jsf-carrier' ;
+
 
 export const AON_FISCAL_MENU = 'aon-fiscal-menu';
 
 export const AON_PAYROLL_MENU = 'aon-payroll-menu';
+export const AON_JSF_IRPF_DATA = 'aon-jsf-irpf-data' ;
+export const AON_JSF_CONTRACT_BATCH = 'aon-jsf-contract-batch' ;
 
 export const AON_MARKETING_MENU = 'aon-marketing-menu';
 export const AON_JSF_MESSAGES = 'aon-jsf-messages' ;
@@ -311,3 +347,21 @@ export const AON_COMMERCE_MENU = 'aon-commerce-menu';
 export const AON_GARAGE_MENU = 'aon-garage-menu';
 
 export const AON_IMAGE_EDITOR = 'aon-image-editor';
+
+export const AON_CONFIGURATION_MENU = 'aon-configuration-menu';
+export const AON_JSF_MAIL_CONTACT = 'aon-jsf-mail-contact' ;
+export const AON_JSF_MAIL_ACCOUNT = 'aon-jsf-mail-account' ;
+export const AON_JSF_MAIL_SIGNATURE = 'aon-jsf-mail-signature' ;
+export const AON_JSF_GLOBAL_CONFIG = 'aon-jsf-global-config' ;
+export const AON_JSF_PRODUCT_TAG = 'aon-jsf-product-tag' ;
+export const AON_JSF_PACKING_TAG = 'aon-jsf-packing-tag' ;
+export const AON_JSF_BRAND = 'aon-jsf-brand' ;
+export const AON_JSF_TARIFF = 'aon-jsf-tariff' ;
+export const AON_JSF_CATALOGUE = 'aon-jsf-catalogue' ;
+export const AON_JSF_TAX = 'aon-jsf-tax' ;
+export const AON_JSF_SERIES = 'aon-jsf-series' ;
+export const AON_JSF_RELATIONSHIP = 'aon-jsf-relationship' ;
+export const AON_JSF_BANK_CONCEPT = 'aon-jsf-bank-concept' ;
+export const AON_JSF_LOADER = 'aon-jsf-loader' ;
+
+

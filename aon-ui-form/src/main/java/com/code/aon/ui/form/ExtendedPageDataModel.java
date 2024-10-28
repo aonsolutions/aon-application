@@ -2,8 +2,12 @@ package com.code.aon.ui.form;
 
 import java.io.IOException;
 import java.io.Serializable;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.faces.FacesException;
 import javax.faces.context.FacesContext;
@@ -56,6 +60,9 @@ public class ExtendedPageDataModel extends ExtendedDataModel implements Serializ
 	
 	private boolean sortable;
     
+	private Set<String> visibleFields;
+	
+	
 	/**
 	 * Instantiates a new page data model2.
 	 * 
@@ -63,8 +70,9 @@ public class ExtendedPageDataModel extends ExtendedDataModel implements Serializ
 	 * @param criteriaProvider the criteria provider
 	 */
 	public ExtendedPageDataModel(IDataModelDataProvider dataProvider, ICriteriaProvider criteriaProvider) {
-    	this.dataProvider = dataProvider;
     	this.page = Page.EMPTY_PAGE;
+    	this.dataProvider = dataProvider;
+    	this.visibleFields = new HashSet<>();
     	this.sortOrder = new SortOrderMap(criteriaProvider);
 	}
 
@@ -312,6 +320,15 @@ public class ExtendedPageDataModel extends ExtendedDataModel implements Serializ
 			this.cachedRange = null;
 			this.sortOrder.setUpdated(false);
 		}
+	}
+	
+	public void setVisibleFields(String ...fields) {
+		visibleFields = new HashSet<>();
+		Arrays.stream(fields).forEach(visibleFields::add);
+	}
+	
+	public Collection<String> getVisibleFields() {
+		return Collections.unmodifiableCollection(visibleFields);
 	}
 	
 }

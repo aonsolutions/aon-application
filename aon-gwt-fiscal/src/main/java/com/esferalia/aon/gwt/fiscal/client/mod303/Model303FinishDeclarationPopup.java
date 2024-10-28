@@ -194,9 +194,9 @@ class Model303FinishDeclarationPopup extends AonCustomDialog {
 				row++;
 			}
 			
-			// DATOS DEL APLAZAMIENTO: Nº de Plazos, Fecha primer plazo y mensaje de aviso (solo si es positivo)
+			// DATOS DEL APLAZAMIENTO: Nº de Plazos, Fecha primer plazo y mensaje de aviso (solo si es positivo y a partir de 2024)
 			
-			if (mod303.getDeclarationResult() > 0) {
+			if (mod303.getDeclarationResult() > 0 && mod303.getYear() >= 2024) {
 				avisoLabel.setVisible(false);			
 				aplazaLabel.setVisible(false);
 				aplazaTable.setVisible(false);
@@ -219,7 +219,7 @@ class Model303FinishDeclarationPopup extends AonCustomDialog {
 				}			
 				fechaPlazo.addValueChangeHandler( event -> { 
 						mod303.setFechaPlazo(fechaPlazo.format());
-						// FALTA - POR AHORA LE PONEMOS LA FECHA DEL PRIMER PLAZO
+						// Aplazamiento, ponemos como fecha de vencimiento, la fecha de aplazamiento
 						if (mod303.getFinance() != null) 
 							mod303.getFinance().setDueDate(fechaPlazo.getValue());
 					});

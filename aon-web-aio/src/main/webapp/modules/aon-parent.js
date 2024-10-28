@@ -63,7 +63,9 @@ export class AonParent extends AonElement {
 		//TODO: aonParent.startLoader();
 		getCompanies()
 		.then( companies => {
-			if(companies.length === 1){
+			if ( LS.getCompany() ) {
+				this.companySelection(LS.getCompany(), companies.length == 1 );
+			}else if(companies.length === 1){
 				this.companySelection(companies[0], true);
 			} else {
 				this.getElement("aonMenu").close();
@@ -307,6 +309,12 @@ export class AonParent extends AonElement {
 					let companyyy = this.getElement("aonHeaderCompanyList");
 					companyy.style.display = "block";
 					companyyy.style.display = "block";
+					let logo = this.getElement("aonLogo");
+					logo.addEventListener("click", function handleClick() {
+						companyy.style.display = "none";
+						companyyy.style.display = "none";
+						logo.removeEventListener("click", handleClick); 
+					});
 				});
 			}
 		}, 100); 

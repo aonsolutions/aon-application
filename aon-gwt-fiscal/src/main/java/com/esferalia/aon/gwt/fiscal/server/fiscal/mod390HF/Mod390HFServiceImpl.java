@@ -16,7 +16,7 @@ import com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo;
 import com.esferalia.aon.occam.api.model.type.Mod390Key;
 import com.esferalia.aon.watson.error.AonCoreException;
 
-@WebServlet(name = "Mod390HF Servlet", urlPatterns = { "/aon_gwt_fiscal/ms/Mod390HF" })
+@WebServlet(name = "Mod390HF Servlet", urlPatterns = { "/aon_gwt_fiscal/ms/Mod390HF", "/aon_gwt_mod200/ms/Mod390HF" })
 public class Mod390HFServiceImpl extends AonStatelessRemoteServiceServlet implements Mod390HFService {
 
 	private static final long serialVersionUID = 11373213973954273L;

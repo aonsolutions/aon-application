@@ -21,7 +21,7 @@
 			height: 12px;
 		}
 		
-		.firstColumn {
+		.aonEnterpriseCardLabel {
 			min-width: 170px;
 			padding: 5px;
 			background-color: #f6f6f6;
@@ -92,18 +92,18 @@
 			width: 180px;
 		}
 		
-		.requiredColor {
+		.aonEnterpriseCardRequired {
 			color: #2152A5;
 			font-weight: bold !important;
 		}
 		
-		.styleBorder {
+		.aonEnterpriseCard {
 			border: 1px solid black;
 			border-radius: 5px;
 			padding: 0 1rem .5rem;
 		}
 		
-		.tittle {
+		.aonEnterpriseCardTitle {
 			position: relative;
 			top: -10px;
 			left: 20px;
@@ -128,30 +128,36 @@
 			width: 100%;
 		}
 		@external documentError;
+		
+		@external aonEnterpriseCard;
+		@external aonEnterpriseCardTitle;
+		@external aonEnterpriseCardLabel;
+		@external aonEnterpriseCardRequired;
+		
 		</ui:style>
 
 	<g:HTMLPanel styleName="{style.container}">
 		<g:HTMLPanel
 			styleName="{style.widthAll} {style.heightAll}"
 			debugId="enterpriseHTMLPanel">
-			<g:HTMLPanel styleName="{style.styleBorder}">
-				<g:Label styleName='{style.tittle}'>Datos empresa</g:Label>
+			<g:HTMLPanel styleName="{style.aonEnterpriseCard}">
+				<g:Label styleName='{style.aonEnterpriseCardTitle}'>Datos empresa</g:Label>
 				<g:HTMLPanel ui:field="activityDataTable"
 					styleName="{style.widthAll} {style.heightAll} {style.flexColumn}">
 					<g:HTMLPanel styleName="{style.flex}">
 						<g:Label
-							styleName='{style.requiredColor} {style.firstColumn}'>Nombre</g:Label>
+							styleName='{style.aonEnterpriseCardRequired} {style.aonEnterpriseCardLabel}'>Nombre</g:Label>
 						<g:TextBox ui:field="enterpriseName"
 							debugId="enterpriseNameTB"
 							styleName='aon-inputText {style.inputTextHeight}  {style.inputPadding} {style.widthAll}'></g:TextBox>
 					</g:HTMLPanel>
 					<g:HTMLPanel styleName="{style.flex}">
-						<g:Label styleName='{style.firstColumn}'>Nombre Comercial / Alias</g:Label>
+						<g:Label styleName='{style.aonEnterpriseCardLabel}'>Nombre Comercial / Alias</g:Label>
 						<g:TextBox ui:field="enterpriseAlias"
 							styleName='aon-inputText {style.inputTextHeight}  {style.inputPadding} {style.widthAll}'></g:TextBox>
 					</g:HTMLPanel>
 					<g:HTMLPanel styleName="{style.flex}">
-						<g:Label styleName='{style.firstColumn}'>Documento</g:Label>
+						<g:Label styleName='{style.aonEnterpriseCardLabel}'>Documento</g:Label>
 						<g:Label ui:field="documentType"
 							debugId="enterpriseDocumentType"></g:Label>
 						<g:TextBox ui:field="document"
@@ -166,7 +172,7 @@
 					</g:HTMLPanel>
 					<g:HTMLPanel styleName="{style.flex}">
 						<g:Label
-							styleName='{style.requiredColor} {style.firstColumn}'>Dirección</g:Label>
+							styleName='{style.aonEnterpriseCardRequired} {style.aonEnterpriseCardLabel}'>Dirección</g:Label>
 						<g:ListBox ui:field="streetType"
 							styleName='aon-selectOneMenu {style.inputLBHeight} {style.inputPadding} {style.mw180}'></g:ListBox>
 						<g:TextBox ui:field="address"
@@ -181,7 +187,7 @@
 					</g:HTMLPanel>
 					<g:HTMLPanel styleName="{style.flex}">
 						<g:Label
-							styleName='{style.firstColumn} {style.emptyLabel} {style.inputTextHeight}'></g:Label>
+							styleName='{style.aonEnterpriseCardLabel} {style.emptyLabel} {style.inputTextHeight}'></g:Label>
 						<g:Label>Provincia</g:Label>
 						<g:ListBox ui:field="addressProvince"
 							debugId="enterpriseProvinceAddressTB"
@@ -191,7 +197,7 @@
 							styleName='aon-inputText {style.inputLBHeight} {style.inputPadding} {style.mw150}'></g:ListBox>
 					</g:HTMLPanel>
 					<g:HTMLPanel styleName="{style.flex}">
-						<g:Label styleName='{style.firstColumn}'>Contacto</g:Label>
+						<g:Label styleName='{style.aonEnterpriseCardLabel}'>Contacto</g:Label>
 						<g:Label>Móvil</g:Label>
 						<g:TextBox ui:field="mobile"
 							styleName='aon-inputText {style.inputTextHeight} {style.inputPadding} {style.widthAll}'></g:TextBox>
@@ -203,12 +209,12 @@
 							styleName='aon-inputText {style.inputTextHeight} {style.inputPadding} {style.widthAll}'></g:TextBox>
 					</g:HTMLPanel>
 					<g:HTMLPanel styleName="{style.flex}">
-						<g:Label styleName='{style.firstColumn}'>Web</g:Label>
+						<g:Label styleName='{style.aonEnterpriseCardLabel}'>Web</g:Label>
 						<g:TextBox ui:field="enterpriseWeb"
 							styleName='aon-inputText {style.inputTextHeight} {style.inputPadding} {style.widthAll}'></g:TextBox>
 					</g:HTMLPanel>
 					<g:HTMLPanel styleName="{style.flex}">
-						<g:Label styleName='{style.firstColumn}'>Ámbito</g:Label>
+						<g:Label styleName='{style.aonEnterpriseCardLabel}'>Ámbito</g:Label>
 						<g:HTMLPanel ui:field="enterpriseScopePanel"
 							styleName="{style.widthAll}"></g:HTMLPanel>
 					</g:HTMLPanel>
@@ -219,28 +225,28 @@
 		<g:HTMLPanel
 			styleName="{style.widthAll} {style.heightAll} {style.mt20}"
 			debugId="otherDataHTMLPanel">
-			<g:HTMLPanel styleName="{style.styleBorder}">
-				<g:Label styleName='{style.tittle}'>Otros datos</g:Label>
+			<g:HTMLPanel styleName="{style.aonEnterpriseCard}">
+				<g:Label styleName='{style.aonEnterpriseCardTitle}'>Otros datos</g:Label>
 				<g:HTMLPanel ui:field="otherDataDataTable"
 					styleName="{style.widthAll} {style.heightAll} {style.flexColumn}">
 					<g:HTMLPanel styleName="{style.flex}">
-						<g:Label styleName='{style.firstColumn}'>Modelo Recibo Salarial</g:Label>
+						<g:Label styleName='{style.aonEnterpriseCardLabel}'>Modelo Recibo Salarial</g:Label>
 						<g:ListBox ui:field="enterprisePaysheetModel"
 							styleName='aon-selectOneMenu {style.inputLBHeight} {style.inputPadding} {style.widthAll} '></g:ListBox>
 					</g:HTMLPanel>
 					<g:HTMLPanel styleName="{style.flex}">
-						<g:Label styleName='{style.firstColumn}'>Envío Nóminas</g:Label>
+						<g:Label styleName='{style.aonEnterpriseCardLabel}'>Envío Nóminas</g:Label>
 						<g:ListBox ui:field="enterprisePaysheetSendType"
 							styleName='aon-selectOneMenu {style.inputLBHeight} {style.inputPadding} {style.widthAll} '></g:ListBox>
 						<g:HTMLPanel ui:field="enterprisePaysheetSendPanel"
 							styleName='{style.flex} {style.widthAll}'>
-							<g:Label styleName='{style.mw100} {style.firstColumn}'>A la dirección : </g:Label>
+							<g:Label styleName='{style.mw100} {style.aonEnterpriseCardLabel}'>A la dirección : </g:Label>
 							<g:TextBox ui:field="enterprisePaysheetSendEmail"
 								styleName='aon-inputText {style.inputTextHeight} {style.inputPadding} {style.widthAll}'></g:TextBox>
 						</g:HTMLPanel>
 					</g:HTMLPanel>
 					<g:HTMLPanel styleName="{style.flex}">
-						<g:Label styleName='{style.firstColumn}'>Convenio</g:Label>
+						<g:Label styleName='{style.aonEnterpriseCardLabel}'>Convenio</g:Label>
 						<g:SuggestBox ui:field="enterpriseAgreement"
 							styleName='aon-inputText {style.inputTextHeight} {style.inputPadding} {style.widthAll}' />
 					</g:HTMLPanel>
@@ -251,17 +257,17 @@
 		<g:HTMLPanel
 			styleName="{style.widthAll} {style.heightAll} {style.mt20}"
 			debugId="otherDataHTMLPanel">
-			<g:HTMLPanel styleName="{style.styleBorder}">
-				<g:Label styleName='{style.tittle}'>Sistema RED</g:Label>
+			<g:HTMLPanel styleName="{style.aonEnterpriseCard}">
+				<g:Label styleName='{style.aonEnterpriseCardTitle}'>Sistema RED</g:Label>
 				<g:HTMLPanel ui:field="tgssDataTable"
 					styleName="{style.widthAll} {style.heightAll} {style.flexColumn}">
 					<g:HTMLPanel styleName="{style.flex}">
-						<g:Label styleName='{style.firstColumn}'>Clave autorización</g:Label>
+						<g:Label styleName='{style.aonEnterpriseCardLabel}'>Clave autorización</g:Label>
 						<g:TextBox ui:field="enterprisePayAuthorizationKey"
 								styleName='aon-inputText {style.inputTextHeight} {style.inputPadding} {style.widthAll}' maxLength="8"></g:TextBox>
 					</g:HTMLPanel>
 					<g:HTMLPanel styleName="{style.flex}">
-						<g:Label styleName='{style.firstColumn}'>Entidad gestora del plan de pensiones</g:Label>
+						<g:Label styleName='{style.aonEnterpriseCardLabel}'>Entidad gestora del plan de pensiones</g:Label>
 						<g:ListBox ui:field="enterprisePaySsMutual"
 							styleName='aon-selectOneMenu {style.inputLBHeight} {style.inputPadding} {style.widthAll} ' />
 					</g:HTMLPanel>

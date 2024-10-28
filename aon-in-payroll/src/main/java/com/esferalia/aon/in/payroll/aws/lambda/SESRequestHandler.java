@@ -6,8 +6,8 @@ import static com.esferalia.aon.jooq.tables.EnterpriseCcc.ENTERPRISE_CCC;
 import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
 
 import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -23,10 +23,8 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.Properties;
-import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -34,12 +32,6 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
 import javax.activation.MimetypesFileTypeMap;
-import jakarta.mail.Address;
-import jakarta.mail.BodyPart;
-import jakarta.mail.MessagingException;
-import jakarta.mail.Multipart;
-import jakarta.mail.Session;
-import jakarta.mail.internet.MimeMessage;
 
 import org.jooq.DSLContext;
 import org.jooq.SQLDialect;
@@ -49,18 +41,21 @@ import org.jooq.impl.DSL;
 
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.RequestHandler;
-import com.amazonaws.services.s3.AmazonS3;
-import com.amazonaws.services.s3.AmazonS3ClientBuilder;
-import com.amazonaws.services.s3.model.GetObjectRequest;
-import com.amazonaws.services.s3.model.S3Object;
 import com.esferalia.aon.in.payroll.pdf.SalaryPDFParser;
 import com.esferalia.aon.in.payroll.pdf.jooq.DSLPDFSalaryBuilder;
 import com.esferalia.aon.jooq.tables.Domain;
 import com.esferalia.aon.salary.ISalaryBuilder;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
+import jakarta.mail.Address;
+import jakarta.mail.BodyPart;
+import jakarta.mail.MessagingException;
+import jakarta.mail.Multipart;
+import jakarta.mail.Session;
+import jakarta.mail.internet.MimeMessage;
 import net.aonsolutions.core.pool.AonConnectionException;
 import net.aonsolutions.core.pool.ConnectionInfo;
+import solutions.aon.aws.s3.S3;
 
 public class SESRequestHandler implements RequestHandler<Object, String> {
 	
@@ -227,13 +222,16 @@ public class SESRequestHandler implements RequestHandler<Object, String> {
     
     private static Optional<MimeMessage> handleMessage(String bucket, String key, Callback callback, Handler ...handlers ) {
     	MimeMessage mimeMessage = null;
-    	AmazonS3 s3 = AmazonS3ClientBuilder.standard().build();  
-        S3Object s3Object = s3.getObject(new GetObjectRequest(bucket, key));
-        try ( InputStream is = s3Object.getObjectContent()) {
-        	mimeMessage = handleMIME(is , callback, handlers );
-        } catch ( Exception e ) {
-        	e.printStackTrace();
-        }
+		try {
+			byte[] data = S3.download(bucket, key);
+			try ( InputStream is = new ByteArrayInputStream(data)) {
+				mimeMessage = handleMIME(is , callback, handlers );
+			} catch ( Exception e ) {
+				e.printStackTrace();
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
         return Optional.ofNullable(mimeMessage);
     }
     
