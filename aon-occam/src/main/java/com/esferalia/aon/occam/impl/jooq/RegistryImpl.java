@@ -52,6 +52,7 @@ import com.esferalia.aon.occam.api.model.QuestionParams;
 import com.esferalia.aon.occam.api.model.SellerParams;
 import com.esferalia.aon.occam.api.model.SellerWorkloadParams;
 import com.esferalia.aon.occam.api.model.Survey;
+import com.esferalia.aon.occam.api.model.fee.Fee;
 import com.esferalia.aon.occam.api.model.registry.Carrier;
 import com.esferalia.aon.occam.api.model.registry.Category;
 import com.esferalia.aon.occam.api.model.registry.CompanyFull;
@@ -416,6 +417,10 @@ public class RegistryImpl implements IRegistry{
 		return ctx.getDslContext().transactionResult(configuration -> SellerWorkloadDAO.getListCount(ctx, params));
 	}
 	
+	@Override
+	public List<Fee> getSellersWorkloadFees(CloseableAONContext ctx, SellerWorkloadParams params) {
+		return ctx.getDslContext().transactionResult(configuration -> SellerWorkloadDAO.getFeeList(ctx, params));
+	}
 	
 	// -------------------- RSELLER
 	

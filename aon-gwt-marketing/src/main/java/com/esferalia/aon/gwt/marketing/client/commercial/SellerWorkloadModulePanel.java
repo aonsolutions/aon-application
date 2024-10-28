@@ -60,7 +60,7 @@ public abstract class SellerWorkloadModulePanel extends AonCustomDockLayout {
 			getSearchTextBox().setValue(null, false);
 			scope.getListBox().setSelectedIndex(0);
 			active.getListBox().setSelectedIndex(0);
-			customer.getListBox().setSelectedIndex(0);
+			customer.getListBox().setSelectedIndex(1);
 			period.getListBox().setSelectedIndex(0);
 			
 			sellerWorkloadPanel.resetSearchOffset();
@@ -73,7 +73,10 @@ public abstract class SellerWorkloadModulePanel extends AonCustomDockLayout {
 		period.addItem( "Mes actual", "0");
 		period.addItem( "Pr\u00f3ximos 2 meses", "1");
 		period.addItem( "Pr\u00f3ximos 3 meses", "2");
-		period.getListBox().addChangeHandler(event -> onSearch( options ));
+		period.getListBox().addChangeHandler(event -> {
+			this.clickFilterButton();
+			onSearch( options );
+		});
 		
 		scope.addItem("-", "");
 		options.getConfiguration().getAvailableScopes().forEach(sc -> scope.addItem(sc.getDescription(), sc.getId() + ""));
@@ -89,7 +92,7 @@ public abstract class SellerWorkloadModulePanel extends AonCustomDockLayout {
 		customer.addItem( "Todas", "");
 		customer.addItem( "Con clientes", "1");
 		customer.addItem( "Sin clientes", "0");
-		customer.getListBox().setSelectedIndex(0);
+		customer.getListBox().setSelectedIndex(1);
 		customer.getListBox().addChangeHandler(event -> onSearch( options ));
 		
 		addFilterWidget(period);
@@ -129,7 +132,7 @@ public abstract class SellerWorkloadModulePanel extends AonCustomDockLayout {
 	private void addButtonsToolbar() {
 		AonToolbarButton downloadExcel = new AonToolbarButton("Exportar Excel", AON.CSS.aonIconDownload());
 		downloadExcel.addClickHandler(e -> {
-			Window.alert("Exportar cargas de trabajo a Excel");
+			Window.alert("Exportar cargas de trabajo de todos los agentes comerciales a Excel");
 			
 //			String fileDownloadURL = 
 //					"/ms/api/seller-excel/" + 
@@ -196,8 +199,10 @@ public abstract class SellerWorkloadModulePanel extends AonCustomDockLayout {
 	}
 	
 	public void getSellerListCount(Consumer<Integer> finish) {
+//		Window.alert("getSellerListCount");
 		if(null == sellerWorkloadPanel || null ==  sellerWorkloadPanel.getTable()) finish.accept(0);
 		
+//		Window.alert("getSellerListCount DB");
 		sellerWorkloadPanel.getSellerListCount(count -> {
 			finish.accept(count);
 		});

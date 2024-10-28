@@ -7,20 +7,23 @@ import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.CommonService;
 import com.esferalia.aon.gwt.common.client.CommonServiceAsync;
 import com.esferalia.aon.gwt.common.client.CommonServiceAsyncDecorator;
-import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomToolbar;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomDockLayout;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomListBox;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonMessagePanel;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonSearchPanelButton;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
 import com.esferalia.aon.occam.api.model.SellerWorkloadParams;
 import com.esferalia.aon.occam.api.model.registry.Seller;
 import com.esferalia.aon.occam.api.model.registry.SellerWorkload;
+import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.dom.client.Style.Unit;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.google.gwt.user.client.ui.DeckLayoutPanel;
-import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.SimpleLayoutPanel;
 
-public abstract class SellerWorkloadEntryPanel extends DeckLayoutPanel {
+public abstract class SellerWorkloadEntryPanel extends AonCustomDockLayout {
 	
 	// ------------------------------------------------- CommonServiceAsync
 	
@@ -35,39 +38,111 @@ public abstract class SellerWorkloadEntryPanel extends DeckLayoutPanel {
 	
 	// ------------------------------------------------- Variables
 	
-	private final String EMPTY_STRING = "";
-	
-	private DockLayoutPanel sellerEntryPanel;
-
-	private AonCustomToolbar toolbar;
 	private Integer position = -1;
 	private AonToolbarButton previusSeller;
 	private Label sellerIteration;
 	private AonToolbarButton nextSeller;
 	
 	private HTMLPanel container;
+	private HTMLPanel messagePanel = new HTMLPanel("");
 	
-	private HTMLPanel messagePanel = new HTMLPanel(EMPTY_STRING);
+	private SimpleLayoutPanel centerPanel;
+	
+	private AonSearchPanelButton cleanButton;
+	
+	private AonCustomListBox sort = new AonCustomListBox("Ordenar Por");
+	private AonCustomListBox asc = new AonCustomListBox("Orden");
 	
 	private SellerModuleOptions options;
+	
+	private SellerWorkloadFeePanel sellerWorkloadFeePanel;
+	
 	private SellerWorkload sellerWorkload;
 	
+	// ------------------------------------------------- Constructor
+	
 	public SellerWorkloadEntryPanel(SellerModuleOptions options) {
+		super("Carga Trabajo (AC)");
 		
 		this.options = options;
 		initializeCommonService();
 		
-		sellerEntryPanel = new DockLayoutPanel(Unit.PX);
-		add(sellerEntryPanel);
-		showWidget(sellerEntryPanel);
+		addButtonsToolbar();
+		getSearchTextBox().addKeyUpHandler(e -> {
+			String value = getSearchTextBox().getValue();
+			if(AonStringUtils.isNotBlank(value) && value.length() > 3) {
+				onSearch( options );
+			} else if(AonStringUtils.isBlank(value)) {
+				onSearch( options );
+			}
+		});
+		setSearchPlaceholder("Filtrar por cliente, producto...");
 		
-		createToolbar();
+		addFilterMenu();
+		
+		cleanButton = new AonSearchPanelButton( AON.MSG.clean(), AON.CSS.aonIconClear() );
+		cleanButton.addClickHandler(event -> {
+			getSearchTextBox().setValue(null, false);
+			
+			sellerWorkloadFeePanel.resetSearchOffset();
+			
+			onSearch( options );
+		});
+		
+		addFilterToolbarButton(cleanButton);
+		
+		addSortMenu();
+		
+		sort.addItem("Nombre", "name");
+		sort.addItem("Alias", "alias");
+		sort.addItem("Documento", "document");
+		sort.getListBox().addChangeHandler(event -> onSearch( options ));
+		
+		asc.addItem("Ascendente", "true");
+		asc.addItem("Descendete", "false");
+		asc.getListBox().addChangeHandler(event -> onSearch( options ));
+		
+		addSortWidget(sort);
+		addSortWidget(asc);
+		
+		container = new HTMLPanel("");
+		container.addStyleName(AON.CSS.aonFlexColumn());
+		
+		container.add(messagePanel);
+	
+		centerPanel = new SimpleLayoutPanel();
+		centerPanel.setHeight("100%");
+		centerPanel.getElement().getStyle().setProperty("margin-left", "1rem");
+		
+		container.add(centerPanel);
+		
+		add(container);
 	}
 	
-	private void createToolbar() {
-		toolbar = new AonCustomToolbar( "Carga Trabajo (AC)" );
-		toolbar.showBackButton();
-		toolbar.getBackButton().addClickHandler(e -> onBackClick());
+	private void addButtonsToolbar() {
+		AonToolbarButton backButton = new AonToolbarButton("Listado", AON.CSS.aonIconBack());
+		backButton.addClickHandler(e -> onBackClick());
+		addToolbarButton(backButton);
+		
+		AonToolbarButton downloadExcel = new AonToolbarButton("Exportar Excel", AON.CSS.aonIconDownload());
+		downloadExcel.addClickHandler(e -> {
+			Window.alert("Exportar cargas de trabajo a Excel");
+			
+//			String fileDownloadURL = 
+//					"/ms/api/seller-excel/" + 
+//					"?domainId=" + options.getDomain() + 
+//					"&domainName=" + options.getDomainName() + 
+//					"&login=" + options.getUser() +
+//					"&description=" + getSearchTextBox().getValue() +
+//					"&scope=" + scope.getValue() +
+//					"&active=" + active.getValue() +
+//					"&orderBy=" + sort.getValue() +
+//					"&asc=" + asc.getValue()
+//					;
+//			
+//			Window.open(fileDownloadURL, "_blank", null);
+		});
+		addToolbarButton(downloadExcel);
 		
 		previusSeller = new AonToolbarButton("Anterior Agente Comercial", AON.CSS.aonIconLeft());
 		previusSeller.setEnabled(position > 0);
@@ -75,11 +150,11 @@ public abstract class SellerWorkloadEntryPanel extends DeckLayoutPanel {
 			position = position - 1;
 			getNextSeller(position, nextSeller -> onSellerWorkloadSelectionChange(nextSeller, position));
 		});
-		toolbar.addToolbarButton(previusSeller);
+		addToolbarButton(previusSeller);
 		
 		getSellerWorkloadListCount(count -> {
 			sellerIteration = new Label((null == sellerWorkload ? "ND" : (position + 1)) + " / " + count);
-			toolbar.addToolbarButton(sellerIteration);
+			addToolbarButton(sellerIteration);
 			
 			nextSeller = new AonToolbarButton("Siguiente Agente Comercial", AON.CSS.aonIconRight());
 			nextSeller.setEnabled(position < (count - 1));
@@ -87,10 +162,51 @@ public abstract class SellerWorkloadEntryPanel extends DeckLayoutPanel {
 				position = position + 1;
 				getNextSeller(position, nextSeller -> onSellerWorkloadSelectionChange(nextSeller, position));
 			});
-			toolbar.addToolbarButton(nextSeller);
+			addToolbarButton(nextSeller);
 		});
 		
-		sellerEntryPanel.addNorth(toolbar, 50);
+	}
+	
+	public void onSearch( SellerModuleOptions options ) {
+		SellerWorkloadParams params = getWidgetParams( options );
+		sellerWorkloadFeePanel = new SellerWorkloadFeePanel(params) {
+
+			@Override
+			protected void onShowErrorMessage(String errorMessage) {
+				AonMessagePanel.showError(messagePanel, errorMessage);
+			}
+
+			@Override
+			protected void onShowSuccessMessage(String successMessage) {
+				AonMessagePanel.showSuccess(messagePanel, successMessage);
+			}
+
+			@Override
+			protected void onShowLoadingMessage(String loadingMessage) {
+				AonMessagePanel.showLoading(messagePanel, loadingMessage);
+			}
+		
+		};
+			
+		centerPanel.setWidget(sellerWorkloadFeePanel);
+	}
+	
+	public SellerWorkloadParams getWidgetParams( SellerModuleOptions options) {
+		SellerWorkloadParams sellerWorkloadParams = new SellerWorkloadParams();
+		
+		sellerWorkloadParams.setDomainName(options.getDomainName())
+			.setDomain(options.getDomain())
+			.setUser(options.getUser())
+			.setDescription(getSearchTextBox().getValue())
+			.setOrderBy(sort.getValue())
+			.setAsc(Boolean.parseBoolean(asc.getValue()))
+			;
+		
+		return sellerWorkloadParams;
+	}
+	
+	public SellerWorkloadParams getSellerListParams() {
+		return getWidgetParams(options);
 	}
 
 	private void getNextSeller(Integer nextPos, Consumer<SellerWorkload> sellerLoad) {
@@ -136,16 +252,9 @@ public abstract class SellerWorkloadEntryPanel extends DeckLayoutPanel {
 		getSellerWorkload(sellerWorkload.getId(), dbSeller -> {
 			this.sellerWorkload = sellerWorkload;
 			
-			sellerEntryPanel.clear();
+			setToolbarTitle("Carga Trabajo / " + sellerWorkload.getName());
 			
-			createToolbar();
-			toolbar.setToolbarTitle("Carga Trabajo / ", sellerWorkload.getName());
-			
-			container = new HTMLPanel(EMPTY_STRING);
-			container.addStyleName(AON.CSS.aonFlexColumn());
-			container.add(messagePanel);
-			
-			sellerEntryPanel.add(container);
+			onSearch(options);
 			
 			finish.accept(null);
 		});

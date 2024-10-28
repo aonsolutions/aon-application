@@ -43,6 +43,7 @@ import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.attachment.AttachType;
 import com.esferalia.aon.occam.api.model.commission.CommissionType;
 import com.esferalia.aon.occam.api.model.config.ConfigParams;
+import com.esferalia.aon.occam.api.model.fee.Fee;
 import com.esferalia.aon.occam.api.model.finance.FBatch;
 import com.esferalia.aon.occam.api.model.finance.PayMethod;
 import com.esferalia.aon.occam.api.model.fiscal.IFiscalModel;
@@ -668,6 +669,11 @@ public class CommonServiceImpl extends AonStatelessRemoteServiceServlet implemen
 	@Override
 	public Integer getSellersWorkloadCount(SellerWorkloadParams params) throws AonCoreException {
 		return AON.getSellerWorkloadListCount(params);
+	}
+	@Override
+	public List<Fee> getSellersWorkloadFees(SellerWorkloadParams params) throws AonCoreException {
+		List<Fee> sellersWorkloadFees =  AON.getSellersWorkloadFees(params);
+		return sellersWorkloadFees;
 	}
 
 	

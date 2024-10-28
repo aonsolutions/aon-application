@@ -29,6 +29,7 @@ import com.esferalia.aon.occam.api.model.Workgroup;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.commission.CommissionType;
 import com.esferalia.aon.occam.api.model.config.ConfigParams;
+import com.esferalia.aon.occam.api.model.fee.Fee;
 import com.esferalia.aon.occam.api.model.finance.FBatch;
 import com.esferalia.aon.occam.api.model.finance.PayMethod;
 import com.esferalia.aon.occam.api.model.fiscal.IFiscalModel;
@@ -683,6 +684,12 @@ public class CommonServiceAsyncDecorator implements CommonServiceAsync {
 	public void getSellersWorkloadCount(SellerWorkloadParams params, AsyncCallback<Integer> callback) throws AonCoreException {
 		AON.start();
 		serviceAsync.getSellersCount(params, new AsyncCallbackWrapper<>(callback));
+	}
+
+	@Override
+	public void getSellersWorkloadFees(SellerWorkloadParams params, AsyncCallback<List<Fee>> callback) throws AonCoreException {
+		AON.start();
+		serviceAsync.getSellersWorkloadFees(params, new AsyncCallbackWrapper<>(callback));
 	}
 
 }

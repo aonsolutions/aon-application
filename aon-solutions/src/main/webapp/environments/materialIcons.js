@@ -180,17 +180,17 @@ export const KEYBOARD_ARROW_LEFT = 'keyboard_arrow_left';
 export const KEYBOARD_ARROW_RIGHT = 'keyboard_arrow_right';
 export const KEYBOARD_ARROW_DOWN = 'keyboard_arrow_down';
 // ----- L
-
-export const LOCAL_MALL = 'local_mall';
-export const LOCAL_SHIPPING = 'local_shipping';
-export const LOGIN = 'login';
-export const LOGOUT = 'logout';
+export const LABEL = 'label';
+export const LANGUAGE = 'language';
+export const LICENSE = 'license';
 export const LINK = 'link';
 export const LINK_OFF = 'link_off';
 export const LIST = 'list';
 export const LIST_ALT = 'list_alt';
-export const LABEL = 'label';
-export const LANGUAGE = 'language';
+export const LOCAL_MALL = 'local_mall';
+export const LOCAL_SHIPPING = 'local_shipping';
+export const LOGIN = 'login';
+export const LOGOUT = 'logout';
 
 // ----- M
 

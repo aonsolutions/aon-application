@@ -29,18 +29,20 @@ public class AonCustomTable extends HTMLPanel {
 	
 	public Label addHeader(Label label, String width) {
 		addCellHeaderStyle(label);
-		label.getElement().getStyle().setProperty("width", width);
-		if(AonStringUtils.equalsIgnoreCase(width, "-moz-available"))
+		if(AonStringUtils.equalsIgnoreCase(width, "-moz-available")) {
+			label.getElement().getStyle().setProperty("width", width);
 			label.getElement().getStyle().setProperty("width", "-webkit-fill-available");
+		} else label.getElement().getStyle().setProperty("min-width", width);
 		header.add(label);
 		return label;
 	}
 	
 	public Label addHeader(Label label, String width, String styles) {
 		addCellHeaderStyle(label);
-		label.getElement().getStyle().setProperty("width", width);
-		if(AonStringUtils.equalsIgnoreCase(width, "-moz-available"))
+		if(AonStringUtils.equalsIgnoreCase(width, "-moz-available")) {
+			label.getElement().getStyle().setProperty("width", width);
 			label.getElement().getStyle().setProperty("width", "-webkit-fill-available");
+		} else label.getElement().getStyle().setProperty("min-width", width);
 		header.add(label);
 		addInlineStyle(label, styles);
 		return label;
@@ -102,9 +104,11 @@ public class AonCustomTable extends HTMLPanel {
 	}
 	
 	public void addRow(HTMLPanel row, Widget widget, String width) {
-		widget.getElement().getStyle().setProperty("width", width);
-		if(AonStringUtils.equalsIgnoreCase(width, "-moz-available"))
+		if(AonStringUtils.equalsIgnoreCase(width, "-moz-available")) {
+			widget.getElement().getStyle().setProperty("width", width);
 			widget.getElement().getStyle().setProperty("width", "-webkit-fill-available");
+		} else widget.getElement().getStyle().setProperty("min-width", width);
+		
 		row.add(widget);
 	}
 	

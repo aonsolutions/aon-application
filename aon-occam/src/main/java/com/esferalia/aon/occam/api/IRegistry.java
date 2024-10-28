@@ -50,6 +50,7 @@ import com.esferalia.aon.occam.api.model.QuestionParams;
 import com.esferalia.aon.occam.api.model.SellerParams;
 import com.esferalia.aon.occam.api.model.SellerWorkloadParams;
 import com.esferalia.aon.occam.api.model.Survey;
+import com.esferalia.aon.occam.api.model.fee.Fee;
 import com.esferalia.aon.occam.api.model.registry.Carrier;
 import com.esferalia.aon.occam.api.model.registry.Category;
 import com.esferalia.aon.occam.api.model.registry.CompanyFull;
@@ -154,6 +155,7 @@ public interface IRegistry {
 	// ------------------- SELLER WORKLOAD
 	public List<SellerWorkload> getSellerWorkloadList(CloseableAONContext ctx, SellerWorkloadParams params);
 	public Integer getSellerWorkloadListCount(CloseableAONContext ctx, SellerWorkloadParams params);
+	public List<Fee> getSellersWorkloadFees(CloseableAONContext ctx, SellerWorkloadParams params);
 	
 	// ------------------- RSELLER
 	public RegistrySeller getRegistrySeller(AONContext ctx, RegistrySellerFilter filter);
