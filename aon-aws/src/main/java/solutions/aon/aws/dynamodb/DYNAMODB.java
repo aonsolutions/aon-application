@@ -1,21 +1,23 @@
 package solutions.aon.aws.dynamodb;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
-import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClientBuilder;
-import com.amazonaws.services.dynamodbv2.model.AttributeDefinition;
-import com.amazonaws.services.dynamodbv2.model.AttributeValue;
-import com.amazonaws.services.dynamodbv2.model.CreateTableRequest;
-import com.amazonaws.services.dynamodbv2.model.GetItemRequest;
-import com.amazonaws.services.dynamodbv2.model.KeySchemaElement;
-import com.amazonaws.services.dynamodbv2.model.KeyType;
-import com.amazonaws.services.dynamodbv2.model.ListTablesResult;
-import com.amazonaws.services.dynamodbv2.model.ProvisionedThroughput;
-import com.amazonaws.services.dynamodbv2.model.ScanRequest;
+import software.amazon.awssdk.regions.Region;
+import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
+import software.amazon.awssdk.services.dynamodb.model.AttributeDefinition;
+import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
+import software.amazon.awssdk.services.dynamodb.model.CreateTableRequest;
+import software.amazon.awssdk.services.dynamodb.model.GetItemRequest;
+import software.amazon.awssdk.services.dynamodb.model.KeySchemaElement;
+import software.amazon.awssdk.services.dynamodb.model.KeyType;
+import software.amazon.awssdk.services.dynamodb.model.ListTablesRequest;
+import software.amazon.awssdk.services.dynamodb.model.ListTablesResponse;
+import software.amazon.awssdk.services.dynamodb.model.ProvisionedThroughput;
+import software.amazon.awssdk.services.dynamodb.model.PutItemRequest;
+import software.amazon.awssdk.services.dynamodb.model.ScalarAttributeType;
+import software.amazon.awssdk.services.dynamodb.model.ScanRequest;
 
 public class DYNAMODB {
 
@@ -23,61 +25,89 @@ public class DYNAMODB {
 	
 	}
 	
-	private static AmazonDynamoDB connect() {
-		return AmazonDynamoDBClientBuilder.standard().build();
+	private static DynamoDbClient connect() {
+		return DynamoDbClient.builder()
+                .region(Region.EU_WEST_1)
+                .build();
 	}
 
 	public static Map<String, AttributeValue> get2(String table, String key, String value) {
-		AmazonDynamoDB client = connect();
-		String name = "#"+key;
-		String val = ":"+ key;
-		Map<String,String> expressionAttributesNames = new HashMap<>();
+		DynamoDbClient client = connect();
+		try {
+			String name = "#"+key;
+			String val = ":"+ key;
+			Map<String,String> expressionAttributesNames = new HashMap<>();
 			expressionAttributesNames.put(name, key);
-		Map<String,AttributeValue> expressionAttributeValues = new HashMap<>();
-			expressionAttributeValues.put(val, new AttributeValue().withS(value));
+			Map<String,AttributeValue> expressionAttributeValues = new HashMap<>();
+			expressionAttributeValues.put(val, AttributeValue.builder().s(value).build());
 			
-		ScanRequest req = new ScanRequest(table)
-			.withFilterExpression(name + "=" + val)
-			.withExpressionAttributeNames(expressionAttributesNames)
-		    .withExpressionAttributeValues(expressionAttributeValues);
-		List<Map<String, AttributeValue>> list = client.scan(req).getItems();
-		return list.isEmpty() ? new HashMap<>() : list.get(0);
+			ScanRequest request = ScanRequest.builder()
+					.tableName(table)
+					.filterExpression(name + "=" + val)
+					.expressionAttributeNames(expressionAttributesNames)
+					.expressionAttributeValues(expressionAttributeValues)
+					.build();
+
+			List<Map<String, AttributeValue>> list = client.scan(request).items();
+			return list.isEmpty() ? new HashMap<>() : list.get(0);
+		} finally {
+			client.close();
+		}
 	}
 	
 	public static Map<String, AttributeValue> get(String table, String key, String value) {
-		AmazonDynamoDB client = connect();
-		HashMap<String,AttributeValue> map = new HashMap<>();
-		map.put(key, new AttributeValue(value));
-		return client.getItem(new GetItemRequest()
-				.withKey(map)
-				.withTableName(table))
-			.getItem();
+		DynamoDbClient client = connect();
+		try {
+			HashMap<String,AttributeValue> map = new HashMap<>();
+			map.put(key, AttributeValue.builder().s(value).build());
+			
+			GetItemRequest request = GetItemRequest.builder().key(map).tableName(table).build();
+			
+			return client.getItem(request).item();			
+		} finally {
+			client.close();
+		}
 	}
 	
 	public static void put(String table, Map<String, AttributeValue> item) {
-		AmazonDynamoDB client = connect();
-		client.putItem(table, item);
+		DynamoDbClient client = connect();
+		try {
+			PutItemRequest request = PutItemRequest.builder()
+	                .tableName(table)
+	                .item(item)
+	                .build();
+			
+			client.putItem(request);
+		} finally {
+			client.close();
+		}
 	}
 
 	public static boolean exist(String table) {
-		AmazonDynamoDB client = connect();		
-		ListTablesResult list = client.listTables();
-		return list.getTableNames().contains(table);
+		DynamoDbClient client = connect();		
+		try {
+			ListTablesRequest request = ListTablesRequest.builder().build();
+			ListTablesResponse response = client.listTables(request);
+			return response.tableNames().contains(table);
+		} finally {
+			client.close();
+		}
 	}
 	
 	public static void createTable(String table, String key) {
-		AmazonDynamoDB client = connect();
-		
-		List<AttributeDefinition> attributeDefinitions = new ArrayList<>();
-        List<KeySchemaElement> keySchema = new ArrayList<>();
-		attributeDefinitions.add(new AttributeDefinition().withAttributeName(key).withAttributeType("S"));
-        keySchema.add(new KeySchemaElement().withAttributeName(key).withKeyType(KeyType.HASH));
-
-		CreateTableRequest request = new CreateTableRequest().withTableName(table).withKeySchema(keySchema)
-            .withAttributeDefinitions(attributeDefinitions).withProvisionedThroughput(
-                new ProvisionedThroughput().withReadCapacityUnits(5L).withWriteCapacityUnits(6L));
-		
-		client.createTable(request);
+		DynamoDbClient client = connect();
+		try {
+			CreateTableRequest createTableRequest = CreateTableRequest.builder()
+				.attributeDefinitions(AttributeDefinition.builder().attributeName(key).attributeType(ScalarAttributeType.S).build())
+				.keySchema(KeySchemaElement.builder().attributeName(key).keyType(KeyType.HASH).build())
+				.provisionedThroughput(ProvisionedThroughput.builder().readCapacityUnits(5L).writeCapacityUnits(6L).build())
+				.tableName(table)
+				.build();
+			
+			client.createTable(createTableRequest);
+		} finally {
+			client.close();
+		}
 	}
 	
 }

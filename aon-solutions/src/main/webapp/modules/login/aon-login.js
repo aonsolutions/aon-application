@@ -21,6 +21,7 @@ import { Language } from "../../models/Language.js";
 import { AonMobileParent } from "../company/aon-mobile-parent.js";
 import { AonParent } from "aonparent";
 import { createEmail, createInput } from "../../components/CreateComponent.js";
+import { changeUrl } from "../../services/actionService.js";
 
 export class AonLogin extends AonElement {
   tag;
@@ -363,11 +364,12 @@ export class AonLogin extends AonElement {
     logo.addEventListener(EVENT.CLICK, ()=>{
       this.tag = this.tag + 1;
       if(this.tag >= 5){
-        const BASE_URL_MOBILE = href.includes("aonsolutions.org") ? "https://aon.solutions/" : "https://aonsolutions.org";
-        mobileAction({
-          action:MOBILE_ACTION.SET_BASE_URL,
-          BASE_URL_MOBILE
-        });
+        const url = href.includes("aonsolutions.org") ? "https://aon.solutions/" : "https://aonsolutions.org";
+        let ionicData = {
+          action: MOBILE_ACTION.SET_BASE_URL,
+          BASE_URL_MOBILE: url
+        }
+        changeUrl(ionicData, url);
         this.tag = 0;
       }
 		})

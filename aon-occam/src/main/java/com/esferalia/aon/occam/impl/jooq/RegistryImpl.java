@@ -50,7 +50,9 @@ import com.esferalia.aon.occam.api.model.Person;
 import com.esferalia.aon.occam.api.model.Question;
 import com.esferalia.aon.occam.api.model.QuestionParams;
 import com.esferalia.aon.occam.api.model.SellerParams;
+import com.esferalia.aon.occam.api.model.SellerWorkloadParams;
 import com.esferalia.aon.occam.api.model.Survey;
+import com.esferalia.aon.occam.api.model.fee.Fee;
 import com.esferalia.aon.occam.api.model.registry.Carrier;
 import com.esferalia.aon.occam.api.model.registry.Category;
 import com.esferalia.aon.occam.api.model.registry.CompanyFull;
@@ -75,6 +77,7 @@ import com.esferalia.aon.occam.api.model.registry.RegistrySeller;
 import com.esferalia.aon.occam.api.model.registry.RegistryType;
 import com.esferalia.aon.occam.api.model.registry.Segment;
 import com.esferalia.aon.occam.api.model.registry.Seller;
+import com.esferalia.aon.occam.api.model.registry.SellerWorkload;
 import com.esferalia.aon.occam.api.model.registry.Supplier;
 import com.esferalia.aon.occam.api.model.registry.SupplierFull;
 import com.esferalia.aon.occam.api.model.registry.Target;
@@ -100,6 +103,7 @@ import com.esferalia.aon.occam.impl.jooq.dao.RegistrySegmentDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.RegistrySellerDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.RegistrySuggestionDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.SellerDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.SellerWorkloadDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.SupplierDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.SurveyDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.TargetDAO;
@@ -399,6 +403,23 @@ public class RegistryImpl implements IRegistry{
 	@Override
 	public void deleteSeller(CloseableAONContext ctx, Integer sellerId) {
 		ctx.getDslContext().transaction(configuration -> SellerDAO.delete(ctx, sellerId));
+	}
+	
+	// -------------------- SELLER WORKLOAD
+	
+	@Override
+	public List<SellerWorkload> getSellerWorkloadList(CloseableAONContext ctx, SellerWorkloadParams params) {
+		return ctx.getDslContext().transactionResult(configuration -> SellerWorkloadDAO.getList(ctx, params));
+	}
+	
+	@Override
+	public Integer getSellerWorkloadListCount(CloseableAONContext ctx, SellerWorkloadParams params) {
+		return ctx.getDslContext().transactionResult(configuration -> SellerWorkloadDAO.getListCount(ctx, params));
+	}
+	
+	@Override
+	public List<Fee> getSellersWorkloadFees(CloseableAONContext ctx, SellerWorkloadParams params) {
+		return ctx.getDslContext().transactionResult(configuration -> SellerWorkloadDAO.getFeeList(ctx, params));
 	}
 	
 	// -------------------- RSELLER

@@ -94,6 +94,7 @@ export const AON_CARD_TEXT = 'aonCardText';
 export const AON_CARD_TITLE_SECTION = 'aonCardTitleSection';
 export const AON_CARD_TITLE_SECTION_END = 'aonCardTitleSectionEnd';
 export const AON_CARD_TOTAL = 'aonCardTotal';
+export const AON_CARD_UPLOAD_TOAST = 'aonCardUploadToast';
 export const AON_BANK_CARD_TOTAL = 'aonBankCardTotal';
 export const AON_FISCAL_CARD_TOTAL = 'aonFiscalCardTotal';
 export const AON_DIALOG = 'aonDialog';

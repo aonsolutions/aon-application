@@ -134,8 +134,8 @@
 			<classifier>sources</classifier>
 		</dependency>
 		<dependency>
-			<groupId>net.aonsolutions</groupId>
-			<artifactId>aon.storage</artifactId>
+			<groupId>solutions.aon</groupId>
+			<artifactId>aon.aws</artifactId>
 			<version>${project.version}</version>
 			<scope>compile</scope>
 		</dependency>

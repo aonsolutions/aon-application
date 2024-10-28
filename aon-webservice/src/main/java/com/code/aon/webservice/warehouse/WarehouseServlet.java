@@ -12,12 +12,6 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.logging.Logger;
 
-import jakarta.servlet.ServletException;
-import jakarta.servlet.annotation.WebServlet;
-import jakarta.servlet.http.HttpServlet;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -47,6 +41,7 @@ import com.esferalia.aon.occam.api.model.management.Purchase;
 import com.esferalia.aon.occam.api.model.management.PurchaseDetail;
 import com.esferalia.aon.occam.api.model.product.OldItem;
 import com.esferalia.aon.occam.api.model.product.OldProduct;
+import com.esferalia.aon.occam.api.model.product.Product;
 import com.esferalia.aon.occam.api.model.registry.Carrier;
 import com.esferalia.aon.occam.api.model.security.Scope;
 import com.esferalia.aon.occam.api.model.stat.StatData;
@@ -62,6 +57,12 @@ import com.esferalia.aon.occam.impl.jooq.dao.StatDAO;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
+
+import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 @SuppressWarnings("serial")
 @WebServlet(name = "WarehouseServlet", urlPatterns = { "/warehouse/*",
@@ -883,14 +884,14 @@ public class WarehouseServlet extends HttpServlet{
     		StatData<Integer, String, Double> stat = getStockForecastStatData(domain, login, filterMap);
         	
     		Integer[] productIds = stat.getMap().keySet().toArray(new Integer[stat.getMap().keySet().size()]);
-        	Map<Integer, OldProduct> productMap = new HashMap<>();
-        	AON.getProductStream(domain.getName(), domain.getId(), login, f->f.getIdProperty().in(productIds)).forEach(product -> {
-        		productMap.put(product.getId(), product);
-        	});
+        	Map<Integer, Product> productMap = new HashMap<>();
+        	
+        	AON.getProductStream(domain, login,  f->f.getIdProperty().in(productIds))
+        		.forEach(product -> productMap.put(product.getId(), product));
     		
         	for(Integer productId: productIds) {
     			if(stat.getMap().containsKey(productId)){
-    				OldProduct product = productMap.get(productId);
+    				Product product = productMap.get(productId);
     				Double outputs = new Double(stat.get(productId, StatDAO.PRODUCT_OUTPUTS));
     				Double dailyOutputs = outputs / daysCount;
     				Double accumulation = dailyOutputs * accumulationDays;
@@ -1008,14 +1009,14 @@ public class WarehouseServlet extends HttpServlet{
     		StatData<Integer, String, Double> stat = getProductMovementsStatData(domain, login, filterMap);
         	
     		Integer[] productIds = stat.getMap().keySet().toArray(new Integer[stat.getMap().keySet().size()]);
-        	Map<Integer, OldProduct> productMap = new HashMap<>();
-        	AON.getProductStream(domain.getName(), domain.getId(), login, f->f.getIdProperty().in(productIds)).forEach(product -> {
-        		productMap.put(product.getId(), product);
-        	});
+        	Map<Integer, Product> productMap = new HashMap<>();
+        	
+        	AON.getProductStream(domain, login,  f->f.getIdProperty().in(productIds))
+    			.forEach(product -> productMap.put(product.getId(), product));
     		
         	for(Integer productId: productIds) {
     			if(stat.getMap().containsKey(productId)){
-    				OldProduct product = productMap.get(productId);
+    				Product product = productMap.get(productId);
     				Double inputs = (stat.get(productId, StatDAO.PRODUCT_INPUTS));
     				Double outputs = (stat.get(productId, StatDAO.PRODUCT_OUTPUTS));
     				inputs = inputs==null?0.0:inputs;

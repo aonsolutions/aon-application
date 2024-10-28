@@ -126,6 +126,10 @@ public class AonCustomDockLayout extends DockLayoutPanel {
 		filterButton.setVisible(false);
 	}
 	
+	public void clickFilterButton() {
+		filterButton.click();
+	}
+	
 	// Right menu
 	
 	public void addFilterMenu() {

@@ -6,14 +6,14 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public enum AonError implements Serializable{
-	// Ã --> \u00C1 Ã¡ --> \u00E1
-	// Ã‰ --> \u00C9 Ã© --> \u00E9
-	// Ã --> \u00CD Ã­ --> \u00ED  
-	// Ã“ --> \u00D3 Ã³ --> \u00F3
-	// Ãš --> \u00DA Ãº --> \u00FA
-	// Ã‘ --> \u00D1 Ã± --> \u00F1
-	// Âº --> \u00AA Âª --> \u00BA
-	// Â¿ --> \u00BF 
+	// Á --> \u00C1 á --> \u00E1
+	// É --> \u00C9 é --> \u00E9
+	// Í --> \u00CD í --> \u00ED
+	// Ó --> \u00D3 ó --> \u00F3
+	// Ú --> \u00DA ú --> \u00FA
+	// Ñ --> \u00D1 ñ --> \u00F1
+	// ª --> \u00AA º --> \u00BA
+	// ¿ --> \u00BF
 	
 	
 	// -----------------------------------------------------------
@@ -21,6 +21,12 @@ public enum AonError implements Serializable{
 	// -----------------------------------------------------------
 	 READ_FORBIDDEN("El acceso de lectura al recurso solicitado, ha sido denegado.")
 	,WRITE_FORBIDDEN("El acceso de escritura al recurso solicitado, ha sido denegado.")
+	,NULL_FILTER("No se han indicado condiciones de b\u00FAsqueda.")
+	,INVALID_DOMAIN("Dominio no encontrado")
+	,INVALID_USER("Usuario no encontrado")
+	,INVALID_COMPANY("Company no encontrado")
+	,NO_SCOPES_DEFINED_FOR_USER("No se han definido \u00E1mbitos para el usuario")
+	,NOT_DIRTY("{0} NOT SAVED! (not dirty) id: {1}")
 
 	// -----------------------------------------------------------
 	// --------------------- COMMON ------------------------------
@@ -34,6 +40,7 @@ public enum AonError implements Serializable{
 	,EMPTY_NAME("El nombre es un dato obligatorio, no puede estar vac\u00EDa")
 	,EMPTY_YEAR("El ejercicio es un dato obligatorio, no puede estar vac\u00EDo")
 	,EMPTY_DATA("El dato \"{0}\" es obligatorio, no puede estar vac\u00EDo")
+	,EMPTY_SAVE("No se puede guardar un objeto vac\u00EDo.")
 	,INVALID_YEAR("El ejercicio debe tener un valor real")
 	,EMPTY_PERIOD("El periodo es un dato obligatorio, no puede estar vac\u00EDo")
 	,WRONG_PERIOD("No se ha encontrado un periodo contable para la fecha \"{0}\"")
@@ -172,12 +179,17 @@ public enum AonError implements Serializable{
 	,AMORTIZATION_TYPE_PARAMS_NULL("Los parametros son nulos")
 	
 	// --------------------------------------------- INVOICE
+	,INVOICE_SAVE_ERROR("No se ha podido grabar la factura")
+	,INVOICE_SAVE_DELETE_ERROR("No se ha podido modificar o borrar la factura")
+	
+	,INVOICE_EMPTY_DOMAIN("El dominio de la factura es un dato obligatorio, no puede estar vac\u00EDa")
 	,INVOICE_EMPTY_DATE("La fecha de la factura es un dato obligatorio, no puede estar vac\u00EDa")
 	,INVOICE_EMPTY_TAX_DATE("La fecha I.V.A. de la factura es un dato obligatorio, no puede estar vac\u00EDa")
 	,INVOICE_EMPTY_TYPE("El tipo de la factura es un dato obligatorio, no puede estar vac\u00EDa")
 	,INVOICE_EMPTY_REGISTRY("El titular de la factura es un dato obligatorio, no puede estar vac\u00EDa")
 	,INVOICE_EMPTY_SCOPE("El \u00E1mbito de la factura es un dato obligatorio, no puede estar vac\u00EDa")
-	,INVOICE_DUPLICATED_SERIES_NUMBER("Ya existe una factura con esa Serie/N\u00FAmero.")
+	,INVOICE_DUPLICATED_SERIES_NUMBER("Ya existe una factura con esa Serie/N\u00FAmero. [{0}]")
+
 	,INVOICE_DUPLICATED_REFERENCE_CODE("Ya existe una factura del titular con ese N\u00FAmero de referencia.")
 	,INVOICE_OPERATIONS_DEADLINE("La fecha de la factura rebasa la fecha l\u00EDmite de operaciones indicada en la configuraci\u00F3n de empresa. ")
 	,INVOICE_TEN_YEARS("El a\u00F1o de la factura no es v\u00E1lido, es anterior diez a\u00F1os al actual") 
@@ -195,7 +207,13 @@ public enum AonError implements Serializable{
 	,INVOICE_CANT_DELETE_TBAI("No es posible borrar la factura porque est\u00E1 enviada a Ticket Bai. Dar de baja la factura en Ticket Bai.")
 	,INVOICE_CANT_DELETE_MODEL("Imposible borrar o modificar, la factura ha sido declarada en modelos fiscales: {0}")
 	,TRACKING_CANT_DELETE_MODEL("Imposible borrar o modificar, el vto. ha sido declarada en modelos fiscales: {0}")
-
+	
+	// --------------------------------------------- CALCULATOR
+	,INVOICE_CALC_REV_MORE("No se puede realizar el c\u00E1clulo inverso. Hay m\u00E1s de un detalle de fatura")
+	,INVOICE_CALC_REV_ZERO("No se puede realizar el c\u00E1lculo inverso. No hay detalles de factura.")
+	,INVOICE_CALC_REV_FARMER("El c\u00E1lculo inverso para retenciones de agricultura no est\u00E1 soportado.")
+	,INVOICE_CALC_NO_WITHHOLDING_INFO("No hay infomarci\u00F3n para el c\u00E1lculo de la retenci\u00F3n")
+	
 	// --------------------------------------------- DUA
 	,INVOICE_DUA_NATIONAL_INVOICE_EMPTY("No se ha indicado una factura nacional tipo DUA")
 	,INVOICE_DUA_IMPORT_INVOICE_EMPTY("No se ha indicado una factura de importaci\u00F3n")
@@ -217,6 +235,7 @@ public enum AonError implements Serializable{
 	,FINANCE_WRONG_IBAN_LENGTH("Longitud de IBAN incorrecta.")
 	,FINANCE_WRONG_ACCOUNT_BANK("Cuenta Bancaria incorrecta.")
 	,FINANCE_WRONG_IBAN("IBAN incorrecto.")
+	,FINANCE_UNKNOWN_PAYMENT("No se puede determinar si el vencimiento es un pago o un cobro")
 	,FINANCE_WRONG_PAYMENT("Si la factura es una venta, el tipo del vencimiento debe ser \"cobro\". En caso contario, \"pago\".")
 	,DELETE_STATUS_WRONG("No se permite el borrado de vencimientos que no est\u00E9n pendientes.")
 	,FINANCE_TRACKING_WITHOUT_DATE("En el tracking no existe informaci\u00F3n sobre la fecha del movimiento.")
