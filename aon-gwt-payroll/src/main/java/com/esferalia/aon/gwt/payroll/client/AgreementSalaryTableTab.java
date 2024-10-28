@@ -538,7 +538,7 @@ public abstract class AgreementSalaryTableTab extends ResizeComposite {
 		variablesVisivility = new AonToolbarSmallButton("Mostrar/Ocultar variables", AON.CSS.aonIconVisibility());
 		variablesVisivility.addClickHandler(click -> {
 			Date selectedDate = formatDate.parse(datesLB.getSelectedValue());
-			AgreementVariablesDialog dialog = new AgreementVariablesDialog(agreement.getAllVariables(), agreement.getVariablesByDate(selectedDate)) {
+			AgreementVariablesDialog dialog = new AgreementVariablesDialog(agreement.getAllVariables(), agreement.getVariablesByDate(selectedDate), null) {
 				
 				@Override
 				protected void onAccept(String variablesType, Set<String> variables) {
@@ -557,6 +557,18 @@ public abstract class AgreementSalaryTableTab extends ResizeComposite {
 							break;
 					}
 					createSalaryTable();	
+				}
+
+				@Override
+				protected void onDelete(Set<String> deleteVariables) {
+					// TODO Auto-generated method stub
+					
+				}
+
+				@Override
+				protected void onCreateVariabel(String variablesType, String value) {
+					// TODO Auto-generated method stub
+					
 				}
 			};
 			dialog.setGlassStyleName(style.dialogGlass());

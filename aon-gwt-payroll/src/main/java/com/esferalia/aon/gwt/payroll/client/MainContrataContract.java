@@ -188,29 +188,34 @@ public class MainContrataContract extends MainEntryPoint {
 	// Employee List Cols
 	
 	private static enum EMPLOYEE_COL {
-		  DES(AON.MSG.name()						,"-moz-available")
-		, DOC(AON.MSG.document()					,"20rem")
-		, NSS("NSS"									,"20rem")
-		, CON("TC2"									,"10rem")
-		, WOR(AON.MSG.workplace()					,"30rem")
-		, CAT("Categoria"							,"30rem")
-		, STA("F. Inicio"							,"10rem")
-		, END("F. Fin"								,"10rem")
-		, BUT(AonStringUtils.EMPTY					,"5rem")
+		  DES(AON.MSG.name()						,"-moz-available"	,"min-width: 5rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
+		, DOC(AON.MSG.document()					,"5rem"				,"")
+		, NSS("NSS"									,"5rem"				,"")
+		, CON("TC2"									,"3rem"				,"")
+		, WOR(AON.MSG.workplace()					,"7rem"				,"")
+		, CAT("Categoria"							,"7rem"				,"min-width: 7rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
+		, STA("F. Inicio"							,"5rem"				,"")
+		, END("F. Fin"								,"5rem"				,"")
+		, BUT(AonStringUtils.EMPTY					,"2rem"				,"")
 		;
 
 		String headerLabel;
 		String colWidth;
+		String styles;
 
-		private EMPLOYEE_COL(String headerLabel,String colWidth) {
+		private EMPLOYEE_COL(String headerLabel,String colWidth,String styles) {
 			this.headerLabel = headerLabel;
 			this.colWidth = colWidth;
+			this.styles = styles;
 		}
 		public String getColWidth() {
 			return colWidth;
 		}
 		public String getHeaderLabel() {
 			return headerLabel;
+		}
+		public String getStyles() {
+			return styles;
 		}
 	}
 	
@@ -792,7 +797,7 @@ public class MainContrataContract extends MainEntryPoint {
 	private void paintEmployeeHeader() {
 		employeesTable.createHeader();
 		for ( EMPLOYEE_COL col : EMPLOYEE_COL.values()) 
-			employeesTable.addHeader(new Label(col.getHeaderLabel()), col.getColWidth());
+			employeesTable.addHeader(new Label(col.getHeaderLabel()), col.getColWidth(), col.getStyles());
 	}
 	
 	private void paintEmployeeRow(EmployeeContractInfo employeeContractInfo) {
@@ -861,12 +866,20 @@ public class MainContrataContract extends MainEntryPoint {
 		if(null != employeeContractInfo.getContractInfo().getEndDate())
 			endDateLabel.setText(formatFullDate.format(employeeContractInfo.getContractInfo().getEndDate()));
 		
+		employeeNameLabel.setTitle(employeeContractInfo.getEmployeeInfo().getFullName());
+		employeesTable.addInlineStyle(employeeNameLabel, EMPLOYEE_COL.DES.getStyles());
 		employeesTable.addRow(row, employeeNameLabel, EMPLOYEE_COL.DES.getColWidth());
+		
 		employeesTable.addRow(row, new Label(employeeContractInfo.getEmployeeInfo().getDocument()), EMPLOYEE_COL.DOC.getColWidth());
 		employeesTable.addRow(row, new Label(employeeContractInfo.getEmployeeInfo().getSsNumber()), EMPLOYEE_COL.NSS.getColWidth());
 		employeesTable.addRow(row, contractTypeLabel, EMPLOYEE_COL.CON.getColWidth());
 		employeesTable.addRow(row, new Label(employeeContractInfo.getContractInfo().getWorkplaceName()), EMPLOYEE_COL.WOR.getColWidth());
-		employeesTable.addRow(row, new Label(employeeContractInfo.getContractInfo().getAgreementCategory()), EMPLOYEE_COL.CAT.getColWidth());
+		
+		Label category = new Label(employeeContractInfo.getContractInfo().getAgreementCategory());
+		category.setTitle(employeeContractInfo.getContractInfo().getAgreementCategory());
+		employeesTable.addInlineStyle(category, EMPLOYEE_COL.CAT.getStyles());
+		employeesTable.addRow(row, category, EMPLOYEE_COL.CAT.getColWidth());
+		
 		employeesTable.addRow(row, new Label(formatFullDate.format(employeeContractInfo.getContractInfo().getStartDate())), EMPLOYEE_COL.STA.getColWidth());
 		employeesTable.addRow(row, endDateLabel, EMPLOYEE_COL.END.getColWidth());
 		employeesTable.addRow(row, buttonContainer, EMPLOYEE_COL.BUT.getColWidth());

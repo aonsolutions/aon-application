@@ -1,5 +1,6 @@
 
 import * as LS from 'aonsolutions/services/localStorageService.js';
+import * as UA from 'aonsolutions/services/userAgentService.js';
 import { AonModule } from './modules/aon-module.js';
 import { setPosition } from 'aonsolutions/services/maps.js';
 import { waitEl } from 'aonsolutions/services/utils.js';
@@ -53,7 +54,8 @@ const load = () => {
 }
 
 export const loadTheme = () => {
-    let themeUrl = getParam("theme") || LS.getTheme() || getCookie("theme") || LS.AON_THEME; 
+    let themeUrl = UA.isMobile() ? LS.AON_MOBILE_THEME
+		: getParam("theme") || LS.getTheme() || getCookie("theme") || LS.AON_THEME; 
 	return new Promise((resolve, reject) => {
 		try {
 			const aonThemeSpan = document.createElement(TAG.SPAN);

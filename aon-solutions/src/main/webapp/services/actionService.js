@@ -60,8 +60,19 @@ export const openFile = (file) => {
     }
 }
 
-export const changeStatusBarColor = (ionicData, color) => {
-    let data = {action: 'changeStatusBarColor', color};
+export const changeStatusBarColor = (ionicData, color, dark) => {
+    let data = {action: 'changeStatusBarColor', color, dark: dark || false};
+    if(UA.isAndroidApp()) {
+        window.Android.changeStatusBarColor(JSON.stringify(data));
+    } else if (UA.isIosApp()) {
+        window.webkit.messageHandlers.doStuffMessageHandler.postMessage(data);
+    } else if(UA.isAppMobile()) {
+        mobileAction(ionicData);
+    }
+}
+
+export const changeUrl = (ionicData, url) => {
+    let data = {action: 'changeUrl', url};
     if(UA.isAndroidApp()) {
         window.Android.changeStatusBarColor(JSON.stringify(data));
     } else if (UA.isIosApp()) {

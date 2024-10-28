@@ -179,6 +179,7 @@ export class AonPresenceList extends AonElement {
             durationMs += elapsedMs; // Sumar los milisegundos transcurridos a la duración
             res.duration = this.msToTimeString(durationMs); // Convertir de vuelta a "minutos:segundos"
           }
+          // alert(JSON.stringify(res));
           let tr = aonTable.addRow(res, (el) => this.aonEvent(el, res));
           tr.id = "aonTimeControlRow";
         });

@@ -136,7 +136,7 @@ public class AonToken implements Serializable{
 	public static String build(JSONObject object, Date expireDate) {
         String token = "";
         try {
-            Algorithm algorithm = Algorithm.HMAC256("aonsecret");
+            Algorithm algorithm = Algorithm.HMAC256(AonSecret.getAonSecret());
             expireDate = expireDate != null ? expireDate : AonDateUtils.addMonths(new Date(), 3);
             token = JWT.create()
                     .withIssuer("auth0")

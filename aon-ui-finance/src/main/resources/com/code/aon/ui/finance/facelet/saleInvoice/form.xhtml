@@ -48,30 +48,32 @@
 						</aon:if>
 						
 						<aon:if test="#{saleInvoice.tbaiInvoice and saleInvoice.araba}"> 
-							<a id="tbaiUrl"	
-								href="#{saleInvoice.tbaiUrl}"
+							<aon:outputLink 
+								id="tbaiUrl"	
 								target="_blank" 
-								class="aon-finding-toolbar-item aon-icon-araba">
+								value="#{saleInvoice.tbaiUrl}"
+								styleClass="aon-finding-toolbar-item aon-icon-araba">
 								Ticket Bai
-							</a>
+							</aon:outputLink>
 						</aon:if>
 						
 						<aon:if test="#{saleInvoice.tbaiInvoice and saleInvoice.gipuzkoa}"> 
-							<a id="tbaiUrl"	
-								href="#{saleInvoice.tbaiUrl}"
+							<aon:outputLink 
+								id="tbaiUrl"	
 								target="_blank" 
-								class="aon-finding-toolbar-item aon-icon-gipuzkoa">
+								value="#{saleInvoice.tbaiUrl}"
+								styleClass="aon-finding-toolbar-item aon-icon-gipuzkoa">
 								Ticket Bai
-							</a>
+							</aon:outputLink>
 						</aon:if>
 						
 						<aon:if test="#{saleInvoice.tbaiInvoice and saleInvoice.bizkaia}"> 
-							<a id="tbaiUrl"	
-								href="#{saleInvoice.tbaiUrl}"
+							<aon:outputLink id="tbaiUrl"	
 								target="_blank" 
-								class="aon-finding-toolbar-item aon-icon-bizkaia">
+								value="#{saleInvoice.tbaiUrl}"
+								styleClass="aon-finding-toolbar-item aon-icon-bizkaia">
 								Ticket Bai
-								</a>
+								</aon:outputLink>
 						</aon:if>
 					
 						<aon:if test="#{aonConfiguration.bean.invoice.showSendEmail}">
@@ -79,7 +81,7 @@
 								actionListener="#{saleInvoice.onSendInvoiceByEmail}"
 								rendered="#{saleInvoiceDetail.model.rowCount > 0 and saleInvoiceDetail.to == null}"
 								styleClass="aon-finding-toolbar-item aon-icon-webmail2 aon-finding-toolbar-item-no-border"
-								style="width: 14px;" reRender="showNewMessageWindow">
+								reRender="showNewMessageWindow">
 							</aon:commandButton>
 						</aon:if>
 						<aon:if test="#{saleInvoice.printWord}">

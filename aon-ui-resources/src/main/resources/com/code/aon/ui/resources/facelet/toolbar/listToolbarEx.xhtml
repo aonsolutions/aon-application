@@ -1,6 +1,5 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
-	xmlns:a4j="http://richfaces.org/a4j"
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:f="http://java.sun.com/jsf/core"
@@ -30,6 +29,9 @@
 			
 			<aon:if test="#{!app.standAlone}">
 				<ui:insert name="beforeSpinToolbarContent"/>
+			</aon:if>	
+			<aon:if test="#{app.standAlone}">
+				<aon:insert name="beforeSpinToolbarContent" filter="#{!aon:isMenuItem(el)}"/>
 			</aon:if>	
 			
 			<aon:if test="#{showMoreMenu}">
@@ -109,41 +111,6 @@
 				</aon:ifDefined>
 
 			</aon:if>
-
-			<aon:if test="#{showFilterWidget}">
-				<script type="text/javascript">
-	           	//<![CDATA[
-		         function moveAtEndFilterInput() {
-					let filterInput = #{rich:element(toolbarID.concat('-filter-input'))};
-					filterInput.focus();
-					filterInput.setSelectionRange(filterInput.value.length, filterInput.value.length);
-		         }
-         		//]]>
-				</script>
-				<aon:div id="#{toolbarID}-filter" styleClass="aon-finding-filter-toolbar" >					 
-					<aon:inputText 
-					value=""
-					id="#{toolbarID}-filter-input"
-					placeholder="#{bundle.aon_filter}..."
-					valueChangeListener="#{filterChangeListener}"
-					styleClass="aon-finding-filter-input aon-inputText aon-icon-search"  
-					>
-						<a4j:support 
-						event="onkeyup"
-						requestDelay="500"
-						ajaxSingle="true"
-						limitToList="true"
-						reRender="aonContent"
-						ignoreDupResponses="true"
-						eventsQueue="#{toolbarID}FilterKeyUp"
-						oncomplete="javascript:moveAtEndFilterInput()"
-						onsubmit="if (window.event.which == 27 || window.event.which == 38 || window.event.which == 40) {return false;}"
-						>
-							<aon:actionListener method="#{filterActionListener}" />
-						</a4j:support> 
-					</aon:inputText>												
- 				</aon:div>												
- 			</aon:if>	
 			
 				
 		</ui:define>

@@ -11,6 +11,7 @@ import com.auth0.jwt.interfaces.DecodedJWT;
 import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Filter.AuthDeviceFilter;
+import com.esferalia.aon.occam.api.model.aonsolutions.AonSecret;
 import com.esferalia.aon.occam.api.model.aonsolutions.AonToken;
 import com.esferalia.aon.occam.api.model.aonsolutions.DomainUserRoles;
 import com.esferalia.aon.occam.api.model.security.AuthDevice;
@@ -37,7 +38,11 @@ public class SECURITY {
 	}
 
 	public static AonToken getAonToken(String token) {
-		JSONObject json = SECURITY.decodeJWT(token);
+		return getAonToken(token, AonSecret.getAonSecret());
+	}
+	
+	public static AonToken getAonToken(String token, String secret) {
+		JSONObject json = SECURITY.decodeJWT(token, secret);
 		AonToken aonToken = AonToken.parse(json);
 		if(!AonStringUtils.isBlank(aonToken.getUuid())) {
 			aonToken.setAuth(hexStringToByteArray(aonToken.getUuid()));
@@ -74,8 +79,8 @@ public class SECURITY {
 		}
 	}
 	
-	public static JSONObject decodeJWT(String token) {
-		Algorithm algorithm = Algorithm.HMAC256("aonsecret");
+	public static JSONObject decodeJWT(String token, String secret) {
+		Algorithm algorithm = Algorithm.HMAC256(secret);
 		DecodedJWT jwt = JWT.require(algorithm).build().verify(token);	
 		return new JSONObject(jwt.getSubject())
 				.put("expired", jwt.getExpiresAt() != null
@@ -110,21 +115,5 @@ public class SECURITY {
 		try (CloseableAONContext ctx = AONContext.getAONContext(domain.getName(), domain.getId(), login)){
 			return getSecurity().delete(ctx, user);
 		}
-	}
-	
-	public static void main(String[] args) {
-		Algorithm algorithm = Algorithm.HMAC256("aonsecret");
-		String token =   JWT.create()
-				.withIssuer("auth0")
-				.withIssuedAt(new Date())
-				//.withExpiresAt(AonDateUtils.addDays(new Date(), 1))
-				.withSubject("{'schema':'', 'schema_first_domain':'', 'uuid':''}")
-				.sign(algorithm);		
-		System.out.println(token);
-		JSONObject object = decodeJWT("asdfjlasdvjawyiwd3iahsdjiaskfopwesuh"
-			//"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ7J3NjaGVtYSc6JycsICdzY2hlbWFfZmlyc3RfZG9tYWluJzonJywgJ3V1aWQnOicnfSIsImlzcyI6ImF1dGgwIiwiaWF0IjoxNjA3MjQ3NjU3fQ.aYp2l--oUoLTFUrAmS7mgOLtHl4c62JRxMbF6a4pUQU"
-			  //"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ7J3NjaGVtYSc6JycsICdzY2hlbWFfZmlyc3RfZG9tYWluJzonJywgJ3V1aWQnOicnfSIsImlzcyI6ImF1dGgwIiwiaWF0IjoxNjA3MjQ3NjU3fQ.aYp2l--oUoLTFUrAmS7mgOLtHl4c62JRxMbF6a4pUQU";
-		);
-		System.out.println(object);
 	}
 }

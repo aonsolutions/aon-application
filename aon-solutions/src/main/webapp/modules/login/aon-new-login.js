@@ -24,6 +24,11 @@ import { AonParent } from "aonparent";
 import { AonIconButton } from "../../components/aon-icon-button.js";
 import { createInput } from "../../components/CreateComponent.js";
 
+import { changeUrl } from '../../services/actionService.js';
+
+
+import * as UA from '../../services/userAgentService.js';
+
 export class AonNewLogin extends AonElement {
   tag;
   userInput;
@@ -214,34 +219,48 @@ export class AonNewLogin extends AonElement {
     d.getContent().addEventListener(EVENT.MOUSELEAVE, () => d.close());
 
     let options = [{
-      name: "Castellano",
+      name: MSG.SPANISH,
+      title: MSG.SPANISH,
+      permission: true,
       image: '../assets/img/aonIconCastellano.png',
       fn: () => LS.setLanguage(Language.SPANISH)
     }, {
-      name: "English",
+      name: MSG.ENGLISH,
+      title: MSG.ENGLISH,
+      permission: true,
       image: '../assets/img/aonIconEnglish.png',
       fn: () => LS.setLanguage(Language.ENGLISH)
     }, {
-      name: "Français",
+      name: MSG.FRENCH,
+      title: MSG.FRENCH,
+      permission: true,
       image: '../assets/img/aonIconFrancais.png',
       fn: () => LS.setLanguage(Language.FRENCH)
     }, {
-      name: "Deutsch",
+      name: MSG.DEUTSCH,
+      title: MSG.DEUTSCH,
+      permission: true,
       image: '../assets/img/aonIconDeutsch.png',
       fn: () => LS.setLanguage(Language.DEUTSCH)
     }, {
-      name: "Euskara",
+      name: MSG.BASQUE,
+      title: MSG.BASQUE,
+      permission: true,
       image: '../assets/img/aonIconEuskera.png',
       fn: () => LS.setLanguage(Language.BASQUE)
     }, {
-      name: "Català",
+      name: MSG.CATALAN,
+      title: MSG.CATALAN,
+      permission: true,
       image: '../assets/img/aonIconCatala.png',
       fn: () => LS.setLanguage(Language.CATALAN)
     }, {
-      name: "Galego",
+      name: MSG.GALICIAN,
+      title: MSG.GALICIAN,
+      permission: true,
       image: '../assets/img/aonIconGalego.png',
       fn: () => LS.setLanguage(Language.GALICIAN)
-    } ];
+    }];
 
     d.setMenuOptions(options, top, left);
     d.open();
@@ -268,7 +287,7 @@ export class AonNewLogin extends AonElement {
     this.build();
     
     this.buildLogo();
-    if(!webkitRequestMobile() && this.isMobile()){ // si es app
+    if(!UA.isApp() && this.isMobile()){ // si es app
       this.buildAppLogo();
     } else {
       this.getElement('logosMobiles').style.display = 'none';
@@ -354,11 +373,12 @@ export class AonNewLogin extends AonElement {
     logoToolbar.addEventListener(EVENT.CLICK, ()=>{
       this.tag = this.tag + 1;
       if(this.tag >= 5){
-        const BASE_URL_MOBILE = hrefToolbar.includes("aonsolutions.org") ? "https://aon.solutions/" : "https://aonsolutions.org";
-        mobileAction({
-          action:MOBILE_ACTION.SET_BASE_URL,
-          BASE_URL_MOBILE
-        });
+        const url = hrefToolbar.includes("aonsolutions.org") ? "https://aon.solutions/" : "https://aonsolutions.org";
+        let ionicData = {
+          action: MOBILE_ACTION.SET_BASE_URL,
+          BASE_URL_MOBILE: url
+        }
+        changeUrl(ionicData, url);
         this.tag = 0;
       }
 		})

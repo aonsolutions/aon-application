@@ -53,7 +53,7 @@
 			margin-top: 30px;
 		}
 		
-		.draft {
+		.aon-Salary-DraftPanel {
 			min-width: 1080px;
 		}
 
@@ -335,6 +335,8 @@
 			width: auto;
 		}
 
+		@external aon-Salary-DraftPanel;
+
 	</ui:style>
 	
 	<ui:import field="com.esferalia.aon.gwt.payroll.client.SalaryDraft.*" />
@@ -442,7 +444,7 @@
 					<g:center>
 						<g:VerticalPanel styleName="{style.document}" ui:field="scrolledPanel" >
 	    					
-							<g:VerticalPanel ui:field="draftPanel" width="auto" styleName="{style.draft}">
+							<g:VerticalPanel ui:field="draftPanel" width="auto" styleName="{style.aon-Salary-DraftPanel}">
 								
 								<g:HorizontalPanel ui:field='timeRulePanel'  debugId='timeRulePanel' visible="false" styleName="aon-width-all {style.vertical-margin}" />
 								<!--  g:HorizontalPanel ui:field='dbTimeRulePanel'  debugId='dbTimeRulePanel' visible="false" styleName="aon-width-all {style.vertical-margin} {style.disabled}" /-->

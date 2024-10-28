@@ -16,9 +16,6 @@ public class Templates {
 		if ( invoiceTemplate == null ) {
 			for (InvoiceTemplate pdfTemplate : PDF_TEMPLATES ) {
 				try {
-					
-//System.out.println( text );					
-					
 					return pdfTemplate.parse(text, handler);
 				} catch ( Throwable e ) {
 					throw new InvoicePDFException(e);
