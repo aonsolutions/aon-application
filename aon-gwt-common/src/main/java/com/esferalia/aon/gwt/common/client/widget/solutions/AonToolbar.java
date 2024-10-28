@@ -95,7 +95,8 @@ public class AonToolbar extends FlowPanel {
 	@Override
 	public void setTitle(String name) {
 		titlePanel.clear();
-		Label title = new Label( AonStringUtils.abbreviate(name, 80) );
+		name = AonStringUtils.lowerCase(name);
+		Label title = new Label( AonStringUtils.abbreviate(name, 80));
 		title.setTitle(name);
 		title.setStyleName(AON.CSS.aonToolbarTitle());
 		titlePanel.add( title );

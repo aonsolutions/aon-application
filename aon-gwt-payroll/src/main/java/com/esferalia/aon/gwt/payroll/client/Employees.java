@@ -306,6 +306,9 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 
 	interface MyStyle extends CssResource {
 		String staticEmployees();
+		default String title() { 
+			return "aon-EmployeesToolbar-Title"; 
+		}
 	}
 
 	@UiField
@@ -2781,8 +2784,8 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 		
 		employeesToolbar.add(showMenuButton);
 		
-		Label title = new Label("Integral de n\u00f3minas");
-		title.getElement().getStyle().setTextTransform(TextTransform.UPPERCASE);
+		Label title = new Label("Integral de N\u00f3minas");
+		title.addStyleName(style.title());
 		employeesToolbar.add(title);
 		
 		dynamicEmployees.addDomHandler(new MouseOutHandler() {
