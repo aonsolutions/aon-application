@@ -1358,6 +1358,9 @@ public interface AonSolutionsCSS extends CssResource {
 
 	@ClassName("aon_toast")
 	String aonToast();
+	
+	@ClassName("aon_toast_model")
+	String aonToastModel();
 
 	@ClassName("aon_toast_header")
 	String aonToastHeader();

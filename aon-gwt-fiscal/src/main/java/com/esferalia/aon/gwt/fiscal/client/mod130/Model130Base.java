@@ -14,7 +14,7 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomPopup;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDoubleBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonSplash;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonTableButton;
-import com.esferalia.aon.gwt.common.client.widget.solutions.AonToast;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonToastModel;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
 import com.esferalia.aon.gwt.fiscal.client.FiscalModelUtils;
@@ -108,6 +108,8 @@ public abstract class Model130Base extends DockLayoutPanel {
 	protected Hidden domainIdHidden = new Hidden("domainId");
 	protected Hidden domainNameHidden = new Hidden("domainName");
 	protected Hidden userHidden = new Hidden("user");
+
+	private AonToastModel toast = null;
 	
 	protected Model130Base(Mod130 mod130, final Model130Callback callback) {
 		super(Unit.PX);
@@ -191,33 +193,35 @@ public abstract class Model130Base extends DockLayoutPanel {
 		toolbarPanel.add(printButton);
 		
 		commentsButton.addClickHandler( event -> {
-			final AonToast toast = new AonToast();
-			FlowPanel commentPanel = new FlowPanel();
-			commentPanel.setStyleName( FiscalModelUtils.getAdministrationBackgroundStyle(getModel().getAdministration()) );
-			commentPanel.addStyleName(AON.CSS.aonHeightAll());
-			commentPanel.addStyleName(AON.CSS.aonTextCenter());
-			TextArea comment = new TextArea();
-			comment.addValueChangeHandler(event1 -> {
-				getModel().setComments(event1.getValue());
-				styleCommentsButton();
-				Model130.SERVICE.saveComments( getCallback().getOptions().getOccam(), getModel(), new AsyncCallback<Mod130>() {
-					@Override
-					public void onSuccess(Mod130 result) {
-						toast.hide();
-					}
-
-					@Override
-					public void onFailure(Throwable caught) {
-						toast.hide();
-						getCallback().showError(AON.MSG.unableToSaveDeclaration(caught.getMessage()));
-					}
+			if (toast == null || toast.getParent() == null) {
+				toast = new AonToastModel(this);
+				FlowPanel commentPanel = new FlowPanel();
+				commentPanel.setStyleName( FiscalModelUtils.getAdministrationBackgroundStyle(getModel().getAdministration()) );
+				commentPanel.addStyleName(AON.CSS.aonHeightAll());
+				commentPanel.addStyleName(AON.CSS.aonTextCenter());
+				TextArea comment = new TextArea();
+				comment.addValueChangeHandler(event1 -> {
+					getModel().setComments(event1.getValue());
+					styleCommentsButton();
+					Model130.SERVICE.saveComments( getCallback().getOptions().getOccam(), getModel(), new AsyncCallback<Mod130>() {
+						@Override
+						public void onSuccess(Mod130 result) {
+							toast.hide();
+						}
+	
+						@Override
+						public void onFailure(Throwable caught) {
+							toast.hide();
+							getCallback().showError(AON.MSG.unableToSaveDeclaration(caught.getMessage()));
+						}
+					});
 				});
-			});
-			comment.setText(getModel().getComments());
-			comment.setWidth("90%");
-			comment.setHeight("5em");
-			commentPanel.add(comment);
-			toast.show(AON.MSG.comments(), commentPanel);
+				comment.setText(getModel().getComments());
+				comment.setWidth("90%");
+				comment.setHeight("5em");
+				commentPanel.add(comment);
+				toast.show(AON.MSG.comments(), commentPanel);
+			}
 		});
 		toolbarPanel.add( commentsButton );
 		styleCommentsButton();
