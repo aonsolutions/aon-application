@@ -6,6 +6,7 @@ import java.sql.Timestamp;
 import java.util.Date;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
+import java.util.stream.Stream;
 
 import org.jooq.Condition;
 import org.jooq.Record;
@@ -42,13 +43,17 @@ public class InvoiceBatchDAO {
 		}
 		@Override public Property<Integer> getIdProperty() {return new FilterDAO.PropertyDAO<>(INVOICE_BATCH.ID);}
 		@Override public Property<Integer> getDomainProperty(){return new FilterDAO.PropertyDAO<>(INVOICE_BATCH.DOMAIN);}
+		@Override public Property<String> getDescriptionProperty() {return new FilterDAO.PropertyDAO<>(INVOICE_BATCH.DESCRIPTION);}
 		@Override public Property<Timestamp> getDateProperty() {return new FilterDAO.PropertyDAO<>(INVOICE_BATCH.DATE);}
+		@Override public Property<Timestamp> getEndDateProperty() {return new FilterDAO.PropertyDAO<>(INVOICE_BATCH.END_DATE);}
 		@Override public Property<Byte> getTypeProperty() {return new FilterDAO.PropertyDAO<>(INVOICE_BATCH.TYPE);}
 		@Override public Property<Byte> getOperationProperty() {return new FilterDAO.PropertyDAO<>(INVOICE_BATCH.OPERATION);}
 		@Override public Property<Integer> getDataResponseProperty() {return new FilterDAO.PropertyDAO<>(INVOICE_BATCH.DATA_RESPONSE);}
 		@Override public Property<String> getCreationUserProperty() {return new FilterDAO.PropertyDAO<>(INVOICE_BATCH.CREATION_USER);}
+		@Override public Property<Timestamp> getCreationDateProperty() {return new FilterDAO.PropertyDAO<>(INVOICE_BATCH.CREATION_DATE);}
+		@Override public Property<String> getModificationUserProperty() {return new FilterDAO.PropertyDAO<>(INVOICE_BATCH.MODIFICATION_USER);}
+		@Override public Property<Timestamp> getModificationDateProperty() {return new FilterDAO.PropertyDAO<>(INVOICE_BATCH.MODIFICATION_DATE);}
 	}
-	
 	
 	public static SelectConditionStep<Record> select(AONContext ctx, InvoiceBatchFilter filter){	
 		return ctx.getDslContext()
@@ -63,6 +68,11 @@ public class InvoiceBatchDAO {
 			.findFirst().orElse(new InvoiceBatch());
 	}
 	
+	public static Stream<InvoiceBatch> getStream(AONContext ctx, InvoiceBatchFilter filter) {
+		return select(ctx, filter)
+			.fetch().stream().map(new InvoiceBatchFiller());
+	}
+	
 	public static InvoiceBatch save(AONContext ctx, InvoiceBatch invoiceBatch) {
 		InvoiceBatchValidation.autoComplete(ctx, invoiceBatch);
 		InvoiceBatchValidation.validate(ctx, invoiceBatch);
@@ -73,12 +83,15 @@ public class InvoiceBatchDAO {
 	
 	public static InvoiceBatch update(AONContext ctx, InvoiceBatch invoiceBatch) {
 		ctx.getDslContext().update(INVOICE_BATCH)
-		.set(INVOICE_BATCH.DOMAIN, invoiceBatch.getDomain())
+		.set(INVOICE_BATCH.DOMAIN, invoiceBatch.getDomain())		
+		.set(INVOICE_BATCH.DESCRIPTION, invoiceBatch.getDescription())
 		.set(INVOICE_BATCH.DATE, AonDateUtils.toTimestamp(invoiceBatch.getDate()))
+		.set(INVOICE_BATCH.END_DATE, AonDateUtils.toTimestamp(invoiceBatch.getEndDate()))
 		.set(INVOICE_BATCH.TYPE, invoiceBatch.getType().value())
 		.set(INVOICE_BATCH.OPERATION, invoiceBatch.getOperation().value())
 		.set(INVOICE_BATCH.DATA_RESPONSE, invoiceBatch.getDataResponse())
-		.set(INVOICE_BATCH.CREATION_USER, invoiceBatch.getCreationUser())
+		.set(INVOICE_BATCH.MODIFICATION_USER, ctx.getUser())
+		.set(INVOICE_BATCH.MODIFICATION_DATE, new Timestamp( System.currentTimeMillis()) )
 		.where(INVOICE_BATCH.ID.eq(invoiceBatch.getId()))
 		.execute();
 		return invoiceBatch;
@@ -87,11 +100,14 @@ public class InvoiceBatchDAO {
 	public static InvoiceBatch insert(AONContext ctx, InvoiceBatch invoiceBatch) {
 		Integer id = ctx.getDslContext().insertInto(INVOICE_BATCH)
 				.set(INVOICE_BATCH.DOMAIN, invoiceBatch.getDomain())
+				.set(INVOICE_BATCH.DESCRIPTION, invoiceBatch.getDescription())
 				.set(INVOICE_BATCH.DATE, AonDateUtils.toTimestamp(invoiceBatch.getDate()))
+				.set(INVOICE_BATCH.END_DATE, AonDateUtils.toTimestamp(invoiceBatch.getEndDate()))
 				.set(INVOICE_BATCH.TYPE, invoiceBatch.getType().value())
 				.set(INVOICE_BATCH.OPERATION, invoiceBatch.getOperation().value())
 				.set(INVOICE_BATCH.DATA_RESPONSE, invoiceBatch.getDataResponse())
-				.set(INVOICE_BATCH.CREATION_USER, invoiceBatch.getCreationUser())
+				.set(INVOICE_BATCH.CREATION_USER, ctx.getUser())
+				.set(INVOICE_BATCH.CREATION_DATE, new Timestamp( System.currentTimeMillis()))
 			.returning(INVOICE_BATCH.ID).fetchOne().getId();
 		return invoiceBatch.setId(id);
 	}	
@@ -100,7 +116,7 @@ public class InvoiceBatchDAO {
 		delete(ctx, f -> f.getDomainProperty().eq(ctx.getDomainId()).and(f.getIdProperty().eq(id)));
 	}
 	
-	public static void delete(AONContext ctx, InvoiceBatchFilter filter){
+	public static void delete(AONContext ctx, InvoiceBatchFilter filter) {
 		ctx.getDslContext().delete(INVOICE_BATCH)
 		.where(INVOICE_BATCH_PROPERTIES.getConditions(filter))
 		.execute();
@@ -115,13 +131,18 @@ public class InvoiceBatchDAO {
 		
 		public static InvoiceBatch build(Record r) {
 			return new InvoiceBatch()
-				.setId(r.getValue(INVOICE_BATCH.ID))
-				.setDomain(r.getValue(INVOICE_BATCH.DOMAIN))
-				.setDate(r.getValue(INVOICE_BATCH.DATE))
-				.setType(InvoiceCommunicationType.safeValueOf(r.getValue(INVOICE_BATCH.TYPE)))
-				.setOperation(InvoiceCommunicationOperation.safeValueOf(r.getValue(INVOICE_BATCH.OPERATION)))
-				.setDataResponse(r.getValue(INVOICE_BATCH.DATA_RESPONSE))
-				.setCreationUser(r.getValue(INVOICE_BATCH.CREATION_USER));
+				.setId(getValue(r, INVOICE_BATCH.ID))
+				.setDescription(getValue(r, INVOICE_BATCH.DESCRIPTION))
+				.setDomain(getValue(r, INVOICE_BATCH.DOMAIN))
+				.setDate(getValue(r, INVOICE_BATCH.DATE))
+				.setEndDate(getValue(r, INVOICE_BATCH.END_DATE))
+				.setType(InvoiceCommunicationType.safeValueOf(getValue(r, INVOICE_BATCH.TYPE)))
+				.setOperation(InvoiceCommunicationOperation.safeValueOf(getValue(r, INVOICE_BATCH.OPERATION)))
+				.setDataResponse(getValue(r, INVOICE_BATCH.DATA_RESPONSE))
+				.setCreationUser(getValue(r, INVOICE_BATCH.CREATION_USER))
+				.setCreationDate(getValue(r, INVOICE_BATCH.CREATION_DATE))
+				.setModificationUser(getValue(r, INVOICE_BATCH.MODIFICATION_USER))
+				.setModificationDate(getValue(r, INVOICE_BATCH.MODIFICATION_DATE));
 		}
 	}
 	
@@ -146,16 +167,10 @@ public class InvoiceBatchDAO {
 				throw new AonCoreException(AonError.EMPTY_DATA.format("operation")) ;
 		};
 		
-		public static final BiConsumer<AONContext, InvoiceBatch> EMPTY_DATA_RESPONSE = (ctx, invoiceBatch) -> {
-			if (invoiceBatch.getOperation() == null) 
-				throw new AonCoreException(AonError.EMPTY_DATA.format("data_response")) ;
-		};
-		
 		public static void validate(AONContext ctx, InvoiceBatch invoiceBatch) throws AonCoreException {
 				EMPTY_DOMAIN
 				.andThen(EMPTY_TYPE)
 				.andThen(EMPTY_OPERATION)
-				.andThen(EMPTY_DATA_RESPONSE)
 				.accept(ctx, invoiceBatch);
 		}
 		

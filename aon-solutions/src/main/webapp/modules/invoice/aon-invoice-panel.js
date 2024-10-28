@@ -1,5 +1,5 @@
 import { AonElement } from "../../components/AonElement.js";
-import { insertInvoice, mobileAction, MOBILE_ACTION, selfconta, downloadInvoiceExcel, getInvoice, getRawdocCount, getInvofoxCount, invoiceDuplicateFix, refreshProcessing } from "../../services/service.js";
+import { insertInvoice, mobileAction, MOBILE_ACTION, selfconta, downloadInvoiceExcel, getInvoice, getRawdocCount, getInvofoxCount, invoiceDuplicateFix, refreshProcessing, saveInvoiceClosing } from "../../services/service.js";
 import { Invoice } from "./Invoice.js";
 import { AonInvoice } from "./aon-invoice.js";
 import { AonMobileInvoice } from "./aon-mobile-invoice.js";
@@ -41,6 +41,7 @@ import { AonFutureTax } from "../fiscal/tax/aon-future-tax.js";
 import { generateJobId } from "./InvoiceUtils.js";
 import { getReader } from "../../services/utils.js";
 import { AonImageEditor } from "../../components/aon-image-editor.js";
+import { createSelect } from "../../components/CreateComponent.js";
 
 export class AonInvoicePanel extends AonElement {
   selectedOption;
@@ -160,6 +161,7 @@ export class AonInvoicePanel extends AonElement {
     this.clearToolbar();
     if(!this.isMobile()) {
       this.getApplication().addToolbarOption2(ACTION.ADD_INVOICE, () => this.addInvoice());
+      if(this.isBeta()) this.getApplication().addToolbarOption("Close", "close", () => this.closingInvoice());
       this.getApplication().addToolbarOption("Refresh", "refresh", () => this.refreshInvoicePanel());
       this.getApplication().addToolbarOption("Upload", "file_upload", () => this.addInvoiceFile());
       if(processing) this.getApplication().addToolbarOption("Sync", "sync", () => this.refreshProcessing()); 
@@ -759,6 +761,43 @@ export class AonInvoicePanel extends AonElement {
       this.aonInvoiceList({ status: "inbox" });
       aonInvoice.stopLoader();
     }
+  }
+
+  closingInvoice() {
+    let closing = this.createDiv();
+    let closingPeriod = createSelect();
+    closingPeriod.options = JSON.stringify([
+      { name: MSG.JANUARY, value: "01" }, { name: MSG.FEBRUARY, value: "02" }, { name: MSG.MARCH, value: "03" }, 
+      { name: MSG.APRIL, value: "04" }, { name: MSG.MAY, value: "05" }, { name: MSG.JUNE, value: "06" },      
+      { name: MSG.JULY, value: "07" }, { name: MSG.AUGUST, value: "08" }, { name: MSG.SEPTEMBER, value: "09" },
+      { name: MSG.OCTOBER, value: "10" }, { name: MSG.NOVEMBER, value: "11" }, { name: MSG.DECEMBER, value: "12" },
+      { name: "1 Trimestre", value: "1T" }, { name: "2 Trimestre", value: "2T" }, { name: "3 Trimestre", value: "3T" },
+      { name: "4 Trimestre", value: "4T" } 
+    ]);
+    closing.appendChild(closingPeriod)
+    let closingYear = createSelect("aonInvoiceClosingYear", MSG.YEAR);
+    closingYear.options = JSON.stringify([{ name: "2024", value: 2024 }]);
+    closing.appendChild(closingYear);
+    
+    let d = this.getApplication().getDialog();
+    d.clear();
+    if(!this.isMobile()) d.width = '400px';
+    d.setTitle("Cierre de Facturas Recibidas");
+    d.setContent(closing);
+    d.addAcceptAction(() => {
+      let data =  {
+        period: closingPeriod.value,
+        year: closingYear.value
+      };
+    
+      saveInvoiceClosing(data)
+      .then(r => this.showToast({
+          type: "success",
+          message: "El cierre se ha realizado correctamente.",
+        }))
+      .catch(error => this.showToast(error));
+    });
+    d.open();
   }
 
   refreshInvoicePanel() {
