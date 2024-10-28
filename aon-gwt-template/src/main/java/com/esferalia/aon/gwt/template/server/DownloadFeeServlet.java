@@ -27,6 +27,7 @@ import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Filter;
 import com.esferalia.aon.occam.api.model.Properties.FeeProperties;
+import com.esferalia.aon.occam.api.model.SellerWorkloadParams;
 import com.esferalia.aon.occam.api.model.fee.Fee;
 import com.esferalia.aon.occam.api.model.registry.CustomerFeeParams;
 import com.esferalia.aon.watson.server.io.ByteArrayOutputStream;
@@ -105,11 +106,18 @@ public class DownloadFeeServlet extends HttpServlet {
         celdaf.setCellStyle(style);
         
         Boolean isCustomerFee = filterJSON.optBoolean("isCustomerFee", false);
+        Boolean isSellerWorkload = filterJSON.optBoolean("isSellerWorkload", false);
   
         LinkedList<Fee> fees;
         
         if(isCustomerFee) {
         	fees = AON.getFullFeeList(domain.getName(), domain.getId(), login, getCondition(domain, filterJSON));
+        } else if(isSellerWorkload) {
+        	List<Integer> ids = AON.getSellersWorkloadFeesIds(getConditionWorkload(domain, login, filterJSON));
+        	CustomerFeeParams params = new CustomerFeeParams();
+    		params.setDomain(domain.getId());
+    		params.setFeeIds(ids.toArray(Integer[]::new));
+        	fees = AON.getFullFeeList(domain.getName(), domain.getId(), login, params);
         } else {
             if(filterJSON.opt("segment") != null) {
     			JSONArray segment = filterJSON.optJSONArray("segment");
@@ -230,8 +238,7 @@ public class DownloadFeeServlet extends HttpServlet {
         out.close();
 		
 	}
-	
-	
+
 	private Filter feeFilter(Domain domain, JSONObject filterJSON, FeeProperties f, Integer[] a) {
 		Filter filter =  f.getDomainProperty().eq(domain.getId());
 
@@ -549,6 +556,19 @@ public class DownloadFeeServlet extends HttpServlet {
 		
 		return params;
 	
+	}
+	
+	private SellerWorkloadParams getConditionWorkload(Domain domain, String login, JSONObject filterJSON) {
+		SellerWorkloadParams params = new SellerWorkloadParams();
+		
+		params.setUser(login);
+		params.setDomainName(domain.getName());
+		params.setDomain(domain.getId());
+		params.setPeriod(Byte.parseByte(filterJSON.optString("period")));
+		params.setSeller(Integer.parseInt(filterJSON.optString("seller")));
+		params.setDescription(filterJSON.optString("description"));
+		
+		return params;
 	}
 	
 	public String decode(String value){

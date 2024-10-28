@@ -110,12 +110,16 @@ public class FeeDAO {
 	
 	public static LinkedList<Fee> getFeeList(AONContext ctx, CustomerFeeParams customerFeeParams){
 		Condition condition = createFeeCondition(ctx, customerFeeParams);
+		
 		SelectOnConditionStep<Record> fromCustomerRecords = ctx.getDslContext().selectDistinct().from(CUSTOMER_FEE)
 				.join(DOMAIN).on(DOMAIN.ID.eq(CUSTOMER_FEE.DOMAIN))
 				.join(CUSTOMER).on(CUSTOMER.REGISTRY.eq(CUSTOMER_FEE.CUSTOMER))
 				.join(CUSTOMER_ALIAS).on(CUSTOMER.REGISTRY.eq(CUSTOMER_ALIAS.ID))
 				.join(ITEM).on(ITEM.ID.eq(CUSTOMER_FEE.ITEM))
-				.join(PRODUCT).on(PRODUCT.ID.eq(ITEM.PRODUCT));
+				.join(PRODUCT).on(PRODUCT.ID.eq(ITEM.PRODUCT))
+				.join(WORKPLACE).on(CUSTOMER_FEE.WORKPLACE.eq(WORKPLACE.ID))
+				.leftOuterJoin(PCATEGORY).on(PCATEGORY.ID.eq(PRODUCT.CATEGORY))
+				.leftOuterJoin(INVOICING_GROUP).on(INVOICING_GROUP.ID.eq(CUSTOMER_FEE.INVOICING_GROUP));
 		
 		if(null != customerFeeParams.getSeller())
 			fromCustomerRecords = fromCustomerRecords 	
@@ -138,6 +142,7 @@ public class FeeDAO {
 		
 		Result<Record> feeRecords = fromCustomerRecords 
 				.where(condition)
+				.groupBy(CUSTOMER_FEE.ID)
 				.orderBy(CUSTOMER_FEE.CUSTOMER, CUSTOMER_FEE.LINE)
 				.offset(customerFeeParams.getOffset())
 				.limit(customerFeeParams.getLimit())
@@ -176,6 +181,7 @@ public class FeeDAO {
 		
 		Result<Record> feeRecords = fromCustomerRecords 
 				.where(condition)
+				.groupBy(CUSTOMER_FEE.ID)
 				.orderBy(CUSTOMER_FEE.CUSTOMER, CUSTOMER_FEE.LINE)
 				.offset(customerFeeParams.getOffset())
 				.limit(customerFeeParams.getLimit())
@@ -398,6 +404,10 @@ public class FeeDAO {
 		
 		if(null != customerFeeParams.getFeeIds() && customerFeeParams.getFeeIds().length > 0) {
 			condition = condition.and(CUSTOMER_FEE.ID.in(customerFeeParams.getFeeIds()));
+		}
+		
+		if(AonStringUtils.isNotBlank(customerFeeParams.getCustomerName()) || AonStringUtils.isNotBlank(customerFeeParams.getProductName())) {
+			condition = condition.and(CUSTOMER_ALIAS.NAME.likeIgnoreCase("%" + customerFeeParams.getCustomerName() + "%")).or(CUSTOMER_FEE.DESCRIPTION.likeIgnoreCase("%" + customerFeeParams.getProductName() + "%"));
 		}
 		
 		return condition;

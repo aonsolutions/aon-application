@@ -262,8 +262,7 @@ public abstract class SellerWorkloadPanel extends ScrollPanel {
 		
 		HTMLPanel row = tab.createRow();
 		row.addDomHandler(e -> {
-			Window.alert("Lista cuotas del agente " + sellerWorkload.getName() + ", para el periodo seleccionado");
-			//onSellerWorkloadOpen(sellerWorkload);
+			onSellerWorkloadOpen(sellerWorkload);
 		}, ClickEvent.getType());
 		
 		AonTableButton checkButton = new AonTableButton(AON.MSG.selectAction(), AON.CSS.aonIconCheck());

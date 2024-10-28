@@ -1,10 +1,8 @@
 package com.esferalia.aon.gwt.marketing.client.commercial;
 
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.function.Consumer;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
@@ -17,17 +15,14 @@ import com.esferalia.aon.gwt.common.client.CommonServiceAsyncDecorator;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomTable;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonTableButton;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarSmallButton;
-import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.esferalia.aon.occam.api.model.SellerWorkloadParams;
 import com.esferalia.aon.occam.api.model.fee.Fee;
 import com.esferalia.aon.occam.api.model.registry.Seller;
-import com.esferalia.aon.occam.api.model.registry.SellerWorkload;
-import com.esferalia.aon.occam.api.model.registry.SellerWorkloadPeriod;
+import com.esferalia.aon.occam.api.model.type.BillingPeriod;
 import com.esferalia.aon.watson.mutable.MutableInt;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.TextAlign;
-import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ScrollEvent;
 import com.google.gwt.event.dom.client.ScrollHandler;
 import com.google.gwt.i18n.client.NumberFormat;
@@ -39,8 +34,6 @@ import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ScrollPanel;
-import com.google.gwt.user.client.ui.SimplePanel;
-import com.google.gwt.user.client.ui.Widget;
 
 public abstract class SellerWorkloadFeePanel extends ScrollPanel {
 
@@ -49,13 +42,11 @@ public abstract class SellerWorkloadFeePanel extends ScrollPanel {
 	private static final Logger LOGGER = Logger.getLogger(SellerWorkloadFeePanel.class.getName());
 	static { LOGGER.addHandler( new ConsoleLogHandler() ); }
 	
-	private final int limit = 100;
+	private final int limit = 30;
 	private final MutableInt offset = new MutableInt(0);
 	private final MutableInt moreData = new MutableInt(0);
 	private final MutableInt searchEnabled = new MutableInt( 0 );
 	
-	private SimplePanel container;
-	private ScrollPanel scrollPanel;
 	private AonCustomTable tab;
 	private int lastScrollPos = 0;
 	
@@ -66,10 +57,9 @@ public abstract class SellerWorkloadFeePanel extends ScrollPanel {
 	private static enum COLS {
 		  
 		DES(AON.MSG.customer()						,"-moz-available"	,"min-width: 5rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
-		, STA(AON.MSG.status()						,"7rem"				,"")
-		, TYP(AON.MSG.scope()						,"7rem"				,"")
-		, CON("Concepto"							,"-moz-available"	,"min-width: 5rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
-		, PER("Perido"								,"5rem"				,"")
+		, STA(AON.MSG.status()						,"5rem"				,"")
+		, CON("Producto"							,"-moz-available"	,"min-width: 5rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
+		, PER("Perido"								,"4rem"				,"")
 		, QUA("Cantidad"							,"5rem"				,"text-align: right;")
 		, PRI("Precio"								,"6rem"				,"text-align: right;")
 		, DIS("Descuento"							,"6rem"				,"text-align: right;")
@@ -106,9 +96,7 @@ public abstract class SellerWorkloadFeePanel extends ScrollPanel {
 		this.params = params;
 		this.rowSellers.clear();
 
-		container = new SimplePanel();
-		container.getElement().getStyle().setProperty("padding", "0 1rem 0 1px");
-		setWidget(container);
+		this.getElement().getStyle().setProperty("padding", "0 1rem 0 1px");
 		
 		addScrollHandler(new ScrollHandler() {
 
@@ -119,6 +107,7 @@ public abstract class SellerWorkloadFeePanel extends ScrollPanel {
 				if (oldScrollPos >= lastScrollPos) {
 					return;
 				}
+				
 				// -----------------------------------------------------
 				if (isSearchEnabled()) {
 					int maxScrollTop = getWidget().getOffsetHeight() - getOffsetHeight();
@@ -159,13 +148,11 @@ public abstract class SellerWorkloadFeePanel extends ScrollPanel {
 	}
 
 	private void search() {
-		container.clear();
 		tab = new AonCustomTable();
 		tab.setMaxHeight((Window.getClientHeight() - 200) + "px");
-		scrollPanel = new ScrollPanel(tab);
+		this.setWidget(tab);
 		
 		paintHeader();
-		container.setWidget(scrollPanel);
 		searchData();
 	}
 	
@@ -201,8 +188,8 @@ public abstract class SellerWorkloadFeePanel extends ScrollPanel {
 				FlowPanel line = new FlowPanel();
 				InlineLabel label = new InlineLabel(AON.MSG.noData());
 				line.add(label);
-				container.clear();
-				container.add(line);
+				this.clear();
+				this.setWidget(line);
 				disableMoreData();
 			}
 			enableSearch();
@@ -224,10 +211,11 @@ public abstract class SellerWorkloadFeePanel extends ScrollPanel {
 		tab.addRow(row, statusLabel, COLS.STA.getColWidth());
 		
 		Label productLabel = new Label(fee.getDescription());
+		productLabel.setTitle(fee.getDescription());
 		tab.addInlineStyle(productLabel, COLS.CON.getStyles());
 		tab.addRow(row, productLabel, COLS.CON.getColWidth());
 		
-		Label periodLabel = new Label(fee.getPeriod().getValue().toString());
+		Label periodLabel = new Label(BillingPeriod.toString(fee.getPeriod()));
 		tab.addRow(row, periodLabel, COLS.PER.getColWidth());
 		
 		Label quantityLabel = new Label(null == fee.getQuantity() ? "" : fee.getQuantity().toString());
@@ -268,8 +256,8 @@ public abstract class SellerWorkloadFeePanel extends ScrollPanel {
 	private String createFeeInfo(Fee fee) {
 		String tooltip = "";
 		
-		tooltip += "Seguridad: " + fee.getSecurityLevel().getName();
-		tooltip += "\nC. Trabajo: " + fee.getWorkplace().getDescription();
+		tooltip += "Seguridad: " + (null == fee.getSecurityLevel() ? "N/D" : fee.getSecurityLevel().getName());
+		tooltip += "\nC. Trabajo: " + (null == fee.getWorkplace() ? "N/D" : fee.getWorkplace().getDescription());
 		
 		if(null != fee.getSeller() && AonStringUtils.isNotBlank(fee.getSeller().getName())) tooltip += "\nComercial: " + fee.getSeller().getName();
 		if(null != fee.getInvoicingGroup() && AonStringUtils.isNotBlank(fee.getInvoicingGroup().getDescription())) tooltip += "\nG. Facturac\u00f3n: " + fee.getInvoicingGroup().getDescription();
@@ -284,6 +272,21 @@ public abstract class SellerWorkloadFeePanel extends ScrollPanel {
 			@Override
 			public void onSuccess(List<Fee> sellerswokloadFees) {
 				success.accept(sellerswokloadFees);
+			}
+			
+			@Override
+			public void onFailure(Throwable caught) {
+				// Error
+			}
+		});
+	}
+	
+	public void getCustomerFeeIds(Consumer<List<Integer>> success) {
+		COMMON_SERVICE.getSellersWorkloadFeesIds(params, new AsyncCallback<List<Integer>>() {
+			
+			@Override
+			public void onSuccess(List<Integer> sellerswokloadFeesIds) {
+				success.accept(sellerswokloadFeesIds);
 			}
 			
 			@Override
