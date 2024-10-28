@@ -85,7 +85,7 @@ public class AonNordigen {
 		return NordigenAPI.createEndUserAgreement(token.getAccess(), MAX_DAYS, MAX_DAYS, null, institutionId);
 	}
 
-	static NordigenAgreement getAgreement(NordigenAccessToken token, String agreementId) {
+	public static NordigenAgreement getAgreement(NordigenAccessToken token, String agreementId) {
 		return NordigenAPI.getEndUserAgreement(token.getAccess(), agreementId);
 	}
 
@@ -565,19 +565,32 @@ public class AonNordigen {
 	}
 	
 	//NUEVO COMO IDEA YA QUE HACE FALTA VOLVER A HACER EL AGREEMENT TRAS LOS DIAS CONFIGURADOS
-	public static boolean handleAgreement(NordigenAccessToken token, NordigenRequisition requisition) {		
-		NordigenAgreement agreement = AonNordigen.getAgreement(token, requisition.getAgreement());
-		Date today = new Date();
-		Date created = agreement.getCreated();
-		long diffInMillies = today.getTime() - created.getTime();
+//	public static boolean handleAgreement(NordigenAccessToken token, NordigenRequisition requisition) {		
+//		NordigenAgreement agreement = AonNordigen.getAgreement(token, requisition.getAgreement());
+//		Date today = new Date();
+//		Date created = agreement.getCreated();
+//		long diffInMillies = today.getTime() - created.getTime();
+//	    long daysBetween = TimeUnit.DAYS.convert(diffInMillies, TimeUnit.MILLISECONDS);
+//		int daysToExpire = agreement.getAccessValidForDays() - (int)daysBetween;
+//		
+//		if (daysToExpire <= 5) {
+//			return true;
+//		}else {
+//			return false;
+//		}
+//	}
+	
+	public static int handleAgreement(NordigenAccessToken token, NordigenRequisition requisition) {		
+	    NordigenAgreement agreement = AonNordigen.getAgreement(token, requisition.getAgreement());
+	    Date today = new Date();
+	    Date created = agreement.getCreated();
+	    
+	    long diffInMillies = today.getTime() - created.getTime();
 	    long daysBetween = TimeUnit.DAYS.convert(diffInMillies, TimeUnit.MILLISECONDS);
-		int daysToExpire = agreement.getAccessValidForDays() - (int)daysBetween;
-		
-		if (daysToExpire <= 5) {
-			return true;
-		}else {
-			return false;
-		}
+	    
+	    int daysToExpire = agreement.getAccessValidForDays() - (int) daysBetween;
+	    
+	    return daysToExpire;
 	}
 	
 

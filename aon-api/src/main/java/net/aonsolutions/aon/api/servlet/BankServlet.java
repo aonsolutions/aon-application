@@ -19,9 +19,11 @@ import com.esferalia.aon.occam.api.model.Properties.NordigenBankStatementPropert
 import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.finance.BankAccount;
 import com.esferalia.aon.occam.api.model.finance.nordigen.NordigenAccessToken;
+import com.esferalia.aon.occam.api.model.finance.nordigen.NordigenAgreement;
 import com.esferalia.aon.occam.api.model.finance.nordigen.NordigenBankAccount;
 import com.esferalia.aon.occam.api.model.finance.nordigen.NordigenConfiguration;
 import com.esferalia.aon.occam.api.model.finance.nordigen.NordigenInstitution;
+import com.esferalia.aon.occam.api.model.finance.nordigen.NordigenRequisition;
 import com.esferalia.aon.occam.api.model.registry.RegistryBank;
 import com.esferalia.aon.occam.api.model.type.StatementStatus;
 import com.esferalia.aon.watson.util.AonStringUtils;
@@ -145,7 +147,7 @@ public class BankServlet extends AonApiHttpServlet {
 	    
 	    Company company = AON.getCompanyForDomain(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin());
 	    if (company == null || company.get() == null) {
-	        throw new IllegalArgumentException("La compañía no puede ser nula.");
+	        throw new IllegalArgumentException("La compaï¿½ï¿½a no puede ser nula.");
 	    }
 	    
 	    String iban = api.getData().optString("iban");
@@ -155,14 +157,12 @@ public class BankServlet extends AonApiHttpServlet {
 	    
 	    String bic = api.getData().optString("swiftBic");
 	    if (bic == null || bic.isEmpty()) {
-	        throw new IllegalArgumentException("El código SWIFT/BIC no puede estar vacio.");
+	        throw new IllegalArgumentException("El cï¿½digo SWIFT/BIC no puede estar vacio.");
 	    }
 	    
 	    String suffix = api.getData().optString(IJsonNames.SUFIX);
 
 	    String alias = api.getData().optString(IJsonNames.NAME);
-
-//	    boolean active = api.getData().optBoolean(IJsonNames.ACTIVE); 
 
 	    bank.setDomain(api.getDomain().getId())
 	        .setRegistry(company.get().getId())
@@ -199,30 +199,6 @@ public class BankServlet extends AonApiHttpServlet {
 			return false;
 		}
 	}
-
-//	private static boolean insertMovesIntoBD(AonApiData api, HttpServletRequest request) {
-//		try {
-//			String idParam = request.getParameter("id");
-//			int id = Integer.parseInt(idParam);
-//			occam.setDomain(api.getDomain().getId()).setDomainName(api.getDomain().getName())
-//					.setUser(api.getUser().getLogin());
-//			NordigenConfiguration nc = AonNordigen.getConfiguration(occam);
-//			NordigenAccessToken token = nc.getToken();
-//			token = NordigenUtils.handleToken(token);
-//			List<NordigenBankAccount> lista = nc.getAccounts();
-//			NordigenBankAccount bank2 = new NordigenBankAccount();
-//
-//			for (int i = 0; i < lista.size(); i++) {
-//				if (lista.get(i).getRbank().getId().equals(id)) {
-//					bank2 = AonNordigen.setBankAccountValues(occam, token, lista.get(i));
-//				}
-//			}
-//			AonNordigen.insertStatements(occam, bank2);
-//			return true;
-//		} catch (Exception e) {
-//			return false;
-//		}
-//	}
 
 	private static boolean insertBalancesIntoBD(AonApiData api, HttpServletRequest request) {
 		try {
@@ -293,9 +269,13 @@ public class BankServlet extends AonApiHttpServlet {
 					String instBic = institution.getBic();
 					if (instBic.equals(bankBic.replace("XXX", ""))) {
 						bankJson.put("logo", institution.getLogo());
-						break;
 					}
 				}
+			}
+			if (bank.getRequisition() != null && !AonStringUtils.isBlank(bank.getRequisition())) {
+				NordigenRequisition requisition = AonNordigen.getRequisition(token, bank.getRequisition());
+				int days = AonNordigen.handleAgreement(token, requisition);
+				bankJson.put("acces_valid_days_left", days);
 			}
 			resultArray.put(bankJson);
 		}
