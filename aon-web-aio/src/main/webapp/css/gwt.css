@@ -214,12 +214,14 @@
 	background-color: #fafafa;
 }
 
-table:has(> tbody > .dataGridEvenRow) {
+.aon_display_grid,
+table:has(> tbody > .dataGridEvenRow){
 	border-collapse: separate;
 	border-spacing: 0px 6px;
 }
 
-.dataGridCell {
+.dataGridCell,
+.aon_display_grid_cell {
 	padding-left: 1.0em;
 	padding-top: 0.5em;
 	padding-bottom: 0.5em;
@@ -233,27 +235,29 @@ table:has(> tbody > .dataGridEvenRow) {
 	background-color: transparent;
 }
 
-.dataGridFirstColumn {
+.dataGridFirstColumn,
+.aon_display_grid_cell:first-child {
 	border-left: 1px solid #ddd;
 	border-radius: 6px 0px 0px 6px;
 }
 
-.dataGridLastColumn {
+.dataGridLastColumn,
+.aon_display_grid_cell:last-child {
 	border-right: 1px solid #ddd;
 	border-radius: 0px 6px 6px 0px;
 }
 
-.dataGridOddRow, .dataGridEvenRow {
+.dataGridOddRow, .dataGridEvenRow, .aon_display_grid_row {
 	border-top: 1px solid #ddd;
 	border-bottom: 1px solid #ddd;
 	background-color: transparent;
 }
 
-.dataGridHoveredRow {
+.dataGridHoveredRow, .aon_display_grid_row:hover {
 	background-color: #f1f1f1;
 }
 
-.dataGridEvenRow:first-child {
+.dataGridEvenRow:first-child, .aon_display_grid_row:first-child {
 	border-bottom: 1px solid #ddd !important;
 }
 
@@ -289,6 +293,10 @@ table:has(> tbody > .dataGridEvenRow) {
   text-transform: capitalize;
 }
 
+.aon_custom_row:hover, .aon_utility_option:hover, .aon_custom_text_box:hover
+	{
+	background-color: #f1f1f1;
+}
 
 .aon_icon_undo {
 	background-size: 24px;
@@ -377,6 +385,12 @@ table:has(> tbody > .dataGridEvenRow) {
 .aon-dataTable .aon-icon-reset{
 	background-size: 24px;
 	background-image: url('data:image/svg+xml;utf-8,<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="--var(aonIconColor, black)"><path d="M460-460H240v-40h220v-220h40v220h220v40H500v220h-40v-220Z"/></svg>') ;
+}
+
+.gwt-CheckBox {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
 }
 
 input[type='checkbox']{
