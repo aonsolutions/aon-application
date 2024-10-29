@@ -67,8 +67,10 @@ public abstract class SellerWorkloadPanel extends ScrollPanel {
 		, TYP(AON.MSG.scope()						,"7rem"				,"")
 		, ACT("Estado"								,"5rem"				,"")
 		, CUS("Clientes"							,"5rem"				,"text-align: right;")
+//		, SAL("N\u00f3minas"						,"5rem"				,"text-align: right;")
 		, FEE("Cuotas"								,"5rem"				,"text-align: right;")
-		, AMO("Facturaci\u00f3n"					,"6rem"				,"text-align: right;")
+		, TOT("Facturaci\u00f3n Bruta"				,"8rem"				,"text-align: right;")
+		, AMO("Facturaci\u00f3n Neta"				,"8rem"				,"text-align: right;")
 		;
 
 		String headerLabel;
@@ -297,19 +299,28 @@ public abstract class SellerWorkloadPanel extends ScrollPanel {
 			customerL.getElement().getStyle().setTextAlign(TextAlign.RIGHT);
 			tab.addRow(row, customerL, COLS.CUS.getColWidth());
 			
+			// TODO: a futuro
+//			Label salariesL = new Label(entry.getValue().getSalaries().toString());
+//			salariesL.getElement().getStyle().setTextAlign(TextAlign.RIGHT);
+//			tab.addRow(row, salariesL, COLS.SAL.getColWidth());
+			
 			Label feeL = new Label(entry.getValue().getCustomerFees().toString());
 			feeL.getElement().getStyle().setTextAlign(TextAlign.RIGHT);
 			tab.addRow(row, feeL, COLS.FEE.getColWidth());
 			
-			Label amountL = new Label(formatToEuro(entry.getValue().getAmount()));
-			amountL.getElement().getStyle().setTextAlign(TextAlign.RIGHT);
-			tab.addRow(row, amountL, COLS.AMO.getColWidth());
+			Label totalAmountL = new Label(formatToEuro(entry.getValue().getTotalAmount()));
+			totalAmountL.getElement().getStyle().setTextAlign(TextAlign.RIGHT);
+			tab.addRow(row, totalAmountL, COLS.AMO.getColWidth());
+			
+			Label netAmountL = new Label(formatToEuro(entry.getValue().getNetAmount()));
+			netAmountL.getElement().getStyle().setTextAlign(TextAlign.RIGHT);
+			tab.addRow(row, netAmountL, COLS.AMO.getColWidth());
 			
 			if(i % 2 != 0) {
 				addGrayBg(customerL);
 				addGrayBg(feeL);
-				addGrayBg(amountL);
-			}
+				addGrayBg(netAmountL);
+				addGrayBg(totalAmountL);}
 		}
 		
 		tab.addRow(row, buttonContainer, "2rem");

@@ -27,7 +27,6 @@ import com.google.gwt.event.dom.client.ScrollEvent;
 import com.google.gwt.event.dom.client.ScrollHandler;
 import com.google.gwt.i18n.client.NumberFormat;
 import com.google.gwt.logging.client.ConsoleLogHandler;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTMLPanel;
@@ -60,12 +59,15 @@ public abstract class SellerWorkloadFeePanel extends ScrollPanel {
 		, STA(AON.MSG.status()						,"5rem"				,"")
 		, CON("Producto"							,"-moz-available"	,"min-width: 5rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
 		, PER("Perido"								,"4rem"				,"")
-		, QUA("Cantidad"							,"5rem"				,"text-align: right;")
-		, PRI("Precio"								,"6rem"				,"text-align: right;")
-		, DIS("Descuento"							,"6rem"				,"text-align: right;")
-		, STR("F. Desde"							,"6rem"				,"")
+		, QUA("Cantidad"							,"4rem"				,"text-align: right;")
+		, PRI("Pre. Bruto"							,"6rem"				,"text-align: right;")
+		, DIS("Descuento"							,"5rem"				,"text-align: right;")
+		, NET("Pre. Neto"							,"6rem"				,"text-align: right;")
+		, TOB("Importe Bruto"						,"6rem"				,"text-align: right;")
+		, TON("Importe Neto"						,"6rem"				,"text-align: right;")
+		, STR("F. Desde"							,"4rem"				,"")
 		, BIL("F. Facturaci\u00f3n"					,"6rem"				,"")
-		, END("F. Hasta"							,"6rem"				,"")
+		, END("F. Hasta"							,"4rem"				,"")
 		, BUT(AonStringUtils.EMPTY					,"2rem"				,"")
 		;
 
@@ -149,7 +151,6 @@ public abstract class SellerWorkloadFeePanel extends ScrollPanel {
 
 	private void search() {
 		tab = new AonCustomTable();
-		tab.setMaxHeight((Window.getClientHeight() - 200) + "px");
 		this.setWidget(tab);
 		
 		paintHeader();
@@ -204,6 +205,7 @@ public abstract class SellerWorkloadFeePanel extends ScrollPanel {
 		HTMLPanel row = tab.createRow();
 		
 		Label customerLabel = new Label(fee.getCustomer().getName());
+		customerLabel.setTitle(fee.getCustomer().getName());
 		tab.addInlineStyle(customerLabel, COLS.DES.getStyles());
 		tab.addRow(row, customerLabel, COLS.DES.getColWidth());
 		
@@ -229,6 +231,18 @@ public abstract class SellerWorkloadFeePanel extends ScrollPanel {
 		Label discountLabel = new Label(null == fee.getDiscountExpr() ? "" : fee.getDiscountExpr());
 		discountLabel.getElement().getStyle().setTextAlign(TextAlign.RIGHT);
 		tab.addRow(row, discountLabel, COLS.DIS.getColWidth());
+		
+		Label netCostLabel = new Label(formatToEuro(null == fee.getNetCost() ? 0.00 : fee.getNetCost()));
+		netCostLabel.getElement().getStyle().setTextAlign(TextAlign.RIGHT);
+		tab.addRow(row, netCostLabel, COLS.NET.getColWidth());
+		
+		Label priceTotalLabel = new Label(formatToEuro(null == fee.getTotalPrice() ? 0.00 : fee.getTotalPrice()));
+		priceTotalLabel.getElement().getStyle().setTextAlign(TextAlign.RIGHT);
+		tab.addRow(row, priceTotalLabel, COLS.TOB.getColWidth());
+		
+		Label priceNetLabel = new Label(formatToEuro(null == fee.getTotalNetPrice() ? 0.00 : fee.getTotalNetPrice()));
+		priceNetLabel.getElement().getStyle().setTextAlign(TextAlign.RIGHT);
+		tab.addRow(row, priceNetLabel, COLS.TON.getColWidth());
 		
 		Label startLabel = new Label(AonDateUtils.formatDate(fee.getStartDate()));
 		tab.addRow(row, startLabel, COLS.STR.getColWidth());
