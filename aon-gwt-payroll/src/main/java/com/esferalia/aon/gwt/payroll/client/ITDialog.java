@@ -1738,7 +1738,7 @@ public abstract class ITDialog extends AonCustomDialog {
     }
 	
 	private void removeITPartTGSS(ITPart part) {
-		LOGGER.info(part.toString());
+		changeStatusPending();
 		onRemoveITPartTGSS(parseITByStatus(part));
 	}
 	
@@ -1815,7 +1815,7 @@ public abstract class ITDialog extends AonCustomDialog {
 	}
 	
 	// --------------------------------------------------- NormalizeIT.Methods
-	protected void normalizeITToSave() {
+	public void normalizeITToSave() {
 		if((byte) 1 == Byte.parseByte(causeLowPart.getSelectedValue())) {
 			Date realStartDate = DateUtils.copyDateOnly(this.it.getStartDate());
 			
@@ -2135,7 +2135,7 @@ public abstract class ITDialog extends AonCustomDialog {
 		baseCC.setStyleName("aon-inputText");
 		panel.add(baseCC);
 		baseCC.addChangeHandler(event->{
-			it.setDailyCGCBase(baseCC.getValue() / quoteDayInput.getValue().intValue());
+			it.setDailyCGCBase(baseCC.getValue());
 //			it.setRegulationBase(baseCC.getValue());
 		});
 		
@@ -2148,7 +2148,7 @@ public abstract class ITDialog extends AonCustomDialog {
 		baseCP.setStyleName("aon-inputText");
 		panel.add(baseCP);
 		baseCP.addChangeHandler(event->{
-			it.setDailyCGPBase(baseCP.getValue() / quoteDayInput.getValue().intValue());
+			it.setDailyCGPBase(baseCP.getValue());
 		});
 		baseCPEl.setVisible(isPaternity());
 		baseCP.setVisible(isPaternity());
@@ -2190,7 +2190,13 @@ public abstract class ITDialog extends AonCustomDialog {
 	}
 	
     protected void changeStatusPending() {
-        changeStatus(ContractLeaveDetailStatus.PENDING);
+    	for (ITPart itPart: this.it.getITParts()) {
+            if(itPart.getType().equals((byte)0)) {
+                itPart.setStatus(ContractLeaveDetailStatus.PENDING.value());
+                itPart.setModify(true);
+                break;
+            }
+        }
     }
 	
 	private void getTramos() {
@@ -2291,8 +2297,9 @@ public abstract class ITDialog extends AonCustomDialog {
             Double baseCpRound = Math.round(baseCp*100.0)/100.0;
             baseCP.setValue(baseCpRound);
             
-        	it.setDailyCGCBase(baseCcRound/quoteDay);
-        	it.setDailyCGPBase(baseCpRound/quoteDay);
+        	it.setDailyCGCBase(baseCcRound);
+        	it.setDailyCGPBase(baseCpRound);
+        	
         }
 	}
 	
