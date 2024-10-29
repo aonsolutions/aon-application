@@ -10,11 +10,11 @@
 			transition: 0.5s;
 		}
 	
-		.employees img {
+		.aon-EmployeesPanel img {
 			filter: grayscale(100%) contrast(200%);
 		}
 		
-		.employeesTree  {
+		.aon-EmployeesTree  {
 			text-transform: uppercase;
 		}
 
@@ -37,7 +37,14 @@
 			z-index: 1;
 		}
 		
+		.aon-EmployeesToolbar-Title {
+			text-transform: uppercase;
+		}
+		
 		.heightAll { height: 100%; }
+		
+		@external aon-EmployeesTree;
+		@external aon-EmployeesToolbar-Title;
 	
 	</ui:style>
 
@@ -48,8 +55,8 @@
 				<g:HTMLPanel styleName="{style.flexColumn}" ui:field="dynamicEmployees">
 					<g:HTMLPanel styleName="{style.flex}" ui:field="employeesToolbar"/>
 					<aon:AonEmployeesTreeToolbar ui:field="toolbar" />
-					<g:ScrollPanel styleName="{style.employees} {style.heightAll}"  ui:field="scrollPanel" debugId="employeesScrollPanel">
-						<g:Tree  ui:field="tree" debugId="employeesTree"  styleName="{style.employeesTree} gwt-Tree" />
+					<g:ScrollPanel styleName="{style.aon-EmployeesPanel} {style.heightAll}"  ui:field="scrollPanel" debugId="employeesScrollPanel">
+						<g:Tree  ui:field="tree" debugId="employeesTree"  styleName="{style.aon-EmployeesTree} gwt-Tree" />
 					</g:ScrollPanel>
 				</g:HTMLPanel>
 				
