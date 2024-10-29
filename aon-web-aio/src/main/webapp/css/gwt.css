@@ -52,7 +52,7 @@
  * Card
  */
 .aonCard, .aonEmployeeCard, .aonEnterpriseCard, .aonCCCCard,
-	.aonActivityCard, .aon_search_panel {
+	.aonActivityCard, .aonMod145Card, .aonSEPECard, .aon_search_panel {
 	font-size: 12px;
 	margin: 10px;
 	border-radius: 5px;
@@ -63,7 +63,7 @@
 }
 
 .aonCardTitle, .aonEmployeeCardTitle, .aonEnterpriseCardTitle,
-	.aonCCCCardTitle, .aonActivityCardTitle {
+	.aonCCCCardTitle, .aonActivityCardTitle, .aonSEPECardTitle, .aonMod145CardTitle {
 	color: #262626;
 	display: flex;
 	font-size: 14px;
@@ -73,12 +73,13 @@
 	position: initial;
 }
 
-.aonEmployeeCardLabel, .aonEnterpriseCardLabel, .aonActivityCardLabel {
+.aonEmployeeCardLabel, .aonEnterpriseCardLabel, .aonActivityCardLabel, .aonMod145CardLabel, .aonSEPECardLabel {
+	font-weight: 400;
 	background-color: #fff;
 }
 
 .aonEmployeeCardRequired, .aonEnterpriseCardRequired,
-	.aonActivityCardRequired {
+	.aonActivityCardRequired, .aonMod145CardRequired {
 	
 }
 
@@ -103,6 +104,10 @@
 	padding-right: 40px;
 }
 
+.aon_custom_table_header{
+	background-color: transparent;
+}
+
 .aon_custom_row {
 	cursor: pointer;
 	margin-top: 3px;
@@ -110,6 +115,9 @@
 	border-radius: 5px;
 	padding: 12px 12px 12px 12px;
 	border: 1px solid rgb(221, 221, 221);
+	
+	color: #5f6368;
+	font-size: 12px;
 }
 
 .gwt-Selector .gwt-SplitLayoutPanel-VDragger {
@@ -235,13 +243,31 @@ table:has(> tbody > .dataGridEvenRow){
 	background-color: transparent;
 }
 
+.gwt-PopupPanel .dataGridCell {
+	height: 32px;
+	padding-top: 0em;
+	padding-left: 15px;
+	padding-bottom: 0em;
+	border-top: none;
+	border-bottom: none;
+} 
+.gwt-PopupPanel .dataGridLastColumn {
+	border-right: none;
+}
+
+.gwt-PopupPanel .dataGridFirstColumn {
+	border-left: none;
+}
+
 .dataGridFirstColumn,
+.dataGridCell:first-child,
 .aon_display_grid_cell:first-child {
 	border-left: 1px solid #ddd;
 	border-radius: 6px 0px 0px 6px;
 }
 
 .dataGridLastColumn,
+.dataGridCell:last-child,
 .aon_display_grid_cell:last-child {
 	border-right: 1px solid #ddd;
 	border-radius: 0px 6px 6px 0px;
@@ -273,10 +299,12 @@ table:has(> tbody > .dataGridEvenRow){
 	font-weight: normal;
 }
 
-.gwt-MenuItem .aon-icon-commandButton {
-	min-height: 24px;
-	padding-top: 6px; 
-	display: inline-block;
+.gwt-MenuItem .aon_icon_pdf {
+	background-size: 14px;
+	background-image: url('data:image/svg+xml;utf-8,<svg fill="black" width="14px" height="14px" viewBox="0 0 24 24" role="img" xmlns="http://www.w3.org/2000/svg"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"><title>Adobe Acrobat Reader icon</title><path d="M23.63 15.3c-.71-.745-2.166-1.17-4.224-1.17-1.1 0-2.377.106-3.761.354a19.443 19.443 0 0 1-2.307-2.661c-.532-.71-.994-1.49-1.42-2.236.817-2.484 1.207-4.507 1.207-5.962 0-1.632-.603-3.336-2.342-3.336-.532 0-1.065.32-1.349.781-.78 1.384-.425 4.4.923 7.381a60.277 60.277 0 0 1-1.703 4.507c-.568 1.349-1.207 2.733-1.917 4.01C2.834 18.53.314 20.34.03 21.758c-.106.533.071 1.03.462 1.42.142.107.639.533 1.49.533 2.59 0 5.323-4.188 6.707-6.707 1.065-.355 2.13-.71 3.194-.994a34.963 34.963 0 0 1 3.407-.745c2.732 2.448 5.145 2.839 6.352 2.839 1.49 0 2.023-.604 2.2-1.1.32-.64.106-1.349-.213-1.704zm-1.42 1.03c-.107.532-.64.887-1.384.887-.213 0-.39-.036-.604-.071-1.348-.32-2.626-.994-3.903-2.059a17.717 17.717 0 0 1 2.98-.248c.746 0 1.385.035 1.81.142.497.106 1.278.426 1.1 1.348zm-7.524-1.668a38.01 38.01 0 0 0-2.945.674 39.68 39.68 0 0 0-2.52.745 40.05 40.05 0 0 0 1.207-2.555c.426-.994.78-2.023 1.136-2.981.354.603.745 1.207 1.135 1.739a50.127 50.127 0 0 0 1.987 2.378zM10.038 1.46a.768.768 0 0 1 .674-.425c.745 0 .887.851.887 1.526 0 1.135-.355 2.874-.958 4.861-1.03-2.768-1.1-5.074-.603-5.962zM6.134 17.997c-1.81 2.981-3.549 4.826-4.613 4.826a.872.872 0 0 1-.532-.177c-.213-.213-.32-.461-.249-.745.213-1.065 2.271-2.555 5.394-3.904Z"></path></g></svg>') ;
+}
+.gwt-MenuItem .aon-icon-commandButton{
+	white-space: nowrap;
 }
 
 .aon-StackLayoutHeader {
@@ -296,6 +324,10 @@ table:has(> tbody > .dataGridEvenRow){
 .aon_custom_row:hover, .aon_utility_option:hover, .aon_custom_text_box:hover
 	{
 	background-color: #f1f1f1;
+}
+
+.aon_icon_info {
+	background-size: 24px;
 }
 
 .aon_icon_undo {
@@ -387,11 +419,62 @@ table:has(> tbody > .dataGridEvenRow){
 	background-image: url('data:image/svg+xml;utf-8,<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="--var(aonIconColor, black)"><path d="M460-460H240v-40h220v-220h40v220h220v40H500v220h-40v-220Z"/></svg>') ;
 }
 
+.aon_icon_add_block {
+	background-size: 24px;
+	background-image: url('data:image/svg+xml;utf-8,<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="black"><path d="M146-346v-28h280v28H146Zm0-160v-28h440v28H146Zm0-160v-28h440v28H146Zm520 480v-160H506v-28h160v-160h28v160h160v28H694v160h-28Z"/></svg>') ;
+}
+
+.aon_toolbar_button.aon_icon_receipt{
+	background-size: 28px;
+	background-image: url('data:image/svg+xml;utf-8,<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="black"><path d="M346-266h268v-28H346v28Zm0-160h268v-28H346v28Zm-74 294q-26 0-43-17t-17-43v-576q0-26 17-43t43-17h314l162 162v474q0 26-17 43t-43 17H272Zm300-520v-148H272q-12 0-22 10t-10 22v576q0 12 10 22t22 10h416q12 0 22-10t10-22v-460H572ZM240-800v148-148 640-640Z"/></svg>');
+}
+
+.aon_icon_filter_list {
+	background-size: 24px;
+	background-image: url('data:image/svg+xml;utf-8,<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="black"><path d="M429-292v-28h101v28H429ZM282-466v-28h395v28H282ZM172-640v-28h616v28H172Z"/></svg>') ;
+}
+
+.aon_icon_refresh {
+	background-size: 24px;
+	background-image: url('data:image/svg+xml;utf-8,<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="black"><path d="M211-362q-12-27-18.5-56.5T186-478q0-123 86-209.5T480-774h70l-90-90 20-20 124 124-124 124-20-20 90-90h-70q-111 0-188.5 78T214-478q0 23 4.5 47.5T232-383l-21 21ZM480-76 356-200l124-124 20 20-90 90h70q111 0 188.5-78T746-482q0-23-4.5-47.5T728-577l21-21q12 27 18.5 56.5T774-482q0 123-86 209.5T480-186h-70l90 90-20 20Z"/></svg>') ;
+}
+
+.aon_icon_lock {
+	background-size: 24px;
+	background-image: url('data:image/svg+xml;utf-8,<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="black"><path d="M272-132q-25 0-42.5-17.5T212-192v-336q0-25 17.5-42.5T272-588h60v-80q0-62 43-105t105-43q62 0 105 43t43 105v80h60q25 0 42.5 17.5T748-528v336q0 25-17.5 42.5T688-132H272Zm0-28h416q14 0 23-9t9-23v-336q0-14-9-23t-23-9H272q-14 0-23 9t-9 23v336q0 14 9 23t23 9Zm208-146q23 0 38.5-15.5T534-360q0-23-15.5-38.5T480-414q-23 0-38.5 15.5T426-360q0 23 15.5 38.5T480-306ZM360-588h240v-80q0-50-35-85t-85-35q-50 0-85 35t-35 85v80ZM240-160v-400 400Z"/></svg>') ;
+}
+
+.aon_icon_unlock{
+	background-size: 24px;
+	background-image: url('data:image/svg+xml;utf-8,<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="black"><path d="M272-588h328v-80q0-50-35-85t-85-35q-50 0-85 35t-35 85h-28q0-62 43-105t105-43q62 0 105 43t43 105v80h60q25 0 42.5 17.5T748-528v336q0 25-17.5 42.5T688-132H272q-25 0-42.5-17.5T212-192v-336q0-25 17.5-42.5T272-588Zm0 428h416q14 0 23-9t9-23v-336q0-14-9-23t-23-9H272q-14 0-23 9t-9 23v336q0 14 9 23t23 9Zm208-146q23 0 38.5-15.5T534-360q0-23-15.5-38.5T480-414q-23 0-38.5 15.5T426-360q0 23 15.5 38.5T480-306ZM240-160v-400 400Z"/></svg>') ;
+}
+
+.aon_icon_verify{
+	background-size: 24px;
+	background-image: url('data:image/svg+xml;utf-8,<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="black"><path d="m366-126-64-108-122-26 12-126-82-94 82-94-12-126 122-26 64-108 114 48 114-48 64 108 122 26-12 126 82 94-82 94 12 126-122 26-64 108-114-48-114 48Zm12-36 102-42 102 42 58-96 110-24-10-114 74-84-74-84 10-114-110-24-58-96-102 42-102-42-58 96-110 24 10 114-74 84 74 84-10 114 110 24 58 96Zm102-318Zm-42 106 190-190-20-20-170 170-86-86-20 20 106 106Z"/></svg>') ;
+}
+
+.aon_icon_upload_file{
+	background-size: 24px;
+	background-image: url('data:image/svg+xml;utf-8,<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="black"><path d="M466-264h28v-194l90 90 20-20-124-124-124 124 20 20 90-90v194ZM272-132q-26 0-43-17t-17-43v-576q0-26 17-43t43-17h314l162 162v474q0 26-17 43t-43 17H272Zm300-520v-148H272q-12 0-22 10t-10 22v576q0 12 10 22t22 10h416q12 0 22-10t10-22v-460H572ZM240-800v148-148 640-640Z"/></svg>') ;
+}
+
+.aon_icon_list{
+	background-size: 24px;
+	background-image: url('data:image/svg+xml;utf-8,<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="black"><path d="M326.07-304q11.93 0 19.93-8.07t8-20q0-11.93-8.07-19.93t-20-8Q314-360 306-351.93t-8 20q0 11.93 8.07 19.93t20 8Zm0-148q11.93 0 19.93-8.07t8-20q0-11.93-8.07-19.93t-20-8Q314-508 306-499.93t-8 20q0 11.93 8.07 19.93t20 8Zm0-148q11.93 0 19.93-8.07t8-20q0-11.93-8.07-19.93t-20-8Q314-656 306-647.93t-8 20q0 11.93 8.07 19.93t20 8ZM450-318h208v-28H450v28Zm0-148h208v-28H450v28Zm0-148h208v-28H450v28ZM232-172q-26 0-43-17t-17-43v-496q0-26 17-43t43-17h496q26 0 43 17t17 43v496q0 26-17 43t-43 17H232Zm0-28h496q12 0 22-10t10-22v-496q0-12-10-22t-22-10H232q-12 0-22 10t-10 22v496q0 12 10 22t22 10Zm-32-560v560-560Z"/></svg>') ;
+}
+
+.aon_icon_ {
+	background-size: 24px;
+	background-image: url('data:image/svg+xml;utf-8,') ;
+}
+
 .gwt-CheckBox {
 	display: flex;
 	flex-direction: row;
 	align-items: center;
 }
+
 
 input[type='checkbox']{
   	width: 24px;
