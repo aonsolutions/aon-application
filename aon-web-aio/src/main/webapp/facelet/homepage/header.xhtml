@@ -2240,6 +2240,16 @@
 				sonar.send();				
 				
 			}, 300000);
+  			
+			/**
+			* For new design. 
+			*/
+  			localStorage.setItem('aon_session_id', "#{dur.token}");
+  	       	localStorage.setItem('aon_domain_id', #{domainSwitcher.domainId});
+  			localStorage.setItem('aon_domain_login', '#{domainSwitcher.currentUser}');
+  			localStorage.setItem('aon_domain_name', '#{domainSwitcher.currentDomainNameURL}');
+  			localStorage.setItem('aon_domain_document', '#{domainSwitcher.currentDomainDocument}');
+  			
 			
 		
 	</script>
@@ -2267,7 +2277,26 @@
 				</aon:div>
 			</aon:panelGroup>
 				<aon:panelGroup>
-					<c:if test="#{domainSwitcher.aonSolutionsOrg}" >
+					<c:if test="#{domainSwitcher.betaDomain}" >
+						<h:outputLink 
+							id="new_aon"
+							value="/beta"
+							target="_blank" 
+							style="color: #002469;"
+							styleClass="aon-top-menu-item"
+						>
+							<aon:outputText
+							value="open_in_new"  
+							styleClass="material-icons" 
+							style="position:absolute; font-size:24px; transform: translateY(-2px); " 
+							/>
+							<aon:outputText
+							value="Nuevo Diseño" 
+							style="padding-left: 24px; white-space: nowrap;" 
+							/>
+						</h:outputLink>
+						<!--
+						By now we open a new window with new design.  
 						<aon:commandLink 
 							id="new_aon"
 							action="start" 
@@ -2285,6 +2314,7 @@
 							style="padding-left: 38px; white-space: nowrap;" 
 							/>
 						</aon:commandLink>
+						-->
 					</c:if>
 				</aon:panelGroup>
 			
