@@ -570,9 +570,26 @@ public class MainCRAGenerator {
 			cccs.addCCC(ccc);
 		}
 		
-		mainCRA = createMainCRA(eti, cccs);
-		
-		return mainCRA;
+		if(cccs.getCccs().isEmpty() || (cccs.getCccs().size() == 1 && cccs.getCccs().get(0).getDde() == null && cccs.getCccs().get(0).getDdeas() == null && cccs.getCccs().get(0).getFiniq() == null)) {
+			String errorMessage = "";
+			
+			JSONArray errorsArr = (JSONArray) ((JSONObject)cccsArr.get(0)).get("ERRS");
+			if(null != errorsArr) {
+				for(int i = 0; i < errorsArr.size(); i++) {
+					JSONObject error = (JSONObject) errorsArr.get(i);
+					for (Object key : error.keySet()) {
+			            String e = error.get(key).toString();
+			            errorMessage += e + "\n";
+			        }
+				}
+			}
+			
+			throw new IllegalArgumentException(errorMessage);
+		} else {
+			mainCRA = createMainCRA(eti, cccs);
+			
+			return mainCRA;
+		}
 		
 	}
 

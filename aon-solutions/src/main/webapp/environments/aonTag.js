@@ -213,6 +213,12 @@ export const AON_RIGHT_PANEL = 'aon-right-panel';
 export const AON_JSF_APP = 'aon-jsf-app' ;
 
 export const AON_ACCOUNTING_MENU = 'aon-accounting-menu';
+export const AON_JSF_AMORTIZATION = 'aon-jsf-amortization' ;
+export const AON_JSF_PERIOD_AMORTIZATION = 'aon-jsf-period-amortization' ;
+export const AON_JSF_END_PERIOD_ENTRIES = 'aon-jsf-end-period-entries' ;
+export const AON_JSF_INVOICE_REPORT = 'aon-jsf-invoice-report' ;
+export const AON_JSF_INVOICE_RECORDER = 'aon-jsf-invoice-recorder' ;
+export const AON_JSF_FINANCE_TRACKING_ENTRY = 'aon-jsf-finance-tracking-entry' ;
 
 export const AON_SUITE_MENU = 'aon-suite-menu';
 
@@ -299,10 +305,27 @@ export const AON_JSF_FEE_INVOICING = 'aon-jsf-fee-invoicing' ;
 export const AON_JSF_FEE_PRE_INVOICING = 'aon-jsf-fee-pre-invoicing' ;
 
 export const AON_WAREHOUSE_MENU = 'aon-warehouse-menu';
+export const AON_JSF_INCOME = 'aon-jsf-income' ;
+export const AON_JSF_DELIVERY = 'aon-jsf-delivery' ;
+export const AON_JSF_WAREHOUSE_TRANSFER = 'aon-jsf-warehouse-transfer' ;
+export const AON_JSF_ORDER_SERVER = 'aon-jsf-order-server' ;
+export const AON_JSF_INVENTORY = 'aon-jsf-inventory' ;
+export const AON_JSF_INVENTORY_CLOSE = 'aon-jsf-inventory-close' ;
+export const AON_JSF_STOCK = 'aon-jsf-stock' ;
+export const AON_JSF_ORDER_PROPOSAL = 'aon-jsf-order-proposal' ;
+export const AON_JSF_STOCK_REPORT_ITEM = 'aon-jsf-stock-report-item' ;
+export const AON_JSF_STOCK_REPORT_WAREHOUSE = 'aon-jsf-stock-report-warehouse' ;
+export const AON_JSF_STOCK_REPORT_ITEM_VALUED = 'aon-jsf-stock-report-item-valued' ;
+export const AON_JSF_STOCK_REPORT_WAREHOUSE_VALUED = 'aon-jsf-stock-report-warehouse-valued' ;
+export const AON_JSF_WAREHOUSE = 'aon-jsf-warehouse' ;
+export const AON_JSF_CARRIER = 'aon-jsf-carrier' ;
+
 
 export const AON_FISCAL_MENU = 'aon-fiscal-menu';
 
 export const AON_PAYROLL_MENU = 'aon-payroll-menu';
+export const AON_JSF_IRPF_DATA = 'aon-jsf-irpf-data' ;
+export const AON_JSF_CONTRACT_BATCH = 'aon-jsf-contract-batch' ;
 
 export const AON_MARKETING_MENU = 'aon-marketing-menu';
 export const AON_JSF_MESSAGES = 'aon-jsf-messages' ;

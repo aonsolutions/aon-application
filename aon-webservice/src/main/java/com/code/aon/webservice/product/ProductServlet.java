@@ -5,12 +5,6 @@ import java.util.Date;
 import java.util.Map;
 import java.util.Optional;
 
-import jakarta.servlet.ServletException;
-import jakarta.servlet.annotation.WebServlet;
-import jakarta.servlet.http.HttpServlet;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -22,10 +16,16 @@ import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Filter;
 import com.esferalia.aon.occam.api.model.Properties.ItemProperties;
 import com.esferalia.aon.occam.api.model.Properties.ProductProperties;
-import com.esferalia.aon.occam.api.model.product.OldItem;
 import com.esferalia.aon.occam.api.model.product.ItemAddInfo;
-import com.esferalia.aon.occam.api.model.product.OldProduct;
+import com.esferalia.aon.occam.api.model.product.OldItem;
+import com.esferalia.aon.occam.api.model.product.Product;
 import com.esferalia.aon.occam.api.model.product.ProductStatus;
+
+import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 @SuppressWarnings("serial")
 @WebServlet(name = "ProductServlet", urlPatterns = { "/product/*",
@@ -230,10 +230,8 @@ public class ProductServlet extends HttpServlet{
     
     private JSONArray getElaborableItemList(Domain domain, String login, Map<String, String[]> map){
     	JSONArray array = new JSONArray();
-    	
-    	Integer[] productIds = AON.getProductList(domain.getName(), domain.getId(), login,
-    			f -> elaborableProductFilter(domain, map, f))
-    			.stream().mapToInt(OldProduct::getId).boxed().toArray(Integer[]::new);
+    	Integer[] productIds = AON.getProductStream(domain, login, f -> elaborableProductFilter(domain, map, f))
+    		.mapToInt(Product::getId).boxed().toArray(Integer[]::new);
     			
     	AON.getFullItemList(domain.getName(), domain.getId(), login,
     			f -> elaborableItemFilter(domain, map, f, productIds))

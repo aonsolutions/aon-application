@@ -57,6 +57,25 @@ public enum BillingPeriod implements Serializable{
 		return BillingPeriod.NO_PERIOD;
 	}
 	
+	public static String toString(BillingPeriod period) {
+		switch (period) {
+			case MONTHLY:
+				return "Mensual";
+			case BI_MONTHLY:
+				return "Bimensual";
+			case THREE_MONTHLY:
+				return "Trimestal";
+			case FOUR_MONTHLY:
+				return "Cuatrimestral";
+			case SIX_MONTHLY:
+				return "Semestral";
+			case YEARLY:
+				return "Anual";
+			default:
+				return "";
+		}
+	}
+	
 	
 	
 }

@@ -102,7 +102,7 @@ public class AonEmployeesToolbar extends Composite {
 		
 		headerSection.add(showMenuButton);
 		
-		Label title = new Label("Integral de n\u00f3minas");
+		Label title = new Label("Integral de N\u00f3minas");
 		title.addStyleName(style.title());
 		headerSection.add(title);
 		

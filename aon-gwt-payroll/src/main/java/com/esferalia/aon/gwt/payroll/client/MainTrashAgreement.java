@@ -107,7 +107,7 @@ public abstract class MainTrashAgreement extends Composite implements Listener,
 			}
 			
 			@Override
-			public void onSaved() {
+			public void onSaved(Consumer<Void> finish) {
 				// Not save on trash
 			}
 		};

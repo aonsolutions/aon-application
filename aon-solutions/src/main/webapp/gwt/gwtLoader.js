@@ -69,9 +69,15 @@
 	
 	const addScript = (document, type,  src) => {
 		let script = document.createElement(TAG.SRIPT);
-		script.src = src;
-		script.type = type;
+		script.type = src.type || type;
+		if ( src.src ) {
+			script.src = src.src;
+		}
+		if ( src.code ) {
+			script.appendChild(document.createTextNode(src.code));
+		}
 		document.head.appendChild(script);
+		
 	}
 	
 	
@@ -131,11 +137,17 @@
 			iframe.style.height = '100%';
 			iframe.style.border = 'none';
 			iframe.style.inset = 'none';
-			iframe.src = 'about:blank';
+			iframe.src = 'about_blank';
+			//iframe.src = 'about:blank';
 			iframe.onload = () => {
 				
 
 				let iwindow = iframe.contentWindow;			
+				let idocument = iframe.document || iframe.contentDocument || iframe.contentWindow.document;		
+				
+				iwindow.stop();
+				idocument.body.innerHTML = "";
+
 				
 				iwindow.drawChartsCallback = () => {};
 				iwindow.getSubEntryPoint = () => subEntryPoint;
@@ -151,7 +163,6 @@
 
 
 				// inject 'gwt' script 
-				let idocument = iframe.document || iframe.contentDocument || iframe.contentWindow.document;		
 				
 				for (const sheet of document.styleSheets) {
 					if ( sheet?.href?.includes('fonts.googleapis.com') ){

@@ -9,6 +9,7 @@ import com.esferalia.aon.gwt.common.shared.Constants;
 import com.esferalia.aon.gwt.issues.client.Issues;
 import com.esferalia.aon.gwt.issues.client.IssuesEntryPoint;
 import com.esferalia.aon.gwt.marketing.client.commercial.SellerModule;
+import com.esferalia.aon.gwt.marketing.client.commercial.SellerWorkloadModule;
 import com.esferalia.aon.gwt.marketing.client.marketing.campaign.MarketingCompaignModule;
 import com.esferalia.aon.gwt.marketing.client.quesrtion.QuestionModule;
 import com.esferalia.aon.gwt.payroll.client.EmployeeTree;
@@ -126,21 +127,6 @@ public class Aio implements EntryPoint {
 				}
 			});
 			break;
-//		case Modules.DOCUMENT:
-//			GWT.runAsync(Documental.class, new RunAsyncCallback() {
-//
-//				@Override
-//				public void onFailure(Throwable reason) {
-//					Window.alert("Error al cargar");
-//				}
-//
-//				@Override
-//				public void onSuccess() {
-//					documental = new Documental(aonData);
-//					documental.onModuleLoad();
-//				}
-//			});		
-//			break;
 		case Modules.STAT:
 			GWT.runAsync(MainEntryPoint.class, new RunAsyncCallback() {
 
@@ -360,6 +346,22 @@ public class Aio implements EntryPoint {
 				public void onSuccess() {
 					SellerModule sellerModule = new SellerModule();
 					sellerModule.onModuleLoad();
+				}
+			});		
+			break;
+			
+		case Modules.SELLER_WORKLOAD_MODULE:
+			GWT.runAsync(SellerWorkloadModule.class, new RunAsyncCallback() {
+
+				@Override
+				public void onFailure(Throwable reason) {
+					Window.alert("Error al cargar");
+				}
+
+				@Override
+				public void onSuccess() {
+					SellerWorkloadModule sellerWorkloadModule = new SellerWorkloadModule();
+					sellerWorkloadModule.onModuleLoad();
 				}
 			});		
 			break;

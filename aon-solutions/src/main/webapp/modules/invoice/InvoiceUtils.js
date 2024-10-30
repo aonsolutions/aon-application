@@ -59,7 +59,6 @@ export const uploadInvoice2 = (file, success, error) => {
                 .catch((e) => error(file, e));
             }
         }).catch((e) => error(file, e));
-
     }
 }
 
@@ -76,8 +75,8 @@ export const s3UploadInvoices = (el, files, jobId) => {
 export const s3UploadInvoice = (file, jobId, data, success, error) => {
     let formData = new FormData();
     let xhr = new XMLHttpRequest();
-  
-  	let fileOrder = `0${data.uploaded}`.slice(-2);
+    let prefix = data.prefix || '';
+  	let fileOrder =  `0${data.uploaded}`.slice(-2);
   	data.uploaded += 1;
    
     let re = /(?:\.([^.]+))?$/;
@@ -100,7 +99,7 @@ export const s3UploadInvoice = (file, jobId, data, success, error) => {
         + `/${LS.getDomainDocument()}`
         + `/${LS.getDomainLogin()}`
         + `/${jobId}` 
-        + `/${fileOrder}_${base64}`);
+        + `/${fileOrder}_${prefix}_${base64}`);
     formData.append('success_action_status', '201');
     formData.append('Content-Type', file.type);
     formData.append('file', file);

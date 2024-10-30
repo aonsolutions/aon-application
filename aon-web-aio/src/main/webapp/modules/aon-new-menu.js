@@ -174,7 +174,7 @@ export class AonNewMenu extends AonElement {
 					this.rootPanel(new AonDesktop());
 					break;
 				case AON_CLASSIC.app:
-					open('https://' + localStorage.getItem('aon_domain_name') + '/login?token=' + localStorage.getItem('aon_session_id'))
+					open(location.protocol + '//' + localStorage.getItem('aon_domain_name') + ( location.port ? ":" + location.port : ""   ) + '/login?token=' + localStorage.getItem('aon_session_id'))
 					return;
 				case Apps.CONSOLE.app:
 					this.rootPanel(new AonConsole());
@@ -388,7 +388,7 @@ export class AonNewMenu extends AonElement {
 	
 		if (!LS.isPortalChecked()) {
 			let topMenuHome = div.appendChild(this.buildTopApp(HOME));
-			topMenuHome.id = "topMenuHome";
+			// topMenuHome.id = "topMenuHome";
 		}
 	
 		const excludedApps = ['commerce', 'garage', 'academy', 'office'];
@@ -444,7 +444,7 @@ export class AonNewMenu extends AonElement {
 		let appDiv = this.createElement(TAG.DIV);
 		appDiv.id = `aonMenuBar-${app.app}`;
 		appDiv.classList.add("aonNewMenuTopAppDivApp");
-		appDiv.appendChild(this.buildApp(app,undefined));
+		appDiv.appendChild(this.buildApp(app,undefined,appDiv.id));
 	
 		return appDiv;
 	}
@@ -463,7 +463,7 @@ export class AonNewMenu extends AonElement {
 		}
 		
 		rootPanel.style.marginTop = "68px";
-		rootPanel.style.height = `calc(100vh - 61px)`;
+		rootPanel.style.height = `calc(100vh - 115px )`;
 	}
 
 	hideTopNav() {
@@ -501,8 +501,8 @@ export class AonNewMenu extends AonElement {
 	
 		sidenav.style.width = '68px';
 		sidenav.style.display = "";  
-		sidenav.style.marginTop = "6px";
-		apps.style.marginTop = "6px";
+		// sidenav.style.marginTop = "6px";
+		// apps.style.marginTop = "6px";
 	
 		menulist.style.visibility = "visible";
 	
@@ -548,7 +548,7 @@ export class AonNewMenu extends AonElement {
 		}
 	}
 
-	buildApp(app, style) {
+	buildApp(app, style, id) {
 
 		let a = this.createElement(TAG.A);
 		a.addEventListener(EVENT.CLICK, () => {
@@ -576,9 +576,9 @@ export class AonNewMenu extends AonElement {
 		div.style.flexDirection = style?.flexDirection || 'column';
 		div.style.transition = 'background-color 0.2s';
 		div.style.cursor = "pointer";
-		if (!LS.isLeftMenu()) {
-			div.style.marginTop = "0px";
-		}
+		// if (!LS.isLeftMenu()) {
+		// 	div.style.marginTop = "0px";
+		// }
 		div.title = app.title;
 		let header = this.getElement("aonHeaderWeb");
 		let welcome = this.getElement("aonCompanyTabFilter");
@@ -656,6 +656,10 @@ export class AonNewMenu extends AonElement {
 
 		if (app.app == "applications"){
 			this.controlSideNav();
+		}
+
+		if(id == "aonMenuBar-home"){
+			div.id = "topMenuHome";
 		}
 		
 
@@ -1124,7 +1128,6 @@ export class AonNewMenu extends AonElement {
 								}			
 							});
 							input.click();
-							// this.appSelection(Apps.INVOICE);
 						}
 					}
 				]
@@ -1139,7 +1142,6 @@ export class AonNewMenu extends AonElement {
 					input.className = CSS.AON_NONE;
 					input.addEventListener(EVENT.CHANGE, ({target}) => uploadDocuments(input, target.files) );
 					input.click();
-					this.appSelection(Apps.DOCUMENTAL);
 				},
 				icon: MATERIAL_ICONS.CLOUD_UPLOAD,
 				name: MSG.UPLOAD_DOCUMENT,
@@ -1153,11 +1155,10 @@ export class AonNewMenu extends AonElement {
 					let aonMessengerChat = new AonMessenger();	
 					aonMessengerChat.data = {source:TASK_SOURCE.QUERY};
 					this.rootPanel(aonMessengerChat);
-					this.appSelection(Apps.MESSENGER);
 				}
 			});
 		}
-		if(this.getDur().isAon()){
+		if(this.getDur().isPayroll()){
 			newMenuOptions.push({
 				icon: 'person_add',
 				name: MSG.NEW_EMPLOYEE,
@@ -1178,8 +1179,6 @@ export class AonNewMenu extends AonElement {
 							});
 						});
 					});
-					this.appSelection(Apps.MESSENGER);
-
 				}
 			});
 		}

@@ -177,11 +177,18 @@ public class Cra {
 					
 				});
 				
-				// Adding TRBS to DDE
-				dde.put("TRBS", trbs);
+				if(!trbs.isEmpty()) {
+					// Adding TRBS to DDE
+					dde.put("TRBS", trbs);
+					
+					// Adding DDE (Normal salaries) to MainCRAJSON 
+					ccci.put("DDE", dde);
+				} else {
+					JSONObject err = new JSONObject();
+					err.put("ERR", "No hay ninguna nómina que proceda introducir para este periodo.");
+					errors.add(err);
+				}
 				
-				// Adding DDE (Normal salaries) to MainCRAJSON 
-				ccci.put("DDE", dde);
 			}
 			
 			// ----------- ATRASOS

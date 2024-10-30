@@ -12,8 +12,10 @@
 			id="appButton" 
 			style="display: none; " 
 			action="companyImages.initialAction"
-			actionListener="#{companyImages.onEditSearch}"
 		>
+			<aon:actionListener method="#{domains.onSelect}" />
+			<aon:actionListener method="#{company.onLoad}" />
+			<aon:actionListener method="#{companyImages.onEditSearch}" />
 			<aon:actionListener method="#{companyImages.onSearch}" />
 		</aon:commandButton>
 	</aon:form>

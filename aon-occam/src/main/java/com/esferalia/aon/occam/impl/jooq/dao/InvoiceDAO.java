@@ -1261,7 +1261,7 @@ public class InvoiceDAO {
 
 		// ONLY IF IS TICKET BAI.
 		TbaiConfiguration tbaiConfiguration = TbaiConfigurationDAO.get(ctx);
-		if(tbaiConfiguration.isActive() && invoice.getNumber() > 0) {
+		if(tbaiConfiguration.isActive() && invoice.getNumber() > 0 && invoice.isSales()) {
 			saveInvoiceTracking(ctx, invoice, InvoiceTrackingStatus.DELETED);
 		}
 	}
@@ -1604,7 +1604,7 @@ public class InvoiceDAO {
 
 	public static void updateWithholdingType(AONContext ctx, Integer invoiceId, WithholdingType newType ) {
 		if (invoiceId == null)  throw new AonCoreException("El Identificador de factura no puede estar vacio");
-		if (newType == null) throw new AonCoreException("El nuevo tipo de retención no puede estar vacio");
+		if (newType == null) throw new AonCoreException("El nuevo tipo de retenciï¿½n no puede estar vacio");
 	
 		MutableInt sum = new MutableInt();
 		ctx.getDslContext().select(INVOICE_TAX.ID)
@@ -1630,7 +1630,7 @@ public class InvoiceDAO {
 		
 		if (params.getActivity() != null) {
 			if (AonMathUtils.isNegative(params.getActivity())) {
-				// Sólo las comunes. Los "sin activdad".
+				// Sï¿½lo las comunes. Los "sin activdad".
 				condition = condition.and( INVOICE.ACTIVITY.isNull());
 			} else {
 				condition = condition.and( INVOICE.ACTIVITY.eq( params.getActivity() ));

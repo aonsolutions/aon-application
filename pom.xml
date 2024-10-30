@@ -75,9 +75,7 @@
     <module>aon-ui-admin</module>
     <module>aon-google-apis</module>
     <module>aon-google-apis-v2</module>
-    <!--module>aon-conexflow</module-->
     <module>aon-oauth2</module>
-    <module>aon-hhg-webservice</module>
     <module>aon-webservice</module>
     <module>aon-dump</module>
     <module>aon-sii</module>
