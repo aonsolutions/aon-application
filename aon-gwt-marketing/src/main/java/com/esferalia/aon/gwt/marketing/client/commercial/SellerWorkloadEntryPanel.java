@@ -40,7 +40,7 @@ public abstract class SellerWorkloadEntryPanel extends AonCustomDockLayout {
 	
 	// ------------------------------------------------- Variables
 	
-	private Integer position = -1;
+	private Integer position = 0;
 	private AonToolbarButton previusSeller;
 	private Label sellerIteration;
 	private AonToolbarButton nextSeller;
@@ -75,29 +75,29 @@ public abstract class SellerWorkloadEntryPanel extends AonCustomDockLayout {
 			if(AonStringUtils.isNotBlank(value) && value.length() > 3) {
 				onSearch( getSellerWorkloadListParams() );
 			} else if(AonStringUtils.isBlank(value)) {
+				sellerWorkloadFeePanel.resetSearchOffset();
 				onSearch( getSellerWorkloadListParams() );
 			}
 		});
 		setSearchPlaceholder("Filtrar por cliente, producto...");
 		
 		addFilterMenu();
-		
-		cleanButton = new AonSearchPanelButton( AON.MSG.clean(), AON.CSS.aonIconClear() );
-		cleanButton.addClickHandler(event -> {
-			getSearchTextBox().setValue(null, false);
-			
-			sellerWorkloadFeePanel.resetSearchOffset();
-			
-			onSearch( getSellerWorkloadListParams() );
-		});
-		
-		addFilterToolbarButton(cleanButton);
+//		
+//		cleanButton = new AonSearchPanelButton( AON.MSG.clean(), AON.CSS.aonIconClear() );
+//		cleanButton.addClickHandler(event -> {
+//			getSearchTextBox().setValue(null, false);
+//			
+//			sellerWorkloadFeePanel.resetSearchOffset();
+//			
+//			onSearch( getSellerWorkloadListParams() );
+//		});
+//		
+//		addFilterToolbarButton(cleanButton);
 		
 		addSortMenu();
 		
-		sort.addItem("Nombre", "name");
-		sort.addItem("Alias", "alias");
-		sort.addItem("Documento", "document");
+		sort.addItem("Cliente", "customer");
+		sort.addItem("Producto", "product");
 		sort.getListBox().addChangeHandler(event -> onSearch( getSellerWorkloadListParams() ));
 		
 		asc.addItem("Ascendente", "true");
@@ -270,11 +270,11 @@ public abstract class SellerWorkloadEntryPanel extends AonCustomDockLayout {
 			
 			setToolbarTitle("Carga Trabajo / " + sellerWorkload.getName());
 			
-			updatePosition();
+			updatePosition(f -> {
+				onSearch(params);
+				finish.accept(null);
+			});
 			
-			onSearch(params);
-			
-			finish.accept(null);
 		});
 	}
 	
@@ -294,10 +294,15 @@ public abstract class SellerWorkloadEntryPanel extends AonCustomDockLayout {
 		});
 	}
 	
-	private void updatePosition() {
+	private void updatePosition(Consumer<Integer> finish) {
 		getSellerWorkloadListCount(count -> {
 			position = getSellerWorkloadPosition(sellerWorkload.getId());
 			sellerIteration.setText((position + 1) + " / " + count);
+			
+			previusSeller.setEnabled(position > 0);
+			nextSeller.setEnabled(position < (count - 1));
+			
+			finish.accept(count);
 		});
 	}
 	

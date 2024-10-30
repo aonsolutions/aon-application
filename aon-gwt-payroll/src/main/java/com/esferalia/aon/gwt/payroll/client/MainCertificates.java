@@ -77,29 +77,34 @@ public class MainCertificates extends MainEntryPoint{
 	private FullViewer fullViewer;
 	
 	private static enum COLS {
-		  DES("Titular"						,"-moz-available")
-		, BUD("Representaci\u00f3n"			,"-moz-available")
-		, DOC("F. Expiraci\u00f3n"			,"30rem")
-		, TYP(AON.MSG.alias()				,"45rem")
-		, ACT(AonStringUtils.EMPTY			,"10rem")
-		, TGS("TGSS"						,"10rem")
-		, SEP("SEPE"						,"10rem")
-		, AEA("AEAT"						,"10rem")
-		, BUT(AonStringUtils.EMPTY			,"40rem")
+		  DES("Titular"						,"-moz-available"	,"min-width: 5rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
+		, BUD("Representaci\u00f3n"			,"-moz-available"	,"min-width: 5rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
+		, DOC("F. Expiraci\u00f3n"			,"5rem"				,"")
+		, TYP(AON.MSG.alias()				,"10rem"			,"min-width: 10rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
+		, ACT(AonStringUtils.EMPTY			,"2.5rem"			,"")
+		, TGS("TGSS"						,"2.5rem"			,"")
+		, SEP("SEPE"						,"2.5rem"			,"")
+		, AEA("AEAT"						,"2.5rem"			,"")
+		, BUT(AonStringUtils.EMPTY			,"9rem"				,"")
 		;
 
 		String headerLabel;
 		String colWidth;
+		String styles;
 
-		private COLS(String headerLabel,String colWidth) {
+		private COLS(String headerLabel,String colWidth,String styles) {
 			this.headerLabel = headerLabel;
 			this.colWidth = colWidth;
+			this.styles = styles;
 		}
 		public String getColWidth() {
 			return colWidth;
 		}
 		public String getHeaderLabel() {
 			return headerLabel;
+		}
+		public String getStyles() {
+			return styles;
 		}
 	}
 	
@@ -214,7 +219,7 @@ public class MainCertificates extends MainEntryPoint{
 	private void paintUserHeader() {
 		userCertTable.createHeader();
 		for ( COLS col : COLS.values()) 
-			userCertTable.addHeader(new Label(col.getHeaderLabel()), col.getColWidth());
+			userCertTable.addHeader(new Label(col.getHeaderLabel()), col.getColWidth(), col.getStyles());
 	}
 
 	private void initEnterpriseCertDataTable() {
@@ -230,7 +235,7 @@ public class MainCertificates extends MainEntryPoint{
 	private void paintEnterpriseHeader() {
 		enterpriseCertTable.createHeader();
 		for ( COLS col : COLS.values()) 
-			enterpriseCertTable.addHeader(new Label(col.getHeaderLabel()), col.getColWidth());
+			enterpriseCertTable.addHeader(new Label(col.getHeaderLabel()), col.getColWidth(), col.getStyles());
 	}
 	
 	// ------------------------------------------------------ onModuleLoad
@@ -340,6 +345,8 @@ public class MainCertificates extends MainEntryPoint{
 		}
 		
 		Label certificateForL = new Label(certificateFor);
+		certificateForL.setTitle(certificateFor);
+		table.addInlineStyle(certificateForL, COLS.DES.getStyles());
 
 		String representation = "-";
 		if(!certificate.getCertificateInfo().isEmpty())
@@ -347,11 +354,15 @@ public class MainCertificates extends MainEntryPoint{
 				(AonStringUtils.isBlank(certificate.getCertificateInfo().getCif()) ? "" : "(" + certificate.getCertificateInfo().getCif() + ") ") + certificate.getCertificateInfo().getEnterprise();
 		
 		Label representationL = new Label(representation);
+		representationL.setTitle(representation);
+		table.addInlineStyle(representationL, COLS.BUD.getStyles());
 		
 		String expirationDate = null == certificate.getCertificateInfo().getToDate() ? "" : formatFullDate.format(certificate.getCertificateInfo().getToDate());
 		Label expirationDateL = new Label(expirationDate);
 		
 		Label alias = new Label(certificate.getDescription());
+		alias.setTitle(certificate.getDescription());
+		table.addInlineStyle(alias, COLS.TYP.getStyles());
 		
 		String securityTitle = certificate.getConfidential() != null && certificate.getConfidential().equals(CertificateSecurity.PRIVATE) ? "Privado: S\u00f3lo visible para usuarios de la empresa" : "P\u00fablico: Visible para todos los usuarios";
 		String securityIcon = certificate.getConfidential() != null && certificate.getConfidential().equals(CertificateSecurity.PRIVATE) ? AON.CSS.aonIconLock() : AON.CSS.aonIconUnLock();

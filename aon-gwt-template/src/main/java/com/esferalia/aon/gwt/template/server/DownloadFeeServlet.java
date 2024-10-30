@@ -7,8 +7,11 @@ import java.io.UnsupportedEncodingException;
 import java.sql.Date;
 import java.util.ArrayList;
 import java.util.Base64;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
@@ -59,6 +62,10 @@ public class DownloadFeeServlet extends HttpServlet {
 		Integer domainId = Integer.parseInt(domain_id);
 		Domain domain = AON.getDomain(domain_name, domainId, login);
 		JSONObject filterJSON = new JSONObject(decode(req.getParameter("filter")));
+				 
+        Boolean isCustomerFee = filterJSON.optBoolean("isCustomerFee", false);
+        Boolean isSellerWorkload = filterJSON.optBoolean("isSellerWorkload", false);
+        Boolean isSellersWorkload = filterJSON.optBoolean("isSellersWorkload", false);
 	
 		LinkedList<String> columnList = DownloadImportTemplateServlet.getExportFeeColumnList();
 		
@@ -95,7 +102,7 @@ public class DownloadFeeServlet extends HttpServlet {
 		style3.setBorderLeft(BorderStyle.THIN);
 		
         CellStyle dateStyle = libro.createCellStyle();
-        dateStyle.setDataFormat(libro.getCreationHelper().createDataFormat().getFormat("dd/mm/YYYY"));  
+        dateStyle.setDataFormat(libro.getCreationHelper().createDataFormat().getFormat("dd/mm/yyyy"));  
 
         for(Integer i = 0; i< columnList.size(); i++){
         	Cell celda = fila.createCell(i);
@@ -104,20 +111,28 @@ public class DownloadFeeServlet extends HttpServlet {
         }
         Cell celdaf = fila.createCell(columns);
         celdaf.setCellStyle(style);
-        
-        Boolean isCustomerFee = filterJSON.optBoolean("isCustomerFee", false);
-        Boolean isSellerWorkload = filterJSON.optBoolean("isSellerWorkload", false);
-  
+       
         LinkedList<Fee> fees;
         
         if(isCustomerFee) {
         	fees = AON.getFullFeeList(domain.getName(), domain.getId(), login, getCondition(domain, filterJSON));
         } else if(isSellerWorkload) {
-        	List<Integer> ids = AON.getSellersWorkloadFeesIds(getConditionWorkload(domain, login, filterJSON));
+        	List<Integer> ids = AON.getSellersWorkloadFeesIds(getConditionSellerWorkload(domain, login, filterJSON));
         	CustomerFeeParams params = new CustomerFeeParams();
     		params.setDomain(domain.getId());
     		params.setFeeIds(ids.toArray(Integer[]::new));
         	fees = AON.getFullFeeList(domain.getName(), domain.getId(), login, params);
+        } else if(isSellersWorkload) {
+        	List<Integer> ids = AON.getSellersWorkloadFeesIds(getConditionSellersWorkload(domain, login, filterJSON));
+        	CustomerFeeParams params = new CustomerFeeParams();
+    		params.setDomain(domain.getId());
+    		params.setFeeIds(ids.toArray(Integer[]::new));
+        	fees = AON.getFullFeeList(domain.getName(), domain.getId(), login, params);
+        	Collections.sort(fees, Comparator
+        		    .comparing((Fee fee) -> fee.getSellerComercial() != null &&  fee.getSellerComercial().getName() != null ? fee.getSellerComercial().getName() : null,
+        		               Comparator.nullsFirst(String::compareTo))  // nullsFirst para que los nulls queden al inicio
+        		    .thenComparing((Fee fee) -> fee.getCustomer() != null&&  fee.getCustomer().getName() != null ? fee.getCustomer().getName() : null,
+        		                   Comparator.nullsFirst(String::compareTo))); // nullsFirst también para Customer ID
         } else {
             if(filterJSON.opt("segment") != null) {
     			JSONArray segment = filterJSON.optJSONArray("segment");
@@ -218,7 +233,7 @@ public class DownloadFeeServlet extends HttpServlet {
         Integer length = data.length;
         ByteArrayInputStream bais = new ByteArrayInputStream(data);
         
-        resp.addHeader("Content-Disposition","attachment; filename=\"Cuotas.xls\"");
+        resp.addHeader("Content-Disposition","attachment; filename=\"" + (isSellerWorkload ? "CargaTrabajo_Cuotas" : "Cuotas") + ".xls\"");
         resp.setContentType("application/msexcel");
 
         if (length > 0 && length <= Integer.MAX_VALUE);
@@ -558,7 +573,7 @@ public class DownloadFeeServlet extends HttpServlet {
 	
 	}
 	
-	private SellerWorkloadParams getConditionWorkload(Domain domain, String login, JSONObject filterJSON) {
+	private SellerWorkloadParams getConditionSellerWorkload(Domain domain, String login, JSONObject filterJSON) {
 		SellerWorkloadParams params = new SellerWorkloadParams();
 		
 		params.setUser(login);
@@ -567,6 +582,28 @@ public class DownloadFeeServlet extends HttpServlet {
 		params.setPeriod(Byte.parseByte(filterJSON.optString("period")));
 		params.setSeller(Integer.parseInt(filterJSON.optString("seller")));
 		params.setDescription(filterJSON.optString("description"));
+		
+		params.setOffset(0);
+		params.setLimit(Integer.MAX_VALUE);
+		
+		return params;
+	}
+	
+	private SellerWorkloadParams getConditionSellersWorkload(Domain domain, String login, JSONObject filterJSON) {
+		SellerWorkloadParams params = new SellerWorkloadParams();
+		
+		params.setUser(login);
+		params.setDomainName(domain.getName());
+		params.setDomain(domain.getId());
+		
+		params.setPeriod(Byte.parseByte(filterJSON.optString("period")));
+		params.setScope(Integer.parseInt(filterJSON.optString("scope")));
+		params.setActive(Byte.parseByte(filterJSON.optString("active")));
+		params.setCustomers(Byte.parseByte(filterJSON.optString("customer")));
+		params.setDescription(filterJSON.optString("description"));
+		
+		params.setOffset(0);
+		params.setLimit(Integer.MAX_VALUE);
 		
 		return params;
 	}

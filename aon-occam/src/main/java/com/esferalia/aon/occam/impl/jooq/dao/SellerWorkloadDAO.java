@@ -8,7 +8,6 @@ import static com.esferalia.aon.jooq.tables.Item.ITEM;
 import static com.esferalia.aon.jooq.tables.Pcategory.PCATEGORY;
 import static com.esferalia.aon.jooq.tables.Product.PRODUCT;
 import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
-import static com.esferalia.aon.jooq.tables.Ritem.RITEM;
 import static com.esferalia.aon.jooq.tables.Scope.SCOPE;
 import static com.esferalia.aon.jooq.tables.Seller.SELLER;
 import static com.esferalia.aon.jooq.tables.Workplace.WORKPLACE;
@@ -34,9 +33,9 @@ import org.jooq.Record1;
 import org.jooq.Record5;
 import org.jooq.Result;
 import org.jooq.Select;
+import org.jooq.SelectConditionStep;
 import org.jooq.SelectHavingStep;
 import org.jooq.SelectJoinStep;
-import org.jooq.SelectOnConditionStep;
 import org.jooq.impl.DSL;
 
 import com.esferalia.aon.jooq.tables.Registry;
@@ -179,7 +178,7 @@ public class SellerWorkloadDAO {
 
 	    while (start.before(end)) {
 	        // Realizamos la consulta con la lógica del ajuste de fechas incorporada
-	        Result<Record1<Integer>> result = ctx.getDslContext()
+	        SelectConditionStep<Record1<Integer>> select = ctx.getDslContext()
 	        	.selectDistinct(CUSTOMER_FEE.ID)
 	            .from(CUSTOMER_FEE)
 	            .join(CUSTOMER).on(CUSTOMER.REGISTRY.eq(CUSTOMER_FEE.CUSTOMER).and(CUSTOMER.STATUS.ne((byte)1)))
@@ -190,10 +189,15 @@ public class SellerWorkloadDAO {
 	            .and(CUSTOMER_FEE.FINAL_DATE.isNull().or(CUSTOMER_FEE.FINAL_DATE.greaterOrEqual(end)))
 	            .and(CUSTOMER_FEE.PERIOD.ne((short) 0))
 	            .and(recalculatedBillingDateAdjusted.lessOrEqual(start)) // Filtro por la fecha ajustada
-	            .and(condition)
-	            .offset(params.getOffset())
-				.limit(params.getLimit())
-	            .fetch();
+	            .and(condition);
+	        
+	        	applyFeeOrdering(select, params);
+	        	
+	        	Result<Record1<Integer>> result = select
+	        		.groupBy(CUSTOMER_FEE.ID)
+	        		.offset(params.getOffset())
+					.limit(params.getLimit())
+		            .fetch();
 	        
 	        customerFeeIds.addAll(result.getValues(CUSTOMER_FEE.ID));
 	        
@@ -201,14 +205,20 @@ public class SellerWorkloadDAO {
 	        start = AonDateUtils.toSql(AonDateUtils.addMonths(start, 1));
 	    }
 	    
+	    if(customerFeeIds.isEmpty())
+	    	return new LinkedList<Fee>();
+	    
 	    CustomerFeeParams customerFeeParams = new CustomerFeeParams();
 	    customerFeeParams.setDomain(ctx.getDomainId());
 	    customerFeeParams.setFeeIds(customerFeeIds.toArray(new Integer[0]));
 	    customerFeeParams.setCustomerName(params.getDescription());
 	    customerFeeParams.setProductName(params.getDescription());
+	    customerFeeParams.setOrderBy(params.getOrderBy());
+	    customerFeeParams.setAsc(params.isAsc());
 	    
-	    LinkedList<Fee> feeList = getFeeList(ctx, customerFeeParams);
+	    LinkedList<Fee> feeList = getFees(ctx, customerFeeParams);
 	    
+	    System.out.println("Seller : " + params.getSeller());
 	    System.out.println("Offset : " + params.getOffset());
 	    System.out.println("Limit : " + params.getLimit());
 	    System.out.println(feeList.size());
@@ -217,54 +227,143 @@ public class SellerWorkloadDAO {
 	}
 
 	public static List<Integer> getFeeIdsList(CloseableAONContext ctx, SellerWorkloadParams params) {
-		Condition condition = createFeeCondition(ctx, params);
 		
-		Date start = getStartDatePeriod(params.getPeriod());
-	    Date end = getEndDatePeriod(params.getPeriod());
-	    
-	    HashSet<Integer> customerFeeIds = new HashSet<Integer>();
+		if(params.getSeller() == null) {
+			
+			Condition condition = paramsToCondition(ctx, params);
+			
+			Date start = getStartDatePeriod(params.getPeriod());
+			Date end = getEndDatePeriod(params.getPeriod());
+			
+			SelectHavingStep<?> select = ctx.getDslContext().select(
+		            SELLER.REGISTRY,
+		            SELLER_ALIAS.NAME,
+		            SELLER_ALIAS.DOCUMENT,
+		            SCOPE.DESCRIPTION
+		        )
+				.from(SELLER)
+		        .join(SELLER_ALIAS).on(SELLER_ALIAS.ID.eq(SELLER.REGISTRY))
+		        .join(SCOPE).on(SCOPE.ID.eq(SELLER.SCOPE))
+		        .leftJoin(CUSTOMER_FEE).on(CUSTOMER_FEE.SELLER.eq(SELLER.REGISTRY)
+		            .and(CUSTOMER_FEE.INITIAL_DATE.lessOrEqual(AonDateUtils.toSql(start)))
+		            .and(CUSTOMER_FEE.FINAL_DATE.isNull().or(CUSTOMER_FEE.FINAL_DATE.greaterOrEqual(AonDateUtils.toSql(end))))) // Condiciones de fechas
+		        .where(condition)
+		        .groupBy(SELLER.REGISTRY); // Agrupamos por SELLER
+			        
+			applyOrdering(select, params);
+			applyHavingCustomers(select, params);
+					
+			List<SellerWorkload> sellers = select
+					.limit(params.getOffset(), params.getLimit())
+					.fetch()
+					.stream()
+					.map(new SellerFiller())
+					.collect(Collectors.toList());
+			
+			HashSet<Integer> customerFeeAllIds = new HashSet<Integer>();
+			
+			for(SellerWorkload sellerWorkload : sellers) {
+				Condition conditionFee = createFeeCondition(ctx, params);
+				
+				start = getStartDatePeriod(params.getPeriod());
+				end = getEndDatePeriod(params.getPeriod());
+			    
+			    HashSet<Integer> customerFeeIds = new HashSet<Integer>();
 
-	    // Utilizamos JOOQ para recalcular la fecha de facturación ajustada de manera compatible con ambos motores de base de datos
-	    Field<Date> recalculatedBillingDateAdjusted = DSL
-	        .when(CUSTOMER_FEE.PERIOD.eq((short) 1), DSL.dateSub(CUSTOMER_FEE.BILLING_DATE, 1, DatePart.MONTH))
-	        .when(CUSTOMER_FEE.PERIOD.eq((short) 2), DSL.dateSub(CUSTOMER_FEE.BILLING_DATE, 2, DatePart.MONTH))
-	        .when(CUSTOMER_FEE.PERIOD.eq((short) 3), DSL.dateSub(CUSTOMER_FEE.BILLING_DATE, 3, DatePart.MONTH))
-	        .when(CUSTOMER_FEE.PERIOD.eq((short) 4), DSL.dateSub(CUSTOMER_FEE.BILLING_DATE, 4, DatePart.MONTH))
-	        .when(CUSTOMER_FEE.PERIOD.eq((short) 5), DSL.dateSub(CUSTOMER_FEE.BILLING_DATE, 6, DatePart.MONTH))
-	        .when(CUSTOMER_FEE.PERIOD.eq((short) 6), DSL.dateSub(CUSTOMER_FEE.BILLING_DATE, 12, DatePart.MONTH))
-	        .otherwise(CUSTOMER_FEE.BILLING_DATE); // Si no hay período definido, no ajustamos la fecha
+			    // Utilizamos JOOQ para recalcular la fecha de facturación ajustada de manera compatible con ambos motores de base de datos
+			    Field<Date> recalculatedBillingDateAdjusted = DSL
+			        .when(CUSTOMER_FEE.PERIOD.eq((short) 1), DSL.dateSub(CUSTOMER_FEE.BILLING_DATE, 1, DatePart.MONTH))
+			        .when(CUSTOMER_FEE.PERIOD.eq((short) 2), DSL.dateSub(CUSTOMER_FEE.BILLING_DATE, 2, DatePart.MONTH))
+			        .when(CUSTOMER_FEE.PERIOD.eq((short) 3), DSL.dateSub(CUSTOMER_FEE.BILLING_DATE, 3, DatePart.MONTH))
+			        .when(CUSTOMER_FEE.PERIOD.eq((short) 4), DSL.dateSub(CUSTOMER_FEE.BILLING_DATE, 4, DatePart.MONTH))
+			        .when(CUSTOMER_FEE.PERIOD.eq((short) 5), DSL.dateSub(CUSTOMER_FEE.BILLING_DATE, 6, DatePart.MONTH))
+			        .when(CUSTOMER_FEE.PERIOD.eq((short) 6), DSL.dateSub(CUSTOMER_FEE.BILLING_DATE, 12, DatePart.MONTH))
+			        .otherwise(CUSTOMER_FEE.BILLING_DATE); // Si no hay período definido, no ajustamos la fecha
 
-	    while (start.before(end)) {
-	        // Realizamos la consulta con la lógica del ajuste de fechas incorporada
-	        Result<Record1<Integer>> result = ctx.getDslContext()
-	        	.selectDistinct(CUSTOMER_FEE.ID)
-	            .from(CUSTOMER_FEE)
-	            .join(CUSTOMER).on(CUSTOMER.REGISTRY.eq(CUSTOMER_FEE.CUSTOMER).and(CUSTOMER.STATUS.ne((byte)1)))
-	            .join(CUSTOMER_ALIAS).on(CUSTOMER.REGISTRY.eq(CUSTOMER_ALIAS.ID))
-	            .where(CUSTOMER_FEE.SELLER.eq(params.getSeller()))
-	            .and(CUSTOMER_FEE.DOMAIN.in(SecurityDAO.getInheritanceDomainIds(ctx)))
-	            .and(CUSTOMER_FEE.INITIAL_DATE.lessOrEqual(start))
-	            .and(CUSTOMER_FEE.FINAL_DATE.isNull().or(CUSTOMER_FEE.FINAL_DATE.greaterOrEqual(end)))
-	            .and(CUSTOMER_FEE.PERIOD.ne((short) 0))
-	            .and(recalculatedBillingDateAdjusted.lessOrEqual(start)) // Filtro por la fecha ajustada
-	            .and(condition)
-	            .fetch();
-	        
-	        customerFeeIds.addAll(result.getValues(CUSTOMER_FEE.ID));
-	        
-	        // Sumamos un mes a la fecha de inicio
-	        start = AonDateUtils.toSql(AonDateUtils.addMonths(start, 1));
-	    }
-	    
-	    System.out.println("getFeeIdsList size : " + customerFeeIds.size());
-	    
-	    return customerFeeIds.stream().collect(Collectors.toList());
+			    while (start.before(end)) {
+			        // Realizamos la consulta con la lógica del ajuste de fechas incorporada
+			        Result<Record1<Integer>> result = ctx.getDslContext()
+			        	.selectDistinct(CUSTOMER_FEE.ID)
+			            .from(CUSTOMER_FEE)
+			            .join(CUSTOMER).on(CUSTOMER.REGISTRY.eq(CUSTOMER_FEE.CUSTOMER).and(CUSTOMER.STATUS.ne((byte)1)))
+			            .join(CUSTOMER_ALIAS).on(CUSTOMER.REGISTRY.eq(CUSTOMER_ALIAS.ID))
+			            .where(CUSTOMER_FEE.SELLER.eq(sellerWorkload.getId()))
+			            .and(CUSTOMER_FEE.DOMAIN.in(SecurityDAO.getInheritanceDomainIds(ctx)))
+			            .and(CUSTOMER_FEE.INITIAL_DATE.lessOrEqual(start))
+			            .and(CUSTOMER_FEE.FINAL_DATE.isNull().or(CUSTOMER_FEE.FINAL_DATE.greaterOrEqual(end)))
+			            .and(CUSTOMER_FEE.PERIOD.ne((short) 0))
+			            .and(recalculatedBillingDateAdjusted.lessOrEqual(start)) // Filtro por la fecha ajustada
+			            .and(conditionFee)
+			            .fetch();
+			        
+			        customerFeeIds.addAll(result.getValues(CUSTOMER_FEE.ID));
+			        
+			        // Sumamos un mes a la fecha de inicio
+			        start = AonDateUtils.toSql(AonDateUtils.addMonths(start, 1));
+			    }
+			    
+			    System.out.println("getFeeIdsList size : " + customerFeeIds.size());
+			    
+			    customerFeeAllIds.addAll(customerFeeIds);
+			}
+			
+			System.out.println("getFeeIdsList ALL size : " + customerFeeAllIds.size());
+			
+			return customerFeeAllIds.stream().collect(Collectors.toList());
+			
+		} else {
+		
+			Condition condition = createFeeCondition(ctx, params);
+			
+			Date start = getStartDatePeriod(params.getPeriod());
+		    Date end = getEndDatePeriod(params.getPeriod());
+		    
+		    HashSet<Integer> customerFeeIds = new HashSet<Integer>();
+
+		    // Utilizamos JOOQ para recalcular la fecha de facturación ajustada de manera compatible con ambos motores de base de datos
+		    Field<Date> recalculatedBillingDateAdjusted = DSL
+		        .when(CUSTOMER_FEE.PERIOD.eq((short) 1), DSL.dateSub(CUSTOMER_FEE.BILLING_DATE, 1, DatePart.MONTH))
+		        .when(CUSTOMER_FEE.PERIOD.eq((short) 2), DSL.dateSub(CUSTOMER_FEE.BILLING_DATE, 2, DatePart.MONTH))
+		        .when(CUSTOMER_FEE.PERIOD.eq((short) 3), DSL.dateSub(CUSTOMER_FEE.BILLING_DATE, 3, DatePart.MONTH))
+		        .when(CUSTOMER_FEE.PERIOD.eq((short) 4), DSL.dateSub(CUSTOMER_FEE.BILLING_DATE, 4, DatePart.MONTH))
+		        .when(CUSTOMER_FEE.PERIOD.eq((short) 5), DSL.dateSub(CUSTOMER_FEE.BILLING_DATE, 6, DatePart.MONTH))
+		        .when(CUSTOMER_FEE.PERIOD.eq((short) 6), DSL.dateSub(CUSTOMER_FEE.BILLING_DATE, 12, DatePart.MONTH))
+		        .otherwise(CUSTOMER_FEE.BILLING_DATE); // Si no hay período definido, no ajustamos la fecha
+
+		    while (start.before(end)) {
+		        // Realizamos la consulta con la lógica del ajuste de fechas incorporada
+		        Result<Record1<Integer>> result = ctx.getDslContext()
+		        	.selectDistinct(CUSTOMER_FEE.ID)
+		            .from(CUSTOMER_FEE)
+		            .join(CUSTOMER).on(CUSTOMER.REGISTRY.eq(CUSTOMER_FEE.CUSTOMER).and(CUSTOMER.STATUS.ne((byte)1)))
+		            .join(CUSTOMER_ALIAS).on(CUSTOMER.REGISTRY.eq(CUSTOMER_ALIAS.ID))
+		            .where(CUSTOMER_FEE.SELLER.eq(params.getSeller()))
+		            .and(CUSTOMER_FEE.DOMAIN.in(SecurityDAO.getInheritanceDomainIds(ctx)))
+		            .and(CUSTOMER_FEE.INITIAL_DATE.lessOrEqual(start))
+		            .and(CUSTOMER_FEE.FINAL_DATE.isNull().or(CUSTOMER_FEE.FINAL_DATE.greaterOrEqual(end)))
+		            .and(CUSTOMER_FEE.PERIOD.ne((short) 0))
+		            .and(recalculatedBillingDateAdjusted.lessOrEqual(start)) // Filtro por la fecha ajustada
+		            .and(condition)
+		            .fetch();
+		        
+		        customerFeeIds.addAll(result.getValues(CUSTOMER_FEE.ID));
+		        
+		        // Sumamos un mes a la fecha de inicio
+		        start = AonDateUtils.toSql(AonDateUtils.addMonths(start, 1));
+		    }
+		    
+		    System.out.println("getFeeIdsList size : " + customerFeeIds.size());
+		    
+		    return customerFeeIds.stream().collect(Collectors.toList());
+		    
+		}
+		
 	}
 	
-	public static LinkedList<Fee> getFeeList(AONContext ctx, CustomerFeeParams customerFeeParams){
+	public static LinkedList<Fee> getFees(AONContext ctx, CustomerFeeParams customerFeeParams){
 		Condition condition = createFeeCondition(ctx, customerFeeParams);
 		
-		SelectOnConditionStep<Record> fromCustomerRecords = ctx.getDslContext().selectDistinct().from(CUSTOMER_FEE)
+		SelectConditionStep<Record> fromCustomerRecords = ctx.getDslContext().selectDistinct().from(CUSTOMER_FEE)
 				.join(DOMAIN).on(DOMAIN.ID.eq(CUSTOMER_FEE.DOMAIN))
 				.join(CUSTOMER).on(CUSTOMER.REGISTRY.eq(CUSTOMER_FEE.CUSTOMER))
 				.join(CUSTOMER_ALIAS).on(CUSTOMER.REGISTRY.eq(CUSTOMER_ALIAS.ID))
@@ -272,14 +371,15 @@ public class SellerWorkloadDAO {
 				.join(PRODUCT).on(PRODUCT.ID.eq(ITEM.PRODUCT))
 				.join(WORKPLACE).on(CUSTOMER_FEE.WORKPLACE.eq(WORKPLACE.ID))
 				.leftOuterJoin(PCATEGORY).on(PCATEGORY.ID.eq(PRODUCT.CATEGORY))
-				.leftOuterJoin(INVOICING_GROUP).on(INVOICING_GROUP.ID.eq(CUSTOMER_FEE.INVOICING_GROUP));
+				.leftOuterJoin(INVOICING_GROUP).on(INVOICING_GROUP.ID.eq(CUSTOMER_FEE.INVOICING_GROUP))
+				.where(condition);
 			
 //		fromCustomerRecords = fromCustomerRecords.leftJoin(RITEM).on(RITEM.REGISTRY.eq(CUSTOMER_FEE.CUSTOMER).and(RITEM.ITEM.eq(CUSTOMER_FEE.ITEM)).and(RITEM.CUSTOMER_FEE.eq(CUSTOMER_FEE.ID)));
 		
-		Result<Record> feeRecords = fromCustomerRecords 
-				.where(condition)
-				.groupBy(CUSTOMER_FEE.ID)
-				.orderBy(CUSTOMER_FEE.CUSTOMER, CUSTOMER_FEE.DESCRIPTION)
+		applyCustomerFeeOrdering(fromCustomerRecords, customerFeeParams);
+		
+		Result<Record> feeRecords = fromCustomerRecords	
+			.groupBy(CUSTOMER_FEE.ID)
 			.fetch();
 		
 		System.out.println("Customer Fee size : " + feeRecords.size());
@@ -288,7 +388,7 @@ public class SellerWorkloadDAO {
 		
 		return fees;
 	}
-	
+
 	private static Condition createFeeCondition(AONContext ctx, CustomerFeeParams customerFeeParams) {
 		Condition condition = CUSTOMER_FEE.DOMAIN.eq(customerFeeParams.getDomain());
 		
@@ -341,6 +441,30 @@ public class SellerWorkloadDAO {
 	    orderFields.put("name", SELLER_ALIAS.NAME);
 	    orderFields.put("alias", SELLER_ALIAS.ALIAS);
 	    orderFields.put("document", SELLER_ALIAS.DOCUMENT);
+
+	    Field<?> orderField = orderFields.get(params.getOrderBy());
+
+	    if (orderField != null) {
+	        select.orderBy(params.isAsc() ? orderField.asc() : orderField.desc());
+	    }
+	}
+	
+	private static void applyFeeOrdering(SelectHavingStep<?> select, SellerWorkloadParams params) {
+		HashMap<String, Field<?>> orderFields = new HashMap<>();
+	    orderFields.put("customer", CUSTOMER_ALIAS.NAME);
+	    orderFields.put("product", CUSTOMER_FEE.DESCRIPTION);
+
+	    Field<?> orderField = orderFields.get(params.getOrderBy());
+
+	    if (orderField != null) {
+	        select.orderBy(params.isAsc() ? orderField.asc() : orderField.desc());
+	    }
+	}
+	
+	private static void applyCustomerFeeOrdering(SelectConditionStep<Record> select, CustomerFeeParams params) {
+		HashMap<String, Field<?>> orderFields = new HashMap<>();
+	    orderFields.put("customer", CUSTOMER_ALIAS.NAME);
+	    orderFields.put("product", CUSTOMER_FEE.DESCRIPTION);
 
 	    Field<?> orderField = orderFields.get(params.getOrderBy());
 
@@ -433,6 +557,7 @@ public class SellerWorkloadDAO {
 	            .fetch();
 
 	        // Inicializamos los valores para los cálculos
+	        double netSum = 0.0;
 	        double totalSum = 0.0;
 	        ScriptEngine engine = new ScriptEngineManager().getEngineByName("JavaScript");
 
@@ -455,7 +580,9 @@ public class SellerWorkloadDAO {
 
 	            // Fórmula: (PRICE - DISCOUNT) * QUANTITY / PERIOD
 	            double periodValue = getPeriodValue(recordPeriod);
-	            double feeSum = (price - discount) * quantity / periodValue;
+	            double feeNetSum = (price - discount) * quantity / periodValue;
+	            double feeSum = price * quantity / periodValue;
+	            netSum += feeNetSum;
 	            totalSum += feeSum;
 	        }
 
@@ -463,6 +590,7 @@ public class SellerWorkloadDAO {
 	        sellerWorkload.addSellerWorkloadPeriod(start, 
 	            (int)result.stream().map(it -> it.get(CUSTOMER_FEE.CUSTOMER)).distinct().count(), 
 	            result.size(), 
+	            netSum,
 	            totalSum);
 
 	        // Sumamos un mes a la fecha de inicio

@@ -11,6 +11,9 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
 import com.esferalia.aon.occam.api.model.SellerWorkloadParams;
 import com.esferalia.aon.occam.api.model.registry.SellerWorkload;
 import com.esferalia.aon.watson.util.AonStringUtils;
+import com.google.gwt.core.client.GWT;
+import com.google.gwt.json.client.JSONObject;
+import com.google.gwt.json.client.JSONString;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.SimpleLayoutPanel;
@@ -132,24 +135,32 @@ public abstract class SellerWorkloadModulePanel extends AonCustomDockLayout {
 	private void addButtonsToolbar() {
 		AonToolbarButton downloadExcel = new AonToolbarButton("Exportar Excel", AON.CSS.aonIconDownload());
 		downloadExcel.addClickHandler(e -> {
-			Window.alert("Exportar cargas de trabajo de todos los agentes comerciales a Excel");
+			JSONObject json = new JSONObject();
 			
-//			String fileDownloadURL = 
-//					"/ms/api/seller-excel/" + 
-//					"?domainId=" + options.getDomain() + 
-//					"&domainName=" + options.getDomainName() + 
-//					"&login=" + options.getUser() +
-//					"&description=" + getSearchTextBox().getValue() +
-//					"&scope=" + scope.getValue() +
-//					"&active=" + active.getValue() +
-//					"&orderBy=" + sort.getValue() +
-//					"&asc=" + asc.getValue()
-//					;
-//			
-//			Window.open(fileDownloadURL, "_blank", null);
+			SellerWorkloadParams sellerWorkloadListParams = getWidgetParams( options );
+			
+			json.put("period", new JSONString(sellerWorkloadListParams.getPeriod().toString()));
+			json.put("scope", new JSONString(sellerWorkloadListParams.getScope().toString()));
+			json.put("active", new JSONString(sellerWorkloadListParams.getActive().toString()));
+			json.put("customer", new JSONString(sellerWorkloadListParams.getCustomers().toString()));
+			json.put("description", new JSONString(sellerWorkloadListParams.getDescription()));
+			json.put("isSellersWorkload", new JSONString("true"));
+			
+			String fileDownloadURL = GWT.getModuleBaseURL()+ "ms/gwt_download_fee/"
+	            	+ "?filter=" + btoa(json.toString())
+	            	+ "&domain_name=" + options.getDomainName()
+	            	+ "&domain_id=" + options.getDomain()
+					+ "&username="+ options.getUser();
+			
+			Window.open( fileDownloadURL, "_blank",null);
 		});
+		
 		addToolbarButton(downloadExcel);
 	}
+	
+	private native String btoa(String str) /*-{
+	    return btoa(str);
+	}-*/;
 
 	public void onSearch( SellerModuleOptions options ) {
 		SellerWorkloadParams params = getWidgetParams( options );

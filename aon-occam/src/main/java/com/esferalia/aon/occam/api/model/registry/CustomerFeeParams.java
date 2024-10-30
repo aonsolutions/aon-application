@@ -46,6 +46,9 @@ public class CustomerFeeParams implements Serializable {
 	private Integer limit;
 	private Integer offset;
 	
+	private String orderBy;
+	private boolean asc = true;
+	
 	private Integer[] feeIds;
 	
 	private Integer childDomain;
@@ -224,6 +227,21 @@ public class CustomerFeeParams implements Serializable {
 	}
 	public CustomerFeeParams setOffset(Integer offset) {
 		this.offset = offset;
+		return this;
+	}
+	
+	public String getOrderBy() {
+		return orderBy;
+	}
+	public CustomerFeeParams setOrderBy(String orderBy) {
+		this.orderBy = orderBy;
+		return this;
+	}
+	public boolean isAsc() {
+		return asc;
+	}
+	public CustomerFeeParams setAsc(boolean asc) {
+		this.asc = asc;
 		return this;
 	}
 
