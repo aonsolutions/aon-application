@@ -483,8 +483,10 @@
 	}
 		
 	.aon-direct-access-list-element:hover {
-		border-radius: 50px;
-    	background-color: rgb(32,33,36,0.059) !important;
+		border-radius: 0px;
+    	background-color: #f6f6f6 !important;
+    	border-bottom-right-radius: 50px;
+  		border-top-right-radius: 50px;
 	}	
 	
 	.aon-direct-access-list-element.selected {
@@ -1292,6 +1294,14 @@
 		border:none;
 		background-color: #fafafa;
 	}
+	
+	.aon-group .rich-tabpanel-content,
+	.aon-group .rich-tab-inactive,
+	.aon-group .rich-tab-active {
+		background-color: #fff;
+		border-color: #fff;
+	}
+	
 
 	.rich-tabhdr-side-cell {
 		border-top:none
@@ -1801,6 +1811,10 @@
     	background: none;
     	border-radius: 16px;
     	border: 1px solid #aaa;
+	}
+	
+	.rich-fileupload-list-decor {
+		display: none;
 	}
 	
 	.rich-fileupload-button-content {
@@ -2413,7 +2427,7 @@
 	.aon-EmployeeTree .gwt-SplitLayoutPanel-VDragger,
 	.aon-EmployeeTree-Events .gwt-MenuBar-horizontal, 
 	.aon-EmployeeTree-Employees .gwt-MenuBar-horizontal {
-		background-color: #f6f8fc !important;
+		background-color: #fafafa !important;
 	}
 
 	.aon-Model-Detail{
@@ -2446,7 +2460,6 @@
 	}
 
 	
-	.aon-ConfigContent,
 	.aon-Model-Detail,
 	.aon-MainTrash-Detail,
 	.aon-MainCreta-Details,
@@ -2456,17 +2469,29 @@
 		background-color: #ffffff !important;
 	}
 	
+	.aon-ConfigContent {
+		background-color: #fafafa !important;
+	}
+	
+	
 	.aon-ConfigPanel {
 		padding: 10px 20px 10px 10px;
 	}
 	
 	.aon-ConfigPanel .aon-panelBar-title {
-		border-radius : 16px;
+		border: none;
+		text-align: inherit;
 	}
 	
-	/*
-	* 
-	*/
+	.aon-ConfigPanel .aon-panelBar-selected {
+		border: none !important;
+		border-radius: 0px;
+		background-color: #f1f1f1 !important;
+		border-bottom-right-radius: 50px;
+  		border-top-right-radius: 50px;
+		border-left: 2px solid #002469 !important;
+	}
+	
 	.aon-MainAgreement-ToolBar {
 		border-bottom: none;
 	}
@@ -2817,7 +2842,37 @@
 		padding-bottom: 22px;
 	}
 	
+	.aon-group .aon-toolbar {
+		border: 0px;
+		border-bottom: #ddd 1px solid;
+		background-color: #fff;
+	}
 	
+	[id*="globalConfig"] .aon-panelGrid-odd,
+	[id*="globalConfig"] .aon-panelGrid-even {
+		background-color: #fafafa;
+		border-color: #fafafa;
+	}
+	
+	[id*="globalConfig"] .aon-group .aon-panelGrid-odd,
+	[id*="globalConfig"] .aon-group .aon-panelGrid-even {
+		background-color: #fff;
+		border-color: #fff;
+	}
+	
+	
+	.aon-ConfigContent .aon_custom_table_header,
+	.aon-ConfigContent  #rootPanel {
+		background-color: #fafafa;
+	}
+	
+	.aon-ConfigContent .gwt-TabLayoutPanelTabs {
+		border-bottom-color: #fafafa !important;
+	}
+	
+	.aonDataScroller {
+		padding-left: 0px !important;
+	}
 	
 	</style>
 
