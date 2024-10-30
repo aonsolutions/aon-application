@@ -29,6 +29,10 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import javax.script.ScriptEngine;
+import javax.script.ScriptEngineManager;
+import javax.script.ScriptException;
+
 import org.jooq.Condition;
 import org.jooq.Record;
 import org.jooq.Record1;
@@ -110,12 +114,16 @@ public class FeeDAO {
 	
 	public static LinkedList<Fee> getFeeList(AONContext ctx, CustomerFeeParams customerFeeParams){
 		Condition condition = createFeeCondition(ctx, customerFeeParams);
+		
 		SelectOnConditionStep<Record> fromCustomerRecords = ctx.getDslContext().selectDistinct().from(CUSTOMER_FEE)
 				.join(DOMAIN).on(DOMAIN.ID.eq(CUSTOMER_FEE.DOMAIN))
 				.join(CUSTOMER).on(CUSTOMER.REGISTRY.eq(CUSTOMER_FEE.CUSTOMER))
 				.join(CUSTOMER_ALIAS).on(CUSTOMER.REGISTRY.eq(CUSTOMER_ALIAS.ID))
 				.join(ITEM).on(ITEM.ID.eq(CUSTOMER_FEE.ITEM))
-				.join(PRODUCT).on(PRODUCT.ID.eq(ITEM.PRODUCT));
+				.join(PRODUCT).on(PRODUCT.ID.eq(ITEM.PRODUCT))
+				.join(WORKPLACE).on(CUSTOMER_FEE.WORKPLACE.eq(WORKPLACE.ID))
+				.leftOuterJoin(PCATEGORY).on(PCATEGORY.ID.eq(PRODUCT.CATEGORY))
+				.leftOuterJoin(INVOICING_GROUP).on(INVOICING_GROUP.ID.eq(CUSTOMER_FEE.INVOICING_GROUP));
 		
 		if(null != customerFeeParams.getSeller())
 			fromCustomerRecords = fromCustomerRecords 	
@@ -138,6 +146,7 @@ public class FeeDAO {
 		
 		Result<Record> feeRecords = fromCustomerRecords 
 				.where(condition)
+				.groupBy(CUSTOMER_FEE.ID)
 				.orderBy(CUSTOMER_FEE.CUSTOMER, CUSTOMER_FEE.LINE)
 				.offset(customerFeeParams.getOffset())
 				.limit(customerFeeParams.getLimit())
@@ -176,6 +185,7 @@ public class FeeDAO {
 		
 		Result<Record> feeRecords = fromCustomerRecords 
 				.where(condition)
+				.groupBy(CUSTOMER_FEE.ID)
 				.orderBy(CUSTOMER_FEE.CUSTOMER, CUSTOMER_FEE.LINE)
 				.offset(customerFeeParams.getOffset())
 				.limit(customerFeeParams.getLimit())
@@ -400,6 +410,10 @@ public class FeeDAO {
 			condition = condition.and(CUSTOMER_FEE.ID.in(customerFeeParams.getFeeIds()));
 		}
 		
+		if(AonStringUtils.isNotBlank(customerFeeParams.getCustomerName()) || AonStringUtils.isNotBlank(customerFeeParams.getProductName())) {
+			condition = condition.and(CUSTOMER_ALIAS.NAME.likeIgnoreCase("%" + customerFeeParams.getCustomerName() + "%")).or(CUSTOMER_FEE.DESCRIPTION.likeIgnoreCase("%" + customerFeeParams.getProductName() + "%"));
+		}
+		
 		return condition;
 	}
 
@@ -461,6 +475,9 @@ public class FeeDAO {
 				.setLine(r.getValue(CUSTOMER_FEE.LINE))
 				.setPeriod(BillingPeriod.values()[r.getValue(CUSTOMER_FEE.PERIOD)])
 				.setPrice(r.getValue(CUSTOMER_FEE.PRICE))
+				.setNetCost(calculateNetCost(r))
+				.setTotalNetPrice(calculateTotalNetPrice(r))
+				.setTotalPrice(calculateTotalPrice(r))
 				.setProject(new Project().setId(r.getValue(CUSTOMER_FEE.PROJECT)))
 				.setQuantity(r.getValue(CUSTOMER_FEE.QUANTITY))
 				.setSeller(new Seller().setId(r.getValue(CUSTOMER_FEE.SELLER)))
@@ -475,6 +492,117 @@ public class FeeDAO {
 					: new Workplace().setId(r.getValue(CUSTOMER_FEE.WORKPLACE)))
 				.setHasRItem(r.get(RITEM.ID) != null);
 		}
+
+		private static Double calculateTotalPrice(Record record) {
+			Double quantity = record.get(CUSTOMER_FEE.QUANTITY);
+            Double price = record.get(CUSTOMER_FEE.PRICE);
+            short recordPeriod = record.get(CUSTOMER_FEE.PERIOD);
+            
+            // Fórmula: PRICE * QUANTITY / PERIOD
+            double periodValue = getPeriodValue(recordPeriod);
+            double feeSum = price * quantity / periodValue;
+            return feeSum;
+		}
+
+		private static Double calculateTotalNetPrice(Record record) {
+			Double quantity = record.get(CUSTOMER_FEE.QUANTITY);
+            Double price = record.get(CUSTOMER_FEE.PRICE);
+            String discountExpr = record.get(CUSTOMER_FEE.DISCOUNT_EXPR);
+            short recordPeriod = record.get(CUSTOMER_FEE.PERIOD);
+            
+            ScriptEngine engine = new ScriptEngineManager().getEngineByName("JavaScript");
+
+            // Calcular el descuento
+            double discount = 0.0;
+            if (discountExpr != null && !discountExpr.isEmpty()) {
+                try {
+                    discount = evaluateDiscount(discountExpr, price, engine);
+                } catch (ScriptException e) {
+                    System.err.println("Error evaluando DISCOUNT_EXPR: " + discountExpr);
+                    e.printStackTrace();
+                }
+            }
+
+            // Fórmula: (PRICE - DISCOUNT) * QUANTITY / PERIOD
+            double periodValue = getPeriodValue(recordPeriod);
+            double feeNetSum = (price - discount) * quantity / periodValue;
+            return feeNetSum;
+		}
+
+		private static Double calculateNetCost(Record r) {
+            Double price = r.get(CUSTOMER_FEE.PRICE);
+            String discountExpr = r.get(CUSTOMER_FEE.DISCOUNT_EXPR);
+            
+	        ScriptEngine engine = new ScriptEngineManager().getEngineByName("JavaScript");
+
+            // Calcular el descuento
+            double discount = 0.0;
+            if (discountExpr != null && !discountExpr.isEmpty()) {
+                try {
+                    discount = evaluateDiscount(discountExpr, price, engine);
+                } catch (ScriptException e) {
+                    System.err.println("Error evaluando DISCOUNT_EXPR: " + discountExpr);
+                    e.printStackTrace();
+                }
+            }
+
+            // Fórmula: (PRICE - DISCOUNT)
+            double netCost = (price - discount);
+			return netCost;
+		}
+		
+		// Método para evaluar el descuento basado en DISCOUNT_EXPR
+		private static double evaluateDiscount(String discountExpr, Double price, ScriptEngine engine) throws ScriptException {
+		    double discount = 0.0;
+		    double discountedPrice = price;
+
+		    // Expresión regular que soporta números con o sin decimales (e.g., 10, 10.5)
+		    String numberPattern = "\\d+(\\.\\d+)?";
+
+		    if (discountExpr.matches(numberPattern)) { 
+		        // Si es un número simple como "10" o "10.5", aplicamos ese porcentaje de descuento
+		        discount = (price * Double.parseDouble(discountExpr)) / 100;
+		        discountedPrice = price - discount;
+		    } else {
+		        // Si es una expresión matemática (e.g., "10 + 10.5"), aplicamos cada descuento secuencialmente
+		        String[] discountParts = discountExpr.split("\\+");
+
+		        for (String part : discountParts) {
+		            part = part.trim();
+		            if (part.matches(numberPattern)) {
+		                // Aplicamos el porcentaje de descuento al precio actual
+		                double percentage = Double.parseDouble(part);
+		                discount = (discountedPrice * percentage) / 100;
+		                discountedPrice -= discount;
+		            } else {
+		                // Si por alguna razón el descuento no es numérico, se lanza una excepción
+		                throw new ScriptException("Formato de descuento inválido: " + part);
+		            }
+		        }
+		    }
+
+		    return price - discountedPrice; // Devolvemos la cantidad total descontada
+		}
+		
+		// Método para calcular el valor de división por periodo (Short Period)
+	    private static double getPeriodValue(short period) {
+	        switch (period) {
+	            case 1:
+	                return 1.0;
+	            case 2:
+	                return 2.0;
+	            case 3:
+	                return 3.0;
+	            case 4:
+	                return 4.0;
+	            case 5:
+	                return 6.0;
+	            case 6:
+	                return 12.0;
+	            default:
+	                return 1.0; // Por defecto, si el periodo es inválido o no se especifica
+	        }
+	    }
 	}
 
 	public static Fee getFee(AONContext ctx, Integer id){

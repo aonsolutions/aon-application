@@ -62,13 +62,15 @@ public abstract class SellerWorkloadPanel extends ScrollPanel {
 	private Map<Integer, AonTableButton> selectedItems = new HashMap<>();
 	
 	private static enum COLS {
-		  CHK(AonStringUtils.EMPTY					,"2rem"				,"" )
-		, DES(AON.MSG.name()						,"-moz-available"	,"min-width: 5rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
+//		  CHK(AonStringUtils.EMPTY					,"2rem"				,"" )
+		 DES(AON.MSG.name()						,"-moz-available"	,"min-width: 5rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
 		, TYP(AON.MSG.scope()						,"7rem"				,"")
 		, ACT("Estado"								,"5rem"				,"")
 		, CUS("Clientes"							,"5rem"				,"text-align: right;")
+//		, SAL("N\u00f3minas"						,"5rem"				,"text-align: right;")
 		, FEE("Cuotas"								,"5rem"				,"text-align: right;")
-		, AMO("Facturaci\u00f3n"					,"6rem"				,"text-align: right;")
+		, TOT("Facturaci\u00f3n Bruta"				,"8rem"				,"text-align: right;")
+		, AMO("Facturaci\u00f3n Neta"				,"8rem"				,"text-align: right;")
 		;
 
 		String headerLabel;
@@ -164,29 +166,29 @@ public abstract class SellerWorkloadPanel extends ScrollPanel {
 	private void paintHeader() {
 		tab.createHeader();
 		for ( COLS col : COLS.values()) 
-			if(col == COLS.CHK) {
-				AonTableButton checkAllButton = new AonTableButton(AON.MSG.selectAction(), AON.CSS.aonIconCheck());
-				checkAllButton.addClickHandler(e -> {
-					List<AonTableButton> selectedItemList = selectedItems.values().stream().filter(check -> AonStringUtils.containsIgnoreCase(check.getStyleName(), AON.CSS.aonIconChecked())).collect(Collectors.toList());
-					if (selectedItemList.size() == rowSellers.size() || AonStringUtils.containsIgnoreCase(checkAllButton.getStyleName(), AON.CSS.aonIconChecked())) {
-						checkAllButton.addStyleName(AON.CSS.aonIconCheck());
-						checkAllButton.removeStyleName(AON.CSS.aonIconChecked());
-						selectedItems.values().forEach(check ->{
-							check.addStyleName(AON.CSS.aonIconCheck());
-							check.removeStyleName(AON.CSS.aonIconChecked());
-						});
-					} else {
-						checkAllButton.addStyleName(AON.CSS.aonIconChecked());
-						checkAllButton.removeStyleName(AON.CSS.aonIconCheck());
-						selectedItems.values().forEach(check ->{
-							check.addStyleName(AON.CSS.aonIconChecked());
-							check.removeStyleName(AON.CSS.aonIconCheck());
-						});
-					}
-				});
-				
-				tab.addHeader(checkAllButton, col.getColWidth());
-			} else
+//			if(col == COLS.CHK) {
+//				AonTableButton checkAllButton = new AonTableButton(AON.MSG.selectAction(), AON.CSS.aonIconCheck());
+//				checkAllButton.addClickHandler(e -> {
+//					List<AonTableButton> selectedItemList = selectedItems.values().stream().filter(check -> AonStringUtils.containsIgnoreCase(check.getStyleName(), AON.CSS.aonIconChecked())).collect(Collectors.toList());
+//					if (selectedItemList.size() == rowSellers.size() || AonStringUtils.containsIgnoreCase(checkAllButton.getStyleName(), AON.CSS.aonIconChecked())) {
+//						checkAllButton.addStyleName(AON.CSS.aonIconCheck());
+//						checkAllButton.removeStyleName(AON.CSS.aonIconChecked());
+//						selectedItems.values().forEach(check ->{
+//							check.addStyleName(AON.CSS.aonIconCheck());
+//							check.removeStyleName(AON.CSS.aonIconChecked());
+//						});
+//					} else {
+//						checkAllButton.addStyleName(AON.CSS.aonIconChecked());
+//						checkAllButton.removeStyleName(AON.CSS.aonIconCheck());
+//						selectedItems.values().forEach(check ->{
+//							check.addStyleName(AON.CSS.aonIconChecked());
+//							check.removeStyleName(AON.CSS.aonIconCheck());
+//						});
+//					}
+//				});
+//				
+//				tab.addHeader(checkAllButton, col.getColWidth());
+//			} else
 				tab.addHeader(new Label(col.getHeaderLabel()), col.getColWidth(), col.getStyles());
 		
 		checkPeriodHeader();
@@ -203,7 +205,8 @@ public abstract class SellerWorkloadPanel extends ScrollPanel {
 			
 			tab.addHeader(new Label(COLS.CUS.getHeaderLabel()), COLS.CUS.getColWidth(), COLS.CUS.getStyles() + "background-color: #f4f4f4; height: 2rem; display: flex; align-items: center; justify-content: end; padding-right: 0.4rem;");
 			tab.addHeader(new Label(COLS.FEE.getHeaderLabel()), COLS.FEE.getColWidth(), COLS.FEE.getStyles() + "background-color: #f4f4f4; height: 2rem; display: flex; align-items: center; justify-content: end; padding-right: 0.4rem;");
-			tab.addHeader(new Label("Fact. (" + secondDateFormat + ")"), COLS.AMO.getColWidth(), COLS.AMO.getStyles() + "background-color: #f4f4f4; height: 2rem; display: flex; align-items: center; justify-content: end; padding-right: 0.4rem;");
+			tab.addHeader(new Label("Fact. (" + secondDateFormat + ") Bruta"), COLS.TOT.getColWidth(), COLS.TOT.getStyles() + "background-color: #f4f4f4; height: 2rem; display: flex; align-items: center; justify-content: end; padding-right: 0.4rem;");
+			tab.addHeader(new Label("Fact. (" + secondDateFormat + ") Neta"), COLS.AMO.getColWidth(), COLS.AMO.getStyles() + "background-color: #f4f4f4; height: 2rem; display: flex; align-items: center; justify-content: end; padding-right: 0.4rem;");
 			
 		} else if(params.getPeriod() == 2) {
 			Date secondDate = DateUtils.addMonths2Date(currentDate, 1);
@@ -211,14 +214,16 @@ public abstract class SellerWorkloadPanel extends ScrollPanel {
 			
 			tab.addHeader(new Label(COLS.CUS.getHeaderLabel()), COLS.CUS.getColWidth(), COLS.CUS.getStyles() + "background-color: #f4f4f4; height: 2rem; display: flex; align-items: center; justify-content: end; padding-right: 0.4rem;");
 			tab.addHeader(new Label(COLS.FEE.getHeaderLabel()), COLS.FEE.getColWidth(), COLS.FEE.getStyles() + "background-color: #f4f4f4; height: 2rem; display: flex; align-items: center; justify-content: end; padding-right: 0.4rem;");
-			tab.addHeader(new Label("Fact. (" + secondDateFormat + ")"), COLS.AMO.getColWidth(), COLS.AMO.getStyles() + "background-color: #f4f4f4; height: 2rem; display: flex; align-items: center; justify-content: end; padding-right: 0.4rem;");
+			tab.addHeader(new Label("Fact. (" + secondDateFormat + ") Bruta"), COLS.TOT.getColWidth(), COLS.TOT.getStyles() + "background-color: #f4f4f4; height: 2rem; display: flex; align-items: center; justify-content: end; padding-right: 0.4rem;");
+			tab.addHeader(new Label("Fact. (" + secondDateFormat + ") Neta"), COLS.AMO.getColWidth(), COLS.AMO.getStyles() + "background-color: #f4f4f4; height: 2rem; display: flex; align-items: center; justify-content: end; padding-right: 0.4rem;");
 			
 			Date thirdDate = DateUtils.addMonths2Date(currentDate, 1);
 			String thirdDateFormat = AonDateUtils.formatMonthYear(thirdDate);
 			
 			tab.addHeader(new Label(COLS.CUS.getHeaderLabel()), COLS.CUS.getColWidth(), COLS.CUS.getStyles());
 			tab.addHeader(new Label(COLS.FEE.getHeaderLabel()), COLS.FEE.getColWidth(), COLS.FEE.getStyles());
-			tab.addHeader(new Label("Fact. (" + thirdDateFormat + ")"), COLS.AMO.getColWidth(), COLS.AMO.getStyles());
+			tab.addHeader(new Label("Fact. (" + thirdDateFormat + ") Bruta"), COLS.TOT.getColWidth(), COLS.TOT.getStyles());
+			tab.addHeader(new Label("Fact. (" + thirdDateFormat + ") Neta"), COLS.AMO.getColWidth(), COLS.AMO.getStyles());
 		}
 	}
 
@@ -262,24 +267,23 @@ public abstract class SellerWorkloadPanel extends ScrollPanel {
 		
 		HTMLPanel row = tab.createRow();
 		row.addDomHandler(e -> {
-			Window.alert("Lista cuotas del agente " + sellerWorkload.getName() + ", para el periodo seleccionado");
-			//onSellerWorkloadOpen(sellerWorkload);
+			onSellerWorkloadOpen(sellerWorkload);
 		}, ClickEvent.getType());
 		
-		AonTableButton checkButton = new AonTableButton(AON.MSG.selectAction(), AON.CSS.aonIconCheck());
-		checkButton.addClickHandler(e -> {
-			e.stopPropagation();
-			if (AonStringUtils.containsIgnoreCase(checkButton.getStyleName(), AON.CSS.aonIconChecked())) {
-				checkButton.addStyleName(AON.CSS.aonIconCheck());
-				checkButton.removeStyleName(AON.CSS.aonIconChecked());
-			} else {
-				checkButton.addStyleName(AON.CSS.aonIconChecked());
-				checkButton.removeStyleName(AON.CSS.aonIconCheck());
-			}
-			
-//			List<AonTableButton> selectedItemList = selectedItems.values().stream().filter(check -> AonStringUtils.containsIgnoreCase(check.getStyleName(), AON.CSS.aonIconChecked())).collect(Collectors.toList());
-		});
-		tab.addRow(row, checkButton, COLS.CHK.getColWidth());
+//		AonTableButton checkButton = new AonTableButton(AON.MSG.selectAction(), AON.CSS.aonIconCheck());
+//		checkButton.addClickHandler(e -> {
+//			e.stopPropagation();
+//			if (AonStringUtils.containsIgnoreCase(checkButton.getStyleName(), AON.CSS.aonIconChecked())) {
+//				checkButton.addStyleName(AON.CSS.aonIconCheck());
+//				checkButton.removeStyleName(AON.CSS.aonIconChecked());
+//			} else {
+//				checkButton.addStyleName(AON.CSS.aonIconChecked());
+//				checkButton.removeStyleName(AON.CSS.aonIconCheck());
+//			}
+//			
+////			List<AonTableButton> selectedItemList = selectedItems.values().stream().filter(check -> AonStringUtils.containsIgnoreCase(check.getStyleName(), AON.CSS.aonIconChecked())).collect(Collectors.toList());
+//		});
+//		tab.addRow(row, checkButton, COLS.CHK.getColWidth());
 		
 		Label name = new Label(sellerWorkload.getName());
 		name.setTitle(sellerWorkload.getName());
@@ -298,25 +302,34 @@ public abstract class SellerWorkloadPanel extends ScrollPanel {
 			customerL.getElement().getStyle().setTextAlign(TextAlign.RIGHT);
 			tab.addRow(row, customerL, COLS.CUS.getColWidth());
 			
+			// TODO: a futuro
+//			Label salariesL = new Label(entry.getValue().getSalaries().toString());
+//			salariesL.getElement().getStyle().setTextAlign(TextAlign.RIGHT);
+//			tab.addRow(row, salariesL, COLS.SAL.getColWidth());
+			
 			Label feeL = new Label(entry.getValue().getCustomerFees().toString());
 			feeL.getElement().getStyle().setTextAlign(TextAlign.RIGHT);
 			tab.addRow(row, feeL, COLS.FEE.getColWidth());
 			
-			Label amountL = new Label(formatToEuro(entry.getValue().getAmount()));
-			amountL.getElement().getStyle().setTextAlign(TextAlign.RIGHT);
-			tab.addRow(row, amountL, COLS.AMO.getColWidth());
+			Label totalAmountL = new Label(formatToEuro(entry.getValue().getTotalAmount()));
+			totalAmountL.getElement().getStyle().setTextAlign(TextAlign.RIGHT);
+			tab.addRow(row, totalAmountL, COLS.TOT.getColWidth());
+			
+			Label netAmountL = new Label(formatToEuro(entry.getValue().getNetAmount()));
+			netAmountL.getElement().getStyle().setTextAlign(TextAlign.RIGHT);
+			tab.addRow(row, netAmountL, COLS.AMO.getColWidth());
 			
 			if(i % 2 != 0) {
 				addGrayBg(customerL);
 				addGrayBg(feeL);
-				addGrayBg(amountL);
-			}
+				addGrayBg(netAmountL);
+				addGrayBg(totalAmountL);}
 		}
 		
 		tab.addRow(row, buttonContainer, "2rem");
 		
 		rowSellers.put(sellerWorkload.getId(), sellerWorkload);
-		selectedItems.put(sellerWorkload.getId(), checkButton);
+//		selectedItems.put(sellerWorkload.getId(), checkButton);
 	}
 	
 	private void addGrayBg(Widget widget) {

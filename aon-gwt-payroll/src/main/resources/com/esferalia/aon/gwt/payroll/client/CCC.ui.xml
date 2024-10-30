@@ -73,14 +73,14 @@
 			padding-left: .5rem !important;
 		}
 		
-		.styleBorder{
+		.aonCCCCard{
 			width: 100%;
 			border: 1px solid black;
 			border-radius: 5px;
 			padding: 0 1rem .5rem;
 		}
 		
-		.tittle{
+		.aonCCCCardTitle{
 			position: relative;
 			top: -10px;
 			left: 20px;
@@ -102,12 +102,14 @@
 		.widthAll { width: 100%; }
 		
 		@external warningTB;
+		@external aonCCCCard;
+		@external aonCCCCardTitle;
 	
 	</ui:style>
 
 	<g:HTMLPanel styleName="{style.widthAll} {style.flexCenter}" ui:field="centerContainer" debugId="activityHTMLPanel">
-   		<g:HTMLPanel styleName="{style.styleBorder}">
-    		<g:Label styleName='{style.tittle}'>Cuentas de cotización</g:Label>
+   		<g:HTMLPanel styleName="{style.aonCCCCard}">
+    		<g:Label styleName='{style.aonCCCCardTitle}'>Cuentas de cotización</g:Label>
 	    	<g:HTMLPanel styleName="{style.widthAll}" debugId="paymetDialogHTMLPanel">
 	    		<g:HTMLPanel styleName="{style.container}">
 	    			<g:Grid ui:field="cccDataTableHeader" styleName="{style.widthAll}"></g:Grid>

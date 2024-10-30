@@ -17,9 +17,11 @@ public class CustomerFeeParams implements Serializable {
 	private Byte periodicity;
 	
 	private Integer customer;
+	private String customerName;
 	private Byte customerStatus;
 	
 	private Integer product;
+	private String productName;
 	private Integer productCategory;
 	private Integer productTag;
 	private Byte productStatus;
@@ -43,6 +45,9 @@ public class CustomerFeeParams implements Serializable {
 
 	private Integer limit;
 	private Integer offset;
+	
+	private String orderBy;
+	private boolean asc = true;
 	
 	private Integer[] feeIds;
 	
@@ -224,6 +229,21 @@ public class CustomerFeeParams implements Serializable {
 		this.offset = offset;
 		return this;
 	}
+	
+	public String getOrderBy() {
+		return orderBy;
+	}
+	public CustomerFeeParams setOrderBy(String orderBy) {
+		this.orderBy = orderBy;
+		return this;
+	}
+	public boolean isAsc() {
+		return asc;
+	}
+	public CustomerFeeParams setAsc(boolean asc) {
+		this.asc = asc;
+		return this;
+	}
 
 	public Integer getSegment() {
 		return this.segment;
@@ -248,4 +268,21 @@ public class CustomerFeeParams implements Serializable {
 		this.childDomain = childDomain;
 		return this;
 	}
+
+	public String getCustomerName() {
+		return customerName;
+	}
+	public CustomerFeeParams setCustomerName(String customerName) {
+		this.customerName = customerName;
+		return this;
+	}
+	public String getProductName() {
+		return productName;
+	}
+
+	public CustomerFeeParams setProductName(String productName) {
+		this.productName = productName;
+		return this;
+	}
+	
 }

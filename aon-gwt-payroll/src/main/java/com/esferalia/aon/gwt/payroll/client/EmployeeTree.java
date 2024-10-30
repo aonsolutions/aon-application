@@ -2379,7 +2379,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 		}
 		
 		private String getTitle(Employee employee) {
-			return employee.getFullname();
+			return AonStringUtils.lowerCase(employee.getFullname());
 		}
 		
 	}

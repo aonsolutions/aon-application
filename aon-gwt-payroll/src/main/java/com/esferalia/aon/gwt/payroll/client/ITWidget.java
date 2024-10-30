@@ -3,7 +3,6 @@ package com.esferalia.aon.gwt.payroll.client;
 import static com.google.gwt.user.client.ui.FormPanel.METHOD_GET;
 import static com.google.gwt.user.client.ui.FormPanel.METHOD_POST;
 
-import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -20,7 +19,6 @@ import java.util.function.Consumer;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
-import com.code.aon.marketing.enumeration.NewsletterLayout;
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.css.AonGwtTemplateResources;
 import com.esferalia.aon.gwt.common.client.widget.CustomDataGrid;
@@ -57,7 +55,6 @@ import com.esferalia.aon.gwt.payroll.shared.SistemaREDService;
 import com.esferalia.aon.gwt.payroll.shared.SistemaREDService.JsSistemaREDEmployeeIT;
 import com.esferalia.aon.gwt.payroll.shared.SistemaREDService.JsSistemaREDIT;
 import com.esferalia.aon.gwt.payroll.shared.SistemaREDService.Parameter;
-import com.esferalia.aon.gwt.payroll.shared.StringEscapeUtils;
 import com.esferalia.aon.gwt.visualization.client.visualizations.TimeLineChart;
 import com.esferalia.aon.gwt.visualization.client.visualizations.TimeLineChart.Options;
 import com.esferalia.aon.gwt.visualization.client.visualizations.TimeLineChart.Options.BarLabelStyle;
@@ -1982,7 +1979,7 @@ public abstract class ITWidget extends ResizeComposite {
 
 				@Override
 				protected void onRemoveITPartToSS(ItNotExist ItNotExist) {
-					confirmDeleteITToTGSS(ItNotExist);
+					confirmDeleteITToTGSS(ItNotExist, f -> {});
 				}
 
 				@Override
@@ -1997,7 +1994,7 @@ public abstract class ITWidget extends ResizeComposite {
 
 								@Override
 								public void onAccept() {
-									removeITPart(itNotEx);
+									removeITPart(itNotEx, f -> {});
 								}
 							});
 				}
@@ -2033,7 +2030,7 @@ public abstract class ITWidget extends ResizeComposite {
 		});
 	}
 
-	private void confirmDeleteITToTGSS(ItNotExist itNotEx) {
+	private void confirmDeleteITToTGSS(ItNotExist itNotEx, Consumer<Void> finish) {
 		AonConfirmDialog confirmDialog = new AonConfirmDialog();
 		confirmDialog.confirm("BORRADO",
 				String.valueOf("\u00BF") + "Realmente desea anular el parte IT del Sistema RED?",
@@ -2044,7 +2041,9 @@ public abstract class ITWidget extends ResizeComposite {
 
 					@Override
 					public void onAccept() {
-						removeITPart(itNotEx);
+						removeITPart(itNotEx, f -> {
+							finish.accept(null);
+						});
 						if (itDialogEdit != null) {
 							itDialogEdit.hide();
 						}
@@ -2052,15 +2051,17 @@ public abstract class ITWidget extends ResizeComposite {
 				});
 	}
 
-	private void removeITPart(ItNotExist itNotEx) {
+	private void removeITPart(ItNotExist itNotEx, Consumer<Void> finish) {
 		List<ItNotExist> itNotExist = new ArrayList<>();
 		itNotExist.add(itNotEx);
 		removeITParts(itNotExist, s -> {
 			showDeleteMessage();
-			loadITWidget();
+			finish.accept(null);
+//			loadITWidget();
 		}, e -> {
 			AonDialog dialog = new AonDialog("Error", new HTML(e.getMessage()));
 			dialog.warning();
+			finish.accept(null);
 		});
 	}
 
@@ -2184,7 +2185,11 @@ public abstract class ITWidget extends ResizeComposite {
 
 			@Override
 			protected void onRemoveITPartTGSS(ItNotExist ItNotExist) {
-				confirmDeleteITToTGSS(ItNotExist);
+				confirmDeleteITToTGSS(ItNotExist, f -> {
+					normalizeITToSave();
+					acceptUpdate(itEmployee);
+					startLoading(false);
+				});
 			}
 
 			@Override
