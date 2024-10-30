@@ -20,3 +20,88 @@
     bottom: 60px;
     right: 0px;
 }
+
+#aonAppMenuSideNavList {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr); 
+    gap: 10px; 
+    padding: 0;
+    margin: 0;
+    list-style: none;
+    width: 100%;
+    background-color: #f9f9f9;
+    justify-items: center; 
+    align-items: center; 
+}
+
+#aonWarehouseMobileSideNavContentElaborationList,
+#aonWarehouseMobileSidenavContentElaboration,
+#aonWarehouseMobileSideNavContentPackaging,
+#aonWarehouseMobileSideNavContentDelivery,
+#aonWarehouseMobileSideNavContentTags {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: fit-content;
+    padding: 15px;
+    background-color: transparent;
+    transition: background-color 0.3s, transform 0.2s;
+    cursor: pointer;
+    border-radius: 8px;
+}
+
+#aonWarehouseMobileSideNavContentElaborationList:hover,
+#aonWarehouseMobileSidenavContentElaboration:hover,
+#aonWarehouseMobileSideNavContentPackaging:hover,
+#aonWarehouseMobileSideNavContentDelivery:hover,
+#aonWarehouseMobileSideNavContentTags:hover {
+    background-color: #e6e6e6;
+    transform: scale(1.05);
+}
+
+#aonWarehouseMobileSideNavContentElaborationList .aonMenuItemIcon,
+#aonWarehouseMobileSidenavContentElaboration .aonMenuItemIcon,
+#aonWarehouseMobileSideNavContentPackaging .aonMenuItemIcon,
+#aonWarehouseMobileSideNavContentDelivery .aonMenuItemIcon,
+#aonWarehouseMobileSideNavContentTags .aonMenuItemIcon {
+    font-size: 24px;
+    margin-bottom: 5px;
+    color: #333;
+}
+
+#aonWarehouseMobileSideNavContentElaborationList .aonMenuItemSpanTags,
+#aonWarehouseMobileSidenavContentElaboration .aonMenuItemSpanTags,
+#aonWarehouseMobileSideNavContentPackaging .aonMenuItemSpanTags,
+#aonWarehouseMobileSideNavContentDelivery .aonMenuItemSpanTags,
+#aonWarehouseMobileSideNavContentTags .aonMenuItemSpanTags {
+    font-size: 14px;
+    color: #666;
+    text-align: center;
+    line-height: 1.2;
+    display: block;
+    max-width: 80px;
+    word-wrap: break-word;
+}
+
+#aonWarehouseMobileSidenavContentElaborationicon,
+#aonWarehouseMobileSidenavContentPackagingicon,
+#aonWarehouseMobileSidenavContentDeliveryicon,
+#aonWarehouseMobileSidenavContentTagsicon {
+    font-size: 50px;
+}
+
+#aonMenuItemSpanElaboration,
+#aonMenuItemSpanPackaging,
+#aonMenuItemSpanDelivery,
+#aonMenuItemSpanTags {
+    font-size: 14px;
+}
+
+#aonWarehouseMobileSidenavContentElaborationList{
+    margin-left: -40px;
+}
+
+#aonSidenavTitleElaboration{
+    margin-left: -45px !important;
+}
