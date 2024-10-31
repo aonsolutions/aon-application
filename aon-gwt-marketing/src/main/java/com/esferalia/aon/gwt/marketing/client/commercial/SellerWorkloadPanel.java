@@ -63,7 +63,7 @@ public abstract class SellerWorkloadPanel extends ScrollPanel {
 	
 	private static enum COLS {
 //		  CHK(AonStringUtils.EMPTY					,"2rem"				,"" )
-		 DES(AON.MSG.name()						,"-moz-available"	,"min-width: 5rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
+		 DES(AON.MSG.name()							,"-moz-available"	,"min-width: 5rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
 		, TYP(AON.MSG.scope()						,"7rem"				,"")
 		, ACT("Estado"								,"5rem"				,"")
 		, CUS("Clientes"							,"5rem"				,"text-align: right;")

@@ -117,25 +117,30 @@ public abstract class CCCNew extends ResizeComposite {
 	// ----------------------------------------------- Cols
 	
 	private static enum COLS {
-		  ACT("Actividad"					,"-moz-available")
-		, TYP("Tipo"						,"50rem")
-		, ACC("Cuenta"						,"50rem")
-		, PRO("Provincia"					,"30rem")
-		, BUT(AonStringUtils.EMPTY			,"10rem")
+		  ACT("Actividad"					,"-moz-available"	,"min-width: 5rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
+		, TYP("Tipo"						,"10rem"			,"")
+		, ACC("Cuenta"						,"10rem"			,"")
+		, PRO("Provincia"					,"10rem"			,"")
+		, BUT(AonStringUtils.EMPTY			,"3rem"				,"")
 		;
 
 		String headerLabel;
 		String colWidth;
+		String styles;
 
-		private COLS(String headerLabel,String colWidth) {
+		private COLS(String headerLabel,String colWidth,String styles) {
 			this.headerLabel = headerLabel;
 			this.colWidth = colWidth;
+			this.styles = styles;
 		}
 		public String getColWidth() {
 			return colWidth;
 		}
 		public String getHeaderLabel() {
 			return headerLabel;
+		}
+		public String getStyles() {
+			return styles;
 		}
 	}
 	
@@ -199,6 +204,9 @@ public abstract class CCCNew extends ResizeComposite {
 		row.addDomHandler(e -> onCCCOpen(cccInfo), ClickEvent.getType());
 		
 		Label activity = new Label( getActivities().stream().filter(entry -> entry.getKey().equals(cccInfo.getEnterpriseActivity()) || entry.getKey() == cccInfo.getEnterpriseActivity()).findFirst().get().getValue() );
+		activity.setTitle( getActivities().stream().filter(entry -> entry.getKey().equals(cccInfo.getEnterpriseActivity()) || entry.getKey() == cccInfo.getEnterpriseActivity()).findFirst().get().getValue() );
+		cccTable.addInlineStyle(activity, COLS.ACT.getStyles());
+		
 		Label regime = new Label( getRegime(cccInfo.getType()) );
 		
 		HTMLPanel hPanel = new HTMLPanel("");
