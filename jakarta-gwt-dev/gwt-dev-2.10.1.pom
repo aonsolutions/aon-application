@@ -9,7 +9,7 @@
         <version>2.10.1</version>
     </parent>
     <groupId>org.gwtproject</groupId>
-    <artifactId>gwt-dev-jakarta</artifactId>
+    <artifactId>gwt-dev</artifactId>
     <packaging>jar</packaging>
     <version>2.10.1</version>
 
@@ -44,10 +44,6 @@
                 </exclusion>
             </exclusions>
         </dependency>
-        <!--dependency>
-            <groupId>ant</groupId>
-            <artifactId>ant</artifactId>
-        </dependency-->
         <dependency>
             <groupId>commons-collections</groupId>
             <artifactId>commons-collections</artifactId>
@@ -117,12 +113,6 @@
         <dependency>
             <groupId>org.eclipse.jetty</groupId>
             <artifactId>apache-jsp</artifactId>
-           <exclusions>
-                <exclusion>
-                    <groupId>javax.servlet</groupId>
-                    <artifactId>javax.servlet-api</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
     </dependencies>
 </project>

@@ -9,15 +9,13 @@
         <version>2.10.1</version>
     </parent>
     <groupId>org.gwtproject</groupId>
-    <artifactId>gwt-servlet-jakarta</artifactId>
+    <artifactId>gwt-servlet</artifactId>
     <packaging>jar</packaging>
     <version>2.10.1</version>
     <dependencies>
         <dependency>
-            <groupId>jakarta.validation</groupId>
+            <groupId>javax.validation</groupId>
             <artifactId>validation-api</artifactId>
-            <version>1.0.0.GA</version>
-
             <!-- needed by RequestFactory -->
             <optional>true</optional>
         </dependency>
