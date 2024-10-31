@@ -5,6 +5,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
@@ -157,130 +158,98 @@ public class AonNordigen {
 	// ----------------------------------------------------------------
 	// -------------------------------------------------------- [PUBLIC]
 	// ----------------------------------------------------------------
-//	public static NordigenBankAccount setBankAccountValues(Occam occam, NordigenAccessToken token, NordigenBankAccount account) {
-//	try (CloseableAONContext ctx =  AONContext.getAONContext(occam)) {
-//		RegistryBank rbank = account.getRbank();
-//		if (rbank.getRequisition() != null) {
-//			String reqId = rbank.getRequisition();
-//			if (AonStringUtils.isNotBlank(reqId)) {
-//				account.setLinked(true);
-//				account.setRequisition(getRequisition(token, reqId));
-//				account.setMetadata(NordigenMetadaUtils.getNordigenAccountMetadata(token, account.getRequisition(), rbank));
-//				String accountId = account.getMetadata() != null ? account.getMetadata().getId() : null;
-//				account.setLastMovementDate(BankStatementDAO.getLastMovementDate(ctx, account.getRbank().getId()));
-//				
-//				Thread thread3 = new Thread(() -> {
-//					try {
-//						if (account.getRequisition() != null && account.getRequisition().getInstitutionId() != null) {
-//							account.setInstitution(NordigenInstitutionUtils.getInstitution(token, account.getRequisition().getInstitutionId()));
-//						}
-//					} catch (Exception e) {
-//						AON_SOLUTIONS.insertLogData(occam, new LogData(occam.getDomain(), e));
-//						e.printStackTrace();
-//						account.addLog(e.getMessage());
+
+	
+	public static NordigenBankAccount setBankAccountValues(Occam occam, NordigenAccessToken token, NordigenBankAccount account) {
+	    try (CloseableAONContext ctx = AONContext.getAONContext(occam)) {
+	        RegistryBank rbank = account.getRbank();
+	        if (rbank.getRequisition() != null) {
+	            String reqId = rbank.getRequisition();
+	            if (AonStringUtils.isNotBlank(reqId)) {
+	                account.setLinked(true);
+	                account.setRequisition(getRequisition(token, reqId));
+//	                if (!account.getRequisition().getStatus().equals(NordigenRequisitionStatus.LINKED)) {
+//						System.out.println("entra aki");
+//						deleteRequisitionById(token, occam, reqId);
 //					}
-//				});
-//				thread3.start();
-//				
-//				if (account.getMetadata() != null
-//					&& AonStringUtils.isNotBlank(accountId)
-//					&& NordigenRequisitionStatus.LINKED.equals(account.getRequisition().getStatus())) {
-//					
-////					Thread thread1 = new Thread(() -> {
-////						try {
-////							account.setDetail(getAccountDetail(token, accountId));
-////						} catch (Exception e) {
-////							e.printStackTrace();
-////							account.addLog(e.getMessage());
-////						}
-////					});
-//					Thread thread2 = new Thread(() -> {
-//						try {
-//							account.setBalances(NordigenBalancesUtils.getAccountBalances(token, accountId));
-//							account.setNotInsertedMovements(NordigenTransactionsUtils.getNotInsertedTransactions(token, account));
-//						} catch (Exception e) {
-//							AON_SOLUTIONS.insertLogData(occam, new LogData(occam.getDomain(), e));
-//							e.printStackTrace();
-//							account.addLog(e.getMessage());
-//						}
-//					});
-//					
-////					thread1.start();
-//					thread2.start();
-//					thread2.join();
-//				}
-//				thread3.join();
-//				
-//			}
-//		}
-//		return NordigenDAO.updateRegistryBank(ctx, account);
-//	} catch (InterruptedException e) {
-//		Thread.currentThread().interrupt();
-//		AON_SOLUTIONS.insertLogData(occam, new LogData(occam.getDomain(), e));
-//		throw new AonCoreException(e);
-//	}
-//}
+	                // ExecutorService para manejo de hilos
+	                ExecutorService executor = Executors.newSingleThreadExecutor();
+	                Future<Void> metadataFuture = executor.submit(() -> {
+	                    int retries = 5;
+	                    int delay = 500; // tiempo de espera en ms entre intentos
+	                    for (int i = 0; i < retries; i++) {
+	                        account.setMetadata(NordigenMetadaUtils.getNordigenAccountMetadata(token, account.getRequisition(), rbank));
+	                        if (account.getMetadata() != null) {
+	                            System.out.println("Metadata cargado exitosamente: " + account.getMetadata());
+	                            return null; // si la metadata se carga correctamente, salir del bucle
+	                        }
+	                        System.out.println("Reintentando cargar metadata... Intento " + (i + 1));
+	                        Thread.sleep(delay);
+	                    }
+	                    // Si después de los reintentos no se carga metadata, se deja null
+	                    System.out.println("Error: No se pudo cargar metadata después de varios intentos.");
+	                    account.addLog("Error al cargar metadata.");
+	                    return null;
+	                });
 
-	// Esta en NordigenServiceImpl
-	public static NordigenBankAccount setBankAccountValues(Occam occam, NordigenAccessToken token,
-			NordigenBankAccount account) {
-		ExecutorService executor = Executors.newFixedThreadPool(2);
+	                // Esperar a que se complete la carga de metadata
+	                metadataFuture.get();  // Espera a que el Future termine
 
-		try (CloseableAONContext ctx = AONContext.getAONContext(occam)) {
-			RegistryBank rbank = account.getRbank();
+	                // Verificación de metadata antes de proceder
+	                if (account.getMetadata() == null) {
+	                    System.out.println("Error: Metadata no se cargó correctamente.");
+	                    executor.shutdown();
+	                    return account; // Devolvemos el objeto incompleto en caso de error
+	                }
 
-			if (rbank != null && rbank.getRequisition() != null) {
-				String reqId = rbank.getRequisition();
-				if (AonStringUtils.isNotBlank(reqId)) {
-					account.setLinked(true);
-					account.setRequisition(getRequisition(token, reqId));
-					account.setMetadata(
-							NordigenMetadaUtils.getNordigenAccountMetadata(token, account.getRequisition(), rbank));
-					String accountId = account.getMetadata() != null ? account.getMetadata().getId() : null;
-					account.setLastMovementDate(BankStatementDAO.getLastMovementDate(ctx, account.getRbank().getId()));
+	                // Continuar con el resto de los hilos dependientes
+	                String accountId = account.getMetadata().getId();
+	                account.setLastMovementDate(BankStatementDAO.getLastMovementDate(ctx, account.getRbank().getId()));
 
-					Future<?> institutionTask = executor.submit(() -> {
-						try {
-							if (account.getRequisition() != null
-									&& account.getRequisition().getInstitutionId() != null) {
-								account.setInstitution(NordigenInstitutionUtils.getInstitution(token,
-										account.getRequisition().getInstitutionId()));
-							}
-						} catch (Exception e) {
-							AON_SOLUTIONS.insertLogData(occam, new LogData(occam.getDomain(), e));
-							account.addLog(e.getMessage());
-						}
-					});
+	                // Hilo para obtener Institution
+	                Thread institutionThread = new Thread(() -> {
+	                    try {
+	                        if (account.getRequisition().getInstitutionId() != null) {
+	                            account.setInstitution(NordigenInstitutionUtils.getInstitution(token, account.getRequisition().getInstitutionId()));
+	                        }
+	                    } catch (Exception e) {
+	                        e.printStackTrace();
+	                        account.addLog(e.getMessage());
+	                    }
+	                });
+	                institutionThread.start();
 
-					Future<?> balancesTask = executor.submit(() -> {
-						try {
-							account.setBalances(NordigenBalancesUtils.getAccountBalances(token, accountId));
-							account.setNotInsertedMovements(
-									NordigenTransactionsUtils.getNotInsertedTransactions(token, account));
-						} catch (Exception e) {
-							AON_SOLUTIONS.insertLogData(occam, new LogData(occam.getDomain(), e));
-							account.addLog(e.getMessage());
-						}
-					});
+	                // Hilo para obtener Balances y Movimientos
+	                Thread balancesThread = new Thread(() -> {
+	                    try {
+	                        account.setBalances(NordigenBalancesUtils.getAccountBalances(token, accountId));
+	                        account.setNotInsertedMovements(NordigenTransactionsUtils.getNotInsertedTransactions(token, account));
+	                    } catch (Exception e) {
+	                        e.printStackTrace();
+	                        AON_SOLUTIONS.insertLogData(occam, new LogData(occam.getDomain(), e));
+	                        account.addLog(e.getMessage());
+	                    }
+	                });
+	                balancesThread.start();
 
-					institutionTask.get();
-					balancesTask.get();
-				}
-			}
-
-			return NordigenDAO.updateRegistryBank(ctx, account);
-
-		} catch (InterruptedException e) {
-			Thread.currentThread().interrupt();
-			AON_SOLUTIONS.insertLogData(occam, new LogData(occam.getDomain(), e));
-			throw new AonCoreException(e);
-		} catch (Exception e) {
-			AON_SOLUTIONS.insertLogData(occam, new LogData(occam.getDomain(), e));
-			throw new AonCoreException(e);
-		} finally {
-			executor.shutdown();
-		}
+	                // Espera a que todos los hilos finalicen
+	                institutionThread.join();
+	                balancesThread.join();
+	                
+	                // Cerrar el executor
+	                executor.shutdown();
+	            }
+	        }
+	        return NordigenDAO.updateRegistryBank(ctx, account);
+	    } catch (InterruptedException | ExecutionException e) {
+	        Thread.currentThread().interrupt();
+	        AON_SOLUTIONS.insertLogData(occam, new LogData(occam.getDomain(), e));
+	        throw new AonCoreException(e);
+	    }
 	}
+	
+	
+	
 
 	// Esta en NordigenServiceImpl
 	public static boolean deleteRequisitionById(NordigenAccessToken token, Occam occam, String requisitionId) {

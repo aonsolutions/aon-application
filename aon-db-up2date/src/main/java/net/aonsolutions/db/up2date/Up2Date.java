@@ -508,7 +508,7 @@ public class Up2Date {
 //         InvoiceDataCreation.INVOICE_DATA_CREATION,
 //         InvoiceDocAddS3Bucket.INVOICEDOC_ADDS3BUCKET,
 //    		
-//    		LogDataCreation.LOG_DATA_CREATION
+    	LogDataCreation.LOG_DATA_CREATION,
     	UrlShortenCreation.URLSHORTEN_CREATION,
     	Artist2024Update.ARTIST2024UPDATE,
     	InvofoxEnterpriseDataFix.INVOFOX_ENTERPRISE_DATA_FIX,

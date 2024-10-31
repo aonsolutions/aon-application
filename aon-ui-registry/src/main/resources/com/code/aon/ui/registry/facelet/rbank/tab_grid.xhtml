@@ -8,12 +8,16 @@
 	xmlns:h="http://java.sun.com/jsf/html">
 
 	<aon:valueParam name="showSuffix" default="#{false}"/>
-
+	<!-- columna de la izquierda que mete -->
+	<aon:valueParam name="skipSelectRow" value="true" />
+	<!-- columna de la derecha que mete -->
+	<aon:valueParam name="skipEditButtons" value="true" />
+	
 	<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/grid.xhtml">
 		<ui:param name="skipLineEdition" value="#{!aonRole.financeOperator}" />
 
 		<ui:define name="columns">
-			<aon:column styleClass="aon-editDataTable-textColumn aon-width-auto">
+			<aon:column styleClass="aon-editDataTable-textColumn aon-width-350">
 				<f:facet name="header">
 					<aon:outputLabel for="#{controller.beanName}_BankAccount_country" value="#{bundle.aon_iban}" />
 				</f:facet>
@@ -27,6 +31,18 @@
 				</ui:include>
 				<f:facet name="footer">
 					<aon:div>
+						<!-- Boton de crear en el footer, ya que no sale desde el gridEx.xhtml ahora al skipSelectRow=true arriba para no mostrar una columna de mas -->
+						<ui:insert name="beginFooterContent"/>
+						<aon:if test="#{!skipResetButton}">
+							<aon:commandButton
+								id="#{dataTableId}-reset" title="#{bundle.aon_reset} (#{bundle.aon_key_new_line_accelerator})"
+								action="#{resetAction}" actionListener="#{resetActionListener}"
+								rendered="#{!formNew}" reRender="#{resetButtonReRender}"
+								styleClass="aon-editDataTable-button aon-icon-reset"
+								accesskey="#{bundle.aon_key_new_line}" 
+								focus="#{(focusOnAdd != null)?(focusOnAdd):''}"/>
+						</aon:if>
+						<!-- Formulario rellenar IBAN si le da al + -->
 						<ui:include src="bankAccount.xhtml">
 							<ui:param name="bankAccountController" value="#{controller.accountHelper}" />
 							<ui:param name="renderBankAccount" value="#{formNew}" />
@@ -34,24 +50,29 @@
 							<ui:param name="bankAccountSuffix" value="-New" />
 							<ui:param name="bankCodeChangeReRender" value="RegistryBank_alias-New,RegistryBank_bic-New" />
 						</ui:include>
-					</aon:div>															
+					</aon:div>													
 				</f:facet>
 			</aon:column>
 			
-			<aon:column styleClass="aon-editDataTable-textColumn aon-width-180" >
+			<aon:column styleClass="aon-editDataTable-textColumn aon-width-auto" >
 				<f:facet name="header">
 					<aon:outputLabel for="RegistryBank_alias" value="#{bundle.aon_description}" />
 				</f:facet>
 				<aon:outputText value="#{to.alias}" rendered="#{formList}" />
 				<aon:inputText id="RegistryBank_alias"
+					styleClass="aon-width-all"
 					value="#{to.alias}" 
-					size="25" maxlength="25" required="#{true}"
-					rendered="#{formEdit}" />
+					required="#{true}" 
+					rendered="#{formEdit}"
+					style="min-width: 200px;"
+				/>
 				<f:facet name="footer">
 					<aon:inputText id="RegistryBank_alias-New"
 						value="#{controller.to.alias}" 
-						size="25" maxlength="25" required="#{true}"
-						rendered="#{formNew}" />
+						required="#{true}"
+						rendered="#{formNew}"
+						style="min-width: 200px;"
+					/>
 				</f:facet>
 			</aon:column>
 
@@ -74,6 +95,23 @@
 				</f:facet>
 			</aon:column>
 			
+			<aon:column styleClass="aon-editDataTable-textColumn aon-width-240">
+   				<f:facet name="header">
+       				<aon:outputLabel for="RegistryBank_requisition" value="#{bundle.aon_requisition}" />
+   				</f:facet>
+    
+    			<aon:outputText value="#{empty to.requisition ? 'no vinculado' : to.requisition}" rendered="#{formList}" />
+    			<aon:outputText
+    				id="RegistryBank_requisition"
+    				value="#{empty to.requisition ? 'no vinculado' : to.requisition}"
+                	rendered="#{formEdit}" 
+       			/>
+        		
+   				<f:facet name="footer">
+        			<aon:outputText id="RegistryBank_requisition-New" value="" rendered="#{formNew}"/>
+   				</f:facet>
+			</aon:column>
+				
 			<aon:if test="#{showSuffix}">
 				<aon:column styleClass="aon-editDataTable-textColumn aon-width-50">
 					<f:facet name="header">
@@ -90,23 +128,6 @@
 							size="3" maxlength="3" 
 							rendered="#{formNew}" />
 					</f:facet>
-				</aon:column>
-				
-				<aon:column styleClass="aon-editDataTable-textColumn aon-width-50">
-    				<f:facet name="header">
-        				<aon:outputLabel for="RegistryBank_requisition" value="#{bundle.aon_requisition}" />
-    				</f:facet>
-    			<aon:outputText value="#{empty to.requisition ? 'no vinculado' : to.requisition}" rendered="#{formList}" />
-    			<aon:inputText id="RegistryBank_requisition"
-        			value="#{empty to.requisition ? 'no vinculado' : to.requisition}"
-        			readonly="true" 
-        			rendered="#{formEdit}" />
-			    <f:facet name="footer">
-			        <aon:inputText id="RegistryBank_requisition-new"
-			            value="#{empty controller.to.requisition ? 'no vinculado' : controller.to.requisition}"
-			            readonly="true" 
-			            rendered="#{formNew}" />
-			    </f:facet>
 				</aon:column>
 				
 				<aon:if test="#{aonRole.accountingOperator}">	
