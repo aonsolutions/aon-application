@@ -850,7 +850,6 @@
 		color: #4b4b4b;
 		background-image: none;
 		background-color: #fafafa;
-		border-bottom: 1px solid #ddd;	
 	}
 
 /* 	.aon-scroll-area .aon-dataTable {
@@ -2694,30 +2693,30 @@
  		border-top: 1px solid #C4C0B9;
   		background-color: #fff;
 	}
-	#aonContent\:newsForm\:News_contentTextArea_cut,
-	#aonContent\:newsForm\:News_contentTextArea_copy,
-	#aonContent\:newsForm\:News_contentTextArea_paste,
-	#aonContent\:newsForm\:News_contentTextArea_pastetext,
-	#aonContent\:newsForm\:News_contentTextArea_pasteword,
-	#aonContent\:newsForm\:News_contentTextArea_undo,
-	#aonContent\:newsForm\:News_contentTextArea_redo,
-	#aonContent\:newsForm\:News_contentTextArea_search,
-	#aonContent\:newsForm\:News_contentTextArea_replace,
-	#aonContent\:newsForm\:News_contentTextArea_link,
-	#aonContent\:newsForm\:News_contentTextArea_unlink,
-	#aonContent\:newsForm\:News_contentTextArea_anchor,
-	#aonContent\:newsForm\:News_contentTextArea_image,
-	#aonContent\:newsForm\:News_contentTextArea_table,		
-	#aonContent\:newsForm\:News_contentTextArea_row_props,
-	#aonContent\:newsForm\:News_contentTextArea_cell_props,
-	#aonContent\:newsForm\:News_contentTextArea_row_before,
-	#aonContent\:newsForm\:News_contentTextArea_row_after,
-	#aonContent\:newsForm\:News_contentTextArea_delete_row,
-	#aonContent\:newsForm\:News_contentTextArea_col_before,
-	#aonContent\:newsForm\:News_contentTextArea_col_after,
-	#aonContent\:newsForm\:News_contentTextArea_delete_col,
-	#aonContent\:newsForm\:News_contentTextArea_split_cells,
-	#aonContent\:newsForm\:News_contentTextArea_merge_cells,
+	a[id*="TextArea_cut"],
+	a[id*="TextArea_copy"],
+	a[id*="TextArea_paste"],
+	a[id*="TextArea_pastetext"],
+	a[id*="TextArea_pasteword"],
+	a[id*="TextArea_undo"],
+	a[id*="TextArea_redo"],
+	a[id*="TextArea_search"],
+	a[id*="TextArea_replace"],
+	a[id*="TextArea_link"],
+	a[id*="TextArea_unlink"],
+	a[id*="TextArea_anchor"],
+	a[id*="TextArea_image"],
+	a[id*="TextArea_table"],		
+	a[id*="TextArea_row_props"],
+	a[id*="TextArea_cell_props"],
+	a[id*="TextArea_row_before"],
+	a[id*="TextArea_row_after"],
+	a[id*="TextArea_delete_row"],
+	a[id*="TextArea_col_before"],
+	a[id*="TextArea_col_after"],
+	a[id*="TextArea_delete_col"],
+	a[id*="TextArea_split_cells"],
+	a[id*="TextArea_merge_cells"],
 	.mceToolbarStart, .mceToolbarEnd {
   		display: none !important;
 	}
@@ -2825,17 +2824,15 @@
 		padding-right: 15px !important;
 	}
 
-	.aon-text-right {
-		text-align: left;
-	}
 	
 	.aon-outputText {
 		float: left !important;
 	}
 	
-	[id*="j_id"]{
-		text-align: left !important;
+	[id*="invoiceList"] .aon-outputText {
+		float: right !important;
 	}
+
 	
 	a[id*="targetDeduplicationData"],
 	a[id*="invoicingGroupDetailData"]{
