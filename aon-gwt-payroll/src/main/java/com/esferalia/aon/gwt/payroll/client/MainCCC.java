@@ -176,8 +176,15 @@ public class MainCCC extends MainEntryPoint{
 		activityCCCWidget = new CCCWidgetImpl();
 		activityCCCWidget.getElement().getStyle().setProperty("margin", "0 1rem");
 		
-		this.dockLayoutPanel = new AonCustomDockLayout("C\u00f3digo Cuentas Cotizaci\u00f3n");
-		this.pdfDockLayoutPanel = new AonCustomDockLayout("PDF");
+		this.dockLayoutPanel = new AonCustomDockLayout("C\u00f3digo Cuentas Cotizaci\u00f3n") {
+			@Override
+			protected void onClearFilter() { /* Nothing to do here */ }
+		};
+		
+		this.pdfDockLayoutPanel = new AonCustomDockLayout("PDF") {
+			@Override
+			protected void onClearFilter() { /* Nothing to do here */ }
+		};
 		
 		GWT.<AonGwtTemplateResources>create(AonGwtTemplateResources.class).css().ensureInjected();
 		AON.ensureInjected();
@@ -391,7 +398,6 @@ public class MainCCC extends MainEntryPoint{
 		this.dockLayoutPanel.addToolbarButton(importBtn);
 		
 		this.dockLayoutPanel.hideSearchWidget();
-		this.dockLayoutPanel.hideFilterWidget();
 		
 	}
 	
@@ -404,7 +410,6 @@ public class MainCCC extends MainEntryPoint{
 		
 		this.pdfDockLayoutPanel.addToolbarButton(backButton);
 		this.pdfDockLayoutPanel.hideSearchWidget();
-		this.pdfDockLayoutPanel.hideFilterWidget();
 	}
 	
 	// ----------------------------------------------- Toolbar.Methods TGSS
