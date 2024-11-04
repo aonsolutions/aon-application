@@ -6,6 +6,8 @@ import static jakarta.servlet.http.HttpServletResponse.SC_INTERNAL_SERVER_ERROR;
 
 import java.io.IOException;
 import java.security.Principal;
+import java.util.Arrays;
+import java.util.Objects;
 
 import javax.faces.FactoryFinder;
 import javax.faces.component.UIViewRoot;
@@ -22,6 +24,9 @@ import org.apache.catalina.connector.Request;
 import com.code.aon.aio.controller.AppController;
 import com.code.aon.aio.controller.DesktopController;
 import com.code.aon.jaas.auth.AuthPrincipal;
+import com.code.aon.ui.common.ICommonConstants;
+import com.code.aon.ui.common.LocaleElement;
+import com.code.aon.ui.common.controller.ConfigurationController;
 import com.code.aon.ui.config.util.UserUtils;
 import com.code.aon.ui.util.AonUtil;
 
@@ -41,6 +46,7 @@ public class JsfAppServlet extends HttpServlet {
 	private static final String VIEW_ID = "viewId";
 	private static final String ACTION = "action";
 	private static final String DOMAIN = "domain";
+	private static final String LANGUAGE = "language";
 	private static final String ACTION_LISTENER = "actionListener";
 
 	@Override
@@ -55,7 +61,7 @@ public class JsfAppServlet extends HttpServlet {
 			
 			initFacesContext(req, resp);
 			initDesktopController(req);
-			
+			initConfigurationController(req);
 
 			FacesContext facesContext = FacesContext.getCurrentInstance();
 			ExternalContext externalContext = facesContext.getExternalContext();
@@ -64,6 +70,14 @@ public class JsfAppServlet extends HttpServlet {
 		} finally {
 			releaseFacesContext();
 		}	
+	}
+
+	private void initConfigurationController(HttpServletRequest req) {
+		ConfigurationController configController =  (ConfigurationController) AonUtil.getRegisteredBean(ICommonConstants.CONFIGURATION_CONTROLLER_NAME);
+		String language = req.getParameter(LANGUAGE);
+		Arrays.stream(configController.getLocales())
+		.filter(locale -> Objects.equals(locale.getLanguage(), language))
+		.findFirst().ifPresent(LocaleElement::changeLanguage);
 	}
 
 	private void initDesktopController(HttpServletRequest req) {
