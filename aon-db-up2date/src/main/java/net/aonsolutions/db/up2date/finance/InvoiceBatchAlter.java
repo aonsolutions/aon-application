@@ -31,7 +31,8 @@ public class InvoiceBatchAlter implements Update {
 			String addDescription = "ALTER TABLE `invoice_batch` ADD COLUMN `description` varchar(32) CHARACTER SET latin1 COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Descripcion del lote' AFTER `domain`";
 			String addEndDate = "ALTER TABLE `invoice_batch` ADD COLUMN `end_date` date DEFAULT NULL COMMENT 'Fecha de finalizacion' AFTER `date`";
 			String modifyDataResponse = "ALTER TABLE `invoice_batch` MODIFY COLUMN `data_response` int DEFAULT NULL COMMENT 'Envio de la comunicacion'";
-		
+			String addMd5 = "ALTER TABLE `invoice_batch` ADD COLUMN `md5` varchar(32) CHARACTER SET latin1 COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Hash md5' AFTER `data_response`";
+			
 			String addCreationDate = "ALTER TABLE `invoice_batch` ADD COLUMN `creation_date` datetime DEFAULT NULL COMMENT 'Fecha de creacion'";
 			String addModificationUser = "ALTER TABLE `invoice_batch` ADD COLUMN `modification_user` varchar(16) CHARACTER SET latin1 COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Usuario de modificacion'";
 			String addModificationDate = "ALTER TABLE `invoice_batch` ADD COLUMN `modification_date` datetime DEFAULT NULL COMMENT 'Fecha de modificacion'";
@@ -39,6 +40,7 @@ public class InvoiceBatchAlter implements Update {
 			dslContext.execute(addDescription);
 			dslContext.execute(addEndDate);
 			dslContext.execute(modifyDataResponse);
+			dslContext.execute(addMd5);
 			dslContext.execute(addCreationDate);
 			dslContext.execute(addModificationUser);
 			dslContext.execute(addModificationDate);

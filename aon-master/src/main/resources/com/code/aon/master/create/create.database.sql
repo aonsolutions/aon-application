@@ -4730,6 +4730,7 @@ CREATE TABLE `invoice_batch` (
   `type` tinyint NOT NULL DEFAULT '0' COMMENT 'Tipo de Comunicacion',
   `operation` tinyint NOT NULL DEFAULT '0' COMMENT 'Tipo de Operacion',
   `data_response` int DEFAULT NULL COMMENT 'Envio de la comunicacion',
+  `md5` varchar(32) CHARACTER SET latin1 COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Hash md5',
   `creation_user` varchar(16) CHARACTER SET latin1 COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Usuario de creacion',
   `creation_date` datetime DEFAULT NULL COMMENT 'Fecha de creacion',
   `modification_user` varchar(16) CHARACTER SET latin1 COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Usuario de modificacion',

@@ -15,6 +15,7 @@ public class InvoiceBatch implements Serializable{
 	private InvoiceCommunicationType type;
 	private InvoiceCommunicationOperation operation;
 	private Integer dataResponse;
+	private String md5;
 	private String creationUser;
 	private Date creationDate;
 	private String modificationUser;
@@ -92,6 +93,15 @@ public class InvoiceBatch implements Serializable{
 		return this;
 	}
 
+	public String getMd5() {
+		return md5;
+	}
+	
+	public InvoiceBatch setMd5(String md5) {
+		this.md5 = md5;
+		return this;
+	}
+	
 	public String getCreationUser() {
 		return creationUser;
 	}

@@ -90,6 +90,7 @@ public class InvoiceBatchDAO {
 		.set(INVOICE_BATCH.TYPE, invoiceBatch.getType().value())
 		.set(INVOICE_BATCH.OPERATION, invoiceBatch.getOperation().value())
 		.set(INVOICE_BATCH.DATA_RESPONSE, invoiceBatch.getDataResponse())
+		.set(INVOICE_BATCH.MD5, invoiceBatch.getMd5())
 		.set(INVOICE_BATCH.MODIFICATION_USER, ctx.getUser())
 		.set(INVOICE_BATCH.MODIFICATION_DATE, new Timestamp( System.currentTimeMillis()) )
 		.where(INVOICE_BATCH.ID.eq(invoiceBatch.getId()))
@@ -106,6 +107,7 @@ public class InvoiceBatchDAO {
 				.set(INVOICE_BATCH.TYPE, invoiceBatch.getType().value())
 				.set(INVOICE_BATCH.OPERATION, invoiceBatch.getOperation().value())
 				.set(INVOICE_BATCH.DATA_RESPONSE, invoiceBatch.getDataResponse())
+				.set(INVOICE_BATCH.MD5, invoiceBatch.getMd5())
 				.set(INVOICE_BATCH.CREATION_USER, ctx.getUser())
 				.set(INVOICE_BATCH.CREATION_DATE, new Timestamp( System.currentTimeMillis()))
 			.returning(INVOICE_BATCH.ID).fetchOne().getId();
@@ -139,6 +141,7 @@ public class InvoiceBatchDAO {
 				.setType(InvoiceCommunicationType.safeValueOf(getValue(r, INVOICE_BATCH.TYPE)))
 				.setOperation(InvoiceCommunicationOperation.safeValueOf(getValue(r, INVOICE_BATCH.OPERATION)))
 				.setDataResponse(getValue(r, INVOICE_BATCH.DATA_RESPONSE))
+				.setMd5(getValue(r, INVOICE_BATCH.MD5))
 				.setCreationUser(getValue(r, INVOICE_BATCH.CREATION_USER))
 				.setCreationDate(getValue(r, INVOICE_BATCH.CREATION_DATE))
 				.setModificationUser(getValue(r, INVOICE_BATCH.MODIFICATION_USER))

@@ -1,7 +1,7 @@
 import { AonElement } from '../../components/AonElement.js';
 import { CONSTANT, MSG, TAG, EVENT } from '../../environments/environments.js';
-import { addElements, setElements } from './ElementCache.js';
-import { createList } from '../../../components/CreateComponent.js';
+import { addElements, setElements } from '../warehouse/elaboration/ElementCache.js';
+import { createList } from '../../components/CreateComponent.js';
 import { getInvoiceClosing } from '../../services/invoiceService.js';
 
 export class AonInvoiceClosingList extends AonElement {
@@ -25,6 +25,7 @@ export class AonInvoiceClosingList extends AonElement {
 
 	connectedCallback () {
 		this.initialize();
+		this.build();
  	}
 
 	initialize() {
@@ -38,20 +39,18 @@ export class AonInvoiceClosingList extends AonElement {
 
  	build() {
 		let aonTable = createList(this.TABLE);
-		aonTable.selectable = 'true';
 		this.appendChild(aonTable);
-		aonTable.addColumn(MSG.ID, 'string', 'id', '100px');
+		aonTable.addColumn('Id', 'string', 'id', '100px');
 		aonTable.addColumn(MSG.DESCRIPTION, 'string', 'description', 'auto');
-		aonTable.addColumn(MSG.START_DATE, 'string', 'startDate', '100px');
-		aonTable.addColumn(MSG.END_DATE, 'string', 'endDate', '100px');
-		aonTable.addColumn("Hash", 'string', 'hash', '200px');
+		aonTable.addColumn(MSG.START_DATE, 'string', 'start_date', '100px');
+		aonTable.addColumn(MSG.END_DATE, 'string', 'end_date', '100px');
+		aonTable.addColumn("Hash", 'string', 'hash', '300px');
 
 		this.init();
 		aonTable.addEventListener('more', () => {
 			if(this.more)
 				this.loadMore();
 		});
-
 		this.buildSearch();
 	}
 
@@ -92,7 +91,6 @@ export class AonInvoiceClosingList extends AonElement {
 				
 				aonTable.removeRows();
 				aonTable.selected = [];
-				this.removeElaborationActions();
 				closing.forEach((cl, i) => {
 					aonTable.addRow(cl, () => {}, (e) => {});
 				});
