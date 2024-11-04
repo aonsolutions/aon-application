@@ -726,6 +726,10 @@
   		padding: 10px;
 		min-width: fit-content;
    	}
+   	
+   	.aon-panelGrid .aon-panelGrid {
+   		border: 0px;
+   	}
   	
   	.aon-group .aon-panelGrid,
   	.aon-panelGrid .aon-group{
@@ -813,7 +817,11 @@
 	.aon-popupWindow-close,
 	.gwt-Selector .gwt-PopupPanel .custom-dialog-close{
 		background-size: cover;
-		background: transparent url(#{aonResource.resolve['/images/aon-cancel.svg']}) scroll center center no-repeat;
+		background: #fafafa url(#{aonResource.resolve['/images/aon-cancel.svg']}) scroll center center no-repeat;
+	}
+	
+	.aon-popupWindow-close {
+	  	border: #fafafa 1px solid;
 	}
 	
 	
@@ -850,6 +858,7 @@
 		color: #4b4b4b;
 		background-image: none;
 		background-color: #fafafa;
+		border-color: #fafafa;
 	}
 
 /* 	.aon-scroll-area .aon-dataTable {
@@ -2869,6 +2878,15 @@
 	
 	.aonDataScroller {
 		padding-left: 0px !important;
+	}
+	
+	#aonContent\:showNewMessageModalPanelShadowDiv,
+	#aonContent\:showNewMessageModalPanelContentDiv,
+	#aonContent\:newFeeModalPanelShadowDiv,
+	#aonContent\:newFeeModalPanelContentDiv {
+	 	min-width: fit-content !important;
+	  	min-height: fit-content !important;
+	  	padding: 10px;
 	}
 	
 	</style>
