@@ -193,7 +193,7 @@ public class ITComunica {
 	
 				Double base = baseOptional.get();
 				int quoteDays = employeeIt.getQuoteDays();
-				float baseCtiCgc  = base.floatValue() * quoteDays;
+				float baseCtiCgc  = base.floatValue() /* * quoteDays */;
 				String regime = employeeIt.getRegime();
 				String ccc = employeeIt.getCcc();
 				String nss = employeeIt.getNss();

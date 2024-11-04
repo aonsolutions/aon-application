@@ -29,6 +29,9 @@ public class Fee implements Serializable{
 	private String description;
 	private Double quantity;
 	private Double price;
+	private Double netCost;
+	private Double totalNetPrice;
+	private Double totalPrice;
 	private String discountExpr;
 	private Date startDate;
 	private Date endDate;
@@ -100,6 +103,33 @@ public class Fee implements Serializable{
 		return this;
 	}
 	
+	public Double getNetCost() {
+		return netCost;
+	}
+	
+	public Fee setNetCost(Double netCost) {
+		this.netCost = netCost;
+		return this;
+	}
+	
+	public Double getTotalNetPrice() {
+		return totalNetPrice;
+	}
+
+	public Fee setTotalNetPrice(Double totalNetPrice) {
+		this.totalNetPrice = totalNetPrice;
+		return this;
+	}
+
+	public Double getTotalPrice() {
+		return totalPrice;
+	}
+
+	public Fee setTotalPrice(Double totalPrice) {
+		this.totalPrice = totalPrice;
+		return this;
+	}
+
 	public Double getDiscount() {
 		DiscountExpression de = new DiscountExpression(getDiscountExpr());
 		return de.getPercentage();

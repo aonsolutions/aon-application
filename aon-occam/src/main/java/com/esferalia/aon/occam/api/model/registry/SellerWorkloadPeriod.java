@@ -8,7 +8,9 @@ public class SellerWorkloadPeriod  implements Serializable {
 	
 	private Integer customers;
 	private Integer customerFees;
-	private Double amount;
+	private Integer salaries;
+	private Double netAmount;
+	private Double totalAmount;
 	
 	public SellerWorkloadPeriod() {
 		super();
@@ -32,12 +34,30 @@ public class SellerWorkloadPeriod  implements Serializable {
 		return this;
 	}
 
-	public Double getAmount() {
-		return amount;
+	public Integer getSalaries() {
+		return salaries;
 	}
 
-	public SellerWorkloadPeriod setAmount(Double amount) {
-		this.amount = amount;
+	public SellerWorkloadPeriod setSalaries(Integer salaries) {
+		this.salaries = salaries;
+		return this;
+	}
+
+	public Double getNetAmount() {
+		return netAmount;
+	}
+
+	public SellerWorkloadPeriod setNetAmount(Double amount) {
+		this.netAmount = amount;
+		return this;
+	}
+	
+	public Double getTotalAmount() {
+		return totalAmount;
+	}
+
+	public SellerWorkloadPeriod setTotalAmount(Double amount) {
+		this.totalAmount = amount;
 		return this;
 	}
 }

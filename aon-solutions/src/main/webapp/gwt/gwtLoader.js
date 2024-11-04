@@ -157,9 +157,7 @@
 				iwindow.getCurrentDomainName = () => LS.getDomainName();
 				iwindow.getCurrentDomain = () => LS.getDomainId();
 				iwindow.getCurrentUser = () => LS.getDomainLogin();
-				
-
-				
+				iwindow.isSysAdmin = () => true;
 
 
 				// inject 'gwt' script 
