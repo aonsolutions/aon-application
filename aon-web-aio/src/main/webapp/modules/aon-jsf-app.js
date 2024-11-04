@@ -70,6 +70,11 @@ export class AonJsfApp extends AonElement {
 		domainInput.value = LS.getDomainName();
 		form.appendChild(domainInput);
 
+		let languageInput = this.createElement(TAG.INPUT);
+		languageInput.type = 'hidden';
+		languageInput.name = 'language';
+		languageInput.value = LS.getLanguage();
+		form.appendChild(languageInput);
 
 		this.appendChild(form);
 
