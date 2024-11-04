@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metadata>
+  <groupId>net.ltgt.gwt.maven</groupId>
+  <artifactId>gwt-maven-plugin</artifactId>
+  <versioning>
+    <latest>HEAD-SNAPSHOT</latest>
+    <versions>
+      <version>HEAD-SNAPSHOT</version>
+    </versions>
+    <lastUpdated>20241104224019</lastUpdated>
+  </versioning>
+</metadata>
