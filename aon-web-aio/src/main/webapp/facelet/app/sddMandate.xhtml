@@ -12,8 +12,9 @@
 			id="appButton" 
 			style="display: none; " 
 			action="sddMandate_list-management"
-			actionListener="#{sddMandate.onSearch}"
 		>
+			<f:setPropertyActionListener target="#{sddMandate.defaultOrder}" value="updateDate desc" />
+			<aon:actionListener method="#{sddMandate.onSearch}" />
 		</aon:commandButton>
 	</aon:form>
 	

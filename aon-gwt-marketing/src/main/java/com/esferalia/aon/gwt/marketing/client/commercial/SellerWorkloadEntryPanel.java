@@ -81,8 +81,6 @@ public abstract class SellerWorkloadEntryPanel extends AonCustomDockLayout {
 		});
 		setSearchPlaceholder("Filtrar por cliente, producto...");
 		
-		addFilterMenu();
-//		
 //		cleanButton = new AonSearchPanelButton( AON.MSG.clean(), AON.CSS.aonIconClear() );
 //		cleanButton.addClickHandler(event -> {
 //			getSearchTextBox().setValue(null, false);
@@ -93,8 +91,6 @@ public abstract class SellerWorkloadEntryPanel extends AonCustomDockLayout {
 //		});
 //		
 //		addFilterToolbarButton(cleanButton);
-		
-		addSortMenu();
 		
 		sort.addItem("Cliente", "customer");
 		sort.addItem("Producto", "product");

@@ -42,7 +42,17 @@ public class CancelInvoiceCommunicationTypeVisitor extends BasicCommunicationInv
 	
 	@Override
 	public void visitSERES() {
-		
+		// Not implemented
+	}
+	
+	@Override
+	public void visitEMAIL() {
+		// Not implemented
+	}
+	
+	@Override
+	public void visitCLOSING() {
+		// Not implemented
 	}
 
 }

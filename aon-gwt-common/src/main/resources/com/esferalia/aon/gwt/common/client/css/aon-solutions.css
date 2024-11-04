@@ -1034,6 +1034,32 @@
 	gap: .5rem
 }
 
+/* Estilo para el contenedor principal */
+.aon_search_filter {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    border-bottom: 1px solid #b9b8b8;
+    width: 300px;
+}
+
+/* Estilo del contenido del PopupPanel */
+.aon_search_filter_popup {
+    display: flex;
+    flex-direction: column;
+    width: 275px;
+    height: 28rem;
+    overflow: hidden;
+    background-color: #fff;
+    padding: .5rem;
+}
+
+/* Estilo del ScrollPanel */
+.aon_search_filter_scroll {
+    flex-grow: 1;
+    overflow-y: auto;
+}
+
 .aon_utility_option{
 	display: flex;
 	align-items: center;
@@ -1126,7 +1152,7 @@
 	align-items: center;
 	gap: 0.5rem;
 	border-bottom: 1px solid rgb(185, 184, 184);
-	width: 275px;
+	width: 290px;
 }
 
 .aon_custom_text_box_input_no_border{
