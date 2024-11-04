@@ -507,12 +507,13 @@ public class InvoiceServlet extends AonApiHttpServlet{
 		json.put(IJsonNames.SERIES, invoice.getSeries());
 		json.put(IJsonNames.SERIE, invoice.getSeries());
 		json.put(IJsonNames.NUMBER, invoice.getNumber());
+		json.put(IJsonNames.SIGNED, invoice.isSigned());
 
 		InvoiceData invoiceData = AON.getInvoiceData(domain, user, f -> f.getInvoiceProperty().eq(invoice.getId())
 				.and(f.getNameProperty().eq("MD5")));
 		if(invoiceData != null && !AonStringUtils.isBlank(invoiceData.getValue())) {
 			String md5 = AonDigestUtils.md5Hex(invoice.flat());
-			json.put("altered", md5.equalsIgnoreCase(invoiceData.getValue()));
+			json.put("altered", !md5.equalsIgnoreCase(invoiceData.getValue()));
 		}
 
 		return json;
