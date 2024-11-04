@@ -17,22 +17,32 @@ public class ModifyInvoiceCommunicationTypeVisitor extends BasicCommunicationInv
 	
 	@Override
 	public void visitSII() {
-	
+		// Not implemented
 	}
 
 	@Override
 	public void visitTBAI() {
-		
+		// Not implemented
 	}
 
 	@Override
 	public void visitLROE() {
-
+		// Not implemented
 	}
 	
 	@Override
 	public void visitSERES() {
-		
+		// Not implemented		
+	}
+	
+	@Override
+	public void visitEMAIL() {
+		// Not implemented
+	}
+	
+	@Override
+	public void visitCLOSING() {
+		// Not implemented
 	}
 
 }
