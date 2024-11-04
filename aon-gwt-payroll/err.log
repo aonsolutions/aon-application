@@ -1,0 +1,28 @@
+[[1;34mINFO[m] Error stacktraces are turned on.
+[[1;34mINFO[m] Scanning for projects...
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m-----------------< [0;36mcom.esferalia.aon:aon.gwt.payroll[0;1m >------------------[m
+[[1;34mINFO[m] [1mBuilding AON GWT PAYROLL 9.23-SNAPSHOT[m
+[[1;34mINFO[m]   from pom.xml
+[[1;34mINFO[m] [1m--------------------------------[ jar ]---------------------------------[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32mmaven-clean-plugin:2.5:clean[m [1m(default-clean)[m @ [36maon.gwt.payroll[0;1m ---[m
+[[1;34mINFO[m] Deleting /var/tmp/aon-application/aon-gwt-payroll/target
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32mmaven-enforcer-plugin:3.0.0:enforce[m [1m(enforce-maven)[m @ [36maon.gwt.payroll[0;1m ---[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32mbuildnumber-maven-plugin:3.0.0:create[m [1m(default)[m @ [36maon.gwt.payroll[0;1m ---[m
+[[1;34mINFO[m] ShortRevision tag detected. The value is '5'.
+[[1;34mINFO[m] Executing: /bin/sh -c cd '/var/tmp/aon-application/aon-gwt-payroll' && 'git' 'rev-parse' '--verify' '--short=5' 'HEAD'
+[[1;34mINFO[m] Working directory: /var/tmp/aon-application/aon-gwt-payroll
+[[1;34mINFO[m] Storing buildNumber: 26daf1 at timestamp: 1730667635879
+[[1;34mINFO[m] Storing buildScmBranch: gwt-2.11.0
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32mbuild-helper-maven-plugin:3.3.0:add-source[m [1m(add-source)[m @ [36maon.gwt.payroll[0;1m ---[m
+[[1;34mINFO[m] Source directory: /var/tmp/aon-application/aon-gwt-payroll/target/generated-sources added.
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32mmaven-resources-plugin:2.6:resources[m [1m(default-resources)[m @ [36maon.gwt.payroll[0;1m ---[m
+[[1;34mINFO[m] Using 'ISO-8859-1' encoding to copy filtered resources.
+[[1;34mINFO[m] Copying 223 resources
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32mmaven-compiler-plugin:3.10.1:compile[m [1m(default-compile)[m @ [36maon.gwt.payroll[0;1m ---[m

@@ -14,6 +14,25 @@
   <build>
     <plugins>
       <plugin>
+        <groupId>net.ltgt.gwt.maven</groupId>
+        <artifactId>gwt-maven-plugin</artifactId>
+        <version>HEAD-SNAPSHOT</version>
+        <extensions>true</extensions>
+        <configuration>
+          <skipModule>true</skipModule>
+          <webappDirectory>${project.build.outputDirectory}</webappDirectory>
+          <moduleName>com.esferalia.aon.gwt.connect.Connect</moduleName>
+        </configuration>
+        <executions>
+          <execution>
+            <phase>prepare-package</phase>
+            <goals>
+              <goal>compile</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+      <!--plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>gwt-maven-plugin</artifactId>
         <version>2.10.0</version>
@@ -32,12 +51,10 @@
             <phase>prepare-package</phase>
             <goals>
               <goal>compile</goal>
-              <!--goal>generateAsync</goal-->
-              <!--goal>test</goal -->
             </goals>
           </execution>
         </executions>
-      </plugin>
+      </plugin-->
 			<plugin>
 				<groupId>com.google.code.maven-replacer-plugin</groupId>
 				<artifactId>replacer</artifactId>
@@ -85,13 +102,19 @@
     <dependency>
       <groupId>org.gwtproject</groupId>
       <artifactId>gwt-servlet-jakarta</artifactId>
-      <version>2.11.0</version>
+      <version>2.12.0</version>
       <scope>compile</scope>
     </dependency>
     <dependency>
       <groupId>org.gwtproject</groupId>
+      <artifactId>gwt-dev-jakarta</artifactId>
+      <version>2.12.0</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.gwtproject</groupId>
       <artifactId>gwt-user-jakarta</artifactId>
-      <version>2.11.0</version>
+      <version>2.12.0</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
@@ -181,11 +204,10 @@
     <build>
       <plugins>
         <plugin>
-          <groupId>org.codehaus.mojo</groupId>
+          <groupId>net.ltgt.gwt.maven</groupId>
           <artifactId>gwt-maven-plugin</artifactId>
           <configuration>
-            <draftCompile>true</draftCompile>
-	    <module>com.esferalia.aon.gwt.connect.DevelopmentConnect</module>
+	    <moduleName>com.esferalia.aon.gwt.connect.DevelopmentConnect</moduleName>
           </configuration>
         </plugin>
       </plugins>
