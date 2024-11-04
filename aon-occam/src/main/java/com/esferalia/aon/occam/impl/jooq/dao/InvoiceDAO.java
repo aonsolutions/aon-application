@@ -615,6 +615,7 @@ public class InvoiceDAO {
 				.setRegistryDocumentCountry(Country.safeValueOf(r.getValue(INVOICE.RDOCUMENT_COUNTRY)))
 				.setRegistryName(r.getValue(INVOICE.RNAME))
 				.setRegistryAddress(r.getValue(INVOICE.RADDRESS))
+				.setSigned(getBoolean(r, INVOICE.SIGNED))
 				.setScope(checkField(r, SCOPE.ID)
 						? ScopeFiller.buildScope(r)
 						: new Scope().setId(r.getValue(INVOICE.SCOPE)))
