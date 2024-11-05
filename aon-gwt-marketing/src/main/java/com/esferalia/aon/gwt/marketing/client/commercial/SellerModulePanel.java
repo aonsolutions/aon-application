@@ -7,7 +7,6 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomDockLayout;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomListBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonMessagePanel;
-import com.esferalia.aon.gwt.common.client.widget.solutions.AonSearchPanelButton;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonSellerPanel;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonSellerPanel.AonSellerPanelCallback;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
@@ -28,8 +27,6 @@ public abstract class SellerModulePanel extends AonCustomDockLayout {
 	
 	private SimpleLayoutPanel centerPanel;
 	
-	private AonSearchPanelButton cleanButton;
-	
 	private AonCustomListBox scope = new AonCustomListBox("Ambito");
 	private AonCustomListBox active = new AonCustomListBox("Activo");
 	
@@ -46,7 +43,8 @@ public abstract class SellerModulePanel extends AonCustomDockLayout {
 		this.options = options;
 		
 		addButtonsToolbar();
-		getSearchTextBox().addKeyUpHandler(e -> {
+		
+		addKeyUpHandler(e -> {
 			String value = getSearchTextBox().getValue();
 			if(AonStringUtils.isNotBlank(value) && value.length() > 3) {
 				onSearch( options );
@@ -54,22 +52,6 @@ public abstract class SellerModulePanel extends AonCustomDockLayout {
 				onSearch( options );
 			}
 		});
-		
-		
-		addFilterMenu();
-		
-		cleanButton = new AonSearchPanelButton( AON.MSG.clean(), AON.CSS.aonIconClear() );
-		cleanButton.addClickHandler(event -> {
-			getSearchTextBox().setValue(null, false);
-			scope.getListBox().setSelectedIndex(0);
-			active.getListBox().setSelectedIndex(0);
-			
-			sellerPanel.resetSearchOffset();
-			
-			onSearch( options );
-		});
-
-		addFilterToolbarButton(cleanButton);
 		
 		scope.addItem("-", "");
 		options.getConfiguration().getAvailableScopes().forEach(sc -> scope.addItem(sc.getDescription(), sc.getId() + ""));
@@ -84,8 +66,6 @@ public abstract class SellerModulePanel extends AonCustomDockLayout {
 		
 		addFilterWidget(scope);
 		addFilterWidget(active);
-		
-		addSortMenu();
 		
 		sort.addItem("Nombre", "name");
 		sort.addItem("Alias", "alias");
@@ -111,6 +91,17 @@ public abstract class SellerModulePanel extends AonCustomDockLayout {
 		container.add(centerPanel);
 		
 		add(container);
+		onSearch( options );
+	}
+
+	@Override
+	protected void onClearFilter() {
+		getSearchTextBox().setValue(null, false);
+		scope.getListBox().setSelectedIndex(0);
+		active.getListBox().setSelectedIndex(0);
+		
+		sellerPanel.resetSearchOffset();
+		
 		onSearch( options );
 	}
 

@@ -11,9 +11,10 @@
 		<aon:commandButton 
 			id="appButton" 
 			style="display: none; " 
-			action="finance_search-charge"
+			action="finance_list-charge"
 			actionListener="#{finance.onEditSearchCharge}"
 		>
+			<aon:actionListener method="#{finance.onSearch}" />
 		</aon:commandButton>
 	</aon:form>
 	
