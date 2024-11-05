@@ -116,6 +116,19 @@
 										</aon:commandLink>
 									</aon:div>
 									
+									<!-- *********************** [MODELO 369] -->
+									<aon:div>
+										<aon:commandLink id="gwt_mod369" action="gwt_mod369" 
+											title="#{bundle.fiscal_model_369_module}" styleClass="aon-menu-fiscal">
+											<aon:outputText rendered="#{fiscalParams.aeat}" styleClass="aon-menu-fiscal-model aon-menu-icon-aeat" value="369"/>
+											<aon:outputText rendered="#{fiscalParams.araba}" styleClass="aon-menu-fiscal-model aon-menu-icon-araba" value="369"/>
+											<aon:outputText rendered="#{fiscalParams.bizkaia}" styleClass="aon-menu-fiscal-model aon-menu-icon-bizkaia" value="369"/>
+											<aon:outputText rendered="#{fiscalParams.gipuzkoa}" styleClass="aon-menu-fiscal-model aon-menu-icon-gipuzkoa" value="369"/>
+											<aon:outputText rendered="#{fiscalParams.navarra}" styleClass="aon-menu-fiscal-model aon-menu-icon-navarra" value="369"/>
+											<aon:outputText styleClass="aon-menu-fiscal-label" value="#{bundle.fiscal_model_369_module}"/>
+										</aon:commandLink>
+									</aon:div>
+									
 									<!-- *********************** [MODELO 140] -->
 									<aon:div rendered="#{fiscalParams.bizkaia and fiscalParams.personaFisica}">
 										<aon:commandLink id="gwt_mod140-new" action="gwt_mod140-new" 

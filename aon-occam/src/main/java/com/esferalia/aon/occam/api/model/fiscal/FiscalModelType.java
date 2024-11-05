@@ -31,7 +31,8 @@ public enum FiscalModelType implements Serializable{
 	M303    ("IVA","IVA"		, false){ @Override public void visit(IFiscalModelTypeVisitor visitor) { visitor.visitM303();} },
 	M140	("140","140"		, false){ @Override public void visit(IFiscalModelTypeVisitor visitor) { } },
 	M240	("240","240"		, false){ @Override public void visit(IFiscalModelTypeVisitor visitor) { } },
-	SII		("SII","SII"		, false){ @Override public void visit(IFiscalModelTypeVisitor visitor) { } }
+	SII		("SII","SII"		, false){ @Override public void visit(IFiscalModelTypeVisitor visitor) { } },
+	M369    ("369","369"		, false){ @Override public void visit(IFiscalModelTypeVisitor visitor) { } },  // FALTA - NO SE SI VOY A NECESITAR VISIT
 	;
 
 	private String value;
@@ -90,7 +91,8 @@ public enum FiscalModelType implements Serializable{
 			|| this == M390_HF 
 			|| this == M310 
 			|| this == M311 
-			|| this == M303;				
+			|| this == M303
+			|| this == M369;				
 	}
 
 	public boolean isRetention() {

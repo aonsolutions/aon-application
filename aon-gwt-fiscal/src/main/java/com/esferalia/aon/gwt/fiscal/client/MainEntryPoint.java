@@ -175,6 +175,14 @@ public class MainEntryPoint implements EntryPoint {
 				com.esferalia.aon.gwt.fiscal.client.invoice.InvoiceModelReport.run(); 
 			}
 		},
+		Model369 {
+			@Override
+			void run() {
+				// FALTA
+				//com.esferalia.aon.gwt.fiscal.client.mod369.Model369.run();
+				Window.alert("Modelo 369");
+			}
+		},
 		;
 		abstract void run();
 	}
