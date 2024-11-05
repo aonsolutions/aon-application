@@ -112,6 +112,7 @@ export class AonCtaList extends AonElement {
         title: "Cert. Estar al corriente S.S",
         permission: true,
         aonIcon: "aon_seg_social",
+        backgroundColor: 'var(--aonPayroll)',
         fn: () => this.getCertCorriente(res),
       },
       {
@@ -119,6 +120,7 @@ export class AonCtaList extends AonElement {
         title: "Trabajadores en alta",
         permission: true,
         aonIcon: "aon_seg_social",
+        backgroundColor: 'var(--aonPayroll)',
         fn: () => this.getReportAffiliateInAlta(res),
       },
       {
@@ -126,6 +128,7 @@ export class AonCtaList extends AonElement {
         title: "Movimientos previos",
         permission: true,
         aonIcon: "aon_seg_social",
+        backgroundColor: 'var(--aonPayroll)',
         fn: () => this.getReportAffiliateInMovPrev(res),
       },
       {
@@ -133,6 +136,7 @@ export class AonCtaList extends AonElement {
         title: "IDC",
         permission: true,
         aonIcon: "aon_seg_social",
+        backgroundColor: 'var(--aonPayroll)',
         fn: () => this.getIdcCcc(res),
       },
     ];
