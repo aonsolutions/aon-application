@@ -4,6 +4,7 @@ import java.util.Date;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.watson.util.AonStringUtils;
+import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.datepicker.client.DateBox;
 
@@ -53,6 +54,10 @@ public class AonCustomDateBox extends HTMLPanel {
 
 	public void setFocus(boolean focused) {
 		this.dateBox.setFocus(focused);
+	}
+	
+	public void addValueChangeHandler(ValueChangeHandler<Date> handler) {
+		this.dateBox.addValueChangeHandler(handler);
 	}
 
 }
