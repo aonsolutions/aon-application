@@ -69,6 +69,7 @@ public abstract class AgreementVariablesDialog extends AonCustomDialog {
 	private TextBox newVariableTB;
 	
 	private Map<String, CheckBox> variablesMap = new HashMap<String, CheckBox>();
+	private Map<String, CheckBox> deleteVariablesMap = new HashMap<String, CheckBox>();
 	
 	// --------------------------------------------------- Variables.Footer
 	
@@ -141,7 +142,7 @@ public abstract class AgreementVariablesDialog extends AonCustomDialog {
 		panel.clear();
 		panel.addStyleName(style.flexColumn());
 		
-		Label deleteMessege = new Label("Borrado variables");
+		Label deleteMessege = new Label("Seleccione variables para borrar");
 		deleteMessege.getElement().getStyle().setProperty("font-size", ".8rem");
 		deleteMessege.getElement().getStyle().setProperty("margin-top", ".7rem");
 		deleteMessege.getElement().getStyle().setProperty("border-bottom", "1px solid #eee");
@@ -162,24 +163,34 @@ public abstract class AgreementVariablesDialog extends AonCustomDialog {
 			variablesMap.put(var, varCB);
 			variablesCBPanel.add(flexPanel);
 			
+			deleteVariablesMap.put(var, varCB);
+			
 			varCB.addValueChangeHandler(e -> {
 				if(e.getValue())
 					deleteVariables.add(var);
 				else
 					deleteVariables.remove(var);
 				
-				acceptBtnDialog.setText( deleteVariables.size() > 0 && newVariableTB.getValue().length() == 0 ? AON.MSG.deleteAction() : AON.MSG.accept());
+				if(deleteVariables.size() > 0) {
+					acceptBtnDialog.setText( AON.MSG.deleteAction() );
+					newVariableTB.setValue("");
+				}
 			});
 		}
 		
 		variablesScroll.add(variablesCBPanel);
 		panel.add(variablesScroll);
 		
+		Label cretaeMessege = new Label("Crear variable");
+		cretaeMessege.getElement().getStyle().setProperty("font-size", ".8rem");
+		cretaeMessege.getElement().getStyle().setProperty("margin-top", ".7rem");
+		cretaeMessege.getElement().getStyle().setProperty("border-bottom", "1px solid #eee");
+		panel.add(cretaeMessege);
 		
 		newVariableTB = new TextBox();
 		newVariableTB.getElement().getStyle().setProperty("font-size", ".8rem");
 		newVariableTB.getElement().getStyle().setProperty("border", "1px solid #eee");
-		newVariableTB.getElement().setPropertyString("placeholder", "Crear variable");
+		newVariableTB.getElement().setPropertyString("placeholder", "Escriba el nombre de variable...");
 		newVariableTB.addKeyUpHandler(e -> {
 			if(variables.contains(newVariableTB.getValue().toUpperCase()) || noConceptVariables.contains(newVariableTB.getValue().toUpperCase())) {
 				AonMessagePanel.showError(messagePanel, "Existe una variable con ese nombre");
@@ -192,7 +203,10 @@ public abstract class AgreementVariablesDialog extends AonCustomDialog {
 		newVariableTB.addValueChangeHandler(e -> {
 			if(variables.contains(e.getValue().toUpperCase()) || noConceptVariables.contains(e.getValue().toUpperCase())) {
 				AonMessagePanel.showError(messagePanel, "Existe una variable con ese nombre");
-			} else acceptBtnDialog.setText( AON.MSG.accept() );
+			} else if(newVariableTB.getValue().length() != 0) {
+				deleteVariablesMap.values().stream().forEach(cb -> cb.setValue(false));
+				acceptBtnDialog.setText( "Crear" );
+			}
 		});
 		panel.add(newVariableTB);
 		
@@ -222,6 +236,7 @@ public abstract class AgreementVariablesDialog extends AonCustomDialog {
 				variablesScroll.clear();
 				hideVariablesCBPanel();
 			}
+			acceptBtnDialog.setText( AON.MSG.accept());
 		});
 	}
 	
