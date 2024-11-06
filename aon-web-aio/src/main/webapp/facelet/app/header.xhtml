@@ -181,6 +181,7 @@
 	    color: rgb(66,66,66) !important;
 	    cursor: pointer !important;
 	    font-size: 16px !important;
+	    text-align: center;
 	}
 	
 	.rich-calendar-footer {
@@ -270,6 +271,7 @@
 	
 	.rich-calendar-editor-btn-selected{
 		background-color: #002469 !important;
+		color: white;
 	}
 	
 	.rich-calendar-editor-btn-over,
@@ -297,6 +299,10 @@
 	
 	.rich-calendar-editor-layout-shadow {
 		background-color: #F8F9FA !important;
+	}
+	
+	.rich-calendar-date-layout-split {
+		border-right: 1px solid #C4C0B9 !important;
 	}
 	
 	.aonDataScroller {
@@ -873,62 +879,72 @@
 	}
 	
 	.aon-dataTable,
-	.aon-dataTable tr ,
+	.aon-dataTable > tbody > tr ,
 	.aon-editDataTable,
-	.aon-editDataTable tr
+	.aon-editDataTable > tbody > tr
 	{
 		border: none;
 	}
 	
-	.aon-dataTable td,
-	.aon-dataTable th,
-	.aon-editDataTable td,
-	.aon-editDataTable th,
-	.aon-dataTable-header th,
-	.aon-editDataTable-header th
+	.aon-dataTable > tbody > tr > td,
+	.aon-dataTable > th,
+	.aon-editDataTable > tbody > tr > td,
+	.aon-editDataTable > tfoot > tr > td,
+	.aon-editDataTable > th,
+	.aon-dataTable-header > th,
+	.aon-editDataTable-header > th
 	 {
     	padding-left: 1.0em;
     	padding-top: 0.5em;
     	padding-bottom: 0.5em;
-		border-left: none;
-		border-right: none;
+		border-left: 0px;
+		border-right: 0px;
     	box-shadow: none; 
     	height: 40px;
 		vertical-align: middle;
 		text-align: left;
 	}	
 	
-	.aon-dataTable td,
 	.aon-editDataTable td {
+	  	padding: 0px;
+	  	border: 0px;
+	}
+	
+	.aon-dataTable > tbody > tr > td,
+	.aon-editDataTable > tbody > tr > td,
+	.aon-editDataTable > tfoot > tr > td {
 		border-top: 1px solid #ddd;    	
 		border-bottom: 1px solid #ddd;
 	}
-	.aon-dataTable tr td:first-child,
-	.aon-editDataTable tr td:first-child {
+	.aon-dataTable > tbody > tr > td:first-child,
+	.aon-editDataTable > tbody > tr > td:first-child,
+	.aon-editDataTable > tfoot > tr > td:first-child {
 		border-left: 1px solid #ddd;
 		border-radius: 6px 0px 0px 6px;    	
 	}
 	
-	.aon-dataTable tr td:last-child,
-	.aon-editDataTable tr td:last-child {
+		.aon-dataTable > tbody > tr > td:last-child,
+	.aon-editDataTable > tbody > tr > td:last-child,
+	.aon-editDataTable > tfoot > tr > td:last-child{
 		border-right: 1px solid #ddd;    	
 		border-radius: 0px 6px 6px 0px;    	
 	}
 
-	.aon-dataTable th,
-	.aon-editDataTable th,
-	.aon-dataTable-header th,
-	.aon-editDataTable-header th{
+	.aon-dataTable > th,
+	.aon-editDataTable > th,
+	.aon-dataTable-header > th,
+	.aon-editDataTable-header > th{
 		border-bottom: 1px solid #ddd !important;
 	}
 	
-	.aon-dataTable table td {
+	.aon-dataTable > table > tr > td {
     	box-shadow: none;
 		border-left: none;
 		border-right: none;
 		border-top: none;
 		border-bottom: 1px solid #ddd;
 	}
+
 
 	.aon-dataTable,
 	.aon-editDataTable,
@@ -943,10 +959,10 @@
 		border: #ccc 1px solid;
 	}
 	
-	.aon-dataTable td,
-	.aon-editDataTable td,
-	.aon-dataTable-header th,
-	.aon-editDataTable-header th
+	.aon-dataTable > tbody > tr > td,
+	.aon-editDataTable > tbody > tr > td,
+	.aon-dataTable-header > th,
+	.aon-editDataTable-header > th
 	 {
 		color: #5f6368;
     	font-size: 12px;
@@ -2880,15 +2896,15 @@
 		padding-left: 0px !important;
 	}
 	
-	#aonContent\:showNewMessageModalPanelShadowDiv,
 	#aonContent\:showNewMessageModalPanelContentDiv,
-	#aonContent\:newFeeModalPanelShadowDiv,
 	#aonContent\:newFeeModalPanelContentDiv {
-	 	min-width: fit-content !important;
-	  	min-height: fit-content !important;
-	  	padding: 10px;
+	    width: fit-content !important;
+		min-height: fit-content !important;
+		padding-bottom: 30px;
 	}
 	
+			
+
 	</style>
 
 	<script type="text/javascript">
