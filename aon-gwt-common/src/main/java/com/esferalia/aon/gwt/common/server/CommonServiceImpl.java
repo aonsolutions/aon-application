@@ -675,6 +675,11 @@ public class CommonServiceImpl extends AonStatelessRemoteServiceServlet implemen
 		List<Fee> sellersWorkloadFees =  AON.getSellersWorkloadFees(params);
 		return sellersWorkloadFees;
 	}
+	@Override
+	public List<Integer> getSellersWorkloadFeesIds(SellerWorkloadParams params) throws AonCoreException {
+		List<Integer> sellersWorkloadFees = AON.getSellersWorkloadFeesIds(params);
+		return sellersWorkloadFees;
+	}
 
 	
 }

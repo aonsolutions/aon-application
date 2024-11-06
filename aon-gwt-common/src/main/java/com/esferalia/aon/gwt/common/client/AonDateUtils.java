@@ -46,7 +46,7 @@ public class AonDateUtils {
 	}
 	
 	public static String formatDate(Date date) {
-		 return dateFormat.format(date);
+		 return null == date ? "" : dateFormat.format(date);
 	}
 	
 	public static String formatTime(Date date) {
@@ -54,7 +54,7 @@ public class AonDateUtils {
 	}
 	
 	public static String formatMonthYear(Date date) {
-		String dateFormated = monthYearFormat.format(date);
+		String dateFormated = null == date ? "" : monthYearFormat.format(date);
 		dateFormated = capitalizeAndRemoveDot(dateFormated);
 		return dateFormated;
 	}

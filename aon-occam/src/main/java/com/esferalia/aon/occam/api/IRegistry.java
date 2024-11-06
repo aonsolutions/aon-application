@@ -161,6 +161,7 @@ public interface IRegistry {
 	public List<SellerWorkload> getSellerWorkloadList(CloseableAONContext ctx, SellerWorkloadParams params);
 	public Integer getSellerWorkloadListCount(CloseableAONContext ctx, SellerWorkloadParams params);
 	public List<Fee> getSellersWorkloadFees(CloseableAONContext ctx, SellerWorkloadParams params);
+	public List<Integer> getSellersWorkloadFeesIds(CloseableAONContext ctx, SellerWorkloadParams params);
 	
 	// ------------------- RSELLER
 	public RegistrySeller getRegistrySeller(AONContext ctx, RegistrySellerFilter filter);

@@ -80,8 +80,15 @@ public class JsonUtils {
 	}
 	
 	public static Double getdouble(JSONObject json, String key ) {
-		Number n = AonNumberUtils.toDouble(json.optNumber(key, null));
-		return n==null?0:n.doubleValue();
+		String doubleString = getString(json, key);
+		if(!AonStringUtils.isBlank(doubleString) && ".".equals(doubleString.substring(0, 1))) {
+			doubleString = "0" + doubleString;
+			Number n = AonNumberUtils.toDouble(doubleString);
+			return n == null ? 0 : n.doubleValue();
+		} else {
+			Number n = AonNumberUtils.toDouble(json.optNumber(key, null));
+			return n == null ? 0 : n.doubleValue();
+		}
 	}
 	
 	public static Short getShort(JSONObject json, String key) {

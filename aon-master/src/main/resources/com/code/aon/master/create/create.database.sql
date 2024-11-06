@@ -498,6 +498,7 @@ CREATE TABLE `alcatraz` (
   `salary` int DEFAULT NULL COMMENT 'Id Nomina',
   `finance` int DEFAULT NULL COMMENT 'Id Vto',
   `finance_tracking` int DEFAULT NULL COMMENT 'Id seguimiento Vto',
+  `invoice_batch` int DEFAULT NULL COMMENT 'Id Lote Factura',
   PRIMARY KEY (`id`),
   KEY `IDX_ALCATRAZ_DOMAIN` (`domain`),
   KEY `IDX_ALCATRAZ_FS_MODEL` (`fs_model`),
@@ -505,12 +506,14 @@ CREATE TABLE `alcatraz` (
   KEY `IDX_ALCATRAZ_SALARY` (`salary`),
   KEY `IDX_ALCATRAZ_FINANCE` (`finance`),
   KEY `IDX_ALCATRAZ_FINANCE_TRACKING` (`finance_tracking`),
+  KEY `IDX_ALCATRAZ_INVOICE_BATCH` (`invoice_batch`),
   CONSTRAINT `FK_ALCATRAZ_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
   CONSTRAINT `FK_ALCATRAZ_FS_MODEL` FOREIGN KEY (`fs_model`) REFERENCES `fs_model` (`id`),
   CONSTRAINT `FK_ALCATRAZ_INVOICE` FOREIGN KEY (`invoice`) REFERENCES `invoice` (`id`),
   CONSTRAINT `FK_ALCATRAZ_SALARY` FOREIGN KEY (`salary`) REFERENCES `salary` (`id`),
   CONSTRAINT `FK_ALCATRAZ_FINANCE` FOREIGN KEY (`finance`) REFERENCES `finance` (`id`),
-  CONSTRAINT `FK_ALCATRAZ_FINANCE_TRACKING` FOREIGN KEY (`finance_tracking`) REFERENCES `finance_tracking` (`id`)
+  CONSTRAINT `FK_ALCATRAZ_FINANCE_TRACKING` FOREIGN KEY (`finance_tracking`) REFERENCES `finance_tracking` (`id`),
+  CONSTRAINT `FK_ALCATRAZ_INVOICE_BATCH` FOREIGN KEY (`invoice_batch`) REFERENCES `invoice_batch` (`id`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Bloqueo de entidades';
 
 #
@@ -4721,11 +4724,17 @@ CREATE TABLE `invoice_doc` (
 CREATE TABLE `invoice_batch` (
   `id` int NOT NULL AUTO_INCREMENT COMMENT 'Identificador unico',
   `domain` int NOT NULL COMMENT 'Identificador del Dominio',
+  `description` varchar(32) CHARACTER SET latin1 COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Descripcion del lote',
   `date` datetime NOT NULL COMMENT 'Fecha de comunicacion',
+  `end_date` datetime DEFAULT NULL COMMENT 'Fecha de finalizacion',
   `type` tinyint NOT NULL DEFAULT '0' COMMENT 'Tipo de Comunicacion',
-  `operation` tinyint NOT NULL DEFAULT '0' COMMENT 'Tipo de Operación',
-  `data_response` int NOT NULL COMMENT 'Envio de la comunicacion',
+  `operation` tinyint NOT NULL DEFAULT '0' COMMENT 'Tipo de Operacion',
+  `data_response` int DEFAULT NULL COMMENT 'Envio de la comunicacion',
+  `md5` varchar(32) CHARACTER SET latin1 COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Hash md5',
   `creation_user` varchar(16) CHARACTER SET latin1 COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Usuario de creacion',
+  `creation_date` datetime DEFAULT NULL COMMENT 'Fecha de creacion',
+  `modification_user` varchar(16) CHARACTER SET latin1 COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Usuario de modificacion',
+  `modification_date` datetime DEFAULT NULL COMMENT 'Fecha de modificacion',
   PRIMARY KEY (`id`),
   KEY `IDX_INVOICE_BATCH_DOMAIN` (`domain`),
   KEY `IDX_INVOICE_BATCH_DATA_RESPONSE` (`data_response`),

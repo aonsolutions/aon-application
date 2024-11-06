@@ -211,6 +211,7 @@ import com.esferalia.aon.occam.api.model.finance.FinanceFilter;
 import com.esferalia.aon.occam.api.model.finance.FinanceTracking;
 import com.esferalia.aon.occam.api.model.finance.InvofoxConfiguration;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
+import com.esferalia.aon.occam.api.model.finance.InvoiceBatch;
 import com.esferalia.aon.occam.api.model.finance.InvoiceCommunicationTracking;
 import com.esferalia.aon.occam.api.model.finance.InvoiceData;
 import com.esferalia.aon.occam.api.model.finance.InvoiceDetail;
@@ -5313,6 +5314,12 @@ public class AON {
 		}
 	}
 	
+	public static List<Integer> getSellersWorkloadFeesIds(SellerWorkloadParams params) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(params.getDomainName(), params.getDomain(), params.getUser())) {
+			return getRegistry().getSellersWorkloadFeesIds(ctx, params);
+		}
+	}
+	
 	// ------------------- RSELLER
 	public static RegistrySeller getRegistrySeller(Domain domain, String login, RegistrySellerFilter filter) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(domain, login)) {
@@ -8745,18 +8752,11 @@ public class AON {
 	}
 	
 	public static Stream<Series> getSeriesStream(String domainName,Integer domainId, String login, SeriesFilter filter){
-		CloseableAONContext ctx = null;
-		try {
-			ctx = AONContext.getAONContext(domainName, domainId, login);
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)) {
 			return getCommon().getSeriesStream(ctx, filter);
-		} finally {
-			if (ctx != null)
-				ctx.close();
 		}
 	}
 	
-	
-
 	public static  String getURL(String shortUrl ){
 		return getURL(URI.create(shortUrl));
 	}
@@ -8784,5 +8784,19 @@ public class AON {
 		} catch (SQLException | AonConnectionException e) {
 			throw new RuntimeException(e);
 		} 
+	}
+	
+	// INVOICE CLOSING
+	
+	public static Stream<InvoiceBatch> getInvoiceClosing(Domain domain, User user) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domain, user)) {
+			return getFinance().getInvoiceClosing(ctx);
+		}
+	}
+	
+	public static void saveInvoiceClosing(Domain domain, User user, InvoiceBatch invoiceBatch) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domain, user)) {
+			getFinance().saveInvoiceClosing(ctx, invoiceBatch);
+		}
 	}
 }

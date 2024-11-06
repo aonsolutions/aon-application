@@ -4346,27 +4346,35 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 		return sum;
 	}
 
-	private double getAverageVariable(String name, Date start, Date end) {
+	private double getAverageVariable(String name, Date start, Date end, double def) {
 		List<ITimedVariable<Number>> vars = this.contractExpressionContext.getVariables(name);
 		
 		int days = 0;
 		double sum = 0.00;
 		
-		Period p = new Period(start, end);
+		Period period = new Period(start, end);
 		for (ITimedVariable<Number> var : vars) {
-			Period period = var.getPeriod();
-			Period intersect = period.intersect(p);
+			Period varPeriod = var.getPeriod();
+			Period intersect = varPeriod.intersect(varPeriod);
 			if (intersect == null)
 				continue;
 
-			Number value = var.getValue(period);
+			Number value = var.getValue(varPeriod);
 			if (value == null)
 				continue;
 			days += days(intersect);
 			sum += value.doubleValue() * days(intersect);
 		}
+		
+		List<Period> varPeriods = vars.stream().map(var -> var.getPeriod()).toList();
+		List<Period> emptyPeriods = Period.sub(period, varPeriods);
+		for (Period emptyPeriod : emptyPeriods) {
+			days += days(emptyPeriod);
+			sum += def * days(emptyPeriod);
+		}
+		
 
-		return sum / days;
+		return days == 0 ? 0.00 : sum / days;
 	}
 
 	private boolean containsVariable(Object name) {
@@ -5634,8 +5642,24 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 					double avgPartialFactor = getAverageVariable(
 							PARTIAL_FACTOR.getName(), 
 							SQLContractSalaryCalculatorContext.this.startDate, 
-							SQLContractSalaryCalculatorContext.this.getEnd());
-					return workDays * ( avgPartialFactor == 0.00 ? 1.00 : avgPartialFactor );
+							SQLContractSalaryCalculatorContext.this.getEnd(),
+							1.00 );
+					double avgPaternityFactor = getAverageVariable(
+							PATERNITY_FACTOR.getName(), 
+							SQLContractSalaryCalculatorContext.this.startDate, 
+							SQLContractSalaryCalculatorContext.this.getEnd(),
+							1.00);
+					double avgMaternityFactor = getAverageVariable(
+							MATERNITY_FACTOR.getName(), 
+							SQLContractSalaryCalculatorContext.this.startDate, 
+							SQLContractSalaryCalculatorContext.this.getEnd(),
+							1.00);
+					
+					return workDays  
+							* ( avgPartialFactor == 0.00 ? 1.00 : avgPartialFactor ) 
+							* ( avgPaternityFactor == 0.00 ? 1.00 : avgPaternityFactor )
+							* ( avgMaternityFactor == 0.00 ? 1.00 : avgMaternityFactor )
+							;
 				} catch (ExpressionExceptionWrapper e) {
 				}
 				return workDays;

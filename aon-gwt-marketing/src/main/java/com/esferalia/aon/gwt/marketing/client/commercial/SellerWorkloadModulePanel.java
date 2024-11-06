@@ -11,6 +11,9 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
 import com.esferalia.aon.occam.api.model.SellerWorkloadParams;
 import com.esferalia.aon.occam.api.model.registry.SellerWorkload;
 import com.esferalia.aon.watson.util.AonStringUtils;
+import com.google.gwt.core.client.GWT;
+import com.google.gwt.json.client.JSONObject;
+import com.google.gwt.json.client.JSONString;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.SimpleLayoutPanel;
@@ -41,9 +44,9 @@ public abstract class SellerWorkloadModulePanel extends AonCustomDockLayout {
 		super("Carga Trabajo");
 		
 		this.options = options;
-		
 		addButtonsToolbar();
-		getSearchTextBox().addKeyUpHandler(e -> {
+		
+		addKeyUpHandler(e -> {
 			String value = getSearchTextBox().getValue();
 			if(AonStringUtils.isNotBlank(value) && value.length() > 3) {
 				onSearch( options );
@@ -52,29 +55,12 @@ public abstract class SellerWorkloadModulePanel extends AonCustomDockLayout {
 			}
 		});
 		
-		
-		addFilterMenu();
-		
-		cleanButton = new AonSearchPanelButton( AON.MSG.clean(), AON.CSS.aonIconClear() );
-		cleanButton.addClickHandler(event -> {
-			getSearchTextBox().setValue(null, false);
-			scope.getListBox().setSelectedIndex(0);
-			active.getListBox().setSelectedIndex(0);
-			customer.getListBox().setSelectedIndex(1);
-			period.getListBox().setSelectedIndex(0);
-			
-			sellerWorkloadPanel.resetSearchOffset();
-			
-			onSearch( options );
-		});
-
-		addFilterToolbarButton(cleanButton);
+		setSearchPlaceholder("Buscar por nombre ...");
 		
 		period.addItem( "Mes actual", "0");
 		period.addItem( "Pr\u00f3ximos 2 meses", "1");
 		period.addItem( "Pr\u00f3ximos 3 meses", "2");
 		period.getListBox().addChangeHandler(event -> {
-			this.clickFilterButton();
 			onSearch( options );
 		});
 		
@@ -100,8 +86,6 @@ public abstract class SellerWorkloadModulePanel extends AonCustomDockLayout {
 		addFilterWidget(active);
 		addFilterWidget(customer);
 		
-		addSortMenu();
-		
 		sort.addItem("Nombre", "name");
 		sort.addItem("Alias", "alias");
 		sort.addItem("Documento", "document");
@@ -126,30 +110,52 @@ public abstract class SellerWorkloadModulePanel extends AonCustomDockLayout {
 		container.add(centerPanel);
 		
 		add(container);
+		
+		onSearch( options );
+	}
+	
+	@Override
+	protected void onClearFilter() {
+		getSearchTextBox().setValue(null, false);
+		scope.getListBox().setSelectedIndex(0);
+		active.getListBox().setSelectedIndex(0);
+		customer.getListBox().setSelectedIndex(1);
+		period.getListBox().setSelectedIndex(0);
+		
+		sellerWorkloadPanel.resetSearchOffset();
+		
 		onSearch( options );
 	}
 
 	private void addButtonsToolbar() {
 		AonToolbarButton downloadExcel = new AonToolbarButton("Exportar Excel", AON.CSS.aonIconDownload());
 		downloadExcel.addClickHandler(e -> {
-			Window.alert("Exportar cargas de trabajo de todos los agentes comerciales a Excel");
+			JSONObject json = new JSONObject();
 			
-//			String fileDownloadURL = 
-//					"/ms/api/seller-excel/" + 
-//					"?domainId=" + options.getDomain() + 
-//					"&domainName=" + options.getDomainName() + 
-//					"&login=" + options.getUser() +
-//					"&description=" + getSearchTextBox().getValue() +
-//					"&scope=" + scope.getValue() +
-//					"&active=" + active.getValue() +
-//					"&orderBy=" + sort.getValue() +
-//					"&asc=" + asc.getValue()
-//					;
-//			
-//			Window.open(fileDownloadURL, "_blank", null);
+			SellerWorkloadParams sellerWorkloadListParams = getWidgetParams( options );
+			
+			json.put("period", new JSONString(sellerWorkloadListParams.getPeriod().toString()));
+			json.put("scope", new JSONString(sellerWorkloadListParams.getScope().toString()));
+			json.put("active", new JSONString(sellerWorkloadListParams.getActive().toString()));
+			json.put("customer", new JSONString(sellerWorkloadListParams.getCustomers().toString()));
+			json.put("description", new JSONString(sellerWorkloadListParams.getDescription()));
+			json.put("isSellersWorkload", new JSONString("true"));
+			
+			String fileDownloadURL = GWT.getModuleBaseURL()+ "ms/gwt_download_fee/"
+	            	+ "?filter=" + btoa(json.toString())
+	            	+ "&domain_name=" + options.getDomainName()
+	            	+ "&domain_id=" + options.getDomain()
+					+ "&username="+ options.getUser();
+			
+			Window.open( fileDownloadURL, "_blank",null);
 		});
+		
 		addToolbarButton(downloadExcel);
 	}
+	
+	private native String btoa(String str) /*-{
+	    return btoa(str);
+	}-*/;
 
 	public void onSearch( SellerModuleOptions options ) {
 		SellerWorkloadParams params = getWidgetParams( options );
@@ -199,17 +205,15 @@ public abstract class SellerWorkloadModulePanel extends AonCustomDockLayout {
 	}
 	
 	public void getSellerListCount(Consumer<Integer> finish) {
-//		Window.alert("getSellerListCount");
 		if(null == sellerWorkloadPanel || null ==  sellerWorkloadPanel.getTable()) finish.accept(0);
 		
-//		Window.alert("getSellerListCount DB");
 		sellerWorkloadPanel.getSellerListCount(count -> {
 			finish.accept(count);
 		});
 	}
 
 	public Integer getSellerListPosition(Integer sellerId) {
-		return null == sellerId || null == sellerWorkloadPanel ? 0 : sellerWorkloadPanel.getSellerListPosition(sellerId);
+		return sellerWorkloadPanel.getSellerListPosition(sellerId);
 	}
 	
 	public SellerWorkloadParams getSellerListParams() {

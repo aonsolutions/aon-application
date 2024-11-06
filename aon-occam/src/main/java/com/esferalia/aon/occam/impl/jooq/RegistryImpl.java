@@ -445,6 +445,11 @@ public class RegistryImpl implements IRegistry{
 		return ctx.getDslContext().transactionResult(configuration -> SellerWorkloadDAO.getFeeList(ctx, params));
 	}
 	
+	@Override
+	public List<Integer> getSellersWorkloadFeesIds(CloseableAONContext ctx, SellerWorkloadParams params) {
+		return ctx.getDslContext().transactionResult(configuration -> SellerWorkloadDAO.getFeeIdsList(ctx, params));
+	}
+	
 	// -------------------- RSELLER
 	
 	@Override
