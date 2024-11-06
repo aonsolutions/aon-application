@@ -40,6 +40,10 @@ public class FinanceUtils {
 			prop = prop.and(p.getPayrollProperty().eq( AonEnumUtils.getByte( false )));
 		}
 		
+		if(AonStringUtils.isNotBlank(params.getDescription()))
+			prop = prop.and(p.getRegistryNameProperty().like("%" + params.getDescription() + "%").or(p.getConceptNameProperty().like("%" + params.getDescription() + "%")));
+			
+		
 		if (params.getFromInvoiceDate() != null) {
 			prop = prop.and(p.getInvoiceDateProperty().ge(params.getFromInvoiceDate()));
 		}

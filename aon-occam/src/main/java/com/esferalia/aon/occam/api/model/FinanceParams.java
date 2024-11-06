@@ -12,6 +12,9 @@ public class FinanceParams implements Serializable{
 	
 	private int domain;
 	private String domainName;
+	
+	private String description;
+	
 	private Date fromInvoiceDate;
 	private Date toInvoiceDate;
 	private Date fromDueDate;
@@ -50,6 +53,13 @@ public class FinanceParams implements Serializable{
 	}
 	public FinanceParams setDomainName(String domainName) {
 		this.domainName = domainName;
+		return this;
+	}
+	public String getDescription() {
+		return description;
+	}
+	public FinanceParams setDescription(String description) {
+		this.description = description;
 		return this;
 	}
 	public Date getFromInvoiceDate() {
