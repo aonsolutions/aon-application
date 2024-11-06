@@ -179,6 +179,7 @@ public class InvoiceApiDAO {
 				.setRegistryDocumentCountry(Country.safeValueOf(r.getValue(INVOICE.RDOCUMENT_COUNTRY)))
 				.setRegistryName(r.getValue(INVOICE.RNAME))
 				
+				.setSigned(getBoolean(r, INVOICE.SIGNED))
 //				.setAddressProvinceCode(record.getValue(GEOZONE.CODE))
 //				.setAddressProvince(record.getValue(GEOZONE.NAME))
 //				.setAddressTown(record.getValue(RADDRESS.CITY))

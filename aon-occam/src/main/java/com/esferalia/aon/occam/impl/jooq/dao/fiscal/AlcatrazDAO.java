@@ -24,6 +24,7 @@ import org.jooq.exception.DataAccessException;
 
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
+import com.esferalia.aon.occam.api.model.finance.InvoiceBatch;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModel;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceFilter;
 import com.esferalia.aon.occam.impl.jooq.dao.fiscal.FiscalModelDAO.FiscalModelFiller;
@@ -172,6 +173,34 @@ public class AlcatrazDAO {
 			log(ctx,"\tINSERT ALCATRAZ id: {0} Mod: {1} {2} rows",fm.getId(), fm.getModel(), batch.size());
 		}
 		return fm;
+	}
+
+	public static InvoiceBatch saveInvoiceBatchInvoices(AONContext ctx, InvoiceBatch invoiceBatch, Set<Integer> invoices) {
+		try {
+			ctx.checkWrite();
+			insertInvoiceBatch(ctx, invoiceBatch, invoices);
+			return invoiceBatch;
+		} catch (DataAccessException t) {
+			throw new AonCoreException(t.getCause()!=null?t.getCause().getMessage():t.getMessage());
+		} catch (Exception t) {
+			throw new AonCoreException(t.getMessage());
+		}
+	}
+	
+	private static InvoiceBatch insertInvoiceBatch(AONContext ctx, InvoiceBatch invoiceBatch, Set<Integer> invoices) {
+		if (invoiceBatch != null && invoiceBatch.getId() != null 
+				&& invoices != null && !invoices.isEmpty()) {
+			BatchBindStep batch = ctx.getDslContext()
+					.batch(ctx.getDslContext().insertInto(ALCATRAZ
+							,ALCATRAZ.DOMAIN
+							,ALCATRAZ.INVOICE_BATCH
+							,ALCATRAZ.INVOICE)
+							.values((Integer) null,(Integer) null,(Integer) null));
+			invoices.stream().forEach(inv -> batch.bind(invoiceBatch.getDomain(), invoiceBatch.getId(), inv));
+			batch.execute();
+			log(ctx,"\tINSERT ALCATRAZ id: {0} InvoiceBatch: {1} {2} rows",invoiceBatch .getId(), invoiceBatch.getDescription(), batch.size());
+		}
+		return invoiceBatch;
 	}
 
 	public static <T extends FiscalModel> void deleteFiscalModel(AONContext ctx, T fm) {

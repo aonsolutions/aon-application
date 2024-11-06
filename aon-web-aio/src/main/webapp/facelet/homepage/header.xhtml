@@ -2277,13 +2277,13 @@
 				</aon:div>
 			</aon:panelGroup>
 				<aon:panelGroup>
-					<c:if test="#{domainSwitcher.betaDomain}" >
+					<aon:if test="#{domainSwitcher.betaEnabled}" >
 						<h:outputLink 
 							id="new_aon"
-							value="/beta"
 							target="_blank" 
 							style="color: #002469;"
 							styleClass="aon-top-menu-item"
+							value="/beta?aonMenuTopnav=true&amp;aonMenuSidenav=true"
 						>
 							<aon:outputText
 							value="open_in_new"  
@@ -2315,7 +2315,7 @@
 							/>
 						</aon:commandLink>
 						-->
-					</c:if>
+					</aon:if>
 				</aon:panelGroup>
 			
 			<aon:panelGroup style="text-align:left; display:flex" >
