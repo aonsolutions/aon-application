@@ -2,61 +2,28 @@ import { CONSTANT, MATERIAL_ICONS, MSG, TAG } from "../../environments/environme
 import * as GWT from "../../gwt/gwt.js";
 import { waitEl } from "../../services/utils.js";
 
-  /*
-  export const gwtLoad = (option) => {
+  export const gwtLoad = async (option) => {
     let application = document.querySelector(TAG.AON_APPLICATION);
     document.body.classList.add('gwt-Selector');
+
     GWT.load(option, application.CONTENT);
-  }
-  */
 
-  export const gwtLoad = (option) => {
-    let application = document.querySelector(TAG.AON_APPLICATION);
-
-    let content = application.CONTENT;
-    if(content) content.innerHTML = '';
-
-    console.log("------ gwtLoad ------");
+    // Not working. Why not need Iframe here like MainContrata
+    //GWT.iLoad(option, application.CONTENT);
     
-
     application.startLoader();
     application.closeSidenav();
 
-    GWT.iLoad(option, application.CONTENT);
-
-    waitEl(`#${application.CONTENT} iframe`).finally(() => {
-      fixBackgroundColor();
-    });
-
     waitEl(`#${application.CONTENT} .aon_toolbar`).finally(() => {
       application.stopLoader();
-      fixSpacing();
       fixTableHeaderBackgroundColor();
     });
-
-    console.log("------ gwtLoad END ------");
   }
 
   export const fixTableHeaderBackgroundColor = () => {
-    let application = this.getApplication();
-    let iframe = document.querySelector(`#${application.CONTENT} iframe`);
-    let iframeContent = iframe.contentWindow.document;
-
-    let tableHeaders = iframeContent.body.querySelectorAll(`div.aon_custom_table_header`);
+    let application = document.querySelector(TAG.AON_APPLICATION);
+    let tableHeaders = application.querySelectorAll(`div.aon_custom_table_header`);
     if(tableHeaders) tableHeaders.forEach(tableHeader => tableHeader.style.backgroundColor = "#fafafa");
-  }
-
-  export const fixBackgroundColor = () => {
-    let application = this.getApplication();
-    let iframe = document.querySelector(`#${application.CONTENT} iframe`);
-    iframe.contentWindow.document.body.style.backgroundColor = "transparent";
-  }
-
-  export const fixSpacing = () => {
-    if (!document.querySelector("aon-module"))
-      waitEl(`#${this.getApplication().getContent().id} div:first-child`)
-        .then((el) => (el.style.position = ""))
-        .catch((err) => console.log(err));
   }
 
   export const newInvoice = (type) => {
@@ -300,14 +267,20 @@ import { waitEl } from "../../services/utils.js";
     id: CONSTANT.CHARGES_PAYMENTS.initCap(),
     name: MSG.CHARGES_AND_PAYMENTS,
     icon: MATERIAL_ICONS.PAYMENT,
-    fn: () => gwtLoad(GWT.FINANCE)
+    fn: async () => {
+      await gwtLoad(GWT.FINANCE);
+      fixTableHeaderWidth();
+    }
   }
 
+  export const fixTableHeaderWidth = () => {
+    let application = document.querySelector(TAG.AON_APPLICATION);
 
-
-
-  this.goContractDesk();
-            this.getApplication().closeSidenav();
+    waitEl(`#${application.CONTENT} .aon_toolbar`).finally(() => {
+      let spans = application.querySelectorAll(`div.aon_custom_table_header span`);
+      if(spans) spans.forEach(span => span.style.minWidth = "3rem");
+    });
+  }
 
   export const VAT_PANEL = {
     id: CONSTANT.VAT_PANEL.initCap(),
