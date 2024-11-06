@@ -403,8 +403,8 @@ public class FinanceModule extends MainEntryPoint {
 
 	private static enum COLS {
 		
-		TYP(AonStringUtils.EMPTY		, "2rem" 			,"color: transparent;")
-		, CHK(AonStringUtils.EMPTY		, "2rem" 			,"color: transparent;")
+		TYP(AonStringUtils.EMPTY		, "2rem" 			,"")
+		, CHK(AonStringUtils.EMPTY		, "2rem" 			,"")
 		, DDT("F. Vto."					, "6rem" 			,"")
 		, DOC("N\u00BA Documento"		, "8rem"			,"")
 		, INV("N\u00BA Factura"			, "7rem"  			,"white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
@@ -438,8 +438,8 @@ public class FinanceModule extends MainEntryPoint {
 	}
 	
 	private static enum PAYROLL_COLS {
-		  TYP(AonStringUtils.EMPTY		, "3em" 			,"")
-		, CHK(AonStringUtils.EMPTY		, "3em" 			,"")
+		  TYP(AonStringUtils.EMPTY		, "2rem" 			,"")
+		, CHK(AonStringUtils.EMPTY		, "2rem" 			,"")
 		, DDT("F. Vto."					, "4rem" 			,"")
 		, DOC("Concepto"				, "10rem"			,"")
 		, TIT("CIF/NIF/NIE"				, "5rem"			,"")
@@ -478,11 +478,11 @@ public class FinanceModule extends MainEntryPoint {
 		
 		if(this.isPayroll) {
 			for ( PAYROLL_COLS col : PAYROLL_COLS.values())
-				if(col.equals(PAYROLL_COLS.TYP) || col.equals(PAYROLL_COLS.CHK)) table.addHeader(col.equals(PAYROLL_COLS.CHK) ? selectedCount : new Label( AonStringUtils.isBlank(col.getHeaderLabel()) ? "A" : col.getHeaderLabel() ), col.getColWidth(), col.getCellStyleClass());
+				if(col.equals(PAYROLL_COLS.TYP) || col.equals(PAYROLL_COLS.CHK)) table.addHeader(col.equals(PAYROLL_COLS.CHK) ? selectedCount : new Label( AonStringUtils.isBlank(col.getHeaderLabel()) ? "" : col.getHeaderLabel() ), "1rem", col.getCellStyleClass());
 				else table.addHeader(new Label( AonStringUtils.isBlank(col.getHeaderLabel()) ? "" : col.getHeaderLabel() ), col.getColWidth(), col.getCellStyleClass());
 		} else {
 			for ( COLS col : COLS.values())
-				if(col.equals(COLS.TYP) || col.equals(COLS.CHK)) table.addHeader(col.equals(COLS.CHK) ? selectedCount : new Label( AonStringUtils.isBlank(col.getHeaderLabel()) ? "A" : col.getHeaderLabel() ), col.getColWidth(), col.getCellStyleClass());
+				if(col.equals(COLS.TYP) || col.equals(COLS.CHK)) table.addHeader(col.equals(COLS.CHK) ? selectedCount : new Label( AonStringUtils.isBlank(col.getHeaderLabel()) ? "" : col.getHeaderLabel() ), "1rem", col.getCellStyleClass());
 				else table.addHeader(new Label( AonStringUtils.isBlank(col.getHeaderLabel()) ? "" : col.getHeaderLabel() ), col.getColWidth(), col.getCellStyleClass());
 		}
 		

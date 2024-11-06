@@ -4,16 +4,12 @@ import java.util.LinkedList;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomTable;
-import com.esferalia.aon.gwt.common.client.widget.solutions.AonTableButton;
 import com.esferalia.aon.gwt.fiscal.client.AccountEntrySelectionEvent;
 import com.esferalia.aon.gwt.fiscal.client.AccountEntrySelectionHandler;
 import com.esferalia.aon.gwt.fiscal.client.HasAccountEntrySelectionHandlers;
-import com.esferalia.aon.occam.api.model.AccountEntry;
 import com.esferalia.aon.occam.api.model.finance.EnumVisitors.IFinanceTrackingTypeVisitor;
 import com.esferalia.aon.occam.api.model.finance.FinanceTracking;
 import com.esferalia.aon.watson.util.AonStringUtils;
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.i18n.client.NumberFormat;
 import com.google.gwt.user.client.ui.HTMLPanel;
@@ -27,7 +23,7 @@ public class AonCustomTrackingPanel extends ScrollPanel implements HasAccountEnt
 		, ACT("Acci\u00f3n"				, "5rem" 			,"")
 		, DES("Descripci\u00f3n"		, "-moz-available"  ,"min-width: 5rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
 		, AMO("Importe"					, "8rem" 			,"text-align: right;")
-		, AUD("Auditoria"				, "-moz-available"	,"min-width: 10rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
+		, AUD("Auditoria"				, "-moz-available"	,"min-width: 20rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
 //		, BTN(""						, "3rem"  			,"")
 		;
 

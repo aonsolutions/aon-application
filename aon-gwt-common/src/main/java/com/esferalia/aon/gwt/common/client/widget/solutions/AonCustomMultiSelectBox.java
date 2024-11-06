@@ -11,7 +11,6 @@ import com.google.gwt.event.dom.client.BlurEvent;
 import com.google.gwt.event.dom.client.BlurHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.shared.HandlerRegistration;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Label;
@@ -111,12 +110,7 @@ public class AonCustomMultiSelectBox extends HTMLPanel {
         	
         	filterMenu.add(checkBoxPanel);
         	
-        	checkBox.addClickHandler(e -> {
-        		Window.alert("CheckBox click");
-        		e.stopPropagation();
-        		changeCheckBoxValue(checkBox, option);
-        		Window.alert("CheckBox end");
-        	});
+        	checkBox.addValueChangeHandler(e -> changeCheckBoxValue(checkBox, option));
         	checkBoxPanel.addDomHandler(e -> changeCheckBoxValue(checkBox, option), ClickEvent.getType());
         	
         	valuesCB.put(option, checkBox);
