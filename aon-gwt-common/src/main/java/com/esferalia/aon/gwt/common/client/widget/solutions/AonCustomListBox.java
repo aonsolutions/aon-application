@@ -1,6 +1,7 @@
 package com.esferalia.aon.gwt.common.client.widget.solutions;
 
 import com.esferalia.aon.gwt.common.client.AON;
+import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.ListBox;
 
@@ -60,6 +61,10 @@ public class AonCustomListBox extends HTMLPanel {
 	        }
 	    }
 	    lBox.setSelectedIndex(indexToFind);
+	}
+
+	public void addChangeHandler(ChangeHandler changeHandler) {
+		listBox.addChangeHandler(changeHandler);
 	}
 
 }
