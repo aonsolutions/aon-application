@@ -22,11 +22,6 @@
 			text-align: center !important;
 		}
 		
-		.firstColumn{
-			min-width: 200px;
-			padding: 5px;
-			background-color: #f6f6f6; 
-		}
 		
 		.flex{
 			display: flex;
@@ -58,19 +53,19 @@
 			padding-left: .5rem !important;
 		}
 		
-		.requiredColor{
-			color: #2152A5;
-			font-weight: bold !important;
-		}
 		
-		.styleBorder{
+		.warningTB { border: 1.5px solid #ad0000; }
+		
+		.widthAll { width: 100%; }
+		
+		.aonActivityCard {
 			width: 100%;
 			border: 1px solid black;
 			border-radius: 5px;
 			padding: 0 1rem .5rem;
 		}
-		
-		.tittle{
+
+		.aonActivityCardTitle{
 			position: relative;
 			top: -1.2em;
 			left: 20px;
@@ -82,37 +77,49 @@
 			text-align: center;
 		}
 		
-		.warningTB { border: 1.5px solid #ad0000; }
+		.aonActivityCardLabel{
+			min-width: 200px;
+			padding: 5px;
+			background-color: #f6f6f6; 
+		}
 		
-		.widthAll { width: 100%; }
+		.aonActivityCardRequired{
+			color: #2152A5;
+			font-weight: bold !important;
+		}
+		
 		
 		@external warningTB;
-		
+		@external aonActivityCard;
+		@external aonActivityCardLabel;
+		@external aonActivityCardTitle;
+		@external aonActivityCardRequired;
+
 	</ui:style>
 
 	<g:HTMLPanel styleName="{style.container}">
-		<g:HTMLPanel styleName="{style.widthAll} {style.heightAll} {style.flexCenter}" debugId="activityHTMLPanel">
-	   		<g:HTMLPanel styleName="{style.styleBorder}">
-	    		<g:Label styleName='{style.tittle}'>Datos de actividad</g:Label>
+		<g:HTMLPanel styleName="{style.widthAll} {style.heightAll} {style.flexCenter} " debugId="activityHTMLPanel">
+	   		<g:HTMLPanel styleName="{style.aonActivityCard}">
+	    		<g:Label styleName='{style.aonActivityCardTitle}'>Datos de actividad</g:Label>
 		    	<g:HTMLPanel ui:field="activityDataTable" styleName="{style.widthAll} {style.heightAll} {style.flexColumn}">
 		    		<g:HTMLPanel ui:field="activityDescriptionPanel" styleName="{style.flex}">
-		    			<g:Label  styleName='{style.requiredColor} {style.firstColumn}'>Descripción</g:Label>
+		    			<g:Label  styleName='{style.aonActivityCardRequired} {style.aonActivityCardLabel}'>Descripción</g:Label>
 		    			<g:TextBox ui:field="activityDescription" debugId="activityNameTB" styleName='aon-inputText {style.inputTextHeight} {style.widthAll}'></g:TextBox>
 					</g:HTMLPanel>
 					<g:HTMLPanel ui:field="activityCNAE2009Panel" styleName="{style.flex}">
-		    			<g:Label  styleName='{style.firstColumn}'>CNAE2009</g:Label>
+		    			<g:Label  styleName='{style.aonActivityCardLabel}'>CNAE2009</g:Label>
 		    			<g:SuggestBox ui:field="activityCNAE2009" debugId="activityCnaeTB" styleName='aon-inputText {style.inputTextHeight} {style.widthAll}'></g:SuggestBox>
 					</g:HTMLPanel>
 					<g:HTMLPanel styleName="{style.flex}">
-		    			<g:Label styleName='{style.firstColumn}'>Fecha inicio</g:Label>
+		    			<g:Label styleName='{style.aonActivityCardLabel}'>Fecha inicio</g:Label>
 		    			<a:DateBoxEx ui:field="startDate" styleName='rich-calendar-input aon-selectInputDate-inputClass {style.inputTextHeight} {style.dateBoxStyle}'></a:DateBoxEx>
 					</g:HTMLPanel>
 					<g:HTMLPanel styleName="{style.flex}">
-		    			<g:Label styleName='{style.firstColumn}'>Fecha fin</g:Label>
+		    			<g:Label styleName='{style.aonActivityCardLabel}'>Fecha fin</g:Label>
 		    			<a:DateBoxEx ui:field="endDate" styleName='rich-calendar-input aon-selectInputDate-inputClass {style.inputTextHeight} {style.dateBoxStyle}'></a:DateBoxEx>
 					</g:HTMLPanel>
 					<g:HTMLPanel styleName="{style.flex}">
-		    			<g:Label styleName='{style.firstColumn}'>Actividad principal</g:Label>
+		    			<g:Label styleName='{style.aonActivityCardLabel}'>Actividad principal</g:Label>
 		    			<g:CheckBox ui:field="activityActive" styleName="{style.checkBox}"></g:CheckBox>
 					</g:HTMLPanel>	
 		    	</g:HTMLPanel>

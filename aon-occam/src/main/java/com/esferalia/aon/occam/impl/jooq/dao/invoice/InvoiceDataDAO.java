@@ -80,6 +80,16 @@ public class InvoiceDataDAO {
 		return invoiceData;
 	}
 	
+	public static InvoiceData save(AONContext ctx, InvoiceData invoiceData, Invoice invoice) {
+		InvoiceDataValidation.validate(ctx, invoiceData);
+		if(invoice != null && invoice.getId() != null) {
+			invoiceData = invoiceData.getId() != null 
+					? update(ctx, invoiceData)
+					: insert(ctx, invoiceData);
+		}
+		return invoiceData;
+	}
+	
 	public static InvoiceData update(AONContext ctx, InvoiceData invoiceData) {
 		ctx.getDslContext().update(INVOICE_DATA)
 		.set(INVOICE_DATA.DOMAIN, invoiceData.getDomain())

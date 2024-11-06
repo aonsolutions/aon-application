@@ -250,5 +250,6 @@ public interface CommonServiceAsync {
 	void getSellersWorkload(SellerWorkloadParams params, AsyncCallback<List<SellerWorkload>> asyncCallback) throws AonCoreException;
 	void getSellersWorkloadCount(SellerWorkloadParams params, AsyncCallback<Integer> asyncCallback) throws AonCoreException;
 	void getSellersWorkloadFees(SellerWorkloadParams params, AsyncCallback<List<Fee>> asyncCallback) throws AonCoreException;
+	void getSellersWorkloadFeesIds(SellerWorkloadParams params, AsyncCallback<List<Integer>> asyncCallback) throws AonCoreException;
 
 }

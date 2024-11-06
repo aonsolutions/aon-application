@@ -46,6 +46,7 @@ import com.esferalia.aon.occam.api.model.attachment.RegistryAttachmentType;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceCommunicationStatus;
 import com.esferalia.aon.occam.api.model.finance.InvoiceCommunicationType;
+import com.esferalia.aon.occam.api.model.finance.InvoiceData;
 import com.esferalia.aon.occam.api.model.finance.InvoiceInfo;
 import com.esferalia.aon.occam.api.model.finance.InvoiceNewPortal;
 import com.esferalia.aon.occam.api.model.finance.InvoiceProperties;
@@ -56,6 +57,7 @@ import com.esferalia.aon.occam.api.model.finance.TbaiConfiguration;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceFilter;
 import com.esferalia.aon.occam.api.model.product.Tax;
 import com.esferalia.aon.occam.api.model.registry.CompanyFull;
+import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.type.Administration;
 import com.esferalia.aon.occam.api.model.type.AppParam;
 import com.esferalia.aon.occam.api.model.type.Country;
@@ -69,6 +71,7 @@ import com.esferalia.aon.occam.api.model.type.RawdocStatus;
 import com.esferalia.aon.occam.api.model.type.RawdocType;
 import com.esferalia.aon.occam.api.model.type.WithholdingType;
 import com.esferalia.aon.watson.server.AonDateUtils;
+import com.esferalia.aon.watson.server.codec.AonDigestUtils;
 import com.esferalia.aon.watson.util.AonDocumentUtil;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
@@ -1011,7 +1014,7 @@ public class InvoiceServlet extends AonApiHttpServlet{
 			Integer domainId = api.getDomain().getId();
 			String login = api.getUser().getLogin();
 			AON_SOLUTIONS.getInvoices(domainName, domainId, login, f -> invoiceFilter(f, domainId, filter))
-				.forEach(invoice -> jsArray.put(invoiceList2JSON(invoice)));
+				.forEach(invoice -> jsArray.put(invoiceList2JSON(api.getDomain(), api.getUser(), invoice)));
 			return jsArray;
 		} else {
 			return RawdocServlet.getRawdocs(api);
@@ -1019,11 +1022,12 @@ public class InvoiceServlet extends AonApiHttpServlet{
 	}
 	 
 	
-	private static JSONObject invoiceList2JSON(Invoice invoice) {
+	private static JSONObject invoiceList2JSON(Domain domain, User user, Invoice invoice) {
 		String referenceAux = "";
 		if(!AonStringUtils.isBlank(invoice.getSeries())) {
 			referenceAux = referenceAux + invoice.getSeries() + "/";
 		}
+
 		referenceAux = referenceAux + "PROFORMA";
 		JSONObject json = new JSONObject();
 		json.put(IJsonNames.ID, invoice.getId());
@@ -1039,6 +1043,15 @@ public class InvoiceServlet extends AonApiHttpServlet{
 		json.put(IJsonNames.SERIES, invoice.getSeries());
 		json.put(IJsonNames.SERIE, invoice.getSeries());
 		json.put(IJsonNames.NUMBER, invoice.getNumber());
+		json.put(IJsonNames.SIGNED, invoice.isSigned());
+
+		InvoiceData invoiceData = AON.getInvoiceData(domain, user, f -> f.getInvoiceProperty().eq(invoice.getId())
+				.and(f.getNameProperty().eq("MD5")));
+		if(invoiceData != null && !AonStringUtils.isBlank(invoiceData.getValue())) {
+			String md5 = AonDigestUtils.md5Hex(invoice.flat());
+			json.put("altered", !md5.equalsIgnoreCase(invoiceData.getValue()));
+		}
+
 		return json;
 	}
 	

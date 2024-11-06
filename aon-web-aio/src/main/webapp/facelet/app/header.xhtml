@@ -50,6 +50,12 @@
 		scale: 0.9;
 	}
 	
+	.rich-calendar-time-layout, .rich-calendar-date-layout, .rich-calendar-time-layout input {
+	 	font-size: 13px;
+	  	font-family: lucida Grande,Trebuchet MS,Arial,sans-serif;
+	  	background-color: #fff !important;
+	}
+	
 	.rich-calendar-boundary-dates {
 		color: #F8F9FA !important;
 		pointer-events: none !important; 
@@ -85,96 +91,13 @@
 	}
 	
 		
-	[id$=WeekDayCell0]{
-	    visibility: hidden; 
-	    position: relative; 
-	}
-	
-	[id$=WeekDayCell0]::before {
-	    content: "D"; 
-	    visibility: visible; 
-	    position: absolute;
-  		left: 18px;
-	}
-	
-	[id$=WeekDayCell1]{
-	    visibility: hidden; 
-	    position: relative; 
-	}
-	
-	[id$=WeekDayCell1]::before {
-	    content: "L"; 
-	    visibility: visible; 
-	    position: absolute;
-  		left: 18px;
-	}
-	
-	[id$=WeekDayCell2]{
-	    visibility: hidden; 
-	    position: relative; 
-	}
-	
-	[id$=WeekDayCell2]::before {
-	    content: "M"; 
-	    visibility: visible;
-	    position: absolute;
-  		left: 18px;
-	}
-	
-	[id$=WeekDayCell3]{
-	    visibility: hidden; 
-	    position: relative;
-	}
-	
-	[id$=WeekDayCell3]::before {
-	    content: "X"; 
-	    visibility: visible; 
-	    position: absolute;
-  		left: 18px;
-	}
-	
-	[id$=WeekDayCell4]{
-	    visibility: hidden; 
-	    position: relative; 
-	}
-	
-	[id$=WeekDayCell4]::before {
-	    content: "J";
-	    visibility: visible; 
-	    position: absolute;
-  		left: 18px;
-	}
-	
-	[id$=WeekDayCell5]{
-	    visibility: hidden; 
-	    position: relative; 
-	}
-	
-	[id$=WeekDayCell5]::before {
-	    content: "V"; 
-	    visibility: visible; 
-	    position: absolute;
-  		left: 18px;
-	}
-	
-	[id$=WeekDayCell6]{
-	    visibility: hidden;
-	    position: relative; 
-	}
-	
-	[id$=WeekDayCell6]::before {
-	    content: "S"; 
-	    visibility: visible; 
-	    position: absolute;
-  		left: 18px;
-	}
-	
 	.rich-calendar-tool-btn {
 	    background-color: #fff !important;
 	    border: none !important;
 	    color: rgb(66,66,66) !important;
 	    cursor: pointer !important;
 	    font-size: 16px !important;
+	    text-transform: capitalize;
 	}
 	
 	.rich-calendar-footer {
@@ -197,15 +120,20 @@
 	    display: none !important; 
 	}
 	
-	
 	.rich-calendar-days {
-	    background-color: #f8f9fa !important;
+	    color: #FFF !important;
+	    font-size: 0px !important;
+	    text-align: center !important;
+	    background-color: #fff !important;
+	    padding: 8px !important;
+	    border-bottom: 1px solid #fff !important;
+	}
+	
+	.rich-calendar-days:first-letter{
 	    color: #D3D3D7 !important;
+	    text-transform: uppercase;
 	    font-weight: 600 !important;
 	    font-size: 14px !important;
-	    text-align: center !important;
-	    padding: 8px !important;
-	    border-bottom: 1px solid #ddd !important;
 	}
 	
 	
@@ -250,9 +178,6 @@
 	  font-weight: bold;
 	}
 	
-	.rich-calendar-weekends {
-	    color: #D3D3D7 !important;
-	}
 	
 /* 	.rich-calendar-holly{
 		background-color: #B2BCD1 !important;
@@ -477,8 +402,10 @@
 	}
 		
 	.aon-direct-access-list-element:hover {
-		border-radius: 50px;
-    	background-color: rgb(32,33,36,0.059) !important;
+		border-radius: 0px;
+    	background-color: #f6f6f6 !important;
+    	border-bottom-right-radius: 50px;
+  		border-top-right-radius: 50px;
 	}	
 	
 	.aon-direct-access-list-element.selected {
@@ -842,7 +769,6 @@
 		color: #4b4b4b;
 		background-image: none;
 		background-color: #fafafa;
-		border-bottom: 1px solid #ddd;	
 	}
 
 /* 	.aon-scroll-area .aon-dataTable {
@@ -877,9 +803,9 @@
 		border-left: none;
 		border-right: none;
     	box-shadow: none; 
-    	
     	height: 40px;
-
+		vertical-align: middle;
+		text-align: left;
 	}	
 	
 	.aon-dataTable td,
@@ -1286,6 +1212,14 @@
 		border:none;
 		background-color: #fafafa;
 	}
+	
+	.aon-group .rich-tabpanel-content,
+	.aon-group .rich-tab-inactive,
+	.aon-group .rich-tab-active {
+		background-color: #fff;
+		border-color: #fff;
+	}
+	
 
 	.rich-tabhdr-side-cell {
 		border-top:none
@@ -1468,6 +1402,7 @@
 	.aon-icon-company {
 		background-size: 24px;
 		background-image: url('data:image/svg+xml;utf-8,&lt;svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="--var(aonIconColor,black)"&gt;&lt;path d="M240-200h156v-234h168v234h156v-360L480-742 240-560v360Zm-28 28v-402l268-203 268 203v402H536v-234H424v234H212Zm268-299Z"/&gt;&lt;/svg&gt;') ;
+		padding-left: 16px !important;
 	}
 
 	.aon-icon-file-entrance  {
@@ -1684,6 +1619,7 @@
 		padding-bottom:12px;
 		background-position-x : center;
 		background-position-y : center;
+		vertical-align: middle;
 	}
 	
 	.aon-panelGrid-odd .aon-icon-edit-add,
@@ -1724,7 +1660,7 @@
 	.aon-editDataTable-iconColumn .aon-icon-company{
 		padding-top:6px;
 		padding-left:24px;
-		padding-bottom:18px;
+		padding-bottom:6px;
 	}
 	
 	.aon-lookupButton-new {
@@ -1793,6 +1729,10 @@
     	background: none;
     	border-radius: 16px;
     	border: 1px solid #aaa;
+	}
+	
+	.rich-fileupload-list-decor {
+		display: none;
 	}
 	
 	.rich-fileupload-button-content {
@@ -2405,7 +2345,7 @@
 	.aon-EmployeeTree .gwt-SplitLayoutPanel-VDragger,
 	.aon-EmployeeTree-Events .gwt-MenuBar-horizontal, 
 	.aon-EmployeeTree-Employees .gwt-MenuBar-horizontal {
-		background-color: #f6f8fc !important;
+		background-color: #fafafa !important;
 	}
 
 	.aon-Model-Detail{
@@ -2438,7 +2378,6 @@
 	}
 
 	
-	.aon-ConfigContent,
 	.aon-Model-Detail,
 	.aon-MainTrash-Detail,
 	.aon-MainCreta-Details,
@@ -2448,17 +2387,29 @@
 		background-color: #ffffff !important;
 	}
 	
+	.aon-ConfigContent {
+		background-color: #fafafa !important;
+	}
+	
+	
 	.aon-ConfigPanel {
 		padding: 10px 20px 10px 10px;
 	}
 	
 	.aon-ConfigPanel .aon-panelBar-title {
-		border-radius : 16px;
+		border: none;
+		text-align: inherit;
 	}
 	
-	/*
-	* 
-	*/
+	.aon-ConfigPanel .aon-panelBar-selected {
+		border: none !important;
+		border-radius: 0px;
+		background-color: #f1f1f1 !important;
+		border-bottom-right-radius: 50px;
+  		border-top-right-radius: 50px;
+		border-left: 2px solid #002469 !important;
+	}
+	
 	.aon-MainAgreement-ToolBar {
 		border-bottom: none;
 	}
@@ -2652,11 +2603,192 @@
 	}
 	
 	[id$="New"],
-	[id$="New"] .aon-group,
+	[id$="New"] .aon-group,a
 	[id$="New"] .rich-stglpanel {
     	min-width: fit-content;
 	}
 	
+	.richfacesSkin table.mceLayout tr.mceFirst {
+ 		border-top: 1px solid #C4C0B9;
+  		background-color: #fff;
+	}
+	a[id*="TextArea_cut"],
+	a[id*="TextArea_copy"],
+	a[id*="TextArea_paste"],
+	a[id*="TextArea_pastetext"],
+	a[id*="TextArea_pasteword"],
+	a[id*="TextArea_undo"],
+	a[id*="TextArea_redo"],
+	a[id*="TextArea_search"],
+	a[id*="TextArea_replace"],
+	a[id*="TextArea_link"],
+	a[id*="TextArea_unlink"],
+	a[id*="TextArea_anchor"],
+	a[id*="TextArea_image"],
+	a[id*="TextArea_table"],		
+	a[id*="TextArea_row_props"],
+	a[id*="TextArea_cell_props"],
+	a[id*="TextArea_row_before"],
+	a[id*="TextArea_row_after"],
+	a[id*="TextArea_delete_row"],
+	a[id*="TextArea_col_before"],
+	a[id*="TextArea_col_after"],
+	a[id*="TextArea_delete_col"],
+	a[id*="TextArea_split_cells"],
+	a[id*="TextArea_merge_cells"],
+	.mceToolbarStart, .mceToolbarEnd {
+  		display: none !important;
+	}
+	
+	.mceToolbar {
+    	background-color: #fff !important;
+    	padding: 4px !important;
+    	white-space: nowrap !important; 
+    	overflow-x: auto !important; 
+    	display: flex !important;  
+    	align-items: center !important;  
+	}
+
+	.mceButton {
+	    width: auto !important;
+	    height: auto !important;
+	    margin: 0 4px !important;
+	    padding: 2px !important;
+	    background-color: transparent !important;
+    	border: none !important;
+    	display: inline-block !important;
+	}
+	
+	
+	td a.mceButton.mceButtonEnabled:hover {
+	    background-color: #eee !important;
+	    cursor: pointer !important;
+	    border-radius: 50% !important;
+	}
+	
+	.mceSeparator {
+	    display: none !important;
+	}
+	
+	.mceToolbarStartButton {
+	    margin-left: 0 !important;
+	}
+	
+	.richfacesSkin .mceButton,
+	.richfacesSkin .mceSplitButton {
+		background-image: none !important;
+	}
+	
+	.richfacesSkin table {
+  		background: #fff;
+  		overflow-y: hidden;
+  	}
+  	
+  	.richfacesSkin .mceListBox .mceText {
+  		background: #fff;
+  		border: 1px solid #C4C0B9;
+  		border-radius: 10px;
+  		font-family: lucida Grande,Trebuchet MS,Arial,sans-serif;
+  	}
+  	
+  	td a.mceText:hover{
+  		background-color: #eee !important;
+	    cursor: pointer !important;
+  	}
+  	
+  	table[id*="font"] td.mceLast a,
+  	.richfacesSkin .mceSplitButton a.mceOpen,
+  	.richfacesSkin table.mceSplitButtonEnabled:hover a.mceAction, 
+  	.richfacesSkin .mceSplitButtonHover a.mceAction, 
+  	.richfacesSkin .mceSplitButtonSelected {
+  		background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAwAAAAICAYAAADN5B7xAAAAW0lEQVR4XmNgAIJr12/8B9H4AFxNd2//fw1t/f+bNm/FqWnjpi1gNT19E/4zTJoy7b+ali5OTTDFIDUgtWBBXJqwKoYBdE14FcMAsiaCimEApokoxTAAUohLMQD0yGO6tCDOwgAAAABJRU5ErkJggg==);
+		background-size: cover;
+	    background-repeat: no-repeat;
+	    background-position: center;
+	    background-size: 6px;
+  	}
+	
+	.richfacesSkin .mceMenu .mceMenuItemEnabled a:hover, 
+	.richfacesSkin .mceMenu .mceMenuItemActive,
+	.richfacesSkin .mceMenuItemTitle a {
+		background-color: #eee;
+	}
+	
+	.richfacesSkin .mceSplitButton a.mceAction,
+	a[id$="_open"] {
+		background-color: #fff;
+	}
+	 
+	a[id$="_open"]:hover {
+		background-color: #eee;
+		border-radius: 5px;
+	}
+	
+	table[id*="font"] a[id$="open"]{
+		display: none !important;
+	}
+	
+	.richfacesSkin table.mceSplitButtonEnabled:hover a.mceOpen, .richfacesSkin .mceSplitButtonHover a.mceOpen, .richfacesSkin .mceSplitButtonSelected a.mceOpen {
+  		background-position: center;
+	}
+	
+	.aon-table-row-link {
+	  background: transparent url(images/aon-icon/aon-icon-rowSelector.png) no-repeat scroll center left;
+	  margin: 0;
+	  padding: 0 10px 0 14px;
+	}
+	
+	[id*="invoiceFinances"],
+	[id$="selectButton"]{
+		padding-right: 15px !important;
+	}
+
+	
+	.aon-outputText {
+		float: left !important;
+	}
+	
+	[id*="invoiceList"] .aon-outputText {
+		float: right !important;
+	}
+
+	
+	a[id*="targetDeduplicationData"],
+	a[id*="invoicingGroupDetailData"]{
+		padding-bottom: 22px;
+	}
+	
+	.aon-group .aon-toolbar {
+		border: 0px;
+		border-bottom: #ddd 1px solid;
+		background-color: #fff;
+	}
+	
+	[id*="globalConfig"] .aon-panelGrid-odd,
+	[id*="globalConfig"] .aon-panelGrid-even {
+		background-color: #fafafa;
+		border-color: #fafafa;
+	}
+	
+	[id*="globalConfig"] .aon-group .aon-panelGrid-odd,
+	[id*="globalConfig"] .aon-group .aon-panelGrid-even {
+		background-color: #fff;
+		border-color: #fff;
+	}
+	
+	
+	.aon-ConfigContent .aon_custom_table_header,
+	.aon-ConfigContent  #rootPanel {
+		background-color: #fafafa;
+	}
+	
+	.aon-ConfigContent .gwt-TabLayoutPanelTabs {
+		border-bottom-color: #fafafa !important;
+	}
+	
+	.aonDataScroller {
+		padding-left: 0px !important;
+	}
 	
 	</style>
 

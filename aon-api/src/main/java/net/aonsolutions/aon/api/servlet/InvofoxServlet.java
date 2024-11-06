@@ -187,13 +187,11 @@ public class InvofoxServlet extends AonApiHttpServlet {
 	}
 	
 	private static JSONObject rawdocDocument(AonApiData api, String documentId) {
-		JSONObject json = new JSONObject();
 		Rawdoc rawdoc = AON.getRawdocStream(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), 
 				f -> f.getDomainProperty().eq(api.getDomain().getId())
 					.and(f.getJsonProperty().like("%invofoxId%" + documentId + "%"))).findFirst().orElse(null);
-		
 		if(rawdoc == null) {
-			json = getDocument(api.getDomain(), api.getUser(), documentId);
+			JSONObject json = getDocument(api.getDomain(), api.getUser(), documentId);
 			Integer id = JsonUtils.getInteger(json, IJsonNames.ID);
 			RawdocType type = json.opt("type") != null && json.optString("type").equalsIgnoreCase("emitida") 
 					? RawdocType.OUTPUT : RawdocType.INPUT;
@@ -202,6 +200,16 @@ public class InvofoxServlet extends AonApiHttpServlet {
 			json.put("ocrStatus", ocrStatus);
 			json.put(IJsonNames.STATUS, status.getTediName());
 
+			if(id != null) {
+				Rawdoc rdoc = AON.getRawdocStream(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), 
+						f -> f.getDomainProperty().eq(api.getDomain().getId())
+							.and(f.getIdProperty().eq(id))).findFirst().orElse(null);
+				if(rdoc != null && !AonStringUtils.isBlank(rdoc.getJson())) {
+					boolean signed = JsonUtils.getboolean(new JSONObject(rdoc.getJson()), IJsonNames.SIGNED);
+					json.put(IJsonNames.SIGNED, signed);
+				}
+			}
+			
 			rawdoc = new Rawdoc()
 				.setId(id)
 				.setDomain(api.getDomain().getId())
@@ -216,9 +224,8 @@ public class InvofoxServlet extends AonApiHttpServlet {
 			json.put("id", rawdoc.getId()); 
 
 			exportDocument(api, documentId);
-		} else json = new JSONObject(rawdoc.getJson());
-		
-		return json;
+			return json;
+		} else return new JSONObject(rawdoc.getJson());
 	}
 	
 	private static JSONObject refreshProcessing(AonApiData api) {
@@ -349,6 +356,16 @@ public class InvofoxServlet extends AonApiHttpServlet {
 				if (inv != null && publicState != null && OCRSeverity.approved.equals(publicState)
 						&& inv.getTediCategory() != null) {
 					Integer rawdocId = getRawdocId(ocrDocument);
+
+					if(rawdocId != null) {
+						Rawdoc rdoc = AON.getRawdocStream(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), 
+								f -> f.getDomainProperty().eq(api.getDomain().getId())
+									.and(f.getIdProperty().eq(rawdocId))).findFirst().orElse(null);
+						if(rdoc != null && !AonStringUtils.isBlank(rdoc.getJson())) {
+							boolean signed = JsonUtils.getboolean(new JSONObject(rdoc.getJson()), IJsonNames.SIGNED);
+							inv.setSigned(signed);
+						}
+					}
 					
 					inv = AON.acceptInvoice(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(),
 							inv, rawdocId);
@@ -373,6 +390,9 @@ public class InvofoxServlet extends AonApiHttpServlet {
 				} else rawdocDocument(api);
 //			}
 			
+			return new JSONObject();
+		} catch (Exception e) {
+			rawdocDocument(api);
 			return new JSONObject();
 		}
 	}

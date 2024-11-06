@@ -683,13 +683,19 @@ public class CommonServiceAsyncDecorator implements CommonServiceAsync {
 	@Override
 	public void getSellersWorkloadCount(SellerWorkloadParams params, AsyncCallback<Integer> callback) throws AonCoreException {
 		AON.start();
-		serviceAsync.getSellersCount(params, new AsyncCallbackWrapper<>(callback));
+		serviceAsync.getSellersWorkloadCount(params, new AsyncCallbackWrapper<>(callback));
 	}
 
 	@Override
 	public void getSellersWorkloadFees(SellerWorkloadParams params, AsyncCallback<List<Fee>> callback) throws AonCoreException {
 		AON.start();
 		serviceAsync.getSellersWorkloadFees(params, new AsyncCallbackWrapper<>(callback));
+	}
+
+	@Override
+	public void getSellersWorkloadFeesIds(SellerWorkloadParams params, AsyncCallback<List<Integer>> callback) throws AonCoreException {
+		AON.start();
+		serviceAsync.getSellersWorkloadFeesIds(params, new AsyncCallbackWrapper<>(callback));
 	}
 
 }

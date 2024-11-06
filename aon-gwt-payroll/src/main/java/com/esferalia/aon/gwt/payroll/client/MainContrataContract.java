@@ -19,7 +19,6 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog.AonAcceptDialogCallback;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonExpandButton;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonMessagePanel;
-import com.esferalia.aon.gwt.common.client.widget.solutions.AonSearchPanelButton;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonTableButton;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
 import com.esferalia.aon.gwt.common.shared.DateUtils;
@@ -48,7 +47,6 @@ import com.google.gwt.http.client.URL;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.DeckPanel;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.FormPanel;
@@ -293,8 +291,38 @@ public class MainContrataContract extends MainEntryPoint {
 		enterpriseSalary = new EnterpriseSalaryImpl();
 		enterpriseSalary.setBackButtonVisible();
 
-		employeesDockLayoutPanel = new AonCustomDockLayout("Contratos");
-		pdfDockLayoutPanel = new AonCustomDockLayout("PDF");
+		employeesDockLayoutPanel = new AonCustomDockLayout("Contratos") {
+			@Override
+			protected void onClearFilter() { 
+				mainContrataContractObject.resetEmployeesList();
+				offset = 0;
+				
+				params.setDescription(null);
+				employeesDockLayoutPanel.getSearchTextBox().setValue(null);
+				
+				params.setActive((byte)1);
+				active.setValue("1");
+				
+				params.setTc2(null);
+				tc2LB.setValue("");
+				
+				params.setWorkplace(null);
+				workplaceLB.setValue("");
+				
+				params.setFrom(null);
+				fromDB.setValue(null);
+				
+				params.setTo(null);
+				toDB.setValue(null);
+				
+				onSearch();
+			}
+		};
+		
+		pdfDockLayoutPanel = new AonCustomDockLayout("PDF") {
+			@Override
+			protected void onClearFilter() { /* Nothing to do here */ }
+		};
 
 		// Inject rich styles.
 		AON.ensureInjected();
@@ -552,7 +580,7 @@ public class MainContrataContract extends MainEntryPoint {
 		
 		employeesDockLayoutPanel.setSearchPlaceholder("Filtrar por nombre, documento o nss");
 		
-		employeesDockLayoutPanel.getSearchTextBox().addKeyUpHandler(e -> {
+		employeesDockLayoutPanel.addKeyUpHandler(e -> {
 			String value = employeesDockLayoutPanel.getSearchTextBox().getValue();
 			if(e.getNativeKeyCode() == KeyCodes.KEY_ENTER || e.getNativeKeyCode() == KeyCodes.KEY_MAC_ENTER) return;
 			
@@ -567,36 +595,6 @@ public class MainContrataContract extends MainEntryPoint {
 				onSearch();
 			}
 		});
-		
-		employeesDockLayoutPanel.addFilterMenu();
-		
-		AonSearchPanelButton cleanButton = new AonSearchPanelButton( AON.MSG.clean(), AON.CSS.aonIconClear() );
-		cleanButton.addClickHandler(event -> {
-			mainContrataContractObject.resetEmployeesList();
-			offset = 0;
-			
-			params.setDescription(null);
-			employeesDockLayoutPanel.getSearchTextBox().setValue(null);
-			
-			params.setActive((byte)1);
-			active.setValue("1");
-			
-			params.setTc2(null);
-			tc2LB.setValue("");
-			
-			params.setWorkplace(null);
-			workplaceLB.setValue("");
-			
-			params.setFrom(null);
-			fromDB.setValue(null);
-			
-			params.setTo(null);
-			toDB.setValue(null);
-			
-			onSearch();
-		});
-		
-		employeesDockLayoutPanel.addFilterToolbarButton(cleanButton);
 		
 		active.addItem( "Todas", "");
 		active.addItem( "Inactivas", "0");
@@ -628,8 +626,6 @@ public class MainContrataContract extends MainEntryPoint {
 		employeesDockLayoutPanel.addFilterWidget(workplaceLB);
 		employeesDockLayoutPanel.addFilterWidget(fromDB);
 		employeesDockLayoutPanel.addFilterWidget(toDB);
-		
-		employeesDockLayoutPanel.addSortMenu();
 		
 		sort.addItem("Nombre", "name");
 		sort.addItem("Documento", "document");
@@ -704,7 +700,6 @@ public class MainContrataContract extends MainEntryPoint {
 		pdfDockLayoutPanel.addToolbarButton(closePDF);
 		
 		pdfDockLayoutPanel.hideSearchWidget();
-		pdfDockLayoutPanel.hideFilterWidget();
 	}
 	
 	// OnModuleLoad

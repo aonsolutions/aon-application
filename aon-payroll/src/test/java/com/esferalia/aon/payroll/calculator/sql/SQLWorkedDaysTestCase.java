@@ -90,6 +90,7 @@ import com.esferalia.aon.jooq.tables.records.RegistryRecord;
 import com.esferalia.aon.jooq.tables.records.ScopeRecord;
 import com.esferalia.aon.jooq.tables.records.WorkplaceRecord;
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.model.type.ContractLeaveType;
 import com.esferalia.aon.payroll.Salary;
 import com.esferalia.aon.payroll.SalaryBuilder;
 import com.esferalia.aon.payroll.calculator.SmartContractSalaryCalculator;
@@ -104,6 +105,7 @@ import com.esferalia.aon.salary.expression.ExpressionException;
 import com.esferalia.aon.salary.expression.ITimedResult;
 import com.esferalia.aon.salary.expression.Period;
 import com.esferalia.aon.salary.expression.UndefinedVariablesException;
+import com.esferalia.aon.watson.util.AonDateUtils;
 
 import junit.framework.Assert;
 
@@ -2325,6 +2327,216 @@ public class SQLWorkedDaysTestCase extends AbstractSQLTestCase {
 					ctx,
 					12 *  monthdays * coefficient, start, end, monthdays);
 
+	}
+
+	@Test
+	public void testTotalWorkDaysI() throws ExpressionException, SQLException {
+
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+
+		Date start = getFirstDayOfYear(getToday());
+
+		@SuppressWarnings("serial")
+		ContractRecord contract = newContract(aonContext, start,
+				new HashMap<String, String>() {
+					{
+						put(PARTIAL_FACTOR.getName(), "0.5");
+						put(TC2.getName(),format("\"%s\"", random(PARTIAL_TIME).getValue()));
+					}
+				});
+		
+		
+		addIT(aonContext, contract, LeaveType.PATERNITY, start, null, null);
+		addData(aonContext, contract, start, null, ContextVariable.PATERNITY_FACTOR, 0.5);
+		
+		Date end = getLastDayOfMonth(start);
+		
+		ISQLContractSalaryCalculatorContext ctx = 
+		getContractSalaryCalculatorContext(connection, start, end, end, contract);
+
+		List<ITimedResult<Double>> totalWorkedDays = ctx.getExpressionContext().eval(ContextVariable.TOTAL_WORKED_DAYS.getName(), start, end, Double.class);
+		
+		totalWorkedDays.forEach( r -> {
+			org.junit.Assert.assertEquals(r.getPeriod().getStart(), start);
+			org.junit.Assert.assertEquals(r.getPeriod().getEnd(), end);
+			org.junit.Assert.assertEquals(r.getValue(), AonDateUtils.get(end, Calendar.DAY_OF_MONTH) * 0.25, DELTA);
+			
+		});
+		
+
+	}
+
+	@Test
+	public void testTotalWorkDaysII() throws ExpressionException, SQLException {
+
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+
+		Date start = getFirstDayOfYear(getToday());
+
+		@SuppressWarnings("serial")
+		ContractRecord contract = newContract(aonContext, start,
+				new HashMap<String, String>() {
+					{
+						put(PARTIAL_FACTOR.getName(), "0.5");
+						put(TC2.getName(),format("\"%s\"", random(PARTIAL_TIME).getValue()));
+					}
+				});
+		
+		
+		Date end = getLastDayOfMonth(start);
+		
+		ISQLContractSalaryCalculatorContext ctx = 
+		getContractSalaryCalculatorContext(connection, start, end, end, contract);
+
+		List<ITimedResult<Double>> totalWorkedDays = ctx.getExpressionContext().eval(ContextVariable.TOTAL_WORKED_DAYS.getName(), start, end, Double.class);
+		
+		totalWorkedDays.forEach( r -> {
+			org.junit.Assert.assertEquals(r.getPeriod().getStart(), start);
+			org.junit.Assert.assertEquals(r.getPeriod().getEnd(), end);
+			org.junit.Assert.assertEquals(AonDateUtils.get(end, Calendar.DAY_OF_MONTH) * 0.5, r.getValue(), DELTA);
+			
+		});
+		
+
+	}
+
+	@Test
+	public void testTotalWorkDaysIII() throws ExpressionException, SQLException {
+
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+
+		Date start = getFirstDayOfYear(getToday());
+
+		@SuppressWarnings("serial")
+		ContractRecord contract = newContract(aonContext, start,
+				new HashMap<String, String>() {
+					{
+						put(TC2.getName(),format("\"%s\"", random(FULL_TIME).getValue()));
+					}
+				});
+		
+		
+		Date end = getLastDayOfMonth(start);
+		
+		ISQLContractSalaryCalculatorContext ctx = 
+		getContractSalaryCalculatorContext(connection, start, end, end, contract);
+
+		List<ITimedResult<Double>> totalWorkedDays = ctx.getExpressionContext().eval(ContextVariable.TOTAL_WORKED_DAYS.getName(), start, end, Double.class);
+		
+		totalWorkedDays.forEach( r -> {
+			org.junit.Assert.assertEquals(r.getPeriod().getStart(), start);
+			org.junit.Assert.assertEquals(r.getPeriod().getEnd(), end);
+			org.junit.Assert.assertEquals(AonDateUtils.get(end, Calendar.DAY_OF_MONTH),r.getValue(),  DELTA);
+			
+		});
+		
+
+	}
+
+	@Test
+	public void testTotalWorkDaysIV() throws ExpressionException, SQLException {
+
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+
+		Date start = getFirstDayOfYear(getToday());
+
+		@SuppressWarnings("serial")
+		ContractRecord contract = newContract(aonContext, start,
+				new HashMap<String, String>() {
+					{
+						put(TC2.getName(),format("\"%s\"", random(PARTIAL_TIME).getValue()));
+					}
+				});
+		
+		
+		addIT(aonContext, contract, LeaveType.COMMON_DISEASE, start, null, null);
+		
+		Date end = getLastDayOfMonth(start);
+		
+		ISQLContractSalaryCalculatorContext ctx = 
+		getContractSalaryCalculatorContext(connection, start, end, end, contract);
+
+		List<ITimedResult<Double>> totalWorkedDays = ctx.getExpressionContext().eval(ContextVariable.TOTAL_WORKED_DAYS.getName(), start, end, Double.class);
+		
+		totalWorkedDays.forEach( r -> {
+			org.junit.Assert.assertEquals(r.getPeriod().getStart(), start);
+			org.junit.Assert.assertEquals(r.getPeriod().getEnd(), end);
+			org.junit.Assert.assertEquals(0.00, r.getValue(), DELTA);
+			
+		});
+	}
+
+	@Test
+	public void testTotalWorkDaysV() throws ExpressionException, SQLException {
+
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+
+		Date start = getFirstDayOfYear(getToday());
+
+		@SuppressWarnings("serial")
+		ContractRecord contract = newContract(aonContext, start,
+				new HashMap<String, String>() {
+					{
+						put(TC2.getName(),format("\"%s\"", random(FULL_TIME).getValue()));
+					}
+				});
+		
+		
+		addIT(aonContext, contract, LeaveType.COMMON_DISEASE, add(start, Calendar.DAY_OF_MONTH, 10), null, null);
+		
+		Date end = getLastDayOfMonth(start);
+		
+		ISQLContractSalaryCalculatorContext ctx = 
+		getContractSalaryCalculatorContext(connection, start, end, end, contract);
+
+		List<ITimedResult<Double>> totalWorkedDays = ctx.getExpressionContext().eval(ContextVariable.TOTAL_WORKED_DAYS.getName(), start, end, Double.class);
+		
+		totalWorkedDays.forEach( r -> {
+			org.junit.Assert.assertEquals(r.getPeriod().getStart(), start);
+			org.junit.Assert.assertEquals(r.getPeriod().getEnd(), end);
+			org.junit.Assert.assertEquals(10, r.getValue() , DELTA);
+			
+		});
+	}
+
+	@Test
+	public void testTotalWorkDaysVI() throws ExpressionException, SQLException {
+
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+
+		Date start = getFirstDayOfYear(getToday());
+
+		@SuppressWarnings("serial")
+		ContractRecord contract = newContract(aonContext, start,
+				new HashMap<String, String>() {
+					{
+						put(TC2.getName(),format("\"%s\"", random(FULL_TIME).getValue()));
+					}
+				});
+		
+		Date maternityStart = add(start, Calendar.DAY_OF_MONTH, 10);
+		addIT(aonContext, contract, LeaveType.MATERNITY, maternityStart , null, null);
+		addData(aonContext, contract, maternityStart, null, ContextVariable.MATERNITY_FACTOR, 0.5);
+		
+		Date end = getLastDayOfMonth(start);
+		
+		ISQLContractSalaryCalculatorContext ctx = 
+		getContractSalaryCalculatorContext(connection, start, end, end, contract);
+
+		List<ITimedResult<Double>> totalWorkedDays = ctx.getExpressionContext().eval(ContextVariable.TOTAL_WORKED_DAYS.getName(), start, end, Double.class);
+		
+		totalWorkedDays.forEach( r -> {
+			org.junit.Assert.assertEquals(r.getPeriod().getStart(), start);
+			org.junit.Assert.assertEquals(r.getPeriod().getEnd(), end);
+			org.junit.Assert.assertEquals(10 +  (AonDateUtils.get(end, Calendar.DAY_OF_MONTH) -10 ) * 0.5, r.getValue() , DELTA);
+			
+		});
 	}
 
 	// ------------------------------------------------------------------------

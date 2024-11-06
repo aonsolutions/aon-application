@@ -1358,6 +1358,9 @@ public interface AonSolutionsCSS extends CssResource {
 
 	@ClassName("aon_toast")
 	String aonToast();
+	
+	@ClassName("aon_toast_model")
+	String aonToastModel();
 
 	@ClassName("aon_toast_header")
 	String aonToastHeader();
@@ -1398,6 +1401,14 @@ public interface AonSolutionsCSS extends CssResource {
 	
 	@ClassName("aon_line")
 	String aonLine();
+	@ClassName("aon_search_filter_scroll")
+	String aonSearchFilterScroll();
+
+	@ClassName("aon_search_filter_popup")
+	String aonSearchFilterPopup();
+
+	@ClassName("aon_search_filter")
+	String aonSearchFilter();
 
 }
 

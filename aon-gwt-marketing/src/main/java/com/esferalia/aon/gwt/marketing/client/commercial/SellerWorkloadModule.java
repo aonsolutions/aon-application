@@ -99,6 +99,14 @@ public class SellerWorkloadModule extends MainEntryPoint {
 			protected SellerWorkloadParams getSellerWorkloadListParams() {
 				return sellerWorkloadModulePanel.getSellerListParams();
 			}
+
+			@Override
+			protected Integer getSellerWorkloadPosition(Integer sellerWorkloadId) {
+				return sellerWorkloadModulePanel.getSellerListPosition(sellerWorkloadId);
+			}
+
+			@Override
+			protected void onClearFilter() { /* Nothing to do here */ }
 		};
 			
 		deckLayoutPanel.add(sellerWorkloadModulePanel);
@@ -117,12 +125,12 @@ public class SellerWorkloadModule extends MainEntryPoint {
 	
 	private void showSelectedSellerWorkload(SellerWorkload sellerWorkload) {
 		deckLayoutPanel.showWidget(sellerWorkloadEntryPanel);
-		sellerWorkloadEntryPanel.setSellerWorkload(sellerWorkload, sellerWorkloadModulePanel.getSellerListPosition(sellerWorkload.getId()));
+		sellerWorkloadEntryPanel.setSellerWorkload(sellerWorkloadModulePanel.getSellerListParams(), sellerWorkload, sellerWorkloadModulePanel.getSellerListPosition(sellerWorkload.getId()));
 	}
 	
 	private void showSelectedSellerWorkload(SellerWorkload sellerWorkload, Integer position) {
 		deckLayoutPanel.showWidget(sellerWorkloadEntryPanel);
-		sellerWorkloadEntryPanel.setSellerWorkload(sellerWorkload, position);
+		sellerWorkloadEntryPanel.setSellerWorkload(sellerWorkloadModulePanel.getSellerListParams(), sellerWorkload, position);
 	}
 	
 }

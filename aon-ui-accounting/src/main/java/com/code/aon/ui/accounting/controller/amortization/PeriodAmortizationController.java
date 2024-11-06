@@ -7,6 +7,9 @@ import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 import javax.faces.model.DataModel;
 
+import org.apache.commons.lang.StringUtils;
+
+import com.code.aon.AonVersion;
 import com.code.aon.account.Account;
 import com.code.aon.accounting.AccountEntry;
 import com.code.aon.accounting.Amortization;
@@ -15,7 +18,6 @@ import com.code.aon.accounting.Period;
 import com.code.aon.accounting.amortization.AmortizationManager;
 import com.code.aon.accounting.enumeration.AmortizationDetailStatus;
 import com.code.aon.accounting.summary.SummaryProvider;
-import com.code.aon.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
@@ -24,6 +26,9 @@ import com.code.aon.common.util.CommonUtil;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.Projection;
 import com.code.aon.ql.ProjectionList;
+import com.code.aon.ql.ast.Expression;
+import com.code.aon.ql.util.ExpressionException;
+import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.ui.accounting.IAccountingConstants;
 import com.code.aon.ui.accounting.controller.entry.AccountEntryController;
 import com.code.aon.ui.form.BasicController;
@@ -41,6 +46,10 @@ public class PeriodAmortizationController extends BasicController {
 	private boolean pendingStatus;
 	private boolean scoredStatus;
 	private boolean blockedStatus;
+	private String description;
+	private Account accumulatedAccount;
+	private Account allocationAccount;
+	private Account fixedAssetAccount;
 	
 	private double accumulated;
 	private double pending;
@@ -108,12 +117,45 @@ public class PeriodAmortizationController extends BasicController {
 	public void setBlockedStatus(boolean blockedStatus) {
 		this.blockedStatus = blockedStatus;
 	}
+	
+	public String getDescription() {
+		return description;
+	}
+	public void setDescription(String description) {
+		this.description = description;
+	}
+
+	public Account getAccumulatedAccount() {
+		return accumulatedAccount;
+	}
+
+	public void setAccumulatedAccount(Account accumulatedAccount) {
+		this.accumulatedAccount = accumulatedAccount;
+	}
+
+	public Account getAllocationAccount() {
+		return allocationAccount;
+	}
+
+	public void setAllocationAccount(Account allocationAccount) {
+		this.allocationAccount = allocationAccount;
+	}
+
+	public Account getFixedAssetAccount() {
+		if (fixedAssetAccount== null) fixedAssetAccount = new Account(); 
+		return fixedAssetAccount;
+	}
+
+	public void setFixedAssetAccount(Account fixedAssetAccount) {
+		this.fixedAssetAccount = fixedAssetAccount;
+	}
 
 	@Override
 	public void onSearch(ActionEvent event) {
 		try {
 			clearCriteria();
-			String alias = getFieldName(IEntityAlias.AMORTIZATION_DETAIL_TO_DATE);
+			// ---------------------------------- FECHA
+			String dateAlias = getFieldName(IEntityAlias.AMORTIZATION_DETAIL_TO_DATE);
 			Date fromDate = getPeriod().getInitiationDate();
 			if (getFromDate() != null ) {
 				fromDate = getFromDate();
@@ -122,11 +164,46 @@ public class PeriodAmortizationController extends BasicController {
 			if (getToDate() != null ) {
 				toDate = getToDate();
 			}
-			getCriteria().addGreaterThanOrEqualExpression(alias, fromDate);
-			getCriteria().addLessThanOrEqualExpression(alias, toDate);
-			getCriteria().addNotEqualExpression(getFieldName(IEntityAlias.AMORTIZATION_DETAIL_STATUS), AmortizationDetailStatus.BLOCKED);
+			getCriteria().addGreaterThanOrEqualExpression(dateAlias, fromDate);
+			getCriteria().addLessThanOrEqualExpression(dateAlias, toDate);
+			
+			// ---------------------------------- ESTADO
+			String statusAlias = getFieldName(IEntityAlias.AMORTIZATION_DETAIL_STATUS);
+			Expression expr1 = pendingStatus
+					?ExpressionUtilities.getEqualExpression(statusAlias, AmortizationDetailStatus.PENDING)
+					:null;
+			Expression expr2 = scoredStatus
+					?ExpressionUtilities.getEqualExpression(statusAlias, AmortizationDetailStatus.SCORED)
+					:null;
+			Expression expr3 = blockedStatus
+					?ExpressionUtilities.getEqualExpression(statusAlias, AmortizationDetailStatus.BLOCKED)
+					:null;
+			Expression exp = null;
+			if (expr1 != null) exp = expr1;
+			if (expr2 != null) {
+				exp = exp==null?expr2 : ExpressionUtilities.getOrExpression(exp, expr2);   
+			}
+			if (expr3 != null) {
+				exp = exp==null?expr3 : ExpressionUtilities.getOrExpression(exp, expr3);   
+			}
+			if (exp != null) {
+				getCriteria().addExpression(exp);
+			}
+			
+			// ---------------------------------- DESCRIPTION
+			if (StringUtils.isNotBlank(description)) {
+				String desc =  (!StringUtils.contains(description,"*")) 
+					?"*" +  description + "*"
+					:description;
+				getCriteria().addExpression(getFieldName(IEntityAlias.AMORTIZATION_DETAIL_AMORTIZATION_DESCRIPTION), desc);
+			}
+			// ---------------------------------- Fixed Asset Account
+			if (fixedAssetAccount != null && fixedAssetAccount.getId() != null) {
+				getCriteria().addEqualExpression(getFieldName(IEntityAlias.AMORTIZATION_DETAIL_AMORTIZATION_FIXED_ASSET_ACCOUNT_ID), fixedAssetAccount.getId());
+			}
+			
 			super.onSearch(event);
-		} catch (ManagerBeanException e) {
+		} catch (ManagerBeanException | ExpressionException e) {
 			AonUtil.addErrorMessage(e.getMessage());
 			throw new AbortProcessingException(e.getMessage(), e);
 		}
@@ -168,6 +245,7 @@ public class PeriodAmortizationController extends BasicController {
 		return model;
 	}
 
+		
 	public double getAccumulated() {
 		return accumulated;
 	}

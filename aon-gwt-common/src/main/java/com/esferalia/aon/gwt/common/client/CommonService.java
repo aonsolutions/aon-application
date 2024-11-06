@@ -56,6 +56,7 @@ import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.task.TaskHolder;
 import com.esferalia.aon.occam.api.model.type.TagType;
 import com.esferalia.aon.watson.error.AonCoreException;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 
@@ -250,5 +251,6 @@ public interface CommonService extends RemoteService {
 	List<SellerWorkload> getSellersWorkload(SellerWorkloadParams params) throws AonCoreException;
 	Integer getSellersWorkloadCount(SellerWorkloadParams params) throws AonCoreException;
 	List<Fee> getSellersWorkloadFees(SellerWorkloadParams params) throws AonCoreException;
-
+	List<Integer> getSellersWorkloadFeesIds(SellerWorkloadParams params) throws AonCoreException;
+	
 }
