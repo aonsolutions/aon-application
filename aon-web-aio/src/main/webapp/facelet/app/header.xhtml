@@ -91,90 +91,6 @@
 	}
 	
 		
-	[id$=WeekDayCell0]{
-	    visibility: hidden; 
-	    position: relative; 
-	}
-	
-	[id$=WeekDayCell0]::before {
-	    content: "D"; 
-	    visibility: visible; 
-	    position: absolute;
-  		left: 18px;
-	}
-	
-	[id$=WeekDayCell1]{
-	    visibility: hidden; 
-	    position: relative; 
-	}
-	
-	[id$=WeekDayCell1]::before {
-	    content: "L"; 
-	    visibility: visible; 
-	    position: absolute;
-  		left: 18px;
-	}
-	
-	[id$=WeekDayCell2]{
-	    visibility: hidden; 
-	    position: relative; 
-	}
-	
-	[id$=WeekDayCell2]::before {
-	    content: "M"; 
-	    visibility: visible;
-	    position: absolute;
-  		left: 18px;
-	}
-	
-	[id$=WeekDayCell3]{
-	    visibility: hidden; 
-	    position: relative;
-	}
-	
-	[id$=WeekDayCell3]::before {
-	    content: "X"; 
-	    visibility: visible; 
-	    position: absolute;
-  		left: 18px;
-	}
-	
-	[id$=WeekDayCell4]{
-	    visibility: hidden; 
-	    position: relative; 
-	}
-	
-	[id$=WeekDayCell4]::before {
-	    content: "J";
-	    visibility: visible; 
-	    position: absolute;
-  		left: 18px;
-	}
-	
-	[id$=WeekDayCell5]{
-	    visibility: hidden; 
-	    position: relative; 
-	}
-	
-	[id$=WeekDayCell5]::before {
-	    content: "V"; 
-	    visibility: visible; 
-	    position: absolute;
-  		left: 18px;
-	}
-	
-	[id$=WeekDayCell6]{
-	    visibility: hidden;
-	    position: relative; 
-	}
-	
-	[id$=WeekDayCell6]::before {
-	    content: "S"; 
-	    visibility: visible; 
-	    position: absolute;
-  		left: 18px;
-	}
-	
 	.rich-calendar-tool-btn {
 	    background-color: #fff !important;
 	    border: none !important;
@@ -182,6 +98,7 @@
 	    cursor: pointer !important;
 	    font-size: 16px !important;
 	    text-align: center;
+	    text-transform: capitalize;
 	}
 	
 	.rich-calendar-footer {
@@ -204,15 +121,20 @@
 	    display: none !important; 
 	}
 	
-	
 	.rich-calendar-days {
-	    background-color: #f8f9fa !important;
+	    color: #FFF !important;
+	    font-size: 0px !important;
+	    text-align: center !important;
+	    background-color: #fff !important;
+	    padding: 8px !important;
+	    border-bottom: 1px solid #fff !important;
+	}
+	
+	.rich-calendar-days:first-letter{
 	    color: #D3D3D7 !important;
+	    text-transform: uppercase;
 	    font-weight: 600 !important;
 	    font-size: 14px !important;
-	    text-align: center !important;
-	    padding: 8px !important;
-	    border-bottom: 1px solid #ddd !important;
 	}
 	
 	
@@ -257,9 +179,6 @@
 	  font-weight: bold;
 	}
 	
-	.rich-calendar-weekends {
-	    color: #D3D3D7 !important;
-	}
 	
 /* 	.rich-calendar-holly{
 		background-color: #B2BCD1 !important;

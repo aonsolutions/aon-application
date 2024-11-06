@@ -11,9 +11,10 @@
 		<aon:commandButton 
 			id="appButton" 
 			style="display: none; " 
-			action="fbatch_search-payment"
+			action="fbatch_list-payment"
 			actionListener="#{fbatch.onEditSearchPayment}"
 		>
+			<aon:actionListener method="#{fbatch.onSearch}" />
 		</aon:commandButton>
 	</aon:form>
 	

@@ -7,7 +7,6 @@ import { AonDialogMenu } from 'aonsolutions/components/aon-dialog-menu.js';
 
 export class AonParent extends AonElement {
 
-
 	notice;
 	filter;
 	_filter; // NEW FILTER
@@ -61,11 +60,14 @@ export class AonParent extends AonElement {
 		
 		this.clearSelectedTab(this._filter);		
 		//TODO: aonParent.startLoader();
-		getCompanies()
-		.then( companies => {
-			if ( LS.getCompany() ) {
+
+		getCompanies().then( companies => {
+			let cps = companies.filter(r => r.id == LS.getDomainId());
+			if(cps.length > 0 && !cps[0].parent) {
+				this.companySelection(cps[0], companies.length == 1 );
+			} else if ( LS.getCompany() ) {
 				this.companySelection(LS.getCompany(), companies.length == 1 );
-			}else if(companies.length === 1){
+			} else if(companies.length === 1) {
 				this.companySelection(companies[0], true);
 			} else {
 				this.getElement("aonMenu").close();

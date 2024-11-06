@@ -20,10 +20,14 @@ public class S3Invoice {
     	return S3.getObjectMetadata(bucketName, key).getOrDefault(COMPANY_NAME, "");
     }
 
-    public static JSONObject getLoadBatchTask(String bucketName, String key) throws NoSuchLoadBatchException, IOException{
-		byte[] loadBatch = S3.download(bucketName, key);
-		String jsonString = new String ( loadBatch, StandardCharsets.UTF_8 );
-		return new JSONObject(jsonString);  
+    public static JSONObject getLoadBatchTask(String bucketName, String key) throws NoSuchLoadBatchException {
+    	try {
+    	   	byte[] loadBatch = S3.download(bucketName, key);
+    		String jsonString = new String ( loadBatch, StandardCharsets.UTF_8 );
+    		return new JSONObject(jsonString);     		
+    	} catch (Exception e) {
+    		throw new NoSuchLoadBatchException(e.getMessage());
+		}
     }
 
     public static void setLoadBatchTask(String bucketName, String key, JSONObject loadBatch ) throws JSONException, IOException {

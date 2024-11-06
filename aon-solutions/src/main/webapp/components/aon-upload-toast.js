@@ -78,8 +78,13 @@ export class AonUploadToast extends AonElement {
 		
 		let span = this.createSpan()
 		span.innerHTML = file.name;
-		span.style.position = 'relative';
-		span.style.top = '7px';
+		span.classList.add(CSS.AON_TEXT_OVERFLOW);
+
+		span.style.maxHeight = '30px';
+		span.style.width = this.isMobile() ? '180px' : '220px';
+		span.style.display = 'block';	
+		span.style.paddingTop = '5px';
+		
 		div.appendChild(span);
 		
 

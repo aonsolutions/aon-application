@@ -476,8 +476,8 @@ export class AonDialog extends AonElement {
 		let accept = this.createButtonAccept();
 		if(accept){
 			accept.addEventListener(EVENT.CLICK, (ev) => {
-				fn(ev);
 				this.close();
+				fn(ev);
 			});
 		}
 	}
