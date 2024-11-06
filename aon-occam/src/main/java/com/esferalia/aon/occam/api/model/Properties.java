@@ -893,8 +893,10 @@ public interface Properties {
 		Property<Byte> getDeliveryValuatedProperty();
 		Property<Integer> getAccountProperty();
 		Property<Integer> getProjectTypeProperty();
-		
 		Property<Integer> getRegistryRelationProperty();
+		Property<Byte> getMediaType();
+		Property<String> getMediaValue();
+		Property<String> getRegistryAddress();
 	}
 	
 	public interface CreditorProperties extends RegistryProperties, AuditProperties {
@@ -909,7 +911,10 @@ public interface Properties {
 		Property<String> getCreationUserProperty();
 		Property<Timestamp> getCreationDateProperty();
 		Property<String> getModificationUserProperty();
-		Property<Timestamp> getModificationDateProperty();	
+		Property<Timestamp> getModificationDateProperty();
+		Property<Byte> getMediaType();
+		Property<String> getMediaValue();
+		Property<String> getRegistryAddress();
 	}
 	
 	public interface SellerProperties extends RegistryProperties{
@@ -982,6 +987,9 @@ public interface Properties {
 		Property<Integer> getScopeProperty();
 		Property<Byte> getPurchaseValuatedProperty();
 		Property<Integer> getAccountProperty();
+		Property<Byte> getMediaType();
+		Property<String> getMediaValue();
+		Property<String> getRegistryAddress();
 	}
 
 	public interface TargetProperties extends RegistryProperties, AuditProperties{

@@ -17,6 +17,8 @@ import org.jooq.SelectConditionStep;
 import org.jooq.SelectJoinStep;
 import org.jooq.impl.DSL;
 
+import com.esferalia.aon.jooq.tables.Raddress;
+import com.esferalia.aon.jooq.tables.Rmedia;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Account;
 import com.esferalia.aon.occam.api.model.Domain;
@@ -68,6 +70,9 @@ public class CreditorDAO {
 		@Override public Property<Timestamp> getCreationDateProperty() {return new FilterDAO.PropertyDAO<>(CREDITOR.CREATION_DATE);}
 		@Override public Property<String> getModificationUserProperty() {return new FilterDAO.PropertyDAO<>(CREDITOR.MODIFICATION_USER);}
 		@Override public Property<Timestamp> getModificationDateProperty() {return new FilterDAO.PropertyDAO<>(CREDITOR.MODIFICATION_DATE);}
+		@Override public Property<Byte> getMediaType() {return new FilterDAO.PropertyDAO<>(Rmedia.RMEDIA.MEDIA);}
+        @Override public Property<String> getMediaValue() {return new FilterDAO.PropertyDAO<>(Rmedia.RMEDIA.VALUE);}
+        @Override public Property<String> getRegistryAddress(){return new FilterDAO.PropertyDAO<>(Raddress.RADDRESS.ADDRESS);}
 	}
 
 	
