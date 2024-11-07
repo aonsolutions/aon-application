@@ -97,6 +97,7 @@
 	    color: rgb(66,66,66) !important;
 	    cursor: pointer !important;
 	    font-size: 16px !important;
+	    text-align: center;
 	    text-transform: capitalize;
 	}
 	
@@ -189,6 +190,7 @@
 	
 	.rich-calendar-editor-btn-selected{
 		background-color: #002469 !important;
+		color: white;
 	}
 	
 	.rich-calendar-editor-btn-over,
@@ -216,6 +218,10 @@
 	
 	.rich-calendar-editor-layout-shadow {
 		background-color: #F8F9FA !important;
+	}
+	
+	.rich-calendar-date-layout-split {
+		border-right: 1px solid #C4C0B9 !important;
 	}
 	
 	.aonDataScroller {
@@ -645,6 +651,10 @@
   		padding: 10px;
 		min-width: fit-content;
    	}
+   	
+   	.aon-panelGrid .aon-panelGrid {
+   		border: 0px;
+   	}
   	
   	.aon-group .aon-panelGrid,
   	.aon-panelGrid .aon-group{
@@ -732,7 +742,11 @@
 	.aon-popupWindow-close,
 	.gwt-Selector .gwt-PopupPanel .custom-dialog-close{
 		background-size: cover;
-		background: transparent url(#{aonResource.resolve['/images/aon-cancel.svg']}) scroll center center no-repeat;
+		background: #fafafa url(#{aonResource.resolve['/images/aon-cancel.svg']}) scroll center center no-repeat;
+	}
+	
+	.aon-popupWindow-close {
+	  	border: #fafafa 1px solid;
 	}
 	
 	
@@ -769,6 +783,7 @@
 		color: #4b4b4b;
 		background-image: none;
 		background-color: #fafafa;
+		border-color: #fafafa;
 	}
 
 /* 	.aon-scroll-area .aon-dataTable {
@@ -783,62 +798,72 @@
 	}
 	
 	.aon-dataTable,
-	.aon-dataTable tr ,
+	.aon-dataTable > tbody > tr ,
 	.aon-editDataTable,
-	.aon-editDataTable tr
+	.aon-editDataTable > tbody > tr
 	{
 		border: none;
 	}
 	
-	.aon-dataTable td,
-	.aon-dataTable th,
-	.aon-editDataTable td,
-	.aon-editDataTable th,
-	.aon-dataTable-header th,
-	.aon-editDataTable-header th
+	.aon-dataTable > tbody > tr > td,
+	.aon-dataTable > th,
+	.aon-editDataTable > tbody > tr > td,
+	.aon-editDataTable > tfoot > tr > td,
+	.aon-editDataTable > th,
+	.aon-dataTable-header > th,
+	.aon-editDataTable-header > th
 	 {
     	padding-left: 1.0em;
     	padding-top: 0.5em;
     	padding-bottom: 0.5em;
-		border-left: none;
-		border-right: none;
+		border-left: 0px;
+		border-right: 0px;
     	box-shadow: none; 
     	height: 40px;
 		vertical-align: middle;
 		text-align: left;
 	}	
 	
-	.aon-dataTable td,
 	.aon-editDataTable td {
+	  	padding: 0px;
+	  	border: 0px;
+	}
+	
+	.aon-dataTable > tbody > tr > td,
+	.aon-editDataTable > tbody > tr > td,
+	.aon-editDataTable > tfoot > tr > td {
 		border-top: 1px solid #ddd;    	
 		border-bottom: 1px solid #ddd;
 	}
-	.aon-dataTable tr td:first-child,
-	.aon-editDataTable tr td:first-child {
+	.aon-dataTable > tbody > tr > td:first-child,
+	.aon-editDataTable > tbody > tr > td:first-child,
+	.aon-editDataTable > tfoot > tr > td:first-child {
 		border-left: 1px solid #ddd;
 		border-radius: 6px 0px 0px 6px;    	
 	}
 	
-	.aon-dataTable tr td:last-child,
-	.aon-editDataTable tr td:last-child {
+		.aon-dataTable > tbody > tr > td:last-child,
+	.aon-editDataTable > tbody > tr > td:last-child,
+	.aon-editDataTable > tfoot > tr > td:last-child{
 		border-right: 1px solid #ddd;    	
 		border-radius: 0px 6px 6px 0px;    	
 	}
 
-	.aon-dataTable th,
-	.aon-editDataTable th,
-	.aon-dataTable-header th,
-	.aon-editDataTable-header th{
+	.aon-dataTable > th,
+	.aon-editDataTable > th,
+	.aon-dataTable-header > th,
+	.aon-editDataTable-header > th{
 		border-bottom: 1px solid #ddd !important;
 	}
 	
-	.aon-dataTable table td {
+	.aon-dataTable > table > tr > td {
     	box-shadow: none;
 		border-left: none;
 		border-right: none;
 		border-top: none;
 		border-bottom: 1px solid #ddd;
 	}
+
 
 	.aon-dataTable,
 	.aon-editDataTable,
@@ -853,10 +878,10 @@
 		border: #ccc 1px solid;
 	}
 	
-	.aon-dataTable td,
-	.aon-editDataTable td,
-	.aon-dataTable-header th,
-	.aon-editDataTable-header th
+	.aon-dataTable > tbody > tr > td,
+	.aon-editDataTable > tbody > tr > td,
+	.aon-dataTable-header > th,
+	.aon-editDataTable-header > th
 	 {
 		color: #5f6368;
     	font-size: 12px;
@@ -1351,6 +1376,7 @@
 	.aon-icon-big-info {
 		background-size: 32px;
 		background-image: url('data:image/svg+xml;utf-8,&lt;svg xmlns="http://www.w3.org/2000/svg" height="32px" viewBox="0 -960 960 960" width="32px" fill="--var(aonIconColor,black)"&gt;&lt;path d="M466-306h28v-214h-28v214Zm14-264q8.5 0 14.25-5.75T500-590q0-8.5-5.75-14.25T480-610q-8.5 0-14.25 5.75T460-590q0 8.5 5.75 14.25T480-570Zm.17 438q-72.17 0-135.73-27.39-63.56-27.39-110.57-74.35-47.02-46.96-74.44-110.43Q132-407.65 132-479.83q0-72.17 27.39-135.73 27.39-63.56 74.35-110.57 46.96-47.02 110.43-74.44Q407.65-828 479.83-828q72.17 0 135.73 27.39 63.56 27.39 110.57 74.35 47.02 46.96 74.44 110.43Q828-552.35 828-480.17q0 72.17-27.39 135.73-27.39 63.56-74.35 110.57-46.96 47.02-110.43 74.44Q552.35-132 480.17-132Zm-.17-28q134 0 227-93t93-227q0-134-93-227t-227-93q-134 0-227 93t-93 227q0 134 93 227t227 93Zm0-320Z"/&gt;&lt;/svg&gt;') ;
+		height: 32px;
 	}
 	
 	.aon-icon-download {
@@ -2790,6 +2816,19 @@
 		padding-left: 0px !important;
 	}
 	
+	#aonContent\:showNewMessageModalPanelContentDiv,
+	#aonContent\:newFeeModalPanelContentDiv {
+	    width: fit-content !important;
+		min-height: fit-content !important;
+		padding-bottom: 30px;
+	}
+	
+	#aonContent\:newFeeForm\:CustomerFee_description_long {
+		padding-right: 13px !important;
+	}
+	
+			
+
 	</style>
 
 	<script type="text/javascript">
