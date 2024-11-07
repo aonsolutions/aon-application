@@ -920,6 +920,11 @@ class SistemaREDMov {
 
 			btnSubmit = htmlPage.querySelector("#Sub2207001004_85");
 			htmlPage = btnSubmit.click();
+			
+			HtmlInput confirmButton = (HtmlInput) htmlPage.getElementById("Sub2204701006_83");
+			if(null != confirmButton)
+				htmlPage = confirmButton.click();
+			
 			HtmlUnitToolkit.manageStatusCode(htmlPage);
 		}
 	}
@@ -997,7 +1002,8 @@ class SistemaREDMov {
 			webClient.getOptions().setJavaScriptEnabled(true);
 			webClient.getOptions().setThrowExceptionOnScriptError(false);
 			webClient.setJavaScriptErrorListener(jascriptFunctionExceptionError());
-			HtmlPage htmlPage = webClient.getPage(url);
+			
+			HtmlPage htmlPage =  HtmlUnitToolkit.transformXmlPage(webClient.getPage(url));
 			
 			Integer ident = Integer.parseInt(Toolkit.getIdentityType(ipf));
 
@@ -1014,14 +1020,14 @@ class SistemaREDMov {
 			formDatos.getInputByName("CC1EmpresaAut").setValue(regimen + ctaCti);
 			((HtmlInput) htmlPage.querySelector("#PR_CAMPO_ORIGEN")).setValue("FORM");
 
-			htmlPage = ((HtmlButton) htmlPage.querySelector("#ENVIO_10")).click();
+			htmlPage = HtmlUnitToolkit.transformXmlPage( ((HtmlButton) htmlPage.querySelector("#ENVIO_10")).click() );
 			HtmlUnitToolkit.handleNewSegSocialExceptions(htmlPage);
 	
 			formDatos = (HtmlForm) HtmlUnitToolkit.wait4(htmlPage, p -> p.getElementById("FORMULARIO_1")).orElseThrow();
 			formDatos.getInputByName(fieldValue).setValue(newValue);
 			formDatos.getInputByName(fieldDate).setValue(fr[0] + "/" + fr[1] + "/" + fr[2]);
 
-			htmlPage = ((HtmlButton) htmlPage.querySelector("#ENVIO_7")).click();
+			htmlPage = HtmlUnitToolkit.transformXmlPage( ((HtmlButton) htmlPage.querySelector("#ENVIO_7")).click() );
 			HtmlUnitToolkit.handleNewSegSocialExceptions(htmlPage);
 
 			String message = HtmlUnitToolkit.getMessageSuccess(htmlPage);
