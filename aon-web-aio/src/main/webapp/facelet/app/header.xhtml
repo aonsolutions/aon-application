@@ -61,6 +61,12 @@
 		pointer-events: none !important; 
 	}
 	
+	.rich-calendar-select {
+	  	background-color: #7F91B3 !important;
+	  	color: #fff !important;
+	  	font-weight: bold;
+	}
+	
 	.rich-bottom-cell {
 		display: none !important;
 	}
@@ -1341,6 +1347,7 @@
 	.aon-icon-edit-add-simple {
 		background-size: 20px;
 		background-image: url('data:image/svg+xml;utf-8,&lt;svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="--var(aonIconColor,black)"&gt;&lt;path d="M211-176q-16 3-27-8t-8-27l23-112 124 124-112 23Zm112-23L199-323l434-434q17-17 42-17t42 17l40 40q17 17 17 42t-17 42L323-199Zm330-538L252-337l85 85 400-401q9-9 9-22.5t-9-22.5l-39-39q-9-9-22.5-9t-22.5 9Z"/&gt;&lt;/svg&gt;');
+		padding-right: 13px !important;
 	}
 	
 	.aon-icon-circle-green {
@@ -2817,15 +2824,25 @@
 	}
 	
 	#aonContent\:showNewMessageModalPanelContentDiv,
-	#aonContent\:newFeeModalPanelContentDiv {
+	#aonContent\:newFeeModalPanelContentDiv,
+	#aonContent\:newAlarmhModalPanelContentDiv,
+	#aonContent\:rectificationModalPanelContentDiv,
+	#aonContent\:duplicationModalPanelContentDiv,
+	#aonContent\:projectModalPanelContentDiv,
+	#aonContent\:remarksModalPanelContentDiv,
+	#aonContent\:fiscalInformationModalPanelContentDiv {
 	    width: fit-content !important;
 		min-height: fit-content !important;
 		padding-bottom: 30px;
 	}
 	
-	#aonContent\:newFeeForm\:CustomerFee_description_long {
-		padding-right: 13px !important;
+	#aonContent\:newFeeModalPanelContentDiv {
+		padding-bottom: 70px !important;
 	}
+	
+	#aonContent\:fiscalInformationModalPanelContentDiv {
+		padding-bottom: 120px !important;
+	}	
 	
 			
 
