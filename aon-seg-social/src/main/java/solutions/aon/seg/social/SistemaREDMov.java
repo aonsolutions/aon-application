@@ -625,14 +625,15 @@ class SistemaREDMov {
 
 	private static void altaConsolidadaDeleteImpl(final InputStream certificateInputStream,
 			final String certificatePassword, final String certificateType, String regimen, String ctaCti, String nss)
-			throws SegSocialException, FailingHttpStatusCodeException, MalformedURLException, IOException, InterruptedException {
-		try (WebClient webClient = HtmlUnitToolkit.getWebClient(certificateInputStream, certificatePassword,
-				certificateType)) {
+			throws SegSocialException, FailingHttpStatusCodeException, MalformedURLException, IOException, InterruptedException, TransformerException {
+		
+		try (WebClient webClient = HtmlUnitToolkit.getWebClient(certificateInputStream, certificatePassword,certificateType)) {
+			
 			webClient.getOptions().setUseInsecureSSL(true);
 			webClient.getOptions().setJavaScriptEnabled(true);
 			webClient.getOptions().setThrowExceptionOnScriptError(false);
 			webClient.setJavaScriptErrorListener(jascriptFunctionExceptionError());
-			HtmlPage htmlPage = webClient.getPage("https://w2.seg-social.es/ProsaInternet/OnlineAccess?ARQ.SPM.ACTION=LOGIN&ARQ.SPM.APPTYPE=SERVICE&ARQ.IDAPP=XV24M00E");
+			HtmlPage htmlPage = HtmlUnitToolkit.transformXmlPage( webClient.getPage("https://w2.seg-social.es/ProsaInternet/OnlineAccess?ARQ.SPM.ACTION=LOGIN&ARQ.SPM.APPTYPE=SERVICE&ARQ.IDAPP=XV24M00E") );
 			handleSegSocialExceptions(htmlPage);
 
 			HtmlForm formDatos = (HtmlForm) HtmlUnitToolkit.wait4(htmlPage, p -> p.getElementById("FORMULARIO_1"))
