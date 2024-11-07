@@ -15,12 +15,12 @@ import com.esferalia.aon.gwt.common.client.widget.ConfirmDialog;
 import com.esferalia.aon.gwt.common.client.widget.ConfirmDialog.ConfirmDialogCallback;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonConfirmDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonConfirmDialog.AonConfirmDialogCallback;
-import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomCheckBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomDateBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomDockLayout;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomListBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomMultiSelectBox;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomNumberBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomTable;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomTextBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog;
@@ -131,11 +131,9 @@ public class FinanceModule extends MainEntryPoint {
 	
 	private AonCustomListBox confidential = new AonCustomListBox("Confidecial");
 	private AonCustomListBox payment = new AonCustomListBox("Tipo");
-	private Label payroll = new Label("N\u00f3minas");
-	private AonCustomTextBox amount = new AonCustomTextBox("Importe");
-	private AonCustomCheckBox nearbyNumbers = new AonCustomCheckBox("Cant. cercanas");
-	private AonCustomTextBox concept = new AonCustomTextBox("Concepto");
-	private AonCustomTextBox referenceCode = new AonCustomTextBox("Cod. Referencia");
+	private AonCustomNumberBox amount;
+	private AonCustomTextBox concept;
+	private AonCustomTextBox referenceCode = new AonCustomTextBox("N\u00BA Factura");
 	private AonCustomListBox payMethod = new AonCustomListBox("Forma de pago");
 	
 	AonCustomMultiSelectBox statusMultiSelectBox = new AonCustomMultiSelectBox("Estado");
@@ -271,8 +269,14 @@ public class FinanceModule extends MainEntryPoint {
 			}
 		});
 		
+		amount = new AonCustomNumberBox("Importe") {
+			@Override protected void onNearChange() { search(opt, getParams(opt)); }
+		};
+		
+		concept = new AonCustomTextBox(this.isPayroll ? "Concepto" : "N\u00BA Documento");
+		
+		
 		amount.addValueChangeHandler(e -> search(opt, getParams(opt)));
-		nearbyNumbers.addValueChangeHandler(e -> search(opt, getParams(opt)));
 		concept.addValueChangeHandler(e -> search(opt, getParams(opt)));
 		fromInvoiceDate.addValueChangeHandler(e -> search(opt, getParams(opt)));
 		toInvoiceDate.addValueChangeHandler(e -> search(opt, getParams(opt)));
@@ -297,38 +301,9 @@ public class FinanceModule extends MainEntryPoint {
 		payment.addItem("Cobro", "Cobro");
 		payment.addChangeHandler(e -> search(opt, getParams(opt)));
 		
-		HTMLPanel amountPanel = new HTMLPanel("");
-		amountPanel.setStyleName(AON.CSS.aonItemFlex());
+		dockLayoutPanel.addFilterWidget(amount);
 		
-		amountPanel.add(amount);
-		amountPanel.add(nearbyNumbers);
-		
-		dockLayoutPanel.addFilterWidget(amountPanel);
-		
-		dockLayoutPanel.addFilterWidget(referenceCode);
-		dockLayoutPanel.addFilterWidget(concept);
-		
-		HTMLPanel invoiceDatePanel = new HTMLPanel("");
-		invoiceDatePanel.setStyleName(AON.CSS.aonItemFlex());
-		
-		invoiceDatePanel.add(fromInvoiceDate);
-		invoiceDatePanel.add(toInvoiceDate);
-		
-		dockLayoutPanel.addFilterWidget(invoiceDatePanel);
-		
-		HTMLPanel dueDatePanel = new HTMLPanel("");
-		dueDatePanel.setStyleName(AON.CSS.aonItemFlex());
-		
-		dueDatePanel.add(fromDueDate);
-		dueDatePanel.add(toDueDate);
-		
-		dockLayoutPanel.addFilterWidget(dueDatePanel);
-		
-		dockLayoutPanel.addFilterWidget(this.isPayroll ? payroll : payment);
-		if (opt.getConfiguration() != null && opt.getConfiguration().getUser() != null && opt.getConfiguration().getUser().hasConfidentialityRole())
-			dockLayoutPanel.addFilterWidget(confidential);
-		
-		dockLayoutPanel.addFilterWidget(payMethod);
+		if(this.isPayroll) dockLayoutPanel.addFilterWidget(payment);
 		
 		// Status
 		Set<String> options = new LinkedHashSet<String>();
@@ -349,6 +324,30 @@ public class FinanceModule extends MainEntryPoint {
 		
 		dockLayoutPanel.addFilterWidget(statusMultiSelectBox);
 		
+		HTMLPanel invoiceDatePanel = new HTMLPanel("");
+		invoiceDatePanel.setStyleName(AON.CSS.aonItemFlex());
+		
+		invoiceDatePanel.add(fromInvoiceDate);
+		invoiceDatePanel.add(toInvoiceDate);
+		
+		dockLayoutPanel.addFilterWidget(invoiceDatePanel);
+		
+		HTMLPanel dueDatePanel = new HTMLPanel("");
+		dueDatePanel.setStyleName(AON.CSS.aonItemFlex());
+		
+		dueDatePanel.add(fromDueDate);
+		dueDatePanel.add(toDueDate);
+		
+		dockLayoutPanel.addFilterWidget(dueDatePanel);
+		
+		dockLayoutPanel.addFilterWidget(referenceCode);
+		dockLayoutPanel.addFilterWidget(concept);
+		
+		dockLayoutPanel.addFilterWidget(payMethod);
+		
+		if (opt.getConfiguration() != null && opt.getConfiguration().getUser() != null && opt.getConfiguration().getUser().hasConfidentialityRole())
+			dockLayoutPanel.addFilterWidget(confidential);
+		
 		initialize(opt);
 	}
 
@@ -363,8 +362,8 @@ public class FinanceModule extends MainEntryPoint {
 			.setToInvoiceDate(toInvoiceDate.getValue())
 			.setFromDueDate(fromDueDate.getValue())
 			.setToDueDate(toDueDate.getValue())
-			.setAmount(AonStringUtils.isNotBlank(amount.getValue()) ? Double.parseDouble( amount.getValue() ) : null)
-			.setNearbyNumbers(nearbyNumbers.getValue())
+			.setAmount(amount.getValue())
+			.setNearbyNumbers(amount.isNearBy())
 			.setConcept(concept.getValue())
 			.setReferenceCode(referenceCode.getValue())
 			.setPayMethod(AonStringUtils.isNotBlank(payMethod.getValue()) ? Integer.parseInt(payMethod.getValue()) : null)
@@ -386,7 +385,6 @@ public class FinanceModule extends MainEntryPoint {
 
 	private void initialize(FinanceModuleOptions opt) {
 		amount.setValue(null);
-		nearbyNumbers.setValue(false);
 		fromInvoiceDate.setValue(null);
 		toInvoiceDate.setValue(null);
 		fromDueDate.setValue(null);
@@ -440,14 +438,14 @@ public class FinanceModule extends MainEntryPoint {
 	private static enum PAYROLL_COLS {
 		  TYP(AonStringUtils.EMPTY		, "2rem" 			,"")
 		, CHK(AonStringUtils.EMPTY		, "2rem" 			,"")
-		, DDT("F. Vto."					, "4rem" 			,"")
+		, DDT("F. Vto."					, "6rem" 			,"")
 		, DOC("Concepto"				, "10rem"			,"")
-		, TIT("CIF/NIF/NIE"				, "5rem"			,"")
+		, TIT("CIF/NIF/NIE"				, "6rem"			,"")
 		, AUTO("Titular"				, "-moz-available"  ,"min-width: 5rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
-		, PYM("Forma pago"				, "8rem"			,"")
-		, AMO("Importe"					, "6rem" 			,"")
-		, STA(AON.MSG.status()			, "4rem"			,"")
-		, ACT(AON.MSG.actions()			, "5rem"			,"")
+		, PYM("Forma pago"				, "10.5rem"			,"")
+		, AMO("Importe"					, "7rem" 			,"")
+		, STA(AON.MSG.status()			, "6rem"			,"")
+		, ACT(AON.MSG.actions()			, "6rem"			,"")
 		;
 
 		String headerLabel;
