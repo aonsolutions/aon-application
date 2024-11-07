@@ -307,7 +307,7 @@ select {
 }
 
 .gwt-Selector .aon_custom_dialog {
-	z-index: 70	
+	z-index: 70	;
 }
 
 .gwt-Selector .aon_suggest_box_popup {
