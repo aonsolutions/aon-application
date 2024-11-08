@@ -1338,7 +1338,7 @@ export class AonInvoice extends AonElement {
 			let enabled = this.invoice.isInbox() && this.series && this.series.filter(f => f.description == this.invoice.serie).length === 0;
 			this.getElement(this.NUMBER).readonly = !enabled;
 			this.getElement(this.NUMBER).disabled = !enabled;
-			if(!enabled) {
+			if(!enabled || this.invoice.serie == '') {
 				this.invoice.number = '';
 				this.getElement(this.NUMBER).value = '';
 			} else {
