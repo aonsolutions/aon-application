@@ -88,6 +88,9 @@ public class FinanceDAO {
 		@Override public Property<Integer> getPayMethodProperty() {return new FilterDAO.PropertyDAO<>(FINANCE.PAY_METHOD);}
 		@Override public Property<Byte> getPayMethodTypeProperty() {return new FilterDAO.PropertyDAO<>(PAY_METHOD.TYPE);}
 		@Override public Property<Byte> getPayrollProperty() {return new FilterDAO.PropertyDAO<>(FINANCE.PAYROLL);}
+		
+		@Override public Property<String> getRegistryNameProperty() {return new FilterDAO.PropertyDAO<>(REGISTRY.NAME);}
+		@Override public Property<String> getConceptNameProperty() {return new FilterDAO.PropertyDAO<>(FINANCE.CONCEPT);}
 	}
 	
 	// ---------------------------------------------------------- ORDER

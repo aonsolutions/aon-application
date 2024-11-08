@@ -170,6 +170,7 @@ export class AonInvoicePanel extends AonElement {
       if(processing) this.getApplication().addToolbarOption("Sync", "sync", () => this.refreshProcessing()); 
  
       if(acceptedInvoices) this.getApplication().addToolbarOption2(SigninSidenav.EXCEL, () => this.downloadInvoiceExcel());
+      if(this.isConsole()) this.getApplication().addToolbarOption('FIX', 'healing', () => invoiceDuplicateFix());
     } else {
       this.getApplication().removeFloatOption();
       this.getApplication().addFloatOption(ACTION.ADD_INVOICE, () => this.addInvoice());

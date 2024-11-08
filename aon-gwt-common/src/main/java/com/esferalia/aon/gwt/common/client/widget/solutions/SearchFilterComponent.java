@@ -53,6 +53,7 @@ public abstract class SearchFilterComponent extends HTMLPanel {
         	int top = this.getAbsoluteTop() + this.getOffsetHeight();
             int left = this.getAbsoluteLeft();
             searchMenuPopup.setPopupPosition(left, top);
+            searchMenuPopup.getElement().getStyle().setZIndex(3);
             searchMenuPopup.show(); // Muestra con animación
         });
         
@@ -82,6 +83,7 @@ public abstract class SearchFilterComponent extends HTMLPanel {
 		
 		ScrollPanel scrollPanel = new ScrollPanel();
         scrollPanel.setStyleName(AON.CSS.aonSearchFilterScroll());
+        scrollPanel.getElement().getStyle().setProperty("padding-right", ".5rem");
         menus.add(filterMenu);
         menus.add(sortMenu);
         menus.add(utilitiesMenu);
