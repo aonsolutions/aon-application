@@ -753,8 +753,10 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 					addResult(expressionContext, undefPayment.getName(), start, end, 0.00);
 					addResult(expressionContext, undefPayment.getSurName(), start, end, 0.00);
 				} catch (UndefinedVariablesException e) {
-
-					if (undefPayment.willBeDefined(paymentsVars)) {
+					
+					if ( e.hasVariableName(MONTHLY_PAYMENTS)) {
+						undefMonthlyPayments.add(undefPayment);
+					} else if (undefPayment.willBeDefined(paymentsVars)) {
 						undefPayments.add(undefPayment);
 
 						if (++undefined >= undefPayments.size())
@@ -783,6 +785,10 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 			for (Period p : Period.sub(List.copyOf(monthlyPayments.keySet()), leavePeriods ) ) {
 				expressionContext.setVariable(MONTHLY_PAYMENTS, monthlyPayments.get(p), p.getStart(), p.getEnd());
 			}
+			for (Period p : leavePeriods ) {
+				expressionContext.setVariable(MONTHLY_PAYMENTS, 0.00, p.getStart(), p.getEnd());
+			}
+			
 			
 			
 			for (UndefPayment undefMonthlyPayment : undefMonthlyPayments) {
@@ -1593,7 +1599,8 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 				contractPayment.getExpression())); 
 	}
 
-	protected List<ITimedResult<Double>> fixExtraResults(IContractPayment contractPayment, List<ITimedResult<Double>> results, Date start, Date end, ExpressionContext expressionContext) 
+	protected List<ITimedResult<Double>> fixExtraResults(IContractPayment contractPayment, List<ITimedResult<Double>> results, Date start, Date end, ExpressionContext expressionContext)  
+	throws AonException
 	{
 		return results;
 	}
