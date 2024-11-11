@@ -53,7 +53,9 @@ import net.aonsolutions.db.up2date.registry.RItemAddSellerColumn;
 import net.aonsolutions.db.up2date.task.AddColumnTaskHolderWorkgroupDatesType;
 import net.aonsolutions.db.up2date.tgss.Artist2024Update;
 import net.aonsolutions.db.up2date.finance.InvofoxEnterpriseDataFix;
+import net.aonsolutions.db.up2date.finance.InvoiceBatchAlter;
 import net.aonsolutions.db.up2date.fiscal.AlterFsMod200Nrc;
+import net.aonsolutions.db.up2date.tgss.Artist2024Update;
 import net.aonsolutions.db.up2date.urlshortener.UrlShortenCreation;
 import net.aonsolutions.db.up2date.warehouse.SalesDetailAddDeliveryColumn;
 
@@ -512,7 +514,8 @@ public class Up2Date {
     	UrlShortenCreation.URLSHORTEN_CREATION,
     	Artist2024Update.ARTIST2024UPDATE,
     	InvofoxEnterpriseDataFix.INVOFOX_ENTERPRISE_DATA_FIX,
-    	AlterFsMod200Nrc.ALTER_FS_MODEL200_NRC
+    	AlterFsMod200Nrc.ALTER_FS_MODEL200_NRC,
+    	InvoiceBatchAlter.INVOICE_BATCH_ALTER
 	};
 
     // ------------------------------------------------------------------------

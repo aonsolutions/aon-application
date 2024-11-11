@@ -727,6 +727,7 @@ public class Invoice implements Serializable, HasAudit {
 	public boolean isVatImportation() {
 		return getFiscal() != null && getFiscal().isVatRegimeEnabled(VATTaxRegime.VAT_IMPORTATION);
 	}
+	
 	public Invoice setVatImportation(boolean value) {
 		ensureFiscal().setVatRegime(VATTaxRegime.VAT_IMPORTATION, value);
 		return this;
@@ -821,5 +822,34 @@ public class Invoice implements Serializable, HasAudit {
 		return this.getTaxBreakdown().flatMap( itb -> itb.getInvoiceWithholding() );
 	}
 	 
+	public String flat() {	
+		StringBuilder builder = new StringBuilder();
+//		java.lang.reflect.Field[] field = this.getClass().getDeclaredFields();
+//		for (java.lang.reflect.Field f : field) {
+//			try {
+//				if(f.get(this) != null && (f.getType() == java.lang.Integer.class
+//						|| f.getType() == java.lang.String.class
+//						|| f.getType() == int.class
+//						|| f.getType() == java.util.Date.class
+//						|| f.getType() == boolean.class
+//						|| f.getType() == double.class
+//						)) {
+//					String value = f.get(this).toString();
+//					builder.append(value);
+//				}
+//			} catch (Exception e) {
+//				e.printStackTrace();
+//			}			
+//		}
+		
+		builder.append(getSeries());
+		builder.append(getNumber());
+		builder.append(getReferenceCode());
+		builder.append(getRegistryName());
+		builder.append(getRegistryDocument());
+		builder.append(getTotal());
+		
+		return builder.toString();
+	}
 }
 

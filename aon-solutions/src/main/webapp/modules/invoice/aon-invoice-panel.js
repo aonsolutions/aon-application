@@ -1,5 +1,5 @@
 import { AonElement } from "../../components/AonElement.js";
-import { insertInvoice, mobileAction, MOBILE_ACTION, selfconta, downloadInvoiceExcel, getInvoice, getRawdocCount, getInvofoxCount, invoiceDuplicateFix, refreshProcessing } from "../../services/service.js";
+import { insertInvoice, mobileAction, MOBILE_ACTION, selfconta, downloadInvoiceExcel, getInvoice, getRawdocCount, getInvofoxCount, invoiceDuplicateFix, refreshProcessing, saveInvoiceClosing } from "../../services/service.js";
 import { Invoice } from "./Invoice.js";
 import { AonInvoice } from "./aon-invoice.js";
 import { AonMobileInvoice } from "./aon-mobile-invoice.js";
@@ -41,6 +41,8 @@ import { AonFutureTax } from "../fiscal/tax/aon-future-tax.js";
 import { generateJobId } from "./InvoiceUtils.js";
 import { getReader } from "../../services/utils.js";
 import { AonImageEditor } from "../../components/aon-image-editor.js";
+import { createSelect } from "../../components/CreateComponent.js";
+import { AonInvoiceClosingList } from "./aon-invoice-closing-list.js";
 
 export class AonInvoicePanel extends AonElement {
   selectedOption;
@@ -56,6 +58,7 @@ export class AonInvoicePanel extends AonElement {
   SUPPLIER_LIST;
   CREDITOR_LIST;
   INVEST_LIST;
+  CLOSING_INVOICE_LIST;
 
   get id() {
     return this.getAttribute(CONSTANT.ID);
@@ -99,6 +102,7 @@ export class AonInvoicePanel extends AonElement {
     this.SUPPLIER_LIST = this.INVOICE + "SupplierList";
     this.CREDITOR_LIST = this.INVOICE + "CreditorList";
     this.INVEST_LIST = this.INVOICE + "InvestList";
+    this.CLOSING_INVOICE_LIST = this.INVOICE + "ClosingInvoiceList";
 
     this.status = this.status || CONSTANT.INBOX;
     this.filter = {
@@ -160,11 +164,13 @@ export class AonInvoicePanel extends AonElement {
     this.clearToolbar();
     if(!this.isMobile()) {
       this.getApplication().addToolbarOption2(ACTION.ADD_INVOICE, () => this.addInvoice());
+      if(this.isBeta()) this.getApplication().addToolbarOption("Close", "disabled_by_default", () => this.closingInvoice());
       this.getApplication().addToolbarOption("Refresh", "refresh", () => this.refreshInvoicePanel());
       this.getApplication().addToolbarOption("Upload", "file_upload", () => this.addInvoiceFile());
       if(processing) this.getApplication().addToolbarOption("Sync", "sync", () => this.refreshProcessing()); 
  
       if(acceptedInvoices) this.getApplication().addToolbarOption2(SigninSidenav.EXCEL, () => this.downloadInvoiceExcel());
+      if(this.isConsole()) this.getApplication().addToolbarOption('FIX', 'healing', () => invoiceDuplicateFix());
     } else {
       this.getApplication().removeFloatOption();
       this.getApplication().addFloatOption(ACTION.ADD_INVOICE, () => this.addInvoice());
@@ -211,6 +217,10 @@ export class AonInvoicePanel extends AonElement {
     // }
 
     this.buildToolbarSearchOption();
+  }
+
+  buildClosingInvoiceToolbarOptions() {
+    this.clearToolbar();
   }
 
   buildCustomerToolbarOptions() {
@@ -587,6 +597,12 @@ export class AonInvoicePanel extends AonElement {
     }
   }
 
+  aonClosingInvoiceList(filter) {
+    let closingInvoiceList = new AonInvoiceClosingList();
+    closingInvoiceList.id = this.CLOSING_INVOICE_LIST;
+    this.getApplication().setContent(closingInvoiceList);
+  }
+
   addCustomer() {
     let aonCustomer = new AonCustomer();
     aonCustomer.id = this.id + "Customer";
@@ -759,6 +775,88 @@ export class AonInvoicePanel extends AonElement {
       this.aonInvoiceList({ status: "inbox" });
       aonInvoice.stopLoader();
     }
+  }
+
+  closingInvoice() {
+    let closing = this.createDiv();
+    let closingPeriod = createSelect("aonInvoiceClosingPeriod", MSG.PERIOD);
+    closingPeriod.options = JSON.stringify([
+      { name: MSG.JANUARY, value: "01" }, { name: MSG.FEBRUARY, value: "02" }, { name: MSG.MARCH, value: "03" }, 
+      { name: MSG.APRIL, value: "04" }, { name: MSG.MAY, value: "05" }, { name: MSG.JUNE, value: "06" },      
+      { name: MSG.JULY, value: "07" }, { name: MSG.AUGUST, value: "08" }, { name: MSG.SEPTEMBER, value: "09" },
+      { name: MSG.OCTOBER, value: "10" }, { name: MSG.NOVEMBER, value: "11" }, { name: MSG.DECEMBER, value: "12" },
+      { name: "1 Trimestre", value: "1T" }, { name: "2 Trimestre", value: "2T" }, { name: "3 Trimestre", value: "3T" },
+      { name: "4 Trimestre", value: "4T" } 
+    ]);
+    closing.appendChild(closingPeriod)
+    let closingYear = createSelect("aonInvoiceClosingYear", MSG.YEAR);
+    closingYear.options = JSON.stringify([{ name: "2024", value: 2024 }]);
+    closing.appendChild(closingYear);
+    
+    let d = this.getApplication().getDialog();
+    d.clear();
+    if(!this.isMobile()) d.width = '400px';
+    d.setTitle("Cierre de Facturas Recibidas");
+    d.setContent(closing);
+    d.addAcceptAction(() => {
+      let data =  {
+        period: closingPeriod.value,
+        year: closingYear.value
+      };
+      this.closingInvoiceConfirm1(data);
+    });
+    d.open();
+  }
+
+  closingInvoiceConfirm1(data) {
+    let d = this.getApplication().getDialog();
+    d.clear();
+    if(!this.isMobile()) d.width = '400px';
+    d.setTitle("Cierre de Facturas Recibidas");
+    d.setContentHTML(`¿Está seguro que quiere cerrar el periodo entre la fecha ${this.getStartDate(data)} e ${this.getEndDate(data)}?`);
+    d.addAcceptAction(() => {
+      this.closingInvoiceConfirm2(data);
+    });
+    d.open();
+  }
+
+  closingInvoiceConfirm2(data) {
+    let d = this.getApplication().getDialog();
+    d.clear();
+    if(!this.isMobile()) d.width = '400px';
+    d.setTitle("Cierre de Facturas Recibidas");
+    d.setContentHTML(`Va a cerrar el periodo comprendido entre la fecha  ${this.getStartDate(data)} e ${this.getEndDate(data)}, ¿Está seguro?`);
+    d.addAcceptAction(() => {
+      saveInvoiceClosing(data)
+      .then(r => this.showToast({
+          type: "success",
+          message: "El cierre se ha realizado correctamente.",
+        }))
+      .catch(error => this.showToast(error));
+    });
+    d.open();
+  }
+
+  getStartDate(data) {
+    let period = data.period;
+    let year = data.year;
+
+    if(period === '1T') return `01/01/${year}`;
+    else if(period === '2T') return `01/04/${year}`;
+    else if(period === '3T') return `01/07/${year}`;
+    else if(period === '4T') return `01/10/${year}`;
+    else return `01/${period}/${year}`;
+  }
+
+  getEndDate(data) {
+    let period = data.period;
+    let year = data.year;
+
+    if(period === '1T') return `31/03/${year}`;
+    else if(period === '2T') return `31/06/${year}`;
+    else if(period === '3T') return `30/09/${year}`;
+    else if(period === '4T') return `31/12/${year}`;
+    else return `30/${period}/${year}`;
   }
 
   refreshInvoicePanel() {

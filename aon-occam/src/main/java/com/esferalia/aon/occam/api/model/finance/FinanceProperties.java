@@ -21,5 +21,8 @@ public interface FinanceProperties {
 	Property<Integer> getPayMethodProperty();
 	Property<Byte> getPayMethodTypeProperty();
 	Property<Byte> getPayrollProperty();
+	
+	Property<String> getRegistryNameProperty();
+	Property<String> getConceptNameProperty();
 
 }

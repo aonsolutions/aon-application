@@ -62,13 +62,13 @@ public abstract class SellerWorkloadPanel extends ScrollPanel {
 	private Map<Integer, AonTableButton> selectedItems = new HashMap<>();
 	
 	private static enum COLS {
-//		  CHK(AonStringUtils.EMPTY					,"2rem"				,"" )
-		 DES(AON.MSG.name()						,"-moz-available"	,"min-width: 5rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
+//		 CHK(AonStringUtils.EMPTY					,"2rem"				,"" )
+		 DES(AON.MSG.name()							,"-moz-available"	,"min-width: 5rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
 		, TYP(AON.MSG.scope()						,"7rem"				,"")
-		, ACT("Estado"								,"5rem"				,"")
-		, CUS("Clientes"							,"5rem"				,"text-align: right;")
+		, ACT("Estado"								,"4rem"				,"")
+		, CUS("Clientes"							,"3.5rem"			,"text-align: right;")
 //		, SAL("N\u00f3minas"						,"5rem"				,"text-align: right;")
-		, FEE("Cuotas"								,"5rem"				,"text-align: right;")
+		, FEE("Cuotas"								,"3rem"				,"text-align: right;")
 		, TOT("Facturaci\u00f3n Bruta"				,"8rem"				,"text-align: right;")
 		, AMO("Facturaci\u00f3n Neta"				,"8rem"				,"text-align: right;")
 		;

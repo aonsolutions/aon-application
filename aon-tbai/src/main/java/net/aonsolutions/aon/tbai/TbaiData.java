@@ -1,7 +1,6 @@
 package net.aonsolutions.aon.tbai;
 
 import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
@@ -11,8 +10,6 @@ import java.util.Date;
 import java.util.LinkedList;
 
 import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 
 import org.json.JSONObject;

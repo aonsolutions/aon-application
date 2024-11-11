@@ -121,8 +121,15 @@ public class MainCertificates extends MainEntryPoint{
 		GWT.<AonGwtTemplateResources>create(AonGwtTemplateResources.class).css().ensureInjected();
 		AON.ensureInjected();
 	
-		this.dockLayoutPanel = new AonCustomDockLayout("Certificados Digitales");
-		this.pdfDockLayoutPanel = new AonCustomDockLayout("Usuarios Secundarios");
+		this.dockLayoutPanel = new AonCustomDockLayout("Certificados Digitales") {
+			@Override
+			protected void onClearFilter() { /* Nothing to do here */ }
+		};
+		
+		this.pdfDockLayoutPanel = new AonCustomDockLayout("Usuarios Secundarios") {
+			@Override
+			protected void onClearFilter() { /* Nothing to do here */ }
+		};
 		
 		Widget ui = binder.createAndBindUi(this);
 		RootLayoutPanel.get(getRootPanel() != null ? getRootPanel() : "rootPanel").add(ui);
@@ -175,7 +182,6 @@ public class MainCertificates extends MainEntryPoint{
 		
 		this.dockLayoutPanel.addToolbarButton(newButton);
 		this.dockLayoutPanel.hideSearchWidget();
-		this.dockLayoutPanel.hideFilterWidget();
 	}
 	
 	private void addPDFButtonsToolbar() {
@@ -184,7 +190,6 @@ public class MainCertificates extends MainEntryPoint{
 		
 		this.pdfDockLayoutPanel.addToolbarButton(backButton);
 		this.pdfDockLayoutPanel.hideSearchWidget();
-		this.pdfDockLayoutPanel.hideFilterWidget();
 	}
 
 	// ------------------------------------------------------ Constructor.Methods
