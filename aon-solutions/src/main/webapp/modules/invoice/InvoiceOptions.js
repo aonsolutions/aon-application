@@ -1,6 +1,5 @@
 import { CONSTANT, MATERIAL_ICONS, MSG, TAG } from "../../environments/environments.js"
 import * as GWT from "../../gwt/gwt.js";
-import { waitEl } from "../../services/utils.js";
 
   export const gwtLoad = (option) => {
     let application = document.querySelector(TAG.AON_APPLICATION);
