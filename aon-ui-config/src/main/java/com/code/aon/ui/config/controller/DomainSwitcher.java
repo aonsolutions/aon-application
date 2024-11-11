@@ -122,7 +122,9 @@ public class DomainSwitcher extends AbstractDomainSwitcher implements
 			setShowActive(true);
 			super.setDomainId(initializeDomain());
 		} catch (Throwable th) {
-			super.setDomainId(1);
+			th.printStackTrace();
+			LOGGER.error( "** Unknown exception " + th.getMessage());
+			throw th;
 		}
 	}
 

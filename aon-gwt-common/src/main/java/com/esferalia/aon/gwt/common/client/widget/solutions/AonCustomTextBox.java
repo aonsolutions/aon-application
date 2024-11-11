@@ -2,6 +2,7 @@ package com.esferalia.aon.gwt.common.client.widget.solutions;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.watson.util.AonStringUtils;
+import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.TextBox;
 
@@ -60,6 +61,10 @@ public class AonCustomTextBox extends HTMLPanel {
 
 	public void addButton(AonTableButton button) {
 		textBoxPanel.add(button);
+	}
+
+	public void addValueChangeHandler(ValueChangeHandler<String> valueChangeHandler) {
+		textBox.addValueChangeHandler(valueChangeHandler);
 	}
 
 }

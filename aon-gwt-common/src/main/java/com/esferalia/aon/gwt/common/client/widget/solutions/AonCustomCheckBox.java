@@ -2,6 +2,7 @@ package com.esferalia.aon.gwt.common.client.widget.solutions;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.watson.util.AonStringUtils;
+import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.HTMLPanel;
 
@@ -50,9 +51,16 @@ public class AonCustomCheckBox extends HTMLPanel {
 	public void setEnable(boolean enabled) {
 		this.checkBox.setEnabled(enabled);
 	}
-
+	
 	public void setFocus(boolean focused) {
 		this.checkBox.setFocus(focused);
 	}
+	
+	public void addValueChangeHandler(ValueChangeHandler<Boolean> handler) {
+		checkBox.addValueChangeHandler(handler);
+	}
+	
+	
+	
 
 }
