@@ -252,10 +252,13 @@ import { waitEl } from "../../services/utils.js";
     name: MSG.CHARGES_AND_PAYMENTS,
     icon: MATERIAL_ICONS.PAYMENT,
     fn: () => {
-      gwtLoad(GWT.FINANCE);
+      let application = document.querySelector(TAG.AON_APPLICATION);
+
+      // Si le paso el contenedor donde deberia colocarse falla.. si no lo pone bien el rootPanel, pero en este caso no se quiere eso
+      //GWT.iLoad(GWT.FINANCE, application.CONTENT);
+      GWT.iLoad(GWT.FINANCE);
 
       // Close sidenav
-      let application = document.querySelector(TAG.AON_APPLICATION);
       application.closeSidenav();
     }
   }
