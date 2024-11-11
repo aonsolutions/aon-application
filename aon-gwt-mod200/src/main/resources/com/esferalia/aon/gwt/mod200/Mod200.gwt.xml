@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <module rename-to='aon_gwt_mod200'>
 
+	<!-- Include GWTUpload library -->
+  	<inherits name="gwtupload.GWTUpload"/>
+
 	<!-- Inherit the core Web Toolkit stuff. -->
 	<inherits name='com.google.gwt.user.User' />
 	<inherits name="com.google.gwt.i18n.I18N" />
@@ -10,6 +13,13 @@
 	<inherits name="com.google.gwt.logging.Logging"/>	 
 	<inherits name='net.aonsolutions.gwt.pdfjs.PdfJs'/>
 		 
+	<inherits name="com.esferalia.aon.gwt.common.Common" />
+	<inherits name="com.esferalia.aon.gwt.api.Api" /> 
+	<!-- <inherits name="com.esferalia.aon.occam.api.Occam" /> -->
+	<inherits name="com.esferalia.aon.occam.mod200.api.OccamMod200" />
+	
+	<inherits name="com.esferalia.aon.gwt.fiscal.Fiscal" />
+
 	<!-- Spanish language, independent of country -->
 	<!-- extend-property name="locale" values="es" /-->
 
@@ -23,7 +33,7 @@
 	<extend-property name="user.agent" values="safari" />
 	<!--extend-property name="user.agent" values="ie8" /-->
 	<!--extend-property name="user.agent" values="ie9" /-->
-	<extend-property name="user.agent" values="ie10" />
+	<!--extend-property name="user.agent" values="ie10" /-->
 	
 	<set-configuration-property name="locale.useragent" value="Y" />
 	
@@ -37,15 +47,6 @@
 	<!-- <inherits name='com.google.gwt.user.theme.chrome.Chrome'/> -->
 	<!-- <inherits name='com.google.gwt.user.theme.dark.Dark'/> -->
 	
-	<inherits name="com.esferalia.aon.gwt.common.Common" />
-	<inherits name="com.esferalia.aon.gwt.api.Api" /> 
-	<!-- <inherits name="com.esferalia.aon.occam.api.Occam" /> -->
-	<inherits name="com.esferalia.aon.occam.mod200.api.OccamMod200" />
-	
-	<inherits name="com.esferalia.aon.gwt.fiscal.Fiscal" />
-	
-	<!-- Include GWTUpload library -->
-  	<inherits name="gwtupload.GWTUpload"/>
 	
 	<!-- Specify the app entry point class. --> 
 	<entry-point class='com.esferalia.aon.gwt.mod200.client.MainEntryPoint' />

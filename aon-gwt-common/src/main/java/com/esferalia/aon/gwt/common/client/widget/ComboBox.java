@@ -130,13 +130,20 @@ public class ComboBox<T> extends ListBox implements HasData<T> {
 			if (BrowserEvents.CLICK.equals(eventType)) {
 				comboBox.hideDropDownList();
 				comboBox.fireChangeEvent();
-			} else if (BrowserEvents.KEYPRESS.equals(eventType))
-				switch (event.getKeyCode()) {
-				case KeyCodes.KEY_ENTER:
-				case KeyCodes.KEY_ESCAPE:
+			} else if (BrowserEvents.KEYPRESS.equals(eventType)){
+				int keyCode = event.getKeyCode();
+				if ( keyCode == KeyCodes.KEY_ENTER 
+				|| keyCode == KeyCodes.KEY_ESCAPE ){
 					comboBox.hideDropDownList();
 					comboBox.fireChangeEvent();
 				}
+				//switch (event.getKeyCode()) {
+				//case KeyCodes.KEY_ENTER:
+				//case KeyCodes.KEY_ESCAPE:
+				//	comboBox.hideDropDownList();
+				//	comboBox.fireChangeEvent();
+				//}
+			}
 
 		}
 
