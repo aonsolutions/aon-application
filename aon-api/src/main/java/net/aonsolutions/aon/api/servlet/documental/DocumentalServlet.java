@@ -203,7 +203,6 @@ public class DocumentalServlet extends AonApiHttpServlet{
 
 	private Filter attachFilter(AonApiData api, AttachProperties f) {
 		DomainUserRoles dur = SECURITY.getDomainUserRoles(api.getDomain(), api.getUser().getLogin(), api.getUser().getId());
-		
 		Integer[] scopes = null;
 		try {
 			scopes = AON.getUserScopes(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), api.getUser().getId());
@@ -275,6 +274,10 @@ public class DocumentalServlet extends AonApiHttpServlet{
     	if(api.getData().opt(IJsonNames.CATEGORY) != null) {
     		// TODO FILTRO CATEGOR�A M�LTIPLE
     		filter = filter.and(f.getCategoryProperty().eq(api.getData().optInt(IJsonNames.CATEGORY)));
+    	}
+    	
+    	if(api.getData().optInt("not_in_category") != 0){
+    		filter = filter.and(f.getCategoryProperty().ne(api.getData().optInt("not_in_category")).or(f.getCategoryProperty().isNull()));
     	}
     	
     	if(api.getData().opt(IJsonNames.TAG) != null) {

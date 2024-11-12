@@ -610,7 +610,6 @@ public class InvoiceServlet extends AonApiHttpServlet{
 		JSONObject json = new JSONObject();
 		JSONObject jsonInvoice = new JSONObject(rawdoc.getJson());
 		JSONArray taxes = jsonInvoice.optJSONArray(IJsonNames.TAXES);
-		System.out.println(taxes);
 		Double taxableBase = 0.0;
 		Double retentionPercentage = 0.0;
 		Double surchargeQuota = 0.0;
@@ -632,7 +631,10 @@ public class InvoiceServlet extends AonApiHttpServlet{
 		json.put(IJsonNames.ID, rawdoc.getId());
 		json.put(IJsonNames.DATE, jsonInvoice.optString(IJsonNames.DATE));
 		json.put(IJsonNames.REFERENCE, jsonInvoice.optString(IJsonNames.REFERENCE));
-		json.put(IJsonNames.NAME, jsonInvoice.optJSONObject(IJsonNames.RECEIVER).optString(IJsonNames.NAME) );
+		if(jsonInvoice.optJSONObject(IJsonNames.RECEIVER) != null) {
+			json.put(IJsonNames.NAME, jsonInvoice.optJSONObject(IJsonNames.RECEIVER).optString(IJsonNames.NAME) );
+			json.put(IJsonNames.DOCUMENT, jsonInvoice.optJSONObject(IJsonNames.RECEIVER).optString(IJsonNames.DOCUMENT));
+		}
 		json.put(IJsonNames.BASE, taxableBase);
 		json.put(IJsonNames.RETENTION_PERCENT, retentionPercentage);
 		json.put(IJsonNames.SURCHARGE_QUOTA, surchargeQuota);
@@ -643,7 +645,6 @@ public class InvoiceServlet extends AonApiHttpServlet{
 		json.put(IJsonNames.NUMBER, jsonInvoice.optString(IJsonNames.NUMBER));
 		json.put(IJsonNames.SERIE, jsonInvoice.optString(IJsonNames.SERIE));
 		json.put(IJsonNames.EMAIL, jsonInvoice.optBoolean(IJsonNames.EMAIL));
-		json.put(IJsonNames.DOCUMENT, jsonInvoice.optJSONObject(IJsonNames.RECEIVER).optString(IJsonNames.DOCUMENT));
 		if(rawdoc.getMimeType() != null){
 	        JSONObject data = new JSONObject();
 	        data.put("domain_name", api.getDomain().getName());
