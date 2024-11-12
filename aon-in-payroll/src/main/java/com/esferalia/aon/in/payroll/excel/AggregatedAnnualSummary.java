@@ -156,6 +156,11 @@ public class AggregatedAnnualSummary {
 		public String visitMEI(DeductionType deductionType) {
 		    return "MECANISMO EQUIDAD INTERGENERACIONAL";
 		}
+		
+		@Override
+		public String visitSolidarity(DeductionType deductionType) {
+			return "SOLIDARIDAD";
+		}
 	};
 
 	public static void writeExcel (OutputStream oos, String domainName, String user, Optional<Integer> enterpriseId, Optional<Integer> workplaceId, Integer year, SummaryType type, boolean complete) {
