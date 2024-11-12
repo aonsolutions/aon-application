@@ -620,11 +620,11 @@ public class InvoiceServlet extends AonApiHttpServlet{
 					retentionPercentage = taxes.optJSONObject(i).optDouble(IJsonNames.PERCENTAGE);
 				} else {
 					Double a = taxes.optJSONObject(i).optDouble(IJsonNames.SURCHARGE_QUOTA);
-					surchargeQuota += a.isNaN() ? 0 : a;
+					surchargeQuota += a.isNaN() || a.isInfinite() ? 0 : a;
 					Double b = taxes.optJSONObject(i).optDouble(IJsonNames.QUOTA);
-					vatQuota += b.isNaN() ? 0 : b;
+					vatQuota += b.isNaN() || a.isInfinite() ? 0 : b;
 					Double c = taxes.optJSONObject(i).optDouble(IJsonNames.BASE);
-					taxableBase += c.isNaN() ? 0 : c;
+					taxableBase += c.isNaN() || a.isInfinite() ? 0 : c;
 				}
 			}
 		}
