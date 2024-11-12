@@ -10,6 +10,7 @@ import { deleteWarehouse, getDelivery, getWarehouses, saveWarehouse } from '../.
 import { AonDeliveryTag } from './deliveryTag/aon-delivery-tag.js';
 import { AonMobileDeliveryList } from '../delivery/aon-mobile-delivery-list.js';
 import { AonMobileDelivery } from '../delivery/aon-mobile-delivery.js';
+import { AonDeliveryList } from '../delivery/aon-delivery-list.js';
 import { AonCarrierList } from '../registry/carrier/aon-carrier-list.js';
 import { AonMobileCarrierList } from '../registry/carrier/aon-mobile-carrier-list.js';
 import { getWorkplaces } from '../../services/workplaceService.js';
@@ -236,8 +237,7 @@ export class AonWarehouse extends AonElement {
 				this.getApplication().setContent(aonDelivery);
 			});
 		} else this.getApplication().setContent(
-			new AonMobileDeliveryList());
-			// this.isMobile() ? new AonMobileDeliveryList() : new AonDeliveryList());
+			this.isMobile() ? new AonMobileDeliveryList() : new AonDeliveryList());
 	}
 
 	aonDeliveryTag() {

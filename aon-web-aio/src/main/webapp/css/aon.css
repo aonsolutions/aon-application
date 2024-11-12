@@ -64,6 +64,8 @@
  
   --aonMessenger: #33A9A9; /* #f6655a; --aonMessenger: rgb(134, 211, 100); */
   --aonMessengerBackground: #feedec;
+
+  --aonWarehouse: #002469;
  
   --aonTimecontrol: #D1C36D;
   --aonTimecontrolBackground: rgba(209, 195, 109, .2);
@@ -473,7 +475,7 @@ color: var(--aonSearchButton);
   margin: 0px 0px 0px 0px;
  
   /*background-color: #FAF9F8;*/
-  box-shadow: var(--shadow4,0 0 2px var(--colorNeutralShadowAmbient,rgba(0,0,0,.12)),0 0px 4px var(--colorNeutralShadowKey,rgba(0,0,0,.14)));
+  /*box-shadow: var(--shadow4,0 0 2px var(--colorNeutralShadowAmbient,rgba(0,0,0,.12)),0 0px 4px var(--colorNeutralShadowKey,rgba(0,0,0,.14)));*/
   border-left: 1px solid rgba(0,0,0,0.1);
 }
 
@@ -672,8 +674,6 @@ h1 {
   padding: 0 1rem;
   position: relative;
   top: 0%;
-  z-index: 8;
- 
   align-items: center;
   border-bottom: none;
 }
@@ -944,7 +944,6 @@ background-color: var(--aonLightGray);
   background-color: var(--aonHeaderBackgroundColor);
   top: 48px;
   position: fixed;
-  z-index: 1000000;
   height: calc(100vh - 49px);
   overflow: hidden;
   overflow-y: hidden;
@@ -956,7 +955,6 @@ background-color: var(--aonLightGray);
 .aonMenuLeftop  {
     top: 0;
     left: 0;
-    z-index: 8;
     height: 48px;
     width: 5rem;
     position: fixed;
@@ -1065,16 +1063,8 @@ background-color: var(--aonLightGray);
   visibility: hidden; /* not show but fill space */
 }
 
+
 .aonSidenavTitle {
-  font-size: 12px;
-  margin-top: 15px;
-  margin-bottom: 10px;
-  color: gray;
-  margin-left: 15px;
-}
-
-
-.aonSidenavTitleBeta {
   font-size: 16px;
   margin-top: 15px;
   margin-bottom: 10px;
@@ -1083,14 +1073,20 @@ background-color: var(--aonLightGray);
   color: var(--aonSuiteMenuTitle);
 }
 
-.aonSidenavTitleBeta span {
+.aonSidenavTitle span {
     font-weight: 500;
     display: inline-block;
     text-transform: lowercase;
 }
 
-.aonSidenavTitleBeta span:first-letter{
+.aonSidenavTitle span:first-letter{
   text-transform: uppercase;
+}
+
+.aonSidenavTitleButton {
+  position: absolute;
+  margin-top: -4px;
+  right: 0px;
 }
 
 .aonSidenav {
@@ -1104,18 +1100,6 @@ background-color: var(--aonLightGray);
   height: calc(100vh - 102px);
   border: 0px none;
   background-color: #fafafa;
- 
-}
-
-.aonSidenavBeta {
-  position: relative;
-  flex-basis: 0px;
-  flex-grow: 0;
-  flex-shrink: 0;
-  left: 0;
-  transition-duration: 500ms;
-  overflow-x: hidden;
-  height: calc(100vh - 102px);
 }
 
 .sidenav {
@@ -1494,7 +1478,7 @@ margin-top: 20px;
   width: 100%;
   height: 100%;
   overflow: auto;
-  background-color: rgba(0, 0, 0, 0.4);
+  background-color: rgba(0, 0, 0, 0.2);
   user-select: none;
 }
 
@@ -2802,35 +2786,35 @@ background-image: url("../favicon.png");
 }
 
 .aonLink:after {
-content: 'aonSolutions';
+  content: 'aonSolutions';
 }
 
 .aonTrademark:after {
-content: 'es una marca registrada de AON SOLUTIONS, S.L.';
+  content: 'es una marca registrada de AON SOLUTIONS, S.L.';
 }
 
 .aonWeekSchedule:after{
-content: 'Lunes a jueves de 8:00 a 15:00';
+  content: 'Lunes a jueves de 8:00 a 15:00';
 }
 
 .aonWeekFridaySchedule:after{
-content: 'Viernes de 8:00 a 14:00';
+  content: 'Viernes de 8:00 a 14:00';
 }
 
 .aonSupportTelephone:after {
-content: '(+34) 900 831 205';
+  content: '(+34) 900 831 205';
 }
 
 .aonSupportUsersEmail:after {
-content: 'soporte@aonSolutions.es';
+  content: 'soporte@aonSolutions.es';
 }
 
 .aonSupportSalesEmail:after {
-content: 'comercial@aonSolutions.es';
+  content: 'comercial@aonSolutions.es';
 }
 
 .aonSupportAdminEmail:after {
-content: 'administración@aonSolutions.es';
+  content: 'administración@aonSolutions.es';
 }
 
 /*
@@ -2838,13 +2822,13 @@ content: 'administración@aonSolutions.es';
 
 .aonHeaderStart,
 .aonMenuLeftopStart{
-background-color: var(--aonBlue);
+  background-color: var(--aonBlue);
 }
 
 
 .aonHeaderHome,
 .aonMenuLeftopHome{
-background-color: var(--aonBlue);
+  background-color: var(--aonBlue);
 }
 
 .aonHeaderApps,
@@ -2858,18 +2842,18 @@ background-color: var(--aonBlue);
 }
 
 .aonNewMenuSideNavLi {
-margin-left: 2px;
-border-left: 2px solid transparent;
+  margin-left: 2px;
+  border-left: 2px solid transparent;
 }
 
 #aonMenuList-home.aonMenuSidenavLiSeleted {
-margin-left: 2px;
-border-left: 2px solid var(--aonBlue);
+  margin-left: 2px;
+  border-left: 2px solid var(--aonBlue);
 }
 
 .aonHeaderApplications,
 .aonMenuLeftopApplications{
-background-color: var(--aonBlue);
+  background-color: var(--aonBlue);
 }
 
 .aonHeaderNote,
@@ -2878,8 +2862,8 @@ background-color: var(--aonBlue);
 }
 
 #aonMenuList-note.aonMenuSidenavLiSeleted {
-margin-left: 2px;
-border-left: 2px solid var(--aonNote);
+  margin-left: 2px;
+  border-left: 2px solid var(--aonNote);
 }
 
 
@@ -2889,8 +2873,8 @@ border-left: 2px solid var(--aonNote);
 }
 
 #aonMenuList-fiscal.aonMenuSidenavLiSeleted {
-margin-left: 2px;
-border-left: 2px solid var(--aonFiscal);
+  margin-left: 2px;
+  border-left: 2px solid var(--aonFiscal);
 }
 
 .aonHeaderPayroll,
@@ -2899,8 +2883,8 @@ border-left: 2px solid var(--aonFiscal);
 }
 
 #aonMenuList-payroll.aonMenuSidenavLiSeleted {
-margin-left: 2px;
-border-left: 2px solid var(--aonPayroll);
+  margin-left: 2px;
+  border-left: 2px solid var(--aonPayroll);
 }
 
 .aonHeaderInvoice,
@@ -2909,8 +2893,8 @@ border-left: 2px solid var(--aonPayroll);
 }
 
 #aonMenuList-invoice.aonMenuSidenavLiSeleted {
-margin-left: 2px;
-border-left: 2px solid var(--aonInvoice);
+  margin-left: 2px;
+  border-left: 2px solid var(--aonInvoice);
 }
 
 .aonHeaderComunica,
@@ -2920,8 +2904,8 @@ border-left: 2px solid var(--aonInvoice);
 
 
 #aonMenuList-comunica.aonMenuSidenavLiSeleted {
-margin-left: 2px;
-border-left: 2px solid var(--aonPayroll);
+  margin-left: 2px;
+  border-left: 2px solid var(--aonPayroll);
 }
 
 .aonHeaderDocumental,
@@ -2930,8 +2914,8 @@ border-left: 2px solid var(--aonPayroll);
 }
 
 #aonMenuList-documental.aonMenuSidenavLiSeleted {
-margin-left: 2px;
-border-left: 2px solid var(--aonDocumental);
+  margin-left: 2px;
+  border-left: 2px solid var(--aonDocumental);
 }
 
 .aonHeaderAccounting,
@@ -2940,8 +2924,8 @@ border-left: 2px solid var(--aonDocumental);
 }
 
 #aonMenuList-accounting.aonMenuSidenavLiSeleted {
-margin-left: 2px;
-border-left: 2px solid var(--aonAccounting);
+  margin-left: 2px;
+  border-left: 2px solid var(--aonAccounting);
 }
 
 .aonHeaderTimecontrol,
@@ -2950,8 +2934,8 @@ border-left: 2px solid var(--aonAccounting);
 }
 
 #aonMenuList-timecontrol.aonMenuSidenavLiSeleted {
-margin-left: 2px;
-border-left: 2px solid var(--aonTimecontrol);
+  margin-left: 2px;
+  border-left: 2px solid var(--aonTimecontrol);
 }
 
 .aonHeaderMessenger,
@@ -2960,8 +2944,18 @@ border-left: 2px solid var(--aonTimecontrol);
 }
 
 #aonMenuList-messenger.aonMenuSidenavLiSeleted {
-margin-left: 2px;
-border-left: 2px solid var(--aonMessenger);
+  margin-left: 2px;
+  border-left: 2px solid var(--aonMessenger);
+}
+
+.aonHeaderWarehouse,
+.aonMenuLeftopWarehoues {
+	background-color: var(--aonBlue);
+}
+
+#aonMenuList-warehouse.aonMenuSidenavLiSeleted {
+  margin-left: 2px;
+  border-left: 2px solid var(--aonWarehouse);
 }
 
 .aonHeaderOffice,
@@ -3047,6 +3041,7 @@ border-left: 2px solid var(--aonMessenger);
 .aonHeaderInvoice  .material-icons,
 .aonHeaderComunica  .material-icons,
 .aonHeaderMessenger .material-icons,
+.aonHeaderWarehouse .material-icons,
 .aonHeaderAccounting .material-icons,
 .aonHeaderDocumental .material-icons,
 .aonHeaderTimecontrol .material-icons,
@@ -3078,6 +3073,7 @@ color: var(--aonWhite);
 .aonHeaderInvoice  #aon-search-buttonIcon,
 .aonHeaderComunica  #aon-search-buttonIcon,
 .aonHeaderMessenger #aon-search-buttonIcon,
+.aonHeaderWarehouse #aon-search-buttonIcon,
 .aonHeaderAccounting #aon-search-buttonIcon,
 .aonHeaderDocumental #aon-search-buttonIcon,
 .aonHeaderTimecontrol #aon-search-buttonIcon,
@@ -3106,6 +3102,7 @@ color: var(--aonWhite);
 .aonMenuLeftopInvoice  .material-symbols-outlined,
 .aonMenuLeftopComunica  .material-symbols-outlined,
 .aonMenuLeftopMessenger .material-symbols-outlined,
+.aonMenuLeftopWarehouse .material-symbols-outlined,
 .aonMenuLeftopAccounting .material-symbols-outlined,
 .aonMenuLeftopDocumental .material-symbols-outlined,
 .aonMenuLeftopTimecontrol .material-symbols-outlined,
@@ -3139,6 +3136,7 @@ color: var(--aonWhite);
 .aonHeaderInvoice #aonHeaderCompanyName,
 .aonHeaderComunica #aonHeaderCompanyName,
 .aonHeaderMessenger #aonHeaderCompanyName,
+.aonHeaderWarehouse #aonHeaderCompanyName,
 .aonHeaderAccounting #aonHeaderCompanyName,
 .aonHeaderDocumental #aonHeaderCompanyName,
 .aonHeaderTimecontrol #aonHeaderCompanyName,
@@ -3179,6 +3177,7 @@ color: var(--aonWhite);
 #timecontrol:hover,
 #note:hover,
 #messenger:hover,
+#warehouse:hover,
 #office:hover,
 #garage:hover,
 #academy:hover,

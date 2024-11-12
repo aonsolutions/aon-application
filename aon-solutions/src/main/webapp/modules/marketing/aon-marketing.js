@@ -68,7 +68,7 @@ export class AonMarketing extends AonElement {
 	}
 
 	aonQuestion() {
-		GWT.load(GWT.QUESTION, this.getApplication().CONTENT);
+		GWT.iLoad(GWT.QUESTION, this.getApplication().CONTENT);
 	}
 }
 if(!window.customElements.get(TAG.AON_MARKETING)){

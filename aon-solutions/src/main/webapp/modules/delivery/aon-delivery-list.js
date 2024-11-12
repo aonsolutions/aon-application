@@ -1,10 +1,10 @@
 import { AonElement } from '../../components/AonElement.js';
-import { AonTable } from '../../components/aon-table.js';
-
-import { CONSTANT, EVENT, MSG, MATERIAL_ICONS, TAG } from '../../environments/environments.js';
+import { CONSTANT, EVENT, MSG, TAG } from '../../environments/environments.js';
 import { getDeliveries, getDelivery } from '../../services/warehouseService.js';
-import { AonDelivery } from './aon-delivery.js';
+import { AonMobileDelivery } from './aon-mobile-delivery.js';
+
 import { createList } from '../../components/CreateComponent.js';
+import * as OPTION from './DeliveryOptions.js';
 
 export class AonDeliveryList extends AonElement {
 
@@ -57,7 +57,8 @@ export class AonDeliveryList extends AonElement {
             full: true
         }
         getDelivery(data).then(r => {
-            let aonDelivery = new AonDelivery();
+            // let aonDelivery = new AonDelivery();
+            let aonDelivery = new AonMobileDelivery();
             aonDelivery.setDelivery(r);
             this.getApplication().setContent(aonDelivery);
         });
@@ -75,7 +76,9 @@ export class AonDeliveryList extends AonElement {
 
 		const btnSearch = this.getApplication().addSearchOption();
 		let searchFn = (event) => this.search(event.detail);
-		btnSearch.addEventListener(EVENT.SEARCH, searchFn);
+        btnSearch.addEventListener(EVENT.SEARCH_NEW, searchFn);
+        btnSearch.buildOptionsFilter(OPTION.DELIVERY_SEARCH_OPTIONS);
+
 
 		table.addColumn(MSG.DATE, 'date', 'date', '10%');
 		table.addColumn('Número de Albarán', 'string', 'reference', '25%');
@@ -86,9 +89,13 @@ export class AonDeliveryList extends AonElement {
 		this.init();
 	}
 
-	search(value) {
-		this.filter.value = value;
-		this.init();		
+	search(detail) {
+        let value = detail.search;
+		if(detail.search) this.filter.value = value;
+        if(detail.status) this.filter.status = detail.status;
+        if(detail.startDate) this.filter.from = detail.startDate;
+        if(detail.to) this.filter.to = detail.to;
+		this.init();
 	}
 
 	init() {
@@ -113,7 +120,7 @@ export class AonDeliveryList extends AonElement {
 	loadMore() {
 		this.more = false;
 		let table = this.getElement(this.TABLE);
-        if(tanñe && this.filter.page) {
+        if(table && this.filter.page) {
             this.filter.page = this.filter.page + 1;
             getDeliveries(this.filter).then(deliveries => {
                 if(deliveries.length == 0)

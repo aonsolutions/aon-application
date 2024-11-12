@@ -182,7 +182,7 @@ export class AonReg extends AonElement {
 		let div = this.getElement(this.DIV);
 		div.style.position = 'absolute';
 		div.style.height = '100%';
-		GWT.load(GWT.MAIN_DIGITAL_CERTIFICATES, this.DIV);
+		GWT.iLoad(GWT.MAIN_DIGITAL_CERTIFICATES, this.DIV);
 	}
 
 	buildRegistralData() {
