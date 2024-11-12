@@ -4738,7 +4738,7 @@ public class SalaryDraft extends ResizeComposite
 				dumpSystemDeduction(compositeDeduction, percent, deduction.getDescription(), row++, expandButton);
 				for (Deduction child : compositeDeduction.getChilds()) {
 					Double childPercent = getPercent(child, salaryDraftObject);
-					Widget childPercentWidget = newPercentWidget(compositeDeduction, childPercent);
+					Widget childPercentWidget = newPercentWidget(child, childPercent);
 					dumpSystemItem(child,
 							"  " + child.getDescription(),
 							row, 

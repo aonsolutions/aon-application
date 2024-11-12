@@ -2000,7 +2000,7 @@ public class SalaryDraftBuilder
 		case SOLIDARITY:
 			return deduction.getType().getDescription();
 		default:
-			return getDescription(deduction, def);
+			return getDescription((Deduction)deduction, def);
 		}
 		
 	}
