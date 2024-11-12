@@ -639,7 +639,7 @@ public class InvoiceServlet extends AonApiHttpServlet{
 		json.put(IJsonNames.RETENTION_PERCENT, Double.isFinite(retentionPercentage) ? retentionPercentage : 0);
 		json.put(IJsonNames.SURCHARGE_QUOTA, Double.isFinite(surchargeQuota) ? surchargeQuota : 0);
 		json.put(IJsonNames.QUOTA, Double.isFinite(vatQuota) ? vatQuota : 0);
-		json.put(IJsonNames.TOTAL, jsonInvoice.optDouble(IJsonNames.TOTAL));
+		json.put(IJsonNames.TOTAL, Double.isFinite(jsonInvoice.optDouble(IJsonNames.TOTAL)) ? jsonInvoice.optDouble(IJsonNames.TOTAL) : 0);
 		json.put(IJsonNames.TYPE, jsonInvoice.optString(IJsonNames.TYPE));
 		json.put(IJsonNames.STATUS, InvoiceStatus.PENDING.name().toLowerCase());
 		json.put(IJsonNames.NUMBER, jsonInvoice.optString(IJsonNames.NUMBER));
