@@ -544,8 +544,8 @@ public class FinanceModule extends MainEntryPoint {
 		settleAllButton.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
-				ConfirmDialog cd = new ConfirmDialog();
-				cd.confirm(AON.MSG.settleAllFinanceAction( selectedItems.size() ), new ConfirmDialogCallback(){
+				AonConfirmDialog cd = new AonConfirmDialog();
+				cd.confirm(AON.MSG.settleAllFinanceAction( selectedItems.size() ), new AonConfirmDialogCallback(){
 					@Override
 					public void onAccept() {
 						
