@@ -191,8 +191,7 @@ export class AonApplication extends AonElement {
 
   getSidenavClassName() {
     if(this.isMobile()) return 'aonMobileSidenav';
-    else if(LS.isNewTheme()) return 'aonSidenav';
-    else return 'aonSidenavBeta';
+    else return 'aonSidenav';
   }
 
   buildMobileSidenav() {
@@ -312,7 +311,7 @@ export class AonApplication extends AonElement {
     sidenav.appendChild(div);
 
     let sidenavTitle = this.createElement(TAG.DIV);
-    sidenavTitle.className = LS.isNewTheme() ? "aonSidenavTitleBeta" : "aonSidenavTitle";
+    sidenavTitle.className = CSS.AON_SIDENAV_TITLE;
     sidenavTitle.innerHTML = title.toUpperCase();
     sidenavTitle.title = title;
     div.appendChild(sidenavTitle);
@@ -347,7 +346,7 @@ export class AonApplication extends AonElement {
       sidenav.appendChild(div);
 
       let sidenavTitle = this.createElement(TAG.DIV);
-      sidenavTitle.className = LS.isNewTheme() ? "aonSidenavTitleBeta" : "aonSidenavTitle";
+      sidenavTitle.className = CSS.AON_SIDENAV_TITLE;
       sidenavTitle.innerHTML = title.toUpperCase();
       sidenavTitle.title = title;
       div.appendChild(sidenavTitle);
@@ -370,9 +369,7 @@ export class AonApplication extends AonElement {
 
     if(data.button && !this.isMobile()) {
       let buttonDiv = this.createElement(TAG.DIV);
-      buttonDiv.style.marginTop = LS.isNewTheme() ? "-12px" : "-15px";
-      buttonDiv.style.right = "0px";
-      buttonDiv.style.position = "absolute";
+      buttonDiv.className = CSS.AON_SIDENAV_TITLE_BUTTON;
       let button = new AonIconButton();
       button.icon = data.button.icon;
       button.id = div.id + data.button.id;
@@ -382,9 +379,7 @@ export class AonApplication extends AonElement {
     }
     if (newButton && !this.isMobile()) {
       let addButton = this.createElement(TAG.DIV);
-      addButton.style.marginTop = LS.isNewTheme() ? "-12px" : "-15px";
-      addButton.style.right = "0px";
-      addButton.style.position = "absolute";
+      addButton.className = CSS.AON_SIDENAV_TITLE_BUTTON;
       let aonIconButton = new AonIconButton();
       aonIconButton.icon = "add";
       aonIconButton.id = div.id + "NewButton";
@@ -394,7 +389,7 @@ export class AonApplication extends AonElement {
     }
 
     let sidenavTitle = this.createElement(TAG.DIV);
-    sidenavTitle.className = LS.isNewTheme() ? "aonSidenavTitleBeta" : "aonSidenavTitle";
+    sidenavTitle.className = CSS.AON_SIDENAV_TITLE;
     sidenavTitle.id = "aonSidenavTitle"+data.id;
     sidenavTitle.title = data.name;
     sidenavTitle.style.cursor = "pointer";
@@ -472,9 +467,7 @@ export class AonApplication extends AonElement {
 
       if(data.button && !this.isMobile()) {
         let buttonDiv = this.createElement(TAG.DIV);
-        buttonDiv.style.marginTop = LS.isNewTheme() ? "-12px" : "-15px";
-        buttonDiv.style.right = "0px";
-        buttonDiv.style.position = "absolute";
+        buttonDiv.className = CSS.AON_SIDENAV_TITLE_BUTTON;
         let button = new AonIconButton();
         button.icon = data.button.icon;
         button.id = div.id + data.button.id;
@@ -484,9 +477,7 @@ export class AonApplication extends AonElement {
       }
       if (newButton && !this.isMobile()) {
         let addButton = this.createElement(TAG.DIV);
-        addButton.style.marginTop = LS.isNewTheme() ? "-12px" : "-15px";
-        addButton.style.right = "0px";
-        addButton.style.position = "absolute";
+        addButton.className = CSS.AON_SIDENAV_TITLE_BUTTON;
         let aonIconButton = new AonIconButton();
         aonIconButton.icon = "add";
         aonIconButton.id = div.id + "NewButton";
@@ -496,7 +487,7 @@ export class AonApplication extends AonElement {
       }
 
       let sidenavTitle = this.createElement(TAG.DIV);
-      sidenavTitle.className = LS.isNewTheme() ? "aonSidenavTitleBeta" : "aonSidenavTitle";
+      sidenavTitle.className = CSS.AON_SIDENAV_TITLE;
       sidenavTitle.id = "aonSidenavTitle"+data.id;
       sidenavTitle.title = data.name;
       sidenavTitle.style.cursor = "pointer";
