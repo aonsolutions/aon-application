@@ -4,7 +4,7 @@ import java.io.Serializable;
 
 public enum Mod369VatType implements Serializable {
 
-	 STANDARD 	("Estándar", "S")
+	 STANDARD 	("Est\u00E1ndar", "S")
 	,REDUCED 	("Reducido", "R")	
 	;
 	

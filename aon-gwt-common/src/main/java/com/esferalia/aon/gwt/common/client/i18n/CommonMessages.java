@@ -164,6 +164,10 @@ public interface CommonMessages extends Messages {
 		,"M140"		,"Libro-registro de operaciones econ\u00F3micas de personas f\u00EDsicas [VERSI\u00d3N BETA]"
 		,"M240"		,"Libro-registro de operaciones econ\u00F3micas de personas jur\u00EDdicas [VERSI\u00d3N BETA]"
 		,"SII"		,"Suministro inmediato de informaci\u00F3n"
+//		,"M369"		,"Declaraciones de IVA del r\u00E9gimen One Stop Shop (OSS)"
+		,"M369_RU"	,"Declaraciones de IVA del r\u00E9gimen One Stop Shop (OSS) - R\u00E9gimen de la Uni\u00F3n"
+		,"M369_RE"	,"Declaraciones de IVA del r\u00E9gimen One Stop Shop (OSS) - R\u00E9gimen Exterior a la Uni\u00F3n"
+		,"M369_RI"	,"Declaraciones de IVA del r\u00E9gimen One Stop Shop (OSS) - R\u00E9gimen de Importaci\u00F3n"
 		})	
 	String fiscalModelDescriptionlong(@Select FiscalModelType f);
 

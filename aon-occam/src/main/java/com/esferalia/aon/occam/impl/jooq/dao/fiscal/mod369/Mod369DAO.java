@@ -7,6 +7,7 @@ import static com.esferalia.aon.jooq.tables.FsModel369.FS_MODEL369;
 import static com.esferalia.aon.jooq.tables.FsModel369Detail.FS_MODEL369_DETAIL;
 
 import java.sql.Timestamp;
+import java.util.Date;
 import java.util.LinkedList;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -203,8 +204,8 @@ public class Mod369DAO {
 				.set(FS_MODEL369.COMMENTS, mod369.getComments())
 				.set(FS_MODEL369.CREATION_USER, mod369.getCreationUser())
 				.set(FS_MODEL369.CREATION_DATE, AonDateUtils.toTimestamp(mod369.getCreationDate()))
-				.set(FS_MODEL369.REGIME, mod369.getRegime().value())
-				.set(FS_MODEL369.PAY_TYPE, mod369.getPayType().value())
+				.set(FS_MODEL369.REGIME, AonEnumUtils.getByte(mod369.getRegime()))
+				.set(FS_MODEL369.PAY_TYPE, AonEnumUtils.getByte(mod369.getPayType()))
 				.set(FS_MODEL369.NRC, mod369.getNrc())
 				.set(FS_MODEL369.AMOUNT_PAID, mod369.getAmountPaid())
 				.set(FS_MODEL369.WITHOUT_ACTIVITY, AonEnumUtils.getByte(mod369.isWithoutActivity()))
@@ -236,8 +237,8 @@ public class Mod369DAO {
 			.set(FS_MODEL369.COMMENTS, mod369.getComments())
 			.set(FS_MODEL369.MODIFICATION_USER, mod369.getModificationUser())
 			.set(FS_MODEL369.MODIFICATION_DATE, AonDateUtils.toTimestamp(mod369.getModificationDate()))
-			.set(FS_MODEL369.REGIME, mod369.getRegime().value())
-			.set(FS_MODEL369.PAY_TYPE, mod369.getPayType().value())
+			.set(FS_MODEL369.REGIME, AonEnumUtils.getByte(mod369.getRegime()))
+			.set(FS_MODEL369.PAY_TYPE, AonEnumUtils.getByte(mod369.getPayType()))
 			.set(FS_MODEL369.NRC, mod369.getNrc())
 			.set(FS_MODEL369.AMOUNT_PAID, mod369.getAmountPaid())
 			.set(FS_MODEL369.WITHOUT_ACTIVITY, AonEnumUtils.getByte(mod369.isWithoutActivity()))
@@ -276,7 +277,7 @@ public class Mod369DAO {
 			.set(FS_MODEL369_DETAIL.DETAIL_TYPE, detailType )
 			.set(FS_MODEL369_DETAIL.COUNTRY, Country.safeIso2(detail.getCountry()))
 			.set(FS_MODEL369_DETAIL.VAT_PERCENT, detail.getVatPercent())
-			.set(FS_MODEL369_DETAIL.VAT_TYPE, detail.getVatType().value())
+			.set(FS_MODEL369_DETAIL.VAT_TYPE, AonEnumUtils.getByte(detail.getVatType()))
 			.set(FS_MODEL369_DETAIL.BASE, detail.getBase())
 			.set(FS_MODEL369_DETAIL.QUOTA, detail.getQuota())			
 			.execute();
@@ -286,7 +287,7 @@ public class Mod369DAO {
 		ctx.getDslContext().update(FS_MODEL369_DETAIL)
 			.set(FS_MODEL369_DETAIL.COUNTRY, Country.safeIso2(detail.getCountry()))
 			.set(FS_MODEL369_DETAIL.VAT_PERCENT, detail.getVatPercent())
-			.set(FS_MODEL369_DETAIL.VAT_TYPE, detail.getVatType().value())
+			.set(FS_MODEL369_DETAIL.VAT_TYPE, AonEnumUtils.getByte(detail.getVatType()))
 			.set(FS_MODEL369_DETAIL.BASE, detail.getBase())
 			.set(FS_MODEL369_DETAIL.QUOTA, detail.getQuota())			
 			.where(FS_MODEL369_DETAIL.ID.equal(detail.getId()))
@@ -329,7 +330,7 @@ public class Mod369DAO {
 			.set(FS_MODEL369_DETAIL.DETAIL_TYPE, detailType)
 			.set(FS_MODEL369_DETAIL.COUNTRY, Country.safeIso2(detail.getCountry()))
 			.set(FS_MODEL369_DETAIL.VAT_PERCENT, detail.getVatPercent())
-			.set(FS_MODEL369_DETAIL.VAT_TYPE, detail.getVatType().value())
+			.set(FS_MODEL369_DETAIL.VAT_TYPE, AonEnumUtils.getByte(detail.getVatType()))
 			.set(FS_MODEL369_DETAIL.BASE, detail.getBase())
 			.set(FS_MODEL369_DETAIL.QUOTA, detail.getQuota())
 			.set(FS_MODEL369_DETAIL.OTHER_COUNTRY, Country.safeIso2(detail.getOtherCountry()))
@@ -341,7 +342,7 @@ public class Mod369DAO {
 		ctx.getDslContext().update(FS_MODEL369_DETAIL)
 			.set(FS_MODEL369_DETAIL.COUNTRY, Country.safeIso2(detail.getCountry()))
 			.set(FS_MODEL369_DETAIL.VAT_PERCENT, detail.getVatPercent())
-			.set(FS_MODEL369_DETAIL.VAT_TYPE, detail.getVatType().value())
+			.set(FS_MODEL369_DETAIL.VAT_TYPE, AonEnumUtils.getByte(detail.getVatType()))
 			.set(FS_MODEL369_DETAIL.BASE, detail.getBase())
 			.set(FS_MODEL369_DETAIL.QUOTA, detail.getQuota())
 			.set(FS_MODEL369_DETAIL.OTHER_COUNTRY, Country.safeIso2(detail.getOtherCountry()))
@@ -374,7 +375,7 @@ public class Mod369DAO {
 			.set(FS_MODEL369_DETAIL.DETAIL_TYPE, detailType)
 			.set(FS_MODEL369_DETAIL.COUNTRY, Country.safeIso2(detail.getCountry()))
 			.set(FS_MODEL369_DETAIL.CORRECTION_YEAR, detail.getYear())
-			.set(FS_MODEL369_DETAIL.CORRECTION_PERIOD, detail.getPeriod().value())			
+			.set(FS_MODEL369_DETAIL.CORRECTION_PERIOD, AonEnumUtils.getByte(detail.getPeriod()))			
 			.set(FS_MODEL369_DETAIL.QUOTA, detail.getQuota())
 			.execute();
 	}
@@ -383,7 +384,7 @@ public class Mod369DAO {
 		ctx.getDslContext().update(FS_MODEL369_DETAIL)
 			.set(FS_MODEL369_DETAIL.COUNTRY, Country.safeIso2(detail.getCountry()))
 			.set(FS_MODEL369_DETAIL.CORRECTION_YEAR, detail.getYear())
-			.set(FS_MODEL369_DETAIL.CORRECTION_PERIOD, detail.getPeriod().value())			
+			.set(FS_MODEL369_DETAIL.CORRECTION_PERIOD, AonEnumUtils.getByte(detail.getPeriod()))			
 			.set(FS_MODEL369_DETAIL.QUOTA, detail.getQuota())
 			.where(FS_MODEL369_DETAIL.ID.equal(detail.getId()))
 			.execute();
@@ -574,15 +575,30 @@ public class Mod369DAO {
 //	}
 
 	public static Mod369 initialize(AONContext ctx, int year, Period period) {
+
+		if (year == 0) {
+			// Ponemos por defecto el año, segun la fecha actual, si estamos en enero ponemos
+			// el año anterior (se supone que queremos hacer el del ultimo periodo del año anterior)
+			// en caso contrario ponemos el año actual
+			Date today = new Date();
+			year = AonDateUtils.getYear(today);		
+			if (AonDateUtils.getMonth(today) == 0) {
+				year = year - 1;			
+			}
+		}
+
 		Mod369 mod369 = new Mod369();
 		AonConfiguration conf = ConfigurationDAO.getConfiguration(ctx);
 		mod369.setDomain(ctx.getDomainId());
+		mod369.setCountry(conf.getCompany().getDocumentCountry());
 		mod369.setDocument(conf.getCompany().getDocument());
 		mod369.setName(conf.getCompany().getName());
 		mod369.setYear(year);
 		mod369.setPeriod(period);
+		mod369.setRegime(Mod369Regime.UNION); 
 		mod369.setStatus(FiscalStatus.PENDING);
 		mod369.setAdministration(conf.fiscal().getAdministration(Administration.COMMON_TERRITORY));
+		mod369.setPayType(Mod369PayType.TOTAL);
 		mod369.setDetails3(new LinkedList<>());
 		mod369.setDetails4(new LinkedList<>());
 		mod369.setDetails5(new LinkedList<>());

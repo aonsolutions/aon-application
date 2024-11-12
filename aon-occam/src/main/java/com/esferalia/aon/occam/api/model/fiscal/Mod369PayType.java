@@ -7,7 +7,7 @@ public enum Mod369PayType implements Serializable {
 	 TOTAL 		("Ingreso total", "I")
 	,PARTIAL 	("Ingreso parcial", "S")	
 	,NO_INCOME 	("Sin ingreso", "O")
-	,NEGATIVE 	("Negativa/Pago cero", "N")
+	,NEGATIVE 	("Negativa", "N")
 	,TRANSFER	("A Ingresar por transferencia", "T")
 	;
 	

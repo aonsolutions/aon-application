@@ -32,7 +32,13 @@ public enum FiscalModelType implements Serializable{
 	M140	("140","140"		, false){ @Override public void visit(IFiscalModelTypeVisitor visitor) { } },
 	M240	("240","240"		, false){ @Override public void visit(IFiscalModelTypeVisitor visitor) { } },
 	SII		("SII","SII"		, false){ @Override public void visit(IFiscalModelTypeVisitor visitor) { } },
-	M369    ("369","369"		, false){ @Override public void visit(IFiscalModelTypeVisitor visitor) { } },  // FALTA - NO SE SI VOY A NECESITAR VISIT
+//	M369    ("369","369"		, false){ @Override public void visit(IFiscalModelTypeVisitor visitor) { } },  // FALTA - NO SE SI VOY A NECESITAR VISIT
+//	M369_RU ("369","369 R.U."	, false){ @Override public void visit(IFiscalModelTypeVisitor visitor) { } },  // FALTA - NO SE SI VOY A NECESITAR VISIT
+//	M369_RE ("369","369 R.E."	, false){ @Override public void visit(IFiscalModelTypeVisitor visitor) { } },  // FALTA - NO SE SI VOY A NECESITAR VISIT
+//	M369_RI ("369","369 R.I."	, false){ @Override public void visit(IFiscalModelTypeVisitor visitor) { } },  // FALTA - NO SE SI VOY A NECESITAR VISIT
+	M369_RU ("369","369"	, false){ @Override public void visit(IFiscalModelTypeVisitor visitor) { } },  // FALTA - NO SE SI VOY A NECESITAR VISIT
+	M369_RE ("369","369"	, false){ @Override public void visit(IFiscalModelTypeVisitor visitor) { } },  // FALTA - NO SE SI VOY A NECESITAR VISIT
+	M369_RI ("369","369"	, false){ @Override public void visit(IFiscalModelTypeVisitor visitor) { } },  // FALTA - NO SE SI VOY A NECESITAR VISIT
 	;
 
 	private String value;
@@ -92,7 +98,10 @@ public enum FiscalModelType implements Serializable{
 			|| this == M310 
 			|| this == M311 
 			|| this == M303
-			|| this == M369;				
+//			|| this == M369;
+			|| this == M369_RU
+			|| this == M369_RE
+			|| this == M369_RI;
 	}
 
 	public boolean isRetention() {

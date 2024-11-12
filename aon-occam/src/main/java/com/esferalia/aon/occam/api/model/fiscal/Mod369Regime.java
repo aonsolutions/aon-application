@@ -4,9 +4,9 @@ import java.io.Serializable;
 
 public enum Mod369Regime implements Serializable {
 
-	 UNION 		("R\u00E9gimen de la Unión", "MOSS")
-	,OUTSIDE 	("R\u00E9gimen Exterior a la Unión", "VOES")	
-	,IMPORT 	("R\u00E9gimen de Importación", "IMPO")
+	 UNION 		("R\u00E9gimen de la Uni\u00F3n", "MOSS")
+	,OUTSIDE 	("R\u00E9gimen Exterior a la Uni\u00F3n", "VOES")	
+	,IMPORT 	("R\u00E9gimen de Importaci\u00F3n", "IMPO")
 	;
 	
 	private String description;

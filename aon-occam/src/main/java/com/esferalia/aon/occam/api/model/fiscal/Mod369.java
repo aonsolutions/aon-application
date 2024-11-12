@@ -196,7 +196,12 @@ public class Mod369 implements IFiscalModel, HasAudit {
 	
 	@Override
 	public FiscalModelType getModel() {
-		return FiscalModelType.M369;
+		//return FiscalModelType.M369;
+		if (getRegime() == Mod369Regime.IMPORT)
+			return FiscalModelType.M369_RI;
+		else if (getRegime() == Mod369Regime.OUTSIDE)
+			return FiscalModelType.M369_RE;
+		return FiscalModelType.M369_RU;
 	}
 	
 	// ---------------------------------------------------------- AUDIT
@@ -402,7 +407,7 @@ public class Mod369 implements IFiscalModel, HasAudit {
 		if (details6 == null) {
 			details6 = new LinkedList<Mod369DetailOther>();
 		}
-		return details5;
+		return details6;
 	}
 	
 	public Mod369 setDetails6(LinkedList<Mod369DetailOther> details6) {

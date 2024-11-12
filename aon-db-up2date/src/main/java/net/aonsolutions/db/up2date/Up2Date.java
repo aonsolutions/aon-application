@@ -22,6 +22,7 @@ import org.apache.commons.cli.ParseException;
 import net.aonsolutions.db.up2date.finance.InvofoxEnterpriseDataFix;
 import net.aonsolutions.db.up2date.finance.InvoiceBatchAlter;
 import net.aonsolutions.db.up2date.fiscal.AlterFsMod200Nrc;
+import net.aonsolutions.db.up2date.fiscal.FsModel369Creation;
 import net.aonsolutions.db.up2date.tgss.Artist2024Update;
 import net.aonsolutions.db.up2date.urlshortener.UrlShortenCreation;
 
@@ -479,7 +480,9 @@ public class Up2Date {
     	Artist2024Update.ARTIST2024UPDATE,
     	InvofoxEnterpriseDataFix.INVOFOX_ENTERPRISE_DATA_FIX,
     	AlterFsMod200Nrc.ALTER_FS_MODEL200_NRC,
-    	InvoiceBatchAlter.INVOICE_BATCH_ALTER
+    	InvoiceBatchAlter.INVOICE_BATCH_ALTER,
+    	FsModel369Creation.FS_MODEL369_CREATION
+    	
 	};
 
     // ------------------------------------------------------------------------
