@@ -3,8 +3,10 @@ import * as GWT from "../../gwt/gwt.js";
 
   export const gwtLoad = (option) => {
     let application = document.querySelector(TAG.AON_APPLICATION);
-    document.body.classList.add('gwt-Selector');
     GWT.load(option, application.CONTENT);
+
+    // Not working. Why not need Iframe here like MainContrata
+    //GWT.iLoad(option, application.CONTENT);
   }
 
   export const newInvoice = (type) => {
@@ -248,7 +250,16 @@ import * as GWT from "../../gwt/gwt.js";
     id: CONSTANT.CHARGES_PAYMENTS.initCap(),
     name: MSG.CHARGES_AND_PAYMENTS,
     icon: MATERIAL_ICONS.PAYMENT,
-    fn: () => gwtLoad(GWT.FINANCE)
+    fn: () => {
+      let application = document.querySelector(TAG.AON_APPLICATION);
+
+      // Si le paso el contenedor donde deberia colocarse falla.. si no lo pone bien el rootPanel, pero en este caso no se quiere eso
+      //GWT.iLoad(GWT.FINANCE, application.CONTENT);
+      GWT.iLoad(GWT.FINANCE);
+
+      // Close sidenav
+      application.closeSidenav();
+    }
   }
 
   export const VAT_PANEL = {

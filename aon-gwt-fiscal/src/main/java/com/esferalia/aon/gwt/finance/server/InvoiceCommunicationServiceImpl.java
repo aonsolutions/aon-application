@@ -4,6 +4,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.json.JSONObject;
@@ -117,8 +118,12 @@ public class InvoiceCommunicationServiceImpl extends AonStatelessRemoteServiceSe
 			EnterpriseActivity ea = AON.getEnterpriseActivity(company.getDomain().getName(),
 					company.getDomain().getId(), "", invoice.getActivity().getId());
 			if(ea == null || ea.getId() == null) {
-				ea = AON.getEnterpriseActivities(company.getDomain().getName(),
-						company.getDomain().getId(), "").filter(f -> f.isPrincipal()).findFirst().orElse(new EnterpriseActivity());
+				List<EnterpriseActivity> list = AON.getEnterpriseActivities(company.getDomain().getName(),
+						company.getDomain().getId(), "").toList();
+				if(list.isEmpty()) throw new Exception("El dominio no tiene Actividad.");
+				Optional<EnterpriseActivity> opt = list.stream().filter(f -> f.isPrincipal()).findFirst();
+				if(opt.isEmpty()) opt = list.stream().findFirst();
+				ea = opt.orElse(new EnterpriseActivity());
 			}
 			invoice.setEpigraph(ea.getIae().getFullEpigraph());
 			//*****
