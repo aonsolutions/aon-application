@@ -825,6 +825,7 @@ public class Contrata {
 			}
 			
 			webClient.waitForBackgroundJavaScript(5000);
+			
 			htmlPage = ((HtmlSubmitInput) form.querySelector("[name=aceptar]")).click();
 
 			// For contract 502 check if duration equals or less than 90 days
@@ -863,6 +864,17 @@ public class Contrata {
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
+			
+			// Los datos de la P. Fisica en la base de datos no coinciden con los tecleados. Compruebelos.
+			try {
+				if(htmlPage.querySelector("#avisos > div > p:last-child").getVisibleText().contains("no coinciden con los tecleados")) {
+					htmlPage = htmlPage.getElementById("volver").click();
+					setOccupation(cto, form);
+					
+					webClient.waitForBackgroundJavaScript(5000);
+					htmlPage = ((HtmlSubmitInput) form.querySelector("[name=aceptar]")).click();
+				}
+			} catch (Exception e) {}
 			
 			handleSepeAlert(alertHandler.getCollectedAlerts());
 			handleSepeExceptions(htmlPage);
