@@ -13,6 +13,9 @@ import static com.esferalia.aon.payroll.enumeration.ContextVariable.INKIND_IRPF_
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.IRPF_BASE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.MONEY_IRPF_BASE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.NON_STRUCTURAL_OVERTIME_BASE;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.SOLIDARITY_BASE_FIRST;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.SOLIDARITY_BASE_SECOND;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.SOLIDARITY_BASE_THIRD;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.STRUCTURAL_OVERTIME_BASE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.UNPAID;
 
@@ -193,7 +196,7 @@ public class SalaryDraftBuilder
 		return formatted;
 	}
 
-	private static String formatItemDescription(Item<?> item, String calcDescription, Map<String, ITimedVariable<?>> context, Date draftStart, Date draftEnd, boolean child) {
+	private String formatItemDescription(Item<?> item, String calcDescription, Map<String, ITimedVariable<?>> context, Date draftStart, Date draftEnd, boolean child) {
 		
 		String description ; 
 		if ( item.getType() == Deduction.Type.IRPF )
@@ -203,7 +206,8 @@ public class SalaryDraftBuilder
 		else 
 		    description = formatItemDescription(item, draftStart, draftEnd);
 	
-		if ( !child && 
+		if (!child &&
+			item.getType() != Deduction.Type.SOLIDARITY && 
 			AonUtils.equals(item.getStartDate(),draftStart)
 				&&  AonUtils.equals(item.getEndDate(),draftEnd) ) {
 			return description;
@@ -222,26 +226,33 @@ public class SalaryDraftBuilder
 				INKIND_IRPF_BASE, 
 				BASE_CTA_ESP, 
 				STRUCTURAL_OVERTIME_BASE, 
-				NON_STRUCTURAL_OVERTIME_BASE, } ) {
+				NON_STRUCTURAL_OVERTIME_BASE,
+				SOLIDARITY_BASE_FIRST,
+				SOLIDARITY_BASE_SECOND,
+				SOLIDARITY_BASE_THIRD,
+				} ) {
 			ITimedVariable<?> var = context.get(contextVar.getName());
 
 			if ( var == null )
 				continue;
+			
 			Object value = var.getValue(var.getPeriod());
 			if ( value == null )
 				continue;
 			if ( !(value instanceof Number) )
 				continue;
 			
-			Number base = ( Number ) value;
-			return String.format("%s <span style='float:right;' title='%s' >%s</span>", 
+			Number deductionBase = (( Number ) value);
+			
+			return String.format("%s <span style='float:right;' title='%s' >s/ %s</span>", 
 					description, 
 					getDescription(contextVar),
-					new java.text.DecimalFormat("#,##0.00;(#,##0.00)", DecimalFormatSymbols.getInstance(new Locale("es","ES"))).format(base));
+					new java.text.DecimalFormat("#,##0.00;(#,##0.00)", DecimalFormatSymbols.getInstance(new Locale("es","ES"))).format(deductionBase));
 		}
 		
 		return description;
 	}
+	
 
 	public void setDbSalary(com.esferalia.aon.payroll.Salary dbSalary) throws SalaryException {
 
@@ -1516,6 +1527,9 @@ public class SalaryDraftBuilder
 			    	d.getAmount() < 0.00 
 			    	&& d.getType() == Deduction.Type.COMMON_CONTINGENCY 
 			    	&& deduction.getType() == Deduction.Type.COMMON_CONTINGENCY)
+
+			    || (d.getType() == Deduction.Type.SOLIDARITY 
+			    	&& deduction.getType() == Deduction.Type.SOLIDARITY)
 			    ) 
 			{
 				if (deduction instanceof CompositeDeduction)
@@ -1547,6 +1561,8 @@ public class SalaryDraftBuilder
 			    	&& c.getType() == Deduction.Type.COMMON_CONTINGENCY 
 			    	&& cost.getType() == Deduction.Type.COMMON_CONTINGENCY)
 		    		
+				    || (c.getType() == Deduction.Type.SOLIDARITY 
+			    	&& cost.getType() == Deduction.Type.SOLIDARITY)
 				) {
 				if (cost instanceof CompositeDeduction)
 					return (CompositeDeduction) cost;
@@ -1977,6 +1993,16 @@ public class SalaryDraftBuilder
 		description.append(" Cotizaci\u00f3n por Exceso");
 	    }
 	    return description.toString();
+	}
+
+	private static String getDescription(CompositeDeduction deduction, String def) {
+		switch (deduction.getType()) {
+		case SOLIDARITY:
+			return deduction.getType().getDescription();
+		default:
+			return getDescription(deduction, def);
+		}
+		
 	}
 
 	private static String getDescription(Deduction deduction, String def) {

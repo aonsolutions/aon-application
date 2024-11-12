@@ -49,6 +49,7 @@ import static com.esferalia.aon.payroll.enumeration.ContextVariable.SLD_C737;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.SLD_H03;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.SLD_H04;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.SLD_H06;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.SOLIDARITY_BASES;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.STRIKE_FACTOR;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.STRUCTURAL_OVERTIME_BASE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.SUM;
@@ -2236,6 +2237,7 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 		fillData(ctx, FILL_DATA);
 		fillData(ctx, FREE_BASES);
 		fillData(ctx, ERE_BASES);
+		fillData(ctx, SOLIDARITY_BASES);
 		
 		ctx.getSalaryType().accept(new SalaryTypeVisitor<Void>() {
 
@@ -2495,6 +2497,11 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 			
 			@Override
 			public void visitProfessionalContigency(DeductionType deductionType) {
+				add();
+			}
+			
+			@Override
+			public void visitSolidarity(DeductionType deductionType) {
 				add();
 			}
 			
