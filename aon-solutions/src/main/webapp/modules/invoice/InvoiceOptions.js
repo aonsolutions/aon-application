@@ -4,7 +4,7 @@ import * as GWT from "../../gwt/gwt.js";
   export const gwtLoad = (option) => {
     let application = document.querySelector(TAG.AON_APPLICATION);
     document.body.classList.add('gwt-Selector');
-    GWT.load(option, application.CONTENT);
+    GWT.iLoad(option, application.CONTENT);
   }
 
   export const newInvoice = (type) => {

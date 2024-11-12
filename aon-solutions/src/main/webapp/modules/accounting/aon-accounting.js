@@ -202,7 +202,7 @@ export class AonAccounting extends AonElement {
 				fn: () => {
 					this.getApplication().removeSidenavById(CONSTANT.OPTIONS);
 					this.clearElementById(this.getApplication().getContent().id);
-					GWT.load(GWT.NORDIGEN, this.getApplication().CONTENT);
+					GWT.iLoad(GWT.NORDIGEN, this.getApplication().CONTENT);
 					this.loader(`#${this.getApplication().getContent().id} .aon_toolbar`);
 				}
 			});
@@ -215,7 +215,7 @@ export class AonAccounting extends AonElement {
 				fn: () => {
 					this.getApplication().removeSidenavById(CONSTANT.OPTIONS);
 					this.clearElementById(this.getApplication().getContent().id);
-					GWT.load(GWT.STATEMENT_REPORT, this.getApplication().CONTENT);
+					GWT.iLoad(GWT.STATEMENT_REPORT, this.getApplication().CONTENT);
 					this.loader(`#${this.getApplication().getContent().id} .aon_toolbar`);
 				}
 			});
@@ -226,7 +226,7 @@ export class AonAccounting extends AonElement {
 				fn: () => {
 					this.getApplication().removeSidenavById(CONSTANT.OPTIONS);
 					this.clearElementById(this.getApplication().getContent().id);
-					GWT.load(GWT.ACCOUNT_OPERATION_STATEMENT, this.getApplication().CONTENT);
+					GWT.iLoad(GWT.ACCOUNT_OPERATION_STATEMENT, this.getApplication().CONTENT);
 					this.loader(`#${this.getApplication().getContent().id} .aon_toolbar`);
 				}
 			});
@@ -237,7 +237,7 @@ export class AonAccounting extends AonElement {
 				fn: () => {
 					this.getApplication().removeSidenavById(CONSTANT.OPTIONS);
 					this.clearElementById(this.getApplication().getContent().id);
-					GWT.load(GWT.ACCOUNT_TRIAL_BALANCE_REPORT, this.getApplication().CONTENT);
+					GWT.iLoad(GWT.ACCOUNT_TRIAL_BALANCE_REPORT, this.getApplication().CONTENT);
 					this.loader(`#${this.getApplication().getContent().id} .aon_toolbar`);
 				}
 			});
@@ -248,7 +248,7 @@ export class AonAccounting extends AonElement {
 				fn: () => {
 					this.getApplication().removeSidenavById(CONSTANT.OPTIONS);
 					this.clearElementById(this.getApplication().getContent().id);
-					GWT.load(GWT.JOURNAL_REPORT, this.getApplication().CONTENT);
+					GWT.iLoad(GWT.JOURNAL_REPORT, this.getApplication().CONTENT);
 					this.loader(`#${this.getApplication().getContent().id} .aon_toolbar`);
 				}
 			});
@@ -259,7 +259,7 @@ export class AonAccounting extends AonElement {
 				fn: () => {
 					this.getApplication().removeSidenavById(CONSTANT.OPTIONS);
 					this.clearElementById(this.getApplication().getContent().id);
-					GWT.load(GWT.LEDGER_REPORT, this.getApplication().CONTENT);
+					GWT.iLoad(GWT.LEDGER_REPORT, this.getApplication().CONTENT);
 					this.loader(`#${this.getApplication().getContent().id} .aon_toolbar`);
 				}
 			});
@@ -270,7 +270,7 @@ export class AonAccounting extends AonElement {
 				fn: () => {
 					this.getApplication().removeSidenavById(CONSTANT.OPTIONS);
 					this.clearElementById(this.getApplication().getContent().id);
-					GWT.load(GWT.ACCOUNT_BALANCE_REPORT, this.getApplication().CONTENT);
+					GWT.iLoad(GWT.ACCOUNT_BALANCE_REPORT, this.getApplication().CONTENT);
 					this.loader(`#${this.getApplication().getContent().id} .aon_toolbar`);
 				}
 			});
