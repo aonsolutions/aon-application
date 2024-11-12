@@ -15,6 +15,7 @@ import com.esferalia.aon.occam.api.model.DomainParams;
 import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.console.ConsoleTableField;
 import com.esferalia.aon.occam.api.model.console.ConsoleTableRow;
+import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.watson.error.AonCoreException;
 
 @WebServlet(name = "Aon MS Console Servlet", urlPatterns = { "/aon_gwt_fiscal/ms/Console" })
@@ -49,8 +50,12 @@ public class ConsoleServiceImpl extends AonStatelessRemoteServiceServlet impleme
 	}
 	
 	@Override
-	public String remoteAccess(DomainParams params, Integer domainId) {
-		return CONSOLE.remoteAccess(params, domainId);
+	public Boolean switchRemoteAccess(DomainParams params, Integer domainId) {
+		return CONSOLE.switchRemoteAccess(params, domainId);
+	}
+	@Override
+	public LinkedList<User> availableUsers(Occam occam, Integer domainId) throws AonCoreException {
+		return CONSOLE.availableUsers(occam, domainId);
 	}
 	
 	@Override

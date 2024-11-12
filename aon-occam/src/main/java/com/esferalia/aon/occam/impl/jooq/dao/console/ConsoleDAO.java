@@ -14,7 +14,6 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Function;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.jooq.Condition;
@@ -36,23 +35,23 @@ import com.code.aon.ql.util.ExpressionException;
 import com.esferalia.aon.jooq.AonMaster;
 import com.esferalia.aon.jooq.tables.records.DomainRecord;
 import com.esferalia.aon.occam.api.AONContext;
-import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.esferalia.aon.occam.api.model.ConsoleDomain;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.DomainParams;
 import com.esferalia.aon.occam.api.model.console.ConsoleTableField;
 import com.esferalia.aon.occam.api.model.console.ConsoleTableFieldType;
 import com.esferalia.aon.occam.api.model.console.ConsoleTableRow;
+import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.type.AppParam;
 import com.esferalia.aon.occam.impl.jooq.dao.AppParamDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.DomainDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.Filler;
 import com.esferalia.aon.occam.impl.jooq.dao.FillerDAO.DomainFiller;
+import com.esferalia.aon.occam.impl.jooq.dao.SecurityDAO;
 import com.esferalia.aon.occam.impl.jooq.ql.JOOQRenderer;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.server.AonEnumUtils;
-import com.esferalia.aon.watson.util.AonCollectionUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.esferalia.aon.watson.util.Pair;
@@ -69,7 +68,7 @@ public class ConsoleDAO {
 	protected ConsoleDAO() {
 	}
 	
-	public static Stream<ConsoleDomain> getDomains(CloseableAONContext ctx, DomainParams params) {
+	public static Stream<ConsoleDomain> getDomains(AONContext ctx, DomainParams params) {
 		com.esferalia.aon.jooq.tables.Domain domainChild = DOMAIN.as("domainChild");
 		Field<Integer> childCountParent = domainChild.PARENT.as("childCountParent");
 		Field<Integer> childCountField = DSL.count().as("childCount");
@@ -134,7 +133,7 @@ public class ConsoleDAO {
 			;			
 	}
 
-	public static Domain changeActive(CloseableAONContext ctx, Integer domainId, boolean active) {
+	public static Domain changeActive(AONContext ctx, Integer domainId, boolean active) {
 		int count = ctx.getDslContext()
 			.update(DOMAIN)
 			.set(DOMAIN.ACTIVE, AonEnumUtils.getByte( active ))
@@ -154,7 +153,7 @@ public class ConsoleDAO {
 		return dom;
 	}
 
-	public static Domain changeExpirationDate(CloseableAONContext ctx, Integer domainId, Date expireDate) {
+	public static Domain changeExpirationDate(AONContext ctx, Integer domainId, Date expireDate) {
 		int count = ctx.getDslContext()
 			.update(DOMAIN)
 			.set(DOMAIN.EXPIRATIONDATE, AonDateUtils.toSql( expireDate ))
@@ -250,8 +249,17 @@ public class ConsoleDAO {
 			.findAny()
 			.isPresent();
 	}
+	
+	public static Stream<User> availableUsers(AONContext ctx, Integer domainId) {
+		DomainRecord domainRecord = DomainDAO.getParentDomain(ctx, domainId);
+		Integer[] domains = (domainRecord == null || domainRecord.getParent() == null) 
+			? new Integer[]{domainId}
+			: new Integer[]{domainId,domainRecord.getParent()};
+		return SecurityDAO.getDomainUserStream( ctx, f -> f.getDomainProperty().in( domains)
+				.and( f.getActiveProperty().eq( (byte) 1)));
+	}
 
-	public static String remoteAccess(CloseableAONContext ctx, Integer domainId) {
+	public static boolean switchRemoteAccess(AONContext ctx, Integer domainId) {
 		if (isRemoteAccessEnabled(ctx, domainId)) {
 			int count = ctx.getDslContext()
 				.delete(APP_PARAM)
@@ -259,7 +267,7 @@ public class ConsoleDAO {
 				.and(APP_PARAM.NAME .eq(AppParam.AON_SUPPORT_ENABLED.toString()))
 				.execute();
 			ctx.log().info("Remote Access Change: OFF " + domainId + "(" + count + " rows)");
-			return null;
+			return false;
 		} else {
 			int count = ctx.getDslContext()
 				.insertInto(APP_PARAM)
@@ -268,42 +276,7 @@ public class ConsoleDAO {
 				.set(APP_PARAM.VALUE, String.valueOf(new Date().getTime()))
 				.execute();
 			ctx.log().info("Remote Access Change: ON " + domainId + "(" + count + " rows)");
-			DomainRecord domainRecord = DomainDAO.getParentDomain(ctx, domainId);
-			Integer[] domains = (domainRecord == null || domainRecord.getParent() == null) 
-				? new Integer[]{domainId}
-				: new Integer[]{domainId,domainRecord.getParent()};
-			List<String> domainUsers = new LinkedList<>();
-			List<String> parentUsers = new LinkedList<>();
-			ctx.getDslContext()
-				.select(USER.DOMAIN, USER.LOGIN)
-				.from(USER)
-				.where(USER.DOMAIN.in(domains))
-				.and(USER.ACTIVE.eq((byte) 1))
-				.limit(10)
-				.fetch()
-				.stream()
-				.forEach(rec -> {
-					if (domainId.equals(rec.getValue(USER.DOMAIN))) {
-						domainUsers.add (rec.getValue(USER.LOGIN));
-					} else {
-						parentUsers.add (rec.getValue(USER.LOGIN));
-					}
-				});
-			StringBuilder users = new StringBuilder();
-			if (AonCollectionUtils.isNotEmpty( parentUsers )) {
-				users.append("Usuarios del dominio padre: ");
-				AonCollectionUtils.stream( parentUsers )
-					.map( u -> "["+u+"] ")
-					.forEach( users::append );
-			}
-			if (AonCollectionUtils.isNotEmpty( domainUsers )) {
-				users.append("Usuarios del dominio: ");
-				AonCollectionUtils.stream( domainUsers )
-					.map( u -> "["+u+"] ")
-					.forEach( users::append );
-			}
-			
-			return AonStringUtils.defaultIfBlank(users.toString(), "No hay usuarios activos en el dominio");
+			return true;
 		}
 		
 	}
@@ -317,7 +290,7 @@ public class ConsoleDAO {
 		return (TableField<?, Integer>) AON_MASTER.getTable(tableName).field("domain");
 	}
 	
-	public static ConsoleTableRow getTableRow(CloseableAONContext ctx, ConsoleTableRow params) {
+	public static ConsoleTableRow getTableRow(AONContext ctx, ConsoleTableRow params) {
 		try {
 			ConsoleTableRow tableRow = getTableRowMetadata( ctx, params );
 			Table<?> table = AON_MASTER.getTable(params.getTable());
@@ -406,7 +379,7 @@ public class ConsoleDAO {
 			.toArray(tableName -> new String[tableName]);
 	}
 
-	public static ConsoleTableRow getTableRowMetadata(CloseableAONContext ctx, ConsoleTableRow params) {
+	public static ConsoleTableRow getTableRowMetadata(AONContext ctx, ConsoleTableRow params) {
 		ConsoleTableRow tableRow = new ConsoleTableRow()
 				.setSchema(params.getSchema())
 				.setTable( params.getTable() )
@@ -487,7 +460,7 @@ public class ConsoleDAO {
 		if (field.getType() == null) throw new AonCoreException("No se ha indicado el tipo de la columna para la operación.");
 	}
 	
-	public static Boolean delete(CloseableAONContext ctx, ConsoleTableRow row) {
+	public static Boolean delete(AONContext ctx, ConsoleTableRow row) {
 		validate(row);
 		Table<?> table = AON_MASTER.getTable(row.getTable());
 		TableField<?, Integer> pkField = getPkField(row.getTable());
@@ -497,7 +470,7 @@ public class ConsoleDAO {
 		return (count>0);
 	}
 	
-	public static ConsoleTableRow update(CloseableAONContext ctx, ConsoleTableRow row, ConsoleTableField field) {
+	public static ConsoleTableRow update(AONContext ctx, ConsoleTableRow row, ConsoleTableField field) {
 		validate(row);
 		validate(field);
 		Table<?> table = AON_MASTER.getTable(row.getTable());
