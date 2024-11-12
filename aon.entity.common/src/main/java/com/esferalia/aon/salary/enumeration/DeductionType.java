@@ -108,6 +108,13 @@ public enum DeductionType implements IResourceable {
 		public void accept(DeductionTypeVisitor visitor) {
 			visitor.visitMei(this);
 		}
+	},
+	SOLIDARITY(true)
+	{
+		@Override
+		public void accept(DeductionTypeVisitor visitor) {
+			visitor.visitSolidarity(this);
+		}
 	}
 	;
 	

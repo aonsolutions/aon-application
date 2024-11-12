@@ -2941,6 +2941,11 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 			    return "MECANISMO EQUIDAD INTERGENERACIONAL";
 			}
 			
+			@Override
+			public String visitSolidarity(DeductionType deductionType) {
+			    return "SOLIDARIDAD";
+			}
+			
 		});
 	}
 
