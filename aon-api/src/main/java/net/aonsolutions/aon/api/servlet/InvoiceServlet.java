@@ -631,6 +631,7 @@ public class InvoiceServlet extends AonApiHttpServlet{
 		json.put(IJsonNames.ID, rawdoc.getId());
 		json.put(IJsonNames.DATE, jsonInvoice.optString(IJsonNames.DATE));
 		json.put(IJsonNames.REFERENCE, jsonInvoice.optString(IJsonNames.REFERENCE));
+		json.put(IJsonNames.FILE_NAME, jsonInvoice.optString(IJsonNames.FILE_NAME));
 		if(jsonInvoice.optJSONObject(IJsonNames.RECEIVER) != null) {
 			json.put(IJsonNames.NAME, jsonInvoice.optJSONObject(IJsonNames.RECEIVER).optString(IJsonNames.NAME) );
 			json.put(IJsonNames.DOCUMENT, jsonInvoice.optJSONObject(IJsonNames.RECEIVER).optString(IJsonNames.DOCUMENT));
