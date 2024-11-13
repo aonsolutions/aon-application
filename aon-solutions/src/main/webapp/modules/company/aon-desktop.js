@@ -1478,13 +1478,13 @@ export class AonDesktop extends AonElement {
 				this.rootPanel(payroll);
 				break;
 			case Apps.INVOICE.app:
-				GWT.load(GWT.INVOICE_STAT);
+				GWT.iLoad(GWT.INVOICE_STAT);
 				break;
 			case Apps.TIMECONTROL.app:
 				break;
 			case Apps.MESSENGER.app:
 				if(this.isBeta())
-					GWT.load(GWT.TASK_STAT);
+					GWT.iLoad(GWT.TASK_STAT);
 				break;
 			}
 	}
