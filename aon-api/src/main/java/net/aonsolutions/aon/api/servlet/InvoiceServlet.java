@@ -1,6 +1,7 @@
 package net.aonsolutions.aon.api.servlet;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 import java.util.Date;
@@ -646,7 +647,18 @@ public class InvoiceServlet extends AonApiHttpServlet{
 		json.put(IJsonNames.NUMBER, jsonInvoice.optString(IJsonNames.NUMBER));
 		json.put(IJsonNames.SERIE, jsonInvoice.optString(IJsonNames.SERIE));
 		json.put(IJsonNames.EMAIL, jsonInvoice.optBoolean(IJsonNames.EMAIL));
-		if(rawdoc.getMimeType() != null){
+		if(!AonStringUtils.isBlank(rawdoc.getS3Key())) {
+//			URL url = S3.getURL(rawdoc.getS3Bucket(), rawdoc.getS3Key());
+			JSONObject f = new JSONObject();
+			f.put("url", "https://aon-upload-post.s3.eu-west-1.amazonaws.com/invoices/prueba-nuevo-cadiz.aonsolutions.org/B27376466/60873515/20241113123245/00__MTIzMTIzMTJBICgxMik%3D.pdf");
+			f.put("path", "https://aon-upload-post.s3.eu-west-1.amazonaws.com/invoices/prueba-nuevo-cadiz.aonsolutions.org/B27376466/60873515/20241113123245/00__MTIzMTIzMTJBICgxMik%3D.pdf");
+			//String contentType = S3.getContentType(rawdoc.getS3Bucket(), rawdoc.getS3Key());
+			f.put("content_type", rawdoc.getMimeType() != null && rawdoc.getMimeType().getName().contains("image")
+					? rawdoc.getMimeType().getName() : "application/pdf");
+			f.put("s3Bucket", rawdoc.getS3Bucket());
+			f.put("s3Key", rawdoc.getS3Key());
+		    json.put(IJsonNames.FILE, f);
+		} else if(rawdoc.getMimeType() != null){
 	        JSONObject data = new JSONObject();
 	        data.put("domain_name", api.getDomain().getName());
 	        data.put("domain_id", api.getDomain().getId());
