@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.Date;
@@ -66,6 +67,7 @@ import com.esferalia.aon.occam.api.model.type.DomainType;
 import com.esferalia.aon.occam.api.model.type.MediaType;
 import com.esferalia.aon.occam.api.model.type.SecurityLevel;
 import com.esferalia.aon.occam.api.model.type.StreetType;
+import com.esferalia.aon.occam.impl.jooq.dao.DomainDAO;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.util.AonDocumentUtil;
 import com.esferalia.aon.watson.util.AonStringUtils;
@@ -243,16 +245,13 @@ public class ActionTargetServlet extends AonApiHttpServlet {
 		
 		if(null != parent) {
 			
-			byte[] logo = null;
-			try (CloseableAONContext aonContext = AONContext.getAONContext(parent.getName(), api.getUser().getLogin())) {
-				Company company = AON.getCompany(parent, api.getUser(), f -> f.getDomainProperty().eq(parent.getId()));
-				logo = getLogo(aonContext, company.getId());
-			}
+			String logoUrl = getLogoUrl(parent, api.getUser());
 			
 			try {
 				String emailBody = createEnterpriseBody(
 						actionTarget.getTarget().getDocument() + "-" + parent.getName(), 				// urlEnterprise
-						"http://" + parent.getName() + ":8080/ms/api/action-target/create-enterprise", 	// postUrl
+						"https://" + parent.getName() + "/ms/api/action-target/create-enterprise", 		// postUrl
+//						"http://" + parent.getName() + ":8080/ms/api/action-target/create-enterprise", 	// postUrl
 						actionTarget.getTarget().getName(), 											// enterpriseNameMail
 						actionTarget.getTarget().getDocument(),											// document 
 						actionTarget.getTarget().getStreetType(), 										// streetType
@@ -268,7 +267,7 @@ public class ActionTargetServlet extends AonApiHttpServlet {
 						parent.getId().toString(),														// domainId
 						api.getUser().getLogin(),														// userLogin
 						api.getToken(),																	// userLogin
-						logo,																			// LOGO		
+						logoUrl,																			// LOGO		
 						parent.getDescription());
 				
 				sendTrailEnterpriseMail(actionTarget, emailBody);
@@ -279,6 +278,24 @@ public class ActionTargetServlet extends AonApiHttpServlet {
 			
 		}
 		
+	}
+	
+	private static String getLogoUrl(Domain parentDomain, User user) {
+		String logoUrl = null;
+		try (CloseableAONContext aonContext = AONContext.getAONContext(parentDomain.getName(), user.getLogin())) {
+			Company company = AON.getCompany(parentDomain, user, f -> f.getDomainProperty().eq(parentDomain.getId()));
+			
+			Attach attach = getLogoAttach(aonContext, company.getId());
+			
+			String str = "domain="+ attach.getDomain().getId() + "&id=" + attach.getId() + "&attach_type=registry";
+		    String result = Base64.getEncoder().encodeToString(str.getBytes(StandardCharsets.UTF_8));
+		    
+		    Domain attachDomain = DomainDAO.getDomain(aonContext, attach.getDomain().getId());
+		    logoUrl = "https://" + parentDomain.getName() + "/ms/download_attachment/"  + attachDomain.getName() + "/" + attach.getCreationUser() + "/" +  result;
+//		    logoUrl = "http://" + domainName + ":8080/" + "ms/download_attachment/"  + attachDomain.getName() + "/" + attach.getCreationUser() + "/" +  result;
+		}
+		
+		return logoUrl;
 	}
 
 	// ---------------------------------------------------------------------------------------------
@@ -795,30 +812,30 @@ public class ActionTargetServlet extends AonApiHttpServlet {
 	}
 	
 	public static String createEnterpriseBody(String urlEnterprise, String baseUrl, String enterpriseNameMail, String document, String streetType, String address, String number, String zip, String geozoneCode, 
-            String city, String phone, String email, String target, String domainName, String domainId, String userLogin, String token, byte[] logo, String parentDomainName) throws UnsupportedEncodingException {
+            String city, String phone, String email, String target, String domainName, String domainId, String userLogin, String token, String logosrc, String parentDomainName) throws UnsupportedEncodingException {
     
 	    // Construir la URL completa para la llamada GET en GWT
 	    String postUrl = baseUrl + "?name=" + URLEncoder.encode(enterpriseNameMail, "UTF-8") + "&document=" + document + "&streetType=" + streetType
-	                     + "&address=" + address + "&number=" + number + "&zip=" + zip + "&geozoneCode=" + geozoneCode
-	                     + "&city=" + city + "&phone=" + phone + "&email=" + email + "&target=" + target
+	                     + "&address=" + URLEncoder.encode(address, "UTF-8") + "&number=" + number + "&zip=" + zip + "&geozoneCode=" + geozoneCode
+	                     + "&city=" + URLEncoder.encode(city, "UTF-8") + "&phone=" + phone + "&email=" + email + "&target=" + target
 	                     + "&domain_name=" + domainName + "&domain_id=" + domainId + "&domain_login=" + userLogin
 	                     + "&session_id=" + token;
 	
 	    String shortUrl = AON.getShortURL("laburr", postUrl);
 	    
 	    String body = "";
-	    String logoBase64 = "";
-	    
-	    if (logo != null) {
-	        logoBase64 = Base64.getEncoder().encodeToString(logo);
-	    }
+//	    String logoBase64 = "";
+//	    
+//	    if (logo != null) {
+//	        logoBase64 = Base64.getEncoder().encodeToString(logo);
+//	    }
 	    
 	    body += "<div style=\"background-color: #f9f9f9; padding: 20px; border-radius: 10px; max-width: 600px; margin: 0 auto; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);\">\n";
 	    
 	    if (AonStringUtils.isNotBlank(body)) {
 	        body += "  <!-- Imagen del logo al principio -->\n"
 	                + "  <div style=\"text-align: center; margin-bottom: 20px;\">\n"
-	                + "    <img src=\"data:image/png;base64," + logoBase64 + "\" alt=\"" + parentDomainName + "\" style=\"max-width: 200px; border-radius: 10px;\">\n"
+	                + "    <img src=\"" + logosrc + "\" alt=\"" + parentDomainName + "\" style=\"max-width: 200px; border-radius: 10px;\">\n"
 	                + "  </div>\n";
 	    }
 	    
@@ -906,6 +923,19 @@ public class ActionTargetServlet extends AonApiHttpServlet {
 				optLogo = Optional.ofNullable(new ByteArrayInputStream(attach1.getData()));
 		}
 		return getBytes(optLogo);
+	}
+	
+	private static Attach getLogoAttach(AONContext aonContext, Integer enterpriseId) {
+		Attach attach1 = AON.getAttach(aonContext.getDomainName(), aonContext.getDomainId(), aonContext.getUser(),
+				f -> f.getTypeProperty().eq(SIGNATURE.value()).and(f.getAttachModuleProperty().eq(enterpriseId)),
+				REGISTRY);
+
+		if (attach1 == null || attach1.getData() == null)
+			attach1 = AON.getAttach(aonContext.getDomainName(), aonContext.getDomainId(), aonContext.getUser(),
+					f -> f.getTypeProperty().eq(LOGO.value()).and(f.getAttachModuleProperty().eq(enterpriseId)),
+					REGISTRY);
+
+		return attach1;
 	}
 
 	private static byte[] getBytes(Optional<InputStream> optLogo) {
