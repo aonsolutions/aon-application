@@ -99,6 +99,8 @@ public class ActionTargetServlet extends AonApiHttpServlet {
 	private static String userMail;
 	private static String userLogingMail;
 	private static String passwordMail;
+	
+	private static boolean isLocal = false;
 
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) {
@@ -246,12 +248,14 @@ public class ActionTargetServlet extends AonApiHttpServlet {
 		if(null != parent) {
 			
 			String logoUrl = getLogoUrl(parent, api.getUser());
+			String postUrl = (isLocal ? "http" : "https") + "://" + parent.getName() + (isLocal ? ":8080" : "") + "/ms/api/action-target/create-enterprise";
+			
+			System.out.println("LogoURL : " + logoUrl);
 			
 			try {
 				String emailBody = createEnterpriseBody(
 						actionTarget.getTarget().getDocument() + "-" + parent.getName(), 				// urlEnterprise
-						"https://" + parent.getName() + "/ms/api/action-target/create-enterprise", 	// postUrl
-//						"http://" + parent.getName() + ":8080/ms/api/action-target/create-enterprise", 	// postUrl
+						postUrl, 																		// postUrl
 						actionTarget.getTarget().getName(), 											// enterpriseNameMail
 						actionTarget.getTarget().getDocument(),											// document 
 						actionTarget.getTarget().getStreetType(), 										// streetType
@@ -291,8 +295,7 @@ public class ActionTargetServlet extends AonApiHttpServlet {
 		    String result = Base64.getEncoder().encodeToString(str.getBytes(StandardCharsets.UTF_8));
 		    
 		    Domain attachDomain = DomainDAO.getDomain(aonContext, attach.getDomain().getId());
-		    logoUrl = "https://" + parentDomain.getName() + "/ms/download_attachment/"  + attachDomain.getName() + "/" + attach.getCreationUser() + "/" +  result;
-//		    logoUrl = "http://" + domainName + ":8080/" + "ms/download_attachment/"  + attachDomain.getName() + "/" + attach.getCreationUser() + "/" +  result;
+		    logoUrl = (isLocal ? "http" : "https") + "://" + parentDomain.getName() + (isLocal ? ":8080" : "") + "/ms/download_attachment/"  + attachDomain.getName() + "/" + attach.getCreationUser() + "/" +  result;
 		}
 		
 		return logoUrl;
@@ -423,19 +426,54 @@ public class ActionTargetServlet extends AonApiHttpServlet {
 		}
 		
 		// Send mail
-		sendTrailEnterpriseCreatedMail(email);	
+		Domain parent = api.getDomain().isParent() ? 
+				api.getDomain() : 
+				AON.getDomain(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), f->f.getIdProperty().eq(api.getDomain().getParentId()));			
 		
+		String logoUrl = getLogoUrl(parent, api.getUser());
+		
+		sendTrailEnterpriseCreatedMail(email, logoUrl, parent.getDescription());	
+		
+		return getFinishCreationHtml(logoUrl, parent.getDescription());
+	}
+	
+	private static String getFinishCreationHtml(String logoUrl, String parentDomainDesc) {
 		// Response HTML Page
-		String mensaje = "La empresa se ha generado correctamente.";
-
-        // Estructura de la página HTML
-        String htmlResponse = "<html>"
-                + "<head><title>Generación de Empresa</title></head>"
-                + "<body>"
-                + "<h1>" + mensaje + "</h1>"
-                + "<p>Gracias por usar nuestro sistema.</p>"
-                + "<a href='/'>Volver a la página principal</a>"
-                + "</body></html>";
+		String htmlResponse = 
+				
+				"<div style=\"display: flex; justify-content: center; align-items: center; padding: 20px;\">"
+		        + "<div style=\"background-color: #ffffff; padding: 20px; max-width: 600px; width: 100%; border-radius: 8px; box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1); border-top: 5px solid #002469;\">"
+		        
+			        // Logo
+			        + "<div style=\"text-align: center;\">"
+			        + "<img src=\"" + logoUrl + "\" alt=\"" + parentDomainDesc + "\" style=\"max-width: 150px; height: auto; margin-bottom: 20px;\">"
+			        + "</div>"
+		        
+			        // Título de confirmación
+			        + "<h1 style=\"color: #333333; text-align: center; font-size: 24px; margin-top: 0;\">" + (errors.isEmpty() ? "¡Empresa generada correctamente!" : "¡No se ha podido generar la empresa!") + "</h1>"
+		        
+			        // Información de la empresa
+			        + "<div style=\"color: #555555; font-size: 16px; line-height: 1.6; margin-top: 20px;\">"
+				        + "<p><strong>Nombre de la Empresa:</strong> " + enterpriseNameMail + "</p>"
+				        + "<p><strong>URL Empresa:</strong> <a href=\"" + urlMail + "\" style=\"color: #333333; text-decoration: none;\">" + urlMail + "</a></p>"
+				        + "<p><strong>Email:</strong> " + userMail + "</p>"
+			        + "</div>";
+		
+		if(!errors.isEmpty()) {
+			htmlResponse
+					+= "<p style=\"font-size: 16px; color: #333;\"><strong>Errores</strong></p>";
+			
+			for(String error : errors) {
+				htmlResponse   += "  <div style=\"color: red; margin-bottom: 15px; font-size: 14px;\">"
+						+ "   " + error + ""
+						+ "  </div>";
+			}
+		}
+		        
+		// Mensaje de agradecimiento
+		htmlResponse += "<p style=\"color: #777777; text-align: center; font-size: 14px; margin-top: 30px;\">Gracias por confiar en nosotros. Si tienes alguna pregunta, no dudes en contactarnos.</p>"
+				  + "</div>"
+		        + "</div>";
 			
         return htmlResponse;
 	}
@@ -795,7 +833,7 @@ public class ActionTargetServlet extends AonApiHttpServlet {
 		System.out.println("Email sent : " + emailSent);
 	}
 	
-	private static void sendTrailEnterpriseCreatedMail(String targetEmail) {
+	private static void sendTrailEnterpriseCreatedMail(String targetEmail, String logoUrl, String parentDomainName) {
 		String fromTo = "booking@aonsolutions.es";
 		
 		SESMessage msg = new SESMessage()
@@ -804,7 +842,7 @@ public class ActionTargetServlet extends AonApiHttpServlet {
 				.setTo(targetEmail)
 				.setBcc(fromTo)
 				.setSubject(enterpriseNameMail + " (TRIAL)")
-				.setBody(createEnterpriseCreatedBody());
+				.setBody(createEnterpriseCreatedBody(logoUrl, parentDomainName));
 		
 		String emailSent = SES.sendEmail(msg);
 		
@@ -824,11 +862,6 @@ public class ActionTargetServlet extends AonApiHttpServlet {
 	    String shortUrl = AON.getShortURL("laburr", postUrl);
 	    
 	    String body = "";
-//	    String logoBase64 = "";
-//	    
-//	    if (logo != null) {
-//	        logoBase64 = Base64.getEncoder().encodeToString(logo);
-//	    }
 	    
 	    body += "<div style=\"background-color: #f9f9f9; padding: 20px; border-radius: 10px; max-width: 600px; margin: 0 auto; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);\">\n";
 	    
@@ -865,13 +898,20 @@ public class ActionTargetServlet extends AonApiHttpServlet {
 	}
 
 
-	private static String createEnterpriseCreatedBody() {
+	private static String createEnterpriseCreatedBody(String logoUrl, String parentDomainName) {
 		String body = "";
 		
-		body += "<div style=\"background-color: #ffffff; padding: 20px; border-radius: 10px; max-width: 600px; margin: 0 auto; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);\">\n"
-				+ "  <h2 style=\"text-align: center; color: #333;\">" + (errors.isEmpty() ? "Informaci\u00f3n de Creación de Empresa" : "Error Creaci\u00f3n de Empresa") + "</h2>\n"
+		body += "<div style=\"background-color: #ffffff; padding: 20px; border-radius: 10px; max-width: 600px; margin: 0 auto; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);\">\n";
+		
+		if (AonStringUtils.isNotBlank(body)) {
+		        body += "  <!-- Imagen del logo al principio -->\n"
+		                + "  <div style=\"text-align: center; margin-bottom: 20px;\">\n"
+		                + "    <img src=\"" + logoUrl + "\" alt=\"" + parentDomainName + "\" style=\"max-width: 200px; border-radius: 10px;\">\n"
+		                + "  </div>\n";
+		}
+		
+		body += "  <h2 style=\"text-align: center; color: #333;\">" + (errors.isEmpty() ? "Informaci\u00f3n de Creación de Empresa" : "Error Creaci\u00f3n de Empresa") + "</h2>\n"
 				+ "\n"
-				
 				+ "  <p style=\"font-size: 16px; color: #333;\"><strong>Nombre de la Empresa:</strong> <span id=\"nombre-empresa\">" + enterpriseNameMail + "</span></p>\n"
 				+ "\n"
 				+ "  <p style=\"font-size: 16px; color: #333;\"><strong>URL de la Empresa:</strong> <a href=\"" + urlMail + "\" id=\"url-empresa\" style=\"color: #007bff;\">" + urlMail + "</a></p>\n"
