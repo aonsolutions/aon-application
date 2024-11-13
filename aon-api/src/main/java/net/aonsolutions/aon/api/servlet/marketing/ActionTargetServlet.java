@@ -250,7 +250,7 @@ public class ActionTargetServlet extends AonApiHttpServlet {
 			try {
 				String emailBody = createEnterpriseBody(
 						actionTarget.getTarget().getDocument() + "-" + parent.getName(), 				// urlEnterprise
-						"https://" + parent.getName() + "/ms/api/action-target/create-enterprise", 		// postUrl
+						"https://" + parent.getName() + "/ms/api/action-target/create-enterprise", 	// postUrl
 //						"http://" + parent.getName() + ":8080/ms/api/action-target/create-enterprise", 	// postUrl
 						actionTarget.getTarget().getName(), 											// enterpriseNameMail
 						actionTarget.getTarget().getDocument(),											// document 
