@@ -531,6 +531,23 @@
 	align-items: center;
 }
 
+.gwt-TabBar {
+	background: transparent;
+}
+
+.gwt-TabBar .gwt-TabBarItem {
+	color: black;
+	background: transparent;
+}
+
+.gwt-TabBarItem-wrapper-selected {
+	border-bottom: 2px solid transparent;
+}
+
+.gwt-TabBarItem-wrapper-selected {
+	border-bottom: 2px solid #002469;
+}
+
 input[type='checkbox'] {
 	width: 24px;
 	height: 24px;
