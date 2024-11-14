@@ -41,14 +41,22 @@ public class PageM14_2 extends PageAbs {
 
 	public PageM14_2(Deposit2 deposit) {
 		super(deposit);
-
+		initialize(0);
+	}
+	
+	public PageM14_2(Deposit2 deposit, Integer tab) {
+		super(deposit);
+		initialize(tab);
+	}
+	
+	private void initialize(Integer tab) {
 		table1 = new FlexTable();
 		table2 = new FlexTable();
 		tabPanel = new TabPanel();
 		
 		Widget ui = pageBinder.createAndBindUi(this);
 		initWidget(ui);
-		tabPanel.selectTab(0);
+		tabPanel.selectTab(tab != null ? tab : 0);
 		
 		initializeTable();
 	}
@@ -107,5 +115,10 @@ public class PageM14_2 extends PageAbs {
 			}
 			++row;
 		}
+	}
+	
+	@Override
+	protected void refreshDepositPage() {
+		getDeposit().refreshPage(tabPanel.getTabBar().getSelectedTab());
 	}
 }

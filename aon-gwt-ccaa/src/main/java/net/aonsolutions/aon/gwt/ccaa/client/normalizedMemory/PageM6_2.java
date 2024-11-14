@@ -79,7 +79,15 @@ public class PageM6_2 extends PageAbs {
 	
 	public PageM6_2(Deposit2 deposit) {
 		super(deposit);
-
+		initialize(0);
+	}
+	
+	public PageM6_2(Deposit2 deposit, Integer tab) {
+		super(deposit);
+		initialize(tab);
+	}
+	
+	private void initialize(Integer tab) {
 		table1 = new FlexTable();
 		table2 = new FlexTable();
 		table3 = new FlexTable();
@@ -88,8 +96,7 @@ public class PageM6_2 extends PageAbs {
 		tabPanel = new TabPanel();
 		Widget ui = pageBinder.createAndBindUi(this);
 		initWidget(ui);
-		tabPanel.selectTab(0);
-	
+		tabPanel.selectTab(tab != null ? tab : 0);	
 		initializeTable();
 	}
 
