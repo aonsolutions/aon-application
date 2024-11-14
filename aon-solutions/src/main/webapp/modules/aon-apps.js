@@ -18,6 +18,7 @@ import { AonTimecontrol } from './timecontrol/aon-timecontrol.js';
 import { AonWarehouse } from './warehouse/aon-warehouse.js';
 import { AonConsole } from './console/aon-console.js';
 import { AonMarketing } from './marketing/aon-marketing.js';
+import { AonDragLeft } from './company/aon-dragleft.js';
 
 
 export class AonApps extends AonElement {
@@ -56,6 +57,7 @@ export class AonApps extends AonElement {
 		this.appendChild(this.buildTitle('APLICACIONES DISPONIBLES'));
 
 		let ul = this.createElement(TAG.UL);
+		ul.id = "aonMobileAppSelection";
 		ul.classList.add(CSS.AON_UL);
 		ul.classList.add(CSS.AON_LIST_GROUP);
 
@@ -64,8 +66,10 @@ export class AonApps extends AonElement {
 			if(this.isApp(app)) {
 
 				let li = this.createElement(TAG.LI);
+				li.id = "aonMobileAppSelectionApp-"+ app.app;
 				li.classList.add(CSS.AON_LIST_GROUP_ITEM);
 				li.classList.add(CSS.AON_APP_LI);
+				li.classList.add("fixLi");
 				li.style.borderRight = '0px';
 				li.style.borderLeft = '0px';
 				li.style.cursor = 'pointer';
@@ -79,10 +83,11 @@ export class AonApps extends AonElement {
 				span.style.margin = '20px';
 
 				if(app.icon) {
-					span.innerHTML = `<aon-icon icon="${app.icon}" color="${app.color}" size="30px"></aon-icon>`;
+					span.innerHTML = `<aon-icon id="aonMobileSelectionIcon-${app.app}" icon="${app.icon}" color="${app.color}" size="28px"></aon-icon>`;
 				}  else if(app.symbol) {
 					let icon = this.createSpan();
 					icon.classList.add(CSS.MATERIAL_SYMBOLS_OUTLINED);
+					icon.id = "aonMobileSelectionIcon-"+app.app;
 					icon.innerHTML = app.symbol;
 					icon.style.color = app.color;
 					icon.style.paddingTop = '5px';
@@ -90,31 +95,35 @@ export class AonApps extends AonElement {
 					span.appendChild(icon);
 				} else {
 					let img = this.createElement(TAG.IMG);
+					img.id = "aonMobileSelectionImg-"+app.app;
 					img.style.width = '30px';
 					img.src = app.logo;
 					span.appendChild(img);
 				}
 				let span2 = this.createElement(TAG.SPAN);
+				span2.id = "aonAppTitle-"+app.app
 				span2.className = 'aonAppTitle';
 				span2.innerHTML = app.title;
 				span.appendChild(span2);
 
-				let buttons = this.createElement(TAG.SPAN);
-				buttons.style.position = 'absolute';
-				buttons.style.right = '10px';
+				// let buttons = this.createElement(TAG.SPAN);
+				// buttons.style.position = 'absolute';
+				// buttons.style.right = '10px';
 
-				let i = this.createElement('i');
-				i.className = 'material-icons';
-				i.innerHTML = 'keyboard_arrow_right';
-				buttons.appendChild(i);
+				// let i = this.createElement('i');
+				// i.className = 'material-icons';
+				// i.innerHTML = 'keyboard_arrow_right';
+				// buttons.appendChild(i);
 
-				span.appendChild(buttons);
+				//span.appendChild(buttons);
 				li.appendChild(span);
 				ul.appendChild(li);
 			}
 		}
   	
 		this.appendChild(ul);
+		let drag = new AonDragLeft();
+		this.appendChild(drag);	
 	}
 
 	buildTitle(title) {

@@ -21,17 +21,11 @@
     right: 0px;
 }
 
-#aonAppMenuSideNavList {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr); 
-    gap: 10px; 
-    padding: 0;
-    margin: 0;
-    list-style: none;
-    width: 100%;
-    background-color: #f9f9f9;
-    justify-items: center; 
-    align-items: center; 
+#aonWarehouseMobileSidenavContentElaborationList{
+    display: grid !important;
+    grid-template-columns: repeat(2,1fr)  !important;
+    gap: 10px  !important;
+    list-style-type: none  !important;
 }
 
 #aonWarehouseMobileSideNavContentElaborationList,
@@ -99,9 +93,112 @@
 }
 
 #aonWarehouseMobileSidenavContentElaborationList{
-    margin-left: -40px;
+    margin-left: -30px;
 }
 
 #aonSidenavTitleElaboration{
-    margin-left: -45px !important;
+    margin-left: -170px !important;
+}
+
+#aonWarehouseMobileSidenavContentTags{
+    margin-bottom: 30px;
+}
+
+#aonWarehouseMobileSidenavContentPackagingicon{
+    margin-top: 5px;
+}
+
+/***************/
+.aonListGroupItem{
+    border-bottom: none;
+}
+
+#aonMobileAppSelection{
+    display: grid;
+    grid-template-columns: repeat(4,1fr);  
+    font-size: 10px;
+    padding: 0px;
+}
+
+.fixLi{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 90px;
+    margin-left: -10px;
+}
+
+.aonAppTitle{
+    display: block;
+    text-align: center;
+}
+
+ #aonMobileSelectionIcon-console{
+    margin-left: 30px;
+}
+
+#aonAppTitle-console{
+    margin-left: 3px;
+}
+
+#aonMobileSelectionIcon-accounting{
+    margin-left: 36px;
+} 
+
+#aonAppTitle-accounting{
+    margin-left: -3px;
+}
+
+#aonMobileSelectionImg-fiscal{
+    margin-left: 40px;
+}
+
+#aonAppTitle-fiscal{
+    margin-left: 20px;
+    margin-top: 3px;
+}
+
+#aonMobileSelectionIcon-payroll{
+    margin-left: 26px;
+}
+
+#aonAppTitle-payroll{
+    margin-top: 2px;
+}
+
+#aonMobileSelectionIcon-invoice{
+    margin-left: 32px;
+}
+
+#aonAppTitle-invoice{
+    margin-left: 3px;
+}
+
+#aonMobileSelectionIcon-documental{
+    margin-left: 30px;
+}
+
+#aonAppTitle-documental{
+    margin-left: -8px;
+}
+
+#aonMobileSelectionIcon-timecontrol{
+    margin-left: 40px;
+}
+
+#aonAppTitle-timecontrol{
+    margin-left: 6px;
+}
+
+#aonMobileSelectionIcon-warehouse{
+    margin-left: 25px;
+}
+
+#aonAppTitle-warehouse{
+    margin-left: -3px;
+}
+
+#aonMobileSelectionIcon-marketing{
+    margin-left: 32px;
 }

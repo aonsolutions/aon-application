@@ -4504,3 +4504,37 @@ font-weight: 600;
    pointer-events: none;  /* Deshabilita la interacción con el mouse */
  }
 
+ .aonDragLeftContainer { 
+    display: flex;
+    overflow: hidden;
+    width: 100%;
+    position: relative;
+    max-width: 100%;
+ }
+
+ .aonDragLeftInnerContainer {
+    display: flex;
+    transition: transform 0.5s ease;
+    width: 100%;
+    max-width: 100%;
+ }
+
+ .aonDragLeftCard {
+    flex: 0 0 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+ }
+
+ .aonDragLeftDotsContainer {
+    display: flex;
+    justify-content: center;
+    margin-top: 10px;
+ }
+
+ .aonDragLeftDot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    margin: 0 5px;
+    transition: background-color 0.3s;
+ }

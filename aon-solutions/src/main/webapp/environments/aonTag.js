@@ -140,6 +140,8 @@ export const AON_CREDITOR_LIST = 'aon-creditor-list';
 export const AON_MOBILE_CREDITOR = 'aon-mobile-creditor';
 export const AON_MOBILE_CREDITOR_LIST = 'aon-mobile-creditor-list';
 
+export const AON_DRAGLEFT = 'aon-dragleft';
+
 export const AON_PROJECT_PANEL = 'aon-project-panel';
 export const AON_PROJECT_LIST = 'aon-project-list';
 export const AON_PROJECT = 'aon-project';
