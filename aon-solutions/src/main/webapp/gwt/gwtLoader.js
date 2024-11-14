@@ -123,11 +123,8 @@
 
 	export const iStartModule = (module, entrypoint, subEntryPoint, rootPanel, customize) => {
 		let panel = rootPanel || 'rootPanel';
-		if(rootPanel) {
-			localStorage.setItem('rootPanel', rootPanel);
-		} else {
-			localStorage.removeItem('rootPanel');
-		}
+		localStorage.removeItem('rootPanel');
+
 		localStorage.setItem('aon_solutions', true);
 		removeRootPanel(panel);
 		if (window.document.createElement && window.document.getElementsByTagName) {
@@ -157,9 +154,7 @@
 				iwindow.getCurrentDomainName = () => LS.getDomainName();
 				iwindow.getCurrentDomain = () => LS.getDomainId();
 				iwindow.getCurrentUser = () => LS.getDomainLogin();
-				
-
-				
+				iwindow.isSysAdmin = () => true;
 
 
 				// inject 'gwt' script 

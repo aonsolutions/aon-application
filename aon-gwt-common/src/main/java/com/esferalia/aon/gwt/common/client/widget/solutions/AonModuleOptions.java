@@ -14,6 +14,7 @@ public class AonModuleOptions<T extends AonModuleOptions<T>> implements Serializ
 	private int domain;
 	private String user;
 	private AonConfiguration configuration;
+	private boolean advancedMode;
 
 	private HasWidgets parentWidget;
 	
@@ -61,6 +62,15 @@ public class AonModuleOptions<T extends AonModuleOptions<T>> implements Serializ
 	@SuppressWarnings("unchecked")
 	public T setConfiguration(AonConfiguration configuration) {
 		this.configuration = configuration;
+		return (T) this;
+	}
+	
+	public boolean isAdvancedMode() {
+		return advancedMode;
+	}
+	@SuppressWarnings("unchecked")
+	public T setAdvancedMode(boolean advancedMode) {
+		this.advancedMode = advancedMode;
 		return (T) this;
 	}
 	

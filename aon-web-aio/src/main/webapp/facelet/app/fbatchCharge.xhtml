@@ -11,9 +11,10 @@
 		<aon:commandButton 
 			id="appButton" 
 			style="display: none; " 
-			action="fbatch_search-charge"
+			action="fbatch_list-charge"
 			actionListener="#{fbatch.onEditSearchCharge}"
 		>
+			<aon:actionListener method="#{fbatch.onSearch}" />
 		</aon:commandButton>
 	</aon:form>
 	

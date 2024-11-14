@@ -1885,11 +1885,16 @@ public interface Properties {
 	public interface InvoiceBatchProperties {
 		Property<Integer> getIdProperty();
 		Property<Integer> getDomainProperty();
+		Property<String> getDescriptionProperty();
 		Property<Timestamp> getDateProperty();
+		Property<Timestamp> getEndDateProperty();
 		Property<Byte> getTypeProperty();
 		Property<Byte> getOperationProperty();
 		Property<Integer> getDataResponseProperty();
 		Property<String> getCreationUserProperty();
+		Property<Timestamp> getCreationDateProperty();
+		Property<String> getModificationUserProperty();
+		Property<Timestamp> getModificationDateProperty();
 	}
 	
 	public interface InvoiceBatchDetailProperties {

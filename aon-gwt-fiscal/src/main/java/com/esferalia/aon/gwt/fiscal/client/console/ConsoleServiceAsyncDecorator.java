@@ -11,6 +11,7 @@ import com.esferalia.aon.occam.api.model.DomainParams;
 import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.console.ConsoleTableField;
 import com.esferalia.aon.occam.api.model.console.ConsoleTableRow;
+import com.esferalia.aon.occam.api.model.security.User;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public class ConsoleServiceAsyncDecorator implements ConsoleServiceAsync {
@@ -52,9 +53,14 @@ public class ConsoleServiceAsyncDecorator implements ConsoleServiceAsync {
 	}
 	
 	@Override
-	public void remoteAccess(DomainParams params, Integer domainId, AsyncCallback<String> callback) {
+	public void switchRemoteAccess(DomainParams params, Integer domainId, AsyncCallback<Boolean> callback) {
 		AON.start();
-		fsa.remoteAccess(params, domainId, new AsyncCallbackWrapper<>(callback));
+		fsa.switchRemoteAccess(params, domainId, new AsyncCallbackWrapper<>(callback));
+	}
+	@Override
+	public void availableUsers(Occam occam, Integer domainId, AsyncCallback<LinkedList<User>> callback) {
+		AON.start();
+		fsa.availableUsers(occam, domainId, new AsyncCallbackWrapper<>(callback));
 	}
 	
 	@Override

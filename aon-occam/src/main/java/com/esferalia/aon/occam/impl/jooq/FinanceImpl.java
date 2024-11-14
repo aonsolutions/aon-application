@@ -40,6 +40,7 @@ import com.esferalia.aon.occam.api.model.finance.FinanceFilter;
 import com.esferalia.aon.occam.api.model.finance.FinanceTracking;
 import com.esferalia.aon.occam.api.model.finance.InvofoxConfiguration;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
+import com.esferalia.aon.occam.api.model.finance.InvoiceBatch;
 import com.esferalia.aon.occam.api.model.finance.InvoiceCommunicationTracking;
 import com.esferalia.aon.occam.api.model.finance.InvoiceData;
 import com.esferalia.aon.occam.api.model.finance.InvoiceDetail;
@@ -85,6 +86,7 @@ import com.esferalia.aon.occam.impl.jooq.dao.RegistryOldDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.SettleSalariesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.SiiConfigurationDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.TbaiConfigurationDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.invoice.InvoiceClosingDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.invoice.InvoiceCommunicationTrackingDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.invoice.InvoiceDataDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.invoice.InvoiceInfoDAO;
@@ -948,5 +950,17 @@ public class FinanceImpl implements IFinance {
 		return ctx.getDslContext().transactionResult(
 				configuration -> FinanceDAO.getFinanceGroupStatus(ctx, filter));	
 	}
+
+	// ---------- INVOICE CLOSING
 	
+	@Override
+	public Stream<InvoiceBatch> getInvoiceClosing(CloseableAONContext ctx) {
+		return ctx.getDslContext().transactionResult(
+				configuration -> InvoiceClosingDAO.get(ctx));
+	}
+	
+	@Override
+	public void saveInvoiceClosing(CloseableAONContext ctx, InvoiceBatch invoiceBatch) {
+		ctx.getDslContext().transaction(configuration -> InvoiceClosingDAO.save(ctx, invoiceBatch));
+	}
 }

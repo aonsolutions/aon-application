@@ -31,12 +31,17 @@ export const DARK_THEME = '/css/theme/dark.css';
 export const DARK_BETA_THEME = '/css/theme/darkBeta.css';
 
 export const get = (item) => {
-    let value = localStorage.getItem(item);
+	let value = getParam(item);
+	if ( value === null ){
+		value = localStorage.getItem(item);
+	} 
     if ( value === null ){ 
         value = getComputedStyle(document.body).getPropertyValue(`--${item}`);
     } 
     return value;
 }
+
+
 
 export const set = (item, value) => {
     localStorage.setItem(item, value);
@@ -326,5 +331,11 @@ export const removeDomain = () => {
     removeDomainName();
     removeDomainLogin();
     removeDomainDocument();
+}
+
+const getParam = (paramName) => {
+	const queryString = window.location.search;
+	const searchParams = new URLSearchParams(queryString);
+	return searchParams.get(paramName);
 }
 

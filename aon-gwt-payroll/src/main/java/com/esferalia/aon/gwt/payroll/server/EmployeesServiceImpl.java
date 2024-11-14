@@ -1681,7 +1681,8 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 		try {
 		    	conn = AonServletUtils.getConnection(domain);
 			ByteArrayOutputStream reportOut = new ByteArrayOutputStream();
-			com.esferalia.aon.payroll.Salary salary = EmployeesServiceHelper.calculate(conn, draft, new SmartContractSalaryCalculator<>(new SalaryBuilder()));
+			com.esferalia.aon.payroll.Salary salary = 
+			EmployeesServiceHelper.calculate(conn, draft, new SmartContractSalaryCalculator<>(new RoundSalaryBuilder<>(new SalaryBuilder(),EmployeesServiceHelper.round(2))));
 
 			DraftPayrollBuilder.generatePayroll(reportOut, domain, salary);
 			byte [] reportByteArray = reportOut.toByteArray();
@@ -6662,18 +6663,18 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 			// Get certificate
 			Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId, "TGSS");
 
-			InputStream certificateInputStream = new ByteArrayInputStream(certificate.getData());
+//			InputStream certificateInputStream = new ByteArrayInputStream(certificate.getData());
 
 			ArrayList<String> nssList = new ArrayList<>();
 			nssList.add(nss);
 
 			Collection<solutions.aon.seg.social.object.Employee> employeeCollection = SistemaRED
-					.ipfxnaf(certificateInputStream, certificate.getPassword(), certificate.getType(), nssList);
+					.ipfxnaf( new ByteArrayInputStream(certificate.getData()), certificate.getPassword(), certificate.getType(), nssList);
 			solutions.aon.seg.social.object.Employee employee = (solutions.aon.seg.social.object.Employee) employeeCollection
 					.toArray()[0];
 
 			// altaConsolidadaDelete
-			SistemaRED.removeMovConsolidated(certificateInputStream, certificate.getPassword(), certificate.getType(),
+			SistemaRED.removeMovConsolidated( new ByteArrayInputStream(certificate.getData()), certificate.getPassword(), certificate.getType(),
 					SituationType.valueOf(situation), regimen, ctaCti, nss, employee.getIpf(), fecha);
 
 		} catch (Exception e) {

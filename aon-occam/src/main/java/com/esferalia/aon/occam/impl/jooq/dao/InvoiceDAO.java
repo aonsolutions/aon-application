@@ -75,6 +75,7 @@ import com.esferalia.aon.occam.api.model.attachment.InvoiceAttachmentType;
 import com.esferalia.aon.occam.api.model.finance.Finance;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceBreakdown;
+import com.esferalia.aon.occam.api.model.finance.InvoiceData;
 import com.esferalia.aon.occam.api.model.finance.InvoiceDetail;
 import com.esferalia.aon.occam.api.model.finance.InvoiceFilter;
 import com.esferalia.aon.occam.api.model.finance.InvoiceFiscal;
@@ -127,6 +128,7 @@ import com.esferalia.aon.watson.AonError;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.mutable.MutableInt;
 import com.esferalia.aon.watson.server.AonDateUtils;
+import com.esferalia.aon.watson.server.codec.AonDigestUtils;
 import com.esferalia.aon.watson.util.AonEnumUtils;
 import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
@@ -613,6 +615,7 @@ public class InvoiceDAO {
 				.setRegistryDocumentCountry(Country.safeValueOf(r.getValue(INVOICE.RDOCUMENT_COUNTRY)))
 				.setRegistryName(r.getValue(INVOICE.RNAME))
 				.setRegistryAddress(r.getValue(INVOICE.RADDRESS))
+				.setSigned(getBoolean(r, INVOICE.SIGNED))
 				.setScope(checkField(r, SCOPE.ID)
 						? ScopeFiller.buildScope(r)
 						: new Scope().setId(r.getValue(INVOICE.SCOPE)))
@@ -735,6 +738,8 @@ public class InvoiceDAO {
 			.set(INVOICING_GROUP.MODIFICATION_USER, ctx.getUser())
 			.where(INVOICING_GROUP.ID.eq(invoicingGroup.getId()))
 			.execute();
+
+		
 		return invoicingGroup;
 	}
 	
@@ -935,6 +940,22 @@ public class InvoiceDAO {
 		return invoice;
 	}
 	
+	private static void generateMD5(AONContext ctx, Invoice invoice) {
+		String md5 = AonDigestUtils.md5Hex(invoice.flat());
+		InvoiceData invoiceData = InvoiceDataDAO.get(ctx, f -> f.getDomainProperty().eq(ctx.getDomainId())
+				.and(f.getInvoiceProperty().eq(invoice.getId()))
+				.and(f.getNameProperty().eq("MD5")));
+		if(invoiceData == null) invoiceData = new InvoiceData();
+		
+		invoiceData.setDomain(invoice.getDomain())
+				.setInvoice(invoice.getId())
+				.setName("MD5")
+				.setValue(md5)
+				.setStartDate(new Date());
+		
+		InvoiceDataDAO.save(ctx, invoiceData, invoice);
+	}
+	
 	public static Invoice insert(AONContext ctx, Invoice invoice) {
 		return insert(ctx,ConfigurationDAO.getConfiguration(ctx, invoice.getIssueDate()),invoice); 
 	}
@@ -997,6 +1018,7 @@ public class InvoiceDAO {
 		
 		insertDetails(ctx, config, invoice);
 		InvoiceFiscalDAO.save(ctx, config, invoice);
+		generateMD5(ctx, invoice);
 		return invoice.setCreationDate(new Date()); 
 	}
 	
@@ -1084,6 +1106,7 @@ public class InvoiceDAO {
 			InvoiceFiscalDAO.save(ctx, config, invoice);
 			updateDetails(ctx, config, invoice);
 		}
+		generateMD5(ctx, invoice);
 		return invoice; 
 	}
 	
@@ -1624,7 +1647,7 @@ public class InvoiceDAO {
 		ctx.log().info("UPDATE WITHHOLDING TYPE: {0}: {1} filas.",invoiceId, sum.getValue());
 	}
 
-	private static Condition getWhere(AccountingReportParams params) {
+	public static Condition getWhere(AccountingReportParams params) {
 		
 		Condition condition = INVOICE.DOMAIN.equal( params.getDomain() );
 		

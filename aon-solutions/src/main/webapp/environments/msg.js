@@ -332,6 +332,7 @@ export const HTTP_REQUEST_HEADER = 'HTTP Request Header';
 // ----- I
 
 export const IN_DEVELOPMENT = MSG.IN_DEVELOPMENT;
+export const IN_PREPARATION = "En Preparación";
 export const IN_PROGRESS = "En Progreso"; // TODO
 export const IN_TRASH = "En Papelera"; // TODO
 export const INACTIVE = MSG.INACTIVE;
@@ -387,7 +388,7 @@ export const INVOICE_TAXES_DESCRIPTION = 'Resumen de los impuestos de la factura
 export const INVOICE_DETAILS_DESCRIPTION = 'Detalles de la factura';
 export const INVOICE_FINANCES_DESCRIPTION = 'Vencimientos de la factura.';
 export const INVOICE_WORKPLACE_DESCRIPTION = 'Centro de Trabajo de la factura.';
-
+export const INVOICED = "Facturado";
 export const INVOICES = MSG.INVOICES;
 export const IRPF = MSG.IRPF;
 export const IS_REQUIRED = MSG.IS_REQUIRED;
@@ -514,6 +515,7 @@ export const PENDING_INVOICES = MSG.PENDING_INVOICES;
 export const PENDING_REVIEW = MSG.PENDING_REVIEW;
 export const PENDING_TASKS = MSG.PENDING_TASKS;
 export const PENDINGS = MSG.PENDINGS;
+export const PERIOD = 'Periodo';
 export const PERSONALIZED = 'Personalizado';
 export const PERSONALIZED_THEME = 'Tema Personalizado';
 export const PERMISSIONS = MSG.PERMISSIONS;

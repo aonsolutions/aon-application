@@ -49,6 +49,7 @@ import static com.esferalia.aon.payroll.enumeration.ContextVariable.SLD_C737;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.SLD_H03;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.SLD_H04;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.SLD_H06;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.SOLIDARITY_BASES;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.STRIKE_FACTOR;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.STRUCTURAL_OVERTIME_BASE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.SUM;
@@ -753,8 +754,10 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 					addResult(expressionContext, undefPayment.getName(), start, end, 0.00);
 					addResult(expressionContext, undefPayment.getSurName(), start, end, 0.00);
 				} catch (UndefinedVariablesException e) {
-
-					if (undefPayment.willBeDefined(paymentsVars)) {
+					
+					if ( e.hasVariableName(MONTHLY_PAYMENTS)) {
+						undefMonthlyPayments.add(undefPayment);
+					} else if (undefPayment.willBeDefined(paymentsVars)) {
 						undefPayments.add(undefPayment);
 
 						if (++undefined >= undefPayments.size())
@@ -783,6 +786,10 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 			for (Period p : Period.sub(List.copyOf(monthlyPayments.keySet()), leavePeriods ) ) {
 				expressionContext.setVariable(MONTHLY_PAYMENTS, monthlyPayments.get(p), p.getStart(), p.getEnd());
 			}
+			for (Period p : leavePeriods ) {
+				expressionContext.setVariable(MONTHLY_PAYMENTS, 0.00, p.getStart(), p.getEnd());
+			}
+			
 			
 			
 			for (UndefPayment undefMonthlyPayment : undefMonthlyPayments) {
@@ -1593,7 +1600,8 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 				contractPayment.getExpression())); 
 	}
 
-	protected List<ITimedResult<Double>> fixExtraResults(IContractPayment contractPayment, List<ITimedResult<Double>> results, Date start, Date end, ExpressionContext expressionContext) 
+	protected List<ITimedResult<Double>> fixExtraResults(IContractPayment contractPayment, List<ITimedResult<Double>> results, Date start, Date end, ExpressionContext expressionContext)  
+	throws AonException
 	{
 		return results;
 	}
@@ -2229,6 +2237,7 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 		fillData(ctx, FILL_DATA);
 		fillData(ctx, FREE_BASES);
 		fillData(ctx, ERE_BASES);
+		fillData(ctx, SOLIDARITY_BASES);
 		
 		ctx.getSalaryType().accept(new SalaryTypeVisitor<Void>() {
 
@@ -2488,6 +2497,11 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 			
 			@Override
 			public void visitProfessionalContigency(DeductionType deductionType) {
+				add();
+			}
+			
+			@Override
+			public void visitSolidarity(DeductionType deductionType) {
 				add();
 			}
 			

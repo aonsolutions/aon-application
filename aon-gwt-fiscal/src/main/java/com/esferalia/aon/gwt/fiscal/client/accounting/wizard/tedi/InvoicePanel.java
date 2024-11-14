@@ -250,6 +250,12 @@ public class InvoicePanel extends WizardContentBase<AccountingInvoice> implement
 	
 	private boolean isAccountSource() {
 		boolean sourceAccount = true;
+		if (getCallback().getModuleOptions().isForceInvoiceEdition()) {
+			if (getWrapper().getInvoice() != null) {
+				getWrapper().getInvoice().setSkipAlcatrazValidationAllowed( true );
+			}
+			return true;
+		}
 		if (getWrapper().getInvoice() != null && getWrapper().getInvoice().getDetails() != null) {
 			for (InvoiceDetail detail : getWrapper().getInvoice().getDetails()) {
 				LOGGER.info(detail.getSource().getDescription());

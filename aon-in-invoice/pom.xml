@@ -116,14 +116,6 @@
     </activation>
     <build>
       <plugins>
-        <plugin>
-          <groupId>org.codehaus.mojo</groupId>
-          <artifactId>gwt-maven-plugin</artifactId>
-          <configuration>
-            <draftCompile>true</draftCompile>
-	    	<module>com.esferalia.aon.gwt.payroll.DevelopmentPayroll</module>
-          </configuration>
-        </plugin>
 			<plugin>
 			    <groupId>org.apache.maven.plugins</groupId>
 			    <artifactId>maven-assembly-plugin</artifactId>

@@ -44,9 +44,9 @@ public abstract class SellerWorkloadModulePanel extends AonCustomDockLayout {
 		super("Carga Trabajo");
 		
 		this.options = options;
-		
 		addButtonsToolbar();
-		getSearchTextBox().addKeyUpHandler(e -> {
+		
+		addKeyUpHandler(e -> {
 			String value = getSearchTextBox().getValue();
 			if(AonStringUtils.isNotBlank(value) && value.length() > 3) {
 				onSearch( options );
@@ -55,29 +55,12 @@ public abstract class SellerWorkloadModulePanel extends AonCustomDockLayout {
 			}
 		});
 		
-		
-		addFilterMenu();
-		
-		cleanButton = new AonSearchPanelButton( AON.MSG.clean(), AON.CSS.aonIconClear() );
-		cleanButton.addClickHandler(event -> {
-			getSearchTextBox().setValue(null, false);
-			scope.getListBox().setSelectedIndex(0);
-			active.getListBox().setSelectedIndex(0);
-			customer.getListBox().setSelectedIndex(1);
-			period.getListBox().setSelectedIndex(0);
-			
-			sellerWorkloadPanel.resetSearchOffset();
-			
-			onSearch( options );
-		});
-
-		addFilterToolbarButton(cleanButton);
+		setSearchPlaceholder("Buscar por nombre ...");
 		
 		period.addItem( "Mes actual", "0");
 		period.addItem( "Pr\u00f3ximos 2 meses", "1");
 		period.addItem( "Pr\u00f3ximos 3 meses", "2");
 		period.getListBox().addChangeHandler(event -> {
-			this.clickFilterButton();
 			onSearch( options );
 		});
 		
@@ -103,8 +86,6 @@ public abstract class SellerWorkloadModulePanel extends AonCustomDockLayout {
 		addFilterWidget(active);
 		addFilterWidget(customer);
 		
-		addSortMenu();
-		
 		sort.addItem("Nombre", "name");
 		sort.addItem("Alias", "alias");
 		sort.addItem("Documento", "document");
@@ -129,6 +110,20 @@ public abstract class SellerWorkloadModulePanel extends AonCustomDockLayout {
 		container.add(centerPanel);
 		
 		add(container);
+		
+		onSearch( options );
+	}
+	
+	@Override
+	protected void onClearFilter() {
+		getSearchTextBox().setValue(null, false);
+		scope.getListBox().setSelectedIndex(0);
+		active.getListBox().setSelectedIndex(0);
+		customer.getListBox().setSelectedIndex(1);
+		period.getListBox().setSelectedIndex(0);
+		
+		sellerWorkloadPanel.resetSearchOffset();
+		
 		onSearch( options );
 	}
 

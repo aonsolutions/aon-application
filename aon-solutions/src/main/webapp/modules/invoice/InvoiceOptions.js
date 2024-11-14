@@ -3,7 +3,8 @@ import * as GWT from "../../gwt/gwt.js";
 
   export const gwtLoad = (option) => {
     let application = document.querySelector(TAG.AON_APPLICATION);
-    GWT.load(option, application.CONTENT);
+    document.body.classList.add('gwt-Selector');
+    GWT.iLoad(option, application.CONTENT);
   }
 
   export const newInvoice = (type) => {
@@ -59,6 +60,14 @@ import * as GWT from "../../gwt/gwt.js";
     let parent = application.getParent();
     parent.buildInvestToolbarOptions();
     parent.aonInvestList(filter);
+  }
+
+
+  export const closingInvoiceList = (filter) => {
+    let application = document.querySelector(TAG.AON_APPLICATION);
+    let parent = application.getParent();
+    parent.buildClosingInvoiceToolbarOptions();
+    parent.aonClosingInvoiceList(filter);
   }
 
   export const CREATE_INVOICE_ISSUED = {
@@ -277,13 +286,20 @@ import * as GWT from "../../gwt/gwt.js";
     options: [PRODUCT, EXPENSES, INVEST]
   }
 
+  export const CLOSING_INVOICE = {
+    id: 'ClosingInvoice',
+    name: "Cierre de Facturación",
+    icon: "disabled_by_default",
+    fn: () => closingInvoiceList()
+  }
+
   // MAIN OPTION
 
   export const MANAGEMENT = {
     id: CONSTANT.MANAGEMENT.initCap(),
     title: MSG.MANAGEMENT,
     name: MSG.MANAGEMENT,
-    options:[ REGISTRY, CONCEPTS, CHARGES_PAYMENTS, FISCAL_DRAFT ]
+    options:[ REGISTRY, CONCEPTS, CHARGES_PAYMENTS, FISCAL_DRAFT, CLOSING_INVOICE ]
   }
 
 

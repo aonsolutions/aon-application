@@ -163,7 +163,7 @@ public abstract class AbstractSQLTestCase {
 	@Before
 	public void setUp() throws ClassNotFoundException, SQLException,
 			AonSQLException {
-		shutUp();
+		//shutUp();
 		connection = connect();
 		AONContext context = new AONContext(connection);
 		cleanSystemData(context);
@@ -331,6 +331,22 @@ public abstract class AbstractSQLTestCase {
 				.set(SYSTEM_COST.START_DATE, startDate)
 				.set(SYSTEM_COST.TYPE, (byte) (type != null ? type.ordinal() : DeductionType.OTHER.ordinal()))
 				.set(SYSTEM_COST.DOMAIN, (-1) * ssRegimetype.ordinal())
+				.set(SYSTEM_COST.EXPRESSION, expression)
+				.execute();
+
+		aonContext.getDslContext().execute("SET FOREIGN_KEY_CHECKS=1");
+	}
+
+	protected final void addSSRegimeCost(AONContext aonContext, SSRegimeType ssRegimetype, Date startDate, 
+			DeductionType type, String code, String description, String expression) {
+		aonContext.getDslContext().execute("SET FOREIGN_KEY_CHECKS=0");
+
+		aonContext.getDslContext().insertInto(SYSTEM_COST)
+				.set(SYSTEM_COST.CODE, code)
+				.set(SYSTEM_COST.START_DATE, startDate)
+				.set(SYSTEM_COST.TYPE, (byte) (type != null ? type.ordinal() : DeductionType.OTHER.ordinal()))
+				.set(SYSTEM_COST.DOMAIN, (-1) * ssRegimetype.ordinal())
+				.set(SYSTEM_COST.DESCRIPTION, description)
 				.set(SYSTEM_COST.EXPRESSION, expression)
 				.execute();
 
