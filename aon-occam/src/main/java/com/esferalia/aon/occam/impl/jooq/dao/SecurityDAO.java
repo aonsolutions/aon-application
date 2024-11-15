@@ -1,7 +1,7 @@
 package com.esferalia.aon.occam.impl.jooq.dao;
 
-import static com.esferalia.aon.jooq.tables.ActionEntry.ACTION_ENTRY;
 import static com.esferalia.aon.jooq.tables.ActionDenied.ACTION_DENIED;
+import static com.esferalia.aon.jooq.tables.ActionEntry.ACTION_ENTRY;
 import static com.esferalia.aon.jooq.tables.ActionFavorite.ACTION_FAVORITE;
 import static com.esferalia.aon.jooq.tables.ApplicationRole.APPLICATION_ROLE;
 import static com.esferalia.aon.jooq.tables.ApplicationUser.APPLICATION_USER;
@@ -19,6 +19,7 @@ import static com.esferalia.aon.jooq.tables.DomainApplication.DOMAIN_APPLICATION
 import static com.esferalia.aon.jooq.tables.DomainApplicationModule.DOMAIN_APPLICATION_MODULE;
 import static com.esferalia.aon.jooq.tables.Enterprise.ENTERPRISE;
 import static com.esferalia.aon.jooq.tables.MailAccount.MAIL_ACCOUNT;
+import static com.esferalia.aon.jooq.tables.NoticeTag.NOTICE_TAG;
 import static com.esferalia.aon.jooq.tables.Profile.PROFILE;
 import static com.esferalia.aon.jooq.tables.ProfileRole.PROFILE_ROLE;
 import static com.esferalia.aon.jooq.tables.Raddinfo.RADDINFO;
@@ -38,7 +39,6 @@ import static com.esferalia.aon.jooq.tables.UserScope.USER_SCOPE;
 import static com.esferalia.aon.jooq.tables.UserWorkgroup.USER_WORKGROUP;
 import static com.esferalia.aon.jooq.tables.Workgroup.WORKGROUP;
 import static com.esferalia.aon.jooq.tables.Workplace.WORKPLACE;
-import static com.esferalia.aon.jooq.tables.NoticeTag.NOTICE_TAG;
 import static com.esferalia.aon.occam.api.model.attachment.DataAttachSource.SISTEMA_RED;
 import static com.esferalia.aon.occam.api.model.attachment.RegistryAttachmentType.DIGITAL_CERTIFICATE;
 
@@ -49,7 +49,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 import org.jooq.Condition;
@@ -70,10 +69,10 @@ import com.esferalia.aon.jooq.tables.records.SignatureRecord;
 import com.esferalia.aon.jooq.tables.records.UserRecord;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.ApplicationParameter;
+import com.esferalia.aon.occam.api.model.Certificate;
 import com.esferalia.aon.occam.api.model.Contact;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Filter.AuthFilter;
-import com.esferalia.aon.occam.api.model.Filter.CertificateFilter;
 import com.esferalia.aon.occam.api.model.Filter.ContactFilter;
 import com.esferalia.aon.occam.api.model.Filter.DomainAppFilter;
 import com.esferalia.aon.occam.api.model.Filter.MailAccountFilter;
@@ -88,7 +87,6 @@ import com.esferalia.aon.occam.api.model.MailAccount;
 import com.esferalia.aon.occam.api.model.MailAccountType;
 import com.esferalia.aon.occam.api.model.Module;
 import com.esferalia.aon.occam.api.model.Properties.AuthProperties;
-import com.esferalia.aon.occam.api.model.Properties.CertificateProperties;
 import com.esferalia.aon.occam.api.model.Properties.ContactProperties;
 import com.esferalia.aon.occam.api.model.Properties.MailAccountProperties;
 import com.esferalia.aon.occam.api.model.Properties.SignatureProperties;
@@ -101,16 +99,15 @@ import com.esferalia.aon.occam.api.model.attachment.DataAttachType;
 import com.esferalia.aon.occam.api.model.attachment.RegistryAttachmentType;
 import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.security.Auth;
-import com.esferalia.aon.occam.api.model.Certificate;
 import com.esferalia.aon.occam.api.model.security.CertificateNotFoundException;
 import com.esferalia.aon.occam.api.model.security.Scope;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.security.UserScope;
 import com.esferalia.aon.occam.api.model.security.UserWorkgroup;
 import com.esferalia.aon.occam.api.model.task.TaskHolder;
-import com.esferalia.aon.occam.api.model.type.OldAonRole;
 import com.esferalia.aon.occam.api.model.type.AppParam;
 import com.esferalia.aon.occam.api.model.type.MimeType;
+import com.esferalia.aon.occam.api.model.type.OldAonRole;
 import com.esferalia.aon.occam.api.model.type.SecurityLevel;
 import com.esferalia.aon.occam.api.model.type.TagType;
 import com.esferalia.aon.occam.impl.jooq.dao.CertificateDAO.CertificatePropertiesDAO;
@@ -1547,6 +1544,7 @@ public class SecurityDAO {
 		Long userNum = getDomainUserStream(ctx, f -> f.getDomainProperty().eq(domain.getId()).and(f.getEnterpriseProperty().isNull()).and(f.getActiveProperty().eq((byte) 1)).and(f.getSharedProperty().eq((byte)0))).count();
 		domain.setDefinedUsers(userNum.intValue());
 		
+		Optional<ApplicationParameter> trialAppParam = AppParamDAO.getApplicationParameterStream(ctx, f -> f.getNameProperty().eq(AppParam.TRIAL.name()).and(f.getDomainProperty().eq(ctx.getDomainId()))).findFirst();
 
 		return new DomainUserRoles()
 				.setOldDomainModules(getDomainModules(ctx).collect(Collectors.toCollection(LinkedList::new)))
@@ -1560,7 +1558,8 @@ public class SecurityDAO {
 				.setParentDomainApps(parentDomainApps)
 				.setDomainUserRoles(domainUserRoles)
 				.setParentDomainUserRoles(parentDomainUserRoles)
-				.setDomainPayer(domainPayer != null);
+				.setDomainPayer(domainPayer != null)
+				.setTrial(trialAppParam.isPresent());
 	}
 
 	public static boolean isOCRActive(AONContext ctx, int domain) {
@@ -1580,6 +1579,13 @@ public class SecurityDAO {
 		ctx.getDslContext().update(DOMAIN)
 			.set(DOMAIN.MAXDEFINEDUSERS, maxDefinedUser)
 			.where(DOMAIN.ID.eq(ctx.getDomainId()))
+			.execute();
+	}
+	
+	public static void saveDomainMaxDefinedUser(AONContext ctx, Integer domainId, Integer maxDefinedUser) {
+		ctx.getDslContext().update(DOMAIN)
+			.set(DOMAIN.MAXDEFINEDUSERS, maxDefinedUser)
+			.where(DOMAIN.ID.eq(domainId))
 			.execute();
 	}
 	

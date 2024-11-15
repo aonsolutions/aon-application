@@ -4,9 +4,6 @@ import static com.esferalia.aon.occam.api.model.attachment.AttachType.REGISTRY;
 import static com.esferalia.aon.occam.api.model.attachment.RegistryAttachmentType.LOGO;
 import static com.esferalia.aon.occam.api.model.attachment.RegistryAttachmentType.SIGNATURE;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
@@ -40,8 +37,10 @@ import com.esferalia.aon.occam.api.model.MarketingAction.MarketingSellerDistribu
 import com.esferalia.aon.occam.api.model.MarketingActionTarget;
 import com.esferalia.aon.occam.api.model.Person;
 import com.esferalia.aon.occam.api.model.Workplace;
+import com.esferalia.aon.occam.api.model.aonsolutions.AonApp;
 import com.esferalia.aon.occam.api.model.aonsolutions.AonLanguage;
 import com.esferalia.aon.occam.api.model.aonsolutions.AonRole;
+import com.esferalia.aon.occam.api.model.aonsolutions.DomainApp;
 import com.esferalia.aon.occam.api.model.aonsolutions.UserAppRole;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.project.ProjectCommercial;
@@ -68,7 +67,9 @@ import com.esferalia.aon.occam.api.model.type.MediaType;
 import com.esferalia.aon.occam.api.model.type.SecurityLevel;
 import com.esferalia.aon.occam.api.model.type.StreetType;
 import com.esferalia.aon.occam.impl.jooq.dao.DomainDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.SecurityDAO;
 import com.esferalia.aon.watson.error.AonCoreException;
+import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonDocumentUtil;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
@@ -233,7 +234,8 @@ public class ActionTargetServlet extends AonApiHttpServlet {
 			
 		// Send mail
 		
-		sendCreationEnterpriseMail(api, actionTarget, target.getId());
+		boolean trial = JsonUtils.getboolean(api.getData().getJSONObject("actionTarget"), "trial");
+		if(trial) sendCreationEnterpriseMail(api, actionTarget, target.getId());
 		
 		// Return data
 		
@@ -418,6 +420,12 @@ public class ActionTargetServlet extends AonApiHttpServlet {
 			
 			// Create Default User
 			createDefaultUser(api, c, targetObj.get(), email, phone);
+			
+			try (CloseableAONContext ctx = AONContext.getAONContext(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin())) {
+				SecurityDAO.saveDomainMaxDefinedUser(ctx, domain.getId(), 1);
+				DomainApp domainApp = new DomainApp().setDomain(domain.getId()).setApp(AonApp.INVOICE).setActive(true);
+				SecurityDAO.saveDomainApp(ctx, domainApp);
+			}
 			
 			System.out.println("----------------------- Create Enterprise (END) -----------------------");
 		} catch (Exception e) {
@@ -711,7 +719,7 @@ public class ActionTargetServlet extends AonApiHttpServlet {
 		if(a == null || a.getId() == null)
 			AON.insertApplicationParameter(domain.getName(), domain.getId(), user.getLogin(), appParam);
 	
-		AON_SOLUTIONS.saveUserFinancePortal(domain, user.getLogin(), user.getId());		
+		//AON_SOLUTIONS.saveUserFinancePortal(domain, user.getLogin(), user.getId());		
 		
 		return user;
 	}
@@ -725,7 +733,9 @@ public class ActionTargetServlet extends AonApiHttpServlet {
 		
 		LinkedList<AonRole> tRoles = new LinkedList<AonRole>();
 		tRoles.add(AonRole.ENTERPRISE);
-
+		tRoles.add(AonRole.INVOICE_PORTAL);
+		tRoles.add(AonRole.INVOICE);
+		
 		AonRole.stream().forEach(role -> {	
 			if(aRoles.contains(role) && !tRoles.contains(role)) {
 				AON_SOLUTIONS.deleteUserAppRole(domain.getName(), domain.getId(), login, f -> 
@@ -859,7 +869,9 @@ public class ActionTargetServlet extends AonApiHttpServlet {
 	                     + "&domain_name=" + domainName + "&domain_id=" + domainId + "&domain_login=" + userLogin
 	                     + "&session_id=" + token;
 	
-	    String shortUrl = AON.getShortURL("laburr", postUrl);
+	    Date expirationDate = new Date();
+	    expirationDate = AonDateUtils.addDays(expirationDate, 1);
+	    String shortUrl = AON.getShortURL("laburr", postUrl, expirationDate);
 	    
 	    String body = "";
 	    
@@ -876,7 +888,7 @@ public class ActionTargetServlet extends AonApiHttpServlet {
 	            + "\n"
 	            + "  <p style=\"font-size: 16px; color: #333;\"><strong>Nombre de la Empresa:</strong> <span id=\"nombre-empresa\">" + enterpriseNameMail + "</span></p>\n"
 	            + "\n"
-	            + "  <p style=\"font-size: 16px; color: #333;\"><strong>URL de la Empresa:</strong> <a href=\"http://" + urlEnterprise + "\" id=\"url-empresa\" style=\"color: #007bff;\">" + urlEnterprise + "</a></p>\n"
+	            + "  <p style=\"font-size: 16px; color: #333;\"><strong>URL de la Empresa:</strong> <a href=\"https://" + urlEnterprise + "\" id=\"url-empresa\" style=\"color: #007bff;\">" + urlEnterprise + "</a></p>\n"
 	            + "\n"
 	            + "  <!-- Enlace para enviar la solicitud GET -->\n"
 	            + "  <div style=\"text-align: center; margin-top: 20px;\">\n"
@@ -914,7 +926,7 @@ public class ActionTargetServlet extends AonApiHttpServlet {
 				+ "\n"
 				+ "  <p style=\"font-size: 16px; color: #333;\"><strong>Nombre de la Empresa:</strong> <span id=\"nombre-empresa\">" + enterpriseNameMail + "</span></p>\n"
 				+ "\n"
-				+ "  <p style=\"font-size: 16px; color: #333;\"><strong>URL de la Empresa:</strong> <a href=\"" + urlMail + "\" id=\"url-empresa\" style=\"color: #007bff;\">" + urlMail + "</a></p>\n"
+				+ "  <p style=\"font-size: 16px; color: #333;\"><strong>URL de la Empresa:</strong> <a href=\"https://" + urlMail + "\" id=\"url-empresa\" style=\"color: #007bff;\">" + urlMail + "</a></p>\n"
 				+ "\n"
 				+ "  <p style=\"font-size: 16px; color: #333;\"><strong>Auth:</strong> <span id=\"usuario\">" + userMail + "</span></p>\n"
 				+ "\n"
@@ -945,26 +957,6 @@ public class ActionTargetServlet extends AonApiHttpServlet {
 		return body;
 	}
 	
-	private static byte[] getLogo(AONContext aonContext, Integer enterpriseId) {
-		// LOGO
-		Optional<InputStream> optLogo = Optional.empty();
-		{
-
-			Attach attach1 = AON.getAttach(aonContext.getDomainName(), aonContext.getDomainId(), aonContext.getUser(),
-					f -> f.getTypeProperty().eq(SIGNATURE.value()).and(f.getAttachModuleProperty().eq(enterpriseId)),
-					REGISTRY);
-
-			if (attach1 == null || attach1.getData() == null)
-				attach1 = AON.getAttach(aonContext.getDomainName(), aonContext.getDomainId(), aonContext.getUser(),
-						f -> f.getTypeProperty().eq(LOGO.value()).and(f.getAttachModuleProperty().eq(enterpriseId)),
-						REGISTRY);
-
-			if (attach1 != null && attach1.getData() != null)
-				optLogo = Optional.ofNullable(new ByteArrayInputStream(attach1.getData()));
-		}
-		return getBytes(optLogo);
-	}
-	
 	private static Attach getLogoAttach(AONContext aonContext, Integer enterpriseId) {
 		Attach attach1 = AON.getAttach(aonContext.getDomainName(), aonContext.getDomainId(), aonContext.getUser(),
 				f -> f.getTypeProperty().eq(SIGNATURE.value()).and(f.getAttachModuleProperty().eq(enterpriseId)),
@@ -976,14 +968,6 @@ public class ActionTargetServlet extends AonApiHttpServlet {
 					REGISTRY);
 
 		return attach1;
-	}
-
-	private static byte[] getBytes(Optional<InputStream> optLogo) {
-		try {
-			return optLogo.isPresent() ? optLogo.get().readAllBytes() : null;
-		} catch (IOException e1) {
-			return null;
-		}
 	}
 	
 }
