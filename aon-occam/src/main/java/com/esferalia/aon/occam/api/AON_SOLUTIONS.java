@@ -486,6 +486,12 @@ public class AON_SOLUTIONS {
 		} 
 	}
 	
+	public static Integer getInvoicesCount(String domainName, Integer domainId, String login, InvoiceFilter filter) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
+			return getApi().getInvoicesCount(ctx, filter);
+		} 
+	}
+	
 	public static Stream<InvoiceNewPortal> getInvoiceNewPortal(String domainName, Integer domainId, String login, InvoiceFilter filter) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
 			return getApi().getInvoiceNewPortal(ctx, filter);

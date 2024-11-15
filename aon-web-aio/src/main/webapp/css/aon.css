@@ -4502,4 +4502,9 @@ font-weight: 600;
 .blocked {
    pointer-events: none;  /* Deshabilita la interacción con el mouse */
  }
+ 
+ .aonHoverGray:hover{
+  background-color: #f1f1f1;
+  cursor: pointer;
+}
 
