@@ -26,15 +26,23 @@ public class PageM11_2 extends PageAbs {
 
 	public PageM11_2(Deposit2 deposit) {
 		super(deposit);
-
-		table1 = new FlexTable();
-
-		Widget ui = pageBinder.createAndBindUi(this);
-		initWidget(ui);
-		
-		initializeTable();
+		initialize(0);
+	}
+	
+	public PageM11_2(Deposit2 deposit, Integer tab) {
+		super(deposit);
+		initialize(tab);
 	}
 
+	private void initialize(Integer tab) {		
+		table1 = new FlexTable();
+		
+		Widget ui = pageBinder.createAndBindUi(this);
+		initWidget(ui);
+		tabPanel.selectTab(tab != null ? tab : 0);
+		initializeTable();
+	}
+	
 	@Override
 	protected void initializeTable() {
 		String[] PERIODS = new String[] {
@@ -87,5 +95,10 @@ public class PageM11_2 extends PageAbs {
 			}
 			++row;
 		}
+	}
+	
+	@Override
+	protected void refreshDepositPage() {
+		getDeposit().refreshPage(tabPanel.getTabBar().getSelectedTab());
 	}
 }
