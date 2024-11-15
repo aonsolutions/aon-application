@@ -355,6 +355,10 @@
 	text-transform: capitalize;
 }
 
+.aon_custom_text_box {
+	height: 3rem;
+}
+
 .aon_custom_row:hover, .aon_utility_option:hover, .aon_custom_text_box:hover
 	{
 	background-color: #f1f1f1;

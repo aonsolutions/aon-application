@@ -2463,3 +2463,8 @@ label.rating:hover {
   color: gray;
   line-height: 21px;
 }
+
+.aonHoverGray:hover{
+  background-color: #f1f1f1;
+  cursor: pointer;
+}
