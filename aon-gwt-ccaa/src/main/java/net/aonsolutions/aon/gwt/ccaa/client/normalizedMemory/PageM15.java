@@ -28,10 +28,18 @@ public class PageM15 extends PageAbs {
 
 	public PageM15(Deposit2 deposit) {
 		super(deposit);
-
+		initialize(0);
+	}
+	
+	public PageM15(Deposit2 deposit, Integer tab) {
+		super(deposit);
+		initialize(tab);
+	}
+	
+	private void initialize(Integer tab) {
 		Widget ui = pageBinder.createAndBindUi(this);
 		initWidget(ui);
-		
+		tabPanel.selectTab(tab != null ? tab : 0);
 		initializeTable();
 	}
 
@@ -41,7 +49,6 @@ public class PageM15 extends PageAbs {
 			AON.MSG.fiscalYear() + " " + getYear(),
 			AON.MSG.fiscalYear() + " " + (getYear() - 1)
 		};
-		tabPanel.selectTab(0);
 		
 		if(getYear().equals(2014)){
 			defineMRNTable(table, PERIODS, MRN_FOOTERS, D2DepositConstants.MRN15_ABREVIATE_PYMES_KEYS, 2);
@@ -154,6 +161,11 @@ public class PageM15 extends PageAbs {
 			}
 			++row;
 		}
+	}
+	
+	@Override
+	protected void refreshDepositPage() {
+		getDeposit().refreshPage(tabPanel.getTabBar().getSelectedTab());
 	}
 
 }

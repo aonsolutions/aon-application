@@ -57,27 +57,33 @@ public class PageH4 extends PageAbs {
 
 	public PageH4(Deposit2 deposit) {
 		super(deposit);
-		
-		Widget ui = pageBinder.createAndBindUi(this);
-		initWidget(ui);
-		tabPanel.selectTab(0);
-		
-		initializeTable();
+		initialize(0);
 	}
 
+	public PageH4(Deposit2 deposit, Integer tab) {
+		super(deposit);
+		initialize(tab);
+	}
+
+	private void initialize(Integer tab) {		
+		Widget ui = pageBinder.createAndBindUi(this);
+		initWidget(ui);
+		tabPanel.selectTab(tab != null ? tab : getDefaultTab());
+		initializeTable();
+	}
+	
+	private Integer getDefaultTab() {
+		return isPymes() ? 1 : 0;
+	}
+	
 	@Override
 	protected void initializeTable() {
 		if (isPymes()) {
 			defineECPNTable(table1,ECPN_PYMES_HEADER,D2PDepositConstants.ECPN_PYMES_KEYS);
 			tabPanel. getTabBar().setTabEnabled(0, false);
-			tabPanel.selectTab(1);	
 		} else {
 			defineBalanceTable(table,AON.MSG.patrimonioIngresos(),D2DepositConstants.ECPN_INCOMES_KEYS);
 			defineECPNTable(table1,ECPN_ABREVIATE_HEADER,D2DepositConstants.ECPN_ABREVIATE_KEYS);
-			
-			if(tabPanel.getTabBar().getSelectedTab() != 0)
-				tabPanel.selectTab(tabPanel.getTabBar().getSelectedTab());
-			else tabPanel.selectTab(0);
 		}
 	}
 	
@@ -153,5 +159,10 @@ public class PageH4 extends PageAbs {
 			}
 			row = paintKey(tab, innerKeys , row);
 		}
+	}
+	
+	@Override
+	protected void refreshDepositPage() {
+		getDeposit().refreshPage(tabPanel.getTabBar().getSelectedTab());
 	}
 }
