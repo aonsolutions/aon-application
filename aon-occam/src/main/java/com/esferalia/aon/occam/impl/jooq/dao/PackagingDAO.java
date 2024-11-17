@@ -773,7 +773,7 @@ public class PackagingDAO {
 		String init = year.toString().substring(2,4);
 		if(barcode.length() > 14) {
 			Barcode b = new Barcode().setValue(barcode).setType(BarcodeType.GS1_128);
-			return init + b.parseGS1128().get(GS1128Codes.CODE_10);
+			return b.parseGS1128().get(GS1128Codes.CODE_10);
 		}
 		return init + Integer.toString(AonDateUtils.getDayOfYear(new Date()));
 	}
@@ -789,9 +789,11 @@ public class PackagingDAO {
 	private static String calculateBarcode(String barcode) {
 		if(barcode.length() > 14) {
 			Barcode b = new Barcode().setValue(barcode).setType(BarcodeType.GS1_128);
-			return b.parseGS1128().get(GS1128Codes.CODE_01);
+			String code = b.parseGS1128().get(GS1128Codes.CODE_01);
+			if(code == null)
+				code = b.parseGS1128().get(GS1128Codes.CODE_02);
+			return code;
 		}
 		return barcode;
 	}
-
 }

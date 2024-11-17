@@ -50,7 +50,19 @@
     	            	value="#{controller.protocolAon}"/>
 					<aon:outputText value=" (Envío a través de no-reply@aon.solutions)"/>
 				</aon:div>
-
+				
+				<aon:if test="#{controller.protocolAon}" >
+					<aon:outputLabel for="MailAccount_IncludeBcc"
+						value="Incluir Bcc" />
+	
+					<aon:div>
+	                	<aon:selectBooleanCheckbox id="MailAccount_IncludeBcc"
+    	            		actionListener="#{controller.onIncludeBccChanged}"
+    	            		reRender="MailAccountDiv" ajaxSingle="false"
+    	            		value="#{controller.includeBcc}"/>
+						<aon:outputText value=" Enviar copia en bcc."/>
+					</aon:div>
+				</aon:if>
 				<aon:if test="#{!controller.protocolAon}" >
 	
 					<aon:outputLabel for="MailAccount_replyToMail"
