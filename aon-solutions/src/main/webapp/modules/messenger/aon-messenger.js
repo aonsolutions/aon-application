@@ -971,7 +971,7 @@ export class AonMessenger extends AonElement {
     
 		this.clearElementById(contentId);
 
-		GWT.load(GWT.TASK_STAT, contentId);
+		GWT.iLoad(GWT.TASK_STAT, contentId);
 
 		waitEl(`#${contentId} > div:first-child`)
 		.then(element=>{

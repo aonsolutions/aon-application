@@ -1,34 +1,43 @@
 package com.esferalia.aon.gwt.fiscal.client.console;
 
 import java.util.Date;
+import java.util.LinkedList;
 import java.util.logging.Logger;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonConfirmDialog;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomPopup;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDateBox;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonDisplayGrid;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDisplayGrid.AonDisplayGridRow;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDisplayTable;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonMessageDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonTableButton;
 import com.esferalia.aon.gwt.fiscal.client.console.ConsoleDomainTable.ConsoleDomainTableCallback;
 import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.type.DomainType;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.logging.client.ConsoleLogHandler;
 import com.google.gwt.user.client.Timer;
-import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.Window.Location;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.FormPanel;
+import com.google.gwt.user.client.ui.Hidden;
 import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.datepicker.client.CalendarUtil;
 
 class ConsoleDomainTableRow extends AonDisplayGridRow {
 	
 	private static final Logger ROW_LOGGER = Logger.getLogger(ConsoleDomainTableRow.class.getName());
+	private static final String PSW = "aonc4u";
+	
 	static {
 		ROW_LOGGER.addHandler( new ConsoleLogHandler() );
 	}
@@ -58,6 +67,7 @@ class ConsoleDomainTableRow extends AonDisplayGridRow {
 	private AonTableButton remoteAccessButton;
 	private AonTableButton duplicateButton;
 	private AonTableButton editButton;
+	private AonTableButton utilitiesButton;
 	private Anchor dumpAnchor;
 	
 	
@@ -150,25 +160,10 @@ class ConsoleDomainTableRow extends AonDisplayGridRow {
 					
 		
 		remoteAccessButton = new AonTableButton("Acceso remoto", AON.CSS.aonIconWrench());
-		remoteAccessButton.addClickHandler(e -> callback.onRemoteAccess(id, new AsyncCallback<String>() {
-			@Override
-			public void onFailure(Throwable caught) {
-				callback.showError( "No se pudo modificar el acceso remoto. ("+ caught.getMessage() +")");
-			}
-
-			@Override
-			public void onSuccess(String result) {
-				if (AonStringUtils.isBlank(result)) {
-					decorateRemoteAccess(false);	
-				} else {
-					String msg =  "Desea navegar a " + domain.getName() 
-						+ "?. Puede acceder con uno de los siguientes usuarios " + result;
-					AonConfirmDialog.showConfirm("Pregunta", msg
-						, () -> Window.open("https://" + domain.getName(), "", ""));
-					decorateRemoteAccess(true);
-				}
-			}
-		}));
+		remoteAccessButton.addClickHandler(e -> switchRemoteAccess( id ));
+		
+		utilitiesButton = new AonTableButton(AON.MSG.utilities(), AON.CSS.aonIconDataSettings());		 
+		utilitiesButton.addClickHandler(e -> callback.onUtilitiesDomain( domain));
 		
 		duplicateButton= new AonTableButton(AON.MSG.duplicate(), AON.CSS.aonIconCopy());		 
 		duplicateButton.addClickHandler(e -> duplicate(domain));
@@ -215,6 +210,7 @@ class ConsoleDomainTableRow extends AonDisplayGridRow {
 			.addCell( remoteAccessButton )
 			.addCell( editButton )
 			.addCell( duplicateButton )
+			.addCell( utilitiesButton )
 			.addCell( dumpAnchor );
 			
 		
@@ -229,6 +225,101 @@ class ConsoleDomainTableRow extends AonDisplayGridRow {
 		
 	}
 
+	private void switchRemoteAccess(Integer id) {
+		callback.onSwitchRemoteAccess(id, new AsyncCallback<Boolean>() {
+			@Override
+			public void onFailure(Throwable caught) {
+				callback.showError( "No se pudo modificar el acceso remoto. ("+ caught.getMessage() +")");
+			}
+
+			@Override
+			public void onSuccess(Boolean result) {
+				if (result != null) {
+					decorateRemoteAccess(result);
+					if (result) {
+						offerNavigate( domain );
+					}
+				}
+			}
+
+		});
+	}
+	
+	private void offerNavigate(JsConsoleDomain domain) {
+		callback.onAvailableUsers(domain, new AsyncCallback<LinkedList<User>>() {
+
+			@Override
+			public void onFailure(Throwable t) {
+				callback.showError( "No se pudo mostrar los usuarios. ("+ t.getMessage() +")");
+			}
+
+			@Override
+			public void onSuccess(LinkedList<User> users) {
+				AonCustomPopup popup = new AonCustomPopup(true); 
+				popup.setWidth("600px");
+				popup.setHeight("600px");
+				FlowPanel container = new FlowPanel();
+				Hidden userHidden = new Hidden("j_username");
+				Hidden passwordHidden = new Hidden("j_password");
+				FormPanel locForm = new FormPanel("_blank");
+				locForm.setMethod(FormPanel.METHOD_POST);
+				FlowPanel locFormPanel = new FlowPanel();
+				locFormPanel.add(userHidden);
+				locFormPanel.add(passwordHidden);
+				locForm.setWidget(locFormPanel);
+				container.add(locForm);
+				
+				AonDisplayGrid grid = new AonDisplayGrid();
+				grid.addStyleName(AON.CSS.aonMarginTop());
+				grid.addStyleName(AON.CSS.aonWidthAlmostAll());
+				grid.addStyleName(AON.CSS.aonBlockCenter());
+				grid.addHeaderRow()
+					.addCell(new Label(""), AON.CSS.aonWidth30())
+					.addCell(new Label("Usuario"), AON.CSS.aonWidth150())
+					.addCell(new Label("Nombre"), AON.CSS.aonFlexGrow1());
+				users.stream()	
+					.forEach( u -> {
+						Label topLevel = new Label();
+						if (AonNumberUtils.notEquals(domain.getId(),u.getDomain())) {
+							topLevel.setStyleName(AON.CSS.aonTabIcon());
+							topLevel.addStyleName(AON.CSS.aonIconLevelTop());
+						}
+						grid.addRow()
+							.addCell( topLevel )
+							.addCell(new Label(u.getLogin()))
+							.addCell(new Label(u.getName()))
+							.addClickHandler( e -> {
+								String url = 
+									(AonStringUtils.isBlank(Location.getProtocol()) ?"http:":Location.getProtocol())
+									+ "//"
+									+ domain.getName()
+									+ (AonStringUtils.isNotBlank(Location.getPort())
+										?":" + Location.getPort() + "/aon-aio"
+										:"")
+									+ "/login"
+								;
+								AonConfirmDialog.showConfirm("Pregunta"
+								, "Desea navegar a \"" + url + "\"?"
+								, () -> {
+									locForm.setAction(url);
+									userHidden.setValue("cau="+u.getLogin());
+									passwordHidden.setValue(PSW);
+									locForm.submit();
+									popup.hide();
+								});
+							});
+						
+					});
+				ScrollPanel scroll = new ScrollPanel();
+				container.add(grid);
+				scroll.add(container);
+				popup.add(scroll);
+				popup.center();
+				popup.show();
+			}
+		});
+	}
+	
 	private native void  copyToClipboard(String copyText) /*-{
 		try {
 			if (!navigator.clipboard) {

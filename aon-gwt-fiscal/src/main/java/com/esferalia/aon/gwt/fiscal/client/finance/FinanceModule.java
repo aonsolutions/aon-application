@@ -11,8 +11,6 @@ import com.esferalia.aon.gwt.common.client.CommonService;
 import com.esferalia.aon.gwt.common.client.CommonServiceAsync;
 import com.esferalia.aon.gwt.common.client.CommonServiceAsyncDecorator;
 import com.esferalia.aon.gwt.common.client.RootLayoutPanel;
-import com.esferalia.aon.gwt.common.client.widget.ConfirmDialog;
-import com.esferalia.aon.gwt.common.client.widget.ConfirmDialog.ConfirmDialogCallback;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonConfirmDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonConfirmDialog.AonConfirmDialogCallback;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomDateBox;
@@ -473,14 +471,25 @@ public class FinanceModule extends MainEntryPoint {
 		table.createHeader();
 		
 		selectedCount = new InlineLabel();
+		selectedCount.addStyleName("minWidth_2");
 		
 		if(this.isPayroll) {
 			for ( PAYROLL_COLS col : PAYROLL_COLS.values())
-				if(col.equals(PAYROLL_COLS.TYP) || col.equals(PAYROLL_COLS.CHK)) table.addHeader(col.equals(PAYROLL_COLS.CHK) ? selectedCount : new Label( AonStringUtils.isBlank(col.getHeaderLabel()) ? "" : col.getHeaderLabel() ), "1rem", col.getCellStyleClass());
+				if(col.equals(PAYROLL_COLS.TYP) || col.equals(PAYROLL_COLS.CHK)) {
+					Label label = new Label( AonStringUtils.isBlank(col.getHeaderLabel()) ? "" : col.getHeaderLabel() );
+					label.addStyleName("minWidth_2");
+					table.addHeader(col.equals(PAYROLL_COLS.CHK) ? selectedCount : label, "1rem", col.getCellStyleClass());
+				}
+				
 				else table.addHeader(new Label( AonStringUtils.isBlank(col.getHeaderLabel()) ? "" : col.getHeaderLabel() ), col.getColWidth(), col.getCellStyleClass());
 		} else {
 			for ( COLS col : COLS.values())
-				if(col.equals(COLS.TYP) || col.equals(COLS.CHK)) table.addHeader(col.equals(COLS.CHK) ? selectedCount : new Label( AonStringUtils.isBlank(col.getHeaderLabel()) ? "" : col.getHeaderLabel() ), "1rem", col.getCellStyleClass());
+				if(col.equals(COLS.TYP) || col.equals(COLS.CHK)) {
+					Label label = new Label( AonStringUtils.isBlank(col.getHeaderLabel()) ? "" : col.getHeaderLabel() );
+					label.addStyleName("minWidth_2");
+					table.addHeader(col.equals(COLS.CHK) ? selectedCount : label, "1rem", col.getCellStyleClass());
+				}
+				
 				else table.addHeader(new Label( AonStringUtils.isBlank(col.getHeaderLabel()) ? "" : col.getHeaderLabel() ), col.getColWidth(), col.getCellStyleClass());
 		}
 		
@@ -544,8 +553,8 @@ public class FinanceModule extends MainEntryPoint {
 		settleAllButton.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
-				ConfirmDialog cd = new ConfirmDialog();
-				cd.confirm(AON.MSG.settleAllFinanceAction( selectedItems.size() ), new ConfirmDialogCallback(){
+				AonConfirmDialog cd = new AonConfirmDialog();
+				cd.confirm(AON.MSG.settleAllFinanceAction( selectedItems.size() ), new AonConfirmDialogCallback(){
 					@Override
 					public void onAccept() {
 						

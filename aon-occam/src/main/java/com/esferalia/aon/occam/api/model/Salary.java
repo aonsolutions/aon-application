@@ -155,6 +155,10 @@ public class Salary implements Serializable {
 			return false;
 		}
 
+		public boolean isSolidarity() {
+			return false;
+		}
+
 		public boolean isJobTraining() {
 			return false;
 		}
@@ -241,6 +245,18 @@ public class Salary implements Serializable {
 
 	}
 
+	public static class SolidarityDeduction extends Deduction {
+
+		public SolidarityDeduction(Double amount, String description) {
+			super(amount, description, "SOLIDARIDAD", DeductionType.SOLIDARITY);
+		}
+
+		@Override
+		public boolean isSolidarity() {
+			return true;
+		}
+	}
+
 	public static class Cost {
 		
 		String name;
@@ -285,6 +301,9 @@ public class Salary implements Serializable {
 			return false;
 		}
 
+		public boolean isSolidarity() {
+			return false;
+		}
 
 		public boolean isJobTraining() {
 			return false;
@@ -393,6 +412,18 @@ public class Salary implements Serializable {
 		}
 	}
 	
+	public static class SolidarityCost extends Cost {
+
+		public SolidarityCost(Double amount, String description) {
+			super(amount, description, "MEI_E", DeductionType.MEI);
+		}
+
+		@Override
+		public boolean isSolidarity() {
+			return true;
+		}
+	}
+
 	public static class Bonus {
 		Double amount;
 		String description;
@@ -880,6 +911,11 @@ public class Salary implements Serializable {
 					return new IMSCost(amount, description);
 				}
 				
+				@Override
+				public Cost visitSolidarity(DeductionType deductionType) {
+					return new SolidarityCost(amount, description);
+				}
+				
 			});
 		} catch (Exception e) {
 		}
@@ -941,6 +977,11 @@ public class Salary implements Serializable {
 						DeductionType deductionType) {
 					
 					return new ProfessionalContingecyDeduction(amount, description);
+				}
+				
+				@Override
+				public Deduction visitSolidarity(DeductionType deductionType) {
+					return new SolidarityDeduction(amount, description);
 				}
 				
 

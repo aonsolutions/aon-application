@@ -460,6 +460,7 @@ public final class IJsonNames {
 	public static final String PRODUCT = "product";
 	public static final String PRODUCTS = "products";
 	public static final String PRODUCT_ID = "productId";
+	public static final String PRODUCT_TYPE = "productType";
 	public static final String PROFIT_PERCENT = "profitPercent";
 	public static final String PROGRESS = "progress";
 	public static final String PROJECT = "project";

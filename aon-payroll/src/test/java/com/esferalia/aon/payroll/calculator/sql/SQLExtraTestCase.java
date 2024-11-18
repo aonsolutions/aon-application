@@ -49,17 +49,13 @@ import com.esferalia.aon.jooq.tables.records.ContractRecord;
 import com.esferalia.aon.jooq.tables.records.PaymentConceptRecord;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
-import com.esferalia.aon.occam.api.model.type.ContractLeaveType;
-import com.esferalia.aon.payroll.IrpfOutcome;
 import com.esferalia.aon.payroll.Salary;
 import com.esferalia.aon.payroll.SalaryBuilder;
 import com.esferalia.aon.payroll.SalaryPayment;
 import com.esferalia.aon.payroll.calculator.ContractSalaryCalculator;
-import com.esferalia.aon.payroll.calculator.IContractBonus;
-import com.esferalia.aon.payroll.calculator.IContractDeduction;
-import com.esferalia.aon.payroll.calculator.IContractPayment;
 import com.esferalia.aon.payroll.calculator.ContractSalaryCalculator.Listener;
 import com.esferalia.aon.payroll.calculator.GenericContractSalaryCalculator;
+import com.esferalia.aon.payroll.calculator.IContractDeduction;
 import com.esferalia.aon.payroll.calculator.SmartContractSalaryCalculator;
 import com.esferalia.aon.payroll.calculator.jooq.JooqSalaryBuilder;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
@@ -74,7 +70,6 @@ import com.esferalia.aon.salary.enumeration.PaymentType;
 import com.esferalia.aon.salary.enumeration.SalaryType;
 import com.esferalia.aon.salary.expression.ExpressionException;
 import com.esferalia.aon.salary.expression.ITimedVariable;
-import com.esferalia.aon.salary.expression.ExpressionContext.RemovedExpressionVariable;
 import com.esferalia.aon.salary.payment.IPayment;
 
 import junit.framework.Assert;
@@ -7454,6 +7449,89 @@ public class SQLExtraTestCase extends AbstractSQLTestCase {
 
 	}
 
+
+	@Test
+	public void testProrratedBaseVIX() throws ExpressionException,
+			SQLException, SalaryException {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+
+		// @formatter:on
+		
+		addSystemData(aonContext, getFirstDayOfYear(getToday()), null, new HashMap<String, String>(){
+			{
+				put("BASE_CGC_MIN", "1343.00 * DIAS_NOMINA / DIAS_MES");
+			}
+			});
+		
+		
+		PaymentConceptRecord pagaExtra = addConcept(aonContext, "PAGA_EXTRA", PaymentType.CRA_0004);
+		PaymentConceptRecord salarioBase = addConcept(aonContext, "SALARIO_BASE", PaymentType.CRA_0001);
+
+		AgreementLevelCategoryRecord category = newAgreement(aonContext, 
+		new Extra [] {},
+		new Payment [] {
+			new Payment() {
+				{
+					this.type = PaymentType.CRA_0004;
+					this.concept = pagaExtra.getId();
+					this.expression = "IMP_PAGA_EXTRA * DIAS_TRABAJADOS / DIAS_MES";
+				}
+			},
+			new Payment() {
+				{
+					this.type = PaymentType.CRA_0004;
+					this.concept = pagaExtra.getId();
+					this.expression = "IMP_PAGA_EXTRA * DIAS_TRABAJADOS / DIAS_MES";
+				}
+			},
+			new Payment() {
+				{
+					this.concept = salarioBase.getId();
+					this.expression = "SALARIO_MENSUAL";
+				}
+			}
+			
+		},
+		new HashMap<String, String>(){
+		{
+			put("SALARIO_MENSUAL", "1000.00");
+			put("IMP_PAGA_EXTRA", "1000.00");
+		}
+		}
+		);
+		
+		ContractRecord contract = newContract(aonContext,
+				getFirstDayOfYear(getToday()) 
+				,new HashMap<String, String>(){
+				{
+					put(MONTH_DAYS.getName(), "30");
+				}
+				}
+				,new String[] {} 
+				,new String[] {} 
+				,category);
+		
+		
+		addPayment(aonContext, contract, pagaExtra, "IMP_PAGA_EXTRA * DIAS_TRABAJADOS / DIAS_MES", "_P", PaymentType.CRA_0004);
+		addPayment(aonContext, contract, pagaExtra, "IMP_PAGA_EXTRA * DIAS_TRABAJADOS / DIAS_MES", "_P", PaymentType.CRA_0004);
+
+		//@formatter:off
+		
+		Date startDate = add( getLastDayOfMonth(getToday()), Calendar.DAY_OF_MONTH, -1 );
+		Date endDate = getLastDayOfMonth(startDate);
+		
+		Salary salary = 
+		new SmartContractSalaryCalculator<Salary>(new SalaryBuilder())
+		.calculate(getContractSalaryCalculatorContext(connection, startDate, endDate, endDate, contract))
+		;
+		
+		for ( SalaryPayment payment : salary.getSalaryPayments() ) 
+			System.out.println(payment.getDescription() + " = " + payment.getAmount() +", " + payment.getQuote());
+
+		Assert.assertEquals( 1343.00 / 30 * 2 /* 1000.00 / 30 * 2 + 1100.00 / 30 * 2  /6.00 */, salary.getCommonBase(), DELTA);
+
+	}
 
 	@Test
 	@Ignore("Not Yet")

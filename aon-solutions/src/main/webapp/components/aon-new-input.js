@@ -370,6 +370,8 @@ export class AonNewInput extends AonElement {
 
     setDisabled(disabled) {
         this.disabled = disabled;
+        let input = this.getElement(this.INPUT);
+        if(input) input.setAttribute("disabled", "true");
     }
 
     focus() {

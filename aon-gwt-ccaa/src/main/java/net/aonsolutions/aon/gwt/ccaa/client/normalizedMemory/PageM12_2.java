@@ -55,7 +55,15 @@ public class PageM12_2 extends PageAbs {
 		
 	public PageM12_2(Deposit2 deposit) {
 		super(deposit);
-		
+		initialize(0);
+	}
+	
+	public PageM12_2(Deposit2 deposit, Integer tab) {
+		super(deposit);
+		initialize(tab);
+	}
+
+	private void initialize(Integer tab) {
 		table1 = new FlexTable();
 		table2 = new FlexTable();
 		table3 = new FlexTable();
@@ -65,11 +73,11 @@ public class PageM12_2 extends PageAbs {
 		
 		Widget ui = pageBinder.createAndBindUi(this);
 		initWidget(ui);
-		tabPanel.selectTab(0);
+		tabPanel.selectTab(tab != null ? tab : 0);
 		
 		initializeTable();
 	}
-
+	
 	@Override
 	protected void initializeTable() {
 		String[] PERIODS = new String[] {
@@ -81,10 +89,6 @@ public class PageM12_2 extends PageAbs {
 		table1Title.setText(AON.MSG.memory12_1_2X(getYear() - 1));
 		table2Title.setText(AON.MSG.memory12_3_4X(getYear()));
 		table3Title.setText(AON.MSG.memory12_3_4X(getYear() - 1));
-		
-		if(tabPanel.getTabBar().getSelectedTab() != 0)
-			tabPanel.selectTab(tabPanel.getTabBar().getSelectedTab());
-		else tabPanel.selectTab(0);
 		
 		if(getYear() < 2016){
 			defineMRNTable(table, MRN_HEADERS, D2DepositConstants.MRN12_ABREVIATE_PYMES_KEYS_1);
@@ -149,5 +153,10 @@ public class PageM12_2 extends PageAbs {
 			}
 			++row;
 		}
+	}
+	
+	@Override
+	protected void refreshDepositPage() {
+		getDeposit().refreshPage(tabPanel.getTabBar().getSelectedTab());
 	}
 }

@@ -2,10 +2,11 @@ package com.esferalia.aon.occam.impl.jooq.dao.api;
 
 import static com.esferalia.aon.jooq.tables.Account.ACCOUNT;
 import static com.esferalia.aon.jooq.tables.Invoice.INVOICE;
+import static com.esferalia.aon.jooq.tables.InvoiceAttach.INVOICE_ATTACH;
 import static com.esferalia.aon.jooq.tables.InvoiceDetail.INVOICE_DETAIL;
 import static com.esferalia.aon.jooq.tables.InvoiceDetailAccount.INVOICE_DETAIL_ACCOUNT;
-import static com.esferalia.aon.jooq.tables.InvoiceInfo.INVOICE_INFO;
 import static com.esferalia.aon.jooq.tables.InvoiceFiscal.INVOICE_FISCAL;
+import static com.esferalia.aon.jooq.tables.InvoiceInfo.INVOICE_INFO;
 import static com.esferalia.aon.jooq.tables.InvoiceTax.INVOICE_TAX;
 
 import java.math.BigDecimal;
@@ -166,6 +167,9 @@ public class InvoiceApiDAO {
 		Integer page = INVOICE_PROPERTIES.getPage(filter);
 		Integer perPage = INVOICE_PROPERTIES.getPerPage(filter);
 		
+		page = null == page ? 1 : page;
+		perPage = null == perPage ? Integer.MAX_VALUE : perPage;
+		
 		return ctx.getDslContext().select()
 				.from(INVOICE)
 				.leftOuterJoin(INVOICE_INFO).on(INVOICE_INFO.INVOICE.eq(INVOICE.ID))
@@ -173,9 +177,25 @@ public class InvoiceApiDAO {
 			.groupBy(INVOICE.ID)
 			.orderBy(INVOICE.ISSUE_DATE.desc(), INVOICE.ID.desc())
 			.limit(perPage)
-			.offset(perPage * (page -1))
+			.offset(perPage * (page - 1))
 			.fetch().stream().map(new InvoiceApiFiller(ctx));
-	}	
+	}
+	
+	public static Integer getInvoicesCount(AONContext ctx, InvoiceFilter filter) {
+		Integer page = INVOICE_PROPERTIES.getPage(filter);
+		Integer perPage = INVOICE_PROPERTIES.getPerPage(filter);
+		
+		page = null == page ? 1 : page;
+		perPage = null == perPage ? Integer.MAX_VALUE : perPage;
+		
+		Integer result = ctx.getDslContext().selectCount()
+				.from(INVOICE)
+				.leftOuterJoin(INVOICE_INFO).on(INVOICE_INFO.INVOICE.eq(INVOICE.ID))
+			.where(INVOICE_PROPERTIES.getConditions(filter))
+			.fetchOne(0, int.class);
+		
+		return result;
+	}
 	
 	public static Date getInvoiceExpDate(AONContext ctx, Integer id) {
 		return ctx.getDslContext().select(INVOICE_FISCAL.EXP_DATE)

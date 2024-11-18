@@ -21,6 +21,9 @@ import static com.esferalia.aon.payroll.enumeration.ContextVariable.SLD_C737;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.SLD_H03;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.SLD_H04;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.SLD_H06;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.SOLIDARITY_BASE_FIRST;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.SOLIDARITY_BASE_SECOND;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.SOLIDARITY_BASE_THIRD;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.STRUCTURAL_OVERTIME_BASE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.TC2;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.TOTAL_PAYMENT;
@@ -1538,7 +1541,27 @@ public class Bases {
 
 	}
 	
+	private static class AnyNonNegativeCCretaData extends CCretaData {
+		
+		
+		
+		public AnyNonNegativeCCretaData(String variable) {
+			super(variable);
+		}
 
+		@Override
+		public Double get(Salary salary, Fecha desde, Fecha hasta) 
+				throws NoSuchVariableException ,UnMatchedVariableException {
+			try {
+				return super.get(salary, desde, hasta);
+			} catch ( UnMatchedVariableException  e ) {
+				ContextData contextData = e.getContextData();
+				return CCretaData.get(variable, salary, new Period(contextData.getStartDate(), contextData.getEndDate()));
+			}
+		}
+
+	}
+	
 	private static class NonNegativeCCretaData extends CCretaData {
 
 		public NonNegativeCCretaData(String variable) {
@@ -1959,6 +1982,10 @@ public class Bases {
 			put("634", new NonNegativeCCretaData(MATERNITY_BASE.getName()));
 			put("636", new NonNegativeCompositeCCretaData().add(ERE_BASES));
 			put("637", new NonNegativeCompositeCCretaData().add(ERE_BASES));
+
+			put("497", new AnyNonNegativeCCretaData(SOLIDARITY_BASE_FIRST.getName()));
+			put("498", new AnyNonNegativeCCretaData(SOLIDARITY_BASE_SECOND.getName()));
+			put("499", new AnyNonNegativeCCretaData(SOLIDARITY_BASE_THIRD.getName()));
 
 			put("663", new CCretaData(ContextVariable.PREST_IT));
 

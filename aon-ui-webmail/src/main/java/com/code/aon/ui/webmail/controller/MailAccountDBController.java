@@ -122,6 +122,13 @@ public class MailAccountDBController extends MailDBController implements IMailAc
 	public void onProtocolAonChanged( ActionEvent event ) {
 		MailAccount mailAccount = (MailAccount) getTo();
 		mailAccount.setProtocol(protocolAon ? "aon" : null);
+		mailAccount.setReplyToMail(protocolAon ? mailAccount.getEmail() : null);
+	}
+	
+	boolean includeBcc;
+	public void onIncludeBccChanged( ActionEvent event ) {
+		MailAccount mailAccount = (MailAccount) getTo();
+		mailAccount.setReplyToMail(includeBcc ? mailAccount.getEmail() : null);
 	}
 
 	public boolean isProtocolAon() {
@@ -133,6 +140,17 @@ public class MailAccountDBController extends MailDBController implements IMailAc
 		protocolAon = aon;
 		MailAccount mailAccount = (MailAccount) getTo();
 		mailAccount.setProtocol(aon ? "aon" : null);
+	}
+	
+	public boolean isIncludeBcc() {
+		MailAccount mailAccount = (MailAccount) getTo();
+		return mailAccount.getReplyToMail() != null;
+	}
+	
+	public void setIncludeBcc(boolean bcc) {
+		includeBcc = bcc;
+		MailAccount mailAccount = (MailAccount) getTo();
+		mailAccount.setReplyToMail(includeBcc ? mailAccount.getEmail() : null);
 	}
 	
 	public boolean isProtocolDefinied() {

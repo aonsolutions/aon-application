@@ -43,24 +43,28 @@ public class PageM5_2 extends PageAbs {
 
 	public PageM5_2(Deposit2 deposit) {
 		super(deposit);
-		
+		initialize(0);
+	}
+	
+	public PageM5_2(Deposit2 deposit, Integer tab) {
+		super(deposit);
+		initialize(tab);
+	}
+	
+	private void initialize(Integer tab) {
 		table1 = new FlexTable();
 		table2 = new FlexTable();
 		Widget ui = pageBinder.createAndBindUi(this);
 		initWidget(ui);
-		
+		tabPanel.selectTab(tab != null ? tab : 0);
 		initializeTable();
 	}
 
 	@Override
 	protected void initializeTable() {
-		
-		tabPanel.selectTab(0);
-		
 		defineMRNTable(table, MRN_HEADER_A, D2DepositConstants.MRN5_ABREVIATE_PYMES_KEYS_1);
 		defineMRNTable(table1, MRN_HEADER_B, D2DepositConstants.MRN5_ABREVIATE_PYMES_KEYS_2);
 		defineMRNTable(table2, MRN_HEADER_C, D2DepositConstants.MRN5_ABREVIATE_PYMES_KEYS_3);
-		
 	}
 	
 	protected void defineMRNTable(FlexTable tab, String[] headers, D2DepositKey[][] keys) {
@@ -94,5 +98,10 @@ public class PageM5_2 extends PageAbs {
 			}
 			++row;
 		}
+	}
+	
+	@Override
+	protected void refreshDepositPage() {
+		getDeposit().refreshPage(tabPanel.getTabBar().getSelectedTab());
 	}
 }

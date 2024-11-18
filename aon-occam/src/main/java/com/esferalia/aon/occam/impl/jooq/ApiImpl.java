@@ -26,6 +26,12 @@ public class ApiImpl implements IApi {
 	}
 	
 	@Override
+	public Integer getInvoicesCount(AONContext ctx, InvoiceFilter filter) {
+		return ctx.getDslContext().transactionResult(
+				configuration -> InvoiceApiDAO.getInvoicesCount(ctx, filter));
+	}
+	
+	@Override
 	public Date getInvoiceExpDate(AONContext ctx, Integer id) {
 		return ctx.getDslContext().transactionResult(
 				configuration -> InvoiceApiDAO.getInvoiceExpDate(ctx, id));

@@ -32,6 +32,7 @@ import com.esferalia.aon.occam.api.model.product.Item;
 import com.esferalia.aon.occam.api.model.product.Product;
 import com.esferalia.aon.occam.api.model.product.ProductCategory;
 import com.esferalia.aon.occam.api.model.product.ProductKind;
+import com.esferalia.aon.occam.api.model.product.ProductStatus;
 import com.esferalia.aon.occam.api.model.registry.BookingStatus;
 import com.esferalia.aon.occam.api.model.registry.RegistryItem;
 import com.esferalia.aon.occam.api.model.registry.RegistryItemStatus;
@@ -467,25 +468,39 @@ public class ProductServlet extends AonApiHttpServlet {
 					f.getDescriptionProperty().like("%" + value + "%")
 					.or(f.getProductCodeProperty().like("%" + value + "%"))
 					.or(f.getProductNameProperty().like("%" + value + "%"))
+					.or(f.getSerialNumberProperty().like("%" + value + "%"))
 			);
 		}
 	
-		if(api.getData().opt(IJsonNames.REGISTRY) != null){
+		if(JsonUtils.has(api.getData(),IJsonNames.REGISTRY)){
 			Integer registry = api.getData().optInt(IJsonNames.REGISTRY);
 			filter = filter.and(f.getRegistryProperty().eq(registry));
 		}
 		
-		if(api.getData().opt(IJsonNames.SERIAL_NUMBER) != null) {
+		if(JsonUtils.has(api.getData(), IJsonNames.SERIAL_NUMBER)) {
 			filter = filter.and(f.getSerialNumberProperty().eq(JsonUtils.getString(api.getData(), IJsonNames.SERIAL_NUMBER)));
 		}
 		
-		if(api.getData().opt(IJsonNames.TYPE) != null) {
+		if(JsonUtils.has(api.getData(), IJsonNames.TYPE)) {
 			RegistryMode type = api.getData().getEnum(RegistryMode.class, IJsonNames.TYPE);
 			if (type != null) {				
 				filter = filter.and(f.getTypeProperty().eq(type.value()));
 			}
 		}
 		
+		if(JsonUtils.has(api.getData(), IJsonNames.PRODUCT_TYPE)) {
+			ProductType productType = ProductType.safeValueOf(JsonUtils.getString(api.getData(), IJsonNames.PRODUCT_TYPE));
+			if(productType != null) {				
+				filter = filter.and(f.getProductTypeProperty().eq(productType.value()));
+			}
+		}
+		
+		if(JsonUtils.has(api.getData(), IJsonNames.ACTIVE)) {
+			boolean active = JsonUtils.getboolean(api.getData(), IJsonNames.ACTIVE);
+			filter = filter.and(f.getStatusProperty().eq(active 
+					? ProductStatus.ACTIVE.value() 
+					: ProductStatus.DISCONTINUED.value()));
+		}
 		return filter;
 	}
 

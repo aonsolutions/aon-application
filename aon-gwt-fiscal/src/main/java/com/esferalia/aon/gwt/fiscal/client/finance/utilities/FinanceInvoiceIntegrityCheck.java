@@ -24,7 +24,6 @@ import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SimpleLayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
@@ -62,25 +61,16 @@ class FinanceInvoiceIntegrityCheck extends OptionBase {
 	
 	
 	public void run() {
-		final PopupPanel popup = new PopupPanel(false, true);
-		Label label = new Label(AON.MSG.processing());
-		label.addStyleName(AON.AON_CSS.aonTimer());
-		popup.add(label);
-		popup.setGlassEnabled(true);
-		popup.setAnimationEnabled(true);
-		popup.center();
 		FinanceUtilitiesModule.SERVICE.financeInvoiceIntegrity(getOptions().getOccam(), getDomain(), new AsyncCallback<FinanceUtilitiesResult>(){
 
 			@Override
 			public void onFailure(Throwable caught) {
 				openFootPanelIfNeeded();
 				showErrorPanel(caught.getMessage());
-				popup.hide();
 			}
 
 			@Override
 			public void onSuccess(FinanceUtilitiesResult result) {
-				popup.hide();
 				cleanErrorPanel();
 				container.setWidget( paintResults(result) );
 			}

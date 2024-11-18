@@ -34,7 +34,15 @@ public class PageH5 extends PageAbs {
 
 	public PageH5(Deposit2 deposit) {
 		super(deposit);
-		
+		initialize(0);
+	}
+	
+	public PageH5(Deposit2 deposit, Integer tab) {
+		super(deposit);
+		initialize(tab);
+	}
+	
+	private void initialize(Integer tab) {
 		LMA8099000 = new Label(); 
 		IMA8099000 = new CheckBox();
 		LMA8099010 = new Label();
@@ -42,11 +50,11 @@ public class PageH5 extends PageAbs {
 		
 		Widget ui = pageBinder.createAndBindUi(this);
 		initWidget(ui);
-		tabPanel.selectTab(0);
+		tabPanel.selectTab(tab != null ? tab : 0);
 		
 		initializeTable();
 	}
-
+	
 	private void init() {
 		LMA8099000.setText("Los abajo firmantes, como Administradores de "
 				+ "la Sociedad citada, manifiestan que en la contabilidad "
@@ -142,7 +150,13 @@ public class PageH5 extends PageAbs {
 		paintKeyField(tab,keys[1],row,2,false);
 		return  ++row;
 	}
+	
 	protected void onEdit(String key, String value) {
 		onEdit(key, value, false);
+	}
+	
+	@Override
+	protected void refreshDepositPage() {
+		getDeposit().refreshPage(tabPanel.getTabBar().getSelectedTab());
 	}
 }

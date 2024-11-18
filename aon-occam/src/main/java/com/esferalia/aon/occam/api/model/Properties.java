@@ -274,6 +274,7 @@ public interface Properties {
 		Property<Integer> getStockUnitTagProperty();
 		Property<String> getProductCodeProperty();
 		Property<String> getProductNameProperty();
+		Property<Byte> getProductTypeProperty();
 		
 		Property<Integer> getRegistryProperty();
 		Property<Byte> getTypeProperty();

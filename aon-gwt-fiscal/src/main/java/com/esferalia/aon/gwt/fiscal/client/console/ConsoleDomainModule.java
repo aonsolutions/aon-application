@@ -2,12 +2,15 @@ package com.esferalia.aon.gwt.fiscal.client.console;
 
 import java.util.Date;
 import java.util.LinkedHashMap;
+import java.util.LinkedList;
 import java.util.logging.Logger;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.AsyncCallbackWrapper;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonCloseTab;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonConfirmDialog;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomPopup;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonDisplayGrid;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonLayoutPanel;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonMessageDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonMinimizePanel;
@@ -16,11 +19,15 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
 import com.esferalia.aon.gwt.fiscal.client.console.ConsoleDomainTable.ConsoleDomainTableCallback;
 import com.esferalia.aon.gwt.fiscal.client.console.ConsoleDomainTableRow.DeleteAsyncCallback;
+import com.esferalia.aon.gwt.fiscal.client.finance.utilities.FinanceUtilitiesModuleOptions;
+import com.esferalia.aon.gwt.fiscal.client.finance.utilities.FinanceUtilitiesModulePanel;
 import com.esferalia.aon.gwt.fiscal.shared.IRequestParamsNames;
 import com.esferalia.aon.gwt.fiscal.shared.JsonParams;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.DomainParams;
+import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.console.ConsoleMessageType;
+import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.mutable.MutableInt;
 import com.esferalia.aon.watson.util.AonNumberUtils;
@@ -38,6 +45,7 @@ import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.FormPanel;
 import com.google.gwt.user.client.ui.Hidden;
 import com.google.gwt.user.client.ui.InlineLabel;
+import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SimpleLayoutPanel;
 import com.google.gwt.user.client.ui.SplitLayoutPanel;
@@ -258,9 +266,17 @@ public class ConsoleDomainModule extends AonLayoutPanel {
 		// 												  		   [REMOTE ACCESS]
 		// -----------------------------------------------------------------------
 		@Override
-		public void onRemoteAccess(Integer domainId, AsyncCallback<String> cbk) {
+		public void onAvailableUsers(JsConsoleDomain domain, AsyncCallback<LinkedList<User>> cbk) {
+			Occam occam = new Occam()
+				.setDomainName(domain.getName())
+				.setDomain(domain.getId())
+				.setUser( null );
+			ConsoleModule.CONSOLE_SERVICE.availableUsers(occam, domain.getId(), new AsyncCallbackWrapper<>( cbk ));
+		}
+		@Override
+		public void onSwitchRemoteAccess(Integer domainId, AsyncCallback<Boolean> cbk) {
 			DomainParams params = filterPanel.getParams(options);
-			ConsoleModule.CONSOLE_SERVICE.remoteAccess(params,domainId, new AsyncCallbackWrapper<>( cbk ));
+			ConsoleModule.CONSOLE_SERVICE.switchRemoteAccess(params,domainId, new AsyncCallbackWrapper<>( cbk ));
 		}
 		
 		// -----------------------------------------------------------------------
@@ -282,6 +298,104 @@ public class ConsoleDomainModule extends AonLayoutPanel {
 			mainTabLayout.selectTab(tabLabel);
 		}
 
+		// ----------------------------------------------------------------------
+		// 												  		     [UTILIDADES]
+		// ----------------------------------------------------------------------
+		@Override
+		public void onUtilitiesDomain(JsConsoleDomain domain) {
+			onAvailableUsers(domain, new AsyncCallback<LinkedList<User>>() {
+
+				@Override
+				public void onFailure(Throwable t) {
+					showError( "No se pudo mostrar los usuarios. ("+ t.getMessage() +")");
+				}
+
+				@Override
+				public void onSuccess(LinkedList<User> users) {
+					AonCustomPopup popup = new AonCustomPopup(true); 
+					popup.setWidth("600px");
+					popup.setHeight("600px");
+					FlowPanel container = new FlowPanel();
+					Hidden userHidden = new Hidden("j_username");
+					Hidden passwordHidden = new Hidden("j_password");
+					FormPanel locForm = new FormPanel("_blank");
+					locForm.setMethod(FormPanel.METHOD_POST);
+					FlowPanel locFormPanel = new FlowPanel();
+					locFormPanel.add(userHidden);
+					locFormPanel.add(passwordHidden);
+					locForm.setWidget(locFormPanel);
+					container.add(locForm);
+					
+					AonDisplayGrid grid = new AonDisplayGrid();
+					grid.addStyleName(AON.CSS.aonMarginTop());
+					grid.addStyleName(AON.CSS.aonWidthAlmostAll());
+					grid.addStyleName(AON.CSS.aonBlockCenter());
+					grid.addHeaderRow()
+						.addCell(new Label(""), AON.CSS.aonWidth30())
+						.addCell(new Label("Usuario"), AON.CSS.aonWidth150())
+						.addCell(new Label("Nombre"), AON.CSS.aonFlexGrow1());
+					users.stream()	
+						.forEach( u -> {
+							Label topLevel = new Label();
+							if (AonNumberUtils.notEquals(domain.getId(),u.getDomain())) {
+								topLevel.setStyleName(AON.CSS.aonTabIcon());
+								topLevel.addStyleName(AON.CSS.aonIconLevelTop());
+							}
+							grid.addRow()
+								.addCell( topLevel )
+								.addCell(new Label(u.getLogin()))
+								.addCell(new Label(u.getName()))
+								.addClickHandler( e -> {
+									final String tabLabel = "Tool " + AonStringUtils.abbreviate(domain.getDescription(), 20);
+									Widget w = mainTabLayout.getWidget(tabLabel);
+									if (w == null) {
+										AonCloseTab closeTab = new AonCloseTab(tabLabel, true);
+										closeTab.addCloseHandler(e1 -> mainTabLayout.remove(tabLabel));
+										FinanceUtilitiesModuleOptions opts = new FinanceUtilitiesModuleOptions()
+											.setDomainName(domain.getName())
+											.setDomain(domain.getId())
+											.setUser(u.getLogin())
+											.setAdvancedMode( true );
+										Domain d = new Domain()
+											.setId( domain.getId() )
+											.setName(domain.getName())
+											.setDescription(domain.getDescription())
+											.setParentId(domain.getParentId())
+											.setDomainType( domain.getDomainType())
+											.setEnableHeredity( domain.isEnableHeredity() )
+											.setDomainManagement(domain.isDomainManagement())
+											.setActive( domain.isActive() )
+											.setOwner( domain.getOwner() )
+											.setScope( domain.getScope() )
+											.setMaxDefinedUsers(domain.getMaxDefinedUsers())
+											.setDefinedUsers(domain.getDefinedUsers())
+											.setMaxDocumentSize(domain.getMaxDocumentSize())
+											.setMaxTotalDocumentSize(domain.getMaxTotalDocumentSize())
+											.setLastAccessUser(domain.getLastAccessUser())
+											.setLastAccessDate(domain.getLastAccessDate())
+											.setExpirationDate((domain.getExpirationDate() ))
+											.setCreationUser( domain.getCreationUser() )
+											.setCreationDate( domain.getCreationDate() )  
+											.setModificationUser( domain.getModificationUser() )
+											.setModificationDate(domain.getModificationDate())
+										;
+										
+										FinanceUtilitiesModulePanel panel = new FinanceUtilitiesModulePanel( opts, d );						
+										mainTabLayout.add( panel, closeTab, tabLabel);
+										popup.hide();
+								} 
+								mainTabLayout.selectTab(tabLabel);
+							});
+						});
+					ScrollPanel scroll = new ScrollPanel();
+					container.add(grid);
+					scroll.add(container);
+					popup.add(scroll);
+					popup.center();
+					popup.show();
+				}
+			});
+		}
 		// -----------------------------------------------------------------------
 		// 												  		   	   [DUPLICATE]
 		// -----------------------------------------------------------------------

@@ -5,7 +5,7 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonLayoutPanel;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonMinimizePanel;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonTabLayoutPanel;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
-import com.esferalia.aon.gwt.fiscal.client.finance.utilities.FinanceUtilitiesModule.IOption;
+import com.esferalia.aon.gwt.fiscal.client.finance.utilities.FinanceUtilitiesModulePanel.IOption;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.finance.utilities.FinanceUtilitiesResult;
 import com.esferalia.aon.watson.util.AonStringUtils;

@@ -107,7 +107,7 @@
 }
 
 .aon_custom_table_header {
-	background-color: transparent;
+	background-color: #fafafa;
 }
 
 .aon_custom_row {
@@ -355,6 +355,10 @@
 	text-transform: capitalize;
 }
 
+.aon_custom_text_box {
+	height: 3rem;
+}
+
 .aon_custom_row:hover, .aon_utility_option:hover, .aon_custom_text_box:hover
 	{
 	background-color: #f1f1f1;
@@ -420,8 +424,8 @@
 
 .aon_icon_visibility {
 	background-size: 24px;
-	background-image:
-		url('data:image/svg+xml;utf-8,<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#5f6368"><path d="M480.24-364q56.76 0 96.26-39.74 39.5-39.73 39.5-96.5 0-56.76-39.74-96.26-39.73-39.5-96.5-39.5-56.76 0-96.26 39.74-39.5 39.73-39.5 96.5 0 56.76 39.74 96.26 39.73 39.5 96.5 39.5Zm-.24-28q-45 0-76.5-31.5T372-500q0-45 31.5-76.5T480-608q45 0 76.5 31.5T588-500q0 45-31.5 76.5T480-392Zm.14 140Q355-252 252-319.5 149-387 96-500q53-113 155.86-180.5 102.85-67.5 228-67.5Q605-748 708-680.5 811-613 864-500q-53 113-155.86 180.5-102.85 67.5-228 67.5ZM480-500Zm0 220q113 0 207.5-59.5T832-500q-50-101-144.5-160.5T480-720q-113 0-207.5 59.5T128-500q50 101 144.5 160.5T480-280Z"/></svg>');
+	background-image: 
+		url('data:image/svg+xml;utf-8,<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="black"><path d="M480.24-364q56.76 0 96.26-39.74 39.5-39.73 39.5-96.5 0-56.76-39.74-96.26-39.73-39.5-96.5-39.5-56.76 0-96.26 39.74-39.5 39.73-39.5 96.5 0 56.76 39.74 96.26 39.73 39.5 96.5 39.5Zm-.24-28q-45 0-76.5-31.5T372-500q0-45 31.5-76.5T480-608q45 0 76.5 31.5T588-500q0 45-31.5 76.5T480-392Zm.14 140Q355-252 252-319.5 149-387 96-500q53-113 155.86-180.5 102.85-67.5 228-67.5Q605-748 708-680.5 811-613 864-500q-53 113-155.86 180.5-102.85 67.5-228 67.5ZM480-500Zm0 220q113 0 207.5-59.5T832-500q-50-101-144.5-160.5T480-720q-113 0-207.5 59.5T128-500q50 101 144.5 160.5T480-280Z"/></svg>');
 }
 
 .aon-icon-config, .aon_icon_settings {
@@ -531,6 +535,23 @@
 	align-items: center;
 }
 
+.gwt-TabBar {
+	background: transparent;
+}
+
+.gwt-TabBar .gwt-TabBarItem {
+	color: black;
+	background: transparent;
+}
+
+.gwt-TabBarItem-wrapper-selected {
+	border-bottom: 2px solid transparent;
+}
+
+.gwt-TabBarItem-wrapper-selected {
+	border-bottom: 2px solid #002469;
+}
+
 input[type='checkbox'] {
 	width: 24px;
 	height: 24px;
@@ -544,4 +565,8 @@ input[type='checkbox'] {
 input[type='checkbox']:checked {
 	background-image:
 		url('data:image/svg+xml;utf-8,<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="black"><path d="m424-348 248-248-20-20-228 228-114-114-20 20 134 134ZM232-172q-26 0-43-17t-17-43v-496q0-26 17-43t43-17h496q26 0 43 17t17 43v496q0 26-17 43t-43 17H232Zm0-28h496q12 0 22-10t10-22v-496q0-12-10-22t-22-10H232q-12 0-22 10t-10 22v496q0 12 10 22t22 10Zm-32-560v560-560Z"/></svg>');
+}
+
+.minWidth_2{
+	min-width: 2rem !important;
 }

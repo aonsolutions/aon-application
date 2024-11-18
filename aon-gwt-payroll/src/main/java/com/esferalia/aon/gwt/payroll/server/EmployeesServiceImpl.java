@@ -1681,7 +1681,8 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 		try {
 		    	conn = AonServletUtils.getConnection(domain);
 			ByteArrayOutputStream reportOut = new ByteArrayOutputStream();
-			com.esferalia.aon.payroll.Salary salary = EmployeesServiceHelper.calculate(conn, draft, new SmartContractSalaryCalculator<>(new SalaryBuilder()));
+			com.esferalia.aon.payroll.Salary salary = 
+			EmployeesServiceHelper.calculate(conn, draft, new SmartContractSalaryCalculator<>(new RoundSalaryBuilder<>(new SalaryBuilder(),EmployeesServiceHelper.round(2))));
 
 			DraftPayrollBuilder.generatePayroll(reportOut, domain, salary);
 			byte [] reportByteArray = reportOut.toByteArray();

@@ -24,6 +24,8 @@ export class DomainUserRoles {
 
   domainPayer;
 
+  isTrial;
+
   constructor(data) {
     this.domain = new Domain(data.domain);
     this.parentDomain = new Domain(data.parentDomain);
@@ -41,6 +43,8 @@ export class DomainUserRoles {
     this.maxDefinedUsers = data.maxDefinedUsers;
     this.definedUsers = data.definedUsers;
     this.domainPayer = data.domainPayer;
+
+    this.isTrial = data.trial;
   }
 
   checkUsers() {
@@ -738,5 +742,9 @@ export class DomainUserRoles {
 
   isCommerce(){
     return this.getDomain().getDomainType() == 'COMMERCE';
+  }
+
+  isTrial(){
+    return this.isTrial;
   }
 }

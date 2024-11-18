@@ -1648,7 +1648,7 @@ public class InvoiceDAO {
 		ctx.log().info("UPDATE WITHHOLDING TYPE: {0}: {1} filas.",invoiceId, sum.getValue());
 	}
 
-	private static Condition getWhere(AccountingReportParams params) {
+	public static Condition getWhere(AccountingReportParams params) {
 		
 		Condition condition = INVOICE.DOMAIN.equal( params.getDomain() );
 		

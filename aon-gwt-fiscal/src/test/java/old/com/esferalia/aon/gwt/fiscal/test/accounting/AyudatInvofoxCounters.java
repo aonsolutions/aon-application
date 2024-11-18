@@ -10,6 +10,7 @@ import java.io.LineNumberReader;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.poi.ss.usermodel.BorderStyle;
 import org.apache.poi.ss.usermodel.CellStyle;
@@ -29,10 +30,12 @@ import com.esferalia.aon.gwt.finance.server.AbsExcelAction;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
+import com.google.gwt.dev.util.collect.HashMap;
 
 public class AyudatInvofoxCounters {
 	
 	private static List<Domain> domains = new LinkedList<>();
+	private static Map<Integer,Integer> counters = new HashMap<>();
 	
 	private AyudatInvofoxCounters() {
 	}
@@ -47,7 +50,42 @@ public class AyudatInvofoxCounters {
 			readFile(f);
 		}
 		
+		String[] counterFiles = new String[] {
+				 "/home/ecastellano/TRABAJO/INVOFOX/USAGE/invofox-ayudat.txt"
+				,"/home/ecastellano/TRABAJO/INVOFOX/USAGE/invofox-grupo.txt"
+				,"/home/ecastellano/TRABAJO/INVOFOX/USAGE/invofox-pro.txt"
+			};
+			for (String f :counterFiles ) {
+				readCounters(f);
+			}
+
 		readExcel( );
+	}
+
+	private static void readCounters(String f) throws IOException {
+		String s =AonStringUtils.substringAfter(f, "/home/ecastellano/TRABAJO/INVOFOX/USAGE/invofox-"); 
+		String schema = AonStringUtils.substringBefore(s, ".");
+		try (FileInputStream fis = new FileInputStream(f)) {
+			InputStreamReader ireader = new InputStreamReader(fis);
+			LineNumberReader reader = new LineNumberReader(ireader);
+			while ( reader.ready()) {
+				String line = reader.readLine();
+				if ( !AonStringUtils.startsWith( line, "domain" ) ) {
+					String[] tokens =  AonStringUtils.splitPreserveAllTokens(line, '\t' );
+					Integer domain = AonNumberUtils.toInteger(AonStringUtils.trimToNull(tokens[0]));
+					Integer count = AonNumberUtils.toInteger(AonStringUtils.trimToNull(tokens[1]));
+					Integer prev = counters.put( domain, count );
+					domains.stream()
+						.filter( d -> AonNumberUtils.equals(domain, d.getDomainId()  ))
+						.findAny()
+						.ifPresentOrElse( 
+							d -> d.setCounter(count)
+							, () -> System.out.println( schema + " -- " + domain + " ---> " + count + " --- NO PRESENT!!!") 
+						)
+						;
+				}
+			}
+		}
 	}
 
 	private static void readFile(String f) throws IOException {
@@ -79,14 +117,14 @@ public class AyudatInvofoxCounters {
 			.setRegistry( AonNumberUtils.toInteger( tokens[0]) )
 			.setDocument( tokens[1] )	
 			.setCompanyName( tokens[2] )
-			.setParentId( AonNumberUtils.toInteger( tokens[3]) )
-			.setParentName( tokens[4] )	
-			.setParentDescription( tokens[5] )	
-			.setParentAonCustomer( AonNumberUtils.toInteger( tokens[6]) )	
-			.setDomainId( AonNumberUtils.toInteger( tokens[7]) )
-			.setDomainName( tokens[8] )	
-			.setDomainDescription( tokens[9] )	
-			.setDomainAonCustomer( AonNumberUtils.toInteger( tokens[10]) )	
+			.setDomainId( AonNumberUtils.toInteger( tokens[3]) )
+			.setDomainName( tokens[4] )	
+			.setDomainDescription( tokens[5] )	
+			.setDomainAonCustomer( AonNumberUtils.toInteger( tokens[6]) )	
+			.setParentId( AonNumberUtils.toInteger( tokens[7]) )
+			.setParentName( tokens[8] )	
+			.setParentDescription( tokens[9] )	
+			.setParentAonCustomer( AonNumberUtils.toInteger( tokens[10]) )	
 		;
 	}
 	private static class Invofox {
@@ -102,6 +140,7 @@ public class AyudatInvofoxCounters {
 		private double error;
 		private double total;
 		
+		private double aonProcessed;
 		private double processed;	
 		private double automated;
 		private double clientDiscarded;	
@@ -195,6 +234,14 @@ public class AyudatInvofoxCounters {
 			this.total = total;
 			return this;
 		}
+		
+		public double getAonProcessed() {
+			return aonProcessed;
+		}
+		public Invofox setAonProcessed(double aonProcessed) {
+			this.aonProcessed = aonProcessed;
+			return this;
+		}
 		public double getProcessed() {
 			return processed;
 		}
@@ -257,6 +304,8 @@ public class AyudatInvofoxCounters {
 		private String domainName;	
 		private String domainDescription;	
 		private Integer domainAonCustomer;
+		
+		private Integer counter;
 		
 		public String getSchema() {
 			return schema;
@@ -353,17 +402,23 @@ public class AyudatInvofoxCounters {
 			this.domainAonCustomer = domainAonCustomer;
 			return this;
 		}
-	
+		public Integer getCounter() {
+			return counter;
+		}
+		public Domain setCounter(Integer counter) {
+			this.counter = counter;
+			return this;
+		}
 	}
 	
 	private static void readExcel() throws FileNotFoundException, IOException {
-		FileOutputStream fos = new FileOutputStream( "/home/ecastellano/TRABAJO/INVOFOX/USAGE/August 2024.xlsx" );
+		FileOutputStream fos = new FileOutputStream( "/home/ecastellano/TRABAJO/INVOFOX/USAGE/October 2024.xlsx" );
 		ExcelAction action = new ExcelAction( );
 		action.initialize("USAGE");
 		String f = "/home/ecastellano/TRABAJO/INVOFOX/USAGE/AonDocsPerCompany.xlsx";
 		try (FileInputStream fis = new FileInputStream(f)) {
 			try (XSSFWorkbook workbook = new XSSFWorkbook(fis)){
-				XSSFSheet sheet = workbook.getSheetAt(1);
+				XSSFSheet sheet = workbook.getSheetAt(0);
 				Iterator<Row> rowIterator = sheet.iterator();
 				int line = 0;
 				while (rowIterator.hasNext()) {
@@ -389,12 +444,10 @@ public class AyudatInvofoxCounters {
 									.setProcessed( row.getCell( 3 ).getNumericCellValue() )	
 									.setAutomated(row.getCell( 4 ).getNumericCellValue()) 	
 									.setClientDiscarded(row.getCell( 5 ).getNumericCellValue())	
-									.setDuplicated(row.getCell( 6 ).getNumericCellValue())	
-									.setUsedClassifier(row.getCell( 7 ).getNumericCellValue())	
-									.setUsedSplitter(row.getCell( 8 ).getNumericCellValue())
-									
-									;	
-							
+//							.setDuplicated(row.getCell( 6 ).getNumericCellValue())	
+									.setUsedClassifier(row.getCell( 6 ).getNumericCellValue())	
+									.setUsedSplitter(row.getCell( 7 ).getNumericCellValue())
+									;
 							boolean exists = domains.stream()
 									.filter( d -> AonStringUtils.equalsIgnoreCase(invofox.getDocument(), d.getDocument() ))
 									.findAny()
@@ -467,7 +520,8 @@ public class AyudatInvofoxCounters {
 			cellCount = 0;
 			String[] columns = new String[] {
 				"Company Name"
-				,"TaxId"						
+				,"TaxId"
+				,"AON"
 				,"Processed"
 				,"Automated"
 				,"ClientDiscarded"	
@@ -501,6 +555,8 @@ public class AyudatInvofoxCounters {
 			cellCount = 0;
 			addCell(invofox.getName());
 			addCell(invofox.getDocument());
+			
+			addCell(domain.getCounter());
 			
 			addCell(invofox.getProcessed());
 			addCell(invofox.getAutomated());
