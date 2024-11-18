@@ -48,6 +48,7 @@ import { AonMarketing } from '../marketing/aon-marketing.js';
 import { MessegerUtils } from '../messenger/utils/MessengerUtils.js';
 import { generateJobId } from '../invoice/InvoiceUtils.js';
 import { AonTrial } from '../invoice/aon-trial.js';
+import { AonDashboardSalesPurchases } from '../accounting/aon-dashboard-sales-purchases.js';
 
 export class AonDesktop extends AonElement {
 
@@ -491,7 +492,7 @@ export class AonDesktop extends AonElement {
 			let trialCard = new AonCard();
 			trialCard.classList.add(CSS.AON_DASHBOARD_CARD);
 			trialCard.id = "trial";
-			trialCard.message = "Resumen Facturas (Trial)";
+			trialCard.message = "Versión Evaluación (Resumen de uso)";
 			trialCard.setApp(this.getDur().isInvoice() ? Apps.INVOICE : Apps.ACCOUNTING);
 			cardsPanel.appendChild(trialCard);
 			trialCard.getCardTitle1().style.cursor = 'pointer';
@@ -503,6 +504,38 @@ export class AonDesktop extends AonElement {
 			trialCard.firstChild.style.margin = '0';
 
 			trialCard.addEventListener(EVENT.CLICK_TITLE, () => {
+				this.appSelection(this.getDur().isInvoice() ? Apps.INVOICE.app : Apps.ACCOUNTING.app);
+			});
+		}
+
+		if((this.getDur().isInvoice() || this.getDur().isAccounting()) && this.getDur().isTrial) {
+			// Ventas y Gastos Card
+			let defaultYear = new Date().getFullYear();
+
+			if(new Date().getTime() < new Date(new Date().getFullYear(), 0, 31))
+				defaultYear = defaultYear - 1;
+
+			let aonDashboardSalesPurchases = new AonDashboardSalesPurchases("yearly", defaultYear);
+			aonDashboardSalesPurchases.id = "aonDashboardSalesPurchases";
+
+			let vygCard = new AonCard();
+			vygCard.classList.add(CSS.AON_DASHBOARD_CARD);
+			vygCard.id = "vygCard";
+			// pygCard.title = "Pérdidas y Ganancias";
+			vygCard.message = "Ventas y Gastos";
+			vygCard.setApp(this.getDur().isInvoice() ? Apps.INVOICE : Apps.ACCOUNTING);
+			cardsPanel.appendChild(vygCard);
+			vygCard.getCardTitle1().style.cursor = 'pointer';
+			vygCard.insertAdjacentHTML( 'beforeend', "<aon-dialog-menu id='aonCardVyGOption'> </aon-dialog-menu>" );
+
+			vygCard.setContent(aonDashboardSalesPurchases);
+			vygCard.addTitleButton(MSG.OPTIONS, MATERIAL_ICONS.MORE_VERT, false, () => this.filterVyG(vygCard));
+			vygCard.firstChild.style.marginLeft = '0';
+			vygCard.firstChild.style.minHeight = "28rem";
+			vygCard.firstChild.children.item(1).style.height = "22.5rem";
+			vygCard.firstChild.style.margin = '0';
+
+			vygCard.addEventListener(EVENT.CLICK_TITLE, () => {
 				this.appSelection(this.getDur().isInvoice() ? Apps.INVOICE.app : Apps.ACCOUNTING.app);
 			});
 		}
@@ -746,6 +779,64 @@ export class AonDesktop extends AonElement {
 				aonDashboardGraphicsTrial = new AonDashboardGraphicsTrial("monthly", pygyYear);
 				aonDashboardGraphicsTrial.id = "aonDashboardGraphicsTrial";
 				pygCard.setContent(aonDashboardGraphicsTrial);
+			}
+		};
+	
+		let options = [anual, trimestral, mensual];
+		
+		d.setMenuOptions(options, top, left);
+		d.open();
+	}
+
+	filterVyG(vygCard){
+		let button = this.getElement('vygCardTitleSection2OpcionesButtonIconButton');
+		let top  = button.getBoundingClientRect().top;
+		const left = button.getBoundingClientRect().left;
+
+		let vyGYearSelect = this.getElement('vyGyearSelect');
+		let period = JSON.parse(vyGYearSelect.value);
+        let vygYear = period.name;
+
+		let aonDashboardSalesPurchases = this.getElement('aonDashboardSalesPurchases');
+
+		let d = document.getElementById('aonCardVyGOption');
+
+		const anual = {
+			name: 'Vista Anual',
+			title:"Vista Anual",
+			icon: 'calendar_today',
+			backgroundColor: "#4472C4",
+			fn: () => {
+				vygCard.clear();
+				aonDashboardSalesPurchases = new AonDashboardSalesPurchases("yearly", vygYear);
+				aonDashboardSalesPurchases.id = "aonDashboardSalesPurchases";
+				vygCard.setContent(aonDashboardSalesPurchases);
+			}
+		};
+
+		const trimestral = {
+			name: 'Vista Trimestral',
+			title:"Vista Trimestral",
+			icon: 'calendar_today',
+			backgroundColor: "#4472C4",
+			fn: () => {
+				vygCard.clear();
+				aonDashboardSalesPurchases = new AonDashboardSalesPurchases("quarterly", vygYear);
+				aonDashboardSalesPurchases.id = "aonDashboardSalesPurchases";
+				vygCard.setContent(aonDashboardSalesPurchases);
+			}
+		};
+
+		const mensual = {
+			name: "Vista Mensual",
+			title: "Vista Mensual",
+			icon: 'calendar_today',
+			backgroundColor: "#4472C4",
+			fn: () => {
+				vygCard.clear();
+				aonDashboardSalesPurchases = new AonDashboardSalesPurchases("monthly", vygYear);
+				aonDashboardSalesPurchases.id = "aonDashboardSalesPurchases";
+				vygCard.setContent(aonDashboardSalesPurchases);
 			}
 		};
 	

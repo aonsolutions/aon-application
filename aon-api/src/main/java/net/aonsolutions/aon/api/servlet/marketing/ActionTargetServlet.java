@@ -479,6 +479,7 @@ public class ActionTargetServlet extends AonApiHttpServlet {
 		}
 		        
 		// Mensaje de agradecimiento
+		htmlResponse += "<p style=\"color: #777777; font-size: 14px; margin-top: 30px;\">Se ha enviado un correo, al mail indicado para crear la empresa, con estos datos.</p>";
 		htmlResponse += "<p style=\"color: #777777; text-align: center; font-size: 14px; margin-top: 30px;\">Gracias por confiar en nosotros. Si tienes alguna pregunta, no dudes en contactarnos.</p>"
 				  + "</div>"
 		        + "</div>";
@@ -884,20 +885,25 @@ public class ActionTargetServlet extends AonApiHttpServlet {
 	                + "  </div>\n";
 	    }
 	    
-	    body += "  <h2 style=\"text-align: center; color: #333;\">Información para la Creación de Empresa</h2>\n"
-	            + "\n"
-	            + "  <p style=\"font-size: 16px; color: #333;\"><strong>Nombre de la Empresa:</strong> <span id=\"nombre-empresa\">" + enterpriseNameMail + "</span></p>\n"
-	            + "\n"
-	            + "  <p style=\"font-size: 16px; color: #333;\"><strong>URL de la Empresa:</strong> <a href=\"https://" + urlEnterprise + "\" id=\"url-empresa\" style=\"color: #007bff;\">" + urlEnterprise + "</a></p>\n"
-	            + "\n"
-	            + "  <!-- Enlace para enviar la solicitud GET -->\n"
+	    body   += "  <h2 style=\"text-align: center; color: #333;\">VERIFICACIÓN para la creación de empresa</h2>\n"
+	            + "\n";
+	    
+	    body   += "  <p style=\"font-size: 14px; color: #555; margin-top: 20px;\">\n"
+	            + "    Hemos recibido una solicitud para la creación de la empresa <strong>" + enterpriseNameMail + "</strong> con NIF: <strong>" + document + "</strong> desde esta cuenta de correo. Si ha sido Vd. pulse sobre el botón\n"
+	            + "  </p>\n";
+	    
+	    body   += "  <!-- Enlace para enviar la solicitud GET -->\n"
 	            + "  <div style=\"text-align: center; margin-top: 20px;\">\n"
 	            + "    <a href=\"" + shortUrl + "\" style=\"background-color: #28a745; color: white; padding: 12px 24px; text-decoration: none; font-size: 16px; font-weight: bold; border-radius: 5px; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);\">\n"
 	            + "      Crear Empresa\n"
 	            + "    </a>\n"
-	            + "  </div>\n"
-	            + "\n"
-	            + "  <p style=\"font-size: 14px; color: #555; text-align: center; margin-top: 20px;\">\n"
+	            + "  </div>\n";
+	    
+	    body   += "  <p style=\"font-size: 14px; color: #555; text-align: center; margin-top: 20px;\">\n"
+	            + "    En caso contrato ignore este correo y no realizaremos ninguna acción adicional.\n"
+	            + "  </p>\n";
+	    
+	    body   += "  <p style=\"font-size: 14px; color: #555; text-align: center; margin-top: 20px;\">\n"
 	            + "    Esta empresa será creada como una <strong>empresa de prueba</strong> para fines de evaluación.\n"
 	            + "  </p>\n"
 	            + "\n"
@@ -913,24 +919,29 @@ public class ActionTargetServlet extends AonApiHttpServlet {
 	private static String createEnterpriseCreatedBody(String logoUrl, String parentDomainName) {
 		String body = "";
 		
-		body += "<div style=\"background-color: #ffffff; padding: 20px; border-radius: 10px; max-width: 600px; margin: 0 auto; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);\">\n";
-		
-		if (AonStringUtils.isNotBlank(body)) {
-		        body += "  <!-- Imagen del logo al principio -->\n"
-		                + "  <div style=\"text-align: center; margin-bottom: 20px;\">\n"
-		                + "    <img src=\"" + logoUrl + "\" alt=\"" + parentDomainName + "\" style=\"max-width: 200px; border-radius: 10px;\">\n"
-		                + "  </div>\n";
-		}
-		
-		body += "  <h2 style=\"text-align: center; color: #333;\">" + (errors.isEmpty() ? "Informaci\u00f3n de Creación de Empresa" : "Error Creaci\u00f3n de Empresa") + "</h2>\n"
+		body += "<div style=\"background-color: #f9f9f9; padding: 20px; border-radius: 10px; max-width: 600px; margin: 0 auto; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);\">\n";
+		    
+	    if (AonStringUtils.isNotBlank(body)) {
+	        body += "  <!-- Imagen del logo al principio -->\n"
+	                + "  <div style=\"text-align: center; margin-bottom: 20px;\">\n"
+	                + "    <img src=\"" + logoUrl + "\" alt=\"" + parentDomainName + "\" style=\"max-width: 200px; border-radius: 10px;\">\n"
+	                + "  </div>\n";
+	    }
+	    
+	    body   += "  <h2 style=\"text-align: center; color: #333;\">Confirmación Creación de Empresa: <strong>" + enterpriseNameMail + "</strong></h2>\n"
+	            + "\n";
+	    
+	    body   += "  <p style=\"font-size: 14px; color: #555; margin-top: 20px;\">\n"
+	            + "    ¡ Enhorabuena !, Acabamos de crear su empresa para qeu pueda emitir y registrar facturas gratuitamente con un límite de 50 documentos.\n"
+	            + "  </p>\n";
+	    
+	    body   += "  <p style=\"font-size: 14px; color: #555; margin-top: 20px;\">\n"
+	            + "    A continuación le detallamos los datos de acceso:\n"
+	            + "  </p>\n";
+		    
+		body   += "  <p style=\"font-size: 16px; color: #333;\"><strong>Link Web:</strong> <a href=\"https://" + urlMail + "\" id=\"url-empresa\" style=\"color: #007bff;\">" + urlMail + "</a></p>\n"
 				+ "\n"
-				+ "  <p style=\"font-size: 16px; color: #333;\"><strong>Nombre de la Empresa:</strong> <span id=\"nombre-empresa\">" + enterpriseNameMail + "</span></p>\n"
-				+ "\n"
-				+ "  <p style=\"font-size: 16px; color: #333;\"><strong>URL de la Empresa:</strong> <a href=\"https://" + urlMail + "\" id=\"url-empresa\" style=\"color: #007bff;\">" + urlMail + "</a></p>\n"
-				+ "\n"
-				+ "  <p style=\"font-size: 16px; color: #333;\"><strong>Auth:</strong> <span id=\"usuario\">" + userMail + "</span></p>\n"
-				+ "\n"
-				+ "  <p style=\"font-size: 16px; color: #333;\"><strong>Usuario:</strong> <span id=\"usuario\">" + userLogingMail + "</span></p>\n"
+				+ "  <p style=\"font-size: 16px; color: #333;\"><strong>Usuario:</strong> <span id=\"usuario\">" + userMail + "</span></p>\n"
 				+ "\n"
 				+ "  <p style=\"font-size: 16px; color: #333;\"><strong>Contraseña:</strong> <span id=\"contraseña\">" + passwordMail + "</span></p>\n"
 				+ "\n"
