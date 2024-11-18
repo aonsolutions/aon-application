@@ -89,6 +89,7 @@ import com.esferalia.aon.occam.impl.jooq.TaskImpl;
 import com.esferalia.aon.occam.impl.jooq.TimeControlImpl;
 import com.esferalia.aon.occam.impl.jooq.dao.invoiceduplicatefix.InvoiceDuplicateFixDAO;
 import com.esferalia.aon.watson.util.AonStringUtils;
+import com.esferalia.aon.watson.util.Pair;
 
 public class AON_SOLUTIONS {
 	
@@ -489,6 +490,12 @@ public class AON_SOLUTIONS {
 	public static Integer getInvoicesCount(String domainName, Integer domainId, String login, InvoiceFilter filter) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
 			return getApi().getInvoicesCount(ctx, filter);
+		} 
+	}
+	
+	public static Pair<Date, Date> getInvoicesChartPeriod(String domainName, Integer domainId, String login, InvoiceFilter filter) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
+			return getApi().getInvoicesChartPeriod(ctx, filter);
 		} 
 	}
 	
