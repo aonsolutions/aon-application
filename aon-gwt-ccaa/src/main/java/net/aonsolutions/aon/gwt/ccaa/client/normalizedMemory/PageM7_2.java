@@ -63,12 +63,22 @@ public class PageM7_2 extends PageAbs {
 	
 	public PageM7_2(Deposit2 deposit) {
 		super(deposit);
-
+		initialize(0);
+	}
+	
+	public PageM7_2(Deposit2 deposit, Integer tab) {
+		super(deposit);
+		initialize(tab);
+	}
+	
+	private void initialize(Integer tab) {
 		table1 = new FlexTable();
 		table2 = new FlexTable();
 		table3 = new FlexTable();
 		Widget ui = pageBinder.createAndBindUi(this);
 		initWidget(ui);
+		
+		tabPanel.selectTab(tab != null ? tab : 0);
 		
 		initializeTable();
 	}
@@ -81,8 +91,6 @@ public class PageM7_2 extends PageAbs {
 		String[] AUXILIARES = new String[] {
 			AON.MSG.fiscalYear() + " " + getYear() , AON.MSG.fiscalYear() + " " + (getYear() - 1)
 		};
-		
-		tabPanel.selectTab(0);
 		
 		if(getYear() >=2016){
 			tablePanel.setVisible(false);
@@ -160,5 +168,10 @@ public class PageM7_2 extends PageAbs {
 			}
 			++row;
 		}
+	}
+	
+	@Override
+	protected void refreshDepositPage() {
+		getDeposit().refreshPage(tabPanel.getTabBar().getSelectedTab());
 	}
 }

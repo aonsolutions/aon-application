@@ -396,6 +396,9 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("Duplicar")
 	String duplicate();
 
+	@DefaultMessage("Utilidades")
+	String utilities();
+
 	@DefaultMessage("Seleccionar")
 	String selectAction();
 	

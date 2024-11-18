@@ -113,6 +113,7 @@ public class Invoice implements Serializable, HasAudit {
 	
 	private boolean recordable;
 	private boolean selected;
+	private boolean skipAlcatrazValidationAllowed;
 
 	public Integer getId() {
 		return id;
@@ -793,7 +794,13 @@ public class Invoice implements Serializable, HasAudit {
 		this.selected = selected;
 		return this;
 	}
-	
+	public boolean isSkipAlcatrazValidation() {
+		return skipAlcatrazValidationAllowed;
+	}
+	public Invoice setSkipAlcatrazValidationAllowed(boolean skipAlcatrazValidationAllowed) {
+		this.skipAlcatrazValidationAllowed = skipAlcatrazValidationAllowed;
+		return this;
+	}
 	public Optional<TaxBreakdown> getTaxBreakdown() {
 		return Optional.ofNullable(taxBreakdown);
 	}

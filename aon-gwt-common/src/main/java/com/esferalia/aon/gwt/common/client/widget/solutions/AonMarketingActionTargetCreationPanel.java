@@ -649,9 +649,9 @@ public abstract class AonMarketingActionTargetCreationPanel extends SimplePanel 
 						urlBuilder.setPath("/ms/api/generate_token/json/");
 						
 						HashMap<String, String> headers = new HashMap<>();
-						headers.put("domainName", domainName);
-						headers.put("domainLogin", user);
-						headers.put("domainId", String.valueOf(domainId));
+						headers.put("domain_name", domainName);
+						headers.put("domain_login", user);
+						headers.put("domain_id", String.valueOf(domainId));
 						headers.put("id", serviceUsersLB.getSelectedValue());
 						headers.put("time", "3");
 						

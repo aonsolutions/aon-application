@@ -514,7 +514,7 @@ export class AonOfficePanel extends AonElement {
       let aonView = undefined;
       switch (view) {
         case BOOKING_PANEL.id:
-          GWT.load(GWT.BOOKING_PANEL, this.getApplication().CONTENT);
+          GWT.iLoad(GWT.BOOKING_PANEL, this.getApplication().CONTENT);
           break;
         case LINK_DOMAINS.id:
           aonView = new AonLinkDomains();

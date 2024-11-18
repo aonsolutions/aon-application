@@ -26,7 +26,7 @@ export class AonMobileConsoleHome extends AonElement {
         this.appendChild(div);
 	
 		let titleA = this.createElement(TAG.DIV);
-        titleA.className = LS.isNewTheme() ? "aonSidenavTitleBeta" : "aonSidenavTitle";
+        titleA.className = CSS.AON_SIDENAV_TITLE;
 	    titleA.innerHTML = 'UTILIDADES';
 		div.appendChild(titleA);
 

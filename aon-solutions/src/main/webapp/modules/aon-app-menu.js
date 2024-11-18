@@ -80,7 +80,7 @@ export class AonAppMenu extends AonElement {
         }
     
         let sidenavTitle = this.createElement(TAG.DIV);
-        sidenavTitle.className = LS.isNewTheme() ? "aonSidenavTitleBeta" : "aonSidenavTitle";
+        sidenavTitle.className = CSS.AON_SIDENAV_TITLE;
         sidenavTitle.id = "aonSidenavTitle"+data.id;
         sidenavTitle.title = data.name;
         sidenavTitle.style.cursor = "pointer";

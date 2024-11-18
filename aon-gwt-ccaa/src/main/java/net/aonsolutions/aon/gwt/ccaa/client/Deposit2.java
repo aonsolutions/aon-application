@@ -244,16 +244,24 @@ public class Deposit2 extends DockLayoutPanel {
 		updatePage(getDepositMenu());
 	}
 	
+	public void refreshPage(Integer tab) {
+		updatePage(getDepositMenu(), tab);
+	}
+
 	public void updatePage(DepositMenu depositMenu) {
+		updatePage(depositMenu, 0);		
+	}
+	
+	public void updatePage(DepositMenu depositMenu, Integer tab) {
 		setDepositMenu(depositMenu);
 		if(DepositMenu.HIS.equals(depositMenu)) getPage().setWidget(new PageH1(thiz));
 		if(DepositMenu.ITR.equals(depositMenu)) getPage().setWidget(new PageITR(thiz));
 		if(DepositMenu.SRA.equals(depositMenu)) getPage().setWidget(new PageH6(thiz));
 		if(DepositMenu.AR.equals(depositMenu)) getPage().setWidget(new PageM3_2(thiz));
-		if(DepositMenu.BS.equals(depositMenu)) getPage().setWidget(new PageH2(thiz));
-		if(DepositMenu.CPG.equals(depositMenu)) getPage().setWidget(new PageH3(thiz));
-		if(DepositMenu.ECPN.equals(depositMenu)) getPage().setWidget(new PageH4(thiz));
-		if(DepositMenu.DM.equals(depositMenu)) getPage().setWidget(new PageH5(thiz));
+		if(DepositMenu.BS.equals(depositMenu)) getPage().setWidget(new PageH2(thiz, tab));
+		if(DepositMenu.CPG.equals(depositMenu)) getPage().setWidget(new PageH3(thiz, tab));
+		if(DepositMenu.ECPN.equals(depositMenu)) getPage().setWidget(new PageH4(thiz, tab));
+		if(DepositMenu.DM.equals(depositMenu)) getPage().setWidget(new PageH5(thiz, tab));
 		if(DepositMenu.DC.equals(depositMenu)) getPage().setWidget(new PageH7(thiz));
 		
 		// MEMORIA
@@ -263,23 +271,23 @@ public class Deposit2 extends DockLayoutPanel {
 		if(DepositMenu.AR_CN.equals(depositMenu)) getPage().setWidget(new PageM3_2(thiz));
 		if(DepositMenu.NRV.equals(depositMenu)) getPage().setWidget(new FreeText(thiz, depositMenu.getDescription(), "MAT4", false));
 		if(DepositMenu.IMIII_TL.equals(depositMenu)) getPage().setWidget(new FreeText(thiz, depositMenu.getDescription(), "MAT5", false));
-		if(DepositMenu.IMIII_CN.equals(depositMenu)) getPage().setWidget(new PageM5_2(thiz));
+		if(DepositMenu.IMIII_CN.equals(depositMenu)) getPage().setWidget(new PageM5_2(thiz, tab));
 		if(DepositMenu.AF_TL.equals(depositMenu)) getPage().setWidget(new FreeText(thiz, depositMenu.getDescription(), "MAT6", false));
-		if(DepositMenu.AF_CN.equals(depositMenu)) getPage().setWidget(new PageM6_2(thiz));
+		if(DepositMenu.AF_CN.equals(depositMenu)) getPage().setWidget(new PageM6_2(thiz, tab));
 		if(DepositMenu.PF_TL.equals(depositMenu)) getPage().setWidget(new FreeText(thiz, depositMenu.getDescription(), "MAT7", false));
-		if(DepositMenu.PF_CN.equals(depositMenu)) getPage().setWidget(new PageM7_2(thiz));
+		if(DepositMenu.PF_CN.equals(depositMenu)) getPage().setWidget(new PageM7_2(thiz, tab));
 		if(DepositMenu.FP.equals(depositMenu)) getPage().setWidget(new FreeText(thiz, depositMenu.getDescription(), "MAT8", false));
 		if(DepositMenu.SF.equals(depositMenu)) getPage().setWidget(new FreeText(thiz, depositMenu.getDescription(), "MAT9", false));
-		if(DepositMenu.IG.equals(depositMenu)) getPage().setWidget(new PageM10(thiz));
+		if(DepositMenu.IG.equals(depositMenu)) getPage().setWidget(new PageM10(thiz, tab));
 		if(DepositMenu.SDL_TL.equals(depositMenu)) getPage().setWidget(new FreeText(thiz, depositMenu.getDescription(), "MAT11", false));
-		if(DepositMenu.SDL_CN.equals(depositMenu)) getPage().setWidget(new PageM11_2(thiz));
+		if(DepositMenu.SDL_CN.equals(depositMenu)) getPage().setWidget(new PageM11_2(thiz, tab));
 		if(DepositMenu.OPV_TL.equals(depositMenu)) getPage().setWidget(new FreeText(thiz, depositMenu.getDescription(), "MAT12", false));
-		if(DepositMenu.OPV_CN.equals(depositMenu)) getPage().setWidget(new PageM12_2(thiz));
+		if(DepositMenu.OPV_CN.equals(depositMenu)) getPage().setWidget(new PageM12_2(thiz, tab));
 		if(DepositMenu.OI_TL.equals(depositMenu)) getPage().setWidget(new FreeText(thiz, depositMenu.getDescription(), "MAT13", false));
-		if(DepositMenu.OI_CN.equals(depositMenu)) getPage().setWidget(new PageM13_2(thiz));
+		if(DepositMenu.OI_CN.equals(depositMenu)) getPage().setWidget(new PageM13_2(thiz, tab));
 		if(DepositMenu.IM_TL.equals(depositMenu)) getPage().setWidget(new FreeText(thiz, depositMenu.getDescription(), "MAT14", false));
-		if(DepositMenu.IM_CN.equals(depositMenu)) getPage().setWidget(new PageM14_2(thiz));
-		if(DepositMenu.IA.equals(depositMenu)) getPage().setWidget(new PageM15(thiz));
+		if(DepositMenu.IM_CN.equals(depositMenu)) getPage().setWidget(new PageM14_2(thiz, tab));
+		if(DepositMenu.IA.equals(depositMenu)) getPage().setWidget(new PageM15(thiz, tab));
 		
 		if(DepositMenu.D.equals(depositMenu)) getPage().setWidget(new MemoryDocuments(thiz));
 		

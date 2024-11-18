@@ -441,10 +441,10 @@ export class AonFiscal extends AonElement {
           aonView = new AonFutureTax(FISCAL, this._filter.estimationFilter);
           break;
         case FISCAL_VIEWS.VAT_PANEL:
-          GWT.load(GWT.VAT_REPORT, this.applicationEl.CONTENT);
+          GWT.iLoad(GWT.VAT_REPORT, this.applicationEl.CONTENT);
           break;
         case FISCAL_VIEWS.IRPF_REPORT:
-          GWT.load(GWT.IRPF_REPORT, this.applicationEl.CONTENT);
+          GWT.iLoad(GWT.IRPF_REPORT, this.applicationEl.CONTENT);
           break;
       }
       if (aonView) {

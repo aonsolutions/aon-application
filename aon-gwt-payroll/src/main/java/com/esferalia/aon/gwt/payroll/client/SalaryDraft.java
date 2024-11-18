@@ -4730,18 +4730,26 @@ public class SalaryDraft extends ResizeComposite
 		}
 
 		if (deduction.getAmount() != null) {
-			Double percent = getPercent(deduction, salaryDraftObject);
-			dumpSystemDeduction(deduction, percent, deduction.getDescription(), row++, expandButton);
+			
 
-			if (deduction instanceof CompositeDeduction) {
-				for (Deduction child : ((CompositeDeduction) deduction).getChilds()) {
-
+			if (deduction instanceof CompositeDeduction ) {
+				CompositeDeduction compositeDeduction  = (CompositeDeduction) deduction;
+				Double percent = getPercent(compositeDeduction, salaryDraftObject);
+				dumpSystemDeduction(compositeDeduction, percent, deduction.getDescription(), row++, expandButton);
+				for (Deduction child : compositeDeduction.getChilds()) {
+					Double childPercent = getPercent(child, salaryDraftObject);
+					Widget childPercentWidget = newPercentWidget(child, childPercent);
 					dumpSystemItem(child,
 							"  " + child.getDescription(),
-							row, null, null);
+							row, 
+							childPercentWidget, 
+							null);
 
 					paymentsTable.getRowFormatter().getElement(row++).getStyle().setDisplay(Display.NONE);
 				}
+			} else {
+				Double percent = getPercent(deduction, salaryDraftObject);
+				dumpSystemDeduction(deduction, percent, deduction.getDescription(), row++, expandButton);
 			}
 
 		} else {
@@ -6228,7 +6236,6 @@ public class SalaryDraft extends ResizeComposite
 			Deduction cost = costs.get(i);
 			paymentsTable.insertRow(beforeRow );
 			
-			Double percent = getPercent(cost, salaryDraftObject);
 			Deduction.Type type = getType(cost, Deduction.Type.OTHER);
 
 			Button expandButton = null;
@@ -6240,15 +6247,24 @@ public class SalaryDraft extends ResizeComposite
 			}
 
 
-			dumpSystemDeduction(cost, percent, cost.getDescription(), beforeRow++ , expandButton, "_cost");
 
 			if (cost instanceof CompositeDeduction) {
-				for (Deduction child : ((CompositeDeduction) cost).getChilds()) {
+				CompositeDeduction compositeCost = ( CompositeDeduction ) cost;
+				
+				Double percent = getPercent(compositeCost, salaryDraftObject);
+				dumpSystemDeduction(cost, percent, cost.getDescription(), beforeRow++ , expandButton, "_cost");
+				
+				for (Deduction child : compositeCost.getChilds()) {
 					paymentsTable.insertRow(beforeRow );
-					dumpSystemItem(child,"  " + child.getDescription() ,beforeRow, null, null);
+					Double childPercent = getPercent(child, salaryDraftObject);
+					Widget childPercentWidget = newPercentWidget(child, childPercent);
+					dumpSystemItem(child,"  " + child.getDescription() ,beforeRow, childPercentWidget, null);
 
 					paymentsTable.getRowFormatter().getElement(beforeRow++).getStyle().setDisplay(Display.NONE);
 				}
+			} else {
+				Double percent = getPercent(cost, salaryDraftObject);
+				dumpSystemDeduction(cost, percent, cost.getDescription(), beforeRow++ , expandButton, "_cost");
 			}
 			
 			
@@ -6391,6 +6407,9 @@ public class SalaryDraft extends ResizeComposite
 
 
 	private Widget newPercentWidget(Deduction deduction, Double percent) {
+		if ( percent == null )
+			return newPercentLabel("");
+
 		Deduction.Type type = getType(deduction, Deduction.Type.OTHER);
 		switch (type) {
 		case IRPF:
@@ -7368,6 +7387,12 @@ public class SalaryDraft extends ResizeComposite
 		return getPercent(getType(deduction, Deduction.Type.OTHER), deduction.getDbAmount(), draftObject.getDbIrpfBase(),
 				draftObject.getDbCgcBase(), draftObject.getDbCgpBase(), draftObject.getDbHExtraBase(),
 				draftObject.getDbNonHExtraBase());
+	}
+
+	private static Double getPercent(CompositeDeduction deduction, SalaryDraftObject draftObject) {
+		List<Double>  percents = deduction.getChilds()
+		.stream().map( child -> getPercent(child, draftObject)).distinct().collect(Collectors.toList());
+		return percents.size() == 1 ? percents.get(0) : null;
 	}
 
 	private static Double getPercent(Deduction deduction, SalaryDraftObject draftObject) {

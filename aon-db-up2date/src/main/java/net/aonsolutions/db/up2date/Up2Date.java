@@ -54,8 +54,10 @@ import net.aonsolutions.db.up2date.task.AddColumnTaskHolderWorkgroupDatesType;
 import net.aonsolutions.db.up2date.tgss.Artist2024Update;
 import net.aonsolutions.db.up2date.finance.InvofoxEnterpriseDataFix;
 import net.aonsolutions.db.up2date.finance.InvoiceBatchAlter;
+import net.aonsolutions.db.up2date.fiscal.AlterFsMod2002020;
 import net.aonsolutions.db.up2date.fiscal.AlterFsMod200Nrc;
 import net.aonsolutions.db.up2date.tgss.Artist2024Update;
+import net.aonsolutions.db.up2date.tgss.SolidarityInsert;
 import net.aonsolutions.db.up2date.urlshortener.UrlShortenCreation;
 import net.aonsolutions.db.up2date.warehouse.SalesDetailAddDeliveryColumn;
 
@@ -511,11 +513,15 @@ public class Up2Date {
 //         InvoiceDocAddS3Bucket.INVOICEDOC_ADDS3BUCKET,
 //    		
     	LogDataCreation.LOG_DATA_CREATION,
-    	UrlShortenCreation.URLSHORTEN_CREATION,
-    	Artist2024Update.ARTIST2024UPDATE,
-    	InvofoxEnterpriseDataFix.INVOFOX_ENTERPRISE_DATA_FIX,
-    	AlterFsMod200Nrc.ALTER_FS_MODEL200_NRC,
-    	InvoiceBatchAlter.INVOICE_BATCH_ALTER
+    		
+    	// UrlShortenCreation.URLSHORTEN_CREATION,
+    	// Artist2024Update.ARTIST2024UPDATE,
+    	// InvofoxEnterpriseDataFix.INVOFOX_ENTERPRISE_DATA_FIX,
+    	// AlterFsMod200Nrc.ALTER_FS_MODEL200_NRC,
+    	// InvoiceBatchAlter.INVOICE_BATCH_ALTER
+    		
+    	// AlterFsMod2002020.ALTER_FS_MODEL_200_2020
+    	SolidarityInsert.SOLIDARITYINSERT	
 	};
 
     // ------------------------------------------------------------------------

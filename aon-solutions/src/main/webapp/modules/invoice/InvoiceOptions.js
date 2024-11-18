@@ -1,13 +1,10 @@
 import { CONSTANT, MATERIAL_ICONS, MSG, TAG } from "../../environments/environments.js"
 import * as GWT from "../../gwt/gwt.js";
-import { waitEl } from "../../services/utils.js";
 
   export const gwtLoad = (option) => {
     let application = document.querySelector(TAG.AON_APPLICATION);
-    GWT.load(option, application.CONTENT);
-
-    // Not working. Why not need Iframe here like MainContrata
-    //GWT.iLoad(option, application.CONTENT);
+    document.body.classList.add('gwt-Selector');
+    GWT.iLoad(option, application.CONTENT);
   }
 
   export const newInvoice = (type) => {
@@ -251,13 +248,7 @@ import { waitEl } from "../../services/utils.js";
     id: CONSTANT.CHARGES_PAYMENTS.initCap(),
     name: MSG.CHARGES_AND_PAYMENTS,
     icon: MATERIAL_ICONS.PAYMENT,
-    fn: () => {
-      gwtLoad(GWT.FINANCE);
-
-      // Close sidenav
-      let application = document.querySelector(TAG.AON_APPLICATION);
-      application.closeSidenav();
-    }
+    fn: () => gwtLoad(GWT.FINANCE)
   }
 
   export const VAT_PANEL = {
