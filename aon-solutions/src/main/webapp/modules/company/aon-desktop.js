@@ -508,7 +508,7 @@ export class AonDesktop extends AonElement {
 			});
 		}
 
-		if(this.getDur().isInvoice() || this.getDur().isAccounting()) {
+		if((this.getDur().isInvoice() || this.getDur().isAccounting()) && this.getDur().isTrial) {
 			// Ventas y Gastos Card
 			let defaultYear = new Date().getFullYear();
 

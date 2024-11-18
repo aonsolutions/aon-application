@@ -101,7 +101,7 @@ public class ActionTargetServlet extends AonApiHttpServlet {
 	private static String userLogingMail;
 	private static String passwordMail;
 	
-	private static boolean isLocal = true;
+	private static boolean isLocal = false;
 
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) {
