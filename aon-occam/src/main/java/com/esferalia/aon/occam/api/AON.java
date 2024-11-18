@@ -1904,7 +1904,6 @@ public class AON {
 	public static Invoice acceptInvoice(AONContext ctx, Invoice invoice, Integer rawdocId){
 		return getFinance().acceptInvoice(ctx, invoice, rawdocId);
 	}
-	
 
 	public static Invoice insertInvoice(Occam occam, Invoice invoice){
 		return insertInvoice( occam.getDomainName(), occam.getDomain(), occam.getUser(), invoice);
