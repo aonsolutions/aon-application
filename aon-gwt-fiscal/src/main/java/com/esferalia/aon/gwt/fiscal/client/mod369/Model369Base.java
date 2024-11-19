@@ -3,12 +3,12 @@ package com.esferalia.aon.gwt.fiscal.client.mod369;
 import java.util.LinkedList;
 
 import com.esferalia.aon.gwt.common.client.AON;
-import com.esferalia.aon.gwt.common.client.widget.CountryListBox;
 import com.esferalia.aon.gwt.common.client.widget.PeriodListBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonAuditDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonConfirmDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonConfirmDialog.AonConfirmDialogCallback;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDateBox;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonDisplayGrid;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDisplayTable;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDisplayTable.AonDisplayTableRow;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDocumentTextBox;
@@ -42,6 +42,7 @@ import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.FormPanel;
+import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.Hidden;
 import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.IsWidget;
@@ -51,11 +52,9 @@ import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.TabLayoutPanel;
 import com.google.gwt.user.client.ui.TextArea;
-import com.google.gwt.user.client.ui.Widget;
 
 abstract class Model369Base extends DockLayoutPanel {
 
-//	private static final String WIDTH_200PX = "200px";
 	static final String MODEL369_FILE = "/aon_gwt_fiscal/ms/Model369File";
 	
 	protected interface IModel369Detail extends IsWidget {
@@ -70,7 +69,6 @@ abstract class Model369Base extends DockLayoutPanel {
 	private boolean dirty;
 
 	protected FiscalModelAdmonPanel<Mod369, Model369ModuleOptions> admonPanel;
-//	protected AonTextBox receiptBox;
 
 	protected final AonToolbar toolbarPanel = new AonToolbar(); 
 	protected final AonToolbarButton newButton = new AonToolbarButton(AON.MSG.newAction(),AON.CSS.aonIconAdd());
@@ -84,11 +82,9 @@ abstract class Model369Base extends DockLayoutPanel {
 	protected final AonToolbarButton duplicateButton = new AonToolbarButton(AON.MSG.duplicate(),AON.CSS.aonIconCopy());
 	protected final AonToolbarButton commentsButton = new AonToolbarButton(AON.MSG.comments(), AON.CSS.aonIconNoComments());
 	protected final AonToolbarButton auditButton = new AonToolbarButton(AON.MSG.audit(),AON.CSS.aonIconAudit());
-//	protected final AonToolbarButton certificateButton = new AonToolbarButton(AON.MSG.printCertificate(),AON.CSS.aonIconPdf());
 	
 	protected final AonToolbar decToolbar = new AonToolbar();
 	protected final InlineLabel dirtyLabel = new InlineLabel();
-//	protected final InlineLabel replacedLabel = new InlineLabel();
 	protected final Label statusLabel = new Label();
 	
 	protected FormPanel diskForm = new FormPanel("_blank");
@@ -97,9 +93,9 @@ abstract class Model369Base extends DockLayoutPanel {
 	protected Hidden domainNameHidden = new Hidden("domainName");
 	protected Hidden userHidden = new Hidden("user");
 
-//	private IModel369Detail detailManager;
-//	private IModel369Correction partnerManager;
 	private AonToastModel toast = null;
+	
+	private DockLayoutPanel dockResultPanel = new DockLayoutPanel(Unit.PX);	
 	
 	protected Model369Base(Model369Callback cbk, Mod369 mod369) {
 		super(Unit.PX);
@@ -108,7 +104,7 @@ abstract class Model369Base extends DockLayoutPanel {
 		select( mod369 );
 		
 		AonFiscalModelHeader modelHeader = new AonFiscalModelHeader(this.mod369);
-//		modelHeader.getModelNameCell().add(new Label(this.mod369.getRegime().getDescription()));
+		modelHeader.getModelNameCell().add(new Label(this.mod369.getRegime().getDescription()));
 		
 		addNorth(modelHeader, AonFiscalModelHeader.HEIGTH);
 		addNorth(getToolbarPanel(), AonToolbar.HEIGTH);
@@ -168,9 +164,6 @@ abstract class Model369Base extends DockLayoutPanel {
 		duplicateButton.addClickHandler( event -> getCallback().onDuplicate(getCallback().getOptions(),getModel().getId()));
 		toolbarPanel.add(duplicateButton);
 		
-//		certificateButton.addClickHandler(event -> certificate());
-//		toolbarPanel.add(certificateButton);
-
 		commentsButton.addClickHandler( event -> {
 			if (toast == null || toast.getParent() == null) {
 				toast  = new AonToastModel(this);
@@ -231,7 +224,6 @@ abstract class Model369Base extends DockLayoutPanel {
 					@Override
 					public void onSuccess(Mod369 result) {
 						popup.hide();
-						//getCallback().onSelect( result, detailManager.getSelectedDetailIndex() );
 						getCallback().onSelect( result );
 						if (cbk != null) cbk.onSuccess(result);
 					}
@@ -322,24 +314,8 @@ abstract class Model369Base extends DockLayoutPanel {
 		dirtyLabel.setStyleName(AON.CSS.aonIconLabel());
 		dirtyLabel.addStyleName(AON.CSS.aonIconDirty());
 		dirtyLabel.setTitle("Cambios sin guardar");
-//		dirtyLabel.getElement().getStyle().setWidth(10, Unit.PX);
-//		dirtyLabel.getElement().getStyle().setHeight(10, Unit.PX);
 		marksPanels.add(dirtyLabel);
 		
-//		if (getModel().isReplacement()) {
-//			replacedLabel.setText(AON.MSG.replacement());
-//			replacedLabel.setStyleName(AON.CSS.aonMarginLeft());
-//			replacedLabel.addStyleName(AON.CSS.aonIconChecked());
-//			replacedLabel.addStyleName(AON.CSS.aonLabelWithIcon());
-//		}
-//		if (getModel().isComplementary()) {
-//			replacedLabel.setText( AON.MSG.complementary());
-//			replacedLabel.setStyleName(AON.CSS.aonMarginLeft());
-//			replacedLabel.addStyleName(AON.CSS.aonIconChecked());
-//			replacedLabel.addStyleName(AON.CSS.aonLabelWithIcon());
-//		}
-//		marksPanels.add(replacedLabel);
-
 		styleDirtyLabel();
 		styleStatusLabel();
 		
@@ -355,7 +331,6 @@ abstract class Model369Base extends DockLayoutPanel {
 		Model369.SERVICE.changeStatus(getCallback().getOptions().getOccam(), getModel(), FiscalStatus.FINISHED, new AsyncCallback<Mod369>() {
 			@Override
 			public void onSuccess(Mod369 result) {
-				//getCallback().onSelect(result , detailManager.getSelectedDetailIndex() );
 				getCallback().onSelect(result);
 			}
 			
@@ -371,7 +346,6 @@ abstract class Model369Base extends DockLayoutPanel {
 		Model369.SERVICE.changeStatus(getCallback().getOptions().getOccam(), getModel(), FiscalStatus.SENT, new AsyncCallback<Mod369>() {
 			@Override
 			public void onSuccess(Mod369 result) {
-				//callback.onSelect(result, detailManager.getSelectedDetailIndex());
 				callback.onSelect(result);
 			}
 
@@ -387,7 +361,6 @@ abstract class Model369Base extends DockLayoutPanel {
 		Model369.SERVICE.changeStatus(getCallback().getOptions().getOccam(), getModel(), FiscalStatus.PENDING, new AsyncCallback<Mod369>() {
 			@Override
 			public void onSuccess(Mod369 result) {
-//				callback.onSelect(result, detailManager.getSelectedDetailIndex());
 				callback.onSelect(result);
 			}
 
@@ -449,7 +422,6 @@ abstract class Model369Base extends DockLayoutPanel {
 	}
 
 	private void refreshToolbarState() {
-		//toolbarPanel.setTitle(AonStringUtils.join(getModel().getDocument(),AonStringUtils.SPACE,getModel().getFullName()));
 		identificationLabelChanged();
 		newButton.setVisible(!getModel().isNew() 
 				&& !getCallback().getOptions().isBackButtonVisible() 
@@ -471,7 +443,7 @@ abstract class Model369Base extends DockLayoutPanel {
 		duplicateButton.setVisible(!getModel().isNew());
 		auditButton.setVisible(!getModel().isNew());
 		
-		// Habilitar/Desabilitar botones según si se ha modificado algo en el modelo
+		// Habilitar/Deshabilitar botones según si se ha modificado algo en el modelo
 		markAsPendingButton.setEnabled(!isDirty());
 		markAsFinishedButton.setEnabled(!isDirty());
 		markAsSentButton.setEnabled(!isDirty());
@@ -479,7 +451,6 @@ abstract class Model369Base extends DockLayoutPanel {
 	
 	private void identificationLabelChanged() {
 		toolbarPanel.setTitle(AonStringUtils.join(Country.safeIso2(getModel().getCountry()),AonStringUtils.SPACE,getModel().getDocument(),AonStringUtils.SPACE,getModel().getName()));
-		//toolbarPanel.setTitle("REGIMEN DE LA UNION   --   " + AonStringUtils.join(Country.safeIso2(getModel().getCountry()),AonStringUtils.SPACE,getModel().getDocument(),AonStringUtils.SPACE,getModel().getName()));
 	}
 
 	protected void paintDeclarationTab(TabLayoutPanel tabPanel) {
@@ -491,7 +462,7 @@ abstract class Model369Base extends DockLayoutPanel {
 		table.setStyleName(AON.CSS.aonTable());
 		table.addStyleName(AON.CSS.aonWidthAlmostAll());
 		table.addStyleName(AON.CSS.aonBlockCenter());
-		table.getColumnFormatter().setWidth(0, "300px");		
+		table.getColumnFormatter().setWidth(0, "250px");		
 		table.getColumnFormatter().setWidth(1, "auto");
 		
 		int row = 0;
@@ -506,7 +477,7 @@ abstract class Model369Base extends DockLayoutPanel {
 			regimeList.addItem(p.getDescription(), Integer.toString(p.ordinal()));	
 		}
 		regimeList.setSelectedIndex(getModel().getRegime().value());
-		regimeList.setEnabled(false); // El Régimen no se deja modificar una vez creado el modelo
+		regimeList.setEnabled(false); // El Régimen no se deja modificar
 		table.setWidget(row, 1, regimeList);
 		row++;
 		
@@ -515,7 +486,7 @@ abstract class Model369Base extends DockLayoutPanel {
 		table.setWidget(row, 0, new InlineLabel(AON.MSG.country()));
 		table.getCellFormatter().setStyleName(row, 0, AON.CSS.aonTableLabel());
 		
-		CountryListBox countryList = new CountryListBox();
+		Mod369CountryListBox countryList = new Mod369CountryListBox();
 		countryList.setWidth("120px");
 		countryList.setValue(getModel().getCountry());
 		countryList.setEnabled(getModel().isEditable());
@@ -671,301 +642,19 @@ abstract class Model369Base extends DockLayoutPanel {
 			getModel().setWithoutActivity(withoutActivity.getValue());
 			markAsDirty();
 		});
-		table.setWidget(row, 1, withoutActivity);
-		row++;
-		
-		// Tipo de pago
-		
-		table.setWidget(row, 0, new InlineLabel("Tipo de Pago"));
-		table.getCellFormatter().setStyleName(row, 0, AON.CSS.aonTableLabel());
-				
-		ListBox payTypeList = new ListBox();
-		for (Mod369PayType p : Mod369PayType.values()) {
-			payTypeList.addItem(p.getDescription(), Integer.toString(p.ordinal()));	
-		}
-		payTypeList.setSelectedIndex(getModel().getPayType().value());
-		payTypeList.setEnabled(getModel().isEditable());
-		payTypeList.addChangeHandler(event -> {
-			getModel().setPayType(Mod369PayType.safeValueOf(payTypeList.getSelectedIndex()));
-			markAsDirty();
-		});
-		table.setWidget(row, 1, payTypeList);
-		row++;
-		
-		// NRC Pago
-		
-		table.setWidget(row, 0, new InlineLabel("NRC Pago"));
-		table.getCellFormatter().setStyleName(row, 0, AON.CSS.aonTableLabel());
-
-		AonTextBox nrc = new AonTextBox();
-		nrc.setVisibleLength(22);
-		nrc.setMaxLength(22);
-		nrc.setValue(getModel().getNrc());
-		nrc.setEnabled(getModel().isEditable());
-		nrc.addValueChangeHandler( event -> {
-			getModel().setNrc(nrc.getValue());
-			markAsDirty();
-		});
-		table.setWidget(row, 1, nrc);
-		row++;
-		
-		// Importe pagado
-		
-		table.setWidget(row, 0, new InlineLabel("Importe pagado"));
-		table.getCellFormatter().setStyleName(row, 0, AON.CSS.aonTableLabel());
-		
-		AonDoubleBox amountPaid = new AonDoubleBox(17);
-		amountPaid.setValue(getModel().getAmountPaid());
-		amountPaid.setEnabled(getModel().isEditable());
-		amountPaid.addValueChangeHandler(event -> {
-			if (amountPaid.getValue() == null) amountPaid.setValue(0.0,false);
-			getModel().setAmountPaid(amountPaid.getValue());
-			markAsDirty();
-		});
-		table.setWidget(row, 1, amountPaid);
-
-//		table.setWidget( 2, 0, new InlineLabel(AON.MSG.contactPerson()));
-//		table.getCellFormatter().setStyleName(2,0, AON.CSS.aonTableLabel());
-//		AonTextBox contactPerson = new AonTextBox();
-//		contactPerson.setMaxLength(40);
-//		contactPerson.setVisibleLength(30);
-//		contactPerson.setValue(getModel().getContactPerson());
-//		contactPerson.addValueChangeHandler( event -> {
-//			getModel().setContactPerson(contactPerson.getValue());
-//			markAsDirty();
-//		});
-//		table.setWidget(2, 1, contactPerson);
-
-//		table.setWidget( 3, 0, new InlineLabel(AON.MSG.contactPhone()));
-//		table.getCellFormatter().setStyleName(3,0, AON.CSS.aonTableLabel());
-//		AonTextBox contactPhone = new AonTextBox();
-//		contactPhone.setMaxLength(9);
-//		contactPhone.setVisibleLength(10);
-//		contactPhone.setValue(getModel().getContactPhone());
-//		contactPhone.addValueChangeHandler( event -> {
-//			getModel().setContactPhone(contactPhone.getValue());
-//			markAsDirty();
-//		});
-//		table.setWidget(3, 1, contactPhone);
-		
-
-//		table.setWidget( 4, 0, new InlineLabel(AON.MSG.contactMail()));
-//		table.getCellFormatter().setStyleName(4,0, AON.CSS.aonTableLabel());
-//		AonTextBox contactMail = new AonTextBox();
-//		contactMail.setMaxLength(50);
-//		contactMail.setVisibleLength(50);
-//		contactMail.setValue(getModel().getContactMail());
-//		contactMail.addValueChangeHandler( event -> {
-//			getModel().setContactMail(contactMail.getValue());
-//			markAsDirty();
-//		});
-//		table.setWidget(4, 1, contactMail);
-		
-//		table.setWidget( 5, 0, new InlineLabel(AON.MSG.receipt()));
-//		table.getCellFormatter().setStyleName(5,0, AON.CSS.aonTableLabel());
-//		receiptBox = new AonTextBox();
-//		receiptBox.setMaxLength(13);
-//		receiptBox.setVisibleLength(13);
-//		receiptBox.setEnabled(getModel().isAEAT());
-//		receiptBox.setValue(getModel().getReceipt());
-//		receiptBox.addValueChangeHandler(event -> {
-//			getModel().setReceipt(receiptBox.getValue());
-//			markAsDirty();
-//		});
-//		table.setWidget(5, 1, receiptBox);
-
-//		table.setWidget( 6, 0, new InlineLabel(AON.MSG.previousDeclaration()));
-//		table.getCellFormatter().setStyleName(6,0, AON.CSS.aonTableLabel());
-//		AonTextBox replaced = new AonTextBox();
-//		replaced.setMaxLength(13);
-//		replaced.setVisibleLength(13);
-//		replaced.setEnabled(getModel().isAEAT() && (getModel().isComplementary() || getModel().isReplacement()));
-//		replaced.setValue(getModel().getReplacedReceipt());
-//		replaced.addValueChangeHandler(event -> {
-//			getModel().setReplacedReceipt(replaced.getValue());
-//			markAsDirty();
-//		});
-//		table.setWidget(6, 1, replaced);
+		table.setWidget(row, 1, withoutActivity);		
 		
 		declarationScrollPanel.setWidget(table);
 		tabPanel.add(declarationScrollPanel, AON.MSG.declaration());
 	}
 	
-//	protected void decorateDeclarationTab() {
-//		if (receiptBox != null) {
-//			receiptBox.setValue( getModel().getReceipt() );
-//		}
-//	}
-
-//	protected void paintDetailTab(TabLayoutPanel tabPanel, Integer selectedIndex) {		
-//		detailManager = new Model369Detail(getCallback(), getModel(), selectedIndex );
-//		tabPanel.add( (Widget) detailManager, "Detail3");  
-//	}
-
-//	protected void paintPartnersTab(TabLayoutPanel tabPanel, Integer selectedIndex ) {
-//		// Evaluar lo diferentes paneles por administraciuon y/o ejercicio. 
-//		partnerManager = new Model369Correction( getCallback() , getModel(), selectedIndex );
-//		tabPanel.add( (Widget) partnerManager,  AON.MSG.entityPartners());
-//	}
-
-	
-//	protected void paintEntityTab(TabLayoutPanel tabPanel) {
-//		ScrollPanel entityScrollPanel = new ScrollPanel();
-//		entityScrollPanel.setStyleName(AON.CSS.aonWidthAll());
-//		entityScrollPanel.addStyleName(AON.CSS.aonScrollArea());
-//		
-//		FlexTable tab = new FlexTable();
-//		tab.setStyleName(AON.CSS.aonWidthAll());
-//		tab.addStyleName(AON.CSS.aonNowrap());
-//		
-//		tab.getColumnFormatter().setWidth(0, "150px");
-//		tab.getColumnFormatter().setWidth(1, WIDTH_200PX);
-//		tab.getColumnFormatter().setWidth(2, WIDTH_200PX);
-//		tab.getColumnFormatter().setWidth(3, "auto");
-//
-//		tab.getCellFormatter().setStyleName(0, 0, AON.CSS.aonBorderBottom());
-//		tab.getCellFormatter().addStyleName(0, 0, AON.CSS.aonBold());
-//		tab.getFlexCellFormatter().setColSpan(0, 0, 4);
-//		tab.setWidget(0, 0, new InlineLabel(AON.MSG.localEntities()));
-//
-//		tab.setWidget(1, 0, new Model369SmallerLabel(AON.MSG.entityType()));
-//		ListBox entityType = new ListBox();
-//		entityType.addItem(" - ","");
-//		entityType.addItem("1 - Sociedad civil.","1");
-//		entityType.addItem("2 - Comunidad de bienes.","2");
-//		entityType.addItem("3 - Herencia yacente.","3");
-//		entityType.addItem("4 - Comunidad de propietarios.","4");
-//		entityType.addItem("5 - Otros","5");
-//		entityType.setWidth(WIDTH_200PX);
-//		entityType.setSelectedIndex(AonNumberUtils.toint(getModel().getEntityType()));
-//		entityType.addChangeHandler(event -> {
-//			getModel().setEntityType(entityType.getSelectedValue());
-//			markAsDirty();
-//		});
-//		tab.setWidget(1, 1, entityType);
-//		
-//		tab.setWidget(1, 2, new Model369SmallerLabel(AON.MSG.mainActivity()));
-//		ListBox mainActivity = new ListBox();
-//		mainActivity.addItem(" - ","");
-//		mainActivity.addItem("1 - Actividad empresarial.","1");
-//		mainActivity.addItem("2 - Actividad profesional.","2");
-//		mainActivity.addItem("3 - Tenencia y administraci\u00F3n de bienes inmuebles.","3");
-//		mainActivity.addItem("4 - Tenencia y administraci\u00F3n de valores o activos financieros.","4");
-//		mainActivity.addItem("5 - Otras.","5");
-//		mainActivity.setWidth("250px");
-//		mainActivity.setSelectedIndex(AonNumberUtils.toint(getModel().getMainActivity()));
-//		mainActivity.addChangeHandler(event -> {
-//			getModel().setMainActivity(mainActivity.getSelectedValue());
-//			markAsDirty();
-//		});
-//		tab.setWidget(1, 3, mainActivity);
-//		
-//		tab.getCellFormatter().setStyleName(2, 0, AON.CSS.aonBorderBottom());
-//		tab.getCellFormatter().addStyleName(2, 0, AON.CSS.aonBold());
-//		tab.getFlexCellFormatter().setColSpan(2, 0, 4);
-//		tab.setWidget(2, 0, new InlineLabel(AON.MSG.foreignEntities()));
-//		
-//		tab.setWidget(3, 0, new Model369SmallerLabel(AON.MSG.entityType()));
-//		ListBox foreignEntityType = new ListBox();
-//		foreignEntityType.addItem(" - ","");
-//		foreignEntityType.addItem("1- Corporaci\u00F3n, asociaci\u00F3n o ente con personalidad jur\u00EDdica propia.","1");
-//		foreignEntityType.addItem("2- Corporaci\u00F3n o ente independiente pero sin personalidad jur\u00EDdica propia.","2");
-//		foreignEntityType.addItem("3- Conjunto unitario de bienes pertenecientes a dos o m\u00E1s personas en com\u00FAn sin personalidad jur\u00EDdica propia.","3");
-//		foreignEntityType.addItem("4- Otras","4");
-//		foreignEntityType.setWidth(WIDTH_200PX);
-//		foreignEntityType.setSelectedIndex(AonNumberUtils.toint(getModel().getForeignEntityType()));
-//		foreignEntityType.addChangeHandler(event -> {
-//			getModel().setForeignEntityType(foreignEntityType.getSelectedValue());
-//			markAsDirty();
-//		});
-//		tab.setWidget(3, 1, foreignEntityType);
-//
-//		tab.setWidget(3, 2, new Model369SmallerLabel(AON.MSG.entityType()));
-//		ListBox foreignObject = new ListBox();
-//		foreignObject.addItem(" - ","");
-//		foreignObject.addItem("A - Actividad nat. empresarial.","A");
-//		foreignObject.addItem("B - Actividad nat. profesional.","B");
-//		foreignObject.setWidth(WIDTH_200PX);
-//		foreignObject.setSelectedIndex(AonNumberUtils.toint(getModel().getForeignObject()));
-//		foreignObject.addChangeHandler(event -> {
-//			getModel().setForeignEntityType(foreignObject.getSelectedValue());
-//			markAsDirty();
-//		});
-//		tab.setWidget(3, 3, foreignObject);
-//		
-//		tab.setWidget(4, 0, new Model369SmallerLabel(AON.MSG.country()));
-//		CountryListBox country = new CountryListBox();
-//		country.setValue( Country.safeValueOf( getModel().getCountry() ));
-//		country.addChangeHandler(event -> {
-//			getModel().setCountry(country.getSelectedValue());
-//			markAsDirty();
-//		});
-//		tab.setWidget(4, 1, country);
-//		
-//		tab.setWidget(4, 2, new Model369SmallerLabel(AON.MSG.residentPercent()));
-//		AonDoubleBox residentPercent = new AonDoubleBox();
-//		residentPercent.setValue(getModel().getResidentPercent());
-//		residentPercent.addValueChangeHandler(event -> {
-//			getModel().setResidentPercent(residentPercent.getValue());
-//			markAsDirty();
-//		});
-//		tab.setWidget(4, 3, residentPercent);
-//		
-//		CheckBox taxIS = new CheckBox(AON.MSG.isTax());
-//		taxIS.setValue(getModel().isTaxIS());
-//		taxIS.addClickHandler(event -> {
-//			getModel().setTaxIS(taxIS.getValue());
-//			markAsDirty();
-//		});
-//		tab.getFlexCellFormatter().setColSpan(5, 0, 2);
-//		tab.setWidget(5, 0, taxIS);
-//		
-//		tab.setWidget(5, 1, new Model369SmallerLabel(AON.MSG.netAmount()));
-//		AonDoubleBox netSalesAmount = new AonDoubleBox();
-//		netSalesAmount.setValue(getModel().getNetSalesAmount());
-//		netSalesAmount.addValueChangeHandler(event -> {
-//			getModel().setNetSalesAmount(netSalesAmount.getValue());
-//			markAsDirty();
-//		});
-//		tab.setWidget(5, 2, netSalesAmount);
-//		
-//		tab.setWidget(6, 0, new Model369SmallerLabel(AON.MSG.lrDocument()));
-//		AonDocumentTextBox lrDocument = new AonDocumentTextBox();
-//		lrDocument.setValue(getModel().getLrDocument());
-//		lrDocument.addValueChangeHandler(event -> {
-//			getModel().setLrDocument(lrDocument.getValue());
-//			markAsDirty();
-//		});
-//		tab.setWidget(6, 1, lrDocument);
-//		
-//		tab.setWidget(6, 2, new Model369SmallerLabel(AON.MSG.lrName()));
-//		AonTextBox lrName = new AonTextBox();
-//		lrName.setMaxLength(40);
-//		lrName.setVisibleLength(40);
-//		lrName.setValue(getModel().getLrName());
-//		lrName.addValueChangeHandler(event -> {
-//			getModel().setLrName(lrName.getValue());
-//			markAsDirty();
-//		});
-//		tab.setWidget(6, 3, lrName);
-//
-//		entityScrollPanel.setWidget(tab);
-//		tabPanel.add(entityScrollPanel, AON.MSG.entity() );
-//	}
-	
 	protected void paintDetailsTab(TabLayoutPanel tabPanel) {
 		
 		ScrollPanel detailScrollPanel = new ScrollPanel();
 		detailScrollPanel.getElement().getStyle().setProperty("max-width", "1000px");
-//		detailScrollPanel.setStyleName(AON.CSS.aonWidthAll());
-//		detailScrollPanel.addStyleName(AON.CSS.aonScrollArea());
 		
 		FlowPanel basePanel = new FlowPanel();
-//		basePanel.setStyleName(AON.CSS.aonMarginLeft());
 		basePanel.addStyleName(AON.CSS.aonPaddingBottom());
-//		basePanel.getElement().getStyle().setProperty("max-width", "1000px");
-//		paint(basePanel);		
-//		detailScrollPanel.setWidget(basePanel);
 		
 		if (getModel().getRegime() == Mod369Regime.IMPORT) {
 			// Régimen de importación: Importaciones de bienes de menos de 150 euros
@@ -985,11 +674,9 @@ abstract class Model369Base extends DockLayoutPanel {
 	
 	private FlowPanel paintDetailsPanel(FlowPanel panel, LinkedList<Mod369Detail> details, String title) {
 		
-//		FlowPanel panel = new FlowPanel();
 	    panel.setStyleName(AON.CSS.aonWidthAlmostAll());
 		panel.addStyleName(AON.CSS.aonMarginLeft());
 		panel.addStyleName(AON.CSS.aonPaddingBottom());
-//		panel.getElement().getStyle().setProperty("max-width", "1000px");
 		panel.clear();
 
 		panel.add(getDetailTitle(title));
@@ -999,13 +686,14 @@ abstract class Model369Base extends DockLayoutPanel {
 			final int idx = i;
 
 			// País de consumo
-			CountryListBox countryList = new CountryListBox();
+			Mod369CountryListBox countryList = new Mod369CountryListBox();
 			countryList.setWidth("170px");			
 			countryList.setSelectedIndex(0);			
 			countryList.setValue(details.get(idx).getCountry());
 			countryList.setEnabled(getModel().isEditable());
 			countryList.addChangeHandler(event -> {
 				details.get(idx).setCountry(countryList.getValue());
+				paintResultPanel(dockResultPanel);
 				markAsDirty();				
 			});
 			
@@ -1016,6 +704,7 @@ abstract class Model369Base extends DockLayoutPanel {
 			percent.setValue(details.get(idx).getVatPercent());
 			percent.setEnabled(getModel().isEditable());
 			percent.addValueChangeHandler(event -> {
+				if (percent.getValue() == null) percent.setValue(0.0,false);
 				details.get(idx).setVatPercent(percent.getValue());
 				markAsDirty();
 			});			
@@ -1039,6 +728,7 @@ abstract class Model369Base extends DockLayoutPanel {
 			base.setValue(details.get(idx).getBase());
 			base.setEnabled(getModel().isEditable());
 			base.addValueChangeHandler(event -> {
+				if (base.getValue() == null) base.setValue(0.0,false);
 				details.get(idx).setBase(base.getValue());
 				markAsDirty();
 			});
@@ -1050,18 +740,19 @@ abstract class Model369Base extends DockLayoutPanel {
 			quota.setValue(details.get(idx).getQuota());
 			quota.setEnabled(getModel().isEditable());
 			quota.addValueChangeHandler(event -> {
+				if (quota.getValue() == null) quota.setValue(0.0,false);
 				details.get(idx).setQuota(quota.getValue());
+				paintResultPanel(dockResultPanel);
 				markAsDirty();
 			});			
 			
-			// Boton borrar linea
-			//AonTableButton deleteRowButton = new AonTableButton(AON.MSG.deleteAction(),AON.CSS.aonIconDelete());
+			// Boton borrar/restaurar linea
 			AonTableButton deleteRowButton = details.get(idx).isDeleted() ? new AonTableButton(AON.MSG.restoreAction(),AON.CSS.aonIconRestore()) : new AonTableButton(AON.MSG.deleteAction(),AON.CSS.aonIconDelete());
 			deleteRowButton.setEnabled(getModel().isEditable());
 			deleteRowButton.addClickHandler(event -> {
 				details.get(idx).setDeleted(!details.get(idx).isDeleted());
-//				details.remove(idx);
-				paintDetailsPanel(panel, details, title); 
+				paintDetailsPanel(panel, details, title);
+				paintResultPanel(dockResultPanel);
 				markAsDirty();
 			});
 			
@@ -1107,15 +798,9 @@ abstract class Model369Base extends DockLayoutPanel {
 		
 		ScrollPanel detailScrollPanel = new ScrollPanel();
 		detailScrollPanel.getElement().getStyle().setProperty("max-width", "1000px");
-//		detailScrollPanel.setStyleName(AON.CSS.aonWidthAll());
-//		detailScrollPanel.addStyleName(AON.CSS.aonScrollArea());
 		
 		FlowPanel basePanel = new FlowPanel();
-//		basePanel.setStyleName(AON.CSS.aonMarginLeft());
 		basePanel.addStyleName(AON.CSS.aonPaddingBottom());
-//		basePanel.getElement().getStyle().setProperty("max-width", "1000px");
-//		paint(basePanel);		
-//		detailScrollPanel.setWidget(basePanel);
 		
 		// Régimen de la Unión: Prestaciones de servicios otros, Entregas de bienes otros 
 		basePanel.add(paintDetailsOtherPanel(new FlowPanel(), getModel().getDetails5(), "Prestaciones de servicios desde establecimientos permanentes en otros EM distintos de Espa\u00F1a", "C\u00F3digo Pa\u00EDs EM del EP", "NIVA del EP"));
@@ -1127,11 +812,9 @@ abstract class Model369Base extends DockLayoutPanel {
 	
 	private FlowPanel paintDetailsOtherPanel(FlowPanel panel, LinkedList<Mod369DetailOther> details, String title, String titleCol1, String titleCol2) {
 		
-//		FlowPanel panel = new FlowPanel();
 	    panel.setStyleName(AON.CSS.aonWidthAlmostAll());
 		panel.addStyleName(AON.CSS.aonMarginLeft());
 		panel.addStyleName(AON.CSS.aonPaddingBottom());
-//		panel.getElement().getStyle().setProperty("max-width", "1000px");
 		panel.clear();
 
 		panel.add(getDetailTitle(title));
@@ -1141,7 +824,7 @@ abstract class Model369Base extends DockLayoutPanel {
 			final int idx = i;
 			
 			// País de envío
-			CountryListBox otherCountryList = new CountryListBox();
+			Mod369CountryListBox otherCountryList = new Mod369CountryListBox();
 			otherCountryList.setWidth("170px");			
 			otherCountryList.setSelectedIndex(0);			
 			otherCountryList.setValue(details.get(idx).getOtherCountry());
@@ -1162,13 +845,14 @@ abstract class Model369Base extends DockLayoutPanel {
 			});
 
 			// País de consumo
-			CountryListBox countryList = new CountryListBox();
+			Mod369CountryListBox countryList = new Mod369CountryListBox();
 			countryList.setWidth("170px");			
 			countryList.setSelectedIndex(0);			
 			countryList.setValue(details.get(idx).getCountry());
 			countryList.setEnabled(getModel().isEditable());
 			countryList.addChangeHandler(event -> {
 				details.get(idx).setCountry(countryList.getValue());
+				paintResultPanel(dockResultPanel);
 				markAsDirty();				
 			});
 			
@@ -1179,6 +863,7 @@ abstract class Model369Base extends DockLayoutPanel {
 			percent.setValue(details.get(idx).getVatPercent());
 			percent.setEnabled(getModel().isEditable());
 			percent.addValueChangeHandler(event -> {
+				if (percent.getValue() == null) percent.setValue(0.0,false);
 				details.get(idx).setVatPercent(percent.getValue());
 				markAsDirty();
 			});			
@@ -1202,6 +887,7 @@ abstract class Model369Base extends DockLayoutPanel {
 			base.setValue(details.get(idx).getBase());
 			base.setEnabled(getModel().isEditable());
 			base.addValueChangeHandler(event -> {
+				if (base.getValue() == null) base.setValue(0.0,false);
 				details.get(idx).setBase(base.getValue());
 				markAsDirty();
 			});
@@ -1213,18 +899,19 @@ abstract class Model369Base extends DockLayoutPanel {
 			quota.setValue(details.get(idx).getQuota());
 			quota.setEnabled(getModel().isEditable());
 			quota.addValueChangeHandler(event -> {
+				if (quota.getValue() == null) quota.setValue(0.0,false);
 				details.get(idx).setQuota(quota.getValue());
+				paintResultPanel(dockResultPanel);
 				markAsDirty();
 			});			
 			
-			// Boton borrar linea
-			//AonTableButton deleteRowButton = new AonTableButton(AON.MSG.deleteAction(),AON.CSS.aonIconDelete());
+			// Boton borrar/restaurar linea
 			AonTableButton deleteRowButton = details.get(idx).isDeleted() ? new AonTableButton(AON.MSG.restoreAction(),AON.CSS.aonIconRestore()) : new AonTableButton(AON.MSG.deleteAction(),AON.CSS.aonIconDelete());
 			deleteRowButton.setEnabled(getModel().isEditable());
 			deleteRowButton.addClickHandler(event -> {
 				details.get(idx).setDeleted(!details.get(idx).isDeleted());
-//				details.remove(idx);
-				paintDetailsOtherPanel(panel, details, title, titleCol1, titleCol2); 
+				paintDetailsOtherPanel(panel, details, title, titleCol1, titleCol2);
+				paintResultPanel(dockResultPanel);
 				markAsDirty();
 			});
 			
@@ -1277,11 +964,9 @@ abstract class Model369Base extends DockLayoutPanel {
 	
 	private FlowPanel paintCorrectionsPanel(FlowPanel panel) {
 		
-//		FlowPanel panel = new FlowPanel();
 	    panel.setStyleName(AON.CSS.aonWidthAlmostAll());
 		panel.addStyleName(AON.CSS.aonMarginLeft());
 		panel.addStyleName(AON.CSS.aonPaddingBottom());
-//		panel.getElement().getStyle().setProperty("max-width", "1000px");
 		panel.clear();
 
 		String title = "Correcciones de declaraciones de per\u00EDodos anteriores (m\u00E1x. 3 a\u00F1os)";
@@ -1292,13 +977,14 @@ abstract class Model369Base extends DockLayoutPanel {
 			final int idx = i;
 
 			// País de consumo
-			CountryListBox countryList = new CountryListBox();
+			Mod369CountryListBox countryList = new Mod369CountryListBox();
 			countryList.setWidth("170px");			
 			countryList.setSelectedIndex(0);			
 			countryList.setValue(getModel().getCorrections().get(idx).getCountry());
 			countryList.setEnabled(getModel().isEditable());
 			countryList.addChangeHandler(event -> {
 				getModel().getCorrections().get(idx).setCountry(countryList.getValue());
+				paintResultPanel(dockResultPanel);
 				markAsDirty();				
 			});
 			
@@ -1329,7 +1015,9 @@ abstract class Model369Base extends DockLayoutPanel {
 			quota.setValue(getModel().getCorrections().get(idx).getQuota());
 			quota.setEnabled(getModel().isEditable());
 			quota.addValueChangeHandler(event -> {
+				if (quota.getValue() == null) quota.setValue(0.0,false);
 				getModel().getCorrections().get(idx).setQuota(quota.getValue());
+				paintResultPanel(dockResultPanel);
 				markAsDirty();
 			});			
 			
@@ -1338,8 +1026,8 @@ abstract class Model369Base extends DockLayoutPanel {
 			deleteRowButton.setEnabled(getModel().isEditable());
 			deleteRowButton.addClickHandler(event -> {
 				getModel().getCorrections().get(idx).setDeleted(!getModel().getCorrections().get(idx).isDeleted());
-//				details.remove(idx);
 				paintCorrectionsPanel(panel); 
+				paintResultPanel(dockResultPanel);
 				markAsDirty();
 			});
 			
@@ -1379,7 +1067,6 @@ abstract class Model369Base extends DockLayoutPanel {
 		title.setStyleName(AON.CSS.aonMarginTop());
 		title.addStyleName(AON.CSS.aonMarginBottom());
 		title.addStyleName(AON.CSS.aonBold());
-		//title.addStyleName(AON.CSS.aonTextUppercase());
 		title.addStyleName(AON.CSS.aonFontMedium());		
 		title.addStyleName(AON.CSS.aonWidthAlmostAll());
 		title.addStyleName(AON.CSS.aonBlockCenter());
@@ -1395,7 +1082,6 @@ abstract class Model369Base extends DockLayoutPanel {
 			AonDisplayTableRow row = tab.addRow();
 			for (String s : headers) {
 				Label l = new Label(s);
-				//l.addStyleName(AON.CSS.aonMarginRight());				
 				row.addCell(l, AON.CSS.aonBold(), AON.CSS.aonBorderBottom(), AON.CSS.aonTextCenter());
 			}				
 			row.addCell(new Label(""), AON.CSS.aonBorderBottom()); // Ultima cabecera, para el icono de borrar línea
@@ -1403,6 +1089,134 @@ abstract class Model369Base extends DockLayoutPanel {
 		
 		panel.add(tab);
 		return tab;
+	}
+	
+	protected void paintResultTab(TabLayoutPanel tabPanel) {
+		
+		tabPanel.add(paintResultPanel(dockResultPanel), AON.MSG.result());
+		
+	}
+	
+	private DockLayoutPanel paintResultPanel(DockLayoutPanel dockLayoutPanel) {
+		
+		AonDoubleBox amountPaid = new AonDoubleBox(17);
+		
+		// Desglose por estado miembro
+		
+		AonDisplayGrid grid = new AonDisplayGrid();
+		grid.addStyleName(AON.CSS.aonMarginTop());
+		grid.getElement().getStyle().setProperty("margin-left", "1%");
+		
+		grid.addHeaderRow()
+			.addCell(new Label("Estado Miembro"),AON.CSS.aonWidth100())
+			.addCell(new Label(AON.MSG.result()),AON.CSS.aonWidthAuto());
+		
+		getModel().calculate();
+		getModel().getMapResult().forEach( (country,amount) -> {
+			Label countryLabel = new Label();
+			countryLabel.setText(country==null?"":country.getName());
+			
+			Label resultLabel = new Label();
+			resultLabel.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_RIGHT);
+			resultLabel.setText(AON.FMT.format(amount));
+			
+			grid.addRow().addCell(countryLabel)
+						 .addCell(resultLabel);			
+		});
+		
+		
+		ScrollPanel detailScrollPanel = new ScrollPanel();
+		detailScrollPanel.setStyleName(AON.CSS.aonBorderRight());		
+		detailScrollPanel.setWidget(grid);
+		
+		ScrollPanel resultScrollPanel = new ScrollPanel();
+		resultScrollPanel.setStyleName(AON.CSS.aonWidthAll());
+		resultScrollPanel.addStyleName(AON.CSS.aonScrollArea());
+		
+		FlexTable table = new FlexTable();
+		table.setStyleName(AON.CSS.aonTable());
+		table.addStyleName(AON.CSS.aonWidthAlmostAll());
+		table.addStyleName(AON.CSS.aonBlockCenter());
+		table.getColumnFormatter().setWidth(0, "150px");		
+		table.getColumnFormatter().setWidth(1, "auto");
+		
+		int row = 0;
+		
+		// Resultado (importe a ingresar en España)
+		
+		table.setWidget(row, 0, new InlineLabel("Importe a ingresar en Espa\u00F1a"));
+		table.getCellFormatter().setStyleName(row, 0, AON.CSS.aonTableLabel());
+		
+		AonDoubleBox result = new AonDoubleBox(17);
+		result.setValue(getModel().getResult());
+		result.setEnabled(false);
+		table.setWidget(row, 1, result);
+		row++;
+		
+		// Tipo de pago
+		
+		table.setWidget(row, 0, new InlineLabel("Tipo de Pago"));
+		table.getCellFormatter().setStyleName(row, 0, AON.CSS.aonTableLabel());
+				
+		ListBox payTypeList = new ListBox();
+		for (Mod369PayType p : Mod369PayType.values()) {
+			payTypeList.addItem(p.getDescription(), Integer.toString(p.ordinal()));	
+		}
+		payTypeList.setSelectedIndex(getModel().getPayType().value());
+		payTypeList.setEnabled(getModel().isEditable());
+		payTypeList.addChangeHandler(event -> {
+			getModel().setPayType(Mod369PayType.safeValueOf(payTypeList.getSelectedIndex()));
+			if (getModel().getPayType() == Mod369PayType.TOTAL) {
+				getModel().setAmountPaid(result.getValue());
+				amountPaid.setValue(result.getValue(),false);
+			} else if (getModel().getPayType() == Mod369PayType.NO_INCOME || getModel().getPayType() == Mod369PayType.NEGATIVE) {
+				getModel().setAmountPaid(0.0);
+				amountPaid.setValue(0.0,false);
+			}				
+			markAsDirty();
+		});
+		table.setWidget(row, 1, payTypeList);
+		row++;
+		
+		// NRC Pago
+		
+		table.setWidget(row, 0, new InlineLabel("NRC Pago"));
+		table.getCellFormatter().setStyleName(row, 0, AON.CSS.aonTableLabel());
+
+		AonTextBox nrc = new AonTextBox();
+		nrc.setVisibleLength(22);
+		nrc.setMaxLength(22);
+		nrc.setValue(getModel().getNrc());
+		nrc.setEnabled(getModel().isEditable());
+		nrc.addValueChangeHandler( event -> {
+			getModel().setNrc(nrc.getValue());
+			markAsDirty();
+		});
+		table.setWidget(row, 1, nrc);
+		row++;
+		
+		// Importe pagado
+		
+		table.setWidget(row, 0, new InlineLabel("Importe pagado"));
+		table.getCellFormatter().setStyleName(row, 0, AON.CSS.aonTableLabel());
+		
+		amountPaid.setValue(getModel().getAmountPaid());
+		amountPaid.setEnabled(getModel().isEditable());
+		amountPaid.addValueChangeHandler(event -> {
+			if (amountPaid.getValue() == null) amountPaid.setValue(0.0,false);
+			getModel().setAmountPaid(amountPaid.getValue());
+			markAsDirty();
+		});
+		table.setWidget(row, 1, amountPaid);
+		
+		resultScrollPanel.setWidget(table);
+		
+		dockLayoutPanel.clear();
+		dockLayoutPanel.addWest(detailScrollPanel, 230);
+		dockLayoutPanel.add(resultScrollPanel);
+		
+		return dockLayoutPanel;
+		
 	}
 	
 }

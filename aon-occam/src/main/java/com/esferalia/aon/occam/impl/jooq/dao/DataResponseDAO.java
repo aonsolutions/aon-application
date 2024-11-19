@@ -352,6 +352,11 @@ public class DataResponseDAO {
 				pair.setLeft( DataResponseSource.MOD180 ).setRight(DataAttachSource.MOD180);
 			}
 			
+			@Override 
+			public void visitM369() { 
+				pair.setLeft( DataResponseSource.MOD369 ).setRight(DataAttachSource.MOD369);
+			}
+			
 		});
 		return pair;
 	}

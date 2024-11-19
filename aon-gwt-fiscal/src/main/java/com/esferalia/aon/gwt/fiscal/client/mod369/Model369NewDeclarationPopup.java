@@ -20,10 +20,7 @@ class Model369NewDeclarationPopup extends AonCustomDialog {
 	private AonIntegerBox yearBox = new AonIntegerBox();
 	private PeriodListBox periodList = new PeriodListBox();
 	private ListBox regimeList = new ListBox();
-	
-//	private CheckBox replacement = new CheckBox();
-//	private CheckBox complementary = new CheckBox();
-//	private AonTextBox replacedReceiptBox = new AonTextBox();
+	Label labelWarning = new Label();
 	
 	public Model369NewDeclarationPopup(final Mod369 mod369 ,final Model369Callback callback) {
 		this(mod369 ,false, false, callback);
@@ -35,9 +32,6 @@ class Model369NewDeclarationPopup extends AonCustomDialog {
 		int oldYear = mod369.getYear();
 		if (duplicate) {
 			mod369.setYear(oldYear);
-//			mod369.setComplementary(false);
-//			mod369.setReplacement(false);
-//			mod369.setReplacedReceipt("");
 		}		
 		setCaption(AON.MSG.newDeclaration());
 		if (reset) setCaption(AON.MSG.resetDeclaration());
@@ -53,21 +47,8 @@ class Model369NewDeclarationPopup extends AonCustomDialog {
 		periodList.setValue(mod369.getPeriod());
 		regimeList.setSelectedIndex(mod369.getRegime().value());
 		
-//		complementary.setValue(mod369.isComplementary());
-//		replacement.setValue(mod369.isReplacement());
-//		replacedReceiptBox.setValue(mod369.getReplacedReceipt());
-
 		FlowPanel rootPanel = new FlowPanel();
 		
-		// MENSAJE DE AVISO SI NO SE CUMPLIMENTAN LOS DATOS EJERCICIO Y PERIODO
-		
-		Label labelWarning = new Label("DEBE CUMPLIMENTAR TODOS LOS DATOS");
-		labelWarning.setStyleName(AON.CSS.aonMarginTop());
-		labelWarning.addStyleName(AON.CSS.aonTextCenter());
-		labelWarning.addStyleName(AON.CSS.aonBold());		
-		labelWarning.addStyleName(AON.CSS.aonColorRed());
-		labelWarning.setVisible(false);
-
 		// ADMINISTRATION
 
 		//admonList.setEnabled(!reset && !duplicate);
@@ -91,9 +72,6 @@ class Model369NewDeclarationPopup extends AonCustomDialog {
 			labelWarning.setVisible(false);			
 		});
 		
-		//periodList.addChangeHandler( event -> mod369.setPeriod( periodList.getValue() ));
-		//tab.addLabelWidgetRow(AON.MSG.period(), periodList);
-		
 		// REGIMEN
 		
 		for (Mod369Regime p : Mod369Regime.values()) {
@@ -102,59 +80,6 @@ class Model369NewDeclarationPopup extends AonCustomDialog {
 		regimeList.addChangeHandler(event -> {
 			mod369.setRegime(Mod369Regime.safeValueOf(regimeList.getSelectedIndex()));
 		});
-
-		
-		
-//		defaultVatRegimeLabel.setText("Destinar Fras. sin actividad a");
-//		if (defaultVatRegime.getItemCount() == 0) {
-//			defaultVatRegime.addItem(VATRegime.GENERAL.getName());
-//			defaultVatRegime.addItem(VATRegime.SIMPLIFIED.getName());
-//		}
-//		defaultVatRegime.addChangeHandler(event -> {
-//			model.setDefaultVatRegime(defaultVatRegime.getSelectedIndex() == 1? VATRegime.SIMPLIFIED: VATRegime.GENERAL);
-//			initialize(model, callback );	
-//		});
-//		
-//		defaultVatRegime.setSelectedIndex( model.getDefaultVATRegime() == VATRegime.SIMPLIFIED? 1 : 0);
-//		tab.addLabelWidgetRow(defaultVatRegimeLabel, defaultVatRegime);
-
-
-		
-		// COMPLEMENTARIA
-//		complementary.setText(AON.MSG.complementary());
-//		complementary.setEnabled(!reset && !duplicate); // Por defecto deshabilitada si es duplicar, porque el ejercicio por defecto es el siguiente
-//		complementary.addValueChangeHandler(event -> {
-//			mod369.setComplementary(complementary.getValue());
-//			
-//			if (complementary.getValue().booleanValue()) {
-//				replacement.setValue(false,true);
-//			}
-//			
-//			replacedReceiptBox.setEnabled(complementary.getValue() || replacement.getValue());
-//			if (!complementary.getValue().booleanValue() && !replacement.getValue().booleanValue()) {
-//				replacedReceiptBox.setValue("",true);
-//			}				
-//		});
-
-		// SUSTITUTIVA
-//		replacement.setText(AON.MSG.replacement());
-//		replacement.setEnabled(!reset && !duplicate); // Por defecto deshabilitada si es duplicar, porque el ejercicio por defecto es el siguiente
-//		replacement.addValueChangeHandler(event -> {
-//			mod369.setReplacement(replacement.getValue());				
-//			if (replacement.getValue().booleanValue()) {
-//				complementary.setValue(false,true);
-//			}				
-//			replacedReceiptBox.setEnabled(complementary.getValue() || replacement.getValue());
-//			if (!complementary.getValue().booleanValue() && !replacement.getValue().booleanValue()) {
-//				replacedReceiptBox.setValue("",true);					
-//			}			
-//		});
-		
-		// NUMERO DE DECLARACION ANTERIOR
-//		replacedReceiptBox.setMaxLength(13);
-//		replacedReceiptBox.setVisibleLength(13);
-//		replacedReceiptBox.setEnabled(false);  // Por defecto deshabilitado porque complementaria y sustitutiva están desmarcados
-//		replacedReceiptBox.addValueChangeHandler(event -> mod369.setReplacedReceipt(replacedReceiptBox.getValue()));
 
 		AonDisplayTable tab = new AonDisplayTable();
 		tab.addStyleName(AON.CSS.aonMarginTop());
@@ -173,16 +98,6 @@ class Model369NewDeclarationPopup extends AonCustomDialog {
 		tab.addRow()
 			.addCell( new Label("R\u00E9gimen"), AON.CSS.aonTableLabel())
 			.addCell( regimeList );
-
-//		tab.addRow( )
-//			.addCell( new Label(), AON.CSS. aonTableLabel())
-//			.addCell( complementary);
-//		tab.addRow( )
-//			.addCell( new Label(), AON.CSS. aonTableLabel())
-//			.addCell( replacement);
-//		tab.addRow( )	
-//			.addCell( new Label( AON.MSG.previousDeclaration()), AON.CSS. aonTableLabel())
-//			.addCell(replacedReceiptBox);
 		
 		rootPanel.add(tab);
 		
@@ -194,6 +109,13 @@ class Model369NewDeclarationPopup extends AonCustomDialog {
 			rootPanel.add(labelReset);
 		}
 		
+		// MENSAJE DE AVISO SI NO SE CUMPLIMENTAN LOS DATOS EJERCICIO Y PERIODO O EL PERIODO NO ES ACORDE CON EL REGIMEN		
+		
+		labelWarning.setStyleName(AON.CSS.aonMarginTop());
+		labelWarning.addStyleName(AON.CSS.aonTextCenter());
+		labelWarning.addStyleName(AON.CSS.aonBold());		
+		labelWarning.addStyleName(AON.CSS.aonColorRed());
+		labelWarning.setVisible(false);		
 		rootPanel.add(labelWarning);		
 		
 		FlowPanel buttonsPanel = new FlowPanel();
@@ -207,8 +129,19 @@ class Model369NewDeclarationPopup extends AonCustomDialog {
 		acceptButton.addClickHandler(event -> {
 			acceptButton.setEnabled(false);
 			if (mod369.getYear() == 0 || mod369.getPeriod() == null) {
+				labelWarning.setText("DEBE CUMPLIMENTAR TODOS LOS DATOS");
 				labelWarning.setVisible(true);
 				acceptButton.setEnabled(true);
+			}
+			else if ((mod369.getRegime() == Mod369Regime.UNION || mod369.getRegime() == Mod369Regime.OUTSIDE) && !mod369.getPeriod().isQuarterPeriod()) {
+				labelWarning.setText("EL PERIODO PARA ESTE REGIMEN DEBE SER TRIMESTRAL");
+				labelWarning.setVisible(true);
+				acceptButton.setEnabled(true);			
+			}
+			else if (mod369.getRegime() == Mod369Regime.IMPORT && !mod369.getPeriod().isMonthPeriod()) {
+				labelWarning.setText("EL PERIODO PARA ESTE REGIMEN DEBE SER MENSUAL");
+				labelWarning.setVisible(true);
+				acceptButton.setEnabled(true);			
 			} else {
 				hide();
 				callback.onAccept(mod369);

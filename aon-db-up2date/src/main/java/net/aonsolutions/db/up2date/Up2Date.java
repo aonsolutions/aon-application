@@ -481,6 +481,7 @@ public class Up2Date {
     	InvofoxEnterpriseDataFix.INVOFOX_ENTERPRISE_DATA_FIX,
     	AlterFsMod200Nrc.ALTER_FS_MODEL200_NRC,
     	InvoiceBatchAlter.INVOICE_BATCH_ALTER,
+    	
     	FsModel369Creation.FS_MODEL369_CREATION
     	
 	};

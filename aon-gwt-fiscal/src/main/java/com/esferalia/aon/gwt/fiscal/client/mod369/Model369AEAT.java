@@ -13,7 +13,6 @@ import com.google.gwt.user.client.ui.TabLayoutPanel;
 
 public class Model369AEAT extends Model369Base {
 
-//	public Model369AEAT(Model369Callback cbk,Mod369 mod369, Integer selectedDetailIndex) {
 	public Model369AEAT(Model369Callback cbk, Mod369 mod369) {
 		super(cbk, mod369);
 		
@@ -24,17 +23,14 @@ public class Model369AEAT extends Model369Base {
 		add(centerPanel);
 		
 		paintDeclarationTab(tabPanel);
-//		paintEntityTab(tabPanel);
-//		paintDetailTab(tabPanel, selectedDetailIndex);
-//		paintPartnersTab(tabPanel, selectedPartnerIndex);
 		paintDetailsTab(tabPanel);
 		paintDetailsOtherTab(tabPanel);
 		paintCorrectionsTab(tabPanel);
+		paintResultTab(tabPanel);
 		paintAdministrationTab(tabPanel);
 		
 		tabPanel.addSelectionHandler( event -> cbk.setSelectedTab(event.getSelectedItem()));
 		if (cbk.getSelectedTab() == null || cbk.getSelectedTab() < 0 || cbk.getSelectedTab() >= tabPanel.getWidgetCount()) {
-			//cbk.setSelectedTab(1);
 			cbk.setSelectedTab(0);
 		}
 		tabPanel.selectTab(cbk.getSelectedTab(), false);
@@ -61,7 +57,7 @@ public class Model369AEAT extends Model369Base {
 
 					@Override
 					public String getValidatePrintAction() {
-						return GWT.getHostPageBaseURL() +"aon_gwt_fiscal/ms/Mod369ValidatePrintAEAT";						
+						return null; // NO HAY VALIDACION EN LA AEAT PARA ESTE MODELO
 					}
 
 					@Override
@@ -71,7 +67,7 @@ public class Model369AEAT extends Model369Base {
 
 					@Override
 					public String getSendAction() {
-						return GWT.getHostPageBaseURL() +"aon_gwt_fiscal/ms/Mod369SendAEAT";
+						return null; // NO HAY PRESENTACION DIRECTA EN LA AEAT PARA ESTE MODELO
 					}
 
 					@Override
@@ -95,7 +91,7 @@ public class Model369AEAT extends Model369Base {
 					}
 
 					@Override
-					public String getCheckAction() {
+					public String getCheckAction() {						
 						return GWT.getHostPageBaseURL() +"aon_gwt_fiscal/ms/Mod369CheckAEAT";
 					}
 

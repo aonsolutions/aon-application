@@ -97,12 +97,11 @@ public class Model369Table extends SimpleLayoutPanel implements HasSelectionHand
 		, SEC(AON.MSG.period()		, 75 ,AON.CSS.aonTextCenter())
 		, REG("R\u00E9gimen"		, 150,AON.CSS.aonTextCenter())
 		, DCT(AON.MSG.status()		, 75 ,AON.CSS.aonTextCenter())
-//		, CMP("C"					, 20 ,AON.CSS.aonTextCenter())
-//		, SST("S"					, 20 ,AON.CSS.aonTextCenter())
 		, DOC("Documento"			, 100,AON.CSS.aonTextLeft())
 		, AUTO(AON.MSG.name()		, 0  ,AON.CSS.aonTextLeft())
 		, SAC("Sin Act."	 		, 70 ,AON.CSS.aonTextCenter())
-		, RST("Importe pagado"		, 100,AON.CSS.aonTextRight())  
+		, RST("Resultado"			, 100,AON.CSS.aonTextRight())
+		, PAG("Importe pagado"		, 100,AON.CSS.aonTextRight())  
 	    , ACT("Tipo de pago"		, 100,AON.CSS.aonTextCenter()) 
 		;
 
@@ -154,16 +153,6 @@ public class Model369Table extends SimpleLayoutPanel implements HasSelectionHand
 			admon.setStyleName(AON.CSS.aonIconLabel());
 			admon.addStyleName(FiscalModelUtils.getAdministrationIconStyle(mod369.getAdministration()));
 			
-//			InlineLabel comp = new InlineLabel();
-//			comp.setTitle( AON.MSG.complementary());
-//			comp.setStyleName(AON.CSS.aonIconLabel());
-//			comp.addStyleName( mod369.isComplementary()?AON.CSS.aonIconChecked():AON.CSS.aonIconCheck() );
-//			
-//			InlineLabel sust = new InlineLabel();
-//			sust.setTitle( AON.MSG.replacement());
-//			sust.setStyleName(AON.CSS.aonIconLabel());
-//			sust.addStyleName( mod369.isReplacement()?AON.CSS.aonIconChecked():AON.CSS.aonIconCheck() );
-			
 			AonDisplayGridRow row = tab.addRow();
 			row.addStyleName(AON.CSS.aonClickable());
 			row.addClickHandler( event ->  SelectionEvent.fire(Model369Table.this, mod369));					
@@ -185,15 +174,20 @@ public class Model369Table extends SimpleLayoutPanel implements HasSelectionHand
 			wact.setTitle(AON.MSG.withoutActivity());
 			wact.setStyleName(AON.CSS.aonIconLabel());
 			wact.addStyleName( mod369.isWithoutActivity() ? AON.CSS.aonIconChecked() : AON.CSS.aonIconCheck() );
-			
+
 			InlineLabel declarationResult = new InlineLabel();
+			declarationResult.setText(AON.FMT.format(mod369.getResult()));
+			
+			InlineLabel amountPaid = new InlineLabel();
 			if (mod369.getAmountPaid() != null) {
-				declarationResult.setText(AON.FMT.format(mod369.getAmountPaid()));
-			}			
+				amountPaid.setText(AON.FMT.format(mod369.getAmountPaid()));
+			}
+			
 			row.addCell( new InlineLabel(mod369.getDocument()))      // NIF
 			   .addCell( new InlineLabel(mod369.getName()))          // Nombre
 			   .addCell( wact, AON.CSS.aonTextCenter())              // Sin Actividad
-			   .addCell( declarationResult, AON.CSS.aonTextRight())  // Importe pagado
+			   .addCell( declarationResult, AON.CSS.aonTextRight())  // Resultado
+			   .addCell( amountPaid, AON.CSS.aonTextRight())         // Importe pagado
 			   .addCell( new InlineLabel(mod369.getPayType() == null ? "" : mod369.getPayType().getDescription())); // Tipo de pago
 		}
 		

@@ -123,6 +123,7 @@ public class EnumVisitors {
 		void visitM200();
 		void visitM202();
 		void visitM303();
+		void visitM369();
 	}
 	
 	public static interface IInvoiceCommunicationTypeVisitor {

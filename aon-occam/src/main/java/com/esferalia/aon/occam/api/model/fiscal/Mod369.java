@@ -2,6 +2,8 @@ package com.esferalia.aon.occam.api.model.fiscal;
 
 import java.util.Date;
 import java.util.LinkedList;
+import java.util.Map;
+import java.util.TreeMap;
 
 import com.esferalia.aon.occam.api.model.HasAudit;
 import com.esferalia.aon.occam.api.model.type.Administration;
@@ -29,7 +31,8 @@ public class Mod369 implements IFiscalModel, HasAudit {
 	private String modificationUser;
 	private Date modificationDate;
 	private Integer fsModel;
-	private Mod369Regime regime;       // Régimen 
+	private Mod369Regime regime;       // Régimen
+	private double result;             // Resultado a ingresar en España
 	private Mod369PayType payType;     // Tipo de Pago 
 	private String nrc;                // NRC Pago
 	private Double amountPaid;         // Importe pagado
@@ -41,8 +44,8 @@ public class Mod369 implements IFiscalModel, HasAudit {
 	private Date fromDate;             // Fecha desde 
 	private Date toDate;               // Fecha hasta
 	
-// FALTA - POR AHORA VOY A PONER SOLO UN TIPO DE DETALLE, SEGUN EL REGIMEN PUEDE HABER MAS
-//	
+// LINEAS DE DETALLES SEGUN EL REGIMEN:
+//
 //	Régimen de la Unión:
 //	3. Prestaciones de servicios desde el EMID (España) y desde establecimientos permanentes situados fuera de la UE. (details3)
 //	4. Entregas de bienes expedidos o transportados desde EMID España. (details4)
@@ -63,6 +66,9 @@ public class Mod369 implements IFiscalModel, HasAudit {
 	private LinkedList<Mod369DetailOther> details5;         // Régimen de la Unión - 5. Prestaciones de servicios desde establecimientos permanentes en otros EM distintos de España.
 	private LinkedList<Mod369DetailOther> details6;         // Régimen de la Unión - 6. Entregas de bienes expedidos o transportados desde otros EM distintos de España.
 	private LinkedList<Mod369DetailCorrection> corrections; // Correcciones de declaraciones de períodos anteriores
+	
+	// Resultado, por estado miembro
+	private Map<Country, Double> mapResult;
 	
 	@Override
 	public Integer getId() { 
@@ -179,11 +185,7 @@ public class Mod369 implements IFiscalModel, HasAudit {
 		return name;
 	}
 	
-	@Override
-	public double getResult() {
-		return 0;
-	}
-	
+
 	@Override
 	public IFiscalModelKey getDeclarationTypeKey() {
 		return null;
@@ -196,15 +198,9 @@ public class Mod369 implements IFiscalModel, HasAudit {
 	
 	@Override
 	public FiscalModelType getModel() {
-		//return FiscalModelType.M369;
-		if (getRegime() == Mod369Regime.IMPORT)
-			return FiscalModelType.M369_RI;
-		else if (getRegime() == Mod369Regime.OUTSIDE)
-			return FiscalModelType.M369_RE;
-		return FiscalModelType.M369_RU;
+		return FiscalModelType.M369;
 	}
 	
-	// ---------------------------------------------------------- AUDIT
 	@Override
 	public String getCreationUser() {
 		return creationUser;
@@ -264,7 +260,17 @@ public class Mod369 implements IFiscalModel, HasAudit {
 		this.regime = regime;
 		return this;
 	}
-
+	
+	@Override
+	public double getResult() {
+		return result;
+	}
+	
+	public Mod369 setResult(double result) {
+		this.result = result;
+		return this;
+	}
+	
 	public Mod369PayType getPayType() {
 		return payType;
 	}
@@ -425,6 +431,46 @@ public class Mod369 implements IFiscalModel, HasAudit {
 	public Mod369 setCorrections(LinkedList<Mod369DetailCorrection> corrections) {
 		this.corrections = corrections;
 		return this;
+	}
+
+	public Map<Country, Double> getMapResult() {
+		if (mapResult == null) {
+			mapResult = new TreeMap<>();
+		}
+		return mapResult;
+	}
+	
+	public void calculate() {
+
+		getMapResult().clear();
+		getDetails3().forEach(detail -> addMapResult(detail.getCountry(), detail.getQuota(), detail.isDeleted()));
+		getDetails4().forEach(detail -> addMapResult(detail.getCountry(), detail.getQuota(), detail.isDeleted()));
+		getDetails5().forEach(detail -> addMapResult(detail.getCountry(), detail.getQuota(), detail.isDeleted()));
+		getDetails6().forEach(detail -> addMapResult(detail.getCountry(), detail.getQuota(), detail.isDeleted()));
+		getCorrections().forEach(detail -> addMapResult(detail.getCountry(), detail.getQuota(), detail.isDeleted()));
+		
+		result = getMapResult().values().stream().mapToDouble(det -> det.doubleValue() > 0.0 ? det.doubleValue() : 0.0).sum();
+		
+		// Resultado cero, tipo de pago Negativa
+		if (result == 0)
+			setPayType(Mod369PayType.NEGATIVE);
+        // Si el resultado es mayor que cero y era negativa, lo ponemos por defecto como pago total 	
+		else if (getPayType() == Mod369PayType.NEGATIVE)
+			setPayType(Mod369PayType.TOTAL);
+		
+		// Tipo de Pago total, sin ingreso o negativa, importe pagado total o cero
+		if (getPayType() == Mod369PayType.TOTAL) {
+			setAmountPaid(result);
+		} else if (getPayType() == Mod369PayType.NO_INCOME || getPayType() == Mod369PayType.NEGATIVE) {
+			setAmountPaid(0.0);
+		}
+
+	}
+	
+	private void addMapResult(Country country, double quota, boolean isDeleted ) {
+		if (country != null) {
+			getMapResult().put(country, isDeleted ? 0.0 : quota + getMapResult().getOrDefault(country, 0.0));
+		}
 	}
 
 }

@@ -80,7 +80,6 @@ public class Model369 extends MainEntryPoint {
 
 		@Override
 		public void onNew() {
-			//newModel(getOptions(), AonJSFiscalModelUtils.guessModelYear());
 			newModel(getOptions(), 0, null);
 		}
 		
@@ -115,12 +114,7 @@ public class Model369 extends MainEntryPoint {
 			Model369.this.setSelectedTab(tabIndex);
 		}
 		
-//		public void onSelect(Mod369 mod369, Integer selectedDetailIndex) {
-//			select(mod369, selectedDetailIndex);
-//		}
-
 		public void onSelect(Mod369 mod369) {
-//			select(mod369, selectedDetailIndex);
 			select(mod369);
 		}		
 		
@@ -135,9 +129,6 @@ public class Model369 extends MainEntryPoint {
 							newMod369.setYear(mod369.getYear());
 							newMod369.setPeriod(mod369.getPeriod());
 							newMod369.setRegime(mod369.getRegime());
-//							newMod369.setComplementary(mod369.isComplementary());
-//							newMod369.setReplacement(mod369.isReplacement());
-//							newMod369.setReplacedReceipt(mod369.getReplacedReceipt());						
 							showResetDeclarationPopup(options, newMod369, mod369);
 						}
 
@@ -187,7 +178,6 @@ public class Model369 extends MainEntryPoint {
 														@Override
 														public void onSuccess(Mod369 model) {
 															popup.hide();
-															//select(model, null);
 															select(model);
 														}
 
@@ -230,7 +220,6 @@ public class Model369 extends MainEntryPoint {
 										@Override
 										public void onSuccess(Mod369 model) {
 											popup.hide();
-											//select(model, null);
 											select(model);
 										}
 
@@ -288,7 +277,6 @@ public class Model369 extends MainEntryPoint {
 		this.options = options;
 		AON.ensureInjected();
 		aonLayout = new AonLayoutPanel();
-		//aonLayout.addStyleName("aaon-Model");
 		aonLayout.addStyleName("aon-Model");
 		splitLayoutPanel = new SplitLayoutPanel( 2 );
 		aonLayout.add(splitLayoutPanel);
@@ -369,7 +357,6 @@ public class Model369 extends MainEntryPoint {
 				if (selected == null) {
 					showErrorMessage(AON.MSG.unableToFindDeclaration());
 				} else {
-					//select(selected, null);
 					select(selected);
 				}
 			}
@@ -389,7 +376,6 @@ public class Model369 extends MainEntryPoint {
 				if (selected == null) {
 					showErrorMessage(AON.MSG.unableToFindDeclaration());
 				} else {
-					//select(selected, null);
 					select(selected);
 				}
 			}
@@ -401,28 +387,9 @@ public class Model369 extends MainEntryPoint {
 		} );
 	}
 	
-//	private void select(Mod369 selected, Integer selectedDetailIndex) {
-//		cleanErrorMessage();
-//		// FALTA - POR AHORA SOLO AEAT
-//		declarationContainer.setWidget(new Model369AEAT(new Model369Callback(), selected, selectedDetailIndex));
-////		if ( selected.isAEAT() ) {
-////			declarationContainer.setWidget( new Model369AEAT(new Model369Callback(),selected,selectedIncomeIndex,selectedPartnerIndex));
-////		} else if ( selected.isAraba() ) {
-////			declarationContainer.setWidget( new Model369ARABA(new Model369Callback(),selected,selectedIncomeIndex,selectedPartnerIndex));
-////		} else if ( selected.isBizkaia() ) {
-////			declarationContainer.setWidget( new Model369BIZKAIA(new Model369Callback(),selected,selectedIncomeIndex,selectedPartnerIndex));
-////		} else if ( selected.isGipuzkoa() ) {
-////			declarationContainer.setWidget( new Model369GIPUZKOA(new Model369Callback(),selected,selectedIncomeIndex,selectedPartnerIndex));
-////		} else if ( selected.isNavarra() ) {
-////			declarationContainer.setWidget( new Model369NAVARRA(new Model369Callback(),selected,selectedIncomeIndex,selectedPartnerIndex));
-////		} else {
-////			showErrorMessage("Administraci\u00F3n y/o ejercicio no soportado.");
-////		}
-//	}
-	
 	private void select(Mod369 selected) {
 		cleanErrorMessage();
-		// FALTA - POR AHORA SOLO AEAT
+		// POR AHORA SOLO AEAT
 		declarationContainer.setWidget(new Model369AEAT(new Model369Callback(), selected));
 //		if ( selected.isAEAT() ) {
 //			declarationContainer.setWidget( new Model369AEAT(new Model369Callback(),selected,selectedIncomeIndex,selectedPartnerIndex));
@@ -488,7 +455,6 @@ public class Model369 extends MainEntryPoint {
 									@Override
 									public void onSuccess(Mod369 model) {
 										popup.hide();
-										//select(model, null);
 										select(model);
 									}
 

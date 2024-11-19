@@ -23,9 +23,6 @@ import com.esferalia.aon.watson.server.io.AonIOUtils;
 @WebServlet(name = "Mod369 File download", urlPatterns = { "/aon_gwt_fiscal/ms/Model369File" })
 public class Mod369File extends HttpServlet {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 8609869628031385294L;
 
 	@Override

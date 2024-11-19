@@ -1,4 +1,3 @@
-
 package com.esferalia.aon.occam.impl.jooq.dao.fiscal.mod369;
 
 import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
@@ -33,6 +32,7 @@ import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.occam.api.model.type.Period;
 import com.esferalia.aon.occam.impl.jooq.dao.ConfigurationDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.fiscal.AlcatrazDAO;
+import com.esferalia.aon.watson.AonError;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.server.AonEnumUtils;
@@ -113,7 +113,6 @@ public class Mod369DAO {
 			.selectFrom(FS_MODEL369_DETAIL)
 			.where(FS_MODEL369_DETAIL.FS_MODEL369.equal(mod369))
 			.and(FS_MODEL369_DETAIL.DETAIL_TYPE.eq(type))
-//			.orderBy(FS_MODEL369_DETAIL.DOCUMENT,FS_MODEL369_DETAIL.KEY,FS_MODEL369_DETAIL.SUBKEY )
 			.fetch()
 			.stream()
 			.map( new Mod369DetailFiller() )
@@ -126,7 +125,6 @@ public class Mod369DAO {
 			.selectFrom(FS_MODEL369_DETAIL)
 			.where(FS_MODEL369_DETAIL.FS_MODEL369.equal(mod369))
 			.and(FS_MODEL369_DETAIL.DETAIL_TYPE.eq(type))
-//			.orderBy(FS_MODEL369_DETAIL.DOCUMENT,FS_MODEL369_DETAIL.KEY,FS_MODEL369_DETAIL.SUBKEY )
 			.fetch()
 			.stream()
 			.map( new Mod369DetailOtherFiller() )
@@ -139,7 +137,6 @@ public class Mod369DAO {
 			.selectFrom(FS_MODEL369_DETAIL)
 			.where(FS_MODEL369_DETAIL.FS_MODEL369.equal(mod369))
 			.and(FS_MODEL369_DETAIL.DETAIL_TYPE.eq(type))
-//			.orderBy(FS_MODEL369_DETAIL.DOCUMENT,FS_MODEL369_DETAIL.KEY,FS_MODEL369_DETAIL.SUBKEY )
 			.fetch()
 			.stream()
 			.map( new Mod369DetailCorrectionFiller() )
@@ -187,7 +184,7 @@ public class Mod369DAO {
 	}
 
 	private static Mod369 insert(AONContext ctx, Mod369 mod369) {
-//		validate(ctx, mod369);
+		validate(ctx, mod369);
 		mod369.setCreationUser(ctx.getUser());
 		mod369.setCreationDate(new Timestamp(System.currentTimeMillis()));
 		mod369.setFsModel(saveFsModel(ctx, mod369)); 
@@ -205,6 +202,7 @@ public class Mod369DAO {
 				.set(FS_MODEL369.CREATION_USER, mod369.getCreationUser())
 				.set(FS_MODEL369.CREATION_DATE, AonDateUtils.toTimestamp(mod369.getCreationDate()))
 				.set(FS_MODEL369.REGIME, AonEnumUtils.getByte(mod369.getRegime()))
+				.set(FS_MODEL369.RESULT, mod369.getResult())
 				.set(FS_MODEL369.PAY_TYPE, AonEnumUtils.getByte(mod369.getPayType()))
 				.set(FS_MODEL369.NRC, mod369.getNrc())
 				.set(FS_MODEL369.AMOUNT_PAID, mod369.getAmountPaid())
@@ -238,6 +236,7 @@ public class Mod369DAO {
 			.set(FS_MODEL369.MODIFICATION_USER, mod369.getModificationUser())
 			.set(FS_MODEL369.MODIFICATION_DATE, AonDateUtils.toTimestamp(mod369.getModificationDate()))
 			.set(FS_MODEL369.REGIME, AonEnumUtils.getByte(mod369.getRegime()))
+			.set(FS_MODEL369.RESULT, mod369.getResult())
 			.set(FS_MODEL369.PAY_TYPE, AonEnumUtils.getByte(mod369.getPayType()))
 			.set(FS_MODEL369.NRC, mod369.getNrc())
 			.set(FS_MODEL369.AMOUNT_PAID, mod369.getAmountPaid())
@@ -293,12 +292,6 @@ public class Mod369DAO {
 			.where(FS_MODEL369_DETAIL.ID.equal(detail.getId()))
 			.execute();
 	}
-	
-//	private static void deleteDetail(AONContext ctx, Mod369Detail detail) {
-//		ctx.getDslContext().delete(FS_MODEL369_DETAIL)
-//			.where(FS_MODEL369_DETAIL.ID.equal(detail.getId()))
-//			.execute();
-//	}
 	
 	private static void deleteDetail(AONContext ctx, int id) {
 		ctx.getDslContext().delete(FS_MODEL369_DETAIL)
@@ -390,40 +383,27 @@ public class Mod369DAO {
 			.execute();
 	}
 	
-	// FALTA - RESTO DE DETALLES (CORRECCIONES, ...) 
-
-//	private static void validate(AONContext ctx, Mod369 mod369) {
-//		if (mod369.isReplacement() || mod369.isComplementary()) {
-//			// Se comprueba que exista la declaración sustituida.
-//			if (!ctx.getDslContext().selectOne()
-//					.from(FS_MODEL369)
-//					.where(FS_MODEL369.YEAR.equal(mod369.getYear())
-//					.and(FS_MODEL369.ADMINISTRATION.equal(mod369.getAdministration().value()))
-//					.and(FS_MODEL369.ENTERPRISE.equal(mod369.getEnterprise()))
-//					)
-//					.fetch()
-//					.stream()
-//					.findFirst()
-//					.isPresent()) 
-//				throw new AonCoreException(
-//						AonError.FISCAL_NO_REPLACED_DECLARATION.getMessage());
-//		} else {
-//			// Se comprueba que no exista ya una declaración.
-//			if (ctx.getDslContext().selectOne()
-//				.from(FS_MODEL369)
-//				.where(FS_MODEL369.YEAR.equal(mod369.getYear())
-//				.and(FS_MODEL369.ADMINISTRATION.equal(mod369.getAdministration().value()))
-//				.and(FS_MODEL369.ENTERPRISE.equal(mod369.getEnterprise()))
-//				.and(FS_MODEL369.REPLACEMENT.equal(ZERO_BYTE))
-//				.and(FS_MODEL369.COMPLEMENTARY.equal(ZERO_BYTE)))				
-//				.fetch()
-//				.stream()
-//				.findFirst()
-//				.isPresent()) 
-//				throw new AonCoreException(
-//						AonError.FISCAL_DECLARATION_ALREADY_EXISTS.getMessage());
-//		}
-//	}
+	private static void validate(AONContext ctx, Mod369 mod369) {
+		
+		// Comprobar que esta cumplimentado ejercicio, periodo y régimen
+		if (mod369.getYear() == 0 || mod369.getPeriod() == null || mod369.getRegime() == null)
+			throw new AonCoreException("Debe cumplimentar Ejercicio y Periodo.");
+		
+		// Se comprueba que no exista ya una declaracion, para el periodo y regimen indicado
+		if (ctx.getDslContext().selectOne()
+			.from(FS_MODEL369)
+			.where(FS_MODEL369.DOMAIN.equal(mod369.getDomain())
+					.and(FS_MODEL369.YEAR.equal(mod369.getYear()))
+					.and(FS_MODEL369.PERIOD.equal(mod369.getPeriod().value()))
+					.and(FS_MODEL369.REGIME.equal(mod369.getRegime().value()))
+					.and(FS_MODEL369.ADMINISTRATION.equal(mod369.getAdministration().value())))				
+			.fetch()
+			.stream()
+			.findFirst()
+			.isPresent()) 
+			throw new AonCoreException(
+					AonError.FISCAL_DECLARATION_ALREADY_EXISTS.getMessage());
+	}
 
 	public static void delete(AONContext ctx, Mod369 mod369) {
 		
@@ -474,6 +454,7 @@ public class Mod369DAO {
 				.setModificationDate(rec.getValue(FS_MODEL369.MODIFICATION_DATE))
 			    .setFsModel(rec.getValue(FS_MODEL369.FS_MODEL))
 			    .setRegime(Mod369Regime.safeValueOf(rec.getValue(FS_MODEL369.REGIME)))
+			    .setResult(rec.getValue(FS_MODEL369.RESULT))
 			    .setPayType(Mod369PayType.safeValueOf(rec.getValue(FS_MODEL369.PAY_TYPE)))
 			    .setNrc(rec.getValue(FS_MODEL369.NRC))
 			    .setAmountPaid(rec.getValue(FS_MODEL369.AMOUNT_PAID))
@@ -487,8 +468,6 @@ public class Mod369DAO {
 		}
 	}
 	
-	// FALTA - LOS FILLER DE LAS LINEAS NO CARGAN EL ID, DOMAIN, FS_MODEL369 NI DETAILTYPE ??
-			
 	private static class Mod369DetailFiller implements Function<Record, Mod369Detail> {
 
 		@Override
@@ -538,42 +517,6 @@ public class Mod369DAO {
 		
 	}
 	
-
-	
-//	private static class Mod369PartnerFiller implements Function<Record, Mod369Partner> {
-//
-//		@Override
-//		public Mod369Partner apply(Record rec) {
-//			return new Mod369Partner()
-//				.setId(rec.getValue(FS_MODEL369_DETAIL.ID))
-//				.setDocument(rec.getValue(FS_MODEL369_DETAIL.DOCUMENT))
-//				.setRepresentativeDocument(rec.getValue(FS_MODEL369_DETAIL.REPRESENTATIVE_DOCUMENT))
-//				.setName(rec.getValue(FS_MODEL369_DETAIL.NAME))
-//				.setProvince(rec.getValue(FS_MODEL369_DETAIL.PROVINCE))
-//				.setCountry(rec.getValue(FS_MODEL369_DETAIL.COUNTRY))
-//				.setPartType(rec.getValue(FS_MODEL369_DETAIL.PART_TYPE))
-//				.setMemberEndOfYear(AonEnumUtils.getBoolean( rec.getValue(FS_MODEL369_DETAIL.MEMBER_END_OF_YEAR)))
-//				.setMemberDays(rec.getValue(FS_MODEL369_DETAIL.MEMBER_DAYS))
-//				.setPartPercent(rec.getValue(FS_MODEL369_DETAIL.PART_PERCENT))
-//				.setKey(rec.getValue(FS_MODEL369_DETAIL.KEY))
-//				.setSubKey(rec.getValue(FS_MODEL369_DETAIL.SUBKEY))
-//				.setAmount(rec.getValue(FS_MODEL369_DETAIL.AMOUNT))
-//				.setReduction(rec.getValue(FS_MODEL369_DETAIL.REDUCTION))
-//				.setAddress(rec.getValue(FS_MODEL369_DETAIL.ADDRESS))
-//				.setExpenses(AonNumberUtils.zeroIfNull(rec.getValue(FS_MODEL369_DETAIL.EXPENSES)))
-//				.setNature(rec.getValue(FS_MODEL369_DETAIL.NATURE))
-//				.setLocation(rec.getValue(FS_MODEL369_DETAIL.LOCATION))
-//				.setCadasdralReference(rec.getValue(FS_MODEL369_DETAIL.CADASDRAL_REFERENCE))
-//				.setDeclaredKey(rec.getValue(FS_MODEL369_DETAIL.DECLARED_KEY))
-//				.setAssetPercent(rec.getValue(FS_MODEL369_DETAIL.ASSET_PERCENT))
-//				.setAssetDays(rec.getValue(FS_MODEL369_DETAIL.ASSET_DAYS))
-//				.setRendNetoPrevio(rec.getValue(FS_MODEL369_DETAIL.REND_NETO_PREVIO))
-//				.setRendNetoMinorado(rec.getValue(FS_MODEL369_DETAIL.REND_NETO_MINORA))
-//				;
-//			
-//		}
-//	}
-
 	public static Mod369 initialize(AONContext ctx, int year, Period period) {
 
 		if (year == 0) {
@@ -682,7 +625,7 @@ public class Mod369DAO {
 	
 	private static Integer insertFsModel(AONContext ctx, Mod369 mod369) {
 		
-		Integer id = ctx.getDslContext()
+		return ctx.getDslContext()
 			.insertInto(FS_MODEL)
 				.set(FS_MODEL.DOMAIN, mod369.getDomain())
 				.set(FS_MODEL.YEAR, mod369.getYear())
@@ -692,7 +635,7 @@ public class Mod369DAO {
 				.set(FS_MODEL.SECURITY_LEVEL,AonEnumUtils.getByte( mod369.isConfidential() ))
 //				.set(FS_MODEL.COMPLEMENTARY, AonEnumUtils.getByte( mod369.isComplementary() ))
 //				.set(FS_MODEL.REPLACEMENT, AonEnumUtils.getByte( mod369.isReplacement() )) 
-//				.set(FS_MODEL.WITHOUTACTIVITY,AonEnumUtils.getByte( mod349.isWithoutActivity()  ))
+//				.set(FS_MODEL.WITHOUTACTIVITY,AonEnumUtils.getByte( mod369.isWithoutActivity()  ))
 				.set(FS_MODEL.MODEL, mod369.getModel().getValue() )
 //				.set(FS_MODEL.NUMBER, mod369.getNumber())
 //				.set(FS_MODEL.REPLACED_NUMBER, mod369.getReplacedNumber())
@@ -701,24 +644,24 @@ public class Mod369DAO {
 				.set(FS_MODEL.DOCUMENT, mod369.getDocument() )
 //				.set(FS_MODEL.SURNAME, mod369.getSurname())
 				.set(FS_MODEL.NAME, mod369.getName())
-//				.set(FS_MODEL.STREET_INITIAL,mod349.getStreetInitial())
-//				.set(FS_MODEL.STREET_NAME,mod349.getStreetName())
-//				.set(FS_MODEL.STREET_NUMBER,mod349.getStreetNumber())
-//				.set(FS_MODEL.STREET_STAIR,mod349.getStreetStair())
-//				.set(FS_MODEL.STREET_FLOOR,mod349.getStreetFloor())
-//				.set(FS_MODEL.STREET_DOOR,mod349.getStreetDoor())
-//				.set(FS_MODEL.PHONE,mod349.getPhone())
-//				.set(FS_MODEL.TOWN,mod349.getTown())
-//				.set(FS_MODEL.PROVINCE,mod349.getProvince())
-//				.set(FS_MODEL.ZIP,mod349.getZip())
-//				.set(FS_MODEL.ADMON_AEAT,mod349.getAdmonAeat())
+//				.set(FS_MODEL.STREET_INITIAL,mod369.getStreetInitial())
+//				.set(FS_MODEL.STREET_NAME,mod369.getStreetName())
+//				.set(FS_MODEL.STREET_NUMBER,mod369.getStreetNumber())
+//				.set(FS_MODEL.STREET_STAIR,mod369.getStreetStair())
+//				.set(FS_MODEL.STREET_FLOOR,mod369.getStreetFloor())
+//				.set(FS_MODEL.STREET_DOOR,mod369.getStreetDoor())
+//				.set(FS_MODEL.PHONE,mod369.getPhone())
+//				.set(FS_MODEL.TOWN,mod369.getTown())
+//				.set(FS_MODEL.PROVINCE,mod369.getProvince())
+//				.set(FS_MODEL.ZIP,mod369.getZip())
+//				.set(FS_MODEL.ADMON_AEAT,mod369.getAdmonAeat())
 //				.set(FS_MODEL.CONTACT_PERSON,mod369.getContactPerson())
 //				.set(FS_MODEL.CONTACT_PHONE,mod369.getContactPhone())
-//				.set(FS_MODEL.CONTACT_CELLULAR,mod349.getContactCellular())
+//				.set(FS_MODEL.CONTACT_CELLULAR,mod369.getContactCellular())
 //				.set(FS_MODEL.CONTACT_EMAIL,mod369.getContactMail())
 				.set(FS_MODEL.RESULT, mod369.getDeclarationResult())
 				.set(FS_MODEL.DECLARATION_TYPE, AonEnumUtils.getByte( mod369.getDeclarationResultType() ) )
-//				.set(FS_MODEL.ACCOUNT_ENTRY, mod349.getAccountEntry())
+//				.set(FS_MODEL.ACCOUNT_ENTRY, mod369.getAccountEntry())
 				.set(FS_MODEL.CREATION_USER, mod369.getCreationUser())
 				.set(FS_MODEL.CREATION_DATE, AonDateUtils.toTimestamp(mod369.getCreationDate()))
 				.set(FS_MODEL.MODIFICATION_USER, mod369.getModificationUser())
@@ -726,7 +669,6 @@ public class Mod369DAO {
 			.returning(FS_MODEL.ID)
 			.fetchOne()
 			.getValue(FS_MODEL.ID);
-		return id;
 		
 	}	
 	
@@ -741,7 +683,7 @@ public class Mod369DAO {
 			.set(FS_MODEL.SECURITY_LEVEL,AonEnumUtils.getByte( mod369.isConfidential() ))
 //			.set(FS_MODEL.COMPLEMENTARY, AonEnumUtils.getByte( mod369.isComplementary()))
 //			.set(FS_MODEL.REPLACEMENT,AonEnumUtils.getByte( mod369.isReplacement() ))  
-//			.set(FS_MODEL.WITHOUTACTIVITY,AonEnumUtils.getByte( mod349.isWithoutActivity()  ))
+//			.set(FS_MODEL.WITHOUTACTIVITY,AonEnumUtils.getByte( mod369.isWithoutActivity()  ))
 			.set(FS_MODEL.MODEL, mod369.getModel().getValue())
 //			.set(FS_MODEL.NUMBER, mod369.getNumber())
 //			.set(FS_MODEL.REPLACED_NUMBER, mod369.getReplacedNumber())
@@ -750,24 +692,24 @@ public class Mod369DAO {
 			.set(FS_MODEL.DOCUMENT, mod369.getDocument())
 //			.set(FS_MODEL.SURNAME, mod369.getSurname())
 			.set(FS_MODEL.NAME, mod369.getName())
-//			.set(FS_MODEL.STREET_INITIAL,mod349.getStreetInitial())
-//			.set(FS_MODEL.STREET_NAME,mod349.getStreetName())
-//			.set(FS_MODEL.STREET_NUMBER,mod349.getStreetNumber())
-//			.set(FS_MODEL.STREET_STAIR,mod349.getStreetStair())
-//			.set(FS_MODEL.STREET_FLOOR,mod349.getStreetFloor())
-//			.set(FS_MODEL.STREET_DOOR,mod349.getStreetDoor())
-//			.set(FS_MODEL.PHONE,mod349.getPhone())
-//			.set(FS_MODEL.TOWN,mod349.getTown())
-//			.set(FS_MODEL.PROVINCE,mod349.getProvince())
-//			.set(FS_MODEL.ZIP,mod349.getZip())
-//			.set(FS_MODEL.ADMON_AEAT,mod349.getAdmonAeat())
+//			.set(FS_MODEL.STREET_INITIAL,mod369.getStreetInitial())
+//			.set(FS_MODEL.STREET_NAME,mod369.getStreetName())
+//			.set(FS_MODEL.STREET_NUMBER,mod369.getStreetNumber())
+//			.set(FS_MODEL.STREET_STAIR,mod369.getStreetStair())
+//			.set(FS_MODEL.STREET_FLOOR,mod369.getStreetFloor())
+//			.set(FS_MODEL.STREET_DOOR,mod369.getStreetDoor())
+//			.set(FS_MODEL.PHONE,mod369.getPhone())
+//			.set(FS_MODEL.TOWN,mod369.getTown())
+//			.set(FS_MODEL.PROVINCE,mod369.getProvince())
+//			.set(FS_MODEL.ZIP,mod369.getZip())
+//			.set(FS_MODEL.ADMON_AEAT,mod369.getAdmonAeat())
 //			.set(FS_MODEL.CONTACT_PERSON,mod369.getContactPerson())
 //			.set(FS_MODEL.CONTACT_PHONE,mod369.getContactPhone())
-//			.set(FS_MODEL.CONTACT_CELLULAR,mod349.getContactCellular())
+//			.set(FS_MODEL.CONTACT_CELLULAR,mod369.getContactCellular())
 //			.set(FS_MODEL.CONTACT_EMAIL,mod369.getContactMail())
 			.set(FS_MODEL.RESULT, mod369.getDeclarationResult())
 			.set(FS_MODEL.DECLARATION_TYPE,AonEnumUtils.getByte( mod369.getDeclarationResultType() ) )
-//			.set(FS_MODEL.ACCOUNT_ENTRY,mod349.getAccountEntry())
+//			.set(FS_MODEL.ACCOUNT_ENTRY,mod369.getAccountEntry())
 			.set(FS_MODEL.MODIFICATION_USER, mod369.getModificationUser())
 			.set(FS_MODEL.MODIFICATION_DATE, AonDateUtils.toTimestamp(mod369.getModificationDate()))
 		.where(FS_MODEL.ID.equal(mod369.getFsModel()))

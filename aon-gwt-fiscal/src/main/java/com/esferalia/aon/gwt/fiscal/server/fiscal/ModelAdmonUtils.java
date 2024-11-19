@@ -602,6 +602,12 @@ public class ModelAdmonUtils {
 					throw new AonCoreException(e);
 				}
 			}
+			
+			@Override 
+			public void visitM369() {
+				// EL MODELO 369 NO PERMITE LA PRESENTACION DIRECTA
+			}
+
 		});
 		return output.toByteArray();
 	}
@@ -684,6 +690,11 @@ public class ModelAdmonUtils {
 
 					@Override
 					public void visitM200() {}
+					
+					@Override 
+					public void visitM369() {
+						// EL MODELO 369 NO PERMITE LA PRESENTACION DIRECTA
+					}
 
 				});
 			}			
@@ -772,6 +783,11 @@ public class ModelAdmonUtils {
 			@Override 
 			public void visitM180() {
 				MODEL180.aeatPresentation(occam, getMod180(fm) , aeatResponse);
+			}
+			
+			@Override 
+			public void visitM369() {
+				// EL MODELO 369 NO PERMITE LA PRESENTACION DIRECTA
 			}
 			
 		});
