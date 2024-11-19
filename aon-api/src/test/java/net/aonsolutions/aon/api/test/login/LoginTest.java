@@ -74,7 +74,7 @@ public class LoginTest extends AbstractOccamTest {
 	private void incorrectPasswordLogin(Auth auth) { 
 		JSONObject respObject = login(auth.getEmail(), "t3st");
 		assertEquals("error", respObject.optString("type"));
-		assertEquals("La Contraseña no coincide.", respObject.optString("message"));
+		assertEquals("La password no coincide.", respObject.optString("message"));
 	}
 	
 	private JSONObject login(String username, String password) {
