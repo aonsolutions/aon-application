@@ -3,7 +3,6 @@ package solutions.aon.aws.ses;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
-import java.nio.ByteBuffer;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Properties;
@@ -19,18 +18,29 @@ import jakarta.mail.internet.InternetAddress;
 import jakarta.mail.internet.MimeBodyPart;
 import jakarta.mail.internet.MimeMessage;
 import jakarta.mail.internet.MimeMultipart;
+import software.amazon.awssdk.auth.credentials.DefaultCredentialsProvider;
+import software.amazon.awssdk.awscore.exception.AwsServiceException;
 import software.amazon.awssdk.core.SdkBytes;
+import software.amazon.awssdk.core.exception.SdkClientException;
 import software.amazon.awssdk.regions.Region;
-import software.amazon.awssdk.services.ses.SesClient;
-import software.amazon.awssdk.services.ses.model.RawMessage;
-import software.amazon.awssdk.services.ses.model.SendEmailRequest;
-import software.amazon.awssdk.services.ses.model.SendRawEmailRequest;
+import software.amazon.awssdk.services.sesv2.SesV2Client;
+import software.amazon.awssdk.services.sesv2.model.GetEmailIdentityResponse;
+import software.amazon.awssdk.services.sesv2.model.NotFoundException;
+import software.amazon.awssdk.services.sesv2.model.SendEmailRequest;
+import software.amazon.awssdk.services.sesv2.model.SesV2Exception;
 
 public class SES {
 	
 	private static final Logger LOGGER  = Logger.getLogger(SES.class.getName());
 	private static final String EMAIL_SENT = "Email Sent!";
 	private static final String EMAIL_NOT_SENT = "The email was not sent.";
+	
+	private static SesV2Client getSesV2Client() {
+		return SesV2Client.builder()
+				.region(Region.EU_WEST_1)
+				.credentialsProvider(DefaultCredentialsProvider.create())
+				.build();
+	}
 	
 	public static String sendEmail(SESMessage msg) {	
 		return sendEmailWithAttachment(msg);
@@ -124,16 +134,18 @@ public class SES {
             // Instantiate an Amazon SES client, which will make the service 
             // call with the supplied AWS credentials.
             
-        	SesClient client = SesClient.builder().region(Region.EU_WEST_1).build();
+            SesV2Client client = getSesV2Client();
         	
             // Send the email.
             ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
             message.writeTo(outputStream);
             
-            RawMessage rawMessage = RawMessage.builder().data(SdkBytes.fromByteArray(outputStream.toByteArray())).build();
+			SendEmailRequest rawEmailRequest = SendEmailRequest.builder()
+					.content(contentBuilder -> contentBuilder
+							.raw(rawBuilder -> rawBuilder.data(SdkBytes.fromByteArray(outputStream.toByteArray()))))
+					.build();
 
-            SendRawEmailRequest rawEmailRequest = SendRawEmailRequest.builder().rawMessage(rawMessage).build();
-            client.sendRawEmail(rawEmailRequest);
+			client.sendEmail(rawEmailRequest);
             LOGGER.info(EMAIL_SENT);
             return "ok";
         } catch (Exception e) {
@@ -148,14 +160,19 @@ public class SES {
     	try {
             // Instantiate an Amazon SES client, which will make the service 
             // call with the supplied AWS credentials.
-            SesClient client = SesClient.builder().region(Region.EU_WEST_1).build();
+            SesV2Client client = getSesV2Client();
 
             // Send the email.
             ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
             message.writeTo(outputStream);
-            RawMessage rawMessage = RawMessage.builder().data(SdkBytes.fromByteArray(outputStream.toByteArray())).build();
-            SendRawEmailRequest rawEmailRequest = SendRawEmailRequest.builder().rawMessage(rawMessage).build();
-            client.sendRawEmail(rawEmailRequest);
+            
+			SendEmailRequest rawEmailRequest = SendEmailRequest.builder()
+					.content(contentBuilder -> contentBuilder
+							.raw(rawBuilder -> rawBuilder.data(SdkBytes.fromByteArray(outputStream.toByteArray()))))
+					.build();
+            
+            client.sendEmail(rawEmailRequest);
+            
             LOGGER.info(EMAIL_SENT + " from " + domain);
         } catch (Exception e) {
             // Display an error if something goes wrong.
@@ -163,6 +180,7 @@ public class SES {
 			e.printStackTrace();
         }
     }
+
 	
     public static String sendEmailToList(String from, List<String> toList, String subject, String body) {
     	SESMessage msg = new SESMessage()
@@ -211,4 +229,38 @@ public class SES {
     			.setFiles(files);
     	return sendEmailWithAttachment(msg);    	
     }
+    
+	public static GetEmailIdentityResponse getEmailIdentity(String email) {
+		try {
+			return getSesV2Client().getEmailIdentity( builder -> builder.emailIdentity(email));
+		} catch ( AwsServiceException | SdkClientException e ) {
+			return null;
+		}
+		
+	}
+
+	public static boolean isVerifiedForSendingStatus(String email) {
+		try {
+	    	GetEmailIdentityResponse response = getSesV2Client().getEmailIdentity( builder -> builder.emailIdentity(email));
+	    	return response.verifiedForSendingStatus();
+		} catch ( AwsServiceException | SdkClientException e ) {
+			return false;
+		}
+    }
+	
+	public static void sendVerificationEmail(String email) {
+		SesV2Client client = getSesV2Client();
+		try {
+			client.deleteEmailIdentity(builder -> builder.emailIdentity(email));
+		} catch ( AwsServiceException | SdkClientException e ) {
+		}
+		client.createEmailIdentity(builder -> builder.emailIdentity(email));
+
+		//getSesV2Client().sendCustomVerificationEmail( builder -> builder.emailAddress(email).templateName("AonSolutionsTemplate") );
+	}
+    
+
+    public static void main(String[] args) {
+    	sendVerificationEmail("rtrepiana@gmail.com");
+	}
 }
