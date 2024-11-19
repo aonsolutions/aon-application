@@ -149,7 +149,7 @@ public class LoginServlet extends AonApiHttpServlet{
 	    	object.put("type", "error");
     	} else if(!ok) {
 	    	resp.setStatus(401);
-	    	object.put("message", "La Contraseï¿½a no coincide.");
+	    	object.put("message", "La Contraseña no coincide.");
 	    	object.put("type", "error");
     	} else {
     		object.put("session_id", token);
