@@ -259,7 +259,7 @@ public abstract class AbstractSQLTestCase {
 		aonContext.getDslContext().execute("SET FOREIGN_KEY_CHECKS=1");
 	}
 
-	protected final void addSSRegimeData(AONContext aonContext, SSRegimeType ssRegimetype, Date startDate, Date endDate,
+	protected static final void addSSRegimeData(AONContext aonContext, SSRegimeType ssRegimetype, Date startDate, Date endDate,
 			Map<String, String> datas) {
 		aonContext.getDslContext().execute("SET FOREIGN_KEY_CHECKS=0");
 
@@ -337,7 +337,7 @@ public abstract class AbstractSQLTestCase {
 		aonContext.getDslContext().execute("SET FOREIGN_KEY_CHECKS=1");
 	}
 
-	protected final void addSSRegimeCost(AONContext aonContext, SSRegimeType ssRegimetype, Date startDate, 
+	protected static final void addSSRegimeCost(AONContext aonContext, SSRegimeType ssRegimetype, Date startDate, 
 			DeductionType type, String code, String description, String expression) {
 		aonContext.getDslContext().execute("SET FOREIGN_KEY_CHECKS=0");
 
@@ -438,7 +438,7 @@ public abstract class AbstractSQLTestCase {
 		aonContext.getDslContext().execute("SET FOREIGN_KEY_CHECKS=1");
 	}
 
-	protected final void addSSRegimeDeduction(AONContext aonContext, SSRegimeType ssRegimetype, Date startDate,
+	protected static final void addSSRegimeDeduction(AONContext aonContext, SSRegimeType ssRegimetype, Date startDate,
 		DeductionType deductionType, String name, String description, String expression) {
         	aonContext.getDslContext().execute("SET FOREIGN_KEY_CHECKS=0");
         

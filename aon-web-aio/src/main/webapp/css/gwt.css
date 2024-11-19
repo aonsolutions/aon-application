@@ -355,6 +355,10 @@
 	text-transform: capitalize;
 }
 
+.aon_custom_text_box {
+	height: 3rem;
+}
+
 .aon_custom_row:hover, .aon_utility_option:hover, .aon_custom_text_box:hover
 	{
 	background-color: #f1f1f1;
@@ -531,6 +535,23 @@
 	align-items: center;
 }
 
+.gwt-TabBar {
+	background: transparent;
+}
+
+.gwt-TabBar .gwt-TabBarItem {
+	color: black;
+	background: transparent;
+}
+
+.gwt-TabBarItem-wrapper-selected {
+	border-bottom: 2px solid transparent;
+}
+
+.gwt-TabBarItem-wrapper-selected {
+	border-bottom: 2px solid #002469;
+}
+
 input[type='checkbox'] {
 	width: 24px;
 	height: 24px;
@@ -544,4 +565,8 @@ input[type='checkbox'] {
 input[type='checkbox']:checked {
 	background-image:
 		url('data:image/svg+xml;utf-8,<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="black"><path d="m424-348 248-248-20-20-228 228-114-114-20 20 134 134ZM232-172q-26 0-43-17t-17-43v-496q0-26 17-43t43-17h496q26 0 43 17t17 43v496q0 26-17 43t-43 17H232Zm0-28h496q12 0 22-10t10-22v-496q0-12-10-22t-22-10H232q-12 0-22 10t-10 22v496q0 12 10 22t22 10Zm-32-560v560-560Z"/></svg>');
+}
+
+.minWidth_2{
+	min-width: 2rem !important;
 }

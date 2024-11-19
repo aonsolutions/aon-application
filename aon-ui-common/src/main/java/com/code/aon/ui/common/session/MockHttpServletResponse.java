@@ -102,7 +102,7 @@ public class MockHttpServletResponse implements HttpServletResponse {
 	public void sendError(int status) throws IOException {
 	}
 
-	public void sendRedirect(String url) throws IOException {
+	public void sendRedirect(String url, int sc, boolean clearBuffer ) throws IOException {
 	}
 
 	public void setDateHeader(String name, long value) {

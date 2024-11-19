@@ -162,7 +162,7 @@ public class SendEmailServlet extends HttpServlet{
 	    		MimeMessage message = (MimeMessage) sentMessage.getMessage();
 	            message.setFrom(new InternetAddress(from));
 	            Address replyTo = new InternetAddress(ma.getEmail());
-	            message.addRecipient(RecipientType.BCC, replyTo);
+	            if(ma.isIncludeBcc()) message.addRecipient(RecipientType.BCC, replyTo);
 	            Address[] addresses = {replyTo};
 	            message.setReplyTo(addresses);
 	            SES.sendEmail(domain.getName(), message);

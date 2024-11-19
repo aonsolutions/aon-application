@@ -467,9 +467,11 @@ public class SQLSolidarityTestCase extends AbstractSQLTestCase {
 		assertEquals(0, base499.size());
 
 	}
+	private static void addSolidarityBases(AONContext aonContext) {
+		addSolidarityBases(aonContext, getFirstDayOfYear(getToday()));
+	}
 
-	private void addSolidarityBases(AONContext aonContext) {
-		Date startDate = getFirstDayOfYear(getToday());
+	protected static  void addSolidarityBases(AONContext aonContext, Date startDate) {
 		addSSRegimeData(aonContext, SSRegimeType.GENERAL,
 				startDate, 
 				null,

@@ -6,6 +6,7 @@ import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.ui.webmail.controller.IWebMailConstants;
+import com.code.aon.ui.webmail.controller.MailAccountDBController;
 import com.code.aon.ui.webmail.controller.MailConfigController;
 import com.code.aon.webmail.IMailAccount;
 
@@ -46,5 +47,7 @@ public class MailAccountControllerListener extends ControllerAdapter {
 			getMailConfig().loadFolders();
 		}
 	}
+	
+	
 	
 }
