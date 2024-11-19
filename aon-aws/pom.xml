@@ -22,7 +22,7 @@
 	
 		<dependency>
     		<groupId>software.amazon.awssdk</groupId>
-    		<artifactId>ses</artifactId>
+    		<artifactId>sesv2</artifactId>
 		    <version>2.28.23</version>
     		<scope>compile</scope>
     	</dependency>
