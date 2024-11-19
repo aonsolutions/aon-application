@@ -85,9 +85,20 @@
 					</aon:if>
 				</aon:div>
 				
-				
+				<aon:if test="#{controller.protocolAon}" >
+					<aon:outputLabel for="MailAccount_IncludeBcc"
+						value="Incluir Bcc" />
+	
+					<aon:div>
+	                	<aon:selectBooleanCheckbox id="MailAccount_IncludeBcc"
+    	            		actionListener="#{controller.onIncludeBccChanged}"
+    	            		reRender="MailAccountDiv" ajaxSingle="false"
+    	            		value="#{controller.includeBcc}"/>
+						<aon:outputText value=" Enviar copia en bcc."/>
+					</aon:div>
+				</aon:if>
 
-				<aon:if test="#{!controller.protocolAon}" >
+        <aon:if test="#{!controller.protocolAon}" >
 	
 					<aon:outputLabel for="MailAccount_replyToMail"
 						value="#{bundle.webmail_mailAccount_replyToMail}" />
@@ -260,7 +271,7 @@
 						<aon:commandButton reRender="folderWindow"
 							rendered="#{!controller.nevv and (mailConfig.treeNode != null)}"
 							title="#{bundle.webmail_folder_selection}"
-							value="&#160;" styleClass="aon-lookupButton aon-margin-left">
+							value="&#160;" styleClass="aon-lookupButton aon-margin-left">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
 							<f:setPropertyActionListener target="#{mailConfig.selectedFolder}"
 								value="trashFolder" />
 							<f:setPropertyActionListener target="#{mailConfig.showFolderWindow}"

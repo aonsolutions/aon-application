@@ -34,6 +34,7 @@ import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.EnterpriseActivity;
 import com.esferalia.aon.occam.api.model.Filter.RegistryAddressFilter;
 import com.esferalia.aon.occam.api.model.GeoZone;
+import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.finance.BankAccount;
 import com.esferalia.aon.occam.api.model.finance.Finance;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
@@ -928,7 +929,11 @@ public class ServalInvoiceImport extends ImportUtils{
 				} 
 			}
 
-			AON_SOLUTIONS.acceptInvoice(domain, user, invoice);
+			Occam occam = new Occam()
+					.setDomain(domain.getId())
+					.setDomainName(domain.getName())
+					.setUser(user.getLogin());
+			AON.acceptInvoice(occam, invoice, null);
 		} catch (Exception e) {
 			e.printStackTrace();
 			error.setError(false);

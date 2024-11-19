@@ -22,11 +22,18 @@ public class PageH3 extends PageAbs {
 
 	public PageH3(Deposit2 deposit) {
 		super(deposit);
-		
+		initialize(0);
+	}
+	
+	public PageH3(Deposit2 deposit, Integer tab) {
+		super(deposit);
+		initialize(tab);
+	}
+	
+	private void initialize(Integer tab) {
 		Widget ui = pageBinder.createAndBindUi(this);
 		initWidget(ui);
-		tabPanel.selectTab(0);
-		
+		tabPanel.selectTab(tab != null ? tab : 0);		
 		initializeTable();
 	}
 
@@ -37,5 +44,10 @@ public class PageH3 extends PageAbs {
 		} else {
 			defineBalanceTable(table,AON.MSG.debitCredit(),D2DepositConstants.PYG_ABREVIATE_KEYS);
 		}
+	}
+	
+	@Override
+	protected void refreshDepositPage() {
+		getDeposit().refreshPage(tabPanel.getTabBar().getSelectedTab());
 	}
 }

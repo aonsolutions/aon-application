@@ -88,9 +88,10 @@ public class AonApiHttpServlet extends HttpServlet{
 		api.setMethod(method.length > 0 ? method[0] : req.getMethod());
 		api.setData(api.isGet() ? getParamsJSON(req) : getRequestJSON(req));
 		
-		api.setToken((AonStringUtils.isEmpty(req.getHeader(IConstants.SESSION_ID)) 
-				|| IConstants.NULL.equalsIgnoreCase(req.getHeader(IConstants.SESSION_ID))) 
-			? IConstants.EMPTY : req.getHeader(IConstants.SESSION_ID));
+		api.setToken(
+				(AonStringUtils.isEmpty(req.getHeader(IConstants.SESSION_ID)) || IConstants.NULL.equalsIgnoreCase(req.getHeader(IConstants.SESSION_ID))) 
+				? (null != api.getData() && !AonStringUtils.isEmpty(JsonUtils.getString(api.getData(), IConstants.SESSION_ID)) ? JsonUtils.getString(api.getData(), IConstants.SESSION_ID)  : IConstants.EMPTY )
+				: req.getHeader(IConstants.SESSION_ID));
 		
 		Domain domain = getDomain(req, api);
 		api.setDomain(domain);

@@ -228,7 +228,6 @@ export class AonInvoice extends AonElement {
 				this.getApplication().getParent().buildCounter();
 				
 			} 
-
 		}
 	}
 

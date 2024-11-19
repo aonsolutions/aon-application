@@ -25,10 +25,18 @@ public class PageM13_2 extends PageAbs {
 
 	public PageM13_2(Deposit2 deposit) {
 		super(deposit);
-
+		initialize(0);
+	}
+	
+	public PageM13_2(Deposit2 deposit, Integer tab) {
+		super(deposit);
+		initialize(tab);		
+	}
+	
+	private void initialize(Integer tab) {
 		Widget ui = pageBinder.createAndBindUi(this);
 		initWidget(ui);
-		
+		tabPanel.selectTab(tab != null ? tab : 0);
 		initializeTable();
 	}
 
@@ -39,8 +47,6 @@ public class PageM13_2 extends PageAbs {
 			AON.MSG.fiscalYear() + " " + (getYear() - 1)
 		};
 		
-		tabPanel.selectTab(0);
-	
 		if(getYear() < 2016){
 			defineMRNTable(table, PERIODS, D2DepositConstants.MRN13_ABREVIATE_KEYS);
 		} else {
@@ -83,5 +89,10 @@ public class PageM13_2 extends PageAbs {
 			}
 			++row;
 		}
+	}
+	
+	@Override
+	protected void refreshDepositPage() {
+		getDeposit().refreshPage(tabPanel.getTabBar().getSelectedTab());
 	}
 }
