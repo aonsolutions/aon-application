@@ -9,6 +9,7 @@ import com.esferalia.aon.occam.api.model.DomainParams;
 import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.console.ConsoleTableField;
 import com.esferalia.aon.occam.api.model.console.ConsoleTableRow;
+import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
@@ -21,7 +22,8 @@ public interface ConsoleService extends RemoteService {
 	Boolean deleteDomain(DomainParams params, Integer domainId) throws AonCoreException;
 	Domain changeActive(DomainParams params, Integer domainId, boolean active) throws AonCoreException;
 	Domain changeExpirationDate(DomainParams params, Integer domainId, Date expireDate) throws AonCoreException;
-	String remoteAccess(DomainParams params, Integer domainId) throws AonCoreException;
+	Boolean switchRemoteAccess(DomainParams params, Integer domainId) throws AonCoreException;
+	LinkedList<User> availableUsers(Occam occam, Integer domainId) throws AonCoreException;
 	String[] getAonTables() throws AonCoreException;
 	ConsoleTableRow getTableRow(ConsoleTableRow row) throws AonCoreException;
 	ConsoleTableRow getTableRowMetadata(ConsoleTableRow row) throws AonCoreException;

@@ -124,6 +124,9 @@ color:#000;
 .aon-border-top-black{border-top:#000 2px solid;}
 .aon-border-bottom-black{border-bottom:#000 2px solid;}
 
+.aon-valign-items-middle{display: flex; flex-direction: row; align-items: center;}
+
+
 .aon-input-required {
 	color:#2152A5;
 	font-weight: bold !important;
@@ -1621,12 +1624,12 @@ color:#000;
 	}
 	
 .aon-panelGrid-search .aon-panelGrid-odd{
-	background-color:#f6f5e3; !important;
+	background-color:#f6f5e3 !important;
 	border:0;
 	text-align:right;	
 }
 .aon-panelGrid-search .aon-panelGrid-even{
-	background-color:#f6f5e3; !important;	
+	background-color:#f6f5e3 !important;	
 	border:0;
 	padding:2px;
 }

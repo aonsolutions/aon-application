@@ -45,7 +45,10 @@ public class Barcode {
 				Integer index = barcode.contains("\u001d") ? barcode.indexOf('\u001d') : barcode.indexOf('\f');
 				map.put(gs1Code, barcode.substring(gs1Code.getKeyLength(), index));
 				barcode = barcode.substring(index + 1);
-			} else return map;
+			} else {
+				map.put(gs1Code, barcode.substring(gs1Code.getKeyLength()));
+				return map;
+			}
 		}
 		
 		return map;

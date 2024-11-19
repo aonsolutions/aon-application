@@ -28,12 +28,20 @@ import com.code.aon.webmail.db.MailAccount;
 import com.code.aon.webmail.enumeration.ConnectionSecurity;
 import com.code.aon.webmail.enumeration.MailAccountType;
 import com.esferalia.aon.entity.IEntityAlias;
+import com.esferalia.aon.watson.util.AonStringUtils;
+import com.esferalia.aon.watson.util.Pair;
+
+import software.amazon.awssdk.services.sesv2.model.GetEmailIdentityResponse;
+import solutions.aon.aws.ses.SES;
 
 public class MailAccountDBController extends MailDBController implements IMailAccountController {
 
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
 	private final static Logger LOGGER = LoggerFactory.getLogger(MailAccountDBController.class);
+	
+	
+	private Pair<String,GetEmailIdentityResponse> emailIdentity;
 	
 	@Override
 	protected String getDuplicatedMessage( String name ) {
@@ -122,6 +130,13 @@ public class MailAccountDBController extends MailDBController implements IMailAc
 	public void onProtocolAonChanged( ActionEvent event ) {
 		MailAccount mailAccount = (MailAccount) getTo();
 		mailAccount.setProtocol(protocolAon ? "aon" : null);
+		mailAccount.setReplyToMail(protocolAon ? mailAccount.getEmail() : null);
+	}
+	
+	boolean includeBcc;
+	public void onIncludeBccChanged( ActionEvent event ) {
+		MailAccount mailAccount = (MailAccount) getTo();
+		mailAccount.setReplyToMail(includeBcc ? mailAccount.getEmail() : null);
 	}
 
 	public boolean isProtocolAon() {
@@ -129,10 +144,25 @@ public class MailAccountDBController extends MailDBController implements IMailAc
 		return isProtocolDefinied() && "aon".equalsIgnoreCase(mailAccount.getProtocol());
 	}
 	
+	public boolean isProtocolAon(MailAccount mailAccount) {
+		return isProtocolDefinied(mailAccount) && "aon".equalsIgnoreCase(mailAccount.getProtocol());
+	}
+
 	public void setProtocolAon(boolean aon) {
 		protocolAon = aon;
 		MailAccount mailAccount = (MailAccount) getTo();
 		mailAccount.setProtocol(aon ? "aon" : null);
+	}
+	
+	public boolean isIncludeBcc() {
+		MailAccount mailAccount = (MailAccount) getTo();
+		return mailAccount.getReplyToMail() != null;
+	}
+	
+	public void setIncludeBcc(boolean bcc) {
+		includeBcc = bcc;
+		MailAccount mailAccount = (MailAccount) getTo();
+		mailAccount.setReplyToMail(includeBcc ? mailAccount.getEmail() : null);
 	}
 	
 	public boolean isProtocolDefinied() {
@@ -140,4 +170,38 @@ public class MailAccountDBController extends MailDBController implements IMailAc
 		return !StringUtils.isEmpty(mailAccount.getProtocol());
 	}
 	
+	public boolean isProtocolDefinied(MailAccount mailAccount) {
+		return !StringUtils.isEmpty(mailAccount.getProtocol());
+	}
+
+	public void updateEmailIdentity() {
+		MailAccount mailAccount = (MailAccount) getTo();
+		if ( mailAccount == null ) {
+			this.emailIdentity  = null;
+		} else {
+			updateEmailIdentity(mailAccount.getEmail());
+		}
+	}
+	
+	public void updateEmailIdentity(String email) {
+		if ( AonStringUtils.isBlank(email) ) {
+			this.emailIdentity = null;
+		} else if ( this.emailIdentity == null || !AonStringUtils.equalsIgnoreCase(emailIdentity.getKey(), email )){
+			this.emailIdentity = new Pair<>( email, SES.getEmailIdentity(email));
+		}
+	}
+
+	public boolean isVerifiedForSendingStatus() {
+		updateEmailIdentity();
+		return emailIdentity != null &&  emailIdentity.getValue() != null && emailIdentity.getValue().verifiedForSendingStatus();
+	}
+	
+	public boolean isVerifiedForSendingStatus(String email) {
+		updateEmailIdentity(email);
+		return emailIdentity != null &&  emailIdentity.getValue() != null && emailIdentity.getValue().verifiedForSendingStatus();
+	}
+	
+	public boolean isVerifiedForSendingStatus(MailAccount mailAccount) {
+		return isVerifiedForSendingStatus(mailAccount.getEmail());
+	}
 }

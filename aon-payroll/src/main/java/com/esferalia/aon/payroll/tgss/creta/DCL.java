@@ -348,7 +348,12 @@ public class DCL {
 				public Double visitMEI(DeductionType deductionType) {
 				    return visit(Deduction::isMei);
 				}
-
+				
+				@Override
+				public Double visitSolidarity(DeductionType deductionType) {
+				    return visit(Deduction::isSolidarity);
+				}
+				
 				private Double visit(Predicate<Deduction> filter) {
 					return salary.getDeductions().stream().filter(filter)
 							.collect(Collectors.summingDouble(deduction -> deduction.getAmount() * 100.00));
@@ -388,6 +393,11 @@ public class DCL {
 				@Override
 				public Double visitMEI(DeductionType deductionType) {
 				    return visit(Cost::isMei);
+				}
+				
+				@Override
+				public Double visitSolidarity(DeductionType deductionType) {
+				    return visit(Cost::isSolidarity);
 				}
 
 				private Double visit(Predicate<Cost> filter) {

@@ -186,15 +186,22 @@ public class CONSOLE {
 		}
 	}
 
-	public static String remoteAccess(DomainParams params, Integer domainId) {
-		try (CloseableAONContext ctx = AONContext.getAONContext(params.getSchema())) {
-			return getConsole().remoteAccess(ctx,domainId);
+	public static LinkedList<User> availableUsers(Occam occam, Integer domainId) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(occam)) {
+			return getConsole().availableUsers(ctx,domainId)
+					.collect(Collectors.toCollection( LinkedList::new));
 		}
 	}
 	
-	public static String remoteAccess(String domainName, Integer domainId, String userName) {
-		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, userName)){
-			return getConsole().remoteAccess(ctx,domainId);
+	public static boolean switchRemoteAccess(DomainParams params, Integer domainId) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(params.getSchema())) {
+			return getConsole().switchRemoteAccess(ctx,domainId);
+		}
+	}
+	
+	public static boolean switchRemoteAccess(Occam occam, Integer domainId) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(occam)){
+			return getConsole().switchRemoteAccess(ctx,domainId);
 		}
 	}
 

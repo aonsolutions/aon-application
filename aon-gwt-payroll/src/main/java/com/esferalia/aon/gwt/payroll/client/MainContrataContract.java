@@ -162,6 +162,7 @@ public class MainContrataContract extends MainEntryPoint {
 	private AonToolbarButton sistemREDInfoBtn;
 	
 	private boolean contextLoaded = false;
+	private boolean fetchingData = false;
 	
 	// Filter Employee List
 	
@@ -584,7 +585,8 @@ public class MainContrataContract extends MainEntryPoint {
 			String value = employeesDockLayoutPanel.getSearchTextBox().getValue();
 			if(e.getNativeKeyCode() == KeyCodes.KEY_ENTER || e.getNativeKeyCode() == KeyCodes.KEY_MAC_ENTER) return;
 			
-			if(AonStringUtils.isNotBlank(value) && value.length() > 2) {
+			if(AonStringUtils.isNotBlank(value) && value.length() > 2 && !fetchingData) {
+				fetchingData = true;
 				mainContrataContractObject.resetEmployeesList();
 				offset = 0;
 				params.setDescription(value);
@@ -775,6 +777,8 @@ public class MainContrataContract extends MainEntryPoint {
 						disableMoreData();
 					}
 					enableSearch();
+					
+					fetchingData = false;
 				}, 
 				f -> {
 					AonMessagePanel.showError(employeesMessagePanel, "Error contratos: " + f.getMessage());

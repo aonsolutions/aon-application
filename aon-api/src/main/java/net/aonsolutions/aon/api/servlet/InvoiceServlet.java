@@ -572,7 +572,9 @@ public class InvoiceServlet extends AonApiHttpServlet{
 			tbaiValidation(invoice);
 		}
 		
-		invoice = AON_SOLUTIONS.acceptInvoice(api.getDomain(), api.getUser(), invoice);
+		Integer rawdocId = invoice.getId();
+		invoice.setId(null);
+		invoice = AON.acceptInvoice(api.getOccam(), invoice, rawdocId);
 		processInvoiceFile(api, invoice);
 		acceptTbai(tbaiConfiguration, company, invoice);
 		JSONObject json = InvoiceJSON.toJSON(invoice);

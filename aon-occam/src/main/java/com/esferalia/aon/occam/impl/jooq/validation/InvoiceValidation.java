@@ -12,6 +12,7 @@ import org.jooq.impl.DSL;
 
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
+import com.esferalia.aon.occam.api.model.ApplicationParameter;
 import com.esferalia.aon.occam.api.model.DataResponse;
 import com.esferalia.aon.occam.api.model.DataResponseDetail;
 import com.esferalia.aon.occam.api.model.Options;
@@ -22,7 +23,9 @@ import com.esferalia.aon.occam.api.model.finance.InvoiceDetail;
 import com.esferalia.aon.occam.api.model.finance.InvoiceInfo;
 import com.esferalia.aon.occam.api.model.finance.TbaiConfiguration;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModel;
+import com.esferalia.aon.occam.api.model.type.AppParam;
 import com.esferalia.aon.occam.api.model.type.DataResponseSource;
+import com.esferalia.aon.occam.impl.jooq.dao.AppParamDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.ConfigurationDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.DataResponseDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.InvoiceDAO;
@@ -34,6 +37,7 @@ import com.esferalia.aon.watson.AonError;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonMathUtils;
+import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class InvoiceValidation {
@@ -256,13 +260,21 @@ public class InvoiceValidation {
 		if (inv.getId() != null) {
 			List<FiscalModel> models = AlcatrazDAO.isInvoiceDeclared(ctx.getContext(), inv.getId() );
 			if (models != null && !models.isEmpty()) {
-				throw new AonCoreException(AonError.INVOICE_CANT_DELETE_MODEL.format(
-						models
-						.stream()
-						.map( fm -> MessageFormat.format("[Mod. {0}] ",fm.getModelFullName()))
-						.collect(StringBuilder::new, StringBuilder::append , StringBuilder::append )
-						.toString()
-						));
+				if (inv.isSkipAlcatrazValidation()) {
+					ApplicationParameter ap = new ApplicationParameter()
+							.setDomain( inv.getDomain() )
+							.setName( AppParam.FS_FORCE_DIFF_CALC )
+							.setValue(  AonNumberUtils.toString(AonDateUtils.getYear( inv.getIssueDate())) );
+					AppParamDAO.insertApplicationParameter( ctx.getContext(), ap );
+				} else {
+					throw new AonCoreException(AonError.INVOICE_CANT_DELETE_MODEL.format(
+						models.stream()
+							.map( fm -> MessageFormat.format("[Mod. {0}] ",fm.getModelFullName()))
+							.collect(StringBuilder::new, StringBuilder::append , StringBuilder::append )
+							.toString()
+							));
+					
+				}
 			}
 		}
 	};

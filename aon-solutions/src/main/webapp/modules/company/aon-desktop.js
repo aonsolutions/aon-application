@@ -1,6 +1,6 @@
 import {AonElement} from '../../components/AonElement.js';
 import { Apps, ClassicApps, getAppsByDur} from  '../../services/app.js';
-import {getDomainNotice, getDomainUserRoles, getTaskCount, getTaskHolder, getTimeControl, getAttach, getPeriodLaboral} from  '../../services/service.js';
+import {getDomainNotice, getDomainUserRoles, getTaskCount, getTaskHolder, getTimeControl, getAttach, getPeriodLaboral, getTrailData} from  '../../services/service.js';
 import {getAccessBidoq} from  '../../services/bidoqService.js';
 import {DomainUserRoles} from '../../models/DomainUserRoles.js';
 import { CONSTANT, CSS, EVENT, MATERIAL_ICONS, MSG, TAG } from '../../environments/environments.js';
@@ -47,6 +47,8 @@ import { AonDialog } from '../../components/aon-dialog.js';
 import { AonMarketing } from '../marketing/aon-marketing.js';
 import { MessegerUtils } from '../messenger/utils/MessengerUtils.js';
 import { generateJobId } from '../invoice/InvoiceUtils.js';
+import { AonTrial } from '../invoice/aon-trial.js';
+import { AonDashboardSalesPurchases } from '../accounting/aon-dashboard-sales-purchases.js';
 
 export class AonDesktop extends AonElement {
 
@@ -484,6 +486,59 @@ export class AonDesktop extends AonElement {
 				this.appSelectionFilter(Apps.ACCOUNTING.app, dashboardGraphicsTrial.getFilter());
 			});
 		}
+		
+		if((this.getDur().isInvoice() || this.getDur().isAccounting()) && this.getDur().isTrial) {
+			// Trial Card
+			let trialCard = new AonCard();
+			trialCard.classList.add(CSS.AON_DASHBOARD_CARD);
+			trialCard.id = "trial";
+			trialCard.message = "Versión Evaluación (Resumen de uso)";
+			trialCard.setApp(this.getDur().isInvoice() ? Apps.INVOICE : Apps.ACCOUNTING);
+			cardsPanel.appendChild(trialCard);
+			trialCard.getCardTitle1().style.cursor = 'pointer';
+
+			trialCard.setContent(new AonTrial());
+			trialCard.firstChild.style.marginLeft = '0';
+			trialCard.firstChild.style.minHeight = "28rem";
+			trialCard.firstChild.children.item(1).style.height = "22.5rem";
+			trialCard.firstChild.style.margin = '0';
+
+			trialCard.addEventListener(EVENT.CLICK_TITLE, () => {
+				this.appSelection(this.getDur().isInvoice() ? Apps.INVOICE.app : Apps.ACCOUNTING.app);
+			});
+		}
+
+		if((this.getDur().isInvoice() || this.getDur().isAccounting()) && this.getDur().isTrial) {
+			// Ventas y Gastos Card
+			let defaultYear = new Date().getFullYear();
+
+			if(new Date().getTime() < new Date(new Date().getFullYear(), 0, 31))
+				defaultYear = defaultYear - 1;
+
+			let aonDashboardSalesPurchases = new AonDashboardSalesPurchases("yearly", defaultYear);
+			aonDashboardSalesPurchases.id = "aonDashboardSalesPurchases";
+
+			let vygCard = new AonCard();
+			vygCard.classList.add(CSS.AON_DASHBOARD_CARD);
+			vygCard.id = "vygCard";
+			// pygCard.title = "Pérdidas y Ganancias";
+			vygCard.message = "Ventas y Gastos";
+			vygCard.setApp(this.getDur().isInvoice() ? Apps.INVOICE : Apps.ACCOUNTING);
+			cardsPanel.appendChild(vygCard);
+			vygCard.getCardTitle1().style.cursor = 'pointer';
+			vygCard.insertAdjacentHTML( 'beforeend', "<aon-dialog-menu id='aonCardVyGOption'> </aon-dialog-menu>" );
+
+			vygCard.setContent(aonDashboardSalesPurchases);
+			vygCard.addTitleButton(MSG.OPTIONS, MATERIAL_ICONS.MORE_VERT, false, () => this.filterVyG(vygCard));
+			vygCard.firstChild.style.marginLeft = '0';
+			vygCard.firstChild.style.minHeight = "28rem";
+			vygCard.firstChild.children.item(1).style.height = "22.5rem";
+			vygCard.firstChild.style.margin = '0';
+
+			vygCard.addEventListener(EVENT.CLICK_TITLE, () => {
+				this.appSelection(this.getDur().isInvoice() ? Apps.INVOICE.app : Apps.ACCOUNTING.app);
+			});
+		}
 
 		if(this.getDur().isInvoice() || this.getDur().isAccounting()) {
 			// Cobros y Pagos Card
@@ -724,6 +779,64 @@ export class AonDesktop extends AonElement {
 				aonDashboardGraphicsTrial = new AonDashboardGraphicsTrial("monthly", pygyYear);
 				aonDashboardGraphicsTrial.id = "aonDashboardGraphicsTrial";
 				pygCard.setContent(aonDashboardGraphicsTrial);
+			}
+		};
+	
+		let options = [anual, trimestral, mensual];
+		
+		d.setMenuOptions(options, top, left);
+		d.open();
+	}
+
+	filterVyG(vygCard){
+		let button = this.getElement('vygCardTitleSection2OpcionesButtonIconButton');
+		let top  = button.getBoundingClientRect().top;
+		const left = button.getBoundingClientRect().left;
+
+		let vyGYearSelect = this.getElement('vyGyearSelect');
+		let period = JSON.parse(vyGYearSelect.value);
+        let vygYear = period.name;
+
+		let aonDashboardSalesPurchases = this.getElement('aonDashboardSalesPurchases');
+
+		let d = document.getElementById('aonCardVyGOption');
+
+		const anual = {
+			name: 'Vista Anual',
+			title:"Vista Anual",
+			icon: 'calendar_today',
+			backgroundColor: "#4472C4",
+			fn: () => {
+				vygCard.clear();
+				aonDashboardSalesPurchases = new AonDashboardSalesPurchases("yearly", vygYear);
+				aonDashboardSalesPurchases.id = "aonDashboardSalesPurchases";
+				vygCard.setContent(aonDashboardSalesPurchases);
+			}
+		};
+
+		const trimestral = {
+			name: 'Vista Trimestral',
+			title:"Vista Trimestral",
+			icon: 'calendar_today',
+			backgroundColor: "#4472C4",
+			fn: () => {
+				vygCard.clear();
+				aonDashboardSalesPurchases = new AonDashboardSalesPurchases("quarterly", vygYear);
+				aonDashboardSalesPurchases.id = "aonDashboardSalesPurchases";
+				vygCard.setContent(aonDashboardSalesPurchases);
+			}
+		};
+
+		const mensual = {
+			name: "Vista Mensual",
+			title: "Vista Mensual",
+			icon: 'calendar_today',
+			backgroundColor: "#4472C4",
+			fn: () => {
+				vygCard.clear();
+				aonDashboardSalesPurchases = new AonDashboardSalesPurchases("monthly", vygYear);
+				aonDashboardSalesPurchases.id = "aonDashboardSalesPurchases";
+				vygCard.setContent(aonDashboardSalesPurchases);
 			}
 		};
 	
@@ -1478,13 +1591,13 @@ export class AonDesktop extends AonElement {
 				this.rootPanel(payroll);
 				break;
 			case Apps.INVOICE.app:
-				GWT.load(GWT.INVOICE_STAT);
+				GWT.iLoad(GWT.INVOICE_STAT);
 				break;
 			case Apps.TIMECONTROL.app:
 				break;
 			case Apps.MESSENGER.app:
 				if(this.isBeta())
-					GWT.load(GWT.TASK_STAT);
+					GWT.iLoad(GWT.TASK_STAT);
 				break;
 			}
 	}

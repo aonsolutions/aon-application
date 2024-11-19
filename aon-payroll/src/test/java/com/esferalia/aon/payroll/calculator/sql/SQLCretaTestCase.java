@@ -3741,7 +3741,7 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 	Assert.assertEquals("01", tramo0.getFechaDesde().getDia());
 	Assert.assertEquals("10", tramo0.getFechaHasta().getDia());
 	assertTramoActivoNormalTiempoCompleto(tramo0);
-
+	
 	Tramo tramo1 = tramos.get(1);
 	Assert.assertEquals("11", tramo1.getFechaDesde().getDia());
 	Assert.assertEquals("15", tramo1.getFechaHasta().getDia());
@@ -3751,7 +3751,9 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 	Assert.assertEquals("16", tramo2.getFechaDesde().getDia());
 	Assert.assertEquals(Integer.toString(endDate.getDate()), tramo2.getFechaHasta().getDia());
 	assertTramoActivoNormalTiempoCompleto(tramo2);
-
+	
+	assertSolidaridad(tramos);
+	
     }
 
     @Test
@@ -3798,6 +3800,7 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 	Assert.assertEquals(Integer.toString(endDate.getDate()), tramo1.getFechaHasta().getDia());
 	assertTramoMaternidadTiempoCompleto(tramo1);
 
+	assertSolidaridad(tramos);
     }
 
     @Test
@@ -3884,6 +3887,7 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 	Assert.assertEquals(Integer.toString(endDate.getDate()), tramo3.getFechaHasta().getDia());
 	assertTramoMaternidadTiempoCompleto(tramo3);
 
+	assertSolidaridad(tramos);
     }
 
     @Test
@@ -3933,6 +3937,7 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 	Assert.assertEquals(Integer.toString(endDate.getDate()), tramo1.getFechaHasta().getDia());
 	assertTramoMaternidadTiempoParcial(tramo1);
 
+	assertSolidaridad(tramos);
     }
 
     @Test
@@ -3972,6 +3977,7 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 	Assert.assertEquals(diaHasta, tramo1.getFechaHasta().getDia());
 	assertTramoExpedienteRegulacionEmpleoTotal(tramo1);
 
+	assertSolidaridad(tramos);
     }
 
     @Test
@@ -4011,6 +4017,7 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 	Assert.assertEquals(diaHasta, tramo1.getFechaHasta().getDia());
 	assertTramoExpedienteRegulacionEmpleoTotal(tramo1);
 
+	assertSolidaridad(tramos);
     }
 
     @Test
@@ -4096,6 +4103,8 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 		ccc, contract);
 
 	Assert.assertEquals(5, bases.size());
+
+	assertSolidaridad(tramos);
     }
 
     @Test
@@ -4174,6 +4183,8 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 		ccc, contract);
 
 	Assert.assertEquals(3, bases.size());
+
+	assertSolidaridad(tramos);
     }
 
     @Test
@@ -4259,6 +4270,8 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 		ccc, contract);
 
 	Assert.assertEquals(4, bases.size());
+
+	assertSolidaridad(tramos);
     }
 
     @Test
@@ -4316,6 +4329,8 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 		ccc, contract);
 
 	Assert.assertEquals(3, bases.size());
+
+	assertSolidaridad(tramos);
     }
 
     @Test
@@ -4355,6 +4370,7 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 	Assert.assertEquals(diaHasta, tramo1.getFechaHasta().getDia());
 	assertTramoExpedienteRegulacionEmpleoTotal(tramo1);
 
+	assertSolidaridad(tramos);
     }
 
     @Test
@@ -4394,6 +4410,7 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 	Assert.assertEquals(diaHasta, tramo1.getFechaHasta().getDia());
 	assertTramoExpedienteRegulacionEmpleoParcialActivo(tramo1);
 
+	assertSolidaridad(tramos);
     }
 
     @Test
@@ -6355,8 +6372,8 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 	calendar.setTime(endDate);
 	String mes = Integer.toString(calendar.get(MONTH) + 1);
 	String anho = Integer.toString(calendar.get(YEAR));
-
-	ByteArrayOutputStream trabajadoresTramosOs = new ByteArrayOutputStream();
+	
+	net.aonsolutions.core.tgss.creta.jaxb.trabajadorestramos.TrabajadoresTramos trabajadoresTramos =
 	TrabajadoresTramos.generate(connection, "0000", // autorizado,
 		mes, // desdeAnhoMes,
 		anho, // desdeAnho,
@@ -6365,19 +6382,11 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 		mes, // ctrlMes,
 		anho, // ctrlAnho,
 		"L13", // tipo,
-		new String[] { "0111" + "" + ccc }, // cccs
-		trabajadoresTramosOs);
+		new String[] { "0111" + "" + ccc } // cccs
+	);
+	
+	assertSolidaridad(trabajadoresTramos);
 
-	trabajadoresTramosOs.flush();
-
-	ByteArrayInputStream trabajadoresTramosIs = new ByteArrayInputStream(trabajadoresTramosOs.toByteArray());
-
-	net.aonsolutions.core.tgss.creta.jaxb.trabajadorestramos.TrabajadoresTramos trabajadoresTramos = Utils
-		.unmarshal(net.aonsolutions.core.tgss.creta.jaxb.trabajadorestramos.TrabajadoresTramos.class,
-			trabajadoresTramosIs);
-
-	trabajadoresTramosOs.close();
-	trabajadoresTramosIs.close();
 
 	Liquidacion liquidacion = trabajadoresTramos.getLiquidacion();
 	org.junit.Assert.assertEquals(Integer.parseInt(anho),
@@ -7829,12 +7838,18 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 	Assert.assertEquals(Integer.toString(get(endDate, DAY_OF_MONTH)), tramo.getFechaHasta().getDia());
 	
 	
-	org.junit.Assert.assertEquals(2, tramo.getDatosTramo().getDatoSolicitado().size());
+	org.junit.Assert.assertEquals(5, tramo.getDatosTramo().getDatoSolicitado().size());
 	
 	tramo.getDatosTramo().getDatoSolicitado().forEach( d -> {
 	    if ( d.getCodigo().equals("500")) 
 		return ;
 	    else if (d.getCodigo().equals("601") )
+		return ;
+	    else if (d.getCodigo().equals("497") )
+		return ;
+	    else if (d.getCodigo().equals("498") )
+		return ;
+	    else if (d.getCodigo().equals("499") )
 		return ;
 	    org.junit.Assert.fail(d.getCodigo());
 	});
@@ -7898,12 +7913,18 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 	Assert.assertEquals(Integer.toString(get(endDate, DAY_OF_MONTH)), tramo.getFechaHasta().getDia());
 	
 	
-	org.junit.Assert.assertEquals(2, tramo.getDatosTramo().getDatoSolicitado().size());
+	org.junit.Assert.assertEquals(5, tramo.getDatosTramo().getDatoSolicitado().size());
 	
 	tramo.getDatosTramo().getDatoSolicitado().forEach( d -> {
 	    if ( d.getCodigo().equals("500")) 
 		return ;
 	    else if (d.getCodigo().equals("601") )
+		return ;
+	    else if (d.getCodigo().equals("497") )
+		return ;
+	    else if (d.getCodigo().equals("498") )
+		return ;
+	    else if (d.getCodigo().equals("499") )
 		return ;
 	    org.junit.Assert.fail(d.getCodigo());
 	});
@@ -7995,6 +8016,185 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 			.findFirst().orElseThrow(() -> new AssertionFailedError(""));
 		
 		org.junit.Assert.assertEquals(salaryHours, Double.parseDouble(_1.getValor()), 0.00);
+
+    }
+
+    @Test
+    public void testCretaSolidaridadI()
+	    throws ExpressionException, SQLException, SalaryException, JAXBException, IOException, EmptyBasesException, XMLStreamException, FactoryConfigurationError {
+	Connection connection = getConnection();
+	AONContext aonContext = new AONContext(connection);
+
+	cleanSalaries(aonContext);
+	cleanSystemPayments(aonContext);
+
+	String ccc = Long.toString(System.currentTimeMillis()).substring(0, 11);
+
+	@SuppressWarnings("serial")
+	ContractRecord contract = newContract(aonContext, ccc, ContractCode.C100, "03");
+	addPayment(aonContext, contract, "BRUTO(7500.00 * DIAS_TRABAJADOS / DIAS_MES)");
+	
+	SQLSolidarityTestCase.addSolidarityBases(aonContext, contract.getStartDate());
+
+	Date startDate = add(getFirstDayOfMonth(getToday()), MONTH, 1);
+	Date endDate = getLastDayOfMonth(startDate);
+	
+	net.aonsolutions.core.tgss.creta.jaxb.bases.Bases bases = getBases(connection, startDate, endDate, ccc, contract);
+	
+	net.aonsolutions.core.tgss.creta.jaxb.bases.Tramo tramo = 
+	bases.getLiquidacion().get(0)
+	.getLiquidacionMes().get(0)
+	.getTrabajadores().getTrabajador().get(0)
+	.getTramos().getTramo().get(0);
+	
+	assertDato(tramo.getDatosTramo().getDatoSolicitado(), "C", "500", "472050");
+	assertDato(tramo.getDatosTramo().getDatoSolicitado(), "C", "497", "47205");
+	assertDato(tramo.getDatosTramo().getDatoSolicitado(), "C", "498", "188820");
+	assertDato(tramo.getDatosTramo().getDatoSolicitado(), "C", "499", "41925");
+
+    }
+
+    @Test
+    public void testCretaSolidaridadII()
+	    throws ExpressionException, SQLException, SalaryException, JAXBException, IOException, EmptyBasesException, XMLStreamException, FactoryConfigurationError {
+	Connection connection = getConnection();
+	AONContext aonContext = new AONContext(connection);
+
+	cleanSalaries(aonContext);
+	cleanSystemPayments(aonContext);
+
+	String ccc = Long.toString(System.currentTimeMillis()).substring(0, 11);
+
+	@SuppressWarnings("serial")
+	ContractRecord contract = newContract(aonContext, ccc, ContractCode.C100, "03");
+	addPayment(aonContext, contract, "BRUTO(4720.5 * 1.10 * DIAS_TRABAJADOS / DIAS_MES)");
+	
+	SQLSolidarityTestCase.addSolidarityBases(aonContext, contract.getStartDate());
+
+	Date startDate = add(getFirstDayOfMonth(getToday()), MONTH, 1);
+	Date endDate = getLastDayOfMonth(startDate);
+	
+	net.aonsolutions.core.tgss.creta.jaxb.bases.Bases bases = getBases(connection, startDate, endDate, ccc, contract);
+	
+	net.aonsolutions.core.tgss.creta.jaxb.bases.Tramo tramo = 
+	bases.getLiquidacion().get(0)
+	.getLiquidacionMes().get(0)
+	.getTrabajadores().getTrabajador().get(0)
+	.getTramos().getTramo().get(0);
+	
+	assertDato(tramo.getDatosTramo().getDatoSolicitado(), "C", "500", "472050");
+	assertDato(tramo.getDatosTramo().getDatoSolicitado(), "C", "497", "47205");
+	assertNoDato(tramo.getDatosTramo().getDatoSolicitado(), "C", "498");
+	assertNoDato(tramo.getDatosTramo().getDatoSolicitado(), "C", "499");
+
+    }
+
+    @Test
+    public void testCretaSolidaridadIII()
+	    throws ExpressionException, SQLException, SalaryException, JAXBException, IOException, EmptyBasesException, XMLStreamException, FactoryConfigurationError {
+	Connection connection = getConnection();
+	AONContext aonContext = new AONContext(connection);
+
+	cleanSalaries(aonContext);
+	cleanSystemPayments(aonContext);
+
+	String ccc = Long.toString(System.currentTimeMillis()).substring(0, 11);
+
+	@SuppressWarnings("serial")
+	ContractRecord contract = newContract(aonContext, ccc, ContractCode.C100, "03");
+	addPayment(aonContext, contract, "BRUTO(4720.5 * 1.50 * DIAS_TRABAJADOS / DIAS_MES)");
+	
+	SQLSolidarityTestCase.addSolidarityBases(aonContext, contract.getStartDate());
+
+	Date startDate = add(getFirstDayOfMonth(getToday()), MONTH, 1);
+	Date endDate = getLastDayOfMonth(startDate);
+	
+	net.aonsolutions.core.tgss.creta.jaxb.bases.Bases bases = getBases(connection, startDate, endDate, ccc, contract);
+	
+	net.aonsolutions.core.tgss.creta.jaxb.bases.Tramo tramo = 
+	bases.getLiquidacion().get(0)
+	.getLiquidacionMes().get(0)
+	.getTrabajadores().getTrabajador().get(0)
+	.getTramos().getTramo().get(0);
+	
+	assertDato(tramo.getDatosTramo().getDatoSolicitado(), "C", "500", "472050");
+	assertDato(tramo.getDatosTramo().getDatoSolicitado(), "C", "497", "47205");
+	assertDato(tramo.getDatosTramo().getDatoSolicitado(), "C", "498", "188820");
+	assertNoDato(tramo.getDatosTramo().getDatoSolicitado(), "C", "499");
+
+    }
+
+    @Test
+    public void testCretaSolidaridadIV()
+	    throws ExpressionException, SQLException, SalaryException, JAXBException, IOException, EmptyBasesException, XMLStreamException, FactoryConfigurationError {
+	Connection connection = getConnection();
+	AONContext aonContext = new AONContext(connection);
+
+	cleanSalaries(aonContext);
+	cleanSystemPayments(aonContext);
+
+	String ccc = Long.toString(System.currentTimeMillis()).substring(0, 11);
+
+	@SuppressWarnings("serial")
+	ContractRecord contract = newContract(aonContext, ccc, ContractCode.C100, "03");
+	addPayment(aonContext, contract, "4720.5 * 1.50 - 1750.00 ");
+	
+	SQLSolidarityTestCase.addSolidarityBases(aonContext, contract.getStartDate());
+
+	Date startDate = add(getFirstDayOfMonth(getToday()), MONTH, 1);
+	Date endDate = getLastDayOfMonth(startDate);
+	
+	
+	Date changeDate = add(startDate, Calendar.DAY_OF_MONTH , 9);
+	addData(aonContext, contract, contract.getStartDate(), add(changeDate, Calendar.DAY_OF_MONTH, -1), QUOTE_GROUP, "\"03\"");
+	addData(aonContext, contract, changeDate, null, QUOTE_GROUP, "\"01\"");
+	
+	net.aonsolutions.core.tgss.creta.jaxb.bases.Bases bases = getBases(connection, startDate, endDate, ccc, contract);
+	
+	net.aonsolutions.core.tgss.creta.jaxb.bases.Tramo tramo = 
+	bases.getLiquidacion().get(0)
+	.getLiquidacionMes().get(0)
+	.getTrabajadores().getTrabajador().get(0)
+	.getTramos().getTramo().get(0);
+	 
+	assertDato(tramo.getDatosTramo().getDatoSolicitado(), "C", "497", "47205");
+	assertDato(tramo.getDatosTramo().getDatoSolicitado(), "C", "498", "188820");
+	assertNoDato(tramo.getDatosTramo().getDatoSolicitado(), "C", "499");
+
+    }
+
+    @Test
+    public void testCretaSolidaridadV()
+	    throws ExpressionException, SQLException, SalaryException, JAXBException, IOException, EmptyBasesException, XMLStreamException, FactoryConfigurationError {
+	Connection connection = getConnection();
+	AONContext aonContext = new AONContext(connection);
+
+	cleanSalaries(aonContext);
+	cleanSystemPayments(aonContext);
+
+	String ccc = Long.toString(System.currentTimeMillis()).substring(0, 11);
+
+	@SuppressWarnings("serial")
+	ContractRecord contract = newContract(aonContext, ccc, ContractCode.C100, "03");
+	addPayment(aonContext, contract, "75000.00 * DIAS_TRABAJADOS / DIAS_MES");
+	
+	SQLSolidarityTestCase.addSolidarityBases(aonContext, contract.getStartDate());
+
+	Date startDate = add(getFirstDayOfMonth(getToday()), MONTH, 1);
+	Date endDate = getLastDayOfMonth(startDate);
+	
+	addIT(aonContext, contract, OCCUPATIONAL_DISEASE, startDate, add(startDate, Calendar.DAY_OF_MONTH, 5), null);
+	
+	net.aonsolutions.core.tgss.creta.jaxb.bases.Bases bases = getBases(connection, startDate, endDate, ccc, contract);
+	
+	net.aonsolutions.core.tgss.creta.jaxb.bases.Tramo tramo = 
+	bases.getLiquidacion().get(0)
+	.getLiquidacionMes().get(0)
+	.getTrabajadores().getTrabajador().get(0)
+	.getTramos().getTramo().get(0);
+	
+	assertDato(tramo.getDatosTramo().getDatoSolicitado(), "C", "497", "47205");
+	assertDato(tramo.getDatosTramo().getDatoSolicitado(), "C", "498", "188820");
 
     }
 
@@ -8111,11 +8311,9 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 	ContractRecord contract = newContract(aonContext, SSRegimeType.GENERAL, cccType, startDate, // getFirstDayOfYear(getToday()),
 		endDate, new HashMap<String, String>() {
 		    {
-			// put(MONTH_DAYS.getName(), String.format("%f", 30.00));
 			put(QUOTE_GROUP.getName(), String.format("'%s'", quoteGroup));
 			put(TC2.getName(), String.format("\"%s\"", contractCode.getValue()));
 			put(MONTH_DAYS.getName(), String.format("{'%s':30}[%s]", quoteGroup, QUOTE_GROUP.getName()));
-
 		    }
 		}, new String[] { "250.00 * DIAS_TRABAJADOS / DIAS_MES", "1500.00 * DIAS_TRABAJADOS / DIAS_MES",
 //				"TRACE('GRUPO_COTIZACION=%s\r\n', GRUPO_COTIZACION); 0.00;"
@@ -8172,6 +8370,7 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 	addPayment(aonContext, contract, ereFzaExonerado,
 		String.format("/*read-only*/%s * 0.00/**/", ERE_DAYS_FORCE_OFF),
 		String.format("%s * BASE_REGULADORA", ERE_DAYS_FORCE_OFF));
+	
 
 	//@formatter:on
 	return contract;
@@ -8446,6 +8645,42 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 		.getTrabajador().get(0).getTramos().getTramo();
     }
     // -------------------------------------------------------------------------
+
+	private static void assertSolidaridad(
+			net.aonsolutions.core.tgss.creta.jaxb.trabajadorestramos.TrabajadoresTramos trabajadoresTramos) {
+		trabajadoresTramos.getLiquidacion().getLiquidacionMes().forEach(l -> assertSolidaridad(l.getTrabajadores()));
+	}
+
+    private static void assertSolidaridad(Trabajadores trabajadores) {
+    	trabajadores.getTrabajador().forEach(SQLCretaTestCase::assertSolidaridad);
+    }
+
+    private static void assertSolidaridad(Trabajador trabajador) {
+    	assertSolidaridad(trabajador.getTramos().getTramo());
+    }
+    
+    private static void assertSolidaridad(List<Tramo> tramos) {
+    	for ( int i = 0; i < 1 ; i++ )
+    		assertTramoSolidaridad(tramos.get(i));
+    	for ( int i = 1; i < tramos.size() ; i++ )
+    		assertNoTramoSolidaridad(tramos.get(i));
+    }
+
+    private static void assertTramoSolidaridad(Tramo tramo) {
+	List<DatoSolicitado> datoSolicitados = tramo.getDatosTramo().getDatoSolicitado();
+
+	assertDatosSolicitado(datoSolicitados, "C", "497", "P");
+	assertDatosSolicitado(datoSolicitados, "C", "498", "P");
+	assertDatosSolicitado(datoSolicitados, "C", "499", "P");
+    }
+    
+    private static void assertNoTramoSolidaridad(Tramo tramo) {
+	List<DatoSolicitado> datoSolicitados = tramo.getDatosTramo().getDatoSolicitado();
+
+	assertNoDatoSolicitado(datoSolicitados, "C", "497");
+	assertNoDatoSolicitado(datoSolicitados, "C", "498");
+	assertNoDatoSolicitado(datoSolicitados, "C", "499");
+    }
 
     private static void assertTramoTutoria(Tramo tramo) {
 	List<DatoSolicitado> datoSolicitados = tramo.getDatosTramo().getDatoSolicitado();

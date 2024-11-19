@@ -28,6 +28,7 @@ public class AonDomainUserRoles extends DomainUserRoles{
 		setDomainPayer(dur.isDomainPayer());
 		setOldDomainModules(dur.getOldDomainModules());
 		setOldParentDomainModules(dur.getOldParentDomainModules());
+		setTrial(dur.isTrial());
 
 	}
 	
@@ -67,6 +68,7 @@ public class AonDomainUserRoles extends DomainUserRoles{
 		json.put("domainUserRoles", domainUserRoles);
 		json.put("parentDomainUserRoles", parentDomainUserRoles);
 		json.put("domainPayer", isDomainPayer());
+		json.put("trial", isTrial());
 
 		json.put("oldUserRoles", oldUserRoles);
 		return json;

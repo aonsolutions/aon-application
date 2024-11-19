@@ -1904,7 +1904,6 @@ public class AON {
 	public static Invoice acceptInvoice(AONContext ctx, Invoice invoice, Integer rawdocId){
 		return getFinance().acceptInvoice(ctx, invoice, rawdocId);
 	}
-	
 
 	public static Invoice insertInvoice(Occam occam, Invoice invoice){
 		return insertInvoice( occam.getDomainName(), occam.getDomain(), occam.getUser(), invoice);
@@ -8641,15 +8640,19 @@ public class AON {
 	}
 
 	public static  String getShortURL(String path, String url ) {
-		return getShortURL(path, URI.create(url));
+		return getShortURL(path, URI.create(url), null);
 	}
 	
-	public static  String getShortURL(String path, URI uri)  {
+	public static  String getShortURL(String path, String url, Date expirationDate ) {
+		return getShortURL(path, URI.create(url), expirationDate);
+	}
+	
+	public static  String getShortURL(String path, URI uri, Date expirationDate)  {
 		new AonURIBuilder(uri).getQueryParams();
 		Map<String, String[]> parameterMap = new AonURIBuilder(uri).getQueryParamsMap();
 		String domain = parameterMap.getOrDefault("domain", new String[] {uri.getHost()})[0];
 		try ( Connection connection = AonDataSource.getInstance().getConnection(domain) ) {
-			return getURLShortener().getShortURL(new AONContext(connection), path, uri.toString(), null);
+			return getURLShortener().getShortURL(new AONContext(connection), path, uri.toString(), expirationDate);
 		} catch (SQLException | AonConnectionException e) {
 			throw new RuntimeException(e);
 		} 
