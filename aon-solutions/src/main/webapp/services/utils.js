@@ -200,3 +200,13 @@ export const ramdomString = (length) => {
   }
   return ramdomString;
 };
+
+
+export const isBase64 = (str) => {
+  if (str ==='' || str.trim() ===''){ return false; }
+  try {
+      return btoa(atob(str)) == str;
+  } catch (err) {
+      return false;
+  }
+}

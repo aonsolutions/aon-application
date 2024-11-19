@@ -97,7 +97,7 @@ export class AonSuiteMenu extends AonElement {
         });
 
         let sideNavTitle = this.createDiv();
-        sideNavTitle.className = "aonSidenavTitleBeta suiteMenuSidenavTitle";
+        sideNavTitle.className = "aonSidenavTitle suiteMenuSidenavTitle";
         sideNavTitle.innerHTML = MSG.QUICK_ACCESS;
         sideMenu.appendChild(sideNavTitle);
 
@@ -109,7 +109,7 @@ export class AonSuiteMenu extends AonElement {
             this.buildSideNavCard(sideMenu,"1");
 
         let utilidades = this.createDiv();
-        utilidades.className = "aonSidenavTitleBeta suiteMenuSide";
+        utilidades.className = "aonSidenavTitle suiteMenuSide";
         utilidades.innerHTML = MSG.UTILITIES;
         
             
@@ -146,7 +146,7 @@ export class AonSuiteMenu extends AonElement {
 
         let title = this.createDiv();
         title.id = this.TITLE;
-        title.className = "aonSidenavTitleBeta";
+        title.className = "aonSidenavTitle";
         div.appendChild(title);
 
         let div2 = this.createDiv();

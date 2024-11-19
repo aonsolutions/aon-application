@@ -38,7 +38,7 @@ import com.esferalia.aon.occam.api.model.warehouse.Delivery;
 import com.esferalia.aon.seres.ftp.SeresFtpConnectionProvider;
 import com.esferalia.aon.seres.ftp.seres.FtpStoreProcess.ResponseMessageType;
 import com.esferalia.aon.seres.ftp.seres.FtpStoreProcess.SeresFtpProcessThread;
-import com.esferalia.aon.seres.writer.connect.ConnectDeliveryWriterOccam;
+import com.esferalia.aon.seres.writer.connect2.ConnectDeliveryWriterOccam;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.jcraft.jsch.JSchException;
 
@@ -179,7 +179,7 @@ public class FtpDeliveryUploadOccamHandler implements Serializable {
 	public FileOutput exportEdiFile(Delivery delivery) throws AonException {
 		FileOutput output = null;
 		try {
-			com.esferalia.aon.seres.writer.connect2.ConnectDeliveryWriterOccam writer = new com.esferalia.aon.seres.writer.connect2.ConnectDeliveryWriterOccam(domainName, domainId, login);
+			ConnectDeliveryWriterOccam writer = new com.esferalia.aon.seres.writer.connect2.ConnectDeliveryWriterOccam(domainName, domainId, login);
 			EdiCodes codes = SERES.getEdiCodes(domainName, domainId, login, delivery);
 			byte[] attachData = ConnectDeliveryWriterOccam.DeliveryPackages.obtainPackageDataAttach(
 					domainName, domainId, login, delivery.getId()).getData();

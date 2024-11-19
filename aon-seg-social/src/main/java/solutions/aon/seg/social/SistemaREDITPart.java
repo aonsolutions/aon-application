@@ -7,12 +7,11 @@ import static solutions.aon.seg.social.toolkit.HtmlUnitToolkit.getElConstains;
 import static solutions.aon.seg.social.toolkit.HtmlUnitToolkit.getWebClient;
 import static solutions.aon.seg.social.toolkit.HtmlUnitToolkit.wait4;
 
-import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
+import java.nio.charset.StandardCharsets;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -27,6 +26,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
 
 import org.apache.http.impl.client.CloseableHttpClient;
+import org.htmlunit.ElementNotFoundException;
 import org.htmlunit.FailingHttpStatusCodeException;
 import org.htmlunit.Page;
 import org.htmlunit.StringWebResponse;
@@ -46,7 +46,6 @@ import org.htmlunit.html.HtmlTable;
 import org.htmlunit.html.HtmlTableBody;
 import org.htmlunit.html.HtmlTableCell;
 import org.htmlunit.html.HtmlTableRow;
-import org.htmlunit.html.HtmlTextArea;
 import org.htmlunit.util.WebConnectionWrapper;
 import org.htmlunit.xml.XmlPage;
 import org.xml.sax.SAXException;
@@ -396,15 +395,16 @@ class SistemaREDITPart extends ServicioREDPartUtils {
 			htmlPage = fillGeneralData(htmlPage, regime, ccc, naf, startdate, contingency, situationEmployee, BAJA);
 
 			
-			if (job.isPresent()) {				
-				((HtmlInput) htmlPage.getElementById("puestoTrabajo")).setValue(job.get());
-				((HtmlInput) htmlPage.getElementById("puestoTrabajo")).setValueAttribute(job.get());
+			HtmlForm form = (HtmlForm) wait4(htmlPage, p -> p.getElementById("FORMULARIO_4")).orElseThrow(()-> new SegSocialException(TRY_AGAIN));
+			if (job.isPresent()) {		
+				HtmlInput jobInput = form.getInputByName("puestoTrabajo");
+				jobInput.focus();
+				jobInput.type(job.get());
+				jobInput.blur();
 			}
 			
 			// Data Contract
 			HtmlOption contractTypeOption = null;
-			HtmlInput cotBaseInput = null;
-			HtmlInput cotDaysInput = null;
 			
 			switch (contractType) {
 			case FIJO_DISCONTINUO_Y_TIEMPO_PARCIAL:
@@ -413,52 +413,55 @@ class SistemaREDITPart extends ServicioREDPartUtils {
 				
 
 				wait4(htmlPage, p -> p.getElementById("sumaBaseCot"))
-						.orElseThrow(() -> new SegSocialException(TRY_AGAIN));
+				.orElseThrow(() -> new SegSocialException(TRY_AGAIN));
 
-				cotBaseInput = (HtmlInput) htmlPage.getElementById("sumaBaseCot");
-				cotDaysInput = (HtmlInput) htmlPage.getElementById("sumaDiasCot");
 				break;
 			case RESTO_Y_AUTONOMOS:
 				webClient.waitForBackgroundJavaScript(5000);
 				htmlPage = HtmlUnitToolkit.selectOption(htmlPage, "tipoContrato", "2");
 
-				wait4(htmlPage, p -> p.getElementById("BaseCot")).orElseThrow(() -> new SegSocialException(TRY_AGAIN));
+				wait4(htmlPage, p -> p.getElementById("BaseCot"))
+				.orElseThrow(() -> new SegSocialException(TRY_AGAIN));
 
-				cotBaseInput = (HtmlInput) htmlPage.getElementById("BaseCot");
-				cotDaysInput = (HtmlInput) htmlPage.getElementById("DiasCot");
 				break;
 				
 			}
 			
+
 			if(fATEP.isPresent()) {
-				DomNode inputATEP = htmlPage.getElementById("fechaATEP");
-				if(null != inputATEP) {
-					((HtmlInput)inputATEP).setValue(Toolkit.formatDate(fATEP.get(), DATE_FORMAT).get());
+				try {
+					HtmlInput inputATEP = form.getInputByName("fechaATEP");
+					inputATEP.setValue(Toolkit.formatDate(fATEP.get(), DATE_FORMAT).get());
+				} catch ( ElementNotFoundException e ) {
 				}
 			}
 
 
-			String baseCotStr = Toolkit.parseDecimalToString(baseCot);
-			if(cotBaseInput!=null && !baseCotStr.isEmpty()) {
-				cotBaseInput.setValue(baseCotStr);
-				cotBaseInput.setValueAttribute(baseCotStr);
-			}
-
-			if(cotDaysInput!=null && cotDays>0) {
-				cotDaysInput.setValue(cotDays+"");
-				cotDaysInput.setValueAttribute(cotDays+"");
-			}
-			
 			if (occupation.isPresent()) {				
-				((HtmlSelect) htmlPage.getElementById("ocupacion")).setSelectedAttribute(occupation.get(), true);
+				form.getSelectByName("ocupacion").setSelectedAttribute(occupation.get(), true);
 			}
 			
 			if (jobDescription.isPresent()) {		
-				((HtmlTextArea) htmlPage.getElementById("funcDesempe")).click();
-				((HtmlTextArea) htmlPage.getElementById("funcDesempe")).setText(jobDescription.get());
+				form.getTextAreaByName("funcDesempe").click();
+				form.getTextAreaByName("funcDesempe").setText(jobDescription.get());
 			}
 			
-			HtmlForm form = (HtmlForm) wait4(htmlPage, p -> p.getElementById("FORMULARIO_4")).orElseThrow(()-> new SegSocialException(TRY_AGAIN));
+
+			String baseCotStr = Toolkit.parseDecimalToString(baseCot);
+			switch (contractType) {
+			case FIJO_DISCONTINUO_Y_TIEMPO_PARCIAL:
+				form.getInputByName("sumaBaseCot").setValue(baseCotStr);
+				form.getInputByName("sumaDiasCot").setValue(cotDays+"");
+				break;
+			case RESTO_Y_AUTONOMOS:
+				form.getInputByName("BaseCot").setValue(baseCotStr);;
+				form.getInputByName("DiasCot").setValue(cotDays+"");
+				break;
+				
+			}
+
+			//form.getElementsByTagName("input").forEach( input ->  System.out.println( ((HtmlInput)input).getId() + " = "  + ((HtmlInput)input).getValue() + " : " +  ((HtmlInput)input).isValid()  + " , " + ((HtmlInput)input).isValidValidityState() ));
+			
 			HtmlButton validate = (HtmlButton) wait4(htmlPage, p ->p.querySelector("button[type=\"submit\"][title=\"Validar\"]")).orElseThrow(()-> new SegSocialException(TRY_AGAIN));
 			htmlPage = validate.click();
 			
@@ -958,7 +961,13 @@ class SistemaREDITPart extends ServicioREDPartUtils {
 	private static WebResponse skipDateFormatError (WebRequest request, WebResponse response) {
 		
 		if ( request.getUrl().getFile().endsWith("prosa.min.js")) {
-			String content = response.getContentAsString();
+			String content ;
+			try ( InputStream is  = SistemaREDITPart.class.getResourceAsStream("prosa.min.js") ) {
+				content = new String(is.readAllBytes(), StandardCharsets.UTF_8 );
+			} catch ( IOException e ) {
+				content = response.getContentAsString();				
+			}
+			//String content = response.getContentAsString();
 			//content = content.replaceAll("a\s*=\s*E\\(.*msgErrorFormaFecha.*dd/mm/aaaa\"\\)\\]\\)", "a=!0");
 			content = content.replaceAll("\"chrome\"", "\":-o\"");
 			return new StringWebResponse(content, request.getUrl());
@@ -978,19 +987,31 @@ class SistemaREDITPart extends ServicioREDPartUtils {
 		
 		
 		
-	public static void __main(String[] args) throws IOException, SegSocialException, ParseException, FailingHttpStatusCodeException, InterruptedException, TransformerException {
-		try ( InputStream is = new FileInputStream("/home/ndiaz/Documentos/pvasesores.p12");
-				FileOutputStream os = new FileOutputStream(File.createTempFile("tgss", ".pdf"))) {
-			Date startDate = new SimpleDateFormat("dd/MM/yyyy").parse("01/09/2023");
-			List<ITPart> itParts = getItsImpl(is, "7624", "PKCS12", "0111", "41017063249", Optional.empty(), Optional.of(startDate), Optional.of(new Date()), Optional.empty());
-			for (ITPart itPart : itParts) {
-				System.out.println(itPart);  
-			}
-			System.out.println( "---------------------------");
-			List<It> its = orderByIT(itParts);
-			for (It it: its) {
-				System.out.println(it);
-			}
+	public static void main(String[] args) throws IOException, SegSocialException, ParseException, FailingHttpStatusCodeException, InterruptedException, TransformerException {
+		try ( InputStream certificateIs = new FileInputStream("/home/rtrepiana/Downloads/carcellemorcillo.aonsolutions.org.p12")){
+			Date startDate = new SimpleDateFormat("dd/MM/yyyy").parse("26/09/2024");
+			SistemaREDITPart.registerItBajaImpl(
+					certificateIs,
+					"000000",
+					"PKCS12",
+					"0111", 
+					"50122070978",
+					"500073203489",
+					SistemaRED.Contingencies.ACCIDENT_LABORAL,
+					SistemaRED.SituationEmployee.ACTIVO,
+					startDate,
+					SistemaRED.ContractType.RESTO_Y_AUTONOMOS,
+					2115.46f,
+					31,
+					Optional.of(startDate),
+					Optional.empty(),
+					Optional.empty(),
+					Optional.empty(),
+					Optional.empty(),
+					Optional.of("NIVEL XII"),
+					Optional.of("Las propias de NIVEL XII")
+					);
+			
 		}
 	}
 }

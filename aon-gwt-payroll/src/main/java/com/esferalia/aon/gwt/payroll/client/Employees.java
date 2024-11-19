@@ -31,7 +31,6 @@ import com.esferalia.aon.gwt.payroll.shared.CategoryDraft;
 import com.esferalia.aon.gwt.payroll.shared.Cost;
 import com.esferalia.aon.gwt.payroll.shared.Employee;
 import com.esferalia.aon.gwt.payroll.shared.Enterprise;
-import com.esferalia.aon.gwt.payroll.shared.EnterpriseContext;
 import com.esferalia.aon.gwt.payroll.shared.Irpf;
 import com.esferalia.aon.gwt.payroll.shared.Predicate;
 import com.esferalia.aon.gwt.payroll.shared.Salary;
@@ -41,6 +40,7 @@ import com.esferalia.aon.gwt.payroll.shared.StatisticYears;
 import com.esferalia.aon.gwt.payroll.shared.Statistics;
 import com.esferalia.aon.gwt.payroll.shared.Workplace;
 import com.esferalia.aon.watson.util.AonStringUtils;
+import com.esferalia.aon.watson.util.AonWordUtils;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.Style.Overflow;
@@ -306,6 +306,9 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 
 	interface MyStyle extends CssResource {
 		String staticEmployees();
+		default String title() { 
+			return "aon-EmployeesToolbar-Title"; 
+		}
 	}
 
 	@UiField
@@ -1931,7 +1934,7 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 		SafeHtmlBuilder builder = new SafeHtmlBuilder();
 		builder.append(AbstractImagePrototype.create(imageProto).getSafeHtml());
 		builder.append(' ');
-		builder.appendEscaped(title);
+		builder.appendEscaped(capitalize(title));
 		return builder.toSafeHtml();
 	}
 
@@ -1942,7 +1945,7 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 		SafeHtmlBuilder builder = new SafeHtmlBuilder();
 		builder.append(TEMPLATE.materialIcon(materialIcon));
 		builder.append(' ');
-		builder.appendEscaped(title);
+		builder.appendEscaped(capitalize(title));
 		return builder.toSafeHtml();
 	}
 
@@ -2781,8 +2784,8 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 		
 		employeesToolbar.add(showMenuButton);
 		
-		Label title = new Label("Integral de n\u00f3minas");
-		title.getElement().getStyle().setTextTransform(TextTransform.UPPERCASE);
+		Label title = new Label("Integral de N\u00f3minas");
+		title.addStyleName(style.title());
 		employeesToolbar.add(title);
 		
 		dynamicEmployees.addDomHandler(new MouseOutHandler() {
@@ -2820,102 +2823,32 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 		});
 		staticEmployees.add(menuBtn);
 		
-		HTMLPanel enterprisePanel = new HTMLPanel("");
-		enterprisePanel.getElement().getStyle().setProperty("display", "flex");
-		enterprisePanel.getElement().getStyle().setProperty("flex-direction", "column");
-		enterprisePanel.getElement().getStyle().setProperty("gap", ".55rem");
-		enterprisePanel.getElement().getStyle().setProperty("align-items", "center");
-		enterprisePanel.setHeight("100%");
-		
-		AonToolbarButton searchBtn = new AonToolbarButton("", AON.CSS.aonIconSearch());
-		enterprisePanel.add(searchBtn);
-		
-		for(int i=0; i<tree.getItemCount(); i++) {
-			TreeItem treeItem = tree.getItem(i);
-			Object userObject = treeItem.getUserObject();
-			
-			if(!treeItem.isVisible()) continue;
-			
-			AonToolbarButton btn = new AonToolbarButton("");
-			
-			if(userObject instanceof Enterprise) {
-				btn = new AonToolbarButton("", AON.CSS.aonIconEnterprise());
-				btn.setHeight("20px");
-				btn.setWidth("20px");
-				btn.getElement().getStyle().setProperty("border-radius", "0");
-				enterprisePanel.add(btn);
-			} else if(userObject instanceof Activity) {
-				btn = new AonToolbarButton("", AON.CSS.aonIconActivity());
-				btn.setHeight("20px");
-				btn.setWidth("20px");
-				btn.getElement().getStyle().setProperty("filter", "grayscale(100%) contrast(200%)");
-				enterprisePanel.add(btn);
-				
-				if(treeItem.getState()) {
-					AonToolbarButton btnChild = new AonToolbarButton("", AON.CSS.aonIconTgss());
-					btnChild.setHeight("20px");
-					btnChild.setWidth("20px");
-					btnChild.getElement().getStyle().setProperty("border-radius", "0");
-					enterprisePanel.add(btnChild);
-					
-					if(treeItem.getChildCount() > 1) {
-						AonToolbarButton btnAddChild = new AonToolbarButton("", AON.CSS.aonIconAdd());
-						btnAddChild.setHeight("20px");
-						btnAddChild.setWidth("20px");
-						enterprisePanel.add(btnAddChild);	
-					} 
-				}
-			} else if(userObject instanceof Workplace) {
-				btn = new AonToolbarButton("", AON.CSS.aonIconPin());
-				btn.setHeight("20px");
-				btn.setWidth("20px");
-				enterprisePanel.add(btn);
-				
-				if(treeItem.getState()) {
-					TreeItem childTreeItem = treeItem.getChild(0);
-					Object childUserObject = childTreeItem.getUserObject();
-					
-					if(childUserObject instanceof SalaryDraftObject) {
-						AonToolbarButton btnChild = new AonToolbarButton("");
-						Employee employee = ((SalaryDraftObject)childUserObject).getEmployee();
-						if(isActive(employee)) { 
-							btnChild = new AonToolbarButton("", AON.CSS.aonIconPerson());
-							btnChild.setHeight("20px");
-							btnChild.setWidth("20px");
-						} else {
-							btnChild = new AonToolbarButton("", AON.CSS.aonIconPersonOff());
-							btnChild.setHeight("20px");
-							btnChild.setWidth("20px");
-							
-						}
-							
-						enterprisePanel.add(btnChild);
-					}
-					
-					if(treeItem.getChildCount() > 1) {
-						AonToolbarButton btnChild = new AonToolbarButton("", AON.CSS.aonIconAdd());
-						btnChild.setHeight("20px");
-						btnChild.setWidth("20px");
-						enterprisePanel.add(btnChild);	
-					}	
-				}
-			}
-				
-		}
-		
-		enterprisePanel.addDomHandler(e -> {
-		    showMenuButton.setTitle("Ocultar");
-		    showMenuButton.removeStyleName(AON.CSS.aonIconMenu());
-		    showMenuButton.addStyleName(AON.CSS.aonIconMenuCollapse());
-		    addStyleName(style.staticEmployees());
-		    getElement().getStyle().setBackgroundColor("white");
-		    scrollPanel.setHeight("85%");
-		    onShowEmployees(true);
-		}, MouseOverEvent.getType());
-		
-		staticEmployees.add(enterprisePanel);
-		
 		showStaticEmployees();
 	}
+	
+	private static String capitalize(String str) {
+		if ( AonStringUtils.isBlank(str) )
+			return str;
+		
+		boolean capitalizeNext = true;
+		StringBuilder builder = new StringBuilder(str.length());
+		
+		for ( int i = 0; i < str.length(); i++ ) {
+			char ch = str.charAt(i);
+			if ( Character.isWhitespace(ch) 
+				|| ch == ',' || ch == '.') {
+				builder.append(ch);
+				capitalizeNext = true;
+			} else if ( capitalizeNext ) {
+				builder.append(Character.toUpperCase(ch));
+				capitalizeNext = false;
+			} else {
+				builder.append(Character.toLowerCase(ch));
+			}
+		}
+		return builder.toString();
+	}
+	
+	
 	
 }

@@ -13,10 +13,29 @@
 	<name>AON GWT AIO</name>
 	<build>
 		<plugins>
-			<plugin>
+      <plugin>
+        <groupId>net.ltgt.gwt.maven</groupId>
+        <artifactId>gwt-maven-plugin</artifactId>
+        <version>HEAD-SNAPSHOT</version>
+        <extensions>true</extensions>
+        <configuration>
+          <skipModule>true</skipModule>
+          <webappDirectory>${project.build.outputDirectory}</webappDirectory>
+          <moduleName>net.aonsolutions.aon.gwt.aio.Aio</moduleName>
+        </configuration>
+        <executions>
+          <execution>
+            <phase>prepare-package</phase>
+            <goals>
+              <goal>compile</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+			<!--plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>gwt-maven-plugin</artifactId>
-				<version>2.8.2</version>
+				<version>2.10.0</version>
 				<configuration>
 					<module>net.aonsolutions.aon.gwt.aio.Aio</module>
 					<webappDirectory>${project.build.outputDirectory}</webappDirectory>
@@ -25,7 +44,6 @@
 					  <compileSourcesArtifact>com.esferalia.aon:aon.gwt.api</compileSourcesArtifact>  
 					  <compileSourcesArtifact>com.esferalia.aon:aon.occam</compileSourcesArtifact>
 					  <compileSourcesArtifact>com.esferalia.aon:aon.gwt.issues</compileSourcesArtifact>  
-<!-- 				  <compileSourcesArtifact>net.aonsolutions:aon.gwt.document</compileSourcesArtifact>  -->
 					  <compileSourcesArtifact>com.esferalia.aon:aon.gwt.stat</compileSourcesArtifact>
 					  <compileSourcesArtifact>com.esferalia.aon:aon.gwt.dump</compileSourcesArtifact>
 					  <compileSourcesArtifact>net.aonsolutions:aon.gwt.warehouse</compileSourcesArtifact>
@@ -50,7 +68,7 @@
 						</goals>
 					</execution>
 				</executions>
-			</plugin>
+			</plugin-->
 			<plugin>
 				<groupId>com.google.code.maven-replacer-plugin</groupId>
 				<artifactId>replacer</artifactId>
@@ -88,23 +106,23 @@
 	<dependencies>
 
 		<dependency>
-			<groupId>com.google.gwt</groupId>
+			<groupId>org.gwtproject</groupId>
 			<artifactId>gwt-servlet-jakarta</artifactId>
-			<version>2.8.2</version>
+			<version>2.12.0</version>
 			<scope>compile</scope>
 		</dependency>
 
 		<dependency>
-			<groupId>com.google.gwt</groupId>
+			<groupId>org.gwtproject</groupId>
 			<artifactId>gwt-user-jakarta</artifactId>
-			<version>2.8.2</version>
+			<version>2.12.0</version>
 			<scope>provided</scope>
 		</dependency>
 	
 		<dependency>
-			<groupId>com.google.gwt</groupId>
-			<artifactId>gwt-dev</artifactId>
-			<version>2.8.2</version>
+			<groupId>org.gwtproject</groupId>
+			<artifactId>gwt-dev-jakarta</artifactId>
+			<version>2.12.0</version>
 			<scope>provided</scope>
 		</dependency>
 
@@ -211,22 +229,6 @@
 			<scope>compile</scope>
 			<classifier>sources</classifier>
 		</dependency>
-		
-<!--
- 		<dependency>
-			<groupId>net.aonsolutions</groupId>
-			<artifactId>aon.gwt.document</artifactId>
-			<version>${project.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>net.aonsolutions</groupId>
-			<artifactId>aon.gwt.document</artifactId>
-			<version>${project.version}</version>
-			<scope>compile</scope>
-			<classifier>sources</classifier>
-		</dependency> 
--->
-
 		<dependency>
 			<groupId>com.esferalia.aon</groupId>
 			<artifactId>aon.gwt.fiscal</artifactId>
@@ -421,11 +423,10 @@
     <build>
       <plugins>
         <plugin>
-          <groupId>org.codehaus.mojo</groupId>
+          <groupId>net.ltgt.gwt.maven</groupId>
           <artifactId>gwt-maven-plugin</artifactId>
           <configuration>
-            <draftCompile>true</draftCompile>
-	   		<module>net.aonsolutions.aon.gwt.aio.DevelopmentAio</module>
+	   		    <moduleName>net.aonsolutions.aon.gwt.aio.DevelopmentAio</moduleName>
           </configuration>
         </plugin>
       </plugins>

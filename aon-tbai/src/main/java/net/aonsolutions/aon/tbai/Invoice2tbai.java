@@ -488,7 +488,8 @@ public class Invoice2tbai {
 					|| (invoice.isIsp() && Country.ES.equals(invoice.getRegistryDocumentCountry()))
 					|| (invoice.isCanCeuMel() && Country.ES.equals(invoice.getRegistryDocumentCountry()))) {
 				DesgloseFacturaType desgloseFactura = new DesgloseFacturaType();
-				desgloseFactura.setSujeta(sujeta);
+				if(sujeta.getExenta() != null || sujeta.getNoExenta() != null)
+					desgloseFactura.setSujeta(sujeta);
 				if(totalSuplidos > 0.0) desgloseFactura.setNoSujeta(noSujeta);
 				desglose.setDesgloseFactura(desgloseFactura);
 			} else if(invoice.isService()){

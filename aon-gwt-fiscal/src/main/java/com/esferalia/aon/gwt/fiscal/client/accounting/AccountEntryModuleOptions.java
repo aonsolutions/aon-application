@@ -13,7 +13,7 @@ public class AccountEntryModuleOptions extends  ModuleOptions<AccountEntryModule
 	private AccountingInvoice accountingInvoice;
 	private TediResult tediResult;
 	private ModuleCallback externalCallback;
-
+	private boolean forceInvoiceEdition;
 	
 	private boolean embedded = false;
 	private boolean backButtonVisible = true;
@@ -64,6 +64,13 @@ public class AccountEntryModuleOptions extends  ModuleOptions<AccountEntryModule
 		return this;
 	}
 
+	public boolean isForceInvoiceEdition() {
+		return forceInvoiceEdition;
+	}
+	public AccountEntryModuleOptions setForceInvoiceEdition(boolean forceInvoiceEdition) {
+		this.forceInvoiceEdition = forceInvoiceEdition;
+		return this;
+	}
 	public boolean isEmbedded() {
 		return embedded;
 	}

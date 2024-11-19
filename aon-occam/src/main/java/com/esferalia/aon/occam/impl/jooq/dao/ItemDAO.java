@@ -103,6 +103,7 @@ public class ItemDAO {
 		
 		@Override public Property<String> getProductCodeProperty() {return new FilterDAO.PropertyDAO<>(PRODUCT.CODE);}
 		@Override public Property<String> getProductNameProperty() {return new FilterDAO.PropertyDAO<>(PRODUCT.NAME);}
+		@Override public Property<Byte> getProductTypeProperty() {return new FilterDAO.PropertyDAO<>(PRODUCT.TYPE);}
 		
 		@Override public Property<Integer> getRegistryProperty() {return new FilterDAO.PropertyDAO<>(RITEM.REGISTRY);}
 		@Override public Property<Byte> getTypeProperty() {return new FilterDAO.PropertyDAO<>(RITEM.TYPE);}
@@ -133,8 +134,8 @@ public class ItemDAO {
 			.where(ITEM_PROPERTIES.getConditions(filter));
 	}
 	
-	public static Item get(AONContext ctx, Integer id){
-        return get(ctx, f -> f.getIdProperty().eq(id));
+	public static Item get(AONContext ctx, Integer id, Options... options){
+        return get(ctx, f -> f.getIdProperty().eq(id), options);
     }
 	
 	public static Item get(AONContext ctx, ItemFilter filter, Options... options){
@@ -186,7 +187,6 @@ public class ItemDAO {
 	
 	public static Stream<RitemRecord> getRItemRecordStream(AONContext ctx, RegistryItemFilter filter){
 		ctx.checkRead();
-		System.out.println(ctx.getDslContext().select().from(RITEM).where(RITEM_PROPERTIES.getConditions(filter)).getSQL().toString());
 		return ctx.getDslContext().select().from(RITEM).where(RITEM_PROPERTIES.getConditions(filter))
 				.fetchStreamInto(RITEM);
 	}

@@ -164,16 +164,16 @@ public class Mod347DAO {
 		}
 	}
 	
-	public static Mod347 initialize(AONContext ctx) {	
+	public static Mod347 initialize(AONContext ctx, int year) {	
 		
 		// Ponemos por defecto el año, según la fecha actual, si estamos en enero o febrero ponemos
 		// el año anterior (se supone que queremos hacer el del ultimo periodo del año anterior)
 		// en caso contrario ponemos el año actual
-		Date today = new Date();
-		int year = AonDateUtils.getYear(today);		
-		if (AonDateUtils.getMonth(today) == 0 || AonDateUtils.getMonth(today) == 1) {
-			year = year - 1;			
-		}
+//		Date today = new Date();
+//		int year = AonDateUtils.getYear(today);		
+//		if (AonDateUtils.getMonth(today) == 0 || AonDateUtils.getMonth(today) == 1) {
+//			year = year - 1;			
+//		}
 		
 		AonConfiguration conf = ConfigurationDAO.getConfiguration(ctx);		
 		Mod347 mod347 = new Mod347();

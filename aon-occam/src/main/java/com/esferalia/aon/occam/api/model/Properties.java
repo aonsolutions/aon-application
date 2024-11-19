@@ -274,6 +274,7 @@ public interface Properties {
 		Property<Integer> getStockUnitTagProperty();
 		Property<String> getProductCodeProperty();
 		Property<String> getProductNameProperty();
+		Property<Byte> getProductTypeProperty();
 		
 		Property<Integer> getRegistryProperty();
 		Property<Byte> getTypeProperty();
@@ -893,8 +894,10 @@ public interface Properties {
 		Property<Byte> getDeliveryValuatedProperty();
 		Property<Integer> getAccountProperty();
 		Property<Integer> getProjectTypeProperty();
-		
 		Property<Integer> getRegistryRelationProperty();
+		Property<Byte> getMediaType();
+		Property<String> getMediaValue();
+		Property<String> getRegistryAddress();
 	}
 	
 	public interface CreditorProperties extends RegistryProperties, AuditProperties {
@@ -909,7 +912,10 @@ public interface Properties {
 		Property<String> getCreationUserProperty();
 		Property<Timestamp> getCreationDateProperty();
 		Property<String> getModificationUserProperty();
-		Property<Timestamp> getModificationDateProperty();	
+		Property<Timestamp> getModificationDateProperty();
+		Property<Byte> getMediaType();
+		Property<String> getMediaValue();
+		Property<String> getRegistryAddress();
 	}
 	
 	public interface SellerProperties extends RegistryProperties{
@@ -982,6 +988,9 @@ public interface Properties {
 		Property<Integer> getScopeProperty();
 		Property<Byte> getPurchaseValuatedProperty();
 		Property<Integer> getAccountProperty();
+		Property<Byte> getMediaType();
+		Property<String> getMediaValue();
+		Property<String> getRegistryAddress();
 	}
 
 	public interface TargetProperties extends RegistryProperties, AuditProperties{
@@ -1905,11 +1914,16 @@ public interface Properties {
 	public interface InvoiceBatchProperties {
 		Property<Integer> getIdProperty();
 		Property<Integer> getDomainProperty();
+		Property<String> getDescriptionProperty();
 		Property<Timestamp> getDateProperty();
+		Property<Timestamp> getEndDateProperty();
 		Property<Byte> getTypeProperty();
 		Property<Byte> getOperationProperty();
 		Property<Integer> getDataResponseProperty();
 		Property<String> getCreationUserProperty();
+		Property<Timestamp> getCreationDateProperty();
+		Property<String> getModificationUserProperty();
+		Property<Timestamp> getModificationDateProperty();
 	}
 	
 	public interface InvoiceBatchDetailProperties {
@@ -1972,5 +1986,6 @@ public interface Properties {
 		Property<java.util.Date> getOperationDateProperty();
 		Property<String> getAmountStringProperty();
 		Property<String> getOperationDateStringProperty();
+		Property<String> getStatusStringProperty();
 	}
 }

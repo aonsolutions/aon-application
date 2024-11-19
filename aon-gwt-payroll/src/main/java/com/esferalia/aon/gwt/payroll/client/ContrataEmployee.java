@@ -977,8 +977,9 @@ public abstract class ContrataEmployee extends ResizeComposite {
 				ctoExtension.setVisible(hasCertificateSEPE && hasExtensionComuniation);
 				
 				separatorCertifica.setVisible(null != endDate);
-				cetifica2.setVisible(null != endDate);
-				cetifica2PDF.setVisible(hasCertificateSEPE && null != endDate);
+				// Show always, for example for ERE/ERTE
+//				cetifica2.setVisible(null != endDate);
+				cetifica2PDF.setVisible(hasCertificateSEPE /*&& null != endDate*/);
 				
 				separatorAdds.setVisible(canExtension || canTransform || hasExtension || hasTransform);
 				contractExtension.setVisible(canExtension);
@@ -2075,7 +2076,7 @@ public abstract class ContrataEmployee extends ResizeComposite {
 				contrataEmployeeObject.cambioCoef(partialityCoef, date,
 						s -> showSuccess("AVISO: Parcialidad",
 								"El coeficiente de parcialidad ha sido notificado a la Seguridad Social."),
-						f -> showError("Error comunicaci\u00F3n", f.getMessage()));
+						f -> showError("Error comunicaci\u00F3n Parcialidad", f.getMessage()));
 			}
 			
 			@Override
@@ -2084,7 +2085,7 @@ public abstract class ContrataEmployee extends ResizeComposite {
 				contrataEmployeeObject.cambioCno(cno, date,
 						s -> showSuccess("AVISO: CNO",
 								"El cambio de CNO ha sido notificado a la Seguridad Social."),
-						f -> showError("Error comunicaci\u00F3n", f.getMessage()));
+						f -> showError("Error comunicaci\u00F3n CNO", f.getMessage()));
 			}
 
 			@Override
@@ -2093,7 +2094,7 @@ public abstract class ContrataEmployee extends ResizeComposite {
 				contrataEmployeeObject.cambioOcupacion(ocupation, date,
 						s -> showSuccess("AVISO: Ocupaci\u00F3n",
 								"El cambio de ocupaci\u00F3n ha sido notificado a la Seguridad Social."),
-						f -> showError("Error comunicaci\u00F3n", f.getMessage()));
+						f -> showError("Error comunicaci\u00F3n Ocupaci\u00f3n", f.getMessage()));
 			}
 
 			@Override
@@ -2102,7 +2103,7 @@ public abstract class ContrataEmployee extends ResizeComposite {
 				contrataEmployeeObject.cambioGrupCtz(quoteGroup, date,
 						s -> showSuccess("AVISO: Grupo cotizaci\u00F3n",
 								"El cambio de grupo de cotizaci\u00F3n ha sido notificado a la Seguridad Social."),
-						f -> showError("Error comunicaci\u00F3n", f.getMessage()));
+						f -> showError("Error comunicaci\u00F3n Grupo Cotizaci\u00f3n", f.getMessage()));
 			}
 
 			@Override
@@ -2111,7 +2112,7 @@ public abstract class ContrataEmployee extends ResizeComposite {
 				contrataEmployeeObject.cambioContrato(contract, partialityCoef, date,
 						s -> showSuccess("AVISO: Tipo contrato",
 								"El cambio de tipo de contrato ha sido notificado a la Seguridad Social."),
-						f -> showError("Error comunicaci\u00F3n", f.getMessage()));
+						f -> showError("Error comunicaci\u00F3n TC2", f.getMessage()));
 			}
 
 			@Override
@@ -2120,7 +2121,7 @@ public abstract class ContrataEmployee extends ResizeComposite {
 				contrataEmployeeObject.sendEmployeeBaja(settleReason, s -> {
 					showSuccess("AVISO: Baja", "La baja de este trabajador ha sido notificada a la Seguridad Social.");
 					downloadTAEnd();
-				}, f -> showError("Error comunicaci\u00F3n", f.getMessage()));
+				}, f -> showError("Error comunicaci\u00F3n Fecha Fin", f.getMessage()));
 			}
 
 			@Override
@@ -2129,7 +2130,7 @@ public abstract class ContrataEmployee extends ResizeComposite {
 				contrataEmployeeObject.sendEmployeeAlta(s -> {
 					showSuccess("AVISO: Alta", "El alta de este trabajador ha sido notificado a la Seguridad Social.");
 					downloadStartDocuments();
-				}, f -> showError("Error comunicaci\u00F3n", f.getMessage()));
+				}, f -> showError("Error comunicaci\u00F3n Fecha Inicio", f.getMessage()));
 			}
 		};
 	}

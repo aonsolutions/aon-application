@@ -105,7 +105,8 @@ public abstract class PageAbs extends ResizeComposite {
 	}
 
 	public boolean isPymes() {
-		return depositType == DepositType.PYMES;
+		return getDeposit() != null && !AonStringUtils.isBlank(getDeposit().getType())
+				&& getDeposit().getType().equalsIgnoreCase("Pymes");
 	}
 	
 	public Map<D2DepositKey, DoubleBox> getInputs() {
@@ -598,7 +599,7 @@ public abstract class PageAbs extends ResizeComposite {
 				@Override
 				public void onSuccess(Map<String, String> result) {
 					setMap(result);
-					getDeposit().refreshPage();
+					refreshDepositPage();
 				}
 
 				@Override
@@ -631,7 +632,7 @@ public abstract class PageAbs extends ResizeComposite {
 				@Override
 				public void onSuccess(Map<String, String> result) {
 					setMap(result);
-					getDeposit().refreshPage();
+					refreshDepositPage();
 				}
 
 				@Override
@@ -731,6 +732,10 @@ public abstract class PageAbs extends ResizeComposite {
 		
 	public Boolean isChanged(String key){
 		return false;
+	}
+	
+	protected void refreshDepositPage() {
+		getDeposit().refreshPage();
 	}
 	
 	protected abstract void initializeTable();

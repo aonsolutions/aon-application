@@ -1,12 +1,14 @@
 package com.esferalia.aon.gwt.fiscal.client.console;
 
 import java.util.Date;
+import java.util.LinkedList;
 import java.util.logging.Logger;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDisplayGrid;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.DomainParams;
+import com.esferalia.aon.occam.api.model.security.User;
 import com.google.gwt.event.logical.shared.HasSelectionHandlers;
 import com.google.gwt.event.logical.shared.SelectionEvent;
 import com.google.gwt.event.logical.shared.SelectionHandler;
@@ -40,8 +42,10 @@ class ConsoleDomainTable extends AonDisplayGrid implements HasSelectionHandlers<
 		public void onChangeActive(Integer domainId, boolean active, AsyncCallback<Domain> cbk);
 		public void onChangeExpirationDate(Integer domainId, Date expireDate, AsyncCallback<Domain> cbk);
 		public void onValidate(Integer domainId, String name, String descrption, AsyncCallback<Boolean> cbk);
-		public void onRemoteAccess(Integer integer, AsyncCallback<String> cbk);
+		public void onSwitchRemoteAccess(Integer integer, AsyncCallback<Boolean> cbk);
+		public void onAvailableUsers(JsConsoleDomain domain, AsyncCallback<LinkedList<User>> cbk);
 		public void onEditDomain( Integer domainId, String descrption );
+		public void onUtilitiesDomain( JsConsoleDomain domain );
 	}
 	
 	

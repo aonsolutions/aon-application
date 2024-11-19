@@ -209,7 +209,7 @@ public class MessageController implements IWebMailConstants, Serializable {
 	            message.addRecipient(RecipientType.BCC, replyTo);
 	            Address[] addresses = {replyTo};
 	            message.setReplyTo(addresses);
-	            SES.sendEmail(message);
+	            SES.sendEmail(AonUtil.getDomainName(), message);
 	    	} else {
 	    		server.sendMessage(sentMessage);
 	    	}

@@ -792,8 +792,21 @@ public class SQLIrpfCalculatorContext implements IIrpfCalculatorContext {
 
 	@Override
 	public String getComunidadAutonoma() {
-		// TODO Auto-generated method stub
-		return null;
+		Administration administration = IrpfContractSalaryCalculatorContext.get(ctx, SQLConstants.WORKPLACE, WorkplaceColumns.ECONOMICAGREEMENT, Administration.class);
+		if ( administration == null )
+			return null;
+		switch (administration ) {
+		case ALAVA :
+			return "01";
+		case BIZKAIA: 
+			return "48";
+		case GIPUZKOA: 
+			return "20";
+		case NAVARRA: 
+			return "31";
+		default:
+			return null;
+		}
 	}
 
 	@Override

@@ -19,8 +19,13 @@ import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
-import net.aonsolutions.db.up2date.doc.InvoiceDocAddS3Bucket;
-import net.aonsolutions.db.up2date.payroll.InKindDeductionUpdate;
+import net.aonsolutions.db.up2date.finance.InvofoxEnterpriseDataFix;
+import net.aonsolutions.db.up2date.finance.InvoiceBatchAlter;
+import net.aonsolutions.db.up2date.fiscal.AlterFsMod2002020;
+import net.aonsolutions.db.up2date.fiscal.AlterFsMod200Nrc;
+import net.aonsolutions.db.up2date.tgss.Artist2024Update;
+import net.aonsolutions.db.up2date.tgss.SolidarityInsert;
+import net.aonsolutions.db.up2date.urlshortener.UrlShortenCreation;
 
 public class Up2Date {
 
@@ -468,9 +473,18 @@ public class Up2Date {
         // AgreementUpdateHideMessage.AGREEMENTUPDATEHIDEMESSAGE,
         // AgreementUpdateHideToDisable.AGREEMENTUPDATEHIDETODISABLE,
         
-        InKindDeductionUpdate.INKIND_DEDUCTION_UPDATE,
+        // InKindDeductionUpdate.INKIND_DEDUCTION_UPDATE,
         // InvoiceDataCreation.INVOICE_DATA_CREATION,
-        InvoiceDocAddS3Bucket.INVOICEDOC_ADDS3BUCKET
+        // InvoiceDocAddS3Bucket.INVOICEDOC_ADDS3BUCKET
+    		
+    	// UrlShortenCreation.URLSHORTEN_CREATION,
+    	// Artist2024Update.ARTIST2024UPDATE,
+    	// InvofoxEnterpriseDataFix.INVOFOX_ENTERPRISE_DATA_FIX,
+    	// AlterFsMod200Nrc.ALTER_FS_MODEL200_NRC,
+    	// InvoiceBatchAlter.INVOICE_BATCH_ALTER
+    		
+    	// AlterFsMod2002020.ALTER_FS_MODEL_200_2020
+    	SolidarityInsert.SOLIDARITYINSERT	
 	};
 
     // ------------------------------------------------------------------------

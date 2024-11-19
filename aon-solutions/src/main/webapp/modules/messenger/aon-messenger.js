@@ -323,7 +323,7 @@ export class AonMessenger extends AonElement {
 		let messengerOpts = [];
 		
 		messengerOpts.push({
-			name: 'Recibidas',
+			name: MSG.RECEIVED,
 			icon: MATERIAL_ICONS.MOVE_TO_INBOX,
 			id: MATERIAL_ICONS.MOVE_TO_INBOX,
 			fn: () =>{
@@ -354,7 +354,7 @@ export class AonMessenger extends AonElement {
 				this.showView(MESSENGER_VIEWS.AON_MESSENGER_LIST, undefined, this.getListFilter());
 			}
 		},{
-			name: 'Todas',
+			name: MSG.ALL2,
 			icon: MATERIAL_ICONS.ALL_INBOX,
 			id: MATERIAL_ICONS.ALL_INBOX,
 			fn: () =>{
@@ -971,7 +971,7 @@ export class AonMessenger extends AonElement {
     
 		this.clearElementById(contentId);
 
-		GWT.load(GWT.TASK_STAT, contentId);
+		GWT.iLoad(GWT.TASK_STAT, contentId);
 
 		waitEl(`#${contentId} > div:first-child`)
 		.then(element=>{

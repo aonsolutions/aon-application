@@ -445,11 +445,25 @@ class SistemaREDMov {
 		}
 
 		if (pageResult.isHtmlPage()) {
-//			htmlPage = (HtmlPage) htmlPage;
+//			Toolkit.buildFile(((HtmlPage) pageResult).asXml().getBytes(), "/Users/svaldepenas/Desktop/alta_2.html");
+			
+			String messageResult = "";
+			
+			DomNode warning = ((HtmlPage) pageResult).querySelector("#Sub1001101047"); 
+			if(null != warning) {
+				DomNode warningMessage = ((HtmlPage) pageResult).querySelector("#Sub1201101047"); 
+				if(null != warningMessage && warningMessage.getTextContent().trim().length() > 0) {
+					messageResult += "\n" + warningMessage.getTextContent().trim();
+					throw new SegSocialException(messageResult + ". Tramite esta comunicaci\u00f3n manualmente.");
+				}
+			}
+			
 			DomNode message = ((HtmlPage) pageResult).querySelector("#DIL"); 
 			if(message!=null) {
-				throw new SegSocialException(message.getTextContent().trim());
+				messageResult += "\n" + message.getTextContent().trim();
+				throw new SegSocialException(messageResult);
 			}
+			
 		} else {
 			try {
 				return pageResult.getWebResponse().getContentAsStream().readAllBytes();
@@ -611,14 +625,15 @@ class SistemaREDMov {
 
 	private static void altaConsolidadaDeleteImpl(final InputStream certificateInputStream,
 			final String certificatePassword, final String certificateType, String regimen, String ctaCti, String nss)
-			throws SegSocialException, FailingHttpStatusCodeException, MalformedURLException, IOException, InterruptedException {
-		try (WebClient webClient = HtmlUnitToolkit.getWebClient(certificateInputStream, certificatePassword,
-				certificateType)) {
+			throws SegSocialException, FailingHttpStatusCodeException, MalformedURLException, IOException, InterruptedException, TransformerException {
+		
+		try (WebClient webClient = HtmlUnitToolkit.getWebClient(certificateInputStream, certificatePassword,certificateType)) {
+			
 			webClient.getOptions().setUseInsecureSSL(true);
 			webClient.getOptions().setJavaScriptEnabled(true);
 			webClient.getOptions().setThrowExceptionOnScriptError(false);
 			webClient.setJavaScriptErrorListener(jascriptFunctionExceptionError());
-			HtmlPage htmlPage = webClient.getPage("https://w2.seg-social.es/ProsaInternet/OnlineAccess?ARQ.SPM.ACTION=LOGIN&ARQ.SPM.APPTYPE=SERVICE&ARQ.IDAPP=XV24M00E");
+			HtmlPage htmlPage = HtmlUnitToolkit.transformXmlPage( webClient.getPage("https://w2.seg-social.es/ProsaInternet/OnlineAccess?ARQ.SPM.ACTION=LOGIN&ARQ.SPM.APPTYPE=SERVICE&ARQ.IDAPP=XV24M00E") );
 			handleSegSocialExceptions(htmlPage);
 
 			HtmlForm formDatos = (HtmlForm) HtmlUnitToolkit.wait4(htmlPage, p -> p.getElementById("FORMULARIO_1"))
@@ -906,6 +921,11 @@ class SistemaREDMov {
 
 			btnSubmit = htmlPage.querySelector("#Sub2207001004_85");
 			htmlPage = btnSubmit.click();
+			
+			HtmlInput confirmButton = (HtmlInput) htmlPage.getElementById("Sub2204701006_83");
+			if(null != confirmButton)
+				htmlPage = confirmButton.click();
+			
 			HtmlUnitToolkit.manageStatusCode(htmlPage);
 		}
 	}
@@ -983,7 +1003,8 @@ class SistemaREDMov {
 			webClient.getOptions().setJavaScriptEnabled(true);
 			webClient.getOptions().setThrowExceptionOnScriptError(false);
 			webClient.setJavaScriptErrorListener(jascriptFunctionExceptionError());
-			HtmlPage htmlPage = webClient.getPage(url);
+			
+			HtmlPage htmlPage =  HtmlUnitToolkit.transformXmlPage(webClient.getPage(url));
 			
 			Integer ident = Integer.parseInt(Toolkit.getIdentityType(ipf));
 
@@ -1000,14 +1021,14 @@ class SistemaREDMov {
 			formDatos.getInputByName("CC1EmpresaAut").setValue(regimen + ctaCti);
 			((HtmlInput) htmlPage.querySelector("#PR_CAMPO_ORIGEN")).setValue("FORM");
 
-			htmlPage = ((HtmlButton) htmlPage.querySelector("#ENVIO_10")).click();
+			htmlPage = HtmlUnitToolkit.transformXmlPage( ((HtmlButton) htmlPage.querySelector("#ENVIO_10")).click() );
 			HtmlUnitToolkit.handleNewSegSocialExceptions(htmlPage);
 	
 			formDatos = (HtmlForm) HtmlUnitToolkit.wait4(htmlPage, p -> p.getElementById("FORMULARIO_1")).orElseThrow();
 			formDatos.getInputByName(fieldValue).setValue(newValue);
 			formDatos.getInputByName(fieldDate).setValue(fr[0] + "/" + fr[1] + "/" + fr[2]);
 
-			htmlPage = ((HtmlButton) htmlPage.querySelector("#ENVIO_7")).click();
+			htmlPage = HtmlUnitToolkit.transformXmlPage( ((HtmlButton) htmlPage.querySelector("#ENVIO_7")).click() );
 			HtmlUnitToolkit.handleNewSegSocialExceptions(htmlPage);
 
 			String message = HtmlUnitToolkit.getMessageSuccess(htmlPage);

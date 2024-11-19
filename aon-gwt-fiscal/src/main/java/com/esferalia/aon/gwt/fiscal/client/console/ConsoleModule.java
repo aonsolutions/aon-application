@@ -61,8 +61,8 @@ public class ConsoleModule extends MainEntryPoint {
 
 			@Override
 			public void onSuccess() {
-				ConsoleModule domainIntegrityCheck = new ConsoleModule();
-				domainIntegrityCheck.onModuleLoad();
+				ConsoleModule consoleModule = new ConsoleModule();
+				consoleModule.onModuleLoad();
 			}
 			
 		});

@@ -23,10 +23,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import javax.faces.context.FacesContext;
-import jakarta.mail.Address;
-import jakarta.mail.internet.AddressException;
-import jakarta.mail.internet.InternetAddress;
-import jakarta.mail.internet.MimeMessage;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.ArrayUtils;
@@ -63,6 +59,11 @@ import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.server.io.AonFileUtils;
 import com.google.api.services.drive.Drive;
 
+import jakarta.mail.Address;
+import jakarta.mail.Message.RecipientType;
+import jakarta.mail.internet.AddressException;
+import jakarta.mail.internet.InternetAddress;
+import jakarta.mail.internet.MimeMessage;
 import net.aonsolutions.aon.google.apis.drive.AonDrive;
 import solutions.aon.aws.ses.SES;
 
@@ -349,9 +350,10 @@ public class FinanceEmailUtil extends CompanyEmailUtil implements IFinanceConsta
 		    		MimeMessage message = (MimeMessage) aonMessage.getMessage();
 		            message.setFrom(new InternetAddress(from));
 		            Address replyTo = new InternetAddress(getEmailSender().getMailAccount().getEmail());
+		            message.addRecipient(RecipientType.BCC, replyTo);
 		            Address[] addresses = {replyTo};
 		            message.setReplyTo(addresses);
-		            SES.sendEmail(message);
+		            SES.sendEmail(AonUtil.getDomainName(), message);
 		    	} else {
 		    		aonMessage = getEmailSender().sendMessage(recipients, _subject, _content, MimeType.MIME_HTML, file, xml );
 					if ( saveSent ) {

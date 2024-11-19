@@ -24,4 +24,6 @@ public interface RawdocServiceAsync {
 	void getAccountingInvoice(String domainName, int domain, String user, String invoice,AsyncCallback<AccountingInvoice> callback);
 	void processInvoiceFile(String domainName, int domain, String user, String jsonStr, Invoice invoice,AsyncCallback<Boolean> callback);
 
+	void getS3Url(Rawdoc rawdoc, AsyncCallback<String> callback);
+
 }

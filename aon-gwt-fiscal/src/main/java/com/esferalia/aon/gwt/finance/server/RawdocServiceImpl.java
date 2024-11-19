@@ -23,7 +23,6 @@ import com.esferalia.aon.occam.api.model.attachment.InvoiceAttachmentType;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.tedi.TediResult;
 import com.esferalia.aon.occam.api.model.type.MimeType;
-import com.esferalia.aon.occam.impl.jooq.dao.AttachmentDAO;
 import com.esferalia.aon.occam.server.accounting.Rawdoc2AccountingInvoice;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.util.AonStringUtils;
@@ -153,5 +152,10 @@ public class RawdocServiceImpl extends AonStatelessRemoteServiceServlet implemen
 			}
 		}
 		return true;
+	}
+
+	@Override
+	public String getS3Url(Rawdoc rawdoc) {
+		return S3.getURL(rawdoc.getS3Bucket(), rawdoc.getS3Key()).toExternalForm();
 	}
 }

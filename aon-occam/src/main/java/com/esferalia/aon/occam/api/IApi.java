@@ -11,7 +11,9 @@ public interface IApi {
 
 	Stream<InvoiceNewPortal> getInvoiceNewPortal(AONContext ctx, InvoiceFilter filter, InvoiceOrder order);
 	Stream<Invoice> getInvoices(AONContext ctx, InvoiceFilter filter);
-	java.util.Date getInvoiceExpDate(AONContext ctx, Integer id);
 	long getInvoiceNewPortalCount(AONContext ctx, InvoiceFilter filter);
 	void updateInvoiceNote(AONContext ctx,Integer id, String comment);
+	Integer getInvoicesCount(AONContext ctx, InvoiceFilter filter);
+	java.util.Date getInvoiceExpDate(AONContext ctx, Integer id); 
+
 }

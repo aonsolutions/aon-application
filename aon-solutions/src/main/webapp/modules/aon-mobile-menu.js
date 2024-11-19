@@ -11,7 +11,7 @@ import * as UA from '../services/userAgentService.js';
 import { AonNotification } from "./notification/aon-notification.js";
 import { AonApps } from "./aon-apps.js";
 import { AonNotificationIcon } from "./notification/aon-notification-icon.js";
-import { uploadInvoices } from "./invoice/InvoiceUtils.js";
+import { generateJobId, uploadInvoices } from "./invoice/InvoiceUtils.js";
 import { uploadDocuments } from "./documental/DocumentalUtils.js";
 import { AonDialog } from "../components/aon-dialog.js";
 import { AonInvoicePanel } from "./invoice/aon-invoice-panel.js";
@@ -302,7 +302,7 @@ export class AonMobileMenu extends AonElement {
       fn :  () => {
         if(isInvoice){
           dialog.close();
-          if(UA.isAndroidApp()) {
+          if(UA.isApp()) {
             this.SELECTED = "invoice";
             let ionicData = { action: MOBILE_ACTION.CAMERA, id: this.INPUT_CAMERA, selector: 'aon-new-mobile-menu' };
             openCamera(ionicData, (result) => {
@@ -501,10 +501,11 @@ export class AonMobileMenu extends AonElement {
 			  uploadToast = new AonUploadToast();
 	  		this.appendChild(uploadToast);
   		}
-		  let data = {
-			  uploaded : 0
-		  } 
+		  let data = { uploaded: 0, prefix: 'CM' };
+      uploadToast.setJobId(generateJobId()); 
 			uploadToast.addFile("invoice", e.detail, data);
+
+      this.home();
 		});
     this.rootPanel(editor); 
   }

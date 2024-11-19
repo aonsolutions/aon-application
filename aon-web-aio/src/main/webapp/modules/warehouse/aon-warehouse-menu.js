@@ -1,6 +1,7 @@
 import { MSG, CSS, EVENT, TAG } from 'aonsolutions/environments/environments.js'; 
 import { AonSuiteMenu } from '../aon-suite-menu.js';
 import * as GWT from 'aonsolutions/gwt/gwt.js';
+import * as JSF from '../aon-jsf-app.js';
 
 export class AonWarehouseMenu extends AonSuiteMenu {
 
@@ -47,38 +48,38 @@ export class AonWarehouseMenu extends AonSuiteMenu {
             options: [ {
                 description: "Entradas (Albaranes de Compra)",
                 title: "Entradas (Albaranes de Compra)",
-                action: () => alert("description")
+				action: () => this.rootPanel(new JSF.AonJsfIncome)
             },{
                 description: "Salidas (Albaranes de Compra)",
                 title: "Salidas (Albaranes de Compra)",
-                action: () => alert("description")
+				action: () => this.rootPanel(new JSF.AonJsfDelivery)
             },{
                 description: "Traspasos entre almacenes",
                 title: "Traspasos entre almacenes",
-                action: () => alert("description")
+				action: () => this.rootPanel(new JSF.AonJsfWarehouseTransfer)
             },{
                 description: "Servir pedidos",
                 title: "Servir pedidos",
-                action: () => alert("description")
+				action: () => this.rootPanel(new JSF.AonJsfOrderServer)
             }]
         },{
             title: 'Informes',
             options: [{
                 description: "Listado por almacén.",
                 title: "Listado por almacén.",
-                action: () => alert("description")
+				action: () => this.rootPanel(new JSF.AonJsfStockReportWarehouse)
             },{
                 description: "Listado por articulo.",
                 title: "Listado por articulo.",
-                action: () => alert("description")
+				action: () => this.rootPanel(new JSF.AonJsfStockReportItem)
             },{
                 description: "Listado valorado por almacén.",
                 title: "Listado valorado por almacén.",
-                action: () => alert("description")
+				action: () => this.rootPanel(new JSF.AonJsfStockReportWarehouseValued)
             },{
                 description: "Listado valorado por articulo.",
                 title: "Listado valorado por articulo.",
-                action: () => alert("description")
+				action: () => this.rootPanel(new JSF.AonJsfStockReportItemValued)
             },{
                 description: "Aprovisionamiento según consumo",
                 title: "Aprovisionamiento según consumo",
@@ -93,19 +94,19 @@ export class AonWarehouseMenu extends AonSuiteMenu {
             options: [{
                 description: "Cierre de inventario",
                 title: "Cierre de inventario",
-                action: () => alert("description")
+				action: () => this.rootPanel(new JSF.AonJsfInventoryClose)
             },{
                 description: "Gestión de Inventarios",
                 title: "Gestión de Inventarios",
-                action: () => alert("description")
+				action: () => this.rootPanel(new JSF.AonJsfInventory)
             },{
                 description: "Control de Existencias",
                 title: "Control de Existencias",
-                action: () => alert("description")
+				action: () => this.rootPanel(new JSF.AonJsfStock)
             },{
                 description: "Propuesta de pedidos",
                 title: "Propuesta de pedidos",
-                action: () => alert("description")
+				action: () => this.rootPanel(new JSF.AonJsfOrderProposal)
             }]
         },{
             title: 'Elaboraciones',
@@ -127,11 +128,11 @@ export class AonWarehouseMenu extends AonSuiteMenu {
             options: [{
                 description: "Definicion de Almacenes",
                 title: "Definicion de Almacenes",
-                action: () => alert("description")
+				action: () => this.rootPanel(new JSF.AonJsfWarehouse)
             },{
                 description: "Agencias de transporte",
                 title: "Agencias de transporte",
-                action: () => alert("description")
+				action: () => this.rootPanel(new JSF.AonJsfCarrier)
             },{
                 description: "Impresión de etiquetas de productos",
                 title: "Impresión de etiquetas de productos",

@@ -228,7 +228,6 @@ export class AonInvoice extends AonElement {
 				this.getApplication().getParent().buildCounter();
 				
 			} 
-
 		}
 	}
 
@@ -359,8 +358,7 @@ export class AonInvoice extends AonElement {
 		invoiceToolbar.addButton2(ACTION.PREVIOUS, () => this.previousInvoice());
 		invoiceToolbar.addSeparator();
 
-		if(!this.getInvoice().isOcrStatus(CONSTANT.REJECTED, CONSTANT.DISCARDED, CONSTANT.PENDING_DECISSION, CONSTANT.ERROR )
-			&& !this.getInvoice().isDraft()){
+		if(!this.getInvoice().isDraft() && !this.getInvoice().isRejected()){
 			invoiceToolbar.addButton('Options', 'more_vert', (e) => {
 				e.preventDefault();
 				let rect = e.target.getBoundingClientRect();
@@ -386,11 +384,13 @@ export class AonInvoice extends AonElement {
 				comment.fn = () => this.addInvoiceComment();
 				moreActions.push(comment);
 	
-				let send = ACTION.SEND_INVOICE;
-				send.permission = true;
-				send.backgroundColor = INVOICE.color;
-				send.fn = () => this.sendInvoice();
-				moreActions.push(send);
+				if(this.getInvoice().isEmitida()) {
+					let send = ACTION.SEND_INVOICE;
+					send.permission = true;
+					send.backgroundColor = INVOICE.color;
+					send.fn = () => this.sendInvoice();
+					moreActions.push(send);
+				}
 	
 				if(!this.getInvoice().isRawdoc()){
 					let rectify = ACTION.RECTIFY_INVOICE;
@@ -1337,7 +1337,7 @@ export class AonInvoice extends AonElement {
 			let enabled = this.invoice.isInbox() && this.series && this.series.filter(f => f.description == this.invoice.serie).length === 0;
 			this.getElement(this.NUMBER).readonly = !enabled;
 			this.getElement(this.NUMBER).disabled = !enabled;
-			if(!enabled) {
+			if(!enabled || this.invoice.serie == '') {
 				this.invoice.number = '';
 				this.getElement(this.NUMBER).value = '';
 			} else {

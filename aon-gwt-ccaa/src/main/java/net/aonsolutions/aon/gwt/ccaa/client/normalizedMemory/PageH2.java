@@ -6,6 +6,7 @@ import com.esferalia.aon.occam.api.model.fiscal.d2_deposit.D2PDepositConstants;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.TabPanel;
 import com.google.gwt.user.client.ui.Widget;
@@ -22,16 +23,24 @@ public class PageH2 extends PageAbs {
 	@UiField FlexTable table1;
 	@UiField FlexTable table2;
 	@UiField TabPanel tabPanel;
-	
+
 	public PageH2(Deposit2 deposit) {
 		super(deposit);
-		
-		Widget ui = pageBinder.createAndBindUi(this);
-		initWidget(ui);
-		tabPanel.selectTab(0);
-		initializeTable();
+		initialize(0);
+	}
+	
+	public PageH2(Deposit2 deposit, Integer tab) {
+		super(deposit);
+		initialize(tab);
 	}
 
+	private void initialize(Integer tab) {		
+		Widget ui = pageBinder.createAndBindUi(this);
+		initWidget(ui);
+		tabPanel.selectTab(tab != null ? tab : 0);
+		initializeTable();
+	}
+	
 	@Override
 	protected void initializeTable() {
 		if (isPymes()) {
@@ -47,5 +56,10 @@ public class PageH2 extends PageAbs {
 			else defineBalanceTable(table1,AON.MSG.balanceActivo(),D2DepositConstants.BA_ABREVIATE_KEYS_2);
 			defineBalanceTable(table2,AON.MSG.balanceActivo(),D2DepositConstants.BA_ABREVIATE_KEYS_3);
 		}
+	}
+	
+	@Override
+	protected void refreshDepositPage() {
+		getDeposit().refreshPage(tabPanel.getTabBar().getSelectedTab());
 	}
 }

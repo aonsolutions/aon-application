@@ -35,14 +35,28 @@ export class AonConfig extends AonElement {
         this.TOP_NAV_SWITCH = this.id + 'TopSwitch';
         this.SIDE_NAV_SWITCH = this.id + 'SideSwitch';
         this.APPS_SWITCH = this.id + 'AppsSwitch';
-        this.DARK_SWITCH = this.id + 'DarkSwitch';
-        this.BRAND_SWITCH = this.id + 'BrandSwitch';
         this.LANG_CARD = this.id + 'HelpLangCard';
         this.THEMES_CARD = this.id + 'ThemesCard';
         this.TYPE_CARD = this.id + 'TypeCard';
     }
 
     build() {
+
+        let sideNavDiv= this.createDiv();
+        sideNavDiv.className = CSS.AON_CONFIG_SIDE_NAV;
+
+        let sideNavTitle = this.createSpan(); 
+        sideNavTitle.className =  `${CSS.AON_CONFIG_SIDE_NAV}Title`;
+        //sideNavTitle.innerHTML = MSG.PORTAL_MENU;
+        sideNavTitle.innerHTML = MSG.SIDE_MENU;
+        sideNavDiv.appendChild(sideNavTitle);
+
+        let sideNavSwitch = new AonSwitch();
+        sideNavSwitch.id = this.SIDE_NAV_SWITCH;
+        sideNavSwitch.checked =  LS.isLeftMenu();
+        sideNavDiv.appendChild(sideNavSwitch);
+
+        this.appendChild(sideNavDiv);
 
         let topNavDiv = this.createDiv();
         topNavDiv.className = CSS.AON_CONFIG_TOP_NAV;
@@ -59,70 +73,32 @@ export class AonConfig extends AonElement {
 
         this.appendChild(topNavDiv);
 
+        if(this.isCSSLoaded("beta")){
+            let appsDiv = this.createDiv();
+            appsDiv.className = CSS.AON_CONFIG_APPS;
+    
+            let appsTitle = this.createSpan(); 
+            appsTitle.className =  `${CSS.AON_CONFIG_APPS}Title`;
+            appsTitle.innerHTML = "Mostrar todas las apps";
+            appsDiv.appendChild(appsTitle);
+    
+            let appsSwitch = new AonSwitch();
+            appsSwitch.id = this.APPS_SWITCH;
+            appsSwitch.checked = LS.isAppMenu();
+            appsDiv.appendChild(appsSwitch);
+    
+            this.appendChild(appsDiv);
 
-        let sideNavDiv= this.createDiv();
-        sideNavDiv.className = CSS.AON_CONFIG_SIDE_NAV;
-
-        let sideNavTitle = this.createSpan(); 
-        sideNavTitle.className =  `${CSS.AON_CONFIG_SIDE_NAV}Title`;
-        sideNavTitle.innerHTML = MSG.PORTAL_MENU;
-        sideNavDiv.appendChild(sideNavTitle);
-
-        let sideNavSwitch = new AonSwitch();
-        sideNavSwitch.id = this.SIDE_NAV_SWITCH;
-        sideNavSwitch.checked =  LS.isLeftMenu();
-        sideNavDiv.appendChild(sideNavSwitch);
-
-        this.appendChild(sideNavDiv);
-
-        let appsDiv = this.createDiv();
-        appsDiv.className = CSS.AON_CONFIG_APPS;
-
-        let appsTitle = this.createSpan(); 
-        appsTitle.className =  `${CSS.AON_CONFIG_APPS}Title`;
-        appsTitle.innerHTML = "Mostrar todas las apps";
-        appsDiv.appendChild(appsTitle);
-
-        let appsSwitch = new AonSwitch();
-        appsSwitch.id = this.APPS_SWITCH;
-        appsSwitch.checked = LS.isAppMenu();
-        appsDiv.appendChild(appsSwitch);
-
-        this.appendChild(appsDiv);
-
-        let darkDiv = this.createDiv();
-        darkDiv.className = CSS.AON_CONFIG_DARK;
-
-        let darkTitle = this.createSpan(); 
-        darkTitle.className =  `${CSS.AON_CONFIG_DARK}Title`;
-        darkTitle.innerHTML = "Modo oscuro";
-        darkDiv.appendChild(darkTitle);
-
-        let darkSwitch = new AonSwitch();
-        darkSwitch.id = this.DARK_SWITCH;
-        darkSwitch.checked = LS.isDarkTheme();
-        darkDiv.appendChild(darkSwitch);
-
-        this.appendChild(darkDiv);
-
-        let brandDiv = this.createDiv();
-        brandDiv.className = CSS.AON_CONFIG_BRAND;
-
-        let brandTitle = this.createSpan(); 
-        brandTitle.className =  `${CSS.AON_CONFIG_DARK}Title`;
-        brandTitle.innerHTML = "Marca blanca";
-        brandDiv.appendChild(brandTitle);
-
-        let brandSwitch = new AonSwitch();
-        brandSwitch.id = this.BRAND_SWITCH;
-        brandSwitch.checked = LS.isWhiteBrand();
-        brandDiv.appendChild(brandSwitch);
-
-        this.appendChild(brandDiv);
+            appsSwitch.addEventListener(EVENT.CHANGE, () => {
+                LS.setAppMenu(appsSwitch.checked);
+                aonMenu.buildMenuTopnav();
+                aonMenu.reloadTopNav();
+            });
+        }
 
         let themesCard = new AonCard();
         themesCard.id = this.THEMES_CARD;
-        themesCard.title = "Selección de tema";
+        themesCard.title = MSG.THEME_SELECTION;
         themesCard.className = "rightPanelLangCard";
         this.appendChild(themesCard);
 
@@ -130,10 +106,10 @@ export class AonConfig extends AonElement {
         themesCardDiv.style.boxShadow = 'none';
 
         let themesDiv = this.createDiv();
-        themesDiv.appendChild(this.buildThemeData("Estándar", '/css/theme/aon.css'));
-        themesDiv.appendChild(this.buildThemeData("Clásico",'/css/theme/classic.css'));
-        themesDiv.appendChild(this.buildThemeData("Moderno",'/css/theme/modern.css'));
-        themesDiv.appendChild(this.buildThemeData("Oscuro",'/css/theme/dark.css'));
+        themesDiv.appendChild(this.buildThemeData(MSG.STANDARD, '/css/theme/aon.css'));
+        themesDiv.appendChild(this.buildThemeData(MSG.CLASSIC,'/css/theme/classic.css'));
+        themesDiv.appendChild(this.buildThemeData(MSG.MODERN,'/css/theme/modern.css'));
+        themesDiv.appendChild(this.buildThemeData(MSG.DARK,'/css/theme/dark.css'));
         //themesDiv.appendChild(this.buildThemeData("Oscuro (Beta)",'/css/theme/darkBeta.css'));
         themesCard.setContent(themesDiv);
 
@@ -158,54 +134,44 @@ export class AonConfig extends AonElement {
 
         topNavSwitch.addEventListener(EVENT.CHANGE, () => {
             LS.setTopMenu(topNavSwitch.checked);
+            let topnav = this.getElement("aonMenuTopnav");
 
-      
-        if(LS.isTopMenu()) {
-                aonMenu.showTopNav();
+            if(LS.isTopMenu()) {
+            	aonMenu.showTopNav();
             } else {
                 aonMenu.hideTopNav();
             };
-                
-        });
+			
+		});
 
         sideNavSwitch.addEventListener(EVENT.CHANGE, () => {
             let welcome = this.getElement("aonCompanyTabFilter");
             LS.setLeftMenu(sideNavSwitch.checked);
             LS.setPortalChecked(sideNavSwitch.checked);
+            let side = this.getElement("aonMenuSidenav");
             if(!welcome){
-                if(LS.isLeftMenu()) {
+                if(side.style.width == "0px") {
                     aonMenu.showSideNav();
-                } else {
+                } else if(side.style.width == "68px") {
                     aonMenu.hideSideNav();
                 };
             }
             
         });
 
-        appsSwitch.addEventListener(EVENT.CHANGE, () => {
-            LS.setAppMenu(appsSwitch.checked);
-            aonMenu.buildMenuTopnav();
-            aonMenu.reloadTopNav();
-        });
-
-        darkSwitch.addEventListener(EVENT.CHANGE, () => {
-            LS.setDarkTheme(darkSwitch.checked);
-            if (darkSwitch.checked) {
-                loadTheme("dark");
-            } else if (!darkSwitch.checked){
-                loadTheme("aon");
-            }
-            location.reload();
-        });
-
-        brandSwitch.addEventListener(EVENT.CHANGE, () => {
-            LS.setWhiteBrand(brandSwitch.checked);
-        })
-
         let openButton = this.getElement("openNotificationButton");
 		openButton.style.display = "none";
         
     }
+
+    isCSSLoaded(cssFileName) {
+		for (let sheet of document.styleSheets) {
+			if (sheet.href && sheet.href.includes(cssFileName)) {
+				return true;
+			}
+		}
+		return false;
+	}
 
     buildThemeData(value,theme){
         let div = this.createDiv();

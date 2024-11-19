@@ -25,8 +25,12 @@ import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.time.Duration;
 import java.util.ArrayList;
+import java.util.Base64;
+import java.util.Comparator;
 import java.util.Date;
+import java.util.LinkedHashMap;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
@@ -60,6 +64,7 @@ import com.esferalia.aon.occam.api.json.JsonUtils;
 import com.esferalia.aon.occam.api.json.invoice.InvoiceJSON;
 import com.esferalia.aon.occam.api.model.AccountingReportParams;
 import com.esferalia.aon.occam.api.model.CertificateInfo;
+import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.DomainGserviceaccount;
 import com.esferalia.aon.occam.api.model.IJsonNames;
 import com.esferalia.aon.occam.api.model.Occam;
@@ -69,8 +74,10 @@ import com.esferalia.aon.occam.api.model.attachment.AttachType;
 import com.esferalia.aon.occam.api.model.attachment.RegistryAttachmentType;
 import com.esferalia.aon.occam.api.model.finance.BankAccount;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
+import com.esferalia.aon.occam.api.model.finance.TbaiConfiguration;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalMatrixParams;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModel;
+import com.esferalia.aon.occam.api.model.fiscal.FiscalModelDetail;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModelType;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModelUtils;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalStatus;
@@ -92,9 +99,11 @@ import com.esferalia.aon.occam.api.model.fiscal.Mod303;
 import com.esferalia.aon.occam.api.model.fiscal.VatContext;
 import com.esferalia.aon.occam.api.model.fiscal.aeat.AEATParams;
 import com.esferalia.aon.occam.api.model.fiscal.aeat.AEATResponse;
+import com.esferalia.aon.occam.api.model.invoice.InvoiceFilter;
 import com.esferalia.aon.occam.api.model.type.Administration;
 import com.esferalia.aon.occam.api.model.type.AppParam;
 import com.esferalia.aon.occam.api.model.type.FiscalModelDeclarationType;
+import com.esferalia.aon.occam.api.model.type.InvoiceType;
 import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.occam.api.model.type.Period;
 import com.esferalia.aon.occam.api.model.type.WithholdingType;
@@ -136,8 +145,10 @@ import jakarta.servlet.http.HttpServletResponse;
 import net.aonsolutions.aon.api.error.AonApiError;
 import net.aonsolutions.aon.api.error.AonApiException;
 import net.aonsolutions.aon.api.ewok.AonApiData;
+import net.aonsolutions.aon.api.ewok.IConstants;
 import net.aonsolutions.aon.api.excel.InvoiceExcelExport;
 import net.aonsolutions.aon.google.apis.drive.AonDrive;
+import net.aonsolutions.aon.tbai.TbaiData;
 
 @WebServlet(name = "AonFiscalServlet", urlPatterns = {"/ms/api/fiscal/*"})
 public class FiscalServlet extends AonApiHttpServlet{
@@ -155,7 +166,9 @@ public class FiscalServlet extends AonApiHttpServlet{
 			AonApiData api = initialize(req, false);
 			if ( AonStringUtils.endsWith(api.getPath(), "/models") ) {
 				response(req, resp, getFiscalModels(api));
-			} else if ( AonStringUtils.endsWith(api.getPath(), "/models/invoices") ) {
+			} 
+			// Fiscal Models (invoices & salaries) Excel
+			else if ( AonStringUtils.endsWith(api.getPath(), "/models/invoices") ) {
 				response(req, resp, getFiscalModelsInvoinces(api));
 			} else if ( AonStringUtils.endsWith(api.getPath(), "/models/invoices/count") ) {
 				response(req, resp, getFiscalModelsInvoincesCount(api));
@@ -165,7 +178,9 @@ public class FiscalServlet extends AonApiHttpServlet{
 				response(req, resp, getFiscalModelsSalaries(api));
 			} else if ( AonStringUtils.endsWith(api.getPath(), "/models/salaries/count") ) {
 				response(req, resp, getFiscalModelsSalariesCount(api));
-			} else if ( AonStringUtils.endsWith(api.getPath(), "/models390") ) {
+			} 
+			
+			else if ( AonStringUtils.endsWith(api.getPath(), "/models390") ) {
 				response(req, resp, getFiscalModels390(api));
 			} else if ( AonStringUtils.endsWith(api.getPath(), "/estimations") ) {
 				response(req, resp, getFiscalModelsEstimations(api));
@@ -175,7 +190,10 @@ public class FiscalServlet extends AonApiHttpServlet{
 				responseFile(resp, "filename", getFiscalExcel(api), MimeType.MS_EXCEL_2007);
 			} else if ( AonStringUtils.endsWith(api.getPath(), "/one") ) {
 				response(req, resp, getFiscalById(api));
-			} else if ( AonStringUtils.endsWith(api.getPath(), "/estimations/invoices") ) {
+			} else if ( AonStringUtils.endsWith(api.getPath(), "/detail") ) {
+				response(req, resp, getFiscalDetailById(api));
+			} // Fiscal Estimation Models (invoices & salaries) Excel
+			else if ( AonStringUtils.endsWith(api.getPath(), "/estimations/invoices") ) {
 				response(req, resp, getFiscalModelsEstimationsInvoinces(api));
 			} else if ( AonStringUtils.endsWith(api.getPath(), "/estimations/salaries") ) {
 				response(req, resp, getFiscalModelsEstimationsSalaries(api));
@@ -218,10 +236,44 @@ public class FiscalServlet extends AonApiHttpServlet{
 			FiscalModelType modelType = FiscalModelType.safeValueByName(type);
 			FiscalModel fs;
 			if(id != null && id != 0 && modelType != null) {
-				fs = getModel(ctx, FiscalModelType.M131, id);
+				fs = getModel(ctx, modelType, id);
 				return FiscalModelJSON.toJSON(fs);
 			} else {
 				throw new AonApiException("Error al obtener el modelo.");
+			}
+		} catch(Exception e) {
+			throw new AonApiException(e.getMessage());
+		}
+	}
+	
+	private JSONArray getFiscalDetailById(AonApiData api) {
+		try {			
+			CloseableAONContext ctx;
+			ctx = AONContext.getAONContext(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin());
+			Integer id = api.getData().optInt(IJsonNames.ID);
+			String type = api.getData().optString(IJsonNames.TYPE);
+			FiscalModelType modelType = FiscalModelType.safeValueByName(type);
+			FiscalModel fs;
+			JSONArray array = new JSONArray();
+			if(id != null && id != 0 && modelType != null) {
+				fs = getModel(ctx, modelType, id);
+				LinkedHashMap<String, FiscalModelDetail> map = fs.getMap();
+				for(var element : map.entrySet()) {
+					JSONObject json = new JSONObject();
+					json.put("id" , element.getValue().getId());
+					json.put("expression" , element.getValue().getExpression());
+					json.put("description" , element.getValue().getDescription());
+					json.put("type" , element.getValue().getType());
+					json.put("acumulated_amount" , element.getValue().getAccumulatedAmount());
+					json.put("declared_amount" , element.getValue().getDeclaredAmount());
+					json.put("resultamount" , element.getValue().getResultAmount());
+					json.put("adjust_amount" , element.getValue().getAdjustAmount());
+					json.put("amount" , element.getValue().getAmount());
+					array.put(json);
+				}
+				return array;
+			} else {
+				throw new AonApiException("Error al obtener los detalles del modelo.");
 			}
 		} catch(Exception e) {
 			throw new AonApiException(e.getMessage());
@@ -288,7 +340,7 @@ public class FiscalServlet extends AonApiHttpServlet{
 			models.addAll( Mod131DAO.getMod131s(ctx, api.getDomain().getId()).collect(Collectors.toCollection(LinkedList::new)));
 			models.addAll( Mod202DAO.getMod202s(ctx, api.getDomain().getId()).collect(Collectors.toCollection(LinkedList::new)));
 			
-			// Comprobar si está configurado "Presentación automática de modelos" y "Entorno de Pruebas de la AEAT"
+			// Comprobar si estï¿½ configurado "Presentaciï¿½n automï¿½tica de modelos" y "Entorno de Pruebas de la AEAT"
 			int presModelAutoEnabled = AppParamDAO.fetchIntValue(ctx, AppParam.FS_PRES_MODEL_AUTO_ENABLED);
 			boolean testEnvironment = AonEnumUtils.getAonBoolean(AppParamDAO.fetchValue(ctx, AppParam.FS_AEAT_TEST_ENV));
 			
@@ -297,7 +349,7 @@ public class FiscalServlet extends AonApiHttpServlet{
 			models.forEach(model-> {
 				try {
 					jsonModels.put(FiscalModelJSON.toJSON(model)
-							.put("presModelAuto", model.getAdministration() == Administration.COMMON_TERRITORY ? presModelAutoEnabled : 0) // Presentación automática del modelo (solo modelos de la Agencia Tributaria)							
+							.put("presModelAuto", model.getAdministration() == Administration.COMMON_TERRITORY ? presModelAutoEnabled : 0) // Presentaciï¿½n automï¿½tica del modelo (solo modelos de la Agencia Tributaria)							
 							.put("testEnvironment", testEnvironment)  // Entorno de pruebas de la AEAT
 							.put("nrc", model.getNrc())
 							.put("plazos", model.getPlazos())							
@@ -314,52 +366,95 @@ public class FiscalServlet extends AonApiHttpServlet{
 		} 
 	}
 	
-	private JSONObject getFiscalModelsInvoinces(AonApiData api) {
+	private JSONArray getFiscalModelsInvoinces(AonApiData api) {
 		try ( CloseableAONContext ctx = AONContext.getAONContext(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin())){
 			
-			/*
-			 * api.getData example 
-			 * {
-			 * 	"fsModel": fsModelId,
-			 * }
-			 * **/
-			
 			Integer fsModelId = JsonUtils.getInteger(api.getData(), "fsModel");
+			String invoiceType = JsonUtils.getString(api.getData(), "invoiceType");
+			
+			// Filter JSON
+			String search = JsonUtils.getString(api.getData(), "search");
+			Date startDate = JsonUtils.getDateFormat(api.getData(), "startDate", "yyyy-MM-dd");
+			Date endDate = JsonUtils.getDateFormat(api.getData(), "endDate", "yyyy-MM-dd");
+			Integer limit = JsonUtils.getInteger(api.getData(), "limit");
 			Integer page = JsonUtils.getInteger(api.getData(), "page");
-			Integer offset = page * 100;
-			List<Alcatraz> alcatrazList = AlcatrazDAO.getAlcatrazInvoicesByFsModel(ctx, fsModelId, offset);
+			Integer offset = page * limit;
+			
+			List<InvoiceType> types = new ArrayList<InvoiceType>();
+			if(AonStringUtils.equalsIgnoreCase(invoiceType, "issued")) types.add(InvoiceType.SALES);
+			else {
+				types.add(InvoiceType.EXPENSES);
+				types.add(InvoiceType.PURCHASE);
+			}
+			
+			// Filter
+			InvoiceFilter invoiceFilter = new InvoiceFilter();
+			invoiceFilter.setDescription(search);
+			invoiceFilter.setTypesByte(types.stream().map(type -> type.value()).toArray(Byte[]::new));
+			invoiceFilter.setFrom(startDate);
+			invoiceFilter.setTo(endDate);
+			invoiceFilter.setPerPage(limit);
+			invoiceFilter.setPage(offset);
+			
+			List<Alcatraz> alcatrazList = AlcatrazDAO.getAlcatrazInvoicesByFsModel(ctx, fsModelId, invoiceFilter);
 			
 			// Invoices
+			LinkedHashSet<Integer> invoiceIds = alcatrazList.stream().map(Alcatraz::getInvoice).filter(Objects::nonNull).collect(Collectors.toCollection(LinkedHashSet::new));
+			List<Integer> invoiceIdsArr = new ArrayList<>(invoiceIds);
+			 
 			List<Invoice> invoices = new ArrayList<Invoice>();
-			HashSet<Integer> invoiceIds = alcatrazList.stream().map(Alcatraz::getInvoice).filter(Objects::nonNull).collect(Collectors.toCollection(HashSet::new));
-			invoiceIds.forEach(invoiceId -> invoices.add( AON_SOLUTIONS.getInvoice(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), invoiceId) ) );
+			invoices = AON.getFullInvoiceList(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), invoiceIdsArr);
 			
-			JSONArray invoicesArr = InvoiceJSON.toJSON(invoices);
+			JSONArray invoicesArr = new JSONArray();
+			invoices.forEach(invoice -> {
+				JSONObject invoiceJson = InvoiceJSON.toJSON(invoice);
+				
+				TbaiConfiguration tbai = AON.getTbaiConfiguration(api.getDomain(), api.getUser().getLogin());
+				if(tbai.isActive()) {	
+					String tbaiUrl = TbaiData.getInstance(tbai).getTbaiUrl(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), invoice.getId());
+					if(!AonStringUtils.isBlank(tbaiUrl)) {
+						invoiceJson.put("tbai", true);
+						invoiceJson.put("tbaiUrl", tbaiUrl);
+					}
+				}
+				invoiceJson.put(IJsonNames.FILE, buildInvoiceFileJSON(api.getDomain(), api.getUser().getLogin(), invoice));
+				
+				invoicesArr.put(invoiceJson);
+			});
 			
-			// Salaries
-			JSONArray salariesArr = new JSONArray();
 			
-			// Result
-			JSONObject result = new JSONObject();
-			result.put("invoice", invoicesArr);
-			result.put("salary", salariesArr);
-			
-			return result;
+			return invoicesArr;
 		} 
 	}
 	
 	private JSONObject getFiscalModelsInvoincesCount(AonApiData api) {
 		try ( CloseableAONContext ctx = AONContext.getAONContext(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin())){
 			
-			/*
-			 * api.getData example 
-			 * {
-			 * 	"fsModel": fsModelId,
-			 * }
-			 * **/
-			
 			Integer fsModelId = JsonUtils.getInteger(api.getData(), "fsModel");
-			Integer alcatrazInvoiceCount = AlcatrazDAO.getAlcatrazInvoicesCountByFsModel(ctx, fsModelId);
+			String invoiceType = JsonUtils.getString(api.getData(), "invoiceType");
+			
+			// Filter JSON
+			String search = JsonUtils.getString(api.getData(), "search");
+			Date startDate = JsonUtils.getDateFormat(api.getData(), "startDate", "yyyy-MM-dd");
+			Date endDate = JsonUtils.getDateFormat(api.getData(), "endDate", "yyyy-MM-dd");
+			
+			List<InvoiceType> types = new ArrayList<InvoiceType>();
+			if(AonStringUtils.equalsIgnoreCase(invoiceType, "issued")) types.add(InvoiceType.SALES);
+			else {
+				types.add(InvoiceType.EXPENSES);
+				types.add(InvoiceType.PURCHASE);
+			}
+			
+			// Filter
+			InvoiceFilter invoiceFilter = new InvoiceFilter();
+			invoiceFilter.setDescription(search);
+			invoiceFilter.setTypesByte(types.stream().map(type -> type.value()).toArray(Byte[]::new));
+			invoiceFilter.setFrom(startDate);
+			invoiceFilter.setTo(endDate);
+			invoiceFilter.setPerPage(Integer.MAX_VALUE);
+			invoiceFilter.setPage(0);
+			
+			Integer alcatrazInvoiceCount = AlcatrazDAO.getAlcatrazInvoicesCountByFsModel(ctx, fsModelId, invoiceFilter);
 			
 			// Result
 			JSONObject result = new JSONObject();
@@ -372,7 +467,29 @@ public class FiscalServlet extends AonApiHttpServlet{
 	private File getFiscalModelsInvoincesExcel(AonApiData api, HttpServletRequest req) throws IOException {
 		JSONObject json = new JSONObject(decode(req.getParameter(IJsonNames.JSON).getBytes()));
 		Integer fsModelId = JsonUtils.getInteger(json, "fsModel");
+		String invoiceType = JsonUtils.getString(json, "invoiceType");
 		List<Integer> ids = toList(json.getJSONArray("ids"));
+		
+		// Filter JSON
+		String search = JsonUtils.getString(json, "search");
+		Date startDate = JsonUtils.getDateFormat(json, "startDate", "yyyy-MM-dd");
+		Date endDate = JsonUtils.getDateFormat(json, "endDate", "yyyy-MM-dd");
+		
+		List<InvoiceType> types = new ArrayList<InvoiceType>();
+		if(AonStringUtils.equalsIgnoreCase(invoiceType, "issued")) types.add(InvoiceType.SALES);
+		else {
+			types.add(InvoiceType.EXPENSES);
+			types.add(InvoiceType.PURCHASE);
+		}
+		
+		// Filter
+		InvoiceFilter invoiceFilter = new InvoiceFilter();
+		invoiceFilter.setDescription(search);
+		invoiceFilter.setTypesByte(types.stream().map(type -> type.value()).toArray(Byte[]::new));
+		invoiceFilter.setFrom(startDate);
+		invoiceFilter.setTo(endDate);
+		invoiceFilter.setPerPage(Integer.MAX_VALUE);
+		invoiceFilter.setPage(0);
 		
 		Integer domainId = JsonUtils.getInteger(json, IJsonNames.DOMAIN_ID);
 		String domainName = JsonUtils.getString(json, IJsonNames.DOMAIN_NAME);
@@ -384,12 +501,13 @@ public class FiscalServlet extends AonApiHttpServlet{
 			List<Invoice> invoices = new ArrayList<Invoice>();
 			
 			if(ids.isEmpty()) {
-				alcatrazList = AlcatrazDAO.getAlcatrazInvoicesByFsModel(ctx, fsModelId);
-				HashSet<Integer> invoiceIds = alcatrazList.stream().map(Alcatraz::getInvoice).filter(Objects::nonNull).collect(Collectors.toCollection(HashSet::new));
+				alcatrazList = AlcatrazDAO.getAlcatrazInvoicesByFsModel(ctx, fsModelId, invoiceFilter);
+				LinkedHashSet<Integer> invoiceIds = alcatrazList.stream().map(Alcatraz::getInvoice).filter(Objects::nonNull).collect(Collectors.toCollection(LinkedHashSet::new));
 				invoiceIds.forEach(invoiceId -> invoices.add( AON_SOLUTIONS.getInvoice(domainName, domainId, login, invoiceId) ) );
 				
 			} else {
-				ids.forEach(invoiceId -> invoices.add( AON_SOLUTIONS.getInvoice(domainName, domainId, login, invoiceId) ) );	
+				ids.forEach(invoiceId -> invoices.add( AON_SOLUTIONS.getInvoice(domainName, domainId, login, invoiceId) ) );
+				invoices.sort(Comparator.comparing(Invoice::getIssueDate).thenComparing(Invoice::getReferenceCode).thenComparing(Invoice::getRegistryName));
 			}
 			
 			// Invoices
@@ -399,57 +517,62 @@ public class FiscalServlet extends AonApiHttpServlet{
 		} 
 	}
 	
-	private JSONObject getFiscalModelsSalaries(AonApiData api) {
+	private JSONArray getFiscalModelsSalaries(AonApiData api) {
 		try ( CloseableAONContext ctx = AONContext.getAONContext(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin())){
-			
-			/*
-			 * api.getData example 
-			 * {
-			 * 	"fsModel": fsModelId,
-			 * }
-			 * **/
-			
+			// Filter JSON
 			Integer fsModelId = JsonUtils.getInteger(api.getData(), "fsModel");
-			Integer page = JsonUtils.getInteger(api.getData(), "page");
-			Integer offset = page * 100;
-			List<Alcatraz> alcatrazList = AlcatrazDAO.getAlcatrazSalariesByFsModel(ctx, fsModelId, offset);
 			
-			// Invoice
-			JSONArray invoicesArr = new JSONArray();
+			String search = JsonUtils.getString(api.getData(), "search");
+			Date startDate = JsonUtils.getDateFormat(api.getData(), "startDate", "yyyy-MM-dd");
+			Date endDate = JsonUtils.getDateFormat(api.getData(), "endDate", "yyyy-MM-dd");
+			Integer limit = JsonUtils.getInteger(api.getData(), "limit");
+			Integer page = JsonUtils.getInteger(api.getData(), "page");
+			Integer offset = page * limit;
+			
+			// Filter
+			InvoiceFilter invoiceFilter = new InvoiceFilter();
+			invoiceFilter.setDescription(search);
+			invoiceFilter.setFrom(startDate);
+			invoiceFilter.setTo(endDate);
+			invoiceFilter.setPerPage(limit);
+			invoiceFilter.setPage(offset);
+			
+			List<Alcatraz> alcatrazList = AlcatrazDAO.getAlcatrazSalariesByFsModel(ctx, fsModelId, invoiceFilter);
 			
 			// Salaries
-			HashSet<Integer> salaryIds = alcatrazList.stream().map(Alcatraz::getSalary).filter(Objects::nonNull).collect(Collectors.toCollection(HashSet::new));
+			LinkedHashSet<Integer> salaryIds = alcatrazList.stream().map(Alcatraz::getSalary).filter(Objects::nonNull).collect(Collectors.toCollection(LinkedHashSet::new));
 			
 			Integer[] salariesIdsArr = new Integer[salaryIds.size()];
 			salaryIds.toArray(salariesIdsArr); // fill the array
 			
 			Stream<Salary> salaries = AON.getSalaries(ctx, f -> f.getIdProperty().in(salariesIdsArr));
-			List<Salary> salariesList = salaries.toList();
+			List<Salary> salariesList = salaries.sorted(Comparator.comparing(Salary::getEndDate).thenComparing(Salary::getEmployeeName)).toList();
 			
 			JSONArray salariesArr = new JSONArray();
 			salariesList.forEach(salary -> salariesArr.put(toJSONSalaryInfo(salary)));
 			
-			// Result			
-			JSONObject result = new JSONObject();
-			result.put("invoice", invoicesArr);
-			result.put("salary", salariesArr);
-			
-			return result;
+			return salariesArr;
 		} 
 	}
 	
 	private JSONObject getFiscalModelsSalariesCount(AonApiData api) {
 		try ( CloseableAONContext ctx = AONContext.getAONContext(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin())){
 			
-			/*
-			 * api.getData example 
-			 * {
-			 * 	"fsModel": fsModelId,
-			 * }
-			 * **/
-			
 			Integer fsModelId = JsonUtils.getInteger(api.getData(), "fsModel");
-			Integer alcatrazSalaryCount = AlcatrazDAO.getAlcatrazSalariesCountByFsModel(ctx, fsModelId);
+			
+			String search = JsonUtils.getString(api.getData(), "search");
+			Date startDate = JsonUtils.getDateFormat(api.getData(), "startDate", "yyyy-MM-dd");
+			Date endDate = JsonUtils.getDateFormat(api.getData(), "endDate", "yyyy-MM-dd");
+			
+			// Filter
+			InvoiceFilter invoiceFilter = new InvoiceFilter();
+			invoiceFilter.setDescription(search);
+			invoiceFilter.setFrom(startDate);
+			invoiceFilter.setTo(endDate);
+			invoiceFilter.setPerPage(Integer.MAX_VALUE);
+			invoiceFilter.setPage(0);
+			
+			Integer alcatrazSalaryCount = AlcatrazDAO.getAlcatrazSalariesCountByFsModel(ctx, fsModelId, invoiceFilter);
 			
 			// Result			
 			JSONObject result = new JSONObject();
@@ -464,7 +587,7 @@ public class FiscalServlet extends AonApiHttpServlet{
 			LinkedList<FiscalModel> models = new LinkedList<>();
 			models.addAll( Mod390HFDAO.getMod390HFs(ctx, api.getDomain().getId()).collect(Collectors.toCollection(LinkedList::new)));
 			
-			// Comprobar si está configurado "Presentación automática de modelos" y "Entorno de Pruebas de la AEAT"
+			// Comprobar si estï¿½ configurado "Presentaciï¿½n automï¿½tica de modelos" y "Entorno de Pruebas de la AEAT"
 			int presModelAutoEnabled = AppParamDAO.fetchIntValue(ctx, AppParam.FS_PRES_MODEL_AUTO_ENABLED);
 			boolean testEnvironment = AonEnumUtils.getAonBoolean(AppParamDAO.fetchValue(ctx, AppParam.FS_AEAT_TEST_ENV));
 			
@@ -473,7 +596,7 @@ public class FiscalServlet extends AonApiHttpServlet{
 			models.forEach(model-> {
 				try {
 					jsonModels.put(FiscalModelJSON.toJSON(model)
-							.put("presModelAuto", model.getAdministration() == Administration.COMMON_TERRITORY ? presModelAutoEnabled : 0) // Presentación automática del modelo (solo modelos de la Agencia Tributaria)							
+							.put("presModelAuto", model.getAdministration() == Administration.COMMON_TERRITORY ? presModelAutoEnabled : 0) // Presentaciï¿½n automï¿½tica del modelo (solo modelos de la Agencia Tributaria)							
 							.put("testEnvironment", testEnvironment)  // Entorno de pruebas de la AEAT
 							.put("nrc", model.getNrc())
 							);
@@ -611,11 +734,7 @@ public class FiscalServlet extends AonApiHttpServlet{
 			// IRPF PROFESIONAL
 			IrpfSummaryGroup professionalIRPFMap = irpfSummary.getMap().get(WithholdingTypeGroup.PROFESIONAL);
 			TreeMap<Double, IrpfSummaryPercent> professionalMap = null == professionalIRPFMap ? null : professionalIRPFMap.getMap().get(WithholdingType.PROFESSIONAL).getMap();
-			System.out.println("----------- PROFESIONAL");
-			Double professionalAmount = null == professionalMap ? 0.00 : professionalMap.values().stream().mapToDouble(irpfSummaryPercent -> {
-				System.out.println("Salaries : " + irpfSummaryPercent.getSalaries() + ", Invoices : " + irpfSummaryPercent.getInvoices() + ", Quota : " + irpfSummaryPercent.getInput().getQuota());
-				return irpfSummaryPercent.getInput().getQuota();
-			}).sum();
+			Double professionalAmount = null == professionalMap ? 0.00 : professionalMap.values().stream().mapToDouble(irpfSummaryPercent -> null == irpfSummaryPercent.getInput() ? 0.00 : irpfSummaryPercent.getInput().getQuota()).sum();
 			
 			JSONObject irpfProfessionalJson = new JSONObject();
 			irpfProfessionalJson.put("description", "IRPF Profesional");
@@ -625,11 +744,7 @@ public class FiscalServlet extends AonApiHttpServlet{
 			// IRPF ARRENDAMIENTO
 			IrpfSummaryGroup rentingIRPFlMap = irpfSummary.getMap().get(WithholdingTypeGroup.CAPITAL_INMOBILIARIO);
 			TreeMap<Double, IrpfSummaryPercent> rentinglMap = null == rentingIRPFlMap ? null : rentingIRPFlMap.getMap().get(WithholdingType.RENTING).getMap();
-			System.out.println("----------- ARRENDAMIENTO");
-			Double rentingAmount = null == rentinglMap ? 0.00 : rentinglMap.values().stream().mapToDouble(irpfSummaryPercent -> { 
-				System.out.println("Salaries : " + irpfSummaryPercent.getSalaries() + ", Invoices : " + irpfSummaryPercent.getInvoices() + ", Quota : " + irpfSummaryPercent.getInput().getQuota());
-				return irpfSummaryPercent.getInput().getQuota();
-			}).sum();
+			Double rentingAmount = null == rentinglMap ? 0.00 : rentinglMap.values().stream().mapToDouble(irpfSummaryPercent -> null == irpfSummaryPercent.getInput() ? 0.00 : irpfSummaryPercent.getInput().getQuota()).sum();
 			
 			JSONObject irpfRentingJson = new JSONObject();
 			irpfRentingJson.put("description", "IRPF Arrendamiento");
@@ -640,59 +755,57 @@ public class FiscalServlet extends AonApiHttpServlet{
 		} 
 	}
 	
-	private JSONObject getFiscalModelsEstimationsInvoinces(AonApiData api) {
+	private JSONArray getFiscalModelsEstimationsInvoinces(AonApiData api) {
 		try ( CloseableAONContext ctx = AONContext.getAONContext(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin())){
 			JSONObject params = api.getData();
 			Integer year = JsonUtils.getInteger(params, IJsonNames.YEAR);
 			String period = JsonUtils.getString(params, IJsonNames.PERIOD);
 			String type = JsonUtils.getString(params, IJsonNames.TYPE); // VAT, IRPF_ALAVA, IRPF_BIZKAIA, IRPF_GIPUZKOA, IRPF_NAVARRA, IRPF_AEAT, IRPF_ARRENDAMIENTO, IRFP_PROFESIONAL
-			Integer page = JsonUtils.getInteger(params, "page");
-			Integer offset = page * 100;
 			
-			// Result
-			JSONObject result = new JSONObject();
+			String invoiceType = JsonUtils.getString(params, "invoiceType");
+			
+			// Filter JSON
+			String search = JsonUtils.getString(api.getData(), "search");
+			Date startDate = JsonUtils.getDateFormat(api.getData(), "startDate", "yyyy-MM-dd");
+			Date endDate = JsonUtils.getDateFormat(api.getData(), "endDate", "yyyy-MM-dd");
+			Integer limit = JsonUtils.getInteger(api.getData(), "limit");
+			Integer page = JsonUtils.getInteger(api.getData(), "page");
+			Integer offset = page * limit;
+			
+			List<InvoiceType> types = new ArrayList<InvoiceType>();
+			if(AonStringUtils.equalsIgnoreCase(invoiceType, "issued")) types.add(InvoiceType.SALES);
+			else {
+				types.add(InvoiceType.EXPENSES);
+				types.add(InvoiceType.PURCHASE);
+			}
+			
+			// Filter
+			InvoiceFilter invoiceFilter = new InvoiceFilter();
+			invoiceFilter.setDescription(search);
+			invoiceFilter.setTypesByte(types.stream().map(typeIt -> typeIt.value()).toArray(Byte[]::new));
+			invoiceFilter.setFrom(startDate);
+			invoiceFilter.setTo(endDate);
+			invoiceFilter.setPerPage(limit);
+			invoiceFilter.setPage(offset);
 			
 			if(AonStringUtils.equalsIgnoreCase("VAT", type)) {
 				
 				// VAT
-				result.put("invoice", getFiscalModelsEstimationsVATInvoinces(api, ctx, year, period, offset));
-				return result;
-				
-			} else if(AonStringUtils.equalsIgnoreCase("IRPF_ALAVA", type)) {
-				
-				// Nothing to do
-				
-			} else if(AonStringUtils.equalsIgnoreCase("IRPF_BIZKAIA", type)) {
-				
-				// Nothing to do
-				
-			} else if(AonStringUtils.equalsIgnoreCase("IRPF_GIPUZKOA", type)) {
-				
-				// Nothing to do
-				
-			} else if(AonStringUtils.equalsIgnoreCase("IRPF_NAVARRA", type)) {
-				
-				// Nothing to do
-				
-			} else if(AonStringUtils.equalsIgnoreCase("IRPF_AEAT", type)) {
-				
-				// Nothing to do
+				return getFiscalModelsEstimationsVATInvoinces(api, ctx, year, period, invoiceFilter);
 				
 			} else if(AonStringUtils.equalsIgnoreCase("IRPF_ARRENDAMIENTO", type)) {
 				
 				//Invoice
-				result.put("invoice", getIRPFEstimation(api, ctx, year, period, WithholdingTypeGroup.CAPITAL_INMOBILIARIO, WithholdingType.RENTING, offset));
-				return result;
+				return getIRPFEstimation(api, ctx, year, period, WithholdingTypeGroup.CAPITAL_INMOBILIARIO, WithholdingType.RENTING, invoiceFilter);
 				
 			} else if(AonStringUtils.equalsIgnoreCase("IRFP_PROFESIONAL", type)) {
 				
 				//Invoice
-				result.put("invoice", getIRPFEstimation(api, ctx, year, period, WithholdingTypeGroup.PROFESIONAL, WithholdingType.PROFESSIONAL, offset));
-				return result;
+				return getIRPFEstimation(api, ctx, year, period, WithholdingTypeGroup.PROFESIONAL, WithholdingType.PROFESSIONAL, invoiceFilter);
 				
 			}
 			
-			return result; 
+			return null; 
 		} 
 	}
 	
@@ -710,42 +823,45 @@ public class FiscalServlet extends AonApiHttpServlet{
 			String period = JsonUtils.getString(json, IJsonNames.PERIOD);
 			String type = JsonUtils.getString(json, IJsonNames.TYPE); // VAT, IRPF_ALAVA, IRPF_BIZKAIA, IRPF_GIPUZKOA, IRPF_NAVARRA, IRPF_AEAT, IRPF_ARRENDAMIENTO, IRFP_PROFESIONAL
 			
+			String invoiceType = JsonUtils.getString(json, "invoiceType");
+			
+			// Filter JSON
+			String search = JsonUtils.getString(json, "search");
+			Date startDate = JsonUtils.getDateFormat(json, "startDate", "yyyy-MM-dd");
+			Date endDate = JsonUtils.getDateFormat(json, "endDate", "yyyy-MM-dd");
+			
+			List<InvoiceType> types = new ArrayList<InvoiceType>();
+			if(AonStringUtils.equalsIgnoreCase(invoiceType, "issued")) types.add(InvoiceType.SALES);
+			else {
+				types.add(InvoiceType.EXPENSES);
+				types.add(InvoiceType.PURCHASE);
+			}
+			
+			// Filter
+			InvoiceFilter invoiceFilter = new InvoiceFilter();
+			invoiceFilter.setDescription(search);
+			invoiceFilter.setTypesByte(types.stream().map(typeIt -> typeIt.value()).toArray(Byte[]::new));
+			invoiceFilter.setFrom(startDate);
+			invoiceFilter.setTo(endDate);
+			invoiceFilter.setPerPage(Integer.MAX_VALUE);
+			invoiceFilter.setPage(0);
+			
 			List<Invoice> invoices = new ArrayList<Invoice>();
 			
 			if(AonStringUtils.equalsIgnoreCase("VAT", type)) {
 				
 				// VAT
-				invoices = getFiscalModelsEstimationsVATInvoinces(ctx, year, period, ids);
-				
-			} else if(AonStringUtils.equalsIgnoreCase("IRPF_ALAVA", type)) {
-				
-				// Nothing to do
-				
-			} else if(AonStringUtils.equalsIgnoreCase("IRPF_BIZKAIA", type)) {
-				
-				// Nothing to do
-				
-			} else if(AonStringUtils.equalsIgnoreCase("IRPF_GIPUZKOA", type)) {
-				
-				// Nothing to do
-				
-			} else if(AonStringUtils.equalsIgnoreCase("IRPF_NAVARRA", type)) {
-				
-				// Nothing to do
-				
-			} else if(AonStringUtils.equalsIgnoreCase("IRPF_AEAT", type)) {
-				
-				// Nothing to do
+				invoices = getFiscalModelsEstimationsVATInvoinces(ctx, year, period, ids, invoiceFilter);
 				
 			} else if(AonStringUtils.equalsIgnoreCase("IRPF_ARRENDAMIENTO", type)) {
 				
 				//Invoice
-				invoices = getIRPFEstimation(ctx, year, period, WithholdingTypeGroup.CAPITAL_INMOBILIARIO, WithholdingType.RENTING, ids);
+				invoices = getIRPFEstimation(ctx, year, period, WithholdingTypeGroup.CAPITAL_INMOBILIARIO, WithholdingType.RENTING, ids, invoiceFilter);
 				
 			} else if(AonStringUtils.equalsIgnoreCase("IRFP_PROFESIONAL", type)) {
 				
 				//Invoice
-				invoices = getIRPFEstimation(ctx, year, period, WithholdingTypeGroup.PROFESIONAL, WithholdingType.PROFESSIONAL, ids);
+				invoices = getIRPFEstimation(ctx, year, period, WithholdingTypeGroup.PROFESIONAL, WithholdingType.PROFESSIONAL, ids, invoiceFilter);
 				
 			}
 			
@@ -763,45 +879,48 @@ public class FiscalServlet extends AonApiHttpServlet{
 			String period = JsonUtils.getString(params, IJsonNames.PERIOD);
 			String type = JsonUtils.getString(params, IJsonNames.TYPE); // VAT, IRPF_ALAVA, IRPF_BIZKAIA, IRPF_GIPUZKOA, IRPF_NAVARRA, IRPF_AEAT, IRPF_ARRENDAMIENTO, IRFP_PROFESIONAL
 			
+			String invoiceType = JsonUtils.getString(params, "invoiceType");
+			
+			// Filter JSON
+			String search = JsonUtils.getString(api.getData(), "search");
+			Date startDate = JsonUtils.getDateFormat(api.getData(), "startDate", "yyyy-MM-dd");
+			Date endDate = JsonUtils.getDateFormat(api.getData(), "endDate", "yyyy-MM-dd");
+			
+			List<InvoiceType> types = new ArrayList<InvoiceType>();
+			if(AonStringUtils.equalsIgnoreCase(invoiceType, "issued")) types.add(InvoiceType.SALES);
+			else {
+				types.add(InvoiceType.EXPENSES);
+				types.add(InvoiceType.PURCHASE);
+			}
+			
+			// Filter
+			InvoiceFilter invoiceFilter = new InvoiceFilter();
+			invoiceFilter.setDescription(search);
+			invoiceFilter.setTypesByte(types.stream().map(typeIt -> typeIt.value()).toArray(Byte[]::new));
+			invoiceFilter.setFrom(startDate);
+			invoiceFilter.setTo(endDate);
+			invoiceFilter.setPerPage(Integer.MAX_VALUE);
+			invoiceFilter.setPage(0);
+			
 			// Result
 			JSONObject result = new JSONObject();
 			
 			if(AonStringUtils.equalsIgnoreCase("VAT", type)) {
 				
 				// VAT
-				result.put("count", getFiscalModelsEstimationsVATInvoincesCount(api, ctx, year, period));
+				result.put("count", getFiscalModelsEstimationsVATInvoincesCount(api, ctx, year, period, invoiceFilter));
 				return result;
-				
-			} else if(AonStringUtils.equalsIgnoreCase("IRPF_ALAVA", type)) {
-				
-				// Nothing to do
-				
-			} else if(AonStringUtils.equalsIgnoreCase("IRPF_BIZKAIA", type)) {
-				
-				// Nothing to do
-				
-			} else if(AonStringUtils.equalsIgnoreCase("IRPF_GIPUZKOA", type)) {
-				
-				// Nothing to do
-				
-			} else if(AonStringUtils.equalsIgnoreCase("IRPF_NAVARRA", type)) {
-				
-				// Nothing to do
-				
-			} else if(AonStringUtils.equalsIgnoreCase("IRPF_AEAT", type)) {
-				
-				// Nothing to do
 				
 			} else if(AonStringUtils.equalsIgnoreCase("IRPF_ARRENDAMIENTO", type)) {
 				
 				//Invoice
-				result.put("count", getIRPFEstimationCount(api, ctx, year, period, WithholdingTypeGroup.CAPITAL_INMOBILIARIO, WithholdingType.RENTING));
+				result.put("count", getIRPFEstimationCount(api, ctx, year, period, WithholdingTypeGroup.CAPITAL_INMOBILIARIO, WithholdingType.RENTING, invoiceFilter));
 				return result;
 				
 			} else if(AonStringUtils.equalsIgnoreCase("IRFP_PROFESIONAL", type)) {
 				
 				//Invoice
-				result.put("count", getIRPFEstimationCount(api, ctx, year, period, WithholdingTypeGroup.PROFESIONAL, WithholdingType.PROFESSIONAL));
+				result.put("count", getIRPFEstimationCount(api, ctx, year, period, WithholdingTypeGroup.PROFESIONAL, WithholdingType.PROFESSIONAL, invoiceFilter));
 				return result;
 				
 			}
@@ -810,63 +929,57 @@ public class FiscalServlet extends AonApiHttpServlet{
 		} 
 	}
 	
-	private JSONObject getFiscalModelsEstimationsSalaries(AonApiData api) {
+	private JSONArray getFiscalModelsEstimationsSalaries(AonApiData api) {
 		try ( CloseableAONContext ctx = AONContext.getAONContext(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin())){
 			JSONObject params = api.getData();
 			Integer year = JsonUtils.getInteger(params, IJsonNames.YEAR);
 			String period = JsonUtils.getString(params, IJsonNames.PERIOD);
 			String type = JsonUtils.getString(params, IJsonNames.TYPE); // VAT, IRPF_ALAVA, IRPF_BIZKAIA, IRPF_GIPUZKOA, IRPF_NAVARRA, IRPF_AEAT, IRPF_ARRENDAMIENTO, IRFP_PROFESIONAL
-			Integer page = JsonUtils.getInteger(params, "page");
-			Integer offset = page * 100;
 			
-			// Result
-			JSONObject result = new JSONObject();
+			// Filter JSON
+			String search = JsonUtils.getString(api.getData(), "search");
+			Date startDate = JsonUtils.getDateFormat(api.getData(), "startDate", "yyyy-MM-dd");
+			Date endDate = JsonUtils.getDateFormat(api.getData(), "endDate", "yyyy-MM-dd");
+			Integer limit = JsonUtils.getInteger(api.getData(), "limit");
+			Integer page = JsonUtils.getInteger(api.getData(), "page");
+			Integer offset = page * limit;
 			
-			if(AonStringUtils.equalsIgnoreCase("VAT", type)) {
-				
-				// Nothing to do
-				
-			} else if(AonStringUtils.equalsIgnoreCase("IRPF_ALAVA", type)) {
+			// Filter
+			InvoiceFilter invoiceFilter = new InvoiceFilter();
+			invoiceFilter.setDescription(search);
+			invoiceFilter.setFrom(startDate);
+			invoiceFilter.setTo(endDate);
+			invoiceFilter.setPerPage(limit);
+			invoiceFilter.setPage(offset);
+			
+			if(AonStringUtils.equalsIgnoreCase("IRPF_ALAVA", type)) {
 				
 				// IRPF SALARIES ALAVA
-				result.put("salary", getSalariesEstimation(api, ctx, year, period,  Administration.ALAVA, offset));
-				return result;
+				return getSalariesEstimation(api, ctx, year, period,  Administration.ALAVA, invoiceFilter);
 				
 			} else if(AonStringUtils.equalsIgnoreCase("IRPF_BIZKAIA", type)) {
 				
 				// IRPF SALARIES BIZKAIA
-				result.put("salary", getSalariesEstimation(api, ctx, year, period,  Administration.BIZKAIA, offset));
-				return result;
+				return getSalariesEstimation(api, ctx, year, period,  Administration.BIZKAIA, invoiceFilter);
 				
 			} else if(AonStringUtils.equalsIgnoreCase("IRPF_GIPUZKOA", type)) {
 				
 				// IRPF SALARIES GIPUZKOA
-				result.put("salary", getSalariesEstimation(api, ctx, year, period,  Administration.GIPUZKOA, offset));
-				return result;
+				return getSalariesEstimation(api, ctx, year, period,  Administration.GIPUZKOA, invoiceFilter);
 				
 			} else if(AonStringUtils.equalsIgnoreCase("IRPF_NAVARRA", type)) {
 				
 				// IRPF SALARIES NAVARRA
-				result.put("salary", getSalariesEstimation(api, ctx, year, period,  Administration.NAVARRA, offset));
-				return result;
+				return getSalariesEstimation(api, ctx, year, period,  Administration.NAVARRA, invoiceFilter);
 				
 			} else if(AonStringUtils.equalsIgnoreCase("IRPF_AEAT", type)) {
 				
 				// IRPF SALARIES AEAT
-				result.put("salary", getSalariesEstimation(api, ctx, year, period,  Administration.COMMON_TERRITORY, offset));
-				return result;
+				return getSalariesEstimation(api, ctx, year, period,  Administration.COMMON_TERRITORY, invoiceFilter);
 				
-			} else if(AonStringUtils.equalsIgnoreCase("IRPF_ARRENDAMIENTO", type)) {
-				
-				// Nothing to do
-				
-			} else if(AonStringUtils.equalsIgnoreCase("IRFP_PROFESIONAL", type)) {
-				
-				// Nothing to do
-				
-			}
+			} 
 			
-			return result; 
+			return null; 
 		} 
 	}
 	
@@ -877,58 +990,60 @@ public class FiscalServlet extends AonApiHttpServlet{
 			String period = JsonUtils.getString(params, IJsonNames.PERIOD);
 			String type = JsonUtils.getString(params, IJsonNames.TYPE); // VAT, IRPF_ALAVA, IRPF_BIZKAIA, IRPF_GIPUZKOA, IRPF_NAVARRA, IRPF_AEAT, IRPF_ARRENDAMIENTO, IRFP_PROFESIONAL
 			
+			// Filter JSON
+			String search = JsonUtils.getString(api.getData(), "search");
+			Date startDate = JsonUtils.getDateFormat(api.getData(), "startDate", "yyyy-MM-dd");
+			Date endDate = JsonUtils.getDateFormat(api.getData(), "endDate", "yyyy-MM-dd");
+			
+			// Filter
+			InvoiceFilter invoiceFilter = new InvoiceFilter();
+			invoiceFilter.setDescription(search);
+			invoiceFilter.setFrom(startDate);
+			invoiceFilter.setTo(endDate);
+			invoiceFilter.setPerPage(Integer.MAX_VALUE);
+			invoiceFilter.setPage(0);
+			
+			
 			// Result
 			JSONObject result = new JSONObject();
 			
-			if(AonStringUtils.equalsIgnoreCase("VAT", type)) {
-				
-				// Nothing to do
-				
-			} else if(AonStringUtils.equalsIgnoreCase("IRPF_ALAVA", type)) {
+			if(AonStringUtils.equalsIgnoreCase("IRPF_ALAVA", type)) {
 				
 				// IRPF SALARIES ALAVA
-				result.put("count", getSalariesEstimationCount(api, ctx, year, period,  Administration.ALAVA));
+				result.put("count", getSalariesEstimationCount(api, ctx, year, period,  Administration.ALAVA, invoiceFilter));
 				return result;
 				
 			} else if(AonStringUtils.equalsIgnoreCase("IRPF_BIZKAIA", type)) {
 				
 				// IRPF SALARIES BIZKAIA
-				result.put("count", getSalariesEstimationCount(api, ctx, year, period,  Administration.BIZKAIA));
+				result.put("count", getSalariesEstimationCount(api, ctx, year, period,  Administration.BIZKAIA, invoiceFilter));
 				return result;
 				
 			} else if(AonStringUtils.equalsIgnoreCase("IRPF_GIPUZKOA", type)) {
 				
 				// IRPF SALARIES GIPUZKOA
-				result.put("count", getSalariesEstimationCount(api, ctx, year, period,  Administration.GIPUZKOA));
+				result.put("count", getSalariesEstimationCount(api, ctx, year, period,  Administration.GIPUZKOA, invoiceFilter));
 				return result;
 				
 			} else if(AonStringUtils.equalsIgnoreCase("IRPF_NAVARRA", type)) {
 				
 				// IRPF SALARIES NAVARRA
-				result.put("count", getSalariesEstimationCount(api, ctx, year, period,  Administration.NAVARRA));
+				result.put("count", getSalariesEstimationCount(api, ctx, year, period,  Administration.NAVARRA, invoiceFilter));
 				return result;
 				
 			} else if(AonStringUtils.equalsIgnoreCase("IRPF_AEAT", type)) {
 				
 				// IRPF SALARIES AEAT
-				result.put("count", getSalariesEstimationCount(api, ctx, year, period,  Administration.COMMON_TERRITORY));
+				result.put("count", getSalariesEstimationCount(api, ctx, year, period,  Administration.COMMON_TERRITORY, invoiceFilter));
 				return result;
 				
-			} else if(AonStringUtils.equalsIgnoreCase("IRPF_ARRENDAMIENTO", type)) {
-				
-				// Nothing to do
-				
-			} else if(AonStringUtils.equalsIgnoreCase("IRFP_PROFESIONAL", type)) {
-				
-				// Nothing to do
-				
-			}
+			} 
 			
 			return result; 
 		} 
 	}
 	
-	private JSONArray getFiscalModelsEstimationsVATInvoinces(AonApiData api, CloseableAONContext ctx, Integer year, String period, Integer offset) {
+	private JSONArray getFiscalModelsEstimationsVATInvoinces(AonApiData api, CloseableAONContext ctx, Integer year, String period, InvoiceFilter invoiceFilter) {
 		// Period
 		Date startDate;
 		Date endDate;
@@ -958,20 +1073,39 @@ public class FiscalServlet extends AonApiHttpServlet{
 		accountingReportParams.setUser(api.getUser().getLogin());
 		accountingReportParams.setFromDate(startDate);
 		accountingReportParams.setToDate(endDate);
-		Stream<VatContext> vatSummaryEstimation = VATDAO.getVatBreakdown(ctx, accountingReportParams, offset);
+		Stream<VatContext> vatSummaryEstimation = VATDAO.getVatBreakdown(ctx, accountingReportParams, invoiceFilter);
 	
-		HashSet<Integer> invoicesIds = new HashSet<Integer>();
+		LinkedHashSet<Integer> invoicesIds = new LinkedHashSet<Integer>();
+		
+		invoicesIds.addAll(vatSummaryEstimation.map(vatSummary ->vatSummary.getInvoice()).filter(Objects::nonNull).collect(Collectors.toList()));
+		List<Integer> invoiceIdsArr = new ArrayList<>(invoicesIds);
+		
 		List<Invoice> invoices = new ArrayList<Invoice>();
+		invoices = AON.getFullInvoiceList(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), invoiceIdsArr);
 		
-		invoicesIds.addAll(vatSummaryEstimation.map(vatSummary -> vatSummary.getInvoice()).filter(Objects::nonNull).collect(Collectors.toList()));
-		invoicesIds.forEach(invoicesId -> invoices.add( AON_SOLUTIONS.getInvoice(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), invoicesId) ) );
+		JSONArray invoicesArr = new JSONArray();
 		
-		JSONArray invoicesArr = InvoiceJSON.toJSON(invoices);
+		invoices.forEach(invoice -> {
+			JSONObject invoiceJson = InvoiceJSON.toJSON(invoice);
+			
+			TbaiConfiguration tbai = AON.getTbaiConfiguration(api.getDomain(), api.getUser().getLogin());
+			if(tbai.isActive()) {	
+				String tbaiUrl = TbaiData.getInstance(tbai).getTbaiUrl(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), invoice.getId());
+				if(!AonStringUtils.isBlank(tbaiUrl)) {
+					invoiceJson.put("tbai", true);
+					invoiceJson.put("tbaiUrl", tbaiUrl);
+				}
+			}
+			invoiceJson.put(IJsonNames.FILE, buildInvoiceFileJSON(api.getDomain(), api.getUser().getLogin(), invoice));
+			
+			invoicesArr.put(invoiceJson);
+		});
+		
 		
 		return invoicesArr;
 	}
 	
-	private List<Invoice> getFiscalModelsEstimationsVATInvoinces(CloseableAONContext ctx, Integer year, String period, List<Integer> ids) {
+	private List<Invoice> getFiscalModelsEstimationsVATInvoinces(CloseableAONContext ctx, Integer year, String period, List<Integer> ids, InvoiceFilter invoiceFilter) {
 		// Period
 		Date startDate;
 		Date endDate;
@@ -1004,20 +1138,24 @@ public class FiscalServlet extends AonApiHttpServlet{
 			accountingReportParams.setUser(ctx.getUser());
 			accountingReportParams.setFromDate(startDate);
 			accountingReportParams.setToDate(endDate);
-			Stream<VatContext> vatSummaryEstimation = VATDAO.getVatBreakdown(ctx, accountingReportParams);
+			Stream<VatContext> vatSummaryEstimation = VATDAO.getVatBreakdown(ctx, accountingReportParams, invoiceFilter);
 		
-			HashSet<Integer> invoicesIds = new HashSet<Integer>();
-			
+			LinkedHashSet<Integer> invoicesIds = new LinkedHashSet<Integer>();
 			invoicesIds.addAll(vatSummaryEstimation.map(vatSummary -> vatSummary.getInvoice()).filter(Objects::nonNull).collect(Collectors.toList()));
-			invoicesIds.forEach(invoicesId -> invoices.add( AON_SOLUTIONS.getInvoice(ctx.getDomainName(), ctx.getDomainId(), ctx.getUser(), invoicesId) ) );
+			List<Integer> invoiceIdsArr = new ArrayList<>(invoicesIds);
+			
+			invoices = AON.getFullInvoiceList(ctx.getDomainName(), ctx.getDomainId(), ctx.getUser(), invoiceIdsArr);
+			
 		} else {
-			ids.forEach(invoiceId -> invoices.add( AON_SOLUTIONS.getInvoice(ctx.getDomainName(), ctx.getDomainId(), ctx.getUser(), invoiceId) ) );	
+			List<Integer> invoiceIdsArr = new ArrayList<>(ids);
+			invoices = AON.getFullInvoiceList(ctx.getDomainName(), ctx.getDomainId(), ctx.getUser(), invoiceIdsArr);
+			invoices.sort(Comparator.comparing(Invoice::getIssueDate).thenComparing(Invoice::getReferenceCode).thenComparing(Invoice::getRegistryName));
 		}
 		
 		return invoices;
 	}
 	
-	private Integer getFiscalModelsEstimationsVATInvoincesCount(AonApiData api, CloseableAONContext ctx, Integer year, String period) {
+	private Integer getFiscalModelsEstimationsVATInvoincesCount(AonApiData api, CloseableAONContext ctx, Integer year, String period, InvoiceFilter invoiceFilter) {
 		// Period
 		Date startDate;
 		Date endDate;
@@ -1047,12 +1185,12 @@ public class FiscalServlet extends AonApiHttpServlet{
 		accountingReportParams.setUser(api.getUser().getLogin());
 		accountingReportParams.setFromDate(startDate);
 		accountingReportParams.setToDate(endDate);
-		Integer vatSummaryEstimation = VATDAO.getVatBreakdownCount(ctx, accountingReportParams);
+		Integer vatSummaryEstimation = VATDAO.getVatBreakdownCount(ctx, accountingReportParams, invoiceFilter);
 	
 		return vatSummaryEstimation;
 	}
 	
-	private JSONArray getSalariesEstimation(AonApiData api, CloseableAONContext ctx, Integer year, String period, Administration adminstration, Integer offset) {
+	private JSONArray getSalariesEstimation(AonApiData api, CloseableAONContext ctx, Integer year, String period, Administration adminstration, InvoiceFilter invoiceFilter) {
 		// Period
 		String fiscalPeriod;
 		if(AonStringUtils.equalsIgnoreCase(period, "T1")) {
@@ -1068,14 +1206,14 @@ public class FiscalServlet extends AonApiHttpServlet{
 		SalaryFiscalModel salaryFiscalModel = new SalaryFiscalModel(api.getDomain().getId(), api.getDomain().getName(), year, Period.safeValueOf(fiscalPeriod), adminstration);
 		
 		// IRPF SALARIES
-		Stream<IrpfBreakdown> irpfSalaries = IRPFDAO.getNotInModelSalaryIrpfBreakdown(ctx, salaryFiscalModel, offset);
-		HashSet<Integer> salariesIds = irpfSalaries.map(irpfSalary -> irpfSalary.getSalary()).filter(Objects::nonNull).collect(Collectors.toCollection(HashSet::new));
+		Stream<IrpfBreakdown> irpfSalaries = IRPFDAO.getNotInModelSalaryIrpfBreakdown(ctx, salaryFiscalModel, invoiceFilter);
+		LinkedHashSet<Integer> salariesIds = irpfSalaries.map(irpfSalary -> irpfSalary.getSalary()).filter(Objects::nonNull).collect(Collectors.toCollection(LinkedHashSet::new));
 		
 		Integer[] salariesIdsArr = new Integer[salariesIds.size()];
 		salariesIds.toArray(salariesIdsArr); // fill the array
 		
 		Stream<Salary> salaries = AON.getSalaries(ctx, f -> f.getIdProperty().in(salariesIdsArr));
-		List<Salary> salariesList = salaries.toList();
+		List<Salary> salariesList = salaries.sorted(Comparator.comparing(Salary::getEndDate).thenComparing(Salary::getEmployeeName)).toList();
 		
 		JSONArray salariesJsonArr = new JSONArray();
 		salariesList.forEach(salary -> salariesJsonArr.put(toJSONSalaryInfo(salary)));
@@ -1083,7 +1221,7 @@ public class FiscalServlet extends AonApiHttpServlet{
 		return salariesJsonArr;
 	}
 	
-	private Integer getSalariesEstimationCount(AonApiData api, CloseableAONContext ctx, Integer year, String period, Administration adminstration) {
+	private Integer getSalariesEstimationCount(AonApiData api, CloseableAONContext ctx, Integer year, String period, Administration adminstration, InvoiceFilter invoiceFilter) {
 		// Period
 		String fiscalPeriod;
 		if(AonStringUtils.equalsIgnoreCase(period, "T1")) {
@@ -1099,12 +1237,12 @@ public class FiscalServlet extends AonApiHttpServlet{
 		SalaryFiscalModel salaryFiscalModel = new SalaryFiscalModel(api.getDomain().getId(), api.getDomain().getName(), year, Period.safeValueOf(fiscalPeriod), adminstration);
 		
 		// IRPF SALARIES
-		Integer irpfSalaries = IRPFDAO.getNotInModelSalaryIrpfBreakdownCount(ctx, salaryFiscalModel);
+		Integer irpfSalaries = IRPFDAO.getNotInModelSalaryIrpfBreakdownCount(ctx, salaryFiscalModel, invoiceFilter);
 		
 		return irpfSalaries;
 	}
 	
-	private JSONArray getIRPFEstimation(AonApiData api, CloseableAONContext ctx, Integer year, String period, WithholdingTypeGroup withholdingTypeGroup, WithholdingType withholdingType, Integer offset) {
+	private JSONArray getIRPFEstimation(AonApiData api, CloseableAONContext ctx, Integer year, String period, WithholdingTypeGroup withholdingTypeGroup, WithholdingType withholdingType, InvoiceFilter invoiceFilter) {
 		//Period
 		Date startDate;
 		Date endDate;
@@ -1134,24 +1272,43 @@ public class FiscalServlet extends AonApiHttpServlet{
 		irpfParams.setUser(api.getUser().getLogin());
 		irpfParams.setFromDate(startDate);
 		irpfParams.setToDate(endDate);
-		IrpfSummary irpfSummary = IRPFDAO.getIRPFSummary(ctx, irpfParams, offset);
+		IrpfSummary irpfSummary = IRPFDAO.getIRPFSummary(ctx, irpfParams, invoiceFilter);
 		
 		// IRPF
 		IrpfSummaryGroup irpfSummaryGroup = irpfSummary.getMap().get(withholdingTypeGroup);
 		TreeMap<Double, IrpfSummaryPercent> map = null == irpfSummaryGroup ? null : irpfSummaryGroup.getMap().get(withholdingType).getMap();
 		
-		HashSet<Integer> profesionalInvoicesIds = new HashSet<>();
-		map.values().stream().forEach(irpfSummaryPercent -> profesionalInvoicesIds.addAll( irpfSummaryPercent.getInvoices() ));
+		JSONArray invoicesArr = new JSONArray();
 		
-		List<Invoice> invoices = new ArrayList<Invoice>();
-		profesionalInvoicesIds.forEach(invoicesId -> invoices.add( AON_SOLUTIONS.getInvoice(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), invoicesId) ) );
-		
-		JSONArray invoicesArr = InvoiceJSON.toJSON(invoices);
+		if(null != map) {
+			LinkedHashSet<Integer> profesionalInvoicesIds = new LinkedHashSet<>();
+			map.values().stream().forEach(irpfSummaryPercent -> profesionalInvoicesIds.addAll( irpfSummaryPercent.getInvoices() ));
+			List<Integer> invoiceIdsArr = new ArrayList<>(profesionalInvoicesIds);
+			
+			List<Invoice> invoices = new ArrayList<Invoice>();
+			invoices = AON.getFullInvoiceList(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), invoiceIdsArr);
+			
+			invoices.forEach(invoice -> {
+				JSONObject invoiceJson = InvoiceJSON.toJSON(invoice);
+				
+				TbaiConfiguration tbai = AON.getTbaiConfiguration(api.getDomain(), api.getUser().getLogin());
+				if(tbai.isActive()) {	
+					String tbaiUrl = TbaiData.getInstance(tbai).getTbaiUrl(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), invoice.getId());
+					if(!AonStringUtils.isBlank(tbaiUrl)) {
+						invoiceJson.put("tbai", true);
+						invoiceJson.put("tbaiUrl", tbaiUrl);
+					}
+				}
+				invoiceJson.put(IJsonNames.FILE, buildInvoiceFileJSON(api.getDomain(), api.getUser().getLogin(), invoice));
+				
+				invoicesArr.put(invoiceJson);
+			});
+		}
 		
 		return invoicesArr;
 	}
 	
-	private List<Invoice> getIRPFEstimation(CloseableAONContext ctx, Integer year, String period, WithholdingTypeGroup withholdingTypeGroup, WithholdingType withholdingType, List<Integer> ids) {
+	private List<Invoice> getIRPFEstimation(CloseableAONContext ctx, Integer year, String period, WithholdingTypeGroup withholdingTypeGroup, WithholdingType withholdingType, List<Integer> ids, InvoiceFilter invoiceFilter ) {
 		//Period
 		Date startDate;
 		Date endDate;
@@ -1184,25 +1341,27 @@ public class FiscalServlet extends AonApiHttpServlet{
 			irpfParams.setUser(ctx.getUser());
 			irpfParams.setFromDate(startDate);
 			irpfParams.setToDate(endDate);
-			IrpfSummary irpfSummary = IRPFDAO.getIRPFSummary(ctx, irpfParams);
+			IrpfSummary irpfSummary = IRPFDAO.getIRPFSummary(ctx, irpfParams, invoiceFilter);
 			
 			// IRPF
 			IrpfSummaryGroup irpfSummaryGroup = irpfSummary.getMap().get(withholdingTypeGroup);
 			TreeMap<Double, IrpfSummaryPercent> map = null == irpfSummaryGroup ? null : irpfSummaryGroup.getMap().get(withholdingType).getMap();
 			
-			HashSet<Integer> profesionalInvoicesIds = new HashSet<>();
+			LinkedHashSet<Integer> profesionalInvoicesIds = new LinkedHashSet<>();
 			map.values().stream().forEach(irpfSummaryPercent -> profesionalInvoicesIds.addAll( irpfSummaryPercent.getInvoices() ));
+			List<Integer> invoiceIdsArr = new ArrayList<>(profesionalInvoicesIds);
 			
-			profesionalInvoicesIds.forEach(invoicesId -> invoices.add( AON_SOLUTIONS.getInvoice(ctx.getDomainName(), ctx.getDomainId(), ctx.getUser(), invoicesId) ) );
+			invoices = AON.getFullInvoiceList(ctx.getDomainName(), ctx.getDomainId(), ctx.getUser(), invoiceIdsArr);
 		} else {
-			ids.forEach(invoicesId -> invoices.add( AON_SOLUTIONS.getInvoice(ctx.getDomainName(), ctx.getDomainId(), ctx.getUser(), invoicesId) ) );
-			
+			List<Integer> invoiceIdsArr = new ArrayList<>(ids);
+			invoices = AON.getFullInvoiceList(ctx.getDomainName(), ctx.getDomainId(), ctx.getUser(), invoiceIdsArr);
+			invoices.sort(Comparator.comparing(Invoice::getIssueDate).thenComparing(Invoice::getReferenceCode).thenComparing(Invoice::getRegistryName));
 		}
 		
 		return invoices;
 	}
 	
-	private Integer getIRPFEstimationCount(AonApiData api, CloseableAONContext ctx, Integer year, String period, WithholdingTypeGroup withholdingTypeGroup, WithholdingType withholdingType) {
+	private Integer getIRPFEstimationCount(AonApiData api, CloseableAONContext ctx, Integer year, String period, WithholdingTypeGroup withholdingTypeGroup, WithholdingType withholdingType, InvoiceFilter invoiceFilter) {
 		//Period
 		Date startDate;
 		Date endDate;
@@ -1232,14 +1391,15 @@ public class FiscalServlet extends AonApiHttpServlet{
 		irpfParams.setUser(api.getUser().getLogin());
 		irpfParams.setFromDate(startDate);
 		irpfParams.setToDate(endDate);
-		IrpfSummary irpfSummary = IRPFDAO.getIRPFSummary(ctx, irpfParams);
+		IrpfSummary irpfSummary = IRPFDAO.getIRPFSummary(ctx, irpfParams, invoiceFilter);
 		
 		// IRPF
 		IrpfSummaryGroup irpfSummaryGroup = irpfSummary.getMap().get(withholdingTypeGroup);
 		TreeMap<Double, IrpfSummaryPercent> map = null == irpfSummaryGroup ? null : irpfSummaryGroup.getMap().get(withholdingType).getMap();
 		
-		HashSet<Integer> profesionalInvoicesIds = new HashSet<>();
-		map.values().stream().forEach(irpfSummaryPercent -> profesionalInvoicesIds.addAll( irpfSummaryPercent.getInvoices() ));
+		LinkedHashSet<Integer> profesionalInvoicesIds = new LinkedHashSet<>();
+		if(null != map)
+			map.values().stream().forEach(irpfSummaryPercent -> profesionalInvoicesIds.addAll( irpfSummaryPercent.getInvoices() ));
 		
 		return profesionalInvoicesIds.size();
 	}
@@ -1252,9 +1412,48 @@ public class FiscalServlet extends AonApiHttpServlet{
 			.put("totalDeduction", salaryInfo.getTotalDeduction())
 			.put("totalLiquid", salaryInfo.getTotalLiquid())
 			.put("totalPayment", salaryInfo.getTotalPayment())
+			.put("irpf", salaryInfo.getTotalIrpf())
 			.put("type", salaryInfo.getSalaryType().name())
 			.put("startDate",  AonDateUtils.format( salaryInfo.getStartDate(), FORMAT_DATE))
 	        .put("endDate",  AonDateUtils.format( salaryInfo.getEndDate(), FORMAT_DATE));
+	}
+	
+
+	
+	public static JSONObject buildInvoiceFileJSON(Domain domain, String login, Invoice invoice) {
+		Attach invoiceAttach = AON.getAttach(domain.getName(), domain.getId(), login,
+				f -> f.getAttachModuleProperty().eq(invoice.getId())
+				, AttachType.INVOICE);
+
+		JSONObject json = new JSONObject();
+		if(invoiceAttach != null && invoiceAttach.getId() != null) {
+			JSONObject data = new JSONObject();
+			data.put(IConstants.DOMAIN_NAME, domain.getName());
+			data.put(IConstants.DOMAIN_ID, domain.getId());
+			data.put(IJsonNames.ID, invoiceAttach.getId());
+			data.put(IConstants.ATTACH_TYPE, AttachType.INVOICE.getName());
+			String result = Base64.getEncoder().encodeToString(data.toString().getBytes(StandardCharsets.UTF_8));
+			String path = "/ms/api/file/" +  result;	
+			String url = "https://" + domain.getName() + path; 
+		    json.put(IJsonNames.URL, url);
+		    json.put(IJsonNames.PATH, path);
+		    json.put(IConstants.CONTENT_TYPE, invoiceAttach.getMimeType().getName());
+		} else {
+			JSONObject data = new JSONObject();
+			data.put(IConstants.DOMAIN_NAME, domain.getName());
+			data.put(IConstants.DOMAIN_ID, domain.getId());
+			data.put(IJsonNames.ID, invoice.getId());
+			data.put(IConstants.SOURCE, "invoice");
+			data.put(IJsonNames.LOGIN, login);
+		
+			String result = Base64.getEncoder().encodeToString(data.toString().getBytes(StandardCharsets.UTF_8));
+			String path = "/ms/api/download_invoice_pdf?json=" +  result;
+			String url = "https://" + domain.getName() + path;
+		    json.put(IJsonNames.URL, url);
+		    json.put(IJsonNames.PATH, path);
+		    json.put(IConstants.CONTENT_TYPE, MimeType.PDF.getName());
+		}
+		return json;
 	}
 	
 	class SalaryFiscalModel implements ISalaryFiscalModel{
@@ -1347,7 +1546,7 @@ public class FiscalServlet extends AonApiHttpServlet{
 				boolean reject = !reasonReject.isEmpty();
 				String nrc = JsonUtils.optString(params, "nrc");  
 				Integer certi = JsonUtils.getInteger(params, "certi");  				
-				int presModelAuto = reject || declarationType == FiscalModelDeclarationType.DEFERRAL ? 0 : JsonUtils.getInt(params, "presModelAuto");  // Presentación automática del modelo (solo si no ha sido Rechazado por el Cliente y No es aplazamiento)				
+				int presModelAuto = reject || declarationType == FiscalModelDeclarationType.DEFERRAL ? 0 : JsonUtils.getInt(params, "presModelAuto");  // Presentaciï¿½n automï¿½tica del modelo (solo si no ha sido Rechazado por el Cliente y No es aplazamiento)				
 				boolean test = JsonUtils.getboolean(params, "testEnvironment");  // Entorno de pruebas
 				
 				int plazos = AonNumberUtils.toint(JsonUtils.getInteger(params, "plazos"));
@@ -1355,22 +1554,22 @@ public class FiscalServlet extends AonApiHttpServlet{
 				
 				FiscalModelType modelType = FiscalModelType.safeValueOf(JsonUtils.getString(params , IJsonNames.MODEL));
 				
-				// Comprobar si hay presentacion automática del modelo y no se ha seleccionado certificado
+				// Comprobar si hay presentacion automï¿½tica del modelo y no se ha seleccionado certificado
 				if (presModelAuto == 1 && certi == null) {
 					throw new AonApiException("ERROR: Debe seleccionar certificado.");
 				}
 				
-				// Comprobar si hay presentación automática, es ingreso y no se ha indicado NRC
+				// Comprobar si hay presentaciï¿½n automï¿½tica, es ingreso y no se ha indicado NRC
 				if (presModelAuto == 1 && declarationType == FiscalModelDeclarationType.DEPOSIT && AonStringUtils.isBlank(nrc)) {
 					throw new AonApiException("ERROR: Debe indicar NRC.");
 				}
 				
-				// Comprobar si hay presentación autómatica, es domiciliación o devolución y no se ha indicado IBAN
+				// Comprobar si hay presentaciï¿½n autï¿½matica, es domiciliaciï¿½n o devoluciï¿½n y no se ha indicado IBAN
 				if (presModelAuto == 1 && (declarationType == FiscalModelDeclarationType.BANK || declarationType == FiscalModelDeclarationType.PAYBACK) && AonStringUtils.isBlank(iban)) {
 					throw new AonApiException("ERROR: Debe indicar IBAN.");
 				}
 				
-				// Parámetros para la posible presentación automática del modelo 
+				// Parï¿½metros para la posible presentaciï¿½n automï¿½tica del modelo 
 				AEATParams aeatParams = new AEATParams()
 						.setDomainName(api.getDomain().getName())
 						.setDomainId(api.getDomain().getId())
@@ -1400,13 +1599,13 @@ public class FiscalServlet extends AonApiHttpServlet{
 					model.setNrc(nrc);
 					model.setPlazos(plazos);
 					model.setFechaPlazo(AonDateUtils.simpleFormat(fechaPlazo));
-					// FALTA - Aplazamiento, ponemos por ahora la fecha de vencimiento la fecha de aplazamiento 
+					// Aplazamiento, ponemos como fecha de vencimiento, la fecha de aplazamiento 
 					if (declarationType == FiscalModelDeclarationType.DEFERRAL && model.getFinance() != null && fechaPlazo != null) {
 						model.getFinance().setDueDate(fechaPlazo);
 					}
 					markModelAsFinished(ctx, model);
 					
-					// Presentación automática del modelo 
+					// Presentaciï¿½n automï¿½tica del modelo 
 					if (presModelAuto == 1) {
 						send(aeatParams, model);
 					}
@@ -1513,7 +1712,7 @@ public class FiscalServlet extends AonApiHttpServlet{
 					new TrustManager[] { new DefaultTrustManager() },
 					new SecureRandom());
 			
-			// Añadir los parametros FIRNIF y FIRNOMBRE cuyos valores se obtienen en la llamada a getKeyManagers
+			// Aï¿½adir los parametros FIRNIF y FIRNOMBRE cuyos valores se obtienen en la llamada a getKeyManagers
 			params.put("FIRNIF", aeatParams.getDocument());
 			params.put("FIRNOMBRE", aeatParams.getName());
 			
@@ -1676,8 +1875,8 @@ public class FiscalServlet extends AonApiHttpServlet{
 		
 	}
 	
-	// Se utilizará para devolver los errores que se han producido en la presentación, es decir cuando la llamada al 
-	// servicio de presentación del modelo es correcta, pero la Agencia Tributaria devuelve mensajes de error
+	// Se utilizarï¿½ para devolver los errores que se han producido en la presentaciï¿½n, es decir cuando la llamada al 
+	// servicio de presentaciï¿½n del modelo es correcta, pero la Agencia Tributaria devuelve mensajes de error
 	class AonApiAeatError extends AonApiException {
 		
 		private static final long serialVersionUID = 5030570086298704983L;
@@ -1691,7 +1890,7 @@ public class FiscalServlet extends AonApiHttpServlet{
 	    }
 	}
 	
-	// Se utilizará para devolver cualquier otro error que se produzca en la llamada a la presentación del modelo 
+	// Se utilizarï¿½ para devolver cualquier otro error que se produzca en la llamada a la presentaciï¿½n del modelo 
 	class AonApiAeatException extends AonApiException {
 
 		private static final long serialVersionUID = 735277798302398475L;

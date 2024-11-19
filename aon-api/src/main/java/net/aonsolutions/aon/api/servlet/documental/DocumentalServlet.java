@@ -3,9 +3,6 @@ package net.aonsolutions.aon.api.servlet.documental;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.sql.Date;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.Collection;
@@ -35,7 +32,7 @@ import com.esferalia.aon.occam.api.model.registry.Category;
 import com.esferalia.aon.occam.api.model.security.Scope;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.server.io.AonFileUtils;
-import com.google.api.services.calendar.model.Calendar;
+import com.esferalia.aon.watson.util.AonStringUtils;
 
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -203,7 +200,6 @@ public class DocumentalServlet extends AonApiHttpServlet{
 
 	private Filter attachFilter(AonApiData api, AttachProperties f) {
 		DomainUserRoles dur = SECURITY.getDomainUserRoles(api.getDomain(), api.getUser().getLogin(), api.getUser().getId());
-		
 		Integer[] scopes = null;
 		try {
 			scopes = AON.getUserScopes(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), api.getUser().getId());
@@ -275,6 +271,28 @@ public class DocumentalServlet extends AonApiHttpServlet{
     	if(api.getData().opt(IJsonNames.CATEGORY) != null) {
     		// TODO FILTRO CATEGOR�A M�LTIPLE
     		filter = filter.and(f.getCategoryProperty().eq(api.getData().optInt(IJsonNames.CATEGORY)));
+    	}
+    	
+    	if(AonStringUtils.isNotBlank(api.getData().optString("in_category"))){
+    		try {    			
+    			String[] ids = api.getData().optString("in_category").split(",");
+    			Integer[] idsInt = new Integer[ids.length];
+    			for(int i = 0; i < ids.length; i++) {
+    				idsInt[i] = Integer.parseInt(ids[i]);
+    			}
+    			filter = filter.and(f.getCategoryProperty().in(idsInt));
+    		} catch(Exception e) {}
+    	}
+    	
+    	if(AonStringUtils.isNotBlank(api.getData().optString("not_in_category"))){
+    		try {    			
+    			String[] ids = api.getData().optString("not_in_category").split(",");
+    			Integer[] idsInt = new Integer[ids.length];
+    			for(int i = 0; i < ids.length; i++) {
+    				idsInt[i] = Integer.parseInt(ids[i]);
+    			}
+    			filter = filter.and(f.getCategoryProperty().notIn(idsInt).or(f.getCategoryProperty().isNull()));
+    		} catch(Exception e) {}
     	}
     	
     	if(api.getData().opt(IJsonNames.TAG) != null) {

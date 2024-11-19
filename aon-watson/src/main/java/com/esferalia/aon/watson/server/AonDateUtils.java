@@ -588,6 +588,20 @@ public class AonDateUtils {
     	c.setTime(date);
     	return c.get(Calendar.HOUR_OF_DAY);
     }
+    
+    public static Integer getMinute(Date date){
+    	if(date == null) return null;
+    	Calendar c = Calendar.getInstance();
+    	c.setTime(date);
+    	return c.get(Calendar.MINUTE);
+    }
+    
+    public static Integer getSecond(Date date){
+    	if(date == null) return null;
+    	Calendar c = Calendar.getInstance();
+    	c.setTime(date);
+    	return c.get(Calendar.SECOND);
+    }
 	
 	/**
 	 * Devuelve el numero de dias del mes en curso indicado en la fecha.
@@ -1376,5 +1390,11 @@ public class AonDateUtils {
 			return b == null ? 0 : 1;
 		}
 		return b == null ? -1 : a.compareTo(b);
+	}
+
+	public static boolean isAfter(Date first, Date second) {
+		if (first == null) return false;
+		if (second == null) return false;
+		return first.after(second);
 	}
 }

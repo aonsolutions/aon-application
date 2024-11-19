@@ -100,7 +100,7 @@ public class SupplierCreditorServlet extends AonApiHttpServlet {
 	
 	private static JSONObject customerCount(AonApiData api) {
 		String globalFilter = api.getData().optString(IJsonNames.GLOBAL);
-		long count = AON.getCustomerCount(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), f -> genericFilter(api, api.getData(), f), globalFilter);
+		long count = AON.getCustomerCount(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), f -> customerFilter(api, api.getData(), f), globalFilter);
 		return new JSONObject().put(IJsonNames.COUNT, count);
 	}
 	
@@ -121,14 +121,12 @@ public class SupplierCreditorServlet extends AonApiHttpServlet {
 	private static JSONObject creditorSupplierCount(AonApiData api) {
 		String globalFilter = api.getData().optString(IJsonNames.GLOBAL);
 		long count = AON.getSupplierCreditorCount(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), 
-				f -> genericFilter(api, api.getData(), f), f -> genericFilter(api, api.getData(), f), globalFilter);
+				f -> creditorFilter(api, api.getData(), f), f -> supplierFilter(api, api.getData(), f), globalFilter);
 		return new JSONObject().put(IJsonNames.COUNT, count);
 	}
 	
 	private static <T extends RegistryProperties> Filter genericFilter(AonApiData api, JSONObject json, T f) {
 		Filter filter = f.getDomainProperty().eq(api.getDomain().getId());
-		String jsonValue = json.optString(IJsonNames.VALUE);
-		String global = json.optString(IJsonNames.GLOBAL);
 		Boolean withDocument = api.getData().has("with_document") ? api.getData().optBoolean("with_document") : null;
 		if(withDocument != null) {
 			if(withDocument)
@@ -136,22 +134,26 @@ public class SupplierCreditorServlet extends AonApiHttpServlet {
 			else
 				filter = filter.and(f.getDocumentProperty().eq(""));
 		}
-		jsonValue = global.isEmpty() ? jsonValue : global;
-		if(!jsonValue.isEmpty()) {
-			Filter valueFilter = f.getNameProperty().like("%" + jsonValue + "%")
-					.or(f.getDocumentProperty().like("%" + jsonValue + "%"));
-			if(!global.isEmpty())
-				valueFilter = valueFilter.or(f.getNationalityProperty().like("%" + jsonValue + "%"));
-			filter = filter.and(valueFilter);
-		}
 		return filter;
 	}
 	
 	private static Filter supplierFilter(AonApiData api, JSONObject json, SupplierProperties f) {
 		Filter filter = genericFilter(api, json, f);		
 		String status = json.optString(IJsonNames.STATUS);
+		String jsonValue = json.optString(IJsonNames.VALUE);
+		String global = json.optString(IJsonNames.GLOBAL);
 		if(!AonStringUtils.isBlank(status)) {
 			filter = filter.and(f.getStatusProperty().eq(RegistryStatus.safeValueOf(status).value()));
+		}
+		jsonValue = global.isEmpty() ? jsonValue : global;
+		if(!jsonValue.isEmpty()) {
+			Filter valueFilter = f.getNameProperty().like("%" + jsonValue + "%")
+					.or(f.getDocumentProperty().like("%" + jsonValue + "%"));
+			if(!global.isEmpty())
+				valueFilter = valueFilter.or(f.getNationalityProperty().like("%" + jsonValue + "%"))
+				.or(f.getMediaType().in(new Byte[] {1,2}).and(f.getMediaValue().like("%" + global + "%")))
+				.or(f.getRegistryAddress().like("%" + global + "%"));
+			filter = filter.and(valueFilter);
 		}
 		return filter;
 	}
@@ -159,8 +161,20 @@ public class SupplierCreditorServlet extends AonApiHttpServlet {
 	private static Filter creditorFilter(AonApiData api, JSONObject json, CreditorProperties f) {
 		Filter filter = genericFilter(api, json, f);		
 		String status = json.optString(IJsonNames.STATUS);
+		String jsonValue = json.optString(IJsonNames.VALUE);
+		String global = json.optString(IJsonNames.GLOBAL);
 		if(!AonStringUtils.isBlank(status)) {
 			filter = filter.and(f.getStatusProperty().eq(RegistryStatus.safeValueOf(status).value()));
+		}
+		jsonValue = global.isEmpty() ? jsonValue : global;
+		if(!jsonValue.isEmpty()) {
+			Filter valueFilter = f.getNameProperty().like("%" + jsonValue + "%")
+					.or(f.getDocumentProperty().like("%" + jsonValue + "%"));
+			if(!global.isEmpty())
+				valueFilter = valueFilter.or(f.getNationalityProperty().like("%" + jsonValue + "%"))
+				.or(f.getMediaType().in(new Byte[] {1,2}).and(f.getMediaValue().like("%" + global + "%")))
+				.or(f.getRegistryAddress().like("%" + global + "%"));
+			filter = filter.and(valueFilter);
 		}
 		return filter;
 	}
@@ -168,8 +182,20 @@ public class SupplierCreditorServlet extends AonApiHttpServlet {
 	private static Filter customerFilter(AonApiData api, JSONObject json, CustomerProperties f) {
 		Filter filter = genericFilter(api, json, f);		
 		String status = json.optString(IJsonNames.STATUS);
+		String jsonValue = json.optString(IJsonNames.VALUE);
+		String global = json.optString(IJsonNames.GLOBAL);
 		if(!AonStringUtils.isBlank(status)) {
 			filter = filter.and(f.getStatusProperty().eq(RegistryStatus.safeValueOf(status).value()));
+		}
+		jsonValue = global.isEmpty() ? jsonValue : global;
+		if(!jsonValue.isEmpty()) {
+			Filter valueFilter = f.getNameProperty().like("%" + jsonValue + "%")
+					.or(f.getDocumentProperty().like("%" + jsonValue + "%"));
+			if(!global.isEmpty())
+				valueFilter = valueFilter.or(f.getNationalityProperty().like("%" + jsonValue + "%"))
+				.or(f.getMediaType().in(new Byte[] {1,2}).and(f.getMediaValue().like("%" + global + "%")))
+				.or(f.getRegistryAddress().like("%" + global + "%"));
+			filter = filter.and(valueFilter);
 		}
 		return filter;
 	}

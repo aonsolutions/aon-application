@@ -89,7 +89,6 @@ public class RawdocModule extends MainEntryPoint {
 	}
 	private static final TabLayoutFolderSafeTemplate TABLAYOUT_FOLDER_TEMPLATE = GWT.create(TabLayoutFolderSafeTemplate.class);
 	
-	
 	private static RawdocServiceAsync RAWDOC_SERVICE;
 	private static CommonServiceAsync COMMON_SERVICE;
 	
@@ -905,21 +904,36 @@ public class RawdocModule extends MainEntryPoint {
 		}
 		
 		AonTableButton viewDoc = null;
-		if ( rawdoc.getMimeType() != null) {
-			viewDoc = new AonTableButton(AON.MSG.attach(), getAttachIcon(rawdoc.getMimeType()));
+		if ( rawdoc.getMimeType() != null || rawdoc.getS3Key() != null) {
+			viewDoc = new AonTableButton(AON.MSG.attach(), getAttachIcon(rawdoc.getMimeType() != null
+					? rawdoc.getMimeType() : MimeType.PDF));
 			viewDoc.getElement().getStyle().setMarginRight(5, Unit.PX);
 			viewDoc.addClickHandler(new ClickHandler() {
 				
 				@Override
 				public void onClick(ClickEvent event) {
-					String params = "domain="+ opt.getDomain() 
-					+ "&id=" +  rawdoc.getId();
-					params = RawdocModule.b64encode(params);
-					String url = URL.encode(GWT.getModuleBaseURL() + "ms/download_rawdoc" 
+					if(rawdoc.getS3Key() != null) {
+						RAWDOC_SERVICE.getS3Url(rawdoc, new AsyncCallback<String>() {
+							@Override
+							public void onSuccess(String url) {
+								showViewer(MimeType.PDF, url);
+							}
+							
+							@Override
+							public void onFailure(Throwable caught) {
+								showError(caught.getMessage());
+							}
+						});
+					} else {
+						String params = "domain="+ opt.getDomain() 
+						+ "&id=" +  rawdoc.getId();
+						params = RawdocModule.b64encode(params);
+						String url = URL.encode(GWT.getModuleBaseURL() + "ms/download_rawdoc" 
 							+ "/" + opt.getDomainName() 
 							+ "/" + opt.getUser() 
 							+ "/" +  params);
-					showViewer(rawdoc.getMimeType(),url);
+						showViewer(rawdoc.getMimeType(),url);
+					}
 				}
 			});
 		}

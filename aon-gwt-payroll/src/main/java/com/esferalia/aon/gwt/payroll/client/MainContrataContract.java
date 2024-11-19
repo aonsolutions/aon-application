@@ -19,7 +19,6 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog.AonAcceptDialogCallback;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonExpandButton;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonMessagePanel;
-import com.esferalia.aon.gwt.common.client.widget.solutions.AonSearchPanelButton;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonTableButton;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
 import com.esferalia.aon.gwt.common.shared.DateUtils;
@@ -48,7 +47,6 @@ import com.google.gwt.http.client.URL;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.DeckPanel;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.FormPanel;
@@ -164,6 +162,7 @@ public class MainContrataContract extends MainEntryPoint {
 	private AonToolbarButton sistemREDInfoBtn;
 	
 	private boolean contextLoaded = false;
+	private boolean fetchingData = false;
 	
 	// Filter Employee List
 	
@@ -188,29 +187,34 @@ public class MainContrataContract extends MainEntryPoint {
 	// Employee List Cols
 	
 	private static enum EMPLOYEE_COL {
-		  DES(AON.MSG.name()						,"-moz-available")
-		, DOC(AON.MSG.document()					,"20rem")
-		, NSS("NSS"									,"20rem")
-		, CON("TC2"									,"10rem")
-		, WOR(AON.MSG.workplace()					,"30rem")
-		, CAT("Categoria"							,"30rem")
-		, STA("F. Inicio"							,"10rem")
-		, END("F. Fin"								,"10rem")
-		, BUT(AonStringUtils.EMPTY					,"5rem")
+		  DES(AON.MSG.name()						,"-moz-available"	,"min-width: 5rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
+		, DOC(AON.MSG.document()					,"5rem"				,"")
+		, NSS("NSS"									,"5rem"				,"")
+		, CON("TC2"									,"3rem"				,"")
+		, WOR(AON.MSG.workplace()					,"7rem"				,"")
+		, CAT("Categoria"							,"7rem"				,"min-width: 7rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
+		, STA("F. Inicio"							,"5rem"				,"")
+		, END("F. Fin"								,"5rem"				,"")
+		, BUT(AonStringUtils.EMPTY					,"2rem"				,"")
 		;
 
 		String headerLabel;
 		String colWidth;
+		String styles;
 
-		private EMPLOYEE_COL(String headerLabel,String colWidth) {
+		private EMPLOYEE_COL(String headerLabel,String colWidth,String styles) {
 			this.headerLabel = headerLabel;
 			this.colWidth = colWidth;
+			this.styles = styles;
 		}
 		public String getColWidth() {
 			return colWidth;
 		}
 		public String getHeaderLabel() {
 			return headerLabel;
+		}
+		public String getStyles() {
+			return styles;
 		}
 	}
 	
@@ -288,8 +292,38 @@ public class MainContrataContract extends MainEntryPoint {
 		enterpriseSalary = new EnterpriseSalaryImpl();
 		enterpriseSalary.setBackButtonVisible();
 
-		employeesDockLayoutPanel = new AonCustomDockLayout("Contratos");
-		pdfDockLayoutPanel = new AonCustomDockLayout("PDF");
+		employeesDockLayoutPanel = new AonCustomDockLayout("Contratos") {
+			@Override
+			protected void onClearFilter() { 
+				mainContrataContractObject.resetEmployeesList();
+				offset = 0;
+				
+				params.setDescription(null);
+				employeesDockLayoutPanel.getSearchTextBox().setValue(null);
+				
+				params.setActive((byte)1);
+				active.setValue("1");
+				
+				params.setTc2(null);
+				tc2LB.setValue("");
+				
+				params.setWorkplace(null);
+				workplaceLB.setValue("");
+				
+				params.setFrom(null);
+				fromDB.setValue(null);
+				
+				params.setTo(null);
+				toDB.setValue(null);
+				
+				onSearch();
+			}
+		};
+		
+		pdfDockLayoutPanel = new AonCustomDockLayout("PDF") {
+			@Override
+			protected void onClearFilter() { /* Nothing to do here */ }
+		};
 
 		// Inject rich styles.
 		AON.ensureInjected();
@@ -547,11 +581,12 @@ public class MainContrataContract extends MainEntryPoint {
 		
 		employeesDockLayoutPanel.setSearchPlaceholder("Filtrar por nombre, documento o nss");
 		
-		employeesDockLayoutPanel.getSearchTextBox().addKeyUpHandler(e -> {
+		employeesDockLayoutPanel.addKeyUpHandler(e -> {
 			String value = employeesDockLayoutPanel.getSearchTextBox().getValue();
 			if(e.getNativeKeyCode() == KeyCodes.KEY_ENTER || e.getNativeKeyCode() == KeyCodes.KEY_MAC_ENTER) return;
 			
-			if(AonStringUtils.isNotBlank(value) && value.length() > 2) {
+			if(AonStringUtils.isNotBlank(value) && value.length() > 2 && !fetchingData) {
+				fetchingData = true;
 				mainContrataContractObject.resetEmployeesList();
 				offset = 0;
 				params.setDescription(value);
@@ -562,36 +597,6 @@ public class MainContrataContract extends MainEntryPoint {
 				onSearch();
 			}
 		});
-		
-		employeesDockLayoutPanel.addFilterMenu();
-		
-		AonSearchPanelButton cleanButton = new AonSearchPanelButton( AON.MSG.clean(), AON.CSS.aonIconClear() );
-		cleanButton.addClickHandler(event -> {
-			mainContrataContractObject.resetEmployeesList();
-			offset = 0;
-			
-			params.setDescription(null);
-			employeesDockLayoutPanel.getSearchTextBox().setValue(null);
-			
-			params.setActive((byte)1);
-			active.setValue("1");
-			
-			params.setTc2(null);
-			tc2LB.setValue("");
-			
-			params.setWorkplace(null);
-			workplaceLB.setValue("");
-			
-			params.setFrom(null);
-			fromDB.setValue(null);
-			
-			params.setTo(null);
-			toDB.setValue(null);
-			
-			onSearch();
-		});
-		
-		employeesDockLayoutPanel.addFilterToolbarButton(cleanButton);
 		
 		active.addItem( "Todas", "");
 		active.addItem( "Inactivas", "0");
@@ -623,8 +628,6 @@ public class MainContrataContract extends MainEntryPoint {
 		employeesDockLayoutPanel.addFilterWidget(workplaceLB);
 		employeesDockLayoutPanel.addFilterWidget(fromDB);
 		employeesDockLayoutPanel.addFilterWidget(toDB);
-		
-		employeesDockLayoutPanel.addSortMenu();
 		
 		sort.addItem("Nombre", "name");
 		sort.addItem("Documento", "document");
@@ -699,7 +702,6 @@ public class MainContrataContract extends MainEntryPoint {
 		pdfDockLayoutPanel.addToolbarButton(closePDF);
 		
 		pdfDockLayoutPanel.hideSearchWidget();
-		pdfDockLayoutPanel.hideFilterWidget();
 	}
 	
 	// OnModuleLoad
@@ -775,6 +777,8 @@ public class MainContrataContract extends MainEntryPoint {
 						disableMoreData();
 					}
 					enableSearch();
+					
+					fetchingData = false;
 				}, 
 				f -> {
 					AonMessagePanel.showError(employeesMessagePanel, "Error contratos: " + f.getMessage());
@@ -792,7 +796,7 @@ public class MainContrataContract extends MainEntryPoint {
 	private void paintEmployeeHeader() {
 		employeesTable.createHeader();
 		for ( EMPLOYEE_COL col : EMPLOYEE_COL.values()) 
-			employeesTable.addHeader(new Label(col.getHeaderLabel()), col.getColWidth());
+			employeesTable.addHeader(new Label(col.getHeaderLabel()), col.getColWidth(), col.getStyles());
 	}
 	
 	private void paintEmployeeRow(EmployeeContractInfo employeeContractInfo) {
@@ -861,12 +865,20 @@ public class MainContrataContract extends MainEntryPoint {
 		if(null != employeeContractInfo.getContractInfo().getEndDate())
 			endDateLabel.setText(formatFullDate.format(employeeContractInfo.getContractInfo().getEndDate()));
 		
+		employeeNameLabel.setTitle(employeeContractInfo.getEmployeeInfo().getFullName());
+		employeesTable.addInlineStyle(employeeNameLabel, EMPLOYEE_COL.DES.getStyles());
 		employeesTable.addRow(row, employeeNameLabel, EMPLOYEE_COL.DES.getColWidth());
+		
 		employeesTable.addRow(row, new Label(employeeContractInfo.getEmployeeInfo().getDocument()), EMPLOYEE_COL.DOC.getColWidth());
 		employeesTable.addRow(row, new Label(employeeContractInfo.getEmployeeInfo().getSsNumber()), EMPLOYEE_COL.NSS.getColWidth());
 		employeesTable.addRow(row, contractTypeLabel, EMPLOYEE_COL.CON.getColWidth());
 		employeesTable.addRow(row, new Label(employeeContractInfo.getContractInfo().getWorkplaceName()), EMPLOYEE_COL.WOR.getColWidth());
-		employeesTable.addRow(row, new Label(employeeContractInfo.getContractInfo().getAgreementCategory()), EMPLOYEE_COL.CAT.getColWidth());
+		
+		Label category = new Label(employeeContractInfo.getContractInfo().getAgreementCategory());
+		category.setTitle(employeeContractInfo.getContractInfo().getAgreementCategory());
+		employeesTable.addInlineStyle(category, EMPLOYEE_COL.CAT.getStyles());
+		employeesTable.addRow(row, category, EMPLOYEE_COL.CAT.getColWidth());
+		
 		employeesTable.addRow(row, new Label(formatFullDate.format(employeeContractInfo.getContractInfo().getStartDate())), EMPLOYEE_COL.STA.getColWidth());
 		employeesTable.addRow(row, endDateLabel, EMPLOYEE_COL.END.getColWidth());
 		employeesTable.addRow(row, buttonContainer, EMPLOYEE_COL.BUT.getColWidth());

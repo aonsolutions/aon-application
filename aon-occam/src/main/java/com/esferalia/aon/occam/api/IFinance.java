@@ -36,6 +36,7 @@ import com.esferalia.aon.occam.api.model.finance.FinanceFilter;
 import com.esferalia.aon.occam.api.model.finance.FinanceTracking;
 import com.esferalia.aon.occam.api.model.finance.InvofoxConfiguration;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
+import com.esferalia.aon.occam.api.model.finance.InvoiceBatch;
 import com.esferalia.aon.occam.api.model.finance.InvoiceCommunicationTracking;
 import com.esferalia.aon.occam.api.model.finance.InvoiceData;
 import com.esferalia.aon.occam.api.model.finance.InvoiceDetail;
@@ -97,6 +98,7 @@ public interface IFinance {
 	Invoice validateInvoice(AONContext ctx, Invoice invoice, Integer rawdocId);
 
 	Invoice getFullInvoice(AONContext ctx, Integer id);
+	List<Invoice>getFullInvoiceList(AONContext ctx, List<Integer> ids);
 	Stream<Invoice> getInvoiceHeaders(AONContext ctx, AccountingReportParams params, int offset, int limit);
 	Stream<Invoice> getInvoiceHeaders(AONContext ctx, InvoiceFilter filter, int offset, int limit);
 	Stream<Invoice> getInvoiceStream(AONContext ctx, InvoiceFilter filter);
@@ -264,6 +266,7 @@ public interface IFinance {
 	public Stream<InvoiceData> getInvoiceDataStream(AONContext ctx, InvoiceDataFilter filter);
 	public InvoiceData getInvoiceData(AONContext ctx, InvoiceDataFilter filter);
 	public InvoiceData saveInvoiceData(AONContext ctx, InvoiceData invoiceData);
+	public void deleteInvoiceData(AONContext ctx, Integer invoiceId);
 	
 	public InvoiceInfo getInvoiceInfo(AONContext ctx, InvoiceInfoFilter filter);
 	public InvoiceInfo saveInvoiceInfo(AONContext ctx, InvoiceInfo invoiceInfo);
@@ -305,6 +308,13 @@ public interface IFinance {
 	
 	Double getFinanceGroupStatus(CloseableAONContext ctx, FinanceFilter filter);
 	Optional<Item> getLastItem(AONContext ctx, Integer registry);
+	
+	// 	***********************************************
+	// 	************** INVOICE CLOSING ****************
+	// 	***********************************************
+	
+	Stream<InvoiceBatch> getInvoiceClosing(CloseableAONContext ctx);
+	void saveInvoiceClosing(CloseableAONContext ctx, InvoiceBatch invoiceBatch);
 
 }
 	

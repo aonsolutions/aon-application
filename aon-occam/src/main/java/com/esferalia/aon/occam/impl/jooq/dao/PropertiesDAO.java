@@ -70,6 +70,8 @@ import org.jooq.impl.SQLDataType;
 
 import com.esferalia.aon.jooq.tables.BankStatement;
 import com.esferalia.aon.jooq.tables.Raddinfo;
+import com.esferalia.aon.jooq.tables.Raddress;
+import com.esferalia.aon.jooq.tables.Rmedia;
 import com.esferalia.aon.occam.api.model.Filter.AgreementLevelCategoryFilter;
 import com.esferalia.aon.occam.api.model.Filter.ApplicationParameterFilter;
 import com.esferalia.aon.occam.api.model.Filter.AuthDeviceFilter;
@@ -369,6 +371,9 @@ public class PropertiesDAO {
 		@Override public Property<Timestamp> getCreationDateProperty() {return new FilterDAO.PropertyDAO<>(SUPPLIER.CREATION_DATE);}
 		@Override public Property<String> getModificationUserProperty() {return new FilterDAO.PropertyDAO<>(SUPPLIER.MODIFICATION_USER);}
 		@Override public Property<Timestamp> getModificationDateProperty() {return new FilterDAO.PropertyDAO<>(SUPPLIER.MODIFICATION_DATE);}
+		@Override public Property<Byte> getMediaType() {return new FilterDAO.PropertyDAO<>(Rmedia.RMEDIA.MEDIA);}
+        @Override public Property<String> getMediaValue() {return new FilterDAO.PropertyDAO<>(Rmedia.RMEDIA.VALUE);}
+        @Override public Property<String> getRegistryAddress(){return new FilterDAO.PropertyDAO<>(Raddress.RADDRESS.ADDRESS);}
 	}
 	
 	public static class TargetPropertiesDAO implements TargetProperties {
@@ -1703,6 +1708,11 @@ public class PropertiesDAO {
 		            DSL.inline("%d/%m/%Y")
 		        )
 		    );
+		}
+
+		@Override
+		public Property<String> getStatusStringProperty() {
+			return new FilterDAO.PropertyDAO<>(BankStatement.BANK_STATEMENT.STATUS.cast(SQLDataType.VARCHAR));
 		}
 
 	}

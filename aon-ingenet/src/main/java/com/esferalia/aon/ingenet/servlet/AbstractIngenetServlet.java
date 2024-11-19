@@ -1,5 +1,6 @@
 package com.esferalia.aon.ingenet.servlet;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
@@ -8,26 +9,10 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Base64;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.LinkedList;
-import java.util.List;
 
-import jakarta.servlet.ServletException;
-import jakarta.servlet.http.HttpServlet;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-
-import org.apache.http.HttpResponse;
-import org.apache.http.NameValuePair;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.entity.UrlEncodedFormEntity;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.impl.client.HttpClientBuilder;
-import org.apache.http.message.BasicNameValuePair;
-import org.json.JSONException;
-import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xml.sax.SAXException;
@@ -39,9 +24,17 @@ import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.esferalia.aon.occam.api.model.ApplicationParameter;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.MailAccount;
-import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.occam.impl.jooq.dao.AppParamDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.DomainDAO;
+import com.esferalia.aon.watson.server.io.AonFileUtils;
+import com.esferalia.aon.watson.util.AonStringUtils;
+
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import solutions.aon.aws.ses.SES;
+import solutions.aon.aws.ses.SESMessage;
 
 public abstract class AbstractIngenetServlet extends HttpServlet {
 
@@ -266,64 +259,32 @@ public abstract class AbstractIngenetServlet extends HttpServlet {
 		return list!=null && !list.isEmpty()?list.getFirst():null;
 	}
 	
-	protected void sendEmail2(IngenetLogLevel logLevel, String subject, String content, String attachName,
-			String attachValue, String... recipients) {
-		JSONObject json = new JSONObject();
+	protected void sendEmail(IngenetLogLevel logLevel, String subject, String content, String attachName, String attachValue, String... recipients) {
 		try {
-			MailAccount mail = getAdminMailAccount();
-			if(mail==null || mail.getId()==null){
-				LOGGER.error("No ADMIN mail account defined, cannot continue with email sending!");
-			} else {
-				String recipientsTo = "";
-				if (isDevEnabled()) {
-					recipientsTo = "aibanez@aonsolutions.es";
-					subject = "[AON/Test-"+logLevel+"] " + subject;
-					LOGGER.info("*** RUNNING TEST ENVIRONMENT, AVOID SPAM RECIPIENTS TO.");
-				} else {
-					if (recipients != null) {
-						for (String to : recipients) {
-							if (!recipientsTo.isEmpty())
-								recipientsTo += ",";
-							recipientsTo += to;
-						}
-					}
-					subject = "[AON-"+logLevel+"] " + subject;
-				}
-				json.put("mailAccountId", mail.getId())
-						.put("recipientsTo", recipientsTo)
-						.put("content", content).put("subject", subject)
-						.put("login", getUser()).put("domainName", getDomain())
-						.put("domainId", getDomainId())
-						.put("bcc", "aibanez@aonsolutions.es");
-
-				if (attachValue == null || "".equals(attachValue)) {
-					json.put("md5", "");
-				} else {
-					String encode = Base64.getEncoder().encodeToString(
-							attachValue.getBytes());
-					json.put("md5", encode)
-							.put("attachName", attachName + ".xml")
-							.put("mimetype", MimeType.XML.ordinal());
-				}
-
-				String url = getScheme() + "://" + getDomain()
-						+ (isDevEnabled() ? ":8080/aon-aio" : "")
-						+ "/send_email/";
-				LOGGER.info("*** SEND EMAIL URL " + url);
-				HttpClientBuilder base = HttpClientBuilder.create();
-				HttpClient client = base.build();
-				HttpPost post = new HttpPost(url);
-				List<NameValuePair> urlParameters = new ArrayList<NameValuePair>();
-				urlParameters.add(new BasicNameValuePair("details", json
-						.toString()));
-				post.setEntity(new UrlEncodedFormEntity(urlParameters));
-				HttpResponse resp = client.execute(post);
-				System.out.println(resp);
+			File file = null;
+			if(!AonStringUtils.isBlank(attachValue)) {
+				file = File.createTempFile(attachName, ".xml");
+				AonFileUtils.writeByteArrayToFile(file, attachValue.getBytes());
 			}
-		} catch (JSONException e) {
-			LOGGER.error("Error on mailing", e.getMessage());
-		} catch (IOException e) {
-			LOGGER.error("Error on mailing", e.getMessage());
+		
+			SESMessage sesMessage = new SESMessage()
+				.setAlias("Aon Solutions Dev")
+				.setFrom("dev@aon.solutions")
+				.setBody(content)
+				.setFile(file);
+			
+			if (isDevEnabled()) {
+				sesMessage.setTo("aibanez@aonsolutions.es");
+				sesMessage.setSubject("[AON/Test-"+logLevel+"] " + subject);
+				LOGGER.info("*** RUNNING TEST ENVIRONMENT, AVOID SPAM RECIPIENTS TO.");
+			} else {
+				sesMessage.setTo(Arrays.asList(recipients));
+				sesMessage.setSubject("[AON-"+logLevel+"] " + subject);
+			}
+		
+			SES.sendEmail(sesMessage);
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
 	}
 	
@@ -367,7 +328,7 @@ public abstract class AbstractIngenetServlet extends HttpServlet {
 		else if(IngenetLogLevel.ERROR==logLevel)
 			LOGGER.error(content);
 		
-		sendEmail2(logLevel, subject, content, fileName, fileValue, recipients);
+		sendEmail(logLevel, subject, content, fileName, fileValue, recipients);
 		if(folder!=null){
 			saveToDisk2(folder, fileName, fileValue);
 		}

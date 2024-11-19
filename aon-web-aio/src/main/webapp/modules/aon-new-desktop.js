@@ -166,7 +166,7 @@ export class AonNewDesktop extends AonElement {
 		let appDiv = this.createElement(TAG.DIV);
 		appDiv.classList.add("aonNewDesktopAppDiv");
 		
-		if (app.symbol) {
+		if (app.symbol && app.app!="payroll") {
 			let icon = this.createElement(TAG.SPAN);
 			icon.classList.add(CSS.MATERIAL_SYMBOLS_OUTLINED);
 			icon.id = `aonDesktopAppImg-${app.app}`;

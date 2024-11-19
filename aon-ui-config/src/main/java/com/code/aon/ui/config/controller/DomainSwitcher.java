@@ -66,6 +66,7 @@ import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.esferalia.aon.occam.api.SECURITY;
+import com.esferalia.aon.occam.api.model.aonsolutions.AonSecret;
 import com.esferalia.aon.occam.api.model.aonsolutions.DomainUserRoles;
 import com.esferalia.aon.occam.api.model.finance.InvoiceStatus;
 import com.esferalia.aon.occam.api.model.security.User;
@@ -121,7 +122,9 @@ public class DomainSwitcher extends AbstractDomainSwitcher implements
 			setShowActive(true);
 			super.setDomainId(initializeDomain());
 		} catch (Throwable th) {
-			super.setDomainId(1);
+			th.printStackTrace();
+			LOGGER.error( "** Unknown exception " + th.getMessage());
+			throw th;
 		}
 	}
 
@@ -819,7 +822,7 @@ public class DomainSwitcher extends AbstractDomainSwitcher implements
 	}
 	
 	public String getToken() {
-		Algorithm algorithm = Algorithm.HMAC256("aonsecret");
+		Algorithm algorithm = Algorithm.HMAC256(AonSecret.getAonSecret());
 		String token =   JWT.create()
 				.withIssuer("auth0")
 				.withIssuedAt(new Date())

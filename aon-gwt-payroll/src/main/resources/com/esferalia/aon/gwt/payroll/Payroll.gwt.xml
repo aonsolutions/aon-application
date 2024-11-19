@@ -5,13 +5,18 @@
 	<inherits name="com.google.gwt.i18n.I18N" />
 	<inherits name="com.google.gwt.logging.Logging"/>
 
+	<inherits name="com.google.gwt.json.JSON" />
+
 	<inherits name='net.aonsolutions.gwt.pdfjs.PdfJs'/>
 	<inherits name='com.esferalia.aon.gwt.common.Common'/>
 	<inherits name="com.esferalia.aon.occam.api.Occam" />	
 	<inherits name='com.esferalia.aon.gwt.codemirror.CodeMirror'/>
 	<inherits name='com.esferalia.aon.js.payroll.Payroll'/>
 	
-	<inherits name="com.google.gwt.json.JSON" />
+	<!-- Chart Tools -->
+	<inherits name='com.google.gwt.visualization.Visualization'/>
+	<inherits name='com.esferalia.aon.gwt.visualization.Visualization'/>
+		
 	
 	<!-- stylesheets eclipse them -->
 	<stylesheet src="codemirror/theme/eclipse.css"/>
@@ -29,10 +34,6 @@
 
 	<stylesheet src="aonReadOnly.css"/>
 
-	<!-- Chart Tools -->
-	<inherits name='com.google.gwt.visualization.Visualization'/>
-	<inherits name='com.esferalia.aon.gwt.visualization.Visualization'/>
-		
 	<!-- Spanish language, independent of country -->
 	<!--  extend-property name="locale" values="es" /-->
 	<!-- English language, independent of country -->
@@ -48,7 +49,7 @@
 	<extend-property name="user.agent" values="safari" />
 	<!--extend-property name="user.agent" values="ie8" /-->
 	<!--extend-property name="user.agent" values="ie9" /-->
-	<extend-property name="user.agent" values="ie10" />
+	<!-- extend-property name="user.agent" values="ie10" /-->
 
 	<set-configuration-property name="locale.useragent" value="Y" />
 	

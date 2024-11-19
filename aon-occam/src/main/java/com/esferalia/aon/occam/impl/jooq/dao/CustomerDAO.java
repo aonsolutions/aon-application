@@ -23,6 +23,8 @@ import  org.jooq.Record;
 import org.jooq.SelectConditionStep;
 import org.jooq.impl.DSL;
 
+import com.esferalia.aon.jooq.tables.Raddress;
+import com.esferalia.aon.jooq.tables.Rmedia;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Account;
 import com.esferalia.aon.occam.api.model.Customer;
@@ -83,9 +85,11 @@ public class CustomerDAO {
 		@Override public Property<Timestamp> getCreationDateProperty() {return new FilterDAO.PropertyDAO<>(CUSTOMER.CREATION_DATE);}
 		@Override public Property<String> getModificationUserProperty() {return new FilterDAO.PropertyDAO<>(CUSTOMER.MODIFICATION_USER);}
 		@Override public Property<Timestamp> getModificationDateProperty() {return new FilterDAO.PropertyDAO<>(CUSTOMER.MODIFICATION_DATE);}
-        @Override public Property<Integer> getProjectTypeProperty() {return new FilterDAO.PropertyDAO<>(PROJECT.PROJECT_TYPE);}	
-        
-        @Override public Property<Integer> getRegistryRelationProperty() {return new FilterDAO.PropertyDAO<>(RRELATIONSHIP.ID);}	
+        @Override public Property<Integer> getProjectTypeProperty() {return new FilterDAO.PropertyDAO<>(PROJECT.PROJECT_TYPE);}
+        @Override public Property<Integer> getRegistryRelationProperty() {return new FilterDAO.PropertyDAO<>(RRELATIONSHIP.ID);}
+        @Override public Property<Byte> getMediaType() {return new FilterDAO.PropertyDAO<>(Rmedia.RMEDIA.MEDIA);}
+        @Override public Property<String> getMediaValue() {return new FilterDAO.PropertyDAO<>(Rmedia.RMEDIA.VALUE);}
+        @Override public Property<String> getRegistryAddress(){return new FilterDAO.PropertyDAO<>(Raddress.RADDRESS.ADDRESS);}
 	}
 
 	protected static class CustomerFiller extends Filler  implements Function<Record, Customer> {

@@ -20,8 +20,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Base64;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
 import java.util.LinkedList;
@@ -36,15 +35,6 @@ import javax.faces.event.ActionEvent;
 import javax.faces.model.SelectItem;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.http.HttpResponse;
-import org.apache.http.NameValuePair;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.entity.UrlEncodedFormEntity;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.impl.client.HttpClientBuilder;
-import org.apache.http.message.BasicNameValuePair;
-import org.json.JSONException;
-import org.json.JSONObject;
 import org.richfaces.event.UploadEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -83,7 +73,12 @@ import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.MailAccount;
+import com.esferalia.aon.watson.server.io.AonFileUtils;
+import com.esferalia.aon.watson.util.AonStringUtils;
 import com.sun.faces.util.MessageFactory;
+
+import solutions.aon.aws.ses.SES;
+import solutions.aon.aws.ses.SESMessage;
 
 
 public class PrintParametersController implements Serializable {
@@ -266,7 +261,7 @@ public class PrintParametersController implements Serializable {
 					+ attach.getDriveId() + "]";
 			String msg2 = "\nVALUE FOUND: " + value;
 			LOGGER.error(msg + msg2);
-			sendEmail(domainName, domainId, user, "ERROR", "InvoiceFooterText", msg, "error", value, "soporte@aonsolutions.es");
+			sendEmail("ERROR", "InvoiceFooterText", msg, "error", value, "soporte@aonsolutions.es");
 			return true;
 		}
 		return false;
@@ -991,68 +986,26 @@ public class PrintParametersController implements Serializable {
 		}
 	}
 	
-	protected void sendEmail(String domainName, Integer domainId, String user, String logLevel, String subject, String content, String attachName,
-			String attachValue, String... recipients) {
-		JSONObject json = new JSONObject();
+	protected void sendEmail(String logLevel, String subject, String content, String attachName, String attachValue, String... recipients) {
 		try {
-			MailAccount mail = getAdminMailAccount(domainName, domainId, user);
-			if(mail==null || mail.getId()==null){
-				LOGGER.error("No ADMIN mail account defined, cannot continue with email sending!");
-			} else {
-//				HttpServletRequest request = HttpServletRequestValve.getHttpServletRequest();
-//		    	boolean isDevEnabled = request.getServerPort()==8080
-//		    			&& request.getRequestURL().lastIndexOf(":8080")>=0;
-				boolean isDevEnabled = false;				
-				
-				String recipientsTo = "";
-				subject = "[DESARROLLO-AON/" + (isDevEnabled?"Test-":"") + logLevel + "] " + subject;
-				if (recipients != null) {
-					for (String to : recipients) {
-						if (!recipientsTo.isEmpty())
-							recipientsTo += ",";
-						recipientsTo += to;
-					}
-				}
-				if (isDevEnabled) {
-					recipientsTo = "eagirrezabal@aonsolutions.es";
-				}
-				
-				json.put("mailAccountId", mail.getId())
-						.put("recipientsTo", recipientsTo)
-						.put("content", content).put("subject", subject)
-						.put("login", user).put("domainName", domainName)
-						.put("domainId", domainId)
-						.put("bcc", "eagirrezabal@aonsolutions.es");
-
-				if (attachValue == null || "".equals(attachValue)) {
-					json.put("md5", "");
-				} else {
-					String encode = Base64.getEncoder().encodeToString(
-							attachValue.getBytes());
-					json.put("md5", encode)
-							.put("attachName", attachName + ".xml")
-							.put("mimetype", MimeType.MIME_XML.ordinal());
-				}
-
-				String url = "http" + (isDevEnabled ? "" : "s") + "://" + domainName
-						+ (isDevEnabled ? ":8080/aon-aio" : "")
-						+ "/send_email/";
-//				String url = "https://" + domainName + "/send_email/";
-				LOGGER.info("*** SEND EMAIL URL " + url);
-				HttpClientBuilder base = HttpClientBuilder.create();
-				HttpClient client = base.build();
-				HttpPost post = new HttpPost(url);
-				List<NameValuePair> urlParameters = new ArrayList<NameValuePair>();
-				urlParameters.add(new BasicNameValuePair("details", json
-						.toString()));
-				post.setEntity(new UrlEncodedFormEntity(urlParameters));
-				HttpResponse resp = client.execute(post);
-				System.out.println(resp);
+			File file = null;
+			if(!AonStringUtils.isBlank(attachValue)) {
+				file = File.createTempFile(attachName, ".xml");
+				AonFileUtils.writeByteArrayToFile(file, attachValue.getBytes());
 			}
-		} catch (JSONException e) {
-			LOGGER.error("Error on mailing", e.getMessage());
-		} catch (IOException e) {
-			LOGGER.error("Error on mailing", e.getMessage());
+		
+			SESMessage sesMessage = new SESMessage()
+				.setAlias("Aon Solutions Dev")
+				.setFrom("dev@aon.solutions")
+				.setTo(Arrays.asList(recipients))
+				.setSubject("[DESARROLLO-AON/" + logLevel + "] " + subject)
+				.setBody(content)
+				.setBcc("aibanez@aonsolutions.es")
+				.setFile(file);
+		
+			SES.sendEmail(sesMessage);
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
 	}
 	

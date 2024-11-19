@@ -94,8 +94,16 @@ public class JooqEnterpriseSalaryBuilder {
 			condition = WORKPLACE.ID.eq(workplaceId);
 		else
 			condition = ENTERPRISE.REGISTRY.eq(enterpriseId);
-		condition = condition.and(SALARY.CHARGE_DATE.between(new java.sql.Date(startDate.getTime())
-				, new java.sql.Date(endDate.getTime())));
+		
+		condition = condition.and(
+				(
+						SALARY.TYPE.ne(com.esferalia.aon.occam.api.model.type.SalaryType.DELAY.value()).and(
+						SALARY.ISSUE_DATE.between(new java.sql.Date(startDate.getTime()), new java.sql.Date(endDate.getTime())))
+				).or(
+						SALARY.TYPE.eq(com.esferalia.aon.occam.api.model.type.SalaryType.DELAY.value()).and(
+						SALARY.CHARGE_DATE.between(new java.sql.Date(startDate.getTime()), new java.sql.Date(endDate.getTime())))
+				)
+		);
 		
 		Collection<Integer> typeInts = Arrays.stream(types).map(com.esferalia.aon.occam.api.model.type.SalaryType::ordinal).collect(Collectors.toList());
 		
@@ -110,9 +118,16 @@ public class JooqEnterpriseSalaryBuilder {
 			condition = WORKPLACE.ID.eq(workplaceId);
 		else
 			condition = ENTERPRISE.REGISTRY.eq(enterpriseId);
-		condition = condition.and(SALARY.CHARGE_DATE.between(new java.sql.Date(startDate.getTime())
-				, new java.sql.Date(endDate.getTime())));
 		
+		condition = condition.and(
+				(
+						SALARY.TYPE.ne(com.esferalia.aon.occam.api.model.type.SalaryType.DELAY.value()).and(
+						SALARY.ISSUE_DATE.between(new java.sql.Date(startDate.getTime()), new java.sql.Date(endDate.getTime())))
+				).or(
+						SALARY.TYPE.eq(com.esferalia.aon.occam.api.model.type.SalaryType.DELAY.value()).and(
+						SALARY.CHARGE_DATE.between(new java.sql.Date(startDate.getTime()), new java.sql.Date(endDate.getTime())))
+				)
+		);
 		
 		if (persons != null && persons.length > 0) {
 			Set<Integer> personIds = new LinkedHashSet<>();
@@ -209,7 +224,7 @@ public class JooqEnterpriseSalaryBuilder {
 			condition = WORKPLACE.ID.eq(workplaceId);
 		else
 			condition = ENTERPRISE.REGISTRY.eq(enterpriseId);
-		condition = condition.and(SALARY.CHARGE_DATE.between(new java.sql.Date(startDate.getTime())
+		condition = condition.and(SALARY.ISSUE_DATE.between(new java.sql.Date(startDate.getTime())
 				, new java.sql.Date(endDate.getTime())));
 		
 		
@@ -716,15 +731,23 @@ public class JooqEnterpriseSalaryBuilder {
 			if (!map.containsKey(r.get(WORKPLACE.DESCRIPTION)))
 				map.put(r.get(WORKPLACE.DESCRIPTION), new LinkedHashMap<>());
 			
-			String key  = String.format("%s-%s-%3$td-%3$tm-%4$tY-%4$td-%4$tm-%3$tY",
-			isEmpty(r.get(SALARY.SOCIAL_SECURITY_NUMBER)) ? r.get(CONTRACT.ID) : r.get(SALARY.SOCIAL_SECURITY_NUMBER) , 
+			// TODO: Esto acumula las nominas agrupandolas por trabajador en vez por contrato, los clientes han dicho que lo quieren desglosado
+			
+//			String key  = String.format("%s-%s-%3$td-%3$tm-%4$tY-%4$td-%4$tm-%3$tY",
+//			isEmpty(r.get(SALARY.SOCIAL_SECURITY_NUMBER)) ? r.get(CONTRACT.ID) : r.get(SALARY.SOCIAL_SECURITY_NUMBER) , 
+//			getSalaryTypeKey(salaryType),
+//			r.get(SALARY.START_DATE),
+//			r.get(SALARY.END_DATE)
+//			);
+			
+			String key  = String.format("%s-%s-%3$td-%3$tm-%3$tY",
+			r.get(CONTRACT.ID), 
 			getSalaryTypeKey(salaryType),
-			r.get(SALARY.START_DATE),
 			r.get(SALARY.END_DATE)
 			);
 			
 			Map<String, EnterprisePayrollEntry> eMap = map.get(r.get(WORKPLACE.DESCRIPTION));
-			eMap.put(key, entry);
+			eMap.merge(key, entry, EnterprisePayrollEntry::merge );
 		});
 			
 		return map;

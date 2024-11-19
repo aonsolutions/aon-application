@@ -140,10 +140,11 @@ public class SmartSQLContractSettleCalculatorContext extends SQLContractSettleCa
 	protected void loadDaysContextVariables(ContractExpressionContext ctx) throws ExpressionException {
 	    	Date endDate = SmartSQLContractSettleCalculatorContext.this.settleEndDate;
 	    	Date startDate = SmartSQLContractSettleCalculatorContext.this.getStartDate();
+			Period settlePeriod = new Period(startDate, endDate); 
 		ITimedVariable<Double> days = new ITimedVariable<Double>() {
 			@Override
 			public Period getPeriod() {
-				return new Period(startDate,endDate);
+				return settlePeriod;
 			}
 
 			@Override
@@ -152,11 +153,31 @@ public class SmartSQLContractSettleCalculatorContext extends SQLContractSettleCa
 			}
 
 		};
-		for ( ContextVariable ctxVar : new ContextVariable [] {WORKED_DAYS, SALARY_DAYS, QUOTE_DAYS} ) {
+		for ( ContextVariable ctxVar : new ContextVariable [] {SALARY_DAYS, QUOTE_DAYS} ) {
 		    if ( !ctx.containsVariable(ctxVar.getName(), startDate, endDate) ) {
-			ctx.putVariable(ctxVar, days);
+		    	ctx.putVariable(ctxVar, days);
 		    }
 		}
+		
+		List<Period> noHolidays = getPeriods(ContextVariable.NO_HOLIDAYS);
+		
+		for ( Period p : Period.sub(Collections.singletonList(settlePeriod), noHolidays) ) {
+			ITimedVariable<Double> workedDays = new ITimedVariable<Double>() {
+				@Override
+				public Period getPeriod() {
+					return p;
+				}
+
+				@Override
+				public Double getValue(Period p) {
+					return ((Long)p.getDays()).doubleValue();
+				}
+
+			};
+			ctx.putVariable(WORKED_DAYS, workedDays);
+		}
+		
+		
 		
 	}
 	

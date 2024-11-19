@@ -33,6 +33,14 @@ public class UndefinedVariablesException extends ExpressionException {
 	}
 	 
 	
+	public boolean hasVariableName(String var) {
+		if (var == null)
+			return false;
+		for (String v : variableNames)
+			if (var.equals(v))
+				return true;
+		return false;
+	}
 	
 	
 }

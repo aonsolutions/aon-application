@@ -10,7 +10,6 @@ import java.util.stream.Collectors;
 
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
-import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.Customer;
 import com.esferalia.aon.occam.api.model.EnterpriseActivity;
 import com.esferalia.aon.occam.api.model.Occam;
@@ -31,24 +30,23 @@ import com.esferalia.aon.occam.api.model.type.WithholdingType;
 import com.esferalia.aon.occam.impl.jooq.dao.CreditorDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.FinanceDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.SupplierDAO;
+import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonCollectionUtils;
 import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.github.javafaker.Faker;
 
 public class InvoiceFaker {
-	private static Faker faker = new Faker( new Locale("es") );
+	private static Faker faker = new Faker( Locale.of("es") );
 	
 	public static class InvoiceFakerParams {
 		private AONContext ctx;
-		private AonConfiguration config;
 		private Date issueDate;
 		private InvoiceWithholding withholding;
 		private boolean mustForceRegistry;
 		
-		public InvoiceFakerParams(AONContext ctx, AonConfiguration config) {
+		public InvoiceFakerParams(AONContext ctx) {
 			this.ctx = ctx;
-			this.config = config;
 		}
 		
 		public AONContext getCtx() {
@@ -56,13 +54,6 @@ public class InvoiceFaker {
 		}
 		public InvoiceFakerParams setCtx(AONContext ctx) {
 			this.ctx = ctx;
-			return this;
-		}
-		public AonConfiguration getConfig() {
-			return config;
-		}
-		public InvoiceFakerParams setConfig(AonConfiguration config) {
-			this.config = config;
 			return this;
 		}
 		public Date getIssueDate() {
@@ -107,6 +98,7 @@ public class InvoiceFaker {
 			@Override 
 			public InvoiceType getType() { return InvoiceType.SALES; }
 			
+			@Override 
 			public Invoice get( InvoiceFakerParams params ) {
 				Invoice invoice = InvoiceFaker.getHeader(params, InvoiceType.SALES);
 				invoice.setTransaction(InvoiceTransactionType.NATIONAL);
@@ -118,6 +110,7 @@ public class InvoiceFaker {
 			@Override 
 			public InvoiceType getType() { return InvoiceType.SALES; }
 
+			@Override 
 			public Invoice get( InvoiceFakerParams params ) {
 				Invoice invoice = InvoiceFaker.getHeader(params, InvoiceType.SALES);
 				invoice.setTransaction(InvoiceTransactionType.NATIONAL);
@@ -130,6 +123,7 @@ public class InvoiceFaker {
 			@Override 
 			public InvoiceType getType() { return InvoiceType.SALES; }
 
+			@Override 
 			public Invoice get( InvoiceFakerParams params ) {
 				Invoice invoice = InvoiceFaker.getHeader(params, InvoiceType.SALES);
 				invoice.setTransaction(InvoiceTransactionType.CAN_CEU_MEL);
@@ -141,6 +135,7 @@ public class InvoiceFaker {
 			@Override 
 			public InvoiceType getType() { return InvoiceType.SALES; }
 
+			@Override 
 			public Invoice get( InvoiceFakerParams params ) {
 				Invoice invoice = InvoiceFaker.getHeader(params, InvoiceType.SALES);
 				invoice.setTransaction(InvoiceTransactionType.CAN_CEU_MEL);
@@ -153,6 +148,7 @@ public class InvoiceFaker {
 			@Override 
 			public InvoiceType getType() { return InvoiceType.SALES; }
 
+			@Override 
 			public Invoice get( InvoiceFakerParams params ) {
 				Invoice invoice = InvoiceFaker.getHeader(params, InvoiceType.SALES);
 				invoice.setTransaction(InvoiceTransactionType.NATIONAL);
@@ -165,6 +161,7 @@ public class InvoiceFaker {
 			@Override 
 			public InvoiceType getType() { return InvoiceType.PURCHASE; }
 
+			@Override 
 			public Invoice get( InvoiceFakerParams params ) {
 				Invoice invoice = InvoiceFaker.getHeader(params, InvoiceType.PURCHASE);
 				invoice.setTransaction(InvoiceTransactionType.NATIONAL);
@@ -176,6 +173,7 @@ public class InvoiceFaker {
 			@Override 
 			public InvoiceType getType() { return InvoiceType.PURCHASE; }
 			
+			@Override 
 			public Invoice get( InvoiceFakerParams params ) {
 				Invoice invoice = InvoiceFaker.getHeader(params, InvoiceType.PURCHASE);
 				invoice.setTransaction(InvoiceTransactionType.NATIONAL);
@@ -188,6 +186,7 @@ public class InvoiceFaker {
 			@Override 
 			public InvoiceType getType() { return InvoiceType.PURCHASE; }
 
+			@Override 
 			public Invoice get( InvoiceFakerParams params ) {
 				Invoice invoice = InvoiceFaker.getHeader(params, InvoiceType.PURCHASE);
 				invoice.setTransaction(InvoiceTransactionType.INTRACOMMUNITY);
@@ -200,6 +199,7 @@ public class InvoiceFaker {
 			@Override 
 			public InvoiceType getType() { return InvoiceType.PURCHASE; }
 
+			@Override 
 			public Invoice get( InvoiceFakerParams params ) {
 				Invoice invoice = InvoiceFaker.getHeader(params, InvoiceType.PURCHASE);
 				invoice.setTransaction(InvoiceTransactionType.OTHER_ISP);
@@ -212,6 +212,7 @@ public class InvoiceFaker {
 			@Override 
 			public InvoiceType getType() { return InvoiceType.PURCHASE; }
 
+			@Override 
 			public Invoice get( InvoiceFakerParams params ) {
 				Invoice invoice = InvoiceFaker.getHeader(params, InvoiceType.PURCHASE);
 				invoice.setTransaction(InvoiceTransactionType.EXTRACOMMUNITY);
@@ -224,6 +225,7 @@ public class InvoiceFaker {
 			@Override 
 			public InvoiceType getType() { return InvoiceType.PURCHASE; }
 
+			@Override 
 			public Invoice get( InvoiceFakerParams params ) {
 				Invoice invoice = InvoiceFaker.getHeader(params, InvoiceType.PURCHASE);
 				invoice.setTransaction(InvoiceTransactionType.EXTRACOMMUNITY);
@@ -236,6 +238,7 @@ public class InvoiceFaker {
 			@Override 
 			public InvoiceType getType() { return InvoiceType.PURCHASE; }
 
+			@Override 
 			public Invoice get( InvoiceFakerParams params ) {
 				Invoice invoice = InvoiceFaker.getHeader(params, InvoiceType.PURCHASE);
 				invoice.setTransaction(InvoiceTransactionType.EXTRACOMMUNITY);
@@ -248,6 +251,7 @@ public class InvoiceFaker {
 			@Override 
 			public InvoiceType getType() { return InvoiceType.PURCHASE; }
 
+			@Override 
 			public Invoice get( InvoiceFakerParams params ) {
 				Invoice invoice = InvoiceFaker.getHeader(params, InvoiceType.PURCHASE);
 				invoice.setTransaction(InvoiceTransactionType.EXTRACOMMUNITY);
@@ -261,6 +265,7 @@ public class InvoiceFaker {
 			@Override 
 			public InvoiceType getType() { return InvoiceType.EXPENSES; }
 
+			@Override 
 			public Invoice get( InvoiceFakerParams params ) {
 				Invoice invoice = InvoiceFaker.getHeader(params, InvoiceType.EXPENSES);
 				invoice.setTransaction(InvoiceTransactionType.NATIONAL);
@@ -273,6 +278,7 @@ public class InvoiceFaker {
 			@Override 
 			public InvoiceType getType() { return InvoiceType.EXPENSES; }
 
+			@Override 
 			public Invoice get( InvoiceFakerParams params ) {
 				Invoice invoice = InvoiceFaker.getHeader(params, InvoiceType.EXPENSES);
 				invoice.setTransaction(InvoiceTransactionType.NATIONAL);
@@ -285,6 +291,7 @@ public class InvoiceFaker {
 			@Override 
 			public InvoiceType getType() { return InvoiceType.EXPENSES; }
 			
+			@Override 
 			public Invoice get( InvoiceFakerParams params ) {
 				Invoice invoice = InvoiceFaker.getHeader(params, InvoiceType.EXPENSES);
 				invoice.setTransaction(InvoiceTransactionType.NATIONAL);
@@ -296,6 +303,7 @@ public class InvoiceFaker {
 			@Override 
 			public InvoiceType getType() { return InvoiceType.SALES; }
 			
+			@Override 
 			public Invoice get( InvoiceFakerParams params ) {
 				Invoice invoice = InvoiceFaker.getHeader(params, InvoiceType.SALES);
 				invoice.setTransaction(InvoiceTransactionType.NATIONAL);
@@ -309,6 +317,7 @@ public class InvoiceFaker {
 			@Override 
 			public InvoiceType getType() { return InvoiceType.SALES; }
 
+			@Override 
 			public Invoice get( InvoiceFakerParams params ) {
 				Invoice invoice = InvoiceFaker.getHeader(params, InvoiceType.SALES);
 				invoice.setTransaction(InvoiceTransactionType.NATIONAL);
@@ -322,6 +331,7 @@ public class InvoiceFaker {
 			@Override 
 			public InvoiceType getType() { return InvoiceType.PURCHASE; }
 
+			@Override 
 			public Invoice get( InvoiceFakerParams params ) {
 				Invoice invoice = InvoiceFaker.getHeader(params, InvoiceType.PURCHASE);
 				invoice.setTransaction(InvoiceTransactionType.NATIONAL);
@@ -335,6 +345,7 @@ public class InvoiceFaker {
 			@Override 
 			public InvoiceType getType() { return InvoiceType.EXPENSES; }
 
+			@Override 
 			public Invoice get( InvoiceFakerParams params ) {
 				Invoice invoice = InvoiceFaker.getHeader(params, InvoiceType.EXPENSES);
 				invoice.setTransaction(InvoiceTransactionType.NATIONAL);
@@ -378,16 +389,16 @@ public class InvoiceFaker {
 			public Void visitSales(Invoice invoice) {
 				Customer customer = AonRandom.getCustomer( params.getCtx() );
 				fillRegistryData(invoice, customer);
-				invoice.setSeries(params.getConfig().getDefaultInvoiceSeries());
+				invoice.setSeries(params.getCtx().getConfig().getDefaultInvoiceSeries());
 				invoice.setNumber( AON.getInvoiceNextNumber(params.getCtx(), new Byte[]{invoice.getType().value()}, invoice.getSeries()));
 				
 				invoice.setScope(customer.getScope());
 				invoice.setTransaction( customer.getTransaction() );
 				
 				invoice.setService( AonRandom.gt(80) );
-				invoice.setVatAccrualPayment(invoice.isNational() && params.getConfig().getCompany().isVatAccrualPayment());
+				invoice.setVatAccrualPayment(invoice.isNational() && params.getCtx().getConfig().getCompany().isVatAccrualPayment());
 				invoice.setSurcharge(customer.isSurcharge());
-				invoice.setWithholding(customer.isWithholding() && params.getConfig().getCompany().isWithholding());
+				invoice.setWithholding(customer.isWithholding() && params.getCtx().getConfig().getCompany().isWithholding());
 				invoice.setWithholdingFarmer(false);
 				return null;
 			}
@@ -407,7 +418,7 @@ public class InvoiceFaker {
 				
 				invoice.setService( AonRandom.gt(40) );
 				invoice.setVatAccrualPayment(invoice.isNational() && supplier.isVatAccrualPayment());
-				invoice.setSurcharge(params.getConfig().getCompany().isSurcharge());
+				invoice.setSurcharge(params.getCtx().getConfig().getCompany().isSurcharge());
 				invoice.setWithholding(supplier.isWithholding());
 				invoice.setWithholdingFarmer(supplier.isWithholdingFarmer());
 				return null;
@@ -516,7 +527,7 @@ public class InvoiceFaker {
 		InvoiceDetail detail = new InvoiceDetail();
 		detail.setDomain(invoice.getDomain())
 			.setInvoice(invoice)
-			.setWorkplace( params.getConfig().getWorkplaces().getFirst() )
+			.setWorkplace( params.getCtx().getConfig().getWorkplaces().getFirst() )
 			.setDescription(AonRandom.item(5, 50))
 			.setQuantity(AonRandom.getDouble(0, 10))
 			.setDiscountExpression( AonRandom.gt(10)
@@ -586,7 +597,7 @@ public class InvoiceFaker {
 	}
 
 	private static InvoiceTax getVatInvoiceTax(InvoiceFakerParams params, Invoice invoice, InvoiceDetail detail) {
-		double vatPercent = getVatPercent( AonRandom.number(0, 100));
+		double vatPercent = getVatPercent( invoice, AonRandom.number(0, 100));
 		InvoiceTax tax =  new InvoiceTax()
 			.setTaxType(TaxType.VAT)
 			.setBase(detail.getTaxableBase())
@@ -597,22 +608,27 @@ public class InvoiceFaker {
 		return calculate(tax);
 	}
 	
-	private static double getVatPercent(int x) {
+	private static double getVatPercent(Invoice invoice, int x) {
+		Date octoberFirst = AonDateUtils.getDate(2024, 9,1);
+		boolean previous = AonDateUtils.compare(invoice.getIssueDate(), octoberFirst) == -1; 
 		if ( x >= 0 && x <= 50) return 21.0;
 		if ( x > 50 && x <= 75) return 10.0;
-		if ( x > 75 && x <= 95) return 4.0;
-		if ( x > 95 && x <= 98) return 5.0;
+		if ( x > 75 && x <= 90) return 4.0;
+		if ( x > 90 && x <= 95) return previous?0.0:2.0;
+		if ( x > 95 && x <= 98) return previous?5.0:7.5;
 		return 0.0;
 	}
 	
 	private static double getSurchargePercent(double vatPercent) {
 		if (vatPercent == 21) return 5.2;
 		else if (vatPercent == 10) return 1.4;
+		else if (vatPercent == 7.5) return 1;
+		else if (vatPercent == 5) return 0.62;
 		else if (vatPercent == 4) return 0.5;
+		else if (vatPercent == 2) return 0.26;
 		else {
 			int x = AonRandom.number(0, 100);
 			if ( x <= 70) return 1.75; 
-			if ( x <= 90) return 0.62;
 			return 0.0;
 		}
 	}
@@ -719,50 +735,50 @@ public class InvoiceFaker {
 			?getRandomSales(params)
 			:getRandomNotSales(params);
 	}
-	public static Invoice getSalesNational(AONContext ctx, AonConfiguration configuration) {
-		InvoiceFakerParams params = new InvoiceFakerParams(ctx,configuration);
+	public static Invoice getSalesNational(AONContext ctx) {
+		InvoiceFakerParams params = new InvoiceFakerParams(ctx);
 		return InvoiceFakerTypes.SALES_NATIONAL.get(params);
 	}
-	public static Invoice getSalesCanCeuService(AONContext ctx, AonConfiguration configuration) {
-		return getSalesCanCeuService(new InvoiceFakerParams(ctx,configuration));
+	public static Invoice getSalesCanCeuService(AONContext ctx) {
+		return getSalesCanCeuService(new InvoiceFakerParams(ctx));
 	}
 	public static Invoice getSalesCanCeuService(InvoiceFakerParams params) {
 		return InvoiceFakerTypes.SALES_CAN_CEU_MEL_SERVICE.get(params);
 	}
-	public static Invoice getSalesCanCeu(AONContext ctx, AonConfiguration configuration) {
-		return getSalesCanCeu(new InvoiceFakerParams(ctx,configuration));
+	public static Invoice getSalesCanCeu(AONContext ctx) {
+		return getSalesCanCeu(new InvoiceFakerParams(ctx));
 	}
 	public static Invoice getSalesCanCeu(InvoiceFakerParams params) {
 		return InvoiceFakerTypes.SALES_CAN_CEU_MEL.get(params);
 	}
-	public static Invoice getExpensesNational(AONContext ctx, AonConfiguration configuration) {
-		InvoiceFakerParams params = new InvoiceFakerParams(ctx,configuration);
+	public static Invoice getExpensesNational(AONContext ctx) {
+		InvoiceFakerParams params = new InvoiceFakerParams(ctx);
 		return InvoiceFakerTypes.EXPENSES_NATIONAL.get(params);
 	}
-	public static Invoice getPurchaseNational(AONContext ctx, AonConfiguration configuration) {
-		InvoiceFakerParams params = new InvoiceFakerParams(ctx,configuration);
+	public static Invoice getPurchaseNational(AONContext ctx) {
+		InvoiceFakerParams params = new InvoiceFakerParams(ctx);
 		return InvoiceFakerTypes.PURCHASE_NATIONAL.get(params);
 	}
-	public static Invoice getPurchaseExtracommunity(AONContext ctx, AonConfiguration configuration) {
-		return getPurchaseExtracommunity( new InvoiceFakerParams(ctx,configuration));
+	public static Invoice getPurchaseExtracommunity(AONContext ctx) {
+		return getPurchaseExtracommunity( new InvoiceFakerParams(ctx));
 	}
 	public static Invoice getPurchaseExtracommunity(InvoiceFakerParams params) {
 		return InvoiceFakerTypes.PURCHASE_EXTRACOMMUNITY.get(params);
 	}
-	public static Invoice getPurchaseExtracommunityVatImport(AONContext ctx, AonConfiguration configuration) {
-		return getPurchaseExtracommunityVatImport( new InvoiceFakerParams(ctx,configuration) ); 
+	public static Invoice getPurchaseExtracommunityVatImport(AONContext ctx) {
+		return getPurchaseExtracommunityVatImport( new InvoiceFakerParams(ctx) ); 
 	}
 	public static Invoice getPurchaseExtracommunityVatImport(InvoiceFakerParams params) {
 		return InvoiceFakerTypes.PURCHASE_EXTRACOMMUNITY_VAT_IMPORT.get(params);
 	}
-	public static Invoice getPurchaseCanCeu(AONContext ctx, AonConfiguration configuration) {
-		return getPurchaseCanCeu(new InvoiceFakerParams(ctx,configuration)); 
+	public static Invoice getPurchaseCanCeu(AONContext ctx) {
+		return getPurchaseCanCeu(new InvoiceFakerParams(ctx)); 
 	}
 	public static Invoice getPurchaseCanCeu(InvoiceFakerParams params) {
 		return InvoiceFakerTypes.PURCHASE_CAN_CEU_MEL.get(params);
 	}
-	public static Invoice getPurchaseCanCeuVatImport(AONContext ctx, AonConfiguration configuration) {
-		return getPurchaseCanCeuVatImport(new InvoiceFakerParams(ctx,configuration)); 
+	public static Invoice getPurchaseCanCeuVatImport(AONContext ctx) {
+		return getPurchaseCanCeuVatImport(new InvoiceFakerParams(ctx)); 
 	}
 	public static Invoice getPurchaseCanCeuVatImport(InvoiceFakerParams params) {
 		return InvoiceFakerTypes.PURCHASE_CAN_CEU_MEL_VAT_IMPORT.get(params);
@@ -774,8 +790,8 @@ public class InvoiceFaker {
 				.setWithholdingType(wt))
 				.setMustForceRegistry(true);
 	}
-	public static Invoice getRetentionInvoice( AONContext ctx, Occam occam, AonConfiguration configuration, final WithholdingType wt) {
-		InvoiceFakerParams params = new InvoiceFakerParams(ctx,configuration)
+	public static Invoice getRetentionInvoice( AONContext ctx, Occam occam, final WithholdingType wt) {
+		InvoiceFakerParams params = new InvoiceFakerParams(ctx)
 			.setIssueDate(AonRandom.getYearDay(new Date()));
 		InvoiceFaker.fillRetentionParams(ctx, params, wt);
 		return InvoiceFaker.getExpensesRetention(params);
@@ -784,8 +800,8 @@ public class InvoiceFaker {
 		return InvoiceFakerTypes.EXPENSES_RETENTION.get(invParams);
 	}
 
-	public static Invoice getPurchaseFarmerRetention(AONContext ctx, AonConfiguration configuration) {
-		InvoiceFakerParams invParams = new InvoiceFakerParams(ctx,configuration);
+	public static Invoice getPurchaseFarmerRetention(AONContext ctx) {
+		InvoiceFakerParams invParams = new InvoiceFakerParams(ctx);
 		return getPurchaseFarmerRetention(invParams);
 	}
 	public static Invoice getPurchaseFarmerRetention(InvoiceFakerParams invParams) {
@@ -803,8 +819,8 @@ public class InvoiceFaker {
 		return InvoiceFakerTypes.SALES_FARMER_RETENTION.get(invParams);
 	}
 	
-	public static Invoice getSalesRetentionInvoice( AONContext ctx, Occam occam, AonConfiguration configuration, final WithholdingType wt) {
-		InvoiceFakerParams params = new InvoiceFakerParams(ctx,configuration)
+	public static Invoice getSalesRetentionInvoice( AONContext ctx, Occam occam, final WithholdingType wt) {
+		InvoiceFakerParams params = new InvoiceFakerParams(ctx)
 			.setIssueDate(AonRandom.getYearDay(new Date()));
 		InvoiceFaker.fillRetentionParams(ctx, params, wt);
 		return InvoiceFakerTypes.SALES_RETENTION.get(params);

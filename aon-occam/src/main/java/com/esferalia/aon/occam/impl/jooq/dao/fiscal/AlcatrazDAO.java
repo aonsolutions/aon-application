@@ -1,27 +1,36 @@
 package com.esferalia.aon.occam.impl.jooq.dao.fiscal;
 
 import static com.esferalia.aon.jooq.tables.Alcatraz.ALCATRAZ;
+import static com.esferalia.aon.jooq.tables.Contract.CONTRACT;
 import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
 import static com.esferalia.aon.jooq.tables.Finance.FINANCE;
 import static com.esferalia.aon.jooq.tables.FsModel.FS_MODEL;
+import static com.esferalia.aon.jooq.tables.Invoice.INVOICE;
 import static com.esferalia.aon.jooq.tables.PayMethod.PAY_METHOD;
 import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
+import static com.esferalia.aon.jooq.tables.Salary.SALARY;
 import static com.esferalia.aon.jooq.tables.Scope.SCOPE;
 
 import java.io.Serializable;
+import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.jooq.BatchBindStep;
+import org.jooq.Condition;
 import org.jooq.exception.DataAccessException;
 
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
+import com.esferalia.aon.occam.api.model.finance.InvoiceBatch;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModel;
+import com.esferalia.aon.occam.api.model.invoice.InvoiceFilter;
 import com.esferalia.aon.occam.impl.jooq.dao.fiscal.FiscalModelDAO.FiscalModelFiller;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.util.AonNumberUtils;
+import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class AlcatrazDAO {
 	
@@ -166,6 +175,34 @@ public class AlcatrazDAO {
 		return fm;
 	}
 
+	public static InvoiceBatch saveInvoiceBatchInvoices(AONContext ctx, InvoiceBatch invoiceBatch, Set<Integer> invoices) {
+		try {
+			ctx.checkWrite();
+			insertInvoiceBatch(ctx, invoiceBatch, invoices);
+			return invoiceBatch;
+		} catch (DataAccessException t) {
+			throw new AonCoreException(t.getCause()!=null?t.getCause().getMessage():t.getMessage());
+		} catch (Exception t) {
+			throw new AonCoreException(t.getMessage());
+		}
+	}
+	
+	private static InvoiceBatch insertInvoiceBatch(AONContext ctx, InvoiceBatch invoiceBatch, Set<Integer> invoices) {
+		if (invoiceBatch != null && invoiceBatch.getId() != null 
+				&& invoices != null && !invoices.isEmpty()) {
+			BatchBindStep batch = ctx.getDslContext()
+					.batch(ctx.getDslContext().insertInto(ALCATRAZ
+							,ALCATRAZ.DOMAIN
+							,ALCATRAZ.INVOICE_BATCH
+							,ALCATRAZ.INVOICE)
+							.values((Integer) null,(Integer) null,(Integer) null));
+			invoices.stream().forEach(inv -> batch.bind(invoiceBatch.getDomain(), invoiceBatch.getId(), inv));
+			batch.execute();
+			log(ctx,"\tINSERT ALCATRAZ id: {0} InvoiceBatch: {1} {2} rows",invoiceBatch .getId(), invoiceBatch.getDescription(), batch.size());
+		}
+		return invoiceBatch;
+	}
+
 	public static <T extends FiscalModel> void deleteFiscalModel(AONContext ctx, T fm) {
 		ctx.checkWrite();
 		int count = ctx.getDslContext()
@@ -241,73 +278,87 @@ public class AlcatrazDAO {
 		;
 	}
 	
-	public static List<Alcatraz> getAlcatrazByFsModel(AONContext ctx, Integer fsModelId) {
+	// Get invoice from FsModel
+	
+	public static List<Alcatraz> getAlcatrazInvoicesByFsModel(CloseableAONContext ctx, Integer fsModel, InvoiceFilter invoiceFilter) {
+		Condition condition = parseCondition(ctx, invoiceFilter);
+		
 		return ctx.getDslContext()
-			.select()
-			.from(ALCATRAZ)
-			.where(ALCATRAZ.FS_MODEL.eq(fsModelId))
-			.fetch()
-			.stream()
-			.map(rec -> new Alcatraz()
-					.setInvoice(rec.get(ALCATRAZ.INVOICE))
-					.setSalary(rec.get(ALCATRAZ.SALARY))
-			)
-			.collect(Collectors.toCollection(LinkedList::new))
-		;
+				.select()
+				.from(ALCATRAZ)
+				.join(INVOICE).on(INVOICE.ID.eq(ALCATRAZ.INVOICE))
+				.join(REGISTRY).on(REGISTRY.ID.eq(INVOICE.REGISTRY))
+				.where(ALCATRAZ.FS_MODEL.eq(fsModel))
+				.and(ALCATRAZ.INVOICE.isNotNull())
+				.and(condition)
+				.orderBy(INVOICE.ISSUE_DATE, INVOICE.REFERENCE_CODE, REGISTRY.NAME)
+				.limit(invoiceFilter.getPerPage())
+				.offset(invoiceFilter.getPage())
+				.fetch()
+				.stream()
+				.map(rec -> new Alcatraz()
+						.setInvoice(rec.get(ALCATRAZ.INVOICE))
+						.setSalary(rec.get(ALCATRAZ.SALARY))
+				).collect(Collectors.toCollection(LinkedList::new))
+			;
 	}
 	
-	public static List<Alcatraz> getAlcatrazInvoicesByFsModel(AONContext ctx, Integer fsModelId) {
-		return ctx.getDslContext()
-			.select()
-			.from(ALCATRAZ)
-			.where(ALCATRAZ.FS_MODEL.eq(fsModelId))
-			.and(ALCATRAZ.INVOICE.isNotNull())
-			.fetch()
-			.stream()
-			.map(rec -> new Alcatraz()
-					.setInvoice(rec.get(ALCATRAZ.INVOICE))
-					.setSalary(rec.get(ALCATRAZ.SALARY))
-			)
-			.collect(Collectors.toCollection(LinkedList::new))
-		;
-	}
-	
-	public static List<Alcatraz> getAlcatrazInvoicesByFsModel(AONContext ctx, Integer fsModelId, Integer offset) {
-		return ctx.getDslContext()
-			.select()
-			.from(ALCATRAZ)
-			.where(ALCATRAZ.FS_MODEL.eq(fsModelId))
-			.and(ALCATRAZ.INVOICE.isNotNull())
-			.limit(100)
-			.offset(offset)
-			.fetch()
-			.stream()
-			.map(rec -> new Alcatraz()
-					.setInvoice(rec.get(ALCATRAZ.INVOICE))
-					.setSalary(rec.get(ALCATRAZ.SALARY))
-			)
-			.collect(Collectors.toCollection(LinkedList::new))
-		;
-	}
-	
-	public static Integer getAlcatrazInvoicesCountByFsModel(AONContext ctx, Integer fsModelId) {
+	public static Integer getAlcatrazInvoicesCountByFsModel(AONContext ctx, Integer fsModel, InvoiceFilter invoiceFilter) {
+		Condition condition = parseCondition(ctx, invoiceFilter);
+		
 		return ctx.getDslContext()
 			.selectCount()
 			.from(ALCATRAZ)
-			.where(ALCATRAZ.FS_MODEL.eq(fsModelId))
+			.join(INVOICE).on(INVOICE.ID.eq(ALCATRAZ.INVOICE))
+			.join(REGISTRY).on(REGISTRY.ID.eq(INVOICE.REGISTRY))
+			.where(ALCATRAZ.FS_MODEL.eq(fsModel))
 			.and(ALCATRAZ.INVOICE.isNotNull())
+			.and(condition)
 			.fetchOne()
 			.value1();
 	}
 	
-	public static List<Alcatraz> getAlcatrazSalariesByFsModel(AONContext ctx, Integer fsModelId, Integer offset) {
+	private static Condition parseCondition(AONContext ctx, InvoiceFilter invoiceFilter) {
+		Condition condition = ALCATRAZ.DOMAIN.eq(ctx.getDomainId());
+		
+		if(null != invoiceFilter.getTypesByte())
+			condition = condition.and(INVOICE.TYPE.in(invoiceFilter.getTypesByte()));
+		
+		if(null != invoiceFilter.getFrom())
+			condition = condition.and(INVOICE.ISSUE_DATE.ge(parseToSqlDate(invoiceFilter.getFrom())));
+		
+		if(null != invoiceFilter.getTo())
+			condition = condition.and(INVOICE.ISSUE_DATE.le(parseToSqlDate(invoiceFilter.getTo())));
+		
+		if(AonStringUtils.isNotBlank(invoiceFilter.getDescription())) {
+			condition = condition.and(
+					INVOICE.REFERENCE_CODE.like("%" + invoiceFilter.getDescription() + "%")
+					.or(INVOICE.RNAME.like("%" + invoiceFilter.getDescription() + "%"))
+					.or(REGISTRY.NAME.like("%" + invoiceFilter.getDescription() + "%"))
+					.or(INVOICE.SERIES.like("%" + invoiceFilter.getDescription() + "%"))
+					.or(INVOICE.RDOCUMENT.like("%" + invoiceFilter.getDescription() + "%"))
+					.or(REGISTRY.DOCUMENT.like("%" + invoiceFilter.getDescription() + "%"))
+			);
+		}
+		
+		return condition;
+	}
+	
+	public static List<Alcatraz> getAlcatrazSalariesByFsModel(AONContext ctx, Integer fsModel, InvoiceFilter invoiceFilter) {
+		Condition condition = parseSalaryCondition(ctx, invoiceFilter);
+		
 		return ctx.getDslContext()
 			.select()
 			.from(ALCATRAZ)
-			.where(ALCATRAZ.FS_MODEL.eq(fsModelId))
+			.join(SALARY).on(SALARY.ID.eq(ALCATRAZ.SALARY))
+			.join(CONTRACT).on(CONTRACT.ID.eq(SALARY.CONTRACT))
+			.join(REGISTRY).on(REGISTRY.ID.eq(CONTRACT.PERSON))
+			.where(ALCATRAZ.FS_MODEL.eq(fsModel))
 			.and(ALCATRAZ.SALARY.isNotNull())
-			.limit(100)
-			.offset(offset)
+			.and(condition)
+			.orderBy(SALARY.END_DATE, REGISTRY.NAME)
+			.limit(invoiceFilter.getPerPage())
+			.offset(invoiceFilter.getPage())
 			.fetch()
 			.stream()
 			.map(rec -> new Alcatraz()
@@ -318,14 +369,46 @@ public class AlcatrazDAO {
 		;
 	}
 	
-	public static Integer getAlcatrazSalariesCountByFsModel(AONContext ctx, Integer fsModelId) {
+	public static Integer getAlcatrazSalariesCountByFsModel(AONContext ctx, Integer fsModel, InvoiceFilter invoiceFilter) {
+		Condition condition = parseSalaryCondition(ctx, invoiceFilter);
+		
 		return ctx.getDslContext()
 			.selectCount()
 			.from(ALCATRAZ)
-			.where(ALCATRAZ.FS_MODEL.eq(fsModelId))
+			.join(SALARY).on(SALARY.ID.eq(ALCATRAZ.SALARY))
+			.join(CONTRACT).on(CONTRACT.ID.eq(SALARY.CONTRACT))
+			.join(REGISTRY).on(REGISTRY.ID.eq(CONTRACT.PERSON))
+			.where(ALCATRAZ.FS_MODEL.eq(fsModel))
 			.and(ALCATRAZ.SALARY.isNotNull())
+			.and(condition)
 			.fetchOne()
 			.value1();
+	}
+	
+	private static Condition parseSalaryCondition(AONContext ctx, InvoiceFilter invoiceFilter) {
+		Condition condition = ALCATRAZ.DOMAIN.eq(ctx.getDomainId());
+		
+		if(null != invoiceFilter.getFrom())
+			condition = condition.and(SALARY.ISSUE_DATE.ge(parseToSqlDate(invoiceFilter.getFrom())));
+		
+		if(null != invoiceFilter.getTo())
+			condition = condition.and(SALARY.ISSUE_DATE.le(parseToSqlDate(invoiceFilter.getTo())));
+		
+		if(AonStringUtils.isNotBlank(invoiceFilter.getDescription())) {
+			condition = condition.and(
+					SALARY.EMPLOYEE_NAME.like("%" + invoiceFilter.getDescription() + "%")
+					.or(SALARY.EMPLOYEE_DOCUMENT.like("%" + invoiceFilter.getDescription() + "%"))
+					.or(REGISTRY.NAME.like("%" + invoiceFilter.getDescription() + "%"))
+					.or(REGISTRY.DOCUMENT.like("%" + invoiceFilter.getDescription() + "%"))
+			);
+		}
+		
+		return condition;
+	}
+	
+	private static java.sql.Date parseToSqlDate(Date date){
+		if(null == date) return null;
+		return new java.sql.Date(date.getTime());
 	}
 	
 }

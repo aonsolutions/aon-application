@@ -160,9 +160,9 @@ public enum AppParam {
 	,FS_MODEL_CFG_M202
 	,FS_MODEL_CFG_M184
 	,FS_MODEL_CFG_M193
-	,
-	@Deprecated
-	FS_MODEL_CFG_SII
+	,FS_FORCE_DIFF_CALC
+	
+	,@Deprecated FS_MODEL_CFG_SII
 	,FS_MODEL_CFG_CCAA
 	,FS_CUSTOMER_CHECK_ENABLED
 	,FS_PRES_MODEL_AUTO_ENABLED
@@ -271,6 +271,7 @@ public enum AppParam {
 	, SIG_DOMAIN_NAME
 	, SIG_DOMAIN_ID
 	, SIG_LOGIN
+	, TRIAL
 	;
 	
 	public String getValue() {

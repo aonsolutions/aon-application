@@ -498,6 +498,7 @@ CREATE TABLE `alcatraz` (
   `salary` int DEFAULT NULL COMMENT 'Id Nomina',
   `finance` int DEFAULT NULL COMMENT 'Id Vto',
   `finance_tracking` int DEFAULT NULL COMMENT 'Id seguimiento Vto',
+  `invoice_batch` int DEFAULT NULL COMMENT 'Id Lote Factura',
   PRIMARY KEY (`id`),
   KEY `IDX_ALCATRAZ_DOMAIN` (`domain`),
   KEY `IDX_ALCATRAZ_FS_MODEL` (`fs_model`),
@@ -505,12 +506,14 @@ CREATE TABLE `alcatraz` (
   KEY `IDX_ALCATRAZ_SALARY` (`salary`),
   KEY `IDX_ALCATRAZ_FINANCE` (`finance`),
   KEY `IDX_ALCATRAZ_FINANCE_TRACKING` (`finance_tracking`),
+  KEY `IDX_ALCATRAZ_INVOICE_BATCH` (`invoice_batch`),
   CONSTRAINT `FK_ALCATRAZ_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
   CONSTRAINT `FK_ALCATRAZ_FS_MODEL` FOREIGN KEY (`fs_model`) REFERENCES `fs_model` (`id`),
   CONSTRAINT `FK_ALCATRAZ_INVOICE` FOREIGN KEY (`invoice`) REFERENCES `invoice` (`id`),
   CONSTRAINT `FK_ALCATRAZ_SALARY` FOREIGN KEY (`salary`) REFERENCES `salary` (`id`),
   CONSTRAINT `FK_ALCATRAZ_FINANCE` FOREIGN KEY (`finance`) REFERENCES `finance` (`id`),
-  CONSTRAINT `FK_ALCATRAZ_FINANCE_TRACKING` FOREIGN KEY (`finance_tracking`) REFERENCES `finance_tracking` (`id`)
+  CONSTRAINT `FK_ALCATRAZ_FINANCE_TRACKING` FOREIGN KEY (`finance_tracking`) REFERENCES `finance_tracking` (`id`),
+  CONSTRAINT `FK_ALCATRAZ_INVOICE_BATCH` FOREIGN KEY (`invoice_batch`) REFERENCES `invoice_batch` (`id`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Bloqueo de entidades';
 
 #
@@ -4014,6 +4017,7 @@ CREATE TABLE `fs_model200` (
   `modification_date` datetime DEFAULT NULL COMMENT 'Fecha de modificacion',
   `fs_model` int DEFAULT NULL COMMENT 'Identificador de fs_model',
   `nrs_anexoVI` varchar(22) CHARACTER SET latin1 COLLATE latin1_spanish_ci DEFAULT NULL,
+  `nrc` varchar(22) CHARACTER SET latin1 COLLATE latin1_spanish_ci DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `IDX_FS_MODEL200_DOMAIN` (`domain`),
   KEY `IDX_FS_MODEL200_ENTERPRISE` (`enterprise`),
@@ -4720,11 +4724,17 @@ CREATE TABLE `invoice_doc` (
 CREATE TABLE `invoice_batch` (
   `id` int NOT NULL AUTO_INCREMENT COMMENT 'Identificador unico',
   `domain` int NOT NULL COMMENT 'Identificador del Dominio',
+  `description` varchar(32) CHARACTER SET latin1 COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Descripcion del lote',
   `date` datetime NOT NULL COMMENT 'Fecha de comunicacion',
+  `end_date` datetime DEFAULT NULL COMMENT 'Fecha de finalizacion',
   `type` tinyint NOT NULL DEFAULT '0' COMMENT 'Tipo de Comunicacion',
-  `operation` tinyint NOT NULL DEFAULT '0' COMMENT 'Tipo de Operación',
-  `data_response` int NOT NULL COMMENT 'Envio de la comunicacion',
+  `operation` tinyint NOT NULL DEFAULT '0' COMMENT 'Tipo de Operacion',
+  `data_response` int DEFAULT NULL COMMENT 'Envio de la comunicacion',
+  `md5` varchar(32) CHARACTER SET latin1 COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Hash md5',
   `creation_user` varchar(16) CHARACTER SET latin1 COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Usuario de creacion',
+  `creation_date` datetime DEFAULT NULL COMMENT 'Fecha de creacion',
+  `modification_user` varchar(16) CHARACTER SET latin1 COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Usuario de modificacion',
+  `modification_date` datetime DEFAULT NULL COMMENT 'Fecha de modificacion',
   PRIMARY KEY (`id`),
   KEY `IDX_INVOICE_BATCH_DOMAIN` (`domain`),
   KEY `IDX_INVOICE_BATCH_DATA_RESPONSE` (`data_response`),
@@ -8929,6 +8939,25 @@ CREATE TABLE `training_course` (
   CONSTRAINT `FK_TRAINING_COURSE_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
   CONSTRAINT `FK_TRAINING_COURSE_TRAINING_CENTER` FOREIGN KEY (`training_center`) REFERENCES `training_center` (`registry`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Cursos de los Centros Formativos';
+
+#
+# Table structure for table `url_shorten`
+#
+
+CREATE TABLE IF NOT EXISTS  `url_shorten`(
+  `id` int NOT NULL AUTO_INCREMENT COMMENT 'ID unico de la url',
+  `domain` int NOT NULL COMMENT 'Dominio',
+  `url` TEXT NOT NULL COMMENT 'URL original',
+  `uuid` varchar(128) NOT NULL COMMENT 'Identificador unico de la URL',
+  `count` int NOT NULL DEFAULT 0 COMMENT 'Peticiones',
+  `expiration_date` datetime DEFAULT NULL COMMENT 'Fecha de caducidad' ,
+  `creation_date` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT 'Fecha de creacion',
+  PRIMARY KEY (`id`),
+  KEY `IDX_URL_SHORTEN_DOMAIN` (`domain`),
+  UNIQUE KEY `IDX_URL_SHORTEN_UUID` (`uuid`),
+  CONSTRAINT `FK_URL_SHORTEN_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='URLs ofuscadas';
+
 
 #
 # Table structure for table `user`

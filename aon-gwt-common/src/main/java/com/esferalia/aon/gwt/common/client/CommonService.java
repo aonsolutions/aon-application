@@ -23,11 +23,13 @@ import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.Question;
 import com.esferalia.aon.occam.api.model.QuestionParams;
 import com.esferalia.aon.occam.api.model.SellerParams;
+import com.esferalia.aon.occam.api.model.SellerWorkloadParams;
 import com.esferalia.aon.occam.api.model.Survey;
 import com.esferalia.aon.occam.api.model.Workgroup;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.commission.CommissionType;
 import com.esferalia.aon.occam.api.model.config.ConfigParams;
+import com.esferalia.aon.occam.api.model.fee.Fee;
 import com.esferalia.aon.occam.api.model.finance.FBatch;
 import com.esferalia.aon.occam.api.model.finance.PayMethod;
 import com.esferalia.aon.occam.api.model.fiscal.IFiscalModel;
@@ -46,6 +48,7 @@ import com.esferalia.aon.occam.api.model.registry.RegistryAddress;
 import com.esferalia.aon.occam.api.model.registry.RegistryBank;
 import com.esferalia.aon.occam.api.model.registry.RegistryMedia;
 import com.esferalia.aon.occam.api.model.registry.Seller;
+import com.esferalia.aon.occam.api.model.registry.SellerWorkload;
 import com.esferalia.aon.occam.api.model.registry.Supplier;
 import com.esferalia.aon.occam.api.model.registry.SupplierFull;
 import com.esferalia.aon.occam.api.model.registry.Target;
@@ -241,4 +244,13 @@ public interface CommonService extends RemoteService {
 	void deleteRegistryAttach(String domainName, Integer domain, String user, Integer id) throws AonCoreException;
 	List<Category> getAviableCategories(String domainName, Integer domainId, String user) throws AonCoreException;
 
+	// **************************************************
+	// ******************************** [SELLER WORKLOAD]
+	// **************************************************
+	
+	List<SellerWorkload> getSellersWorkload(SellerWorkloadParams params) throws AonCoreException;
+	Integer getSellersWorkloadCount(SellerWorkloadParams params) throws AonCoreException;
+	List<Fee> getSellersWorkloadFees(SellerWorkloadParams params) throws AonCoreException;
+	List<Integer> getSellersWorkloadFeesIds(SellerWorkloadParams params) throws AonCoreException;
+	
 }

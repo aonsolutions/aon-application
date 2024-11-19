@@ -37,6 +37,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.Function;
@@ -714,7 +715,7 @@ public class SmartContractSalaryCalculator<T extends ISalary> extends GenericCon
 			
 			
 			if (paymentType == PaymentType.CRA_0004 
-				&& isAtIT(expressionContext, start, end)) {
+				&& isAtFullIT(expressionContext, start, end)) {
 				contractPayment = new DelegateContractPayment(contractPayment) {
 					@Override
 					public String getExpression() {
@@ -740,6 +741,14 @@ public class SmartContractSalaryCalculator<T extends ISalary> extends GenericCon
 		if ( payment.getConceptId() != null ) 
 			return payment.getType();
 		
+		//'SALARIO_BASE' or 'SALARIO BASE'
+		if ( AonStringUtils.equals(ContextVariable.BASE_SALARY, payment.getName()) )
+			return CRA_0001;
+
+		if ( AonStringUtils.isNotBlank(payment.getDescription()) 
+			&& AonStringUtils.getLevenshteinDistance(ContextVariable.BASE_SALARY, payment.getDescription(), 2) != -1 )
+			return CRA_0001;
+
 		if ( AonStringUtils.isBlank(payment.getDescription()) )
 			return payment.getType();
 
@@ -1009,20 +1018,33 @@ public class SmartContractSalaryCalculator<T extends ISalary> extends GenericCon
 
 	@Override
 	protected List<ITimedResult<Double>> fixExtraResults(IContractPayment contractPayment,
-			List<ITimedResult<Double>> results, Date start, Date end, ExpressionContext expressionContext) {
+			List<ITimedResult<Double>> results, Date start, Date end, ExpressionContext expressionContext) throws AonException {
 		// TODO Auto-generated method stub
 		List<ITimedResult<Double>> fixed  = new ArrayList<ITimedResult<Double>>(); 
 		for ( ITimedResult<Double> result : results ) {
 			Period period = result.getPeriod();
 			Double value = result.getValue(result.getPeriod());
 			
+			if ( value == null 
+				|| value == 0.00 ) {
+				fixed.add( result );
+				continue;
+			} 
+			
 			try {
-				double cgcBaseMin = get(expressionContext, period, ContextVariable.CGC_BASE_MIN, ContextVariable.MONTHLY_PAYMENTS, ContextVariable.BASE_SALARY);
+				double cgcBaseMin = get(expressionContext, 
+						period, 
+						ContextVariable.CGC_BASE_MIN, 
+						ContextVariable.BASE_SALARY,
+						ContextVariable.MONTHLY_PAYMENTS 
+						);
 				double paymentMin = (( cgcBaseMin * 12 ) / 14) * 0.90; // 90% of 14th Base Min 
 				if ( contractPayment.getSalaryType() == SalaryType.SALARY
 					&& contractPayment.getMonth() != null ) {
 					fixed.add( result );
-				}else if ( value == null || value == 0.00 || paymentMin <= 0.00 || value < paymentMin ) {
+				} else if ( paymentMin <= 0.00 
+						|| value < paymentMin ) {
+					expressionContext.dryEval(ContextVariable.MONTHLY_PAYMENTS, start, end);
 					fixed.add( result );
 				} else {
 				    double prorrated = expressionContext
@@ -1031,7 +1053,11 @@ public class SmartContractSalaryCalculator<T extends ISalary> extends GenericCon
 					    .stream().collect(Collectors.summingDouble(r -> r.getValue()));
 				    fixed.add(new TimedResult<>(prorrated, period, result.getContext()));
 				}
-			} catch (ExpressionException e) {
+			}
+			catch (UndefinedVariablesException e) {
+				throw e;
+			} 
+			catch (ExpressionException e) {
 				fixed.add( result );
 			}
 			
@@ -2209,10 +2235,21 @@ public class SmartContractSalaryCalculator<T extends ISalary> extends GenericCon
 		return ( IExtraPayment) payment;
 	}
 	
-	private static boolean isAtIT(ExpressionContext expressionContext, Date startDate, Date endDate) {
+	private static boolean isAtFullIT(ExpressionContext expressionContext, Date startDate, Date endDate) {
 		try {
 			List<Period> itPeriods = expressionContext.getPeriods(ContextVariable.LEAVE_DAYS);
-			return Period.sub(new Period(startDate, endDate), itPeriods).isEmpty();
+			boolean allTimeInIT = Period.sub(new Period(startDate, endDate), itPeriods).isEmpty();
+			if ( allTimeInIT ) {
+				for ( ContextVariable factorVar : new ContextVariable [] {ContextVariable.MATERNITY_FACTOR , ContextVariable.PATERNITY_FACTOR, ContextVariable.LEAVE_FACTOR } ) {
+					try {
+						return expressionContext.eval(factorVar.getName() , startDate, endDate, Number.class)
+						.stream().map(ITimedResult::getValue).allMatch( v -> v.doubleValue() == 1.00 );
+					} catch ( Exception e ) {
+					}
+				}
+				return true;
+			}
+			return false ;
 		} catch (Exception e) {
 			return false;
 		}

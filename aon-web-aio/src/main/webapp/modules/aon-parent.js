@@ -7,7 +7,6 @@ import { AonDialogMenu } from 'aonsolutions/components/aon-dialog-menu.js';
 
 export class AonParent extends AonElement {
 
-
 	notice;
 	filter;
 	_filter; // NEW FILTER
@@ -61,9 +60,14 @@ export class AonParent extends AonElement {
 		
 		this.clearSelectedTab(this._filter);		
 		//TODO: aonParent.startLoader();
-		getCompanies()
-		.then( companies => {
-			if(companies.length === 1){
+
+		getCompanies().then( companies => {
+			let cps = companies.filter(r => r.id == LS.getDomainId());
+			if(cps.length > 0 && !cps[0].parent) {
+				this.companySelection(cps[0], companies.length == 1 );
+			} else if ( LS.getCompany() ) {
+				this.companySelection(LS.getCompany(), companies.length == 1 );
+			} else if(companies.length === 1) {
 				this.companySelection(companies[0], true);
 			} else {
 				this.getElement("aonMenu").close();
@@ -307,6 +311,12 @@ export class AonParent extends AonElement {
 					let companyyy = this.getElement("aonHeaderCompanyList");
 					companyy.style.display = "block";
 					companyyy.style.display = "block";
+					let logo = this.getElement("aonLogo");
+					logo.addEventListener("click", function handleClick() {
+						companyy.style.display = "none";
+						companyyy.style.display = "none";
+						logo.removeEventListener("click", handleClick); 
+					});
 				});
 			}
 		}, 100); 
@@ -401,7 +411,7 @@ export class AonParent extends AonElement {
 			aonShowMenu.style.display = 'block';
 		}
 		let aonHeaderHelp = this.getElement(BASE_ID + 'Help');
-		aonHeaderHelp.style.display = 'block';
+		// aonHeaderHelp.style.display = 'block';
 
 		// let aonHeaderSearch = this.getElement(BASE_ID + 'Search');
 		// aonHeaderSearch.style.display = 'none';

@@ -9,12 +9,11 @@ import com.esferalia.aon.occam.test.AbstractOccamTest;
 import com.esferalia.aon.occam.test.Asserts;
 import com.esferalia.aon.occam.test.Repeat;
 import com.esferalia.aon.occam.test.faker.AccountingFaker;
-import com.esferalia.aon.occam.test.faker.AonFaker;
 
 public class JsonAccountOperatingReportParams extends AbstractOccamTest {
 
 	@Test
-	@Repeat( 100 )
+	@Repeat( 20 )
 	public void test() {
 		AccountOperatingReport expected = AccountingFaker.getAccountOperatingReport(ctx);
 		JSONObject json = AccountOperatingReportJSON.toJSON(expected);

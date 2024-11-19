@@ -1,6 +1,7 @@
 import { MSG, CSS, EVENT, TAG } from 'aonsolutions/environments/environments.js'; 
 import { AonSuiteMenu } from '../aon-suite-menu.js';
 import * as GWT from 'aonsolutions/gwt/gwt.js';
+import * as JSF from '../aon-jsf-app.js';
 import { AonComunica } from 'aonsolutions/modules/laboral/aon-comunica.js';
 
 export class AonPayrollMenu extends AonSuiteMenu {
@@ -73,11 +74,11 @@ export class AonPayrollMenu extends AonSuiteMenu {
                 description: "CRA - Conceptos Retributivos Abonados",
                 title: "CRA - Conceptos Retributivos Abonados",
                 action: () => GWT.iLoad(GWT.MAIN_CRA)
-            },/*{
+            },{
                 description: "AFI - Altas, bajas y modificaciones de trabajadores",
                 title: "AFI - Altas, bajas y modificaciones de trabajadores",
-                action: () => alert("description")
-            },*/{
+				action: () => this.rootPanel(new JSF.AonJsfContractBatch)
+            },{
                 description: "AFI - Régimen Especial Agrario Jornadas",
                 title: "AFI - Régimen Especial Agrario Jornadas",
                 action: () => GWT.iLoad(GWT.MAIN_AFI)
@@ -119,11 +120,11 @@ export class AonPayrollMenu extends AonSuiteMenu {
                 description: "Vencimientos de Nóminas",
                 title: "Vencimientos de Nóminas",
                 action: () => GWT.iLoad(GWT.FINANCE_PAYROLL)
-            },/*{
+            },{
                 description: "Facturas de Gastos",
                 title: "Facturas de Gastos",
-                action: () => alert("description")
-            },{
+				action: () => this.rootPanel(new JSF.AonJsfExpenseInvoice)
+            }/*,{
                 description: "Vencimientos de Nóminas",
                 title: "Vencimientos de Nóminas",
                 action: () => alert("description")
@@ -183,11 +184,11 @@ export class AonPayrollMenu extends AonSuiteMenu {
             }]
         },{
             title: 'Modelos Tributarios',
-            options: [/*{
+            options: [{
                 description: "Modelo 145",
                 title: "Modelo 145",
-                action: () => alert("description")
-            },*/{
+				action: () => this.rootPanel(new JSF.AonJsfIrpfData)
+            },{
                 description: "Modelo 111",
                 title: "Modelo 111",
                 action: () => GWT.iLoad(GWT.MODEL_111)

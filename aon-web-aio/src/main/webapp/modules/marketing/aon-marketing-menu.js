@@ -61,7 +61,8 @@ export class AonMarketingMenu extends AonSuiteMenu {
             options: [{
                 description: "Campañas",
                 title: "Campañas",
-                action: () => this.rootPanel(new JSF.AonJsfMarketingCampaign())
+				action: () => GWT.iLoad(GWT.MARKETING_CAMPAIGN)
+                //action: () => this.rootPanel(new JSF.AonJsfMarketingCampaign())
             },{
                 description: "Communication Center",
                 title: "Communication Center",

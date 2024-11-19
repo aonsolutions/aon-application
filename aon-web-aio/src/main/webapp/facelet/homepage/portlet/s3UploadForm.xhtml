@@ -22,14 +22,25 @@
 				const domainDescription =  '#{domainSwitcher.currentDomainDescription}';
 				
 				const fileOrder = ('0' + uploadCount++ ).slice(-2);  
-				
+				const s3Prefix = '#{s3Prefix}';
+				var filename = file.name;
+			    if(s3Prefix == 'invoices') {
+					var re = /(?:\.([^.]+))?$/;
+				    var ext = re.exec(file.name)[0];
+				    
+				    var filename = ext ? file.name.replace(ext, '') : file.name;
+
+				    filename = filename.length > 30 ? filename.substring(0,30) : filename;
+				    filename = btoa(filename) + (ext || '');			    	
+			    }
+
     			formData.append('key', 
     					'#{s3Prefix}'
     					+'/' + domainName
     					+ ( domainDocument ? '/' + domainDocument : '' )
     					+'/' + user
     					+ ( uploadId ? '/' + uploadId : '' )
-    					+ '/' + fileOrder + '_' + file.name);
+    					+ '/' + fileOrder + '_' + filename);
     			formData.append('success_action_status', '201');
     			formData.append('x-amz-meta-company-name', domainDescription );
     			formData.append('Content-Type', file.type);

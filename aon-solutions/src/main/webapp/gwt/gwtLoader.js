@@ -69,9 +69,15 @@
 	
 	const addScript = (document, type,  src) => {
 		let script = document.createElement(TAG.SRIPT);
-		script.src = src;
-		script.type = type;
+		script.type = src.type || type;
+		if ( src.src ) {
+			script.src = src.src;
+		}
+		if ( src.code ) {
+			script.appendChild(document.createTextNode(src.code));
+		}
 		document.head.appendChild(script);
+		
 	}
 	
 	
@@ -117,11 +123,8 @@
 
 	export const iStartModule = (module, entrypoint, subEntryPoint, rootPanel, customize) => {
 		let panel = rootPanel || 'rootPanel';
-		if(rootPanel) {
-			localStorage.setItem('rootPanel', rootPanel);
-		} else {
-			localStorage.removeItem('rootPanel');
-		}
+		localStorage.removeItem('rootPanel');
+
 		localStorage.setItem('aon_solutions', true);
 		removeRootPanel(panel);
 		if (window.document.createElement && window.document.getElementsByTagName) {
@@ -131,11 +134,17 @@
 			iframe.style.height = '100%';
 			iframe.style.border = 'none';
 			iframe.style.inset = 'none';
-			iframe.src = 'about:blank';
+			iframe.src = 'about_blank';
+			//iframe.src = 'about:blank';
 			iframe.onload = () => {
 				
 
 				let iwindow = iframe.contentWindow;			
+				let idocument = iframe.document || iframe.contentDocument || iframe.contentWindow.document;		
+				
+				iwindow.stop();
+				idocument.body.innerHTML = "";
+
 				
 				iwindow.drawChartsCallback = () => {};
 				iwindow.getSubEntryPoint = () => subEntryPoint;
@@ -145,13 +154,10 @@
 				iwindow.getCurrentDomainName = () => LS.getDomainName();
 				iwindow.getCurrentDomain = () => LS.getDomainId();
 				iwindow.getCurrentUser = () => LS.getDomainLogin();
-				
-
-				
+				iwindow.isSysAdmin = () => true;
 
 
 				// inject 'gwt' script 
-				let idocument = iframe.document || iframe.contentDocument || iframe.contentWindow.document;		
 				
 				for (const sheet of document.styleSheets) {
 					if ( sheet?.href?.includes('fonts.googleapis.com') ){

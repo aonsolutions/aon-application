@@ -297,7 +297,7 @@
       <groupId>com.esferalia.aon</groupId>
       <artifactId>aon.gwt.payroll</artifactId>
       <version>${project.version}</version>
-      <scope>runtime</scope>
+      <scope>compile</scope>
     </dependency>
     <dependency>
       <groupId>com.esferalia.aon</groupId>
@@ -525,18 +525,6 @@
       <version>${project.version}</version>
       <scope>compile</scope>
     </dependency>
-    <!--dependency>
-      <groupId>com.code.aon</groupId>
-      <artifactId>aon.conexflow</artifactId>
-      <version>${project.version}</version>
-      <scope>compile</scope>
-    </dependency>
-    <dependency>
-      <groupId>com.code.aon</groupId>
-      <artifactId>aon.hhg.webservice</artifactId>
-      <version>${project.version}</version>
-      <scope>compile</scope>
-    </dependency-->
     <dependency>
       <groupId>net.aonsolutions</groupId>
       <artifactId>aon.webservice</artifactId>
@@ -598,18 +586,6 @@
       <scope>compile</scope>
     </dependency>
     <!-- EXTERNAL LIBRARIES -->
-    <dependency>
-      <groupId>org.openid4java</groupId>
-      <artifactId>openid4java</artifactId>
-      <version>0.9.7</version>
-      <scope>compile</scope>
-      <exclusions>
-		  <exclusion>
-	          <groupId>xml-apis</groupId>
-	          <artifactId>xml-apis</artifactId>
-		  </exclusion>
-      </exclusions>
-    </dependency>
     <dependency>
       <groupId>org.apache.tomcat</groupId>
       <artifactId>tomcat-catalina</artifactId>

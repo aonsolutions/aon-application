@@ -85,8 +85,8 @@ export class AonMobileDelivery extends AonElement {
 		toolbar.title = this.delivery.reference; 
 		this.appendChild(toolbar);
 		// toolbar.addButton2(ACTION.SAVE, () => this.save());
-		toolbar.addButton2(ACTION.DELETE, () => this.delete());
-		toolbar.addButton2(ACTION.ACCEPT, () => this.accept());
+		if(this.delivery.status != 'INVOICED') toolbar.addButton2(ACTION.DELETE, () => this.delete());
+		if(this.delivery.status == 'IN_PREPARATION') toolbar.addButton2(ACTION.ACCEPT, () => this.accept());
 		toolbar.addButton2(ACTION.BACK, () => this.back());
 		this.getApplication().addFloatOption(ACTION.ADD, () => this.addPackaging())
 

@@ -251,6 +251,16 @@
 												</aon:commandLink>
 											</aon:div>
 										</aon:if>
+										
+										<!-- Panel Carga Trabajo -->
+										<aon:if test="#{domainSwitcher.sig}">
+											<aon:div styleClass="aon-direct-access-list-element">
+												<aon:commandLink 
+													id="sellerWorkloadModule" 
+													action="gwt_sellerWorkloadModule"
+													value="Panel Carga Trabajo" />
+											</aon:div>
+										</aon:if>
 									</aon:div>
 								</aon:panelGrid>
 							</aon:if>

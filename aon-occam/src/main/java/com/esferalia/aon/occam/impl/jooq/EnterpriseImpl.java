@@ -44,13 +44,24 @@ public class EnterpriseImpl implements IEnterprise {
 	}
 
 	// --------------------------- ENTERPRISE DATA
+
+	@Override
+	public EnterpriseData getEnterpriseData(AONContext ctx, EnterpriseDataFilter filter) {
+		return ctx.getDslContext().transactionResult(
+				configuration -> EnterpriseDataDAO.get(ctx, filter));
+	}
 	
 	@Override
 	public LinkedList<EnterpriseData> getEnterpriseDataList(AONContext ctx, EnterpriseDataFilter filter) {
 		return ctx.getDslContext().transactionResult(
 				configuration -> EnterpriseDataDAO.getList(ctx, filter));
 	}
-
+	
+	@Override
+	public EnterpriseData saveEnterpriseData(AONContext ctx, EnterpriseData enterpriseData) {
+		return ctx.getDslContext().transactionResult(
+				configuration -> EnterpriseDataDAO.save(ctx, enterpriseData));
+	}
 
 	@Override
 	public void insertEnterpriseData(AONContext ctx, List<EnterpriseData> enterpriseData) {

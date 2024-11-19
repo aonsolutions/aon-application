@@ -44,7 +44,6 @@ import com.esferalia.aon.occam.api.model.management.SalesDetail;
 import com.esferalia.aon.occam.api.model.office.Tag;
 import com.esferalia.aon.occam.api.model.product.Item;
 import com.esferalia.aon.occam.api.model.product.ItemComposition;
-import com.esferalia.aon.occam.api.model.product.OldItem;
 import com.esferalia.aon.occam.api.model.registry.RAddress;
 import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.seres.EdiCodes;
@@ -125,7 +124,7 @@ public class ConnectDeliveryWriterOccam  implements Serializable {
 	private SEH1C createSEH1CRecord(Delivery delivery, EdiCodes codes) {
 		SEH1C seh1c = new SEH1C();
 		
-		String referenceCode = isECI(delivery.getCustomer().getDocument()) ? referenceCodeNumber(delivery.getReferenceCode()) : delivery.getReferenceCode();
+		String referenceCode = SeresUtils.isECI(delivery.getCustomer().getDocument()) ? referenceCodeNumber(delivery.getReferenceCode()) : delivery.getReferenceCode();
 		
 		seh1c.setTipoDeDocumento_351_35E_(SEH1C.SEH1C_2.NOTAS_DE_ENVIO_351
 				.getValue());
@@ -179,7 +178,7 @@ public class ConnectDeliveryWriterOccam  implements Serializable {
 
 	private List<SEH1D> createSEH1DList(Delivery delivery, EdiCodes codes) {
 		List<SEH1D> list = new ArrayList<>();
-		boolean eci = isECI(delivery.getCustomer().getDocument());
+		boolean eci = SeresUtils.isECI(delivery.getCustomer().getDocument());
 		list.add(createSEH1DRecord(SEH1D.SEH1D_2.EMISOR_DEL_MENSAJE_MS,
 				codes.getMscode(), getWorkPlace(delivery.getWorkplace().getId()).getEnterprise(), "", eci));
 		list.add(createSEH1DRecord(SEH1D.SEH1D_2.RECEPTOR_DEL_MENSAJE_MR,
@@ -243,7 +242,6 @@ public class ConnectDeliveryWriterOccam  implements Serializable {
 			DeliveryDetail auxDetail = detailList.stream().filter(f-> f.getLine() == env).findFirst().orElse(new DeliveryDetail());
 			Double quantity = auxDetail.getQuantity();
 			
-			
 			SEH1P packaging  = createSEH1PRecord(i + 2, quantity.intValue(), "CT", sscc.getSscc(), detail, codes);
 			packaging.setNumeroDeJerarquiaPadreDeEmbalaje(mainPackage.getNumeroDeJerarquiaDeEmbalaje());
 
@@ -304,7 +302,7 @@ public class ConnectDeliveryWriterOccam  implements Serializable {
 	private List<SEH1B> createSEH1BList(Delivery delivery) {
 	    return new LinkedList<>();
 //		List<SEH1B> list = new ArrayList<>();
-//		if(isEroski(delivery.getCustomer().getDocument())) {
+//		if(SeresUtils.isEroski(delivery.getCustomer().getDocument())) {
 //			for (DeliveryDetail detail : delivery.getDetails()) {
 //				if(!ProductType.AUXILIARY.equals(detail.getItem().getProduct().getType()))
 //						list.add(createSEH1BRecord(detail));
@@ -394,7 +392,6 @@ public class ConnectDeliveryWriterOccam  implements Serializable {
 			}
 		}
 
-
 		seh1p.setDimensionDeAltura1_HT_(null);
 		seh1p.setDimensionDeAltura2(null);
 		seh1p.setCodigoSignificacionDeLaMedidaAltura(null);
@@ -438,7 +435,10 @@ public class ConnectDeliveryWriterOccam  implements Serializable {
 		}
 		
 		Integer customerId = delivery.getCustomer().getId();
-		String productCustomerCode = obtainProductCustomerCode(detail.getItem(), customerId);
+		
+		com.esferalia.aon.occam.api.model.registry.RegistryItem ritem = obtainProductCustomerCode(detail.getItem(), customerId);
+		String productCustomerBarcode = ritem != null ? ritem.getEdiSalesCode() : "";
+		String productCustomerCode = ritem != null ? ritem.getCode() : "";
 		
 		Item base = AON.getItem(new Domain().setId(domainId).setName(domainName), login, f -> 
 			f.getDomainProperty().eq(domainId)
@@ -447,7 +447,7 @@ public class ConnectDeliveryWriterOccam  implements Serializable {
 		
 		SEH1L seh1l = new SEH1L();
 		seh1l.setNumeroDeLineaDelArticulo(lineNumber);
-		seh1l.setCodigoEANDelArticulo(productCustomerCode);
+		seh1l.setCodigoEANDelArticulo(productCustomerBarcode);
 		seh1l.setDescripcionDelArticulo(detail.getItem().getProduct().getName());
 		seh1l.setTipoDeIdentificacionDelArticulo_CU_DU_("CU");
 		seh1l.setNumeroDeArticuloDelProveedor_SA_(productCustomerCode);
@@ -508,9 +508,11 @@ public class ConnectDeliveryWriterOccam  implements Serializable {
 		seh1l.setDiferenciaEnCantidadPedida_21_(null);
 		seh1l.setCodigoDiscrepancia(null);
 		seh1l.setPesoTotalNetoDeLaLinea_AAI_AAF_(quantity * detail.getItem().getPackMeasurement());
-		seh1l.setPesoTotalBrutoDeLaLinea_AAI_AAB_(null);
+		seh1l.setPesoTotalBrutoDeLaLinea_AAI_AAB_(quantity * detail.getItem().getPackMeasurement());
 		if(detail.getItem().getPackMeasurementTag()!=null && detail.getItem().getPackMeasurementTag().getName()!=null) {
-			seh1l.setUnidadDeMedidaPeso(StringUtils.substring(detail.getItem().getPackMeasurementTag().getName(), 0, 3).toUpperCase());
+			String packMeasurement = detail.getItem().getPackMeasurementTag().getName();
+			if("KG".equalsIgnoreCase(packMeasurement)) packMeasurement = "KGM";
+			seh1l.setUnidadDeMedidaPeso(StringUtils.substring(packMeasurement, 0, 3).toUpperCase());
 		}
 		seh1l.setDimensionDeTemperatura1_TC_(null);
 		seh1l.setDimensionDeTemperatura2(null);
@@ -541,7 +543,10 @@ public class ConnectDeliveryWriterOccam  implements Serializable {
 		}
 		
 		Integer customerId = delivery.getCustomer().getId();
-		String productCustomerCode = obtainProductCustomerCode(item, customerId);
+
+		com.esferalia.aon.occam.api.model.registry.RegistryItem ritem = obtainProductCustomerCode(item, customerId);
+		String productCustomerBarcode = ritem != null ? ritem.getEdiSalesCode() : "";
+		String productCustomerCode = ritem != null ? ritem.getCode() : "";
 		
 		Item base = AON.getItem(new Domain().setId(domainId).setName(domainName), login, f -> 
 			f.getDomainProperty().eq(domainId)
@@ -550,7 +555,7 @@ public class ConnectDeliveryWriterOccam  implements Serializable {
 		
 		SEH1L seh1l = new SEH1L();
 		seh1l.setNumeroDeLineaDelArticulo(lineNumber);
-		seh1l.setCodigoEANDelArticulo(productCustomerCode);
+		seh1l.setCodigoEANDelArticulo(productCustomerBarcode);
 		seh1l.setDescripcionDelArticulo(item.getProduct().getName());
 		seh1l.setTipoDeIdentificacionDelArticulo_CU_DU_("CU");
 		seh1l.setNumeroDeArticuloDelProveedor_SA_(productCustomerCode);
@@ -611,9 +616,11 @@ public class ConnectDeliveryWriterOccam  implements Serializable {
 		seh1l.setDiferenciaEnCantidadPedida_21_(null);
 		seh1l.setCodigoDiscrepancia(null);
 		seh1l.setPesoTotalNetoDeLaLinea_AAI_AAF_(quantity * item.getPackMeasurement());
-		seh1l.setPesoTotalBrutoDeLaLinea_AAI_AAB_(null);
+		seh1l.setPesoTotalBrutoDeLaLinea_AAI_AAB_(quantity * item.getPackMeasurement());
 		if(item.getPackMeasurementTag()!=null && item.getPackMeasurementTag().getName()!=null) {
-			seh1l.setUnidadDeMedidaPeso(StringUtils.substring(item.getPackMeasurementTag().getName(), 0, 3).toUpperCase());
+			String packMeasurement = item.getPackMeasurementTag().getName();
+			if("KG".equalsIgnoreCase(packMeasurement)) packMeasurement = "KGM";
+			seh1l.setUnidadDeMedidaPeso(StringUtils.substring(packMeasurement, 0, 3).toUpperCase());
 		}
 		seh1l.setDimensionDeTemperatura1_TC_(null);
 		seh1l.setDimensionDeTemperatura2(null);
@@ -748,9 +755,12 @@ public class ConnectDeliveryWriterOccam  implements Serializable {
 		return item.getId();
 	}
 
-	private OldItem getItem(Integer itemId){
+	private Item getItem(Integer itemId){
 		try {
-			return AON.getItem(domainName, domainId, login, itemId);
+			Domain domain = new Domain()
+					.setName(domainName)
+					.setId(domainId);
+			return AON.getItem(domain, login, itemId);
 		} catch (Throwable e) {
 			LOGGER.error(e.getMessage());
 		}
@@ -771,7 +781,7 @@ public class ConnectDeliveryWriterOccam  implements Serializable {
 		return null;
 	}
 
-	private String obtainProductCustomerCode(Item item, Integer customerId) {
+	private com.esferalia.aon.occam.api.model.registry.RegistryItem obtainProductCustomerCode(Item item, Integer customerId) {
 		try {
 			Integer baseItemId = getBaseItemId(item.getProduct().getId());
 			com.esferalia.aon.occam.api.model.registry.RegistryItem rItem = 
@@ -783,22 +793,16 @@ public class ConnectDeliveryWriterOccam  implements Serializable {
 				.sorted((i1, i2) -> i1.getPriority().compareTo(i2.getPriority()))
 				.findFirst().orElse(new com.esferalia.aon.occam.api.model.registry.RegistryItem());
 			if(rItem!=null)
-				return rItem.getCode();
+				return rItem;
 		} catch (Throwable e) {
 			LOGGER.error(e.getMessage());
 		}
-		return "";
-	}
-
-	private boolean isPackageItem(Integer itemId) {
-		OldItem item = getItem(itemId);
-		return item != null && item.getSerialNumber() == null
-				&& item.getSerialDate() == null;
+		return null;
 	}
 	
 	private Double obtainPackageQuantity(Item item, double quantity, String customerPackingTag) {
 		if(customerPackingTag!=null){
-			OldItem oldItem = getItem(item.getId());
+			Item oldItem = getItem(item.getId());
 			Tag itemPackFormatTag = oldItem.getPackFormatTag();
 			Tag itemPackMeasurementTag = oldItem.getPackMeasurementTag();
 			Tag itemPackingTag = oldItem.getPackUnitsTag();
@@ -1014,16 +1018,4 @@ public class ConnectDeliveryWriterOccam  implements Serializable {
 		}
 		return builder.toString();
 	}
-
-	private boolean isECI(String document) {
-		return "A28017895".equalsIgnoreCase(document);
-	}
-	
-    private boolean isEroski(String document) {
-        return "F20033361".equalsIgnoreCase(document)
-                || "B88512975".equalsIgnoreCase(document)
-                || "A08115032".equalsIgnoreCase(document)
-                || "A36651313".equalsIgnoreCase(document);
-    }
-
 }

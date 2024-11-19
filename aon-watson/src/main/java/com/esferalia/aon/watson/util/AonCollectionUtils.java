@@ -3,7 +3,10 @@ package com.esferalia.aon.watson.util;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
+import java.util.stream.DoubleStream;
+import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 public class AonCollectionUtils {
@@ -77,4 +80,44 @@ public class AonCollectionUtils {
 	public static <T> boolean isNotEmpty(T[] array) {
 		return !isEmpty(array);
 	}
+
+	public static IntStream stream( int times) {
+		return IntStream.range(0, times);
+	}
+	public static IntStream stream( int[] array) {
+		if (array == null) return IntStream.empty();
+		return Arrays.stream(array);
+	}
+	public static boolean isEmpty(int[] array) {
+		return array == null || array.length == 0;
+	}
+	public static boolean isNotEmpty(int[] array) {
+		return !isEmpty(array);
+	}
+	public static int length(int[] array) {
+		return ( isNotEmpty(array))
+			? array.length
+			: 0;
+	}
+
+	public static DoubleStream stream( double[] array) {
+		if (array == null) return DoubleStream.empty();
+		return Arrays.stream(array);
+	}
+
+	public static <T> Optional<T> getLast(Stream<T> stream) {
+		return stream.reduce((first, second) -> second);
+	}
+	
+	
+	public static boolean contains(Byte[] types, byte type) {
+		if (types == null) return false;
+		for (byte t : types) {
+			if (t == type) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
 }

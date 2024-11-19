@@ -56,9 +56,36 @@
 							timeZone="#{timeZoneController.timeZone}"
 							popupDateFormat="#{bundle.aon_date_pattern}" />
 					</aon:div>
-									
+					
+					<aon:outputText value="#{bundle.aon_status}" />
+					<aon:div id="statuc-div">
+						<aon:selectBooleanCheckbox id="pendingStatus" value="#{periodAmortization.pendingStatus}"/>
+						<aon:outputLabel for="pendingStatus" value="Pendientes" />
+						
+						<aon:selectBooleanCheckbox id="scoredStatus" value="#{periodAmortization.scoredStatus}"/>
+						<aon:outputLabel for="scoredStatus" value="Contabilizados" />
+						
+						<aon:selectBooleanCheckbox id="blockedStatus" value="#{periodAmortization.blockedStatus}"/>
+						<aon:outputLabel for="blockedStatus" value="Bloqueados" />
+					
+					</aon:div>
+								
+					<aon:outputLabel for="Amortization_description"
+						value="#{bundle.aon_description}" />
+					<aon:inputText id="Amortization_Detail_Amortizationi_Description" size="50"
+						value="#{periodAmortization.description}" />
+								
+					<aon:outputText value="#{bundle.accounting_fixed_asset_account}" />
+					<ui:include src="/com/code/aon/ui/account/facelet/account/lookup.xhtml" >
+						<ui:param name="skipLabel" value="#{true}" />
+						<ui:param name="lookupTo" value="#{periodAmortization.fixedAssetAccount}" />
+						<ui:param name="idRequired" value="false" />
+						<ui:param name="lookupSuffix" value="fixedAsset" />
+					</ui:include>
+					
 				</ui:define>
 			</ui:decorate>
 		</aon:form>
+		<aon:lookupButtonPopup lookup="#{accountLookup}" />		
 	</ui:define>
 </ui:composition>

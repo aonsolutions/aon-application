@@ -4,7 +4,6 @@ import static com.esferalia.aon.jooq.tables.BankStatement.BANK_STATEMENT;
 import static com.esferalia.aon.jooq.tables.Rbank.RBANK;
 
 import java.sql.Timestamp;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -13,25 +12,15 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import org.joda.time.Days;
-import org.joda.time.LocalDate;
 import org.jooq.DatePart;
 import org.jooq.InsertValuesStep11;
 import org.jooq.Record;
-import org.jooq.Record1;
-import org.jooq.Result;
-import org.jooq.SelectConditionStep;
 import org.jooq.impl.DSL;
-import org.jooq.impl.QOM.Inline;
-import org.jooq.impl.QOM.TimestampDiff;
 
 import com.esferalia.aon.jooq.tables.records.BankStatementRecord;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.Filter.NordigenBankStatementFilter;
-import com.esferalia.aon.occam.api.model.Filter.Property;
-import com.esferalia.aon.occam.api.model.Properties.NordigenBankStatementProperties;
-import com.esferalia.aon.occam.api.model.Properties.RegistryBankProperties;
 import com.esferalia.aon.occam.api.model.finance.BankStatement;
 import com.esferalia.aon.occam.api.model.finance.nordigen.NordigenAccountBalance;
 import com.esferalia.aon.occam.api.model.finance.nordigen.NordigenBalanceType;
@@ -102,10 +91,20 @@ public class NordigenDAO {
 		.select()
 		.from(BANK_STATEMENT)
 		.where(STATEMENT_PROPERTIES.getConditions(filter))
+		.orderBy(BANK_STATEMENT.OPERATION_DATE.desc())
 		.limit(perPage).offset(perPage * (page -1))
 		.fetch()
 		.stream()
 		.map(new BankStatementFiller());
+	}
+	
+	public static long getBankMovementsCount(AONContext ctx, NordigenBankStatementFilter filter) {
+		return ctx.getDslContext().select()
+				.from(BANK_STATEMENT)
+				.where(STATEMENT_PROPERTIES.getConditions(filter))
+				.fetch()
+				.stream()
+				.count();
 	}
 	
 	static class BankStatementFiller extends Filler implements Function<Record, BankStatement>{
@@ -188,7 +187,7 @@ public class NordigenDAO {
 				, BANK_STATEMENT.REFERENCE1
 				, BANK_STATEMENT.REFERENCE2
 				);
-		
+
 		List<NordigenBankStatement> bankStatements = account.getNotInsertedMovements();		
 		
 		if (bankStatements != null) {
@@ -196,12 +195,11 @@ public class NordigenDAO {
 			for (NordigenBankStatement bankStatement : bankStatements) {
 				if (!bankStatement.isPending() 
 					&& bankStatement.getOperationDate() != null
-					&& AonDateUtils.isLessThanToday( bankStatement.getOperationDate()) ) {
-					
+					&& AonDateUtils.isLessThanToday( bankStatement.getOperationDate()))
+				{
 					bankStatement.setLotNumber(lotNumber);
 					// BankStatement Validation
 					BankStatementValidator.validate(ctx, bankStatement);
-					
 					query = query.values(bankStatement.getDomain()
 						,bankStatement.getRegistryBank() != null ? bankStatement.getRegistryBank().getId() : null
 						,bankStatement.getLotNumber()
@@ -213,8 +211,7 @@ public class NordigenDAO {
 						,bankStatement.getStatus().value()
 						,bankStatement.getReference1()
 						,bankStatement.getReference2());
-				}
-				
+				}				
 			}
 		}
 		

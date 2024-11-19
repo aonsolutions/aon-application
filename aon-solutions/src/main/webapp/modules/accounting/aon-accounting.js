@@ -77,7 +77,7 @@ export class AonAccounting extends AonElement {
 		let periodOptions = this.PERIODS.map((period) => ({
 			id: period.name,
 			icon: MATERIAL_ICONS.EVENT,
-			name: "Ejercicio " + period.name,
+			name: MSG.EXERCISE + " " + period.name,
 			clickable: true,
 			fn: () => {
 				if(!this.filter) this.filter = {};
@@ -89,7 +89,7 @@ export class AonAccounting extends AonElement {
 		let viewOptions = [
 			{
 				id: 'VistaAnual',
-				name: 'Vista Anual',
+				name: MSG.ANNUAL_VIEW,
 				icon: MATERIAL_ICONS.CALENDAR_TODAY,
 				fn: () => {
 					if(!this.filter) this.filter = {};
@@ -99,7 +99,7 @@ export class AonAccounting extends AonElement {
 			},
 			{
 				id: 'VistaTrimestral',
-				name: 'Vista Trimestral',
+				name: MSG.QUARTERLY_VIEW,
 				icon: MATERIAL_ICONS.CALENDAR_TODAY,
 				fn: () => {
 					if(!this.filter) this.filter = {};
@@ -109,7 +109,7 @@ export class AonAccounting extends AonElement {
 			},
 			{
 				id: 'VistaMensual',
-				name: 'Vista Mensual',
+				name: MSG.MONTHLY_VIEW,
 				icon: MATERIAL_ICONS.CALENDAR_TODAY,
 				fn: () => {
 					if(!this.filter) this.filter = {};
@@ -122,7 +122,7 @@ export class AonAccounting extends AonElement {
 		let detailOptions = [
 			{
 				id: 'Estándar',
-				name: 'Estándar',
+				name: MSG.STANDARD,
 				icon: MATERIAL_ICONS.LIST,
 				fn: () => {
 					if(!this.filter) this.filter = {};
@@ -132,7 +132,7 @@ export class AonAccounting extends AonElement {
 			},
 			{
 				id: 'Resumido',
-				name: 'Resumido',
+				name: MSG.SUMMARIZED,
 				icon: MATERIAL_ICONS.LIST,
 				fn: () => {
 					if(!this.filter) this.filter = {};
@@ -142,7 +142,7 @@ export class AonAccounting extends AonElement {
 			},
 			{
 				id: 'Detallado',
-				name: 'Detallado',
+				name: MSG.DETAILED,
 				icon: MATERIAL_ICONS.LIST,
 				fn: () => {
 					if(!this.filter) this.filter = {};
@@ -202,7 +202,7 @@ export class AonAccounting extends AonElement {
 				fn: () => {
 					this.getApplication().removeSidenavById(CONSTANT.OPTIONS);
 					this.clearElementById(this.getApplication().getContent().id);
-					GWT.load(GWT.NORDIGEN, this.getApplication().CONTENT);
+					GWT.iLoad(GWT.NORDIGEN, this.getApplication().CONTENT);
 					this.loader(`#${this.getApplication().getContent().id} .aon_toolbar`);
 				}
 			});
@@ -215,7 +215,7 @@ export class AonAccounting extends AonElement {
 				fn: () => {
 					this.getApplication().removeSidenavById(CONSTANT.OPTIONS);
 					this.clearElementById(this.getApplication().getContent().id);
-					GWT.load(GWT.STATEMENT_REPORT, this.getApplication().CONTENT);
+					GWT.iLoad(GWT.STATEMENT_REPORT, this.getApplication().CONTENT);
 					this.loader(`#${this.getApplication().getContent().id} .aon_toolbar`);
 				}
 			});
@@ -226,7 +226,7 @@ export class AonAccounting extends AonElement {
 				fn: () => {
 					this.getApplication().removeSidenavById(CONSTANT.OPTIONS);
 					this.clearElementById(this.getApplication().getContent().id);
-					GWT.load(GWT.ACCOUNT_OPERATION_STATEMENT, this.getApplication().CONTENT);
+					GWT.iLoad(GWT.ACCOUNT_OPERATION_STATEMENT, this.getApplication().CONTENT);
 					this.loader(`#${this.getApplication().getContent().id} .aon_toolbar`);
 				}
 			});
@@ -237,7 +237,7 @@ export class AonAccounting extends AonElement {
 				fn: () => {
 					this.getApplication().removeSidenavById(CONSTANT.OPTIONS);
 					this.clearElementById(this.getApplication().getContent().id);
-					GWT.load(GWT.ACCOUNT_TRIAL_BALANCE_REPORT, this.getApplication().CONTENT);
+					GWT.iLoad(GWT.ACCOUNT_TRIAL_BALANCE_REPORT, this.getApplication().CONTENT);
 					this.loader(`#${this.getApplication().getContent().id} .aon_toolbar`);
 				}
 			});
@@ -248,7 +248,7 @@ export class AonAccounting extends AonElement {
 				fn: () => {
 					this.getApplication().removeSidenavById(CONSTANT.OPTIONS);
 					this.clearElementById(this.getApplication().getContent().id);
-					GWT.load(GWT.JOURNAL_REPORT, this.getApplication().CONTENT);
+					GWT.iLoad(GWT.JOURNAL_REPORT, this.getApplication().CONTENT);
 					this.loader(`#${this.getApplication().getContent().id} .aon_toolbar`);
 				}
 			});
@@ -259,7 +259,7 @@ export class AonAccounting extends AonElement {
 				fn: () => {
 					this.getApplication().removeSidenavById(CONSTANT.OPTIONS);
 					this.clearElementById(this.getApplication().getContent().id);
-					GWT.load(GWT.LEDGER_REPORT, this.getApplication().CONTENT);
+					GWT.iLoad(GWT.LEDGER_REPORT, this.getApplication().CONTENT);
 					this.loader(`#${this.getApplication().getContent().id} .aon_toolbar`);
 				}
 			});
@@ -270,7 +270,7 @@ export class AonAccounting extends AonElement {
 				fn: () => {
 					this.getApplication().removeSidenavById(CONSTANT.OPTIONS);
 					this.clearElementById(this.getApplication().getContent().id);
-					GWT.load(GWT.ACCOUNT_BALANCE_REPORT, this.getApplication().CONTENT);
+					GWT.iLoad(GWT.ACCOUNT_BALANCE_REPORT, this.getApplication().CONTENT);
 					this.loader(`#${this.getApplication().getContent().id} .aon_toolbar`);
 				}
 			});

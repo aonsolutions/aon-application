@@ -216,18 +216,17 @@ class PECListener  implements IdcParserListener {
 	static final Map<String, String> BONUS_QUOTA_EXPRESSION_MAP = new HashMap<String, String>() {
 		{
 			put("01", "CGC_E + IT_E + IMS_E + FP_E + DESMPL_E + FOGASA_E"); 	// Cuota empresarial por AT y EP, Cuotas de recaudación	conjunta
-			put("03", "CGC_E"); 							// Cuota empresarial por Contingencias Comunes
+			put("03", "CGC_E"); 								// Cuota empresarial por Contingencias Comunes
 			put("51", "CUOTA_EMPRESARIAL"); 					// Cuota Empresarial - Horas extras			
 			put("57", "CUOTA_EMPRESARIAL"); 					// Cuota Total
 			put("68", "CGC_E + IT_E + IMS_E"); 					// Contingencias Comunes y Profesionales - Cuota Total
-			//put("81", "");
 		}
 	};
 
 	@SuppressWarnings("serial")
 	static final Map<String, String> COST_QUOTA_EXPRESSION_MAP = new HashMap<String, String>() {
 		{
-			put("43", "-CGC_E"); 							// Contingencias Comunes  
+			put("43", "-CGC_E"); 								// Contingencias Comunes  
 		}
 	};
 
@@ -299,22 +298,14 @@ class PECListener  implements IdcParserListener {
 			put("78", collection(newRemoveCost(ContextVariable.FP_ENTERPRISE)));
 		}
 	};
-	
+		
 	@SuppressWarnings("serial")
-	static final Map<String, String> PEC_TYPE_T_49_MAP = new HashMap<String, String>() {
+	static final Map<String, Collection<CostProvider>> UNKNOWN_COST_QUOTA_PROVIDERS_MAP = new HashMap<String, Collection<CostProvider>>() {
 		{
-			put("01", "BONIFICACIÓN INEM");
-			put("03", "RED.CUOTA SS-PORCENT");
-			put("13", "BONIFICACIÓN SPEE PROG FOMENTO DE EMPLEO-PORCENTAJE");
-			put("16", "BONIFICACIÓN SPEE PROG FOMENTO DE EMPLEO. CUANTÍA");
-			put("15", "EXONERACIÓN E.R.E. FUERZA MAYOR. TIEMPO PARCIAL");
-			put("37", "EXONERACIÓN E.R.E. FUERZA MAYOR. TIEMPO COMPLETO");
-			put("40", "TIPO COTIZACIÓN ESPECIAL.SEA");
-			put("41", "BONIFICACIÓN PROGRAMA FOMENTO DE EMPLEO. CUANTÍA DIARIA");
-			put("42", "RED.CUOTA SS-CUANTÍA");
+			put("06-03", collection(newMinusPercentCost(ContextVariable.CGC_ENTERPRISE, ContextVariable.CGC_BASE_ENTERPRISE)));
 		}
 	};
-		
+
 	@SuppressWarnings("serial")
 	static final Map<String, String> PEC_BONUS_MAP = new HashMap<String, String>() {
 		{
@@ -344,6 +335,7 @@ class PECListener  implements IdcParserListener {
 	static final Map<String, String> PEC_COST_MAP = new HashMap<String, String>() {
 		{
 			put("03", "RED.CUOTA SS-PORCENT");
+			put("06", "DECREMENTO DE TIPOS");
 			put("07", "EXONERACIÓN");
 			put("09", "EXCLUSIONES");
 			put("40", "TIPO COTIZACIÓN ESPECIAL.SEA");
@@ -436,7 +428,12 @@ class PECListener  implements IdcParserListener {
 		}
 		if ( PEC_DEDUCTION_MAP.containsKey(code )) {
 			if ( DEDUCTION_QUOTA_PROVIDER_MAP.containsKey(quota)) {
-				DEDUCTION_QUOTA_PROVIDER_MAP.get(quota).forEach(f -> f.newDeduction(nss, ccc, code, quota, portTipo, description, start, pecEnd).addTo(PECListener.this)) ;			}
+				DEDUCTION_QUOTA_PROVIDER_MAP.get(quota).forEach(f -> f.newDeduction(nss, ccc, code, quota, portTipo, description, start, pecEnd).addTo(PECListener.this)) ;			
+			}
+		}
+		
+		if ( UNKNOWN_COST_QUOTA_PROVIDERS_MAP.containsKey(code+"-"+quota)) {
+			UNKNOWN_COST_QUOTA_PROVIDERS_MAP.get( code+"-"+ quota ).forEach(f -> f.newCost(nss, ccc, portTipo, quota, quota, description, start, pecEnd).addTo(PECListener.this));
 		}
 	}
 	
@@ -594,6 +591,10 @@ class PECListener  implements IdcParserListener {
 		return (nss, ccc, pec, quota, portTipo, description, start, end) -> newRemoveCost(nss, ccc, pec, quota, portTipo, description, start, end, var);
 	}
 
+	private static CostProvider newMinusPercentCost( ContextVariable costVar, ContextVariable baseVar ) {
+		return (nss, ccc, pec, quota, portTipo, description, start, end) -> newMinusPercentCost(nss, ccc, pec, quota, portTipo, description, start, end, costVar, baseVar);
+	}
+
 	private static NegativeDeduction newNegativeDeduction(
 			String nss, 
 			String ccc, 
@@ -635,6 +636,46 @@ class PECListener  implements IdcParserListener {
 		RemoveDeduction deduction =  new RemoveDeduction();	
 		return newRemovePEC(deduction, nss, ccc, pec, quota, portTipo, description, start, end, var);
 	}
+
+	private static Cost newMinusPercentCost(
+			String nss, 
+			String ccc, 
+			String pec, 
+			String quota, 
+			String portTipo,
+			String description, 
+			Date start, 
+			Date end ,
+			ContextVariable costVar,
+			ContextVariable percentVar
+			){
+			
+			double percent;
+			try {
+				percent = NUMBER_FORMAT.parse(portTipo).doubleValue();
+			} catch (ParseException e) {
+				percent = 100.00;
+			}
+			
+			Cost cost =  new Cost();	
+			cost.setCcc(ccc);
+			cost.setNss(nss);
+			cost.setStartDate(start);
+			cost.setEndDate(end);
+			cost.setFormula(String.format(Locale.ROOT,
+					"/*epoch:%d,pec:%s,quota:%s*//*read-only*/-1 * MIN(%s, %s * %.2f / 100.00)/**/", 
+					Calendar.getInstance().getTimeInMillis(),
+					pec, 
+					quota,
+					costVar.getName(),
+					percentVar.getName(),
+					percent
+					));
+			cost.setDescription(String.format(new Locale("es", "ES"),"%s %s (%s)", description, getDescription(costVar), portTipo));
+			cost.setName(costVar.getName());
+			
+			return cost;
+		}
 
 	private static Cost newCgcITCost(
 		String nss, 

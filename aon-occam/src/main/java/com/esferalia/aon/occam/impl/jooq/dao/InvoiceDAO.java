@@ -34,6 +34,7 @@ import java.util.Collection;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -74,6 +75,7 @@ import com.esferalia.aon.occam.api.model.attachment.InvoiceAttachmentType;
 import com.esferalia.aon.occam.api.model.finance.Finance;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceBreakdown;
+import com.esferalia.aon.occam.api.model.finance.InvoiceData;
 import com.esferalia.aon.occam.api.model.finance.InvoiceDetail;
 import com.esferalia.aon.occam.api.model.finance.InvoiceFilter;
 import com.esferalia.aon.occam.api.model.finance.InvoiceFiscal;
@@ -117,6 +119,7 @@ import com.esferalia.aon.occam.impl.jooq.dao.RegistryDAO.RegistryFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.SecurityDAO.ScopeFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.invoice.InvoiceAddressDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.invoice.InvoiceBatchDetailDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.invoice.InvoiceDataDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.invoice.InvoiceInfoDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.offer.OfferDetailDAO;
 import com.esferalia.aon.occam.impl.jooq.validation.InvoiceAutoComplete;
@@ -125,6 +128,7 @@ import com.esferalia.aon.watson.AonError;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.mutable.MutableInt;
 import com.esferalia.aon.watson.server.AonDateUtils;
+import com.esferalia.aon.watson.server.codec.AonDigestUtils;
 import com.esferalia.aon.watson.util.AonEnumUtils;
 import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
@@ -415,6 +419,14 @@ public class InvoiceDAO {
 						.collect(Collectors.joining(", ")))
 			);
 	}
+	
+	public static ArrayList<Invoice> getFullInvoiceList(AONContext ctx, List<Integer> ids) {
+		ArrayList<Invoice> invoices = new ArrayList<Invoice>();
+		
+		ids.forEach(id -> invoices.add( getFullInvoice(ctx, id) ));
+		
+		return invoices;
+	}
 
 	public static Invoice getFullInvoice(AONContext ctx, Integer id) {
 		Invoice invoice = getInvoice(ctx, id);
@@ -603,6 +615,7 @@ public class InvoiceDAO {
 				.setRegistryDocumentCountry(Country.safeValueOf(r.getValue(INVOICE.RDOCUMENT_COUNTRY)))
 				.setRegistryName(r.getValue(INVOICE.RNAME))
 				.setRegistryAddress(r.getValue(INVOICE.RADDRESS))
+				.setSigned(getBoolean(r, INVOICE.SIGNED))
 				.setScope(checkField(r, SCOPE.ID)
 						? ScopeFiller.buildScope(r)
 						: new Scope().setId(r.getValue(INVOICE.SCOPE)))
@@ -726,6 +739,8 @@ public class InvoiceDAO {
 			.set(INVOICING_GROUP.MODIFICATION_USER, ctx.getUser())
 			.where(INVOICING_GROUP.ID.eq(invoicingGroup.getId()))
 			.execute();
+
+		
 		return invoicingGroup;
 	}
 	
@@ -926,6 +941,22 @@ public class InvoiceDAO {
 		return invoice;
 	}
 	
+	private static void generateMD5(AONContext ctx, Invoice invoice) {
+		String md5 = AonDigestUtils.md5Hex(invoice.flat());
+		InvoiceData invoiceData = InvoiceDataDAO.get(ctx, f -> f.getDomainProperty().eq(ctx.getDomainId())
+				.and(f.getInvoiceProperty().eq(invoice.getId()))
+				.and(f.getNameProperty().eq("MD5")));
+		if(invoiceData == null) invoiceData = new InvoiceData();
+		
+		invoiceData.setDomain(invoice.getDomain())
+				.setInvoice(invoice.getId())
+				.setName("MD5")
+				.setValue(md5)
+				.setStartDate(new Date());
+		
+		InvoiceDataDAO.save(ctx, invoiceData, invoice);
+	}
+	
 	public static Invoice insert(AONContext ctx, Invoice invoice) {
 		return insert(ctx,ConfigurationDAO.getConfiguration(ctx, invoice.getIssueDate()),invoice); 
 	}
@@ -988,6 +1019,7 @@ public class InvoiceDAO {
 		
 		insertDetails(ctx, config, invoice);
 		InvoiceFiscalDAO.save(ctx, config, invoice);
+		generateMD5(ctx, invoice);
 		return invoice.setCreationDate(new Date()); 
 	}
 	
@@ -1075,6 +1107,7 @@ public class InvoiceDAO {
 			InvoiceFiscalDAO.save(ctx, config, invoice);
 			updateDetails(ctx, config, invoice);
 		}
+		generateMD5(ctx, invoice);
 		return invoice; 
 	}
 	
@@ -1242,6 +1275,7 @@ public class InvoiceDAO {
 		InvoiceAddressDAO.delete(ctx, id);
 		InvoiceBatchDetailDAO.delete(ctx, f-> f.getInvoiceProperty().eq(id));
 		InvoiceInfoDAO.delete(ctx, f-> f.getInvoiceProperty().eq(id));
+		InvoiceDataDAO.delete(ctx, f-> f.getInvoiceProperty().eq(id));
 		
 		count = ctx.getDslContext()
 			.delete(INVOICE)
@@ -1251,7 +1285,7 @@ public class InvoiceDAO {
 
 		// ONLY IF IS TICKET BAI.
 		TbaiConfiguration tbaiConfiguration = TbaiConfigurationDAO.get(ctx);
-		if(tbaiConfiguration.isActive() && invoice.getNumber() > 0) {
+		if(tbaiConfiguration.isActive() && invoice.getNumber() > 0 && invoice.isSales()) {
 			saveInvoiceTracking(ctx, invoice, InvoiceTrackingStatus.DELETED);
 		}
 	}
@@ -1594,7 +1628,7 @@ public class InvoiceDAO {
 
 	public static void updateWithholdingType(AONContext ctx, Integer invoiceId, WithholdingType newType ) {
 		if (invoiceId == null)  throw new AonCoreException("El Identificador de factura no puede estar vacio");
-		if (newType == null) throw new AonCoreException("El nuevo tipo de retención no puede estar vacio");
+		if (newType == null) throw new AonCoreException("El nuevo tipo de retenciï¿½n no puede estar vacio");
 	
 		MutableInt sum = new MutableInt();
 		ctx.getDslContext().select(INVOICE_TAX.ID)
@@ -1614,13 +1648,13 @@ public class InvoiceDAO {
 		ctx.log().info("UPDATE WITHHOLDING TYPE: {0}: {1} filas.",invoiceId, sum.getValue());
 	}
 
-	private static Condition getWhere(AccountingReportParams params) {
+	public static Condition getWhere(AccountingReportParams params) {
 		
 		Condition condition = INVOICE.DOMAIN.equal( params.getDomain() );
 		
 		if (params.getActivity() != null) {
 			if (AonMathUtils.isNegative(params.getActivity())) {
-				// Sólo las comunes. Los "sin activdad".
+				// Sï¿½lo las comunes. Los "sin activdad".
 				condition = condition.and( INVOICE.ACTIVITY.isNull());
 			} else {
 				condition = condition.and( INVOICE.ACTIVITY.eq( params.getActivity() ));

@@ -1,6 +1,6 @@
 import {AonElement} from '../../components/AonElement.js';
 import { Apps, ClassicApps, getAppsByDur} from  '../../services/app.js';
-import {getDomainNotice, getDomainUserRoles, getTaskCount, getTaskHolder, getTimeControl, getAttach, getPeriodLaboral} from  '../../services/service.js';
+import {getDomainNotice, getDomainUserRoles, getTaskCount, getTaskHolder, getTimeControl, getAttach, getPeriodLaboral, getTrailData} from  '../../services/service.js';
 import {getAccessBidoq} from  '../../services/bidoqService.js';
 import {DomainUserRoles} from '../../models/DomainUserRoles.js';
 import { CONSTANT, CSS, EVENT, MATERIAL_ICONS, MSG, TAG } from '../../environments/environments.js';
@@ -46,6 +46,8 @@ import { AonDashboardChargePayments } from '../accounting/aon-dashboard-charge-p
 import { AonDialog } from '../../components/aon-dialog.js';
 import { AonMarketing } from '../marketing/aon-marketing.js';
 import { MessegerUtils } from '../messenger/utils/MessengerUtils.js';
+import { generateJobId } from '../invoice/InvoiceUtils.js';
+import { AonTrial } from '../invoice/aon-trial.js';
 
 export class AonDesktop extends AonElement {
 
@@ -367,6 +369,7 @@ export class AonDesktop extends AonElement {
 		let data = {
 			uploaded : 0
 		}
+		uploadToast.setJobId(generateJobId());
 		for (let file of files) {
 			uploadToast.addFile("invoice", file, data);
 		}
@@ -480,6 +483,27 @@ export class AonDesktop extends AonElement {
 			pygCard.addEventListener(EVENT.CLICK_TITLE, () => {
 				let dashboardGraphicsTrial = this.getElement('aonDashboardGraphicsTrial');
 				this.appSelectionFilter(Apps.ACCOUNTING.app, dashboardGraphicsTrial.getFilter());
+			});
+		}
+		
+		if((this.getDur().isInvoice() || this.getDur().isAccounting()) && this.getDur().isTrial) {
+			// Trial Card
+			let trialCard = new AonCard();
+			trialCard.classList.add(CSS.AON_DASHBOARD_CARD);
+			trialCard.id = "trial";
+			trialCard.message = "Resumen Facturas (Trial)";
+			trialCard.setApp(this.getDur().isInvoice() ? Apps.INVOICE : Apps.ACCOUNTING);
+			cardsPanel.appendChild(trialCard);
+			trialCard.getCardTitle1().style.cursor = 'pointer';
+
+			trialCard.setContent(new AonTrial());
+			trialCard.firstChild.style.marginLeft = '0';
+			trialCard.firstChild.style.minHeight = "28rem";
+			trialCard.firstChild.children.item(1).style.height = "22.5rem";
+			trialCard.firstChild.style.margin = '0';
+
+			trialCard.addEventListener(EVENT.CLICK_TITLE, () => {
+				this.appSelection(this.getDur().isInvoice() ? Apps.INVOICE.app : Apps.ACCOUNTING.app);
 			});
 		}
 
@@ -1476,13 +1500,13 @@ export class AonDesktop extends AonElement {
 				this.rootPanel(payroll);
 				break;
 			case Apps.INVOICE.app:
-				GWT.load(GWT.INVOICE_STAT);
+				GWT.iLoad(GWT.INVOICE_STAT);
 				break;
 			case Apps.TIMECONTROL.app:
 				break;
 			case Apps.MESSENGER.app:
 				if(this.isBeta())
-					GWT.load(GWT.TASK_STAT);
+					GWT.iLoad(GWT.TASK_STAT);
 				break;
 			}
 	}

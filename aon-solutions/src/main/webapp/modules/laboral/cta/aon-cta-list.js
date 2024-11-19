@@ -109,22 +109,34 @@ export class AonCtaList extends AonElement {
     return [
       {
         name: "Cert. Estar al corriente S.S",
+        title: "Cert. Estar al corriente S.S",
+        permission: true,
         aonIcon: "aon_seg_social",
+        backgroundColor: 'var(--aonPayroll)',
         fn: () => this.getCertCorriente(res),
       },
       {
         name: "Trabajadores en alta",
+        title: "Trabajadores en alta",
+        permission: true,
         aonIcon: "aon_seg_social",
+        backgroundColor: 'var(--aonPayroll)',
         fn: () => this.getReportAffiliateInAlta(res),
       },
       {
         name: "Movimientos previos",
+        title: "Movimientos previos",
+        permission: true,
         aonIcon: "aon_seg_social",
+        backgroundColor: 'var(--aonPayroll)',
         fn: () => this.getReportAffiliateInMovPrev(res),
       },
       {
         name: "IDC",
+        title: "IDC",
+        permission: true,
         aonIcon: "aon_seg_social",
+        backgroundColor: 'var(--aonPayroll)',
         fn: () => this.getIdcCcc(res),
       },
     ];

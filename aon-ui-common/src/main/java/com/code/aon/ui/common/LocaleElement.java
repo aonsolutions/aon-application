@@ -23,6 +23,10 @@ public class LocaleElement implements Serializable {
 		return locale.toString();
 	}
 	
+	public String getLanguage() {
+		return locale.getLanguage();
+	}
+	
 	public String getDisplayName() {
 		return this.locale.getDisplayLanguage(AonUtil.getCurrentLocale());
 	}

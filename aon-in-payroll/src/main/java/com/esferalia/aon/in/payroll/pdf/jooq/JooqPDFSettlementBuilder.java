@@ -48,6 +48,7 @@ import com.esferalia.aon.occam.api.model.attachment.RegistryAttachmentType;
 import com.esferalia.aon.occam.api.model.registry.RAddress;
 import com.esferalia.aon.occam.api.model.type.DeductionType;
 import com.esferalia.aon.occam.api.model.type.SalaryType;
+import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.watson.util.AonDateUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
@@ -295,6 +296,18 @@ public class JooqPDFSettlementBuilder {
 						return AonNumberUtils.zeroIfNull(salary.getProfessionalContingenciesBase()) > 0 ? deduction.getAmount() / salary.getProfessionalContingenciesBase() * 100 : null;
 					}
 					
+					@Override
+					public Double visitSolidarity(DeductionType deductionType) {
+						for ( ContextVariable solidarityBaseVar : ContextVariable.SOLIDARITY_BASES ) {
+							if ( AonStringUtils.endsWith(solidarityBaseVar.getName(), deduction.getName()) ) {
+								Double solidarityBase = salary.getContextData(solidarityBaseVar.getName(), salary.getStartDate(), salary.getEndDate())
+										.stream().map(Salary.ContextData::getExpression).map(AonNumberUtils::toDouble).findFirst().orElse(null);
+								return AonNumberUtils.zeroIfNull(solidarityBase) > 0 ? deduction.getAmount() / solidarityBase * 100 : null;
+							}
+						}
+						return null;
+					}
+					
 				});
 
 			} else if (salary.getIrpfBase() != null && salary.getIrpfBase() > 0){
@@ -407,6 +420,11 @@ public class JooqPDFSettlementBuilder {
 				return "Bonificaciones";
 			}
 			
+			@Override
+			public String visitSolidarity(DeductionType deductionType) {
+				return "Solidaridad";
+			}
+			
 		});
 	}
 	
@@ -493,6 +511,11 @@ public class JooqPDFSettlementBuilder {
 			@Override
 			public Integer visitBonus(DeductionType deductionType) {
 				return 6;
+			}
+			
+			@Override
+			public Integer visitSolidarity(DeductionType deductionType) {
+				return 7;
 			}
 		});
 	}

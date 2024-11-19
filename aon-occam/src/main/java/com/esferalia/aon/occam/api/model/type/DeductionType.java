@@ -100,6 +100,13 @@ public enum DeductionType {
 			return visitor.visitMEI(this);
 		}
 	},
+	SOLIDARITY {
+		@Override
+		public <T> T accept(Visitor<T> visitor) {
+			return visitor.visitSolidarity(this);
+		}
+		
+	}
 	;
 	
 	public static DeductionType BONUS = IMS;
@@ -167,10 +174,12 @@ public enum DeductionType {
 		default T visitBonus(DeductionType deductionType) {
 			return null;
 		}
-		T visitMEI(DeductionType deductionType);
-//		default T visitMEI(DeductionType deductionType) {
-//			return null;
-//		}
+		default  T visitMEI(DeductionType deductionType) {
+			return null;
+		}
+		
+		T visitSolidarity(DeductionType deductionType);
+
 	}
 	
 	@SuppressWarnings("serial")

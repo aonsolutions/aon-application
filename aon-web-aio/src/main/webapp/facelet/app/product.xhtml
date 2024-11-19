@@ -12,8 +12,9 @@
 			id="appButton" 
 			style="display: none; " 
 			action="product_list-management"
-			actionListener="#{product.onSearch}"
 		>
+			<f:setPropertyActionListener target="#{product.defaultOrder}" value="updateDate desc" />
+			<aon:actionListener method="#{product.onSearch}" />
 		</aon:commandButton>
 	</aon:form>
 	

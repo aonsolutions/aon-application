@@ -178,8 +178,9 @@ public class JooqEmployeeIrpf {
 						Record irpfPercentRecord = irpfPercentRecords.get(0);
 						try {
 							irpfPercent = Double.parseDouble(irpfPercentRecord.get(SALARY_DATA.EXPRESSION));
-							moneyQuote = moneyBase * irpfPercent / 100;
-							inkindQuote = inkindBase * irpfPercent / 100;
+							
+							moneyQuote = getMoneyQuote(dslContext, salaryId, salaryType, moneyBase, irpfPercent);
+							inkindQuote = getInkindQuote(dslContext, salaryId, salaryType, inkindBase, irpfPercent);
 						} catch (NumberFormatException e) {
 							System.err.println("Can't format percent : " + irpfPercentRecord.get(SALARY_DATA.EXPRESSION));
 						}
@@ -219,6 +220,30 @@ public class JooqEmployeeIrpf {
 		}
 		
 		return employeeIrpfList;
+	}
+
+	private static Double getMoneyQuote(DSLContext dslContext, Integer salaryId, String salaryType, Double moneyBase, Double irpfPercent) {
+		if(AonStringUtils.equalsIgnoreCase(salaryType, "Manual")) {
+			List<Double> quotes = dslContext.selectFrom(SALARY_PAYMENT)
+					.where(SALARY_PAYMENT.SALARY.eq(salaryId))
+					.and(SALARY_PAYMENT.TYPE.eq((byte)1))
+					.fetch(SALARY_PAYMENT.QUOTE);
+				
+				if(!quotes.isEmpty()) return quotes.get(0);
+		}
+		return moneyBase * irpfPercent / 100;
+	}
+
+	private static Double getInkindQuote(DSLContext dslContext, Integer salaryId, String salaryType, Double inkindBase, Double irpfPercent) {
+		if(AonStringUtils.equalsIgnoreCase(salaryType, "Manual")) {
+			List<Double> quotes = dslContext.selectFrom(SALARY_PAYMENT)
+				.where(SALARY_PAYMENT.SALARY.eq(salaryId))
+				.and(SALARY_PAYMENT.TYPE.eq((byte)13))
+				.fetch(SALARY_PAYMENT.QUOTE);
+			
+			if(!quotes.isEmpty()) return quotes.get(0);
+		}
+		return inkindBase * irpfPercent / 100;
 	}
 
 	private static EmployeeIrpf createEmployeeIrpfL190(DSLContext dslContext, Date iteratorDate, Integer salaryId, String salaryType, Record salaryRecord) throws IllegalArgumentException {
@@ -280,8 +305,8 @@ public class JooqEmployeeIrpf {
 			Record irpfPercentRecord = irpfPercentRecords.get(0);
 			try {
 				irpfPercent = Double.parseDouble(irpfPercentRecord.get(SALARY_DATA.EXPRESSION));
-				moneyQuote = moneyBase * irpfPercent / 100;
-				inkindQuote = inkindBase * irpfPercent / 100;
+				moneyQuote = getMoneyQuote(dslContext, salaryId, salaryType, moneyBase, irpfPercent);
+				inkindQuote = getInkindQuote(dslContext, salaryId, salaryType, inkindBase, irpfPercent);
 			} catch (NumberFormatException e) {
 				System.err.println("Can't format percent : " + irpfPercentRecord.get(SALARY_DATA.EXPRESSION));
 			}

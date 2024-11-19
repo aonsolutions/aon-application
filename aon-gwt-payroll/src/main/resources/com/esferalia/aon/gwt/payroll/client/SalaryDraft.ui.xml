@@ -53,7 +53,7 @@
 			margin-top: 30px;
 		}
 		
-		.draft {
+		.aon-Salary-DraftPanel {
 			min-width: 1080px;
 		}
 
@@ -315,7 +315,7 @@
 			
 		}
 		
-		.stackHeader {
+		.aon-StackLayoutHeader {
 			padding: .7em .5em .7em .6em;
 		}
 		
@@ -334,6 +334,9 @@
 		.wAuto {
 			width: auto;
 		}
+
+		@external aon-Salary-DraftPanel;
+		@external aon-StackLayoutHeader;
 
 	</ui:style>
 	
@@ -442,7 +445,7 @@
 					<g:center>
 						<g:VerticalPanel styleName="{style.document}" ui:field="scrolledPanel" >
 	    					
-							<g:VerticalPanel ui:field="draftPanel" width="auto" styleName="{style.draft}">
+							<g:VerticalPanel ui:field="draftPanel" width="auto" styleName="{style.aon-Salary-DraftPanel}">
 								
 								<g:HorizontalPanel ui:field='timeRulePanel'  debugId='timeRulePanel' visible="false" styleName="aon-width-all {style.vertical-margin}" />
 								<!--  g:HorizontalPanel ui:field='dbTimeRulePanel'  debugId='dbTimeRulePanel' visible="false" styleName="aon-width-all {style.vertical-margin} {style.disabled}" /-->
@@ -791,7 +794,7 @@
 						<g:StackLayoutPanel unit='EM' ui:field="contextStackLayoutPanel" debugId="contextStackLayoutPanel" >
 							<g:stack>
 								<g:header size='3.5' >
-									<div class='{style.stackHeader}' >
+									<div class='{style.aon-StackLayoutHeader}' >
 										<span class='aon-icon-rowSelector-S' style="padding-left: 20px; padding-top:2px;" >Variables del Sistema</span>
 									</div>
 								</g:header>
@@ -801,7 +804,7 @@
 							</g:stack>
 							<g:stack>
 								<g:header size='3.5' >
-									<div class='{style.stackHeader}' >
+									<div class='{style.aon-StackLayoutHeader}' >
 										<span class='aon-icon-rowSelector-C' style="padding-left: 20px; padding-top:2px;" >Variables del Convenio</span> 
 									</div>
 								</g:header>
@@ -811,7 +814,7 @@
 							</g:stack>
 							<g:stack>
 								<g:header size='3.5'  >
-									<div class='{style.stackHeader}'  >
+									<div class='{style.aon-StackLayoutHeader}'  >
 										<span class='material-icons ' style="vertical-align: middle; color: black; font-size: 20px;" >person</span>
 										Variables del Empleado
 									</div>

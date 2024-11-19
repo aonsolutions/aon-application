@@ -12,7 +12,7 @@ import org.jooq.Record;
 import org.jooq.conf.Settings;
 import org.jooq.impl.DSL;
 
-import net.aonsolutions.storage.s3.S3;
+import solutions.aon.aws.s3.S3;
 
 public class JooqContractAttach {
 	
@@ -264,7 +264,7 @@ public class JooqContractAttach {
 		
 		String s3Key = contractDataRecord.get(CONTRACT_DOC.S3_KEY);		
 		if ( s3Key != null ) 
-		    return S3.getContractDocDownloadURL(s3Key).toString();
+		    return S3.getAonTableDownloadURL("contract_doc", s3Key).toString();
 		
 		byte [] data = contractDataRecord.get(CONTRACT_ATTACH.DATA);
 		return  Base64.getEncoder().encodeToString(data);

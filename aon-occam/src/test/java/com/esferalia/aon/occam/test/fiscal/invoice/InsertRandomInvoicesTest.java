@@ -1,6 +1,7 @@
 package com.esferalia.aon.occam.test.fiscal.invoice;
 
 import java.text.MessageFormat;
+import java.util.Date;
 
 import org.junit.Assert;
 import org.junit.Test;
@@ -29,10 +30,15 @@ public class InsertRandomInvoicesTest extends AbstractOccamTest {
 		for (int count = 0; count < times; count++) {
 			Invoice invoice = null;
 			if (AonRandom.gt(90)) {
-				invoice = AonRandom.generateRandomRetentionInvoice(ctx,getOccam(),getConfiguration(),AonRandom.getRandomWithholdingType());
+				invoice = AonRandom.generateRandomRetentionInvoice(ctx,getOccam(),AonRandom.getRandomWithholdingType());
 			} else {
-				InvoiceFakerParams params = new InvoiceFakerParams(ctx,getConfiguration()).setIssueDate( AonRandom.getRandomYearDay( year ) );
-				invoice = InvoiceFaker.getRandom(params);
+				if (AonRandom.gt(20)) {
+					InvoiceFakerParams params = new InvoiceFakerParams(ctx).setIssueDate( AonRandom.getRandomYearDay( year ) );
+					invoice = InvoiceFaker.getRandomNotSales(params);
+				} else {
+					InvoiceFakerParams params = new InvoiceFakerParams(ctx).setIssueDate( new Date( ) );
+					invoice = InvoiceFaker.getRandomSales(params);
+				}
 			}
 			invoice = AON.insertInvoice(getOccam(),invoice);
 			AccountingInvoiceDAO.saveFinances(ctx, invoice);

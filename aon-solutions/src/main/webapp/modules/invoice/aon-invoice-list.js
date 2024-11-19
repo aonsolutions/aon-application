@@ -3,15 +3,15 @@ import { AonSelect } from '../../components/aon-select.js';
 
 import { Paymethods } from '../../services/paymethod.js';
 import { getInvoices, getInvoice, insertInvoice, deleteRawdocInvoices,
-	 sendInvoiceMail, downloadInvoices, getAeatCertificates, getInvofoxDocuments, getInvofoxDocument, recordInvoices } from '../../services/service.js';
+	 sendInvoiceMail, downloadInvoices, getAeatCertificates, recordInvoices } from '../../services/service.js';
 import { Invoice, getDocumentNumber } from './Invoice.js';
 
 import {addInvoices, setInvoices, setIndex} from './InvoiceCache.js';
 
-import { CONSTANT, MATERIAL_ICONS, MSG, TAG } from '../../environments/environments.js';
+import { COLORS, CONSTANT, MATERIAL_ICONS, MSG, TAG } from '../../environments/environments.js';
 
 import * as ACTION from '../actions.js';
-import { formatNumber } from '../../services/utils.js';
+import { formatNumber, isBase64 } from '../../services/utils.js';
 import * as LS from '../../services/localStorageService.js';
 import { AonDateUtils } from '../utils/AonDateUtils.js';
 import { createList } from '../../components/CreateComponent.js';
@@ -19,8 +19,7 @@ import { createList } from '../../components/CreateComponent.js';
 export class AonInvoiceList extends AonElement {
 
 	more;
-	filter;
-	invofoxFilter;
+	filter;	
 	TABLE;
 
 	get id() {
@@ -59,7 +58,7 @@ export class AonInvoiceList extends AonElement {
 			aonInvoiceTable.addColumn(MSG.INVOICE_NUMBER, 'string', 'reference', '150px');
 			aonInvoiceTable.addColumn(MSG.HOLDER, 'string', 'name', 'auto');
 			aonInvoiceTable.addColumn(MSG.AMOUNT, 'number', 'totalParse', '100px');
-			aonInvoiceTable.addColumn('', 'icons', 'icons', '100px');
+			aonInvoiceTable.addColumn('', 'icons', 'icons', this.isInvoice() ? '140px' : '180px');
 	
 			this.init();
 			aonInvoiceTable.addEventListener('more', () => {
@@ -81,8 +80,9 @@ export class AonInvoiceList extends AonElement {
 		let aonInvoiceTable = createList(this.TABLE); 
 		aonInvoiceTable.selectable = 'true';
 		this.appendChild(aonInvoiceTable);
-		aonInvoiceTable.addColumn(MSG.DATE, 'date', 'dateTable', '120px');;
+		aonInvoiceTable.addColumn(MSG.DATE, 'date', 'creation_date', '120px');
 		aonInvoiceTable.addColumn(MSG.NAME, 'string', 'name', 'auto');
+		aonInvoiceTable.addColumn(MSG.USER, 'string', 'creation_user', '120px');
 		aonInvoiceTable.addColumn('', 'icons', 'icons', '100px');
 
 		this.init();
@@ -105,18 +105,31 @@ export class AonInvoiceList extends AonElement {
 		invoice.documentNumber =  getDocumentNumber(invoice);
 		invoice.totalParse = formatNumber(invoice.total, 2, "EUR");
 		invoice.icons = this.buildRowIcons(invoice); 
-		this.getTable().addRow(invoice, () => this.aonInvoice(invoice, idx), (e) => this.aonInvoiceContextMenu(e, invoice, idx));
+		let tr = this.getTable().addRow(invoice, () => this.aonInvoice(invoice, idx), (e) => this.aonInvoiceContextMenu(e, invoice, idx));
+		if(invoice.altered) {
+			tr.style.backgroundColor = '#ffe3e3';
+		}
+		tr.id = "aonInvoiceRow";
 	}
 
 	paintProcessingRow(idx, invoice) {
 		if(invoice.file) {
 			let key = invoice.file.s3Key;
 			let keyValues = key.split("/");
-			invoice.name = keyValues[keyValues.length - 1];
+			let value = keyValues[keyValues.length - 1];
+			let array = value.split("_");
+			let base64 = array[array.length - 1];
+			let re = /(?:\.([^.]+))?$/;
+			let ext = re.exec(base64)[0];
+			base64 = base64.replace(ext, '');
+			if(isBase64(base64)) {
+				invoice.name = atob(base64) + ext;
+			} else invoice.name = value;
 		}
 		if(!invoice.name) invoice.name = '';
 
-		this.getTable().addRow(invoice, () => {}, () => {});
+		let tr = this.getTable().addRow(invoice, () => {}, () => {});
+		tr.id = "aonInvoiceRow";
 	}
 		
 	loadMore() {
@@ -134,33 +147,7 @@ export class AonInvoiceList extends AonElement {
 					this.paintAccountingRow(i, invoice);
 				});
 			});
-		} else if(aonInvoiceTable && this.invofoxFilter && this.getDur().isInvofox()) {
-			this.invofoxFilter.page = this.invofoxFilter.page + 1;
-			this.buildInvofox();
 		}
-	}
-
-	buildInvofox() {
-		getInvofoxDocuments(this.invofoxFilter).then(r => {
-			if(r.length == 0)
-				this.more = false;
-			addInvoices(r);
-			r.forEach((invoice, i) => {	
-				let date = new Date(invoice.date);
-				let day = date.getDate();
-				let month = date.getMonth() + 1;
-				let year = date.getFullYear();
-				invoice.referenceTable = invoice.reference;
-				invoice.dateTable = day.toString().zeros(2) + '/' + month.toString().zeros(2) + '/' + year.toString();
-				invoice.totalParse = formatNumber(invoice.total, 2, "EUR");
-				invoice.icons = this.buildRowIcons(invoice);
-				this.getTable().addRow(invoice, () => {
-					getInvofoxDocument(invoice.id).then( doc => {
-						this.aonInvoice(doc, i);
-					}); 
-				},() => {});
-			});
-		});
 	}
 
 	init() {
@@ -186,10 +173,6 @@ export class AonInvoiceList extends AonElement {
 					else this.paintAccountingRow(i, invoice);
 				});
 			});
-
-			if(this.invofoxFilter && this.getDur().isInvofox()) {
-				this.buildInvofox();	
-			} 
 		}
 	}
 
@@ -218,6 +201,24 @@ export class AonInvoiceList extends AonElement {
 				icon: this.getOcrInvoiceStatusIcon(),
 				title: this.getOcrInvoiceStatusIconTitle(invoice),
 				color: this.getOcrInvoiceStatusIconColor(invoice)
+			};
+			icons.push(icon);
+		}
+
+		if(inv.isSigned()) {
+			let icon = {
+				icon: MATERIAL_ICONS.LICENSE,
+				title: '',
+				color: COLORS.AON_DARK_GRAY
+			};
+			icons.push(icon);			
+		} 
+
+		if(inv.isRawdoc()) {
+			let icon = {
+				icon: MATERIAL_ICONS.INFO,
+				title: invoice.creation_date + ' - ' + invoice.creation_user,
+				color: COLORS.AON_LIGHT_GRAY
 			};
 			icons.push(icon);
 		}
@@ -313,8 +314,8 @@ export class AonInvoiceList extends AonElement {
 			//aonInvoice.addToolbarOption2(ACTION.DELETE_TO_TRASH, () => this.deleteInvoices());
 			//aonInvoice.addToolbarOption2(ACTION.REJECT_INVOICE, () => this.rejectInvoices());
 			toolbar.addSeparator();
-			aonInvoice.addToolbarOption2(ACTION.DOWNLOAD_INVOICE, () => this.downloadInvoices());
-			aonInvoice.addToolbarOption2(ACTION.SEND_INVOICE, () => this.sendInvoices());
+			// aonInvoice.addToolbarOption2(ACTION.DOWNLOAD_INVOICE, () => this.downloadInvoices());
+			// aonInvoice.addToolbarOption2(ACTION.SEND_INVOICE, () => this.sendInvoices());
 		} else if(this.getFilter().status === CONSTANT.REFUSED || this.getFilter().status === CONSTANT.REJECTED){
 			//aonInvoice.addToolbarOption2(ACTION.DELETE_TO_TRASH, () => this.deleteInvoices());
 			//aonInvoice.addToolbarOption2(ACTION.RESTORE_INVOICE, () => this.restoreInvoices());
@@ -480,6 +481,10 @@ export class AonInvoiceList extends AonElement {
 		return this.getFilter().status &&  this.getFilter().status === 'processing';
 	}
 
+	isInvoice() {
+		return this.getFilter().status &&  this.getFilter().status === 'accounting';
+	}
+
 	getPaymethod(paymethod) {
 		let value = '';
 		Paymethods.forEach((item, i) => {
@@ -575,9 +580,6 @@ export class AonInvoiceList extends AonElement {
 	    	}
 		} else {
 			actions = [send, download];
-			//actions = this.isBeta() 
-			//	? [deleteTBAI, send, download]
-			//	: [send, download];
 		}
 	  	if(!inv.file && !inv.isEmitida() && number === 1){
 	  		actions.push(addFile);

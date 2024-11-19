@@ -31,11 +31,13 @@ import com.esferalia.aon.occam.api.model.fiscal.VatContext;
 import com.esferalia.aon.occam.api.model.fiscal.aeat.AEATResponse;
 import com.esferalia.aon.occam.api.model.fiscal.mod303.entry.Mod303DefaultAccountEntryScript;
 import com.esferalia.aon.occam.api.model.type.AccountEntryType;
+import com.esferalia.aon.occam.api.model.type.AppParam;
 import com.esferalia.aon.occam.api.model.type.Mod303Key;
 import com.esferalia.aon.occam.api.model.type.Period;
 import com.esferalia.aon.occam.api.model.type.VATRegime;
 import com.esferalia.aon.occam.impl.jooq.dao.AccountEntryDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.AccountPeriodDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.AppParamDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.DataResponseDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.FinanceDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.FiscalModelValidation;
@@ -128,7 +130,19 @@ public class Mod303DAO extends FiscalModelDAO {
 			dec.ensureDetails(mod303);
 		} catch (AonCoreException e) {
 			mod303.addMessage(e.getMessage());
-		} 
+		}
+		Mod303 m303 = mod303;
+		AppParamDAO.getApplicationParameterStream( ctx, f -> 
+			f.getDomainProperty().eq(m303.getDomain() )
+			.and( f.getNameProperty().eq( AppParam.FS_FORCE_DIFF_CALC.name() ))
+			)
+			.filter( ap -> AonNumberUtils.equals(m303.getYear(),AonNumberUtils.toInteger(ap.getValue())))
+			.findFirst()
+			.ifPresent( ap -> {
+				m303.addMessage("Se han modificado facturas declaradas en el ejercicio. Se recomienda realizar cálculo por diferencia.");
+			}
+		);
+		
 		return mod303;
 	}
 	

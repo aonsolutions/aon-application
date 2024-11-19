@@ -22,6 +22,8 @@ import java.security.UnrecoverableKeyException;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.util.Date;
+import java.util.List;
+import java.util.Optional;
 
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.HttpsURLConnection;
@@ -90,15 +92,21 @@ public class TbaiMain {
 					info = lroe240.buildInfo(OperacionEnum.A_00, lroe240.getEjercicio(tbaiConfiguration, invoice));
 					lroeResponse = lroe240.alta(company, tbaiConfiguration, invoice, xml);
 				} else {
-				    Person person = AonDocumentUtil.isAssetCommunity(company.getDocument())
+				    Person person = AonDocumentUtil.isAssetCommunity(company.getDocument()) || AonDocumentUtil.isCivilSociety(company.getDocument())
 				    		? new Person().copy(company) 
 				    		: AON.getPerson(company.getDomain(), "", f -> f.getIdProperty().eq(company.getId()));
-                    EnterpriseActivity ea = AON.getEnterpriseActivity(company.getDomain().getName(),
-                        company.getDomain().getId(), "", invoice.getActivity().getId());
-                    if(ea == null || ea.getId() == null) {
-                        ea = AON.getEnterpriseActivities(company.getDomain().getName(),
-                            company.getDomain().getId(), "").filter(f -> f.isPrincipal()).findFirst().orElse(new EnterpriseActivity());
-                    }
+				    if(person.getId() == null) person = new Person().copy(company);
+                 
+				    EnterpriseActivity ea = AON.getEnterpriseActivity(company.getDomain().getName(),
+							company.getDomain().getId(), "", invoice.getActivity().getId());
+					if(ea == null || ea.getId() == null) {
+						List<EnterpriseActivity> list = AON.getEnterpriseActivities(company.getDomain().getName(),
+								company.getDomain().getId(), "").toList();
+						if(list.isEmpty()) throw new Exception("El dominio no tiene Actividad.");
+						Optional<EnterpriseActivity> opt = list.stream().filter(f -> f.isPrincipal()).findFirst();
+						if(opt.isEmpty()) opt = list.stream().findFirst();
+						ea = opt.orElse(new EnterpriseActivity());
+					}
                     invoice.setEpigraph(ea.getIae().getFullEpigraph());
                     LROE140_1_1 lroe140 = new LROE140_1_1();
                     info = lroe140.buildInfo(OperacionEnum.A_00, lroe140.getEjercicio(tbaiConfiguration, invoice));
@@ -194,11 +202,12 @@ public class TbaiMain {
 					info = lroe240.buildInfo(OperacionEnum.A_00, lroe240.getEjercicio(tbaiConfiguration, invoice));
 					lroeResponse = lroe240.alta(company, tbaiConfiguration, invoice, xml);
 				} else {
-					Person person = AonDocumentUtil.isAssetCommunity(company.getDocument())
+					Person person = AonDocumentUtil.isAssetCommunity(company.getDocument()) || AonDocumentUtil.isCivilSociety(company.getDocument())
 				    		? new Person().copy(company) 
 				    		: AON.getPerson(company.getDomain(), "", f -> f.getIdProperty().eq(company.getId()));
+				    if(person.getId() == null) person = new Person().copy(company);
 
-					EnterpriseActivity ea = AON.getEnterpriseActivity(company.getDomain().getName(),
+				    EnterpriseActivity ea = AON.getEnterpriseActivity(company.getDomain().getName(),
                         company.getDomain().getId(), "", invoice.getActivity().getId());
                     if(ea == null || ea.getId() == null) {
                         ea = AON.getEnterpriseActivities(company.getDomain().getName(),

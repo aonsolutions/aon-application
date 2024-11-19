@@ -31,9 +31,7 @@ import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.Customer;
 import com.esferalia.aon.occam.api.model.Filter;
-import com.esferalia.aon.occam.api.model.Filter.ItemFilter;
 import com.esferalia.aon.occam.api.model.Filter.RegistryAddressFilter;
-import com.esferalia.aon.occam.api.model.Properties.ItemProperties;
 import com.esferalia.aon.occam.api.model.Properties.RegistryAddressProperties;
 import com.esferalia.aon.occam.api.model.management.Sales;
 import com.esferalia.aon.occam.api.model.management.SalesDetail;
@@ -238,8 +236,8 @@ public class ConnectSalesResponseOccam  implements Serializable {
 			LOGGER.error(e.getMessage());
 		}
 		
-		String ediBY = isDia(customer) ? customerEdiCabeceraCode : customerEdiFacturaCode;
-		String ediIV = isDia(customer) ? customerEdiFacturaCode : customerEdiCabeceraCode;
+		String ediBY = SeresUtils.isDia(customer.getDocument()) ? customerEdiCabeceraCode : customerEdiFacturaCode;
+		String ediIV = SeresUtils.isDia(customer.getDocument()) ? customerEdiFacturaCode : customerEdiCabeceraCode;
 		
 		
 		List<ORSPP> orsppList = new LinkedList<>();
@@ -444,10 +442,6 @@ public class ConnectSalesResponseOccam  implements Serializable {
 		orspe.setUnidadDeMedida(null);
 		orspe.setCantidadDescuento_Cargo(null);
 		return orspe;
-	}
-	
-	private boolean isDia(Registry registry) {
-		return "A80782519".equalsIgnoreCase(registry.getDocument());
 	}
 	
 	private String obtainProductCustomerCode(Item item, Integer customerId) {

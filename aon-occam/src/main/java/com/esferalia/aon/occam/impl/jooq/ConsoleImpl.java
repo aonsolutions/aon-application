@@ -7,7 +7,6 @@ import java.util.stream.Stream;
 import org.jooq.Named;
 
 import com.esferalia.aon.occam.api.AONContext;
-import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.esferalia.aon.occam.api.IConsole;
 import com.esferalia.aon.occam.api.model.ConsoleDomain;
 import com.esferalia.aon.occam.api.model.Domain;
@@ -17,6 +16,7 @@ import com.esferalia.aon.occam.api.model.DomainParams;
 import com.esferalia.aon.occam.api.model.Filter.DomainFilter;
 import com.esferalia.aon.occam.api.model.console.ConsoleTableField;
 import com.esferalia.aon.occam.api.model.console.ConsoleTableRow;
+import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.type.AonStatus;
 import com.esferalia.aon.occam.impl.jooq.console.ConsoleDeleteDomain;
 import com.esferalia.aon.occam.impl.jooq.console.ConsoleParams;
@@ -34,7 +34,7 @@ public class ConsoleImpl implements IConsole {
 	}
 	
 	@Override
-	public Stream<ConsoleDomain> getDomains(CloseableAONContext ctx, DomainParams params ) {
+	public Stream<ConsoleDomain> getDomains(AONContext ctx, DomainParams params ) {
 		return ConsoleDAO.getDomains(ctx, params);
 	}
 	
@@ -44,27 +44,30 @@ public class ConsoleImpl implements IConsole {
 	}
 	
 	@Override
-	public Domain changeActive(CloseableAONContext ctx, Integer domainId, boolean active) {
+	public Domain changeActive(AONContext ctx, Integer domainId, boolean active) {
 		return ConsoleDAO.changeActive(ctx, domainId, active);
 	}
 	
 	@Override
-	public Domain changeExpirationDate(CloseableAONContext ctx, Integer domainId, Date expireDate) {
+	public Domain changeExpirationDate(AONContext ctx, Integer domainId, Date expireDate) {
 		return ConsoleDAO.changeExpirationDate(ctx, domainId, expireDate);
 	}
-	
 	@Override
-	public String remoteAccess(CloseableAONContext ctx, Integer domainId) {
-		return ConsoleDAO.remoteAccess(ctx, domainId);
+	public Stream<User> availableUsers(AONContext ctx, Integer domainId){
+		return ConsoleDAO.availableUsers(ctx, domainId);
+	}
+	@Override
+	public boolean switchRemoteAccess(AONContext ctx, Integer domainId) {
+		return ConsoleDAO.switchRemoteAccess(ctx, domainId);
 	}
 
 	@Override
-	public ConsoleTableRow getTableRow(CloseableAONContext ctx, ConsoleTableRow row) {
+	public ConsoleTableRow getTableRow(AONContext ctx, ConsoleTableRow row) {
 		return ConsoleDAO.getTableRow(ctx, row);
 	}
 	
 	@Override
-	public ConsoleTableRow getTableRowMetadata(CloseableAONContext ctx, ConsoleTableRow row) {
+	public ConsoleTableRow getTableRowMetadata(AONContext ctx, ConsoleTableRow row) {
 		return ConsoleDAO.getTableRowMetadata(ctx, row);
 	}
 
@@ -74,12 +77,12 @@ public class ConsoleImpl implements IConsole {
 	}
 	
 	@Override
-	public ConsoleTableRow update(CloseableAONContext ctx, ConsoleTableRow row, ConsoleTableField field) {
+	public ConsoleTableRow update(AONContext ctx, ConsoleTableRow row, ConsoleTableField field) {
 		return ConsoleDAO.update(ctx, row, field);
 	}
 	
 	@Override
-	public Boolean delete(CloseableAONContext ctx, ConsoleTableRow row) {
+	public Boolean delete(AONContext ctx, ConsoleTableRow row) {
 		return ConsoleDAO.delete(ctx, row);
 	}
 

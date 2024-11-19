@@ -38,6 +38,7 @@ import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Label;
@@ -99,6 +100,8 @@ public abstract class AonMarketingActionTargetCreationPanel extends SimplePanel 
 	private Integer domainIdValueInt;
 	private String userValueStr;
 	private String sessionIdValueStr;
+	
+	private CheckBox trailCB;
 	
 	public AonMarketingActionTargetCreationPanel(final String domainName,final int domain, final String user, LinkedList<Scope> aviableScopes, LinkedList<GeoZone> aviableGeozones, final MarketingAction marketingAction, Seller seller, final AonMarketingActionTargetCreationPanelCallback aonMarketingActionTargetCreationPanelCallback) {
 		this.aviableGeozones = aviableGeozones;
@@ -255,7 +258,7 @@ public abstract class AonMarketingActionTargetCreationPanel extends SimplePanel 
 		HTMLPanel documentGroup = new HTMLPanel(EMPTY_STRING);
 		addInputGroupStyle(documentGroup.getElement());
 		
-		Label documentTitle = new Label("Documento");
+		Label documentTitle = new Label("Documento *");
 		addInputTitleStyle(documentTitle.getElement());
 		
 		document.addValueChangeHandler(e -> {
@@ -435,6 +438,12 @@ public abstract class AonMarketingActionTargetCreationPanel extends SimplePanel 
 		
 		if(AonStringUtils.isBlank(email.getValue())) {
 			AonMessagePanel.showWarning(messagePanel, "El campo 'Email' es requerido");
+			messagePanel.getWidget(0).getElement().getStyle().setMargin(0.00, Unit.PX);
+			return false;
+		}
+		
+		if(AonStringUtils.isBlank(document.getValue())) {
+			AonMessagePanel.showWarning(messagePanel, "El campo 'Documento' es requerido");
 			messagePanel.getWidget(0).getElement().getStyle().setMargin(0.00, Unit.PX);
 			return false;
 		}
@@ -640,9 +649,9 @@ public abstract class AonMarketingActionTargetCreationPanel extends SimplePanel 
 						urlBuilder.setPath("/ms/api/generate_token/json/");
 						
 						HashMap<String, String> headers = new HashMap<>();
-						headers.put("domainName", domainName);
-						headers.put("domainLogin", user);
-						headers.put("domainId", String.valueOf(domainId));
+						headers.put("domain_name", domainName);
+						headers.put("domain_login", user);
+						headers.put("domain_id", String.valueOf(domainId));
 						headers.put("id", serviceUsersLB.getSelectedValue());
 						headers.put("time", "3");
 						
@@ -709,6 +718,11 @@ public abstract class AonMarketingActionTargetCreationPanel extends SimplePanel 
 		bodyGroup.add(copy);
 		request.add(bodyGroup);
 		
+		// Check create enterprise
+		trailCB = new CheckBox("Empresa prueba");
+		trailCB.addValueChangeHandler(e -> loadJSONBody());
+		request.add(trailCB);
+		
 		loadJSONBody();
 		request.add(jsonPanel);
 		
@@ -719,6 +733,8 @@ public abstract class AonMarketingActionTargetCreationPanel extends SimplePanel 
 		
 		String json = 
 		"{\n"
+		+ "<br>"
+		+ "  &ensp;\"trial\":" + trailCB.getValue() + "\n"
 		+ "<br>"
 		+ "  &ensp;\"marketingAction\":{\n"
 		+ "<br>"
@@ -817,6 +833,8 @@ public abstract class AonMarketingActionTargetCreationPanel extends SimplePanel 
 
 	private JSONObject createActionTargetJSON() {
 		JSONObject actionTarget = new JSONObject();
+		
+		actionTarget.put("trial", new JSONString(trailCB.getValue().toString()));
 		
 		JSONObject action = new JSONObject();
 		action.put("id", new JSONString(marketingAction.getId().toString()));

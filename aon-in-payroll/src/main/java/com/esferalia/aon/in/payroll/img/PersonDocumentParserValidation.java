@@ -5,9 +5,10 @@ import java.util.function.Consumer;
 
 import org.apache.pdfbox.pdmodel.PDDocument;
 
-import com.amazonaws.services.textract.model.Document;
 import com.esferalia.aon.watson.AonError;
 import com.esferalia.aon.watson.error.AonCoreException;
+
+import software.amazon.awssdk.services.textract.model.Document;
 
 class PersonDocumentParserValidation {
 
@@ -37,8 +38,8 @@ class PersonDocumentParserValidation {
 	};
 
 	private static final Consumer<Document> DOC_FILE_SIZE_EXCEEDED = document -> {
-		if (document != null && document.getBytes() != null
-				&& (document.getBytes().position() + document.getBytes().remaining()) > (5 * 1024 * 1024)) {
+		if (document != null && document.bytes() != null
+				&& (document.bytes().asByteBuffer().position() + document.bytes().asByteBuffer().remaining()) > (5 * 1024 * 1024)) {
 			throw new AonCoreException(AonError.FILE_SIZE_EXCEEDED.getMessage());
 		}
 	};

@@ -76,6 +76,7 @@ export class AonNewUpload extends AonElement {
         input.type = CONSTANT.FILE;
         input.accept = this.accept;
         input.className = CSS.AON_NONE;
+        input.multiple = 'multiple';
         input.addEventListener(EVENT.CHANGE, ({target}) => {
             let desktop = this.getElement('aonDesktop');
             let invoiceHome = this.getElement('aonInvoiceHome'); 

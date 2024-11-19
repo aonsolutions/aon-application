@@ -10,10 +10,14 @@
 			transition: 0.5s;
 		}
 	
-		.employees img {
+		.aon-EmployeesPanel img {
 			filter: grayscale(100%) contrast(200%);
 		}
 		
+		.aon-EmployeesTree  {
+			text-transform: uppercase;
+		}
+
 		.flex {
 			display: flex;
 			gap: .5rem;
@@ -33,19 +37,26 @@
 			z-index: 1;
 		}
 		
+		.aon-EmployeesToolbar-Title {
+			text-transform: uppercase;
+		}
+		
 		.heightAll { height: 100%; }
+		
+		@external aon-EmployeesTree;
+		@external aon-EmployeesToolbar-Title;
 	
 	</ui:style>
 
 
 	<g:DockLayoutPanel unit='PX' styleName="{style.animate}" >
-		<g:center>
+		<g:center >
 			<g:DeckPanel ui:field="employeesDeck">
 				<g:HTMLPanel styleName="{style.flexColumn}" ui:field="dynamicEmployees">
 					<g:HTMLPanel styleName="{style.flex}" ui:field="employeesToolbar"/>
 					<aon:AonEmployeesTreeToolbar ui:field="toolbar" />
-					<g:ScrollPanel styleName="{style.employees} {style.heightAll}"  ui:field="scrollPanel" debugId="employeesScrollPanel">
-						<g:Tree  ui:field="tree" debugId="employeesTree"/>
+					<g:ScrollPanel styleName="{style.aon-EmployeesPanel} {style.heightAll}"  ui:field="scrollPanel" debugId="employeesScrollPanel">
+						<g:Tree  ui:field="tree" debugId="employeesTree"  styleName="{style.aon-EmployeesTree} gwt-Tree" />
 					</g:ScrollPanel>
 				</g:HTMLPanel>
 				

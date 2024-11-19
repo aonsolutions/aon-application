@@ -1034,6 +1034,32 @@
 	gap: .5rem
 }
 
+/* Estilo para el contenedor principal */
+.aon_search_filter {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    border-bottom: 1px solid #b9b8b8;
+    width: 300px;
+}
+
+/* Estilo del contenido del PopupPanel */
+.aon_search_filter_popup {
+    display: flex;
+    flex-direction: column;
+    width: 275px;
+    height: 28rem;
+    overflow: hidden;
+    background-color: #fff;
+    padding: .5rem;
+}
+
+/* Estilo del ScrollPanel */
+.aon_search_filter_scroll {
+    flex-grow: 1;
+    overflow-y: auto;
+}
+
 .aon_utility_option{
 	display: flex;
 	align-items: center;
@@ -1058,10 +1084,19 @@
 	border-bottom: 1px solid #ddd;
 	min-height: 2.5rem;
 	padding: 0 1rem;
+	gap: 0;
+}
+
+.aon_custom_row > * {
+	padding: 0 .5rem;
 }
 
 .aon_custom_row:hover{
 	background-color: #eaf1fb;
+}
+
+.aon_custom_row:hover div{
+	background-color: transparent !important;
 }
 
 .aon_custom_row_button, .aon_custom_card_button{
@@ -1117,7 +1152,7 @@
 	align-items: center;
 	gap: 0.5rem;
 	border-bottom: 1px solid rgb(185, 184, 184);
-	width: 275px;
+	width: 290px;
 }
 
 .aon_custom_text_box_input_no_border{
@@ -2144,6 +2179,16 @@
 	animation-iteration-count: 1;
 }
 
+.aon_toast_model {
+	position: absolute;
+	color: #333;
+	width: 300px;
+	background-color: #d8ecff;
+	border: 0.5px solid #999;
+	border-radius: 10px;
+	inset: 0px 50px auto auto !important;
+}
+
 .aon_toast .aon_widget_close {
 	border: 1px solid darkgray;
 }
@@ -2217,6 +2262,11 @@
 	z-index : 1;
 	padding : 0 1rem;
 	border-bottom : 1px solid #ddd;
+	gap: 0;
+}
+
+.aon_custom_table_header > * {
+	padding: 0 .5rem;
 }
 
 .aon_custom_table_cell_header{

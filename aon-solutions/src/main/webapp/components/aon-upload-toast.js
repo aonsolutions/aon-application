@@ -38,13 +38,7 @@ export class AonUploadToast extends AonElement {
 		card.title = MSG.UPLOAD_FILE;		
 		this.appendChild(card);
 		card.addTitleButton(MSG.CLOSE, MATERIAL_ICONS.CLOSE, false, () => this.close());
-		
-		card.style.minHeight = '100px';
-		card.style.width = '400px';
-		card.style.position = 'absolute';
-		card.style.zIndex = 3;
-		card.style.bottom = '10px';
-		card.style.right = '25px';
+		card.classList.add(CSS.AON_CARD_UPLOAD_TOAST);
 		
 		let ul = this.createElement(TAG.UL);
 		ul.id = this.id + 'List';
@@ -84,8 +78,13 @@ export class AonUploadToast extends AonElement {
 		
 		let span = this.createSpan()
 		span.innerHTML = file.name;
-		span.style.position = 'relative';
-		span.style.top = '7px';
+		span.classList.add(CSS.AON_TEXT_OVERFLOW);
+
+		span.style.maxHeight = '30px';
+		span.style.width = this.isMobile() ? '180px' : '220px';
+		span.style.display = 'block';	
+		span.style.paddingTop = '5px';
+		
 		div.appendChild(span);
 		
 
@@ -122,6 +121,10 @@ export class AonUploadToast extends AonElement {
  		} else if("documental" === type) {
 			uploadDocument(file, data, success, error);
 		}
+	}
+
+	setJobId(jobId) {
+		this.JOB_ID = jobId;
 	}
 
 	getTypeIcon(type) {

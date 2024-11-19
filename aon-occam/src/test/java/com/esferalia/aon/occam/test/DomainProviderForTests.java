@@ -210,7 +210,7 @@ class DomainProviderForTests {
 		.set(WORKPLACE.ADDRESS, address.getId())
 		.set(WORKPLACE.ENTERPRISE, companyFull.getRegistry().getId())
 		.set(WORKPLACE.SCOPE, newScopeId)
-		.set(WORKPLACE.ECONOMICAGREEMENT, AonEnumUtils.getByte( AonRandom.getRandomAdministration(10) ))
+		.set(WORKPLACE.ECONOMICAGREEMENT, AonEnumUtils.getByte( AonRandom.getRandomAdministration(-1) ))
 		.execute();
 		ctx.log().info("Workplace insertada correctamente");
 		
@@ -237,15 +237,6 @@ class DomainProviderForTests {
 			.execute();
 		context.log().info("EnterpriseActivity created");
 
-	/*
-  `cnae` int(4) DEFAULT NULL COMMENT 'Identificador del CNAE',
-  `cnae2009` int(4) DEFAULT NULL COMMENT 'Identificador del CNAE 2009',
-  `surcharge` tinyint(1) DEFAULT 0 COMMENT 'Indica si la Actividad tiene de recargo de equivalencia',
-  `retention_tax` int(4) DEFAULT NULL COMMENT 'Identificador del IRPF por defecto',
-  `prorata` double(5,2) DEFAULT 100.00 COMMENT 'Porcentaje de prorrata',
-  `prorata_type` tinyint(1) DEFAULT 0 COMMENT 'Indica el tipo de prorrata',
-  */
-		
 		ApplicationParameter betaParam = AppParamDAO.fetchOne(context, AppParam.AON_BETA_ENABLED.toString());
 		if (betaParam == null || betaParam.getId() == null) {
 			context.getDslContext().insertInto(APP_PARAM)
@@ -276,10 +267,16 @@ class DomainProviderForTests {
 		context.log().info("Default Fiscal Creditor inserted!");
 		
 		AppParamDAO.saveApplicationParameter(context, new ApplicationParameter()
-				.setDomain(context.getDomainId())
-				.setName(AppParam.FS_ADMON_CREDITOR)
-				.setValue(defaultFiscalCreditor.getId().toString()));
+			.setDomain(context.getDomainId())
+			.setName(AppParam.FS_ADMON_CREDITOR)
+			.setValue(defaultFiscalCreditor.getId().toString()));
 		context.log().info("App Param FS_ADMON_CREDITOR set to " + defaultFiscalCreditor.getId());
+		
+		AppParamDAO.saveApplicationParameter(context, new ApplicationParameter()
+			.setDomain(context.getDomainId())
+			.setName(AppParam.FS_ADMON_RETENTION_CREDITOR)
+			.setValue(defaultFiscalCreditor.getId().toString()));
+		context.log().info("App Param FS_ADMON_RETENTION_CREDITOR set to " + defaultFiscalCreditor.getId());
 	}
 	
 	private static void insertGeozones(AONContext ctx, Domain domain) {

@@ -281,7 +281,7 @@ public class FiscalFaker {
 	}
 	
 	public static Mod349 createMod349(FiscalFakerParams params) {
-		Mod349 mod349 = MODEL349.initialize(params.getOccam());
+		Mod349 mod349 = MODEL349.initialize(params.getOccam(), AonDateUtils.getYear(params.getIssueDate()), null);
 		mod349.setAdministration(Objects.requireNonNullElse(params.getAdministration(), getRandomAdministration()));
 		mod349.setComplementary(params.isComplementary());
 		mod349.setReplacement(params.isReplacement());				
