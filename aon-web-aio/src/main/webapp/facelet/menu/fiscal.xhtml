@@ -79,6 +79,16 @@
 											</h:outputLink>
 										</aon:if>
 										
+										<aon:if test="#{fiscalParams.canarias}">
+											<h:outputLink target="_blank" value="https://sede.gobiernodecanarias.org"
+												styleClass="aon-menu-fiscal-model aon-menu-icon-canarias"
+												style="display: inline-block; margin-right: 0px;"
+												title="#{bundle.aon_navigate_to_official_website}">
+												<h:graphicImage styleClass="aon-vertical-align-middle"
+													title="Agencia Tributaria Canaria"
+													url="#{aonResource.resolve['/images/aon-icon/aon-icon-canarias.png']}" />
+											</h:outputLink>
+										</aon:if>
 										<aon:outputText value="Modelos tributarios" styleClass="aon-padding-left"/>
 										
 										<aon:panelGroup>

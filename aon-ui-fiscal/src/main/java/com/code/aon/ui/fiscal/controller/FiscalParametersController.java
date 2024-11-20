@@ -377,6 +377,9 @@ public class FiscalParametersController implements Serializable {
 	public boolean isNavarra() {
 		return getDefaultAdministration() == null || getDefaultAdministration() == Administration.NAVARRA;
 	}
+	public boolean isCanarias() {
+		return getDefaultAdministration() == null || getDefaultAdministration() == Administration.CANARIAS;
+	}
 	
 	public void setDefaultAdministration(Administration defaultAdministration) {
 		getParameters().get(FS_DEFAULT_ADMINISTRATION).setValue(defaultAdministration ==null?null:Integer.toString(defaultAdministration.ordinal()));

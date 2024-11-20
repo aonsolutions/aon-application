@@ -185,6 +185,7 @@ public class EnumVisitors {
 		T visitNavarra();
 		T visitCommonTerritory();
 		T visitUnknown();
+		T visitCanarias();
 	}
 	
 	public static interface IAccountDependencyVisitor<T> {

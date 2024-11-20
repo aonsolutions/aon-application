@@ -6,6 +6,7 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonDisplayTable.AonD
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDisplayTable.AonDisplayTableRow;
 import com.esferalia.aon.gwt.fiscal.client.FiscalModelUtils;
 import com.esferalia.aon.occam.api.model.fiscal.IFiscalModel;
+import com.esferalia.aon.occam.api.model.type.Administration;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.google.gwt.dom.client.Style.BorderStyle;
 import com.google.gwt.dom.client.Style.Unit;
@@ -28,8 +29,8 @@ public class AonFiscalModelHeader extends SimpleLayoutPanel {
 		header.getElement().getStyle().setProperty("border-spacing","2px");
 		
 		String[] styles = new String[]{
-			FiscalModelUtils.getAdministrationBackgroundStyle(m.getAdministration()),	
-			AON.CSS.aonColorWhite(),
+			FiscalModelUtils.getAdministrationBackgroundStyle(m.getAdministration()),
+			(m.getAdministration() == Administration.CANARIAS?AON.CSS.aonColorBlack():AON.CSS.aonColorWhite()),
 			AON.CSS.aonBold(),
 			AON.CSS.aonTextCenter(),
 			AON.CSS.aonFontLarger(),
