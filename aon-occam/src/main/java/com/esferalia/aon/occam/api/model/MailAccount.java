@@ -211,7 +211,11 @@ public class MailAccount implements Serializable{
 		return this;
 	}
 	
-	public Boolean isProtocolAon() {
+	public boolean isProtocolAon() {
 		return getProtocol() != null && "aon".equalsIgnoreCase(getProtocol());
+	}
+	
+	public boolean isIncludeBcc() {
+		return getReplytoMail() != null;
 	}
 }

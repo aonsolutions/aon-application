@@ -992,6 +992,10 @@ public class MatrixNewModelVisitor implements IFiscalModelTypeVisitor {
 			AonMessageDialog.warning("El modelo 200 para el ejercicio " + model.getYear() + ", a\u00FAn no est\u00E1 disponible.");
 		}
 	}
-	
+
+	@Override
+	public void visitM369() {
+		// EL MODELO 369 AUN NO ESTA EN LA MATRIZ		
+	}	
 
 }

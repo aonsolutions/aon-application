@@ -202,7 +202,11 @@ public class MessageController implements IWebMailConstants, Serializable {
     	try {
 	    	sentMessage = compoundMessage(server);
 	    	if(isProtocolAon()) {
-	    		String from = this.senderMailAccount.getDisplayName() + "<no-reply@aon.solutions>";
+	    		String from = 
+				this.senderMailAccount.getDisplayName() +
+				(SES.isVerifiedForSendingStatus(this.senderMailAccount.getEmail()) ?
+				"<"+this.senderMailAccount.getEmail()+">" : "<no-reply@aon.solutions>" );
+
 	    		MimeMessage message = (MimeMessage) sentMessage.getMessage();
 	            message.setFrom(new InternetAddress(from));
 	            Address replyTo = new InternetAddress(this.senderMailAccount.getEmail());
@@ -691,6 +695,10 @@ public class MessageController implements IWebMailConstants, Serializable {
 		} else {
 			AonUtil.addErrorMessageFromBundle(ICommonMessages.NOT_MAIL_ACCOUNTS);
 		}
+	}
+
+	public void onSendVerifyEmail(ActionEvent event) {
+		SES.sendVerificationEmail(this.senderMailAccount.getEmail());
 	}
 
 	public void onPrepareEmailWindow(ActionEvent event) {

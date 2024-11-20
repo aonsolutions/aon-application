@@ -25,6 +25,8 @@ import static com.esferalia.aon.watson.util.AonStringUtils.equalsIgnoreCase;
 import static com.esferalia.aon.watson.util.AonStringUtils.isEmpty;
 
 import java.io.ByteArrayInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -441,7 +443,7 @@ public class JooqPayrollBuilder {
 
 				ArrayList<String> inserted = new ArrayList<String>();
 
-				HashMap<Integer, ArrayList<PDFDeduction>> deductionMap = new HashMap<Integer, ArrayList<PDFDeduction>>();
+				HashMap<Integer, ArrayList<PDFDeduction>> deductionMap = new HashMap<>();
 				salary.getDeductions().stream().sorted(Comparator.comparing(d -> {
 					return !(d.getDescription() == null || d.getDescription().isEmpty()) ? d.getDescription()
 							: chooseDescription(d.getDeductionType());
@@ -451,17 +453,18 @@ public class JooqPayrollBuilder {
 
 					if (deductionType == null)
 						return;
+					
+					Double percent = data
+							.getOrDefault(getPercentVariableName(deductionName, deductionType.ordinal()),
+									Collections.emptyList())
+							.stream().map(ContextData::getExpression).filter(Objects::nonNull).map(Double::parseDouble)
+							.findFirst().orElse(null);
 
-					List<ContextData> percList = data
-							.get("PORCENTAJE_" + getDeductionType(deductionName, deductionType.ordinal()));
-					ContextData cd = percList != null ? percList.get(0) : null;
-					Double percent = null;
-					if (cd != null) {
-						if (cd.getExpression() != null)
-							percent = Double.parseDouble(cd.getExpression());
-						else
-							percent = -1d;
-					}
+					Double base = data
+							.getOrDefault(getBaseVariableName(deductionName, deductionType.ordinal()),
+									Collections.emptyList())
+							.stream().map(ContextData::getExpression).filter(Objects::nonNull).map(Double::parseDouble)
+							.findFirst().orElse(null);
 
 					int type = chooseType(deductionType);
 					String description = d.getDescription();
@@ -473,7 +476,7 @@ public class JooqPayrollBuilder {
 						description = chooseDescription(deductionType);
 					}
 
-					PDFDeduction pdfDeductionEntry = new PDFDeduction(d.getAmount(), d.getName(), description, percent,
+					PDFDeduction pdfDeductionEntry = new PDFDeduction(d.getAmount(), d.getName(), description, percent, base,
 							deductionType);
 					if (!deductionMap.containsKey(type))
 						deductionMap.put(type, new ArrayList<>());
@@ -507,6 +510,8 @@ public class JooqPayrollBuilder {
 					deductionMap.get(1).add(new PDFDeduction(0d, "FP", "Formación Profesional", 0d));
 				if (!inserted.contains("IRPF"))
 					deductionMap.get(2).add(new PDFDeduction(0d, "IRPF", "Retribuciones Dinerarias", 0d));
+				
+				
 
 				// EMBARGOS (placed at 'Other deductions' -type 5- field on 'Deductions')
 				{
@@ -581,6 +586,56 @@ public class JooqPayrollBuilder {
 
 					}
 
+					HashMap<Integer, ArrayList<PDFDeduction>> costMap = new HashMap<>();
+					salary.getCosts().forEach(cost -> {
+						String costName = cost.getName();
+						DeductionType costType = cost.getCostType();
+
+						if (costType == null)
+							return;
+						
+						
+						Double costPercent = data
+								.getOrDefault(getPercentVariableName(costName, costType.ordinal()),
+										Collections.emptyList())
+								.stream().map(ContextData::getExpression).filter(Objects::nonNull).map(Double::parseDouble)
+								.findFirst().orElse(null);
+
+						Double costBase = data
+								.getOrDefault(getBaseVariableName(costName, costType.ordinal() ),
+										Collections.emptyList())
+								.stream().map(ContextData::getExpression).filter(Objects::nonNull).map(Double::parseDouble)
+								.findFirst().orElse(null);
+
+						int type = chooseType(costType);
+						String description = cost.getDescription();
+
+						if (description == null || description.isEmpty()) {
+							description = chooseDescription(costName);
+						}
+						if (description == null || description.isEmpty()) {
+							description = chooseDescription(costType);
+						}
+
+						PDFDeduction pdfCostEntry = new PDFDeduction(cost.getAmount(), cost.getName(), description, costPercent, costBase,
+								costType);
+						if (!costMap.containsKey(type))
+							costMap.put(type, new ArrayList<>());
+						
+						if (costMap.get(type).stream().anyMatch(ded -> equalsIgnoreCase(ded.getDescription().get(),
+								pdfCostEntry.getDescription().get()))) {
+							PDFDeduction ded = costMap.get(type).stream()
+									.filter(d1 -> equalsIgnoreCase(d1.getDescription().get(),
+											pdfCostEntry.getDescription().get()))
+									.findFirst().get();
+
+							ded.setAmount(ded.getAmount().get() + pdfCostEntry.getAmount().get());
+						} else {
+							costMap.get(type).add(pdfCostEntry);
+						}
+					});
+					
+
 					// SET COST VALUES
 					costBuilder.setCommonContApEnterprise(Optional.ofNullable(commonContApEnterprise));
 					costBuilder.setMeiApEnterprise(Optional.ofNullable(meiApEnterprise));
@@ -594,6 +649,8 @@ public class JooqPayrollBuilder {
 					// REMUNERATION AND PRO. EXT. BASE
 					costBuilder.setExtraProrationAmount(Optional.ofNullable(salary.getExtraProrationBase()));
 					costBuilder.setMonthlyAmount(Optional.ofNullable(salary.getRemuneration()));
+
+					payrollBuilder.setCosts(costMap);
 				}
 
 				double[] atEp = new double[] { 0 };
@@ -1255,6 +1312,7 @@ public class JooqPayrollBuilder {
 		case 4:
 		case 5:
 		case 13:
+		case 14:
 			return 1;
 		case 6:
 			return 2;
@@ -1284,6 +1342,7 @@ public class JooqPayrollBuilder {
 		case 4:
 		case 5:
 		case 13:
+		case 14:
 			return 1;
 		case 6:
 			return 2;
@@ -1302,9 +1361,14 @@ public class JooqPayrollBuilder {
 		if (AonStringUtils.isBlank(deductionName))
 			return null;
 		switch (deductionName) {
-		case "MEI":
-		case "MEI_E":
+		case "MEI", "MEI_E":
 			return "Mecanismo de Equidad Intergeneracional (MEI)";
+		case "SOLIDARIDAD_I", "SOLIDARIDAD_I_E":
+			return "Primer tramo (hasta el 10% de la base máxima)";
+		case "SOLIDARIDAD_II", "SOLIDARIDAD_II_E":
+			return "Segundo tramo (desde el 10% hasta el 50% de la base máxima)";
+		case "SOLIDARIDAD_III", "SOLIDARIDAD_III_E":
+			return "Tercer tramo (superior al 50% de la base máxima)";
 		default:
 			return null;
 		}
@@ -1375,6 +1439,8 @@ public class JooqPayrollBuilder {
 			return "Embargo";
 		case 13:
 			return "Mecanismo de Equidad Intergeneracional (MEI)";
+		case 14:
+			return "Solidaridad";
 		default:
 			return "Otras deducciones";
 		}
@@ -1404,6 +1470,50 @@ public class JooqPayrollBuilder {
 			return "EMBARGO";
 		case 13:
 			return "MEI";
+		case 14:
+			return "SOLIDARIDAD";
+		default:
+			return null;
+		}
+	}
+
+	private static String getPercentVariableName(String deductionName, Integer type) {
+		switch (type) {
+		case 0 :
+			return "PORCENTAJE_" + deductionName;
+		case 2:
+			return "PORCENTAJE_DESMPL";
+		case 3:
+			return "PORCENTAJE_FP";
+		case 4:
+			return "PORCENTAJE_ESTR";
+		case 5:
+			return "PORCENTAJE_NO_ESTR";
+		case 6:
+			return "PORCENTAJE_IRPF";
+		case 13:
+			return "PORCENTAJE_MEI";
+		case 14:
+			return "PORCENTAJE_" + deductionName;
+		default:
+			return null;
+		}
+	}
+
+	private static String getBaseVariableName(String deductionName, Integer type) {
+		switch (type) {
+		case 0 ,13 :
+			return "BASE_CGC";
+		case 2,3:
+			return "BASE_CGP";
+		case 4:
+			return "BASE_ESTR";
+		case 5:
+			return "BASE_NO_ESTR";
+		case 6:
+			return "BASE_IRPF";
+		case 14:
+			return "BASE_" + AonStringUtils.removeEnd( deductionName, "_E");
 		default:
 			return null;
 		}

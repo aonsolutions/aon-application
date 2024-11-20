@@ -27,6 +27,7 @@ import com.esferalia.aon.payroll.enumeration.DeductHomeLoan;
 import com.esferalia.aon.payroll.enumeration.DisabilityLevel;
 import com.esferalia.aon.payroll.enumeration.FamilySituation;
 import com.esferalia.aon.payroll.enumeration.IrpfRegularizationReason;
+import com.esferalia.aon.payroll.irpf.IIrpfCalculatorContext.Contrato;
 import com.esferalia.aon.payroll.irpf.IIrpfCalculatorContext.Descendiente;
 import com.esferalia.aon.payroll.irpf.IIrpfCalculatorContext.Discapacidad;
 import com.esferalia.aon.payroll.irpf.IIrpfCalculatorContext.SituacionFamiliar;
@@ -2860,6 +2861,10 @@ public class IrpfCalculator {
 										"discapacidad >= 33% y < 65%, movilidad reducida",
 										"discapacidad > 65%"}[handicap])) );
 
+			if ( ctx.getContrato() == Contrato.DOS ) {
+				percent = Math.max(2.00, percent);
+			}
+			
 			TipoRetenidoSalida2024 retenidoSalida2024 = new TipoRetenidoSalida2024();
 			retenidoSalida2024.setTipoRetencion(BigDecimal.valueOf(percent));
 			//retenidoSalida2024.setResidenciaCeutaMelilla(new ResidenciaCeutaMelilla());

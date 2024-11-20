@@ -377,7 +377,8 @@ public class TrabajadoresTramos {
 
 					List<Period> periods = merge(salary, cgcBasePeriods);//cgcBasePeriods;
 					
-					for ( Period p: periods ) {
+					boolean firstPeriod = true;
+					for ( Period p : periods) {
 						
 						if ( p.getStart().after(endDate) )
 							continue;
@@ -387,6 +388,7 @@ public class TrabajadoresTramos {
 						//	continue;
 						
 						TramoBuilder tramoBuilder  = new TramoBuilder();
+						
 
 						Calendar start = Calendar.getInstance();
 						start.setTime(p.getStart());
@@ -1276,6 +1278,15 @@ public class TrabajadoresTramos {
 							
 						});
 						
+						if ( firstPeriod ) {
+							for ( String codigo : new String[] {"497", "498", "499"} ) {
+								dataSolicitadoBuilder.setTipo("C");
+								dataSolicitadoBuilder.setCodigo( codigo );
+								dataSolicitadoBuilder.setObligatorio(false);
+								tramoBuilder.addDato(dataSolicitadoBuilder.create());
+							}
+							firstPeriod = false;
+						}
 						
 						
 						visit(salary, p.getStart(), p.getEnd(), salaryVisitor );
@@ -1286,9 +1297,10 @@ public class TrabajadoresTramos {
 						} catch (Exception e ) {
 							//TODO: Log this please
 						}
-						
 
 						trabajadorBuilder.addTramo(tramoBuilder.create());
+						
+						
 						
 					}
 					
