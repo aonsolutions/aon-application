@@ -12,6 +12,7 @@ public enum Administration implements Serializable {
 	GIPUZKOA("Gipuzkoa") { @Override public <T> T visit(IAdministrationVisitor<T> visitor){ return visitor.visitGipuzkoa();} },
 	NAVARRA("Navarra") { @Override public <T> T visit(IAdministrationVisitor<T> visitor){ return visitor.visitNavarra();} },
 	COMMON_TERRITORY("Territorio Com\u00FAn") { @Override public <T> T visit(IAdministrationVisitor<T> visitor){ return visitor.visitCommonTerritory();} },
+	CANARIAS("A.T. Canaria"){ @Override public <T> T visit(IAdministrationVisitor<T> visitor){ return visitor.visitCanarias();} },
 	UNKNOWN("Otro"){ @Override public <T> T visit(IAdministrationVisitor<T> visitor){ return visitor.visitUnknown();} },
 	;
 

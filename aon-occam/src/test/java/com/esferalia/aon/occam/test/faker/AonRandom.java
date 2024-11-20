@@ -322,7 +322,7 @@ public class AonRandom {
 		// **********************
 		int length = 0;
 		if (Administration.UNKNOWN != null) {
-			length =  Administration.values().length - 1;
+			length =  Administration.values().length - 2;
 		} else {
 			length =  Administration.values().length;
 		}

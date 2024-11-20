@@ -207,6 +207,11 @@ public abstract class Mod303AbstractTest extends AbstractOccamTest {
 					return mod.getDeclarationResult();
 				}
 				
+				@Override
+				public Double visitCanarias() {
+					return mod.getDeclarationResult();
+				}
+				
 			}
 		)); 
 	}
