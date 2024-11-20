@@ -71,6 +71,10 @@ public class FiscalModelUtils {
 
 		// ********** SII **********
 		,SII	("SII",mod -> mod.getModel() == FiscalModelType.SII)
+		
+		// ********** MODELO 369 ********** 
+		,M369	("369",mod -> mod.getModel() == FiscalModelType.M369)
+		
 		;
 		
 		private String name;

@@ -1005,6 +1005,7 @@ class InvoiceModelReportPanel extends ScrollPanel{
 		}
 
 		@Override public void visitM200()  { callback.onFailure( new UnsupportedOperationException( ERROR )); }
+		@Override public void visitM369()  { callback.onFailure( new UnsupportedOperationException( ERROR )); }
 
 	}
 	
