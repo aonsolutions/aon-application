@@ -17,6 +17,5 @@ public interface Model369ServiceAsync {
 	void initialize(Occam occam, Integer year, Period period,AsyncCallback<Mod369> callback);
 	void saveComments(Occam occam, Mod369 mod369,AsyncCallback<Mod369> asyncCallback);
 	void changeStatus(Occam occam, Mod369 mod369, FiscalStatus newStatus, AsyncCallback<Mod369> callback);
-	void duplicate(Occam occam, Mod369 mod369, AsyncCallback<Mod369> callback);
 
 }

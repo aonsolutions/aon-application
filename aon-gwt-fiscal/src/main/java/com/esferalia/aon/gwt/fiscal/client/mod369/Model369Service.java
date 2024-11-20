@@ -20,5 +20,5 @@ public interface Model369Service extends RemoteService {
 	Mod369 initialize(Occam occam, Integer year, Period period) throws AonCoreException;
 	Mod369 saveComments(Occam occam, Mod369 mod369) throws AonCoreException;
 	Mod369 changeStatus(Occam occam, Mod369 mod369, FiscalStatus newStatus) throws AonCoreException;
-	Mod369 duplicate(Occam occam, Mod369 mod369) throws AonCoreException;
+	
 }

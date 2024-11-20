@@ -60,11 +60,5 @@ public class MODEL369 {
 			return getImpl().changeStatus(ctx, mod369, newStatus);
 		}
 	}
-	
-	public static Mod369 duplicate(Occam occam, Mod369 mod369) {
-		try (CloseableAONContext ctx = AONContext.getAONContext(occam)) {
-			return getImpl().duplicate(ctx, mod369);
-		}
-	}
 
 }

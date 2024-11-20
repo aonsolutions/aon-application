@@ -401,8 +401,8 @@ public class Mod369DAO {
 			.stream()
 			.findFirst()
 			.isPresent()) 
-			throw new AonCoreException(
-					AonError.FISCAL_DECLARATION_ALREADY_EXISTS.getMessage());
+			//throw new AonCoreException(AonError.FISCAL_DECLARATION_ALREADY_EXISTS.getMessage());
+			throw new AonCoreException(AonError.FISCAL_DECLARATION_ALREADY_EXISTS.format(mod369.getModel().getName()));
 	}
 
 	public static void delete(AONContext ctx, Mod369 mod369) {
@@ -564,40 +564,6 @@ public class Mod369DAO {
 		} catch (Exception t) {
 			throw new AonCoreException(t.getCause()!=null?t.getCause().getMessage():t.getMessage());
 		}
-	}
-	
-	public static Mod369 duplicate(AONContext ctx, Mod369 mod369) {
-		int id = mod369.getId();
-		mod369.setId(null);
-		mod369 = save(ctx, mod369);
-		
-		Mod369 original = getById(ctx, id);
-		for (Mod369Detail detail : original.getDetails3()) {
-			detail.setId(null);
-			detail.setMod369(mod369.getId());
-			mod369.getDetails3().add(detail);
-		}
-		for (Mod369Detail detail : original.getDetails4()) {
-			detail.setId(null);
-			detail.setMod369(mod369.getId());
-			mod369.getDetails4().add(detail);
-		}
-		for (Mod369DetailOther detail : original.getDetails5()) {
-			detail.setId(null);
-			detail.setMod369(mod369.getId());
-			mod369.getDetails5().add(detail);
-		}
-		for (Mod369DetailOther detail : original.getDetails6()) {
-			detail.setId(null);
-			detail.setMod369(mod369.getId());
-			mod369.getDetails6().add(detail);
-		}
-		for (Mod369DetailCorrection detail : original.getCorrections()) {
-			detail.setId(null);
-			detail.setMod369(mod369.getId());
-			mod369.getCorrections().add(detail);
-		}
-		return save(ctx, mod369);
 	}
 	
 	// Mantenimiento de la fila en fs_model 

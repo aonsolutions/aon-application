@@ -75,11 +75,9 @@ abstract class Model369Base extends DockLayoutPanel {
 	protected final AonToolbarButton saveButton = new AonToolbarButton( AON.MSG.saveAction(), AON.CSS.aonIconSave());
 	protected final AonToolbarButton cancelButton = new AonToolbarButton(AON.MSG.cancelAction(),AON.CSS.aonIconBack());
 	protected final AonToolbarButton deleteButton = new AonToolbarButton(AON.MSG.deleteAction(),AON.CSS.aonIconDelete());
-	protected final AonToolbarButton resetButton = new AonToolbarButton(AON.MSG.resetAction(),AON.CSS.aonIconRefresh());
 	protected final AonToolbarButton markAsPendingButton = new AonToolbarButton(AON.MSG.reopen(),AON.CSS.aonIconModelReopen());
 	protected final AonToolbarButton markAsFinishedButton = new AonToolbarButton(AON.MSG.finish(),AON.CSS.aonIconModelFinish());
 	protected final AonToolbarButton markAsSentButton = new AonToolbarButton(AON.MSG.markAsSent(),AON.CSS.aonIconModelSent());
-	protected final AonToolbarButton duplicateButton = new AonToolbarButton(AON.MSG.duplicate(),AON.CSS.aonIconCopy());
 	protected final AonToolbarButton commentsButton = new AonToolbarButton(AON.MSG.comments(), AON.CSS.aonIconNoComments());
 	protected final AonToolbarButton auditButton = new AonToolbarButton(AON.MSG.audit(),AON.CSS.aonIconAudit());
 	
@@ -157,12 +155,6 @@ abstract class Model369Base extends DockLayoutPanel {
 		
 		deleteButton.addClickHandler(event -> delete());
 		toolbarPanel.add(deleteButton);
-		
-		resetButton.addClickHandler( event -> getCallback().onReset(getCallback().getOptions(),getModel()));
-		toolbarPanel.add(resetButton);		
-		
-		duplicateButton.addClickHandler( event -> getCallback().onDuplicate(getCallback().getOptions(),getModel().getId()));
-		toolbarPanel.add(duplicateButton);
 		
 		commentsButton.addClickHandler( event -> {
 			if (toast == null || toast.getParent() == null) {
@@ -428,7 +420,6 @@ abstract class Model369Base extends DockLayoutPanel {
 				&& !getCallback().getOptions().hasExternalCallback());
 		saveButton.setVisible(!getModel().isFinished() && !getModel().isSent());
 		deleteButton.setVisible(!getModel().isNew() && !getModel().isFinished() && !getModel().isSent());
-		resetButton.setVisible(!getModel().isNew() && !getModel().isFinished() && !getModel().isSent());
 		cancelButton.setVisible(true);
 		markAsPendingButton.setVisible(!getModel().isNew() &&
 			(getModel().getStatus() == FiscalStatus.FINISHED 
@@ -440,13 +431,13 @@ abstract class Model369Base extends DockLayoutPanel {
 			|| getModel().getStatus() == FiscalStatus.MISSING));
 		markAsSentButton.setVisible(!getModel().isNew() &&
 			(getModel().getStatus() == FiscalStatus.FINISHED));
-		duplicateButton.setVisible(!getModel().isNew());
 		auditButton.setVisible(!getModel().isNew());
 		
 		// Habilitar/Deshabilitar botones según si se ha modificado algo en el modelo
 		markAsPendingButton.setEnabled(!isDirty());
 		markAsFinishedButton.setEnabled(!isDirty());
 		markAsSentButton.setEnabled(!isDirty());
+		newButton.setEnabled(!isDirty());
 	}
 	
 	private void identificationLabelChanged() {

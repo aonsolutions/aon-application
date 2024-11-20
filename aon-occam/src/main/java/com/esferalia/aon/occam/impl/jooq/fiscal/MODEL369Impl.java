@@ -47,10 +47,5 @@ public class MODEL369Impl implements IMODEL369 {
 		return ctx.getDslContext().transactionResult(
 				configuration -> Mod369DAO.changeStatusMod369(ctx, mod369, newStatus));		
 	}
-	@Override
-	public Mod369 duplicate(AONContext ctx, Mod369 mod369) {
-		return ctx.getDslContext().transactionResult(
-				configuration -> Mod369DAO.duplicate(ctx, mod369));		
-	}
 
 }

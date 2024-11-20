@@ -22,20 +22,10 @@ class Model369NewDeclarationPopup extends AonCustomDialog {
 	private ListBox regimeList = new ListBox();
 	Label labelWarning = new Label();
 	
-	public Model369NewDeclarationPopup(final Mod369 mod369 ,final Model369Callback callback) {
-		this(mod369 ,false, false, callback);
-	}
-	
-	public Model369NewDeclarationPopup(final Mod369 mod369, final boolean duplicate, final boolean reset, final Model369Callback callback) {
+	public Model369NewDeclarationPopup(final Mod369 mod369, final Model369Callback callback) {
 		setWidth("450px");
 		
-		int oldYear = mod369.getYear();
-		if (duplicate) {
-			mod369.setYear(oldYear);
-		}		
 		setCaption(AON.MSG.newDeclaration());
-		if (reset) setCaption(AON.MSG.resetDeclaration());
-		if (duplicate) setCaption(AON.MSG.duplicate());
 		setGlassEnabled(true);
 		setAnimationEnabled(true);
 		
@@ -51,7 +41,6 @@ class Model369NewDeclarationPopup extends AonCustomDialog {
 		
 		// ADMINISTRATION
 
-		//admonList.setEnabled(!reset && !duplicate);
 		admonList.setEnabled(false);  // POR AHORA SOLO AEAT
 		admonList.addChangeHandler( event -> mod369.setAdministration( admonList.getValue() ));
 
@@ -59,7 +48,6 @@ class Model369NewDeclarationPopup extends AonCustomDialog {
 		
 		yearBox.setMaxLength(4);
 		yearBox.setVisibleLength(4);
-		yearBox.setEnabled(!reset);
 		yearBox.addValueChangeHandler(event -> {
 			mod369.setYear(yearBox.getValue()==null?0:yearBox.getValue());
 			labelWarning.setVisible(false);
@@ -100,14 +88,6 @@ class Model369NewDeclarationPopup extends AonCustomDialog {
 			.addCell( regimeList );
 		
 		rootPanel.add(tab);
-		
-		// MENSAJE DE AVISO PARA INICIALIZAR EL MODELO
-		if (reset) {
-			Label labelReset = new Label(AON.MSG.resetWarning());
-			labelReset.addStyleName(AON.CSS.aonMarginTop());
-			labelReset.addStyleName(AON.CSS.aonColorRed());
-			rootPanel.add(labelReset);
-		}
 		
 		// MENSAJE DE AVISO SI NO SE CUMPLIMENTAN LOS DATOS EJERCICIO Y PERIODO O EL PERIODO NO ES ACORDE CON EL REGIMEN		
 		

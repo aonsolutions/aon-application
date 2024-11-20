@@ -60,10 +60,4 @@ public class Model369ServiceAsyncDecorator implements Model369ServiceAsync {
 		fsa.changeStatus(occam, mod369, newStatus, new AsyncCallbackWrapper<>(callback));
 	}
 
-	@Override
-	public void duplicate(Occam occam, Mod369 mod369, AsyncCallback<Mod369> callback) {
-		AON.start();
-		fsa.duplicate(occam, mod369, new AsyncCallbackWrapper<>(callback));
-		
-	}
 }

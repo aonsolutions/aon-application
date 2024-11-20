@@ -16,6 +16,5 @@ public interface IMODEL369 {
 	public void delete(AONContext ctx,Mod369 mod369);
 	public Mod369 saveComments(AONContext ctx, Mod369 mod369);
 	public Mod369 changeStatus(AONContext ctx, Mod369 mod369, FiscalStatus newStatus);
-	public Mod369 duplicate(AONContext ctx, Mod369 mod369);
 	
 }

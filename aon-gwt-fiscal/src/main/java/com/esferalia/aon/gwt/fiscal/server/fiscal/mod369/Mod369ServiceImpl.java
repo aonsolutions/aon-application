@@ -58,8 +58,4 @@ public class Mod369ServiceImpl extends AonStatelessRemoteServiceServlet implemen
 		return MODEL369.changeStatus(occam, mod369, newStatus);
 	}
 
-	@Override
-	public Mod369 duplicate(Occam occam, Mod369 mod369) {
-		return MODEL369.duplicate(occam, mod369);
-	}
 }
