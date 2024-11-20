@@ -6091,6 +6091,28 @@ public class AON {
 				ctx.close();
 		}
 	}
+	
+	public static CommercialTracking save(String domainName, Integer domainId, String login, CommercialTracking commercialTracking) {
+		CloseableAONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			return getCommercial().save(ctx, commercialTracking);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+	
+	public static CommercialActivity save(String domainName, Integer domainId, String login, CommercialActivity commercialActivity) {
+		CloseableAONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			return getCommercial().save(ctx, commercialActivity);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
 
 	public static Stream<CommercialTracking> getCommercialTrackingStream(String domainName, Integer domainId, String login,	CommercialTrackingFilter filter) {
 		CloseableAONContext ctx = null;

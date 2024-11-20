@@ -12,6 +12,7 @@ public interface IApi {
 
 	Stream<InvoiceNewPortal> getInvoiceNewPortal(AONContext ctx, InvoiceFilter filter);
 	Stream<Invoice> getInvoices(AONContext ctx, InvoiceFilter filter);
+	Stream<Invoice> getChartInvoices(AONContext ctx, InvoiceFilter filter);
 	Pair<Date, Date> getInvoicesChartPeriod(AONContext ctx, InvoiceFilter filter);
 	Integer getInvoicesCount(AONContext ctx, InvoiceFilter filter);
 	java.util.Date getInvoiceExpDate(AONContext ctx, Integer id); 

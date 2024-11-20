@@ -487,6 +487,12 @@ public class AON_SOLUTIONS {
 		} 
 	}
 	
+	public static Stream<Invoice> getChartInvoices(String domainName, Integer domainId, String login, InvoiceFilter filter) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
+			return getApi().getChartInvoices(ctx, filter);
+		} 
+	}
+	
 	public static Integer getInvoicesCount(String domainName, Integer domainId, String login, InvoiceFilter filter) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
 			return getApi().getInvoicesCount(ctx, filter);

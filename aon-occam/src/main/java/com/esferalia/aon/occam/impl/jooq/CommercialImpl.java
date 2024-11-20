@@ -21,6 +21,12 @@ public class CommercialImpl implements ICommercial {
 	}
 	
 	@Override
+	public CommercialTracking save(AONContext ctx, CommercialTracking commercialTracking) {
+		return 	ctx.getDslContext().transactionResult(
+				configuration -> CommercialDAO.save(ctx, commercialTracking));
+	}
+	
+	@Override
 	public Stream<CommercialTracking> getCommercialTrackingStream(AONContext ctx, CommercialTrackingFilter filter) {
 		return 	ctx.getDslContext().transactionResult(
 				configuration -> CommercialDAO.getCommercialTrackingStream(ctx, filter));
@@ -43,6 +49,12 @@ public class CommercialImpl implements ICommercial {
 	public LinkedList<CommercialActivity> getCommercialActivityList(AONContext ctx, CommercialActivityFilter filter) {
 		return 	ctx.getDslContext().transactionResult(
 				configuration -> CommercialDAO.getCommercialActivityList(ctx, filter));
+	}
+	
+	@Override
+	public CommercialActivity save(AONContext ctx, CommercialActivity commercialActivity) {
+		return 	ctx.getDslContext().transactionResult(
+				configuration -> CommercialDAO.save(ctx, commercialActivity));
 	}
 
 }
