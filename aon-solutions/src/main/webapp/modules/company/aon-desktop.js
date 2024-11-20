@@ -401,7 +401,7 @@ export class AonDesktop extends AonElement {
 			upload.appendChild(uploadDoc);
 		}
 
-		if (this.getDur().isInvoice()){
+		if (this.getDur().isInvoice() && ( this.getDur().isOcr() || this.getDur().isInvofox() )){
 			let uploadInv = new AonNewUpload();
 			uploadInv.id = "factUpload";
 			uploadInv.setMessage("Subir factura");
@@ -508,7 +508,7 @@ export class AonDesktop extends AonElement {
 			});
 		}
 
-		if((this.getDur().isInvoice() || this.getDur().isAccounting()) && this.getDur().isTrial) {
+		if((this.getDur().isInvoice() || this.getDur().isAccounting())) {
 			// Ventas y Gastos Card
 			let defaultYear = new Date().getFullYear();
 

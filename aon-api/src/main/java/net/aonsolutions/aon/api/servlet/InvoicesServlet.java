@@ -188,7 +188,7 @@ public class InvoicesServlet extends AonApiHttpServlet {
     private static JSONArray getChartInvoices(AonApiData api) {
         JSONArray array = new JSONArray();
         AON_SOLUTIONS
-        	.getInvoices(api.getDomain().getName(), api.getDomain().getId(), "api", f -> invoiceFilter(api, f))
+        	.getChartInvoices(api.getDomain().getName(), api.getDomain().getId(), "api", f -> invoiceFilter(api, f))
         	.forEach(invoice -> array.put(invoiceList2JSON(invoice)));
         return array;
     }
@@ -316,6 +316,7 @@ public class InvoicesServlet extends AonApiHttpServlet {
                 ? InvoiceStatus.SCORED.name().toLowerCase()
                 : InvoiceStatus.PENDING.name().toLowerCase());
         json.put(IJsonNames.TYPE, invoice.getType().value());
+        json.put(IJsonNames.TAXABLE_BASE, invoice.getTaxableBase());
         return json;
     }
     
