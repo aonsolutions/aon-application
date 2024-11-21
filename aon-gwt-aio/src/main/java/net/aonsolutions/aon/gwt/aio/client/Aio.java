@@ -2,8 +2,7 @@ package net.aonsolutions.aon.gwt.aio.client;
 
 import static com.esferalia.aon.gwt.common.client.AONEntryPoint.getParameter;
 
-import com.esferalia.aon.gwt.common.client.css.AonResources;
-import com.esferalia.aon.gwt.common.client.css.GWTResources;
+import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.shared.AonData;
 import com.esferalia.aon.gwt.common.shared.Constants;
 import com.esferalia.aon.gwt.issues.client.Issues;
@@ -80,8 +79,7 @@ public class Aio implements EntryPoint {
 	
 	@Override
 	public void onModuleLoad() {
-		GWT.<GWTResources> create(GWTResources.class).css().ensureInjected();
-		GWT.<AonResources> create(AonResources.class).css().ensureInjected();
+		AON.ensureInjected();
 		
 		String entryPoint = getParameter(GWT.getModuleName(), Constants.ENTRY_POINT_PARAM);		
 		if(isAonSolutions()) {
