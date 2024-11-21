@@ -80,12 +80,18 @@ public class PEC {
 		put(53, new PEC().setMessage("R\u00C9GIMEN ESPECIAL MINER\u00CDA DEL CARB\u00D3N"));
 		put(54, new PEC().setMessage("BONIFICACI\u00D3N SEA TRANSFORMACI\u00D3N EN INDEFINIDO. CUOTA FIJA MENSUAL"));
 		put(55, new PEC().setMessage("BONIFICACI\u00D3N SEA TRANSFORMACI\u00D3N EN INDEFINIDO. CUOTA FIJA DIARIA"));				
+
+		put(56, new PEC().setMessage("COTIZACI\u00D3N ADICIONAL CONTRATO TEMPORAL INFERIOR A 30 D\u00CDAS"));				
+		put(57, new PEC().setMessage("BONIFICACI\u00D3N SEEH.FOGASA 01-10-2022"));				
+		put(58, new PEC().setMessage("REDUCCI\u00D3N PLANES DE PENSIONES EMPLEO"));				
+		put(59, new PEC().setMessage("CONTRATOS FORMATIVOS EN ALTERNANCIA"));				
+		put(60, new PEC().setMessage("EXCLUSI\u00D3N- PR\u00C1CTICAS NO REMUNERADAS"));				
 				
 	}};
 	//@formatter:on
 	
 	public static PEC getPEC(String code){
-		return PEC_DESCRIPTIONS.get(Integer.parseInt(code));
+		return PEC_DESCRIPTIONS.getOrDefault(Integer.parseInt(code), new PEC().setMessage("PECULIARIDAD DE COTIZACI\u00D3N " + code ));
 	}
 
 	public static final Map<Integer, String> CUOTA_DESCRIPTIONS = 
@@ -169,6 +175,11 @@ public class PEC {
 		put(77,"TIPO COTIZACI\u00D3N ISM AT");
 		put(78,"FORMACI\u00D3N PROFESIONAL. CUOTA TOTAL");
 		put(79,"DESEMPLEO Y FORMACI\u00D3N PROFESIONAL. CUOTA TOTAL");
+		put(80,"DECREMENTO BBCC SOBRE TIEMPO COMPLETO");
+		put(81,"CONTINGENCIAS COMUNES Y PROFESIONALES - BBCC MEDIA 12 MESES");
+		put(84,"COTING. COMUN, SIN IT/BASE PROMEDIO 12 M");
+		put(85,"COTING.COMUN/BC MIN TRAMO 1. TAB.GENERAL");
+		put(86,"IT CC,FP,DESEMPLEO,FOGASA");
 			
 	}};
 	
@@ -972,11 +983,11 @@ public class PEC {
 	}};
 	
 	public static String getCuotaDescription(String cuota) {
-		return CUOTA_DESCRIPTIONS.getOrDefault(Integer.parseInt(cuota), "");
+		return CUOTA_DESCRIPTIONS.getOrDefault(Integer.parseInt(cuota), "CUOTA " + cuota);
 	}
 	
 	public static String getColectivoDescription(String colectivo) {
-		return COLECTIVO_DESCRIPTIONS.getOrDefault(Integer.parseInt(colectivo), "");
+		return COLECTIVO_DESCRIPTIONS.getOrDefault(Integer.parseInt(colectivo), "COLECTIVO " + colectivo);
 	}
 	
 }
