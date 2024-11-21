@@ -32,6 +32,7 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 import com.esferalia.aon.watson.util.Pair;
 
 import software.amazon.awssdk.services.sesv2.model.GetEmailIdentityResponse;
+import software.amazon.awssdk.services.sesv2.model.VerificationStatus;
 import solutions.aon.aws.ses.SES;
 
 public class MailAccountDBController extends MailDBController implements IMailAccountController {
@@ -204,4 +205,31 @@ public class MailAccountDBController extends MailDBController implements IMailAc
 	public boolean isVerifiedForSendingStatus(MailAccount mailAccount) {
 		return isVerifiedForSendingStatus(mailAccount.getEmail());
 	}
+	
+	public String getVerificationStatus() {
+		updateEmailIdentity();
+		if (emailIdentity == null || emailIdentity.getValue() == null) {
+	        return "UNKNOW";
+	    }else {
+			return emailIdentity.getValue().verificationStatusAsString();
+	    }
+	}
+	
+	public String getVerificationStatus(String email) {
+		updateEmailIdentity(email);
+		if (emailIdentity == null || emailIdentity.getValue() == null) {
+	        return "UNKNOW";
+	    }else {
+			return emailIdentity.getValue().verificationStatusAsString();
+	    }
+	}
+	
+	public String getVerificationStatus(MailAccount mailAccount) {
+		if (!isProtocolAon(mailAccount)) {
+			return null;
+		}else {
+			return getVerificationStatus(mailAccount.getEmail());	
+		}
+	}
+
 }

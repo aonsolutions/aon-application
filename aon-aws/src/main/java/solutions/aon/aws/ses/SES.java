@@ -24,14 +24,16 @@ import software.amazon.awssdk.core.SdkBytes;
 import software.amazon.awssdk.core.exception.SdkClientException;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.sesv2.SesV2Client;
+import software.amazon.awssdk.services.sesv2.model.EmailContent;
+import software.amazon.awssdk.services.sesv2.model.GetEmailIdentityRequest;
 import software.amazon.awssdk.services.sesv2.model.GetEmailIdentityResponse;
-import software.amazon.awssdk.services.sesv2.model.NotFoundException;
+import software.amazon.awssdk.services.sesv2.model.RawMessage;
 import software.amazon.awssdk.services.sesv2.model.SendEmailRequest;
-import software.amazon.awssdk.services.sesv2.model.SesV2Exception;
+import software.amazon.awssdk.services.sesv2.model.VerificationStatus;
 
 public class SES {
-	
-	private static final Logger LOGGER  = Logger.getLogger(SES.class.getName());
+
+	private static final Logger LOGGER = Logger.getLogger(SES.class.getName());
 	private static final String EMAIL_SENT = "Email Sent!";
 	private static final String EMAIL_NOT_SENT = "The email was not sent.";
 	
@@ -68,68 +70,13 @@ public class SES {
 //        
 //        return sendEmail(request);
 	}
-	
-    public static String sendEmailWithAttachment(SESMessage msg) {	
-        try {
-        	Session session = Session.getDefaultInstance(new Properties());
-    	
-        	// Create a new MimeMessage object.
-        	MimeMessage message = new MimeMessage(session);
-        
-        	// Add subject, from and to lines.
-        	message.setSubject(msg.getSubject(), "UTF-8");
-        	message.setFrom(new InternetAddress(msg.getAliasFrom()));
-        
-        	String to =  String.join(",", msg.getTo().toArray(String[]::new));
-        	message.setRecipients(jakarta.mail.Message.RecipientType.TO, InternetAddress.parse(to));
-        	
-        	String bcc =  String.join(",", msg.getBcc().toArray(String[]::new));
-        	message.setRecipients(jakarta.mail.Message.RecipientType.BCC, InternetAddress.parse(bcc));
 
-        	String cc =  String.join(",", msg.getCc().toArray(String[]::new));
-        	message.setRecipients(jakarta.mail.Message.RecipientType.CC, InternetAddress.parse(cc));
-        	
-        	if(msg.isReplyTo()) {
-            	message.setReplyTo(InternetAddress.parse(msg.getReplyTo()));
-        	}
-        	
-        	// Create a multipart/alternative child container.
-        	MimeMultipart msgBody = new MimeMultipart("alternative");
-        
-        	// Create a wrapper for the HTML and text parts.        
-        	MimeBodyPart wrap = new MimeBodyPart();
-                
-        	// Define the HTML part.
-        	MimeBodyPart htmlPart = new MimeBodyPart();
-        	htmlPart.setContent(msg.getBody(),"text/html; charset=UTF-8");
-                
-        	// Add the text and HTML parts to the child container.
-        	msgBody.addBodyPart(htmlPart);
-        
-        	// Add the child container to the wrapper object.
-        	wrap.setContent(msgBody);
-        
-        	// Create a multipart/mixed parent container.
-        	MimeMultipart multipart = new MimeMultipart("mixed");
-        
-        	// Add the parent container to the message.
-        	message.setContent(multipart);
-        
-        	// Add the multipart/alternative part to the message.
-        	multipart.addBodyPart(wrap);
-        
-        	for (File file : msg.getFiles()) {
-        		// Define the attachment
-        		MimeBodyPart att = new MimeBodyPart(); 
-        		DataSource bds = new FileDataSource(file);
-        		att.setDataHandler(new DataHandler(bds)); 
-        		att.setFileName(bds.getName());             
-        		// Add the attachment to the message.
-        		multipart.addBodyPart(att);
-        	}
+	public static String sendEmailWithAttachment(SESMessage msg) {
+		try {
+			Session session = Session.getDefaultInstance(new Properties());
 
-        	LOGGER.info("Attempting to send an email through Amazon SES "
-                    + "using the AWS SDK for Java...");
+			// Create a new MimeMessage object.
+			MimeMessage message = new MimeMessage(session);
 
             // Instantiate an Amazon SES client, which will make the service 
             // call with the supplied AWS credentials.
@@ -258,9 +205,19 @@ public class SES {
 
 		//getSesV2Client().sendCustomVerificationEmail( builder -> builder.emailAddress(email).templateName("AonSolutionsTemplate") );
 	}
+	
+	public static String verificationStatus(String email) {
+		try {
+	    	GetEmailIdentityResponse response = getSesV2Client().getEmailIdentity( builder -> builder.emailIdentity(email));
+	    	System.out.println(response.verificationStatusAsString());
+	    	return response.verificationStatusAsString();
+		} catch ( AwsServiceException | SdkClientException e ) {
+			return null;
+		}		
+	}
     
 
     public static void main(String[] args) {
-    	sendVerificationEmail("rtrepiana@gmail.com");
+    	sendVerificationEmail("ndiaz@aonsolutions.es");
 	}
 }

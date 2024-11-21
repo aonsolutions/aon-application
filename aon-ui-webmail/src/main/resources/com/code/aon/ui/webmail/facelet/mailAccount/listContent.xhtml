@@ -51,7 +51,7 @@
 					</f:facet>
 					<aon:outputText value="#{to.signature.name}" />
 				</aon:column>
-
+				
 				<aon:if test="#{!mailConfig.skipTypeColumn}">	
 					<aon:column styleClass="aon-editDataTable-iconColumn">
 						<f:facet name="header">
@@ -67,20 +67,24 @@
 							<aon:outputText value="#{bundle.aon_status}" />
 						</f:facet>
 						<aon:div>
-							<aon:div styleClass="aon-valign-items-middle" rendered="#{to ne null and controller.isProtocolAon(to) and controller.isVerifiedForSendingStatus(to)}" >
+							<aon:div styleClass="aon-valign-items-middle" rendered="#{controller.getVerificationStatus(to)=='SUCCESS'}" >
 								<aon:outputText styleClass="material-icons-outlined aon-color-green" value="check_circle" />
 								<aon:outputText styleClass="aon-color-green aon-padding-left" value="#{bundle.webmail_mailAccount_Verified}" />
 							</aon:div>
-							<aon:div styleClass="aon-valign-items-middle"  rendered="#{to ne null and controller.isProtocolAon(to) and !controller.isVerifiedForSendingStatus(to)}">
+							<aon:div styleClass="aon-valign-items-middle"  rendered="#{controller.getVerificationStatus(to)=='UNKNOW' || controller.getVerificationStatus(to)=='FAILED'}">
 								<aon:outputText styleClass="material-icons-outlined aon-label-error" value="cancel" />
 								<aon:outputText styleClass="aon-label-error aon-padding-left" value="#{bundle.webmail_mailAccount_Unverified}" />
+							</aon:div>
+							<aon:div styleClass="aon-valign-items-middle"  rendered="#{controller.getVerificationStatus(to)=='PENDING' || controller.getVerificationStatus(to)=='NOT_STARTED'}">
+								<aon:outputText styleClass="material-icons-outlined aon-pending" value="cancel" />
+								<aon:outputText styleClass="aon-pending aon-padding-left" value="#{bundle.webmail_mailAccount_Pending}" />
 							</aon:div>
 						</aon:div>
 					</aon:column>
 				</aon:if>
 
 				<aon:if test="#{!mailConfig.skipDefaultAccountColumn}">	
-					<aon:column styleClass="aon-editDataTable-iconColumn ">
+					<aon:column styleClass="aon-editDataTable-iconColumn">
 						<f:facet name="header">
 							<aon:outputText value="#{bundle.webmail_mailAccount_default_account}" />
 						</f:facet>
