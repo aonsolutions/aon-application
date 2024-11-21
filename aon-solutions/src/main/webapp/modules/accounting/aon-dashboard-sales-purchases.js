@@ -183,8 +183,9 @@ export class AonDashboardSalesPurchases extends AonElement {
 
       this.filter.from = this.formatDate(new Date(this.filter.year, 0, 1));
       this.filter.to = this.formatDate(new Date(this.filter.year, 11, 31));
+      
       this.invoices = await getChartInvoices(this.filter);
-
+      
       if (this.invoices) {
         if (this.filter.show === "yearly") {
           this.calculateYearlyData(this.invoices);
@@ -199,16 +200,16 @@ export class AonDashboardSalesPurchases extends AonElement {
   calculateYearlyData(invoicesData) {
     this.purchases = invoicesData
       .filter((item) => item.type === 0)
-      .reduce((acc, item) => acc + item.total, 0);
+      .reduce((acc, item) => acc + item.taxableBase, 0);
     this.sales = invoicesData
       .filter((item) => item.type === 1)
-      .reduce((acc, item) => acc + item.total, 0);
+      .reduce((acc, item) => acc + item.taxableBase, 0);
     this.expenses = invoicesData
       .filter((item) => item.type === 2)
-      .reduce((acc, item) => acc + item.total, 0);
+      .reduce((acc, item) => acc + item.taxableBase, 0);
     this.tickets = invoicesData
       .filter((item) => item.type === 3)
-      .reduce((acc, item) => acc + item.total, 0);
+      .reduce((acc, item) => acc + item.taxableBase, 0);
     this.profits = this.sales - this.purchases - this.expenses - this.tickets;
   }
 
@@ -399,16 +400,16 @@ export class AonDashboardSalesPurchases extends AonElement {
         // Sumar el campo total al tipo correspondiente en el trimestre
         switch (item.type) {
           case 1: // Sales
-            quarterObj.sales += item.total;
+            quarterObj.sales += item.taxableBase;
             break;
           case 0: // Purchases
-            quarterObj.purchases += item.total;
+            quarterObj.purchases += item.taxableBase;
             break;
           case 2: // Expenses
-            quarterObj.expenses += item.total;
+            quarterObj.expenses += item.taxableBase;
             break;
           case 3: // Tickets
-            quarterObj.tickets += item.total;
+            quarterObj.tickets += item.taxableBase;
             break;
         }
       });
@@ -484,16 +485,16 @@ export class AonDashboardSalesPurchases extends AonElement {
           // Sumar el campo total al tipo correspondiente
           switch (item.type) {
             case 1: // Sales
-              monthObj.sales += item.total;
+              monthObj.sales += item.taxableBase;
               break;
             case 0: // Purchases
-              monthObj.purchases += item.total;
+              monthObj.purchases += item.taxableBase;
               break;
             case 2: // Expenses
-              monthObj.expenses += item.total;
+              monthObj.expenses += item.taxableBase;
               break;
             case 3: // Tickets
-              monthObj.tickets += item.total;
+              monthObj.tickets += item.taxableBase;
               break;
           }
         }

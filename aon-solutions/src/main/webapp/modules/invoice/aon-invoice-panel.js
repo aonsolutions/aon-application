@@ -164,9 +164,14 @@ export class AonInvoicePanel extends AonElement {
     this.clearToolbar();
     if(!this.isMobile()) {
       this.getApplication().addToolbarOption2(ACTION.ADD_INVOICE, () => this.addInvoice());
+      
       if(this.isBeta()) this.getApplication().addToolbarOption("Close", "disabled_by_default", () => this.closingInvoice());
+      
       this.getApplication().addToolbarOption("Refresh", "refresh", () => this.refreshInvoicePanel());
-      this.getApplication().addToolbarOption("Upload", "file_upload", () => this.addInvoiceFile());
+      
+      if (this.getDur().isOcr() || this.getDur().isInvofox())
+        this.getApplication().addToolbarOption("Upload", "file_upload", () => this.addInvoiceFile());
+      
       if(processing) this.getApplication().addToolbarOption("Sync", "sync", () => this.refreshProcessing()); 
  
       if(acceptedInvoices) this.getApplication().addToolbarOption2(SigninSidenav.EXCEL, () => this.downloadInvoiceExcel());
@@ -304,6 +309,10 @@ export class AonInvoicePanel extends AonElement {
 
     OPTION.getOptions(this.getDur()).forEach((option) => {
       option.app = INVOICE;
+      if(this.getDur().isTrial) {
+        const itemsToRemove = [OPTION.RAWDOC_PROCESSING, OPTION.RAWDOC_REJECT];
+        option.options = option.options.filter(option => !itemsToRemove.includes(option));
+      }
       this.getApplication().addSidenavOptions3(option);
     });
     this.buildCounter();
