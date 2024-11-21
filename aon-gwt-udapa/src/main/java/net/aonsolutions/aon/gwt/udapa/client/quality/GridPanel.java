@@ -53,7 +53,7 @@ public class GridPanel extends ResizeComposite implements RequiresResize {
 	DataGridResources resources = GWT.create(DataGridResources.class);
 	
 	public interface DataGridResources extends DataGrid.Resources {
-		@Source("com/esferalia/aon/gwt/common/client/css/data-grid.css")
+		@Source("com/esferalia/aon/gwt/common/client/css/DataGrid.css")
 		Style dataGridStyle();
 	}
 	

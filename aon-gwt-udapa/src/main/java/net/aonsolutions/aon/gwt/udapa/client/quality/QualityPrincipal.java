@@ -19,7 +19,7 @@ import com.google.gwt.user.client.ui.Widget;
 
 import net.aonsolutions.aon.gwt.vaadin.client.FilterPanel;
 
-public class QualityPrincipal extends Composite{
+public class QualityPrincipal extends Composite {
 	
 	interface Binder extends UiBinder<Widget, QualityPrincipal> {}
 	public static final AonGwtIssuesCSS I_CSS = GWT.<AonGwtIssuesResources> create(AonGwtIssuesResources.class).css();
@@ -66,14 +66,14 @@ public class QualityPrincipal extends Composite{
 	}
 	
 	public void southContent(){
-		southContent.setWidget(new PrincipalFootPanel(this));
+//		southContent.setWidget(new PrincipalFootPanel(this));
 	}
 	public void gridContent(){
 		LinkedList<String> list = new LinkedList<>();
 		list.add("1");
 		getFilterMap().put("page", list);
 		list = new LinkedList<>();
-		list.add("40");
+		list.add("50");
 		getFilterMap().put("per_page", list);
 		parent.getAPI().getCommon().getDataResponseQuality(getFilterMap(), new AsyncCallback<JSON<JsDataResponse>>() {
 			
