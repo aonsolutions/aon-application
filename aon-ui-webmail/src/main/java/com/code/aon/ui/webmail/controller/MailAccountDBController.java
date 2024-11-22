@@ -2,12 +2,21 @@ package com.code.aon.ui.webmail.controller;
 
 import static com.code.aon.ui.common.ICommonMessages.MAIL_ACCOUNT_DUPLICATED;
 
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
+import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
+import javax.faces.model.DataModel;
+import javax.faces.model.DataModelEvent;
+import javax.faces.model.DataModelListener;
 import javax.faces.model.SelectItem;
 
+import org.ajax4jsf.model.DataVisitor;
+import org.ajax4jsf.model.Range;
+import org.ajax4jsf.model.SequenceRange;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,6 +30,7 @@ import com.code.aon.ql.Criteria;
 import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.ui.config.util.UserUtils;
+import com.code.aon.ui.form.ExtendedPageDataModel;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.webmail.IMailAccount;
 import com.code.aon.webmail.bean.IMailConstants;
@@ -29,10 +39,8 @@ import com.code.aon.webmail.enumeration.ConnectionSecurity;
 import com.code.aon.webmail.enumeration.MailAccountType;
 import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.watson.util.AonStringUtils;
-import com.esferalia.aon.watson.util.Pair;
 
 import software.amazon.awssdk.services.sesv2.model.GetEmailIdentityResponse;
-import software.amazon.awssdk.services.sesv2.model.VerificationStatus;
 import solutions.aon.aws.ses.SES;
 
 public class MailAccountDBController extends MailDBController implements IMailAccountController {
@@ -41,8 +49,10 @@ public class MailAccountDBController extends MailDBController implements IMailAc
 	
 	private final static Logger LOGGER = LoggerFactory.getLogger(MailAccountDBController.class);
 	
+	private static GetEmailIdentityResponse UNKNOWN = GetEmailIdentityResponse.builder().verificationStatus("UNKNOW")
+			.verifiedForSendingStatus(Boolean.FALSE).build();	
 	
-	private Pair<String,GetEmailIdentityResponse> emailIdentity;
+	private Map<String,GetEmailIdentityResponse> emailIdentityMap = new HashMap<>();
 	
 	@Override
 	protected String getDuplicatedMessage( String name ) {
@@ -175,61 +185,66 @@ public class MailAccountDBController extends MailDBController implements IMailAc
 		return !StringUtils.isEmpty(mailAccount.getProtocol());
 	}
 
+	public void updateEmailIdentities() {
+		
+		emailIdentityMap.forEach( (email,identity) ->  updateEmailIdentity(email));
+	}
+	
+	
 	public void updateEmailIdentity() {
 		MailAccount mailAccount = (MailAccount) getTo();
-		if ( mailAccount == null ) {
-			this.emailIdentity  = null;
-		} else {
+		if ( mailAccount != null ) {
 			updateEmailIdentity(mailAccount.getEmail());
 		}
 	}
 	
 	public void updateEmailIdentity(String email) {
-		if ( AonStringUtils.isBlank(email) ) {
-			this.emailIdentity = null;
-		} else if ( this.emailIdentity == null || !AonStringUtils.equalsIgnoreCase(emailIdentity.getKey(), email )){
-			this.emailIdentity = new Pair<>( email, SES.getEmailIdentity(email));
+		if ( AonStringUtils.isNotBlank(email) ) {
+			GetEmailIdentityResponse emailIdentity = SES.getEmailIdentity(email);
+			this.emailIdentityMap.put(email, emailIdentity == null ? UNKNOWN : emailIdentity );
 		}
 	}
 
 	public boolean isVerifiedForSendingStatus() {
-		updateEmailIdentity();
-		return emailIdentity != null &&  emailIdentity.getValue() != null && emailIdentity.getValue().verifiedForSendingStatus();
+		MailAccount mailAccount = (MailAccount) getTo();
+		return isVerifiedForSendingStatus(mailAccount);
 	}
 	
 	public boolean isVerifiedForSendingStatus(String email) {
-		updateEmailIdentity(email);
-		return emailIdentity != null &&  emailIdentity.getValue() != null && emailIdentity.getValue().verifiedForSendingStatus();
+		GetEmailIdentityResponse emailIdentity = emailIdentityMap.get(email); 
+		return emailIdentity != null && emailIdentity.verifiedForSendingStatus();
 	}
 	
 	public boolean isVerifiedForSendingStatus(MailAccount mailAccount) {
-		return isVerifiedForSendingStatus(mailAccount.getEmail());
+		return mailAccount != null && isVerifiedForSendingStatus(mailAccount.getEmail());
 	}
 	
 	public String getVerificationStatus() {
-		updateEmailIdentity();
-		if (emailIdentity == null || emailIdentity.getValue() == null) {
-	        return "UNKNOW";
-	    }else {
-			return emailIdentity.getValue().verificationStatusAsString();
-	    }
+		MailAccount mailAccount = (MailAccount) getTo();
+		return getVerificationStatus(mailAccount);
 	}
 	
 	public String getVerificationStatus(String email) {
-		updateEmailIdentity(email);
-		if (emailIdentity == null || emailIdentity.getValue() == null) {
-	        return "UNKNOW";
-	    }else {
-			return emailIdentity.getValue().verificationStatusAsString();
-	    }
+		GetEmailIdentityResponse emailIdentity = emailIdentityMap.get(email); 
+		return emailIdentity != null  ? emailIdentity.verificationStatusAsString() : null;
 	}
 	
 	public String getVerificationStatus(MailAccount mailAccount) {
-		if (!isProtocolAon(mailAccount)) {
+		if (mailAccount == null 
+			|| !isProtocolAon(mailAccount) 
+			|| AonStringUtils.isBlank(mailAccount.getEmail()) ) {
 			return null;
 		}else {
 			return getVerificationStatus(mailAccount.getEmail());	
 		}
+	}
+	
+	
+	@Override
+	public List<ITransferObject> search(int start, int count) throws ManagerBeanException {
+		List<ITransferObject> list = super.search(start, count);
+		list.forEach( account -> emailIdentityMap.put(((MailAccount) account).getEmail(), null));
+		return list;
 	}
 
 }
