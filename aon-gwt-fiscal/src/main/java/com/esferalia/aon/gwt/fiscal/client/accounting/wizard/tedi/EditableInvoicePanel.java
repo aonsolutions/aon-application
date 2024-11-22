@@ -45,6 +45,7 @@ import com.esferalia.aon.occam.api.model.finance.InvoiceVAT;
 import com.esferalia.aon.occam.api.model.finance.InvoiceWithholding;
 import com.esferalia.aon.occam.api.model.registry.AccountingRegistry;
 import com.esferalia.aon.occam.api.model.registry.AccountingRegistryType;
+import com.esferalia.aon.occam.api.model.type.Administration;
 import com.esferalia.aon.occam.api.model.type.InvoiceType;
 import com.esferalia.aon.occam.api.model.type.RectificationType;
 import com.esferalia.aon.watson.util.AonNumberUtils;
@@ -146,7 +147,10 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 	private CheckLabel vatAccrualPayment;
 	private CheckLabel withholdingFarmer;
 	private CheckLabel duaLinked;
-	private CheckLabel importRegime;
+	private CheckLabel uossRegime;
+	private CheckLabel euossRegime;
+	private CheckLabel iossRegime;
+	
 	
 	private InvoiceVATPanel vatPanel;
 	private FlowPanel duaPanelContainer;
@@ -790,7 +794,6 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 		vatPanel.headerInfoChanged(new EditableInvoicePanelCallback(invoiceCallback));
 		withholdingPanel.setVisible(invoiceCallback.getInvoice().isWithholding());
 		withholdingPanel.setValue(invoiceCallback.getInvoice().getWithholdingData());
-//		invoiceDataRectifierTableRowDiv.setVisible( invoiceCallback.getInvoice().isRectifier() );
 		invoiceTotal.setValue(invoiceCallback.getInvoice().getTotalInvoice(),false);
 		invoiceCallback.paintEntry();
 		invoiceCallback.getInvoice().getAccountEntry().setDirty(true);
@@ -897,13 +900,29 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 			}
 			
 			if (ai.isVatImportation()) {
-				InlineLabel l3 = new InlineLabel("Reg. Import.");
+				InlineLabel l3 = new InlineLabel("Reg. Import. (IOSS)");
 				l3.setStyleName(AON.CSS.aonTagItem());
 				l3.getElement().getStyle().setColor(TAG_ITEM_FOREGROUND_COLOR);
 				l3.getElement().getStyle().setBackgroundColor(TAG_ITEM_BACKGROUND_COLOR);
 				checksLabel.add(l3);
 			}
 
+			if (ai.isVatUnion()) {
+				InlineLabel l3 = new InlineLabel("Reg. Uni\u00F3n (UOSS).");
+				l3.setStyleName(AON.CSS.aonTagItem());
+				l3.getElement().getStyle().setColor(TAG_ITEM_FOREGROUND_COLOR);
+				l3.getElement().getStyle().setBackgroundColor(TAG_ITEM_BACKGROUND_COLOR);
+				checksLabel.add(l3);
+			}
+
+			if (ai.isVatUnionExternal()) {
+				InlineLabel l3 = new InlineLabel("Reg. Exterior Uni\u00F3n (EUOSS).");
+				l3.setStyleName(AON.CSS.aonTagItem());
+				l3.getElement().getStyle().setColor(TAG_ITEM_FOREGROUND_COLOR);
+				l3.getElement().getStyle().setBackgroundColor(TAG_ITEM_BACKGROUND_COLOR);
+				checksLabel.add(l3);
+			}
+			
 			AonTableButton moreData = new AonTableButton(AON.MSG.invoiceParams(),AON.CSS.aonIconMoreVertical());
 			moreData.addClickHandler(new ClickHandler() {
 				
@@ -964,7 +983,8 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 		TextBox rName = new TextBox();
 		taxDate = new AonDateBox();
 		workplaces = new ListBox();
-		InvoiceTransactionListBox transactionBox = new InvoiceTransactionListBox();
+		InvoiceTransactionListBox transactionBox = new InvoiceTransactionListBox( isDefaultAdmonCanarias( invoiceCallback ) );
+		
 		AonIntegerBox number = new AonIntegerBox();
 		
 		checksTable = new FlowPanel();
@@ -978,7 +998,9 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 		vatAccrualPayment = new CheckLabel(AON.MSG.vatAccrualPaymentAbbr());
 		withholdingFarmer = new CheckLabel(AON.MSG.withholdingFarmerAbbr());
 		duaLinked = new CheckLabel("DUA");
-		importRegime = new CheckLabel("Reg. Import.");
+		uossRegime = new CheckLabel("Reg. Uni\u00F3n (UOSS)");
+		euossRegime = new CheckLabel("Reg. Exterior Uni\u00F3n (EUOSS)");
+		iossRegime = new CheckLabel("Reg. Import. (IOSS)");
 		
 		TextBox manualConcept = new TextBox();
 		
@@ -1106,24 +1128,14 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 		headerPanel1.add(documentLabel);
 		
 		
-		fullDocument.addTypeChangeHandler(new ChangeHandler() {
-			@Override
-			public void onChange(ChangeEvent arg0) {
-				invoiceCallback.getInvoice().getInvoice().setRegistryDocumentType(fullDocument.getType());
-			}
+		fullDocument.addTypeChangeHandler(arg0 -> invoiceCallback.getInvoice().getInvoice().setRegistryDocumentType(fullDocument.getType()));
+		fullDocument.addCountryChangeHandler(arg0 -> {
+			invoiceCallback.getInvoice().getInvoice().setRegistryDocumentCountry(fullDocument.getCountry());
+			InvoiceCalculator.calculate(invoiceCallback.getInvoice());
+			enableChecks(invoiceCallback);
+			headerDataChanged(invoiceCallback);
 		});
-		fullDocument.addCountryChangeHandler(new ChangeHandler() {
-			@Override
-			public void onChange(ChangeEvent arg0) {
-				invoiceCallback.getInvoice().getInvoice().setRegistryDocumentCountry(fullDocument.getCountry());
-			}
-		});
-		fullDocument.addDocumentChangeHandler(new  ValueChangeHandler<String>() {
-			@Override
-			public void onValueChange(ValueChangeEvent<String> arg0) {
-				invoiceCallback.getInvoice().getInvoice().setRegistryDocument(fullDocument.getDocument());
-			}
-		});
+		fullDocument.addDocumentChangeHandler(arg0 -> invoiceCallback.getInvoice().getInvoice().setRegistryDocument(fullDocument.getDocument()));
 		headerPanel1.add(fullDocument);
 		
 		InlineLabel nameLabel = new InlineLabel(AON.MSG.name());
@@ -1133,15 +1145,11 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 		rName.setStyleName(AON.CSS.aonInputText());
 		rName.setVisibleLength(50);
 		rName.setMaxLength(50);
-		rName.addValueChangeHandler(new  ValueChangeHandler<String>() {
-			
-			@Override
-			public void onValueChange(ValueChangeEvent<String> arg0) {
-				invoiceCallback.getInvoice().getInvoice().setRegistryName(rName.getValue());
-				if (AonStringUtils.isBlank(invoiceCallback.getInvoice().getManualConcept())) {
-					invoiceCallback.getInvoice().setManualConcept( rName.getValue());
-					headerDataChanged(invoiceCallback);
-				}
+		rName.addValueChangeHandler(arg0 -> {
+			invoiceCallback.getInvoice().getInvoice().setRegistryName(rName.getValue());
+			if (AonStringUtils.isBlank(invoiceCallback.getInvoice().getManualConcept())) {
+				invoiceCallback.getInvoice().setManualConcept( rName.getValue());
+				headerDataChanged(invoiceCallback);
 			}
 		});
 		headerPanel1.add(rName);
@@ -1165,13 +1173,9 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 		taxDateLabel.setVisible(!invoiceCallback.getInvoice().isUndeductible());
 		headerPanel2.add(taxDateLabel);
 		
-		taxDate.addValueChangeHandler(new ValueChangeHandler<Date>() {
-			
-			@Override
-			public void onValueChange(ValueChangeEvent<Date> event) {
-				invoiceCallback.getInvoice().getInvoice().setTaxDate(event.getValue());
-				decorateTaxDate(invoiceCallback.getInvoice());
-			}
+		taxDate.addValueChangeHandler(event -> {
+			invoiceCallback.getInvoice().getInvoice().setTaxDate(event.getValue());
+			decorateTaxDate(invoiceCallback.getInvoice());
 		});
 		taxDate.setVisible(!invoiceCallback.getInvoice().isUndeductible());
 		headerPanel2.add(taxDate);
@@ -1184,15 +1188,11 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 		transactionLabel.setVisible(!invoiceCallback.getInvoice().isUndeductible());
 		headerPanel2.add(transactionLabel);
 		
-		transactionBox.addChangeHandler(new ChangeHandler() {
-			
-			@Override
-			public void onChange(ChangeEvent event) {
-				invoiceCallback.getInvoice().getInvoice().setTransaction(transactionBox.getValue());
-				InvoiceCalculator.calculate(invoiceCallback.getInvoice());
-				enableChecks(invoiceCallback);
-				headerDataChanged(invoiceCallback);
-			}
+		transactionBox.addChangeHandler(event -> {
+			invoiceCallback.getInvoice().getInvoice().setTransaction(transactionBox.getValue());
+			InvoiceCalculator.calculate(invoiceCallback.getInvoice());
+			enableChecks(invoiceCallback);
+			headerDataChanged(invoiceCallback);
 		});
 		transactionBox.setVisible(!invoiceCallback.getInvoice().isUndeductible());
 		headerPanel2.add(transactionBox);
@@ -1201,13 +1201,9 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 		// --------- WORKPLACE ---------
 		// -------------------------------
 		if (invoiceCallback.getConfiguration().getWorkplaces() != null && invoiceCallback.getConfiguration().getWorkplaces().size() > 1) {
-			workplaces.addChangeHandler( new ChangeHandler() {
-				
-				@Override
-				public void onChange(ChangeEvent event) {
-					Integer wp = AonNumberUtils.toInteger(workplaces.getSelectedValue());
-					invoiceCallback.getInvoice().setWorkplace(wp);
-				}
+			workplaces.addChangeHandler( event -> {
+				Integer wp = AonNumberUtils.toInteger(workplaces.getSelectedValue());
+				invoiceCallback.getInvoice().setWorkplace(wp);
 			});
 			int i = 0;
 			for (Workplace ea : invoiceCallback.getConfiguration().getWorkplaces()) {
@@ -1502,23 +1498,48 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 		checksTableRow1.add(duaLinked);
 		
 		
+		// --------------------------------------
+		// --------- Regimen Unión UOSS ---------
+		// --------------------------------------
+		uossRegime.paint(invoiceCallback.getInvoice().isVatUnion());
+		uossRegime.addClickHandler( event -> {
+			invoiceCallback.getInvoice().getInvoice().setVatUnion(!invoiceCallback.getInvoice().getInvoice().isVatUnion());
+			decorateInvoiceTypeLabel( invoiceCallback.getInvoice());
+			uossRegime.paint(invoiceCallback.getInvoice().getInvoice().isVatUnion());
+			headerDataChanged(invoiceCallback);
+		});
+		uossRegime.getElement().getStyle().setWidth(120, Unit.PX); 
+		checksTableRow1.add(uossRegime);
+
+		// -----------------------------------------
+		// ------ Regimen Exterior Unión UOSS ------
+		// -----------------------------------------
+		euossRegime.paint(invoiceCallback.getInvoice().isVatUnion());
+		euossRegime.addClickHandler( event -> {
+			invoiceCallback.getInvoice().getInvoice().setVatUnionExternal(!invoiceCallback.getInvoice().getInvoice().isVatUnionExternal());
+			decorateInvoiceTypeLabel( invoiceCallback.getInvoice());
+			euossRegime.paint(invoiceCallback.getInvoice().getInvoice().isVatUnionExternal());
+			headerDataChanged(invoiceCallback);
+		});
+		euossRegime.getElement().getStyle().setWidth(120, Unit.PX); 
+		checksTableRow1.add(euossRegime);
+
 		// ---------------------------------------
-		// --------- Regimne importacion ---------
+		// --------- Regimen importacion IOSS ----
 		// ---------------------------------------
-		importRegime.paint(invoiceCallback.getInvoice().isVatImportation());
-		importRegime.addClickHandler( new ClickHandler() {
+		iossRegime.paint(invoiceCallback.getInvoice().isVatImportation());
+		iossRegime.addClickHandler( new ClickHandler() {
 			
 			@Override
 			public void onClick(ClickEvent event) {
 				invoiceCallback.getInvoice().getInvoice().setVatImportation(!invoiceCallback.getInvoice().getInvoice().isVatImportation());
 				decorateInvoiceTypeLabel( invoiceCallback.getInvoice());
-				importRegime.paint(invoiceCallback.getInvoice().getInvoice().isVatImportation());
-				// InvoiceCalculator.calculate(invoiceCallback.getInvoice());
+				iossRegime.paint(invoiceCallback.getInvoice().getInvoice().isVatImportation());
 				headerDataChanged(invoiceCallback);
 			}
 		});
-		importRegime.getElement().getStyle().setWidth(120, Unit.PX); 
-		checksTableRow1.add(importRegime);
+		iossRegime.getElement().getStyle().setWidth(120, Unit.PX); 
+		checksTableRow1.add(iossRegime);
 		
 
 //		// *************************************************************************
@@ -1961,6 +1982,10 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 		return invoicePanel;
 	}
 
+	private boolean isDefaultAdmonCanarias(InvoicePanelCallback invoiceCallback) {
+		return invoiceCallback.getConfiguration().fiscal().getAdministration(null) == Administration.CANARIAS;
+	}
+
 	private void fillSeriesWidget(InvoicePanelCallback invoiceCallback, AccountingInvoice inv) {
 		series.clear();
 		series.addItem(" --- ","");
@@ -2013,7 +2038,9 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 			withholdingFarmer.setVisible(false);
 			vatAccrualPayment.setVisible(false);
 			duaLinked.setVisible(false);
-			importRegime.setVisible(false);
+			iossRegime.setVisible(false);
+			uossRegime.setVisible(false);
+			euossRegime.setVisible(false);
 		} else {
 			invoiceCallback.getInvoice().getTransaction().visit(new IInvoiceTransactionTypeVisitor() {
 				
@@ -2026,12 +2053,28 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 					withholdingFarmer.setVisible(true);
 					vatAccrualPayment.setVisible(true);
 					duaLinked.setVisible(invoiceCallback.getInvoice().isExpenses());
-					importRegime.setVisible(false);
+					uossRegime.setVisible(
+						   invoiceCallback.getInvoice().isSales()
+					    && !isDefaultAdmonCanarias( invoiceCallback )
+						&& invoiceCallback.getInvoice().getInvoice().getRegistryDocumentCountry() != null
+						&& invoiceCallback.getInvoice().getInvoice().getRegistryDocumentCountry().isEuropeanUnionCountry()
+					);
+					euossRegime.setVisible( false );
+					iossRegime.setVisible( false );
 				}
 				
 				@Override
 				public void visitOtherISP() {
-					visitNational();
+					visitCommon();
+					investment.setVisible(true);
+					withholding.setVisible(true);
+					surcharge.setVisible(true);
+					withholdingFarmer.setVisible(true);
+					vatAccrualPayment.setVisible(true);
+					duaLinked.setVisible(invoiceCallback.getInvoice().isExpenses());
+					iossRegime.setVisible(false);
+					uossRegime.setVisible(false);
+					euossRegime.setVisible(false);
 				}
 				
 				
@@ -2044,8 +2087,9 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 					withholdingFarmer.setVisible(false);
 					vatAccrualPayment.setVisible(false);
 					duaLinked.setVisible(false);
-					importRegime.setVisible(false);
-					// duaPanel.setVisible(false);
+					iossRegime.setVisible(false);
+					uossRegime.setVisible(false);
+					euossRegime.setVisible(false);
 				}
 				
 				@Override
@@ -2056,9 +2100,31 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 					withholdingFarmer.setVisible(false);
 					vatAccrualPayment.setVisible(false);
 					duaLinked.setVisible(false);
-					importRegime.setVisible(!invoiceCallback.getInvoice().isSales() 
-							&& !invoiceCallback.getInvoice().isService() 
-							&& !invoiceCallback.getInvoice().isInvestment());
+					
+					iossRegime.setVisible(
+						// Si es una venta de bienes y company tributa en CANARIAS
+					   (invoiceCallback.getInvoice().isSales()
+						&& !invoiceCallback.getInvoice().isService()
+						&& invoiceCallback.getInvoice().getInvoice().getRegistryDocumentCountry() != null
+						&& invoiceCallback.getInvoice().getInvoice().getRegistryDocumentCountry().isEuropeanUnionCountry()
+					    && isDefaultAdmonCanarias( invoiceCallback )
+					   )
+					|| 
+						// Se recibe una exportación
+						(  !invoiceCallback.getInvoice().isSales() 
+						&& !invoiceCallback.getInvoice().isService() 
+						&& !invoiceCallback.getInvoice().isInvestment()
+						&& invoiceCallback.getInvoice().getInvoice().getRegistryDocumentCountry() != null
+						&& invoiceCallback.getInvoice().getInvoice().getRegistryDocumentCountry().isEuropeanUnionCountry())
+					);
+					euossRegime.setVisible(
+						   invoiceCallback.getInvoice().isSales()
+						&& invoiceCallback.getInvoice().isService()
+						&& invoiceCallback.getInvoice().getInvoice().getRegistryDocumentCountry() != null
+						&& invoiceCallback.getInvoice().getInvoice().getRegistryDocumentCountry().isEuropeanUnionCountry()
+						&& isDefaultAdmonCanarias( invoiceCallback )
+					);
+					uossRegime.setVisible( false  );
 				}
 				
 				@Override

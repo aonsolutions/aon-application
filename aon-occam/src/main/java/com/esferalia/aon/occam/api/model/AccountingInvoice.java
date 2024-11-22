@@ -249,12 +249,13 @@ public class AccountingInvoice implements Serializable, IAccountEntryWrapper {
 	public boolean isInputVatEnabled() {
 		return invoice != null 
 			&& !invoice.isUndeductible() 
-			&& ((invoice.isPurchase() && invoice.isNational())						// Compra nacional 
-			|| (invoice.isExpenses() && invoice.isNational())						// Gasto nacional
-			|| (invoice.isVatImportationAvailable() && invoice.isVatImportation()	// Regimen importacioon
-				&& isVatImportationAmountValid())
-//				&& AonMathUtils.isLessThan(getTotal(), REG_IMPORT_MAX_VALUE0 ))	
-			|| invoice.mustApplyISP());										// Aplicar la inversión de sujeto pasivo.	
+			&& ((invoice.isPurchase() && invoice.isNational())		// Compra nacional 
+			|| (invoice.isExpenses() && invoice.isNational())		// Gasto nacional
+			|| (!invoice.isSales()									//  |
+				&& invoice.isVatImportationAvailable()				//  | Regimen importacioon
+				&& invoice.isVatImportation()						//  | 
+				&& isVatImportationAmountValid())					//  |
+			|| invoice.mustApplyISP());								// Aplicar la inversión de sujeto pasivo.	
 	}
 	private boolean isVatImportationAmountValid() {
 		return getVats() == null 
@@ -397,4 +398,10 @@ public class AccountingInvoice implements Serializable, IAccountEntryWrapper {
 		return invoice != null && invoice.isVatImportation();
 	}
 
+	public boolean isVatUnion() {
+		return invoice != null && invoice.isVatUnion();
+	}
+	public boolean isVatUnionExternal() {
+		return invoice != null && invoice.isVatUnionExternal();
+	}
 }
