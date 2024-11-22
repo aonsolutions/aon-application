@@ -903,5 +903,10 @@ public class MatrixViewVisitor implements IFiscalModelTypeVisitor {
 			callback.onFailure(t);
 		}
 	}
+	
+	@Override
+	public void visitM369() {
+		// EL MODELO 369 AUN NO ESTA EN LA MATRIZ		
+	}
 
 }

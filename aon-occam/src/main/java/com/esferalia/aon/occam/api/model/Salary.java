@@ -247,8 +247,8 @@ public class Salary implements Serializable {
 
 	public static class SolidarityDeduction extends Deduction {
 
-		public SolidarityDeduction(Double amount, String description) {
-			super(amount, description, "SOLIDARIDAD", DeductionType.SOLIDARITY);
+		public SolidarityDeduction(Double amount, String name, String description) {
+			super(amount, description, name, DeductionType.SOLIDARITY);
 		}
 
 		@Override
@@ -414,8 +414,8 @@ public class Salary implements Serializable {
 	
 	public static class SolidarityCost extends Cost {
 
-		public SolidarityCost(Double amount, String description) {
-			super(amount, description, "MEI_E", DeductionType.MEI);
+		public SolidarityCost(Double amount, String name, String description) {
+			super(amount, description, name, DeductionType.SOLIDARITY);
 		}
 
 		@Override
@@ -913,7 +913,7 @@ public class Salary implements Serializable {
 				
 				@Override
 				public Cost visitSolidarity(DeductionType deductionType) {
-					return new SolidarityCost(amount, description);
+					return new SolidarityCost(amount, code, description);
 				}
 				
 			});
@@ -981,7 +981,7 @@ public class Salary implements Serializable {
 				
 				@Override
 				public Deduction visitSolidarity(DeductionType deductionType) {
-					return new SolidarityDeduction(amount, description);
+					return new SolidarityDeduction(amount, code, description);
 				}
 				
 

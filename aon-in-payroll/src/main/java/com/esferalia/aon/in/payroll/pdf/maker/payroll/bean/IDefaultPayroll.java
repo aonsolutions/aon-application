@@ -39,6 +39,8 @@ public interface IDefaultPayroll {
 
 	Optional<Map<Integer, ArrayList<PDFPayment>>> getAccruals();
 
+	Optional<Map<Integer, ArrayList<PDFDeduction>>> getCosts();
+
 	Optional<Map<Integer, ArrayList<PDFDeduction>>> getDeductions();
 
 	Optional<Double> getPaymentsTotal();

@@ -34,12 +34,14 @@ import java.sql.SQLException;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
+import java.util.Deque;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -4864,6 +4866,8 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 		
 		fixItDaysWhenIfDays(ctx);
 		
+		loadHolidaysContextVariable(ctx);
+		
 		loadWeekHoursContextVariable(ctx);
 
 		loadTotalsContextVars(ctx);
@@ -5692,6 +5696,41 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 				ctx.setVariable(ContextVariable.COMMON_DISEASE_DAYS_21, p.daysStream().count(), p.getStart(), p.getEnd());
 		}
 	}
+	
+	private void loadHolidaysContextVariable(ContractExpressionContext ctx) {
+		
+		ICalendar calendar = getCalendar();
+		if ( calendar == null )
+			return;
+		
+		Deque<TimedObject<Double>> holidays = new ArrayDeque<>();
+		new Period(contractStartDate, contractEndDate)
+		.forEachDay( day -> {
+			if ( calendar.getDayType(day) == DayType.HOLIDAY ) {
+				if ( holidays.isEmpty() ) {
+					holidays.push(new TimedObject<Double>(1d, day.getTime(), day.getTime()));
+				} else {
+					TimedObject<Double> prevHoliday = holidays.peek();
+					Date prevHolidayEnd = prevHoliday.getPeriod().getEnd();
+					Date prevHolidayNext = AonDateUtils.add(prevHolidayEnd, Calendar.DAY_OF_MONTH, 1);
+					Date holidayDate = day.getTime();
+					if ( AonDateUtils.compare(prevHolidayNext, holidayDate) == 0) {
+						holidays.pop();
+								holidays.push(new TimedObject<>(prevHoliday.getValue() + 1d,
+										prevHoliday.getPeriod().getStart(), day.getTime()));
+							} else {
+						holidays.push(new TimedObject<>(1d, day.getTime(), day.getTime()));
+					}
+					
+				}
+			}
+		});
+		
+		holidays.forEach( holiday -> ctx.putVariable(PARTY_DAYS, holiday));
+		
+		
+	}
+	
 
 	private void loadWeekHoursContextVariable(ContractExpressionContext ctx) {
 

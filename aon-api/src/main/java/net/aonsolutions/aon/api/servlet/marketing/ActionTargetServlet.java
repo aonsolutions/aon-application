@@ -29,6 +29,8 @@ import com.esferalia.aon.occam.api.AON_SOLUTIONS;
 import com.esferalia.aon.occam.api.json.JsonUtils;
 import com.esferalia.aon.occam.api.json.UserJSON;
 import com.esferalia.aon.occam.api.model.ApplicationParameter;
+import com.esferalia.aon.occam.api.model.CommercialActivity;
+import com.esferalia.aon.occam.api.model.CommercialTracking;
 import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.GeoZone;
@@ -98,7 +100,6 @@ public class ActionTargetServlet extends AonApiHttpServlet {
 	private static String enterpriseNameMail;
 	private static String urlMail;
 	private static String userMail;
-	private static String userLogingMail;
 	private static String passwordMail;
 	
 	private static boolean isLocal = false;
@@ -273,8 +274,9 @@ public class ActionTargetServlet extends AonApiHttpServlet {
 						parent.getId().toString(),														// domainId
 						api.getUser().getLogin(),														// userLogin
 						api.getToken(),																	// userLogin
-						logoUrl,																			// LOGO		
-						parent.getDescription());
+						logoUrl,																		// LOGO		
+						parent.getDescription(),
+						actionTarget.getMarketingAction().getId());
 				
 				sendTrailEnterpriseMail(actionTarget, emailBody);
 				
@@ -326,6 +328,12 @@ public class ActionTargetServlet extends AonApiHttpServlet {
 		String email = JsonUtils.getString(data, "email");
 		
 		Integer target = JsonUtils.getInteger(data, "target");
+		Integer marketingActionId = JsonUtils.getInteger(data, "marketingAction");
+		
+		Domain parent = api.getDomain().isParent() ? 
+				api.getDomain() : 
+				AON.getDomain(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), f->f.getIdProperty().eq(api.getDomain().getParentId()));
+		
 		
 		// Create Enterprise
 		try {
@@ -338,10 +346,6 @@ public class ActionTargetServlet extends AonApiHttpServlet {
 			company.setLegalPerson(AonDocumentUtil.isValidCIF(document));
 			
 			checkCompany(company);
-			
-			Domain parent = api.getDomain().isParent() ? 
-					api.getDomain() : 
-					AON.getDomain(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), f->f.getIdProperty().eq(api.getDomain().getParentId()));
 					
 			String domainNewName = company.getDocument() + "-" + parent.getName();
 			Domain d = new Domain()
@@ -376,6 +380,23 @@ public class ActionTargetServlet extends AonApiHttpServlet {
 						.setGeozone(geozoneOpt.isPresent() ? geozoneOpt.get().getId() : null)
 						.setGeozoneCode(geozoneCode)
 						.setGeozoneName(geozoneOpt.isPresent() ? geozoneOpt.get().getName() : null)
+						;
+				
+				registryAddress = AON.save(api.getDomain(), api.getUser().getLogin(), registryAddress);
+				comapnyRaddressId = registryAddress.getId();
+			} else {
+				RegistryAddress registryAddress = new RegistryAddress()
+						.setDomain(domain.getId())
+						.setRegistry(c.getId())
+						.setMain(true)
+						.setStreetType(StreetType.CALLE)
+						.setAddress(address)
+						.setNumber(number)
+						.setZip(zip)
+						.setCity(city)
+						.setGeozone(null)
+						.setGeozoneCode(geozoneCode)
+						.setGeozoneName(null)
 						;
 				
 				registryAddress = AON.save(api.getDomain(), api.getUser().getLogin(), registryAddress);
@@ -427,17 +448,68 @@ public class ActionTargetServlet extends AonApiHttpServlet {
 				SecurityDAO.saveDomainApp(ctx, domainApp);
 			}
 			
+			MarketingAction mkAction = AON.getMarketingAction(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), marketingActionId);
+			Domain officeDomain = AON.getDomain(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), f -> f.getIdProperty().eq(mkAction.getDomain()));
+			
+			CommercialActivity commercialActivitySelfRegistration = AON.getCommercialActivity(officeDomain.getName(), officeDomain.getId(), api.getUser().getLogin(), f -> f.getDomainProperty().eq(officeDomain.getId()).and(f.getNameProperty().like("%AUTOREGISTRO%")));
+			if(null == commercialActivitySelfRegistration) {
+				CommercialActivity ca = new CommercialActivity()
+						.setDomain(officeDomain.getId())
+						.setName("AUTOREGISTRO");
+				
+				commercialActivitySelfRegistration = AON.save(officeDomain.getName(), officeDomain.getId(), api.getUser().getLogin(), ca);
+			}
+			
+			ProjectCommercial projectCommercial = AON.getProjectCommercial(officeDomain.getName(), officeDomain.getId(), api.getUser().getLogin(), f -> f.getDomainProperty().eq(officeDomain.getId()).and(f.getTargetProperty().eq(target)));
+			
+			if(null != projectCommercial) {
+				CommercialTracking commercialTracking = new CommercialTracking()
+						.setDomain(officeDomain.getId())
+						.setDate(new Date())
+						.setSeller(projectCommercial.getSeller())
+						.setProjectCommercial(projectCommercial.getId())
+						.setActivity(commercialActivitySelfRegistration.getId())
+						.setStatus((byte)1)
+						.setComments("El lead " + targetObj.get().getName() + " ha creado la empresa " + enterpriseNameMail + " (" + urlMail + ")." )
+						;
+				AON.save(officeDomain.getName(), officeDomain.getId(), api.getUser().getLogin(), commercialTracking);
+			}
+			
+			CommercialActivity commercialActivityTracing = AON.getCommercialActivity(officeDomain.getName(), officeDomain.getId(), api.getUser().getLogin(), f -> f.getDomainProperty().eq(officeDomain.getId()).and(f.getNameProperty().like("%SEGUIMIENTO%")));
+			if(null == commercialActivityTracing) {
+				CommercialActivity ca = new CommercialActivity()
+						.setDomain(officeDomain.getId())
+						.setName("SEGUIMIENTO");
+				
+				commercialActivityTracing = AON.save(officeDomain.getName(), officeDomain.getId(), api.getUser().getLogin(), ca);
+			}
+			
+			if(null != projectCommercial) {
+				CommercialTracking commercialTracking = new CommercialTracking()
+						.setDomain(officeDomain.getId())
+						.setDate(new Date())
+						.setSeller(projectCommercial.getSeller())
+						.setProjectCommercial(projectCommercial.getId())
+						.setActivity(commercialActivityTracing.getId())
+						.setStatus((byte)0)
+						.setComments("Hacer un seguimiento para el lead pasado unos dias para recibir su feedback.")
+						;
+				AON.save(officeDomain.getName(), officeDomain.getId(), api.getUser().getLogin(), commercialTracking);
+			}
+			
+			
+			Optional<MarketingActionTarget> mkActionTarget = mkAction.getTargets().stream().filter(mkTarget -> mkTarget.getId().equals(target)).findFirst();
+			if(mkActionTarget.isPresent())
+				AON.saveMarketingActionTarget(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), mkActionTarget.get().setActionTargetStatus((byte)5)); // Finalizado
+			
 			System.out.println("----------------------- Create Enterprise (END) -----------------------");
+		
 		} catch (Exception e) {
 			e.printStackTrace();
 			errors.add(e.getMessage());
 		}
 		
 		// Send mail
-		Domain parent = api.getDomain().isParent() ? 
-				api.getDomain() : 
-				AON.getDomain(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), f->f.getIdProperty().eq(api.getDomain().getParentId()));			
-		
 		String logoUrl = getLogoUrl(parent, api.getUser());
 		
 		sendTrailEnterpriseCreatedMail(email, logoUrl, parent.getDescription());	
@@ -509,9 +581,10 @@ public class ActionTargetServlet extends AonApiHttpServlet {
 	
 	private static void createCommercialOperation(AonApiData api, ActionTarget actionTarget, Target target, MarketingActionTarget mkActionTarget) {
 		// Create Operacion Comercial
+		ProjectCommercial projectCommercial = null;
 		
 		if(actionTarget.getMarketingAction().getSellerDistribution() == MarketingSellerDistribution.MANUAL  && null != actionTarget.getMarketingAction().getSeller()) {
-			ProjectCommercial projectCommercial = new ProjectCommercial()
+			projectCommercial = new ProjectCommercial()
 					.copy(new Project()
 						.setDomain(target.getDomain())
 						.setRegistry(target.get())
@@ -530,14 +603,14 @@ public class ActionTargetServlet extends AonApiHttpServlet {
 					.setStatusDate(new Date())
 					.setProbability(0);
 			
-			AON.saveProjectCommercial(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), projectCommercial);
+			projectCommercial = AON.saveProjectCommercial(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), projectCommercial);
 			
 			mkActionTarget.setActionTargetStatus((byte)6); // Enviado
 			AON.saveMarketingActionTarget(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), mkActionTarget);
 		} else if(actionTarget.getMarketingAction().getSellerDistribution() == MarketingSellerDistribution.AUTOMATIC && null != actionTarget.getMarketingAction().getWorkgroup().getId()) {
 			Seller nextSeller = getNextLinealSellerByWorkgroup(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), actionTarget.getMarketingAction().getWorkgroup().getId());
 			if(null != nextSeller) {
-				ProjectCommercial projectCommercial = new ProjectCommercial()
+				projectCommercial = new ProjectCommercial()
 						.copy(new Project()
 							.setDomain(target.getDomain())
 							.setRegistry(target.get())
@@ -556,11 +629,58 @@ public class ActionTargetServlet extends AonApiHttpServlet {
 						.setStatusDate(new Date())
 						.setProbability(0);
 				
-				AON.saveProjectCommercial(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), projectCommercial);
+				projectCommercial = AON.saveProjectCommercial(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), projectCommercial);
 				
 				mkActionTarget.setActionTargetStatus((byte)6); // Enviado
 				AON.saveMarketingActionTarget(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), mkActionTarget);
 			}
+		}
+		
+		CommercialActivity commercialActivityRequest = AON.getCommercialActivity(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), f -> f.getDomainProperty().eq(api.getDomain().getId()).and(f.getNameProperty().like("%SOLICITUD%")));
+		if(null == commercialActivityRequest) {
+			CommercialActivity ca = new CommercialActivity()
+					.setDomain(api.getDomain().getId())
+					.setName("SOLICITUD");
+			
+			commercialActivityRequest = AON.save(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), ca);
+		}
+		
+		MarketingAction mkAction = AON.getMarketingAction(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), mkActionTarget.getMarketingAction().getId());
+		
+		if(null != projectCommercial) {
+			CommercialTracking commercialTracking = new CommercialTracking()
+					.setDomain(target.getDomain().getId())
+					.setDate(new Date())
+					.setSeller(projectCommercial.getSeller())
+					.setProjectCommercial(projectCommercial.getId())
+					.setActivity(commercialActivityRequest.getId())
+					.setStatus((byte)1)
+					.setComments("El lead " + target.getName() + " se ha registrado en la acci\u00f3n " + mkAction.getDescription() + ".")
+					;
+			AON.save(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), commercialTracking);
+		}
+		
+		CommercialActivity commercialActivityCheck = AON.getCommercialActivity(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), f -> f.getDomainProperty().eq(api.getDomain().getId()).and(f.getNameProperty().like("%VERIFICACION%")));
+		if(null == commercialActivityCheck) {
+			CommercialActivity ca = new CommercialActivity()
+					.setDomain(api.getDomain().getId())
+					.setName("VERIFICACION");
+			
+			commercialActivityCheck = AON.save(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), ca);
+		}
+		
+		
+		if(null != projectCommercial) {
+			CommercialTracking commercialTracking = new CommercialTracking()
+					.setDomain(target.getDomain().getId())
+					.setDate(new Date())
+					.setSeller(projectCommercial.getSeller())
+					.setProjectCommercial(projectCommercial.getId())
+					.setActivity(commercialActivityCheck.getId())
+					.setStatus((byte)1)
+					.setComments("Se ha enviado al lead " + target.getName() + " un mail para crear una empresa de trial.")
+					;
+			AON.save(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), commercialTracking);
 		}
 	}
 	
@@ -620,7 +740,8 @@ public class ActionTargetServlet extends AonApiHttpServlet {
 			if(auth.getAuth() != null) {
 				User user = createUser(company, auth, login, target.getName());
 				userMail = email;
-				userLogingMail = user.getLogin();
+				// Login
+				// userLogingMail = user.getLogin();
 				passwordMail = login;
 				
 				setUserAppRole(domain, user);
@@ -861,14 +982,14 @@ public class ActionTargetServlet extends AonApiHttpServlet {
 	}
 	
 	public static String createEnterpriseBody(String urlEnterprise, String baseUrl, String enterpriseNameMail, String document, String streetType, String address, String number, String zip, String geozoneCode, 
-            String city, String phone, String email, String target, String domainName, String domainId, String userLogin, String token, String logosrc, String parentDomainName) throws UnsupportedEncodingException {
+            String city, String phone, String email, String target, String domainName, String domainId, String userLogin, String token, String logosrc, String parentDomainName, Integer marketingAction) throws UnsupportedEncodingException {
     
 	    // Construir la URL completa para la llamada GET en GWT
 	    String postUrl = baseUrl + "?name=" + URLEncoder.encode(enterpriseNameMail, "UTF-8") + "&document=" + document + "&streetType=" + streetType
 	                     + "&address=" + URLEncoder.encode(address, "UTF-8") + "&number=" + number + "&zip=" + zip + "&geozoneCode=" + geozoneCode
 	                     + "&city=" + URLEncoder.encode(city, "UTF-8") + "&phone=" + phone + "&email=" + email + "&target=" + target
 	                     + "&domain_name=" + domainName + "&domain_id=" + domainId + "&domain_login=" + userLogin
-	                     + "&session_id=" + token;
+	                     + "&session_id=" + token + "&marketingAction=" + marketingAction;
 	
 	    Date expirationDate = new Date();
 	    expirationDate = AonDateUtils.addDays(expirationDate, 1);
@@ -932,7 +1053,7 @@ public class ActionTargetServlet extends AonApiHttpServlet {
 	            + "\n";
 	    
 	    body   += "  <p style=\"font-size: 14px; color: #555; margin-top: 20px;\">\n"
-	            + "    ¡ Enhorabuena !, Acabamos de crear su empresa para qeu pueda emitir y registrar facturas gratuitamente con un límite de 50 documentos.\n"
+	            + "    ¡ Enhorabuena !, Acabamos de crear su empresa para que pueda emitir y registrar facturas gratuitamente con un límite de 50 documentos.\n"
 	            + "  </p>\n";
 	    
 	    body   += "  <p style=\"font-size: 14px; color: #555; margin-top: 20px;\">\n"

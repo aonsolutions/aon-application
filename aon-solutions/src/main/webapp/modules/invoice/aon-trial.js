@@ -173,6 +173,8 @@ export class AonTrial extends AonElement {
     bookingDiv.style.display = "flex";
     bookingDiv.style.flexDirection = "column";
     bookingDiv.style.justifyContent = "center";
+    bookingDiv.style.backgroundColor = "#23ab23";
+    bookingDiv.style.color = "white";
     bookingDiv.classList.add("aonHoverGray");
     bookingDiv.addEventListener(EVENT.CLICK, () => {
       this.getApplication().confirmDialog(
@@ -191,12 +193,13 @@ export class AonTrial extends AonElement {
 
     let bookingButton = this.createElement(TAG.I);
     bookingButton.classList.add("material-icons");
-    bookingButton.style.fontSize = "2.7rem"
+    bookingButton.style.fontSize = "2.7rem";
     bookingButton.innerHTML = "contract_edit";
     bookingDiv.appendChild(bookingButton);
 
     let bookingTextDiv = this.createElement(TAG.DIV);
     bookingTextDiv.classList.add("aonInvoiceHomeRejectedName");
+    bookingTextDiv.style.color = "white";
     bookingTextDiv.innerHTML = "Ampliar Contratación";
 
     bookingDiv.appendChild(bookingTextDiv);

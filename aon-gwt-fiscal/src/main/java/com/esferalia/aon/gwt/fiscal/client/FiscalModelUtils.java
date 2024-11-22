@@ -97,6 +97,7 @@ public class FiscalModelUtils {
 		@Override public String visitNavarra() 	{return AON.CSS.aonIconNavarra();}
 		@Override public String visitCommonTerritory() 	{return AON.CSS.aonIconAeat();}
 		@Override public String visitUnknown() 	{return AON.CSS.aonIconUnknown();}
+		@Override public String visitCanarias() 	{return AON.CSS.aonIconCanarias();}
 	}
 	private static final IAdministrationVisitor<String> ADMINISTRATION_ICON_STYLE = new AdministrationIconStyle();
 	public static String getAdministrationIconStyle(Administration adm) {
@@ -110,6 +111,7 @@ public class FiscalModelUtils {
 		@Override public String visitNavarra() 	{return AON.CSS.aonIconNavarraBw();}
 		@Override public String visitCommonTerritory() 	{return AON.CSS.aonIconAeatBw();}
 		@Override public String visitUnknown() 	{return AON.CSS.aonIconUnknown();}
+		@Override public String visitCanarias() 	{return AON.CSS.aonIconCanariasBw();}
 	}
 	private static final IAdministrationVisitor<String> ADMINISTRATION_BW_ICON_STYLE = new AdministrationBWIconStyle();
 	public static String getAdministrationBWIconStyle(Administration adm) {
@@ -123,6 +125,7 @@ public class FiscalModelUtils {
 		@Override public DataResource visitNavarra() 	{return AON.AON_SOLUTIONS_RESOURCES.aonIconNavarra();}
 		@Override public DataResource visitCommonTerritory() 	{return AON.AON_SOLUTIONS_RESOURCES.aonIconAeat();}
 		@Override public DataResource visitUnknown() 	{return AON.AON_SOLUTIONS_RESOURCES.aonIconUnknown();}
+		@Override public DataResource visitCanarias() 	{return AON.AON_SOLUTIONS_RESOURCES.aonIconCanarias();}
 	}
 	private static final IAdministrationVisitor<DataResource> ADMINISTRATION_ICON_RESOURCE = new AdministrationIconResource();
 	public static DataResource getAdministrationIconDataResource(Administration adm) {
@@ -136,6 +139,7 @@ public class FiscalModelUtils {
 		@Override public DataResource visitNavarra() 	{return AON.AON_SOLUTIONS_RESOURCES.aonIconNavarraBw();}
 		@Override public DataResource visitCommonTerritory() 	{return AON.AON_SOLUTIONS_RESOURCES.aonIconAeatBw();}
 		@Override public DataResource visitUnknown() 	{return AON.AON_SOLUTIONS_RESOURCES.aonIconUnknown();}
+		@Override public DataResource visitCanarias() 	{return AON.AON_SOLUTIONS_RESOURCES.aonIconCanariasBw();}
 	}
 	private static final IAdministrationVisitor<DataResource> ADMINISTRATION_BW_ICON_RESOURCE = new AdministrationBWIconResource();
 	public static DataResource getAdministrationBWIconDataResource(Administration adm) {
@@ -149,6 +153,7 @@ public class FiscalModelUtils {
 		@Override public String visitNavarra() 	{return AON.CSS.aonNavarraBackgroundColor();}
 		@Override public String visitCommonTerritory() 	{return AON.CSS.aonAeatBackgroundColor();}
 		@Override public String visitUnknown() 	{return AON.CSS.aonAeatBackgroundColor();}
+		@Override public String visitCanarias() 	{return AON.CSS.aonCanariasBackgroundColor();}
 	}
 	private static final IAdministrationVisitor<String> ADMINISTRATION_BACKGROUND_STYLE = new AdministrationBackgroundStyle();
 	public static String getAdministrationBackgroundStyle(Administration adm) {
@@ -238,61 +243,61 @@ public class FiscalModelUtils {
 //		} 
 //		return AON.AON_CSS.aonAeatHeaderImage();
 //	}
-	
-	/**
-	 * @param adm
-	 * @return
-	 * @deprecated Use getAdministrationIconStyle
-	 */
-	@Deprecated
-	public static String getAdministrationIcon(Administration adm) {
-		if (adm == Administration.ALAVA) {
-			return AON.AON_CSS.aonIconAraba();
-		} else if (adm == Administration.BIZKAIA) {
-			return AON.AON_CSS.aonIconBizkaia();
-		} else if (adm == Administration.GIPUZKOA) {
-			return AON.AON_CSS.aonIconGipuzkoa();
-		} else if (adm == Administration.NAVARRA) {
-			return AON.AON_CSS.aonIconNavarra();
-		} else if (adm == Administration.UNKNOWN) {
-			return AON.AON_CSS.aonIconQuestion();
-		} 
-		return AON.AON_CSS.aonIconAeat();
-	}
-	@Deprecated
-	public static String getAdministrationIconBW(Administration adm) {
-		if (adm == Administration.ALAVA) {
-			return AON.AON_CSS.aonIconArabaBW();
-		} else if (adm == Administration.BIZKAIA) {
-			return AON.AON_CSS.aonIconBizkaiaBW();
-		} else if (adm == Administration.GIPUZKOA) {
-			return AON.AON_CSS.aonIconGipuzkoaBW();
-		} else if (adm == Administration.NAVARRA) {
-			return AON.AON_CSS.aonIconNavarraBW();
-		} else if (adm == Administration.UNKNOWN) {
-			return AON.AON_CSS.aonIconQuestion();
-		} 
-		return AON.AON_CSS.aonIconAeatBW();
-	}
-
-	/**
-	 * @deprecated Use getAdministrationIconDataResource
-	 */
-	@Deprecated
-	public static ImageResource getAdministrationIconResource(Administration adm) {
-		if (adm ==Administration.ALAVA) {
-			return AON.AON_RESOURCES.aonIconAraba();	
-		} else if (adm ==Administration.BIZKAIA) {
-			return AON.AON_RESOURCES.aonIconBizkaia();
-		} else if (adm ==Administration.GIPUZKOA) {
-			return AON.AON_RESOURCES.aonIconGipuzkoa();
-		} else if (adm ==Administration.NAVARRA) {
-			return AON.AON_RESOURCES.aonIconNavarra();
-		} else if (adm == Administration.UNKNOWN) {
-			return AON.AON_RESOURCES.aonIconQuestion();
-		} 
-		return AON.AON_RESOURCES.aonAeat();
-	}
+//	
+//	/**
+//	 * @param adm
+//	 * @return
+//	 * @deprecated Use getAdministrationIconStyle
+//	 */
+//	@Deprecated
+//	public static String getAdministrationIcon(Administration adm) {
+//		if (adm == Administration.ALAVA) {
+//			return AON.AON_CSS.aonIconAraba();
+//		} else if (adm == Administration.BIZKAIA) {
+//			return AON.AON_CSS.aonIconBizkaia();
+//		} else if (adm == Administration.GIPUZKOA) {
+//			return AON.AON_CSS.aonIconGipuzkoa();
+//		} else if (adm == Administration.NAVARRA) {
+//			return AON.AON_CSS.aonIconNavarra();
+//		} else if (adm == Administration.CANARIAS) {
+//			return AON.AON_CSS.aonIconQuestion();
+//		} 
+//		return AON.AON_CSS.aonIconAeat();
+//	}
+//	@Deprecated
+//	public static String getAdministrationIconBW(Administration adm) {
+//		if (adm == Administration.ALAVA) {
+//			return AON.AON_CSS.aonIconArabaBW();
+//		} else if (adm == Administration.BIZKAIA) {
+//			return AON.AON_CSS.aonIconBizkaiaBW();
+//		} else if (adm == Administration.GIPUZKOA) {
+//			return AON.AON_CSS.aonIconGipuzkoaBW();
+//		} else if (adm == Administration.NAVARRA) {
+//			return AON.AON_CSS.aonIconNavarraBW();
+//		} else if (adm == Administration.CANARIAS) {
+//			return AON.AON_CSS.aonIconQuestion();
+//		} 
+//		return AON.AON_CSS.aonIconAeatBW();
+//	}
+//
+//	/**
+//	 * @deprecated Use getAdministrationIconDataResource
+//	 */
+//	@Deprecated
+//	public static ImageResource getAdministrationIconResource(Administration adm) {
+//		if (adm ==Administration.ALAVA) {
+//			return AON.AON_RESOURCES.aonIconAraba();	
+//		} else if (adm ==Administration.BIZKAIA) {
+//			return AON.AON_RESOURCES.aonIconBizkaia();
+//		} else if (adm ==Administration.GIPUZKOA) {
+//			return AON.AON_RESOURCES.aonIconGipuzkoa();
+//		} else if (adm ==Administration.NAVARRA) {
+//			return AON.AON_RESOURCES.aonIconNavarra();
+//		} else if (adm == Administration.CANARIAS) {
+//			return AON.AON_RESOURCES.aonIconQuestion();
+//		} 
+//		return AON.AON_RESOURCES.aonAeat();
+//	}
 
 	
 //	/**

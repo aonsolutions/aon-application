@@ -26,6 +26,12 @@ public class ApiImpl implements IApi {
 	}
 	
 	@Override
+	public Stream<Invoice> getChartInvoices(AONContext ctx, InvoiceFilter filter) {
+		return ctx.getDslContext().transactionResult(
+				configuration -> InvoiceApiDAO.getChartInvoices(ctx, filter));
+	}
+	
+	@Override
 	public Pair<Date, Date> getInvoicesChartPeriod(AONContext ctx, InvoiceFilter filter) {
 		return ctx.getDslContext().transactionResult(
 				configuration -> InvoiceApiDAO.getInvoicesChartPeriod(ctx, filter));
