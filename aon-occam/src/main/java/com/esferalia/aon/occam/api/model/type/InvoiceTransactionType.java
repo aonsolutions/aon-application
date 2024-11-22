@@ -7,7 +7,7 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 
 public enum InvoiceTransactionType implements Serializable {
 
-	NATIONAL ("Nacional", "NAC")
+	NATIONAL ("Op. Interiores", "NAC")
 		{ @Override public void visit(IInvoiceTransactionTypeVisitor visitor) { visitor.visitNational();} },
 	INTRACOMMUNITY("Intracomunitaria", "INTR")
 		{ @Override public void visit(IInvoiceTransactionTypeVisitor visitor) { visitor.visitIntracommunity();} },
