@@ -8,14 +8,31 @@ import com.google.gwt.user.client.ui.ListBox;
 public class InvoiceTransactionListBox extends ListBox {
 
 	public InvoiceTransactionListBox() {
-		this("------");
+		this("------", false);
 	}	
 	
+	public InvoiceTransactionListBox(boolean forCanarias) {
+		this("------", forCanarias);
+	}	
+
 	public InvoiceTransactionListBox(String firstItemLabel) {
+		this(firstItemLabel, false);
+	}
+	
+	public InvoiceTransactionListBox(String firstItemLabel, boolean forCanarias) {
 		setWidth("120px");
 		addItem(AonStringUtils.defaultIfBlank(firstItemLabel),"");
+		int i = 1;
 		for (InvoiceTransactionType d : InvoiceTransactionType.values()) {
-			addItem(d.getDescription());	
+			String desc = d.getDescription(); 
+			if ( forCanarias ) {
+				desc = AonStringUtils.remove(desc, "Canarias, ");
+			}
+			addItem(desc);
+			if ( forCanarias && d == InvoiceTransactionType.INTRACOMMUNITY ) {
+					getElement().getElementsByTagName("option").getItem(i).setAttribute("disabled", "disabled");
+			}
+			i++;
 		}
 	}
 

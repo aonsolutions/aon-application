@@ -13,15 +13,12 @@ import com.esferalia.aon.gwt.api.client.warehouse.JsOrder;
 import com.esferalia.aon.gwt.api.client.warehouse.JsOrderDetail;
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.polymer.AonDialog;
-import com.esferalia.aon.gwt.common.client.polymer.AonTemplate2;
-import net.aonsolutions.aon.gwt.vaadin.client.FilterPanel;
-import com.esferalia.aon.gwt.common.client.widget.Toolbar;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonTemplate;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
 import com.esferalia.aon.gwt.common.shared.AonData;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.JsonUtils;
 import com.google.gwt.dom.client.Style.Unit;
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.json.client.JSONObject;
 import com.google.gwt.json.client.JSONString;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -35,17 +32,17 @@ import com.vaadin.polymer.paper.PaperInputElement;
 import com.vaadin.polymer.paper.PaperItemElement;
 import com.vaadin.polymer.paper.PaperRadioButtonElement;
 import com.vaadin.polymer.paper.PaperToggleButtonElement;
-import com.vaadin.polymer.paper.widget.PaperIconButton;
 
 import net.aonsolutions.aon.gwt.udapa.client.IUdapa;
 import net.aonsolutions.aon.gwt.udapa.client.IUdapaAsync;
 import net.aonsolutions.aon.gwt.udapa.client.Utils;
+import net.aonsolutions.aon.gwt.vaadin.client.FilterPanel;
 import net.aonsolutions.polymer.aon.AonComboBoxElement;
 import net.aonsolutions.polymer.aon.widget.AonComboBox;
 import net.aonsolutions.polymer.aon.widget.event.SelectedItemChangedEvent;
 import net.aonsolutions.polymer.aon.widget.event.SelectedItemChangedEventHandler;
 
-public class UdapaQuality extends AonTemplate2{
+public class UdapaQuality extends AonTemplate {
 
 	final IUdapaAsync impl = GWT.create(IUdapa.class);
 	private API API;
@@ -54,6 +51,16 @@ public class UdapaQuality extends AonTemplate2{
 	private AonData aonData;
 	private FilterPanel filterPanel;
 	private Boolean isBack = false;
+	
+	private AonToolbarButton backButton;
+	private AonToolbarButton newButton;
+	private AonToolbarButton deleteButton;
+	private AonToolbarButton printPdfButton;
+	private AonToolbarButton downloadExcelButton;
+	private AonToolbarButton downloadPdfButton;
+	private AonToolbarButton downloadLiqButton;
+	private AonToolbarButton previousButton;
+	private AonToolbarButton nextButton;
 	
 	public API getAPI() {
 		return API;
@@ -80,6 +87,7 @@ public class UdapaQuality extends AonTemplate2{
 	}
 	
 	public UdapaQuality(AonData aonData) {
+		super("Ficha de Calidad");
 		this.aonData = aonData;
 		this.API = new API(GWT.getModuleBaseURL(), aonData.getMd5(),
 			aonData.getDomain().getName(), aonData.getDomain().getId(),
@@ -114,45 +122,50 @@ public class UdapaQuality extends AonTemplate2{
 	
 	private void startApplication() {
 		toolbar();
-		westContent();
-		principalContent();
+		content();
 	}
 	
 	private void toolbar() {
-		getDockLayoutPanel().setWidgetSize(getToolbar(), 23);
-		Toolbar toolbar = new Toolbar("Ficha de calidad");
-		toolbar.addButton("Volver", AON.AON_CSS.aonIconCancel(), false).addClickHandler(backClickHandler());
-		toolbar.addButton(AON.MSG.newAction(), AON.AON_CSS.aonIconReset()).addClickHandler(resetClickHandler());
-		toolbar.addButton(AON.MSG.deleteAction(), AON.AON_CSS.aonIconDelete(), false).addClickHandler(deleteClickHandler());
-		toolbar.addButton("Impresi\u00f3n", AON.AON_CSS.aonIconPdf(), false).addClickHandler(printClickHandler());
-		toolbar.addButton("", AON.AON_CSS.aonIconExcel()).addClickHandler(excelDownloadClickHandler());
-		toolbar.addButton("Descargar", AON.AON_CSS.aonIconPdf()).addClickHandler(pdfDownloadClickHandler());
-		toolbar.addButton("Liquidaci\u00f3n", AON.AON_CSS.aonIconExcel()).addClickHandler(liqDownloadClickHandler());
+		getToolbar().getButtonContainer().clear();
 		
-		PaperIconButton ant = new PaperIconButton();
-		ant.setNoink(true);
-		ant.setVisible(false);
-		ant.setStyle("margin:0px;padding:0px;height:20px;right:40px;position:absolute;");
-		ant.setIcon("chevron-left");
-		ant.addClickHandler(antClickHandler());
-		toolbar.addWidget(ant);
+		backButton = new AonToolbarButton("Volver",
+			AON.CSS.aonIconBack(), false, e -> back());
+		getToolbar().add(backButton);
 		
-		PaperIconButton next = new PaperIconButton();
-		next.setNoink(true);
-		next.setVisible(false);
-		next.setStyle("margin:0px;padding:0px;height:20px;right:0px;position:absolute;");
-		next.setIcon("chevron-right");
-		next.addClickHandler(nextClickHandler());
-		toolbar.addWidget(next);
+		newButton = new AonToolbarButton(AON.MSG.newAction(),
+			AON.CSS.aonIconAdd(), true, e -> resetQuality());
+		getToolbar().add(newButton);
 		
-		setToolbar(toolbar);
-	}
-	
-	private void westContent() {
+		deleteButton = new AonToolbarButton(AON.MSG.deleteAction(),
+			AON.CSS.aonIconDelete(), false, e -> deleteQuality());
+		getToolbar().add(deleteButton);
 
+		printPdfButton = new AonToolbarButton("Impresi\u00f3n",
+			AON.CSS.aonIconPdf(), false, e -> printQuality());
+		getToolbar().add(printPdfButton);
+			
+		downloadExcelButton = new AonToolbarButton("Descargar Excel",
+			AON.CSS.aonIconExcel(), true, e -> printQualityList("excel"));
+		getToolbar().add(downloadExcelButton);
+			
+		downloadPdfButton = new AonToolbarButton("Descargar Pdf",
+			AON.CSS.aonIconPdf(), true, e -> printQualityList("pdf"));
+		getToolbar().add(downloadPdfButton);
+		
+		downloadLiqButton = new AonToolbarButton("Liquidaci\u00f3n",
+			AON.CSS.aonIconExcel(), true, e -> printLiqList("excel"));
+		getToolbar().add(downloadLiqButton);
+		
+		previousButton = new AonToolbarButton("Anterior",
+			AON.CSS.aonIconPrev(), false, e -> previous());
+		getToolbar().add(previousButton);
+			
+		nextButton = new AonToolbarButton("Siguiente",
+			AON.CSS.aonIconNext(), false, e -> next());
+		getToolbar().add(nextButton);
 	}
 	
-	private void principalContent() {
+	private void content() {
 		setContent(new QualityPrincipal(me));
 	}
 	
@@ -195,16 +208,15 @@ public class UdapaQuality extends AonTemplate2{
 	
 	public void sheetContent(JsDataResponse js, HashMap<String, LinkedList<String>> map) {
 		setFilterMap(map);
-		Toolbar toolbar = (Toolbar) getToolbar().getWidget();
 		
-		toolbar.getButtonPanel().getWidget(0).setVisible(true);// toolbar.setBackVisible(true);
-		toolbar.getButtonPanel().getWidget(2).setVisible(true);// toolbar.setRemoveVisible(true);
-		toolbar.getButtonPanel().getWidget(3).setVisible(true);// toolbar.setPrintVisible(true);
-		toolbar.getButtonPanel().getWidget(4).setVisible(false);// toolbar.setExcelVisible(false);
-		toolbar.getButtonPanel().getWidget(5).setVisible(false);// toolbar.setPdfVisible(false);
-		toolbar.getButtonPanel().getWidget(6).setVisible(false);// toolbar.setLiqVisible(false);
-		toolbar.getButtonPanel().getWidget(7).setVisible(true);// toolbar.setAntVisible(true);
-		toolbar.getButtonPanel().getWidget(8).setVisible(true);// toolbar.setNextVisible(true);
+		backButton.setVisible(true);
+		deleteButton.setVisible(true);
+		printPdfButton.setVisible(true);		
+		downloadExcelButton.setVisible(false);
+		downloadPdfButton.setVisible(false);
+		downloadLiqButton.setVisible(false);
+		previousButton.setVisible(true);
+		nextButton.setVisible(true);
 
 		setContent(new QualitySheet(this, js));
 	}
@@ -353,139 +365,58 @@ public class UdapaQuality extends AonTemplate2{
 		dialog.center();
 	}
 	
-	
-	/***** BUTTON CLICK HANDLER *****/
-	
-	private ClickHandler backClickHandler() {
-		return new ClickHandler() {
-			
-			@Override
-			public void onClick(ClickEvent event) {
-				isBack = true;
-				startApplication();
-			}
-		};
+	private void back() {
+		isBack = true;
+		startApplication();
 	}
 	
-	private ClickHandler resetClickHandler() {
-		return new ClickHandler() {
-			
-			@Override
-			public void onClick(ClickEvent event) {
-				resetQuality();
-			}
-		};
-	}
-	
-	private ClickHandler deleteClickHandler() {
-		return new ClickHandler() {
-			
-			@Override
-			public void onClick(ClickEvent event) {
-				deleteQuality();
-			}
-		};
-	}
-	
-	private ClickHandler printClickHandler() {
-		return new ClickHandler() {
-			
-			@Override
-			public void onClick(ClickEvent event) {
-				printQuality();
-			}
-		};
-	}
-	
-	private ClickHandler excelDownloadClickHandler() {
-		return new ClickHandler() {
-			
-			@Override
-			public void onClick(ClickEvent event) {
-				printQualityList("excel");
-			}
-		};
-	}
-	
-	private ClickHandler pdfDownloadClickHandler() {
-		return new ClickHandler() {
-			
-			@Override
-			public void onClick(ClickEvent event) {
-				printQualityList("pdf");
-			}
-		};
-	}
-	
-	private ClickHandler liqDownloadClickHandler() {
-		return new ClickHandler() {
-			
-			@Override
-			public void onClick(ClickEvent event) {
-				printLiqList("excel");
-			}
-		};
-	}
-	
-	private ClickHandler antClickHandler() {
-		return new ClickHandler() {
-			
-			@Override
-			public void onClick(ClickEvent event) {
-				Integer page = Integer.parseInt(getFilterMap().get("page").get(0));
+	private void previous() {
+		Integer page = Integer.parseInt(getFilterMap().get("page").get(0));
 				
-				if(page > 1 ){
-					page = page - 1;
+		if(page > 1 ){
+			page = page - 1;
+			LinkedList<String> list = new LinkedList<>();
+			list.add(page.toString());
+			getFilterMap().put("page", list);
+			list = new LinkedList<>();
+			list.add("1");
+			getFilterMap().put("per_page", list);
+			getAPI().getCommon().getDataResponseQuality(getFilterMap(), new AsyncCallback<JSON<JsDataResponse>>() {
+					
+				@Override
+				public void onSuccess(JSON<JsDataResponse> result) {
+					setContent(new QualitySheet(me, result.getData().get(0)));
+				}
+					
+				@Override public void onFailure(Throwable caught) {}
+			});
+		}
+	}
+	
+	private void next() {
+		Integer page = Integer.parseInt(getFilterMap().get("page").get(0));
+		page = page + 1;
+		LinkedList<String> list = new LinkedList<>();
+		list.add(page.toString());
+		getFilterMap().put("page", list);
+		list = new LinkedList<>();
+		list.add("1");
+		getFilterMap().put("per_page", list);
+		getAPI().getCommon().getDataResponseQuality(getFilterMap(), new AsyncCallback<JSON<JsDataResponse>>() {
+					
+			@Override
+			public void onSuccess(JSON<JsDataResponse> result) {
+				if(result.getData().length() == 0){
+					Integer page = Integer.parseInt(getFilterMap().get("page").get(0));
+					page = page < 2 ? 1 : page - 1;
 					LinkedList<String> list = new LinkedList<>();
 					list.add(page.toString());
 					getFilterMap().put("page", list);
-					list = new LinkedList<>();
-					list.add("1");
-					getFilterMap().put("per_page", list);
-					getAPI().getCommon().getDataResponseQuality(getFilterMap(), new AsyncCallback<JSON<JsDataResponse>>() {
-						
-						@Override
-						public void onSuccess(JSON<JsDataResponse> result) {
-							setContent(new QualitySheet(me, result.getData().get(0)));
-						}
-						
-						@Override public void onFailure(Throwable caught) {}
-					});
 				}
+				setContent(new QualitySheet(me, result.getData().get(0)));						
 			}
-		};
-	}
-	
-	private ClickHandler nextClickHandler() {
-		return new ClickHandler() {
-			
-			@Override
-			public void onClick(ClickEvent event) {
-				Integer page = Integer.parseInt(getFilterMap().get("page").get(0));
-				page = page + 1;
-				LinkedList<String> list = new LinkedList<>();
-				list.add(page.toString());
-				getFilterMap().put("page", list);
-				list = new LinkedList<>();
-				list.add("1");
-				getFilterMap().put("per_page", list);
-				getAPI().getCommon().getDataResponseQuality(getFilterMap(), new AsyncCallback<JSON<JsDataResponse>>() {
 					
-					@Override
-					public void onSuccess(JSON<JsDataResponse> result) {
-						if(result.getData().length() == 0){
-							Integer page = Integer.parseInt(getFilterMap().get("page").get(0));
-							page = page < 2 ? 1 : page - 1;
-							LinkedList<String> list = new LinkedList<>();
-							list.add(page.toString());
-							getFilterMap().put("page", list);
-						}
-						setContent(new QualitySheet(me, result.getData().get(0)));						
-					}
-					
-					@Override public void onFailure(Throwable caught) {}
-				});
-			}
-		};
+			@Override public void onFailure(Throwable caught) {}
+		});
 	}
 }

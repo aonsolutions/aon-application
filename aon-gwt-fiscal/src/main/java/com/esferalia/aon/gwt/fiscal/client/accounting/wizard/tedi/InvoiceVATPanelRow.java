@@ -14,8 +14,10 @@ import com.esferalia.aon.occam.api.model.Account;
 import com.esferalia.aon.occam.api.model.InvestAsset;
 import com.esferalia.aon.occam.api.model.InvoiceCalculator;
 import com.esferalia.aon.occam.api.model.finance.InvoiceVAT;
+import com.esferalia.aon.occam.api.model.type.Administration;
 import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
+import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.KeyCodes;
@@ -155,6 +157,14 @@ class InvoiceVATPanelRow extends AonDisplayGridRow implements Focusable, HasSele
 		}
 		
 	}
+	private String decorateIVA(IEditableInvoicePanelCallback invoiceCallback, String oriLabel) {
+		String label = oriLabel;
+		if (invoiceCallback.getConfiguration().fiscal().getAdministration(null) == Administration.CANARIAS) {
+			label = AonStringUtils.replace(label, "I.V.A.", "IGIC");
+			label = AonStringUtils.replace(label, "IVA", "IGIC");
+		}
+		return label;
+	}
 
 	private void addInvestAssetAdditionalData(IEditableInvoicePanelCallback callback, int vatIdx) {
 		int vatInvestRowIndex = rowIndex + 1;
@@ -162,7 +172,7 @@ class InvoiceVATPanelRow extends AonDisplayGridRow implements Focusable, HasSele
 		iaGrid.addStyleName( AON.CSS.aonMarginLeft());
 		iaGrid.addStyleName( AON.CSS.aonPaddingLeft());
 		
-		Label dedLabel = new Label("IVA Deducible");
+		Label dedLabel = new Label( decorateIVA(callback,"IVA Deducible"));
 		dedLabel.setStyleName(AON.CSS.aonInnerLabel());
 		dedLabel.addStyleName(AON.CSS.aonBold());
 		dedLabel.addStyleName(AON.CSS.aonPaddingLeft());
@@ -173,12 +183,12 @@ class InvoiceVATPanelRow extends AonDisplayGridRow implements Focusable, HasSele
 		dedPercentLabel.addStyleName(AON.CSS.aonPaddingLeft());
 		dedPercentLabel.addStyleName(AON.CSS.aonPaddingRight());
 		
-		Label dedQuotaLabel = new Label("IVA Deducible");
+		Label dedQuotaLabel = new Label(decorateIVA(callback,"IVA Deducible"));
 		dedQuotaLabel.setStyleName(AON.CSS.aonInnerLabel());
 		dedQuotaLabel.addStyleName(AON.CSS.aonPaddingLeft());
 		dedQuotaLabel.addStyleName(AON.CSS.aonPaddingRight());
 
-		Label noDedQuotaLabel = new Label("IVA NO Deducible");
+		Label noDedQuotaLabel = new Label(decorateIVA(callback,"IVA NO Deducible"));
 		noDedQuotaLabel.setStyleName(AON.CSS.aonInnerLabel());
 		noDedQuotaLabel.addStyleName(AON.CSS.aonPaddingLeft());
 		noDedQuotaLabel.addStyleName(AON.CSS.aonPaddingRight());
@@ -317,7 +327,7 @@ class InvoiceVATPanelRow extends AonDisplayGridRow implements Focusable, HasSele
 		vatQuota.addValueChangeHandler(event -> {
 			callback.getVat(vatIdx).setQuotaEdited(AonMathUtils.isNotZero(InvoiceCalculator.getQuotaGap(callback.getVat(vatIdx), vatQuota.getValue())));
 			if (callback.getVat(vatIdx).isQuotaEdited()) {
-				vatQuota.setTitle("Cuota de IVA modificada. Deber\u00EDa ser: " + InvoiceCalculator.getQuota(callback.getVat(vatIdx)));
+				vatQuota.setTitle(decorateIVA(callback,"Cuota de IVA modificada. Deber\u00EDa ser: " + InvoiceCalculator.getQuota(callback.getVat(vatIdx))));
 			} else {
 				vatQuota.setTitle(null);
 			}
@@ -478,7 +488,7 @@ class InvoiceVATPanelRow extends AonDisplayGridRow implements Focusable, HasSele
 		dedQuota.addValueChangeHandler(event -> {
 			callback.getVat(vatIdx).setDeductibleQuotaEdited(AonMathUtils.isNotZero(InvoiceCalculator.getDeductibleQuotaGap(callback.getVat(vatIdx), dedQuota.getValue())));
 			if (callback.getVat(vatIdx).isDeductibleQuotaEdited()) {
-				dedQuota.setTitle("Cuota de IVA deducible modificada. Deber\u00EDa ser: " + InvoiceCalculator.getDeductibleQuota(callback.getVat(vatIdx)));
+				dedQuota.setTitle(decorateIVA(callback,"Cuota de IVA deducible modificada. Deber\u00EDa ser: " + InvoiceCalculator.getDeductibleQuota(callback.getVat(vatIdx))));
 			} else {
 				dedQuota.setTitle(null);
 			}

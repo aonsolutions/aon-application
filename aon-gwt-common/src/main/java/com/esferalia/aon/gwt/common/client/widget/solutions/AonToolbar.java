@@ -44,7 +44,7 @@ public class AonToolbar extends FlowPanel {
 		titlePanel = new FlowPanel();
 		titlePanel.addStyleName(AON.CSS.aonToolbarTitleContainer());
 		titlePanel.addStyleName(AON.CSS.aonItemFlex());
-		setTitle(name);
+		setTitle(name != null ? name : "");
 		innerToolbar.add(titlePanel);
 
 		super.add(innerToolbar);

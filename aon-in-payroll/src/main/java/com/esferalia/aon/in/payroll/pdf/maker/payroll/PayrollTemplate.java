@@ -881,7 +881,7 @@ public class PayrollTemplate implements IPayrollTemplate {
 	private static String getDescription(PDFDeduction deduction) {
 		String deductionName = deduction.getName().orElse("");
 		if (AonStringUtils.isBlank(deductionName))
-			return null;
+			return deduction.getDescription().orElse("");
 		switch (deductionName) {
 		case "SOLIDARIDAD_I", "SOLIDARIDAD_I_E":
 			return "Solidaridad Primer tramo (hasta el 10%)";
