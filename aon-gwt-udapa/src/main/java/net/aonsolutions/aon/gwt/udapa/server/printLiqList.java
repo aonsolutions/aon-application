@@ -358,7 +358,7 @@ public class printLiqList extends HttpServlet{
 							cell(libro, row, style3, 23, pFondo);
 							
 							// SUBIDAS A MEDIAS
-							Double z = pFondo > contractPrice ? (pFondo - contractPrice) * 0.55 : 0.0;
+							Double z = pFondo > contractPrice ? (pFondo - contractPrice) * 0.65 : 0.0;
 							cell(libro, row, style3, 24, z);
 							
 							// PRECIO
@@ -493,7 +493,7 @@ public class printLiqList extends HttpServlet{
 	
 	private Cell cell(HSSFWorkbook libro, Row row, CellStyle style, Integer index, Double dbl) {
 		Cell cell = row.createCell(index);
-		cell.setCellValue(dbl);
+		cell.setCellValue(dbl != null ? dbl : 0.0);
 		row.setHeightInPoints(25);
 		cell.setCellStyle(style);	
 		return cell;

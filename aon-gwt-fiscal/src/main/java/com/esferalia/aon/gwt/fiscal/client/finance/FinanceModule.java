@@ -86,13 +86,18 @@ public class FinanceModule extends MainEntryPoint {
 	
 	private static class FinanceRow {
 		private int row;
+		private HTMLPanel rowPanel;
 		private Finance finance;
-		private FinanceRow( int row, Finance finance) {
+		private FinanceRow( int row, HTMLPanel rowPanel, Finance finance) {
 			this.row = row;
+			this.rowPanel = rowPanel;
 			this.finance = finance;
 		}
 		private int getRow() {
 			return row;
+		}
+		private HTMLPanel getRowPanel() {
+			return rowPanel;
 		}
 		private Finance getFinance() {
 			return finance;
@@ -248,6 +253,7 @@ public class FinanceModule extends MainEntryPoint {
 		// Auto search first time
 		enableMoreData();
 		container.clear();
+		container.add(messagePanel);
 		getTable();
 		container.add(table);
 		offset.setValue(0);
@@ -437,7 +443,7 @@ public class FinanceModule extends MainEntryPoint {
 		  TYP(AonStringUtils.EMPTY		, "2rem" 			,"")
 		, CHK(AonStringUtils.EMPTY		, "2rem" 			,"")
 		, DDT("F. Vto."					, "6rem" 			,"")
-		, DOC("Concepto"				, "10rem"			,"")
+		, DOC("Concepto"				, "8rem"			,"")
 		, TIT("CIF/NIF/NIE"				, "6rem"			,"")
 		, AUTO("Titular"				, "-moz-available"  ,"min-width: 5rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
 		, PYM("Forma pago"				, "10.5rem"			,"")
@@ -588,7 +594,8 @@ public class FinanceModule extends MainEntryPoint {
 									@Override
 									public void onSuccess(Finance fin) {
 										progress();
-										paintRow(opt, fin, financeRow.getRow());
+										updateStatusField(financeRow.getRowPanel(), fin);
+										updateButtonsField(financeRow.getRowPanel(), fin, opt);
 									}
 									
 									private void progress() {
@@ -668,7 +675,8 @@ public class FinanceModule extends MainEntryPoint {
 										@Override
 										public void onSuccess(Finance fin) {
 											progress();
-											paintRow(opt, fin, financeRow.getRow());
+											updateStatusField(financeRow.getRowPanel(), fin);
+											updateButtonsField(financeRow.getRowPanel(), fin, opt);
 										}
 										
 										private void progress() {
@@ -846,7 +854,6 @@ public class FinanceModule extends MainEntryPoint {
 
 	private void paintRow(final FinanceModuleOptions opt, Finance finance) {
 		int row = table.getRowsCount();
-		finances.put(finance.getId(), new FinanceRow(row, finance));
 		paintRow(opt, finance, row);
 	}
 	
@@ -854,6 +861,7 @@ public class FinanceModule extends MainEntryPoint {
 		
 		HTMLPanel row = table.createRow();
 		
+		finances.put(finance.getId(), new FinanceRow(rowX, row, finance));
 		
 		AonTableButton paymentButton = new AonTableButton(finance.isPayment() ? "Pago" : "Cobro", finance.isPayment() ? AON.CSS.aonIconFinanceOut() : AON.CSS.aonIconFinanceIn());
 		table.addRow(row, paymentButton, COLS.TYP.getColWidth());
@@ -953,11 +961,11 @@ public class FinanceModule extends MainEntryPoint {
 		FlowPanel buttonContainer = new FlowPanel();
 		buttonContainer.getElement().getStyle().setTextAlign(TextAlign.CENTER);
 		
-		addButtons(buttonContainer, finance, opt);
+		addButtons(buttonContainer, row, finance, opt);
 		table.addRow(row, buttonContainer, COLS.ACT.getColWidth());
 	}
 	
-	private void addButtons(FlowPanel buttonContainer, Finance finance, FinanceModuleOptions opt) {
+	private void addButtons(FlowPanel buttonContainer, HTMLPanel row, Finance finance, FinanceModuleOptions opt) {
 		// *************************************************************************
 		// *******															 *******
 		// *******				TRACKING INFO BUTTON		 				 *******
@@ -1003,7 +1011,7 @@ public class FinanceModule extends MainEntryPoint {
 		// *******															 *******
 		// *************************************************************************
 		AonTableButton payButton = null;
-		if (finance.isFullPending() && finance.getId() != null) {
+		if (finance.isFullPending() && finance.getId() != null && !isPayroll) {
 			payButton = new AonTableButton(AON.MSG.toPay(), AON.CSS.aonIconFinancePay() );
 			final AonCustomDialog dialog = new AonCustomDialog();
 			String suffix = ( finance.isPayment()?" PAGO":" COBRO");
@@ -1040,7 +1048,8 @@ public class FinanceModule extends MainEntryPoint {
 
 												@Override
 												public void onSuccess(FinanceTracking tracking) {
-													FinanceModule.this.paintRow(opt, tracking.getFinance(), -1);
+													updateStatusField(row, tracking.getFinance());
+													updateButtonsField(row, tracking.getFinance(), opt);
 												}
 											});
 								}
@@ -1056,7 +1065,7 @@ public class FinanceModule extends MainEntryPoint {
 		
 		// *************************************************************************
 		// *******															 *******
-		// *******				SETTLE BUTTON		 				 			 *******
+		// *******				SETTLE BUTTON		 				 		 *******
 		// *******															 *******
 		// *************************************************************************
 		AonTableButton settleButton = null;
@@ -1084,7 +1093,8 @@ public class FinanceModule extends MainEntryPoint {
 
 								@Override
 								public void onSuccess(Finance fin) {
-									FinanceModule.this.paintRow(opt, fin, -1);
+									updateStatusField(row, fin);
+									updateButtonsField(row, fin, opt);
 								}
 
 							});						
@@ -1131,7 +1141,8 @@ public class FinanceModule extends MainEntryPoint {
 
 								@Override
 								public void onSuccess(Finance fin) {
-									FinanceModule.this.paintRow(opt, fin, -1);
+									updateStatusField(row, fin);
+									updateButtonsField(row, fin, opt);
 								}
 							});						
 						}
@@ -1187,7 +1198,8 @@ public class FinanceModule extends MainEntryPoint {
 
 												@Override
 												public void onSuccess(FinanceTracking tracking) {
-													FinanceModule.this.paintRow(opt, tracking.getFinance(), -1);
+													updateStatusField(row, tracking.getFinance());
+													updateButtonsField(row, tracking.getFinance(), opt);
 												}
 											});
 								}
@@ -1290,6 +1302,45 @@ public class FinanceModule extends MainEntryPoint {
 			deleteButton.addStyleName(AON.CSS.aonCustomRowButtom());
 			buttonContainer.add(deleteButton);
 		}
+	}
+
+	private void updateStatusField(HTMLPanel row, Finance finance) {
+		Label status = (Label) row.getWidget(isPayroll ? 8 : 10);
+		status.setText(finance.getFinanceStatus() == null ? "" : finance.getFinanceStatus().getDescription());
+		
+		finance.getFinanceStatus().visit( new IFinanceStatusVisitor() {
+			@Override
+			public void visitSettled() {
+				status.setStyleName(AON.CSS.aonColorBlue());
+			}
+			
+			@Override
+			public void visitReturned() {
+				status.setStyleName(AON.CSS.aonColorRed());
+				status.addStyleName(AON.CSS.aonBold());
+			}
+			
+			@Override
+			public void visitPending() {
+				status.setStyleName(AON.CSS.aonColorRed());
+			}
+			
+			@Override
+			public void visitPaid() {
+				status.setStyleName(AON.CSS.aonColorGreen());
+			}
+			
+			@Override
+			public void visitBatched() {
+				status.setStyleName(AON.CSS.aonColorGreen());
+			}
+		});
+	}
+
+	private void updateButtonsField(HTMLPanel row, Finance finance, FinanceModuleOptions opt) {
+		FlowPanel buttonsPanel = (FlowPanel) row.getWidget(isPayroll ? 9 : 11);
+		buttonsPanel.clear();
+		addButtons(buttonsPanel, row, finance, opt);
 	}
 
 	private static String formatToEuro(double amount) {

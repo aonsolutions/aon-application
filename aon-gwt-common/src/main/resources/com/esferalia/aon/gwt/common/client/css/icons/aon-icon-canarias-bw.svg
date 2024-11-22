@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   version="1.1"
+   x="0px"
+   y="0px"
+   width="24"
+   height="24"
+   viewBox="0 0 959.9616 959.9616"
+   enable-background="new 0 0 1000 1000"
+   xml:space="preserve"
+   id="svg9"
+   sodipodi:docname="aon-icon-canarias-bw.svg"
+   inkscape:version="1.3.1 (9b9bdc1480, 2023-11-25, custom)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg"><defs
+   id="defs9" /><sodipodi:namedview
+   id="namedview9"
+   pagecolor="#ffffff"
+   bordercolor="#666666"
+   borderopacity="1.0"
+   inkscape:showpageshadow="2"
+   inkscape:pageopacity="0.0"
+   inkscape:pagecheckerboard="0"
+   inkscape:deskcolor="#d1d1d1"
+   inkscape:zoom="26.528"
+   inkscape:cx="26.783021"
+   inkscape:cy="14.946471"
+   inkscape:window-width="1920"
+   inkscape:window-height="1011"
+   inkscape:window-x="0"
+   inkscape:window-y="0"
+   inkscape:window-maximized="1"
+   inkscape:current-layer="svg9"
+   showgrid="false" />
+<g
+   id="fill-0071b7"
+   fill="#0071b7"
+   transform="translate(0,16.3968)"
+   style="fill:#000a11;fill-opacity:1">
+	<path
+   d="m 150.6,908.4 c -65.1,0 -118,-52.9 -118,-118 0,-65.1 52.9,-118 118,-118 65.1,0 118,52.9 118,118 0,65.1 -52.9,118 -118,118 z m 0,-214.3 c -53.1,0 -96.3,43.2 -96.3,96.3 0,53.1 43.2,96.3 96.3,96.3 53.1,0 96.3,-43.2 96.3,-96.3 0,-53.1 -43.2,-96.3 -96.3,-96.3 z"
+   id="path1"
+   style="fill:#000a11;fill-opacity:1" />
+	<path
+   d="M 97.8,597.3 C 43.9,597.3 0,553.4 0,499.5 c 0,-53.9 43.9,-97.8 97.8,-97.8 53.9,0 97.8,43.9 97.8,97.8 0,53.9 -43.9,97.8 -97.8,97.8 z m 0,-173.9 c -41.9,0 -76.1,34.1 -76.1,76.1 0,42 34.1,76.1 76.1,76.1 42,0 76.1,-34.1 76.1,-76.1 0,-42 -34.2,-76.1 -76.1,-76.1 z"
+   id="path2"
+   style="fill:#000a11;fill-opacity:1" />
+	<circle
+   cx="206.8"
+   cy="268"
+   r="75.800003"
+   id="circle2"
+   style="fill:#000a11;fill-opacity:1" />
+	<path
+   d="M 461.5,133.3 C 461.5,97.8 432.7,69 397.2,69 c -35.5,0 -64.3,28.8 -64.3,64.3 0,35.5 28.8,64.3 64.3,64.3 35.5,0 64.3,-28.8 64.3,-64.3 z"
+   id="path3"
+   style="fill:#000a11;fill-opacity:1" />
+</g>
+<g
+   id="fill-ffe700"
+   fill="#ffe700"
+   transform="translate(0,16.3968)"
+   style="fill:#000000;fill-opacity:1">
+	<path
+   d="m 659.9,116.6 c 0,-29.2 -23.7,-53 -53,-53 -29.3,0 -53,23.7 -53,53 0,29.3 23.7,53 53,53 29.3,0 53,-23.8 53,-53 z"
+   id="path4"
+   style="fill:#000000;fill-opacity:1" />
+	<path
+   d="m 834.6,185.9 c 0,-25 -20.3,-45.3 -45.3,-45.3 -25,0 -45.3,20.3 -45.3,45.3 0,25 20.3,45.3 45.3,45.3 25,-0.1 45.3,-20.3 45.3,-45.3 z"
+   id="path5"
+   style="fill:#000000;fill-opacity:1" />
+	<path
+   d="m 956.3,304 c 0,-19.9 -16.2,-36.1 -36.1,-36.1 -19.9,0 -36.1,16.2 -36.1,36.1 0,19.9 16.2,36.1 36.1,36.1 19.9,0 36.1,-16.2 36.1,-36.1 z"
+   id="path6"
+   style="fill:#000000;fill-opacity:1" />
+</g>
+
+</svg>
