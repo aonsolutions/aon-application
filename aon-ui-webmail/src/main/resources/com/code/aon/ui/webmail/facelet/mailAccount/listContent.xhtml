@@ -1,8 +1,9 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <ui:composition  xmlns="http://www.w3.org/1999/xhtml"
-	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:a4j="http://richfaces.org/a4j"
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:aon="http://www.code.es/aon-rich-components">
 
 	<aon:valueParam name="innerToolbar" default="#{false}"/>
@@ -51,7 +52,7 @@
 					</f:facet>
 					<aon:outputText value="#{to.signature.name}" />
 				</aon:column>
-
+				
 				<aon:if test="#{!mailConfig.skipTypeColumn}">	
 					<aon:column styleClass="aon-editDataTable-iconColumn">
 						<f:facet name="header">
@@ -67,20 +68,83 @@
 							<aon:outputText value="#{bundle.aon_status}" />
 						</f:facet>
 						<aon:div>
-							<aon:div styleClass="aon-valign-items-middle" rendered="#{to ne null and controller.isProtocolAon(to) and controller.isVerifiedForSendingStatus(to)}" >
+							<aon:div styleClass="aon-valign-items-middle" rendered="#{controller.getVerificationStatus(to)=='SUCCESS'}" >
 								<aon:outputText styleClass="material-icons-outlined aon-color-green" value="check_circle" />
 								<aon:outputText styleClass="aon-color-green aon-padding-left" value="#{bundle.webmail_mailAccount_Verified}" />
 							</aon:div>
-							<aon:div styleClass="aon-valign-items-middle"  rendered="#{to ne null and controller.isProtocolAon(to) and !controller.isVerifiedForSendingStatus(to)}">
+							<aon:div styleClass="aon-valign-items-middle"  rendered="#{controller.getVerificationStatus(to)=='UNKNOW' || controller.getVerificationStatus(to)=='FAILED'}">
 								<aon:outputText styleClass="material-icons-outlined aon-label-error" value="cancel" />
 								<aon:outputText styleClass="aon-label-error aon-padding-left" value="#{bundle.webmail_mailAccount_Unverified}" />
+							</aon:div>
+							<aon:div styleClass="aon-valign-items-middle"  rendered="#{controller.getVerificationStatus(to)=='PENDING' || controller.getVerificationStatus(to)=='NOT_STARTED'}">
+								<aon:outputText styleClass="material-icons-outlined aon-pending" value="cancel" />
+								<aon:outputText styleClass="aon-pending aon-padding-left" value="#{bundle.webmail_mailAccount_Pending}" />
+							</aon:div>
+							<aon:div styleClass="aon-valign-items-middle"  rendered="#{controller.isProtocolAon(to) and controller.getVerificationStatus(to) eq null }">
+								<style>
+									@keyframes rotate {
+										0% {
+									        transform: rotate(0deg)
+									    }
+									    6% {
+									        transform: rotate(22deg)
+									    }
+									    12% {
+									        transform: rotate(45deg)
+									    }
+									    18% {
+									        transform: rotate(67deg)
+									    }
+									    25% {
+									        transform: rotate(90deg)
+									    }
+									    31% {
+									        transform: rotate(122deg)
+									    }
+									    37% {
+									        transform: rotate(135deg);
+									    }
+									    43% {
+									        transform: rotate(157deg);
+									    }
+									    50% {
+									        transform: rotate(180deg);
+									    }
+									    56% {
+									        transform: rotate(192deg);
+									    }
+									    62% {
+									        transform: rotate(225deg);
+									    }
+									    68% {
+									        transform: rotate(237deg);
+									    }
+									    75% {
+									        transform: rotate(270deg);
+									    }
+									    81% {
+									        transform: rotate(282deg);
+									    }
+									    87% {
+									        transform: rotate(315deg);
+									    }
+									    93% {
+									        transform: rotate(327deg);
+									    }
+									    100% {
+									        transform: rotate(360deg);
+									    }
+    								}								
+								</style>
+								<aon:outputText styleClass="material-icons-outlined aon-pending" style="animation-name: rotate; animation-duration: 1.0s; animation-iteration-count: infinite;" value="sync" />
+								<aon:outputText styleClass="aon-pending aon-padding-left" value="" />
 							</aon:div>
 						</aon:div>
 					</aon:column>
 				</aon:if>
 
 				<aon:if test="#{!mailConfig.skipDefaultAccountColumn}">	
-					<aon:column styleClass="aon-editDataTable-iconColumn ">
+					<aon:column styleClass="aon-editDataTable-iconColumn">
 						<f:facet name="header">
 							<aon:outputText value="#{bundle.webmail_mailAccount_default_account}" />
 						</f:facet>
@@ -103,6 +167,18 @@
 				
 		</ui:decorate>
 
+		<a4j:jsFunction 
+			id="updateEmailIdentities" 
+			name="updateEmailIdentities" 
+			reRender="#{controller.beanName}Data" 
+			action="#{controller.updateEmailIdentities}" 
+			>
+		</a4j:jsFunction>
+		<script type="text/javascript">
+		//<![CDATA[
+			updateEmailIdentities();
+		//]]>
+		</script>
 	</aon:div>
 
 </ui:composition>

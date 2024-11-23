@@ -62,25 +62,42 @@
 									ajaxSingle="true" 
 									reRender="showNewMessageWindow"
 									value="#{bundle.webmail_send_test_email}"
-									styleClass="aon-color-green aon-padding-left" 
+									styleClass="aon-color-green aon-padding aonButton-Verified" 
 									actionListener="#{webmailMessage.onSendEmail}" 
 								>
 									<f:setPropertyActionListener target="#{webmailMessage.senderMailAccount}" value="#{controller.to}" />
 								</aon:commandLink>
 							</aon:if>
 							<aon:if test="#{!controller.verifiedForSendingStatus}" >
-								<aon:outputText styleClass="material-icons-outlined aon-label-error aon-padding-left" value="cancel" />
-								<aon:outputText styleClass="aon-label-error" value="#{bundle.webmail_mailAccount_Unverified}"/>
-								<aon:commandLink id="sendVerifyEmail" 
-									ajaxSingle="true" 
-									reRender="showNewMessageWindow"
-									value="#{bundle.webmail_send_verify_email}" 
-									styleClass="aon-label-error aon-padding-left" 
-								>
-									<f:setPropertyActionListener target="#{webmailMessage.senderMailAccount}" value="#{controller.to}" />
-									<aon:actionListener method="#{webmailMessage.onSendVerifyEmail}" />
-								</aon:commandLink>
-							</aon:if>
+								<aon:if test="#{controller.verificationStatus == 'PENDING' || controller.verificationStatus == 'NOT_STARTED'}" >
+									<aon:outputText styleClass="material-icons-outlined aon-pending aon-padding-left" value="cancel" />
+									<aon:outputText styleClass="aon-pending" value="#{bundle.webmail_mailAccount_Pending}"/>
+									<aon:outputText styleClass="aon-padding-left aon-pending" value="#{bundle.webmail_mailAccount_Check_Email}"/>
+									<aon:commandLink id="sendAgainVerifyEmail" 
+										ajaxSingle="true" 
+										reRender="showNewMessageWindow"
+										value="#{bundle.webmail_resend_verify_email}" 
+										styleClass="aon-padding aonButton-Pending" 
+									>
+										<f:setPropertyActionListener target="#{webmailMessage.senderMailAccount}" value="#{controller.to}" />
+										<aon:actionListener method="#{webmailMessage.onSendVerifyEmail}" />
+									</aon:commandLink>
+								</aon:if>
+								<aon:if test="#{controller.verificationStatus == 'UNKNOW' || controller.verificationStatus == 'FAILED'}" >
+ 									<aon:outputText styleClass="material-icons-outlined aon-label-error aon-padding-left" value="cancel" />
+									<aon:outputText styleClass="aon-label-error" value="#{bundle.webmail_mailAccount_Unverified}"/>
+								
+									<aon:commandLink id="sendVerifyEmail" 
+										ajaxSingle="true" 
+										reRender="showNewMessageWindow"
+										value="#{bundle.webmail_send_verify_email}" 
+										styleClass="aon-label-error aon-padding aonButton-Error" 
+									>
+										<f:setPropertyActionListener target="#{webmailMessage.senderMailAccount}" value="#{controller.to}" />
+										<aon:actionListener method="#{webmailMessage.onSendVerifyEmail}" />
+									</aon:commandLink>
+ 								</aon:if>
+ 							</aon:if>
 						</aon:if>
 					</aon:if>
 				</aon:div>
@@ -271,7 +288,7 @@
 						<aon:commandButton reRender="folderWindow"
 							rendered="#{!controller.nevv and (mailConfig.treeNode != null)}"
 							title="#{bundle.webmail_folder_selection}"
-							value="&#160;" styleClass="aon-lookupButton aon-margin-left">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
+							value="&#160;" styleClass="aon-lookupButton aon-margin-left">
 							<f:setPropertyActionListener target="#{mailConfig.selectedFolder}"
 								value="trashFolder" />
 							<f:setPropertyActionListener target="#{mailConfig.showFolderWindow}"
