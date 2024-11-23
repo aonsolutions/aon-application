@@ -80,6 +80,41 @@
 								<aon:outputText styleClass="material-icons-outlined aon-pending" value="cancel" />
 								<aon:outputText styleClass="aon-pending aon-padding-left" value="#{bundle.webmail_mailAccount_Pending}" />
 							</aon:div>
+							<aon:div styleClass="aon-valign-items-middle"  rendered="#{controller.isProtocolAon(to) and controller.getVerificationStatus(to) eq null }">
+								<style>
+									@keyframes rotate {
+										0% {
+									        transform: rotate(0deg)
+									    }
+									    12% {
+									        transform: rotate(45deg)
+									    }
+									    25% {
+									        transform: rotate(90deg)
+									    }
+									    37% {
+									        transform: rotate(135deg);
+									    }
+									    50% {
+									        transform: rotate(180deg);
+									    }
+									    62% {
+									        transform: rotate(225deg);
+									    }
+									    75% {
+									        transform: rotate(270deg);
+									    }
+									    87% {
+									        transform: rotate(315deg);
+									    }
+									    100% {
+									        transform: rotate(360deg);
+									    }
+    								}								
+								</style>
+								<aon:outputText styleClass="material-icons-outlined aon-pending" style="animation-name: rotate; animation-duration: 1.0s; animation-iteration-count: infinite;" value="sync" />
+								<aon:outputText styleClass="aon-pending aon-padding-left" value="" />
+							</aon:div>
 						</aon:div>
 					</aon:column>
 				</aon:if>
