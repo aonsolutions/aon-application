@@ -1,22 +1,20 @@
 package com.code.aon.ui.webmail.controller;
 
 import static com.code.aon.ui.common.ICommonMessages.MAIL_ACCOUNT_DUPLICATED;
+import static com.esferalia.aon.watson.util.AonStringUtils.contains;
+import static com.esferalia.aon.watson.util.AonStringUtils.isBlank;
+import static com.esferalia.aon.watson.util.AonStringUtils.isNotBlank;
+import static com.esferalia.aon.watson.util.AonStringUtils.substringAfter;
+import static com.esferalia.aon.watson.util.AonStringUtils.substringAfterLast;
 
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
-import javax.faces.model.DataModel;
-import javax.faces.model.DataModelEvent;
-import javax.faces.model.DataModelListener;
 import javax.faces.model.SelectItem;
 
-import org.ajax4jsf.model.DataVisitor;
-import org.ajax4jsf.model.Range;
-import org.ajax4jsf.model.SequenceRange;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,7 +28,6 @@ import com.code.aon.ql.Criteria;
 import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.ui.config.util.UserUtils;
-import com.code.aon.ui.form.ExtendedPageDataModel;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.webmail.IMailAccount;
 import com.code.aon.webmail.bean.IMailConstants;
@@ -186,8 +183,10 @@ public class MailAccountDBController extends MailDBController implements IMailAc
 	}
 
 	public void updateEmailIdentities() {
-		
-		emailIdentityMap.forEach( (email,identity) ->  updateEmailIdentity(email));
+		List<String> emails = emailIdentityMap.keySet().stream().filter(s -> contains(s, '@')).toList();
+		for ( String email : emails ) {
+			updateEmailIdentity(email);
+		}
 	}
 	
 	
@@ -199,10 +198,33 @@ public class MailAccountDBController extends MailDBController implements IMailAc
 	}
 	
 	public void updateEmailIdentity(String email) {
-		if ( AonStringUtils.isNotBlank(email) ) {
-			GetEmailIdentityResponse emailIdentity = SES.getEmailIdentity(email);
-			this.emailIdentityMap.put(email, emailIdentity == null ? UNKNOWN : emailIdentity );
+		if ( isBlank(email)) {
+			return;
 		}
+		GetEmailIdentityResponse emailIdentity = SES.getEmailIdentity(email);
+		
+		for (String domain = substringAfterLast(email, "@"); contains(domain,'.')
+				&& emailIdentity == null; domain = substringAfter(domain, ".")) {
+			emailIdentity = this.emailIdentityMap.get(domain);
+		}
+		for (String domain = substringAfterLast(email, "@"); contains(domain, '.')
+				&& emailIdentity == null; domain = substringAfter(domain, ".")) {
+			emailIdentity = SES.getEmailIdentity(domain);
+			this.emailIdentityMap.put(domain, emailIdentity );
+		}
+
+		this.emailIdentityMap.put(email, emailIdentity == null ? UNKNOWN : emailIdentity );
+		
+		
+	}
+	
+	public GetEmailIdentityResponse getEmailIdentity(String email) {
+		GetEmailIdentityResponse emailIdentity = this.emailIdentityMap.get(email);
+		for (String domain = substringAfterLast(email, "@"); emailIdentity == null
+				&& contains(domain, '.'); domain = substringAfter(domain, ".")) {
+			emailIdentity = this.emailIdentityMap.get(domain);
+		}
+		return emailIdentity;
 	}
 
 	public boolean isVerifiedForSendingStatus() {
@@ -211,7 +233,7 @@ public class MailAccountDBController extends MailDBController implements IMailAc
 	}
 	
 	public boolean isVerifiedForSendingStatus(String email) {
-		GetEmailIdentityResponse emailIdentity = emailIdentityMap.get(email); 
+		GetEmailIdentityResponse emailIdentity = getEmailIdentity(email); 
 		return emailIdentity != null && emailIdentity.verifiedForSendingStatus();
 	}
 	
@@ -225,9 +247,11 @@ public class MailAccountDBController extends MailDBController implements IMailAc
 	}
 	
 	public String getVerificationStatus(String email) {
-		GetEmailIdentityResponse emailIdentity = emailIdentityMap.get(email); 
+		GetEmailIdentityResponse emailIdentity = getEmailIdentity(email); 
 		return emailIdentity != null  ? emailIdentity.verificationStatusAsString() : null;
 	}
+	
+	
 	
 	public String getVerificationStatus(MailAccount mailAccount) {
 		if (mailAccount == null 
