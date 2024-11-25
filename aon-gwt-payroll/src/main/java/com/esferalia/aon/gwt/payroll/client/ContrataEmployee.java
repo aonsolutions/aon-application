@@ -391,7 +391,6 @@ public abstract class ContrataEmployee extends ResizeComposite {
 			pdfSalaryButton.setVisible(true);
 			
 			boolean hasSettleSalary = hasSettleSalary();
-			Window.alert("hasSettle : " + hasSettleSalary);
 			pdfSalarySettleButton.setVisible(hasSettleSalary);
 			if(hasSettleSalary) pdfSalarySettleButton.setEnabled(false);
 			
