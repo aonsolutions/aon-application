@@ -1005,6 +1005,9 @@ public interface AonSolutionsCSS extends CssResource {
 	
 	@ClassName("aon_color_red")
 	String aonColorRed();
+	
+	@ClassName("aon_no_border_toolbar")
+	String aonNoBorderToolbar();
 
 	@ClassName("aon_color_green")
 	String aonColorGreen();
