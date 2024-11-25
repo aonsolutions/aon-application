@@ -1,5 +1,6 @@
 package com.esferalia.aon.payroll.calculator.sql;
 
+import static com.esferalia.aon.jooq.tables.Contract.CONTRACT;
 import static com.esferalia.aon.jooq.tables.ContractPayment.CONTRACT_PAYMENT;
 import static com.esferalia.aon.jooq.tables.PaymentConcept.PAYMENT_CONCEPT;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.AGREEMENT_HOURS;
@@ -63,6 +64,7 @@ import org.junit.Ignore;
 import org.junit.Test;
 
 import com.code.aon.common.enumeration.Month;
+import com.code.aon.ql.Criteria;
 import com.esferalia.aon.jooq.tables.ContractPayment;
 import com.esferalia.aon.jooq.tables.PaymentConcept;
 import com.esferalia.aon.jooq.tables.records.AgreementLevelCategoryRecord;
@@ -7715,6 +7717,65 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 		
 		org.junit.Assert.assertEquals(0, prestIt1_3);
 		org.junit.Assert.assertEquals(1, prestIt4_15);
+	}
+	
+	
+	@Test
+	public void testBaseRegulatoryAndDelays() throws ExpressionException, SQLException,
+			SalaryException {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+		
+		Date contractStartDate = add(getToday(), Calendar.MONTH, -1);
+		
+		//@formatter:off
+		ContractRecord contract = newContract(aonContext, 
+				contractStartDate,
+				new HashMap<String,String>(){
+				{
+					put(MONTH_DAYS.getName(), "30");
+				}
+				},
+				new String[] {
+				"250.00 * DIAS_TRABAJADOS / DIAS_MES" ,
+				"1500.00 * DIAS_TRABAJADOS / DIAS_MES"
+				}, 
+				new String[] {
+				}, null);
+		//@formatter:on
+		
+		
+		calculateAndSave(connection, getContractSalaryCalculatorContext(connection, contractStartDate,
+				getLastDayOfMonth(contractStartDate), getLastDayOfMonth(contractStartDate), contract));
+		
+		addPayment(aonContext, contract, contractStartDate, null, "ATRASO CONVENIO", "250 * DIAS_TRABAJADOS / DIAS_MES",
+				"_P", "_P", PaymentType.CRA_0001);
+		
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(CONTRACT.getName() + "." + CONTRACT.ID.getName(), contract.getId());
+		SQLContractDelayCalculatorContext delayCtx = new SQLContractDelayCalculatorContext(connection, 
+				contractStartDate, 
+				getLastDayOfMonth(contractStartDate), 
+				getLastDayOfMonth(contractStartDate), 
+				criteria);
+		delayCtx.next();
+		calculateAndSave(connection, delayCtx);
+		
+
+		Date startDate = getFirstDayOfMonth(getToday());
+		Date endDate = getLastDayOfMonth(startDate);
+		
+		Date startIT = add(startDate, Calendar.DAY_OF_MONTH, 5);
+
+		addIT(aonContext, contract, LeaveType.COMMON_DISEASE, startIT,
+				null, null);
+		
+		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
+				connection, startDate, endDate, endDate, contract);
+		
+		ctx.getExpressionContext().eval(ContextVariable.REGULATORY_BASE.getName(), startIT, endDate)
+		.forEach(  r ->  org.junit.Assert.assertEquals(2000.00 / 30.00, ((Number) r.getValue()).doubleValue(), DELTA));
+
 	}
 
 	// ------------------------------------------------------------------------
