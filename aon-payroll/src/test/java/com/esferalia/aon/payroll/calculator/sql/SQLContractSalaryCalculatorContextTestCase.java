@@ -4,8 +4,10 @@ import static com.esferalia.aon.jooq.tables.Contract.CONTRACT;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.CGC_BASE_MIN;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.DROP_FACTOR;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.MONTH_DAYS;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.PARTY_DAYS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.WORKED_DAYS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.WORKED_FACTOR;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.WORKING_DAYS;
 import static com.esferalia.aon.watson.util.AonDateUtils.getFirstDayOfMonth;
 import static com.esferalia.aon.watson.util.AonDateUtils.getFirstDayOfYear;
 import static com.esferalia.aon.watson.util.AonDateUtils.getLastDayOfMonth;
@@ -20,6 +22,7 @@ import java.sql.Connection;
 import java.sql.Date;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -36,6 +39,7 @@ import com.code.aon.common.AonException;
 import com.code.aon.ql.Criteria;
 import com.esferalia.aon.jooq.tables.records.AgreementLevelCategoryRecord;
 import com.esferalia.aon.jooq.tables.records.AgreementRecord;
+import com.esferalia.aon.jooq.tables.records.CalendarRecord;
 import com.esferalia.aon.jooq.tables.records.ContractRecord;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Deduction;
@@ -55,9 +59,11 @@ import com.esferalia.aon.salary.SalaryException;
 import com.esferalia.aon.salary.enumeration.DeductionType;
 import com.esferalia.aon.salary.expression.ExpressionContext.ExpressionExceptionWrapper;
 import com.esferalia.aon.salary.expression.ExpressionException;
+import com.esferalia.aon.salary.expression.ITimedObject;
 import com.esferalia.aon.salary.expression.ITimedResult;
 import com.esferalia.aon.salary.expression.ITimedVariable;
 import com.esferalia.aon.salary.expression.Period;
+import com.esferalia.aon.salary.expression.TimedResult;
 //import com.esferalia.aon.salary.expression.CompileException;
 import com.esferalia.aon.watson.util.AonDateUtils;
 
@@ -801,9 +807,118 @@ public class SQLContractSalaryCalculatorContextTestCase extends
 		.eval("[AGRARIO:true,ARTISTAS:true,HOGAR:true]["+ ContextVariable.REGIME.getName() + "]" , firstDayOfMonth, lastDayOfMonth, Boolean.class)
 		.forEach(r -> assertTrue(r.getValue()));
 		
-}
+	}
 	
+	@Test
+	public void testCalendarPartyDaysI() throws SQLException, AonException {
 
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+		Integer domainId = newDomain(aonContext).getId();
+		
+		Date firstDayOfMonth = getFirstDayOfMonth(getToday());
+		Date lastDayOfMonth = getLastDayOfMonth(getToday());
+		
+		List<Date> holidays = new ArrayList<>();
+		for (Date holiday = firstDayOfMonth; holiday
+				.before(lastDayOfMonth); holiday = add(holiday, Calendar.DAY_OF_MONTH, 5)) {
+			holidays.add(holiday);
+		}
+		
+		Integer holidayId = newHoliday(
+				aonContext, 
+				domainId, 
+				null, //parentId,
+				holidays.toArray(new Date[holidays.size()])
+				)
+				.getId();
+		
+		CalendarRecord calendar = newCalendar(aonContext, 
+				domainId, 
+				holidayId, 
+				null,//mondayHours, 
+				8.00,//tuesdayHours, 
+				8.00,//wednesdayHours, 
+				8.00,//thursdayHours, 
+				8.00,//fridayHours, 
+				8.00,//saturdayHours, 
+				null//sundayHours
+				)
+				;
+		
+		
+		@SuppressWarnings("serial")
+		ContractRecord contract = newContract(aonContext, 
+				firstDayOfMonth ,
+				Collections.emptyMap(),
+				new String[] { PARTY_DAYS.getName()},
+				new String[] {},
+				null,
+				calendar);
+		
+		List<ITimedResult<Double>> partyDays = getContractSalaryCalculatorContext(connection, firstDayOfMonth, lastDayOfMonth, lastDayOfMonth, contract).getExpressionContext()
+		.eval(PARTY_DAYS.getName(), firstDayOfMonth, lastDayOfMonth,Double.class);
+		
+		org.junit.Assert.assertEquals(holidays.size(), partyDays.size());
+		
+		org.junit.Assert.assertEquals(holidays.size(), partyDays.stream().collect(Collectors.summingDouble(ITimedObject<Double>::getValue)), 0.00);
+		
+	}
+
+	@Test
+	public void testCalendarPartyDaysII() throws SQLException, AonException {
+
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+		Integer domainId = newDomain(aonContext).getId();
+		
+		Date firstDayOfMonth = getFirstDayOfMonth(getToday());
+		Date lastDayOfMonth = getLastDayOfMonth(getToday());
+		
+		List<Date> holidays = new ArrayList<>();
+		for (int i = 0; i < 10; i++) {
+			holidays.add(add(firstDayOfMonth, Calendar.DAY_OF_MONTH, i));
+		}
+		
+		Integer holidayId = newHoliday(
+				aonContext, 
+				domainId, 
+				null, //parentId,
+				holidays.toArray(new Date[holidays.size()])
+				)
+				.getId();
+		
+		CalendarRecord calendar = newCalendar(aonContext, 
+				domainId, 
+				holidayId, 
+				null,//mondayHours, 
+				8.00,//tuesdayHours, 
+				8.00,//wednesdayHours, 
+				8.00,//thursdayHours, 
+				8.00,//fridayHours, 
+				8.00,//saturdayHours, 
+				null//sundayHours
+				)
+				;
+		
+		
+		@SuppressWarnings("serial")
+		ContractRecord contract = newContract(aonContext, 
+				firstDayOfMonth ,
+				Collections.emptyMap(),
+				new String[] { PARTY_DAYS.getName()},
+				new String[] {},
+				null,
+				calendar);
+		
+		List<ITimedResult<Double>> partyDays = getContractSalaryCalculatorContext(connection, firstDayOfMonth, lastDayOfMonth, lastDayOfMonth, contract).getExpressionContext()
+		.eval(PARTY_DAYS.getName(), firstDayOfMonth, lastDayOfMonth,Double.class);
+		
+		org.junit.Assert.assertEquals(1, partyDays.size());
+		
+		org.junit.Assert.assertEquals(10, partyDays.stream().collect(Collectors.summingDouble(ITimedObject<Double>::getValue)), 0.00);
+		
+	}
 	// ------------------------------------------------------------------------
 
 }

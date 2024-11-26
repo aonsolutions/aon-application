@@ -120,7 +120,7 @@ class ModelMatrixFilterPanel extends AonDisplayTable implements HasValueChangeHa
 		model.setStyleName(AON.CSS.aonMarginRight());
 		model.addItem(" TODOS ", "");
 		for (FiscalModelType m : FiscalModelType.values()) {
-			if (m != FiscalModelType.M140 && m != FiscalModelType.M240 && m != FiscalModelType.SII && m != FiscalModelType.M303_RG && m != FiscalModelType.M303_RS && m != FiscalModelType.M310 && m != FiscalModelType.M311 && m != FiscalModelType.M340 ) {
+			if (m != FiscalModelType.M369 && m != FiscalModelType.M140 && m != FiscalModelType.M240 && m != FiscalModelType.SII && m != FiscalModelType.M303_RG && m != FiscalModelType.M303_RS && m != FiscalModelType.M310 && m != FiscalModelType.M311 && m != FiscalModelType.M340 ) {
 				model.addItem(AON.MSG.fiscalModelType(m), m.toString());
 			}
 		}

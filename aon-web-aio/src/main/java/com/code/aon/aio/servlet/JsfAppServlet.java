@@ -22,7 +22,6 @@ import org.apache.catalina.Session;
 import org.apache.catalina.connector.Request;
 
 import com.code.aon.aio.controller.AppController;
-import com.code.aon.aio.controller.DesktopController;
 import com.code.aon.jaas.auth.AuthPrincipal;
 import com.code.aon.ui.common.ICommonConstants;
 import com.code.aon.ui.common.LocaleElement;

@@ -95,6 +95,23 @@ public class InvoiceApiDAO {
 			.fetch().stream().map(new InvoiceApiFiller(ctx));
 	}
 	
+	public static Stream<Invoice> getChartInvoices(AONContext ctx, InvoiceFilter filter) {
+		return ctx.getDslContext().select()
+				.from(INVOICE)
+				.leftOuterJoin(INVOICE_INFO).on(INVOICE_INFO.INVOICE.eq(INVOICE.ID))
+			.where(INVOICE_PROPERTIES.getConditions(filter))
+			.groupBy(INVOICE.ID)
+			.fetch().stream().map(r -> {
+				return new Invoice()
+					.setId(r.get(INVOICE.ID))
+					.setIssueDate(r.get(INVOICE.ISSUE_DATE))
+					.setType(AonEnumUtils.enumValue(InvoiceType.class,r.getValue(INVOICE.TYPE)))
+					.setTotal(r.get(INVOICE.TOTAL))
+					.setTaxableBase(r.get(INVOICE.TAXABLE_BASE))
+					;
+			});
+	}
+	
 	public static Pair<Date, Date> getInvoicesChartPeriod(AONContext ctx, InvoiceFilter filter) {
 		
 		Record2<java.sql.Date, java.sql.Date> result = ctx.getDslContext().select(

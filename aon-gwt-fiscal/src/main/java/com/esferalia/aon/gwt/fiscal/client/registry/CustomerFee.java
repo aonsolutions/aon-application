@@ -1703,7 +1703,14 @@ public class CustomerFee extends MainEntryPoint {
 		ListBox statusListBox = createStatusListBox(fee, row);
 		statusListBox.setWidth("85px");
 		setInputStyle(statusListBox);
-		setSelectedValueLB(statusListBox, fee.getCustomer().getStatus().getDescription());
+		setSelectedValueLB(statusListBox, null == fee.getCustomer().getStatus() ? "" : fee.getCustomer().getStatus().getDescription());
+		if(null == fee.getCustomer().getStatus()) {
+			statusListBox.getElement().getStyle().setColor("red");
+			statusListBox.getElement().getStyle().setBorderColor("red");
+			statusListBox.getElement().getStyle().setFontWeight(FontWeight.BOLD);
+			statusListBox.setTitle("Cuidado, el estado del cliente no esta definido. Esto es un error grave");
+		}
+		
 		
 		TextBox lineTextBox = new TextBox();
 		lineTextBox.setEnabled(null != customerSuggestions.get(customerSuggestBox.getValue()));

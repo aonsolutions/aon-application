@@ -391,6 +391,7 @@ public abstract class FBatchPaymentEntryModule extends SimpleLayoutPanel {
 			confidential.addStyleName(AON.CSS.aonIconCheck());
 			confidential.removeStyleName(AON.CSS.aonIconChecked());
 		}
+		
 		String amountSum = null == fBatch.getBatchDetails() || fBatch.getBatchDetails().isEmpty() ? "0.00 \u20ac"
 				: AON.FMT.format(fBatch.getBatchDetails().stream().map(fBatchDetail -> fBatchDetail.getAmount())
 						.reduce(0.00, (a, b) -> a + b)) + " \u20ac";
@@ -1123,6 +1124,15 @@ public abstract class FBatchPaymentEntryModule extends SimpleLayoutPanel {
 			issueDate.setTitle(infoTitle);
 			amount.setTitle(infoTitle);
 		}
+		
+		if(!finance.hasSalary()) {
+			issueDate.addStyleName(AON.CSS.aonColorRed());
+			titular.addStyleName(AON.CSS.aonColorRed());
+			amount.addStyleName(AON.CSS.aonColorRed());
+
+			issueDate.setTitle(infoTitle);
+			amount.setTitle(infoTitle);
+		}
 
 		AonTableButton addButton = new AonTableButton("A\u00f1adir a la remesa", AON.CSS.aonIconMoveRight());
 		addButton.addClickHandler(e -> {
@@ -1135,7 +1145,7 @@ public abstract class FBatchPaymentEntryModule extends SimpleLayoutPanel {
 		});
 
 		aviableFinanceTable.setWidget(row, col,
-			isSelectable(finance) && !notValidAccountBic(finance) && !hasNegativeAmount(finance) ? checkButton : new Label()
+			isSelectable(finance) && !notValidAccountBic(finance) && !hasNegativeAmount(finance) && finance.hasSalary() ? checkButton : new Label()
 		);
 		++col;
 		aviableFinanceTable.setWidget(row, col, issueDate);
@@ -1156,12 +1166,12 @@ public abstract class FBatchPaymentEntryModule extends SimpleLayoutPanel {
 		aviableFinanceTable.setWidget(row, col, amount);
 		++col;
 		aviableFinanceTable.setWidget(row, col, 
-			notValidAccountBic(finance) || hasNegativeAmount(finance) ? infoButton : addButton
+			notValidAccountBic(finance) || hasNegativeAmount(finance) || !finance.hasSalary() ? infoButton : addButton
 		);
 		
 		aviableFinanceTable.getRowFormatter().getElement(row).getStyle().setProperty("height", "1.5rem");
 	}
-	
+
 	private String getInfoMessage(Finance finance) {
 		if(hasNegativeAmount(finance)) return "El vencimiento tiene un valor negativo";
 		else if(notValidAccountBic(finance))
@@ -1170,6 +1180,7 @@ public abstract class FBatchPaymentEntryModule extends SimpleLayoutPanel {
 			: !finance.getBankAccount().isValidBankAccount()
 					? "La cuenta bacanria asociada al titular no es correcta"
 					: AonStringUtils.isBlank(finance.getBic()) ? "No existe BIC asociado al titular" : "";
+		else if (!finance.hasSalary()) return "Este vencimiento tiene asociada una nomina inexistente";
 		else return AonStringUtils.EMPTY;
 	}
 	

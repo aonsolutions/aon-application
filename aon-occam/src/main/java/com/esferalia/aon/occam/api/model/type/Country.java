@@ -301,12 +301,47 @@ public enum Country implements Serializable {
 	public int getBbanLength() {
 		return ibanLength - 4;
 	}
+	
+	public boolean isEuropeanUnionCountry() {
+		return this == ES || isIntracommunityCountry();
+	}
 
 	public boolean isIntracommunityCountry() {
-		return this == DE || this == AT || this == BE || this == BG || this == HR || this == CY || this == DK
-			|| this == SI || this == EE || this == FI || this == FR || this == GR || this == GB || this == NL
-			|| this == HU || this == IT || this == IE || this == LV || this == LT || this == LU || this == MT
-			|| this == PL || this == PT || this == CZ || this == SK || this == RO || this == SE || this == XI;
+ 		return this == DE	//ALEMANIA 
+			|| this == AT	//AUSTRIA 
+			|| this == BE	//BELGICA
+			|| this == BG	//BULGARIA 
+			|| this == HR	//CROACIA 
+			|| this == CY	//CHIPRE 
+			|| this == DK	//DINAMARCA
+							//ESPAÑA
+			|| this == SI	//ESLOVENIA 
+			|| this == EE	//ESTONIA 
+			|| this == FI	//FINLANDIA 
+			|| this == FR 	//FRANCIA
+			|| this == GR	//GRECIA 
+		//  || this == GB	BREXIT!! 
+			|| this == NL	//PAISES BAJOS
+			|| this == HU	//HUNGRIA
+			|| this == IT	//ITALIA 
+			|| this == IE	//IRLANDA 
+			|| this == LV	//LETONIA 
+			|| this == LT	//LITUANIA
+			|| this == LU	//LUXEMBURGO 
+			|| this == MT	//MALTA (Inc. Gozo Y Comino)
+			|| this == PL	//POLONIA 
+			|| this == PT 	//PORTUGAL (Inc. Azores y Madeira)
+			|| this == CZ	//REPUBLICA CHECA 
+			|| this == SK 	//REPUBLICA ESLOVACA
+			|| this == RO 	//RUMANIA
+			|| this == SE	//SUECIA 
+			|| this == XI	//IRLANDA DEL NORTE
+		;
+		
+		
+		
+		
+		
 	}
 
 	public static Country safeValueOf(String iso2) {

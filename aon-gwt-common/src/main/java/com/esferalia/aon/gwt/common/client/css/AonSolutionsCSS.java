@@ -534,6 +534,12 @@ public interface AonSolutionsCSS extends CssResource {
 	@ClassName("aon_icon_aeat_bw")
 	String aonIconAeatBw();
 
+	@ClassName("aon_icon_canarias")
+	String aonIconCanarias();
+
+	@ClassName("aon_icon_canarias_bw")
+	String aonIconCanariasBw();
+
 	@ClassName("aon_icon_araba")
 	String aonIconAraba();
 
@@ -999,6 +1005,9 @@ public interface AonSolutionsCSS extends CssResource {
 	
 	@ClassName("aon_color_red")
 	String aonColorRed();
+	
+	@ClassName("aon_no_border_toolbar")
+	String aonNoBorderToolbar();
 
 	@ClassName("aon_color_green")
 	String aonColorGreen();
@@ -1322,6 +1331,9 @@ public interface AonSolutionsCSS extends CssResource {
 	
 	@ClassName("aon_navarra_background_color")
 	String aonNavarraBackgroundColor();
+	
+	@ClassName("aon_canarias_background_color")
+	String aonCanariasBackgroundColor();
 	
 	@ClassName("aon_ccaa_background_color")
 	String aonCcaaBackgroundColor();

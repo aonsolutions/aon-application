@@ -1087,50 +1087,56 @@ export class AonNewMenu extends AonElement {
 
 		let newMenuOptions = [];
 		if(this.getDur().isInvoice()){
+			let optionsMenu = [
+				{
+					name: MSG.ISSUEDS,
+					icon: MATERIAL_ICONS.UNARCHIVE,
+					fn: () => this.newInvoice('emitida')
+				}, {
+					name: MSG.RECEIVEDS,
+					icon: MATERIAL_ICONS.ARCHIVE,
+					fn: () => this.newInvoice('recibida')					
+				}, {
+					name: MSG.TICKETS+"/"+MSG.SUPPORTING_DOCUMENTS,
+					icon: MATERIAL_ICONS.RECEIPT,
+					fn: () => this.newInvoice('ticket')
+					
+				}
+			];
+			
+			if( this.getDur().isOcr() || this.getDur().isInvofox() ){
+				optionsMenu.push({
+					name: MSG.UPLOAD_INVOICE,
+					icon: MATERIAL_ICONS.CLOUD_UPLOAD,
+					fn: () => {
+						let input = this.createElement(TAG.INPUT);
+						input.type = CONSTANT.FILE;
+						input.accept = this.accept;
+						input.className = CSS.AON_NONE;
+						input.multiple = 'multiple';
+						
+						input.addEventListener(EVENT.CHANGE, ({target}) => {
+							let uploadToast = this.getElement('aonUploadToast');
+							if(!uploadToast){ 
+								uploadToast = new AonUploadToast();
+								this.getApplication().getContent().appendChild(uploadToast);
+							}
+							let data = { uploaded : 0 };
+							uploadToast.setJobId(generateJobId());
+							for (let file of target.files) {
+								uploadToast.addFile("invoice", file, data);
+							}			
+						});
+						input.click();
+					}
+				});
+			}
+			
 			newMenuOptions.push({
 				fn: () => {},
 				icon: 'note_add',
 				name: MSG.NEW_INVOICE,
-				options : [
-					{
-						name: MSG.ISSUEDS,
-						icon: MATERIAL_ICONS.UNARCHIVE,
-						fn: () => this.newInvoice('emitida')
-					}, {
-						name: MSG.RECEIVEDS,
-						icon: MATERIAL_ICONS.ARCHIVE,
-						fn: () => this.newInvoice('recibida')					
-					}, {
-						name: MSG.TICKETS+"/"+MSG.SUPPORTING_DOCUMENTS,
-						icon: MATERIAL_ICONS.RECEIPT,
-						fn: () => this.newInvoice('ticket')
-						
-					}, {
-						name: MSG.UPLOAD_INVOICE,
-						icon: MATERIAL_ICONS.CLOUD_UPLOAD,
-						fn: () => {
-							let input = this.createElement(TAG.INPUT);
-							input.type = CONSTANT.FILE;
-							input.accept = this.accept;
-							input.className = CSS.AON_NONE;
-							input.multiple = 'multiple';
-							
-							input.addEventListener(EVENT.CHANGE, ({target}) => {
-								let uploadToast = this.getElement('aonUploadToast');
-								if(!uploadToast){ 
-									uploadToast = new AonUploadToast();
-									this.getApplication().getContent().appendChild(uploadToast);
-								}
-								let data = { uploaded : 0 };
-								uploadToast.setJobId(generateJobId());
-								for (let file of target.files) {
-									uploadToast.addFile("invoice", file, data);
-								}			
-							});
-							input.click();
-						}
-					}
-				]
+				options : optionsMenu
 			});
 		}
 		if(this.getDur().isDocumental()){

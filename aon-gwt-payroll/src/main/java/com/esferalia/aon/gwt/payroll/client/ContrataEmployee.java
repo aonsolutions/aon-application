@@ -386,16 +386,23 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		@Override
 		protected void onSalaryShow() {
 			closeSalaryPDF.setVisible(false);
+			
 			deleteSalaryButton.setVisible(true);
 			pdfSalaryButton.setVisible(true);
-			pdfSalarySettleButton.setVisible(true);
-			bidoqSalaryPublishButton.setVisible(Wnd.getCurrentDomainNameURL().contains("ayudat"));
+			
+			boolean hasSettleSalary = hasSettleSalary();
+			pdfSalarySettleButton.setVisible(hasSettleSalary);
+			if(hasSettleSalary) pdfSalarySettleButton.setEnabled(false);
+			
+			bidoqSalaryPublishButton.setVisible(null != getDur() && getDur().isBidoq());
+			
 			emailSalary.setVisible(true);
 		}
 
 		@Override
 		protected void onPDFShow() {
 			closeSalaryPDF.setVisible(true);
+			
 			deleteSalaryButton.setVisible(false);
 			pdfSalaryButton.setVisible(false);
 			pdfSalarySettleButton.setVisible(false);
@@ -406,9 +413,15 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		private void enableDisableButtons(boolean isSomethingSelected, boolean hasSettleSelected) {
 			deleteSalaryButton.setEnabled(isSomethingSelected);
 	    	pdfSalaryButton.setEnabled(isSomethingSelected);
-	    	pdfSalarySettleButton.setEnabled(hasSettleSelected);
+	    	
+	    	if(hasSettleSelected)
+	    		pdfSalarySettleButton.setEnabled(hasSettleSelected);
+	    	
 //	    	publishButton.setEnabled(isSomethingSelected);
-	    	bidoqSalaryPublishButton.setEnabled(isSomethingSelected);
+	    	
+	    	if(null != getDur() && getDur().isBidoq())
+	    		bidoqSalaryPublishButton.setEnabled(isSomethingSelected && null != getDur() && getDur().isBidoq());
+	    	
 	    	emailSalary.setEnabled(isSomethingSelected);
 		}
 		

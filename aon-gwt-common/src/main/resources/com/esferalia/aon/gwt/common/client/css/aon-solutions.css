@@ -384,6 +384,10 @@
 .aon_icon_navarra { background-image: iconNavarra;}
 @url iconNavarraBw aonIconNavarraBw;
 .aon_icon_navarra_bw { background-image: iconNavarraBw;}
+@url iconCanarias aonIconCanarias;
+.aon_icon_canarias { background-image: iconCanarias;}
+@url iconCanariasBw aonIconCanariasBw;
+.aon_icon_canarias_bw { background-image: iconCanariasBw;}
 @url iconModelFinish aonIconModelFinish;
 .aon_icon_model_finish { background-image: iconModelFinish;}
 @url iconModelSent aonIconModelSent;
@@ -2083,6 +2087,8 @@
 .aon_gipuzkoa_background_color { background-color: #A1C031;}
 .aon_navarra_background_color { background-color: #da002a;}
 .aon_ccaa_background_color { background-color: #C41230;}
+.aon_canarias_background_color { background-color: #fbba00;}
+
 
 /* CONFIRM DIALOG  */
 .aon_cards {
@@ -2274,4 +2280,8 @@
 	color : #5f6368;
 	font-size : .8rem;
 	font-weight : bold;
+}
+
+.aon_no_border_toolbar > .aon_toolbar_inner {
+	border: none;
 }

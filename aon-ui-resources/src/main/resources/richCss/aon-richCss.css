@@ -3620,6 +3620,15 @@ rich-fileupload-button-dis, rich-fileupload-button-selection{
 .aon-background-navarra {
 	background-color: #da002a;
 }
+.aon-menu-icon-canarias{
+	bbackground: transparent url(images/aon-icon/aon-icon-canarias.png) scroll 2px center no-repeat;
+	color: #da002a;
+	border: 0.5px solid #fbba00;;
+}
+.aon-background-canarias {
+	background-color: #fbba00;;
+}
+
 .aon-menu-fiscal-label {
 	background: transparent url("images/aon-icon/aon-ul-list.png") no-repeat scroll left center;
 	padding-left: 15px;

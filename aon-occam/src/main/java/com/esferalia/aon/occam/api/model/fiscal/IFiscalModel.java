@@ -66,6 +66,9 @@ public interface IFiscalModel extends Serializable {
 	public default boolean isAEAT() {
 		return (getAdministration() == Administration.COMMON_TERRITORY);
 	}
+	public default boolean isCanarias() {
+		return (getAdministration() == Administration.CANARIAS);
+	}
 	public default boolean isStrictToDeposit() {
 		return false;
 	};
@@ -154,5 +157,6 @@ public interface IFiscalModel extends Serializable {
 	public default IFiscalModel setFechaPlazo(String d) {
 		return this;
 	}
+	
 	
 }

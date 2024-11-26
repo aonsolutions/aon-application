@@ -188,8 +188,8 @@ public class DefaultPayrollFuseBox {
 	
 	//DEDUCTIONS
 	
-	private static List<PDFDeduction> getDeductionsByType(final Optional<Map<Integer, ArrayList<PDFDeduction>>> allDeductions, final DeductionType deductionType) {
-		if (deductionType == null) {
+	public static List<PDFDeduction> getDeductionsByType(final Optional<Map<Integer, ArrayList<PDFDeduction>>> allDeductions, DeductionType ...deductionTypes) {
+		if (deductionTypes == null || deductionTypes.length == 0) {
 			return Collections.emptyList();
 		}
 		ArrayList<PDFDeduction> deds = new ArrayList<>();
@@ -202,7 +202,17 @@ public class DefaultPayrollFuseBox {
 			deds.addAll(
 				 dl
 				.stream()
-				.filter(d -> d != null && deductionType.equals(d.getDeductionType().orElse(DeductionType.OTHER)))
+				.filter(d ->  { 
+					if ( d == null ) {
+						return false;
+					}
+					for(DeductionType deductionType : deductionTypes ) {
+						if ( deductionType.equals(d.getDeductionType().orElse(DeductionType.OTHER)))
+							return true;
+					}
+					return false;
+					
+				})
 				.collect(Collectors.toList())
 			)
 		);
@@ -241,6 +251,7 @@ public class DefaultPayrollFuseBox {
 							DeductionType.MEI,
 							DeductionType.UNEMPLOYMENT,
 							DeductionType.JOB_TRAINING,
+							DeductionType.SOLIDARITY,
 							DeductionType.NON_STRUCTURAL_OVERTIME,
 							DeductionType.STRUCTURAL_OVERTIME,
 							DeductionType.IRPF,

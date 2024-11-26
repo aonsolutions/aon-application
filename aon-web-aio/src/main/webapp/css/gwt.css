@@ -570,3 +570,7 @@ input[type='checkbox']:checked {
 .minWidth_2{
 	min-width: 2rem !important;
 }
+
+.aon_no_border_toolbar .aon_toolbar_inner{
+	border: none;
+}

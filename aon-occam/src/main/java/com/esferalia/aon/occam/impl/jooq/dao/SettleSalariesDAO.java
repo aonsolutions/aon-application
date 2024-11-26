@@ -23,6 +23,7 @@ import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -78,7 +79,7 @@ public class SettleSalariesDAO {
 				.join(CONTRACT).on(CONTRACT.ID.eq(SALARY.CONTRACT))
 				.join(WORKPLACE).on(WORKPLACE.ID.eq(CONTRACT.WORKPLACE))
 				.join(REGISTRY).on(REGISTRY.ID.eq(CONTRACT.PERSON))
-				.join(RPAYMETHOD).on(RPAYMETHOD.REGISTRY.eq(CONTRACT.PERSON))
+				.leftOuterJoin(RPAYMETHOD).on(RPAYMETHOD.REGISTRY.eq(CONTRACT.PERSON))
 				.leftOuterJoin(RBANK).on(RBANK.ID.eq(RPAYMETHOD.RBANK))
 				.where(SALARY.DOMAIN.eq(ctx.getDomainId()))
 				.and(SALARY.CHARGE_DATE.between(parseToSQLDate(startDate), parseToSQLDate(endDate)))
@@ -87,6 +88,9 @@ public class SettleSalariesDAO {
 //				.and(SALARY.TOTAL_LIQUID.ne(0.00))
 				.orderBy(SALARY.START_DATE, SALARY.CHARGE_DATE)
 				.fetch();
+		
+		List<Record> salariesWithoutPaymethod = salaries.stream().filter(salary -> null == salary.get(RPAYMETHOD.ID)).toList();
+		if(salariesWithoutPaymethod.size() != 0) throw new AonCoreException("Los trabajadores " + salariesWithoutPaymethod.stream().map(salary -> salary.get(REGISTRY.NAME)).collect(Collectors.joining(",")) + " no tienen método de pago definido en su ficha. Por favor revise esto antes de continuar");
 		
 		if(salaries.isEmpty()) throw new AonCoreException("No existen n\u00f3minas sobre las que generar un vencimiento para el periodo " + formatDate(date));
 		
@@ -208,12 +212,15 @@ public class SettleSalariesDAO {
 		
 		Result<Record> fbatchDetails = ctx.getDslContext().select().from(FBATCH_DETAIL)
 			.join(FINANCE).on(FINANCE.ID.eq(FBATCH_DETAIL.FINANCE))
-			.leftOuterJoin(RADDRESS).on(RADDRESS.REGISTRY.eq(FINANCE.REGISTRY).and(RADDRESS.TYPE.eq((byte)0)))
+			.leftOuterJoin(RADDRESS).on(RADDRESS.REGISTRY.eq(FINANCE.REGISTRY).and(RADDRESS.TYPE.eq((byte)1)))
 			.leftOuterJoin(GEOZONE).on(GEOZONE.ID.eq(RADDRESS.GEOZONE))
 			.where(FBATCH_DETAIL.FBATCH.eq(fbatchId))
+//			.groupBy(FBATCH_DETAIL.ID, RADDRESS.REGISTRY)
 			.fetch();
 		
 		if(null == fbatchDetails || fbatchDetails.isEmpty()) throw new AonCoreException("No existen vencimientos en la remesa sobre los que generar el fichero Sepa");
+		
+		System.out.println("Vencimientos : " + fbatchDetails.size());
 		
 		Record fbatchEnterprise = ctx.getDslContext().select().from(FBATCH)
 				.innerJoin(ENTERPRISE).on(ENTERPRISE.DOMAIN.eq(FBATCH.DOMAIN))
