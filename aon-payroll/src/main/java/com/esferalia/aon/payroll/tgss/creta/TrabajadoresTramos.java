@@ -387,7 +387,7 @@ public class TrabajadoresTramos {
 						//if ( p.getEnd().after(endDate) )
 						//	continue;
 						
-						TramoBuilder tramoBuilder  = new TramoBuilder();
+						TramoBuilder tramoBuilder  = new TramoBuilder() ;
 						
 
 						Calendar start = Calendar.getInstance();
@@ -435,6 +435,7 @@ public class TrabajadoresTramos {
 							public void visitPPE() {
 							}
 							
+							
 							@Override
 							public void visitFormacionNormal() {
 							}
@@ -455,6 +456,11 @@ public class TrabajadoresTramos {
 							public void visitRegimenArtistasNormal() {
 							}
 							
+							@Override
+							public void visitSinPerciboRetribucion() {
+								
+							}
+
 							@Override
 							public void visitFormacionEnAlternanciaNormal() {
 							}
@@ -745,6 +751,11 @@ public class TrabajadoresTramos {
 							
 							@Override
 							public void visitGrupoCotizacionMensual() {
+							}
+
+							@Override
+							public void visitSinPerciboRetribucion() {
+								
 							}
 
 							@Override
@@ -1161,6 +1172,11 @@ public class TrabajadoresTramos {
 							}
 
 							@Override
+							public void visitSinPerciboRetribucion() {
+								salaryVisitor.visitSinPerciboRetribucion();
+							}
+
+							@Override
 							public void visitIncapacidadTemporal15PrimerosDias() {
 								salaryVisitor.visitIncapacidadTemporal15PrimerosDias();
 							}
@@ -1278,7 +1294,21 @@ public class TrabajadoresTramos {
 							
 						});
 						
-						if ( firstPeriod ) {
+						
+						visit(salary, p.getStart(), p.getEnd(), salaryVisitor );
+						
+						tramoBuilder.setTipoDeContrato(getContextData(TC2.getName(), salary, p.getStart(), p.getEnd(), "-"));
+						try {
+							tramoBuilder.setGrupoCotizacion(getContextData(QUOTE_GROUP.getName(), salary, p.getStart(), p.getEnd()));
+						} catch (Exception e ) {
+							//TODO: Log this please
+						}
+						
+						if ( tramoBuilder.isEmpty() )
+							continue;
+
+						if ( firstPeriod  ) {
+							
 							for ( String codigo : new String[] {"497", "498", "499"} ) {
 								dataSolicitadoBuilder.setTipo("C");
 								dataSolicitadoBuilder.setCodigo( codigo );
@@ -1289,15 +1319,6 @@ public class TrabajadoresTramos {
 						}
 						
 						
-						visit(salary, p.getStart(), p.getEnd(), salaryVisitor );
-						
-						tramoBuilder.setTipoDeContrato(getContextData(TC2.getName(), salary, p.getStart(), p.getEnd(), "-"));
-						try {
-							tramoBuilder.setGrupoCotizacion(getContextData(QUOTE_GROUP.getName(), salary, p.getStart(), p.getEnd()));
-						} catch (Exception e ) {
-							//TODO: Log this please
-						}
-
 						trabajadorBuilder.addTramo(tramoBuilder.create());
 						
 						
@@ -1405,6 +1426,11 @@ public class TrabajadoresTramos {
 
 				@Override
 				public void visitGrupoCotizacionMensual() {
+				}
+				
+				@Override
+				public void visitSinPerciboRetribucion() {
+					cretaPeriods.add(new Period(period.getStart(), period.getEnd()));
 				}
 
 				@Override
@@ -1536,6 +1562,10 @@ public class TrabajadoresTramos {
 				}
 
 				@Override
+				public void visitSinPerciboRetribucion() {
+				}
+
+				@Override
 				public void visitIncapacidadTemporal15PrimerosDias() {
 					Period last = cretaPeriods.removeLast();
 					cretaPeriods.add(new Period(last.getStart(), period.getEnd()));
@@ -1662,6 +1692,11 @@ public class TrabajadoresTramos {
 
 				@Override
 				public void visitGrupoCotizacionMensual() {
+				}
+
+				@Override
+				public void visitSinPerciboRetribucion() {
+					visitOthers();
 				}
 
 				@Override
@@ -1795,6 +1830,11 @@ public class TrabajadoresTramos {
 				}
 
 				@Override
+				public void visitSinPerciboRetribucion() {
+					visitOthers();
+				}
+
+				@Override
 				public void visitIncapacidadTemporal15PrimerosDias() {
 					visitOthers();
 				}
@@ -1925,6 +1965,11 @@ public class TrabajadoresTramos {
 			@Override
 			public void visitGrupoCotizacionMensual() {
 				state.visitGrupoCotizacionMensual();
+			}
+
+			@Override
+			public void visitSinPerciboRetribucion() {
+				state.visitSinPerciboRetribucion();
 			}
 
 			@Override
@@ -2077,6 +2122,7 @@ public class TrabajadoresTramos {
 		void visitFormacionEnAlternanciaNormal();
 		void visitGrupoCotizacionDiario();
 		void visitGrupoCotizacionMensual();
+		void visitSinPerciboRetribucion();
 		void visitIncapacidadTemporal15PrimerosDias();
 		void visitIncapacidadTemporalPagoDelegado();
 		void visitIncapacidadTemporalPagoDirecto();
@@ -2176,8 +2222,14 @@ public class TrabajadoresTramos {
 		boolean jornadasReales = getContextData(ContextVariable.DO_DAYS.getName(), salary, startDate, endDate,  0.00) > 0.00;
 		
 		boolean ppe = getSumContextData(ContextVariable.BASE_PPE.getName(), salary, startDate, endDate)  > 0.00;
+		
+		boolean unpaid = getSumContextData(ContextVariable.UNPAID_BASE.getName(), salary, startDate, endDate)  > 0.00;
 
-			if ( becarios )
+		String quoteGroup = getContextData(QUOTE_GROUP.getName(), salary, startDate, endDate,  "01");
+
+		if ( unpaid )
+			visitor.visitSinPerciboRetribucion();
+		else if ( becarios )
 			if ( iTPagoDelegado )
 				visitor.visitIncapacidadTemporalPagoDelegadoFormacion();
 			else if ( atEPPagoDelegado )
@@ -2263,7 +2315,6 @@ public class TrabajadoresTramos {
 			visitor.visitExpedienteRegulacionEmpleoParcial();
 
 		Visit grupoCotizacion ;
-		String quoteGroup = getContextData(QUOTE_GROUP.getName(), salary, startDate, endDate,  "01");
 		if ( formacionEnAlternancia )
 		    	grupoCotizacion = visitor::visitGrupoCotizacionMensual;
 		else if ( jornadasReales )

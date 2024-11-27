@@ -880,7 +880,8 @@ public class FinanceModule extends MainEntryPoint {
 				checkButton.removeStyleName(AON.CSS.aonIconCheck());
 			}
 		}); 
-		table.addRow(row, checkButton, COLS.CHK.getColWidth());
+		
+		table.addRow(row, ( !isPayroll || finance.hasSalary() ? checkButton : new Label() ), ( !isPayroll || finance.hasSalary() ? COLS.CHK.getColWidth() : "1rem" ));
 		
 		Label dueDate = new Label(AON.DATE_FORMAT.format(finance.getDueDate()));
 		table.addRow(row, dueDate, COLS.DDT.getColWidth());
@@ -914,6 +915,12 @@ public class FinanceModule extends MainEntryPoint {
 		Label regName = new Label(rname);
 		regName.setTitle(rname);
 		table.addInlineStyle(regName, COLS.AUTO.getCellStyleClass());
+		
+		if(isPayroll && !finance.hasSalary()) {
+			regName.addStyleName(AON.CSS.aonColorRed());
+			regName.setTitle("Este vencimiento esta asociado a una nomina inexistente");
+		}
+		
 		table.addRow(row, regName, COLS.AUTO.getColWidth());
 		
 		Label payMethod = new Label(finance.getPayMethodName());
@@ -1069,7 +1076,7 @@ public class FinanceModule extends MainEntryPoint {
 		// *******															 *******
 		// *************************************************************************
 		AonTableButton settleButton = null;
-		if (finance.isFullPending() && finance.getId() != null) {
+		if (finance.isFullPending() && finance.getId() != null && (!isPayroll || finance.hasSalary())) {
 			settleButton = new AonTableButton(AON.MSG.toSettle(), AON.CSS.aonIconFinanceSettle() );
 			settleButton.addClickHandler(new ClickHandler() {
 				

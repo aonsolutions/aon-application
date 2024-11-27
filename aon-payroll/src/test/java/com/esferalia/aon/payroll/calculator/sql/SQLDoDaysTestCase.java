@@ -490,4 +490,57 @@ public class SQLDoDaysTestCase extends AbstractSQLTestCase {
 		assertEquals(11.11 * 15 + 33.33, salary.getTotalPayment(), DELTA);
 		assertEquals(100.00 * 15 , salary.getCommonBase(), DELTA);
 	}
+
+	@Test
+	public void testDoDaysTimeUnits() throws ExpressionException,
+			SQLException, SalaryException {
+
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+		
+		Date contractStartDate = getFirstDayOfMonth(getToday());
+		Date contractEndDate = add(contractStartDate, Calendar.DAY_OF_MONTH, 20);
+		//@formatter:off
+		@SuppressWarnings("serial")
+		ContractRecord contract = newContract(aonContext, 
+				contractStartDate,
+				contractEndDate,
+				Collections.emptyMap(),
+				new String[] {
+				"66.66 * JORNADAS_REALES" ,
+				}, 
+				new String[] {						
+				"BASE_CGC * 4.60 / 100.00", 
+				"BASE_CGC * 1.50 / 100.00", 
+				"BASE_CGC * 0.10 / 100.00", 
+				"BASE_IRPF * PORCENTAJE_IRPF/100.00" 
+				},
+				null);
+		//@formatter:on
+		
+		Date startDate = getFirstDayOfMonth(getToday());
+		Date endDate = getLastDayOfMonth(getToday());
+		
+		Date doDaysStartDate = add(startDate, Calendar.DATE, 9);
+		
+		addData(aonContext, contract, doDaysStartDate, null, ContextVariable.DO_DAYS, "15");
+		
+		
+		ISQLContractSalaryCalculatorContext ctx = 
+				getContractSalaryCalculatorContext(
+				connection, 
+				startDate,
+				contractEndDate,
+				endDate,
+				endDate,
+				contract);
+		
+		Salary salary = new SmartContractSalaryCalculator<Salary>( new SalaryBuilder()).calculate(ctx);
+		
+		assertEquals(15 , salary.getTimeUnits(), 0.00);
+		
+		
+		
+	}
+
 }

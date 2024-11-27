@@ -4039,6 +4039,12 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 				pair.snd += partial ? naturalDays: quoteDays ;
 			} )
 			;
+
+			Stream<com.esferalia.aon.occam.api.model.Salary> delays = AON.getSalaries(new AONContext(connection),
+					p -> p.getIsDelayProperty().eq(true).and(p.getContractProperty().eq(contractId))
+							.and(p.getStartDateProperty().le(prevEndMonth)).and(p.getEndDateProperty().ge(prevStartMonth)));
+			delays.forEach(s-> pair.fst += s.getCommonContingenciesBase());
+			
 			br = pair.fst / pair.snd;
 			
 			salaries.close();

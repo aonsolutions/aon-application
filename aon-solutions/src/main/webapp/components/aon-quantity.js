@@ -1,4 +1,5 @@
 import { MSG, EVENT, TAG, CSS } from '../environments/environments.js'
+import { round } from '../services/utils.js';
 import { AonNewInput } from './aon-new-input.js';
 
 export class AonQuantity extends AonNewInput {
@@ -73,9 +74,8 @@ export class AonQuantity extends AonNewInput {
             formatQuantity = formatQuantity / this.packUnits;	
         } else if(this.stockUnitTag === this.packUnitsTag) {
             formatQuantity = this.quantity / this.packUnits;	
-        }    
-        // formatQuantity = AonMathUtils.round(formatQuantity);
-        this.setValue(formatQuantity);  
+        }
+        this.setValue(round(formatQuantity));  
     }
 
     toStockUnit() {
@@ -93,9 +93,11 @@ export class AonQuantity extends AonNewInput {
           this.setQuantity(value);
         } else if(this.format === 'format' && this.stockUnitTag != '') {   
             if(this.stockUnitTag === this.packMeasurementTag) {
-                this.setQuantity(value * this.packMeasurement * this.packUnits);	
+                let v = value * this.packMeasurement * this.packUnits;
+                this.setQuantity(round(v));
             } else if(this.stockUnitTag === this.packUnitsTag) {
-                this.setQuantity(value * this.packUnits);	
+                let v = value * this.packUnits;
+                this.setQuantity(round(v));	
             }    
         }
     }
