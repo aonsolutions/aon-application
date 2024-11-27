@@ -218,6 +218,6 @@ public class SES {
     
 
     public static void main(String[] args) {
-    	sendVerificationEmail("ndiaz@aonsolutions.es");
+    	sendVerificationEmail("diaznayra2@gmail.com");
 	}
 }
