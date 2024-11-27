@@ -78,10 +78,13 @@
 										reRender="showNewMessageWindow"
 										value="#{bundle.webmail_resend_verify_email}" 
 										styleClass="aon-padding aonButton-Pending" 
+										onclick="Richfaces.showModalPanel('emailWaitProccess#{messageSuffix}')" 
+						     			oncomplete="Richfaces.hideModalPanel('emailWaitProccess#{messageSuffix}')"
 									>
 										<f:setPropertyActionListener target="#{webmailMessage.senderMailAccount}" value="#{controller.to}" />
 										<aon:actionListener method="#{webmailMessage.onSendVerifyEmail}" />
 									</aon:commandLink>
+									<ui:include src="/com/code/aon/ui/webmail/facelet/webmailMessage/waitProcess.xhtml" />	
 								</aon:if>
 								<aon:if test="#{controller.verificationStatus == 'UNKNOW' || controller.verificationStatus == 'FAILED'}" >
  									<aon:outputText styleClass="material-icons-outlined aon-label-error aon-padding-left" value="cancel" />
