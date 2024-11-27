@@ -327,6 +327,8 @@ public class ProjectDAO {
 				updateProjectCommercial(ctx, projectCommercial);
 			}
 			
+		} else {
+			updateProjectCommercial(ctx, projectCommercial);
 		}
 		
 		return projectCommercial;

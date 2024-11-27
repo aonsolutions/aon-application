@@ -4,6 +4,7 @@ import static com.esferalia.aon.jooq.tables.Alcatraz.ALCATRAZ;
 import static com.esferalia.aon.jooq.tables.Contract.CONTRACT;
 import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
 import static com.esferalia.aon.jooq.tables.Enterprise.ENTERPRISE;
+import static com.esferalia.aon.jooq.tables.Finance.FINANCE;
 import static com.esferalia.aon.jooq.tables.FsModel.FS_MODEL;
 import static com.esferalia.aon.jooq.tables.Person.PERSON;
 import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
@@ -41,8 +42,6 @@ import com.esferalia.aon.gwt.payroll.shared.SalaryInfo.AlcatrazPeriod;
 import com.esferalia.aon.gwt.payroll.shared.SalaryInfo.AlcatrazTerritory;
 import com.esferalia.aon.gwt.payroll.shared.SalaryInfoFilter;
 import com.esferalia.aon.gwt.payroll.shared.WorkplaceEmployees;
-import com.esferalia.aon.jooq.tables.Scope;
-import com.esferalia.aon.jooq.tables.User;
 import com.esferalia.aon.jooq.tables.records.AlcatrazRecord;
 import com.esferalia.aon.jooq.tables.records.FsModelRecord;
 
@@ -169,6 +168,7 @@ public class JooqPayrollSalaries {
 				.join(CONTRACT).on(CONTRACT.ID.eq(SALARY.CONTRACT))
 				.join(WORKPLACE).on(WORKPLACE.ID.eq(CONTRACT.WORKPLACE))
 				.join(ENTERPRISE).on(ENTERPRISE.REGISTRY.eq(WORKPLACE.ENTERPRISE))
+				.leftOuterJoin(FINANCE).on(FINANCE.SOURCE_ID.eq(SALARY.ID))
 				.where(contractsCondition)
 				.and(salaryTypeCondition)
 				.and(datesCondition)
@@ -206,6 +206,8 @@ public class JooqPayrollSalaries {
 			// Enterprise ID
 			salaryInfo.setEnterpriseId(enterpriseId);
 			
+			salaryInfo.setFinance(null != salaryRecord.get(FINANCE.ID));
+			
 			//Is Alcatraz
 			Result<AlcatrazRecord> alcatrazRecords = dslContext.selectFrom(ALCATRAZ).where(ALCATRAZ.SALARY.eq(salaryInfo.getId())).fetch();
 			if(!alcatrazRecords.isEmpty()) {
@@ -239,10 +241,11 @@ public class JooqPayrollSalaries {
 		SalaryInfo salaryInfo = new SalaryInfo();
 		// Get end salary
 		 Record salaryRecord = dslContext.select().from(SALARY)
-				 .join(CONTRACT).on(CONTRACT.ID.eq(SALARY.CONTRACT))
-					.join(WORKPLACE).on(WORKPLACE.ID.eq(CONTRACT.WORKPLACE))
-					.join(ENTERPRISE).on(ENTERPRISE.REGISTRY.eq(WORKPLACE.ENTERPRISE))
-					.where(contractsCondition)
+				.join(CONTRACT).on(CONTRACT.ID.eq(SALARY.CONTRACT))
+				.join(WORKPLACE).on(WORKPLACE.ID.eq(CONTRACT.WORKPLACE))
+				.join(ENTERPRISE).on(ENTERPRISE.REGISTRY.eq(WORKPLACE.ENTERPRISE))
+				.leftOuterJoin(FINANCE).on(FINANCE.SOURCE_ID.eq(SALARY.ID))
+				.where(contractsCondition)
 				.and(salaryTypeCondition)
 				.and(datesCondition)
 				.orderBy(SALARY.END_DATE.desc())
@@ -260,6 +263,8 @@ public class JooqPayrollSalaries {
 			salaryInfo.setTotalPayment(salaryRecord.get(SALARY.TOTAL_PAYMENT));
 			salaryInfo.setTotalDeduction(salaryRecord.get(SALARY.TOTAL_DEDUCTION));
 			salaryInfo.setTotalLiquid(salaryRecord.get(SALARY.TOTAL_LIQUID));
+			
+			salaryInfo.setFinance(null != salaryRecord.get(FINANCE.ID));
 			
 			//Is Alcatraz
 			Result<AlcatrazRecord> alcatrazRecords = dslContext.selectFrom(ALCATRAZ).where(ALCATRAZ.SALARY.eq(salaryInfo.getId())).fetch();
@@ -290,6 +295,7 @@ public class JooqPayrollSalaries {
 				.on(CONTRACT.ID.eq(SALARY.CONTRACT))
 				.innerJoin(REGISTRY)
 				.on(REGISTRY.ID.eq(CONTRACT.PERSON))
+				.leftOuterJoin(FINANCE).on(FINANCE.SOURCE_ID.eq(SALARY.ID))
 				.where(REGISTRY.DOMAIN.eq(filter.getWorkplaceId()))
 				.and(REGISTRY.DOCUMENT.eq(document))
 				.and(salaryTypeCondition)
@@ -333,6 +339,8 @@ public class JooqPayrollSalaries {
 			
 			// Enterprise ID
 			salaryInfo.setEnterpriseId(enterpriseId);
+			
+			salaryInfo.setFinance(null != salaryRecord.get(FINANCE.ID));
 			
 			//Is Alcatraz
 			Result<AlcatrazRecord> alcatrazRecords = dslContext.selectFrom(ALCATRAZ).where(ALCATRAZ.SALARY.eq(salaryInfo.getId())).fetch();

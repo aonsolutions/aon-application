@@ -4512,3 +4512,11 @@ font-weight: 600;
 	border: none;
 }
 
+.aon_no_border_toolbar .aon_toolbar_button_container {
+	margin: 0;
+}
+
+.aon_no_border_toolbar .aon_toolbar_title_container {
+	padding: 0;
+}
+

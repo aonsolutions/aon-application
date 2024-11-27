@@ -1139,7 +1139,7 @@
 	min-height: 1rem;
 }
 
-.aon_custom_text_box_input{
+.aon_between_input, .aon_custom_text_box_input{
 	text-overflow: ellipsis;
 	font-size: 13px;
 	background: transparent;
@@ -1179,6 +1179,13 @@
 .aon_custom_text_box_input:focus{
 	border: none !important;
   	box-shadow: none !important;
+	/*border-bottom: 1px solid #b9b8b8 !important;*/
+}
+
+.aon_between_input:focus{
+	border: none !important;
+	border-bottom: 1px solid #b9b8b8 !important; 
+	box-shadow: none !important;
 	/*border-bottom: 1px solid #b9b8b8 !important;*/
 }
 
@@ -2284,4 +2291,13 @@
 
 .aon_no_border_toolbar > .aon_toolbar_inner {
 	border: none;
+	gap : 1rem;
+}
+
+.aon_no_border_toolbar .aon_toolbar_button_container {
+	margin: 0;
+}
+
+.aon_no_border_toolbar .aon_toolbar_title_container {
+	padding: 0;
 }
