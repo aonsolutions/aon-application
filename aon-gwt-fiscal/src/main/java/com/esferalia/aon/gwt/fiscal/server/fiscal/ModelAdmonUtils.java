@@ -68,6 +68,7 @@ import com.esferalia.aon.occam.api.fiscal.MODEL3902018;
 import com.esferalia.aon.occam.api.fiscal.MODEL3902021;
 import com.esferalia.aon.occam.api.fiscal.MODEL3902022;
 import com.esferalia.aon.occam.api.fiscal.MODEL3902023;
+import com.esferalia.aon.occam.api.fiscal.MODEL3902024;
 import com.esferalia.aon.occam.api.model.DomainGserviceaccount;
 import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
@@ -96,6 +97,7 @@ import com.esferalia.aon.occam.api.model.fiscal.aeat.AEATResponse;
 import com.esferalia.aon.occam.api.model.fiscal.mod390.Mod3902021;
 import com.esferalia.aon.occam.api.model.fiscal.mod390.Mod3902022;
 import com.esferalia.aon.occam.api.model.fiscal.mod390.Mod3902023;
+import com.esferalia.aon.occam.api.model.fiscal.mod390.Mod3902024;
 import com.esferalia.aon.occam.api.model.type.DataResponseSource;
 import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.occam.api.model.type.Period;
@@ -116,6 +118,7 @@ import com.esferalia.aon.occam.server.fiscal.format.mod303.Mod303Writer;
 import com.esferalia.aon.occam.server.fiscal.format.mod390.Mod3902021Writer;
 import com.esferalia.aon.occam.server.fiscal.format.mod390.Mod3902022Writer;
 import com.esferalia.aon.occam.server.fiscal.format.mod390.Mod3902023Writer;
+import com.esferalia.aon.occam.server.fiscal.format.mod390.Mod3902024Writer;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.http.AonHttpUtils;
 import com.esferalia.aon.watson.server.io.AonIOUtils;
@@ -541,7 +544,11 @@ public class ModelAdmonUtils {
 			@Override 
 			public void visitM390() { 
 				try {
-					if (fm instanceof Mod3902023) {
+					if (fm instanceof Mod3902024) {
+						Mod3902024 mod = (Mod3902024) fm;
+						Mod3902024Writer.fillWriter( mod , writer);
+					}
+					else if (fm instanceof Mod3902023) {
 						Mod3902023 mod = (Mod3902023) fm;
 						Mod3902023Writer.fillWriter( mod , writer);
 					}
@@ -737,18 +744,22 @@ public class ModelAdmonUtils {
 				MODEL303.aeatPresentation(occam, getMod303(fm) , aeatResponse);				
 			}
 			@Override 
-			public void visitM390() { 
-				if (fm instanceof Mod3902021) {
-					Mod3902021 mod = (Mod3902021) fm;
-					MODEL3902021.aeatPresentation(occam, mod , aeatResponse);
+			public void visitM390() {
+				if (fm instanceof Mod3902024) {
+					Mod3902024 mod = (Mod3902024) fm;
+					MODEL3902024.aeatPresentation(occam, mod , aeatResponse);
 				}
-				if (fm instanceof Mod3902022) {
+				else if (fm instanceof Mod3902023) {
+					Mod3902023 mod = (Mod3902023) fm;
+					MODEL3902023.aeatPresentation(occam, mod , aeatResponse);
+				}
+				else if (fm instanceof Mod3902022) {
 					Mod3902022 mod = (Mod3902022) fm;
 					MODEL3902022.aeatPresentation(occam, mod , aeatResponse);
 				}
-				if (fm instanceof Mod3902023) {
-					Mod3902023 mod = (Mod3902023) fm;
-					MODEL3902023.aeatPresentation(occam, mod , aeatResponse);
+				else if (fm instanceof Mod3902021) {
+					Mod3902021 mod = (Mod3902021) fm;
+					MODEL3902021.aeatPresentation(occam, mod , aeatResponse);
 				}
 			}
 			@Override public void visitM390HF() { /* Auto-generated method stub */}
@@ -1490,7 +1501,9 @@ public class ModelAdmonUtils {
 			case M390:
 				IFiscalModel model390 = MODEL390.getMod390(occam, ModelAdmonUtils.getFiscalModelId(aeatParams));
 				if (model390 != null) {
-					if (model390.getYear() >= 2023) 
+					if (model390.getYear() >= 2024) 
+						model = MODEL3902024.get(occam, ModelAdmonUtils.getFiscalModelId(aeatParams));					
+					else if (model390.getYear() == 2023) 
 						model = MODEL3902023.get(occam, ModelAdmonUtils.getFiscalModelId(aeatParams));					
 					else if (model390.getYear() == 2022) 
 						model = MODEL3902022.get(occam, ModelAdmonUtils.getFiscalModelId(aeatParams));
