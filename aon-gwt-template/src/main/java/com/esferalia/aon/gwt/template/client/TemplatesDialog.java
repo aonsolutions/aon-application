@@ -30,14 +30,10 @@ import com.google.gwt.event.dom.client.MouseOverHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.FlexTable;
-import com.google.gwt.user.client.ui.FormPanel;
-import com.google.gwt.user.client.ui.FormPanel.SubmitCompleteEvent;
-import com.google.gwt.user.client.ui.FormPanel.SubmitCompleteHandler;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
@@ -46,15 +42,6 @@ import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
-
-import gwtupload.client.IFileInput.FileInputType;
-import gwtupload.client.IUploadStatus.Status;
-import gwtupload.client.IUploader;
-import gwtupload.client.IUploader.OnCancelUploaderHandler;
-import gwtupload.client.IUploader.OnFinishUploaderHandler;
-import gwtupload.client.IUploader.OnStartUploaderHandler;
-import gwtupload.client.IUploader.OnStatusChangedHandler;
-import gwtupload.client.SingleUploader;
 
 public abstract class TemplatesDialog extends CustomDialogB {
 	
@@ -291,12 +278,6 @@ public abstract class TemplatesDialog extends CustomDialogB {
 		flex_table.setWidget(3, 0, label4);
 		flex_table.setWidget(3, 1, tagListBox);
 
-		SingleUploader upload = newUploader(null, dialog.getUrl(), 4);
-		Label label5 = new Label(MSG.file());
-		label5.addStyleName("aon-input-required");
-		flex_table.setWidget(4, 0, label5);
-		flex_table.setWidget(4, 1, upload);
-		
 		flexTableCss();
 	}
 	
@@ -375,12 +356,7 @@ public abstract class TemplatesDialog extends CustomDialogB {
 		label4.addStyleName("aon-input-required");
 		flex_table.setWidget(3, 0, label4);
 		flex_table.setWidget(3, 1, tagListBox);
-		
-		SingleUploader upload = newUploader(null, dialog.getUrl(), 4);
-		Label label5 = new Label(MSG.file());
-		label5.addStyleName("aon-input-required");
-		flex_table.setWidget(4, 0, label5);
-		flex_table.setWidget(4, 1, upload);
+
 		flexTableCss();
 	}
 	
@@ -492,10 +468,6 @@ public abstract class TemplatesDialog extends CustomDialogB {
 		}
 		flex_table.setWidget(0, 0, new Label(MSG.template()));
 		flex_table.setWidget(0, 1, lb);
-		
-		SingleUploader upload = newUploader(null, url, 1);
-		flex_table.setWidget(1, 0, new Label(MSG.file()));
-		flex_table.setWidget(1, 1, upload);
 		
 		flexTableCss();
 	}
@@ -705,10 +677,6 @@ public abstract class TemplatesDialog extends CustomDialogB {
 		flex_table.setWidth("400px");
 		flex_table.setBorderWidth(1);
 		flex_table.setCellSpacing(0);
-		
-		SingleUploader upload = newUploader(null, url, 1);
-		flex_table.setWidget(0, 0, new Label(MSG.file()));
-		flex_table.setWidget(0, 1, upload);
 			
 		flexTableCss();
 	}
@@ -727,10 +695,6 @@ public abstract class TemplatesDialog extends CustomDialogB {
 		}
 		flex_table.setWidget(0, 0, new Label(MSG.template()));
 		flex_table.setWidget(0, 1, lb);
-		
-		SingleUploader upload = newUploader(null, url, 1);
-		flex_table.setWidget(1, 0, new Label(MSG.file()));
-		flex_table.setWidget(1, 1, upload);
 		
 		item.getProductRoles(getDomain(), getUser(), new AsyncCallback<List<String>>() {
 			
@@ -761,19 +725,6 @@ public abstract class TemplatesDialog extends CustomDialogB {
 		flex_table.setWidth("400px");
 		flex_table.setBorderWidth(1);
 		flex_table.setCellSpacing(0);
-		
-//		ListBox lb = new ListBox();
-//		lb.addItem("-");
-//		for(TemplateInfo ti : templates){
-//			if(ti.getType().equals(MSG.fee()))
-//				lb.addItem(ti.getName());
-//		}
-//		flex_table.setWidget(0, 0, new Label(MSG.template()));
-//		flex_table.setWidget(0, 1, lb);
-//		
-		SingleUploader upload = newUploader(null, url, 1);
-		flex_table.setWidget(0, 0, new Label(MSG.file()));
-		flex_table.setWidget(0, 1, upload);
 		
 		CheckBox cb = new CheckBox();
 		cb.setValue(true);
@@ -807,10 +758,6 @@ public abstract class TemplatesDialog extends CustomDialogB {
 		
 		flex_table.setWidget(1, 0, new Label(MSG.warehouse()));
 		flex_table.setWidget(1, 1,lb2 );
-		
-		SingleUploader upload = newUploader(null, dialog.getUrl(), 4);
-		flex_table.setWidget(4, 0, new Label(MSG.file()));
-		flex_table.setWidget(4, 1, upload);
 		
 		flexTableCss();
 	}
@@ -987,10 +934,6 @@ public abstract class TemplatesDialog extends CustomDialogB {
 		tb.setStyleName("aon-inputText");
 		flex_table.setWidget(4, 0, new Label(MSG.comments()));
 		flex_table.setWidget(4, 1, tb);
-		
-		SingleUploader upload = newUploader(null, dialog.getUrl(), 5);
-		flex_table.setWidget(5, 0, new Label(MSG.file()));
-		flex_table.setWidget(5, 1, upload);
 		
 		flexTableCss();
 	}
@@ -1384,89 +1327,6 @@ public abstract class TemplatesDialog extends CustomDialogB {
 	long progress = 10;
 	Integer rowAux;
 	String urlAux;
-	
-	public  SingleUploader newUploader(SingleUploader up,String url, Integer row){
-		rowAux = row;urlAux = url;
-		final SingleUploader upload;
-       	if(up==null){
-       		 upload=  new SingleUploader(FileInputType.BROWSER_INPUT.with(FileInputType.LABEL.getInstance()));
-       	}
-       	else{
-       		 upload = up;
-       	}
-       	upload.setAutoSubmit(true);
-        upload.setServletPath(url + "/gwt_upload" 
-        		+ "?domain_name="+ aonData.getDomain().getName() 
-				+ "&domain_id="+ aonData.getDomain().getId()
-				+ "&login="+ getAonData().getUser().getLogin());
-        
-        upload.getForm().getWidget().getElement().getChild(1).removeFromParent();
-        upload.getForm().setAction(url + "/gwt_upload");
-        upload.getForm().setEncoding(FormPanel.ENCODING_MULTIPART);
-        upload.getForm().setMethod(FormPanel.METHOD_POST);
-        upload.setTitle("uploadFormElement");
-        upload.avoidEmptyFiles(true);
-       
-        upload.addOnCancelUploadHandler(new OnCancelUploaderHandler() {
-        	Integer row = rowAux;
-        	String url = urlAux;
-        	Dialog dialog = d;
-        	@Override
-			public void onCancel(IUploader uploader) {
-        		SingleUploader upload = newUploader(null, url,row);
-        		flex_table.setWidget(row, 1, upload);
-        		if(dialog.getType().equals("editEcommerceTemplate") || dialog.getType().equals("importEcommerceTemplate")){
-        			accept_button.setEnabled(false);
-        		}
-        		// reset out of TemplatesServlet!!!
-			}
-		});
-        
-        upload.addOnStatusChangedHandler(new OnStatusChangedHandler() {
-		
-			@Override
-			public void onStatusChanged(IUploader uploader) {
-				if(upload.getStatus() != Status.SUCCESS){
-			
-					upload.getStatusWidget().setProgress(progress, 100);
-			
-				}
-				else{
-					upload.getStatusWidget().setProgress(100, 100);
-				}	
-				progress=progress+20;
-			}
-		});
-
-        upload.addOnStartUploadHandler(new OnStartUploaderHandler() {
-			
-			@Override
-			public void onStart(IUploader uploader) {
-				upload.getStatusWidget().setVisible(true);
-			}
-		});
-        
-        upload.addOnFinishUploadHandler(new OnFinishUploaderHandler() {
-			
-			@Override
-			public void onFinish(IUploader uploader) {
-				upload.getStatusWidget().setProgress(100, 100);
-				upload.getStatusWidget().setStatus(Status.DONE);
-				upload.getStatusWidget().setVisible(true);
-				progress = 0;		
-				accept_button.setEnabled(true);
-			}
-		});
-        upload.getForm().addSubmitCompleteHandler(new SubmitCompleteHandler() {
-			
-			@Override
-			public void onSubmitComplete(SubmitCompleteEvent event) {
-				upload.getForm().getWidget().getElement().getChild(0).removeFromParent();				
-			}
-		});
-        
-        return upload;
-	}
 	
 	public void flexTableCss(){
 		for (int i = 0; i < flex_table.getRowCount(); i++) {

@@ -10,7 +10,7 @@ public interface Mod2002014ServiceAsync {
 
 	void createMod2002014(String domainName, int domain, int year,AsyncCallback<Mod2002014> callback);
 	void initializeNewMod2002014(String domainName, int domain, Mod2002014 mod200, AsyncCallback<Mod2002014> callback);
-	void initializeMod2002014(String domainName, int domain, Mod2002014 mod200,AsyncCallback<Mod2002014> callback);
+	void initializeMod2002014(String domainName, int domain, Mod2002014 mod200, String data, AsyncCallback<Mod2002014> callback);
 	void getMod2002014ByYear(String domainName, int domain, int year,AsyncCallback<Mod2002014> callback);
 	void calculateMod2002014(Mod2002014 mod200, AsyncCallback<Mod2002014> callback);
 	void deleteMod2002014(String domainName, int domain, int id,AsyncCallback<Void> callback);
@@ -19,7 +19,7 @@ public interface Mod2002014ServiceAsync {
 	void saveMod2002014(String domainName, int domain, Mod2002014 mod200,AsyncCallback<Mod2002014> callback);
 	void validateMod2002014(Mod2002014 mod200, AsyncCallback<Mod2002014> callback);
 	void importMod2002013(String domainName, int domain, Mod2002014 mod200,AsyncCallback<Mod2002014> callback);
-	void fillMod2002014AccountingData(Mod2002014 mod200, AsyncCallback<Mod2002014> callback);
+	void fillMod2002014AccountingData(Mod2002014 mod200, String data, AsyncCallback<Mod2002014> callback);
 	void getCompanyBanks(String domainName, int domain, AsyncCallback<LinkedList<CompanyBank>> asyncCallback);
 
 	}

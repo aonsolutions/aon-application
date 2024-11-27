@@ -1,16 +1,26 @@
 package com.esferalia.aon.gwt.mod200.server.e2016;
 
+import java.io.ByteArrayInputStream;
 import java.util.LinkedList;
+
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.Unmarshaller;
 
 import com.esferalia.aon.gwt.common.server.AonRemoteServiceServlet;
 import com.esferalia.aon.gwt.mod200.client.mod200.e2016.Mod2002016Service;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.CompanyBank;
 import com.esferalia.aon.occam.mod200.api.FISCAL;
+import com.esferalia.aon.occam.mod200.api.model.mod200_2014.Mod2002014;
 import com.esferalia.aon.occam.mod200.api.model.mod200_2015.Mod2002015;
 import com.esferalia.aon.occam.mod200.api.model.mod200_2016.Mod2002016;
+import com.esferalia.aon.occam.mod200.impl.jooq.dao.mod200_2015.jaxb.MOD2002015;
+import com.esferalia.aon.occam.mod200.impl.jooq.dao.mod200_2015.jaxb.XMLtoMod2002015;
 import com.esferalia.aon.occam.mod200.impl.jooq.dao.mod200_2016.jaxb.MOD2002016;
 import com.esferalia.aon.occam.mod200.impl.jooq.dao.mod200_2016.jaxb.XMLtoMod2002016;
+import com.esferalia.aon.occam.mod200.server.format.mod200_2014.Mod2002014Reader;
+import com.esferalia.aon.occam.mod200.server.format.mod200_2015.Mod2002015Import2014;
+import com.esferalia.aon.occam.mod200.server.format.mod200_2015.Mod2002015Reader;
 import com.esferalia.aon.occam.mod200.server.format.mod200_2016.Mod2002016Import2015;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.util.AonStringUtils;
@@ -34,22 +44,24 @@ public class Mod2002016ServiceImpl extends AonRemoteServiceServlet implements Mo
 	}
 	
 	@Override
-	public Mod2002016 initializeMod2002016(String domainName, int domain, Mod2002016 mod200) {
-		HttpServletRequest request = getThreadLocalRequest();
+	public Mod2002016 initializeMod2002016(String domainName, int domain, Mod2002016 mod200, String data) {
 		try {
-			Mod2002015 mod2002015 = (Mod2002015) request.getSession().getAttribute("Mod2002015Import");
-			if (mod2002015 != null) {
-				if (!AonStringUtils.equals( mod2002015.getDocument(), mod200.getDocument())) {
-					throw new AonCoreException("El NIF del documento importado no coincide");
+			if(data != null) {
+				byte[] fileData = java.util.Base64.getDecoder().decode(data);
+				ByteArrayInputStream input = new ByteArrayInputStream(fileData);
+				Mod2002015 mod2002015 = Mod2002015Reader.getMod2002015(input);
+			
+				if (mod2002015 != null) {
+					if (!AonStringUtils.equals( mod2002015.getDocument(), mod200.getDocument())) {
+						throw new AonCoreException("El NIF del documento importado no coincide");
+					}
+					Mod2002016Import2015.import2015(mod200, mod2002015);
+					mod200.setInitializedFromLastYear(true);
 				}
-				Mod2002016Import2015.import2015(mod200, mod2002015);
-				mod200.setInitializedFromLastYear(true);
 			}
 			return FISCAL.initializeMod2002016(domainName,domain,this.getUserLogin(),mod200);
 		} catch ( Throwable t) {
 			throw new AonCoreException(t);
-		} finally {
-			request.getSession().removeAttribute("Mod2002015Import");
 		}
 	}
 
@@ -99,22 +111,23 @@ public class Mod2002016ServiceImpl extends AonRemoteServiceServlet implements Mo
 	}
 	
 	@Override
-	public Mod2002016 fillMod2002016AccountingData(Mod2002016 mod200)
-			throws AonCoreException {
-		HttpServletRequest request = getThreadLocalRequest();
+	public Mod2002016 fillMod2002016AccountingData(Mod2002016 mod200, String data) throws AonCoreException {
 		try {
-			MOD2002016 mod = (MOD2002016) request.getSession().getAttribute("Mod2002016Accounting");
-			if (mod == null) {
-				throw new AonCoreException("El fichero no se ha recibido correctamente");	
-			}
-			if (mod200 != null) {
-				XMLtoMod2002016.fillMod2002016(mod, mod200);
+			if(data != null) {
+				byte[] fileData = java.util.Base64.getDecoder().decode(data);
+				
+				ByteArrayInputStream input = new ByteArrayInputStream(fileData);
+				JAXBContext context = JAXBContext.newInstance(MOD2002016.class);
+				Unmarshaller um = context.createUnmarshaller();
+				MOD2002016 mod = (MOD2002016) um.unmarshal(input);
+				
+				if (mod200 != null) {
+					XMLtoMod2002016.fillMod2002016(mod, mod200);
+				}				
 			}
 			return mod200; 
 		} catch ( Throwable t) {
 			throw new AonCoreException(t);
-		} finally {
-			request.getSession().removeAttribute("Mod2002016Accounting");
 		}
 	}
 	

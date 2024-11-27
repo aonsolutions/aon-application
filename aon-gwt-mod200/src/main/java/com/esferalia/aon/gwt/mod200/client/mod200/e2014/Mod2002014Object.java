@@ -62,8 +62,8 @@ public class Mod2002014Object implements Serializable {
 	}
 
 	// ************************************
-	public void initializeMod200(final AsyncCallback<Mod2002014> callback) {
-		Model200.getMod2002014Service().initializeMod2002014(domainName,mod200.getDomain(),mod200, new AsyncCallback<Mod2002014>() {
+	public void initializeMod200(String data, final AsyncCallback<Mod2002014> callback) {
+		Model200.getMod2002014Service().initializeMod2002014(domainName,mod200.getDomain(),mod200, data, new AsyncCallback<Mod2002014>() {
 			
 			@Override
 			public void onSuccess(Mod2002014 result) {
@@ -111,8 +111,8 @@ public class Mod2002014Object implements Serializable {
 		});
 	}
 	
-	public void fillMod2002014AccountingData(final AsyncCallback<Mod2002014> callback) {
-		Model200.getMod2002014Service().fillMod2002014AccountingData(mod200, new AsyncCallback<Mod2002014>() {
+	public void fillMod2002014AccountingData(String data, final AsyncCallback<Mod2002014> callback) {
+		Model200.getMod2002014Service().fillMod2002014AccountingData(mod200, data, new AsyncCallback<Mod2002014>() {
 			
 			@Override
 			public void onSuccess(Mod2002014 result) {

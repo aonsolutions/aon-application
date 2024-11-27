@@ -110,8 +110,8 @@ public class Mod2002017Object implements Serializable {
 		});
 	}
 	
-	public void fillMod2002017AccountingData(final AsyncCallback<Mod2002017> callback) {
-		Model200.getMod2002017Service().fillMod2002017AccountingData(mod200, new AsyncCallback<Mod2002017>() {
+	public void fillMod2002017AccountingData(String data, final AsyncCallback<Mod2002017> callback) {
+		Model200.getMod2002017Service().fillMod2002017AccountingData(mod200, data, new AsyncCallback<Mod2002017>() {
 			
 			@Override
 			public void onSuccess(Mod2002017 result) {

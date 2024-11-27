@@ -72,8 +72,6 @@ public interface ITemplate extends RemoteService{
 	public Error insertPGC(Domain domain, User user, Integer index);
 	public Error insertPGC(Domain domain, User user, AccountImportClass pgc, Integer index);
 	
-	public Error insertCustomerIban(Domain domain, User user);
-	
 	public List<InvoiceImportClass> executeInvoice(Domain domain , User user, String data);
 	public List<InvoiceImportClass> executeServalInvoice(Domain domain , User user, String data);
 	
@@ -84,7 +82,7 @@ public interface ITemplate extends RemoteService{
 	public List<AccountEntryImportClass> executeDiary(Domain domain , User user, String data);	
 
 	public Integer executeExcel(Domain domain, User user, TemplateInfo ti, ImportType importType, Boolean ignoreInactiveClient, 
-			Integer inventory, String warehouse1,String warehouse2 , String series, String comments,Boolean istransfer ,Integer number);
+			Integer inventory, String warehouse1,String warehouse2 , String series, String comments,Boolean istransfer ,Integer number, String data);
 	
 	public Error insertTransferStock(Domain domain, User user);
 
@@ -100,7 +98,7 @@ public interface ITemplate extends RemoteService{
 		
 	Error executeExcelEcommerce(Domain domain, User user, Ecommerce ecommerce,
 			Seller seller, String type,
-			Tag tag);
+			Tag tag, String data);
 	
 	public String generateConsumptionExcel(Domain domain, User user, List<Warehouse> warehouses, String type, Boolean onlyNegative, Boolean detail, 
 			Integer size, Boolean packaged, Boolean withoutInv, Integer category, Boolean dif);
@@ -108,7 +106,7 @@ public interface ITemplate extends RemoteService{
 	public String generateConsumptionExcel(Domain domain, User user, List<Warehouse> warehouses, String type, Boolean onlyNegative, Boolean detail, 
 			Integer size, Date startDate, Date endDate, Boolean packaged, Integer category, Boolean dif);
 	
-	public Integer excelRowNumber(Domain domain, User user);
+	public Integer excelRowNumber(Domain domain, User user, String data);
 	
 	public List<Seller> getSellerList(Domain domain, User user);
 	

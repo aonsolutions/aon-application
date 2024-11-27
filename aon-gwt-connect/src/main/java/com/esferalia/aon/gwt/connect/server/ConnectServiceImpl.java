@@ -1,5 +1,6 @@
 package com.esferalia.aon.gwt.connect.server;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -9,19 +10,18 @@ import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
-import jakarta.servlet.annotation.WebServlet;
-import jakarta.servlet.http.HttpServletRequest;
-
 import com.esferalia.aon.gwt.common.server.AonRemoteServiceServlet;
 import com.esferalia.aon.gwt.connect.client.ConnectService;
 import com.esferalia.aon.occam.api.AON;
-import com.esferalia.aon.occam.mod200.api.FISCAL;
 import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.occam.mod200.api.FISCAL;
 import com.esferalia.aon.occam.mod200.api.model.mod200_2013.Mod2002013;
 import com.esferalia.aon.occam.mod200.server.format.Mod2002013Reader;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.google.gwt.thirdparty.guava.common.io.Files;
+
+import jakarta.servlet.annotation.WebServlet;
 
 /**
  * The server side implementation of the RPC service.
@@ -32,17 +32,14 @@ public class ConnectServiceImpl extends AonRemoteServiceServlet implements
 		ConnectService {
 
 	@Override
-	public List<String> importZippedMod2002013(String domainName, int domain)
-			throws AonCoreException {
-		HttpServletRequest request = getThreadLocalRequest();
-
+	public List<String> importZippedMod2002013(String domainName, int domain, String data) throws AonCoreException {
 		List<String> messages = new LinkedList<String>();
 
 		try {
-			File file = (File) request.getSession().getAttribute(
-					"aonMod200BOEZIP");
-			if (file != null) {
-				FileInputStream in = new FileInputStream(file);
+
+			if (data != null) {
+				byte[] fileData = java.util.Base64.getDecoder().decode(data);
+				ByteArrayInputStream in = new ByteArrayInputStream(fileData);
 				ZipInputStream zipin = new ZipInputStream(in);
 				File parent = Files.createTempDir();
 				processZIPFiles(parent, zipin, domainName, domain, messages);
@@ -52,8 +49,6 @@ public class ConnectServiceImpl extends AonRemoteServiceServlet implements
 
 		} catch (Throwable t) {
 			throw new AonCoreException(t);
-		} finally {
-			request.getSession().removeAttribute("aonMod200BOEZIP");
 		}
 	}
 
