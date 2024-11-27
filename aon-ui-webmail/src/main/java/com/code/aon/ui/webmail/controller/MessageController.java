@@ -217,13 +217,13 @@ public class MessageController implements IWebMailConstants, Serializable {
     	try {
 	    	sentMessage = compoundMessage(server);
 	    	if(isProtocolAon()) {
-	    		String from = 
-				this.senderMailAccount.getDisplayName() +
-				(isVerifiedForSendingStatus(this.senderMailAccount.getEmail()) ?
-				"<"+this.senderMailAccount.getEmail()+">" : "<no-reply@aon.solutions>" );
+	    		String address = isVerifiedForSendingStatus(this.senderMailAccount.getEmail()) ?
+				this.senderMailAccount.getEmail() : "no-reply@aon.solutions" ;
 
 	    		MimeMessage message = (MimeMessage) sentMessage.getMessage();
-	            message.setFrom(new InternetAddress(from));
+	            String personal = this.senderMailAccount.getDisplayName();
+	    		message.setFrom(new InternetAddress(address, personal, "UTF-8" ));
+
 	            Address replyTo = new InternetAddress(this.senderMailAccount.getEmail());
 	            message.addRecipient(RecipientType.BCC, replyTo);
 	            Address[] addresses = {replyTo};
