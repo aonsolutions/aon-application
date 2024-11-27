@@ -1131,6 +1131,7 @@ public abstract class FBatchPaymentEntryModule extends SimpleLayoutPanel {
 			amount.addStyleName(AON.CSS.aonColorRed());
 
 			issueDate.setTitle(infoTitle);
+			titular.setTitle(infoTitle);
 			amount.setTitle(infoTitle);
 		}
 
@@ -1497,12 +1498,23 @@ public abstract class FBatchPaymentEntryModule extends SimpleLayoutPanel {
 
 		Label amount = new Label(AON.FMT.format(finance.getAmount()) + " \u20ac");
 		amount.addStyleName(AON.CSS.aonTextRight());
+		
+		if(!finance.hasSalary()) {
+			issueDate.addStyleName(AON.CSS.aonColorRed());
+			titular.addStyleName(AON.CSS.aonColorRed());
+			amount.addStyleName(AON.CSS.aonColorRed());
+
+			String infoTitle = "Este vencimiento tiene asociada una nomina inexistente";
+			issueDate.setTitle(infoTitle);
+			titular.setTitle(infoTitle);
+			amount.setTitle(infoTitle);
+		}
 
 		selectedFinanceTable.setWidget(row, col,
 				finance.isPending() || finance.isBatched() ? removeButton : new Label());
 		++col;
 		selectedFinanceTable.setWidget(row, col,
-				finance.isPending() || finance.isBatched() ? checkButton : new Label());
+				finance.isPending() || finance.isBatched() || finance.hasSalary() ? checkButton : new Label());
 		++col;
 		selectedFinanceTable.setWidget(row, col, issueDate);
 		++col;

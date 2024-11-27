@@ -574,3 +574,11 @@ input[type='checkbox']:checked {
 .aon_no_border_toolbar .aon_toolbar_inner{
 	border: none;
 }
+
+.aon_no_border_toolbar .aon_toolbar_button_container {
+	margin: 0;
+}
+
+.aon_no_border_toolbar .aon_toolbar_title_container {
+	padding: 0;
+}

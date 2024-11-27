@@ -130,7 +130,7 @@ public class FinanceModule extends MainEntryPoint {
 	private AonCustomDateBox toInvoiceDate = new AonCustomDateBox("F. Fin Factura");
 	
 	private AonCustomDateBox fromDueDate = new AonCustomDateBox("F. Inicio Vto.");
-	private AonCustomDateBox toDueDate = new AonCustomDateBox("F. Inicio Vto.");
+	private AonCustomDateBox toDueDate = new AonCustomDateBox("F. Fin Vto.");
 	
 	private AonCustomListBox confidential = new AonCustomListBox("Confidecial");
 	private AonCustomListBox payment = new AonCustomListBox("Tipo");
@@ -273,14 +273,12 @@ public class FinanceModule extends MainEntryPoint {
 			}
 		});
 		
-		amount = new AonCustomNumberBox("Importe") {
-			@Override protected void onNearChange() { search(opt, getParams(opt)); }
-		};
+		amount = new AonCustomNumberBox("Importe");
 		
 		concept = new AonCustomTextBox(this.isPayroll ? "Concepto" : "N\u00BA Documento");
 		
-		
 		amount.addValueChangeHandler(e -> search(opt, getParams(opt)));
+		
 		concept.addValueChangeHandler(e -> search(opt, getParams(opt)));
 		fromInvoiceDate.addValueChangeHandler(e -> search(opt, getParams(opt)));
 		toInvoiceDate.addValueChangeHandler(e -> search(opt, getParams(opt)));
@@ -307,7 +305,7 @@ public class FinanceModule extends MainEntryPoint {
 		
 		dockLayoutPanel.addFilterWidget(amount);
 		
-		if(this.isPayroll) dockLayoutPanel.addFilterWidget(payment);
+		if(!this.isPayroll) dockLayoutPanel.addFilterWidget(payment);
 		
 		// Status
 		Set<String> options = new LinkedHashSet<String>();
@@ -321,20 +319,22 @@ public class FinanceModule extends MainEntryPoint {
 		statusMultiSelectBox.addBlurHandler(new BlurHandler() {
             @Override
             public void onBlur(BlurEvent event) {
-            	//Window.alert(statusMultiSelectBox.getSelectedOptions().isEmpty() ? "No hay nada seleccionado" : String.join(", ", statusMultiSelectBox.getSelectedOptions()));
+//            	Window.alert(statusMultiSelectBox.getSelectedOptions().isEmpty() ? "No hay nada seleccionado" : String.join(", ", statusMultiSelectBox.getSelectedOptions()));
             	search(opt, getParams(opt));
             }
         });
 		
 		dockLayoutPanel.addFilterWidget(statusMultiSelectBox);
 		
-		HTMLPanel invoiceDatePanel = new HTMLPanel("");
-		invoiceDatePanel.setStyleName(AON.CSS.aonItemFlex());
-		
-		invoiceDatePanel.add(fromInvoiceDate);
-		invoiceDatePanel.add(toInvoiceDate);
-		
-		dockLayoutPanel.addFilterWidget(invoiceDatePanel);
+		if(!this.isPayroll) {
+			HTMLPanel invoiceDatePanel = new HTMLPanel("");
+			invoiceDatePanel.setStyleName(AON.CSS.aonItemFlex());
+			
+			invoiceDatePanel.add(fromInvoiceDate);
+			invoiceDatePanel.add(toInvoiceDate);
+			
+			dockLayoutPanel.addFilterWidget(invoiceDatePanel);
+		}
 		
 		HTMLPanel dueDatePanel = new HTMLPanel("");
 		dueDatePanel.setStyleName(AON.CSS.aonItemFlex());
@@ -344,7 +344,9 @@ public class FinanceModule extends MainEntryPoint {
 		
 		dockLayoutPanel.addFilterWidget(dueDatePanel);
 		
-		dockLayoutPanel.addFilterWidget(referenceCode);
+		if(!this.isPayroll)
+			dockLayoutPanel.addFilterWidget(referenceCode);
+		
 		dockLayoutPanel.addFilterWidget(concept);
 		
 		dockLayoutPanel.addFilterWidget(payMethod);
@@ -359,19 +361,20 @@ public class FinanceModule extends MainEntryPoint {
 		boolean confidentiality = opt.getConfiguration() != null 
 				&& opt.getUser() != null 
 				&& opt.getConfiguration().getUser().hasConfidentialityRole();
-		return new FinanceParams()
+		
+		Boolean isPayment = AonStringUtils.isBlank(payment.getValue()) ? null : (AonStringUtils.equals(payment.getValue(), "Pago") ? true : false);
+		
+		FinanceParams params = new FinanceParams()
 			.setDomain(opt.getDomain())
 			.setDescription(dockLayoutPanel.getSearchTextBox().getValue())
 			.setFromInvoiceDate(fromInvoiceDate.getValue())
 			.setToInvoiceDate(toInvoiceDate.getValue())
 			.setFromDueDate(fromDueDate.getValue())
 			.setToDueDate(toDueDate.getValue())
-			.setAmount(amount.getValue())
-			.setNearbyNumbers(amount.isNearBy())
 			.setConcept(concept.getValue())
 			.setReferenceCode(referenceCode.getValue())
 			.setPayMethod(AonStringUtils.isNotBlank(payMethod.getValue()) ? Integer.parseInt(payMethod.getValue()) : null)
-			.setPayment(AonStringUtils.isNotBlank(payment.getValue()) ? AonStringUtils.equals(payment.getValue(), "1") : null)
+			.setPayment(isPayment)
 			.setPending(statusMultiSelectBox.getSelectedOptions().contains("Pendiente"))
 			.setBatched(statusMultiSelectBox.getSelectedOptions().contains("Remesado"))
 			.setReturned(statusMultiSelectBox.getSelectedOptions().contains("Devuelto"))
@@ -381,6 +384,26 @@ public class FinanceModule extends MainEntryPoint {
 			.setHasConfidentialityRole(confidentiality)
 			.setIsPayroll(this.isPayroll)
 			;
+		
+		if(amount.isBetweenNumbers()) {
+			params
+				.setAmount(null)
+				.setGTAmount(amount.getGTValue())
+				.setLTAmount(amount.getLTValue())
+				.setBetweenNumbers(amount.isBetweenNumbers())
+				;
+		} else {
+			params
+				.setAmount(amount.getValue())
+				.setGTAmount(null)
+				.setLTAmount(null)
+				.setBetweenNumbers(amount.isBetweenNumbers())
+				;
+		}
+		
+		
+		
+		return params;
 	}
 	
 	public boolean isSettledChecked() {

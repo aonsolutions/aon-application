@@ -898,6 +898,9 @@ public interface AonSolutionsCSS extends CssResource {
 	@ClassName("aon_custom_text_box_input")
 	String aonCustomTextBoxInput();
 	
+	@ClassName("aon_between_input")
+	String aonBetweenInput();
+	
 	@ClassName("aon_custom_text_box_input_no_border")
 	String aonCustomTextBoxInputNoBorder();
 	
