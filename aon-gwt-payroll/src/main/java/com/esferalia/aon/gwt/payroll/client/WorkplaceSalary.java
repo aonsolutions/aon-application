@@ -682,7 +682,13 @@ public class WorkplaceSalary extends Composite {
 			@Override
 			public void onAccept() {
 				List<SalaryInfo> alcatrazSalaries = salaryTable.getSelectedSalaries().stream().filter(salary -> salary.isAlcatraz()).collect(Collectors.toList());
-				if(alcatrazSalaries.isEmpty()) {
+				List<SalaryInfo> financeSalaries = salaryTable.getSelectedSalaries().stream().filter(salary -> salary.isFinance()).collect(Collectors.toList());
+				
+				if(!alcatrazSalaries.isEmpty()) 
+					createAlcatrazWarning(alcatrazSalaries);
+				else if(!financeSalaries.isEmpty()) {
+					createFinanceWarning(financeSalaries);
+				} else {
 					workplaceSalaryObject.deleteSalaries(
 							salaryTable.getSelectedSalaries(), 
 							s -> 
@@ -693,8 +699,7 @@ public class WorkplaceSalary extends Composite {
 								})
 							, f -> {}
 					);
-				} else 
-					createAlcatrazWarning(alcatrazSalaries);
+				}
 			}
 		});
 	}
@@ -708,6 +713,20 @@ public class WorkplaceSalary extends Composite {
 		}
 		
 		message += "<br>Para poder eliminar dichas n&oacute;minas, deber&aacute; eliminar primero el <b>Modelo 111</b> asociado.";
+		
+		AonDialog dialog = new AonDialog("Borraro", new HTML(message));
+		dialog.info();
+	}
+	
+	private void createFinanceWarning(List<SalaryInfo> financeSalaries) {
+		DateTimeFormat formatDate = DateTimeFormat.getFormat("dd/MM/yyyy");
+		
+		String message = "No se pueden eliminar la n&oacute;minas que ya tienen <b>vencimientos</b> creados. Estas n&oacute;minas son:<br><br>";
+		for(SalaryInfo salary : financeSalaries) {
+			message += "&emsp;" + salary.getEmployeeName() + " (" + formatDate.format(salary.getStartDate()) + " - " + formatDate.format(salary.getEndDate()) + ")<br>";
+		}
+		
+		message += "<br>Para poder eliminar dichas n&oacute;minas, deber&aacute; eliminar primero los <b>vencimientos</b> asociados.";
 		
 		AonDialog dialog = new AonDialog("Borraro", new HTML(message));
 		dialog.info();
