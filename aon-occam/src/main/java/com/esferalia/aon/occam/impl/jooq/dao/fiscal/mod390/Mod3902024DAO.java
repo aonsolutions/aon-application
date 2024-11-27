@@ -108,13 +108,13 @@ public class Mod3902024DAO {
 	public enum Mod3902024DetailKeyDAO implements Serializable {
 		// IVA devengado
 	 	// Régimen ordinario
-		  C0701	(Mod3902024DetailKey.C0701, (mod, vc) -> isCommonNationalSales(vc, mod) && hasPercent0(vc))
-		 ,C0668 (Mod3902024DetailKey.C0668, (mod, vc) -> isCommonNationalSales(vc, mod) && hasPercent2(vc))
-		 ,C0002 (Mod3902024DetailKey.C0002, (mod, vc) -> isCommonNationalSales(vc, mod) && hasPercent4(vc))		
-		 ,C0703	(Mod3902024DetailKey.C0703, (mod, vc) -> isCommonNationalSales(vc, mod) && hasPercent5(vc))
-		 ,C0670 (Mod3902024DetailKey.C0670, (mod, vc) -> isCommonNationalSales(vc, mod) && hasPercent75(vc))
-		 ,C0004	(Mod3902024DetailKey.C0004, (mod, vc) -> isCommonNationalSales(vc, mod) && hasPercent10(vc))
-		 ,C0006	(Mod3902024DetailKey.C0006, (mod, vc) -> isCommonNationalSales(vc, mod) && hasPercent21(vc))
+		  C0701	(Mod3902024DetailKey.C0701, (mod, vc) -> isCommonNationalSales(vc, mod) && !vc.isVatAccrualRegime() && hasPercent0(vc))
+		 ,C0668 (Mod3902024DetailKey.C0668, (mod, vc) -> isCommonNationalSales(vc, mod) && !vc.isVatAccrualRegime() && hasPercent2(vc))
+		 ,C0002 (Mod3902024DetailKey.C0002, (mod, vc) -> isCommonNationalSales(vc, mod) && !vc.isVatAccrualRegime() && hasPercent4(vc))		
+		 ,C0703	(Mod3902024DetailKey.C0703, (mod, vc) -> isCommonNationalSales(vc, mod) && !vc.isVatAccrualRegime() && hasPercent5(vc))
+		 ,C0670 (Mod3902024DetailKey.C0670, (mod, vc) -> isCommonNationalSales(vc, mod) && !vc.isVatAccrualRegime() && hasPercent75(vc))
+		 ,C0004	(Mod3902024DetailKey.C0004, (mod, vc) -> isCommonNationalSales(vc, mod) && !vc.isVatAccrualRegime() && hasPercent10(vc))
+		 ,C0006	(Mod3902024DetailKey.C0006, (mod, vc) -> isCommonNationalSales(vc, mod) && !vc.isVatAccrualRegime() && hasPercent21(vc))
 	 	// Operaciones intragrupo
 		 ,C0705	(Mod3902024DetailKey.C0705, null)
 		 ,C0672	(Mod3902024DetailKey.C0672, null)
@@ -122,7 +122,15 @@ public class Mod3902024DAO {
 		 ,C0707	(Mod3902024DetailKey.C0707, null)
 		 ,C0674	(Mod3902024DetailKey.C0674, null)
 		 ,C0503	(Mod3902024DetailKey.C0503, null)
-		 ,C0505	(Mod3902024DetailKey.C0505, null)
+		 ,C0505	(Mod3902024DetailKey.C0505, null)		 
+		 // Régimen especial del criterio de caja
+		 ,C0709	(Mod3902024DetailKey.C0709, (mod, vc) -> isCommonNationalSales(vc, mod) && vc.isVatAccrualRegime() && hasPercent0(vc))
+		 ,C0676 (Mod3902024DetailKey.C0676, (mod, vc) -> isCommonNationalSales(vc, mod) && vc.isVatAccrualRegime() && hasPercent2(vc))
+		 ,C0644 (Mod3902024DetailKey.C0644, (mod, vc) -> isCommonNationalSales(vc, mod) && vc.isVatAccrualRegime() && hasPercent4(vc))		
+		 ,C0711	(Mod3902024DetailKey.C0711, (mod, vc) -> isCommonNationalSales(vc, mod) && vc.isVatAccrualRegime() && hasPercent5(vc))
+		 ,C0678 (Mod3902024DetailKey.C0678, (mod, vc) -> isCommonNationalSales(vc, mod) && vc.isVatAccrualRegime() && hasPercent75(vc))
+		 ,C0646	(Mod3902024DetailKey.C0646, (mod, vc) -> isCommonNationalSales(vc, mod) && vc.isVatAccrualRegime() && hasPercent10(vc))
+		 ,C0648	(Mod3902024DetailKey.C0648, (mod, vc) -> isCommonNationalSales(vc, mod) && vc.isVatAccrualRegime() && hasPercent21(vc))
 	 	// Régimen especial de bienes usados, objetos de arte, antigüedades y objetos de colección
 		 ,C0713	(Mod3902024DetailKey.C0713, null)
 		 ,C0680	(Mod3902024DetailKey.C0680, null)
@@ -286,28 +294,17 @@ public class Mod3902024DAO {
 		 ,C0065	(Mod3902024DetailKey.C0065, null)
 		 
 		 // Operaciones en régimen general
-		 ,C0099	 (Mod3902024DetailKey.C0099, ((mod, vc) -> (vc.isNationalSales() && vc.isVatGeneralRegime(mod.isSimplifiedRegime()?VATRegime.SIMPLIFIED:VATRegime.GENERAL))))
+		 ,C0099	 (Mod3902024DetailKey.C0099, ((mod, vc) -> (vc.isNationalSales() && !vc.isVatAccrualRegime() && vc.isVatGeneralRegime(mod.isSimplifiedRegime()?VATRegime.SIMPLIFIED:VATRegime.GENERAL))))
 		 // Operaciones a las que habiéndoles sido aplicado el régimen especial del criterio de caja hubieran resultado devengadas conforme a la regla general de devengo contenida en el art. 75 LIVA
-		 ,C0653	 (Mod3902024DetailKey.C0653, null) // MIRAR CASILLA 654
+		 ,C0653	 (Mod3902024DetailKey.C0653, null) // Se obtiene en getDetails()
 		 // Entregas intracomunitarias de bienes y servicios
-		 ,C0103	 (Mod3902024DetailKey.C0103, ((mod, vc) -> (
-				 vc.isIntracommunitySales() && 
-				 !vc.isWithoutRightDeductionType())))
-
+		 ,C0103	 (Mod3902024DetailKey.C0103, ((mod, vc) -> ( vc.isIntracommunitySales() && !vc.isWithoutRightDeductionType())))
 		 // Exportaciones y otras operaciones exentas con derecho a deducción
-		 ,C0104	 (Mod3902024DetailKey.C0104, ((mod, vc) -> (vc.isSales() 
-			&& !vc.isWithoutRightDeductionType() 
-			&& vc.isExtracommunity())))
-		 
+		 ,C0104	 (Mod3902024DetailKey.C0104, ((mod, vc) -> (vc.isSales() && !vc.isWithoutRightDeductionType() && vc.isExtracommunity())))
 		 // Operaciones exentas sin derecho a deducción
-		 ,C0105	 (Mod3902024DetailKey.C0105, ((mod, vc) -> (vc.isSales() 
-			&& !vc.isNational() && vc.isWithoutRightDeductionType())))
-		 
+		 ,C0105	 (Mod3902024DetailKey.C0105, ((mod, vc) -> (vc.isSales() && !vc.isNational() && vc.isWithoutRightDeductionType())))
 		 // Operaciones no sujetas por reglas de localización (excepto las incluidas en la casilla 126)
-		 ,C0110	 (Mod3902024DetailKey.C0110, ((mod, vc) -> (vc.isSales() 
-			&& !vc.isWithoutRightDeductionType() 
-			&& (vc.isOtherISP() || vc.isCanCeuMel()))))
-		 
+		 ,C0110	 (Mod3902024DetailKey.C0110, ((mod, vc) -> (vc.isSales() && !vc.isWithoutRightDeductionType() && (vc.isOtherISP() || vc.isCanCeuMel()))))
 		 // Operaciones sujetas con inversión del sujeto pasivo
 		 ,C0125	 (Mod3902024DetailKey.C0125, null)
 		 // Operaciones no sujetas por reglas de localización acogidas a los regímenes especiales de ventanilla única
@@ -321,7 +318,7 @@ public class Mod3902024DAO {
 		 // Operaciones en régimen especial de la agricultura, ganadería y pesca
 		 ,C0101	 (Mod3902024DetailKey.C0101, null)
 		 // Operaciones realizadas por sujetos pasivos acogidos al régimen especial del recargo de equivalencia
-		 ,C0102	 (Mod3902024DetailKey.C0102, ((mod, vc) -> (vc.isNationalSales() && vc.isSurcharge())))
+		 ,C0102	 (Mod3902024DetailKey.C0102, ((mod, vc) -> (vc.isNationalSales() && vc.isVatSurchargeRegime())))
 		 // Operaciones en Régimen especial de bienes usados, objetos de arte, antigüedades y objetos de colección
 		 ,C0227	 (Mod3902024DetailKey.C0227, null)
 		 // Operaciones en régimen especial de Agencias de Viajes
@@ -332,7 +329,6 @@ public class Mod3902024DAO {
 		 ,C0107	 (Mod3902024DetailKey.C0107, ((mod, vc) -> (vc.isNationalSales() && vc.isInvestment())))
 		 // Total volumen de operaciones 
 		 ,C0108	 (Mod3902024DetailKey.C0108, null)
-		 
 		 ;		 
 		 
 		private Mod3902024DetailKey key;
