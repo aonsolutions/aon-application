@@ -102,6 +102,7 @@ public class ActionTargetServlet extends AonApiHttpServlet {
 	private static String urlMail;
 	private static String userMail;
 	private static String passwordMail;
+	private static boolean authExisted = false;
 	
 	private static boolean isLocal = false;
 
@@ -483,7 +484,8 @@ public class ActionTargetServlet extends AonApiHttpServlet {
 			AON.insertApplicationParameter(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), trailParam);
 			
 			// Create Default User
-			createDefaultUser(api, c, targetObj.get(), email, phone);
+			boolean newAuth = createDefaultUser(api, c, targetObj.get(), email, phone);
+			authExisted = !newAuth;
 			
 			try (CloseableAONContext ctx = AONContext.getAONContext(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin())) {
 				SecurityDAO.saveDomainMaxDefinedUser(ctx, domain.getId(), 1);
@@ -819,8 +821,9 @@ public class ActionTargetServlet extends AonApiHttpServlet {
 		}
 	}
 	
-	private static void createDefaultUser(AonApiData api, Company company, Target target, String email, String phone) throws Exception {
+	private static boolean createDefaultUser(AonApiData api, Company company, Target target, String email, String phone) throws Exception {
 		Domain domain = company.getDomain();
+		boolean newAuth = true;
 		
 		if(Utils.isEmail(email)) {
 			
@@ -830,6 +833,8 @@ public class ActionTargetServlet extends AonApiHttpServlet {
 			Auth auth = AON_SOLUTIONS.getAuth(email);
 			if(auth.getUuid() == null)
 				auth = createAuth(domain, target, login, pass, email,phone);
+			else 
+				newAuth = false;
 			
 			if(auth.getAuth() != null) {
 				User user = createUser(company, auth, login, target.getName());
@@ -848,6 +853,8 @@ public class ActionTargetServlet extends AonApiHttpServlet {
 		} else {
 			throw new Exception("El email (" + email + ") no tiene un formato correcto.");
 		}
+		
+		return newAuth;
 	}
 	
 	private static String ramdonLogin() {
@@ -1174,10 +1181,17 @@ public class ActionTargetServlet extends AonApiHttpServlet {
 		body   += "  <p style=\"font-size: 16px; color: #333;\"><strong>Link Web:</strong> <a href=\"" + (isLocal ? "http" : "https") + "://" + urlMail + (isLocal ? ":8080" : "") + "/beta?theme=https://aonsolutions.github.io/aon-theme/css/infoautonomos.css" + "\" id=\"url-empresa\" style=\"color: #007bff;\">" + urlMail + "</a></p>\n"
 				+ "\n"
 				+ "  <p style=\"font-size: 16px; color: #333;\"><strong>Usuario:</strong> <span id=\"usuario\">" + userMail + "</span></p>\n"
-				+ "\n"
-				+ "  <p style=\"font-size: 16px; color: #333;\"><strong>Contraseña:</strong> <span id=\"contraseña\">" + passwordMail + "</span></p>\n"
-				+ "\n"
-				;
+				+ "\n";
+		
+		if(authExisted) {
+			body   += "  <p style=\"font-size: 16px; color: #333;\"><strong>Contraseña:</strong> <span id=\"contraseña\">La existente para este usuario</span></p>\n"
+					+ "\n"
+					;
+		} else {
+			body   += "  <p style=\"font-size: 16px; color: #333;\"><strong>Contraseña:</strong> <span id=\"contraseña\">" + passwordMail + "</span></p>\n"
+					+ "\n"
+					;
+		}
 		
 		if(!errors.isEmpty()) {
 			body   += "  <p style=\"font-size: 16px; color: #333;\"><strong>Errores</strong></p>\n"
