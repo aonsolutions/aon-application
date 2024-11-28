@@ -101,13 +101,6 @@
       <scope>compile</scope>
     </dependency>
     <dependency>
-      <groupId>commons-fileupload</groupId>
-      <artifactId>commons-fileupload-jakarta</artifactId>
-      <version>1.3.1</version>
-      <scope>provided</scope>
-    </dependency>
-    
-    <dependency>
 		<groupId>org.apache.poi</groupId>
 		<artifactId>poi</artifactId>
 		<version>3.17</version>
