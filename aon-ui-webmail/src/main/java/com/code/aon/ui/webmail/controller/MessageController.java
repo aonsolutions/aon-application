@@ -2,10 +2,14 @@ package com.code.aon.ui.webmail.controller;
 
 import static com.code.aon.ui.common.ICommonConstants.LOGGED_USER_CONTROLLER_NAME;
 import static com.code.aon.webmail.bean.IMailConstants.IMAP;
+import static com.esferalia.aon.watson.util.AonStringUtils.contains;
+import static com.esferalia.aon.watson.util.AonStringUtils.substringAfter;
+import static com.esferalia.aon.watson.util.AonStringUtils.substringAfterLast;
 
 import java.io.Serializable;
 import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
+import java.security.Principal;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -13,6 +17,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ExecutionException;
 
 import javax.faces.context.FacesContext;
 import javax.faces.event.AbortProcessingException;
@@ -45,6 +50,7 @@ import com.code.aon.common.domain.DomainManager;
 import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.common.util.AonFile;
 import com.code.aon.faces.controller.AttachmentUtil;
+import com.code.aon.jaas.auth.AuthPrincipal;
 import com.code.aon.ui.common.ICommonMessages;
 import com.code.aon.ui.common.controller.LoggedUser;
 import com.code.aon.ui.util.AonUtil;
@@ -58,6 +64,7 @@ import com.code.aon.webmail.bean.AonFolder;
 import com.code.aon.webmail.bean.AonMessage;
 import com.code.aon.webmail.bean.AonMessageUtils;
 import com.code.aon.webmail.bean.AonServer;
+import com.esferalia.aon.jooq.tables.Auth;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.ApplicationParameter;
 import com.esferalia.aon.occam.api.model.Domain;
@@ -70,15 +77,23 @@ import com.esferalia.aon.occam.api.model.type.MailProcessType;
 import com.google.api.services.drive.Drive;
 
 import net.aonsolutions.aon.google.apis.drive.AonDrive;
+import software.amazon.awssdk.services.sesv2.model.GetEmailIdentityResponse;
 import solutions.aon.aws.ses.SES;
 
 public class MessageController implements IWebMailConstants, Serializable {
 	
+	private static final String SES_IDENTITY_LOGIN_TAG = "login";
+	private static final String SES_IDENTITY_DOMAIN_TAG = "domain";
+
+	private static final String SES_DEFAULT_CONFIGURATION_SET = "default";
+	private static final String SES_DEFAULT_VERIFY_EMAIL_TEMPLATE = "AonSolutionsTemplate";
+
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	private static final String MESSAGE_WINDOW_INCLUDED = "com.code.aon.ui.webmail.MessageWindow";
 
 	private final static Logger LOGGER = LoggerFactory.getLogger(MessageController.class);
+	
 	
 	private String recipientsTo;
 	
@@ -202,13 +217,13 @@ public class MessageController implements IWebMailConstants, Serializable {
     	try {
 	    	sentMessage = compoundMessage(server);
 	    	if(isProtocolAon()) {
-	    		String from = 
-				this.senderMailAccount.getDisplayName() +
-				(SES.isVerifiedForSendingStatus(this.senderMailAccount.getEmail()) ?
-				"<"+this.senderMailAccount.getEmail()+">" : "<no-reply@aon.solutions>" );
+	    		String address = isVerifiedForSendingStatus(this.senderMailAccount.getEmail()) ?
+				this.senderMailAccount.getEmail() : "no-reply@aon.solutions" ;
 
 	    		MimeMessage message = (MimeMessage) sentMessage.getMessage();
-	            message.setFrom(new InternetAddress(from));
+	            String personal = this.senderMailAccount.getDisplayName();
+	    		message.setFrom(new InternetAddress(address, personal, "UTF-8" ));
+
 	            Address replyTo = new InternetAddress(this.senderMailAccount.getEmail());
 	            message.addRecipient(RecipientType.BCC, replyTo);
 	            Address[] addresses = {replyTo};
@@ -697,8 +712,19 @@ public class MessageController implements IWebMailConstants, Serializable {
 		}
 	}
 
-	public void onSendVerifyEmail(ActionEvent event) {
-		SES.sendVerificationEmail(this.senderMailAccount.getEmail());
+	public void onSendVerifyEmail(ActionEvent event) throws InterruptedException, ExecutionException {
+		AuthPrincipal authPrincipal = (AuthPrincipal) FacesContext.getCurrentInstance().getExternalContext()
+				.getUserPrincipal();
+		String domain = authPrincipal.getDomain();
+		String login = authPrincipal.getShortName();
+		Map<String,String> domainAndLoginTags = new HashMap<>();
+		domainAndLoginTags.put(SES_IDENTITY_LOGIN_TAG, login);
+		domainAndLoginTags.put(SES_IDENTITY_DOMAIN_TAG, domain);
+		SES.sendVerificationEmail(
+				this.senderMailAccount.getEmail(), 
+				SES_DEFAULT_CONFIGURATION_SET,
+				domainAndLoginTags,
+				SES_DEFAULT_VERIFY_EMAIL_TEMPLATE);
 	}
 
 	public void onPrepareEmailWindow(ActionEvent event) {
@@ -782,5 +808,15 @@ public class MessageController implements IWebMailConstants, Serializable {
 	public void setMailProccessType(MailProcessType mailProccessType) {
 		this.mailProccessType = mailProccessType;
 	}
+	
+	public boolean isVerifiedForSendingStatus(String email) {
+		GetEmailIdentityResponse emailIdentity = SES.getEmailIdentity(email);
+		for (String domain = substringAfterLast(email, "@"); emailIdentity == null
+				&& contains(domain, '.'); domain = substringAfter(domain, ".")) {
+			emailIdentity = SES.getEmailIdentity(domain);
+		}
+		return emailIdentity != null && emailIdentity.verifiedForSendingStatus();
+	}
+	
 	
 }

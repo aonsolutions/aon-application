@@ -66,15 +66,24 @@ public class FinanceUtils {
 		if (AonStringUtils.isNotEmpty(params.getReferenceCode())) {
 			prop = prop.and(p.getInvoiceReferenceCodeProperty().like(AonStringUtils.SQLlike(params.getReferenceCode())));
 		}
-		if (params.getAmount() != null && AonMathUtils.isNotZero(params.getAmount())) {
-			if (params.isNearbyNumbers()) {
-				double factor = params.getAmount() * params.getFactor() / 100;
-				prop = prop.and(p.getAmountProperty().between((params.getAmount()-factor), (params.getAmount()+factor)));
-			} else {
-				prop = prop.and(p.getAmountProperty().eq(params.getAmount()));
+		
+		if(params.isBetweenNumbers()) {
+			if(params.getGTAmount() != null && AonMathUtils.isNotZero(params.getGTAmount()))
+				prop = prop.and(p.getAmountProperty().ge(params.getGTAmount()));
+			if(params.getLTAmount() != null && AonMathUtils.isNotZero(params.getLTAmount()))
+				prop = prop.and(p.getAmountProperty().le(params.getLTAmount()));
+		} else {
+			if (params.getAmount() != null && AonMathUtils.isNotZero(params.getAmount())) {
+				if (params.isNearbyNumbers()) {
+					double factor = params.getAmount() * params.getFactor() / 100;
+					prop = prop.and(p.getAmountProperty().between((params.getAmount()-factor), (params.getAmount()+factor)));
+				} else {
+					prop = prop.and(p.getAmountProperty().eq(params.getAmount()));
+				}
+					
 			}
-				
 		}
+		
 		Filter[] statusFilters = new Filter[]{
 			(params.isPending()?p.getStatusProperty().eq(FinanceStatus.PENDING.value()):null),
 			(params.isBatched()?p.getStatusProperty().eq(FinanceStatus.BATCHED.value()):null),

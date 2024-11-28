@@ -2,6 +2,7 @@ package com.esferalia.aon.gwt.common.client.widget.solutions;
 
 import java.util.function.Consumer;
 
+import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.KeyUpHandler;
@@ -14,7 +15,7 @@ import com.google.gwt.user.client.ui.Widget;
 public abstract class AonCustomDockLayout extends DockLayoutPanel {
 
 	// Toolbar
-	AonToolbar toolbar;
+	private AonToolbar toolbar;
 	
 	private SearchFilterComponent searchFilterComponent;
 	private AonToolbarSearchBox aonToolbarSearchBox;
@@ -35,6 +36,7 @@ public abstract class AonCustomDockLayout extends DockLayoutPanel {
 	
 	private void createToolbar(String title, boolean searchFilter) {
 		toolbar = new AonToolbar(title);
+		toolbar.addStyleName(AON.CSS.aonNoBorderToolbar());
 			
 		if(searchFilter) {
 			searchFilterComponent = new SearchFilterComponent() {
@@ -48,6 +50,7 @@ public abstract class AonCustomDockLayout extends DockLayoutPanel {
 		
 			toolbar.showSearchPanel(searchFilterComponent);
 		}
+		
 		addNorth(toolbar, AonToolbar.HEIGTH);
 	}
 	

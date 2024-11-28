@@ -212,12 +212,15 @@ public class SettleSalariesDAO {
 		
 		Result<Record> fbatchDetails = ctx.getDslContext().select().from(FBATCH_DETAIL)
 			.join(FINANCE).on(FINANCE.ID.eq(FBATCH_DETAIL.FINANCE))
-			.leftOuterJoin(RADDRESS).on(RADDRESS.REGISTRY.eq(FINANCE.REGISTRY).and(RADDRESS.TYPE.eq((byte)0)))
+			.leftOuterJoin(RADDRESS).on(RADDRESS.REGISTRY.eq(FINANCE.REGISTRY).and(RADDRESS.TYPE.eq((byte)1)))
 			.leftOuterJoin(GEOZONE).on(GEOZONE.ID.eq(RADDRESS.GEOZONE))
 			.where(FBATCH_DETAIL.FBATCH.eq(fbatchId))
+//			.groupBy(FBATCH_DETAIL.ID, RADDRESS.REGISTRY)
 			.fetch();
 		
 		if(null == fbatchDetails || fbatchDetails.isEmpty()) throw new AonCoreException("No existen vencimientos en la remesa sobre los que generar el fichero Sepa");
+		
+		System.out.println("Vencimientos : " + fbatchDetails.size());
 		
 		Record fbatchEnterprise = ctx.getDslContext().select().from(FBATCH)
 				.innerJoin(ENTERPRISE).on(ENTERPRISE.DOMAIN.eq(FBATCH.DOMAIN))

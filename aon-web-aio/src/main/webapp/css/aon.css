@@ -4503,8 +4503,20 @@ font-weight: 600;
    pointer-events: none;  /* Deshabilita la interacción con el mouse */
  }
  
- .aonHoverGray:hover{
+.aonHoverGray:hover{
   background-color: #f1f1f1;
   cursor: pointer;
+}
+
+.aon_no_border_toolbar > .aon_toolbar_inner{
+	border: none;
+}
+
+.aon_no_border_toolbar .aon_toolbar_button_container {
+	margin: 0;
+}
+
+.aon_no_border_toolbar .aon_toolbar_title_container {
+	padding: 0;
 }
 

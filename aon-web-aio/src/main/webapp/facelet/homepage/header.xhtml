@@ -1900,6 +1900,10 @@
 		border-color: black;
 	}
 
+	.aon-color-green {
+		color: green;
+	}
+	
 	.aon-pending {
 		color: rgb(243, 159, 29);
 	}
@@ -1964,6 +1968,41 @@
  		animation-iteration-count: infinite;
 	}
 
+	.aonButton-Pending{
+		border: 1px solid rgb(243, 159, 29);
+	  	border-radius: 5px;
+	  	margin-left: 10px;
+	}
+	
+	.aonButton-Error{
+		border: 1px solid red;
+	  	border-radius: 5px;
+	  	margin-left: 10px;
+	}
+	
+	.aonButton-Verified{
+		border: 1px solid green;
+	  	border-radius: 5px;
+	  	margin-left: 10px;
+	}
+	
+	.aonButton-Pending:hover,
+	.aonButton-Error:hover,
+	.aonButton-Verified:hover {
+  		font-weight: bold;
+	}
+	
+	[id*="sendVerifyEmail"] {
+		color: red !important;
+	}
+	
+	[id*="sendAgainVerifyEmail"] {
+		color: rgb(243, 159, 29) !important;
+	}
+	
+	[id*="sendTestEmailWindow"] {
+		color: green !important;
+	}
 	</style>
 
 	<script type="text/javascript">

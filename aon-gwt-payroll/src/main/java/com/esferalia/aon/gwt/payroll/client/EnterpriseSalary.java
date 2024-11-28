@@ -22,6 +22,7 @@ import com.esferalia.aon.gwt.payroll.shared.Mail;
 import com.esferalia.aon.gwt.payroll.shared.SalaryInfo;
 import com.esferalia.aon.gwt.payroll.shared.SalaryInfoFilter;
 import com.esferalia.aon.gwt.payroll.shared.Workplace;
+import com.esferalia.aon.occam.api.model.aonsolutions.DomainUserRoles;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler.ScheduledCommand;
@@ -38,6 +39,7 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.DeckPanel;
@@ -283,7 +285,7 @@ public abstract class EnterpriseSalary extends Composite {
 	
 	private EnterpriseSalaryObject enterpriseSalaryObject;
 	
-	private List<Listener> listeners;
+	private List<Listener> listeners = new LinkedList<>();
 	
 	private SalaryTable salaryTable;
 	
@@ -295,6 +297,9 @@ public abstract class EnterpriseSalary extends Composite {
 //	private AonToolbarButton publishButton;
 	private AonToolbarButton bidoqPublishButton;
 	private AonToolbarButton email;
+	
+	private DomainEnterprisesServiceAsync service = DomainEnterprisesServiceAsync.newInstance();
+	private DomainUserRoles dur;
 
 	// --------------------------------------------- Constructor
 
@@ -304,6 +309,25 @@ public abstract class EnterpriseSalary extends Composite {
 		salaryTable = new SalaryTableImpl();
 		initWidget(uiBinder.createAndBindUi(this)); 
 		
+		service.getDomainUserRoles(new AsyncCallback<DomainUserRoles>() {
+			
+			@Override
+			public void onSuccess(DomainUserRoles result) {
+				dur = result;
+				initView();
+			}
+			
+			@Override
+			public void onFailure(Throwable caught) {
+				Window.alert("Error DUR: " + caught.getMessage());
+				initView();
+			}
+			
+		});
+		
+	}
+
+	private void initView() {
 		// Init toolbar
 		getToolbarPanel();
 		getToolbarPDFViewerPanel();
@@ -508,10 +532,6 @@ public abstract class EnterpriseSalary extends Composite {
 	// --------------------------------------------- Init SalaryTable
 
 	private void initSalariesTable() {
-		//Show buttons
-//		this.publishButton.setVisible(!Wnd.getCurrentDomainNameURL().contains("ayudat"));
-		this.bidoqPublishButton.setVisible(Wnd.getCurrentDomainNameURL().contains("ayudat"));
-		
 		//Disable buttons till any salary selected
 		enableDisableButtons(false);
 		
@@ -722,7 +742,10 @@ public abstract class EnterpriseSalary extends Composite {
 		deleteButton.setEnabled(isSomethingSelected);
     	pdfButton.setEnabled(isSomethingSelected);
 //    	publishButton.setEnabled(isSomethingSelected);
-    	bidoqPublishButton.setEnabled(isSomethingSelected);
+    	
+    	if(null != this.dur && this.dur.isBidoq())
+    		bidoqPublishButton.setEnabled(isSomethingSelected && null != this.dur && this.dur.isBidoq());
+    	
     	email.setEnabled(isSomethingSelected);
 	}
 	
@@ -793,7 +816,7 @@ public abstract class EnterpriseSalary extends Composite {
 		
 		bidoqPublishButton = new AonToolbarButton( "Bidoq", "aon-icon-bidoq");
 		bidoqPublishButton.addClickHandler(e -> onBidoqPublish());	
-		bidoqPublishButton.setVisible(Wnd.getCurrentDomainNameURL().contains("ayudat"));
+		bidoqPublishButton.setVisible(null != this.dur && this.dur.isBidoq());
 		toolbar.add(bidoqPublishButton);
 		
 		email = new AonToolbarButton(AON.MSG.email(), AON.CSS.aonIconEmail());
@@ -842,7 +865,13 @@ public abstract class EnterpriseSalary extends Composite {
 			@Override
 			public void onAccept() {
 				List<SalaryInfo> alcatrazSalaries = salaryTable.getSelectedSalaries().stream().filter(salary -> salary.isAlcatraz()).collect(Collectors.toList());
-				if(alcatrazSalaries.isEmpty()) {
+				List<SalaryInfo> financeSalaries = salaryTable.getSelectedSalaries().stream().filter(salary -> salary.isFinance()).collect(Collectors.toList());
+				
+				if(!alcatrazSalaries.isEmpty()) 
+					createAlcatrazWarning(alcatrazSalaries);
+				else if(!financeSalaries.isEmpty()) {
+					createFinanceWarning(financeSalaries);
+				} else {
 					enterpriseSalaryObject.deleteSalaries(
 							salaryTable.getSelectedSalaries(), 
 							s -> 
@@ -853,9 +882,7 @@ public abstract class EnterpriseSalary extends Composite {
 								})
 							, f -> {}
 					);
-				} else 
-					createAlcatrazWarning(alcatrazSalaries);
-				
+				}
 			}
 		});
 	}
@@ -869,6 +896,20 @@ public abstract class EnterpriseSalary extends Composite {
 		}
 		
 		message += "<br>Para poder eliminar dichas n&oacute;minas, deber&aacute; eliminar primero el <b>Modelo 111</b> asociado.";
+		
+		AonDialog dialog = new AonDialog("Borraro", new HTML(message));
+		dialog.info();
+	}
+	
+	private void createFinanceWarning(List<SalaryInfo> financeSalaries) {
+		DateTimeFormat formatDate = DateTimeFormat.getFormat("dd/MM/yyyy");
+		
+		String message = "No se pueden eliminar la n&oacute;minas que ya tienen <b>vencimientos</b> creados. Estas n&oacute;minas son:<br><br>";
+		for(SalaryInfo salary : financeSalaries) {
+			message += "&emsp;" + salary.getEmployeeName() + " (" + formatDate.format(salary.getStartDate()) + " - " + formatDate.format(salary.getEndDate()) + ")<br>";
+		}
+		
+		message += "<br>Para poder eliminar dichas n&oacute;minas, deber&aacute; eliminar primero los <b>vencimientos</b> asociados.";
 		
 		AonDialog dialog = new AonDialog("Borraro", new HTML(message));
 		dialog.info();
