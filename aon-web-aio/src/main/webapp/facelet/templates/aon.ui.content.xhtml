@@ -14,6 +14,10 @@
 		</ui:insert>
 	</aon:if>
 	
+	<aon:if test="#{app.standAlone}" >
+		<ui:include src="/com/code/aon/ui/webmail/facelet/webmailMessage/messageNewModal.xhtml" />
+	</aon:if>
+	
 	<aon:componentGroup
 		family="javax.faces.Command"
 		rendered="#{aonRole.guest}"

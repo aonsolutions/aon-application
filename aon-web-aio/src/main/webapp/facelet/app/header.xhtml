@@ -1322,6 +1322,11 @@
 		background-size: 24px;
 		background-image: url('data:image/svg+xml;utf-8,&lt;svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="--var(aonIconColor, black)"&gt;&lt;path d="M800-663.08v438.46q0 27.62-18.5 46.12Q763-160 735.38-160H224.62q-27.62 0-46.12-18.5Q160-197 160-224.62v-510.76q0-27.62 18.5-46.12Q197-800 224.62-800h438.46L800-663.08ZM760-646 646-760H224.62q-10.77 0-17.7 6.92-6.92 6.93-6.92 17.7v510.76q0 10.77 6.92 17.7 6.93 6.92 17.7 6.92h510.76q10.77 0 17.7-6.92 6.92-6.93 6.92-17.7V-646ZM480-298.46q33.08 0 56.54-23.46T560-378.46q0-33.08-23.46-56.54T480-458.46q-33.08 0-56.54 23.46T400-378.46q0 33.08 23.46 56.54T480-298.46ZM270.77-569.23h296.92v-120H270.77v120ZM200-646v446-560 114Z"/&gt;&lt;/svg&gt;') ;
 	}
+	
+	.aon-icon-accept[value='Send'],
+	.aon-icon-accept[value='Enviar']{
+		background-image: url('data:image/svg+xml;utf-8,&lt;svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="black"&gt;&lt;path d="M172-238v-484l574 242-574 242Zm28-42 474-200-474-200v160l180 40-180 40v160Zm0 0v-400 400Z"/&gt;&lt;/svg&gt;') ;
+	}
 
 	.aon-icon-cancel{
 		background-size: 24px;
@@ -1538,6 +1543,15 @@
 	    background-color: transparent;
 	    background-position: center center;	
     }
+    
+	input.aon-finding-toolbar-item.aon-icon-accept[value='Send'],
+	input.aon-finding-toolbar-item.aon-icon-accept[value='Enviar'] {
+		width: fit-content;	
+	    border-radius: 10%;
+	    padding-left: 24px;
+		color: var(--aonIconColor, black);
+	    background-position: left center;	
+	}
 	
 	input.aon-finding-toolbar-item.aon-icon-webmail2{
 	    width:40px;
@@ -2989,7 +3003,72 @@
 	 #aonContent\:globalConfigPanelForm\:configPanelBar {
 	 	width: 180px !important;
 	 }
+	 
+	 @keyframes rotate {
+		0% {
+			transform: rotate(0deg)
+		}
+		6% {
+		    transform: rotate(22deg)
+		}
+		12% {
+		    transform: rotate(45deg)
+		}
+		18% {
+		    transform: rotate(67deg)
+		}
+		25% {
+			transform: rotate(90deg)
+		}
+		31% {
+			transform: rotate(122deg)
+		}
+		37% {
+			transform: rotate(135deg);
+		}
+		43% {
+		    transform: rotate(157deg);
+		}
+		50% {
+		    transform: rotate(180deg);
+		}
+		56% {
+		    transform: rotate(192deg);
+		}
+		62% {
+		    transform: rotate(225deg);
+		}
+		68% {
+		    transform: rotate(237deg);
+		}
+		75% {
+		    transform: rotate(270deg);
+		}
+		81% {
+		    transform: rotate(282deg);
+		}
+		87% {
+		    transform: rotate(315deg);
+		}
+		93% {
+		    transform: rotate(327deg);
+		}
+		100% {
+		    transform: rotate(360deg);
+		}
+ 	}
+ 	
+ 	.rotate-animation{
+ 		animation-name: rotate; 
+ 		animation-duration: 1.0s; 
+ 		animation-iteration-count: infinite;
+	}
+	
 
+	.new-mail-button {
+	  background: none;
+	  border: #808080 1px solid;
+	}
 	</style>
 
 	<script type="text/javascript">
