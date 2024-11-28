@@ -4,7 +4,9 @@ import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.CommonService;
@@ -776,7 +778,8 @@ public class FinanceModule extends MainEntryPoint {
 	}
 	
 	protected void checkAll(final FinanceModuleOptions opt, boolean check) {
-		for (FinanceRow financeRow : finances.values()) {
+		List<FinanceRow> filteredFinances = finances.values().stream().filter(finance -> !isPayroll || finance.getFinance().hasSalary() && (finance.getFinance().getAmount() + finance.getFinance().getExpenses()) == finance.getFinance().getSalaryTotalLiquid()).collect(Collectors.toList());
+		for (FinanceRow financeRow : filteredFinances) {
 			financeRow.getFinance().setSelected(check);
 			manageSelection(financeRow.getFinance());
 			Widget w = table.getWidget(financeRow.getRow(), 1);
@@ -904,7 +907,7 @@ public class FinanceModule extends MainEntryPoint {
 			}
 		}); 
 		
-		table.addRow(row, ( !isPayroll || finance.hasSalary() ? checkButton : new Label() ), ( !isPayroll || finance.hasSalary() ? COLS.CHK.getColWidth() : "1rem" ));
+		table.addRow(row, ( !isPayroll || (finance.hasSalary() && (finance.getAmount() + finance.getExpenses()) == finance.getSalaryTotalLiquid()) ? checkButton : new Label() ), ( !isPayroll || (finance.hasSalary() && (finance.getAmount() + finance.getExpenses()) == finance.getSalaryTotalLiquid()) ? COLS.CHK.getColWidth() : "1rem" ));
 		
 		Label dueDate = new Label(AON.DATE_FORMAT.format(finance.getDueDate()));
 		table.addRow(row, dueDate, COLS.DDT.getColWidth());
@@ -939,7 +942,10 @@ public class FinanceModule extends MainEntryPoint {
 		regName.setTitle(rname);
 		table.addInlineStyle(regName, COLS.AUTO.getCellStyleClass());
 		
-		if(isPayroll && !finance.hasSalary()) {
+		if(isPayroll && finance.hasSalary() && (finance.getAmount() + finance.getExpenses()) != finance.getSalaryTotalLiquid()) {
+			regName.addStyleName(AON.CSS.aonColorOrange());
+			regName.setTitle("El importe de este vencimiento no coincide con el importe de la n\u00f3nmina asociada");
+		} else if(isPayroll && !finance.hasSalary()) {
 			regName.addStyleName(AON.CSS.aonColorRed());
 			regName.setTitle("Este vencimiento esta asociado a una nomina inexistente");
 		}
@@ -1099,7 +1105,7 @@ public class FinanceModule extends MainEntryPoint {
 		// *******															 *******
 		// *************************************************************************
 		AonTableButton settleButton = null;
-		if (finance.isFullPending() && finance.getId() != null && (!isPayroll || finance.hasSalary())) {
+		if (finance.isFullPending() && finance.getId() != null && (!isPayroll || (finance.hasSalary() && (finance.getAmount() + finance.getExpenses()) == finance.getSalaryTotalLiquid()))) {
 			settleButton = new AonTableButton(AON.MSG.toSettle(), AON.CSS.aonIconFinanceSettle() );
 			settleButton.addClickHandler(new ClickHandler() {
 				

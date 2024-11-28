@@ -109,7 +109,11 @@ public class AonCustomMultiSelectBox extends HTMLPanel {
         	
         	filterMenu.add(checkBoxPanel);
         	
-        	checkBox.addValueChangeHandler(e -> changeCheckBoxValue(checkBox, option));
+        	checkBox.addClickHandler(e -> {
+        		checkBox.setValue(!checkBox.getValue());
+        		changeCheckBoxValue(checkBox, option);
+        		e.getNativeEvent().stopPropagation();
+        	});
         	checkBoxPanel.addDomHandler(e -> changeCheckBoxValue(checkBox, option), ClickEvent.getType());
         	
         	valuesCB.put(option, checkBox);
