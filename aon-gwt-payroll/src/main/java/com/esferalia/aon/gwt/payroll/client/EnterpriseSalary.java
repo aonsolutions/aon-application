@@ -309,18 +309,18 @@ public abstract class EnterpriseSalary extends Composite {
 		salaryTable = new SalaryTableImpl();
 		initWidget(uiBinder.createAndBindUi(this)); 
 		
+		initView();
 		service.getDomainUserRoles(new AsyncCallback<DomainUserRoles>() {
 			
 			@Override
 			public void onSuccess(DomainUserRoles result) {
 				dur = result;
-				initView();
+				bidoqPublishButton.setVisible(null != dur && dur.isBidoq());
 			}
 			
 			@Override
 			public void onFailure(Throwable caught) {
 				Window.alert("Error DUR: " + caught.getMessage());
-				initView();
 			}
 			
 		});
