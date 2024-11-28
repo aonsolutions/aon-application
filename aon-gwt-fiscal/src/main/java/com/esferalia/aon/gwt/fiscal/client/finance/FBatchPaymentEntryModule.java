@@ -1125,7 +1125,16 @@ public abstract class FBatchPaymentEntryModule extends SimpleLayoutPanel {
 			amount.setTitle(infoTitle);
 		}
 		
-		if(!finance.hasSalary()) {
+		if(finance.hasSalary() && (finance.getAmount() + finance.getExpenses()) != finance.getSalaryTotalLiquid()) {
+			issueDate.addStyleName(AON.CSS.aonColorOrange());
+			titular.addStyleName(AON.CSS.aonColorOrange());
+			amount.addStyleName(AON.CSS.aonColorOrange());
+
+			String title = "El importe de este vencimiento no coincide con el importe de la n\u00f3nmina asociada";
+			issueDate.setTitle(title);
+			titular.setTitle(title);
+			amount.setTitle(title);
+		} else if(!finance.hasSalary()) {
 			issueDate.addStyleName(AON.CSS.aonColorRed());
 			titular.addStyleName(AON.CSS.aonColorRed());
 			amount.addStyleName(AON.CSS.aonColorRed());
@@ -1146,7 +1155,7 @@ public abstract class FBatchPaymentEntryModule extends SimpleLayoutPanel {
 		});
 
 		aviableFinanceTable.setWidget(row, col,
-			isSelectable(finance) && !notValidAccountBic(finance) && !hasNegativeAmount(finance) && finance.hasSalary() ? checkButton : new Label()
+			isSelectable(finance) && !notValidAccountBic(finance) && !hasNegativeAmount(finance) && finance.hasSalary() && (finance.getAmount() + finance.getExpenses()) == finance.getSalaryTotalLiquid() ? checkButton : new Label()
 		);
 		++col;
 		aviableFinanceTable.setWidget(row, col, issueDate);
@@ -1167,7 +1176,7 @@ public abstract class FBatchPaymentEntryModule extends SimpleLayoutPanel {
 		aviableFinanceTable.setWidget(row, col, amount);
 		++col;
 		aviableFinanceTable.setWidget(row, col, 
-			notValidAccountBic(finance) || hasNegativeAmount(finance) || !finance.hasSalary() ? infoButton : addButton
+			notValidAccountBic(finance) || hasNegativeAmount(finance) || !finance.hasSalary() || (finance.getAmount() + finance.getExpenses()) != finance.getSalaryTotalLiquid() ? infoButton : addButton
 		);
 		
 		aviableFinanceTable.getRowFormatter().getElement(row).getStyle().setProperty("height", "1.5rem");
@@ -1182,6 +1191,8 @@ public abstract class FBatchPaymentEntryModule extends SimpleLayoutPanel {
 					? "La cuenta bacanria asociada al titular no es correcta"
 					: AonStringUtils.isBlank(finance.getBic()) ? "No existe BIC asociado al titular" : "";
 		else if (!finance.hasSalary()) return "Este vencimiento tiene asociada una nomina inexistente";
+		else if(finance.hasSalary() && (finance.getAmount() + finance.getExpenses()) != finance.getSalaryTotalLiquid())
+			return "El importe de este vencimiento no coincide con el importe de la n\u00f3nmina asociada";
 		else return AonStringUtils.EMPTY;
 	}
 	
@@ -1499,7 +1510,16 @@ public abstract class FBatchPaymentEntryModule extends SimpleLayoutPanel {
 		Label amount = new Label(AON.FMT.format(finance.getAmount()) + " \u20ac");
 		amount.addStyleName(AON.CSS.aonTextRight());
 		
-		if(!finance.hasSalary()) {
+		if(finance.hasSalary() && (finance.getAmount() + finance.getExpenses()) != finance.getSalaryTotalLiquid()) {
+			issueDate.addStyleName(AON.CSS.aonColorOrange());
+			titular.addStyleName(AON.CSS.aonColorOrange());
+			amount.addStyleName(AON.CSS.aonColorOrange());
+
+			String title = "El importe de este vencimiento no coincide con el importe de la n\u00f3nmina asociada";
+			issueDate.setTitle(title);
+			titular.setTitle(title);
+			amount.setTitle(title);
+		} if(!finance.hasSalary()) {
 			issueDate.addStyleName(AON.CSS.aonColorRed());
 			titular.addStyleName(AON.CSS.aonColorRed());
 			amount.addStyleName(AON.CSS.aonColorRed());
@@ -1514,7 +1534,7 @@ public abstract class FBatchPaymentEntryModule extends SimpleLayoutPanel {
 				finance.isPending() || finance.isBatched() ? removeButton : new Label());
 		++col;
 		selectedFinanceTable.setWidget(row, col,
-				finance.isPending() || finance.isBatched() || finance.hasSalary() ? checkButton : new Label());
+				finance.isPending() || finance.isBatched() || finance.hasSalary() && (finance.getAmount() + finance.getExpenses()) == finance.getSalaryTotalLiquid() ? checkButton : new Label());
 		++col;
 		selectedFinanceTable.setWidget(row, col, issueDate);
 		++col;

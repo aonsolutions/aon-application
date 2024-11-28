@@ -171,7 +171,7 @@ public class FinanceDAO {
 			.select(PAY_METHOD.fields())
 			.select(SCOPE.fields())
 			.select(INVOICE.fields())
-			.select(SALARY.ID)
+			.select(SALARY.ID, SALARY.TOTAL_LIQUID)
 			.from(FINANCE)
 			.join(REGISTRY).on(FINANCE.REGISTRY.equal(REGISTRY.ID))
 			.join(SCOPE).on(FINANCE.SCOPE.equal(SCOPE.ID))
@@ -542,6 +542,7 @@ public class FinanceDAO {
 				.setPayMethodName(record.getValue(PAY_METHOD.NAME))
 				.setPayMethodType( PayMethodType.safeValueOf(  record.getValue(PAY_METHOD.TYPE)))
 				.setHasSalary(null != record.get(SALARY.ID))
+				.setSalaryTotalLiquid(null != record.get(SALARY.ID) && null != record.get(SALARY.TOTAL_LIQUID) ? record.get(SALARY.TOTAL_LIQUID) : null)
 				.setDirty(false)
 				;
 		}
