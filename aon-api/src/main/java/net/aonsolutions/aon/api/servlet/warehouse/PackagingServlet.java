@@ -147,15 +147,21 @@ public class PackagingServlet extends AonApiHttpServlet {
 		if(autoSendDelivery){
 			System.out.println("SEND DELIVERY TO SERES IS TRUE");
 			SeresInfo info = SERES.getSeresInfo(api.getDomain(), api.getUser());
-			if(info.getSeresPath() == null)
+			if(delivery.getCustomerDocument() != null && isAldi(delivery.getCustomerDocument())) {
+				info.setSeresPath(SeresPath.ENVIO_DESADV_D01B);
+			} else if(info.getSeresPath() == null)
 				info.setSeresPath(SeresPath.ENVIO_DESADV_D96A);
 			DeliveryUpload du = new DeliveryUpload(api.getDomain(), api.getUser().getLogin(), info);
 			EdiCodes codes = SERES.getEdiCodes(api.getDomain(), api.getUser(), delivery);
 			delivery.setEdiCodes(codes);
-			
-			
 			du.uploadDelivery(delivery);
 		} else System.out.println("SEND DELIVERY TO SERES IS FALSE");
 
+	}
+	
+	private boolean isAldi(String document) {
+		return "B63667109".equals(document)
+				|| "B56242415".equals(document)	
+				|| "B84160233".equals(document);		
 	}
 }
