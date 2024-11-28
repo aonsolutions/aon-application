@@ -1,6 +1,6 @@
 import {AonElement} from '../../components/AonElement.js';
 import { Apps, ClassicApps, getAppsByDur} from  '../../services/app.js';
-import {getDomainNotice, getDomainUserRoles, getTaskCount, getTaskHolder, getTimeControl, getAttach, getPeriodLaboral, getTrailData} from  '../../services/service.js';
+import {getDomainNotice, getDomainUserRoles, getTaskCount, getTaskHolder, getTimeControl, getAttach, getPeriodLaboral, getTrailData, getCompanyOne} from  '../../services/service.js';
 import {getAccessBidoq} from  '../../services/bidoqService.js';
 import {DomainUserRoles} from '../../models/DomainUserRoles.js';
 import { CONSTANT, CSS, EVENT, MATERIAL_ICONS, MSG, TAG } from '../../environments/environments.js';
@@ -36,7 +36,7 @@ import { AonStatistics } from '../timecontrol/time-control/statistics/aon-statis
 import { AonPayrollCard } from '../laboral/payroll/aon-payroll-card.js';
 import { AonMessengerCard } from '../messenger/aon-messenger-card.js';
 import { getModelsFiscal } from '../../services/service.js';
-import { sortBy } from '../../services/utils.js';
+import { sortBy, waitEl } from '../../services/utils.js';
 import { FiscalUtils } from '../fiscal/FiscalUtils.js';
 import { AonBankCard } from '../accounting/aon-bank-card.js';
 import { AonDocumentalCard } from '../documental/aon-documental-card.js';
@@ -714,6 +714,31 @@ export class AonDesktop extends AonElement {
 			messengerCard.firstChild.children.item(1).style.height = "22.5rem";
 			messengerCard.firstChild.style.margin = '0';
 		}
+
+		let data = {
+			additional_info: ['ADDRESSES']
+		};
+    
+		console.log("getCompanyOne");
+		console.log(data);
+		
+		getCompanyOne(data).then(cp => {
+			console.log(cp);
+			if(!cp.addresses || cp.addresses.length === 0){
+				this.getApplication().confirmDialog(
+					"Dirección",
+					"No existe una direccion para esta empresa. Cumplimentelá antes de continuar.",
+					async () => {
+					  let aonHeader = this.getElement('aonHeader');
+					  aonHeader.aonConfiguration();
+			  
+					  waitEl(`ul[id*="aonConfigurationSidenavEMPRESAList"] li[id*="aonConfigurationSidenav"]`).then(liGeneralInfo =>{
+						liGeneralInfo.click();
+					  }); 
+					}
+				  );
+			}
+		});
 	}
 
 	async isElementLoaded(selector){
