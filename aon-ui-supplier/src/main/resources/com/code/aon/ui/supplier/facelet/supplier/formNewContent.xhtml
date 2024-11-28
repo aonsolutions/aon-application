@@ -5,35 +5,40 @@
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:aon="http://www.code.es/aon-rich-components">
-
-	<aon:panelGrid columns="2" columnClasses="aon-panelGrid-odd aon-width-150,aon-panelGrid-even aon-width-500">
-
-		<aon:if test="#{lookup != null}">
-			<ui:param name="controller" value="#{lookup}"/>
-		</aon:if>
-
-		<ui:include	src="/com/code/aon/ui/supplier/facelet/supplier/formContent.xhtml" />
 	
-		<aon:if test="#{aonConfiguration.bean.supplier.showTariff}">
-			<aon:outputLabel for="Supplier_tariff_id"
-				value="#{bundle.report_tariff}" />
-			<aon:selectOneMenu id="Supplier_tariff_id"
-				value="#{controller.to.tariff}">
-				<f:selectItem itemLabel="-" value="#{null}" />
-				<f:selectItems value="#{configCollections.purchaseTariffs}" />
-			</aon:selectOneMenu>
-		</aon:if>
-
-		<ui:include src="/com/code/aon/ui/registry/facelet/lookup/registry/formAddressMedia.xhtml">
-			<ui:param name="controllerLookupListener" value="#{supplierForm}"/>
-		</ui:include>
+	<aon:div>
+		<aon:panelGrid columns="2" styleClass="aonCards" columnClasses="aon-vertical-align-top, aon-vertical-align-top">
+			<aon:panelGrid columns="2" styleClass="aonCard" columnClasses="aon-panelGrid-odd aon-width-150,aon-panelGrid-even aon-width-500">
 		
-	</aon:panelGrid>
-
-	<aon:if test="#{aonConfiguration.bean.supplier.showFinanceData}">
-		<ui:include src="/com/code/aon/ui/registry/facelet/lookup/registry/formPayMethod.xhtml">
-			<ui:param name="controllerLookupListener" value="#{supplierForm}"/>
-		</ui:include>
-	</aon:if>
-
+				<aon:if test="#{lookup != null}">
+					<ui:param name="controller" value="#{lookup}"/>
+				</aon:if>
+		
+				<ui:include	src="/com/code/aon/ui/supplier/facelet/supplier/formContent.xhtml" />
+			
+				<aon:if test="#{aonConfiguration.bean.supplier.showTariff}">
+					<aon:outputLabel for="Supplier_tariff_id"
+						value="#{bundle.report_tariff}" />
+					<aon:selectOneMenu id="Supplier_tariff_id"
+						value="#{controller.to.tariff}">
+						<f:selectItem itemLabel="-" value="#{null}" />
+						<f:selectItems value="#{configCollections.purchaseTariffs}" />
+					</aon:selectOneMenu>
+				</aon:if>
+		
+				<ui:include src="/com/code/aon/ui/registry/facelet/lookup/registry/formAddressMedia.xhtml">
+					<ui:param name="controllerLookupListener" value="#{supplierForm}"/>
+				</ui:include>
+				
+			</aon:panelGrid>
+		
+			<aon:if test="#{aonConfiguration.bean.supplier.showFinanceData}">
+				<aon:div styleClass="aonCard">
+					<ui:include src="/com/code/aon/ui/registry/facelet/lookup/registry/formPayMethod.xhtml">
+						<ui:param name="controllerLookupListener" value="#{supplierForm}"/>
+					</ui:include>
+				</aon:div>
+			</aon:if>
+		</aon:panelGrid>
+	</aon:div>
 </ui:composition>
