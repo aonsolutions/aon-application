@@ -56,6 +56,11 @@ public class Mod193Detail implements Serializable {
 	private double bizkaiaRetention;
 	private double gipuzkoaRetention;
 	
+	// FALTA - CAMPOS NUEVOS PARA 2024
+	private String previousPayerDocument;  	// NIF pagador anterior
+	private Date accrualDate; 				// Fecha de devengo
+	private String marketKey; 				// Clave de mercado (A, B, C o D)
+	
 	private boolean dirty;
 	private boolean deleted;
 
@@ -430,6 +435,33 @@ public class Mod193Detail implements Serializable {
 	}
 	public Mod193Detail setGipuzkoaRetention(double gipuzkoaRetention) {
 		this.gipuzkoaRetention = gipuzkoaRetention;
+		return this;
+	}
+
+	public String getPreviousPayerDocument() {
+		return previousPayerDocument;
+	}
+
+	public Mod193Detail setPreviousPayerDocument(String previousPayerDocument) {
+		this.previousPayerDocument = previousPayerDocument;
+		return this;
+	}
+
+	public Date getAccrualDate() {
+		return accrualDate;
+	}
+
+	public Mod193Detail setAccrualDate(Date accrualDate) {
+		this.accrualDate = accrualDate;
+		return this;
+	}
+
+	public String getMarketKey() {
+		return marketKey;
+	}
+
+	public Mod193Detail setMarketKey(String marketKey) {
+		this.marketKey = marketKey;
 		return this;
 	}
 }
