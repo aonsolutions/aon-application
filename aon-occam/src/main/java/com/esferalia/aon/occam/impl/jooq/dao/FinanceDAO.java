@@ -501,7 +501,7 @@ public class FinanceDAO {
 	// -------------------------------------------------------------
 	// ---------------------------- MAP ----------------------------
 	// -------------------------------------------------------------
-	public static class FullFinanceFiller  implements Function<Record,Finance> {
+	public static class FullFinanceFiller extends Filler   implements Function<Record,Finance> {
 		@Override
 		public Finance apply(Record record) {
 			return new Finance()
@@ -541,8 +541,8 @@ public class FinanceDAO {
 				.setModificationDate(record.getValue(FINANCE.MODIFICATION_DATE))
 				.setPayMethodName(record.getValue(PAY_METHOD.NAME))
 				.setPayMethodType( PayMethodType.safeValueOf(  record.getValue(PAY_METHOD.TYPE)))
-				.setHasSalary(null != record.get(SALARY.ID))
-				.setSalaryTotalLiquid(null != record.get(SALARY.ID) && null != record.get(SALARY.TOTAL_LIQUID) ? record.get(SALARY.TOTAL_LIQUID) : null)
+				.setHasSalary(checkField(record, SALARY.ID))
+				.setSalaryTotalLiquid(checkField(record, SALARY.TOTAL_LIQUID) ? record.get(SALARY.TOTAL_LIQUID) : null)
 				.setDirty(false)
 				;
 		}
