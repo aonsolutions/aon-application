@@ -46,7 +46,7 @@ public interface ITemplateAsync {
 
 	void executeExcel(Domain domain, User user, TemplateInfo ti, ImportType importType, Boolean ignoreInactiveClient,
 			Integer inventory, String warehouse1, String warehouse2, String series, String comments, Boolean istransfer,
-			Integer number, AsyncCallback<Integer> callback);
+			Integer number, String data, AsyncCallback<Integer> callback);
 
 	void insertProduct(Domain domain, User user, String value, AsyncCallback<Error> callback);
 	
@@ -61,8 +61,6 @@ public interface ITemplateAsync {
 	void insertDiary(Domain domain, User user, Integer index, AsyncCallback<Error> callback);
 	
 	void insertPGC(Domain domain, User user, Integer index, AsyncCallback<Error> callback);
-
-	void insertCustomerIban(Domain domain, User user, AsyncCallback<Error> callback);
 
 	void insertTransferStock(Domain domain, User user, AsyncCallback<Error> callback);
 
@@ -88,9 +86,9 @@ public interface ITemplateAsync {
 	void generateConsumptionExcel(Domain domain, User user, List<Warehouse> warehouses, String type, Boolean onlyNegative,
 			Boolean detail, Integer size, Boolean packaged, Boolean withoutInv, Integer category, Boolean dif, AsyncCallback<String> callback);
 	
-	void excelRowNumber(Domain domain, User user, AsyncCallback<Integer> callback);
+	void excelRowNumber(Domain domain, User user, String data, AsyncCallback<Integer> callback);
 
-	void executeExcelEcommerce(Domain domain, User user, Ecommerce ecommerce, Seller seller, String type, Tag tag, AsyncCallback<Error> callback);
+	void executeExcelEcommerce(Domain domain, User user, Ecommerce ecommerce, Seller seller, String type, Tag tag, String data, AsyncCallback<Error> callback);
 
 	void getSellerList(Domain domain, User user, AsyncCallback<List<Seller>> callback);
 

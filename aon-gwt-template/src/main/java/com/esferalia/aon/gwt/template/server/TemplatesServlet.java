@@ -51,8 +51,6 @@ import com.esferalia.aon.gwt.template.server.imports.PGCImport;
 import com.esferalia.aon.gwt.template.server.imports.RegistryImport;
 import com.esferalia.aon.gwt.template.server.imports.ServalInvoiceImport;
 import com.esferalia.aon.gwt.template.server.marketplace.XMLUtils;
-import com.esferalia.aon.gwt.template.server.projectCommercial.CustomerIban;
-import com.esferalia.aon.gwt.template.server.projectCommercial.CustomerIbanImport;
 import com.esferalia.aon.gwt.template.server.projectCommercial.ProjectCommercialImport;
 import com.esferalia.aon.gwt.template.shared.AccountEntryImportClass;
 import com.esferalia.aon.gwt.template.shared.AccountImportClass;
@@ -127,23 +125,11 @@ public class TemplatesServlet extends AonStatelessRemoteServiceServlet implement
 
 	HashMap<String, ProductInfo> map = new HashMap<String, ProductInfo>();
 	
-	public static HashMap<String, byte[]> out;
 	static Integer size;
 	private static String mimetype;
 
 	public static TemplatesServlet getInstance() {
 		return new TemplatesServlet();
-	}
-
-	public static HashMap<String, byte[]> getOut() {
-		return out;
-	}
-	
-	public static void addOut(String hashId, byte[] data) {
-		if(out == null) {
-			out = new HashMap<String, byte[]>();
-		}
-		out.put(hashId, data);
 	}
 	
 	public static String getMimetype() {
@@ -221,7 +207,6 @@ public class TemplatesServlet extends AonStatelessRemoteServiceServlet implement
 
 	//-------------------- IMPORTAR
 	HashMap<String, LinkedList<ProjectCommercial>> pcs = new HashMap<>();
-	HashMap<String, LinkedList<CustomerIban>> cis = new HashMap<>();
 	HashMap<String, List<InvoiceImportClass>> ivs = new HashMap<>();
 	HashMap<String, LinkedList<RegistryImportClass>> rvs = new HashMap<>();
 	HashMap<String, LinkedList<AccountEntryImportClass>> dvs = new HashMap<>();
@@ -259,9 +244,9 @@ public class TemplatesServlet extends AonStatelessRemoteServiceServlet implement
 		return DiaryImport.getInstance().importation(domain, user.getLogin(), fileData);
 	}
 	
-	
+	@Override
 	public Integer executeExcel(Domain domain, User user, TemplateInfo ti, ImportType importType, Boolean ignoreInactiveClient,
-		Integer inventory, String warehouse1,String warehouse2 , String series, String comments,Boolean istransfer ,Integer number){
+		Integer inventory, String warehouse1,String warehouse2 , String series, String comments,Boolean istransfer ,Integer number, String data){
 		this.ti = ti;
 		error = new Error();
 		verror = new LinkedList<String>();
@@ -271,21 +256,21 @@ public class TemplatesServlet extends AonStatelessRemoteServiceServlet implement
 		com.esferalia.aon.gwt.template.shared.Error error = new Error();
 
 		String hashId = Base64.encode(domain.getName() + user.getLogin());		
-		byte[] data = getOut().get(hashId);
+		byte[] fileData = java.util.Base64.getDecoder().decode(data);
 		
-		if(data == null){
+		if(fileData == null){
 			error.setError(false);
- 			textError =  textError + "*No ha importado ning�n archivo.\n";
-			verror.add("*No ha importado ning�n archivo.");
+ 			textError =  textError + "* No ha importado ning\u00fan archivo.\n";
+			verror.add("*No ha importado ning\u00fan archivo.");
 			error.setTextError(verror);
 			this.error = error;
 			return -1;
 		}
 
-		saveImportation(domain, user, importType, data);
+		saveImportation(domain, user, importType, fileData);
 		Iterator<Row> rowIterator;
 		try {
-			ByteArrayInputStream bais = new ByteArrayInputStream(data);
+			ByteArrayInputStream bais = new ByteArrayInputStream(fileData);
 
 			HSSFWorkbook workbook = new HSSFWorkbook(bais);
 			HSSFSheet sheet = workbook.getSheetAt(0);
@@ -301,25 +286,22 @@ public class TemplatesServlet extends AonStatelessRemoteServiceServlet implement
 			else if(importType.equals(ImportType.STOCK))
 				executeExcelStock(domain, user, rowIterator, error, inventory, warehouse1, warehouse2, series, comments, istransfer, number);
 			else if(ImportType.DELIVERY.equals(importType)) {
-				di.put(hashId, DeliveryImport.getInstance().importation(data));
-			}
-			else if(ImportType.PROJECT_COMMERCIAL.equals(importType)) {
-				pcs.put(hashId, ProjectCommercialImport.getInstance().importation(domain, user.getLogin(), data));
-			} else if(ImportType.CUSTOMER_IBAN.equals(importType)) {
-				cis.put(hashId, CustomerIbanImport.getInstance().importation(domain, user.getLogin(), data));
+				di.put(hashId, DeliveryImport.getInstance().importation(fileData));
+			} else if(ImportType.PROJECT_COMMERCIAL.equals(importType)) {
+				pcs.put(hashId, ProjectCommercialImport.getInstance().importation(domain, user.getLogin(), fileData));
 			} else if(ImportType.INVOICE.equals(importType)) {
-				ivs.put(hashId, InvoiceImport.getInstance().importation(data));
+				ivs.put(hashId, InvoiceImport.getInstance().importation(fileData));
 				rowCount = ivs.get(hashId).size();
 			} else if(ImportType.REGISTRY.equals(importType)) {
-				rvs.put(hashId, RegistryImport.getInstance().importation(domain, user.getLogin(), data));
+				rvs.put(hashId, RegistryImport.getInstance().importation(domain, user.getLogin(), fileData));
 				rowCount = rvs.get(hashId).size();
 			}
 			else if(ImportType.DIARY.equals(importType)) {
-				dvs.put(hashId, DiaryImport.getInstance().importation(domain, user.getLogin(), data));
+				dvs.put(hashId, DiaryImport.getInstance().importation(domain, user.getLogin(), fileData));
 				rowCount = dvs.get(hashId).size();
 			}
 			else if(ImportType.PGC.equals(importType)) {
-				accounts.put(hashId, PGCImport.getInstance().importation(domain, user.getLogin(), data));
+				accounts.put(hashId, PGCImport.getInstance().importation(domain, user.getLogin(), fileData));
 				rowCount = accounts.get(hashId).size();
 			}
 
@@ -332,11 +314,10 @@ public class TemplatesServlet extends AonStatelessRemoteServiceServlet implement
 			error.setTextError(verror);
 			this.error = error;
 			e.printStackTrace();
-			getOut().remove(hashId);
 			return -1;
 		} catch (OfficeXmlFileException e){
 			try {
-				ByteArrayInputStream bais = new ByteArrayInputStream(data);
+				ByteArrayInputStream bais = new ByteArrayInputStream(fileData);
 
 				XSSFWorkbook workbook = new XSSFWorkbook(bais);
 				XSSFSheet sheet = workbook.getSheetAt(0);
@@ -351,28 +332,25 @@ public class TemplatesServlet extends AonStatelessRemoteServiceServlet implement
 				else if(importType.equals(ImportType.STOCK))
 					executeExcelStock(domain, user, rowIterator, error, inventory, warehouse1, warehouse2, series, comments, istransfer, number);
 				else if(ImportType.DELIVERY.equals(importType)) {
-					di.put(hashId, DeliveryImport.getInstance().importationX(data));
+					di.put(hashId, DeliveryImport.getInstance().importationX(fileData));
 				}
 				else if(ImportType.PROJECT_COMMERCIAL.equals(importType)) {
-					pcs.put(hashId, ProjectCommercialImport.getInstance().importationX(domain, user.getLogin(), data));
-				}
-				else if(ImportType.CUSTOMER_IBAN.equals(importType)) {
-					cis.put(hashId, CustomerIbanImport.getInstance().importationX(domain, user.getLogin(), data));
+					pcs.put(hashId, ProjectCommercialImport.getInstance().importationX(domain, user.getLogin(), fileData));
 				}
 				else if(ImportType.INVOICE.equals(importType)) {
-					ivs.put(hashId, InvoiceImport.getInstance().importationX(data));
+					ivs.put(hashId, InvoiceImport.getInstance().importationX(fileData));
 					rowCount = ivs.get(hashId).size();
 				}
 				else if(ImportType.REGISTRY.equals(importType)) {
-					rvs.put(hashId, RegistryImport.getInstance().importationX(domain, user.getLogin(), data));
+					rvs.put(hashId, RegistryImport.getInstance().importationX(domain, user.getLogin(), fileData));
 					rowCount = rvs.get(hashId).size();
 				}
 				else if(ImportType.DIARY.equals(importType)) {
-					dvs.put(hashId, DiaryImport.getInstance().importationX(domain, user.getLogin(), data));
+					dvs.put(hashId, DiaryImport.getInstance().importationX(domain, user.getLogin(), fileData));
 					rowCount = dvs.get(hashId).size();
 				}
 				else if(ImportType.PGC.equals(importType)) {
-					accounts.put(hashId, PGCImport.getInstance().importationX(domain, user.getLogin(), data));
+					accounts.put(hashId, PGCImport.getInstance().importationX(domain, user.getLogin(), fileData));
 					rowCount = accounts.get(hashId).size();
 				}				
 				workbook.close();
@@ -384,11 +362,9 @@ public class TemplatesServlet extends AonStatelessRemoteServiceServlet implement
 				error.setTextError(verror);
 				this.error = error;
 				e.printStackTrace();
-				getOut().remove(hashId);
 				return -1;
 			}
 		}
-		getOut().remove(hashId);
 		return rowCount;
 	}
 
@@ -937,8 +913,9 @@ public class TemplatesServlet extends AonStatelessRemoteServiceServlet implement
 
 		Domain d = AON.getDomain(domain.getName(), domain.getId(), user.getLogin());
 		LinkedList<Tag> tagList = AON.getTagList(domain.getName(), domain.getId(), user.getLogin(), f -> f.getDomainProperty().eq(domain.getId()));
-		LinkedList<Tax> taxList = d.getParentId() != null ? AON.getTaxList(domain.getName(), domain.getId(), user.getLogin(), f -> f.getDomainProperty().eq(domain.getId()).or(f.getDomainProperty().eq(d.getParentId())))
-				: AON.getTaxList(domain.getName(), domain.getId(), user.getLogin(), f -> f.getDomainProperty().eq(domain.getId()));
+		List<Tax> taxList = d.getParentId() != null 
+			? AON.getTaxStream(domain.getName(), domain.getId(), user.getLogin(), f -> f.getDomainProperty().eq(domain.getId()).or(f.getDomainProperty().eq(d.getParentId()))).toList()
+			: AON.getTaxStream(domain.getName(), domain.getId(), user.getLogin(), f -> f.getDomainProperty().eq(domain.getId())).toList();
 		rowStream.forEach(row ->{
 			if(row.getRowNum() !=0 && row.getPhysicalNumberOfCells()> 3){
 				Iterator<Cell> cellIterator = row.cellIterator();
@@ -1083,7 +1060,7 @@ public class TemplatesServlet extends AonStatelessRemoteServiceServlet implement
 	}
 
 	private ProductInfo check(Domain domain, User user, Integer row, String column, String template, Object value,ProductInfo product, CellType type
-			, LinkedList<ProductCategory> productCategoryList, LinkedList<Brand> brandList, LinkedList<Tag> tagList, LinkedList<Tax> taxList) {
+			, List<ProductCategory> productCategoryList, List<Brand> brandList, List<Tag> tagList, List<Tax> taxList) {
 		switch (template) {
 		case "Nombre":
 			if((type.equals(CellType.STRING) && !value.equals("")) || type.equals(CellType.NUMERIC)){
@@ -1681,30 +1658,22 @@ public class TemplatesServlet extends AonStatelessRemoteServiceServlet implement
 	}
 
 	@Override
-	public Error executeExcelEcommerce(Domain domain, User user, Ecommerce ecommerce, Seller seller, String type, Tag tag) {
+	public Error executeExcelEcommerce(Domain domain, User user, Ecommerce ecommerce, Seller seller, String type, Tag tag, String data) {
 		Error error = new Error();
 		error.setError(true);
-    	if(getOut() == null){
-			error.setError(false);
-			LinkedList<String> verror = new LinkedList<String>();
-			verror.add("*No ha importado ning�n archivo.");
-			error.setTextError(verror);
-			return error;
-		}
-    	
-    	String hashId = Base64.encode(domain.getName() + user.getLogin());		
-		byte[] data = getOut().get(hashId);
+		
+		byte[] fileData = java.util.Base64.getDecoder().decode(data);
 		
 		byte[] xml = null;
 
     	if(getMimetype().equals(MimeType.CSV.getName()) && (ecommerce.equals(Ecommerce.EBAY) || ecommerce.equals(Ecommerce.GENERIC))){
-    		xml = csvToXmlEbay(data, ecommerce.getName(), type, tag.getName(), seller.getName());
+    		xml = csvToXmlEbay(fileData, ecommerce.getName(), type, tag.getName(), seller.getName());
     	}
 
 		if(xml == null && ecommerce.equals(Ecommerce.AMAZON))
-			xml = excelToXmlAmazonXXX(data, ecommerce.getName(), type, tag.getName(), seller.getName());
+			xml = excelToXmlAmazonXXX(fileData, ecommerce.getName(), type, tag.getName(), seller.getName());
 		else if(xml == null && (ecommerce.equals(Ecommerce.EBAY) || ecommerce.equals(Ecommerce.GENERIC)))
-			xml = excelToXmlEbayXXX(data, ecommerce.getName(), type, tag.getName(), seller.getName());
+			xml = excelToXmlEbayXXX(fileData, ecommerce.getName(), type, tag.getName(), seller.getName());
 
 		if(xml != null){
 			Attach attach = AON.getAttach(domain.getName(), domain.getId(), user.getLogin(),
@@ -2248,13 +2217,13 @@ public class TemplatesServlet extends AonStatelessRemoteServiceServlet implement
 		return saveFile(domain, file);
 	}
 
-	public Integer excelRowNumber(Domain domain, User user){
-		String hashId = Base64.encode(domain.getName() + user.getLogin());		
-		byte[] data = getOut().get(hashId);
-		if(data != null){
+	public Integer excelRowNumber(Domain domain, User user, String data){
+		byte[] fileData = java.util.Base64.getDecoder().decode(data);
+
+		if(fileData != null){
 			try{
 				
-				ByteArrayInputStream bais = new ByteArrayInputStream(data);
+				ByteArrayInputStream bais = new ByteArrayInputStream(fileData);
 
 				HSSFWorkbook workbook = new HSSFWorkbook(bais);
 				HSSFSheet sheet = workbook.getSheetAt(0);
@@ -2266,7 +2235,7 @@ public class TemplatesServlet extends AonStatelessRemoteServiceServlet implement
 				return 1;
 			} catch (OfficeXmlFileException e){
 				try {
-					ByteArrayInputStream bais = new ByteArrayInputStream(data);
+					ByteArrayInputStream bais = new ByteArrayInputStream(fileData);
 
 					XSSFWorkbook workbook = new XSSFWorkbook(bais);
 					XSSFSheet sheet = workbook.getSheetAt(0);
@@ -2363,19 +2332,6 @@ public class TemplatesServlet extends AonStatelessRemoteServiceServlet implement
 		String hashId = Base64.encode(domain.getName() + user.getLogin());
 		try {
 			ProjectCommercialImport.getInstance().insertProjectCommercial(domain, user, pcs.get(hashId));
-		} catch (Exception e) {
-			return new Error()
-				.setError(false)
-				.setTextError(e.getMessage());
-		}
-		return new Error();
-	}
-
-	@Override
-	public Error insertCustomerIban(Domain domain, User user) {
-		String hashId = Base64.encode(domain.getName() + user.getLogin());
-		try {
-			CustomerIbanImport.getInstance().insertCustomerIban(domain, user, cis.get(hashId));
 		} catch (Exception e) {
 			return new Error()
 				.setError(false)

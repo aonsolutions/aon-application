@@ -50,6 +50,9 @@ public class InvoiceTaxDAO {
 		@Override public Property<Double> getDeductibleQuotaProperty() {return new FilterDAO.PropertyDAO<>(INVOICE_TAX.DEDUCTIBLE_QUOTA);}
 	}
 	
+	private InvoiceTaxDAO() {
+
+	}	
 	
 	public static SelectConditionStep<Record> select(AONContext ctx, InvoiceTaxFilter filter){	
 		return ctx.getDslContext()

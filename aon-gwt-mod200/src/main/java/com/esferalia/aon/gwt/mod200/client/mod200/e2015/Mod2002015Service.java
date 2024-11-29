@@ -15,7 +15,7 @@ import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 public interface Mod2002015Service extends RemoteService {
 	Mod2002015 createMod2002015(String domainName,int domain,int year) throws AonCoreException;
 	Mod2002015 initializeNewMod2002015(String domainName,int domain,Mod2002015 mod200) throws AonCoreException;
-	Mod2002015 initializeMod2002015(String domainName,int domain,Mod2002015 mod200) throws AonCoreException;
+	Mod2002015 initializeMod2002015(String domainName,int domain,Mod2002015 mod200, String data) throws AonCoreException;
 	Mod2002015 getMod2002015ByYear(String domainName,int domain, int year) throws AonCoreException;
 	Mod2002015 getMod2002015ById(String domainName,int domain, int id) throws AonCoreException;
 	Mod2002015 calculateMod2002015(Mod2002015 mod200) throws AonCoreException;
@@ -24,7 +24,7 @@ public interface Mod2002015Service extends RemoteService {
 	void deleteMod2002015(String domainName,int domain,int id) throws AonCoreException;
 	String dumpAEATMod2002015(Mod2002015 mod200) throws AonCoreException;
 	Mod2002015 importMod2002014(String domainName,int domain,Mod2002015 mod200) throws AonCoreException;
-	Mod2002015 fillMod2002015AccountingData(Mod2002015 mod200) throws AonCoreException;
+	Mod2002015 fillMod2002015AccountingData(Mod2002015 mod200, String data) throws AonCoreException;
 	LinkedList<CompanyBank> getCompanyBanks(String domainName, int domain) throws AonCoreException;
 
 }

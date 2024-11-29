@@ -1,6 +1,10 @@
 package com.esferalia.aon.gwt.mod200.server.e2014;
 
+import java.io.ByteArrayInputStream;
 import java.util.LinkedList;
+
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.Unmarshaller;
 
 import com.esferalia.aon.gwt.common.server.AonRemoteServiceServlet;
 import com.esferalia.aon.gwt.mod200.client.mod200.e2014.Mod2002014Service;
@@ -11,6 +15,7 @@ import com.esferalia.aon.occam.mod200.api.model.mod200_2013.Mod2002013;
 import com.esferalia.aon.occam.mod200.api.model.mod200_2014.Mod2002014;
 import com.esferalia.aon.occam.mod200.impl.jooq.dao.mod200_2014.jaxb.MOD2002014;
 import com.esferalia.aon.occam.mod200.impl.jooq.dao.mod200_2014.jaxb.XMLtoMod2002014;
+import com.esferalia.aon.occam.mod200.server.format.Mod2002013Reader;
 import com.esferalia.aon.occam.mod200.server.format.mod200_2014.Mod2002014Import2013;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.util.AonStringUtils;
@@ -34,22 +39,25 @@ public class Mod2002014ServiceImpl extends AonRemoteServiceServlet implements Mo
 	}
 	
 	@Override
-	public Mod2002014 initializeMod2002014(String domainName, int domain, Mod2002014 mod200) {
-		HttpServletRequest request = getThreadLocalRequest();
+	public Mod2002014 initializeMod2002014(String domainName, int domain, Mod2002014 mod200, String data) {
 		try {
-			Mod2002013 mod2002013 = (Mod2002013) request.getSession().getAttribute("Mod2002013Import");
-			if (mod2002013 != null) {
-				if (!AonStringUtils.equals( mod2002013.getDocument(), mod200.getDocument())) {
-					throw new AonCoreException("El NIF del documento importado no coincide");
-				}
-				Mod2002014Import2013.import2013(mod200, mod2002013);
-				mod200.setInitializedFromLastYear(true);
+			if(data != null) {
+				byte[] fileData = java.util.Base64.getDecoder().decode(data);
+				ByteArrayInputStream input = new ByteArrayInputStream(fileData);
+				Mod2002013 mod2002013 = Mod2002013Reader.getMod2002013(input);
+				
+				if (mod2002013 != null) {
+					if (!AonStringUtils.equals( mod2002013.getDocument(), mod200.getDocument())) {
+						throw new AonCoreException("El NIF del documento importado no coincide");
+					}
+					Mod2002014Import2013.import2013(mod200, mod2002013);
+					mod200.setInitializedFromLastYear(true);
+				}				
 			}
+
 			return FISCAL.initializeMod2002014(domainName,domain,this.getUserLogin(),mod200);
 		} catch ( Throwable t) {
 			throw new AonCoreException(t);
-		} finally {
-			request.getSession().removeAttribute("Mod2002013Import");
 		}
 	}
 
@@ -99,19 +107,23 @@ public class Mod2002014ServiceImpl extends AonRemoteServiceServlet implements Mo
 	}
 	
 	@Override
-	public Mod2002014 fillMod2002014AccountingData(Mod2002014 mod200)
-			throws AonCoreException {
-		HttpServletRequest request = getThreadLocalRequest();
+	public Mod2002014 fillMod2002014AccountingData(Mod2002014 mod200, String data) throws AonCoreException {
 		try {
-			MOD2002014 mod = (MOD2002014) request.getSession().getAttribute("Mod2002014Accounting");
-			if (mod200 != null) {
-				XMLtoMod2002014.fillMod2002014(mod, mod200);
+			if(data != null) {
+				byte[] fileData = java.util.Base64.getDecoder().decode(data);
+				
+				ByteArrayInputStream input = new ByteArrayInputStream(fileData);
+				JAXBContext context = JAXBContext.newInstance(MOD2002014.class);
+				Unmarshaller um = context.createUnmarshaller();
+				MOD2002014 mod = (MOD2002014) um.unmarshal(input);
+				
+				if (mod200 != null) {
+					XMLtoMod2002014.fillMod2002014(mod, mod200);
+				}				
 			}
 			return mod200; 
 		} catch ( Throwable t) {
 			throw new AonCoreException(t);
-		} finally {
-			request.getSession().removeAttribute("Mod2002014Accounting");
 		}
 	}
 

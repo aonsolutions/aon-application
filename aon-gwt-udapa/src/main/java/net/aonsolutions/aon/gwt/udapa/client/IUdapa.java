@@ -17,4 +17,8 @@ public interface IUdapa extends RemoteService{
 	public void deleteQuality(String domainName, Integer domainId, Integer drId);
 	
 	public void updateIncomeDetail(String domainName, Integer domainId, Double price, Double quantity, Integer incomeDetailId);
+
+	public void uploadImage(String domainName, Integer domainId, String login, String data, String type, Integer dataResponse);
+	
+
 }

@@ -184,13 +184,7 @@
       <artifactId>pool</artifactId>
       <version>${project.version}</version>
       <scope>compile</scope>
-    </dependency>
-          <dependency>
-        <groupId>com.googlecode.gwtupload</groupId>
-        <artifactId>gwtupload-jakarta</artifactId>
-        <version>1.0.1</version>
-      </dependency>
-    
+    </dependency> 
   </dependencies>
   <profiles>
     <profile>

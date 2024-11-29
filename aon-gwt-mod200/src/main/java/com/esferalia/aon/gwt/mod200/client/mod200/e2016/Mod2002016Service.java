@@ -13,7 +13,7 @@ public interface Mod2002016Service extends RemoteService {
 	// ---------------------------------------------------------------MODELO 200 - 2016
 	Mod2002016 createMod2002016(String domainName,int domain,int year) throws AonCoreException;
 	Mod2002016 initializeNewMod2002016(String domainName,int domain,Mod2002016 mod200) throws AonCoreException;
-	Mod2002016 initializeMod2002016(String domainName,int domain,Mod2002016 mod200) throws AonCoreException;
+	Mod2002016 initializeMod2002016(String domainName,int domain,Mod2002016 mod200, String data) throws AonCoreException;
 	Mod2002016 getMod2002016ByYear(String domainName,int domain, int year) throws AonCoreException;
 	Mod2002016 getMod2002016ById(String domainName,int domain, int id) throws AonCoreException;
 	Mod2002016 calculateMod2002016(Mod2002016 mod200) throws AonCoreException;
@@ -22,7 +22,7 @@ public interface Mod2002016Service extends RemoteService {
 	void deleteMod2002016(String domainName,int domain,int id) throws AonCoreException;
 	String dumpAEATMod2002016(Mod2002016 mod200) throws AonCoreException;
 	Mod2002016 importMod2002015(String domainName,int domain,Mod2002016 mod200) throws AonCoreException;
-	Mod2002016 fillMod2002016AccountingData(Mod2002016 mod200) throws AonCoreException;
+	Mod2002016 fillMod2002016AccountingData(Mod2002016 mod200, String data) throws AonCoreException;
 	LinkedList<CompanyBank> getCompanyBanks(String domainName, int domain) throws AonCoreException;
 
 }

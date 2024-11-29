@@ -6248,18 +6248,28 @@ public class AON {
 	// ************************************* TAX **
 	// ********************************************
 
-	public static Stream<Tax> getTaxStream(String domainName, Integer domainId, String login, TaxFilter filter){
-		CloseableAONContext ctx = null;
-		try{
-			ctx = AONContext.getAONContext(domainName, domainId, login);
-			return getCommon().getTaxStream(ctx, filter);
-		} finally {
-			if(ctx != null) ctx.close();
+	public static Stream<Tax> getVatStream(Occam occam, TaxFilter filter){
+		try (CloseableAONContext ctx = AONContext.getAONContext(occam)){
+			return getCommon().getVatStream(ctx);
 		}
 	}
 	
-	public static LinkedList<Tax> getTaxList(String domainName, Integer domainId, String login, TaxFilter filter){
-		return getTaxStream(domainName, domainId, login, filter).collect(Collectors.toCollection(LinkedList::new));
+	public static Stream<Tax> getWithholdingStream(Occam occam, TaxFilter filter){
+		try (CloseableAONContext ctx = AONContext.getAONContext(occam)){
+			return getCommon().getWithholdingStream(ctx);
+		}
+	}
+	
+	public static Stream<Tax> getTaxStream(Occam occam, TaxFilter filter){
+		try (CloseableAONContext ctx = AONContext.getAONContext(occam)){
+			return getCommon().getTaxStream(ctx, filter);
+		}
+	}
+	
+	public static Stream<Tax> getTaxStream(String domainName, Integer domainId, String login, TaxFilter filter){
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
+			return getCommon().getTaxStream(ctx, filter);
+		}
 	}
 	
 	public static Tax getTax(String domainName, Integer domainId, String login, Integer id){
