@@ -487,7 +487,7 @@ export class AonDesktop extends AonElement {
 			});
 		}
 		
-		if((this.getDur().isInvoice() || this.getDur().isAccounting()) && this.getDur().isTrial) {
+		if((this.getDur().isInvoice() || this.getDur().isAccounting()) && this.getDur().isTrial()) {
 			// Trial Card
 			let trialCard = new AonCard();
 			trialCard.classList.add(CSS.AON_DASHBOARD_CARD);

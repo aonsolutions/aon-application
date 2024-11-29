@@ -349,7 +349,19 @@ public class CommonImpl implements ICommon {
 	@Override
 	public Stream<Tax> getTaxStream(AONContext ctx, TaxFilter filter){
 		return ctx.getDslContext().transactionResult(
-				configuration -> TaxDAO.getTaxs(ctx, filter));
+				configuration -> TaxDAO.getStream(ctx, filter));
+	}
+	
+	@Override
+	public Stream<Tax> getVatStream(AONContext ctx){
+		return ctx.getDslContext().transactionResult(
+				configuration -> TaxDAO.getVatTaxes(ctx));
+	}
+	
+	@Override
+	public Stream<Tax> getWithholdingStream(AONContext ctx){
+		return ctx.getDslContext().transactionResult(
+				configuration -> TaxDAO.getWithholdingTaxes(ctx));
 	}
 
 	// ------------------ DATA REQUEST

@@ -285,7 +285,7 @@ export class Invoice {
 
   setCategory(category) {
     this.category = category;
-    if(category.substring(0, 3) === '705'){
+    if(category && category.substring(0, 3) === '705'){
       this.service = true;
     } else this.service = false;
 
