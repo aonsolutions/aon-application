@@ -86,11 +86,12 @@ export class AonInvoice extends AonElement {
 	async connectedCallback () {
 		this.initialize();
 		this.initializeFunctions();
+		this.configuration = await getInvoiceConfiguration();
+
 		this.buildDur().then(r => {
 			this.build();
-		});
+		});		
 		
-		this.configuration = await getInvoiceConfiguration();
 		getCompany().then(company => {
 			const registry = this.getInvoice().isEmitida()
 				? this.getInvoice().getRegistry().id 
@@ -1670,8 +1671,9 @@ export class AonInvoice extends AonElement {
 		// ----- TAX PERCENT
 
 		tax.type = tax.type || tax.tax;
-		let percentage = createSelect(this.TAX_PERCENTAGE + i, '% ' + getTaxTypeName(tax.type, this.isMobile(), this.configuration.administration));
-		percentage.options = JSON.stringify(getTaxPercentageOption(tax.type, this.configuration.administration));
+		let administration = this.configuration ? this.configuration.administration : '';
+		let percentage = createSelect(this.TAX_PERCENTAGE + i, '% ' + getTaxTypeName(tax.type, this.isMobile(), administration));
+		percentage.options = JSON.stringify(getTaxPercentageOption(tax.type, administration));
 		percentage.addEventListener(EVENT.SELECT, () => {
 			tax.percentage = percentage.value;
 			tax.type = getTaxType(tax.percentage);
@@ -1968,8 +1970,9 @@ export class AonInvoice extends AonElement {
 
 		// ----- DETAIL VAT
 		if(this.invoice.isVatEnabled()) {
-			let vat = createSelect(this.DETAIL_VAT + i, getVatLabel(this.configuration.administration));
-			vat.options = JSON.stringify(getVats(this.configuration.administration));
+			let administration = this.configuration ? this.configuration.administration : '';
+			let vat = createSelect(this.DETAIL_VAT + i, getVatLabel(administration));
+			vat.options = JSON.stringify(getVats(administration));
 			if(detail.prepayment === undefined) detail.prepayment = false;
 			vat.readonly = this.invoice.isReadonly() || (detail.prepayment && detail.prepayment == 'true');
 			
@@ -2074,8 +2077,9 @@ export class AonInvoice extends AonElement {
 
 		// ----- DETAIL VAT
 		if(this.invoice.isVatEnabled() &&  (!detail.prepayment || detail.prepayment == 'false')) {
-			let vat = createSelect(this.DETAIL_VAT + 'Dialog' + i, getVatLabel(this.configuration.administration));
-			vat.options = JSON.stringify(getVats(this.configuration.administration));
+			let administration = this.configuration ? this.configuration.administration : '';
+			let vat = createSelect(this.DETAIL_VAT + 'Dialog' + i, getVatLabel(administration));
+			vat.options = JSON.stringify(getVats(administration));
 			if(detail.prepayment === undefined) detail.prepayment = false;
 			vat.readonly = this.invoice.isReadonly() || detail.prepayment;
 			vat.addEventListener(EVENT.SELECT, () => {
