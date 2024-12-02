@@ -17,6 +17,8 @@ import static com.esferalia.aon.jooq.tables.Workplace.WORKPLACE;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.nio.charset.StandardCharsets;
 import java.sql.Timestamp;
 import java.text.DecimalFormat;
@@ -157,6 +159,7 @@ public class SettleSalariesDAO {
 				
 				if(!salaryAmount.equals(financeAmount)) {
 					Double amountDiff = salaryAmount - financeAmount;
+					amountDiff = new BigDecimal(amountDiff).setScale(2, RoundingMode.HALF_UP).doubleValue();
 					// Insert new salary diff finance
 					if(amountDiff != 0.00) {
 						ctx.getDslContext().insertInto(FINANCE)
