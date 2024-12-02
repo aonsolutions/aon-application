@@ -1474,7 +1474,7 @@ export class AonInvoice extends AonElement {
 		activitySpan.appendChild(activity);
 		getCompanyActivities({}).then(activities => {
 			if(activities.length > 0) {
-				this.invoice.setActivity(this.invoice.getActivity() || activities[0]);
+				if(!this.invoice.activity) this.invoice.setActivity(this.invoice.getActivity() || activities[0]);
 				activity.setOptions(activities);
 				activity.value = this.invoice.getActivity().id;
 			}
