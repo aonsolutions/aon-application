@@ -1,9 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <module rename-to='aon_gwt_fiscal'>
 
-	<!-- Include GWTUpload library -->
-  	<inherits name="gwtupload.GWTUpload"/>
-  	
 	<!-- Inherit the core Web Toolkit stuff. -->
 	<inherits name='com.google.gwt.user.User' />
 	<inherits name="com.google.gwt.i18n.I18N" />

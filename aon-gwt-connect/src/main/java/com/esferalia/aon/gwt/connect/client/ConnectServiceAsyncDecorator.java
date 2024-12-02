@@ -15,10 +15,10 @@ public class ConnectServiceAsyncDecorator implements ConnectServiceAsync {
 	}
 
 	@Override
-	public void importZippedMod2002013(String domainName, int domain,
+	public void importZippedMod2002013(String domainName, int domain, String data,
 			AsyncCallback<List<String>> callback) {
 		AON.start();
-		csa.importZippedMod2002013(domainName, domain,
+		csa.importZippedMod2002013(domainName, domain, data,
 				new AsyncCallbackWrapper<List<String>>(callback));
 
 	}

@@ -15,7 +15,6 @@
 
 					<div class="aon-scroll-area">
 
-						<g:FlexTable ui:field="flexTable" />
 						<div>
 							<g:Button ui:field="button" />
 						</div>

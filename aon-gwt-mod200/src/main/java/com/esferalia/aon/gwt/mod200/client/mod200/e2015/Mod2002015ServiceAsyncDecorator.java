@@ -34,9 +34,9 @@ public class Mod2002015ServiceAsyncDecorator implements Mod2002015ServiceAsync {
 
 	@Override
 	public void initializeMod2002015(String domainName, int domain,
-			Mod2002015 mod200, AsyncCallback<Mod2002015> callback) {
+			Mod2002015 mod200, String data, AsyncCallback<Mod2002015> callback) {
 		AON.start();
-		fsa.initializeMod2002015(domainName, domain, mod200,
+		fsa.initializeMod2002015(domainName, domain, mod200, data,
 				new AsyncCallbackWrapper<Mod2002015>(callback));
 	}
 
@@ -106,10 +106,10 @@ public class Mod2002015ServiceAsyncDecorator implements Mod2002015ServiceAsync {
 	}
 
 	@Override
-	public void fillMod2002015AccountingData(Mod2002015 mod200,
+	public void fillMod2002015AccountingData(Mod2002015 mod200, String data,
 			AsyncCallback<Mod2002015> callback) {
 		AON.start();
-		fsa.fillMod2002015AccountingData(mod200,
+		fsa.fillMod2002015AccountingData(mod200, data,
 				new AsyncCallbackWrapper<Mod2002015>(callback));
 	}
 

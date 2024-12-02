@@ -82,7 +82,8 @@ export class AonInvoiceCommunication extends AonElement {
             {value: 'BIZKAIA', name: 'Bizkaia'},
             {value: 'GIPUZKOA', name: 'Gipuzkoa'},
             {value: 'NAVARRA', name: 'Navarra'},
-            {value: 'COMMON_TERRITORY', name: 'Territorio Común'}
+            {value: 'COMMON_TERRITORY', name: 'Territorio Común'},
+            {value: 'CANARIAS', name: 'A.T. Canaria'}
         ];
 
         let administration = this.createAonElement(new AonSelect(), this.ADMINISTRATION, 'Administración');

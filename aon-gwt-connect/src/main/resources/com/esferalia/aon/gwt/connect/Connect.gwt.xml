@@ -7,9 +7,6 @@
 	<inherits name='com.esferalia.aon.gwt.common.Common' />
 	<inherits name="com.esferalia.aon.occam.api.Occam" />
 
-	<!-- Include GWTUpload library -->
-	<inherits name="gwtupload.GWTUpload" />
-
 	<inherits name='com.google.gwt.user.theme.clean.Clean' />
 
 	<!--extend-property name="locale" values="es" /-->

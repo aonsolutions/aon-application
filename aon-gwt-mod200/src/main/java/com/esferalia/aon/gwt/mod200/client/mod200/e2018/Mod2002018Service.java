@@ -22,7 +22,7 @@ public interface Mod2002018Service extends RemoteService {
 	void deleteMod2002018(String domainName,int domain,int id) throws AonCoreException;
 	String dumpAEATMod2002018(Mod2002018 mod200) throws AonCoreException;
 	Mod2002018 importMod2002017(String domainName,int domain,Mod2002018 mod200) throws AonCoreException;
-	Mod2002018 fillMod2002018AccountingData(Mod2002018 mod200) throws AonCoreException;
+	Mod2002018 fillMod2002018AccountingData(Mod2002018 mod200, String data) throws AonCoreException;
 	LinkedList<CompanyBank> getCompanyBanks(String domainName, int domain) throws AonCoreException;
 
 }

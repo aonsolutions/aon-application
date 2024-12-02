@@ -19,7 +19,7 @@ public interface Mod2002017ServiceAsync {
 	void saveMod2002017(String domainName, int domain, Mod2002017 mod200,AsyncCallback<Mod2002017> callback);
 	void validateMod2002017(Mod2002017 mod200, AsyncCallback<Mod2002017> callback);
 	void importMod2002016(String domainName, int domain, Mod2002017 mod200,AsyncCallback<Mod2002017> callback);
-	void fillMod2002017AccountingData(Mod2002017 mod200, AsyncCallback<Mod2002017> callback);
+	void fillMod2002017AccountingData(Mod2002017 mod200, String data, AsyncCallback<Mod2002017> callback);
 	void getCompanyBanks(String domainName, int domain, AsyncCallback<LinkedList<CompanyBank>> asyncCallback);
 
 }
