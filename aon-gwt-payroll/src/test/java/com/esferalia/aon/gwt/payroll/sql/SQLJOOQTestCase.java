@@ -137,7 +137,7 @@ public class SQLJOOQTestCase extends AbstractSQLTestCase {
 		List<Integer> ids = AON.getSalaries(domain, "login", p -> p.getContractProperty().eq(contract.getId())).map(s -> s.getId()).collect(Collectors.toList());
 		
 
-		JooqPayrollSalaries.deleteSalaries(connection, ids);
+		JooqPayrollSalaries.deleteSalaries(connection, domain.getId(), ids);
 
 		AON.getSalaries(domain, "login", p -> p.getContractProperty().eq(contract.getId())).findAny()
 		.ifPresent( c -> org.junit.Assert.fail("Contracts NOT deleted!!!!!!!!!!!!" ));
