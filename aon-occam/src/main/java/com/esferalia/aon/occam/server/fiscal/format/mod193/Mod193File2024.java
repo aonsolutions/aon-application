@@ -90,7 +90,7 @@ enum Mod193File2024 {
 	   ,(wr, mod190,detail) -> wr.append(AonFiscalFileUtils.unsigned(AonMathUtils.round(detail.getArabaRetention()),13,2)) // DIPUTACIÓN FORAL DE ARABA/ÁLAVA.
 	   ,(wr, mod190,detail) -> wr.append(AonFiscalFileUtils.unsigned(AonMathUtils.round(detail.getGipuzkoaRetention()),13,2)) // DIPUTACIÓN FORAL DE GIPUZKOA.
 	   ,(wr, mod190,detail) -> wr.append(AonFiscalFileUtils.unsigned(AonMathUtils.round(detail.getBizkaiaRetention()),13,2)) // DIPUTACIÓN FORAL DE BIZKAIA.
-	   ,(wr, mod190,detail) -> wr.append(detail.isCeutaMelilla()?"1":"0")
+	   ,(wr, mod190,detail) -> wr.append(AonFiscalFileUtils.text(detail.getCeutaMelillaPalma(),1))
 	   ,(wr, mod193,detail) -> wr.append(AonFiscalFileUtils.unsigned(getOrderNumber(),7,0))            // Número de orden: A cada registro del perceptor se le asignará de forma secuencial un número de orden.
 	   ,(wr, mod193,detail) -> wr.append(AonFiscalFileUtils.text(detail.getPreviousPayerDocument(),9)) // NIF del pagador anterior
 	   ,(wr, mod193,detail) -> wr.append(AonFiscalFileUtils.dateZeroES(detail.getAccrualDate()))       // Fecha de devengo

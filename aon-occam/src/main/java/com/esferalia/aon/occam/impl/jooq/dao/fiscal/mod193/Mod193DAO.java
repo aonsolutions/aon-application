@@ -269,7 +269,7 @@ public class Mod193DAO {
 			.set(FS_MODEL193_DETAIL.EXPENSES,detail.getExpenses())
 			.set(FS_MODEL193_DETAIL.PENALIZATION,detail.getPenalization())
 			.set(FS_MODEL193_DETAIL.DECLARANT_NATURE,AonEnumUtils.getByte( detail.isDeclarantNature()))
-			.set(FS_MODEL193_DETAIL.CEUTA_MELILLA, AonEnumUtils.getByte(detail.isCeutaMelilla()))
+			.set(FS_MODEL193_DETAIL.CEUTA_MELILLA, detail.getCeutaMelillaPalma())
 			.set(FS_MODEL193_DETAIL.COMMON_RETENTION, detail.getCommonRetention())
 			.set(FS_MODEL193_DETAIL.NAVARRA_RETENTION, detail.getNavarraRetention())
 			.set(FS_MODEL193_DETAIL.ARABA_RETENTION, detail.getArabaRetention())
@@ -313,7 +313,7 @@ public class Mod193DAO {
 				.set(FS_MODEL193_DETAIL.EXPENSES,detail.getExpenses())
 				.set(FS_MODEL193_DETAIL.PENALIZATION,detail.getPenalization())
 				.set(FS_MODEL193_DETAIL.DECLARANT_NATURE,AonEnumUtils.getByte( detail.isDeclarantNature()))
-				.set(FS_MODEL193_DETAIL.CEUTA_MELILLA, AonEnumUtils.getByte(detail.isCeutaMelilla()))
+				.set(FS_MODEL193_DETAIL.CEUTA_MELILLA, detail.getCeutaMelillaPalma())
 				.set(FS_MODEL193_DETAIL.COMMON_RETENTION, detail.getCommonRetention())
 				.set(FS_MODEL193_DETAIL.NAVARRA_RETENTION, detail.getNavarraRetention())
 				.set(FS_MODEL193_DETAIL.ARABA_RETENTION, detail.getArabaRetention())
@@ -466,7 +466,7 @@ public class Mod193DAO {
 				.setExpenses(rec.getValue(FS_MODEL193_DETAIL.EXPENSES))
 				.setPenalization(rec.getValue(FS_MODEL193_DETAIL.PENALIZATION))
 				.setDeclarantNature(AonEnumUtils.getBoolean(rec.getValue(FS_MODEL193_DETAIL.DECLARANT_NATURE)))
-				.setCeutaMelilla(AonEnumUtils.getBoolean(rec.getValue(FS_MODEL193_DETAIL.CEUTA_MELILLA)))
+				.setCeutaMelillaPalma(rec.getValue(FS_MODEL193_DETAIL.CEUTA_MELILLA))
 				.setCommonRetention(rec.getValue(FS_MODEL193_DETAIL.COMMON_RETENTION))
 				.setNavarraRetention(rec.getValue(FS_MODEL193_DETAIL.NAVARRA_RETENTION))
 				.setArabaRetention(rec.getValue(FS_MODEL193_DETAIL.ARABA_RETENTION))
@@ -479,7 +479,6 @@ public class Mod193DAO {
 		}
 	}
 
-	// FALTA - REVISAR SI LOS NUEVOS CAMPOS PARA EL 2024 SE PUEDEN CUMPLIMENTAR DE ALGUNA FORMA
 	private static void insertDetailsFromInvoice(AONContext ctx,final Mod193 mod193) {
 		java.sql.Date firstDay = AonDateUtils.toSql(AonDateUtils.getYearFirstDay(mod193.getYear()));
 		java.sql.Date lastDay = AonDateUtils.toSql(AonDateUtils.getYearLastDay(mod193.getYear()));

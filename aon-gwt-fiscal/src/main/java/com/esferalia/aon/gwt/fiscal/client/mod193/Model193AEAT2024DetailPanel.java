@@ -1,7 +1,6 @@
 package com.esferalia.aon.gwt.fiscal.client.mod193;
 
 import com.esferalia.aon.gwt.common.client.AON;
-import com.esferalia.aon.gwt.common.client.widget.ProvinceListBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDateBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDocumentTextBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDoubleBox;
@@ -10,6 +9,7 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonTextBox;
 import com.esferalia.aon.gwt.fiscal.client.mod193.Model193AEATDetail2024.IModel193DetailCallback;
 import com.esferalia.aon.occam.api.model.fiscal.Mod193Detail;
 import com.esferalia.aon.occam.api.model.type.Mod1932024Key;
+import com.esferalia.aon.occam.api.model.type.Province;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
@@ -153,7 +153,7 @@ public class Model193AEAT2024DetailPanel extends SimpleLayoutPanel implements Fo
 		tab2.setWidget(1, 4, new Model193SmallerLabel(AON.MSG.keyCode()));
 		tab2.setWidget(1, 5, new Model193SmallerLabel(AON.MSG.issuingCode()));
 		tab2.setWidget(1, 6, new Model193SmallerLabel(AON.MSG.accrualYear()));
-		tab2.setWidget(1, 7, new Label());
+		tab2.setWidget(1, 7, new Model193SmallerLabel("Ceuta o Melilla / Isla de la Palma"));
 
 		// Clave percepción / Naturaleza
 		final ListBox nature = new ListBox();
@@ -197,9 +197,18 @@ public class Model193AEAT2024DetailPanel extends SimpleLayoutPanel implements Fo
 		});
 		tab2.setWidget(2, 2, intermediaryPayment);
 
-		// FALTA - EN LA LISTA PERMITIDA EN EL DISEÑO DEL REGISTRO ESTAN DE LA 01 A 52 Y ADEMAS 53 ES LA ISLA DE LA PALMA Y NO ESTA "NO RESIDENTE"
-		// Provincia (Código)
-		ProvinceListBox province = new ProvinceListBox();
+		// Provincia (Códigos: 01 a 50, 51-Ceuta, 52-Melilla, 53-Isla de la Palma)
+		ListBox province = new ListBox();
+		province.setWidth("120px");
+		for (Province p : Province.values()) {
+			if (p == Province.DESCONOCIDO)
+				province.addItem("-");
+			else if (p == Province.TENERIFE)
+				province.addItem("S.C. Tenerife (excepto Isla de la Palma)");
+			else if (p != Province.NO_RESIDENTE)
+				province.addItem(p.getName());	
+		}
+		province.addItem("Isla de la Palma");
 		province.setSelectedIndex(detail.getProvince());
 		province.addChangeHandler( event -> {
 			detail.setProvince(province.getSelectedIndex());
@@ -240,15 +249,18 @@ public class Model193AEAT2024DetailPanel extends SimpleLayoutPanel implements Fo
 		});
 		tab2.setWidget(2, 6, accrualYear);
 		
-		// FALTA - ESTE CAMPO NO ES UN CHECK SINO QUE SUS VALORES PERMITIDOS SON 0,1,2 (NO APLICABLE, CEUTA O MELILLA, ISLA DE LA PALMA)
 		// Ceuta o Melilla / Isla de la Palma
-		CheckBox ceutaMelilla = new CheckBox("Ceuta o Melilla");  // TAL Y COMO ESTA AHORA, SOLO SE PUEDE INDICAR CEUTA O MELILLA
-		ceutaMelilla.setValue(detail.isCeutaMelilla());
-		ceutaMelilla.addClickHandler(event -> {
-			detail.setCeutaMelilla(ceutaMelilla.getValue());
+		ListBox ceutaMelillaPalma = new ListBox();
+		ceutaMelillaPalma.setWidth("140px");
+		ceutaMelillaPalma.addItem("-");
+		ceutaMelillaPalma.addItem("1 - Ceuta o Melilla");
+		ceutaMelillaPalma.addItem("2 - Isla de La Palma");
+		ceutaMelillaPalma.setSelectedIndex(detail.getCeutaMelillaPalma());
+		ceutaMelillaPalma.addChangeHandler( event -> {
+			detail.setCeutaMelillaPalma((byte) ceutaMelillaPalma.getSelectedIndex());
 			callback.onValueChanged(detail);
 		});
-		tab2.setWidget(2, 7, ceutaMelilla);
+		tab2.setWidget(2, 7, ceutaMelillaPalma);
 		
 		tab2.setWidget(3, 0, new Model193SmallerLabel(AON.MSG.payment()));
 		tab2.setWidget(3, 1, new Model193SmallerLabel(AON.MSG.codeType()));
@@ -268,7 +280,6 @@ public class Model193AEAT2024DetailPanel extends SimpleLayoutPanel implements Fo
 		payment.addItem("3 - Como mediador de valor extranjero");
 		payment.addItem("4 - Como mediador de valor extranjero no retenedor");
 		payment.addItem("5 - Como mediador de otro tipo de rendimientos o rentas obtenidas por cesi\u00F3n de capitales consignados con clave B-06");
-		
 		payment.setSelectedIndex(detail.getPayment());
 		payment.addChangeHandler( event -> {
 			detail.setPayment((byte) payment.getSelectedIndex());
