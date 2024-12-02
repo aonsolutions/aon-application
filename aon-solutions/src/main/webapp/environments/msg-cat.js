@@ -168,6 +168,7 @@ export const EMPLOYEE = 'Empleat';
 export const END_DATE = 'Data Fin';
 export const ENGLISH = 'Anglès';
 export const ENTERPRISE = 'Empresa';
+export const ENTERPRISES = 'Empresas';
 export const ENTRY = 'Entrada';
 export const EQUIVALENCE_SURCHARGE = `Recàrrec d'Equivalència`;
 export const EXERCISE = 'Exercici';

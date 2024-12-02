@@ -169,6 +169,7 @@ export const EMPLOYEE = 'Langile';
 export const END_DATE = 'Amaiera-data';
 export const ENGLISH = 'Ingelesa';
 export const ENTERPRISE = 'Enpresa';
+export const ENTERPRISES = 'Enpresak';
 export const ENTRY = 'Sarrera';
 export const EQUIVALENCE_SURCHARGE = 'Baliokidetasun Errekargua';
 export const EXIT = 'Irteera';

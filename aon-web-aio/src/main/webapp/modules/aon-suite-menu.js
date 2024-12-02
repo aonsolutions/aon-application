@@ -19,11 +19,27 @@ export class AonSuiteMenu extends AonElement {
     last; 
     new;
     cardData;
-
+	
+/*
+	dur;
+*/
 	constructor () {
 		super();
 	}
-
+	
+	
+	
+/*	
+	getDur(){
+		alert( "get " + this.dur );
+		return this.dur || super.getDur();		
+	}
+	
+	setDur( dur ){
+		alert( "set " + dur );
+		this.dur = dur;
+	}
+*/
 	connectedCallback () {
 		this.clear();
 		this.initialize();
@@ -90,7 +106,7 @@ export class AonSuiteMenu extends AonElement {
 
         let options = this.createElement(TAG.DIV);
         options.id = this.OPTIONS;
-        options.className = 'aonInputListOptions';
+        options.className = 'aonInputListo';
         sideMenu.appendChild(options);
         dropdownButton.addEventListener(EVENT.CLICK, () => {
            this.buildOptions(this.selectOptions);
@@ -153,7 +169,9 @@ export class AonSuiteMenu extends AonElement {
         div2.classList.add("suiteMenuDiv2");
         content.appendChild(div2);
 
-        this.options.forEach((opt, i) => {
+        this.options
+		.filter( opt => !opt.filter || opt.filter() )
+		.forEach((opt, i) => {
             this.buildCard(opt, i,div2);
         });
 	}
@@ -196,6 +214,12 @@ export class AonSuiteMenu extends AonElement {
 
     buildCard(opt, i,div){
         // if(opt.visible!=undefined && opt.visible == true){
+			
+			let options = opt.options.filter(opt => !opt.filter || opt.filter());
+			if (options.length === 0 ) 
+				return; 
+
+			
             let card = new AonCard();
             card.id = "card" + i;
             card.title = opt.title;
@@ -206,7 +230,7 @@ export class AonSuiteMenu extends AonElement {
             cardDiv.classList.add("suiteMenuCardDiv");
             
             let divGeneral = this.createDiv();
-            opt.options.forEach((v) =>{
+			options.forEach((v) =>{
                 divGeneral.appendChild(this.buildCardData(v));
             })
         
@@ -376,6 +400,12 @@ export class AonSuiteMenu extends AonElement {
         return this.getElement(this.DROPDOWN_BUTTON);
     }
 
+	isDomainManagementAvailable() {
+		return this.getDur().isDomainManagementAvailable();
+	}
+	isNotDomainManagementAvailable() {
+		return !this.getDur().isDomainManagementAvailable();
+	}
 	
 }
 if(!window.customElements.get(TAG.AON_SUITE_MENU)){
