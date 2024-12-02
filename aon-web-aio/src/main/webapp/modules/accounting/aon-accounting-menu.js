@@ -48,28 +48,29 @@ export class AonAccountingMenu extends AonSuiteMenu {
 			options: [ {
 				description:"Mantenimiento de Apuntes",
 				title:"Mantenimiento de Apuntes",
-				action: () => GWT.iLoad(GWT.ACCOUNT_ENTRY)
+				action: () => GWT.iLoad(GWT.ACCOUNT_ENTRY),
 			},{
 				description: "Apuntes de Amortizaciones",
 				title: "Apuntes de Amortizaciones",
-				action: () => this.rootPanel(new JSF.AonJsfPeriodAmortization)
+				action: () => this.rootPanel(new JSF.AonJsfPeriodAmortization),
 			},{
 				description: "Asientos de explotación, cierre y apertura",
 				title: "Asientos de explotación, cierre y apertura",
-				action: () => this.rootPanel(new JSF.AonJsfEndPeriodEntries)
+				action: () => this.rootPanel(new JSF.AonJsfEndPeriodEntries),
 			},{
 				description: "Contabilización de Facturas",
 				title: "Contabilización de Facturas",
-				action: () => this.rootPanel(new JSF.AonJsfInvoiceRecorder)
+				action: () => this.rootPanel(new JSF.AonJsfInvoiceRecorder),
 			},{
 				description: "Contabilización de Cobros y Pagos realizados",
 				title: "Contabilización de Cobros y Pagos realizados",
-				action: () => this.rootPanel(new JSF.AonJsfFinanceTrackingEntry)
+				action: () => this.rootPanel(new JSF.AonJsfFinanceTrackingEntry),
 			},{
 				description: "Documentos Pendientes",
 				title: "Documentos Pendientes",
-				action: () => GWT.iLoad(GWT.RAWDOC)
-			}]
+				action: () => GWT.iLoad(GWT.RAWDOC),
+			}],
+			filter: () => this.isNotDomainManagementAvailable()
 		},{
 			title: 'Listados Contables',
 			options: [{
@@ -100,7 +101,8 @@ export class AonAccountingMenu extends AonSuiteMenu {
 				description: "Cuenta de Explotación (P y G) ANALÍTICA",
 				title: "Cuenta de Explotación (P y G) ANALÍTICA",
 				action: () => GWT.iLoad(GWT.ACCOUNT_ANALYTICAL_REPORT)
-			}*/]
+			}*/],
+			filter: () => this.isNotDomainManagementAvailable()
 		},{
 			title: 'Tablas Auxiliares',
 			options: [{
@@ -131,7 +133,8 @@ export class AonAccountingMenu extends AonSuiteMenu {
 				description: MSG.CREDITOR,
 				title: MSG.CREDITOR,
 				action: () => GWT.iLoad(GWT.CREDITOR)
-			}]
+			}],
+			filter: () => this.isNotDomainManagementAvailable()
 		},{
 			title: 'Inmovilizado',
 			options: [{
@@ -146,7 +149,8 @@ export class AonAccountingMenu extends AonSuiteMenu {
 				description: "Bienes Afectos o de Inversión",
 				title: "Bienes Afectos o de Inversión",
 				action: () => GWT.iLoad(GWT.INVEST_ASSET)
-			}]
+			}],
+			filter: () => this.isNotDomainManagementAvailable()
 		},{
 			title: 'Listados de Hacienda',
 			options: [{
@@ -165,7 +169,8 @@ export class AonAccountingMenu extends AonSuiteMenu {
 				description: "Listado de Excel de Impuestos aplicados en Facturas",
 				title: "Listado de Excel de Impuestos aplicados en Facturas",
 				action: () => this.rootPanel(new JSF.AonJsfInvoiceReport)
-			}]
+			}],
+			filter: () => this.isNotDomainManagementAvailable()
 		},{
 			title: 'Utilidades',
 			options: [{
@@ -188,7 +193,8 @@ export class AonAccountingMenu extends AonSuiteMenu {
 				description: "Utilidades facturas/vencimientos",
 				title: "Utilidades facturas/vencimientos",
 				action: () => GWT.iLoad(GWT.FINANCE_UTILITIES)
-			}]
+			}],
+			filter: () => this.isNotDomainManagementAvailable()
 		},{
 			title: 'Movimientos Bancarios',
 			options: [/*{
@@ -207,7 +213,8 @@ export class AonAccountingMenu extends AonSuiteMenu {
 				description: "Formas de pago",
 				title: "Formas de pago",
 				action: () => GWT.iLoad(GWT.PAY_METHOD)
-			}]
+			}],
+			filter: () => this.isNotDomainManagementAvailable()
 		},{
 			title: 'Registro Mercantil',
 			options: [/*{
@@ -218,7 +225,46 @@ export class AonAccountingMenu extends AonSuiteMenu {
 				description: "Depósito de cuentas (D2)",
 				title: "Depósito de cuentas (D2)",
 				action: () => GWT.iLoad(GWT.DEPOSIT)
-			}]
+			}],
+			filter: () => this.isNotDomainManagementAvailable()
+		},{
+			title: 'Contabilidad',
+			options: [{
+				description: "Plan General Contable",
+				title: "Plan General Contable",
+				action: () => this.rootPanel(new JSF.AonJsfAccount)
+			},{
+				description: "Conceptos Automáticos",
+				title: "Conceptos Automáticos",
+				action: () => this.rootPanel(new JSF.AonJsfAutConcept)
+			},{
+				description: "Definición de Balances",
+				title: "Definición de Balances",
+				action: () => this.rootPanel(new JSF.AonJsfBalance)
+			},{
+				description: "Tabla de Tipos de Amortización",
+				title: "Tabla de Tipos de Amortización",
+				action: () => this.rootPanel(new JSF.AonJsfAmortizationType)
+			},{
+				description: "Utilidades y chequeos contables",
+				title: "Utilidades y chequeos contables",
+				action: () =>  GWT.iLoad(GWT.ACCOUNTING_UTILITIES)
+			},{
+				description: "Utilidades y chequeos contables",
+				title: "Utilidades y chequeos contables",
+				action: () => alert("Utilidades y chequeos contables"),
+				filter : () => false
+			}],
+			filter: () => this.isDomainManagementAvailable()
+		},{
+			title: 'Registro Mercantil',
+			options: [{
+				description: "Depósito de cuentas (D2)",
+				title: "Depósito de cuentas (D2)",
+				action: () => GWT.iLoad(GWT.DEPOSIT_TEXT_MODE)
+			}
+		],
+			filter: () => this.isDomainManagementAvailable()
 		}/*,{
 			title: 'Tesorería de Gestión (TEMPORAL)',
 			options: [{
@@ -246,6 +292,7 @@ export class AonAccountingMenu extends AonSuiteMenu {
         
 	}
 	*/
+	
 }
 if(!window.customElements.get(TAG.AON_ACCOUNTING_MENU)){
 	window.customElements.define(TAG.AON_ACCOUNTING_MENU, AonAccountingMenu);

@@ -264,6 +264,7 @@ export const EMPLOYEE = MSG.EMPLOYEE;
 export const END_DATE = MSG.END_DATE;
 export const ENGLISH = MSG.ENGLISH;
 export const ENTERPRISE = MSG.ENTERPRISE;
+export const ENTERPRISES = MSG.ENTERPRISES;
 export const ENTRY = MSG.ENTRY;
 export const ENVIRONMENT = 'Entorno';//TODO
 export const EQUIVALENCE_SURCHARGE = MSG.EQUIVALENCE_SURCHARGE;

@@ -214,6 +214,11 @@ export const AON_RIGHT_PANEL = 'aon-right-panel';
 export const AON_JSF_APP = 'aon-jsf-app' ;
 
 export const AON_ACCOUNTING_MENU = 'aon-accounting-menu';
+export const AON_JSF_ACCOUNT = 'aon-jsf-account' ;
+export const AON_JSF_BALANCE = 'aon-jsf-balance' ;
+export const AON_JSF_AUT_CONCEPT = 'aon-jsf-aut-concept' ;
+export const AON_JSF_ACC_PERIOD = 'aon-jsf-acc-period' ;
+export const AON_JSF_AMORTIZATION_TYPE = 'aon-jsf-amortization-type' ;
 export const AON_JSF_AMORTIZATION = 'aon-jsf-amortization' ;
 export const AON_JSF_PERIOD_AMORTIZATION = 'aon-jsf-period-amortization' ;
 export const AON_JSF_END_PERIOD_ENTRIES = 'aon-jsf-end-period-entries' ;
@@ -364,5 +369,10 @@ export const AON_JSF_SERIES = 'aon-jsf-series' ;
 export const AON_JSF_RELATIONSHIP = 'aon-jsf-relationship' ;
 export const AON_JSF_BANK_CONCEPT = 'aon-jsf-bank-concept' ;
 export const AON_JSF_LOADER = 'aon-jsf-loader' ;
+
+export const AON_ENTERPRISE_MENU = 'aon-enterprise-menu';
+export const AON_JSF_NEW_DOMAIN = 'aon-jsf-new-domain' ;
+export const AON_JSF_REMOVE_DOMAIN = 'aon-jsf-remove-domain' ;
+
 
 

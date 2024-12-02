@@ -104,7 +104,8 @@ export class AonFiscalMenu extends AonSuiteMenu {
                 description: "Declaración SII ",
                 title: "Suministro Inmediato de Información",
                 action: () => GWT.iLoad(GWT.MODEL_SII)
-            }]
+            }],
+			filter: () => this.isNotDomainManagementAvailable()		
         },{
             title: 'IRPF AEAT',
             visible: this.isAEAT,
@@ -136,7 +137,8 @@ export class AonFiscalMenu extends AonSuiteMenu {
                 description: "Modelo 193 ",
                 title: "Resumen anual de retenciones e ingresos a cuenta. Rendimientosdel capital mobiliario, IS e IRNR sobre determinadas rentas",
                 action: () =>  GWT.iLoad(GWT.MODEL_193)
-            }]
+            }],
+			filter: () => this.isNotDomainManagementAvailable()		
         },{
             title: 'AEAT',
             visible: this.isAEAT,
@@ -160,7 +162,8 @@ export class AonFiscalMenu extends AonSuiteMenu {
                 description2: " |Sociedades",
                 title: "Impuesto Sociedades. Pago fraccionado",
                 action: () => GWT.iLoad(GWT.MODEL_202)
-            }]
+            }],
+			filter: () => this.isNotDomainManagementAvailable()		
         },{
             title: 'IVA Forales',
             visible: this.isAlava || this.isGipu || this.isBizk,
@@ -185,7 +188,8 @@ export class AonFiscalMenu extends AonSuiteMenu {
                 description: "Declaración SII ",
                 title: "Suministro Inmediato de Información",
                 action: () => GWT.iLoad(GWT.MODEL_SII)
-            }]
+            }],
+			filter: () => this.isNotDomainManagementAvailable()		
         },{
             title: 'IRPF Forales',
             visible: this.isAlava || this.isGipu || this.isBizk,
@@ -217,7 +221,8 @@ export class AonFiscalMenu extends AonSuiteMenu {
                 description: "Modelo 193 ",
                 title: "Resumen anual de retenciones e ingresos a cuenta. Rendimientos del capital mobiliario, IS e IRNR sobre determinadas rentas",
                 action: () => GWT.iLoad(GWT.MODEL_193)
-            }]
+            }],
+			filter: () => this.isNotDomainManagementAvailable()		
         },{
             title: 'LROE Bizkaia',
             visible: this.isBizk,
@@ -229,7 +234,8 @@ export class AonFiscalMenu extends AonSuiteMenu {
                 description: "Modelo 240 ",
                 tite: "Libro-registro de operaciones económicas de sociedades",
                 action: () => GWT.iLoad(GWT.MODEL_240)
-            }]
+            }],
+			filter: () => this.isNotDomainManagementAvailable()		
         },{
             title: 'IVA Navarra',
             visible: this.isNavarra,
@@ -253,7 +259,8 @@ export class AonFiscalMenu extends AonSuiteMenu {
                 description: "Declaración SII ",
                 title: "Suministro Inmediato de Información",
                 action: () => GWT.iLoad(GWT.MODEL_SII)
-            }]
+            }],
+			filter: () => this.isNotDomainManagementAvailable()		
         },{
             title: 'IRPF Navarra',
             visible: this.isNavarra,
@@ -285,8 +292,18 @@ export class AonFiscalMenu extends AonSuiteMenu {
                 description: "Modelo 193 ",
                 title: "Resumen anual de retenciones e ingresos a cuenta. Rendimientos del capital mobiliario, IS e IRNR sobre determinadas rentas",
                 action: () => GWT.iLoad(GWT.MODEL_193)
-            }]
-        }];
+            }],
+			filter: () => this.isNotDomainManagementAvailable()		
+        },{
+            title: 'Matriz de empresas y modelos fiscales',
+            visible: true,
+            options: [{
+                title: "Matriz de empresas y modelos fiscales",
+				description: "Matriz de empresas y modelos fiscales",
+                action: () => GWT.iLoad(GWT.MODEL_MATRIX)
+            }],
+			filter: () => this.isDomainManagementAvailable()		
+		}];
     }
     /*
     build() {

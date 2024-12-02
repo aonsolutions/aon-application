@@ -222,6 +222,17 @@ export const CONFIGURATION_MENU = {
 	price: " ",
 };
 
+export const ENTERPRISE_MENU = {
+	app: "enterpriseMenu",
+	symbol: "domain",
+	title: MSG.ENTERPRISES,
+	description: MSG.ENTERPRISES,
+	subtitle: "Empresas",
+	color: "var(--aonTopMenuAvailable)",
+	style: "aonTopNavEnterpriseButton",
+	apps: [],
+	price: " ",
+};
 
 export const TOP_MENU_APPS = [
 	APP.OFFICE,
@@ -229,6 +240,7 @@ export const TOP_MENU_APPS = [
 	APP.ACADEMY,
 	APP.COMMERCE,
 
+	ENTERPRISE_MENU,
 	COMMERCIAL_MENU,
 	MANAGEMENT_MENU,
 	TREASURY_MENU,

@@ -70,7 +70,18 @@ export class AonParent extends AonElement {
 			} else if(companies.length === 1) {
 				this.companySelection(companies[0], true);
 			} else {
-				this.getElement("aonMenu").close();
+				
+				this.clearElementById('aonMenu');
+				let aonMenu = this.getElement('aonMenu');
+				aonMenu.init().then(() => {
+					LS.setDomainLogin(aonMenu.getDur().getUser().login);
+					LS.setDomainId(aonMenu.getDur().getDomain().getId());
+					LS.setDomainName(aonMenu.getDur().getDomain().getName());
+					//localStorage.setItem("aon_domain_id", aonMenu.getDur().getDomain().getId());
+					//localStorage.setItem("aon_domain_name", aonMenu.getDur().getDomain().getName());
+					aonMenu.open();
+				});
+
 				this.selectTab(filter);		
 				//TODO: aonParent.stopLoader();
 				this.page = 1;
@@ -196,10 +207,12 @@ export class AonParent extends AonElement {
 	}
 	
 	build() {
+
 		let parentDiv = this.createDiv();
 		parentDiv.className = CSS.AON_PARENT_DIV;
 		this.appendChild(parentDiv);
 		
+
 		let welcomeDiv = this.createDiv();
 		welcomeDiv.className = CSS.AON_WELCOME_DIV;
 		let welcomeSpan = this.createSpan();
@@ -207,7 +220,8 @@ export class AonParent extends AonElement {
 		welcomeSpan.style.fontSize = '24px';
 		welcomeSpan.style.fontWeight = '600';
 		welcomeDiv.appendChild(welcomeSpan);
-	
+		
+		// Companies
 		let companyDiv = this.createDiv();
 		companyDiv.className = CSS.AON_COMPANY_DIV;
 	
@@ -327,7 +341,7 @@ export class AonParent extends AonElement {
 		}
 	
 
-	loadMore() {
+		loadMore() {
 		//TODO: this.getApplication().startLoader();
 		getCompanies().then( companies => {
 			let first = this.page * 30;
@@ -337,6 +351,9 @@ export class AonParent extends AonElement {
 		.finally(()=>{
 			//TODO: this.getApplication().stopLoader();
 		});
+	
+		// Customers
+		
 	}
 
 	cleanCompanies(){
@@ -401,10 +418,15 @@ export class AonParent extends AonElement {
 	companySelection(company, onlyOne) {
 		const BASE_ID = 'aonHeader';
 		localStorage.setItem('company', JSON.stringify(company));
-		localStorage.setItem("aon_domain_id", company.id);
-		localStorage.setItem("aon_domain_name", company.domain);
+		LS.setDomainId(company.id);
+		LS.setDomainName(company.domain);
+		LS.setDomainLogin(company.login);
+		//localStorage.setItem("aon_domain_id", company.id);
+		//localStorage.setItem("aon_domain_name", company.domain);
 		localStorage.setItem("aon_domain_document", company.document);
 		localStorage.setItem("onlyOne", onlyOne);
+		
+		
 
 		if(!LS.isNewTheme() && (company.parentId || company.type !== 'CONSULTANCY')){
 			let aonShowMenu = this.getElement('aonShowMenu');

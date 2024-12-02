@@ -170,6 +170,7 @@ export const EMPLOYEE = 'Empregado';
 export const END_DATE = 'Data Fin';
 export const ENGLISH = 'Inglés';
 export const ENTERPRISE = 'Empresa';
+export const ENTERPRISES = 'Empresas';
 export const ENTRY = 'Entrada';
 export const EQUIVALENCE_SURCHARGE = 'Recargo de Equivalencia';
 export const EXIT = 'Saída';
