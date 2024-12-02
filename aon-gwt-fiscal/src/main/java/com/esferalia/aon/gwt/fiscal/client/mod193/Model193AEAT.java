@@ -112,10 +112,13 @@ public class Model193AEAT extends Model193Base {
 	private void paintPerceptorsTab(TabLayoutPanel tabPanel, Integer selectedIndex) {
 		if (getModel().getYear() < 2023) {
 			setDetailManager( new Model193AEATDetail2016( getCallback() , getModel(), selectedIndex ));
-		} else {
-			setDetailManager( new Model193AEATDetail2023( getCallback() , getModel(), selectedIndex ));
 		}
-		tabPanel.add( (Widget) getDetailManager(),  AON.MSG.receiverList() );
+		else if (getModel().getYear() == 2023) {
+			setDetailManager( new Model193AEATDetail2023( getCallback() , getModel(), selectedIndex ));
+		} else {
+			setDetailManager( new Model193AEATDetail2024( getCallback() , getModel(), selectedIndex ));
+		}
+		tabPanel.add( (Widget) getDetailManager(), AON.MSG.receiverList() );
 	}
 	
 }

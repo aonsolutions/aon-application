@@ -1,15 +1,15 @@
 package com.esferalia.aon.gwt.fiscal.client.mod193;
 
 import com.esferalia.aon.gwt.common.client.AON;
-import com.esferalia.aon.gwt.common.client.widget.ProvinceListBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDateBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDocumentTextBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDoubleBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonIntegerBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonTextBox;
-import com.esferalia.aon.gwt.fiscal.client.mod193.Model193AEATDetail2023.IModel193DetailCallback;
+import com.esferalia.aon.gwt.fiscal.client.mod193.Model193AEATDetail2024.IModel193DetailCallback;
 import com.esferalia.aon.occam.api.model.fiscal.Mod193Detail;
-import com.esferalia.aon.occam.api.model.type.Mod1932015Key;
+import com.esferalia.aon.occam.api.model.type.Mod1932024Key;
+import com.esferalia.aon.occam.api.model.type.Province;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
@@ -23,19 +23,17 @@ import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SimpleLayoutPanel;
 
-public class Model193AEAT2023DetailPanel extends SimpleLayoutPanel implements Focusable {
+public class Model193AEAT2024DetailPanel extends SimpleLayoutPanel implements Focusable {
 	
 	private static final String WIDTH_200PX = "200px";
 	private static final String WIDTH_160PX = "160px";
-
 
 	private final class ValueChangeHandlerImplementation2 implements ValueChangeHandler<String> {
 		private final Mod193Detail detail;
 		private final IModel193DetailCallback callback;
 		private final AonTextBox issuingCode;
 
-		private ValueChangeHandlerImplementation2(Mod193Detail detail, IModel193DetailCallback callback,
-				AonTextBox issuingCode) {
+		private ValueChangeHandlerImplementation2(Mod193Detail detail, IModel193DetailCallback callback, AonTextBox issuingCode) {
 			this.detail = detail;
 			this.callback = callback;
 			this.issuingCode = issuingCode;
@@ -48,14 +46,12 @@ public class Model193AEAT2023DetailPanel extends SimpleLayoutPanel implements Fo
 		}
 	}
 
-
 	private final class ValueChangeHandlerImplementation implements ValueChangeHandler<String> {
 		private final IModel193DetailCallback callback;
 		private final Mod193Detail detail;
 		private final AonTextBox name;
 
-		private ValueChangeHandlerImplementation(IModel193DetailCallback callback, Mod193Detail detail,
-				AonTextBox name) {
+		private ValueChangeHandlerImplementation(IModel193DetailCallback callback, Mod193Detail detail,	AonTextBox name) {
 			this.callback = callback;
 			this.detail = detail;
 			this.name = name;
@@ -68,12 +64,11 @@ public class Model193AEAT2023DetailPanel extends SimpleLayoutPanel implements Fo
 		}
 	}
 
-
 	private static final String WIDTH_100PX = "100px";
 	private int tabIndex; 
 	private AonDocumentTextBox document;
 	
-	public Model193AEAT2023DetailPanel(Mod193Detail detail, IModel193DetailCallback callback) {
+	public Model193AEAT2024DetailPanel(Mod193Detail detail, IModel193DetailCallback callback) {
 		ScrollPanel scroll = new ScrollPanel();
 		scroll.setStyleName(AON.CSS.aonWidthAll());
 		FlowPanel panel = new FlowPanel();
@@ -98,6 +93,7 @@ public class Model193AEAT2023DetailPanel extends SimpleLayoutPanel implements Fo
 		tab1.setWidget(1, 2, new Model193SmallerLabel(AON.MSG.representativeDocument()));
 		tab1.setWidget(1, 3, new Model193SmallerLabel(AON.MSG.fullName()));
 		
+		// Pendiente
 		CheckBox pending = new CheckBox(AON.MSG.pending());
 		pending.setValue(detail.isPending());
 		pending.addClickHandler(event -> {
@@ -106,6 +102,7 @@ public class Model193AEAT2023DetailPanel extends SimpleLayoutPanel implements Fo
 		});
 		tab1.setWidget(2, 0, pending);
 		
+		// NIF perceptor
 		document = new AonDocumentTextBox();
 		document.setValue(detail.getDocument());
 		document.addValueChangeHandler(event -> {
@@ -114,6 +111,7 @@ public class Model193AEAT2023DetailPanel extends SimpleLayoutPanel implements Fo
 		});
 		tab1.setWidget(2, 1, document);
 		
+		// NIF representante
 		AonDocumentTextBox representativeDocument = new AonDocumentTextBox();
 		representativeDocument.setValue(detail.getRepresentativeDocument());
 		representativeDocument.addValueChangeHandler(event -> {
@@ -122,6 +120,7 @@ public class Model193AEAT2023DetailPanel extends SimpleLayoutPanel implements Fo
 		});
 		tab1.setWidget(2, 2, representativeDocument);
 		
+		// Apellidos y nombre, razón social o denominación del perceptor
 		AonTextBox name = new AonTextBox();
 		name.setVisibleLength(40);
 		name.setMaxLength(40);
@@ -156,20 +155,21 @@ public class Model193AEAT2023DetailPanel extends SimpleLayoutPanel implements Fo
 		tab2.setWidget(1, 6, new Model193SmallerLabel(AON.MSG.accrualYear()));
 		tab2.setWidget(1, 7, new Model193SmallerLabel("Ceuta o Melilla / Isla de la Palma"));
 
+		// Clave percepción / Naturaleza
 		final ListBox nature = new ListBox();
 		nature.setWidth("40px");
 
 		final ListBox key = new ListBox();
 		key.setWidth("40px");
-		for (Mod1932015Key k : Mod1932015Key.values()) {
+		for (Mod1932024Key k : Mod1932024Key.values()) {
 			key.addItem(AonStringUtils.abbreviate(k.getDescription(),150), k.getValue());
 		}
 		
-		Model193AEAT2023DetailPanel.setValue(key, nature, detail);
+		Model193AEAT2024DetailPanel.setValue(key, nature, detail);
 		
 		key.addChangeHandler(event -> {
 			nature.clear();
-			Mod1932015Key keyEnum = Mod1932015Key.values()[key.getSelectedIndex()];
+			Mod1932024Key keyEnum = Mod1932024Key.values()[key.getSelectedIndex()];
 			detail.setKey( keyEnum.toString() );
 			nature.setEnabled(true);
 			for (int i = 0; i < keyEnum.getNatures().length; i++) {
@@ -181,15 +181,15 @@ public class Model193AEAT2023DetailPanel extends SimpleLayoutPanel implements Fo
 		tab2.setWidget(2, 0, key);
 
 		nature.addChangeHandler(event -> {
-			Mod1932015Key keyEnum = Mod1932015Key.values()[key.getSelectedIndex()];
+			Mod1932024Key keyEnum = Mod1932024Key.values()[key.getSelectedIndex()];
 			int idx = nature.getSelectedIndex() == -1 ? 0 : nature.getSelectedIndex();
 			detail.setNature(keyEnum.getNatures()[idx]);
 			callback.onValueChanged(detail);
 		});
 		tab2.setWidget(2, 1, nature);
 
-		CheckBox intermediaryPayment = new CheckBox(AON.MSG.intermediaryPayment());
-		// intermediaryPayment.setStyleName(AON.CSS.aonFontMedium());
+		// Perceptor mediador 
+		CheckBox intermediaryPayment = new CheckBox("Perceptor mediador");
 		intermediaryPayment.setValue(detail.isIntermediaryPayment());
 		intermediaryPayment.addClickHandler(event -> {
 			detail.setIntermediaryPayment(intermediaryPayment.getValue());
@@ -197,7 +197,18 @@ public class Model193AEAT2023DetailPanel extends SimpleLayoutPanel implements Fo
 		});
 		tab2.setWidget(2, 2, intermediaryPayment);
 
-		ProvinceListBox province = new ProvinceListBox();
+		// Provincia (Códigos: 01 a 50, 51-Ceuta, 52-Melilla, 53-Isla de la Palma)
+		ListBox province = new ListBox();
+		province.setWidth("120px");
+		for (Province p : Province.values()) {
+			if (p == Province.DESCONOCIDO)
+				province.addItem("-");
+			else if (p == Province.TENERIFE)
+				province.addItem("S.C. Tenerife (excepto Isla de la Palma)");
+			else if (p != Province.NO_RESIDENTE)
+				province.addItem(p.getName());	
+		}
+		province.addItem("Isla de la Palma");
 		province.setSelectedIndex(detail.getProvince());
 		province.addChangeHandler( event -> {
 			detail.setProvince(province.getSelectedIndex());
@@ -205,6 +216,7 @@ public class Model193AEAT2023DetailPanel extends SimpleLayoutPanel implements Fo
 		});
 		tab2.setWidget(2, 3, province);
 		
+		// Clave código
 		ListBox keyCode = new ListBox();
 		keyCode.setWidth("40px");
 		keyCode.addItem("-");
@@ -218,6 +230,7 @@ public class Model193AEAT2023DetailPanel extends SimpleLayoutPanel implements Fo
 		});
 		tab2.setWidget(2, 4, keyCode);
 		
+		// Código emisor
 		AonTextBox issuingCode = new AonTextBox();
 		issuingCode.setVisibleLength(12);
 		issuingCode.setMaxLength(12);
@@ -225,6 +238,7 @@ public class Model193AEAT2023DetailPanel extends SimpleLayoutPanel implements Fo
 		issuingCode.addValueChangeHandler(new ValueChangeHandlerImplementation2(detail, callback, issuingCode));
 		tab2.setWidget(2, 5, issuingCode);
 
+		// Ejercicio devengo
 		AonIntegerBox accrualYear = new AonIntegerBox();
 		accrualYear.setMaxLength(4);
 		accrualYear.setVisibleLength(4);
@@ -235,6 +249,7 @@ public class Model193AEAT2023DetailPanel extends SimpleLayoutPanel implements Fo
 		});
 		tab2.setWidget(2, 6, accrualYear);
 		
+		// Ceuta o Melilla / Isla de la Palma
 		ListBox ceutaMelillaPalma = new ListBox();
 		ceutaMelillaPalma.setWidth("140px");
 		ceutaMelillaPalma.addItem("-");
@@ -256,12 +271,15 @@ public class Model193AEAT2023DetailPanel extends SimpleLayoutPanel implements Fo
 		tab2.setWidget(3, 5, new Model193SmallerLabel(AON.MSG.reductions()));
 		tab2.getFlexCellFormatter().setColSpan(3, 5, 2);
 
+		// Pago
 		ListBox payment = new ListBox();
 		payment.setWidth("40px");
 		payment.addItem("-");
-		payment.addItem("1 - Como emisor.");
-		payment.addItem("2 - Como mediador de valor nacional.");
-		payment.addItem("3 - Como mediador de valor extranjero.");
+		payment.addItem("1 - Como emisor");
+		payment.addItem("2 - Como mediador de valor nacional");
+		payment.addItem("3 - Como mediador de valor extranjero");
+		payment.addItem("4 - Como mediador de valor extranjero no retenedor");
+		payment.addItem("5 - Como mediador de otro tipo de rendimientos o rentas obtenidas por cesi\u00F3n de capitales consignados con clave B-06");
 		payment.setSelectedIndex(detail.getPayment());
 		payment.addChangeHandler( event -> {
 			detail.setPayment((byte) payment.getSelectedIndex());
@@ -269,6 +287,7 @@ public class Model193AEAT2023DetailPanel extends SimpleLayoutPanel implements Fo
 		});
 		tab2.setWidget(4, 0, payment);
 		
+		// Tipo código
 		ListBox codeType = new ListBox();
 		codeType.setWidth("40px");
 		codeType.addItem("-","");
@@ -290,7 +309,7 @@ public class Model193AEAT2023DetailPanel extends SimpleLayoutPanel implements Fo
 		});
 		tab2.setWidget(4, 1, codeType);
 
-		
+		// Código cuenta valores
 		AonTextBox accountCode = new AonTextBox();
 		accountCode.setVisibleLength(12);
 		accountCode.setMaxLength(12);
@@ -302,8 +321,8 @@ public class Model193AEAT2023DetailPanel extends SimpleLayoutPanel implements Fo
 		});
 		tab2.setWidget(4, 2, accountCode);
 				
+		// Tipo de percepcion (En especie)
 		CheckBox inKind = new CheckBox(AON.MSG.inKind());
-		// inKind.setStyleName(AON.CSS.aonFontMedium());
 		inKind.setValue(detail.isInKind());
 		inKind.addClickHandler(event -> {
 			detail.setInKind(inKind.getValue());
@@ -311,7 +330,7 @@ public class Model193AEAT2023DetailPanel extends SimpleLayoutPanel implements Fo
 		});
 		tab2.setWidget(4, 3, inKind);
 				
-
+        // Importe percepciones/remuneracion al prestamista 
 		AonDoubleBox lenderAmount = new AonDoubleBox();
 		lenderAmount.setValue(detail.getLenderAmount());
 		lenderAmount.addValueChangeHandler(event -> {
@@ -321,6 +340,7 @@ public class Model193AEAT2023DetailPanel extends SimpleLayoutPanel implements Fo
 		tab2.setWidget(4, 4, lenderAmount);
 		tab2.getFlexCellFormatter().setColSpan(4, 4, 2);
 		
+		// Importe reducciones
 		AonDoubleBox reduction = new AonDoubleBox();
 		reduction.setValue(detail.getReduction());
 		reduction.addValueChangeHandler(event -> {
@@ -342,6 +362,7 @@ public class Model193AEAT2023DetailPanel extends SimpleLayoutPanel implements Fo
 		tab3.setWidget(1, 1, new Model193SmallerLabel(AON.MSG.percent()));
 		tab3.setWidget(1, 2, new Model193SmallerLabel(AON.MSG.retentionAccount()));
 		
+		// Base retenciones e ingresos a cuenta
 		AonDoubleBox retentionBase = new AonDoubleBox();
 		retentionBase.setValue(detail.getRetentionBase());
 		retentionBase.addValueChangeHandler(event -> {
@@ -350,6 +371,7 @@ public class Model193AEAT2023DetailPanel extends SimpleLayoutPanel implements Fo
 		});
 		tab3.setWidget(2, 0, retentionBase);
 		
+		// Porcentaje retencion (%)
 		AonDoubleBox percent = new AonDoubleBox();
 		percent.setValue(detail.getPercent());
 		percent.addValueChangeHandler(event -> {
@@ -358,6 +380,7 @@ public class Model193AEAT2023DetailPanel extends SimpleLayoutPanel implements Fo
 		});
 		tab3.setWidget(2, 1, percent);
 
+		// Retenciones e ingresos a cuenta
 		AonDoubleBox retention = new AonDoubleBox();
 		retention.setValue(detail.getRetention());
 		retention.addValueChangeHandler(event -> {
@@ -376,12 +399,13 @@ public class Model193AEAT2023DetailPanel extends SimpleLayoutPanel implements Fo
 		tab4.setStyleName(AON.CSS.aonWidthAll());
 		tab4.addStyleName(AON.CSS.aonNowrap());
 		
- 		tab4.setWidget(1, 0, new Model193SmallerLabel(AON.MSG.loanStart() + " 2016"));
+ 		tab4.setWidget(1, 0, new Model193SmallerLabel(AON.MSG.loanStart()));
 		tab4.setWidget(1, 1, new Model193SmallerLabel(AON.MSG.loanDueStart()));
 		tab4.setWidget(1, 2, new Model193SmallerLabel(AON.MSG.penalizations()));
 		tab4.setWidget(1, 3, new Model193SmallerLabel(AON.MSG.compensations()));
 		tab4.setWidget(1, 4, new Model193SmallerLabel(AON.MSG.guarantee()));
 
+		// Fecha inicio préstamo
 		AonDateBox loanStartDate = new AonDateBox();
 		loanStartDate.setValue(detail.getLoanStartDate());
 		loanStartDate.addValueChangeHandler(event -> {
@@ -390,6 +414,7 @@ public class Model193AEAT2023DetailPanel extends SimpleLayoutPanel implements Fo
 		});
 		tab4.setWidget(2, 0, loanStartDate);
 		
+		// Fecha vencimiento préstamo
 		AonDateBox loanDueDate = new AonDateBox();
 		loanDueDate.setValue(detail.getLoanDueDate());
 		loanDueDate.addValueChangeHandler(event -> {
@@ -398,6 +423,7 @@ public class Model193AEAT2023DetailPanel extends SimpleLayoutPanel implements Fo
 		});
 		tab4.setWidget(2, 1, loanDueDate);
 		
+		// Penalizaciones
 		AonDoubleBox penalization = new AonDoubleBox();
 		penalization.setValue(detail.getPenalization());
 		penalization.addValueChangeHandler(event -> {
@@ -406,6 +432,7 @@ public class Model193AEAT2023DetailPanel extends SimpleLayoutPanel implements Fo
 		});
 		tab4.setWidget(2, 2, penalization);
 
+		// Compensaciones
 		AonDoubleBox compensation = new AonDoubleBox();
 		compensation.setValue(detail.getCompensation());
 		compensation.addValueChangeHandler(event -> {
@@ -414,6 +441,7 @@ public class Model193AEAT2023DetailPanel extends SimpleLayoutPanel implements Fo
 		});
 		tab4.setWidget(2, 3, compensation);
 
+		// Garantías
 		AonDoubleBox guarantee = new AonDoubleBox();
 		guarantee.setValue(detail.getGuarantee());
 		guarantee.addValueChangeHandler(event -> {
@@ -421,7 +449,63 @@ public class Model193AEAT2023DetailPanel extends SimpleLayoutPanel implements Fo
 			callback.onNameChanged(detail);
 		});
 		tab4.setWidget(2, 4, guarantee);
+		
+		FlexTable tab41 = new FlexTable();
+		panel.add(tab41);
+		tab41.getColumnFormatter().setWidth(0, WIDTH_160PX);
+		tab41.getColumnFormatter().setWidth(1, WIDTH_160PX);
+		tab41.getColumnFormatter().setWidth(2, "auto");
+		tab41.setStyleName(AON.CSS.aonWidthAll());
+		tab41.addStyleName(AON.CSS.aonNowrap());
+		
+ 		tab41.setWidget(1, 0, new Model193SmallerLabel("NIF del pagador anterior"));
+		tab41.setWidget(1, 1, new Model193SmallerLabel("Fecha de devengo"));
+		tab41.setWidget(1, 2, new Model193SmallerLabel("Clave de mercado"));
+		
+		// NIF del pagador anterior
+		AonDocumentTextBox previousPayerDocument = new AonDocumentTextBox();
+		previousPayerDocument.setMaxLength(9);
+		previousPayerDocument.setValue(detail.getPreviousPayerDocument());
+		previousPayerDocument.addValueChangeHandler(event -> {
+			detail.setPreviousPayerDocument(previousPayerDocument.getValue());
+			callback.onValueChanged(detail);
+		});
+		tab41.setWidget(2, 0, previousPayerDocument);
+		
+		// Fecha de devengo
+		AonDateBox accrualDate = new AonDateBox();
+		accrualDate.setValue(detail.getAccrualDate());
+		accrualDate.addValueChangeHandler(event -> {
+			detail.setAccrualDate(accrualDate.getValue());
+			callback.onNameChanged(detail);
+		});
+		tab41.setWidget(2, 1, accrualDate);
 
+		// Clave de mercado
+		ListBox marketKey = new ListBox();
+		marketKey.setWidth("400px");
+		marketKey.addItem("-","");
+		marketKey.addItem("A - Mercado secundario oficial de valores espa\u00F1ol","A");
+		marketKey.addItem("B - Mercado secundario oficial de valores extranjeros de la UE","B");
+		marketKey.addItem("C - Otros mercados oficiales extranjeros","C");
+		marketKey.addItem("D - Otros","D");
+		
+		if (AonStringUtils.equals("A", detail.getMarketKey())) {
+			marketKey.setSelectedIndex(1);	
+		} else if (AonStringUtils.equals("B", detail.getMarketKey())) {
+			marketKey.setSelectedIndex(2);
+		} else if (AonStringUtils.equals("C", detail.getMarketKey())) {
+			marketKey.setSelectedIndex(3);
+		} else if (AonStringUtils.equals("D", detail.getMarketKey())) {
+			marketKey.setSelectedIndex(4);
+		} else {
+			marketKey.setSelectedIndex(0);
+		}
+		marketKey.addChangeHandler( event -> {
+			detail.setMarketKey(marketKey.getValue(marketKey.getSelectedIndex()));
+			callback.onValueChanged(detail);
+		});
+		tab41.setWidget(2, 2, marketKey);
 
 		FlexTable tab31 = new FlexTable();
 		panel.add(tab31);		
@@ -448,7 +532,8 @@ public class Model193AEAT2023DetailPanel extends SimpleLayoutPanel implements Fo
 		tab31.setWidget(1, 3, new Model193SmallerLabel("Dip. Foral Gipuzkoa"));
 		tab31.setWidget(1, 4, new Model193SmallerLabel("Dip. Foral Bizkaia"));
 		tab31.setWidget(1, 5, new Label());
-		
+
+		// Retenciones e ingresos a cuenta - Hacienda Estatal
 		AonDoubleBox commonRetention = new AonDoubleBox();
 		commonRetention.setValue(detail.getCommonRetention());
 		commonRetention.addValueChangeHandler(event -> {
@@ -457,6 +542,7 @@ public class Model193AEAT2023DetailPanel extends SimpleLayoutPanel implements Fo
 		});
 		tab31.setWidget(2, 0, commonRetention);
 
+		// Retenciones e ingresos a cuenta - Navarra
 		AonDoubleBox navarraRetention = new AonDoubleBox();
 		navarraRetention.setValue(detail.getNavarraRetention());
 		navarraRetention.addValueChangeHandler(event -> {
@@ -465,6 +551,7 @@ public class Model193AEAT2023DetailPanel extends SimpleLayoutPanel implements Fo
 		});
 		tab31.setWidget(2, 1, navarraRetention);
 		
+		// Retenciones e ingresos a cuenta - Araba/Alava
 		AonDoubleBox arabaRetention = new AonDoubleBox();
 		arabaRetention.setValue(detail.getArabaRetention());
 		arabaRetention.addValueChangeHandler(event -> {
@@ -473,6 +560,7 @@ public class Model193AEAT2023DetailPanel extends SimpleLayoutPanel implements Fo
 		});
 		tab31.setWidget(2, 2, arabaRetention);
 		
+		// Retenciones e ingresos a cuenta - Gipuzkoa
 		AonDoubleBox gipuzkoaRetention = new AonDoubleBox();
 		gipuzkoaRetention.setValue(detail.getGipuzkoaRetention());
 		gipuzkoaRetention.addValueChangeHandler(event -> {
@@ -481,6 +569,7 @@ public class Model193AEAT2023DetailPanel extends SimpleLayoutPanel implements Fo
 		});
 		tab31.setWidget(2, 3, gipuzkoaRetention);
 
+		// Retenciones e ingresos a cuenta - Bizkaia
 		AonDoubleBox bizkaiaRetention = new AonDoubleBox();
 		bizkaiaRetention.setValue(detail.getBizkaiaRetention());
 		bizkaiaRetention.addValueChangeHandler(event -> {
@@ -518,9 +607,9 @@ public class Model193AEAT2023DetailPanel extends SimpleLayoutPanel implements Fo
 
 	private static void setValue(ListBox key, ListBox nature, Mod193Detail detail) {
 		if (AonStringUtils.isBlank( detail.getKey())) {
-			detail.setKey(Mod1932015Key.A.toString());
+			detail.setKey(Mod1932024Key.A.toString());
 		}
-		Mod1932015Key keyEnum = Mod1932015Key.valueOf(detail.getKey());
+		Mod1932024Key keyEnum = Mod1932024Key.valueOf(detail.getKey());
 		key.setSelectedIndex(keyEnum.ordinal());
 		nature.clear();
 		nature.setEnabled(true);
