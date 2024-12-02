@@ -231,15 +231,15 @@ export const TaxIRPFAGRIPercentage = [
 ];
 
 export const getVats = (administration) => {
-  if("CANARIAS" == administration) {
+  if(administration && "CANARIAS" == administration) {
     return TaxVatIGICPercentage;
-  } else TaxIVAPercentage;
+  } else return TaxIVAPercentage;
 }
 
 export const getVatLabel = (administration) => {
-  if("CANARIAS" == administration) {
+  if(administration && "CANARIAS" == administration) {
     return '%IGIC';
-  } else '%IVA';
+  } else return '%IVA';
 }
 
 
