@@ -106,7 +106,7 @@ export const getDomainUserRoles = (data) => {
       get(API.COMPANY_APPROLES, data).then(r => {
         durum = r;
         resolve(r);
-      }).catch(e => reject(e));
+      }).catch(reject);
   });
 }
 

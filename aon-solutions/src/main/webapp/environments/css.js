@@ -44,6 +44,7 @@ export const AON_MENU_LINK = 'aonMenuLink';
 export const AON_HEADER = 'aonHeader';
 export const AON_HEADER_BETA = 'aonHeaderBeta';
 export const AON_HEADER_BUTTON = 'aonHeaderButton';
+export const AON_HEADER_START = 'aonHeaderStart';
 export const AON_IMG_AVATAR = 'aonImgAvatar';
 export const AON_AVATAR = 'aonAvatar';
 export const AON_LI = 'aonLi';
