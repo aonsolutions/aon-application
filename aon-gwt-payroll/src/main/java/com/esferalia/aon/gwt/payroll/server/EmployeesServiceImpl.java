@@ -1634,8 +1634,9 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 		Connection conn = null;
 		try {
 			conn = AonServletUtils.getConnection(domain);
+			Integer domainId = AonServletUtils.getDomainID(domain);
 			// syncBonus(conn, domain, user, salaryDraft);
-			calculateAndSave(conn, salaryDraft);
+			calculateAndSave(conn, domainId, salaryDraft);
 			return salaryDraft;
 		} catch (SQLException e) {
 			throw new IllegalArgumentException(e);
@@ -1656,8 +1657,9 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 		Connection conn = null;
 		try {
 			conn = AonServletUtils.getConnection(domain);
+			Integer domainId = AonServletUtils.getDomainID(domain);
 
-			calculateAndSave(conn, salaryDraft, sections);
+			calculateAndSave(conn, domainId, salaryDraft, sections);
 			return salaryDraft;
 		} catch (SQLException e) {
 			throw new IllegalArgumentException(e);
@@ -2086,12 +2088,14 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 		Connection conn = null;
 		try {
 			conn = AonServletUtils.getConnection(domain);
+			
+			Integer domainId = AonServletUtils.getDomainID(domain);
 
 			int ids[] = new int[salaries.length];
 			for (int i = 0; i < salaries.length; i++)
 				ids[i] = salaries[i].getId();
 
-			deleteSalaries(conn, ids);
+			deleteSalaries(conn, domainId, ids);
 
 		} catch (SQLException e) {
 			throw new IllegalArgumentException(e);
@@ -3821,11 +3825,11 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 	}
 
 	@SuppressWarnings("unchecked")
-	private static void calculateAndSave(Connection conn, SalaryDraft draft) throws SQLException {
+	private static void calculateAndSave(Connection conn, Integer domainId, SalaryDraft draft) throws SQLException {
 		if (draft.hasDbSalary())
 			deleteSalaries(conn, domainId, draft.getDbId());
 		if (draft.getType() == Type.SETTLE)
-			deleteAllSettles(conn, draft.getEmployee().getId());
+			deleteAllSettles(conn, domainId, draft.getEmployee().getId());
 
 		JooqSalaryBuilder<ISalary> jooqSalaryBuilder = new JooqSalaryBuilder<ISalary>(conn);
 		RoundSalaryBuilder<ISalary> jooqRoundSalaryBuilder = new RoundSalaryBuilder<ISalary>(jooqSalaryBuilder,
@@ -3873,11 +3877,11 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 	}
 
 	@SuppressWarnings("unchecked")
-	private static void calculateAndSave(Connection conn, SalaryDraft draft, Date sections[]) throws SQLException {
+	private static void calculateAndSave(Connection conn, Integer domainId, SalaryDraft draft, Date sections[]) throws SQLException {
 		if (draft.hasDbSalary())
 			deleteSalaries(conn, domainId, draft.getDbId());
 		if (draft.getType() == Type.SETTLE)
-			deleteAllSettles(conn, draft.getEmployee().getId());
+			deleteAllSettles(conn, domainId, draft.getEmployee().getId());
 
 		SalaryDraftBuilder salaryDraftBuilder = new SalaryDraftBuilder(draft);
 
@@ -5489,7 +5493,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 		}
 	}
 
-	private static void deleteAllSettles(Connection conn, int id) throws SQLException {
+	private static void deleteAllSettles(Connection conn, Integer domainId, int id) throws SQLException {
 		ResultSet rs = null;
 		PreparedStatement settleStmt = null;
 		try {
@@ -5504,7 +5508,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 			while (rs.next())
 				ids.add(rs.getInt(SalaryColumns.ID));
 
-			JooqPayrollSalaries.deleteSalaries(conn, ids);
+			JooqPayrollSalaries.deleteSalaries(conn, domainId, ids);
 		} finally {
 			if (rs != null)
 				rs.close();
@@ -5514,13 +5518,13 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 
 	}
 
-	private static void deleteSalaries(Connection conn, int... ids) throws SQLException {
+	private static void deleteSalaries(Connection conn, Integer domainId, int... ids) throws SQLException {
 
 		boolean autoCommit = conn.getAutoCommit();
 		try {
 			conn.setAutoCommit(false);
 			
-			JooqPayrollSalaries.deleteSalaries(conn, Arrays.stream(ids).boxed().collect(Collectors.toList()));
+			JooqPayrollSalaries.deleteSalaries(conn, domainId, Arrays.stream(ids).boxed().collect(Collectors.toList()));
 
 			conn.commit();
 			
@@ -5824,7 +5828,8 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 	@Override
 	public void deleteSalaries(String domainName, ArrayList<Integer> ids) {
 		try (Connection connection = AonServletUtils.getConnection(domainName)) {
-			JooqPayrollSalaries.deleteSalaries(connection, ids);
+			Integer domainId = AonServletUtils.getDomainID(domainName);
+			JooqPayrollSalaries.deleteSalaries(connection, domainId, ids);
 		} catch (SQLException e) {
 			throw new IllegalArgumentException(e);
 		}
