@@ -131,10 +131,14 @@ export class AonNewMenu extends AonElement {
 		this.setAttribute('opened', true);
 		
 		return new Promise((resolve, reject) => {
-			this.buildDur().then(()=> {
+			this.buildDur()
+			.then(()=> {
+				this.clear();
 				this.build();
 				resolve();
-			});
+			})
+			.catch(reject)
+			;
 		});
 
 		
@@ -991,19 +995,6 @@ export class AonNewMenu extends AonElement {
 	}
 
 	
-	isSidenavApp(app) {
-		return this.isApp(app) 
-		&& (
-			HOME.app  ==  app.app 
-			|| APPS.app  ==  app.app 
-			|| AON_CLASSIC.app == app.app
-			|| APPLICATIONS.app  ==  app.app 
-			|| MenuApps.TIMECONTROL.app == app.app
-			|| MenuApps.DOCUMENTAL.app  ==  app.app 
-			|| !this.getDur().isDomainManagementAvailable()
-		);
-	}
-
 	isApp(app) {
 		if (OFFICE.app === app.app)
 			return this.getDur().isOffice();
@@ -1081,6 +1072,24 @@ export class AonNewMenu extends AonElement {
 			return domain.getName() && (domain.getName().includes("udapa") || domain.getName().includes("paturpat") || this.isLocal());
 		}
 		else return false;
+	}
+	
+	isSidenavApp(app) {
+		return this.isApp(app) 
+		&& (
+			HOME.app  ==  app.app 
+			|| APPS.app  ==  app.app 
+			|| AON_CLASSIC.app == app.app
+			|| APPLICATIONS.app  ==  app.app 
+			|| MenuApps.TIMECONTROL.app == app.app
+			|| MenuApps.DOCUMENTAL.app  ==  app.app 
+			|| !this.getDur().isDomainManagementAvailable()
+		);
+	}
+
+
+	isAppEnabled(app) {
+		return this.isSidenavApp(app);
 	}
 
 	buildAppMenuOptions(app) {
