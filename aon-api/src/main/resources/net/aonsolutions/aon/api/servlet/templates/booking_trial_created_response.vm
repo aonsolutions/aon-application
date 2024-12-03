@@ -1,0 +1,43 @@
+<html>
+<head>
+	<style>
+	</style>
+</head>
+<body>
+
+	<div style="display: flex; justify-content: center; align-items: center; padding: 20px;">
+	  <div style="background-color: #ffffff; padding: 20px; max-width: 600px; width: 100%; border-radius: 8px; box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1); border-top: 5px solid #002469;">
+	
+	    <!-- Logo -->
+	    <div style="text-align: center;">
+	      <img src="$logo" alt="$parentName" style="max-width: 150px; height: auto; margin-bottom: 20px;">
+	    </div>
+	
+	    <!-- Título de confirmación -->
+	    <h1 style="color: #333333; text-align: center; font-size: 24px; margin-top: 0;">
+	      ¡Empresa generada correctamente!
+	    </h1>
+	
+	    <!-- Información de la empresa -->
+	    <div style="color: #555555; font-size: 16px; line-height: 1.6; margin-top: 20px;">
+	      <p><strong>Nombre de la Empresa:</strong> $name</p>
+	      <p><strong>URL Empresa:</strong> 
+	        <a href="$url" style="color: #333333; text-decoration: none;">
+	          $domainName
+	        </a>
+	      </p>
+	      <p><strong>Email:</strong> $mail</p>
+	    </div>
+	
+	    <!-- Mensaje de agradecimiento -->
+	    <p style="color: #777777; font-size: 14px; margin-top: 30px;">
+	      Se ha enviado un correo al mail indicado para crear la empresa con estos datos.
+	    </p>
+	    <p style="color: #777777; text-align: center; font-size: 14px; margin-top: 30px;">
+	      Gracias por confiar en nosotros. Si tienes alguna pregunta, no dudes en contactarnos.
+	    </p>
+	  </div>
+	</div>
+
+</body>
+</html>

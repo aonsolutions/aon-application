@@ -6,44 +6,36 @@
 <body>
 
 	<div style="background-color: #f9f9f9; padding: 20px; border-radius: 10px; max-width: 600px; margin: 0 auto; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);">
-  
+
 	  <!-- Imagen del logo al principio -->
 	  <div style="text-align: center; margin-bottom: 20px;">
 	    <img src="$logo" alt="$parentName" style="max-width: 200px; border-radius: 10px;">
 	  </div>
 	
-	  <h2 style="text-align: center; color: #333;">Creación/Actualización de cuenta</h2>
-	  <h3 style="text-align: center; color: #333;">$fullName</h3>
+	  <h2 style="text-align: center; color: #333;">Empresa ya existente: <strong>$name</strong></h2>
 	
 	  <p style="font-size: 14px; color: #555; margin-top: 20px;">
-	    ¡Enhorabuena!, Acabamos de crear o actualizar la cuenta de acceso: 
+	    La empresa que se ha registrado ya existe. Intente acceder con sus credenciales.
 	  </p>
-	  
-	  <p style="font-size: 16px; color: #333;">
-	    <strong>Web:</strong> 
-	    <span id="web">
-	    	<a href="$enterpriseUrl" 
-		       id="url-empresa" 
-		       style="color: #007bff;">
-		      $enterpriseName
-		    </a>
-	    </span>
+	
+	  <p style="font-size: 14px; color: #555; margin-top: 20px;">
+	    A continuación le detallamos los datos de acceso:
 	  </p>
 	
 	  <p style="font-size: 16px; color: #333;">
-	    <strong>Usuario:</strong> <span id="usuario">$email</span>
-	  </p>
-	
-	  <!-- Contraseña dependiendo de authExisted -->
-	  <p style="font-size: 16px; color: #333;">
-	    <strong>Contraseña:</strong> 
-	    <span id="contraseña">$password</span>
+	    <strong>Link Web:</strong>
+	    <a href="$url" 
+	       id="url-empresa" 
+	       style="color: #007bff;">
+	      $name
+	    </a>
 	  </p>
 	
 	  <p style="font-size: 12px; color: #666; text-align: center; margin-top: 20px;">
 	    Si tienes alguna duda, por favor contacta con soporte ($contact).
 	  </p>
 	</div>
+
 
 
 </body>
