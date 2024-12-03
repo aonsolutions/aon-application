@@ -12,26 +12,27 @@
 	    <img src="$logo" alt="$parentName" style="max-width: 200px; border-radius: 10px;">
 	  </div>
 	
-	  <h2 style="text-align: center; color: #333;">Creación/Actualización de cuenta</h2>
-	  <h3 style="text-align: center; color: #333;">$fullName</h3>
+	  <h2 style="text-align: center; color: #333;">Confirmación Creación de Empresa: <strong>$name</strong></h2>
 	
 	  <p style="font-size: 14px; color: #555; margin-top: 20px;">
-	    ¡Enhorabuena!, Acabamos de crear o actualizar la cuenta de acceso: 
+	    ¡Enhorabuena!, Acabamos de crear su empresa para que pueda emitir y registrar facturas gratuitamente con un límite de 50 documentos.
 	  </p>
-	  
-	  <p style="font-size: 16px; color: #333;">
-	    <strong>Web:</strong> 
-	    <span id="web">
-	    	<a href="$enterpriseUrl" 
-		       id="url-empresa" 
-		       style="color: #007bff;">
-		      $enterpriseName
-		    </a>
-	    </span>
+	
+	  <p style="font-size: 14px; color: #555; margin-top: 20px;">
+	    A continuación le detallamos los datos de acceso:
 	  </p>
 	
 	  <p style="font-size: 16px; color: #333;">
-	    <strong>Usuario:</strong> <span id="usuario">$email</span>
+	    <strong>Link Web:</strong>
+	    <a href="$url" 
+	       id="url-empresa" 
+	       style="color: #007bff;">
+	      $domainName
+	    </a>
+	  </p>
+	
+	  <p style="font-size: 16px; color: #333;">
+	    <strong>Usuario:</strong> <span id="usuario">$user</span>
 	  </p>
 	
 	  <!-- Contraseña dependiendo de authExisted -->
@@ -44,6 +45,8 @@
 	    Si tienes alguna duda, por favor contacta con soporte ($contact).
 	  </p>
 	</div>
+
+
 
 
 </body>

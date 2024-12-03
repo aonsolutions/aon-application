@@ -1,6 +1,7 @@
 package com.esferalia.aon.occam.impl.jooq.dao;
 
 import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
+import static com.esferalia.aon.jooq.tables.CommercialTracking.COMMERCIAL_TRACKING;
 import static com.esferalia.aon.jooq.tables.Project.PROJECT;
 import static com.esferalia.aon.jooq.tables.ProjectCommercial.PROJECT_COMMERCIAL;
 import static com.esferalia.aon.jooq.tables.ProjectReservation.PROJECT_RESERVATION;
@@ -354,6 +355,7 @@ public class ProjectDAO {
 	}
 	
 	private static void deleteProjectCommercial(AONContext ctx, Integer id) {
+		ctx.getDslContext().delete(COMMERCIAL_TRACKING).where(COMMERCIAL_TRACKING.PROJECT_COMMERCIAL.eq(id)).execute();
 		ctx.getDslContext().delete(PROJECT_COMMERCIAL).where(PROJECT_COMMERCIAL.PROJECT.eq(id)).execute();
 	}
 	

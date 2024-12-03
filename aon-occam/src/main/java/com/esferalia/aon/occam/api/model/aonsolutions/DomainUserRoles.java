@@ -645,6 +645,10 @@ public class DomainUserRoles implements Serializable {
 		return hasApp(AonApp.CUSTOM_VIEW);
 	}
 	
+	public boolean hasParentCustomView() {
+		return hasParentApp(AonApp.CUSTOM_VIEW);
+	}
+	
 	// TREASURY
 	
 	public boolean hasTreasury() {

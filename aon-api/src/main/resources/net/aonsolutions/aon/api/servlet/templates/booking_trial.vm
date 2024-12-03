@@ -1,0 +1,43 @@
+<html>
+<head>
+	<style>
+	</style>
+</head>
+<body>
+
+	<div style="background-color: #f9f9f9; padding: 20px; border-radius: 10px; max-width: 600px; margin: 0 auto; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);">
+  
+	  <!-- Imagen del logo al principio -->
+	  <div style="text-align: center; margin-bottom: 20px;">
+	    <img src="$logo" alt="$parentName" style="max-width: 200px; border-radius: 10px;">
+	  </div>
+	
+	  <h2 style="text-align: center; color: #333;">VERIFICACIÓN para la creación de empresa</h2>
+	
+	  <p style="font-size: 14px; color: #555; margin-top: 20px;">
+	    Hemos recibido una solicitud para la creación de la empresa <strong>$name</strong> con NIF: <strong>$document</strong> desde esta cuenta de correo. Si ha sido Vd. pulse sobre el botón
+	  </p>
+	
+	  <!-- Enlace para enviar la solicitud GET -->
+	  <div style="text-align: center; margin-top: 20px;">
+	    <a href="$postUrl" style="background-color: #28a745; color: white; padding: 12px 24px; text-decoration: none; font-size: 16px; font-weight: bold; border-radius: 5px; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);">
+	      Crear Empresa
+	    </a>
+	  </div>
+	
+	  <p style="font-size: 14px; color: #555; text-align: center; margin-top: 20px;">
+	    En caso contrato ignore este correo y no realizaremos ninguna acción adicional.
+	  </p>
+	
+	  <p style="font-size: 14px; color: #555; text-align: center; margin-top: 20px;">
+	    Esta empresa será creada como una <strong>empresa de prueba</strong> para fines de evaluación.
+	  </p>
+	
+	  <p style="font-size: 12px; color: #666; text-align: center; margin-top: 20px;">
+	    Si tienes alguna duda, por favor contacta con soporte ($contact).
+	  </p>
+	</div>
+
+
+</body>
+</html>
