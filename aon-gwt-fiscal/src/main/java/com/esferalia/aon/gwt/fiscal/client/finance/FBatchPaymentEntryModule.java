@@ -1155,7 +1155,7 @@ public abstract class FBatchPaymentEntryModule extends SimpleLayoutPanel {
 		});
 
 		aviableFinanceTable.setWidget(row, col,
-			isSelectable(finance) && !notValidAccountBic(finance) && !hasNegativeAmount(finance) && finance.hasSalary() && (finance.getAmount() + finance.getExpenses()) == finance.getSalaryTotalLiquid() ? checkButton : new Label()
+			isSelectable(finance) && !notValidAccountBic(finance) && !hasNegativeAmount(finance) && finance.hasSalary() ? checkButton : new Label()
 		);
 		++col;
 		aviableFinanceTable.setWidget(row, col, issueDate);
@@ -1176,7 +1176,7 @@ public abstract class FBatchPaymentEntryModule extends SimpleLayoutPanel {
 		aviableFinanceTable.setWidget(row, col, amount);
 		++col;
 		aviableFinanceTable.setWidget(row, col, 
-			notValidAccountBic(finance) || hasNegativeAmount(finance) || !finance.hasSalary() || (finance.getAmount() + finance.getExpenses()) != finance.getSalaryTotalLiquid() ? infoButton : addButton
+			notValidAccountBic(finance) || hasNegativeAmount(finance) || !finance.hasSalary() ? infoButton : addButton
 		);
 		
 		aviableFinanceTable.getRowFormatter().getElement(row).getStyle().setProperty("height", "1.5rem");

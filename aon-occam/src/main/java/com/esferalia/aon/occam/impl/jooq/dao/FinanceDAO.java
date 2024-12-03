@@ -501,7 +501,7 @@ public class FinanceDAO {
 	// -------------------------------------------------------------
 	// ---------------------------- MAP ----------------------------
 	// -------------------------------------------------------------
-	public static class FullFinanceFiller extends Filler   implements Function<Record,Finance> {
+	public static class FullFinanceFiller extends Filler implements Function<Record,Finance> {
 		@Override
 		public Finance apply(Record record) {
 			return new Finance()

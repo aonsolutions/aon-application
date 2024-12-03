@@ -66,19 +66,23 @@ export class AonConfigurationMenu extends AonSuiteMenu {
             options: [{
                 description: "Clientes",
                 title: "Clientes",
-                action: () => this.rootPanel(new JSF.AonJsfCustomer())
+                action: () => this.rootPanel(new JSF.AonJsfCustomer()),
+				filter: () => this.isNotDomainManagementAvailable()
             },{
                 description: "Grupos de Facturación",
                 title: "Grupos de Facturación",
-                action: () => this.rootPanel(new JSF.AonJsfInvoicingGroup())
+                action: () => this.rootPanel(new JSF.AonJsfInvoicingGroup()),
+				filter: () => this.isNotDomainManagementAvailable()
 			},{
 			    description: "Proveedores",
 			    title: "Proveedores",
-			    action: () => this.rootPanel(new JSF.AonJsfSupplier())
+			    action: () => this.rootPanel(new JSF.AonJsfSupplier()),
+				filter: () => this.isNotDomainManagementAvailable()
 			},{
 			    description: "Acreedores",
 			    title: "Acreedores",
-			    action: () => this.rootPanel(new JSF.AonJsfCreditor())
+			    action: () => this.rootPanel(new JSF.AonJsfCreditor()),
+				filter: () => this.isNotDomainManagementAvailable()
 			},{
 			    description: "Productos",
 			    title: "Productos",
@@ -90,11 +94,13 @@ export class AonConfigurationMenu extends AonSuiteMenu {
 			},{
                 description: "Clientes Potenciales",
                 title: "Clientes Potenciales",
-                action: () => this.rootPanel(new JSF.AonJsfTarget())
+                action: () => this.rootPanel(new JSF.AonJsfTarget()),
+				filter: () => this.isNotDomainManagementAvailable()
             },{
                 description: "Agentes Comerciales",
                 title: "Agentes Comerciales",
-                action: () => this.rootPanel(new JSF.AonJsfSeller())
+                action: () => this.rootPanel(new JSF.AonJsfSeller()),
+				filter: () => this.isNotDomainManagementAvailable()
             }
 			]
         },{
@@ -103,11 +109,12 @@ export class AonConfigurationMenu extends AonSuiteMenu {
                 description: "Formas de Pago",
                 title: "Formas de Page",
                 action: () => this.rootPanel(new JSF.AonJsfPayMethod())
-            }/*,{
+            },{
                 description: "Asignación contable por tipo de forma de pago",
                 title: "Asignación contable por tipo de forma de pago",
-                action: () => alert("Asignación contable por tipo de forma de pago")
-            }*/,{
+                action: () => alert("Asignación contable por tipo de forma de pago"),
+				filter: () => this.isDomainManagementAvailable()
+            },{
                 description: "Conceptos Bancarios",
                 title: "Conceptos Bancarios",
 				action: () => this.rootPanel(new JSF.AonJsfBankConcept())
@@ -127,18 +134,24 @@ export class AonConfigurationMenu extends AonSuiteMenu {
                 description: "Segmentación",
                 title: "Segmentación",
                 action: () => this.rootPanel(new JSF.AonJsfSegment())
-            }]
+            },{
+                description: "Tipos de relaciones entre entidades",
+                title: "Tipos de relaciones entre entidades",
+                action: () => alert("Tipos de relaciones entre entidades"),
+				filter: () => this.isDomainManagementAvailable()
+			}]
         },{
             title: 'Tablas Auxiliares de Productos',
             options: [{
                 description: "Etiquetas de Productos",
                 title: "Etiquetas de Productos",
 				action: () => this.rootPanel(new JSF.AonJsfProductTag())
-            }/*,{
+            },{
                 description: "Etiquetas de Formatos/Medidas",
                 title: "Etiquetas de Formatos/Medidas",
-                action: () => alert("Etiquetas de Formatos/Medidas")
-            }*/,{
+                action: () => alert("Etiquetas de Formatos/Medidas"),
+				filter: () => this.isDomainManagementAvailable()
+            },{
                 description: "Categorías",
                 title: "Categorías",
                 action: () => this.rootPanel(new JSF.AonJsfProductCategory())
@@ -160,7 +173,8 @@ export class AonConfigurationMenu extends AonSuiteMenu {
             options: [{
                 description: "Carga de datos desde ficheros Excel",
                 title: "Carga de datos desde ficheros Excel",
-				action: () => GWT.iLoad(GWT.IMPORT)
+				action: () => GWT.iLoad(GWT.IMPORT),
+				filter: () => this.isNotDomainManagementAvailable()
             },{
                 description: "Gestión Plantillas para carga de datos",
                 title: "Gestión Plantillas para carga de datos",
@@ -168,11 +182,13 @@ export class AonConfigurationMenu extends AonSuiteMenu {
             },{
                 description: "Carga de datos desde ficheros CSV",
                 title: "Carga de datos desde ficheros CSV",
-				action: () => this.rootPanel(new JSF.AonJsfLoader())
+				action: () => this.rootPanel(new JSF.AonJsfLoader()),
+				filter: () => this.isNotDomainManagementAvailable()
             },{
                 description: "Descarga de datos en formato Excel",
                 title: "Descarga de datos en formato Excel",
-				action: () => GWT.iLoad(GWT.INVOICE_REPORT)
+				action: () => GWT.iLoad(GWT.INVOICE_REPORT),
+				filter: () => this.isNotDomainManagementAvailable()
             }]
         }];
     }

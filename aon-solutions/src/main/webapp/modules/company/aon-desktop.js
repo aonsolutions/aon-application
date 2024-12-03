@@ -715,15 +715,12 @@ export class AonDesktop extends AonElement {
 			messengerCard.firstChild.style.margin = '0';
 		}
 
+		// Check if company has address, required for TRIAL
 		let data = {
 			additional_info: ['ADDRESSES']
 		};
     
-		console.log("getCompanyOne");
-		console.log(data);
-		
 		getCompanyOne(data).then(cp => {
-			console.log(cp);
 			if(!cp.addresses || cp.addresses.length === 0){
 				this.getApplication().confirmDialog(
 					"Dirección",
