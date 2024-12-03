@@ -3823,7 +3823,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 	@SuppressWarnings("unchecked")
 	private static void calculateAndSave(Connection conn, SalaryDraft draft) throws SQLException {
 		if (draft.hasDbSalary())
-			deleteSalaries(conn, draft.getDbId());
+			deleteSalaries(conn, domainId, draft.getDbId());
 		if (draft.getType() == Type.SETTLE)
 			deleteAllSettles(conn, draft.getEmployee().getId());
 
@@ -3875,7 +3875,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 	@SuppressWarnings("unchecked")
 	private static void calculateAndSave(Connection conn, SalaryDraft draft, Date sections[]) throws SQLException {
 		if (draft.hasDbSalary())
-			deleteSalaries(conn, draft.getDbId());
+			deleteSalaries(conn, domainId, draft.getDbId());
 		if (draft.getType() == Type.SETTLE)
 			deleteAllSettles(conn, draft.getEmployee().getId());
 
