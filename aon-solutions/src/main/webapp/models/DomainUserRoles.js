@@ -746,4 +746,8 @@ export class DomainUserRoles {
   isTrial() {
     return this.trial;
   }
+  
+  isDomainManagementAvailable(){
+	return this.domain?.domainManagement;
+  }
 }

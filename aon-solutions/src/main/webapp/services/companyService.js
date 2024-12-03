@@ -100,8 +100,7 @@ export const saveCompany = (data) => put(API.COMPANY, data)
 export const getDomainUserRoles = (data) => {
   const domain = LS.getDomainId();
   return new Promise((resolve, reject) => {
-    if(!domain) resolve({});
-    else if (durum && durum.domain === domain && !data.reload)
+	if (durum && durum.domain === domain && !data.reload)
       resolve(durum);
     else 
       get(API.COMPANY_APPROLES, data).then(r => {
