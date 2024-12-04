@@ -1209,6 +1209,9 @@ public interface AonSolutionsCSS extends CssResource {
 
 	@ClassName("aon_toolbar_small_title")
 	String aonToolbarSmallTitle();
+	
+	@ClassName("aon_toolbar_filter_container")
+	String aonToolbarFilterContainer();
 
 	@ClassName("aon_toolbar_button_container")
 	String aonToolbarButtonContainer();

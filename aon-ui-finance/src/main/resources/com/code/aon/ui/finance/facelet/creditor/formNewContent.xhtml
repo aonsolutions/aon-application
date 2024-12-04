@@ -6,24 +6,29 @@
 	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:aon="http://www.code.es/aon-rich-components">
 
-	<aon:panelGrid columns="2" columnClasses="aon-panelGrid-odd aon-width-150,aon-panelGrid-even aon-width-500">
-
-		<aon:if test="#{lookup != null}">
-			<ui:param name="controller" value="#{lookup}"/>
-		</aon:if>
-
-		<ui:include	src="/com/code/aon/ui/finance/facelet/creditor/formContent.xhtml" />
-
-		<ui:include src="/com/code/aon/ui/registry/facelet/lookup/registry/formAddressMedia.xhtml">
-			<ui:param name="controllerLookupListener" value="#{creditorForm}"/>
-		</ui:include>
-
-	</aon:panelGrid>
-
-	<aon:if test="#{aonConfiguration.bean.creditor.showFinanceData}">
-		<ui:include src="/com/code/aon/ui/registry/facelet/lookup/registry/formPayMethod.xhtml">
-			<ui:param name="controllerLookupListener" value="#{creditorForm}"/>
-		</ui:include>
-	</aon:if>
-
+	<aon:div>
+		<aon:panelGrid columns="${app.standAlone ? 2: 1}" styleClass="aonCards" columnClasses="aon-vertical-align-top, aon-vertical-align-top">
+			<aon:panelGrid columns="2" styleClass="aonCard" columnClasses="aon-panelGrid-odd aon-width-150,aon-panelGrid-even aon-width-500">
+		
+				<aon:if test="#{lookup != null}">
+					<ui:param name="controller" value="#{lookup}"/>
+				</aon:if>
+		
+				<ui:include	src="/com/code/aon/ui/finance/facelet/creditor/formContent.xhtml" />
+		
+				<ui:include src="/com/code/aon/ui/registry/facelet/lookup/registry/formAddressMedia.xhtml">
+					<ui:param name="controllerLookupListener" value="#{creditorForm}"/>
+				</ui:include>
+		
+			</aon:panelGrid>
+		
+			<aon:if test="#{aonConfiguration.bean.creditor.showFinanceData}">
+				<aon:div styleClass="aonCard">
+					<ui:include src="/com/code/aon/ui/registry/facelet/lookup/registry/formPayMethod.xhtml">
+						<ui:param name="controllerLookupListener" value="#{creditorForm}"/>
+					</ui:include>
+				</aon:div>
+			</aon:if>
+		</aon:panelGrid>
+	</aon:div>
 </ui:composition>

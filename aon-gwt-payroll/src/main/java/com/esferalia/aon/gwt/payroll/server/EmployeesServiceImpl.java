@@ -2091,7 +2091,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 			
 			Integer domainId = AonServletUtils.getDomainID(domain);
 
-			int ids[] = new int[salaries.length];
+			Integer[] ids = new Integer[salaries.length];
 			for (int i = 0; i < salaries.length; i++)
 				ids[i] = salaries[i].getId();
 
@@ -5518,13 +5518,17 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 
 	}
 
-	private static void deleteSalaries(Connection conn, Integer domainId, int... ids) throws SQLException {
+	private static void deleteSalaries(Connection conn, Integer domainId, Integer salaryId) throws SQLException {
+		deleteSalaries(conn, domainId, new Integer[] {salaryId});
+	}
+
+	private static void deleteSalaries(Connection conn, Integer domainId, Integer[] salaryIds) throws SQLException {
 
 		boolean autoCommit = conn.getAutoCommit();
 		try {
 			conn.setAutoCommit(false);
 			
-			JooqPayrollSalaries.deleteSalaries(conn, domainId, Arrays.stream(ids).boxed().collect(Collectors.toList()));
+			JooqPayrollSalaries.deleteSalaries(conn, domainId, Arrays.stream(salaryIds).collect(Collectors.toList()));
 
 			conn.commit();
 			
