@@ -930,13 +930,14 @@ public class UserServlet extends AonApiHttpServlet {
 		String logoUrl = getLogoUrl(parent, api.getUser());
 		
 		String from = getFromMessage(api);
+		String alias = AonStringUtils.isBlank(from)  ? "AON Solutions" : formatUT8B(cp.getName());
 
 		SESMessage msg = new SESMessage()
-				.setAlias(cp.getName())
-				.setFrom(from)
-				.setReplyTo(from)
+				.setAlias(alias)
+				.setFrom(AonStringUtils.isBlank(from) ? "booking@aon.solutions" : from)
+				.setReplyTo(AonStringUtils.isBlank(from) ? "asignacion@aonsolutions.es" : from)
 				.setTo(email)
-				.setSubject("NUEVO USUARIO | AON SOLUTIONS")
+				.setSubject(AonStringUtils.isBlank(from) ? "USUARIO | AON SOLUTIONS" : formatUT8B("USUARIO | " + cp.getName().toUpperCase()))
 				.setBody(authCreateInfoContent(api, fullName, email, password, from, logoUrl, parent.getDescription()));
 
 		SES.sendEmail(msg);
@@ -961,6 +962,14 @@ public class UserServlet extends AonApiHttpServlet {
 		return from;
 	}
 	
+    /**
+     * Returns the parameter formated to UTF8 & Base64
+     */
+    private static String formatUT8B(final String text) {
+    	if(AonStringUtils.isBlank(text)) return text;
+        return "=?UTF-8?B?" + Base64.getEncoder().encodeToString(text.getBytes(StandardCharsets.UTF_8)) + "?=" ;
+    }
+	
 	private JSONObject sendAuthInfoMail(AonApiData api) {
 		Company cp = AON.getCompany(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), 
 				f -> f.getDomainProperty().eq(api.getDomain().getId()));
@@ -972,7 +981,7 @@ public class UserServlet extends AonApiHttpServlet {
 		auth.setPassword(pass);
 		AON_SOLUTIONS.updateAuthPassword(auth);
 		
-		sendAuthCreateInfoMail(api, auth.getName(), email, password, cp);
+		sendAuthCreateInfoMail(api, auth.getFullname(), email, password, cp);
 		return new JSONObject();
 	}
 	

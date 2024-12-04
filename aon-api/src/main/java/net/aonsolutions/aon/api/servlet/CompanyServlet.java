@@ -4,11 +4,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
-
-import jakarta.servlet.annotation.WebServlet;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -42,6 +39,9 @@ import com.esferalia.aon.occam.api.model.type.DomainType;
 import com.esferalia.aon.watson.util.AonDocumentUtil;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import net.aonsolutions.aon.api.error.AonApiError;
 import net.aonsolutions.aon.api.error.AonApiException;
 import net.aonsolutions.aon.api.ewok.AonApiData;
@@ -190,15 +190,15 @@ public class CompanyServlet extends AonApiHttpServlet{
 	
 	private void checkCompany(AonApiData api, Company company) throws AonApiException {
 		if(AonStringUtils.isBlank(company.getDocument())) {
-			throw new AonApiException("El documento de la empresa está vacío.");
+			throw new AonApiException("El documento de la empresa est?vac?.");
 		}
 		
 		if(!AonDocumentUtil.isValid(company.getDocument())) {
-			throw new AonApiException("El documento de la empresa no es válido");
+			throw new AonApiException("El documento de la empresa no es v?ido");
 		}
 		
 		if(AonStringUtils.isBlank(company.getName())) {
-			throw new AonApiException("El nombre de la empresa está vacío");
+			throw new AonApiException("El nombre de la empresa est?vac?");
 		}
 		Company c = AON.getCompany(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), f -> f.getDocumentProperty().eq(company.getDocument()));
 		if(c.getId() != null) {
@@ -474,11 +474,29 @@ public class CompanyServlet extends AonApiHttpServlet{
 			.setPayer(domainPayer ? api.getDomain().getId().toString() : "");
 		
 		AON.saveBooking(api.getDomain(), api.getUser(), newBooking);
-		boolean console = api.getUser() != null && api.getUser().getDomain() != null 
-				&& api.getUser().getDomain() == 0;
-		BookingUtils.getInstance().sendMail(api.getDomain(), api.getUser(), oldBooking, newBooking, console);
+		
+		boolean console = api.getUser() != null && api.getUser().getDomain() != null && api.getUser().getDomain() == 0;
+		Domain parentDomain = AON.getDomain(api.getDomain().getName(), api.getDomain().getParentId(), api.getUser().getLogin());
+		
+		boolean isDifferentBooking = isDifferentBooking(oldBooking, newBooking);
+		
+		if(isDifferentBooking) {
+			BookingUtils.getInstance().sendMail(api.getDomain(), api.getUser(), oldBooking, newBooking, console);
 
+//			TaskBookingUtils.getInstance().createTask(api.getDomain(), parentDomain, api.getUser(), oldBooking, newBooking);
+		}
+		
 		return new JSONObject();
+	}
+	
+	private boolean isDifferentBooking(Booking oldBooking, Booking newBooking) {
+		Integer numberUsersDiff = oldBooking.getNumberOfUsers() - newBooking.getNumberOfUsers();
+		
+		List<AonApp> dropOut = oldBooking.getApps().stream().filter(app -> !newBooking.getApps().contains(app)).collect(Collectors.toList());
+		
+		List<AonApp> booking = newBooking.getApps().stream().filter(app -> !oldBooking.getApps().contains(app)).collect(Collectors.toList());
+		
+		return numberUsersDiff != 0 || !dropOut.isEmpty() || !booking.isEmpty();
 	}
 	
 	private JSONArray getBanks(AonApiData api) {

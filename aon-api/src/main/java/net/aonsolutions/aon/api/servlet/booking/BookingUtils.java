@@ -1,8 +1,14 @@
 package net.aonsolutions.aon.api.servlet.booking;
 
+import static com.esferalia.aon.occam.api.model.attachment.AttachType.REGISTRY;
+import static com.esferalia.aon.occam.api.model.attachment.RegistryAttachmentType.LOGO;
+import static com.esferalia.aon.occam.api.model.attachment.RegistryAttachmentType.SIGNATURE;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.StringWriter;
+import java.nio.charset.StandardCharsets;
+import java.util.Base64;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -17,13 +23,19 @@ import org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader;
 
 import com.code.aon.common.enumeration.MimeType;
 import com.esferalia.aon.occam.api.AON;
+import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
+import com.esferalia.aon.occam.api.SECURITY;
 import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.aonsolutions.AonApp;
+import com.esferalia.aon.occam.api.model.aonsolutions.DomainUserRoles;
+import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.registry.RegistryMedia;
 import com.esferalia.aon.occam.api.model.security.Booking;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.type.DomainType;
+import com.esferalia.aon.occam.impl.jooq.dao.DomainDAO;
 import com.esferalia.aon.watson.server.io.AonFileUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
@@ -45,28 +57,69 @@ public class BookingUtils {
 			Integer[] companies = AON.getCompanyStream(domain.getName(), domain.getId(), user.getLogin(), f -> f.getDomainProperty().in(domains))
 				.map(Company::getId).toArray(Integer[]::new);
 		
-			mails = AON.getRegistryMediaStream(domain, user, f -> f.getRegistryProperty().in(companies).and(f.getDomainProperty().in(domains)))
+			List<String> rmediaMails = AON.getRegistryMediaStream(domain, user, f -> f.getRegistryProperty().in(companies).and(f.getDomainProperty().in(domains)))
 					.map(RegistryMedia::getValue).toList();
+			
+			mails.addAll(rmediaMails);
 			mails.add(domain.getOwner());
+			
 			if(domain.isChild()) {
 				Domain parent = AON.getDomain(domain.getName(), domain.getId(), user.getLogin(), f -> f.getIdProperty().eq(domain.getParentId()));
 				mails.add(parent.getOwner());
 			}
 		} else mails.add("admin@aonsolutions.es");
-
+		
+		String from = getFromMessage(domain, user);
+		String alias = AonStringUtils.isBlank(from)  ? formatUT8B("AON Solutions | Contrataciones") : formatUT8B(domain.getDescription() + " | Contrataciones");
+		
 		SESMessage msg = new SESMessage()
-				.setAlias("AON Solutions | Contrataciones")
+				.setAlias(alias)
 				.setTo(mails)
 				.addBcc("admin@aonsolutions.es")
 				.addBcc("administracion@aonsolutions.es")
 				.addBcc("asignacion@aonsolutions.es")
-				.setFrom("booking@aon.solutions")
-				.setReplyTo("asignacion@aonsolutions.es")
+				.setFrom(AonStringUtils.isBlank(from) ? "booking@aon.solutions" : from)
+				.setReplyTo(AonStringUtils.isBlank(from) ? "asignacion@aonsolutions.es" : from)
 				.setSubject(subject)
-				.setBody(body)
-				.setFiles(getFiles(oldBooking, newBooking));
+				.setBody(body);
+		
+		if(AonStringUtils.isBlank(from))
+			msg.setFiles(getFiles(oldBooking, newBooking));
 
-		SES.sendEmailWithAttachment(msg);
+		SES.sendEmail(msg);
+	}
+	
+    /**
+     * Returns the parameter formated to UTF8 & Base64
+     */
+    private static String formatUT8B(final String text) {
+    	if(AonStringUtils.isBlank(text)) return text;
+        return "=?UTF-8?B?" + Base64.getEncoder().encodeToString(text.getBytes(StandardCharsets.UTF_8)) + "?=" ;
+    }
+	
+	private static String getFromMessage(Domain domain, User user) {
+		DomainUserRoles domainUserRoles = SECURITY.getDomainUserRoles(domain, user.getLogin(), user.getId());
+		String from = null;
+
+		if (domainUserRoles.hasParentCustomView() || domainUserRoles.hasCustomView()) {
+			Domain parentDomain = AON.getDomain(domain.getName(), domain.getId(),
+					user.getLogin(), f -> f.getIdProperty().eq(domain.getParentId()));
+			// Ya es el dominio padre el que hay en api.getDomain()
+			if (null == domain.getParentId() && (null == parentDomain || null == parentDomain.getId())) {
+				RegistryMedia emailMedia = AON.getRegistryMedia(domain,user,
+						f -> f.getDomainProperty().eq(domain.getId()).and(f.getMediaProperty().eq((byte) 4)));
+				if (null != emailMedia && AonStringUtils.isNotBlank(emailMedia.getValue()))
+					from = emailMedia.getValue();
+			// Se busca el dominio padre
+			} else if (null != parentDomain && null != parentDomain.getId()) {
+				RegistryMedia emailMedia = AON.getRegistryMedia(domain, user,
+						f -> f.getDomainProperty().eq(parentDomain.getId()).and(f.getMediaProperty().eq((byte) 4)));
+				if (null != emailMedia && AonStringUtils.isNotBlank(emailMedia.getValue()))
+					from = emailMedia.getValue();
+			}
+		}
+
+		return from;
 	}
 	
 	private List<File> getFiles(Booking oldBooking, Booking newBooking) {
@@ -100,15 +153,28 @@ public class BookingUtils {
 				.setNumberOfUsers(b.getNumberOfUsers())
 				.setApps(b.getApps().stream().map(app -> app.getDescription())
 						.collect(Collectors.toCollection(LinkedList::new)));
+		
+		String logo = "";
+		String parentName = domain.getDescription();
+		if(domain.getParentId() == null) logo = getLogoUrl(domain, user);
+		else {
+			Domain parentDomain = AON.getDomain(domain.getName(), domain.getId(), user.getLogin(), f -> f.getIdProperty().eq(domain.getParentId()));
+			logo = getLogoUrl(parentDomain, user);
+			parentName = parentDomain.getDescription();
+		}
+		
+		DomainUserRoles domainUserRoles = SECURITY.getDomainUserRoles(domain, user.getLogin(), user.getId());
 				
 		VelocityEngine engine = new VelocityEngine();
 		engine.setProperty(RuntimeConstants.RESOURCE_LOADER, "classpath");
 		engine.setProperty("classpath.resource.loader.class", ClasspathResourceLoader.class.getName());
 		engine.init();
 	
-		
 		VelocityContext context = new VelocityContext();
 		context.put("booking", booking);
+		context.put("logo", logo);
+		context.put("parentName", parentName);
+		context.put("customView", domainUserRoles.hasCustomView() || domainUserRoles.hasParentCustomView());
 		
 		Template template = engine.getTemplate("/net/aonsolutions/aon/api/servlet/templates/booking.vm");
 		
@@ -116,6 +182,39 @@ public class BookingUtils {
 		template.merge(context, writer);
 
 		return writer.toString();
+	}
+	
+	private static String getLogoUrl(Domain parentDomain, User user) {
+		boolean isLocal = false;
+		String logoUrl = null;
+		try (CloseableAONContext aonContext = AONContext.getAONContext(parentDomain.getName(), user.getLogin())) {
+			Company company = AON.getCompany(parentDomain, user, f -> f.getDomainProperty().eq(parentDomain.getId()));
+
+			Attach attach = getLogoAttach(aonContext, company.getId());
+
+			String str = "domain=" + attach.getDomain().getId() + "&id=" + attach.getId() + "&attach_type=registry";
+			String result = Base64.getEncoder().encodeToString(str.getBytes(StandardCharsets.UTF_8));
+
+			Domain attachDomain = DomainDAO.getDomain(aonContext, attach.getDomain().getId());
+			logoUrl = (isLocal ? "http" : "https") + "://" + parentDomain.getName() + (isLocal ? ":8080" : "")
+					+ "/ms/download_attachment/" + attachDomain.getName() + "/" + attach.getCreationUser() + "/"
+					+ result;
+		}
+
+		return logoUrl;
+	}
+
+	private static Attach getLogoAttach(AONContext aonContext, Integer enterpriseId) {
+		Attach attach1 = AON.getAttach(aonContext.getDomainName(), aonContext.getDomainId(), aonContext.getUser(),
+				f -> f.getTypeProperty().eq(SIGNATURE.value()).and(f.getAttachModuleProperty().eq(enterpriseId)),
+				REGISTRY);
+
+		if (attach1 == null || attach1.getData() == null)
+			attach1 = AON.getAttach(aonContext.getDomainName(), aonContext.getDomainId(), aonContext.getUser(),
+					f -> f.getTypeProperty().eq(LOGO.value()).and(f.getAttachModuleProperty().eq(enterpriseId)),
+					REGISTRY);
+
+		return attach1;
 	}
 	
 	private String getDomainTypeStr(DomainType type){
