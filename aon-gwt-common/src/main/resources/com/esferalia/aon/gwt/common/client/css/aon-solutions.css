@@ -1987,7 +1987,8 @@
 	background-color: #edf0ff;
 	border: #999 1px solid;
 	padding: 5px 1.5em 5px 1.5em;
-	margin: auto !important;
+	margin: 0 1rem;
+	/*margin: auto !important;*/
 }
 .aon_search_panel td{
 	border: none;
