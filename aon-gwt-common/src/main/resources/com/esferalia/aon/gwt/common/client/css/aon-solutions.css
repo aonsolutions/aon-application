@@ -1335,6 +1335,11 @@
 	border-bottom: solid #c4c4c4 1px;
 	min-height: 32px;
 }
+
+.aon_toolbar_filter_container {
+	
+}
+
 .aon_toolbar_button_container {
 	margin-left: 1em;
 	display: flex;
@@ -1429,6 +1434,8 @@
 	display: flex;
 	border-bottom: 2px solid #002469;
 }
+
+
 		
 .aon_toolbar_text_box {
 	box-shadow: none !important;
@@ -1461,15 +1468,16 @@
 	background-position: center center;
 	background-repeat: no-repeat;
 	background-color: inherit;
-	padding-left: 10px;
+	padding-left: 5px;
 }
 
-.aon_button:hover, .aon_button:focus{
+.aon_button:hover {
  	background-color: #EEE;
 }
 .aon_button:disabled {
 	opacity: 0.2;
 }
+
 .aon_expand_panel {
 	flex-shrink: 0;
 	border-radius: 50%;
@@ -1979,6 +1987,7 @@
 	background-color: #edf0ff;
 	border: #999 1px solid;
 	padding: 5px 1.5em 5px 1.5em;
+	margin: auto !important;
 }
 .aon_search_panel td{
 	border: none;
