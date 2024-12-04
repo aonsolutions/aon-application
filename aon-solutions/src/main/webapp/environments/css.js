@@ -152,6 +152,7 @@ export const AON_WELCOME_DIV = 'aonWelcomeDiv';
 
 export const AON_COMPANY_DIV = 'aonCompanyDiv';
 export const AON_COMPANY_TITLE_DIV = 'aonCompanyTitleDiv';
+export const AON_COMPANY_FILTER_EMPTY = 'aonCompanyFilterEmpty';
 
 // aon-figma.css
 
