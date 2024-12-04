@@ -1,114 +1,127 @@
 <html>
-<head>
-	<style>
-	
-		.diva {
-			background-color: #f1f1f1;
-			padding-top: 20px;
-			padding-bottom: 20px;
-		}
-	
-		
-		.divb {
-			margin: 0px auto;
-			max-width: 600px;
-			background-color: white;
-			border-radius: 5px;
-		}
-		
-		.tableA {
-			width: 100%;
-			padding-top: 10px;
-		}
-		
-		.invoiceTable {
-			border: 1px solid #bbb;
-			border-radius: 5px;
-			width: 565px;
-		    margin: 15px;
-		}
-		
-		
-		.invoiceText {
-			font-size: 14px;
-		    margin: 20px;
-		}
-		
-		.label {
-			font-size: 12px;
-			margin-bottom: 0px;
-			color: rgba(0,0,0,.54);
-		}
-		
-	</style>
-</head>
-<body>
+<head></head>
+<body style="font-family: Arial, sans-serif; background-color: #f4f4f4; margin: 0; padding: 0;">
+    <div style="background-color: #ffffff; padding: 20px; border-radius: 10px; max-width: 600px; margin: 30px auto; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);">
+        <!-- Header -->
+        <div style="text-align: center; margin-bottom: 20px;">
+            <img src="$logo" alt="$parentName" style="max-width: 200px; border-radius: 10px;">
+        </div>
 
-	<div class="diva">
-		<div class="divb">
-			<table class="tableA">
-				<tr>
-					<td style="text-align: center;">
-						<a href="https://aonsolutions.es" target="_blank" alt="AON SOLUTIONS">
-							<img src="https://aon.solutions/assets/aon-logo.png" style="cursor: pointer;" width="200px">
-						</a>
-					</td>
-					<td></td>
-				</tr>
-				
-	
-				<tr>
-    				<td>
-        				<hr>
-    				</td>
-				</tr>
-				
-				<tr>
-    				<td style="padding-left:20px">
-						Estimado Cliente:<br><br>
-						La funcionalidad contratada en la Plataforma de aonSolutions ha sido modificada por $booking.getUser().<br>
-						La configuración actual para la dirección $booking.getDomainName() queda como le detallamos a continuación:<br><br>
-						
-						Empresa: $booking.getCompanyName()<br><br>
-						
-						Tipo de Acceso: $booking.getDomainType()<br>
-						Número de Usuarios: $booking.getNumberOfUsers()<br><br>
-						
-						Aplicaciones y Servicios Contratados:
-						#foreach($app in $booking.getApps())
-							$app |
-						#end
-						<br><br>
-						Esperamos que la información detallada sea correcta, en caso contrario contacte con su administrador para corregirla en la opción de "Funcionalidad contratada" dentro del apartado de CONFIGURACIÓN. <br><br>
-						
-						Acceda al enlace de <a href="https://aonsolutions.es/docs/aon_condiciones_generales_del_contrato.pdf" target="_blank">términos y condiciones</a> para consultar las Condiciones generales del contrato de licencia de software.<br><br>
+        <!-- Title -->
+        <h2 style="text-align: center; color: #333; font-size: 18px; margin-bottom: 20px;">Modificación de Contratación</h2>
 
-						Sin otro particular reciba un cordial saludo.<br><br>
+        <!-- Body -->
+        <div style="font-size: 14px; color: #555; line-height: 1.6;">
+            <p style="margin: 15px 0;">Estimado Cliente:</p>
+            <p style="margin: 15px 0;">
+                La funcionalidad contratada en su plataforma ha sido modificada por 
+                <span style="font-weight: bold; color: #333;">$booking.getUser()</span>.
+                <br>
+                La configuración actual para la dirección 
+                <span style="font-weight: bold; color: #333;">$booking.getDomainName()</span> queda como se detalla a continuación:
+            </p>
 
-						Dpto. de Contrataciones<br>
-						Atención al Cliente | 900 831 205
-    				</td>
-				</tr>
-				
-				<tr>
-    				<td>
-        				<hr>
-    				</td>
-				</tr>
-				
-				<tr class="label">
-					<td>
-						<div style="text-align:center">Este es un mensaje generado automáticamente. Por favor, no conteste a este correo.</div>
-						<div style="text-align:center">Si quiere saber más sobre nuestras prácticas relativas a la privacidad, consulte nuestro:</div>
-						<div style="text-align:center">
-							<a href="https://aonsolutions.es/politicas-legales/aviso-legal/" style="font-weight:700;color:rgb(26,24,27)" target="_blank">aviso legal</a> |
-							<a href="https://aonsolutions.es/politicas-legales/politica-privacidad/" style="font-weight:700;color:rgb(26,24,27)" target="_blank">política de privacidad</a> 
-						</div>						
-					</td>
-				</tr>
-			</table>
-		</div>
-	</div>
+            #if($domainChange)
+                <p style="margin: 15px 0;">
+                    <strong style="color: #333;">Cambio de Dominio:</strong> $domainChange
+                </p>
+            #end
 
+            #if($usersChange)
+                <p style="margin: 15px 0;">
+                    <strong style="color: #333;">Cambio en Usuarios:</strong> $usersChange
+                </p>
+            #end
+
+            #if($sizeChange)
+                <p style="margin: 15px 0;">
+                    <strong style="color: #333;">Cambio en Tamaño:</strong> $sizeChange
+                </p>
+            #end
+
+            #if($multiDomain)
+                <p style="margin: 15px 0;">
+                    <strong style="color: #333;">Múltiples Dominios:</strong> $multiDomain
+                </p>
+            #end
+
+            #if($payerDomain)
+                <p style="margin: 15px 0;">
+                    <strong style="color: #333;">Dominio Pagador:</strong> $payerDomain
+                </p>
+            #end
+
+            #if ($addedApps && $addedApps.size() > 0)
+                <p style="margin: 15px 0;">
+                    <strong style="color: #333;">Aplicaciones añadidas:</strong>
+                </p>
+                <ul style="margin-left: 20px;">
+                    #foreach($addedApp in $addedApps)
+                        <li style="margin-left: 20px;">$addedApp</li>
+                    #end
+                </ul>
+            #end
+
+            #if ($removeApps && $removeApps.size() > 0)
+                <p style="margin: 15px 0;">
+                    <strong style="color: #333;">Aplicaciones eliminadas:</strong>
+                </p>
+                <ul style="margin-left: 20px;">
+                    #foreach($removeApp in $removeApps)
+                        <li style="margin-left: 20px;">$removeApp</li>
+                    #end
+                </ul>
+            #end
+
+            <p style="margin: 15px 0;">
+                <strong style="color: #333;">Resumen de empresa:</strong>
+            </p>
+            <p style="margin: 15px 0;">
+                Empresa: <span style="font-weight: bold; color: #333;">$booking.getCompanyName()</span><br>
+                Tipo de Acceso: <span style="font-weight: bold; color: #333;">$booking.getDomainType()</span><br>
+                Número de Usuarios: <span style="font-weight: bold; color: #333;">$booking.getNumberOfUsers()</span>
+            </p>
+
+            <p style="margin: 15px 0;">
+                <strong style="color: #333;">Aplicaciones y Servicios Contratados:</strong><br>
+                #foreach($app in $booking.getApps())
+                    $app |
+                #end
+            </p>
+
+            <p style="margin: 15px 0;">
+                Esperamos que la información detallada sea correcta. En caso contrario, contacte con su administrador para corregirla en la opción de 
+                <strong style="color: #333;">"Funcionalidad contratada"</strong> dentro del apartado de CONFIGURACIÓN.
+            </p>
+
+            #if(!$customView)
+                <p style="margin: 15px 0;">
+                    Acceda al enlace de 
+                    <a href="https://aonsolutions.es/docs/aon_condiciones_generales_del_contrato.pdf" target="_blank" style="color: #007bff; text-decoration: none;">términos y condiciones</a>
+                    para consultar las Condiciones generales del contrato de licencia de software.
+                </p>
+            #end
+
+            <p style="margin: 15px 0;">Sin otro particular, reciba un cordial saludo.</p>
+            <p style="margin: 15px 0;">
+                Dpto. de Contrataciones<br>
+                #if(!$customView)
+                    Atención al Cliente | 900 831 205
+                #end
+            </p>
+        </div>
+
+        <!-- Footer -->
+        <div style="font-size: 12px; text-align: center; color: #888; margin-top: 20px;">
+            <p>Este es un mensaje generado automáticamente. Por favor, no conteste a este correo.</p>
+            #if(!$customView)
+                <p>
+                    Si quiere saber más sobre nuestras prácticas relativas a la privacidad, consulte nuestro:<br>
+                    <a href="https://aonsolutions.es/politicas-legales/aviso-legal/" target="_blank" style="font-weight: bold; color: #1a181b; text-decoration: none;">aviso legal</a> |
+                    <a href="https://aonsolutions.es/politicas-legales/politica-privacidad/" target="_blank" style="font-weight: bold; color: #1a181b; text-decoration: none;">política de privacidad</a>
+                </p>
+            #end
+        </div>
+    </div>
 </body>
 </html>

@@ -1,53 +1,43 @@
 <html>
-<head>
-	<style>
-	</style>
-</head>
-<body>
-
-	<div style="background-color: #f9f9f9; padding: 20px; border-radius: 10px; max-width: 600px; margin: 0 auto; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);">
-  
-	  <!-- Imagen del logo al principio -->
-	  <div style="text-align: center; margin-bottom: 20px;">
-	    <img src="$logo" alt="$parentName" style="max-width: 200px; border-radius: 10px;">
-	  </div>
-	
-	  <h2 style="text-align: center; color: #333;">Confirmación Creación de Empresa: <strong>$name</strong></h2>
-	
-	  <p style="font-size: 14px; color: #555; margin-top: 20px;">
-	    ¡Enhorabuena!, Acabamos de crear su empresa para que pueda emitir y registrar facturas gratuitamente con un límite de 50 documentos.
-	  </p>
-	
-	  <p style="font-size: 14px; color: #555; margin-top: 20px;">
-	    A continuación le detallamos los datos de acceso:
-	  </p>
-	
-	  <p style="font-size: 16px; color: #333;">
-	    <strong>Link Web:</strong>
-	    <a href="$url" 
-	       id="url-empresa" 
-	       style="color: #007bff;">
-	      $domainName
-	    </a>
-	  </p>
-	
-	  <p style="font-size: 16px; color: #333;">
-	    <strong>Usuario:</strong> <span id="usuario">$user</span>
-	  </p>
-	
-	  <!-- Contraseña dependiendo de authExisted -->
-	  <p style="font-size: 16px; color: #333;">
-	    <strong>Contraseña:</strong> 
-	    <span id="contraseña">$password</span>
-	  </p>
-	
-	  <p style="font-size: 12px; color: #666; text-align: center; margin-top: 20px;">
-	    Si tienes alguna duda, por favor contacta con soporte ($contact).
-	  </p>
-	</div>
-
-
-
-
+<head></head>
+<body style="font-family: Arial, sans-serif; background-color: #f4f4f4; margin: 0; padding: 0;">
+    <table align="center" width="100%" style="background-color: #f4f4f4; padding: 20px;">
+        <tr>
+            <td align="center">
+                <table style="max-width: 600px; width: 100%; background-color: #ffffff; border-radius: 10px; box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);" cellpadding="0" cellspacing="0">
+                    <!-- Header -->
+                    <tr>
+                        <td align="center" style="padding: 20px;">
+                            <img src="$logo" alt="$parentName" style="max-width: 200px; border-radius: 10px;">
+                        </td>
+                    </tr>
+                    <!-- Title -->
+                    <tr>
+                        <td align="center" style="color: #333333; font-size: 24px; font-weight: bold; padding: 10px;">
+                            Confirmación Creación de Empresa: <strong>$name</strong>
+                        </td>
+                    </tr>
+                    <!-- Body -->
+                    <tr>
+                        <td style="color: #555555; font-size: 16px; line-height: 1.6; padding: 20px;">
+                            <p>¡Enhorabuena! Acabamos de crear su empresa para que pueda emitir y registrar facturas gratuitamente con un límite de 50 documentos.</p>
+                            <p>A continuación le detallamos los datos de acceso:</p>
+                            <p><strong>Link Web:</strong> 
+                                <a href="$url" style="color: #007bff; text-decoration: none;">$domainName</a>
+                            </p>
+                            <p><strong>Usuario:</strong> $user</p>
+                            <p><strong>Contraseña:</strong> $password</p>
+                        </td>
+                    </tr>
+                    <!-- Footer -->
+                    <tr>
+                        <td align="center" style="color: #666666; font-size: 12px; padding: 20px;">
+                            <p>Si tienes alguna duda, por favor contacta con soporte: <strong>$contact</strong>.</p>
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    </table>
 </body>
 </html>
