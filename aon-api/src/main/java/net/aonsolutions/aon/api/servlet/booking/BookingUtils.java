@@ -9,8 +9,10 @@ import java.io.IOException;
 import java.io.StringWriter;
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang.ObjectUtils;
@@ -50,7 +52,7 @@ public class BookingUtils {
 	
 	public void sendMail(Domain domain, User user, Booking oldBooking, Booking newBooking, boolean console) {
 		String subject = "Modificación de Contratación en " + domain.getName();
-		String body = content(domain, user, newBooking);
+		String body = content(domain, user, newBooking, oldBooking);
 		List<String> mails = new LinkedList<>();
 		if(!console) {
 			Integer[] domains = domain.isChild() ? new Integer[] {domain.getId(), domain.getParentId()} : new Integer[] {domain.getId()};
@@ -144,7 +146,7 @@ public class BookingUtils {
 		return file;
 	}
 	
-	private String content(Domain domain, User user, Booking b) {
+	private String content(Domain domain, User user, Booking b, Booking oldBooking) {
 		BookingMail booking = new BookingMail()
 				.setUser(user.getName())
 				.setCompanyName(domain.getDescription())
@@ -164,17 +166,58 @@ public class BookingUtils {
 		}
 		
 		DomainUserRoles domainUserRoles = SECURITY.getDomainUserRoles(domain, user.getLogin(), user.getId());
-				
+		
+		String domainChange = null;
+		if(!oldBooking.getDomain().getDomainType().equals(b.getDomain().getDomainType()))
+			domainChange = "El tipo de dominio ha cambiado de " + getDomainTypeStr(oldBooking.getDomain().getDomainType()) + " a " + getDomainTypeStr(b.getDomain().getDomainType());
+		
+		String usersChange = null;
+		if (!ObjectUtils.equals(oldBooking.getNumberOfUsers(), b.getNumberOfUsers()))
+			usersChange = "El numero de usuarios ha cambiado de " + oldBooking.getNumberOfUsers() + " a " + b.getNumberOfUsers();
+		
+		String sizeChange = null;
+		if (!ObjectUtils.equals(oldBooking.getDomain().getMaxTotalDocumentSize(), b.getDomain().getMaxTotalDocumentSize()))
+			sizeChange = "El tamañano contratado ha cambiado de " + oldBooking.getDomain().getMaxTotalDocumentSize() + " a " + b.getDomain().getMaxTotalDocumentSize();
+		
+		String multiDomain = null;
+		if (oldBooking.getDomain().isDomainManagement() != b.getDomain().isDomainManagement())
+			multiDomain = b.getDomain().isDomainManagement() ? "La empresa ahora es multidominio" : "La empresa ha dejado de ser multidominio";
+		
+		String payerDomain = null;
+		if (!AonStringUtils.equals(oldBooking.getPayer(), b.getPayer())) 
+			payerDomain = b.getPayer() != null ? "La empresa ahora es dominio pagador" : "La empresa ha dejado de ser dominio pagador";
+		
+		Set<String> currentApps = b.getApps().stream()
+                .map(AonApp::getDescription)
+                .collect(Collectors.toSet());
+                
+		Set<String> oldApps = oldBooking.getApps().stream()
+                .map(AonApp::getDescription)
+                .collect(Collectors.toSet());
+		
+		Set<String> addedApps = new HashSet<>(currentApps);
+		addedApps.removeAll(oldApps);
+
+        Set<String> removeApps = new HashSet<>(oldApps);
+        removeApps.removeAll(currentApps); 
+		
 		VelocityEngine engine = new VelocityEngine();
 		engine.setProperty(RuntimeConstants.RESOURCE_LOADER, "classpath");
 		engine.setProperty("classpath.resource.loader.class", ClasspathResourceLoader.class.getName());
 		engine.init();
-	
+		
 		VelocityContext context = new VelocityContext();
 		context.put("booking", booking);
 		context.put("logo", logo);
 		context.put("parentName", parentName);
 		context.put("customView", domainUserRoles.hasCustomView() || domainUserRoles.hasParentCustomView());
+		context.put("domainChange", domainChange);
+		context.put("usersChange", usersChange);
+		context.put("sizeChange", sizeChange);
+		context.put("multiDomain", multiDomain);
+		context.put("payerDomain", payerDomain);
+		context.put("addedApps", addedApps);
+		context.put("removeApps", removeApps);
 		
 		Template template = engine.getTemplate("/net/aonsolutions/aon/api/servlet/templates/booking.vm");
 		

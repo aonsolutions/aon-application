@@ -405,7 +405,20 @@ public class ActionTargetServlet extends AonApiHttpServlet {
 		checkCompany(company);
 
 		// Ceck Exist Domain
-		checkExistingDomain(api, document, email);
+		boolean existDomain = checkExistingDomain(api, document, email);
+		if(existDomain) {
+			Domain parentDomain = null == api.getDomain().getParentId() ? api.getDomain() : AON.getDomain(api.getDomain().getName(), api.getDomain().getId(),
+					api.getUser().getLogin(), f -> f.getIdProperty().eq(api.getDomain().getParentId()));
+			
+			Domain domain = AON.getDomain(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(),
+					f -> f.getNameProperty().like("%" + document + "%")
+							.and(f.getParentProperty().eq(parentDomain.getId())));
+			
+			String logoUrl = getLogoUrl(parentDomain, api.getUser());
+			String from = getFromMessage(api);
+			
+			return createEnterpriseDuplicateBody(domain, parentDomain.getDescription(), logoUrl, from);
+		}
 
 		String domainNewName = company.getDocument() + "-" + parent.getName();
 		Domain d = new Domain().setName(domainNewName.toLowerCase()).setDescription(company.getName())
@@ -975,9 +988,10 @@ public class ActionTargetServlet extends AonApiHttpServlet {
 	// AUXILIAR METHODS
 	// ---------------------------------------------------------------------------------------------
 
-	private static void checkExistingDomain(AonApiData api, String document, String targetEmail) {
-		Domain parentDomain = AON.getDomain(api.getDomain().getName(), api.getDomain().getId(),
+	private static boolean checkExistingDomain(AonApiData api, String document, String targetEmail) {
+		Domain parentDomain = null == api.getDomain().getParentId() ? api.getDomain() : AON.getDomain(api.getDomain().getName(), api.getDomain().getId(),
 				api.getUser().getLogin(), f -> f.getIdProperty().eq(api.getDomain().getParentId()));
+		
 		if (null != parentDomain && null != parentDomain.getId()) {
 			Domain domain = AON.getDomain(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(),
 					f -> f.getNameProperty().like("%" + document + "%")
@@ -985,9 +999,12 @@ public class ActionTargetServlet extends AonApiHttpServlet {
 			if (null != domain && null != domain.getId()) {
 				String logoUrl = getLogoUrl(parentDomain, api.getUser());
 				sendDomainExistsMail(api, domain, parentDomain.getDescription(), logoUrl, targetEmail);
-				throw new IllegalArgumentException("El dominio " + domain.getName() + " ya existe para este despacho");
+				return true;
+//				throw new IllegalArgumentException("El dominio " + domain.getName() + " ya existe para este despacho");
 			}
 		}
+		
+		return false;
 	}
 
 	private static void sendDomainExistsMail(AonApiData api, Domain domain, String parentDomainDescription,
