@@ -19,6 +19,7 @@ import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
+import net.aonsolutions.db.up2date.fiscal.AlterFsMod190Detail2024;
 import net.aonsolutions.db.up2date.fiscal.AlterFsMod193Detail2024;
 import net.aonsolutions.db.up2date.fiscal.FsModel369Creation;
 import net.aonsolutions.db.up2date.tgss.SolidarityInsert;
@@ -483,7 +484,8 @@ public class Up2Date {
     	SolidarityInsert.SOLIDARITYINSERT,
     	
     	FsModel369Creation.FS_MODEL369_CREATION,
-    	AlterFsMod193Detail2024.ALTER_FS_MODEL_193_DETAIL_2024
+    	AlterFsMod193Detail2024.ALTER_FS_MODEL_193_DETAIL_2024,
+    	AlterFsMod190Detail2024.ALTER_FS_MODEL_190_DETAIL_2024
 
 	};
 

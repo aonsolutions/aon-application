@@ -227,8 +227,8 @@ public class Mod190DAO {
 								FS_MODEL190_DETAIL.NAVARRA_RETENTION,
 								FS_MODEL190_DETAIL.ARABA_RETENTION,
 								FS_MODEL190_DETAIL.BIZKAIA_RETENTION,
-								FS_MODEL190_DETAIL.GIPUZKOA_RETENTION
-								
+								FS_MODEL190_DETAIL.GIPUZKOA_RETENTION,
+								FS_MODEL190_DETAIL.EXCESSES								
 								)
 						.values(null, null, null, null, null, null, null, null,
 								null, null, null, null, null, null, null, null,
@@ -237,7 +237,7 @@ public class Mod190DAO {
 								null, null, null, null, null, null, null, null,
 								null, null, null, null, null, null, null, null,
 								null, null, null, null, null, null, null, null,
-								null, null, null, null, null, null, null));
+								null, null, null, null, null, null, null, null));
 		for (Mod190Detail detail : mod190.getDetails()) {
 			batch.bind(detail.getDomain()
 					, detail.getMod190()
@@ -253,7 +253,7 @@ public class Mod190DAO {
 					, detail.getInKindDeposit()
 					, detail.getInKindOutputDeposit()
 					, detail.getAccrualYear()
-					, AonEnumUtils.getByte(detail.isCeutaMelilla())
+					, detail.getCeutaMelillaPalma()
 					, detail.getBirthYear()
 					, detail.getFamilySituation()
 					, detail.getSpouseDocument()
@@ -302,6 +302,7 @@ public class Mod190DAO {
 					, detail.getArabaRetention()
 					, detail.getBizkaiaRetention()
 					, detail.getGipuzkoaRetention()
+					, AonEnumUtils.getByte(detail.isExcesses())
 					);
 		}
 		batch.execute();
@@ -342,7 +343,7 @@ public class Mod190DAO {
 				.set(FS_MODEL190_DETAIL.IN_KIND_DEPOSIT,detail.getInKindDeposit())
 				.set(FS_MODEL190_DETAIL.IN_KIND_OUTPUT_DEPOSIT,detail.getInKindOutputDeposit())
 				.set(FS_MODEL190_DETAIL.ACCRUAL_YEAR, detail.getAccrualYear())
-				.set(FS_MODEL190_DETAIL.CEUTA_MELILLA,AonEnumUtils.getByte(detail.isCeutaMelilla()))
+				.set(FS_MODEL190_DETAIL.CEUTA_MELILLA, detail.getCeutaMelillaPalma())
 				.set(FS_MODEL190_DETAIL.BIRTH_YEAR, detail.getBirthYear())
 				.set(FS_MODEL190_DETAIL.FAMILY_SITUATION,detail.getFamilySituation())
 				.set(FS_MODEL190_DETAIL.SPOUSE_DOCUMENT,detail.getSpouseDocument())
@@ -391,6 +392,7 @@ public class Mod190DAO {
 				.set(FS_MODEL190_DETAIL.ARABA_RETENTION, detail.getArabaRetention())
 				.set(FS_MODEL190_DETAIL.BIZKAIA_RETENTION, detail.getBizkaiaRetention())
 				.set(FS_MODEL190_DETAIL.GIPUZKOA_RETENTION, detail.getGipuzkoaRetention())
+				.set(FS_MODEL190_DETAIL.EXCESSES, AonEnumUtils.getByte(detail.isExcesses()))
 				;
 	}
 
@@ -413,7 +415,7 @@ public class Mod190DAO {
 				.set(FS_MODEL190_DETAIL.IN_KIND_DEPOSIT,detail.getInKindDeposit())
 				.set(FS_MODEL190_DETAIL.IN_KIND_OUTPUT_DEPOSIT,detail.getInKindOutputDeposit())
 				.set(FS_MODEL190_DETAIL.ACCRUAL_YEAR, detail.getAccrualYear())
-				.set(FS_MODEL190_DETAIL.CEUTA_MELILLA,AonEnumUtils.getByte(detail.isCeutaMelilla()))
+				.set(FS_MODEL190_DETAIL.CEUTA_MELILLA, detail.getCeutaMelillaPalma())
 				.set(FS_MODEL190_DETAIL.BIRTH_YEAR, detail.getBirthYear())
 				.set(FS_MODEL190_DETAIL.FAMILY_SITUATION,detail.getFamilySituation())
 				.set(FS_MODEL190_DETAIL.SPOUSE_DOCUMENT,detail.getSpouseDocument())
@@ -462,6 +464,7 @@ public class Mod190DAO {
 				.set(FS_MODEL190_DETAIL.ARABA_RETENTION, detail.getArabaRetention())
 				.set(FS_MODEL190_DETAIL.BIZKAIA_RETENTION, detail.getBizkaiaRetention())
 				.set(FS_MODEL190_DETAIL.GIPUZKOA_RETENTION, detail.getGipuzkoaRetention())
+				.set(FS_MODEL190_DETAIL.EXCESSES, AonEnumUtils.getByte(detail.isExcesses()))
 				.where(FS_MODEL190_DETAIL.ID.equal(detail.getId())).execute();
 	}
 
@@ -668,7 +671,7 @@ public class Mod190DAO {
 				.setInKindDepositIL(AonMathUtils.round(rec.getValue(FS_MODEL190_DETAIL.IN_KIND_DEPOSIT_IL)))
 				.setInKindOutputDepositIL(AonMathUtils.round(rec.getValue(FS_MODEL190_DETAIL.IN_KIND_OUTPUT_DEPOSIT_IL)))
 				.setBirthYear(rec.getValue(FS_MODEL190_DETAIL.BIRTH_YEAR))
-				.setCeutaMelilla(AonEnumUtils.getBoolean(rec.getValue(FS_MODEL190_DETAIL.CEUTA_MELILLA)))
+				.setCeutaMelillaPalma(rec.getValue(FS_MODEL190_DETAIL.CEUTA_MELILLA))
 				.setFamilySituation(rec.getValue(FS_MODEL190_DETAIL.FAMILY_SITUATION))
 				.setSpouseDocument(rec.getValue(FS_MODEL190_DETAIL.SPOUSE_DOCUMENT))
 				.setDisability(rec.getValue(FS_MODEL190_DETAIL.DISABILITY))
@@ -710,12 +713,11 @@ public class Mod190DAO {
 				.setArabaRetention(AonMathUtils.round(rec.getValue(FS_MODEL190_DETAIL.ARABA_RETENTION)))
 				.setBizkaiaRetention(AonMathUtils.round(rec.getValue(FS_MODEL190_DETAIL.BIZKAIA_RETENTION)))
 				.setGipuzkoaRetention(AonMathUtils.round(rec.getValue(FS_MODEL190_DETAIL.GIPUZKOA_RETENTION)))
+				.setExcesses(AonEnumUtils.getBoolean(rec.getValue(FS_MODEL190_DETAIL.EXCESSES)))
 				;
 		}
 	}
 
-
-	
 	public static Mod190 duplicate(AONContext ctx, Mod190 mod190) {
 		
 		int id = mod190.getId();
