@@ -1050,6 +1050,10 @@ background-color: var(--aonLightGray);
   overflow-y: auto;
 }
 
+.aonCompanyFilterEmpty {
+	display: none;	
+}
+
 .aonSidenavDiv {
   padding-left: 25px;
 }
