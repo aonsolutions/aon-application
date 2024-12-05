@@ -147,8 +147,7 @@ public class TimeControlDAO {
 		
 		LinkedList<TimeControl> tcList = new LinkedList<>();
 		LinkedList<TimeControlDetail> list = getTimeControlDetailList(ctx, f -> 
-			f.getDomainProperty().eq(ctx.getDomainId())
-			.and(f.getDateProperty().ge(startTimestamp))
+			f.getDateProperty().ge(startTimestamp)
 			.and(f.getDateProperty().le(endTimestamp))
 			.and(f.getTaskHolderProperty().eq(taskHolderId)));
 		

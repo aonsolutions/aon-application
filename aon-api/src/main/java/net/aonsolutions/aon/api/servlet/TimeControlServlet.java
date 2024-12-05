@@ -6,11 +6,8 @@ import java.io.IOException;
 import java.sql.Timestamp;
 import java.util.Date;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.logging.Logger;
-
-import jakarta.servlet.annotation.WebServlet;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -36,6 +33,9 @@ import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import net.aonsolutions.aon.api.error.AonApiError;
 import net.aonsolutions.aon.api.error.AonApiException;
 import net.aonsolutions.aon.api.ewok.AonApiData;
@@ -143,7 +143,14 @@ public class TimeControlServlet extends AonApiHttpServlet{
 		TaskHolder taskHolder = AON.getTaskHolder(domain.getName(), domain.getId(), user.getLogin(), f -> 
 				f.getDomainProperty().eq(domain.getId())
 				.and(f.getUserIdProperty().eq(user.getId())));
-		return getTimeControl(domain, user, taskHolder);
+		if ( taskHolder == null || taskHolder.getId() == null) {
+			List<TaskHolder> taskHolders = AON.getTaskHolderStream(domain.getName(), domain.getId(), user.getLogin(),
+					f -> f.getUserIdProperty().eq(user.getId())).toList();
+			if ( taskHolders.size() == 1 ) {
+				taskHolder = taskHolders.getFirst();
+			}
+		}
+		return getTimeControl(taskHolder.getDomain(), user, taskHolder);
 	}
 	
 	private JSONObject getTimeControl(AonApiData api, AonToken aonToken, Integer taskHolderId) {
@@ -160,14 +167,15 @@ public class TimeControlServlet extends AonApiHttpServlet{
 				.and(f.getActiveProperty().eq((byte) 1)
 				.and(f.getTypeProperty().eq(TaskHolderType.INTERNAL.value()))));
 		}
-		return getTimeControl(api.getDomain(), api.getUser(), taskHolder);
+		return getTimeControl(taskHolder.getDomain(), api.getUser(), taskHolder);
 	}
 	
 	private JSONObject saveTimeControl(AonApiData api) {
 		JSONObject json = new JSONObject();
 		JSONObject jsonSave = new JSONObject();
 		
-		boolean parent = api.getData().optBoolean(IJsonNames.PARENT);
+		boolean parent = api.getData().optBoolean(IJsonNames.PARENT) || 
+				api.getDomain().isDomainManagement();
 		
 		if(parent && !AonStringUtils.isEmpty(api.getToken())) {
 			AonToken aonToken = SECURITY.getAonToken(api.getToken());

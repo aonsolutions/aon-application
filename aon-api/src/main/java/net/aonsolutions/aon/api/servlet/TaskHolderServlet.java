@@ -228,11 +228,21 @@ public class TaskHolderServlet extends AonApiHttpServlet{
 				    f.getDomainProperty().eq(domain.getId()).and(f.getUserIdProperty().eq(api.getUser().getId()))
 		);
 		
+		if ( taskholder == null || taskholder.getId() == null) {
+			List<TaskHolder> taskHolders = AON.getTaskHolderStream(domain.getName(), domain.getId(), api.getUser().getLogin(),
+					f -> f.getUserIdProperty().eq(api.getUser().getId())).toList();
+			if ( taskHolders.size() == 1 ) {
+				taskholder = taskHolders.getFirst();
+			} else {
+				taskholder = new TaskHolder();
+			}
+		}
 		
 		JSONObject object = TaskHolderJSON.toJSON(taskholder);
 	
 		if(api.getData().optBoolean(IJsonNames.WORKGROUPS)) {
-			TaskHolderWorkgroupFilter filter  = f -> f.getTaskHolderProperty().eq(taskholder.getId());
+			Integer taskholderId = taskholder.getId();
+			TaskHolderWorkgroupFilter filter  = f -> f.getTaskHolderProperty().eq(taskholderId);
 			object.put(IJsonNames.WORKGROUPS,
 				WorkgroupJSON.toJSON(
 					AON.getTaskHolderWorkgroupStream(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), filter)

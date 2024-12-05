@@ -85,8 +85,6 @@ export class AonParent extends AonElement {
 					LS.setDomainId(aonMenu.getDur().getDomain().getId());
 					LS.setDomainName(aonMenu.getDur().getDomain().getName());
 					aonMenu.open();
-					//this.cleanApps();
-					//this.buildApps(aonMenu);
 				})
 				.catch((err) => {
 				});
@@ -98,6 +96,8 @@ export class AonParent extends AonElement {
 				this.buildCompanies(companies.filter(f => this.companyFilter(f, filter)).slice(0, 30));
 				callback?.(companies);
 
+				this.cleanApps();
+				this.buildApps(aonMenu);
 			}	
 		}, () => closeSession());
 
@@ -322,7 +322,6 @@ export class AonParent extends AonElement {
 
 
 		let contentDiv = this.createDiv();
-		contentDiv.style.display= 'flex';
 		contentDiv.appendChild(appsDiv);
 		contentDiv.appendChild(companyDiv);
 	
@@ -385,8 +384,11 @@ export class AonParent extends AonElement {
 
 	buildApps(aonMenu){
 		let appsDiv = this.getElement(this.APPS_DIV);
-		aonMenu.isAppEnabled(MenuApps.TIMECONTROL);
-		appsDiv.appendChild( new AonTimeControlCard());		
+		appsDiv.className = CSS.AON_APPS_DIV;
+		//aonMenu.isAppEnabled(MenuApps.TIMECONTROL);
+		let aonTimeControlCard = new AonTimeControlCard();
+		aonTimeControlCard.onError = () => appsDiv.removeChild(aonTimeControlCard); 
+		appsDiv.appendChild(aonTimeControlCard);
 	}
 
 	cleanCompanies(){
