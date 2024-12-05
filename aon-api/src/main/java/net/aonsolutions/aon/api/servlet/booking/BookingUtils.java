@@ -41,6 +41,7 @@ import com.esferalia.aon.occam.impl.jooq.dao.DomainDAO;
 import com.esferalia.aon.watson.server.io.AonFileUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
+import net.aonsolutions.aon.api.servlet.Utils;
 import solutions.aon.aws.ses.SES;
 import solutions.aon.aws.ses.SESMessage;
 
@@ -53,21 +54,25 @@ public class BookingUtils {
 	public void sendMail(Domain domain, User user, Booking oldBooking, Booking newBooking, boolean console) {
 		String subject = "Modificación de Contratación en " + domain.getName();
 		String body = content(domain, user, newBooking, oldBooking);
-		List<String> mails = new LinkedList<>();
+		Set<String> mails = new HashSet<>();
+		
 		if(!console) {
 			Integer[] domains = domain.isChild() ? new Integer[] {domain.getId(), domain.getParentId()} : new Integer[] {domain.getId()};
 			Integer[] companies = AON.getCompanyStream(domain.getName(), domain.getId(), user.getLogin(), f -> f.getDomainProperty().in(domains))
 				.map(Company::getId).toArray(Integer[]::new);
 		
-			List<String> rmediaMails = AON.getRegistryMediaStream(domain, user, f -> f.getRegistryProperty().in(companies).and(f.getDomainProperty().in(domains)))
+			List<String> rmediaMails = AON.getRegistryMediaStream(domain, user, f -> f.getRegistryProperty().in(companies).and(f.getDomainProperty().in(domains)).and(f.getMediaProperty().eq((byte)4)))
 					.map(RegistryMedia::getValue).toList();
 			
 			mails.addAll(rmediaMails);
-			mails.add(domain.getOwner());
+			
+			if(Utils.isEmail(domain.getOwner()))
+				mails.add(domain.getOwner());
 			
 			if(domain.isChild()) {
 				Domain parent = AON.getDomain(domain.getName(), domain.getId(), user.getLogin(), f -> f.getIdProperty().eq(domain.getParentId()));
-				mails.add(parent.getOwner());
+				if(Utils.isEmail(parent.getOwner()))
+					mails.add(parent.getOwner());
 			}
 		} else mails.add("admin@aonsolutions.es");
 		
@@ -76,7 +81,7 @@ public class BookingUtils {
 		
 		SESMessage msg = new SESMessage()
 				.setAlias(alias)
-				.setTo(mails)
+				.setTo(mails.stream().toList())
 				.addBcc("admin@aonsolutions.es")
 				.addBcc("administracion@aonsolutions.es")
 				.addBcc("asignacion@aonsolutions.es")
