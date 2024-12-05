@@ -731,6 +731,7 @@ public class AEATIVA2024toMod390 {
 		ac.setIncomes(ensureBigDecimal(actividad.getVolIngresos()));
 		ac.setQuotaIndex(ensureBigDecimal(actividad.getIndCuota()));
 		ac.setAccrualQuota(ensureBigDecimal(actividad.getCuotaDevengada()));
+		ac.setDanaReduction(ensureBigDecimal(actividad.getDana()));		
 		ac.setInputQuotas(ensureBigDecimal(actividad.getCuotasSoportadas()));
 		ac.setQuota(ensureBigDecimal(actividad.getCuotaRegSimplificado()));
 		return ac;
@@ -770,6 +771,7 @@ public class AEATIVA2024toMod390 {
 		}
 		sra.setBoxC(ensureBigDecimal(act.getCuotaDevengada()));
 		sra.setBoxC1(ensureBigDecimal(act.getLorca()));
+		sra.setBoxC2(ensureBigDecimal(act.getDana()));
 		sra.setBoxD(ensureBigDecimal(act.getCuotaSoportada()));
 		sra.setBoxE(ensureBigDecimal(act.getIndiceCorrector()));
 		sra.setBoxF(ensureBigDecimal(act.getResultado()));

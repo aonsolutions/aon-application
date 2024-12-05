@@ -33,7 +33,8 @@ public class SimplifiedRegimePanel extends FlowPanel implements HasValueChangeHa
 	private AonDoubleBox amount7 = new AonDoubleBox();
 	
 	private AonDoubleBox boxC = new AonDoubleBox();
-	private AonDoubleBox boxC1 = new AonDoubleBox();
+	private AonDoubleBox boxC1 = new AonDoubleBox();  // Reducción Lorca
+	private AonDoubleBox boxC2 = new AonDoubleBox();  // Reducción DANA 2024
 	private AonDoubleBox boxD = new AonDoubleBox();
 	private AonDoubleBox boxE = new AonDoubleBox();
 	private AonDoubleBox boxF = new AonDoubleBox();
@@ -69,6 +70,7 @@ public class SimplifiedRegimePanel extends FlowPanel implements HasValueChangeHa
 	    amount7.setValue(regime.getAmount7(),false);
 	    boxC.setValue(regime.getBoxC(),false);
 	    boxC1.setValue(regime.getBoxC1(),false);
+	    boxC2.setValue(regime.getBoxC2(),false);
 	    boxD.setValue(regime.getBoxD(),false);
 		boxE.setValue(regime.getBoxE(),false);
 		boxF.setValue(regime.getBoxF(),false);
@@ -100,6 +102,7 @@ public class SimplifiedRegimePanel extends FlowPanel implements HasValueChangeHa
 		    reg.setAmount7(amount7.getValue());
 		    reg.setBoxC(boxC.getValue());
 		    reg.setBoxC1(boxC1.getValue());
+		    reg.setBoxC2(boxC2.getValue());
 		    reg.setBoxD(boxD.getValue());
 			reg.setBoxE(boxE.getValue());
 			reg.setBoxF(boxF.getValue());
@@ -129,6 +132,7 @@ public class SimplifiedRegimePanel extends FlowPanel implements HasValueChangeHa
 	    amount7.setValue(0.0,false);
 	    boxC.setValue(0.0,false);
 	    boxC1.setValue(0.0,false);
+	    boxC2.setValue(0.0,false);
 	    boxD.setValue(0.0,false);
 		boxE.setValue(0.0,false);
 		boxF.setValue(0.0,false);
@@ -203,9 +207,13 @@ public class SimplifiedRegimePanel extends FlowPanel implements HasValueChangeHa
 			.addCell(new AonBoxLabel("C"), AON.CSS.aonWidth40(), AON.CSS.aonTextCenter())
 			.addCell(boxC, AON.CSS.aonWidth120());
 		tab1.addRow()
-			.addCell(new Label(AON.MSG.reductions()), AON.CSS.aonWidthAuto(), AON.CSS.aonBorderBottom())
-			.addCell(new AonBoxLabel(" "), AON.CSS.aonWidth40(), AON.CSS.aonTextCenter())
+			.addCell(new Label("Reducci\u00F3n Lorca"), AON.CSS.aonWidthAuto(), AON.CSS.aonBorderBottom())
+			.addCell(new Label(" "), AON.CSS.aonWidth40(), AON.CSS.aonTextCenter())
 			.addCell(boxC1, AON.CSS.aonWidth120());
+		tab1.addRow()
+			.addCell(new Label("Reducci\u00F3n DANA"), AON.CSS.aonWidthAuto(), AON.CSS.aonBorderBottom())
+			.addCell(new Label(" "), AON.CSS.aonWidth40(), AON.CSS.aonTextCenter())
+			.addCell(boxC2, AON.CSS.aonWidth120());
 		tab1.addRow()
 			.addCell(new Label(AON.MSG.page6D()), AON.CSS.aonWidthAuto(), AON.CSS.aonBorderBottom())
 			.addCell(new AonBoxLabel("D"), AON.CSS.aonWidth40(), AON.CSS.aonTextCenter())
@@ -235,7 +243,6 @@ public class SimplifiedRegimePanel extends FlowPanel implements HasValueChangeHa
 			.addCell(new AonBoxLabel("J"), AON.CSS.aonWidth40(), AON.CSS.aonTextCenter())
 			.addCell(boxJ, AON.CSS.aonWidth120());
 		
-		
 	    epigrafe.addValueChangeHandler(event -> fire());
 	    unit1.addValueChangeHandler(event -> fire());
 	    amount1.addValueChangeHandler(event -> fire());
@@ -252,6 +259,8 @@ public class SimplifiedRegimePanel extends FlowPanel implements HasValueChangeHa
 	    unit7.addValueChangeHandler(event -> fire());
 	    amount7.addValueChangeHandler(event -> fire());
 	    boxC.addValueChangeHandler(event -> fire());
+	    boxC1.addValueChangeHandler(event -> fire());  // FALTA - ESTE NO ESTABA PUESTO
+	    boxC2.addValueChangeHandler(event -> fire());
 	    boxD.addValueChangeHandler(event -> fire());
 		boxE.addValueChangeHandler(event -> fire());
 		boxF.addValueChangeHandler(event -> fire());
