@@ -113,7 +113,7 @@ public class DocumentalMailServlet extends HttpServlet{
 			&& signature.getSignature() != "")
 			msg = msg+ "<p></p>"+ signature.getSignature();
 		else msg = msg +"<p></p><table><tbody><tr><td>"	
-				+"<p style=\"color: #222;\">Para cualquier aclaraciÃ³n o informaciÃ³n adicional, no dude en contactar con nosotros.</p>"
+				+"<p style=\"color: #222;\">Para cualquier aclaración o información adicional, no dude en contactar con nosotros.</p>"
 				+"<p style=\"color: #222;\">"
 				+ "<div>"+getCompanyName(domain, login)+"</div>"
 				+"<div><b>Gracias por confiar en nosotros</b></div>"
