@@ -70,6 +70,7 @@ public class StatementPanelReport extends DockLayoutPanel implements Focusable, 
 	private ListBox activity;
 	private CheckBox reverseOrder;
 	SimpleLayoutPanel filterPanel = new SimpleLayoutPanel();
+	private Label messageLabel;
 
 	
 	private boolean activitiesListBoxEnabled;
@@ -110,7 +111,7 @@ public class StatementPanelReport extends DockLayoutPanel implements Focusable, 
 		activitiesListBoxEnabled = (options.getConfiguration() != null && options.getConfiguration().hasActivities());
 		addStyleName(AON.CSS.aonScrollArea());
 		addStyleName(AON.CSS.aonMarginBottom());
-		addNorth(filterPanel, 90);
+		addNorth(filterPanel, 110);
 		
 		centerPanel = new SimpleLayoutPanel();
 		add(centerPanel);
@@ -543,14 +544,25 @@ public class StatementPanelReport extends DockLayoutPanel implements Focusable, 
 	}
 	
 	public void closeFilterPanel() {
-		filterPanel.addStyleName(AON.CSS.aonDisplayNone());
-		StatementPanelReport.this.setWidgetSize(filterPanel, 0);
+	    filterPanel.addStyleName(AON.CSS.aonDisplayNone());
+	    StatementPanelReport.this.setWidgetSize(filterPanel, 0);
+
+	    if (messageLabel == null) {
+	        messageLabel = new Label("Introduzca valores en el filtro de b\u00FAsqueda");
+	        messageLabel.setStyleName("gwt-InlineLabel aon_bold aon_closeFilter_message");
+	        centerPanel.add(messageLabel);
+	    }
 	}
-	
+
 	public void openFilterPanel() {
-		filterPanel.removeStyleName(AON.CSS.aonDisplayNone());
-		StatementPanelReport.this.setWidgetSize(filterPanel, 90);
-		StatementPanelReport.this.animate(500);
+	    filterPanel.removeStyleName(AON.CSS.aonDisplayNone());
+	    StatementPanelReport.this.setWidgetSize(filterPanel, 110);
+	    StatementPanelReport.this.animate(500);
+
+	    if (messageLabel != null) {
+	    	centerPanel.remove(messageLabel);
+	        messageLabel = null;
+	    }
 	}
 	
 	public boolean isFilterPanelOpened() {
