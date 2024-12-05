@@ -90,8 +90,8 @@ public class BookingUtils {
 				.setSubject(subject)
 				.setBody(body);
 		
-		if(AonStringUtils.isBlank(from))
-			msg.setFiles(getFiles(oldBooking, newBooking));
+//		if(AonStringUtils.isBlank(from))
+//			msg.setFiles(getFiles(oldBooking, newBooking));
 
 		SES.sendEmail(msg);
 	}
