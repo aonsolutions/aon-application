@@ -2313,3 +2313,13 @@
 .aon_no_border_toolbar .aon_toolbar_title_container {
 	padding: 0;
 }
+
+.aon_closeFilter_message {
+	position: absolute;        
+    top: 10px !important;              
+    left: 50% !important;                 
+    transform: translateX(-50%); 
+    background-color: transparent; 
+    padding: 10px 20px;     
+    text-align: center;
+}

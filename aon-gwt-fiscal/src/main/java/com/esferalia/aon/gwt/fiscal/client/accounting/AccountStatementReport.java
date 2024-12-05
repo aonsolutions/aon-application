@@ -76,13 +76,13 @@ public class AccountStatementReport extends MainEntryPoint {
 			@Override
 			public void closeFilterPanel() {
 				super.closeFilterPanel();
-	        	filterButton.setHTML("<span class='material-symbols-outlined'>filter_alt</span>");
+	        	filterButton.setHTML("<span class='material-icons'>filter_alt</span>");
 			}
 			
 			@Override
 			public void openFilterPanel() {
 				super.openFilterPanel();
-	        	filterButton.setHTML("<span class='material-symbols-outlined'>filter_alt_off</span>");
+	        	filterButton.setHTML("<span class='material-icons'>filter_alt_off</span>");
 			}
 		};
 		
