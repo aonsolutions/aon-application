@@ -22,73 +22,74 @@
             </p>
 
             #if($domainChange)
-                <p style="margin: 15px 0;">
+                <p style="margin-top: 15px;">
                     <strong style="color: #333;">Cambio de Dominio:</strong> $domainChange
                 </p>
             #end
 
             #if($usersChange)
-                <p style="margin: 15px 0;">
+                <p style="margin-top: 15px;">
                     <strong style="color: #333;">Cambio en Usuarios:</strong> $usersChange
                 </p>
             #end
 
             #if($sizeChange)
-                <p style="margin: 15px 0;">
+                <p style="margin-top: 15px;">
                     <strong style="color: #333;">Cambio en Tamaño:</strong> $sizeChange
                 </p>
             #end
 
             #if($multiDomain)
-                <p style="margin: 15px 0;">
+                <p style="margin-top: 15px;">
                     <strong style="color: #333;">Múltiples Dominios:</strong> $multiDomain
                 </p>
             #end
 
             #if($payerDomain)
-                <p style="margin: 15px 0;">
+                <p style="margin-top: 15px;">
                     <strong style="color: #333;">Dominio Pagador:</strong> $payerDomain
                 </p>
             #end
 
             #if ($addedApps && $addedApps.size() > 0)
-                <p style="margin: 15px 0;">
-                    <strong style="color: #333;">Aplicaciones añadidas:</strong>
+                <p style="margin: 15px 0 0 0;">
+                    <strong style="color: #333;">Opciones añadidas:</strong>
                 </p>
-                <ul style="margin-left: 20px;">
+                <ul style="margin: 0; padding: 0 0 0 20px;">
                     #foreach($addedApp in $addedApps)
-                        <li style="margin-left: 20px;">$addedApp</li>
+                        <li style="margin-left: 10px;">$addedApp</li>
                     #end
                 </ul>
             #end
 
             #if ($removeApps && $removeApps.size() > 0)
-                <p style="margin: 15px 0;">
-                    <strong style="color: #333;">Aplicaciones eliminadas:</strong>
+                <p style="margin: 15px 0 0 0;">
+                    <strong style="color: #333;">Opciones eliminadas:</strong>
                 </p>
-                <ul style="margin-left: 20px;">
+                <ul style="margin: 0; padding: 0 0 0 20px;">
                     #foreach($removeApp in $removeApps)
-                        <li style="margin-left: 20px;">$removeApp</li>
+                        <li style="margin-left: 10px;">$removeApp</li>
                     #end
                 </ul>
             #end
 
-            <p style="margin: 15px 0;">
-                <strong style="color: #333;">Resumen de empresa:</strong>
+            <p style="margin: 15px 0 0 0;">
+                <strong style="color: #333;">Contratación actual para $booking.getCompanyName()</strong>
             </p>
-            <p style="margin: 15px 0;">
-                Empresa: <span style="font-weight: bold; color: #333;">$booking.getCompanyName()</span><br>
+            <p style="margin: 0 0 0 20px;">
                 Tipo de Acceso: <span style="font-weight: bold; color: #333;">$booking.getDomainType()</span><br>
                 Número de Usuarios: <span style="font-weight: bold; color: #333;">$booking.getNumberOfUsers()</span>
             </p>
 
-            <p style="margin: 15px 0;">
-                <strong style="color: #333;">Aplicaciones y Servicios Contratados:</strong><br>
-                #foreach($app in $booking.getApps())
-                    $app |
-                #end
+            <p style="margin: 0 0 0 20px;">
+                Aplicaciones y Servicios Contratados:<br>
             </p>
-
+            <p style="margin: 0 0 0 35px;">
+	            #foreach($app in $booking.getApps())
+	                    <strong style="color: #333;">$app</strong> |
+	            #end
+            </p>
+            
             <p style="margin: 15px 0;">
                 Esperamos que la información detallada sea correcta. En caso contrario, contacte con su administrador para corregirla en la opción de 
                 <strong style="color: #333;">"Funcionalidad contratada"</strong> dentro del apartado de CONFIGURACIÓN.
