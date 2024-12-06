@@ -162,8 +162,17 @@ public class ActionTargetServlet extends AonApiHttpServlet {
 		actionTarget.setMarketingAction(ma);
 
 		// Ceck Exist Domain
-		checkExistingDomain(api, actionTarget.getTarget().getDocument(), actionTarget.getTarget().getEmail());
-
+		boolean existDomain = checkExistingDomain(api, actionTarget.getTarget().getDocument(), actionTarget.getTarget().getEmail());
+		if(existDomain) {
+			Domain parentDomain = null == api.getDomain().getParentId() ? api.getDomain() : AON.getDomain(api.getDomain().getName(), api.getDomain().getId(),
+					api.getUser().getLogin(), f -> f.getIdProperty().eq(api.getDomain().getParentId()));
+			Domain domain = AON.getDomain(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(),
+					f -> f.getNameProperty().like("%" + actionTarget.getTarget().getDocument() + "%")
+							.and(f.getParentProperty().eq(parentDomain.getId())));
+			
+			throw new IllegalArgumentException("El dominio " + domain.getName() + " ya existe para este despacho");
+		}
+		
 		// Get / Save Target
 		Optional<Target> targetOpt = AON.getTarget(api.getDomain().getName(), api.getDomain().getId(),
 				api.getUser().getLogin(), f -> f.getDocumentProperty().eq(actionTarget.getTarget().getDocument())

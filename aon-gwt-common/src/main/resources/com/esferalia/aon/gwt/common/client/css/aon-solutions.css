@@ -230,6 +230,8 @@
 .aon_icon_trash_list { background-image: iconTrashList;}
 @url iconPaste aonIconPaste;
 .aon_icon_paste { background-image: iconPaste;}
+@url iconMoveGroup aonIconMoveGroup;
+.aon_icon_move_group { background-image: iconMoveGroup;}
 @url iconWork aonIconWork;
 .aon_icon_work { background-image: iconWork;}
 @url iconWorkOff aonIconWorkOff;
