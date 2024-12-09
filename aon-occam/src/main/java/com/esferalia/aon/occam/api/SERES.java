@@ -18,6 +18,34 @@ public class SERES {
 	private static ISeres getSeres() {
 		return new SeresImpl();
 	}
+
+	public static SeresInfo getSeresInfo(Domain domain, User user, Invoice invoice) {
+		return getSeresInfo(domain.getName(), domain.getId(), user.getLogin(), invoice);		
+	}
+	
+	public static SeresInfo getSeresInfo(Domain domain, String login, Invoice invoice) {
+		return getSeresInfo(domain.getName(), domain.getId(), login, invoice);
+	}
+	
+	public static SeresInfo getSeresInfo(String domainName, Integer domainId, String login, Invoice invoice) {
+		try(CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)) {
+			return getSeres().getSeresInfo(ctx, invoice);
+		}
+	}
+	
+	public static SeresInfo getSeresInfo(Domain domain, User user, Delivery delivery) {
+		return getSeresInfo(domain.getName(), domain.getId(), user.getLogin(), delivery);		
+	}
+	
+	public static SeresInfo getSeresInfo(Domain domain, String login, Delivery delivery) {
+		return getSeresInfo(domain.getName(), domain.getId(), login, delivery);
+	}
+	
+	public static SeresInfo getSeresInfo(String domainName, Integer domainId, String login, Delivery delivery) {
+		try(CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)) {
+			return getSeres().getSeresInfo(ctx, delivery);
+		}
+	}
 	
 	public static SeresInfo getSeresInfo(Domain domain, User user) {
 		return getSeresInfo(domain.getName(), domain.getId(), user.getLogin());		
@@ -46,7 +74,6 @@ public class SERES {
 			return getSeres().getEdiCodes(ctx, delivery);
 		}
 	}
-	
 	
 	public static EdiCodes getEdiCodes(Domain domain, User user, Invoice invoice){
         return getEdiCodes(domain.getName(), domain.getId(), user.getLogin(), invoice);

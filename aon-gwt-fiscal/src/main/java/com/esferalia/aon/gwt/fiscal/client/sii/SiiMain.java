@@ -97,8 +97,7 @@ public class SiiMain extends DockLayoutPanel {
 				addWest(getMenu(), 250);
 				initializeFilter();
 				
-				
-				invoiceGrid = new InvoiceGrid(options, getFilterParams()) {
+				invoiceGrid = new InvoiceGrid(options, getFilterParams(), result.isTaxDate()) {
 					
 					@Override
 					public void info(Integer invoice, String reference) {
