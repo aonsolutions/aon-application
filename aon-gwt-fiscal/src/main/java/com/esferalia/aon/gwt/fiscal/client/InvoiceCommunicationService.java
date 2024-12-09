@@ -9,6 +9,7 @@ import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceCommunicationTracking;
 import com.esferalia.aon.occam.api.model.finance.InvoiceCommunicationType;
 import com.esferalia.aon.occam.api.model.finance.SiiConfiguration;
+import com.esferalia.aon.occam.api.model.finance.TbaiConfiguration;
 import com.esferalia.aon.occam.api.model.fiscal.aeat.AEATParams;
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
@@ -17,6 +18,8 @@ import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 public interface InvoiceCommunicationService extends RemoteService {
 	
 	SiiConfiguration getSiiConfiguration(String domainName, int domainId, String user);
+	TbaiConfiguration getTbaiConfiguration(String domainName, int domainId, String user);
+	
 	List<InvestAsset> getInvestAssets(String domainName, int domainId, String user);
 	void assignInvestAsset2Invoice(String domainName, int domainId, String user, String investAsset, Invoice invoice);
 	void addDocumentInvoice(String domainName, int domainId, String user, Invoice invoice);
