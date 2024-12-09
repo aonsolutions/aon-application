@@ -356,8 +356,10 @@ public class TimeControlDAO {
 			tc.getDetail().add(r);
 		});
 		
-		TimeControlDetail tcd = getLastTimeControlDetail(ctx, f -> f.getDomainProperty().eq(ctx.getDomainId())
-			.and(f.getTaskHolderProperty().eq(taskHolderId)).and(f.getIdProperty().ge(0)));
+		TimeControlDetail tcd = getLastTimeControlDetail(ctx, 
+			f -> 
+			f.getTaskHolderProperty().eq(taskHolderId)
+			.and(f.getIdProperty().ge(0)));
 
 		if(tc.getDetail().isEmpty() && TimeControlStatus.IN.equals(tcd.getStatus())  
 			&& AonDateUtils.isSameDay(AonDateUtils.addDays(new Date(), -1), tcd.getDate())) {

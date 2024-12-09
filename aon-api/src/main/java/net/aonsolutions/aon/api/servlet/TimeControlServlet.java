@@ -140,6 +140,11 @@ public class TimeControlServlet extends AonApiHttpServlet{
 	}
 
 	private JSONObject getTimeControl(Domain domain, User user) {
+		TaskHolder taskHolder = findTaskHolder(domain, user);
+		return getTimeControl(taskHolder.getDomain(), user, taskHolder);
+	}
+
+	private TaskHolder findTaskHolder(Domain domain, User user) {
 		TaskHolder taskHolder = AON.getTaskHolder(domain.getName(), domain.getId(), user.getLogin(), f -> 
 				f.getDomainProperty().eq(domain.getId())
 				.and(f.getUserIdProperty().eq(user.getId())));
@@ -150,7 +155,7 @@ public class TimeControlServlet extends AonApiHttpServlet{
 				taskHolder = taskHolders.getFirst();
 			}
 		}
-		return getTimeControl(taskHolder.getDomain(), user, taskHolder);
+		return taskHolder != null ? taskHolder : new TaskHolder();
 	}
 	
 	private JSONObject getTimeControl(AonApiData api, AonToken aonToken, Integer taskHolderId) {

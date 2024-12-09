@@ -220,23 +220,7 @@ public class TaskHolderServlet extends AonApiHttpServlet{
 	}
 	
 	private JSONObject getTaskHolder(AonApiData api) {
-		Domain domain = api.getDomain();
-		
-		TaskHolder taskholder = AON.getTaskHolder(domain.getName(), domain.getId(), api.getUser().getLogin(), 
-				f->	api.getData().opt(IJsonNames.ID)!=null ? 
-				    filter(api, f) :
-				    f.getDomainProperty().eq(domain.getId()).and(f.getUserIdProperty().eq(api.getUser().getId()))
-		);
-		
-		if ( taskholder == null || taskholder.getId() == null) {
-			List<TaskHolder> taskHolders = AON.getTaskHolderStream(domain.getName(), domain.getId(), api.getUser().getLogin(),
-					f -> f.getUserIdProperty().eq(api.getUser().getId())).toList();
-			if ( taskHolders.size() == 1 ) {
-				taskholder = taskHolders.getFirst();
-			} else {
-				taskholder = new TaskHolder();
-			}
-		}
+		TaskHolder taskholder = findTaskHolder(api);
 		
 		JSONObject object = TaskHolderJSON.toJSON(taskholder);
 	
@@ -254,6 +238,7 @@ public class TaskHolderServlet extends AonApiHttpServlet{
 		return RegistryServlet.getRegistryAdditionalInfo(object, api, api.getData(), taskholder.getId(), null);
 		
 	}
+
 	
 	private JSONArray getTaskHoldersWorkGroup(AonApiData api) {
 		Domain domain     = api.getDomain();
@@ -369,4 +354,26 @@ public class TaskHolderServlet extends AonApiHttpServlet{
 		
 		return filter;
 	}	
+	
+	public static TaskHolder findTaskHolder(AonApiData api) {
+		Domain domain = api.getDomain();
+		
+		TaskHolder taskholder = AON.getTaskHolder(domain.getName(), domain.getId(), api.getUser().getLogin(), 
+				f->	api.getData().opt(IJsonNames.ID)!=null ? 
+				    filter(api, f) :
+				    f.getDomainProperty().eq(domain.getId()).and(f.getUserIdProperty().eq(api.getUser().getId()))
+		);
+		
+		if ( taskholder == null || taskholder.getId() == null) {
+			List<TaskHolder> taskHolders = AON.getTaskHolderStream(domain.getName(), domain.getId(), api.getUser().getLogin(),
+					f -> f.getUserIdProperty().eq(api.getUser().getId())).toList();
+			if ( taskHolders.size() == 1 ) {
+				taskholder = taskHolders.getFirst();
+			} else {
+				taskholder = new TaskHolder();
+			}
+		}
+		return taskholder;
+	}
+	
 }
