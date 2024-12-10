@@ -1050,6 +1050,10 @@ background-color: var(--aonLightGray);
   overflow-y: auto;
 }
 
+.aonCompanyFilterEmpty {
+	display: none;	
+}
+
 .aonSidenavDiv {
   padding-left: 25px;
 }
@@ -3035,6 +3039,12 @@ background-image: url("../favicon.png");
   background-color: var(--aonBlue);
 }
 
+.aonHeaderEnterpriseMenu,
+.aonMenuLeftopEnterpriseMenu {
+  background-color: var(--aonBlue);
+}
+
+
 .aonHeaderNote .material-icons,
 .aonHeaderFiscal .material-icons,
 .aonHeaderPayroll .material-icons,
@@ -3059,6 +3069,7 @@ background-image: url("../favicon.png");
 .aonHeaderPayrollMenu .material-icons,
 .aonHeaderMarketingMenu .material-icons,
 .aonHeaderConfigurationMenu .material-icons,
+.aonHeaderEnterpriseMenu .material-icons,
 .aonHeaderNotification .material-icons,
 .aonHeaderHome .material-icons,
 .aonHeaderApps .material-icons,
@@ -3091,6 +3102,7 @@ color: var(--aonWhite);
 .aonHeaderPayrollMenu #aon-search-buttonIcon,
 .aonHeaderMarketingMenu #aon-search-buttonIcon,
 .aonHeaderConfigurationMenu #aon-search-buttonIcon,
+.aonHeaderEnterpriseMenu #aon-search-buttonIcon,
 .aonHeaderNotification #aon-search-buttonIcon{
   color: var(--aonSearchButton);
 }
@@ -3154,6 +3166,7 @@ color: var(--aonWhite);
 .aonHeaderPayrollMenu #aonHeaderCompanyName,
 .aonHeaderMarketingMenu #aonHeaderCompanyName,
 .aonHeaderConfigurationMenu #aonHeaderCompanyName,
+.aonHeaderEnterpriseMenu #aonHeaderCompanyName,
 .aonHeaderNotification #aonHeaderCompanyName,
 .aonHeaderHome  #aonHeaderCompanyName,
 .aonHeaderApps #aonHeaderCompanyName,
@@ -3192,6 +3205,7 @@ color: var(--aonWhite);
 #payrollMenu:hover,
 #marketingMenu:hover,
 #configurationMenu:hover,
+#enterpriseMenu:hover,
 #aonApplication:hover {
   background-color: var(--aonCardColor);
   /*transition: background-color 0.2s;*/
@@ -4503,8 +4517,20 @@ font-weight: 600;
    pointer-events: none;  /* Deshabilita la interacción con el mouse */
  }
  
- .aonHoverGray:hover{
+.aonHoverGray:hover{
   background-color: #f1f1f1;
   cursor: pointer;
+}
+
+.aon_no_border_toolbar > .aon_toolbar_inner{
+	border: none;
+}
+
+.aon_no_border_toolbar .aon_toolbar_button_container {
+	margin: 0;
+}
+
+.aon_no_border_toolbar .aon_toolbar_title_container {
+	padding: 0;
 }
 

@@ -77,6 +77,7 @@ public class FiscalMenuDAO {
 						.map(fm -> fm.setModel((fm.getModel() == FiscalModelType.M390)?FiscalModelType.M390_HF:fm.getModel()))
 						.filter( fm -> fm.getModel() != FiscalModelType.M349 )  // No se coge de fs_model el modelo 349, pues no todos los datos están actualizados, se coge más abajo de su tabla
 						.filter( fm -> fm.getModel() != FiscalModelType.M200 )  // Tampoco se coge el modelo 200 de fs_model
+						.filter( fm -> fm.getModel() != FiscalModelType.M369 )  // Tampoco se coge el modelo 369 de fs_model
 						.filter( fm -> fm.getModel() != FiscalModelType.M390_HF || (fm.getModel() == FiscalModelType.M390_HF && (params.getModel() == null || params.getModel() == FiscalModelType.M390_HF)) )
 						.peek( fm -> {
 							// FALTA - AUN NO ESTA HECHO EL REFACTOR DEL MODELO 202 POR AHORA LES ASIGNO AQUI ESTAS PROPIEDADES
@@ -197,8 +198,12 @@ public class FiscalMenuDAO {
 							.forEach( allModels::put );
 					}
 				}
+				@Override
+				public void visitM369() {
+					// EL MODELO 369 AUN NO ESTA EN LA MATRIZ DE MODELOS					
+				}
 			};
-			for (FiscalModelType type : FiscalModelType.values()) {
+ 			for (FiscalModelType type : FiscalModelType.values()) {
 				type.visit( visitor );
 			}
 		}

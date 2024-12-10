@@ -7,7 +7,9 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonTableButton;
 import com.esferalia.aon.gwt.fiscal.client.accounting.wizard.tedi.EditableInvoicePanel.IEditableInvoicePanelCallback;
 import com.esferalia.aon.occam.api.model.Account;
 import com.esferalia.aon.occam.api.model.finance.InvoiceVAT;
+import com.esferalia.aon.occam.api.model.type.Administration;
 import com.esferalia.aon.watson.util.AonCollectionUtils;
+import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.event.logical.shared.HasSelectionHandlers;
 import com.google.gwt.event.logical.shared.HasValueChangeHandlers;
 import com.google.gwt.event.logical.shared.SelectionEvent;
@@ -19,7 +21,6 @@ import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Focusable;
 import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.Widget;
 
 public class InvoiceVATPanel extends FlowPanel implements HasValueChangeHandlers<InvoiceVAT>, HasSelectionHandlers<Account>, Focusable {
 
@@ -35,7 +36,7 @@ public class InvoiceVATPanel extends FlowPanel implements HasValueChangeHandlers
 			}
 
 			@Override
-			Widget getLabel() {
+			Label getLabel() {
 				return new Label(AON.MSG.accountAbr());
 			}
 
@@ -61,7 +62,7 @@ public class InvoiceVATPanel extends FlowPanel implements HasValueChangeHandlers
 			}
 
 			@Override
-			Widget getLabel() {
+			Label getLabel() {
 				return new Label(AON.MSG.taxableBaseAbr());
 			}
 
@@ -87,7 +88,7 @@ public class InvoiceVATPanel extends FlowPanel implements HasValueChangeHandlers
 			}
 
 			@Override
-			Widget getLabel() {
+			Label getLabel() {
 				return new Label("% IVA");
 			}
 
@@ -113,7 +114,7 @@ public class InvoiceVATPanel extends FlowPanel implements HasValueChangeHandlers
 			}
 
 			@Override
-			Widget getLabel() {
+			Label getLabel() {
 				return new Label(AON.MSG.vatQuota());
 			}
 
@@ -139,7 +140,7 @@ public class InvoiceVATPanel extends FlowPanel implements HasValueChangeHandlers
 			}
 
 			@Override
-			Widget getLabel() {
+			Label getLabel() {
 				return new Label("% RE");
 			}
 
@@ -165,7 +166,7 @@ public class InvoiceVATPanel extends FlowPanel implements HasValueChangeHandlers
 			}
 
 			@Override
-			Widget getLabel() {
+			Label getLabel() {
 				return new Label(AON.MSG.surchargeQuota());
 			}
 
@@ -191,7 +192,7 @@ public class InvoiceVATPanel extends FlowPanel implements HasValueChangeHandlers
 			}
 
 			@Override
-			Widget getLabel() {
+			Label getLabel() {
 				return new Label(AON.MSG.actInvestAsset());
 			}
 
@@ -222,7 +223,7 @@ public class InvoiceVATPanel extends FlowPanel implements HasValueChangeHandlers
 			}
 
 			@Override
-			Widget getLabel() {
+			Label getLabel() {
 				return new Label(AON.MSG.inputVatAccount());
 			}
 
@@ -248,7 +249,7 @@ public class InvoiceVATPanel extends FlowPanel implements HasValueChangeHandlers
 			}
 
 			@Override
-			Widget getLabel() {
+			Label getLabel() {
 				return new Label(AON.MSG.outputVatAccount());
 			}
 
@@ -274,7 +275,7 @@ public class InvoiceVATPanel extends FlowPanel implements HasValueChangeHandlers
 			}
 
 			@Override
-			Widget getLabel() {
+			Label getLabel() {
 				return new Label("IRPF");
 			}
 
@@ -300,7 +301,7 @@ public class InvoiceVATPanel extends FlowPanel implements HasValueChangeHandlers
 			}
 
 			@Override
-			Widget getLabel() {
+			Label getLabel() {
 				return new Label("Supl.");
 			}
 
@@ -326,7 +327,7 @@ public class InvoiceVATPanel extends FlowPanel implements HasValueChangeHandlers
 			}
 
 			@Override
-			Widget getLabel() {
+			Label getLabel() {
 				return new Label("");
 			}
 
@@ -347,7 +348,7 @@ public class InvoiceVATPanel extends FlowPanel implements HasValueChangeHandlers
 		};
 
 		abstract String width();
-		abstract Widget getLabel();
+		abstract Label getLabel();
 		abstract boolean isHeaderEnabled(IEditableInvoicePanelCallback callback);
 		abstract boolean isRowCellEnabled(IEditableInvoicePanelCallback callback, final int vatIdx);
 		abstract boolean isEnabled(IEditableInvoicePanelCallback callback, final int vatIdx);
@@ -435,7 +436,9 @@ public class InvoiceVATPanel extends FlowPanel implements HasValueChangeHandlers
 				grid.getColumnFormatter().setWidth(idx, column.width());
 				grid.getCellFormatter().setStyleName(0, idx, AON.CSS.aonDisplayGridHeaderCell());
 				grid.getCellFormatter().setStyleName(0, idx, AON.CSS.aonNowrap());
-				grid.setWidget(0, idx, column.getLabel());
+				Label label = column.getLabel();
+				label.setText( decorateIVA(callback, label.getText() ) );
+				grid.setWidget(0, idx, label);
 				idx++;
 			}
 		}
@@ -450,6 +453,15 @@ public class InvoiceVATPanel extends FlowPanel implements HasValueChangeHandlers
 
 	}
 
+	private String decorateIVA(IEditableInvoicePanelCallback invoiceCallback, String oriLabel) {
+		String label = oriLabel;
+		if (invoiceCallback.getConfiguration().fiscal().getAdministration(null) == Administration.CANARIAS) {
+			label = AonStringUtils.replace(label, "I.V.A.", "IGIC");
+			label = AonStringUtils.replace(label, "IVA", "IGIC");
+		}
+		return label;
+	}
+	
 	private void addButtonsRow(IEditableInvoicePanelCallback callback) {
 		buttonsRow.clear();
 		addButton = new AonTableButton(AON.MSG.newAction(), AON.CSS.aonIconAdd());

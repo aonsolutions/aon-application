@@ -225,10 +225,10 @@ public class NotificationServlet extends HttpServlet{
 					&& ni.getSignature().getSignature() != "")
 				msg = msg+ "<p></p>"+ ni.getSignature().getSignature();
 			else msg = msg +"<p></p><table><tbody><tr><td>"	
-				+"<p style=\"color: #222;\">Para cualquier aclaraciÃ³n o informaciÃ³n adicional, no dude en contactar con nosotros.</p>"
+				+"<p style=\"color: #222;\">Para cualquier aclaración o información adicional, no dude en contactar con nosotros.</p>"
 				+"<p style=\"color: #222;\">"
 				+ "<div>"+getCompanyName(domain, login)+"</div>"
-				+"<div>Dpto. de AtenciÃ³n al cliente | <b>Gracias por confiar en nosotros</b></div>"
+				+"<div>Dpto. de Atención al cliente | <b>Gracias por confiar en nosotros</b></div>"
 				+ "</p>"
 				+ "</td></tr></tbody></table>"			
 				+ "</div></div>";

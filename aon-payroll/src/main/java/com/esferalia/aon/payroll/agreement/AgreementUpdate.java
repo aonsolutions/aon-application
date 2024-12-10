@@ -458,7 +458,7 @@ public class AgreementUpdate {
 				   	    	            AgreementLevel agreementLevel = agreement.getAgreementLevel(description, category);
 			   	    	            	
 			   	    	            	Node nodeConcept = elementCPI.getElementsByTagName("CONCEPTOS").item(0);
-			   	    	            	if (null != nodeConcept && nodeConcept.getNodeType() == Node.ELEMENT_NODE) {
+			   	    	            	if (null != nodeConcept && nodeConcept.getNodeType() == Node.ELEMENT_NODE && null != agreementLevel) {
 			   	    	            		Element elementConcept = (Element) nodeConcept;
 			   	    	            		
 			   	    	            		NodeList listCPTO = elementConcept.getElementsByTagName("CPTO_IT");

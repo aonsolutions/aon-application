@@ -226,7 +226,11 @@ class Mod303AEAT2024T3Declaration extends Mod303AEAT {
 		CT_C169(Mod303Key.CT_C169,
 				(mod, vat) -> c169Filter(mod,vat),
 				(ctx, mod, vat) -> greatherQuotaPercent(Mod303Key.CT_C169, mod, vat),
-				(ctx, mod) -> add(Mod303Key.CT_C169, mod, SURCHARGE_PERCENT_026), 
+				(ctx, mod) -> {
+					if (c169Filter(mod)) {
+						add(Mod303Key.CT_C169, mod, SURCHARGE_PERCENT_026);
+					}
+				}, 
 				null, null),
 		CT_C170(Mod303Key.CT_C170,
 				(mod, vat) -> c169Filter(mod,vat),
@@ -2500,6 +2504,17 @@ class Mod303AEAT2024T3Declaration extends Mod303AEAT {
 			);
 	}
 	
+	private static boolean c169Filter(Mod303 mod) {
+		//"00026", "00050" 	periodos 10 y 4T de 2024 y ejercicios posteriores
+		return (mod.getYear() > 2024
+		 	 || (mod.getYear() == 2024 
+		 	  && (mod.getPeriod() == Period.M10 
+			  ||  mod.getPeriod() == Period.M11 
+			  ||  mod.getPeriod() == Period.M12 
+			  ||  mod.getPeriod() == Period.T4))
+			);
+	}
+
 	private static boolean c17Filter(Mod303 mod, VatContext vat) {
 		//	Constante "00000", "00050" o "00062"	09 y 3T de 2024
 		//	Constante "00100"						A partir de 10 y 4T de 2024 y ejercicios posteriores

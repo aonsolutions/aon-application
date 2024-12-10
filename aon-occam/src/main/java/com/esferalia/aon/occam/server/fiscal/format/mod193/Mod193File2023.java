@@ -92,7 +92,7 @@ enum Mod193File2023 {
 	   ,(wr, mod190,detail) -> wr.append(AonFiscalFileUtils.unsigned(AonMathUtils.round(detail.getArabaRetention()),13,2)) // DIPUTACIÓN FORAL DE ARABA/ÁLAVA.
 	   ,(wr, mod190,detail) -> wr.append(AonFiscalFileUtils.unsigned(AonMathUtils.round(detail.getGipuzkoaRetention()),13,2)) // DIPUTACIÓN FORAL DE GIPUZKOA.
 	   ,(wr, mod190,detail) -> wr.append(AonFiscalFileUtils.unsigned(AonMathUtils.round(detail.getBizkaiaRetention()),13,2)) // DIPUTACIÓN FORAL DE BIZKAIA.
-	   ,(wr, mod190,detail) -> wr.append(detail.isCeutaMelilla()?"1":"0")
+	   ,(wr, mod190,detail) -> wr.append(AonFiscalFileUtils.text(detail.getCeutaMelillaPalma(),1))
 
 	   ,(wr, mod193,detail) -> wr.append(AonStringUtils.repeat(' ', 186))		
 	   ,(wr, mod193,detail) -> wr.append("\r\n")

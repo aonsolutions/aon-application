@@ -34,6 +34,7 @@ public class AccountStatementReport extends MainEntryPoint {
 	private static final String ACC_STATEMENT_REPORT_PRINT = "/aon_gwt_fiscal/roms/AccountStatementReportExcelPrint";
 	private static CommonServiceAsync commonService;
 
+
 	@Override
 	public void onModuleLoad() {
 		RootLayoutPanel root = RootLayoutPanel.get(getRootPanel() != null ? getRootPanel() : "rootPanel");
@@ -70,10 +71,23 @@ public class AccountStatementReport extends MainEntryPoint {
 		
 		AON.ensureInjected();
 		DockLayoutPanel dockLayoutPanel = new DockLayoutPanel(Unit.PX);
-		StatementPanelReport panel = new StatementPanelReport(options, true);
+		final AonToolbarButton filterButton = new AonToolbarButton("", AON.CSS.aonToolbarFilterContainer());
+		StatementPanelReport panel = new StatementPanelReport(options, true) {
+			@Override
+			public void closeFilterPanel() {
+				super.closeFilterPanel();
+	        	filterButton.setHTML("<span class='material-icons'>filter_alt</span>");
+			}
+			
+			@Override
+			public void openFilterPanel() {
+				super.openFilterPanel();
+	        	filterButton.setHTML("<span class='material-icons'>filter_alt_off</span>");
+			}
+		};
 		
 		AonToolbar toolbar = new AonToolbar("Extracto de cuentas");
-
+ 
 		FormPanel diskForm = new FormPanel("_blank");
 		diskForm.setMethod(FormPanel.METHOD_POST);
 		Hidden accountReportParamsHidden = new Hidden(IRequestParamsNames.ACCOUNT_REPORT_PARAMS);
@@ -104,7 +118,24 @@ public class AccountStatementReport extends MainEntryPoint {
 			}
 		});
 		buttonContainer.add(pdfPrint);
+		
+		filterButton.setHTML("<span class='material-icons'>filter_alt_off</span>");
+		
+		filterButton.addClickHandler(new ClickHandler() {
+
+		    @Override
+		    public void onClick(ClickEvent event) {
+		        if (panel.isFilterPanelOpened()) {
+		            panel.closeFilterPanel();
+		        } else {
+		            panel.openFilterPanel();
+
+		        }
+		    }
+		});
+		
 		toolbar.add(buttonContainer);
+		toolbar.add(filterButton);
 		dockLayoutPanel.addNorth(toolbar, AonToolbar.HEIGTH);
 		dockLayoutPanel.add( panel );
 		

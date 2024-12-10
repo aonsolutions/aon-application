@@ -12,6 +12,8 @@ public class SeresInfo implements Serializable {
 	private String password;
 	private SeresPath seresPath;
 
+	EdiCodes ediCodes;
+	
 	public String getServer() {
 		return server;
 	}
@@ -58,5 +60,13 @@ public class SeresInfo implements Serializable {
 	public SeresInfo setSeresPath(SeresPath seresPath) {
 		this.seresPath = seresPath;
 		return this;
+	}
+	
+	public EdiCodes getEdiCodes() {
+		return ediCodes;
+	}
+	
+	public void setEdiCodes(EdiCodes ediCodes) {
+		this.ediCodes = ediCodes;
 	}
 }

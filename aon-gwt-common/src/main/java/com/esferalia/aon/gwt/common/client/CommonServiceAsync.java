@@ -21,6 +21,7 @@ import com.esferalia.aon.occam.api.model.MarketingCampaign;
 import com.esferalia.aon.occam.api.model.MarketingCompaignParams;
 import com.esferalia.aon.occam.api.model.Newsletter;
 import com.esferalia.aon.occam.api.model.Occam;
+import com.esferalia.aon.occam.api.model.PayMethodParams;
 import com.esferalia.aon.occam.api.model.Question;
 import com.esferalia.aon.occam.api.model.QuestionParams;
 import com.esferalia.aon.occam.api.model.SellerParams;
@@ -96,9 +97,11 @@ public interface CommonServiceAsync {
 	// ************************************* [PAY_METHOD]
 	// **************************************************
 	
-	void getPayMethods(String domainName, int domain, String user,AsyncCallback<LinkedList<PayMethod>> callback);
-	void savePayMethod(String domainName,int domain, String user, PayMethod payMethod ,AsyncCallback<PayMethod> callback);
-	void deletePayMethod(String domainName,int domain, String user, Integer id, AsyncCallback<Void> callback);
+	void getPayMethods(String domainName, int domain, String user,AsyncCallback<LinkedList<PayMethod>> callback) throws AonCoreException;
+	void getPayMethods(PayMethodParams params,AsyncCallback<LinkedList<PayMethod>> callback) throws AonCoreException;
+	void savePayMethod(String domainName,int domain, String user, PayMethod payMethod ,AsyncCallback<PayMethod> callback) throws AonCoreException;
+	void deletePayMethod(String domainName,int domain, String user, Integer id, AsyncCallback<Void> callback) throws AonCoreException;
+	void groupPayMethod(String domainName,int domain, String user, List<PayMethod> selectedPaymethodList, PayMethod groupedPaymthod, AsyncCallback<Void> callback) throws AonCoreException;
 
 	// **************************************************
 	// **************************************** [INVOICE]

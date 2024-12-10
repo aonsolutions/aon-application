@@ -101,6 +101,12 @@ export const DEPOSIT = {
   subEntryPoint: 'deposit_new'
 };
 
+export const DEPOSIT_TEXT_MODE = {
+  module: GWT_AIO,
+  entryPoint: 'deposit',
+  subEntryPoint: 'deposit_text_mode'
+};
+
 export const EMPLOYEES = {
   title:'Integral de Nóminas',
   module: GWT_PAYROLL,
@@ -176,7 +182,11 @@ export const MAIN_CALCULATOR = {
 export const MAIN_CRETA = {
   title: 'Creta',
   module: GWT_PAYROLL,
-  entryPoint: 'MainCreta'
+  entryPoint: 'MainCreta',
+  javaScripts : [
+  { src: `${GWT_PAYROLL}/codemirror/addon/merge/diff_match_patch.js`},
+  { src: `${GWT_PAYROLL}/codemirror/lib/codemirrorcompressed.js`}
+  ]  
 };
 
 export const MAIN_CRA = {
@@ -330,6 +340,13 @@ export const MODEL_200 = {
   name: "Model 200",
   module: "aon_gwt_mod200",
   entryPoint: 'Model200'
+};
+
+export const MODEL_MATRIX = {
+  title:"Model 200",
+  name: "Model 200",
+  module: "aon_gwt_mod200",
+  entryPoint: 'ModelMatrix'
 };
 
 export const MODEL_202 = {

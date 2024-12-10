@@ -15,6 +15,7 @@ import com.esferalia.aon.gwt.fiscal.client.mod390.e2018.Model3902018;
 import com.esferalia.aon.gwt.fiscal.client.mod390.e2021.Model3902021;
 import com.esferalia.aon.gwt.fiscal.client.mod390.e2022.Model3902022;
 import com.esferalia.aon.gwt.fiscal.client.mod390.e2023.Model3902023;
+import com.esferalia.aon.gwt.fiscal.client.mod390.e2024.Model3902024;
 import com.esferalia.aon.gwt.fiscal.client.model.IFiscalModelCallback;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalStatus;
@@ -341,7 +342,9 @@ public class Model390 extends MainEntryPoint {
 	private void select(Model390ModuleOptions options, Mod390 selected) {
 		cleanErrorMessage();
 		if (selected.isAEAT()) {
-			if (selected.getYear() >= 2023) {
+			if (selected.getYear() >= 2024) {
+				declarationContainer.setWidget(new Model3902024(new Model390Callback(),selected));
+			} else if (selected.getYear() == 2023) {
 				declarationContainer.setWidget(new Model3902023(new Model390Callback(),selected));
 			} else if (selected.getYear() == 2022) {
 				declarationContainer.setWidget(new Model3902022(new Model390Callback(),selected));

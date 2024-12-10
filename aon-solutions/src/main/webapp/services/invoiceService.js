@@ -72,3 +72,5 @@ export const getInvoiceClosing = (data) => get(`${API_URL}/invoiceClosing`, data
 export const saveInvoiceClosing = (data) => post(`${API_URL}/invoiceClosing`, data);
 
 export const getTrailData = (data) => get(`${API_URL}/trial`, data);
+export const getChartInvoices = (data) => get(`${API_URL}/invoices/chart`, data);
+export const getChartInvoicesPeriod = (data) => get(`${API_URL}/invoices/chart/period`, data);

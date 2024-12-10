@@ -681,24 +681,34 @@ public class Invoice implements Serializable, HasAudit {
 	
 	public boolean isOutputVatEnabled() {
 		return !isUndeductible() && (
-			(isSales() && isNational())		// Venta Nacional
-			|| mustApplyISP());					// Aplicar la inversión de sujeto pasivo.	
+			(isSales() && isNational())				// Venta Nacional
+			|| mustApplyISP()						// Aplicar la inversión de sujeto pasivo.
+			|| (isSales()  							//  |
+				&& isVatImportationAvailable() 		//  | Regimen importacioon IOSS
+				&& isVatImportation()				//  | 
+				&& isVatImportationAmountValid())	//  |
+			|| isVatUnion() 						// Regimen Unión UOSS  
+			|| isVatUnionExternal() 				//  Regimen Exterior Unión UOSS
+			)
+		;
 	}
 	public boolean isVatImportationAvailable() {
 		return (isExtracommunity() || isCanCeuMel()) 
-				&& (isPurchase() || isExpenses()) 	 
-				&& !isService()
-			;
+			&& (isPurchase() || isExpenses() || isSales()) 	 
+			&& !isService()
+		;
 	}
 	
 	public boolean isInputVatEnabled() {
 		return !isUndeductible() && (
-			  (isPurchase() && isNational())						// Compra nacional 
-			|| (isExpenses() && isNational())						// Gasto nacional
-			|| (isVatImportationAvailable() && isVatImportation()	// Regimen importacioon
-				&& isVatImportationAmountValid())
-//				&& AonMathUtils.isLessThan(getTotal(), REG_IMPORT_MAX_VALUE0 ))	
-			|| mustApplyISP());										// Aplicar la inversión de sujeto pasivo.	
+			  (isPurchase() && isNational())		// Compra nacional 
+			|| (isExpenses() && isNational())		// Gasto nacional
+			|| (!isSales()							//  |
+				&& isVatImportationAvailable() 		//  |
+				&& isVatImportation()				//  | Regimen importacioon
+				&& isVatImportationAmountValid())	//  |
+			|| mustApplyISP())						// Aplicar la inversión de sujeto pasivo.
+		;
 	}
 	public boolean isVatImportationAmountValid() {
 		return getDetails() == null 
@@ -725,10 +735,25 @@ public class Invoice implements Serializable, HasAudit {
 	
 	// ----------- VAT REGIMES
 	
+	public boolean isVatUnion() {
+		return getFiscal() != null && getFiscal().isVatRegimeEnabled(VATTaxRegime.VAT_UNION);
+	}
+	public Invoice setVatUnion(boolean value) {
+		ensureFiscal().setVatRegime(VATTaxRegime.VAT_UNION, value);
+		return this;
+	}
+
+	public boolean isVatUnionExternal() {
+		return getFiscal() != null && getFiscal().isVatRegimeEnabled(VATTaxRegime.VAT_UNION_EXTERNAL);
+	}
+	public Invoice setVatUnionExternal(boolean value) {
+		ensureFiscal().setVatRegime(VATTaxRegime.VAT_UNION_EXTERNAL, value);
+		return this;
+	}
+
 	public boolean isVatImportation() {
 		return getFiscal() != null && getFiscal().isVatRegimeEnabled(VATTaxRegime.VAT_IMPORTATION);
 	}
-	
 	public Invoice setVatImportation(boolean value) {
 		ensureFiscal().setVatRegime(VATTaxRegime.VAT_IMPORTATION, value);
 		return this;

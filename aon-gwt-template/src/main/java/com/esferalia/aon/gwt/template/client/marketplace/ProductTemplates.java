@@ -8,6 +8,7 @@ import java.util.Vector;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.ContextMenu;
+import com.esferalia.aon.gwt.common.client.widget.Upload;
 import com.esferalia.aon.gwt.common.shared.AonData;
 import com.esferalia.aon.gwt.template.client.ITemplate;
 import com.esferalia.aon.gwt.template.client.ITemplateAsync;
@@ -311,57 +312,65 @@ public class ProductTemplates  extends ResizeComposite{
 					
 					@Override
 					protected void onAccept() {
-						hide();
-						pbd = new ProgressBarDialog(2.0, 1.0) {
-						};
-						pbd.addStyleName("gwt-PopupPanel-template");
-						pbd.setGlassEnabled(true);
-						pbd.show();
-						ListBox ecommerceListBox = (ListBox) flex_table.getWidget(0, 1);
-						Integer ordinal = Integer.parseInt(ecommerceListBox.getSelectedValue());
-						Ecommerce ecommerce = Ecommerce.values()[ordinal];
 						
-						ListBox sellerListBox = (ListBox) flex_table.getWidget(1, 1);
-						Seller seller = new Seller();
-						seller.setName(sellerListBox.getSelectedItemText());
-						seller.setId(Integer.parseInt(sellerListBox.getSelectedValue()));
-
-						TextBox typeTextBox = (TextBox) flex_table.getWidget(2, 1);
-						String type = typeTextBox.getText();
-
-						ListBox tagListBox = (ListBox) flex_table.getWidget(3, 1);
-						Tag tag = new Tag();
-						if(!tagListBox.getSelectedItemText().equals("-"))
-							tag.setName(tagListBox.getSelectedItemText())
-								.setId(Integer.parseInt(tagListBox.getSelectedValue()));
-
-						item.executeExcelEcommerce(getDomain(), getUser(), ecommerce, seller, type, tag, new AsyncCallback<Error>() {
+						Upload upload = new Upload() {
+							
 							@Override
-							public void onSuccess(Error result) {		
-								pbd.hide();
-								Dialog d2 = new Dialog("Importar Plantilla Ecommerce","Aceptar",true,"Cancelar",false,"importResponse");
-								d2.setError(result);
-								TemplatesDialog popup2 = new TemplatesDialog(getAonData(), d2){
-
-									@Override
-									protected void onAccept() {
-										hide();	
-										refreshDataGrid();
-									}
-												
-									@Override
-									protected void onCancel() {
-										hide();
-									}
+							protected void onUpload(String data, String type) {
+								hide();
+								pbd = new ProgressBarDialog(2.0, 1.0) {
 								};
-								popup2.addStyleName("gwt-PopupPanel-template");
-								popup2.setGlassEnabled(true);
-								popup2.show();
+								pbd.addStyleName("gwt-PopupPanel-template");
+								pbd.setGlassEnabled(true);
+								pbd.show();
+								ListBox ecommerceListBox = (ListBox) flex_table.getWidget(0, 1);
+								Integer ordinal = Integer.parseInt(ecommerceListBox.getSelectedValue());
+								Ecommerce ecommerce = Ecommerce.values()[ordinal];
+								
+								ListBox sellerListBox = (ListBox) flex_table.getWidget(1, 1);
+								Seller seller = new Seller();
+								seller.setName(sellerListBox.getSelectedItemText());
+								seller.setId(Integer.parseInt(sellerListBox.getSelectedValue()));
+
+								TextBox typeTextBox = (TextBox) flex_table.getWidget(2, 1);
+								String type2 = typeTextBox.getText();
+
+								ListBox tagListBox = (ListBox) flex_table.getWidget(3, 1);
+								Tag tag = new Tag();
+								if(!tagListBox.getSelectedItemText().equals("-"))
+									tag.setName(tagListBox.getSelectedItemText())
+										.setId(Integer.parseInt(tagListBox.getSelectedValue()));
+
+								item.executeExcelEcommerce(getDomain(), getUser(), ecommerce, seller, type2, tag, data, new AsyncCallback<Error>() {
+									@Override
+									public void onSuccess(Error result) {		
+										pbd.hide();
+										Dialog d2 = new Dialog("Importar Plantilla Ecommerce","Aceptar",true,"Cancelar",false,"importResponse");
+										d2.setError(result);
+										TemplatesDialog popup2 = new TemplatesDialog(getAonData(), d2){
+
+											@Override
+											protected void onAccept() {
+												hide();	
+												refreshDataGrid();
+											}
+														
+											@Override
+											protected void onCancel() {
+												hide();
+											}
+										};
+										popup2.addStyleName("gwt-PopupPanel-template");
+										popup2.setGlassEnabled(true);
+										popup2.show();
+									}
+													
+									@Override
+									public void onFailure(Throwable caught) {}
+								});
 							}
-											
-							@Override
-							public void onFailure(Throwable caught) {}
-						});
+						};
+						upload.upload();
 					}
 				};		
 				popup.addStyleName("gwt-PopupPanel-template");

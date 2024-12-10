@@ -8,11 +8,15 @@ import com.esferalia.aon.gwt.api.client.API;
 import com.esferalia.aon.gwt.api.client.JSON;
 import com.esferalia.aon.gwt.api.client.documental.JsAttach;
 import com.esferalia.aon.gwt.common.client.AON;
+import com.esferalia.aon.gwt.common.client.css.AonResources;
 import com.esferalia.aon.gwt.common.client.widget.DoubleBox;
 import com.esferalia.aon.gwt.common.client.widget.MinimizePanel;
 import com.esferalia.aon.gwt.common.client.widget.MinimizePanel.MaximizeEvent;
 import com.esferalia.aon.gwt.common.client.widget.MinimizePanel.MinimizeEvent;
-import com.esferalia.aon.occam.api.model.attachment.AttachType;
+import com.esferalia.aon.gwt.common.client.widget.Upload;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonButton;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomButton;
+import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.watson.util.AonMathUtils;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.FontWeight;
@@ -46,10 +50,9 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.vaadin.polymer.iron.widget.IronImage;
 import com.vaadin.polymer.paper.widget.PaperIconButton;
-import com.vaadin.polymer.vaadin.widget.VaadinUpload;
-import com.vaadin.polymer.vaadin.widget.event.UploadSuccessEvent;
-import com.vaadin.polymer.vaadin.widget.event.UploadSuccessEventHandler;
 
+import net.aonsolutions.aon.gwt.udapa.client.IUdapa;
+import net.aonsolutions.aon.gwt.udapa.client.IUdapaAsync;
 import net.aonsolutions.aon.gwt.udapa.client.Utils;
 import net.aonsolutions.aon.gwt.udapa.shared.quality.Destiny;
 import net.aonsolutions.aon.gwt.udapa.shared.quality.QualitySheetCode;
@@ -61,7 +64,8 @@ public class FootPanel extends Composite {
 
 	private static final Binder binder = GWT.create(Binder.class);
 		
-	
+	final IUdapaAsync impl = GWT.create(IUdapa.class);
+
 	QualitySheet parent;
 	
 	public API getAPI() {
@@ -92,40 +96,62 @@ public class FootPanel extends Composite {
 	}
 
 	public void imgPanel() {
+		VerticalPanel vp = new VerticalPanel();
+		vp.setWidth("100%");
+	    Button button = new Button();
+	    button.setStyleName(AON.AON_RESOURCES.css().aonDialogButton());
+	    button.setTitle("Subir Imagen");
+	    button.setText("Subir Imagen");
+		button.addClickHandler(new ClickHandler() {
+			
+			@Override
+			public void onClick(ClickEvent arg0) {
+				Upload upload = new Upload() {
+					
+					@Override
+					protected void onUpload(String data, String type) {
+						Integer domainId = parent.getAonData().getDomain().getId();
+						String domainName = parent.getAonData().getDomain().getName();
+						String login = parent.getAonData().getUser().getLogin();
+						Window.alert(domainId + " " + domainName + " " + login);
+						String s = parent.getDataResponse().getId() + "";
+						Integer id = Integer.parseInt(s);
+						impl.uploadImage(domainName, domainId, login, data, type, id, new AsyncCallback<Void>() {
+							
+							@Override
+							public void onSuccess(Void arg0) {
+								getAPI().getAttachment().getQualityImages(parent.getDataResponse().getId(), new AsyncCallback<JSON<JsAttach>>() {
+									@Override
+									public void onSuccess(JSON<JsAttach> result) {
+										vp.remove(1);
+										vp.add(imagePanel(result.getData().toLinkedList()));
+									}
+									
+									@Override public void onFailure(Throwable caught) {}
+								});
+							}
+							
+							@Override
+							public void onFailure(Throwable arg0) {
+								
+							}
+						});
+					}
+				};
+				upload.upload();
+				
+			}
+		});
+
+		vp.add(button);
+		imgPanel.setWidget(vp);
 		getAPI().getAttachment().getQualityImages(parent.getDataResponse().getId(), new AsyncCallback<JSON<JsAttach>>() {
 			
 			@Override
 			public void onSuccess(JSON<JsAttach> result) {
-				VerticalPanel vp = new VerticalPanel();
-				vp.setWidth("100%");
-				VaadinUpload upload = new VaadinUpload();
-				String dataRequest = "?domain_name="+parent.getAonData().getDomain().getName() 
-						+ "&domain_id="+ parent.getAonData().getDomain().getId()
-						+ "&login="+ parent.getAonData().getUser().getLogin()
-						+ "&id="+ parent.getDataResponse().getId()
-						+ "&attach_type=" + AttachType.DATA.getName();
-				upload.setTarget(GWT.getModuleBaseURL() + "ms/uploadImages"+ dataRequest);
-				upload.setAccept("image/*");
-				upload.addUploadSuccessHandler(new UploadSuccessEventHandler() {
-					
-					@Override
-					public void onUploadSuccess(UploadSuccessEvent event) {
-						getAPI().getAttachment().getQualityImages(parent.getDataResponse().getId(), new AsyncCallback<JSON<JsAttach>>() {
-							@Override
-							public void onSuccess(JSON<JsAttach> result) {
-								vp.remove(1);
-								vp.add(imagePanel(result.getData().toLinkedList()));
-							}
-							
-							@Override public void onFailure(Throwable caught) {}
-						});
-					}
-				});
 
-				vp.add(upload);
 				vp.add(imagePanel(result.getData().toLinkedList()));
-				// vp.add(new ImagePanel(result.getData()));
-				imgPanel.setWidget(vp);
+
 			}
 			
 			@Override public void onFailure(Throwable caught) {}
@@ -256,7 +282,7 @@ public class FootPanel extends Composite {
 			Double contractPrice = Double.parseDouble(product_price);
 
 			Double pFondo = dbPFondo.getValue() != null && !dbPFondo.getValue().equals("") ? dbPFondo.getValue() : 0.0;
-			Double z = pFondo > contractPrice ? (pFondo - contractPrice) * 0.55 : 0.0;
+			Double z = pFondo > contractPrice ? (pFondo - contractPrice) * 0.65 : 0.0;
 			Double price = contractPrice + z;
 			if(Destiny.BASERRI.equals(destiny)) {
 				price = price * 0.88;
@@ -430,7 +456,7 @@ public class FootPanel extends Composite {
 					});
 					
 					Double pFondo =dbPFondo.getValue();
-					Double z = pFondo > contractPrice ? (pFondo - contractPrice) * 0.55 : 0.0;
+					Double z = pFondo > contractPrice ? (pFondo - contractPrice) * 0.65 : 0.0;
 					Double price = contractPrice + z;
 					if(Destiny.BASERRI.equals(destiny)) {
 						price = price * 0.88;

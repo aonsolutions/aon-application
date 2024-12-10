@@ -61,6 +61,10 @@ import net.aonsolutions.db.up2date.tgss.SolidarityInsert;
 import net.aonsolutions.db.up2date.urlshortener.UrlShortenCreation;
 import net.aonsolutions.db.up2date.warehouse.SalesDetailAddDeliveryColumn;
 
+import net.aonsolutions.db.up2date.fiscal.AlterFsMod193Detail2024;
+import net.aonsolutions.db.up2date.fiscal.FsModel369Creation;
+import net.aonsolutions.db.up2date.tgss.SolidarityInsert;
+
 public class Up2Date {
 
     private static Update[] UPDATES = {
@@ -521,7 +525,11 @@ public class Up2Date {
     	// InvoiceBatchAlter.INVOICE_BATCH_ALTER
     		
     	// AlterFsMod2002020.ALTER_FS_MODEL_200_2020
-    	SolidarityInsert.SOLIDARITYINSERT	
+    	SolidarityInsert.SOLIDARITYINSERT,
+    	
+    	FsModel369Creation.FS_MODEL369_CREATION,
+    	AlterFsMod193Detail2024.ALTER_FS_MODEL_193_DETAIL_2024
+
 	};
 
     // ------------------------------------------------------------------------

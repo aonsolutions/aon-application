@@ -4,7 +4,9 @@ import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.CommonService;
@@ -86,13 +88,18 @@ public class FinanceModule extends MainEntryPoint {
 	
 	private static class FinanceRow {
 		private int row;
+		private HTMLPanel rowPanel;
 		private Finance finance;
-		private FinanceRow( int row, Finance finance) {
+		private FinanceRow( int row, HTMLPanel rowPanel, Finance finance) {
 			this.row = row;
+			this.rowPanel = rowPanel;
 			this.finance = finance;
 		}
 		private int getRow() {
 			return row;
+		}
+		private HTMLPanel getRowPanel() {
+			return rowPanel;
 		}
 		private Finance getFinance() {
 			return finance;
@@ -125,7 +132,7 @@ public class FinanceModule extends MainEntryPoint {
 	private AonCustomDateBox toInvoiceDate = new AonCustomDateBox("F. Fin Factura");
 	
 	private AonCustomDateBox fromDueDate = new AonCustomDateBox("F. Inicio Vto.");
-	private AonCustomDateBox toDueDate = new AonCustomDateBox("F. Inicio Vto.");
+	private AonCustomDateBox toDueDate = new AonCustomDateBox("F. Fin Vto.");
 	
 	private AonCustomListBox confidential = new AonCustomListBox("Confidecial");
 	private AonCustomListBox payment = new AonCustomListBox("Tipo");
@@ -248,6 +255,7 @@ public class FinanceModule extends MainEntryPoint {
 		// Auto search first time
 		enableMoreData();
 		container.clear();
+		container.add(messagePanel);
 		getTable();
 		container.add(table);
 		offset.setValue(0);
@@ -267,14 +275,12 @@ public class FinanceModule extends MainEntryPoint {
 			}
 		});
 		
-		amount = new AonCustomNumberBox("Importe") {
-			@Override protected void onNearChange() { search(opt, getParams(opt)); }
-		};
+		amount = new AonCustomNumberBox("Importe");
 		
 		concept = new AonCustomTextBox(this.isPayroll ? "Concepto" : "N\u00BA Documento");
 		
-		
 		amount.addValueChangeHandler(e -> search(opt, getParams(opt)));
+		
 		concept.addValueChangeHandler(e -> search(opt, getParams(opt)));
 		fromInvoiceDate.addValueChangeHandler(e -> search(opt, getParams(opt)));
 		toInvoiceDate.addValueChangeHandler(e -> search(opt, getParams(opt)));
@@ -301,7 +307,7 @@ public class FinanceModule extends MainEntryPoint {
 		
 		dockLayoutPanel.addFilterWidget(amount);
 		
-		if(this.isPayroll) dockLayoutPanel.addFilterWidget(payment);
+		if(!this.isPayroll) dockLayoutPanel.addFilterWidget(payment);
 		
 		// Status
 		Set<String> options = new LinkedHashSet<String>();
@@ -315,20 +321,22 @@ public class FinanceModule extends MainEntryPoint {
 		statusMultiSelectBox.addBlurHandler(new BlurHandler() {
             @Override
             public void onBlur(BlurEvent event) {
-            	//Window.alert(statusMultiSelectBox.getSelectedOptions().isEmpty() ? "No hay nada seleccionado" : String.join(", ", statusMultiSelectBox.getSelectedOptions()));
+//            	Window.alert(statusMultiSelectBox.getSelectedOptions().isEmpty() ? "No hay nada seleccionado" : String.join(", ", statusMultiSelectBox.getSelectedOptions()));
             	search(opt, getParams(opt));
             }
         });
 		
 		dockLayoutPanel.addFilterWidget(statusMultiSelectBox);
 		
-		HTMLPanel invoiceDatePanel = new HTMLPanel("");
-		invoiceDatePanel.setStyleName(AON.CSS.aonItemFlex());
-		
-		invoiceDatePanel.add(fromInvoiceDate);
-		invoiceDatePanel.add(toInvoiceDate);
-		
-		dockLayoutPanel.addFilterWidget(invoiceDatePanel);
+		if(!this.isPayroll) {
+			HTMLPanel invoiceDatePanel = new HTMLPanel("");
+			invoiceDatePanel.setStyleName(AON.CSS.aonItemFlex());
+			
+			invoiceDatePanel.add(fromInvoiceDate);
+			invoiceDatePanel.add(toInvoiceDate);
+			
+			dockLayoutPanel.addFilterWidget(invoiceDatePanel);
+		}
 		
 		HTMLPanel dueDatePanel = new HTMLPanel("");
 		dueDatePanel.setStyleName(AON.CSS.aonItemFlex());
@@ -338,7 +346,9 @@ public class FinanceModule extends MainEntryPoint {
 		
 		dockLayoutPanel.addFilterWidget(dueDatePanel);
 		
-		dockLayoutPanel.addFilterWidget(referenceCode);
+		if(!this.isPayroll)
+			dockLayoutPanel.addFilterWidget(referenceCode);
+		
 		dockLayoutPanel.addFilterWidget(concept);
 		
 		dockLayoutPanel.addFilterWidget(payMethod);
@@ -353,19 +363,20 @@ public class FinanceModule extends MainEntryPoint {
 		boolean confidentiality = opt.getConfiguration() != null 
 				&& opt.getUser() != null 
 				&& opt.getConfiguration().getUser().hasConfidentialityRole();
-		return new FinanceParams()
+		
+		Boolean isPayment = AonStringUtils.isBlank(payment.getValue()) ? null : (AonStringUtils.equals(payment.getValue(), "Pago") ? true : false);
+		
+		FinanceParams params = new FinanceParams()
 			.setDomain(opt.getDomain())
 			.setDescription(dockLayoutPanel.getSearchTextBox().getValue())
 			.setFromInvoiceDate(fromInvoiceDate.getValue())
 			.setToInvoiceDate(toInvoiceDate.getValue())
 			.setFromDueDate(fromDueDate.getValue())
 			.setToDueDate(toDueDate.getValue())
-			.setAmount(amount.getValue())
-			.setNearbyNumbers(amount.isNearBy())
 			.setConcept(concept.getValue())
 			.setReferenceCode(referenceCode.getValue())
 			.setPayMethod(AonStringUtils.isNotBlank(payMethod.getValue()) ? Integer.parseInt(payMethod.getValue()) : null)
-			.setPayment(AonStringUtils.isNotBlank(payment.getValue()) ? AonStringUtils.equals(payment.getValue(), "1") : null)
+			.setPayment(isPayment)
 			.setPending(statusMultiSelectBox.getSelectedOptions().contains("Pendiente"))
 			.setBatched(statusMultiSelectBox.getSelectedOptions().contains("Remesado"))
 			.setReturned(statusMultiSelectBox.getSelectedOptions().contains("Devuelto"))
@@ -375,6 +386,26 @@ public class FinanceModule extends MainEntryPoint {
 			.setHasConfidentialityRole(confidentiality)
 			.setIsPayroll(this.isPayroll)
 			;
+		
+		if(amount.isBetweenNumbers()) {
+			params
+				.setAmount(null)
+				.setGTAmount(amount.getGTValue())
+				.setLTAmount(amount.getLTValue())
+				.setBetweenNumbers(amount.isBetweenNumbers())
+				;
+		} else {
+			params
+				.setAmount(amount.getValue())
+				.setGTAmount(null)
+				.setLTAmount(null)
+				.setBetweenNumbers(amount.isBetweenNumbers())
+				;
+		}
+		
+		
+		
+		return params;
 	}
 	
 	public boolean isSettledChecked() {
@@ -437,7 +468,7 @@ public class FinanceModule extends MainEntryPoint {
 		  TYP(AonStringUtils.EMPTY		, "2rem" 			,"")
 		, CHK(AonStringUtils.EMPTY		, "2rem" 			,"")
 		, DDT("F. Vto."					, "6rem" 			,"")
-		, DOC("Concepto"				, "10rem"			,"")
+		, DOC("Concepto"				, "8rem"			,"")
 		, TIT("CIF/NIF/NIE"				, "6rem"			,"")
 		, AUTO("Titular"				, "-moz-available"  ,"min-width: 5rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
 		, PYM("Forma pago"				, "10.5rem"			,"")
@@ -588,7 +619,8 @@ public class FinanceModule extends MainEntryPoint {
 									@Override
 									public void onSuccess(Finance fin) {
 										progress();
-										paintRow(opt, fin, financeRow.getRow());
+										updateStatusField(financeRow.getRowPanel(), fin);
+										updateButtonsField(financeRow.getRowPanel(), fin, opt);
 									}
 									
 									private void progress() {
@@ -668,7 +700,8 @@ public class FinanceModule extends MainEntryPoint {
 										@Override
 										public void onSuccess(Finance fin) {
 											progress();
-											paintRow(opt, fin, financeRow.getRow());
+											updateStatusField(financeRow.getRowPanel(), fin);
+											updateButtonsField(financeRow.getRowPanel(), fin, opt);
 										}
 										
 										private void progress() {
@@ -745,7 +778,8 @@ public class FinanceModule extends MainEntryPoint {
 	}
 	
 	protected void checkAll(final FinanceModuleOptions opt, boolean check) {
-		for (FinanceRow financeRow : finances.values()) {
+		List<FinanceRow> filteredFinances = finances.values().stream().filter(finance -> !isPayroll || finance.getFinance().hasSalary() && (finance.getFinance().getAmount() + finance.getFinance().getExpenses()) == finance.getFinance().getSalaryTotalLiquid()).collect(Collectors.toList());
+		for (FinanceRow financeRow : filteredFinances) {
 			financeRow.getFinance().setSelected(check);
 			manageSelection(financeRow.getFinance());
 			Widget w = table.getWidget(financeRow.getRow(), 1);
@@ -846,7 +880,6 @@ public class FinanceModule extends MainEntryPoint {
 
 	private void paintRow(final FinanceModuleOptions opt, Finance finance) {
 		int row = table.getRowsCount();
-		finances.put(finance.getId(), new FinanceRow(row, finance));
 		paintRow(opt, finance, row);
 	}
 	
@@ -854,6 +887,7 @@ public class FinanceModule extends MainEntryPoint {
 		
 		HTMLPanel row = table.createRow();
 		
+		finances.put(finance.getId(), new FinanceRow(rowX, row, finance));
 		
 		AonTableButton paymentButton = new AonTableButton(finance.isPayment() ? "Pago" : "Cobro", finance.isPayment() ? AON.CSS.aonIconFinanceOut() : AON.CSS.aonIconFinanceIn());
 		table.addRow(row, paymentButton, COLS.TYP.getColWidth());
@@ -872,7 +906,8 @@ public class FinanceModule extends MainEntryPoint {
 				checkButton.removeStyleName(AON.CSS.aonIconCheck());
 			}
 		}); 
-		table.addRow(row, checkButton, COLS.CHK.getColWidth());
+		
+		table.addRow(row, ( !isPayroll || (finance.hasSalary() && (finance.getAmount() + finance.getExpenses()) == finance.getSalaryTotalLiquid()) ? checkButton : new Label() ), ( !isPayroll || (finance.hasSalary() && (finance.getAmount() + finance.getExpenses()) == finance.getSalaryTotalLiquid()) ? COLS.CHK.getColWidth() : "1rem" ));
 		
 		Label dueDate = new Label(AON.DATE_FORMAT.format(finance.getDueDate()));
 		table.addRow(row, dueDate, COLS.DDT.getColWidth());
@@ -906,6 +941,15 @@ public class FinanceModule extends MainEntryPoint {
 		Label regName = new Label(rname);
 		regName.setTitle(rname);
 		table.addInlineStyle(regName, COLS.AUTO.getCellStyleClass());
+		
+		if(isPayroll && finance.hasSalary() && (finance.getAmount() + finance.getExpenses()) != finance.getSalaryTotalLiquid()) {
+			regName.addStyleName(AON.CSS.aonColorOrange());
+			regName.setTitle("El importe de este vencimiento no coincide con el importe de la n\u00f3nmina asociada");
+		} else if(isPayroll && !finance.hasSalary()) {
+			regName.addStyleName(AON.CSS.aonColorRed());
+			regName.setTitle("Este vencimiento esta asociado a una nomina inexistente");
+		}
+		
 		table.addRow(row, regName, COLS.AUTO.getColWidth());
 		
 		Label payMethod = new Label(finance.getPayMethodName());
@@ -953,11 +997,11 @@ public class FinanceModule extends MainEntryPoint {
 		FlowPanel buttonContainer = new FlowPanel();
 		buttonContainer.getElement().getStyle().setTextAlign(TextAlign.CENTER);
 		
-		addButtons(buttonContainer, finance, opt);
+		addButtons(buttonContainer, row, finance, opt);
 		table.addRow(row, buttonContainer, COLS.ACT.getColWidth());
 	}
 	
-	private void addButtons(FlowPanel buttonContainer, Finance finance, FinanceModuleOptions opt) {
+	private void addButtons(FlowPanel buttonContainer, HTMLPanel row, Finance finance, FinanceModuleOptions opt) {
 		// *************************************************************************
 		// *******															 *******
 		// *******				TRACKING INFO BUTTON		 				 *******
@@ -1003,7 +1047,7 @@ public class FinanceModule extends MainEntryPoint {
 		// *******															 *******
 		// *************************************************************************
 		AonTableButton payButton = null;
-		if (finance.isFullPending() && finance.getId() != null) {
+		if (finance.isFullPending() && finance.getId() != null && !isPayroll) {
 			payButton = new AonTableButton(AON.MSG.toPay(), AON.CSS.aonIconFinancePay() );
 			final AonCustomDialog dialog = new AonCustomDialog();
 			String suffix = ( finance.isPayment()?" PAGO":" COBRO");
@@ -1040,7 +1084,8 @@ public class FinanceModule extends MainEntryPoint {
 
 												@Override
 												public void onSuccess(FinanceTracking tracking) {
-													FinanceModule.this.paintRow(opt, tracking.getFinance(), -1);
+													updateStatusField(row, tracking.getFinance());
+													updateButtonsField(row, tracking.getFinance(), opt);
 												}
 											});
 								}
@@ -1056,11 +1101,11 @@ public class FinanceModule extends MainEntryPoint {
 		
 		// *************************************************************************
 		// *******															 *******
-		// *******				SETTLE BUTTON		 				 			 *******
+		// *******				SETTLE BUTTON		 				 		 *******
 		// *******															 *******
 		// *************************************************************************
 		AonTableButton settleButton = null;
-		if (finance.isFullPending() && finance.getId() != null) {
+		if (finance.isFullPending() && finance.getId() != null && (!isPayroll || (finance.hasSalary() && (finance.getAmount() + finance.getExpenses()) == finance.getSalaryTotalLiquid()))) {
 			settleButton = new AonTableButton(AON.MSG.toSettle(), AON.CSS.aonIconFinanceSettle() );
 			settleButton.addClickHandler(new ClickHandler() {
 				
@@ -1084,7 +1129,8 @@ public class FinanceModule extends MainEntryPoint {
 
 								@Override
 								public void onSuccess(Finance fin) {
-									FinanceModule.this.paintRow(opt, fin, -1);
+									updateStatusField(row, fin);
+									updateButtonsField(row, fin, opt);
 								}
 
 							});						
@@ -1131,7 +1177,8 @@ public class FinanceModule extends MainEntryPoint {
 
 								@Override
 								public void onSuccess(Finance fin) {
-									FinanceModule.this.paintRow(opt, fin, -1);
+									updateStatusField(row, fin);
+									updateButtonsField(row, fin, opt);
 								}
 							});						
 						}
@@ -1187,7 +1234,8 @@ public class FinanceModule extends MainEntryPoint {
 
 												@Override
 												public void onSuccess(FinanceTracking tracking) {
-													FinanceModule.this.paintRow(opt, tracking.getFinance(), -1);
+													updateStatusField(row, tracking.getFinance());
+													updateButtonsField(row, tracking.getFinance(), opt);
 												}
 											});
 								}
@@ -1290,6 +1338,45 @@ public class FinanceModule extends MainEntryPoint {
 			deleteButton.addStyleName(AON.CSS.aonCustomRowButtom());
 			buttonContainer.add(deleteButton);
 		}
+	}
+
+	private void updateStatusField(HTMLPanel row, Finance finance) {
+		Label status = (Label) row.getWidget(isPayroll ? 8 : 10);
+		status.setText(finance.getFinanceStatus() == null ? "" : finance.getFinanceStatus().getDescription());
+		
+		finance.getFinanceStatus().visit( new IFinanceStatusVisitor() {
+			@Override
+			public void visitSettled() {
+				status.setStyleName(AON.CSS.aonColorBlue());
+			}
+			
+			@Override
+			public void visitReturned() {
+				status.setStyleName(AON.CSS.aonColorRed());
+				status.addStyleName(AON.CSS.aonBold());
+			}
+			
+			@Override
+			public void visitPending() {
+				status.setStyleName(AON.CSS.aonColorRed());
+			}
+			
+			@Override
+			public void visitPaid() {
+				status.setStyleName(AON.CSS.aonColorGreen());
+			}
+			
+			@Override
+			public void visitBatched() {
+				status.setStyleName(AON.CSS.aonColorGreen());
+			}
+		});
+	}
+
+	private void updateButtonsField(HTMLPanel row, Finance finance, FinanceModuleOptions opt) {
+		FlowPanel buttonsPanel = (FlowPanel) row.getWidget(isPayroll ? 9 : 11);
+		buttonsPanel.clear();
+		addButtons(buttonsPanel, row, finance, opt);
 	}
 
 	private static String formatToEuro(double amount) {

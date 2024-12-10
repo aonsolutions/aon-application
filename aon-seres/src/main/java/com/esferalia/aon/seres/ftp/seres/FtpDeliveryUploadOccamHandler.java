@@ -33,6 +33,7 @@ import com.esferalia.aon.occam.api.SERES;
 import com.esferalia.aon.occam.api.model.ApplicationParameter;
 import com.esferalia.aon.occam.api.model.registry.NoteType;
 import com.esferalia.aon.occam.api.model.seres.EdiCodes;
+import com.esferalia.aon.occam.api.model.seres.SeresInfo;
 import com.esferalia.aon.occam.api.model.type.DataResponseSource;
 import com.esferalia.aon.occam.api.model.warehouse.Delivery;
 import com.esferalia.aon.seres.ftp.SeresFtpConnectionProvider;
@@ -148,11 +149,11 @@ public class FtpDeliveryUploadOccamHandler implements Serializable {
 		checkValidLogin();
 		
 		try {
-			FtpStoreProcess fsp = new FtpStoreProcess(DataResponseSource.SERES_DELIVERY, domainName, domainId, login,
-					this.remotePath, this.server, this.port, this.user, this.password);
+			FtpStoreProcess fsp = new FtpStoreProcess(DataResponseSource.SERES_DELIVERY, domainName, domainId, login);
 			
 			for(Delivery delivery: deliveryList) {
 				String referenceCode = delivery.getSeries()+"_"+delivery.getNumber();
+				SeresInfo info = SERES.getSeresInfo(domainName, domainId, login, delivery);
 				FileOutput output = exportEdiFile(delivery);
 				if(output!=null && output.getErrors()!=null && output.getErrors().size()>0){
 					for(Exception e: output.getErrors()){
@@ -162,7 +163,7 @@ public class FtpDeliveryUploadOccamHandler implements Serializable {
 					fsp.track(Level.SEVERE, ResponseMessageType.COMMIT, delivery.getId(), referenceCode);
 				} else {
 					byte[] data = output.getContent();
-					fsp.put(delivery.getId(), data, referenceCode);
+					fsp.put(delivery.getId(), data, referenceCode, info);
 					fsp.track(Level.INFO, ResponseMessageType.COMMIT, delivery.getId(), referenceCode);
 				}
 			}

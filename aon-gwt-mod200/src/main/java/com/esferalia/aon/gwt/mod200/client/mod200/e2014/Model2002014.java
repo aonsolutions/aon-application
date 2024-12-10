@@ -7,11 +7,12 @@ import com.esferalia.aon.gwt.common.client.widget.DoubleBox;
 import com.esferalia.aon.gwt.common.client.widget.MinimizePanel;
 import com.esferalia.aon.gwt.common.client.widget.MinimizePanel.MinimizeEvent;
 import com.esferalia.aon.gwt.common.client.widget.ResultsPanel;
+import com.esferalia.aon.gwt.common.client.widget.Upload;
 import com.esferalia.aon.gwt.mod200.client.FiscalModelUtils;
 import com.esferalia.aon.gwt.mod200.client.mod200.Model200.Model200Callback;
+import com.esferalia.aon.gwt.mod200.client.mod200.Model200ModuleOptions;
 import com.esferalia.aon.occam.mod200.api.model.mod200_2014.Mod2002014;
 import com.esferalia.aon.occam.mod200.api.model.mod200_2014.ValidationMessage2014;
-import com.esferalia.aon.gwt.mod200.client.mod200.Model200ModuleOptions;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -227,7 +228,7 @@ public class Model2002014 extends ResizeComposite  {
 		popup.setAnimationEnabled(true);
 		popup.center();
 		page00.populate( mod200Object );
-		mod200Object.initializeMod200(new AsyncCallback<Mod2002014>() {
+		mod200Object.initializeMod200(null, new AsyncCallback<Mod2002014>() {
 			@Override
 			public void onSuccess(Mod2002014 result) {
 				popup.hide();
@@ -241,6 +242,31 @@ public class Model2002014 extends ResizeComposite  {
 			}
 		});
 	}
+	
+	void initialize(String data) {
+		final PopupPanel popup = new PopupPanel(false, true);
+		Label label = new Label(AON.MSG.processing());
+		label.addStyleName(AON.AON_CSS.aonTimer());
+		popup.add(label);
+		popup.setGlassEnabled(true);
+		popup.setAnimationEnabled(true);
+		popup.center();
+		page00.populate( mod200Object );
+		mod200Object.initializeMod200(data, new AsyncCallback<Mod2002014>() {
+			@Override
+			public void onSuccess(Mod2002014 result) {
+				popup.hide();
+				dump();
+			}
+			
+			@Override
+			public void onFailure(Throwable e) {
+				popup.hide();
+				raiseException(e);
+			}
+		});
+	}
+
 
 	private void dump() {
 		page00.dump(mod200Object);
@@ -555,54 +581,36 @@ public class Model2002014 extends ResizeComposite  {
 	
 	@UiHandler("importButton")
 	void onImportButtonClick(ClickEvent event) {
-		UploadDialog ud = new UploadDialog(AON.MSG.import2013(),GWT.getModuleBaseURL() +"Mod2002013BOEUpload") {
-			
+		Upload upload = new Upload() {
+	
 			@Override
-			protected void onCancel() {
-				hide();
-			}
-			
-			@Override
-			protected void onAccept() {
-				hide();
-				onInitializeClick(null);
+			protected void onUpload(String data, String type) {
+				initialize(data);
 			}
 		};
-		ud.addStyleName("gwt-PopupPanel-template");
-		ud.setGlassEnabled(true);
-		ud.center();
-		ud.show();
+		upload.upload();
 	}
 
 	@UiHandler("importAccountingButton")
 	void onImportAccountingButtonClick(ClickEvent event) {
-		UploadDialog ud = new UploadDialog(AON.MSG.importAccounting(),GWT.getModuleBaseURL() +"Mod2002014AccountingUpload") {
+		Upload upload = new Upload() {
 			
 			@Override
-			protected void onCancel() {
-				hide();
-			}
-			
-			@Override
-			protected void onAccept() {
-				mod200Object.fillMod2002014AccountingData(new AsyncCallback<Mod2002014>() {
+			protected void onUpload(String data, String type) {
+				mod200Object.fillMod2002014AccountingData(data, new AsyncCallback<Mod2002014>() {
 					@Override
 					public void onSuccess(Mod2002014 result) {
-						hide();
+
 					}
 					
 					@Override
 					public void onFailure(Throwable e) {
-						hide();
 						raiseException(e);
 					}
 				});
 			}
 		};
-		ud.addStyleName("gwt-PopupPanel-template");
-		ud.setGlassEnabled(true);
-		ud.center();
-		ud.show();
+		upload.upload();
 	}
 
 	private class WestFocusPanel extends FocusPanel {

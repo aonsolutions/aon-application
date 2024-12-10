@@ -250,7 +250,7 @@
 	
 	.aon-panelGrid-search .aon-panelGrid-odd,
 	.aon-panelGrid-search .aon-panelGrid-even {
-    	background-color: #fff;
+    	background-color: #fff !important;
 	}
 	
 	.aon-panelGrid-search .rich-stglpanel-header {
@@ -1900,6 +1900,109 @@
 		border-color: black;
 	}
 
+	.aon-color-green {
+		color: green;
+	}
+	
+	.aon-pending {
+		color: rgb(243, 159, 29);
+	}
+	
+	@keyframes rotate {
+		0% {
+			transform: rotate(0deg)
+		}
+		6% {
+		    transform: rotate(22deg)
+		}
+		12% {
+		    transform: rotate(45deg)
+		}
+		18% {
+		    transform: rotate(67deg)
+		}
+		25% {
+			transform: rotate(90deg)
+		}
+		31% {
+			transform: rotate(122deg)
+		}
+		37% {
+			transform: rotate(135deg);
+		}
+		43% {
+		    transform: rotate(157deg);
+		}
+		50% {
+		    transform: rotate(180deg);
+		}
+		56% {
+		    transform: rotate(192deg);
+		}
+		62% {
+		    transform: rotate(225deg);
+		}
+		68% {
+		    transform: rotate(237deg);
+		}
+		75% {
+		    transform: rotate(270deg);
+		}
+		81% {
+		    transform: rotate(282deg);
+		}
+		87% {
+		    transform: rotate(315deg);
+		}
+		93% {
+		    transform: rotate(327deg);
+		}
+		100% {
+		    transform: rotate(360deg);
+		}
+ 	}
+ 	
+ 	.rotate-animation{
+ 		animation-name: rotate; 
+ 		animation-duration: 1.0s; 
+ 		animation-iteration-count: infinite;
+	}
+
+	.aonButton-Pending{
+		border: 1px solid rgb(243, 159, 29);
+	  	border-radius: 5px;
+	  	margin-left: 10px;
+	}
+	
+	.aonButton-Error{
+		border: 1px solid red;
+	  	border-radius: 5px;
+	  	margin-left: 10px;
+	}
+	
+	.aonButton-Verified{
+		border: 1px solid green;
+	  	border-radius: 5px;
+	  	margin-left: 10px;
+	}
+	
+	.aonButton-Pending:hover,
+	.aonButton-Error:hover,
+	.aonButton-Verified:hover {
+  		font-weight: bold;
+	}
+	
+	[id*="sendVerifyEmail"] {
+		color: red !important;
+	}
+	
+	[id*="sendAgainVerifyEmail"] {
+		color: rgb(243, 159, 29) !important;
+	}
+	
+	[id*="sendTestEmailWindow"] {
+		color: green !important;
+	}
 	</style>
 
 	<script type="text/javascript">

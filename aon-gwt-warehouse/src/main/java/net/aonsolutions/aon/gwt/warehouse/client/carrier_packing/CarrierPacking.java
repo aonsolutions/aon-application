@@ -12,14 +12,12 @@ import com.esferalia.aon.gwt.api.client.warehouse.JsCarrierPacking;
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.css.AonResources;
 import com.esferalia.aon.gwt.common.client.polymer.AonDialog;
-import com.esferalia.aon.gwt.common.client.polymer.AonTemplate2;
-import com.esferalia.aon.gwt.common.client.widget.Toolbar;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonTemplate;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
 import com.esferalia.aon.gwt.common.shared.AonData;
 import com.esferalia.aon.occam.api.model.warehouse.CarrierPackingType;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Unit;
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.HorizontalPanel;
@@ -33,7 +31,6 @@ import com.vaadin.polymer.paper.PaperInputElement;
 import com.vaadin.polymer.paper.PaperItemElement;
 import com.vaadin.polymer.paper.PaperRadioButtonElement;
 import com.vaadin.polymer.paper.PaperToggleButtonElement;
-import com.vaadin.polymer.paper.widget.PaperIconButton;
 import com.vaadin.polymer.paper.widget.PaperInput;
 import com.vaadin.polymer.paper.widget.PaperRadioButton;
 import com.vaadin.polymer.paper.widget.event.ChangeEvent;
@@ -44,7 +41,7 @@ import net.aonsolutions.aon.gwt.warehouse.client.IWarehouseAsync;
 import net.aonsolutions.polymer.aon.AonComboBoxElement;
 import net.aonsolutions.polymer.aon.widget.AonComboBox;
 
-public class CarrierPacking extends AonTemplate2{
+public class CarrierPacking extends AonTemplate {
 	
 	final static AonResources AON_RESOURCES = GWT.create(AonResources.class);
 
@@ -54,7 +51,17 @@ public class CarrierPacking extends AonTemplate2{
 	public HashMap<String, LinkedList<String>> filterMap;
 	private CarrierPacking me = this;
 	
+	private AonToolbarButton backButton;
+	private AonToolbarButton newButton;
+	private AonToolbarButton deleteButton;
+	private AonToolbarButton printButton;
+	private AonToolbarButton sendButton;
+	private AonToolbarButton tokenButton;
+	private AonToolbarButton previousButton;
+	private AonToolbarButton nextButton;
+	
 	public CarrierPacking(AonData aonData) {
+		super("Packing List");
 		this.API = new API(GWT.getModuleBaseURL(), aonData.getMd5(),
 				aonData.getDomain().getName(), aonData.getDomain().getId(),
 				aonData.getUser().getLogin());
@@ -62,8 +69,6 @@ public class CarrierPacking extends AonTemplate2{
 	
 	@Override
 	public void onModuleLoad() {
-		super.onModuleLoad();
-
 		Polymer.importHref(Arrays.asList(
 				IronIconsElement.SRC,
 				"iron-icons/maps-icons.html",
@@ -80,6 +85,7 @@ public class CarrierPacking extends AonTemplate2{
 		});
 		
 		Polymer.whenReady( o -> {
+			super.onModuleLoad();
 			startApplication();
 			return null;
 		});
@@ -87,41 +93,45 @@ public class CarrierPacking extends AonTemplate2{
 	
 	private void startApplication() {
 		toolbar();
-		westContent();
 		content();
 	}
+	
+
 
 	private void toolbar() {
-		getDockLayoutPanel().setWidgetSize(getToolbar(), 23);
-		Toolbar toolbar = new Toolbar("Carrier Packing");
-		toolbar.addButton("Volver", AON.AON_CSS.aonIconCancel(), false).addClickHandler(backClickHandler());
-		toolbar.addButton(AON.MSG.newAction(), AON.AON_CSS.aonIconReset()).addClickHandler(resetClickHandler());
-		toolbar.addButton(AON.MSG.deleteAction(), AON.AON_CSS.aonIconDelete(), false).addClickHandler(deleteClickHandler());
-		toolbar.addButton("Impresi\u00f3n", AON.AON_CSS.aonIconPdf(), false).addClickHandler(printClickHandler());
-		toolbar.addButton("Enviar", "aon-icon-mail", false).addClickHandler(emailClickHandler());
-		toolbar.addButton("token", AON_RESOURCES.css().aonIconBrighteye(), false).addClickHandler(brighteyeClickHandler());
-		
-		PaperIconButton ant = new PaperIconButton();
-		ant.setNoink(true);
-		ant.setVisible(false);
-		ant.setStyle("margin:0px;padding:0px;height:20px;right:40px;position:absolute;");
-		ant.setIcon("chevron-left");
-		ant.addClickHandler(antClickHandler());
-		toolbar.addWidget(ant);
-		
-		PaperIconButton next = new PaperIconButton();
-		next.setNoink(true);
-		next.setVisible(false);
-		next.setStyle("margin:0px;padding:0px;height:20px;right:0px;position:absolute;");
-		next.setIcon("chevron-right");
-		next.addClickHandler(nextClickHandler());
-		toolbar.addWidget(next);
-		
-		setToolbar(toolbar);
-	}
+		getToolbar().getButtonContainer().clear();
 
-	private void westContent(){
+		backButton = new AonToolbarButton("Volver",
+			AON.CSS.aonIconBack(), false, e -> back());
+		getToolbar().add(backButton);
 		
+		newButton = new AonToolbarButton(AON.MSG.newAction(),
+			AON.CSS.aonIconAdd(), true, e -> createCarrierPacking());
+		getToolbar().add(newButton);
+		
+		deleteButton = new AonToolbarButton(AON.MSG.deleteAction(),
+			AON.CSS.aonIconDelete(), false, e -> removeCarrierPacking());
+		getToolbar().add(deleteButton);
+		
+		printButton = new AonToolbarButton("Impresi\u00f3n",
+			AON.CSS.aonIconPdf(), false, e -> print());
+		getToolbar().add(printButton);
+		
+		sendButton = new AonToolbarButton("Enviar",
+			AON.CSS.aonIconEmail(), false, e -> sendEmail());
+		getToolbar().add(sendButton);
+		
+		tokenButton = new AonToolbarButton("Token",
+			AON_RESOURCES.css().aonIconBrighteye(), false, e -> brighteye());
+		getToolbar().add(tokenButton);
+		
+		previousButton = new AonToolbarButton("Anterior",
+			AON.CSS.aonIconPrev(), false, e -> previous());
+		getToolbar().add(previousButton);
+		
+		nextButton = new AonToolbarButton("Siguiente",
+			AON.CSS.aonIconNext(), false, e -> next());
+		getToolbar().add(nextButton);
 	}
 	
 	/**
@@ -146,15 +156,13 @@ public class CarrierPacking extends AonTemplate2{
 	}
 
 	public void carrierPackingContent(JsCarrierPacking js){
-		Toolbar toolbar = (Toolbar) getToolbar().getWidget();
-		
-		toolbar.getButtonPanel().getWidget(0).setVisible(true);// setBackVisible(false);
-		toolbar.getButtonPanel().getWidget(2).setVisible(true);// setRemoveVisible(false);
-		toolbar.getButtonPanel().getWidget(3).setVisible(true);// setPrintVisible(false);
-		toolbar.getButtonPanel().getWidget(4).setVisible(true);// setEmailVisible(false);
-		toolbar.getButtonPanel().getWidget(5).setVisible(true);// setBrighteyeVisible(false);
-		toolbar.getButtonPanel().getWidget(6).setVisible(true);// setAntVisible(false);
-		toolbar.getButtonPanel().getWidget(7).setVisible(true);// setNextVisible(false);
+		backButton.setVisible(true);
+		deleteButton.setVisible(true);
+		printButton.setVisible(true);
+		sendButton.setVisible(true);
+		tokenButton.setVisible(true);
+		previousButton.setVisible(true);
+		nextButton.setVisible(true);
 
 		setContent(new CarrierPackingDetail(this, js));
 	}
@@ -341,139 +349,69 @@ public class CarrierPacking extends AonTemplate2{
 	
 	/***** BUTTON CLICK HANDLER *****/
 	
-	private ClickHandler backClickHandler() {
-		return new ClickHandler() {
+	private void back() {
+		toolbar();
+		content(filterMap);		
+	}
+	
+	private void print() {
+		CarrierPackingDetail w = (CarrierPackingDetail) getContent().getWidget();
+		API.getWarehouse().downloadPackingList(w.getJsCarrierPacking().getId());
+	}
+	
+	private void brighteye() {
+		CarrierPackingDetail w = (CarrierPackingDetail) getContent().getWidget();
+		Window.open("https://udapa.aonsolutions.net/udapa/qr?cp=" + w.getJsCarrierPacking().getId(), "_blank", null);
+	}
+	
+	private void previous() {
+		Integer page = Integer.parseInt(filterMap.get("page").get(0));
+		if(page > 1 ){
+			page = page - 1;
+			LinkedList<String> list = new LinkedList<>();
+			list.add(page.toString());
+			filterMap.put("page", list);
+			list = new LinkedList<>();
+			list.add("1");
+			filterMap.put("per_page", list);
 			
-			@Override
-			public void onClick(ClickEvent event) {
-				Toolbar toolbar = (Toolbar) getToolbar().getWidget();
+			getAPI().getWarehouse().getCarrierPacking(filterMap, new AsyncCallback<JSON<JsCarrierPacking>>() {
+					
+				@Override
+				public void onSuccess(JSON<JsCarrierPacking> result) {
+					setContent(new CarrierPackingDetail(me, result.getData().get(0)));
+				}
 				
-				toolbar.getButtonPanel().getWidget(0).setVisible(false);// setBackVisible(false);
-				toolbar.getButtonPanel().getWidget(2).setVisible(false);// setRemoveVisible(false);
-				toolbar.getButtonPanel().getWidget(3).setVisible(false);// setPrintVisible(false);
-				toolbar.getButtonPanel().getWidget(4).setVisible(false);// setEmailVisible(false);
-				toolbar.getButtonPanel().getWidget(5).setVisible(false);// setBrighteyeVisible(false);
-				toolbar.getButtonPanel().getWidget(6).setVisible(false);// setAntVisible(false);
-				toolbar.getButtonPanel().getWidget(7).setVisible(false);// setNextVisible(false);
+				@Override public void onFailure(Throwable caught) {}
+			});
+		}
+	}
+	
+	private void next() {
+		Integer page = Integer.parseInt(filterMap.get("page").get(0));
+		page = page + 1;
+		LinkedList<String> list = new LinkedList<>();
+		list.add(page.toString());
+		filterMap.put("page", list);
+		list = new LinkedList<>();
+		list.add("1");
+		filterMap.put("per_page", list);
 				
-				content(filterMap);
-			}
-		};
-	}
-	
-	private ClickHandler resetClickHandler() {
-		return new ClickHandler() {
-			
+		getAPI().getWarehouse().getCarrierPacking(filterMap, new AsyncCallback<JSON<JsCarrierPacking>>() {
+					
 			@Override
-			public void onClick(ClickEvent event) {
-				createCarrierPacking();
-			}
-		};
-	}
-	
-	private ClickHandler deleteClickHandler() {
-		return new ClickHandler() {
-			
-			@Override
-			public void onClick(ClickEvent event) {
-				removeCarrierPacking();
-			}
-		};
-	}
-	
-	private ClickHandler printClickHandler() {
-		return new ClickHandler() {
-			
-			@Override
-			public void onClick(ClickEvent event) {
-				CarrierPackingDetail w = (CarrierPackingDetail) getContent().getWidget();
-				API.getWarehouse().downloadPackingList(w.getJsCarrierPacking().getId());
-			}
-		};
-	}
-	
-	private ClickHandler brighteyeClickHandler() {
-		return new ClickHandler() {
-			
-			@Override
-			public void onClick(ClickEvent event) {
-				CarrierPackingDetail w = (CarrierPackingDetail) getContent().getWidget();
-				Window.open("https://udapa.aonsolutions.net/udapa/qr?cp=" + w.getJsCarrierPacking().getId(), "_blank", null);
-			}
-		};
-	}
-	
-	private ClickHandler emailClickHandler() {
-		return new ClickHandler() {
-			
-			@Override
-			public void onClick(ClickEvent event) {
-				sendEmail();
-			}
-		};
-	}
-	
-	private ClickHandler antClickHandler() {
-		return new ClickHandler() {
-			
-			@Override
-			public void onClick(ClickEvent event) {
-				Integer page = Integer.parseInt(filterMap.get("page").get(0));
-				if(page > 1 ){
-					page = page - 1;
+			public void onSuccess(JSON<JsCarrierPacking> result) {
+				if(result.getData().length() == 0){
+					Integer page = Integer.parseInt(filterMap.get("page").get(0));
+					page = page < 2 ? 1 : page - 1;
 					LinkedList<String> list = new LinkedList<>();
 					list.add(page.toString());
 					filterMap.put("page", list);
-					list = new LinkedList<>();
-					list.add("1");
-					filterMap.put("per_page", list);
-				
-					getAPI().getWarehouse().getCarrierPacking(filterMap, new AsyncCallback<JSON<JsCarrierPacking>>() {
-					
-						@Override
-						public void onSuccess(JSON<JsCarrierPacking> result) {
-							setContent(new CarrierPackingDetail(me, result.getData().get(0)));
-						}
-						
-						@Override public void onFailure(Throwable caught) {}
-					});
 				}
-			}
-		};
-	}
-	
-	private ClickHandler nextClickHandler() {
-		return new ClickHandler() {
+				setContent(new CarrierPackingDetail(me, result.getData().get(0)));					}
 			
-			@Override
-			public void onClick(ClickEvent event) {
-				Integer page = Integer.parseInt(filterMap.get("page").get(0));
-				page = page + 1;
-				LinkedList<String> list = new LinkedList<>();
-				list.add(page.toString());
-				filterMap.put("page", list);
-				list = new LinkedList<>();
-				list.add("1");
-				filterMap.put("per_page", list);
-				
-				getAPI().getWarehouse().getCarrierPacking(filterMap, new AsyncCallback<JSON<JsCarrierPacking>>() {
-					
-					@Override
-					public void onSuccess(JSON<JsCarrierPacking> result) {
-						if(result.getData().length() == 0){
-							Integer page = Integer.parseInt(filterMap.get("page").get(0));
-							page = page < 2 ? 1 : page - 1;
-							LinkedList<String> list = new LinkedList<>();
-							list.add(page.toString());
-							filterMap.put("page", list);
-						}
-						setContent(new CarrierPackingDetail(me, result.getData().get(0)));					}
-					
-					@Override public void onFailure(Throwable caught) {}
-				});
-			}
-		};
+			@Override public void onFailure(Throwable caught) {}
+		});	
 	}
 
-	
 }

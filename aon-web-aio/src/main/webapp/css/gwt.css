@@ -570,3 +570,20 @@ input[type='checkbox']:checked {
 .minWidth_2{
 	min-width: 2rem !important;
 }
+
+.aon_no_border_toolbar .aon_toolbar_inner{
+	border: none;
+}
+
+.aon_no_border_toolbar .aon_toolbar_button_container {
+	margin: 0;
+}
+
+.aon_no_border_toolbar .aon_toolbar_title_container {
+	padding: 0;
+}
+
+.aon-panelGrid-search .aon-panelGrid-odd,
+.aon-panelGrid-search .aon-panelGrid-even {
+	background-color: #FFF !important;
+}

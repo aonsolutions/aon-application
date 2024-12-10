@@ -26,9 +26,6 @@
 	<inherits name='com.esferalia.aon.gwt.payroll.PayrollAio' />
 	<inherits name="net.aonsolutions.aon.gwt.vaadin.VaadinAio"/>
 	<inherits name='com.google.gwt.user.theme.clean.Clean' />
-	
-	<!-- Include GWTUpload library -->
-  	<inherits name="gwtupload.GWTUpload"/>
   	
  	<!-- Load dinamically predefined styles in the library when the application starts -->
 	

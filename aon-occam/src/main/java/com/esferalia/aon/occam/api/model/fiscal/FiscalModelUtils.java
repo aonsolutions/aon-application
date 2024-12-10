@@ -32,7 +32,8 @@ public class FiscalModelUtils {
 				&& (mod.isAEAT() || ((mod.isAraba() || mod.isBizkaia()) && !mod.isLastPeriod()))
 		)
 		,M300	("300",mod -> (mod.getModel() == FiscalModelType.M303_RG || mod.getModel() == FiscalModelType.M303_RS || mod.getModel() == FiscalModelType.M303) && mod.isGipuzkoa() && mod.isQuarterPeriod() && !mod.isLastPeriod() )	
-		,M320	("320",mod -> (mod.getModel() == FiscalModelType.M303_RG || mod.getModel() == FiscalModelType.M303_RS || mod.getModel() == FiscalModelType.M303) && mod.isGipuzkoa() && mod.isMonthPeriod() && !mod.isLastPeriod() )	
+		,M320	("320",mod -> (mod.getModel() == FiscalModelType.M303_RG || mod.getModel() == FiscalModelType.M303_RS || mod.getModel() == FiscalModelType.M303) && mod.isGipuzkoa() && mod.isMonthPeriod() && !mod.isLastPeriod() )
+		,M420	("420",mod -> (mod.getModel() == FiscalModelType.M303 && mod.isCanarias() && mod.isQuarterPeriod())) 
 		
 		// ********** MODELO 390 **********
 		,M390	("390",mod -> mod.getModel() == FiscalModelType.M390 
@@ -71,6 +72,10 @@ public class FiscalModelUtils {
 
 		// ********** SII **********
 		,SII	("SII",mod -> mod.getModel() == FiscalModelType.SII)
+		
+		// ********** MODELO 369 ********** 
+		,M369	("369",mod -> mod.getModel() == FiscalModelType.M369)
+		
 		;
 		
 		private String name;

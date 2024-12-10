@@ -55,7 +55,10 @@ import com.google.gwt.http.client.RequestException;
 import com.google.gwt.http.client.Response;
 import com.google.gwt.http.client.UrlBuilder;
 import com.google.gwt.json.client.JSONObject;
+import com.google.gwt.json.client.JSONParser;
+import com.google.gwt.json.client.JSONValue;
 import com.google.gwt.user.client.Command;
+import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
@@ -239,16 +242,38 @@ public abstract class MarketingActionEntryPanel extends DockLayoutPanel {
 				    // Send the request
 				    requestBuilder.sendRequest(body.toString(), new RequestCallback() {
 				        public void onResponseReceived(Request request, Response response) {
-				        	marketingActionPanel.resetSearchOffset();
-							setMarketingAction(marketingAction);
+				        	JSONValue jsonValue = JSONParser.parseStrict(response.getText());
+				        	 String message = "";
+			        	    if (jsonValue != null && jsonValue.isObject() != null) {
+			        	        JSONObject jsonObject = jsonValue.isObject();
+			        	        
+			        	        JSONValue messageValue = jsonObject.get("message");
+			        	        message = null != messageValue ? messageValue.isString().stringValue() : "Error desconocido";
+			        	    }
+				        	
+				        	if(response.getStatusCode() == 400) {
+				        		AonMessagePanel.showError(messagePanel, message);
+				        	} else {
+				        		AonMessagePanel.showSuccess(messagePanel, message);
+				        		
+				        		Timer timer = new Timer() {
+					       		     @Override
+					       		     public void run() {
+					       		    	marketingActionPanel.resetSearchOffset();
+										setMarketingAction(marketingAction);
+					       		     }
+					       		};
+					       		timer.schedule(2500);
+					        	
+				        	}
 				        }
 
 						public void onError(Request request, Throwable exception) {
-							
+							Window.alert(exception.getMessage());
 				        }
 				    });
 				} catch (RequestException exception) {
-					
+					Window.alert("Catch : " + exception.getMessage());
 				}
 			}
 		}) {
@@ -815,7 +840,7 @@ public abstract class MarketingActionEntryPanel extends DockLayoutPanel {
 		searchPanel = new FlowPanel();
 		searchPanel.setStyleName(AON.CSS.aonSearchPanel());
 		searchPanel.addStyleName(AON.CSS.aonFlexBetween());
-		searchPanel.getElement().getStyle().setProperty("margin", "0 1rem");
+		searchPanel.getElement().getStyle().setProperty("margin", "0 1rem !important");
 		
 		filterPanel = new FlowPanel();
 		filterPanel.addStyleName(AON.CSS.aonItemFlex());

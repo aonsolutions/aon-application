@@ -462,7 +462,7 @@ public class DomainCompanyServlet extends AonApiHttpServlet {
 						updateChildsConectaUserBookingRItem(api, booking, customerId, logs);
 						
 					} else  {
-//						throw new AonApiException("ContrataciÃ³n no encontrada");
+//						throw new AonApiException("Contratación no encontrada");
 					}
 				}
 			}

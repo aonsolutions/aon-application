@@ -59,10 +59,16 @@ public class HibernateBlobManager implements IBlobManager {
 		if ( HttpServletRequestValve.getHttpServletRequest() != null ) {
 			serverName = HttpServletRequestValve.getServerName();	
 		}
+		
 		if (! StringUtils.isEmpty(serverName) ) {
 			AonDataSource ds = AonDataSource.getInstance();
-			connection = ds.getConnection(serverName);					
-		} else {
+			try {
+				connection = ds.getConnection(serverName);
+			} catch ( AonConnectionException e ) {
+			}
+		} 
+
+		if ( connection == null )  {
 			String factoryName = HibernateUtil.getSessionFactoryName(bo.getClass().getName());
 			SessionFactoryImplementor session = (SessionFactoryImplementor) HibernateUtil.getSessionFactory(factoryName);
 			ConnectionProvider connectionProvider = session.getConnectionProvider();

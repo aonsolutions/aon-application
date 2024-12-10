@@ -9,6 +9,6 @@ import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 @RemoteServiceRelativePath("Connect")
 public interface ConnectService extends RemoteService {
 
-	List<String> importZippedMod2002013(String domainName,int domain) throws AonCoreException;
+	List<String> importZippedMod2002013(String domainName,int domain, String data) throws AonCoreException;
 
 }
