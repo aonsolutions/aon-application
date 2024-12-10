@@ -6,7 +6,9 @@ import java.net.MalformedURLException;
 import java.text.DecimalFormat;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.Optional;
 
+import org.htmlunit.ElementNotFoundException;
 import org.htmlunit.FailingHttpStatusCodeException;
 import org.htmlunit.Page;
 import org.htmlunit.WebClient;
@@ -192,8 +194,22 @@ public class Certificado {
 
 			HtmlPage htmlPage = firstPageSepeCert(webClient);
 			
-			HtmlAnchor hrefButton = HtmlUnitToolkit.wait4(htmlPage, p -> p.getAnchorByHref("https://sede.sepe.gob.es/CertificadosRedTrabajaWEB/ActionMecanizacionEntradaEmpresa.do"))
-					.orElseThrow();
+//			Toolkit.buildFile(htmlPage.asXml().getBytes(),  System.getProperty("user.home")+"/Desktop/certifica2.html");
+			
+			HtmlAnchor hrefButton = null;
+			try {
+			    hrefButton = HtmlUnitToolkit.wait4(htmlPage, p -> p.getAnchorByHref("https://sede.sepe.gob.es/CertificadosRedTrabajaWEB/ActionMecanizacionEntradaEmpresa.do")).orElseThrow();
+			} catch (ElementNotFoundException e) {
+				Optional<HtmlForm> contactUpdateOptional = HtmlUnitToolkit.wait4(htmlPage, 
+				        p -> p.querySelector("#FormCertificadoElectronico"));
+
+				    if (contactUpdateOptional.isPresent()) {
+				        throw new SepeException("Antes de continuar con la comunicación debe actualizar en el SEPE, para este certificado digital, los datos, teléfono y email.");
+				    } else {
+				        throw new SepeException("Algo ha ido mal, por favor póngase en contacto con soporte.");
+				    }
+			}
+
 			htmlPage = (HtmlPage) hrefButton.click();
 
 			{// DATA ENTERPRISE
