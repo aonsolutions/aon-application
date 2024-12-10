@@ -4125,7 +4125,9 @@ public class SalaryDraft extends ResizeComposite
 	
 	@UiHandler("salaryButton")
 	void onSalaryButtonClick(ClickEvent event) {
-
+		
+		salaryButton.setEnabled(false);
+		
 		salaryDraftObject.save(new CalculateCallback() {
 
 			@Override
@@ -4136,11 +4138,13 @@ public class SalaryDraft extends ResizeComposite
 			public void onCalculateSucces(SalaryDraftObject object) {
 				SalaryDraft.this.onCalculateSucces(object);
 				SalaryDraft.this.salaryDraftObject.emitSalary(SalaryDraft.this);
+				salaryButton.setEnabled(true);
 			}
 
 			@Override
 			public void onCalculateFailure(Throwable throwable) {
 				SalaryDraft.this.onCalculateFailure(throwable);
+				salaryButton.setEnabled(true);
 			}
 		});
 			
