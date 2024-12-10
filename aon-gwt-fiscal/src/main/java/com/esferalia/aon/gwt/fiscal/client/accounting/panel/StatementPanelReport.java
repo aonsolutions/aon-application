@@ -18,6 +18,7 @@ import com.esferalia.aon.gwt.fiscal.client.accounting.AccountPeriodBox;
 import com.esferalia.aon.gwt.fiscal.client.accounting.AccountingReportModuleOptions;
 import com.esferalia.aon.occam.api.model.Account;
 import com.esferalia.aon.occam.api.model.AccountPeriod;
+import com.esferalia.aon.occam.api.model.AccountStatement;
 import com.esferalia.aon.occam.api.model.AccountingReportParams;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.EnterpriseActivity;
@@ -68,7 +69,10 @@ public class StatementPanelReport extends DockLayoutPanel implements Focusable, 
 	private AonAccountBox account;
 	private ListBox activity;
 	private CheckBox reverseOrder;
+	SimpleLayoutPanel filterPanel = new SimpleLayoutPanel();
+	private Label messageLabel;
 
+	
 	private boolean activitiesListBoxEnabled;
 	
 	
@@ -107,8 +111,8 @@ public class StatementPanelReport extends DockLayoutPanel implements Focusable, 
 		activitiesListBoxEnabled = (options.getConfiguration() != null && options.getConfiguration().hasActivities());
 		addStyleName(AON.CSS.aonScrollArea());
 		addStyleName(AON.CSS.aonMarginBottom());
-		SimpleLayoutPanel northPanel = new SimpleLayoutPanel();
-		addNorth(northPanel, 90);
+		addNorth(filterPanel, 110);
+		
 		centerPanel = new SimpleLayoutPanel();
 		add(centerPanel);
 		
@@ -370,37 +374,36 @@ public class StatementPanelReport extends DockLayoutPanel implements Focusable, 
 		min.addStyleName(AON.CSS.aonNowrap());
 		min.addStyleName(AON.CSS.aonWidthAll());
 		
-		AonSearchPanelButton maximize = new AonSearchPanelButton(AON.MSG.maximize(),AON.CSS.aonIconMaximize());
-		maximize.addClickHandler(new ClickHandler() {
+//		AonSearchPanelButton maximize = new AonSearchPanelButton(AON.MSG.maximize(),AON.CSS.aonIconMaximize());
+//		maximize.addClickHandler(new ClickHandler() {
+//			
+//			@Override
+//			public void onClick(ClickEvent event) {
+//				tab.removeStyleName(AON.CSS.aonDisplayNone());
+//				StatementPanelReport.this.setWidgetSize(filterPanel, 90 );
+//				StatementPanelReport.this.animate(500);
+//			}
+//		});
+//
+//		min.add(maximize);
+//		
+		AonSearchPanelButton close = new AonSearchPanelButton(AON.MSG.close(),AON.CSS.aonWidgetClose());
+		close.addClickHandler(new ClickHandler() {
 			
 			@Override
 			public void onClick(ClickEvent event) {
-				tab.removeStyleName(AON.CSS.aonDisplayNone());
-				StatementPanelReport.this.setWidgetSize(northPanel, 90 );
-				StatementPanelReport.this.animate(500);
+	            closeFilterPanel();
 			}
 		});
-
-		min.add(maximize);
-		
-		AonSearchPanelButton minimize = new AonSearchPanelButton(AON.MSG.minimize(),AON.CSS.aonIconMinimize());
-		minimize.addClickHandler(new ClickHandler() {
-			
-			@Override
-			public void onClick(ClickEvent event) {
-				tab.addStyleName(AON.CSS.aonDisplayNone());
-				StatementPanelReport.this.setWidgetSize(northPanel, 35);
-			}
-		});
-		min.add(minimize);
+		min.add(close);
 
 		mainTab.setWidget(0, 1, min);
 		mainTab.getCellFormatter().setStyleName(0,1, AON.CSS.aonSearchPanelLabel());
 
-		northPanel.setWidget(mainTab);
+		filterPanel.setWidget(mainTab);
 		if (params != null) {
 			tab.addStyleName(AON.CSS.aonDisplayNone());
-			StatementPanelReport.this.setWidgetSize(northPanel, 35);
+			StatementPanelReport.this.setWidgetSize(filterPanel, 35);
 			onSearch(options);
 		} else {
 			account.setFocus(true);
@@ -538,6 +541,36 @@ public class StatementPanelReport extends DockLayoutPanel implements Focusable, 
 					:SecurityLevel.OFFICIAL)
 			.setReverseOrder(reverseOrder.getValue())
 			;
+	}
+	
+	public void closeFilterPanel() {
+	    filterPanel.addStyleName(AON.CSS.aonDisplayNone());
+	    StatementPanelReport.this.setWidgetSize(filterPanel, 0);
+
+	    if (messageLabel == null) {
+	        messageLabel = new Label("Introduzca valores en el filtro de b\u00FAsqueda");
+	        messageLabel.setStyleName("gwt-InlineLabel aon_bold aon_closeFilter_message");
+	        centerPanel.add(messageLabel);
+	    }
+	}
+
+	public void openFilterPanel() {
+	    filterPanel.removeStyleName(AON.CSS.aonDisplayNone());
+	    StatementPanelReport.this.setWidgetSize(filterPanel, 110);
+	    StatementPanelReport.this.animate(500);
+
+	    if (messageLabel != null) {
+	    	centerPanel.remove(messageLabel);
+	        messageLabel = null;
+	    }
+	}
+	
+	public boolean isFilterPanelOpened() {
+		double filterPanelSize = getWidgetSize(filterPanel);
+		if (Double.compare(filterPanelSize, 0.0) == 0) {
+			return false;
+		}
+		return true;
 	}
 	
 }

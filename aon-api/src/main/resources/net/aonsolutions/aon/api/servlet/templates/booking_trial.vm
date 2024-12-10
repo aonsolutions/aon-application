@@ -1,0 +1,51 @@
+<html>
+<head></head>
+<body style="font-family: Arial, sans-serif; margin: 0; padding: 10px 0; color: #333;">
+    <table align="center" width="100%" style="padding: 20px;">
+        <tr>
+            <td align="center">
+                <table style="max-width: 650px; width: 100%; background-color: rgba(241, 240, 232, 0.1); border: 1px solid rgba(0, 0, 0, 0.1); border-radius: 10px; padding: 10px 15px;" cellpadding="0" cellspacing="0">
+                    <!-- Header -->
+                    <tr>
+                        <td align="center" style="padding: 20px;">
+                            <img src="$logo" alt="$parentName" style="max-width: 200px; border-radius: 10px;">
+                        </td>
+                    </tr>
+                    <!-- Title -->
+                    <tr>
+                        <td align="center" style="color: #333333; font-size: 24px; font-weight: bold; padding: 10px;">
+                            VERIFICACIÓN para la creación de empresa
+                        </td>
+                    </tr>
+                    <!-- Body -->
+                    <tr>
+                        <td style="color: #555555; font-size: 16px; line-height: 1.6; padding: 20px;">
+                            <p>Hemos recibido una solicitud para la creación de la empresa <strong>$name</strong> con NIF: <strong>$document</strong> desde esta cuenta de correo. Si ha sido Vd. pulse sobre el botón para continuar con la creación de la empresa.</p>
+                            <!-- Button -->
+                            <table align="center" style="margin-top: 20px;">
+                                <tr>
+                                    <td align="center">
+                                        <a href="$postUrl" style="display: inline-block; background-color: #28a745; color: white; padding: 12px 24px; text-decoration: none; font-size: 16px; font-weight: bold; border-radius: 5px; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);">
+                                            Crear Empresa
+                                        </a>
+                                    </td>
+                                </tr>
+                            </table>
+                            <p style="margin-top: 20px;">En caso contrario, ignore este correo y no realizaremos ninguna acción adicional.</p>
+                            <p style="margin-top: 20px;">Esta empresa será creada como una <strong>empresa de prueba</strong> para fines de evaluación.</p>
+                        </td>
+                    </tr>
+                    <!-- Footer -->
+                    <tr>
+                        <td align="center" style="color: #666666; font-size: 12px; padding: 20px;">
+                            <p>Si tienes alguna duda, por favor contacta con soporte: 
+                            	<a style="color: #007bff; text-decoration: none;" href="mailto:$contact">$contact</a>.
+                           	</p>
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    </table>
+</body>
+</html>

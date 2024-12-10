@@ -535,7 +535,7 @@
 	
 	.aon-panelGrid-search .aon-panelGrid-odd,
 	.aon-panelGrid-search .aon-panelGrid-even {
-    	background-color: #fff;
+    	background-color: #fff !important;
 	}
 	
 	.aon-panelGrid-search .rich-stglpanel-header {
@@ -1784,16 +1784,17 @@
     	background: none;
     	border-radius: 16px;
     	border: 1px solid #aaa;
+    	font-weight: normal;
 	}
 	
-	.rich-fileupload-list-decor {
+/* 	.rich-fileupload-list-decor {
 		display: none;
 	}
 	
 	.rich-fileupload-button-content {
 		display: none;
 	}
-	
+ */	
 	.rich-fileupload-button-light{
 		background-color:#f6f6f6;
 	}
@@ -2876,7 +2877,7 @@
 	#aonContent\:newProjectModalPanelContentDiv,
 	#aonContent\:newRegistrySupplierModalPanelContentDiv */
 	[id*="PanelContentDiv"] {
-	    width: fit-content !important;
+	    min-width: fit-content !important;
 		min-height: fit-content !important;
 		padding-bottom: 35px;
 	}

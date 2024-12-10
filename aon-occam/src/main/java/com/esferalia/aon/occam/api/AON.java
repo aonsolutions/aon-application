@@ -166,6 +166,7 @@ import com.esferalia.aon.occam.api.model.Newsletter;
 import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.OldTask;
 import com.esferalia.aon.occam.api.model.Options;
+import com.esferalia.aon.occam.api.model.PayMethodParams;
 import com.esferalia.aon.occam.api.model.PayrollWorkplace;
 import com.esferalia.aon.occam.api.model.Person;
 import com.esferalia.aon.occam.api.model.ProjectFilter;
@@ -7902,6 +7903,12 @@ public class AON {
 		}
 	}
 	
+	public static LinkedList<PayMethod> getPayMethods(PayMethodParams params) {
+		try(CloseableAONContext ctx = AONContext.getAONContext(params.getDomainName(), params.getDomain(), params.getUser())) {
+			return getFinance().getPayMethods(ctx, params);
+		}
+	}
+	
 	public static PayMethod getPayMethod(String domainName, Integer domainId, String login, PayMethodFilter filter) {
 		try(CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)) {
 			return getFinance().getPayMethod(ctx, filter);
@@ -7921,6 +7928,12 @@ public class AON {
 	public static void deletePayMethod(String domainName, Integer domainId, String login, Integer id) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)) {
 			getFinance().deletePayMethod(ctx, id); 
+		}
+	}
+	
+	public static void groupPayMethod(String domainName, Integer domainId, String login, List<PayMethod> selectedPaymethodList, PayMethod groupedPaymthod) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)) {
+			getFinance().groupPayMethod(ctx, selectedPaymethodList, groupedPaymthod); 
 		}
 	}
 

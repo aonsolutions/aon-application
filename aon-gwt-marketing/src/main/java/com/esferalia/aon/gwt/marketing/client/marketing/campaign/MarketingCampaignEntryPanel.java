@@ -414,7 +414,7 @@ public abstract class MarketingCampaignEntryPanel extends DeckLayoutPanel {
 		searchPanel = new FlowPanel();
 		searchPanel.setStyleName(AON.CSS.aonSearchPanel());
 		searchPanel.addStyleName(AON.CSS.aonFlexBetween());
-		searchPanel.getElement().getStyle().setProperty("margin", "0 1rem");
+		searchPanel.getElement().getStyle().setProperty("margin", "0 1rem !important");
 		
 		filterPanel = new FlowPanel();
 		filterPanel.addStyleName(AON.CSS.aonItemFlex());

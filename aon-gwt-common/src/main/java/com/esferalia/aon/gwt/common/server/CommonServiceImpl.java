@@ -9,6 +9,7 @@ import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import com.esferalia.aon.gwt.common.client.AsyncCallbackWrapper;
 import com.esferalia.aon.gwt.common.client.CommonService;
 import com.esferalia.aon.occam.api.ACCOUNTING;
 import com.esferalia.aon.occam.api.AON;
@@ -33,6 +34,7 @@ import com.esferalia.aon.occam.api.model.MarketingCampaign;
 import com.esferalia.aon.occam.api.model.MarketingCompaignParams;
 import com.esferalia.aon.occam.api.model.Newsletter;
 import com.esferalia.aon.occam.api.model.Occam;
+import com.esferalia.aon.occam.api.model.PayMethodParams;
 import com.esferalia.aon.occam.api.model.Question;
 import com.esferalia.aon.occam.api.model.QuestionParams;
 import com.esferalia.aon.occam.api.model.SellerParams;
@@ -72,6 +74,7 @@ import com.esferalia.aon.occam.api.model.type.TagType;
 import com.esferalia.aon.occam.impl.jooq.dao.DataResponseDAO;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.util.AonStringUtils;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 
 import jakarta.servlet.annotation.WebServlet;
 
@@ -176,8 +179,12 @@ public class CommonServiceImpl extends AonStatelessRemoteServiceServlet implemen
 	// **************************************************
 	
 	@Override
-	public LinkedList<PayMethod> getPayMethods(String domainName, int domain, String user) {
+	public LinkedList<PayMethod> getPayMethods(String domainName, int domain, String user) throws AonCoreException {
 		return AON.getPayMethods(domainName, domain, user);
+	}
+	@Override
+	public LinkedList<PayMethod> getPayMethods(PayMethodParams params) throws AonCoreException {
+		return AON.getPayMethods(params);
 	}
 	@Override
 	public PayMethod savePayMethod(String domainName, int domain, String user, PayMethod payMethod) throws AonCoreException {
@@ -186,6 +193,10 @@ public class CommonServiceImpl extends AonStatelessRemoteServiceServlet implemen
 	@Override
 	public void deletePayMethod(String domainName, int domain, String user, Integer id) throws AonCoreException {
 		AON.deletePayMethod(domainName, domain, user, id);
+	}
+	@Override
+	public void groupPayMethod(String domainName, int domain, String user, List<PayMethod> selectedPaymethodList, PayMethod groupedPaymthod) throws AonCoreException {
+		AON.groupPayMethod(domainName, domain, user, selectedPaymethodList, groupedPaymthod);
 	}
 
 	// **************************************************
