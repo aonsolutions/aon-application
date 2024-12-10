@@ -216,7 +216,7 @@ public class SeresDAO {
 	
 	private static SeresPath getInvoiceSeresPath(AONContext ctx, Integer registry) {
 		String note = getRegistryNoteComments(ctx, "SERES_SEND_INVOICE", registry);
-		return	!AonStringUtils.isBlank(note) ? SeresPath.safeValueOf(note) : SeresPath.ENVIO_INVOIC_D96A;
+		return	!AonStringUtils.isBlank(note) ? SeresPath.safeValueOf(note) : SeresPath.ENVIO_INVOIC_D93A;
 	}
 	
 	private static SeresPath getDeliverySeresPath(AONContext ctx, Integer registry) {

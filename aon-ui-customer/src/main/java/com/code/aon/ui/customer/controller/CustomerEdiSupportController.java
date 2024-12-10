@@ -85,7 +85,7 @@ public class CustomerEdiSupportController extends CustomerEdiSupport implements 
 	
 	public SeresPath getSendInvoice() {
 		if(sendDesadv == null)
-			return SeresPath.ENVIO_INVOIC_D96A;
+			return SeresPath.ENVIO_INVOIC_D93A;
 		return sendInvoice;
 	}
 	
