@@ -800,7 +800,7 @@ public class SQLPartialTimeTestCase extends AbstractSQLTestCase {
 				new HashMap<String, String>() {
 					{
 						put(ContextVariable.TC2.getName(), format("\"%s\"",
-								random(PARTIAL_TIME).getValue()));
+								C200.getValue()));
 
 						put(MONDAY_HOURS.getName(), format("%d", 4));
 						put(TUESDAY_HOURS.getName(), format("%d", 4));
