@@ -11,7 +11,9 @@ public enum NoteType implements Serializable {
     OBSERVATION,
     MESSAGE,
     TRACKING,
-    FACTURAE;
+    FACTURAE,
+    EDI;
+	
 	
 	private NoteType() {
 	

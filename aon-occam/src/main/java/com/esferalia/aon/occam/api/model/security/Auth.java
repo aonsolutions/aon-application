@@ -4,6 +4,8 @@ import java.io.Serializable;
 import java.util.LinkedList;
 import java.util.List;
 
+import com.esferalia.aon.watson.util.AonStringUtils;
+
 @SuppressWarnings("serial")
 public class Auth implements Serializable {
 	
@@ -87,6 +89,11 @@ public class Auth implements Serializable {
 	public Auth setSurname(String surname) {
 		this.surname = surname;
 		return this;
+	}
+	
+	public String getFullname() {
+		return AonStringUtils.isBlank(name) ? "" : name.substring(0, 1).toUpperCase() + name.substring(1).toLowerCase() + 
+				(AonStringUtils.isBlank(surname) ? "" : " " + surname.substring(0, 1).toUpperCase() + surname.substring(1).toLowerCase());
 	}
 
 	public String getDocument() {
