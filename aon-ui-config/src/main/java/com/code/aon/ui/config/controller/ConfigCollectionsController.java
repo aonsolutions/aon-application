@@ -168,6 +168,7 @@ public class ConfigCollectionsController implements Serializable {
 			administrations.add(new SelectItem(Administration.BIZKAIA, Administration.BIZKAIA.getName(locale)));
 			administrations.add(new SelectItem(Administration.GIPUZKOA, Administration.GIPUZKOA.getName(locale)));
 			administrations.add(new SelectItem(Administration.NAVARRA, Administration.NAVARRA.getName(locale)));
+			administrations.add(new SelectItem(Administration.CANARIAS, Administration.CANARIAS.getName(locale)));
 		}
 		return administrations;
 	}

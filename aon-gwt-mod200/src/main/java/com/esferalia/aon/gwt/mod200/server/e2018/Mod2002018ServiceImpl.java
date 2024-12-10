@@ -1,6 +1,10 @@
 package com.esferalia.aon.gwt.mod200.server.e2018;
 
+import java.io.ByteArrayInputStream;
 import java.util.LinkedList;
+
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.Unmarshaller;
 
 import com.esferalia.aon.gwt.common.server.AonRemoteServiceServlet;
 import com.esferalia.aon.gwt.mod200.client.mod200.e2018.Mod2002018Service;
@@ -9,6 +13,8 @@ import com.esferalia.aon.occam.api.model.CompanyBank;
 import com.esferalia.aon.occam.mod200.api.FISCAL;
 import com.esferalia.aon.occam.mod200.api.model.mod200_2017.Mod2002017;
 import com.esferalia.aon.occam.mod200.api.model.mod200_2018.Mod2002018;
+import com.esferalia.aon.occam.mod200.impl.jooq.dao.mod200_2017.jaxb.MOD2002017;
+import com.esferalia.aon.occam.mod200.impl.jooq.dao.mod200_2017.jaxb.XMLtoMod2002017;
 import com.esferalia.aon.occam.mod200.impl.jooq.dao.mod200_2018.jaxb.MOD2002018;
 import com.esferalia.aon.occam.mod200.impl.jooq.dao.mod200_2018.jaxb.XMLtoMod2002018;
 import com.esferalia.aon.occam.mod200.server.format.mod200_2018.Mod2002018Import2017;
@@ -35,21 +41,10 @@ public class Mod2002018ServiceImpl extends AonRemoteServiceServlet implements Mo
 	
 	@Override
 	public Mod2002018 initializeMod2002018(String domainName, int domain, Mod2002018 mod200) {
-		HttpServletRequest request = getThreadLocalRequest();
 		try {
-			Mod2002017 mod2002017 = (Mod2002017) request.getSession().getAttribute("Mod2002017Import");
-			if (mod2002017 != null) {
-				if (!AonStringUtils.equals( mod2002017.getDocument(), mod200.getDocument())) {
-					throw new AonCoreException("El NIF del documento importado no coincide");
-				}
-				Mod2002018Import2017.import2017(mod200, mod2002017);
-				mod200.setInitializedFromLastYear(true);
-			}
 			return FISCAL.initializeMod2002018(domainName,domain,this.getUserLogin(),mod200);
 		} catch ( Throwable t) {
 			throw new AonCoreException(t);
-		} finally {
-			request.getSession().removeAttribute("Mod2002017Import");
 		}
 	}
 
@@ -99,22 +94,24 @@ public class Mod2002018ServiceImpl extends AonRemoteServiceServlet implements Mo
 	}
 	
 	@Override
-	public Mod2002018 fillMod2002018AccountingData(Mod2002018 mod200)
-			throws AonCoreException {
-		HttpServletRequest request = getThreadLocalRequest();
+	public Mod2002018 fillMod2002018AccountingData(Mod2002018 mod200, String data) throws AonCoreException {
 		try {
-			MOD2002018 mod = (MOD2002018) request.getSession().getAttribute("Mod2002018Accounting");
-			if (mod == null) {
-				throw new AonCoreException("El fichero no se ha recibido correctamente");	
-			}
-			if (mod200 != null) {
-				XMLtoMod2002018.fillMod2002018(mod, mod200);
+			
+			if(data != null) {
+				byte[] fileData = java.util.Base64.getDecoder().decode(data);
+				
+				ByteArrayInputStream input = new ByteArrayInputStream(fileData);
+				JAXBContext context = JAXBContext.newInstance(MOD2002018.class);
+				Unmarshaller um = context.createUnmarshaller();
+				MOD2002018 mod = (MOD2002018) um.unmarshal(input);
+				
+				if (mod200 != null) {
+					XMLtoMod2002018.fillMod2002018(mod, mod200);
+				}				
 			}
 			return mod200; 
 		} catch ( Throwable t) {
 			throw new AonCoreException(t);
-		} finally {
-			request.getSession().removeAttribute("Mod2002018Accounting");
 		}
 	}
 	

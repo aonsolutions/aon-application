@@ -1,0 +1,41 @@
+<html>
+<head></head>
+<body style="font-family: Arial, sans-serif;  margin: 0; padding: 10px 0; color: #333;">
+    <table align="center" width="100%" padding: 20px;">
+        <tr>
+            <td align="center">
+                <table style="max-width: 650px; width: 100%; background-color: rgba(241, 240, 232, 0.1); border: 1px solid rgba(0, 0, 0, 0.1); border-radius: 10px; padding: 10px 15px; margin-top: 50px;" cellpadding="0" cellspacing="0">
+                    <!-- Header -->
+                    <tr>
+                        <td align="center" style="padding: 20px;">
+                            <img src="$logo" alt="$parentName" style="max-width: 200px; border-radius: 10px;">
+                        </td>
+                    </tr>
+                    <!-- Title -->
+                    <tr>
+                        <td align="center" style="color: #333333; font-size: 24px; font-weight: bold; padding: 10px;">
+                            Empresa ya existente: <strong>$name</strong>
+                        </td>
+                    </tr>
+                    <!-- Body -->
+                    <tr>
+                        <td style="color: #555555; font-size: 16px; line-height: 1.6; padding: 20px;">
+                            <p>La empresa que se ha registrado ya existe. Intente acceder con sus credenciales.</p>
+                            <p>A continuación le detallamos los datos de acceso:</p>
+                            <p><strong>Link Web:</strong> <a href="$url" style="color: #007bff; text-decoration: none;">$name</a></p>
+                        </td>
+                    </tr>
+                    <!-- Footer -->
+                    <tr>
+                        <td align="center" style="color: #666666; font-size: 12px; padding: 20px;">
+                            <p>Si tienes alguna duda, por favor contacta con soporte: 
+                            	<a style="color: #007bff; text-decoration: none;" href="mailto:$contact">$contact</a>.
+                            </p>
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    </table>
+</body>
+</html>

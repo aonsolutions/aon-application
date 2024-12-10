@@ -4,13 +4,13 @@ import java.io.Serializable;
 
 public enum VatSummaryType implements Serializable {
 
-	 NATIONAL 		("Nacional"		,vat -> vat.isNational() && !vat.isFarmerRegime())
-	,SURCHARGE 		("Rec. Equiv."	,vat -> false)	
+	 NATIONAL 		("Op. Interiores"			,vat -> vat.isNational() && !vat.isFarmerRegime())
+	,SURCHARGE 		("Rec. Equiv."				,vat -> false)	
 	,FARMER 		("R\u00E9g. Agr\u00EDc."	,vat -> vat.isNational() && vat.isFarmerRegime())
-	,INTRACOMMUNITY	("Intracomun."	,vat -> vat.isIntracommunity())
-	,EXTRACOMMUNITY	("Extracomun."	,vat -> vat.isExtracommunity())
-	,CAN_CEU_MEL	("Can/Ceu/Mel"	,vat -> vat.isCanCeuMel())
-	,OTHER_ISP		("I.S.P."		,vat -> vat.isOtherISP())
+	,INTRACOMMUNITY	("Intracomun."				,VatContext::isIntracommunity)
+	,EXTRACOMMUNITY	("Extracomun."				,VatContext::isExtracommunity)
+	,CAN_CEU_MEL	("Can/Ceu/Mel"				,VatContext::isCanCeuMel)
+	,OTHER_ISP		("I.S.P."					,VatContext::isOtherISP)
 	;
 	
 

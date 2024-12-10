@@ -469,6 +469,7 @@ public class MarketingCampaignDAO {
 				.leftOuterJoin(PROJECT)
 				.on(PROJECT.ID.eq(PROJECT_COMMERCIAL.PROJECT).and(PROJECT.NAME.eq(params.getMarketingAction().getDescription())))
 				.where(condition)
+				.groupBy(TARGET.REGISTRY)
 				.orderBy(TargetDAO.TARGET_ALIAS.NAME)
 				.limit(params.getOffset(), params.getLimit())
 				.fetch()

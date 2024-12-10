@@ -65,6 +65,10 @@ public class TramoBuilder {
 		return tramo;
 	}
 	
+	public boolean isEmpty() {
+		return datos.isEmpty();
+	}
+	
 	
 	public TramoBuilder addDato(DatoSolicitado dato) {
 		datos.add(dato);

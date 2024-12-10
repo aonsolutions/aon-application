@@ -75,6 +75,80 @@ public class CommercialDAO {
 				.fetchInto(COMMERCIAL_TRACKING).stream().map(new FullCommercialTrackingFiller());
 	}
 	
+	public static CommercialTracking save(AONContext ctx, CommercialTracking commercialTracking){
+		
+		if(null == commercialTracking.getId()) {
+			Integer commecialTrackingId = ctx.getDslContext().insertInto(COMMERCIAL_TRACKING)
+				.set(COMMERCIAL_TRACKING.DOMAIN, commercialTracking.getDomain())
+				.set(COMMERCIAL_TRACKING.DATE, new Timestamp(commercialTracking.getDate().getTime()))
+				.set(COMMERCIAL_TRACKING.SELLER, commercialTracking.getSeller())
+				.set(COMMERCIAL_TRACKING.PROJECT_COMMERCIAL, commercialTracking.getProjectCommercial())
+				.set(COMMERCIAL_TRACKING.ACTIVITY, commercialTracking.getActivity())
+				.set(COMMERCIAL_TRACKING.COMMENTS, commercialTracking.getComments())
+				.set(COMMERCIAL_TRACKING.STATUS, commercialTracking.getStatus())
+				.set(COMMERCIAL_TRACKING.NEXT_COMMERCIAL_TRACKING, commercialTracking.getNextCommercialTracking())
+				.set(COMMERCIAL_TRACKING.END_DATE, null == commercialTracking.getEndDate() ? null : new Timestamp(commercialTracking.getEndDate().getTime()))
+				.set(COMMERCIAL_TRACKING.OFFER, commercialTracking.getOffer())
+				.set(COMMERCIAL_TRACKING.ALLDAY, null != commercialTracking.getAllday() && commercialTracking.getAllday() ? (byte)1 : (byte)0)
+				.set(COMMERCIAL_TRACKING.LOCATION, commercialTracking.getLocation())
+				.set(COMMERCIAL_TRACKING.EVENTID, commercialTracking.getEventId())
+				.returning(COMMERCIAL_TRACKING.ID)
+				.fetchOne(COMMERCIAL_TRACKING.ID)
+				;
+				
+			
+			return commercialTracking.setId(commecialTrackingId);
+		} else {
+			ctx.getDslContext().update(COMMERCIAL_TRACKING)
+				.set(COMMERCIAL_TRACKING.DATE, new Timestamp(commercialTracking.getDate().getTime()))
+				.set(COMMERCIAL_TRACKING.SELLER, commercialTracking.getSeller())
+				.set(COMMERCIAL_TRACKING.PROJECT_COMMERCIAL, commercialTracking.getProjectCommercial())
+				.set(COMMERCIAL_TRACKING.ACTIVITY, commercialTracking.getActivity())
+				.set(COMMERCIAL_TRACKING.COMMENTS, commercialTracking.getComments())
+				.set(COMMERCIAL_TRACKING.STATUS, commercialTracking.getStatus())
+				.set(COMMERCIAL_TRACKING.NEXT_COMMERCIAL_TRACKING, commercialTracking.getNextCommercialTracking())
+				.set(COMMERCIAL_TRACKING.END_DATE, null == commercialTracking.getEndDate() ? null : new Timestamp(commercialTracking.getEndDate().getTime()))
+				.set(COMMERCIAL_TRACKING.OFFER, commercialTracking.getOffer())
+				.set(COMMERCIAL_TRACKING.ALLDAY, null != commercialTracking.getAllday() && commercialTracking.getAllday() ? (byte)1 : (byte)0)
+				.set(COMMERCIAL_TRACKING.LOCATION, commercialTracking.getLocation())
+				.set(COMMERCIAL_TRACKING.EVENTID, commercialTracking.getEventId())
+				.where(COMMERCIAL_TRACKING.ID.eq(commercialTracking.getId()))
+				.execute()
+				;
+			
+		
+			return commercialTracking;
+		}
+	}
+	
+	public static CommercialActivity save(AONContext ctx, CommercialActivity commercialActivity){
+		
+		if(null == commercialActivity.getId()) {
+			Integer commecialActivityId = ctx.getDslContext().insertInto(COMMERCIAL_ACTIVITY)
+				.set(COMMERCIAL_ACTIVITY.DOMAIN, commercialActivity.getDomain())
+				.set(COMMERCIAL_ACTIVITY.NAME, commercialActivity.getName())
+				.set(COMMERCIAL_ACTIVITY.PROBABILITY, commercialActivity.getProbability())
+				.set(COMMERCIAL_ACTIVITY.SURVEY, commercialActivity.getSurvey())
+				.returning(COMMERCIAL_ACTIVITY.ID)
+				.fetchOne(COMMERCIAL_ACTIVITY.ID)
+				;
+				
+			return commercialActivity.setId(commecialActivityId);
+		} else {
+			ctx.getDslContext().update(COMMERCIAL_ACTIVITY)
+				.set(COMMERCIAL_ACTIVITY.NAME, commercialActivity.getName())
+				.set(COMMERCIAL_ACTIVITY.PROBABILITY, commercialActivity.getProbability())
+				.set(COMMERCIAL_ACTIVITY.SURVEY, commercialActivity.getSurvey())
+				.where(COMMERCIAL_ACTIVITY.ID.eq(commercialActivity.getId()))
+				.execute()
+				;
+			
+			return commercialActivity;
+		}
+		
+		
+	}
+	
 	public static void updateEventId(AONContext ctx, Integer ctId, String eventId){
 		ctx.getDslContext().update(COMMERCIAL_TRACKING)
 		.set(COMMERCIAL_TRACKING.EVENTID, eventId)

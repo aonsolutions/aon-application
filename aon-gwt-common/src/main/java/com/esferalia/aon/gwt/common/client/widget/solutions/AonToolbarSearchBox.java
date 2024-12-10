@@ -34,7 +34,7 @@ public abstract class AonToolbarSearchBox extends FlowPanel{
 		});
 		this.add(text);
 		
-		AonToolbarButton moreButton = new AonToolbarButton(AON.MSG.advancedSearch(), AON.CSS.aonIconDown());
+		AonToolbarButton moreButton = new AonToolbarButton(AON.MSG.advancedSearch(), AON.CSS.aonIconFilterList());
 		moreButton.addClickHandler(event -> {
 			if(getAdvancedSearch() != null) {
 				PopupPanel popup = new PopupPanel();

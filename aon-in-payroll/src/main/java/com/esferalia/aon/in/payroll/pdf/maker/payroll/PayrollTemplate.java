@@ -22,6 +22,7 @@ import static com.esferalia.aon.in.payroll.pdf.api.toolkit.PDFToolkit.drawTextCe
 import static com.esferalia.aon.in.payroll.pdf.api.toolkit.PDFToolkit.drawTextRight;
 import static com.esferalia.aon.in.payroll.pdf.maker.payroll.bean.CraTypes.getType;
 import static com.esferalia.aon.in.payroll.pdf.maker.payroll.bean.DeductionTypes.getType;
+import static com.esferalia.aon.in.payroll.pdf.maker.payroll.bean.DefaultPayrollFuseBox.getDeductionsByType;
 import static java.util.ResourceBundle.getBundle;
 
 import java.io.ByteArrayInputStream;
@@ -67,6 +68,7 @@ import com.esferalia.aon.in.payroll.pdf.maker.payroll.bean.PDFPayment;
 import com.esferalia.aon.in.payroll.pdf.maker.payroll.bean.PayrollTypes;
 import com.esferalia.aon.in.payroll.pdf.maker.payroll.bean.UnknownCraException;
 import com.esferalia.aon.in.payroll.tgss.cra.CRAException;
+import com.esferalia.aon.occam.api.model.type.DeductionType;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.watson.util.AonDateUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
@@ -528,22 +530,43 @@ public class PayrollTemplate implements IPayrollTemplate {
 			y -= 15;
 
 			if (localTotal != 0)
-			    m.getValue().stream().forEach(n -> {
+			    m.getValue().stream()
+			    .sorted((d1,d2) -> { 
+			    	int compareTo = d1.getDeductionType().orElse(DeductionType.OTHER).compareTo(d2.getDeductionType().orElse(DeductionType.OTHER));
+			    	if ( compareTo == 0 )
+			    		compareTo = d1.getName().orElse("").compareTo(d2.getName().orElse(""));
+			    	return compareTo;
+			    })
+			    .forEach(n -> {
 				String entryValue = toLatinNumber(n.getAmount().orElse(null)) + " " + text("MONEDA");
 				String entryPercent = (n.getPercent().isEmpty()) ? ""
 					: toLatinNumber(n.getPercent().get()) + " % ";
-				String entryTxt = n.getPercent().map( p -> " por ").orElse("") + n.getDescription().orElse("").replaceAll("<.*>", "");
-
+				String description = getDescription(n);
+				String entryTxt = n.getPercent().map( p -> " por ").orElse("") + description.replaceAll("<.*>", "");
+				
+				
 				if (n.getAmount().isPresent() && n.getAmount().get() != 0) {
 				    PdfText quantity = new PdfText(x, y, 60, 15, contents, entryPercent, BLACK,
 					    HELVETICA, fontSize, RIGHT);
 				    quantity.draw();
 
-				    PdfText t2 = new PdfText(x + 64, y, 270, 15, contents, entryTxt, BLACK, HELVETICA,
-					    fontSize, LEFT);
-				    t2.drawCroppableLine();
 
-				    PdfText t3 = new PdfText(x + 64 + 270, y, 60, 15, contents, entryValue, BLACK,
+					if ( n.getDeductionType().orElse(null) == DeductionType.SOLIDARITY ) {
+					    PdfText t2 = new PdfText(x + 64, y, 210, 15, contents, entryTxt, BLACK, HELVETICA,
+							    fontSize, LEFT);
+						    t2.drawCroppableLine();
+						String entryBase = (n.getBase().isEmpty()) ? ""
+								: toLatinNumber(n.getBase().get()) + " " + text("MONEDA");
+					    PdfText base = new PdfText(x + 64 + 210 , y, 60, 15, contents, entryBase, BLACK,
+							    HELVETICA, fontSize, RIGHT);
+						    base.draw();
+					} else {
+					    PdfText t2 = new PdfText(x + 64, y, 270, 15, contents, entryTxt, BLACK, HELVETICA,
+							    fontSize, LEFT);
+						    t2.drawCroppableLine();
+					}
+
+					PdfText t3 = new PdfText(x + 64 + 270, y, 60, 15, contents, entryValue, BLACK,
 					    HELVETICA, fontSize, RIGHT);
 				    t3.draw();
 
@@ -601,11 +624,11 @@ public class PayrollTemplate implements IPayrollTemplate {
 	    final String type = text("TIPO").toUpperCase();
 	    final String base = text("BASE").toUpperCase();
 
-	    final String commonContingenciesTitle = "1. " + text("CONTINGENCIAS COMUNES");
+	    final String commonContingenciesTitle = text("CONTINGENCIAS COMUNES");
 	    final String monthlyAmmountTitle = text("IMPORTE DE REMUNERACION MENSUAL");
 	    final String extraHourProrrationTitle = text("IMPORTE PRORRATA DE PAGA EXTRAORDINARIA");
 
-	    final String meiTitle = "2. " + text("MECANISMO DE EQUIDAD INTERGENERACIONAL");
+	    final String meiTitle = text("MECANISMO DE EQUIDAD INTERGENERACIONAL");
 
 	    final String profContingenciesTitle = "3. "
 		    + text("CONTINGENCIAS PROFESIONALES Y CONCEPTOS DE RECAUDACION CONJUNTA");
@@ -614,12 +637,12 @@ public class PayrollTemplate implements IPayrollTemplate {
 	    final String profesFormTitle = text("FORMACION PROFESIONAL");
 	    final String fogasaTitle = text("FONDO DE GARANTIA SALARIAL");
 	    
-	    
+		final String		   solidarityTitle		   = text("SOLIDARIDAD");
 
-	    final String extraHoursTitle = "4. " + text("COTIZACION ADICIONAL POR HORAS EXTRAS");
+	    final String extraHoursTitle = text("COTIZACION ADICIONAL POR HORAS EXTRAS");
 	    final String forceMajeureTitle = text("FUERZA MAYOR O");
 	    final String noStructTitle = text("NO ESTRUCTURALES");
-	    String irpfTitle = "5. " + text("BASE SUJETA A RETENCION IRPF") + " ";
+	    String irpfTitle = text("BASE SUJETA A RETENCION IRPF") + " ";
 	    final String totalContingenciesTitle = text("TOTAL APORTACIONES");
 	    final ContingencyBases conts = contigencies.get();
 
@@ -714,7 +737,9 @@ public class PayrollTemplate implements IPayrollTemplate {
 	    drawBox(contents, x + 336, y, 70, 20, LIGHT_GRAY);
 	    drawTextRight(contents, new PDRectangle(x + 336, y, 70, 20), base, BLACK, HELVETICA, fontSize - 1, 5, 7);
 
-	    drawText(contents, commonContingenciesTitle, x, y, BLACK, HELVETICA_BOLD, fontSize - 1);
+	    int index = 1;
+	    
+	    drawText(contents, index++ + ". " + commonContingenciesTitle, x, y, BLACK, HELVETICA_BOLD, fontSize - 1);
 
 	    y -= 9;
 	    x += 15;
@@ -735,7 +760,7 @@ public class PayrollTemplate implements IPayrollTemplate {
 		    fontSize - 3, 5, 1);
 
 	    y -= 12;
-	    drawText(contents, meiTitle, x - 15, y, BLACK, HELVETICA_BOLD, 7);
+	    drawText(contents, index++ + ". " + meiTitle, x - 15, y, BLACK, HELVETICA_BOLD, fontSize - 1 );
 	    drawTextRight(contents, new PDRectangle(x + 322, y, 70, 70), commContBase, BLACK, HELVETICA, fontSize - 3,
 		    5, 1);
 	    drawTextRight(contents, new PDRectangle(x + 396, y, 70, 70), meiType, BLACK, HELVETICA, fontSize - 3, 5, 1);
@@ -743,7 +768,7 @@ public class PayrollTemplate implements IPayrollTemplate {
 		    1);
 
 	    y -= 12;
-	    drawText(contents, profContingenciesTitle, x - 15, y, BLACK, HELVETICA_BOLD, 7);
+	    drawText(contents, index++ + ". " + profContingenciesTitle, x - 15, y, BLACK, HELVETICA_BOLD, fontSize -1 );
 
 	    y -= 10;
 	    drawText(contents, atEpTitle, x, y, BLACK, HELVETICA, fontSize - 3);
@@ -775,30 +800,52 @@ public class PayrollTemplate implements IPayrollTemplate {
 	    drawTextRight(contents, new PDRectangle(x + 465, y - 5, 70, 70), fogasaApEnt, BLACK, HELVETICA,
 		    fontSize - 3, 5, 1);
 
-	    y -= 12;
-	    drawText(contents, extraHoursTitle, x - 15, y, BLACK, HELVETICA_BOLD, fontSize - 2);
-
-	    y -= 10;
-	    drawText(contents, forceMajeureTitle, x, y, BLACK, HELVETICA, fontSize - 3);
-	    drawTextRight(contents, new PDRectangle(x + 322, y - 2, 70, 70), forceMajeureBase, BLACK, HELVETICA,
-		    fontSize - 3, 5, 1);
-	    drawTextRight(contents, new PDRectangle(x + 396, y - 2, 70, 70), forceMajeureType, BLACK, HELVETICA,
-		    fontSize - 3, 5, 1);
-	    drawTextRight(contents, new PDRectangle(x + 465, y - 2, 70, 70), forceMajeureApEnt, BLACK, HELVETICA,
-		    fontSize - 3, 5, 1);
-
-	    y -= 8;
-	    drawText(contents, noStructTitle, x, y, BLACK, HELVETICA, fontSize - 3);
-	    drawTextRight(contents, new PDRectangle(x + 322, y - 2, 70, 70), noStructBase, BLACK, HELVETICA,
-		    fontSize - 3, 5, 1);
-	    drawTextRight(contents, new PDRectangle(x + 396, y - 2, 70, 70), noStructType, BLACK, HELVETICA,
-		    fontSize - 3, 5, 1);
-	    drawTextRight(contents, new PDRectangle(x + 465, y - 2, 70, 70), noStructApEnt, BLACK, HELVETICA,
-		    fontSize - 3, 5, 1);
-
+		List<PDFDeduction> solidarityCosts = getDeductionsByType(p.getCosts(), DeductionType.SOLIDARITY);
+		double extraHours = conts.getForceMajeureApEnterprise().orElse(0d) + conts.getNoStructApEnterprise().orElse(0d);
+		
+		if ( extraHours > 0d || solidarityCosts.isEmpty()  ) {
+		    y -= 12;
+		    drawText(contents, index++ + ". " + extraHoursTitle, x - 15, y, BLACK, HELVETICA_BOLD, fontSize - 1);
+	
+		    y -= 10;
+		    drawText(contents, forceMajeureTitle, x, y, BLACK, HELVETICA, fontSize - 3);
+		    drawTextRight(contents, new PDRectangle(x + 322, y - 2, 70, 70), forceMajeureBase, BLACK, HELVETICA,
+			    fontSize - 3, 5, 1);
+		    drawTextRight(contents, new PDRectangle(x + 396, y - 2, 70, 70), forceMajeureType, BLACK, HELVETICA,
+			    fontSize - 3, 5, 1);
+		    drawTextRight(contents, new PDRectangle(x + 465, y - 2, 70, 70), forceMajeureApEnt, BLACK, HELVETICA,
+			    fontSize - 3, 5, 1);
+	
+		    y -= 8;
+		    drawText(contents, noStructTitle, x, y, BLACK, HELVETICA, fontSize - 3);
+		    drawTextRight(contents, new PDRectangle(x + 322, y - 2, 70, 70), noStructBase, BLACK, HELVETICA,
+			    fontSize - 3, 5, 1);
+		    drawTextRight(contents, new PDRectangle(x + 396, y - 2, 70, 70), noStructType, BLACK, HELVETICA,
+			    fontSize - 3, 5, 1);
+		    drawTextRight(contents, new PDRectangle(x + 465, y - 2, 70, 70), noStructApEnt, BLACK, HELVETICA,
+			    fontSize - 3, 5, 1);
+		}
+		
+		if ( !solidarityCosts.isEmpty()  ) {
+			y -= 12;
+			drawText(contents, index++ + ". " + solidarityTitle, x - 15, y, BLACK, HELVETICA_BOLD, fontSize - 1);
+			solidarityCosts = solidarityCosts.stream()
+					.sorted((c1, c2) -> c2.getName().orElse("").compareTo(c1.getName().orElse(""))).toList();
+			for ( PDFDeduction solidarityCost : solidarityCosts ) {
+				y -= 8;
+				drawText(contents, solidarityCost.getDescription().orElse(""), x, y, BLACK, HELVETICA, fontSize - 3);
+				drawTextRight(contents, new PDRectangle(x + 322, y - 2, 70, 70), solidarityCost.getBase().map( b -> toLatinNumber(b) + " " + text("MONEDA")).orElse("")  , BLACK, HELVETICA,
+						fontSize - 3, 5, 1);
+				drawTextRight(contents, new PDRectangle(x + 396, y - 2, 70, 70), solidarityCost.getPercent().map( b -> toLatinNumber(b) + " %").orElse(""), BLACK, HELVETICA,
+						fontSize - 3, 5, 1);
+				drawTextRight(contents, new PDRectangle(x + 465, y - 2, 70, 70), solidarityCost.getAmount().map( b -> toLatinNumber(b) + " " + text("MONEDA")).orElse("") , BLACK, HELVETICA,
+						fontSize - 3, 5, 1);
+			}
+		}
+		
 	    y -= 12;
 	    x -= 15;
-	    drawText(contents, irpfTitle, x, y, BLACK, HELVETICA_BOLD, fontSize - 3);
+	    drawText(contents, index + ". " +irpfTitle, x, y, BLACK, HELVETICA_BOLD, fontSize - 1);
 	    drawBox(contents, x, y - 2, 405, .2f, BLACK);
 	    drawTextRight(contents, new PDRectangle(x + 308, y - 5, 100, 10), totalIrpf, BLACK, HELVETICA, fontSize - 3,
 		    5, 5);
@@ -830,5 +877,22 @@ public class PayrollTemplate implements IPayrollTemplate {
 		&& !Objects.equals(key, IPayrollTemplate.NOTE) 
 		&& !Objects.equals(key, IPayrollTemplate.WARNING) ;	
     }
+    
+	private static String getDescription(PDFDeduction deduction) {
+		String deductionName = deduction.getName().orElse("");
+		if (AonStringUtils.isBlank(deductionName))
+			return deduction.getDescription().orElse("");
+		switch (deductionName) {
+		case "SOLIDARIDAD_I", "SOLIDARIDAD_I_E":
+			return "Solidaridad Primer tramo (hasta el 10%)";
+		case "SOLIDARIDAD_II", "SOLIDARIDAD_II_E":
+			return "Solidaridad Segundo tramo (del 10% al 50%)";
+		case "SOLIDARIDAD_III", "SOLIDARIDAD_III_E":
+			return "Solidaridad Tercer tramo (superior al 50%)";
+		default:
+			return deduction.getDescription().orElse("");
+		}
+	}
+    
 
 }

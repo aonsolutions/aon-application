@@ -75,9 +75,16 @@ export class AonIcon extends AonElement {
         height="${this.hasAttribute('size') ? this.getAttribute('size') : '24px'}">
         <g id="${this.getAttribute('icon')}" transform="${transform}">`;
       icon.paths.forEach(p => {
+        if(p.type && p.type === 'circle') {
           html = html + `
-            <path d="${p.path}" style="fill:${p.fill ? p.fill : (this.hasAttribute('color') ? this.getAttribute('color'): '#5f6368')};"/>
-          `
+          <circle cx="${p.cx}" cy="${p.cy}" r="${p.r} style="fill:"${p.fill};" />
+          `;
+        } else {
+          html = html + `
+          <path d="${p.path}" style="fill:${p.fill ? p.fill : (this.hasAttribute('color') ? this.getAttribute('color'): '#5f6368')};"/>
+          `;
+        } 
+
       });
       html = html + `</g></svg>`;
       this.innerHTML = html;

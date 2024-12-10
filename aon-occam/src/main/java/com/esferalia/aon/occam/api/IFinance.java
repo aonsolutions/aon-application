@@ -23,6 +23,7 @@ import com.esferalia.aon.occam.api.model.Filter.RawdocFilter;
 import com.esferalia.aon.occam.api.model.Filter.RegistryFilter;
 import com.esferalia.aon.occam.api.model.InvoiceCounter;
 import com.esferalia.aon.occam.api.model.Order.RawdocOrder;
+import com.esferalia.aon.occam.api.model.PayMethodParams;
 import com.esferalia.aon.occam.api.model.Rawdoc;
 import com.esferalia.aon.occam.api.model.RawdocDomainData;
 import com.esferalia.aon.occam.api.model.RawdocInvoiceCounter;
@@ -223,8 +224,10 @@ public interface IFinance {
 	// 	***********************************************
 	public PayMethod getPayMethod(AONContext ctx, PayMethodFilter filter);
 	public LinkedList<PayMethod> getPayMethods(AONContext ctx);
+	public LinkedList<PayMethod> getPayMethods(AONContext ctx, PayMethodParams params);
 	public PayMethod savePayMethod(AONContext ctx, PayMethod payMethod);
 	public void deletePayMethod(AONContext ctx,Integer id);
+	public void groupPayMethod(AONContext ctx, List<PayMethod> selectedPaymethodList, PayMethod groupedPaymthod);
 	
 	// 	***********************************************
 	// 	********* PRINT INVOICE CONFIGURATION *********

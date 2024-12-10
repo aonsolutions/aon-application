@@ -1,7 +1,7 @@
 import { AonElement } from 'aonsolutions/components/AonElement.js';
 import { Apps, HomeApps, MenuApps, AuxApps, DESKTOP_APPS, MENU_APPS, TOP_MENU_APPS, AON_APPS, NEW, HOME, AON_CLASSIC, APPS, APPLICATIONS, NEW_APPS } from '../services/app.js';
 import {COMMERCE, OFFICE, GARAGE, ACADEMY} from  "aonsolutions/services/app.js";
-import {ACCOUNTING_MENU, COMMERCIAL_MENU, GROUPWARE_MENU, MANAGEMENT_MENU, TREASURY_MENU, WAREHOUSE_MENU, FISCAL_MENU, PAYROLL_MENU, MARKETING_MENU, CONFIGURATION_MENU} from "../services/app.js"
+import {ACCOUNTING_MENU, COMMERCIAL_MENU, GROUPWARE_MENU, MANAGEMENT_MENU, TREASURY_MENU, WAREHOUSE_MENU, FISCAL_MENU, PAYROLL_MENU, MARKETING_MENU, CONFIGURATION_MENU, ENTERPRISE_MENU} from "../services/app.js"
 import { MSG, CONSTANT, AON_ICONS, CSS, EVENT, MATERIAL_ICONS, TAG } from 'aonsolutions/environments/environments.js';
 import { AonDocumental } from 'aonsolutions/modules/documental/aon-documental.js';
 import 'aonsolutions/modules/project/aon-project-panel.js';
@@ -44,6 +44,10 @@ import { AonAcademyMenu } from './academy/aon-academy-menu.js';
 import { AonCommerceMenu } from './commerce/aon-commerce-menu.js';
 import { AonGarageMenu } from './garage/aon-garage-menu.js';
 import { AonConfigurationMenu } from './configuration/aon-configuration-menu.js';
+import { AonEnterpriseMenu } from './enterprise/aon-enterprise-menu.js';
+
+import { AonParent } from "./aon-parent.js";
+
 
 import { generateJobId } from 'aonsolutions/modules/invoice/InvoiceUtils.js';
 
@@ -127,10 +131,14 @@ export class AonNewMenu extends AonElement {
 		this.setAttribute('opened', true);
 		
 		return new Promise((resolve, reject) => {
-			this.buildDur().then(()=> {
+			this.buildDur()
+			.then(()=> {
+				this.clear();
 				this.build();
 				resolve();
-			});
+			})
+			.catch(reject)
+			;
 		});
 
 		
@@ -141,12 +149,20 @@ export class AonNewMenu extends AonElement {
 		//	});
 		//}
 	}
+	
+	rootPanelMenu(menu) {
+		const dur = this.getDur();
+		menu.getDur = function () { 
+			return dur; 
+		};
+		this.rootPanel(menu);
+	}
 
 	appSelection(app, sidenav) {
 		let apps = this.getElement("applications");
 		apps.className = '';
 		const excludedApps = ['commerce', 'garage', 'academy', 'office'];
-		const portalApps = DESKTOP_APPS.filter( app => this.isApp(app) ); 
+		const portalApps = DESKTOP_APPS.filter( app => this.isSidenavApp(app) ); 
 		const portalNoApps = DESKTOP_APPS.filter( app => !this.isApp(app) ); 
 		const suiteApps = TOP_MENU_APPS.filter(app => this.isApp(app));
 		const suiteNoApps = TOP_MENU_APPS.filter(app => !this.isApp(app));
@@ -171,7 +187,7 @@ export class AonNewMenu extends AonElement {
 					this.showNewDialogMenu(this.getElement(app.app));
 					break;
 				case HOME.app:
-					this.rootPanel(new AonDesktop());
+					this.rootPanel(this.getDur().isDomainManagementAvailable() ? new AonParent() : new AonDesktop());
 					break;
 				case AON_CLASSIC.app:
 					open(location.protocol + '//' + localStorage.getItem('aon_domain_name') + ( location.port ? ":" + location.port : ""   ) + '/login?token=' + localStorage.getItem('aon_session_id'))
@@ -222,43 +238,46 @@ export class AonNewMenu extends AonElement {
 					this.rootPanel(new AonDesktop());
 					break;
 				case ACCOUNTING_MENU.app:
-					this.rootPanel(new AonAccountingMenu());
+					this.rootPanelMenu(new AonAccountingMenu());
 					break;
 				case COMMERCIAL_MENU.app:
-					this.rootPanel(new AonCommercialMenu());
+					this.rootPanelMenu(new AonCommercialMenu());
 					break;
 				case GROUPWARE_MENU.app:
-					this.rootPanel(new AonGroupwareMenu());
+					this.rootPanelMenu(new AonGroupwareMenu());
 					break;
 				case MANAGEMENT_MENU.app:
-					this.rootPanel(new AonManagementMenu());
+					this.rootPanelMenu(new AonManagementMenu());
 					break;
 				case TREASURY_MENU.app:
-					this.rootPanel(new AonTreasuryMenu());
+					this.rootPanelMenu(new AonTreasuryMenu());
 					break;
 				case WAREHOUSE_MENU.app:
-					this.rootPanel(new AonWarehouseMenu());
+					this.rootPanelMenu(new AonWarehouseMenu());
 					break;
 				case FISCAL_MENU.app:
-					this.rootPanel(new AonFiscalMenu());
+					this.rootPanelMenu(new AonFiscalMenu());
 					break;
 				case PAYROLL_MENU.app:
-					this.rootPanel(new AonPayrollMenu());
+					this.rootPanelMenu(new AonPayrollMenu());
 					break;
 				case MARKETING_MENU.app:
-					this.rootPanel(new AonMarketingMenu());
+					this.rootPanelMenu(new AonMarketingMenu());
 					break;
 				case CONFIGURATION_MENU.app:
-					this.rootPanel(new AonConfigurationMenu());
+					this.rootPanelMenu(new AonConfigurationMenu());
 					break;
 				case ACADEMY.app:
-					this.rootPanel(new AonAcademyMenu());
+					this.rootPanelMenu(new AonAcademyMenu());
 					break;
 				case COMMERCE.app:
-					this.rootPanel(new AonCommerceMenu());
+					this.rootPanelMenu(new AonCommerceMenu());
 					break;
 				case GARAGE.app:
-					this.rootPanel(new AonGarageMenu());
+					this.rootPanelMenu(new AonGarageMenu());
+					break;
+				case ENTERPRISE_MENU.app:
+					this.rootPanelMenu(new AonEnterpriseMenu());
 					break;
 				default/*Apps.HOME*/:
 					this.rootPanel(new AonNewDesktop(portalApps, portalNoApps, suiteApps, suiteNoApps));
@@ -353,7 +372,7 @@ export class AonNewMenu extends AonElement {
 		ul.classList.add("aonNewMenuSideNavUl");
 		
 		for (let item in MENU_APPS) {
-			if (this.isApp(MENU_APPS[item])) {
+			if (this.isSidenavApp(MENU_APPS[item])) {
 				let app = MENU_APPS[item];
 				let li = this.createElement(TAG.LI);
 				li.id = `aonMenuList-${app.app}`;
@@ -685,7 +704,7 @@ export class AonNewMenu extends AonElement {
 				// Verificamos si el clic ocurrió fuera del sidenav
 				const buttonNew = this.getElement("new");
 
-				if (!buttonNew.contains(event.target) && !LS.isPortalChecked()) {
+				if (!buttonNew?.contains(event.target) && !LS.isPortalChecked()) {
 					// Si se clicó fuera del sidenav, lo ocultamos
 					this.hideSideNav();
 				}
@@ -975,6 +994,7 @@ export class AonNewMenu extends AonElement {
 		return `rgb(${r}, ${g}, ${b})`;
 	}
 
+	
 	isApp(app) {
 		if (OFFICE.app === app.app)
 			return this.getDur().isOffice();
@@ -1007,6 +1027,8 @@ export class AonNewMenu extends AonElement {
 			return this.getDur().isMarketing();
 		if (CONFIGURATION_MENU.app === app.app)
 			return this.getDur().isAdmin();
+		if (ENTERPRISE_MENU.app === app.app)
+			return this.getDur().isDomainManagementAvailable();
 		
 		if (MenuApps.ACCOUNTING.app === app.app)
 			return this.getDur().isAccounting();
@@ -1051,7 +1073,24 @@ export class AonNewMenu extends AonElement {
 		}
 		else return false;
 	}
+	
+	isSidenavApp(app) {
+		return this.isApp(app) 
+		&& (
+			HOME.app  ==  app.app 
+			|| APPS.app  ==  app.app 
+			|| AON_CLASSIC.app == app.app
+			|| APPLICATIONS.app  ==  app.app 
+			|| MenuApps.TIMECONTROL.app == app.app
+			|| MenuApps.DOCUMENTAL.app  ==  app.app 
+			|| !this.getDur().isDomainManagementAvailable()
+		);
+	}
 
+
+	isAppEnabled(app) {
+		return this.isSidenavApp(app);
+	}
 
 	buildAppMenuOptions(app) {
 
@@ -1087,50 +1126,56 @@ export class AonNewMenu extends AonElement {
 
 		let newMenuOptions = [];
 		if(this.getDur().isInvoice()){
+			let optionsMenu = [
+				{
+					name: MSG.ISSUEDS,
+					icon: MATERIAL_ICONS.UNARCHIVE,
+					fn: () => this.newInvoice('emitida')
+				}, {
+					name: MSG.RECEIVEDS,
+					icon: MATERIAL_ICONS.ARCHIVE,
+					fn: () => this.newInvoice('recibida')					
+				}, {
+					name: MSG.TICKETS+"/"+MSG.SUPPORTING_DOCUMENTS,
+					icon: MATERIAL_ICONS.RECEIPT,
+					fn: () => this.newInvoice('ticket')
+					
+				}
+			];
+			
+			if( this.getDur().isOcr() || this.getDur().isInvofox() ){
+				optionsMenu.push({
+					name: MSG.UPLOAD_INVOICE,
+					icon: MATERIAL_ICONS.CLOUD_UPLOAD,
+					fn: () => {
+						let input = this.createElement(TAG.INPUT);
+						input.type = CONSTANT.FILE;
+						input.accept = this.accept;
+						input.className = CSS.AON_NONE;
+						input.multiple = 'multiple';
+						
+						input.addEventListener(EVENT.CHANGE, ({target}) => {
+							let uploadToast = this.getElement('aonUploadToast');
+							if(!uploadToast){ 
+								uploadToast = new AonUploadToast();
+								this.getApplication().getContent().appendChild(uploadToast);
+							}
+							let data = { uploaded : 0 };
+							uploadToast.setJobId(generateJobId());
+							for (let file of target.files) {
+								uploadToast.addFile("invoice", file, data);
+							}			
+						});
+						input.click();
+					}
+				});
+			}
+			
 			newMenuOptions.push({
 				fn: () => {},
 				icon: 'note_add',
 				name: MSG.NEW_INVOICE,
-				options : [
-					{
-						name: MSG.ISSUEDS,
-						icon: MATERIAL_ICONS.UNARCHIVE,
-						fn: () => this.newInvoice('emitida')
-					}, {
-						name: MSG.RECEIVEDS,
-						icon: MATERIAL_ICONS.ARCHIVE,
-						fn: () => this.newInvoice('recibida')					
-					}, {
-						name: MSG.TICKETS+"/"+MSG.SUPPORTING_DOCUMENTS,
-						icon: MATERIAL_ICONS.RECEIPT,
-						fn: () => this.newInvoice('ticket')
-						
-					}, {
-						name: MSG.UPLOAD_INVOICE,
-						icon: MATERIAL_ICONS.CLOUD_UPLOAD,
-						fn: () => {
-							let input = this.createElement(TAG.INPUT);
-							input.type = CONSTANT.FILE;
-							input.accept = this.accept;
-							input.className = CSS.AON_NONE;
-							input.multiple = 'multiple';
-							
-							input.addEventListener(EVENT.CHANGE, ({target}) => {
-								let uploadToast = this.getElement('aonUploadToast');
-								if(!uploadToast){ 
-									uploadToast = new AonUploadToast();
-									this.getApplication().getContent().appendChild(uploadToast);
-								}
-								let data = { uploaded : 0 };
-								uploadToast.setJobId(generateJobId());
-								for (let file of target.files) {
-									uploadToast.addFile("invoice", file, data);
-								}			
-							});
-							input.click();
-						}
-					}
-				]
+				options : optionsMenu
 			});
 		}
 		if(this.getDur().isDocumental()){

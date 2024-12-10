@@ -170,6 +170,7 @@ import com.esferalia.aon.occam.api.model.Options;
 import com.esferalia.aon.occam.api.model.Order.CustomerOrder;
 import com.esferalia.aon.occam.api.model.Order.RawdocOrder;
 import com.esferalia.aon.occam.api.model.Order.SupplierCreditorOrder;
+import com.esferalia.aon.occam.api.model.PayMethodParams;
 import com.esferalia.aon.occam.api.model.PayrollWorkplace;
 import com.esferalia.aon.occam.api.model.Person;
 import com.esferalia.aon.occam.api.model.ProjectFilter;
@@ -1908,7 +1909,6 @@ public class AON {
 	public static Invoice acceptInvoice(AONContext ctx, Invoice invoice, Integer rawdocId){
 		return getFinance().acceptInvoice(ctx, invoice, rawdocId);
 	}
-	
 
 	public static Invoice insertInvoice(Occam occam, Invoice invoice){
 		return insertInvoice( occam.getDomainName(), occam.getDomain(), occam.getUser(), invoice);
@@ -6150,6 +6150,28 @@ public class AON {
 				ctx.close();
 		}
 	}
+	
+	public static CommercialTracking save(String domainName, Integer domainId, String login, CommercialTracking commercialTracking) {
+		CloseableAONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			return getCommercial().save(ctx, commercialTracking);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+	
+	public static CommercialActivity save(String domainName, Integer domainId, String login, CommercialActivity commercialActivity) {
+		CloseableAONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			return getCommercial().save(ctx, commercialActivity);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
 
 	public static Stream<CommercialTracking> getCommercialTrackingStream(String domainName, Integer domainId, String login,	CommercialTrackingFilter filter) {
 		CloseableAONContext ctx = null;
@@ -6286,18 +6308,28 @@ public class AON {
 	// ************************************* TAX **
 	// ********************************************
 
-	public static Stream<Tax> getTaxStream(String domainName, Integer domainId, String login, TaxFilter filter){
-		CloseableAONContext ctx = null;
-		try{
-			ctx = AONContext.getAONContext(domainName, domainId, login);
-			return getCommon().getTaxStream(ctx, filter);
-		} finally {
-			if(ctx != null) ctx.close();
+	public static Stream<Tax> getVatStream(Occam occam, TaxFilter filter){
+		try (CloseableAONContext ctx = AONContext.getAONContext(occam)){
+			return getCommon().getVatStream(ctx);
 		}
 	}
 	
-	public static LinkedList<Tax> getTaxList(String domainName, Integer domainId, String login, TaxFilter filter){
-		return getTaxStream(domainName, domainId, login, filter).collect(Collectors.toCollection(LinkedList::new));
+	public static Stream<Tax> getWithholdingStream(Occam occam, TaxFilter filter){
+		try (CloseableAONContext ctx = AONContext.getAONContext(occam)){
+			return getCommon().getWithholdingStream(ctx);
+		}
+	}
+	
+	public static Stream<Tax> getTaxStream(Occam occam, TaxFilter filter){
+		try (CloseableAONContext ctx = AONContext.getAONContext(occam)){
+			return getCommon().getTaxStream(ctx, filter);
+		}
+	}
+	
+	public static Stream<Tax> getTaxStream(String domainName, Integer domainId, String login, TaxFilter filter){
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
+			return getCommon().getTaxStream(ctx, filter);
+		}
 	}
 	
 	public static Tax getTax(String domainName, Integer domainId, String login, Integer id){
@@ -8002,6 +8034,12 @@ public class AON {
 		}
 	}
 	
+	public static LinkedList<PayMethod> getPayMethods(PayMethodParams params) {
+		try(CloseableAONContext ctx = AONContext.getAONContext(params.getDomainName(), params.getDomain(), params.getUser())) {
+			return getFinance().getPayMethods(ctx, params);
+		}
+	}
+	
 	public static PayMethod getPayMethod(String domainName, Integer domainId, String login, PayMethodFilter filter) {
 		try(CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)) {
 			return getFinance().getPayMethod(ctx, filter);
@@ -8021,6 +8059,12 @@ public class AON {
 	public static void deletePayMethod(String domainName, Integer domainId, String login, Integer id) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)) {
 			getFinance().deletePayMethod(ctx, id); 
+		}
+	}
+	
+	public static void groupPayMethod(String domainName, Integer domainId, String login, List<PayMethod> selectedPaymethodList, PayMethod groupedPaymthod) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)) {
+			getFinance().groupPayMethod(ctx, selectedPaymethodList, groupedPaymthod); 
 		}
 	}
 

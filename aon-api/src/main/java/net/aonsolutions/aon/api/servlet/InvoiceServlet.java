@@ -21,6 +21,7 @@ import com.esferalia.aon.occam.api.AON_SOLUTIONS;
 import com.esferalia.aon.occam.api.FINANCE;
 import com.esferalia.aon.occam.api.json.CompanyJSON;
 import com.esferalia.aon.occam.api.json.JsonUtils;
+import com.esferalia.aon.occam.api.json.TaxJSON;
 import com.esferalia.aon.occam.api.json.invoice.InvoiceJSON;
 import com.esferalia.aon.occam.api.json.invoice.InvoiceSeriesJSON;
 import com.esferalia.aon.occam.api.json.invoice.PrintInvoiceConfigurationJSON;
@@ -87,6 +88,7 @@ import net.aonsolutions.aon.api.error.AonApiException;
 import net.aonsolutions.aon.api.ewok.AonApiData;
 import net.aonsolutions.aon.api.ewok.IConstants;
 import net.aonsolutions.aon.api.request.BidoqRequest;
+import net.aonsolutions.aon.api.servlet.RawdocServlet;
 import net.aonsolutions.aon.sign.PdfSigner;
 import net.aonsolutions.aon.tbai.TbaiData;
 import net.aonsolutions.aon.tbai.TbaiMain;
@@ -1132,7 +1134,9 @@ public class InvoiceServlet extends AonApiHttpServlet{
 			tbaiValidation(invoice);
 		}
 		
-		invoice = AON_SOLUTIONS.acceptInvoice(api.getDomain(), api.getUser(), invoice);
+		Integer rawdocId = invoice.getId();
+		invoice.setId(null);
+		invoice = AON.acceptInvoice(api.getOccam(), invoice, rawdocId);
 		processInvoiceFile(api, invoice);
 		acceptTbai(tbaiConfiguration, company, invoice);
 		JSONObject json = InvoiceJSON.toJSON(invoice);
@@ -1286,6 +1290,7 @@ public class InvoiceServlet extends AonApiHttpServlet{
 		json.put(IJsonNames.ADMINISTRATION, getAdministration(api));
 		json.put("withholdingPercent", withholdingPercent.getWithholdingType().name());
 		json.put("invofox", InvofoxServlet.getConfiguration(api));
+		json.put(IJsonNames.VATS, getVats(api));
 		return json;
 	}
 	
@@ -1327,6 +1332,12 @@ public class InvoiceServlet extends AonApiHttpServlet{
 			.put("sii", sii)
 			.put("invofox", invofox)
 			.put(IJsonNames.E_INVOICE, company.iseInvoice());
+	}
+	
+	private JSONArray getVats(AonApiData api) {
+		return TaxJSON.toJSON(
+			AON.getTaxStream(api.getOccam(), f -> f.getDomainProperty().eq(api.getDomain().getId()))
+		);
 	}
 	
 	private JSONObject getPrintConfiguration(AonApiData api) {
@@ -1422,14 +1433,15 @@ public class InvoiceServlet extends AonApiHttpServlet{
 	}
 	
 	public static void main(String[] args) {
-		JSONObject data = new JSONObject();
-		data.put(IConstants.DOMAIN_NAME, "innovative-mac.aonsolutions.net");
-		data.put(IConstants.DOMAIN_ID, 562);
-		data.put(IJsonNames.ID, 1209900); //1177840);
-		data.put(IConstants.ATTACH_TYPE, AttachType.DATA.getName());
-		String result = Base64.getEncoder().encodeToString(data.toString().getBytes(StandardCharsets.UTF_8));
-		String url = "innovative-mac.aonsolutions.net/ms/api/file/" +  result;	
-		System.out.println(url);
+//		JSONObject data = new JSONObject();
+//		data.put(IConstants.DOMAIN_NAME, "innovative-mac.aonsolutions.net");
+//		data.put(IConstants.DOMAIN_ID, 562);
+//		data.put(IJsonNames.ID, 1209900); //1177840);
+//		data.put(IConstants.ATTACH_TYPE, AttachType.DATA.getName());
+//		String result = Base64.getEncoder().encodeToString(data.toString().getBytes(StandardCharsets.UTF_8));
+//		String url = "innovative-mac.aonsolutions.net/ms/api/file/" +  result;	
+//		System.out.println(url);
+
 	}
 	
 	private JSONArray getInvoiceSeries(AonApiData api) {

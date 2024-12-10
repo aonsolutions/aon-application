@@ -10,6 +10,7 @@ import com.esferalia.aon.gwt.common.client.widget.MinimizePanel;
 import com.esferalia.aon.gwt.common.client.widget.MinimizePanel.MaximizeEvent;
 import com.esferalia.aon.gwt.common.client.widget.MinimizePanel.MinimizeEvent;
 import com.esferalia.aon.gwt.common.client.widget.ResultsPanel;
+import com.esferalia.aon.gwt.common.client.widget.Upload;
 import com.esferalia.aon.gwt.mod200.client.FiscalModelUtils;
 import com.esferalia.aon.gwt.mod200.client.mod200.Model200.Model200Callback;
 import com.esferalia.aon.occam.mod200.api.model.mod200_2016.Mod2002016;
@@ -294,7 +295,7 @@ public class Model2002016 extends ResizeComposite  {
 		popup.setAnimationEnabled(true);
 		popup.center();
 		getPage(P00).populate( );
-		mod200Object.initializeMod200(new AsyncCallback<Mod2002016>() {
+		mod200Object.initializeMod200(null, new AsyncCallback<Mod2002016>() {
 			@Override
 			public void onSuccess(Mod2002016 result) {
 				popup.hide();
@@ -566,33 +567,24 @@ public class Model2002016 extends ResizeComposite  {
 
 	@UiHandler("importAccountingButton")
 	void onImportAccountingButtonClick(ClickEvent event) {
-		UploadDialog ud = new UploadDialog(AON.MSG.importAccounting(),GWT.getModuleBaseURL() +"Mod2002016AccountingUpload") {
+		Upload upload = new Upload() {
 			
 			@Override
-			protected void onCancel() {
-				hide();
-			}
-			
-			@Override
-			protected void onAccept() {
-				mod200Object.fillMod2002016AccountingData(new AsyncCallback<Mod2002016>() {
+			protected void onUpload(String data, String type) {
+				mod200Object.fillMod2002016AccountingData(data, new AsyncCallback<Mod2002016>() {
 					@Override
 					public void onSuccess(Mod2002016 result) {
-						hide();
+
 					}
 					
 					@Override
 					public void onFailure(Throwable e) {
-						hide();
 						raiseException(e);
 					}
-				});
+				});				
 			}
 		};
-		ud.addStyleName("gwt-PopupPanel-template");
-		ud.setGlassEnabled(true);
-		ud.center();
-		ud.show();
+		upload.upload();
 	}
 	
 	private class WestFocusPanel extends FocusPanel {

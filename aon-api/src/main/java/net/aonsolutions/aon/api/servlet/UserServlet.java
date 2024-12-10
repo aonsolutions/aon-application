@@ -1,5 +1,11 @@
 package net.aonsolutions.aon.api.servlet;
+import static com.esferalia.aon.occam.api.model.attachment.AttachType.REGISTRY;
+import static com.esferalia.aon.occam.api.model.attachment.RegistryAttachmentType.LOGO;
+import static com.esferalia.aon.occam.api.model.attachment.RegistryAttachmentType.SIGNATURE;
+
 import java.io.StringWriter;
+import java.nio.charset.StandardCharsets;
+import java.util.Base64;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
@@ -23,6 +29,7 @@ import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.AON_SOLUTIONS;
 import com.esferalia.aon.occam.api.SECURITY;
+import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.esferalia.aon.occam.api.json.AuthJSON;
 import com.esferalia.aon.occam.api.json.JsonUtils;
 import com.esferalia.aon.occam.api.json.RegistryJSON;
@@ -37,10 +44,14 @@ import com.esferalia.aon.occam.api.model.Person;
 import com.esferalia.aon.occam.api.model.Properties.UserProperties;
 import com.esferalia.aon.occam.api.model.RawdocUserData;
 import com.esferalia.aon.occam.api.model.Workgroup;
+import com.esferalia.aon.occam.api.model.aonsolutions.AonApp;
 import com.esferalia.aon.occam.api.model.aonsolutions.AonRole;
 import com.esferalia.aon.occam.api.model.aonsolutions.AonToken;
+import com.esferalia.aon.occam.api.model.aonsolutions.DomainUserRoles;
 import com.esferalia.aon.occam.api.model.aonsolutions.UserAppRole;
+import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.registry.Registry;
+import com.esferalia.aon.occam.api.model.registry.RegistryMedia;
 import com.esferalia.aon.occam.api.model.security.Auth;
 import com.esferalia.aon.occam.api.model.security.Scope;
 import com.esferalia.aon.occam.api.model.security.User;
@@ -50,6 +61,7 @@ import com.esferalia.aon.occam.api.model.security.UserType;
 import com.esferalia.aon.occam.api.model.security.UserWorkgroup;
 import com.esferalia.aon.occam.api.model.task.TaskHolder;
 import com.esferalia.aon.occam.api.model.type.AppParam;
+import com.esferalia.aon.occam.impl.jooq.dao.DomainDAO;
 import com.esferalia.aon.watson.util.AonDocumentUtil;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
@@ -64,6 +76,7 @@ import solutions.aon.aws.ses.SESMessage;
 public class UserServlet extends AonApiHttpServlet {
 		
 	private static final Logger LOGGER  = Logger.getLogger(UserServlet.class.getName());
+	private static boolean isLocal = false;
 
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) {
@@ -922,14 +935,53 @@ public class UserServlet extends AonApiHttpServlet {
 		return json;
 	}	
 	
-	private void sendAuthCreateInfoMail(String email, String password, Company cp) {
+	private void sendAuthCreateInfoMail(AonApiData api, String fullName, String email, String password, Company cp) {
+		Domain parent = api.getDomain().isParent() ? api.getDomain()
+				: AON.getDomain(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(),
+						f -> f.getIdProperty().eq(api.getDomain().getParentId()));
+		
+		String logoUrl = getLogoUrl(parent, api.getUser());
+		
+		String from = getFromMessage(api);
+		String alias = AonStringUtils.isBlank(from)  ? "AON Solutions" : formatUT8B(cp.getName());
+
 		SESMessage msg = new SESMessage()
+				.setAlias(alias)
+				.setFrom(AonStringUtils.isBlank(from) ? "booking@aon.solutions" : from)
+				.setReplyTo(AonStringUtils.isBlank(from) ? "asignacion@aonsolutions.es" : from)
 				.setTo(email)
-				.setAlias(cp.getName())
-				.setBody(authCreateInfoContent(email, password))
-				.setSubject("NUEVO USUARIO | AON SOLUTIONS");
+				.setSubject(AonStringUtils.isBlank(from) ? "USUARIO | AON SOLUTIONS" : formatUT8B("USUARIO | " + cp.getName().toUpperCase()))
+				.setBody(authCreateInfoContent(api, fullName, email, password, from, logoUrl, parent.getDescription()));
+
 		SES.sendEmail(msg);
 	}
+
+	private static String getFromMessage(AonApiData api) {
+		DomainUserRoles domainUserRoles = SECURITY.getDomainUserRoles(api.getDomain(), api.getUser().getLogin(),
+				api.getUser().getId());
+		String from = null;
+
+		if (domainUserRoles.hasParentCustomView() || domainUserRoles.hasParentApp(AonApp.CUSTOM_VIEW)) {
+			Domain parentDomain = AON.getDomain(api.getDomain().getName(), api.getDomain().getId(),
+					api.getUser().getLogin(), f -> f.getIdProperty().eq(api.getDomain().getParentId()));
+			if (null != parentDomain && null != parentDomain.getId()) {
+				RegistryMedia emailMedia = AON.getRegistryMedia(api.getDomain(), api.getUser(),
+						f -> f.getDomainProperty().eq(parentDomain.getId()).and(f.getMediaProperty().eq((byte) 4)));
+				if (null != emailMedia && AonStringUtils.isNotBlank(emailMedia.getValue()))
+					from = emailMedia.getValue();
+			}
+		}
+
+		return from;
+	}
+	
+    /**
+     * Returns the parameter formated to UTF8 & Base64
+     */
+    private static String formatUT8B(final String text) {
+    	if(AonStringUtils.isBlank(text)) return text;
+        return "=?UTF-8?B?" + Base64.getEncoder().encodeToString(text.getBytes(StandardCharsets.UTF_8)) + "?=" ;
+    }
 	
 	private JSONObject sendAuthInfoMail(AonApiData api) {
 		Company cp = AON.getCompany(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), 
@@ -942,19 +994,25 @@ public class UserServlet extends AonApiHttpServlet {
 		auth.setPassword(pass);
 		AON_SOLUTIONS.updateAuthPassword(auth);
 		
-		sendAuthCreateInfoMail(email, password, cp);
+		sendAuthCreateInfoMail(api, auth.getFullname(), email, password, cp);
 		return new JSONObject();
 	}
 	
-	private String authCreateInfoContent(String email, String password) {
+	private String authCreateInfoContent(AonApiData api, String fullName, String email, String password, String from, String logo, String parentName) {
 		VelocityEngine engine = new VelocityEngine();
 		engine.setProperty(RuntimeConstants.RESOURCE_LOADER, "classpath");
 		engine.setProperty("classpath.resource.loader.class", ClasspathResourceLoader.class.getName());
 		engine.init();
 			
 		VelocityContext context = new VelocityContext();
+		context.put("logo", logo);
+		context.put("parentName", parentName);
+		context.put("enterpriseUrl", (isLocal ? "http" : "https") + "://" + api.getDomain().getName() + (isLocal ? ":8080/beta" : "/beta"));
+		context.put("enterpriseName", api.getDomain().getDescription());
+		context.put("fullName", fullName);
 		context.put("email", email);
 		context.put("password", password);
+		context.put("contact", AonStringUtils.isBlank(from) ? "booking@aonsolutions.es" : from);
 			
 		Template template = engine.getTemplate("/net/aonsolutions/aon/api/servlet/templates/auth_create_info.vm");
 			
@@ -985,6 +1043,38 @@ public class UserServlet extends AonApiHttpServlet {
 					.findFirst().orElse(null);
 		}
 		return s;
+	}
+
+	private static String getLogoUrl(Domain parentDomain, User user) {
+		String logoUrl = null;
+		try (CloseableAONContext aonContext = AONContext.getAONContext(parentDomain.getName(), user.getLogin())) {
+			Company company = AON.getCompany(parentDomain, user, f -> f.getDomainProperty().eq(parentDomain.getId()));
+
+			Attach attach = getLogoAttach(aonContext, company.getId());
+
+			String str = "domain=" + attach.getDomain().getId() + "&id=" + attach.getId() + "&attach_type=registry";
+			String result = Base64.getEncoder().encodeToString(str.getBytes(StandardCharsets.UTF_8));
+
+			Domain attachDomain = DomainDAO.getDomain(aonContext, attach.getDomain().getId());
+			logoUrl = (isLocal ? "http" : "https") + "://" + parentDomain.getName() + (isLocal ? ":8080" : "")
+					+ "/ms/download_attachment/" + attachDomain.getName() + "/" + attach.getCreationUser() + "/"
+					+ result;
+		}
+
+		return logoUrl;
+	}
+
+	private static Attach getLogoAttach(AONContext aonContext, Integer enterpriseId) {
+		Attach attach1 = AON.getAttach(aonContext.getDomainName(), aonContext.getDomainId(), aonContext.getUser(),
+				f -> f.getTypeProperty().eq(SIGNATURE.value()).and(f.getAttachModuleProperty().eq(enterpriseId)),
+				REGISTRY);
+
+		if (attach1 == null || attach1.getData() == null)
+			attach1 = AON.getAttach(aonContext.getDomainName(), aonContext.getDomainId(), aonContext.getUser(),
+					f -> f.getTypeProperty().eq(LOGO.value()).and(f.getAttachModuleProperty().eq(enterpriseId)),
+					REGISTRY);
+
+		return attach1;
 	}
 	
 	private JSONObject getPermission(AonApiData api) {

@@ -32,9 +32,8 @@ import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.occam.api.SERES;
 import com.esferalia.aon.occam.api.model.registry.RegistryAddress;
 import com.esferalia.aon.occam.api.model.seres.EdiCodes;
+import com.esferalia.aon.occam.api.model.seres.SeresInfo;
 import com.esferalia.aon.occam.api.model.type.DataResponseSource;
-import com.esferalia.aon.seres.ftp.FtpException;
-import com.esferalia.aon.seres.ftp.FtpLoginException;
 import com.esferalia.aon.seres.ftp.SeresFtpConnectionProvider;
 import com.esferalia.aon.seres.ftp.seres.FtpStoreProcess;
 import com.esferalia.aon.seres.ftp.seres.FtpStoreProcess.ResponseMessageType;
@@ -193,9 +192,8 @@ public class FtpSaleInvoiceUploaderHandler implements Serializable {
 				String domainName = AonUtil.getDomainName();
 				Integer domainId = DomainManager.getCurrentDomain();
 				String loggedUser = UserUtils.getInstance().getLoggedUser().getLogin();
-				
-				FtpStoreProcess fsp = new FtpStoreProcess(DataResponseSource.SERES_INVOICE, domainName, domainId, loggedUser,
-						this.remotePath, this.server, this.port, this.user, this.password);
+				SeresInfo info = getSeresInfo(invoice);
+				FtpStoreProcess fsp = new FtpStoreProcess(DataResponseSource.SERES_INVOICE, domainName, domainId, loggedUser);
 				if(output!=null && output.getErrors()!=null && output.getErrors().size()>0){
 					for(Exception e: output.getErrors()){
 						Fd0Exception fd0 = (Fd0Exception) e;
@@ -204,7 +202,7 @@ public class FtpSaleInvoiceUploaderHandler implements Serializable {
 					fsp.track(Level.SEVERE, ResponseMessageType.COMMIT, sourceId, referenceCode);
 				} else {
 					byte[] data = output.getContent();
-					fsp.put(sourceId, data, referenceCode);
+					fsp.put(sourceId, data, referenceCode, info);
 					fsp.track(Level.INFO, ResponseMessageType.COMMIT, sourceId, referenceCode);
 				}
 				SeresFtpProcessThread thread = fsp.new SeresFtpProcessThread(fsp); 
@@ -265,6 +263,17 @@ public class FtpSaleInvoiceUploaderHandler implements Serializable {
         Integer domainId = DomainManager.getCurrentDomain();
         String login = UserUtils.getInstance().getLoggedUser().getLogin();
         return SERES.getEdiCodes(domainName, domainId, login, inv);
+    }
+	
+	private SeresInfo getSeresInfo(Invoice invoice) {
+		com.esferalia.aon.occam.api.model.finance.Invoice inv = new com.esferalia.aon.occam.api.model.finance.Invoice()
+				.setId(invoice.getId())
+				.setRegistry(invoice.getRegistry().getId())
+				.setAddress(new RegistryAddress().setId(invoice.getRegistryAddress().getId()));
+		String domainName = AonUtil.getDomainName();
+        Integer domainId = DomainManager.getCurrentDomain();
+        String login = UserUtils.getInstance().getLoggedUser().getLogin();
+        return SERES.getSeresInfo(domainName, domainId, login, inv);
     }
 	
 }

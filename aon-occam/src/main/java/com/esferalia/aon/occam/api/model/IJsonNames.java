@@ -663,6 +663,7 @@ public final class IJsonNames {
 	public static final String VAT_EXEMPTION_CAUSE = "vatExemptionCause";
 	public static final String VAT_SUMMARY_TYPE = "vatSummaryType";
 	public static final String VAT_SURCHARGE_REGIME = "vatSurchargeRegime";
+	public static final String VATS = "vats";
 	public static final String VOLUME = "volume";
 	// ---------------------------------------------------------------------------------------------	[W] 
 	public static final String WAREHOUSE = "warehouse";

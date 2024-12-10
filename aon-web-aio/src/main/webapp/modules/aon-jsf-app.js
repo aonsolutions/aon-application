@@ -1076,6 +1076,62 @@ export class AonJsfCarrier extends AonJsfApp {
 	}
 }
 
+export class AonJsfAccount extends AonJsfApp {
+	
+	constructor() {
+		super();
+		this.setViewId('/facelet/app/account.xhtml');
+	}
+}
+
+export class AonJsfBalance extends AonJsfApp {
+	
+	constructor() {
+		super();
+		this.setViewId('/facelet/app/balance.xhtml');
+	}
+}
+
+export class AonJsfAccPeriod extends AonJsfApp {
+	
+	constructor() {
+		super();
+		this.setViewId('/facelet/app/accPeriod.xhtml');
+	}
+}
+
+export class AonJsfAmortizationType extends AonJsfApp {
+	
+	constructor() {
+		super();
+		this.setViewId('/facelet/app/amortizationType.xhtml');
+	}
+}
+
+export class AonJsfAutConcept extends AonJsfApp {
+	
+	constructor() {
+		super();
+		this.setViewId('/facelet/app/autConcept.xhtml');
+	}
+}
+
+export class AonJsfNewDomain extends AonJsfApp {
+	
+	constructor() {
+		super();
+		this.setViewId('/facelet/app/newDomain.xhtml');
+	}
+}
+
+export class AonJsfRemoveDomain extends AonJsfApp {
+	
+	constructor() {
+		super();
+		this.setViewId('/facelet/app/removeDomain.xhtml');
+	}
+}
+
 if(!window.customElements.get(TAG.AON_JSF_APP)){
 	window.customElements.define(TAG.AON_JSF_APP, AonJsfApp);
 }
@@ -1562,4 +1618,32 @@ if(!window.customElements.get(TAG.AON_JSF_CARRIER)){
 
 if(!window.customElements.get(TAG.AON_JSF_WAREHOUSE)){
 	window.customElements.define(TAG.AON_JSF_WAREHOUSE, AonJsfWarehouse);
+}
+
+if(!window.customElements.get(TAG.AON_JSF_ACCOUNT)){
+	window.customElements.define(TAG.AON_JSF_ACCOUNT, AonJsfAccount);
+}
+
+if(!window.customElements.get(TAG.AON_JSF_BALANCE)){
+	window.customElements.define(TAG.AON_JSF_BALANCE, AonJsfBalance);
+}
+
+if(!window.customElements.get(TAG.AON_JSF_ACC_PERIOD)){
+	window.customElements.define(TAG.AON_JSF_ACC_PERIOD, AonJsfAccPeriod);
+}
+
+if(!window.customElements.get(TAG.AON_JSF_AMORTIZATION_TYPE)){
+	window.customElements.define(TAG.AON_JSF_AMORTIZATION_TYPE, AonJsfAmortizationType);
+}
+
+if(!window.customElements.get(TAG.AON_JSF_AUT_CONCEPT)){
+	window.customElements.define(TAG.AON_JSF_AUT_CONCEPT, AonJsfAutConcept);
+}
+
+if(!window.customElements.get(TAG.AON_JSF_NEW_DOMAIN)){
+	window.customElements.define(TAG.AON_JSF_NEW_DOMAIN, AonJsfNewDomain);
+}
+
+if(!window.customElements.get(TAG.AON_JSF_REMOVE_DOMAIN)){
+	window.customElements.define(TAG.AON_JSF_REMOVE_DOMAIN, AonJsfRemoveDomain);
 }

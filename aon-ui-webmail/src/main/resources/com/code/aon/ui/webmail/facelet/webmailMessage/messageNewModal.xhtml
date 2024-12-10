@@ -13,7 +13,7 @@
 	<aon:if test="#{!webmailMessage.included or (messageSuffix != null)}">
 		<aon:panelGroup id="showNewMessageWindow#{messageSuffix}">
 			<aon:if test="#{webmailMessage.showNewMessageWindow}">
-				<aon:valueParam name="windowHeight" default="600" />
+				<aon:valueParam name="windowHeight" default="620" />
 				<rich:modalPanel id="showNewMessageModalPanel#{messageSuffix}"
 					domElementAttachment="parent"
 					showWhenRendered="#{webmailMessage.showNewMessageWindow}"

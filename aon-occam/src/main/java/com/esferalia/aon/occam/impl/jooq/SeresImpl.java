@@ -17,6 +17,18 @@ public class SeresImpl implements ISeres {
 	}
 	
 	@Override
+	public SeresInfo getSeresInfo(AONContext ctx, Invoice invoice) {
+		return ctx.getDslContext().transactionResult(configuration -> 
+			SeresDAO.getSeresInfo(ctx, invoice));
+	}
+	
+	@Override
+	public SeresInfo getSeresInfo(AONContext ctx, Delivery delivery) {
+		return ctx.getDslContext().transactionResult(configuration -> 
+			SeresDAO.getSeresInfo(ctx, delivery));
+	}
+	
+	@Override
 	public EdiCodes getEdiCodes(AONContext ctx, Delivery delivery) {
 		return ctx.getDslContext().transactionResult(configuration -> 
 			SeresDAO.getEdiCodes(ctx, delivery));

@@ -30,15 +30,31 @@ import com.esferalia.aon.occam.api.model.registry.RegistryNote;
 import com.esferalia.aon.occam.api.model.seres.EdiCodes;
 import com.esferalia.aon.occam.api.model.seres.IEdiSupport;
 import com.esferalia.aon.occam.api.model.seres.SeresInfo;
+import com.esferalia.aon.occam.api.model.seres.SeresPath;
 import com.esferalia.aon.occam.api.model.type.AppParam;
 import com.esferalia.aon.occam.api.model.type.DataResponseSource;
 import com.esferalia.aon.occam.api.model.warehouse.Delivery;
 import com.esferalia.aon.occam.api.model.warehouse.DeliveryDetail;
+import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class SeresDAO {
 	
 	private SeresDAO() {
 
+	}
+	
+	public static SeresInfo getSeresInfo(AONContext ctx, Invoice invoice) {
+		SeresInfo seresInfo = getSeresInfo(ctx);
+		seresInfo.setEdiCodes(getEdiCodes(ctx, invoice));
+		seresInfo.setSeresPath(getInvoiceSeresPath(ctx, invoice.getRegistry()));
+		return seresInfo;
+	}
+	
+	public static SeresInfo getSeresInfo(AONContext ctx, Delivery delivery) {
+		SeresInfo seresInfo = getSeresInfo(ctx);
+		seresInfo.setEdiCodes(getEdiCodes(ctx, delivery));		
+		seresInfo.setSeresPath(getInvoiceSeresPath(ctx, delivery.getCustomer().getId()));
+		return seresInfo;
 	}
 	
 	public static SeresInfo getSeresInfo(AONContext ctx) {
@@ -64,7 +80,6 @@ public class SeresDAO {
 			if(r.getName().equalsIgnoreCase(AppParam.SERES_FTP_PORT.toString())) {
 				seresInfo.setPort(Integer.parseInt(r.getValue()));
 			}
-			
 		});
 
 		return seresInfo;
@@ -197,6 +212,16 @@ public class SeresDAO {
 		ApplicationParameter param = AppParamDAO.getApplicationParameterStream(ctx, f -> f.getDomainProperty().eq(ctx.getDomainId())
 				.and(f.getNameProperty().eq(AppParam.EDI_COMPANY_CODE.getValue()))).findFirst().orElse(null);
 		return param !=null ? param.getValue() : null;
+	}
+	
+	private static SeresPath getInvoiceSeresPath(AONContext ctx, Integer registry) {
+		String note = getRegistryNoteComments(ctx, "SERES_SEND_INVOICE", registry);
+		return	!AonStringUtils.isBlank(note) ? SeresPath.safeValueOf(note) : SeresPath.ENVIO_INVOIC_D96A;
+	}
+	
+	private static SeresPath getDeliverySeresPath(AONContext ctx, Integer registry) {
+		String note = getRegistryNoteComments(ctx, "SERES_SEND_DESADV", registry);
+		return	!AonStringUtils.isBlank(note) ? SeresPath.safeValueOf(note) : SeresPath.ENVIO_DESADV_D96A;
 	}
 }
 

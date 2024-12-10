@@ -20,6 +20,7 @@ import java.util.stream.Stream;
 
 import org.jooq.Field;
 import org.jooq.Record;
+import org.jooq.Record2;
 import org.jooq.impl.DSL;
 
 import com.esferalia.aon.occam.api.AONContext;
@@ -51,6 +52,7 @@ import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.InvoicePropertiesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.PropertyOrdersDAO.InvoicePropertyOrdersDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.invoice.InvoiceInfoDAO.InvoiceInfoFiller;
 import com.esferalia.aon.watson.util.AonEnumUtils;
+import com.esferalia.aon.watson.util.Pair;
 
 public class InvoiceApiDAO {
 	
@@ -179,6 +181,44 @@ public class InvoiceApiDAO {
 			.limit(perPage)
 			.offset(perPage * (page - 1))
 			.fetch().stream().map(new InvoiceApiFiller(ctx));
+	}
+	
+	public static Stream<Invoice> getChartInvoices(AONContext ctx, InvoiceFilter filter) {
+		return ctx.getDslContext().select()
+				.from(INVOICE)
+				.leftOuterJoin(INVOICE_INFO).on(INVOICE_INFO.INVOICE.eq(INVOICE.ID))
+			.where(INVOICE_PROPERTIES.getConditions(filter))
+			.groupBy(INVOICE.ID)
+			.fetch().stream().map(r -> {
+				return new Invoice()
+					.setId(r.get(INVOICE.ID))
+					.setIssueDate(r.get(INVOICE.ISSUE_DATE))
+					.setType(AonEnumUtils.enumValue(InvoiceType.class,r.getValue(INVOICE.TYPE)))
+					.setTotal(r.get(INVOICE.TOTAL))
+					.setTaxableBase(r.get(INVOICE.TAXABLE_BASE))
+					;
+			});
+	}
+	
+	public static Pair<Date, Date> getInvoicesChartPeriod(AONContext ctx, InvoiceFilter filter) {
+		
+		Record2<java.sql.Date, java.sql.Date> result = ctx.getDslContext().select(
+				DSL.min(INVOICE.ISSUE_DATE),
+				DSL.max(INVOICE.ISSUE_DATE)
+            )
+            .from(INVOICE)
+            .where(INVOICE_PROPERTIES.getConditions(filter))
+            .fetchOne(); // Solo necesitamos un registro, no una lista
+
+        if (result != null) {
+            // Extraer las fechas directamente
+            Date minDate = result.value1(); // min(INVOICE.ISSUE_DATE)
+            Date maxDate = result.value2(); // max(INVOICE.ISSUE_DATE)
+
+            return new Pair<Date, Date>(minDate, maxDate);
+        } else {
+        	return null;
+        }
 	}
 	
 	public static Integer getInvoicesCount(AONContext ctx, InvoiceFilter filter) {

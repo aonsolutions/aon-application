@@ -72,7 +72,11 @@
 	<table-filter match-name="sales_info" exclude="true" />
 	<table-filter match-name="delivery_info" exclude="true" />
 
-	<table-filter match-name="url_shorten" exclude="true" />	
+	<table-filter match-name="url_shorten" exclude="true" />
+	
+	<table-filter match-name="fs_model369" exclude="true" />
+	<table-filter match-name="fs_model369_detail" exclude="true" />
+		
 	<!--  ***************** -->
 	<!--  MAPPING DE TABLAS -->
 	<!--  ***************** -->

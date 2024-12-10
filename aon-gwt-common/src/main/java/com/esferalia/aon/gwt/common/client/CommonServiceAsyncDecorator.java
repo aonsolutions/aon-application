@@ -20,6 +20,7 @@ import com.esferalia.aon.occam.api.model.MarketingCampaign;
 import com.esferalia.aon.occam.api.model.MarketingCompaignParams;
 import com.esferalia.aon.occam.api.model.Newsletter;
 import com.esferalia.aon.occam.api.model.Occam;
+import com.esferalia.aon.occam.api.model.PayMethodParams;
 import com.esferalia.aon.occam.api.model.Question;
 import com.esferalia.aon.occam.api.model.QuestionParams;
 import com.esferalia.aon.occam.api.model.SellerParams;
@@ -165,21 +166,33 @@ public class CommonServiceAsyncDecorator implements CommonServiceAsync {
 	// ************************************* [PAY_METHOD]
 	// **************************************************
 	@Override
-	public void getPayMethods(String domainName, int domain, String user, AsyncCallback<LinkedList<PayMethod>> callback) {
+	public void getPayMethods(String domainName, int domain, String user, AsyncCallback<LinkedList<PayMethod>> callback) throws AonCoreException {
 		AON.start();
 		serviceAsync.getPayMethods(domainName, domain, user, new AsyncCallbackWrapper<>(callback));
 	}
 	
 	@Override
-	public void savePayMethod(String domainName, int domain, String user, PayMethod payMethod, AsyncCallback<PayMethod> callback) {
+	public void getPayMethods(PayMethodParams params, AsyncCallback<LinkedList<PayMethod>> callback) throws AonCoreException {
+		AON.start();
+		serviceAsync.getPayMethods(params, new AsyncCallbackWrapper<>(callback));
+	}
+	
+	@Override
+	public void savePayMethod(String domainName, int domain, String user, PayMethod payMethod, AsyncCallback<PayMethod> callback) throws AonCoreException {
 		AON.start();
 		serviceAsync.savePayMethod(domainName, domain, user, payMethod, new AsyncCallbackWrapper<>(callback));
 	}
 	
 	@Override
-	public void deletePayMethod(String domainName, int domain, String user, Integer id, AsyncCallback<Void> callback) {
+	public void deletePayMethod(String domainName, int domain, String user, Integer id, AsyncCallback<Void> callback) throws AonCoreException {
 		AON.start();
 		serviceAsync.deletePayMethod(domainName, domain, user, id, new AsyncCallbackWrapper<>(callback));
+	}
+	
+	@Override
+	public void groupPayMethod(String domainName, int domain, String user, List<PayMethod> selectedPaymethodList, PayMethod groupedPaymthod, AsyncCallback<Void> callback) throws AonCoreException {
+		AON.start();
+		serviceAsync.groupPayMethod(domainName, domain, user, selectedPaymethodList, groupedPaymthod, new AsyncCallbackWrapper<>(callback));
 	}
 
 	// **************************************************

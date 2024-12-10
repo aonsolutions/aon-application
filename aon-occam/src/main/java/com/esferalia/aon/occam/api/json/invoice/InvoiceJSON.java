@@ -214,7 +214,7 @@ public class InvoiceJSON {
 			.put(IJsonNames.REGISTRY_NAME, inv.getRegistryName() )
 			.put(IJsonNames.ISSUE_DATE, inv.getIssueDate() == null? null : AonNumberUtils.toString(inv.getIssueDate().getTime()) )
 			.put(IJsonNames.TAX_DATE, inv.getTaxDate() == null? null : AonNumberUtils.toString(inv.getTaxDate().getTime()) )
-			.put(IJsonNames.TOTAL, inv.getTotal() )
+			.put(IJsonNames.TOTAL, inv.getTotal())
 		;
 	}
 	

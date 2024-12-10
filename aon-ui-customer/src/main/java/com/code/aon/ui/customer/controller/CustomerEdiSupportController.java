@@ -16,8 +16,8 @@ import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.config.Tag;
 import com.code.aon.config.enumeration.TagType;
-import com.code.aon.customer.CustomerEdiSupport;
 import com.code.aon.customer.Customer;
+import com.code.aon.customer.CustomerEdiSupport;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionUtilities;
@@ -25,6 +25,7 @@ import com.code.aon.registry.Registry;
 import com.code.aon.registry.RegistryNote;
 import com.code.aon.registry.enumeration.NoteType;
 import com.esferalia.aon.entity.IEntityAlias;
+import com.esferalia.aon.occam.api.model.seres.SeresPath;
 
 public class CustomerEdiSupportController extends CustomerEdiSupport implements Serializable {
 
@@ -32,8 +33,12 @@ public class CustomerEdiSupportController extends CustomerEdiSupport implements 
 
 	private boolean seresAutoCommitDelivery;
 	private boolean seresInvoicingMainAddress;
-	private Boolean eci;
+	private boolean eci;
 	
+	private SeresPath receiveOrder;
+	private SeresPath sendDesadv;
+	private SeresPath sendInvoice;
+
 	public boolean isEci(){
 		return eci;
 	}
@@ -58,11 +63,64 @@ public class CustomerEdiSupportController extends CustomerEdiSupport implements 
 		this.seresInvoicingMainAddress = seresInvoicingMainAddress;
 	}
 
+	public SeresPath getReceiveOrder() {
+		if(receiveOrder == null)
+			return SeresPath.RECEPCION_ORDERS_D96A;
+		return receiveOrder;
+	}
+	
+	public void setReceiveOrder(SeresPath receiveOrder) {
+		this.receiveOrder = receiveOrder;
+	}
+	
+	public SeresPath getSendDesadv() {
+		if(sendDesadv == null)
+			return SeresPath.ENVIO_DESADV_D96A;
+		return sendDesadv;
+	}
+	
+	public void setSendDesadv(SeresPath sendDesadv) {
+		this.sendDesadv = sendDesadv;
+	}
+	
+	public SeresPath getSendInvoice() {
+		if(sendDesadv == null)
+			return SeresPath.ENVIO_INVOIC_D96A;
+		return sendInvoice;
+	}
+	
+	public void setSendInvoice(SeresPath sendInvoice) {
+		this.sendInvoice = sendInvoice;
+	}
+	
+	public List<SelectItem> getReceiveOrderOptions() {
+		List<SelectItem> list = new LinkedList<>();
+		list.add(new SelectItem(SeresPath.RECEPCION_ORDERS_D01B, "D01B"));
+		list.add(new SelectItem(SeresPath.RECEPCION_ORDERS_D93A, "D93A"));
+		list.add(new SelectItem(SeresPath.RECEPCION_ORDERS_D96A, "D96A"));
+		return list;
+	}
+	
+	public List<SelectItem> getSendDesadvOptions() {
+		List<SelectItem> list = new LinkedList<>();
+		list.add(new SelectItem(SeresPath.ENVIO_DESADV_D01B, "D01B"));
+		list.add(new SelectItem(SeresPath.ENVIO_DESADV_D96A, "D96A"));
+		return list;
+	}
+	
+	public List<SelectItem> getSendInvoiceOptions() {
+		List<SelectItem> list = new LinkedList<>();
+		list.add(new SelectItem(SeresPath.ENVIO_INVOIC_D01B, "D01B"));
+		list.add(new SelectItem(SeresPath.ENVIO_INVOIC_D93A, "D93A"));
+		list.add(new SelectItem(SeresPath.ENVIO_INVOIC_D96A, "D96A"));
+		return list;
+	}
+	
 	public List<SelectItem> getPackingTypeTags() throws ManagerBeanException {
 		IManagerBean tagBean = BeanManager.getManagerBean(Tag.class);
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(tagBean.getFieldName(IEntityAlias.TAG_TYPE), TagType.PACKING);
-		List<SelectItem> list = new LinkedList<SelectItem>();
+		List<SelectItem> list = new LinkedList<>();
 		for (ITransferObject to : tagBean.getList(criteria)) {
 			Tag tag = (Tag) to;
 			list.add(new SelectItem(tag.getId().toString(), tag.getName()));
@@ -71,25 +129,35 @@ public class CustomerEdiSupportController extends CustomerEdiSupport implements 
 	}
 
 	public void onRecover(Customer customer) throws ManagerBeanException {
-		setEci(isECI(customer.getRegistry()));
+		setEci(isEci(customer.getRegistry()));
 		init(customer);
 		
 		RegistryNote autoCommit = this.getRegistryNote(SERES_AUTO_COMMIT_DELIVERY, customer.getId());
-		seresAutoCommitDelivery = autoCommit != null && new Boolean(autoCommit.getComments());
-		
+		seresAutoCommitDelivery = autoCommit != null && Boolean.getBoolean(autoCommit.getComments());
 		RegistryNote mainInvoicingAddress = this.getRegistryNote(SERES_INVOICING_MAIN_ADDRESS, customer.getId());
-		seresInvoicingMainAddress = mainInvoicingAddress != null && new Boolean(mainInvoicingAddress.getComments());
+		seresInvoicingMainAddress = mainInvoicingAddress != null && Boolean.getBoolean(mainInvoicingAddress.getComments());
+
+		RegistryNote order = this.getRegistryNote(SERES_RECEIVE_ORDER, customer.getId());
+		if(order != null) setReceiveOrder(SeresPath.safeValueOf(order.getComments()));
+		
+		RegistryNote desadv = this.getRegistryNote(SERES_SEND_DESADV, customer.getId());
+		if(desadv != null) setSendDesadv(SeresPath.safeValueOf(desadv.getComments()));
+		
+		RegistryNote invoice = this.getRegistryNote(SERES_SEND_INVOICE, customer.getId());
+		if(invoice != null) setSendInvoice(SeresPath.safeValueOf(invoice.getComments()));
+		
+		seresInvoicingMainAddress = mainInvoicingAddress != null && Boolean.getBoolean(mainInvoicingAddress.getComments());
 	}
 
 	private void clear(Customer customer) {
-		setEci(isECI(customer.getRegistry()));
+		setEci(isEci(customer.getRegistry()));
 		getAddresses(customer).forEach(
-				address -> {
+				address -> 
 					getAddressCodes().put(
 							address.getId(),
 							getAddressCodes(obtainRegistryNote(address.getId(),
-									customer)));
-				});
+									customer)))
+				);
 	}
 
 	private void saveActiveParam(Customer customer) throws ManagerBeanException {
@@ -118,6 +186,34 @@ public class CustomerEdiSupportController extends CustomerEdiSupport implements 
 		rNote.setComments(String.valueOf(isSeresInvoicingMainAddress()));
 		saveRegistryNote(rNote);
 	}
+	
+	
+	private void saveReceiveOrderParam(Customer customer) throws ManagerBeanException {
+		RegistryNote rNote = this.getRegistryNote(SERES_RECEIVE_ORDER, customer.getId());
+		if (rNote == null) {
+			rNote = getEmptyNote(customer.getRegistry(), SERES_RECEIVE_ORDER);
+		}
+		rNote.setComments(getReceiveOrder().name());
+		saveRegistryNote(rNote);
+	}
+	
+	private void saveSendDesadvParam(Customer customer) throws ManagerBeanException {
+		RegistryNote rNote = this.getRegistryNote(SERES_SEND_DESADV, customer.getId());
+		if (rNote == null) {
+			rNote = getEmptyNote(customer.getRegistry(), SERES_SEND_DESADV);
+		}
+		rNote.setComments(getSendDesadv().name());
+		saveRegistryNote(rNote);
+	}
+	
+	private void saveSendInvoiceParam(Customer customer) throws ManagerBeanException {
+		RegistryNote rNote = this.getRegistryNote(SERES_SEND_INVOICE, customer.getId());
+		if (rNote == null) {
+			rNote = getEmptyNote(customer.getRegistry(), SERES_SEND_INVOICE);
+		}
+		rNote.setComments(getSendInvoice().name());
+		saveRegistryNote(rNote);
+	}
 
 	private void save(Customer customer) throws ManagerBeanException {
 		for (Integer addressId : this.getAddressCodes().keySet()) {
@@ -127,11 +223,12 @@ public class CustomerEdiSupportController extends CustomerEdiSupport implements 
 				note = getEmptyNote(customer.getRegistry(),
 						addressId.toString());
 			}
-			String format = "";
+			StringBuilder format = new StringBuilder();
 			for(int i=0; i<EDI_VALUES.length; i++)
-				format += EDI_VALUES[i] + "=%s;";
+				format.append(EDI_VALUES[i] + "=%s;");
+			
 			List<String> values = this.getAddressCodes().get(addressId);
-			note.setComments(String.format(format, values.toArray()));
+			note.setComments(String.format(format.toString(), values.toArray()));
 			saveRegistryNote(note);
 		}
 	}
@@ -141,6 +238,11 @@ public class CustomerEdiSupportController extends CustomerEdiSupport implements 
 			saveActiveParam(customer);
 			saveSeresAutoCommitDeliveryParam(customer);
 			saveSeresInvoicingMainAddressParam(customer);
+			
+			saveReceiveOrderParam(customer);
+			saveSendDesadvParam(customer);
+			saveSendInvoiceParam(customer);
+			
 			save(customer);
 		} else {
 			onRemove(customer);
@@ -187,9 +289,7 @@ public class CustomerEdiSupportController extends CustomerEdiSupport implements 
 		}
 	}
 	
-	private Boolean isECI(Registry registry) {
+	private boolean isEci(Registry registry) {
 		return "A28017895".equalsIgnoreCase(registry.getDocument());
 	}
-
-
 }

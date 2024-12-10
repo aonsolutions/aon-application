@@ -15,4 +15,6 @@ public interface IUdapaAsync {
 	void deleteQuality(String domainName, Integer domainId, Integer drId, AsyncCallback<Void> callback);
 	
 	void updateIncomeDetail(String domainName, Integer domainId, Double price, Double quantity, Integer incomeDetailId, AsyncCallback<Void> callback);
+
+	void uploadImage(String domainName, Integer domainId, String login, String data, String type, Integer dataResponse, AsyncCallback<Void> callback);
 }

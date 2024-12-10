@@ -49,7 +49,7 @@ import net.aonsolutions.aon.gwt.udapa.shared.quality.QualitySheetConstants;
 import net.aonsolutions.aon.gwt.udapa.shared.quality.WidgetStack;
 import net.aonsolutions.aon.gwt.udapa.shared.quality.WidgetType;
 
-public class QualitySheet extends Composite{
+public class QualitySheet extends Composite {
 	
 	interface Binder extends UiBinder<Widget, QualitySheet> {}
 	private static final Binder binder = GWT.create(Binder.class);

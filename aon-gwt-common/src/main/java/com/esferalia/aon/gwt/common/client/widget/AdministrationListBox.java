@@ -23,8 +23,10 @@ public class AdministrationListBox extends ListBox {
 		if (!hideNavarra) {
 			this.addItem( Administration.NAVARRA.getDescription());
 		}
-		if (!onlyForal)
+		if (!onlyForal) {
 			this.addItem( Administration.COMMON_TERRITORY.getDescription());
+			this.addItem( Administration.CANARIAS.getDescription());
+		}
 	}
 
 	public Administration getValue() {

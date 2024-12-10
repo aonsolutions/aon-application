@@ -170,6 +170,7 @@ export const EMPLOYEE = 'Employee';
 export const END_DATE = 'End Date';
 export const ENGLISH = 'English';
 export const ENTERPRISE = 'Enterprise';
+export const ENTERPRISES = 'Enterprises';
 export const ENTRY = 'Entry';
 export const EQUIVALENCE_SURCHARGE = 'Equivalence Surcharge';
 export const EXERCISE = "Exercise";

@@ -152,7 +152,7 @@
 				// loadDomainFunctions
 				iwindow.getCurrentDomainNameURL = () => LS.getDomainName();
 				iwindow.getCurrentDomainName = () => LS.getDomainName();
-				iwindow.getCurrentDomain = () => LS.getDomainId();
+				iwindow.getCurrentDomain = () => parseInt(LS.getDomainId());
 				iwindow.getCurrentUser = () => LS.getDomainLogin();
 				iwindow.isSysAdmin = () => true;
 

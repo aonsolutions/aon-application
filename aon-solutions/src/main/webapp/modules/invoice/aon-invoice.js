@@ -17,7 +17,7 @@ import { CONSTANT, CSS, EVENT, MATERIAL_ICONS, MSG, TAG } from '../../environmen
 import * as GWT from '../../gwt/gwt.js';
 import * as ACTION from '../actions.js';
 import { Transactions } from '../../services/transaction.js';
-import { ErrCode, ErrKey, getTaxPercentageOption, getTaxType, getTaxTypeName, TaxIVAPercentage, TaxType, WithholdingType } from './invoiceEnums.js';
+import { ErrCode, ErrKey, getTaxPercentageOption, getTaxType, getTaxTypeName, getVatLabel, getVats, TaxType, WithholdingType } from './invoiceEnums.js';
 import { getInvestAssets, getItems} from '../../services/productService.js';
 import * as LS from '../../services/localStorageService.js';
 import { AonBasicTable } from '../../components/aon-basic-table.js';
@@ -86,11 +86,12 @@ export class AonInvoice extends AonElement {
 	async connectedCallback () {
 		this.initialize();
 		this.initializeFunctions();
+		this.configuration = await getInvoiceConfiguration();
+
 		this.buildDur().then(r => {
 			this.build();
-		});
+		});		
 		
-		this.configuration = await getInvoiceConfiguration();
 		getCompany().then(company => {
 			const registry = this.getInvoice().isEmitida()
 				? this.getInvoice().getRegistry().id 
@@ -1133,7 +1134,7 @@ export class AonInvoice extends AonElement {
 		let div = this.createDiv();
 		div.className = CSS.AON_FLEX;
 		table.addCell(div, '4');
-		
+
 		if(this.invoice.isEmitida() && !this.isInvofoxInvoice()) {
 			// ----- SERIE
 			let serieSpan = this.createTableSpan("20%", "2px");
@@ -1168,8 +1169,8 @@ export class AonInvoice extends AonElement {
 				getSalesSeries({}).then(r => {
 					this.series = r;
 					let enabled = this.invoice.isInbox() && r.filter(f => f.description == this.invoice.serie).length === 0;
-					number.readonly = !enabled;
-					number.disabled = !enabled;					
+					number.setReadonly(!enabled);
+					number.setDisabled(!enabled);					
 				});
 
 				number.addEventListener(EVENT.CHANGE, () => {
@@ -1473,7 +1474,7 @@ export class AonInvoice extends AonElement {
 		activitySpan.appendChild(activity);
 		getCompanyActivities({}).then(activities => {
 			if(activities.length > 0) {
-				this.invoice.setActivity(this.invoice.getActivity() || activities[0]);
+				if(!this.invoice.activity) this.invoice.setActivity(this.invoice.getActivity() || activities[0]);
 				activity.setOptions(activities);
 				activity.value = this.invoice.getActivity().id;
 			}
@@ -1621,7 +1622,7 @@ export class AonInvoice extends AonElement {
 							this.invoice.setFinance(finance, i); 
 						}
 				   	});
-				} else { 
+				} else {
 					finance.bank_account = "";
 					this.invoice.setFinance(finance, i);
 				}
@@ -1635,6 +1636,7 @@ export class AonInvoice extends AonElement {
 			if(transactionJSON.transaction)
 				this.invoice.setTransaction(transactionJSON.transaction);
 		}
+
 		if(registry.withholding) this.invoice.setWithholding(registry.withholding);
 		if(registry.surcharge) this.invoice.setSurcharge(registry.surcharge);
 
@@ -1642,14 +1644,12 @@ export class AonInvoice extends AonElement {
 			registry: this.invoice.getRegistry().id,
 			type: this.invoice.type
 		};
-
 		if(this.getDur().hasAccounting() || this.getDur().hasParentAccounting()){
 			getRegistrySuggestedAccount(data).then(r => {
 				this.invoice.setCategory(r.code);
 				this.getElement(this.CATEGORY).value = r.code;
 			});
 		}
-
 		this.getElement(this.TOTAL).value = this.invoice.getTotal();
 		this.buildTaxCardContent();
 		this.buildDetailCard();
@@ -1671,8 +1671,9 @@ export class AonInvoice extends AonElement {
 		// ----- TAX PERCENT
 
 		tax.type = tax.type || tax.tax;
-		let percentage = createSelect(this.TAX_PERCENTAGE + i, '% ' + getTaxTypeName(tax.type, this.isMobile()));
-		percentage.options = JSON.stringify(getTaxPercentageOption(tax.type));
+		let administration = this.configuration ? this.configuration.administration : '';
+		let percentage = createSelect(this.TAX_PERCENTAGE + i, '% ' + getTaxTypeName(tax.type, this.isMobile(), administration));
+		percentage.options = JSON.stringify(getTaxPercentageOption(tax.type, administration));
 		percentage.addEventListener(EVENT.SELECT, () => {
 			tax.percentage = percentage.value;
 			tax.type = getTaxType(tax.percentage);
@@ -1969,8 +1970,9 @@ export class AonInvoice extends AonElement {
 
 		// ----- DETAIL VAT
 		if(this.invoice.isVatEnabled()) {
-			let vat = createSelect(this.DETAIL_VAT + i, '%IVA');
-			vat.options = JSON.stringify(TaxIVAPercentage);
+			let administration = this.configuration ? this.configuration.administration : '';
+			let vat = createSelect(this.DETAIL_VAT + i, getVatLabel(administration));
+			vat.options = JSON.stringify(getVats(administration));
 			if(detail.prepayment === undefined) detail.prepayment = false;
 			vat.readonly = this.invoice.isReadonly() || (detail.prepayment && detail.prepayment == 'true');
 			
@@ -2075,8 +2077,9 @@ export class AonInvoice extends AonElement {
 
 		// ----- DETAIL VAT
 		if(this.invoice.isVatEnabled() &&  (!detail.prepayment || detail.prepayment == 'false')) {
-			let vat = createSelect(this.DETAIL_VAT + 'Dialog' + i, '%IVA');
-			vat.options = JSON.stringify(TaxIVAPercentage);
+			let administration = this.configuration ? this.configuration.administration : '';
+			let vat = createSelect(this.DETAIL_VAT + 'Dialog' + i, getVatLabel(administration));
+			vat.options = JSON.stringify(getVats(administration));
 			if(detail.prepayment === undefined) detail.prepayment = false;
 			vat.readonly = this.invoice.isReadonly() || detail.prepayment;
 			vat.addEventListener(EVENT.SELECT, () => {

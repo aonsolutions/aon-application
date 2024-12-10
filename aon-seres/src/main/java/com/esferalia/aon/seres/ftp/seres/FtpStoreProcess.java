@@ -6,8 +6,8 @@ import java.io.File;
 import java.io.InputStream;
 import java.io.Serializable;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.logging.Level;
 
 import org.apache.commons.io.IOUtils;
@@ -18,8 +18,9 @@ import com.code.aon.AonVersion;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.DataResponse;
 import com.esferalia.aon.occam.api.model.DataResponseDetail;
+import com.esferalia.aon.occam.api.model.seres.SeresInfo;
 import com.esferalia.aon.occam.api.model.type.DataResponseSource;
-import com.esferalia.aon.seres.ftp.SeresFtpConnectionProvider;
+import com.esferalia.aon.seres.ftp.SeresSftpConnectionProvider;
 import com.esferalia.aon.watson.server.io.AonFileUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
@@ -40,76 +41,54 @@ public class FtpStoreProcess implements ILongProcess, Serializable {
 	protected static final String RECIPIENTS_TO_LOG = "udapalog@aonsolutions.es";
 	protected static final String RECIPIENTS_TO_SUCCESS = "udapasuccess@aonsolutions.es";
 	protected static final String RECIPIENTS_TO_FAILURES = "udapafailures@aonsolutions.es";
-	
-	
-	private boolean success = false;
-	
-	private Map<Integer, byte[]> dataMap;
-	private Map<Integer, String> referenceCodeMap;
+		
+	private List<FtpObject> list;
+
 	private DataResponseSource source;
 	
 	private String domainName;
 	private int domainId;
-	private String loggedUser;
+	private String loggedUser;	
 	
-	private String ftpRemotePath;
-	private String ftpServer;
-	private Integer ftpPort;
-	private String ftpUser;
-	private String ftpPassword;
-	
-	
-	
-	public FtpStoreProcess(DataResponseSource source, String domainName, int domainId, String loggedUser, String ftpRemotePath,
-			String ftpServer, Integer ftpPort, String ftpUser, String ftpPassword) {
-		this.dataMap = new HashMap<>();
-		this.referenceCodeMap = new HashMap<>();
+	public FtpStoreProcess(DataResponseSource source, String domainName, int domainId, String loggedUser) {
+		this.list = new LinkedList<>();
 		this.source = source;
 		
 		this.domainName = domainName;
 		this.domainId = domainId;
 		this.loggedUser = loggedUser;
-		
-		this.ftpRemotePath = ftpRemotePath;
-		this.ftpServer = ftpServer;
-		this.ftpPort = ftpPort;
-		this.ftpUser = ftpUser;
-		this.ftpPassword = ftpPassword;
 	}
 	
-	public void put(int id, byte[] data, String referenceCode) {
-		dataMap.put(id, data);
-		referenceCodeMap.put(id, referenceCode);
+	public void put(int id, byte[] data, String referenceCode, SeresInfo info) {
+		FtpObject o = new FtpObject()
+				.setId(id)
+				.setData(data)
+				.setReference(referenceCode)
+				.setSeresInfo(info);
+		list.add(o);
 	}
 	
 	@Override
 	public void execute() {
-		for(Integer id: dataMap.keySet()){
-			byte[] data = dataMap.get(id);
-			String referenceCode = referenceCodeMap.get(id);
-			
-			InputStream inputStream = new BufferedInputStream(
-					new ByteArrayInputStream(data));
-			success = storeFtpFile(referenceCode + ".edi",
-					inputStream);
-			
-			LOGGER.info("FTP STORE: " + success);
-			if (success) {
-				track(Level.INFO, ResponseMessageType.RESPONSE, id, referenceCode);
-			} else {
-				track(Level.SEVERE, ResponseMessageType.RESPONSE, id, referenceCode);
-			}
-			IOUtils.closeQuietly(inputStream);
-		}
+		list.stream().forEach(this::storeFtpFile);
 	}
 	
-	private boolean storeFtpFile(String fileName, InputStream inputStream) {
+	private boolean storeFtpFile(FtpObject object) {
 		try {
-			return SeresFtpConnectionProvider.storeFile(ftpRemotePath, fileName,
-					inputStream, ftpServer, ftpPort, ftpUser, ftpPassword);
+			InputStream inputStream = new BufferedInputStream(
+				new ByteArrayInputStream(object.getData()));
+			boolean success = SeresSftpConnectionProvider.storeFile(object.getSeresInfo(), object.getReference() + ".edi", inputStream);
+			LOGGER.info("FTP STORE: " + success);
+			if (success) {
+				track(Level.INFO, ResponseMessageType.RESPONSE, object.getId(), object.getReference());
+			} else {
+				track(Level.SEVERE, ResponseMessageType.RESPONSE, object.getId(), object.getReference());
+			}
+			IOUtils.closeQuietly(inputStream);
+			return success;
 		} catch (Exception e) {
 			LOGGER.error(e.getMessage());
-		} 
+		}
 		return false;
 	}
 	

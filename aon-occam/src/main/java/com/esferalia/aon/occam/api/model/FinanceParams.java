@@ -31,6 +31,11 @@ public class FinanceParams implements Serializable{
 	
 	private Integer registry;
 	private Double amount;
+	
+	private boolean betweenNumbers = false;
+	private Double gtamount;
+	private Double ltamount;
+	
 	private boolean nearbyNumbers;
 	private double factor = 5;
 	private String concept;
@@ -102,6 +107,27 @@ public class FinanceParams implements Serializable{
 	}
 	public FinanceParams setAmount(Double amount) {
 		this.amount = amount;
+		return this;
+	}
+	public boolean isBetweenNumbers() {
+		return betweenNumbers;
+	}
+	public FinanceParams setBetweenNumbers(boolean betweenNumbers) {
+		this.betweenNumbers = betweenNumbers;
+		return this;
+	}
+	public Double getGTAmount() {
+		return gtamount;
+	}
+	public FinanceParams setGTAmount(Double gtamount) {
+		this.gtamount = gtamount;
+		return this;
+	}
+	public Double getLTAmount() {
+		return ltamount;
+	}
+	public FinanceParams setLTAmount(Double ltamount) {
+		this.ltamount = ltamount;
 		return this;
 	}
 	public boolean isNearbyNumbers() {

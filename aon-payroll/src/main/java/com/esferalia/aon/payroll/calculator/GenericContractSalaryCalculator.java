@@ -2308,8 +2308,9 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 	    	for ( ContextVariable ctxVar : new ContextVariable [] {ContextVariable.TOTAL_DAYS, ContextVariable.DO_DAYS}) {
         		try {
         			if ( ctx.getExpressionContext().isDef(ctxVar)) {
-        				salaryBuilder.setTimeUnits(ctx.getExpressionContext().getVariables(ctxVar).stream()
-        					.map(v -> (Number) v.getValue(v.getPeriod()))
+						salaryBuilder.setTimeUnits(ctx.getExpressionContext()
+								.eval(ctxVar.getName(), ctx.getStartDate(), ctx.getEndDate(), Number.class).stream()
+	        					.map(v -> (Number) v.getValue(v.getPeriod()))
         					.collect(Collectors.summingDouble(Number::doubleValue)).intValue());
         				return;
         			}

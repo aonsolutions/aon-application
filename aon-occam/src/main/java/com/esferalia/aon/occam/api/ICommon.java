@@ -152,7 +152,10 @@ public interface ICommon {
 	public void deleteTag(AONContext ctx, TagFilter filter);
 	
 	//TAX
+
 	public Stream<Tax> getTaxStream(AONContext ctx, TaxFilter filter);
+	public Stream<Tax> getVatStream(AONContext ctx);
+	public Stream<Tax> getWithholdingStream(AONContext ctx);
 
 	// DATA RESPONSE
 	

@@ -36,6 +36,7 @@ public class DefaultPayroll implements IDefaultPayroll {
 	private Optional<Integer>								totalDays;
 	private Optional<Map<Integer, ArrayList<PDFPayment>>>	accruals;
 	private Optional<Map<Integer, ArrayList<PDFDeduction>>>	deductions;
+	private Optional<Map<Integer, ArrayList<PDFDeduction>>>	costs;
 	private Optional<Double>								totalSSContributions;
 	private Optional<Double>								accrualTotal;
 	private Optional<Double>								deductionTotal;
@@ -127,6 +128,11 @@ public class DefaultPayroll implements IDefaultPayroll {
 	public Optional<Map<Integer, ArrayList<PDFDeduction>>> getDeductions() {
 		return deductions;
 	}
+	
+	@Override
+	public Optional<Map<Integer, ArrayList<PDFDeduction>>> getCosts() {
+		return costs;
+	}
 
 	@Override
 	public Optional<Double> getPaymentsTotal() {
@@ -189,6 +195,7 @@ public class DefaultPayroll implements IDefaultPayroll {
 		private Optional<Integer>								totalDays;
 		private Optional<Map<Integer, ArrayList<PDFPayment>>>	accruals;
 		private Optional<Map<Integer, ArrayList<PDFDeduction>>>	deductions;
+		private Optional<Map<Integer, ArrayList<PDFDeduction>>>	costs;
 		private Optional<Double>								accrualTotal;
 		private Optional<Double>								totalSSContributions;
 		private Optional<Double>								deductionTotal;
@@ -216,6 +223,7 @@ public class DefaultPayroll implements IDefaultPayroll {
 			totalDays		  = Optional.empty();
 			accruals		  = Optional.of(new HashMap<>());
 			deductions		  = Optional.of(new HashMap<>());
+			costs		  	  = Optional.of(new HashMap<>());
 			totalSSContributions = Optional.empty();
 			accrualTotal	  = Optional.empty();
 			deductionTotal	  = Optional.empty();
@@ -308,6 +316,11 @@ public class DefaultPayroll implements IDefaultPayroll {
 
 		public DefaultPayrollBuilder setDeductions(Map<Integer, ArrayList<PDFDeduction>> deductions) {
 			this.deductions = Optional.ofNullable(deductions);
+			return this;
+		}
+
+		public DefaultPayrollBuilder setCosts(Map<Integer, ArrayList<PDFDeduction>> costs) {
+			this.costs = Optional.ofNullable(costs);
 			return this;
 		}
 
@@ -421,6 +434,11 @@ public class DefaultPayroll implements IDefaultPayroll {
 			return this;
 		}
 
+		public DefaultPayrollBuilder setCosts(Optional<Map<Integer, ArrayList<PDFDeduction>>> costs) {
+			this.costs = costs;
+			return this;
+		}
+
 		public DefaultPayrollBuilder setAccrualTotal(Optional<Double> accrualTotal) {
 			this.accrualTotal = accrualTotal;
 			return this;
@@ -478,6 +496,7 @@ public class DefaultPayroll implements IDefaultPayroll {
 			p.totalDays			= this.totalDays;
 			p.accruals			= this.accruals;
 			p.deductions		= this.deductions;
+			p.costs				= this.costs;
 			p.totalSSContributions = this.totalSSContributions;
 			p.accrualTotal		= this.accrualTotal;
 			p.deductionTotal	= this.deductionTotal;

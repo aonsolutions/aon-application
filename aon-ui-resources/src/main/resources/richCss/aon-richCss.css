@@ -124,6 +124,9 @@ color:#000;
 .aon-border-top-black{border-top:#000 2px solid;}
 .aon-border-bottom-black{border-bottom:#000 2px solid;}
 
+.aon-valign-items-middle{display: flex; flex-direction: row; align-items: center;}
+
+
 .aon-input-required {
 	color:#2152A5;
 	font-weight: bold !important;
@@ -1621,12 +1624,12 @@ color:#000;
 	}
 	
 .aon-panelGrid-search .aon-panelGrid-odd{
-	background-color:#f6f5e3; !important;
+	background-color:#f6f5e3 !important;
 	border:0;
 	text-align:right;	
 }
 .aon-panelGrid-search .aon-panelGrid-even{
-	background-color:#f6f5e3; !important;	
+	background-color:#f6f5e3 !important;	
 	border:0;
 	padding:2px;
 }
@@ -3617,6 +3620,15 @@ rich-fileupload-button-dis, rich-fileupload-button-selection{
 .aon-background-navarra {
 	background-color: #da002a;
 }
+.aon-menu-icon-canarias{
+	bbackground: transparent url(images/aon-icon/aon-icon-canarias.png) scroll 2px center no-repeat;
+	color: #da002a;
+	border: 0.5px solid #fbba00;;
+}
+.aon-background-canarias {
+	background-color: #fbba00;;
+}
+
 .aon-menu-fiscal-label {
 	background: transparent url("images/aon-icon/aon-ul-list.png") no-repeat scroll left center;
 	padding-left: 15px;

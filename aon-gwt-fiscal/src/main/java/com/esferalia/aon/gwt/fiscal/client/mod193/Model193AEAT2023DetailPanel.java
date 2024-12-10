@@ -154,7 +154,7 @@ public class Model193AEAT2023DetailPanel extends SimpleLayoutPanel implements Fo
 		tab2.setWidget(1, 4, new Model193SmallerLabel(AON.MSG.keyCode()));
 		tab2.setWidget(1, 5, new Model193SmallerLabel(AON.MSG.issuingCode()));
 		tab2.setWidget(1, 6, new Model193SmallerLabel(AON.MSG.accrualYear()));
-		tab2.setWidget(1, 7, new Label());
+		tab2.setWidget(1, 7, new Model193SmallerLabel("Ceuta o Melilla / Isla de la Palma"));
 
 		final ListBox nature = new ListBox();
 		nature.setWidth("40px");
@@ -235,15 +235,17 @@ public class Model193AEAT2023DetailPanel extends SimpleLayoutPanel implements Fo
 		});
 		tab2.setWidget(2, 6, accrualYear);
 		
-		CheckBox ceutaMelilla = new CheckBox(AON.MSG.ceutaMelillaAbbrv());
-		ceutaMelilla.setValue(detail.isCeutaMelilla());
-		ceutaMelilla.addClickHandler(event -> {
-			detail.setCeutaMelilla(ceutaMelilla.getValue());
+		ListBox ceutaMelillaPalma = new ListBox();
+		ceutaMelillaPalma.setWidth("140px");
+		ceutaMelillaPalma.addItem("-");
+		ceutaMelillaPalma.addItem("1 - Ceuta o Melilla");
+		ceutaMelillaPalma.addItem("2 - Isla de La Palma");
+		ceutaMelillaPalma.setSelectedIndex(detail.getCeutaMelillaPalma());
+		ceutaMelillaPalma.addChangeHandler( event -> {
+			detail.setCeutaMelillaPalma((byte) ceutaMelillaPalma.getSelectedIndex());
 			callback.onValueChanged(detail);
 		});
-		tab2.setWidget(2, 7, ceutaMelilla);
-		
-		
+		tab2.setWidget(2, 7, ceutaMelillaPalma);
 		
 		tab2.setWidget(3, 0, new Model193SmallerLabel(AON.MSG.payment()));
 		tab2.setWidget(3, 1, new Model193SmallerLabel(AON.MSG.codeType()));

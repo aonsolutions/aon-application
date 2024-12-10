@@ -218,12 +218,9 @@ public class DeliveryServlet extends AonApiHttpServlet {
 				&& rNote.getComments().trim().equalsIgnoreCase("true");
 		if(autoSendDelivery){
 			System.out.println("SEND DELIVERY TO SERES IS TRUE");
-			SeresInfo info = SERES.getSeresInfo(api.getDomain(), api.getUser());
-			if(info.getSeresPath() == null)
-				info.setSeresPath(SeresPath.ENVIO_DESADV_D96A);
+			SeresInfo info = SERES.getSeresInfo(api.getDomain(), api.getUser(), delivery);
 			DeliveryUpload du = new DeliveryUpload(api.getDomain(), api.getUser().getLogin(), info);
-			EdiCodes codes = SERES.getEdiCodes(api.getDomain(), api.getUser(), d);
-			d.setEdiCodes(codes);
+			d.setEdiCodes(info.getEdiCodes());
 			
 			Attach attach = AON.getAttach(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(),
 				f -> f.getDomainProperty().eq(api.getDomain().getId())
@@ -235,6 +232,5 @@ public class DeliveryServlet extends AonApiHttpServlet {
 		} else System.out.println("SEND DELIVERY TO SERES IS FALSE");
 
 	}
-	
 }
 
