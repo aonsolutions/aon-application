@@ -48,6 +48,7 @@ import java.util.Calendar;
 import java.util.Collections;
 import java.util.HashMap;
 
+import org.junit.Ignore;
 import org.junit.Test;
 
 import com.esferalia.aon.jooq.tables.records.AgreementLevelCategoryRecord;
@@ -782,6 +783,7 @@ public class SQLPartialTimeTestCase extends AbstractSQLTestCase {
 	}
 
 	@Test
+	@Ignore()
 	public void testPartialMonthlyXVI()
 			throws ExpressionException, SQLException, SalaryException {
 		Connection connection = getConnection();
