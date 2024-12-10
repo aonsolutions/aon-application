@@ -4028,7 +4028,7 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 					p -> p.getIsSalaryProperty().eq(true).and(p.getContractProperty().eq(contractId))
 							.and(p.getStartDateProperty().le(prevEndMonth)).and(p.getEndDateProperty().ge(prevStartMonth)));
 			
-			Pair<Double, Double> pair = new Pair<Double, Double>(0.00, 0.00);
+			Pair<Double, Double> pair = new Pair<>(0.00, 0.00);
 			salaries.forEach(s-> {
 				pair.fst += s.getCommonContingenciesBase();
 				
@@ -4039,11 +4039,16 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 				pair.snd += partial ? naturalDays: quoteDays ;
 			} )
 			;
-
-			Stream<com.esferalia.aon.occam.api.model.Salary> delays = AON.getSalaries(new AONContext(connection),
-					p -> p.getIsDelayProperty().eq(true).and(p.getContractProperty().eq(contractId))
-							.and(p.getStartDateProperty().le(prevEndMonth)).and(p.getEndDateProperty().ge(prevStartMonth)));
-			delays.forEach(s-> pair.fst += s.getCommonContingenciesBase());
+			Stream<com.esferalia.aon.occam.api.model.Salary> delays =
+			AON.getSalaryData(new AONContext(connection), p -> p.getIsDelayProperty().eq(true).and(p.getContractProperty().eq(contractId))
+					.and(p.getStartDateProperty().le(prevEndMonth)).and(p.getEndDateProperty().ge(prevStartMonth)));
+				
+			delays.forEach(s ->  { 
+				List<ContextData> cgcBases = s.getContextData(ContextVariable.CGC_BASE.getName(), prevStartMonth, prevEndMonth);
+				double commonContingenciesBase = cgcBases.stream().collect(Collectors.summingDouble( d -> AonNumberUtils.todouble(d.getExpression()) ));
+				pair.fst += commonContingenciesBase;
+			
+			});;
 			
 			br = pair.fst / pair.snd;
 			
