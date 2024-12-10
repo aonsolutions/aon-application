@@ -22,9 +22,7 @@ import com.esferalia.aon.occam.api.model.attachment.AttachType;
 import com.esferalia.aon.occam.api.model.attachment.DataAttachSource;
 import com.esferalia.aon.occam.api.model.registry.NoteType;
 import com.esferalia.aon.occam.api.model.registry.RegistryNote;
-import com.esferalia.aon.occam.api.model.seres.EdiCodes;
 import com.esferalia.aon.occam.api.model.seres.SeresInfo;
-import com.esferalia.aon.occam.api.model.seres.SeresPath;
 import com.esferalia.aon.occam.api.model.type.DeliveryStatus;
 import com.esferalia.aon.occam.api.model.warehouse.CarrierPacking;
 import com.esferalia.aon.occam.api.model.warehouse.Delivery;
@@ -218,7 +216,7 @@ public class DeliveryServlet extends AonApiHttpServlet {
 				&& rNote.getComments().trim().equalsIgnoreCase("true");
 		if(autoSendDelivery){
 			System.out.println("SEND DELIVERY TO SERES IS TRUE");
-			SeresInfo info = SERES.getSeresInfo(api.getDomain(), api.getUser(), delivery);
+			SeresInfo info = SERES.getSeresInfo(api.getDomain(), api.getUser(), d);
 			DeliveryUpload du = new DeliveryUpload(api.getDomain(), api.getUser().getLogin(), info);
 			d.setEdiCodes(info.getEdiCodes());
 			

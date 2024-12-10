@@ -47,6 +47,8 @@ import solutions.aon.aws.ses.SESMessage;
 
 public class BookingUtils {
 	
+	private static final String AON_LOGO = "https://aon.solutions/assets/aon-logo.png";
+	
 	public static BookingUtils getInstance() {
 		return new BookingUtils();
 	}
@@ -247,6 +249,8 @@ public class BookingUtils {
 			logoUrl = (isLocal ? "http" : "https") + "://" + parentDomain.getName() + (isLocal ? ":8080" : "")
 					+ "/ms/download_attachment/" + attachDomain.getName() + "/" + attach.getCreationUser() + "/"
 					+ result;
+		} catch (Exception e) {
+			logoUrl = AON_LOGO;
 		}
 
 		return logoUrl;
