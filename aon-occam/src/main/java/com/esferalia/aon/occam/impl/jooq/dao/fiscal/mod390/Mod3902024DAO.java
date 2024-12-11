@@ -931,6 +931,9 @@ public class Mod3902024DAO {
 			mod390.getSimpRegime1().setBoxC(src.getAmount());
 			mod390.setBox74( AonMathUtils.round(mod390.getBox74() + src.getAmount()));
 			return true;}),
+		
+		// FALTA - EL IMPORTE LORCA Y EL IMPORTE DANA, PODRAN VENIR AHORA DEL MODELO 303, PUES HABRA QUE AÑADIR CAMPOS PARA PODER INTRODUCIRLO
+		
 //		CAC1_C1  (Mod303Key.CT_S117, (src,mod390) -> {mod390.getSimpRegime1().setBoxC1(src.getAmount());return true;}),
 		CAC1_D   (Mod303Key.CT_S118, null),
 		CAC1_Z   (Mod303Key.CT_S119, null),

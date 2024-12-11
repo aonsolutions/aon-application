@@ -431,7 +431,7 @@ public class Mod3902024Writer {
 		   ,(wr,m390) -> wr.append(AonFiscalFileUtils.unsigned(m390.getSimpRegime1() != null?m390.getSimpRegime1().getUnit7():0.0,10,2))
 		   ,(wr,m390) -> wr.append(AonFiscalFileUtils.unsigned(m390.getSimpRegime1() != null?m390.getSimpRegime1().getAmount7():0.0,17,2))
 		   ,(wr,m390) -> wr.append(AonFiscalFileUtils.unsigned(m390.getSimpRegime1() != null?m390.getSimpRegime1().getBoxC():0.0,17,2))
-		   ,(wr,m390) -> wr.append(AonFiscalFileUtils.unsigned(m390.getSimpRegime1() != null?m390.getSimpRegime1().getBoxC1():0.0,17,2))
+		   ,(wr,m390) -> wr.append(AonFiscalFileUtils.unsigned(m390.getSimpRegime1() != null?m390.getSimpRegime1().getBoxC1():0.0,17,2)) // Lorca
 		   ,(wr,m390) -> wr.append(AonFiscalFileUtils.unsigned(m390.getSimpRegime1() != null?m390.getSimpRegime1().getBoxD():0.0,17,2))
 		   ,(wr,m390) -> wr.append(AonFiscalFileUtils.unsigned(m390.getSimpRegime1() != null?m390.getSimpRegime1().getBoxE():0.0,3,2))
 		   ,(wr,m390) -> wr.append(AonFiscalFileUtils.signedZero(m390.getSimpRegime1() != null?m390.getSimpRegime1().getBoxF():0.0,17,2))
@@ -439,6 +439,7 @@ public class Mod3902024Writer {
 		   ,(wr,m390) -> wr.append(AonFiscalFileUtils.unsigned(m390.getSimpRegime1() != null?m390.getSimpRegime1().getBoxH():0.0,17,2))
 		   ,(wr,m390) -> wr.append(AonFiscalFileUtils.unsigned(m390.getSimpRegime1() != null?m390.getSimpRegime1().getBoxI():0.0,17,2))
 		   ,(wr,m390) -> wr.append(AonFiscalFileUtils.unsigned(m390.getSimpRegime1() != null?m390.getSimpRegime1().getBoxJ():0.0,17,2))
+		   
 		   ,(wr,m390) -> wr.append(AonFiscalFileUtils.text(m390.getSimpRegime2() != null?m390.getSimpRegime2().getEpigrafe():" ",4))
 		   ,(wr,m390) -> wr.append(AonFiscalFileUtils.unsigned(m390.getSimpRegime2() != null?m390.getSimpRegime2().getUnit1():0.0,10,2))
 		   ,(wr,m390) -> wr.append(AonFiscalFileUtils.unsigned(m390.getSimpRegime2() != null?m390.getSimpRegime2().getAmount1():0.0,17,2))
@@ -455,7 +456,7 @@ public class Mod3902024Writer {
 		   ,(wr,m390) -> wr.append(AonFiscalFileUtils.unsigned(m390.getSimpRegime2() != null?m390.getSimpRegime2().getUnit7():0.0,10,2))
 		   ,(wr,m390) -> wr.append(AonFiscalFileUtils.unsigned(m390.getSimpRegime2() != null?m390.getSimpRegime2().getAmount7():0.0,17,2))
 		   ,(wr,m390) -> wr.append(AonFiscalFileUtils.unsigned(m390.getSimpRegime2() != null?m390.getSimpRegime2().getBoxC():0.0,17,2))
-		   ,(wr,m390) -> wr.append(AonFiscalFileUtils.unsigned(m390.getSimpRegime2() != null?m390.getSimpRegime2().getBoxC1():0.0,17,2))
+		   ,(wr,m390) -> wr.append(AonFiscalFileUtils.unsigned(m390.getSimpRegime2() != null?m390.getSimpRegime2().getBoxC1():0.0,17,2))  // Lorca		   
 		   ,(wr,m390) -> wr.append(AonFiscalFileUtils.unsigned(m390.getSimpRegime2() != null?m390.getSimpRegime2().getBoxD():0.0,17,2))
 		   ,(wr,m390) -> wr.append(AonFiscalFileUtils.unsigned(m390.getSimpRegime2() != null?m390.getSimpRegime2().getBoxE():0.0,3,2))
 		   ,(wr,m390) -> wr.append(AonFiscalFileUtils.signedZero(m390.getSimpRegime2() != null?m390.getSimpRegime2().getBoxF():0.0,17,2))
@@ -463,36 +464,42 @@ public class Mod3902024Writer {
 		   ,(wr,m390) -> wr.append(AonFiscalFileUtils.unsigned(m390.getSimpRegime2() != null?m390.getSimpRegime2().getBoxH():0.0,17,2))
 		   ,(wr,m390) -> wr.append(AonFiscalFileUtils.unsigned(m390.getSimpRegime2() != null?m390.getSimpRegime2().getBoxI():0.0,17,2))
 		   ,(wr,m390) -> wr.append(AonFiscalFileUtils.unsigned(m390.getSimpRegime2() != null?m390.getSimpRegime2().getBoxJ():0.0,17,2))
+		   
 		   ,(wr,m390) -> wr.append(AonFiscalFileUtils.unsigned(m390.getFarmerRegime1() != null?m390.getFarmerRegime1().getCodigo():null,2,0))
 		   ,(wr,m390) -> wr.append(AonFiscalFileUtils.unsigned(m390.getFarmerRegime1() != null?m390.getFarmerRegime1().getIncomes():0.0,17,2))
 		   ,(wr,m390) -> wr.append(AonFiscalFileUtils.unsigned(m390.getFarmerRegime1() != null?m390.getFarmerRegime1().getQuotaIndex():0.0,6,5))
 		   ,(wr,m390) -> wr.append(AonFiscalFileUtils.unsigned(m390.getFarmerRegime1() != null?m390.getFarmerRegime1().getAccrualQuota():0.0,17,2))
 		   ,(wr,m390) -> wr.append(AonFiscalFileUtils.unsigned(m390.getFarmerRegime1() != null?m390.getFarmerRegime1().getInputQuotas():0.0,17,2))
 		   ,(wr,m390) -> wr.append(AonFiscalFileUtils.signedZero(m390.getFarmerRegime1() != null?m390.getFarmerRegime1().getQuota():0.0,17,2))
+		   
 		   ,(wr,m390) -> wr.append(AonFiscalFileUtils.unsigned(m390.getFarmerRegime2() != null?m390.getFarmerRegime2().getCodigo():null,2,0))
 		   ,(wr,m390) -> wr.append(AonFiscalFileUtils.unsigned(m390.getFarmerRegime2() != null?m390.getFarmerRegime2().getIncomes():0.0,17,2))
 		   ,(wr,m390) -> wr.append(AonFiscalFileUtils.unsigned(m390.getFarmerRegime2() != null?m390.getFarmerRegime2().getQuotaIndex():0.0,6,5))
 		   ,(wr,m390) -> wr.append(AonFiscalFileUtils.unsigned(m390.getFarmerRegime2() != null?m390.getFarmerRegime2().getAccrualQuota():0.0,17,2))
 		   ,(wr,m390) -> wr.append(AonFiscalFileUtils.unsigned(m390.getFarmerRegime2() != null?m390.getFarmerRegime2().getInputQuotas():0.0,17,2))
 		   ,(wr,m390) -> wr.append(AonFiscalFileUtils.signedZero(m390.getFarmerRegime2() != null?m390.getFarmerRegime2().getQuota():0.0,17,2))
+		   
 		   ,(wr,m390) -> wr.append(AonFiscalFileUtils.unsigned(m390.getFarmerRegime3() != null?m390.getFarmerRegime3().getCodigo():null,2,0))
 		   ,(wr,m390) -> wr.append(AonFiscalFileUtils.unsigned(m390.getFarmerRegime3() != null?m390.getFarmerRegime3().getIncomes():0.0,17,2))
 		   ,(wr,m390) -> wr.append(AonFiscalFileUtils.unsigned(m390.getFarmerRegime3() != null?m390.getFarmerRegime3().getQuotaIndex():0.0,6,5))
 		   ,(wr,m390) -> wr.append(AonFiscalFileUtils.unsigned(m390.getFarmerRegime3() != null?m390.getFarmerRegime3().getAccrualQuota():0.0,17,2))
-		   ,(wr,m390) -> wr.append(AonFiscalFileUtils.unsigned(m390.getFarmerRegime3() != null?m390.getFarmerRegime3().getInputQuotas():0.0,17,2))
+		   ,(wr,m390) -> wr.append(AonFiscalFileUtils.unsigned(m390.getFarmerRegime3() != null?m390.getFarmerRegime3().getInputQuotas():0.0,17,2))		   
 		   ,(wr,m390) -> wr.append(AonFiscalFileUtils.signedZero(m390.getFarmerRegime3() != null?m390.getFarmerRegime3().getQuota():0.0,17,2))
+		   
 		   ,(wr,m390) -> wr.append(AonFiscalFileUtils.unsigned(m390.getFarmerRegime4() != null?m390.getFarmerRegime4().getCodigo():null,2,0))
 		   ,(wr,m390) -> wr.append(AonFiscalFileUtils.unsigned(m390.getFarmerRegime4() != null?m390.getFarmerRegime4().getIncomes():0.0,17,2))
 		   ,(wr,m390) -> wr.append(AonFiscalFileUtils.unsigned(m390.getFarmerRegime4() != null?m390.getFarmerRegime4().getQuotaIndex():0.0,6,5))
 		   ,(wr,m390) -> wr.append(AonFiscalFileUtils.unsigned(m390.getFarmerRegime4() != null?m390.getFarmerRegime4().getAccrualQuota():0.0,17,2))
 		   ,(wr,m390) -> wr.append(AonFiscalFileUtils.unsigned(m390.getFarmerRegime4() != null?m390.getFarmerRegime4().getInputQuotas():0.0,17,2))
 		   ,(wr,m390) -> wr.append(AonFiscalFileUtils.signedZero(m390.getFarmerRegime4() != null?m390.getFarmerRegime4().getQuota():0.0,17,2))
+		   
 		   ,(wr,m390) -> wr.append(AonFiscalFileUtils.unsigned(m390.getFarmerRegime5() != null?m390.getFarmerRegime5().getCodigo():null,2,0))
 		   ,(wr,m390) -> wr.append(AonFiscalFileUtils.unsigned(m390.getFarmerRegime5() != null?m390.getFarmerRegime5().getIncomes():0.0,17,2))
 		   ,(wr,m390) -> wr.append(AonFiscalFileUtils.unsigned(m390.getFarmerRegime5() != null?m390.getFarmerRegime5().getQuotaIndex():0.0,6,5))
 		   ,(wr,m390) -> wr.append(AonFiscalFileUtils.unsigned(m390.getFarmerRegime5() != null?m390.getFarmerRegime5().getAccrualQuota():0.0,17,2))
 		   ,(wr,m390) -> wr.append(AonFiscalFileUtils.unsigned(m390.getFarmerRegime5() != null?m390.getFarmerRegime5().getInputQuotas():0.0,17,2))
 		   ,(wr,m390) -> wr.append(AonFiscalFileUtils.signedZero(m390.getFarmerRegime5() != null?m390.getFarmerRegime5().getQuota():0.0,17,2))
+		   
 		   ,(wr,m390) -> wr.append(AonFiscalFileUtils.signedZero(m390.getBox74(),17,2))
 		   ,(wr,m390) -> wr.append(AonFiscalFileUtils.signedZero(m390.getBox75(),17,2))
 		   ,(wr,m390) -> wr.append(AonFiscalFileUtils.signedZero(m390.getBox76(),17,2))
@@ -503,9 +510,20 @@ public class Mod3902024Writer {
 		   ,(wr,m390) -> wr.append(AonFiscalFileUtils.signedZero(m390.getBox81(),17,2))
 		   ,(wr,m390) -> wr.append(AonFiscalFileUtils.signedZero(m390.getBox82(),17,2))
 		   ,(wr,m390) -> wr.append(AonFiscalFileUtils.signedZero(m390.getBox83(),17,2))
+		   
 		   ,(wr,m390) -> wr.append(checkEpi(m390.getSimpRegime1())) 
-		   ,(wr,m390) -> wr.append(checkEpi(m390.getSimpRegime2())) 
-		   ,(wr,m390) -> wr.append(AonStringUtils.repeat(' ', 148))
+		   ,(wr,m390) -> wr.append(checkEpi(m390.getSimpRegime2()))
+		   
+		   ,(wr,m390) -> wr.append(AonFiscalFileUtils.unsigned(m390.getSimpRegime1() != null ? m390.getSimpRegime1().getBoxC2() : 0.0, 17, 2)) // Operaciones Reg. Simplificado - Actividad 1 - Reducción aplicable por actividad realizada en municipios afectados por la DANA
+		   ,(wr,m390) -> wr.append(AonFiscalFileUtils.unsigned(m390.getSimpRegime1() != null ? m390.getSimpRegime1().getBoxC1() + m390.getSimpRegime1().getBoxC2() : 0.0, 17, 2)) // Operaciones Reg. Simplificado - Actividad 1 - Reducciones
+		   ,(wr,m390) -> wr.append(AonFiscalFileUtils.unsigned(m390.getSimpRegime2() != null ? m390.getSimpRegime2().getBoxC2() : 0.0, 17, 2)) // Operaciones Reg. Simplificado - Actividad 2 - Reducción aplicable por actividad realizada en municipios afectados por la DANA
+		   ,(wr,m390) -> wr.append(AonFiscalFileUtils.unsigned(m390.getSimpRegime2() != null ? m390.getSimpRegime2().getBoxC1() + m390.getSimpRegime2().getBoxC2() : 0.0, 17, 2)) // Operaciones Reg. Simplificado - Actividad 2 - Reducciones
+		   ,(wr,m390) -> wr.append(AonFiscalFileUtils.unsigned(m390.getFarmerRegime1() != null ? m390.getFarmerRegime1().getDanaReduction() : 0.0, 17, 2)) // Operaciones Reg. Simplificado - Act. Agrícolas y Ganaderas - Actividad 1 - Reducción aplicable por actividad realizada en municipios afectados por la DANA
+		   ,(wr,m390) -> wr.append(AonFiscalFileUtils.unsigned(m390.getFarmerRegime2() != null ? m390.getFarmerRegime2().getDanaReduction() : 0.0, 17, 2)) // Operaciones Reg. Simplificado - Act. Agrícolas y Ganaderas - Actividad 2 - Reducción aplicable por actividad realizada en municipios afectados por la DANA
+		   ,(wr,m390) -> wr.append(AonFiscalFileUtils.unsigned(m390.getFarmerRegime3() != null ? m390.getFarmerRegime3().getDanaReduction() : 0.0, 17, 2)) // Operaciones Reg. Simplificado - Act. Agrícolas y Ganaderas - Actividad 3 - Reducción aplicable por actividad realizada en municipios afectados por la DANA
+		   ,(wr,m390) -> wr.append(AonFiscalFileUtils.unsigned(m390.getFarmerRegime4() != null ? m390.getFarmerRegime4().getDanaReduction() : 0.0, 17, 2)) // Operaciones Reg. Simplificado - Act. Agrícolas y Ganaderas - Actividad 4 - Reducción aplicable por actividad realizada en municipios afectados por la DANA
+		   ,(wr,m390) -> wr.append(AonFiscalFileUtils.unsigned(m390.getFarmerRegime5() != null ? m390.getFarmerRegime5().getDanaReduction() : 0.0, 17, 2)) // Operaciones Reg. Simplificado - Act. Agrícolas y Ganaderas - Actividad 5 - Reducción aplicable por actividad realizada en municipios afectados por la DANA
+		   ,(wr,m390) -> wr.append(AonStringUtils.repeat(' ', 150))
 		   ,(wr,m390) -> wr.append("</T39005000>")
 		})
 		

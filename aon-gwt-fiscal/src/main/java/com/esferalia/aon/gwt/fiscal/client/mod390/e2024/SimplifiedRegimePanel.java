@@ -259,7 +259,7 @@ public class SimplifiedRegimePanel extends FlowPanel implements HasValueChangeHa
 	    unit7.addValueChangeHandler(event -> fire());
 	    amount7.addValueChangeHandler(event -> fire());
 	    boxC.addValueChangeHandler(event -> fire());
-	    boxC1.addValueChangeHandler(event -> fire());  // FALTA - ESTE NO ESTABA PUESTO
+	    boxC1.addValueChangeHandler(event -> fire());
 	    boxC2.addValueChangeHandler(event -> fire());
 	    boxD.addValueChangeHandler(event -> fire());
 		boxE.addValueChangeHandler(event -> fire());
