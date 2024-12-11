@@ -4094,26 +4094,7 @@ public class SalaryDraft extends ResizeComposite
 	@UiHandler("acceptButton")
 	void onAcceptButtonClick(ClickEvent event) {
 		acceptButton.setEnabled(false);
-		salaryDraftObject.save(new CalculateCallback() {
-			
-			@Override
-			public Calculate getCalculate() {
-				return SalaryDraft.this.getCalculate();
-			}
-
-			@Override
-			public void onCalculateSucces(SalaryDraftObject object) {
-				SalaryDraft.this.onCalculateSucces(object);
-				acceptButton.setEnabled(true);
-			}
-			
-			@Override
-			public void onCalculateFailure(Throwable throwable) {
-				SalaryDraft.this.onCalculateFailure(throwable);
-				acceptButton.setEnabled(true);
-			}
-			
-		});
+		salaryDraftObject.save(SalaryDraft.this);
 	}
 
 	@UiHandler("extraButton")
