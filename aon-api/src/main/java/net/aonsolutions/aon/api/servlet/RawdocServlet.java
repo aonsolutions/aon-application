@@ -411,7 +411,7 @@ public class RawdocServlet extends AonApiHttpServlet {
 			ea.setExpression(count.toString());
 		}
 		
-		ea = AON.saveEnterpriseData(api.getDomain(), api.getUser(), ea);
+		AON.saveEnterpriseData(api.getDomain(), api.getUser(), ea);
 		return new JSONObject();
 	}
 }
