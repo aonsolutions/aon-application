@@ -32,6 +32,7 @@ import java.util.stream.Stream;
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.AonDateUtils;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonMessagePanel;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonMessagePanel.Promise;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarSmallButton;
 import com.esferalia.aon.gwt.common.shared.DateUtils;
@@ -3365,16 +3366,32 @@ public class SalaryDraft extends ResizeComposite
 		AonMessagePanel.showLoading(getMessagePanel(), message);
 	}
 
-	protected void showError(String title, String message) {
-		Map<String, String> errorMap = new HashMap<>();
-		errorMap.put(title, message);
-		AonMessagePanel.showError(getMessagePanel(), errorMap);
+	protected void showInfo(String message) {
+		AonMessagePanel.showInfo(getMessagePanel(), message);
+	}
+
+	protected void showError(String message) {
+		AonMessagePanel.showError(getMessagePanel(), message);
+	}
+
+	protected Promise showSuccess(String message) {
+		return AonMessagePanel.showSuccess(getMessagePanel(), message);
+	}
+
+	protected void showEmitting() {
+		showLoading("Emitiendo la " + AonStringUtils.lowerCase(getSalaryDraftObject().getType().getDescription())
+				+ ".Espere por favor.");
 	}
 	
-	protected void showSuccess(String title, String message) {
-		Map<String, String> successMap = new HashMap<>();
-		successMap.put(title, message);
-		AonMessagePanel.showSuccess(getMessagePanel(), successMap);
+	protected Promise showSuccessEmitted() {
+		String type = AonStringUtils.lowerCase(getSalaryDraftObject().getType().getDescription());
+		return showSuccess("La " + type + "se ha emitido correctamente.");
+	}
+	
+	protected void showErrorEmitting(Throwable t) {
+		String message = AonStringUtils.substringAfterLast(t.getLocalizedMessage(), ":");
+		String type = AonStringUtils.lowerCase(getSalaryDraftObject().getType().getDescription());
+		showError("Se ha producido un error al emitir la " + type + " '" + message + "'. Disculpe las molestias.");
 	}
 
 	private void setFiscalModelIcon(Widget widget) {
@@ -4099,6 +4116,7 @@ public class SalaryDraft extends ResizeComposite
 
 	@UiHandler("extraButton")
 	void onExtraButtonClick(ClickEvent event) {
+		showEmitting();
 		extraButton.setEnabled(false);
 		salaryDraftObject.emitSalary(new CalculateCallback() {
 			
@@ -4111,12 +4129,14 @@ public class SalaryDraft extends ResizeComposite
 			public void onCalculateSucces(SalaryDraftObject object) {
 				SalaryDraft.this.onCalculateSucces(object);
 				extraButton.setEnabled(true);
+				SalaryDraft.this.showSuccessEmitted();
 			}
 			
 			@Override
 			public void onCalculateFailure(Throwable throwable) {
 				SalaryDraft.this.onCalculateFailure(throwable);
 				extraButton.setEnabled(true);
+				SalaryDraft.this.showErrorEmitting(throwable);
 			}
 			
 		});
@@ -4124,6 +4144,7 @@ public class SalaryDraft extends ResizeComposite
 
 	@UiHandler("settleButton")
 	void onSettleButtonClick(ClickEvent event) {
+		showEmitting();
 		settleButton.setEnabled(false);
 		salaryDraftObject.emitSalary(new CalculateCallback() {
 			
@@ -4132,14 +4153,17 @@ public class SalaryDraft extends ResizeComposite
 				String message = "El fichero Certific@2 se ha generado correctmente."
 						+ " Para poder visualizarlo y comunicarlo dirijase a: Contratos > "
 						+ salaryDraftObject.getEmployeeName() + " > Mas > Cetific@2";
-				fireSettleMessage(message);
+				//fireSettleMessage(message);
 				settleButton.setEnabled(true);
+				SalaryDraft.this.showSuccessEmitted()
+				.andThen(() ->  SalaryDraft.this.showInfo(message));
 			}
 			
 			@Override
 			public void onCalculateFailure(Throwable throwable) {
-				fireSettleMessage(throwable.getMessage());
+				//fireSettleMessage(throwable.getMessage());
 				settleButton.setEnabled(true);
+				SalaryDraft.this.showErrorEmitting(throwable);
 			}
 			
 			@Override
@@ -4151,8 +4175,10 @@ public class SalaryDraft extends ResizeComposite
 	
 	@UiHandler("salaryButton")
 	void onSalaryButtonClick(ClickEvent event) {
+		showEmitting();
 		salaryButton.setEnabled(false);
 		salaryDraftObject.save(new CalculateCallback() {
+
 
 			@Override
 			public Calculate getCalculate() {
@@ -4172,12 +4198,14 @@ public class SalaryDraft extends ResizeComposite
 					public void onCalculateSucces(SalaryDraftObject object) {
 						SalaryDraft.this.onCalculateSucces(object);
 						salaryButton.setEnabled(true);
+						SalaryDraft.this.showSuccessEmitted();
 					}
 					
 					@Override
 					public void onCalculateFailure(Throwable throwable) {
 						SalaryDraft.this.onCalculateFailure(throwable);
 						salaryButton.setEnabled(true);
+						SalaryDraft.this.showErrorEmitting(throwable);
 					}
 					
 				});
@@ -4187,6 +4215,7 @@ public class SalaryDraft extends ResizeComposite
 			public void onCalculateFailure(Throwable throwable) {
 				SalaryDraft.this.onCalculateFailure(throwable);
 				salaryButton.setEnabled(true);
+				SalaryDraft.this.showErrorEmitting(throwable);
 			}
 		});
 			
@@ -4195,6 +4224,7 @@ public class SalaryDraft extends ResizeComposite
 	@UiHandler("delayButton")
 	void onDelayButtonClick(ClickEvent event) {
 		
+		showEmitting();
 		delayButton.setEnabled(false);
 		
 		List<Variable> irpfPercentDraftVars =
@@ -4222,12 +4252,14 @@ public class SalaryDraft extends ResizeComposite
 					public void onCalculateSucces(SalaryDraftObject object) {
 						SalaryDraft.this.onCalculateSucces(object);
 						delayButton.setEnabled(true);
+						SalaryDraft.this.showSuccessEmitted();
 					}
 					
 					@Override
 					public void onCalculateFailure(Throwable throwable) {
 						SalaryDraft.this.onCalculateFailure(throwable);
 						delayButton.setEnabled(true);
+						SalaryDraft.this.showErrorEmitting(throwable);
 					}
 					
 				});
@@ -4237,6 +4269,7 @@ public class SalaryDraft extends ResizeComposite
 			public void onCalculateFailure(Throwable throwable) {
 				SalaryDraft.this.onCalculateFailure(throwable);
 				delayButton.setEnabled(true);
+				SalaryDraft.this.showErrorEmitting(throwable);
 			}
 		});
 			
@@ -4255,11 +4288,9 @@ public class SalaryDraft extends ResizeComposite
 	void onTgssButtonClick(ClickEvent event) {
 		salaryDraftObject.syncCalcs(new SyncCalsCallback() {
 			
-			String title = "Sincronizando C\u00E1lculos";
-			
 			@Override
 			public void onSyncStart(SalaryDraftObject object) {
-				showLoading(title);
+				showLoading("Sincronizando c\u00E1lculos");
 			}
 			
 			@Override
@@ -4270,12 +4301,12 @@ public class SalaryDraft extends ResizeComposite
 			@Override
 			public void onSyncFinish(SalaryDraftObject object) {
 				SalaryDraft.this.calculate();
-				showSuccess(title, "Completada");
+				showSuccess("Sincronizaci\u00F3 de c\u00E1lculos completada");
 			}
 			
 			@Override
 			public void onSyncFailure(Throwable throwable) {
-				showError(title, throwable.getMessage());
+				showError("No se han podido sincronizar los c\u00E1lculos . " + throwable.getMessage());
 			}
 		});
 	}
@@ -5884,7 +5915,7 @@ public class SalaryDraft extends ResizeComposite
 		salaryDraftObject.downloadIrpf("application/pdf", new AsyncCallback<String>() {
 			@Override
 			public void onFailure(Throwable caught) {
-				showError("IRPF", caught.getLocalizedMessage());
+				showError("IRPF, " + caught.getLocalizedMessage());
 			}
 
 			@Override
