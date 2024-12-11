@@ -1081,7 +1081,6 @@ export class AonNewMenu extends AonElement {
 			|| APPS.app  ==  app.app 
 			|| AON_CLASSIC.app == app.app
 			|| APPLICATIONS.app  ==  app.app 
-			|| MenuApps.TIMECONTROL.app == app.app
 			|| MenuApps.DOCUMENTAL.app  ==  app.app 
 			|| !this.getDur().isDomainManagementAvailable()
 		);

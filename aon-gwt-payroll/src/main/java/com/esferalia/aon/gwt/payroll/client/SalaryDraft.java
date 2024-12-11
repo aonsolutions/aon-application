@@ -4093,27 +4093,72 @@ public class SalaryDraft extends ResizeComposite
 
 	@UiHandler("acceptButton")
 	void onAcceptButtonClick(ClickEvent event) {
-		salaryDraftObject.save(this);
+		acceptButton.setEnabled(false);
+		salaryDraftObject.save(new CalculateCallback() {
+			
+			@Override
+			public Calculate getCalculate() {
+				return SalaryDraft.this.getCalculate();
+			}
+
+			@Override
+			public void onCalculateSucces(SalaryDraftObject object) {
+				SalaryDraft.this.onCalculateSucces(object);
+				acceptButton.setEnabled(true);
+			}
+			
+			@Override
+			public void onCalculateFailure(Throwable throwable) {
+				SalaryDraft.this.onCalculateFailure(throwable);
+				acceptButton.setEnabled(true);
+			}
+			
+		});
 	}
 
 	@UiHandler("extraButton")
 	void onExtraButtonClick(ClickEvent event) {
-		salaryDraftObject.emitSalary(SalaryDraft.this);
+		extraButton.setEnabled(false);
+		salaryDraftObject.emitSalary(new CalculateCallback() {
+			
+			@Override
+			public Calculate getCalculate() {
+				return SalaryDraft.this.getCalculate();
+			}
+
+			@Override
+			public void onCalculateSucces(SalaryDraftObject object) {
+				SalaryDraft.this.onCalculateSucces(object);
+				extraButton.setEnabled(true);
+			}
+			
+			@Override
+			public void onCalculateFailure(Throwable throwable) {
+				SalaryDraft.this.onCalculateFailure(throwable);
+				extraButton.setEnabled(true);
+			}
+			
+		});
 	}
 
 	@UiHandler("settleButton")
 	void onSettleButtonClick(ClickEvent event) {
+		settleButton.setEnabled(false);
 		salaryDraftObject.emitSalary(new CalculateCallback() {
 			
 			@Override
 			public void onCalculateSucces(SalaryDraftObject salaryDraftObject) {
-				String message = "El fichero Certific@2 se ha generado correctmente. Para poder visualizarlo y comunicarlo dirijase a: Contratos > " + salaryDraftObject.getEmployeeName() + " > Mas > Cetific@2";
+				String message = "El fichero Certific@2 se ha generado correctmente."
+						+ " Para poder visualizarlo y comunicarlo dirijase a: Contratos > "
+						+ salaryDraftObject.getEmployeeName() + " > Mas > Cetific@2";
 				fireSettleMessage(message);
+				settleButton.setEnabled(true);
 			}
 			
 			@Override
 			public void onCalculateFailure(Throwable throwable) {
 				fireSettleMessage(throwable.getMessage());
+				settleButton.setEnabled(true);
 			}
 			
 			@Override
@@ -4125,9 +4170,7 @@ public class SalaryDraft extends ResizeComposite
 	
 	@UiHandler("salaryButton")
 	void onSalaryButtonClick(ClickEvent event) {
-		
 		salaryButton.setEnabled(false);
-		
 		salaryDraftObject.save(new CalculateCallback() {
 
 			@Override
@@ -4137,8 +4180,26 @@ public class SalaryDraft extends ResizeComposite
 			@Override
 			public void onCalculateSucces(SalaryDraftObject object) {
 				SalaryDraft.this.onCalculateSucces(object);
-				SalaryDraft.this.salaryDraftObject.emitSalary(SalaryDraft.this);
-				salaryButton.setEnabled(true);
+				SalaryDraft.this.salaryDraftObject.emitSalary(new CalculateCallback() {
+					
+					@Override
+					public Calculate getCalculate() {
+						return SalaryDraft.this.getCalculate();
+					}
+
+					@Override
+					public void onCalculateSucces(SalaryDraftObject object) {
+						SalaryDraft.this.onCalculateSucces(object);
+						salaryButton.setEnabled(true);
+					}
+					
+					@Override
+					public void onCalculateFailure(Throwable throwable) {
+						SalaryDraft.this.onCalculateFailure(throwable);
+						salaryButton.setEnabled(true);
+					}
+					
+				});
 			}
 
 			@Override
@@ -4153,6 +4214,8 @@ public class SalaryDraft extends ResizeComposite
 	@UiHandler("delayButton")
 	void onDelayButtonClick(ClickEvent event) {
 		
+		delayButton.setEnabled(false);
+		
 		List<Variable> irpfPercentDraftVars =
 		getDraftVariablesOf(PORCENTAJE_IRPF)
 		.collect(Collectors.toList()); 
@@ -4166,14 +4229,33 @@ public class SalaryDraft extends ResizeComposite
 			}
 			@Override
 			public void onCalculateSucces(SalaryDraftObject object) {
-				//SalaryDraft.this.onCalculateSucces(object);
 				salaryDraftObject.getDrafContext().addAll(irpfPercentDraftVars);
-				SalaryDraft.this.salaryDraftObject.emitSalary(SalaryDraft.this);
+				SalaryDraft.this.salaryDraftObject.emitSalary(new CalculateCallback() {
+					
+					@Override
+					public Calculate getCalculate() {
+						return SalaryDraft.this.getCalculate();
+					}
+
+					@Override
+					public void onCalculateSucces(SalaryDraftObject object) {
+						SalaryDraft.this.onCalculateSucces(object);
+						delayButton.setEnabled(true);
+					}
+					
+					@Override
+					public void onCalculateFailure(Throwable throwable) {
+						SalaryDraft.this.onCalculateFailure(throwable);
+						delayButton.setEnabled(true);
+					}
+					
+				});
 			}
 
 			@Override
 			public void onCalculateFailure(Throwable throwable) {
 				SalaryDraft.this.onCalculateFailure(throwable);
+				delayButton.setEnabled(true);
 			}
 		});
 			
