@@ -6332,6 +6332,10 @@ public class AON {
 		}
 	}
 	
+	public static LinkedList<Tax> getTaxList(String domainName, Integer domainId, String login, TaxFilter filter){
+		return getTaxStream(domainName, domainId, login, filter).collect(Collectors.toCollection(LinkedList::new));
+	}
+	
 	public static Tax getTax(String domainName, Integer domainId, String login, Integer id){
 		return getTax(domainName, domainId, login, f -> f.getIdProperty().eq(id));
 	}
