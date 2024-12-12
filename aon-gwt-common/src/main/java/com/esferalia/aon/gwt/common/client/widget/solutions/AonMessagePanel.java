@@ -2,6 +2,7 @@ package com.esferalia.aon.gwt.common.client.widget.solutions;
 
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.concurrent.Future;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.google.gwt.animation.client.Animation;
@@ -16,6 +17,14 @@ import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.Widget;
 
 public class AonMessagePanel extends FlowPanel {
+	
+	public static class Promise {
+		private Runnable andThen = () -> {}; 
+
+		public void andThen(Runnable runnable) {
+			this.andThen = runnable ;
+		}
+	}
 	
     	// ------------------------------------------------ Variables
 	
@@ -183,36 +192,36 @@ public class AonMessagePanel extends FlowPanel {
 	
 	// ------------------------------------------------ Show Success
 	
-	public static <T> void showSuccess(Panel panelIn, T ...messages) {
+	public static <T> Promise showSuccess(Panel panelIn, T ...messages) {
 		panel = panelIn;
 		clearEntryPanel(panel);
 		AonMessagePanel aonMessagePanel = getAonSuccessMessagePanel();
 		fillMessages(aonMessagePanel, messages);
-		showAndAddMainPanelTimer(panel, aonMessagePanel);
+		return showAndAddMainPanelTimer(panel, aonMessagePanel);
 	}
 
-	public static <T> void showSuccess(Panel panelIn, Map<String, T> messages) {
+	public static <T> Promise showSuccess(Panel panelIn, Map<String, T> messages) {
 		panel = panelIn;
 		clearEntryPanel(panel);
 		AonMessagePanel aonMessagePanel = getAonSuccessMessagePanel();
 		fillMessages(aonMessagePanel, messages);
-		showAndAddMainPanelTimer(panel, aonMessagePanel);
+		return showAndAddMainPanelTimer(panel, aonMessagePanel);
 	}
 	
-	public static void showSuccess(Panel panelIn, Widget errorWidget) {
+	public static Promise showSuccess(Panel panelIn, Widget errorWidget) {
 		panel = panelIn;
 		clearEntryPanel(panel);
 		AonMessagePanel aonMessagePanel = getAonSuccessMessagePanel();
 		addMessageWidget(aonMessagePanel, errorWidget);
-		showAndAddMainPanelTimer(panel, aonMessagePanel);
+		return showAndAddMainPanelTimer(panel, aonMessagePanel);
 	}
 	
-	public static void showSuccess(Panel panelIn, String html) {
+	public static Promise showSuccess(Panel panelIn, String html) {
 		panel = panelIn;
 		clearEntryPanel(panel);
 		AonMessagePanel aonMessagePanel = getAonSuccessMessagePanel();
 		addMessageWidget(aonMessagePanel, new HTMLPanel(html));
-		showAndAddMainPanelTimer(panel, aonMessagePanel);
+		return showAndAddMainPanelTimer(panel, aonMessagePanel);
 	}
 	
 	private static AonMessagePanel getAonSuccessMessagePanel() {
@@ -260,17 +269,20 @@ public class AonMessagePanel extends FlowPanel {
 		aonMessagePanel.closePanel.setVisible(visible);
 	}
 	
-	private static void showAndAddMainPanelTimer(Panel panel, AonMessagePanel aonMessagePanel) {
+	private static Promise showAndAddMainPanelTimer(Panel panel, AonMessagePanel aonMessagePanel) {
+		Promise promise = new Promise(); 
 		panel.add(aonMessagePanel);
 		panel.getElement().getStyle().clearDisplay();
 		fadeIn(aonMessagePanel);
 		Timer timer = new Timer() {
 		     @Override
 		     public void run() {
-		    	 fadeOut(panel, aonMessagePanel);
+		    	 fadeOut(panel, aonMessagePanel)
+		    	 .andThen(() -> promise.andThen.run());
 		     }
 		};
 		timer.schedule(2500);
+		return promise;
 	}
 	
 	private static void showAndAddMainPanelTimerLong(Panel panel, AonMessagePanel aonMessagePanel) {
@@ -286,7 +298,8 @@ public class AonMessagePanel extends FlowPanel {
 		timer.schedule(3500);
 	}
 	
-	private static void fadeOut(Panel panel, AonMessagePanel aonMessagePanel) {
+	private static Promise fadeOut(Panel panel, AonMessagePanel aonMessagePanel) {
+		Promise promise = new Promise();
 		new Animation() {
 
 	        @Override
@@ -299,8 +312,10 @@ public class AonMessagePanel extends FlowPanel {
 	        	aonMessagePanel.getElement().getStyle().setDisplay(Display.NONE);
 	        	aonMessagePanel.removeFromParent();
 	        	panel.getElement().getStyle().setDisplay(Display.NONE);
+	        	promise.andThen.run();
 	        }
 	    }.run( 400 );
+	    return promise;
 	}
 	
 	private static void fadeIn(AonMessagePanel aonMessagePanel) {
