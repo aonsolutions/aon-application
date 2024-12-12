@@ -14,10 +14,14 @@ import com.google.gwt.event.dom.client.HasErrorHandlers;
 import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.dom.client.KeyUpEvent;
 import com.google.gwt.event.dom.client.KeyUpHandler;
+import com.google.gwt.event.logical.shared.ValueChangeEvent;
+import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
+import com.google.gwt.i18n.client.NumberFormat;
 import com.google.gwt.text.shared.AbstractRenderer;
 import com.google.gwt.text.shared.Parser;
 import com.google.gwt.text.shared.Renderer;
+import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.ValueBox;
@@ -32,6 +36,7 @@ public class DoubleBox extends ValueBox<Double> implements HasErrorHandlers{
 	public static interface ExpressionResolver {
 		void resolve(String expression, AsyncCallback<Double> callback);
 	}
+	
 	private static final ExpressionResolver ARITHMETIC_RESOLVER = new ExpressionResolver() {
 		@Override
 		public void resolve(String expression, AsyncCallback<Double> callback) {
@@ -52,30 +57,90 @@ public class DoubleBox extends ValueBox<Double> implements HasErrorHandlers{
 	private static final int CHANGE_DISPLAY_MILLIS = 4000;
 	private int precision;
 	
+	private static final NumberFormat EUROPEAN_FORMAT = NumberFormat.getFormat("#,##0.00");
+
+	
 	private static final Renderer<Double> RENDERER = new AbstractRenderer<Double>() {
 
 		@Override
 		public String render(Double object) {
 			if (object == null)
 				return "";
-			return Double.toString(object);
+			return EUROPEAN_FORMAT.format(object);
+//			return Double.toString(object);
 		}
 	};
-
+	
 	private static final Parser<Double> PARSER = new Parser<Double>() {
+        @Override
+        public Double parse(CharSequence text) throws ParseException {
+            if (text == null || text.toString().trim().isEmpty()) {
+                return null;
+            }
 
-		@Override
-		public Double parse(CharSequence text) throws ParseException {
-			if (AonStringUtils.isEmpty(text))
-				return 0.0;
-			try {
-				return Double.parseDouble(text.toString());
-			} catch (NumberFormatException e) {
-				throw new ParseException(e.getMessage(), 0);
-			}
+            try {
+            	String input = text.toString().trim();
 
-		}
-	};
+            	 // 1. Si contiene un punto y una coma, eliminamos el punto y convertimos la coma en un punto.
+                if (input.contains(".") && input.contains(",")) {
+                    input = input.replace(".", "").replace(",", ".");
+                }
+            	
+                // 2. Si contiene más de un punto, eliminamos todos los puntos.
+                if (input.chars().filter(ch -> ch == '.').count() > 1) {
+                    input = input.replace(".", "");
+                }
+
+                // 3. Si contiene solo un punto, lo convertimos en una coma.
+                else if (input.contains(".")) {
+                    input = input.replace(".", ",");
+                }
+
+                // 4. Finalmente, convertir coma en punto para la conversión numérica.
+                input = input.replace(",", ".");
+            	
+            	
+                // Eliminar separadores de miles y reemplazar coma decimal por punto decimal
+//                String normalized = text.toString().replace(".", "").replace(",", ".");
+                return Double.valueOf(input);
+            } catch (NumberFormatException e) {
+                throw new ParseException("Formato de número no válido: " + text, 0);
+            }
+        }
+    };
+    
+    @Override
+    public void onBrowserEvent(Event event) {
+    	super.onBrowserEvent(event);
+
+        if (event.getTypeInt() == com.google.gwt.user.client.Event.ONBLUR) {
+            try {
+                // Procesar el texto ingresado manualmente
+                Double parsedValue = getValueOrThrow(); // Validar y parsear el valor actual
+                if (parsedValue != null) {
+                    // Formatear y actualizar la vista usando el Renderer
+                    setValue(parsedValue, false); // Esto renderiza correctamente con el formato
+                }
+            } catch (ParseException e) {
+                addStyleName(AON.AON_CSS.aonInputError()); // Aplicar estilo de error si el parse falla
+            }
+        }
+    }
+
+//	private static final Parser<Double> PARSER = new Parser<Double>() {
+//
+//		@Override
+//		public Double parse(CharSequence text) throws ParseException {
+//			if (AonStringUtils.isEmpty(text))
+//				return 0.0;
+//			try {
+//				return Double.parseDouble(text.toString());
+//			} catch (NumberFormatException e) {
+//				throw new ParseException(e.getMessage(), 0);
+//			}
+//
+//		}
+//	};
 	
 	public DoubleBox() {
 		this(VISIBLE_LENGTH, PRECISION );
@@ -107,6 +172,17 @@ public class DoubleBox extends ValueBox<Double> implements HasErrorHandlers{
 			}
 		});
 		this.setResolver(ARITHMETIC_RESOLVER);
+		
+		addValueChangeHandler(new ValueChangeHandler<Double>() {
+            @Override
+            public void onValueChange(ValueChangeEvent<Double> event) {
+                Double value = event.getValue();
+                if (value != null) {
+                    // Asegurarse de renderizar con el formato correcto
+                    setValue(value, false);
+                }
+            }
+        });
 	}
 
 	public void setResolver(final ExpressionResolver resolver) {
@@ -145,24 +221,6 @@ public class DoubleBox extends ValueBox<Double> implements HasErrorHandlers{
 				}
 			}
 		});
-/*
- 	
- 		// TODO DIALOGO PARA AÑADIR EXPRESIONES - CODE MIRROR.
- 	
-  		addClickHandler(new ClickHandler() {
- 
-			
-			@Override
-			public void onClick(ClickEvent event) {
-				if ( resolver != null) {
-					if ( AonStringUtils.startsWith(getText(),EQUAL)) {
-						Window.alert("DIALOGO DE EXPRESIONES");
-						Code
-					}
-				}
-			}
-		});
-*/
 	}
 	
 	private int getPrecision() {
@@ -174,8 +232,14 @@ public class DoubleBox extends ValueBox<Double> implements HasErrorHandlers{
 
 	@Override
 	public void setValue(Double value, boolean fireEvents) {
-		if (value == null) value = 0.0;
-		super.setValue(AonMathUtils.round(value,getPrecision()), fireEvents);
+		if (value == null) {
+            value = 0.0;
+        }
+
+        // Asegurarse de que se renderice correctamente con el formato europeo
+        super.setValue(AonMathUtils.round(value,getPrecision()), fireEvents);
+        getElement().setPropertyString("value", EUROPEAN_FORMAT.format(AonMathUtils.round(value,getPrecision())));
+    
 	}
 	
 	public void setValue(Double value, boolean fireEvents, boolean shouldDisplayChange) {
@@ -196,4 +260,8 @@ public class DoubleBox extends ValueBox<Double> implements HasErrorHandlers{
 	public HandlerRegistration addErrorHandler(ErrorHandler handler) {
 		return addHandler(handler, ErrorEvent.getType());
 	}
+	
+	public HandlerRegistration addValueChangeHandler(ValueChangeHandler<Double> handler) {
+        return super.addValueChangeHandler(handler);
+    }
 }
