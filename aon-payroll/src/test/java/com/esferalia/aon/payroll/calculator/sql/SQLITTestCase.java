@@ -7778,6 +7778,65 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 
 	}
 
+	@Test
+	public void testBaseRegulatoryAndDelaysII() throws ExpressionException, SQLException,
+			SalaryException {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+		
+		Date contractStartDate = add(getToday(), Calendar.MONTH, -10);
+		
+		//@formatter:off
+		ContractRecord contract = newContract(aonContext, 
+				contractStartDate,
+				new HashMap<String,String>(){
+				{
+					put(MONTH_DAYS.getName(), "30");
+				}
+				},
+				new String[] {
+				"250.00 * DIAS_TRABAJADOS / DIAS_MES" ,
+				"1500.00 * DIAS_TRABAJADOS / DIAS_MES"
+				}, 
+				new String[] {
+				}, null);
+		//@formatter:on
+		Date prevMonthEndDate = getLastDayOfMonth(add(getToday(), Calendar.MONTH, -1));
+		
+		for ( Date date = contractStartDate ; date.before(prevMonthEndDate); date = add(date, MONTH, 1)) {
+			calculateAndSave(connection, getContractSalaryCalculatorContext(connection, date,
+					getLastDayOfMonth(date), getLastDayOfMonth(date), contract));
+		}
+		
+		addPayment(aonContext, contract, contractStartDate, null, "ATRASO CONVENIO", "250 * DIAS_TRABAJADOS / DIAS_MES",
+				"_P", "_P", PaymentType.CRA_0001);
+		
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(CONTRACT.getName() + "." + CONTRACT.ID.getName(), contract.getId());
+		SQLContractDelayCalculatorContext delayCtx = new SQLContractDelayCalculatorContext(connection, 
+				contractStartDate, 
+				prevMonthEndDate, 
+				prevMonthEndDate, 
+				criteria);
+		delayCtx.next();
+		calculateAndSave(connection, delayCtx);
+		
+
+		Date startDate = getFirstDayOfMonth(getToday());
+		Date endDate = getLastDayOfMonth(startDate);
+		
+		Date startIT = add(startDate, Calendar.DAY_OF_MONTH, 5);
+
+		addIT(aonContext, contract, LeaveType.COMMON_DISEASE, startIT,
+				null, null);
+		
+		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
+				connection, startDate, endDate, endDate, contract);
+		
+		ctx.getExpressionContext().eval(ContextVariable.REGULATORY_BASE.getName(), startIT, endDate)
+		.forEach(  r ->  org.junit.Assert.assertEquals(2000.00 / 30.00, ((Number) r.getValue()).doubleValue(), DELTA));
+
+	}
 	// ------------------------------------------------------------------------
 	
 

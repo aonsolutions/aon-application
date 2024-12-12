@@ -27,7 +27,10 @@ public enum NoteType implements IResourceable {
     TRACKING,
 
     /** FACTURAE. */
-    FACTURAE;
+    FACTURAE,
+    
+    /** EDI. */
+    EDI;
     
     /** Message key prefix. */
     private static final String MSG_KEY_PREFIX = "aon_enum_notetype_";

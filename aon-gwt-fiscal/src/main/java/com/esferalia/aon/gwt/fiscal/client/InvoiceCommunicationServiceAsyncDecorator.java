@@ -11,6 +11,7 @@ import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceCommunicationType;
 import com.esferalia.aon.occam.api.model.finance.InvoiceCommunicationTracking;
 import com.esferalia.aon.occam.api.model.finance.SiiConfiguration;
+import com.esferalia.aon.occam.api.model.finance.TbaiConfiguration;
 import com.esferalia.aon.occam.api.model.fiscal.aeat.AEATParams;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
@@ -27,6 +28,12 @@ public class InvoiceCommunicationServiceAsyncDecorator implements InvoiceCommuni
 	public void getSiiConfiguration(String domainName, int domainId, String user, AsyncCallback<SiiConfiguration> callback) {
 		AON.start();
 		ssa.getSiiConfiguration(domainName, domainId, user, new AsyncCallbackWrapper<>(callback));
+	}
+	
+	@Override
+	public void getTbaiConfiguration(String domainName, int domainId, String user, AsyncCallback<TbaiConfiguration> callback) {
+		AON.start();
+		ssa.getTbaiConfiguration(domainName, domainId, user, new AsyncCallbackWrapper<>(callback));
 	}
 	
 	@Override

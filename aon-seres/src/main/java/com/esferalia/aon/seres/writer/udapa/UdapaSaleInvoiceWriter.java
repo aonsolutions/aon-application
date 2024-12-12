@@ -293,15 +293,13 @@ public class UdapaSaleInvoiceWriter {
 		sincl.setUnidadDeMedida(null);
 		sincl.setUnidadesEntregadas(null);
 		sincl.setNumeroUnidadesDeConsumoEnU_Expedicion_59_(null);
-		sincl.setImporteTotalNetoDeLaLineaDeArticulo(detail
-				.getTotalSalesPrice());
+		sincl.setImporteTotalNetoDeLaLineaDeArticulo(detail.getTotalSalesPrice());
 		sincl.setPrecioBrutoUnitario(detail.getPrice());
 		sincl.setPrecioNetoUnitario(null);
 		sincl.setUnidadDeMedidaDelPrecio(null);
 		sincl.setCalificadorIVA_IGIG(SINCL.F5153I.IV_VAT.getValue());
 		sincl.setPorcentajeImpuestoIVA_IGIG(detail.getVatPercent());
-		sincl.setImporteImpuestoIVA_IGIG(CommonUtil.round(
-				detail.getTaxableBase() * detail.getVatPercent() / 100, 3));
+		sincl.setImporteImpuestoIVA_IGIG(CommonUtil.round(detail.getTaxableBase() * detail.getVatPercent() / 100, 3));
 		sincl.setPorcentajeRecargoDeEquivalencia(detail.getRetentionPercent());
 		sincl.setImporteRecargoDeEquivalencia(detail.getSurchargeQuota());
 		sincl.setCalificadorOtroTipoDeImpuesto(null);

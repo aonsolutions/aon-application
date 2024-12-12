@@ -23,7 +23,6 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.SftpException;
 
-
 public class DeliveryUpload extends Seres {
 
 	private static final long serialVersionUID = 1L;
