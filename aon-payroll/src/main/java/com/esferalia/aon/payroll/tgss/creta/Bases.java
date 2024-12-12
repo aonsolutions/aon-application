@@ -1541,6 +1541,42 @@ public class Bases {
 
 	}
 	
+	private static class MatchCCretaData extends NonNegativeCCretaData {
+		
+		public MatchCCretaData(String variable) {
+			super(variable);
+		}
+
+		@Override
+		public Double get(Salary salary, Fecha desde, Fecha hasta) 
+				throws NoSuchVariableException, UnMatchedVariableException {
+			try {
+				return super.get(salary, desde, hasta);
+			} catch ( UnMatchedVariableException e ) {
+				
+				List<ContextData> datas = salary.getContextData()
+						.getOrDefault(variable, Collections.emptyList());
+
+				double varValue = datas.stream()
+				.collect(Collectors.summingDouble(DistributeCCretaData::eval));
+
+				if (varValue == 0.00)
+					throw new NoSuchVariableException(variable);
+				
+				Long varDays = 
+				datas.stream()
+				.map(d -> new Period(d.getStartDate(), d.getEndDate()))
+				.collect(Collectors.summingLong( Period::getDays ));
+				
+				Period varPeriod = new Period(toDate(desde), toDate(hasta));
+				long periodDays = varPeriod.daysStream().count();
+				
+				return varValue / varDays * periodDays;
+			}
+		
+		}
+	}
+	
 	private static class AnyNonNegativeCCretaData extends CCretaData {
 		
 		
@@ -1966,7 +2002,7 @@ public class Bases {
 	private static final Map<String, CretaData> CONTEXT_VARIABLE_MAP = new HashMap<String, CretaData>() {
 		{
 			put("500", new NonNegativeCCretaData(CGC_BASE.getName()));
-			put("535", new NonNegativeCCretaData(MATERNITY_BASE.getName()));
+			put("535", new MatchCCretaData(MATERNITY_BASE.getName()));
 			put("536", new NonNegativeCompositeCCretaData().add(ERE_BASES));
 			
 			put("537", new C537CretaData(ADDITIONAL_BASE.getName()));
@@ -1978,8 +2014,8 @@ public class Bases {
 
 			put("601", new NonNegativeCCretaData(CGP_BASE.getName()));
 			put("611", new NonNegativeCCretaData(CGP_BASE.getName()));
-			put("635", new NonNegativeCCretaData(MATERNITY_BASE.getName()));
-			put("634", new NonNegativeCCretaData(MATERNITY_BASE.getName()));
+			put("635", new MatchCCretaData(MATERNITY_BASE.getName()));
+			put("634", new MatchCCretaData(MATERNITY_BASE.getName()));
 			put("636", new NonNegativeCompositeCCretaData().add(ERE_BASES));
 			put("637", new NonNegativeCompositeCCretaData().add(ERE_BASES));
 
