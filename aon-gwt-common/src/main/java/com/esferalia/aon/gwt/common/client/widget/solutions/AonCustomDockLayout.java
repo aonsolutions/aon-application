@@ -4,6 +4,7 @@ import java.util.function.Consumer;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.watson.util.AonStringUtils;
+import com.google.gwt.dom.client.Style.Display;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.KeyUpHandler;
 import com.google.gwt.user.client.ui.Button;
@@ -112,6 +113,11 @@ public abstract class AonCustomDockLayout extends DockLayoutPanel {
 		};
 		if(advancedSearch != null) aonToolbarSearchBox.setAdvancedSearch(advancedSearch);
 		getToolbar().showSearchPanel(aonToolbarSearchBox);
+	}
+
+	public void hideToolbarFilterMessages() {
+		toolbar.getMessagePanel().getElement().getStyle().setDisplay(Display.NONE);
+		toolbar.getFilterPanel().getElement().getStyle().setDisplay(Display.NONE);
 	}
 	
 	protected abstract void onClearFilter();
