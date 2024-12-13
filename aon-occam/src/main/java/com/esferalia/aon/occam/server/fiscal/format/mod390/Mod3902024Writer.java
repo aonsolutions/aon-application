@@ -415,7 +415,7 @@ public class Mod3902024Writer {
 		,PAGE_5 (new IPropertyFiller[] { 
 			(wr,m390) -> wr.append("<T39005000>")
 		   ,(wr,m390) -> wr.append(" ")
-		   ,(wr,m390) -> wr.append(AonFiscalFileUtils.text(m390.getSimpRegime1() != null?m390.getSimpRegime1().getEpigrafe():" ",4))
+		   ,(wr,m390) -> wr.append(AonFiscalFileUtils.text(m390.getSimpRegime1() != null? AonStringUtils.replace(m390.getSimpRegime1().getEpigrafe(),".",""):" ",4)) 
 		   ,(wr,m390) -> wr.append(AonFiscalFileUtils.unsigned(m390.getSimpRegime1() != null?m390.getSimpRegime1().getUnit1():0.0,10,2))
 		   ,(wr,m390) -> wr.append(AonFiscalFileUtils.unsigned(m390.getSimpRegime1() != null?m390.getSimpRegime1().getAmount1():0.0,17,2))
 		   ,(wr,m390) -> wr.append(AonFiscalFileUtils.unsigned(m390.getSimpRegime1() != null?m390.getSimpRegime1().getUnit2():0.0,10,2))
@@ -440,7 +440,7 @@ public class Mod3902024Writer {
 		   ,(wr,m390) -> wr.append(AonFiscalFileUtils.unsigned(m390.getSimpRegime1() != null?m390.getSimpRegime1().getBoxI():0.0,17,2))
 		   ,(wr,m390) -> wr.append(AonFiscalFileUtils.unsigned(m390.getSimpRegime1() != null?m390.getSimpRegime1().getBoxJ():0.0,17,2))
 		   
-		   ,(wr,m390) -> wr.append(AonFiscalFileUtils.text(m390.getSimpRegime2() != null?m390.getSimpRegime2().getEpigrafe():" ",4))
+		   ,(wr,m390) -> wr.append(AonFiscalFileUtils.text(m390.getSimpRegime2() != null?AonStringUtils.replace(m390.getSimpRegime2().getEpigrafe(),".",""):" ",4))
 		   ,(wr,m390) -> wr.append(AonFiscalFileUtils.unsigned(m390.getSimpRegime2() != null?m390.getSimpRegime2().getUnit1():0.0,10,2))
 		   ,(wr,m390) -> wr.append(AonFiscalFileUtils.unsigned(m390.getSimpRegime2() != null?m390.getSimpRegime2().getAmount1():0.0,17,2))
 		   ,(wr,m390) -> wr.append(AonFiscalFileUtils.unsigned(m390.getSimpRegime2() != null?m390.getSimpRegime2().getUnit2():0.0,10,2))
