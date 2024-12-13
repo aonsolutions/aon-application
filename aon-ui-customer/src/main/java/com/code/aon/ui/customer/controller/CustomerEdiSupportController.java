@@ -26,6 +26,7 @@ import com.code.aon.registry.RegistryNote;
 import com.code.aon.registry.enumeration.NoteType;
 import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.occam.api.model.seres.SeresPath;
+import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class CustomerEdiSupportController extends CustomerEdiSupport implements Serializable {
 
@@ -133,9 +134,11 @@ public class CustomerEdiSupportController extends CustomerEdiSupport implements 
 		init(customer);
 		
 		RegistryNote autoCommit = this.getRegistryNote(SERES_AUTO_COMMIT_DELIVERY, customer.getId());
-		seresAutoCommitDelivery = autoCommit != null && Boolean.getBoolean(autoCommit.getComments());
+		seresAutoCommitDelivery = autoCommit != null && !AonStringUtils.isBlank(autoCommit.getComments())
+				&& Boolean.valueOf(autoCommit.getComments().trim());
 		RegistryNote mainInvoicingAddress = this.getRegistryNote(SERES_INVOICING_MAIN_ADDRESS, customer.getId());
-		seresInvoicingMainAddress = mainInvoicingAddress != null && Boolean.getBoolean(mainInvoicingAddress.getComments());
+		seresInvoicingMainAddress = mainInvoicingAddress != null && !AonStringUtils.isBlank(mainInvoicingAddress.getComments())
+				&& Boolean.valueOf(mainInvoicingAddress.getComments().trim());
 
 		RegistryNote order = this.getRegistryNote(SERES_RECEIVE_ORDER, customer.getId());
 		if(order != null) setReceiveOrder(SeresPath.safeValueOf(order.getComments()));
@@ -146,7 +149,6 @@ public class CustomerEdiSupportController extends CustomerEdiSupport implements 
 		RegistryNote invoice = this.getRegistryNote(SERES_SEND_INVOICE, customer.getId());
 		if(invoice != null) setSendInvoice(SeresPath.safeValueOf(invoice.getComments()));
 		
-		seresInvoicingMainAddress = mainInvoicingAddress != null && Boolean.getBoolean(mainInvoicingAddress.getComments());
 	}
 
 	private void clear(Customer customer) {
