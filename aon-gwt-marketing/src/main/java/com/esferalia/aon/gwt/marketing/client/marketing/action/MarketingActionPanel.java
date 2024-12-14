@@ -60,16 +60,16 @@ public abstract class MarketingActionPanel extends ScrollPanel {
 	
 	private static enum COLS {
 		  DES(AON.MSG.description()					,"-moz-available"  	,"min-width: 5rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
-		, CAN("Canal"								,"7rem" 			,"")
-		, TYP(AON.MSG.type()						,"4rem" 			,"")
-		, BUD("Presupuesto"							,"6rem" 			,"")
-		, EXP("Gastos"								,"6rem" 			,"")
+		, CAN("Canal"								,"8rem" 			,"")
+		, TYP(AON.MSG.type()						,"5rem" 			,"")
+		, BUD("Presupuesto"							,"7rem" 			,"")
+		, EXP("Gastos"								,"7rem" 			,"")
 		, STD("F. Inicio"							,"5rem" 			,"")
 		, END("F. Fin"								,"5rem" 			,"")
 		, COM("A. Comercial"						,"6rem" 			,"white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
-		, SUR("Cuestionario"						,"6rem" 			,"")
-		, TGT("C. Potenciales"						,"6rem" 			,"")
-		, BUT(AonStringUtils.EMPTY					,"2rem" 			,"")
+//		, SUR("Cuestionario"						,"6rem" 			,"")
+		, TGT("C. Poten."							,"5rem" 			,"")
+		, BUT(AonStringUtils.EMPTY					,"3rem" 			,"")
 		;
 
 		String headerLabel;
@@ -135,7 +135,7 @@ public abstract class MarketingActionPanel extends ScrollPanel {
 	private void initHiddenColumns() {
 		colTabletHidden.clear();
 		colTabletHidden.add(COLS.COM);
-		colTabletHidden.add(COLS.SUR);
+//		colTabletHidden.add(COLS.SUR);
 		colTabletHidden.add(COLS.TGT);
 	}
 
@@ -266,7 +266,7 @@ public abstract class MarketingActionPanel extends ScrollPanel {
 			tab.addInlineStyle(taskHolder, COLS.COM.getCellStyleClass());
 			tab.addRow(row, taskHolder, COLS.COM.getColWidth());
 			
-			tab.addRow(row, new Label(marketingAction.getSurvey() == null ? "" : marketingAction.getSurvey().getDescription()), COLS.SUR.getColWidth());
+//			tab.addRow(row, new Label(marketingAction.getSurvey() == null ? "" : marketingAction.getSurvey().getDescription()), COLS.SUR.getColWidth());
 			tab.addRow(row, new Label(marketingAction.getTargets() == null ? "0" : marketingAction.getTargets().size() + ""), COLS.TGT.getColWidth());
 		}
 		
