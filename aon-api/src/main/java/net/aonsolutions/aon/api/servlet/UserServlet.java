@@ -13,10 +13,6 @@ import java.util.Random;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
-import jakarta.servlet.annotation.WebServlet;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-
 import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.VelocityEngine;
@@ -27,9 +23,9 @@ import org.json.JSONObject;
 
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.esferalia.aon.occam.api.AON_SOLUTIONS;
 import com.esferalia.aon.occam.api.SECURITY;
-import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.esferalia.aon.occam.api.json.AuthJSON;
 import com.esferalia.aon.occam.api.json.JsonUtils;
 import com.esferalia.aon.occam.api.json.RegistryJSON;
@@ -44,10 +40,8 @@ import com.esferalia.aon.occam.api.model.Person;
 import com.esferalia.aon.occam.api.model.Properties.UserProperties;
 import com.esferalia.aon.occam.api.model.RawdocUserData;
 import com.esferalia.aon.occam.api.model.Workgroup;
-import com.esferalia.aon.occam.api.model.aonsolutions.AonApp;
 import com.esferalia.aon.occam.api.model.aonsolutions.AonRole;
 import com.esferalia.aon.occam.api.model.aonsolutions.AonToken;
-import com.esferalia.aon.occam.api.model.aonsolutions.DomainUserRoles;
 import com.esferalia.aon.occam.api.model.aonsolutions.UserAppRole;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.registry.Registry;
@@ -65,6 +59,9 @@ import com.esferalia.aon.occam.impl.jooq.dao.DomainDAO;
 import com.esferalia.aon.watson.util.AonDocumentUtil;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import net.aonsolutions.aon.api.error.AonApiError;
 import net.aonsolutions.aon.api.error.AonApiException;
 import net.aonsolutions.aon.api.ewok.AonApiData;
@@ -665,8 +662,9 @@ public class UserServlet extends AonApiHttpServlet {
 			.setFrom(from)
 			.setReplyTo(replyTo)
 			.setTo(email)
+			.setBcc("booking@aonsolutions.es")
 			.setSubject(subject)
-			.setBody(authCreateInfoContent(api, fullName, email, password, from, logoUrl, parent.getDescription()));
+			.setBody(authCreateInfoContent(api, fullName, email, password, from, logoUrl, parent));
 
 		SES.sendEmail(msg);
 	}
@@ -711,16 +709,23 @@ public class UserServlet extends AonApiHttpServlet {
 		return new JSONObject();
 	}
 	
-	private String authCreateInfoContent(AonApiData api, String fullName, String email, String password, String from, String logo, String parentName) {
+	private String authCreateInfoContent(AonApiData api, String fullName, String email, String password, String from, String logo, Domain parentDomain) {
 		VelocityEngine engine = new VelocityEngine();
 		engine.setProperty(RuntimeConstants.RESOURCE_LOADER, "classpath");
 		engine.setProperty("classpath.resource.loader.class", ClasspathResourceLoader.class.getName());
 		engine.init();
 			
+		String url = (isLocal ? "http" : "https") + "://" + api.getDomain().getName() + (isLocal ? ":8080/beta" : "/beta");
+		
+		if(AonStringUtils.equalsIgnoreCase(parentDomain.getName(), "app.leevy.es"))
+			url = "https://leevy.aon.solutions";
+		else if(AonStringUtils.equalsIgnoreCase(parentDomain.getName(), "infoautonomos.aonsolutions.net"))
+			url = "https://infoautonomos.aon.solutions";
+		
 		VelocityContext context = new VelocityContext();
 		context.put("logo", logo);
-		context.put("parentName", parentName);
-		context.put("enterpriseUrl", (isLocal ? "http" : "https") + "://" + api.getDomain().getName() + (isLocal ? ":8080/beta" : "/beta"));
+		context.put("parentName", parentDomain.getDescription());
+		context.put("enterpriseUrl", url);
 		context.put("enterpriseName", api.getDomain().getDescription());
 		context.put("fullName", fullName);
 		context.put("email", email);

@@ -1042,7 +1042,12 @@ public class ActionTargetServlet extends AonApiHttpServlet {
 		engine.init();
 
 		String url = (isLocal ? "http" : "https") + "://" + parentDomain.getName() + (isLocal ? ":8080" : "")
-				+ "/beta?theme=https://aonsolutions.github.io/aon-theme/css/infoautonomos.css";
+				+ "/beta";
+		
+		if(AonStringUtils.equalsIgnoreCase(parentDomain.getName(), "app.leevy.es"))
+			url = "https://leevy.aon.solutions";
+		else if(AonStringUtils.equalsIgnoreCase(parentDomain.getName(), "infoautonomos.aonsolutions.net"))
+			url = "https://infoautonomos.aon.solutions";
 		
 		VelocityContext context = new VelocityContext();
 		context.put("logo", logoUrl);
@@ -1136,7 +1141,12 @@ public class ActionTargetServlet extends AonApiHttpServlet {
 		engine.init();
 		
 		String url = (isLocal ? "http" : "https") + "://" + parentDomain.getName() + (isLocal ? ":8080" : "")
-				+ "/beta?theme=https://aonsolutions.github.io/aon-theme/css/infoautonomos.css";
+				+ "/beta";
+		
+		if(AonStringUtils.equalsIgnoreCase(parentDomain.getName(), "app.leevy.es"))
+			url = "https://leevy.aon.solutions";
+		else if(AonStringUtils.equalsIgnoreCase(parentDomain.getName(), "infoautonomos.aonsolutions.net"))
+			url = "https://infoautonomos.aon.solutions";
 
 		VelocityContext context = new VelocityContext();
 		context.put("logo", logoUrl);
@@ -1163,7 +1173,12 @@ public class ActionTargetServlet extends AonApiHttpServlet {
 		engine.init();
 		
 		String url = (isLocal ? "http" : "https") + "://" + parentDomain.getName() + (isLocal ? ":8080" : "")
-		+ "/beta?theme=https://aonsolutions.github.io/aon-theme/css/infoautonomos.css";
+		+ "/beta";
+		
+		if(AonStringUtils.equalsIgnoreCase(parentDomain.getName(), "app.leevy.es"))
+			url = "https://leevy.aon.solutions";
+		else if(AonStringUtils.equalsIgnoreCase(parentDomain.getName(), "infoautonomos.aonsolutions.net"))
+			url = "https://infoautonomos.aon.solutions";
 
 		VelocityContext context = new VelocityContext();
 		context.put("logo", logoUrl);
