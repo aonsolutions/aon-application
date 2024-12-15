@@ -301,7 +301,7 @@ public class Bases {
 				
 				// from here MONTH_DAYS == 30, so  
 				boolean monthly = lastDayOfMonth != 30 
-						|| getQuoteGroup(salary, period) >= 8
+						|| getQuoteGroup(salary, period) < 8
 						|| getQuoteDays(salary, period) == 0
 						|| getCotizacionMensual(salary,period);
 				
