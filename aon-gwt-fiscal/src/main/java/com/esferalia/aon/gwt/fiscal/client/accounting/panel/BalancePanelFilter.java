@@ -63,37 +63,37 @@ public class BalancePanelFilter extends SimpleLayoutPanel implements HasValueCha
 		mainTab.getColumnFormatter().setWidth(0, "auto");
 		mainTab.getColumnFormatter().setWidth(1, "50px");
 		mainTab.setWidget(0, 0, getFilterTab(options,params));
-		mainTab.setWidget(0, 1, getMinMaxButtonsPanel());
+		mainTab.setWidget(0, 1, getCloseButtonPanel());
 		setWidget(mainTab);
 	}
 
-	private FlowPanel getMinMaxButtonsPanel() {
+	private FlowPanel getCloseButtonPanel() {
 		FlowPanel min = new FlowPanel();
 		min.setStyleName(AON.CSS.aonTextRight());
 		min.addStyleName(AON.CSS.aonPaddingRight());
 		min.addStyleName(AON.CSS.aonNowrap());
 		min.addStyleName(AON.CSS.aonWidthAll());
 		
-		AonSearchPanelButton maximize = new AonSearchPanelButton(AON.MSG.maximize(),AON.CSS.aonIconMaximize());
-		maximize.addClickHandler(new ClickHandler() {
-			
-			@Override
-			public void onClick(ClickEvent event) {
-				MaximizeEvent.fire(BalancePanelFilter.this);
-			}
-		});
-
-		min.add(maximize);
+//		AonSearchPanelButton maximize = new AonSearchPanelButton(AON.MSG.maximize(),AON.CSS.aonIconMaximize());
+//		maximize.addClickHandler(new ClickHandler() {
+//			
+//			@Override
+//			public void onClick(ClickEvent event) {
+//				MaximizeEvent.fire(BalancePanelFilter.this);
+//			}
+//		});
+//
+//		min.add(maximize);
 		
-		AonSearchPanelButton minimize = new AonSearchPanelButton(AON.MSG.minimize(),AON.CSS.aonIconMinimize());
-		minimize.addClickHandler(new ClickHandler() {
+		AonSearchPanelButton close = new AonSearchPanelButton(AON.MSG.close(),AON.CSS.aonWidgetClose());
+		close.addClickHandler(new ClickHandler() {
 			
 			@Override
 			public void onClick(ClickEvent event) {
 				MinimizeEvent.fire(BalancePanelFilter.this);
 			}
 		});
-		min.add(minimize);
+		min.add(close);
 		return min;
 	}
 

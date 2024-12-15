@@ -8,7 +8,9 @@ import com.esferalia.aon.gwt.common.client.CommonService;
 import com.esferalia.aon.gwt.common.client.CommonServiceAsync;
 import com.esferalia.aon.gwt.common.client.CommonServiceAsyncDecorator;
 import com.esferalia.aon.gwt.common.client.widget.MinimizePanel.MaximizeEvent;
+import com.esferalia.aon.gwt.common.client.widget.MinimizePanel.MaximizeHandler;
 import com.esferalia.aon.gwt.common.client.widget.MinimizePanel.MinimizeEvent;
+import com.esferalia.aon.gwt.common.client.widget.MinimizePanel.MinimizeHandler;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDateBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonSearchPanelButton;
 import com.esferalia.aon.gwt.common.shared.DateUtils;
@@ -38,6 +40,8 @@ import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.i18n.client.DateTimeFormat.PredefinedFormat;
+import com.google.gwt.layout.client.Layout.AnimationCallback;
+import com.google.gwt.layout.client.Layout.Layer;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
@@ -56,7 +60,7 @@ public class LedgerPanelReport extends DockLayoutPanel implements Focusable, Has
 
 	private static CommonServiceAsync commonService;
 
-	private SimpleLayoutPanel northPanel;
+	private SimpleLayoutPanel filterPanel;
 	private SimpleLayoutPanel centerPanel;
 	
 	private AccountPeriodBox period;
@@ -95,7 +99,7 @@ public class LedgerPanelReport extends DockLayoutPanel implements Focusable, Has
 		setStyleName(AON.CSS.aonSelector());
 		addStyleName(AON.CSS.aonScrollArea());
 		addStyleName(AON.CSS.aonMarginBottom());
-		northPanel = new SimpleLayoutPanel();
+		filterPanel = new SimpleLayoutPanel();
 		FlexTable mainTab = new FlexTable();
 		mainTab.setStyleName(AON.CSS.aonSearchPanel());
 		mainTab.addStyleName(AON.CSS.aonWidthAlmostAll());
@@ -103,9 +107,9 @@ public class LedgerPanelReport extends DockLayoutPanel implements Focusable, Has
 		mainTab.getColumnFormatter().setWidth(0, "auto");
 		mainTab.getColumnFormatter().setWidth(1, "50px");
 		mainTab.setWidget(0, 0, getFilterTab(options,new AccountingReportParams()));
-		mainTab.setWidget(0, 1, getMinMaxButtonsPanel());
-		northPanel.setWidget(mainTab);
-		addNorth(northPanel, 110);
+		mainTab.setWidget(0, 1, getCloseButtonsPanel());
+		filterPanel.setWidget(mainTab);
+		addNorth(filterPanel, 110);
 		centerPanel = new SimpleLayoutPanel();
 		add(centerPanel);
 		onSearch(options);
@@ -468,33 +472,68 @@ public class LedgerPanelReport extends DockLayoutPanel implements Focusable, Has
 			;
 	}
 	
-	private FlowPanel getMinMaxButtonsPanel() {
+	private FlowPanel getCloseButtonsPanel() {
 		FlowPanel min = new FlowPanel();
 		min.setStyleName(AON.CSS.aonTextRight());
 		min.addStyleName(AON.CSS.aonPaddingRight());
 		min.addStyleName(AON.CSS.aonNowrap());
 		min.addStyleName(AON.CSS.aonWidthAll());
 		
-		AonSearchPanelButton maximize = new AonSearchPanelButton(AON.MSG.maximize(),AON.CSS.aonIconMaximize());
-		maximize.addClickHandler(new ClickHandler() {
+		AonSearchPanelButton close = new AonSearchPanelButton(AON.MSG.close(),AON.CSS.aonIconClose());
+		close.addClickHandler(new ClickHandler() {
 			
 			@Override
 			public void onClick(ClickEvent event) {
-				MaximizeEvent.fire(LedgerPanelReport.this);
+				LedgerPanelReport.this.closeFilterPanel();
 			}
 		});
+		min.add(close);
+		return min;
+	}
 
-		min.add(maximize);
-		
-		AonSearchPanelButton minimize = new AonSearchPanelButton(AON.MSG.minimize(),AON.CSS.aonIconMinimize());
-		minimize.addClickHandler(new ClickHandler() {
+	public void closeFilterPanel() {
+		LedgerPanelReport.this.setWidgetSize(filterPanel, 0);
+		LedgerPanelReport.this.animate(500, new AnimationCallback() {
 			
 			@Override
-			public void onClick(ClickEvent event) {
+			public void onAnimationComplete() {
 				MinimizeEvent.fire(LedgerPanelReport.this);
 			}
+			@Override
+			public void onLayout(Layer arg0, double arg1) {							
+			}
+			
 		});
-		min.add(minimize);
-		return min;
+	}
+	
+	public void openFilterPanel() {
+		LedgerPanelReport.this.setWidgetSize(filterPanel, 110);
+		LedgerPanelReport.this.animate(500, new AnimationCallback() {
+			
+			@Override
+			public void onAnimationComplete() {
+				MaximizeEvent.fire(LedgerPanelReport.this);
+			}
+			@Override
+			public void onLayout(Layer arg0, double arg1) {							
+			}
+			
+		});
+	}
+	
+	public boolean isFilterPanelOpened() {
+		double filterPanelSize = getWidgetSize(filterPanel);
+		if (Double.compare(filterPanelSize, 0.0) == 0) {
+			return false;
+		}
+		return true;
+	}
+	
+	public HandlerRegistration addFilterMinimizeHandler(MinimizeHandler handler) {
+		return addHandler(handler, MinimizeEvent.getType());
+	}
+
+	public HandlerRegistration addFilterMaximizeHandler(MaximizeHandler handler) {
+		return addHandler(handler, MaximizeEvent.getType());
 	}
 }
