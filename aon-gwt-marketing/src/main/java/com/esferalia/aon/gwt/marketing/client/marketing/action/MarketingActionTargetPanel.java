@@ -9,6 +9,7 @@ import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.CommonService;
 import com.esferalia.aon.gwt.common.client.CommonServiceAsync;
 import com.esferalia.aon.gwt.common.client.CommonServiceAsyncDecorator;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomTable;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog.AonAcceptDialogCallback;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonTableButton;
@@ -27,8 +28,8 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.ScrollEvent;
 import com.google.gwt.event.dom.client.ScrollHandler;
 import com.google.gwt.logging.client.ConsoleLogHandler;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HTMLPanel;
@@ -45,23 +46,25 @@ public abstract class MarketingActionTargetPanel extends ScrollPanel {
 	static { LOGGER.addHandler( new ConsoleLogHandler() ); }
 	
 	private final int limit = 100;
-	private final MutableInt row = new MutableInt(0);
 	private final MutableInt offset = new MutableInt(0);
 	private final MutableInt moreData = new MutableInt(0);
 	private final MutableInt searchEnabled = new MutableInt( 0 );
+	
 	private SimplePanel container;
-	private FlexTable tab;
+	private AonCustomTable tab;
 	private int lastScrollPos = 0;
 	
 	private MarketingActionTargetParams params;
 	private Seller seller;
 	private Workgroup workgroup;
 	
+	private boolean isTablet = false;
+	
 	private static enum COLS {
-		DES("Cliente Potencial"						,"auto"  ,null)
-		, COM(AON.MSG.comments()					,"37rem" ,null)
-		, STA(AON.MSG.status()						,"150px" ,null)
-		, BUT(AonStringUtils.EMPTY					,"50px"  ,null)
+		DES("Cliente Potencial"						,"-moz-available"  	,"min-width: 5rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
+		, COM(AON.MSG.comments()					,"15rem" 			,"white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
+		, STA(AON.MSG.status()						,"5rem" 			,"")
+		, BUT(AonStringUtils.EMPTY					,"3rem"  			,"")
 		;
 
 		String headerLabel;
@@ -99,6 +102,7 @@ public abstract class MarketingActionTargetPanel extends ScrollPanel {
 		this.params = params;
 		this.seller = seller;
 		this.workgroup = workgroup;
+		this.isTablet = Window.getClientWidth() <= 980;
 
 		container = new SimplePanel();
 		setWidget(container);
@@ -153,25 +157,17 @@ public abstract class MarketingActionTargetPanel extends ScrollPanel {
 
 	private void search() {
 		container.clear();
-		tab = new FlexTable();
-		tab.addStyleName(AON.CSS.aonGrid());
+		tab = new AonCustomTable();
 		
 		paintHeader();
 		container.setWidget(tab);
-		row.setValue(1);
 		searchData();
 	}
 	
 	private void paintHeader() {
-		for ( COLS col : COLS.values()) {
-			tab.getColumnFormatter().setWidth(col.ordinal(), col.getColWidth());	
-			tab.setWidget(0, col.ordinal(), new Label( col.getHeaderLabel() ));
-			tab.getFlexCellFormatter().addStyleName(0, col.ordinal(),AON.CSS.aonGridHeader());
-			if ( col.getCellStyleClass() != null) {
-				tab.getFlexCellFormatter().addStyleName(0, col.ordinal(),col.getCellStyleClass());
-				tab.getFlexCellFormatter().addStyleName(0, col.ordinal(),AON.CSS.aonNowrap());
-			}
-		}
+		tab.createHeader();
+		for ( COLS col : COLS.values()) 
+			tab.addHeader(new Label(col.getHeaderLabel()), col.getColWidth(), col.getCellStyleClass());
 	}
 	
 	private void searchData() {
@@ -207,55 +203,15 @@ public abstract class MarketingActionTargetPanel extends ScrollPanel {
 			
 		});
 	}
-	
-	private void paintRow(MarketingActionTarget marketingActionTarget) {
-		final int r = row.getValue();
-		paintRow(r, marketingActionTarget); 
-		row.increment();
-	}
-	
-	private void paintRow(final int r, MarketingActionTarget marketingActionTarget) {
-		int col = 0;
-		paintActiveRow(r,col,marketingActionTarget);
-	}
 
-	private void paintActiveRow(final int r, int col, MarketingActionTarget marketingActionTarget) {
-		tab.setWidget(r, col, new Label(marketingActionTarget.getName()));
-		col++;
-		
-		HTMLPanel commentsPanel = new HTMLPanel("");
-		commentsPanel.setStyleName(AON.CSS.aonItemFlex());
-		commentsPanel.getElement().getStyle().setProperty("justify-content", "space-between");
-		
-		Label comments = new Label(marketingActionTarget.getComments());
-		comments.setTitle(marketingActionTarget.getComments());
-		comments.getElement().getStyle().setProperty("max-width", "35rem");
-		comments.getElement().getStyle().setProperty("white-space", "nowrap");
-		comments.getElement().getStyle().setProperty("overflow", "hidden");
-		comments.getElement().getStyle().setProperty("text-overflow", "ellipsis");
-		commentsPanel.add(comments);
-		
-		if(AonStringUtils.isNotBlank(marketingActionTarget.getComments()) && marketingActionTarget.getComments().length() > 100) {
-			AonTableButton showFullComment = new AonTableButton("Ver comentario completo", AON.CSS.aonIconComment());
-			showFullComment.addClickHandler(e -> {
-        		AonDialog dialog = new AonDialog(marketingActionTarget.getName() + " (Comentarios)", new Label(marketingActionTarget.getComments()));
-    			dialog.info();
-			});
-			commentsPanel.add(showFullComment);
-		}
-		
-		tab.setWidget(r, col, commentsPanel);
-		col++;
-		
-		tab.setWidget(r, col, new Label(getActionStatus(marketingActionTarget.getActionTargetStatus())));
-		col++;
-		
+	private void paintRow(MarketingActionTarget marketingActionTarget) {
 		FlowPanel buttonContainer = new FlowPanel();
-		buttonContainer.getElement().getStyle().setTextAlign(TextAlign.RIGHT);
+		buttonContainer.getElement().getStyle().setTextAlign(TextAlign.CENTER);
 		
 		if(marketingActionTarget.hasProjectCommercial()) {
 			AonTableButton deleteProjectCommercial;
 			deleteProjectCommercial = new AonTableButton("Eliminar Operaci\u00f3n Comercial", AON.CSS.aonIconWorkOff());
+			if(!isTablet) deleteProjectCommercial.addStyleName(AON.CSS.aonCustomRowButtom());
 			deleteProjectCommercial.addClickHandler( new ClickHandler() {
 				
 				@Override
@@ -284,6 +240,7 @@ public abstract class MarketingActionTargetPanel extends ScrollPanel {
 			createProjectCommercial = new AonTableButton("Crear Operaci\u00f3n Comercial", AON.CSS.aonIconWorkAdd());
 			createProjectCommercial.setEnabled(null != this.seller);
 			if(null == this.seller) createProjectCommercial.setTitle("No se puede crear una operaci\u00f3n comercial si la acci\u00f3n no esta asignada a nadie");
+			if(!isTablet) createProjectCommercial.addStyleName(AON.CSS.aonCustomRowButtom());
 			createProjectCommercial.addClickHandler( new ClickHandler() {
 				
 				@Override
@@ -309,8 +266,8 @@ public abstract class MarketingActionTargetPanel extends ScrollPanel {
 			buttonContainer.add(createProjectCommercial);
 		}
 		
-		AonTableButton button;
-		button = new AonTableButton(AON.MSG.deleteAction(), AON.CSS.aonIconDelete());
+		AonTableButton button = new AonTableButton(AON.MSG.deleteAction(), AON.CSS.aonIconDelete());
+		if(!isTablet) button.addStyleName(AON.CSS.aonCustomRowButtom());
 		button.addClickHandler( new ClickHandler() {
 			
 			@Override
@@ -333,11 +290,37 @@ public abstract class MarketingActionTargetPanel extends ScrollPanel {
 				});
 			}
 		});
-		
 		buttonContainer.add(button);
 		
-		tab.setWidget(r, col, buttonContainer);
-		col++;
+		HTMLPanel row = tab.createRow();
+		
+		Label name = new Label(marketingActionTarget.getName());
+		name.setTitle(marketingActionTarget.getName());
+		tab.addInlineStyle(name, COLS.DES.getCellStyleClass());
+		tab.addRow(row, name, COLS.DES.getColWidth());
+		
+		HTMLPanel commentsPanel = new HTMLPanel("");
+		commentsPanel.setStyleName(AON.CSS.aonItemFlex());
+		commentsPanel.getElement().getStyle().setProperty("justify-content", "space-between");
+		
+		Label comments = new Label(marketingActionTarget.getComments());
+		comments.setTitle(marketingActionTarget.getComments());
+		commentsPanel.add(comments);
+		
+		if(AonStringUtils.isNotBlank(marketingActionTarget.getComments()) && marketingActionTarget.getComments().length() > 100) {
+			AonTableButton showFullComment = new AonTableButton("Ver comentario completo", AON.CSS.aonIconComment());
+			showFullComment.addClickHandler(e -> {
+        		AonDialog dialog = new AonDialog(marketingActionTarget.getName() + " (Comentarios)", new Label(marketingActionTarget.getComments()));
+    			dialog.info();
+			});
+			commentsPanel.add(showFullComment);
+		}
+		
+		tab.addInlineStyle(comments, COLS.COM.getCellStyleClass());
+		tab.addRow(row, commentsPanel, COLS.COM.getColWidth());
+		
+		tab.addRow(row, new Label(getActionStatus(marketingActionTarget.getActionTargetStatus())), COLS.STA.getColWidth());
+		tab.addRow(row, buttonContainer, COLS.BUT.getColWidth());
 	}
 
 	private String getActionStatus(Byte actionTargetStatus) {
@@ -393,7 +376,7 @@ public abstract class MarketingActionTargetPanel extends ScrollPanel {
 	}
 
 	private void deleteProjectCommercial(MarketingActionTarget marketingActionTarget) {
-		COMMON_SERVICE.deleteProjectCommercial(params.getDomainName(), params.getDomain(), params.getUser(), marketingActionTarget.getProjectCommercial(), new AsyncCallback<Void>() {
+		COMMON_SERVICE.deleteProjectCommercial(params.getDomainName(), params.getDomain(), params.getUser(), marketingActionTarget.getProject(), new AsyncCallback<Void>() {
 			
 			@Override
 			public void onSuccess(Void result) {
@@ -455,6 +438,7 @@ public abstract class MarketingActionTargetPanel extends ScrollPanel {
 							@Override
 							public void onSuccess(ProjectCommercial projectCommercial) {
 								marketingActionTarget.setActionTargetStatus((byte)6); // Enviado
+								marketingActionTarget.setProject(projectCommercial.getId());
 								COMMON_SERVICE.saveMarketingActionTarget(params.getDomainName(), params.getDomain(), params.getUser(), marketingActionTarget, new AsyncCallback<MarketingActionTarget>() {
 									
 									@Override
@@ -511,6 +495,7 @@ public abstract class MarketingActionTargetPanel extends ScrollPanel {
 					@Override
 					public void onSuccess(ProjectCommercial projectCommercial) {
 						marketingActionTarget.setActionTargetStatus((byte)6); // Enviado
+						marketingActionTarget.setProject(projectCommercial.getId());
 						COMMON_SERVICE.saveMarketingActionTarget(params.getDomainName(), params.getDomain(), params.getUser(), marketingActionTarget, new AsyncCallback<MarketingActionTarget>() {
 							
 							@Override
