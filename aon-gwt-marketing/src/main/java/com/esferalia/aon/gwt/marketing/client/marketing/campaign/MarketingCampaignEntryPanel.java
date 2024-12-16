@@ -320,6 +320,7 @@ public abstract class MarketingCampaignEntryPanel extends DeckLayoutPanel {
 		HTMLPanel row2 = new HTMLPanel("");
 		row2.setStyleName(AON.CSS.aonItemFlex());
 		
+		workgroup.clearItems();
 		workgroup.addItem("-", "");
 		workgroup.addChangeHandler(e -> {
 			if(AonStringUtils.isBlank(workgroup.getValue())) {

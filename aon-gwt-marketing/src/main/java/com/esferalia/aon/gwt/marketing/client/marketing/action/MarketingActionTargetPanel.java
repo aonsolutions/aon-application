@@ -62,9 +62,9 @@ public abstract class MarketingActionTargetPanel extends ScrollPanel {
 	
 	private static enum COLS {
 		DES("Cliente Potencial"						,"-moz-available"  	,"min-width: 5rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
-		, COM(AON.MSG.comments()					,"15rem" 			,"white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
-		, STA(AON.MSG.status()						,"5rem" 			,"")
-		, BUT(AonStringUtils.EMPTY					,"3rem"  			,"")
+		, COM(AON.MSG.comments()					,"20rem" 			,"white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
+		, STA(AON.MSG.status()						,"6rem" 			,"")
+		, BUT(AonStringUtils.EMPTY					,"4rem"  			,"")
 		;
 
 		String headerLabel;

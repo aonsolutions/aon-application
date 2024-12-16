@@ -183,6 +183,8 @@ public class DoubleBox extends ValueBox<Double> implements HasErrorHandlers{
                 }
             }
         });
+		
+		addFocusHandler(e -> getElement().<com.google.gwt.dom.client.InputElement>cast().select());
 	}
 
 	public void setResolver(final ExpressionResolver resolver) {
