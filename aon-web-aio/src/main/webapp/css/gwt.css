@@ -587,3 +587,15 @@ input[type='checkbox']:checked {
 .aon-panelGrid-search .aon-panelGrid-even {
 	background-color: #FFF !important;
 }
+
+.aon_message_panel{
+	align-items: center;
+}
+
+.aon_message_close_panel{
+	padding: 0 1rem 0 0;
+}
+
+.aon_message_close_panel > button{
+	min-height: 2rem;
+}
