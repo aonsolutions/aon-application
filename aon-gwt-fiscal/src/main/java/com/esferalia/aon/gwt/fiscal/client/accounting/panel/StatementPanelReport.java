@@ -7,6 +7,10 @@ import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.CommonService;
 import com.esferalia.aon.gwt.common.client.CommonServiceAsync;
 import com.esferalia.aon.gwt.common.client.CommonServiceAsyncDecorator;
+import com.esferalia.aon.gwt.common.client.widget.MinimizePanel.MaximizeEvent;
+import com.esferalia.aon.gwt.common.client.widget.MinimizePanel.MaximizeHandler;
+import com.esferalia.aon.gwt.common.client.widget.MinimizePanel.MinimizeEvent;
+import com.esferalia.aon.gwt.common.client.widget.MinimizePanel.MinimizeHandler;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonAccountBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDateBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonSearchPanelButton;
@@ -42,6 +46,8 @@ import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.i18n.client.DateTimeFormat.PredefinedFormat;
+import com.google.gwt.layout.client.Layout.AnimationCallback;
+import com.google.gwt.layout.client.Layout.Layer;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.CheckBox;
@@ -544,8 +550,18 @@ public class StatementPanelReport extends DockLayoutPanel implements Focusable, 
 	}
 	
 	public void closeFilterPanel() {
-	    filterPanel.addStyleName(AON.CSS.aonDisplayNone());
 	    StatementPanelReport.this.setWidgetSize(filterPanel, 0);
+	    StatementPanelReport.this.animate(500, new AnimationCallback() {
+			
+			@Override
+			public void onAnimationComplete() {
+				MinimizeEvent.fire(StatementPanelReport.this);
+			}
+			@Override
+			public void onLayout(Layer arg0, double arg1) {							
+			}
+			
+		});
 
 	    if (messageLabel == null) {
 	        messageLabel = new Label("Introduzca valores en el filtro de b\u00FAsqueda");
@@ -555,9 +571,18 @@ public class StatementPanelReport extends DockLayoutPanel implements Focusable, 
 	}
 
 	public void openFilterPanel() {
-	    filterPanel.removeStyleName(AON.CSS.aonDisplayNone());
 	    StatementPanelReport.this.setWidgetSize(filterPanel, 110);
-	    StatementPanelReport.this.animate(500);
+	    StatementPanelReport.this.animate(500, new AnimationCallback() {
+			
+			@Override
+			public void onAnimationComplete() {
+				MaximizeEvent.fire(StatementPanelReport.this);
+			}
+			@Override
+			public void onLayout(Layer arg0, double arg1) {							
+			}
+			
+		});
 
 	    if (messageLabel != null) {
 	    	centerPanel.remove(messageLabel);
@@ -571,6 +596,14 @@ public class StatementPanelReport extends DockLayoutPanel implements Focusable, 
 			return false;
 		}
 		return true;
+	}
+	
+	public HandlerRegistration addFilterMinimizeHandler(MinimizeHandler handler) {
+		return addHandler(handler, MinimizeEvent.getType());
+	}
+
+	public HandlerRegistration addFilterMaximizeHandler(MaximizeHandler handler) {
+		return addHandler(handler, MaximizeEvent.getType());
 	}
 	
 }
