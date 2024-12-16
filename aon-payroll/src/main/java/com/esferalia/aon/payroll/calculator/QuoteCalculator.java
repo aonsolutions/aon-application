@@ -13,6 +13,7 @@ import static com.esferalia.aon.payroll.enumeration.ContextVariable.DIRECT_PAY;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.ERES;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.ERE_BASES;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.FREE_BASES;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.LACK_PERIOD;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.MATERNITY;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.MATERNITY_FACTOR;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.NON_STRUCTURAL_OVERTIME_BASE;
@@ -126,6 +127,8 @@ public abstract class QuoteCalculator {
 	public abstract Double getRawDirectPayBase() throws AonException;
 
 	public abstract Double getAdditionalBase() throws AonException;
+
+	public abstract Double getLackPeriodBase() throws AonException;
 
 	public abstract List<ITimedResult<Double>> quote(IContractPayment payment,
 			Date start, Date end, double amount) throws AonException;
@@ -275,6 +278,11 @@ public abstract class QuoteCalculator {
 		public Double getAdditionalBase() throws AonException {
 			return null;
 		}
+		
+		@Override
+		public Double getLackPeriodBase() throws AonException {
+			return null;
+		}
 
 		private static QuoteCalculator SINGLETON = new NonQuote();
 
@@ -397,6 +405,12 @@ public abstract class QuoteCalculator {
 		public Double getAdditionalBase() throws AonException {
 			return bases.containsKey(ADDITIONAL.getName())
 					? bases.get(ADDITIONAL.getName()) : 0.00;
+		}
+
+		@Override
+		public Double getLackPeriodBase() throws AonException {
+			return bases.containsKey(LACK_PERIOD.getName())
+					? bases.get(LACK_PERIOD.getName()) : 0.00;
 		}
 
 		protected double getQuote(IContractPayment payment, Date start,
@@ -913,6 +927,14 @@ public abstract class QuoteCalculator {
 			return additionalBase;
 		}
 		
+		@Override
+		public Double getLackPeriodBase() throws AonException {
+			double lackPeriodBase = 0.00;
+			for (GeneralQuote calculator : calculators)
+				lackPeriodBase += calculator.getLackPeriodBase();
+			return lackPeriodBase;
+		}
+
 		@Override
 		public List<ITimedResult<Double>> quote(IContractPayment payment,
 				Date start, Date end, double amount) throws AonException {
