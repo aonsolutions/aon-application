@@ -487,6 +487,8 @@ public class JooqPayrollSalaries {
 		List<Integer> userScopes = dslContext.select(USER_SCOPE.SCOPE).from(USER_SCOPE).where(USER_SCOPE.USER_ID.eq(userId)).fetch(USER_SCOPE.SCOPE);
 		
 		Result<Record> contractRecords = dslContext.select().from(CONTRACT)
+				.join(PERSON).on(PERSON.REGISTRY.eq(CONTRACT.PERSON))
+				.join(REGISTRY).on(REGISTRY.ID.eq(CONTRACT.PERSON))
 				.join(WORKPLACE).on(WORKPLACE.ID.eq(CONTRACT.WORKPLACE))
 				.where(CONTRACT.ID.gt(0))
 				.and(CONTRACT.WORKPLACE.eq(workplaceId))
@@ -494,20 +496,12 @@ public class JooqPayrollSalaries {
 				.fetch();
 		
 		for(Record contractRecord : contractRecords){
-			Record personRecord = dslContext.select().from(PERSON)
-					.where(PERSON.REGISTRY.eq(contractRecord.get(CONTRACT.PERSON)))
-					.fetchOne();
-			
-			Record registryRecord = dslContext.select().from(REGISTRY)
-					.where(REGISTRY.ID.eq(contractRecord.get(CONTRACT.PERSON)))
-					.fetchOne();
-			
 			workplaceEmployees.addEmployee(
 					contractRecord.get(CONTRACT.ID), 
-					personRecord.get(PERSON.NAME), 
-					personRecord.get(PERSON.FIRST_SURNAME) + " " + personRecord.get(PERSON.SECOND_SURNAME), 
-					registryRecord.get(REGISTRY.DOCUMENT), 
-					personRecord.get(PERSON.SOCIAL_SECURITY_NUM));
+					contractRecord.get(PERSON.NAME), 
+					contractRecord.get(PERSON.FIRST_SURNAME) + " " + contractRecord.get(PERSON.SECOND_SURNAME), 
+					contractRecord.get(REGISTRY.DOCUMENT), 
+					contractRecord.get(PERSON.SOCIAL_SECURITY_NUM));
 		}
 		
 		return workplaceEmployees;
@@ -523,6 +517,8 @@ public class JooqPayrollSalaries {
 		List<Integer> userScopes = dslContext.select(USER_SCOPE.SCOPE).from(USER_SCOPE).where(USER_SCOPE.USER_ID.eq(userId)).fetch(USER_SCOPE.SCOPE);
 		
 		Result<Record> contractRecords = dslContext.select().from(CONTRACT)
+				.join(PERSON).on(PERSON.REGISTRY.eq(CONTRACT.PERSON))
+				.join(REGISTRY).on(REGISTRY.ID.eq(CONTRACT.PERSON))
 				.join(WORKPLACE).on(WORKPLACE.ID.eq(CONTRACT.WORKPLACE))
 				.join(ENTERPRISE).on(ENTERPRISE.REGISTRY.eq(WORKPLACE.ENTERPRISE))
 				.where(CONTRACT.ID.gt(0))
@@ -533,21 +529,13 @@ public class JooqPayrollSalaries {
 				.fetch();
 		
 		for(Record contractRecord : contractRecords){
-			Record personRecord = dslContext.select().from(PERSON)
-					.where(PERSON.REGISTRY.eq(contractRecord.get(CONTRACT.PERSON)))
-					.fetchOne();
-			
-			Record registryRecord = dslContext.select().from(REGISTRY)
-					.where(REGISTRY.ID.eq(contractRecord.get(CONTRACT.PERSON)))
-					.fetchOne();
-			
 			EmployeeInfo employee = new EmployeeInfo();
 			employee.setEmployeeId(contractRecord.get(CONTRACT.ID));
 			employee.setContractId(contractRecord.get(CONTRACT.ID));
-			employee.setName(personRecord.get(PERSON.NAME));
-			employee.setSurName(personRecord.get(PERSON.FIRST_SURNAME) + " " + personRecord.get(PERSON.SECOND_SURNAME));
-			employee.setDocument(registryRecord.get(REGISTRY.DOCUMENT));
-			employee.setSsNumber(personRecord.get(PERSON.SOCIAL_SECURITY_NUM));
+			employee.setName(contractRecord.get(PERSON.NAME));
+			employee.setSurName(contractRecord.get(PERSON.FIRST_SURNAME) + " " + contractRecord.get(PERSON.SECOND_SURNAME));
+			employee.setDocument(contractRecord.get(REGISTRY.DOCUMENT));
+			employee.setSsNumber(contractRecord.get(PERSON.SOCIAL_SECURITY_NUM));
 			
 			enterpriseEmployees.add(employee);
 		}

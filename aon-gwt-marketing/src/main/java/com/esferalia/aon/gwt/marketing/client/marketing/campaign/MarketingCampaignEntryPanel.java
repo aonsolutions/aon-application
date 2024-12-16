@@ -282,11 +282,10 @@ public abstract class MarketingCampaignEntryPanel extends DeckLayoutPanel {
 		actionsPanel.getElement().getStyle().setProperty("padding", "0 1rem");
 		
 		AonCustomCard actionsCard = new AonCustomCard("Acciones");
-		actionsCard.getElement().getStyle().setProperty("min-height", "13rem");
 		actionsCard.getElement().getStyle().setProperty("width", "100%");
 		
 		centerPanel = new SimpleLayoutPanel();
-		centerPanel.setHeight((Window.getClientHeight() - 505) + "px");
+//		centerPanel.setHeight((Window.getClientHeight() - 505) + "px");
 		actionsCard.add(centerPanel);
 		
 		actionsPanel.add(actionsCard);
@@ -300,8 +299,25 @@ public abstract class MarketingCampaignEntryPanel extends DeckLayoutPanel {
 		Scheduler.get().scheduleDeferred(new Command() {
 	        public void execute() {
 	        	description.setFocus(true);
+	        	
+	        	int alturaRestante = calcularAlturaRestante(centerPanel);
+	        	centerPanel.setHeight(alturaRestante + "px");
 	        }
 	    });		
+	}
+
+	private int calcularAlturaRestante(Widget widget) {
+		// Posición del widget desde el inicio del documento
+	    int posicionWidget = widget.getElement().getAbsoluteTop();
+
+	    // Altura del viewport
+	    int alturaViewport = Window.getClientHeight();
+
+	    // Scroll actual (en caso de que la página tenga desplazamiento)
+	    int scrollActual = Window.getScrollTop();
+
+	    // Altura restante
+	    return alturaViewport + scrollActual - posicionWidget - 35;
 	}
 
 	private Widget createInfoCardContent() {
@@ -320,6 +336,7 @@ public abstract class MarketingCampaignEntryPanel extends DeckLayoutPanel {
 		HTMLPanel row2 = new HTMLPanel("");
 		row2.setStyleName(AON.CSS.aonItemFlex());
 		
+		workgroup.clearItems();
 		workgroup.addItem("-", "");
 		workgroup.addChangeHandler(e -> {
 			if(AonStringUtils.isBlank(workgroup.getValue())) {

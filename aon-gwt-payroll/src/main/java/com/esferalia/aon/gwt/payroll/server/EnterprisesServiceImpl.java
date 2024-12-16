@@ -161,6 +161,7 @@ import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.esferalia.aon.occam.api.DOC;
 import com.esferalia.aon.occam.api.PAYROLL;
 import com.esferalia.aon.occam.api.SECURITY;
+import com.esferalia.aon.occam.api.model.ApplicationParameter;
 import com.esferalia.aon.occam.api.model.Certificate;
 import com.esferalia.aon.occam.api.model.CertificateInfo;
 import com.esferalia.aon.occam.api.model.ContractParams;
@@ -3222,6 +3223,8 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 			Certificate certificate = null;
 			Integer domainId = AonServletUtils.getDomainID(domainName);
 			
+			Optional<ApplicationParameter> authParam = AON.getApplicationParameterStream(domainName, domainId, userLogin, f -> f.getDomainProperty().eq(domainId).and(f.getNameProperty().eq("PAY_authorization_key_PAY"))).findFirst();
+			
 			if(rattachId == null) {
 				Integer parentDomainId = AonServletUtils.getParentDomainID(domainName); 
 				Integer userId = AonServletUtils.getUserID(connection, userLogin, domainId, parentDomainId);	
@@ -3230,7 +3233,7 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 			} else
 				certificate = parseCertificate(AON.getCertificate(domainName, domainId, userLogin, f -> f.getIdProperty().eq(rattachId)));
 			
-			byte[] data = SistemaRED.getSecondaryUsersPDF(new ByteArrayInputStream(certificate.getData()), certificate.getPassword(), certificate.getType());
+			byte[] data = SistemaRED.getSecondaryUsersPDF(new ByteArrayInputStream(certificate.getData()), certificate.getPassword(), certificate.getType(), authParam.isEmpty() ? null : authParam.get().getValue());
 			String base64Pdf = Base64.getEncoder().encodeToString(data);
 					
 			Writer stringWriter = new StringWriter();
@@ -3254,6 +3257,8 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 			Certificate certificate = null;
 			Integer domainId = AonServletUtils.getDomainID(domainName);
 			
+			Optional<ApplicationParameter> authParam = AON.getApplicationParameterStream(domainName, domainId, userLogin, f -> f.getDomainProperty().eq(domainId).and(f.getNameProperty().eq("PAY_authorization_key_PAY"))).findFirst();
+			
 			if(rattachId == null) {
 				Integer parentDomainId = AonServletUtils.getParentDomainID(domainName); 
 				Integer userId = AonServletUtils.getUserID(connection, userLogin, domainId, parentDomainId);	
@@ -3262,7 +3267,7 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 			} else
 				certificate = parseCertificate(AON.getCertificate(domainName, domainId, userLogin, f -> f.getIdProperty().eq(rattachId)));
 			
-			byte[] data = SistemaRED.getAssignedCCCsPDF(new ByteArrayInputStream(certificate.getData()), certificate.getPassword(), certificate.getType());
+			byte[] data = SistemaRED.getAssignedCCCsPDF(new ByteArrayInputStream(certificate.getData()), certificate.getPassword(), certificate.getType(), authParam.isEmpty() ? null : authParam.get().getValue());
 			String base64Pdf = Base64.getEncoder().encodeToString(data);
 					
 			Writer stringWriter = new StringWriter();

@@ -44,7 +44,7 @@ import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
-class Mod303AEAT2024T3Declaration extends Mod303AEAT {
+class Mod303AEAT2024T4Declaration extends Mod303AEAT {
 	
 	@FunctionalInterface
 	private interface ISimplifiedRegimeActivityFiller {
@@ -61,7 +61,7 @@ class Mod303AEAT2024T3Declaration extends Mod303AEAT {
 		void copy(Mod303 prev, Mod303 current);
 	}
 
-	protected Mod303AEAT2024T3Declaration() {
+	protected Mod303AEAT2024T4Declaration() {
 
 	}
 	
@@ -84,12 +84,9 @@ class Mod303AEAT2024T3Declaration extends Mod303AEAT {
 	
 	public static boolean accept(Mod303 mod) {
 		return mod.isAEAT() && 
-				(mod.getYear() == 2024) && 
-				(  mod.getPeriod() == Period.M09
-    			|| mod.getPeriod() == Period.M10
-		    	|| mod.getPeriod() == Period.M11
-		    	|| mod.getPeriod() == Period.T3
-		    	);		
+			((mod.getYear() > 2024)
+		 || (mod.getYear() == 2024 && (mod.getPeriod() == Period.M12 || mod.getPeriod() == Period.T4)
+	    ));		
 	}
 	
 	private static final Mod303Key[] COMPENSATION_EXPLAIN_KEYS = new Mod303Key[] { Mod303Key.CT_C110 };
@@ -111,7 +108,7 @@ class Mod303AEAT2024T3Declaration extends Mod303AEAT {
 		,CT_A02(Mod303Key.CT_A02)
 		,CT_A03(Mod303Key.CT_A03)
 		,CT_A07(Mod303Key.CT_A07, null, null,(ctx, mod) -> add(Mod303Key.CT_A07, mod,ConfigurationDAO.getConfiguration(ctx).getCompany().isVatAccrualPayment() ? 1 : 0),null, null)
-		,CT_A08(Mod303Key.CT_A08) // Compras Criterio de caja. Se incializa en la casilla 075.
+		,CT_A08(Mod303Key.CT_A08) // Compras Criterio de caja. Se inicializa en la casilla 075.
 		,CT_A09(Mod303Key.CT_A09)
 		,CT_A10(Mod303Key.CT_A10)
 		,CT_A04(Mod303Key.CT_A04)
@@ -190,7 +187,7 @@ class Mod303AEAT2024T3Declaration extends Mod303AEAT {
 		CT_C11(Mod303Key.CT_C11, (mod, vat) -> adqIntracomunitariasFilterNoRECT(vat, mod),
 				(ctx, mod, vat) -> add(Mod303Key.CT_C11, mod, vat.getQuota()), null, null, null)
 
-		// Otras operaciones con inversiÃ³n del sujeto pasivo (excepto. adq. intracom).
+		// Otras operaciones con inversión del sujeto pasivo (excepto. adq. intracom).
 		// Base y cuota
 		,
 		CT_C12(Mod303Key.CT_C12, (mod, vat) -> operacionesISPFilterNoRECT(vat, mod),
@@ -198,7 +195,7 @@ class Mod303AEAT2024T3Declaration extends Mod303AEAT {
 		CT_C13(Mod303Key.CT_C13, (mod, vat) -> operacionesISPFilterNoRECT(vat, mod),
 				(ctx, mod, vat) -> add(Mod303Key.CT_C13, mod, vat.getQuota()), null, null, null)
 
-		// ModificaciÃ³n bases y cuotas
+		// Modificación bases y cuotas
 		,
 		CT_C14(Mod303Key.CT_C14, (mod, vat) -> modificacionBasesYCuotasFilter(vat, mod),
 				(ctx, mod, vat) -> add(Mod303Key.CT_C14, mod, vat.getBase()), null, null, null),
@@ -300,7 +297,7 @@ class Mod303AEAT2024T3Declaration extends Mod303AEAT {
 		CT_C29(Mod303Key.CT_C29, (mod, vat) -> operacionesInterioresCorrientesFilter(vat, mod),
 				(ctx, mod, vat) -> addProrrated(Mod303Key.CT_C29, mod, vat), null, null, null)
 
-		// Por cuotas soportadas en operaciones interiores con bienes de inversiÃ³n
+		// Por cuotas soportadas en operaciones interiores con bienes de inversión
 		,
 		CT_C30(Mod303Key.CT_C30, (mod, vat) -> operacionesInterioresInversionFilter(vat, mod),
 				(ctx, mod, vat) -> add(Mod303Key.CT_C30, mod, vat.getBase()), null, null, null),
@@ -314,7 +311,7 @@ class Mod303AEAT2024T3Declaration extends Mod303AEAT {
 		CT_C33(Mod303Key.CT_C33, (mod, vat) -> importacionesCorrientesFilter(vat, mod),
 				(ctx, mod, vat) -> addProrrated(Mod303Key.CT_C33, mod, vat), null, null, null)
 
-		// Por cuotas soportadas en las importaciones de bienes de inversiÃ³n
+		// Por cuotas soportadas en las importaciones de bienes de inversión
 		,
 		CT_C34(Mod303Key.CT_C34, (mod, vat) -> importacionesInversionFilter(vat, mod),
 				(ctx, mod, vat) -> add(Mod303Key.CT_C34, mod, vat.getBase()), null, null, null),
@@ -330,28 +327,28 @@ class Mod303AEAT2024T3Declaration extends Mod303AEAT {
 				(ctx, mod, vat) -> addProrrated(Mod303Key.CT_C37, mod, vat), null, null, null)
 
 		// Por cuotas soportadas en adquisiciones intracomunitarias de bienes de
-		// inversiÃ³n
+		// inversión
 		,
 		CT_C38(Mod303Key.CT_C38, (mod, vat) -> adqIntracomunitariasInversionFilter(vat, mod),
 				(ctx, mod, vat) -> add(Mod303Key.CT_C38, mod, vat.getBase()), null, null, null),
 		CT_C39(Mod303Key.CT_C39, (mod, vat) -> adqIntracomunitariasInversionFilter(vat, mod),
 				(ctx, mod, vat) -> addProrrated(Mod303Key.CT_C39, mod, vat), null, null, null)
 
-		// RectificaciÃ³n de deducciones
+		// Rectificación de deducciones
 		,
 		CT_C40(Mod303Key.CT_C40, (mod, vat) -> rectificacionDeduccionesFilter(vat, mod),
 				(ctx, mod, vat) -> add(Mod303Key.CT_C40, mod, vat.getBase()), null, null, null),
 		CT_C41(Mod303Key.CT_C41, (mod, vat) -> rectificacionDeduccionesFilter(vat, mod),
 				(ctx, mod, vat) -> addProrrated(Mod303Key.CT_C41, mod, vat), null, null, null)
 
-		// Compensaciones RÃ©gimen Especial A.G. y P.
+		// Compensaciones Régimen Especial A.G. y P.
 		, CT_C42(Mod303Key.CT_C42, (mod, vat) -> compensacionesRegAgrarioFilter(vat, mod),
 				(ctx, mod, vat) -> addProrrated(Mod303Key.CT_C42, mod, vat), null, null, null)
 
-		// RegularizaciÃ³n inversiones
+		// Regularización inversiones
 		, CT_C43(Mod303Key.CT_C43)
 
-		// RegularizaciÃ³n por aplicaciÃ³n del porcentaje definitivo de prorrata
+		// Regularización por aplicación del porcentaje definitivo de prorrata
 		, CT_C44(Mod303Key.CT_C44, null, null, null
 				,null
 				,null
@@ -372,61 +369,65 @@ class Mod303AEAT2024T3Declaration extends Mod303AEAT {
 		, CT_C45(Mod303Key.CT_C45, null, null, null,
 				"CT_C29+CT_C31+CT_C33+CT_C35+CT_C37+CT_C39+CT_C41+CT_C42+CT_C43+CT_C44", null)
 
-		// Resultado RÃ©gimen general
+		// Resultado Régimen general
 		, CT_C46(Mod303Key.CT_C46, null, null, null, "CT_C27-CT_C45", null)
 
 		// --------------------------------------------------------------
 		// ----------------------------------------- REGIMEN SIMPLIFICADO
 		// --------------------------------------------------------------
 
-		// (1) Actividades agrÃ­colas, ganaderas y forestales. CÃ³digo
+		// (1) Actividades agrícolas, ganaderas y forestales. Código
 		,CT_SA11(Mod303Key.CT_SA11, null, null, null, null, null
 			,mod -> mod.putDescription(Mod303Key.CT_SA11, ensureFarmerActivity(mod, 0).getCode())
 			,mod -> ensureFarmerActivity(mod, 0).setCode(mod.getDescription(Mod303Key.CT_SA11))
 			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_SA11))
-		// (1) Actividades agrÃ­colas, ganaderas y forestales. DescripciÃ³n
+		// (1) Actividades agrícolas, ganaderas y forestales. Descripción
 		,CT_SA1D(Mod303Key.CT_SA1D, null, null, null, null, null
 			,mod -> mod.putDescription(Mod303Key.CT_SA1D, ensureFarmerActivity(mod, 0).getDescription())
 			,mod -> ensureFarmerActivity(mod, 0).setDescription(mod.getDescription(Mod303Key.CT_SA1D))
 			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_SA1D))
-		// (1) Actividades agrÃ­colas, ganaderas y forestales. Volumen de ingresos
+		// (1) Actividades agrícolas, ganaderas y forestales. Volumen de ingresos
 		,CT_SA12(Mod303Key.CT_SA12, null, null, null, null, null
 			,mod -> mod.putAmount(Mod303Key.CT_SA12, ensureFarmerActivity(mod, 0).getVol())
 			,mod -> ensureFarmerActivity(mod, 0).setVol(mod.getAmount(Mod303Key.CT_SA12))
 			,null)
-		// (1) Actividades agrÃ­colas, ganaderas y forestales. Ãndice de cuota
+		// (1) Actividades agrícolas, ganaderas y forestales. Indice de cuota
 		,CT_SA13(Mod303Key.CT_SA13, null, null, null, null, null
 			,mod -> mod.putAmount(Mod303Key.CT_SA13, (ensureFarmerActivity(mod, 0).getInd() * 10000))
 			,mod -> ensureFarmerActivity(mod, 0).setInd(mod.getAmount(Mod303Key.CT_SA13) / 10000)
 			,null)
-		// (1) Actividades agrÃ­colas, ganaderas y forestales. Cuota devengada
+		// (1) Actividades agrícolas, ganaderas y forestales. Cuota devengada
 		,CT_SA14(Mod303Key.CT_SA14, null, null, null
 			,"(hasFarmerActivity(0))?round(CT_SA12*CT_SA13/10000):(0.0)"
 			,null
 			,mod -> mod.putAmount(Mod303Key.CT_SA14, ensureFarmerActivity(mod, 0).getCuo())
 			,mod -> ensureFarmerActivity(mod, 0).setCuo(mod.getAmount(Mod303Key.CT_SA14))
 			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_SA14))
-		// (1) Actividades agrÃ­colas, ganaderas y forestales. Porcentaje trimestral
+		// (1) Actividades agrícolas, ganaderas y forestales. DANA 2024
+		,CT_SA1X(Mod303Key.CT_SA1X, null, null, null, null, null
+			,mod -> mod.putAmount(Mod303Key.CT_SA1X, ensureFarmerActivity(mod, 0).getDana())
+			,mod -> ensureFarmerActivity(mod, 0).setDana((int) mod.getAmount(Mod303Key.CT_SA1X))
+			,null)
+		// (1) Actividades agrícolas, ganaderas y forestales. Reducción DANA 2024
+		,CT_SA1R(Mod303Key.CT_SA1R, null, null, null, "(hasFarmerActivity(0)?calculateReduction2024(CT_SA1X,25,CT_SA14,CT_SA1R):0.0)", null
+			,mod -> mod.putAmount(Mod303Key.CT_SA1R, ensureFarmerActivity(mod, 0).getDanaReduction())
+			,mod -> ensureFarmerActivity(mod, 0).setDanaReduction(mod.getAmount(Mod303Key.CT_SA1R))
+			,null)
+		// (1) Actividades agrícolas, ganaderas y forestales. Porcentaje trimestral (1T,2T,3T)
 		,CT_SA15(Mod303Key.CT_SA15, null, null, null
 			,"(hasFarmerActivity(0) && !isLastPeriod())?CT_SA15:(0.0)"
 			,null
 			,mod -> mod.putAmount(Mod303Key.CT_SA15, ensureFarmerActivity(mod, 0).getPor())
 			,mod -> ensureFarmerActivity(mod, 0).setPor(mod.getAmount(Mod303Key.CT_SA15))
 			,null)
-		// (1) Actividades agrÃ­colas, ganaderas y forestales. Ingreso a cuenta [A]
+		// (1) Actividades agrícolas, ganaderas y forestales. Ingreso a cuenta [A] (1T,2T,3T)
 		,CT_SA16(Mod303Key.CT_SA16, null, null, null
-			,"(hasFarmerActivity(0) && !isLastPeriod())?round(CT_SA14*CT_SA15/100):(0.0)"
+			,"(hasFarmerActivity(0) && !isLastPeriod())?round((CT_SA14-CT_SA1R)*CT_SA15/100):(0.0)"
 			,null
 			,mod -> mod.putAmount(Mod303Key.CT_SA16, ensureFarmerActivity(mod, 0).getIng())
 			,mod -> ensureFarmerActivity(mod, 0).setIng(mod.getAmount(Mod303Key.CT_SA16))
 			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_SA16))
-
-		// ******************		
-		// ******************		
-		// ******************		
-		// ******************		
-		// ******************		
-		// (1) Actividades agrÃ­colas, ganaderas y forestales. Cuota soportada
+		// (1) Actividades agrícolas, ganaderas y forestales. Cuota soportada (4T)
 		,CT_SA17(Mod303Key.CT_SA17, null, null, null
 			,"(hasFarmerActivity(0) && isLastPeriod())?CT_SA17:(0.0)"
 			,null
@@ -440,79 +441,78 @@ class Mod303AEAT2024T3Declaration extends Mod303AEAT {
 			,mod -> mod.putAmount(Mod303Key.CT_SA1B, ensureFarmerActivity(mod, 0).getCom())
 			,mod -> ensureFarmerActivity(mod, 0).setCom(mod.getAmount(Mod303Key.CT_SA1B))
 			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_SA1B))
-		// (1) 1% de la cuota devengada por operaciones corrientes
+		// (1) 1% de la cuota devengada por operaciones corrientes (4T)
 		,CT_SA1C(Mod303Key.CT_SA1C, null, null, null
 			,"(hasFarmerActivity(0) && isLastPeriod())?round(CT_SA14 * 1 / 100):(0.0)"
 			,null
 			,mod -> mod.putAmount(Mod303Key.CT_SA1C, ensureFarmerActivity(mod, 0).getDev())
 			,mod -> ensureFarmerActivity(mod, 0).setDev(mod.getAmount(Mod303Key.CT_SA1C))
 			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_SA1C))
-		// (1) Cuota soportada (4T)
+		// (1) Cuota soportada operaciones corrientes (4T)
 		,CT_SA1A(Mod303Key.CT_SA1A, null, null, null
 			,"(hasFarmerActivity(0) && isLastPeriod())?round(CT_SA17+CT_SA1B+CT_SA1C):(0.0)"
 			,null
 			,mod -> mod.putAmount(Mod303Key.CT_SA1A, ensureFarmerActivity(mod, 0).getTso())
 			,mod -> ensureFarmerActivity(mod, 0).setTso(mod.getAmount(Mod303Key.CT_SA1A))
 			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_SA1A))
-		// ******************		
-		// ******************		
-		// ******************		
-		// ******************		
-		// ******************		
-		
-		// (1) Actividades agrÃ­colas, ganaderas y forestales. Cuota anual derivada del regimen simplificado [B]
+		// (1) Actividades agrícolas, ganaderas y forestales. Cuota anual derivada del regimen simplificado [B] (4T)
 		,CT_SA18(Mod303Key.CT_SA18, null, null, null
-			,"(hasFarmerActivity(0) && isLastPeriod())?round(CT_SA14-CT_SA1A):(0.0)"
+			,"(hasFarmerActivity(0) && isLastPeriod())?round(CT_SA14-CT_SA1R-CT_SA1A):(0.0)"
 			,null
 			,mod -> mod.putAmount(Mod303Key.CT_SA18, ensureFarmerActivity(mod, 0).getCad())
 			,mod -> ensureFarmerActivity(mod, 0).setCad(mod.getAmount(Mod303Key.CT_SA18))
 			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_SA18))
-		// (2) Actividades agrÃ­colas, ganaderas y forestales. CÃ³digo
+		
+		// (2) Actividades agrícolas, ganaderas y forestales. Código
 		,CT_SA21(Mod303Key.CT_SA21, null, null, null, null, null
 			,mod -> mod.putDescription(Mod303Key.CT_SA21, ensureFarmerActivity(mod, 1).getCode())
 			,mod -> ensureFarmerActivity(mod, 1).setCode(mod.getDescription(Mod303Key.CT_SA21))
 			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_SA21))
-		// (2) Actividades agrÃ­colas, ganaderas y forestales. DescripciÃ³n
+		// (2) Actividades agrícolas, ganaderas y forestales. Descripción
 		,CT_SA2D(Mod303Key.CT_SA2D, null, null, null, null, null
 			,mod -> mod.putDescription(Mod303Key.CT_SA2D, ensureFarmerActivity(mod, 1).getDescription())
 			,mod -> ensureFarmerActivity(mod, 1).setDescription(mod.getDescription(Mod303Key.CT_SA2D))
 			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_SA2D))
-		// (2) Actividades agrÃ­colas, ganaderas y forestales. Volumen de ingresos
+		// (2) Actividades agrícolas, ganaderas y forestales. Volumen de ingresos
 		,CT_SA22(Mod303Key.CT_SA22, null, null, null, null, null
 			,mod -> mod.putAmount(Mod303Key.CT_SA22, ensureFarmerActivity(mod, 1).getVol())
 			,mod -> ensureFarmerActivity(mod, 1).setVol(mod.getAmount(Mod303Key.CT_SA22))
 			,null)
-		// (2) Actividades agrÃ­colas, ganaderas y forestales. Ãndice de cuota
+		// (2) Actividades agrícolas, ganaderas y forestales. Indice de cuota
 		,CT_SA23(Mod303Key.CT_SA23, null, null, null, null, null
 			,mod -> mod.putAmount(Mod303Key.CT_SA23, ensureFarmerActivity(mod, 1).getInd() * 10000)
 			,mod -> ensureFarmerActivity(mod, 1).setInd(mod.getAmount(Mod303Key.CT_SA23) / 10000)
 			,null)
-		// (2) Actividades agrÃ­colas, ganaderas y forestales. Cuota devengada
+		// (2) Actividades agrícolas, ganaderas y forestales. Cuota devengada
 		,CT_SA24(Mod303Key.CT_SA24, null, null, null, "(hasFarmerActivity(1))?round(CT_SA22*CT_SA23/10000):(0.0)", null
 			,mod -> mod.putAmount(Mod303Key.CT_SA24, ensureFarmerActivity(mod, 1).getCuo())
 			,mod -> ensureFarmerActivity(mod, 1).setCuo(mod.getAmount(Mod303Key.CT_SA24))
 			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_SA24))
-		// (2) Actividades agrÃ­colas, ganaderas y forestales. Porcentaje trimestral
-		,
-		CT_SA25(Mod303Key.CT_SA25, null, null, null
+		// (2) Actividades agrícolas, ganaderas y forestales. DANA 2024
+		,CT_SA2X(Mod303Key.CT_SA2X, null, null, null, null, null
+			,mod -> mod.putAmount(Mod303Key.CT_SA2X, ensureFarmerActivity(mod, 1).getDana())
+			,mod -> ensureFarmerActivity(mod, 1).setDana((int) mod.getAmount(Mod303Key.CT_SA2X))
+			,null)
+		// (2) Actividades agrícolas, ganaderas y forestales. Reducción DANA 2024
+		,CT_SA2R(Mod303Key.CT_SA2R, null, null, null, "(hasFarmerActivity(1)?calculateReduction2024(CT_SA2X,25,CT_SA24,CT_SA2R):0.0)", null
+			,mod -> mod.putAmount(Mod303Key.CT_SA2R, ensureFarmerActivity(mod, 1).getDanaReduction())
+			,mod -> ensureFarmerActivity(mod, 1).setDanaReduction(mod.getAmount(Mod303Key.CT_SA2R))
+			,null)
+		// (2) Actividades agrícolas, ganaderas y forestales. Porcentaje trimestral (1T, 2T, 3T)
+		,CT_SA25(Mod303Key.CT_SA25, null, null, null
 			,"(hasFarmerActivity(1) && !isLastPeriod())?CT_SA25:(0.0)"
 			,null
 			,mod -> mod.putAmount(Mod303Key.CT_SA25, ensureFarmerActivity(mod, 1).getPor())
 			,mod -> ensureFarmerActivity(mod, 1).setPor(mod.getAmount(Mod303Key.CT_SA25))
 			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_SA25))
-		// (2) Actividades agrÃ­colas, ganaderas y forestales. Ingreso a cuenta [A]
+		// (2) Actividades agrícolas, ganaderas y forestales. Ingreso a cuenta [A] (1T, 2T, 3T)
 		,CT_SA26(Mod303Key.CT_SA26, null, null, null
-			,"(hasFarmerActivity(1) && !isLastPeriod())?round(CT_SA24*CT_SA25/100):(0.0)"
+			,"(hasFarmerActivity(1) && !isLastPeriod())?round((CT_SA24-CT_SA2R)*CT_SA25/100):(0.0)"
 			,null
 			,mod -> mod.putAmount(Mod303Key.CT_SA26, ensureFarmerActivity(mod, 1).getIng())
 			,mod -> ensureFarmerActivity(mod, 1).setIng(mod.getAmount(Mod303Key.CT_SA26))
 			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_SA26))
-		// ******************		
-		// ******************		
-		// ******************		
-		// ******************		
-		// ******************		
-		// (1) Actividades agrÃ­colas, ganaderas y forestales. Cuota soportada
+		// (1) Actividades agrícolas, ganaderas y forestales. Cuota soportada (4T)
 		,CT_SA27(Mod303Key.CT_SA27, null, null, null
 			,"(hasFarmerActivity(1) && isLastPeriod())?CT_SA27:(0.0)"
 			,null
@@ -526,167 +526,167 @@ class Mod303AEAT2024T3Declaration extends Mod303AEAT {
 			,mod -> mod.putAmount(Mod303Key.CT_SA2B, ensureFarmerActivity(mod, 1).getCom())
 			,mod -> ensureFarmerActivity(mod, 1).setCom(mod.getAmount(Mod303Key.CT_SA2B))
 			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_SA2B))
-		// (1) 1% de la cuota devengada por operaciones corrientes
+		// (1) 1% de la cuota devengada por operaciones corrientes (4T)
 		,CT_SA2C(Mod303Key.CT_SA2C, null, null, null
 			,"(hasFarmerActivity(1) && isLastPeriod())?round(CT_SA24 * 1 / 100):(0.0)"
 			,null
 			,mod -> mod.putAmount(Mod303Key.CT_SA2C, ensureFarmerActivity(mod, 1).getDev())
 			,mod -> ensureFarmerActivity(mod, 1).setDev(mod.getAmount(Mod303Key.CT_SA2C))
 			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_SA2C))
-		// (1) Cuota soportada (4T)
+		// (1) Cuota soportada operaciones corrientes (4T)
 		,CT_SA2A(Mod303Key.CT_SA2A, null, null, null
 			,"(hasFarmerActivity(1) && isLastPeriod())?round(CT_SA27+CT_SA2B+CT_SA2C):(0.0)"
 			,null
 			,mod -> mod.putAmount(Mod303Key.CT_SA2A, ensureFarmerActivity(mod, 1).getTso())
 			,mod -> ensureFarmerActivity(mod, 1).setTso(mod.getAmount(Mod303Key.CT_SA2A))
 			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_SA2A))
-		// ******************		
-		// ******************		
-		// ******************		
-		// ******************		
-		// ******************		
-		// (2) Actividades agrÃ­colas, ganaderas y forestales. Cuota anual derivada del regimen simplificado [B]
+		// (2) Actividades agrícolas, ganaderas y forestales. Cuota anual derivada del regimen simplificado [B]  (4T)
 		,CT_SA28(Mod303Key.CT_SA28, null, null, null
-			,"(hasFarmerActivity(1) && isLastPeriod())?round(CT_SA24-CT_SA2A):(0.0)"
+			,"(hasFarmerActivity(1) && isLastPeriod())?round(CT_SA24-CT_SA2R-CT_SA2A):(0.0)"
 			,null
 			,mod -> mod.putAmount(Mod303Key.CT_SA28, ensureFarmerActivity(mod, 1).getCad())
 			,mod -> ensureFarmerActivity(mod, 1).setCad(mod.getAmount(Mod303Key.CT_SA28))
 			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_SA28))
-		// (3) Actividades agrÃ­colas, ganaderas y forestales. CÃ³digo
+		
+		// (3) Actividades agrícolas, ganaderas y forestales. Código
 		,CT_SA31(Mod303Key.CT_SA31, null, null, null, null, null
 			,mod -> mod.putDescription(Mod303Key.CT_SA31, ensureFarmerActivity(mod, 2).getCode())
 			,mod -> ensureFarmerActivity(mod, 2).setCode(mod.getDescription(Mod303Key.CT_SA31))
 			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_SA31))
-		// (3) Actividades agrÃ­colas, ganaderas y forestales. DescripciÃ³n
+		// (3) Actividades agrícolas, ganaderas y forestales. Descripción
 		,CT_SA3D(Mod303Key.CT_SA3D, null, null, null, null, null
 			,mod -> mod.putDescription(Mod303Key.CT_SA3D, ensureFarmerActivity(mod, 2).getDescription())
 			,mod -> ensureFarmerActivity(mod, 2).setDescription(mod.getDescription(Mod303Key.CT_SA3D))
 			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_SA3D))
-		// (3) Actividades agrÃ­colas, ganaderas y forestales. Volumen de ingresos
+		// (3) Actividades agrícolas, ganaderas y forestales. Volumen de ingresos
 		,CT_SA32(Mod303Key.CT_SA32, null, null, null, null, null
 			,mod -> mod.putAmount(Mod303Key.CT_SA32, ensureFarmerActivity(mod, 2).getVol())
 			,mod -> ensureFarmerActivity(mod, 2).setVol(mod.getAmount(Mod303Key.CT_SA32))
 			,null)
-		// (3) Actividades agrÃ­colas, ganaderas y forestales. Ãndice de cuota
+		// (3) Actividades agrícolas, ganaderas y forestales. Indice de cuota
 		,CT_SA33(Mod303Key.CT_SA33, null, null, null, null, null
 			,mod -> mod.putAmount(Mod303Key.CT_SA33, ensureFarmerActivity(mod, 2).getInd() * 10000)
 			,mod -> ensureFarmerActivity(mod, 2).setInd(mod.getAmount(Mod303Key.CT_SA33) / 10000)
 			,null)
-		// (3) Actividades agrÃ­colas, ganaderas y forestales. Cuota devengada
+		// (3) Actividades agrícolas, ganaderas y forestales. Cuota devengada
 		,CT_SA34(Mod303Key.CT_SA34, null, null, null
 			,"(hasFarmerActivity(2))?round(CT_SA32*CT_SA33/10000):(0.0)"
 			,null
 			,mod -> mod.putAmount(Mod303Key.CT_SA34, ensureFarmerActivity(mod, 2).getCuo())
 			,mod -> ensureFarmerActivity(mod, 2).setCuo(mod.getAmount(Mod303Key.CT_SA34))
 			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_SA34))
-		// (3) Actividades agrÃ­colas, ganaderas y forestales. Porcentaje trimestral
+		// (3) Actividades agrícolas, ganaderas y forestales. DANA 2024
+		,CT_SA3X(Mod303Key.CT_SA3X, null, null, null, null, null
+			,mod -> mod.putAmount(Mod303Key.CT_SA3X, ensureFarmerActivity(mod, 2).getDana())
+			,mod -> ensureFarmerActivity(mod, 2).setDana((int) mod.getAmount(Mod303Key.CT_SA3X))
+			,null)
+		// (3) Actividades agrícolas, ganaderas y forestales. Reducción DANA 2024
+		,CT_SA3R(Mod303Key.CT_SA3R, null, null, null, "(hasFarmerActivity(2)?calculateReduction2024(CT_SA3X,25,CT_SA34,CT_SA3R):0.0)", null
+			,mod -> mod.putAmount(Mod303Key.CT_SA3R, ensureFarmerActivity(mod, 2).getDanaReduction())
+			,mod -> ensureFarmerActivity(mod, 2).setDanaReduction(mod.getAmount(Mod303Key.CT_SA3R))
+			,null)
+		// (3) Actividades agrícolas, ganaderas y forestales. Porcentaje trimestral (1T, 2T, 3T)
 		,CT_SA35(Mod303Key.CT_SA35, null, null, null
 			,"(hasFarmerActivity(2) && !isLastPeriod())?CT_SA35:(0.0)"
 			,null
 			,mod -> mod.putAmount(Mod303Key.CT_SA35, ensureFarmerActivity(mod, 2).getPor())
 			,mod -> ensureFarmerActivity(mod, 2).setPor(mod.getAmount(Mod303Key.CT_SA35))
 			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_SA35))
-		// (3) Actividades agrÃ­colas, ganaderas y forestales. Ingreso a cuenta [A]
+		// (3) Actividades agrícolas, ganaderas y forestales. Ingreso a cuenta [A] (1T, 2T, 3T)
 		,CT_SA36(Mod303Key.CT_SA36, null, null, null
-			,"(hasFarmerActivity(2) && !isLastPeriod())?round(CT_SA34*CT_SA35/100):(0.0)"
+			,"(hasFarmerActivity(2) && !isLastPeriod())?round((CT_SA34-CT_SA3R)*CT_SA35/100):(0.0)"
 			,null
 			,mod -> mod.putAmount(Mod303Key.CT_SA36, ensureFarmerActivity(mod, 2).getIng())
 			,mod -> ensureFarmerActivity(mod, 2).setIng(mod.getAmount(Mod303Key.CT_SA36))
 			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_SA36))
-		// ******************		
-		// ******************		
-		// ******************		
-		// ******************		
-		// ******************		
-		// (1) Actividades agrÃ­colas, ganaderas y forestales. Cuota soportada
+		// (3) Actividades agrícolas, ganaderas y forestales. Cuota soportada (4T)
 		,CT_SA37(Mod303Key.CT_SA37, null, null, null
 			,"(hasFarmerActivity(2) && isLastPeriod())?CT_SA37:(0.0)"
 			,null
 			,mod -> mod.putAmount(Mod303Key.CT_SA37, ensureFarmerActivity(mod, 2).getSop())
 			,mod -> ensureFarmerActivity(mod, 2).setSop(mod.getAmount(Mod303Key.CT_SA37))
 			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_SA37))
-		// (1) Compensaciones satisfechas a sujetos pasivos en R.E.A.G.P. (4T)
+		// (3) Compensaciones satisfechas a sujetos pasivos en R.E.A.G.P. (4T)
 		,CT_SA3B(Mod303Key.CT_SA3B, null, null, null
 			,"(hasFarmerActivity(2) && isLastPeriod())?CT_SA3B:(0.0)"
 			,null
 			,mod -> mod.putAmount(Mod303Key.CT_SA3B, ensureFarmerActivity(mod, 2).getCom())
 			,mod -> ensureFarmerActivity(mod, 2).setCom(mod.getAmount(Mod303Key.CT_SA3B))
 			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_SA3B))
-		// (1) 1% de la cuota devengada por operaciones corrientes
+		// (3) 1% de la cuota devengada por operaciones corrientes (4T)
 		,CT_SA3C(Mod303Key.CT_SA3C, null, null, null
 			,"(hasFarmerActivity(2) && isLastPeriod())?round(CT_SA34 * 1 / 100):(0.0)"
 			,null
 			,mod -> mod.putAmount(Mod303Key.CT_SA3C, ensureFarmerActivity(mod, 2).getDev())
 			,mod -> ensureFarmerActivity(mod, 2).setDev(mod.getAmount(Mod303Key.CT_SA3C))
 			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_SA3C))
-		// (1) Cuota soportada (4T)
+		// (3) Cuota soportada operaciones corrientes (4T)
 		,CT_SA3A(Mod303Key.CT_SA3A, null, null, null
 			,"(hasFarmerActivity(2) && isLastPeriod())?round(CT_SA37+CT_SA3B+CT_SA3C):(0.0)"
 			,null
 			,mod -> mod.putAmount(Mod303Key.CT_SA3A, ensureFarmerActivity(mod, 2).getTso())
 			,mod -> ensureFarmerActivity(mod, 2).setTso(mod.getAmount(Mod303Key.CT_SA3A))
 			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_SA3A))
-		// ******************		
-		// ******************		
-		// ******************		
-		// ******************		
-		// ******************		
-		// (3) Actividades agrÃ­colas, ganaderas y forestales. Cuota anual derivada del regimen simplificado [B]
+		// (3) Actividades agrícolas, ganaderas y forestales. Cuota anual derivada del regimen simplificado [B] (4T)
 		,CT_SA38(Mod303Key.CT_SA38, null, null, null
-			,"(hasFarmerActivity(2) && isLastPeriod())?round(CT_SA34-CT_SA3A):(0.0)"
+			,"(hasFarmerActivity(2) && isLastPeriod())?round(CT_SA34-CT_SA3R-CT_SA3A):(0.0)"
 			,null
 			,mod -> mod.putAmount(Mod303Key.CT_SA38, ensureFarmerActivity(mod, 2).getCad())
 			,mod -> ensureFarmerActivity(mod, 2).setCad(mod.getAmount(Mod303Key.CT_SA38))
 			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_SA38))
 
-		// (4) Actividades agrÃ­colas, ganaderas y forestales. CÃ³digo
+		// (4) Actividades agrícolas, ganaderas y forestales. Código
 		,CT_SA41(Mod303Key.CT_SA41, null, null, null, null, null
 			,mod -> mod.putDescription(Mod303Key.CT_SA41, ensureFarmerActivity(mod, 3).getCode())
 			,mod -> ensureFarmerActivity(mod, 3).setCode(mod.getDescription(Mod303Key.CT_SA41))
 			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_SA41))
-		// (4) Actividades agrÃ­colas, ganaderas y forestales. DescripciÃ³n
+		// (4) Actividades agrícolas, ganaderas y forestales. Descripción
 		,CT_SA4D(Mod303Key.CT_SA4D, null, null, null, null, null
 			,mod -> mod.putDescription(Mod303Key.CT_SA4D, ensureFarmerActivity(mod, 3).getDescription())
 			,mod -> ensureFarmerActivity(mod, 3).setDescription(mod.getDescription(Mod303Key.CT_SA4D))
 			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_SA4D))
-		// (4) Actividades agrÃ­colas, ganaderas y forestales. Volumen de ingresos
+		// (4) Actividades agrícolas, ganaderas y forestales. Volumen de ingresos
 		,CT_SA42(Mod303Key.CT_SA42, null, null, null, null, null
 			,mod -> mod.putAmount(Mod303Key.CT_SA42, ensureFarmerActivity(mod, 3).getVol())
 			,mod -> ensureFarmerActivity(mod, 3).setVol(mod.getAmount(Mod303Key.CT_SA42))
 			,null)
-		// (4) Actividades agrÃ­colas, ganaderas y forestales. Ãndice de cuota
-		,
-		CT_SA43(Mod303Key.CT_SA43, null, null, null, null, null
+		// (4) Actividades agrícolas, ganaderas y forestales. Indice de cuota
+		,CT_SA43(Mod303Key.CT_SA43, null, null, null, null, null
 			,mod -> mod.putAmount(Mod303Key.CT_SA43, ensureFarmerActivity(mod, 3).getInd() * 10000)
 			,mod -> ensureFarmerActivity(mod, 3).setInd(mod.getAmount(Mod303Key.CT_SA43) / 10000)
 			,null)
-		// (4) Actividades agrÃ­colas, ganaderas y forestales. Cuota devengada
+		// (4) Actividades agrícolas, ganaderas y forestales. Cuota devengada
 		,CT_SA44(Mod303Key.CT_SA44, null, null, null
 			,"(hasFarmerActivity(3))?round(CT_SA42*CT_SA43/10000):(0.0)"
 			,null
 			,mod -> mod.putAmount(Mod303Key.CT_SA44, ensureFarmerActivity(mod, 3).getCuo())
 			,mod -> ensureFarmerActivity(mod, 3).setCuo(mod.getAmount(Mod303Key.CT_SA44))
 			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_SA44))
-		// (4) Actividades agrÃ­colas, ganaderas y forestales. Porcentaje trimestral
+		// (4) Actividades agrícolas, ganaderas y forestales. DANA 2024
+		,CT_SA4X(Mod303Key.CT_SA4X, null, null, null, null, null
+			,mod -> mod.putAmount(Mod303Key.CT_SA4X, ensureFarmerActivity(mod, 3).getDana())
+			,mod -> ensureFarmerActivity(mod, 3).setDana((int) mod.getAmount(Mod303Key.CT_SA4X))
+			,null)
+		// (4) Actividades agrícolas, ganaderas y forestales. Reducción DANA 2024
+		,CT_SA4R(Mod303Key.CT_SA4R, null, null, null, "(hasFarmerActivity(3)?calculateReduction2024(CT_SA4X,25,CT_SA44,CT_SA4R):0.0)", null
+			,mod -> mod.putAmount(Mod303Key.CT_SA4R, ensureFarmerActivity(mod, 3).getDanaReduction())
+			,mod -> ensureFarmerActivity(mod, 3).setDanaReduction(mod.getAmount(Mod303Key.CT_SA4R))
+			,null)
+		// (4) Actividades agrícolas, ganaderas y forestales. Porcentaje trimestral (1T, 2T, 3T)
 		,CT_SA45(Mod303Key.CT_SA45, null, null, null
 			,"(hasFarmerActivity(3) && !isLastPeriod())?CT_SA45:(0.0)"
 			,null
 			,mod -> mod.putAmount(Mod303Key.CT_SA45, ensureFarmerActivity(mod, 3).getPor())
 			,mod -> ensureFarmerActivity(mod, 3).setPor(mod.getAmount(Mod303Key.CT_SA45))
 			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_SA45))
-		// (4) Actividades agrÃ­colas, ganaderas y forestales. Ingreso a cuenta [A]
+		// (4) Actividades agrícolas, ganaderas y forestales. Ingreso a cuenta [A] (1T, 2T, 3T)
 		,CT_SA46(Mod303Key.CT_SA46, null, null, null
-			,"(hasFarmerActivity(3) && !isLastPeriod())?round(CT_SA44*CT_SA45/100):(0.0)"
+			,"(hasFarmerActivity(3) && !isLastPeriod())?round((CT_SA44-CT_SA4R)*CT_SA45/100):(0.0)"
 			,null
 			,mod -> mod.putAmount(Mod303Key.CT_SA46, ensureFarmerActivity(mod, 3).getIng())
 			,mod -> ensureFarmerActivity(mod, 3).setIng(mod.getAmount(Mod303Key.CT_SA46))
 			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_SA46))
-		// ******************		
-		// ******************		
-		// ******************		
-		// ******************		
-		// ******************		
-		// (4) Actividades agrÃ­colas, ganaderas y forestales. Cuota soportada
+		// (4) Actividades agrícolas, ganaderas y forestales. Cuota soportada (4T)
 		,CT_SA47(Mod303Key.CT_SA47, null, null, null
 			,"(hasFarmerActivity(3) && isLastPeriod())?CT_SA47:(0.0)"
 			,null
@@ -700,63 +700,58 @@ class Mod303AEAT2024T3Declaration extends Mod303AEAT {
 			,mod -> mod.putAmount(Mod303Key.CT_SA4B, ensureFarmerActivity(mod, 3).getCom())
 			,mod -> ensureFarmerActivity(mod, 3).setCom(mod.getAmount(Mod303Key.CT_SA4B))
 			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_SA4B))
-		// (4) 1% de la cuota devengada por operaciones corrientes
+		// (4) 1% de la cuota devengada por operaciones corrientes (4T)
 		,CT_SA4C(Mod303Key.CT_SA4C, null, null, null
 			,"(hasFarmerActivity(3) && isLastPeriod())?round(CT_SA44 * 1 / 100):(0.0)"
 			,null
 			,mod -> mod.putAmount(Mod303Key.CT_SA4C, ensureFarmerActivity(mod, 3).getDev())
 			,mod -> ensureFarmerActivity(mod, 3).setDev(mod.getAmount(Mod303Key.CT_SA4C))
 			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_SA4C))
-		// (4) Cuota soportada (4T)
+		// (4) Cuota soportada operaciones corrientes (4T)
 		,CT_SA4A(Mod303Key.CT_SA4A, null, null, null
 			,"(hasFarmerActivity(3) && isLastPeriod())?round(CT_SA47+CT_SA4B+CT_SA4C):(0.0)"
 			,null
 			,mod -> mod.putAmount(Mod303Key.CT_SA4A, ensureFarmerActivity(mod, 3).getTso())
 			,mod -> ensureFarmerActivity(mod, 3).setTso(mod.getAmount(Mod303Key.CT_SA4A))
 			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_SA4A))
-		// ******************		
-		// ******************		
-		// ******************		
-		// ******************		
-		// ******************		
-		// (4) Actividades agrÃ­colas, ganaderas y forestales. Cuota anual derivada del regimen simplificado [B]
+		// (4) Actividades agrícolas, ganaderas y forestales. Cuota anual derivada del regimen simplificado [B] (4T)
 		,CT_SA48(Mod303Key.CT_SA48, null, null, null
-			,"(hasFarmerActivity(3) && isLastPeriod())?round(CT_SA44-CT_SA4A):(0.0)", null
+			,"(hasFarmerActivity(3) && isLastPeriod())?round(CT_SA44-CT_SA4R-CT_SA4A):(0.0)", null
 			,mod -> mod.putAmount(Mod303Key.CT_SA48, ensureFarmerActivity(mod, 3).getCad())
 			,mod -> ensureFarmerActivity(mod, 3).setCad(mod.getAmount(Mod303Key.CT_SA48))
 			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_SA48))
 		
-		// (1) Actividades en rÃ©gimen simplificado. Epigrafe IAE
+		// (1) Actividades en régimen simplificado. Epigrafe IAE
 		,CT_S101(Mod303Key.CT_S101, null, null, null, null, null
 			,mod -> mod.putDescription(Mod303Key.CT_S101, ensureActivity(mod, 0).getEpigraph())
 			,mod -> ensureActivity(mod, 0).setEpigraph(mod.getDescription(Mod303Key.CT_S101))
 			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S101))
-		// (1) Actividades en rÃ©gimen simplificado. Epigrafe IAE - DescripciÃ³n
+		// (1) Actividades en régimen simplificado. Epigrafe IAE - Descripción
 		,CT_S10D(Mod303Key.CT_S10D, null, null, null, null, null
 			,mod -> mod.putDescription(Mod303Key.CT_S10D, ensureActivity(mod, 0).getDescription())
 			,mod -> ensureActivity(mod, 0).setDescription(mod.getDescription(Mod303Key.CT_S10D))
 			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S10D))
-		// (1) Actividades en rÃ©gimen simplificado. Epigrafe IAE - Indicador auxiliar de actividad en el caso de ep\u00EDgrafes 691.9 y 722
+		// (1) Actividades en régimen simplificado. Epigrafe IAE - Indicador auxiliar de actividad en el caso de epígrafes 691.9 y 722
 		,CT_S102(Mod303Key.CT_S102, null, null, null, null, null
 			,mod -> mod.putAmount(Mod303Key.CT_S102, ensureActivity(mod, 0).getSpecialEpigraph())
 			,mod -> ensureActivity(mod, 0).setSpecialEpigraph((int) mod.getAmount(Mod303Key.CT_S102))
 			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S102))
-		// (1) Actividades en rÃ©gimen simplificado. Actividad de Temporada. NÂº DÃ­as en los que se ejerciÃ³ la actividad en el aÃ±o anterior
+		// (1) Actividades en régimen simplificado. Actividad de Temporada. Nº Días en los que se ejerció la actividad en el año anterior
 		,CT_S1X1(Mod303Key.CT_S1X1, null, null, null, null, null
 			,mod -> mod.putAmount(Mod303Key.CT_S1X1, ensureActivity(mod, 0).getTem())
 			,mod -> ensureActivity(mod, 0).setTem((int) mod.getAmount(Mod303Key.CT_S1X1))
 			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S1X1))
-		// (1) Actividades en rÃ©gimen simplificado. NÃºmero de dÃ­as de ejercicio de la actividad en el trimestre
+		// (1) Actividades en régimen simplificado. Número de días de ejercicio de la actividad en el trimestre
 		,CT_S1X2(Mod303Key.CT_S1X2, null, null, null, null, null
 			,mod -> mod.putAmount(Mod303Key.CT_S1X2, ensureActivity(mod, 0).getDia())
 			,mod -> ensureActivity(mod, 0).setDia((int) mod.getAmount(Mod303Key.CT_S1X2))
 			,(prev,cur) -> ensureActivityDays(prev,cur, Mod303Key.CT_S101, Mod303Key.CT_S1X2))
-		// (1) Actividades en rÃ©gimen simplificado. NÃºmero de empleados al inicio del ejercicio ( o al inicio de la actividad)
+		// (1) Actividades en régimen simplificado. Número de empleados al inicio del ejercicio ( o al inicio de la actividad)
 		,CT_S1X3(Mod303Key.CT_S1X3, null, null, null, null, null
 			,mod -> mod.putAmount(Mod303Key.CT_S1X3, ensureActivity(mod, 0).getEmp())
 			,mod -> ensureActivity(mod, 0).setEmp((int) mod.getAmount(Mod303Key.CT_S1X3))
 			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S1X3))
-		// (1) Actividades en rÃ©gimen simplificado. Si realiza la actividad en LORCA
+		// (1) Actividades en régimen simplificado. Si realiza la actividad en LORCA
 		,CT_S1X4(Mod303Key.CT_S1X4, null, null, null, null, null
 			,mod -> mod.putAmount(Mod303Key.CT_S1X4, ensureActivity(mod, 0).getLor())
 			,mod -> ensureActivity(mod, 0).setLor((int) mod.getAmount(Mod303Key.CT_S1X4))
@@ -765,7 +760,12 @@ class Mod303AEAT2024T3Declaration extends Mod303AEAT {
 		,CT_S1X5(Mod303Key.CT_S1X5, null, null, null, null, null
 			,mod -> mod.putAmount(Mod303Key.CT_S1X5, ensureActivity(mod, 0).getCov())
 			,mod -> ensureActivity(mod, 0).setCov((int) mod.getAmount(Mod303Key.CT_S1X5))
-			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S1X5))
+			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S1X5))		
+		// (1) Actividades en régimen simplificado. Si realiza la actividad en municipios afectados por la DANA
+		,CT_S1X6(Mod303Key.CT_S1X6, null, null, null, null, null
+				,mod -> mod.putAmount(Mod303Key.CT_S1X6, ensureActivity(mod, 0).getDana())
+				,mod -> ensureActivity(mod, 0).setDana((int) mod.getAmount(Mod303Key.CT_S1X6))
+				,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S1X6))		
 		,CT_S11D(Mod303Key.CT_S11D, null, null, null, null, null
 			,mod -> mod.putDescription(Mod303Key.CT_S11D, ensureModule(mod, 0, 0).getDescription())
 			,mod -> ensureModule(mod, 0, 0).setDescription(mod.getDescription(Mod303Key.CT_S11D))
@@ -947,7 +947,6 @@ class Mod303AEAT2024T3Declaration extends Mod303AEAT {
 			,mod -> mod.putAmount(Mod303Key.CT_S1E4, ensureActivity(mod, 0).getChildMen18Hours())
 			,mod -> ensureActivity(mod, 0).setChildMen18Hours(mod.getAmount(Mod303Key.CT_S1E4))
 			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S1E4))
-
 		,CT_S1C1(Mod303Key.CT_S1C1, null, null, null, null, null
 			,mod -> mod.putAmount(Mod303Key.CT_S1C1, ensureDesk(mod, 0, 0).getDeskCapacity())
 			,mod -> ensureDesk(mod, 0, 0).setDeskCapacity((int) mod.getAmount(Mod303Key.CT_S1C1))
@@ -996,128 +995,140 @@ class Mod303AEAT2024T3Declaration extends Mod303AEAT {
 			,mod -> mod.putAmount(Mod303Key.CT_S1D4, ensureDesk(mod, 0, 3).getDeskDays())
 			,mod -> ensureDesk(mod, 0, 3).setDeskDays((int) mod.getAmount(Mod303Key.CT_S1D4))
 			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S1D4))
-
 		,CT_S17R(Mod303Key.CT_S17R, null, null, null
 			,"calculateResult(0,CT_S17I,CT_S17F)"
 			, null
 			,mod -> mod.putAmount(Mod303Key.CT_S17R, ensureModule(mod, 0, 6).getResult())
 			,mod -> ensureModule(mod, 0, 6).setResult(mod.getAmount(Mod303Key.CT_S17R))
 			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S17R))
-		// (1) Actividades en rÃ©gimen simplificado. C Cuota devengada operaciones corrientes
+		// (1) Actividades en régimen simplificado. C Cuota devengada operaciones corrientes
 		,CT_S117(Mod303Key.CT_S117, null, null, null, "round(CT_S11R+CT_S12R+CT_S13R+CT_S14R+CT_S15R+CT_S16R+CT_S17R)", null
 			,mod -> mod.putAmount(Mod303Key.CT_S117, ensureActivity(mod, 0).getDev())
 			,mod -> ensureActivity(mod, 0).setDev(mod.getAmount(Mod303Key.CT_S117))
-			,null)
-		// (1) Actividades en rÃ©gimen simplificado. D Reducciones
-		,
-		CT_S118(Mod303Key.CT_S118, null, null, null, "calculateReduccion2021(0,CT_S117,CT_S1X4,CT_S1X5)", null
+			,null)		
+		// (1) Actividades en régimen simplificado. Reducción Lorca
+		,CT_S1R1(Mod303Key.CT_S1R1, null, null, null, "calculateReduction2024(CT_S1X4,20,CT_S117,CT_S1R1)", null
+			,mod -> mod.putAmount(Mod303Key.CT_S1R1, ensureActivity(mod, 0).getLorcaReduction())
+			,mod -> ensureActivity(mod, 0).setLorcaReduction(mod.getAmount(Mod303Key.CT_S1R1))
+			,null)		
+		// (1) Actividades en régimen simplificado. Reducción DANA
+		,CT_S1R2(Mod303Key.CT_S1R2, null, null, null, "calculateReduction2024(CT_S1X6,25,CT_S117,CT_S1R2)", null
+			,mod -> mod.putAmount(Mod303Key.CT_S1R2, ensureActivity(mod, 0).getDanaReduction())
+			,mod -> ensureActivity(mod, 0).setDanaReduction(mod.getAmount(Mod303Key.CT_S1R2))
+			,null)		
+		// (1) Actividades en régimen simplificado. D Reducciones
+		,CT_S118(Mod303Key.CT_S118, null, null, null, "CT_S1R1+CT_S1R2", null
 			,mod -> mod.putAmount(Mod303Key.CT_S118, ensureActivity(mod, 0).getRed())
 			,mod -> ensureActivity(mod, 0).setRed(mod.getAmount(Mod303Key.CT_S118))
-			,null)
-		// (1) Actividades en rÃ©gimen simplificado. Z Ãndice corrector actividades de
-		// temporada
+			,null)		
+		// (1) Actividades en régimen simplificado. Z Indice corrector actividades de temporada (1T, 2T, 3T)
 		,CT_S119(Mod303Key.CT_S119, null, null, null, "isLastPeriod()?0.0:calculateIndiceTemporada( CT_S1X1 )", null
 			,mod -> mod.putAmount(Mod303Key.CT_S119, ensureActivity(mod, 0).getInd())
 			,mod -> ensureActivity(mod, 0).setInd(mod.isLastPeriod() ? 0.0 : mod.getAmount(Mod303Key.CT_S119))
 			,null)
-		// (1) Actividades en rÃ©gimen simplificado. E Porcentaje de ingreso a cuenta
+		// (1) Actividades en régimen simplificado. E Porcentaje de ingreso a cuenta (1T, 2T, 3T)
 		,CT_S120(Mod303Key.CT_S120, null, null, null
 			,"calculatePorcentajeIngresoCuenta2023(0,CT_S1X5)", null
 			,mod -> mod.putAmount(Mod303Key.CT_S120, ensureActivity(mod, 0).getPor())
 			,mod -> ensureActivity(mod, 0).setPor(mod.isLastPeriod() ? 0.0 : mod.getAmount(Mod303Key.CT_S120))
 			,null)
-		// (1) Actividades en rÃ©gimen simplificado. F Ingreso a cuenta ( ([C] - [D] ) x [E])
+		// (1) Actividades en régimen simplificado. F Ingreso a cuenta ( ([C] - [D] ) x [E]) (1T, 2T, 3T)
 		,CT_S121(Mod303Key.CT_S121, null, null, null
 			,"calculateIngresoCuenta2021(0, CT_S1X1, CT_S1X2, CT_S117, CT_S118, CT_S119, CT_S120,CT_S1X5)", null
 			,mod -> mod.putAmount(Mod303Key.CT_S121, ensureActivity(mod, 0).getIng())
 			,mod -> ensureActivity(mod, 0).setIng(mod.isLastPeriod() ? 0.0 : mod.getAmount(Mod303Key.CT_S121))
 			,null)
-		// (1) Actividades en rÃ©gimen simplificado. 1% de la cuota devengada por operaciones corrientes
+		// (1) Actividades en régimen simplificado. 1% de la cuota devengada por operaciones corrientes (4T)
 		,CT_S12X(Mod303Key.CT_S12X, null, null, null, "isLastPeriod()?round(CT_S117 * 1 / 100):0.0", null
 			,mod -> mod.putAmount(Mod303Key.CT_S12X, ensureActivity(mod, 0).getSopx())
 			,mod -> ensureActivity(mod, 0).setSopx(mod.getAmount(Mod303Key.CT_S12X))
 			,null)
-		// (1) Actividades en rÃ©gimen simplificado. G Cuotas soportadas
+		// (1) Actividades en régimen simplificado. G Cuotas soportadas (4T)
 		,CT_S12Y(Mod303Key.CT_S12Y, null, null, null, null, null
 			,mod -> mod.putAmount(Mod303Key.CT_S12Y, ensureActivity(mod, 0).getSopy())
 			,mod -> ensureActivity(mod, 0).setSopy(mod.getAmount(Mod303Key.CT_S12Y))
 			,null)
-		// (1) Actividades en rÃ©gimen simplificado. G Cuotas soportadas operaciones corrientes
+		// (1) Actividades en régimen simplificado. G Cuotas soportadas operaciones corrientes (4T)
 		,CT_S122(Mod303Key.CT_S122, null, null, null, "isLastPeriod()?(CT_S12X+CT_S12Y):0.0", null
 			,mod -> mod.putAmount(Mod303Key.CT_S122, ensureActivity(mod, 0).getSop())
 			,mod -> ensureActivity(mod, 0).setSop(mod.getAmount(Mod303Key.CT_S122))
 			,null)
-		// (1) Actividades en rÃ©gimen simplificado. H Ãndice corrector de actividades de temporada
+		// (1) Actividades en régimen simplificado. H Indice corrector de actividades de temporada (4T)
 		,CT_S123(Mod303Key.CT_S123, null, null, null, "isLastPeriod()?calculateIndiceTemporada( CT_S1X1 ):0.0", null
 			,mod -> mod.putAmount(Mod303Key.CT_S123, ensureActivity(mod, 0).getIct())
 			,mod -> ensureActivity(mod, 0).setIct(mod.getAmount(Mod303Key.CT_S123))
 			,null)
-		// (1) Actividades en rÃ©gimen simplificado. I RESULTADO (( [C] - [D] - [G] ) x [H])
+		// (1) Actividades en régimen simplificado. I RESULTADO (( [C] - [D] - [G] ) x [H]) (4T)
 		,CT_S124(Mod303Key.CT_S124, null, null, null, "calculateResultadoAnual( CT_S117, CT_S118, CT_S122, CT_S123)",null
 			,mod -> mod.putAmount(Mod303Key.CT_S124, ensureActivity(mod, 0).getRes())
 			,mod -> ensureActivity(mod, 0).setRes(mod.getAmount(Mod303Key.CT_S124))
 			,null)
-		// (1) Actividades en rÃ©gimen simplificado. J Porcentaje cuota mÃ­nima
+		// (1) Actividades en régimen simplificado. J Porcentaje cuota mínima (4T)
 		,CT_S125(Mod303Key.CT_S125, null, null, null, "isLastPeriod()?CT_S125:0.0", null
 			,mod -> mod.putAmount(Mod303Key.CT_S125, ensureActivity(mod, 0).getPcm())
 			,mod -> ensureActivity(mod, 0).setPcm(mod.getAmount(Mod303Key.CT_S125))
 			,null)
-		// (1) Actividades en rÃ©gimen simplificado. K DevoluciÃ³n cuotas soportadas otros paÃ­ses
+		// (1) Actividades en régimen simplificado. K Devolución cuotas soportadas otros paises (4T)
 		,CT_S126(Mod303Key.CT_S126, null, null, null, null, null
 			,mod -> mod.putAmount(Mod303Key.CT_S126, ensureActivity(mod, 0).getDvc())
 			,mod -> ensureActivity(mod, 0).setDvc(mod.getAmount(Mod303Key.CT_S126))
 			,null)
-		// (1) Actividades en rÃ©gimen simplificado. L Cuota mÃ­nima
+		// (1) Actividades en régimen simplificado. L Cuota mínima (4T)
 		,CT_S127(Mod303Key.CT_S127, null, null, null, "calculateCuotaMinima(CT_S117, CT_S118, CT_S125, CT_S126,CT_S123)",null
 			,mod -> mod.putAmount(Mod303Key.CT_S127, ensureActivity(mod, 0).getCmn())
 			,mod -> ensureActivity(mod, 0).setCmn(mod.getAmount(Mod303Key.CT_S127))
 			,null)
-		// (1) Actividades en rÃ©gimen simplificado. M Cuota anual derivada rÃ©gimen simplificado
+		// (1) Actividades en régimen simplificado. M Cuota anual derivada régimen simplificado (4T)
 		,CT_S128(Mod303Key.CT_S128, null, null, null, "isLastPeriod()?((CT_S127>CT_S124)?CT_S127:CT_S124):0.0", null
 			,mod -> mod.putAmount(Mod303Key.CT_S128, ensureActivity(mod, 0).getCad())
 			,mod -> ensureActivity(mod, 0).setCad(mod.getAmount(Mod303Key.CT_S128))
 			,null)
 		
-		// (1) Actividades en rÃ©gimen simplificado. Epigrafe IAE
+		// (2) Actividades en régimen simplificado. Epigrafe IAE
 		,CT_S201(Mod303Key.CT_S201, null, null, null, null, null
 			,mod -> mod.putDescription(Mod303Key.CT_S201, ensureActivity(mod, 1).getEpigraph())
 			,mod -> ensureActivity(mod, 1).setEpigraph(mod.getDescription(Mod303Key.CT_S201))
 			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S201))
-		// (1) Actividades en rÃ©gimen simplificado. Epigrafe IAE - DescripciÃ³n
+		// (2) Actividades en régimen simplificado. Epigrafe IAE - Descripción
 		,CT_S20D(Mod303Key.CT_S20D, null, null, null, null, null
 			,mod -> mod.putDescription(Mod303Key.CT_S20D, ensureActivity(mod, 1).getDescription())
 			,mod -> ensureActivity(mod, 1).setDescription(mod.getDescription(Mod303Key.CT_S20D))
 			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S20D))
-		// (1) Actividades en rÃ©gimen simplificado. Epigrafe IAE - Indicador auxiliar de actividad en el caso de ep\u00EDgrafes 691.9 y 722
+		// (2) Actividades en régimen simplificado. Epigrafe IAE - Indicador auxiliar de actividad en el caso de ep\u00EDgrafes 691.9 y 722
 		,CT_S202(Mod303Key.CT_S202, null, null, null, null, null
 			,mod -> mod.putAmount(Mod303Key.CT_S202, ensureActivity(mod, 1).getSpecialEpigraph())
 			,mod -> ensureActivity(mod, 1).setSpecialEpigraph((int) mod.getAmount(Mod303Key.CT_S202))
 			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S202))
-		// (1) Actividades en rÃ©gimen simplificado. Actividad de Temporada. NÂº DÃ­as en los que se ejerciÃ³ la actividad en el aÃ±o anterior
+		// (2) Actividades en régimen simplificado. Actividad de Temporada. Nº Días en los que se ejerció la actividad en el aÃ±o anterior
 		,CT_S2X1(Mod303Key.CT_S2X1, null, null, null, null, null
 			,mod -> mod.putAmount(Mod303Key.CT_S2X1, ensureActivity(mod, 1).getTem())
 			,mod -> ensureActivity(mod, 1).setTem((int) mod.getAmount(Mod303Key.CT_S2X1))
 			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S2X1))
-		// (1) Actividades en rÃ©gimen simplificado. NÃºmero de dÃ­as de ejercicio de la actividad en el trimestre
+		// (2) Actividades en régimen simplificado. Número de días de ejercicio de la actividad en el trimestre
 		,CT_S2X2(Mod303Key.CT_S2X2, null, null, null, null, null
 			,mod -> mod.putAmount(Mod303Key.CT_S2X2, ensureActivity(mod, 1).getDia())
 			,mod -> ensureActivity(mod, 1).setDia((int) mod.getAmount(Mod303Key.CT_S2X2))
 			,(prev,cur) -> ensureActivityDays(prev,cur, Mod303Key.CT_S201, Mod303Key.CT_S2X2))
-		// (1) Actividades en rÃ©gimen simplificado. NÃºmero de empleados al inicio del ejercicio ( o al inicio de la actividad)
+		// (2) Actividades en régimen simplificado. Número de empleados al inicio del ejercicio ( o al inicio de la actividad)
 		,CT_S2X3(Mod303Key.CT_S2X3, null, null, null, null, null
 			,mod -> mod.putAmount(Mod303Key.CT_S2X3, ensureActivity(mod, 1).getEmp())
 			,mod -> ensureActivity(mod, 1).setEmp((int) mod.getAmount(Mod303Key.CT_S2X3))
 			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S2X3))
-		// (1) Actividades en rÃ©gimen simplificado. Si realiza la actividad en LORCA
+		// (2) Actividades en régimen simplificado. Si realiza la actividad en LORCA
 		,CT_S2X4(Mod303Key.CT_S2X4, null, null, null, null, null
 			,mod -> mod.putAmount(Mod303Key.CT_S2X4, ensureActivity(mod, 1).getLor())
 			,mod -> ensureActivity(mod, 1).setLor((int) mod.getAmount(Mod303Key.CT_S2X4))
 			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S2X4))
-		// (1) Reduccion extraordinaria por covid-19, art. 9 RD-Ley 35/2020)
+		// (2) Reduccion extraordinaria por covid-19, art. 9 RD-Ley 35/2020)
 		,CT_S2X5(Mod303Key.CT_S2X5, null, null, null, null, null
 			,mod -> mod.putAmount(Mod303Key.CT_S2X5, ensureActivity(mod, 1).getCov())
 			,mod -> ensureActivity(mod, 1).setCov((int) mod.getAmount(Mod303Key.CT_S2X5))
 			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S2X5))
+		// (2) Actividades en régimen simplificado. Si realiza la actividad en municipios afectados por la DANA
+		,CT_S2X6(Mod303Key.CT_S2X6, null, null, null, null, null
+				,mod -> mod.putAmount(Mod303Key.CT_S2X6, ensureActivity(mod, 1).getDana())
+				,mod -> ensureActivity(mod, 1).setDana((int) mod.getAmount(Mod303Key.CT_S2X6))
+				,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S2X6))		
 		,CT_S21D(Mod303Key.CT_S21D, null, null, null, null, null
 			,mod -> mod.putDescription(Mod303Key.CT_S21D, ensureModule(mod, 1, 0).getDescription())
 			,mod -> ensureModule(mod, 1, 0).setDescription(mod.getDescription(Mod303Key.CT_S21D))
@@ -1271,9 +1282,6 @@ class Mod303AEAT2024T3Declaration extends Mod303AEAT {
 			,mod -> mod.putAmount(Mod303Key.CT_S27F, ensureModule(mod, 1, 6).getFactor())
 			,mod -> ensureModule(mod, 1, 6).setFactor(mod.getAmount(Mod303Key.CT_S27F))
 			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S27F))
-		
-		
-		
 		,CT_S2P1(Mod303Key.CT_S2P1, null, null, null, null, null
 			,mod -> mod.putAmount(Mod303Key.CT_S2P1, ensureActivity(mod, 1).getMay19Hours())
 			,mod -> ensureActivity(mod, 1).setMay19Hours(mod.getAmount(Mod303Key.CT_S2P1))
@@ -1305,8 +1313,7 @@ class Mod303AEAT2024T3Declaration extends Mod303AEAT {
 		,CT_S2E4(Mod303Key.CT_S2E4, null, null, null, null, null
 			,mod -> mod.putAmount(Mod303Key.CT_S2E4, ensureActivity(mod, 1).getChildMen18Hours())
 			,mod -> ensureActivity(mod, 1).setChildMen18Hours(mod.getAmount(Mod303Key.CT_S2E4))
-			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S2E4))
-		
+			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S2E4))		
 		,CT_S2C1(Mod303Key.CT_S2C1, null, null, null, null, null
 			,mod -> mod.putAmount(Mod303Key.CT_S2C1, ensureDesk(mod, 1, 0).getDeskCapacity())
 			,mod -> ensureDesk(mod, 1, 0).setDeskCapacity((int) mod.getAmount(Mod303Key.CT_S2C1))
@@ -1354,127 +1361,141 @@ class Mod303AEAT2024T3Declaration extends Mod303AEAT {
 		,CT_S2D4(Mod303Key.CT_S2D4, null, null, null, null, null
 			,mod -> mod.putAmount(Mod303Key.CT_S2D4, ensureDesk(mod, 1, 3).getDeskDays())
 			,mod -> ensureDesk(mod, 1, 3).setDeskDays((int) mod.getAmount(Mod303Key.CT_S2D4))
-			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S2D4))
-		
+			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S2D4))		
 		,CT_S27R(Mod303Key.CT_S27R, null, null, null
 			,"calculateResult(1,CT_S27I,CT_S27F)"
 			, null
 			,mod -> mod.putAmount(Mod303Key.CT_S27R, ensureModule(mod, 1, 6).getResult())
 			,mod -> ensureModule(mod, 1, 6).setResult(mod.getAmount(Mod303Key.CT_S27R))
 			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S27R))
-		// (1) Actividades en rÃ©gimen simplificado. C Cuota devengada operaciones corrientes
+		// (2) Actividades en régimen simplificado. C Cuota devengada operaciones corrientes
 		,CT_S217(Mod303Key.CT_S217, null, null, null, "round(CT_S21R+CT_S22R+CT_S23R+CT_S24R+CT_S25R+CT_S26R+CT_S27R)", null
 			,mod -> mod.putAmount(Mod303Key.CT_S217, ensureActivity(mod, 1).getDev())
 			,mod -> ensureActivity(mod, 1).setDev(mod.getAmount(Mod303Key.CT_S217))
 			,null)
-		// (1) Actividades en rÃ©gimen simplificado. D Reducciones
-		,CT_S218(Mod303Key.CT_S218, null, null, null, "calculateReduccion2021(1,CT_S217,CT_S2X4,CT_S2X5)", null
+		// (2) Actividades en régimen simplificado. Reducción Lorca
+		,CT_S2R1(Mod303Key.CT_S2R1, null, null, null, "calculateReduction2024(CT_S2X4,20,CT_S217,CT_S2R1)", null
+			,mod -> mod.putAmount(Mod303Key.CT_S2R1, ensureActivity(mod, 1).getLorcaReduction())
+			,mod -> ensureActivity(mod, 1).setLorcaReduction(mod.getAmount(Mod303Key.CT_S2R1))
+			,null)		
+		// (2) Actividades en régimen simplificado. Reducción DANA
+		,CT_S2R2(Mod303Key.CT_S2R2, null, null, null, "calculateReduction2024(CT_S2X6,25,CT_S217,CT_S2R2)", null
+			,mod -> mod.putAmount(Mod303Key.CT_S2R2, ensureActivity(mod, 1).getDanaReduction())
+			,mod -> ensureActivity(mod, 1).setDanaReduction(mod.getAmount(Mod303Key.CT_S2R2))
+			,null)		
+		// (2) Actividades en régimen simplificado. D Reducciones
+		,CT_S218(Mod303Key.CT_S218, null, null, null, "CT_S2R1+CT_S2R2", null
 			,mod -> mod.putAmount(Mod303Key.CT_S218, ensureActivity(mod, 1).getRed())
 			,mod -> ensureActivity(mod, 1).setRed(mod.getAmount(Mod303Key.CT_S218))
 			,null)
-		// (1) Actividades en rÃ©gimen simplificado. Z Ãndice corrector actividades de temporada
+		// (2) Actividades en régimen simplificado. Z Indice corrector actividades de temporada (1T, 2T, 3T)
 		,CT_S219(Mod303Key.CT_S219, null, null, null, "isLastPeriod()?0.0:calculateIndiceTemporada( CT_S2X1 )", null
 			,mod -> mod.putAmount(Mod303Key.CT_S219, ensureActivity(mod, 1).getInd())
 			,mod -> ensureActivity(mod, 1).setInd(mod.isLastPeriod() ? 0.0 : mod.getAmount(Mod303Key.CT_S219))
 			,null)
-		// (1) Actividades en rÃ©gimen simplificado. E Porcentaje de ingreso a cuenta
+		// (2) Actividades en régimen simplificado. E Porcentaje de ingreso a cuenta (1T, 2T, 3T)
 		,CT_S220(Mod303Key.CT_S220, null, null, null
 			,"calculatePorcentajeIngresoCuenta2023(1,CT_S2X5)", null
 			,mod -> mod.putAmount(Mod303Key.CT_S220, ensureActivity(mod, 1).getPor())
 			,mod -> ensureActivity(mod, 1).setPor(mod.isLastPeriod() ? 0.0 : mod.getAmount(Mod303Key.CT_S220))
 			,null)
-		// (1) Actividades en rÃ©gimen simplificado. F Ingreso a cuenta ( ([C] - [D] ) x [E])
+		// (2) Actividades en régimen simplificado. F Ingreso a cuenta ( ([C] - [D] ) x [E]) (1T, 2T, 3T)
 		,CT_S221(Mod303Key.CT_S221, null, null, null
 			,"calculateIngresoCuenta2021(1, CT_S2X1, CT_S2X2, CT_S217, CT_S218, CT_S219, CT_S220,CT_S2X5)", null
 			,mod -> mod.putAmount(Mod303Key.CT_S221, ensureActivity(mod, 1).getIng())
 			,mod -> ensureActivity(mod, 1).setIng(mod.isLastPeriod() ? 0.0 : mod.getAmount(Mod303Key.CT_S221))
 			,null)
-		// (1) Actividades en rÃ©gimen simplificado. 1% de la cuota devengada por operaciones corrientes
+		// (2) Actividades en régimen simplificado. 1% de la cuota devengada por operaciones corrientes (4T)
 		,CT_S22X(Mod303Key.CT_S22X, null, null, null, "isLastPeriod()?round(CT_S217 * 1 / 100):0.0", null
 			,mod -> mod.putAmount(Mod303Key.CT_S22X, ensureActivity(mod, 1).getSopx())
 			,mod -> ensureActivity(mod, 1).setSopx(mod.getAmount(Mod303Key.CT_S22X))
 			,null)
-		// (1) Actividades en rÃ©gimen simplificado. G Cuotas soportadas
+		// (2) Actividades en régimen simplificado. G Cuotas soportadas (4T)
 		,CT_S22Y(Mod303Key.CT_S22Y, null, null, null, null, null
 			,mod -> mod.putAmount(Mod303Key.CT_S22Y, ensureActivity(mod, 1).getSopy())
 			,mod -> ensureActivity(mod, 1).setSopy(mod.getAmount(Mod303Key.CT_S22Y))
 			,null)
-		// (1) Actividades en rÃ©gimen simplificado. G Cuotas soportadas operaciones corrientes
+		// (2) Actividades en régimen simplificado. G Cuotas soportadas operaciones corrientes (4T)
 		,CT_S222(Mod303Key.CT_S222, null, null, null, "isLastPeriod()?(CT_S22X+CT_S22Y):0.0", null
 			,mod -> mod.putAmount(Mod303Key.CT_S222, ensureActivity(mod, 1).getSop())
 			,mod -> ensureActivity(mod, 1).setSop(mod.getAmount(Mod303Key.CT_S222))
 			,null)
-		// (1) Actividades en rÃ©gimen simplificado. H Ãndice corrector de actividades de temporada
+		// (2) Actividades en régimen simplificado. H Indice corrector de actividades de temporada (4T)
 		,CT_S223(Mod303Key.CT_S223, null, null, null, "isLastPeriod()?calculateIndiceTemporada( CT_S2X1 ):0.0", null
 			,mod -> mod.putAmount(Mod303Key.CT_S223, ensureActivity(mod, 1).getIct())
 			,mod -> ensureActivity(mod, 1).setIct(mod.getAmount(Mod303Key.CT_S223))
 			,null)
-		// (1) Actividades en rÃ©gimen simplificado. I RESULTADO (( [C] - [D] - [G] ) x [H])
+		// (2) Actividades en régimen simplificado. I RESULTADO (( [C] - [D] - [G] ) x [H]) (4T)
 		,CT_S224(Mod303Key.CT_S224, null, null, null, "calculateResultadoAnual( CT_S217, CT_S218, CT_S222, CT_S223)", null
 			,mod -> mod.putAmount(Mod303Key.CT_S224, ensureActivity(mod, 1).getRes())
 			,mod -> ensureActivity(mod, 1).setRes(mod.getAmount(Mod303Key.CT_S224))
 			,null)
-		// (1) Actividades en rÃ©gimen simplificado. J Porcentaje cuota mÃ­nima
+		// (2) Actividades en régimen simplificado. J Porcentaje cuota mínima (4T)
 		,CT_S225(Mod303Key.CT_S225, null, null, null, "isLastPeriod()?CT_S225:0.0", null
 			,mod -> mod.putAmount(Mod303Key.CT_S225, ensureActivity(mod, 1).getPcm())
 			,mod -> ensureActivity(mod, 1).setPcm(mod.getAmount(Mod303Key.CT_S225))
 			,null)
-		// (1) Actividades en rÃ©gimen simplificado. K DevoluciÃ³n cuotas soportadas otros paÃ­ses
+		// (2) Actividades en régimen simplificado. K Devolución cuotas soportadas otros paises (4T)
 		,CT_S226(Mod303Key.CT_S226, null, null, null, null, null
 			,mod -> mod.putAmount(Mod303Key.CT_S226, ensureActivity(mod, 1).getDvc())
 			,mod -> ensureActivity(mod, 1).setDvc(mod.getAmount(Mod303Key.CT_S226))
 			,null)
-		// (1) Actividades en rÃ©gimen simplificado. L Cuota mÃ­nima
+		// (2) Actividades en régimen simplificado. L Cuota mínima (4T)
 		,CT_S227(Mod303Key.CT_S227, null, null, null, "calculateCuotaMinima(CT_S217, CT_S218, CT_S225, CT_S226,CT_S223)", null
 			,mod -> mod.putAmount(Mod303Key.CT_S227, ensureActivity(mod, 1).getCmn())
 			,mod -> ensureActivity(mod, 1).setCmn(mod.getAmount(Mod303Key.CT_S227))
 			,null)
-		// (1) Actividades en rÃ©gimen simplificado. M Cuota anual derivada rÃ©gimen simplificado
+		// (2) Actividades en régimen simplificado. M Cuota anual derivada régimen simplificado (4T)
 		,CT_S228(Mod303Key.CT_S228, null, null, null, "isLastPeriod()?((CT_S227>CT_S224)?CT_S227:CT_S224):0.0", null
 			,mod -> mod.putAmount(Mod303Key.CT_S228, ensureActivity(mod, 1).getCad())
 			,mod -> ensureActivity(mod, 1).setCad(mod.getAmount(Mod303Key.CT_S228))
 			,null)
 		
-		// (1) Actividades en rÃ©gimen simplificado. Epigrafe IAE
+		// (3) Actividades en régimen simplificado. Epigrafe IAE
 		,CT_S301(Mod303Key.CT_S301, null, null, null, null, null
 			,mod -> mod.putDescription(Mod303Key.CT_S301, ensureActivity(mod, 2).getEpigraph())
 			,mod -> ensureActivity(mod, 2).setEpigraph(mod.getDescription(Mod303Key.CT_S301))
 			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S301))
-		// (1) Actividades en rÃ©gimen simplificado. Epigrafe IAE - DescripciÃ³n
+		// (3) Actividades en régimen simplificado. Epigrafe IAE - Descripción
 		,CT_S30D(Mod303Key.CT_S30D, null, null, null, null, null
 			,mod -> mod.putDescription(Mod303Key.CT_S30D, ensureActivity(mod, 2).getDescription())
 			,mod -> ensureActivity(mod, 2).setDescription(mod.getDescription(Mod303Key.CT_S30D))
 			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S30D))
-		// (1) Actividades en rÃ©gimen simplificado. Epigrafe IAE - Indicador auxiliar de actividad en el caso de ep\u00EDgrafes 691.9 y 722
+		// (3) Actividades en régimen simplificado. Epigrafe IAE - Indicador auxiliar de actividad en el caso de ep\u00EDgrafes 691.9 y 722
 		,CT_S302(Mod303Key.CT_S302, null, null, null, null, null
 			,mod -> mod.putAmount(Mod303Key.CT_S302, ensureActivity(mod, 2).getSpecialEpigraph())
 			,mod -> ensureActivity(mod, 2).setSpecialEpigraph((int) mod.getAmount(Mod303Key.CT_S302))
 			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S302))
-		// (1) Actividades en rÃ©gimen simplificado. Actividad de Temporada. NÂº DÃ­as en los que se ejerciÃ³ la actividad en el aÃ±o anterior
+		// (3) Actividades en régimen simplificado. Actividad de Temporada. Nº Días en los que se ejerció la actividad en el aÃ±o anterior
 		,CT_S3X1(Mod303Key.CT_S3X1, null, null, null, null, null
 			,mod -> mod.putAmount(Mod303Key.CT_S3X1, ensureActivity(mod, 2).getTem())
 			,mod -> ensureActivity(mod, 2).setTem((int) mod.getAmount(Mod303Key.CT_S3X1))
 			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S3X1))
-		// (1) Actividades en rÃ©gimen simplificado. NÃºmero de dÃ­as de ejercicio de la actividad en el trimestre
+		// (3) Actividades en régimen simplificado. Número de dÃ­as de ejercicio de la actividad en el trimestre
 		,CT_S3X2(Mod303Key.CT_S3X2, null, null, null, null, null
 			,mod -> mod.putAmount(Mod303Key.CT_S3X2, ensureActivity(mod, 2).getDia())
 			,mod -> ensureActivity(mod, 2).setDia((int) mod.getAmount(Mod303Key.CT_S3X2))
 			,(prev,cur) -> ensureActivityDays(prev,cur, Mod303Key.CT_S301, Mod303Key.CT_S3X2))
-		// (1) Actividades en rÃ©gimen simplificado. NÃºmero de empleados al inicio del ejercicio ( o al inicio de la actividad)
+		// (3) Actividades en régimen simplificado. Número de empleados al inicio del ejercicio ( o al inicio de la actividad)
 		,CT_S3X3(Mod303Key.CT_S3X3, null, null, null, null, null
 			,mod -> mod.putAmount(Mod303Key.CT_S3X3, ensureActivity(mod, 2).getEmp())
 			,mod -> ensureActivity(mod, 2).setEmp((int) mod.getAmount(Mod303Key.CT_S3X3))
 			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S3X3))
-		// (1) Actividades en rÃ©gimen simplificado. Si realiza la actividad en LORCA
+		// (3) Actividades en régimen simplificado. Si realiza la actividad en LORCA
 		,CT_S3X4(Mod303Key.CT_S3X4, null, null, null, null, null
 			,mod -> mod.putAmount(Mod303Key.CT_S3X4, ensureActivity(mod, 2).getLor())
 			,mod -> ensureActivity(mod, 2).setLor((int) mod.getAmount(Mod303Key.CT_S3X4))
 			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S3X3))
-		// (1) Reduccion extraordinaria por covid-19, art. 9 RD-Ley 35/2020)
+		// (3) Reduccion extraordinaria por covid-19, art. 9 RD-Ley 35/2020)
 		,CT_S3X5(Mod303Key.CT_S3X5, null, null, null, null, null
 			,mod -> mod.putAmount(Mod303Key.CT_S3X5, ensureActivity(mod, 2).getCov())
 			,mod -> ensureActivity(mod, 2).setCov((int) mod.getAmount(Mod303Key.CT_S3X5))
 			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S3X3))
+		// (3) Actividades en régimen simplificado. Si realiza la actividad en municipios afectados por la DANA
+		,CT_S3X6(Mod303Key.CT_S3X6, null, null, null, null, null
+				,mod -> mod.putAmount(Mod303Key.CT_S3X6, ensureActivity(mod, 2).getDana())
+				,mod -> ensureActivity(mod, 2).setDana((int) mod.getAmount(Mod303Key.CT_S3X6))
+				,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S3X6))		
 		,CT_S31D(Mod303Key.CT_S31D, null, null, null, null, null
 			,mod -> mod.putDescription(Mod303Key.CT_S31D, ensureModule(mod, 2, 0).getDescription())
 			,mod -> ensureModule(mod, 2, 0).setDescription(mod.getDescription(Mod303Key.CT_S31D))
@@ -1541,13 +1562,11 @@ class Mod303AEAT2024T3Declaration extends Mod303AEAT {
 			,mod -> mod.putAmount(Mod303Key.CT_S33R, ensureModule(mod, 2, 2).getResult())
 			,mod -> ensureModule(mod, 2, 2).setResult(mod.getAmount(Mod303Key.CT_S33R))
 			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S33R))
-		,
-		CT_S34D(Mod303Key.CT_S34D, null, null, null, null, null
+		,CT_S34D(Mod303Key.CT_S34D, null, null, null, null, null
 			,mod -> mod.putDescription(Mod303Key.CT_S34D, ensureModule(mod, 2, 3).getDescription())
 			,mod -> ensureModule(mod, 2, 3).setDescription(mod.getDescription(Mod303Key.CT_S34D))
 			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S34D))
-		,
-		CT_S34I(Mod303Key.CT_S34I, null, null, null, null, null
+		,CT_S34I(Mod303Key.CT_S34I, null, null, null, null, null
 			,mod -> mod.putAmount(Mod303Key.CT_S34I, ensureModule(mod, 2, 3).getValue())
 			,mod -> ensureModule(mod, 2, 3).setValue(mod.getAmount(Mod303Key.CT_S34I))
 			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S34I))
@@ -1625,8 +1644,6 @@ class Mod303AEAT2024T3Declaration extends Mod303AEAT {
 			,mod -> mod.putAmount(Mod303Key.CT_S37F, ensureModule(mod, 2, 6).getFactor())
 			,mod -> ensureModule(mod, 2, 6).setFactor(mod.getAmount(Mod303Key.CT_S37F))
 			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S37F))
-		
-
 		,CT_S3P1(Mod303Key.CT_S3P1, null, null, null, null, null
 			,mod -> mod.putAmount(Mod303Key.CT_S3P1, ensureActivity(mod, 2).getMay19Hours())
 			,mod -> ensureActivity(mod, 2).setMay19Hours(mod.getAmount(Mod303Key.CT_S3P1))
@@ -1659,7 +1676,6 @@ class Mod303AEAT2024T3Declaration extends Mod303AEAT {
 			,mod -> mod.putAmount(Mod303Key.CT_S3E4, ensureActivity(mod, 2).getChildMen18Hours())
 			,mod -> ensureActivity(mod, 2).setChildMen18Hours(mod.getAmount(Mod303Key.CT_S3E4))
 			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S3E4))
-
 		,CT_S3C1(Mod303Key.CT_S3C1, null, null, null, null, null
 			,mod -> mod.putAmount(Mod303Key.CT_S3C1, ensureDesk(mod, 2, 0).getDeskCapacity())
 			,mod -> ensureDesk(mod, 2, 0).setDeskCapacity((int) mod.getAmount(Mod303Key.CT_S3C1))
@@ -1707,131 +1723,142 @@ class Mod303AEAT2024T3Declaration extends Mod303AEAT {
 		,CT_S3D4(Mod303Key.CT_S3D4, null, null, null, null, null
 			,mod -> mod.putAmount(Mod303Key.CT_S3D4, ensureDesk(mod, 2, 3).getDeskDays())
 			,mod -> ensureDesk(mod, 2, 3).setDeskDays((int) mod.getAmount(Mod303Key.CT_S3D4))
-			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S3D4))
-			
-		
+			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S3D4))		
 		,CT_S37R(Mod303Key.CT_S37R, null, null, null
 			,"calculateResult(2,CT_S37I,CT_S37F)"
 			, null
 			,mod -> mod.putAmount(Mod303Key.CT_S37R, ensureModule(mod, 2, 6).getResult())
 			,mod -> ensureModule(mod, 2, 6).setResult(mod.getAmount(Mod303Key.CT_S37R))
 			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S37R))
-
-		// (1) Actividades en rÃ©gimen simplificado. C Cuota devengada operaciones corrientes
+		// (3) Actividades en régimen simplificado. C Cuota devengada operaciones corrientes
 		,CT_S317(Mod303Key.CT_S317, null, null, null, "round(CT_S31R+CT_S32R+CT_S33R+CT_S34R+CT_S35R+CT_S36R+CT_S37R)", null
 			,mod -> mod.putAmount(Mod303Key.CT_S317, ensureActivity(mod, 2).getDev())
 			,mod -> ensureActivity(mod, 2).setDev(mod.getAmount(Mod303Key.CT_S317))
 			,null)
-		// (1) Actividades en rÃ©gimen simplificado. D Reducciones
-		,CT_S318(Mod303Key.CT_S318, null, null, null, "calculateReduccion2021(2,CT_S317,CT_S3X4,CT_S3X5)", null
+		// (3) Actividades en régimen simplificado. Reducción Lorca
+		,CT_S3R1(Mod303Key.CT_S3R1, null, null, null, "calculateReduction2024(CT_S3X4,20,CT_S317,CT_S3R1)", null
+			,mod -> mod.putAmount(Mod303Key.CT_S3R1, ensureActivity(mod, 2).getLorcaReduction())
+			,mod -> ensureActivity(mod, 2).setLorcaReduction(mod.getAmount(Mod303Key.CT_S3R1))
+			,null)		
+		// (3) Actividades en régimen simplificado. Reducción DANA
+		,CT_S3R2(Mod303Key.CT_S3R2, null, null, null, "calculateReduction2024(CT_S3X6,25,CT_S317,CT_S3R2)", null
+			,mod -> mod.putAmount(Mod303Key.CT_S3R2, ensureActivity(mod, 2).getDanaReduction())
+			,mod -> ensureActivity(mod, 2).setDanaReduction(mod.getAmount(Mod303Key.CT_S3R2))
+			,null)		
+		// (3) Actividades en régimen simplificado. D Reducciones
+		,CT_S318(Mod303Key.CT_S318, null, null, null, "CT_S3R1+CT_S3R2", null
 			,mod -> mod.putAmount(Mod303Key.CT_S318, ensureActivity(mod, 2).getRed())
 			,mod -> ensureActivity(mod, 2).setRed(mod.getAmount(Mod303Key.CT_S318))
 			,null)
-		// (1) Actividades en rÃ©gimen simplificado. Z Ãndice corrector actividades de temporada
+		// (3) Actividades en régimen simplificado. Z Indice corrector actividades de temporada (1T, 2T, 3T)
 		,CT_S319(Mod303Key.CT_S319, null, null, null, "isLastPeriod()?0.0:calculateIndiceTemporada( CT_S3X1 )", null
 			,mod -> mod.putAmount(Mod303Key.CT_S319, ensureActivity(mod, 2).getInd())
 			,mod -> ensureActivity(mod, 2).setInd(mod.getAmount(Mod303Key.CT_S319))
 			,null)
-		// (1) Actividades en rÃ©gimen simplificado. E Porcentaje de ingreso a cuenta
+		// (3) Actividades en régimen simplificado. E Porcentaje de ingreso a cuenta (1T, 2T, 3T)
 		,CT_S320(Mod303Key.CT_S320, null, null, null
 			,"calculatePorcentajeIngresoCuenta2023(2,CT_S3X5)", null
 			,mod -> mod.putAmount(Mod303Key.CT_S320, ensureActivity(mod, 2).getPor())
 			,mod -> ensureActivity(mod, 2).setPor(mod.getAmount(Mod303Key.CT_S320))
 			,null)
-		// (1) Actividades en rÃ©gimen simplificado. F Ingreso a cuenta ( ([C] - [D] ) x [E])
+		// (3) Actividades en régimen simplificado. F Ingreso a cuenta ( ([C] - [D] ) x [E]) (1T, 2T, 3T)
 		,CT_S321(Mod303Key.CT_S321, null, null, null
 			,"calculateIngresoCuenta2021(2, CT_S3X1, CT_S3X2, CT_S317, CT_S318, CT_S319, CT_S320,CT_S3X5)", null
 			,mod -> mod.putAmount(Mod303Key.CT_S321, ensureActivity(mod, 2).getIng())
 			,mod -> ensureActivity(mod, 2).setIng(mod.getAmount(Mod303Key.CT_S321))
 			,null)
-		// (1) Actividades en rÃ©gimen simplificado. 1% de la cuota devengada por operaciones corrientes
+		// (3) Actividades en régimen simplificado. 1% de la cuota devengada por operaciones corrientes (4T)
 		,CT_S32X(Mod303Key.CT_S32X, null, null, null, "isLastPeriod()?round(CT_S317 * 1 / 100):0.0", null
 			,mod -> mod.putAmount(Mod303Key.CT_S32X, ensureActivity(mod, 2).getSopx())
 			,mod -> ensureActivity(mod, 2).setSopx(mod.getAmount(Mod303Key.CT_S32X))
 			,null)
-		// (1) Actividades en rÃ©gimen simplificado. G Cuotas soportadas
+		// (3) Actividades en régimen simplificado. G Cuotas soportadas (4T)
 		,CT_S32Y(Mod303Key.CT_S32Y, null, null, null, null, null
 			,mod -> mod.putAmount(Mod303Key.CT_S32Y, ensureActivity(mod, 2).getSopy())
 			,mod -> ensureActivity(mod, 2).setSopy(mod.getAmount(Mod303Key.CT_S32Y))
 			,null)
-		// (1) Actividades en rÃ©gimen simplificado. G Cuotas soportadas operaciones corrientes
+		// (3) Actividades en régimen simplificado. G Cuotas soportadas operaciones corrientes (4T)
 		,CT_S322(Mod303Key.CT_S322, null, null, null, "isLastPeriod()?(CT_S32X+CT_S32Y):0.0", null
 			,mod -> mod.putAmount(Mod303Key.CT_S322, ensureActivity(mod, 2).getSop())
 			,mod -> ensureActivity(mod, 2).setSop(mod.getAmount(Mod303Key.CT_S322))
 			,null)
-		// (1) Actividades en rÃ©gimen simplificado. H Ãndice corrector de actividades de temporada
+		// (3) Actividades en régimen simplificado. H Indice corrector de actividades de temporada (4T)
 		,CT_S323(Mod303Key.CT_S323, null, null, null, "isLastPeriod()?calculateIndiceTemporada( CT_S3X1 ):0.0", null
 			,mod -> mod.putAmount(Mod303Key.CT_S323, ensureActivity(mod, 2).getIct())
 			,mod -> ensureActivity(mod, 2).setIct(mod.getAmount(Mod303Key.CT_S323))
 			,null)
-		// (1) Actividades en rÃ©gimen simplificado. I RESULTADO (( [C] - [D] - [G] ) x [H])
+		// (3) Actividades en régimen simplificado. I RESULTADO (( [C] - [D] - [G] ) x [H]) (4T)
 		,CT_S324(Mod303Key.CT_S324, null, null, null, "calculateResultadoAnual( CT_S317, CT_S318, CT_S322, CT_S323)",null
 			,mod -> mod.putAmount(Mod303Key.CT_S324, ensureActivity(mod, 2).getRes())
 			,mod -> ensureActivity(mod, 2).setRes(mod.getAmount(Mod303Key.CT_S324))
 			,null)
-		// (1) Actividades en rÃ©gimen simplificado. J Porcentaje cuota mÃ­nima
+		// (3) Actividades en régimen simplificado. J Porcentaje cuota mínima (4T)
 		,CT_S325(Mod303Key.CT_S325, null, null, null, "isLastPeriod()?CT_S325:0.0", null
 			,mod -> mod.putAmount(Mod303Key.CT_S325, ensureActivity(mod, 2).getPcm())
 			,mod -> ensureActivity(mod, 2).setPcm(mod.getAmount(Mod303Key.CT_S325))
 			,null)
-		// (1) Actividades en rÃ©gimen simplificado. K DevoluciÃ³n cuotas soportadas otros paÃ­ses
+		// (3) Actividades en régimen simplificado. K Devolución cuotas soportadas otros paises (4T)
 		,CT_S326(Mod303Key.CT_S326, null, null, null, null, null
 				,mod -> mod.putAmount(Mod303Key.CT_S326, ensureActivity(mod, 2).getDvc())
 				,mod -> ensureActivity(mod, 2).setDvc(mod.getAmount(Mod303Key.CT_S326))
 				, null )
-		// (1) Actividades en rÃ©gimen simplificado. L Cuota mÃ­nima
+		// (3) Actividades en régimen simplificado. L Cuota mínima (4T)
 		,CT_S327(Mod303Key.CT_S327, null, null, null, "calculateCuotaMinima(CT_S317, CT_S318, CT_S325, CT_S326,CT_S323)",null
 			,mod -> mod.putAmount(Mod303Key.CT_S327, ensureActivity(mod, 2).getCmn())
 			,mod -> ensureActivity(mod, 2).setCmn(mod.getAmount(Mod303Key.CT_S327))
 			,null)
-		// (1) Actividades en rÃ©gimen simplificado. M Cuota anual derivada rÃ©gimen simplificado
+		// (3) Actividades en régimen simplificado. M Cuota anual derivada régimen simplificado (4T)
 		,CT_S328(Mod303Key.CT_S328, null, null, null, "isLastPeriod()?((CT_S327>CT_S324)?CT_S327:CT_S324):0.0", null
 			,mod -> mod.putAmount(Mod303Key.CT_S328, ensureActivity(mod, 2).getCad())
 			,mod -> ensureActivity(mod, 2).setCad(mod.getAmount(Mod303Key.CT_S328))
 			,null)
 
-		// (1) Actividades en rÃ©gimen simplificado. Epigrafe IAE
+		// (4) Actividades en régimen simplificado. Epigrafe IAE
 		,CT_S401(Mod303Key.CT_S401, null, null, null, null, null
 			,mod -> mod.putDescription(Mod303Key.CT_S401, ensureActivity(mod, 3).getEpigraph())
 			,mod -> ensureActivity(mod, 3).setEpigraph(mod.getDescription(Mod303Key.CT_S401))
 			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S401))
-		// (1) Actividades en rÃ©gimen simplificado. Epigrafe IAE - DescripciÃ³n
+		// (4) Actividades en régimen simplificado. Epigrafe IAE - Descripción
 		,CT_S40D(Mod303Key.CT_S40D, null, null, null, null, null
 			,mod -> mod.putDescription(Mod303Key.CT_S40D, ensureActivity(mod, 3).getDescription())
 			,mod -> ensureActivity(mod, 3).setDescription(mod.getDescription(Mod303Key.CT_S40D))
 			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S40D))
-		// (1) Actividades en rÃ©gimen simplificado. Epigrafe IAE - Indicador auxiliar de actividad en el caso de ep\u00EDgrafes 691.9 y 722
+		// (4) Actividades en régimen simplificado. Epigrafe IAE - Indicador auxiliar de actividad en el caso de epígrafes 691.9 y 722
 		,CT_S402(Mod303Key.CT_S402, null, null, null, null, null
 			,mod -> mod.putAmount(Mod303Key.CT_S402, ensureActivity(mod, 3).getSpecialEpigraph())
 			,mod -> ensureActivity(mod, 3).setSpecialEpigraph((int) mod.getAmount(Mod303Key.CT_S402))
 			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S402))
-		// (1) Actividades en rÃ©gimen simplificado. Actividad de Temporada. NÂº DÃ­as en
-		// los que se ejerciÃ³ la actividad en el aÃ±o anterior
-		,
-		CT_S4X1(Mod303Key.CT_S4X1, null, null, null, null, null
+		// (4) Actividades en régimen simplificado. Actividad de Temporada. Nº Días en
+		// los que se ejerció la actividad en el año anterior
+		,CT_S4X1(Mod303Key.CT_S4X1, null, null, null, null, null
 			,mod -> mod.putAmount(Mod303Key.CT_S4X1, ensureActivity(mod, 3).getTem())
 			,mod -> ensureActivity(mod, 3).setTem((int) mod.getAmount(Mod303Key.CT_S4X1))
 			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S4X1))
-		// (1) Actividades en rÃ©gimen simplificado. NÃºmero de dÃ­as de ejercicio de la actividad en el trimestre
+		// (4) Actividades en régimen simplificado. Número de días de ejercicio de la actividad en el trimestre
 		,CT_S4X2(Mod303Key.CT_S4X2, null, null, null, null, null
 			,mod -> mod.putAmount(Mod303Key.CT_S4X2, ensureActivity(mod, 3).getDia())
 			,mod -> ensureActivity(mod, 3).setDia((int) mod.getAmount(Mod303Key.CT_S4X2))
 			,(prev,cur) -> ensureActivityDays(prev,cur, Mod303Key.CT_S401, Mod303Key.CT_S4X2))
-		// (1) Actividades en rÃ©gimen simplificado. NÃºmero de empleados al inicio del ejercicio ( o al inicio de la actividad)
+		// (4) Actividades en régimen simplificado. Número de empleados al inicio del ejercicio ( o al inicio de la actividad)
 		,CT_S4X3(Mod303Key.CT_S4X3, null, null, null, null, null
 			,mod -> mod.putAmount(Mod303Key.CT_S4X3, ensureActivity(mod, 3).getEmp())
 			,mod -> ensureActivity(mod, 3).setEmp((int) mod.getAmount(Mod303Key.CT_S4X3))
 			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S4X3))
-		// (1) Actividades en rÃ©gimen simplificado. Si realiza la actividad en LORCA
+		// (4) Actividades en régimen simplificado. Si realiza la actividad en LORCA
 		,CT_S4X4(Mod303Key.CT_S4X4, null, null, null, null, null
 			,mod -> mod.putAmount(Mod303Key.CT_S4X4, ensureActivity(mod, 3).getLor())
 			,mod -> ensureActivity(mod, 3).setLor((int) mod.getAmount(Mod303Key.CT_S4X4))
 			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S4X4))
-		// (1) Reduccion extraordinaria por covid-19, art. 9 RD-Ley 35/2020)
+		// (4) Reduccion extraordinaria por covid-19, art. 9 RD-Ley 35/2020)
 		,CT_S4X5(Mod303Key.CT_S4X5, null, null, null, null, null
 			,mod -> mod.putAmount(Mod303Key.CT_S4X5, ensureActivity(mod, 3).getCov())
 			,mod -> ensureActivity(mod, 3).setCov((int) mod.getAmount(Mod303Key.CT_S4X5))
 			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S4X5))
+		// (4) Actividades en régimen simplificado. Si realiza la actividad en municipios afectados por la DANA
+		,CT_S4X6(Mod303Key.CT_S4X6, null, null, null, null, null
+				,mod -> mod.putAmount(Mod303Key.CT_S4X6, ensureActivity(mod, 3).getDana())
+				,mod -> ensureActivity(mod, 3).setDana((int) mod.getAmount(Mod303Key.CT_S4X6))
+				,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S4X6))		
 		,CT_S41D(Mod303Key.CT_S41D, null, null, null, null, null
 			,mod -> mod.putDescription(Mod303Key.CT_S41D, ensureModule(mod, 3, 0).getDescription())
 			,mod -> ensureModule(mod, 3, 0).setDescription(mod.getDescription(Mod303Key.CT_S41D))
@@ -1980,8 +2007,6 @@ class Mod303AEAT2024T3Declaration extends Mod303AEAT {
 			,mod -> mod.putAmount(Mod303Key.CT_S47F, ensureModule(mod, 3, 6).getFactor())
 			,mod -> ensureModule(mod, 3, 6).setFactor(mod.getAmount(Mod303Key.CT_S47F))
 			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S47F))
-
-		
 		,CT_S4P1(Mod303Key.CT_S4P1, null, null, null, null, null
 			,mod -> mod.putAmount(Mod303Key.CT_S4P1, ensureActivity(mod, 3).getMay19Hours())
 			,mod -> ensureActivity(mod, 3).setMay19Hours(mod.getAmount(Mod303Key.CT_S4P1))
@@ -2014,7 +2039,6 @@ class Mod303AEAT2024T3Declaration extends Mod303AEAT {
 			,mod -> mod.putAmount(Mod303Key.CT_S4E4, ensureActivity(mod, 3).getChildMen18Hours())
 			,mod -> ensureActivity(mod, 3).setChildMen18Hours(mod.getAmount(Mod303Key.CT_S4E4))
 			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S4E4))
-		
 		,CT_S4C1(Mod303Key.CT_S4C1, null, null, null, null, null
 			,mod -> mod.putAmount(Mod303Key.CT_S4C1, ensureDesk(mod, 3, 0).getDeskCapacity())
 			,mod -> ensureDesk(mod, 3, 0).setDeskCapacity((int) mod.getAmount(Mod303Key.CT_S4C1))
@@ -2063,81 +2087,90 @@ class Mod303AEAT2024T3Declaration extends Mod303AEAT {
 			,mod -> mod.putAmount(Mod303Key.CT_S4D4, ensureDesk(mod, 3, 3).getDeskDays())
 			,mod -> ensureDesk(mod, 3, 3).setDeskDays((int) mod.getAmount(Mod303Key.CT_S4D4))
 			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S4D4))
-
 		,CT_S47R(Mod303Key.CT_S47R, null, null, null
 			,"calculateResult(3,CT_S47I,CT_S47F)"
 			, null
 			,mod -> mod.putAmount(Mod303Key.CT_S47R, ensureModule(mod, 3, 6).getResult())
 			,mod -> ensureModule(mod, 3, 6).setResult(mod.getAmount(Mod303Key.CT_S47R))
 			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S47R))
-		// (1) Actividades en rÃ©gimen simplificado. C Cuota devengada operaciones // corrientes
+		// (4) Actividades en régimen simplificado. C Cuota devengada operaciones // corrientes
 		,CT_S417(Mod303Key.CT_S417, null, null, null, "round(CT_S41R+CT_S42R+CT_S43R+CT_S44R+CT_S45R+CT_S46R+CT_S47R)", null
 			,mod -> mod.putAmount(Mod303Key.CT_S417, ensureActivity(mod, 3).getDev())
 			,mod -> ensureActivity(mod, 3).setDev(mod.getAmount(Mod303Key.CT_S417))
 			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S417))
-		// (1) Actividades en rÃ©gimen simplificado. D Reducciones
-		,CT_S418(Mod303Key.CT_S418, null, null, null, "calculateReduccion2021(3,CT_S417,CT_S4X4,CT_S4X5)", null
+		// (4) Actividades en régimen simplificado. Reducción Lorca
+		,CT_S4R1(Mod303Key.CT_S4R1, null, null, null, "calculateReduction2024(CT_S4X4,20,CT_S417,CT_S4R1)", null
+			,mod -> mod.putAmount(Mod303Key.CT_S4R1, ensureActivity(mod, 3).getLorcaReduction())
+			,mod -> ensureActivity(mod, 3).setLorcaReduction(mod.getAmount(Mod303Key.CT_S4R1))
+			,null)		
+		// (4) Actividades en régimen simplificado. Reducción DANA
+		,CT_S4R2(Mod303Key.CT_S4R2, null, null, null, "calculateReduction2024(CT_S4X6,25,CT_S417,CT_S4R2)", null
+			,mod -> mod.putAmount(Mod303Key.CT_S4R2, ensureActivity(mod, 3).getDanaReduction())
+			,mod -> ensureActivity(mod, 3).setDanaReduction(mod.getAmount(Mod303Key.CT_S4R2))
+			,null)		
+		// (4) Actividades en régimen simplificado. D Reducciones
+		,CT_S418(Mod303Key.CT_S418, null, null, null, "CT_S4R1+CT_S4R2", null
 			,mod -> mod.putAmount(Mod303Key.CT_S418, ensureActivity(mod, 3).getRed())
 			,mod -> ensureActivity(mod, 3).setRed(mod.getAmount(Mod303Key.CT_S418))
 			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S418))
-		// (1) Actividades en rÃ©gimen simplificado. Z Ãndice corrector actividades de temporada
+		// (4) Actividades en régimen simplificado. Z Indice corrector actividades de temporada (1T, 2T, 3T)
 		,CT_S419(Mod303Key.CT_S419, null, null, null, "isLastPeriod()?0.0:calculateIndiceTemporada( CT_S4X1 )", null
 			,mod -> mod.putAmount(Mod303Key.CT_S419, ensureActivity(mod, 3).getInd())
 			,mod -> ensureActivity(mod, 3).setInd(mod.getAmount(Mod303Key.CT_S419))
 			,null)
-		// (1) Actividades en rÃ©gimen simplificado. E Porcentaje de ingreso a cuenta
+		// (4) Actividades en régimen simplificado. E Porcentaje de ingreso a cuenta (1T, 2T, 3T)
 		,CT_S420(Mod303Key.CT_S420, null, null, null
 			,"calculatePorcentajeIngresoCuenta2023(3,CT_S4X5)", null
 			,mod -> mod.putAmount(Mod303Key.CT_S420, ensureActivity(mod, 3).getPor())
 			,mod -> ensureActivity(mod, 3).setPor(mod.getAmount(Mod303Key.CT_S420))
 			,null)
-		// (1) Actividades en rÃ©gimen simplificado. F Ingreso a cuenta ( ([C] - [D] ) x [E])
+		// (4) Actividades en régimen simplificado. F Ingreso a cuenta ( ([C] - [D] ) x [E]) (1T, 2T, 3T)
 		,CT_S421(Mod303Key.CT_S421, null, null, null
 			,"calculateIngresoCuenta2021(3, CT_S4X1, CT_S4X2, CT_S417, CT_S418, CT_S419, CT_S420,CT_S4X5)", null
 			,mod -> mod.putAmount(Mod303Key.CT_S421, ensureActivity(mod, 3).getIng())
 			,mod -> ensureActivity(mod, 3).setIng(mod.getAmount(Mod303Key.CT_S421))
 			,null)
-		// (1) Actividades en rÃ©gimen simplificado. 1% de la cuota devengada por operaciones corrientes
+		// (4) Actividades en régimen simplificado. 1% de la cuota devengada por operaciones corrientes (4T)
 		,CT_S42X(Mod303Key.CT_S42X, null, null, null, "isLastPeriod()?round(CT_S417 * 1 / 100):0.0", null
 			,mod -> mod.putAmount(Mod303Key.CT_S42X, ensureActivity(mod, 3).getSopx())
 			,mod -> ensureActivity(mod, 3).setSopx(mod.getAmount(Mod303Key.CT_S42X))
 			,null)
-		// (1) Actividades en rÃ©gimen simplificado. G Cuotas soportadas
+		// (4) Actividades en régimen simplificado. G Cuotas soportadas (4T)
 		,CT_S42Y(Mod303Key.CT_S42Y, null, null, null, null, null
 			,mod -> mod.putAmount(Mod303Key.CT_S42Y, ensureActivity(mod, 3).getSopy())
 			,mod -> ensureActivity(mod, 3).setSopy(mod.getAmount(Mod303Key.CT_S42Y))
 			,null)
-		// (1) Actividades en rÃ©gimen simplificado. G Cuotas soportadas operaciones corrientes
+		// (4) Actividades en régimen simplificado. G Cuotas soportadas operaciones corrientes (4T)
 		,CT_S422(Mod303Key.CT_S422, null, null, null, "isLastPeriod()?(CT_S42X+CT_S42Y):0.0", null
 			,mod -> mod.putAmount(Mod303Key.CT_S422, ensureActivity(mod, 3).getSop())
 			,mod -> ensureActivity(mod, 3).setSop(mod.getAmount(Mod303Key.CT_S422))
 			,null)
-		// (1) Actividades en rÃ©gimen simplificado. H Ãndice corrector de actividades de temporada
+		// (4) Actividades en régimen simplificado. H Indice corrector de actividades de temporada (4T)
 		,CT_S423(Mod303Key.CT_S423, null, null, null, "isLastPeriod()?calculateIndiceTemporada( CT_S4X1 ):0.0", null
 			,mod -> mod.putAmount(Mod303Key.CT_S423, ensureActivity(mod, 3).getIct())
 			,mod -> ensureActivity(mod, 3).setIct(mod.getAmount(Mod303Key.CT_S423))
 			,null)
-		// (1) Actividades en rÃ©gimen simplificado. I RESULTADO (( [C] - [D] - [G] ) x [H])
+		// (4) Actividades en régimen simplificado. I RESULTADO (( [C] - [D] - [G] ) x [H]) (4T)
 		,CT_S424(Mod303Key.CT_S424, null, null, null, "calculateResultadoAnual( CT_S417, CT_S418, CT_S422, CT_S423)",null
 			,mod -> mod.putAmount(Mod303Key.CT_S424, ensureActivity(mod, 3).getRes())
 			,mod -> ensureActivity(mod, 3).setRes(mod.getAmount(Mod303Key.CT_S424))
 			,null)
-		// (1) Actividades en rÃ©gimen simplificado. J Porcentaje cuota mÃ­nima
+		// (4) Actividades en régimen simplificado. J Porcentaje cuota mínima (4T)
 		,CT_S425(Mod303Key.CT_S425, null, null, null, "isLastPeriod()?CT_S425:0.0", null
 			,mod -> mod.putAmount(Mod303Key.CT_S425, ensureActivity(mod, 3).getPcm())
 			,mod -> ensureActivity(mod, 3).setPcm(mod.getAmount(Mod303Key.CT_S425))
 			,null)
-		// (1) Actividades en rÃ©gimen simplificado. K DevoluciÃ³n cuotas soportadas otros paÃ­ses
+		// (4) Actividades en régimen simplificado. K Devolución cuotas soportadas otros paises (4T)
 		,CT_S426(Mod303Key.CT_S426, null, null, null, null, null
 			,mod -> mod.putAmount(Mod303Key.CT_S426, ensureActivity(mod, 3).getDvc())
 			,mod -> ensureActivity(mod, 3).setDvc(mod.getAmount(Mod303Key.CT_S426))
 			,null)
-		// (1) Actividades en rÃ©gimen simplificado. L Cuota mÃ­nima
+		// (4) Actividades en régimen simplificado. L Cuota mínima (4T)
 		,CT_S427(Mod303Key.CT_S427, null, null, null, "calculateCuotaMinima(CT_S417, CT_S418, CT_S425, CT_S426,CT_S423)",null
 			,mod -> mod.putAmount(Mod303Key.CT_S427, ensureActivity(mod, 3).getCmn())
 			,mod -> ensureActivity(mod, 3).setCmn(mod.getAmount(Mod303Key.CT_S427))
 			,null)
-		// (1) Actividades en rÃ©gimen simplificado. M Cuota anual derivada rÃ©gimen simplificado
+		// (4) Actividades en régimen simplificado. M Cuota anual derivada régimen simplificado (4T)
 		,CT_S428(Mod303Key.CT_S428, null, null, null, "isLastPeriod()?((CT_S427>CT_S424)?CT_S427:CT_S424):0.0", null
 			,mod -> mod.putAmount(Mod303Key.CT_S428, ensureActivity(mod, 3).getCad())
 			,mod -> ensureActivity(mod, 3).setCad(mod.getAmount(Mod303Key.CT_S428))
@@ -2159,27 +2192,27 @@ class Mod303AEAT2024T3Declaration extends Mod303AEAT {
 		// 52 Cuotas devengadas - Entregas de activos fijos
 		, CT_S52(Mod303Key.CT_S52, (mod, vat) -> entregasActivosFijosFilterSimp(vat, mod),
 				(ctx, mod, vat) -> add(Mod303Key.CT_S52, mod, vat.getDeductibleQuota()), null, null, null)
-		// 53 Cuotas devengadas - IVA devengado por inversi\u00F3n del sujeto pasivo
+		// 53 Cuotas devengadas - IVA devengado por inversión del sujeto pasivo
 		, CT_S53(Mod303Key.CT_S53, (mod, vat) -> operacionesISPFilterSimp(vat, mod),
 				(ctx, mod, vat) -> add(Mod303Key.CT_S53, mod, vat.getDeductibleQuota()), null, null, null)
 		// 54 Cuotas devengadas - Total cuota resultante
 		, CT_S54(Mod303Key.CT_S54, null, null, null,
 				"isLastPeriod()?(CT_S50+CT_S51+CT_S52+CT_S53):(CT_S47+CT_S51+CT_S52+CT_S53)", null)
-		// 55 IVA deducible - Adquisici\u00F3n o importaci\u00F3n de activos fijos
+		// 55 IVA deducible - Adquisición o importación de activos fijos
 		,
 		CT_S55(Mod303Key.CT_S55,
 				(mod, vat) -> vat.isVatSimplifiedRegime(mod.getDefaultVATRegime()) && !vat.isSales()
 						&& vat.isInvestment(),
 				(ctx, mod, vat) -> add(Mod303Key.CT_S55, mod, vat.getDeductibleQuota()), null, null, null)
-		// 56 IVA deducible - Regularizaci\u00F3n bienes de inversi\u00F3n
+		// 56 IVA deducible - Regularización bienes de inversión
 		, CT_S56(Mod303Key.CT_S56)
 		// 57 IVA deducible - Total IVA deducible
 		, CT_S57(Mod303Key.CT_S57, null, null, null, "CT_S55+CT_S56", null)
-		// 58 Resultado RÃ©gimen Simplificado
+		// 58 Resultado régimen Simplificado
 		, CT_S58(Mod303Key.CT_S58, null, null, null, "CT_S54-CT_S55", null)
 
 		// ---------------------------------------------------------------
-		// ----------------------------------------- INFORMACIÃ“N ADICIONAL
+		// ----------------------------------------- INFORMACIO“N ADICIONAL
 		// ---------------------------------------------------------------
 
 		// Entregas intracomunitarias de bienes y servicios
@@ -2190,25 +2223,25 @@ class Mod303AEAT2024T3Declaration extends Mod303AEAT {
 		, CT_C60(Mod303Key.CT_C60,
 			(mod, vat) -> ventasExtraComunitariasCanCeuBienes(vat, mod),
 			(ctx, mod, vat) -> add(Mod303Key.CT_C60, mod, vat.getBase()), null, null, null)
-		//Operaciones no sujetas por reglas de localizaci\u00F3n (excepto las incluidas en la casilla 123).
+		//Operaciones no sujetas por reglas de localización (excepto las incluidas en la casilla 123).
 		,CT_C120(Mod303Key.CT_C120, (mod, vat) -> ventasExtraComunitariasCanCeuServicios( vat, mod),
 			(ctx, mod, vat) -> add(Mod303Key.CT_C120, mod, vat.getBase()), null, null, null)
-		// Operaciones sujetas con inversi\u00F3n del sujeto pasivo
+		// Operaciones sujetas con inversión del sujeto pasivo
 		,CT_C122(Mod303Key.CT_C122, (mod, vat) -> ventasISP( vat, mod),
 			(ctx, mod, vat) -> add(Mod303Key.CT_C122, mod, vat.getBase()), null, null, null)
-		//Operaciones no sujetas por reglas de localizaci\u00F3n acogidas a los reg\u00EDmenes especiales de ventanilla Ãºnica.
+		//Operaciones no sujetas por reglas de localización acogidas a los regímenes especiales de ventanilla única.
 		,CT_C123(Mod303Key.CT_C123)
-		//Operaciones sujetas y acogidas a los reg\u00EDmenes especiales de ventanilla Ãºnica.
+		//Operaciones sujetas y acogidas a los regímenes especiales de ventanilla única.
 		,CT_C124(Mod303Key.CT_C124)
 /*
 
-		// Operaciones no sujetas o con inversiÃ³n del sujeto pasivo que originan el
-		// derecho a deducciÃ³n
+		// Operaciones no sujetas o con inversión del sujeto pasivo que originan el
+		// derecho a deducción
 		, CT_C61(Mod303Key.CT_C61, (mod, vat) -> ventasISPExtraComunitariasCanCeuServicios( vat, mod),
 				(ctx, mod, vat) -> add(Mod303Key.CT_C61, mod, vat.getBase()), null, null, null)
  */		
 
-		// Importes de las ventas a las que habiÃ©ndoles sido aplicado el rÃ©gimen
+		// Importes de las ventas a las que habiéndoles sido aplicado el régimen
 		// especial del criterio de caja hubieran
 		// resultado devengadas conforme a la regla general de devengo contenida en el
 		// art. 75 LIVA
@@ -2218,26 +2251,26 @@ class Mod303AEAT2024T3Declaration extends Mod303AEAT {
 			, null, null, null, null)
 
 		// Importes de las adquisiciones de bienes y servicios a las que sea de
-		// aplicaciÃ³n o afecte el rÃ©gimen especial del criterio de caja
+		// aplicación o afecte el régimen especial del criterio de caja
 		,CT_C74(Mod303Key.CT_C74 , (mod, vat) -> vat.isNotSales() && vat.isVatAccrualRegime()
 			, null, null, null, null)
 		,CT_C75(Mod303Key.CT_C75 , (mod, vat) -> vat.isNotSales() && vat.isVatAccrualRegime()
 			, null, null, null, null)
 
-		// RegularizaciÃ³n cuotas art. 80.Cinco.5a LIVA
+		// Regularización cuotas art. 80.Cinco.5a LIVA
 		, CT_C76(Mod303Key.CT_C76)
 
 		// Suma de resultados
 		, CT_C64(Mod303Key.CT_C64, null, null, null, "CT_C46+CT_S58+CT_C76", null)
 
-		// % Atribuible a la AdministraciÃ³n del Estado
+		// % Atribuible a la Administración del Estado
 		, CT_C65(Mod303Key.CT_C65, null, null, (ctx, mod) -> add(Mod303Key.CT_C65, mod, 100.0), null, null)
 
-		// Cuota atribuible a la AdministraciÃ³n del Estado
+		// Cuota atribuible a la Administración del Estado
 		, CT_C66(Mod303Key.CT_C66, null, null, null, "round(CT_C64*CT_C65/100)",
 				"<li><b>Resultado:</b> @{CT_C65} % de @{CT_C64} igual <b>@{CT_C66}</b></li>")
 
-		// IVA a la importaciÃ³n liquidado por la Aduana pendiente de ingreso
+		// IVA a la importación liquidado por la Aduana pendiente de ingreso
 		, CT_C77(Mod303Key.CT_C77)
 
 		// A partir de 2021 la casilla 67 se desglosa en 3 casillas (110, 78 y 87)
@@ -2250,10 +2283,10 @@ class Mod303AEAT2024T3Declaration extends Mod303AEAT {
 			)
 
 		// Cuotas a compensar de periodos anteriores aplicadas en este periodo
-		// ValidaciÃ³n que hace la Agencia Tributaria:
-		//	El resultado de la autoliquidaciÃ³n no podrÃ¡ ser A COMPENSAR, si la casilla (78)
-		//	estÃ¡ cumplimentada, es decir, si se hubieran aplicado a la autoliquidaciÃ³n que se
-		//	estÃ© presentando cuotas pendientes de compensaciÃ³n generadas en perÃ­odos
+		// Validación que hace la Agencia Tributaria:
+		//	El resultado de la autoliquidación no podrá ser A COMPENSAR, si la casilla (78)
+		//	está cumplimentada, es decir, si se hubieran aplicado a la autoliquidación que se
+		//	está presentando cuotas pendientes de compensación generadas en periodos
 		//	anteriores.		
 		, CT_C78(Mod303Key.CT_C78, null, null,
 				(ctx, mod) -> add(Mod303Key.CT_C78, mod, mod.getAmount(Mod303Key.CT_C110)), "checkC78(CT_C78,CT_C110,CT_C66,CT_C77)", null)
@@ -2262,14 +2295,14 @@ class Mod303AEAT2024T3Declaration extends Mod303AEAT {
 		, CT_C87(Mod303Key.CT_C87, null, null, null, "CT_C110-CT_C78", null)
 
 		// Exclusivamente para sujetos pasivos que tributan conjuntamente a la
-		// AdministraciÃ³n del Estado
-		// y a las Diputaciones Forales. Resultado de la regularizaciÃ³n anual.
+		// Administración del Estado
+		// y a las Diputaciones Forales. Resultado de la Regularización anual.
 		, CT_C68(Mod303Key.CT_C68)
 
 		// Resultado
 		, CT_C69(Mod303Key.CT_C69, null, null, null, "CT_C66+CT_C77-CT_C78+CT_C68", null)
 
-		// A deducir (exclusivamente en caso de autoliquidaciÃ³n complementaria)
+		// A deducir (exclusivamente en caso de autoliquidación complementaria)
 		, CT_C70(Mod303Key.CT_C70, null, null, (ctx, mod) -> {
 				if (mod.isComplementary()) {
 					add(Mod303Key.CT_C70, mod, Mod303DAO.getSamePeriodEffectiveModels(ctx, mod)
@@ -2440,12 +2473,6 @@ class Mod303AEAT2024T3Declaration extends Mod303AEAT {
 		// Si la declaración es complementaria y por diferencia hay que tener
 		// en cuenta que en los ejercicio anteriores donde ahora se aplica un 7.5% 
 		// se aplicaba un 5%
-//		return isCommonNationalSales(vat, mod) 
-//			&& ( 
-//				(mod.isComplementary() && vat.getPercentage() == PERCENT75)
-//			 || (mod.isComplementary() && (vat.getPercentage() == PERCENT75 || vat.getPercentage() == PERCENT5))
-//		); 
-		
 		if (!mod.isComplementary()) {
 			return isCommonNationalSales(vat, mod)
 				&& (mod.getYear() > 2024
@@ -2844,7 +2871,7 @@ class Mod303AEAT2024T3Declaration extends Mod303AEAT {
 		super.specificInitialization(mod303);
 		if (mod303.getDefaultVATRegime() == VATRegime.SIMPLIFIED) {
 			if (AonMathUtils.isZero(mod303.getAmount(Mod303Key.CT_C46))) {
-				mod303.putAmount(Mod303Key.CT_A02, 0); // SÃ³lo Reg. Simplificado.
+				mod303.putAmount(Mod303Key.CT_A02, 0); // Sólo Reg. Simplificado.
 			} else {
 				mod303.putAmount(Mod303Key.CT_A02, 1); // Reg. Simplificado. y General
 			}
@@ -2852,7 +2879,7 @@ class Mod303AEAT2024T3Declaration extends Mod303AEAT {
 			if (AonMathUtils.isNotZero(mod303.getAmount(Mod303Key.CT_S58))) {
 				mod303.putAmount(Mod303Key.CT_A02, 1); // Reg. Simplificado. y General
 			} else {
-				mod303.putAmount(Mod303Key.CT_A02, 2); // SÃ³lo Reg. Simplificado. y General
+				mod303.putAmount(Mod303Key.CT_A02, 2); // Sólo Reg. Simplificado. y General
 			}
 		}
 	}

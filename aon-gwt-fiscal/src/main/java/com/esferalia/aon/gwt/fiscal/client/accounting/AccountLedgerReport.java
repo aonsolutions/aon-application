@@ -15,6 +15,7 @@ import com.esferalia.aon.gwt.fiscal.client.AccountEntrySelectionEvent;
 import com.esferalia.aon.gwt.fiscal.client.AccountEntrySelectionHandler;
 import com.esferalia.aon.gwt.fiscal.client.MainEntryPoint;
 import com.esferalia.aon.gwt.fiscal.client.accounting.PrintReportDialog.IPrintReportDialogCallback;
+import com.esferalia.aon.gwt.fiscal.client.accounting.panel.JournalPanelReport;
 import com.esferalia.aon.gwt.fiscal.client.accounting.panel.LedgerPanelReport;
 import com.esferalia.aon.gwt.fiscal.shared.IRequestParamsNames;
 import com.esferalia.aon.gwt.fiscal.shared.JsonParams;
@@ -84,7 +85,15 @@ public class AccountLedgerReport extends MainEntryPoint {
 		
 		AON.ensureInjected();
 		DockLayoutPanel dockLayoutPanel = new DockLayoutPanel(Unit.PX);
-		LedgerPanelReport panel = new LedgerPanelReport(options);
+		final AonToolbarButton filterButton = new AonToolbarButton("", AON.CSS.aonToolbarFilterContainer());
+		LedgerPanelReport panel = new LedgerPanelReport( options );
+		
+		panel.addFilterMaximizeHandler(event -> {
+        	filterButton.setHTML("<span class='material-icons'>filter_alt_off</span>");
+		});
+		panel.addFilterMinimizeHandler(event -> {
+			filterButton.setHTML("<span class='material-icons'>filter_alt</span>");
+		});
 		
 		AonToolbar toolbar = new AonToolbar(AON.MSG.ledgerReport());
 
@@ -178,6 +187,23 @@ public class AccountLedgerReport extends MainEntryPoint {
 		buttonContainer.add(exportExcel);
 
 		toolbar.add(buttonContainer);
+		
+		filterButton.setHTML("<span class='material-icons'>filter_alt_off</span>");
+		
+		filterButton.addClickHandler(new ClickHandler() {
+	
+		    @Override
+		    public void onClick(ClickEvent event) {
+		        if (panel.isFilterPanelOpened()) {
+		        	panel.closeFilterPanel();
+			    } else {
+		            panel.openFilterPanel();
+	
+		        }
+		    }
+		});
+				
+		toolbar.add(filterButton);
 		
 		dockLayoutPanel.addNorth(toolbar, AonToolbar.HEIGTH);
 		dockLayoutPanel.add( panel );

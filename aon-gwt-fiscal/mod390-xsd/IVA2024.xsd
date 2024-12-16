@@ -828,6 +828,7 @@
 										</xs:element>
 										<xs:element name="CuotaDevengada" type="tipo_ImpPositivo" minOccurs="0"/>
 										<xs:element name="Lorca" type="tipo_ImpPositivo" minOccurs="0"/>
+                                        <xs:element name="Dana" type="tipo_ImpPositivo" minOccurs="0"/>
 										<xs:element name="CuotaSoportada" type="tipo_ImpPositivo" minOccurs="0"/>
 										<xs:element name="IndiceCorrector" type="tipo_IndiceCorrector" minOccurs="0"/>
 										<xs:element name="Resultado" type="tipo_ImpNegativo" minOccurs="0"/>
@@ -846,6 +847,7 @@
 										<xs:element name="VolIngresos" type="tipo_ImpPositivo" minOccurs="0"/>
 										<xs:element name="IndCuota" type="tipo_InCuota" minOccurs="0"/>
 										<xs:element name="CuotaDevengada" type="tipo_ImpPositivo" minOccurs="0"/>
+                                        <xs:element name="Dana" type="tipo_ImpPositivo" minOccurs="0"/>
 										<xs:element name="CuotasSoportadas" type="tipo_ImpPositivo" minOccurs="0"/>
 										<xs:element name="CuotaRegSimplificado" type="tipo_ImpNegativo" minOccurs="0"/>
 									</xs:sequence>

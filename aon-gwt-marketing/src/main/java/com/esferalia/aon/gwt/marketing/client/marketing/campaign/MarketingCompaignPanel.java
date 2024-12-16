@@ -69,15 +69,15 @@ public abstract class MarketingCompaignPanel extends ScrollPanel {
 	private static enum COLS {
 		  CHK(AonStringUtils.EMPTY					,"2rem"				,"")
 		, DES(AON.MSG.description()					,"-moz-available"  	,"min-width: 5rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
-		, BUD("Presupuesto"							,"6rem" 			,"")
-		, BDA("P. Acumulado"						,"6rem" 			,"")
-		, EXP("Gastos"								,"6rem" 			,"")
-		, EXA("G. Acumulados"						,"6rem" 			,"")
-		, STD("F. Inicio"							,"4rem" 			,"")
-		, END("F. Fin"								,"4rem" 			,"")
-		, TYP(AON.MSG.scope()						,"5rem" 			,"white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
-		, ACT("Estado"								,"3rem"  			,"")
-		, BUT(AonStringUtils.EMPTY					,"2rem" 			,"")
+		, BUD("Presupuesto"							,"7rem" 			,"")
+		, BDA("P. Acumulado"						,"7rem" 			,"")
+		, EXP("Gastos"								,"7rem" 			,"")
+		, EXA("G. Acumulados"						,"7rem" 			,"")
+		, STD("F. Inicio"							,"5rem" 			,"")
+		, END("F. Fin"								,"5rem" 			,"")
+		, TYP(AON.MSG.scope()						,"6rem" 			,"white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
+		, ACT("Estado"								,"4rem"  			,"")
+		, BUT(AonStringUtils.EMPTY					,"3rem" 			,"")
 		;
 
 		String headerLabel;

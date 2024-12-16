@@ -8,6 +8,10 @@ import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.CommonService;
 import com.esferalia.aon.gwt.common.client.CommonServiceAsync;
 import com.esferalia.aon.gwt.common.client.CommonServiceAsyncDecorator;
+import com.esferalia.aon.gwt.common.client.widget.MinimizePanel.MaximizeEvent;
+import com.esferalia.aon.gwt.common.client.widget.MinimizePanel.MaximizeHandler;
+import com.esferalia.aon.gwt.common.client.widget.MinimizePanel.MinimizeEvent;
+import com.esferalia.aon.gwt.common.client.widget.MinimizePanel.MinimizeHandler;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonCloseTab;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDateBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonSearchPanelButton;
@@ -41,6 +45,8 @@ import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.i18n.client.DateTimeFormat.PredefinedFormat;
+import com.google.gwt.layout.client.Layout.AnimationCallback;
+import com.google.gwt.layout.client.Layout.Layer;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
@@ -59,6 +65,7 @@ public class AnalyticalPanelReport extends DockLayoutPanel implements Focusable,
 
 	private static CommonServiceAsync commonService;
 
+	private SimpleLayoutPanel filterPanel;
 	private SimpleLayoutPanel centerPanel;
 	private TabLayoutPanel tabPanel;
 	
@@ -106,8 +113,8 @@ public class AnalyticalPanelReport extends DockLayoutPanel implements Focusable,
 			activitiesListBoxEnabled = (options.getConfiguration() != null && options.getConfiguration().hasActivities());
 			addStyleName(AON.CSS.aonScrollArea());
 			addStyleName(AON.CSS.aonMarginBottom());
-			SimpleLayoutPanel northPanel = new SimpleLayoutPanel();
-			addNorth(northPanel, 75);
+			filterPanel = new SimpleLayoutPanel();
+			addNorth(filterPanel, 75);
 			SimpleLayoutPanel centerPanelContainer = new SimpleLayoutPanel();
 			centerPanelContainer.setStyleName(AON.CSS.aonSelector());
 			centerPanel = new SimpleLayoutPanel();
@@ -116,7 +123,7 @@ public class AnalyticalPanelReport extends DockLayoutPanel implements Focusable,
 			centerPanelContainer.setWidget(tabPanel);
 			add(centerPanelContainer);
 
-			fillNorthPanel(northPanel,options,params);
+			fillNorthPanel(filterPanel,options,params);
 		}
 	}
 	
@@ -363,38 +370,7 @@ public class AnalyticalPanelReport extends DockLayoutPanel implements Focusable,
 		buttons.add(refreshButton);
 		tab.setWidget(1, 4, buttons );
 
-		FlowPanel min = new FlowPanel();
-		min.setStyleName(AON.CSS.aonTextRight());
-		min.addStyleName(AON.CSS.aonPaddingRight());
-		min.addStyleName(AON.CSS.aonNowrap());
-		min.addStyleName(AON.CSS.aonWidthAll());
-		
-		AonSearchPanelButton maximize = new AonSearchPanelButton(AON.MSG.maximize(),AON.CSS.aonIconMaximize());
-		maximize.addClickHandler(new ClickHandler() {
-			
-			@Override
-			public void onClick(ClickEvent event) {
-				tab.removeStyleName(AON.CSS.aonDisplayNone());
-				AnalyticalPanelReport.this.setWidgetSize(northPanel, 95 );
-				AnalyticalPanelReport.this.animate(500);
-			}
-		});
-
-		min.add(maximize);
-		
-		AonSearchPanelButton minimize = new AonSearchPanelButton(AON.MSG.minimize(),AON.CSS.aonIconMinimize());
-		minimize.addClickHandler(new ClickHandler() {
-			
-			@Override
-			public void onClick(ClickEvent event) {
-				tab.addStyleName(AON.CSS.aonDisplayNone());
-				AnalyticalPanelReport.this.setWidgetSize(northPanel, 25);
-				AnalyticalPanelReport.this.animate(500);
-			}
-		});
-		min.add(minimize);
-
-		mainTab.setWidget(0, 1, min);
+		mainTab.setWidget(0, 1, getCloseButtonsPanel());
 		mainTab.getCellFormatter().setStyleName(0,1, AON.CSS.aonSearchPanelLabel());
 
 		northPanel.setWidget(mainTab);
@@ -613,6 +589,71 @@ public class AnalyticalPanelReport extends DockLayoutPanel implements Focusable,
 			.setSecurityLevel(confidential!=null?SecurityLevel.safeValueOf(confidential.getSelectedIndex()):SecurityLevel.OFFICIAL)
 			;
 		
+	}
+	
+	private FlowPanel getCloseButtonsPanel() {
+		FlowPanel min = new FlowPanel();
+		min.setStyleName(AON.CSS.aonTextRight());
+		min.addStyleName(AON.CSS.aonPaddingRight());
+		min.addStyleName(AON.CSS.aonNowrap());
+		min.addStyleName(AON.CSS.aonWidthAll());
+		
+		AonSearchPanelButton close = new AonSearchPanelButton(AON.MSG.close(),AON.CSS.aonIconClose());
+		close.addClickHandler(new ClickHandler() {
+			
+			@Override
+			public void onClick(ClickEvent event) {
+				AnalyticalPanelReport.this.closeFilterPanel();
+			}
+		});
+		min.add(close);
+		return min;
+	}
+
+	public void closeFilterPanel() {
+		AnalyticalPanelReport.this.setWidgetSize(filterPanel, 0);
+		AnalyticalPanelReport.this.animate(500, new AnimationCallback() {
+			
+			@Override
+			public void onAnimationComplete() {
+				MinimizeEvent.fire(AnalyticalPanelReport.this);
+			}
+			@Override
+			public void onLayout(Layer arg0, double arg1) {							
+			}
+			
+		});
+	}
+	
+	public void openFilterPanel() {
+		AnalyticalPanelReport.this.setWidgetSize(filterPanel, 75);
+		AnalyticalPanelReport.this.animate(500, new AnimationCallback() {
+			
+			@Override
+			public void onAnimationComplete() {
+				MaximizeEvent.fire(AnalyticalPanelReport.this);
+			}
+			@Override
+			public void onLayout(Layer arg0, double arg1) {							
+			}
+			
+		});
+	}
+	
+	public boolean isFilterPanelOpened() {
+		double filterPanelSize = getWidgetSize(filterPanel);
+		if (Double.compare(filterPanelSize, 0.0) == 0) {
+			return false;
+		}
+		return true;
+	}
+	
+	public HandlerRegistration addFilterMinimizeHandler(MinimizeHandler handler) {
+		return addHandler(handler, MinimizeEvent.getType());
+	}
+
+	public HandlerRegistration addFilterMaximizeHandler(MaximizeHandler handler) {
+		return addHandler(handler, MaximizeEvent.getType());
 	}
 	
 }

@@ -729,8 +729,8 @@ public class SistemaRED {
 	}
 	
 	public static byte[] getSecondaryUsersPDF(final InputStream certificateInputStream,
-			final String certificatePassword, final String certificateType) throws SegSocialException, IOException {
-		return ServicioREDSecondaryUser.getSecondaryUsersPDF(certificateInputStream, certificatePassword, certificateType);
+			final String certificatePassword, final String certificateType, String autorizationCode) throws SegSocialException, IOException {
+		return ServicioREDSecondaryUser.getSecondaryUsersPDF(certificateInputStream, certificatePassword, certificateType, autorizationCode);
 	}
 
 	public static Collection<SecondaryUser> getSecondaryUsers(final byte[] certificateData,
@@ -968,8 +968,8 @@ public class SistemaRED {
 
 	}
 
-	public static byte[] getAssignedCCCsPDF(ByteArrayInputStream certificateInputStream, String certificatePassword, String certificateType) throws SegSocialException, IOException {
-		return SistemaREDCCC.getAssignedCCCsPDF(certificateInputStream, certificatePassword, certificateType);
+	public static byte[] getAssignedCCCsPDF(ByteArrayInputStream certificateInputStream, String certificatePassword, String certificateType, String autorizationCode) throws SegSocialException, IOException {
+		return SistemaREDCCC.getAssignedCCCsPDF(certificateInputStream, certificatePassword, certificateType, autorizationCode);
 	}
 
 }

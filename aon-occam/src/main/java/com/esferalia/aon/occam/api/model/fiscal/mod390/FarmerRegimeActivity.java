@@ -10,6 +10,7 @@ public class FarmerRegimeActivity implements Serializable {
     protected double incomes;
     protected double quotaIndex;
     protected double accrualQuota;
+    private double danaReduction;   // Reducción DANA 2024
     protected double inputQuotas;
     protected double quota;
     
@@ -59,6 +60,13 @@ public class FarmerRegimeActivity implements Serializable {
 	}
 	public FarmerRegimeActivity setQuota(double quota) {
 		this.quota = quota;
+		return this;
+	}
+	public double getDanaReduction() {
+		return danaReduction;
+	}
+	public FarmerRegimeActivity setDanaReduction(double danaReduction) {
+		this.danaReduction = danaReduction;
 		return this;
 	}
     
