@@ -95,6 +95,7 @@ import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.DecoratedPopupPanel;
 import com.google.gwt.user.client.ui.Grid;
+import com.google.gwt.user.client.ui.HasTreeItems;
 import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
@@ -184,7 +185,7 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 		}
 		
 		@Override
-		protected void onEnterprise(Enterprise enterprise, TreeItem rootItem) {
+		protected <T extends HasTreeItems>  void onEnterprise(Enterprise enterprise, T rootItem) {
 			filter(enterprise).ifPresent(e -> super.onEnterprise(e, rootItem));
 		}
 		
