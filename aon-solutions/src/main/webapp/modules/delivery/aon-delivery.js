@@ -33,6 +33,7 @@ export class AonDelivery extends AonElement {
 	DELIVERY_TABS_BUTTON;
 	PACKAGING_PRODUCT
 	PACKAGING_SOURCE_PRODUCT
+	DIV;
 	delivery;
 	packaging;
 	salesDetails;
@@ -69,10 +70,11 @@ export class AonDelivery extends AonElement {
 		this.PACKAGING_PRODUCT = this.id + 'PackagingProduct';
 		this.PACKAGING_SOURCE_PRODUCT = this.id + 'PackagingSourceProduct';
 		this.DELIVERY_TABS = this.id + CONSTANT.TABS.initCap();
+		this.DIV = this.id + 'Div';
 
 		this.options = this.options || [
-			{ title: MSG.DELIVERY, fn: () => alert("Delivery")},
-			{ title: "Empaquetado", fn: () => alert("Packaging")}
+			{ title: MSG.DELIVERY, fn: () => this.buildDelivery(this.DIV)},
+			{ title: "Empaquetado", fn: () => this.buildPackaging(this.DIV)}
 		];
 	}
 
@@ -83,20 +85,18 @@ export class AonDelivery extends AonElement {
 		toolbar.title = this.delivery.reference; 
 		this.appendChild(toolbar);
 		// toolbar.addButton2(ACTION.SAVE, () => this.save());
+		toolbar.addButton2(ACTION.ADD, () => this.addPackaging());
 		toolbar.addButton2(ACTION.ACCEPT, () => this.accept());
 		toolbar.addButton2(ACTION.BACK, () => this.back());
 
-		let div = this.createElement(TAG.DIV);
+		let div = this.createDiv();
+		div.id = this.DIV;
 		div.style.width = "100%";
 
 		this.buildTabs();
-
-    	tabs.setButtons(this.DELIVERY_TABS_BUTTON);
-
-	    this.appendChild(tabs);
-
 		this.appendChild(div);
-		this.buildDeliveryGeneral(div);
+
+		this.buildDelivery();
 	}
 
 	buildTabs() {
@@ -106,16 +106,20 @@ export class AonDelivery extends AonElement {
 		this.appendChild(tab);
 	}
 
-	buildDelivery(parent){
-		this.buildDeliveryGeneral(parent);
-		this.buildDeliveryDetail(parent);
+	buildDelivery(){
+		let parent = this.getElement(this.DIV);
+		this.clearElement(parent);
+		// this.buildDeliveryGeneral();
+		this.buildDeliveryDetail();
 	}
 
-	buildDeliveryGeneral(parent) {
+	buildDeliveryGeneral() {
+		let parent = this.getElement(this.DIV);
 		createCard(this.DELIVERY_CARD, 'Datos Albarán', parent);
 	}
 
-	buildDeliveryDetail(parent) {
+	buildDeliveryDetail() {
+		let parent = this.getElement(this.DIV);
 		let card = createCard(this.DELIVERY_DETAIL_CARD, 'Detalles', parent);
 
 		let table = new AonBasicTable();
@@ -141,8 +145,10 @@ export class AonDelivery extends AonElement {
 		}
 	}
 
-	buildPackaging(parent){
-		let div = this.createElement(TAG.DIV, "aonPackageDiv")
+	buildPackaging(){
+		let parent = this.getElement(this.DIV);
+		this.clearElement(parent);
+		let div = this.createDiv("aonPackageDiv")
 		let packagingList = new AonMobileDeliveryPackagingList();
 		packagingList.setToolbar(this.DELIVERY_TOOLBAR);
 		packagingList.setPackages(this.delivery.packaging);
@@ -196,7 +202,6 @@ export class AonDelivery extends AonElement {
 	}
 
 	addPackaging() {
-		this.getApplication().removeFloatOption();
 		this.clear();
 		let toolbar = new AonToolbar();
 		toolbar.id = this.DELIVERY_TOOLBAR;
