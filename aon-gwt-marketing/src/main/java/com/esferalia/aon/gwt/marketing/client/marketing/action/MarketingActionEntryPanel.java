@@ -462,7 +462,6 @@ public abstract class MarketingActionEntryPanel extends AonCustomDockLayout{
 		actionsPanel.getElement().getStyle().setProperty("padding", "0 1rem");
 		
 		AonCustomCard actionsCard = new AonCustomCard("Clientes Potenciales");
-		actionsCard.getElement().getStyle().setProperty("min-height", "13rem");
 		actionsCard.getElement().getStyle().setProperty("width", "100%");
 		
 		centerPanel = new SimpleLayoutPanel();
@@ -480,8 +479,25 @@ public abstract class MarketingActionEntryPanel extends AonCustomDockLayout{
 		Scheduler.get().scheduleDeferred(new Command() {
 	        public void execute() {
 	        	description.setFocus(true);
+	        	
+	        	int alturaRestante = calcularAlturaRestante(centerPanel);
+	        	centerPanel.setHeight(alturaRestante + "px");
 	        }
 	    });	
+	}
+
+	private int calcularAlturaRestante(Widget widget) {
+		// Posición del widget desde el inicio del documento
+	    int posicionWidget = widget.getElement().getAbsoluteTop();
+
+	    // Altura del viewport
+	    int alturaViewport = Window.getClientHeight();
+
+	    // Scroll actual (en caso de que la página tenga desplazamiento)
+	    int scrollActual = Window.getScrollTop();
+
+	    // Altura restante
+	    return alturaViewport + scrollActual - posicionWidget - 35;
 	}
 
 	private Widget createInfoCardContent(Widget otherDataContent) {
