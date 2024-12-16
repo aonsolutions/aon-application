@@ -4028,7 +4028,7 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 					p -> p.getIsSalaryProperty().eq(true).and(p.getContractProperty().eq(contractId))
 							.and(p.getStartDateProperty().le(prevEndMonth)).and(p.getEndDateProperty().ge(prevStartMonth)));
 			
-			Pair<Double, Double> pair = new Pair<Double, Double>(0.00, 0.00);
+			Pair<Double, Double> pair = new Pair<>(0.00, 0.00);
 			salaries.forEach(s-> {
 				pair.fst += s.getCommonContingenciesBase();
 				
@@ -4039,13 +4039,43 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 				pair.snd += partial ? naturalDays: quoteDays ;
 			} )
 			;
-
-			Stream<com.esferalia.aon.occam.api.model.Salary> delays = AON.getSalaries(new AONContext(connection),
-					p -> p.getIsDelayProperty().eq(true).and(p.getContractProperty().eq(contractId))
-							.and(p.getStartDateProperty().le(prevEndMonth)).and(p.getEndDateProperty().ge(prevStartMonth)));
-			delays.forEach(s-> pair.fst += s.getCommonContingenciesBase());
+			Stream<com.esferalia.aon.occam.api.model.Salary> delays =
+			AON.getSalaryData(new AONContext(connection), p -> p.getIsDelayProperty().eq(true).and(p.getContractProperty().eq(contractId))
+					.and(p.getStartDateProperty().le(prevEndMonth)).and(p.getEndDateProperty().ge(prevStartMonth)));
+				
+			delays.forEach(s ->  { 
+				List<ContextData> cgcBases = s.getContextData(ContextVariable.CGC_BASE.getName(), prevStartMonth, prevEndMonth);
+				double commonContingenciesBase = cgcBases.stream().collect(Collectors.summingDouble( d -> AonNumberUtils.todouble(d.getExpression()) ));
+				pair.fst += commonContingenciesBase;
+			
+			});
 			
 			br = pair.fst / pair.snd;
+			
+			boolean occupational = getLeaves().stream()
+					.filter(leave -> date.compareTo(leave.getEnd()) <= 0 )
+					.filter(leave -> date.compareTo(leave.getStart() ) >= 0 || AonDateUtils.get(leave.getStart(), Calendar.DAY_OF_MONTH) == 1)
+					.anyMatch(l -> l.getType() == LeaveType.OCCUPATIONAL_DISEASE);
+			if ( occupational ) {
+				Date prevStartYear = add(getFirstDayOfMonth(date), Calendar.YEAR, -1);
+				Stream<com.esferalia.aon.occam.api.model.Salary> prevYearSalaryDatas = AON.getSalaryData(
+						new AONContext(connection),
+						p -> p.getContractProperty().eq(contractId)
+								.and(p.getIsSalaryProperty().eq(true).or(p.getIsDelayProperty().eq(true)))
+								.and(p.getStartDateProperty().le(prevEndMonth))
+								.and(p.getEndDateProperty().ge(prevStartYear)));
+				double overtimeBase =
+				prevYearSalaryDatas.map( s -> {
+					double structuralOvertimeBase = s.getContextData(STRUCTURAL_OVERTIME_BASE.getName(), Collectors.summingDouble(AonNumberUtils::todouble));
+					double nonStructuralOvertimeBase = s.getContextData(NON_STRUCTURAL_OVERTIME_BASE.getName(), Collectors.summingDouble(AonNumberUtils::todouble));
+					return structuralOvertimeBase + nonStructuralOvertimeBase;
+				}).collect(Collectors.summingDouble( d -> d ));
+				
+				Date contractStartDate = getContractStartate();
+				long days = contractStartDate.after(prevStartYear) ? new Period(getContractStartate(), prevEndMonth).getDays() : 365;
+				double brOvertime = overtimeBase / days; 
+				 br += brOvertime;
+			}
 			
 			salaries.close();
 		} catch (Throwable t) {
@@ -5709,12 +5739,30 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 		if ( calendar == null )
 			return;
 		
+		
+		List<Period> contractNonWorking  = new ArrayList<>();
+		contractNonWorking.addAll( getPeriods(ctx, ContextVariable.NON_WORKING, value -> value instanceof Number number && number.doubleValue() > 0 ));
+		Map<Integer, List<Period>> contractNonHours = new HashMap<>();
+		WEEK_HOURS_VARIABLES.forEach((day,hourVar) -> contractNonHours.put(day, getPeriods(ctx, hourVar, value -> AonNumberUtils.todouble(value) <= 0 )));
+		
 		Deque<TimedObject<Double>> holidays = new ArrayDeque<>();
 		new Period(contractStartDate, contractEndDate)
 		.forEachDay( day -> {
+			Date date = day.getTime();
+			if ( contractNonWorking.stream().anyMatch( p -> p.contains(date))){
+				return;
+			} 
+			
+			List<Period> weekDayNonHours = contractNonHours.getOrDefault(day.get(Calendar.DAY_OF_WEEK),
+					Collections.emptyList());
+			
+			if (weekDayNonHours.stream().anyMatch(p -> p.contains(date))) {
+				return;
+			}
+				
 			if ( calendar.getDayType(day) == DayType.HOLIDAY ) {
 				if ( holidays.isEmpty() ) {
-					holidays.push(new TimedObject<Double>(1d, day.getTime(), day.getTime()));
+					holidays.push(new TimedObject<>(1d, day.getTime(), day.getTime()));
 				} else {
 					TimedObject<Double> prevHoliday = holidays.peek();
 					Date prevHolidayEnd = prevHoliday.getPeriod().getEnd();
@@ -6237,6 +6285,22 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 
 		return periods;
 	}
+	
+	private List<Period> getPeriods(ExpressionContext ctx, Predicate<ITimedResult<?>> filter,  String ...varNames) {
+		List<Period> periods = new ArrayList<>();
+		for ( String varName : varNames ) {
+			try {
+				List<ITimedResult<Object>> varResults = ctx.eval(varName, contractStartDate,
+						contractEndDate);
+				varResults.stream().filter(filter)
+						.forEach(r -> periods.add(r.getPeriod()));
+			} catch (Exception e) {
+			}
+		}
+		return periods;
+	}
+	
+	
 
 	private List<Period> joinEquals(List<ITimedVariable<Object>> vars) {
 

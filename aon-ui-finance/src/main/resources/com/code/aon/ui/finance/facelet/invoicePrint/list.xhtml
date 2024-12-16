@@ -31,13 +31,14 @@
 						rendered="#{saleInvoice.tbai or printParams.saleInvoiceDefault}"
 						styleClass="aon-finding-toolbar-item aon-icon-zip">
 					</aon:htmlCommandLink>
-															
-					<aon:commandButton value="&#160;" id="downloadInvoicesZip"
+					
+					<!-- <aon:commandButton value="&#160;" id="downloadInvoicesZip"
 						actionListener="#{invoicePrint.onStartInvoicesZip}"
 						rendered="#{!saleInvoice.tbai and !printParams.saleInvoiceDefault}"
 						reRender="progressBarForm"
 						styleClass="aon-finding-toolbar-item aon-icon-zip aon-finding-toolbar-item-no-border">
-					</aon:commandButton>	
+					</aon:commandButton> -->	
+					
 					<aon:if test="#{invoicePrint.printWord}">
 						<aon:htmlCommandLink id="invoicePrint-reportWord"
 							value="&#160;" target="_new" 

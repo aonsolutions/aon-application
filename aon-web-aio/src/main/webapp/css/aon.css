@@ -1020,6 +1020,7 @@ background-color: var(--aonLightGray);
 
 
 .aonCompanyDiv {
+  width: 60%;
   display: flex;
   flex-direction: column;
   gap: 1rem;
@@ -1028,9 +1029,6 @@ background-color: var(--aonLightGray);
   align-items: start;
   margin: 0 auto;
 
-  width: 84%;
-  /*padding-bottom: 48px;*/
-  max-width: 1128px;
 }
 
 .aonCompanyTitleDiv{
@@ -1378,6 +1376,10 @@ margin-top: 20px;
   background-color: var(--aonCardColor);
 }
 
+.aonAppsDiv .aonCard{
+	border: none;
+	background-color: transparent;
+}
 
 
 .aonCardFlex{
@@ -2559,13 +2561,23 @@ size: 32px;
 }
 
 .aonWelcomeDiv  {
-    width: 84%;
+    width: 60%;
     display: flex;
     margin: 0 auto;
     flex-wrap: wrap;
-    max-width: 1128px;
     padding-top: 72px;
     padding-bottom: 60px;
+}
+
+.aonAppsDiv  {
+    width: 20%;
+    bottom: 40px;
+	position: absolute;
+ }
+
+.aonAppsDiv .aonCard {  
+	margin: auto;
+  	width: fit-content;
 }
 
 .aonTab {

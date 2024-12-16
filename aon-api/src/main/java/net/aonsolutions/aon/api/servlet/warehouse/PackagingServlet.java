@@ -15,9 +15,7 @@ import com.esferalia.aon.occam.api.model.IJsonNames;
 import com.esferalia.aon.occam.api.model.Options;
 import com.esferalia.aon.occam.api.model.registry.NoteType;
 import com.esferalia.aon.occam.api.model.registry.RegistryNote;
-import com.esferalia.aon.occam.api.model.seres.EdiCodes;
 import com.esferalia.aon.occam.api.model.seres.SeresInfo;
-import com.esferalia.aon.occam.api.model.seres.SeresPath;
 import com.esferalia.aon.occam.api.model.warehouse.Delivery;
 import com.esferalia.aon.occam.api.model.warehouse.DeliveryPackaging;
 import com.esferalia.aon.occam.api.model.warehouse.Packaging;
@@ -146,22 +144,11 @@ public class PackagingServlet extends AonApiHttpServlet {
 				&& rNote.getComments().trim().equalsIgnoreCase("true");
 		if(autoSendDelivery){
 			System.out.println("SEND DELIVERY TO SERES IS TRUE");
-			SeresInfo info = SERES.getSeresInfo(api.getDomain(), api.getUser());
-			if(delivery.getCustomerDocument() != null && isAldi(delivery.getCustomerDocument())) {
-				info.setSeresPath(SeresPath.ENVIO_DESADV_D01B);
-			} else if(info.getSeresPath() == null)
-				info.setSeresPath(SeresPath.ENVIO_DESADV_D96A);
+			SeresInfo info = SERES.getSeresInfo(api.getDomain(), api.getUser(), delivery);
 			DeliveryUpload du = new DeliveryUpload(api.getDomain(), api.getUser().getLogin(), info);
-			EdiCodes codes = SERES.getEdiCodes(api.getDomain(), api.getUser(), delivery);
-			delivery.setEdiCodes(codes);
+			delivery.setEdiCodes(info.getEdiCodes());
 			du.uploadDelivery(delivery);
 		} else System.out.println("SEND DELIVERY TO SERES IS FALSE");
 
-	}
-	
-	private boolean isAldi(String document) {
-		return "B63667109".equals(document)
-				|| "B56242415".equals(document)	
-				|| "B84160233".equals(document);		
 	}
 }

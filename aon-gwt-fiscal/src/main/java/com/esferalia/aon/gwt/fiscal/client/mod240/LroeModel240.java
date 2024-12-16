@@ -33,6 +33,7 @@ import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceCommunicationStatus;
 import com.esferalia.aon.occam.api.model.finance.InvoiceCommunicationTracking;
 import com.esferalia.aon.occam.api.model.finance.InvoiceCommunicationType;
+import com.esferalia.aon.occam.api.model.finance.TbaiConfiguration;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModel;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModelType;
 import com.esferalia.aon.occam.api.model.fiscal.aeat.AEATParams;
@@ -120,117 +121,129 @@ public class LroeModel240 extends DockLayoutPanel {
 	protected LroeModel240(Model240 parent, FiscalModelModuleOptions<FiscalModel> options) {
 		super(Unit.PX);
 		this.model240 = parent;
-		FiscalModel mod240 = new FiscalModel();
-		mod240.setAdministration(Administration.BIZKAIA);
-		mod240.setModel(FiscalModelType.M240);
-		mod240.setName(options.getConfiguration().getCompany().getName());
-		mod240.setDocument(options.getConfiguration().getCompany().getDocument());
-		mod240.setYear(AonDateUtils.getCurrentYear());
-		setModel(mod240);
-		setOptions(options);
-		addNorth(new AonFiscalModelHeader(mod240), AonFiscalModelHeader.HEIGTH);
-		addNorth(getToolbar(), AonToolbar.HEIGTH);
-		addWest(getMenu(), 250);
-		initializeFilter();
-		invoiceGrid = new InvoiceGrid(options, getFilterParams()) {
+		SII_SERVICE.getTbaiConfiguration(options.getDomainName(), options.getDomain(), options.getUser(), new AsyncCallback<TbaiConfiguration>() {
 			
 			@Override
-			public void info(Integer invoice, String reference) {
-				SII_SERVICE.getInvoiceCommunicationTrackingList(options.getDomainName(), options.getDomain(), options.getUser(), invoice, new AsyncCallback<List<InvoiceCommunicationTracking>>() {
+			public void onSuccess(TbaiConfiguration result) {
+				FiscalModel mod240 = new FiscalModel();
+				mod240.setAdministration(Administration.BIZKAIA);
+				mod240.setModel(FiscalModelType.M240);
+				mod240.setName(options.getConfiguration().getCompany().getName());
+				mod240.setDocument(options.getConfiguration().getCompany().getDocument());
+				mod240.setYear(AonDateUtils.getCurrentYear());
+				setModel(mod240);
+				setOptions(options);
+				addNorth(new AonFiscalModelHeader(mod240), AonFiscalModelHeader.HEIGTH);
+				addNorth(getToolbar(), AonToolbar.HEIGTH);
+				addWest(getMenu(), 250);
+				initializeFilter();
+				invoiceGrid = new InvoiceGrid(options, getFilterParams(), result.isRegistryTaxDate()) {
 					
 					@Override
-					public void onSuccess(List<InvoiceCommunicationTracking> result) {
-						FlexTable table = new FlexTable();
-						table.setWidth("100%");
-						if(result.isEmpty()) {
-							table.setWidget(0, 0, new Label("No se ha realizado ning\u00fan env\u00edo."));
-						} else {
-							result.stream().forEach(r -> {
-								Integer row = table.getRowCount();
-								table.setWidget(row, 0, new Label(AonDateUtils.formatDate(r.getInvoiceBatch().getDate())));
-								table.setWidget(row, 1, new Label(r.getInvoiceBatch().getOperation().getDescription()));
-								table.setWidget(row, 2, new Label(r.getInvoiceBatchDetail().getStatus().getDescription()));
-								
-								HorizontalPanel hp = new HorizontalPanel();
-								AonIcon downloadRequest = new AonIcon("download");
-								downloadRequest.setTitle("Descargar Petici\u00f3n");
-								downloadRequest.getElement().getStyle().setCursor(Cursor.POINTER);
-								downloadRequest.onClick(new ClickHandler() {
-									
-									@Override
-									public void onClick(ClickEvent event) {
-										SII_SERVICE.getRequestUrl(options.getDomainName(), options.getDomain(), options.getUser(), r.getInvoiceBatch().getDataResponse(), new AsyncCallback<String>() {
+					public void info(Integer invoice, String reference) {
+						SII_SERVICE.getInvoiceCommunicationTrackingList(options.getDomainName(), options.getDomain(), options.getUser(), invoice, new AsyncCallback<List<InvoiceCommunicationTracking>>() {
+							
+							@Override
+							public void onSuccess(List<InvoiceCommunicationTracking> result) {
+								FlexTable table = new FlexTable();
+								table.setWidth("100%");
+								if(result.isEmpty()) {
+									table.setWidget(0, 0, new Label("No se ha realizado ning\u00fan env\u00edo."));
+								} else {
+									result.stream().forEach(r -> {
+										Integer row = table.getRowCount();
+										table.setWidget(row, 0, new Label(AonDateUtils.formatDate(r.getInvoiceBatch().getDate())));
+										table.setWidget(row, 1, new Label(r.getInvoiceBatch().getOperation().getDescription()));
+										table.setWidget(row, 2, new Label(r.getInvoiceBatchDetail().getStatus().getDescription()));
+										
+										HorizontalPanel hp = new HorizontalPanel();
+										AonIcon downloadRequest = new AonIcon("download");
+										downloadRequest.setTitle("Descargar Petici\u00f3n");
+										downloadRequest.getElement().getStyle().setCursor(Cursor.POINTER);
+										downloadRequest.onClick(new ClickHandler() {
 											
 											@Override
-											public void onSuccess(String url) {
-												Window.open(GWT.getModuleBaseURL() + url, "_blank",null);//"status=0,toolbar=0,menubar=0,location=0");	
+											public void onClick(ClickEvent event) {
+												SII_SERVICE.getRequestUrl(options.getDomainName(), options.getDomain(), options.getUser(), r.getInvoiceBatch().getDataResponse(), new AsyncCallback<String>() {
+													
+													@Override
+													public void onSuccess(String url) {
+														Window.open(GWT.getModuleBaseURL() + url, "_blank",null);//"status=0,toolbar=0,menubar=0,location=0");	
+													}
+													
+													@Override
+													public void onFailure(Throwable arg0) {}
+												});
 											}
-											
-											@Override
-											public void onFailure(Throwable arg0) {}
 										});
-									}
-								});
-								
-								hp.add(downloadRequest);
-								
-								AonIcon downloadResponse = new AonIcon("download");
-								downloadResponse.setTitle("Descargar Respuesta");
-								downloadResponse.getElement().getStyle().setCursor(Cursor.POINTER);
-								downloadResponse.onClick(new ClickHandler() {
-									
-									@Override
-									public void onClick(ClickEvent event) {
-										SII_SERVICE.getResponseUrl(options.getDomainName(), options.getDomain(), options.getUser(), r.getInvoiceBatch().getDataResponse(), new AsyncCallback<String>() {
+										
+										hp.add(downloadRequest);
+										
+										AonIcon downloadResponse = new AonIcon("download");
+										downloadResponse.setTitle("Descargar Respuesta");
+										downloadResponse.getElement().getStyle().setCursor(Cursor.POINTER);
+										downloadResponse.onClick(new ClickHandler() {
 											
 											@Override
-											public void onSuccess(String url) {
-												Window.open(GWT.getModuleBaseURL() + url, "_blank",null);//"status=0,toolbar=0,menubar=0,location=0");	
+											public void onClick(ClickEvent event) {
+												SII_SERVICE.getResponseUrl(options.getDomainName(), options.getDomain(), options.getUser(), r.getInvoiceBatch().getDataResponse(), new AsyncCallback<String>() {
+													
+													@Override
+													public void onSuccess(String url) {
+														Window.open(GWT.getModuleBaseURL() + url, "_blank",null);//"status=0,toolbar=0,menubar=0,location=0");	
+													}
+													
+													@Override
+													public void onFailure(Throwable arg0) {}
+												});
 											}
-											
-											@Override
-											public void onFailure(Throwable arg0) {}
 										});
-									}
-								});
-								
-								hp.add(downloadResponse);
-								table.setWidget(row, 3, hp);
-							});
-						}
-						AonDialog dialog = new AonDialog("Informaci\u00f3n", table);
-						dialog.info();
+										
+										hp.add(downloadResponse);
+										table.setWidget(row, 3, hp);
+									});
+								}
+								AonDialog dialog = new AonDialog("Informaci\u00f3n", table);
+								dialog.info();
+							}
+							
+							@Override
+							public void onFailure(Throwable arg0) {
+								AonDialog dialog = new AonDialog("Informaci\u00f3n", new Label("No se ha realizado ning\u00fan env\u00edo."));
+								dialog.info();
+							}
+						});
+						
 					}
-					
+
 					@Override
-					public void onFailure(Throwable arg0) {
-						AonDialog dialog = new AonDialog("Informaci\u00f3n", new Label("No se ha realizado ning\u00fan env\u00edo."));
-						dialog.info();
+					public void download(Invoice object) {
+						Window.alert("En desarrollo...");
 					}
-				});
+
+					@Override
+					public void select(LinkedList<Invoice> selFiles) {
+						selectedInvoices = selFiles;
+						boolean visible = !selFiles.isEmpty();
+						sendButton.setVisible(visible);
+						bajaButton.setVisible(visible);
+						bajaButton.setEnabled(false);
+						
+						refreshButton.setVisible(selFiles.size() == 1
+								&& !selFiles.getFirst().getInvoiceInfo().isAccepted()
+								&& !selFiles.getFirst().getInvoiceInfo().isAcceptedWithErrors());
+					}
+				};
+				add(invoiceGrid);
+				setStyleName(AON.CSS.aonSelector());
+			}
+			
+			@Override
+			public void onFailure(Throwable arg0) {
+				// TODO Auto-generated method stub
 				
 			}
-
-			@Override
-			public void download(Invoice object) {
-				Window.alert("En desarrollo...");
-			}
-
-			@Override
-			public void select(LinkedList<Invoice> selFiles) {
-				selectedInvoices = selFiles;
-				boolean visible = !selFiles.isEmpty();
-				sendButton.setVisible(visible);
-				bajaButton.setVisible(visible);
-				bajaButton.setEnabled(false);
-				
-				refreshButton.setVisible(selFiles.size() == 1
-						&& !selFiles.getFirst().getInvoiceInfo().isAccepted()
-						&& !selFiles.getFirst().getInvoiceInfo().isAcceptedWithErrors());
-			}
-		};
-		add(invoiceGrid);
-		setStyleName(AON.CSS.aonSelector());
+		});
 	}
 	
 	public void initializeFilter() {

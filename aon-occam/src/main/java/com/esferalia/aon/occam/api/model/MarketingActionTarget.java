@@ -14,12 +14,11 @@ public class MarketingActionTarget extends Target implements Serializable {
 	private MarketingAction marketingAction;
 	private Byte actionTargetStatus;
 	
+	private Integer project;
+	
 	private Integer surveyResponse;
 	private String comments;
 	private User user;
-	
-	private boolean projectCommercial = false;
-	private Integer projectCommercialId;
 	
 	private boolean deleted = false;
 	
@@ -99,22 +98,17 @@ public class MarketingActionTarget extends Target implements Serializable {
 		return this;
 	}
 
-	public MarketingActionTarget setHasProjectCommercial(boolean projectCommercial) {
-		this.projectCommercial = projectCommercial;
-		return this;
-	}
-	
 	public Boolean hasProjectCommercial() {
-		return projectCommercial;
+		return project != null;
 	}
 	
-	public MarketingActionTarget setProjectCommercial(Integer projectCommercialId) {
-		this.projectCommercialId = projectCommercialId;
+	public MarketingActionTarget setProject(Integer project) {
+		this.project = project;
 		return this;
 	}
 	
-	public Integer getProjectCommercial() {
-		return projectCommercialId;
+	public Integer getProject() {
+		return project;
 	}
 	
 }

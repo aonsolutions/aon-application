@@ -20,6 +20,7 @@ import com.esferalia.aon.occam.api.model.MarketingCampaign;
 import com.esferalia.aon.occam.api.model.MarketingCompaignParams;
 import com.esferalia.aon.occam.api.model.Newsletter;
 import com.esferalia.aon.occam.api.model.Occam;
+import com.esferalia.aon.occam.api.model.PayMethodParams;
 import com.esferalia.aon.occam.api.model.Question;
 import com.esferalia.aon.occam.api.model.QuestionParams;
 import com.esferalia.aon.occam.api.model.SellerParams;
@@ -56,7 +57,6 @@ import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.task.TaskHolder;
 import com.esferalia.aon.occam.api.model.type.TagType;
 import com.esferalia.aon.watson.error.AonCoreException;
-import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 
@@ -97,9 +97,11 @@ public interface CommonService extends RemoteService {
 	// **************************************************
 	// ************************************* [PAY_METHOD]
 	// **************************************************
-	LinkedList<PayMethod> getPayMethods(String domainName, int domain, String user);
+	LinkedList<PayMethod> getPayMethods(String domainName, int domain, String user) throws AonCoreException;
+	LinkedList<PayMethod> getPayMethods(PayMethodParams params) throws AonCoreException;
 	PayMethod savePayMethod(String domainName,int domain, String user, PayMethod payMethod) throws AonCoreException;
 	void deletePayMethod(String domainName,int domain, String user, Integer id) throws AonCoreException;
+	void groupPayMethod(String domainName,int domain, String user, List<PayMethod> selectedPaymethodList, PayMethod groupedPaymthod) throws AonCoreException;
 
 	// **************************************************
 	// **************************************** [INVOICE]

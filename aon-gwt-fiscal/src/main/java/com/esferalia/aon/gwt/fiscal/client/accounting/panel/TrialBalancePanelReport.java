@@ -25,6 +25,8 @@ import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
+import com.google.gwt.layout.client.Layout.AnimationCallback;
+import com.google.gwt.layout.client.Layout.Layer;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
@@ -39,6 +41,7 @@ public class TrialBalancePanelReport extends DockLayoutPanel implements HasAccou
 	private SimpleLayoutPanel centerPanel;
 	private TabLayoutPanel tabPanel;
 	private TrialBalancePanelFilter filter;
+	SimpleLayoutPanel filterPanel = new SimpleLayoutPanel();
 	
 	public TrialBalancePanelReport(final AccountingReportModuleOptions options) {
 		this(options,null);
@@ -72,8 +75,7 @@ public class TrialBalancePanelReport extends DockLayoutPanel implements HasAccou
 		} else {
 			addStyleName(AON.CSS.aonScrollArea());
 			addStyleName(AON.CSS.aonMarginBottom());
-			SimpleLayoutPanel northPanel = new SimpleLayoutPanel();
-			addNorth(northPanel, 140);
+			addNorth(filterPanel, 200);
 			centerPanel = new SimpleLayoutPanel();
 			centerPanel.setStyleName(AON.CSS.aonSelector());
 			tabPanel = new TabLayoutPanel(30, Unit.PX);
@@ -87,16 +89,36 @@ public class TrialBalancePanelReport extends DockLayoutPanel implements HasAccou
 				
 				@Override
 				public void onMaximize(MaximizeEvent event) {
-					TrialBalancePanelReport.this.setWidgetSize(northPanel, 140 );
-					TrialBalancePanelReport.this.animate(500);
+					TrialBalancePanelReport.this.setWidgetSize(filterPanel, 200 );
+					TrialBalancePanelReport.this.animate(500, new AnimationCallback() {
+						
+						@Override
+						public void onAnimationComplete() {
+							MaximizeEvent.fire(TrialBalancePanelReport.this);
+						}
+						@Override
+						public void onLayout(Layer arg0, double arg1) {							
+						}
+						
+					});
 				}
 			});
 			filter.addMinimizeHandler(new MinimizeHandler() {
 				
 				@Override
 				public void onMinimize(MinimizeEvent event) {
-					TrialBalancePanelReport.this.setWidgetSize(northPanel, 30);
-					TrialBalancePanelReport.this.animate(500);
+					TrialBalancePanelReport.this.setWidgetSize(filterPanel, 0);
+					TrialBalancePanelReport.this.animate(500, new AnimationCallback() {
+						
+						@Override
+						public void onAnimationComplete() {
+							MinimizeEvent.fire(TrialBalancePanelReport.this);
+						}
+						@Override
+						public void onLayout(Layer arg0, double arg1) {							
+						}
+						
+					});
 				}
 			});
 			filter.addValueChangeHandler(new ValueChangeHandler<AccountingReportParams>() {
@@ -107,7 +129,7 @@ public class TrialBalancePanelReport extends DockLayoutPanel implements HasAccou
 					onSearch(options,params,0);
 				}
 			});
-			northPanel.setWidget(filter);
+			filterPanel.setWidget(filter);
 			onSearch(options,filter.getWidgetParams(options),0);
 		}
 	}
@@ -194,5 +216,29 @@ public class TrialBalancePanelReport extends DockLayoutPanel implements HasAccou
 			tabPanel.add(breakdownPanel,closeTab);
 			tabPanel.selectTab(tabPanel.getWidgetCount() - 1);
 		}
+	}
+	
+	public void closeFilterPanel() {
+		MinimizeEvent.fire(filter);
+	}
+	
+	public void openFilterPanel() {
+		MaximizeEvent.fire(filter);
+	}
+	
+	public boolean isFilterPanelOpened() {
+		double filterPanelSize = getWidgetSize(filterPanel);
+		if (Double.compare(filterPanelSize, 0.0) == 0) {
+			return false;
+		}
+		return true;
+	}
+
+	public HandlerRegistration addFilterMinimizeHandler(MinimizeHandler handler) {
+		return addHandler(handler, MinimizeEvent.getType());
+	}
+
+	public HandlerRegistration addFilterMaximizeHandler(MaximizeHandler handler) {
+		return addHandler(handler, MaximizeEvent.getType());
 	}
 }

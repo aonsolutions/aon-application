@@ -162,8 +162,17 @@ public class ActionTargetServlet extends AonApiHttpServlet {
 		actionTarget.setMarketingAction(ma);
 
 		// Ceck Exist Domain
-		checkExistingDomain(api, actionTarget.getTarget().getDocument(), actionTarget.getTarget().getEmail());
-
+		boolean existDomain = checkExistingDomain(api, actionTarget.getTarget().getDocument(), actionTarget.getTarget().getEmail());
+		if(existDomain) {
+			Domain parentDomain = null == api.getDomain().getParentId() ? api.getDomain() : AON.getDomain(api.getDomain().getName(), api.getDomain().getId(),
+					api.getUser().getLogin(), f -> f.getIdProperty().eq(api.getDomain().getParentId()));
+			Domain domain = AON.getDomain(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(),
+					f -> f.getNameProperty().like("%" + actionTarget.getTarget().getDocument() + "%")
+							.and(f.getParentProperty().eq(parentDomain.getId())));
+			
+			throw new IllegalArgumentException("El dominio " + domain.getName() + " ya existe para este despacho");
+		}
+		
 		// Get / Save Target
 		Optional<Target> targetOpt = AON.getTarget(api.getDomain().getName(), api.getDomain().getId(),
 				api.getUser().getLogin(), f -> f.getDocumentProperty().eq(actionTarget.getTarget().getDocument())
@@ -417,7 +426,7 @@ public class ActionTargetServlet extends AonApiHttpServlet {
 			String logoUrl = getLogoUrl(parentDomain, api.getUser());
 			String from = getFromMessage(api);
 			
-			return createEnterpriseDuplicateBody(domain, parentDomain.getDescription(), logoUrl, from);
+			return createEnterpriseDuplicateBody(domain, parentDomain, logoUrl, from);
 		}
 
 		String domainNewName = company.getDocument() + "-" + parent.getName();
@@ -526,21 +535,24 @@ public class ActionTargetServlet extends AonApiHttpServlet {
 
 		Integer commercialActivityAutoRegisterId = commercialActivityAutoRegister.getId();
 
-		// Cerrar antiguo autoregistro tracking
-		LinkedList<CommercialTracking> verificationCommercialTrackingList = AON.getCommercialTrackingList(
-				api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(),
-				f -> f.getProjectCommercialProperty().eq(projectCommercial.getId())
-						.and(f.getActivityProperty().eq(commercialActivityAutoRegisterId)));
-		verificationCommercialTrackingList.forEach(verificationCommercialTracking -> {
-			verificationCommercialTracking.setStatus((byte) 1);
-			AON.save(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(),
-					verificationCommercialTracking);
+		if(projectCommercial  != null && null != projectCommercial.getId()) {
+			// Cerrar antiguo autoregistro tracking
+			LinkedList<CommercialTracking> verificationCommercialTrackingList = AON.getCommercialTrackingList(
+					api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(),
+					f -> f.getProjectCommercialProperty().eq(projectCommercial.getId())
+							.and(f.getActivityProperty().eq(commercialActivityAutoRegisterId)));
+			verificationCommercialTrackingList.forEach(verificationCommercialTracking -> {
+				verificationCommercialTracking.setStatus((byte) 1);
+				AON.save(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(),
+						verificationCommercialTracking);
 
-		});
+			});
 
-		projectCommercial.setStatus((byte) 3);
-		AON.saveProjectCommercial(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(),
-				projectCommercial);
+			projectCommercial.setStatus((byte) 3);
+			AON.saveProjectCommercial(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(),
+					projectCommercial);
+		}
+		
 
 		Optional<MarketingActionTarget> mkActionTarget = mkAction.getTargets().stream()
 				.filter(mkTarget -> mkTarget.getId().equals(target)).findFirst();
@@ -553,9 +565,9 @@ public class ActionTargetServlet extends AonApiHttpServlet {
 		// Send mail
 		String logoUrl = getLogoUrl(parent, api.getUser());
 
-		sendTrailEnterpriseCreatedMail(api, email, logoUrl, parent.getDescription());
+		sendTrailEnterpriseCreatedMail(api, email, logoUrl, parent);
 
-		return getFinishCreationHtml(logoUrl, parent.getDescription());
+		return getFinishCreationHtml(logoUrl, parent);
 	}
 
 	// ---------------------------------------------------------------------------------------------
@@ -609,11 +621,11 @@ public class ActionTargetServlet extends AonApiHttpServlet {
 
 		// Existe expediente: se cierra la verificacion antigua y se crean los nuevos
 		// trackings
-		if (null != mkActionTarget.getProjectCommercial()) {
+		if (null != mkActionTarget.getProject()) {
 
 			ProjectCommercial projectCommercial = AON.getProjectCommercial(api.getDomain().getName(),
 					api.getDomain().getId(), api.getUser().getLogin(),
-					f -> f.getProjectProperty().eq(mkActionTarget.getProjectCommercial()));
+					f -> f.getProjectProperty().eq(mkActionTarget.getProject()));
 
 			Integer commercialActivityAutoRegisterId = commercialActivityAutoRegister.getId();
 
@@ -689,6 +701,7 @@ public class ActionTargetServlet extends AonApiHttpServlet {
 
 					projectCommercial = AON.saveProjectCommercial(api.getDomain().getName(), api.getDomain().getId(),
 							api.getUser().getLogin(), projectCommercial);
+					
 				}
 			}
 
@@ -719,6 +732,8 @@ public class ActionTargetServlet extends AonApiHttpServlet {
 								+ target.getDocument() + "-" + parentDomain.getName() + ").");
 				AON.save(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(),
 						commercialTracking);
+				
+				mkActionTarget.setProject(projectCommercial.getId());
 			}
 		}
 
@@ -998,7 +1013,7 @@ public class ActionTargetServlet extends AonApiHttpServlet {
 							.and(f.getParentProperty().eq(parentDomain.getId())));
 			if (null != domain && null != domain.getId()) {
 				String logoUrl = getLogoUrl(parentDomain, api.getUser());
-				sendDomainExistsMail(api, domain, parentDomain.getDescription(), logoUrl, targetEmail);
+				sendDomainExistsMail(api, domain, parentDomain, logoUrl, targetEmail);
 				return true;
 //				throw new IllegalArgumentException("El dominio " + domain.getName() + " ya existe para este despacho");
 			}
@@ -1007,31 +1022,38 @@ public class ActionTargetServlet extends AonApiHttpServlet {
 		return false;
 	}
 
-	private static void sendDomainExistsMail(AonApiData api, Domain domain, String parentDomainDescription,
+	private static void sendDomainExistsMail(AonApiData api, Domain domain, Domain parentDomain,
 			String logoUrl, String targetEmail) {
 		String from = getFromMessage(api);
 		String bcc = "booking@aonsolutions.es";
 
 		SESMessage msg = new SESMessage().setAlias(domain.getDescription()).setFrom(from).setReplyTo(from)
 				.setTo(targetEmail).setBcc(bcc).setSubject(domain.getDescription() + " (DUPLICADO)")
-				.setBody(createEnterpriseDuplicateBody(domain, parentDomainDescription, logoUrl, from));
+				.setBody(createEnterpriseDuplicateBody(domain, parentDomain, logoUrl, from));
 
 		SES.sendEmail(msg);
 	}
 
-	private static String createEnterpriseDuplicateBody(Domain domain, String parentDomainDescription, String logoUrl,
+	private static String createEnterpriseDuplicateBody(Domain domain, Domain parentDomain, String logoUrl,
 			String from) {
 		VelocityEngine engine = new VelocityEngine();
 		engine.setProperty(RuntimeConstants.RESOURCE_LOADER, "classpath");
 		engine.setProperty("classpath.resource.loader.class", ClasspathResourceLoader.class.getName());
 		engine.init();
 
+		String url = (isLocal ? "http" : "https") + "://" + parentDomain.getName() + (isLocal ? ":8080" : "")
+				+ "/beta";
+		
+		if(AonStringUtils.equalsIgnoreCase(parentDomain.getName(), "app.leevy.es"))
+			url = "https://leevy.aon.solutions";
+		else if(AonStringUtils.equalsIgnoreCase(parentDomain.getName(), "infoautonomos.aonsolutions.net"))
+			url = "https://infoautonomos.aon.solutions";
+		
 		VelocityContext context = new VelocityContext();
 		context.put("logo", logoUrl);
-		context.put("parentName", parentDomainDescription);
+		context.put("parentName", parentDomain.getDescription());
 		context.put("name", domain.getDescription());
-		context.put("url", (isLocal ? "http" : "https") + "://" + domain.getName() + (isLocal ? ":8080" : "")
-				+ "/beta?theme=https://aonsolutions.github.io/aon-theme/css/infoautonomos.css");
+		context.put("url", url);
 		context.put("contact", AonStringUtils.isBlank(from) ? "booking@aonsolutions.es" : from);
 
 		Template template = engine
@@ -1101,29 +1123,36 @@ public class ActionTargetServlet extends AonApiHttpServlet {
 		return from;
 	}
 
-	private static void sendTrailEnterpriseCreatedMail(AonApiData api, String targetEmail, String logoUrl, String parentDomainName) {
+	private static void sendTrailEnterpriseCreatedMail(AonApiData api, String targetEmail, String logoUrl, Domain parentDomain) {
 		String from = getFromMessage(api);
 		String bcc = "booking@aonsolutions.es";
 
 		SESMessage msg = new SESMessage().setAlias(enterpriseNameMail).setFrom(from).setReplyTo(from).setTo(targetEmail)
 				.setBcc(bcc).setSubject(enterpriseNameMail + " (TRIAL)")
-				.setBody(createEnterpriseCreatedBody(logoUrl, parentDomainName, from));
+				.setBody(createEnterpriseCreatedBody(logoUrl, parentDomain, from));
 
 		SES.sendEmail(msg);
 	}
 
-	private static String createEnterpriseCreatedBody(String logoUrl, String parentDomainName, String from) {
+	private static String createEnterpriseCreatedBody(String logoUrl, Domain parentDomain, String from) {
 		VelocityEngine engine = new VelocityEngine();
 		engine.setProperty(RuntimeConstants.RESOURCE_LOADER, "classpath");
 		engine.setProperty("classpath.resource.loader.class", ClasspathResourceLoader.class.getName());
 		engine.init();
+		
+		String url = (isLocal ? "http" : "https") + "://" + parentDomain.getName() + (isLocal ? ":8080" : "")
+				+ "/beta";
+		
+		if(AonStringUtils.equalsIgnoreCase(parentDomain.getName(), "app.leevy.es"))
+			url = "https://leevy.aon.solutions";
+		else if(AonStringUtils.equalsIgnoreCase(parentDomain.getName(), "infoautonomos.aonsolutions.net"))
+			url = "https://infoautonomos.aon.solutions";
 
 		VelocityContext context = new VelocityContext();
 		context.put("logo", logoUrl);
-		context.put("parentName", parentDomainName);
+		context.put("parentName", parentDomain.getDescription());
 		context.put("name", enterpriseNameMail);
-		context.put("url", (isLocal ? "http" : "https") + "://" + urlMail + (isLocal ? ":8080" : "")
-				+ "/beta?theme=https://aonsolutions.github.io/aon-theme/css/infoautonomos.css");
+		context.put("url", url);
 		context.put("domainName", urlMail);
 		context.put("user", userMail);
 		context.put("password", authExisted ? "La existente para este usuario" : passwordMail);
@@ -1137,18 +1166,25 @@ public class ActionTargetServlet extends AonApiHttpServlet {
 		return writer.toString();
 	}
 
-	private static String getFinishCreationHtml(String logoUrl, String parentDomainDesc) {
+	private static String getFinishCreationHtml(String logoUrl, Domain parentDomain) {
 		VelocityEngine engine = new VelocityEngine();
 		engine.setProperty(RuntimeConstants.RESOURCE_LOADER, "classpath");
 		engine.setProperty("classpath.resource.loader.class", ClasspathResourceLoader.class.getName());
 		engine.init();
+		
+		String url = (isLocal ? "http" : "https") + "://" + parentDomain.getName() + (isLocal ? ":8080" : "")
+		+ "/beta";
+		
+		if(AonStringUtils.equalsIgnoreCase(parentDomain.getName(), "app.leevy.es"))
+			url = "https://leevy.aon.solutions";
+		else if(AonStringUtils.equalsIgnoreCase(parentDomain.getName(), "infoautonomos.aonsolutions.net"))
+			url = "https://infoautonomos.aon.solutions";
 
 		VelocityContext context = new VelocityContext();
 		context.put("logo", logoUrl);
-		context.put("parentName", parentDomainDesc);
+		context.put("parentName", parentDomain.getDescription());
 		context.put("name", enterpriseNameMail);
-		context.put("url", (isLocal ? "http" : "https") + "://" + urlMail + (isLocal ? ":8080" : "")
-				+ "/beta?theme=https://aonsolutions.github.io/aon-theme/css/infoautonomos.css");
+		context.put("url", url);
 		context.put("domainName", urlMail);
 		context.put("mail", userMail);
 

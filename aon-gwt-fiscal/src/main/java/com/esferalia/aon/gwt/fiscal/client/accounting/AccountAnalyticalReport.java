@@ -73,6 +73,7 @@ public class AccountAnalyticalReport extends MainEntryPoint {
 	public void loadModule( final AccountingReportModuleOptions options ) {
 		AON.ensureInjected();
 		DockLayoutPanel dockLayoutPanel = new DockLayoutPanel(Unit.PX);
+		final AonToolbarButton filterButton = new AonToolbarButton("", AON.CSS.aonToolbarFilterContainer());
 		AnalyticalPanelReport panel = new AnalyticalPanelReport(options);
 		if (!options.isAccountingGuest()) {
 			panel.addSelectionHandler(new AccountEntrySelectionHandler() {
@@ -84,6 +85,13 @@ public class AccountAnalyticalReport extends MainEntryPoint {
 				}
 			});
 		}
+		
+		panel.addFilterMaximizeHandler(event -> {
+        	filterButton.setHTML("<span class='material-icons'>filter_alt_off</span>");
+		});
+		panel.addFilterMinimizeHandler(event -> {
+			filterButton.setHTML("<span class='material-icons'>filter_alt</span>");
+		});
 			
 		
 		AonToolbar toolbar = new AonToolbar(AON.MSG.accountingAnalyticalBalance());
@@ -163,6 +171,23 @@ public class AccountAnalyticalReport extends MainEntryPoint {
 		buttonContainer.add(printExcel);
 
 		toolbar.add(buttonContainer);
+		
+		filterButton.setHTML("<span class='material-icons'>filter_alt_off</span>");
+		
+		filterButton.addClickHandler(new ClickHandler() {
+	
+		    @Override
+		    public void onClick(ClickEvent event) {
+		        if (panel.isFilterPanelOpened()) {
+		        	panel.closeFilterPanel();
+			    } else {
+		            panel.openFilterPanel();
+	
+		        }
+		    }
+		});
+				
+		toolbar.add(filterButton);
 		
 		dockLayoutPanel.addNorth(toolbar, AonToolbar.HEIGTH);
 		dockLayoutPanel.add( panel );

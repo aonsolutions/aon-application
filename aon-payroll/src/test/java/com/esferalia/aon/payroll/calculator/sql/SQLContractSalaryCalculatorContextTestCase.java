@@ -919,6 +919,147 @@ public class SQLContractSalaryCalculatorContextTestCase extends
 		org.junit.Assert.assertEquals(10, partyDays.stream().collect(Collectors.summingDouble(ITimedObject<Double>::getValue)), 0.00);
 		
 	}
+
+	@Test
+	public void testCalendarPartyDaysIII() throws SQLException, AonException {
+
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+		Integer domainId = newDomain(aonContext).getId();
+		
+		Date firstDayOfMonth = getFirstDayOfMonth(getToday());
+		Date lastDayOfMonth = getLastDayOfMonth(getToday());
+		
+		List<Date> holidays = new ArrayList<>();
+		for (int i = 0; i < 10; i++) {
+			holidays.add(add(firstDayOfMonth, Calendar.DAY_OF_MONTH, i));
+		}
+		
+		Integer holidayId = newHoliday(
+				aonContext, 
+				domainId, 
+				null, //parentId,
+				holidays.toArray(new Date[holidays.size()])
+				)
+				.getId();
+		
+		CalendarRecord calendar = newCalendar(aonContext, 
+				domainId, 
+				holidayId, 
+				null,//mondayHours, 
+				8.00,//tuesdayHours, 
+				8.00,//wednesdayHours, 
+				8.00,//thursdayHours, 
+				8.00,//fridayHours, 
+				8.00,//saturdayHours, 
+				null//sundayHours
+				)
+				;
+		
+		
+		@SuppressWarnings("serial")
+		ContractRecord contract = newContract(aonContext, 
+				firstDayOfMonth ,
+				Collections.emptyMap(),
+				new String[] { PARTY_DAYS.getName()},
+				new String[] {},
+				null,
+				calendar);
+		
+		
+		List<Date> noWorkingDays = new ArrayList<>();
+		for (int i = 0; i < 5; i++) {
+			Date noWorkingDay = add(firstDayOfMonth, Calendar.DAY_OF_MONTH, i);
+			addData(aonContext, contract, noWorkingDay, noWorkingDay, ContextVariable.NON_WORKING, "1" );
+			noWorkingDays.add(noWorkingDay);
+		}
+		
+		List<ITimedResult<Double>> partyDays = getContractSalaryCalculatorContext(connection, firstDayOfMonth, lastDayOfMonth, lastDayOfMonth, contract).getExpressionContext()
+		.eval(PARTY_DAYS.getName(), firstDayOfMonth, lastDayOfMonth,Double.class);
+		
+		org.junit.Assert.assertEquals(1, partyDays.size());
+		
+		org.junit.Assert.assertEquals(10 - noWorkingDays.size(), partyDays.stream().collect(Collectors.summingDouble(ITimedObject<Double>::getValue)), 0.00);
+		
+	}
+
+	@Test
+	public void testCalendarPartyDaysIV() throws SQLException, AonException {
+
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+		Integer domainId = newDomain(aonContext).getId();
+		
+		Date firstDayOfMonth = getFirstDayOfMonth(getToday());
+		Date lastDayOfMonth = getLastDayOfMonth(getToday());
+		
+		List<Date> holidays = new ArrayList<>();
+		for (int i = 0; i < 10; i++) {
+			holidays.add(add(firstDayOfMonth, Calendar.DAY_OF_MONTH, i));
+		}
+		
+		Integer holidayId = newHoliday(
+				aonContext, 
+				domainId, 
+				null, //parentId,
+				holidays.toArray(new Date[holidays.size()])
+				)
+				.getId();
+		
+		CalendarRecord calendar = newCalendar(aonContext, 
+				domainId, 
+				holidayId, 
+				null,//mondayHours, 
+				8.00,//tuesdayHours, 
+				8.00,//wednesdayHours, 
+				8.00,//thursdayHours, 
+				8.00,//fridayHours, 
+				8.00,//saturdayHours, 
+				null//sundayHours
+				)
+				;
+		
+		
+		@SuppressWarnings("serial")
+		ContractRecord contract = newContract(aonContext, 
+				firstDayOfMonth ,
+				Collections.emptyMap(),
+				new String[] { PARTY_DAYS.getName()},
+				new String[] {},
+				null,
+				calendar);
+		
+		setData(aonContext, contract, ContextVariable.SUNDAY_HOURS.getName(), "" );
+		setData(aonContext, contract, ContextVariable.MONDAY_HOURS.getName(), "8.00" );
+		setData(aonContext, contract, ContextVariable.TUESDAY_HOURS.getName(), "8.00" );
+		setData(aonContext, contract, ContextVariable.WEDNESDAY_HOURS.getName(), "8.00" );
+		setData(aonContext, contract, ContextVariable.THURSDAY_HOURS.getName(), "" );
+		setData(aonContext, contract, ContextVariable.FRIDAY_HOURS.getName(), "" );
+		setData(aonContext, contract, ContextVariable.SATURDAY_HOURS.getName(), "" );
+		
+		List<Date> noWorkingDays = new ArrayList<>();
+		for (int i = 0; i < 10; i++) {
+			Date noWorkingDay = add(firstDayOfMonth, Calendar.DAY_OF_MONTH, i);
+			System.out.println(noWorkingDay);
+			int dayOfWeek = AonDateUtils.get(noWorkingDay, Calendar.DAY_OF_WEEK);
+			if ( dayOfWeek == Calendar.SUNDAY 
+				|| dayOfWeek == Calendar.THURSDAY
+				|| dayOfWeek == Calendar.FRIDAY
+				|| dayOfWeek == Calendar.SATURDAY
+				) {
+				noWorkingDays.add(noWorkingDay);
+				System.out.println("\t" + noWorkingDay + ", " + dayOfWeek );
+			}
+		}
+		
+		
+		List<ITimedResult<Double>> partyDays = getContractSalaryCalculatorContext(connection, firstDayOfMonth, lastDayOfMonth, lastDayOfMonth, contract).getExpressionContext()
+		.eval(PARTY_DAYS.getName(), firstDayOfMonth, lastDayOfMonth,Double.class);
+		
+		org.junit.Assert.assertEquals(10 - noWorkingDays.size(), partyDays.stream().collect(Collectors.summingDouble(ITimedObject<Double>::getValue)), 0.00);
+		
+	}
+
 	// ------------------------------------------------------------------------
 
 }

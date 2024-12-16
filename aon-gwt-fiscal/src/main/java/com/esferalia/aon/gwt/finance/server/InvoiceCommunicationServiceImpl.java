@@ -56,6 +56,12 @@ public class InvoiceCommunicationServiceImpl extends AonStatelessRemoteServiceSe
 	public SiiConfiguration getSiiConfiguration(String domainName, int domainId, String user) {
 		return AON.getSiiConfiguration(domainName, domainId, user);
 	}
+	
+	@Override
+	public TbaiConfiguration getTbaiConfiguration(String domainName, int domainId, String user) {
+		TbaiConfiguration tbai = AON.getTbaiConfiguration(domainName, domainId, user);
+		return tbai;
+	}
 
 	@Override
 	public List<Invoice> getInvoices(String domainName, int domainId, String user, InvoiceParams params) {

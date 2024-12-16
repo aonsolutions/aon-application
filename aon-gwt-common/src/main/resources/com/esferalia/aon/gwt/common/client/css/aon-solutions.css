@@ -230,6 +230,8 @@
 .aon_icon_trash_list { background-image: iconTrashList;}
 @url iconPaste aonIconPaste;
 .aon_icon_paste { background-image: iconPaste;}
+@url iconMoveGroup aonIconMoveGroup;
+.aon_icon_move_group { background-image: iconMoveGroup;}
 @url iconWork aonIconWork;
 .aon_icon_work { background-image: iconWork;}
 @url iconWorkOff aonIconWorkOff;
@@ -1327,6 +1329,7 @@
 	box-sizing: border-box;
 	border-bottom: solid #c4c4c4 1px;
 	min-height: 37px;
+	justify-content: space-between;
 }
 .aon_toolbar_small_inner {
 	display: flex;
@@ -2281,7 +2284,7 @@
 	min-height : 2rem;
 	background-color : white;
 	position : sticky;
-	top : -1px;
+	top : -10px;
 	z-index : 1;
 	padding : 0 1rem;
 	border-bottom : 1px solid #ddd;
@@ -2310,4 +2313,14 @@
 
 .aon_no_border_toolbar .aon_toolbar_title_container {
 	padding: 0;
+}
+
+.aon_closeFilter_message {
+	position: absolute;        
+    top: 10px !important;              
+    left: 50% !important;                 
+    transform: translateX(-50%); 
+    background-color: transparent; 
+    padding: 10px 20px;     
+    text-align: center;
 }

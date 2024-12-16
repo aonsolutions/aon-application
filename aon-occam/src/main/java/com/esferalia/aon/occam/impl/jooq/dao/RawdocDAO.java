@@ -228,6 +228,9 @@ public class RawdocDAO {
 		ctx.checkWrite();
 
 		Rawdoc r = get(ctx, rawdoc.getId());
+		if(r == null || r.getId() == null) {
+			return insert(ctx, rawdoc);
+		}
 
 		RawdocValidation.validateRawdoc(ctx, rawdoc);
 		ctx.getDslContext()
