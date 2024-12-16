@@ -24,7 +24,8 @@ public class SimpliedRegimeActivity implements Serializable {
     private double unit7;
     private double amount7;
     private double boxC;
-    private double boxC1;
+    private double boxC1;  // Reducción Lorca
+    private double boxC2;  // Reducción DANA 2024
     private double boxD;
     private double boxE;
     private double boxF;
@@ -251,6 +252,14 @@ public class SimpliedRegimeActivity implements Serializable {
 		else if (line == 5) setAmount5(value);
 		else if (line == 6) setAmount6(value);
 		else if (line == 7) setAmount7(value);
+		return this;
+	}
+	
+	public double getBoxC2() {
+		return boxC2;
+	}
+	public SimpliedRegimeActivity setBoxC2(double boxC2) {
+		this.boxC2 = boxC2;
 		return this;
 	}
 }

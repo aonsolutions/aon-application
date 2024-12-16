@@ -8,6 +8,10 @@ import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.CommonService;
 import com.esferalia.aon.gwt.common.client.CommonServiceAsync;
 import com.esferalia.aon.gwt.common.client.CommonServiceAsyncDecorator;
+import com.esferalia.aon.gwt.common.client.widget.MinimizePanel.MaximizeEvent;
+import com.esferalia.aon.gwt.common.client.widget.MinimizePanel.MaximizeHandler;
+import com.esferalia.aon.gwt.common.client.widget.MinimizePanel.MinimizeEvent;
+import com.esferalia.aon.gwt.common.client.widget.MinimizePanel.MinimizeHandler;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonCloseTab;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDateBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDisplayTable;
@@ -42,6 +46,8 @@ import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.i18n.client.DateTimeFormat.PredefinedFormat;
+import com.google.gwt.layout.client.Layout.AnimationCallback;
+import com.google.gwt.layout.client.Layout.Layer;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.CheckBox;
@@ -61,6 +67,7 @@ public class OperatingPanelReport extends DockLayoutPanel implements Focusable, 
 
 	private static CommonServiceAsync commonService;
 
+	private SimpleLayoutPanel filterPanel;
 	private SimpleLayoutPanel centerPanel;
 	private TabLayoutPanel tabPanel;
 	
@@ -410,6 +417,7 @@ public class OperatingPanelReport extends DockLayoutPanel implements Focusable, 
 				.addCellIf( activitiesListBoxEnabled, new Label(AON.MSG.activity()), AON.CSS.aonSearchPanelLabel(), AON.CSS.aonPaddingLeft())
 				.addCellIf( activitiesListBoxEnabled, activity))
 				.addCell(new Label(), AON.CSS.aonFlexGrow1())
+				.addCell(getCloseButtonsPanel(), AON.CSS.aonPaddingLeft())
 				;
 			
 			FlowPanel buttonsPanel = new FlowPanel();
@@ -436,12 +444,12 @@ public class OperatingPanelReport extends DockLayoutPanel implements Focusable, 
 						)				;
 			}
 
-			SimpleLayoutPanel northPanel = new SimpleLayoutPanel();
+			filterPanel = new SimpleLayoutPanel();
 			ScrollPanel scrollPanel = new ScrollPanel();
 			scrollPanel.addStyleName(AON.CSS.aonWidthAll());
 			scrollPanel.setWidget(mainTab);
-			northPanel.setWidget(scrollPanel);
-			addNorth(northPanel, hasCostCenters?100:80);
+			filterPanel.setWidget(scrollPanel);
+			addNorth(filterPanel, 130);
 			SimpleLayoutPanel centerPanelContainer = new SimpleLayoutPanel();
 			centerPanelContainer.setStyleName(AON.CSS.aonSelector());
 			centerPanel = new SimpleLayoutPanel();
@@ -658,6 +666,71 @@ public class OperatingPanelReport extends DockLayoutPanel implements Focusable, 
 			.setSecurityLevel(confidential!=null?SecurityLevel.safeValueOf(confidential.getSelectedIndex()):SecurityLevel.OFFICIAL)
 			.setByMonth(byMonth.getValue())
 			;
+	}
+	
+	private FlowPanel getCloseButtonsPanel() {
+		FlowPanel min = new FlowPanel();
+		min.setStyleName(AON.CSS.aonTextRight());
+		min.addStyleName(AON.CSS.aonPaddingRight());
+		min.addStyleName(AON.CSS.aonNowrap());
+		min.addStyleName(AON.CSS.aonWidthAll());
+		
+		AonSearchPanelButton close = new AonSearchPanelButton(AON.MSG.close(),AON.CSS.aonIconClose());
+		close.addClickHandler(new ClickHandler() {
+			
+			@Override
+			public void onClick(ClickEvent event) {
+				OperatingPanelReport.this.closeFilterPanel();
+			}
+		});
+		min.add(close);
+		return min;
+	}
+
+	public void closeFilterPanel() {
+		OperatingPanelReport.this.setWidgetSize(filterPanel, 0);
+		OperatingPanelReport.this.animate(500, new AnimationCallback() {
+			
+			@Override
+			public void onAnimationComplete() {
+				MinimizeEvent.fire(OperatingPanelReport.this);
+			}
+			@Override
+			public void onLayout(Layer arg0, double arg1) {							
+			}
+			
+		});
+	}
+	
+	public void openFilterPanel() {
+		OperatingPanelReport.this.setWidgetSize(filterPanel, 130);
+		OperatingPanelReport.this.animate(500, new AnimationCallback() {
+			
+			@Override
+			public void onAnimationComplete() {
+				MaximizeEvent.fire(OperatingPanelReport.this);
+			}
+			@Override
+			public void onLayout(Layer arg0, double arg1) {							
+			}
+			
+		});
+	}
+	
+	public boolean isFilterPanelOpened() {
+		double filterPanelSize = getWidgetSize(filterPanel);
+		if (Double.compare(filterPanelSize, 0.0) == 0) {
+			return false;
+		}
+		return true;
+	}
+	
+	public HandlerRegistration addFilterMinimizeHandler(MinimizeHandler handler) {
+		return addHandler(handler, MinimizeEvent.getType());
+	}
+
+	public HandlerRegistration addFilterMaximizeHandler(MaximizeHandler handler) {
+		return addHandler(handler, MaximizeEvent.getType());
 	}
 	
 }

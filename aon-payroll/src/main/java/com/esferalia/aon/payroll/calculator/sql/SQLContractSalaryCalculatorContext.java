@@ -4048,9 +4048,34 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 				double commonContingenciesBase = cgcBases.stream().collect(Collectors.summingDouble( d -> AonNumberUtils.todouble(d.getExpression()) ));
 				pair.fst += commonContingenciesBase;
 			
-			});;
+			});
 			
 			br = pair.fst / pair.snd;
+			
+			boolean occupational = getLeaves().stream()
+					.filter(leave -> date.compareTo(leave.getEnd()) <= 0 )
+					.filter(leave -> date.compareTo(leave.getStart() ) >= 0 || AonDateUtils.get(leave.getStart(), Calendar.DAY_OF_MONTH) == 1)
+					.anyMatch(l -> l.getType() == LeaveType.OCCUPATIONAL_DISEASE);
+			if ( occupational ) {
+				Date prevStartYear = add(getFirstDayOfMonth(date), Calendar.YEAR, -1);
+				Stream<com.esferalia.aon.occam.api.model.Salary> prevYearSalaryDatas = AON.getSalaryData(
+						new AONContext(connection),
+						p -> p.getContractProperty().eq(contractId)
+								.and(p.getIsSalaryProperty().eq(true).or(p.getIsDelayProperty().eq(true)))
+								.and(p.getStartDateProperty().le(prevEndMonth))
+								.and(p.getEndDateProperty().ge(prevStartYear)));
+				double overtimeBase =
+				prevYearSalaryDatas.map( s -> {
+					double structuralOvertimeBase = s.getContextData(STRUCTURAL_OVERTIME_BASE.getName(), Collectors.summingDouble(AonNumberUtils::todouble));
+					double nonStructuralOvertimeBase = s.getContextData(NON_STRUCTURAL_OVERTIME_BASE.getName(), Collectors.summingDouble(AonNumberUtils::todouble));
+					return structuralOvertimeBase + nonStructuralOvertimeBase;
+				}).collect(Collectors.summingDouble( d -> d ));
+				
+				Date contractStartDate = getContractStartate();
+				long days = contractStartDate.after(prevStartYear) ? new Period(getContractStartate(), prevEndMonth).getDays() : 365;
+				double brOvertime = overtimeBase / days; 
+				 br += brOvertime;
+			}
 			
 			salaries.close();
 		} catch (Throwable t) {

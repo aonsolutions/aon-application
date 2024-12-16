@@ -79,6 +79,12 @@ export class AonDeliveryList extends AonElement {
         btnSearch.addEventListener(EVENT.SEARCH_NEW, searchFn);
         btnSearch.buildOptionsFilter(OPTION.DELIVERY_SEARCH_OPTIONS);
 
+        this.getElement('status').setOptions([
+            { name: "-", value: undefined },
+            { name: MSG.PENDING, value: "PENDING" },
+            { name: MSG.INVOICED, value: "INVOICED" },
+            { name: MSG.IN_PREPARATION, value: "IN_PREPARATION" },
+          ]);
 
 		table.addColumn(MSG.DATE, 'date', 'date', '10%');
 		table.addColumn('Número de Albarán', 'string', 'reference', '25%');

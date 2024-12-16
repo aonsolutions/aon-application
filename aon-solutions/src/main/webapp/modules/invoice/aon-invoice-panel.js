@@ -277,7 +277,15 @@ export class AonInvoicePanel extends AonElement {
     const btnSearch = this.getApplication().addSearchOption();
     let searchFn = (event) => this.search(event.detail);
     btnSearch.addEventListener(EVENT.SEARCH_NEW, searchFn);
-    if(acceptedInvoices) btnSearch.buildOptionsFilter(OPTION.INVOICE_SEARCH_OPTIONS);
+    if(acceptedInvoices) {
+      btnSearch.buildOptionsFilter(OPTION.INVOICE_SEARCH_OPTIONS);
+
+      this.getElement('recorded').setOptions([
+        { name: "-", value: undefined },
+        { name: MSG.PENDING, value: "PENDING" },
+        { name: MSG.ACCOUNTED, value: "SCORED" },
+      ]);
+    }
   }
 
   downloadInvoiceExcel() {

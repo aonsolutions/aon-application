@@ -74,7 +74,17 @@ public class AccountTrialBalanceReport extends MainEntryPoint {
 	public void loadModule( final AccountingReportModuleOptions options ) {
 		AON.ensureInjected();
 		DockLayoutPanel dockLayoutPanel = new DockLayoutPanel(Unit.PX);
-		TrialBalancePanelReport panel = new TrialBalancePanelReport(options);
+		final AonToolbarButton filterButton = new AonToolbarButton("", AON.CSS.aonToolbarFilterContainer());
+		TrialBalancePanelReport panel = new TrialBalancePanelReport(options) {
+			@Override
+			public void closeFilterPanel() {
+				super.closeFilterPanel();
+			}
+			@Override
+			public void openFilterPanel() {
+				super.openFilterPanel();
+			}
+		};
 
 		if (!options.isAccountingGuest()) {
 			panel.addSelectionHandler(new AccountEntrySelectionHandler() {
@@ -87,6 +97,13 @@ public class AccountTrialBalanceReport extends MainEntryPoint {
 				}
 			});
 		}
+		
+		panel.addFilterMaximizeHandler(event -> {
+        	filterButton.setHTML("<span class='material-icons'>filter_alt_off</span>");
+		});
+		panel.addFilterMinimizeHandler(event -> {
+			filterButton.setHTML("<span class='material-icons'>filter_alt</span>");
+		});
 		
 		
 		AonToolbar toolbar = new AonToolbar(AON.MSG.trialBalabce());
@@ -181,8 +198,24 @@ public class AccountTrialBalanceReport extends MainEntryPoint {
 		});
 		buttonContainer.add(ledger);
 
-		
 		toolbar.add(buttonContainer);
+		
+		filterButton.setHTML("<span class='material-icons'>filter_alt_off</span>");
+		
+		filterButton.addClickHandler(new ClickHandler() {
+
+		    @Override
+		    public void onClick(ClickEvent event) {
+		        if (panel.isFilterPanelOpened()) {
+		            panel.closeFilterPanel();
+		        } else {
+		            panel.openFilterPanel();
+
+		        }
+		    }
+		});
+		
+		toolbar.add(filterButton);
 		
 		dockLayoutPanel.addNorth(toolbar, AonToolbar.HEIGTH);
 		dockLayoutPanel.add( panel );
