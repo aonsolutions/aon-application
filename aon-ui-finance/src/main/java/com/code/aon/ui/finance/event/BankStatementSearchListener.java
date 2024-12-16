@@ -12,7 +12,9 @@ import com.code.aon.finance.enumeration.StatementConcept;
 import com.code.aon.finance.enumeration.StatementReliability;
 import com.code.aon.finance.enumeration.StatementStatus;
 import com.code.aon.ql.Criteria;
+import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionException;
+import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.ui.form.event.ControllerSearchListener;
 import com.esferalia.aon.entity.IEntityAlias;
 
@@ -142,6 +144,16 @@ public class BankStatementSearchListener extends ControllerSearchListener {
 		setStatementStatuses(new StatementStatus[0]);
 	}
 
+	private boolean hasMetaCharacters(String value) {
+		return StringUtils.contains(value, '*')
+			|| StringUtils.contains(value, ':')
+			|| StringUtils.contains(value, '_')
+			|| StringUtils.contains(value, '<')
+			|| StringUtils.contains(value, '>')
+			|| StringUtils.contains(value, '=')
+		;
+	}
+	
 	@Override
 	protected void completeCriteria(Criteria criteria) throws ManagerBeanException, ExpressionException {
 		if (StringUtils.isNotEmpty(getLotNumber())) {
@@ -163,7 +175,14 @@ public class BankStatementSearchListener extends ControllerSearchListener {
 			criteria.addExpression(getFieldName(IEntityAlias.BANK_STATEMENT_AMOUNT), getAmount());			
 		}
 		if (StringUtils.isNotEmpty(getDescription())) {
-			criteria.addExpression(getFieldName(IEntityAlias.BANK_STATEMENT_DESCRIPTION), getDescription());			
+			String field = getFieldName(IEntityAlias.BANK_STATEMENT_DESCRIPTION);
+			if (hasMetaCharacters(getDescription())) {
+				criteria.addExpression(field, getDescription());			
+			} else {
+				String con = "%" + getDescription() + "%";
+				Expression expression = ExpressionUtilities.getLikeExpression(field, con);
+				criteria.addExpression(expression);
+			}
 		}
 		if (StringUtils.isNotEmpty(getComments())) {
 			criteria.addExpression(getFieldName(IEntityAlias.BANK_STATEMENT_COMMENTS), getComments());			
