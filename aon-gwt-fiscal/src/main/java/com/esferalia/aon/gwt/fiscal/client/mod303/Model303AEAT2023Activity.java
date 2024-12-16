@@ -22,7 +22,6 @@ import com.esferalia.aon.occam.api.model.fiscal.modules.Module;
 import com.esferalia.aon.occam.api.model.fiscal.modules.ModuleInfo;
 import com.esferalia.aon.occam.api.model.fiscal.modules.Modules2018.Epigraph;
 import com.esferalia.aon.watson.util.AonMathUtils;
-import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.logical.shared.HasValueChangeHandlers;
@@ -54,8 +53,8 @@ class Model303AEAT2023Activity extends DockLayoutPanel implements HasValueChange
 	private AonIntegerBox tem = new AonIntegerBox();
 	private AonIntegerBox dia = new AonIntegerBox();
 	private AonIntegerBox emp = new AonIntegerBox();
-	private ListBox    lor = new ListBox();
-	//private ListBox    cov = new ListBox();
+	private ListBox lor = new ListBox();
+	private ListBox dana = new ListBox();
 	
 	private InlineLabel staffLabel = new InlineLabel(); 
 	private InlineLabel deskLabel = new InlineLabel(); 
@@ -103,6 +102,8 @@ class Model303AEAT2023Activity extends DockLayoutPanel implements HasValueChange
 	};
 
 	private AonDoubleBox dev = new AonDoubleBox();
+	private AonDoubleBox lorcaReduction = new AonDoubleBox(); 
+	private AonDoubleBox danaReduction = new AonDoubleBox();
 	private AonDoubleBox red = new AonDoubleBox();
 	
 	private AonDoubleBox ind = new AonDoubleBox();
@@ -129,8 +130,6 @@ class Model303AEAT2023Activity extends DockLayoutPanel implements HasValueChange
 	private AonDoubleBox spouseHours = new AonDoubleBox(); 		//Horas anuales del cónyuge. (máximo 1.800 horas)
 	private AonDoubleBox childMen18Hours = new AonDoubleBox(); 	//Horas anuales de los hijos menores de 18 años.
 
-
-
 	protected Model303AEAT2023Activity(final IModel303AEATActivityCallback<Mod303Activity> callback) {
 		super(Unit.PX);
 		
@@ -138,13 +137,14 @@ class Model303AEAT2023Activity extends DockLayoutPanel implements HasValueChange
 		addStyleName(AON.CSS.aonBackgroundLigthBlue());
 
 		lor.addItem("-");
-		lor.addItem("Act. realz exclusivamente en Lorca.");
-		lor.addItem("Act. realz. Lorca y otros municipios.");
-		lor.setWidth("140px");
-
-//		cov.addItem("-");
-//		cov.addItem("SI");
-//		cov.setWidth("40px");
+		lor.addItem("Realizada exclusivamente en Lorca");
+		lor.addItem("Realizada en Lorca y otros municipios");
+		lor.setWidth("250px");
+		
+		dana.addItem("-");
+		dana.addItem("Exclusivamente en municipios afectados por la DANA");
+		dana.addItem("En municipios afectados por la DANA y en otros municipios");
+		dana.setWidth("370px");
 
 		addNorth(getToolbar( callback ), AonToolbar.HEIGTH);
 		
@@ -171,14 +171,6 @@ class Model303AEAT2023Activity extends DockLayoutPanel implements HasValueChange
 			tabLayoutPanel.add(getModulesDeskDataPanel(callback), "Inf. M\u00F3dulo \"Mesas\"");
 		}
 		tabLayoutPanel.add(getResultPanel(callback), AON.MSG.result());
-		
-		tabLayoutPanel.addSelectionHandler( e -> {
-			if ( ( AonNumberUtils.equals(e.getSelectedItem(),2) &&  staffModuleIndex(callback) == -1) 
-			  || ( AonNumberUtils.equals(e.getSelectedItem(),3) &&  deskModuleIndex(callback) == -1 )) {
-				AonMessageDialog.show("Aviso", "No procede");
-				tabLayoutPanel.selectTab(1, false);
-			}
-		});
 
 		tabLayoutPanel.selectTab(1, false);
 		
@@ -276,12 +268,14 @@ class Model303AEAT2023Activity extends DockLayoutPanel implements HasValueChange
 		emp.setValue(act.getEmp(),false,true);
 		dia.setValue(act.getDia(),false,true);
 		lor.setSelectedIndex(act.getLor());
-//		cov.setSelectedIndex(act.getCov());
+		dana.setSelectedIndex(act.getDana());
 		
 		Arrays.stream(modules).forEach(m -> populateModule(act,m) );
 		Arrays.stream(desks).forEach(d -> populateDesk(act,d) );
 		
 		dev.setValue(act.getDev(),false,true);
+		lorcaReduction.setValue(act.getLorcaReduction(),false,true);
+		danaReduction.setValue(act.getDanaReduction(),false,true);
 		red.setValue(act.getRed(),false,true);
 		ind.setValue(act.getInd(),false,true);
 		por.setValue(act.getPor(),false,true);
@@ -351,22 +345,75 @@ class Model303AEAT2023Activity extends DockLayoutPanel implements HasValueChange
 		tab.addRow()
 			.addCell( new Label(AON.MSG.irpfActivityEmp()), AON.CSS.aonBorderBottom() )
 			.addCell( emp);
-
-		lor.addChangeHandler(event-> {
-			callback.getActivity().setLor(lor.getSelectedIndex());
-			ValueChangeEvent.<Mod303Activity>fire(Model303AEAT2023Activity.this, callback.getActivity());
-		});
-		tab.addRow()
-			.addCell( new Label(AON.MSG.irpfActivityLor()), AON.CSS.aonBorderBottom() )
-			.addCell( lor );
-
-//		cov.addChangeHandler(event  -> {
-//			callback.getActivity().setCov(cov.getSelectedIndex());
-//			ValueChangeEvent.<Mod303Activity>fire(Model303AEAT2023Activity.this, callback.getActivity());
-//		});
-//		tab.addRow()
-//			.addCell( new Label(AON.MSG.covidReduction()), AON.CSS.aonBorderBottom() )
-//			.addCell( cov );
+		
+		// DANA y LORCA a partir del ultimo periodo de 2024, se realizan el cálculo del importe de la reducción aquí y además Lorca y DANA no se pueden marcar los dos, si uno de ellos está en exclusiva
+		if ((callback.getModel().getYear() == 2024 && callback.getModel().isLastPeriod()) || (callback.getModel().getYear() > 2024)) {
+			
+			lor.setEnabled(callback.getActivity().getDana() != 1);
+			lor.addChangeHandler(event-> {
+				callback.getActivity().setLor(lor.getSelectedIndex());
+				
+				// Reducción 20% de la cuota devengada, si exclusivamente en Lorca, en caso contrario, se deja a cero y que lo cumplimente el usuario
+				if (lor.getSelectedIndex() == 1) {
+					callback.getActivity().setLorcaReduction(AonMathUtils.round(callback.getActivity().getDev()*20/100));
+					// Si Lorca exclusiva, no se puede marcar DANA
+					callback.getActivity().setDana(0);
+					callback.getActivity().setDanaReduction(0.0);
+					dana.setSelectedIndex(0);
+					dana.setEnabled(false);
+					danaReduction.setValue(0.0, false, true);
+					danaReduction.setEnabled(false);
+				} else {
+					callback.getActivity().setLorcaReduction(0.0);
+					dana.setEnabled(true);
+				}	
+				lorcaReduction.setValue(callback.getActivity().getLorcaReduction(), false, true);
+				lorcaReduction.setEnabled(callback.getActivity().getLor() == 2);
+				
+				ValueChangeEvent.<Mod303Activity>fire(Model303AEAT2023Activity.this, callback.getActivity());
+			});
+			tab.addRow()
+				.addCell( new Label("Actividad realizada en Lorca"), AON.CSS.aonBorderBottom() )
+				.addCell( lor );
+			
+			dana.setEnabled(callback.getActivity().getLor() != 1);
+			dana.addChangeHandler(event-> {
+				callback.getActivity().setDana(dana.getSelectedIndex());
+				
+				// Reducción 25% de la cuota devengada, si exclusivamente en municipios DANA, en caso contrario, se deja a cero y que lo cumplimente el usuario
+				if (dana.getSelectedIndex() == 1) {
+					callback.getActivity().setDanaReduction(AonMathUtils.round(callback.getActivity().getDev()*25/100));
+					// Si DANA exclusiva, no se puede marcar Lorca
+					callback.getActivity().setLor(0);
+					callback.getActivity().setLorcaReduction(0.0);
+					lor.setSelectedIndex(0);
+					lor.setEnabled(false);
+					lorcaReduction.setValue(0.0, false, true);
+					lorcaReduction.setEnabled(false);
+				} else {
+					callback.getActivity().setDanaReduction(0.0);
+					lor.setEnabled(true);
+				}	
+				danaReduction.setValue(callback.getActivity().getDanaReduction(), false, true);
+				danaReduction.setEnabled(callback.getActivity().getDana() == 2);
+				ValueChangeEvent.<Mod303Activity>fire(Model303AEAT2023Activity.this, callback.getActivity());
+			});			
+			tab.addRow()
+				.addCell(new Label("Actividad realizada en municipios afectados por la DANA 2024"), AON.CSS.aonBorderBottom())
+				.addCell(dana);
+			
+		} else {
+			
+		    // Hasta 3T de 2024 (solo Lorca)
+			lor.addChangeHandler(event-> {
+				callback.getActivity().setLor(lor.getSelectedIndex());
+				ValueChangeEvent.<Mod303Activity>fire(Model303AEAT2023Activity.this, callback.getActivity());
+			});
+			tab.addRow()
+				.addCell( new Label(AON.MSG.irpfActivityLor()), AON.CSS.aonBorderBottom() )
+				.addCell( lor );
+			
+		}
 
 		dia.addValueChangeHandler(event -> {
 			if (dia.getValue() == null) dia.setValue(0,false);
@@ -628,19 +675,47 @@ class Model303AEAT2023Activity extends DockLayoutPanel implements HasValueChange
 			.addCell( new Label(AON.MSG.page6C()), AON.CSS.aonBorderBottom(), AON.CSS.aonWidth400() )
 			.addCell( new AonBoxLabel("C") )
 			.addCell( dev );
-
 		
-		red.setEnabled(callback.getActivity().getLor() != 1);
+		if ((callback.getModel().getYear() == 2024 && callback.getModel().isLastPeriod()) || (callback.getModel().getYear() > 2024)) {
+			
+			lorcaReduction.setEnabled(callback.getActivity().getLor() == 2);
+			lorcaReduction.addValueChangeHandler(event -> {
+				if (lorcaReduction.getValue() == null) 
+					lorcaReduction.setValue(0.0,false);
+				callback.getActivity().setLorcaReduction(lorcaReduction.getValue());
+				ValueChangeEvent.<Mod303Activity>fire(Model303AEAT2023Activity.this, callback.getActivity());
+			});
+			tab.addRow()
+				.addCell(new Label("Reducci\u00F3n por actividad realizada en Lorca"), AON.CSS.aonBorderBottom(), AON.CSS.aonWidth400() )
+				.addCell(new Label(""))
+				.addCell(lorcaReduction);			
+			
+			danaReduction.setEnabled(callback.getActivity().getDana() == 2);
+			danaReduction.addValueChangeHandler(event -> {
+				if (danaReduction.getValue() == null) 
+					danaReduction.setValue(0.0,false);
+				callback.getActivity().setDanaReduction(danaReduction.getValue());
+				ValueChangeEvent.<Mod303Activity>fire(Model303AEAT2023Activity.this, callback.getActivity());
+			});
+			tab.addRow()
+				.addCell(new Label("Reducci\u00F3n por actividad realizada en municipios afectados por la DANA"), AON.CSS.aonBorderBottom(), AON.CSS.aonWidth400() )
+				.addCell(new Label(""))
+				.addCell(danaReduction);
+			
+			red.setEnabled(false);
+		} else {
+			red.setEnabled(callback.getActivity().getLor() != 1);
+		}
+		
 		red.addValueChangeHandler(event -> {
 			if (red.getValue() == null) red.setValue(0.0,false);
 			callback.getActivity().setRed(red.getValue());
 			ValueChangeEvent.<Mod303Activity>fire(Model303AEAT2023Activity.this, callback.getActivity());
 		});
 		tab.addRow()
-			.addCell( new Label(AON.MSG.reductions()), AON.CSS.aonBorderBottom(), AON.CSS.aonWidth400() )
+			.addCell( new Label(AON.MSG.reductions() + " (total)"), AON.CSS.aonBorderBottom(), AON.CSS.aonWidth400() )
 			.addCell( new AonBoxLabel("D") )
 			.addCell( red );
-
 		
 		if (!callback.getModel().isLastPeriod()) {
 			ind.setEnabled(false);

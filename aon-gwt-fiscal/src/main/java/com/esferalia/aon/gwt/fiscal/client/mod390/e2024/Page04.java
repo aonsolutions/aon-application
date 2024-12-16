@@ -16,7 +16,8 @@ class Page04 extends PageAbs {
 	private AonTextBox f01A = new AonTextBox(); 
 	private AonDoubleBox f01B = new AonDoubleBox();
 	private AonDoubleBox f01C = new AonDoubleBox(AonDoubleBox.VISIBLE_LENGTH, 4);
-	private AonDoubleBox f01D = new AonDoubleBox();
+	private AonDoubleBox f01D = new AonDoubleBox(); // Cuota devengada
+	private AonDoubleBox f01D1 = new AonDoubleBox();  // Reducción DANA 2024
 	private AonDoubleBox f01E = new AonDoubleBox();
 	private AonDoubleBox f01K = new AonDoubleBox();
 	
@@ -24,6 +25,7 @@ class Page04 extends PageAbs {
 	private AonDoubleBox f02B = new AonDoubleBox();
 	private AonDoubleBox f02C = new AonDoubleBox(AonDoubleBox.VISIBLE_LENGTH, 4);
 	private AonDoubleBox f02D = new AonDoubleBox();
+	private AonDoubleBox f02D1 = new AonDoubleBox();  // Reducción DANA 2024
 	private AonDoubleBox f02E = new AonDoubleBox();
 	private AonDoubleBox f02K = new AonDoubleBox();
 
@@ -31,6 +33,7 @@ class Page04 extends PageAbs {
 	private AonDoubleBox f03B = new AonDoubleBox();
 	private AonDoubleBox f03C = new AonDoubleBox(AonDoubleBox.VISIBLE_LENGTH, 4);
 	private AonDoubleBox f03D = new AonDoubleBox();
+	private AonDoubleBox f03D1 = new AonDoubleBox();  // Reducción DANA 2024
 	private AonDoubleBox f03E = new AonDoubleBox();
 	private AonDoubleBox f03K = new AonDoubleBox();
 
@@ -38,6 +41,7 @@ class Page04 extends PageAbs {
 	private AonDoubleBox f04B = new AonDoubleBox();
 	private AonDoubleBox f04C = new AonDoubleBox(AonDoubleBox.VISIBLE_LENGTH, 4);
 	private AonDoubleBox f04D = new AonDoubleBox();
+	private AonDoubleBox f04D1 = new AonDoubleBox();  // Reducción DANA 2024
 	private AonDoubleBox f04E = new AonDoubleBox();
 	private AonDoubleBox f04K = new AonDoubleBox();
 
@@ -45,6 +49,7 @@ class Page04 extends PageAbs {
 	private AonDoubleBox f05B = new AonDoubleBox();
 	private AonDoubleBox f05C = new AonDoubleBox(AonDoubleBox.VISIBLE_LENGTH, 4);
 	private AonDoubleBox f05D = new AonDoubleBox();
+	private AonDoubleBox f05D1 = new AonDoubleBox();  // Reducción DANA 2024
 	private AonDoubleBox f05E = new AonDoubleBox();
 	private AonDoubleBox f05K = new AonDoubleBox();
 
@@ -73,6 +78,7 @@ class Page04 extends PageAbs {
 			f01B.setValue(farmer.getIncomes(),false);
 			f01C.setValue(farmer.getQuotaIndex(),false);
 			f01D.setValue(farmer.getAccrualQuota(),false);
+			f01D1.setValue(farmer.getDanaReduction(),false);
 			f01E.setValue(farmer.getInputQuotas(),false);
 			f01K.setValue(farmer.getQuota(),false);
 		} else {
@@ -84,6 +90,7 @@ class Page04 extends PageAbs {
 			f02B.setValue(farmer.getIncomes(),false);
 			f02C.setValue(farmer.getQuotaIndex(),false);
 			f02D.setValue(farmer.getAccrualQuota(),false);
+			f02D1.setValue(farmer.getDanaReduction(),false);
 			f02E.setValue(farmer.getInputQuotas(),false);
 			f02K.setValue(farmer.getQuota(),false);
 		} else {
@@ -95,6 +102,7 @@ class Page04 extends PageAbs {
 			f03B.setValue(farmer.getIncomes(),false);
 			f03C.setValue(farmer.getQuotaIndex(),false);
 			f03D.setValue(farmer.getAccrualQuota(),false);
+			f03D1.setValue(farmer.getDanaReduction(),false);
 			f03E.setValue(farmer.getInputQuotas(),false);
 			f03K.setValue(farmer.getQuota(),false);
 		} else {
@@ -106,6 +114,7 @@ class Page04 extends PageAbs {
 			f04B.setValue(farmer.getIncomes(),false);
 			f04C.setValue(farmer.getQuotaIndex(),false);
 			f04D.setValue(farmer.getAccrualQuota(),false);
+			f04D1.setValue(farmer.getDanaReduction(),false);
 			f04E.setValue(farmer.getInputQuotas(),false);
 			f04K.setValue(farmer.getQuota(),false);
 		} else {
@@ -117,6 +126,7 @@ class Page04 extends PageAbs {
 			f05B.setValue(farmer.getIncomes(),false);
 			f05C.setValue(farmer.getQuotaIndex(),false);
 			f05D.setValue(farmer.getAccrualQuota(),false);
+			f05D1.setValue(farmer.getDanaReduction(),false);
 			f05E.setValue(farmer.getInputQuotas(),false);
 			f05K.setValue(farmer.getQuota(),false);
 		} else {
@@ -189,6 +199,7 @@ class Page04 extends PageAbs {
 			.addCell(new Label (AON.MSG.f02Msg()), AON.CSS.aonBold(), AON.CSS.aonWidth80())
 			.addCell(new Label (AON.MSG.f03Msg()), AON.CSS.aonBold(), AON.CSS.aonWidth80())
 			.addCell(new Label (AON.MSG.f04Msg()), AON.CSS.aonBold(), AON.CSS.aonWidth80())
+			.addCell(new Label ("Reducci\u00F3n DANA"), AON.CSS.aonBold(), AON.CSS.aonWidth80())
 			.addCell(new Label (AON.MSG.f05Msg()), AON.CSS.aonBold(), AON.CSS.aonWidth80())
 			.addCell(new Label (AON.MSG.page6J()), AON.CSS.aonBold(), AON.CSS.aonWidthAuto());
 		tab1.addRow()
@@ -196,6 +207,7 @@ class Page04 extends PageAbs {
 			.addCell(f01B)
 			.addCell(f01C)
 			.addCell(f01D)
+			.addCell(f01D1)
 			.addCell(f01E)
 			.addCell(f01K);
 		tab1.addRow()
@@ -203,6 +215,7 @@ class Page04 extends PageAbs {
 			.addCell(f02B)
 			.addCell(f02C)
 			.addCell(f02D)
+			.addCell(f02D1)
 			.addCell(f02E)
 			.addCell(f02K);
 		tab1.addRow()
@@ -210,6 +223,7 @@ class Page04 extends PageAbs {
 			.addCell(f03B)
 			.addCell(f03C)
 			.addCell(f03D)
+			.addCell(f03D1)
 			.addCell(f03E)
 			.addCell(f03K);
 		tab1.addRow()
@@ -217,6 +231,7 @@ class Page04 extends PageAbs {
 			.addCell(f04B)
 			.addCell(f04C)
 			.addCell(f04D)
+			.addCell(f04D1)
 			.addCell(f04E)
 			.addCell(f04K);
 		tab1.addRow()
@@ -224,6 +239,7 @@ class Page04 extends PageAbs {
 			.addCell(f05B)
 			.addCell(f05C)
 			.addCell(f05D)
+			.addCell(f05D1)
 			.addCell(f05E)
 			.addCell(f05K);
 
@@ -315,6 +331,11 @@ class Page04 extends PageAbs {
 			calculateAndRefresh();
 			markAsDirty();
 		});
+		f01D1.addValueChangeHandler(event -> {
+			getModel().ensureFarmerRegime1().setDanaReduction(f01D1.getValue());
+			calculateAndRefresh();
+			markAsDirty();
+		});
 		f01E.addValueChangeHandler(event -> {
 			getModel().ensureFarmerRegime1().setInputQuotas(f01E.getValue());
 			calculateAndRefresh();
@@ -343,6 +364,11 @@ class Page04 extends PageAbs {
 		});
 		f02D.addValueChangeHandler(event -> {
 			getModel().ensureFarmerRegime2().setAccrualQuota(f02D.getValue());
+			calculateAndRefresh();
+			markAsDirty();
+		});
+		f02D1.addValueChangeHandler(event -> {
+			getModel().ensureFarmerRegime2().setDanaReduction(f02D1.getValue());
 			calculateAndRefresh();
 			markAsDirty();
 		});
@@ -377,6 +403,11 @@ class Page04 extends PageAbs {
 			calculateAndRefresh();
 			markAsDirty();
 		});
+		f03D1.addValueChangeHandler(event -> {
+			getModel().ensureFarmerRegime3().setDanaReduction(f03D1.getValue());
+			calculateAndRefresh();
+			markAsDirty();
+		});
 		f03E.addValueChangeHandler(event -> {
 			getModel().ensureFarmerRegime3().setInputQuotas(f03E.getValue());
 			calculateAndRefresh();
@@ -408,6 +439,11 @@ class Page04 extends PageAbs {
 			calculateAndRefresh();
 			markAsDirty();
 		});
+		f04D1.addValueChangeHandler(event -> {
+			getModel().ensureFarmerRegime4().setDanaReduction(f04D1.getValue());
+			calculateAndRefresh();
+			markAsDirty();
+		});
 		f04E.addValueChangeHandler(event -> {
 			getModel().ensureFarmerRegime4().setInputQuotas(f04E.getValue());
 			calculateAndRefresh();
@@ -436,6 +472,11 @@ class Page04 extends PageAbs {
 		});
 		f05D.addValueChangeHandler(event -> {
 			getModel().ensureFarmerRegime5().setAccrualQuota(f05D.getValue());
+			calculateAndRefresh();
+			markAsDirty();
+		});
+		f05D1.addValueChangeHandler(event -> {
+			getModel().ensureFarmerRegime5().setDanaReduction(f05D1.getValue());
 			calculateAndRefresh();
 			markAsDirty();
 		});

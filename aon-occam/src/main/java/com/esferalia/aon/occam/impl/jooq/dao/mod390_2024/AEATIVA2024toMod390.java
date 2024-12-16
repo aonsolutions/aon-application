@@ -731,6 +731,7 @@ public class AEATIVA2024toMod390 {
 		ac.setIncomes(ensureBigDecimal(actividad.getVolIngresos()));
 		ac.setQuotaIndex(ensureBigDecimal(actividad.getIndCuota()));
 		ac.setAccrualQuota(ensureBigDecimal(actividad.getCuotaDevengada()));
+		ac.setDanaReduction(ensureBigDecimal(actividad.getDana()));		
 		ac.setInputQuotas(ensureBigDecimal(actividad.getCuotasSoportadas()));
 		ac.setQuota(ensureBigDecimal(actividad.getCuotaRegSimplificado()));
 		return ac;
@@ -740,36 +741,46 @@ public class AEATIVA2024toMod390 {
 		SimpliedRegimeActivity sra = new SimpliedRegimeActivity();
 		sra.setEpigrafe(act.getEpigrafe());
 		List<Modulo> modulos = act.getModulo();
-		if (!modulos.isEmpty()) {
-			sra.setUnit1(ensureBigDecimal(modulos.get(0).getUnidades()));
-			sra.setAmount1(ensureBigDecimal(modulos.get(0).getImporte()));
+		
+		for (Modulo modulo : modulos) {
+			switch (modulo.getNumModulo()) {
+				case "1" -> {
+					sra.setUnit1(ensureBigDecimal(modulo.getUnidades()));
+					sra.setAmount1(ensureBigDecimal(modulo.getImporte()));
+				}
+				case "2" -> {
+					sra.setUnit2(ensureBigDecimal(modulo.getUnidades()));
+					sra.setAmount2(ensureBigDecimal(modulo.getImporte()));
+				}
+				case "3" -> {
+					sra.setUnit3(ensureBigDecimal(modulo.getUnidades()));
+					sra.setAmount3(ensureBigDecimal(modulo.getImporte()));
+				}
+				case "4" -> {
+					sra.setUnit4(ensureBigDecimal(modulo.getUnidades()));
+					sra.setAmount4(ensureBigDecimal(modulo.getImporte()));
+				}
+				case "5" -> {
+					sra.setUnit5(ensureBigDecimal(modulo.getUnidades()));
+					sra.setAmount5(ensureBigDecimal(modulo.getImporte()));
+				}
+				case "6" -> {
+					sra.setUnit6(ensureBigDecimal(modulo.getUnidades()));
+					sra.setAmount6(ensureBigDecimal(modulo.getImporte()));
+				}
+				case "7" -> {
+					sra.setUnit7(ensureBigDecimal(modulo.getUnidades()));
+					sra.setAmount7(ensureBigDecimal(modulo.getImporte()));
+				}
+				default -> {
+					// do nothing					
+				}
+			}
 		}
-		if (modulos.size() > 1) {
-			sra.setUnit2(ensureBigDecimal(modulos.get(1).getUnidades()));
-			sra.setAmount2(ensureBigDecimal(modulos.get(1).getImporte()));
-		}
-		if (modulos.size() > 2) {
-			sra.setUnit3(ensureBigDecimal(modulos.get(2).getUnidades()));
-			sra.setAmount3(ensureBigDecimal(modulos.get(2).getImporte()));
-		}
-		if (modulos.size() > 3) {
-			sra.setUnit4(ensureBigDecimal(modulos.get(3).getUnidades()));
-			sra.setAmount4(ensureBigDecimal(modulos.get(3).getImporte()));
-		}
-		if (modulos.size() > 4) {
-			sra.setUnit5(ensureBigDecimal(modulos.get(4).getUnidades()));
-			sra.setAmount5(ensureBigDecimal(modulos.get(4).getImporte()));
-		}
-		if (modulos.size() > 5) {
-			sra.setUnit6(ensureBigDecimal(modulos.get(5).getUnidades()));
-			sra.setAmount6(ensureBigDecimal(modulos.get(5).getImporte()));
-		}
-		if (modulos.size() > 6) {
-			sra.setUnit7(ensureBigDecimal(modulos.get(6).getUnidades()));
-			sra.setAmount7(ensureBigDecimal(modulos.get(6).getImporte()));
-		}
+		
 		sra.setBoxC(ensureBigDecimal(act.getCuotaDevengada()));
 		sra.setBoxC1(ensureBigDecimal(act.getLorca()));
+		sra.setBoxC2(ensureBigDecimal(act.getDana()));
 		sra.setBoxD(ensureBigDecimal(act.getCuotaSoportada()));
 		sra.setBoxE(ensureBigDecimal(act.getIndiceCorrector()));
 		sra.setBoxF(ensureBigDecimal(act.getResultado()));

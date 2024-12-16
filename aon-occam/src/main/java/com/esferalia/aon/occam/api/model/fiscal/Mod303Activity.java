@@ -21,9 +21,12 @@ public class Mod303Activity implements Serializable {
 	private int emp;			// Número de empleados a 1-01 (o en la fecha de inicio de la actividad)
 	private int lor;			// Si realiza la actividad en LORCA, seleccione lo que proceda
 	private int cov;			// Si aplica la reduccion extraordinaria por covid-19, art. 9 RD-Ley 35/2020)
-	
-	private double dev;			// Cuota devengada operaciones corrientes
-	private double red;			// Reducciones
+	private int dana;			// Si en 2024 realiza la actividad en municipios afectados por la DANA (ver anexo del RD-ley 6/2024), seleccione lo que proceda
+
+	private double dev;			   // Cuota devengada operaciones corrientes
+	private double lorcaReduction; // Importe reducción Lorca (se añade en el último periodo de 2024, junto con la reducción de la DANA)
+	private double danaReduction;  // Importe reducción DANA 2024
+	private double red;			   // Reducciones (total)
 	
 	// 1T, 2T, 3T
 	private double ind;			// Índice corrector de actividades de temporada
@@ -383,8 +386,11 @@ public class Mod303Activity implements Serializable {
 		this.setTem(0);
 		this.setEmp(0);
 		this.setLor(0);
+		this.setDana(0);
 		this.setCov(0);
 		this.setDev(0);
+		this.setLorcaReduction(0);
+		this.setDanaReduction(0);
 		this.setRed(0);
 		this.setInd(0);
 		this.setDia(0);
@@ -420,8 +426,11 @@ public class Mod303Activity implements Serializable {
 				.setDia(toClone.getDia())
 				.setEmp(toClone.getEmp())
 				.setLor(toClone.getLor())
+				.setDana(toClone.getDana())
 				.setCov(toClone.getCov())
 				.setDev(toClone.getDev())
+				.setLorcaReduction(toClone.getLorcaReduction())
+				.setDanaReduction(toClone.getDanaReduction())
 				.setRed(toClone.getRed())
 				.setInd(toClone.getInd())
 				.setPor(toClone.getPor())
@@ -466,6 +475,33 @@ public class Mod303Activity implements Serializable {
 
 	private boolean isEmpty() {
 		return AonStringUtils.isBlank(epigraph);
+	}
+
+	public int getDana() {
+		return dana;
+	}
+
+	public Mod303Activity setDana(int dana) {
+		this.dana = dana;
+		return this;
+	}
+
+	public double getLorcaReduction() {
+		return lorcaReduction;
+	}
+
+	public Mod303Activity setLorcaReduction(double lorcaReduction) {
+		this.lorcaReduction = lorcaReduction;
+		return this;
+	}
+
+	public double getDanaReduction() {
+		return danaReduction;
+	}
+
+	public Mod303Activity setDanaReduction(double danaReduction) {
+		this.danaReduction = danaReduction;
+		return this;
 	}
 
 }
