@@ -36,6 +36,7 @@ public class Mod131Activity implements Serializable {
 	private int emp;			// A10. N\u00AA de empleados a 1-01-2015 (o en la fecha de inicio de la actividad)
 	private int lor;			// A11. Si en el año de devengo, realiza la actividad en LORCA, seleccione lo que proceda
 	private int pal;			// A12. Si en el año de devengo, realiza la actividad en la Isla de La Palma, seleccione lo que proceda
+	private int dana;			// Actividad realizada en municipios afectados por la DANA 2024 
 	private int bat;			// B06. Número de bateas y de barcos auxiliares de la empresa.
 	private double prc;			// Si para el c\u00E1lculo del pago fraccionado desea aplicar un porcentaje superior al que establece la normativa, indique el porcentaje que desea aplicar
 
@@ -81,6 +82,8 @@ public class Mod131Activity implements Serializable {
 	private double rpf;			// I11. Rendimiento a efectos de pagos fraccionados
 	private double rlo;			// I12. Reducci\u00F3n para actividades econ\u00F3micas realizadas en el t\u00E9rmino municipal de Lorca
 	private double rpa;			// I121. Reducción para actividades económicas realizadas en la Isla de La Palma
+	private double danaReduction; // Importe reducción actividad realizada en municipios afectados por la DANA 2024
+	
 	private double rdr;			// I13. Rendimiento a efectos de pagos fraccionados despu\u00E9s de la reducci\u00F3n
 	private int dia;			//      D\u00EDas de ejercicio en 2015
 	private double net;			//      Rendimiento neto de la actividad a efectos del pago fraccionado 
@@ -776,6 +779,24 @@ public class Mod131Activity implements Serializable {
 	}
 	public Mod131Activity setIndex(int index) {
 		this.index = index;
+		return this;
+	}
+
+	public int getDana() {
+		return dana;
+	}
+
+	public Mod131Activity setDana(int dana) {
+		this.dana = dana;
+		return this;
+	}
+
+	public double getDanaReduction() {
+		return danaReduction;
+	}
+
+	public Mod131Activity setDanaReduction(double danaReduction) {
+		this.danaReduction = danaReduction;
 		return this;
 	}
 }

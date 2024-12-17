@@ -41,7 +41,7 @@ import com.google.gwt.user.client.ui.Widget;
 public class Model131Activity2024 extends DockLayoutPanel implements HasValueChangeHandlers<Mod131Activity> {
 	
 	private static final Logger LOGGER = Logger.getLogger(Model131Activity2024.class.getName());
-	private static final String WIDTH_150PX = "150px";
+//	private static final String WIDTH_150PX = "150px";
 	private final Label epigraph = new Label();
 	private final Label epigraphLabel = new Label();
 	
@@ -62,6 +62,7 @@ public class Model131Activity2024 extends DockLayoutPanel implements HasValueCha
 	private AonIntegerBox emp = new AonIntegerBox(6);
 	private ListBox lor = new ListBox();
 	private ListBox pal = new ListBox();
+	private ListBox dana = new ListBox();
 	private ListBox bat = new ListBox();
 	private AonDoubleBox prc = new AonDoubleBox(6);
 
@@ -122,6 +123,8 @@ public class Model131Activity2024 extends DockLayoutPanel implements HasValueCha
 	private AonDoubleBox rpf = new AonDoubleBox(6);
 	private AonDoubleBox rlo = new AonDoubleBox(6);
 	private AonDoubleBox rpa = new AonDoubleBox(6);
+	private AonDoubleBox danaReduction = new AonDoubleBox(6);
+	
 	private AonDoubleBox rdr = new AonDoubleBox(6);
 	private AonIntegerBox dia = new AonIntegerBox(6);
 	private AonDoubleBox net = new AonDoubleBox(6);
@@ -165,17 +168,22 @@ public class Model131Activity2024 extends DockLayoutPanel implements HasValueCha
 		mun.addItem("Desde 50.001 hasta 100.000 habitantes.");
 		mun.addItem("M\u00E1s de 100.000 habitantes.");
 		mun.addItem("Madrid o Barcelona.");
-		mun.setWidth(WIDTH_150PX);
+		mun.setWidth("260px");
 		
 		lor.addItem("-");
 		lor.addItem("Actividad realizada exclusivamente en Lorca.");
 		lor.addItem("Actividad realizada en Lorca y otros municipios.");
-		lor.setWidth(WIDTH_150PX);
+		lor.setWidth("300px");
 		
 		pal.addItem("-");
 		pal.addItem("Actividad realizada exclusivamente en la isla de la Palma.");
 		pal.addItem("Actividad realizada en la isla de la Palma y otros municipios.");
-		pal.setWidth(WIDTH_150PX);
+		pal.setWidth("370px");
+		
+		dana.addItem("-");
+		dana.addItem("Exclusivamente en municipios afectados por la DANA");
+		dana.addItem("En municipios afectados por la DANA y en otros municipios");
+		dana.setWidth("370px");
 		
 		bat.addItem("-");
 		bat.addItem("Una batea y ning\u00FAn barco");
@@ -185,7 +193,7 @@ public class Model131Activity2024 extends DockLayoutPanel implements HasValueCha
 		bat.addItem("Dos bateas y ning\u00FAn barco");
 		bat.addItem("Dos bateas y un barco de menos de 15 TRB");
 		bat.addItem("Otros: n\u00FAmero de bateas, barcos o TRB distintos de los anteriores");
-		bat.setWidth(WIDTH_150PX);
+		bat.setWidth("370px");
 
 		addNorth(getToolbar( callback ), AonToolbar.HEIGTH);		
 
@@ -330,6 +338,7 @@ public class Model131Activity2024 extends DockLayoutPanel implements HasValueCha
 		emp.setValue(act.getEmp());
 		lor.setSelectedIndex(act.getLor());
 		pal.setSelectedIndex(act.getPal());
+		dana.setSelectedIndex(act.getDana());
 		bat.setSelectedIndex(act.getBat());
 		prc.setValue(act.getPrc());
 		int i = 0;
@@ -402,6 +411,7 @@ public class Model131Activity2024 extends DockLayoutPanel implements HasValueCha
 		rpf.setValue(act.getRpf());
 		rlo.setValue(act.getRlo());
 		rpa.setValue(act.getRpa());
+		danaReduction.setValue(act.getDanaReduction());
 		rdr.setValue(act.getRdr());
 		dia.setValue(act.getDia());
 		net.setValue(act.getNet());
@@ -456,8 +466,9 @@ public class Model131Activity2024 extends DockLayoutPanel implements HasValueCha
 			tns.setEnabled(false);
 		}
 		cap.setEnabled( act.getVeh() > 0 );
-		rlo.setEnabled(( lor.getSelectedIndex() == 2 ));
-		rpa.setEnabled(( pal.getSelectedIndex() == 2 ));
+		rlo.setEnabled( lor.getSelectedIndex() == 2 );
+		rpa.setEnabled( pal.getSelectedIndex() == 2 );
+		danaReduction.setEnabled( dana.getSelectedIndex() == 2 );
 	}
 	
 	private Widget getAdditionalDataPanel(IModel131ActivityCallback callback) {
@@ -528,23 +539,77 @@ public class Model131Activity2024 extends DockLayoutPanel implements HasValueCha
 			.addCell(new Label(AON.MSG.irpfActivityEmp()),AON.CSS.aonBold() )
 			.addCell(emp);
 
+		lor.setEnabled(callback.getActivity().getPal() != 1 && callback.getActivity().getDana() != 1);
 		lor.addChangeHandler(event -> {
-			rlo.setValue(0.0, false);
-			callback.getActivity().setRlo( 0.0 );
+//			rlo.setValue(0.0, false);
+//			callback.getActivity().setRlo( 0.0 );
+			callback.getActivity().setLor(lor.getSelectedIndex());
+			if (callback.getActivity().getLor() == 1) {
+				callback.getActivity().setPal(0);
+				callback.getActivity().setDana(0);
+				pal.setSelectedIndex(0);
+				dana.setSelectedIndex(0);
+				pal.setEnabled(false);
+				dana.setEnabled(false);
+			} else {
+				pal.setEnabled(true);
+				dana.setEnabled(true);
+				callback.getActivity().setRlo(0.0);
+			}
 			onFieldChange(callback);
 		});
 		table.addRow()
 			.addCell(new Label(AON.MSG.irpfActivityLor()),AON.CSS.aonBold() )
 			.addCell(lor);
 
+		pal.setEnabled(callback.getActivity().getLor() != 1 && callback.getActivity().getDana() != 1);
 		pal.addChangeHandler(event -> {
-			rpa.setValue(0.0, false);
-			callback.getActivity().setRpa( 0.0 );
+//			rpa.setValue(0.0, false);
+//			callback.getActivity().setRpa( 0.0 );
+			callback.getActivity().setPal(pal.getSelectedIndex());
+			if (callback.getActivity().getPal() == 1) {
+				callback.getActivity().setLor(0);
+				callback.getActivity().setDana(0);
+				lor.setSelectedIndex(0);
+				dana.setSelectedIndex(0);
+				lor.setEnabled(false);
+				dana.setEnabled(false);
+			} else {
+				lor.setEnabled(true);
+				dana.setEnabled(true);
+				callback.getActivity().setRpa(0.0);
+			}
 			onFieldChange(callback);	
 		});
 		table.addRow()
 			.addCell(new Label(AON.MSG.irpfActivityPal()),AON.CSS.aonBold() )
 			.addCell(pal);
+		
+		// DANA solo a partir del ultimo trimestre de 2024
+		if (callback.getModel().getYear() > 2024 || (callback.getModel().getYear() == 2024 && callback.getModel().isLastPeriod())) {
+			dana.setEnabled(callback.getActivity().getLor() != 1 && callback.getActivity().getPal() != 1);
+			dana.addChangeHandler(event -> {
+//				danaReduction.setValue(0.0, false);
+//				callback.getActivity().setDanaReduction( 0.0 );
+				callback.getActivity().setDana(dana.getSelectedIndex());
+				if (callback.getActivity().getDana() == 1) {
+					callback.getActivity().setLor(0);
+					callback.getActivity().setPal(0);
+					lor.setSelectedIndex(0);
+					pal.setSelectedIndex(0);
+					lor.setEnabled(false);
+					pal.setEnabled(false);
+				} else {
+					lor.setEnabled(true);
+					pal.setEnabled(true);
+					callback.getActivity().setDanaReduction(0.0);
+				}
+				onFieldChange(callback);	
+			});
+			table.addRow()
+				.addCell(new Label("Actividad realizada en municipios afectados por la DANA 2024"),AON.CSS.aonBold() )
+				.addCell(dana);
+		}
 
 		bat.addChangeHandler(event -> onFieldChange(callback));
 		table.addRow()
@@ -907,6 +972,7 @@ public class Model131Activity2024 extends DockLayoutPanel implements HasValueCha
 		dia.setValue(AonNumberUtils.zeroIfNull(dia.getValue()),false);
 		rlo.setValue(AonNumberUtils.zeroIfNull(rlo.getValue()),false);
 		rpa.setValue(AonNumberUtils.zeroIfNull(rpa.getValue()),false);
+		danaReduction.setValue(AonNumberUtils.zeroIfNull(danaReduction.getValue()),false);
 		callback.getActivity().setCom(com.getValue());
 		callback.getActivity().setTem(tem.getValue());
 		callback.getActivity().setNue(nue.getValue());
@@ -915,6 +981,7 @@ public class Model131Activity2024 extends DockLayoutPanel implements HasValueCha
 		callback.getActivity().setMun(mun.getSelectedIndex());
 		callback.getActivity().setLor(lor.getSelectedIndex());
 		callback.getActivity().setPal(pal.getSelectedIndex());
+		callback.getActivity().setDana(dana.getSelectedIndex());
 		callback.getActivity().setBat(bat.getSelectedIndex());
 		callback.getActivity().setPrc(prc.getValue());
 		callback.getActivity().setDis(dis.getValue());
@@ -979,8 +1046,9 @@ public class Model131Activity2024 extends DockLayoutPanel implements HasValueCha
 		ic4.setEnabled(false);
 		ic5.setEnabled(false);
 		rpf.setEnabled(false);
-		rlo.setEnabled(false);
-		rpa.setEnabled(false);
+//		rlo.setEnabled(false);
+//		rpa.setEnabled(false);
+//		danaReduction.setEnabled(false);   
 		rdr.setEnabled(false);
 		net.setEnabled(false);
 		por.setEnabled(false);
@@ -988,9 +1056,19 @@ public class Model131Activity2024 extends DockLayoutPanel implements HasValueCha
 		
 		iin.addValueChangeHandler(event -> onFieldChange(callback));
 		dia.addValueChangeHandler(event -> onFieldChange(callback));
-		rlo.addValueChangeHandler(event -> onFieldChange(callback));
-		rpa.addValueChangeHandler(event -> onFieldChange(callback));
-
+		rlo.addValueChangeHandler(event -> {
+			if (rlo.getValue() == null) 
+				rlo.setValue(0.0,false);
+			callback.getActivity().setRlo(rlo.getValue());
+			onFieldChange(callback);
+		});
+		rpa.addValueChangeHandler(event -> {
+			if (rpa.getValue() == null) 
+				rpa.setValue(0.0,false);
+			callback.getActivity().setRpa(rpa.getValue());
+			onFieldChange(callback);
+		});
+		
 		table.addRow()
 			.addCell(new Label(AON.MSG.irpfActivityRnp()),AON.CSS.aonBold(),AON.CSS.aonWidth600() )
 			.addCell(rnp);
@@ -1027,6 +1105,20 @@ public class Model131Activity2024 extends DockLayoutPanel implements HasValueCha
 		table.addRow()
 			.addCell(new Label(AON.MSG.irpfActivityRpa()),AON.CSS.aonBold())
 			.addCell(rpa);
+		
+		// DANA solo a partir del ultimo trimestre de 2024
+		if (callback.getModel().getYear() > 2024 || (callback.getModel().getYear() == 2024 && callback.getModel().isLastPeriod())) {
+			danaReduction.addValueChangeHandler(event -> {
+				if (danaReduction.getValue() == null) 
+					danaReduction.setValue(0.0,false);
+				callback.getActivity().setDanaReduction(danaReduction.getValue());
+				onFieldChange(callback);	
+			});
+			table.addRow()
+				.addCell(new Label("Reducci\u00F3n por actividad realizada en municipios afectados por la DANA"),AON.CSS.aonBold())
+				.addCell(danaReduction);
+		}
+		
 		table.addRow()
 			.addCell(new Label(AON.MSG.irpfActivityRdr()),AON.CSS.aonBold())
 			.addCell(rdr);
@@ -1188,6 +1280,7 @@ public class Model131Activity2024 extends DockLayoutPanel implements HasValueCha
 					callback.getActivity().setRpf(result.getRpf());
 					callback.getActivity().setRlo(result.getRlo());
 					callback.getActivity().setRpa(result.getRpa());
+					callback.getActivity().setDanaReduction(result.getDanaReduction());
 					callback.getActivity().setRdr(result.getRdr());
 					callback.getActivity().setNet(result.getNet());
 					callback.getActivity().setPor(result.getPor());
