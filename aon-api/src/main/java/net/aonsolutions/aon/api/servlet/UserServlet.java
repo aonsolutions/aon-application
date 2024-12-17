@@ -78,7 +78,6 @@ public class UserServlet extends AonApiHttpServlet {
 	private static final String AON_REPLY_TO = "asignacion@aonsolutions.es";
 	private static final String AON_ALIAS = "AON SOLUTIONS S.L.";
 	private static final String AON_SUBJECT = "USUARIO | AON SOLUTIONS";
-	private static boolean isLocal = false;
 
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) {
@@ -657,7 +656,7 @@ public class UserServlet extends AonApiHttpServlet {
 			subject = formatUT8B("USUARIO | " + cp.getName().toUpperCase());
 		}
 		
-		User user = AON.getUser(api.getDomain(), api.getUser().getLogin(), f -> f.getDomainProperty().eq(api.getDomain().getId()).and(f.getAuthEmailProperty().eq(email)));
+		User user = AON.getUser(api.getDomain(), api.getUser().getLogin(), f -> f.getDomainProperty().eq(api.getDomain().getId()).and(f.getAuthProperty().eq(auth.getAuth())));
 
 		SESMessage msg = new SESMessage()
 			.setAlias(alias)
@@ -719,14 +718,14 @@ public class UserServlet extends AonApiHttpServlet {
 		
 		String url = "";
 		if(user != null && user.isPortal()) {
-			url = isLocal ? ("http://" + parentDomain.getName() + ":8080/beta") : "https://aon.solutions";
+			url = "https://aon.solutions";
 			
 			if(AonStringUtils.equalsIgnoreCase(parentDomain.getName(), "app.leevy.es"))
 				url = "https://leevy.aon.solutions";
 			else if(AonStringUtils.equalsIgnoreCase(parentDomain.getName(), "infoautonomos.aonsolutions.net"))
 				url = "https://infoautonomos.aon.solutions";
 		} else {
-			url = isLocal ? ("http://" + parentDomain.getName() + ":8080/beta") : ("https://" + api.getDomain().getName() + "/");
+			url = "https://" + api.getDomain().getName() + "/";
 			
 			if(AonStringUtils.equalsIgnoreCase(parentDomain.getName(), "infoautonomos.aonsolutions.net"))
 				url = "https://infoautonomos.aon.solutions";
@@ -786,9 +785,12 @@ public class UserServlet extends AonApiHttpServlet {
 			String result = Base64.getEncoder().encodeToString(str.getBytes(StandardCharsets.UTF_8));
 
 			Domain attachDomain = DomainDAO.getDomain(aonContext, attach.getDomain().getId());
-			logoUrl = (isLocal ? "http" : "https") + "://" + parentDomain.getName() + (isLocal ? ":8080" : "")
-					+ "/ms/download_attachment/" + attachDomain.getName() + "/" + attach.getCreationUser() + "/"
+			logoUrl = "https://" + parentDomain.getName() + "/ms/download_attachment/" + attachDomain.getName() + "/" + attach.getCreationUser() + "/"
 					+ result;
+			
+//			logoUrl = (isLocal ? "http" : "https") + "://" + parentDomain.getName() + (isLocal ? ":8080" : "")
+//					+ "/ms/download_attachment/" + attachDomain.getName() + "/" + attach.getCreationUser() + "/"
+//					+ result;
 		} catch (Exception e) {
 			e.printStackTrace();
 			logoUrl = AON_LOGO;
