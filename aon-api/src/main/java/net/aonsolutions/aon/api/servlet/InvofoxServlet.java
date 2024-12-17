@@ -388,7 +388,9 @@ public class InvofoxServlet extends AonApiHttpServlet {
 					if(invofoxConfiguration.isAutoRecord()) {					
 						// TODO RECORD INVOICE!
 					}
-				} else rawdocDocument(api, documentId);
+				} else if(publicState != null && !OCRSeverity.exported.equals(publicState)) {
+					rawdocDocument(api, documentId);
+				}
 //			}
 			
 			return new JSONObject();
