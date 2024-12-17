@@ -221,7 +221,7 @@ public class TrainningIntegralTest extends BaseIntegralTestCase {
 		click("costsCheck-input");
 		
 		draft("FORMACION APRENDIZAJE, ALTERNANCIA (EXCESO 1)");
-		calculate(Calendar.JUNE, 2023);
+		calculate(Calendar.DECEMBER, 2024);
 		((HtmlSelect) getElementById("editor-cotiza_exceso")).getOptionByText("SI").click();
 		assertElement("structural_overtime");
 		Assert.assertEquals(3, getElementsById("common_contingency").size());
@@ -230,14 +230,14 @@ public class TrainningIntegralTest extends BaseIntegralTestCase {
 		
 		
 		draft("FORMACION APRENDIZAJE, ALTERNANCIA (EXCESO 2)");
-		calculate(Calendar.JUNE, 2023);
+		calculate(Calendar.DECEMBER, 2024);
 		((HtmlSelect) getElementById("editor-cotiza_exceso")).getOptionByText("SI").click();
 		Assert.assertEquals(3, getElementsById("common_contingency").size());
 		Assert.assertEquals(3, getElementsById("unemployment").size());
 		Assert.assertEquals(3, getElementsById("job_training").size());
 		
 		draft("FORMACION APRENDIZAJE, ALTERNANCIA (EXCESO 3)");
-		calculate(Calendar.JUNE, 2023);
+		calculate(Calendar.DECEMBER, 2024);
 		((HtmlSelect) getElementById("editor-cotiza_exceso")).getOptionByText("SI").click();
 		assertElement("structural_overtime");
 		Assert.assertEquals(1, getElementsById("common_contingency").size());
