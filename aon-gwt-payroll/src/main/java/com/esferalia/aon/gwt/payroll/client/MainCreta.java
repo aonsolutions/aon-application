@@ -2690,10 +2690,11 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 
 
 	protected static void sync(final SyncCallback cb, Collection<CCC> cccs) {
-		List<String> cccCodes = cccs.stream().map(ccc -> ccc.getCode()).collect(Collectors.toList());
-		Map<String, Collection<String>> options  = new HashMap<String, Collection<String>>();
+		List<String> cccCodes = cccs.stream().map(CCC::getCode).collect(Collectors.toList());
+		Map<String, Collection<String>> options  = new HashMap<>();
 		options.put(CretaService.Parameter.CCC.name(), cccCodes );
 		options.put(CretaService.Parameter.USER.name(), Collections.singleton(Wnd.getCurrentUser()));
+		options.put(CretaService.Parameter.DOMAIN.name(), Collections.singleton(Wnd.getCurrentDomainNameURL()));
 		sync(cb, options);
 	}
 
