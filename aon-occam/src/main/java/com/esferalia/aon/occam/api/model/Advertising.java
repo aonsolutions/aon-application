@@ -6,13 +6,19 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 
 public enum Advertising implements Serializable{
 
-	ALLOWED,
-    AUTO_EXCLUSION,
-    DENIED,
-	ROBINSON;
+	ALLOWED("Autorizado"),
+    AUTO_EXCLUSION("Auto Excluido"),
+    DENIED("Denegado"),
+	ROBINSON("Robinson");
 	
-	private Advertising() {
+	private String description;
 	
+	private Advertising(String description) {
+		this.description = description;
+	}
+	
+	public String getDescription() {
+		return this.description;
 	}
 
 	public Byte value(){

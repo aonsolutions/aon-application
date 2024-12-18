@@ -41,6 +41,7 @@ import com.esferalia.aon.occam.api.model.GeoZone;
 import com.esferalia.aon.occam.api.model.MarketingAction;
 import com.esferalia.aon.occam.api.model.MarketingActionParams;
 import com.esferalia.aon.occam.api.model.MarketingActionTarget;
+import com.esferalia.aon.occam.api.model.MarketingActionTargetMassiveParams;
 import com.esferalia.aon.occam.api.model.MarketingActionTargetParams;
 import com.esferalia.aon.occam.api.model.MarketingCampaign;
 import com.esferalia.aon.occam.api.model.MarketingCompaignParams;
@@ -993,6 +994,12 @@ public class RegistryImpl implements IRegistry{
 
 	@Override
 	public List<MarketingActionTarget> getMarketingActionTargets(CloseableAONContext ctx, MarketingActionTargetParams params) {
+		return ctx.getDslContext().transactionResult(
+				configuration -> MarketingCampaignDAO.getActionTargetList(ctx, params));
+	}
+
+	@Override
+	public List<MarketingActionTarget> getMarketingActionTargets(CloseableAONContext ctx, MarketingActionTargetMassiveParams params) {
 		return ctx.getDslContext().transactionResult(
 				configuration -> MarketingCampaignDAO.getActionTargetList(ctx, params));
 	}
