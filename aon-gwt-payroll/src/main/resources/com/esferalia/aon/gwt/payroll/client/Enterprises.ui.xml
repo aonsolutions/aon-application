@@ -5,6 +5,12 @@
 
 	<ui:style>
 	
+	.aon-EnterprisesTree  {
+		text-transform: uppercase;
+	}
+	
+	@external aon-EnterprisesTree;
+
 	</ui:style>
 
 
@@ -16,8 +22,8 @@
 		</g:north>
 
 		<g:center>
-			<g:ScrollPanel ui:field="scrollPanel">
-				<g:Tree ui:field="tree" />
+			<g:ScrollPanel ui:field="scrollPanel" >
+				<g:Tree ui:field="tree"  styleName="{style.aon-EnterprisesTree} gwt-Tree" />
 			</g:ScrollPanel>
 		</g:center>
 	</g:DockLayoutPanel>

@@ -72,19 +72,14 @@ public class AccountStatementReport extends MainEntryPoint {
 		AON.ensureInjected();
 		DockLayoutPanel dockLayoutPanel = new DockLayoutPanel(Unit.PX);
 		final AonToolbarButton filterButton = new AonToolbarButton("", AON.CSS.aonToolbarFilterContainer());
-		StatementPanelReport panel = new StatementPanelReport(options, true) {
-			@Override
-			public void closeFilterPanel() {
-				super.closeFilterPanel();
-	        	filterButton.setHTML("<span class='material-icons'>filter_alt</span>");
-			}
-			
-			@Override
-			public void openFilterPanel() {
-				super.openFilterPanel();
-	        	filterButton.setHTML("<span class='material-icons'>filter_alt_off</span>");
-			}
-		};
+		StatementPanelReport panel = new StatementPanelReport(options, true);
+		
+		panel.addFilterMaximizeHandler(event -> {
+        	filterButton.setHTML("<span class='material-icons'>filter_alt_off</span>");
+		});
+		panel.addFilterMinimizeHandler(event -> {
+			filterButton.setHTML("<span class='material-icons'>filter_alt</span>");
+		});
 		
 		AonToolbar toolbar = new AonToolbar("Extracto de cuentas");
  

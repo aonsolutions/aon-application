@@ -2111,7 +2111,10 @@ public class Bases {
 					.add(CGC_BASE_ENTERPRISE)	  
 					);
 			
+			put("701", new NonNegativeCCretaData(CGP_BASE_ENTERPRISE.getName()));
 			put("702", new NonNegativeCCretaData(CGP_BASE_ENTERPRISE.getName()));
+			put("703", new NonNegativeCCretaData(CGP_BASE_ENTERPRISE.getName()));
+			put("705", new NonNegativeCCretaData(CGP_BASE_ENTERPRISE.getName()));
 		
 			put("300", new NonNegativeCCretaData(TOTAL_PAYMENT.getName()) {
 				public Double get(Salary salary, Fecha desde, Fecha hasta) throws NoSuchVariableException ,UnMatchedVariableException {
@@ -2131,7 +2134,6 @@ public class Bases {
 					} 
 				};
 			});
-			put("705", new NonNegativeCCretaData(CGP_BASE_ENTERPRISE.getName()));
 			
 			put("737", new DistributeCCretaData(SLD_C737.getName()));
 			put("06", new DistributeHCretaData(SLD_H06.getName()));

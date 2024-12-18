@@ -5,6 +5,7 @@ import { AonMobileDelivery } from './aon-mobile-delivery.js';
 
 import { createList } from '../../components/CreateComponent.js';
 import * as OPTION from './DeliveryOptions.js';
+import { AonDelivery } from './aon-delivery.js';
 
 export class AonDeliveryList extends AonElement {
 
@@ -35,7 +36,8 @@ export class AonDeliveryList extends AonElement {
     };
 
     disconnectedCallback() {
-        this.getElement(this.TABLE).removeEventListener('more', this.moreFn);
+        let table = this.getElement(this.TABLE);
+        if(table) table.removeEventListener('more', this.moreFn);
     }
 
     initialize() {
@@ -57,8 +59,7 @@ export class AonDeliveryList extends AonElement {
             full: true
         }
         getDelivery(data).then(r => {
-            // let aonDelivery = new AonDelivery();
-            let aonDelivery = new AonMobileDelivery();
+            let aonDelivery = new AonDelivery();
             aonDelivery.setDelivery(r);
             this.getApplication().setContent(aonDelivery);
         });

@@ -12,6 +12,7 @@ import static com.esferalia.aon.payroll.enumeration.ContextVariable.CGP_BASE_MIN
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.COMMON_DISEASE_DAYS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.DIRECT_PAY;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.FRIDAY_HOURS;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.LACK_PERIOD;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.LEAVE_FACTOR;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.MATERNITY;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.MATERNITY_BASE;
@@ -6690,7 +6691,17 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 			SalaryException {
 		Connection connection = getConnection();
 		AONContext aonContext = new AONContext(connection);
+		
+		
+		addSystemData(aonContext, getFirstDayOfYear(getToday()), null, 
+				new HashMap<String,String>(){
+					private static final long serialVersionUID = 1L;
 
+			{
+				put(CGC_BASE_MIN.getName(), "(1000.00 * (DIAS_NOMINA == DIAS_MES ? 1 : DIAS_NOMINA/30))");
+			}
+		});
+		
 		//@formatter:off
 		ContractRecord contract = newContract(aonContext, 
 				new String[] {
@@ -6698,10 +6709,14 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 				"1500.00 * DIAS_TRABAJADOS / DIAS_MES"
 				}, 
 				new String[] {
-				"TRACE('BASE_CGC=%f\r\n', BASE_CGC);BASE_CGC * 4.70 / 100"
+				"TRACE('BASE_CGC = %f\r\n', BASE_CGC);BASE_CGC * 4.70 / 100"
 				}, null);
 		//@formatter:on
+		
+		addCost(aonContext, contract, contract.getStartDate(), contract.getEndDate(), "BASE_CGC_E * 10.0 / 100.00", "CGC", "CGC_E");
+		
 		addPrestITs(aonContext, contract);
+		
 		
 		Date startITDate = add(getFirstDayOfMonth(getToday()), DAY_OF_MONTH,10);
 		addIT(aonContext, contract, LeaveType.COMMON_DISEASE_AT_LACK, startITDate,
@@ -6726,8 +6741,17 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 		Assert.assertEquals( 1750.00 * 10 / monthDays , salary.getTotalPayment(), DELTA);
 		Assert.assertEquals( 1750.00 , salary.getCommonBase(), DELTA);
 
-		Assert.assertEquals( salary.getCommonBase() * 4.70d/100, salary.getTotalDeduction(), DELTA);
-
+		Assert.assertEquals( 1750.00 * 10 / monthDays * 4.70 / 100.00 , salary.getTotalDeduction(), DELTA);
+		
+		double totalCost = 0.00;
+		for (com.esferalia.aon.payroll.SalaryCost cost : salary
+				.getSalaryCosts()) {
+			System.out.println(cost.getName() + " = " + cost.getAmount()
+					+ " (" + cost.getExpression() + ")");
+			totalCost += cost.getAmount();
+		}
+		
+		Assert.assertEquals( 1750.00 * 10.00 / 100.00 , salary.getTotalEnterprise(), DELTA);
 	}
 
 	@Test
@@ -8027,6 +8051,7 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 
 	protected static PaymentConceptRecord addPrestITs(AONContext aonContext, ContractRecord contract) {
 		PaymentConceptRecord prestIT = addConcept(aonContext, PREST_IT,PaymentType.CRA_0000);
+		PaymentConceptRecord lackIT = addConcept(aonContext, LACK_PERIOD.getName(),PaymentType.CRA_0000);
 		PaymentConceptRecord directIT = addConcept(aonContext, DIRECT_PAY.getName(),PaymentType.CRA_0000);
 		addPayment(aonContext, contract, prestIT, 
 				String.format("BASE_REGULADORA * 1.00 * %s_1_3 * (isdef %s ? %s : 1.00)",  COMMON_DISEASE_DAYS, LEAVE_FACTOR, LEAVE_FACTOR),
@@ -8052,7 +8077,7 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 				String.format("DIAS_ENFERMEDAD_PROFESIONAL_366 * 0.00",  OCCUPATIONAL_DISEASE_DAYS),
 				String.format("BASE_REGULADORA * %s * (isdef %s ? %s : 1.00)",  QUOTE_DAYS, LEAVE_FACTOR, LEAVE_FACTOR)
 				);
-		addPayment(aonContext, contract, prestIT, 
+		addPayment(aonContext, contract, lackIT, 
 				"DIAS_ENFERMEDAD_COMUN_CARENCIA * 0.00",
 				String.format("BASE_REGULADORA * %s * (isdef %s ? %s : 1.00)",  QUOTE_DAYS, LEAVE_FACTOR, LEAVE_FACTOR)
 				);

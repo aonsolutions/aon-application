@@ -217,6 +217,8 @@ public class DeliveryServlet extends AonApiHttpServlet {
 		if(autoSendDelivery){
 			System.out.println("SEND DELIVERY TO SERES IS TRUE");
 			SeresInfo info = SERES.getSeresInfo(api.getDomain(), api.getUser(), d);
+			System.out.println("SEND DELIVERY TO SERES INFO: " + info.getServer() + " " + info.getSeresPath());
+			System.out.println("SEND DELIVERY TO SERES EDI CODES: " + info.getEdiCodes());
 			DeliveryUpload du = new DeliveryUpload(api.getDomain(), api.getUser().getLogin(), info);
 			d.setEdiCodes(info.getEdiCodes());
 			

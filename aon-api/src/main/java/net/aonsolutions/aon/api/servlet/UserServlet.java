@@ -78,7 +78,6 @@ public class UserServlet extends AonApiHttpServlet {
 	private static final String AON_REPLY_TO = "asignacion@aonsolutions.es";
 	private static final String AON_ALIAS = "AON SOLUTIONS S.L.";
 	private static final String AON_SUBJECT = "USUARIO | AON SOLUTIONS";
-	private static boolean isLocal = false;
 
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) {
@@ -640,7 +639,7 @@ public class UserServlet extends AonApiHttpServlet {
 		return json;
 	}	
 	
-	private void sendAuthCreateInfoMail(AonApiData api, String fullName, String email, String password, Company cp) {
+	private void sendAuthCreateInfoMail(AonApiData api, Auth auth, String email, String password, Company cp) {
 		Domain parent = api.getDur().getDomain().isParent()
 			? api.getDur().getDomain() : api.getDur().getParentDomain(); 
 		
@@ -656,6 +655,8 @@ public class UserServlet extends AonApiHttpServlet {
 			alias = formatUT8B(cp.getName());
 			subject = formatUT8B("USUARIO | " + cp.getName().toUpperCase());
 		}
+		
+		User user = AON.getUser(api.getDomain(), api.getUser().getLogin(), f -> f.getDomainProperty().eq(api.getDomain().getId()).and(f.getAuthProperty().eq(auth.getAuth())));
 
 		SESMessage msg = new SESMessage()
 			.setAlias(alias)
@@ -664,7 +665,7 @@ public class UserServlet extends AonApiHttpServlet {
 			.setTo(email)
 			.setBcc("booking@aonsolutions.es")
 			.setSubject(subject)
-			.setBody(authCreateInfoContent(api, fullName, email, password, from, logoUrl, parent));
+			.setBody(authCreateInfoContent(api, user, auth.getFullname(), email, password, from, logoUrl, parent));
 
 		SES.sendEmail(msg);
 	}
@@ -705,22 +706,30 @@ public class UserServlet extends AonApiHttpServlet {
 		auth.setPassword(pass);
 		AON_SOLUTIONS.updateAuthPassword(auth);
 		
-		sendAuthCreateInfoMail(api, auth.getFullname(), email, password, cp);
+		sendAuthCreateInfoMail(api, auth, email, password, cp);
 		return new JSONObject();
 	}
 	
-	private String authCreateInfoContent(AonApiData api, String fullName, String email, String password, String from, String logo, Domain parentDomain) {
+	private String authCreateInfoContent(AonApiData api, User user, String fullName, String email, String password, String from, String logo, Domain parentDomain) {
 		VelocityEngine engine = new VelocityEngine();
 		engine.setProperty(RuntimeConstants.RESOURCE_LOADER, "classpath");
 		engine.setProperty("classpath.resource.loader.class", ClasspathResourceLoader.class.getName());
 		engine.init();
-			
-		String url = (isLocal ? "http" : "https") + "://" + api.getDomain().getName() + (isLocal ? ":8080/beta" : "/beta");
 		
-		if(AonStringUtils.equalsIgnoreCase(parentDomain.getName(), "app.leevy.es"))
-			url = "https://leevy.aon.solutions";
-		else if(AonStringUtils.equalsIgnoreCase(parentDomain.getName(), "infoautonomos.aonsolutions.net"))
-			url = "https://infoautonomos.aon.solutions";
+		String url = "";
+		if(user != null && user.isPortal()) {
+			url = "https://aon.solutions";
+			
+			if(AonStringUtils.equalsIgnoreCase(parentDomain.getName(), "app.leevy.es"))
+				url = "https://leevy.aon.solutions";
+			else if(AonStringUtils.equalsIgnoreCase(parentDomain.getName(), "infoautonomos.aonsolutions.net"))
+				url = "https://infoautonomos.aon.solutions";
+		} else {
+			url = "https://" + api.getDomain().getName() + "/";
+			
+			if(AonStringUtils.equalsIgnoreCase(parentDomain.getName(), "infoautonomos.aonsolutions.net"))
+				url = "https://infoautonomos.aon.solutions";
+		}
 		
 		VelocityContext context = new VelocityContext();
 		context.put("logo", logo);
@@ -776,9 +785,12 @@ public class UserServlet extends AonApiHttpServlet {
 			String result = Base64.getEncoder().encodeToString(str.getBytes(StandardCharsets.UTF_8));
 
 			Domain attachDomain = DomainDAO.getDomain(aonContext, attach.getDomain().getId());
-			logoUrl = (isLocal ? "http" : "https") + "://" + parentDomain.getName() + (isLocal ? ":8080" : "")
-					+ "/ms/download_attachment/" + attachDomain.getName() + "/" + attach.getCreationUser() + "/"
+			logoUrl = "https://" + parentDomain.getName() + "/ms/download_attachment/" + attachDomain.getName() + "/" + attach.getCreationUser() + "/"
 					+ result;
+			
+//			logoUrl = (isLocal ? "http" : "https") + "://" + parentDomain.getName() + (isLocal ? ":8080" : "")
+//					+ "/ms/download_attachment/" + attachDomain.getName() + "/" + attach.getCreationUser() + "/"
+//					+ result;
 		} catch (Exception e) {
 			e.printStackTrace();
 			logoUrl = AON_LOGO;
