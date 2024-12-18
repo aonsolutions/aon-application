@@ -41,7 +41,6 @@ import com.google.gwt.user.client.ui.Widget;
 public class Model131Activity2024 extends DockLayoutPanel implements HasValueChangeHandlers<Mod131Activity> {
 	
 	private static final Logger LOGGER = Logger.getLogger(Model131Activity2024.class.getName());
-//	private static final String WIDTH_150PX = "150px";
 	private final Label epigraph = new Label();
 	private final Label epigraphLabel = new Label();
 	
@@ -156,6 +155,9 @@ public class Model131Activity2024 extends DockLayoutPanel implements HasValueCha
 	private AonIntegerBox deskCapacity3 = new AonIntegerBox();		// Mesas - Capacidad
 	private AonIntegerBox desks4 = new AonIntegerBox();				// Mesas - Mesas
 	private AonIntegerBox deskCapacity4 = new AonIntegerBox();		// Mesas - Capacidad
+	private AonToolbarButton removeButton;
+	private AonTableButton epigraphsButton;
+	private Label toolbarLabel;
 
 	public Model131Activity2024(final IModel131ActivityCallback callback) {
 		super(Unit.PX);
@@ -210,15 +212,15 @@ public class Model131Activity2024 extends DockLayoutPanel implements HasValueCha
 	private AonToolbar getToolbar(IModel131ActivityCallback callback) {
 		AonToolbar toolbar = new AonToolbar( "" );
 
-		AonToolbarButton removeButton = new AonToolbarButton(AON.MSG.deleteAction(),AON.CSS.aonIconDelete());
+		removeButton = new AonToolbarButton(AON.MSG.deleteAction(),AON.CSS.aonIconDelete());
 		removeButton.addClickHandler( event -> AonConfirmDialog.showConfirm(AON.MSG.confirmDeleteAction(), callback::onRemove));
 		toolbar.add(removeButton);
 		
-		AonTableButton epigraphsButton = new AonTableButton("Cambiar actividad" ,AON.CSS.aonIconRefresh());
+		epigraphsButton = new AonTableButton("Cambiar actividad" ,AON.CSS.aonIconRefresh());
 		epigraphsButton.addClickHandler(event ->  contentContainer.setWidget(getActivitySelectionPanel(callback)) );
 		toolbar.add(epigraphsButton);
 
-		Label toolbarLabel = new Label( getTitle( callback.getActivity() ) );
+		toolbarLabel = new Label( getTitle( callback.getActivity() ) );
 		toolbarLabel.setStyleName(AON.CSS.aonBold());
 		toolbarLabel.addStyleName(AON.CSS.aonFontMedium());
 		toolbarLabel.addStyleName(AON.CSS.aonPaddingLeft());
@@ -302,16 +304,6 @@ public class Model131Activity2024 extends DockLayoutPanel implements HasValueCha
 		
 		tabLayoutPanel.add(getResultPanel(callback), AON.MSG.result());
 		
-//		tabLayoutPanel.addSelectionHandler( e -> {
-//			if ( ( AonNumberUtils.equals(e.getSelectedItem(),2) && 
-//				(staffModuleIndex(callback) == -1 && rsStaffModuleIndex(callback) == -1)) 
-//			  || ( AonNumberUtils.equals(e.getSelectedItem(),3) &&  noStaffModuleIndex(callback) == -1)
-//			  || ( AonNumberUtils.equals(e.getSelectedItem(),4) &&  deskModuleIndex(callback) == -1 )) {
-//				AonMessageDialog.show("Aviso", "No procede");
-//				tabLayoutPanel.selectTab(1, false);
-//			}
-//		});
-
 		tabLayoutPanel.selectTab(1, false);
 		
 		return tabLayoutPanel;
@@ -319,6 +311,11 @@ public class Model131Activity2024 extends DockLayoutPanel implements HasValueCha
 
 	protected void populate(Mod131Activity act) {
 		LOGGER.info("Model131Activity2024 populate");
+		
+		epigraphsButton.setVisible(act.isNotEmpty());
+		removeButton.setVisible(act.isNotEmpty());
+		toolbarLabel.setText(getTitle( act ));
+		
 		epigraph.setText(act.getEpigraph());
 		epigraphLabel.setText(AonStringUtils.abbreviate(act.getDescription(),100));
 		epigraphLabel.setTitle(act.getDescription());
@@ -541,8 +538,6 @@ public class Model131Activity2024 extends DockLayoutPanel implements HasValueCha
 
 		lor.setEnabled(callback.getActivity().getPal() != 1 && callback.getActivity().getDana() != 1);
 		lor.addChangeHandler(event -> {
-//			rlo.setValue(0.0, false);
-//			callback.getActivity().setRlo( 0.0 );
 			callback.getActivity().setLor(lor.getSelectedIndex());
 			if (callback.getActivity().getLor() == 1) {
 				callback.getActivity().setPal(0);
@@ -564,8 +559,6 @@ public class Model131Activity2024 extends DockLayoutPanel implements HasValueCha
 
 		pal.setEnabled(callback.getActivity().getLor() != 1 && callback.getActivity().getDana() != 1);
 		pal.addChangeHandler(event -> {
-//			rpa.setValue(0.0, false);
-//			callback.getActivity().setRpa( 0.0 );
 			callback.getActivity().setPal(pal.getSelectedIndex());
 			if (callback.getActivity().getPal() == 1) {
 				callback.getActivity().setLor(0);
@@ -589,8 +582,6 @@ public class Model131Activity2024 extends DockLayoutPanel implements HasValueCha
 		if (callback.getModel().getYear() > 2024 || (callback.getModel().getYear() == 2024 && callback.getModel().isLastPeriod())) {
 			dana.setEnabled(callback.getActivity().getLor() != 1 && callback.getActivity().getPal() != 1);
 			dana.addChangeHandler(event -> {
-//				danaReduction.setValue(0.0, false);
-//				callback.getActivity().setDanaReduction( 0.0 );
 				callback.getActivity().setDana(dana.getSelectedIndex());
 				if (callback.getActivity().getDana() == 1) {
 					callback.getActivity().setLor(0);
@@ -1046,9 +1037,6 @@ public class Model131Activity2024 extends DockLayoutPanel implements HasValueCha
 		ic4.setEnabled(false);
 		ic5.setEnabled(false);
 		rpf.setEnabled(false);
-//		rlo.setEnabled(false);
-//		rpa.setEnabled(false);
-//		danaReduction.setEnabled(false);   
 		rdr.setEnabled(false);
 		net.setEnabled(false);
 		por.setEnabled(false);

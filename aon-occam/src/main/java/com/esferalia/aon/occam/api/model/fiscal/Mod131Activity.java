@@ -651,6 +651,8 @@ public class Mod131Activity implements Serializable {
 		this.setMun(0);
 		this.setEmp(0);
 		this.setLor(0);
+		this.setPal(0);
+		this.setDana(0);
 		this.setBat(0);
 		this.setPrc(0);
 		this.setMay19Hours(0);
@@ -683,6 +685,8 @@ public class Mod131Activity implements Serializable {
 		this.setIc5(0);
 		this.setRpf(0);
 		this.setRlo(0);
+		this.setRpa(0);
+		this.setDanaReduction(0);
 		this.setRdr(0);
 		this.setNet(0); 
 		this.setPor(0);
@@ -717,6 +721,8 @@ public class Mod131Activity implements Serializable {
 			.setMun(toClone.getMun())
 			.setEmp(toClone.getEmp())
 			.setLor(toClone.getLor())
+			.setPal(toClone.getPal())
+			.setDana(toClone.getDana())
 			.setBat(toClone.getBat())
 			.setPrc(toClone.getPrc())
 			.setMay19Hours(toClone.getMay19Hours())
@@ -750,6 +756,7 @@ public class Mod131Activity implements Serializable {
 			.setRpf(toClone.getRpf())
 			.setRlo(toClone.getRlo())
 			.setRpa(toClone.getRpa())
+			.setDanaReduction(toClone.getDanaReduction())
 			.setRdr(toClone.getRdr())
 			.setDia(toClone.getDia())
 			.setNet(toClone.getNet())
