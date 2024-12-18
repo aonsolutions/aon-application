@@ -625,7 +625,7 @@ public class ActionTargetServlet extends AonApiHttpServlet {
 
 			ProjectCommercial projectCommercial = AON.getProjectCommercial(api.getDomain().getName(),
 					api.getDomain().getId(), api.getUser().getLogin(),
-					f -> f.getProjectProperty().eq(mkActionTarget.getProject()));
+					f -> f.getProjectProperty().eq(null == mkActionTarget.getProject() ? null : mkActionTarget.getProject().getId()));
 
 			Integer commercialActivityAutoRegisterId = commercialActivityAutoRegister.getId();
 
@@ -733,7 +733,7 @@ public class ActionTargetServlet extends AonApiHttpServlet {
 				AON.save(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(),
 						commercialTracking);
 				
-				mkActionTarget.setProject(projectCommercial.getId());
+				mkActionTarget.setProject(new Project().setId(projectCommercial.getId()));
 			}
 		}
 

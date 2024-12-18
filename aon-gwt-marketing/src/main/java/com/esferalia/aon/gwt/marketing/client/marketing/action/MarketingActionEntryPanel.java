@@ -11,6 +11,7 @@ import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.CommonService;
 import com.esferalia.aon.gwt.common.client.CommonServiceAsync;
 import com.esferalia.aon.gwt.common.client.CommonServiceAsyncDecorator;
+import com.esferalia.aon.gwt.common.client.widget.ContextMenu;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomCard;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomDateBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomDialog;
@@ -21,6 +22,7 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomSuggestBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomTextBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog.AonAcceptDialogCallback;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonExpandButton;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonMarketingActionTargetCreationPanel;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonMarketingActionTargetCreationPanel.AonMarketingActionTargetCreationPanelCallback;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonMarketingActionTargetPanel;
@@ -29,6 +31,7 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonMessagePanel;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonTableButton;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
 import com.esferalia.aon.gwt.marketing.client.marketing.MarketingModuleOptions;
+import com.esferalia.aon.gwt.marketing.client.marketing.action.MarketingActionTargetMassive.AonMarketingActionTargetMassivePanelCallback;
 import com.esferalia.aon.occam.api.model.MarketingAction;
 import com.esferalia.aon.occam.api.model.MarketingAction.MarketingActionMediaType;
 import com.esferalia.aon.occam.api.model.MarketingAction.MarketingSellerDistribution;
@@ -47,6 +50,8 @@ import com.esferalia.aon.occam.api.model.type.TagType;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler;
+import com.google.gwt.core.client.Scheduler.ScheduledCommand;
+import com.google.gwt.dom.client.NativeEvent;
 import com.google.gwt.dom.client.Style.Display;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.http.client.Request;
@@ -64,11 +69,46 @@ import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HTMLPanel;
+import com.google.gwt.user.client.ui.MenuItem;
 import com.google.gwt.user.client.ui.MultiWordSuggestOracle;
 import com.google.gwt.user.client.ui.SimpleLayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
 
-public abstract class MarketingActionEntryPanel extends AonCustomDockLayout{
+public abstract class MarketingActionEntryPanel extends AonCustomDockLayout {
+	
+	// ------------------------------------------------- ScheduledCommand (Import Targets)
+	
+	class ImportTargetCommand implements ScheduledCommand {
+
+		@Override
+		public void execute() {
+			showMarketingActionTargetDialog();
+		}
+	}
+	
+	class ImportTargetMassiveCommand implements ScheduledCommand {
+
+		@Override
+		public void execute() {
+			showMarketingActionMassiveTargetDialog();
+		}
+	}
+	
+	class TargetContextMenu extends ContextMenu {
+
+		public TargetContextMenu() {
+
+			addMenuItem("Importar cliente potencial", new ImportTargetCommand(), AON.CSS.aonIconAdd(), "importTarget");
+			addMenuItem("Importac\u00f3n masiva clientes potenciales", new ImportTargetMassiveCommand(), AON.CSS.aonIconAdd(), "importTargetMasive");
+		}
+		
+		private MenuItem addMenuItem(String title, ScheduledCommand command, String iconStyle, String debugId) {
+			MenuItem item = addItem(title, command, iconStyle, AON.AON_ICON_CMD_BUTTON, AON.CSS.aonCmdItem());
+			item.ensureDebugId(debugId);
+			return item;
+		}
+
+	}
 	
 	static CommonServiceAsync commonService;
 	
@@ -123,10 +163,13 @@ public abstract class MarketingActionEntryPanel extends AonCustomDockLayout{
 	private MarketingModuleOptions options;
 	private MarketingAction marketingAction;
 	
+	private TargetContextMenu targetContextMenu;
+	
 	public MarketingActionEntryPanel(MarketingModuleOptions options) {
 		super("ACCI\u00f3N");
 		
 		this.options = options;
+		this.targetContextMenu = new TargetContextMenu();
 		initializeCommonService();
 		
 		addButtonsToolbar();
@@ -174,8 +217,20 @@ public abstract class MarketingActionEntryPanel extends AonCustomDockLayout{
 		saveButton.addClickHandler(e -> saveMarketingAction());
 		addToolbarButton(saveButton);
 		
-		AonToolbarButton newActionTargetButton = new AonToolbarButton("A\u00f1adir cliente potencial", AON.CSS.aonIconAdd());
-		newActionTargetButton.addClickHandler(e -> showMarketingActionTargetDialog());
+		AonExpandButton newActionTargetButton = new AonExpandButton("A\u00f1adir cliente potencial", AON.CSS.aonIconAdd()) {
+			
+			@Override
+			public void onExpandClick(ClickEvent event) {
+				NativeEvent nativeEvent = event.getNativeEvent();
+				targetContextMenu.setPopupPosition(nativeEvent.getClientX(), nativeEvent.getClientY());
+				targetContextMenu.show();
+			}
+			
+			@Override
+			public void onDefaultClick(ClickEvent evet) {
+				showMarketingActionTargetDialog();
+			}
+		};
 		addToolbarButton(newActionTargetButton);
 	}
 
@@ -393,6 +448,33 @@ public abstract class MarketingActionEntryPanel extends AonCustomDockLayout{
 			}};
 		
 		dialog.add( aonMarketingActionPanel );
+		dialog.showLoaded();
+	}
+	
+	private void showMarketingActionMassiveTargetDialog() {
+		final AonCustomDialog dialog = new AonCustomDialog();
+		dialog.setCaption( "Cliente Potencial (Masivo)" );
+		final MarketingActionTargetMassive marketingActionTargetMassivePanel = new MarketingActionTargetMassive( options, this.marketingAction, new AonMarketingActionTargetMassivePanelCallback() {
+			
+			@Override
+			public void onCancel() {
+				dialog.hide();
+			}
+			
+			@Override
+			public void onAccept() {
+				dialog.hide();
+				marketingActionPanel.resetSearchOffset();
+				setMarketingAction(marketingAction);
+			}
+		}) {
+
+			@Override
+			protected void onResize() {
+				dialog.showLoaded();
+			}};
+		
+		dialog.add( marketingActionTargetMassivePanel );
 		dialog.showLoaded();
 	}
 	
@@ -1160,7 +1242,7 @@ public abstract class MarketingActionEntryPanel extends AonCustomDockLayout{
 				@Override
 				public void onSuccess(ProjectCommercial projectCommercial) {
 					target.setActionTargetStatus((byte)6); // Enviado
-					target.setProject(projectCommercial.getId());
+					target.setProject(new Project().setId(projectCommercial.getId()));
 					commonService.saveMarketingActionTarget(options.getDomainName(), options.getDomain(), options.getUser(), target, new AsyncCallback<MarketingActionTarget>() {
 						
 						@Override
