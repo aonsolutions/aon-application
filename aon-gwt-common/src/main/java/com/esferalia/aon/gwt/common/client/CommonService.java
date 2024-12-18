@@ -15,6 +15,7 @@ import com.esferalia.aon.occam.api.model.InvestAssetParams;
 import com.esferalia.aon.occam.api.model.MarketingAction;
 import com.esferalia.aon.occam.api.model.MarketingActionParams;
 import com.esferalia.aon.occam.api.model.MarketingActionTarget;
+import com.esferalia.aon.occam.api.model.MarketingActionTargetMassiveParams;
 import com.esferalia.aon.occam.api.model.MarketingActionTargetParams;
 import com.esferalia.aon.occam.api.model.MarketingCampaign;
 import com.esferalia.aon.occam.api.model.MarketingCompaignParams;
@@ -38,7 +39,9 @@ import com.esferalia.aon.occam.api.model.news.News;
 import com.esferalia.aon.occam.api.model.office.Tag;
 import com.esferalia.aon.occam.api.model.payroll.Activity;
 import com.esferalia.aon.occam.api.model.product.OldProduct;
+import com.esferalia.aon.occam.api.model.project.ProjectActivity;
 import com.esferalia.aon.occam.api.model.project.ProjectCommercial;
+import com.esferalia.aon.occam.api.model.project.ProjectType;
 import com.esferalia.aon.occam.api.model.registry.Category;
 import com.esferalia.aon.occam.api.model.registry.Creditor;
 import com.esferalia.aon.occam.api.model.registry.CreditorFull;
@@ -57,6 +60,7 @@ import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.task.TaskHolder;
 import com.esferalia.aon.occam.api.model.type.TagType;
 import com.esferalia.aon.watson.error.AonCoreException;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 
@@ -190,6 +194,7 @@ public interface CommonService extends RemoteService {
 	// **************************************************
 	
 	List<MarketingActionTarget> getMarketingActionTargets(MarketingActionTargetParams params) throws AonCoreException;
+	List<MarketingActionTarget> getMarketingActionTargets(MarketingActionTargetMassiveParams params) throws AonCoreException;
 	void deleteMarketingActionTarget(String domainName, int domain, String user, Integer actionTargetId) throws AonCoreException;
 	MarketingActionTarget saveMarketingActionTarget(String domainName, int domain, String user,MarketingActionTarget marketingActionTarget) throws AonCoreException;
 	
@@ -199,6 +204,10 @@ public interface CommonService extends RemoteService {
 	List<TaskHolder> getAviableTaskHolders(String domainName, int domain, String user, Integer workgroup) throws AonCoreException;
 
 	List<User> getAviableServiceUsers(String domainName, int domain, String user) throws AonCoreException;
+	
+	List<ProjectActivity> getAviableProjectActivity(String domainName, int domain, String user) throws AonCoreException;
+	List<ProjectType> getAviableProjectType(String domainName, int domain, String user) throws AonCoreException;
+	
 	
 	// **************************************************
 	// ***************************** [PROJECT COMMERCIAL]

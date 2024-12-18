@@ -159,6 +159,7 @@ import com.esferalia.aon.occam.api.model.MailTemplate;
 import com.esferalia.aon.occam.api.model.MarketingAction;
 import com.esferalia.aon.occam.api.model.MarketingActionParams;
 import com.esferalia.aon.occam.api.model.MarketingActionTarget;
+import com.esferalia.aon.occam.api.model.MarketingActionTargetMassiveParams;
 import com.esferalia.aon.occam.api.model.MarketingActionTargetParams;
 import com.esferalia.aon.occam.api.model.MarketingCampaign;
 import com.esferalia.aon.occam.api.model.MarketingCompaignParams;
@@ -8602,6 +8603,12 @@ public class AON {
 	// ---------------- Marketing Action Target
 
 	public static List<MarketingActionTarget> getMarketingActionTargets(MarketingActionTargetParams params) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(params.getDomainName(), params.getDomain(), params.getUser())) {
+			return getRegistry().getMarketingActionTargets(ctx, params);
+		}
+	}
+	
+	public static List<MarketingActionTarget> getMarketingActionTargets(MarketingActionTargetMassiveParams params) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(params.getDomainName(), params.getDomain(), params.getUser())) {
 			return getRegistry().getMarketingActionTargets(ctx, params);
 		}

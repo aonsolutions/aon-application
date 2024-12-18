@@ -75,6 +75,14 @@ public abstract class AonCustomDockLayout extends DockLayoutPanel {
 		return getToolbar().getButtonContainer();
 	}
 	
+	public void setSearchZIndex(Integer zIndex) {
+		searchFilterComponent.setSearchZIndex(zIndex);
+	}
+	
+	public void setPopupHeight(String height) {
+		searchFilterComponent.setPopupHeight(height);
+	}
+	
 	public TextBox getSearchTextBox() {
 		return searchFilterComponent.getSearchTextBox();
 	}
