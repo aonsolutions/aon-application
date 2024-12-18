@@ -29,6 +29,7 @@ import com.esferalia.aon.occam.api.model.attachment.AttachType;
 import com.esferalia.aon.occam.api.model.attachment.DataAttachSource;
 import com.esferalia.aon.occam.api.model.attachment.DataAttachType;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
+import com.esferalia.aon.occam.api.model.finance.InvoiceData;
 import com.esferalia.aon.occam.api.model.finance.TbaiConfiguration;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.type.DataRequestType;
@@ -224,18 +225,26 @@ public class TbaiData {
 	}
 
 	public String getTbaiId(String domainName, Integer domainId, String login, Integer invoiceId) {
-		DataResponseSource source = isTest() ? DataResponseSource.TBAI_TEST : DataResponseSource.TBAI;
-		DataResponse dr = AON.getDataResponse(domainName, domainId, login, f -> 
+		InvoiceData id = AON.getInvoiceData(new Domain().setName(domainName).setId(domainId), new User().setLogin(login), f -> 
 			f.getDomainProperty().eq(domainId)
-			.and(f.getSourceProperty().eq(source.value()))
-			.and(f.getSourceIdProperty().eq(invoiceId)));
+			.and(f.getInvoiceProperty().eq(invoiceId))
+			.and(f.getNameProperty().eq("TBAI_ID")));
+		if(id != null && !AonStringUtils.isBlank(id.getValue())) {
+			return id.getValue();
+		} else {
+			DataResponseSource source = isTest() ? DataResponseSource.TBAI_TEST : DataResponseSource.TBAI;
+			DataResponse dr = AON.getDataResponse(domainName, domainId, login, f -> 
+				f.getDomainProperty().eq(domainId)
+				.and(f.getSourceProperty().eq(source.value()))
+				.and(f.getSourceIdProperty().eq(invoiceId)));
 
-		DataResponseDetail drd = !dr.isEmpty() ? AON.getDataResponseDetail(domainName, domainId, login, f -> 
-			f.getDomainProperty().eq(domainId)
-			.and(f.getDataResponseProperty().eq(dr.getId()))
-			.and(f.getDataVariableProperty().eq("tbaiId"))).orElse(new DataResponseDetail()) : new DataResponseDetail();
+			DataResponseDetail drd = !dr.isEmpty() ? AON.getDataResponseDetail(domainName, domainId, login, f -> 
+				f.getDomainProperty().eq(domainId)
+				.and(f.getDataResponseProperty().eq(dr.getId()))
+				.and(f.getDataVariableProperty().eq("tbaiId"))).orElse(new DataResponseDetail()) : new DataResponseDetail();
 	
-		return drd.getDataValue();
+			return drd.getDataValue();
+		}
 	}
 	
 	public byte[] getTbaiRequestFile(Domain domain, String login, Integer invoiceId) {
@@ -275,18 +284,26 @@ public class TbaiData {
 	}
 	
 	public String getTbaiUrl(String domainName, Integer domainId, String login, Integer invoiceId) {
-		DataResponseSource source = isTest() ? DataResponseSource.TBAI_TEST : DataResponseSource.TBAI;
-		DataResponse dr = AON.getDataResponse(domainName, domainId, login, f -> 
+		InvoiceData id = AON.getInvoiceData(new Domain().setName(domainName).setId(domainId), new User().setLogin(login), f -> 
 			f.getDomainProperty().eq(domainId)
-			.and(f.getSourceProperty().eq(source.value()))
-			.and(f.getSourceIdProperty().eq(invoiceId)));
+			.and(f.getInvoiceProperty().eq(invoiceId))
+			.and(f.getNameProperty().eq("TBAI_URL")));
+		if(id != null && !AonStringUtils.isBlank(id.getValue())) {
+			return id.getValue();
+		} else {
+			DataResponseSource source = isTest() ? DataResponseSource.TBAI_TEST : DataResponseSource.TBAI;
+			DataResponse dr = AON.getDataResponse(domainName, domainId, login, f -> 
+				f.getDomainProperty().eq(domainId)
+				.and(f.getSourceProperty().eq(source.value()))
+				.and(f.getSourceIdProperty().eq(invoiceId)));
 
-		DataResponseDetail drd = !dr.isEmpty() ? AON.getDataResponseDetail(domainName, domainId, login, f -> 
-			f.getDomainProperty().eq(domainId)
-			.and(f.getDataResponseProperty().eq(dr.getId()))
-			.and(f.getDataVariableProperty().eq("tbaiUrl"))).orElse(new DataResponseDetail()) : new DataResponseDetail();
+			DataResponseDetail drd = !dr.isEmpty() ? AON.getDataResponseDetail(domainName, domainId, login, f -> 
+				f.getDomainProperty().eq(domainId)
+				.and(f.getDataResponseProperty().eq(dr.getId()))
+				.and(f.getDataVariableProperty().eq("tbaiUrl"))).orElse(new DataResponseDetail()) : new DataResponseDetail();
 	
-		return drd.getDataValue();
+			return drd.getDataValue();
+		}
 	}
 	
 	

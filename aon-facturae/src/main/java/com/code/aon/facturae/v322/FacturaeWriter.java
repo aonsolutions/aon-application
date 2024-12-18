@@ -771,7 +771,7 @@ public class FacturaeWriter {
 	
 	private InvoiceLineType getInvoiceLine(InvoiceDetail line, InvoiceType invoiceType) {
 		InvoiceLineType invoiceLine = new InvoiceLineType();
-		invoiceLine.setIssuerTransactionReference(Util.toTextMax20Type(String.valueOf(line.getId())));
+		// invoiceLine.setIssuerTransactionReference(Util.toTextMax20Type(String.valueOf(line.getId())));
 		if (line.getProject() != null) {
 			Project project = AON.getProject(getDomain().getName(), getDomain().getId(), getUser().getLogin(), f -> 
 					f.getIdProperty().eq(line.getProject()));

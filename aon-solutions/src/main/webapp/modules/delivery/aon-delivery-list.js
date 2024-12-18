@@ -1,11 +1,10 @@
 import { AonElement } from '../../components/AonElement.js';
 import { CONSTANT, EVENT, MSG, TAG } from '../../environments/environments.js';
 import { getDeliveries, getDelivery } from '../../services/warehouseService.js';
-import { AonMobileDelivery } from './aon-mobile-delivery.js';
-
 import { createList } from '../../components/CreateComponent.js';
-import * as OPTION from './DeliveryOptions.js';
 import { AonDelivery } from './aon-delivery.js';
+
+import * as OPTION from './DeliveryOptions.js';
 
 export class AonDeliveryList extends AonElement {
 

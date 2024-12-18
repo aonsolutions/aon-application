@@ -1,6 +1,7 @@
 package net.aonsolutions.aon.api.servlet;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 import java.util.Date;
@@ -81,10 +82,11 @@ import net.aonsolutions.aon.api.error.AonApiException;
 import net.aonsolutions.aon.api.ewok.AonApiData;
 import net.aonsolutions.aon.api.ewok.IConstants;
 import net.aonsolutions.aon.api.request.BidoqRequest;
-import net.aonsolutions.aon.api.servlet.RawdocServlet;
 import net.aonsolutions.aon.sign.PdfSigner;
+import net.aonsolutions.aon.tbai.CRC8;
 import net.aonsolutions.aon.tbai.TbaiData;
 import net.aonsolutions.aon.tbai.TbaiMain;
+import net.aonsolutions.aon.tbai.TbaiUri;
 import solutions.aon.aws.s3.S3;
 
 @WebServlet(name = "AonInvoiceServlet", urlPatterns = {"/ms/api/invoice/*"})
@@ -568,8 +570,10 @@ public class InvoiceServlet extends AonApiHttpServlet{
 				invoice.setReferenceCode(null);	
 			}
 		}
-				
-		if(invoice.isSales() && tbaiConfiguration.isActive()) {
+		String tbaiId = JsonUtils.getString(api.getData(), IJsonNames.TBAI_ID);
+		if(invoice.isSales() && tbaiConfiguration.isActive() && invoice.isThirdPart()) {
+			checkTbaiId(company, invoice, tbaiId);
+		} else if(invoice.isSales() && tbaiConfiguration.isActive()) {
 			tbaiConfiguration.setCertificate(checkCertificate(api));
 			tbaiValidation(invoice);
 		}
@@ -579,8 +583,9 @@ public class InvoiceServlet extends AonApiHttpServlet{
 		invoice = AON.acceptInvoice(api.getOccam(), invoice, rawdocId);
 		processInvoiceFile(api, invoice);
 		acceptTbai(tbaiConfiguration, company, invoice);
+		saveInvoiceData(api, tbaiConfiguration, invoice, tbaiId);
 		JSONObject json = InvoiceJSON.toJSON(invoice);
-		if(invoice.isSales() && tbaiConfiguration.isActive()) {	
+		if(invoice.isSales() && tbaiConfiguration.isActive()) {
 			String tbaiUrl = TbaiData.getInstance(tbaiConfiguration).getTbaiUrl(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), invoice.getId());
 			if(!AonStringUtils.isBlank(tbaiUrl)) {
 				json.put("tbai", true);
@@ -621,9 +626,43 @@ public class InvoiceServlet extends AonApiHttpServlet{
 	}
 	
 	public static void acceptTbai(TbaiConfiguration tbaiConfiguration, Company company,  Invoice invoice) throws Exception {
-		if(invoice.isSales() && tbaiConfiguration.isActive()) {
+		if(invoice.isSales() && tbaiConfiguration.isActive() && !invoice.isThirdPart()) {
 			TbaiMain tbai = new TbaiMain();
 			tbai.createEmisionTBAI(company, invoice, tbaiConfiguration);
+		}
+	}
+	
+	public static void saveInvoiceData(AonApiData api, TbaiConfiguration tbaiConfiguration, Invoice invoice, String tbaiId) throws UnsupportedEncodingException {
+		if(invoice.isSales() && tbaiConfiguration.isActive() && invoice.isThirdPart()){
+			String qrUrl = TbaiUri.getUrlQr(tbaiConfiguration) + "?id=" + tbaiId + "&s="
+					+ (invoice.getSeries() != null ? invoice.getSeries() : "") + "&nf=" + invoice.getNumber() + "&i="
+					+ invoice.getTotal();
+			String crc = CRC8.calculate(qrUrl);
+			qrUrl = qrUrl + "&cr=" + crc;
+			
+			InvoiceData dataTbaiId = new InvoiceData()
+					.setDomain(invoice.getDomain())
+					.setInvoice(invoice.getId())
+					.setName("TBAI_ID")
+					.setValue(tbaiId);
+			
+			InvoiceData dataTbaiUrl = new InvoiceData()
+					.setDomain(invoice.getDomain())
+					.setInvoice(invoice.getId())
+					.setName("TBAI_URL")
+					.setValue(qrUrl);
+			
+			AON.saveInvoiceData(api.getDomain(), api.getUser(), dataTbaiId);
+			AON.saveInvoiceData(api.getDomain(), api.getUser(), dataTbaiUrl);
+		}
+		if(invoice.isThirdPart()) {
+			InvoiceData dataThirdPart = new InvoiceData()
+					.setDomain(invoice.getDomain())
+					.setInvoice(invoice.getId())
+					.setName("THIRD_PART")
+					.setValue("true");
+			
+			AON.saveInvoiceData(api.getDomain(), api.getUser(), dataThirdPart);
 		}
 	}
 	
@@ -726,7 +765,7 @@ public class InvoiceServlet extends AonApiHttpServlet{
 		json.put(IJsonNames.ADMINISTRATION, getAdministration(api));
 		json.put("withholdingPercent", withholdingPercent.getWithholdingType().name());
 		json.put("invofox", InvofoxServlet.getConfiguration(api));
-		json.put(IJsonNames.VATS, getVats(api));
+//		json.put(IJsonNames.VATS, getVats(api));
 		return json;
 	}
 	
@@ -844,6 +883,24 @@ public class InvoiceServlet extends AonApiHttpServlet{
 		checkRegistry(invoice);
 	}
 	
+	private static void checkTbaiId(Company company, Invoice invoice, String tbaiId) throws Exception {
+		if(AonStringUtils.isBlank(tbaiId)) throw new Exception("El Identificador TicketBai está vacío.");
+		if(tbaiId.length() != 39) throw new Exception("El Tamaño del Identificador TicketBai no es correcto.");
+		String[] arr = tbaiId.split("-");
+		if(arr.length != 5) throw new Exception("El Formato del Identificador TicketBai no es correcto."); 
+		
+		if(!arr[0].equalsIgnoreCase("TBAI")) throw new Exception("El Identificador TicketBai no es correcto.");
+		if(!arr[1].equalsIgnoreCase(company.getDocument())) throw new Exception("El Emisor del Identificador TicketBai no coincide con el Documento del Emisor.");		
+		
+		Integer l = tbaiId.length() - 3;
+		String t = tbaiId.substring(0, l);
+		String c = tbaiId.substring(l);
+		String crc = CRC8.calculate(t);
+		if(!crc.equals(c)) {
+			throw new Exception("El Identificador TicketBai no es correcto.");
+		}
+	}
+	
 	private static  void checkInvoice(Invoice invoice) throws Exception {
 		if(invoice.isRectifier() && AonStringUtils.isBlank(invoice.getSeries())) {
 			throw new Exception("Las Facturas rectificativas tienen que tener serie.");
@@ -858,13 +915,13 @@ public class InvoiceServlet extends AonApiHttpServlet{
 	private static void checkRegistry(com.esferalia.aon.occam.api.model.finance.Invoice invoice) throws Exception {
 		if(AonStringUtils.isBlank(invoice.getRegistryDocument()) 
 				&& !invoice.isSimplified()) {
-			throw new Exception("El Documento del cliente estï¿½ vacio.");
+			throw new Exception("El Documento del cliente está vacio.");
 		}
 			
 		if(Country.ES.equals(invoice.getRegistryDocumentCountry()) 
 				&& !AonDocumentUtil.isValid(invoice.getRegistryDocument())
 				&& !invoice.isSimplified()) {
-			throw new Exception("El Documento del cliente no es vï¿½lido.");
+			throw new Exception("El Documento del cliente no es válido.");
 		}
 	}
 	
