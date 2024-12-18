@@ -16,14 +16,24 @@ public class MarketingActionParams implements Serializable{
 	
 	private Date startDate;
 	private Date endDate;
-
+	
 	private Double budget;
+	private boolean betweenBudgetNumbers = false;
+	private Double gtbudget;
+	private Double ltbudget;
+	
 	private Double expense;
+	private boolean betweenExpenseNumbers = false;
+	private Double gtexpense;
+	private Double ltexpense;
 	
 	private MarketingCampaign marketingCampaign;
 	
 	private int limit;
 	private int offset;
+	
+	private String orderBy;
+	private boolean asc = true;
 	
 	public String getDomainName() {
 		return domainName;
@@ -82,6 +92,48 @@ public class MarketingActionParams implements Serializable{
 		this.budget = budget;
 		return this;
 	}
+	public boolean isBetweenBudgetNumbers() {
+		return betweenBudgetNumbers;
+	}
+	public MarketingActionParams setBetweenBudgetNumbers(boolean betweenBudgetNumbers) {
+		this.betweenBudgetNumbers = betweenBudgetNumbers;
+		return this;
+	}
+	public Double getGTBudget() {
+		return gtbudget;
+	}
+	public MarketingActionParams setGTBudget(Double gtbudget) {
+		this.gtbudget = gtbudget;
+		return this;
+	}
+	public Double getLTBudget() {
+		return ltbudget;
+	}
+	public MarketingActionParams setLTBudget(Double ltbudget) {
+		this.ltbudget = ltbudget;
+		return this;
+	}
+	public boolean isBetweenExpenseNumbers() {
+		return betweenExpenseNumbers;
+	}
+	public MarketingActionParams setBetweenExpenseNumbers(boolean betweenExpensetNumbers) {
+		this.betweenExpenseNumbers = betweenExpensetNumbers;
+		return this;
+	}
+	public Double getGTExpense() {
+		return gtexpense;
+	}
+	public MarketingActionParams setGTExpense(Double gtexpense) {
+		this.gtexpense = gtexpense;
+		return this;
+	}
+	public Double getLTExpense() {
+		return ltexpense;
+	}
+	public MarketingActionParams setLTExpense(Double ltexpense) {
+		this.ltexpense = ltexpense;
+		return this;
+	}
 	public Double getExpense() {
 		return expense;
 	}
@@ -108,6 +160,20 @@ public class MarketingActionParams implements Serializable{
 	}
 	public MarketingActionParams setOffset(int offset) {
 		this.offset = offset;
+		return this;
+	}
+	public String getOrderBy() {
+		return orderBy;
+	}
+	public MarketingActionParams setOrderBy(String orderBy) {
+		this.orderBy = orderBy;
+		return this;
+	}
+	public boolean isAsc() {
+		return asc;
+	}
+	public MarketingActionParams setAsc(boolean asc) {
+		this.asc = asc;
 		return this;
 	}
 	

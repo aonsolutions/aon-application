@@ -1,4 +1,4 @@
-FROM tomcat:10.1.19-jdk21-temurin-jammy
+FROM tomcat:11.0.1-jdk21-temurin-noble
 
 ARG AON_VERSION=9.23-SNAPSHOT
 

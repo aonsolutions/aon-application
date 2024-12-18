@@ -15,7 +15,6 @@ import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.PopupPanel;
-import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.ScrollPanel;
 
 public class AonCustomMultiSelectBox extends HTMLPanel {
@@ -28,7 +27,7 @@ public class AonCustomMultiSelectBox extends HTMLPanel {
 	private Set<String> selectedOptions = new LinkedHashSet<String>();
 	private Map<String, CheckBox> valuesCB = new HashMap<>();
 	
-	private boolean hasFocus = false;
+//	private boolean hasFocus = false;
 	
 	public AonCustomMultiSelectBox(String title) {
 		super(EMPTY_STRING);
@@ -36,12 +35,12 @@ public class AonCustomMultiSelectBox extends HTMLPanel {
 		addStyleName(AON.CSS.aonCustomTextBox());
 		
 		// Agregar manejador de blur en el componente
-        RootPanel.get().addDomHandler(event -> {
-            if (hasFocus && !optionsPopup.isShowing()) {
-                fireBlurEvent(); // Lanzar el evento si se pierde el foco
-                hasFocus = false;
-            }
-        }, ClickEvent.getType());
+//      RootPanel.get().addDomHandler(event -> {
+//            if (hasFocus && !optionsPopup.isShowing()) {
+//                fireBlurEvent(); // Lanzar el evento si se pierde el foco
+//                hasFocus = false;
+//            }
+//      }, ClickEvent.getType());
 
 		createTitle(title);
 		createInput();
@@ -78,7 +77,7 @@ public class AonCustomMultiSelectBox extends HTMLPanel {
         optionsPopup.setPopupPosition(left, top);
         optionsPopup.getElement().getStyle().setZIndex(3);
         optionsPopup.show(); // Muestra con animación
-        hasFocus = true;
+//        hasFocus = true;
 	}
 	
 	public void setOptions(Set<String> options) {
@@ -110,7 +109,11 @@ public class AonCustomMultiSelectBox extends HTMLPanel {
         	
         	filterMenu.add(checkBoxPanel);
         	
-        	checkBox.addValueChangeHandler(e -> changeCheckBoxValue(checkBox, option));
+        	checkBox.addClickHandler(e -> {
+        		checkBox.setValue(!checkBox.getValue());
+        		changeCheckBoxValue(checkBox, option);
+        		e.getNativeEvent().stopPropagation();
+        	});
         	checkBoxPanel.addDomHandler(e -> changeCheckBoxValue(checkBox, option), ClickEvent.getType());
         	
         	valuesCB.put(option, checkBox);
@@ -129,6 +132,8 @@ public class AonCustomMultiSelectBox extends HTMLPanel {
 		else selectedOptions.remove(option);
 		
 		selectionLabel.setText(selectedOptions.isEmpty() ? "Seleccione un valor" : String.join(", ", selectedOptions));
+		
+		fireBlurEvent();
 	}
 	
 	public void setSelectedOptions(Set<String> options) {

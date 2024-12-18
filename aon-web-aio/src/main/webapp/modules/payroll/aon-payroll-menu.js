@@ -63,7 +63,8 @@ export class AonPayrollMenu extends AonSuiteMenu {
                 description: "Calculo de Nóminas",
                 title: "Calculo de Nóminas",
                 action: () => GWT.iLoad(GWT.MAIN_CALCULATOR)
-            }]
+            }],
+			filter: () => this.isNotDomainManagementAvailable()		
         },{
             title: 'Seguridad Social',
             options: [{
@@ -90,26 +91,39 @@ export class AonPayrollMenu extends AonSuiteMenu {
         },{
             title: 'Procesos',
             options: [{
+                description: "Calculo de Nóminas",
+                title: "Calculo de Nóminas",
+                action: () => GWT.iLoad(GWT.MAIN_CALCULATOR),
+				filter: () => this.isDomainManagementAvailable()
+			},{
                 description: "Impresión / eMail de Nóminas",
                 title: "Impresión / eMail de Nóminas",
                 action: () => GWT.iLoad(GWT.MAIN_SALARY_PRINT)
-            },/*{
+            },{
                 description: "Listado de costes",
                 title: "Listado de costes",
-                action: () => alert("description")
-            },*/{
+                action: () => alert("description"),
+				filter: () => this.isDomainManagementAvailable()
+            },{
                 description: "Resumen de actividad",
                 title: "Resumen de actividad",
                 action: () => GWT.iLoad(GWT.ACTIVITY_SUMMARY)
             },{
                 description: "Informe de personal asalariado",
                 title: "Informe de personal asalariado",
-                action: () => GWT.iLoad(GWT.CONTRACT_MEDIA)
+                action: () => GWT.iLoad(GWT.CONTRACT_MEDIA),
+				filter: () => this.isNotDomainManagementAvailable()
             },{
                 description: "Cambio masivo contratos",
                 title: "Cambio masivo contratos",
-                action: () => GWT.iLoad(GWT.MASSIVE_CONTRACTS)
-            }]
+                action: () => GWT.iLoad(GWT.MASSIVE_CONTRACTS),
+				filter: () => this.isNotDomainManagementAvailable()
+            },{
+                description: "FIE - Importación masiva de I.T",
+                title: "FIE - Importación masiva de I.T",
+                action: () => alert("description"),
+				filter: () => this.isDomainManagementAvailable()
+			}]
         },{
             title: 'Gestión',
             options: [{
@@ -132,7 +146,8 @@ export class AonPayrollMenu extends AonSuiteMenu {
                 description: "Remesa Transferencia de Nóminas",
                 title: "Remesa Transferencia de Nóminas",
                 action: () => alert("description")
-            }*/]
+            }*/],
+			filter: () => this.isNotDomainManagementAvailable()		
         },/*{
             title: 'SEPE',
             options: [{
@@ -144,9 +159,13 @@ export class AonPayrollMenu extends AonSuiteMenu {
                 title: "Notificaciones Certific@",
                 action: () => alert("description")
             }]
-        },{
+        },*/{
             title: 'Auxiliares',
             options: [{
+                description: "Convenios",
+                title: "Convenios",
+                action: () => GWT.iLoad(GWT.CONVENIOS)
+			},{
                 description: "Modelos de contrato",
                 title: "Modelos de contrato",
                 action: () => alert("description")
@@ -158,12 +177,13 @@ export class AonPayrollMenu extends AonSuiteMenu {
                 description: "Festivos",
                 title: "Festivos",
                 action: () => alert("description")
-            },{
+            }/*,{
                 description: "Variables Calculo Trabajadores",
                 title: "Variables Calculo Trabajadores",
                 action: () => alert("description")
-            }]
-        },*/{
+            }*/],
+			filter: () => this.isDomainManagementAvailable()
+        },{
             title: 'Utilidades',
             options: [{
                 description: "Gestión de Certificados",
@@ -180,7 +200,8 @@ export class AonPayrollMenu extends AonSuiteMenu {
             },{
                 description: "Comunic@",
                 title: "Comunic@",
-                action: () => this.rootPanel(new AonComunica())
+                action: () => this.rootPanel(new AonComunica()),
+				filter: () => this.isNotDomainManagementAvailable()
             }]
         },{
             title: 'Modelos Tributarios',
@@ -196,7 +217,8 @@ export class AonPayrollMenu extends AonSuiteMenu {
                 description: "Modelo 190",
                 title: "Modelo 190",
                 action: () => GWT.iLoad(GWT.MODEL_190)
-            }]
+            }],
+			filter: () => this.isNotDomainManagementAvailable()		
         },/*{
             title: 'Antiguas Opciones (Obsoletas)',
             options: [{

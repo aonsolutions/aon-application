@@ -859,6 +859,8 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 			Double directPayBase = quoteCalculator.getDirectPayBase();
 			Double rawDirectPayBase = quoteCalculator.getRawDirectPayBase();
 
+			Double lackPeriodBase = quoteCalculator.getLackPeriodBase();
+
 			Double unpaidBase = quoteCalculator.getUnpaidBase();
 			Double rawUnpaidBase = quoteCalculator.getRawUnpaidBase();
 
@@ -892,6 +894,8 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 				cgcBase += unpaidBase;
 			if (directPayBase != null)
 				cgcBase += directPayBase;
+			if (lackPeriodBase != null)
+				cgcBase += lackPeriodBase;
 			if (maternityBase != null)
 				cgcBase += maternityBase;
 			if (additionalBase != null)
@@ -931,6 +935,8 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 				cgpBase += additionalBase;
 			if (directPayBase != null)
 				cgpBase += directPayBase;
+			if (lackPeriodBase != null)
+				cgpBase += lackPeriodBase;
 			
 			addVars(expressionContext, CGP_BASE,  ADDITIONAL_BASE);
 
@@ -2308,8 +2314,9 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 	    	for ( ContextVariable ctxVar : new ContextVariable [] {ContextVariable.TOTAL_DAYS, ContextVariable.DO_DAYS}) {
         		try {
         			if ( ctx.getExpressionContext().isDef(ctxVar)) {
-        				salaryBuilder.setTimeUnits(ctx.getExpressionContext().getVariables(ctxVar).stream()
-        					.map(v -> (Number) v.getValue(v.getPeriod()))
+						salaryBuilder.setTimeUnits(ctx.getExpressionContext()
+								.eval(ctxVar.getName(), ctx.getStartDate(), ctx.getEndDate(), Number.class).stream()
+	        					.map(v -> (Number) v.getValue(v.getPeriod()))
         					.collect(Collectors.summingDouble(Number::doubleValue)).intValue());
         				return;
         			}

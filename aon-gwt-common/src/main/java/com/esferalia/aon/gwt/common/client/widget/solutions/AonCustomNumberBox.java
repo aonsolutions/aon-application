@@ -1,26 +1,32 @@
 package com.esferalia.aon.gwt.common.client.widget.solutions;
 
 import com.esferalia.aon.gwt.common.client.AON;
+import com.esferalia.aon.gwt.common.client.widget.DoubleBox;
 import com.esferalia.aon.watson.util.AonStringUtils;
-import com.google.gwt.event.dom.client.KeyCodes;
-import com.google.gwt.event.dom.client.KeyPressEvent;
-import com.google.gwt.event.dom.client.KeyPressHandler;
+import com.google.gwt.dom.client.Style.Display;
+import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.HTMLPanel;
-import com.google.gwt.user.client.ui.TextBox;
+import com.google.gwt.user.client.ui.Label;
 
-public abstract class AonCustomNumberBox extends HTMLPanel {
+public class AonCustomNumberBox extends HTMLPanel {
 
 	private static final String EMPTY_STRING = "";
 	private HTMLPanel textBoxPanel = new HTMLPanel(EMPTY_STRING);
-	private TextBox numberBox;
+	private DoubleBox numberBox;
+	private DoubleBox gtnumberBox;
+	private DoubleBox ltnumberBox;
 	private CheckBox nearCB;
+	
+	private HTMLPanel ltnumberBoxPanel;
+	private HTMLPanel gtnumberBoxPanel;
 	
 	public AonCustomNumberBox(String title) {
 		super(EMPTY_STRING);
 		addStyleName(AON.CSS.aonFlexColumn());
-		addStyleName(AON.CSS.aonCustomTextBox());
+//		addStyleName(AON.CSS.aonCustomTextBox());
+		addStyleName(AON.CSS.aonCustomTextBoxNoBorder());
 
 		createTitle(title);
 		createInput();
@@ -36,61 +42,103 @@ public abstract class AonCustomNumberBox extends HTMLPanel {
 		textBoxPanel.addStyleName(AON.CSS.aonItemFlex());
 		textBoxPanel.addStyleName(AON.CSS.aonFlexBetween());
 		textBoxPanel.getElement().getStyle().setProperty("align-items", "flex-start");
+		textBoxPanel.getElement().getStyle().setProperty("border-bottom", "1px solid #b9b8b8");
 		
-		numberBox = new TextBox();
+		numberBox = new DoubleBox();
 		numberBox.setStyleName(AON.CSS.aonCustomTextBoxInput());
-		numberBox.addKeyPressHandler(new KeyPressHandler() {
-            @Override
-            public void onKeyPress(KeyPressEvent event) {
-                char charCode = event.getCharCode();
-                
-                // Solo permitimos dígitos, punto y caracteres de control como 'Backspace'
-                if (!Character.isDigit(charCode) && charCode != '.' && charCode != KeyCodes.KEY_BACKSPACE) {
-                	numberBox.cancelKey();
-                } else {
-                    // Prevenir múltiples puntos decimales
-                    if (charCode == '.' && numberBox.getText().contains(".")) {
-                    	numberBox. cancelKey();
-                    }
-                }
-            }
-        });
+		numberBox.getElement().setPropertyString("placeholder", "Introduce un valor");
 		
 		nearCB = new CheckBox();
-		nearCB.setTitle("Cant. cercanas");
-		nearCB.addValueChangeHandler(e -> onNearChange());
+		nearCB.setTitle("Busqueda entre valores");
+		nearCB.addValueChangeHandler(e -> {
+			Double number = numberBox.getValue();
+			numberBox.setValue(null);
+			gtnumberBox.setValue(null == number ? null : number);
+			ltnumberBox.setValue(null);
+			
+			numberBox.setEnabled(!nearCB.getValue());
+			gtnumberBox.setEnabled(nearCB.getValue());
+			ltnumberBox.setEnabled(nearCB.getValue());
+			
+			if(nearCB.getValue()) {
+				getElement().getStyle().setProperty("height", "7rem");
+				ltnumberBoxPanel.getElement().getStyle().clearDisplay();
+				gtnumberBoxPanel.getElement().getStyle().clearDisplay();
+			} else {
+				getElement().getStyle().setProperty("height", "2.5rem");
+				ltnumberBoxPanel.getElement().getStyle().setDisplay(Display.NONE);
+				gtnumberBoxPanel.getElement().getStyle().setDisplay(Display.NONE);
+			}
+			
+			if(!nearCB.getValue() || null != number)
+				fireValueChangeEvent();
+		});
 		
 		textBoxPanel.add(numberBox);
 		textBoxPanel.add(nearCB);
 		add(textBoxPanel);
+		
+		gtnumberBoxPanel = new HTMLPanel("");
+		gtnumberBoxPanel.addStyleName(AON.CSS.aonItemFlex());
+		
+		Label gt = new Label("\u2265");
+		
+		gtnumberBox = new DoubleBox();
+		gtnumberBox.setStyleName(AON.CSS.aonBetweenInput());
+		gtnumberBox.getElement().setPropertyString("placeholder", "Mayor o igual que...");
+		gtnumberBoxPanel.getElement().getStyle().setDisplay(Display.NONE);
+		gtnumberBox.getElement().getStyle().setProperty("border-bottom", "1px solid #b9b8b8");
+		
+		gtnumberBoxPanel.add(gt);
+		gtnumberBoxPanel.add(gtnumberBox);
+		
+		add(gtnumberBoxPanel);
+		
+		ltnumberBoxPanel = new HTMLPanel("");
+		ltnumberBoxPanel.addStyleName(AON.CSS.aonItemFlex());
+		
+		Label lt = new Label("\u2264");
+		
+		ltnumberBox = new DoubleBox();
+		ltnumberBox.setStyleName(AON.CSS.aonBetweenInput());
+		ltnumberBox.getElement().setPropertyString("placeholder", "Menor o igual que...");
+		ltnumberBoxPanel.getElement().getStyle().setDisplay(Display.NONE);
+		ltnumberBox.getElement().getStyle().setProperty("border-bottom", "1px solid #b9b8b8");
+		
+		ltnumberBoxPanel.add(lt);
+		ltnumberBoxPanel.add(ltnumberBox);
+		
+		add(ltnumberBoxPanel);
 	}
 
-	public TextBox getNumberBox() {
+	public DoubleBox getNumberBox() {
 		return this.numberBox;
 	}
-
-	public void setValueSrint(String value) {
-		if(AonStringUtils.isBlank(value)) nearCB.setValue(false);
-		this.numberBox.setValue(value);
+	
+	public void hideNearBy() {
+		nearCB.setVisible(false);
 	}
 	
 	public void setValue(Double value) {
 		if(null == value) {
 			nearCB.setValue(false);
 			numberBox.setValue(null);
-		} else numberBox.setValue(value.toString());
+		} else numberBox.setValue(value);
 	}
 
 	public Double getValue() {
-		if(AonStringUtils.isBlank(this.numberBox.getValue())) return null;
-		try {
-		 return Double.parseDouble(this.numberBox.getValue());
-		} catch (Exception e) {
-			return null;
-		}
+		return numberBox.getValue();
 	}
 	
-	public boolean isNearBy() {
+	public Double getGTValue() {
+		return gtnumberBox.getValue();
+	}
+	
+	public Double getLTValue() {
+		return ltnumberBox.getValue();
+	}
+	
+	public boolean isBetweenNumbers() {
 		return nearCB.getValue();
 	}
 	
@@ -105,11 +153,16 @@ public abstract class AonCustomNumberBox extends HTMLPanel {
 	public void addButton(AonTableButton button) {
 		textBoxPanel.add(button);
 	}
+	
+	private void fireValueChangeEvent() {
+        ValueChangeEvent<String> valueChangeEvent = new ValueChangeEvent<String>(null) {};
+        numberBox.fireEvent(valueChangeEvent);
+    }
 
-	public void addValueChangeHandler(ValueChangeHandler<String> valueChangeHandler) {
+	public void addValueChangeHandler(ValueChangeHandler<Double> valueChangeHandler) {
 		numberBox.addValueChangeHandler(valueChangeHandler);
+		gtnumberBox.addValueChangeHandler(valueChangeHandler);
+		ltnumberBox.addValueChangeHandler(valueChangeHandler);
 	}
-
-	protected abstract void onNearChange();	
 
 }

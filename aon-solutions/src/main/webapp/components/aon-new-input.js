@@ -361,7 +361,13 @@ export class AonNewInput extends AonElement {
     }
 
     setReadonly(readonly) {
+
         this.setAttribute(CONSTANT.READONLY, readonly);
+        let input = this.getElement(this.INPUT);
+        if(input) {
+            if(readonly) input.setAttribute("readonly", readonly);
+            else input.removeAttribute("readonly");
+        } 
     }
 
     isDisabled() {
@@ -370,6 +376,11 @@ export class AonNewInput extends AonElement {
 
     setDisabled(disabled) {
         this.disabled = disabled;
+        let input = this.getElement(this.INPUT);
+        if(input) {
+            if(disabled) input.setAttribute("disabled", disabled);
+            else input.removeAttribute("disabled");
+        }
     }
 
     focus() {

@@ -88,7 +88,7 @@ public class ConfigurationDAO {
 							.and(p.getScopeProperty().in( userScopes ))
 					
 					))
-			.setVatTaxes( TaxDAO.getVatTaxs(ctx,params.getAtDate()).collect(Collectors.toCollection(LinkedList::new)))
+			.setVatTaxes( TaxDAO.getVatTaxes(ctx,params.getAtDate()).collect(Collectors.toCollection(LinkedList::new)))
 			.setGeozones( GeoZoneDAO.getStream(ctx, null).collect(Collectors.toCollection(LinkedList::new)))
 			.setAvailableScopes(SecurityDAO.getAvailableScopes (ctx))
 			.setPayMethods(PayMethodDAO.getOrderByNames(ctx))
@@ -96,7 +96,7 @@ public class ConfigurationDAO {
 			.setDefaultVatPercent(defaultVatPercent == 0
 				?null
 				:TaxDAO.getTax(ctx, filter -> filter.getIdProperty().eq(defaultVatPercent)))
-			.setWithholdingTaxes( TaxDAO.getWithholdingTaxs(ctx,params.getAtDate()).collect(Collectors.toCollection(LinkedList::new)))
+			.setWithholdingTaxes( TaxDAO.getWithholdingTaxes(ctx,params.getAtDate()).collect(Collectors.toCollection(LinkedList::new)))
 			.setSegments( RegistrySegmentDAO.getSegments(ctx, p-> p.getDomainProperty().eq( ctx.getDomainId())).collect(Collectors.toCollection(LinkedList::new)))
 			.setDefaultWithholdingPercent(defaultWithholdingPercent== 0
 				?null

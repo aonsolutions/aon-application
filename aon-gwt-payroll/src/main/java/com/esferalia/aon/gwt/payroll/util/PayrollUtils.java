@@ -15,6 +15,7 @@ public class PayrollUtils {
 		case 4: 		// STRUCTURAL_OVERTIME
 		case 5: 		// NON_STRUCTURAL_OVERTIME
 		case 13: 		// MEI
+		case 14: 		// SOLIDARIDAD
 			return 1;
 		case 6: 		// IRPF
 			return 2;
@@ -59,6 +60,8 @@ public class PayrollUtils {
 			return "Embargo";
 		case 13:
 			return "Mecanismo de Equidad Intergeneracional (MEI)";
+		case 14:
+			return "Solidaridad";
 		default:
 			return "Otras deducciones";
 		}

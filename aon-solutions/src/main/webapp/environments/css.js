@@ -44,6 +44,7 @@ export const AON_MENU_LINK = 'aonMenuLink';
 export const AON_HEADER = 'aonHeader';
 export const AON_HEADER_BETA = 'aonHeaderBeta';
 export const AON_HEADER_BUTTON = 'aonHeaderButton';
+export const AON_HEADER_START = 'aonHeaderStart';
 export const AON_IMG_AVATAR = 'aonImgAvatar';
 export const AON_AVATAR = 'aonAvatar';
 export const AON_LI = 'aonLi';
@@ -148,9 +149,11 @@ export const AON_DASHBOARD_CARD = 'aonDashboardCard';
 
 export const AON_PARENT_DIV = 'aonParentDiv';
 export const AON_WELCOME_DIV = 'aonWelcomeDiv';
+export const AON_APPS_DIV = 'aonAppsDiv';
 
 export const AON_COMPANY_DIV = 'aonCompanyDiv';
 export const AON_COMPANY_TITLE_DIV = 'aonCompanyTitleDiv';
+export const AON_COMPANY_FILTER_EMPTY = 'aonCompanyFilterEmpty';
 
 // aon-figma.css
 

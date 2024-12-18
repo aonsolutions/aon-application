@@ -19,13 +19,11 @@ import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
-import net.aonsolutions.db.up2date.finance.InvofoxEnterpriseDataFix;
-import net.aonsolutions.db.up2date.finance.InvoiceBatchAlter;
-import net.aonsolutions.db.up2date.fiscal.AlterFsMod2002020;
-import net.aonsolutions.db.up2date.fiscal.AlterFsMod200Nrc;
-import net.aonsolutions.db.up2date.tgss.Artist2024Update;
+import net.aonsolutions.db.up2date.fiscal.AlterFsMod193Detail2024;
+import net.aonsolutions.db.up2date.fiscal.FsModel369Creation;
+import net.aonsolutions.db.up2date.payroll.LackPayInsert;
 import net.aonsolutions.db.up2date.tgss.SolidarityInsert;
-import net.aonsolutions.db.up2date.urlshortener.UrlShortenCreation;
+import net.aonsolutions.db.up2date.tgss.TrainingExcessDeductions2024Insert;
 
 public class Up2Date {
 
@@ -484,7 +482,15 @@ public class Up2Date {
     	// InvoiceBatchAlter.INVOICE_BATCH_ALTER
     		
     	// AlterFsMod2002020.ALTER_FS_MODEL_200_2020
-    	SolidarityInsert.SOLIDARITYINSERT	
+    	// SolidarityInsert.SOLIDARITYINSERT,
+    	
+    	// FsModel369Creation.FS_MODEL369_CREATION,
+    	// AlterFsMod193Detail2024.ALTER_FS_MODEL_193_DETAIL_2024
+    		
+    	//LackPayInsert.LACKPAYINSERT
+    		
+    	TrainingExcessDeductions2024Insert.TRAININGEXCESSDEDUCTIONS2024INSERT
+
 	};
 
     // ------------------------------------------------------------------------

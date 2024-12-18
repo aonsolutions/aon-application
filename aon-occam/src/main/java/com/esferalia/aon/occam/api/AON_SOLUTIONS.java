@@ -89,6 +89,7 @@ import com.esferalia.aon.occam.impl.jooq.TaskImpl;
 import com.esferalia.aon.occam.impl.jooq.TimeControlImpl;
 import com.esferalia.aon.occam.impl.jooq.dao.invoiceduplicatefix.InvoiceDuplicateFixDAO;
 import com.esferalia.aon.watson.util.AonStringUtils;
+import com.esferalia.aon.watson.util.Pair;
 
 public class AON_SOLUTIONS {
 	
@@ -486,6 +487,24 @@ public class AON_SOLUTIONS {
 		} 
 	}
 	
+	public static Stream<Invoice> getChartInvoices(String domainName, Integer domainId, String login, InvoiceFilter filter) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
+			return getApi().getChartInvoices(ctx, filter);
+		} 
+	}
+	
+	public static Integer getInvoicesCount(String domainName, Integer domainId, String login, InvoiceFilter filter) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
+			return getApi().getInvoicesCount(ctx, filter);
+		} 
+	}
+	
+	public static Pair<Date, Date> getInvoicesChartPeriod(String domainName, Integer domainId, String login, InvoiceFilter filter) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
+			return getApi().getInvoicesChartPeriod(ctx, filter);
+		} 
+	}
+	
 	public static Stream<InvoiceNewPortal> getInvoiceNewPortal(String domainName, Integer domainId, String login, InvoiceFilter filter) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
 			return getApi().getInvoiceNewPortal(ctx, filter);
@@ -840,36 +859,6 @@ public class AON_SOLUTIONS {
 		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
 			Invoice invoice = getFinance().getFullInvoice(ctx, id);
 			return invoice;
-		}
-	}
-	
-	public static JSONObject acceptInvoice(Domain domain, User user, JSONObject json) {
-		return acceptInvoice(domain.getName(), domain.getId(), user.getLogin(), json);
-	}
-	
-	public static JSONObject acceptInvoice(Domain domain, String login, JSONObject json) {
-		return acceptInvoice(domain.getName(), domain.getId(), login, json);
-	}
-	
-	public static JSONObject acceptInvoice(String domainName, Integer domainId, String login, JSONObject json) {
-		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
-			Invoice invoice = InvoiceJSON.fromJSON(json);
-			invoice = getFinance().acceptInvoice(ctx, invoice, invoice.getId());
-			return InvoiceJSON.toJSON(invoice);
-		}
-	}
-	
-	public static Invoice acceptInvoice(Domain domain, User user, Invoice invoice) {
-		return acceptInvoice(domain.getName(), domain.getId(), user.getLogin(), invoice);
-	}
-	
-	public static Invoice acceptInvoice(Domain domain, String login, Invoice invoice) {
-		return acceptInvoice(domain.getName(), domain.getId(), login, invoice);
-	}
-	
-	public static Invoice acceptInvoice(String domainName, Integer domainId, String login, Invoice invoice) {
-		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
-			return getFinance().acceptInvoice(ctx, invoice, invoice.getId());
 		}
 	}
 	

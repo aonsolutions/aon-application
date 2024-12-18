@@ -230,6 +230,8 @@
 .aon_icon_trash_list { background-image: iconTrashList;}
 @url iconPaste aonIconPaste;
 .aon_icon_paste { background-image: iconPaste;}
+@url iconMoveGroup aonIconMoveGroup;
+.aon_icon_move_group { background-image: iconMoveGroup;}
 @url iconWork aonIconWork;
 .aon_icon_work { background-image: iconWork;}
 @url iconWorkOff aonIconWorkOff;
@@ -384,6 +386,10 @@
 .aon_icon_navarra { background-image: iconNavarra;}
 @url iconNavarraBw aonIconNavarraBw;
 .aon_icon_navarra_bw { background-image: iconNavarraBw;}
+@url iconCanarias aonIconCanarias;
+.aon_icon_canarias { background-image: iconCanarias;}
+@url iconCanariasBw aonIconCanariasBw;
+.aon_icon_canarias_bw { background-image: iconCanariasBw;}
 @url iconModelFinish aonIconModelFinish;
 .aon_icon_model_finish { background-image: iconModelFinish;}
 @url iconModelSent aonIconModelSent;
@@ -1135,7 +1141,7 @@
 	min-height: 1rem;
 }
 
-.aon_custom_text_box_input{
+.aon_between_input, .aon_custom_text_box_input{
 	text-overflow: ellipsis;
 	font-size: 13px;
 	background: transparent;
@@ -1175,6 +1181,13 @@
 .aon_custom_text_box_input:focus{
 	border: none !important;
   	box-shadow: none !important;
+	/*border-bottom: 1px solid #b9b8b8 !important;*/
+}
+
+.aon_between_input:focus{
+	border: none !important;
+	border-bottom: 1px solid #b9b8b8 !important; 
+	box-shadow: none !important;
 	/*border-bottom: 1px solid #b9b8b8 !important;*/
 }
 
@@ -1316,6 +1329,7 @@
 	box-sizing: border-box;
 	border-bottom: solid #c4c4c4 1px;
 	min-height: 37px;
+	justify-content: space-between;
 }
 .aon_toolbar_small_inner {
 	display: flex;
@@ -1324,6 +1338,11 @@
 	border-bottom: solid #c4c4c4 1px;
 	min-height: 32px;
 }
+
+.aon_toolbar_filter_container {
+	
+}
+
 .aon_toolbar_button_container {
 	margin-left: 1em;
 	display: flex;
@@ -1418,6 +1437,8 @@
 	display: flex;
 	border-bottom: 2px solid #002469;
 }
+
+
 		
 .aon_toolbar_text_box {
 	box-shadow: none !important;
@@ -1450,15 +1471,16 @@
 	background-position: center center;
 	background-repeat: no-repeat;
 	background-color: inherit;
-	padding-left: 10px;
+	padding-left: 5px;
 }
 
-.aon_button:hover, .aon_button:focus{
+.aon_button:hover {
  	background-color: #EEE;
 }
 .aon_button:disabled {
 	opacity: 0.2;
 }
+
 .aon_expand_panel {
 	flex-shrink: 0;
 	border-radius: 50%;
@@ -1968,6 +1990,8 @@
 	background-color: #edf0ff;
 	border: #999 1px solid;
 	padding: 5px 1.5em 5px 1.5em;
+	margin: 0 1rem;
+	/*margin: auto !important;*/
 }
 .aon_search_panel td{
 	border: none;
@@ -2083,6 +2107,8 @@
 .aon_gipuzkoa_background_color { background-color: #A1C031;}
 .aon_navarra_background_color { background-color: #da002a;}
 .aon_ccaa_background_color { background-color: #C41230;}
+.aon_canarias_background_color { background-color: #fbba00;}
+
 
 /* CONFIRM DIALOG  */
 .aon_cards {
@@ -2258,7 +2284,7 @@
 	min-height : 2rem;
 	background-color : white;
 	position : sticky;
-	top : -1px;
+	top : -10px;
 	z-index : 1;
 	padding : 0 1rem;
 	border-bottom : 1px solid #ddd;
@@ -2274,4 +2300,27 @@
 	color : #5f6368;
 	font-size : .8rem;
 	font-weight : bold;
+}
+
+.aon_no_border_toolbar > .aon_toolbar_inner {
+	border: none;
+	gap : 1rem;
+}
+
+.aon_no_border_toolbar .aon_toolbar_button_container {
+	margin: 0;
+}
+
+.aon_no_border_toolbar .aon_toolbar_title_container {
+	padding: 0;
+}
+
+.aon_closeFilter_message {
+	position: absolute;        
+    top: 10px !important;              
+    left: 50% !important;                 
+    transform: translateX(-50%); 
+    background-color: transparent; 
+    padding: 10px 20px;     
+    text-align: center;
 }

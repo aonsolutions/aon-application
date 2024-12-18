@@ -28,7 +28,9 @@ import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.type.InvoiceType;
 import com.esferalia.aon.occam.api.model.type.RawdocStatus;
 import com.esferalia.aon.occam.api.model.type.RawdocType;
+import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
+import com.esferalia.aon.watson.util.Pair;
 
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -50,6 +52,8 @@ public class InvoicesServlet extends AonApiHttpServlet {
     public static final String ACCEPT = "/accept";
     public static final String RECORD = "/record";
     public static final String COUNT = "/count";
+    public static final String CHART = "/chart";
+    public static final String CHART_PERIOD = "/chart/period";
     
     public static final String INVOICE_DUPLICATE_FIX = "/invoiceduplicatefix";
 
@@ -77,13 +81,14 @@ public class InvoicesServlet extends AonApiHttpServlet {
         LOGGER.info("[" + req.getMethod() + "] " + req.getRequestURI());
         try {
             AonApiData api = initialize(req);
-
+ 
             Object object = new AonRouting(api)
             		.addRoute(RAWDOC, InvoicesServlet::getRawdoc)
             		.addRoute(COUNT, InvoicesServlet::getCount)
+            		.addRoute(CHART, InvoicesServlet::getChartInvoices)
+                    .addRoute(CHART_PERIOD, InvoicesServlet::getChartInvoicesPeriod)
             		.addRoute(INVOICES, InvoicesServlet::getInvoices)
                     .addRoute(INVOICE, InvoicesServlet::getInvoice)
-                    
                     .apply();
 
             response(req, resp, object);
@@ -178,6 +183,24 @@ public class InvoicesServlet extends AonApiHttpServlet {
                     .forEach(invoice -> array.put(invoiceList2JSON(invoice)));
         }
         return array;
+    }
+    
+    private static JSONArray getChartInvoices(AonApiData api) {
+        JSONArray array = new JSONArray();
+        AON_SOLUTIONS
+        	.getChartInvoices(api.getDomain().getName(), api.getDomain().getId(), "api", f -> invoiceFilter(api, f))
+        	.forEach(invoice -> array.put(invoiceList2JSON(invoice)));
+        return array;
+    }
+    
+    private static JSONObject getChartInvoicesPeriod(AonApiData api) {
+    	JSONObject result = new JSONObject();
+        Pair<Date, Date> period = AON_SOLUTIONS.getInvoicesChartPeriod(api.getDomain().getName(), api.getDomain().getId(), "api", f -> invoiceFilter(api, f));
+        if(null != period) { 
+		    result.put("min", AonDateUtils.getYear(period.getKey()));
+		    result.put("max", AonDateUtils.getYear(period.getValue()));
+        }
+        return result;
     }
 
     private static JSONObject getInvoice(AonApiData api) {
@@ -292,6 +315,8 @@ public class InvoicesServlet extends AonApiHttpServlet {
         json.put(IJsonNames.STATUS, invoice.isRecorded()
                 ? InvoiceStatus.SCORED.name().toLowerCase()
                 : InvoiceStatus.PENDING.name().toLowerCase());
+        json.put(IJsonNames.TYPE, invoice.getType().value());
+        json.put(IJsonNames.TAXABLE_BASE, invoice.getTaxableBase());
         return json;
     }
     

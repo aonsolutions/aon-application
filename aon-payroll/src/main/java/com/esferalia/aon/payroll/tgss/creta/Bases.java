@@ -21,6 +21,9 @@ import static com.esferalia.aon.payroll.enumeration.ContextVariable.SLD_C737;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.SLD_H03;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.SLD_H04;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.SLD_H06;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.SOLIDARITY_BASE_FIRST;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.SOLIDARITY_BASE_SECOND;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.SOLIDARITY_BASE_THIRD;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.STRUCTURAL_OVERTIME_BASE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.TC2;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.TOTAL_PAYMENT;
@@ -298,7 +301,7 @@ public class Bases {
 				
 				// from here MONTH_DAYS == 30, so  
 				boolean monthly = lastDayOfMonth != 30 
-						|| getQuoteGroup(salary, period) >= 8
+						|| getQuoteGroup(salary, period) < 8
 						|| getQuoteDays(salary, period) == 0
 						|| getCotizacionMensual(salary,period);
 				
@@ -1538,7 +1541,63 @@ public class Bases {
 
 	}
 	
+	private static class MatchCCretaData extends NonNegativeCCretaData {
+		
+		public MatchCCretaData(String variable) {
+			super(variable);
+		}
 
+		@Override
+		public Double get(Salary salary, Fecha desde, Fecha hasta) 
+				throws NoSuchVariableException, UnMatchedVariableException {
+			try {
+				return super.get(salary, desde, hasta);
+			} catch ( UnMatchedVariableException e ) {
+				
+				List<ContextData> datas = salary.getContextData()
+						.getOrDefault(variable, Collections.emptyList());
+
+				double varValue = datas.stream()
+				.collect(Collectors.summingDouble(DistributeCCretaData::eval));
+
+				if (varValue == 0.00)
+					throw new NoSuchVariableException(variable);
+				
+				Long varDays = 
+				datas.stream()
+				.map(d -> new Period(d.getStartDate(), d.getEndDate()))
+				.collect(Collectors.summingLong( Period::getDays ));
+				
+				Period varPeriod = new Period(toDate(desde), toDate(hasta));
+				long periodDays = varPeriod.daysStream().count();
+				
+				return varValue / varDays * periodDays;
+			}
+		
+		}
+	}
+	
+	private static class AnyNonNegativeCCretaData extends CCretaData {
+		
+		
+		
+		public AnyNonNegativeCCretaData(String variable) {
+			super(variable);
+		}
+
+		@Override
+		public Double get(Salary salary, Fecha desde, Fecha hasta) 
+				throws NoSuchVariableException ,UnMatchedVariableException {
+			try {
+				return super.get(salary, desde, hasta);
+			} catch ( UnMatchedVariableException  e ) {
+				ContextData contextData = e.getContextData();
+				return CCretaData.get(variable, salary, new Period(contextData.getStartDate(), contextData.getEndDate()));
+			}
+		}
+
+	}
+	
 	private static class NonNegativeCCretaData extends CCretaData {
 
 		public NonNegativeCCretaData(String variable) {
@@ -1943,7 +2002,7 @@ public class Bases {
 	private static final Map<String, CretaData> CONTEXT_VARIABLE_MAP = new HashMap<String, CretaData>() {
 		{
 			put("500", new NonNegativeCCretaData(CGC_BASE.getName()));
-			put("535", new NonNegativeCCretaData(MATERNITY_BASE.getName()));
+			put("535", new MatchCCretaData(MATERNITY_BASE.getName()));
 			put("536", new NonNegativeCompositeCCretaData().add(ERE_BASES));
 			
 			put("537", new C537CretaData(ADDITIONAL_BASE.getName()));
@@ -1955,10 +2014,14 @@ public class Bases {
 
 			put("601", new NonNegativeCCretaData(CGP_BASE.getName()));
 			put("611", new NonNegativeCCretaData(CGP_BASE.getName()));
-			put("635", new NonNegativeCCretaData(MATERNITY_BASE.getName()));
-			put("634", new NonNegativeCCretaData(MATERNITY_BASE.getName()));
+			put("635", new MatchCCretaData(MATERNITY_BASE.getName()));
+			put("634", new MatchCCretaData(MATERNITY_BASE.getName()));
 			put("636", new NonNegativeCompositeCCretaData().add(ERE_BASES));
 			put("637", new NonNegativeCompositeCCretaData().add(ERE_BASES));
+
+			put("497", new AnyNonNegativeCCretaData(SOLIDARITY_BASE_FIRST.getName()));
+			put("498", new AnyNonNegativeCCretaData(SOLIDARITY_BASE_SECOND.getName()));
+			put("499", new AnyNonNegativeCCretaData(SOLIDARITY_BASE_THIRD.getName()));
 
 			put("663", new CCretaData(ContextVariable.PREST_IT));
 
@@ -2048,7 +2111,10 @@ public class Bases {
 					.add(CGC_BASE_ENTERPRISE)	  
 					);
 			
+			put("701", new NonNegativeCCretaData(CGP_BASE_ENTERPRISE.getName()));
 			put("702", new NonNegativeCCretaData(CGP_BASE_ENTERPRISE.getName()));
+			put("703", new NonNegativeCCretaData(CGP_BASE_ENTERPRISE.getName()));
+			put("705", new NonNegativeCCretaData(CGP_BASE_ENTERPRISE.getName()));
 		
 			put("300", new NonNegativeCCretaData(TOTAL_PAYMENT.getName()) {
 				public Double get(Salary salary, Fecha desde, Fecha hasta) throws NoSuchVariableException ,UnMatchedVariableException {
@@ -2068,7 +2134,6 @@ public class Bases {
 					} 
 				};
 			});
-			put("705", new NonNegativeCCretaData(CGP_BASE_ENTERPRISE.getName()));
 			
 			put("737", new DistributeCCretaData(SLD_C737.getName()));
 			put("06", new DistributeHCretaData(SLD_H06.getName()));

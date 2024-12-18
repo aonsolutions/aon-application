@@ -290,7 +290,6 @@ public class MainContrataContract extends MainEntryPoint {
 	public MainContrataContract() {
 		contrataEmployee = new ContrataEmployeeImpl();
 		enterpriseSalary = new EnterpriseSalaryImpl();
-		enterpriseSalary.setBackButtonVisible();
 
 		employeesDockLayoutPanel = new AonCustomDockLayout("Contratos") {
 			@Override
@@ -729,6 +728,7 @@ public class MainContrataContract extends MainEntryPoint {
 		this.mainContrataContractObject.getContextInfo(
 				s -> {
 					AonMessagePanel.hideMessage(employeesMessagePanel);
+					enterpriseSalary.setBackButtonVisible();
 					initWorkplaceLB();
 					initTC2LB();
 					contextLoaded = true;

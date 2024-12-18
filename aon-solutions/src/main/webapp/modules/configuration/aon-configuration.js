@@ -244,7 +244,11 @@ export class AonConfiguration extends AonElement {
 			additional_info: ['ADDRESSES', 'MEDIA', 'BANKS', 'PAYMETHOD', 'RECORD_DATA']
 		};
     
+    console.log("getCompanyOne");
+    console.log(data);
+    
     getCompanyOne(data).then(cp => {
+      console.log(cp);
       let aonRegistry = new AonReg();
 			aonRegistry.id = this.getApplication().id + 'Registry';
       aonRegistry.setShowLogo(true);

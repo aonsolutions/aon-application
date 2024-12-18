@@ -33,7 +33,11 @@
 					value="#{bundle.aon_email}" />
 				<aon:inputText id="MailAccount_email"
 					size="60" maxlength="256" required="true"
-					value="#{controller.to.email}" />
+					value="#{controller.to.email}" >
+					<a4j:support event="onchange" ajaxSingle="true"
+						actionListener="#{controller.updateEmailIdentity}"
+						reRender="MailAccountDiv" />
+				</aon:inputText>
 					
 				<aon:outputLabel for="MailAccount_displayName"
 					value="#{bundle.aon_displayName}" />
@@ -43,15 +47,99 @@
 				<aon:outputLabel for="MailAccount_Auto"
 					value="Envío Automático" />
 
-				<aon:div>
+				<aon:div styleClass="aon-valign-items-middle" >
 	                <aon:selectBooleanCheckbox id="MailAccount_Auto"
     	            	actionListener="#{controller.onProtocolAonChanged}"
     	            	reRender="MailAccountDiv" ajaxSingle="false"
     	            	value="#{controller.protocolAon}"/>
-					<aon:outputText value=" (Envío a través de no-reply@aon.solutions)"/>
-				</aon:div>
+					
+					<aon:if test="#{!domainSwitcher.betaEnabled}" >
+						<aon:outputText value=" (Envío a través de no-reply@aon.solutions)"/>
+					</aon:if>
+					<aon:if test="#{domainSwitcher.betaEnabled}" >
+						<aon:outputText value=" (Envío a través de aon Solutions)"/>
+						<aon:if test="#{controller.protocolAon}" >
+							<aon:if test="#{controller.verificationStatus == null}">
+            					<aon:outputText styleClass="material-icons-outlined aon-pending rotate-animation aon-padding" value="sync" />
+								<a4j:jsFunction 
+									id="updateEmailIdentity" 
+									name="updateEmailIdentity" 
+									reRender="MailAccountDiv" 
+									action="#{controller.updateEmailIdentity}" 
+									>
+								</a4j:jsFunction>
+								<script type="text/javascript">
+								//<![CDATA[
+									updateEmailIdentity();
+								//]]>
+								</script>
+        					</aon:if>
 
-				<aon:if test="#{!controller.protocolAon}" >
+							<aon:if test="#{controller.verificationStatus == 'SUCCESS'}" >
+								<aon:outputText styleClass="material-icons-outlined aon-color-green aon-padding-left" value="check_circle" />
+								<aon:outputText styleClass="aon-color-green " value="#{bundle.webmail_mailAccount_Verified}"/>
+								<aon:commandLink id="sendTestEmailWindow" 
+									ajaxSingle="true" 
+									reRender="showNewMessageWindow"
+									value="#{bundle.webmail_send_test_email}"
+									styleClass="aon-color-green aon-padding aonButton-Verified" 
+									actionListener="#{webmailMessage.onSendEmail}" 
+								>
+									<f:setPropertyActionListener target="#{webmailMessage.senderMailAccount}" value="#{controller.to}" />
+								</aon:commandLink>
+							</aon:if>
+              <aon:if test="#{controller.verificationStatus == 'PENDING' || controller.verificationStatus == 'NOT_STARTED'}" >
+                <aon:outputText styleClass="material-icons-outlined aon-pending aon-padding-left" value="cancel" />
+                <aon:outputText styleClass="aon-pending" value="#{bundle.webmail_mailAccount_Pending}"/>
+                <aon:outputText styleClass="aon-padding-left aon-pending" value="#{bundle.webmail_mailAccount_Check_Email}"/>
+                <aon:commandLink id="sendAgainVerifyEmail" 
+                  ajaxSingle="true" 
+                  reRender="showNewMessageWindow"
+                  value="#{bundle.webmail_resend_verify_email}" 
+                  styleClass="aon-padding aonButton-Pending" 
+                  onclick="Richfaces.showModalPanel('emailWaitProccess#{messageSuffix}')" 
+                  oncomplete="Richfaces.hideModalPanel('emailWaitProccess#{messageSuffix}')"
+                >
+                  <f:setPropertyActionListener target="#{webmailMessage.senderMailAccount}" value="#{controller.to}" />
+                  <aon:actionListener method="#{webmailMessage.onSendVerifyEmail}" />
+                </aon:commandLink>
+                <ui:include src="/com/code/aon/ui/webmail/facelet/webmailMessage/waitProcess.xhtml" />	
+              </aon:if>
+              <aon:if test="#{controller.verificationStatus == 'UNKNOW' || controller.verificationStatus == 'FAILED'}" >
+                <aon:outputText styleClass="material-icons-outlined aon-label-error aon-padding-left" value="cancel" />
+                <aon:outputText styleClass="aon-label-error" value="#{bundle.webmail_mailAccount_Unverified}"/>
+
+                <aon:commandLink id="sendVerifyEmail" 
+                  ajaxSingle="true" 
+                  reRender="showNewMessageWindow"
+                  value="#{bundle.webmail_send_verify_email}" 
+                  styleClass="aon-label-error aon-padding aonButton-Error" 
+                  onclick="Richfaces.showModalPanel('emailWaitProccess#{messageSuffix}')" 
+                  oncomplete="Richfaces.hideModalPanel('emailWaitProccess#{messageSuffix}')"
+                >
+                  <f:setPropertyActionListener target="#{webmailMessage.senderMailAccount}" value="#{controller.to}" />
+                  <aon:actionListener method="#{webmailMessage.onSendVerifyEmail}" />
+                </aon:commandLink>
+                <ui:include src="/com/code/aon/ui/webmail/facelet/webmailMessage/waitProcess.xhtml" />	
+              </aon:if>
+						</aon:if>
+					</aon:if>
+				</aon:div>
+				
+				<aon:if test="#{controller.protocolAon}" >
+					<aon:outputLabel for="MailAccount_IncludeBcc"
+						value="Incluir Bcc" />
+	
+					<aon:div>
+	                	<aon:selectBooleanCheckbox id="MailAccount_IncludeBcc"
+    	            		actionListener="#{controller.onIncludeBccChanged}"
+    	            		reRender="MailAccountDiv" ajaxSingle="false"
+    	            		value="#{controller.includeBcc}"/>
+						<aon:outputText value=" Enviar copia en bcc."/>
+					</aon:div>
+				</aon:if>
+
+        <aon:if test="#{!controller.protocolAon}" >
 	
 					<aon:outputLabel for="MailAccount_replyToMail"
 						value="#{bundle.webmail_mailAccount_replyToMail}" />

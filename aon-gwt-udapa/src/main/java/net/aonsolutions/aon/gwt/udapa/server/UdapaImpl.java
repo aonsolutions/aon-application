@@ -9,12 +9,17 @@ import java.util.stream.Collectors;
 
 import jakarta.servlet.annotation.WebServlet;
 
+import com.esferalia.aon.gwt.common.shared.AonData;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.ApplicationParameter;
 import com.esferalia.aon.occam.api.model.DataResponse;
 import com.esferalia.aon.occam.api.model.DataResponseDetail;
+import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.ElaborationDetail;
+import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.accounting.IAccMiningKeyAccept;
+import com.esferalia.aon.occam.api.model.attachment.Attach;
+import com.esferalia.aon.occam.api.model.attachment.AttachType;
 import com.esferalia.aon.occam.api.model.management.PurchaseDetail;
 import com.esferalia.aon.occam.api.model.product.OldItem;
 import com.esferalia.aon.occam.api.model.product.OldProduct;
@@ -22,6 +27,7 @@ import com.esferalia.aon.occam.api.model.registry.RAddress;
 import com.esferalia.aon.occam.api.model.registry.Supplier;
 import com.esferalia.aon.occam.api.model.type.AppParam;
 import com.esferalia.aon.occam.api.model.type.DataResponseSource;
+import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.occam.api.model.warehouse.CarrierPacking;
 import com.esferalia.aon.occam.api.model.warehouse.Income;
 import com.esferalia.aon.occam.api.model.warehouse.IncomeDetail;
@@ -292,6 +298,24 @@ public class UdapaImpl extends RemoteServiceServlet implements IUdapa{
 			incomeDetail.get().setDiscountExpression("0");
 			AON.updateIncomeDetail(domainName, domainId, "", incomeDetail.get());
 		}
+	}
+	
+	@Override
+	public void uploadImage(String domainName, Integer domainId, String login, String data, String type, Integer dataResponse) {
+		byte[] fileData = java.util.Base64.getDecoder().decode(data);
+		
+		Domain domain = new Domain().setName(domainName).setId(domainId);
+		Attach attach = new Attach()
+    			.setAttachModule(dataResponse)
+    			.setAttachType(AttachType.DATA)
+    			.setData(fileData)
+    			.setDescription("imagen")
+    			.setMimeType(MimeType.safeValueFromContenType(type))
+    			.setDomain(domain)
+    			.setType((byte)0)
+    			.setSourceType((byte)0)
+    			.setSourceBatch(dataResponse);
+    	AON.insertAttach(domainName, domainId, login, attach);
 	}
 
 }

@@ -6,6 +6,7 @@ import static com.esferalia.aon.jooq.tables.FinanceTracking.FINANCE_TRACKING;
 import static com.esferalia.aon.jooq.tables.Invoice.INVOICE;
 import static com.esferalia.aon.jooq.tables.PayMethod.PAY_METHOD;
 import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
+import static com.esferalia.aon.jooq.tables.Salary.SALARY;
 import static com.esferalia.aon.jooq.tables.Scope.SCOPE;
 
 import java.math.BigDecimal;
@@ -170,11 +171,13 @@ public class FinanceDAO {
 			.select(PAY_METHOD.fields())
 			.select(SCOPE.fields())
 			.select(INVOICE.fields())
+			.select(SALARY.ID, SALARY.TOTAL_LIQUID)
 			.from(FINANCE)
 			.join(REGISTRY).on(FINANCE.REGISTRY.equal(REGISTRY.ID))
 			.join(SCOPE).on(FINANCE.SCOPE.equal(SCOPE.ID))
 			.leftOuterJoin(PAY_METHOD).on(FINANCE.PAY_METHOD.equal(PAY_METHOD.ID))
 			.leftOuterJoin(INVOICE).on(FINANCE.INVOICE.equal(INVOICE.ID))
+			.leftOuterJoin(SALARY).on(SALARY.ID.equal(FINANCE.SOURCE_ID))
 			.where(FINANCE_PROPERTIES.getConditions(filter))
 			.and(FINANCE.DOMAIN.eq(ctx.getDomainId()));
 	}
@@ -498,7 +501,7 @@ public class FinanceDAO {
 	// -------------------------------------------------------------
 	// ---------------------------- MAP ----------------------------
 	// -------------------------------------------------------------
-	public static class FullFinanceFiller  implements Function<Record,Finance> {
+	public static class FullFinanceFiller extends Filler implements Function<Record,Finance> {
 		@Override
 		public Finance apply(Record record) {
 			return new Finance()
@@ -538,6 +541,8 @@ public class FinanceDAO {
 				.setModificationDate(record.getValue(FINANCE.MODIFICATION_DATE))
 				.setPayMethodName(record.getValue(PAY_METHOD.NAME))
 				.setPayMethodType( PayMethodType.safeValueOf(  record.getValue(PAY_METHOD.TYPE)))
+				.setHasSalary(checkField(record, SALARY.ID))
+				.setSalaryTotalLiquid(checkField(record, SALARY.TOTAL_LIQUID) ? record.get(SALARY.TOTAL_LIQUID) : null)
 				.setDirty(false)
 				;
 		}

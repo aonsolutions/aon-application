@@ -144,7 +144,7 @@ public class DeliveryInfoDAO {
 		};
 		
 		public static final BiConsumer<AONContext, DeliveryInfo> NOT_EXIST_DELIVERY = (ctx, deliveryInfo) -> {
-			Delivery delivery = DeliveryDAO.get(ctx, deliveryInfo.getId());
+			Delivery delivery = DeliveryDAO.get(ctx, deliveryInfo.getDelivery());
 			if (delivery.getId() == null) 
 				throw new AonCoreException(AonError.NOT_EXIST.format("delivery")) ;
 		};

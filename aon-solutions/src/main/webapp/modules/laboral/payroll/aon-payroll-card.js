@@ -46,9 +46,7 @@ export class AonPayrollCard extends AonElement {
   }
 
   buildToolbar() {
-    this.getPayrolls().then(payrolls => {
-      this.getTable(payrolls)
-    });
+    this.getPayrolls().then(payrolls => this.getTable(payrolls));
   }
 
   async getPayrolls() {

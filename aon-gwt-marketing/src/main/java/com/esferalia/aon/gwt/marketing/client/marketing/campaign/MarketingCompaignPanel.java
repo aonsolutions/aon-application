@@ -1,13 +1,18 @@
 package com.esferalia.aon.gwt.marketing.client.marketing.campaign;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.function.Consumer;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.CommonService;
 import com.esferalia.aon.gwt.common.client.CommonServiceAsync;
 import com.esferalia.aon.gwt.common.client.CommonServiceAsyncDecorator;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomTable;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog.AonAcceptDialogCallback;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonTableButton;
@@ -21,25 +26,20 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.ScrollEvent;
 import com.google.gwt.event.dom.client.ScrollHandler;
-import com.google.gwt.event.logical.shared.ValueChangeEvent;
-import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.logging.client.ConsoleLogHandler;
-import com.google.gwt.user.client.Timer;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTML;
+import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SimplePanel;
-import com.google.gwt.user.client.ui.TextBox;
 
 public abstract class MarketingCompaignPanel extends ScrollPanel {
 
-	private static final int CHANGE_DISPLAY_MILLIS = 1000;
 	private static CommonServiceAsync COMMON_SERVICE;
 	
 	private static final Logger LOGGER = Logger.getLogger(MarketingCompaignPanel.class.getName());
@@ -48,29 +48,36 @@ public abstract class MarketingCompaignPanel extends ScrollPanel {
 	private DateTimeFormat formatDate = DateTimeFormat.getFormat("dd/MM/yyyy");
 	
 	private final int limit = 100;
-	private final MutableInt row = new MutableInt(0);
 	private final MutableInt offset = new MutableInt(0);
 	private final MutableInt moreData = new MutableInt(0);
 	private final MutableInt searchEnabled = new MutableInt( 0 );
+	
 	private SimplePanel container;
-	private FlexTable tab;
+	private ScrollPanel scrollPanel;
+	private AonCustomTable tab;
 	private int lastScrollPos = 0;
+	private Map<Integer, MarketingCampaign> rowSCampaigns = new HashMap<>();
+	private Map<Integer, AonTableButton> selectedItems = new HashMap<>();
+
+	private Integer deleteIterator = 0;
 	
 	private MarketingCompaignParams params;
 	
+	private boolean isTablet = false;
+	private ArrayList<COLS> colTabletHidden = new ArrayList<>();
+	
 	private static enum COLS {
-		  NUM(AonStringUtils.EMPTY					,"20px"  ,AON.CSS.aonTextCenter())
-		, SEL(AonStringUtils.EMPTY					,"20px"  ,AON.CSS.aonTextCenter())
-		, DES(AON.MSG.description()					,"auto"  ,null)
-		, BUD("Presupuesto"							,"120px" ,null)
-		, BDA("P. Acumulado"						,"120px" ,null)
-		, EXP("Gastos"								,"120px" ,null)
-		, EXA("G. Acumulados"						,"120px" ,null)
-		, STD("F. Inicio"							,"100px" ,null)
-		, END("F. Fin"								,"100px" ,null)
-		, TYP(AON.MSG.scope()						,"120px" ,null)
-		, ACT("Activa"								,"50px"  ,null)
-		, BUT(AonStringUtils.EMPTY					,"50px"  ,null)
+		  CHK(AonStringUtils.EMPTY					,"2rem"				,"")
+		, DES(AON.MSG.description()					,"-moz-available"  	,"min-width: 5rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
+		, BUD("Presupuesto"							,"7rem" 			,"")
+		, BDA("P. Acumulado"						,"7rem" 			,"")
+		, EXP("Gastos"								,"7rem" 			,"")
+		, EXA("G. Acumulados"						,"7rem" 			,"")
+		, STD("F. Inicio"							,"5rem" 			,"")
+		, END("F. Fin"								,"5rem" 			,"")
+		, TYP(AON.MSG.scope()						,"6rem" 			,"white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
+		, ACT("Estado"								,"4rem"  			,"")
+		, BUT(AonStringUtils.EMPTY					,"3rem" 			,"")
 		;
 
 		String headerLabel;
@@ -99,15 +106,15 @@ public abstract class MarketingCompaignPanel extends ScrollPanel {
 
 	public MarketingCompaignPanel(MarketingCompaignParams params) {
 		
-		addStyleName(AON.CSS.aonScrollArea());
-		addStyleName(AON.CSS.aonPaddingBottom());
-		
 		CommonServiceAsync commonServiceRaw = GWT.create(CommonService.class);
 		COMMON_SERVICE = new CommonServiceAsyncDecorator(commonServiceRaw);
 		
 		this.params = params;
+		this.isTablet = Window.getClientWidth() <= 980;
+		initHiddenColumns();
 
 		container = new SimplePanel();
+		container.getElement().getStyle().setProperty("padding", "0 1rem");
 		setWidget(container);
 		
 		addScrollHandler(new ScrollHandler() {
@@ -132,6 +139,12 @@ public abstract class MarketingCompaignPanel extends ScrollPanel {
 		
 		onSearch();
 		
+	}
+	
+	private void initHiddenColumns() {
+		colTabletHidden.clear();
+		colTabletHidden.add(COLS.BDA);
+		colTabletHidden.add(COLS.EXA);
 	}
 
 	public boolean isSearchEnabled() {
@@ -160,25 +173,44 @@ public abstract class MarketingCompaignPanel extends ScrollPanel {
 
 	private void search() {
 		container.clear();
-		tab = new FlexTable();
-		tab.addStyleName(AON.CSS.aonGrid());
+		tab = new AonCustomTable();
+		tab.setMaxHeight((Window.getClientHeight() - 200) + "px");
+		scrollPanel = new ScrollPanel(tab);
 		
 		paintHeader();
-		container.setWidget(tab);
-		row.setValue(1);
+		container.setWidget(scrollPanel);
 		searchData();
 	}
 	
 	private void paintHeader() {
-		for ( COLS col : COLS.values()) {
-			tab.getColumnFormatter().setWidth(col.ordinal(), col.getColWidth());	
-			tab.setWidget(0, col.ordinal(), new Label( col.getHeaderLabel() ));
-			tab.getFlexCellFormatter().addStyleName(0, col.ordinal(),AON.CSS.aonGridHeader());
-			if ( col.getCellStyleClass() != null) {
-				tab.getFlexCellFormatter().addStyleName(0, col.ordinal(),col.getCellStyleClass());
-				tab.getFlexCellFormatter().addStyleName(0, col.ordinal(),AON.CSS.aonNowrap());
-			}
-		}
+		tab.createHeader();
+		for ( COLS col : COLS.values()) 
+			if(col == COLS.CHK) {
+				AonTableButton checkAllButton = new AonTableButton(AON.MSG.selectAction(), AON.CSS.aonIconCheck());
+				checkAllButton.addClickHandler(e -> {
+					List<AonTableButton> selectedItemList = selectedItems.values().stream().filter(check -> AonStringUtils.containsIgnoreCase(check.getStyleName(), AON.CSS.aonIconChecked())).collect(Collectors.toList());
+					if (selectedItemList.size() == rowSCampaigns.size() || AonStringUtils.containsIgnoreCase(checkAllButton.getStyleName(), AON.CSS.aonIconChecked())) {
+						checkAllButton.addStyleName(AON.CSS.aonIconCheck());
+						checkAllButton.removeStyleName(AON.CSS.aonIconChecked());
+						selectedItems.values().forEach(check ->{
+							check.addStyleName(AON.CSS.aonIconCheck());
+							check.removeStyleName(AON.CSS.aonIconChecked());
+						});
+						onDeleteEnable(false);
+					} else {
+						checkAllButton.addStyleName(AON.CSS.aonIconChecked());
+						checkAllButton.removeStyleName(AON.CSS.aonIconCheck());
+						selectedItems.values().forEach(check ->{
+							check.addStyleName(AON.CSS.aonIconChecked());
+							check.removeStyleName(AON.CSS.aonIconCheck());
+						});
+						onDeleteEnable(true);
+					}
+				});
+				
+				tab.addHeader(checkAllButton, col.getColWidth());
+			} else if(!isTablet || !colTabletHidden.contains(col))
+				tab.addHeader(new Label(col.getHeaderLabel()), col.getColWidth(), col.getCellStyleClass());
 	}
 	
 	private void searchData() {
@@ -216,104 +248,17 @@ public abstract class MarketingCompaignPanel extends ScrollPanel {
 	}
 	
 	private void paintRow(MarketingCampaign marketingCampaign) {
-		int r = row.getValue();
-		int col = 0;
-		paintRow(r, col, marketingCampaign); 
-		row.increment();
-	}
-	
-	private void paintRow(int row, int col,  MarketingCampaign marketingCampaign) {
-		AonTableButton msg = new AonTableButton("");
-		AonTableButton sel = new AonTableButton("", AON.CSS.aonIconRight());
-		TextBox descriptionBox = new TextBox();
-		Button activeBtn = new Button();
-		
-		ValueChangeHandler<String> valueChangeHandlerString = new ValueChangeHandler<String>() {
-			
-			@Override
-			public void onValueChange(ValueChangeEvent<String> event) {
-				marketingCampaign.setDescription(descriptionBox.getValue());
-				boolean currentActive = isActiveToggleButton(activeBtn);
-				marketingCampaign.setActive(currentActive);
-				
-				save(marketingCampaign, msg);
-			}
-		};
-		
-		sel.addClickHandler(e -> {
-			onMarketingCampaignOpen(marketingCampaign);
-		});
-		
-		descriptionBox.addValueChangeHandler(valueChangeHandlerString);
-		activeBtn.addClickHandler(e -> {
-			getEnableDisableButton(activeBtn, !isActiveToggleButton(activeBtn));
-			
-			marketingCampaign.setDescription(descriptionBox.getValue());
-			boolean currentActive = isActiveToggleButton(activeBtn);
-			marketingCampaign.setActive(currentActive);
-			
-			save(marketingCampaign, msg);
-		});
-		
-		tab.setWidget(row, col, msg);
-		col++;
-		
-		tab.setWidget(row, col, sel);
-		col++;
-		
-		descriptionBox.setStyleName(AON.CSS.aonBorderNone());
-		descriptionBox.addStyleName(AON.CSS.aonWidthAll());
-		descriptionBox.setMaxLength(128);
-		descriptionBox.setValue(marketingCampaign.getDescription());
-		tab.setWidget(row, col, descriptionBox);
-		col++;
-		
-		Label budget = new Label(AON.FMT.format(marketingCampaign.getBudget()) + " \u20ac");
-		budget.addStyleName(AON.CSS.aonTextRight());
-		tab.setWidget(row, col, budget);
-		col++;
-		
-		Label budgetAcumulate = new Label(AON.FMT.format(marketingCampaign.getBudget() + marketingCampaign.getActions().stream().mapToDouble(action -> action.getBudget()).sum()) + " \u20ac");
-		budgetAcumulate.addStyleName(AON.CSS.aonTextRight());
-		tab.setWidget(row, col, budgetAcumulate);
-		col++;
-		
-		Label expense = new Label(AON.FMT.format(marketingCampaign.getExpense()) + " \u20ac");
-		expense.addStyleName(AON.CSS.aonTextRight());
-		tab.setWidget(row, col, expense);
-		col++;
-		
-		Label expenseAcumulate = new Label(AON.FMT.format(marketingCampaign.getExpense() + marketingCampaign.getActions().stream().mapToDouble(action -> action.getExpense()).sum()) + " \u20ac");
-		expenseAcumulate.addStyleName(AON.CSS.aonTextRight());
-		tab.setWidget(row, col, expenseAcumulate);
-		col++;
-		
-		Label startDate = new Label(marketingCampaign.getStartDate() == null ? "" : formatDate.format(marketingCampaign.getStartDate()));
-		startDate.addStyleName(AON.CSS.aonTextCenter());
-		tab.setWidget(row, col, startDate);
-		col++;
-		
-		Label endDate = new Label(marketingCampaign.getEndDate() == null ? "" : formatDate.format(marketingCampaign.getEndDate()));
-		endDate.addStyleName(AON.CSS.aonTextCenter());
-		tab.setWidget(row, col, endDate);
-		col++;
-		
-		tab.setWidget(row, col, new Label(marketingCampaign.getScope() == null ? null : marketingCampaign.getScope().getDescription()));
-		col++;
-
-		getEnableDisableButton(activeBtn, marketingCampaign.isActive());
-		tab.setWidget(row, col, activeBtn);
-		col++;
-		
 		FlowPanel buttonContainer = new FlowPanel();
-		buttonContainer.getElement().getStyle().setTextAlign(TextAlign.RIGHT);
+		buttonContainer.getElement().getStyle().setTextAlign(TextAlign.CENTER);
 		
 		AonTableButton button;
-		button = new AonTableButton(AON.MSG.deleteAction(), AON.CSS.aonIconDelete());
+		button = new AonTableButton("Borrar agente comercial", AON.CSS.aonIconDelete());
+		if(!isTablet) button.addStyleName(AON.CSS.aonCustomRowButtom());
 		button.addClickHandler( new ClickHandler() {
 			
 			@Override
 			public void onClick(ClickEvent event) {
+				event.stopPropagation();
 				button.setEnabled(false);
 				AonDialog dialog = new AonDialog("Eliminaci\u00f3n Campa\u00f1a",
 						new HTML("Se va a proceder a eliminar la campa\u00f1a <b>" + marketingCampaign.getDescription() + "</b>.<br>\u00bfEsta seguro que desea proceder con la eliminaci\u00f3n\u003f. Este proceso ser\u00e1 irreversible"));
@@ -332,26 +277,96 @@ public abstract class MarketingCompaignPanel extends ScrollPanel {
 				});
 			}
 		});
-		
-		
 		buttonContainer.add(button);
 		
-		tab.setWidget(row, col, buttonContainer);
-		col++;
-	}
-	
-	private void getEnableDisableButton(Button button, boolean disabled) {
-		button.removeStyleName(disabled ? AON.AON_ICON_DISABLE : AON.AON_ICON_ENABLE);
-		button.removeStyleName(AON.AON_NO_MARGIN);
-		button.removeStyleName(AON.AON_EDIT_DATA_TABLE_BUTTON);
+		HTMLPanel row = tab.createRow();
+		row.addDomHandler(e -> onMarketingCampaignOpen(marketingCampaign), ClickEvent.getType());
 		
-		button.setStyleName(!disabled ? AON.AON_ICON_DISABLE : AON.AON_ICON_ENABLE );
-		button.setStyleName(AON.AON_NO_MARGIN, true);
-		button.setStyleName(AON.AON_EDIT_DATA_TABLE_BUTTON, true);
+		AonTableButton checkButton = new AonTableButton(AON.MSG.selectAction(), AON.CSS.aonIconCheck());
+		checkButton.addClickHandler(e -> {
+			e.stopPropagation();
+			if (AonStringUtils.containsIgnoreCase(checkButton.getStyleName(), AON.CSS.aonIconChecked())) {
+				checkButton.addStyleName(AON.CSS.aonIconCheck());
+				checkButton.removeStyleName(AON.CSS.aonIconChecked());
+			} else {
+				checkButton.addStyleName(AON.CSS.aonIconChecked());
+				checkButton.removeStyleName(AON.CSS.aonIconCheck());
+			}
+			List<AonTableButton> selectedItemList = selectedItems.values().stream().filter(check -> AonStringUtils.containsIgnoreCase(check.getStyleName(), AON.CSS.aonIconChecked())).collect(Collectors.toList());
+			onDeleteEnable(!selectedItemList.isEmpty());
+		});
+		tab.addRow(row, checkButton, COLS.CHK.getColWidth());
+		
+		Label name = new Label(marketingCampaign.getDescription());
+		name.setTitle(marketingCampaign.getDescription());
+		tab.addInlineStyle(name, COLS.DES.getCellStyleClass());
+		tab.addRow(row, name, COLS.DES.getColWidth());
+		
+		tab.addRow(row, new Label(AON.FMT.format(marketingCampaign.getBudget()) + " \u20ac"), COLS.BUD.getColWidth());
+		if(!isTablet) tab.addRow(row, new Label(AON.FMT.format(marketingCampaign.getBudget() + marketingCampaign.getActions().stream().mapToDouble(action -> action.getBudget()).sum()) + " \u20ac"), COLS.BDA.getColWidth());
+		
+		tab.addRow(row, new Label(AON.FMT.format(marketingCampaign.getExpense()) + " \u20ac"), COLS.EXP.getColWidth());
+		if(!isTablet) tab.addRow(row, new Label(AON.FMT.format(marketingCampaign.getExpense() + marketingCampaign.getActions().stream().mapToDouble(action -> action.getExpense()).sum()) + " \u20ac"), COLS.EXA.getColWidth());
+		
+		tab.addRow(row, new Label(marketingCampaign.getStartDate() == null ? "" : formatDate.format(marketingCampaign.getStartDate())), COLS.STD.getColWidth());
+		tab.addRow(row, new Label(marketingCampaign.getEndDate() == null ? "" : formatDate.format(marketingCampaign.getEndDate())), COLS.END.getColWidth());
+		
+		Label type = new Label(marketingCampaign.getScope() == null ? null : marketingCampaign.getScope().getDescription());
+		type.setTitle(marketingCampaign.getScope() == null ? null : marketingCampaign.getScope().getDescription());
+		tab.addInlineStyle(type, COLS.TYP.getCellStyleClass());
+		tab.addRow(row, type, COLS.TYP.getColWidth());
+		
+		tab.addRow(row, new Label(marketingCampaign.isActive() ? "Activo" : "Inactivo"), COLS.ACT.getColWidth());
+		
+		tab.addRow(row, buttonContainer, COLS.BUT.getColWidth());
+		
+		rowSCampaigns.put(marketingCampaign.getId(), marketingCampaign);
+		selectedItems.put(marketingCampaign.getId(), checkButton);
 	}
 	
-	private boolean isActiveToggleButton(Button button) {
-		return AonStringUtils.containsIgnoreCase(button.getStyleName(), AON.AON_ICON_ENABLE);
+	public void deleteCampaigns() {
+		List<Integer> selectedCampaingsList = selectedItems.entrySet().stream().filter(entry -> AonStringUtils.containsIgnoreCase(entry.getValue().getStyleName(), AON.CSS.aonIconChecked())).map(entry -> entry.getKey()).collect(Collectors.toList());
+		
+		AonDialog dialog = new AonDialog("Eliminaci\u00f3n Agente Comercial",
+				new HTML(selectedCampaingsList.size() == selectedItems.entrySet().size() ? "Se va a proceder a eliminar <b>TODAS</b> las campa\u00f1as de marketing.<br>\u00bfEsta seguro que desea proceder con la eliminaci\u00f3n\u003f. Este proceso ser\u00e1 irreversible"
+						: "Se va a proceder a eliminar <b>" + selectedCampaingsList.size() + " campa\u00f1as de marketing</b>.<br>\u00bfEsta seguro que desea proceder con la eliminaci\u00f3n\u003f. Este proceso ser\u00e1 irreversible"));
+		
+		dialog.confirm(new AonAcceptDialogCallback() {
+
+			@Override
+			public void onCancel() {
+				onDeleteEnable(true);
+			}
+
+			@Override
+			public void onAccept() {
+				onShowLoadingMessage("Eliminando agentes comerciales seleccionados...");
+				deleteIterator = 0;
+				delete(selectedCampaingsList);
+			}
+		});
+	}
+	
+	private void delete(List<Integer> selectedCampaingsList) {
+		if(deleteIterator == selectedCampaingsList.size()) {
+			resetSearchOffset();
+			onSearch();
+			onShowSuccessMessage("Agentes comerciales eliminados correctamente");
+		} else {
+			COMMON_SERVICE.deleteMarketingCampaign(params.getDomainName(), params.getDomain(), params.getUser(), selectedCampaingsList.get(deleteIterator), new AsyncCallback<Void>() {
+				
+				@Override
+				public void onSuccess(Void result) {
+					deleteIterator++;
+					delete(selectedCampaingsList);
+				}
+				
+				@Override
+				public void onFailure(Throwable caught) {
+					onShowErrorMessage("Error borrado: " + caught.getMessage());
+				}
+			});
+		}
 	}
 	
 	private void getList(Consumer<List<MarketingCampaign>> success) {
@@ -384,33 +399,15 @@ public abstract class MarketingCompaignPanel extends ScrollPanel {
 		});
 	}
 	
-	private void save(MarketingCampaign marketingCampaign, AonTableButton msg) {
-		COMMON_SERVICE.saveMarketingCampaign(params.getDomainName(), params.getDomain(), params.getUser(), marketingCampaign, new AsyncCallback<MarketingCampaign>() {
-			
-			@Override
-			public void onSuccess(MarketingCampaign result) {
-				msg.addStyleName(AON.CSS.aonIconValid());
-				new Timer() {
-					@Override
-					public void run() {
-						msg.removeStyleName(AON.CSS.aonIconValid());
-					}
-				}.schedule(CHANGE_DISPLAY_MILLIS);
-			}
-			
-			@Override
-			public void onFailure(Throwable caught) {
-				onShowErrorMessage("Error guardado: " + caught.getMessage());
-			}
-		});
-	}
-	
 	public void resetSearchOffset() {
 		offset.setValue(0);
 	}
 
 	protected abstract void onShowErrorMessage(String errorMessage);
 	protected abstract void onMarketingCampaignOpen(MarketingCampaign marketingCampaign);
+	protected abstract void onDeleteEnable(boolean enabled);
+	protected abstract void onShowLoadingMessage(String loadingMessage);
+	protected abstract void onShowSuccessMessage(String successMessage);
 	
 }
 

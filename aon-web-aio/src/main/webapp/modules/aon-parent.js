@@ -4,6 +4,10 @@ import { CSS, EVENT, MATERIAL_ICONS, MSG, TAG } from 'aonsolutions/environments/
 import { AonDesktop } from 'aonsolutions/modules/company/aon-desktop.js';
 import * as LS from 'aonsolutions/services/localStorageService.js';
 import { AonDialogMenu } from 'aonsolutions/components/aon-dialog-menu.js';
+import { MenuApps } from '../services/app.js';
+
+import { AonTimeControlCard } from 'aonsolutions/components/aon-timecontrol-card.js';
+
 
 export class AonParent extends AonElement {
 
@@ -15,6 +19,7 @@ export class AonParent extends AonElement {
 
 	more;
 	
+	APPS_DIV;
 	COMPANY_FILTER_TAB;
 
 	setFilter(filter){
@@ -37,6 +42,7 @@ export class AonParent extends AonElement {
 		this.id = 'aonParent';
 		this.filter = {};
 		this._filter = {};
+		this.APPS_DIV = "appsDiv";
 		this.COMPANY_FILTER_TAB = "aonCompanyTabFilter";
 	}
 
@@ -70,13 +76,28 @@ export class AonParent extends AonElement {
 			} else if(companies.length === 1) {
 				this.companySelection(companies[0], true);
 			} else {
-				this.getElement("aonMenu").close();
+				
+				
+				let aonMenu = this.getElement('aonMenu');
+				aonMenu.init()
+				.then(() => {
+					LS.setDomainLogin(aonMenu.getDur().getUser().login);
+					LS.setDomainId(aonMenu.getDur().getDomain().getId());
+					LS.setDomainName(aonMenu.getDur().getDomain().getName());
+					aonMenu.open();
+				})
+				.catch((err) => {
+				});
+
 				this.selectTab(filter);		
 				//TODO: aonParent.stopLoader();
 				this.page = 1;
 				this.cleanCompanies();
 				this.buildCompanies(companies.filter(f => this.companyFilter(f, filter)).slice(0, 30));
 				callback?.(companies);
+
+				this.cleanApps();
+				this.buildApps(aonMenu);
 			}	
 		}, () => closeSession());
 
@@ -98,7 +119,7 @@ export class AonParent extends AonElement {
 				id: 'shared',
 				shared: true,
 				name: MSG.SHARED
-			}/*, {
+			}, {
 				id: 'consultancy',
 				entorno:true,
 				name: MSG.ENVIRONMENT
@@ -106,12 +127,15 @@ export class AonParent extends AonElement {
 				id: 'office',
 				despacho:true,
 				name: MSG.OFFICE
-			}*/
+			}
 		];	
 		for( let companyFilterTab of companyFilterTabs ){
 			let companyFilterTabCompanies = companies.filter(f => this.companyFilter(f, companyFilterTab));
 			let companyFilterTabSpan = this.getElement(`${this.COMPANY_FILTER_TAB}-${companyFilterTab.id}`);
-			companyFilterTabSpan.innerHTML = `${companyFilterTab.name} (${companyFilterTabCompanies.length})`;
+			if ( companyFilterTabCompanies.length === 0 )
+				companyFilterTabSpan.parentElement.classList.add(CSS.AON_COMPANY_FILTER_EMPTY);
+			else
+				companyFilterTabSpan.innerHTML = `${companyFilterTab.name} (${companyFilterTabCompanies.length})`;
 		}
 
 	}
@@ -196,10 +220,12 @@ export class AonParent extends AonElement {
 	}
 	
 	build() {
+
 		let parentDiv = this.createDiv();
 		parentDiv.className = CSS.AON_PARENT_DIV;
 		this.appendChild(parentDiv);
 		
+
 		let welcomeDiv = this.createDiv();
 		welcomeDiv.className = CSS.AON_WELCOME_DIV;
 		let welcomeSpan = this.createSpan();
@@ -207,7 +233,8 @@ export class AonParent extends AonElement {
 		welcomeSpan.style.fontSize = '24px';
 		welcomeSpan.style.fontWeight = '600';
 		welcomeDiv.appendChild(welcomeSpan);
-	
+		
+		// Companies
 		let companyDiv = this.createDiv();
 		companyDiv.className = CSS.AON_COMPANY_DIV;
 	
@@ -289,9 +316,17 @@ export class AonParent extends AonElement {
 				this.loadMore();
 			}
 		});
+
+		let appsDiv = this.createDiv();
+		appsDiv.id = this.APPS_DIV;
+
+
+		let contentDiv = this.createDiv();
+		contentDiv.appendChild(appsDiv);
+		contentDiv.appendChild(companyDiv);
 	
 		parentDiv.appendChild(welcomeDiv);
-		parentDiv.appendChild(companyDiv);		
+		parentDiv.appendChild(contentDiv);		
 	
 		const interval = setInterval(() => {
 			let totalBottom = this.getTotalBottom(ul);
@@ -327,7 +362,7 @@ export class AonParent extends AonElement {
 		}
 	
 
-	loadMore() {
+		loadMore() {
 		//TODO: this.getApplication().startLoader();
 		getCompanies().then( companies => {
 			let first = this.page * 30;
@@ -337,6 +372,23 @@ export class AonParent extends AonElement {
 		.finally(()=>{
 			//TODO: this.getApplication().stopLoader();
 		});
+	
+		// Customers
+		
+	}
+
+	cleanApps(){
+		let appsDiv = this.getElement(this.APPS_DIV);
+		appsDiv.innerHTML = "";
+	}
+
+	buildApps(aonMenu){
+		let appsDiv = this.getElement(this.APPS_DIV);
+		appsDiv.className = CSS.AON_APPS_DIV;
+		//aonMenu.isAppEnabled(MenuApps.TIMECONTROL);
+		let aonTimeControlCard = new AonTimeControlCard();
+		aonTimeControlCard.onError = () => appsDiv.removeChild(aonTimeControlCard); 
+		appsDiv.appendChild(aonTimeControlCard);
 	}
 
 	cleanCompanies(){
@@ -352,7 +404,6 @@ export class AonParent extends AonElement {
 			ul.appendChild(this.buildLi(company, 'transparent'));
 		}
 	}
-
 
 	buildLi(company, color) {
 		let li = this.createElement(TAG.LI);
@@ -401,10 +452,15 @@ export class AonParent extends AonElement {
 	companySelection(company, onlyOne) {
 		const BASE_ID = 'aonHeader';
 		localStorage.setItem('company', JSON.stringify(company));
-		localStorage.setItem("aon_domain_id", company.id);
-		localStorage.setItem("aon_domain_name", company.domain);
+		LS.setDomainId(company.id);
+		LS.setDomainName(company.domain);
+		LS.setDomainLogin(company.login);
+		//localStorage.setItem("aon_domain_id", company.id);
+		//localStorage.setItem("aon_domain_name", company.domain);
 		localStorage.setItem("aon_domain_document", company.document);
 		localStorage.setItem("onlyOne", onlyOne);
+		
+		
 
 		if(!LS.isNewTheme() && (company.parentId || company.type !== 'CONSULTANCY')){
 			let aonShowMenu = this.getElement('aonShowMenu');
@@ -438,7 +494,7 @@ export class AonParent extends AonElement {
 			aonHeaderCompany.style.right = '180px';
 		}
 		
-		this.clearElementById('aonMenu');
+		//this.clearElementById('aonMenu');
 		let aonMenu = this.getElement('aonMenu');
 		aonMenu.init().then(() => aonMenu.open());
 

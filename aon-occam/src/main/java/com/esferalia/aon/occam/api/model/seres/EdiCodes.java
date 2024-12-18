@@ -1,7 +1,11 @@
 package com.esferalia.aon.occam.api.model.seres;
 
-public class EdiCodes {
+import java.io.Serializable;
 
+public class EdiCodes implements Serializable {
+
+	private static final long serialVersionUID = 1L;
+	
 	String department;
 	String customerEdiCode;
 	String deliveryPointEdiCode;

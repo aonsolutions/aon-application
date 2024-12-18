@@ -84,26 +84,15 @@ public class TrialBalancePanelFilter extends SimpleLayoutPanel implements HasVal
 		min.addStyleName(AON.CSS.aonNowrap());
 		min.addStyleName(AON.CSS.aonWidthAll());
 		
-		AonSearchPanelButton maximize = new AonSearchPanelButton(AON.MSG.maximize(),AON.CSS.aonIconMaximize());
-		maximize.addClickHandler(new ClickHandler() {
-			
-			@Override
-			public void onClick(ClickEvent event) {
-				MaximizeEvent.fire(TrialBalancePanelFilter.this);
-			}
-		});
-
-		min.add(maximize);
-		
-		AonSearchPanelButton minimize = new AonSearchPanelButton(AON.MSG.minimize(),AON.CSS.aonIconMinimize());
-		minimize.addClickHandler(new ClickHandler() {
+		AonSearchPanelButton close = new AonSearchPanelButton(AON.MSG.close(),AON.CSS.aonWidgetClose());
+		close.addClickHandler(new ClickHandler() {
 			
 			@Override
 			public void onClick(ClickEvent event) {
 				MinimizeEvent.fire(TrialBalancePanelFilter.this);
 			}
 		});
-		min.add(minimize);
+		min.add(close);
 		return min;
 	}
 

@@ -78,6 +78,8 @@ public class SalaryInfo implements Serializable {
 	private AlcatrazPeriod alcatrazPeriod;
 	private AlcatrazTerritory alcatrazTerritory;
 	
+	private boolean isFinance; // Vencimiento
+	
 	/**
      * The key provider that provides the unique ID of a contact.
      */
@@ -199,6 +201,12 @@ public class SalaryInfo implements Serializable {
 	}
 	public void setAlcatrazTerritory(AlcatrazTerritory alcatrazTerritory) {
 		this.alcatrazTerritory = alcatrazTerritory;
+	}
+	public boolean isFinance() {
+		return isFinance;
+	}
+	public void setFinance(boolean isFinance) {
+		this.isFinance = isFinance;
 	}
 	
 }

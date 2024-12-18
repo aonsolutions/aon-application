@@ -11,7 +11,9 @@ public enum Administration implements IResourceable {
 	BIZKAIA,
 	GIPUZKOA,
 	NAVARRA,
-	COMMON_TERRITORY;
+	COMMON_TERRITORY,
+	CANARIAS
+	;
 	
     /** Message key prefix. */
     private static final String MSG_KEY_PREFIX = "aon_enum_administration_";

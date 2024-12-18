@@ -2,168 +2,141 @@ package com.esferalia.aon.gwt.marketing.client.marketing.campaign;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomDialog;
-import com.esferalia.aon.gwt.common.client.widget.solutions.AonDoubleBox;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomDialog.AonCustomDialogCallback;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomDockLayout;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomListBox;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomNumberBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonMarketingCampaignPanel;
-import com.esferalia.aon.gwt.common.client.widget.solutions.AonMessagePanel;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonMarketingCampaignPanel.AonMarketingCampaignPanelCallback;
-import com.esferalia.aon.gwt.common.client.widget.solutions.AonSearchPanelButton;
-import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonMessagePanel;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
 import com.esferalia.aon.gwt.marketing.client.marketing.MarketingModuleOptions;
 import com.esferalia.aon.occam.api.model.MarketingCampaign;
 import com.esferalia.aon.occam.api.model.MarketingCompaignParams;
-import com.google.gwt.dom.client.Style.Unit;
-import com.google.gwt.user.client.Window;
-import com.google.gwt.user.client.ui.DockLayoutPanel;
-import com.google.gwt.user.client.ui.FlowPanel;
+import com.esferalia.aon.watson.util.AonStringUtils;
+import com.google.gwt.core.client.Scheduler;
+import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.ui.HTMLPanel;
-import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.SimpleLayoutPanel;
-import com.google.gwt.user.client.ui.TextBox;
 
-
-public abstract class MarketingCampaignModulePanel extends DockLayoutPanel {
+public abstract class MarketingCampaignModulePanel extends AonCustomDockLayout {
 
 	private HTMLPanel container;
 	private HTMLPanel messagePanel = new HTMLPanel("");
 	
-	private SimpleLayoutPanel northPanel;
+	private AonToolbarButton deleteButton;
+	
 	private SimpleLayoutPanel centerPanel;
 	
-	private FlowPanel searchPanel;
-	private FlowPanel filterPanel;
+	private AonCustomListBox scope = new AonCustomListBox("Ambito");
+	private AonCustomListBox active = new AonCustomListBox("Activo");
 	
-	private TextBox description;
-	private ListBox scope;
-	private ListBox active;
+	private AonCustomNumberBox budget = new AonCustomNumberBox("Presupuesto");
+	private AonCustomNumberBox expense = new AonCustomNumberBox("Gastos");
 	
-	private AonDoubleBox budget;
-	private AonDoubleBox expense;
-	
-	private AonSearchPanelButton cleanButton;
-	private AonSearchPanelButton refreshButton;
+	private AonCustomListBox sort = new AonCustomListBox("Ordenar Por");
+	private AonCustomListBox asc = new AonCustomListBox("Orden");
 	
 	private MarketingModuleOptions options;
 	
 	private MarketingCompaignPanel marketingCompaignPanel;
 	
 	public MarketingCampaignModulePanel(MarketingModuleOptions options) {
-		super(Unit.PX);
-		addStyleName(AON.CSS.aonScrollArea());
-		addStyleName(AON.CSS.aonMarginBottom());
+		super("CAMPA\u00D1AS");
 		
 		this.options = options;
 		
-		createToolbar();
+		addButtonsToolbar();
+		
+		hideToolbarFilterMessages();
+		setSearchPlaceholder("Busque por descripci\u00f3n...");
+		addKeyUpHandler(e -> {
+			String value = getSearchTextBox().getValue();
+			if(AonStringUtils.isNotBlank(value) && value.length() > 3) {
+				onSearch( options );
+			} else if(AonStringUtils.isBlank(value)) {
+				onSearch( options );
+			}
+		});
+		
+		budget.addValueChangeHandler(e -> onSearch( options ));
+		expense.addValueChangeHandler(e -> onSearch( options ));
+		
+		scope.addItem("-", "");
+		options.getConfiguration().getAvailableScopes().forEach(sc -> scope.addItem(sc.getDescription(), sc.getId() + ""));
+		scope.getListBox().setSelectedIndex(0);
+		scope.getListBox().addChangeHandler(event -> onSearch( options ));
+		
+		active.addItem( "Todas", "");
+		active.addItem( "Inactivas", "0");
+		active.addItem( "Activas", "1");
+		active.getListBox().setSelectedIndex(2);
+		active.getListBox().addChangeHandler(event -> onSearch( options ));
+		
+		addFilterWidget(budget);
+		addFilterWidget(expense);
+		addFilterWidget(scope);
+		addFilterWidget(active);
+		
+		sort.addItem("Nombre", "name");
+		sort.addItem("Presupuesto", "budget");
+		sort.addItem("Gastos", "expense");
+		sort.getListBox().addChangeHandler(event -> onSearch( options ));
+		
+		asc.addItem("Ascendente", "true");
+		asc.addItem("Descendete", "false");
+		asc.getListBox().addChangeHandler(event -> onSearch( options ));
+		
+		addSortWidget(sort);
+		addSortWidget(asc);
 		
 		container = new HTMLPanel("");
 		container.addStyleName(AON.CSS.aonFlexColumn());
 		
 		container.add(messagePanel);
-		
-		northPanel = new SimpleLayoutPanel();
-		northPanel.setHeight("35px");
-		northPanel.getElement().getStyle().setProperty("margin", "0 1rem");
-		
-		description = new TextBox();
-		description.setVisibleLength(50);
-		description.setStyleName(AON.CSS.aonInputText());
-		description.addValueChangeHandler(event -> onSearch( options ));
-		
-		scope = new ListBox();
-		scope.addItem( "-", "");
-		options.getConfiguration().getAvailableScopes().forEach(sc -> scope.addItem(sc.getDescription(), sc.getId() + ""));
-		scope.setSelectedIndex(0);
-		scope.setStyleName(AON.CSS.aonInputText());
-		scope.addChangeHandler(event -> onSearch( options ));
-		
-		active = new ListBox();
-		active.addItem( "Todas", "");
-		active.addItem( "Inactivas", "0");
-		active.addItem( "Activas", "1");
-		active.setSelectedIndex(2);
-		active.setStyleName(AON.CSS.aonInputText());
-		active.addChangeHandler(event -> onSearch( options ));
-		
-		budget = new AonDoubleBox(15, 2);
-		budget.addValueChangeHandler(e -> onSearch( options ));
-		expense = new AonDoubleBox(15, 2);
-		expense.addValueChangeHandler(e -> onSearch( options ));
-		
-		searchPanel = new FlowPanel();
-		searchPanel.setStyleName(AON.CSS.aonSearchPanel());
-		searchPanel.addStyleName(AON.CSS.aonFlexBetween());
-		
-		filterPanel = new FlowPanel();
-		filterPanel.addStyleName(AON.CSS.aonItemFlex());
-		
-		Label aliasLabel = new Label(AON.MSG.description());
-		aliasLabel.setStyleName(AON.CSS.aonSearchPanelLabel());
-		filterPanel.add(aliasLabel);
-		filterPanel.add(description);
-		
-		Label typeLabel = new Label(AON.MSG.scope());
-		typeLabel.setStyleName(AON.CSS.aonSearchPanelLabel());
-		filterPanel.add(typeLabel);
-		filterPanel.add(scope);
-
-		filterPanel.add(active);
-		
-		Label budgetLabel = new Label("Presupuesto");
-		budgetLabel.setStyleName(AON.CSS.aonSearchPanelLabel());
-		filterPanel.add(budgetLabel);
-		filterPanel.add(budget);
-		
-		Label expenseLabel = new Label("Gastos");
-		expenseLabel.setStyleName(AON.CSS.aonSearchPanelLabel());
-		filterPanel.add(expenseLabel);
-		filterPanel.add(expense);
-
-		searchPanel.add(filterPanel);
-		
-		cleanButton = new AonSearchPanelButton( AON.MSG.clean(), AON.CSS.aonIconClear() );
-		cleanButton.addClickHandler(event -> {
-			description.setValue(null,false);
-			scope.setSelectedIndex(0);
-			active.setSelectedIndex(0);
-			budget.setValue(null);
-			expense.setValue(null);
-			
-			marketingCompaignPanel.resetSearchOffset();
-			
-			onSearch( options );
-		});
-
-		refreshButton = new AonSearchPanelButton( AON.MSG.refresh(), AON.CSS.aonIconRefresh() );
-		refreshButton.addStyleName(AON.CSS.aonMarginLeft());
-		refreshButton.addClickHandler(event -> onSearch( options ));
-
-		FlowPanel buttonsPanel = new FlowPanel();
-		buttonsPanel.add( cleanButton );
-		buttonsPanel.add( refreshButton );
-		searchPanel.add(buttonsPanel);
-		
-		northPanel.setWidget(searchPanel);
-
+	
 		centerPanel = new SimpleLayoutPanel();
-		centerPanel.setHeight((Window.getClientHeight() - 230) + "px");
+		centerPanel.setHeight("100%");
+		centerPanel.getElement().getStyle().setProperty("margin-left", "1rem");
 		
-		container.add(northPanel);
 		container.add(centerPanel);
 		
 		add(container);
 		onSearch( options );
+		
+		Scheduler.get().scheduleDeferred(new Command() {
+	        public void execute() {
+	        	getSearchTextBox().setFocus(true);
+	        }
+	    });		
+	}
+
+	@Override
+	protected void onClearFilter() {
+		getSearchTextBox().setValue(null, false);
+		scope.getListBox().setSelectedIndex(0);
+		active.getListBox().setSelectedIndex(0);
+		budget.setValue(null);
+		expense.setValue(null);
+		
+		marketingCompaignPanel.resetSearchOffset();
+		
+		onSearch( options );
 	}
 	
-	private void createToolbar() {
-		AonToolbar toolbar = new AonToolbar( "CAMPA\u00D1AS" );
-		
-		final AonToolbarButton newButton = new AonToolbarButton( "Nueva Campa\u00f1a", AON.CSS.aonIconAdd());
+	private void addButtonsToolbar() {
+		AonToolbarButton newButton = new AonToolbarButton( "Nueva Campa\u00f1a", AON.CSS.aonIconAdd());
 		newButton.addClickHandler(e -> showMarketingCompaignDialog());
-		toolbar.add(newButton);
+		addToolbarButton(newButton);
 		
-		addNorth(toolbar, 50);
+		deleteButton = new AonToolbarButton( "Borrar Agente Comercial", AON.CSS.aonIconDelete());
+		deleteButton.addClickHandler(e -> {
+			deleteButton.setEnabled(false);
+			marketingCompaignPanel.deleteCampaigns();
+		});
+		deleteButton.setEnabled(false);
+		
+		addToolbarButton(deleteButton);
 	}
 	
 	private void showMarketingCompaignDialog() {
@@ -189,7 +162,13 @@ public abstract class MarketingCampaignModulePanel extends DockLayoutPanel {
 			}};
 		
 		dialog.add( marketingCampaignPanel );
-		dialog.showLoaded();
+		dialog.showLoadedCB(new AonCustomDialogCallback() {
+			
+			@Override
+			public void onEnd() {
+				marketingCampaignPanel.focusDescription();
+			}
+		});
 	}
 
 	public void onSearch( MarketingModuleOptions options ) {
@@ -205,6 +184,21 @@ public abstract class MarketingCampaignModulePanel extends DockLayoutPanel {
 			protected void onShowErrorMessage(String errorMessage) {
 				AonMessagePanel.showError(messagePanel, errorMessage);
 			}
+			
+			@Override
+			protected void onShowSuccessMessage(String successMessage) {
+				AonMessagePanel.showSuccess(messagePanel, successMessage);
+			}
+
+			@Override
+			protected void onShowLoadingMessage(String loadingMessage) {
+				AonMessagePanel.showLoading(messagePanel, loadingMessage);
+			}
+			
+			@Override
+			protected void onDeleteEnable(boolean enabled) {
+				deleteButton.setEnabled(enabled);
+			}
 		
 		};
 			
@@ -212,16 +206,52 @@ public abstract class MarketingCampaignModulePanel extends DockLayoutPanel {
 	}
 
 	public MarketingCompaignParams getWidgetParams( MarketingModuleOptions options) {
-		return new MarketingCompaignParams()
+		MarketingCompaignParams params = new MarketingCompaignParams()
 			.setDomainName(options.getDomainName())
 			.setDomain(options.getDomain())
 			.setUser(options.getUser())
-			.setDescription(description.getValue())
-			.setScope(scope.getSelectedIndex() == 0 ? null : Integer.parseInt(scope.getSelectedValue()))
-			.setActive(active.getSelectedIndex() == 0 ? null : Byte.parseByte(active.getSelectedValue()))
+			.setDescription(getSearchTextBox().getValue())
+			.setScope(AonStringUtils.isBlank(scope.getValue()) ? null :Integer.parseInt(scope.getValue()))
+			.setActive(AonStringUtils.isBlank(active.getValue()) ? null :Byte.parseByte(active.getValue()))
 			.setBudget(budget.getValue())
 			.setExpense(expense.getValue())
+			.setOrderBy(sort.getValue())
+			.setAsc(Boolean.parseBoolean(asc.getValue()))
 			;
+		
+		if(budget.isBetweenNumbers()) {
+			params
+				.setBudget(null)
+				.setGTBudget(budget.getGTValue())
+				.setLTBudget(budget.getLTValue())
+				.setBetweenBudgetNumbers(budget.isBetweenNumbers())
+				;
+		} else {
+			params
+				.setBudget(budget.getValue())
+				.setGTBudget(null)
+				.setLTBudget(null)
+				.setBetweenBudgetNumbers(budget.isBetweenNumbers())
+				;
+		}
+		
+		if(expense.isBetweenNumbers()) {
+			params
+				.setExpense(null)
+				.setGTExpense(expense.getGTValue())
+				.setLTExpense(expense.getLTValue())
+				.setBetweenExpenseNumbers(expense.isBetweenNumbers())
+				;
+		} else {
+			params
+				.setExpense(expense.getValue())
+				.setGTExpense(null)
+				.setLTExpense(null)
+				.setBetweenExpenseNumbers(expense.isBetweenNumbers())
+				;
+		}
+		
+		return params;
 	}
 	
 	protected abstract void onMarketingCampaignSelect(MarketingCampaign marketingCampaign);

@@ -106,10 +106,10 @@ public class Mod2002017ServiceAsyncDecorator implements Mod2002017ServiceAsync {
 	}
 
 	@Override
-	public void fillMod2002017AccountingData(Mod2002017 mod200,
+	public void fillMod2002017AccountingData(Mod2002017 mod200, String data,
 			AsyncCallback<Mod2002017> callback) {
 		AON.start();
-		fsa.fillMod2002017AccountingData(mod200,
+		fsa.fillMod2002017AccountingData(mod200, data,
 				new AsyncCallbackWrapper<Mod2002017>(callback));
 	}
 

@@ -46,6 +46,7 @@ public class ClassicPayrollBundle  extends ListResourceBundle{
 	        { "COTIZACION ADICIONAL POR HORAS EXTRAS", "Cotización adicional por horas extraordinarias" },
 	        { "FUERZA MAYOR O", "Fuerza mayor" },
 	        { "NO ESTRUCTURALES", "No estructurales" },
+			{"SOLIDARIDAD", "Solidaridad"},
 	        { "BASE SUJETA A RETENCION IRPF", "Base sujeta a retención del IRPF" },
 	        { "EN ESPECIE", "en especie" },
 	        { "EN RETRIBUCIONES DINERARIAS", "en retribuciones dinerarias" },

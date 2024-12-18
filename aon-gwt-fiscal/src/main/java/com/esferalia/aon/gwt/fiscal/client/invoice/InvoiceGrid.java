@@ -136,9 +136,10 @@ public abstract class InvoiceGrid extends ResizeComposite implements RequiresRes
 		dataGrid.redraw();
 	}
 	
-	public InvoiceGrid(FiscalModelModuleOptions<FiscalModel> options, InvoiceParams filterParams) {
+	public InvoiceGrid(FiscalModelModuleOptions<FiscalModel> options, InvoiceParams filterParams, boolean fechaIva) {
 		this.filterParams = filterParams;
 		this.options = options;
+		this.isFechaIVA = fechaIva;
 		
 		dataGrid = new CustomDataGrid<>(Integer.MAX_VALUE, resources, PROVIDES_KEY);
 		dataGrid.getElement().getStyle().setMarginLeft(10, Unit.PX);

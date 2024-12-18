@@ -61,6 +61,12 @@
 		pointer-events: none !important; 
 	}
 	
+	.rich-calendar-select {
+	  	background-color: #7F91B3 !important;
+	  	color: #fff !important;
+	  	font-weight: bold;
+	}
+	
 	.rich-bottom-cell {
 		display: none !important;
 	}
@@ -529,7 +535,7 @@
 	
 	.aon-panelGrid-search .aon-panelGrid-odd,
 	.aon-panelGrid-search .aon-panelGrid-even {
-    	background-color: #fff;
+    	background-color: #fff !important;
 	}
 	
 	.aon-panelGrid-search .rich-stglpanel-header {
@@ -695,6 +701,10 @@
     	background-color: #fafafa;
 	}
 	
+	.aon-editDataTable-footer div {
+		text-align: left !important;
+	}
+	
 	.rich-mpnl-mask-div-opaque{
 		background-color: #ddd;
 	}
@@ -803,6 +813,9 @@
 	.aon-editDataTable > tbody > tr
 	{
 		border: none;
+	}
+	.aon-dataTable td {
+		border: 0px;
 	}
 	
 	.aon-dataTable > tbody > tr > td,
@@ -1215,6 +1228,7 @@
 	
 	.aon-panelGrid-odd {
 		background-color: #fff;
+		vertical-align: middle;
 	}
 	
 	.rich-tab-active {
@@ -1308,6 +1322,11 @@
 		background-size: 24px;
 		background-image: url('data:image/svg+xml;utf-8,&lt;svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="--var(aonIconColor, black)"&gt;&lt;path d="M800-663.08v438.46q0 27.62-18.5 46.12Q763-160 735.38-160H224.62q-27.62 0-46.12-18.5Q160-197 160-224.62v-510.76q0-27.62 18.5-46.12Q197-800 224.62-800h438.46L800-663.08ZM760-646 646-760H224.62q-10.77 0-17.7 6.92-6.92 6.93-6.92 17.7v510.76q0 10.77 6.92 17.7 6.93 6.92 17.7 6.92h510.76q10.77 0 17.7-6.92 6.92-6.93 6.92-17.7V-646ZM480-298.46q33.08 0 56.54-23.46T560-378.46q0-33.08-23.46-56.54T480-458.46q-33.08 0-56.54 23.46T400-378.46q0 33.08 23.46 56.54T480-298.46ZM270.77-569.23h296.92v-120H270.77v120ZM200-646v446-560 114Z"/&gt;&lt;/svg&gt;') ;
 	}
+	
+	.aon-icon-accept[value='Send'],
+	.aon-icon-accept[value='Enviar']{
+		background-image: url('data:image/svg+xml;utf-8,&lt;svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="black"&gt;&lt;path d="M172-238v-484l574 242-574 242Zm28-42 474-200-474-200v160l180 40-180 40v160Zm0 0v-400 400Z"/&gt;&lt;/svg&gt;') ;
+	}
 
 	.aon-icon-cancel{
 		background-size: 24px;
@@ -1341,6 +1360,7 @@
 	.aon-icon-edit-add-simple {
 		background-size: 20px;
 		background-image: url('data:image/svg+xml;utf-8,&lt;svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="--var(aonIconColor,black)"&gt;&lt;path d="M211-176q-16 3-27-8t-8-27l23-112 124 124-112 23Zm112-23L199-323l434-434q17-17 42-17t42 17l40 40q17 17 17 42t-17 42L323-199Zm330-538L252-337l85 85 400-401q9-9 9-22.5t-9-22.5l-39-39q-9-9-22.5-9t-22.5 9Z"/&gt;&lt;/svg&gt;');
+		padding-right: 13px !important;
 	}
 	
 	.aon-icon-circle-green {
@@ -1523,6 +1543,15 @@
 	    background-color: transparent;
 	    background-position: center center;	
     }
+    
+	input.aon-finding-toolbar-item.aon-icon-accept[value='Send'],
+	input.aon-finding-toolbar-item.aon-icon-accept[value='Enviar'] {
+		width: fit-content;	
+	    border-radius: 10%;
+	    padding-left: 24px;
+		color: var(--aonIconColor, black);
+	    background-position: left center;	
+	}
 	
 	input.aon-finding-toolbar-item.aon-icon-webmail2{
 	    width:40px;
@@ -1755,16 +1784,17 @@
     	background: none;
     	border-radius: 16px;
     	border: 1px solid #aaa;
+    	font-weight: normal;
 	}
 	
-	.rich-fileupload-list-decor {
+/* 	.rich-fileupload-list-decor {
 		display: none;
 	}
 	
 	.rich-fileupload-button-content {
 		display: none;
 	}
-	
+ */	
 	.rich-fileupload-button-light{
 		background-color:#f6f6f6;
 	}
@@ -2076,6 +2106,10 @@
 
 	.aon-width-fifth {
 		width: 20%;
+	}
+	
+	.aon-width-half {
+		width: 50%;
 	}
 
 
@@ -2586,6 +2620,30 @@
 		background-color: #fff;
 		margin-bottom: 10px;
 	}
+	.aonCards .aonCard {
+		border: 1px solid #ddd;
+		padding-top: 10px;
+		padding-left: 20px;
+	    padding-right: 20px;
+	    padding-bottom: 20px;
+	}
+	
+	.aonCards .aonCard .aon-panelGrid-odd,
+	.aonCards .aonCard .aon-panelGrid-even {
+		background-color: #fff !important;
+	}
+	
+	.aonCards .aon-panelGrid-odd,
+	.aonCards .aon-panelGrid-even {
+		background-color: #fafafa;
+		border: 0px;
+	}
+	
+	.aon-vertical-align-top {
+		vertical-align: top;
+		padding: 5px;
+	}
+	
 	
 	table .aonCard {
 		border: 0px;
@@ -2770,14 +2828,6 @@
 	}
 
 	
-	.aon-outputText {
-		float: left !important;
-	}
-	
-	[id*="invoiceList"] .aon-outputText {
-		float: right !important;
-	}
-
 	
 	a[id*="targetDeduplicationData"],
 	a[id*="invoicingGroupDetailData"]{
@@ -2816,19 +2866,210 @@
 		padding-left: 0px !important;
 	}
 	
-	#aonContent\:showNewMessageModalPanelContentDiv,
-	#aonContent\:newFeeModalPanelContentDiv {
-	    width: fit-content !important;
+	/* #aonContent\:showNewMessageModalPanelContentDiv,
+	#aonContent\:newFeeModalPanelContentDiv,
+	#aonContent\:newAlarmhModalPanelContentDiv,
+	#aonContent\:rectificationModalPanelContentDiv,
+	#aonContent\:duplicationModalPanelContentDiv,
+	#aonContent\:projectModalPanelContentDiv,
+	#aonContent\:remarksModalPanelContentDiv,
+	#aonContent\:fiscalInformationModalPanelContentDiv,
+	#aonContent\:newProjectModalPanelContentDiv,
+	#aonContent\:newRegistrySupplierModalPanelContentDiv */
+	[id*="PanelContentDiv"] {
+	    min-width: fit-content !important;
 		min-height: fit-content !important;
-		padding-bottom: 30px;
+		padding-bottom: 35px;
 	}
 	
-	#aonContent\:newFeeForm\:CustomerFee_description_long {
-		padding-right: 13px !important;
+	#aonContent\:newRegistryProfileModalPanelContentDiv {
+		padding-bottom: 50px !important;
 	}
 	
-			
+	#aonContent\:newAddInfoModalPanelContentDiv {
+		padding-bottom: 65px !important;
+	}
+	
+	#aonContent\:newRegistrySellerModalPanelContentDiv {
+		padding-bottom: 70px !important;
+	}
+	
+	#aonContent\:newDocumentModalPanelContentDiv {
+		padding-bottom: 95px !important;
+	}
+	
+	#aonContent\:newProjectModalPanelContentDiv {
+		padding-bottom: 100px !important;
+	}
+	
+	#aonContent\:newFeeModalPanelContentDiv {
+		padding-bottom: 110px !important;
+	}
+	
+	#aonContent\:fiscalInformationModalPanelContentDiv {
+		padding-bottom: 120px !important;
+	}	
+	
+	#aonContent\:newRegistrySupplierModalPanelContentDiv {
+		padding-bottom: 195px !important;
+	}
+	
+	#aonContent\:newRegistryTaxModalPanelContentDiv {
+		padding-bottom: 130px !important;
+		padding-right: 120px !important;
+	}
+	
+	#aonContent\:newFeeForm\:CustomerFee_finalDate {
+		left: 359px !important;
+  		top: 212px !important;
+	}	
+	
+	#aonContent\:newFeeForm\:CustomerFee_initialDate {
+		left: 149px !important;
+		top: 212px !important;
+	}
+	
+	#aonContent\:customerForm\:Rnote_fromDate {
+		left: 126px !important;
+		top: 43px !important;
+	}
+	
+	#aonContent\:customerForm\:Rnote_toDate {
+		left: 404px !important;
+		top: 43px !important;
+	}
+	
+	#aonContent\:newProjectForm\:Project_date {
+		left: 153px !important;
+		top: 205px !important;
+	}
+	
+	.aon-gotoCommandLink {
+		display: inline-block;
+	}
+	
+	.rich-table-subfootercell {
+	    border-right: 0px;
+	    border-bottom: 0px;
+	}
+	
+	.aon-color-green {
+		color: green;
+	}
+	
+	.aon-pending {
+		color: rgb(243, 159, 29);
+	}
+	
+	.aonButton-Pending{
+		border: 1px solid rgb(243, 159, 29);
+	  	border-radius: 5px;
+	  	margin-left: 10px;
+	}
+	
+	.aonButton-Error{
+		border: 1px solid red;
+	  	border-radius: 5px;
+	  	margin-left: 10px;
+	}
+	
+	.aonButton-Verified{
+		border: 1px solid green;
+	  	border-radius: 5px;
+	  	margin-left: 10px;
+	}
+	
+	.aonButton-Pending:hover,
+	.aonButton-Error:hover,
+	.aonButton-Verified:hover {
+  		font-weight: bold;
+	}
+	
+	[id*="sendVerifyEmail"] {
+		color: red !important;
+	}
+	
+	[id*="sendAgainVerifyEmail"] {
+		color: rgb(243, 159, 29) !important;
+	}
+	
+	[id*="sendTestEmailWindow"] {
+		color: green !important;
+	}
+	
+	.aon-padding {
+		padding: 0.5rem;
+	}
+	
+	 #aonContent\:globalConfigPanelForm\:configPanelBar {
+	 	width: 180px !important;
+	 }
+	 
+	 @keyframes rotate {
+		0% {
+			transform: rotate(0deg)
+		}
+		6% {
+		    transform: rotate(22deg)
+		}
+		12% {
+		    transform: rotate(45deg)
+		}
+		18% {
+		    transform: rotate(67deg)
+		}
+		25% {
+			transform: rotate(90deg)
+		}
+		31% {
+			transform: rotate(122deg)
+		}
+		37% {
+			transform: rotate(135deg);
+		}
+		43% {
+		    transform: rotate(157deg);
+		}
+		50% {
+		    transform: rotate(180deg);
+		}
+		56% {
+		    transform: rotate(192deg);
+		}
+		62% {
+		    transform: rotate(225deg);
+		}
+		68% {
+		    transform: rotate(237deg);
+		}
+		75% {
+		    transform: rotate(270deg);
+		}
+		81% {
+		    transform: rotate(282deg);
+		}
+		87% {
+		    transform: rotate(315deg);
+		}
+		93% {
+		    transform: rotate(327deg);
+		}
+		100% {
+		    transform: rotate(360deg);
+		}
+ 	}
+ 	
+ 	.rotate-animation{
+ 		animation-name: rotate; 
+ 		animation-duration: 1.0s; 
+ 		animation-iteration-count: infinite;
+	}
+	
 
+	.new-mail-button {
+	  background: none;
+	  border: #808080 1px solid;
+	}
 	</style>
 
 	<script type="text/javascript">

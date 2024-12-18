@@ -14,6 +14,7 @@ public class AonToolbar extends FlowPanel {
 	
 	private FlowPanel buttonContainer;
 	private FlowPanel messagePanel;
+	private FlowPanel filterPanel;
 	private FlowPanel searchPanel;
 	private FlowPanel titlePanel;
 	
@@ -36,16 +37,25 @@ public class AonToolbar extends FlowPanel {
 		messagePanel.setStyleName(AON.CSS.aonToolbarMessageContainer());
 		innerToolbar.add(messagePanel);
 		
+		filterPanel = new FlowPanel();
+		filterPanel.setStyleName(AON.CSS.aonToolbarFilterContainer());
+		innerToolbar.add(filterPanel);
+		
+		FlowPanel searchTitleToolbar = new FlowPanel();
+		searchTitleToolbar.addStyleName(AON.CSS.aonItemFlex());
+		
 		searchPanel = new FlowPanel();
 		searchPanel.setStyleName(AON.CSS.aonToolbarSearchContainer());
 		searchPanel.setVisible(false);
-		innerToolbar.add(searchPanel);
+		searchTitleToolbar.add(searchPanel);
 		
 		titlePanel = new FlowPanel();
 		titlePanel.addStyleName(AON.CSS.aonToolbarTitleContainer());
 		titlePanel.addStyleName(AON.CSS.aonItemFlex());
-		setTitle(name);
-		innerToolbar.add(titlePanel);
+		setTitle(name != null ? name : "");
+		searchTitleToolbar.add(titlePanel);
+		
+		innerToolbar.add(searchTitleToolbar);
 
 		super.add(innerToolbar);
 	}
@@ -79,6 +89,10 @@ public class AonToolbar extends FlowPanel {
 		searchPanel.add(widget);
 		searchPanel.setVisible(true);
 	}
+	
+	public void showFilterPanel (Widget widget) {
+		filterPanel.add(widget);
+	}
 
 	public void hideMessages( ) {
 		messagePanel.clear();		
@@ -86,6 +100,10 @@ public class AonToolbar extends FlowPanel {
 	
 	public FlowPanel getMessagePanel() {
 		return messagePanel;
+	}
+	
+	public FlowPanel getFilterPanel() {
+		return filterPanel;
 	}
 	
 	public FlowPanel getButtonContainer() {

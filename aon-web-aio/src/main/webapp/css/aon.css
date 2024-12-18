@@ -1020,6 +1020,7 @@ background-color: var(--aonLightGray);
 
 
 .aonCompanyDiv {
+  width: 60%;
   display: flex;
   flex-direction: column;
   gap: 1rem;
@@ -1028,9 +1029,6 @@ background-color: var(--aonLightGray);
   align-items: start;
   margin: 0 auto;
 
-  width: 84%;
-  /*padding-bottom: 48px;*/
-  max-width: 1128px;
 }
 
 .aonCompanyTitleDiv{
@@ -1048,6 +1046,10 @@ background-color: var(--aonLightGray);
   padding: 0px;
   height: 100%;
   overflow-y: auto;
+}
+
+.aonCompanyFilterEmpty {
+	display: none;	
 }
 
 .aonSidenavDiv {
@@ -1374,6 +1376,10 @@ margin-top: 20px;
   background-color: var(--aonCardColor);
 }
 
+.aonAppsDiv .aonCard{
+	border: none;
+	background-color: transparent;
+}
 
 
 .aonCardFlex{
@@ -2555,13 +2561,23 @@ size: 32px;
 }
 
 .aonWelcomeDiv  {
-    width: 84%;
+    width: 60%;
     display: flex;
     margin: 0 auto;
     flex-wrap: wrap;
-    max-width: 1128px;
     padding-top: 72px;
     padding-bottom: 60px;
+}
+
+.aonAppsDiv  {
+    width: 20%;
+    bottom: 40px;
+	position: absolute;
+ }
+
+.aonAppsDiv .aonCard {  
+	margin: auto;
+  	width: fit-content;
 }
 
 .aonTab {
@@ -3035,6 +3051,12 @@ background-image: url("../favicon.png");
   background-color: var(--aonBlue);
 }
 
+.aonHeaderEnterpriseMenu,
+.aonMenuLeftopEnterpriseMenu {
+  background-color: var(--aonBlue);
+}
+
+
 .aonHeaderNote .material-icons,
 .aonHeaderFiscal .material-icons,
 .aonHeaderPayroll .material-icons,
@@ -3059,6 +3081,7 @@ background-image: url("../favicon.png");
 .aonHeaderPayrollMenu .material-icons,
 .aonHeaderMarketingMenu .material-icons,
 .aonHeaderConfigurationMenu .material-icons,
+.aonHeaderEnterpriseMenu .material-icons,
 .aonHeaderNotification .material-icons,
 .aonHeaderHome .material-icons,
 .aonHeaderApps .material-icons,
@@ -3091,6 +3114,7 @@ color: var(--aonWhite);
 .aonHeaderPayrollMenu #aon-search-buttonIcon,
 .aonHeaderMarketingMenu #aon-search-buttonIcon,
 .aonHeaderConfigurationMenu #aon-search-buttonIcon,
+.aonHeaderEnterpriseMenu #aon-search-buttonIcon,
 .aonHeaderNotification #aon-search-buttonIcon{
   color: var(--aonSearchButton);
 }
@@ -3154,6 +3178,7 @@ color: var(--aonWhite);
 .aonHeaderPayrollMenu #aonHeaderCompanyName,
 .aonHeaderMarketingMenu #aonHeaderCompanyName,
 .aonHeaderConfigurationMenu #aonHeaderCompanyName,
+.aonHeaderEnterpriseMenu #aonHeaderCompanyName,
 .aonHeaderNotification #aonHeaderCompanyName,
 .aonHeaderHome  #aonHeaderCompanyName,
 .aonHeaderApps #aonHeaderCompanyName,
@@ -3192,6 +3217,7 @@ color: var(--aonWhite);
 #payrollMenu:hover,
 #marketingMenu:hover,
 #configurationMenu:hover,
+#enterpriseMenu:hover,
 #aonApplication:hover {
   background-color: var(--aonCardColor);
   /*transition: background-color 0.2s;*/
@@ -4502,6 +4528,23 @@ font-weight: 600;
 .blocked {
    pointer-events: none;  /* Deshabilita la interacción con el mouse */
  }
+ 
+.aonHoverGray:hover{
+  background-color: #f1f1f1;
+  cursor: pointer;
+}
+
+.aon_no_border_toolbar > .aon_toolbar_inner{
+	border: none;
+}
+
+.aon_no_border_toolbar .aon_toolbar_button_container {
+	margin: 0;
+}
+
+.aon_no_border_toolbar .aon_toolbar_title_container {
+	padding: 0;
+}
 
  .aonDragLeftContainer { 
     display: flex;

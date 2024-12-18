@@ -7,7 +7,23 @@
 	xmlns:a4j="http://richfaces.org/a4j"
 	xmlns:rich="http://richfaces.org/rich"
 	xmlns:aon="http://www.code.es/aon-rich-components">
+	<aon:div styleClass="aon-scroll-area">
 	
+<!-- 	<aon:outputLabel styleClass="aon-margin-right" for="Customer_EDI_receiveOrder" value="Recepción Pedidos" />
+	<aon:selectOneMenu styleClass="aon-margin-right" id="Customer_EDI_receiveOrder" value="#{customerEdiSupport.receiveOrder}">
+		<f:selectItems value="#{customerEdiSupport.receiveOrderOptions}" />
+	</aon:selectOneMenu> -->
+	
+	<aon:outputLabel styleClass="aon-margin-right" for="Customer_EDI_sendDesadv" value="Envío Albaranes" />
+	<aon:selectOneMenu styleClass="aon-margin-right" id="Customer_EDI_sendDesadv" value="#{customerEdiSupport.sendDesadv}">
+		<f:selectItems value="#{customerEdiSupport.sendDesadvOptions}" />
+	</aon:selectOneMenu>
+	
+	<aon:outputLabel styleClass="aon-margin-right" for="Customer_EDI_sendInvoice" value="Envío Facturas" />
+	<aon:selectOneMenu styleClass="aon-margin-right"  id="Customer_EDI_sendInvoice" value="#{customerEdiSupport.sendInvoice}">
+		<f:selectItems value="#{customerEdiSupport.sendInvoiceOptions}" />
+	</aon:selectOneMenu>
+
 	<aon:dataTable var="address" 
 		value="#{customerEdiSupport.customerAddresses}">
 
@@ -118,5 +134,5 @@
 		</aon:column>
 		
 	</aon:dataTable>
-	
+	</aon:div>
 </ui:composition>

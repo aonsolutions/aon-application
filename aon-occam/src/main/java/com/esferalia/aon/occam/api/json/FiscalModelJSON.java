@@ -177,6 +177,7 @@ public enum FiscalModelJSON {
 				@Override public void visitM115()  { visitNew();}
 				@Override public void visitM111()  { visitNew();}
 				@Override public void visitM390HF(){ visitNew();}
+				@Override public void visitM369()  { visitNew();}
 			});
 			return json;
 		}
@@ -214,6 +215,7 @@ public enum FiscalModelJSON {
 				@Override public void visitM123()  { visitNew();}
 				@Override public void visitM115()  { visitNew();}
 				@Override public void visitM111()  { visitNew();}
+				@Override public void visitM369()  { visitNew();}
 			});
 			return json;
 		}

@@ -10,6 +10,7 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
 import com.esferalia.aon.gwt.fiscal.client.mod303.Model303AEAT2023SimplifiedRegimeActivities.IModel303AEATActivityCallback;
 import com.esferalia.aon.occam.api.model.fiscal.Mod303ActivityFarmer;
 import com.esferalia.aon.occam.api.model.fiscal.modules.Modules2018.FarmerIVA;
+import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.logical.shared.HasValueChangeHandlers;
@@ -18,6 +19,7 @@ import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SimpleLayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
@@ -42,10 +44,18 @@ class Model303AEAT2023ActivityFarmer extends DockLayoutPanel implements HasValue
 	private AonDoubleBox sop = new AonDoubleBox();
 	private AonDoubleBox cad = new AonDoubleBox();
 	
+	private ListBox dana = new ListBox();
+	private AonDoubleBox danaReduction = new AonDoubleBox();
+	
 	Model303AEAT2023ActivityFarmer(final IModel303AEATActivityCallback<Mod303ActivityFarmer> cbk) {
 		super(Unit.PX);
 		setStyleName(AON.CSS.aonSelector());
 		addStyleName(AON.CSS.aonBackgroundLigthBlue());
+		
+		dana.addItem("-");
+		dana.addItem("Exclusivamente en municipios afectados por la DANA");
+		dana.addItem("En municipios afectados por la DANA y en otros municipios");
+		dana.setWidth("370px");
 		
 		addNorth(getToolbar(cbk), AonToolbar.HEIGTH);
 		
@@ -81,13 +91,45 @@ class Model303AEAT2023ActivityFarmer extends DockLayoutPanel implements HasValue
 			
 		ind.setEnabled(false);
 		tab.addRow()
-			.addCell( new Label(AON.MSG.page6E()), AON.CSS.aonBorderBottom() )
+			.addCell( new Label(AON.MSG.f03Msg()), AON.CSS.aonBorderBottom() )
 			.addCell( ind );
 		
 		cuo.setEnabled(false);
 		tab.addRow()
 			.addCell( new Label(AON.MSG.f04Msg()), AON.CSS.aonBorderBottom() )
 			.addCell( cuo );
+		
+		// DANA - A partir del ultimo periodo de 2024
+		if ((cbk.getModel().getYear() == 2024 && cbk.getModel().isLastPeriod()) || (cbk.getModel().getYear() > 2024)) {
+			dana.setEnabled(cbk.getActivity().isNotEmpty());
+			dana.addChangeHandler(event-> {
+				cbk.getActivity().setDana(dana.getSelectedIndex());
+				
+				// Reducción 25% de la cuota devengada, si exclusivamente en municipios DANA, en caso contrario, se deja a cero y que lo cumplimente el usuario
+				if (dana.getSelectedIndex() == 1) {
+					cbk.getActivity().setDanaReduction(AonMathUtils.round(cbk.getActivity().getCuo()*25/100));  
+				} else {
+					cbk.getActivity().setDanaReduction(0.0);  
+				}	
+				danaReduction.setValue(cbk.getActivity().getDanaReduction(), false, true);
+				danaReduction.setEnabled(cbk.getActivity().getDana()==2);
+				ValueChangeEvent.<Mod303ActivityFarmer>fire(Model303AEAT2023ActivityFarmer.this, cbk.getActivity());
+			});			
+			tab.addRow()
+				.addCell(new Label("Actividad realizada en municipios afectados por la DANA 2024 "), AON.CSS.aonBorderBottom())
+				.addCell(dana);
+			
+			danaReduction.setEnabled(cbk.getActivity().isNotEmpty() && cbk.getActivity().getDana()==2);
+			danaReduction.addValueChangeHandler(event -> {
+				if (danaReduction.getValue() == null) 
+					danaReduction.setValue(0.0,false);
+				cbk.getActivity().setDanaReduction(danaReduction.getValue());
+				ValueChangeEvent.<Mod303ActivityFarmer>fire(Model303AEAT2023ActivityFarmer.this, cbk.getActivity());
+			});
+			tab.addRow()
+				.addCell(new Label("Reducci\u00F3n por actividad realizada en municipios afectados por la DANA"), AON.CSS.aonBorderBottom(), AON.CSS.aonWidth400() )
+				.addCell(danaReduction);			
+		}		
 		
 		if (!cbk.getModel().isLastPeriod()) {
 			por.setEnabled(false);
@@ -179,6 +221,8 @@ class Model303AEAT2023ActivityFarmer extends DockLayoutPanel implements HasValue
 		dev.setValue(act.getDev(),false,true);
 		tso.setValue(act.getTso(),false,true);
 		cad.setValue(act.getCad(),false,true);
+		dana.setSelectedIndex(act.getDana());
+		danaReduction.setValue(act.getDanaReduction(),false,true);
 	}
 	
 	private String getTitle(Mod303ActivityFarmer act) {

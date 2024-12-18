@@ -64,6 +64,7 @@ public class FiscalModelUtils {
 		@Override public String visitNavarra() 	{return AON.CSS.aonIconNavarra();}
 		@Override public String visitCommonTerritory() 	{return AON.CSS.aonIconAeat();}
 		@Override public String visitUnknown() 	{return AON.CSS.aonIconUnknown();}
+		@Override public String visitCanarias() 	{return AON.CSS.aonIconCanarias();}
 	}
 	private static final IAdministrationVisitor<String> ADMINISTRATION_ICON_STYLE = new AdministrationIconStyle();
 	public static String getAdministrationIconStyle(Administration adm) {
@@ -77,6 +78,7 @@ public class FiscalModelUtils {
 		@Override public DataResource visitNavarra() 	{return AON.AON_SOLUTIONS_RESOURCES.aonIconNavarra();}
 		@Override public DataResource visitCommonTerritory() 	{return AON.AON_SOLUTIONS_RESOURCES.aonIconAeat();}
 		@Override public DataResource visitUnknown() 	{return AON.AON_SOLUTIONS_RESOURCES.aonIconUnknown();}
+		@Override public DataResource visitCanarias() 	{return AON.AON_SOLUTIONS_RESOURCES.aonIconCanarias();}
 	}
 	private static final IAdministrationVisitor<DataResource> ADMINISTRATION_ICON_RESOURCE = new AdministrationIconResource();
 	public static DataResource getAdministrationIconDataResource(Administration adm) {
@@ -90,6 +92,7 @@ public class FiscalModelUtils {
 		@Override public String visitNavarra() 	{return AON.CSS.aonNavarraBackgroundColor();}
 		@Override public String visitCommonTerritory() 	{return AON.CSS.aonAeatBackgroundColor();}
 		@Override public String visitUnknown() 	{return AON.CSS.aonAeatBackgroundColor();}
+		@Override public String visitCanarias() 	{return AON.CSS.aonCanariasBackgroundColor();}
 	}
 	private static final IAdministrationVisitor<String> ADMINISTRATION_BACKGROUND_STYLE = new AdministrationBackgroundStyle();
 	public static String getAdministrationBackgroundStyle(Administration adm) {

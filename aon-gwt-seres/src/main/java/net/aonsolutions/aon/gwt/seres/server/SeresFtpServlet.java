@@ -14,12 +14,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
-import jakarta.servlet.ServletException;
-import jakarta.servlet.annotation.WebServlet;
-import jakarta.servlet.http.HttpServlet;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-
 import org.apache.commons.lang.math.NumberUtils;
 import org.json.JSONObject;
 
@@ -27,7 +21,6 @@ import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
-import com.code.aon.common.enumeration.AppParam;
 import com.code.aon.company.Company;
 import com.code.aon.config.ApplicationParameter;
 import com.code.aon.config.Tag;
@@ -48,10 +41,9 @@ import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.registry.NoteType;
 import com.esferalia.aon.occam.api.model.registry.RegistryNote;
 import com.esferalia.aon.occam.api.model.seres.EdiCodes;
+import com.esferalia.aon.occam.api.model.seres.SeresInfo;
 import com.esferalia.aon.occam.api.model.type.DataResponseSource;
 import com.esferalia.aon.occam.api.model.warehouse.Delivery;
-import com.esferalia.aon.seres.ftp.FtpException;
-import com.esferalia.aon.seres.ftp.FtpLoginException;
 import com.esferalia.aon.seres.ftp.SeresFtpConnectionProvider;
 import com.esferalia.aon.seres.ftp.seres.FtpDeliveryUploadOccamHandler;
 import com.esferalia.aon.seres.ftp.seres.FtpStoreProcess;
@@ -60,6 +52,11 @@ import com.esferalia.aon.seres.ftp.seres.FtpStoreProcess.SeresFtpProcessThread;
 import com.esferalia.aon.seres.writer.connect.ConnectSaleInvoiceWriter;
 import com.esferalia.aon.watson.error.AonCoreException;
 
+import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import net.aonsolutions.aon.gwt.seres.shared.CommunicationTarget;
 
 @SuppressWarnings("serial")
@@ -293,11 +290,10 @@ public class SeresFtpServlet extends HttpServlet {
 			checkValidLogin();
 			
 			try {
-				FtpStoreProcess fsp = new FtpStoreProcess(DataResponseSource.SERES_INVOICE, this.domain.getName(), this.domain.getId(), this.loggedUser,
-						this.ftpRemotePath, this.ftpServer, this.ftpPort, this.ftpUser, this.ftpPassword);
-				
+				FtpStoreProcess fsp = new FtpStoreProcess(DataResponseSource.SERES_INVOICE, this.domain.getName(), this.domain.getId(), this.loggedUser);			
 				for(Invoice invoice: invoiceList) {
 					String referenceCode = invoice.getSeries()+"_"+invoice.getNumber();
+					SeresInfo info = getSeresInfo(domain, invoice);
 					FileOutput output = exportEdiFile(domain, invoice);
 					if(output!=null && output.getErrors()!=null && output.getErrors().size()>0){
 						for(Exception e: output.getErrors()){
@@ -305,9 +301,9 @@ public class SeresFtpServlet extends HttpServlet {
 							LOGGER.log(Level.SEVERE, fd0.getMessage());
 						}
 						fsp.track(Level.SEVERE, ResponseMessageType.COMMIT, invoice.getId(), referenceCode);
-					} else {
+					} else if(output != null) {
 						byte[] data = output.getContent();
-						fsp.put(invoice.getId(), data, referenceCode);
+						fsp.put(invoice.getId(), data, referenceCode, info);
 						fsp.track(Level.INFO, ResponseMessageType.COMMIT, invoice.getId(), referenceCode);
 					}
 				}
@@ -367,6 +363,14 @@ public class SeresFtpServlet extends HttpServlet {
 	                .setRegistry(invoice.getRegistry().getId())
 	                .setAddress(new com.esferalia.aon.occam.api.model.registry.RegistryAddress().setId(invoice.getRegistryAddress().getId()));
 	        return SERES.getEdiCodes(domain.getName(), domain.getId(), "", inv);
+	    }
+		
+		private SeresInfo getSeresInfo(Domain domain, Invoice invoice) {
+	        com.esferalia.aon.occam.api.model.finance.Invoice inv = new com.esferalia.aon.occam.api.model.finance.Invoice()
+	                .setId(invoice.getId())
+	                .setRegistry(invoice.getRegistry().getId())
+	                .setAddress(new com.esferalia.aon.occam.api.model.registry.RegistryAddress().setId(invoice.getRegistryAddress().getId()));
+	        return SERES.getSeresInfo(domain.getName(), domain.getId(), "", inv);
 	    }
 		
 		private Company getCompany(Integer domainId) {

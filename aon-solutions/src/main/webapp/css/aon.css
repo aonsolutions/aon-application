@@ -2528,3 +2528,7 @@ label.rating:hover {
   color: #888;
   margin-left: 35px;
 }
+.aonHoverGray:hover{
+  background-color: #f1f1f1;
+  cursor: pointer;
+}

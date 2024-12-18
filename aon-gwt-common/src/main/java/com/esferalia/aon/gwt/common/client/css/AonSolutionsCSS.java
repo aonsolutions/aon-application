@@ -71,6 +71,9 @@ public interface AonSolutionsCSS extends CssResource {
 
 	@ClassName("aon_icon_add")
 	String aonIconAdd();
+	
+	@ClassName("aon_icon_move_group")
+	String aonIconMoveGroup();
 
 	@ClassName("aon_icon_start")
 	String aonIconStart();
@@ -534,6 +537,12 @@ public interface AonSolutionsCSS extends CssResource {
 	@ClassName("aon_icon_aeat_bw")
 	String aonIconAeatBw();
 
+	@ClassName("aon_icon_canarias")
+	String aonIconCanarias();
+
+	@ClassName("aon_icon_canarias_bw")
+	String aonIconCanariasBw();
+
 	@ClassName("aon_icon_araba")
 	String aonIconAraba();
 
@@ -892,6 +901,9 @@ public interface AonSolutionsCSS extends CssResource {
 	@ClassName("aon_custom_text_box_input")
 	String aonCustomTextBoxInput();
 	
+	@ClassName("aon_between_input")
+	String aonBetweenInput();
+	
 	@ClassName("aon_custom_text_box_input_no_border")
 	String aonCustomTextBoxInputNoBorder();
 	
@@ -999,6 +1011,9 @@ public interface AonSolutionsCSS extends CssResource {
 	
 	@ClassName("aon_color_red")
 	String aonColorRed();
+	
+	@ClassName("aon_no_border_toolbar")
+	String aonNoBorderToolbar();
 
 	@ClassName("aon_color_green")
 	String aonColorGreen();
@@ -1197,6 +1212,9 @@ public interface AonSolutionsCSS extends CssResource {
 
 	@ClassName("aon_toolbar_small_title")
 	String aonToolbarSmallTitle();
+	
+	@ClassName("aon_toolbar_filter_container")
+	String aonToolbarFilterContainer();
 
 	@ClassName("aon_toolbar_button_container")
 	String aonToolbarButtonContainer();
@@ -1322,6 +1340,9 @@ public interface AonSolutionsCSS extends CssResource {
 	
 	@ClassName("aon_navarra_background_color")
 	String aonNavarraBackgroundColor();
+	
+	@ClassName("aon_canarias_background_color")
+	String aonCanariasBackgroundColor();
 	
 	@ClassName("aon_ccaa_background_color")
 	String aonCcaaBackgroundColor();

@@ -9,6 +9,7 @@ import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceFilter;
 import com.esferalia.aon.occam.api.model.finance.InvoiceNewPortal;
 import com.esferalia.aon.occam.impl.jooq.dao.api.InvoiceApiDAO;
+import com.esferalia.aon.watson.util.Pair;
 
 public class ApiImpl implements IApi {
 
@@ -22,6 +23,24 @@ public class ApiImpl implements IApi {
 	public Stream<Invoice> getInvoices(AONContext ctx, InvoiceFilter filter) {
 		return ctx.getDslContext().transactionResult(
 				configuration -> InvoiceApiDAO.getInvoices(ctx, filter));
+	}
+	
+	@Override
+	public Stream<Invoice> getChartInvoices(AONContext ctx, InvoiceFilter filter) {
+		return ctx.getDslContext().transactionResult(
+				configuration -> InvoiceApiDAO.getChartInvoices(ctx, filter));
+	}
+	
+	@Override
+	public Pair<Date, Date> getInvoicesChartPeriod(AONContext ctx, InvoiceFilter filter) {
+		return ctx.getDslContext().transactionResult(
+				configuration -> InvoiceApiDAO.getInvoicesChartPeriod(ctx, filter));
+	}
+	
+	@Override
+	public Integer getInvoicesCount(AONContext ctx, InvoiceFilter filter) {
+		return ctx.getDslContext().transactionResult(
+				configuration -> InvoiceApiDAO.getInvoicesCount(ctx, filter));
 	}
 	
 	@Override

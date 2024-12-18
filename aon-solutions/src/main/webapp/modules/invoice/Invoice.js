@@ -285,7 +285,7 @@ export class Invoice {
 
   setCategory(category) {
     this.category = category;
-    if(category.substring(0, 3) === '705'){
+    if(category && category.substring(0, 3) === '705'){
       this.service = true;
     } else this.service = false;
 
@@ -636,7 +636,7 @@ export class Invoice {
   }
 
   deleteTax(tax, i) {
-    if(TaxType.IRPF === tax.type) 
+    if(TaxType.IRPF === tax.type)
       this.withholding = false;
     this.taxes.splice(i, 1);
     this.calculateWithholdingFromTax();
@@ -824,12 +824,16 @@ export class Invoice {
     }
     let base = 0.0;
     if(this.isEmitida() && (!this.isNacional() || this.isExempt())){
+      base = this.total;
+      if(this.isWithholding() && withholdingPercentage > 0){
+        base = this.total / (1 -  withholdingPercentage/100);
+      }
       this.taxes = [{
           tax:TaxType.IVA,
           type: TaxType.IVA,
           percentage: 0.0,
           quota:0.0,
-          base: this.total,
+          base: base,
           surcharge: 0.0,
           surcharge_quota: 0.0
       }];
@@ -987,7 +991,7 @@ export class Invoice {
         }
       }
     }); 
-    if((this.isNacional() && !this.isExempt()) || this.isCcm())   
+    if(this.isNacional() || this.isCcm())   
       this.calculateWithholdingFromTax();
   }
   

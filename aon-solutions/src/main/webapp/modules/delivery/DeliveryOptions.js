@@ -17,12 +17,6 @@ export const DELIVERY_SEARCH_OPTIONS = [
       type: CONSTANT.SELECT,
       name: "status",
       id: "status",
-      title: MSG.STATUS,
-      options: JSON.stringify([
-        { name: "-", value: undefined },
-        { name: MSG.PENDING, value: "PENDING" },
-        { name: MSG.INVOICED, value: "INVOICED" },
-        { name: MSG.IN_PREPARATION, value: "IN_PREPARATION" },
-      ])
+      title: MSG.STATUS
     },
   ];

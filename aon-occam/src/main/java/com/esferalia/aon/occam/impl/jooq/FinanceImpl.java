@@ -27,6 +27,7 @@ import com.esferalia.aon.occam.api.model.Filter.ProductFilter;
 import com.esferalia.aon.occam.api.model.Filter.RawdocFilter;
 import com.esferalia.aon.occam.api.model.Filter.RegistryFilter;
 import com.esferalia.aon.occam.api.model.InvoiceCounter;
+import com.esferalia.aon.occam.api.model.PayMethodParams;
 import com.esferalia.aon.occam.api.model.Rawdoc;
 import com.esferalia.aon.occam.api.model.RawdocDomainData;
 import com.esferalia.aon.occam.api.model.RawdocInvoiceCounter;
@@ -697,16 +698,29 @@ public class FinanceImpl implements IFinance {
 		return 	ctx.getDslContext().transactionResult(
 				configuration -> PayMethodDAO.getOrderByNames(ctx));
 	}
+	
+	@Override
+	public LinkedList<PayMethod> getPayMethods(AONContext ctx, PayMethodParams params) {
+		return 	ctx.getDslContext().transactionResult(
+				configuration -> PayMethodDAO.getList(ctx, params));
+	}
 
 	@Override
 	public PayMethod savePayMethod(AONContext ctx, PayMethod paymethod) {
 		return 	ctx.getDslContext().transactionResult(
 				configuration -> PayMethodDAO.save(ctx, paymethod));
 	}
+	
 	@Override
 	public void deletePayMethod(AONContext ctx, Integer id) {
 		ctx.getDslContext().transaction(
 				configuration -> PayMethodDAO.delete(ctx, id));
+	}
+	
+	@Override
+	public void groupPayMethod(AONContext ctx, List<PayMethod> selectedPaymethodList, PayMethod groupedPaymthod) {
+		ctx.getDslContext().transaction(
+				configuration -> PayMethodDAO.merge(ctx, selectedPaymethodList, groupedPaymthod));
 	}
 
 	@Override

@@ -377,7 +377,8 @@ public class TrabajadoresTramos {
 
 					List<Period> periods = merge(salary, cgcBasePeriods);//cgcBasePeriods;
 					
-					for ( Period p: periods ) {
+					boolean firstPeriod = true;
+					for ( Period p : periods) {
 						
 						if ( p.getStart().after(endDate) )
 							continue;
@@ -386,7 +387,8 @@ public class TrabajadoresTramos {
 						//if ( p.getEnd().after(endDate) )
 						//	continue;
 						
-						TramoBuilder tramoBuilder  = new TramoBuilder();
+						TramoBuilder tramoBuilder  = new TramoBuilder() ;
+						
 
 						Calendar start = Calendar.getInstance();
 						start.setTime(p.getStart());
@@ -433,6 +435,7 @@ public class TrabajadoresTramos {
 							public void visitPPE() {
 							}
 							
+							
 							@Override
 							public void visitFormacionNormal() {
 							}
@@ -453,6 +456,11 @@ public class TrabajadoresTramos {
 							public void visitRegimenArtistasNormal() {
 							}
 							
+							@Override
+							public void visitSinPerciboRetribucion() {
+								
+							}
+
 							@Override
 							public void visitFormacionEnAlternanciaNormal() {
 							}
@@ -510,6 +518,10 @@ public class TrabajadoresTramos {
 
 							@Override
 							public void visitMaternidadPaternidadTiempoParcialFormacion() {
+							}
+							
+							@Override
+							public void visitMaternidadPaternidadTiempoParcialIT15PrimerosDias() {
 							}
 
 							@Override
@@ -746,6 +758,11 @@ public class TrabajadoresTramos {
 							}
 
 							@Override
+							public void visitSinPerciboRetribucion() {
+								
+							}
+
+							@Override
 							public void visitIncapacidadTemporal15PrimerosDias() {
 								// 2.2 Situaciones de Incapacidad Temporal  
 								// 2.2.1 Incapacidad Temporal 15 primeros días 
@@ -978,6 +995,33 @@ public class TrabajadoresTramos {
 							}
 
 							@Override
+							public void visitMaternidadPaternidadTiempoParcialIT15PrimerosDias() {
+								// 2.2 Situaciones de Incapacidad Temporal  
+								// 2.2.1 Incapacidad Temporal 15 primeros días 
+								// Base de contingencias comunes en situación de IT
+								dataSolicitadoBuilder.setTipo("C");
+								dataSolicitadoBuilder.setCodigo("500");
+								dataSolicitadoBuilder.setObligatorio(true);
+								tramoBuilder.addDato(dataSolicitadoBuilder.create());
+								// Base de Accidentes de Trabajo en situación de IT
+								dataSolicitadoBuilder.setTipo("C");
+								dataSolicitadoBuilder.setCodigo("603");
+								dataSolicitadoBuilder.setObligatorio(true);
+								tramoBuilder.addDato(dataSolicitadoBuilder.create());
+
+								// Base de contingencias comunes en situación de Maternidad
+								dataSolicitadoBuilder.setTipo("C");
+								dataSolicitadoBuilder.setCodigo("535");
+								dataSolicitadoBuilder.setObligatorio(true);
+								tramoBuilder.addDato(dataSolicitadoBuilder.create());
+								// Base de Accidentes de Trabajo en situación de Maternidad
+								dataSolicitadoBuilder.setTipo("C");
+								dataSolicitadoBuilder.setCodigo("635");
+								dataSolicitadoBuilder.setObligatorio(true);
+								tramoBuilder.addDato(dataSolicitadoBuilder.create());
+							}
+
+							@Override
 							public void visitIncapacidadTemporalATEPPagoDelegadoFormacion() {
 								//3.1.3 Tramo en situación de IT pago delegado AT y EP
 								// Compensación por AT EP 
@@ -1159,6 +1203,11 @@ public class TrabajadoresTramos {
 							}
 
 							@Override
+							public void visitSinPerciboRetribucion() {
+								salaryVisitor.visitSinPerciboRetribucion();
+							}
+
+							@Override
 							public void visitIncapacidadTemporal15PrimerosDias() {
 								salaryVisitor.visitIncapacidadTemporal15PrimerosDias();
 							}
@@ -1211,6 +1260,11 @@ public class TrabajadoresTramos {
 							@Override
 							public void visitMaternidadPaternidadTiempoParcialFormacion() {
 								salaryVisitor.visitMaternidadPaternidadTiempoParcialFormacion();
+							}
+
+							@Override
+							public void visitMaternidadPaternidadTiempoParcialIT15PrimerosDias() {
+								salaryVisitor.visitMaternidadPaternidadTiempoParcialIT15PrimerosDias();
 							}
 
 							@Override
@@ -1277,7 +1331,6 @@ public class TrabajadoresTramos {
 						});
 						
 						
-						
 						visit(salary, p.getStart(), p.getEnd(), salaryVisitor );
 						
 						tramoBuilder.setTipoDeContrato(getContextData(TC2.getName(), salary, p.getStart(), p.getEnd(), "-"));
@@ -1287,8 +1340,24 @@ public class TrabajadoresTramos {
 							//TODO: Log this please
 						}
 						
+						if ( tramoBuilder.isEmpty() )
+							continue;
 
+						if ( firstPeriod  ) {
+							
+							for ( String codigo : new String[] {"497", "498", "499"} ) {
+								dataSolicitadoBuilder.setTipo("C");
+								dataSolicitadoBuilder.setCodigo( codigo );
+								dataSolicitadoBuilder.setObligatorio(false);
+								tramoBuilder.addDato(dataSolicitadoBuilder.create());
+							}
+							firstPeriod = false;
+						}
+						
+						
 						trabajadorBuilder.addTramo(tramoBuilder.create());
+						
+						
 						
 					}
 					
@@ -1323,7 +1392,7 @@ public class TrabajadoresTramos {
 	}
 	
 
-	private static List<Period> insert(List<Period> periods, Period period) {
+	private static List<Period> __insert(List<Period> periods, Period period) {
 		List<Period> insert = new ArrayList<Period>();
 		for ( Period p : periods )
 			insert.addAll(p.sub(period))   ;
@@ -1336,6 +1405,21 @@ public class TrabajadoresTramos {
 		return insert;
 	}
 	
+	private static List<Period> insert(List<Period> periods, Period period) {
+		List<Period> insert = new ArrayList<Period>();
+		for ( Period p : periods ) {
+			Period intersect = p.intersect(period);
+			if ( intersect != null)
+				insert.add(p.intersect(period));
+			insert.addAll(p.sub(period));
+		}
+		insert.addAll(period.sub(period, periods));
+		
+		Collections.sort(insert);
+		
+		return insert;
+	}
+
 	private static List<Period> merge(Salary salary, List<Period> periods) {
 		LinkedList<Period> cretaPeriods = new LinkedList<Period>();
 		
@@ -1394,6 +1478,11 @@ public class TrabajadoresTramos {
 				@Override
 				public void visitGrupoCotizacionMensual() {
 				}
+				
+				@Override
+				public void visitSinPerciboRetribucion() {
+					cretaPeriods.add(new Period(period.getStart(), period.getEnd()));
+				}
 
 				@Override
 				public void visitIncapacidadTemporal15PrimerosDias() {
@@ -1447,6 +1536,11 @@ public class TrabajadoresTramos {
 
 				@Override
 				public void visitMaternidadPaternidadTiempoParcialFormacion() {
+					cretaPeriods.add(new Period(period.getStart(), period.getEnd()));
+				}
+
+				@Override
+				public void visitMaternidadPaternidadTiempoParcialIT15PrimerosDias() {
 					cretaPeriods.add(new Period(period.getStart(), period.getEnd()));
 				}
 
@@ -1524,6 +1618,10 @@ public class TrabajadoresTramos {
 				}
 
 				@Override
+				public void visitSinPerciboRetribucion() {
+				}
+
+				@Override
 				public void visitIncapacidadTemporal15PrimerosDias() {
 					Period last = cretaPeriods.removeLast();
 					cretaPeriods.add(new Period(last.getStart(), period.getEnd()));
@@ -1576,6 +1674,11 @@ public class TrabajadoresTramos {
 
 				@Override
 				public void visitMaternidadPaternidadTiempoParcialFormacion() {
+					visitOthers();					
+				}
+
+				@Override
+				public void visitMaternidadPaternidadTiempoParcialIT15PrimerosDias() {
 					visitOthers();					
 				}
 
@@ -1653,6 +1756,11 @@ public class TrabajadoresTramos {
 				}
 
 				@Override
+				public void visitSinPerciboRetribucion() {
+					visitOthers();
+				}
+
+				@Override
 				public void visitIncapacidadTemporal15PrimerosDias() {
 					cretaPeriods.add(new Period(period.getStart(), period.getEnd()));
 					state = it15PrimerosDias;
@@ -1707,6 +1815,11 @@ public class TrabajadoresTramos {
 
 				@Override
 				public void visitMaternidadPaternidadTiempoParcialFormacion() {
+					visitOthers();
+				}
+
+				@Override
+				public void visitMaternidadPaternidadTiempoParcialIT15PrimerosDias() {
 					visitOthers();
 				}
 
@@ -1783,6 +1896,11 @@ public class TrabajadoresTramos {
 				}
 
 				@Override
+				public void visitSinPerciboRetribucion() {
+					visitOthers();
+				}
+
+				@Override
 				public void visitIncapacidadTemporal15PrimerosDias() {
 					visitOthers();
 				}
@@ -1835,6 +1953,10 @@ public class TrabajadoresTramos {
 				@Override
 				public void visitMaternidadPaternidadTiempoParcialFormacion() {
 					visitOthers();					
+				}
+
+				@Override
+				public void visitMaternidadPaternidadTiempoParcialIT15PrimerosDias() {
 				}
 
 				@Override
@@ -1916,6 +2038,11 @@ public class TrabajadoresTramos {
 			}
 
 			@Override
+			public void visitSinPerciboRetribucion() {
+				state.visitSinPerciboRetribucion();
+			}
+
+			@Override
 			public void visitIncapacidadTemporal15PrimerosDias() {
 				state.visitIncapacidadTemporal15PrimerosDias();
 			}
@@ -1969,7 +2096,12 @@ public class TrabajadoresTramos {
 			public void visitMaternidadPaternidadTiempoParcialFormacion() {
 				state.visitMaternidadPaternidadTiempoParcialFormacion();
 			}
-
+			
+			@Override
+			public void visitMaternidadPaternidadTiempoParcialIT15PrimerosDias() {
+				state.visitMaternidadPaternidadTiempoParcialFormacion();
+			}
+			
 			@Override
 			public void visitIncapacidadTemporalATEPPagoDelegadoFormacion() {
 				state.visitIncapacidadTemporalATEPPagoDelegadoFormacion();
@@ -2065,6 +2197,7 @@ public class TrabajadoresTramos {
 		void visitFormacionEnAlternanciaNormal();
 		void visitGrupoCotizacionDiario();
 		void visitGrupoCotizacionMensual();
+		void visitSinPerciboRetribucion();
 		void visitIncapacidadTemporal15PrimerosDias();
 		void visitIncapacidadTemporalPagoDelegado();
 		void visitIncapacidadTemporalPagoDirecto();
@@ -2077,6 +2210,7 @@ public class TrabajadoresTramos {
 		void visitExpedienteRegulacionEmpleoParcialFormacion();
 		void visitMaternidadPaternidadTiempoParcialFormacion();
 		void visitIncapacidadTemporalATEPPagoDelegadoFormacion();
+		void visitMaternidadPaternidadTiempoParcialIT15PrimerosDias();
 		void visitExpedienteRegulacionEmpleoParcialFormacionEnAlternancia();
 		void visitMaternidadPaternidadTiempoParcialFormacionEnAlternancia();
 		
@@ -2164,8 +2298,14 @@ public class TrabajadoresTramos {
 		boolean jornadasReales = getContextData(ContextVariable.DO_DAYS.getName(), salary, startDate, endDate,  0.00) > 0.00;
 		
 		boolean ppe = getSumContextData(ContextVariable.BASE_PPE.getName(), salary, startDate, endDate)  > 0.00;
+		
+		boolean unpaid = getSumContextData(ContextVariable.UNPAID_BASE.getName(), salary, startDate, endDate)  > 0.00;
 
-			if ( becarios )
+		String quoteGroup = getContextData(QUOTE_GROUP.getName(), salary, startDate, endDate,  "01");
+
+		if ( unpaid )
+			visitor.visitSinPerciboRetribucion();
+		else if ( becarios )
 			if ( iTPagoDelegado )
 				visitor.visitIncapacidadTemporalPagoDelegadoFormacion();
 			else if ( atEPPagoDelegado )
@@ -2219,7 +2359,13 @@ public class TrabajadoresTramos {
 			else
 				visitor.visitFormacionEnAlternanciaNormal();
 		else if ( iT15primerosDias )
-			visitor.visitIncapacidadTemporal15PrimerosDias();
+			if ( iTMaternity && partialMaternity )
+				visitor.visitMaternidadPaternidadTiempoParcialIT15PrimerosDias();
+			else if ( iTPaternity && partialPaternity )
+				visitor.visitMaternidadPaternidadTiempoParcialIT15PrimerosDias();
+			else 
+				visitor.visitIncapacidadTemporal15PrimerosDias();
+			
 		else if ( iTPagoDelegado )
 			visitor.visitIncapacidadTemporalPagoDelegado();
 		else if ( iTMaternity &&  fullMaternity  )
@@ -2251,7 +2397,6 @@ public class TrabajadoresTramos {
 			visitor.visitExpedienteRegulacionEmpleoParcial();
 
 		Visit grupoCotizacion ;
-		String quoteGroup = getContextData(QUOTE_GROUP.getName(), salary, startDate, endDate,  "01");
 		if ( formacionEnAlternancia )
 		    	grupoCotizacion = visitor::visitGrupoCotizacionMensual;
 		else if ( jornadasReales )

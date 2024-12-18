@@ -118,7 +118,7 @@ public class SQLSolidarityTestCase extends AbstractSQLTestCase {
 			getFirstDayOfYear(getToday()), 
 			Collections.singletonMap(ContextVariable.QUOTE_GROUP.getName(), "\"05\""),
 			new String[] { 
-					"7500.00 * DIAS_TRABAJADOS / DIAS_MES",
+					"8500.00 * DIAS_TRABAJADOS / DIAS_MES",
 			}, 
 			new String[] {
 			},
@@ -141,7 +141,8 @@ public class SQLSolidarityTestCase extends AbstractSQLTestCase {
 		
 		Salary salary = new SmartContractSalaryCalculator<Salary>(new SalaryBuilder()).calculate(ctx);
 		
-		salary.getSalaryDeductions().forEach( d -> System.out.println(d.getExpression() + " : " + d.getAmount() ));
+//		salary.getSalaryDeductions().forEach( d -> System.out.println(d.getExpression() + " : " + d.getAmount() ));
+		salary.getSalaryDatas().forEach( d -> System.out.println(d.getName() + " : " + d.getExpression() ));
 		
 		List<SalaryData> base497 = salary.getSalaryDatas().stream()
 		.filter( data ->  Objects.equals("BASE_SOLIDARIDAD_I", data.getName()))
@@ -149,16 +150,18 @@ public class SQLSolidarityTestCase extends AbstractSQLTestCase {
 		.toList();
 		
 		assertEquals(1, base497.size());
-		assertEquals(472.05, Double.parseDouble(base497.get(0).getExpression()), DELTA);
+		
+		double monthDays = AonDateUtils.get(endDate, Calendar.DAY_OF_MONTH); 
+
+		assertEquals(4720.5 / 30.00 * monthDays * 0.10 , Double.parseDouble(base497.get(0).getExpression()), DELTA);
 		
 		List<SalaryData> base498 = salary.getSalaryDatas().stream()
 		.filter( data ->  Objects.equals("BASE_SOLIDARIDAD_II", data.getName()))
 		.peek( data -> assertEquals(startDate, data.getStartDate()) )
 		.toList();
 		
-		double monthDays = AonDateUtils.get(endDate, Calendar.DAY_OF_MONTH); 
 		assertEquals(1, base498.size());
-		assertEquals(1888.2 , Double.parseDouble(base498.get(0).getExpression()), DELTA);
+		assertEquals(4720.5 / 30.00 * monthDays * 0.40  , Double.parseDouble(base498.get(0).getExpression()), DELTA);
 		
 		List<SalaryData> base499 = salary.getSalaryDatas().stream()
 		.filter( data ->  Objects.equals("BASE_SOLIDARIDAD_III", data.getName()))
@@ -166,9 +169,15 @@ public class SQLSolidarityTestCase extends AbstractSQLTestCase {
 		.toList();
 		
 		
-		double dailyBase = 7500.00 / monthDays ;
+		double dailyBase = 8500.00 / monthDays ;
 		assertEquals(1, base499.size());
-		assertEquals(419.25 - dailyBase , Double.parseDouble(base499.get(0).getExpression()), DELTA);
+		assertEquals(
+				(dailyBase  * 30.00  )
+				- ( 4720.5 / 30.00 * monthDays ) 
+				- Double.parseDouble(base497.get(0).getExpression()) 
+				- Double.parseDouble(base498.get(0).getExpression())
+				, 
+				Double.parseDouble(base499.get(0).getExpression()), DELTA);
 
 	}
 
@@ -467,9 +476,11 @@ public class SQLSolidarityTestCase extends AbstractSQLTestCase {
 		assertEquals(0, base499.size());
 
 	}
+	private static void addSolidarityBases(AONContext aonContext) {
+		addSolidarityBases(aonContext, getFirstDayOfYear(getToday()));
+	}
 
-	private void addSolidarityBases(AONContext aonContext) {
-		Date startDate = getFirstDayOfYear(getToday());
+	protected static  void addSolidarityBases(AONContext aonContext, Date startDate) {
 		addSSRegimeData(aonContext, SSRegimeType.GENERAL,
 				startDate, 
 				null,
