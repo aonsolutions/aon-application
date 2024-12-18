@@ -142,6 +142,7 @@ export const AON_MOBILE_CREDITOR = 'aon-mobile-creditor';
 export const AON_MOBILE_CREDITOR_LIST = 'aon-mobile-creditor-list';
 
 export const AON_DRAGLEFT = 'aon-dragleft';
+export const AON_DRAGLEFT_NOTIFICATION = 'aon-dragleft-notification';
 
 export const AON_PROJECT_PANEL = 'aon-project-panel';
 export const AON_PROJECT_LIST = 'aon-project-list';
@@ -185,6 +186,8 @@ export const AON_WAREHOUSE = 'aon-warehouse';
 
 export const AON_MOBILE_SALES_LIST = 'aon-mobile-sales-list';
 export const AON_MOBILE_SALE = 'aon-mobile-sale';
+export const AON_MOBILE_DESKTOP = 'aon-mobile-desktop';
+export const AON_MOBILE_HOME = 'aon-mobile-home';
 export const AON_SALES_LIST = 'aon-sales-list';
 export const AON_SALES = 'aon-sales';
 

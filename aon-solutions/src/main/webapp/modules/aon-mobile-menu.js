@@ -24,6 +24,8 @@ import { AonImageEditor } from "../components/aon-image-editor.js";
 
 import * as WAREHOUSE_OPTION from './warehouse/WarehouseOptions.js';
 import { AonUploadToast } from "../components/aon-upload-toast.js";
+import { AonMobileHome } from "./home/aon-mobile-home.js";
+import { AonMobileDesktop } from "./company/aon-mobile-desktop.js";
 
 export class AonMobileMenu extends AonElement {
 
@@ -235,7 +237,9 @@ export class AonMobileMenu extends AonElement {
     if(LS.getCompany()) {
       let aonHeader = this.getElement("aonHeader");
       aonHeader.companyIn();
-      this.rootPanelHtml('<aon-mobile-desktop id="aonDesktop"></aon-mobile-desktop>');
+      this.rootPanel(UA.isAndroidApp() 
+        ? new AonMobileHome()
+        : new AonMobileDesktop());
     } else {
       let aonHeader = this.getElement("aonHeader");
       aonHeader.companyOut();

@@ -5,11 +5,13 @@ import { AonLogin } from './login/aon-login.js';
 import { AonHome } from './aon-home.js';
 import { TAG } from '../environments/environments.js'; 
 import * as LS  from '../services/localStorageService.js';
+import * as UA  from '../services/userAgentService.js';
 import './company/aon-mobile-parent.js';
 import { AonLoader } from '../components/aon-loader.js';
 import { AonNewLogin } from './login/aon-new-login.js';
 import { AonParent } from 'aonparent';
 import { AonMobileParent } from './company/aon-mobile-parent.js';
+import { AonMobileHome } from './home/aon-mobile-home.js';
 
 export class AonModule extends AonElement {
 
@@ -137,9 +139,13 @@ export class AonModule extends AonElement {
 			aonMenu.init();
 		} else aonHeader.companyIn(onlyOne);
 
-		this.rootPanelHtml(this.isMobile()
+		if(UA.isAndroidApp()) {
+			this.rootPanel(new AonMobileHome());
+		} else {
+			this.rootPanelHtml(this.isMobile()
 			? '<aon-mobile-desktop id="aonDesktop"></aon-mobile-desktop>'
 			: '<aon-desktop id="aonDesktop"></aon-desktop>');
+		}
 	}
 
 	async orientationLocked(){

@@ -18,7 +18,7 @@ import { AonTimecontrol } from './timecontrol/aon-timecontrol.js';
 import { AonWarehouse } from './warehouse/aon-warehouse.js';
 import { AonConsole } from './console/aon-console.js';
 import { AonMarketing } from './marketing/aon-marketing.js';
-import { AonDragLeft } from './company/aon-dragleft.js';
+import { AonDragLeftNotification } from './home/aon-dragleft-notification.js';
 
 
 export class AonApps extends AonElement {
@@ -122,8 +122,6 @@ export class AonApps extends AonElement {
 		}
   	
 		this.appendChild(ul);
-		let drag = new AonDragLeft();
-		this.appendChild(drag);	
 	}
 
 	buildTitle(title) {

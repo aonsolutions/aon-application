@@ -374,6 +374,6 @@ export class AonMobileDesktop extends AonElement {
 	}
 
 }
-if(!window.customElements.get('aon-mobile-desktop')){
-	window.customElements.define('aon-mobile-desktop', AonMobileDesktop);
+if(!window.customElements.get(TAG.AON_MOBILE_DESKTOP)){
+	window.customElements.define(TAG.AON_MOBILE_DESKTOP, AonMobileDesktop);
 }

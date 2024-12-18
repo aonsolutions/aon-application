@@ -22,6 +22,8 @@ import { AonMobileParent } from "../company/aon-mobile-parent.js";
 import { AonParent } from "aonparent";
 import { createEmail, createInput } from "../../components/CreateComponent.js";
 import { changeUrl } from "../../services/actionService.js";
+import { AonMobileHome } from "../home/aon-mobile-home.js";
+import { AonMobileDesktop } from "../company/aon-mobile-desktop.js";
 
 export class AonLogin extends AonElement {
   tag;
@@ -437,9 +439,9 @@ export class AonLogin extends AonElement {
 
     getUser().then(user => {
       localStorage.setItem('aon_domain_login', user.login);
-      this.rootPanelHtml(this.isMobile()
-          ? '<aon-mobile-desktop id="aonDesktop"></aon-mobile-desktop>'
-          : '<aon-desktop id="aonDesktop"></aon-desktop>');
+      this.rootPanel(UA.isAndroidApp() 
+          ? new AonMobileHome()
+          : new AonMobileDesktop());
     });
   }
 

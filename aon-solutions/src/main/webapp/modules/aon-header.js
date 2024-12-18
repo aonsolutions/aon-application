@@ -7,7 +7,6 @@ import '../components/aon-icon-button.js';
 import '../components/aon-search-box.js';
 import './configuration/aon-configuration.js';
 import './company/aon-desktop.js';
-import './company/aon-mobile-desktop.js';
 import './notification/aon-notification-icon.js';
 import { CONSTANT, CSS, MATERIAL_ICONS, MSG, TAG } from '../environments/environments.js';
 import { DomainUserRoles } from '../models/DomainUserRoles.js';
@@ -230,9 +229,7 @@ export class AonHeader extends AonElement {
 
 			let aonHeaderHomeButton = this.getElement(this.BASE_ID + 'HomeButton');
 			aonHeaderHomeButton.addEventListener('click', () => {
-				this.rootPanelHtml(this.isMobile()
-					? '<aon-mobile-desktop id="aonDesktop"></aon-mobile-desktop>'
-					: '<aon-desktop id="aonDesktop"></aon-desktop>');
+				this.rootPanelHtml('<aon-desktop id="aonDesktop"></aon-desktop>');
 				let aonDesktop = this.getElement('aonDesktop');
 				aonDesktop.setAttribute('company', this.getAttribute('company'));
 			});
@@ -544,9 +541,7 @@ export class AonHeader extends AonElement {
 
 		aonLogo.addEventListener('click', () => {
 			if(LS.getDomainId()){
-				this.rootPanelHtml(this.isMobile()
-					? '<aon-mobile-desktop id="aonDesktop"></aon-mobile-desktop>'
-					: '<aon-desktop id="aonDesktop"></aon-desktop>');
+				this.rootPanelHtml('<aon-desktop id="aonDesktop"></aon-desktop>');
 				let aonDesktop = this.getElement('aonDesktop');
 				aonDesktop.setAttribute('company', this.getAttribute('company'));
 			} else {

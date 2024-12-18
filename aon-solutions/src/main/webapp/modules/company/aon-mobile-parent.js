@@ -3,6 +3,9 @@ import {closeSession, getCompanies, getUser} from  '../../services/service.js';
 import { CSS, EVENT, MSG, TAG } from '../../environments/environments.js';
 import { AonToolbar } from '../../components/aon-toolbar.js';
 import '../../components/aon-application.js';
+import { AonMobileHome } from '../home/aon-mobile-home.js';
+import { AonMobileDesktop } from './aon-mobile-desktop.js';
+import * as UA  from '../../services/userAgentService.js';
 
 export class AonMobileParent extends AonElement {
 
@@ -158,9 +161,9 @@ export class AonMobileParent extends AonElement {
 	  this.getElement(aonHeader.COMPANY_LIST).style.display = 'block';
       getUser().then(user => {
         localStorage.setItem('aon_domain_login', user.login);
-        this.rootPanelHtml(this.isMobile()
-            ? '<aon-mobile-desktop id="aonDesktop"></aon-mobile-desktop>'
-            : '<aon-desktop id="aonDesktop"></aon-desktop>');  
+        this.rootPanel(UA.isAndroidApp() 
+			? new AonMobileHome()
+			: new AonMobileDesktop());
       });
     }
 

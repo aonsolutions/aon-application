@@ -13,6 +13,8 @@ import { changeStatusBarColor } from '../services/actionService.js';
 
 import * as LS from '../services/localStorageService.js';
 import * as UA from '../services/userAgentService.js';
+import { AonMobileDesktop } from './company/aon-mobile-desktop.js';
+import { AonMobileHome } from './home/aon-mobile-home.js';
 
 export class AonNewMobileHeader extends AonElement {
 
@@ -248,10 +250,14 @@ export class AonNewMobileHeader extends AonElement {
 	home() {
 		if(LS.getCompany()) {
 			this.companyIn();
-			this.rootPanelHtml('<aon-mobile-desktop id="aonDesktop"></aon-mobile-desktop>');
+			this.rootPanel(UA.isAndroidApp() 
+				? new AonMobileHome()
+				: new AonMobileDesktop());
 		} else {
 			this.companyOut();
-			this.rootPanelHtml('<aon-mobile-parent id="aonParent"></aon-mobile-parent>');
+			this.rootPanel(UA.isAndroidApp() 
+				? new AonMobileHome()
+				: new AonMobileDesktop());
 		}
 	}
 
