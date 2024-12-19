@@ -114,22 +114,6 @@ public class MainContrataIT extends MainEntryPoint {
 		}
 
 		@Override
-		protected void comunicateIT(ITEmployee itEmployee, IT it, Consumer<Void> success, Consumer<Throwable> failure) {
-			mainContrataITObject.comunicateITBaja(itEmployee, it, 
-				success::accept, 
-				d -> {}
-			);
-		}
-
-		@Override
-		protected void comunicatePaternityIT(ITEmployee itEmployee, IT it, Consumer<Void> success, Consumer<Throwable> failure) {
-			mainContrataITObject.comunicatePaternityIT(itEmployee, it, 
-				success::accept, 
-				d -> {}
-			);
-		}
-
-		@Override
 		protected void getNafxIpf(ITEmployee itEmployee, Consumer<EmployeeSegSocial> success, Consumer<Throwable> failure) {
 			mainContrataITObject.getNafxIpf(itEmployee, 
 				success::accept,  
@@ -146,8 +130,8 @@ public class MainContrataIT extends MainEntryPoint {
 		
 		
 		@Override
-		protected void communicateITPart(ITEmployee itEmployee, IT it, ITPart itPart, Consumer<Void> success, Consumer<Throwable> failure) {
-			mainContrataITObject.communicateITPart(itEmployee, it, itPart,
+		protected void sendEconomicData(ITEmployee itEmployee, IT it, ITPart itPart, Consumer<Void> success, Consumer<Throwable> failure) {
+			mainContrataITObject.sendEconomicData(itEmployee, it, itPart,
 					success::accept, 
 					failure::accept);
 		}

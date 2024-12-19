@@ -178,7 +178,6 @@ import com.esferalia.aon.occam.api.model.security.CertificateNotFoundException;
 import com.esferalia.aon.occam.api.model.security.CertificateType;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.type.ContractLeaveDetailType;
-import com.esferalia.aon.occam.api.model.type.ContractLeaveDischargeCause;
 import com.esferalia.aon.occam.api.model.type.ContractLeaveType;
 import com.esferalia.aon.occam.api.model.type.DeductionType;
 import com.esferalia.aon.occam.api.model.type.DeductionType.Visitor;
@@ -3494,113 +3493,6 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 	}
 
 	@Override
-	public void registerITBaja(String domainName, String userLogin, String regime, String ccc, String naf,
-			String contingency, String situation_employee, String licenseNumber,
-			String cias, String occupation, java.util.Date startdate, String contractType,
-			float baseCot, int cotDays, java.util.Date fATEP, String accidentType, String job, String jobDescription) {
-		
-		try(Connection connection = AonServletUtils.getConnection(domainName)) {
-			Integer domainId = AonServletUtils.getDomainID(domainName);
-			Integer parentDomainId = AonServletUtils.getParentDomainID(domainName); 
-			Integer userId = AonServletUtils.getUserID(connection, userLogin, domainId, parentDomainId);	
-			
-			Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId, "TGSS");
-			
-			SistemaRED.registerITBaja(
-					certificate.getData(), 
-					certificate.getPassword(), 
-					certificate.getType(), 
-					regime, 
-					ccc, 
-					naf, 
-					SistemaRED.Contingencies.valueOf(contingency), 
-					SistemaRED.SituationEmployee.valueOf(situation_employee), 
-					startdate, 
-					SistemaRED.ContractType.valueOf(contractType), 
-					baseCot, 
-					cotDays,
-					Optional.of(fATEP), 
-					Optional.of(SistemaRED.AccidentType.valueOf(accidentType)),
-					Optional.of(licenseNumber), 
-					Optional.of(cias),
-					Optional.of(occupation),
-					Optional.of(job),
-					Optional.of(jobDescription));
-			
-		} catch (SQLException | SegSocialException e) {
-			throw new RuntimeException(e);
-		}
-	}
-
-	@Override
-	public void registerITConfirmation(String domainName, String userLogin, String regime, String ccc, String naf,
-			String contingency, String situation_employee, String licenseNumber,
-			String cias, java.util.Date fbaja, java.util.Date fconfirmation,
-			String npartConfimation) {
-		
-		try(Connection connection = AonServletUtils.getConnection(domainName)) {
-			Integer domainId = AonServletUtils.getDomainID(domainName);
-			Integer parentDomainId = AonServletUtils.getParentDomainID(domainName); 
-			Integer userId = AonServletUtils.getUserID(connection, userLogin, domainId, parentDomainId);	
-			
-			Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId, "TGSS");
-			
-			SistemaRED.registerITConfirmation(
-					certificate.getData(), 
-					certificate.getPassword(), 
-					certificate.getType(), 
-					regime, 
-					ccc, 
-					naf, 
-					SistemaRED.Contingencies.values()[Integer.parseInt(contingency)], 
-					SistemaRED.SituationEmployee.values()[Integer.parseInt(situation_employee)], 
-					Optional.of(licenseNumber), 
-					Optional.of(cias), 
-					fbaja, 
-					fconfirmation, 
-					Optional.of(npartConfimation));
-			
-		} catch (SQLException | SegSocialException e) {
-			throw new RuntimeException(e);
-		}
-	}
-
-	@Override
-	public void registerITAlta(String domainName, String userLogin, String regime, String ccc, String naf,
-			String contingency, String situation_employee, String licenseNumber,
-			String cias, java.util.Date fbaja, java.util.Date falta, java.util.Date fATEP,
-			String accidentType, String causeType) {
-		
-		try(Connection connection = AonServletUtils.getConnection(domainName)) {
-			Integer domainId = AonServletUtils.getDomainID(domainName);
-			Integer parentDomainId = AonServletUtils.getParentDomainID(domainName); 
-			Integer userId = AonServletUtils.getUserID(connection, userLogin, domainId, parentDomainId);	
-			
-			Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId, "TGSS");
-			
-			SistemaRED.registerITAlta(
-					certificate.getData(), 
-					certificate.getPassword(), 
-					certificate.getType(), 
-					regime, 
-					ccc, 
-					naf, 
-					SistemaRED.Contingencies.values()[Integer.parseInt(contingency)], 
-					SistemaRED.SituationEmployee.values()[Integer.parseInt(situation_employee)], 
-					fbaja, 
-					falta, 
-					Optional.of(fATEP), 
-					Optional.of(SistemaRED.AccidentType.values()[Integer.parseInt(accidentType)]), 
-					SistemaRED.CauseType.values()[Integer.parseInt(causeType)],
-					Optional.of(licenseNumber), 
-					Optional.of(cias));
-			
-		} catch (SQLException | SegSocialException e) {
-			throw new RuntimeException(e);
-		}
-	}
-
-	@Override
 	public String getContratoSepe(String domainName, String userLogin, String ipf, java.util.Date startDate, java.util.Date endDate) {
 		try(Connection connection = AonServletUtils.getConnection(domainName)) {
 			Integer domainId = AonServletUtils.getDomainID(domainName);
@@ -4991,7 +4883,7 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 	// ------------------------------------------------ Partes IT
 
 	@Override
-	public void communicateITPart(String domainName, String userLogin, ITEmployee empIt, IT it, ITPart part) throws IllegalArgumentException {
+	public void sendEconomicData(String domainName, String userLogin, ITEmployee empIt, IT it, ITPart part) throws IllegalArgumentException {
 		
 		try(Connection connection = AonServletUtils.getConnection(domainName)) {
 			Integer domainId = AonServletUtils.getDomainID(domainName);
@@ -5025,23 +4917,13 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 			
 			//EXAMPLE IT BAJA
 			EmployeeITPart newPart = parseITPart(part);
-			switch (newPart.getType()) {
-				case BAJA:
-					parseITData(employeeIT, it);
-					employeeIT.setContractType(contractInfo.isPartial() ? EmployeeIT.ContractType.FIJO_DISCONTINUO_Y_TIEMPO_PARCIAL : EmployeeIT.ContractType.RESTO_Y_AUTONOMOS);
-				break;
-				case CONFIRMACION:
-				break;
-				case ALTA:
-					employeeIT.setDischargeCause(ContractLeaveDischargeCause.safeValueOf(it.getTypeHighPart()));
-				break;
-			}
-			
+			parseITData(employeeIT, it);
+			employeeIT.setContractType(contractInfo.isPartial() ? EmployeeIT.ContractType.FIJO_DISCONTINUO_Y_TIEMPO_PARCIAL : EmployeeIT.ContractType.RESTO_Y_AUTONOMOS);
 			employeeIT.addITPart(newPart);
 			
 			System.out.println(employeeIT);
 			
-			List<String> messages = ITComunica.communicateITs(certificate.getData(), certificate.getPassword(), certificate.getType(), employeeIT);
+			List<String> messages = ITComunica.sendEconomicData(certificate.getData(), certificate.getPassword(), certificate.getType(), employeeIT);
 			if(!messages.isEmpty()) {
 				String msg = messages.stream().filter(m-> m!=null && !m.equals("success")).collect(Collectors.joining(", "));
 				if(!msg.isEmpty()) {

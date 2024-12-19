@@ -107,16 +107,6 @@ public class EnterpriseIT extends Composite {
 		}
 
 		@Override
-		protected void comunicateIT(ITEmployee itEmployee, IT it, Consumer<Void> success, Consumer<Throwable> failure) {
-			enterpriseITObject.comunicateITBaja(itEmployee, it, success::accept, failure::accept);
-		}
-
-		@Override
-		protected void comunicatePaternityIT(ITEmployee itEmployee, IT it, Consumer<Void> success, Consumer<Throwable> failure) {
-			enterpriseITObject.comunicatePaternityIT(itEmployee, it, success::accept, failure::accept);
-		}
-
-		@Override
 		protected void getNafxIpf(ITEmployee itEmployee, Consumer<EmployeeSegSocial> success, Consumer<Throwable> failure) {
 			enterpriseITObject.getNafxIpf(itEmployee, success::accept, failure::accept);
 		}
@@ -127,8 +117,8 @@ public class EnterpriseIT extends Composite {
 		}
 
 		@Override
-		protected void communicateITPart(ITEmployee itEmployee, IT it, ITPart part, Consumer<Void> success, Consumer<Throwable> failure) {
-			enterpriseITObject.communicateITPart(itEmployee, it, part, success::accept, failure::accept);
+		protected void sendEconomicData(ITEmployee itEmployee, IT it, ITPart part, Consumer<Void> success, Consumer<Throwable> failure) {
+			enterpriseITObject.sendEconomicData(itEmployee, it, part, success::accept, failure::accept);
 		}
 
 		@Override

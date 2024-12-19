@@ -852,37 +852,6 @@ public class EnterprisesServiceAsyncDecorator implements
 	}
 
 	@Override
-	public void registerITBaja(String domainName, String userLogin, String regime, String ccc, String naf,
-			String contingency, String situation_employee, String licenseNumber,
-			String cias, String occupation, Date startdate, String contractType,
-			float baseCot, int cotDays, Date fATEP, String accidentType, String job, String jobDescription,
-			AsyncCallback<Void> callback) {
-		AON.start();
-		enterprisesServiceAsync.registerITBaja(domainName, userLogin, regime, ccc, naf, contingency, situation_employee, licenseNumber,
-				cias, occupation, startdate, contractType, baseCot, cotDays, fATEP, accidentType, job, jobDescription, new AsyncCallbackWrapper<Void>(callback));
-	}
-
-	@Override
-	public void registerITConfirmation(String domainName, String userLogin, String regime, String ccc, String naf,
-			String contingency, String situation_employee, String licenseNumber,
-			String cias, Date fbaja, Date fconfirmation, String npartConfimation,
-			AsyncCallback<Void> callback) {
-		AON.start();
-		enterprisesServiceAsync.registerITConfirmation(domainName, userLogin, regime, ccc, naf,
-				contingency, situation_employee, licenseNumber, cias, fbaja, fconfirmation, npartConfimation, new AsyncCallbackWrapper<Void>(callback));
-	}
-
-	@Override
-	public void registerITAlta(String domainName, String userLogin, String regime, String ccc, String naf,
-			String contingency, String situation_employee, String licenseNumber,
-			String cias, Date fbaja, Date falta, Date fATEP, String accidentType,
-			String causeType, AsyncCallback<Void> callback) {
-		AON.start();
-		enterprisesServiceAsync.registerITAlta(domainName, userLogin, regime, ccc, naf, contingency, situation_employee, licenseNumber,
-				cias, fbaja, falta, fATEP, accidentType, causeType, new AsyncCallbackWrapper<Void>(callback));
-	}
-
-	@Override
 	public void getContratoSepe(String domainName, String userLogin, String ipf, Date startDate, Date endDate, AsyncCallback<String> callback) {
 		AON.start();
 		enterprisesServiceAsync.getContratoSepe(domainName, userLogin, ipf, startDate, endDate, new AsyncCallbackWrapper<String>(callback));
@@ -1025,10 +994,10 @@ public class EnterprisesServiceAsyncDecorator implements
 	}
 
 	@Override
-	public void communicateITPart(String currentDomainName, String currentUser, ITEmployee itEmployee, IT it, ITPart part,
+	public void sendEconomicData(String currentDomainName, String currentUser, ITEmployee itEmployee, IT it, ITPart part,
 			AsyncCallback<Void> asyncCallback) throws IllegalArgumentException {
 		AON.start();
-		enterprisesServiceAsync.communicateITPart(currentDomainName, currentUser, itEmployee, it, part, asyncCallback);
+		enterprisesServiceAsync.sendEconomicData(currentDomainName, currentUser, itEmployee, it, part, asyncCallback);
 	}
 
 	@Override

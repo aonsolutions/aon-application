@@ -115,22 +115,6 @@ public class WorkplaceIT extends Composite {
 		}
 
 		@Override
-		protected void comunicateIT(ITEmployee itEmployee, IT it, Consumer<Void> success, Consumer<Throwable> failure) {
-			workplaceITObject.comunicateITBaja(itEmployee, it, 
-					success::accept,  
-					d -> {}
-			);
-		}
-
-		@Override
-		protected void comunicatePaternityIT(ITEmployee itEmployee, IT it, Consumer<Void> success, Consumer<Throwable> failure) {
-			workplaceITObject.comunicatePaternityIT(itEmployee, it, 
-					success::accept,  
-					d -> {}
-			);
-		}
-
-		@Override
 		protected void getNafxIpf(ITEmployee itEmployee, Consumer<EmployeeSegSocial> success, Consumer<Throwable> failure) {
 			workplaceITObject.getNafxIpf(itEmployee, 
 					success::accept,  
@@ -146,8 +130,8 @@ public class WorkplaceIT extends Composite {
 		}
 
 		@Override
-		protected void communicateITPart(ITEmployee itEmployee, IT it, ITPart itPart, Consumer<Void> success, Consumer<Throwable> failure) {
-			workplaceITObject.communicateITPart(itEmployee, it, itPart,
+		protected void sendEconomicData(ITEmployee itEmployee, IT it, ITPart itPart, Consumer<Void> success, Consumer<Throwable> failure) {
+			workplaceITObject.sendEconomicData(itEmployee, it, itPart,
 					success::accept, 
 					failure::accept);
 		}

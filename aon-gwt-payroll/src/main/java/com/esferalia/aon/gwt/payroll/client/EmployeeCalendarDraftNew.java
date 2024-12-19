@@ -5,7 +5,6 @@ import java.util.Collections;
 import java.util.Date;
 
 import com.esferalia.aon.gwt.common.client.AON;
-import com.esferalia.aon.gwt.common.client.widget.solutions.AonConfirmDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog.AonAcceptDialogCallback;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
@@ -1646,20 +1645,6 @@ public class EmployeeCalendarDraftNew extends Composite implements ContextMenuHa
 					},
 					f -> {});
 		}
-	}
-	
-	private void comunicateIT(ITEmployee itEmployee, IT it) {
-		employeeCalendarDraftObject.comunicateITBaja(itEmployee, it, t -> {
-			AonConfirmDialog dialog = new AonConfirmDialog();
-			dialog.info("AVISO: COMUNICA", "El parte IT ha sido comunicado correctamente");
-		}, d -> {});
-	}
-
-	private void comunicatePaternityIT(ITEmployee itEmployee, IT it) {
-		employeeCalendarDraftObject.comunicatePaternityIT(itEmployee, it, t -> {
-			AonConfirmDialog dialog = new AonConfirmDialog();
-			dialog.info("AVISO: COMUNICA", "El parte IT ha sido comunicado correctamente");
-		}, d -> {});
 	}
 	
 	private void getITCertificatePDF(ITEmployee itEmployee, IT it) {

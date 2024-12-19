@@ -546,26 +546,6 @@ public class DomainEnterprisesServiceAsync {
 		enterprisesServiceAsync.checkIfRectificative(getCurrentDomainName(), findingDate, selectedCCCList, asyncCallback);
 	}
 	
-	public void registerITBaja(String regime, String ccc, String naf, String contingency, String situation_employee, 
-			String licenseNumber, String cias, String occupation, Date startdate,
-			String contractType, float baseCot , int cotDays, Date fATEP, String accidentType, String job, String jobDescription, AsyncCallback<Void> asyncCallback) {
-		enterprisesServiceAsync.registerITBaja(getCurrentDomainName(), getCurrentUser(), regime, ccc, naf, contingency, situation_employee,  licenseNumber, cias, 
-				occupation, startdate, contractType, baseCot , cotDays, fATEP, accidentType, job, jobDescription, asyncCallback);
-	}
-	
-	public void registerITConfirmation(String regime, String ccc, String naf, String contingency, String situation_employee, 
-			String licenseNumber, String cias, Date fbaja, Date fconfirmation, String npartConfimation, AsyncCallback<Void> asyncCallback) {
-		enterprisesServiceAsync.registerITConfirmation(getCurrentDomainName(), getCurrentUser(), regime, ccc, naf, contingency, situation_employee, licenseNumber, cias, fbaja, 
-				fconfirmation, npartConfimation, asyncCallback);
-	}
-	
-	public void registerITAlta(String regime, String ccc, String naf, String contingency, String situation_employee, 
-			String licenseNumber, String cias, Date fbaja, Date falta, Date fATEP, 
-			String accidentType, String causeType, AsyncCallback<Void> asyncCallback) {
-		enterprisesServiceAsync.registerITAlta(getCurrentDomainName(), getCurrentUser(), regime, ccc, naf, contingency, situation_employee, 
-				licenseNumber, cias, fbaja, falta, fATEP, accidentType, causeType, asyncCallback);
-	}
-	
 	public void getContratoSepe(String ipf, Date startDate, Date endDate, AsyncCallback<String> asyncCallback) {
 		enterprisesServiceAsync.getContratoSepe(getCurrentDomainName(), getCurrentUser(), ipf, startDate, endDate, asyncCallback);
 	}
@@ -665,8 +645,8 @@ public class DomainEnterprisesServiceAsync {
 	}
 	
 
-	public void communicateITPart(ITEmployee itEmployee, IT it, ITPart part, AsyncCallback<Void> asyncCallback) throws IllegalArgumentException{
-		enterprisesServiceAsync.communicateITPart(getCurrentDomainName(), getCurrentUser(),itEmployee, it, part, asyncCallback);
+	public void sendEconomicData(ITEmployee itEmployee, IT it, ITPart part, AsyncCallback<Void> asyncCallback) throws IllegalArgumentException{
+		enterprisesServiceAsync.sendEconomicData(getCurrentDomainName(), getCurrentUser(),itEmployee, it, part, asyncCallback);
 	}
 
 	public void saveITParts(List<ItNotExist>itNotExist, AsyncCallback<Void> asyncCallback) throws IllegalArgumentException{

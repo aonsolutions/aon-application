@@ -2164,7 +2164,7 @@ public abstract class ITWidget extends ResizeComposite {
 			@Override
 			protected void onCommunicateITPart(IT it, ITPart part) {
 				startLoading(true);
-				communicateITPart(itEmployee, it, part, s -> {
+				sendEconomicData(itEmployee, it, part, s -> {
 
 					normalizeITToSave();
 
@@ -2429,18 +2429,10 @@ public abstract class ITWidget extends ResizeComposite {
 	protected abstract void deletePaternityIT(ITEmployee itEmployee, IT it, Consumer<Void> success,
 			Consumer<Throwable> failure);
 
-	@Deprecated
-	protected abstract void comunicateIT(ITEmployee itEmployee, IT it, Consumer<Void> success,
-			Consumer<Throwable> failure);
-
-	@Deprecated
-	protected abstract void comunicatePaternityIT(ITEmployee itEmployee, IT it, Consumer<Void> success,
-			Consumer<Throwable> failure);
-
 	protected abstract void getNafxIpf(ITEmployee itEmployee, Consumer<EmployeeSegSocial> success,
 			Consumer<Throwable> failure);
 
-	protected abstract void communicateITPart(ITEmployee itEmployee, IT it, ITPart part, Consumer<Void> success,
+	protected abstract void sendEconomicData(ITEmployee itEmployee, IT it, ITPart part, Consumer<Void> success,
 			Consumer<Throwable> failure);
 
 	protected abstract void saveITParts(List<ItNotExist> list, Consumer<Void> success, Consumer<Throwable> failure);

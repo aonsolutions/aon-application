@@ -92,23 +92,6 @@ public class TestSistemaREDITPart {
 	}
 	
 	@Test
-	@Ignore	
-	public void registerItBaja() {
-		try (final InputStream certificateInputStream = new FileInputStream(CERTIFICATE_PATH) ) {
-			Date startDate = new Date();
-			byte[] pdf = SistemaREDITPart.registerItBaja(certificateInputStream, CERTIFICATE_PASSWORD, CERTIFICATE_TYPE, 
-					"0111", "01105360062", "291136796369", 
-					SistemaRED.Contingencies.ACCIDENT_LABORAL, SistemaRED.SituationEmployee.ACTIVO,
-					startDate, SistemaRED.ContractType.RESTO_Y_AUTONOMOS, (float) 844.38, 30, Optional.ofNullable(startDate), Optional.empty(),
-					Optional.empty(), Optional.empty(), Optional.empty(), Optional.empty(), Optional.empty());
-			
-			System.out.println(new String(Base64.getEncoder().encode(pdf)));
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
-	
-	@Test
 	@Ignore
 	public void removeIt() {
 		try (final InputStream certificateInputStream = new FileInputStream(CERTIFICATE_PATH) ) {
@@ -164,33 +147,6 @@ public class TestSistemaREDITPart {
 		
 		}
 		catch (Exception e) {e.printStackTrace();}
-	}
-	
-	@Test
-	@Ignore
-	public void registerItConfirmation() {
-		try (final InputStream certificateInputStream = TestItRegister.class.getResourceAsStream("FNMT.p12")){
-			SistemaREDITPart.registerItConfirmation(certificateInputStream,"jg@FNMT","pkcs12", 
-					"0111", "01105360062", "011011187190", 
-					SistemaRED.Contingencies.ENFERMEDAD_COMUN, SistemaRED.SituationEmployee.ACTIVO, Optional.empty(), Optional.empty(),
-					 Toolkit.addDays(new Date(), -1), new Date(), Optional.empty());
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
-	
-	@Test
-	@Ignore
-	public void registerItAlta() {
-		try (final InputStream certificateInputStream = TestItRegister.class.getResourceAsStream("FNMT.p12")){
-			System.out.println("baja:"+new Date("2021/12/27")+" alta:"+new Date("2022/01/03"));
-			SistemaREDITPart.registerItAlta(certificateInputStream,"jg@FNMT","pkcs12", 
-					"0111", "01105360062", "011011187190", 
-					SistemaRED.Contingencies.ENFERMEDAD_COMUN, SistemaRED.SituationEmployee.ACTIVO,
-					new Date("2021/12/27"), new Date("2022/01/03"), Optional.empty(), Optional.empty(),  SistemaRED.CauseType.CURACION, Optional.empty(), Optional.empty());
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
 	}
 	
 	@Test

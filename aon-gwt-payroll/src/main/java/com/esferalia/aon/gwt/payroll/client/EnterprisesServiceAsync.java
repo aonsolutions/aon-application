@@ -199,17 +199,6 @@ public interface EnterprisesServiceAsync {
 	void getServiAgreementDates(String serviAgreementCode, AsyncCallback<List<Integer>> asyncCallback) throws IllegalArgumentException;
 	void checkIfRectificative(String currentDomainName, Date findingDate, ArrayList<Integer> selectedCCCList,
 			AsyncCallback<Boolean> asyncCallback);
-	void registerITBaja(String domainName, String userLogin, String regime, String ccc, String naf, String contingency,
-			String situation_employee, String licenseNumber, String cias,
-			String occupation, Date startdate, String contractType, float baseCot, int cotDays,
-			Date fATEP, String accidentType, String job, String jobDescription, AsyncCallback<Void> asyncCallback);
-	void registerITConfirmation(String domainName, String userLogin, String regime, String ccc, String naf, String contingency,
-			String situation_employee, String licenseNumber, String cias, Date fbaja,
-			Date fconfirmation, String npartConfimation, AsyncCallback<Void> asyncCallback);
-	void registerITAlta(String domainName, String userLogin, String regime, String ccc, String naf, String contingency,
-			String situation_employee, String licenseNumber, String cias, Date fbaja,
-			Date falta, Date fATEP, String accidentType, String causeType,
-			AsyncCallback<Void> asyncCallback);
 	void getEmployeeInfo(String currentDomainName, Integer contractId,
 			AsyncCallback<EmployeeContractInfo> asyncCallback);
 	void getContratoSepe(String currentDomainName, String currentUser, String ipf, Date startDate, Date endDate,
@@ -246,7 +235,7 @@ public interface EnterprisesServiceAsync {
 	void syncSSBonus(String currentDomainName, String currentUser, Integer contractId, AsyncCallback<List<SSBonusData>> asyncCallback) throws IllegalArgumentException;
 	void getEmployeeSSBonuses(String currentDomainName, Integer contractId, AsyncCallback<List<SSBonusData>> asyncCallback) throws IllegalArgumentException;
 	
-	void communicateITPart(String currentDomainName, String currentUser, ITEmployee itEmployee, IT it, ITPart part, AsyncCallback<Void> asyncCallback) throws IllegalArgumentException;	
+	void sendEconomicData(String currentDomainName, String currentUser, ITEmployee itEmployee, IT it, ITPart part, AsyncCallback<Void> asyncCallback) throws IllegalArgumentException;	
 
 	void saveITParts(String currentDomainName, String currentUser, List<ItNotExist> itNotExist, AsyncCallback<Void> asyncCallback) throws IllegalArgumentException;
 
