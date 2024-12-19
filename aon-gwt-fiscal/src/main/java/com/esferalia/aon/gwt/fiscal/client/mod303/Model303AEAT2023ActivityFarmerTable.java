@@ -43,14 +43,16 @@ class Model303AEAT2023ActivityFarmerTable extends FlowPanel implements HasSelect
 			}
 			String label = AonStringUtils.abbreviate(act.getFullDescription(), 60);
 			if (AonStringUtils.isBlank(label)) {
-				label = "Actividad agr\u00EDcola, ganadera, forestal n\u00AA " + i;
+				label = "Actividad agr\u00EDcola, ganadera, forestal n\u00BA " + i;
 			}
 			actRow.addCell( new Label( label ), AON.CSS.aonFlexGrow1() );
 			actRow.addClickHandler(event -> {
-				clearSelectedIndex();
-				selectedIndex = currentIndex;
-				actRow.addStyleName(AON.CSS.aonBackgroundLigthBlue());
-				SelectionEvent.<Mod303ActivityFarmer>fire(Model303AEAT2023ActivityFarmerTable.this, act);
+				if (callback.getModel().isEditable() || act.isNotEmpty()) {
+					clearSelectedIndex();
+					selectedIndex = currentIndex;
+					actRow.addStyleName(AON.CSS.aonBackgroundLigthBlue());
+					SelectionEvent.<Mod303ActivityFarmer>fire(Model303AEAT2023ActivityFarmerTable.this, act);
+				}
 			});
 			i++;
 		}

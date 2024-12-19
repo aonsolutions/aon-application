@@ -44,14 +44,16 @@ class Model303AEAT2023ActivityTable extends FlowPanel implements HasSelectionHan
 			}
 			String label = AonStringUtils.abbreviate(act.getFullDescription(), 60);
 			if (AonStringUtils.isBlank(label)) {
-				label = "Actividad en r\u00E9gimen simplificado n\u00AA " + i;				
+				label = "Actividad en r\u00E9gimen simplificado n\u00BA " + i;				
 			}
 			actRow.addCell( new Label( label ), AON.CSS.aonFlexGrow1() );
 			actRow.addClickHandler(event -> {
-				clearSelectedIndex();
-				selectedIndex = currentIndex;
-				actRow.addStyleName(AON.CSS.aonBackgroundLigthBlue());
-				SelectionEvent.<Mod303Activity>fire(Model303AEAT2023ActivityTable.this, act);
+				if (callback.getModel().isEditable() || act.isNotEmpty()) {
+					clearSelectedIndex();
+					selectedIndex = currentIndex;
+					actRow.addStyleName(AON.CSS.aonBackgroundLigthBlue());
+					SelectionEvent.<Mod303Activity>fire(Model303AEAT2023ActivityTable.this, act);
+				}
 			});
 			i++;
 		}
