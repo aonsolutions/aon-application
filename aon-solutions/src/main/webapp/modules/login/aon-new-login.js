@@ -442,7 +442,7 @@ export class AonNewLogin extends AonElement {
     if(!this.isMobile()){
       let aonMenu = this.getElement('aonMenu');
       aonMenu.clear();
-      aonMenu.init();
+      aonMenu.init().then(() => aonMenu.open());
     } else aonHeader.companyIn(onlyOne);
 
     getUser().then(user => {
@@ -450,6 +450,8 @@ export class AonNewLogin extends AonElement {
       this.rootPanelHtml(this.isMobile()
           ? '<aon-mobile-desktop id="aonDesktop"></aon-mobile-desktop>'
           : '<aon-desktop id="aonDesktop"></aon-desktop>');
+		  let portal = LS.isLeftMenu();
+		  LS.setPortalChecked(portal);
     });
   }
 
