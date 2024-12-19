@@ -668,9 +668,37 @@ public class MarketingCampaignDAO {
 		if(params.isAsc()) {
 			if(AonStringUtils.equals(params.getOrderBy(), "name"))
 				select.orderBy(TargetDAO.TARGET_ALIAS.NAME);
+			else if(AonStringUtils.equals(params.getOrderBy(), "scope"))
+				select.orderBy(SCOPE.DESCRIPTION);
+			else if(AonStringUtils.equals(params.getOrderBy(), "entity"))
+				select.orderBy(TargetDAO.TARGET_ALIAS.TYPE.desc());
+			else if(AonStringUtils.equals(params.getOrderBy(), "advertising"))
+				select.orderBy(TARGET.ADVERTISING);
+			else if(AonStringUtils.equals(params.getOrderBy(), "project"))
+				select.orderBy(PROJECT.NAME);
+			else if(AonStringUtils.equals(params.getOrderBy(), "activity"))
+				select.orderBy(PROJECT_ACTIVITY.ACTIVITY_TYPE);
+			else if(AonStringUtils.equals(params.getOrderBy(), "status"))
+				select.orderBy(TARGET.STATUS);
+			else if(AonStringUtils.equals(params.getOrderBy(), "action"))
+				select.orderBy(MK_ACTION.DESCRIPTION);
 		} else {
 			if(AonStringUtils.equals(params.getOrderBy(), "name"))
 				select.orderBy(TargetDAO.TARGET_ALIAS.NAME.desc());
+			else if(AonStringUtils.equals(params.getOrderBy(), "scope"))
+				select.orderBy(TARGET.SCOPE.desc());
+			else if(AonStringUtils.equals(params.getOrderBy(), "entity"))
+				select.orderBy(TargetDAO.TARGET_ALIAS.TYPE);
+			else if(AonStringUtils.equals(params.getOrderBy(), "advertising"))
+				select.orderBy(TARGET.ADVERTISING.desc());
+			else if(AonStringUtils.equals(params.getOrderBy(), "project"))
+				select.orderBy(PROJECT.NAME.desc());
+			else if(AonStringUtils.equals(params.getOrderBy(), "activity"))
+				select.orderBy(PROJECT_ACTIVITY.ACTIVITY_TYPE.desc());
+			else if(AonStringUtils.equals(params.getOrderBy(), "status"))
+				select.orderBy(TARGET.STATUS.desc());
+			else if(AonStringUtils.equals(params.getOrderBy(), "action"))
+				select.orderBy(MK_ACTION.DESCRIPTION.desc());
 		}
 		
 		System.out.println(select.groupBy(TARGET.REGISTRY)
