@@ -55,11 +55,13 @@ export const closeSession = () => {
     let language = getLanguage();    
     let topMenu = getTopMenu();
     let leftMenu = getLeftMenu();
+    let portalChecked = getPortalChecked();
     localStorage.clear();
     setTheme(theme);
     setLanguage(language);
     setTopMenu(topMenu);
     setLeftMenu(leftMenu);
+    setPortalChecked(portalChecked);
 }
 
 export const getLanguage = () => get(AON_LANGUAGE);
