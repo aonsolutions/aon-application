@@ -5740,9 +5740,13 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 			return;
 		
 		
+		List<Period> contractParty  = new ArrayList<>();
+		contractParty.addAll( getPeriods(ctx, ContextVariable.PARTY_DAYS, value -> value instanceof Number number && number.doubleValue() > 0 ));
+		
 		List<Period> contractNonWorking  = new ArrayList<>();
 		contractNonWorking.addAll( getPeriods(ctx, ContextVariable.NON_WORKING, value -> value instanceof Number number && number.doubleValue() > 0 ));
 		contractNonWorking.addAll( getPeriods(ctx, ContextVariable.PARTY_DAYS, value -> value instanceof Number number && number.doubleValue() <= 0 ));
+		
 		Map<Integer, List<Period>> contractNonHours = new HashMap<>();
 		WEEK_HOURS_VARIABLES.forEach((day,hourVar) -> contractNonHours.put(day, getPeriods(ctx, hourVar, value -> AonNumberUtils.todouble(value) <= 0 )));
 		
@@ -5761,7 +5765,8 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 				return;
 			}
 				
-			if ( calendar.getDayType(day) == DayType.HOLIDAY ) {
+			if ( calendar.getDayType(day) == DayType.HOLIDAY  
+				|| contractParty.stream().anyMatch( p -> p.contains(date)) ) {
 				if ( holidays.isEmpty() ) {
 					holidays.push(new TimedObject<>(1d, day.getTime(), day.getTime()));
 				} else {

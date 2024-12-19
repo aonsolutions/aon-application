@@ -1115,6 +1115,96 @@ public class SQLContractSalaryCalculatorContextTestCase extends
 		org.junit.Assert.assertEquals(0 , partyDays.stream().collect(Collectors.summingDouble(ITimedObject<Double>::getValue)), 0.00);
 		
 	}
+
+	@Test
+	public void testCalendarPartyDaysVI() throws SQLException, AonException {
+
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+		Integer domainId = newDomain(aonContext).getId();
+		
+		Date firstDayOfMonth = getFirstDayOfMonth(getToday());
+		Date lastDayOfMonth = getLastDayOfMonth(getToday());
+		
+		List<Date> holidays = Collections.emptyList();
+		
+		Integer holidayId = newHoliday(
+				aonContext, 
+				domainId, 
+				null, //parentId,
+				holidays.toArray(new Date[holidays.size()])
+				)
+				.getId();
+		
+		CalendarRecord calendar = newCalendar(aonContext, 
+				domainId, 
+				holidayId, 
+				null,//mondayHours, 
+				8.00,//tuesdayHours, 
+				8.00,//wednesdayHours, 
+				8.00,//thursdayHours, 
+				8.00,//fridayHours, 
+				8.00,//saturdayHours, 
+				null//sundayHours
+				)
+				;
+		
+		
+		@SuppressWarnings("serial")
+		ContractRecord contract = newContract(aonContext, 
+				firstDayOfMonth ,
+				Collections.emptyMap(),
+				new String[] { PARTY_DAYS.getName()},
+				new String[] {},
+				null,
+				calendar);
+		
+		for (int i = 0; i < 10; i++) {
+			Date holiday = add(firstDayOfMonth, Calendar.DAY_OF_MONTH, i);
+			addData(aonContext, contract, holiday, holiday, ContextVariable.PARTY_DAYS, "1");
+		}
+		
+		
+		List<ITimedResult<Double>> partyDays = getContractSalaryCalculatorContext(connection, firstDayOfMonth, lastDayOfMonth, lastDayOfMonth, contract).getExpressionContext()
+		.eval(PARTY_DAYS.getName(), firstDayOfMonth, lastDayOfMonth,Double.class);
+		
+		org.junit.Assert.assertEquals(1, partyDays.size());
+		org.junit.Assert.assertEquals(10 , partyDays.stream().collect(Collectors.summingDouble(ITimedObject<Double>::getValue)), 0.00);
+		
+	}
+	
+	@Test
+	public void testCalendarPartyDaysVII() throws SQLException, AonException {
+
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+		
+		Date firstDayOfMonth = getFirstDayOfMonth(getToday());
+		Date lastDayOfMonth = getLastDayOfMonth(getToday());
+		
+		
+		@SuppressWarnings("serial")
+		ContractRecord contract = newContract(aonContext, 
+				firstDayOfMonth ,
+				Collections.emptyMap(),
+				new String[] { PARTY_DAYS.getName()},
+				new String[] {},
+				null,
+				null);
+		
+		for (int i = 0; i < 10; i++) {
+			Date holiday = add(firstDayOfMonth, Calendar.DAY_OF_MONTH, i);
+			addData(aonContext, contract, holiday, holiday, ContextVariable.PARTY_DAYS, "1");
+		}
+		
+		
+		List<ITimedResult<Double>> partyDays = getContractSalaryCalculatorContext(connection, firstDayOfMonth, lastDayOfMonth, lastDayOfMonth, contract).getExpressionContext()
+		.eval(PARTY_DAYS.getName(), firstDayOfMonth, lastDayOfMonth,Double.class);
+		
+		org.junit.Assert.assertEquals(1, partyDays.size());
+		org.junit.Assert.assertEquals(10 , partyDays.stream().collect(Collectors.summingDouble(ITimedObject<Double>::getValue)), 0.00);
+		
+	}
 	// ------------------------------------------------------------------------
 
 }
