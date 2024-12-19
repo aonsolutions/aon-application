@@ -7,6 +7,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.AonDateUtils;
@@ -18,6 +19,7 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonConfirmDialog.Aon
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonLoadingPanel;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonMessagePanel;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonTableButton;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
@@ -1862,18 +1864,20 @@ public abstract class ITDialog extends AonCustomDialog {
 		
 		panel.add(closeBtnDialog);
 		
-		Button communicateDialog = new Button();
-		communicateDialog.setStyleName(AON.CSS.aonOkButtonSmall());
-		communicateDialog.setText("Comunicar");
-		communicateDialog.setAccessKey('A');
-		communicateDialog.addClickHandler(new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent event) {
-                sendItPart();
-			}
-		});
-		
-		panel.add(communicateDialog);
+		if(it.getTypeLowPart() != (byte)2 && it.getTypeLowPart() != (byte)3) { //Maternidad y paternidad exluidos de comunicar bases
+			Button communicateDialog = new Button();
+			communicateDialog.setStyleName(AON.CSS.aonOkButtonSmall());
+			communicateDialog.setText("Comunicar");
+			communicateDialog.setAccessKey('A');
+			communicateDialog.addClickHandler(new ClickHandler() {
+				@Override
+				public void onClick(ClickEvent event) {
+	                sendItPart();
+				}
+			});
+			
+			panel.add(communicateDialog);
+		} 
 	}
 	
 	private void createFooterButtonsFDI() {
@@ -2002,7 +2006,7 @@ public abstract class ITDialog extends AonCustomDialog {
 		mainCommunicate.add(loading);
 		
 		itPartTmp = itPart;
-
+		
 		paintPanel(itPartTmp);
 
 		createFooterButtonsCommunicate();
@@ -2051,6 +2055,9 @@ public abstract class ITDialog extends AonCustomDialog {
 				cause = "";
 			break;
 		}
+		
+		HTMLPanel messagePanel = new HTMLPanel("");
+		mainCommunicate.add(messagePanel);
 
 		HTMLPanel panel = new HTMLPanel("");
 		panel.setStyleName(style.styleBorder());
@@ -2108,6 +2115,9 @@ public abstract class ITDialog extends AonCustomDialog {
 			addInfoAditionalBaja(flexColumn);
 		else if(itPart.getType() == (byte)1)
 			addInfoAditionalConfirmation(itInfoEl, itPart);
+		
+		if(it.getTypeLowPart() == (byte)2 || it.getTypeLowPart() == (byte)3) //Maternidad y paternidad exluidos de comunicar bases
+			AonMessagePanel.showWarning(messagePanel, "Las bajas por maternidad/paternidad no requieren el env\u00edo de los datos econ\u00f3micos");
 
 	}
 	
@@ -2224,6 +2234,12 @@ public abstract class ITDialog extends AonCustomDialog {
 
 	private void fillQuoteDataListPanel(List<Certifica2Info> datas) {
 		if(!datas.isEmpty()){
+			
+			if(it.getTypeLowPart() == (byte)2 || it.getTypeLowPart() == (byte)3) { //Maternidad y paternidad exluidos de comunicar bases
+				Date date = DateUtils.getLastDayOfMonth( DateUtils.addMonths2Date(it.getStartDate(), -2) );
+				datas = datas.stream().filter(cert -> cert.getStartDate().before(date)).collect(Collectors.toList());
+			}
+			
 			Label lbl = new Label("Tramos");
 			lbl.setWidth("105px");
 			lbl.setStyleName("aon-group-title "+ style.tittle());
