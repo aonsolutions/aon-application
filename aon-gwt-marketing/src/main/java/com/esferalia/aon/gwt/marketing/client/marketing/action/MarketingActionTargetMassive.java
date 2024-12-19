@@ -175,6 +175,14 @@ public abstract class MarketingActionTargetMassive extends SimplePanel {
 		dockLayout.addFilterWidget(mkAction);
 		
 		sort.addItem("Nombre", "name");
+		sort.addItem("Ambito", "scope");
+		sort.addItem("Entidad", "entity");
+		sort.addItem("Propaganda", "advertising");
+		sort.addItem("Expediente", "project");
+		sort.addItem("Actividad", "activity");
+		sort.addItem("Estado", "status");
+		sort.addItem("Acci\u00f3n Comerial", "action");
+		
 		sort.getListBox().addChangeHandler(event -> onSearch());
 		
 		asc.addItem("Ascendente", "true");

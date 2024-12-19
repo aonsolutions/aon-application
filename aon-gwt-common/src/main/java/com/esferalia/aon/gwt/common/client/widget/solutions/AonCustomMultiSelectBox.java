@@ -80,6 +80,12 @@ public class AonCustomMultiSelectBox extends HTMLPanel {
 //        hasFocus = true;
 	}
 	
+	public void clearOption() {
+		optionsPopup.clear();
+		selectedOptions.clear();
+		valuesCB.clear();
+	}
+	
 	public void setOptions(Set<String> options) {
 		HTMLPanel popupContent = new HTMLPanel("");
         popupContent.setStyleName(AON.CSS.aonSearchFilterPopup());
