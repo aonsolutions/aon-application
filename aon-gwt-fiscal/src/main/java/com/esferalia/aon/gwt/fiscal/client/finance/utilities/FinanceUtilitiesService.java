@@ -33,6 +33,9 @@ public interface FinanceUtilitiesService extends RemoteService {
 	
 	// Modificación de actividades en facturas.
 	void updateActivity(Occam occam, Integer invoiceId, Integer activity) throws AonCoreException;
-	
+
+	//Integridad del dato actividad en facturas y asientos.
+	FinanceUtilitiesResult activityIntegrity(Occam occam, Integer domain) throws AonCoreException;
+	void activityIntegrityFix(Occam occam, Integer invoiceId, boolean useInvoiceActivity) throws AonCoreException;
 	
 }
