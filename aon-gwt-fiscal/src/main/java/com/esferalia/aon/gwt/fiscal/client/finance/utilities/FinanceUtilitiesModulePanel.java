@@ -58,6 +58,10 @@ public class FinanceUtilitiesModulePanel extends AonLayoutPanel{
 		invoicePanel.add(activityTypeCheck.getSidebarWidget());
 		activityTypeCheck.addSelectionHandler( event -> content.setWidget( activityTypeCheck ));
 		
+		ActivityIntegrityCheck activityIntegrityCheck = new ActivityIntegrityCheck(options,domain);
+		invoicePanel.add(activityIntegrityCheck.getSidebarWidget());
+		activityIntegrityCheck.addSelectionHandler( event -> content.setWidget( activityIntegrityCheck ));
+
 		WithholdingTypeCheck withholdingTypeCheck = new WithholdingTypeCheck(options,domain);
 		invoicePanel.add(withholdingTypeCheck.getSidebarWidget());
 		withholdingTypeCheck.addSelectionHandler( event -> content.setWidget( withholdingTypeCheck ));

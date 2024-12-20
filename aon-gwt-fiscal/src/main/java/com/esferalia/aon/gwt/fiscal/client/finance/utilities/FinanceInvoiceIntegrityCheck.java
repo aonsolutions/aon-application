@@ -203,6 +203,10 @@ class FinanceInvoiceIntegrityCheck extends OptionBase {
 			// Nothing
 		}
 		@Override
+		public void visitActivityIntegrityCheck(FinanceUtilitiesItemType type) {
+			// Nothing
+		}
+		@Override
 		public void  visitFinanceInvoiceIntegrityCheck(FinanceUtilitiesItemType type) {
 			InlineLabel fixLabel = new InlineLabel("Arreglar");
 			fixLabel.setTitle("Arreglar");
