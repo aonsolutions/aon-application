@@ -2,13 +2,11 @@ package solutions.aon.seg.social;
 
 import static solutions.aon.seg.social.exception.StatusCodeException.HandleStatusCodeException;
 import static solutions.aon.seg.social.toolkit.Toolkit.getDateArray;
-import static solutions.aon.seg.social.toolkit.Toolkit.splitStringMultiple;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -44,11 +42,9 @@ import org.apache.http.util.EntityUtils;
 import org.htmlunit.FailingHttpStatusCodeException;
 import org.htmlunit.UnexpectedPage;
 import org.htmlunit.WebClient;
-import org.htmlunit.html.DomNode;
 import org.htmlunit.html.HtmlElement;
 import org.htmlunit.html.HtmlInput;
 import org.htmlunit.html.HtmlLabel;
-import org.htmlunit.html.HtmlOption;
 import org.htmlunit.html.HtmlPage;
 import org.htmlunit.html.HtmlSelect;
 import org.htmlunit.html.HtmlSpan;
@@ -66,8 +62,8 @@ import solutions.aon.seg.social.object.Liquidation;
 import solutions.aon.seg.social.object.Liquidation.LiquidationBuilder;
 import solutions.aon.seg.social.object.Period;
 import solutions.aon.seg.social.object.SituacionEmpresa;
-import solutions.aon.seg.social.object.SituationType;
 import solutions.aon.seg.social.object.SituacionEmpresa.SituacionEmpresaBuilder;
+import solutions.aon.seg.social.object.SituationType;
 import solutions.aon.seg.social.object.WorkerLiquidation;
 import solutions.aon.seg.social.toolkit.HtmlUnitToolkit;
 import solutions.aon.seg.social.toolkit.Toolkit;
@@ -151,8 +147,6 @@ public class ServicioRED extends ServicioREDRegeXML {
 			onlineSelect.getOption(1).setSelected(true);
 
 			HtmlSubmitInput continueButton = document.querySelector("#Sub2207601004");
-			
-//			System.out.println("Regime: " + regime + ", CCC: " + ccc + ", NAF: " + affiliationNumber + ", Date: " + date);
 
 			// Check if we have more than one CCC for this person
 			try {
@@ -161,20 +155,22 @@ public class ServicioRED extends ServicioREDRegeXML {
 				// Check table
 				HtmlTable table = document.querySelector("#Sub0900112078");
 				
-				for(int row=1; row < table.getRowCount(); row++) {
-					HtmlTableCell startDateCell = table.getCellAt(row, 1);
-					HtmlTableCell endDateCell = table.getCellAt(row, 2);
-					
-					String startDate = startDateCell.getTextContent().trim();
-//					String endDate = endDateCell.getTextContent().trim();
-					
-					if(startDate.length() > 0) {
-						HtmlSpan span = (HtmlSpan) startDateCell.getChildNodes().get(1);
-						HtmlLabel label = (HtmlLabel) span.getChildNodes().get(1);
+				if(null != table) {
+					for(int row=1; row < table.getRowCount(); row++) {
+						HtmlTableCell startDateCell = table.getCellAt(row, 1);
 						
-						return getPDFDocument(label);
+						String startDate = startDateCell.getTextContent().trim();
+						
+						if(startDate.length() > 0) {
+							HtmlSpan span = (HtmlSpan) startDateCell.getChildNodes().get(1);
+							HtmlLabel label = (HtmlLabel) span.getChildNodes().get(1);
+							
+							return getPDFDocument(document, label);
+						}
 					}
 				}
+				
+				
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
@@ -187,13 +183,15 @@ public class ServicioRED extends ServicioREDRegeXML {
 		return null;
 	}
 	
-	private static byte[] getPDFDocument(HtmlElement linkElement) throws IllegalArgumentException {
+	private static byte[] getPDFDocument(HtmlPage page, HtmlElement linkElement) throws IllegalArgumentException {
 		try {
 			UnexpectedPage docPage = linkElement.dblClick();
 			return docPage.getWebResponse().getContentAsStream().readAllBytes();
-		} catch (IOException e) {
+		} catch (Exception e) {
+			System.err.println("UnexpectedPage FIND");
+			return null;
 			// Exception
-			throw new IllegalArgumentException(e.getMessage());
+//			throw new IllegalArgumentException(e.getMessage());
 		}
 	}
 
@@ -1849,19 +1847,11 @@ public class ServicioRED extends ServicioREDRegeXML {
 		String btnValue = "P\u00e1g. Sig.";
 		String btnNext = Toolkit.getElementByAttributeFirstTag(body, "value", btnValue);
 		String btnName = Toolkit.getAttribute(btnNext, "name");
-		String btnId= Toolkit.getAttribute(btnNext, "id");
 
 		List<NameValuePair> params = new ArrayList<>();
 		params.add(new BasicNameValuePair(IServicioRedConstants.APP_NAME, "SGIRED"));
 		params.add(new BasicNameValuePair(IServicioRedConstants.FORM_NAME, "ATRM3701"));
 		params.add(new BasicNameValuePair(IServicioRedConstants.SESSION_ID, sessionId));
-//		params.add(new BasicNameValuePair(IServicioRedConstants.FOCUSED_CONTROL, btnId));
-//		params.add(new BasicNameValuePair(IServicioRedConstants.DEFAULT_NULL, "1"));
-//		params.add(new BasicNameValuePair(IServicioRedConstants.TXT_ENTORNO_PR, ""));
-//		params.add(new BasicNameValuePair(IServicioRedConstants.TXT_TRANSAC, "Atr37"));
-//		params.add(new BasicNameValuePair(IServicioRedConstants.TXT_PRACTICE_MENU, "I"));
-//		params.add(new BasicNameValuePair(IServicioRedConstants.TXT_COMMAND_EDIT, "Atr37"));
-//		params.add(new BasicNameValuePair(IServicioRedConstants.PRINT_TYPE, IServicioRedConstants.ONLINE_PRINT));
 		params.add(new BasicNameValuePair(btnName, btnValue));
 
 		httpPost.setEntity(new UrlEncodedFormEntity(params, ServicioREDRegeXML.DEFAULT_ENCODING));

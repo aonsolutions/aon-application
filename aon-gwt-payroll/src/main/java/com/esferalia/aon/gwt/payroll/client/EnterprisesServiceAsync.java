@@ -42,6 +42,7 @@ import com.esferalia.aon.gwt.payroll.shared.Extra;
 import com.esferalia.aon.gwt.payroll.shared.IT;
 import com.esferalia.aon.gwt.payroll.shared.ITEmployee;
 import com.esferalia.aon.gwt.payroll.shared.ITPart;
+import com.esferalia.aon.gwt.payroll.shared.ItParams;
 import com.esferalia.aon.gwt.payroll.shared.Mail;
 import com.esferalia.aon.gwt.payroll.shared.MainCCCInfo;
 import com.esferalia.aon.gwt.payroll.shared.Payment;
@@ -144,16 +145,13 @@ public interface EnterprisesServiceAsync {
 	void getEmployees(String currentDomainName, String user, ContractParams params, AsyncCallback<List<EmployeeContractInfo>> asyncCallback) throws IllegalArgumentException;
 	void getContractListCount(String currentDomainName, String user, ContractParams params, AsyncCallback<Integer> asyncCallback) throws IllegalArgumentException;	
 	void getFJEmployeesInfo(String currentDomainName, AsyncCallback<List<EmployeeContractInfo>> asyncCallback);
-	void getEmployeesITInfo(String currentDomainName, Boolean allEmployees,
-			AsyncCallback<List<ITEmployee>> asyncCallback);
+	void getEmployeeItList(String currentDomainName, ItParams params, AsyncCallback<List<ITEmployee>> asyncCallback) throws IllegalArgumentException;	
 	void getEmployeesITInfo(String currentDomainName, Integer ids [],
 			AsyncCallback<List<ITEmployee>> asyncCallback);
 	void deleteIT(String currentDomainName, Integer itId, AsyncCallback<String> asyncCallback);
 	void createUpdateITEmployee(String currentDomainName, ITEmployee employeeITInfo,
 			AsyncCallback<String> asyncCallback);
 	void getEnterpriseStatus(String domain, String user, Integer enterpriseId , AsyncCallback<EnterpriseStatus> callback);
-
-	void getEnterpriseITStatus(String domain, String user, AsyncCallback<EnterpriseITStatus> callback);
 
 	// ------------------------------------------------ Contract Attachments
 	
@@ -190,8 +188,6 @@ public interface EnterprisesServiceAsync {
 	void createITCertificate(String currentDomainName, String currentUser, String affiliationNumber, String regime,
 			String contributionAccount, String docType, String docNum, String applicantType, String reason,
 			Date dateFrom, Date dateTo, float baseCC, float baseCP, int days, AsyncCallback<Boolean> asyncCallback);
-	void deleteComunicateIT(String currentDomainName, String currentUser, String affiliationNumber, String regime,
-			String contributionAccount, Date dateFrom, Date dateTo, Date startDate, AsyncCallback<Void> asyncCallback) throws IllegalArgumentException;
 	void syncITs(String currentDomainName, String currentUser, AsyncCallback<Void> asyncCallback) throws IllegalArgumentException;
 	void setComunicationIT(String currentDomainName, String currentUser, ITEmployee itEmployee, IT it,
 			AsyncCallback<Void> asyncCallback);

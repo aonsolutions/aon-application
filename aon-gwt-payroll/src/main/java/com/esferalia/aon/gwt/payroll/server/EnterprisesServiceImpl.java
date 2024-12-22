@@ -26,7 +26,6 @@ import java.sql.SQLException;
 import java.sql.Types;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Base64;
 import java.util.Calendar;
 import java.util.Collection;
@@ -119,7 +118,6 @@ import com.esferalia.aon.gwt.payroll.shared.EmployeeInfo;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeSegSocial;
 import com.esferalia.aon.gwt.payroll.shared.Enterprise;
 import com.esferalia.aon.gwt.payroll.shared.EnterpriseContext;
-import com.esferalia.aon.gwt.payroll.shared.EnterpriseITStatus;
 import com.esferalia.aon.gwt.payroll.shared.EnterpriseITStatus.ItNotExist;
 import com.esferalia.aon.gwt.payroll.shared.EnterpriseStatus;
 import com.esferalia.aon.gwt.payroll.shared.EnterpriseStatus.AndEnterpriseStatus;
@@ -127,6 +125,7 @@ import com.esferalia.aon.gwt.payroll.shared.Extra;
 import com.esferalia.aon.gwt.payroll.shared.IT;
 import com.esferalia.aon.gwt.payroll.shared.ITEmployee;
 import com.esferalia.aon.gwt.payroll.shared.ITPart;
+import com.esferalia.aon.gwt.payroll.shared.ItParams;
 import com.esferalia.aon.gwt.payroll.shared.Mail;
 import com.esferalia.aon.gwt.payroll.shared.MainCCCInfo;
 import com.esferalia.aon.gwt.payroll.shared.NumberVariable;
@@ -2393,10 +2392,10 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 	}
 
 	@Override
-	public List<ITEmployee> getEmployeesITInfo(String domainName, Boolean allEmployees) {
+	public List<ITEmployee> getEmployeeItList(String domainName, ItParams params) {
 		try(Connection connection = AonServletUtils.getConnection(domainName)) {
 			Integer domainId = AonServletUtils.getDomainID(domainName);
-			return JooqIT.getEmployeesITInfo(connection, domainId, allEmployees);
+			return JooqIT.getEmployeeItList(connection, domainId, params);
 		} catch (SQLException e) {
 			throw new RuntimeException(e);
 		}
@@ -3393,25 +3392,6 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 			return false;
 		} catch (SQLException e) {
 			throw new RuntimeException(e);
-		}
-	}
-
-	@Override
-	public void deleteComunicateIT(String domainName, String userLogin, String affiliationNumber,
-			String regime, String contributionAccount, java.util.Date dateFrom, java.util.Date dateTo,
-			java.util.Date startDate) throws IllegalArgumentException {
-		
-		try(Connection connection = AonServletUtils.getConnection(domainName)) {
-			Integer domainId = AonServletUtils.getDomainID(domainName);
-			Integer parentDomainId = AonServletUtils.getParentDomainID(domainName); 
-			Integer userId = AonServletUtils.getUserID(connection, userLogin, domainId, parentDomainId);	
-			
-			Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId, "TGSS");
-			
-			SistemaRED.removePaternity(certificate.getData(), certificate.getPassword(), certificate.getType(), affiliationNumber, regime, contributionAccount, dateFrom, dateTo, Optional.of(startDate));
-		
-		} catch (Exception e) {
-			throw new IllegalArgumentException(e);
 		}
 	}
 	
@@ -4993,13 +4973,6 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 			    
 			    if(employeeIT.getId()!=null) {
 			    	AON.removeEmployeeIT(domain, new User(), employeeIT.getId(), part.getId());
-			    } else { //DELETE TGSS
-			    	
-				 	employeeIT.setITParts(new ArrayList<>(Arrays.asList(part)));
-				 	
-					Certificate certificate = AON.getCertificate(domainName, domain.getId(), userLogin, userId, "TGSS");
-			    	List<String> msgs = ITComunica.removeITs(certificate.getData(), certificate.getPassword(), certificate.getType(), employeeIT);
-			    	messages.addAll(msgs);
 			    }
 			 }
 			 
@@ -5012,18 +4985,6 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new IllegalArgumentException(e);
-		}
-	}
-
-	@Override
-	public EnterpriseITStatus getEnterpriseITStatus(String domainName, String login) {
-		try  {
-			Domain domain = new Domain().setId(AonServletUtils.getDomainID(domainName)).setName(domainName);
-			User user = AON.getUser(domain.getName(), domain.getId(), login);
-			return ITStatusUtils.getEnterpriseITStatus(domain, user);
-		} catch ( Exception e  ) {
-			e.printStackTrace();
-			return new EnterpriseITStatus.UnknownError().setMessage(e.getMessage());
 		}
 	}
 	

@@ -4,8 +4,6 @@ import static com.google.gwt.user.client.ui.FormPanel.METHOD_GET;
 import static com.google.gwt.user.client.ui.FormPanel.METHOD_POST;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -14,32 +12,24 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.SortedSet;
 import java.util.function.Consumer;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 import com.esferalia.aon.gwt.common.client.AON;
-import com.esferalia.aon.gwt.common.client.css.AonGwtTemplateResources;
-import com.esferalia.aon.gwt.common.client.widget.CustomDataGrid;
 import com.esferalia.aon.gwt.common.client.widget.MultiFileUpload;
 import com.esferalia.aon.gwt.common.client.widget.ProgressPanel;
-import com.esferalia.aon.gwt.common.client.widget.ProgressPanel.Task;
 import com.esferalia.aon.gwt.common.client.widget.ResultsPanel;
-import com.esferalia.aon.gwt.common.client.widget.solutions.AonConfirmDialog;
-import com.esferalia.aon.gwt.common.client.widget.solutions.AonConfirmDialog.AonConfirmDialogCallback;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomDateBox;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomDockLayout;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomListBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonExpandButton;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonMessagePanel;
-import com.esferalia.aon.gwt.common.client.widget.solutions.AonMinimizePanel;
-import com.esferalia.aon.gwt.common.client.widget.solutions.AonTableButton;
-import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
 import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.esferalia.aon.gwt.payroll.shared.ContractInfo;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeInfo;
-import com.esferalia.aon.gwt.payroll.shared.EmployeeSegSocial;
-import com.esferalia.aon.gwt.payroll.shared.EnterpriseITStatus;
 import com.esferalia.aon.gwt.payroll.shared.EnterpriseITStatus.ItNotExist;
 import com.esferalia.aon.gwt.payroll.shared.FIEService;
 import com.esferalia.aon.gwt.payroll.shared.FIEService.JsContractInfo;
@@ -51,6 +41,7 @@ import com.esferalia.aon.gwt.payroll.shared.ITDataPerson;
 import com.esferalia.aon.gwt.payroll.shared.ITDataPerson.Type;
 import com.esferalia.aon.gwt.payroll.shared.ITEmployee;
 import com.esferalia.aon.gwt.payroll.shared.ITPart;
+import com.esferalia.aon.gwt.payroll.shared.ItParams;
 import com.esferalia.aon.gwt.payroll.shared.SistemaREDService;
 import com.esferalia.aon.gwt.payroll.shared.SistemaREDService.JsSistemaREDEmployeeIT;
 import com.esferalia.aon.gwt.payroll.shared.SistemaREDService.JsSistemaREDIT;
@@ -61,10 +52,10 @@ import com.esferalia.aon.gwt.visualization.client.visualizations.TimeLineChart.O
 import com.esferalia.aon.gwt.visualization.client.visualizations.TimeLineChart.Options.RowLabelStyle;
 import com.esferalia.aon.gwt.visualization.client.visualizations.TimeLineChart.Options.Timeline;
 import com.esferalia.aon.occam.api.model.EmployeeIT;
+import com.esferalia.aon.occam.api.model.aonsolutions.DomainUserRoles;
 import com.esferalia.aon.occam.api.model.type.ContractLeaveType;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
-import com.google.gwt.cell.client.Cell.Context;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.core.client.JsArray;
@@ -76,56 +67,32 @@ import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.IFrameElement;
 import com.google.gwt.dom.client.NativeEvent;
 import com.google.gwt.dom.client.NodeList;
-import com.google.gwt.dom.client.Style.FontWeight;
-import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.ContextMenuEvent;
 import com.google.gwt.event.dom.client.ContextMenuHandler;
 import com.google.gwt.event.dom.client.MouseOverEvent;
 import com.google.gwt.event.dom.client.MouseOverHandler;
-import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.i18n.client.DateTimeFormat.PredefinedFormat;
 import com.google.gwt.json.client.JSONObject;
 import com.google.gwt.logging.client.ConsoleLogHandler;
-import com.google.gwt.resources.client.CssResource;
-import com.google.gwt.safehtml.client.SafeHtmlTemplates;
-import com.google.gwt.safehtml.shared.SafeHtml;
-import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
-import com.google.gwt.uibinder.client.UiBinder;
-import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.user.cellview.client.ColumnSortEvent.ListHandler;
-import com.google.gwt.user.cellview.client.DataGrid;
-import com.google.gwt.user.cellview.client.TextColumn;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.Window;
-import com.google.gwt.user.client.ui.CheckBox;
-import com.google.gwt.user.client.ui.DeckPanel;
+import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.user.client.ui.DeckLayoutPanel;
 import com.google.gwt.user.client.ui.DecoratedPopupPanel;
-import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.FormPanel;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HTMLPanel;
-import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.Hidden;
-import com.google.gwt.user.client.ui.InlineLabel;
-import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.ListBox;
 //import com.google.gwt.user.client.ui.MenuBar;
 import com.google.gwt.user.client.ui.MenuItem;
-import com.google.gwt.user.client.ui.MultiWordSuggestOracle;
 import com.google.gwt.user.client.ui.PopupPanel;
-import com.google.gwt.user.client.ui.ResizeComposite;
-import com.google.gwt.user.client.ui.SplitLayoutPanel;
+import com.google.gwt.user.client.ui.SimpleLayoutPanel;
 import com.google.gwt.user.client.ui.SubmitButton;
-import com.google.gwt.user.client.ui.SuggestBox;
-import com.google.gwt.user.client.ui.TabLayoutPanel;
-import com.google.gwt.user.client.ui.Widget;
-import com.google.gwt.view.client.ListDataProvider;
-import com.google.gwt.view.client.NoSelectionModel;
 import com.google.gwt.visualization.client.AbstractDataTable;
 import com.google.gwt.visualization.client.AbstractDataTable.ColumnType;
 import com.google.gwt.visualization.client.DataTable;
@@ -133,27 +100,12 @@ import com.google.gwt.visualization.client.VisualizationUtils;
 import com.google.gwt.xhr.client.ReadyStateChangeHandler;
 import com.google.gwt.xhr.client.XMLHttpRequest;
 
-public abstract class ITWidget extends ResizeComposite {
+public class ITWidget extends AonCustomDockLayout {
 
 	private static final Logger LOGGER = Logger.getLogger(ITWidget.class.getName());
-	static {
-		LOGGER.addHandler(new ConsoleLogHandler());
-	}
-	// --------------------------------------------------- UiBinder
 
-	private static ITWidgetUiBinder uiBinder = GWT.create(ITWidgetUiBinder.class);
-
-	interface ITWidgetUiBinder extends UiBinder<Widget, ITWidget> {
-	}
-
-	interface TabLayoutFolderSafeTemplate extends SafeHtmlTemplates {
-		@Template("<span class=\"aon_tab_label {1}\">{0}</span>")
-		SafeHtml tab(String title, String icon);
-	}
-
-	private static final TabLayoutFolderSafeTemplate TABLAYOUT_FOLDER_TEMPLATE = GWT
-			.create(TabLayoutFolderSafeTemplate.class);
-
+	static { LOGGER.addHandler(new ConsoleLogHandler()); }
+	
 	// ------------------------------------------------- ScheduledCommand (TGSS)
 
 	class MsjFIECommand implements ScheduledCommand {
@@ -168,7 +120,8 @@ public abstract class ITWidget extends ResizeComposite {
 
 		@Override
 		public void execute() {
-			SistemaREDITResults results = new SistemaREDITResults();
+			results.hideNorth();
+			results.removeAll();
 
 			AonMessagePanel.showLoading(messagePanel, "Sincronizando Its...");
 			DateTimeFormat dateFormat = DateTimeFormat.getFormat(SistemaREDService.DATE_FORMAT);
@@ -177,8 +130,12 @@ public abstract class ITWidget extends ResizeComposite {
 
 			requestDataBuffer.append("&" + Parameter.USER + "=" + Wnd.getCurrentUser());
 			requestDataBuffer.append("&" + Parameter.DOMAIN + "=" + Wnd.getCurrentDomainNameURL());
-			requestDataBuffer.append("&" + Parameter.START_DATE + "=" + dateFormat.format(ITWidget.this.startYear));
-			requestDataBuffer.append("&" + Parameter.END_DATE + "=" + dateFormat.format(ITWidget.this.endYear));
+			
+			Date startYear = start.getValue() == null ? DateUtils.getFirstDayOfYear() : start.getValue();
+			Date endYear = end.getValue() == null ? DateUtils.getLastDayOfYear(new Date()) : end.getValue();
+			
+			requestDataBuffer.append("&" + Parameter.START_DATE + "=" + dateFormat.format(startYear));
+			requestDataBuffer.append("&" + Parameter.END_DATE + "=" + dateFormat.format(endYear));
 
 			XMLHttpRequest xhr = XMLHttpRequest.create();
 			xhr.open("POST", SistemaREDService.SISTEMA_RED_URL + "/" + SistemaREDService.ENTERPRISE_IT_STATUS_TEST);
@@ -200,18 +157,17 @@ public abstract class ITWidget extends ResizeComposite {
 						}
 						JsSistemaREDEmployeeIT employeeIT = employeeITs.get(employeeITs.length() - 1);
 						if (employeeIT.getItsInTgss().length() == 0) {
-							AonMessagePanel.showLoading(messagePanel,SafeHtmlUtils.fromTrustedString("Actualizando las ITs del empleado "
+							AonMessagePanel.showLoading(messagePanel,
+									SafeHtmlUtils.fromTrustedString("Actualizando las ITs del empleado "
 											+ employeeIT.getName() + " , ninguna IT encontrada."));
 						} else {
-							AonMessagePanel.showLoading(messagePanel, SafeHtmlUtils.fromTrustedString(
-									"Actualizando las ITs del empleado "
+							AonMessagePanel.showLoading(messagePanel,
+									SafeHtmlUtils.fromTrustedString("Actualizando las ITs del empleado "
 											+ employeeIT.getName() + " , ITs encontradas en TGSS: "
 											+ employeeIT.getItsInTgss().length()));
 						}
 
 						if (employeeIT.getItsNotInAon().length() != 0) {
-							showResultsPanel();
-							showFootPanel();
 							JsArray<JsSistemaREDIT> itsNotInAon = employeeIT.getItsNotInAon();
 							for (int i = 0; i < itsNotInAon.length(); i++) {
 								ItNotExist itNotExistInAon = new ItNotExist();
@@ -229,31 +185,37 @@ public abstract class ITWidget extends ResizeComposite {
 								}
 
 								itNotExistInAon.setEmployeeIT(employee);
+								Window.alert("itNotExistInAon");
 								results.itNotExist(itNotExistInAon);
 							}
 						}
 
 						if (employeeIT.getItsNotInTgss().length() != 0) {
-							showResultsPanel();
-							showFootPanel();
 							JsArray<JsSistemaREDIT> itsNotInTgss = employeeIT.getItsNotInTgss();
 							for (int i = 0; i < itsNotInTgss.length(); i++) {
 								ItNotExist itNotExistInTgss = new ItNotExist();
 								JsSistemaREDIT sistemaRedIT = itsNotInTgss.get(i);
 								EmployeeIT employee = new EmployeeIT();
+								
+								Integer employeeId = null;
+								try {
+									employeeId = Integer.parseInt(sistemaRedIT.getId());
+								} catch (Exception e) {}
 
 								employee.setCcc(sistemaRedIT.getCcc()).setDni(sistemaRedIT.getDni())
 										.setName(sistemaRedIT.getName()).setNss(sistemaRedIT.getNss())
 										.setRegime(sistemaRedIT.getRegime())
 										.setType(ContractLeaveType.valueOf(sistemaRedIT.getType()))
 										.setId(Integer.parseInt(sistemaRedIT.getId()))
-										.setStartDate(dateFormat.parse(sistemaRedIT.getStartDate()));
+										.setStartDate(dateFormat.parse(sistemaRedIT.getStartDate()))
+										.setId(employeeId);
 
 								if (sistemaRedIT.getEndDate() != null) {
 									employee.setEndDate(dateFormat.parse(sistemaRedIT.getEndDate()));
 								}
 
 								itNotExistInTgss.setEmployeeIT(employee);
+								Window.alert("itNotExistInTgss");
 								results.itNotExist(itNotExistInTgss);
 							}
 						}
@@ -265,15 +227,26 @@ public abstract class ITWidget extends ResizeComposite {
 						return;
 					}
 
-					Scheduler.get()
-							.scheduleDeferred(() -> AonMessagePanel.showSuccess(messagePanel, "Its actualizadas"));
+					Scheduler.get().scheduleDeferred(() -> AonMessagePanel.showSuccess(messagePanel, "Its actualizadas"));
+					Scheduler.get().scheduleDeferred(() -> {
+						if(results.getTreeItems() != 0) {
+							ResultsPanel resultPanel = new ResultsPanel();
+							resultPanel.setHeight((results.getTreeItems() > 20 ? 20 : results.getTreeItems() * 30) + "px");
+							resultPanel.setWidth("800px");
+							resultPanel.setWidget(results);
+							
+							AonDialog dialog = new AonDialog("SistemaRED", resultPanel);
+							dialog.removeMaxWidth();
+							dialog.info();
+						}
+						
+					});
 				}
 
 			});
 
 			xhr.send(requestDataBuffer.toString());
-
-			resultsPanel.setWidget(results);
+			
 		}
 
 	}
@@ -286,69 +259,59 @@ public abstract class ITWidget extends ResizeComposite {
 		public TGSSContextMenu() {
 
 			fie = addItem("Mensaje/Fichero INSS (FIE)", new MsjFIECommand(), AON.CSS.aonIconTgss(),
-					AON.AON_ICON_CMD_BUTTON, style.cmdBtn());
+					AON.AON_ICON_CMD_BUTTON, AON.CSS.aonCmdItem());
 			fie.ensureDebugId("fie");
 
 			tgssSyncro = addItem("Sincronizaci\u00f3n TGSS", new TgssSyncroCommand(), AON.CSS.aonIconTgss(),
-					AON.AON_ICON_CMD_BUTTON, style.cmdBtn());
+					AON.AON_ICON_CMD_BUTTON, AON.CSS.aonCmdItem());
 			tgssSyncro.ensureDebugId("tgssSyncro");
 		}
 
 	}
 
-	// --------------------------------------------------- UiFields
+	// ------------------------------------------------- DockLayoutPanel
 
-	@UiField
-	MyStyle style;
+	private HTMLPanel container;
+	private HTMLPanel messagePanel = new HTMLPanel("");
 
-	interface MyStyle extends CssResource {
-		String filterPanel();
+	private AonCustomDateBox start = new AonCustomDateBox("F. Inicio IT");
+	private AonCustomDateBox end = new AonCustomDateBox("F. Fin IT");
 
-		String flexPanel();
+	private AonCustomListBox sort = new AonCustomListBox("Ordenar Por");
+	private AonCustomListBox asc = new AonCustomListBox("Orden");
 
-		String cmdBtn();
+	private AonToolbarButton showList;
+	private AonToolbarButton showStatics;
+	private AonToolbarButton leyend;
 
-		String mt10();
-	}
+	private TGSSContextMenu tgssContextMenu;
 
-	@UiField
-	DockLayoutPanel dockLayoutPanel;
+	private FormPanel msjFIEFormPanel;
+	private MultiFileUpload msjFIEFileUpload;
+	private SubmitButton msjFIESubmitButton;
+	private SistemaREDITResults results = new SistemaREDITResults();
 
-	@UiField
-	DeckPanel mainDeckPanel;
+	private DeckLayoutPanel deckPanel;
 
-	@UiField
-	HTMLPanel messagePanel;
+	private HTMLPanel staticsPanel;
+	private SimpleLayoutPanel centerPanel;
+	private ITTable staticsList;
 
-	@UiField
-	HTMLPanel filterITListPanel;
+	private ProgressPanel progressPanel;
 
-	@UiField
-	DeckPanel deckPanel;
-
-	@UiField
-	HTMLPanel timelinePanel;
-
-	@UiField
-	DockLayoutPanel splitLayoutPanel;
-
-	HTMLPanel itTablePanel;
-
-	@UiField(provided = true)
-	DataGrid<IT> itDataGrid;
-
+	private List<ITEmployee> employeesList = new ArrayList<ITEmployee>();
+	private List<IT> itsList = new ArrayList<IT>();
+	
+	private ITDialog itDialogEdit;
+	private boolean minimizedByUser;
+	
+	private DomainUserRoles dur;
+	private Integer workplace;
+	
 	// --------------------------------------------------- Variables
 
 	private DateTimeFormat formatFullDate = DateTimeFormat.getFormat("dd/MM/yyyy");
 	private static final String CONTRACT_EXP = "{\"type\":\"bar\"";
-
-	private SuggestBox employeeSB;
-	private ListBox dateListBox;
-	private CheckBox allContracts;
-
-	// --------------------------------------------------- DataGrid
-
-	private List<IT> itsList = Collections.emptyList();
 
 	// --------------------------------------------------- TimeLineChart.Variables
 
@@ -356,17 +319,12 @@ public abstract class ITWidget extends ResizeComposite {
 
 	private static final String ACTIVE = "Activo";
 
-	private int selectedYear;
-	private Date startYear;
-	private Date endYear;
-
 	private static LinkedList<LinkedList<Status>> myEmployees;
 
 	private boolean ifNull; // Evitar el Null del Timeline
 
 	private Map<Integer, ITEmployee> centineels;
 
-	private MultiWordSuggestOracle names = new MultiWordSuggestOracle();
 
 	private TimeLineChart timelineChart;
 
@@ -376,346 +334,385 @@ public abstract class ITWidget extends ResizeComposite {
 	private int posCell; // vR
 	private int posColumn; // uR
 
-	private ExpressionCallback expressionCallback;
 	private TooltipCallBack tooltipCallback;
 
 	private String cadenaTooltip;
 
 	private PopupPanel popupPanel;
 
-	// --------------------------------------------------- Toolbar.Variables
-
-	private AonToolbar toolbar;
-	private AonToolbarButton showList;
-	private AonToolbarButton showStatics;
-	private AonToolbarButton leyend;
-
-	private FormPanel msjFIEFormPanel;
-	private SubmitButton msjFIESubmitButton;
-
-	private MultiFileUpload msjFIEFileUpload;
-
-	private TGSSContextMenu tgssContextMenu;
-
-	private boolean minimizedByUser;
-
-	private AonMinimizePanel footPanel;
-
-	private FlowPanel sessionLog;
-	private ResultsPanel resultsPanel;
-
-	private TabLayoutPanel tabLayout;
-
-	private List<ITEmployee> itEmployeeIts;
-
-	private ProgressPanel progressPanel;
-
-	private ITDialog itDialogEdit;
-
 	// --------------------------------------------------- Constructor
 
 	protected ITWidget() {
-		GWT.<AonGwtTemplateResources>create(AonGwtTemplateResources.class).css().ensureInjected();
-		AON.ensureInjected();
+		super("Partes IT");
+		
+		getDur(durDB -> dur = durDB, f -> AonMessagePanel.showError(messagePanel, f.getMessage()));
 
-		provideITsDataGrid();
-
-		initWidget(uiBinder.createAndBindUi(this));
-
-		getToolbarPanel();
-		dockLayoutPanel.addNorth(toolbar, AonToolbar.HEIGTH);
 		tgssContextMenu = new TGSSContextMenu();
+		centineels = new LinkedHashMap<>();
 
-		initFootPanel();
+		addButtonsToolbar();
 
-		showResultsPanel();
-
-		splitLayoutPanel.setHeight((Window.getClientHeight() - 150) + "px");
-		mainDeckPanel.showWidget(0);
-	}
-
-	// --------------------------------------------------- provideITsDataGrid
-
-	private void provideITsDataGrid() {
-		itsList = Collections.emptyList();
-
-		itDataGrid = new CustomDataGrid<>(Integer.MAX_VALUE, IT.KEY_PROVIDER);
-
-		itDataGrid.setAutoHeaderRefreshDisabled(true);
-
-		itDataGrid.setEmptyTableWidget(new Label("No existen its".toUpperCase()));
-
-		NoSelectionModel<IT> selectionITModel = new NoSelectionModel<>(IT.KEY_PROVIDER);
-		itDataGrid.setSelectionModel(selectionITModel);
-
-		addITInfoColumns(selectionITModel);
-
-		new ListDataProvider<IT>(Collections.emptyList()).addDataDisplay(itDataGrid);
-	}
-
-	private void addITInfoColumns(NoSelectionModel<IT> selectionITModel) {
-		selectionITModel.addSelectionChangeHandler(event -> {
-			IT itSelected = selectionITModel.getLastSelectedObject();
-			openITDialog(itSelected.getContract(), itSelected.getId());
+		hideToolbarFilterMessages();
+		setSearchPlaceholder("Busque por nombre / NIF ...");
+		addKeyUpHandler(e -> {
+			String value = getSearchTextBox().getValue();
+			if (AonStringUtils.isNotBlank(value) && value.length() > 3) {
+				onSearch();
+			} else if (AonStringUtils.isBlank(value)) {
+				onSearch();
+			}
 		});
 
-		// Add Selection Column to table
-		itDataGrid.setSelectionModel(selectionITModel);
+		HTMLPanel datesPanel = new HTMLPanel(AonStringUtils.EMPTY);
+		start.setValue(DateUtils.getFirstDayOfYear());
+		start.addValueChangeHandler(e -> onSearch());
+		end.addValueChangeHandler(e -> onSearch());
+		datesPanel.add(start);
+		datesPanel.add(end);
+		addFilterWidget(datesPanel);
 
-		// Columns
-		TextColumn<IT> employeeNameColumn = new TextColumn<IT>() {
+		sort.addItem("Nombre", "name");
+		sort.addItem("F.Baja", "start");
+		sort.addItem("Causa Baja", "low");
+		sort.addItem("F.Alta", "end");
+		sort.addItem("Causa Alta", "hight");
+		sort.addItem("Inicio Contrato", "startContract");
+		sort.addItem("Fin Contrato", "endContract");
+		sort.getListBox().addChangeHandler(event -> onSearch());
+
+		asc.addItem("Ascendente", "true");
+		asc.addItem("Descendete", "false");
+		asc.getListBox().addChangeHandler(event -> onSearch());
+
+		addSortWidget(sort);
+		addSortWidget(asc);
+
+		container = new HTMLPanel("");
+		container.addStyleName(AON.CSS.aonFlexColumn());
+
+		container.add(messagePanel);
+
+		deckPanel = new DeckLayoutPanel();
+		deckPanel.setHeight("100%");
+
+		staticsPanel = new HTMLPanel(AonStringUtils.EMPTY);
+		staticsPanel.setHeight("100%");
+		deckPanel.add(staticsPanel);
+		
+		centerPanel = new SimpleLayoutPanel();
+		centerPanel.setHeight("100%");
+		
+		deckPanel.add(centerPanel);
+		
+		// Default statics view
+		deckPanel.showWidget(0);
+
+		container.add(deckPanel);
+
+		add(container);
+	}
+
+	@Override
+	protected void onClearFilter() {
+		getSearchTextBox().setValue(null, false);
+		start.setValue(DateUtils.getFirstDayOfYear());
+		end.setValue(null);
+
+		staticsList.resetSearchOffset();
+
+		onSearch();
+	}
+
+	private void addButtonsToolbar() {
+		msjFIEFormPanel = new FormPanel();
+		msjFIEFormPanel.setMethod(FormPanel.METHOD_POST);
+		msjFIEFormPanel.setEncoding(FormPanel.ENCODING_MULTIPART);
+		msjFIEFormPanel.setAction(FIEService.FIE_URL);
+
+		Hidden userNameHidden = new Hidden(FIEService.Parameter.USER.name(), Wnd.getCurrentUser());
+		Hidden domainNameHidden = new Hidden(FIEService.Parameter.DOMAIN.name(), Wnd.getCurrentDomainNameURL());
+
+		msjFIESubmitButton = new SubmitButton();
+		msjFIESubmitButton.setVisible(false);
+
+		msjFIEFileUpload = new MultiFileUpload();
+		msjFIEFileUpload.setName(FIEService.Parameter.FILE.name());
+		msjFIEFileUpload.setVisible(false);
+		msjFIEFileUpload.setAccept(".msj,application/vnd.ms-excel (.xls)");
+		msjFIEFileUpload.addChangeHandler(e -> msjFIEFormPanel.submit());
+		msjFIEFormPanel.addSubmitCompleteHandler(e -> {
+			String json = e.getResults();
+
+			JsArray<JsITEmployee> jsITEmployees = eval("(" + json + ")");
+
+			List<ITEmployee> itEmployees = new ArrayList<>(jsITEmployees.length());
+
+			for (int i = 0; i < jsITEmployees.length(); i++) {
+				JsITEmployee jsITEmployee = jsITEmployees.get(i);
+				ITEmployee itEmployee = fromJsITEmployee(jsITEmployee);
+				itEmployees.add(itEmployee);
+			}
+			
+			if(!itEmployees.isEmpty()) {
+				String pattern = itEmployees.stream()
+					    .map(ITEmployee::getEmployeeInfo)
+					    .map(EmployeeInfo::getFullName)
+					    .map(fullName -> fullName.contains(",") ? fullName.substring(0, fullName.indexOf(",")) : fullName)
+					    .collect(Collectors.joining(" | "));
+				
+				AonMessagePanel.showSuccess(messagePanel, "Se han importado los partes IT de : " + pattern);
+				getSearchTextBox().setValue(pattern);
+				onSearch();
+			} else {
+				AonMessagePanel.showInfo(messagePanel, "Sincronizaci\u00f3n finalizada. No se han encontrado partes que importar.");
+			}
+		});
+
+		FlowPanel formFlowPanel = new FlowPanel();
+		formFlowPanel.add(userNameHidden);
+		formFlowPanel.add(domainNameHidden);
+		formFlowPanel.add(msjFIEFileUpload);
+		formFlowPanel.add(msjFIESubmitButton);
+
+		msjFIEFormPanel.add(formFlowPanel);
+		addToolbarButton(msjFIEFormPanel);
+
+		AonToolbarButton addIT = new AonToolbarButton("Nueva IT", AON.CSS.aonIconAdd());
+		addIT.addClickHandler(e -> onAddIT());
+		addToolbarButton(addIT);
+
+		showList = new AonToolbarButton("Lista ITs", AON.CSS.aonIconList());
+		showList.addClickHandler(e -> showList());
+		addToolbarButton(showList);
+
+		showStatics = new AonToolbarButton("L\u00ednea temporal ITs", AON.CSS.aonIconStatics());
+		showStatics.addClickHandler(e -> {
+			showStatics();
+		});
+		showStatics.setVisible(false);
+		addToolbarButton(showStatics);
+
+		AonExpandButton tgssExpand = new AonExpandButton("Seguridad Social", AON.CSS.aonIconTgss()) {
+
 			@Override
-			public String getValue(IT it) {
-				return it.getFullName();
+			public void onExpandClick(ClickEvent event) {
+				NativeEvent nativeEvent = event.getNativeEvent();
+				tgssContextMenu.setPopupPosition(nativeEvent.getClientX(), nativeEvent.getClientY());
+				tgssContextMenu.show();
 			}
 
 			@Override
-			public void render(Context context, IT it, SafeHtmlBuilder sb) {
-				if (null != it) {
-					// it empiez post contrato ROJO
-					if (checkOutOfContractA(it))
-						sb.appendHtmlConstant(
-								"<div style=\"font-weight: bold !important; color: red;\" title=\"IT posterior a la fecha fin contrato\">"
-										+ it.getFullName() + "</div>");
-					// it fin antes tipo contrato NARANJA
-					else if (checkOutOfContractB(it))
-						sb.appendHtmlConstant(
-								"<div style=\"font-weight: bold !important; color: orange;\" title=\"IT anterior a la fecha inicio contrato\">"
-										+ it.getFullName() + "</div>");
-					// it fin antes tipo contrato y fini post inicio contrato VERDE
-					else if (checkOutOfContractBtw(it))
-						sb.appendHtmlConstant(
-								"<div style=\"font-weight: bold !important; color: green;\" title=\"IT abierta sin fecha alta o fecha alta posterior al fin del contrato\">"
-										+ it.getFullName() + "</div>");
-					else
-						super.render(context, it, sb);
-				} else
-					super.render(context, it, sb);
+			public void onDefaultClick(ClickEvent evet) {
+				onFIEFileSync();
 			}
 		};
+		addToolbarButton(tgssExpand);
 
-		employeeNameColumn.setSortable(true);
-
-		TextColumn<IT> itStartColumn = new TextColumn<IT>() {
-			@Override
-			public String getValue(IT it) {
-				return formatFullDate.format(it.getStartDate());
-			}
-		};
-
-		itStartColumn.setSortable(true);
-		itStartColumn.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
-		itDataGrid.setColumnWidth(itStartColumn, 10, Unit.PCT);
-
-		TextColumn<IT> startCauseColumn = new TextColumn<IT>() {
-			@Override
-			public String getValue(IT it) {
-				return parseLowCause(it.getTypeLowPart());
-			}
-		};
-
-		startCauseColumn.setSortable(true);
-		startCauseColumn.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
-
-		TextColumn<IT> itEndColumn = new TextColumn<IT>() {
-			@Override
-			public String getValue(IT it) {
-				Date endDate = it.getEndDate();
-				return null == endDate ? "" : formatFullDate.format(endDate);
-			}
-		};
-
-		itEndColumn.setSortable(true);
-		itEndColumn.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
-		itDataGrid.setColumnWidth(itEndColumn, 10, Unit.PCT);
-
-		TextColumn<IT> endCauseColumn = new TextColumn<IT>() {
-			@Override
-			public String getValue(IT it) {
-				return parseHighCause(it.getTypeHighPart());
-			}
-		};
-
-		endCauseColumn.setSortable(true);
-		endCauseColumn.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
-
-		TextColumn<IT> startColumn = new TextColumn<IT>() {
-			@Override
-			public String getValue(IT it) {
-				return formatFullDate.format(it.getContractStartDate());
-			}
-		};
-
-		startColumn.setSortable(true);
-		startColumn.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
-		itDataGrid.setColumnWidth(startColumn, 10, Unit.PCT);
-
-		TextColumn<IT> endColumn = new TextColumn<IT>() {
-			@Override
-			public String getValue(IT it) {
-				Date endDate = it.getContractEndDate();
-				return null == endDate ? "" : formatFullDate.format(endDate);
-			}
-		};
-
-		endColumn.setSortable(true);
-		endColumn.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
-		itDataGrid.setColumnWidth(endColumn, 10, Unit.PCT);
-
-		// Add the columns.
-		itDataGrid.addColumn(employeeNameColumn, "Trabajador");
-		itDataGrid.addColumn(itStartColumn, "F. Baja");
-		itDataGrid.addColumn(startCauseColumn, "Causa Baja");
-		itDataGrid.addColumn(itEndColumn, "F. Alta");
-		itDataGrid.addColumn(endCauseColumn, "Causa Alta");
-		itDataGrid.addColumn(startColumn, "Inicio Contrato");
-		itDataGrid.addColumn(endColumn, "Fin Contrato");
+		leyend = new AonToolbarButton("Leyenda", AON.CSS.aonIconInfo());
+		leyend.addClickHandler(e -> onLeyend());
+		leyend.setVisible(false);
+		addToolbarButton(leyend);
 
 	}
 
-	private void initITTable() {
-		ListDataProvider<IT> dataProvider = new ListDataProvider<>();
-
-		dataProvider.addDataDisplay(itDataGrid);
-
-		List<IT> itInfoList = dataProvider.getList();
-		itInfoList.clear();
-
-		for (IT it : this.itsList)
-			itInfoList.add(it);
-
-		itDataGrid.setPageSize(itsList.size());
-
-		addSortColums(itDataGrid, itInfoList);
+	private void onAddIT() {
+		newITDialog();
 	}
 
-	private void addSortColums(DataGrid<IT> dataGrid, List<IT> itList) {
+	private ITDialog newITDialog() {
+		ITDialog itDialog = new ITDialog("Creaci\u00F3n") {
+			@Override
+			protected void onAccept() {
+				accept(getITEmployee(), true);
+			}
 
-		ListHandler<IT> columnSortHandler = new ListHandler<>(itList);
+			@Override
+			protected void onDelete(IT it) {
+				deleteLeave(getITEmployee(), it);
+			}
 
-		columnSortHandler.setComparator(dataGrid.getColumn(0),
-				(o1, o2) -> compareString(o1, o2, o1.getFullName(), o2.getFullName()));
+			@Override
+			protected void onCommunicateITPart(IT it, ITPart part) {
+			}
 
-		columnSortHandler.setComparator(dataGrid.getColumn(1),
-				(o1, o2) -> compareDates(o1, o2, o1.getStartDate(), o2.getStartDate()));
+			@Override
+			protected void onDownloadFDIITPart(IT it, ITPart itPart) {
+			}
+		};
 
-		columnSortHandler.setComparator(dataGrid.getColumn(2), (o1, o2) -> compareString(o1, o2,
-				parseLowCause(o1.getTypeLowPart()), parseLowCause(o2.getTypeLowPart())));
+		itDialog.setEmployeesList(getActiveEmployeesList());
+		itDialog.setIsUserComunica(isUserComunica());
+		itDialog.initConfirmationsTable();
+		itDialog.setModal(true);
+		itDialog.setAnimationEnabled(true);
+		itDialog.center();
+		itDialog.show();
 
-		columnSortHandler.setComparator(dataGrid.getColumn(3),
-				(o1, o2) -> compareDates(o1, o2, o1.getEndDate(), o2.getEndDate()));
-
-		columnSortHandler.setComparator(dataGrid.getColumn(4), (o1, o2) -> compareString(o1, o2,
-				parseHighCause(o1.getTypeHighPart()), parseHighCause(o2.getTypeHighPart())));
-
-		columnSortHandler.setComparator(dataGrid.getColumn(5),
-				(o1, o2) -> compareDates(o1, o2, o1.getContractStartDate(), o2.getContractStartDate()));
-
-		columnSortHandler.setComparator(dataGrid.getColumn(6),
-				(o1, o2) -> compareDates(o1, o2, o1.getContractEndDate(), o2.getContractEndDate()));
-
-		// We know that the data is sorted alphabetically by default.
-		dataGrid.getColumn(1).setDefaultSortAscending(false);
-		dataGrid.getColumnSortList().push(dataGrid.getColumn(1));
-
-		dataGrid.addColumnSortHandler(columnSortHandler);
-
+		return itDialog;
 	}
 
-	private int compareString(Object o1, Object o2, String s1, String s2) {
-		if (o1 == o2)
-			return 0;
-		else if (o1 == null)
-			return -1;
-		else if (o2 == null)
-			return 1;
+	private void deleteLeave(ITEmployee itEmployee, IT it) {
+		if (ITDialog.isPartenityPart(it))
+			deletePaternity(it, itEmployee);
 		else
-			return s1.compareTo(s2);
+			delete(it, itEmployee);
 	}
 
-	private int compareDates(Object o1, Object o2, Date d1, Date d2) {
-		if (o1 == o2 || d1 == d2)
-			return 0;
-		else if (o1 == null || d1 == null)
-			return -1;
-		else if (o2 == null || d2 == null)
-			return 1;
-		else
-			return d1.compareTo(d2);
+	private void accept(ITEmployee itEmployee, boolean newIT) {
+		createUpdateITEmployee(itEmployee, s -> {
+			if (newIT)
+				showCreateMessage();
+			else
+				showUpdateMessage();
+			loadITWidget();
+		}, f -> {
+		});
 	}
 
-	// it empiez post contrato ROJO
-	private boolean checkOutOfContractA(IT it) {
-		return null != it.getContractEndDate() && it.getStartDate().after(it.getContractEndDate());
+	private void showList() {
+		deckPanel.showWidget(1);
+		showStatics.setVisible(true);
+		showList.setVisible(false);
+		leyend.setVisible(false);
+
+		showOrder();
+		
+		loadITsList();
 	}
 
-	// it fin antes tipo contrato NARANJA
-	private boolean checkOutOfContractB(IT it) {
-		return null != it.getEndDate() && it.getEndDate() != it.getContractStartDate()
-				&& it.getEndDate().before(it.getContractStartDate());
+	private void showStatics() {
+		deckPanel.showWidget(0);
+		showStatics.setVisible(false);
+		showList.setVisible(true);
+		leyend.setVisible(true);
+
+		hideOrder();
+		loadITStatics();
 	}
 
-	// it fin antes tipo contrato y fini post inicio contrato VERDE
-	private boolean checkOutOfContractBtw(IT it) {
-		return it.getStartDate().after(it.getContractStartDate()) && (null == it.getEndDate()
-				|| (null != it.getContractEndDate() && it.getEndDate().after(it.getContractEndDate())));
+	private void onFIEFileSync() {
+		msjFIEFormPanel.setMethod(METHOD_GET);
+		msjFIESubmitButton.click();
+		AonMessagePanel.showLoading(messagePanel, "Consultando/Descargando el Fichero INSS Empresas (FIER)");
 	}
 
-	private String parseLowCause(Byte typeLowPart) {
-		switch (typeLowPart) {
-		case (byte) 0:
-			return "Enfermedad Com\u00FAn";
-		case (byte) 1:
-			return "Accidente de trabajo";
-		case (byte) 2:
-			return "Maternidad";
-		case (byte) 3:
-			return "Paternidad";
-		case (byte) 4:
-			return "Riesgo para el embarazo";
-		case (byte) 5:
-			return "Riesgo durante la lactancia";
-		case (byte) 6:
-			return "Accidente no laboral";
-		case (byte) 7:
-			return "Enfermedad com\u00FAn periodo de carencia";
-		case (byte) 8:
-			return "Enfermedad com\u00FAn, prestaci\u00F3n profesional (COVID-19)";
-		case (byte) 9:
-			return "Periodo de Observaci\u00f3n por Enfermedad Profesional";
-		default:
-			return "";
-		}
+	public void loadITWidget() {
+		AonMessagePanel.showLoading(messagePanel, "Obteniendo ITs de los trabajadores...");
+		onSearch();
+	}
+	
+	private void onSearch() {
+		employeesList.clear();
+		itsList.clear();
+		centineels.clear();
+		
+		ItParams params = getParams();
+		params.setOffset(0);
+		params.setLimit(Integer.MAX_VALUE);
+		
+		getEmployeeItList(
+			params,
+			itEmployeeList -> {
+				if (itEmployeeList.isEmpty()) {
+					AonMessagePanel.showWarning(messagePanel, "No existen IT para los filtros seleccionados");
+				} else {
+					employeesList = itEmployeeList;
+					itEmployeeList.stream().map(itEmployee -> itEmployee.getIts()).collect(Collectors.toList()).forEach(listIt -> itsList.addAll(listIt));					
+					int deckIdx = deckPanel.getVisibleWidgetIndex();
+					
+					employeesList.forEach(itEmployee -> centineels.put(itEmployee.getContractInfo().getContractId(), itEmployee));
+					
+					if (0 == deckIdx) {
+						showStatics();
+					} else
+						showList();
+					
+					AonMessagePanel.hideMessage(messagePanel);
+				}
+			},
+			failure -> AonMessagePanel.showError(messagePanel, failure.getMessage())
+		);
 	}
 
-	private String parseHighCause(Byte typeHighPart) {
-		if (null == typeHighPart)
-			return "";
+	private void loadITStatics() {
+		this.tooltipCallback = new TooltipCallBack();
+		this.popupPanel = new PopupPanel(true);
+		this.tooltip = new ITTooltip() {
 
-		switch (typeHighPart) {
-		case (byte) 0:
-			return "Curaci\u00F3n";
-		case (byte) 1:
-			return "Fallecimiento";
-		case (byte) 2:
-			return "Inspecci\u00F3n m\u00E9dica";
-		case (byte) 3:
-			return "Propuesta incapacidad";
-		case (byte) 4:
-			return "Agotamiento de plazo";
-		case (byte) 5:
-			return "Mejor\u00EDa que permite realizar el trabajo habitual";
-		case (byte) 6:
-			return "Incomparecencia";
-		case (byte) 7:
-			return "Control INSS duraci\u00F3n 12 meses";
-		case (byte) 8:
-			return "Recuperaci\u00F3n capacidad profesional";
-		case (byte) 9:
-			return "Incomparecencia contratos de formaci\u00F3n";
-		default:
-			return "";
-		}
+			@Override
+			protected void onTooltipClick(Integer contractId, Integer itId) {
+				openITDialog(contractId, itId);
+			}
+		};
+
+		AonMessagePanel.hideMessage(messagePanel);
+		printTimelineChart();
+	}
+	
+	private final void printTimelineChart() {
+		Runnable onLoadCallback = () -> {
+			try {
+				data = new DataTableWrapper();
+				AbstractDataTable dataTable = createTable();
+				Options options = createOptions(dataTable);
+				timelineChart = new TimeLineChart(dataTable, options);
+
+				if (ifNull)
+					staticsPanel.clear();
+				else {
+					staticsPanel.clear();
+					staticsPanel.add(timelineChart);
+					new MouseEventsHandlers(timelineChart);
+				}
+
+			} catch (Exception ex) {
+				Window.alert(ex + " Se ha producido un error, printTimelineChart");
+			}
+		};
+
+		VisualizationUtils.loadVisualizationApi(onLoadCallback, TimeLineChart.PACKAGE);
+	}
+	
+	private void loadITsList() {
+		ItParams params = getParams();
+		staticsList = new ITTable(params) {
+
+			@Override
+			protected void onShowSuccessMessage(String successMessage) {
+				AonMessagePanel.showSuccess(messagePanel, successMessage);
+			}
+
+			@Override
+			protected void onShowLoadingMessage(String loadingMessage) {
+				AonMessagePanel.showLoading(messagePanel, loadingMessage);
+			}
+
+			@Override
+			protected void onShowErrorMessage(String errorMessage) {
+				AonMessagePanel.showError(messagePanel, errorMessage);
+			}
+
+			@Override
+			protected void onITOpen(Integer contractId, Integer itId) {
+				openITDialog(contractId, itId);
+			}
+
+		};
+		
+		centerPanel.setWidget(staticsList);
+	}
+
+	private ItParams getParams() {
+		ItParams params = new ItParams()
+				.setDescription(getSearchTextBox().getValue())
+				.setStart(start.getValue())
+				.setEnd(end.getValue())
+				.setWorkplace(this.workplace)
+				.setOrderBy(sort.getValue())
+				.setAsc(Boolean.parseBoolean(asc.getValue()))
+				;
+		
+		return params;
 	}
 
 	// ---------------------------------------------------
@@ -736,7 +733,7 @@ public abstract class ITWidget extends ResizeComposite {
 			int mouseClientX = event.getClientX();
 			int mouseClientY = event.getClientY();
 			cadenaTooltip = getLogicalName(element, mouseClientX, mouseClientY);
-
+			
 			if (AonStringUtils.isBlank(cadenaTooltip))
 				return;
 
@@ -774,7 +771,7 @@ public abstract class ITWidget extends ResizeComposite {
 			int mouseClientX = event.getNativeEvent().getClientX();
 			int mouseClientY = event.getNativeEvent().getClientY();
 			cadenaTooltip = getLogicalName(element, mouseClientX, mouseClientY);
-
+			
 			if (AonStringUtils.isBlank(cadenaTooltip))
 				return;
 
@@ -867,18 +864,6 @@ public abstract class ITWidget extends ResizeComposite {
 
 	}
 
-	// --------------------------------------------------- ExpressionCallback
-
-	class ExpressionCallback extends Timer {
-		@Override
-		public void run() {
-			String container = employeeSB.getText().toUpperCase();
-
-			if (AonStringUtils.isEmpty(container) || container.length() > 2)
-				reloadTimeline();
-		}
-	}
-
 	// --------------------------------------------------- TooltipCallback
 
 	class TooltipCallBack extends Timer {
@@ -928,244 +913,6 @@ public abstract class ITWidget extends ResizeComposite {
 
 	}
 
-	public void loadITWidget(Runnable success, Consumer<Throwable> failure) {
-		AonMessagePanel.showLoading(messagePanel, "Obteniendo ITs de los trabajadores...");
-
-		getITEmployeeListDB(itEmployeeList -> {
-			if (itEmployeeList.isEmpty()) {
-				showMessage();
-			} else {
-				itEmployeeIts = itEmployeeList;
-				int deckIdx = mainDeckPanel.getVisibleWidget();
-				if (0 == deckIdx)
-					showStatics();
-				else
-					showList();
-			}
-
-			AonMessagePanel.hideMessage(messagePanel);
-
-			success.run();
-		}, f -> {
-		});
-	}
-
-	// --------------------------------------------------- ContextMenu
-
-	// --------------------------------------------------- OnModuleLoad
-
-	public void loadITWidget() {
-		AonMessagePanel.showLoading(messagePanel, "Obteniendo ITs de los trabajadores...");
-
-		getITEmployeeListDB(itEmployeeList -> {
-			if (itEmployeeList.isEmpty()) {
-				showMessage();
-			} else {
-				itEmployeeIts = itEmployeeList;
-				int deckIdx = mainDeckPanel.getVisibleWidget();
-				if (0 == deckIdx)
-					showStatics();
-				else
-					showList();
-			}
-
-			AonMessagePanel.hideMessage(messagePanel);
-		}, f -> {
-		});
-	}
-
-	private void loadITStatics() {
-		this.expressionCallback = new ExpressionCallback();
-		this.tooltipCallback = new TooltipCallBack();
-		this.popupPanel = new PopupPanel(true);
-		this.tooltip = new ITTooltip() {
-
-			@Override
-			protected void onTooltipClick(Integer contractId, Integer itId) {
-				openITDialog(contractId, itId);
-			}
-		};
-
-		AonMessagePanel.hideMessage(messagePanel);
-		getFilterITListPanel();
-		initDateListBox();
-		initSuggestBox();
-		printTimelineChart();
-
-		// By now this doesn't work
-		// checkStatusITs();
-	}
-
-	private void loadITsList() {
-		itsList = getITsList();
-		initITTable();
-		setTableHeights();
-	}
-
-	private void setTableHeights() {
-		itDataGrid.getElement().getStyle().setHeight(Window.getClientHeight() - 180.00, Unit.PX);
-	}
-
-	private void getFilterITListPanel() {
-		filterITListPanel.clear();
-		filterITListPanel.setStyleName(AON.CSS.aonSearchPanel());
-		filterITListPanel.addStyleName(AON.CSS.aonScrollArea());
-		filterITListPanel.addStyleName(AON.CSS.aonMarginBottom());
-		filterITListPanel.addStyleName(AON.CSS.aonMarginLeft());
-		filterITListPanel.addStyleName(AON.CSS.aonMarginRight());
-		filterITListPanel.addStyleName(AON.CSS.aonBlockCenter());
-		filterITListPanel.addStyleName(style.mt10());
-
-		HTMLPanel filterPanel = new HTMLPanel("");
-		filterPanel.addStyleName(style.filterPanel());
-
-		HTMLPanel itPanel = new HTMLPanel("");
-		itPanel.addStyleName(style.flexPanel());
-		Label itL = new Label("Trabajador : ");
-		itL.getElement().getStyle().setFontWeight(FontWeight.BOLD);
-		itL.getElement().getStyle().setMarginRight(10, Unit.PX);
-		itPanel.add(itL);
-		employeeSB = new SuggestBox(names);
-		employeeSB.setWidth("300px");
-		employeeSB.getElement().getStyle().setMarginRight(10, Unit.PX);
-		itPanel.add(employeeSB);
-		AonTableButton cleanSB = new AonTableButton("Limpiar", AON.CSS.aonIconClear());
-		cleanSB.addClickHandler(e -> employeeSB.setValue("", true));
-		itPanel.add(cleanSB);
-
-		HTMLPanel showPanel = new HTMLPanel("");
-		showPanel.addStyleName(style.flexPanel());
-		Label showL = new Label("Mostrar ITs : ");
-		showL.getElement().getStyle().setFontWeight(FontWeight.BOLD);
-		showL.getElement().getStyle().setMarginRight(5, Unit.PX);
-		showPanel.add(showL);
-		dateListBox = new ListBox();
-		dateListBox.getElement().getStyle().setMarginRight(5, Unit.PX);
-		showPanel.add(dateListBox);
-
-		Label allContractsL = new Label("Contratos con IT");
-		allContractsL.getElement().getStyle().setFontWeight(FontWeight.BOLD);
-		allContracts = new CheckBox();
-		allContracts.setValue(true);
-		allContracts.addValueChangeHandler(e -> {
-			initSuggestBox();
-			reloadTimeline();
-		});
-		showPanel.add(allContractsL);
-		showPanel.add(allContracts);
-
-		filterPanel.add(itPanel);
-		filterPanel.add(showPanel);
-
-		filterITListPanel.add(filterPanel);
-	}
-
-	private void initDateListBox() {
-		dateListBox.clear();
-
-		dateListBox.addItem("\u00daltimos 12 meses", "0");
-		for (Integer year : getAviableYears())
-			dateListBox.addItem(String.valueOf(year));
-
-		dateListBox.setSelectedIndex(0);
-
-		selectedYear = 0;
-		Date date = new Date();
-		endYear = DateUtils.getLastDayOfMonth(date);
-		startYear = DateUtils.copyDateOnly(endYear);
-		startYear = DateUtils.getFirstDayOfMonth(DateUtils.addYears2Date(startYear, -1));
-
-		dateListBox.addChangeHandler(e -> {
-			try {
-				selectedYear = Integer.valueOf(dateListBox.getValue(dateListBox.getSelectedIndex()));
-			} catch (Exception ex) {
-				selectedYear = 0;
-			}
-
-			if (AonNumberUtils.equals(selectedYear, 0)) {
-				Date currentDate = new Date();
-				endYear = DateUtils.getLastDayOfMonth(currentDate);
-				startYear = DateUtils.copyDateOnly(endYear);
-				startYear = DateUtils.getFirstDayOfMonth(DateUtils.addYears2Date(startYear, -1));
-			} else {
-
-				startYear = DateUtils.getFirstDayOfYear(DateUtils.getDate(0, selectedYear));
-
-				// Check if selected year is current year
-				int currentYear = DateUtils.getYear();
-				if (AonNumberUtils.equals(selectedYear, currentYear)) {
-					Date nextMonth = DateUtils.addMonths2Date(new Date(), 1);
-					endYear = DateUtils.getLastDayOfMonth(nextMonth);
-				} else
-					endYear = DateUtils.getLastDayOfYear(DateUtils.getDate(11, selectedYear));
-			}
-
-			initSuggestBox();
-			reloadTimeline();
-		});
-	}
-
-	private final void initSuggestBox() {
-		names.clear();
-
-		centineels = new LinkedHashMap<>();
-
-		Date startYearAux = null;
-		Date endYearAux = null;
-		if (AonNumberUtils.equals(selectedYear, 0)) {
-			startYearAux = DateUtils.copyDateOnly(startYear);
-			endYearAux = DateUtils.getLastDayOfMonth(endYear);
-		} else {
-			startYearAux = DateUtils.getFirstDayOfYear(DateUtils.getDate(0, selectedYear));
-			endYearAux = DateUtils.getLastDayOfYear(DateUtils.getDate(11, selectedYear));
-		}
-
-		for (ITEmployee itEmployee : getFilterITEmployeeList(allContracts.getValue(), startYearAux, endYearAux)) {
-
-			int contractId = itEmployee.getContractInfo().getContractId();
-
-			if ((DateUtils.compare(itEmployee.getContractInfo().getStartDate(), endYearAux) <= 0)
-					&& (DateUtils.compare(itEmployee.getContractInfo().getEndDate(), startYearAux) >= 0)) {
-
-				names.add(itEmployee.getEmployeeInfo().getFullName());
-				centineels.put(contractId, itEmployee);
-			}
-		}
-
-		if (centineels.isEmpty())
-			showMessage();
-		else
-			showTimeLine();
-
-		employeeSB.addValueChangeHandler(e -> {
-			expressionCallback.cancel();
-			expressionCallback.schedule(1500);
-		});
-	}
-
-	private final void printTimelineChart() {
-		Runnable onLoadCallback = () -> {
-			try {
-				data = new DataTableWrapper();
-				AbstractDataTable dataTable = createTable();
-				Options options = createOptions(dataTable);
-				timelineChart = new TimeLineChart(dataTable, options);
-
-				if (ifNull)
-					timelinePanel.clear();
-				else {
-					timelinePanel.clear();
-					timelinePanel.add(timelineChart);
-					new MouseEventsHandlers(timelineChart);
-				}
-
-			} catch (Exception ex) {
-				Window.alert(ex + " Se ha producido un error, printTimelineChart");
-			}
-		};
-
-		VisualizationUtils.loadVisualizationApi(onLoadCallback, TimeLineChart.PACKAGE);
-	}
 
 	// --------------------------------------------------- TimeLineChart.Methods
 
@@ -1173,16 +920,20 @@ public abstract class ITWidget extends ResizeComposite {
 		AbstractDataTable dataTable = createTable();
 		Options options = createOptions(dataTable);
 		timelineChart = new TimeLineChart(dataTable, options);
-		timelinePanel.clear();
-		timelinePanel.add(timelineChart);
+		
+		timelineChart.getParent().getElement().getStyle().setProperty("display", "flex");
+		timelineChart.getParent().getElement().getStyle().setProperty("justify-content", "center");
+		
+		staticsPanel.clear();
+		staticsPanel.add(timelineChart);
 		new MouseEventsHandlers(timelineChart);
 	}
 
 	private Options createOptions(AbstractDataTable dataTable) {
 		Options options = Options.create();
 
-		options.setWidth(deckPanel.getOffsetWidth() - 20);
-		options.setHeight(Window.getClientHeight() - 240);
+		options.setWidth(deckPanel.getOffsetWidth() - 30);
+		options.setHeight(Window.getClientHeight() - 210);
 
 		Timeline timeline = Timeline.create();
 		options.setAvoidOverlappingGridLines(false);
@@ -1225,37 +976,29 @@ public abstract class ITWidget extends ResizeComposite {
 	}
 
 	private final AbstractDataTable createTable() {
-		String container = employeeSB.getText().toUpperCase();
-
-		String[] patterns = AonStringUtils.split(container, '|');
-
 		data = new DataTableWrapper();
 		ifNull = true;
 
-		for (ITEmployee itEmployee : centineels.values()) {
+		for (ITEmployee itEmployee : centineels.values().stream().sorted((o1, o2) -> o1.getEmployeeInfo().getFullName().compareTo(o2.getEmployeeInfo().getFullName())).collect(Collectors.toList())) {
 
-			String fullName = itEmployee.getEmployeeInfo().getFullName();
+			ifNull = false;
 
-			// if (fullName.contains(container)) {
-			if (patterns == null || patterns.length == 0
-					|| Arrays.stream(patterns).anyMatch(p -> AonStringUtils.contains(fullName, p))) {
+			Date start = itEmployee.getContractInfo().getStartDate();
+			Date end = itEmployee.getContractInfo().getEndDate();
 
-				ifNull = false;
+			int contractId = itEmployee.getContractInfo().getContractId();
 
-				Date start = itEmployee.getContractInfo().getStartDate();
-				Date end = itEmployee.getContractInfo().getEndDate();
+			Date startYear = this.start.getValue() == null ? DateUtils.getFirstDayOfYear() : this.start.getValue();
+			Date endYear = this.end.getValue() == null ? DateUtils.getLastDayOfYear(new Date()) : this.end.getValue();
+			
+			start = DateUtils.after(start, startYear);
+			end = DateUtils.before(end, endYear);
 
-				int contractId = itEmployee.getContractInfo().getContractId();
-
-				start = DateUtils.after(start, startYear);
-				end = DateUtils.before(end, endYear);
-
-				if (!itEmployee.getIts().isEmpty())
-					addLeaveRows(itEmployee, contractId, start, end);
-
-				else
-					data.addRow(itEmployee.getEmployeeInfo().getFullName(), ACTIVE, start, end, contractId, contractId);
-			}
+			if (!itEmployee.getIts().isEmpty())
+				addLeaveRows(itEmployee, contractId, start, end);
+			else
+				data.addRow(itEmployee.getEmployeeInfo().getFullName(), ACTIVE, start, end, contractId, contractId);
+			
 		}
 
 		return data.getDataTable();
@@ -1266,11 +1009,14 @@ public abstract class ITWidget extends ResizeComposite {
 		Date leaveStart = null;
 		Date leaveEnd = null;
 
+		Date startYear = this.start.getValue() == null ? DateUtils.getFirstDayOfYear() : this.start.getValue();
+		Date endYear = this.end.getValue() == null ? DateUtils.getLastDayOfYear(new Date()) : this.end.getValue();
+		
 		for (IT it : itEmployee.getIts()) {
 
-			if ((DateUtils.compare(it.getStartDate(), endYear) > 0)
-					|| (DateUtils.compare(it.getEndDate(), startYear) < 0))
-				continue;
+//			if ((DateUtils.compare(it.getStartDate(), endYear) > 0)
+//					|| (DateUtils.compare(it.getEndDate(), startYear) < 0))
+//				continue;
 
 			Byte type = it.getTypeLowPart();
 			Date leaveEndAux = it.getEndDate();
@@ -1735,16 +1481,6 @@ public abstract class ITWidget extends ResizeComposite {
 		return eval(javascript);
 	}-*/;
 
-	// --------------------------------------------------- DeckPanel.Methods
-
-	private void showTimeLine() {
-		deckPanel.showWidget(0);
-	}
-
-	private void showMessage() {
-		deckPanel.showWidget(1);
-	}
-
 	// --------------------------------------------------- Leyend.Methods
 
 	public void openLeyend() {
@@ -1798,226 +1534,9 @@ public abstract class ITWidget extends ResizeComposite {
 		leyendDialog.info();
 	}
 
-	// --------------------------------------------------- Toolbar
-
-	private void getToolbarPanel() {
-		this.toolbar = new AonToolbar("Partes IT");
-
-		msjFIEFormPanel = new FormPanel();
-		msjFIEFormPanel.setMethod(FormPanel.METHOD_POST);
-		msjFIEFormPanel.setEncoding(FormPanel.ENCODING_MULTIPART);
-		msjFIEFormPanel.setAction(FIEService.FIE_URL);
-
-		Hidden userNameHidden = new Hidden(FIEService.Parameter.USER.name(), Wnd.getCurrentUser());
-		Hidden domainNameHidden = new Hidden(FIEService.Parameter.DOMAIN.name(), Wnd.getCurrentDomainNameURL());
-
-		msjFIESubmitButton = new SubmitButton();
-		msjFIESubmitButton.setVisible(false);
-
-		msjFIEFileUpload = new MultiFileUpload();
-		msjFIEFileUpload.setName(FIEService.Parameter.FILE.name());
-		msjFIEFileUpload.setVisible(false);
-		msjFIEFileUpload.setAccept(".msj,application/vnd.ms-excel (.xls)");
-		msjFIEFileUpload.addChangeHandler(e -> msjFIEFormPanel.submit());
-		msjFIEFormPanel.addSubmitCompleteHandler(e -> {
-			String json = e.getResults();
-
-			JsArray<JsITEmployee> jsITEmployees = eval("(" + json + ")");
-
-			List<ITEmployee> itEmployees = new ArrayList<>(jsITEmployees.length());
-
-			for (int i = 0; i < jsITEmployees.length(); i++) {
-				JsITEmployee jsITEmployee = jsITEmployees.get(i);
-				ITEmployee itEmployee = fromJsITEmployee(jsITEmployee);
-				itEmployees.add(itEmployee);
-			}
-
-			setITEmployeeList(itEmployees, s -> {
-				loadITWidget(() -> {
-					String pattern = itEmployees.stream().map(ITEmployee::getEmployeeInfo)
-							.map(EmployeeInfo::getFullName).collect(Collectors.joining("|"));
-					employeeSB.getValueBox().setValue(pattern, true);
-
-				}, f -> {
-				});
-			}, f -> {
-			});
-
-		});
-
-		FlowPanel formFlowPanel = new FlowPanel();
-		formFlowPanel.add(userNameHidden);
-		formFlowPanel.add(domainNameHidden);
-		formFlowPanel.add(msjFIEFileUpload);
-		formFlowPanel.add(msjFIESubmitButton);
-
-		msjFIEFormPanel.add(formFlowPanel);
-		toolbar.add(msjFIEFormPanel);
-
-		AonToolbarButton addIT = new AonToolbarButton("Nueva IT", AON.CSS.aonIconAdd());
-		addIT.addClickHandler(e -> onAddIT());
-		toolbar.add(addIT);
-
-		showList = new AonToolbarButton("Lista ITs", AON.CSS.aonIconList());
-		showList.addClickHandler(e -> showList());
-		toolbar.add(showList);
-
-		showStatics = new AonToolbarButton("L\u00ednea temporal ITs", AON.CSS.aonIconStatics());
-		showStatics.addClickHandler(e -> showStatics());
-		showStatics.setVisible(false);
-		toolbar.add(showStatics);
-
-		AonExpandButton tgssExpand = new AonExpandButton("Seguridad Social", AON.CSS.aonIconTgss()) {
-
-			@Override
-			public void onExpandClick(ClickEvent event) {
-				NativeEvent nativeEvent = event.getNativeEvent();
-				tgssContextMenu.setPopupPosition(nativeEvent.getClientX(), nativeEvent.getClientY());
-				tgssContextMenu.show();
-			}
-
-			@Override
-			public void onDefaultClick(ClickEvent evet) {
-				onFIEFileSync();
-			}
-		};
-		toolbar.add(tgssExpand);
-
-		leyend = new AonToolbarButton("Leyenda", AON.CSS.aonIconInfo());
-		leyend.addClickHandler(e -> onLeyend());
-		leyend.setVisible(false);
-		toolbar.add(leyend);
-
-	}
-
-	// --------------------------------------------------- Toolbar.Methods
-
-	private void showStatics() {
-		mainDeckPanel.showWidget(0);
-		showStatics.setVisible(false);
-		showList.setVisible(true);
-		leyend.setVisible(true);
-		loadITStatics();
-	}
-
-	private void showList() {
-		mainDeckPanel.showWidget(1);
-		showStatics.setVisible(true);
-		showList.setVisible(false);
-		leyend.setVisible(false);
-		loadITsList();
-	}
-
-	private void onAddIT() {
-		newITDialog();
-	}
-
-	private void onFIEFileSync() {
-		msjFIEFormPanel.setMethod(METHOD_GET);
-		msjFIESubmitButton.click();
-		AonMessagePanel.showLoading(messagePanel, "Consultando/Descargando el Fichero INSS Empresas (FIER)");
-	}
-
 	private void onFIEFileUpload() {
 		msjFIEFormPanel.setMethod(METHOD_POST);
 		msjFIEFileUpload.click();
-	}
-
-	private void checkStatusITs() {
-		showProgressPanel();
-		checkStatus(status -> {
-			SistemaREDITResults results = new SistemaREDITResults() {
-				@Override
-				public void run() {
-					showProgressPanel();
-					checkStatus(status -> {
-						removeAll();
-						status.visit(this);
-					}, throwable -> {
-						LOGGER.info("error run");
-					});
-				}
-
-				@Override
-				public void up2DateEnterprise() {
-					this.setUp2DateEnterprise();
-					closeFootPanel();
-				}
-
-				@Override
-				public void updatedEnterprise() {
-					loadITWidget();
-				}
-
-				@Override
-				protected void credentialsFound() {
-					checkStatus(status -> {
-						removeAll();
-						status.visit(this);
-						showResultsPanel();
-						EnterpriseITStatus.ifSistemaREDEnabled(status, ITWidget.this::showFootPanel,
-								ITWidget.this::closeFootPanel);
-
-						EnterpriseITStatus.ifSistemaREDError(status, ITWidget.this::showFootPanel,
-								ITWidget.this::closeFootPanel);
-					}, throwable -> {
-						closeFootPanel();
-					});
-				}
-
-				@Override
-				protected void onOpenITPart(ItNotExist itNotExist) {
-					openITPartDialog(itNotExist);
-				}
-
-				@Override
-				protected void onSaveITPart(ItNotExist itNotEx) {
-					List<ItNotExist> itNotExist = new ArrayList<>();
-					itNotExist.add(itNotEx);
-					saveITPartsAon(itNotExist);
-				}
-
-				@Override
-				protected void onRemoveITPartToSS(ItNotExist ItNotExist) {
-					confirmDeleteITToTGSS(ItNotExist, f -> {});
-				}
-
-				@Override
-				protected void onRemoveITPartToAon(ItNotExist itNotEx) {
-					AonConfirmDialog confirmDialog = new AonConfirmDialog();
-					confirmDialog.confirm("BORRADO",
-							String.valueOf("\u00BF") + "Realmente desea eliminar el parte IT de aon Solutions?",
-							new AonConfirmDialogCallback() {
-								@Override
-								public void onCancel() {
-								}
-
-								@Override
-								public void onAccept() {
-									removeITPart(itNotEx, f -> {});
-								}
-							});
-				}
-
-				@Override
-				public void onFinish() {
-					showResultsPanel();
-				}
-			};
-			// results.itNotExist(null);
-			results.setIsUserComunica(isUserComunica());
-			status.visit(results);
-			resultsPanel.setWidget(results);
-
-			showResultsPanel();
-
-			EnterpriseITStatus.ifSistemaREDEnabled(status, ITWidget.this::showFootPanel, ITWidget.this::closeFootPanel);
-
-			EnterpriseITStatus.ifSistemaREDError(status, ITWidget.this::showFootPanel, ITWidget.this::closeFootPanel);
-		}, f -> {
-			closeFootPanel();
-		});
-
 	}
 
 	private void saveITPartsAon(List<ItNotExist> itNotExist) {
@@ -2030,115 +1549,11 @@ public abstract class ITWidget extends ResizeComposite {
 		});
 	}
 
-	private void confirmDeleteITToTGSS(ItNotExist itNotEx, Consumer<Void> finish) {
-		AonConfirmDialog confirmDialog = new AonConfirmDialog();
-		confirmDialog.confirm("BORRADO",
-				String.valueOf("\u00BF") + "Realmente desea anular el parte IT del Sistema RED?",
-				new AonConfirmDialogCallback() {
-					@Override
-					public void onCancel() {
-					}
-
-					@Override
-					public void onAccept() {
-						removeITPart(itNotEx, f -> {
-							finish.accept(null);
-						});
-						if (itDialogEdit != null) {
-							itDialogEdit.hide();
-						}
-					}
-				});
-	}
-
-	private void removeITPart(ItNotExist itNotEx, Consumer<Void> finish) {
-		List<ItNotExist> itNotExist = new ArrayList<>();
-		itNotExist.add(itNotEx);
-		removeITParts(itNotExist, s -> {
-			showDeleteMessage();
-			finish.accept(null);
-//			loadITWidget();
-		}, e -> {
-			AonDialog dialog = new AonDialog("Error", new HTML(e.getMessage()));
-			dialog.warning();
-			finish.accept(null);
-		});
-	}
-
-	private void openITPartDialog(ItNotExist itNotExist) {
-		Optional<Integer> idPart = itNotExist.getIdPart();
-		if (idPart.isPresent()) {
-			Optional<ITEmployee> itEmployee = Optional.empty();
-			Optional<ITPart> itPart = Optional.empty();
-
-			outerLoop: for (ITEmployee itE : itEmployeeIts) {
-				for (IT it : itE.getIts()) {
-					for (ITPart part : it.getITParts()) {
-						if (part.getId().equals(idPart.get())) {
-							itEmployee = Optional.ofNullable(itE);
-							itPart = Optional.ofNullable(part);
-							break outerLoop;
-						}
-					}
-				}
-			}
-
-			if (itPart.isPresent()) {
-				ITPart part = itPart.get();
-				int contractId = itEmployee.get().getContractInfo().getContractId();
-
-				ITDialog dialog = openITDialog(contractId, part.getIt());
-				dialog.setViewPartComunica(part);
-			}
-		}
-	}
-
 	private void onLeyend() {
 		openLeyend();
 	}
 
 	// --------------------------------------------------- ITDialog.Methods
-
-	private ITDialog newITDialog() {
-		ITDialog itDialog = new ITDialog("Creaci\u00F3n") {
-			@Override
-			protected void onAccept() {
-				accept(getITEmployee(), true);
-			}
-
-			@Override
-			protected void onDelete(IT it) {
-				deleteLeave(getITEmployee(), it);
-			}
-
-			@Override
-			protected void onShowCertitificateIT(IT it) {
-				getITCertificatePDF(getITEmployee(), it);
-			}
-
-			@Override
-			protected void onCommunicateITPart(IT it, ITPart part) {
-			}
-
-			@Override
-			protected void onRemoveITPartTGSS(ItNotExist ItNotExist) {
-			}
-
-			@Override
-			protected void onDownloadFDIITPart(IT it, ITPart itPart) {
-			}
-		};
-
-		itDialog.setEmployeesList(getActiveEmployeesList());
-		itDialog.setIsUserComunica(isUserComunica());
-		itDialog.initConfirmationsTable();
-		itDialog.setModal(true);
-		itDialog.setAnimationEnabled(true);
-		itDialog.center();
-		itDialog.show();
-
-		return itDialog;
-	}
 
 	private ITDialog openITDialog(int contractId, int itId) {
 		IT itInfo = getIT(itId);
@@ -2154,11 +1569,6 @@ public abstract class ITWidget extends ResizeComposite {
 			@Override
 			protected void onDelete(IT it) {
 				deleteLeave(itEmployee, it);
-			}
-
-			@Override
-			protected void onShowCertitificateIT(IT it) {
-				getITCertificatePDF(itEmployee, it);
 			}
 
 			@Override
@@ -2179,15 +1589,6 @@ public abstract class ITWidget extends ResizeComposite {
 
 					AonDialog dialog = new AonDialog("Error", new HTML(e.getMessage()));
 					dialog.warning();
-					startLoading(false);
-				});
-			}
-
-			@Override
-			protected void onRemoveITPartTGSS(ItNotExist ItNotExist) {
-				confirmDeleteITToTGSS(ItNotExist, f -> {
-					normalizeITToSave();
-					acceptUpdate(itEmployee);
 					startLoading(false);
 				});
 			}
@@ -2217,19 +1618,8 @@ public abstract class ITWidget extends ResizeComposite {
 		return itDialogEdit;
 	}
 
-	private void accept(ITEmployee itEmployee, boolean newIT) {
-		setITEmployee(itEmployee, s -> {
-			if (newIT)
-				showCreateMessage();
-			else
-				showUpdateMessage();
-			loadITWidget();
-		}, f -> {
-		});
-	}
-
 	private void acceptUpdate(ITEmployee itEmployee) {
-		setITEmployee(itEmployee, s -> {
+		createUpdateITEmployee(itEmployee, s -> {
 			loadITWidget();
 			showCommunicateIT();
 		}, f -> {
@@ -2237,7 +1627,7 @@ public abstract class ITWidget extends ResizeComposite {
 	}
 
 	private void acceptSave(ITEmployee itEmployee) {
-		setITEmployee(itEmployee, s -> {
+		createUpdateITEmployee(itEmployee, s -> {
 			loadITWidget();
 		}, f -> {
 		});
@@ -2281,13 +1671,6 @@ public abstract class ITWidget extends ResizeComposite {
 		showMessage("Comunicaci\u00F3 IT", "El parte ha sido comunicado a la TGSS");
 	}
 
-	private void deleteLeave(ITEmployee itEmployee, IT it) {
-		if (ITDialog.isPartenityPart(it))
-			deletePaternity(it, itEmployee);
-		else
-			delete(it, itEmployee);
-	}
-
 	private void delete(IT it, ITEmployee itEmployee) {
 		deleteIT(itEmployee, it, s -> {
 			showDeleteMessage();
@@ -2299,33 +1682,12 @@ public abstract class ITWidget extends ResizeComposite {
 	}
 
 	private void deletePaternity(IT it, ITEmployee itEmployee) {
-		deletePaternityIT(itEmployee, it, s -> {
+		deleteIT(itEmployee, it, s -> {
 			showDeleteMessage();
 			loadITWidget();
 		}, f -> {
 			showDeleteMessage();
 			loadITWidget();
-		});
-	}
-
-	private void getITCertificatePDF(ITEmployee itEmployee, IT it) {
-		getNafxIpf(itEmployee, s -> {
-			String affiliationNumber = s.getNss();
-			String regime = itEmployee.getContractInfo().getCompleteCCC().substring(0, 4);
-			String contributionAccount = itEmployee.getContractInfo().getCompleteCCC().substring(4,
-					itEmployee.getContractInfo().getCompleteCCC().length());
-			String dateFromStr = formatFullDate.format(new Date());
-			String dateToStr = formatFullDate.format(new Date());
-			String startDateStr = formatFullDate.format(it.getStartDate());
-
-			String fileDownloadURL = GWT.getModuleBaseURL() + "it_export/";
-			String query = "?domainName=" + Wnd.getCurrentDomainNameURL() + "&userLogin=" + Wnd.getCurrentUser()
-					+ "&affiliationNumber=" + affiliationNumber + "&regime=" + regime + "&contributionAccount="
-					+ contributionAccount + "&dateFromStr=" + dateFromStr + "&dateToStr=" + dateToStr + "&startDateStr="
-					+ startDateStr + "&itType=" + it.getTypeLowPart() + "&itPartType=0";
-
-			Window.open(fileDownloadURL + query, "ITExporter", "resizable=yes,scrollbars=yes,status=yes");
-		}, f -> {
 		});
 	}
 
@@ -2335,121 +1697,136 @@ public abstract class ITWidget extends ResizeComposite {
 		AonMessagePanel.showLoading(messagePanel, message);
 	}
 
-	// --------------------------------------------NEW------------
+	// --------------------------------------------------- Data Methdos
+	
+	private final DomainEnterprisesServiceAsync impl = DomainEnterprisesServiceAsync.newInstance();
 
-	private void initFootPanel() {
-		resultsPanel = new ResultsPanel();
-
-		footPanel = new AonMinimizePanel();
-		footPanel.addMaximizeHandlerNew(event -> showFootPanel());
-		footPanel.addMinimizeHandlerNew(event -> closeFootPanel());
-		footPanel.setStyleName(AON.CSS.aonSelector());
-		footPanel.addStyleName("aon-EmployeeTree-Events");
-
-		tabLayout = new TabLayoutPanel(26, Unit.PX);
-		tabLayout.setWidth("100%");
-		tabLayout.setAnimationDuration(300);
-		footPanel.add(tabLayout);
-
-		splitLayoutPanel.addSouth(footPanel, 17);
-		footPanel.initNewButtons();
-	}
-
-	private void showFootPanel() {
-		footPanel.addButtonMore();
-		splitLayoutPanel.setWidgetSize(footPanel, Window.getClientHeight() / 4.00);
-		splitLayoutPanel.animate(500);
-	}
-
-	private void closeFootPanel() {
-		footPanel.addButtonLess();
-		splitLayoutPanel.setWidgetSize(footPanel, 17);
-		splitLayoutPanel.animate(500);
-	}
-
-	private void showResultsPanel() {
-		removeTabs();
-		tabLayout.add(resultsPanel, TABLAYOUT_FOLDER_TEMPLATE.tab("Resultados ITs", AON.CSS.aonIconTgss()));
-		tabLayout.selectTab(resultsPanel);
-	}
-
-	private void showProgressPanel() {
-		removeTabs();
-		progressPanel = new ProgressPanel();
-		HandlerRegistration handlerRegistration[] = new HandlerRegistration[1];
-		handlerRegistration[0] = progressPanel.addAttachHandler(e -> {
-			Task syncTask = new Task();
-			syncTask.setDescription("Consultando ITs con el SISTEMA RED");
-			progressPanel.showTask(syncTask);
-			handlerRegistration[0].removeHandler();
+	private void getEmployeeItList(ItParams params, Consumer<List<ITEmployee>> success, Consumer<Throwable> failure) {
+		impl.getEmployeeItList(params, new AsyncCallback<List<ITEmployee>>() {
+			
+			@Override
+			public void onSuccess(List<ITEmployee> result) {
+				success.accept(result);
+			}
+			
+			@Override
+			public void onFailure(Throwable caught) {
+				failure.accept(caught);
+			}
 		});
+	}
+	
+	private void getDur(Consumer<DomainUserRoles> success, Consumer<Throwable> failure) {
+		impl.getDomainUserRoles(new AsyncCallback<DomainUserRoles>() {
+			
+			@Override
+			public void onSuccess(DomainUserRoles result) {
+				success.accept(result);
+			}
+			
+			@Override
+			public void onFailure(Throwable caught) {
+				failure.accept(caught);
+			}
+		});
+	}
+	
+	private void createUpdateITEmployee(ITEmployee employeeITInfo, Consumer<String> success, Consumer<Throwable> failure) {
+		impl.createUpdateITEmployee(employeeITInfo, new AsyncCallback<String>() {
+			
+			@Override
+			public void onSuccess(String message) {	
+				success.accept(message);	
+			}
 
-		InlineLabel tab = new InlineLabel("Progreso");
-		tab.addStyleName(AON.AON_ICON_PROGRESS_BAR);
-		tab.addStyleName(AON.AON_ICON_CMD_BUTTON);
-		tabLayout.add(progressPanel, tab);
-		tabLayout.selectTab(progressPanel);
+			@Override
+			public void onFailure(Throwable caught) { }
+		});
+	}
+	
+	private void deleteIT(ITEmployee itEmployee, IT it, Consumer<Void> success, Consumer<Throwable> failure){
+		impl.deleteIT(it.getId(), new AsyncCallback<String>() {
+			
+			@Override
+			public void onSuccess(String message) {	
+				success.accept(null);
+			}
+
+			@Override
+			public void onFailure(Throwable caught) {
+				failure.accept(caught);
+			}
+		});
+	}
+	
+	private void sendEconomicData(ITEmployee itEmployee, IT it, ITPart itPart, Consumer<Void> success, Consumer<Throwable> failure) {
+		impl.sendEconomicData(itEmployee, it, itPart, new AsyncCallback<Void>() {
+
+			@Override
+			public void onFailure(Throwable caught) {
+				failure.accept(caught);
+			}
+
+			@Override
+			public void onSuccess(Void result) {
+				success.accept(result);
+			}}
+		);
+	}
+	
+	private void saveITParts(List<ItNotExist> list, Consumer<Void> success, Consumer<Throwable> failure) {
+		impl.saveITParts(list, new AsyncCallback<Void>() {
+
+			@Override
+			public void onFailure(Throwable caught) {
+				failure.accept(caught);
+			}
+
+			@Override
+			public void onSuccess(Void result) {
+				success.accept(result);
+			}}
+		);
 	}
 
-	private void removeTabs() {
-		if (resultsPanel != null)
-			tabLayout.remove(resultsPanel);
+	private void removeITParts(List<ItNotExist> list, Consumer<Void> success, Consumer<Throwable> failure) {
+		impl.removeITParts(list, new AsyncCallback<Void>() {
 
-		if (progressPanel != null)
-			tabLayout.remove(progressPanel);
+			@Override
+			public void onFailure(Throwable caught) {
+				failure.accept(caught);
+			}
+
+			@Override
+			public void onSuccess(Void result) {
+				success.accept(result);
+			}}
+		);
 	}
 
-	// --------------------------------------------------- Abstract Methdos
-
-	protected abstract void syncITs(Consumer<Void> success, Consumer<Throwable> failure);
-
-	protected abstract void getITEmployeeListDB(Consumer<List<ITEmployee>> success, Consumer<Throwable> failure);
-
-	protected abstract List<IT> getITsList();
-
-	public abstract boolean isUserComunica();
-
-	public abstract SortedSet<Integer> getAviableYears();
-
-	public abstract ITEmployee getITEmployee(Integer contractId);
-
-	public abstract IT getIT(Integer itId);
-
-	protected abstract List<ITEmployee> getActiveEmployeesList();
-
-	protected abstract List<ITEmployee> getFilterITEmployeeList(Boolean allContracts, Date start, Date end);
-
-	protected abstract void setITEmployeeList(List<ITEmployee> itEmployees, Consumer<List<ITEmployee>> success,
-			Consumer<Throwable> failure);
-
-	protected abstract void setITEmployee(ITEmployee itEmployee, Consumer<String> success, Consumer<Throwable> failure);
-
-	protected abstract void deleteIT(ITEmployee itEmployee, IT it, Consumer<Void> success, Consumer<Throwable> failure);
-
-	protected abstract void deletePaternityIT(ITEmployee itEmployee, IT it, Consumer<Void> success,
-			Consumer<Throwable> failure);
-
-	protected abstract void getNafxIpf(ITEmployee itEmployee, Consumer<EmployeeSegSocial> success,
-			Consumer<Throwable> failure);
-
-	protected abstract void sendEconomicData(ITEmployee itEmployee, IT it, ITPart part, Consumer<Void> success,
-			Consumer<Throwable> failure);
-
-	protected abstract void saveITParts(List<ItNotExist> list, Consumer<Void> success, Consumer<Throwable> failure);
-
-	protected abstract void removeITParts(List<ItNotExist> list, Consumer<Void> success, Consumer<Throwable> failure);
-
-	protected abstract void checkStatus(Consumer<EnterpriseITStatus> success, Consumer<Throwable> failure);
-
-	public void setFooter(SplitLayoutPanel splitLayoutPanel, TabLayoutPanel tabLayout, AonMinimizePanel footPanel) {
-		this.splitLayoutPanel.remove(this.footPanel);
-		this.footPanel = footPanel;
-		this.tabLayout = tabLayout;
-		this.splitLayoutPanel = splitLayoutPanel;
+	private boolean isUserComunica() {
+		return null != this.dur && this.dur.isComunica();
 	}
 
-	public void removeFootPanel() {
-		this.splitLayoutPanel.remove(this.footPanel);
+	private ITEmployee getITEmployee(Integer contractId) {
+		Optional<ITEmployee> itEmployeeOpt = employeesList.stream().filter(itEmployee -> AonNumberUtils.equals(itEmployee.getContractInfo().getContractId(), contractId)).findFirst();
+		return itEmployeeOpt.isEmpty() ? null : itEmployeeOpt.get();
+	}
+
+	private IT getIT(Integer itId) {
+		Optional<IT> itOpt = itsList.stream().filter(it -> AonNumberUtils.equals(it.getId(), itId)).findFirst();
+		return itOpt.isEmpty() ? null : itOpt.get();
+	}
+
+	private List<ITEmployee> getActiveEmployeesList(){
+		Date today = new Date();
+		return employeesList.stream()
+				.filter(employeeIT -> null == employeeIT.getContractInfo().getEndDate() || DateUtils.isAfterOrEquals(employeeIT.getContractInfo().getEndDate(), today))
+				.collect(Collectors.toList());
+	}
+
+	public void setWorkplace(Integer workplaceId) {
+		this.workplace = workplaceId;
 	}
 
 }

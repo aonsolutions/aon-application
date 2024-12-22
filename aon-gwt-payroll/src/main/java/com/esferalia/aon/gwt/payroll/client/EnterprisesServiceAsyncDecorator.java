@@ -39,13 +39,13 @@ import com.esferalia.aon.gwt.payroll.shared.EmployeeContractInfo;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeSegSocial;
 import com.esferalia.aon.gwt.payroll.shared.Enterprise;
 import com.esferalia.aon.gwt.payroll.shared.EnterpriseContext;
-import com.esferalia.aon.gwt.payroll.shared.EnterpriseITStatus;
 import com.esferalia.aon.gwt.payroll.shared.EnterpriseITStatus.ItNotExist;
 import com.esferalia.aon.gwt.payroll.shared.EnterpriseStatus;
 import com.esferalia.aon.gwt.payroll.shared.Extra;
 import com.esferalia.aon.gwt.payroll.shared.IT;
 import com.esferalia.aon.gwt.payroll.shared.ITEmployee;
 import com.esferalia.aon.gwt.payroll.shared.ITPart;
+import com.esferalia.aon.gwt.payroll.shared.ItParams;
 import com.esferalia.aon.gwt.payroll.shared.Mail;
 import com.esferalia.aon.gwt.payroll.shared.MainCCCInfo;
 import com.esferalia.aon.gwt.payroll.shared.Payment;
@@ -593,17 +593,9 @@ public class EnterprisesServiceAsyncDecorator implements
 	}
 
 	@Override
-	public void getEnterpriseITStatus(String domain, String user, 
-			AsyncCallback<EnterpriseITStatus> callback) {
+	public void getEmployeeItList(String currentDomainName, ItParams params, AsyncCallback<List<ITEmployee>> callback) {
 		AON.start();
-		enterprisesServiceAsync.getEnterpriseITStatus(domain, user, new AsyncCallbackWrapper<EnterpriseITStatus>(callback));
-	}
-
-
-	@Override
-	public void getEmployeesITInfo(String currentDomainName, Boolean allEmployees, AsyncCallback<List<ITEmployee>> callback) {
-		AON.start();
-		enterprisesServiceAsync.getEmployeesITInfo(currentDomainName, allEmployees, new AsyncCallbackWrapper<List<ITEmployee>>(callback));
+		enterprisesServiceAsync.getEmployeeItList(currentDomainName, params, new AsyncCallbackWrapper<List<ITEmployee>>(callback));
 	}
 	
 	@Override
@@ -808,15 +800,6 @@ public class EnterprisesServiceAsyncDecorator implements
 				reason, dateFrom, dateTo, baseCC, baseCP, days, new AsyncCallbackWrapper<Boolean>(callback));
 	}
 
-	@Override
-	public void deleteComunicateIT(String currentDomainName, String currentUser, String affiliationNumber,
-			String regime, String contributionAccount, Date dateFrom, Date dateTo, Date startDate,
-			AsyncCallback<Void> callback) throws IllegalArgumentException {
-		AON.start();
-		enterprisesServiceAsync.deleteComunicateIT(currentDomainName, currentUser, affiliationNumber,
-				regime, contributionAccount, dateFrom, dateTo, startDate, new AsyncCallbackWrapper<Void>(callback));
-	}
-	
 	@Override
 	public void syncITs(String currentDomainName, String currentUser, AsyncCallback<Void> callback) throws IllegalArgumentException {
 		AON.start();

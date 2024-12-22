@@ -1,7 +1,6 @@
 package solutions.aon.seg.social;
 
 import static solutions.aon.seg.social.SistemaRED.PartType.BAJA;
-import static solutions.aon.seg.social.toolkit.HtmlUnitToolkit.getElConstains;
 import static solutions.aon.seg.social.toolkit.HtmlUnitToolkit.getWebClient;
 import static solutions.aon.seg.social.toolkit.HtmlUnitToolkit.wait4;
 
@@ -38,7 +37,6 @@ import org.htmlunit.html.HtmlOption;
 import org.htmlunit.html.HtmlPage;
 import org.htmlunit.html.HtmlTable;
 import org.htmlunit.html.HtmlTableBody;
-import org.htmlunit.html.HtmlTableCell;
 import org.htmlunit.html.HtmlTableRow;
 import org.htmlunit.util.WebConnectionWrapper;
 import org.htmlunit.xml.XmlPage;
@@ -48,7 +46,6 @@ import solutions.aon.seg.social.exception.SegSocialException;
 import solutions.aon.seg.social.exception.StatusCodeException;
 import solutions.aon.seg.social.exception.invalid.InvalidDataException;
 import solutions.aon.seg.social.exception.invalid.InvalidDateException;
-import solutions.aon.seg.social.exception.invalid.NoQueryData;
 import solutions.aon.seg.social.object.ITPart;
 import solutions.aon.seg.social.object.It;
 import solutions.aon.seg.social.toolkit.HtmlUnitToolkit;
@@ -103,6 +100,7 @@ class SistemaREDITPart extends ServicioREDPartUtils {
 		} catch (MalformedURLException e) {
 			throw new SegSocialException(e);
 		} catch (IOException e) {
+			e.printStackTrace();
 			throw new CertificateNotFoundException();
 		} catch (InterruptedException e) {
 			throw new SegSocialException(e);
@@ -145,27 +143,24 @@ class SistemaREDITPart extends ServicioREDPartUtils {
 			}
 			
 			// Data Contract
-			HtmlOption contractTypeOption = null;
-			
 			switch (contractType) {
-			case FIJO_DISCONTINUO_Y_TIEMPO_PARCIAL:
-				webClient.waitForBackgroundJavaScript(5000);
-				htmlPage = HtmlUnitToolkit.selectOption(htmlPage, "tipoContrato", "1");
-				
-
-				wait4(htmlPage, p -> p.getElementById("sumaBaseCot"))
-				.orElseThrow(() -> new SegSocialException(TRY_AGAIN));
-
-				break;
-			case RESTO_Y_AUTONOMOS:
-				webClient.waitForBackgroundJavaScript(5000);
-				htmlPage = HtmlUnitToolkit.selectOption(htmlPage, "tipoContrato", "2");
-
-				wait4(htmlPage, p -> p.getElementById("BaseCot"))
-				.orElseThrow(() -> new SegSocialException(TRY_AGAIN));
-
-				break;
-				
+				case FIJO_DISCONTINUO_Y_TIEMPO_PARCIAL:
+					webClient.waitForBackgroundJavaScript(5000);
+					htmlPage = HtmlUnitToolkit.selectOption(htmlPage, "tipoContrato", "1");
+					
+	
+					wait4(htmlPage, p -> p.getElementById("sumaBaseCot"))
+					.orElseThrow(() -> new SegSocialException(TRY_AGAIN));
+	
+					break;
+				case RESTO_Y_AUTONOMOS:
+					webClient.waitForBackgroundJavaScript(5000);
+					htmlPage = HtmlUnitToolkit.selectOption(htmlPage, "tipoContrato", "2");
+	
+					wait4(htmlPage, p -> p.getElementById("BaseCot"))
+					.orElseThrow(() -> new SegSocialException(TRY_AGAIN));
+	
+					break;	
 			}
 			
 
@@ -219,23 +214,6 @@ class SistemaREDITPart extends ServicioREDPartUtils {
 			
 			return getPdfProcess(htmlPage, "#ENVIO_8");
 		}
-	}
-	
-	// remove IT
-	public static void removeIt(InputStream certificateInputStream, String certificatePassword, String certificateType,
-			String regime, String ccc, String naf, SistemaRED.PartType partType, Date dateBj, Date dateProcess)
-			throws IOException, InterruptedException, SegSocialException {
-		Toolkit.verifyData(new Object[] { regime, ccc, naf, dateProcess });
-		try {
-			removeItImpl(certificateInputStream, certificatePassword, certificateType, regime, ccc, naf, partType,
-					dateBj, dateProcess);
-		} catch (FailingHttpStatusCodeException e) {
-			StatusCodeException.HandleStatusCodeException(e);
-		} catch (MalformedURLException e) {
-			throw new SegSocialException(e);
-		} catch (Exception e) {
-			throw new SegSocialException(e.getMessage());
-		} 
 	}
 	
 	// remove IT
@@ -424,70 +402,13 @@ class SistemaREDITPart extends ServicioREDPartUtils {
 		}
 	}
 	
-	// remove ITImpl
-	private static void removeItImpl(InputStream certificateInputStream, String certificatePassword,
-			String certificateType, String regime, String ccc, String naf, SistemaRED.PartType partType, Date dateBj, Date dateProcess ) throws FailingHttpStatusCodeException, IOException, SegSocialException, InterruptedException {
-		try (WebClient webClient = HtmlUnitToolkit.getWebClient(certificateInputStream, certificatePassword,
-				certificateType)) {
-			webClient.getOptions().setUseInsecureSSL(true);
-			HtmlPage htmlPage = webClient.getPage(BASE_URI);
-			HtmlUnitToolkit.manageStatusCode(htmlPage);
-			
-			htmlPage = setUrlParseRemoveXml(htmlPage, (HtmlAnchor)htmlPage.getElementById("PEST_4"));
-		
-			wait4(htmlPage, p -> p.querySelector("[name=\"regimenAnulacion\"]")).orElseThrow(()-> new SegSocialException(TRY_AGAIN));
-			
-			HtmlForm form = (HtmlForm) wait4(htmlPage, p -> p.getElementById("FORMULARIO_6")).orElseThrow(()-> new SegSocialException(TRY_AGAIN));
-			form.getInputByName(ARQ_SPM_OUT).remove(); 
-
-			form.getInputByName("regimenAnulacion").setValue(regime);
-			form.getInputByName("cccAnulacion").setValue(ccc);
-			form.getInputByName("nafAnulacion").setValue(naf);
-			Toolkit.formatDate(dateBj, DATE_FORMAT).ifPresent(d-> form.getInputByName("fechaBajaMedAnulacion").setValue(d) );
-			
-			HtmlButton continueIn= (HtmlButton) wait4(htmlPage, p ->p.querySelector("button[value=\"CONTINUAR_ANULACION\"]")).orElseThrow();
-			htmlPage = continueIn.click();
-			HtmlUnitToolkit.handleNewSegSocialExceptions(htmlPage);
-
-			HtmlAnchor firstColumn = getOneAnchorPaginate(htmlPage, partType, dateProcess);
-			
-			if (firstColumn == null) {				
-				throw new NoQueryData("Sin datos de consulta");
-			}
-			
-			htmlPage = setUrlParseRemoveXml(htmlPage, firstColumn);
-			
-			HtmlForm formCancel = (HtmlForm) wait4(htmlPage, p -> p.getElementById("FORMULARIO_6")).orElseThrow(()-> new SegSocialException(TRY_AGAIN));
-			formCancel.getInputByName(ARQ_SPM_OUT).remove(); 
-
-			HtmlButton anular = (HtmlButton) formCancel.querySelector("button[value=\"ACEPTAR_ANULACION\"]");
-			htmlPage = anular.click();
-			HtmlUnitToolkit.handleNewSegSocialExceptions(htmlPage);
-			
-			HtmlForm formConfirm = (HtmlForm) wait4(htmlPage, p -> p.getElementById("FORMULARIO_6")).orElseThrow(()-> new SegSocialException(TRY_AGAIN));
-			formConfirm.getInputByName(ARQ_SPM_OUT).remove(); 
-
-			HtmlButton confirm = formConfirm.querySelector("button[value=\"CONFIRMAR_ANULACION\"]");
-			htmlPage = confirm.click();
-			HtmlUnitToolkit.handleNewSegSocialExceptions(htmlPage);
-			
-			String message = HtmlUnitToolkit.getMessageSuccess(htmlPage);
-			if (!message.isEmpty()) {				
-				System.out.println(message);
-				if (!message.contains("exito")) {					
-					throw new InvalidDataException(message);
-				}
-			} 
-		}
-	}
-	
 	// report IT
 	private static byte[] getITReportImpl(InputStream certificateInputStream, String certificatePassword,
 			String certificateType, String regime, String ccc, String nss, SistemaRED.PartType partType, Date dateBj,
 			Date dateProcess)
 			throws FailingHttpStatusCodeException, IOException, InterruptedException, SegSocialException, TransformerException {
-		try (WebClient webClient = HtmlUnitToolkit.getWebClient(certificateInputStream, certificatePassword,
-				certificateType)) {
+		
+		try (WebClient webClient = HtmlUnitToolkit.getWebClient(certificateInputStream, certificatePassword, certificateType)) {
 			webClient.getOptions().setUseInsecureSSL(true);
 			
 			XmlPage xmlPage = webClient.getPage(BASE_URI);
@@ -511,6 +432,7 @@ class SistemaREDITPart extends ServicioREDPartUtils {
 			HtmlButton continueIn = (HtmlButton) wait4(htmlPage, p ->p.querySelector("button[value=\"CONTINUAR_CONSULTA\"]")).orElseThrow();
 			xmlPage = continueIn.click();
 			htmlPage = HtmlUnitToolkit.transformXmlPage(xmlPage);
+			
 			HtmlUnitToolkit.handleNewSegSocialExceptions(htmlPage);
 			
 			HtmlTable table = (HtmlTable) htmlPage.getElementById("TABLA_12");
@@ -643,57 +565,6 @@ class SistemaREDITPart extends ServicioREDPartUtils {
 			}
 		}
 		throw new SegSocialException(MESSAGE_ERROR);
-	}
-	
-	private static HtmlAnchor getOneAnchorPaginate(HtmlPage htmlPage, SistemaRED.PartType partType, Date date)
-			throws IOException {
-		
-		String dateStr = Toolkit.formatDate(date, DATE_FORMAT).orElse(null);
-		
-		HtmlTable table = (HtmlTable) htmlPage.querySelector("#FORMULARIO_6 table");
-		HtmlAnchor next = null;		
-		HtmlAnchor firstColumn = null;
-		boolean last = false;
-		int numberCell = 0;
-		
-		switch (partType) {
-			case ALTA:
-				numberCell = 2;
-				break;
-			case BAJA:
-				numberCell = 3;
-				break;
-			case CONFIRMACION:
-				numberCell = 4;
-				break;
-		}
-		
-		if (table != null) {
-			
-			while (!last) {
-				next = (HtmlAnchor) getElConstains(htmlPage, "#FORMULARIO_6 a", "Siguiente");
-				for (final HtmlTableRow row : table.getRows()) {
-					HtmlTableCell fCell = row.getCell(numberCell);
-					HtmlTableCell typeCell = row.getCell(6);
-					HtmlTableCell anulCell = row.getCell(7);
-					if (
-							fCell.getVisibleText().contains(dateStr)
-							&& typeCell.getVisibleText().toLowerCase().contains(partType.getDescription().substring(0, 4).toLowerCase())
-							&& anulCell.getVisibleText().contains("N")
-					) {
-						firstColumn = row.getCell(0).querySelector("a");
-						break;
-					}
-				}
-				
-				if (firstColumn == null && next != null) {					
-					htmlPage = setUrlParseRemoveXml(htmlPage, next);
-				} else {					
-					last = true;
-				}
-			}
-		}
-		return firstColumn;
 	}
 	
 	private static WebResponse skipDateFormatError (WebRequest request, WebResponse response) {

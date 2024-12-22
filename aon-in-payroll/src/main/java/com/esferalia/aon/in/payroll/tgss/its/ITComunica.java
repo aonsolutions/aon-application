@@ -18,14 +18,12 @@ import com.esferalia.aon.occam.api.model.EmployeeIT;
 import com.esferalia.aon.occam.api.model.EmployeeITPart;
 import com.esferalia.aon.occam.api.model.payroll.CCCInfo;
 import com.esferalia.aon.occam.api.model.security.User;
-import com.esferalia.aon.occam.api.model.type.ContractLeaveDetailType;
 import com.esferalia.aon.watson.server.AonDateUtils;
 
 import solutions.aon.seg.social.SistemaRED;
 import solutions.aon.seg.social.SistemaRED.AccidentType;
 import solutions.aon.seg.social.SistemaRED.Contingencies;
 import solutions.aon.seg.social.SistemaRED.ContractType;
-import solutions.aon.seg.social.SistemaRED.PartType;
 import solutions.aon.seg.social.SistemaRED.SituationEmployee;
 import solutions.aon.seg.social.exception.SegSocialException;
 import solutions.aon.seg.social.exception.invalid.InvalidDataException;
@@ -128,90 +126,6 @@ public class ITComunica {
 					fATEP, accidentType,
 					collegeNumber, cias, occupation, job, jobDescription
 			);
-			messages.add(SUCCESS);
-		} catch (SegSocialException e) {
-			e.printStackTrace();
-			messages.add(e.getMessage());
-		}
-	}
-	
-	public static List<String> removeITs(final byte[] certificateData, final String certificatePassword,
-			final String certificateType, EmployeeIT employeeIt) {
-		
-		 List<String> messages = new ArrayList<>();
-		 if(employeeIt.isPaternity()) {
-			 removePaternity(new ByteArrayInputStream(certificateData), certificatePassword, certificateType, employeeIt, messages);
-		 } else {
-			 Optional<EmployeeITPart> baja = employeeIt.getItBaja();
-			 Optional<EmployeeITPart> alta = employeeIt.getItAlta();
-			 List<EmployeeITPart> confirmations = employeeIt.getItConfirmations();
-			 
-			 if(!baja.isEmpty()) 
-				 removeIt(new ByteArrayInputStream(certificateData), certificatePassword, certificateType, employeeIt, baja.get(), messages);
-			 
-			 if(!confirmations.isEmpty()) {
-				 confirmations.forEach(itPart-> 
-				 	removeIt(new ByteArrayInputStream(certificateData), certificatePassword, certificateType, employeeIt, itPart, messages)
-				 );
-			 }
-		
-			 if(!alta.isEmpty()) 
-				 removeIt(new ByteArrayInputStream(certificateData), certificatePassword, certificateType, employeeIt, alta.get(), messages);
-		 }
-		 return messages;
-	}
-
-	private static void removeIt(final ByteArrayInputStream byteArrayInputStream, final String certificatePassword,
-			final String certificateType, EmployeeIT employeeIt, EmployeeITPart itPart, List<String> messages) {
-		try {
-			String regime = employeeIt.getRegime();
-			String ccc = employeeIt.getCcc();
-			String nss = employeeIt.getNss();
-			Date startDate = employeeIt.getStartDate();
-			Date date  = itPart.getDate();
-			ContractLeaveDetailType type = itPart.getType();
-			
-			verifyData(new Object[] { regime, ccc, nss, startDate, date, type });    
-			
-			PartType partType = null;
-			
-			switch (type) {
-				case ALTA:
-					partType = PartType.ALTA;
-				break;
-				case CONFIRMACION:
-					partType = PartType.CONFIRMACION;
-				break;
-				default:
-					partType = PartType.BAJA;
-				break;
-			}
-		
-			SistemaRED.removeIT(
-					byteArrayInputStream.readAllBytes(), certificatePassword, certificateType, 
-					regime, ccc, nss, partType, startDate, date
-			);
-			
-			messages.add(SUCCESS);
-		} catch (SegSocialException e) {
-			e.printStackTrace();
-			messages.add(e.getMessage());
-		}
-	}
-	
-	private static void removePaternity(final ByteArrayInputStream byteArrayInputStream, final String certificatePassword,
-			final String certificateType, EmployeeIT employeeIt, List<String> messages) {
-		try {
-			String regime = employeeIt.getRegime();
-			String ccc = employeeIt.getCcc();
-			String nss = employeeIt.getNss();
-			Date startDate = employeeIt.getStartDate();
-			Optional<Date> endDate  = employeeIt.getEndDate();
-	
-			verifyData(new Object[] { regime, ccc, nss, startDate, endDate.get() });    
-			
-			SistemaRED.removePaternity(byteArrayInputStream.readAllBytes(), certificatePassword, certificateType, nss, regime, ccc, startDate, endDate.get(), Optional.empty());
-		
 			messages.add(SUCCESS);
 		} catch (SegSocialException e) {
 			e.printStackTrace();

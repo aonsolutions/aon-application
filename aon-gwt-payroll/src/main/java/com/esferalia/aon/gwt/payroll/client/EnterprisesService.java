@@ -35,13 +35,13 @@ import com.esferalia.aon.gwt.payroll.shared.EmployeeContractInfo;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeSegSocial;
 import com.esferalia.aon.gwt.payroll.shared.Enterprise;
 import com.esferalia.aon.gwt.payroll.shared.EnterpriseContext;
-import com.esferalia.aon.gwt.payroll.shared.EnterpriseITStatus;
 import com.esferalia.aon.gwt.payroll.shared.EnterpriseITStatus.ItNotExist;
 import com.esferalia.aon.gwt.payroll.shared.EnterpriseStatus;
 import com.esferalia.aon.gwt.payroll.shared.Extra;
 import com.esferalia.aon.gwt.payroll.shared.IT;
 import com.esferalia.aon.gwt.payroll.shared.ITEmployee;
 import com.esferalia.aon.gwt.payroll.shared.ITPart;
+import com.esferalia.aon.gwt.payroll.shared.ItParams;
 import com.esferalia.aon.gwt.payroll.shared.Mail;
 import com.esferalia.aon.gwt.payroll.shared.MainCCCInfo;
 import com.esferalia.aon.gwt.payroll.shared.Payment;
@@ -221,7 +221,7 @@ public interface EnterprisesService extends RemoteService {
 	
 	List<EmployeeContractInfo> getFJEmployeesInfo(String currentDomainName);
 
-	List<ITEmployee> getEmployeesITInfo(String currentDomainName, Boolean allEmployees);
+	List<ITEmployee> getEmployeeItList(String currentDomainName, ItParams params) throws IllegalArgumentException;
 
 	List<ITEmployee> getEmployeesITInfo(String currentDomainName, Integer ids []);
 
@@ -230,8 +230,6 @@ public interface EnterprisesService extends RemoteService {
 	String createUpdateITEmployee(String currentDomainName, ITEmployee employeeITInfo);
 	
 	EnterpriseStatus getEnterpriseStatus(String domain, String user, Integer enterpriseId );
-
-	EnterpriseITStatus getEnterpriseITStatus(String domain, String user);
 
 	// ------------------------------------------------ Contract Attachments
 	
@@ -295,9 +293,6 @@ public interface EnterprisesService extends RemoteService {
 	boolean createITCertificate(String currentDomainName, String currentUser, String affiliationNumber, String regime,
 			String contributionAccount, String docType, String docNum, String applicantType, String reason,
 			Date dateFrom, Date dateTo, float baseCC, float baseCP, int days);
-
-	void deleteComunicateIT(String currentDomainName, String currentUser, String affiliationNumber, String regime,
-			String contributionAccount, Date dateFrom, Date dateTo, Date startDate) throws IllegalArgumentException;
 
 	void syncITs(String currentDomainName, String currentUser) throws IllegalArgumentException;
 	

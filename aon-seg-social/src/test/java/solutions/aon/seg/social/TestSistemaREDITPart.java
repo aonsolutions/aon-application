@@ -93,17 +93,6 @@ public class TestSistemaREDITPart {
 	
 	@Test
 	@Ignore
-	public void removeIt() {
-		try (final InputStream certificateInputStream = new FileInputStream(CERTIFICATE_PATH) ) {
-			SistemaREDITPart.removeIt(certificateInputStream, CERTIFICATE_PASSWORD, CERTIFICATE_TYPE, 
-					"0111", "01105360062", "291136796369", SistemaRED.PartType.BAJA, new Date(),new Date());
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
-	
-	@Test
-	@Ignore
 	public void testGetCalc() {
 		try (final InputStream certificateInputStream = TestEmployee.class.getResourceAsStream("FNMT.p12")) {	
 			Date dateFrom = Toolkit.addMonth(new Date(), -1);

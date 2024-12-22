@@ -18,7 +18,6 @@ import solutions.aon.seg.social.object.Calc;
 import solutions.aon.seg.social.object.Employee;
 import solutions.aon.seg.social.object.Idc;
 import solutions.aon.seg.social.object.It;
-import solutions.aon.seg.social.object.PaternityCertificate;
 import solutions.aon.seg.social.object.Period;
 import solutions.aon.seg.social.object.SecondaryUser;
 import solutions.aon.seg.social.object.SituationType;
@@ -649,50 +648,6 @@ public class SistemaRED {
 		}
 	}
 
-	public static boolean sendPaternity(final InputStream certificateInputStream, final String certificatePassword,
-			final String certificateType, final String affiliationNumber, final String regime,
-			final String contributionAccount, final String docNum,
-			final PaternityCertificate.ApplicantType applicantType, PaternityCertificate.ReasonType reason,
-			final Date dateFrom, final Date dateTo, final float baseCC, final float baseCP, final int days)
-			throws SegSocialException, IOException {
-		return Paternity.sendPaternity(certificateInputStream, certificatePassword, certificateType, affiliationNumber,
-				regime, contributionAccount, docNum, applicantType, reason, dateFrom, dateTo, baseCC, baseCP, days);
-	}
-
-	public static boolean sendPaternity(final byte[] certificateData, final String certificatePassword,
-			final String certificateType, final String affiliationNumber, final String regime,
-			final String contributionAccount, final String docNum,
-			final PaternityCertificate.ApplicantType applicantType, PaternityCertificate.ReasonType reason,
-			final Date dateFrom, final Date dateTo, final float baseCC, final float baseCP, final int days)
-			throws SegSocialException {
-		try (InputStream certificateInputStream = new ByteArrayInputStream(certificateData)) {
-			return Paternity.sendPaternity(certificateInputStream, certificatePassword, certificateType,
-					affiliationNumber, regime, contributionAccount, docNum, applicantType, reason, dateFrom, dateTo,
-					baseCC, baseCP, days);
-		} catch (IOException e) {
-			e.printStackTrace();
-			throw new SegSocialException(e);
-		}
-	}
-
-	public static void removePaternity(final InputStream certificateInputStream, final String certificatePassword,
-			final String certificateType, final String nss, final String regime, final String ccc, final Date dateFrom,
-			final Date dateTo, final Optional<Date> startDate) throws SegSocialException {
-		Paternity.removePaternity(certificateInputStream, certificatePassword, certificateType, nss, regime, ccc,
-				dateFrom, dateTo, startDate);
-	}
-
-	public static void removePaternity(final byte[] certificateData, final String certificatePassword,
-			final String certificateType, final String nss, final String regime, final String ccc, final Date dateFrom,
-			final Date dateTo, final Optional<Date> startDate) throws SegSocialException {
-		try (InputStream certificateInputStream = new ByteArrayInputStream(certificateData)) {
-			Paternity.removePaternity(certificateInputStream, certificatePassword, certificateType, nss, regime, ccc,
-					dateFrom, dateTo, startDate);
-		} catch (IOException e) {
-			throw new SegSocialException(e);
-		}
-	}
-
 	public static byte[] getCertificatePdf(final InputStream certificateInputStream, final String certificatePassword,
 			final String certificateType, final String affiliationNumber, final String regime,
 			final String contributionAccount, final Date dateFrom, final Date dateTo, final Optional<Date> startDate)
@@ -805,18 +760,6 @@ public class SistemaRED {
 					naf, contingency, situation_employee, startdate, contractType, baseCot, cotDays, fATEP,
 					accidentType, licenseNumber, cias, occupation, job, jobDescription);
 		} catch (IOException e) {
-			throw new SegSocialException(e);
-		}
-	}
-
-	public static void removeIT(final byte[] certificateData, final String certificatePassword,
-			final String certificateType, final String regime, final String ccc, final String naf,
-			final SistemaRED.PartType partType, final Date dateBj, Date dateProcess) throws SegSocialException {
-
-		try (InputStream certificateInputStream = new ByteArrayInputStream(certificateData)) {
-			SistemaREDITPart.removeIt(certificateInputStream, certificatePassword, certificateType, regime, ccc, naf,
-					partType, dateBj, dateProcess);
-		} catch (IOException | InterruptedException e) {
 			throw new SegSocialException(e);
 		}
 	}
