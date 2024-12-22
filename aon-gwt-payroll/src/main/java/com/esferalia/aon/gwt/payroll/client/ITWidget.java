@@ -231,7 +231,7 @@ public class ITWidget extends AonCustomDockLayout {
 					Scheduler.get().scheduleDeferred(() -> {
 						if(results.getTreeItems() != 0) {
 							ResultsPanel resultPanel = new ResultsPanel();
-							resultPanel.setHeight((results.getTreeItems() > 20 ? 20 : results.getTreeItems() * 30) + "px");
+							resultPanel.setHeight((results.getTreeItems() > 20 ? (20 * 30) : results.getTreeItems() * 30) + "px");
 							resultPanel.setWidth("800px");
 							resultPanel.setWidget(results);
 							

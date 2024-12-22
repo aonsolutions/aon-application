@@ -587,7 +587,7 @@ public class EnterprisesServiceAsyncDecorator implements
 	
 	@Override
 	public void getEnterpriseStatus(String domain, String user, Integer enterpriseId,
-			AsyncCallback<EnterpriseStatus> callback) {
+			AsyncCallback<EnterpriseStatus> callback) throws IllegalArgumentException {
 		AON.start();
 		enterprisesServiceAsync.getEnterpriseStatus(domain, user, enterpriseId, new AsyncCallbackWrapper<EnterpriseStatus>(callback));
 	}

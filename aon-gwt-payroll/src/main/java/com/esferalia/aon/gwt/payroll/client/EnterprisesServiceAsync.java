@@ -151,7 +151,7 @@ public interface EnterprisesServiceAsync {
 	void deleteIT(String currentDomainName, Integer itId, AsyncCallback<String> asyncCallback);
 	void createUpdateITEmployee(String currentDomainName, ITEmployee employeeITInfo,
 			AsyncCallback<String> asyncCallback);
-	void getEnterpriseStatus(String domain, String user, Integer enterpriseId , AsyncCallback<EnterpriseStatus> callback);
+	void getEnterpriseStatus(String domain, String user, Integer enterpriseId , AsyncCallback<EnterpriseStatus> callback) throws IllegalArgumentException;
 
 	// ------------------------------------------------ Contract Attachments
 	

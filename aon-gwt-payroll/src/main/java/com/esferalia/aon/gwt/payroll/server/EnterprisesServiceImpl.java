@@ -2451,7 +2451,7 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 	}
 	
 	@Override
-	public EnterpriseStatus getEnterpriseStatus(String domainName, String userLogin, Integer enterpriseId) {
+	public EnterpriseStatus getEnterpriseStatus(String domainName, String userLogin, Integer enterpriseId) throws IllegalArgumentException {
 		try(Connection connection = AonServletUtils.getConnection(domainName)) {
 			
 			Integer domainId = AonServletUtils.getDomainID(domainName);
@@ -2545,8 +2545,11 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 			
 			return enterpriseStatus;				
 			
-		} catch (  SQLException e ) {
-			throw new RuntimeException(e);
+		} catch (CertificateNotFoundException e) {
+			throw new IllegalArgumentException("No se ha encontrado un certificado digital para hacer esta gesti\u00f3n. Revise Laboral > Certificados Digitales");
+		}
+		catch (  SQLException e ) {
+			throw new IllegalArgumentException(e.getMessage());
 		} 
 	}
 	
