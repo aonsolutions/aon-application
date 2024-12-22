@@ -2324,3 +2324,9 @@
     padding: 10px 20px;     
     text-align: center;
 }
+
+.gwt-viz-container > div {
+	color: red;
+	display: flex;
+	justify-content: center;
+}

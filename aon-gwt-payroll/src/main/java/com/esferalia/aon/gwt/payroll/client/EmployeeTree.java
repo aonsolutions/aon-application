@@ -29,7 +29,6 @@ import com.esferalia.aon.gwt.common.client.widget.ProgressPanel;
 import com.esferalia.aon.gwt.common.client.widget.ProgressPanel.Task;
 import com.esferalia.aon.gwt.common.client.widget.ProgressPanel.TimeTask;
 import com.esferalia.aon.gwt.common.client.widget.ResultsPanel;
-import com.esferalia.aon.gwt.common.client.widget.solutions.AonEmployeesToolbar;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonMessagePanel;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonMinimizePanel;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
@@ -2401,7 +2400,10 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 		}
 
 		void onITsSelected() {
-			employees.getWorkplaceIT(workplace, o -> getWorkplceIT().setWorkplaceITObject(o));
+			employees.getWorkplaceIT(workplace, o -> {
+				getWorkplceIT().setWorkplace(workplace.getId());
+				getWorkplceIT().loadITWidget();
+			});
 		}
 
 		void onCostsSelected() {
@@ -2476,7 +2478,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 		}
 		
 		void onITsSelected() {
-			employees.getEnterpriseIT(enterprise, o-> getEnterpriseIT().setEnterpriseITObject(o));
+			employees.getEnterpriseIT(enterprise, o-> getEnterpriseIT().loadITWidget());
 		}
 
 		void onCostsSelected() {
@@ -2537,10 +2539,10 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 	private Salary salary;
 	private Statistics stats;
 	private EnterpriseSalary enterpriseSalary;
-	private EnterpriseIT enterpriseIT;
+	private ITWidget enterpriseIT;
 	private ITEditor it;
 	private WorkplaceSalary workplaceSalary;
-	private WorkplaceIT workplaceIT;
+	private ITWidget workplaceIT;
 	private CalendarDraft calendarDraft;
 	private SalaryDraft salaryDraft;
 	private SalaryPreview salaryPreview;
@@ -2947,13 +2949,6 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 		getEnterprisePanel().selectWidget(getEnterpriseSalary());
 		getEnterpriseSalary().setEnterpriseSalaryObject(enterpriseSalaryObject);
 	}
-	
-	@Override
-	public void onEnterpriseITSelected(EnterpriseITObject enterpriseITObject) {
-		employeeDetail.setWidget(getEnterprisePanel());
-		getEnterprisePanel().selectWidget(getEnterpriseIT());
-		getEnterpriseIT().setEnterpriseITObject(enterpriseITObject);
-	}
 
 	@Override
 	public void onITDataSelected(ITDataObject dataObject) {
@@ -2966,13 +2961,6 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 		employeeDetail.setWidget(getWorkplacePanel());
 		getWorkplacePanel().selectWidget(getWorkplceSalary());
 		getWorkplceSalary().setWorkplaceSalaryObject(dataObject);
-	}
-	
-	@Override
-	public void onWorkplaceITSelected(WorkplaceITObject workplaceITObject) {
-		employeeDetail.setWidget(getWorkplacePanel());
-		getWorkplacePanel().selectWidget(getWorkplceIT());
-		getWorkplceIT().setWorkplaceITObject(workplaceITObject);
 	}
 
 	@Override
@@ -3226,9 +3214,9 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 		return workplaceSalary;
 	}
 	
-	private WorkplaceIT getWorkplceIT() {
+	private ITWidget getWorkplceIT() {
 		if (workplaceIT == null)
-			workplaceIT = new WorkplaceIT();
+			workplaceIT = new ITWidget();
 		return workplaceIT;
 	}
 
@@ -3261,10 +3249,9 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 		return enterpriseSalary;
 	}
 	
-	private EnterpriseIT getEnterpriseIT() {
+	private ITWidget getEnterpriseIT() {
 		if (enterpriseIT == null) {
-			enterpriseIT = new EnterpriseIT();
-			enterpriseIT.setFooter(dockLayoutPanel, footTabPanel, footPanel);
+			enterpriseIT = new ITWidget();
 		} 
 		return enterpriseIT;
 	}

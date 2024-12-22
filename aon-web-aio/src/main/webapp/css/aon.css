@@ -4546,3 +4546,9 @@ font-weight: 600;
 	padding: 0;
 }
 
+.gwt-viz-container > div {
+	color: red;
+	display: flex;
+	justify-content: center;
+}
+

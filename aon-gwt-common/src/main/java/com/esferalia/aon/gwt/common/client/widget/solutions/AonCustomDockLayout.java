@@ -107,6 +107,14 @@ public abstract class AonCustomDockLayout extends DockLayoutPanel {
 		searchFilterComponent.addSortWidget(widget);
 	}
 	
+	public void showOrder() {
+		searchFilterComponent.showOrder();
+	}
+	
+	public void hideOrder() {
+		searchFilterComponent.hiderder();
+	}
+	
 	public void addUtilityOption(Button button, String text) {
 		searchFilterComponent.addUtilityOption(button, text);
 	}
