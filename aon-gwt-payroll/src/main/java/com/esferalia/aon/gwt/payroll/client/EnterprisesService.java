@@ -229,7 +229,7 @@ public interface EnterprisesService extends RemoteService {
 
 	String createUpdateITEmployee(String currentDomainName, ITEmployee employeeITInfo);
 	
-	EnterpriseStatus getEnterpriseStatus(String domain, String user, Integer enterpriseId );
+	EnterpriseStatus getEnterpriseStatus(String domain, String user, Integer enterpriseId ) throws IllegalArgumentException;
 
 	// ------------------------------------------------ Contract Attachments
 	
