@@ -12,6 +12,7 @@ import com.esferalia.aon.occam.api.model.finance.utilities.FinanceUtilitiesParam
 import com.esferalia.aon.occam.api.model.finance.utilities.FinanceUtilitiesResult;
 import com.esferalia.aon.occam.api.model.type.WithholdingType;
 import com.esferalia.aon.occam.impl.jooq.FinanceImpl;
+import com.esferalia.aon.watson.error.AonCoreException;
 
 public class FINANCE {
 
@@ -68,4 +69,15 @@ public class FINANCE {
 		}
 	}
 	
+	public static FinanceUtilitiesResult activityIntegrity(Occam occam, Integer domain) throws AonCoreException {
+		try (CloseableAONContext ctx = AONContext.getAONContext(occam)) {
+			return getFinance().activityIntegrity(ctx,domain);
+		}
+	}
+	
+	public static void activityIntegrityFix(Occam occam, Integer invoiceId, boolean useInvoiceActivity) throws AonCoreException {
+		try (CloseableAONContext ctx = AONContext.getAONContext(occam)) {
+			getFinance().activityIntegrityFix(ctx,invoiceId, useInvoiceActivity);
+		}
+	}
 }

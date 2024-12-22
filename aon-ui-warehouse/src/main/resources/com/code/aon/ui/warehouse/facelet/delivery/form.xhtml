@@ -151,6 +151,12 @@
 
 								<aon:outputText styleClass="aon-margin-left"
 									value="#{delivery.to.status}" />
+								<aon:commandLink id="changeStatusTopreparation" immediate="true"
+									styleClass="aon-icon-package aon-margin-left" style="padding-right: 20px;"
+									value="&#160;" title="Cambiar estado"
+									rendered="#{delivery.pending and domainSwitcher.paturpat}"
+									actionListener="#{delivery.onChangeStatusToPreparation}"
+								/>
 								<aon:outputText styleClass="aon-italic aon-margin-left"
 									value="(#{bundle.finance_invoice}: "
 									rendered="#{delivery.invoiced}" />

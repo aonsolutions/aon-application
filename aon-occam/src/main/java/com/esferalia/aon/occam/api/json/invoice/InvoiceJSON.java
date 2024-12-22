@@ -89,7 +89,8 @@ public class InvoiceJSON {
 				.setDetails(InvoiceDetailJSON.fromJSON(JsonUtils.getJSONArray(json, IJsonNames.DETAILS)))
 				.setFinances(FinanceJSON.fromJSON(JsonUtils.getJSONArray(json, IJsonNames.FINANCES)))
 				.setTediCategory(JsonUtils.getString(json, IJsonNames.CATEGORY))
-				.setActivity(EnterpriseActivityJSON.fromJSON(JsonUtils.getJSONObject(json, IJsonNames.ACTIVITY)));
+				.setActivity(EnterpriseActivityJSON.fromJSON(JsonUtils.getJSONObject(json, IJsonNames.ACTIVITY)))
+				.setThirdPart(JsonUtils.getboolean(json, IJsonNames.THIRD_PART));
 	}
 
 	private static RectificationType getRectificationType(JSONObject json) {
@@ -150,7 +151,8 @@ public class InvoiceJSON {
 			.put(IJsonNames.DETAILS, InvoiceDetailJSON.toJSON(invoice.getDetails()))
 			.put(IJsonNames.FINANCES, FinanceJSON.toJSON(invoice.getFinances()))
 			.put(IJsonNames.ACTIVITY, EnterpriseActivityJSON.toJSON(invoice.getActivity()))
-			.put(IJsonNames.SCOPE, ScopeJSON.toJSON(invoice.getScope()));
+			.put(IJsonNames.SCOPE, ScopeJSON.toJSON(invoice.getScope()))
+			.put(IJsonNames.THIRD_PART, invoice.isThirdPart());
 		
 		if(invoice.isRectifier() || invoice.isRectified()) {
 			String rectificationInvoiceDate = AonDateUtils.format(invoice.getRectificationInvoiceDate() , AonDateUtils.DATE_TIME_FORMAT_AUX);

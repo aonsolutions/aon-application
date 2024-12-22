@@ -25,14 +25,14 @@
 
 
 	<g:SplitLayoutPanel ui:field="splitLayoutPanel" styleName="aon-MainCreta"  >
-		<g:west size='275'>
+		<g:west size='340'>
 
 			<g:StackLayoutPanel unit='EM' styleName="aon-MainCreta-Enterprises"  >
 
 				<g:stack ui:field="enterprisesStack">
 					<g:header size='3'>
 						<div class='{style.stackHeader}'>
-							<div class='{style.enterprisesIcon}' />
+							<div class='aon_icon_menu_collapse' />
 							EMPRESAS
 						</div>
 					</g:header>

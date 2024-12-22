@@ -5,7 +5,7 @@ import {AonToolbar} from "../../components/aon-toolbar.js";
 import {AonCard} from "../../components/aon-card.js";
 import {AonButton} from "../../components/aon-button.js";
 
-import {CONSTANT, EVENT, MATERIAL_ICONS, MSG, TAG } from '../../environments/environments.js'; 
+import { COLORS, CONSTANT, EVENT, MATERIAL_ICONS, MSG, TAG } from '../../environments/environments.js'; 
 
 import * as ACTION from '../actions.js';
 
@@ -22,6 +22,7 @@ import { AonNewSelect } from '../../components/aon-new-select.js';
 import * as UA from '../../services/userAgentService.js';
 import { openBarcode } from '../../services/actionService.js';
 import { createCard, createInput } from '../../components/CreateComponent.js';
+import { round } from '../../services/utils.js';
 
 export class AonDelivery extends AonElement {
 
@@ -33,6 +34,7 @@ export class AonDelivery extends AonElement {
 	DELIVERY_TABS_BUTTON;
 	PACKAGING_PRODUCT
 	PACKAGING_SOURCE_PRODUCT
+	DIV;
 	delivery;
 	packaging;
 	salesDetails;
@@ -69,10 +71,11 @@ export class AonDelivery extends AonElement {
 		this.PACKAGING_PRODUCT = this.id + 'PackagingProduct';
 		this.PACKAGING_SOURCE_PRODUCT = this.id + 'PackagingSourceProduct';
 		this.DELIVERY_TABS = this.id + CONSTANT.TABS.initCap();
+		this.DIV = this.id + 'Div';
 
 		this.options = this.options || [
-			{ title: MSG.DELIVERY, fn: () => alert("Delivery")},
-			{ title: "Empaquetado", fn: () => alert("Packaging")}
+			{ title: MSG.DELIVERY, fn: () => this.buildDelivery(this.DIV)},
+			{ title: "Empaquetado", fn: () => this.buildPackaging(this.DIV)}
 		];
 	}
 
@@ -83,20 +86,18 @@ export class AonDelivery extends AonElement {
 		toolbar.title = this.delivery.reference; 
 		this.appendChild(toolbar);
 		// toolbar.addButton2(ACTION.SAVE, () => this.save());
+		toolbar.addButton2(ACTION.ADD, () => this.addPackaging());
 		toolbar.addButton2(ACTION.ACCEPT, () => this.accept());
 		toolbar.addButton2(ACTION.BACK, () => this.back());
 
-		let div = this.createElement(TAG.DIV);
+		let div = this.createDiv();
+		div.id = this.DIV;
 		div.style.width = "100%";
 
 		this.buildTabs();
-
-    	tabs.setButtons(this.DELIVERY_TABS_BUTTON);
-
-	    this.appendChild(tabs);
-
 		this.appendChild(div);
-		this.buildDeliveryGeneral(div);
+
+		this.buildDelivery();
 	}
 
 	buildTabs() {
@@ -106,16 +107,20 @@ export class AonDelivery extends AonElement {
 		this.appendChild(tab);
 	}
 
-	buildDelivery(parent){
-		this.buildDeliveryGeneral(parent);
-		this.buildDeliveryDetail(parent);
+	buildDelivery(){
+		let parent = this.getElement(this.DIV);
+		this.clearElement(parent);
+		// this.buildDeliveryGeneral();
+		this.buildDeliveryDetail();
 	}
 
-	buildDeliveryGeneral(parent) {
+	buildDeliveryGeneral() {
+		let parent = this.getElement(this.DIV);
 		createCard(this.DELIVERY_CARD, 'Datos Albarán', parent);
 	}
 
-	buildDeliveryDetail(parent) {
+	buildDeliveryDetail() {
+		let parent = this.getElement(this.DIV);
 		let card = createCard(this.DELIVERY_DETAIL_CARD, 'Detalles', parent);
 
 		let table = new AonBasicTable();
@@ -141,8 +146,10 @@ export class AonDelivery extends AonElement {
 		}
 	}
 
-	buildPackaging(parent){
-		let div = this.createElement(TAG.DIV, "aonPackageDiv")
+	buildPackaging(){
+		let parent = this.getElement(this.DIV);
+		this.clearElement(parent);
+		let div = this.createDiv("aonPackageDiv")
 		let packagingList = new AonMobileDeliveryPackagingList();
 		packagingList.setToolbar(this.DELIVERY_TOOLBAR);
 		packagingList.setPackages(this.delivery.packaging);
@@ -196,7 +203,6 @@ export class AonDelivery extends AonElement {
 	}
 
 	addPackaging() {
-		this.getApplication().removeFloatOption();
 		this.clear();
 		let toolbar = new AonToolbar();
 		toolbar.id = this.DELIVERY_TOOLBAR;
@@ -413,24 +419,51 @@ export class AonDelivery extends AonElement {
 				pendingTable.addRow();
 				
 				let span = this.createSpan();
-				span.innerHTML = this.salesDetails[i].item.product.code;
-				pendingTable.addCell(span);
+				span.innerHTML = this.salesDetails[i].item.product.name;
+				let td = pendingTable.addCell(span);
+				td.style.paddingBottom = '10px';
+				td.style.paddingRight = '10px';
 
 				let span2 = this.createSpan();
-				span2.innerHTML = pending;
-				pendingTable.addCell(span2)
+				let q = this.getFormat(this.salesDetails[i].item, this.salesDetails[i].quantity);
+				let p = this.getFormat(this.salesDetails[i].item, pending);
+								
+				span2.innerHTML = p + '/' + q;
+				span2.style.color = q == p ? `var(${COLORS.AON_RED})` : `var(${COLORS.AON_ORANGE})`;
+				span2.style.fontWeight = 'bold';
+				
+				let td2 = pendingTable.addCell(span2)
+				td2.style.paddingBottom = '10px';
 
 				let aonIconButton = this.createAonElement(new AonIconButton(), 'icon' + i, 'icon');
 				aonIconButton.icon = MATERIAL_ICONS.ADD;
 				aonIconButton.addEventListener(EVENT.CLICK, () => {
 					this.sourceDialog(this.salesDetails[i]);
 				});
-				pendingTable.addCell(aonIconButton);
+				let td3 = pendingTable.addCell(aonIconButton);
+				td3.style.paddingBottom = '10px';
 				aonIconButton.setDisabled(this.packaging.container == undefined);
 			}	
 		}
 	}
 
+	getFormat(item, quantity) {
+		let stockUnitTag = item.stockUnitTag.id;
+		let packFormatTag = item.packFormatTag.id;
+		let packUnitsTag = item.packUnitsTag.id;
+		let packUnits = item.packUnits;
+		let packMeasurementTag = item.packMeasurementTag.id;
+		let packMeasurement = item.packMeasurement;
+		
+		let formatQuantity = quantity;
+		if(stockUnitTag === packMeasurementTag) {
+			formatQuantity = quantity / packMeasurement;
+			formatQuantity = formatQuantity / packUnits;	
+		} else if(stockUnitTag === packUnitsTag) {
+			formatQuantity = quantity / packUnits;	
+		}
+		return round(formatQuantity);
+	}
 
 	sourceDialog(detail) {
 		let id = this.id + 'SourceDialog';

@@ -146,6 +146,7 @@ export class AonInvoice extends AonElement {
 		this.SERVICE = CONSTANT.AON_INVOICE + CONSTANT.SERVICE.initCap();
 		this.INVESTMENT = CONSTANT.AON_INVOICE + CONSTANT.INVESTMENT.initCap();
 		this.RECTIFIED = CONSTANT.AON_INVOICE + CONSTANT.RECTIFIED.initCap();
+		this.THIRD_PART = CONSTANT.AON_INVOICE + CONSTANT.THIRD_PART.initCap();
 		this.NUMBER = CONSTANT.AON_INVOICE + CONSTANT.NUMBER.initCap();
 		this.REFERENCE = CONSTANT.AON_INVOICE + CONSTANT.REFERENCE.initCap();
 		this.DATE = CONSTANT.AON_INVOICE + CONSTANT.DATE.initCap();
@@ -1110,6 +1111,22 @@ export class AonInvoice extends AonElement {
 			});
 			rectified.checked = this.invoice.isRectified();
 
+			// ----- EMITIDA POR TERCEROS
+
+
+			let thirdPart = new AonSwitch();
+			if(this.invoice.isEmitida()){
+				thirdPart.id = this.THIRD_PART;
+				thirdPart.title = MSG.ISSUED_BY_THIRD_PART;
+				thirdPart.readonly = this.invoice.isReadonly();
+				div.appendChild(thirdPart);
+				thirdPart.addEventListener(EVENT.CHANGE, () => {
+					this.invoice.setThirdPart(thirdPart.checked);
+				});
+				thirdPart.checked = this.invoice.isThirdPart();
+			}
+
+
 			const top  = button.getBoundingClientRect().top;
 			const left = button.getBoundingClientRect().left;
 			dialog.setContent(div, top, left);
@@ -1123,6 +1140,13 @@ export class AonInvoice extends AonElement {
 
 			rectified.setWidth('150px');
 			rectified.setMarginBottom('10px');
+		
+			if(this.invoice.isEmitida()){
+				thirdPart.setWidth('150px');
+				thirdPart.setMarginBottom('10px');
+			}
+
+			
 		});
 
 		let table = new AonBasicTable();
@@ -1166,12 +1190,17 @@ export class AonInvoice extends AonElement {
 			number.disabled = CONSTANT.TRUE;
 			numberSpan.appendChild(number);
 			if(this.invoice.isInbox()) {
-				getSalesSeries({}).then(r => {
-					this.series = r;
-					let enabled = this.invoice.isInbox() && r.filter(f => f.description == this.invoice.serie).length === 0;
-					number.setReadonly(!enabled);
-					number.setDisabled(!enabled);					
-				});
+				if(this.invoice.isThirdPart()) {
+					number.setReadonly(false);
+					number.setDisabled(false);
+				} else {
+					getSalesSeries({}).then(r => {
+						this.series = r;
+						let enabled = this.invoice.isInbox() && r.filter(f => f.description == this.invoice.serie).length === 0;
+						number.setReadonly(!enabled );
+						number.setDisabled(!enabled );					
+					});
+				}
 
 				number.addEventListener(EVENT.CHANGE, () => {
 					this.invoice.number = number.value;
@@ -2652,32 +2681,56 @@ export class AonInvoice extends AonElement {
 			d.clear();
 			if(!this.isMobile()) d.width = '400px';
 			d.setTitle(MSG.ACCEPT);
-			let certSelect = createSelect("cert", "Certificado");
-			getAeatCertificates().then(certs => {
-				certSelect.setOptions(certs.map(s => {
-					return {
-						value: s.id,
-					  	name: s.name
-					}
-				}));
-			}); 
-			d.setContent(certSelect);
-			d.addAcceptAction(() => {
-				this.getApplication().startLoader();
-				this.accept = false;
-				let data = this.getInvoice();
-				data.cert = certSelect.value;
-				acceptInvoice(data).then(r => {
-					this.updateCounter(this.getAcceptFromOption(), this.getAcceptToOption(), 1);
-					this.invoice = new Invoice(r);
-					this.getApplication().stopLoader(); 
-					this.reload();
-				}).catch(e => {
-					this.accept = true;
-					this.getApplication().stopLoader(); 
-					this.showError(e)
+
+			if(this.invoice.isThirdPart()) {
+				let tbaiIdInput = createInput(this.TBAI_ID, "Identificador TicketBai");
+				d.setContent(tbaiIdInput);
+
+				d.addAcceptAction(() => {
+					this.getApplication().startLoader();
+					this.accept = false;
+					let data = this.getInvoice();
+					data.tbaiId = tbaiIdInput.value;
+					acceptInvoice(data).then(r => {
+						this.updateCounter(this.getAcceptFromOption(), this.getAcceptToOption(), 1);
+						this.invoice = new Invoice(r);
+						this.getApplication().stopLoader(); 
+						this.reload();
+					}).catch(e => {
+						this.accept = true;
+						this.getApplication().stopLoader(); 
+						this.showError(e)
+					});
 				});
-			});			
+			} else {
+				let certSelect = createSelect("cert", "Certificado");
+				getAeatCertificates().then(certs => {
+					certSelect.setOptions(certs.map(s => {
+						return {
+							value: s.id,
+							  name: s.name
+						}
+					}));
+				}); 
+				d.setContent(certSelect);
+				d.addAcceptAction(() => {
+					this.getApplication().startLoader();
+					this.accept = false;
+					let data = this.getInvoice();
+					data.cert = certSelect.value;
+					acceptInvoice(data).then(r => {
+						this.updateCounter(this.getAcceptFromOption(), this.getAcceptToOption(), 1);
+						this.invoice = new Invoice(r);
+						this.getApplication().stopLoader(); 
+						this.reload();
+					}).catch(e => {
+						this.accept = true;
+						this.getApplication().stopLoader(); 
+						this.showError(e)
+					});
+				});
+			}
+			
 			d.open();
 		} else if(this.accept) {
 			this.getApplication().startLoader();

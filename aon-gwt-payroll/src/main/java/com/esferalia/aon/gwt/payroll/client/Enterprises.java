@@ -47,6 +47,8 @@ import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.AbstractImagePrototype;
 import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.HasTreeItems;
+import com.google.gwt.user.client.ui.IsTreeItem;
 import com.google.gwt.user.client.ui.MenuBar;
 import com.google.gwt.user.client.ui.MenuItem;
 import com.google.gwt.user.client.ui.PopupPanel;
@@ -95,6 +97,8 @@ public class Enterprises extends ResizeComposite implements
 		@Template("<span style=\"{0}\">{1}&nbsp;</span>{2}")
 		SafeHtml treeItem(SafeStyles styles, String preffix, String title);
 	
+		@SafeHtmlTemplates.Template("<span class=\"material-icons\" style=\"vertical-align: middle; color: black; font-size: 20px;\" >{0}</span>")
+		SafeHtml materialIcon(String materialIcon);
 	}
 	
 	private static final Template TEMPLATE = GWT.create(Template.class);
@@ -116,7 +120,8 @@ public class Enterprises extends ResizeComposite implements
     	    
     	}
 
-    	@UiField
+
+    @UiField(provided = true)
 	Tree tree;
 	@UiField
 	ScrollPanel scrollPanel;
@@ -141,9 +146,28 @@ public class Enterprises extends ResizeComposite implements
 	public Enterprises() {
 
 		images = GWT.create(Images.class);
-		listeners = new LinkedList<Enterprises.Listener>();
+		listeners = new LinkedList<>();
 
-		enterprisesService = DomainEnterprisesServiceAsync.newInstance();		
+		enterprisesService = DomainEnterprisesServiceAsync.newInstance();
+		
+		tree = new Tree(new Tree.Resources() {
+			
+			@Override
+			public ImageResource treeOpen() {
+				return images.aon_icon_tree_open();
+			}
+			
+			@Override
+			public ImageResource treeLeaf() {
+				return images.aon_icon_tree_closed();
+			}
+			
+			@Override
+			public ImageResource treeClosed() {
+				return images.aon_icon_tree_closed();
+			}
+		}, false);
+		
 				
 		initWidget(binder.createAndBindUi(this));
 		
@@ -245,7 +269,7 @@ public class Enterprises extends ResizeComposite implements
 		getEnterprises(0, Integer.MAX_VALUE);
 	}
 	
-	protected void onEnterprise(Enterprise enterprise, TreeItem rootItem) {
+	protected <T extends HasTreeItems> void onEnterprise(Enterprise enterprise, T rootItem) {
 		
 		clearEnterprise(enterprise);
 		
@@ -255,16 +279,22 @@ public class Enterprises extends ResizeComposite implements
 		enterpriseItem.setUserObject(enterprise);
 		
 		for (Activity activity: enterprise.getActivities()) {
-
-			for ( CCC ccc : activity.getCccs() ) {
-				LOGGER.info(activity.getDescription() + ", " + ccc.getGeozone() + " " + ccc.getCode());
-				TreeItem cccItem = addImageItem(enterpriseItem, getDescription(activity, ccc),getImage(ccc));
-				cccItem.setUserObject(ccc);
-			}
-			
+			onEnterpriseActivity(activity, enterpriseItem);
 		}
 
 		scrollPanel.scrollToLeft();
+	}
+	
+	protected void onEnterpriseActivity(Activity activity, TreeItem enterpriseItem) {
+		for ( CCC ccc : activity.getCccs() ) {
+			LOGGER.info(activity.getDescription() + ", " + ccc.getGeozone() + " " + ccc.getCode());
+			onEnterpriseCCC(activity, ccc, enterpriseItem);
+		}
+	}
+	
+	protected void onEnterpriseCCC(Activity activity, CCC ccc, TreeItem enterpriseItem) {
+		TreeItem cccItem = addImageItem(enterpriseItem, getDescription(activity, ccc),getImage(ccc));
+		cccItem.setUserObject(ccc);
 	}
 	
 	protected int getSearchTextBoxDelay() {
@@ -273,14 +303,14 @@ public class Enterprises extends ResizeComposite implements
 
 	protected void onEnterprises(List<Enterprise> enterprises) {
 	    	
-	    	tree.removeItems();
+	    tree.removeItems();
 
-		TreeItem enterprisesItem = new TreeItem(imageItemHTML(images.enterprises(), "EMPRESAS"));
+		TreeItem enterprisesItem = new TreeItem(materialIconItemHTML("domain", "EMPRESAS"));
 		enterprisesItem.setUserObject(enterprises);
 		tree.addItem(enterprisesItem);
 		
 		for (Enterprise enterprise : enterprises)
-			Enterprises.this.onEnterprise(enterprise, enterprisesItem);
+			Enterprises.this.onEnterprise(enterprise, tree);
 		
 		enterprisesItem.setState(true, true);
 		tree.setSelectedItem(enterprisesItem);
@@ -546,7 +576,7 @@ public class Enterprises extends ResizeComposite implements
 		}
 	}
 
-	private TreeItem addItem(TreeItem root, String title, String preffix) {
+	private <T extends HasTreeItems>  TreeItem addItem(T root, String title, String preffix) {
 		
 		SafeStyles preffixStyles =
 		new SafeStylesBuilder()
@@ -565,7 +595,7 @@ public class Enterprises extends ResizeComposite implements
 	 * {@link #addImageItem(TreeItem, String, childs, ImageResource) code}
 	 * 
 	 */
-	private TreeItem addImageItem(TreeItem root, String title,
+	private <T extends HasTreeItems> TreeItem addImageItem(T root, String title,
 			ImageResource imageProto) {
 		TreeItem item = new TreeItem(imageItemHTML(imageProto, title));
 		root.addItem(item);
@@ -584,6 +614,23 @@ public class Enterprises extends ResizeComposite implements
 		return builder.toSafeHtml();
 	}
 
+	private TreeItem addMaterialIconItem(TreeItem root, String title,
+			String imageProto) {
+		TreeItem item = new TreeItem(materialIconItemHTML(imageProto, title));
+		root.addItem(item);
+		return item;
+	}
+
+	/**
+	 * Generates HTML for a tree item with an attached material icon.
+	 */
+	private SafeHtml materialIconItemHTML(String materialIcon, String title) {
+		SafeHtmlBuilder builder = new SafeHtmlBuilder();
+		builder.append(TEMPLATE.materialIcon(materialIcon));
+		builder.append(' ');
+		builder.appendEscaped(capitalize(title));
+		return builder.toSafeHtml();
+	}
 
 
 	private boolean isWorkPlaceVisible(Workplace workplace) {
@@ -730,5 +777,27 @@ public class Enterprises extends ResizeComposite implements
 		return activity.getDescription() + ", " + Province.getName(ccc.getGeozone()) + " " + ccc.getCode();
 	}
 
+	private static String capitalize(String str) {
+		if ( AonStringUtils.isBlank(str) )
+			return str;
+		
+		boolean capitalizeNext = true;
+		StringBuilder builder = new StringBuilder(str.length());
+		
+		for ( int i = 0; i < str.length(); i++ ) {
+			char ch = str.charAt(i);
+			if ( Character.isWhitespace(ch) 
+				|| ch == ',' || ch == '.') {
+				builder.append(ch);
+				capitalizeNext = true;
+			} else if ( capitalizeNext ) {
+				builder.append(Character.toUpperCase(ch));
+				capitalizeNext = false;
+			} else {
+				builder.append(Character.toLowerCase(ch));
+			}
+		}
+		return builder.toString();
+	}
 
 }

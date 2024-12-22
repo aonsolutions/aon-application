@@ -139,7 +139,8 @@
 	background-color: #ffffff;
 }
 
-.gwt-Selector .aon-EmployeeTree-Employees {
+.gwt-Selector .aon-MainCreta-Enterprises, .gwt-Selector .aon-EmployeeTree-Employees
+	{
 	width: 340px;
 }
 
@@ -149,7 +150,8 @@
 }
 
 /* .aon-EmployeeTree-Employees */
-.gwt-Selector .aon-EmployeeTree-Employees .gwt-Tree .gwt-TreeItem {
+.gwt-Selector .aon-MainCreta-Enterprises .gwt-Tree .gwt-TreeItem,
+	.gwt-Selector .aon-EmployeeTree-Employees .gwt-Tree .gwt-TreeItem {
 	min-width: 260px;
 	position: relative;
 	padding: 4px 4px 4px 4px;
@@ -164,7 +166,8 @@
 	font-family: Noto Sans, sans-serif !important;
 }
 
-.gwt-Selector .aon-EmployeeTree-Employees .gwt-Tree>div>table:has(.gwt-TreeItem)
+.gwt-Selector .aon-MainCreta-Enterprises .gwt-Tree>div>table:has(.gwt-TreeItem),
+	.gwt-Selector .aon-EmployeeTree-Employees .gwt-Tree>div>table:has(.gwt-TreeItem)
 	{
 	border-top-right-radius: 8px;
 	border-bottom-right-radius: 8px;
@@ -172,7 +175,9 @@
 	border-bottom-left-radius: 0px;
 }
 
-.gwt-Selector .aon-EmployeeTree-Employees .gwt-Tree .gwt-TreeItem-selected,
+.gwt-Selector .aon-MainCreta-Enterprises .gwt-Tree .gwt-TreeItem-selected,
+	.gwt-Selector .aon-EmployeeTree-Employees .gwt-Tree .gwt-TreeItem-selected,
+	.gwt-Selector .aon-MainCreta-Enterprises .gwt-Tree>div>table:has(.gwt-TreeItem-selected),
 	.gwt-Selector .aon-EmployeeTree-Employees .gwt-Tree>div>table:has(.gwt-TreeItem-selected)
 	{
 	font-weight: 700;
@@ -181,66 +186,84 @@
 }
 
 .gwt-Selector .aon-EmployeeTree-Employees .gwt-Tree .gwt-TreeItem:hover,
-	.gwt-Selector .aon-EmployeeTree-Employees .gwt-Tree>div>table:has(.gwt-TreeItem):hover
+	.gwt-Selector .aon-MainCreta-Enterprises .gwt-Tree .gwt-TreeItem:hover,
+	.gwt-Selector .aon-EmployeeTree-Employees .gwt-Tree>div>table:has(.gwt-TreeItem):hover,
+	.gwt-Selector .aon-MainCreta-Enterprises .gwt-Tree>div>table:has(.gwt-TreeItem):hover
 	{
 	background-color: var(--aonLightGray2) !important;
 }
 
-.gwt-Selector .aon-EmployeeTree-Employees .gwt-Tree>div>table .gwt-TreeItem-selected
+.gwt-Selector .aon-MainCreta-Enterprises .gwt-Tree>div>table .gwt-TreeItem-selected,
+	.gwt-Selector .aon-EmployeeTree-Employees .gwt-Tree>div>table .gwt-TreeItem-selected
 	{
 	background: transparent;
 	border-left: none !important;
 }
 
-.gwt-Selector .aon-EmployeeTree-Employees .gwt-Tree>div>table>tbody>tr:first-child>td:first-child img
+.gwt-Selector .aon-MainCreta-Enterprises .gwt-Tree>div>table>tbody>tr:first-child>td:first-child img,
+	.gwt-Selector .aon-EmployeeTree-Employees .gwt-Tree>div>table>tbody>tr:first-child>td:first-child img
 	{
 	margin-left: 12px;
 	background-size: 9px !important;
 }
 
-.gwt-Selector .aon-EmployeeTree-Employees .gwt-Tree>div>.gwt-TreeItem {
+.gwt-Selector .aon-MainCreta-Enterprises .gwt-Tree>div>.gwt-TreeItem,
+	.gwt-Selector .aon-EmployeeTree-Employees .gwt-Tree>div>.gwt-TreeItem {
 	left: -19px;
 	font-size: 16px;
 	font-weight: 500;
 }
 
-.gwt-Selector .aon-EmployeeTree-Employees .gwt-Tree>div>table .gwt-TreeItem
+.gwt-Selector .aon-MainCreta-Enterprises .gwt-Tree>div>table .gwt-TreeItem,
+	.gwt-Selector .aon-EmployeeTree-Employees .gwt-Tree>div>table .gwt-TreeItem
 	{
 	margin-top: 0px;
 	margin-bottom: 0px;
 }
 
-.gwt-Selector .aon-EmployeeTree-Employees .gwt-Tree>div>.gwt-TreeItem,
+.gwt-Selector .aon-MainCreta-Enterprises .gwt-Tree>div>.gwt-TreeItem,
+	.gwt-Selector .aon-EmployeeTree-Employees .gwt-Tree>div>.gwt-TreeItem,
+	.gwt-Selector .aon-MainCreta-Enterprises .gwt-Tree>div>table:has(.gwt-TreeItem),
 	.gwt-Selector .aon-EmployeeTree-Employees .gwt-Tree>div>table:has(.gwt-TreeItem)
 	{
 	margin-top: 6px;
 	margin-bottom: 6px;
 }
 
-.gwt-Selector .aon-EmployeeTree-Employees .gwt-Tree>div>.gwt-TreeItem>img,
+.gwt-Selector .aon-MainCreta-Enterprises .gwt-Tree>div>.gwt-TreeItem>img,
+	.gwt-Selector .aon-MainCreta-Enterprises .gwt-Tree>div>table .gwt-TreeItem>img,
+	.gwt-Selector .aon-MainCreta-Enterprises .gwt-Tree>div>.gwt-TreeItem>.material-icons,
 	.gwt-Selector .aon-EmployeeTree-Employees .gwt-Tree>div>.gwt-TreeItem>.material-icons,
+	.gwt-Selector .aon-EmployeeTree-Employees .gwt-Tree>div>.gwt-TreeItem>img,
 	.gwt-Selector .aon-EmployeeTree-Employees .gwt-Tree>div>table .gwt-TreeItem>img,
+	.gwt-Selector .aon-MainCreta-Enterprises .gwt-Tree>div>table .gwt-TreeItem>.material-icons,
 	.gwt-Selector .aon-EmployeeTree-Employees .gwt-Tree>div>table .gwt-TreeItem>.material-icons
 	{
 	_display: none;
 }
 
-.gwt-Selector .aon-EmployeeTree-Employees .gwt-Tree .gwt-TreeItem-selected .material-icons{
-	font-variation-settings: "FILL" 1,"wght" 200,"GRAD" 0,"opsz" 24 !important;
+.gwt-Selector .aon-MainCreta-Enterprises .gwt-Tree .gwt-TreeItem-selected .material-icons,
+	.gwt-Selector .aon-EmployeeTree-Employees .gwt-Tree .gwt-TreeItem-selected .material-icons
+	{
+	font-variation-settings: "FILL" 1, "wght" 200, "GRAD" 0, "opsz" 24
+		!important;
 }
 
-.gwt-Selector .aon-EmployeeTree-Employees .gwt-Tree>div>div  .gwt-TreeItem
+.gwt-Selector .aon-MainCreta-Enterprises .gwt-Tree>div>div  .gwt-TreeItem,
+	.gwt-Selector .aon-EmployeeTree-Employees .gwt-Tree>div>div  .gwt-TreeItem
 	{
 	left: -19px;
 	padding-left: 18px;
 }
 
-.gwt-Selector .aon-EmployeeTree-Employees .gwt-Tree .gwt-TreeItem .material-icons[style]
+.gwt-Selector .aon-MainCreta-Enterprises .gwt-Tree .gwt-TreeItem .material-icons[style],
+	.gwt-Selector .aon-EmployeeTree-Employees .gwt-Tree .gwt-TreeItem .material-icons[style]
 	{
 	color: var(--aonPayroll) !important;
 }
 
-.gwt-Selector .aon-EmployeeTree-Employees .gwt-Tree .gwt-TreeItem img {
+.gwt-Selector .aon-MainCreta-Enterprises .gwt-Tree .gwt-TreeItem img,
+	.gwt-Selector .aon-EmployeeTree-Employees .gwt-Tree .gwt-TreeItem img {
 	filter: none;
 }
 
@@ -424,7 +447,7 @@
 
 .aon_icon_visibility {
 	background-size: 24px;
-	background-image: 
+	background-image:
 		url('data:image/svg+xml;utf-8,<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="black"><path d="M480.24-364q56.76 0 96.26-39.74 39.5-39.73 39.5-96.5 0-56.76-39.74-96.26-39.73-39.5-96.5-39.5-56.76 0-96.26 39.74-39.5 39.73-39.5 96.5 0 56.76 39.74 96.26 39.73 39.5 96.5 39.5Zm-.24-28q-45 0-76.5-31.5T372-500q0-45 31.5-76.5T480-608q45 0 76.5 31.5T588-500q0 45-31.5 76.5T480-392Zm.14 140Q355-252 252-319.5 149-387 96-500q53-113 155.86-180.5 102.85-67.5 228-67.5Q605-748 708-680.5 811-613 864-500q-53 113-155.86 180.5-102.85 67.5-228 67.5ZM480-500Zm0 220q113 0 207.5-59.5T832-500q-50-101-144.5-160.5T480-720q-113 0-207.5 59.5T128-500q50 101 144.5 160.5T480-280Z"/></svg>');
 }
 
@@ -567,11 +590,11 @@ input[type='checkbox']:checked {
 		url('data:image/svg+xml;utf-8,<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="black"><path d="m424-348 248-248-20-20-228 228-114-114-20 20 134 134ZM232-172q-26 0-43-17t-17-43v-496q0-26 17-43t43-17h496q26 0 43 17t17 43v496q0 26-17 43t-43 17H232Zm0-28h496q12 0 22-10t10-22v-496q0-12-10-22t-22-10H232q-12 0-22 10t-10 22v496q0 12 10 22t22 10Zm-32-560v560-560Z"/></svg>');
 }
 
-.minWidth_2{
+.minWidth_2 {
 	min-width: 2rem !important;
 }
 
-.aon_no_border_toolbar .aon_toolbar_inner{
+.aon_no_border_toolbar .aon_toolbar_inner {
 	border: none;
 }
 
@@ -583,8 +606,8 @@ input[type='checkbox']:checked {
 	padding: 0;
 }
 
-.aon-panelGrid-search .aon-panelGrid-odd,
-.aon-panelGrid-search .aon-panelGrid-even {
+.aon-panelGrid-search .aon-panelGrid-odd, .aon-panelGrid-search .aon-panelGrid-even
+	{
 	background-color: #FFF !important;
 }
 

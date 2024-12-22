@@ -23,6 +23,7 @@ import net.aonsolutions.db.up2date.fiscal.AlterFsMod193Detail2024;
 import net.aonsolutions.db.up2date.fiscal.FsModel369Creation;
 import net.aonsolutions.db.up2date.payroll.LackPayInsert;
 import net.aonsolutions.db.up2date.tgss.SolidarityInsert;
+import net.aonsolutions.db.up2date.tgss.TrainingExcessDeductions2024Insert;
 
 public class Up2Date {
 
@@ -486,7 +487,9 @@ public class Up2Date {
     	// FsModel369Creation.FS_MODEL369_CREATION,
     	// AlterFsMod193Detail2024.ALTER_FS_MODEL_193_DETAIL_2024
     		
-    	LackPayInsert.LACKPAYINSERT
+    	//LackPayInsert.LACKPAYINSERT
+    		
+    	TrainingExcessDeductions2024Insert.TRAININGEXCESSDEDUCTIONS2024INSERT
 
 	};
 

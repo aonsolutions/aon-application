@@ -1309,8 +1309,8 @@ public abstract class Model303Base extends DockLayoutPanel  {
 		dirtyLabel.setStyleName(AON.CSS.aonIconLabel());
 		dirtyLabel.addStyleName(AON.CSS.aonIconDirty());
 		dirtyLabel.setTitle("Cambios sin guardar");
-		dirtyLabel.getElement().getStyle().setWidth(10, Unit.PX);
-		dirtyLabel.getElement().getStyle().setHeight(10, Unit.PX);
+//		dirtyLabel.getElement().getStyle().setWidth(10, Unit.PX);
+//		dirtyLabel.getElement().getStyle().setHeight(10, Unit.PX);
 		marksPanels.add(dirtyLabel);
 		
 		diffLabel.setStyleName(AON.CSS.aonMarginLeft());
