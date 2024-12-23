@@ -42,8 +42,11 @@ public class Model347DeclaredTable extends SimpleLayoutPanel implements HasSelec
 		if (model.getDeclared() == null || model.getDeclared().isEmpty()) {
 			refresh();
 			newDeclared( );	
-		} else if ( selectedIndex != null) {
-			selectionIndex = selectedIndex;
+		} else if (selectedIndex != null) {
+			if (selectedIndex >= model.getDeclared().size())
+				selectionIndex = model.getDeclared().size() - 1;
+			else
+				selectionIndex = selectedIndex;
 			refresh();
 		} else {
 			selectionIndex = 0;

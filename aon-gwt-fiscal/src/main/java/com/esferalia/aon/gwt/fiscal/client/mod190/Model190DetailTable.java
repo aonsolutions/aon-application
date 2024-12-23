@@ -42,7 +42,7 @@ public class Model190DetailTable extends SimpleLayoutPanel implements HasSelecti
 		if (model.getDetails() == null || model.getDetails().isEmpty()) {
 			refresh();
 			newPerceptor( );	
-		} else if ( selectedIndex != null) {
+		} else if (selectedIndex != null) {
 			if (selectedIndex >= model.getDetails().size())
 				selectionIndex = model.getDetails().size() - 1;
 			else
