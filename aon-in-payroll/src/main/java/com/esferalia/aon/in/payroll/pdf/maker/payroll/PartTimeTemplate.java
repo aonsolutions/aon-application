@@ -140,8 +140,8 @@ public class PartTimeTemplate {
 			text.draw();
 			
 			PartTimeEntry entry = params.getEntry(i);
-
-			String ordinaryHours = entry.getOrdinary() != null ? String.format("%.2f", entry.getOrdinary()) : "0,00";
+			
+			String ordinaryHours = ( entry.isHoliday() || entry.getOrdinary() == null ) ? "0.00" : String.format("%.2f", entry.getOrdinary()) ;
 			text = new PdfText(startPoints[1], y, startPoints[2] - startPoints[1], CELL_HEIGHT, contentStream, entry.isHoliday() ? "VACACIONES" : ordinaryHours, BLACK, new PDType1Font(FontName.HELVETICA), normalCellFontSize, PdfSettings.ALIGNMENT.CENTER);
 			text.draw();
 
