@@ -3218,7 +3218,8 @@ color: var(--aonWhite);
 #marketingMenu:hover,
 #configurationMenu:hover,
 #enterpriseMenu:hover,
-#aonApplication:hover {
+#aonApplication:hover,
+#Superset:hover{
   background-color: var(--aonCardColor);
   /*transition: background-color 0.2s;*/
 }
@@ -4544,5 +4545,11 @@ font-weight: 600;
 
 .aon_no_border_toolbar .aon_toolbar_title_container {
 	padding: 0;
+}
+
+aon-superset iframe {
+	border:none;
+	width: 100%;
+	height: 100%;
 }
 

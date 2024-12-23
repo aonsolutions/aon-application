@@ -652,6 +652,7 @@ export const STREET_TYPE = 'Tipo vía';
 export const SITUATION = "Situación"; // TODO
 export const SUITE_MENU = MSG.SUITE_MENU;
 export const SUMMARIZED = MSG.SUMMARIZED;
+export const SUPERSET = 'Superset' ;
 export const SUPPLIED = MSG.SUPPLIED;
 export const SUPPLIER = MSG.SUPPLIER;
 export const SUPPLIERS = MSG.SUPPLIERS;

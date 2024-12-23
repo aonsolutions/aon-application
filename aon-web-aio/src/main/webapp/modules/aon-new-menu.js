@@ -1,6 +1,7 @@
 import { AonElement } from 'aonsolutions/components/AonElement.js';
-import { Apps, HomeApps, MenuApps, AuxApps, DESKTOP_APPS, MENU_APPS, TOP_MENU_APPS, AON_APPS, NEW, HOME, AON_CLASSIC, APPS, APPLICATIONS, NEW_APPS } from '../services/app.js';
+import { Apps, HomeApps, MenuApps, AuxApps, DESKTOP_APPS, MENU_APPS, TOP_MENU_APPS, AON_APPS, NEW, HOME, AON_CLASSIC, APPS, APPLICATIONS, NEW_APPS, SUPERSET } from '../services/app.js';
 import {COMMERCE, OFFICE, GARAGE, ACADEMY} from  "aonsolutions/services/app.js";
+
 import {ACCOUNTING_MENU, COMMERCIAL_MENU, GROUPWARE_MENU, MANAGEMENT_MENU, TREASURY_MENU, WAREHOUSE_MENU, FISCAL_MENU, PAYROLL_MENU, MARKETING_MENU, CONFIGURATION_MENU, ENTERPRISE_MENU} from "../services/app.js"
 import { MSG, CONSTANT, AON_ICONS, CSS, EVENT, MATERIAL_ICONS, TAG } from 'aonsolutions/environments/environments.js';
 import { AonDocumental } from 'aonsolutions/modules/documental/aon-documental.js';
@@ -45,11 +46,14 @@ import { AonCommerceMenu } from './commerce/aon-commerce-menu.js';
 import { AonGarageMenu } from './garage/aon-garage-menu.js';
 import { AonConfigurationMenu } from './configuration/aon-configuration-menu.js';
 import { AonEnterpriseMenu } from './enterprise/aon-enterprise-menu.js';
+import { Superset } from './superset/superset.js';
 
 import { AonParent } from "./aon-parent.js";
 
 
 import { generateJobId } from 'aonsolutions/modules/invoice/InvoiceUtils.js';
+
+import { getApplicationParameters } from 'aonsolutions/services/applicationParameterService.js';
 
 //	Falla la compilación por esta línea que no se usa. REVISAR!!
 // import { FISCAL } from '../../../../target/aon-aio/environments/msg-es.js';
@@ -68,6 +72,9 @@ export class AonNewMenu extends AonElement {
 	AON_MENU_SIDENAV;
 	AON_MENU_APP_OPTIONS;
 	CLOSE;
+	
+	
+	supersetDashboard;
 
 	get id() {
 		return this.getAttribute(CONSTANT.ID);
@@ -279,6 +286,10 @@ export class AonNewMenu extends AonElement {
 				case ENTERPRISE_MENU.app:
 					this.rootPanelMenu(new AonEnterpriseMenu());
 					break;
+				case SUPERSET.app:
+					//"39aa7e93-a3a2-4bf2-b6c6-1297d00bd0e0"
+					this.rootPanel(new Superset(this.supersetDashboard));
+					return;
 				default/*Apps.HOME*/:
 					this.rootPanel(new AonNewDesktop(portalApps, portalNoApps, suiteApps, suiteNoApps));
 					break;
@@ -374,18 +385,14 @@ export class AonNewMenu extends AonElement {
 		for (let item in MENU_APPS) {
 			if (this.isSidenavApp(MENU_APPS[item])) {
 				let app = MENU_APPS[item];
-				let li = this.createElement(TAG.LI);
-				li.id = `aonMenuList-${app.app}`;
-				li.classList.add("aonNewMenuSideNavLi");
-
-				app.cssLogo = this.getCssVariable(`${app.app}SideNavLogo`) ;
-				app.cssIcon = this.getCssVariable(`${app.app}SideNavIcon`) ;
-				app.cssSymbol = this.getCssVariable(`${app.app}SideNavSymbol`);
-				
-				li.appendChild(this.buildApp(app,{color: `var(--aonSidenavIconColor, ${app.newColor || app.color})`}));
-				ul.appendChild(li);
+				this.addMenuSidenavApp(ul, app);
 			}
 		}
+		
+		this.getSupersetDashboard().then((dashboard) => {
+			this.supersetDashboard = dashboard;
+			this.addMenuSidenavApp(ul, SUPERSET);
+		});
 
 		let li2 = this.createElement(TAG.LI);
 		li2.classList.add("aonNewMenuSideNavLi2");
@@ -394,6 +401,19 @@ export class AonNewMenu extends AonElement {
 		aonMenuSidenav.innerHTML = '';
 		aonMenuSidenav.appendChild(ul);
 
+	}
+	
+	addMenuSidenavApp(ul, app) {
+		let li = this.createElement(TAG.LI);
+		li.id = `aonMenuList-${app.app}`;
+		li.classList.add("aonNewMenuSideNavLi");
+
+		app.cssLogo = this.getCssVariable(`${app.app}SideNavLogo`) ;
+		app.cssIcon = this.getCssVariable(`${app.app}SideNavIcon`) ;
+		app.cssSymbol = this.getCssVariable(`${app.app}SideNavSymbol`);
+
+		li.appendChild(this.buildApp(app,{color: `var(--aonSidenavIconColor, ${app.newColor || app.color})`}));
+		ul.appendChild(li);
 	}
 	
 	buildMenuTopnav() {
@@ -1057,6 +1077,8 @@ export class AonNewMenu extends AonElement {
 			return true;
 		else if (APPS.app === app.app)
 			return true;
+		else if (SUPERSET.app === app.app)
+			return true;
 		else if (APPLICATIONS.app === app.app)
 			return true;
 		else if (MenuApps.NOTES.app === app.app)
@@ -1079,6 +1101,7 @@ export class AonNewMenu extends AonElement {
 		&& (
 			HOME.app  ==  app.app 
 			|| APPS.app  ==  app.app 
+			//|| SUPERSET.app == app.app
 			|| AON_CLASSIC.app == app.app
 			|| APPLICATIONS.app  ==  app.app 
 			|| MenuApps.DOCUMENTAL.app  ==  app.app 
@@ -1273,6 +1296,22 @@ export class AonNewMenu extends AonElement {
 			}
 		}
 	}
+	
+	getSupersetDashboard() {
+		return new Promise((resolve, reject) => {
+			getApplicationParameters({params: ['SUPERSET_DASHBOARD']})
+			.then( appParams => {
+				if ( appParams?.length > 0 ) {
+					appParams.sort((a,b) => b.domain - a.domain );
+					resolve(appParams[0].value);
+				} else {
+					reject(new Error("Superset dashboard not found"));
+				}
+			})
+			.catch (reject) ;			
+		});
+	}
+	
 }
 if (!window.customElements.get(TAG.AON_NEW_MENU)) {
 	window.customElements.define(TAG.AON_NEW_MENU, AonNewMenu);

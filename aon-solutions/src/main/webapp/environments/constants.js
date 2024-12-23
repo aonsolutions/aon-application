@@ -337,6 +337,7 @@ export const SUCCESS = "success";
 export const SURCHARGE = 'surcharge';
 export const SURNAME = 'surname';
 export const SURVEY = 'survey';
+export const SUPERSET = 'Superset';
 
 // ----- T
 
