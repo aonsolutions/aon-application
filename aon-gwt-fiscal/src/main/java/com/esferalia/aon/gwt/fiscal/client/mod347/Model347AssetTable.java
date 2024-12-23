@@ -42,8 +42,11 @@ public class Model347AssetTable extends SimpleLayoutPanel implements HasSelectio
 		
 		if (model.getAssets() == null || model.getAssets().isEmpty()) {
 			refresh();
-		} else if ( selectedIndex != null) {
-			selectionIndex = selectedIndex;
+		} else if (selectedIndex != null) {
+			if (selectedIndex >= model.getAssets().size())
+				selectionIndex = model.getAssets().size() - 1;
+			else
+				selectionIndex = selectedIndex;
 			refresh();
 		} else {
 			selectionIndex = 0;

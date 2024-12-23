@@ -363,6 +363,7 @@ public class Mod190ALL2023Declaration extends Mod190Declaration {
 							detail.setDocument(rec.getValue(SALARY.EMPLOYEE_DOCUMENT));
 							detail.setName(rec.getValue(SALARY.EMPLOYEE_NAME));
 							if (accrualYear != null) detail.setAccrualYear( accrualYear );
+							
 							ctx.getDslContext().select(GEOZONE.CODE)
 								.from(RADDRESS)
 								.join(GEOZONE).on(RADDRESS.GEOZONE.equal(GEOZONE.ID))
@@ -472,8 +473,8 @@ public class Mod190ALL2023Declaration extends Mod190Declaration {
 		detail.setContract((byte) 1);
 		
 		if (list != null && !list.isEmpty()) { 
-			IrpfDataRecord record = list.get(0);
-			detail.setCeutaMelilla(AonEnumUtils.getBoolean(record.getCeutaMelilla()));
+			IrpfDataRecord record = list.get(0);			
+			detail.setCeutaMelillaPalma(record.getCeutaMelilla() == null ? (byte) 0 : record.getCeutaMelilla());			
 			Byte familySituation = record.getFamilySituation();
 			if (familySituation != null) {
 				familySituation = (byte) (familySituation + 1);
