@@ -349,6 +349,7 @@ export const TARGET = 'target';
 export const TAXES = 'taxes';
 export const TEXT = 'text';
 export const TEXTAREA = 'textarea';
+export const THIRD_PART = "thirdPart";
 export const TIMECONTROL = 'timecontrol';
 export const TITLE = 'title';
 export const TOOLBAR = 'toolbar';

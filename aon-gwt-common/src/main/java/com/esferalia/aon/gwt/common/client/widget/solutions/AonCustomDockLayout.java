@@ -75,6 +75,14 @@ public abstract class AonCustomDockLayout extends DockLayoutPanel {
 		return getToolbar().getButtonContainer();
 	}
 	
+	public void setSearchZIndex(Integer zIndex) {
+		searchFilterComponent.setSearchZIndex(zIndex);
+	}
+	
+	public void setPopupHeight(String height) {
+		searchFilterComponent.setPopupHeight(height);
+	}
+	
 	public TextBox getSearchTextBox() {
 		return searchFilterComponent.getSearchTextBox();
 	}
@@ -97,6 +105,14 @@ public abstract class AonCustomDockLayout extends DockLayoutPanel {
 	
 	public void addSortWidget(Widget widget) {
 		searchFilterComponent.addSortWidget(widget);
+	}
+	
+	public void showOrder() {
+		searchFilterComponent.showOrder();
+	}
+	
+	public void hideOrder() {
+		searchFilterComponent.hiderder();
 	}
 	
 	public void addUtilityOption(Button button, String text) {

@@ -4553,3 +4553,9 @@ aon-superset iframe {
 	height: 100%;
 }
 
+.gwt-viz-container > div {
+	color: red;
+	display: flex;
+	justify-content: center;
+}
+

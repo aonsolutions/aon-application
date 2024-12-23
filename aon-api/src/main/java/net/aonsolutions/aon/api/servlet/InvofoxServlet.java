@@ -197,33 +197,35 @@ public class InvofoxServlet extends AonApiHttpServlet {
 					? RawdocType.OUTPUT : RawdocType.INPUT;
 			String ocrStatus = JsonUtils.getString(json, IJsonNames.STATUS);
 			RawdocStatus status = getRawdocStatus(ocrStatus); 
-			json.put("ocrStatus", ocrStatus);
-			json.put(IJsonNames.STATUS, status.getTediName());
+			if(!"ocrExported".equalsIgnoreCase(ocrStatus)) {
+				json.put("ocrStatus", ocrStatus);
+				json.put(IJsonNames.STATUS, status.getTediName());
 
-			if(id != null) {
-				Rawdoc rdoc = AON.getRawdocStream(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), 
-						f -> f.getDomainProperty().eq(api.getDomain().getId())
-							.and(f.getIdProperty().eq(id))).findFirst().orElse(null);
-				if(rdoc != null && !AonStringUtils.isBlank(rdoc.getJson())) {
-					boolean signed = JsonUtils.getboolean(new JSONObject(rdoc.getJson()), IJsonNames.SIGNED);
-					json.put(IJsonNames.SIGNED, signed);
+				if(id != null) {
+					Rawdoc rdoc = AON.getRawdocStream(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), 
+							f -> f.getDomainProperty().eq(api.getDomain().getId())
+								.and(f.getIdProperty().eq(id))).findFirst().orElse(null);
+					if(rdoc != null && !AonStringUtils.isBlank(rdoc.getJson())) {
+						boolean signed = JsonUtils.getboolean(new JSONObject(rdoc.getJson()), IJsonNames.SIGNED);
+						json.put(IJsonNames.SIGNED, signed);
+					}
 				}
-			}
-			
-			rawdoc = new Rawdoc()
-				.setId(id)
-				.setDomain(api.getDomain().getId())
-				.setNature(RawdocNature.INVOICE)
-				.setType(type)
-				.setStatus(status)
-				.setJson(json.toString())
-				.setS3Key(getS3Key(json))
-				.setMimeType(getMimeType(json));
-			
-			rawdoc = AON.rawdocSave(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), rawdoc);
-			json.put("id", rawdoc.getId()); 
+				
+				rawdoc = new Rawdoc()
+					.setId(id)
+					.setDomain(api.getDomain().getId())
+					.setNature(RawdocNature.INVOICE)
+					.setType(type)
+					.setStatus(status)
+					.setJson(json.toString())
+					.setS3Key(getS3Key(json))
+					.setMimeType(getMimeType(json));
+				
+				rawdoc = AON.rawdocSave(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), rawdoc);
+				json.put("id", rawdoc.getId()); 
 
-			exportDocument(api, documentId);
+				exportDocument(api, documentId);
+			}
 			return json;
 		} else return new JSONObject(rawdoc.getJson());
 	}
@@ -388,7 +390,9 @@ public class InvofoxServlet extends AonApiHttpServlet {
 					if(invofoxConfiguration.isAutoRecord()) {					
 						// TODO RECORD INVOICE!
 					}
-				} else rawdocDocument(api, documentId);
+				} else if(publicState != null && !OCRSeverity.exported.equals(publicState)) {
+					rawdocDocument(api, documentId);
+				}
 //			}
 			
 			return new JSONObject();

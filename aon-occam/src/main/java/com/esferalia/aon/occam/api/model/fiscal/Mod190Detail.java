@@ -2,12 +2,6 @@ package com.esferalia.aon.occam.api.model.fiscal;
 
 import java.io.Serializable;
 
-/**
- * 
- */
-/**
- * 
- */
 public class Mod190Detail implements Serializable {
 
 	private static final long serialVersionUID = 7374076019343100903L;
@@ -32,7 +26,7 @@ public class Mod190Detail implements Serializable {
 
 	private int tempId;
 
-	private boolean ceutaMelilla;
+	private byte ceutaMelillaPalma; // Ceuta o Melilla / Isla de la Palma (A partir del 2023 tambien para la Isla de la Palma)
 	private int birthYear;
 	private byte familySituation;
 	private String spouseDocument;
@@ -98,6 +92,8 @@ public class Mod190Detail implements Serializable {
 	private double arabaRetention;
 	private double bizkaiaRetention;
 	private double gipuzkoaRetention;
+	
+	private boolean excesses; // Nuevo 2024: EXCESOS ENTREGA ACCIONES EMPRESAS EMERGENTES
 
 	public Integer getId() {
 		return id;
@@ -309,14 +305,6 @@ public class Mod190Detail implements Serializable {
 		return this;
 	}
 
-	public boolean isCeutaMelilla() {
-		return ceutaMelilla;
-	}
-
-	public Mod190Detail setCeutaMelilla(boolean ceutaMelilla) {
-		this.ceutaMelilla = ceutaMelilla;
-		return this;
-	}
 
 	public int getBirthYear() {
 		return birthYear;
@@ -649,5 +637,36 @@ public class Mod190Detail implements Serializable {
 		return this;
 	}
 
+	public boolean isExcesses() {
+		return excesses;
+	}
+
+	public Mod190Detail setExcesses(boolean excesses) {
+		this.excesses = excesses;
+		return this;
+	}
+
+	public byte getCeutaMelillaPalma() {
+		return ceutaMelillaPalma;
+	}
+
+	public Mod190Detail setCeutaMelillaPalma(byte ceutaMelillaPalma) {
+		this.ceutaMelillaPalma = ceutaMelillaPalma;
+		return this;
+	}
+	
+	// Hasta 2022 era boolean (0,1), solo Ceuta o Melilla, se mantienen estos metodos para no modificarlo donde se usa hasta 2022
+	
+	public boolean isCeutaMelilla() {
+		return (ceutaMelillaPalma!=0);
+	}
+
+	public Mod190Detail setCeutaMelilla(boolean ceutaMelilla) {
+		if (ceutaMelilla)
+			ceutaMelillaPalma = 1;
+		else 
+			ceutaMelillaPalma = 0;		
+		return this;
+	}
 
 }

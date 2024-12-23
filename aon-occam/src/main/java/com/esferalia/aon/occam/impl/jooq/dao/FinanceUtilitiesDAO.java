@@ -1,21 +1,28 @@
 package com.esferalia.aon.occam.impl.jooq.dao;
 
+import static com.esferalia.aon.jooq.tables.AccountEntry.ACCOUNT_ENTRY;
+import static com.esferalia.aon.jooq.tables.AccountEntryInvoice.ACCOUNT_ENTRY_INVOICE;
+import static com.esferalia.aon.jooq.tables.EnterpriseActivity.ENTERPRISE_ACTIVITY;
 import static com.esferalia.aon.jooq.tables.Finance.FINANCE;
 import static com.esferalia.aon.jooq.tables.Invoice.INVOICE;
 import static com.esferalia.aon.jooq.tables.PayMethod.PAY_METHOD;
 
 import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
 import java.util.function.Function;
 
 import org.jooq.Condition;
 import org.jooq.Record;
 
+import com.esferalia.aon.jooq.tables.EnterpriseActivity;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.finance.BankAccount;
 import com.esferalia.aon.occam.api.model.finance.EnumVisitors.IFinanceStatusVisitor;
 import com.esferalia.aon.occam.api.model.finance.Finance;
 import com.esferalia.aon.occam.api.model.finance.FinanceTracking;
+import com.esferalia.aon.occam.api.model.finance.FinanceUtil;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
+import com.esferalia.aon.occam.api.model.finance.utilities.ActivityIntegrityItem;
 import com.esferalia.aon.occam.api.model.finance.utilities.FinanceInvoiceIntegrityItem;
 import com.esferalia.aon.occam.api.model.finance.utilities.FinanceUtilitiesParams;
 import com.esferalia.aon.occam.api.model.finance.utilities.FinanceUtilitiesResult;
@@ -30,6 +37,7 @@ import com.esferalia.aon.occam.api.model.type.PayMethodType;
 import com.esferalia.aon.occam.api.model.type.SecurityLevel;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.server.AonDateUtils;
+import com.esferalia.aon.watson.util.AonDocumentUtil;
 import com.esferalia.aon.watson.util.AonEnumUtils;
 
 public class FinanceUtilitiesDAO {
@@ -229,6 +237,105 @@ public class FinanceUtilitiesDAO {
 
 		});
 		return FinanceDAO.getFinance(ctx, finance.getId());
+	}
+
+	public static FinanceUtilitiesResult activityIntegrity(AONContext ctx, Integer domain) {
+		EnterpriseActivity INVOICE_ACTIVITY = ENTERPRISE_ACTIVITY.as("invoice_activity");
+		EnterpriseActivity ACCOUNT_ENTRY_ACTIVITY = ENTERPRISE_ACTIVITY.as("account_entry_activity");
+		
+		FinanceUtilitiesResult result = new FinanceUtilitiesResult();
+		ctx.getDslContext().select(
+					INVOICE.ID, INVOICE.ACTIVITY,
+					INVOICE.TYPE,INVOICE.SERIES,INVOICE.NUMBER,INVOICE.ISSUE_DATE, INVOICE.REFERENCE_CODE, INVOICE.RNAME,
+					INVOICE_ACTIVITY.DESCRIPTION,
+					ACCOUNT_ENTRY.ID, ACCOUNT_ENTRY.ACTIVITY, 
+					ACCOUNT_ENTRY_ACTIVITY.DESCRIPTION)
+			.from(INVOICE)
+			.leftOuterJoin(INVOICE_ACTIVITY).on(INVOICE_ACTIVITY.ID.eq(INVOICE.ACTIVITY)) 
+			.innerJoin( ACCOUNT_ENTRY_INVOICE ).on( ACCOUNT_ENTRY_INVOICE.INVOICE.eq(INVOICE.ID))
+			.innerJoin( ACCOUNT_ENTRY ).on( ACCOUNT_ENTRY.ID.eq(ACCOUNT_ENTRY_INVOICE.ACCOUNT_ENTRY))
+			.leftOuterJoin(ACCOUNT_ENTRY_ACTIVITY).on(ACCOUNT_ENTRY_ACTIVITY.ID.eq(ACCOUNT_ENTRY.ACTIVITY))
+			.where( INVOICE.DOMAIN.eq( domain))
+			.and( INVOICE.ACTIVITY.ne(ACCOUNT_ENTRY.ACTIVITY))
+			.limit( 500 )
+			.fetch()
+			.stream()
+			.map(r -> new ActivityIntegrityItem()
+					.setInvoiceId( r.getValue(INVOICE.ID) )
+					.setInvoiceRef( 
+						FinanceUtil.getDocumentNumber(
+							InvoiceType.safeValueOf( r.getValue(INVOICE.TYPE) ) 
+							, r.getValue(INVOICE.SERIES)
+							, r.getValue(INVOICE.NUMBER))
+						+ " ["
+						+ r.getValue(INVOICE.RNAME)
+						+ "] [" + new SimpleDateFormat("dd/MM/yyyy").format(r.getValue(INVOICE.ISSUE_DATE))
+						+ "] [" + r.getValue(INVOICE.REFERENCE_CODE)
+						+ "]" 
+					)
+					.setInvoiceActivityId( r.getValue(INVOICE.ACTIVITY) )
+					.setInvoiceActivityRef( r.getValue(INVOICE_ACTIVITY.DESCRIPTION) )
+					.setAccountEntryId( r.getValue(ACCOUNT_ENTRY.ID) )
+					.setAccountEntryActivityId( r.getValue(ACCOUNT_ENTRY.ACTIVITY) )
+					.setAccountEntryActivityRef( r.getValue(ACCOUNT_ENTRY_ACTIVITY.DESCRIPTION) )
+				)
+			.forEach( result::add )
+		;
+		
+		return result;
+	}
+
+	public static void activityIntegrityFix(AONContext ctx, Integer invoiceId, boolean useInvoiceActivity) {
+		if (invoiceId == null)  throw new AonCoreException("El Identificador de factura no puede estar vacio");
+		if (useInvoiceActivity) {
+			ctx.getDslContext().select( INVOICE.ACTIVITY )
+				.from( INVOICE )
+				.where(INVOICE.ID.eq(invoiceId))
+				.fetch()
+				.stream()
+				.map( r -> r.getValue(INVOICE.ACTIVITY))
+				.findFirst()
+				.ifPresent( act -> {
+					ctx.getDslContext().select( ACCOUNT_ENTRY_INVOICE.ACCOUNT_ENTRY )
+						.from( ACCOUNT_ENTRY_INVOICE )
+						.where(ACCOUNT_ENTRY_INVOICE.INVOICE.eq(invoiceId))
+						.fetch()
+						.stream()
+						.map( r -> r.getValue(ACCOUNT_ENTRY_INVOICE.ACCOUNT_ENTRY))
+						.findFirst()
+						.ifPresent( accountEntryId -> {
+							int c = ctx.getDslContext().update(ACCOUNT_ENTRY)
+								.set(ACCOUNT_ENTRY.ACTIVITY, act)
+								.where(ACCOUNT_ENTRY.ID.eq(accountEntryId))
+							.execute();
+							ctx.log().info("UPDATE ACTIVITY: AccountEntry {0}: Activity {1}. {2} filas.",accountEntryId, act, c);
+						});
+				});
+		} else {
+			ctx.getDslContext().select( ACCOUNT_ENTRY_INVOICE.ACCOUNT_ENTRY )
+			.from( ACCOUNT_ENTRY_INVOICE )
+			.where(ACCOUNT_ENTRY_INVOICE.INVOICE.eq(invoiceId))
+			.fetch()
+			.stream()
+			.map( r -> r.getValue(ACCOUNT_ENTRY_INVOICE.ACCOUNT_ENTRY))
+			.findFirst()
+			.ifPresent( accountEntryId -> {
+				ctx.getDslContext().select( ACCOUNT_ENTRY.ACTIVITY )
+					.from( ACCOUNT_ENTRY )
+					.where(ACCOUNT_ENTRY.ID.eq(accountEntryId))
+					.fetch()
+					.stream()
+					.map( r -> r.getValue(ACCOUNT_ENTRY.ACTIVITY))
+					.findFirst()
+					.ifPresent( act -> {
+						int c = ctx.getDslContext().update(INVOICE)
+								.set(INVOICE.ACTIVITY, act)
+								.where(INVOICE.ID.eq(invoiceId))
+								.execute();
+						ctx.log().info("UPDATE ACTIVITY: AccountEntry {0}: Activity {1}. {2} filas.",accountEntryId, act, c);
+					});
+			});
+		}
 	}
 	
 }

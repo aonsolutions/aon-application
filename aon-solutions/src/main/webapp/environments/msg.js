@@ -570,6 +570,7 @@ export const RECORD = MSG.RECORD;
 export const RECORD_INVOICE = MSG.RECORD_INVOICE;
 export const RECOVER_PASSWORD = 'Recuperar Contraseña'; // TODO
 export const RECTIFIED = MSG.RECTIFIED;
+export const ISSUED_BY_THIRD_PART = "Emitida por terceros";
 export const RECTIFY = MSG.RECTIFY;
 export const RECTIFY_INVOICE = MSG.RECTIFY_INVOICE;
 export const REFERENCE = MSG.REFERENCE;

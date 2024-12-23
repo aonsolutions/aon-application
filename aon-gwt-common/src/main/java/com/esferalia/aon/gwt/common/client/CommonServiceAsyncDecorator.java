@@ -15,6 +15,7 @@ import com.esferalia.aon.occam.api.model.InvestAssetParams;
 import com.esferalia.aon.occam.api.model.MarketingAction;
 import com.esferalia.aon.occam.api.model.MarketingActionParams;
 import com.esferalia.aon.occam.api.model.MarketingActionTarget;
+import com.esferalia.aon.occam.api.model.MarketingActionTargetMassiveParams;
 import com.esferalia.aon.occam.api.model.MarketingActionTargetParams;
 import com.esferalia.aon.occam.api.model.MarketingCampaign;
 import com.esferalia.aon.occam.api.model.MarketingCompaignParams;
@@ -38,7 +39,9 @@ import com.esferalia.aon.occam.api.model.news.News;
 import com.esferalia.aon.occam.api.model.office.Tag;
 import com.esferalia.aon.occam.api.model.payroll.Activity;
 import com.esferalia.aon.occam.api.model.product.OldProduct;
+import com.esferalia.aon.occam.api.model.project.ProjectActivity;
 import com.esferalia.aon.occam.api.model.project.ProjectCommercial;
+import com.esferalia.aon.occam.api.model.project.ProjectType;
 import com.esferalia.aon.occam.api.model.registry.Category;
 import com.esferalia.aon.occam.api.model.registry.Creditor;
 import com.esferalia.aon.occam.api.model.registry.CreditorFull;
@@ -458,6 +461,12 @@ public class CommonServiceAsyncDecorator implements CommonServiceAsync {
 	}
 
 	@Override
+	public void getMarketingActionTargets(MarketingActionTargetMassiveParams params, AsyncCallback<List<MarketingActionTarget>> callback) throws AonCoreException {
+		AON.start();
+		serviceAsync.getMarketingActionTargets(params, new AsyncCallbackWrapper<>(callback));
+	}
+
+	@Override
 	public void deleteMarketingActionTarget(String domainName, int domain, String user, Integer actionTargetId, AsyncCallback<Void> callback) throws AonCoreException {
 		AON.start();
 		serviceAsync.deleteMarketingActionTarget(domainName, domain, user, actionTargetId, new AsyncCallbackWrapper<>(callback));
@@ -515,6 +524,18 @@ public class CommonServiceAsyncDecorator implements CommonServiceAsync {
 	public void deleteProjectCommercial(String domainName, int domain, String user, Integer projectCommercial, AsyncCallback<Void> callback) throws AonCoreException {
 		AON.start();
 		serviceAsync.deleteProjectCommercial(domainName, domain, user, projectCommercial, new AsyncCallbackWrapper<>(callback));
+	}
+
+	@Override
+	public void getAviableProjectActivity(String domainName, int domain, String user, AsyncCallback<List<ProjectActivity>> callback) throws AonCoreException {
+		AON.start();
+		serviceAsync.getAviableProjectActivity(domainName, domain, user, new AsyncCallbackWrapper<>(callback));
+	}
+
+	@Override
+	public void getAviableProjectType(String domainName, int domain, String user, AsyncCallback<List<ProjectType>> callback) throws AonCoreException {
+		AON.start();
+		serviceAsync.getAviableProjectType(domainName, domain, user, new AsyncCallbackWrapper<>(callback));
 	}
 
 	// **************************************************

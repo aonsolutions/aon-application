@@ -185,7 +185,9 @@ public interface IFinance {
 	public Invoice missingFinanceInvoicesFix(AONContext ctx, Integer invoice);
 	public FinanceUtilitiesResult financeInvoiceIntegrity(AONContext ctx);
 	public Finance financeInvoiceIntegrityFix(AONContext ctx, Finance finance);
-	
+	public FinanceUtilitiesResult activityIntegrity(AONContext ctx, Integer domain);
+	public void activityIntegrityFix(AONContext ctx, Integer invoiceId, boolean useInvoiceActivity);
+
 	public LinkedList<Finance> getFinancesForInvoice(AONContext ctx, Invoice invoice);
 	public Finance settleFinance(AONContext ctx, Integer finance);
 	public Finance unSettleFinance(AONContext ctx, Integer finance);
@@ -314,6 +316,7 @@ public interface IFinance {
 	
 	Stream<InvoiceBatch> getInvoiceClosing(CloseableAONContext ctx);
 	void saveInvoiceClosing(CloseableAONContext ctx, InvoiceBatch invoiceBatch);
+	
 
 }
 	

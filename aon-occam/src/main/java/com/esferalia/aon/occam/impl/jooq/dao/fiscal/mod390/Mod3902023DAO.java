@@ -301,7 +301,8 @@ public class Mod3902023DAO {
 		 ,C0107	 (Mod3902023DetailKey.C0107, ((mod, vc) -> (vc.isNationalSales() && vc.isInvestment())))
 		 // Total volumen de operaciones 
 		 ,C0108	 (Mod3902023DetailKey.C0108, null)
-		 
+		 // Operaciones específicas - Adquisiciones interiores de bienes y servicios exentas 
+		 ,C0230	 (Mod3902023DetailKey.C0230, ((mod, vc) -> operacionesInterioresExentasFilter(vc)))
 		 ;		 
 		 
 		private Mod3902023DetailKey key;
@@ -764,6 +765,7 @@ public class Mod3902023DAO {
 			mod390.setBox656(map.get(Mod3902023DetailKey.C0656).getTaxableBase());
 			mod390.setBox657(map.get(Mod3902023DetailKey.C0656).getQuota());
 			mod390.setAccrualRegimeTarget((map.get(Mod3902023DetailKey.C0656).getTaxableBase()  != 0 || map.get(Mod3902023DetailKey.C0656).getQuota() != 0 ));
+			mod390.setBox230(map.get(Mod3902023DetailKey.C0230).getTaxableBase());
 
 			// ----------------------------------------------------------------------------
 			// En el caso de que el declarante este acogido al regimen simplificado
@@ -1239,10 +1241,15 @@ public class Mod3902023DAO {
 						|| vat.isCanCeuMelExpenses() || (vat.isExtracommunityPurchase() && vat.isService())
 						|| (vat.isCanCeuMelPurchase() && vat.isService())));
 	}
+	
+	private static boolean operacionesInterioresExentasFilter(VatContext vat) {
+		return vat.isVatGeneralRegime(VATRegime.GENERAL) 
+			&& !vat.isVatSurchargeRegime() 
+			&& !vat.isRectification() 
+			&& !vat.isFarmerRegime()
+			&& AonMathUtils.isZero(vat.getPercentage())
+			&& (vat.isNationalPurchase() || vat.isNationalExpenses() || isOperacionesISPFilter(vat));
+	}
 
 }
-
-
-
-
 

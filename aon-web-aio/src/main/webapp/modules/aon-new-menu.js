@@ -329,7 +329,6 @@ export class AonNewMenu extends AonElement {
 		// let icon = this.getElement("aonMenuLeftop");
 		aonMenuLefttop.style.visibility = "visible";
 
-
 		let aonMenuSidenav = this.createElement(TAG.DIV);
 		aonMenuSidenav.id = this.AON_MENU_SIDENAV;
 		aonMenuSidenav.className = CSS.AON_MENU_SIDENAV;
@@ -1225,7 +1224,7 @@ export class AonNewMenu extends AonElement {
 				}
 			});
 		}
-		if(this.getDur().isPayroll()){
+		if(this.getDur().isPayroll() && this.getDur().isMessenger()){
 			newMenuOptions.push({
 				icon: 'person_add',
 				name: MSG.NEW_EMPLOYEE,

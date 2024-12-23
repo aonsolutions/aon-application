@@ -204,7 +204,10 @@ class MissingFinanceInvoicesCheck extends OptionBase {
 		public void visitFinanceInvoiceIntegrityCheck(FinanceUtilitiesItemType type) {
 			// nothing
 		}
-		
+		@Override
+		public void visitActivityIntegrityCheck(FinanceUtilitiesItemType type) {
+			// Nothing
+		}
 		@Override
 		public void visitMissingFinanceInvoice(FinanceUtilitiesItemType type) {
 			AonTableButton viewButton = new AonTableButton(AON.MSG.show(), AON.CSS.aonIconSearch());

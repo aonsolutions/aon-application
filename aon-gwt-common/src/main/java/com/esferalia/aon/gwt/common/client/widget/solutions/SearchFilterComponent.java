@@ -20,6 +20,8 @@ public abstract class SearchFilterComponent extends HTMLPanel {
 	
     private PopupPanel searchMenuPopup = new PopupPanel(true);
     
+    private HTMLPanel popupContent;
+    
     private HTMLPanel filterMenu;
     private HTMLPanel filterBody = new HTMLPanel("");
     
@@ -28,6 +30,8 @@ public abstract class SearchFilterComponent extends HTMLPanel {
     
     private HTMLPanel utilitiesMenu;
     private HTMLPanel utilitiesBody = new HTMLPanel("");
+    
+    private Integer zIndex = 3;
 
     // Constructor
     public SearchFilterComponent() {
@@ -53,7 +57,7 @@ public abstract class SearchFilterComponent extends HTMLPanel {
         	int top = this.getAbsoluteTop() + this.getOffsetHeight();
             int left = this.getAbsoluteLeft();
             searchMenuPopup.setPopupPosition(left, top);
-            searchMenuPopup.getElement().getStyle().setZIndex(3);
+            searchMenuPopup.getElement().getStyle().setZIndex(zIndex);
             searchMenuPopup.show(); // Muestra con animación
         });
         
@@ -62,7 +66,7 @@ public abstract class SearchFilterComponent extends HTMLPanel {
     }
     
    private void setupSearchMenuPopup() {
-	   	HTMLPanel popupContent = new HTMLPanel("");
+	   	popupContent = new HTMLPanel("");
         popupContent.setStyleName(AON.CSS.aonSearchFilterPopup());
         
         // Menus
@@ -158,6 +162,14 @@ public abstract class SearchFilterComponent extends HTMLPanel {
 		
 		sortBody.add(widget);
 	}
+	
+	public void showOrder() {
+		sortMenu.setVisible(true);
+	}
+	
+	public void hiderder() {
+		sortMenu.setVisible(false);
+	}
 
 	public void addUtilityOption(Button button, String text) {
 		
@@ -217,5 +229,13 @@ public abstract class SearchFilterComponent extends HTMLPanel {
 	}
 
 	protected abstract void fireClearFilter();
+
+	public void setSearchZIndex(Integer zIndex) {
+		this.zIndex = zIndex;
+	}
+	
+	public void setPopupHeight(String height) {
+        if(AonStringUtils.isNotBlank(height)) popupContent.setHeight(height);
+	}
 	
 }

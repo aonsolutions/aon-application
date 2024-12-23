@@ -160,7 +160,7 @@ class Model303AEAT2023Activity extends DockLayoutPanel implements HasValueChange
 	}
 	
 	private Widget getActivityData(IModel303AEATActivityCallback<Mod303Activity> callback) {
-		populate(callback.getActivity());		
+		populate(callback.getActivity(), callback.getModel().isEditable());		
 		tabLayoutPanel.clear();
 		tabLayoutPanel.add(getAdditionalDataPanel(callback), AON.MSG.additionalData());
 		tabLayoutPanel.add(getModulesPanel(callback), AON.MSG.modules());
@@ -195,8 +195,8 @@ class Model303AEAT2023Activity extends DockLayoutPanel implements HasValueChange
 		
 		toolbar.add(toolbarLabel);
 
-		epigraphsButton.setVisible(callback.getActivity().isNotEmpty());
-		removeButton.setVisible(callback.getActivity().isNotEmpty());
+		epigraphsButton.setVisible(callback.getActivity().isNotEmpty() && callback.getModel().isEditable());
+		removeButton.setVisible(callback.getActivity().isNotEmpty() && callback.getModel().isEditable());
 
 		return toolbar;
 	}
@@ -259,9 +259,9 @@ class Model303AEAT2023Activity extends DockLayoutPanel implements HasValueChange
 		callback.onAccept();
 	}
 
-	public void populate(Mod303Activity act) {
-		epigraphsButton.setVisible(act.isNotEmpty());
-		removeButton.setVisible(act.isNotEmpty());
+	public void populate(Mod303Activity act, boolean isEditable) {
+		epigraphsButton.setVisible(act.isNotEmpty() && isEditable);
+		removeButton.setVisible(act.isNotEmpty() && isEditable);
 		toolbarLabel.setText(getTitle( act ));
 
 		tem.setValue(act.getTem(),false,true);
@@ -299,6 +299,33 @@ class Model303AEAT2023Activity extends DockLayoutPanel implements HasValueChange
 		ownerDis.setValue(act.isOwnerDis(),false);
 		spouseHours.setValue(act.getSpouseHours(),false,true);
 		childMen18Hours.setValue(act.getChildMen18Hours(),false,true);
+		
+		// Controlar si el modelo es editable, para habilitar o no los campos editables
+		
+		tem.setEnabled(isEditable);
+		emp.setEnabled(isEditable);
+		lor.setEnabled(act.getDana() != 1 && isEditable);
+		dana.setEnabled(act.getLor() != 1 && isEditable);
+		dia.setEnabled(isEditable);
+		may19Hours.setEnabled(isEditable);
+		men19Hours.setEnabled(isEditable);
+		disHours.setEnabled(isEditable);
+		yearHours.setEnabled(isEditable);
+		ownerHours.setEnabled(isEditable);
+		ownerDis.setEnabled(isEditable);
+		spouseHours.setEnabled(isEditable);
+		childMen18Hours.setEnabled(isEditable);
+		lorcaReduction.setEnabled(act.getLor() == 2 && isEditable);
+		danaReduction.setEnabled(act.getDana() == 2 && isEditable);
+		sopy.setEnabled(isEditable);
+		dvc.setEnabled(isEditable);
+		//Arrays.stream(modules).forEach(m -> m.value.setEnabled(act.getModules().size() > m.index && isEditable));
+		Arrays.stream(modules).forEach(m -> m.value.setEnabled(AonStringUtils.isNotBlank(m.description.getText()) && isEditable));
+		Arrays.stream(desks).forEach(d -> {
+			d.capacity.setEnabled(isEditable);
+			d.desk.setEnabled(isEditable);
+			d.days.setEnabled(isEditable);
+		});
 		
 	}
 	private void populateModule(Mod303Activity act, Model303AEAT2023ActivityModule m) {
@@ -349,7 +376,7 @@ class Model303AEAT2023Activity extends DockLayoutPanel implements HasValueChange
 		// DANA y LORCA a partir del ultimo periodo de 2024, se realizan el cálculo del importe de la reducción aquí y además Lorca y DANA no se pueden marcar los dos, si uno de ellos está en exclusiva
 		if ((callback.getModel().getYear() == 2024 && callback.getModel().isLastPeriod()) || (callback.getModel().getYear() > 2024)) {
 			
-			lor.setEnabled(callback.getActivity().getDana() != 1);
+			lor.setEnabled(callback.getActivity().getDana() != 1 && callback.getModel().isEditable());
 			lor.addChangeHandler(event-> {
 				callback.getActivity().setLor(lor.getSelectedIndex());
 				
@@ -376,7 +403,7 @@ class Model303AEAT2023Activity extends DockLayoutPanel implements HasValueChange
 				.addCell( new Label("Actividad realizada en Lorca"), AON.CSS.aonBorderBottom() )
 				.addCell( lor );
 			
-			dana.setEnabled(callback.getActivity().getLor() != 1);
+			dana.setEnabled(callback.getActivity().getLor() != 1 && callback.getModel().isEditable());
 			dana.addChangeHandler(event-> {
 				callback.getActivity().setDana(dana.getSelectedIndex());
 				
@@ -651,8 +678,10 @@ class Model303AEAT2023Activity extends DockLayoutPanel implements HasValueChange
 			callback.getActivity().getModules().get(m.index).setValue(m.value.getValue());
 			ValueChangeEvent.<Mod303Activity>fire(Model303AEAT2023Activity.this, callback.getActivity());
 		});
-		m.factor.setReadOnly(true);
-		m.result.setReadOnly(true);
+//		m.factor.setReadOnly(true);
+//		m.result.setReadOnly(true);
+		m.factor.setEnabled(false);
+		m.result.setEnabled(false);		
 
 		tab.addRow()
 			.addCell(m.description)
@@ -678,7 +707,7 @@ class Model303AEAT2023Activity extends DockLayoutPanel implements HasValueChange
 		
 		if ((callback.getModel().getYear() == 2024 && callback.getModel().isLastPeriod()) || (callback.getModel().getYear() > 2024)) {
 			
-			lorcaReduction.setEnabled(callback.getActivity().getLor() == 2);
+			lorcaReduction.setEnabled(callback.getActivity().getLor() == 2 && callback.getModel().isEditable());
 			lorcaReduction.addValueChangeHandler(event -> {
 				if (lorcaReduction.getValue() == null) 
 					lorcaReduction.setValue(0.0,false);
@@ -690,7 +719,7 @@ class Model303AEAT2023Activity extends DockLayoutPanel implements HasValueChange
 				.addCell(new Label(""))
 				.addCell(lorcaReduction);			
 			
-			danaReduction.setEnabled(callback.getActivity().getDana() == 2);
+			danaReduction.setEnabled(callback.getActivity().getDana() == 2 && callback.getModel().isEditable());
 			danaReduction.addValueChangeHandler(event -> {
 				if (danaReduction.getValue() == null) 
 					danaReduction.setValue(0.0,false);
