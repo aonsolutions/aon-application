@@ -47,6 +47,13 @@ export const AON_CLASSIC = {
 	logo: "../assets/aon.png",
 };
 
+export const SUPERSET = {
+	app: CONSTANT.SUPERSET,
+	title: MSG.SUPERSET,
+	description: MSG.SUPERSET,
+	logo: "../assets/apps/superset.png",
+};
+
 export const NEW_APPS = {
 	app: CONSTANT.APPS,
 	title: MSG.APPLICATIONS,
@@ -75,7 +82,7 @@ export const MENU_APPS = [
   APP.NOTES,
   APP.MESSENGER,
   APP.WAREHOUSE,
-  AON_CLASSIC
+  AON_CLASSIC,
 ];
 
 export const DESKTOP_APPS = [
@@ -87,7 +94,7 @@ export const DESKTOP_APPS = [
   APP.TIMECONTROL,
   APP.NOTES,
   APP.MESSENGER,
-  AON_CLASSIC
+  AON_CLASSIC,
 ];
 
 
