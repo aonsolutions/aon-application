@@ -35,13 +35,13 @@ import com.esferalia.aon.gwt.payroll.shared.EmployeeContractInfo;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeSegSocial;
 import com.esferalia.aon.gwt.payroll.shared.Enterprise;
 import com.esferalia.aon.gwt.payroll.shared.EnterpriseContext;
-import com.esferalia.aon.gwt.payroll.shared.EnterpriseITStatus;
 import com.esferalia.aon.gwt.payroll.shared.EnterpriseITStatus.ItNotExist;
 import com.esferalia.aon.gwt.payroll.shared.EnterpriseStatus;
 import com.esferalia.aon.gwt.payroll.shared.Extra;
 import com.esferalia.aon.gwt.payroll.shared.IT;
 import com.esferalia.aon.gwt.payroll.shared.ITEmployee;
 import com.esferalia.aon.gwt.payroll.shared.ITPart;
+import com.esferalia.aon.gwt.payroll.shared.ItParams;
 import com.esferalia.aon.gwt.payroll.shared.Mail;
 import com.esferalia.aon.gwt.payroll.shared.MainCCCInfo;
 import com.esferalia.aon.gwt.payroll.shared.Payment;
@@ -221,7 +221,7 @@ public interface EnterprisesService extends RemoteService {
 	
 	List<EmployeeContractInfo> getFJEmployeesInfo(String currentDomainName);
 
-	List<ITEmployee> getEmployeesITInfo(String currentDomainName, Boolean allEmployees);
+	List<ITEmployee> getEmployeeItList(String currentDomainName, ItParams params) throws IllegalArgumentException;
 
 	List<ITEmployee> getEmployeesITInfo(String currentDomainName, Integer ids []);
 
@@ -229,9 +229,7 @@ public interface EnterprisesService extends RemoteService {
 
 	String createUpdateITEmployee(String currentDomainName, ITEmployee employeeITInfo);
 	
-	EnterpriseStatus getEnterpriseStatus(String domain, String user, Integer enterpriseId );
-
-	EnterpriseITStatus getEnterpriseITStatus(String domain, String user);
+	EnterpriseStatus getEnterpriseStatus(String domain, String user, Integer enterpriseId ) throws IllegalArgumentException;
 
 	// ------------------------------------------------ Contract Attachments
 	
@@ -296,12 +294,9 @@ public interface EnterprisesService extends RemoteService {
 			String contributionAccount, String docType, String docNum, String applicantType, String reason,
 			Date dateFrom, Date dateTo, float baseCC, float baseCP, int days);
 
-	void deleteComunicateIT(String currentDomainName, String currentUser, String affiliationNumber, String regime,
-			String contributionAccount, Date dateFrom, Date dateTo, Date startDate) throws IllegalArgumentException;
-
 	void syncITs(String currentDomainName, String currentUser) throws IllegalArgumentException;
 	
-	void communicateITPart(String currentDomainName, String currentUser, ITEmployee itEmployee ,IT it, ITPart part) throws IllegalArgumentException;
+	void sendEconomicData(String currentDomainName, String currentUser, ITEmployee itEmployee ,IT it, ITPart part) throws IllegalArgumentException;
 
 	void saveITParts(String currentDomainName, String currentUser, List<ItNotExist> itNotExist) throws IllegalArgumentException;
 	
@@ -315,18 +310,6 @@ public interface EnterprisesService extends RemoteService {
 	List<Integer> getServiAgreementDates(String serviAgreementCode) throws IllegalArgumentException;
 
 	boolean checkIfRectificative(String currentDomainName, Date findingDate, ArrayList<Integer> selectedCCCList);
-
-	void registerITBaja(String domainName, String userLogin, String regime, String ccc, String naf, String contingency,
-			String situation_employee, String licenseNumber, String cias, String occupation, Date startdate,
-			String contractType, float baseCot, int cotDays, Date fATEP, String accidentType, String job, String jobDescription);
-
-	void registerITConfirmation(String domainName, String userLogin, String regime, String ccc, String naf, String contingency,
-			String situation_employee, String licenseNumber, String cias, Date fbaja,
-			Date fconfirmation, String npartConfimation);
-
-	void registerITAlta(String domainName, String userLogin, String regime, String ccc, String naf, String contingency,
-			String situation_employee, String licenseNumber, String cias, Date fbaja,
-			Date falta, Date fATEP, String accidentType, String causeType);
 
 	EmployeeContractInfo getEmployeeInfo(String currentDomainName, Integer contractId);
 

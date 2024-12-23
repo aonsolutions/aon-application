@@ -12,14 +12,12 @@ import java.util.Optional;
 
 import org.htmlunit.FailingHttpStatusCodeException;
 
-import solutions.aon.seg.social.exception.ForbiddenException;
 import solutions.aon.seg.social.exception.InvalidCertificateException;
 import solutions.aon.seg.social.exception.SegSocialException;
 import solutions.aon.seg.social.object.Calc;
 import solutions.aon.seg.social.object.Employee;
 import solutions.aon.seg.social.object.Idc;
 import solutions.aon.seg.social.object.It;
-import solutions.aon.seg.social.object.PaternityCertificate;
 import solutions.aon.seg.social.object.Period;
 import solutions.aon.seg.social.object.SecondaryUser;
 import solutions.aon.seg.social.object.SituationType;
@@ -439,15 +437,6 @@ public class SistemaRED {
 		}
 	}
 
-	private static void evalSwitch(FailingHttpStatusCodeException e) throws ForbiddenException, SegSocialException {
-		switch (e.getStatusCode()) {
-		case 403:
-			throw new ForbiddenException();
-		default:
-			throw new SegSocialException(e);
-		}
-	}
-
 	public static Map<String, Map<String, Map<Period, Map<String, Calc>>>> getCalcByCCC(final byte[] certificateData,
 			final String certificatePassword, final String certificateType, final String ccc,
 			final SistemaRED.Regime regime, final Date dateFrom, final Date dateTo,
@@ -659,50 +648,6 @@ public class SistemaRED {
 		}
 	}
 
-	public static boolean sendPaternity(final InputStream certificateInputStream, final String certificatePassword,
-			final String certificateType, final String affiliationNumber, final String regime,
-			final String contributionAccount, final String docNum,
-			final PaternityCertificate.ApplicantType applicantType, PaternityCertificate.ReasonType reason,
-			final Date dateFrom, final Date dateTo, final float baseCC, final float baseCP, final int days)
-			throws SegSocialException, IOException {
-		return Paternity.sendPaternity(certificateInputStream, certificatePassword, certificateType, affiliationNumber,
-				regime, contributionAccount, docNum, applicantType, reason, dateFrom, dateTo, baseCC, baseCP, days);
-	}
-
-	public static boolean sendPaternity(final byte[] certificateData, final String certificatePassword,
-			final String certificateType, final String affiliationNumber, final String regime,
-			final String contributionAccount, final String docNum,
-			final PaternityCertificate.ApplicantType applicantType, PaternityCertificate.ReasonType reason,
-			final Date dateFrom, final Date dateTo, final float baseCC, final float baseCP, final int days)
-			throws SegSocialException {
-		try (InputStream certificateInputStream = new ByteArrayInputStream(certificateData)) {
-			return Paternity.sendPaternity(certificateInputStream, certificatePassword, certificateType,
-					affiliationNumber, regime, contributionAccount, docNum, applicantType, reason, dateFrom, dateTo,
-					baseCC, baseCP, days);
-		} catch (IOException e) {
-			e.printStackTrace();
-			throw new SegSocialException(e);
-		}
-	}
-
-	public static void removePaternity(final InputStream certificateInputStream, final String certificatePassword,
-			final String certificateType, final String nss, final String regime, final String ccc, final Date dateFrom,
-			final Date dateTo, final Optional<Date> startDate) throws SegSocialException {
-		Paternity.removePaternity(certificateInputStream, certificatePassword, certificateType, nss, regime, ccc,
-				dateFrom, dateTo, startDate);
-	}
-
-	public static void removePaternity(final byte[] certificateData, final String certificatePassword,
-			final String certificateType, final String nss, final String regime, final String ccc, final Date dateFrom,
-			final Date dateTo, final Optional<Date> startDate) throws SegSocialException {
-		try (InputStream certificateInputStream = new ByteArrayInputStream(certificateData)) {
-			Paternity.removePaternity(certificateInputStream, certificatePassword, certificateType, nss, regime, ccc,
-					dateFrom, dateTo, startDate);
-		} catch (IOException e) {
-			throw new SegSocialException(e);
-		}
-	}
-
 	public static byte[] getCertificatePdf(final InputStream certificateInputStream, final String certificatePassword,
 			final String certificateType, final String affiliationNumber, final String regime,
 			final String contributionAccount, final Date dateFrom, final Date dateTo, final Optional<Date> startDate)
@@ -803,7 +748,7 @@ public class SistemaRED {
 		}
 	}
 
-	public static void registerITBaja(final byte[] certificateData, final String certificatePassword,
+	public static void sendEconomicData(final byte[] certificateData, final String certificatePassword,
 			final String certificateType, final String regime, final String ccc, final String naf,
 			final SistemaRED.Contingencies contingency, final SistemaRED.SituationEmployee situation_employee,
 			final Date startdate, final SistemaRED.ContractType contractType, final float baseCot, final int cotDays,
@@ -811,53 +756,10 @@ public class SistemaRED {
 			final Optional<String> licenseNumber, final Optional<String> cias, final Optional<String> occupation, Optional<String> job,  Optional<String> jobDescription)
 			throws SegSocialException {
 		try (InputStream certificateInputStream = new ByteArrayInputStream(certificateData)) {
-			SistemaREDITPart.registerItBaja(certificateInputStream, certificatePassword, certificateType, regime, ccc,
+			SistemaREDITPart.sendEconomicData(certificateInputStream, certificatePassword, certificateType, regime, ccc,
 					naf, contingency, situation_employee, startdate, contractType, baseCot, cotDays, fATEP,
 					accidentType, licenseNumber, cias, occupation, job, jobDescription);
 		} catch (IOException e) {
-			throw new SegSocialException(e);
-		}
-	}
-
-	public static void registerITConfirmation(final byte[] certificateData, final String certificatePassword,
-			final String certificateType, final String regime, final String ccc, final String naf,
-			final SistemaRED.Contingencies contingency, final SistemaRED.SituationEmployee situation_employee,
-			final Optional<String> licenseNumber, final Optional<String> cias, final Date fbaja,
-			final Date fconfirmation, final Optional<String> npartConfimation) throws SegSocialException {
-
-		try (InputStream certificateInputStream = new ByteArrayInputStream(certificateData)) {
-			SistemaREDITPart.registerItConfirmation(certificateInputStream, certificatePassword, certificateType,
-					regime, ccc, naf, contingency, situation_employee, licenseNumber, cias, fbaja, fconfirmation,
-					npartConfimation);
-		} catch (IOException e) {
-			throw new SegSocialException(e);
-		}
-	}
-
-	public static void registerITAlta(final byte[] certificateData, final String certificatePassword,
-			final String certificateType, final String regime, final String ccc, final String naf,
-			final SistemaRED.Contingencies contingency, final SistemaRED.SituationEmployee situation_employee,
-			final Date fbaja, final Date falta, final Optional<Date> fATEP,
-			final Optional<SistemaRED.AccidentType> accidentType, final SistemaRED.CauseType causeType,
-			final Optional<String> licenseNumber, final Optional<String> cias) throws SegSocialException {
-
-		try (InputStream certificateInputStream = new ByteArrayInputStream(certificateData)) {
-			SistemaREDITPart.registerItAlta(certificateInputStream, certificatePassword, certificateType, regime, ccc,
-					naf, contingency, situation_employee, fbaja, falta, fATEP, accidentType, causeType, licenseNumber,
-					cias);
-		} catch (IOException e) {
-			throw new SegSocialException(e);
-		}
-	}
-
-	public static void removeIT(final byte[] certificateData, final String certificatePassword,
-			final String certificateType, final String regime, final String ccc, final String naf,
-			final SistemaRED.PartType partType, final Date dateBj, Date dateProcess) throws SegSocialException {
-
-		try (InputStream certificateInputStream = new ByteArrayInputStream(certificateData)) {
-			SistemaREDITPart.removeIt(certificateInputStream, certificatePassword, certificateType, regime, ccc, naf,
-					partType, dateBj, dateProcess);
-		} catch (IOException | InterruptedException e) {
 			throw new SegSocialException(e);
 		}
 	}

@@ -162,6 +162,14 @@ public abstract class SearchFilterComponent extends HTMLPanel {
 		
 		sortBody.add(widget);
 	}
+	
+	public void showOrder() {
+		sortMenu.setVisible(true);
+	}
+	
+	public void hiderder() {
+		sortMenu.setVisible(false);
+	}
 
 	public void addUtilityOption(Button button, String text) {
 		

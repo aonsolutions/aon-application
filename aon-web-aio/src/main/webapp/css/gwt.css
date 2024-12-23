@@ -622,3 +622,9 @@ input[type='checkbox']:checked {
 .aon_message_close_panel > button{
 	min-height: 2rem;
 }
+
+.gwt-viz-container > div {
+	color: red;
+	display: flex;
+	justify-content: center;
+}

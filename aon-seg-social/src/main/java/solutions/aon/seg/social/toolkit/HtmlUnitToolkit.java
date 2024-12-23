@@ -663,6 +663,7 @@ public class HtmlUnitToolkit {
 								xmlClient.getOptions().setCssEnabled(false);
 								xmlClient.getOptions().setDownloadImages(false);
 								xmlClient.getOptions().setJavaScriptEnabled(false);
+								xmlClient.getOptions().setUseInsecureSSL(true);
 								
 								response = transformXmlPage(xmlClient, response, variables, cache);
 							} 
