@@ -3,6 +3,10 @@ package com.esferalia.aon.gwt.fiscal.client.registry;
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.CountryListBox;
 import com.esferalia.aon.gwt.common.client.widget.DocumentTypeListBox;
+import com.esferalia.aon.gwt.common.client.widget.MinimizePanel.MaximizeEvent;
+import com.esferalia.aon.gwt.common.client.widget.MinimizePanel.MaximizeHandler;
+import com.esferalia.aon.gwt.common.client.widget.MinimizePanel.MinimizeEvent;
+import com.esferalia.aon.gwt.common.client.widget.MinimizePanel.MinimizeHandler;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonSearchPanelButton;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonTextBox;
 import com.esferalia.aon.occam.api.model.RegistryParams;
@@ -29,7 +33,7 @@ import com.google.gwt.user.client.ui.TextBox;
 
 public class RegistryModuleSearchPanel extends SimpleLayoutPanel implements Focusable, HasValueChangeHandlers<RegistryParams>{
 
-	public static final double HEIGHT = 75;
+	public static final double HEIGHT = 140;
 	
 	private DocumentTypeListBox documentTypeBox;
 	private CountryListBox documentCountryBox;
@@ -40,9 +44,10 @@ public class RegistryModuleSearchPanel extends SimpleLayoutPanel implements Focu
 	private CheckBox activeBox;
 	private CheckBox inactiveBox;
 	private CheckBox blockedBox;
-	
+
 	private AonSearchPanelButton cleanButton;
 	private AonSearchPanelButton refreshButton;
+	private AonSearchPanelButton closeButton;
 
 	public RegistryModuleSearchPanel(final RegistryModuleOptions opt) {
 		
@@ -162,6 +167,7 @@ public class RegistryModuleSearchPanel extends SimpleLayoutPanel implements Focu
 
 		FlexTable tab = new FlexTable();
 		tab.setStyleName(AON.CSS.aonGrid());
+		tab.setStyleName(AON.CSS.aonPadding());
 		tab.setWidth("100%");
 		
 		tab.getColumnFormatter().setWidth(0, "110px");
@@ -200,6 +206,16 @@ public class RegistryModuleSearchPanel extends SimpleLayoutPanel implements Focu
 		++col;
 		
 		tab.setWidget(row, col, new InlineLabel());
+		
+		FlowPanel min = new FlowPanel();
+		min.setStyleName(AON.CSS.aonTextRight());
+		min.addStyleName(AON.CSS.aonPaddingRight());
+		min.addStyleName(AON.CSS.aonNowrap());
+		min.addStyleName(AON.CSS.aonWidthAll());
+		
+		closeButton = new AonSearchPanelButton(AON.MSG.close(),AON.CSS.aonWidgetClose());
+		min.add(closeButton);
+		tab.setWidget(row, 8, min);
 		
 		++row;
 		col = 0;
@@ -305,5 +321,10 @@ public class RegistryModuleSearchPanel extends SimpleLayoutPanel implements Focu
 			.setHasConfidentialityRole(confidentiality)
 			;
 	}
+	
+	
+	public void addCloseHandler(ClickHandler closeHandler) {
+		closeButton.addClickHandler(closeHandler);
+	}	
 	
 }

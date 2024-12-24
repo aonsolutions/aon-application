@@ -62,6 +62,10 @@
 	color: rgb(66, 66, 66)
 }
 
+.aon_search_panel {
+	margin: 0 1rem !important;
+}
+
 .aonCardTitle, .aonEmployeeCardTitle, .aonEnterpriseCardTitle,
 	.aonCCCCardTitle, .aonActivityCardTitle, .aonSEPECardTitle,
 	.aonMod145CardTitle {
