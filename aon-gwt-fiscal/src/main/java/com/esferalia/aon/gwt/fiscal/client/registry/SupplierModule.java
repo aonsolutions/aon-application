@@ -12,6 +12,8 @@ import com.esferalia.aon.gwt.common.client.RegistryService;
 import com.esferalia.aon.gwt.common.client.RegistryServiceAsync;
 import com.esferalia.aon.gwt.common.client.RegistryServiceAsyncDecorator;
 import com.esferalia.aon.gwt.common.client.RootLayoutPanel;
+import com.esferalia.aon.gwt.common.client.widget.MinimizePanel.MaximizeEvent;
+import com.esferalia.aon.gwt.common.client.widget.MinimizePanel.MinimizeEvent;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDisplayGrid;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDisplayGrid.AonDisplayGridCell;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDisplayGrid.AonDisplayGridHeaderRow;
@@ -36,6 +38,10 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.dom.client.Style.Unit;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.layout.client.Layout.AnimationCallback;
+import com.google.gwt.layout.client.Layout.Layer;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.FlowPanel;
@@ -85,8 +91,10 @@ public class SupplierModule extends MainEntryPoint {
 	private LinkedHashMap<Integer,SupplierRow> suppliers = new LinkedHashMap<>();
 	private LinkedHashSet<Integer> selectedItems = new LinkedHashSet<>();
 	
-	private SupplierModuleSearchPanel searchPanel;
+	private SupplierModuleSearchPanel filterPanel;
 	private AonToolbar toolbar;
+	AonToolbarButton filterButton = new AonToolbarButton("", AON.CSS.aonToolbarFilterContainer()); 
+
 	
 	private AonToolbarButton checkAll; 
 	private AonToolbarButton uncheckAll;
@@ -139,8 +147,15 @@ public class SupplierModule extends MainEntryPoint {
 	
 	private void loadModule( final RegistryModuleOptions opt ) {
 		dockLayoutPanel.addNorth(getToolbarPanel( opt ), AonToolbar.HEIGTH );
-		searchPanel = new SupplierModuleSearchPanel(opt);
-		dockLayoutPanel.addNorth(searchPanel, RegistryModuleSearchPanel.HEIGHT);
+		filterPanel = new SupplierModuleSearchPanel(opt);
+		filterPanel.addCloseHandler(new ClickHandler() {
+
+		    @Override
+		    public void onClick(ClickEvent event) {
+		    	toogleFilterPanel();
+		    }
+		});
+		dockLayoutPanel.addNorth(filterPanel, RegistryModuleSearchPanel.HEIGHT);
 		progressContainer.setVisible(false);
 		progressContainer.add(progress);
 		dockLayoutPanel.addNorth(progressContainer, 5);
@@ -167,16 +182,16 @@ public class SupplierModule extends MainEntryPoint {
 					int maxScrollTop = centerPanel.getWidget().getOffsetHeight() - centerPanel.getOffsetHeight();
 					if (lastScrollPos >= maxScrollTop) {
 						disableSearch();
-						search(opt, searchPanel.getParams( opt ),offset.getValue());
+						search(opt, filterPanel.getParams( opt ),offset.getValue());
 					}
 				}
 		});
-		searchPanel.addValueChangeHandler(event -> {
+		filterPanel.addValueChangeHandler(event -> {
 				RegistryParams params = event.getValue();
 				search( opt, params );
 		});
 		
-		Scheduler.get().scheduleDeferred(() -> search(opt, searchPanel.getParams(opt)));		
+		Scheduler.get().scheduleDeferred(() -> search(opt, filterPanel.getParams(opt)));		
 	}
 
 	private enum COLS {
@@ -239,6 +254,7 @@ public class SupplierModule extends MainEntryPoint {
 	}
 
 	private Widget getToolbarPanel(final RegistryModuleOptions opt) {
+		
 		toolbar = new AonToolbar(AON.MSG.supplier());
 
 		FormPanel diskForm = new FormPanel("_blank");
@@ -298,18 +314,18 @@ public class SupplierModule extends MainEntryPoint {
 		
 		toolbar.add(addButton);
 
-		AonToolbarButton searchButton = new AonToolbarButton(AON.MSG.searchAction(), AON.CSS.aonIconSearch());
-		
-		searchButton.addClickHandler(event -> {
-				enableMoreData();
-				container.clear();
-				tab = getTable();
-				container.add(tab);
-				offset.setValue(0);
-				search(opt, searchPanel.getParams( opt ), offset.getValue());
-		});
-		
-		toolbar.add(searchButton);
+//		AonToolbarButton searchButton = new AonToolbarButton(AON.MSG.searchAction(), AON.CSS.aonIconSearch());
+//		
+//		searchButton.addClickHandler(event -> {
+//				enableMoreData();
+//				container.clear();
+//				tab = getTable();
+//				container.add(tab);
+//				offset.setValue(0);
+//				search(opt, filterPanel.getParams( opt ), offset.getValue());
+//		});
+//		
+//		toolbar.add(searchButton);
 
 		checkAll  = new AonToolbarButton( AON.MSG.selectAll(), AON.CSS.aonIconChecked() );
 		checkAll.setEnabled(false);
@@ -324,6 +340,17 @@ public class SupplierModule extends MainEntryPoint {
 
 		toolbar.add(uncheckAll);
 
+		filterButton.setHTML("<span class='material-icons'>filter_alt_off</span>");
+		
+		filterButton.addClickHandler(new ClickHandler() {
+
+		    @Override
+		    public void onClick(ClickEvent event) {
+		    	toogleFilterPanel();
+		    }
+		});
+		
+		toolbar.add(filterButton);
 		return toolbar;
 	}
 	
@@ -624,6 +651,43 @@ public class SupplierModule extends MainEntryPoint {
 		dialog.show();
 		
 		Scheduler.get().scheduleDeferred(() -> supplierPanel.setFocus(true));	
+	}
+	
+	public void closeFilterPanel() {
+		dockLayoutPanel.remove(filterPanel);	
+		dockLayoutPanel.animate(500, new AnimationCallback() {
+			
+			public void onAnimationComplete() {
+				MinimizeEvent.fire(dockLayoutPanel);
+	            filterButton.setHTML("<span class='material-icons'>filter_alt</span>");
+			}
+			@Override
+			public void onLayout(Layer arg0, double arg1) {							
+			}
+		});
+	}
+
+	public void openFilterPanel() {
+	    dockLayoutPanel.insertNorth(filterPanel, RegistryModuleSearchPanel.HEIGHT, progressContainer);
+	    dockLayoutPanel.animate(500, new AnimationCallback() {
+	        @Override
+	        public void onAnimationComplete() {
+	            MaximizeEvent.fire(dockLayoutPanel);
+				filterButton.setHTML("<span class='material-icons'>filter_alt_off</span>");
+	        }
+
+	        @Override
+	        public void onLayout(Layer layer, double progress) {
+	        }
+	    });
+	}
+	
+	public void toogleFilterPanel() {
+		if (dockLayoutPanel.getWidgetIndex(filterPanel) != -1) {
+            closeFilterPanel();
+        } else {
+            openFilterPanel();
+        }
 	}
 	
 }		
