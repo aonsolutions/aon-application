@@ -10,7 +10,7 @@ import com.esferalia.aon.occam.server.fiscal.format.mod190.Mod190Writer.IPropert
 import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
-enum Mod190File2023Aeat {
+enum Mod190File2024Aeat {
 	TYPE_1 (new IPropertyFiller[] { 
 		(wr, mod190,detail) -> wr.append("1")
 	   ,(wr, mod190,detail) -> wr.append("190")
@@ -97,22 +97,19 @@ enum Mod190File2023Aeat {
 	   ,(wr, mod190,detail) -> wr.append(AonFiscalFileUtils.unsigned(AonMathUtils.round(detail.getInKindDepositIL()),13,2))
 	   ,(wr, mod190,detail) -> wr.append(AonFiscalFileUtils.unsigned(AonMathUtils.round(detail.getInKindOutputDepositIL()),13,2))
 	   ,(wr, mod190,detail) -> wr.append(AonFiscalFileUtils.unsigned( getComplementoInfancia(detail),1,0))
-	   
 	   ,(wr, mod190,detail) -> wr.append(AonFiscalFileUtils.unsigned(AonMathUtils.round(detail.getCommonRetention()),13,2)) // HACIENDA ESTATAL
 	   ,(wr, mod190,detail) -> wr.append(AonFiscalFileUtils.unsigned(AonMathUtils.round(detail.getNavarraRetention()),13,2)) // COMUNIDAD FORAL DE NAVARRA.
 	   ,(wr, mod190,detail) -> wr.append(AonFiscalFileUtils.unsigned(AonMathUtils.round(detail.getArabaRetention()),13,2)) // DIPUTACIÓN FORAL DE ARABA/ÁLAVA.
 	   ,(wr, mod190,detail) -> wr.append(AonFiscalFileUtils.unsigned(AonMathUtils.round(detail.getGipuzkoaRetention()),13,2)) // DIPUTACIÓN FORAL DE GIPUZKOA.
 	   ,(wr, mod190,detail) -> wr.append(AonFiscalFileUtils.unsigned(AonMathUtils.round(detail.getBizkaiaRetention()),13,2)) // DIPUTACIÓN FORAL DE BIZKAIA.
-	   
-	   
-	   ,(wr, mod190,detail) -> wr.append(AonStringUtils.repeat(' ', 113))
-	   
+	   ,(wr, mod190,detail) -> wr.append(detail.isExcesses() ? "1" : "0") // Excesos entrega acciones empresas emergentes
+	   ,(wr, mod190,detail) -> wr.append(AonStringUtils.repeat(' ', 112))
 	   ,(wr, mod190,detail) -> wr.append("\r\n")
 	})
 	;
 	private IPropertyFiller[] propertyFillers;
 
-	private Mod190File2023Aeat(IPropertyFiller[] pf) {
+	private Mod190File2024Aeat(IPropertyFiller[] pf) {
 		this.propertyFillers = pf;
 	}
 
@@ -131,9 +128,9 @@ enum Mod190File2023Aeat {
 	}
 	
 	static void fill(Mod190 mod190, Writer wr) throws IOException {
-		Mod190File2023Aeat.TYPE_1.fillPage(mod190, null, wr);
+		Mod190File2024Aeat.TYPE_1.fillPage(mod190, null, wr);
 		for (Mod190Detail detail : mod190.getDetails()) {
-			Mod190File2023Aeat.TYPE_2.fillPage(mod190, detail, wr);	
+			Mod190File2024Aeat.TYPE_2.fillPage(mod190, detail, wr);	
 		}
 	}
 }

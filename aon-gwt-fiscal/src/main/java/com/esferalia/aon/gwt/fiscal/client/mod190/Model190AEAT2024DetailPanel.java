@@ -6,7 +6,7 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonDocumentTextBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDoubleBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonIntegerBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonTextBox;
-import com.esferalia.aon.gwt.fiscal.client.mod190.Model190AEATDetail2023.IModel190DetailCallback;
+import com.esferalia.aon.gwt.fiscal.client.mod190.Model190AEATDetail2024.IModel190DetailCallback;
 import com.esferalia.aon.occam.api.model.fiscal.Mod190Detail;
 import com.esferalia.aon.occam.api.model.type.Mod1902023Key;
 import com.esferalia.aon.watson.util.AonNumberUtils;
@@ -22,7 +22,7 @@ import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SimpleLayoutPanel;
 
-public class Model190AEAT2023DetailPanel extends SimpleLayoutPanel implements Focusable {
+public class Model190AEAT2024DetailPanel extends SimpleLayoutPanel implements Focusable {
 
 	private static final String COMPUTADO_POR_MITAD = "2 - Computado por mitad.";
 	private static final String COMPUTADO_POR_ENTERO = "1 - Computado por entero.";
@@ -32,15 +32,17 @@ public class Model190AEAT2023DetailPanel extends SimpleLayoutPanel implements Fo
 	private int tabIndex;
 	private AonDocumentTextBox document;
 
-	private static class Province2023ListBox extends ProvinceListBox {
-		public Province2023ListBox() {
+	private static class Province2024ListBox extends ProvinceListBox {
+		public Province2024ListBox() {
 			super();
-			this.setItemText(53, "La Palma" );
+			this.setItemText(38, "S.C. Tenerife (excepto Isla de la Palma)");
+			this.setItemText(53, "Isla de La Palma" );
 		}
-	};
+	}
 
-	public Model190AEAT2023DetailPanel(Mod190Detail detail, IModel190DetailCallback callback) {
+	public Model190AEAT2024DetailPanel(Mod190Detail detail, IModel190DetailCallback callback) {
 		FlowPanel additionalDataPanel = new FlowPanel();
+		FlowPanel additionalDataPanel2 = new FlowPanel();
 		FlowPanel ilPanel = new FlowPanel();
 		FlowPanel administrationPanel = new FlowPanel();
 
@@ -94,7 +96,7 @@ public class Model190AEAT2023DetailPanel extends SimpleLayoutPanel implements Fo
 		});
 		tab1.setWidget(2, 2, name);
 
-		Province2023ListBox province = new Province2023ListBox();
+		Province2024ListBox province = new Province2024ListBox();
 		province.setSelectedIndex(detail.getProvince());
 		province.addChangeHandler(event -> {
 			detail.setProvince(province.getSelectedIndex());
@@ -111,7 +113,8 @@ public class Model190AEAT2023DetailPanel extends SimpleLayoutPanel implements Fo
 		tab2.getColumnFormatter().setWidth(5, WIDTH_150PX);
 		tab2.getColumnFormatter().setWidth(6, WIDTH_150PX);
 		tab2.getColumnFormatter().setWidth(7, WIDTH_150PX);
-		tab2.getColumnFormatter().setWidth(8, "auto");
+		tab2.getColumnFormatter().setWidth(8, "90px");
+		tab2.getColumnFormatter().setWidth(9, "auto");
 
 		tab2.setStyleName(AON.CSS.aonWidthAll());
 		tab2.addStyleName(AON.CSS.aonNowrap());
@@ -128,7 +131,7 @@ public class Model190AEAT2023DetailPanel extends SimpleLayoutPanel implements Fo
 			key.addItem(k.getDescription(), k.getValue());
 		}
 
-		Model190AEAT2023DetailPanel.setValue(key, subkey, detail);
+		Model190AEAT2024DetailPanel.setValue(key, subkey, detail);
 
 		key.addChangeHandler(event -> {
 			subkey.clear();
@@ -144,9 +147,10 @@ public class Model190AEAT2023DetailPanel extends SimpleLayoutPanel implements Fo
 				subkey.setEnabled(false);
 				detail.setSubKey(null);
 			}
-			Model190AEAT2023DetailPanel.enableOrDisableIlPanel(key, subkey, ilPanel);
-			Model190AEAT2023DetailPanel.enableOrDisableAdditionalDataPanel(key, subkey, additionalDataPanel);
-			Model190AEAT2023DetailPanel.enableOrDisableAdministrationPanel(key, administrationPanel);
+			Model190AEAT2024DetailPanel.enableOrDisableIlPanel(key, subkey, ilPanel);
+			Model190AEAT2024DetailPanel.enableOrDisableAdditionalDataPanel(key, subkey, additionalDataPanel);
+			Model190AEAT2024DetailPanel.enableOrDisableAdditionalDataPanel2(key, subkey, additionalDataPanel2);
+			Model190AEAT2024DetailPanel.enableOrDisableAdministrationPanel(key, administrationPanel);
 			callback.onValueChanged(detail);
 		});
 		tab2.setWidget(0, 1, key);
@@ -161,8 +165,9 @@ public class Model190AEAT2023DetailPanel extends SimpleLayoutPanel implements Fo
 				subkey.setEnabled(false);
 				detail.setSubKey(null);
 			}
-			Model190AEAT2023DetailPanel.enableOrDisableIlPanel(key, subkey, ilPanel);
-			Model190AEAT2023DetailPanel.enableOrDisableAdditionalDataPanel(key, subkey, additionalDataPanel);
+			Model190AEAT2024DetailPanel.enableOrDisableIlPanel(key, subkey, ilPanel);
+			Model190AEAT2024DetailPanel.enableOrDisableAdditionalDataPanel(key, subkey, additionalDataPanel);
+			Model190AEAT2024DetailPanel.enableOrDisableAdditionalDataPanel2(key, subkey, additionalDataPanel2);
 			callback.onValueChanged(detail);
 		});
 		tab2.setWidget(0, 2, new Model190SmallerLabel(AON.MSG.subkey()));
@@ -178,6 +183,7 @@ public class Model190AEAT2023DetailPanel extends SimpleLayoutPanel implements Fo
 		tab2.setWidget(0, 6, new Model190SmallerLabel(AON.MSG.retention()));
 		tab2.setWidget(0, 7, new Label());
 		tab2.setWidget(0, 8, new Model190SmallerLabel(AON.MSG.accrualYear()));
+		tab2.setWidget(0, 9, new Model190SmallerLabel("Ceuta o Melilla / Isla de la Palma"));
 
 		AonDoubleBox perception = new AonDoubleBox();
 		perception.setValue(detail.getPerception());
@@ -206,6 +212,19 @@ public class Model190AEAT2023DetailPanel extends SimpleLayoutPanel implements Fo
 			callback.onValueChanged(detail);
 		});
 		tab2.setWidget(1, 3, accrualYear);
+		
+		// Ceuta o Melilla / Isla de la Palma
+		ListBox ceutaMelillaPalma = new ListBox();
+		ceutaMelillaPalma.setWidth("140px");
+		ceutaMelillaPalma.addItem("-");
+		ceutaMelillaPalma.addItem("1 - Ceuta o Melilla");
+		ceutaMelillaPalma.addItem("2 - Isla de La Palma");
+		ceutaMelillaPalma.setSelectedIndex(detail.getCeutaMelillaPalma());
+		ceutaMelillaPalma.addChangeHandler( event -> {
+			detail.setCeutaMelillaPalma((byte) ceutaMelillaPalma.getSelectedIndex());
+			callback.onValueChanged(detail);
+		});
+		tab2.setWidget(1, 4, ceutaMelillaPalma);
 
 		tab2.setWidget(2, 0, new Model190SmallerLabel(AON.MSG.inKind()));
 		tab2.getFlexCellFormatter().setRowSpan(2, 0, 2);
@@ -213,7 +232,7 @@ public class Model190AEAT2023DetailPanel extends SimpleLayoutPanel implements Fo
 		tab2.setWidget(2, 1, new Model190SmallerLabel(AON.MSG.inKindPerception()));
 		tab2.setWidget(2, 2, new Model190SmallerLabel(AON.MSG.inKindDeposit()));
 		tab2.setWidget(2, 3, new Model190SmallerLabel(AON.MSG.inKindOutputDeposit()));
-		tab2.setWidget(2, 4, new Model190SmallerLabel("Ceuta o Melilla / Isla de la Palma"));
+		tab2.setWidget(2, 4, new Label());
 
 		AonDoubleBox inKindPerception = new AonDoubleBox();
 		inKindPerception.setValue(detail.getInKindPerception());
@@ -238,25 +257,15 @@ public class Model190AEAT2023DetailPanel extends SimpleLayoutPanel implements Fo
 			callback.onValueChanged(detail);
 		});
 		tab2.setWidget(3, 2, inKindOutputDeposit);
-
-//		CheckBox ceutaMelilla = new CheckBox(AON.MSG.ceutaMelillaAbbrv());
-//		ceutaMelilla.setValue(detail.isCeutaMelilla());
-//		ceutaMelilla.addClickHandler(event -> {
-//			detail.setCeutaMelilla(ceutaMelilla.getValue());
-//			callback.onValueChanged(detail);
-//		});
-		// Ceuta o Melilla / Isla de la Palma
-		ListBox ceutaMelillaPalma = new ListBox();
-		ceutaMelillaPalma.setWidth("140px");
-		ceutaMelillaPalma.addItem("-");
-		ceutaMelillaPalma.addItem("1 - Ceuta o Melilla");
-		ceutaMelillaPalma.addItem("2 - Isla de La Palma");
-		ceutaMelillaPalma.setSelectedIndex(detail.getCeutaMelillaPalma());
-		ceutaMelillaPalma.addChangeHandler( event -> {
-			detail.setCeutaMelillaPalma((byte) ceutaMelillaPalma.getSelectedIndex());
+		
+		CheckBox excesses = new CheckBox("Excesos entrega acciones empresas emergentes");
+		excesses.setValue(detail.isExcesses());
+		excesses.addClickHandler(event -> {
+			detail.setExcesses(excesses.getValue());
 			callback.onValueChanged(detail);
 		});
-		tab2.setWidget(3, 3, ceutaMelillaPalma);
+		tab2.setWidget(3, 3, excesses);
+		tab2.getFlexCellFormatter().setColSpan(3, 3, 2);
 
 		FlexTable tab3 = new FlexTable();
 		tab3.getColumnFormatter().setWidth(0, "160px");
@@ -325,7 +334,7 @@ public class Model190AEAT2023DetailPanel extends SimpleLayoutPanel implements Fo
 		});
 		tab3.setWidget(3, 3, inKindOutputDepositIL);
 
-		Model190AEAT2023DetailPanel.enableOrDisableIlPanel(key, subkey, ilPanel);
+		Model190AEAT2024DetailPanel.enableOrDisableIlPanel(key, subkey, ilPanel);
 		ilPanel.add(tab3);
 		panel.add(ilPanel);
 
@@ -396,7 +405,7 @@ public class Model190AEAT2023DetailPanel extends SimpleLayoutPanel implements Fo
 
 		tab31.setWidget(2, 5, new Label());
 		
-		Model190AEAT2023DetailPanel.enableOrDisableAdministrationPanel(key, administrationPanel);
+		Model190AEAT2024DetailPanel.enableOrDisableAdministrationPanel(key, administrationPanel);
 		administrationPanel.add(tab31);
 		panel.add(administrationPanel);
 
@@ -556,10 +565,12 @@ public class Model190AEAT2023DetailPanel extends SimpleLayoutPanel implements Fo
 		});
 		tab5.setWidget(1, 0, homeLoanCommunnication);
 
+		AonDoubleBox applicableReduction1 = new AonDoubleBox();
 		AonDoubleBox applicableReduction = new AonDoubleBox();
 		applicableReduction.setValue(detail.getApplicableReduction());
 		applicableReduction.addValueChangeHandler(event -> {
 			detail.setApplicableReduction(applicableReduction.getValue());
+			applicableReduction1.setValue(applicableReduction.getValue(), false);
 			callback.onValueChanged(detail);
 		});
 		tab5.setWidget(1, 1, applicableReduction);
@@ -588,7 +599,6 @@ public class Model190AEAT2023DetailPanel extends SimpleLayoutPanel implements Fo
 		});
 		tab5.setWidget(1, 4, foodAnnuality);
 
-		tab5.setWidget(1, 5, new Label());
 		additionalDataPanel.add(tab5);
 
 		FlexTable tab6 = new FlexTable();
@@ -928,7 +938,35 @@ public class Model190AEAT2023DetailPanel extends SimpleLayoutPanel implements Fo
 
 		panel.add(additionalDataPanel);
 		enableOrDisableAdditionalDataPanel(key, subkey, additionalDataPanel);
+		
+		// Panel Datos Adicionales solo para reducciones si clave/subclave es E, F 01 a 06, G 01 a 06 y 08, H, I
+		FlexTable tab51 = new FlexTable();
+		tab51.getColumnFormatter().setWidth(0, WIDTH_150PX);
+		tab51.getColumnFormatter().setWidth(1, "auto");
+		tab51.setStyleName(AON.CSS.aonWidthAll());
+		tab51.addStyleName(AON.CSS.aonNowrap());
+		
+		tab51.getCellFormatter().setStyleName(0, 0, AON.CSS.aonBorderBottom());
+		tab51.getCellFormatter().addStyleName(0, 0, AON.CSS.aonBold());
+		tab51.getFlexCellFormatter().setColSpan(0, 0, 2);
+		tab51.setWidget(0, 0, new InlineLabel(AON.MSG.additionalData()));
 
+		tab51.setWidget(1, 0, new Model190SmallerLabel(AON.MSG.applicableReduction()));
+		tab51.setWidget(1, 1, new Label());
+
+		applicableReduction1.setValue(detail.getApplicableReduction());
+		applicableReduction1.addValueChangeHandler(event -> {
+			detail.setApplicableReduction(applicableReduction1.getValue());
+			applicableReduction.setValue(applicableReduction1.getValue(), false);
+			callback.onValueChanged(detail);
+		});
+		tab51.setWidget(2, 0, applicableReduction1);
+		tab51.setWidget(2, 1, new Label());
+		additionalDataPanel2.add(tab51);
+		
+		panel.add(additionalDataPanel2);
+		enableOrDisableAdditionalDataPanel2(key, subkey, additionalDataPanel2);
+	
 		scroll.setWidget(panel);
 		setWidget(scroll);
 	}
@@ -985,6 +1023,16 @@ public class Model190AEAT2023DetailPanel extends SimpleLayoutPanel implements Fo
 				|| (Mod1902023Key.E == keyEnum && "01".equals(subk))
 				|| (Mod1902023Key.E == keyEnum && "02".equals(subk))
 				|| (Mod1902023Key.L == keyEnum && "29".equals(subk)));
+	}
+	
+	private static void enableOrDisableAdditionalDataPanel2(ListBox key, ListBox subKey, Panel panel) {
+		Mod1902023Key keyEnum = Mod1902023Key.values()[key.getSelectedIndex()];
+		String subk = ((subKey.getSelectedIndex() == -1) ? null : subKey.getValue(subKey.getSelectedIndex()));
+		panel.setVisible((Mod1902023Key.E == keyEnum && ("03".equals(subk) || "04".equals(subk))) 
+				|| (Mod1902023Key.F == keyEnum && ("01".equals(subk) || "02".equals(subk) || "03".equals(subk) || "04".equals(subk) || "05".equals(subk) || "06".equals(subk)) )
+				|| (Mod1902023Key.G == keyEnum && ("01".equals(subk) || "02".equals(subk) || "03".equals(subk) || "04".equals(subk) || "05".equals(subk) || "06".equals(subk) || "08".equals(subk)))
+				|| (Mod1902023Key.H == keyEnum)
+				|| (Mod1902023Key.I == keyEnum));
 	}
 
 	private static void enableOrDisableIlPanel(ListBox key, ListBox subKey, Panel panel) {

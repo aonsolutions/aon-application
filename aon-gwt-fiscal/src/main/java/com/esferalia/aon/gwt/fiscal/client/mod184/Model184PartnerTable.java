@@ -42,8 +42,11 @@ public class Model184PartnerTable extends SimpleLayoutPanel implements HasSelect
 		if (model.getPartners() == null || model.getPartners().isEmpty()) {
 			refresh();
 			newPerceptor( );	
-		} else if ( selectedIndex != null) {
-			selectionIndex = selectedIndex;
+		} else if (selectedIndex != null) {
+			if (selectedIndex >= model.getPartners().size())
+				selectionIndex = model.getPartners().size() - 1;
+			else
+				selectionIndex = selectedIndex;
 			refresh();
 		} else {
 			selectionIndex = 0;

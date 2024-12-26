@@ -19,9 +19,11 @@ import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
+import net.aonsolutions.db.up2date.fiscal.AlterFsMod190Detail2024;
 import net.aonsolutions.db.up2date.fiscal.AlterFsMod193Detail2024;
 import net.aonsolutions.db.up2date.fiscal.FsModel369Creation;
 import net.aonsolutions.db.up2date.payroll.LackPayInsert;
+import net.aonsolutions.db.up2date.tgss.FPPercentage2024Fix;
 import net.aonsolutions.db.up2date.tgss.SolidarityInsert;
 import net.aonsolutions.db.up2date.tgss.TrainingExcessDeductions2024Insert;
 
@@ -489,7 +491,9 @@ public class Up2Date {
     		
     	//LackPayInsert.LACKPAYINSERT
     		
-    	TrainingExcessDeductions2024Insert.TRAININGEXCESSDEDUCTIONS2024INSERT
+    	TrainingExcessDeductions2024Insert.TRAININGEXCESSDEDUCTIONS2024INSERT,
+    	FPPercentage2024Fix.FPPERCENTAGE2024FIX,
+    	AlterFsMod190Detail2024.ALTER_FS_MODEL_190_DETAIL_2024
 
 	};
 

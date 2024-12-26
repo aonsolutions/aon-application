@@ -119,7 +119,8 @@ public class TrainingExcessDeductions2024Insert implements Update {
 			dslContext
 			.update(SYSTEM_DATA)
 			.set(SYSTEM_DATA.END_DATE, end2023Date)
-			.where(SYSTEM_DATA.END_DATE.isNull())
+			.where(SYSTEM_DATA.DOMAIN.eq(DOMAIN))
+			.and(SYSTEM_DATA.END_DATE.isNull())
 			.and(SYSTEM_DATA.NAME.eq("PORCENTAJE_FP"))
 			.execute();
 			// Insert new PORCENTAJE_FP
