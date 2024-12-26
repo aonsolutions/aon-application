@@ -1198,7 +1198,7 @@ public class JooqPayrollBuilder {
 		
 		// Check if its festive day and dont have hours
 		Double dayHours = getDayHours(date, salaryData, salaryEnd);
-		if (festiveList != null && festiveList.contains(date) && !(dayHours != null && dayHours > 0)) {
+		if (festiveList != null && festiveList.contains(date) /*&& !(dayHours != null && dayHours > 0)*/) {
 			return false;
 		}
 		
