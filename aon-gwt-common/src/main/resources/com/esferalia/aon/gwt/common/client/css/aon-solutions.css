@@ -2291,10 +2291,23 @@
 	gap: 0;
 }
 
+.aon_custom_table_footer{
+	min-height : 2rem;
+	background-color : #ddd;
+	position : sticky;
+	bottom : 0px;
+	z-index : 1;
+	padding : 0 1rem;
+	border-top : 1px solid #ddd;
+	gap: 0;
+}
+
+.aon_custom_table_footer > *,
 .aon_custom_table_header > * {
 	padding: 0 .5rem;
 }
 
+.aon_custom_table_cell_footer,
 .aon_custom_table_cell_header{
 	background : transparent;
 	color : #5f6368;

@@ -17,6 +17,7 @@ public class ActivitySummaryObject implements Serializable {
 
 	private Integer id;
 	private String name;
+	private String nameUrl;
 	private String firstSurname;
 	private String secondSurname;
 
@@ -48,6 +49,12 @@ public class ActivitySummaryObject implements Serializable {
 	}
 	public void setName(String name) {
 		this.name = name;
+	}
+	public String getNameUrl() {
+		return nameUrl;
+	}
+	public void setNameUrl(String nameUrl) {
+		this.nameUrl = nameUrl;
 	}
 	public String getFirstSurname() {
 		return firstSurname;
