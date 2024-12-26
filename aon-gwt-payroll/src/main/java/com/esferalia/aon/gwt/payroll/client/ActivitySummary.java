@@ -1,5 +1,6 @@
 package com.esferalia.aon.gwt.payroll.client;
 
+import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
@@ -243,7 +244,22 @@ public class ActivitySummary extends AonCustomDockLayout {
 		getSearchTextBox().setValue(null, false);
 		start.setValue(DateUtils.getFirstDayOfMonth());
 		end.setValue(DateUtils.getLastDayOfMonth());
-
+		contractType.setSelectedOptions(Collections.emptySet());
+		
+		Set<String> salaryOptions = new LinkedHashSet<String>();
+		salaryOptions.add("Nomina");
+		salaryOptions.add("Extra");
+		salaryOptions.add("Finiquito");
+		salaryOptions.add("Atrasos");
+		salaryType.setSelectedOptions(salaryOptions);
+		
+		Set<String> itOptions = new LinkedHashSet<String>();
+		itOptions.add("IT EC/AN");
+		itOptions.add("IT AT/EP");
+		itOptions.add("IT M/P");
+		itOptions.add("IT Otros");
+		itType.setSelectedOptions(itOptions);
+		
 		onSearch();
 	}
 
@@ -448,7 +464,7 @@ public class ActivitySummary extends AonCustomDockLayout {
 				ActivitySummaryParams params = new ActivitySummaryParams()
 						.setDomain(domainDB)
 						.setUser(Wnd.getCurrentUser())
-						.setDescription(getSearchTextBox().getValue())
+						.setDescription(AonStringUtils.EMPTY)
 						.setStart(start.getValue())
 						.setEnd(end.getValue())
 						.setStartContract(contractType.getSelectedOptions().contains("Altas"))

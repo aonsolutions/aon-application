@@ -20,7 +20,7 @@ import java.util.stream.Collectors;
 
 import org.jooq.Condition;
 import org.jooq.Record5;
-import org.jooq.Record6;
+import org.jooq.Record7;
 import org.jooq.Result;
 import org.jooq.SelectConditionStep;
 import org.jooq.impl.DSL;
@@ -33,6 +33,7 @@ import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.esferalia.aon.payroll.enumeration.LeaveType;
 import com.esferalia.aon.salary.enumeration.SalaryType;
 import com.esferalia.aon.watson.server.AonDateUtils;
+import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class JooqActivitySummary {
 
@@ -156,11 +157,11 @@ public class JooqActivitySummary {
 	}
 
 	private static Map<Integer, ActivitySummaryObject> getSummaryEmployee(CloseableAONContext ctx, ActivitySummaryParams params) {
-		SelectConditionStep<Record6<String, String, String, java.sql.Date, java.sql.Date, Integer>> select = ctx
+		SelectConditionStep<Record7<String, String, String, java.sql.Date, java.sql.Date, Integer, String>> select = ctx
 				.getDslContext()
 				.select(PERSON.NAME, PERSON.FIRST_SURNAME,
 						PERSON.SECOND_SURNAME, CONTRACT.START_DATE,
-						CONTRACT.END_DATE, CONTRACT.ID)
+						CONTRACT.END_DATE, CONTRACT.ID, REGISTRY.NAME)
 				.from(CONTRACT.leftOuterJoin(PERSON)
 						.on(CONTRACT.PERSON.eq(PERSON.REGISTRY))
 						.leftOuterJoin(REGISTRY)
@@ -176,8 +177,11 @@ public class JooqActivitySummary {
 			select.and(getStartCondition(AonDateUtils.toSql(params.getStart()), AonDateUtils.toSql(params.getEnd()), params.isStartContract()));
 		else if(params.isEndContract())
 			select.and(getEndCondition(AonDateUtils.toSql(params.getStart()), AonDateUtils.toSql(params.getEnd()), params.isEndContract()));
+		
+		if(AonStringUtils.isNotBlank(params.getDescription()))
+			select.and(REGISTRY.NAME.like("%" + params.getDescription() + "%"));
 
-		Result<Record6<String, String, String, java.sql.Date, java.sql.Date, Integer>> result = select.groupBy(CONTRACT.ID)
+		Result<Record7<String, String, String, java.sql.Date, java.sql.Date, Integer, String>> result = select.groupBy(CONTRACT.ID)
 				.orderBy(PERSON.FIRST_SURNAME.asc(),
 						PERSON.SECOND_SURNAME.asc(), PERSON.NAME.asc(),
 						CONTRACT.START_DATE.desc()).fetch();	
@@ -231,6 +235,9 @@ public class JooqActivitySummary {
 			select.and(getStartCondition(AonDateUtils.toSql(params.getStart()), AonDateUtils.toSql(params.getEnd()), params.isStartContract()));
 		else if(params.isEndContract())
 			select.and(getEndCondition(AonDateUtils.toSql(params.getStart()), AonDateUtils.toSql(params.getEnd()), params.isEndContract()));
+		
+		if(AonStringUtils.isNotBlank(params.getDescription()))
+			select.and(DOMAIN.DESCRIPTION.like("%" + params.getDescription() + "%"));
 
 		Result<Record5<Integer, String, String, BigDecimal, BigDecimal>> result = select
 				.groupBy(DOMAIN.ID).orderBy(DOMAIN.DESCRIPTION.asc())
