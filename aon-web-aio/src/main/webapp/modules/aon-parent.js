@@ -1,12 +1,12 @@
 import {AonElement} from 'aonsolutions/components/AonElement.js';
-import {closeSession, getCompanies, getUserNotice, getUser, getCompaniesBySchemas} from  'aonsolutions/services/service.js';
-import { CSS, EVENT, MATERIAL_ICONS, MSG, TAG } from 'aonsolutions/environments/environments.js';
+import {closeSession, getCompanies, getUserNotice, getUser, getCompaniesBySchemas, getTimeControl} from  'aonsolutions/services/service.js';
+import { CSS, EVENT, MATERIAL_ICONS, MSG, TAG, CONSTANT } from 'aonsolutions/environments/environments.js';
 import { AonDesktop } from 'aonsolutions/modules/company/aon-desktop.js';
+import { AonApplication } from 'aonsolutions/components/aon-application.js';
 import * as LS from 'aonsolutions/services/localStorageService.js';
 import { AonDialogMenu } from 'aonsolutions/components/aon-dialog-menu.js';
-import { MenuApps } from '../services/app.js';
-
-import { AonTimeControlCard } from 'aonsolutions/components/aon-timecontrol-card.js';
+import { MenuApps, Apps } from 'aonsolutions/services/app.js';
+import { AonSign } from "aonsolutions/modules/timecontrol/aon-sign.js";
 
 
 export class AonParent extends AonElement {
@@ -18,8 +18,10 @@ export class AonParent extends AonElement {
 	companies;
 
 	more;
-	
+	PARENT;
 	APPS_DIV;
+	PENDING_INVOICES;
+	REJECTED_INVOICES;
 	COMPANY_FILTER_TAB;
 
 	setFilter(filter){
@@ -42,8 +44,11 @@ export class AonParent extends AonElement {
 		this.id = 'aonParent';
 		this.filter = {};
 		this._filter = {};
+		this.PARENT = 'aonParent';
 		this.APPS_DIV = "appsDiv";
 		this.COMPANY_FILTER_TAB = "aonCompanyTabFilter";
+		this.PENDING_INVOICES = `${CONSTANT.INVOICES.initCap()}Pending`;
+		this.REJECTED_INVOICES = `${CONSTANT.INVOICES.initCap()}Rejected`;
 	}
 
 	connectedCallback () {
@@ -57,7 +62,12 @@ export class AonParent extends AonElement {
 
 	init(filter) {
 		//TODO: aonParent.startLoader();
+		
+		let aonApplication = new AonApplication();
+		this.createApplication(this.PARENT, "", aonApplication);
+
 		this.build();
+		this.buildSidenav();
 		this.select(filter, companies => this.decorateTabs(companies) );
 	}
 
@@ -96,8 +106,6 @@ export class AonParent extends AonElement {
 				this.buildCompanies(companies.filter(f => this.companyFilter(f, filter)).slice(0, 30));
 				callback?.(companies);
 
-				this.cleanApps();
-				this.buildApps(aonMenu);
 			}	
 		}, () => closeSession());
 
@@ -205,25 +213,25 @@ export class AonParent extends AonElement {
 	}
 
 	updateCount(){
-		let application = this.getApplication();
 		let inboxCount = 0;
 		let rejectedCount = 0;
+		let application = this.getApplication();
 		
-		if(this.notice.invoice && this.notice.invoice.inbox && this.notice.invoice.inbox.count && this.notice.invoice.inbox.count > 0) 
+		if(this.notice?.invoice?.inbox?.count > 0) 
 			inboxCount = this.notice.invoice.inbox.count;
 
-		if(this.notice.invoice && this.notice.invoice.rejected && this.notice.invoice.rejected.count && this.notice.invoice.rejected.count > 0) 
+		if(this.notice?.invoice?.rejected?.count > 0) 
 			rejectedCount = this.notice.invoice.rejected.count;
 
-		application.updateSidenavCount('PendingInvoices', inboxCount);
-		application.updateSidenavCount('RejectedInvoices', rejectedCount);
+		application.updateSidenavCount(this.PENDING_INVOICES, inboxCount);
+		application.updateSidenavCount(this.REJECTED_INVOICES, rejectedCount);
 	}
 	
 	build() {
 
 		let parentDiv = this.createDiv();
 		parentDiv.className = CSS.AON_PARENT_DIV;
-		this.appendChild(parentDiv);
+		this.getApplication().setContent(parentDiv);
 		
 
 		let welcomeDiv = this.createDiv();
@@ -317,12 +325,7 @@ export class AonParent extends AonElement {
 			}
 		});
 
-		let appsDiv = this.createDiv();
-		appsDiv.id = this.APPS_DIV;
-
-
 		let contentDiv = this.createDiv();
-		contentDiv.appendChild(appsDiv);
 		contentDiv.appendChild(companyDiv);
 	
 		parentDiv.appendChild(welcomeDiv);
@@ -377,18 +380,92 @@ export class AonParent extends AonElement {
 		
 	}
 
-	cleanApps(){
-		let appsDiv = this.getElement(this.APPS_DIV);
-		appsDiv.innerHTML = "";
-	}
+	buildSidenav() {
 
-	buildApps(aonMenu){
-		let appsDiv = this.getElement(this.APPS_DIV);
-		appsDiv.className = CSS.AON_APPS_DIV;
-		//aonMenu.isAppEnabled(MenuApps.TIMECONTROL);
-		let aonTimeControlCard = new AonTimeControlCard();
-		aonTimeControlCard.onError = () => appsDiv.removeChild(aonTimeControlCard); 
-		appsDiv.appendChild(aonTimeControlCard);
+		let invoiceOptions = {
+		  id: CONSTANT.INVOICES.initCap(),
+		  name: MSG.ACTIVITY.toUpperCase(),
+		  app: Apps.INVOICE,
+		  options: [{
+			    id: this.PENDING_INVOICES,
+			    name: MSG.PENDING_INVOICES,
+			    icon: MATERIAL_ICONS.INBOX,
+			    app: Apps.INVOICE,
+			    fn: () => {
+					this.select({ids:this.notice?.invoice?.inbox?.domains});
+			    },
+			  },
+			  {
+			    id: this.REJECTED_INVOICES,
+			    name: MSG.REJECTED_INVOICES,
+			    icon: MATERIAL_ICONS.REPORT,
+				app: Apps.INVOICE,
+			    fn: () => {
+					this.select({ids:this.notice?.invoice?.rejected?.domains});
+			    },
+			  },
+			  {
+			    id: CONSTANT.INVOICES.initCap() + "Unaccount",
+			    name: MSG.UNACCOUNT_INVOICES,
+			    icon: MATERIAL_ICONS.LABEL_IMPORTANT,
+				app: Apps.INVOICE,
+			    fn: () => {
+			      // Filter selectOption method
+			    },
+			  }]
+		};
+		
+		this.getApplication().addSidenavOptions3(invoiceOptions);
+		
+		let helpOptions = {
+		  id: CONSTANT.HELP.initCap(),
+		  name: MSG.HELP.toUpperCase(),
+		  app: Apps.HOME,
+		  options: [{
+			    id: CONSTANT.HELP.initCap() + "Notifications",
+			    name: MSG.NOTIFICATIONS,
+			    icon: MATERIAL_ICONS.RSS_FEED,
+				app: Apps.HOME,
+			    fn: () => {
+			      // Filter selectOption method
+			    }
+			},{
+  			    id: CONSTANT.HELP.initCap() + "ContentIndex",
+  			    name: MSG.CONTENT_INDEX,
+  			    icon: MATERIAL_ICONS.SCHOOL,
+  				app: Apps.HOME,
+  			    fn: () => {
+  			      // Filter selectOption method
+  			    },
+			},
+		  ]
+		};
+		
+		this.getApplication().addSidenavOptions3(helpOptions);
+
+		let appsDiv = this.createDiv();
+		appsDiv.id = this.APPS_DIV;
+		this.getApplication().getSidenav().appendChild(appsDiv);
+
+		
+		getTimeControl().then(r => {
+			let option = {
+				id: "signing",
+				title: MSG.SIGNING.toUpperCase(),
+				name: MSG.SIGNING.toUpperCase(),
+				app: Apps.TIMECONTROL
+			}
+
+			let aonSign = new AonSign();
+			this.getApplication().addSidenavWidget2(option, aonSign);
+
+			aonSign.buildSignin(r);
+			let aonHeader = this.getElement('aonHeader');
+			aonHeader?.timeControlStatus(r);
+		});
+		
+		this.getNotices();
+		
 	}
 
 	cleanCompanies(){

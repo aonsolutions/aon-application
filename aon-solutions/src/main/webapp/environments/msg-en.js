@@ -478,6 +478,7 @@ export const TYPES = 'Types';
 
 // ----- U
 
+export const UNACCOUNT_INVOICES = "Unaccount Invoices";
 export const UNLINK = "Unlink";
 export const UNLINK_DOMAIN_QUESTION = "Do you want to unlink this client from the domain?";
 export const UNLINK_CLIENT = "Unlink client";
