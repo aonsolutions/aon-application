@@ -3,14 +3,11 @@ package com.esferalia.aon.gwt.payroll.shared;
 import java.io.Serializable;
 import java.util.Date;
 
-import com.esferalia.aon.occam.api.model.Domain;
-
 public class ActivitySummaryParams implements Serializable {
 
 	private static final long serialVersionUID = 6015720258657135544L;
 
-	private Domain domain;
-	private String user;
+	private Integer childomain;
 	
 	private String description;
 	
@@ -67,21 +64,12 @@ public class ActivitySummaryParams implements Serializable {
 		return this;
 	}
 
-	public Domain getDomain() {
-		return domain;
+	public Integer getChildomain() {
+		return childomain;
 	}
 
-	public ActivitySummaryParams setDomain(Domain domain) {
-		this.domain = domain;
-		return this;
-	}
-	
-	public String getUser() {
-		return user;
-	}
-
-	public ActivitySummaryParams setUser(String user) {
-		this.user = user;
+	public ActivitySummaryParams setChildomain(Integer childomain) {
+		this.childomain = childomain;
 		return this;
 	}
 
@@ -209,9 +197,5 @@ public class ActivitySummaryParams implements Serializable {
 	public ActivitySummaryParams setAsc(boolean asc) {
 		this.asc = asc;
 		return this;
-	}
-	
-	public boolean isParent() {
-		return domain.getParentId() == null;
 	}
 }
