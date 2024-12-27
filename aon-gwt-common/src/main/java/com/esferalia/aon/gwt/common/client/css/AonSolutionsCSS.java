@@ -874,6 +874,12 @@ public interface AonSolutionsCSS extends CssResource {
 	@ClassName("aon_custom_table_cell_header")
 	String aonCustomTableCellHeader();
 	
+	@ClassName("aon_custom_table_footer")
+	String aonCustomTableFooter();
+	
+	@ClassName("aon_custom_table_cell_footer")
+	String aonCustomTableCellFooter();
+	
 	@ClassName("aon_utility_option")
 	String aonUtilityOption();
 	
