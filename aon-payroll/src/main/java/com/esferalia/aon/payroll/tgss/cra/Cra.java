@@ -14,7 +14,9 @@ import java.sql.Connection;
 import java.sql.Date;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map.Entry;
 
 import org.jooq.DSLContext;
 import org.jooq.Record;
@@ -32,7 +34,7 @@ public class Cra {
 	//													CHECK EXIST PAYROLL
 	// ********************************************************************************************************************************************
 	
-	public static boolean existAnySalary(List<String> cccList, long findingDate, Connection connection)  {
+	public static boolean existAnySalary(HashMap<Integer, String> cccs, long findingDate, Connection connection)  {
 		DSLContext dslContext = new AONContext(connection).getDslContext();
 		
 		// Given findingDate set start and end date
@@ -47,14 +49,17 @@ public class Cra {
 		Date startDateSQL = new Date(startDate.getTimeInMillis());
 		Date endDateSQL = new Date(endDate.getTimeInMillis());
 		
-		for(String ccc : cccList) {
-			Record salaryRecord = dslContext.select().from(SALARY)
+		for(Entry<Integer, String> entry : cccs.entrySet()){
+			Record salaryRecord = dslContext.select()
+				.from(SALARY)
+				.join(CONTRACT).on(CONTRACT.ID.eq(SALARY.CONTRACT))
 				.where(
 						(SALARY.START_DATE.ge(startDateSQL).and(SALARY.END_DATE.le(endDateSQL))) // Nomina
 						.or(SALARY.CHARGE_DATE.between(startDateSQL, endDateSQL)) // Finiquito
 						.or(SALARY.ISSUE_DATE.between(startDateSQL, endDateSQL).or(SALARY.END_DATE.between(startDateSQL, endDateSQL))) // Atraso
 				)
-				.and(SALARY.CCC.eq(ccc))
+				.and(SALARY.CCC.eq(entry.getValue()))
+				.and(CONTRACT.ENTERPRISE_CCC.eq(entry.getKey()))
 				.and(
 						SALARY.TYPE.eq((byte)0) // Nomina
 						.or(SALARY.TYPE.eq((byte)2)) // Finiquito
@@ -76,7 +81,7 @@ public class Cra {
 	// ********************************************************************************************************************************************
 	
 	@SuppressWarnings("unchecked")
-	public static JSONObject getMainCRAByCRA(Integer domainId, Integer parentDomainId, Integer userId, List<String> cccList, long findingDate, String fileName, Connection connection) throws IllegalArgumentException {
+	public static JSONObject getMainCRAByCRA(Integer domainId, Integer parentDomainId, Integer userId, HashMap<Integer, String> cccs, long findingDate, String fileName, Connection connection) throws IllegalArgumentException {
 		
 		// Get dslContext for given connection
 		DSLContext dslContext = new AONContext(connection).getDslContext();
@@ -113,7 +118,7 @@ public class Cra {
 		// Domain Childs
 		List<Integer> domainChilds = getDomainChilds(dslContext, domainId, userId); 
 		
-		cccList.forEach(ccc -> {
+		cccs.entrySet().forEach(entry -> {
 		
 			// Prepare ERRORS
 			JSONArray errors = new JSONArray();
@@ -131,7 +136,8 @@ public class Cra {
 					.on(ENTERPRISE_CCC.ID.eq(CONTRACT.ENTERPRISE_CCC))
 					.where(SALARY.START_DATE.ge(startDateSQL))
 					.and(SALARY.END_DATE.le(endDateSQL))
-					.and(SALARY.CCC.eq(ccc))
+					.and(SALARY.CCC.eq(entry.getValue()))
+					.and(CONTRACT.ENTERPRISE_CCC.eq(entry.getKey()))
 					.and(SALARY.TYPE.eq((byte)0))
 					.and(SALARY.SS_REGIME.notEqual((byte)3).and(CONTRACT.SS_REGIME.notEqual((byte)3)))
 					.and(SALARY.TOTAL_PAYMENT.gt(0.00))
@@ -151,7 +157,7 @@ public class Cra {
 				JSONObject dde = new JSONObject();
 	
 				dde.put("cccRegime", getEnterpriseCCC(dslContext, salaryRecords));
-				dde.put("ccc", ccc);
+				dde.put("ccc", entry.getValue());
 				dde.put("year", startDate.get(Calendar.YEAR));
 				dde.put("month", startDate.get(Calendar.MONTH)+1);
 				
@@ -200,7 +206,8 @@ public class Cra {
 					.join(PERSON)
 					.on(PERSON.REGISTRY.eq(CONTRACT.PERSON))
 					.where(SALARY.CHARGE_DATE.between(startDateSQL, endDateSQL))
-					.and(SALARY.CCC.eq(ccc))
+					.and(SALARY.CCC.eq(entry.getValue()))
+					.and(CONTRACT.ENTERPRISE_CCC.eq(entry.getKey()))
 					.and(SALARY.TYPE.eq((byte)3))
 					.and(SALARY.SS_REGIME.notEqual((byte)3).and(CONTRACT.SS_REGIME.notEqual((byte)3)))
 					.and(SALARY.DOMAIN.in(domainChilds))
@@ -251,7 +258,7 @@ public class Cra {
 							JSONObject ddea = new JSONObject();
 							
 							ddea.put("cccRegime", parseSSRegime(salaryRecord.get(ENTERPRISE_CCC.TYPE)));
-							ddea.put("ccc", ccc);
+							ddea.put("ccc", entry.getValue());
 							
 							// Instance Calendar with actual iteration salary_data startDate
 							Calendar salaryDataStartDate = Calendar.getInstance();
@@ -305,7 +312,8 @@ public class Cra {
 					.on(CONTRACT.ID.eq(SALARY.CONTRACT))
 					.join(PERSON)
 					.on(PERSON.REGISTRY.eq(CONTRACT.PERSON))
-					.where(SALARY.CCC.eq(ccc))
+					.where(SALARY.CCC.eq(entry.getValue()))
+					.and(CONTRACT.ENTERPRISE_CCC.eq(entry.getKey()))
 					.and(SALARY.ISSUE_DATE.between(startDateSQL, endDateSQL))
 					.and(SALARY.TYPE.eq((byte)2))
 					.and(SALARY.SS_REGIME.notEqual((byte)3).and(CONTRACT.SS_REGIME.notEqual((byte)3)))
@@ -325,7 +333,7 @@ public class Cra {
 				JSONObject finiq = new JSONObject();
 				
 				finiq.put("cccRegime", getEnterpriseCCC(dslContext, salaryRecords));
-				finiq.put("ccc", ccc);
+				finiq.put("ccc", entry.getValue());
 				finiq.put("year", startDate.get(Calendar.YEAR));
 				finiq.put("month", startDate.get(Calendar.MONTH)+1);
 				

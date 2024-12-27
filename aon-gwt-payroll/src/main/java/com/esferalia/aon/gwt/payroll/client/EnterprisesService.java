@@ -173,7 +173,7 @@ public interface EnterprisesService extends RemoteService {
 
 	Period getMinMaxCraDate(String domain, String string) throws IllegalArgumentException;
 
-	void createNewCRA(String domainName, String user, long findingDate, List<String> ccc, ArrayList<Integer> cccIdList, Integer cccId, String type) throws IllegalArgumentException;
+	void createNewCRA(String domainName, String user, long findingDate, HashMap<Integer, String> cccs, Integer cccId, String type) throws IllegalArgumentException;
 
 	void deleteCRA(String currentDomainName, Integer code);
 
@@ -209,7 +209,7 @@ public interface EnterprisesService extends RemoteService {
 	
 	String getSalariesPDF(String currentDomainName, String currentUser, Integer enterpriseId, List<Integer> salaryIds) throws IllegalArgumentException;
 
-	void checkCreateNewCRA(String currentDomainName, long findingDate, ArrayList<Integer> cccList) throws IllegalArgumentException;
+	void checkCreateNewCRA(String currentDomainName, long findingDate, HashMap<Integer, String> cccs) throws IllegalArgumentException;
 
 	List<CCCInfo> getEnterprisesCCCInfo(String currentDomainName, String user, long findPeriodTime);
 

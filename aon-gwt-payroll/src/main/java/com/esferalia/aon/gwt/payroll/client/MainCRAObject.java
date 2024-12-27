@@ -108,8 +108,8 @@ public class MainCRAObject {
 	
 	// ------------------------------------------- DataBase Methods (CRAs)
 	
-	public void createNewCRA (Date startDate, ArrayList<String> cccList, ArrayList<Integer> cccIdList, Integer cccId, String type, Consumer<Void> success, Consumer<Throwable> failure){
-		impl.createNewCRA(startDate.getTime(), cccList, cccIdList, cccId, type, new AsyncCallback<Void>() {
+	public void createNewCRA (Date startDate, HashMap<Integer, String> cccs, Integer cccId, String type, Consumer<Void> success, Consumer<Throwable> failure){
+		impl.createNewCRA(startDate.getTime(), cccs, cccId, type, new AsyncCallback<Void>() {
 			@Override
 			public void onFailure(Throwable caught) {
 				failure.accept(caught);	
@@ -122,8 +122,8 @@ public class MainCRAObject {
 		});
 	}
 	
-	public void checkCreateNewCRA (Date startDate, ArrayList<Integer> cccList, Consumer<Void> success, Consumer<Throwable> failure){
-		impl.checkCreateNewCRA(startDate.getTime(), cccList, new AsyncCallback<Void>() {
+	public void checkCreateNewCRA (Date startDate, HashMap<Integer, String> cccs, Consumer<Void> success, Consumer<Throwable> failure){
+		impl.checkCreateNewCRA(startDate.getTime(), cccs, new AsyncCallback<Void>() {
 			@Override
 			public void onFailure(Throwable caught) {
 				failure.accept(caught);	

@@ -2019,23 +2019,23 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 	}
 
 	@Override
-	public void createNewCRA(String domainName, String user, long findingDate, List<String> cccList, ArrayList<Integer> cccIdList, Integer cccId, String craType) throws IllegalArgumentException {
+	public void createNewCRA(String domainName, String user, long findingDate, HashMap<Integer, String> cccs, Integer cccId, String craType) throws IllegalArgumentException {
 		try (Connection connection = AonServletUtils.getConnection(domainName)) {
 			
 			Integer domainId = AonServletUtils.getDomainID(domainName);
 			Integer parentDomainId = AonServletUtils.getParentDomainID(domainName);
 			Integer userId = AonServletUtils.getUserID(connection, user, domainId, parentDomainId);
 			
-			if(Boolean.FALSE.equals(Cra.existAnySalary(cccList, findingDate, connection)))
+			if(Boolean.FALSE.equals(Cra.existAnySalary(cccs, findingDate, connection)))
 				throw new IllegalArgumentException("No existe n\u00F3minas con valores para notificar en el CRA");
 			
 			java.util.Date fileNameDate = new java.util.Date();
 			String fileName = new SimpleDateFormat("ddHHmmss").format(fileNameDate);
 			
-			JSONObject mainCRAJSON = Cra.getMainCRAByCRA(domainId, parentDomainId, userId, cccList, findingDate, fileName, connection);
+			JSONObject mainCRAJSON = Cra.getMainCRAByCRA(domainId, parentDomainId, userId, cccs, findingDate, fileName, connection);
 			String agrarianAFI = MainCRAGenerator.generateMainCRA(mainCRAJSON);
 			
-			JooqCRA.setMainCra(domainId, cccList, cccIdList, agrarianAFI, findingDate, craType, fileNameDate, fileName, connection);
+			JooqCRA.setMainCra(domainId, cccs, agrarianAFI, findingDate, craType, fileNameDate, fileName, connection);
 			
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -2307,9 +2307,9 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 	// ----------------------------------------------
 
 	@Override
-	public void checkCreateNewCRA(String currentDomainName, long findingDate, ArrayList<Integer> cccList) {
+	public void checkCreateNewCRA(String currentDomainName, long findingDate, HashMap<Integer, String> cccs) {
 		try(Connection connection = AonServletUtils.getConnection(currentDomainName)){
-			JooqCRA.checkCreateNewCRA(connection, findingDate, cccList);
+			JooqCRA.checkCreateNewCRA(connection, findingDate, cccs);
 		} catch (Exception e) {
 			throw new IllegalArgumentException(e.getMessage());
 		} 

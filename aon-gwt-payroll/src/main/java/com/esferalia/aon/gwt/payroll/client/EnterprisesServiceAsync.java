@@ -118,7 +118,7 @@ public interface EnterprisesServiceAsync {
 	void getAgrarianJourney(long findingDate, List<String> cccList, String domain, AsyncCallback<Map<Integer, List<AgrarianJourney>>> asyncCallback);
 	void getCRAs(String domain, String string, long liquidDateTime, AsyncCallback<List<CRA>> asyncCallback) throws IllegalArgumentException;
 	void getMinMaxCraDate(String domain, String string, AsyncCallback<Period> asyncCallback) throws IllegalArgumentException;
-	void createNewCRA(String domainName, String user, long findingDate, List<String> ccc, ArrayList<Integer> cccIdList, Integer cccId, String type, AsyncCallback<Void> asyncCallback) throws IllegalArgumentException;
+	void createNewCRA(String domainName, String user, long findingDate, HashMap<Integer, String> cccs, Integer cccId, String type, AsyncCallback<Void> asyncCallback) throws IllegalArgumentException;
 	void deleteCRA(String currentDomainName, Integer code, AsyncCallback<Void> asyncCallback);
 	void getEmployeePeculiarities(String currentDomainName, Integer contractId, AsyncCallback<Peculiarities> asyncCallback);
 	void setEmployeePeculiarities(String currentDomainName, Integer contractId, Peculiarities peculiarities,
@@ -139,7 +139,7 @@ public interface EnterprisesServiceAsync {
 	void checkEnterprisesEmails(String currentDomainName, HashSet<Integer> enterpriseIds, AsyncCallback<String> asyncCallback);
 	void getSettlePDF(String currentDomainName, String user, Integer settleId, AsyncCallback<String> asyncCallback) throws IllegalArgumentException;
 	void getSalariesPDF(String currentDomainName, String currentUser, Integer enterpriseId, List<Integer> salaryIds, AsyncCallback<String> asyncCallback) throws IllegalArgumentException;
-	void checkCreateNewCRA(String currentDomainName, long findingDate, ArrayList<Integer> cccList, AsyncCallback<Void> asyncCallback) throws IllegalArgumentException;
+	void checkCreateNewCRA(String currentDomainName, long findingDate, HashMap<Integer, String> cccs, AsyncCallback<Void> asyncCallback) throws IllegalArgumentException;
 	void getEnterprisesCCCInfo(String currentDomainName, String user, long findPeriodTime, AsyncCallback<List<CCCInfo>> asyncCallback);
 	void getEmployeesInfo(String currentDomainName, Boolean allEmployees, AsyncCallback<List<EmployeeContractInfo>> asyncCallback);
 	void getEmployees(String currentDomainName, String user, ContractParams params, AsyncCallback<List<EmployeeContractInfo>> asyncCallback) throws IllegalArgumentException;
