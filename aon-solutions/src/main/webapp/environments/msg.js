@@ -717,6 +717,7 @@ export const TO_SHOW = "Mostrar";//TODO
 
 // ----- U
 
+export const UNACCOUNT_INVOICES = MSG.UNACCOUNT_INVOICES;
 export const UNLINK = MSG.UNLINK;
 export const UNLINK_DOMAIN_QUESTION = MSG.UNLINK_DOMAIN_QUESTION;
 export const UNLINK_CLIENT = MSG.UNLINK_CLIENT;

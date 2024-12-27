@@ -181,6 +181,7 @@ export const KEYBOARD_ARROW_RIGHT = 'keyboard_arrow_right';
 export const KEYBOARD_ARROW_DOWN = 'keyboard_arrow_down';
 // ----- L
 export const LABEL = 'label';
+export const LABEL_IMPORTANT = 'label_important';
 export const LANGUAGE = 'language';
 export const LICENSE = 'license';
 export const LINK = 'link';
@@ -240,6 +241,7 @@ export const RECEIPT = 'receipt';
 export const REMOVE_CIRCLE = 'remove_circle';
 export const REPORT = 'report';
 export const ROOM = 'room';
+export const RSS_FEED = 'rss_feed';
 
 // ----- S
 
@@ -247,6 +249,7 @@ export const SAVE = 'save';
 export const SAVED_SEARCH = 'saved_search';
 export const SHARE = 'share';
 export const SCHEDULE = 'schedule';
+export const SCHOOL = 'school';
 export const SEARCH = 'search';
 export const SECURITY = 'security';
 export const SEND = 'send';
