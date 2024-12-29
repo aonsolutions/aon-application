@@ -463,9 +463,11 @@ public class SalaryDraft extends ResizeComposite
 	static class TextDateBox implements IsWidget, HasValue<String>, HasAllFocusHandlers, Focusable, HasEnabled {
 
 		private DateBox datebox;
+		private DatePicker datePicker;
 
 		public TextDateBox() {
-			datebox = new DateBox(new DatePicker(), null,
+			datePicker = new DatePicker();
+			datebox = new DateBox(datePicker, null,
 					new DateBox.DefaultFormat(AON.DATE_FORMAT));
 		}
 		
@@ -534,7 +536,11 @@ public class SalaryDraft extends ResizeComposite
 
 		@Override
 		public HandlerRegistration addBlurHandler(BlurHandler handler) {
-			return datebox.addDomHandler(handler, BlurEvent.getType());
+			return datebox.addDomHandler(event -> {
+				if ( !datePicker.isVisible() ) {
+					handler.onBlur(event);
+				}
+			}, BlurEvent.getType());
 		}
 
 		@Override
@@ -7994,6 +8000,7 @@ public class SalaryDraft extends ResizeComposite
 		.setValue(salaryDraftObject.getIssueDate())
 		.setEndDate(salaryDraftObject.getEndDate())
 		.setStartDate(salaryDraftObject.getStartDate())
+		.setExpression(AON.DATE_FORMAT.format(salaryDraftObject.getIssueDate()))
 		.create()
 		;
 		
