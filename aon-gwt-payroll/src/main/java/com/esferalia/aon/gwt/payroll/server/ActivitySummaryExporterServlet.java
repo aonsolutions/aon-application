@@ -2,6 +2,8 @@ package com.esferalia.aon.gwt.payroll.server;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.sql.Connection;
+import java.sql.SQLException;
 import java.sql.Types;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -16,11 +18,10 @@ import com.code.aon.report.poi.ExcelReportExporter;
 import com.code.aon.report.poi.ReportColumnMetadata;
 import com.code.aon.report.poi.ReportMetadata;
 import com.code.aon.ui.util.AonUtil;
+import com.esferalia.aon.gwt.common.server.AonServletUtils;
 import com.esferalia.aon.gwt.payroll.jooq.JooqActivitySummary;
 import com.esferalia.aon.gwt.payroll.shared.ActivitySummaryObject;
 import com.esferalia.aon.gwt.payroll.shared.ActivitySummaryParams;
-import com.esferalia.aon.occam.api.model.Domain;
-import com.esferalia.aon.watson.util.AonStringUtils;
 
 import jakarta.servlet.ServletOutputStream;
 import jakarta.servlet.annotation.WebServlet;
@@ -48,9 +49,7 @@ public class ActivitySummaryExporterServlet extends HttpServlet {
 	protected void doGet(HttpServletRequest request,
 			HttpServletResponse response) throws IOException {
 
-		String _domainId = request.getParameter("domainId");
 		String _domainName = request.getParameter("domainName");
-		String _parentDomainId = request.getParameter("parentDomainId");
 		String _user = request.getParameter("user");
 		
 		String _description = request.getParameter("description");
@@ -71,14 +70,12 @@ public class ActivitySummaryExporterServlet extends HttpServlet {
 		String _itMaternity = request.getParameter("itMaternity");
 		String _itOther = request.getParameter("itOther");
 		
-		try {
+		try (Connection connection = AonServletUtils.getConnection(_domainName)) {
+			Integer domainId = AonServletUtils.getDomainID(_domainName);
+			Integer parentDomainId = AonServletUtils.getParentDomainID(_domainName); 
+			Integer userId = AonServletUtils.getUserID(connection, _user, domainId, parentDomainId);
+			
 			ActivitySummaryParams params = new ActivitySummaryParams()
-					.setDomain(
-						new Domain()
-							.setName(_domainName)
-							.setId(Integer.parseInt(_domainId))
-							.setParentId(AonStringUtils.isBlank(_parentDomainId) || AonStringUtils.equalsIgnoreCase(_parentDomainId, "null") ? null : Integer.parseInt(_parentDomainId)))
-					.setUser(_user)
 					.setDescription(_description)
 					.setStart(new Date(Long.parseLong(_startDate)))
 					.setEnd(new Date(Long.parseLong(_endDate)))
@@ -93,9 +90,9 @@ public class ActivitySummaryExporterServlet extends HttpServlet {
 					.setItMP(Boolean.parseBoolean(_itMaternity))
 					.setItOT(Boolean.parseBoolean(_itOther))
 					;
-
-			List<ActivitySummaryObject> list = JooqActivitySummary.getActivitySummary(params);
-
+			
+			List<ActivitySummaryObject> list = JooqActivitySummary.getActivitySummary(connection, domainId, parentDomainId, userId, params);
+			
 			String fileName = "resumen_actividad";
 			dateFormatter.applyPattern("yyyy/MM/dd");
 			response.setContentType(MimeType.MIME_MS_EXCEL_2007.getName());
@@ -103,7 +100,7 @@ public class ActivitySummaryExporterServlet extends HttpServlet {
 					+ fileName + ".xls\"");
 			ServletOutputStream output = response.getOutputStream();
 
-			if (!excelReport(output, list, params.isParent())) {
+			if (!excelReport(output, list, parentDomainId == null)) {
 				AonUtil.addErrorMessage("No existen datos para generar el informe.");
 			}
 
@@ -113,6 +110,8 @@ public class ActivitySummaryExporterServlet extends HttpServlet {
 		} catch (IOException e) {
 			throw new IllegalArgumentException(e.getMessage(), e);
 		} catch (AonConnectionException e) {
+			throw new IllegalArgumentException(e.getMessage(), e);
+		} catch (SQLException e) {
 			throw new IllegalArgumentException(e.getMessage(), e);
 		}
 	}

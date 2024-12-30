@@ -267,9 +267,7 @@ public class ActivitySummary extends AonCustomDockLayout {
 		excelExport = new AonToolbarButton("Exportar Excel", AON.CSS.aonIconExcel());
 		excelExport.addClickHandler(e -> {
 			String fileDownloadURL = GWT.getModuleBaseURL()+ "/download_activitySummary/"
-	            + "?domainId=" + domain.getId()
-	            + "&domainName=" + domain.getName()
-	            + "&parentDomainId=" + domain.getParentId()
+	            + "?domainName=" + Wnd.getCurrentDomainNameURL()
 	            + "&user=" + Wnd.getCurrentUser()
 		        + "&startDate=" + start.getValue().getTime()
 		        + "&endDate=" + end.getValue().getTime()

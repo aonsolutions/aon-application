@@ -182,6 +182,14 @@ public class JooqActivitySummary {
 			select.and(getStartCondition(AonDateUtils.toSql(params.getStart()), AonDateUtils.toSql(params.getEnd()), params.isStartContract()));
 		else if(params.isEndContract())
 			select.and(getEndCondition(AonDateUtils.toSql(params.getStart()), AonDateUtils.toSql(params.getEnd()), params.isEndContract()));
+		else 
+			select.and(
+					CONTRACT.START_DATE.le(AonDateUtils.toSql(params.getEnd()))
+					.and(
+							CONTRACT.END_DATE.isNull()
+							.or(CONTRACT.END_DATE.ge(AonDateUtils.toSql(params.getStart())))
+					)
+			);
 		
 		if(AonStringUtils.isNotBlank(params.getDescription()))
 			select.and(REGISTRY.NAME.like("%" + params.getDescription() + "%"));
