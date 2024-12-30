@@ -211,6 +211,9 @@ public class Certificado {
 //				    }
 			}
 
+			if(null == hrefButton)
+				 throw new SepeException("Algo ha ido mal, por favor póngase en contacto con soporte. Es probable que el Sepe este temporalmente deshabilitado.");
+			
 			htmlPage = (HtmlPage) hrefButton.click();
 
 			{// DATA ENTERPRISE
