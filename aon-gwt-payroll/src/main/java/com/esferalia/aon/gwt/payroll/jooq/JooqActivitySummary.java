@@ -19,89 +19,95 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.jooq.Condition;
+import org.jooq.DSLContext;
 import org.jooq.Record5;
 import org.jooq.Record7;
 import org.jooq.Result;
 import org.jooq.SelectConditionStep;
+import org.jooq.conf.Settings;
 import org.jooq.impl.DSL;
 
-import com.esferalia.aon.gwt.common.server.AonServletUtils;
 import com.esferalia.aon.gwt.payroll.shared.ActivitySummaryObject;
 import com.esferalia.aon.gwt.payroll.shared.ActivitySummaryParams;
-import com.esferalia.aon.occam.api.AONContext;
-import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.esferalia.aon.payroll.enumeration.LeaveType;
 import com.esferalia.aon.salary.enumeration.SalaryType;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class JooqActivitySummary {
-
-	public static List<ActivitySummaryObject> getActivitySummary(ActivitySummaryParams params) {
-
-		if (params.getDomain() != null && params.getStart() != null && params.getEnd() != null) {
-			
-			try (Connection connection = AonServletUtils.getConnection(params.getDomain().getName());
-					CloseableAONContext ctx = AONContext.getAONContext(params.getDomain().getName(), params.getDomain().getId(), params.getUser());) {
-				
-				Integer userId = AonServletUtils.getUserID(connection, params.getUser(), params.getDomain().getId(), params.getDomain().getParentId());
-			
-				Map<Integer, ActivitySummaryObject> summaryMap = null;
-				Map<Integer, ActivitySummaryObject> salaryMap = null;
-				Map<Integer, ActivitySummaryObject> itMap = null;
-				
-				if (params.isParent()) {
-					try {
-						Integer[] childDomains = null;
-						
-						if(null != userId)
-							childDomains = getChildDomainIDs(ctx, params.getDomain().getId(), userId);
-						else
-							childDomains = getChildDomainIDs(ctx, params.getDomain().getId(), null);
-						
-						summaryMap = getSummaryEnterprise(ctx, params, childDomains);
-						salaryMap = getSummaryEnterpriseSalary(ctx, params, childDomains);
-						itMap = getSummaryEnterpriseIT(ctx, params, childDomains);
-						
-					} catch (SQLException e) {
-						throw new IllegalArgumentException(e.getMessage());
-					}
-				} else {
-					summaryMap = getSummaryEmployee(ctx, params);
-					salaryMap = getSummaryEmployeeSalary(ctx, params);
-					itMap = getSummaryEmployeeIT(ctx, params);
-				}
-				
-				fillMapData(summaryMap, salaryMap);
-				fillMapData(summaryMap, itMap);
-
-				return new ArrayList<>(summaryMap
-						.values()
-						.stream()
-						.sorted((o1, o2) -> o1.getFullname().compareTo(
-								o2.getFullname())).collect(Collectors.toList()));
-			} catch (Exception e) {
-				throw new IllegalArgumentException(e);
-			}
+	
+	private static Settings SETTINGS = null;
+	
+	protected static Settings getDefaultSettings() {
+		if (SETTINGS == null) {
+			SETTINGS = new Settings();
+			SETTINGS.setRenderSchema(false);
 		}
+		return SETTINGS;
+	}
+	
+	public static List<ActivitySummaryObject> getActivitySummary(Connection connection, Integer domainId, Integer parentDomainId, Integer userId, ActivitySummaryParams params) {
+		
+		DSLContext dslContext = DSL.using(connection, getDefaultSettings());
+
+		if (params.getStart() != null && params.getEnd() != null) {
+			Map<Integer, ActivitySummaryObject> summaryMap = null;
+			Map<Integer, ActivitySummaryObject> salaryMap = null;
+			Map<Integer, ActivitySummaryObject> itMap = null;
+			
+			if (parentDomainId == null && params.getChildomain() == null) {
+				try {
+					Integer[] childDomains = null;
+					
+					if(null != userId)
+						childDomains = getChildDomainIDs(dslContext, domainId, userId);
+					else
+						childDomains = getChildDomainIDs(dslContext, domainId, null);
+					
+					summaryMap = getSummaryEnterprise(dslContext, params, childDomains);
+					salaryMap = getSummaryEnterpriseSalary(dslContext, params, childDomains);
+					itMap = getSummaryEnterpriseIT(dslContext, params, childDomains);
+					
+				} catch (SQLException e) {
+					throw new IllegalArgumentException(e.getMessage());
+				}
+			} else {
+				
+				if(params.getChildomain() == null) params.setChildomain(domainId);
+				summaryMap = getSummaryEmployee(dslContext, params, params.getChildomain());
+				salaryMap = getSummaryEmployeeSalary(dslContext, params, params.getChildomain());
+				itMap = getSummaryEmployeeIT(dslContext, params, params.getChildomain());
+			
+			}
+			
+			fillMapData(summaryMap, salaryMap);
+			fillMapData(summaryMap, itMap);
+
+			return new ArrayList<>(summaryMap
+					.values()
+					.stream()
+					.sorted((o1, o2) -> o1.getFullname().compareTo(
+							o2.getFullname())).collect(Collectors.toList()));
+		}
+		
 		return new ArrayList<>();
 	}
 
-	public static Integer[] getChildDomainIDs(AONContext aonContext, Integer domain, Integer userId) throws SQLException {
-		List<Integer> userScopes = aonContext.getDslContext()
+	public static Integer[] getChildDomainIDs(DSLContext dslContext, Integer domain, Integer userId) throws SQLException {
+		List<Integer> userScopes = dslContext
 				.select(USER_SCOPE.SCOPE).from(USER_SCOPE)
 				.where(USER_SCOPE.USER_ID.eq(userId))
 				.fetch(USER_SCOPE.SCOPE);
 		
 		if(userScopes.isEmpty())
-			return  aonContext.getDslContext()
+			return  dslContext
 					.select()
 					.from(DOMAIN)
 					.where(DOMAIN.PARENT.eq(domain))
 					.fetchArray(DOMAIN.ID);
 			
 		else
-			return  aonContext.getDslContext()
+			return  dslContext
 					.select()
 					.from(DOMAIN)
 					.where(DOMAIN.PARENT.eq(domain))
@@ -156,9 +162,8 @@ public class JooqActivitySummary {
 						});
 	}
 
-	private static Map<Integer, ActivitySummaryObject> getSummaryEmployee(CloseableAONContext ctx, ActivitySummaryParams params) {
-		SelectConditionStep<Record7<String, String, String, java.sql.Date, java.sql.Date, Integer, String>> select = ctx
-				.getDslContext()
+	private static Map<Integer, ActivitySummaryObject> getSummaryEmployee(DSLContext dslContext, ActivitySummaryParams params, Integer domainId) {
+		SelectConditionStep<Record7<String, String, String, java.sql.Date, java.sql.Date, Integer, String>> select = dslContext
 				.select(PERSON.NAME, PERSON.FIRST_SURNAME,
 						PERSON.SECOND_SURNAME, CONTRACT.START_DATE,
 						CONTRACT.END_DATE, CONTRACT.ID, REGISTRY.NAME)
@@ -166,7 +171,7 @@ public class JooqActivitySummary {
 						.on(CONTRACT.PERSON.eq(PERSON.REGISTRY))
 						.leftOuterJoin(REGISTRY)
 						.on(REGISTRY.ID.eq(PERSON.REGISTRY)))
-				.where(CONTRACT.DOMAIN.eq(params.getDomain().getId()));
+				.where(CONTRACT.DOMAIN.eq(domainId));
 		
 		if(params.isStartContract() && params.isEndContract())
 			select.and(
@@ -177,6 +182,14 @@ public class JooqActivitySummary {
 			select.and(getStartCondition(AonDateUtils.toSql(params.getStart()), AonDateUtils.toSql(params.getEnd()), params.isStartContract()));
 		else if(params.isEndContract())
 			select.and(getEndCondition(AonDateUtils.toSql(params.getStart()), AonDateUtils.toSql(params.getEnd()), params.isEndContract()));
+		else 
+			select.and(
+					CONTRACT.START_DATE.le(AonDateUtils.toSql(params.getEnd()))
+					.and(
+							CONTRACT.END_DATE.isNull()
+							.or(CONTRACT.END_DATE.ge(AonDateUtils.toSql(params.getStart())))
+					)
+			);
 		
 		if(AonStringUtils.isNotBlank(params.getDescription()))
 			select.and(REGISTRY.NAME.like("%" + params.getDescription() + "%"));
@@ -204,10 +217,9 @@ public class JooqActivitySummary {
 		return map;
 	}
 
-	private static Map<Integer, ActivitySummaryObject> getSummaryEnterprise(CloseableAONContext ctx, ActivitySummaryParams params, Integer[] childDomainIds) {
+	private static Map<Integer, ActivitySummaryObject> getSummaryEnterprise(DSLContext dslContext, ActivitySummaryParams params, Integer[] childDomainIds) {
 
-		SelectConditionStep<Record5<Integer, String, String, BigDecimal, BigDecimal>> select = ctx
-				.getDslContext()
+		SelectConditionStep<Record5<Integer, String, String, BigDecimal, BigDecimal>> select = dslContext
 				.select(DOMAIN.ID,
 						DOMAIN.NAME,
 						DOMAIN.DESCRIPTION,
@@ -261,9 +273,8 @@ public class JooqActivitySummary {
 
 	}
 
-	private static Map<Integer, ActivitySummaryObject> getSummaryEmployeeSalary(CloseableAONContext ctx, ActivitySummaryParams params) {
-		Result<Record5<Integer, BigDecimal, BigDecimal, BigDecimal, BigDecimal>> result = ctx
-				.getDslContext()
+	private static Map<Integer, ActivitySummaryObject> getSummaryEmployeeSalary(DSLContext dslContext, ActivitySummaryParams params, Integer domainId) {
+		Result<Record5<Integer, BigDecimal, BigDecimal, BigDecimal, BigDecimal>> result = dslContext
 				.select(CONTRACT.ID,
 						DSL.sum(DSL.field(
 								SALARY.TYPE.eq((byte) SalaryType.SALARY
@@ -285,7 +296,7 @@ public class JooqActivitySummary {
 				.and(SALARY.ISSUE_DATE.between(
 						AonDateUtils.toSql(params.getStart()),
 						AonDateUtils.toSql(params.getEnd())))
-				.and(CONTRACT.DOMAIN.eq(params.getDomain().getId()))
+				.and(CONTRACT.DOMAIN.eq(domainId))
 				.and(getSalaryCondition(params))
 				.groupBy(CONTRACT.ID)
 				.orderBy(CONTRACT.ID.desc(), CONTRACT.START_DATE.desc())
@@ -309,10 +320,9 @@ public class JooqActivitySummary {
 		return map;
 	}
 
-	private static Map<Integer, ActivitySummaryObject> getSummaryEnterpriseSalary(CloseableAONContext ctx, ActivitySummaryParams params, Integer[] childDomainIds) {
+	private static Map<Integer, ActivitySummaryObject> getSummaryEnterpriseSalary(DSLContext dslContext, ActivitySummaryParams params, Integer[] childDomainIds) {
 
-		Result<Record5<Integer, BigDecimal, BigDecimal, BigDecimal, BigDecimal>> result = ctx
-				.getDslContext()
+		Result<Record5<Integer, BigDecimal, BigDecimal, BigDecimal, BigDecimal>> result = dslContext
 				.select(DOMAIN.ID,
 						DSL.sum(DSL.field(
 								SALARY.TYPE.eq((byte) SalaryType.SALARY
@@ -354,9 +364,8 @@ public class JooqActivitySummary {
 
 	}
 
-	private static Map<Integer, ActivitySummaryObject> getSummaryEmployeeIT(CloseableAONContext ctx, ActivitySummaryParams params) {
-		Result<Record5<Integer, BigDecimal, BigDecimal, BigDecimal, BigDecimal>> result = ctx
-				.getDslContext()
+	private static Map<Integer, ActivitySummaryObject> getSummaryEmployeeIT(DSLContext dslContext, ActivitySummaryParams params, Integer domainId) {
+		Result<Record5<Integer, BigDecimal, BigDecimal, BigDecimal, BigDecimal>> result = dslContext
 				.select(CONTRACT.ID,
 						DSL.sum(DSL.field(
 								CONTRACT_LEAVE.TYPE
@@ -395,7 +404,7 @@ public class JooqActivitySummary {
 				.where(CONTRACT_LEAVE.START_DATE.le(AonDateUtils.toSql(params.getEnd())))
 				.and((CONTRACT_LEAVE.END_DATE.isNull()
 						.or(CONTRACT_LEAVE.END_DATE.ge(AonDateUtils.toSql(params.getStart())))))
-				.and(CONTRACT.DOMAIN.eq(params.getDomain().getId()))
+				.and(CONTRACT.DOMAIN.eq(domainId))
 				.and(getItCondition(params))
 				.groupBy(CONTRACT.ID)
 				.orderBy(CONTRACT.ID.desc(), CONTRACT.START_DATE.desc())
@@ -420,9 +429,8 @@ public class JooqActivitySummary {
 		return map;
 	}
 
-	private static Map<Integer, ActivitySummaryObject> getSummaryEnterpriseIT(CloseableAONContext ctx, ActivitySummaryParams params, Integer[] childDomainIds) {
-		Result<Record5<Integer, BigDecimal, BigDecimal, BigDecimal, BigDecimal>> result = ctx
-				.getDslContext()
+	private static Map<Integer, ActivitySummaryObject> getSummaryEnterpriseIT(DSLContext dslContext, ActivitySummaryParams params, Integer[] childDomainIds) {
+		Result<Record5<Integer, BigDecimal, BigDecimal, BigDecimal, BigDecimal>> result = dslContext
 				.select(DOMAIN.ID,
 						DSL.sum(DSL.field(
 								CONTRACT_LEAVE.TYPE

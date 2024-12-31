@@ -9,7 +9,7 @@ import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 
 @RemoteServiceRelativePath("activity_summary")
 public interface ActivitySummaryService extends RemoteService {
-
-	List<ActivitySummaryObject> getActivitySummary(ActivitySummaryParams params) throws IllegalArgumentException;
+	
+	List<ActivitySummaryObject> getActivitySummary(String domain, String user, ActivitySummaryParams params) throws IllegalArgumentException;
 
 }

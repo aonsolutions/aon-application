@@ -35,7 +35,6 @@ import com.esferalia.aon.gwt.payroll.shared.EmployeeContractInfo;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeSegSocial;
 import com.esferalia.aon.gwt.payroll.shared.Enterprise;
 import com.esferalia.aon.gwt.payroll.shared.EnterpriseContext;
-import com.esferalia.aon.gwt.payroll.shared.EnterpriseITStatus;
 import com.esferalia.aon.gwt.payroll.shared.EnterpriseITStatus.ItNotExist;
 import com.esferalia.aon.gwt.payroll.shared.EnterpriseStatus;
 import com.esferalia.aon.gwt.payroll.shared.Extra;
@@ -73,11 +72,8 @@ public class DomainEnterprisesServiceAsync {
 	private EnterprisesServiceAsync enterprisesServiceAsync;
 	
 	public static DomainEnterprisesServiceAsync newInstance() {
-		EnterprisesServiceAsync enterprisesServiceASync = GWT
-				.create(EnterprisesService.class);
-		EnterprisesServiceAsync enterprisesServiceAsyncDecorator = 
-				new EnterprisesServiceAsyncDecorator(
-				enterprisesServiceASync);
+		EnterprisesServiceAsync enterprisesServiceASync = GWT.create(EnterprisesService.class);
+		EnterprisesServiceAsync enterprisesServiceAsyncDecorator = new EnterprisesServiceAsyncDecorator(enterprisesServiceASync);
 		return new DomainEnterprisesServiceAsync(enterprisesServiceAsyncDecorator);
 	}
 
@@ -274,12 +270,12 @@ public class DomainEnterprisesServiceAsync {
 		enterprisesServiceAsync.getMinMaxCraDate(getCurrentDomainName(), getCurrentUser(), asyncCallback);
 	}
 	
-	public void createNewCRA(long findingDate, List<String> cccList, ArrayList<Integer> cccIdList, Integer cccId, String type, AsyncCallback<Void> asyncCallback) throws IllegalArgumentException {
-		enterprisesServiceAsync.createNewCRA(getCurrentDomainName(), getCurrentUser(), findingDate, cccList, cccIdList, cccId, type, asyncCallback);
+	public void createNewCRA(long findingDate, HashMap<Integer, String> cccs, Integer cccId, String type, AsyncCallback<Void> asyncCallback) throws IllegalArgumentException {
+		enterprisesServiceAsync.createNewCRA(getCurrentDomainName(), getCurrentUser(), findingDate, cccs, cccId, type, asyncCallback);
 	}
 	
-	public void checkCreateNewCRA(long findingDate, ArrayList<Integer> cccList, AsyncCallback<Void> asyncCallback) throws IllegalArgumentException {
-		enterprisesServiceAsync.checkCreateNewCRA(getCurrentDomainName(), findingDate, cccList, asyncCallback);
+	public void checkCreateNewCRA(long findingDate, HashMap<Integer, String> cccs, AsyncCallback<Void> asyncCallback) throws IllegalArgumentException {
+		enterprisesServiceAsync.checkCreateNewCRA(getCurrentDomainName(), findingDate, cccs, asyncCallback);
 	}
 	
 	public void deleteCRA(Integer code, AsyncCallback<Void> asyncCallback) {

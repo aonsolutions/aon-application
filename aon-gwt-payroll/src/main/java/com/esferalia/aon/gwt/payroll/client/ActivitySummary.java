@@ -113,8 +113,8 @@ public class ActivitySummary extends AonCustomDockLayout {
 	
 	private final DateTimeFormat formatDate = DateTimeFormat.getFormat("dd/MM/yyyy");
 	
-	private final ActivitySummaryServiceAsync impl = GWT.create(ActivitySummaryService.class);
-	private final EnterprisesServiceAsync service = GWT.create(EnterprisesService.class);
+	private final DomainActivitySumaryServiceAsync impl = DomainActivitySumaryServiceAsync.newInstance();
+	private final DomainEnterprisesServiceAsync service = DomainEnterprisesServiceAsync.newInstance();
 
 	private Domain domain = null;
 	
@@ -223,7 +223,7 @@ public class ActivitySummary extends AonCustomDockLayout {
 
 		add(container);
 		
-		service.getDomain(Wnd.getCurrentDomainNameURL(), Wnd.getCurrentUser(), new AsyncCallback<Domain>() {
+		service.getDomainDetails(new AsyncCallback<Domain>() {
 			
 			@Override
 			public void onSuccess(Domain domainDB) {
@@ -267,9 +267,7 @@ public class ActivitySummary extends AonCustomDockLayout {
 		excelExport = new AonToolbarButton("Exportar Excel", AON.CSS.aonIconExcel());
 		excelExport.addClickHandler(e -> {
 			String fileDownloadURL = GWT.getModuleBaseURL()+ "/download_activitySummary/"
-	            + "?domainId=" + domain.getId()
-	            + "&domainName=" + domain.getName()
-	            + "&parentDomainId=" + domain.getParentId()
+	            + "?domainName=" + Wnd.getCurrentDomainNameURL()
 	            + "&user=" + Wnd.getCurrentUser()
 		        + "&startDate=" + start.getValue().getTime()
 		        + "&endDate=" + end.getValue().getTime()
@@ -436,8 +434,6 @@ public class ActivitySummary extends AonCustomDockLayout {
 	
 	private void getActivitySummaryParams() {
 		this.params = new ActivitySummaryParams()
-				.setDomain(domain)
-				.setUser(Wnd.getCurrentUser())
 				.setDescription(getSearchTextBox().getValue())
 				.setStart(start.getValue())
 				.setEnd(end.getValue())
@@ -457,60 +453,47 @@ public class ActivitySummary extends AonCustomDockLayout {
 	}
 	
 	private void openChildsDialog(String enterpriseName, ActivitySummaryObject enterpriseSummary) {
-		service.getDomain(enterpriseSummary.getNameUrl(), Wnd.getCurrentUser(), new AsyncCallback<Domain>() {
-			
-			@Override
-			public void onSuccess(Domain domainDB) {
-				ActivitySummaryParams params = new ActivitySummaryParams()
-						.setDomain(domainDB)
-						.setUser(Wnd.getCurrentUser())
-						.setDescription(AonStringUtils.EMPTY)
-						.setStart(start.getValue())
-						.setEnd(end.getValue())
-						.setStartContract(contractType.getSelectedOptions().contains("Altas"))
-						.setEndContract(contractType.getSelectedOptions().contains("Bajas"))
-						.setSalary(salaryType.getSelectedOptions().contains("Nomina"))
-						.setExtra(salaryType.getSelectedOptions().contains("Extra"))
-						.setSettle(salaryType.getSelectedOptions().contains("Finiquito"))
-						.setDelay(salaryType.getSelectedOptions().contains("Atrasos"))
-						.setItCD(itType.getSelectedOptions().contains("IT EC/AN"))
-						.setItOD(itType.getSelectedOptions().contains("IT AT/EP"))
-						.setItMP(itType.getSelectedOptions().contains("IT M/P"))
-						.setItOT(itType.getSelectedOptions().contains("IT Otros"))
-//						.setOrderBy(sort.getValue())
-//						.setAsc(Boolean.parseBoolean(asc.getValue()))
-						;
-				
-				getList(params, activitySummaries -> {
-					SimpleLayoutPanel centerPanel = new SimpleLayoutPanel();
-					centerPanel.setHeight("20rem");
-					centerPanel.getElement().getStyle().setProperty("margin", "1rem");
-					
-					AonCustomTable tab = new AonCustomTable();
-					ScrollPanel tableScrollPanel = new ScrollPanel(tab);
-					
-					paintHeader(tab, false);
-					activitySummaries.forEach(activitySummary -> paintRow(tab, activitySummary, false));
-					paintFooter(tab, activitySummaries, false);
-					
-					centerPanel.setWidget(tableScrollPanel);
-					
-					AonCustomDialog dialog = new AonCustomDialog();
-					dialog.showCloseButton(true);
-					dialog.setCaption(enterpriseName );
-					dialog.setHeight("25rem");
-					dialog.setWidth("75rem");
-					dialog.add( centerPanel );
-					dialog.showLoaded();
-				});
-			}
-
-			@Override
-			public void onFailure(Throwable caught) {
-				AonMessagePanel.showError(messagePanel, "Get Domain : " + caught.getMessage());
-			}
-		});
+		ActivitySummaryParams params = new ActivitySummaryParams()
+				.setChildomain(enterpriseSummary.getId())
+				.setDescription(AonStringUtils.EMPTY)
+				.setStart(start.getValue())
+				.setEnd(end.getValue())
+				.setStartContract(contractType.getSelectedOptions().contains("Altas"))
+				.setEndContract(contractType.getSelectedOptions().contains("Bajas"))
+				.setSalary(salaryType.getSelectedOptions().contains("Nomina"))
+				.setExtra(salaryType.getSelectedOptions().contains("Extra"))
+				.setSettle(salaryType.getSelectedOptions().contains("Finiquito"))
+				.setDelay(salaryType.getSelectedOptions().contains("Atrasos"))
+				.setItCD(itType.getSelectedOptions().contains("IT EC/AN"))
+				.setItOD(itType.getSelectedOptions().contains("IT AT/EP"))
+				.setItMP(itType.getSelectedOptions().contains("IT M/P"))
+				.setItOT(itType.getSelectedOptions().contains("IT Otros"))
+//				.setOrderBy(sort.getValue())
+//				.setAsc(Boolean.parseBoolean(asc.getValue()))
+				;
 		
+		getList(params, activitySummaries -> {
+			SimpleLayoutPanel centerPanel = new SimpleLayoutPanel();
+			centerPanel.setHeight("20rem");
+			centerPanel.getElement().getStyle().setProperty("margin", "1rem");
+			
+			AonCustomTable tab = new AonCustomTable();
+			ScrollPanel tableScrollPanel = new ScrollPanel(tab);
+			
+			paintHeader(tab, false);
+			activitySummaries.forEach(activitySummary -> paintRow(tab, activitySummary, false));
+			paintFooter(tab, activitySummaries, false);
+			
+			centerPanel.setWidget(tableScrollPanel);
+			
+			AonCustomDialog dialog = new AonCustomDialog();
+			dialog.showCloseButton(true);
+			dialog.setCaption(enterpriseName );
+			dialog.setHeight("25rem");
+			dialog.setWidth("75rem");
+			dialog.add( centerPanel );
+			dialog.showLoaded();
+		});
 	}
 
 	private void getList(ActivitySummaryParams params, Consumer<List<ActivitySummaryObject>> success) {

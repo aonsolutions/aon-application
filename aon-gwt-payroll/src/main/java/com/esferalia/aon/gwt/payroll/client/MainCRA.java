@@ -432,7 +432,7 @@ public class MainCRA extends MainEntryPoint {
 
 		creationColumn.setSortable(true);
 		creationColumn.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
-		crasDataGrid.setColumnWidth(creationColumn, 15, Unit.PCT);
+		crasDataGrid.setColumnWidth(creationColumn, 8, Unit.PCT);
 
 		TextColumn<CRA> periodColumn = new TextColumn<CRA>() {
 			@Override
@@ -443,7 +443,17 @@ public class MainCRA extends MainEntryPoint {
 
 		periodColumn.setSortable(true);
 		periodColumn.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
-		crasDataGrid.setColumnWidth(periodColumn, 10, Unit.PCT);
+		crasDataGrid.setColumnWidth(periodColumn, 8, Unit.PCT);
+		
+		TextColumn<CRA> enterpriseNameColumn = new TextColumn<CRA>() {
+			@Override
+			public String getValue(CRA cra) {
+				return cra.getEnterpriseName();
+			}
+		};
+
+		enterpriseNameColumn.setSortable(true);
+		crasDataGrid.setColumnWidth(enterpriseNameColumn, 20, Unit.PCT);
 
 		TextColumn<CRA> activityNameColumn = new TextColumn<CRA>() {
 			@Override
@@ -453,7 +463,7 @@ public class MainCRA extends MainEntryPoint {
 		};
 
 		activityNameColumn.setSortable(true);
-		crasDataGrid.setColumnWidth(activityNameColumn, 25, Unit.PCT);
+		crasDataGrid.setColumnWidth(activityNameColumn, 20, Unit.PCT);
 
 		TextColumn<CRA> rectificativeColumn = new TextColumn<CRA>() {
 			@Override
@@ -464,7 +474,7 @@ public class MainCRA extends MainEntryPoint {
 
 		rectificativeColumn.setSortable(true);
 		rectificativeColumn.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
-		crasDataGrid.setColumnWidth(rectificativeColumn, 10, Unit.PCT);
+		crasDataGrid.setColumnWidth(rectificativeColumn, 8, Unit.PCT);
 
 		TextColumn<CRA> geozoneColumn = new TextColumn<CRA>() {
 			@Override
@@ -487,7 +497,7 @@ public class MainCRA extends MainEntryPoint {
 
 		typeColumn.setSortable(true);
 		typeColumn.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
-		crasDataGrid.setColumnWidth(typeColumn, 15, Unit.PCT);
+		crasDataGrid.setColumnWidth(typeColumn, 10, Unit.PCT);
 
 		TextColumn<CRA> cccColumn = new TextColumn<CRA>() {
 			@Override
@@ -528,7 +538,7 @@ public class MainCRA extends MainEntryPoint {
 		};
 
 		infoColumn.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_RIGHT);
-		crasDataGrid.setColumnWidth(infoColumn, 5, Unit.PCT);
+		crasDataGrid.setColumnWidth(infoColumn, 4, Unit.PCT);
 
 		ActionCell<CRA> downloadActionCell = new ActionCell<>("", cra -> {
 			String fileDownloadURL = GWT.getModuleBaseURL() + "/download_cra/" + "?craBatchId=" + cra.getCode();
@@ -551,7 +561,7 @@ public class MainCRA extends MainEntryPoint {
 		};
 
 		downloadColumn.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_RIGHT);
-		crasDataGrid.setColumnWidth(downloadColumn, 5, Unit.PCT);
+		crasDataGrid.setColumnWidth(downloadColumn, 4, Unit.PCT);
 
 		ActionCell<CRA> deleteActionCell = new ActionCell<>("", cra -> {
 			AonDialog dialog = new AonDialog("Eliminaci\u00f3n CRA",
@@ -596,11 +606,12 @@ public class MainCRA extends MainEntryPoint {
 		};
 
 		deleteColumn.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_RIGHT);
-		crasDataGrid.setColumnWidth(deleteColumn, 5, Unit.PCT);
+		crasDataGrid.setColumnWidth(deleteColumn, 4, Unit.PCT);
 
 		// Add the columns.
 		crasDataGrid.addColumn(creationColumn, "F. Creacion");
 		crasDataGrid.addColumn(periodColumn, "P. Liquidacion");
+		crasDataGrid.addColumn(enterpriseNameColumn, "Empresa");
 		crasDataGrid.addColumn(activityNameColumn, "Actividad");
 
 		crasDataGrid.addColumn(rectificativeColumn, "Tipo CRA");
@@ -1075,12 +1086,10 @@ public class MainCRA extends MainEntryPoint {
 
 	private void onExportButton() {
 		if (!selectionCCCInfoModel.getSelectedSet().isEmpty()) {
-			ArrayList<String> cccList = new ArrayList<>();
-			ArrayList<Integer> cccIdList = new ArrayList<>();
-
+			
+			HashMap<Integer, String> cccs = new HashMap<Integer, String>();
 			for (CCCInfo cccInfo : selectionCCCInfoModel.getSelectedSet()) {
-				cccList.add(cccInfo.getCcc());
-				cccIdList.add(cccInfo.getCccId());
+				cccs.put(cccInfo.getCccId(), cccInfo.getCcc());
 			}
 
 			ArrayList<CCCInfo> cccsSelected = new ArrayList<>();
@@ -1112,8 +1121,8 @@ public class MainCRA extends MainEntryPoint {
 
 						@Override
 						public void onAccept() {
-							mainCRAObjectNew.checkCreateNewCRA(findingDate, cccIdList, p -> {
-								createNewCRA(cccsSelected, cccList, cccIdList, cccId);
+							mainCRAObjectNew.checkCreateNewCRA(findingDate, cccs, p -> {
+								createNewCRA(cccsSelected, cccs, cccId);
 							}, noSalariesMessage -> {
 								
 								AonDialog dialog = new AonDialog("AVISO: CRA",
@@ -1129,7 +1138,7 @@ public class MainCRA extends MainEntryPoint {
 
 									@Override
 									public void onAccept() {
-										createNewCRARectificative(cccsSelected, cccList, selectedCCCIdList, cccId);
+										createNewCRARectificative(cccsSelected, cccs, cccId);
 									}
 								});
 							});
@@ -1137,8 +1146,8 @@ public class MainCRA extends MainEntryPoint {
 					});
 
 				} else {
-					mainCRAObjectNew.checkCreateNewCRA(findingDate, cccIdList, p -> {
-						createNewCRA(cccsSelected, cccList, cccIdList, cccId);
+					mainCRAObjectNew.checkCreateNewCRA(findingDate, cccs, p -> {
+						createNewCRA(cccsSelected, cccs, cccId);
 					}, noSalariesMessage -> {
 						
 						AonDialog dialog = new AonDialog("AVISO: CRA",
@@ -1154,7 +1163,7 @@ public class MainCRA extends MainEntryPoint {
 
 							@Override
 							public void onAccept() {
-								createNewCRA(cccsSelected, cccList, cccIdList, cccId);
+								createNewCRA(cccsSelected, cccs, cccId);
 							}
 						});
 					});
@@ -1164,9 +1173,9 @@ public class MainCRA extends MainEntryPoint {
 		}
 	}
 
-	public void createNewCRA(ArrayList<CCCInfo> cccsSelected, ArrayList<String> cccList, ArrayList<Integer> cccIdList, Integer cccId) {
+	public void createNewCRA(ArrayList<CCCInfo> cccsSelected, HashMap<Integer, String> cccs, Integer cccId) {
 		showLoading("Generando CRA...");
-		mainCRAObjectNew.createNewCRA(findingDate, cccList, cccIdList, cccId, "N", v -> {
+		mainCRAObjectNew.createNewCRA(findingDate, cccs, cccId, "N", v -> {
 			showSuccess("CRA", "CRA generado correctamente");
 			
 			onListCras();
@@ -1175,9 +1184,9 @@ public class MainCRA extends MainEntryPoint {
 		});
 	}
 
-	public void createNewCRARectificative(ArrayList<CCCInfo> cccsSelected, ArrayList<String> cccList, ArrayList<Integer> cccIdList, Integer cccId) {
+	public void createNewCRARectificative(ArrayList<CCCInfo> cccsSelected, HashMap<Integer, String> cccs, Integer cccId) {
 		showLoading("Generando CRA Rectificativo...");
-		mainCRAObjectNew.createNewCRA(findingDate, cccList, cccIdList, cccId, "R", v -> {
+		mainCRAObjectNew.createNewCRA(findingDate, cccs, cccId, "R", v -> {
 			showSuccess("CRA", "CRA Rectificativo generado correctamente");
 			showInfo("INTRUCCIONES: CRA Rectificativo",
 					"Debe enviar el CRA rectificativo que se ha generado en el historial de CRAs rectificativos, para anular el anterior y actualizar la informacion.");

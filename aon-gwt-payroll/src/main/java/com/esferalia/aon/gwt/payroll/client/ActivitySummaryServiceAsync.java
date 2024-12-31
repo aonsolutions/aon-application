@@ -8,6 +8,6 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public interface ActivitySummaryServiceAsync {
 	
-	void getActivitySummary(ActivitySummaryParams params, AsyncCallback<List<ActivitySummaryObject>> callback) throws IllegalArgumentException;
+	void getActivitySummary(String domain, String user, ActivitySummaryParams params, AsyncCallback<List<ActivitySummaryObject>> callback) throws IllegalArgumentException;
 
 }
