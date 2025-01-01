@@ -29,6 +29,7 @@ import com.esferalia.aon.gwt.payroll.shared.EmployeeInfo;
 import com.esferalia.aon.gwt.payroll.shared.IT;
 import com.esferalia.aon.gwt.payroll.shared.ITEmployee;
 import com.esferalia.aon.gwt.payroll.shared.ITPart;
+import com.esferalia.aon.gwt.payroll.shared.ItParams;
 import com.esferalia.aon.occam.api.model.type.ContractLeaveDetailStatus;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.cell.client.Cell.Context;
@@ -78,7 +79,7 @@ import com.google.gwt.view.client.SelectionChangeEvent.Handler;
 
 public abstract class ITDialog extends AonCustomDialog {
     
-    	private static final String COVID_IT = "8";
+    private static final String COVID_IT = "8";
 
 	private static Date COVID_END_DATE = AonDateUtils.parse("dd/MM/yyyy", "25/07/2023");
 	
@@ -260,6 +261,8 @@ public abstract class ITDialog extends AonCustomDialog {
 
 	private AonToolbar toolbarDetail;
 	
+	private final DomainEnterprisesServiceAsync impl = DomainEnterprisesServiceAsync.newInstance();
+	
 	// --------------------------------------------------- ProvideITDataGrid
 	
 	private void provideITDataGrid() {
@@ -381,6 +384,28 @@ public abstract class ITDialog extends AonCustomDialog {
 	
 	public ITDialog(String typeCaption) {	
 		String caption = "Parte IT / " + typeCaption;
+		
+		ItParams params = new ItParams()
+				.setOffset(0)
+				.setLimit(Integer.MAX_VALUE);
+		
+		names.clear();
+			
+		impl.getEmployeeItList(params, new AsyncCallback<List<ITEmployee>>() {
+			
+			@Override
+			public void onSuccess(List<ITEmployee> result) {
+				itEmployeeList = Collections.emptyList();
+				itEmployeeList = result;
+				
+				for(ITEmployee itEmployee : itEmployeeList) 
+					names.add(itEmployee.getContractSuggestion());
+			}
+			
+			@Override
+			public void onFailure(Throwable caught) {}
+		});
+		
 		onModuleLoad(caption);
 		createITToolbar();
 		createFooterButtons();
@@ -687,18 +712,10 @@ public abstract class ITDialog extends AonCustomDialog {
 	// --------------------------------------------------- setEmployeesList (on new it)
 	
 	public void setEmployeesList(List<ITEmployee> itEmployeeListIn) {
-		itEmployeeList = Collections.emptyList();
-		itEmployeeList = itEmployeeListIn;
-		
 		SuggestBox employeeSB = new SuggestBox(names);
 		employeeSB.setStyleName("aon-inputText");
 		employeeSB.getElement().getStyle().setWidth(99, Unit.PCT);
 		employeeSB.setAutoSelectEnabled(true);
-		
-		names.clear();
-		
-		for(ITEmployee itEmployee : this.itEmployeeList) 
-			names.add(itEmployee.getEmployeeInfo().getFullName());
 		
 		employeeSB.addSelectionHandler(e -> {
 			
@@ -724,7 +741,7 @@ public abstract class ITDialog extends AonCustomDialog {
 	
 	private ITEmployee getITEmployee(String employeeName) {
 		for(ITEmployee itEmployee : this.itEmployeeList) {
-			if(AonStringUtils.equalsIgnoreCase(itEmployee.getEmployeeInfo().getFullName(), employeeName))
+			if(AonStringUtils.equalsIgnoreCase(itEmployee.getContractSuggestion(), employeeName))
 				return itEmployee;
 		}
 		return null;
