@@ -421,6 +421,7 @@ public class JooqIT {
 	    System.out.println("cursor size : " + select.limit(params.getOffset(), params.getLimit()).fetch().size());
 	    
 	    Cursor<Record> cursor = select
+	    		.orderBy(CONTRACT.START_DATE.desc(), CONTRACT_LEAVE.START_DATE.desc())
 	    		.limit(params.getOffset(), params.getLimit())
 	    		.fetchLazy();
 	    
@@ -829,8 +830,8 @@ public class JooqIT {
 					.leftJoin(ENTERPRISE_CCC).onKey()
 					//.where(PERSON.SOCIAL_SECURITY_NUM.eq(nss))
 					.where(CONTRACT.ID.eq(contractId))
-					.and(CONTRACT.START_DATE.le(startDate))
-					.and(CONTRACT.END_DATE.isNull().or(CONTRACT.END_DATE.ge(startDate)))
+//					.and(CONTRACT.START_DATE.le(startDate))
+//					.and(CONTRACT.END_DATE.isNull().or(CONTRACT.END_DATE.ge(startDate)))
 				;
 				
 				String completeCcc = contractInfo.getCompleteCCC();
