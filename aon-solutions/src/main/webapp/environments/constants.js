@@ -152,6 +152,7 @@ export const GET_INVOICES = 'getInvoices';
 // ----- H
 
 export const HEADER = 'header';
+export const HELP = 'help';
 export const HIDDEN = 'hidden';
 export const HOLDERS = 'holders';
 export const HOME = 'home';

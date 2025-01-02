@@ -153,7 +153,7 @@ export class AonApplication extends AonElement {
       ? this.toogleMobileSidenav() : this.toogleSidenav());
 
     let sidenav = this.getElement(this.SIDENAV);
-    sidenav.style.flexBasis = this.isMobile() || this.isSidenavBlock() ? "0px" : "250px";
+    sidenav.style.flexBasis = this.isMobile() || this.isSidenavBlock() ? "0px" : this.getSidenavWidth();
     if(this.isMobile()  && this.isSab()) {
       sidenav.style.height = 'calc(100vh - 172px)';
     }
@@ -269,10 +269,10 @@ export class AonApplication extends AonElement {
       this.closeSidenav();
     } else {
       let sidenav = this.getElement(this.SIDENAV);
-      if (sidenav.style.flexBasis === "250px") {
-        sidenav.style.flexBasis = "0px";
+      if (sidenav.style.flexBasis === "0px") {
+        sidenav.style.flexBasis = this.getSidenavWidth();
       } else {
-        sidenav.style.flexBasis = "250px";
+        sidenav.style.flexBasis = "0px";
       }
     }
   }
@@ -1136,6 +1136,12 @@ export class AonApplication extends AonElement {
     );
   }
 
+  getSidenavWidth() {
+	return (
+	  this.hasAttribute("sidenav_width") && this.getAttribute("sidenav_width") || "250px"
+	);
+  }
+  
   development(title=MSG.INFORMATION, subtitle=MSG.IN_DEVELOPMENT) {
 		this.confirmDialog(title, subtitle, () => {});
 	}

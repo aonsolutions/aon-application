@@ -11,6 +11,7 @@ import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
@@ -174,6 +175,7 @@ import com.google.gwt.user.client.ui.UIObject;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.user.datepicker.client.DateBox;
+import com.google.gwt.user.datepicker.client.DatePicker;
 
 import net.aonsolutions.gwt.pdfjs.client.FullViewer;
 
@@ -461,10 +463,15 @@ public class SalaryDraft extends ResizeComposite
 	static class TextDateBox implements IsWidget, HasValue<String>, HasAllFocusHandlers, Focusable, HasEnabled {
 
 		private DateBox datebox;
+		private DatePicker datePicker;
 
 		public TextDateBox() {
-			datebox = new DateBox();
+			datePicker = new DatePicker();
+			datebox = new DateBox(datePicker, null,
+					new DateBox.DefaultFormat(AON.DATE_FORMAT));
 		}
+		
+		
 
 		// --------------------------------------------------- HasValue<String>
 		@Override
@@ -529,7 +536,11 @@ public class SalaryDraft extends ResizeComposite
 
 		@Override
 		public HandlerRegistration addBlurHandler(BlurHandler handler) {
-			return datebox.addDomHandler(handler, BlurEvent.getType());
+			return datebox.addDomHandler(event -> {
+				if ( !datePicker.isVisible() ) {
+					handler.onBlur(event);
+				}
+			}, BlurEvent.getType());
 		}
 
 		@Override
@@ -783,7 +794,7 @@ public class SalaryDraft extends ResizeComposite
 	
 	
 
-	static class DateEditorFactory<E extends Enum<?> & HasDescription> implements VariableEditorFactory<TextDateBox> {
+	static class DateEditorFactory implements VariableEditorFactory<TextDateBox> {
 
 		private String name;
 
@@ -807,6 +818,21 @@ public class SalaryDraft extends ResizeComposite
 
 	}
 
+	static class IssueDateEditorFactory extends DateEditorFactory {
+
+		public IssueDateEditorFactory(String name) {
+			super(name);
+		}
+		
+		@Override
+		public TextDateBox create(Variable variable, SalaryDraftObject salaryDraftObject) {
+			TextDateBox textDateBox = super.create(variable, salaryDraftObject);
+			textDateBox.datebox.addValueChangeHandler(event -> salaryDraftObject.asSalaryPreview().setIssueDate(event.getValue()));
+			
+			return textDateBox;
+		}
+		
+	}
 	
 
 	static class MonthDaysEditorFactory<E extends Enum<?> & HasDescription>
@@ -3805,6 +3831,8 @@ public class SalaryDraft extends ResizeComposite
 			visibleContext.addAll(partialVariables.stream().map( v -> DelegateVariable.getVariable(v, Scope.CONTRACT)).collect(Collectors.toList()));
 		}
 		
+		visibleContext.addAll(getImplicitContext(salaryDraftObject));
+		
 		//dumpContext(constants, Scope.CONTRACT, true, null);
 		
 		if (contextMenuShowed)
@@ -5692,8 +5720,7 @@ public class SalaryDraft extends ResizeComposite
 		int width = editor instanceof ListBox ? size2px(20) + 6 : size2px(20);
 		editor.asWidget().getElement().getStyle().setWidth(width, Unit.PX);
 
-		VariableChangeHandler<T> variableChangeHandler = createVariableChangeHandler(variable);// new
-																								// VariableChangeHandler<T>(variable);
+		VariableChangeHandler<T> variableChangeHandler = createVariableChangeHandler(variable);
 
 		Label label = getLabel(variable);
 		htmlPanel.add(label);
@@ -5701,9 +5728,6 @@ public class SalaryDraft extends ResizeComposite
 
 		HorizontalPanel valuePanel = new HorizontalPanel();
 		valuePanel.setStyleName(AON.GWT_HORIZONTAL_PANEL);
-
-		//TextBox variableTextBox = new ExpressionBox();
-		//variableTextBox.setMaxLength(EXPRESSION_MAX_LENGTH);
 
 		variableChangeHandler.setEditor(editor);
 
@@ -7789,6 +7813,7 @@ public class SalaryDraft extends ResizeComposite
 	private final static VariableEditorFactory COMMON_VARIABLE_EDITOR_FACTORIES[] = { 
 			new MonthDaysEditorFactory("DIAS_MES"),
 			new DateEditorFactory("FECHA_PREAVISO"),
+			new IssueDateEditorFactory("FECHA_EMISION"),
 			//new DateEditorFactory("INICIO_PAGO_DIRECTO"),
 			new EnumNameListBoxFactory<Employee.Occupation>("OCUPACION", Employee.Occupation.class),
 			new DelayFactory("CAUSA_ATRASO"),
@@ -7965,6 +7990,23 @@ public class SalaryDraft extends ResizeComposite
 		}
 		return context;
 	}
+	
+	private static List<Variable> getImplicitContext(SalaryDraftObject salaryDraftObject) {
+		StringVariable issueDateVariable = 
+		new StringVariable.Builder()
+		.setImplicit(true)
+		.setName("FECHA_EMISION")
+		.setScope(Scope.APPLICATION)
+		.setValue(salaryDraftObject.getIssueDate())
+		.setEndDate(salaryDraftObject.getEndDate())
+		.setStartDate(salaryDraftObject.getStartDate())
+		.setExpression(AON.DATE_FORMAT.format(salaryDraftObject.getIssueDate()))
+		.create()
+		;
+		
+		return Collections.singletonList(issueDateVariable);
+	}
+	
 
 	private static boolean contains(List<Variable> vars, String name) {
 		for (Variable v : vars)
