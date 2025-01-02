@@ -4460,9 +4460,11 @@ public class SQLIrpfTestCase extends AbstractSQLTestCase {
 		
 		cleanSystemData(aonContext);
 		
+		Date startOf2024 = add(getFirstDayOfYear(getToday()), Calendar.YEAR, -1);
+		
 		ContractRecord contract = newContract(aonContext, SSRegimeType.GENERAL,
 				CCCType.PRINCIPAL, 
-				getFirstDayOfYear(getToday()),
+				startOf2024,
 				null,
 				new HashMap<String, String>() {
 					{
@@ -4482,7 +4484,7 @@ public class SQLIrpfTestCase extends AbstractSQLTestCase {
 				, null
 				,null);
 
-		Date startDate = getFirstDayOfYear(getToday());
+		Date startDate = startOf2024;
 		Date endDate = getLastDayOfMonth(startDate);
 		
 		ISQLContractSalaryCalculatorContext january2024Ctx =  
