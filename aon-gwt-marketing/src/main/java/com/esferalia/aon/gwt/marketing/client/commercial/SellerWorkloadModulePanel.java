@@ -134,9 +134,12 @@ public abstract class SellerWorkloadModulePanel extends AonCustomDockLayout {
 			
 			SellerWorkloadParams sellerWorkloadListParams = getWidgetParams( options );
 			
+			if(null != sellerWorkloadListParams.getScope())
+				json.put("scope", new JSONString(sellerWorkloadListParams.getScope().toString()));
+			
 			json.put("period", new JSONString(sellerWorkloadListParams.getPeriod().toString()));
-			json.put("scope", new JSONString(sellerWorkloadListParams.getScope().toString()));
 			json.put("active", new JSONString(sellerWorkloadListParams.getActive().toString()));
+			
 			json.put("customer", new JSONString(sellerWorkloadListParams.getCustomers().toString()));
 			json.put("description", new JSONString(sellerWorkloadListParams.getDescription()));
 			json.put("isSellersWorkload", new JSONString("true"));
@@ -190,7 +193,7 @@ public abstract class SellerWorkloadModulePanel extends AonCustomDockLayout {
 		SellerWorkloadParams sellerWorkloadParams = new SellerWorkloadParams()
 			.setCustomers(AonStringUtils.isBlank(customer.getValue()) ? null : Byte.parseByte(customer.getValue()))
 			.setPeriod(Byte.parseByte(period.getValue()));
-			
+		
 		sellerWorkloadParams.setDomainName(options.getDomainName())
 			.setDomain(options.getDomain())
 			.setUser(options.getUser())
