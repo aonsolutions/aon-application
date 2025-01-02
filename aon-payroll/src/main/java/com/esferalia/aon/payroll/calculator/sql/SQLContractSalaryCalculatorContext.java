@@ -4018,7 +4018,7 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 		}
 
 		Date prevEndMonth = getLastDayOfMonth(add(date, Calendar.MONTH, -1));
-		Date prevStartMonth = getLastDayOfMonth(add(date, Calendar.MONTH, fullTime ? -1: -3 ));
+		Date prevStartMonth = getFirstDayOfMonth(add(date, Calendar.MONTH, fullTime ? -1: -3 ));
 
 		double br = 0.00;
 
