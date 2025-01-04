@@ -66,12 +66,9 @@ import org.junit.Test;
 
 import com.code.aon.common.enumeration.Month;
 import com.code.aon.ql.Criteria;
-import com.esferalia.aon.jooq.tables.ContractPayment;
-import com.esferalia.aon.jooq.tables.PaymentConcept;
 import com.esferalia.aon.jooq.tables.records.AgreementLevelCategoryRecord;
 import com.esferalia.aon.jooq.tables.records.AgreementRecord;
 import com.esferalia.aon.jooq.tables.records.ContractLeaveRecord;
-import com.esferalia.aon.jooq.tables.records.ContractPaymentRecord;
 import com.esferalia.aon.jooq.tables.records.ContractRecord;
 import com.esferalia.aon.jooq.tables.records.DomainRecord;
 import com.esferalia.aon.jooq.tables.records.EnterpriseActivityRecord;
@@ -4652,7 +4649,6 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 	}
 
 	@Test
-	@Ignore("February 28 nor work :-(")
 	public void testPaternityITPartialIII() throws ExpressionException, SQLException,
 			SalaryException {
 		Connection connection = getConnection();
@@ -7804,7 +7800,6 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 	}
 
 	@Test
-	@Ignore("Fail , 31 months ???")
 	public void testBaseRegulatoryAndDelaysII() throws ExpressionException, SQLException,
 			SalaryException {
 		Connection connection = getConnection();
@@ -7829,7 +7824,7 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 		//@formatter:on
 		Date prevMonthEndDate = getLastDayOfMonth(add(getToday(), Calendar.MONTH, -1));
 		
-		for ( Date date = contractStartDate ; date.before(prevMonthEndDate); date = add(date, MONTH, 1)) {
+		for ( Date date = getFirstDayOfMonth( contractStartDate ); date.before(prevMonthEndDate); date = add(date, MONTH, 1)) {
 			calculateAndSave(connection, getContractSalaryCalculatorContext(connection, date,
 					getLastDayOfMonth(date), getLastDayOfMonth(date), contract));
 		}
@@ -7849,7 +7844,6 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 		
 
 		Date startDate = getFirstDayOfMonth(getToday());
-		Date endDate = getLastDayOfMonth(startDate);
 		
 		Date startIT = add(startDate, Calendar.DAY_OF_MONTH, 5);
 
@@ -7857,7 +7851,7 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 				null, null);
 		
 		startDate = getFirstDayOfMonth(startIT);
-		endDate = getLastDayOfMonth(startDate);
+		Date endDate = getLastDayOfMonth(startDate);
 
 		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
 				connection, startDate, endDate, endDate, contract);

@@ -537,9 +537,9 @@ public class ContractLeaveLoader {
 								double ctxMonthDays =
 								ExpressionContext.getCurrentBindings()
 								.get(ContextVariable.MONTH_DAYS, value ->  ( value instanceof Number number) ? number.doubleValue() : realMonthDays , realMonthDays );
-								
+																
 								double quoteDays = getQuoteDays(exprCtx, workedPeriod);
-								return Math.min(quoteDays, ctxMonthDays ) * (1.00 - value) * partialFactor;
+								return ( (period.getDays() == realMonthDays) ? ctxMonthDays : quoteDays ) * (1.00 - value) * partialFactor;
 							}
 						});
 						exprCtx.putVariable(ContextVariable.WORKED_FACTOR, new ITimedVariable<Double>() {
