@@ -803,6 +803,8 @@ public class ExpressionContext {
 			return evalUnknowUndefVariable(script, inputs, start, end, toType);
 		} catch (CompileException e) {
 			throw e;
+		} catch ( ExpressionExceptionWrapper e) {
+			throw e.getExpressionException();
 		}
 	}
 	
@@ -840,6 +842,8 @@ public class ExpressionContext {
 			return evalUnknowUndefVariable(script, inputs, start, end, toType);
 		} catch (CompileException e) {
 			throw e;
+		} catch ( ExpressionExceptionWrapper e) {
+			throw e.getExpressionException();
 		}
 	}
 	
@@ -958,6 +962,8 @@ public class ExpressionContext {
 			return evalUnknowUndefVariable(script, inputs, start, end, toType);
 		} catch (CompileException e) {
 			throw e;
+		} catch ( ExpressionExceptionWrapper e) {
+			throw e.getExpressionException();
 		}
 
 	}
