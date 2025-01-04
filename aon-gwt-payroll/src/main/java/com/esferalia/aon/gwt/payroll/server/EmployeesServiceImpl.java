@@ -6754,6 +6754,8 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 			e.printStackTrace();
 			if (e instanceof solutions.aon.seg.social.exception.CertificateNotFoundException)
 				throw new IllegalArgumentException("No existe certificado TGSS para realizar esta comunicacion");
+			else if (e instanceof com.esferalia.aon.occam.api.model.security.CertificateNotFoundException)
+				throw new IllegalArgumentException("No existe certificado TGSS para realizar esta comunicacion");
 			throw new IllegalArgumentException(e.getMessage());
 		}
 	}
