@@ -21,7 +21,7 @@ import { AonMobileDeliveryPackagingList } from './aon-mobile-delivery-packaging-
 import { AonNewSelect } from '../../components/aon-new-select.js';
 import * as UA from '../../services/userAgentService.js';
 import { openBarcode } from '../../services/actionService.js';
-import { createCard, createInput } from '../../components/CreateComponent.js';
+import { createCard, createInput, createQuantity, createSelect } from '../../components/CreateComponent.js';
 import { round } from '../../services/utils.js';
 
 export class AonDelivery extends AonElement {
@@ -487,10 +487,45 @@ export class AonDelivery extends AonElement {
 		product.id = id + 'Envase';
 		table.addCell(product);
 		product.addIcon(MATERIAL_ICONS.QR_CODE_SCANNER, undefined,() => this.openBarcode(product));
+
+		let magicButton = new AonIconButton();
+		magicButton.id = this.id + 'MagicButton';
+		magicButton.title = "magia";
+		magicButton.icon = MATERIAL_ICONS.AUTO_FIX_HIGH;
+		magicButton.addEventListener(EVENT.CLICK, () => {
+			alert("MAGIA")
+		});
+		table.addCell(magicButton);
+
+		table.addRow();
+		
+		let quantityBox = createQuantity(this.PACKAGING_SOURCE_QUANTITY, MSG.QUANTITY);
+		quantityBox.setDisabled(true);
+		quantityBox.addEventListener(EVENT.CHANGE, () => {
+			quantityBox.setQuantityFormat(quantityBox.value);
+		});
+		table.addCell(quantityBox);
+		quantityBox.setTags(detail.item);
+		
+		let actionButton = new AonIconButton();
+		actionButton.id = this.id + 'ActionButton';
+		actionButton.title = "Editar Cantidad";
+		actionButton.icon = MATERIAL_ICONS.EDIT;
+		actionButton.addEventListener(EVENT.CLICK, () => {
+			let edit = actionButton.icon === MATERIAL_ICONS.EDIT;
+			quantityBox.setDisabled(!edit);
+			actionButton.title = edit ? "Cantidad Autómatica" : "Editar Cantidad";
+			actionButton.icon = edit ? MATERIAL_ICONS.HDR_AUTO : MATERIAL_ICONS.EDIT;
+
+		});
+		table.addCell(actionButton);
+
 		let source;
 		let quantity = 0;
 		let composition = [];
 		product.addEventListener(EVENT.CHANGE, () => {
+			let auto = actionButton.icon === MATERIAL_ICONS.HDR_AUTO;
+			let q = quantityBox.getQuantity();
 			product.setDisabled(true);
 			let data = { 
 				sscc: product.value,
@@ -506,6 +541,7 @@ export class AonDelivery extends AonElement {
 						let saveButton = this.getElement(this.DELIVERY_SAVE_BUTTON)
 						saveButton.setDisabled(false);
 						let pendingQuantity = detail.quantity - detail.delivered;
+						if(!auto && q < pendingQuantity) pendingQuantity = q;
 						let quantityValue = i.quantity > pendingQuantity
 							? pendingQuantity : i.quantity;
 						
@@ -523,15 +559,6 @@ export class AonDelivery extends AonElement {
 				this.showError(e);
 			});
 		});
-
-		let magicButton = new AonIconButton();
-		magicButton.id = this.id + 'MagicButton';
-		magicButton.title = "magia";
-		magicButton.icon = MATERIAL_ICONS.AUTO_FIX_HIGH;
-		magicButton.addEventListener(EVENT.CLICK, () => {
-			alert("MAGIA")
-		});
-		table.addCell(magicButton);
 
 		dialog.addAcceptAction(() => {
 			if(source) {

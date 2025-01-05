@@ -18,8 +18,9 @@ import { AonDialog } from '../../components/aon-dialog.js';
 import { getSalesDetails } from '../../services/salesService.js';
 
 import { AonMobileDeliveryPackagingList } from './aon-mobile-delivery-packaging-list.js';
-import { createCard, createInput, createSelect } from '../../components/CreateComponent.js';
+import { createCard, createInput,createQuantity, createSelect } from '../../components/CreateComponent.js';
 import { round } from '../../services/utils.js';
+import { MATERIAL } from '../../environments/constants.js';
 
 export class AonMobileDelivery extends AonElement {
 
@@ -520,12 +521,37 @@ export class AonMobileDelivery extends AonElement {
 			alert("MAGIA")
 		});
 		table.addCell(magicButton);
+		
+		table.addRow();
+
+		let quantityBox = createQuantity(this.PACKAGING_SOURCE_QUANTITY, MSG.QUANTITY);
+		quantityBox.setDisabled(true);
+		quantityBox.addEventListener(EVENT.CHANGE, () => {
+			quantityBox.setQuantityFormat(quantityBox.value);
+		});
+		table.addCell(quantityBox);
+		quantity.setTags(detail.item);
+		
+		let actionButton = new AonIconButton();
+		actionButton.id = this.id + 'ActionButton';
+		actionButton.title = "Editar Cantidad";
+		actionButton.icon = MATERIAL_ICONS.EDIT;
+		actionButton.addEventListener(EVENT.CLICK, () => {
+			let edit = actionButton.icon === MATERIAL_ICONS.EDIT;
+			actionButton.title = edit ? "Cantidad Autómatica" : "Editar Cantidad";
+			actionButton.icon = edit ? MATERIAL_ICONS.HDR_AUTO : MATERIAL_ICONS.EDIT;
+			quantityBox.setDisabled(!edit);
+		});
+		table.addCell(actionButton);
 
 		dialog.addAcceptAction(() => {
-			let data = { 
+			let auto = actionButton.icon === MATERIAL_ICONS.HDR_AUTO;
+			let q = quantityBox.getQuantity();
+			let data = {
 				sscc: product.value,
 				product: detail.item.product.id
 			};
+		
 			getDeliveryPackaging(data).then(r => {
 				// si no esta en ningun albaran  
 					// comprobar que lo que tenga el albarán es lo que se quiere añadir si no ERROR
@@ -536,6 +562,7 @@ export class AonMobileDelivery extends AonElement {
 						let saveButton = this.getElement(this.DELIVERY_SAVE_BUTTON)
 						saveButton.setDisabled(false);
 						let pendingQuantity = detail.quantity - detail.delivered;
+						if(!auto && q < pendingQuantity) pendingQuantity = q;
 						let quantityValue = i.quantity > pendingQuantity
 							? pendingQuantity : i.quantity;
 						
@@ -577,7 +604,7 @@ export class AonMobileDelivery extends AonElement {
 					}		
 	
 					this.buildPendingTable(this.getElement(this.id + 'PendingTable'));
-				} else this.showError("El palet ya etá añadido.");
+				} else this.showError("El palet ya está añadido.");
 			}).catch(e => {
 				product.value = "";
 				product.setDisabled(false);
