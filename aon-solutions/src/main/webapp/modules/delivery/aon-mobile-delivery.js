@@ -30,8 +30,9 @@ export class AonMobileDelivery extends AonElement {
 	DELIVERY_SAVE_BUTTON;
 	DELIVERY_TABS
 	DELIVERY_TABS_BUTTON;
-	PACKAGING_PRODUCT
-	PACKAGING_SOURCE_PRODUCT
+	PACKAGING_PRODUCT;
+	PACKAGING_SOURCE_PRODUCT;
+	PACKAGING_SOURCE_QUANTITY;
 	delivery;
 	packaging;
 	salesDetails;
@@ -65,6 +66,7 @@ export class AonMobileDelivery extends AonElement {
 		this.DELIVERY_SAVE_BUTTON = this.id + 'DeliverySaveButton';
 		this.PACKAGING_PRODUCT = this.id + 'PackagingProduct';
 		this.PACKAGING_SOURCE_PRODUCT = this.id + 'PackagingSourceProduct';
+		this.PACKAGING_SOURCE_QUANTITY = this.id + 'PackagingSourceQuantity';
 		this.DELIVERY_TABS = this.id + CONSTANT.TABS.initCap();
 		this.DELIVERY_TABS_BUTTON = [
 			{
@@ -87,10 +89,14 @@ export class AonMobileDelivery extends AonElement {
 		toolbar.title = this.delivery.reference; 
 		this.appendChild(toolbar);
 		// toolbar.addButton2(ACTION.SAVE, () => this.save());
-		if(this.delivery.status != 'INVOICED') toolbar.addButton2(ACTION.DELETE, () => this.delete());
-		if(this.delivery.status == 'IN_PREPARATION') toolbar.addButton2(ACTION.ACCEPT, () => this.accept());
+		// if(this.delivery.status != 'INVOICED') toolbar.addButton2(ACTION.DELETE, () => this.delete());
+		if(this.delivery.status == 'IN_PREPARATION') {
+			toolbar.addButton2(ACTION.ACCEPT, () => this.accept());
+			this.getApplication().addFloatOption(ACTION.SUBTRACT, () => this.subtractPackaging());
+			this.getApplication().addFloatOption(ACTION.ADD, () => this.addPackaging());
+		}
 		toolbar.addButton2(ACTION.BACK, () => this.back());
-		this.getApplication().addFloatOption(ACTION.ADD, () => this.addPackaging())
+		
 
 		let div = this.createElement(TAG.DIV);
 		div.style.width = "100%";
@@ -160,7 +166,7 @@ export class AonMobileDelivery extends AonElement {
 	buildPackaging(parent){
 		let div = this.createElement(TAG.DIV, "aonPackageDiv")
 		let packagingList = new AonMobileDeliveryPackagingList();
-		packagingList.setToolbar(this.DELIVERY_TOOLBAR);
+		packagingList.setDeliveryToolbar(this.DELIVERY_TOOLBAR);
 		packagingList.setPackages(this.delivery.packaging);
 		div.appendChild(packagingList);
 		parent.appendChild(div);
@@ -221,6 +227,10 @@ export class AonMobileDelivery extends AonElement {
 				.then(sd => this.salesDetails = sd);
 			});
 		}
+	}
+
+	subtractPackaging() {
+		this.getApplication().development();
 	}
 
 	addPackaging() {

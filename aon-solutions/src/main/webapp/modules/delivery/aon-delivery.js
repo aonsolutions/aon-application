@@ -18,7 +18,6 @@ import { acceptDeliveryPackaging, getDeliveryPackaging, getProducts, saveDeliver
 import { AonDialog } from '../../components/aon-dialog.js';
 import { getSalesDetails } from '../../services/salesService.js';
 import { AonMobileDeliveryPackagingList } from './aon-mobile-delivery-packaging-list.js';
-import { AonNewSelect } from '../../components/aon-new-select.js';
 import * as UA from '../../services/userAgentService.js';
 import { openBarcode } from '../../services/actionService.js';
 import { createCard, createInput, createQuantity, createSelect } from '../../components/CreateComponent.js';
@@ -32,8 +31,9 @@ export class AonDelivery extends AonElement {
 	DELIVERY_SAVE_BUTTON;
 	DELIVERY_TABS
 	DELIVERY_TABS_BUTTON;
-	PACKAGING_PRODUCT
-	PACKAGING_SOURCE_PRODUCT
+	PACKAGING_PRODUCT;
+	PACKAGING_SOURCE_PRODUCT;
+	PACKAGING_SOURCE_QUANTITY;
 	DIV;
 	delivery;
 	packaging;
@@ -70,6 +70,7 @@ export class AonDelivery extends AonElement {
 		this.DELIVERY_SAVE_BUTTON = this.id + 'DeliverySaveButton';
 		this.PACKAGING_PRODUCT = this.id + 'PackagingProduct';
 		this.PACKAGING_SOURCE_PRODUCT = this.id + 'PackagingSourceProduct';
+		this.PACKAGING_SOURCE_QUANTITY = this.id + 'PackagingSourceQuantity';
 		this.DELIVERY_TABS = this.id + CONSTANT.TABS.initCap();
 		this.DIV = this.id + 'Div';
 
@@ -151,7 +152,7 @@ export class AonDelivery extends AonElement {
 		this.clearElement(parent);
 		let div = this.createDiv("aonPackageDiv")
 		let packagingList = new AonMobileDeliveryPackagingList();
-		packagingList.setToolbar(this.DELIVERY_TOOLBAR);
+		// packagingList.setToolbar(this.DELIVERY_TOOLBAR);
 		packagingList.setPackages(this.delivery.packaging);
 		div.appendChild(packagingList);
 		parent.appendChild(div);
