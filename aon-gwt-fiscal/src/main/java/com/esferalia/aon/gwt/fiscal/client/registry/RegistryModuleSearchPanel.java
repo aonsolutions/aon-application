@@ -33,7 +33,7 @@ import com.google.gwt.user.client.ui.TextBox;
 
 public class RegistryModuleSearchPanel extends SimpleLayoutPanel implements Focusable, HasValueChangeHandlers<RegistryParams>{
 
-	public static final double HEIGHT = 140;
+	public static final double HEIGHT = 90;
 	
 	private DocumentTypeListBox documentTypeBox;
 	private CountryListBox documentCountryBox;
@@ -121,6 +121,8 @@ public class RegistryModuleSearchPanel extends SimpleLayoutPanel implements Focu
 		});
 		
 		activeBox = new CheckBox( RegistryStatus.ACTIVE.getDescription()) ;
+		activeBox.setStyleName(AON.CSS.aonInlineFlex());
+		activeBox.addStyleName(AON.CSS.aonAlignItemsCenter());
 		activeBox.addClickHandler(new ClickHandler() {
 			
 			@Override
@@ -130,6 +132,8 @@ public class RegistryModuleSearchPanel extends SimpleLayoutPanel implements Focu
 		});
 		
 		inactiveBox = new CheckBox( RegistryStatus.INACTIVE.getDescription()) ;
+		inactiveBox.setStyleName(AON.CSS.aonInlineFlex());
+		inactiveBox.addStyleName(AON.CSS.aonAlignItemsCenter());
 		inactiveBox.addClickHandler(new ClickHandler() {
 			
 			@Override
@@ -139,6 +143,8 @@ public class RegistryModuleSearchPanel extends SimpleLayoutPanel implements Focu
 		});
 		
 		blockedBox = new CheckBox( RegistryStatus.BLOCKED.getDescription()) ;
+		blockedBox.setStyleName(AON.CSS.aonInlineFlex());
+		blockedBox.addStyleName(AON.CSS.aonAlignItemsCenter());
 		blockedBox.addClickHandler(new ClickHandler() {
 			
 			@Override
@@ -147,8 +153,9 @@ public class RegistryModuleSearchPanel extends SimpleLayoutPanel implements Focu
 			}
 		});
 		
+		
 		cleanButton = new AonSearchPanelButton(AON.MSG.clean(), AON.CSS.aonIconClear());
-		cleanButton.addStyleName(AON.CSS.aonMarginLeft());
+		cleanButton.addStyleName(AON.CSS.aonMarginRight());
 		cleanButton.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
@@ -156,14 +163,17 @@ public class RegistryModuleSearchPanel extends SimpleLayoutPanel implements Focu
 			}
 		});
 
-		refreshButton = new AonSearchPanelButton(AON.MSG.refresh(), AON.CSS.aonIconSearch());
-		refreshButton.addStyleName(AON.CSS.aonMarginLeft());
+		refreshButton = new AonSearchPanelButton(AON.MSG.refresh(), AON.CSS.aonIconRefresh());
+		refreshButton.addStyleName(AON.CSS.aonMarginRight());
 		refreshButton.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
 				search(opt);
 			}
 		});
+		
+		closeButton = new AonSearchPanelButton(AON.MSG.close(),AON.CSS.aonWidgetClose());
+		
 
 		FlexTable tab = new FlexTable();
 		tab.setStyleName(AON.CSS.aonGrid());
@@ -207,15 +217,15 @@ public class RegistryModuleSearchPanel extends SimpleLayoutPanel implements Focu
 		
 		tab.setWidget(row, col, new InlineLabel());
 		
-		FlowPanel min = new FlowPanel();
-		min.setStyleName(AON.CSS.aonTextRight());
-		min.addStyleName(AON.CSS.aonPaddingRight());
-		min.addStyleName(AON.CSS.aonNowrap());
-		min.addStyleName(AON.CSS.aonWidthAll());
-		
-		closeButton = new AonSearchPanelButton(AON.MSG.close(),AON.CSS.aonWidgetClose());
-		min.add(closeButton);
-		tab.setWidget(row, 8, min);
+		FlowPanel buttonsPanel = new FlowPanel();
+		buttonsPanel.setStyleName(AON.CSS.aonTextRight());
+		buttonsPanel.addStyleName(AON.CSS.aonPaddingRight());
+		buttonsPanel.addStyleName(AON.CSS.aonNowrap());
+		buttonsPanel.addStyleName(AON.CSS.aonWidthAll());
+		buttonsPanel.add(cleanButton);
+		buttonsPanel.add(refreshButton);
+		buttonsPanel.add(closeButton);
+		tab.setWidget(row, 8, buttonsPanel);
 		
 		++row;
 		col = 0;
@@ -249,13 +259,6 @@ public class RegistryModuleSearchPanel extends SimpleLayoutPanel implements Focu
 		tab.setWidget(row, col, new InlineLabel());
 		++col;
 		
-		
-		FlowPanel buttonsPanel = new FlowPanel();
-		buttonsPanel.setStyleName(AON.CSS.aonNowrap());
-		buttonsPanel.add( cleanButton );
-		buttonsPanel.add( refreshButton );
-		tab.setWidget(row, col, buttonsPanel);
-		++col;
 		setWidget(tab);
 		
 		initialize(opt);
