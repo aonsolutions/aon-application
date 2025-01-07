@@ -238,6 +238,7 @@ export const QR_CODE_SCANNER = 'qr_code_scanner';
 // ----- R
 
 export const RECEIPT = 'receipt';
+export const REMOVE = 'remove';
 export const REMOVE_CIRCLE = 'remove_circle';
 export const REPORT = 'report';
 export const ROOM = 'room';

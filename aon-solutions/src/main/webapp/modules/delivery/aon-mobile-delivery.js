@@ -18,8 +18,9 @@ import { AonDialog } from '../../components/aon-dialog.js';
 import { getSalesDetails } from '../../services/salesService.js';
 
 import { AonMobileDeliveryPackagingList } from './aon-mobile-delivery-packaging-list.js';
-import { createCard, createInput, createSelect } from '../../components/CreateComponent.js';
+import { createCard, createInput,createQuantity, createSelect } from '../../components/CreateComponent.js';
 import { round } from '../../services/utils.js';
+import { MATERIAL } from '../../environments/constants.js';
 
 export class AonMobileDelivery extends AonElement {
 
@@ -29,8 +30,9 @@ export class AonMobileDelivery extends AonElement {
 	DELIVERY_SAVE_BUTTON;
 	DELIVERY_TABS
 	DELIVERY_TABS_BUTTON;
-	PACKAGING_PRODUCT
-	PACKAGING_SOURCE_PRODUCT
+	PACKAGING_PRODUCT;
+	PACKAGING_SOURCE_PRODUCT;
+	PACKAGING_SOURCE_QUANTITY;
 	delivery;
 	packaging;
 	salesDetails;
@@ -64,6 +66,7 @@ export class AonMobileDelivery extends AonElement {
 		this.DELIVERY_SAVE_BUTTON = this.id + 'DeliverySaveButton';
 		this.PACKAGING_PRODUCT = this.id + 'PackagingProduct';
 		this.PACKAGING_SOURCE_PRODUCT = this.id + 'PackagingSourceProduct';
+		this.PACKAGING_SOURCE_QUANTITY = this.id + 'PackagingSourceQuantity';
 		this.DELIVERY_TABS = this.id + CONSTANT.TABS.initCap();
 		this.DELIVERY_TABS_BUTTON = [
 			{
@@ -86,10 +89,14 @@ export class AonMobileDelivery extends AonElement {
 		toolbar.title = this.delivery.reference; 
 		this.appendChild(toolbar);
 		// toolbar.addButton2(ACTION.SAVE, () => this.save());
-		if(this.delivery.status != 'INVOICED') toolbar.addButton2(ACTION.DELETE, () => this.delete());
-		if(this.delivery.status == 'IN_PREPARATION') toolbar.addButton2(ACTION.ACCEPT, () => this.accept());
+		// if(this.delivery.status != 'INVOICED') toolbar.addButton2(ACTION.DELETE, () => this.delete());
+		if(this.delivery.status == 'IN_PREPARATION') {
+			toolbar.addButton2(ACTION.ACCEPT, () => this.accept());
+			this.getApplication().addFloatOption(ACTION.SUBTRACT, () => this.subtractPackaging());
+			this.getApplication().addFloatOption(ACTION.ADD, () => this.addPackaging());
+		}
 		toolbar.addButton2(ACTION.BACK, () => this.back());
-		this.getApplication().addFloatOption(ACTION.ADD, () => this.addPackaging())
+		
 
 		let div = this.createElement(TAG.DIV);
 		div.style.width = "100%";
@@ -159,7 +166,7 @@ export class AonMobileDelivery extends AonElement {
 	buildPackaging(parent){
 		let div = this.createElement(TAG.DIV, "aonPackageDiv")
 		let packagingList = new AonMobileDeliveryPackagingList();
-		packagingList.setToolbar(this.DELIVERY_TOOLBAR);
+		packagingList.setDeliveryToolbar(this.DELIVERY_TOOLBAR);
 		packagingList.setPackages(this.delivery.packaging);
 		div.appendChild(packagingList);
 		parent.appendChild(div);
@@ -220,6 +227,10 @@ export class AonMobileDelivery extends AonElement {
 				.then(sd => this.salesDetails = sd);
 			});
 		}
+	}
+
+	subtractPackaging() {
+		this.getApplication().development();
 	}
 
 	addPackaging() {
@@ -325,9 +336,9 @@ export class AonMobileDelivery extends AonElement {
 					span.innerHTML = i.composition.product.code + ' #' + i.composition.serialNumber;
 					table2.addCell(span);
 					let span2 = this.createSpan();
-					span2.innerHTML = i.quantity;
+					span2.innerHTML = this.getFormat(i.composition, i.quantity);
 					table2.addCell(span2);
-					let saveButton = this.getElement(this.DELIVERY_SAVE_BUTTON)
+					let saveButton = this.getElement(this.DELIVERY_SAVE_BUTTON);
 					saveButton.setDisabled(false);
 					if(!r.delivery || !r.delivery.id) {	
 						for(let j = 0; j < this.salesDetails.length; j++) {
@@ -520,12 +531,37 @@ export class AonMobileDelivery extends AonElement {
 			alert("MAGIA")
 		});
 		table.addCell(magicButton);
+		
+		table.addRow();
+
+		let quantityBox = createQuantity(this.PACKAGING_SOURCE_QUANTITY, MSG.QUANTITY);
+		quantityBox.setDisabled(true);
+		quantityBox.addEventListener(EVENT.CHANGE, () => {
+			quantityBox.setQuantityFormat(quantityBox.value);
+		});
+		table.addCell(quantityBox);
+		quantity.setTags(detail.item);
+		
+		let actionButton = new AonIconButton();
+		actionButton.id = this.id + 'ActionButton';
+		actionButton.title = "Editar Cantidad";
+		actionButton.icon = MATERIAL_ICONS.EDIT;
+		actionButton.addEventListener(EVENT.CLICK, () => {
+			let auto = actionButton.icon === MATERIAL_ICONS.EDIT;
+			actionButton.title = auto ? "Cantidad Autómatica" : "Editar Cantidad";
+			actionButton.icon = auto ? MATERIAL_ICONS.HDR_AUTO : MATERIAL_ICONS.EDIT;
+			quantityBox.setDisabled(!auto);
+		});
+		table.addCell(actionButton);
 
 		dialog.addAcceptAction(() => {
-			let data = { 
+			let auto = actionButton.icon === MATERIAL_ICONS.EDIT;
+			let q = quantityBox.getQuantity();
+			let data = {
 				sscc: product.value,
 				product: detail.item.product.id
 			};
+		
 			getDeliveryPackaging(data).then(r => {
 				// si no esta en ningun albaran  
 					// comprobar que lo que tenga el albarán es lo que se quiere añadir si no ERROR
@@ -536,6 +572,7 @@ export class AonMobileDelivery extends AonElement {
 						let saveButton = this.getElement(this.DELIVERY_SAVE_BUTTON)
 						saveButton.setDisabled(false);
 						let pendingQuantity = detail.quantity - detail.delivered;
+						if(!auto && q < pendingQuantity) pendingQuantity = q;
 						let quantityValue = i.quantity > pendingQuantity
 							? pendingQuantity : i.quantity;
 						
@@ -561,7 +598,7 @@ export class AonMobileDelivery extends AonElement {
 						span.innerHTML = detail.item.product.code + ' #' + c.composition.serialNumber;
 						table2.addCell(span);
 						let span2 = this.createSpan();
-						span2.innerHTML = c.quantity;
+						span2.innerHTML = this.getFormat(detail.item, c.quantity);
 						table2.addCell(span2);
 					});
 	
@@ -577,7 +614,7 @@ export class AonMobileDelivery extends AonElement {
 					}		
 	
 					this.buildPendingTable(this.getElement(this.id + 'PendingTable'));
-				} else this.showError("El palet ya etá añadido.");
+				} else this.showError("El palet ya está añadido.");
 			}).catch(e => {
 				product.value = "";
 				product.setDisabled(false);

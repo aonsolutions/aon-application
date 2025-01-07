@@ -18,10 +18,9 @@ import { acceptDeliveryPackaging, getDeliveryPackaging, getProducts, saveDeliver
 import { AonDialog } from '../../components/aon-dialog.js';
 import { getSalesDetails } from '../../services/salesService.js';
 import { AonMobileDeliveryPackagingList } from './aon-mobile-delivery-packaging-list.js';
-import { AonNewSelect } from '../../components/aon-new-select.js';
 import * as UA from '../../services/userAgentService.js';
 import { openBarcode } from '../../services/actionService.js';
-import { createCard, createInput } from '../../components/CreateComponent.js';
+import { createCard, createInput, createQuantity, createSelect } from '../../components/CreateComponent.js';
 import { round } from '../../services/utils.js';
 
 export class AonDelivery extends AonElement {
@@ -32,8 +31,9 @@ export class AonDelivery extends AonElement {
 	DELIVERY_SAVE_BUTTON;
 	DELIVERY_TABS
 	DELIVERY_TABS_BUTTON;
-	PACKAGING_PRODUCT
-	PACKAGING_SOURCE_PRODUCT
+	PACKAGING_PRODUCT;
+	PACKAGING_SOURCE_PRODUCT;
+	PACKAGING_SOURCE_QUANTITY;
 	DIV;
 	delivery;
 	packaging;
@@ -70,6 +70,7 @@ export class AonDelivery extends AonElement {
 		this.DELIVERY_SAVE_BUTTON = this.id + 'DeliverySaveButton';
 		this.PACKAGING_PRODUCT = this.id + 'PackagingProduct';
 		this.PACKAGING_SOURCE_PRODUCT = this.id + 'PackagingSourceProduct';
+		this.PACKAGING_SOURCE_QUANTITY = this.id + 'PackagingSourceQuantity';
 		this.DELIVERY_TABS = this.id + CONSTANT.TABS.initCap();
 		this.DIV = this.id + 'Div';
 
@@ -151,7 +152,7 @@ export class AonDelivery extends AonElement {
 		this.clearElement(parent);
 		let div = this.createDiv("aonPackageDiv")
 		let packagingList = new AonMobileDeliveryPackagingList();
-		packagingList.setToolbar(this.DELIVERY_TOOLBAR);
+		// packagingList.setToolbar(this.DELIVERY_TOOLBAR);
 		packagingList.setPackages(this.delivery.packaging);
 		div.appendChild(packagingList);
 		parent.appendChild(div);
@@ -305,7 +306,7 @@ export class AonDelivery extends AonElement {
 					span.innerHTML = i.composition.product.code + ' #' + i.composition.serialNumber;
 					table2.addCell(span);
 					let span2 = this.createSpan();
-					span2.innerHTML = i.quantity;
+					span2.innerHTML = this.getFormat(i.composition, i.quantity);
 					table2.addCell(span2);
 					let saveButton = this.getElement(this.DELIVERY_SAVE_BUTTON)
 					saveButton.setDisabled(false);
@@ -487,42 +488,6 @@ export class AonDelivery extends AonElement {
 		product.id = id + 'Envase';
 		table.addCell(product);
 		product.addIcon(MATERIAL_ICONS.QR_CODE_SCANNER, undefined,() => this.openBarcode(product));
-		let source;
-		let quantity = 0;
-		let composition = [];
-		product.addEventListener(EVENT.CHANGE, () => {
-			product.setDisabled(true);
-			let data = { 
-				sscc: product.value,
-				product: detail.item.product.id
-			};
-			getDeliveryPackaging(data).then(r => {
-				// si no esta en ningun albaran  
-					// comprobar que lo que tenga el albarán es lo que se quiere añadir si no ERROR
-					//añadir cantidad 
-
-				Array.prototype.forEach.call(r.item.itemComposition, i => {
-					if(i.composition.product.id === data.product) {
-						let saveButton = this.getElement(this.DELIVERY_SAVE_BUTTON)
-						saveButton.setDisabled(false);
-						let pendingQuantity = detail.quantity - detail.delivered;
-						let quantityValue = i.quantity > pendingQuantity
-							? pendingQuantity : i.quantity;
-						
-						let object = i;
-						object.quantity = quantityValue;
-						composition.push(object);
-
-						quantity = quantity + quantityValue;
-					}
-				});
-				source = r.item.id;
-			}).catch(e => {
-				product.value = "";
-				product.setDisabled(false);
-				this.showError(e);
-			});
-		});
 
 		let magicButton = new AonIconButton();
 		magicButton.id = this.id + 'MagicButton';
@@ -533,7 +498,73 @@ export class AonDelivery extends AonElement {
 		});
 		table.addCell(magicButton);
 
+		table.addRow();
+		
+		let quantityBox = createQuantity(this.PACKAGING_SOURCE_QUANTITY, MSG.QUANTITY);
+		quantityBox.setDisabled(true);
+		quantityBox.addEventListener(EVENT.CHANGE, () => {
+			quantityBox.setQuantityFormat(quantityBox.value);
+		});
+		table.addCell(quantityBox);
+		quantityBox.setTags(detail.item);
+		
+		let actionButton = new AonIconButton();
+		actionButton.id = this.id + 'ActionButton';
+		actionButton.title = "Editar Cantidad";
+		actionButton.icon = MATERIAL_ICONS.EDIT;
+		actionButton.addEventListener(EVENT.CLICK, () => {
+			let auto = actionButton.icon === MATERIAL_ICONS.EDIT;
+			quantityBox.setDisabled(!auto);
+			actionButton.title = auto ? "Cantidad Autómatica" : "Editar Cantidad";
+			actionButton.icon = auto ? MATERIAL_ICONS.HDR_AUTO : MATERIAL_ICONS.EDIT;
+
+		});
+		table.addCell(actionButton);
+
+		let source;
+		let quantity = 0;
+		let composition = [];
+		let sourceDeliveryPackaging;
+
+		product.addEventListener(EVENT.CHANGE, () => {
+			product.setDisabled(true);
+			let data = { 
+				sscc: product.value,
+				product: detail.item.product.id
+			};
+			getDeliveryPackaging(data).then(r => {
+				sourceDeliveryPackaging = r;
+				source = r.item.id;
+			}).catch(e => {
+				product.value = "";
+				product.setDisabled(false);
+				this.showError(e);
+			});
+		});
+
 		dialog.addAcceptAction(() => {
+			let auto = actionButton.icon === MATERIAL_ICONS.EDIT;
+			let q = quantityBox.getQuantity();
+
+			// si no esta en ningun albaran  
+			// comprobar que lo que tenga el albarán es lo que se quiere añadir si no ERROR
+			// añadir cantidad 
+			Array.prototype.forEach.call(sourceDeliveryPackaging.item.itemComposition, i => {
+				if(i.composition.product.id === detail.item.product.id) {
+					let saveButton = this.getElement(this.DELIVERY_SAVE_BUTTON)
+					saveButton.setDisabled(false);
+					let pendingQuantity = detail.quantity - detail.delivered;
+					if(!auto && q < pendingQuantity) pendingQuantity = q;
+					let quantityValue = i.quantity > pendingQuantity
+						? pendingQuantity : i.quantity;
+					
+					let object = i;
+					object.quantity = quantityValue;
+					composition.push(object);
+
+					quantity = quantity + quantityValue;
+				}
+			});
 			if(source) {
 				let contentObject = {
 					source,
@@ -547,7 +578,7 @@ export class AonDelivery extends AonElement {
 					span.innerHTML = detail.item.product.code + ' #' + c.composition.serialNumber;
 					table2.addCell(span);
 					let span2 = this.createSpan();
-					span2.innerHTML = c.quantity;
+					span2.innerHTML = this.getFormat(detail.item, c.quantity);
 					table2.addCell(span2);
 				});
 
