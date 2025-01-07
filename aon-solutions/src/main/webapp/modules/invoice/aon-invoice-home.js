@@ -423,7 +423,7 @@ export class AonInvoiceHome extends AonElement {
 		let rejectedNumber = this.getElement('rejectedNumber');
 		if(rejectedNumber) rejectedNumber.innerHTML = rejectedCounter;
 
-		let trashCounter = getCounter()[OPTION.RAWDOC_DRAFT.id] || 0;
+		let trashCounter = getCounter()[OPTION.RAWDOC_TRASH.id] || 0;
 		let trashNumber = this.getElement('trashNumber');
 		if(trashNumber) trashNumber.innerHTML = trashCounter;
 	}
