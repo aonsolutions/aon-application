@@ -13,6 +13,8 @@ import com.esferalia.aon.gwt.payroll.client.PayrollEmailDialog.Type;
 import com.esferalia.aon.gwt.payroll.shared.AFIChanges;
 import com.esferalia.aon.gwt.payroll.shared.ActivitiesCCC;
 import com.esferalia.aon.gwt.payroll.shared.ActivityInfo;
+import com.esferalia.aon.gwt.payroll.shared.ActivitySummaryObject;
+import com.esferalia.aon.gwt.payroll.shared.ActivitySummaryParams;
 import com.esferalia.aon.gwt.payroll.shared.AgrarianJourney;
 import com.esferalia.aon.gwt.payroll.shared.Agreement;
 import com.esferalia.aon.gwt.payroll.shared.AgreementInfo;
@@ -455,5 +457,9 @@ public interface EnterprisesService extends RemoteService {
 	// ------------------------------------------------ Pension Plan AFI
 	
 	String checkPensionPlanAFI(String currentDomainName, String currentUser, long date, List<Integer> cccIdList);
+	
+	// ------------------------------------------------ Activity Summary
+	
+	List<ActivitySummaryObject> getActivitySummary(String domain, String user, ActivitySummaryParams params) throws IllegalArgumentException;
 
 }

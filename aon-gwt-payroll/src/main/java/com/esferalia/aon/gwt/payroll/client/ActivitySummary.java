@@ -113,7 +113,6 @@ public class ActivitySummary extends AonCustomDockLayout {
 	
 	private final DateTimeFormat formatDate = DateTimeFormat.getFormat("dd/MM/yyyy");
 	
-	private final DomainActivitySumaryServiceAsync impl = DomainActivitySumaryServiceAsync.newInstance();
 	private final DomainEnterprisesServiceAsync service = DomainEnterprisesServiceAsync.newInstance();
 
 	private Domain domain = null;
@@ -497,7 +496,7 @@ public class ActivitySummary extends AonCustomDockLayout {
 	}
 
 	private void getList(ActivitySummaryParams params, Consumer<List<ActivitySummaryObject>> success) {
-		impl.getActivitySummary(params, new AsyncCallback<List<ActivitySummaryObject>>() {
+		service.getActivitySummary(params, new AsyncCallback<List<ActivitySummaryObject>>() {
 			
 			@Override
 			public void onSuccess(List<ActivitySummaryObject> result) {
