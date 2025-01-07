@@ -2903,6 +2903,9 @@ public interface CommonMessages extends Messages {
 	
  	@DefaultMessage("Limpiar")
 	String clean();
+ 	
+ 	@DefaultMessage("Resetear filtro")
+ 	String reset();
 	
  	@DefaultMessage("Actualizar")
 	String refresh();

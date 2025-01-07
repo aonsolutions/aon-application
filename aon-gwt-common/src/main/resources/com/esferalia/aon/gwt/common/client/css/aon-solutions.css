@@ -969,7 +969,7 @@
 	background-size: 100% auto;
 }
 .aon_search_panel_button:hover, .aon_search_panel_button:focus {
-	background-color: white !important; 
+	background-color: #eee !important; 
 }
 
 /* GRID */

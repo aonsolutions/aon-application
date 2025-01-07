@@ -71,6 +71,7 @@ public class LedgerPanelReport extends DockLayoutPanel implements Focusable, Has
 	private ListBox confidential;
 
 	private boolean activitiesListBoxEnabled;
+	private FlexTable mainTab;
 	
 	public LedgerPanelReport(final AccountingReportModuleOptions options) {
 		super(Unit.PX);
@@ -79,7 +80,6 @@ public class LedgerPanelReport extends DockLayoutPanel implements Focusable, Has
 			commonService = new CommonServiceAsyncDecorator(commonServiceRaw);
 			commonService.getAonConfiguration(options.getDomainName(), options.getDomain(), options.getUser()
 				,new AsyncCallback<AonConfiguration>() {
-					@Override
 					public void onSuccess(AonConfiguration result) {
 						fill(options.setConfiguration(result));
 					}
@@ -100,14 +100,13 @@ public class LedgerPanelReport extends DockLayoutPanel implements Focusable, Has
 		addStyleName(AON.CSS.aonScrollArea());
 		addStyleName(AON.CSS.aonMarginBottom());
 		filterPanel = new SimpleLayoutPanel();
-		FlexTable mainTab = new FlexTable();
+		mainTab = new FlexTable();
 		mainTab.setStyleName(AON.CSS.aonSearchPanel());
 		mainTab.addStyleName(AON.CSS.aonWidthAlmostAll());
 		mainTab.addStyleName(AON.CSS.aonBlockCenter());
 		mainTab.getColumnFormatter().setWidth(0, "auto");
 		mainTab.getColumnFormatter().setWidth(1, "50px");
 		mainTab.setWidget(0, 0, getFilterTab(options,new AccountingReportParams()));
-		mainTab.setWidget(0, 1, getCloseButtonsPanel());
 		filterPanel.setWidget(mainTab);
 		addNorth(filterPanel, 110);
 		centerPanel = new SimpleLayoutPanel();
@@ -341,9 +340,10 @@ public class LedgerPanelReport extends DockLayoutPanel implements Focusable, Has
 		}
 		
 		// ************************************************************************  CLEAN
-		AonSearchPanelButton cleanButton = new AonSearchPanelButton(AON.MSG.clean(),AON.CSS.aonIconClear());
+		AonSearchPanelButton cleanButton = new AonSearchPanelButton(AON.MSG.reset(),AON.CSS.aonIconClear());
+		cleanButton.addStyleName(AON.CSS.aonMarginRight());		
 		cleanButton.setTitle(AON.MSG.clean());
-		tab.setWidget(1, 4, cleanButton);
+		tab.setWidget(0, 7, cleanButton);
 		
 		cleanButton.addClickHandler(new ClickHandler() {
 			@Override
@@ -361,6 +361,33 @@ public class LedgerPanelReport extends DockLayoutPanel implements Focusable, Has
 			}
 		});
 		
+		AonSearchPanelButton refreshButton = new AonSearchPanelButton(AON.MSG.refresh(),AON.CSS.aonIconRefresh());
+		refreshButton.addStyleName(AON.CSS.aonMarginRight());		
+		refreshButton.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				onSearch(options);
+			}
+		});
+		
+		AonSearchPanelButton closeButton = new AonSearchPanelButton(AON.MSG.close(),AON.CSS.aonIconClose());
+		closeButton.addClickHandler(new ClickHandler() {
+			
+			@Override
+			public void onClick(ClickEvent event) {
+				LedgerPanelReport.this.closeFilterPanel();
+			}
+		});
+		
+		FlowPanel buttonsPanel = new FlowPanel();
+		buttonsPanel.setStyleName(AON.CSS.aonTextRight());
+		buttonsPanel.addStyleName(AON.CSS.aonPaddingRight());
+		buttonsPanel.addStyleName(AON.CSS.aonNowrap());
+		buttonsPanel.addStyleName(AON.CSS.aonWidthAll());
+		buttonsPanel.add( cleanButton );
+		buttonsPanel.add( refreshButton );
+		buttonsPanel.add(closeButton);
+		mainTab.setWidget(0, 1, buttonsPanel);
 
 		// **********************************************************************  EVENTS
 		period.addChangeHandler(new ChangeHandler() {
@@ -470,25 +497,6 @@ public class LedgerPanelReport extends DockLayoutPanel implements Focusable, Has
 			.setAccount(new Account().setCode(account.getValue()))
 			.setSecurityLevel(confidential!=null?SecurityLevel.safeValueOf(confidential.getSelectedIndex()):SecurityLevel.OFFICIAL)
 			;
-	}
-	
-	private FlowPanel getCloseButtonsPanel() {
-		FlowPanel min = new FlowPanel();
-		min.setStyleName(AON.CSS.aonTextRight());
-		min.addStyleName(AON.CSS.aonPaddingRight());
-		min.addStyleName(AON.CSS.aonNowrap());
-		min.addStyleName(AON.CSS.aonWidthAll());
-		
-		AonSearchPanelButton close = new AonSearchPanelButton(AON.MSG.close(),AON.CSS.aonIconClose());
-		close.addClickHandler(new ClickHandler() {
-			
-			@Override
-			public void onClick(ClickEvent event) {
-				LedgerPanelReport.this.closeFilterPanel();
-			}
-		});
-		min.add(close);
-		return min;
 	}
 
 	public void closeFilterPanel() {
