@@ -13,7 +13,6 @@ export class AonParent extends AonElement {
 
 	notice;
 	filter;
-	_filter; // NEW FILTER
 	selected;
 	companies;
 
@@ -28,22 +27,17 @@ export class AonParent extends AonElement {
 		if(filter.ids?.length) { 
 			filter.ids = filter.ids.join(",");
 		}
-		this._filter = filter;
+		this.filter = filter;
 	}
 
 	getFilter(){
-		return this._filter;
-	}
-
-	addFilter(filter){
-		this._filter = {...this.getFilter(), ...filter};
+		return this.filter;
 	}
 
 	constructor () {
 		super();
 		this.id = 'aonParent';
 		this.filter = {};
-		this._filter = {};
 		this.PARENT = 'aonParent';
 		this.APPS_DIV = "appsDiv";
 		this.COMPANY_FILTER_TAB = "aonCompanyTabFilter";
@@ -55,8 +49,7 @@ export class AonParent extends AonElement {
 		this.init({id:'active', active: true, domainActive:true});
 		let searchBox = this.getElement('aonHeaderSearchBox');
 		searchBox.addEventListener(EVENT.KEYUP, () => {
-			this.select({value:searchBox.value});
-			this.addFilter({value:searchBox.value});
+			this.select({...this.getFilter(),...{value:searchBox.value}});
 		});
 	}
 
@@ -72,9 +65,8 @@ export class AonParent extends AonElement {
 	}
 
 	select(filter, callback) {
-		this.filter = filter;
 		
-		this.clearSelectedTab(this._filter);		
+		this.clearSelectedTab(this.filter);		
 		//TODO: aonParent.startLoader();
 
 		getCompanies().then( companies => {
@@ -103,7 +95,11 @@ export class AonParent extends AonElement {
 				//TODO: aonParent.stopLoader();
 				this.page = 1;
 				this.cleanCompanies();
-				this.buildCompanies(companies.filter(f => this.companyFilter(f, filter)).slice(0, 30));
+				
+				let filteredCompanies = this.filterCompanies(companies, filter);
+				this.decorateTab(filter, filteredCompanies.length);
+				
+				this.buildCompanies(filteredCompanies.slice(0, 30), filter);
 				callback?.(companies);
 
 			}	
@@ -151,54 +147,62 @@ export class AonParent extends AonElement {
 	selectTab(filter) {
 		this.getElement(`${this.COMPANY_FILTER_TAB}-${filter?.id}`)?.classList.add(CSS.AON_TAB_ITEM_TEXT_SELECTED);
 	}
+	
+	decorateTab(filter, count) {
+		try {
+			this.getElement(`${this.COMPANY_FILTER_TAB}-${filter?.id}`).innerHTML = `${filter.name} (${count})`;
+		} catch ( e ) {
+			
+		}
+	}
 
 	clearSelectedTab(filter) {
 		this.getElement(`${this.COMPANY_FILTER_TAB}-${filter?.id}`)?.classList.remove(CSS.AON_TAB_ITEM_TEXT_SELECTED);
 	}
 	
-	companyFilter(f, q) {
-		if(!q) {
-			q = {
+	companyFilter(company, filter) {
+		if(!filter) {
+			filter = {
 				active: true
 			};
 		}
 
 		let value = true;
 
-		if(q){
+		if(filter){
 			
-			if(q.value) {
-				const document = f.document && f.document.toUpperCase().includes(q.value.toUpperCase());
-				const name = f.name && f.name.toUpperCase().includes(q.value.toUpperCase());
-				value = document || name;
+			if(filter.value) {
+				const document = company?.document?.toUpperCase().includes(filter.value.toUpperCase());
+				const name = company?.name?.toUpperCase().includes(filter.value.toUpperCase());
+				value &= document || name;
 			}
 	
-			if(q.active) {
-				value = f.active && (f.parentId || f.type !== 'CONSULTANCY');
+			if(filter.active) {
+				value &= company.active && (company.parentId || company.type !== 'CONSULTANCY');
 			}
 	
-			if(q.inactive) {
-				value = !f.active;
+			if(filter.inactive) {
+				value &= !company.active;
 			}
 	
-			if(q.shared) {
-				value = f.shared;
+			if(filter.shared) {
+				value &= company.shared;
 			}
 	
-			if(q.entorno) {
-				value = !f.parentId && f.type === 'CONSULTANCY';
+			if(filter.entorno) {
+				value &= !company.parentId && company.type === 'CONSULTANCY';
 			}
 	
-			if(q.despacho) {
-				value = f.type === 'OFFICE';
+			if(filter.despacho) {
+				value &= company.type === 'OFFICE';
 			}
 	
-			if(q.ids) {
+			if(filter.ids) {
 				let idFilter;
-				q.ids.split(',').forEach((item, i) => {
-					idFilter = f.id == item || idFilter;
+				filter.ids.split(',').forEach((item, i) => {
+					idFilter = company.id == item || idFilter;
 				});
-				value = idFilter;
+				value &= idFilter;
 			}
 		}
 
@@ -266,34 +270,38 @@ export class AonParent extends AonElement {
 				id: 'active',
 				name: MSG.ACTIVES,
 				icon: 'domain',
-				fn: () => this.select({id:'active', active: true, domainActive:true})
+				fn: () => this.select({id:'active', active: true, domainActive:true, name: MSG.ACTIVES})
 			}, {
 				id: 'inactive',
 				name: MSG.INACTIVES,
 				icon: 'domain_disabled',
-				fn: () => this.select({id: 'inactive', inactive: true, domainActive:false})
+				fn: () => this.select({id: 'inactive', inactive: true, domainActive:false, name: MSG.INACTIVES})
 			}, {
 				id: 'shared',
 				name: MSG.SHARED,
 				icon: MATERIAL_ICONS.SHARE,
-				fn: () => this.select({id:'shared', shared: true})
+				fn: () => this.select({id:'shared', shared: true, name: MSG.SHARED})
 			}, {
 				id: 'consultancy',
 				name: MSG.ENVIRONMENT,
 				icon: MATERIAL_ICONS.APARTMENT,
-				fn: () => this.select({id:'consultancy', entorno:true, type:"CONSULTANCY"})
+				fn: () => this.select({id:'consultancy', entorno:true, type:"CONSULTANCY", name: MSG.ENVIRONMENT})
 			},{
 				id: 'office',
 				name: MSG.OFFICE,
 				icon: 'work',
-				fn: () => this.select({id: 'office', despacho:true, type:"OFFICE"})
+				fn: () => this.select({id: 'office', despacho:true, type:"OFFICE", name: MSG.OFFICE})
 			}
 		];	
 	
 		for( let filterOption of filterOptions ){
 			let companyFilterTabA = this.createElement(TAG.A);
 			companyFilterTabA.className = CSS.AON_TAB_ITEM;
-			companyFilterTabA.addEventListener(EVENT.CLICK, (ev) => filterOption.fn(ev) );
+			companyFilterTabA.addEventListener(EVENT.CLICK, (ev) => {
+				filterOption.fn(ev)
+				this.getApplication().removeBackgroundSidenavAll();
+				
+			});
 	
 			let companyFilterTabSpan = this.createElement(TAG.SPAN);
 			companyFilterTabSpan.innerHTML = filterOption.name; 
@@ -370,7 +378,7 @@ export class AonParent extends AonElement {
 		getCompanies().then( companies => {
 			let first = this.page * 30;
 			this.page = this.page + 1;
-			this.buildCompanies(companies.filter(f => this.companyFilter(f, this.filter)).slice(first, first + 30));	
+			this.buildCompanies(this.filterCompanies(companies, this.filter).slice(first, first + 30), this.filter);	
 		})
 		.finally(()=>{
 			//TODO: this.getApplication().stopLoader();
@@ -392,7 +400,7 @@ export class AonParent extends AonElement {
 			    icon: MATERIAL_ICONS.INBOX,
 			    app: Apps.INVOICE,
 			    fn: () => {
-					this.select({ids:this.notice?.invoice?.inbox?.domains});
+					this.select({...this.getFilter(),...{ids:this.notice?.invoice?.inbox?.domains, count:this.notice?.invoice?.inbox?.domainCount}});
 			    },
 			  },
 			  {
@@ -401,7 +409,7 @@ export class AonParent extends AonElement {
 			    icon: MATERIAL_ICONS.REPORT,
 				app: Apps.INVOICE,
 			    fn: () => {
-					this.select({ids:this.notice?.invoice?.rejected?.domains});
+					this.select({...this.getFilter(),...{ids:this.notice?.invoice?.rejected?.domains, count:this.notice?.invoice?.rejected?.domainCount}});
 			    },
 			  },
 			  {
@@ -475,14 +483,14 @@ export class AonParent extends AonElement {
 		}
 	}
 
-	buildCompanies(companies){
+	buildCompanies(companies, filter){
 		let ul = this.getElement("UlCompanies");
 		for(let company of companies) {
-			ul.appendChild(this.buildLi(company, 'transparent'));
+			ul.appendChild(this.buildLi(company, 'transparent', filter?.count?.[company.domain] ));
 		}
 	}
 
-	buildLi(company, color) {
+	buildLi(company, color, count) {
 		let li = this.createElement(TAG.LI);
 		li.className = 'aonLiBeta' ;
 		li.addEventListener(EVENT.CLICK, () => {
@@ -491,8 +499,8 @@ export class AonParent extends AonElement {
 			LS.setPortalChecked(portal);
 		});
 
-		let span = this.createElement(TAG.SPAN);
-		span.className = 'aonLiSpan';
+		let companySpan = this.createElement(TAG.SPAN);
+		companySpan.className = 'aonLiSpan';
 
 
 		let icon = "business";
@@ -501,21 +509,26 @@ export class AonParent extends AonElement {
 		else if(company.shared) icon = MATERIAL_ICONS.SHARE;
 		else if(!company.active) icon = 'domain_disabled';
 
-		let i = this.createElement(TAG.I);
-		i.className = 'material-icons aonAvatar';
-		i.innerHTML = icon;
+		let iconI = this.createElement(TAG.I);
+		iconI.className = 'material-icons aonAvatar';
+		iconI.innerHTML = icon;
 
-		let span2 = this.createElement(TAG.SPAN);
-		span2.innerHTML = company.name;
+		let nameSpan = this.createElement(TAG.SPAN);
+		nameSpan.innerHTML = company.name;
 
-		let span3 = this.createElement(TAG.SPAN);
-		span3.className = 'aonLiSpanSubtitle';
-		span3.innerHTML = company.document;
+		let docSpan = this.createElement(TAG.SPAN);
+		docSpan.className = 'aonLiSpanSubtitle';
+		docSpan.innerHTML = company.document;
 
-		span.appendChild(i);
-		span.appendChild(span2);
-		span.appendChild(span3);
-		li.appendChild(span);
+		companySpan.appendChild(iconI);
+		companySpan.appendChild(nameSpan);
+		companySpan.appendChild(docSpan);
+		li.appendChild(companySpan);
+
+		let countSpan = this.createElement(TAG.SPAN);
+		countSpan.className = 'aonLiSpanSubtitle';
+		countSpan.innerHTML = count || '';
+		li.appendChild(countSpan);
 
 		let sp = this.createElement(TAG.SPAN);
 		let i2 = this.createElement(TAG.I);
@@ -609,6 +622,11 @@ export class AonParent extends AonElement {
 			totalBottom += parseFloat(style.marginBottom);
 		}
 		return totalBottom;
+	}
+	
+	filterCompanies(companies, filter) {
+		let filteredCompanies = companies.filter(f => this.companyFilter(f, filter));
+		return filteredCompanies.sort( (c1,c2) => ( filter.count?.[c2.domain] || 0 )  -  ( filter.count?.[c1.domain] || 1 ) );
 	}
 }
 
