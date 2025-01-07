@@ -326,7 +326,8 @@ public class StatementPanelReport extends DockLayoutPanel implements Focusable, 
 		
 		tab.setWidget(0, 4, reverseOrder);
 
-		AonSearchPanelButton cleanButton = new AonSearchPanelButton(AON.MSG.clean(), AON.CSS.aonIconClear());
+		AonSearchPanelButton cleanButton = new AonSearchPanelButton(AON.MSG.reset(), AON.CSS.aonIconClear());
+		cleanButton.addStyleName(AON.CSS.aonMarginRight());
 		cleanButton.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
@@ -345,10 +346,20 @@ public class StatementPanelReport extends DockLayoutPanel implements Focusable, 
 		});
 
 		AonSearchPanelButton refreshButton = new AonSearchPanelButton(AON.MSG.refresh(),AON.CSS.aonIconRefresh());
+		refreshButton.addStyleName(AON.CSS.aonMarginRight());
 		refreshButton.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
 				onSearch(options);
+			}
+		});
+		
+		AonSearchPanelButton close = new AonSearchPanelButton(AON.MSG.close(),AON.CSS.aonWidgetClose());
+		close.addClickHandler(new ClickHandler() {
+			
+			@Override
+			public void onClick(ClickEvent event) {
+	            closeFilterPanel();
 			}
 		});
 
@@ -371,39 +382,9 @@ public class StatementPanelReport extends DockLayoutPanel implements Focusable, 
 		FlowPanel buttonContainer = new FlowPanel();
 		buttonContainer.add(cleanButton);
 		buttonContainer.add(refreshButton);
-		tab.setWidget(1, 4, buttonContainer);
+		buttonContainer.add(close);
+		mainTab.setWidget(0, 1, buttonContainer);
 		
-
-		FlowPanel min = new FlowPanel();
-		min.setStyleName(AON.CSS.aonTextRight());
-		min.addStyleName(AON.CSS.aonPaddingRight());
-		min.addStyleName(AON.CSS.aonNowrap());
-		min.addStyleName(AON.CSS.aonWidthAll());
-		
-//		AonSearchPanelButton maximize = new AonSearchPanelButton(AON.MSG.maximize(),AON.CSS.aonIconMaximize());
-//		maximize.addClickHandler(new ClickHandler() {
-//			
-//			@Override
-//			public void onClick(ClickEvent event) {
-//				tab.removeStyleName(AON.CSS.aonDisplayNone());
-//				StatementPanelReport.this.setWidgetSize(filterPanel, 90 );
-//				StatementPanelReport.this.animate(500);
-//			}
-//		});
-//
-//		min.add(maximize);
-//		
-		AonSearchPanelButton close = new AonSearchPanelButton(AON.MSG.close(),AON.CSS.aonWidgetClose());
-		close.addClickHandler(new ClickHandler() {
-			
-			@Override
-			public void onClick(ClickEvent event) {
-	            closeFilterPanel();
-			}
-		});
-		min.add(close);
-
-		mainTab.setWidget(0, 1, min);
 		mainTab.getCellFormatter().setStyleName(0,1, AON.CSS.aonSearchPanelLabel());
 
 		filterPanel.setWidget(mainTab);
@@ -556,18 +537,17 @@ public class StatementPanelReport extends DockLayoutPanel implements Focusable, 
 			@Override
 			public void onAnimationComplete() {
 				MinimizeEvent.fire(StatementPanelReport.this);
+				 if (messageLabel == null) {
+					 messageLabel = new Label("Introduzca valores en el filtro de b\u00FAsqueda");
+				     messageLabel.setStyleName("gwt-InlineLabel aon_bold aon_closeFilter_message");
+				     centerPanel.add(messageLabel);
+				 }
 			}
 			@Override
 			public void onLayout(Layer arg0, double arg1) {							
 			}
 			
 		});
-
-	    if (messageLabel == null) {
-	        messageLabel = new Label("Introduzca valores en el filtro de b\u00FAsqueda");
-	        messageLabel.setStyleName("gwt-InlineLabel aon_bold aon_closeFilter_message");
-	        centerPanel.add(messageLabel);
-	    }
 	}
 
 	public void openFilterPanel() {

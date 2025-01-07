@@ -10,12 +10,10 @@ import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.net.URLEncoder;
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.TimeZone;
 import java.util.regex.Pattern;
 
 import javax.net.ssl.HttpsURLConnection;
@@ -35,6 +33,9 @@ import net.aonsolutions.core.aeat.v2023.jaxb.AEATRetencionesSalida2023;
 import net.aonsolutions.core.aeat.v2024.jaxb.AEATRetencionesEntrada2024;
 import net.aonsolutions.core.aeat.v2024.jaxb.AEATRetencionesError2024;
 import net.aonsolutions.core.aeat.v2024.jaxb.AEATRetencionesSalida2024;
+import net.aonsolutions.core.aeat.v2025.jaxb.AEATRetencionesEntrada2025;
+import net.aonsolutions.core.aeat.v2025.jaxb.AEATRetencionesError2025;
+import net.aonsolutions.core.aeat.v2025.jaxb.AEATRetencionesSalida2025;
 
 class ServicioCalculo {
 	
@@ -74,7 +75,7 @@ class ServicioCalculo {
 
     static String procesarFicheroXml(String ficheroEntrada, Integer ejercicio, Integer periodo)
 	    throws IOException {
-	URL url = new URL("https://www2.agenciatributaria.gob.es/wlpl/PRET-C200/mc");
+	URL url = new URL("https://www2.agenciatributaria.gob.es/wlpl/PRET-R200/mc");
 	
 	HttpsURLConnection con = (HttpsURLConnection) url.openConnection();
 
@@ -180,9 +181,9 @@ class ServicioCalculo {
 			    AEATRetencionesSalida2024.class).createUnmarshaller();
 		    AEATRetencionesSalida2024 salida2024 = 
 			    (AEATRetencionesSalida2024)unmarshaller.unmarshal(reader);
-		    System.out.println("Retenciones IRPF."
-		    	+ "Servicio de Módulo de Cálculo de Retenciones "
-		    	+ "EJERCICIOS 2024 y SIGUIENTES");
+//		    System.out.println("Retenciones IRPF."
+//		    	+ "Servicio de Módulo de Cálculo de Retenciones "
+//		    	+ "EJERCICIOS 2024 y SIGUIENTES");
 		    return salida2024;
 	    } catch (JAXBException | IllegalArgumentException e ) {
 		    StringReader reader = new StringReader(str);
@@ -191,6 +192,34 @@ class ServicioCalculo {
 		    AEATRetencionesError2024 error2024 = 
 			    (AEATRetencionesError2024)unmarshaller.unmarshal(reader);
 		    throw new IrpfCalculateException(error2024);
+	    }
+    }
+
+    public static  AEATRetencionesSalida2025 procesarFicheroXML(AEATRetencionesEntrada2025 entrada2025) throws JAXBException, IrpfCalculateException, IOException {
+	    Marshaller marshaller = JAXBContext.newInstance(
+		    AEATRetencionesEntrada2025.class).createMarshaller();
+	    StringWriter writer = new StringWriter();
+	    marshaller.marshal(entrada2025, writer);
+	    
+	    String str = ServicioCalculo.procesarFicheroXml(writer.toString(), 2025, 0 );
+	    
+	    try {
+		    StringReader reader = new StringReader(str);
+		    Unmarshaller unmarshaller = JAXBContext.newInstance(
+			    AEATRetencionesSalida2025.class).createUnmarshaller();
+		    AEATRetencionesSalida2025 salida2025 = 
+			    (AEATRetencionesSalida2025)unmarshaller.unmarshal(reader);
+		    System.out.println("Retenciones IRPF."
+		    	+ "Servicio de Módulo de Cálculo de Retenciones "
+		    	+ "EJERCICIO 2025");
+		    return salida2025;
+	    } catch (JAXBException | IllegalArgumentException e ) {
+		    StringReader reader = new StringReader(str);
+		    Unmarshaller unmarshaller = JAXBContext.newInstance(
+			    AEATRetencionesError2025.class).createUnmarshaller();
+		    AEATRetencionesError2025 error2025 = 
+			    (AEATRetencionesError2025)unmarshaller.unmarshal(reader);
+		    throw new IrpfCalculateException(error2025);
 	    }
     }
 
@@ -216,13 +245,20 @@ class ServicioCalculo {
 //	    JAXBContext.newInstance(AEATRetencionesSalida2023.class).createMarshaller().marshal(salida2023, System.out);
 //	}
 	
-	try ( StringReader ejemploEntrada2024Reader = new StringReader(EJEMPLOENTRADA2024) ) {
-	    AEATRetencionesEntrada2024 entrada2024 = (AEATRetencionesEntrada2024)
-	    JAXBContext.newInstance(AEATRetencionesEntrada2024.class).createUnmarshaller().unmarshal( ejemploEntrada2024Reader );
-    	
-	    AEATRetencionesSalida2024 salida2024 = procesarFicheroXML(entrada2024, FEBRUARY_2024);
-	    JAXBContext.newInstance(AEATRetencionesSalida2024.class).createMarshaller().marshal(salida2024, System.out);
-	}
+//	try ( StringReader ejemploEntrada2024Reader = new StringReader(EJEMPLOENTRADA2024) ) {
+//	    AEATRetencionesEntrada2024 entrada2024 = (AEATRetencionesEntrada2024)
+//	    JAXBContext.newInstance(AEATRetencionesEntrada2024.class).createUnmarshaller().unmarshal( ejemploEntrada2024Reader );
+//    	
+//	    AEATRetencionesSalida2024 salida2024 = procesarFicheroXML(entrada2024, FEBRUARY_2024);
+//	    JAXBContext.newInstance(AEATRetencionesSalida2024.class).createMarshaller().marshal(salida2024, System.out);
+//	}
+
+//	try ( StringReader ejemploEntrada2025Reader = new StringReader(EJEMPLOENTRADA2025) ) {
+//	    AEATRetencionesEntrada2025 entrada2025 = (AEATRetencionesEntrada2025) 
+//	    	    JAXBContext.newInstance(AEATRetencionesEntrada2025.class).createUnmarshaller().unmarshal( ejemploEntrada2025Reader );
+//	    AEATRetencionesSalida2025 salida2025 = procesarFicheroXML(entrada2025);
+//	    JAXBContext.newInstance(AEATRetencionesSalida2025.class).createMarshaller().marshal(salida2025, System.out);
+//	}
     }
     
     private static final String EJEMPLOENTRADA2022 = 
@@ -289,5 +325,24 @@ class ServicioCalculo {
 	    	+ "</Retenedor></AEATRetencionesEntrada2024>";
 
     
+    private static final String EJEMPLOENTRADA2025 = 
+	    	"<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"
+	    	+ "<AEATRetencionesEntrada2025>"
+	    	+ "<IdDoc>"
+	    	+ "<CodModelo>RET</CodModelo>"
+	    	+ "<Ejercicio>2025</Ejercicio>"
+	    	+ "</IdDoc>"
+	    	+ "<Retenedor>"
+	    	+ "<Nif>Z7896423E</Nif>"
+	    	+ "<ApellidosNombre>LINUX FOUNDATION</ApellidosNombre>"
+	    	+ "<Retenido><Nif>87449445H</Nif><ApellidosNombre>TORVALDS BENEDICT LINUS</ApellidosNombre>"
+	    	+ "<Nacimiento>1974</Nacimiento>"
+	    	+ "<SituacionFamiliar><Situacion3/></SituacionFamiliar>"
+	    	+ "<SituacionLaboral><TrabajadorActivo><Contrato>1</Contrato></TrabajadorActivo></SituacionLaboral>"
+	    	+ "<RetribAnuales>15120.00</RetribAnuales>"
+	    	+ "<Cotizaciones>978.26</Cotizaciones>"
+	    	+ "</Retenido>"
+	    	+ "</Retenedor></AEATRetencionesEntrada2025>";
+
 
 }

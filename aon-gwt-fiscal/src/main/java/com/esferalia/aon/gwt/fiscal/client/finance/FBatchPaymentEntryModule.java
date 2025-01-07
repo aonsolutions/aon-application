@@ -98,6 +98,7 @@ public abstract class FBatchPaymentEntryModule extends SimpleLayoutPanel {
 	private AonToolbarButton resetSearchButton;
 	private AonToolbarButton sepaButton;
 	private AonToolbarButton downloadButton;
+	private AonToolbarButton excelButton;
 	private AonToolbarButton deleteFileButton;
 	private HTMLPanel messagePanel;
 
@@ -1570,11 +1571,13 @@ public abstract class FBatchPaymentEntryModule extends SimpleLayoutPanel {
 		Hidden domainNameHidden = new Hidden(IRequestParamsNames.DOMAIN_NAME);
 		Hidden userHidden = new Hidden(IRequestParamsNames.USER);
 		Hidden rattachHidden = new Hidden("rattach");
+		Hidden fbatchhHidden = new Hidden("fbatch");
 		Hidden attachTypeHidden = new Hidden("attachType");
 
 		FlowPanel formFlowPanel = new FlowPanel();
 		diskForm.add(formFlowPanel);
 		formFlowPanel.add(rattachHidden);
+		formFlowPanel.add(fbatchhHidden);
 		formFlowPanel.add(attachTypeHidden);
 		formFlowPanel.add(domainIdHidden);
 		formFlowPanel.add(domainNameHidden);
@@ -1616,6 +1619,21 @@ public abstract class FBatchPaymentEntryModule extends SimpleLayoutPanel {
 		deleteFileButton.addClickHandler(e -> deleteSepaFile());
 		deleteFileButton.setVisible(this.fBatch.getRattach() != null);
 		toolbar.add(deleteFileButton);
+		
+		excelButton = new AonToolbarButton("Relaci\u00f3n Remesa Bacaria", AON.CSS.aonIconExcel());
+		excelButton.addClickHandler(e -> {
+			diskForm.setAction(GWT.getHostPageBaseURL() + "ms/api/fbatchPaymentReport");
+
+			fbatchhHidden.setValue(fBatch.getId().toString());
+			rattachHidden.setValue(fBatch.getRattach().toString());
+			attachTypeHidden.setValue("registry");
+			domainIdHidden.setValue(opt.getDomain() + "");
+			domainNameHidden.setValue(opt.getDomainName());
+			userHidden.setValue(opt.getUser());
+
+			diskForm.submit();
+		});
+		toolbar.add(excelButton);
 
 		return toolbar;
 	}

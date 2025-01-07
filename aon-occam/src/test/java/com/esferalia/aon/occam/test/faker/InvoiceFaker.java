@@ -609,13 +609,13 @@ public class InvoiceFaker {
 	}
 	
 	private static double getVatPercent(Invoice invoice, int x) {
-		Date octoberFirst = AonDateUtils.getDate(2024, 9,1);
+		Date octoberFirst = AonDateUtils.getYearFirstDay(2025);
 		boolean previous = AonDateUtils.compare(invoice.getIssueDate(), octoberFirst) == -1; 
 		if ( x >= 0 && x <= 50) return 21.0;
 		if ( x > 50 && x <= 75) return 10.0;
 		if ( x > 75 && x <= 90) return 4.0;
-		if ( x > 90 && x <= 95) return previous?0.0:2.0;
-		if ( x > 95 && x <= 98) return previous?5.0:7.5;
+		if ( x > 90 && x <= 95) return previous?2.0:4.0;
+		if ( x > 95 && x <= 98) return previous?7.5:10;
 		return 0.0;
 	}
 	

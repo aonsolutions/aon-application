@@ -121,9 +121,9 @@ export class AonQuantity extends AonNewInput {
         this.packMeasurementTag = object.packMeasurementTag.name;
         this.packMeasurement = object.packMeasurement;
 
-        if(this.format === 'stockUnit') {
+        if(this.getElement(this.TAG_SPAN) && this.format === 'stockUnit') {
             this.getElement(this.TAG_SPAN).innerHTML = this.stockUnitTag;
-        } else {
+        } else if(this.getElement(this.TAG_SPAN)) {
             this.getElement(this.TAG_SPAN).innerHTML = this.packFormatTag; 
         }
     }

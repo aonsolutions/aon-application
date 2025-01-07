@@ -354,7 +354,8 @@ public class OperatingPanelReport extends DockLayoutPanel implements Focusable, 
 				});
 			}
 			
-			AonSearchPanelButton cleanButton = new AonSearchPanelButton(AON.MSG.clean(),AON.CSS.aonIconDelete());
+			AonSearchPanelButton cleanButton = new AonSearchPanelButton(AON.MSG.reset(),AON.CSS.aonIconClear());
+			cleanButton.addStyleName(AON.CSS.aonMarginRight());
 			cleanButton.addClickHandler(new ClickHandler() {
 				@Override
 				public void onClick(ClickEvent event) {
@@ -385,10 +386,20 @@ public class OperatingPanelReport extends DockLayoutPanel implements Focusable, 
 			});
 	
 			AonSearchPanelButton refreshButton = new AonSearchPanelButton(AON.MSG.refresh(),AON.CSS.aonIconRefresh());
+			refreshButton.addStyleName(AON.CSS.aonMarginRight());
 			refreshButton.addClickHandler(new ClickHandler() {
 				@Override
 				public void onClick(ClickEvent event) {
 					onSearch(options);
+				}
+			});
+			
+			AonSearchPanelButton closeButton = new AonSearchPanelButton(AON.MSG.close(),AON.CSS.aonIconClose());
+			closeButton.addClickHandler(new ClickHandler() {
+				
+				@Override
+				public void onClick(ClickEvent event) {
+					OperatingPanelReport.this.closeFilterPanel();
 				}
 			});
 	
@@ -403,6 +414,11 @@ public class OperatingPanelReport extends DockLayoutPanel implements Focusable, 
 				periodBoxContainer.add(getPeriodBox(options,period.getSelectedValue()));
 			}
 
+			FlowPanel buttonsPanel = new FlowPanel();
+			buttonsPanel.addStyleName(AON.CSS.aonMarginLeft());
+			buttonsPanel.add( cleanButton );
+			buttonsPanel.add( refreshButton );
+			buttonsPanel.add(closeButton);
 			mainTab.addRow().addCell( 
 				new AonDisplayTable().addRow()
 				.addCell(new Label(AON.MSG.fiscalYear() +"/"+ AON.MSG.date()),AON.CSS.aonSearchPanelLabel())
@@ -417,13 +433,10 @@ public class OperatingPanelReport extends DockLayoutPanel implements Focusable, 
 				.addCellIf( activitiesListBoxEnabled, new Label(AON.MSG.activity()), AON.CSS.aonSearchPanelLabel(), AON.CSS.aonPaddingLeft())
 				.addCellIf( activitiesListBoxEnabled, activity))
 				.addCell(new Label(), AON.CSS.aonFlexGrow1())
-				.addCell(getCloseButtonsPanel(), AON.CSS.aonPaddingLeft())
+				.addCell(buttonsPanel, AON.CSS.aonPaddingLeft())
 				;
 			
-			FlowPanel buttonsPanel = new FlowPanel();
-			buttonsPanel.addStyleName(AON.CSS.aonMarginLeft());
-			buttonsPanel.add( cleanButton );
-			buttonsPanel.add( refreshButton );
+			
 			mainTab.addRow().addCell( 
 				new AonDisplayTable().addRow()
 				.addCell(new Label(AON.MSG.level()),AON.CSS.aonSearchPanelLabel())
@@ -432,17 +445,10 @@ public class OperatingPanelReport extends DockLayoutPanel implements Focusable, 
 				.addCell(previousPeriods)
 				.addCellIf(options.getConfiguration().getUser().hasConfidentialityRole(),new Label(AON.MSG.show()), AON.CSS.aonSearchPanelLabel(), AON.CSS.aonPaddingLeft())
 				.addCellIf(options.getConfiguration().getUser().hasConfidentialityRole(),confidential)
-				.addCell(buttonsPanel), AON.CSS.aonFlexGrow1())
+				.addCellIf(hasCostCenters, new Label(AON.MSG.costCenter()), AON.CSS.aonSearchPanelLabel())
+				.addCellIf(hasCostCenters, costCenters)
+				.addCellIf(hasCostCenters, selectedCostCenter, AON.CSS.aonFlexGrow1()))
 				;
-	
-			if (hasCostCenters) {
-				mainTab.addRow().addCell( 
-						new AonDisplayTable().addRow()
-						.addCell(new Label(AON.MSG.costCenter()), AON.CSS.aonSearchPanelLabel())
-						.addCell(costCenters)
-						.addCell(selectedCostCenter, AON.CSS.aonFlexGrow1())
-						)				;
-			}
 
 			filterPanel = new SimpleLayoutPanel();
 			ScrollPanel scrollPanel = new ScrollPanel();
@@ -666,25 +672,6 @@ public class OperatingPanelReport extends DockLayoutPanel implements Focusable, 
 			.setSecurityLevel(confidential!=null?SecurityLevel.safeValueOf(confidential.getSelectedIndex()):SecurityLevel.OFFICIAL)
 			.setByMonth(byMonth.getValue())
 			;
-	}
-	
-	private FlowPanel getCloseButtonsPanel() {
-		FlowPanel min = new FlowPanel();
-		min.setStyleName(AON.CSS.aonTextRight());
-		min.addStyleName(AON.CSS.aonPaddingRight());
-		min.addStyleName(AON.CSS.aonNowrap());
-		min.addStyleName(AON.CSS.aonWidthAll());
-		
-		AonSearchPanelButton close = new AonSearchPanelButton(AON.MSG.close(),AON.CSS.aonIconClose());
-		close.addClickHandler(new ClickHandler() {
-			
-			@Override
-			public void onClick(ClickEvent event) {
-				OperatingPanelReport.this.closeFilterPanel();
-			}
-		});
-		min.add(close);
-		return min;
 	}
 
 	public void closeFilterPanel() {

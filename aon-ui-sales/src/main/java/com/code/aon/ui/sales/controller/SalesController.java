@@ -1166,9 +1166,10 @@ public class SalesController extends HeaderObjectController implements ISalesCon
 	}
 	
 	public void onPrepareSale(ActionEvent event) {
+		Date date = getDeliveryDate() != null ? getDeliveryDate() : new Date();
 		String domainName = AonUtil.getDomainName();
 		String login = UserUtils.getInstance().getLoggedUser().getLogin();
-		String series = Integer.toString(AonDateUtils.getYear(new Date()));
+		String series = Integer.toString(AonDateUtils.getYear(date));
 		Sales to = (Sales)this.getTo();
 		to.setCarrier(getPrepareSaleProcess().getCarrier());
 		to.setStatus(SalesStatus.IN_PREPARATION);
@@ -1203,7 +1204,7 @@ public class SalesController extends HeaderObjectController implements ISalesCon
 				.setCustomer(new com.esferalia.aon.occam.api.model.Customer().setId(to.getCustomer().getId()))
 				.setSeries(series)
 				.setAddress(new com.esferalia.aon.occam.api.model.registry.RegistryAddress().setId(to.getShippingAddress().getId()))
-				.setDate(new Date())
+				.setDate(date)
 				.setStatus(DeliveryStatus.IN_PREPARATION)
 				.setWorkplace(new Workplace().setId(to.getWorkPlace().getId()))
 				.setScope(new Scope().setId(to.getScope().getId()))

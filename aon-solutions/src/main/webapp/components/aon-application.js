@@ -1062,6 +1062,7 @@ export class AonApplication extends AonElement {
       aonIconButton.id = buttonId;
       aonIconButton.title = action.name;
       aonIconButton.background = "#f1f1f1";
+      aonIconButton.style.marginLeft = '10px';
       span.appendChild(aonIconButton);
       this.appendChild(span);
       aonIconButton.addEventListener(EVENT.CLICK, fn);
