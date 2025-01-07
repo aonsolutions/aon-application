@@ -17,6 +17,8 @@ import com.esferalia.aon.gwt.payroll.client.PayrollEmailDialog.Type;
 import com.esferalia.aon.gwt.payroll.shared.AFIChanges;
 import com.esferalia.aon.gwt.payroll.shared.ActivitiesCCC;
 import com.esferalia.aon.gwt.payroll.shared.ActivityInfo;
+import com.esferalia.aon.gwt.payroll.shared.ActivitySummaryObject;
+import com.esferalia.aon.gwt.payroll.shared.ActivitySummaryParams;
 import com.esferalia.aon.gwt.payroll.shared.AgrarianJourney;
 import com.esferalia.aon.gwt.payroll.shared.Agreement;
 import com.esferalia.aon.gwt.payroll.shared.AgreementInfo;
@@ -1231,6 +1233,14 @@ public class EnterprisesServiceAsyncDecorator implements
 	public void checkPensionPlanAFI(String domainName, String currentUser, long date, List<Integer> cccIdList, AsyncCallback<String> callback) throws IllegalArgumentException {
 		AON.start();
 		enterprisesServiceAsync.checkPensionPlanAFI(domainName, currentUser, date, cccIdList, callback);
+	}
+
+	// ------------------------------------------------ Activity Summary
+	
+	@Override
+	public void getActivitySummary(String domainName, String currentUser, ActivitySummaryParams params, AsyncCallback<List<ActivitySummaryObject>> callback) throws IllegalArgumentException {
+		AON.start();
+		enterprisesServiceAsync.getActivitySummary(domainName, currentUser, params, callback);
 	}
 
 }
