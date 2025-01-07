@@ -101,11 +101,13 @@ class ModelMatrixFilterPanel extends AonDisplayTable implements HasValueChangeHa
 		InlineLabel yearLabel = new InlineLabel(AON.MSG.fiscalYear());
 		yearLabel.setStyleName(AON.CSS.aonMarginRight());
 		year = new ListBox();
-		year.setStyleName(AON.CSS.aonMarginRight());
-		for (int i = 2012; i < 2025; i++) {
+		year.setStyleName(AON.CSS.aonMarginRight());		
+		for (int i = 2012; i <= AonDateUtils.getCurrentYear(); i++) {
 			String y = AonNumberUtils.toString(i);
 			year.addItem(y, y);
-			if (i == AonDateUtils.getCurrentYear()) {
+			if (i == AonDateUtils.getCurrentYear() - 1 && JsDate.create().getMonth() == 0) {
+				year.setSelectedIndex(year.getItemCount() - 1);	
+			} else if (i == AonDateUtils.getCurrentYear() && JsDate.create().getMonth() != 0) {
 				year.setSelectedIndex(year.getItemCount() - 1);	
 			}
 		}
