@@ -58,6 +58,12 @@ public class RawdocUserData implements Serializable {
 				natureMap.get(nature).get(status).getDomains()
 					.stream().forEach(r -> domainsArray.put(r));
 				noticeJson.put("domains", domainsArray);
+
+				JSONObject domainCount = new JSONObject();
+				natureMap.get(nature).get(status).getDomainCount()
+				.forEach((name,count) -> domainCount.put(name, count));
+				noticeJson.put("domainCount", domainCount);
+				
 				natureJson.put(status.name().toLowerCase(), noticeJson);
 			}
 			json.put(nature.name().toLowerCase(), natureJson);

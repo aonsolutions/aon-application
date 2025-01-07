@@ -1,6 +1,7 @@
 package com.esferalia.aon.occam.api.model;
 
 import java.io.Serializable;
+import java.util.HashMap;
 import java.util.LinkedList;
 
 public class RawdocNotice implements Serializable {
@@ -9,6 +10,7 @@ public class RawdocNotice implements Serializable {
 		
 	private Integer count;
 	private LinkedList<Integer> domains;
+	private HashMap<String, Integer> domainCount;
 	
 	public RawdocNotice() {
 	
@@ -29,6 +31,15 @@ public class RawdocNotice implements Serializable {
 	
 	public RawdocNotice setDomains(LinkedList<Integer> domains) {
 		this.domains = domains;
+		return this;
+	}
+	
+	public HashMap<String, Integer> getDomainCount() {
+		return domainCount;
+	}
+	
+	public RawdocNotice setDomainCount(HashMap<String, Integer> domainCount) {
+		this.domainCount = domainCount;
 		return this;
 	}
 	
