@@ -63,7 +63,7 @@ public class MainEntryPoint implements EntryPoint {
 		} else if (entryPoint.equalsIgnoreCase(Constants.MAIN_CONFIG_COMUNICA_ENTRY_POINT)) {
 			runAsync(MainConfigComunica.class, new MainConfigComunica());
 		} else if (entryPoint.equalsIgnoreCase(Constants.ACTIVITY_SUMMARY_ENTRY_POINT)) {
-			runAsync(ActivitySummary.class, new ActivitySummary() );
+			runAsync(ActivitySummary.class, new ActivitySummaryModule() );
 		} else if (entryPoint.equalsIgnoreCase(Constants.MAIN_SALARY_PRINT_ENTRY_POINT)) {
 			runAsync(MainSalaryPrint.class, new MainSalaryPrint() );
 		} else if (entryPoint.equalsIgnoreCase(Constants.MAIN_MASSIVE_CONTRACTS_ENTRY_POINT)) {

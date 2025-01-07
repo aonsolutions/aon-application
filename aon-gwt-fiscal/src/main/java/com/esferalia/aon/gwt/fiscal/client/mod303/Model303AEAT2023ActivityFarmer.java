@@ -77,9 +77,9 @@ class Model303AEAT2023ActivityFarmer extends DockLayoutPanel implements HasValue
 		tab.addStyleName(AON.CSS.aonMarginLeft());
 		tab.addStyleName(AON.CSS.aonMarginBottom());
 		
-		populate(cbk.getActivity());
+		populate(cbk.getActivity(), cbk.getModel().isEditable());
 		
-		vol.setEnabled( cbk.getActivity().isNotEmpty() );
+		vol.setEnabled( cbk.getActivity().isNotEmpty() && cbk.getModel().isEditable());
 		vol.addValueChangeHandler(event -> {
 			if (vol.getValue() == null) vol.setValue(0.0,false);
 			cbk.getActivity().setVol(vol.getValue());
@@ -101,7 +101,7 @@ class Model303AEAT2023ActivityFarmer extends DockLayoutPanel implements HasValue
 		
 		// DANA - A partir del ultimo periodo de 2024
 		if ((cbk.getModel().getYear() == 2024 && cbk.getModel().isLastPeriod()) || (cbk.getModel().getYear() > 2024)) {
-			dana.setEnabled(cbk.getActivity().isNotEmpty());
+			dana.setEnabled(cbk.getActivity().isNotEmpty() && cbk.getModel().isEditable());
 			dana.addChangeHandler(event-> {
 				cbk.getActivity().setDana(dana.getSelectedIndex());
 				
@@ -119,7 +119,7 @@ class Model303AEAT2023ActivityFarmer extends DockLayoutPanel implements HasValue
 				.addCell(new Label("Actividad realizada en municipios afectados por la DANA 2024 "), AON.CSS.aonBorderBottom())
 				.addCell(dana);
 			
-			danaReduction.setEnabled(cbk.getActivity().isNotEmpty() && cbk.getActivity().getDana()==2);
+			danaReduction.setEnabled(cbk.getActivity().isNotEmpty() && cbk.getActivity().getDana() == 2 && cbk.getModel().isEditable());
 			danaReduction.addValueChangeHandler(event -> {
 				if (danaReduction.getValue() == null) 
 					danaReduction.setValue(0.0,false);
@@ -142,6 +142,7 @@ class Model303AEAT2023ActivityFarmer extends DockLayoutPanel implements HasValue
 				.addCell( new Label(AON.MSG.income()), AON.CSS.aonBorderBottom() )
 				.addCell( ing );
 		} else {
+			sop.setEnabled(cbk.getActivity().isNotEmpty() && cbk.getModel().isEditable());
 			sop.addValueChangeHandler(event -> {
 				if (sop.getValue() == null) sop.setValue(0.0,false);
 				cbk.getActivity().setSop(sop.getValue());
@@ -151,6 +152,7 @@ class Model303AEAT2023ActivityFarmer extends DockLayoutPanel implements HasValue
 				.addCell( new Label("Cuotas soportadas"), AON.CSS.aonBorderBottom() )
 				.addCell( sop );
 			
+			com.setEnabled(cbk.getActivity().isNotEmpty() && cbk.getModel().isEditable());
 			com.addValueChangeHandler(event -> {
 				if (com.getValue() == null) com.setValue(0.0,false);
 				cbk.getActivity().setCom(com.getValue());
@@ -201,15 +203,15 @@ class Model303AEAT2023ActivityFarmer extends DockLayoutPanel implements HasValue
 		
 		toolbar.add(toolbarLabel);
 		
-		epigraphsButton.setVisible(cbk.getActivity().isNotEmpty());
-		removeButton.setVisible(cbk.getActivity().isNotEmpty());
+		epigraphsButton.setVisible(cbk.getActivity().isNotEmpty() && cbk.getModel().isEditable());
+		removeButton.setVisible(cbk.getActivity().isNotEmpty() && cbk.getModel().isEditable());
 
 		return toolbar;
 	}
 	
-	void populate(Mod303ActivityFarmer act) {
-		epigraphsButton.setVisible(act.isNotEmpty());
-		removeButton.setVisible(act.isNotEmpty());
+	void populate(Mod303ActivityFarmer act, boolean isEditable) {
+		epigraphsButton.setVisible(act.isNotEmpty() && isEditable);
+		removeButton.setVisible(act.isNotEmpty() && isEditable);
 		toolbarLabel.setText(getTitle( act ));
 		vol.setValue(act.getVol(),false,true);
 		ind.setValue(act.getInd(),false,true);
@@ -223,6 +225,12 @@ class Model303AEAT2023ActivityFarmer extends DockLayoutPanel implements HasValue
 		cad.setValue(act.getCad(),false,true);
 		dana.setSelectedIndex(act.getDana());
 		danaReduction.setValue(act.getDanaReduction(),false,true);
+		
+		vol.setEnabled(act.isNotEmpty() && isEditable);
+		dana.setEnabled(act.isNotEmpty() && isEditable);
+		danaReduction.setEnabled(act.isNotEmpty() && act.getDana() == 2  && isEditable);
+		sop.setEnabled(act.isNotEmpty() && isEditable);
+		com.setEnabled(act.isNotEmpty() && isEditable);
 	}
 	
 	private String getTitle(Mod303ActivityFarmer act) {

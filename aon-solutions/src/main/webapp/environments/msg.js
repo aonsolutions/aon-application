@@ -570,6 +570,7 @@ export const RECORD = MSG.RECORD;
 export const RECORD_INVOICE = MSG.RECORD_INVOICE;
 export const RECOVER_PASSWORD = 'Recuperar Contraseña'; // TODO
 export const RECTIFIED = MSG.RECTIFIED;
+export const ISSUED_BY_THIRD_PART = "Emitida por terceros";
 export const RECTIFY = MSG.RECTIFY;
 export const RECTIFY_INVOICE = MSG.RECTIFY_INVOICE;
 export const REFERENCE = MSG.REFERENCE;
@@ -652,6 +653,7 @@ export const STREET_TYPE = 'Tipo vía';
 export const SITUATION = "Situación"; // TODO
 export const SUITE_MENU = MSG.SUITE_MENU;
 export const SUMMARIZED = MSG.SUMMARIZED;
+export const SUPERSET = 'Superset' ;
 export const SUPPLIED = MSG.SUPPLIED;
 export const SUPPLIER = MSG.SUPPLIER;
 export const SUPPLIERS = MSG.SUPPLIERS;
@@ -715,6 +717,7 @@ export const TO_SHOW = "Mostrar";//TODO
 
 // ----- U
 
+export const UNACCOUNT_INVOICES = MSG.UNACCOUNT_INVOICES;
 export const UNLINK = MSG.UNLINK;
 export const UNLINK_DOMAIN_QUESTION = MSG.UNLINK_DOMAIN_QUESTION;
 export const UNLINK_CLIENT = MSG.UNLINK_CLIENT;

@@ -203,13 +203,17 @@ public class Certificado {
 				Optional<HtmlForm> contactUpdateOptional = HtmlUnitToolkit.wait4(htmlPage, 
 				        p -> p.querySelector("#FormCertificadoElectronico"));
 
-				    if (contactUpdateOptional.isPresent()) {
-				        throw new SepeException("Antes de continuar con la comunicación debe actualizar en el SEPE, para este certificado digital, los datos, teléfono y email.");
-				    } else {
-				        throw new SepeException("Algo ha ido mal, por favor póngase en contacto con soporte.");
-				    }
+				    if (contactUpdateOptional.isPresent())
+				        throw new SepeException("Antes de continuar con la comunicaci\u00f3n debe actualizar en el SEPE, para este certificado digital, los datos, telefono y email.");
+//				    } else {
+//				    	//Why?
+//				        throw new SepeException("Algo ha ido mal, por favor póngase en contacto con soporte.");
+//				    }
 			}
 
+			if(null == hrefButton)
+				 throw new SepeException("Algo ha ido mal, por favor póngase en contacto con soporte. Es probable que el Sepe este temporalmente deshabilitado.");
+			
 			htmlPage = (HtmlPage) hrefButton.click();
 
 			{// DATA ENTERPRISE

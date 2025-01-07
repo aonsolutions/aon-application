@@ -152,6 +152,7 @@ export const GET_INVOICES = 'getInvoices';
 // ----- H
 
 export const HEADER = 'header';
+export const HELP = 'help';
 export const HIDDEN = 'hidden';
 export const HOLDERS = 'holders';
 export const HOME = 'home';
@@ -337,6 +338,7 @@ export const SUCCESS = "success";
 export const SURCHARGE = 'surcharge';
 export const SURNAME = 'surname';
 export const SURVEY = 'survey';
+export const SUPERSET = 'Superset';
 
 // ----- T
 
@@ -348,6 +350,7 @@ export const TARGET = 'target';
 export const TAXES = 'taxes';
 export const TEXT = 'text';
 export const TEXTAREA = 'textarea';
+export const THIRD_PART = "thirdPart";
 export const TIMECONTROL = 'timecontrol';
 export const TITLE = 'title';
 export const TOOLBAR = 'toolbar';

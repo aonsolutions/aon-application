@@ -46,7 +46,7 @@ class Model131ActivityTable2024 extends FlowPanel implements HasSelectionHandler
 			}
 			String label = AonStringUtils.abbreviate(act.getFullDescription(), 60);
 			if (AonStringUtils.isBlank(label)) {
-				label = "Actividad en estimaci\u00F3n objetiva n\u00AA " + i;				
+				label = "Actividad en estimaci\u00F3n objetiva n\u00BA " + i;				
 			}
 			actRow.addCell( new Label( label ), AON.CSS.aonFlexGrow1() );
 			actRow.addClickHandler(event -> {

@@ -1,10 +1,13 @@
 import { AonMobileList } from '../../components/aon-mobile-list.js';
-import { MATERIAL_ICONS, TAG } from '../../environments/environments.js';
+import { EVENT, MATERIAL_ICONS, MSG, TAG } from '../../environments/environments.js';
 import { getDeliveries, getDelivery } from '../../services/warehouseService.js';
 import { AonMobileDelivery } from './aon-mobile-delivery.js';
 
+import * as OPTION from './DeliveryOptions.js';
+
 export class AonMobileDeliveryList extends AonMobileList {
-	more;
+
+    more;
     filter;
 
     constructor () {
@@ -15,6 +18,7 @@ export class AonMobileDeliveryList extends AonMobileList {
         this.initialize();
         this.init();
         this.addEventListener('more', this.moreFn);
+        this.buildSearch();
     }
 
     moreFn = () => {
@@ -27,6 +31,7 @@ export class AonMobileDeliveryList extends AonMobileList {
     }
 
     initialize() {
+        this.id = this.id || 'aonDeliveryList';
         this.filter = this.filter || {
             page: 1,
             perPage: 30,
@@ -55,7 +60,22 @@ export class AonMobileDeliveryList extends AonMobileList {
                 this.empty();
             }
             deliveries.forEach((delivery, i) => this.addRow(delivery, i));
+
         });        
+    }
+
+    buildSearch() {
+        const btnSearch = this.getApplication().addSearchOption();
+        let searchFn = (event) => this.search(event.detail);
+        btnSearch.addEventListener(EVENT.SEARCH_NEW, searchFn);
+        btnSearch.buildOptionsFilter(OPTION.DELIVERY_SEARCH_OPTIONS);
+
+        this.getElement('status').setOptions([
+            { name: "-", value: undefined },
+            { name: MSG.PENDING, value: "PENDING" },
+            { name: MSG.INVOICED, value: "INVOICED" },
+            { name: MSG.IN_PREPARATION, value: "IN_PREPARATION" },
+        ]);
     }
 
     addRow(delivery, i) {
@@ -79,6 +99,14 @@ export class AonMobileDeliveryList extends AonMobileList {
         });
     }
     
+    search(detail) {
+        let value = detail.search;
+		if(detail.search) this.filter.value = value;
+        if(detail.status) this.filter.status = detail.status;
+        if(detail.startDate) this.filter.from = detail.startDate;
+        if(detail.to) this.filter.to = detail.to;
+		this.init();
+	}
 
     setFilter(filter) {
         this.filter = filter;

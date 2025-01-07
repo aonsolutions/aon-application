@@ -39,6 +39,7 @@ import com.esferalia.aon.occam.api.model.GeoZone;
 import com.esferalia.aon.occam.api.model.MarketingAction;
 import com.esferalia.aon.occam.api.model.MarketingActionParams;
 import com.esferalia.aon.occam.api.model.MarketingActionTarget;
+import com.esferalia.aon.occam.api.model.MarketingActionTargetMassiveParams;
 import com.esferalia.aon.occam.api.model.MarketingActionTargetParams;
 import com.esferalia.aon.occam.api.model.MarketingCampaign;
 import com.esferalia.aon.occam.api.model.MarketingCompaignParams;
@@ -302,6 +303,7 @@ public interface IRegistry {
 	
 	// MARKETING ACTION TARGET
 	public List<MarketingActionTarget> getMarketingActionTargets(CloseableAONContext ctx, MarketingActionTargetParams params);
+	public List<MarketingActionTarget> getMarketingActionTargets(CloseableAONContext ctx, MarketingActionTargetMassiveParams params);
 	public void deleteMarketingActionTarget(CloseableAONContext ctx, Integer id);
 	public MarketingActionTarget saveMarketingActionTarget(CloseableAONContext ctx, MarketingActionTarget marketingActionTarget);
 	

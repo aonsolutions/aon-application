@@ -14,7 +14,6 @@ import com.esferalia.aon.gwt.payroll.shared.EmployeeCalendarInfo;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeSegSocial;
 import com.esferalia.aon.gwt.payroll.shared.IT;
 import com.esferalia.aon.gwt.payroll.shared.ITEmployee;
-import com.esferalia.aon.gwt.payroll.shared.ITPart;
 import com.esferalia.aon.occam.api.model.aonsolutions.DomainUserRoles;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
@@ -191,146 +190,6 @@ public class EmployeeCalendarDraftObject {
 		deleteIT(it, success::accept, failure::accept);
 	}
 	
-	public void comunicateITBaja(ITEmployee itEmployee, IT it, Consumer<Void> success, Consumer<Throwable> failure) {
-		impl.getNafxIpf(itEmployee.getEmployeeInfo().getDocument(), itEmployee.getEmployeeInfo().getSurName(), 
-				itEmployee.getEmployeeInfo().getSecondSurName(), new AsyncCallback<EmployeeSegSocial>() {
-					
-					@Override
-					public void onSuccess(EmployeeSegSocial result) {
-						String naf = result.getNss();
-						String regime = itEmployee.getContractInfo().getCompleteCCC().substring(0, 4);
-						String ccc = itEmployee.getContractInfo().getCompleteCCC().substring(4, itEmployee.getContractInfo().getCompleteCCC().length());
-							
-						float baseCC = it.getDailyCGCBase().floatValue();
-						int days = 	30;
-
-						impl.registerITBaja(
-								regime, 
-								ccc, 
-								naf, 
-								getContingency(it.getTypeLowPart()), 
-								"ACTIVO", 
-								getLicenseNumber(it), 
-								getCias(it), 
-								itEmployee.getContractInfo().getOcupation(), 
-								it.getStartDate(), 
-								getContractType(itEmployee.getContractInfo().getContractType()), 
-								baseCC, 
-								days, 
-								it.getStartDate(), 
-								null, 
-								itEmployee.getContractInfo().getAgreementCategory(),
-								"Las propias de " + itEmployee.getContractInfo().getAgreementCategory(),
-								new AsyncCallback<Void>() {
-									
-									@Override
-									public void onSuccess(Void result) {
-										success.accept(result);
-									}
-									
-									@Override
-									public void onFailure(Throwable caught) {
-										failure.accept(caught);
-									}
-								});
-					}
-
-					@Override
-					public void onFailure(Throwable caught) {
-						failure.accept(caught);
-					}
-				});
-	}
-
-	public void comunicatePaternityIT(ITEmployee itEmployee, IT it, Consumer<Void> success, Consumer<Throwable> failure) {
-		impl.getNafxIpf(itEmployee.getEmployeeInfo().getDocument(), itEmployee.getEmployeeInfo().getSurName(), 
-				itEmployee.getEmployeeInfo().getSecondSurName(), new AsyncCallback<EmployeeSegSocial>() {
-					
-					@Override
-					public void onSuccess(EmployeeSegSocial result) {
-						String affiliationNumber = result.getNss();
-						String regime = itEmployee.getContractInfo().getCompleteCCC().substring(0, 4);
-						String contributionAccount = itEmployee.getContractInfo().getCompleteCCC().substring(4, itEmployee.getContractInfo().getCompleteCCC().length());
-						String docType = checkIPFType(itEmployee.getEmployeeInfo().getDocument()); 
-						String docNum = itEmployee.getEmployeeInfo().getDocument();
-						String applicantType = checkITType(it.getMaternityType());
-						String reason = checkITReason(it.getMaternityReason());
-							
-						float baseCC = it.getDailyCGCBase().floatValue();
-						float baseCP = it.getDailyCGPBase().floatValue();
-						int days = 	30;
-						
-						Date dateFrom = it.getStartDate();
-						Date dateTo = null != it.getEndDate() ? it.getEndDate() : DateUtils.addDays2Date(DateUtils.copyDateOnly(it.getStartDate()), (16*7));
-						if(applicantType.equals("P"))
-							dateTo = null != it.getEndDate() ? it.getEndDate() : DateUtils.addDays2Date(DateUtils.copyDateOnly(it.getStartDate()), (12*7));
-						dateTo = DateUtils.addDays2Date(dateTo, -1);
-						
-						impl.createITCertificate(affiliationNumber, regime, contributionAccount, docType, docNum, applicantType, reason, dateFrom, dateTo, baseCC, baseCP, days, new AsyncCallback<Boolean>() {
-
-							@Override
-							public void onFailure(Throwable caught) {
-								failure.accept(caught);
-							}
-
-							@Override
-							public void onSuccess(Boolean result) {
-								impl.setComunicationIT(itEmployee, it, new AsyncCallback<Void>() {
-
-									@Override
-									public void onFailure(Throwable caught) {
-										failure.accept(caught);
-									}
-
-									@Override
-									public void onSuccess(Void res) {
-										success.accept(null);
-									}
-									
-								});
-							}});
-					}
-					
-					@Override
-					public void onFailure(Throwable caught) {
-						failure.accept(caught);
-					}
-				});
-	}
-	
-	public void deleteComunicateIT(ITEmployee itEmployee, IT it, Consumer<Void> success, Consumer<Throwable> failure) {
-		impl.getNafxIpf(itEmployee.getEmployeeInfo().getDocument(), itEmployee.getEmployeeInfo().getSurName(), 
-				itEmployee.getEmployeeInfo().getSecondSurName(), new AsyncCallback<EmployeeSegSocial>() {
-					
-					@Override
-					public void onSuccess(EmployeeSegSocial result) {
-						String affiliationNumber = result.getNss();
-						String regime = itEmployee.getContractInfo().getCompleteCCC().substring(0, 4);
-						String contributionAccount = itEmployee.getContractInfo().getCompleteCCC().substring(4, itEmployee.getContractInfo().getCompleteCCC().length());
-						Date dateFrom = it.getComunicationDate();
-						Date dateTo = it.getComunicationDate();
-						Date startDateIT = it.getStartDate();
-						
-						impl.deleteComunicateIT(affiliationNumber, regime, contributionAccount, dateFrom, dateTo, startDateIT, new AsyncCallback<Void>() {
-
-							@Override
-							public void onFailure(Throwable caught) {
-								failure.accept(caught);
-							}
-
-							@Override
-							public void onSuccess(Void result) {
-								success.accept(result);
-							}});
-					}
-					
-					@Override
-					public void onFailure(Throwable caught) {
-						failure.accept(caught);
-					}
-				});
-	}
-	
 	public void getNafxIpf(ITEmployee itEmployee, Consumer<EmployeeSegSocial> success, Consumer<Throwable> failure) {
 		impl.getNafxIpf(itEmployee.getEmployeeInfo().getDocument(), itEmployee.getEmployeeInfo().getSurName(), 
 				itEmployee.getEmployeeInfo().getSecondSurName(), new AsyncCallback<EmployeeSegSocial>() {
@@ -435,44 +294,6 @@ public class EmployeeCalendarDraftObject {
 	public String checkIPFType(String ipf) {
 		RegExp dniPattern = RegExp.compile("\\d{8}\\-?[A-HJ-NP-TV-Z]");
 		return dniPattern.test(ipf.toUpperCase()) ? "NIF" : "NIE";
-	}
-	
-	private String getContractType(String contractType) {
-		Integer contractTypeInt = Integer.parseInt(contractType);
-		return (contractTypeInt >= 200 && contractTypeInt < 300) || (contractTypeInt >= 500 && contractTypeInt< 600 || contractTypeInt == 0) ? "FIJO_DISCONTINUO_Y_TIEMPO_PARCIAL" : "RESTO_Y_AUTONOMOS";
-	}
-
-	private String getLicenseNumber(IT it) {
-		for( ITPart itPart : it.getITParts())
-			if(itPart.getType() == (byte)0)
-				return itPart.getCollegeNumber();
-		
-		return "";
-	}
-	
-	private String getCias(IT it) {
-		for( ITPart itPart : it.getITParts())
-			if(itPart.getType() == (byte)0)
-				return itPart.getCias();
-		
-		return "";
-	}
-	
-	private String getContingency(Byte typeLowPart) {
-		switch (typeLowPart) {
-		case (byte) 0:
-			return "ENFERMEDAD_COMUN";
-		case (byte) 1:
-			return "ACCIDENT_LABORAL";
-		case (byte) 6:
-			return "ACCIDENTE_NO_LABORAL";
-		case (byte) 7:
-			return "PERIODOS_OBSERVACION";
-		case (byte) 8:
-			return "ENFERMEDAD_PROFESIONAL";
-		default:
-			return "ENFERMEDAD_COMUN";
-		}
 	}
 	
 	// -------------------------------------------- Calendar

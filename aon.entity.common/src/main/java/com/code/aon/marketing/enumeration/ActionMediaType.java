@@ -30,7 +30,10 @@ public enum ActionMediaType implements IResourceable {
 	MAIL,
 	
     /** NEWSLETTER. */
-	NEWSLETTER;
+	NEWSLETTER,
+	
+	/** INCOMING. */
+	INCOMING;
     
     /** Message key prefix. */
     private static final String MSG_KEY_PREFIX = "aon_enum_action_media_type_";

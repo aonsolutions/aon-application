@@ -5,7 +5,6 @@ import java.util.Collections;
 import java.util.Date;
 
 import com.esferalia.aon.gwt.common.client.AON;
-import com.esferalia.aon.gwt.common.client.widget.solutions.AonConfirmDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog.AonAcceptDialogCallback;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
@@ -13,7 +12,6 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
 import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.esferalia.aon.gwt.payroll.shared.CalendarDaysType.DayType;
 import com.esferalia.aon.gwt.payroll.shared.CalendarDaysType.DayTypeVisitor;
-import com.esferalia.aon.gwt.payroll.shared.EnterpriseITStatus.ItNotExist;
 import com.esferalia.aon.gwt.payroll.shared.IT;
 import com.esferalia.aon.gwt.payroll.shared.ITEmployee;
 import com.esferalia.aon.gwt.payroll.shared.ITPart;
@@ -1486,17 +1484,9 @@ public class EmployeeCalendarDraftNew extends Composite implements ContextMenuHa
 			protected void onDelete(IT it) {
     			deleteLeave(getITEmployee(), it);
 			}
-			
-			@Override
-			protected void onShowCertitificateIT(IT it) {
-				getITCertificatePDF(getITEmployee(), it);
-			}
 
 			@Override
 			protected void onCommunicateITPart(IT it, ITPart itPart) {}
-
-			@Override
-			protected void onRemoveITPartTGSS(ItNotExist ItNotExist) {}
 			
 			@Override
 			protected void onDownloadFDIITPart(IT it, ITPart itPart) {}
@@ -1535,19 +1525,8 @@ public class EmployeeCalendarDraftNew extends Composite implements ContextMenuHa
 				deleteLeave(itEmployee, it);
 			}
 
-			@Override
-			protected void onShowCertitificateIT(IT it) {
-				getITCertificatePDF(itEmployee, it);
-			}
-
 	        @Override
 			protected void onCommunicateITPart(IT it, ITPart part) {
-				AonDialog dialog = new AonDialog("Info", new HTML("Comunicarlo desde en el apartado Laboral > Partes IT"));
-				dialog.info();
-			}
-
-			@Override
-			protected void onRemoveITPartTGSS(ItNotExist ItNotExist) {
 				AonDialog dialog = new AonDialog("Info", new HTML("Comunicarlo desde en el apartado Laboral > Partes IT"));
 				dialog.info();
 			}
@@ -1625,65 +1604,13 @@ public class EmployeeCalendarDraftNew extends Composite implements ContextMenuHa
 	private void deleteLeave(ITEmployee itEmployee, IT it) {
 		if(ITDialog.isPartenityPart(it)) {
 			employeeCalendarDraftObject.deleteIT(it,
-					s -> {
-						if(Boolean.TRUE.equals(it.isComunicate()) && employeeCalendarDraftObject.isUserComunica())
-							employeeCalendarDraftObject.deleteComunicateIT(itEmployee, it, 
-									t -> reloadCalendar(),
-									d -> {});
-						else
-							reloadCalendar();
-					},
+					s -> reloadCalendar(),
 					f -> {});
 		} else {
 			employeeCalendarDraftObject.removeIT(itEmployee, it,
-					s -> {
-						if(Boolean.TRUE.equals(it.isComunicate()) && employeeCalendarDraftObject.isUserComunica())
-							employeeCalendarDraftObject.deleteComunicateIT(itEmployee, it, 
-									t -> reloadCalendar(),
-									d -> {});
-						else
-							reloadCalendar();
-					},
+					s -> reloadCalendar(),
 					f -> {});
 		}
-	}
-	
-	private void comunicateIT(ITEmployee itEmployee, IT it) {
-		employeeCalendarDraftObject.comunicateITBaja(itEmployee, it, t -> {
-			AonConfirmDialog dialog = new AonConfirmDialog();
-			dialog.info("AVISO: COMUNICA", "El parte IT ha sido comunicado correctamente");
-		}, d -> {});
-	}
-
-	private void comunicatePaternityIT(ITEmployee itEmployee, IT it) {
-		employeeCalendarDraftObject.comunicatePaternityIT(itEmployee, it, t -> {
-			AonConfirmDialog dialog = new AonConfirmDialog();
-			dialog.info("AVISO: COMUNICA", "El parte IT ha sido comunicado correctamente");
-		}, d -> {});
-	}
-	
-	private void getITCertificatePDF(ITEmployee itEmployee, IT it) {
-		employeeCalendarDraftObject.getNafxIpf(itEmployee, s -> {
-			String affiliationNumber = s.getNss();
-			String regime = itEmployee.getContractInfo().getCompleteCCC().substring(0, 4);
-			String contributionAccount = itEmployee.getContractInfo().getCompleteCCC().substring(4, itEmployee.getContractInfo().getCompleteCCC().length());
-			String dateFromStr = fullDateFormat.format(new Date());
-			String dateToStr = fullDateFormat.format(new Date());
-			String startDateStr = fullDateFormat.format(it.getStartDate());
-			
-			String fileDownloadURL = GWT.getModuleBaseURL()+ "it_export/";
-			String query = "?domainName=" + Wnd.getCurrentDomainNameURL()
-			 		+ "&userLogin=" + Wnd.getCurrentUser()
-		            + "&affiliationNumber=" + affiliationNumber
-		            + "&regime=" + regime
-		            + "&contributionAccount=" + contributionAccount
-		            + "&dateFromStr=" + dateFromStr
-					+ "&dateToStr=" + dateToStr
-					+ "&startDateStr=" + startDateStr
-					+ "&itType=" + it.getTypeLowPart();
-			
-			Window.open(fileDownloadURL+query, "ITExporter", "resizable=yes,scrollbars=yes,status=yes");
-		}, f -> {});
 	}
 	
 	private void reloadCalendar() {

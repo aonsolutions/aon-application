@@ -66,12 +66,9 @@ import org.junit.Test;
 
 import com.code.aon.common.enumeration.Month;
 import com.code.aon.ql.Criteria;
-import com.esferalia.aon.jooq.tables.ContractPayment;
-import com.esferalia.aon.jooq.tables.PaymentConcept;
 import com.esferalia.aon.jooq.tables.records.AgreementLevelCategoryRecord;
 import com.esferalia.aon.jooq.tables.records.AgreementRecord;
 import com.esferalia.aon.jooq.tables.records.ContractLeaveRecord;
-import com.esferalia.aon.jooq.tables.records.ContractPaymentRecord;
 import com.esferalia.aon.jooq.tables.records.ContractRecord;
 import com.esferalia.aon.jooq.tables.records.DomainRecord;
 import com.esferalia.aon.jooq.tables.records.EnterpriseActivityRecord;
@@ -2719,8 +2716,8 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 		
 		addIT(aonContext, contract, LeaveType.COMMON_DISEASE, startITDate, null, 100.00);
 		
-		Date _365Date = AonDateUtils.add(startITDate, Calendar.DAY_OF_MONTH,364);
-		Date startDate = getFirstDayOfMonth(_365Date);
+		Date _545Date = AonDateUtils.add(startITDate, Calendar.DAY_OF_MONTH,544);
+		Date startDate = getFirstDayOfMonth(_545Date);
 		Date endDate = getLastDayOfMonth(startDate);
 		
 		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
@@ -2732,15 +2729,15 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 
 		cleanSystemCosts(aonContext);
 
-		Assert.assertEquals(get(_365Date, DAY_OF_MONTH)* 100.00 * 0.75,salary.getTotalPayment() );
+		Assert.assertEquals(get(_545Date, DAY_OF_MONTH)* 100.00 * 0.75,salary.getTotalPayment() );
 		Assert.assertEquals(30.00 * 100.00, salary.getCommonBase() );
 		
-		Assert.assertEquals( get(_365Date, DAY_OF_MONTH)* 100.00 * 1.65 / 100.00 , 
+		Assert.assertEquals( get(_545Date, DAY_OF_MONTH)* 100.00 * 1.65 / 100.00 , 
 				salary.getSocialSecurityContributions(), DELTA);
 
 		Assert.assertEquals(
 				(30.00 * 100.00* 23.60 / 100.00)+ 
-				(-1)*get(_365Date, DAY_OF_MONTH)* 100.00 * 0.75
+				(-1)*get(_545Date, DAY_OF_MONTH)* 100.00 * 0.75
 				
 				, salary.getTotalEnterprise()
 				, DELTA );
@@ -3031,8 +3028,8 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 		
 		addIT(aonContext, contract, LeaveType.OCCUPATIONAL_DISEASE, startITDate, null, 100.00);
 		
-		Date _365Date = AonDateUtils.add(startITDate, Calendar.DAY_OF_MONTH,364);
-		Date startDate = getFirstDayOfMonth(_365Date);
+		Date _545Date = AonDateUtils.add(startITDate, Calendar.DAY_OF_MONTH,544);
+		Date startDate = getFirstDayOfMonth(_545Date);
 		Date endDate = getLastDayOfMonth(startDate);
 		
 		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
@@ -3042,13 +3039,13 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 		calculator.setSalaryBuilder(new SalaryBuilder());
 		Salary salary = calculator.calculate(ctx);
 
-		Assert.assertEquals(get(_365Date, DAY_OF_MONTH)* 100.00 * 0.75,salary.getTotalPayment() );
+		Assert.assertEquals(get(_545Date, DAY_OF_MONTH)* 100.00 * 0.75,salary.getTotalPayment() );
 		Assert.assertEquals( 30 * 100.00 , salary.getCommonBase() );
 		
-		Assert.assertEquals( get(_365Date, DAY_OF_MONTH)* 100.00 * 1.65 / 100.00 , 
+		Assert.assertEquals( get(_545Date, DAY_OF_MONTH)* 100.00 * 1.65 / 100.00 , 
 				salary.getSocialSecurityContributions(), DELTA);
 
-		Assert.assertEquals((30.00* 100.00 * 23.60/100.00)+(-1)*get(_365Date, DAY_OF_MONTH)* 100.00 * 0.75, salary.getTotalEnterprise() );
+		Assert.assertEquals((30.00* 100.00 * 23.60/100.00)+(-1)*get(_545Date, DAY_OF_MONTH)* 100.00 * 0.75, salary.getTotalEnterprise() );
 
 		startDate = add(startDate, MONTH, 1);
 		endDate = getLastDayOfMonth(startDate);
@@ -6247,7 +6244,7 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 		org.junit.Assert.assertEquals(1000.00, salary.getCommonBase(), DELTA);
 		
 		
-		Date startITDate = add(getToday(), DAY_OF_MONTH, -400);
+		Date startITDate = add(getToday(), DAY_OF_MONTH, -600);
 
 
 		ContractLeaveRecord firstIT = 
@@ -7815,7 +7812,7 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 				contractStartDate,
 				new HashMap<String,String>(){
 				{
-					put(MONTH_DAYS.getName(), "30");
+					put(MONTH_DAYS.getName(), "30.00");
 				}
 				},
 				new String[] {
@@ -7827,7 +7824,7 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 		//@formatter:on
 		Date prevMonthEndDate = getLastDayOfMonth(add(getToday(), Calendar.MONTH, -1));
 		
-		for ( Date date = contractStartDate ; date.before(prevMonthEndDate); date = add(date, MONTH, 1)) {
+		for ( Date date = getFirstDayOfMonth( contractStartDate ); date.before(prevMonthEndDate); date = add(date, MONTH, 1)) {
 			calculateAndSave(connection, getContractSalaryCalculatorContext(connection, date,
 					getLastDayOfMonth(date), getLastDayOfMonth(date), contract));
 		}
@@ -7847,13 +7844,15 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 		
 
 		Date startDate = getFirstDayOfMonth(getToday());
-		Date endDate = getLastDayOfMonth(startDate);
 		
 		Date startIT = add(startDate, Calendar.DAY_OF_MONTH, 5);
 
 		addIT(aonContext, contract, LeaveType.COMMON_DISEASE, startIT,
 				null, null);
 		
+		startDate = getFirstDayOfMonth(startIT);
+		Date endDate = getLastDayOfMonth(startDate);
+
 		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
 				connection, startDate, endDate, endDate, contract);
 		

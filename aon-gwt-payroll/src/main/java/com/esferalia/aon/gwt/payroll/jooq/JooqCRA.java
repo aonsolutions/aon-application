@@ -17,10 +17,12 @@ import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.jooq.DSLContext;
 import org.jooq.Record;
@@ -61,7 +63,7 @@ public class JooqCRA {
 	
 	// --------------------------------------------- Check Create CRA
 	
-	public static void checkCreateNewCRA(Connection conn, long findingDate, ArrayList<Integer> cccList) throws IllegalArgumentException {
+	public static void checkCreateNewCRA(Connection conn, long findingDate, HashMap<Integer, String> cccs) throws IllegalArgumentException {
 		Date startDate = new Date(findingDate);
 		Date endDate = DateUtils.getLastDayOfMonth(startDate);
 		
@@ -74,7 +76,7 @@ public class JooqCRA {
 					CONTRACT.END_DATE.isNull()
 					.or(CONTRACT.END_DATE.ge(parseDateToSQL(startDate))))
 			.and(CONTRACT.START_DATE.lt(parseDateToSQL(endDate)))
-			.and(CONTRACT.ENTERPRISE_CCC.in(cccList))
+			.and(CONTRACT.ENTERPRISE_CCC.in(cccs.keySet()))
 			.and(CONTRACT.ID.ge(0))
 			.fetch();
 		
@@ -139,6 +141,7 @@ public class JooqCRA {
 			Result<Record> craBatchDetailRecords = dslContext.select().from(CRA_BATCH_DETAIL)
 					.join(ENTERPRISE_CCC)
 					.on(ENTERPRISE_CCC.ID.eq(CRA_BATCH_DETAIL.ENTERPRISE_CCC))
+					.join(DOMAIN).on(DOMAIN.ID.eq(ENTERPRISE_CCC.DOMAIN))
 					.join(GEOZONE)
 					.on(GEOZONE.ID.eq(ENTERPRISE_CCC.GEOZONE))
 					.join(ENTERPRISE_ACTIVITY)
@@ -177,7 +180,7 @@ public class JooqCRA {
 				cccInfo.setActivityId(craBatchDetailRecord.get(ENTERPRISE_ACTIVITY.ID));
 				cccInfo.setActivityDescription(craBatchDetailRecord.get(ENTERPRISE_ACTIVITY.DESCRIPTION));
 				cccInfo.setUseByContracts(true);
-				cccInfo.setEnterpriseDesciption(craBatchDetailRecord.get(REGISTRY.NAME));
+				cccInfo.setEnterpriseDesciption(craBatchDetailRecord.get(DOMAIN.DESCRIPTION));
 				cccInfo.setEnterpriseId(craBatchDetailRecord.get(REGISTRY.ID));
 				
 				includeCCCs.add(cccInfo);
@@ -270,7 +273,7 @@ public class JooqCRA {
 	
 	// --------------------------------------------- Set CRA
 
-	public static void setMainCra(Integer domainId, List<String> cccList, ArrayList<Integer> cccIdList, String craFile, long startDateTime, String craDocumentType, Date fileNameDate, String fileName, Connection connection) {
+	public static void setMainCra(Integer domainId, HashMap<Integer, String> cccs, String craFile, long startDateTime, String craDocumentType, Date fileNameDate, String fileName, Connection connection) {
 		
 		DSLContext dslContext = DSL.using(connection, getDefaultSettings());
 		java.util.Date startDate = new java.util.Date(startDateTime);
@@ -281,23 +284,23 @@ public class JooqCRA {
 			Result<Record> craBatchRecords = dslContext.select().from(CRA_BATCH)
 					.where(CRA_BATCH.ID.in(
 							dslContext.select(CRA_BATCH_DETAIL.CRA_BATCH).from(CRA_BATCH_DETAIL)
-								.where(CRA_BATCH_DETAIL.ENTERPRISE_CCC.in(cccIdList))
+								.where(CRA_BATCH_DETAIL.ENTERPRISE_CCC.in(cccs.keySet()))
 					))
 					.and(DSL.date(CRA_BATCH.OUTCOME_FILE_DATE).eq(parseDateToSQL(startDate)))
 					.fetch();
 			
-			String resultStr = deleteLinesCRA(craBatchRecords, cccList);
+			String resultStr = deleteLinesCRA(craBatchRecords, cccs.values());
 			String newETI = craFile.substring(0, 72);
 			String newCRA = newETI + resultStr + craFile.substring(72, craFile.length());
 			
-			insertCRADB(dslContext, domainId, fileNameDate, "R", newCRA, startDate, cccIdList);
+			insertCRADB(dslContext, domainId, fileNameDate, "R", newCRA, startDate, cccs.keySet());
 		
 		// NORMAL
 		} else
-			insertCRADB(dslContext, domainId, fileNameDate, "N", craFile, startDate, cccIdList);
+			insertCRADB(dslContext, domainId, fileNameDate, "N", craFile, startDate, cccs.keySet());
 	}
 	
-	private static void insertCRADB(DSLContext dslContext, Integer domainId, Date fileNameDate, String craType, String file, Date startDate, ArrayList<Integer> cccIdList) {
+	private static void insertCRADB(DSLContext dslContext, Integer domainId, Date fileNameDate, String craType, String file, Date startDate, Set<Integer> set) {
 		CraBatchRecord craBatchRecord = dslContext.insertInto(CRA_BATCH)
 				.set(CRA_BATCH.DOMAIN, domainId)
 				.set(CRA_BATCH.DATE, new Timestamp(fileNameDate.getTime()))
@@ -311,7 +314,7 @@ public class JooqCRA {
 			
 		Integer craBatchId = craBatchRecord.getId();
 		
-		cccIdList.forEach(cccId -> 
+		set.forEach(cccId -> 
 			dslContext.insertInto(CRA_BATCH_DETAIL)
 				.set(CRA_BATCH_DETAIL.DOMAIN, domainId)
 				.set(CRA_BATCH_DETAIL.CRA_BATCH, craBatchId)
@@ -320,7 +323,7 @@ public class JooqCRA {
 		);
 	}
 	
-	private static String deleteLinesCRA(Result<Record> craBatchRecords, List<String> cccList) {
+	private static String deleteLinesCRA(Result<Record> craBatchRecords, Collection<String> collection) {
 		String resultStr = "";
 		
 		for(Record craBatchRecord : craBatchRecords) {
@@ -337,7 +340,7 @@ public class JooqCRA {
 					
 					String analizeCCC = subStringAnalize.substring(7, 18);
 					
-					if(cccList.contains(analizeCCC)) {
+					if(collection.contains(analizeCCC)) {
 						resultStr += subStringAnalize;
 						
 						for(int j=i+72; i<dataStr.length(); j+=72) {

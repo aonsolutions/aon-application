@@ -295,7 +295,7 @@ public class AonMessagePanel extends FlowPanel {
 		    	 fadeOut(panel, aonMessagePanel);
 		     }
 		};
-		timer.schedule(3500);
+		timer.schedule(4500);
 	}
 	
 	private static Promise fadeOut(Panel panel, AonMessagePanel aonMessagePanel) {

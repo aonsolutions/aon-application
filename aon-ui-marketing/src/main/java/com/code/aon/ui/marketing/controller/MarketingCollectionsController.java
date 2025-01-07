@@ -49,6 +49,7 @@ public class MarketingCollectionsController implements Serializable {
 					case PHONE:
 					case EMAIL:
 					case MAIL:
+					case INCOMING:
 					case NEWSLETTER:
 						String name = mediaType.getName(locale);
 						SelectItem item = new SelectItem(mediaType, name);

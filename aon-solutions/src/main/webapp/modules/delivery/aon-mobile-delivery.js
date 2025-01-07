@@ -5,7 +5,7 @@ import {AonToolbar} from "../../components/aon-toolbar.js";
 import {AonCard} from "../../components/aon-card.js";
 import {AonButton} from "../../components/aon-button.js";
 
-import {CONSTANT, EVENT, MATERIAL_ICONS, MSG, TAG } from '../../environments/environments.js'; 
+import {COLORS, CONSTANT, EVENT, MATERIAL_ICONS, MSG, TAG } from '../../environments/environments.js'; 
 
 import * as ACTION from '../actions.js';
 
@@ -19,6 +19,7 @@ import { getSalesDetails } from '../../services/salesService.js';
 
 import { AonMobileDeliveryPackagingList } from './aon-mobile-delivery-packaging-list.js';
 import { createCard, createInput, createSelect } from '../../components/CreateComponent.js';
+import { round } from '../../services/utils.js';
 
 export class AonMobileDelivery extends AonElement {
 
@@ -409,7 +410,7 @@ export class AonMobileDelivery extends AonElement {
 			this.packaging.container = undefined;
 			getSalesDetails({delivery: this.delivery.id, status:['PENDING','PARTIAL_SETTLED']})
 			.then(sd => {
-				this.salesDetails = sd
+				this.salesDetails = sd;
 				this.buildPendingTable(this.getElement(this.id + 'PendingTable'));
 			});
 		});
@@ -438,22 +439,51 @@ export class AonMobileDelivery extends AonElement {
 				pendingTable.addRow();
 				
 				let span = this.createSpan();
-				span.innerHTML = this.salesDetails[i].item.product.code;
-				pendingTable.addCell(span);
-
+				span.innerHTML = this.salesDetails[i].item.product.name;
+				let td = pendingTable.addCell(span);
+				td.style.paddingBottom = '10px';
+				td.style.paddingRight = '10px';
+				
 				let span2 = this.createSpan();
-				span2.innerHTML = pending;
-				pendingTable.addCell(span2)
+
+				let q = this.getFormat(this.salesDetails[i].item, this.salesDetails[i].quantity);
+				let p = this.getFormat(this.salesDetails[i].item, pending);
+				
+				span2.innerHTML = p + '/' + q;
+				span2.style.color = q == p ? `var(${COLORS.AON_RED})` : `var(${COLORS.AON_ORANGE})`;
+				span2.style.fontWeight = 'bold';
+
+				let td2 = pendingTable.addCell(span2)
+				td2.style.paddingBottom = '10px';
 
 				let aonIconButton = this.createAonElement(new AonIconButton(), 'icon' + i, 'icon');
 				aonIconButton.icon = MATERIAL_ICONS.ADD;
 				aonIconButton.addEventListener(EVENT.CLICK, () => {
 					this.sourceDialog(this.salesDetails[i]);
 				});
-				pendingTable.addCell(aonIconButton);
+				let td3 = pendingTable.addCell(aonIconButton);
+				td3.style.paddingBottom = '10px';
 				aonIconButton.setDisabled(this.packaging.container == undefined);
 			}	
 		}
+	}
+
+	getFormat(item, quantity) {
+		let stockUnitTag = item.stockUnitTag.id;
+		let packFormatTag = item.packFormatTag.id;
+		let packUnitsTag = item.packUnitsTag.id;
+		let packUnits = item.packUnits;
+		let packMeasurementTag = item.packMeasurementTag.id;
+		let packMeasurement = item.packMeasurement;
+		
+		let formatQuantity = quantity;
+		if(stockUnitTag === packMeasurementTag) {
+			formatQuantity = quantity / packMeasurement;
+			formatQuantity = formatQuantity / packUnits;	
+		} else if(stockUnitTag === packUnitsTag) {
+			formatQuantity = quantity / packUnits;	
+		}
+		return round(formatQuantity);
 	}
 
 	sourceDialog(detail) {

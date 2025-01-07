@@ -9,6 +9,7 @@ import static com.esferalia.aon.jooq.tables.Salary.SALARY;
 import static com.esferalia.aon.jooq.tables.UserScope.USER_SCOPE;
 
 import java.math.BigDecimal;
+import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Date;
@@ -18,108 +19,101 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.jooq.Condition;
-import org.jooq.Record4;
+import org.jooq.DSLContext;
 import org.jooq.Record5;
-import org.jooq.Record6;
+import org.jooq.Record7;
 import org.jooq.Result;
+import org.jooq.SelectConditionStep;
+import org.jooq.conf.Settings;
 import org.jooq.impl.DSL;
 
-import com.esferalia.aon.gwt.common.server.AonServletUtils;
 import com.esferalia.aon.gwt.payroll.shared.ActivitySummaryObject;
-import com.esferalia.aon.occam.api.AONContext;
-import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
+import com.esferalia.aon.gwt.payroll.shared.ActivitySummaryParams;
 import com.esferalia.aon.payroll.enumeration.LeaveType;
 import com.esferalia.aon.salary.enumeration.SalaryType;
+import com.esferalia.aon.watson.server.AonDateUtils;
+import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class JooqActivitySummary {
-
-	public static List<ActivitySummaryObject> getActivitySummary(
-			Integer userId, String domainName, boolean parentDomain, Integer domainId,
-			Date startDate, Date endDate, Boolean starts, Boolean ends,
-			Boolean salary, Boolean salaryExtra, Boolean salarySettle,
-			Boolean salaryOther, Boolean itCommonDisease,
-			Boolean itOccupationalDisease, Boolean itMaternity, Boolean itOther) {
-
-		if (domainName != null && domainId != null && startDate != null
-				&& endDate != null) {
-			CloseableAONContext ctx = null;
-			try {
-				ctx = AONContext.getAONContext(domainName, domainId,
-						AonServletUtils.getLoggedUser());
-
-				Map<Integer, ActivitySummaryObject> summaryMap = null;
-				Map<Integer, ActivitySummaryObject> salaryMap = null;
-				Map<Integer, ActivitySummaryObject> itMap = null;
-				if (parentDomain) {
-					try {
-						Integer[] childDomains = null;
-						if(null != userId)
-							childDomains = getChildDomainIDs(ctx, domainId, userId);
-						else
-							childDomains = getChildDomainIDs(ctx, domainId, null);
-						
-						summaryMap = getSummaryEnterprise(childDomains,
-								domainId, domainName, startDate, endDate,
-								starts, ends);
-						salaryMap = getSummaryEnterpriseSalary(childDomains,
-								domainId, domainName, startDate, endDate,
-								salary, salaryExtra, salarySettle, salaryOther);
-						itMap = getSummaryEnterpriseIT(childDomains, domainId,
-								domainName, startDate, endDate,
-								itCommonDisease, itOccupationalDisease,
-								itMaternity, itOther);
-					} catch (SQLException e) {
-						throw new RuntimeException(e.getMessage());
-					}
-				} else {
-					summaryMap = getSummaryEmployee(domainId, domainName,
-							startDate, endDate, starts, ends);
-					salaryMap = getSummaryEmployeeSalary(domainId, domainName,
-							startDate, endDate, salary, salaryExtra,
-							salarySettle, salaryOther);
-					itMap = getSummaryEmployeeIT(domainId, domainName,
-							startDate, endDate, itCommonDisease,
-							itOccupationalDisease, itMaternity, itOther);
-				}
-				fillMapData(summaryMap, salaryMap);
-				fillMapData(summaryMap, itMap);
-
-				return new ArrayList<>(summaryMap
-						.values()
-						.stream()
-						.sorted((o1, o2) -> o1.getFullname().compareTo(
-								o2.getFullname())).collect(Collectors.toList()));
-			} finally {
-				if (ctx != null)
-					ctx.close();
-			}
+	
+	private static Settings SETTINGS = null;
+	
+	protected static Settings getDefaultSettings() {
+		if (SETTINGS == null) {
+			SETTINGS = new Settings();
+			SETTINGS.setRenderSchema(false);
 		}
+		return SETTINGS;
+	}
+	
+	public static List<ActivitySummaryObject> getActivitySummary(Connection connection, Integer domainId, Integer parentDomainId, Integer userId, ActivitySummaryParams params) {
+		
+		DSLContext dslContext = DSL.using(connection, getDefaultSettings());
+
+		if (params.getStart() != null && params.getEnd() != null) {
+			Map<Integer, ActivitySummaryObject> summaryMap = null;
+			Map<Integer, ActivitySummaryObject> salaryMap = null;
+			Map<Integer, ActivitySummaryObject> itMap = null;
+			
+			if (parentDomainId == null && params.getChildomain() == null) {
+				try {
+					Integer[] childDomains = null;
+					
+					if(null != userId)
+						childDomains = getChildDomainIDs(dslContext, domainId, userId);
+					else
+						childDomains = getChildDomainIDs(dslContext, domainId, null);
+					
+					summaryMap = getSummaryEnterprise(dslContext, params, childDomains);
+					salaryMap = getSummaryEnterpriseSalary(dslContext, params, childDomains);
+					itMap = getSummaryEnterpriseIT(dslContext, params, childDomains);
+					
+				} catch (SQLException e) {
+					throw new IllegalArgumentException(e.getMessage());
+				}
+			} else {
+				
+				if(params.getChildomain() == null) params.setChildomain(domainId);
+				summaryMap = getSummaryEmployee(dslContext, params, params.getChildomain());
+				salaryMap = getSummaryEmployeeSalary(dslContext, params, params.getChildomain());
+				itMap = getSummaryEmployeeIT(dslContext, params, params.getChildomain());
+			
+			}
+			
+			fillMapData(summaryMap, salaryMap);
+			fillMapData(summaryMap, itMap);
+
+			return new ArrayList<>(summaryMap
+					.values()
+					.stream()
+					.sorted((o1, o2) -> o1.getFullname().compareTo(
+							o2.getFullname())).collect(Collectors.toList()));
+		}
+		
 		return new ArrayList<>();
 	}
 
-	public static Integer[] getChildDomainIDs(AONContext aonContext, Integer domain, Integer userId) throws SQLException {
-		List<Integer> userScopes = aonContext.getDslContext()
+	public static Integer[] getChildDomainIDs(DSLContext dslContext, Integer domain, Integer userId) throws SQLException {
+		List<Integer> userScopes = dslContext
 				.select(USER_SCOPE.SCOPE).from(USER_SCOPE)
 				.where(USER_SCOPE.USER_ID.eq(userId))
 				.fetch(USER_SCOPE.SCOPE);
 		
 		if(userScopes.isEmpty())
-			return  aonContext.getDslContext()
+			return  dslContext
 					.select()
 					.from(DOMAIN)
 					.where(DOMAIN.PARENT.eq(domain))
 					.fetchArray(DOMAIN.ID);
 			
 		else
-			return  aonContext.getDslContext()
+			return  dslContext
 					.select()
 					.from(DOMAIN)
 					.where(DOMAIN.PARENT.eq(domain))
 					.and(DOMAIN.SCOPE.isNull().or(DOMAIN.SCOPE.in(userScopes)))
 					.fetchArray(DOMAIN.ID);
 	}
-
-
 
 	private static void fillMapData(
 			Map<Integer, ActivitySummaryObject> summaryMap,
@@ -168,460 +162,399 @@ public class JooqActivitySummary {
 						});
 	}
 
-	private static Map<Integer, ActivitySummaryObject> getSummaryEmployee(
-			Integer domainId, String domainName, Date startDate, Date endDate,
-			Boolean starts, Boolean ends) {
+	private static Map<Integer, ActivitySummaryObject> getSummaryEmployee(DSLContext dslContext, ActivitySummaryParams params, Integer domainId) {
+		SelectConditionStep<Record7<String, String, String, java.sql.Date, java.sql.Date, Integer, String>> select = dslContext
+				.select(PERSON.NAME, PERSON.FIRST_SURNAME,
+						PERSON.SECOND_SURNAME, CONTRACT.START_DATE,
+						CONTRACT.END_DATE, CONTRACT.ID, REGISTRY.NAME)
+				.from(CONTRACT.leftOuterJoin(PERSON)
+						.on(CONTRACT.PERSON.eq(PERSON.REGISTRY))
+						.leftOuterJoin(REGISTRY)
+						.on(REGISTRY.ID.eq(PERSON.REGISTRY)))
+				.where(CONTRACT.DOMAIN.eq(domainId));
+		
+		if(params.isStartContract() && params.isEndContract())
+			select.and(
+					getStartCondition(AonDateUtils.toSql(params.getStart()), AonDateUtils.toSql(params.getEnd()), params.isStartContract())
+					.or(getEndCondition(AonDateUtils.toSql(params.getStart()), AonDateUtils.toSql(params.getEnd()), params.isEndContract()))
+			);
+		else if(params.isStartContract())
+			select.and(getStartCondition(AonDateUtils.toSql(params.getStart()), AonDateUtils.toSql(params.getEnd()), params.isStartContract()));
+		else if(params.isEndContract())
+			select.and(getEndCondition(AonDateUtils.toSql(params.getStart()), AonDateUtils.toSql(params.getEnd()), params.isEndContract()));
+		else 
+			select.and(
+					CONTRACT.START_DATE.le(AonDateUtils.toSql(params.getEnd()))
+					.and(
+							CONTRACT.END_DATE.isNull()
+							.or(CONTRACT.END_DATE.ge(AonDateUtils.toSql(params.getStart())))
+					)
+			);
+		
+		if(AonStringUtils.isNotBlank(params.getDescription()))
+			select.and(REGISTRY.NAME.like("%" + params.getDescription() + "%"));
 
-		CloseableAONContext ctx = null;
-		try {
-			ctx = AONContext.getAONContext(domainName, domainId,
-					AonServletUtils.getLoggedUser());
-			Result<Record6<String, String, String, java.sql.Date, java.sql.Date, Integer>> result = ctx
-					.getDslContext()
-					.select(PERSON.NAME, PERSON.FIRST_SURNAME,
-							PERSON.SECOND_SURNAME, CONTRACT.START_DATE,
-							CONTRACT.END_DATE, CONTRACT.ID)
-					.from(CONTRACT.leftOuterJoin(PERSON)
-							.on(CONTRACT.PERSON.eq(PERSON.REGISTRY))
-							.leftOuterJoin(REGISTRY)
-							.on(REGISTRY.ID.eq(PERSON.REGISTRY)))
-					.where(CONTRACT.DOMAIN.eq(domainId))
-					.and(getStartCondition(startDate, endDate, starts))
-					.and(getEndCondition(startDate, endDate, ends))
-					.groupBy(CONTRACT.ID)
-					.orderBy(PERSON.FIRST_SURNAME.asc(),
-							PERSON.SECOND_SURNAME.asc(), PERSON.NAME.asc(),
-							CONTRACT.START_DATE.desc()).fetch();
+		Result<Record7<String, String, String, java.sql.Date, java.sql.Date, Integer, String>> result = select.groupBy(CONTRACT.ID)
+				.orderBy(PERSON.FIRST_SURNAME.asc(),
+						PERSON.SECOND_SURNAME.asc(), PERSON.NAME.asc(),
+						CONTRACT.START_DATE.desc()).fetch();	
+		
+		Map<Integer, ActivitySummaryObject> map = new HashMap<>();
+		result.stream()
+				.forEach(
+						record -> {
+							ActivitySummaryObject obj = new ActivitySummaryObject();
+							obj.setName(record.value1());
+							obj.setFirstSurname(record.value2());
+							obj.setSecondSurname(record.value3());
+							obj.setStartDate(record.value4() != null ? new Date(
+									record.value4().getTime()) : null);
+							obj.setEndDate(record.value5() != null ? new Date(
+									record.value5().getTime()) : null);
+							obj.setId(record.value6());
+							map.put(record.value6(), obj);
+						});
+		return map;
+	}
 
-			Map<Integer, ActivitySummaryObject> map = new HashMap<>();
-			result.stream()
-					.forEach(
-							record -> {
-								ActivitySummaryObject obj = new ActivitySummaryObject();
-								obj.setName(record.value1());
-								obj.setFirstSurname(record.value2());
-								obj.setSecondSurname(record.value3());
-								obj.setStartDate(record.value4() != null ? new Date(
-										record.value4().getTime()) : null);
-								obj.setEndDate(record.value5() != null ? new Date(
-										record.value5().getTime()) : null);
-								obj.setId(record.value6());
-								map.put(record.value6(), obj);
-							});
-			return map;
+	private static Map<Integer, ActivitySummaryObject> getSummaryEnterprise(DSLContext dslContext, ActivitySummaryParams params, Integer[] childDomainIds) {
 
-		} finally {
-			if (ctx != null)
-				ctx.close();
-		}
+		SelectConditionStep<Record5<Integer, String, String, BigDecimal, BigDecimal>> select = dslContext
+				.select(DOMAIN.ID,
+						DOMAIN.NAME,
+						DOMAIN.DESCRIPTION,
+						DSL.sum(DSL
+								.field(CONTRACT.START_DATE.between(
+										AonDateUtils.toSql(params.getStart()),
+										AonDateUtils.toSql(params.getEnd())))
+								.coerce(Integer.class)),
+						DSL.sum(DSL
+								.field(CONTRACT.END_DATE.between(
+										AonDateUtils.toSql(params.getStart()),
+										AonDateUtils.toSql(params.getEnd())))
+								.coerce(Integer.class)))
+				.from(DOMAIN.leftOuterJoin(CONTRACT).on(
+						CONTRACT.DOMAIN.eq(DOMAIN.ID)))
+				.where(DOMAIN.ID.in(childDomainIds))
+				.and(DOMAIN.ACTIVE.eq((byte) 1));
+		
+		if(params.isStartContract() && params.isEndContract())
+			select.and(
+					getStartCondition(AonDateUtils.toSql(params.getStart()), AonDateUtils.toSql(params.getEnd()), params.isStartContract())
+					.or(getEndCondition(AonDateUtils.toSql(params.getStart()), AonDateUtils.toSql(params.getEnd()), params.isEndContract()))
+			);
+		else if(params.isStartContract())
+			select.and(getStartCondition(AonDateUtils.toSql(params.getStart()), AonDateUtils.toSql(params.getEnd()), params.isStartContract()));
+		else if(params.isEndContract())
+			select.and(getEndCondition(AonDateUtils.toSql(params.getStart()), AonDateUtils.toSql(params.getEnd()), params.isEndContract()));
+		
+		if(AonStringUtils.isNotBlank(params.getDescription()))
+			select.and(DOMAIN.DESCRIPTION.like("%" + params.getDescription() + "%"));
+
+		Result<Record5<Integer, String, String, BigDecimal, BigDecimal>> result = select
+				.groupBy(DOMAIN.ID).orderBy(DOMAIN.DESCRIPTION.asc())
+				.fetch();
+		
+		Map<Integer, ActivitySummaryObject> map = new HashMap<>();
+		result.stream()
+				.forEach(
+						record -> {
+							ActivitySummaryObject obj = new ActivitySummaryObject();
+							obj.setId(record.value1());
+							obj.setNameUrl(record.value2());
+							obj.setName(record.value3());
+							obj.setStartCount(record.value4() != null ? record
+									.value4().intValue() : 0);
+							obj.setEndCount(record.value5() != null ? record
+									.value5().intValue() : 0);
+							map.put(record.value1(), obj);
+						});
+		return map;
 
 	}
 
-	private static Map<Integer, ActivitySummaryObject> getSummaryEnterprise(
-			Integer[] childDomainIds, Integer domainId, String domainName,
-			Date startDate, Date endDate, Boolean starts, Boolean ends) {
+	private static Map<Integer, ActivitySummaryObject> getSummaryEmployeeSalary(DSLContext dslContext, ActivitySummaryParams params, Integer domainId) {
+		Result<Record5<Integer, BigDecimal, BigDecimal, BigDecimal, BigDecimal>> result = dslContext
+				.select(CONTRACT.ID,
+						DSL.sum(DSL.field(
+								SALARY.TYPE.eq((byte) SalaryType.SALARY
+										.ordinal())).coerce(Integer.class)),
+						DSL.sum(DSL.field(
+								SALARY.TYPE.eq((byte) SalaryType.EXTRA
+										.ordinal())).coerce(Integer.class)),
+						DSL.sum(DSL.field(
+								SALARY.TYPE.eq((byte) SalaryType.SETTLE
+										.ordinal())).coerce(Integer.class)),
+						DSL.sum(DSL.field(
+								SALARY.TYPE.gt((byte) SalaryType.SETTLE
+										.ordinal())).coerce(Integer.class)))
+				.from(CONTRACT.leftOuterJoin(SALARY).on(
+						CONTRACT.ID.eq(SALARY.CONTRACT)))
+				.where(CONTRACT.START_DATE.lt(
+						AonDateUtils.toSql(params.getEnd())).or(
+						CONTRACT.START_DATE.gt(AonDateUtils.toSql(params.getEnd()))))
+				.and(SALARY.ISSUE_DATE.between(
+						AonDateUtils.toSql(params.getStart()),
+						AonDateUtils.toSql(params.getEnd())))
+				.and(CONTRACT.DOMAIN.eq(domainId))
+				.and(getSalaryCondition(params))
+				.groupBy(CONTRACT.ID)
+				.orderBy(CONTRACT.ID.desc(), CONTRACT.START_DATE.desc())
+				.fetch();
 
-		CloseableAONContext ctx = null;
-		try {
-			ctx = AONContext.getAONContext(domainName, domainId,
-					AonServletUtils.getLoggedUser());
-			Result<Record4<Integer, String, BigDecimal, BigDecimal>> result = ctx
-					.getDslContext()
-					.select(DOMAIN.ID,
-							DOMAIN.DESCRIPTION,
-							DSL.sum(DSL
-									.field(CONTRACT.START_DATE.between(
-											new java.sql.Date(startDate
-													.getTime()),
-											new java.sql.Date(endDate.getTime())))
-									.coerce(Integer.class)),
-							DSL.sum(DSL
-									.field(CONTRACT.END_DATE.between(
-											new java.sql.Date(startDate
-													.getTime()),
-											new java.sql.Date(endDate.getTime())))
-									.coerce(Integer.class)))
-					.from(DOMAIN.leftOuterJoin(CONTRACT).on(
-							CONTRACT.DOMAIN.eq(DOMAIN.ID)))
-					.where(DOMAIN.ID.in(childDomainIds))
-					.and(DOMAIN.ACTIVE.eq((byte) 1))
-					.and(getStartCondition(startDate, endDate, starts))
-					.and(getEndCondition(startDate, endDate, ends))
-					.groupBy(DOMAIN.ID).orderBy(DOMAIN.DESCRIPTION.asc())
-					.fetch();
+		Map<Integer, ActivitySummaryObject> map = new HashMap<>();
+		result.stream()
+				.forEach(
+						record -> {
+							ActivitySummaryObject obj = new ActivitySummaryObject();
+							obj.setSalaryCount(record.value2() != null ? record
+									.value2().intValue() : 0);
+							obj.setSalaryExtraCount(record.value3() != null ? record
+									.value3().intValue() : 0);
+							obj.setSalarySettleCount(record.value4() != null ? record
+									.value4().intValue() : 0);
+							obj.setSalaryOtherCount(record.value5() != null ? record
+									.value5().intValue() : 0);
+							map.put(record.value1(), obj);
+						});
+		return map;
+	}
 
-			Map<Integer, ActivitySummaryObject> map = new HashMap<>();
-			result.stream()
-					.forEach(
-							record -> {
-								ActivitySummaryObject obj = new ActivitySummaryObject();
-								obj.setId(record.value1());
-								obj.setName(record.value2());
-								obj.setStartCount(record.value3() != null ? record
-										.value3().intValue() : 0);
-								obj.setEndCount(record.value4() != null ? record
-										.value4().intValue() : 0);
-								map.put(record.value1(), obj);
-							});
-			return map;
+	private static Map<Integer, ActivitySummaryObject> getSummaryEnterpriseSalary(DSLContext dslContext, ActivitySummaryParams params, Integer[] childDomainIds) {
 
-		} finally {
-			if (ctx != null)
-				ctx.close();
-		}
+		Result<Record5<Integer, BigDecimal, BigDecimal, BigDecimal, BigDecimal>> result = dslContext
+				.select(DOMAIN.ID,
+						DSL.sum(DSL.field(
+								SALARY.TYPE.eq((byte) SalaryType.SALARY
+										.ordinal())).coerce(Integer.class)),
+						DSL.sum(DSL.field(
+								SALARY.TYPE.eq((byte) SalaryType.EXTRA
+										.ordinal())).coerce(Integer.class)),
+						DSL.sum(DSL.field(
+								SALARY.TYPE.eq((byte) SalaryType.SETTLE
+										.ordinal())).coerce(Integer.class)),
+						DSL.sum(DSL.field(
+								SALARY.TYPE.eq((byte) SalaryType.DELAY
+										.ordinal())).coerce(Integer.class)))
+				.from(DOMAIN.leftOuterJoin(SALARY).on(SALARY.DOMAIN.eq(DOMAIN.ID)))
+				.where(SALARY.ISSUE_DATE.between(AonDateUtils.toSql(params.getStart()), AonDateUtils.toSql(params.getEnd())))
+				.and(DOMAIN.ID.in(childDomainIds))
+				.and(DOMAIN.ACTIVE.eq((byte) 1))
+				.and(SALARY.TYPE.lt((byte)4)) // Nomina, extra, finiquito, atraso 
+				.and(getSalaryCondition(params))
+				.groupBy(DOMAIN.ID)
+				.orderBy(DOMAIN.ID.asc()).fetch();
+
+		Map<Integer, ActivitySummaryObject> map = new HashMap<>();
+		result.stream()
+				.forEach(
+						record -> {
+							ActivitySummaryObject obj = new ActivitySummaryObject();
+							obj.setSalaryCount(record.value2() != null ? record
+									.value2().intValue() : 0);
+							obj.setSalaryExtraCount(record.value3() != null ? record
+									.value3().intValue() : 0);
+							obj.setSalarySettleCount(record.value4() != null ? record
+									.value4().intValue() : 0);
+							obj.setSalaryOtherCount(record.value5() != null ? record
+									.value5().intValue() : 0);
+							map.put(record.value1(), obj);
+						});
+		return map;
 
 	}
 
-	private static Map<Integer, ActivitySummaryObject> getSummaryEmployeeSalary(
-			Integer domainId, String domainName, Date startDate, Date endDate,
-			boolean salary, boolean salaryExtra, boolean salarySettle,
-			boolean salaryOther) {
-
-		CloseableAONContext ctx = null;
-		try {
-			ctx = AONContext.getAONContext(domainName, domainId,
-					AonServletUtils.getLoggedUser());
-			Result<Record5<Integer, BigDecimal, BigDecimal, BigDecimal, BigDecimal>> result = ctx
-					.getDslContext()
-					.select(CONTRACT.ID,
-							DSL.sum(DSL.field(
-									SALARY.TYPE.eq((byte) SalaryType.SALARY
-											.ordinal())).coerce(Integer.class)),
-							DSL.sum(DSL.field(
-									SALARY.TYPE.eq((byte) SalaryType.EXTRA
-											.ordinal())).coerce(Integer.class)),
-							DSL.sum(DSL.field(
-									SALARY.TYPE.eq((byte) SalaryType.SETTLE
-											.ordinal())).coerce(Integer.class)),
-							DSL.sum(DSL.field(
-									SALARY.TYPE.gt((byte) SalaryType.SETTLE
-											.ordinal())).coerce(Integer.class)))
-					.from(CONTRACT.leftOuterJoin(SALARY).on(
-							CONTRACT.ID.eq(SALARY.CONTRACT)))
-					.where(CONTRACT.START_DATE.lt(
-							new java.sql.Date(endDate.getTime())).or(
-							CONTRACT.START_DATE.gt(new java.sql.Date(endDate
-									.getTime()))))
-					.and(SALARY.ISSUE_DATE.between(
-							new java.sql.Date(startDate.getTime()),
-							new java.sql.Date(endDate.getTime())))
-					.and(CONTRACT.DOMAIN.eq(domainId))
-					.and(getSalaryCondition(salary, salaryExtra, salarySettle,
-							salaryOther)).groupBy(CONTRACT.ID)
-					.orderBy(CONTRACT.ID.desc(), CONTRACT.START_DATE.desc())
-					.fetch();
-
-			Map<Integer, ActivitySummaryObject> map = new HashMap<>();
-			result.stream()
-					.forEach(
-							record -> {
-								ActivitySummaryObject obj = new ActivitySummaryObject();
-								obj.setSalaryCount(record.value2() != null ? record
-										.value2().intValue() : 0);
-								obj.setSalaryExtraCount(record.value3() != null ? record
-										.value3().intValue() : 0);
-								obj.setSalarySettleCount(record.value4() != null ? record
-										.value4().intValue() : 0);
-								obj.setSalaryOtherCount(record.value5() != null ? record
-										.value5().intValue() : 0);
-								map.put(record.value1(), obj);
-							});
-			return map;
-
-		} finally {
-			if (ctx != null)
-				ctx.close();
-		}
-
-	}
-
-	private static Map<Integer, ActivitySummaryObject> getSummaryEnterpriseSalary(
-			Integer[] childDomainIds, Integer domainId, String domainName,
-			Date startDate, Date endDate, boolean salary, boolean salaryExtra,
-			boolean salarySettle, boolean salaryOther) {
-
-		CloseableAONContext ctx = null;
-		try {
-			ctx = AONContext.getAONContext(domainName, domainId,
-					AonServletUtils.getLoggedUser());
-			Result<Record5<Integer, BigDecimal, BigDecimal, BigDecimal, BigDecimal>> result = ctx
-					.getDslContext()
-					.select(DOMAIN.ID,
-							DSL.sum(DSL.field(
-									SALARY.TYPE.eq((byte) SalaryType.SALARY
-											.ordinal())).coerce(Integer.class)),
-							DSL.sum(DSL.field(
-									SALARY.TYPE.eq((byte) SalaryType.EXTRA
-											.ordinal())).coerce(Integer.class)),
-							DSL.sum(DSL.field(
-									SALARY.TYPE.eq((byte) SalaryType.SETTLE
-											.ordinal())).coerce(Integer.class)),
-							DSL.sum(DSL.field(
-									SALARY.TYPE.gt((byte) SalaryType.SETTLE
-											.ordinal())).coerce(Integer.class)))
-					.from(DOMAIN.leftOuterJoin(SALARY).on(
-							SALARY.DOMAIN.eq(DOMAIN.ID)))
-					.where(SALARY.ISSUE_DATE.between(new java.sql.Date(
-							startDate.getTime()),
-							new java.sql.Date(endDate.getTime())))
-					.and(DOMAIN.ID.in(childDomainIds))
-					.and(DOMAIN.ACTIVE.eq((byte) 1))
-					.and(getSalaryCondition(salary, salaryExtra, salarySettle,
-							salaryOther)).groupBy(DOMAIN.ID)
-					.orderBy(DOMAIN.ID.asc()).fetch();
-
-			Map<Integer, ActivitySummaryObject> map = new HashMap<>();
-			result.stream()
-					.forEach(
-							record -> {
-								ActivitySummaryObject obj = new ActivitySummaryObject();
-								obj.setSalaryCount(record.value2() != null ? record
-										.value2().intValue() : 0);
-								obj.setSalaryExtraCount(record.value3() != null ? record
-										.value3().intValue() : 0);
-								obj.setSalarySettleCount(record.value4() != null ? record
-										.value4().intValue() : 0);
-								obj.setSalaryOtherCount(record.value5() != null ? record
-										.value5().intValue() : 0);
-								map.put(record.value1(), obj);
-							});
-			return map;
-
-		} finally {
-			if (ctx != null)
-				ctx.close();
-		}
-
-	}
-
-	private static Map<Integer, ActivitySummaryObject> getSummaryEmployeeIT(
-			Integer domainId, String domainName, Date startDate, Date endDate,
-			boolean itCommonDisease, boolean itOccupationalDisease,
-			boolean itMaternity, boolean itOther) {
-
-		CloseableAONContext ctx = null;
-		try {
-			ctx = AONContext.getAONContext(domainName, domainId,
-					AonServletUtils.getLoggedUser());
-			Result<Record5<Integer, BigDecimal, BigDecimal, BigDecimal, BigDecimal>> result = ctx
-					.getDslContext()
-					.select(CONTRACT.ID,
-							DSL.sum(DSL.field(
-									CONTRACT_LEAVE.TYPE
-											.in((byte) LeaveType.COMMON_DISEASE
-													.ordinal(),
-													(byte) LeaveType.COMMON_DISEASE_AT_LACK
-													.ordinal())).coerce(
-									Integer.class)),
-							DSL.sum(DSL
-									.field(CONTRACT_LEAVE.TYPE
-											.eq((byte) LeaveType.OCCUPATIONAL_DISEASE
-													.ordinal())).coerce(
-											Integer.class)),
-							DSL.sum(DSL.field(
-									CONTRACT_LEAVE.TYPE.in(
-											(byte) LeaveType.MATERNITY
-													.ordinal(),
-											(byte) LeaveType.PATERNITY
-													.ordinal())).coerce(
-									Integer.class)),
-							DSL.sum(DSL
-									.field(CONTRACT_LEAVE.TYPE.notIn(
-											(byte) LeaveType.COMMON_DISEASE
-													.ordinal(),
-											(byte) LeaveType.COMMON_DISEASE_AT_LACK
+	private static Map<Integer, ActivitySummaryObject> getSummaryEmployeeIT(DSLContext dslContext, ActivitySummaryParams params, Integer domainId) {
+		Result<Record5<Integer, BigDecimal, BigDecimal, BigDecimal, BigDecimal>> result = dslContext
+				.select(CONTRACT.ID,
+						DSL.sum(DSL.field(
+								CONTRACT_LEAVE.TYPE
+										.in((byte) LeaveType.COMMON_DISEASE
 												.ordinal(),
-											(byte) LeaveType.OCCUPATIONAL_DISEASE
-													.ordinal(),
-											(byte) LeaveType.MATERNITY
-													.ordinal(),
-											(byte) LeaveType.PATERNITY
-													.ordinal())).coerce(
-											Integer.class)))
-					.from(CONTRACT.leftOuterJoin(CONTRACT_LEAVE).on(
-							CONTRACT_LEAVE.CONTRACT.eq(CONTRACT.ID)))
-					.where(CONTRACT_LEAVE.START_DATE.le(new java.sql.Date(
-							endDate.getTime())))
-					.and((CONTRACT_LEAVE.END_DATE.isNull()
-							.or(CONTRACT_LEAVE.END_DATE.ge(new java.sql.Date(
-									startDate.getTime())))))
-					.and(CONTRACT.DOMAIN.eq(domainId))
-					.and(getItCondition(itCommonDisease, itOccupationalDisease,
-							itMaternity, itOther)).groupBy(CONTRACT.ID)
-					.orderBy(CONTRACT.ID.desc(), CONTRACT.START_DATE.desc())
-					.fetch();
+												(byte) LeaveType.COMMON_DISEASE_AT_LACK
+												.ordinal())).coerce(
+								Integer.class)),
+						DSL.sum(DSL
+								.field(CONTRACT_LEAVE.TYPE
+										.eq((byte) LeaveType.OCCUPATIONAL_DISEASE
+												.ordinal())).coerce(
+										Integer.class)),
+						DSL.sum(DSL.field(
+								CONTRACT_LEAVE.TYPE.in(
+										(byte) LeaveType.MATERNITY
+												.ordinal(),
+										(byte) LeaveType.PATERNITY
+												.ordinal())).coerce(
+								Integer.class)),
+						DSL.sum(DSL
+								.field(CONTRACT_LEAVE.TYPE.notIn(
+										(byte) LeaveType.COMMON_DISEASE
+												.ordinal(),
+										(byte) LeaveType.COMMON_DISEASE_AT_LACK
+											.ordinal(),
+										(byte) LeaveType.OCCUPATIONAL_DISEASE
+												.ordinal(),
+										(byte) LeaveType.MATERNITY
+												.ordinal(),
+										(byte) LeaveType.PATERNITY
+												.ordinal())).coerce(
+										Integer.class)))
+				.from(CONTRACT.leftOuterJoin(CONTRACT_LEAVE).on(
+						CONTRACT_LEAVE.CONTRACT.eq(CONTRACT.ID)))
+				.where(CONTRACT_LEAVE.START_DATE.le(AonDateUtils.toSql(params.getEnd())))
+				.and((CONTRACT_LEAVE.END_DATE.isNull()
+						.or(CONTRACT_LEAVE.END_DATE.ge(AonDateUtils.toSql(params.getStart())))))
+				.and(CONTRACT.DOMAIN.eq(domainId))
+				.and(getItCondition(params))
+				.groupBy(CONTRACT.ID)
+				.orderBy(CONTRACT.ID.desc(), CONTRACT.START_DATE.desc())
+				.fetch();
 
-			Map<Integer, ActivitySummaryObject> map = new HashMap<>();
-			result.stream()
-					.forEach(
-							record -> {
-								ActivitySummaryObject obj = new ActivitySummaryObject();
-								obj.setItCommonDiseaseCount(record.value2() != null ? record
-										.value2().intValue() : 0);
-								obj.setItOccupationalDiseaseCount(record
-										.value3() != null ? record.value3()
-										.intValue() : 0);
-								obj.setItMaternityCount(record.value4() != null ? record
-										.value4().intValue() : 0);
-								obj.setItOtherCount(record.value5() != null ? record
-										.value5().intValue() : 0);
-								map.put(record.value1(), obj);
-							});
-			return map;
-
-		} finally {
-			if (ctx != null)
-				ctx.close();
-		}
-
+		Map<Integer, ActivitySummaryObject> map = new HashMap<>();
+		result.stream()
+				.forEach(
+						record -> {
+							ActivitySummaryObject obj = new ActivitySummaryObject();
+							obj.setItCommonDiseaseCount(record.value2() != null ? record
+									.value2().intValue() : 0);
+							obj.setItOccupationalDiseaseCount(record
+									.value3() != null ? record.value3()
+									.intValue() : 0);
+							obj.setItMaternityCount(record.value4() != null ? record
+									.value4().intValue() : 0);
+							obj.setItOtherCount(record.value5() != null ? record
+									.value5().intValue() : 0);
+							map.put(record.value1(), obj);
+						});
+		return map;
 	}
 
-	private static Map<Integer, ActivitySummaryObject> getSummaryEnterpriseIT(
-			Integer[] childDomainIds, Integer domainId, String domainName,
-			Date startDate, Date endDate, boolean itCommonDisease,
-			boolean itOccupationalDisease, boolean itMaternity, boolean itOther) {
+	private static Map<Integer, ActivitySummaryObject> getSummaryEnterpriseIT(DSLContext dslContext, ActivitySummaryParams params, Integer[] childDomainIds) {
+		Result<Record5<Integer, BigDecimal, BigDecimal, BigDecimal, BigDecimal>> result = dslContext
+				.select(DOMAIN.ID,
+						DSL.sum(DSL.field(
+								CONTRACT_LEAVE.TYPE
+										.in((byte) LeaveType.COMMON_DISEASE
+												.ordinal(),
+												(byte) LeaveType.COMMON_DISEASE_AT_LACK
+												.ordinal())).coerce(
+								Integer.class)),
+						DSL.sum(DSL
+								.field(CONTRACT_LEAVE.TYPE
+										.eq((byte) LeaveType.OCCUPATIONAL_DISEASE
+												.ordinal())).coerce(
+										Integer.class)),
+						DSL.sum(DSL.field(
+								CONTRACT_LEAVE.TYPE.in(
+										(byte) LeaveType.MATERNITY
+												.ordinal(),
+										(byte) LeaveType.PATERNITY
+												.ordinal())).coerce(
+								Integer.class)),
+						DSL.sum(DSL
+								.field(CONTRACT_LEAVE.TYPE.notIn(
+										(byte) LeaveType.COMMON_DISEASE
+												.ordinal(),
+										(byte) LeaveType.COMMON_DISEASE_AT_LACK
+												.ordinal(),
+										(byte) LeaveType.OCCUPATIONAL_DISEASE
+												.ordinal(),
+										(byte) LeaveType.MATERNITY
+												.ordinal(),
+										(byte) LeaveType.PATERNITY
+												.ordinal())).coerce(
+										Integer.class)))
+				.from(DOMAIN.leftOuterJoin(CONTRACT_LEAVE).on(CONTRACT_LEAVE.DOMAIN.eq(DOMAIN.ID)))
+				.where(CONTRACT_LEAVE.START_DATE.le(AonDateUtils.toSql(params.getEnd())))
+				.and((CONTRACT_LEAVE.END_DATE.isNull().or(CONTRACT_LEAVE.END_DATE.ge(AonDateUtils.toSql(params.getStart())))))
+				.and(DOMAIN.ID.in(childDomainIds))
+				.and(DOMAIN.ACTIVE.eq((byte) 1))
+				.and(getItCondition(params))
+				.groupBy(DOMAIN.ID)
+				.orderBy(DOMAIN.ID.asc())
+				.fetch();
 
-		CloseableAONContext ctx = null;
-		try {
-			ctx = AONContext.getAONContext(domainName, domainId,
-					AonServletUtils.getLoggedUser());
-			Result<Record5<Integer, BigDecimal, BigDecimal, BigDecimal, BigDecimal>> result = ctx
-					.getDslContext()
-					.select(DOMAIN.ID,
-							DSL.sum(DSL.field(
-									CONTRACT_LEAVE.TYPE
-											.in((byte) LeaveType.COMMON_DISEASE
-													.ordinal(),
-													(byte) LeaveType.COMMON_DISEASE_AT_LACK
-													.ordinal())).coerce(
-									Integer.class)),
-							DSL.sum(DSL
-									.field(CONTRACT_LEAVE.TYPE
-											.eq((byte) LeaveType.OCCUPATIONAL_DISEASE
-													.ordinal())).coerce(
-											Integer.class)),
-							DSL.sum(DSL.field(
-									CONTRACT_LEAVE.TYPE.in(
-											(byte) LeaveType.MATERNITY
-													.ordinal(),
-											(byte) LeaveType.PATERNITY
-													.ordinal())).coerce(
-									Integer.class)),
-							DSL.sum(DSL
-									.field(CONTRACT_LEAVE.TYPE.notIn(
-											(byte) LeaveType.COMMON_DISEASE
-													.ordinal(),
-											(byte) LeaveType.COMMON_DISEASE_AT_LACK
-													.ordinal(),
-											(byte) LeaveType.OCCUPATIONAL_DISEASE
-													.ordinal(),
-											(byte) LeaveType.MATERNITY
-													.ordinal(),
-											(byte) LeaveType.PATERNITY
-													.ordinal())).coerce(
-											Integer.class)))
-					.from(DOMAIN.leftOuterJoin(CONTRACT_LEAVE).on(
-							CONTRACT_LEAVE.DOMAIN.eq(DOMAIN.ID)))
-					.where(CONTRACT_LEAVE.START_DATE.le(new java.sql.Date(
-							endDate.getTime())))
-					.and((CONTRACT_LEAVE.END_DATE.isNull()
-							.or(CONTRACT_LEAVE.END_DATE.ge(new java.sql.Date(
-									startDate.getTime())))))
-					.and(DOMAIN.ID.in(childDomainIds))
-					.and(DOMAIN.ACTIVE.eq((byte) 1))
-					.and(getItCondition(itCommonDisease, itOccupationalDisease,
-							itMaternity, itOther)).groupBy(DOMAIN.ID)
-					.orderBy(DOMAIN.ID.asc()).fetch();
-
-			Map<Integer, ActivitySummaryObject> map = new HashMap<>();
-			result.stream()
-					.forEach(
-							record -> {
-								ActivitySummaryObject obj = new ActivitySummaryObject();
-								obj.setItCommonDiseaseCount(record.value2() != null ? record
-										.value2().intValue() : 0);
-								obj.setItOccupationalDiseaseCount(record
-										.value3() != null ? record.value3()
-										.intValue() : 0);
-								obj.setItMaternityCount(record.value4() != null ? record
-										.value4().intValue() : 0);
-								obj.setItOtherCount(record.value5() != null ? record
-										.value5().intValue() : 0);
-								map.put(record.value1(), obj);
-							});
-			return map;
-
-		} finally {
-			if (ctx != null)
-				ctx.close();
-		}
-
+		Map<Integer, ActivitySummaryObject> map = new HashMap<>();
+		result.stream()
+				.forEach(
+						record -> {
+							ActivitySummaryObject obj = new ActivitySummaryObject();
+							obj.setItCommonDiseaseCount(record.value2() != null ? record
+									.value2().intValue() : 0);
+							obj.setItOccupationalDiseaseCount(record
+									.value3() != null ? record.value3()
+									.intValue() : 0);
+							obj.setItMaternityCount(record.value4() != null ? record
+									.value4().intValue() : 0);
+							obj.setItOtherCount(record.value5() != null ? record
+									.value5().intValue() : 0);
+							map.put(record.value1(), obj);
+						});
+		return map;
 	}
 
 	/*
 	 * CONTRACT CONDITIONS
 	 */
-	private static Condition getStartCondition(Date startDate, Date endDate,
-			boolean starts) {
-		return starts ? CONTRACT.START_DATE.ge(
-				new java.sql.Date(startDate.getTime())).and(
-				CONTRACT.START_DATE.le(new java.sql.Date(endDate.getTime())))
-				: CONTRACT.START_DATE.le(new java.sql.Date(endDate.getTime()));
+	private static Condition getStartCondition(java.sql.Date startDate, java.sql.Date endDate, boolean isContractStart) {
+		return isContractStart 
+				? 
+					CONTRACT.START_DATE.ge(startDate)
+					.and(CONTRACT.START_DATE.le(endDate))
+				: 
+					CONTRACT.START_DATE.le(endDate);
 	}
 
-	private static Condition getEndCondition(Date startDate, Date endDate,
-			boolean ends) {
-		return ends ? CONTRACT.END_DATE.isNotNull().and(
-				CONTRACT.END_DATE.ge(new java.sql.Date(startDate.getTime()))
-						.and(CONTRACT.END_DATE.le(new java.sql.Date(endDate
-								.getTime())))) : CONTRACT.END_DATE.ge(
-				new java.sql.Date(startDate.getTime())).or(
-				CONTRACT.END_DATE.isNull());
+	private static Condition getEndCondition(java.sql.Date startDate, java.sql.Date endDate, boolean isContractEnd) {
+		return isContractEnd
+				? 
+					CONTRACT.END_DATE.isNotNull()
+					.and(CONTRACT.END_DATE.ge(startDate)
+					.and(CONTRACT.END_DATE.le(endDate))) 
+				: 
+					CONTRACT.END_DATE.ge(startDate)
+					.or(CONTRACT.END_DATE.isNull());
 	}
 
 	/*
 	 * SALARY CONDITIONS
 	 */
-	private static Condition getSalaryCondition(boolean salary, boolean extra,
-			boolean settle, boolean other) {
+	private static Condition getSalaryCondition(ActivitySummaryParams params) {
 		byte salaryType = (byte) SalaryType.SALARY.ordinal();
 		byte extraType = (byte) SalaryType.EXTRA.ordinal();
 		byte settleType = (byte) SalaryType.SETTLE.ordinal();
+		byte delayype = (byte) SalaryType.DELAY.ordinal();
 
 		Condition cond = null;
-		cond = salary ? SALARY.TYPE.eq(salaryType) : SALARY.TYPE.ne(salaryType);
-		cond = extra ? cond.or(SALARY.TYPE.eq(extraType)) : cond
-				.and(SALARY.TYPE.ne(extraType));
-		cond = settle ? cond.or(SALARY.TYPE.eq(settleType)) : cond
-				.and(SALARY.TYPE.ne(settleType));
-		cond = other ? cond.or(SALARY.TYPE.gt(settleType)) : cond
-				.and(SALARY.TYPE.le(settleType));
+		cond = params.isSalary() ? SALARY.TYPE.eq(salaryType) : SALARY.TYPE.ne(salaryType);
+		cond = params.isExtra() ? cond.or(SALARY.TYPE.eq(extraType)) : cond.and(SALARY.TYPE.ne(extraType));
+		cond = params.isSettle() ? cond.or(SALARY.TYPE.eq(settleType)) : cond.and(SALARY.TYPE.ne(settleType));
+		cond = params.isDelay() ? cond.or(SALARY.TYPE.eq(delayype)) : cond.and(SALARY.TYPE.ne(delayype));
 		return cond;
 	}
 
 	/*
 	 * IT CONDITIONS
 	 */
-	private static Condition getItCondition(boolean itCommonDisease,
-			boolean itOccupationalDisease, boolean itMaternity, boolean itOther) {
+	private static Condition getItCondition(ActivitySummaryParams params) {
 		byte itCommonDiseaseType = (byte) LeaveType.COMMON_DISEASE.ordinal();
 		byte itCommonDiseaseAtLackType = (byte) LeaveType.COMMON_DISEASE_AT_LACK.ordinal();
-		byte itOccupationalDiseaseType = (byte) LeaveType.OCCUPATIONAL_DISEASE
-				.ordinal();
+		byte itOccupationalDiseaseType = (byte) LeaveType.OCCUPATIONAL_DISEASE.ordinal();
 		byte itMaternityType = (byte) LeaveType.MATERNITY.ordinal();
 		byte itPaternityType = (byte) LeaveType.PATERNITY.ordinal();
 
 		Condition cond = null;
-		cond = itCommonDisease ? CONTRACT_LEAVE.TYPE.in(itCommonDiseaseType, itCommonDiseaseAtLackType)
+		cond = params.isItCD() 
+				? CONTRACT_LEAVE.TYPE.in(itCommonDiseaseType, itCommonDiseaseAtLackType)
 				: CONTRACT_LEAVE.TYPE.notIn(itCommonDiseaseType, itCommonDiseaseAtLackType);
-		cond = itOccupationalDisease ? cond.or(CONTRACT_LEAVE.TYPE
-				.eq(itOccupationalDiseaseType)) : cond.and(CONTRACT_LEAVE.TYPE
-				.ne(itOccupationalDiseaseType));
-		cond = itMaternity ? cond.or(CONTRACT_LEAVE.TYPE.eq(itMaternityType))
-				.or(CONTRACT_LEAVE.TYPE.eq(itPaternityType)) : cond.and(
-				CONTRACT_LEAVE.TYPE.ne(itMaternityType)).and(
-				CONTRACT_LEAVE.TYPE.ne(itPaternityType));
-		cond = itOther ? cond.or(CONTRACT_LEAVE.TYPE.gt(itPaternityType))
+		cond = params.isItOD() 
+				? cond.or(CONTRACT_LEAVE.TYPE.eq(itOccupationalDiseaseType)) 
+				: cond.and(CONTRACT_LEAVE.TYPE.ne(itOccupationalDiseaseType));
+		cond = params.isItMP() 
+				? cond.or(CONTRACT_LEAVE.TYPE.eq(itMaternityType)).or(CONTRACT_LEAVE.TYPE.eq(itPaternityType)) 
+				: cond.and(CONTRACT_LEAVE.TYPE.ne(itMaternityType)).and(CONTRACT_LEAVE.TYPE.ne(itPaternityType));
+		cond = params.isItOT()
+				? cond.or(CONTRACT_LEAVE.TYPE.gt(itPaternityType))
 				: cond.and(CONTRACT_LEAVE.TYPE.le(itPaternityType));
 		return cond;
 	}

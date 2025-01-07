@@ -78,5 +78,18 @@ public class FinanceUtilitiesServiceAsyncDecorator implements FinanceUtilitiesSe
 		AON.start();
 		fsa.updateActivity(occam, invoiceId, activity, new AsyncCallbackWrapper<>(callback));
 	}
+	//Integridad del dato actividad en facturas y asientos.
+
+	@Override
+	public void activityIntegrity(Occam occam, Integer domain, AsyncCallback<FinanceUtilitiesResult> callback) throws AonCoreException {
+		AON.start();
+		fsa.activityIntegrity(occam, domain, new AsyncCallbackWrapper<>(callback));
+	}
+
+	@Override
+	public void activityIntegrityFix(Occam occam, Integer invoiceId, boolean useInvoiceActivity, AsyncCallback<Void> callback) throws AonCoreException {
+		AON.start();
+		fsa.activityIntegrityFix(occam, invoiceId, useInvoiceActivity, new AsyncCallbackWrapper<>(callback));
+	}
 
 }

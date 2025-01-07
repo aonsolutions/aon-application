@@ -66,6 +66,7 @@ import com.esferalia.aon.occam.api.model.type.ContractLeaveType;
 import com.esferalia.aon.watson.util.AonDateUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gson.GsonBuilder;
+import com.itextpdf.text.log.SysoLogger;
 
 import solutions.aon.seg.social.SistemaREDINSS;
 import solutions.aon.seg.social.exception.InvalidCertificateException;
@@ -105,15 +106,19 @@ public class FIEServlet extends HttpServlet implements FIEService {
 		    List<Integer> itIds = new ArrayList<Integer>();
 
 		    for (CCCInfo ccc : cccs) {
-			try {
-			    byte[] fie = SistemaREDINSS.getFIE(certificate.getData(), certificate.getPassword(),certificate.getType(), ccc.getCccRegimeCode(), ccc.getCcc() , startDate, endDate);
-			    itIds.addAll(  doFie(fie, ctx.getDslContext(), domainId) );
-			} catch (FailingHttpStatusCodeException | IOException e) {
-			    //
-			}
+				try {
+				    byte[] fie = SistemaREDINSS.getFIE(certificate.getData(), certificate.getPassword(),certificate.getType(), ccc.getCccRegimeCode(), ccc.getCcc() , startDate, endDate); 
+				    System.out.println("------ Fie document is NULL ------");
+				    if(null != fie)
+				    	itIds.addAll(  doFie(fie, ctx.getDslContext(), domainId) );
+				} catch (FailingHttpStatusCodeException | IOException e) {
+				    e.printStackTrace();
+				}
 		    }
 		    
 		    Collection<ITEmployee> itEmployees = JooqIT.getEmployeesITInfo(ctx, itIds);
+		    
+		    itEmployees.forEach(itEmployee -> System.out.println("Imported part for : " + itEmployee.getEmployeeInfo().getFullName()));
 
 		    resp.setStatus(HttpServletResponse.SC_OK);
 		    byte[] content = new GsonBuilder().setDateFormat("YYYY-MM-dd").create().toJson(itEmployees)
@@ -177,7 +182,7 @@ public class FIEServlet extends HttpServlet implements FIEService {
 				public void endDIT() {
 					try {	
 						IT itp = getIt();
-						if(!itp.getCancel())
+						if(!itp.getCancel() && itp.getStartDate() != null)
 							ids.add(addIT(ctx, domainId, itp));
 					} catch ( EmployeeNotFoundexception e) {
 						
@@ -438,9 +443,13 @@ public class FIEServlet extends HttpServlet implements FIEService {
 			// S=se acredita carencia; 
 			// N=no se acredita carencia;
 			// P=consulta la Dirección Provincial del INSS
+			if(AonStringUtils.isBlank(deficiencyIndicator)) deficiencyIndicator = "";
 			switch (deficiencyIndicator) {
 			case "N":
-				if(it.getContingency().equals(ContractLeaveType.ENFERMEDAD_COMUN)) it.setContingency(ContractLeaveType.ENFERMEDAD_COMUN_CARENCIA);
+				if(!it.getContingency().equals(ContractLeaveType.ENFERMEDAD_COMUN)) it.setContingency(ContractLeaveType.ENFERMEDAD_COMUN);
+				break;
+			case "S":
+				it.setContingency(ContractLeaveType.ENFERMEDAD_COMUN_CARENCIA);
 				break;
 			default:
 				break;

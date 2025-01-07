@@ -32,6 +32,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
@@ -880,6 +881,11 @@ public class JooqPayrollBuilder {
 			List<Date> noWorkDaysList = listHolidays(noWorkDays, salaryEnd);
 			
 			List<Date> festiveList = listFestives(aonContext, salary.getId(), salaryStart, salaryEnd);
+			
+			contractDataTmp.getOrDefault("DIAS_FESTIVOS", Collections.emptyList()).stream()
+			.filter(d -> AonNumberUtils.todouble(d.getExpression()) <= 0.00 )
+			.flatMap(d -> new Period(d.getStartDate(), d.getEndDate()).daysStream() )
+			.map(Calendar::getTime).forEach( festiveList::remove );
 
 			setHolidays(params, holidayList, salaryPeriod, entry -> entry.setHoliday(true));
 			setHolidays(params, noWorkDaysList, salaryPeriod, entry -> entry.setNotWorkingDay(true));
@@ -1198,7 +1204,7 @@ public class JooqPayrollBuilder {
 		
 		// Check if its festive day and dont have hours
 		Double dayHours = getDayHours(date, salaryData, salaryEnd);
-		if (festiveList != null && festiveList.contains(date) && !(dayHours != null && dayHours > 0)) {
+		if (festiveList != null && festiveList.contains(date) /*&& !(dayHours != null && dayHours > 0)*/) {
 			return false;
 		}
 		

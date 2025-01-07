@@ -47,6 +47,7 @@ import com.google.gwt.http.client.URL;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.DeckPanel;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.FormPanel;
@@ -444,7 +445,7 @@ public class MainContrataContract extends MainEntryPoint {
 			hPanel.add(sistemaREDMessagePanel);
 			
 			ResultsPanel resultPanel = new ResultsPanel();
-			resultPanel.setHeight((sistemaREDResults.getTreeItems() > 20 ? 20 : sistemaREDResults.getTreeItems() * 30) + "px");
+			resultPanel.setHeight((sistemaREDResults.getTreeItems() > 20 ? (20 * 30) : sistemaREDResults.getTreeItems() * 30) + "px");
 			resultPanel.setWidth("800px");
 			resultPanel.setWidget(sistemaREDResults);
 			hPanel.add(resultPanel);
@@ -722,7 +723,6 @@ public class MainContrataContract extends MainEntryPoint {
 				.setOrderBy("name");
 		
 		onSearch();
-		checkStatus(this.mainContrataContractObject);
 		this.mainContrataContractObject.getCertificateSEPE();
 
 		this.mainContrataContractObject.getContextInfo(
@@ -732,6 +732,8 @@ public class MainContrataContract extends MainEntryPoint {
 					initWorkplaceLB();
 					initTC2LB();
 					contextLoaded = true;
+					
+					checkStatus(this.mainContrataContractObject);
 				}, f -> {
 					AonMessagePanel.showError(employeesMessagePanel, "Error contexto: " + f.getMessage());
 					contextLoaded = true;
@@ -1056,7 +1058,6 @@ public class MainContrataContract extends MainEntryPoint {
 					onSearch();
 					run();
 				}
-
 				@Override
 				protected void newAffiliated(JsArray<JsSistemaREDResults> jsResults, int total) {
 					AonMessagePanel.showLoading(sistemaREDMessagePanel, "Importando Trabajador/es");
@@ -1092,8 +1093,7 @@ public class MainContrataContract extends MainEntryPoint {
 				}
 			};
 
-			sistemaREDResults.hideRunButton();
-			sistemaREDResults.hideClearButton();
+			sistemaREDResults.hideToolbar();
 			
 			enterpriseStatus.visit(sistemaREDResults);
 			sistemREDInfoBtn.setVisible(true);
@@ -1101,7 +1101,7 @@ public class MainContrataContract extends MainEntryPoint {
 			EnterpriseStatus.ifSistemaREDEnabled(
 				enterpriseStatus,
 				() -> {},
-				() -> AonMessagePanel.hideMessage(sistemaREDMessagePanel)
+				() -> {}
 			);
 			
 			EnterpriseStatus.ifSistemaREDError(
@@ -1110,9 +1110,11 @@ public class MainContrataContract extends MainEntryPoint {
 					() -> {}
 			);
 			
-		}, throwable -> {
-			AonMessagePanel.hideMessage(sistemaREDMessagePanel);
+		}, f -> {
+			if(null != sistemaREDMessagePanel)
+				AonMessagePanel.hideMessage(sistemaREDMessagePanel);
 			MainContrataContract.this.setSistemaREDVisible(false);
+			AonMessagePanel.showError(employeesMessagePanel, "Sincronizaci\u00f3n TGSS fallida : " + f.getMessage());
 		});
 	}
 	

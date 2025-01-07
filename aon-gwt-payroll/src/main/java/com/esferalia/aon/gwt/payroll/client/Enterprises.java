@@ -279,16 +279,22 @@ public class Enterprises extends ResizeComposite implements
 		enterpriseItem.setUserObject(enterprise);
 		
 		for (Activity activity: enterprise.getActivities()) {
-
-			for ( CCC ccc : activity.getCccs() ) {
-				LOGGER.info(activity.getDescription() + ", " + ccc.getGeozone() + " " + ccc.getCode());
-				TreeItem cccItem = addImageItem(enterpriseItem, getDescription(activity, ccc),getImage(ccc));
-				cccItem.setUserObject(ccc);
-			}
-			
+			onEnterpriseActivity(activity, enterpriseItem);
 		}
 
 		scrollPanel.scrollToLeft();
+	}
+	
+	protected void onEnterpriseActivity(Activity activity, TreeItem enterpriseItem) {
+		for ( CCC ccc : activity.getCccs() ) {
+			LOGGER.info(activity.getDescription() + ", " + ccc.getGeozone() + " " + ccc.getCode());
+			onEnterpriseCCC(activity, ccc, enterpriseItem);
+		}
+	}
+	
+	protected void onEnterpriseCCC(Activity activity, CCC ccc, TreeItem enterpriseItem) {
+		TreeItem cccItem = addImageItem(enterpriseItem, getDescription(activity, ccc),getImage(ccc));
+		cccItem.setUserObject(ccc);
 	}
 	
 	protected int getSearchTextBoxDelay() {
@@ -589,7 +595,7 @@ public class Enterprises extends ResizeComposite implements
 	 * {@link #addImageItem(TreeItem, String, childs, ImageResource) code}
 	 * 
 	 */
-	private TreeItem addImageItem(TreeItem root, String title,
+	private <T extends HasTreeItems> TreeItem addImageItem(T root, String title,
 			ImageResource imageProto) {
 		TreeItem item = new TreeItem(imageItemHTML(imageProto, title));
 		root.addItem(item);

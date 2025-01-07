@@ -2475,8 +2475,9 @@ class Mod303AEAT2024T4Declaration extends Mod303AEAT {
 		// se aplicaba un 5%
 		if (!mod.isComplementary()) {
 			return isCommonNationalSales(vat, mod)
-				&& (mod.getYear() > 2024
-				 || (mod.getYear() == 2024 
+				&& (
+				// (mod.getYear() > 2024 && vat.getPercentage() == PERCENT75) ||
+				  (mod.getYear() == 2024
 				  && (mod.getPeriod() == Period.M10 
 				  ||  mod.getPeriod() == Period.M11 
 				  ||  mod.getPeriod() == Period.M12 
@@ -2491,19 +2492,20 @@ class Mod303AEAT2024T4Declaration extends Mod303AEAT {
 				);
 		} else {
 			return isCommonNationalSales(vat, mod)
-				&& (mod.getYear() > 2024
-				 || (mod.getYear() == 2024 
-				  && (mod.getPeriod() == Period.M10 
-				  ||  mod.getPeriod() == Period.M11 
-				  ||  mod.getPeriod() == Period.M12 
-				  ||  mod.getPeriod() == Period.T4)
-				  && (vat.getPercentage() == PERCENT75 
-				   || vat.getPercentage() == PERCENT5)
+				&& (
+			// (mod.getYear() > 2024 && vat.getPercentage() == PERCENT75 || vat.getPercentage() == PERCENT5)) || 
+					(mod.getYear() == 2024 
+				  	&& (mod.getPeriod() == Period.M10 
+				  	||  mod.getPeriod() == Period.M11 
+				  	||  mod.getPeriod() == Period.M12 
+				  	||  mod.getPeriod() == Period.T4)
+				  	&& (vat.getPercentage() == PERCENT75 
+				  	 || vat.getPercentage() == PERCENT5)
 				  )
 				 || (mod.getYear() == 2024 
-				  && (mod.getPeriod() == Period.M09 
-				  ||  mod.getPeriod() == Period.T3)
-				  && (vat.getPercentage() == PERCENT5)
+				  	&& (mod.getPeriod() == Period.M09 
+				  	||  mod.getPeriod() == Period.T3)
+				  	&& (vat.getPercentage() == PERCENT5)
 				  )
 				);
 		}
@@ -2515,8 +2517,9 @@ class Mod303AEAT2024T4Declaration extends Mod303AEAT {
 		//"00026", "00050" 	periodos 10 y 4T de 2024 y ejercicios posteriores
 		return isCommonNationalSales(vat, mod) 
 			&& vat.isSurcharge()
-			&&  (mod.getYear() > 2024
-		 	 || (mod.getYear() == 2024 
+			&& (
+				(mod.getYear() > 2024 && vat.getSurchargePercent() == SURCHARGE_PERCENT_05) 
+			|| (mod.getYear() == 2024 
 		 	  && (mod.getPeriod() == Period.M10 
 			  ||  mod.getPeriod() == Period.M11 
 			  ||  mod.getPeriod() == Period.M12 
@@ -2529,12 +2532,14 @@ class Mod303AEAT2024T4Declaration extends Mod303AEAT {
 	
 	private static boolean c169Filter(Mod303 mod) {
 		//"00026", "00050" 	periodos 10 y 4T de 2024 y ejercicios posteriores
-		return (mod.getYear() > 2024
-		 	 || (mod.getYear() == 2024 
+		return (
+			mod.getYear() > 2024 || 
+			(mod.getYear() == 2024 
 		 	  && (mod.getPeriod() == Period.M10 
 			  ||  mod.getPeriod() == Period.M11 
 			  ||  mod.getPeriod() == Period.M12 
-			  ||  mod.getPeriod() == Period.T4))
+			  ||  mod.getPeriod() == Period.T4)
+		 	  )
 			);
 	}
 
@@ -2543,8 +2548,9 @@ class Mod303AEAT2024T4Declaration extends Mod303AEAT {
 		//	Constante "00100"						A partir de 10 y 4T de 2024 y ejercicios posteriores
 		if (!mod.isComplementary()) {
 			return isCommonNationalSales(vat, mod) && vat.isSurcharge()
-				&& (mod.getYear() > 2024
-				 || (mod.getYear() == 2024 
+				&& (
+//						mod.getYear() > 2024 || 
+					(mod.getYear() == 2024 
 				  && (mod.getPeriod() == Period.M10 
 				  ||  mod.getPeriod() == Period.M11 
 				  ||  mod.getPeriod() == Period.M12 
@@ -2561,8 +2567,9 @@ class Mod303AEAT2024T4Declaration extends Mod303AEAT {
 				);
 		} else {
 			return isCommonNationalSales(vat, mod) && vat.isSurcharge()
-				&& (mod.getYear() > 2024
-				 || (mod.getYear() == 2024 
+				&& (
+//						mod.getYear() > 2024 || 
+					(mod.getYear() == 2024 
 				  && (mod.getPeriod() == Period.M10 
 				  ||  mod.getPeriod() == Period.M11 
 				  ||  mod.getPeriod() == Period.M12 
@@ -2586,8 +2593,9 @@ class Mod303AEAT2024T4Declaration extends Mod303AEAT {
 
 	public static void greatherQuotaPercent(Mod303Key modkey, Mod303 mod, VatContext vat) {
 		if (modkey == Mod303Key.CT_C17
-		&& (mod.getYear() > 2024 
-		|| (mod.getYear() == 2024
+		&& (
+//			mod.getYear() > 2024 || 
+				(mod.getYear() == 2024
 		 && (mod.getPeriod() == Period.M10 
 			|| mod.getPeriod() == Period.M11
 			|| mod.getPeriod() == Period.M12

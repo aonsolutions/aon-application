@@ -3,8 +3,6 @@ package com.esferalia.aon.in.payroll.tgss.fie;
 import static com.esferalia.aon.watson.util.AonStringUtils.equalsIgnoreCase;
 import static com.esferalia.aon.watson.util.AonStringUtils.isBlank;
 import static com.esferalia.aon.watson.util.AonStringUtils.substring;
-import static com.esferalia.aon.watson.util.AonStringUtils.trim;
-import static com.esferalia.aon.watson.util.AonStringUtils.trimToNull;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
@@ -14,18 +12,19 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.net.URLConnection;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Optional;
+import java.util.Set;
 import java.util.SortedMap;
 import java.util.TreeMap;
-import java.util.regex.Pattern;
+import java.util.TreeSet;
 
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
@@ -83,7 +82,7 @@ public class FieParser {
 	}
 
 	private static void parseXls(InputStream is , FieListener listener) throws IOException {
-	    SAXParserFactory saxParserFactory  = SAXParserFactory.newInstance();
+		SAXParserFactory saxParserFactory  = SAXParserFactory.newInstance();
 	    try {
 		List<Map<Integer, String>> rows = new ArrayList<>();
 		SAXParser saxParser = saxParserFactory.newSAXParser();
@@ -128,6 +127,8 @@ public class FieParser {
 		    
 		});
 		
+		//printFieConsole(rows);
+		
 		for ( int i = 2; i < rows.size(); i++ ) {
 		    
 		    int col = 2;
@@ -136,6 +137,7 @@ public class FieParser {
 		    // 2-. EMP (Identificación Empresa)
 		    listener.startEnterprise();
 		    String ccc = row.get(col++);
+		    
 		    listener.onRegime(substring(ccc, 0, 4));
 		    listener.onCCC(substring(ccc, 4));
 
@@ -230,84 +232,84 @@ public class FieParser {
 		    boolean itPartCancelStr = AonStringUtils.equalsIgnoreCase("S", row.get(col++));
 		    listener.onDitItPartCancel(itPartCancelStr);
 		    
+		    // Parte de Alta Anulado
+		    col++;
+		    
 		    // Modalidad de pago
 		    col++;
 		    
 		    listener.endDIT();
-
-		    //29-. IT2 (Incapacidad Temporal CP)
-		    // Fecha AT/EP
-		    col++;
-		    // Tipo Accidente
-		    col++;
 		    
-		    
-		    //31-. ITD (IT Pago Directo)
-    		    Date directPaymentStartDate = parseDateFromFie(row.get(col++));
-    		    String directPaymentStartEntity = row.get(col++);
-    		    String actualResponsibleEntity = row.get(col++);
-    		    Date responsibleEntityInitialPaymentDate = parseDateFromFie(row.get(col++));
-    		    Date responsibleEntityFinalPaymentDate = parseDateFromFie(row.get(col++));
-    		    Float regulatoryBase = parseFloat(row.get(col++));
-    		    if ( directPaymentStartDate != null ) {
-			listener.startITD();
-
-			listener.onItdDirectPaymentStartDate(directPaymentStartDate);
-			listener.onItdDirectPaymentStartEntity(directPaymentStartEntity);
-			listener.onItdActualResponsibleEntity(actualResponsibleEntity);
-			listener.onItdResponsibleEntityInitialPaymentDate(responsibleEntityInitialPaymentDate);
-			listener.onItdResponsibleEntityFinalPaymentDate(responsibleEntityFinalPaymentDate);
-			listener.onItdRegulatoryBase(regulatoryBase);
-
-			listener.endITD();
-    		    }
-		    
-		    //37-. OIT (Otros Datos de IT)
-		    Date mcssProcessRevisionStartDate = parseDateFromFie(row.get(col++));
-		    Date cause89Date = parseDateFromFie(row.get(col++));
-		    Date cause90Date = parseDateFromFie(row.get(col++));
-		    Date cause91Date = parseDateFromFie(row.get(col++));
-		    Date cause92Date = parseDateFromFie(row.get(col++));
-		    Boolean process170_2 = AonStringUtils.equalsIgnoreCase(row.get(col++),"S");
-		    Date cause42Date = parseDateFromFie(row.get(col++));
-		    Date cause35Date = parseDateFromFie(row.get(col++));
-		    // Fecha Agotamiento 545 días de IT 
-		    col++;
-		    Date medicalCertificateDate = parseDateFromFie(row.get(col++));
-		    if ( mcssProcessRevisionStartDate != null 
-			 || cause89Date != null 
-			 || cause90Date != null
-			 || cause91Date != null
-			 || cause92Date != null
-			 || process170_2
-			 || cause42Date != null
-			 || cause35Date != null 
-			 || medicalCertificateDate != null
-			 ) {
-			     listener.startOIT();
-
-			     listener.onOitMcssProcessRevisionStartDate(mcssProcessRevisionStartDate);
-			     listener.onOitCause89Date(cause89Date);
-			     listener.onOitCause90Date(cause90Date);
-			     listener.onOitCause91Date(cause91Date);
-			     listener.onOitCause92Date(cause92Date);
-			     listener.onOitProcess170_2(process170_2);
-			     listener.onOitCause42Date(cause42Date);
-			     listener.onOitCause35Date(cause35Date);
-			     listener.onOitMedicalCertificateDate(medicalCertificateDate);
-
-			     listener.endOIT();
-			    }
-		    
-		    //47-. CIT (Continuación Situación en IT)
-    		    Date confirmationStartDate = parseDateFromFie(row.get(col++));
-    		    String confirmationNumberPart = row.get(col++);
-		    if (confirmationStartDate != null ) {
-			listener.startCIT();
-			listener.onCitConfirmationStartDate(confirmationStartDate);
-			listener.onCitConfirmationNumberPart(confirmationNumberPart);
-			listener.endCIT();
+		    col = 41;
+		    //42-. ITD (IT Pago Directo)
+		    Date directPaymentStartDate = parseDateFromFie(row.get(col++));
+		    String directPaymentStartEntity = row.get(col++);
+		    String actualResponsibleEntity = row.get(col++);
+		    Date responsibleEntityInitialPaymentDate = parseDateFromFie(row.get(col++));
+		    Date responsibleEntityFinalPaymentDate = parseDateFromFie(row.get(col++));
+		    Float regulatoryBase = parseFloat(row.get(col++));
+		    if ( directPaymentStartDate != null ) {
+				listener.startITD();
+	
+				listener.onItdDirectPaymentStartDate(directPaymentStartDate);
+				listener.onItdDirectPaymentStartEntity(directPaymentStartEntity);
+				listener.onItdActualResponsibleEntity(actualResponsibleEntity);
+				listener.onItdResponsibleEntityInitialPaymentDate(responsibleEntityInitialPaymentDate);
+				listener.onItdResponsibleEntityFinalPaymentDate(responsibleEntityFinalPaymentDate);
+				listener.onItdRegulatoryBase(regulatoryBase);
+	
+				listener.endITD();
 		    }
+		    
+		    col = 46;
+		    //47-. CIT (Continuación Situación en IT)
+		    Date confirmationStartDate = parseDateFromFie(row.get(col++));
+		    String confirmationNumberPart = row.get(col++);
+		    if (confirmationStartDate != null ) {
+				listener.startCIT();
+				listener.onCitConfirmationStartDate(confirmationStartDate);
+				listener.onCitConfirmationNumberPart(confirmationNumberPart);
+				listener.endCIT();
+		    }
+		    
+		    // DOES NOT EXIST OIT
+//    		col = 46;
+//		    //47-. OIT (Otros Datos de IT)
+//		    Date mcssProcessRevisionStartDate = parseDateFromFie(row.get(col++));
+//		    Date cause89Date = parseDateFromFie(row.get(col++));
+//		    Date cause90Date = parseDateFromFie(row.get(col++));
+//		    Date cause91Date = parseDateFromFie(row.get(col++));
+//		    Date cause92Date = parseDateFromFie(row.get(col++));
+//		    Boolean process170_2 = AonStringUtils.equalsIgnoreCase(row.get(col++),"S");
+//		    Date cause42Date = parseDateFromFie(row.get(col++));
+//		    Date cause35Date = parseDateFromFie(row.get(col++));
+//		    // Fecha Agotamiento 545 días de IT 
+//		    col++;
+//		    Date medicalCertificateDate = parseDateFromFie(row.get(col++));
+//		    if ( mcssProcessRevisionStartDate != null 
+//			 || cause89Date != null 
+//			 || cause90Date != null
+//			 || cause91Date != null
+//			 || cause92Date != null
+//			 || process170_2
+//			 || cause42Date != null
+//			 || cause35Date != null 
+//			 || medicalCertificateDate != null
+//			 ) {
+//			     listener.startOIT();
+//
+//			     listener.onOitMcssProcessRevisionStartDate(mcssProcessRevisionStartDate);
+//			     listener.onOitCause89Date(cause89Date);
+//			     listener.onOitCause90Date(cause90Date);
+//			     listener.onOitCause91Date(cause91Date);
+//			     listener.onOitCause92Date(cause92Date);
+//			     listener.onOitProcess170_2(process170_2);
+//			     listener.onOitCause42Date(cause42Date);
+//			     listener.onOitCause35Date(cause35Date);
+//			     listener.onOitMedicalCertificateDate(medicalCertificateDate);
+//
+//			     listener.endOIT();
+//			    }
 		    
 		    //51-. DIP (Datos Incapacidad Permanente)
 		    
@@ -324,6 +326,53 @@ public class FieParser {
 	    } catch (ParserConfigurationException | SAXException e) {
 		throw new IOException(e);
 	    }
+	}
+	
+	private static void printFieConsole(List<Map<Integer, String>> rows) {
+		// Identificar las columnas únicas
+        Set<Integer> columnas = new TreeSet<>();
+        for (Map<Integer, String> fila : rows) {
+            columnas.addAll(fila.keySet());
+        }
+
+        // Calcular el ancho máximo para cada columna
+        Map<Integer, Integer> anchoColumnas = new HashMap<>();
+        for (Integer columna : columnas) {
+            int maxAncho = ("Columna " + columna).length(); // Inicia con el ancho del encabezado
+            for (Map<Integer, String> fila : rows) {
+                String valor = fila.getOrDefault(columna, " ");
+                maxAncho = Math.max(maxAncho, valor.length());
+            }
+            anchoColumnas.put(columna, maxAncho);
+        }
+
+        // Construir la tabla
+        StringBuilder separador = new StringBuilder("+");
+        for (Integer columna : columnas) {
+            separador.append("-".repeat(anchoColumnas.get(columna) + 2)).append("+");
+        }
+        String lineaSeparador = separador.toString();
+
+        // Imprimir encabezado
+        System.out.println(lineaSeparador);
+        System.out.print("|");
+        for (Integer columna : columnas) {
+            String encabezado = "Columna " + columna;
+            System.out.printf(" %-"+anchoColumnas.get(columna)+"s |", encabezado);
+        }
+        System.out.println();
+        System.out.println(lineaSeparador);
+
+        // Imprimir filas
+        for (Map<Integer, String> fila : rows) {
+            System.out.print("|");
+            for (Integer columna : columnas) {
+                String valor = fila.getOrDefault(columna, " ");
+                System.out.printf(" %-"+anchoColumnas.get(columna)+"s |", valor);
+            }
+            System.out.println();
+        }
+        System.out.println(lineaSeparador);
 	}
 	
 	private static void parseMsj(InputStream is , FieListener listener) throws IOException {	

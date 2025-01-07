@@ -247,10 +247,10 @@ public class CretaServlet extends HttpServlet
 	
 
 	protected Connection getConnection(HttpServletRequest req) throws SQLException {
-		String domain = req.getServerName();
+		String domain = getDomainName(req);
 		return AonServletUtils.getConnection(domain);
 	}
-
+	
 	// ------------------------------------------------------------------------
 	// CretaService.Solicitud.Visitor<HttpServletRequest, HttpServletResponse,
 	// Exception>
@@ -1918,7 +1918,7 @@ public class CretaServlet extends HttpServlet
 //		return Stream.empty();
 		String login = ":-)" ; 
 		Date from = getFromDate();
-		String domainName = req.getServerName();
+		String domainName = getDomainName(req);
 		Integer domainId = AonServletUtils.getDomainID(domainName);
 		Collection<String> cccs = getParameterValues(req, Parameter.CCC);
 		
@@ -1932,7 +1932,7 @@ public class CretaServlet extends HttpServlet
 
 	private static Stream<net.aonsolutions.core.tgss.creta.jaxb.respuesta.Respuesta> findRespuestas(HttpServletRequest req) throws SQLException{
 		Date from = getFromDate();
-		String domainName = req.getServerName();
+		String domainName = getDomainName(req);
 		Integer domainId = AonServletUtils.getDomainID(domainName);
 		Collection<String>  cccs = getParameterValues(req, Parameter.CCC);
 		String login = req.getParameter(CretaService.Parameter.USER.name());
@@ -1957,7 +1957,7 @@ public class CretaServlet extends HttpServlet
 		Date from = AonDateUtils.add(firstDayOfMonth, Calendar.MONTH, -1 );
 		//String login = req.getParameter(CretaService.Parameter.USER.name());  
 		
-		String domainName = req.getServerName();
+		String domainName = getDomainName(req);
 		Integer domainId = AonServletUtils.getDomainID(domainName);
 		Collection<String> cccs = findCCCs(domainName, domainId, new java.sql.Date(from.getTime()), getParameterValues(req, Parameter.CCC));
 		cccs = filter(cccs);
@@ -1982,7 +1982,7 @@ public class CretaServlet extends HttpServlet
 	}
 
 	private static Stream<net.aonsolutions.core.tgss.creta.jaxb.trabajadorestramos.TrabajadoresTramos> findTrabajadoresYTramos(HttpServletRequest req) throws SQLException{
-		String domainName = req.getServerName();
+		String domainName = getDomainName(req);
 		Integer domainId = AonServletUtils.getDomainID(domainName);
 		Date from = getFromDate();
 		Collection<String>  cccs = getParameterValues(req, Parameter.CCC);
@@ -2076,7 +2076,7 @@ public class CretaServlet extends HttpServlet
 		String md5 = AonFileUtils.getMD5Checksum(data);
 
 		String login = ":-)" ; 
-		String domainName = req.getServerName();
+		String domainName = getDomainName(req);
 		Integer domainId = AonServletUtils.getDomainID(domainName);
 
 		Attach attach = getAttach(domainName, domainId, login, type, md5);
@@ -2825,6 +2825,12 @@ public class CretaServlet extends HttpServlet
 		.toArray(String[]::new);
 	}
 	
+	private static String getDomainName(HttpServletRequest req) throws SQLException {
+		String domainName = req.getParameter(Parameter.DOMAIN.name());
+		return AonStringUtils.isNotBlank(domainName) ? domainName : req.getServerName();
+	}
+	
+
 	private String escape(String raw) {
 	    String escaped = raw;
 	    escaped = escaped.replace("\\", "\\\\");
