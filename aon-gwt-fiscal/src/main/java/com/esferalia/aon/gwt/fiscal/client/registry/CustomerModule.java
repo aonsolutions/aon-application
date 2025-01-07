@@ -319,6 +319,7 @@ public class CustomerModule extends MainEntryPoint {
 //		toolbar.add(searchButton);
 
 		checkAll = new AonToolbarButton( AON.MSG.selectAll(), AON.CSS.aonIconChecked() );
+		checkAll.setStyleName(AON.CSS.aonDisplayNone()); //se ocultan por que no tiene funcionalidad
 		checkAll.setEnabled(false);
 		
 		checkAll.addClickHandler(event -> checkAll(true));
@@ -326,6 +327,7 @@ public class CustomerModule extends MainEntryPoint {
 		toolbar.add(checkAll );
 		
 		uncheckAll = new AonToolbarButton( AON.MSG.selectNone(), AON.CSS.aonIconCheck() );
+		uncheckAll.setStyleName(AON.CSS.aonDisplayNone()); //se ocultan por que no tiene funcionalidad
 		uncheckAll.setEnabled(false);
 		
 		uncheckAll.addClickHandler(event -> checkAll(false));
@@ -506,7 +508,7 @@ public class CustomerModule extends MainEntryPoint {
 		customers.put(customer.getId(), new CustomerRow(row, customer));
 		
 		AonTableButton checkButton = new AonTableButton(AON.MSG.selectAction(), selectedItems.contains(customer.getId())?AON.CSS.aonIconChecked():AON.CSS.aonIconCheck());
-		
+		checkButton.setStyleName(AON.CSS.aonDisplayNone());
 		checkButton.addClickHandler(event -> {
 				if (selectedItems.contains(customer.getId())) {
 					customer.setSelected(false);
