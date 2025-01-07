@@ -336,9 +336,9 @@ export class AonMobileDelivery extends AonElement {
 					span.innerHTML = i.composition.product.code + ' #' + i.composition.serialNumber;
 					table2.addCell(span);
 					let span2 = this.createSpan();
-					span2.innerHTML = i.quantity;
+					span2.innerHTML = this.getFormat(i.composition, i.quantity);
 					table2.addCell(span2);
-					let saveButton = this.getElement(this.DELIVERY_SAVE_BUTTON)
+					let saveButton = this.getElement(this.DELIVERY_SAVE_BUTTON);
 					saveButton.setDisabled(false);
 					if(!r.delivery || !r.delivery.id) {	
 						for(let j = 0; j < this.salesDetails.length; j++) {
@@ -547,15 +547,15 @@ export class AonMobileDelivery extends AonElement {
 		actionButton.title = "Editar Cantidad";
 		actionButton.icon = MATERIAL_ICONS.EDIT;
 		actionButton.addEventListener(EVENT.CLICK, () => {
-			let edit = actionButton.icon === MATERIAL_ICONS.EDIT;
-			actionButton.title = edit ? "Cantidad Autómatica" : "Editar Cantidad";
-			actionButton.icon = edit ? MATERIAL_ICONS.HDR_AUTO : MATERIAL_ICONS.EDIT;
-			quantityBox.setDisabled(!edit);
+			let auto = actionButton.icon === MATERIAL_ICONS.EDIT;
+			actionButton.title = auto ? "Cantidad Autómatica" : "Editar Cantidad";
+			actionButton.icon = auto ? MATERIAL_ICONS.HDR_AUTO : MATERIAL_ICONS.EDIT;
+			quantityBox.setDisabled(!auto);
 		});
 		table.addCell(actionButton);
 
 		dialog.addAcceptAction(() => {
-			let auto = actionButton.icon === MATERIAL_ICONS.HDR_AUTO;
+			let auto = actionButton.icon === MATERIAL_ICONS.EDIT;
 			let q = quantityBox.getQuantity();
 			let data = {
 				sscc: product.value,
@@ -598,7 +598,7 @@ export class AonMobileDelivery extends AonElement {
 						span.innerHTML = detail.item.product.code + ' #' + c.composition.serialNumber;
 						table2.addCell(span);
 						let span2 = this.createSpan();
-						span2.innerHTML = c.quantity;
+						span2.innerHTML = this.getFormat(detail.item, c.quantity);
 						table2.addCell(span2);
 					});
 	

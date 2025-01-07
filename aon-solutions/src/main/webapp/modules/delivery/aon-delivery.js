@@ -306,7 +306,7 @@ export class AonDelivery extends AonElement {
 					span.innerHTML = i.composition.product.code + ' #' + i.composition.serialNumber;
 					table2.addCell(span);
 					let span2 = this.createSpan();
-					span2.innerHTML = i.quantity;
+					span2.innerHTML = this.getFormat(i.composition, i.quantity);
 					table2.addCell(span2);
 					let saveButton = this.getElement(this.DELIVERY_SAVE_BUTTON)
 					saveButton.setDisabled(false);
@@ -513,10 +513,10 @@ export class AonDelivery extends AonElement {
 		actionButton.title = "Editar Cantidad";
 		actionButton.icon = MATERIAL_ICONS.EDIT;
 		actionButton.addEventListener(EVENT.CLICK, () => {
-			let edit = actionButton.icon === MATERIAL_ICONS.EDIT;
-			quantityBox.setDisabled(!edit);
-			actionButton.title = edit ? "Cantidad Autómatica" : "Editar Cantidad";
-			actionButton.icon = edit ? MATERIAL_ICONS.HDR_AUTO : MATERIAL_ICONS.EDIT;
+			let auto = actionButton.icon === MATERIAL_ICONS.EDIT;
+			quantityBox.setDisabled(!auto);
+			actionButton.title = auto ? "Cantidad Autómatica" : "Editar Cantidad";
+			actionButton.icon = auto ? MATERIAL_ICONS.HDR_AUTO : MATERIAL_ICONS.EDIT;
 
 		});
 		table.addCell(actionButton);
@@ -524,35 +524,16 @@ export class AonDelivery extends AonElement {
 		let source;
 		let quantity = 0;
 		let composition = [];
+		let sourceDeliveryPackaging;
+
 		product.addEventListener(EVENT.CHANGE, () => {
-			let auto = actionButton.icon === MATERIAL_ICONS.HDR_AUTO;
-			let q = quantityBox.getQuantity();
 			product.setDisabled(true);
 			let data = { 
 				sscc: product.value,
 				product: detail.item.product.id
 			};
 			getDeliveryPackaging(data).then(r => {
-				// si no esta en ningun albaran  
-					// comprobar que lo que tenga el albarán es lo que se quiere añadir si no ERROR
-					//añadir cantidad 
-
-				Array.prototype.forEach.call(r.item.itemComposition, i => {
-					if(i.composition.product.id === data.product) {
-						let saveButton = this.getElement(this.DELIVERY_SAVE_BUTTON)
-						saveButton.setDisabled(false);
-						let pendingQuantity = detail.quantity - detail.delivered;
-						if(!auto && q < pendingQuantity) pendingQuantity = q;
-						let quantityValue = i.quantity > pendingQuantity
-							? pendingQuantity : i.quantity;
-						
-						let object = i;
-						object.quantity = quantityValue;
-						composition.push(object);
-
-						quantity = quantity + quantityValue;
-					}
-				});
+				sourceDeliveryPackaging = r;
 				source = r.item.id;
 			}).catch(e => {
 				product.value = "";
@@ -562,6 +543,28 @@ export class AonDelivery extends AonElement {
 		});
 
 		dialog.addAcceptAction(() => {
+			let auto = actionButton.icon === MATERIAL_ICONS.EDIT;
+			let q = quantityBox.getQuantity();
+
+			// si no esta en ningun albaran  
+			// comprobar que lo que tenga el albarán es lo que se quiere añadir si no ERROR
+			// añadir cantidad 
+			Array.prototype.forEach.call(sourceDeliveryPackaging.item.itemComposition, i => {
+				if(i.composition.product.id === detail.item.product.id) {
+					let saveButton = this.getElement(this.DELIVERY_SAVE_BUTTON)
+					saveButton.setDisabled(false);
+					let pendingQuantity = detail.quantity - detail.delivered;
+					if(!auto && q < pendingQuantity) pendingQuantity = q;
+					let quantityValue = i.quantity > pendingQuantity
+						? pendingQuantity : i.quantity;
+					
+					let object = i;
+					object.quantity = quantityValue;
+					composition.push(object);
+
+					quantity = quantity + quantityValue;
+				}
+			});
 			if(source) {
 				let contentObject = {
 					source,
@@ -575,7 +578,7 @@ export class AonDelivery extends AonElement {
 					span.innerHTML = detail.item.product.code + ' #' + c.composition.serialNumber;
 					table2.addCell(span);
 					let span2 = this.createSpan();
-					span2.innerHTML = c.quantity;
+					span2.innerHTML = this.getFormat(detail.item, c.quantity);
 					table2.addCell(span2);
 				});
 
