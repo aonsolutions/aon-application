@@ -4,7 +4,8 @@ import java.io.Serializable;
 
 public enum RawdocNature implements Serializable {
 	
-	 INVOICE("Factura")
+	 INVOICE("Factura"),
+	 OCR_INVOICE("Factura OCR")
 	 /*
 	  * NOMINA, PRESUPUESTO, PEDIDO, etc ....
 	  */

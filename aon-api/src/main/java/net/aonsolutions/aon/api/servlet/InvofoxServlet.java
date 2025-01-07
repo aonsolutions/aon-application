@@ -214,7 +214,7 @@ public class InvofoxServlet extends AonApiHttpServlet {
 				rawdoc = new Rawdoc()
 					.setId(id)
 					.setDomain(api.getDomain().getId())
-					.setNature(RawdocNature.INVOICE)
+					.setNature(RawdocNature.OCR_INVOICE)
 					.setType(type)
 					.setStatus(status)
 					.setJson(json.toString())
