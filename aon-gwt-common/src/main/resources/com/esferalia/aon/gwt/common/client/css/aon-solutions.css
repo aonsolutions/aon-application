@@ -477,6 +477,10 @@
 .aon_inline_block {
 	display: inline-block;
 }
+
+.aon_inline_flex {
+	display: inline-flex;
+}
 .aon_cmd_item{
 	background-position: center left;
 	background-repeat: no-repeat;
@@ -969,7 +973,7 @@
 	background-size: 100% auto;
 }
 .aon_search_panel_button:hover, .aon_search_panel_button:focus {
-	background-color: white !important; 
+	background-color: #eee !important; 
 }
 
 /* GRID */
@@ -1005,6 +1009,10 @@
 }
 .aon_align_items_baseline {
 	align-items: baseline;
+}
+
+.aon_align_items_center {
+	align-items: center;
 }
 
 .aon_flex_column {

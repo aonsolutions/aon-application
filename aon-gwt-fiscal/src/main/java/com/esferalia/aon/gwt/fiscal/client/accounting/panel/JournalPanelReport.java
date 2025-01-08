@@ -360,7 +360,8 @@ public class JournalPanelReport extends DockLayoutPanel implements Focusable, Ha
 		}
 		tab.getCellFormatter().setStyleName(0,6, AON.CSS.aonSearchPanelLabel());
 		
-		cleanButton = new AonSearchPanelButton(AON.MSG.clean(),AON.CSS.aonIconClear());
+		cleanButton = new AonSearchPanelButton(AON.MSG.reset(),AON.CSS.aonIconClear());
+		cleanButton.addStyleName(AON.CSS.aonMarginRight());		
 		cleanButton.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
@@ -384,10 +385,20 @@ public class JournalPanelReport extends DockLayoutPanel implements Focusable, Ha
 		});
 
 		refreshButton = new AonSearchPanelButton(AON.MSG.refresh(),AON.CSS.aonIconRefresh());
+		refreshButton.addStyleName(AON.CSS.aonMarginRight());		
 		refreshButton.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
 				onSearch(options);
+			}
+		});
+		
+		AonSearchPanelButton closeButton = new AonSearchPanelButton(AON.MSG.close(),AON.CSS.aonIconClose());
+		closeButton.addClickHandler(new ClickHandler() {
+			
+			@Override
+			public void onClick(ClickEvent event) {
+				JournalPanelReport.this.closeFilterPanel();
 			}
 		});
 
@@ -440,16 +451,19 @@ public class JournalPanelReport extends DockLayoutPanel implements Focusable, Ha
 		tab.getFlexCellFormatter().setColSpan(2, 5, 2);
 		
 		FlowPanel buttonsPanel = new FlowPanel();
-		buttonsPanel.add( cleanButton );
+		buttonsPanel.setStyleName(AON.CSS.aonTextRight());
+		buttonsPanel.addStyleName(AON.CSS.aonPaddingRight());
+		buttonsPanel.addStyleName(AON.CSS.aonNowrap());
+		buttonsPanel.addStyleName(AON.CSS.aonWidthAll());
+		buttonsPanel.add( cleanButton );     
 		buttonsPanel.add( refreshButton );
-		tab.setWidget(2, 6, buttonsPanel);
+		buttonsPanel.add( closeButton );
+		tab.setWidget(0, 7, buttonsPanel);
 
 		ScrollPanel scrollPanel = new ScrollPanel();
 		scrollPanel.addStyleName(AON.CSS.aonWidthAll());
 		scrollPanel.setWidget(tab);
 		filterPanel.setWidget(scrollPanel);
-		
-		tab.setWidget(0, 7, getCloseButtonsPanel());
 	}
 
 	@Override
@@ -518,25 +532,6 @@ public class JournalPanelReport extends DockLayoutPanel implements Focusable, Ha
 			.setComments(comments.getValue())
 			.setSecurityLevel(confidential!=null?SecurityLevel.safeValueOf(confidential.getSelectedIndex()):SecurityLevel.OFFICIAL)
 			.setOrder(order.getSelectedIndex());
-	}
-	
-	private FlowPanel getCloseButtonsPanel() {
-		FlowPanel min = new FlowPanel();
-		min.setStyleName(AON.CSS.aonTextRight());
-		min.addStyleName(AON.CSS.aonPaddingRight());
-		min.addStyleName(AON.CSS.aonNowrap());
-		min.addStyleName(AON.CSS.aonWidthAll());
-		
-		AonSearchPanelButton close = new AonSearchPanelButton(AON.MSG.close(),AON.CSS.aonIconClose());
-		close.addClickHandler(new ClickHandler() {
-			
-			@Override
-			public void onClick(ClickEvent event) {
-				JournalPanelReport.this.closeFilterPanel();
-			}
-		});
-		min.add(close);
-		return min;
 	}
 	
 	public void closeFilterPanel() {

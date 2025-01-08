@@ -658,6 +658,9 @@ public interface AonSolutionsCSS extends CssResource {
 	@ClassName("aon_inline_block")
 	String aonInlineBlock();
 	
+	@ClassName("aon_inline_flex")
+	String aonInlineFlex();
+	
 	@ClassName("aon_display_none")
 	String aonDisplayNone();
 	
@@ -939,6 +942,9 @@ public interface AonSolutionsCSS extends CssResource {
 	
 	@ClassName("aon_align_items_baseline")
 	String aonAlignItemsBaseline();
+	
+	@ClassName("aon_align_items_center")
+	String aonAlignItemsCenter();
 
 	@ClassName("aon_padding")
 	String aonPadding();
