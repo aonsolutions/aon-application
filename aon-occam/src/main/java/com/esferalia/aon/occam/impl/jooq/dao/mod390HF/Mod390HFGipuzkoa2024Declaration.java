@@ -22,14 +22,14 @@ import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
-class Mod390HFGipuzkoa2023Declaration extends Mod390HFGIPUZKOADeclaration {
+class Mod390HFGipuzkoa2024Declaration extends Mod390HFGIPUZKOADeclaration {
 	
-	Mod390HFGipuzkoa2023Declaration() {
+	Mod390HFGipuzkoa2024Declaration() {
 		
 	}
 	
 	public static boolean accept(Mod390HF mod) {
-		return  mod.isGipuzkoa() && mod.getYear() == 2023;
+		return  mod.isGipuzkoa() && mod.getYear() >= 2024;
 	}
 	private static final Mod390Key[] PRORATE_KEYS = new Mod390Key[]{
 		  Mod390Key.GP_C022
@@ -39,7 +39,7 @@ class Mod390HFGipuzkoa2023Declaration extends Mod390HFGIPUZKOADeclaration {
 		 ,Mod390Key.GP_C028
 	};
 	
-	private static enum Mod390KeyDAO implements IMod390KeyDAO {
+	private enum Mod390KeyDAO implements IMod390KeyDAO {
 		 GP_A000	(Mod390Key.GP_A000)		// Gran empresa.
 		,GP_A001	(Mod390Key.GP_A001)		// Autoliquidación concursal. PRE
 		,GP_A002	(Mod390Key.GP_A002)		// Autoliquidación concursal. POST
@@ -53,7 +53,7 @@ class Mod390HFGipuzkoa2023Declaration extends Mod390HFGIPUZKOADeclaration {
 		// ------------------------------------------------- IVA DEVENGADO
 		// ---------------------------------------------------------------
 		
-		// Base imponible, porcentaje y cuota al primer tipo.
+		// Base imponible, porcentaje y cuota al 21%
 		,GP_C002(Mod390Key.GP_C002
 			,(mod,vat) -> isCommonNationalSales(vat) && hasPercent21(vat)
 			,(ctx,mod,vat) -> add(Mod390Key.GP_C002,mod,vat.getBase())
@@ -64,7 +64,7 @@ class Mod390HFGipuzkoa2023Declaration extends Mod390HFGIPUZKOADeclaration {
 			,(ctx,mod,vat) -> add(Mod390Key.GP_C003,mod,vat.getQuota())
 			,null,null,null)
 		
-		// Base imponible, porcentaje y cuota al segundo tipo.
+		// Base imponible, porcentaje y cuota al 10%
 		,GP_C004(Mod390Key.GP_C004
 			 ,(mod,vat) -> isCommonNationalSales(vat) && hasPercent10(vat)
 			 ,(ctx,mod,vat) -> add(Mod390Key.GP_C004,mod,vat.getBase())
@@ -75,18 +75,18 @@ class Mod390HFGipuzkoa2023Declaration extends Mod390HFGIPUZKOADeclaration {
 			,(ctx,mod,vat) -> add(Mod390Key.GP_C005,mod,vat.getQuota())
 			,null,null,null)
 		
-		// Base imponible, porcentaje y cuota al segundo tipo.
+		// Base imponible, porcentaje y cuota al 5%, 2% o 7,5%
 		,GP_C114(Mod390Key.GP_C114
-			 ,(mod,vat) -> isCommonNationalSales(vat) && hasPercent5(vat)
+			 ,(mod,vat) -> isCommonNationalSales(vat) && (hasPercent5(vat) || hasPercent2(vat) || hasPercent75(vat))
 			 ,(ctx,mod,vat) -> add(Mod390Key.GP_C114,mod,vat.getBase())
 				,null,null,null)
-		,GP_X114(Mod390Key.GP_X114,null,null,(ctx,mod) -> add(Mod390Key.GP_X114,mod,PERCENT_5),null,null)
+		,GP_X114(Mod390Key.GP_X114,null,null,(ctx,mod) -> add(Mod390Key.GP_X114,mod,PERCENT_5),null,null) // Por defecto se le pone 5% que es lo que lleva el modelo, aunque llevará las bases y cuotas de los tres tipos
 		,GP_C115(Mod390Key.GP_C115
-			 ,(mod,vat) -> isCommonNationalSales(vat) && hasPercent5(vat)
+			 ,(mod,vat) -> isCommonNationalSales(vat) && (hasPercent5(vat) || hasPercent2(vat) || hasPercent75(vat))
 			,(ctx,mod,vat) -> add(Mod390Key.GP_C115,mod,vat.getQuota())
 			,null,null,null)
 
-		// Base imponible, porcentaje y cuota al tercer tipo.
+		// Base imponible, porcentaje y cuota al 4%
 		,GP_C006(Mod390Key.GP_C006
 			 ,(mod,vat) -> isCommonNationalSales(vat) && hasPercent4(vat)
 			 ,(ctx,mod,vat) -> add(Mod390Key.GP_C006,mod,vat.getBase())
@@ -97,13 +97,14 @@ class Mod390HFGipuzkoa2023Declaration extends Mod390HFGIPUZKOADeclaration {
 			,(ctx,mod,vat) -> add(Mod390Key.GP_C007,mod,vat.getQuota())
 			,null,null,null)
 		
+		// Base imponible y porcentaje al 0%
 		,GP_C116(Mod390Key.GP_C116
 			 ,(mod,vat) -> isCommonNationalSales(vat) && hasPercent0(vat)
 			 ,(ctx,mod,vat) -> add(Mod390Key.GP_C116,mod,vat.getBase())
 			,null,null,null)
 		,GP_X116(Mod390Key.GP_X116,null,null,(ctx,mod) -> add(Mod390Key.GP_X006,mod,PERCENT_0),null,null)
 
-			// Modificación bases y cuotas
+		// Modificación bases y cuotas
 		,GP_C008(Mod390Key.GP_C008
 			,(mod,vat) -> modificacionBasesYCuotasFilter(vat) 
 			,(ctx,mod,vat) -> add(Mod390Key.GP_C008,mod,vat.getBase())
@@ -113,7 +114,7 @@ class Mod390HFGipuzkoa2023Declaration extends Mod390HFGIPUZKOADeclaration {
 			,(ctx,mod,vat) -> add(Mod390Key.GP_C009,mod,vat.getQuota())
 			,null,null,null)
 		
-		// Recargo equivalencia al primer tipo.
+		// Recargo equivalencia al 5,2%
 		,GP_C010(Mod390Key.GP_C010
 			,(mod,vat) -> isCommonNationalSales(vat) && vat.isSurcharge() && hasSurchargePercent52(vat)
 			,(ctx,mod,vat) -> add(Mod390Key.GP_C010,mod,vat.getBase())
@@ -124,7 +125,7 @@ class Mod390HFGipuzkoa2023Declaration extends Mod390HFGIPUZKOADeclaration {
 			,(ctx,mod,vat) -> add(Mod390Key.GP_C011,mod,vat.getSurchargeQuota())
 			,null,null,null)
 		
-		// Recargo equivalencia al primer tipo.
+		// Recargo equivalencia al 1,75%
 		,GP_C117(Mod390Key.GP_C117
 			,(mod,vat) -> isCommonNationalSales(vat) && vat.isSurcharge() && hasSurchargePercent175(vat)
 			,(ctx,mod,vat) -> add(Mod390Key.GP_C117,mod,vat.getBase())
@@ -135,7 +136,7 @@ class Mod390HFGipuzkoa2023Declaration extends Mod390HFGIPUZKOADeclaration {
 			,(ctx,mod,vat) -> add(Mod390Key.GP_C118,mod,vat.getSurchargeQuota())
 			,null,null,null)
 
-		// Recargo equivalencia al segundo tipo.
+		// Recargo equivalencia al 1,4%
 		,GP_C012(Mod390Key.GP_C012
 			,(mod,vat) -> isCommonNationalSales(vat) && vat.isSurcharge() && hasSurchargePercent14(vat)
 			,(ctx,mod,vat) -> add(Mod390Key.GP_C012,mod,vat.getBase())
@@ -146,14 +147,14 @@ class Mod390HFGipuzkoa2023Declaration extends Mod390HFGIPUZKOADeclaration {
 			,(ctx,mod,vat) -> add(Mod390Key.GP_C013,mod,vat.getSurchargeQuota())
 			,null,null,null)
 		
-		// Recargo equivalencia al tercer tipo.
+		// Recargo equivalencia al 0,5% 0,26% 0,62% y 1%
 		,GP_C014(Mod390Key.GP_C014
-			,(mod,vat) -> isCommonNationalSales(vat) && vat.isSurcharge() && hasSurchargePercent05(vat)
+			,(mod,vat) -> isCommonNationalSales(vat) && vat.isSurcharge() && (hasSurchargePercent05(vat) || hasSurchargePercent026(vat) || hasSurchargePercent062(vat) || hasSurchargePercent1(vat))
 			,(ctx,mod,vat) -> add(Mod390Key.GP_C014,mod,vat.getBase())
 			,null,null,null)
 		,GP_X014(Mod390Key.GP_X014,null,null,(ctx,mod) -> add(Mod390Key.GP_X014,mod,SURCHARGE_PERCENT_05),null,null)
 		,GP_C015(Mod390Key.GP_C015
-			,(mod,vat) -> isCommonNationalSales(vat) && vat.isSurcharge() && hasSurchargePercent05(vat)
+			,(mod,vat) -> isCommonNationalSales(vat) && vat.isSurcharge() && (hasSurchargePercent05(vat) || hasSurchargePercent026(vat) || hasSurchargePercent062(vat) || hasSurchargePercent1(vat))
 			,(ctx,mod,vat) -> add(Mod390Key.GP_C015,mod,vat.getSurchargeQuota())
 			,null,null,null)
 		
@@ -257,7 +258,7 @@ class Mod390HFGipuzkoa2023Declaration extends Mod390HFGIPUZKOADeclaration {
 		,GP_C037(Mod390Key.GP_C037,null,null
 			,(ctx,mod) -> add(Mod390Key.GP_C037,mod, getPendingCompesateAmounts( ctx, mod ))
 			,null,null)
-		// Total INGRESOS efectuados durante el presente ejercicion
+		// Total INGRESOS efectuados durante el presente ejercicio
 		,GP_C038(Mod390Key.GP_C038,null,null,
 				(ctx,mod) -> {
 					add( Mod390Key.GP_C038, mod, Mod390HFDAO.getM303YearDepositModels(ctx, mod)
@@ -267,7 +268,7 @@ class Mod390HFGipuzkoa2023Declaration extends Mod390HFGIPUZKOADeclaration {
 				,null
 				,null
 		)
-		// Total DEVOLUCIONES practicadas durante el presente ejercicion
+		// Total DEVOLUCIONES practicadas durante el presente ejercicio
 		,GP_C039(Mod390Key.GP_C039,null,null,
 				(ctx,mod) -> {
 					add( Mod390Key.GP_C039, mod, Mod390HFDAO.getM303YearPaybackModels(ctx, mod)
@@ -312,12 +313,12 @@ class Mod390HFGipuzkoa2023Declaration extends Mod390HFGIPUZKOADeclaration {
 			,(ctx,mod,vat) -> add(Mod390Key.GP_C049,mod,vat.getDeductibleQuota())
 			,null,null,null)
 		,GP_C119	(Mod390Key.GP_C119
-			,(mod,vat) -> isCommonPurchase(vat, mod) && hasPercent5(vat)
+			,(mod,vat) -> isCommonPurchase(vat, mod) && (hasPercent5(vat) || hasPercent2(vat) || hasPercent75(vat))
 			,(ctx,mod,vat) -> add(Mod390Key.GP_C119,mod,vat.getBase())
 			,null,null,null)
 		,GP_X119	(Mod390Key.GP_X119,null,null,(ctx,mod) -> add(Mod390Key.GP_X119,mod,PERCENT_5),null,null)
 		,GP_C120	(Mod390Key.GP_C120
-			,(mod,vat) -> isCommonPurchase(vat, mod) && hasPercent5(vat)
+			,(mod,vat) -> isCommonPurchase(vat, mod) && (hasPercent5(vat) || hasPercent2(vat) || hasPercent75(vat))
 			,(ctx,mod,vat) -> add(Mod390Key.GP_C120,mod,vat.getDeductibleQuota())
 			,null,null,null)
 		,GP_C050	(Mod390Key.GP_C050
@@ -374,12 +375,12 @@ class Mod390HFGipuzkoa2023Declaration extends Mod390HFGIPUZKOADeclaration {
 			,null,null,null)
 
 		,GP_C122	(Mod390Key.GP_C122
-			,(mod,vat) -> isCommonExpense(vat) && hasPercent5(vat)
+			,(mod,vat) -> isCommonExpense(vat) && (hasPercent5(vat) || hasPercent2(vat) || hasPercent75(vat))
 			,(ctx,mod,vat) -> add(Mod390Key.GP_C122,mod,vat.getBase())
 			,null,null,null)
 		,GP_X122	(Mod390Key.GP_X122,null,null,(ctx,mod) -> add(Mod390Key.GP_X122,mod,PERCENT_5),null,null)
 		,GP_C123	(Mod390Key.GP_C123
-			,(mod,vat) -> isCommonExpense(vat) && hasPercent5(vat)
+			,(mod,vat) -> isCommonExpense(vat) && (hasPercent5(vat) || hasPercent2(vat) || hasPercent75(vat))
 			,(ctx,mod,vat) -> add(Mod390Key.GP_C123,mod,vat.getDeductibleQuota())
 			,null,null,null)
 		
@@ -431,12 +432,12 @@ class Mod390HFGipuzkoa2023Declaration extends Mod390HFGIPUZKOADeclaration {
 			,null,null,null)
 		
 		,GP_C125	(Mod390Key.GP_C125
-			,(mod,vat) -> vat.isVatGeneralRegime(VATRegime.GENERAL) && vat.isInvestment() && vat.isInput()  && hasPercent5(vat)
+			,(mod,vat) -> vat.isVatGeneralRegime(VATRegime.GENERAL) && vat.isInvestment() && vat.isInput() && (hasPercent5(vat) || hasPercent2(vat) || hasPercent75(vat))
 			,(ctx,mod,vat) -> add(Mod390Key.GP_C125,mod,vat.getBase())
 			,null,null,null)
 		,GP_X125	(Mod390Key.GP_X125,null,null,(ctx,mod) -> add(Mod390Key.GP_X125,mod,PERCENT_5),null,null)
 		,GP_C126	(Mod390Key.GP_C126
-			,(mod,vat) -> vat.isVatGeneralRegime(VATRegime.GENERAL) && vat.isInvestment() && vat.isInput()  && hasPercent5(vat)
+			,(mod,vat) -> vat.isVatGeneralRegime(VATRegime.GENERAL) && vat.isInvestment() && vat.isInput() && (hasPercent5(vat) || hasPercent2(vat) || hasPercent75(vat))
 			,(ctx,mod,vat) -> add(Mod390Key.GP_C126,mod,vat.getDeductibleQuota())
 			,null,null,null)
 
@@ -687,7 +688,9 @@ class Mod390HFGipuzkoa2023Declaration extends Mod390HFGIPUZKOADeclaration {
 			&& vat.getPercentage() !=  PERCENT_12
 			&& vat.getPercentage() !=  PERCENT_4
 			&& vat.getPercentage() !=  PERCENT_5
-			&& vat.getPercentage() !=  PERCENT_0;
+			&& vat.getPercentage() !=  PERCENT_0
+			&& vat.getPercentage() !=  PERCENT_2
+			&& vat.getPercentage() !=  PERCENT_75;
 	}
 	static boolean hasSurchargePercent52(VatContext vat) {
 		return vat.getSurchargePercent() ==  SURCHARGE_PERCENT_52; 

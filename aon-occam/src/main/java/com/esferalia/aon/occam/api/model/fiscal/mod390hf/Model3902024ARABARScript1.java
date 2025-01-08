@@ -82,7 +82,7 @@ public enum Model3902024ARABARScript1 implements IModelScript<Mod390Key> {
 	@Override
 	public FiscalModelKeyInfo[] getInfoKeys() {
 		return infoKeys;
-	};
+	}
 	
 	@Override
 	public boolean hasGraphicParticularity() {
@@ -92,7 +92,7 @@ public enum Model3902024ARABARScript1 implements IModelScript<Mod390Key> {
 	@Override
 	public boolean paintHeaderBefore() {
 		return (this == DVG01);
-	};
+	}
 	
 	@Override
 	public int getFieldSize(Mod390Key key) {
@@ -136,6 +136,7 @@ public enum Model3902024ARABARScript1 implements IModelScript<Mod390Key> {
 		 || key == Mod390Key.AR_C387
 		 || key == Mod390Key.AR_C026
 		 || key == Mod390Key.AR_C820
+		 || key == Mod390Key.AR_C390
 		 || key == Mod390Key.AR_C829
 		 || key == Mod390Key.AR_C035
 		 || key == Mod390Key.AR_C832
