@@ -12,10 +12,13 @@ import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import org.jooq.Condition;
@@ -83,15 +86,88 @@ public class JooqActivitySummary {
 			fillMapData(summaryMap, salaryMap);
 			fillMapData(summaryMap, itMap);
 
-			return new ArrayList<>(summaryMap
-					.values()
-					.stream()
-					.sorted((o1, o2) -> o1.getFullname().compareTo(
-							o2.getFullname())).collect(Collectors.toList()));
+			return sortedList(summaryMap, params);
+			
 		}
 		
 		return new ArrayList<>();
 	}
+
+	private static List<ActivitySummaryObject> sortedList(Map<Integer, ActivitySummaryObject> summaryMap, ActivitySummaryParams params) {
+		if(params.isAsc()) {
+			
+			if(AonStringUtils.equalsIgnoreCase(params.getOrderBy(), "name")) {
+				return sortListByAttribute(summaryMap.values(), ActivitySummaryObject::getFullname);
+			} else if(AonStringUtils.equalsIgnoreCase(params.getOrderBy(), "start")) {
+				return sortListByAttribute(summaryMap.values(), ActivitySummaryObject::getStartDate);
+			} else if(AonStringUtils.equalsIgnoreCase(params.getOrderBy(), "end")) {
+				return sortListByAttribute(summaryMap.values(), ActivitySummaryObject::getEndDate);
+			} else if(AonStringUtils.equalsIgnoreCase(params.getOrderBy(), "salary")) {
+				return sortListByAttribute(summaryMap.values(), ActivitySummaryObject::getSalaryCount);
+			} else if(AonStringUtils.equalsIgnoreCase(params.getOrderBy(), "extra")) {
+				return sortListByAttribute(summaryMap.values(), ActivitySummaryObject::getSalaryExtraCount);
+			} else if(AonStringUtils.equalsIgnoreCase(params.getOrderBy(), "settle")) {
+				return sortListByAttribute(summaryMap.values(), ActivitySummaryObject::getSalarySettleCount);
+			} else if(AonStringUtils.equalsIgnoreCase(params.getOrderBy(), "delay")) {
+				return sortListByAttribute(summaryMap.values(), ActivitySummaryObject::getSalaryOtherCount);
+			} else if(AonStringUtils.equalsIgnoreCase(params.getOrderBy(), "it_ecan")) {
+				return sortListByAttribute(summaryMap.values(), ActivitySummaryObject::getItCommonDiseaseCount);
+			} else if(AonStringUtils.equalsIgnoreCase(params.getOrderBy(), "it_atep")) {
+				return sortListByAttribute(summaryMap.values(), ActivitySummaryObject::getItOccupationalDiseaseCount);
+			} else if(AonStringUtils.equalsIgnoreCase(params.getOrderBy(), "it_mp")) {
+				return sortListByAttribute(summaryMap.values(), ActivitySummaryObject::getItMaternityCount);
+			} else if(AonStringUtils.equalsIgnoreCase(params.getOrderBy(), "it_other")) {
+				return sortListByAttribute(summaryMap.values(), ActivitySummaryObject::getItOtherCount);
+			} 
+			
+		} else {
+			
+			if(AonStringUtils.equalsIgnoreCase(params.getOrderBy(), "name")) {
+				return sortListDescByAttribute(summaryMap.values(), ActivitySummaryObject::getFullname);
+			} else if(AonStringUtils.equalsIgnoreCase(params.getOrderBy(), "start")) {
+				return sortListDescByAttribute(summaryMap.values(), ActivitySummaryObject::getStartDate);
+			} else if(AonStringUtils.equalsIgnoreCase(params.getOrderBy(), "end")) {
+				return sortListDescByAttribute(summaryMap.values(), ActivitySummaryObject::getEndDate);
+			} else if(AonStringUtils.equalsIgnoreCase(params.getOrderBy(), "salary")) {
+				return sortListDescByAttribute(summaryMap.values(), ActivitySummaryObject::getSalaryCount);
+			} else if(AonStringUtils.equalsIgnoreCase(params.getOrderBy(), "extra")) {
+				return sortListDescByAttribute(summaryMap.values(), ActivitySummaryObject::getSalaryExtraCount);
+			} else if(AonStringUtils.equalsIgnoreCase(params.getOrderBy(), "settle")) {
+				return sortListDescByAttribute(summaryMap.values(), ActivitySummaryObject::getSalarySettleCount);
+			} else if(AonStringUtils.equalsIgnoreCase(params.getOrderBy(), "delay")) {
+				return sortListDescByAttribute(summaryMap.values(), ActivitySummaryObject::getSalaryOtherCount);
+			} else if(AonStringUtils.equalsIgnoreCase(params.getOrderBy(), "it_ecan")) {
+				return sortListDescByAttribute(summaryMap.values(), ActivitySummaryObject::getItCommonDiseaseCount);
+			} else if(AonStringUtils.equalsIgnoreCase(params.getOrderBy(), "it_atep")) {
+				return sortListDescByAttribute(summaryMap.values(), ActivitySummaryObject::getItOccupationalDiseaseCount);
+			} else if(AonStringUtils.equalsIgnoreCase(params.getOrderBy(), "it_mp")) {
+				return sortListDescByAttribute(summaryMap.values(), ActivitySummaryObject::getItMaternityCount);
+			} else if(AonStringUtils.equalsIgnoreCase(params.getOrderBy(), "it_other")) {
+				return sortListDescByAttribute(summaryMap.values(), ActivitySummaryObject::getItOtherCount);
+			} 
+			
+		}
+		
+		return new ArrayList<>(summaryMap.values().stream().sorted(Comparator.comparing(o -> o.getFullname())).collect(Collectors.toList()));
+	}
+	
+	private static <T, R extends Comparable<R>> List<T> sortListByAttribute(Collection<T> collection, Function<T, R> attributeExtractor) {
+        return collection.stream()
+                .sorted(Comparator.comparing(
+                    attributeExtractor,
+                    Comparator.nullsLast(Comparator.naturalOrder())
+                ))
+                .collect(Collectors.toList());
+    }
+	
+	private static <T, R extends Comparable<R>> List<T> sortListDescByAttribute(Collection<T> collection, Function<T, R> attributeExtractor) {
+        return collection.stream()
+                .sorted(Comparator.comparing(
+                    attributeExtractor,
+                    Comparator.nullsLast(Comparator.reverseOrder())
+                ))
+                .collect(Collectors.toList());
+    }
 
 	public static Integer[] getChildDomainIDs(DSLContext dslContext, Integer domain, Integer userId) throws SQLException {
 		List<Integer> userScopes = dslContext
