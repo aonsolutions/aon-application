@@ -24,6 +24,7 @@ import com.esferalia.aon.gwt.payroll.shared.HolidayDraft;
 import com.esferalia.aon.jooq.tables.records.HolidayDetailRecord;
 import com.esferalia.aon.jooq.tables.records.HolidayRecord;
 import com.esferalia.aon.jooq.tables.records.PayrollWorkplaceRecord;
+import com.esferalia.aon.watson.util.AonNumberUtils;
 
 public class JooqCalendar {
 
@@ -87,7 +88,7 @@ public class JooqCalendar {
 				
 				calendarDraft.setCalendarHoliday(holiday);
 
-				while (holiday != null)
+				while (holiday != null && notExistAt(holidays, holiday )) 
 					holiday = loadHoliday(dslContext, year, holidays, holiday);
 			}
 			
@@ -104,7 +105,7 @@ public class JooqCalendar {
 		
 		return calendarDraft;
 	}
-
+	
 	private static CalendarDraft getCalendarSelectedHoliday(DSLContext dslContext, Integer selectedHoliday, Integer year, Integer workplaceId) throws IllegalArgumentException {
 
 		CalendarDraft calendarDraft = new CalendarDraft();
@@ -134,7 +135,7 @@ public class JooqCalendar {
 				Integer holiday = record.getValue(HOLIDAY.ID);
 				calendarDraft.setCalendarHoliday(holiday);
 
-				while (holiday != null)
+				while (holiday != null && notExistAt(holidays, holiday ))
 					holiday = loadHoliday(dslContext, year, holidays, holiday);
 			}
 			
@@ -152,6 +153,11 @@ public class JooqCalendar {
 		return calendarDraft;
 
 	}
+
+	private static boolean notExistAt(List<HolidayDraft> holidays, Integer holiday) {
+		return holidays.stream().noneMatch(h -> AonNumberUtils.equals (h.getId(), holiday));		
+	}
+	
 
 	private static Integer loadHoliday(DSLContext dslContext, Integer year, List<HolidayDraft> holidays, Integer holiday) throws IllegalArgumentException {
 

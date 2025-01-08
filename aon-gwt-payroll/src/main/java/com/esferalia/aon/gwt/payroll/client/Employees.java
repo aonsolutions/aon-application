@@ -843,7 +843,7 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 		return treeItem == null ? null : (SalaryDraftObject) treeItem.getUserObject();
 	}
 
-	public void selectSalaryDraft(final int employeeId, int workplaceId, Date startDate, Date endDate, boolean fireEvents) {
+	public void selectSalaryDraft(final int employeeId, int workplaceId, Date startDate, Date endDate, Date chargeDate, boolean fireEvents) {
 
 		class SalaryDraftPredicate implements Predicate<TreeItem> {
 			public boolean test(TreeItem t) {
@@ -865,6 +865,7 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 			salaryDraft.setStartDate(startDate);
 			salaryDraft.setEndDate(endDate);
 			salaryDraft.setIssueDate(endDate);
+			salaryDraft.setChargeDate(chargeDate);
 			
 			tree.setSelectedItem(draftItem, fireEvents);
 			tree.ensureSelectedItemVisible();

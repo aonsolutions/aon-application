@@ -193,6 +193,7 @@ public class JooqPayrollSalaries {
 			salaryInfo.setContract(salaryRecord.get(SALARY.CONTRACT));
 			salaryInfo.setStartDate(salaryRecord.get(SALARY.START_DATE));
 			salaryInfo.setEndDate(salaryRecord.get(SALARY.END_DATE));
+			salaryInfo.setChargeDate(salaryRecord.get(SALARY.CHARGE_DATE));
 			salaryInfo.setType(Salary.Type.values()[salaryRecord.get(SALARY.TYPE)]);
 			salaryInfo.setEnterpriseName(salaryRecord.get(SALARY.ENTERPRISE_NAME));
 			salaryInfo.setEmployeeName(salaryRecord.get(SALARY.EMPLOYEE_NAME));
@@ -276,6 +277,7 @@ public class JooqPayrollSalaries {
 			salaryInfo.setContract(salaryRecord.get(SALARY.CONTRACT));
 			salaryInfo.setStartDate(salaryRecord.get(SALARY.START_DATE));
 			salaryInfo.setEndDate(salaryRecord.get(SALARY.END_DATE));
+			salaryInfo.setChargeDate(salaryRecord.get(SALARY.CHARGE_DATE));
 			salaryInfo.setType(Salary.Type.values()[salaryRecord.get(SALARY.TYPE)]);
 			salaryInfo.setEnterpriseName(salaryRecord.get(SALARY.ENTERPRISE_NAME));
 			salaryInfo.setEmployeeName(salaryRecord.get(SALARY.EMPLOYEE_NAME));
@@ -345,6 +347,7 @@ public class JooqPayrollSalaries {
 			salaryInfo.setContract(salaryRecord.get(SALARY.CONTRACT));
 			salaryInfo.setStartDate(salaryRecord.get(SALARY.START_DATE));
 			salaryInfo.setEndDate(salaryRecord.get(SALARY.END_DATE));
+			salaryInfo.setChargeDate(salaryRecord.get(SALARY.CHARGE_DATE));
 			salaryInfo.setType(Salary.Type.values()[salaryRecord.get(SALARY.TYPE)]);
 			salaryInfo.setEnterpriseName(salaryRecord.get(SALARY.ENTERPRISE_NAME));
 			salaryInfo.setEmployeeName(salaryRecord.get(SALARY.EMPLOYEE_NAME));
