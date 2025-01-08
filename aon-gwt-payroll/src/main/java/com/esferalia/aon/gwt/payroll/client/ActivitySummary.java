@@ -1,6 +1,7 @@
 package com.esferalia.aon.gwt.payroll.client;
 
 import java.util.Collections;
+import java.util.Date;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
@@ -11,6 +12,7 @@ import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomDateBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomDockLayout;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomListBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomMultiSelectBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomTable;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonMessagePanel;
@@ -51,6 +53,7 @@ public class ActivitySummary extends AonCustomDockLayout {
 	
 	private SimpleLayoutPanel centerPanel;
 
+	private AonCustomListBox period = new AonCustomListBox("Periodo");
 	private AonCustomDateBox start = new AonCustomDateBox("Desde");
 	private AonCustomDateBox end = new AonCustomDateBox("Hasta");
 	
@@ -58,8 +61,8 @@ public class ActivitySummary extends AonCustomDockLayout {
 	private AonCustomMultiSelectBox salaryType = new AonCustomMultiSelectBox("Tipo Recibo");
 	private AonCustomMultiSelectBox itType = new AonCustomMultiSelectBox("Tipo IT");
 	
-//	private AonCustomListBox sort = new AonCustomListBox("Ordenar Por");
-//	private AonCustomListBox asc = new AonCustomListBox("Orden");
+	private AonCustomListBox sort = new AonCustomListBox("Ordenar Por");
+	private AonCustomListBox asc = new AonCustomListBox("Orden");
 
 	private AonToolbarButton excelExport;
 	
@@ -72,16 +75,16 @@ public class ActivitySummary extends AonCustomDockLayout {
 	
 	private static enum ENTERPRISES_COLS {
 		  DES(AON.MSG.description()					,"-moz-available"  	,"min-width: 5rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
-		, ALT("Ini. Contrato"						,"5rem" 			,"text-align: center;")
-		, BAJ("Fin Contrato"						,"5rem" 			,"text-align: center;")
+		, ALT("Ini. Contrato"						,"7rem" 			,"text-align: center;")
+		, BAJ("Fin Contrato"						,"7rem" 			,"text-align: center;")
 		, SAL("Nominas"								,"5rem" 			,"text-align: center;")
 		, EXT("Extras"								,"5rem" 			,"text-align: center;")
 		, SET("Finiquitos"							,"5rem" 			,"text-align: center;")
 		, DEL("Atrasos"								,"5rem" 			,"text-align: center;")
-		, ECA("IT EC/AN"							,"4rem" 			,"text-align: center;")
-		, ATE("IT AT/EP"							,"4rem" 			,"text-align: center;")
-		, MPP("IT M/P"								,"4rem" 			,"text-align: center;")
-		, OTH("IT Otros"							,"4rem" 			,"text-align: center;")
+		, ECA("IT EC/AN"							,"5rem" 			,"text-align: center;")
+		, ATE("IT AT/EP"							,"5rem" 			,"text-align: center;")
+		, MPP("IT M/P"								,"5rem" 			,"text-align: center;")
+		, OTH("IT Otros"							,"5rem" 			,"text-align: center;")
 		, BUT(""									,"3rem" 			,"")
 		;
 
@@ -135,7 +138,20 @@ public class ActivitySummary extends AonCustomDockLayout {
 			}
 		});
 		
+		period.addItem("Mes actual");
+        period.addItem("Mes anterior");
+        period.addItem("\u00daltimo trimestre");
+        period.addItem("\u00daltimo cuatrimestre");
+        period.addItem("\u00daltimo a\u00f1o");
+        period.addItem("Personalizado");
+        period.addChangeHandler(e -> {
+        	updateDates();
+        	onSearch();
+        });
+		addFilterWidget(period);
+		
 		HTMLPanel datesPanel = new HTMLPanel(AonStringUtils.EMPTY);
+		datesPanel.addStyleName(AON.CSS.aonItemFlex());
 		start.setValue(DateUtils.getFirstDayOfMonth());
 		end.setValue(DateUtils.getLastDayOfMonth());
 		start.addValueChangeHandler(e -> onSearch());
@@ -189,25 +205,25 @@ public class ActivitySummary extends AonCustomDockLayout {
 		itType.setSelectedOptions(itOptions);
 		addFilterWidget(itType);
 		
-//		sort.addItem("Nombre", "name");
-//		sort.addItem("Alta", "start");
-//		sort.addItem("Bajas", "end");
-//		sort.addItem("Nomina", "salary");
-//		sort.addItem("Extra", "extra");
-//		sort.addItem("Finiquito", "settle");
-//		sort.addItem("Atrasos", "delay");
-//		sort.addItem("IT EC/AN", "it_ecan");
-//		sort.addItem("IT AT/EP", "it_atep");
-//		sort.addItem("IT M/P", "it_mp");
-//		sort.addItem("IT Otros", "it_other");
-//		sort.getListBox().addChangeHandler(event -> onSearch());
-//
-//		asc.addItem("Ascendente", "true");
-//		asc.addItem("Descendete", "false");
-//		asc.getListBox().addChangeHandler(event -> onSearch());
-//
-//		addSortWidget(sort);
-//		addSortWidget(asc);
+		sort.addItem("Nombre", "name");
+		sort.addItem("Alta", "start");
+		sort.addItem("Bajas", "end");
+		sort.addItem("Nomina", "salary");
+		sort.addItem("Extra", "extra");
+		sort.addItem("Finiquito", "settle");
+		sort.addItem("Atrasos", "delay");
+		sort.addItem("IT EC/AN", "it_ecan");
+		sort.addItem("IT AT/EP", "it_atep");
+		sort.addItem("IT M/P", "it_mp");
+		sort.addItem("IT Otros", "it_other");
+		sort.getListBox().addChangeHandler(event -> onSearch());
+
+		asc.addItem("Ascendente", "true");
+		asc.addItem("Descendete", "false");
+		asc.getListBox().addChangeHandler(event -> onSearch());
+
+		addSortWidget(sort);
+		addSortWidget(asc);
 		
 		container = new HTMLPanel("");
 		container.addStyleName(AON.CSS.aonFlexColumn());
@@ -227,7 +243,10 @@ public class ActivitySummary extends AonCustomDockLayout {
 			@Override
 			public void onSuccess(Domain domainDB) {
 				domain = domainDB;
-				onSearch();
+				
+				//onSearch();
+				period.getListBox().setSelectedIndex(0);
+				period.getListBox().fireEvent(new com.google.gwt.event.dom.client.ChangeEvent() {});
 			}
 
 			@Override
@@ -238,6 +257,43 @@ public class ActivitySummary extends AonCustomDockLayout {
 		
 	}
 	
+	private void updateDates() {
+		int selectedIndex = period.getListBox().getSelectedIndex();
+        Date startDate;
+        Date endDate = DateUtils.getLastDayOfMonth();
+
+        switch (selectedIndex) {
+            case 0: // Mes actual
+                startDate = DateUtils.getFirstDayOfMonth();
+                break;
+            case 1: // Mes anterior
+                startDate = DateUtils.getFirstDayOfMonth(DateUtils.addMonths2Date(new Date(), -1));
+                endDate = DateUtils.getLastDayOfMonth(DateUtils.addMonths2Date(new Date(), -1));
+                break;
+            case 2: // Último trimestre
+            	startDate = DateUtils.getFirstDayOfMonth(DateUtils.addMonths2Date(new Date(), -3));
+                break;
+            case 3: // Último cuatrimestre
+            	startDate = DateUtils.getFirstDayOfMonth(DateUtils.addMonths2Date(new Date(), -4));
+                break;
+            case 4: // Último año
+            	startDate = DateUtils.getFirstDayOfMonth(DateUtils.addMonths2Date(new Date(), -12));
+                break;
+            case 5: // Personalizado
+            	startDate = DateUtils.getFirstDayOfMonth();
+                break;
+            default:
+            	startDate = DateUtils.getFirstDayOfMonth();
+                break;
+        }
+
+        start.setValue(startDate);
+        end.setValue(endDate);
+        
+        start.setEnable(selectedIndex > 4);
+        end.setEnable(selectedIndex > 4);
+	}
+
 	@Override
 	protected void onClearFilter() {
 		getSearchTextBox().setValue(null, false);
@@ -355,43 +411,43 @@ public class ActivitySummary extends AonCustomDockLayout {
 		tab.addInlineStyle(name, ENTERPRISES_COLS.DES.getCellStyleClass());
 		tab.addRow(row, name, ENTERPRISES_COLS.DES.getColWidth());
 		
-		Label contractStart = new Label(isParent ? (null == activitySummary.getStartCount() ? "0" : activitySummary.getStartCount().toString()) : (null == activitySummary.getStartDate() ? "" : formatDate.format(activitySummary.getStartDate())));
+		Label contractStart = new Label(isParent ? (null == activitySummary.getStartCount() ? "-" : activitySummary.getStartCount().toString()) : (null == activitySummary.getStartDate() ? "" : formatDate.format(activitySummary.getStartDate())));
 		tab.addInlineStyle(contractStart, ENTERPRISES_COLS.ALT.getCellStyleClass());
 		tab.addRow(row, contractStart, ENTERPRISES_COLS.ALT.getColWidth());
 		
-		Label contractEnd = new Label(isParent ? (null == activitySummary.getEndCount() ? "0" : activitySummary.getEndCount().toString()) : (null == activitySummary.getEndDate() ? "" : formatDate.format(activitySummary.getEndDate())));
+		Label contractEnd = new Label(isParent ? (null == activitySummary.getEndCount() ? "-" : activitySummary.getEndCount().toString()) : (null == activitySummary.getEndDate() ? "" : formatDate.format(activitySummary.getEndDate())));
 		tab.addInlineStyle(contractEnd, ENTERPRISES_COLS.BAJ.getCellStyleClass());
 		tab.addRow(row, contractEnd, ENTERPRISES_COLS.BAJ.getColWidth());
 		
-		Label salary = new Label(null == activitySummary.getSalaryCount() ? "0" : activitySummary.getSalaryCount().toString());
+		Label salary = new Label(null == activitySummary.getSalaryCount() ? "-" : activitySummary.getSalaryCount().toString());
 		tab.addInlineStyle(salary, ENTERPRISES_COLS.SAL.getCellStyleClass());
 		tab.addRow(row, salary, ENTERPRISES_COLS.SAL.getColWidth());
 		
-		Label extra = new Label(null == activitySummary.getSalaryExtraCount() ? "0" : activitySummary.getSalaryExtraCount().toString());
+		Label extra = new Label(null == activitySummary.getSalaryExtraCount() ? "-" : activitySummary.getSalaryExtraCount().toString());
 		tab.addInlineStyle(extra, ENTERPRISES_COLS.EXT.getCellStyleClass());
 		tab.addRow(row, extra, ENTERPRISES_COLS.EXT.getColWidth());
 		
-		Label settle = new Label(null == activitySummary.getSalarySettleCount() ? "0" : activitySummary.getSalarySettleCount().toString());
+		Label settle = new Label(null == activitySummary.getSalarySettleCount() ? "-" : activitySummary.getSalarySettleCount().toString());
 		tab.addInlineStyle(settle, ENTERPRISES_COLS.SET.getCellStyleClass());
 		tab.addRow(row, settle, ENTERPRISES_COLS.SET.getColWidth());
 		
-		Label delay = new Label(null == activitySummary.getSalaryOtherCount() ? "0" : activitySummary.getSalaryOtherCount().toString());
+		Label delay = new Label(null == activitySummary.getSalaryOtherCount() ? "-" : activitySummary.getSalaryOtherCount().toString());
 		tab.addInlineStyle(delay, ENTERPRISES_COLS.DEL.getCellStyleClass());
 		tab.addRow(row, delay, ENTERPRISES_COLS.DEL.getColWidth());
 		
-		Label commonDisease = new Label(null == activitySummary.getItCommonDiseaseCount() ? "0" : activitySummary.getItCommonDiseaseCount().toString());
+		Label commonDisease = new Label(null == activitySummary.getItCommonDiseaseCount() ? "-" : activitySummary.getItCommonDiseaseCount().toString());
 		tab.addInlineStyle(commonDisease, ENTERPRISES_COLS.ECA.getCellStyleClass());
 		tab.addRow(row, commonDisease, ENTERPRISES_COLS.ECA.getColWidth());
 		
-		Label occupationalDisease = new Label(null == activitySummary.getItOccupationalDiseaseCount() ? "0" : activitySummary.getItOccupationalDiseaseCount().toString());
+		Label occupationalDisease = new Label(null == activitySummary.getItOccupationalDiseaseCount() ? "-" : activitySummary.getItOccupationalDiseaseCount().toString());
 		tab.addInlineStyle(occupationalDisease, ENTERPRISES_COLS.ATE.getCellStyleClass());
 		tab.addRow(row, occupationalDisease, ENTERPRISES_COLS.ATE.getColWidth());
 		
-		Label maternity = new Label(null == activitySummary.getItMaternityCount() ? "0" : activitySummary.getItMaternityCount().toString());
+		Label maternity = new Label(null == activitySummary.getItMaternityCount() ? "-" : activitySummary.getItMaternityCount().toString());
 		tab.addInlineStyle(maternity, ENTERPRISES_COLS.MPP.getCellStyleClass());
 		tab.addRow(row, maternity, ENTERPRISES_COLS.MPP.getColWidth());
 		
-		Label other = new Label(null == activitySummary.getItOtherCount() ? "0" : activitySummary.getItOtherCount().toString());
+		Label other = new Label(null == activitySummary.getItOtherCount() ? "-" : activitySummary.getItOtherCount().toString());
 		tab.addInlineStyle(other, ENTERPRISES_COLS.OTH.getCellStyleClass());
 		tab.addRow(row, other, ENTERPRISES_COLS.OTH.getColWidth());
 		
@@ -402,10 +458,10 @@ public class ActivitySummary extends AonCustomDockLayout {
 	private void paintFooter(AonCustomTable tab, List<ActivitySummaryObject> activitySummaries, boolean isParent) {
 		tab.createFooter();
 		
-		tab.addFooter(new Label(AonStringUtils.EMPTY), ENTERPRISES_COLS.DES.getColWidth(), ENTERPRISES_COLS.DES.getCellStyleClass());
+		tab.addFooter(new Label(isParent ? AonStringUtils.EMPTY : ("Contratos: " + activitySummaries.size())), ENTERPRISES_COLS.DES.getColWidth(), ENTERPRISES_COLS.DES.getCellStyleClass());
 		
-		tab.addFooter(new Label(AonStringUtils.EMPTY), ENTERPRISES_COLS.ALT.getColWidth(), ENTERPRISES_COLS.ALT.getCellStyleClass());
-		tab.addFooter(new Label(AonStringUtils.EMPTY), ENTERPRISES_COLS.BAJ.getColWidth(), ENTERPRISES_COLS.BAJ.getCellStyleClass());
+		tab.addFooter(new Label(isParent ? AonStringUtils.EMPTY : ("Altas: " + getAltas(activitySummaries))), ENTERPRISES_COLS.ALT.getColWidth(), ENTERPRISES_COLS.ALT.getCellStyleClass());
+		tab.addFooter(new Label(isParent ? AonStringUtils.EMPTY : ("Bajas: " + getBajas(activitySummaries))), ENTERPRISES_COLS.BAJ.getColWidth(), ENTERPRISES_COLS.BAJ.getCellStyleClass());
 		
 		int salaryCount = activitySummaries.stream().mapToInt(activitySummary -> null == activitySummary.getSalaryCount() ? 0 : activitySummary.getSalaryCount()).sum();
 		int extraCount = activitySummaries.stream().mapToInt(activitySummary -> null == activitySummary.getSalaryExtraCount() ? 0 : activitySummary.getSalaryExtraCount()).sum();
@@ -431,6 +487,32 @@ public class ActivitySummary extends AonCustomDockLayout {
 			tab.addFooter(new Label(AonStringUtils.EMPTY), ENTERPRISES_COLS.BUT.getColWidth(), ENTERPRISES_COLS.BUT.getCellStyleClass());
 	}
 	
+	private String getAltas(List<ActivitySummaryObject> activitySummaries) {
+		if(null != start.getValue() && null != end.getValue()) {
+			long altas = activitySummaries.stream().filter(activitySummary -> ge(activitySummary.getStartDate(), start.getValue()) && le(activitySummary.getStartDate(), end.getValue())).count();
+			return Long.toString(altas);
+		}
+		
+		return "N/D";
+	}
+
+	private String getBajas(List<ActivitySummaryObject> activitySummaries) {
+		if(null != start.getValue() && null != end.getValue()) {
+			long altas = activitySummaries.stream().filter(activitySummary -> null != activitySummary.getEndDate() && ge(activitySummary.getEndDate(), start.getValue()) && le(activitySummary.getEndDate(), end.getValue())).count();
+			return Long.toString(altas);
+		}
+		
+		return "N/D";
+	}
+	
+	private boolean ge(Date date, Date date2) {
+		return date.after(date2) || date.equals(date2);
+	}
+	
+	private boolean le(Date date, Date date2) {
+		return date.before(date2) || date.equals(date2);
+	}
+
 	private void getActivitySummaryParams() {
 		this.params = new ActivitySummaryParams()
 				.setDescription(getSearchTextBox().getValue())
@@ -446,8 +528,8 @@ public class ActivitySummary extends AonCustomDockLayout {
 				.setItOD(itType.getSelectedOptions().contains("IT AT/EP"))
 				.setItMP(itType.getSelectedOptions().contains("IT M/P"))
 				.setItOT(itType.getSelectedOptions().contains("IT Otros"))
-//				.setOrderBy(sort.getValue())
-//				.setAsc(Boolean.parseBoolean(asc.getValue()))
+				.setOrderBy(sort.getValue())
+				.setAsc(Boolean.parseBoolean(asc.getValue()))
 				;
 	}
 	
@@ -467,8 +549,8 @@ public class ActivitySummary extends AonCustomDockLayout {
 				.setItOD(itType.getSelectedOptions().contains("IT AT/EP"))
 				.setItMP(itType.getSelectedOptions().contains("IT M/P"))
 				.setItOT(itType.getSelectedOptions().contains("IT Otros"))
-//				.setOrderBy(sort.getValue())
-//				.setAsc(Boolean.parseBoolean(asc.getValue()))
+				.setOrderBy(sort.getValue())
+				.setAsc(Boolean.parseBoolean(asc.getValue()))
 				;
 		
 		getList(params, activitySummaries -> {

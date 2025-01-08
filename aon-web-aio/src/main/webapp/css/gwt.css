@@ -114,6 +114,10 @@
 	background-color: #fafafa;
 }
 
+.aon_custom_dialog .aon_custom_table_header{
+	background-color: white;
+}
+
 .aon_custom_row {
 	cursor: pointer;
 	margin-top: 3px;
@@ -123,6 +127,12 @@
 	border: 1px solid rgb(221, 221, 221);
 	color: #5f6368;
 	font-size: 12px;
+}
+
+.aon_custom_table_footer{
+	border-radius: 5px;
+  	padding: 12px 12px 12px 12px;
+  	border: 1px solid rgb(221, 221, 221);
 }
 
 .gwt-Selector .gwt-SplitLayoutPanel-VDragger {
