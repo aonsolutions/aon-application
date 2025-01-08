@@ -1,0 +1,173 @@
+description                      ,Año,Mes,Día, description                                            
+ Fiestas ESTATALES               ,2025,1,1, Año Nuevo                                              
+ Fiestas ESTATALES               ,2025,1,6, Epifanía del Señor                                     
+ Fiestas ESTATALES               ,2025,4,18, Viernes Santo                                          
+ Fiestas ESTATALES				  ,2025,5,1,Fiesta del Trabajo
+ Fiestas ESTATALES               ,2025,8,15,Virgen de la Asunción
+ Fiestas ESTATALES               ,2025,10,12,Fiesta del Pilar
+ Fiestas ESTATALES               ,2025,11,1,Todos Los Santos
+ Fiestas ESTATALES               ,2025,12,6,Constitución
+ Fiestas ESTATALES               ,2025,12,8,Inmaculada
+ Fiestas ESTATALES               ,2025,12,25,Natividad del Señor
+ Festivos ANDALUCIA              ,2025,2,28, Día de Andalucía                                       
+ Festivos ANDALUCIA              ,2025,4,17, Jueves Santo                                           
+ Festivos ANDALUCIA              ,2025,10,13,Día de la Hispanidad (se traslada)
+ Festivos PAÍS VASCO             ,2025,4,17,Jueves Santo
+ Festivos PAÍS VASCO             ,2025,4,21,Lunes de Pascua
+ Festivos PAÍS VASCO             ,2025,7,25,Santiago
+ Festivos PAÍS VASCO             ,2025,10,25,Día del País Vasco
+ Festivos ARAGÓN              ,2025,4,17, Jueves Santo                                           
+ Festivos ARAGÓN                 ,2025,4,23, San Jorge,  Día de Aragón
+ Festivos ARAGÓN                 ,2025,10,13,Día de la Hispanidad (se traslada)
+ Festivos ASTURIAS            ,2025,4,17,Jueves Santo
+ Festivos ASTURIAS               ,2025,9,8,Día de Asturias 
+ Festivos ASTURIAS               ,2025,10,13,Traslada el 12 de octubre
+ Festivos BALEARES               ,2025,3,1,Día de las Islas Baleares
+ Festivos BALEARES               ,2025,4,17,Jueves Santo
+ Festivos CANARIAS               ,2025,4,17,Jueves Santo
+ Festivos CANARIAS               ,2025,5,30,Día de Canarias
+ Festivos CANARIAS               ,2025,6,24,San Juan
+ Festivos CANTABRIA              ,2025,4,17,Jueves Santo
+ Festivos CANTABRIA              ,2025,7,28,Día de las Instituciones
+ Festivos CANTABRIA              ,2025,9,15,Día de la Bien Aparecida
+ Festivos CASTILLA - LA MANCHA   ,2025,4,17,Jueves Santo
+ Festivos CASTILLA - LA MANCHA   ,2025,5,31,Día de la Región de Castilla la Mancha
+ Festivos CASTILLA - LA MANCHA   ,2025,6,19,Corpues Christi
+ Festivos CASTILLA Y LEÓN        ,2025,4,17,Jueves Santo
+ Festivos CASTILLA Y LEÓN        ,2025,4,23,Día de Castilla León
+ Festivos CASTILLA Y LEÓN        ,2025,10,13,Traslada el 12 de octubre
+ Festivos CATALUÑA               ,2025,4,21,Lunes de Pascua
+ Festivos CATALUÑA               ,2025,6,24,San Juan
+ Festivos CATALUÑA               ,2025,9,11,Diada
+ Festivos CATALUÑA               ,2025,12,26,San Esteban
+ Festivos COMUNIDAD VALENCIANA   ,2025,3,19,Día de San Jose
+ Festivos COMUNIDAD VALENCIANA   ,2025,4,21,Lunes de Pascua
+ Festivos COMUNIDAD VALENCIANA   ,2025,10,9,Día de la Comunidad Valencina
+ Festivos EXTREMADURA            ,2025,3,19,San José
+ Festivos EXTREMADURA            ,2025,4,17,Jueves Santo
+ Festivos EXTREMADURA            ,2025,9,8,Día de Extremadura
+ Festivos GALICIA                ,2025,4,17,Jueves Santo
+ Festivos GALICIA                ,2025,5,17,Día de las Letras Gallegas
+ Festivos GALICIA                ,2025,7,25,Día del Apóstol Santiago
+ Festivos COMUNIDAD DE MADRID    ,2025,5,2,Fiesta de la Comunidad de Madrid
+ Festivos COMUNIDAD DE MADRID    ,2025,4,17,Jueves Santo
+ Festivos COMUNIDAD DE MADRID    ,2025,7,25,Día del Apóstol Santiago
+ Festivos REGIÓN DE MURCIA       ,2025,3,19,San José
+ Festivos REGIÓN DE MURCIA       ,2025,4,17,Jueves santo 
+ Festivos REGIÓN DE MURCIA       ,2025,6,9,Día de la región de Murcia
+ Festivos NAVARRA                ,2025,3,19,San José
+ Festivos NAVARRA                ,2025,4,17,Jueves santo 
+ Festivos NAVARRA                ,2025,4,21,Lunes de Pascua
+ Festivos NAVARRA                ,2025,7,25,Santiago Apostol
+ Festivos LA RIOJA               ,2025,4,17,Jueves santo 
+ Festivos LA RIOJA               ,2025,4,21,Lunes de Pascua
+ Festivos LA RIOJA               ,2025,6,9,Día de La Rioja
+ Festivos CIUDAD DE CEUTA        ,2025,4,17,Jueves santo 
+ Festivos CIUDAD DE CEUTA        ,2025,6,13,San Antonio
+ Festivos CIUDAD DE CEUTA        ,2025,8,5,Nuestra señora de Africa
+ Festivos CIUDAD DE MELILLA      ,2025,3,19,San José
+ Festivos CIUDAD DE MELILLA      ,2025,4,17,Jueves santo 
+ Festivos CIUDAD DE MELILLA      ,2025,9,8,Virgen de la Victoria
+ Festivos CIUDAD DE MELILLA      ,2025,9,17,Dia de Melilla
+ Festivos A CORUÑA               ,2025,4,17,Jueves santo 
+ Festivos A CORUÑA               ,2025,7,25,Santiago Apostol
+ Festivos ALBACETE               ,2025,6,24, San Juan                                               
+ Festivos ALBACETE               ,2025,9,8, Virgen de los Llanos                                   
+ Festivos ALICANTE               ,2025,6,23,Fiesta local
+ Festivos ALICANTE               ,2025,6,24,San Juan
+ Festivos ALMERÍA                ,2025,6,26,San Juan
+ Festivos ALMERÍA                ,2025,8,30,La Virgen del Mar
+ Festivos ÁVILA                  ,2025,10,15, Santa Teresa de Jesús                                  
+ Festivos ÁVILA                  ,2025,5,2,San Segundo
+ Festivos BADAJOZ                ,2025,3,4,Martes de carnaval
+ Festivos BADAJOZ                ,2025,6,24, San Juan                                               
+ Festivos BARCELONA              ,2025,6,9,Lunes de Pascua Granada
+ Festivos BARCELONA              ,2025,9,24, Día de la Mercé                                     
+ Festivos BILBAO                 ,2025,7,31,San Ignacio de Loyola
+ Festivos BILBAO                 ,2025,8,23, Viernes de la Semana Grande                            
+ Festivos BURGOS                 ,2025,6,20, Curpillos                                              
+ Festivos BURGOS                 ,2025,6,30, San Pedro y San Pablo (se traslada al lunes)                                  
+ Festivos CÁCERES                ,2025,4,23, San Jorge                                              
+ Festivos CÁCERES                ,2025,5,30, San Fernando                                           
+ Festivos CÁDIZ                  ,2025,3,3,Lunes de Carnaval
+ Festivos CÁDIZ                  ,2025,10,7,Virgen del Rosario
+ Festivos CASTELLÓN              ,2025,3,24,Fiestas de la Magdalena
+ Festivos CASTELLÓN              ,2025,3,28,Fiestas de la Magdalena
+ Festivos CEUTA                  ,2025,6,13,San Antonio
+ Festivos CEUTA                  ,2025,8,5,Nuestra señora de Africa
+ Festivos CIUDAD REAL            ,2025,6,9,Nuestra señora de Alarcos
+ Festivos CIUDAD REAL            ,2025,8,22,Octava de la Virgen del Prado
+ Festivos CÓRDOBA                ,2025,9,8,Virgen de la Fuensanta
+ Festivos CÓRDOBA                ,2025,10,24,San Rafael
+Festivos CUENCA,2025,1,28,San Julián
+ Festivos CUENCA                 ,2025,6,2,Virgen de la Luz
+ Festivos GIRONA                 ,2025,6,25,Sant Jaume
+ Festivos GIRONA                 ,2025,10,29,Sant Narcis
+ Festivos GRANADA                ,2025,1,2,Toma de Granada
+ Festivos GRANADA                ,2025,6,19,Corpus Christi
+ Festivos GUADALAJARA            ,2025,9,8,Virgen de la Antigua
+ Festivos GUADALAJARA            ,2025,9,19,Viernes de Feria
+ Festivos HUELVA                 ,2025,8,4,Fiestas Colombinas
+ Festivos HUELVA                 ,2025,9,8,Nuestra Señora de la Cinta
+ Festivos HUESCA                 ,2025,1,22,San Vicente
+ Festivos HUESCA                 ,2025,8,11,San Lorenzo
+ Festivos JAÉN                   ,2025,6,11,Virgen de la Capilla
+ Festivos JAÉN                   ,2025,10,18,San Lucas
+ Festivos LAS PALMAS             ,2025,3,4,Martes de carnaval
+ Festivos LAS PALMAS             ,2025,9,8,Nuestra Señora del Pino
+ Festivos LEÓN                   ,2025,6,24,San Juan
+ Festivos LEÓN                   ,2025,10,6,San Froilán
+ Festivos LLEIDA                 ,2025,5,12,San Anastasio
+ Festivos LLEIDA                 ,2025,9,29,San Miguel
+ Festivos LOGROÑO                ,2025,6,11,San Bernabé
+ Festivos LOGROÑO                ,2025,9,22,San Mateo
+ Festivos LUGO                   ,2025,3,4,Martes de Entroido
+ Festivos LUGO                   ,2025,10,5,San Froián (se traslada al lunes 6)
+ Festivos MADRID                 ,2025,5,15,San Isidro
+ Festivos MADRID                 ,2025,11,9,La Almudena (se traslada al lunes 10)
+ Festivos MÁLAGA                 ,2025,2,19,Toma de Málaga por los Reyes Católicos
+ Festivos MÁLAGA                 ,2025,9,8,Virgen de la Victoria
+ Festivos MELILLA                ,2025,9,8,Virgen de la Victoria
+ Festivos MELILLA                ,2025,9,17,Día de Melilla
+ Festivos MURCIA                 ,2025,4,22,Bando de la Huerta
+ Festivos MURCIA                 ,2025,9,16,Romería
+ Festivos OURENSE                ,2025,2,13,Martes de carnaval
+ Festivos OURENSE                ,2025,11,11,San Martín
+ Festivos OVIEDO                 ,2025,5,21,Martes del Campo
+ Festivos OVIEDO                 ,2025,9,21,San Mateo (se traslada al lunes 22)
+ Festivos PALENCIA               ,2025,2,3,Virgen de la Calle
+ Festivos PALENCIA               ,2025,9,2,San Antolín
+ Festivos PALMA DE MALLORCA      ,2025,3,1,Día de Las Islas Baleares
+ Festivos PALMA DE MALLORCA      ,2025,12,26,San Esteban 
+ Festivos PAMPLONA               ,2025,11,29,San Saturnino
+ Festivos PAMPLONA               ,2025,12,3,San Francisco Javier
+ Festivos PONTEVEDRA             ,2025,3,5, Miércoles de Ceniza                                    
+ Festivos PONTEVEDRA             ,2025,7,11,San Bieito 
+ Festivos SALAMANCA              ,2025,6,12,San Juan de Sahagún 
+ Festivos SALAMANCA              ,2025,9,8,Virgen de la Vega 
+ Festivos SANTA CRUZ DE TENERIFE ,2025,5,3,Día de la Cruz 
+ Festivos SANTA CRUZ DE TENERIFE ,2025,3,4,Martes de Carnaval 
+ Festivos SANTANDER              ,2025,7,9,Virgen del Mar 
+ Festivos SANTANDER              ,2025,7,25,Santiago
+ Festivos SEGOVIA                ,2025,6,24,San Juan 
+ Festivos SEGOVIA                ,2025,10,27,San Frutos 
+ Festivos SEVILLA                ,2025,5,7,Feria de Abril 
+ Festivos SEVILLA                ,2025,6,19,Corpus Christi
+ Festivos SORIA                  ,2025,6,26,Jueves de la Saca 
+ Festivos SORIA                  ,2025,10,3,San Saturio 
+ Festivos TARRAGONA              ,2025,8,19,Sant Magí 
+ Festivos TARRAGONA              ,2025,9,23,La Mercè 
+ Festivos TERUEL                 ,2025,4,22,Sermón de las tortillas
+ Festivos TERUEL                 ,2025,7,14,Vaquilla del Ángel
+ Festivos TOLEDO                 ,2025,1,23,San Ildefonso
+ Festivos TOLEDO                 ,2025,4,21,Lunes de Pascua
+ Festivos VALENCIA               ,2025,1,22, San Vicente Martir                                   
+ Festivos VALENCIA               ,2025,4,28, San Vicente Ferrer                                     
+ Festivos VALLADOLID             ,2025,5,13, San Pedro Regalado                                     
+ Festivos VALLADOLID             ,2025,9,8, Nuestra Sra. de San Lorenzo                            
+ Festivos VITORIA-GASTEIZ        ,2025,4,28, San Prudencio                                          
+ Festivos VITORIA-GASTEIZ        ,2025,8,5,Virgen Blanca
+ Festivos ZAMORA                 ,2025,6,9,La Hiniesta
+ Festivos ZAMORA                 ,2025,9,9,Día de la Virgen
+ Festivos ZARAGOZA               ,2025,3,5,Cincomarzada                                            
+ Festivos ZARAGOZA               ,2025,1,29,San Valero
