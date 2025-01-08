@@ -21,7 +21,6 @@ import com.esferalia.aon.gwt.payroll.shared.Extra;
 import com.esferalia.aon.gwt.payroll.shared.Salary;
 import com.esferalia.aon.gwt.payroll.shared.Salary.Type;
 import com.esferalia.aon.gwt.payroll.shared.Salary.TypeVisitor;
-import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.core.client.Scheduler.ScheduledCommand;
@@ -839,8 +838,11 @@ public class SalarySelect extends Composite {
 	private Date getPayDate() {
 	    Type type = salaryPreview.getType();
 	    
+	    
 	    if ( type != Type.SALARY  ) {
-		return null;
+		    Date endDate = salaryPreview.getChargeDate();
+		    Date chargeDate = salaryPreview.getChargeDate();
+	    	return DateUtils.equals(endDate, chargeDate) ? null : chargeDate;
 	    }
 	    
 	    Salary [] salaries = salaryPreview.getEmployee().getSalaries();
