@@ -2,7 +2,7 @@
 // Este archivo ha sido generado por la arquitectura JavaTM para la implantación de la referencia de enlace (JAXB) XML v2.3.1-b171012.0423 
 // Visite <a href="https://javaee.github.io/jaxb-v2/">https://javaee.github.io/jaxb-v2/</a> 
 // Todas las modificaciones realizadas en este archivo se perderán si se vuelve a compilar el esquema de origen. 
-// Generado el: 2024.11.25 a las 11:44:35 AM CET 
+// Generado el: 2024.12.05 a las 04:40:27 PM CET 
 //
 
 
@@ -656,6 +656,7 @@ import javax.xml.bind.annotation.XmlType;
  *                             &lt;/element&gt;
  *                             &lt;element name="CuotaDevengada" type="{}tipo_ImpPositivo" minOccurs="0"/&gt;
  *                             &lt;element name="Lorca" type="{}tipo_ImpPositivo" minOccurs="0"/&gt;
+ *                             &lt;element name="Dana" type="{}tipo_ImpPositivo" minOccurs="0"/&gt;
  *                             &lt;element name="CuotaSoportada" type="{}tipo_ImpPositivo" minOccurs="0"/&gt;
  *                             &lt;element name="IndiceCorrector" type="{}tipo_IndiceCorrector" minOccurs="0"/&gt;
  *                             &lt;element name="Resultado" type="{}tipo_ImpNegativo" minOccurs="0"/&gt;
@@ -678,6 +679,7 @@ import javax.xml.bind.annotation.XmlType;
  *                             &lt;element name="VolIngresos" type="{}tipo_ImpPositivo" minOccurs="0"/&gt;
  *                             &lt;element name="IndCuota" type="{}tipo_InCuota" minOccurs="0"/&gt;
  *                             &lt;element name="CuotaDevengada" type="{}tipo_ImpPositivo" minOccurs="0"/&gt;
+ *                             &lt;element name="Dana" type="{}tipo_ImpPositivo" minOccurs="0"/&gt;
  *                             &lt;element name="CuotasSoportadas" type="{}tipo_ImpPositivo" minOccurs="0"/&gt;
  *                             &lt;element name="CuotaRegSimplificado" type="{}tipo_ImpNegativo" minOccurs="0"/&gt;
  *                           &lt;/sequence&gt;
@@ -11642,6 +11644,7 @@ public class AEATIVA2024 {
      *                   &lt;/element&gt;
      *                   &lt;element name="CuotaDevengada" type="{}tipo_ImpPositivo" minOccurs="0"/&gt;
      *                   &lt;element name="Lorca" type="{}tipo_ImpPositivo" minOccurs="0"/&gt;
+     *                   &lt;element name="Dana" type="{}tipo_ImpPositivo" minOccurs="0"/&gt;
      *                   &lt;element name="CuotaSoportada" type="{}tipo_ImpPositivo" minOccurs="0"/&gt;
      *                   &lt;element name="IndiceCorrector" type="{}tipo_IndiceCorrector" minOccurs="0"/&gt;
      *                   &lt;element name="Resultado" type="{}tipo_ImpNegativo" minOccurs="0"/&gt;
@@ -11664,6 +11667,7 @@ public class AEATIVA2024 {
      *                   &lt;element name="VolIngresos" type="{}tipo_ImpPositivo" minOccurs="0"/&gt;
      *                   &lt;element name="IndCuota" type="{}tipo_InCuota" minOccurs="0"/&gt;
      *                   &lt;element name="CuotaDevengada" type="{}tipo_ImpPositivo" minOccurs="0"/&gt;
+     *                   &lt;element name="Dana" type="{}tipo_ImpPositivo" minOccurs="0"/&gt;
      *                   &lt;element name="CuotasSoportadas" type="{}tipo_ImpPositivo" minOccurs="0"/&gt;
      *                   &lt;element name="CuotaRegSimplificado" type="{}tipo_ImpNegativo" minOccurs="0"/&gt;
      *                 &lt;/sequence&gt;
@@ -11875,6 +11879,7 @@ public class AEATIVA2024 {
          *         &lt;element name="VolIngresos" type="{}tipo_ImpPositivo" minOccurs="0"/&gt;
          *         &lt;element name="IndCuota" type="{}tipo_InCuota" minOccurs="0"/&gt;
          *         &lt;element name="CuotaDevengada" type="{}tipo_ImpPositivo" minOccurs="0"/&gt;
+         *         &lt;element name="Dana" type="{}tipo_ImpPositivo" minOccurs="0"/&gt;
          *         &lt;element name="CuotasSoportadas" type="{}tipo_ImpPositivo" minOccurs="0"/&gt;
          *         &lt;element name="CuotaRegSimplificado" type="{}tipo_ImpNegativo" minOccurs="0"/&gt;
          *       &lt;/sequence&gt;
@@ -11891,6 +11896,7 @@ public class AEATIVA2024 {
             "volIngresos",
             "indCuota",
             "cuotaDevengada",
+            "dana",
             "cuotasSoportadas",
             "cuotaRegSimplificado"
         })
@@ -11904,6 +11910,8 @@ public class AEATIVA2024 {
             protected BigDecimal indCuota;
             @XmlElement(name = "CuotaDevengada")
             protected BigDecimal cuotaDevengada;
+            @XmlElement(name = "Dana")
+            protected BigDecimal dana;
             @XmlElement(name = "CuotasSoportadas")
             protected BigDecimal cuotasSoportadas;
             @XmlElement(name = "CuotaRegSimplificado")
@@ -12006,6 +12014,30 @@ public class AEATIVA2024 {
             }
 
             /**
+             * Obtiene el valor de la propiedad dana.
+             * 
+             * @return
+             *     possible object is
+             *     {@link BigDecimal }
+             *     
+             */
+            public BigDecimal getDana() {
+                return dana;
+            }
+
+            /**
+             * Define el valor de la propiedad dana.
+             * 
+             * @param value
+             *     allowed object is
+             *     {@link BigDecimal }
+             *     
+             */
+            public void setDana(BigDecimal value) {
+                this.dana = value;
+            }
+
+            /**
              * Obtiene el valor de la propiedad cuotasSoportadas.
              * 
              * @return
@@ -12082,6 +12114,7 @@ public class AEATIVA2024 {
          *         &lt;/element&gt;
          *         &lt;element name="CuotaDevengada" type="{}tipo_ImpPositivo" minOccurs="0"/&gt;
          *         &lt;element name="Lorca" type="{}tipo_ImpPositivo" minOccurs="0"/&gt;
+         *         &lt;element name="Dana" type="{}tipo_ImpPositivo" minOccurs="0"/&gt;
          *         &lt;element name="CuotaSoportada" type="{}tipo_ImpPositivo" minOccurs="0"/&gt;
          *         &lt;element name="IndiceCorrector" type="{}tipo_IndiceCorrector" minOccurs="0"/&gt;
          *         &lt;element name="Resultado" type="{}tipo_ImpNegativo" minOccurs="0"/&gt;
@@ -12104,6 +12137,7 @@ public class AEATIVA2024 {
             "modulo",
             "cuotaDevengada",
             "lorca",
+            "dana",
             "cuotaSoportada",
             "indiceCorrector",
             "resultado",
@@ -12123,6 +12157,8 @@ public class AEATIVA2024 {
             protected BigDecimal cuotaDevengada;
             @XmlElement(name = "Lorca")
             protected BigDecimal lorca;
+            @XmlElement(name = "Dana")
+            protected BigDecimal dana;
             @XmlElement(name = "CuotaSoportada")
             protected BigDecimal cuotaSoportada;
             @XmlElement(name = "IndiceCorrector")
@@ -12239,6 +12275,30 @@ public class AEATIVA2024 {
              */
             public void setLorca(BigDecimal value) {
                 this.lorca = value;
+            }
+
+            /**
+             * Obtiene el valor de la propiedad dana.
+             * 
+             * @return
+             *     possible object is
+             *     {@link BigDecimal }
+             *     
+             */
+            public BigDecimal getDana() {
+                return dana;
+            }
+
+            /**
+             * Define el valor de la propiedad dana.
+             * 
+             * @param value
+             *     allowed object is
+             *     {@link BigDecimal }
+             *     
+             */
+            public void setDana(BigDecimal value) {
+                this.dana = value;
             }
 
             /**

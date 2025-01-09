@@ -78,14 +78,13 @@ public class MainCertificates extends MainEntryPoint{
 	
 	private static enum COLS {
 		  DES("Titular"						,"-moz-available"	,"min-width: 5rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
-		, BUD("Representaci\u00f3n"			,"-moz-available"	,"min-width: 5rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
-		, DOC("F. Expiraci\u00f3n"			,"5rem"				,"")
-		, TYP(AON.MSG.alias()				,"10rem"			,"min-width: 10rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
-		, ACT(AonStringUtils.EMPTY			,"2.5rem"			,"")
-		, TGS("TGSS"						,"2.5rem"			,"")
-		, SEP("SEPE"						,"2.5rem"			,"")
-		, AEA("AEAT"						,"2.5rem"			,"")
-		, BUT(AonStringUtils.EMPTY			,"9rem"				,"")
+		, BUD("Representaci\u00f3n"			,"10rem"			,"white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
+		, DOC("F. Expiraci\u00f3n"			,"6rem"				,"")
+		, TYP(AON.MSG.alias()				,"14rem"			,"white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
+		, TGS("TGSS"						,"3rem"				,"")
+		, SEP("SEPE"						,"3rem"				,"")
+		, AEA("AEAT"						,"3rem"				,"")
+		, BUT(AonStringUtils.EMPTY			,"10rem"			,"")
 		;
 
 		String headerLabel;
@@ -93,6 +92,38 @@ public class MainCertificates extends MainEntryPoint{
 		String styles;
 
 		private COLS(String headerLabel,String colWidth,String styles) {
+			this.headerLabel = headerLabel;
+			this.colWidth = colWidth;
+			this.styles = styles;
+		}
+		public String getColWidth() {
+			return colWidth;
+		}
+		public String getHeaderLabel() {
+			return headerLabel;
+		}
+		public String getStyles() {
+			return styles;
+		}
+	}
+	
+	private static enum COLS_ENTERPRISE {
+		  DES("Titular"						,"-moz-available"	,"min-width: 5rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
+		, BUD("Representaci\u00f3n"			,"10rem"			,"white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
+		, DOC("F. Expiraci\u00f3n"			,"6rem"				,"")
+		, TYP(AON.MSG.alias()				,"14rem"			,"white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
+		, TGS("TGSS"						,"3rem"				,"")
+		, SEP("SEPE"						,"3rem"				,"")
+		, AEA("AEAT"						,"3rem"				,"")
+		, ACT(AonStringUtils.EMPTY			,"3rem"				,"")
+		, BUT(AonStringUtils.EMPTY			,"10rem"			,"")
+		;
+
+		String headerLabel;
+		String colWidth;
+		String styles;
+
+		private COLS_ENTERPRISE(String headerLabel,String colWidth,String styles) {
 			this.headerLabel = headerLabel;
 			this.colWidth = colWidth;
 			this.styles = styles;
@@ -239,7 +270,7 @@ public class MainCertificates extends MainEntryPoint{
 	
 	private void paintEnterpriseHeader() {
 		enterpriseCertTable.createHeader();
-		for ( COLS col : COLS.values()) 
+		for ( COLS_ENTERPRISE col : COLS_ENTERPRISE.values()) 
 			enterpriseCertTable.addHeader(new Label(col.getHeaderLabel()), col.getColWidth(), col.getStyles());
 	}
 	
@@ -369,10 +400,14 @@ public class MainCertificates extends MainEntryPoint{
 		alias.setTitle(certificate.getDescription());
 		table.addInlineStyle(alias, COLS.TYP.getStyles());
 		
+		HTMLPanel securityPanel = new HTMLPanel("");
+		securityPanel.addStyleName(style.flex());
+		securityPanel.getElement().getStyle().setProperty("justify-content", "right");
+		
 		String securityTitle = certificate.getConfidential() != null && certificate.getConfidential().equals(CertificateSecurity.PRIVATE) ? "Privado: S\u00f3lo visible para usuarios de la empresa" : "P\u00fablico: Visible para todos los usuarios";
 		String securityIcon = certificate.getConfidential() != null && certificate.getConfidential().equals(CertificateSecurity.PRIVATE) ? AON.CSS.aonIconLock() : AON.CSS.aonIconUnLock();
 		AonTableButton security = new AonTableButton(securityTitle, securityIcon);
-		security.setEnabled(false);
+		securityPanel.add(security);
 		
 		CheckBox tgssCB = new CheckBox();
 		tgssCB.addStyleName(style.checkBox());
@@ -479,10 +514,13 @@ public class MainCertificates extends MainEntryPoint{
 		table.addRow(row, representationL, COLS.BUD.getColWidth());
 		table.addRow(row, expirationDateL, COLS.DOC.getColWidth());
 		table.addRow(row, alias, COLS.TYP.getColWidth());
-		table.addRow(row, tabLayoutPanel.getSelectedIndex() == 0 ? new Label() : security, tabLayoutPanel.getSelectedIndex() == 0 ? "10rem" : "3rem");
 		table.addRow(row, tgssCB, COLS.TGS.getColWidth());
 		table.addRow(row, sepeCB, COLS.SEP.getColWidth());
 		table.addRow(row, aeatCB, COLS.AEA.getColWidth());
+		
+		if(tabLayoutPanel.getSelectedIndex() != 0)
+			table.addRow(row, securityPanel, COLS_ENTERPRISE.ACT.getColWidth());
+		
 		table.addRow(row, buttonsPanel, COLS.BUT.getColWidth());
 		
 		// Para poder visualizar certificados publicos del padre pero con edicion restringida

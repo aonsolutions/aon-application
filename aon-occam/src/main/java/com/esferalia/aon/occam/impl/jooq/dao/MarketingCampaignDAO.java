@@ -1,12 +1,14 @@
 package com.esferalia.aon.occam.impl.jooq.dao;
 
 import static com.esferalia.aon.jooq.tables.AppParam.APP_PARAM;
+import static com.esferalia.aon.jooq.tables.Customer.CUSTOMER;
 import static com.esferalia.aon.jooq.tables.MkAction.MK_ACTION;
 import static com.esferalia.aon.jooq.tables.MkActionTarget.MK_ACTION_TARGET;
 import static com.esferalia.aon.jooq.tables.MkCampaign.MK_CAMPAIGN;
 import static com.esferalia.aon.jooq.tables.Project.PROJECT;
+import static com.esferalia.aon.jooq.tables.ProjectActivity.PROJECT_ACTIVITY;
 import static com.esferalia.aon.jooq.tables.ProjectCommercial.PROJECT_COMMERCIAL;
-import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
+import static com.esferalia.aon.jooq.tables.ProjectType.PROJECT_TYPE;
 import static com.esferalia.aon.jooq.tables.Scope.SCOPE;
 import static com.esferalia.aon.jooq.tables.Survey.SURVEY;
 import static com.esferalia.aon.jooq.tables.Tag.TAG;
@@ -14,7 +16,6 @@ import static com.esferalia.aon.jooq.tables.Target.TARGET;
 import static com.esferalia.aon.jooq.tables.TaskHolder.TASK_HOLDER;
 import static com.esferalia.aon.jooq.tables.User.USER;
 import static com.esferalia.aon.jooq.tables.Workgroup.WORKGROUP;
-
 import static com.esferalia.aon.occam.impl.jooq.dao.TaskHolderDAO.TASK_HOLDER_ALIAS;
 
 import java.sql.Timestamp;
@@ -24,6 +25,8 @@ import java.util.stream.Collectors;
 
 import org.jooq.Condition;
 import org.jooq.Record;
+import org.jooq.SelectConditionStep;
+import org.jooq.SelectOnConditionStep;
 
 import com.esferalia.aon.jooq.tables.records.AppParamRecord;
 import com.esferalia.aon.occam.api.AONContext;
@@ -35,11 +38,15 @@ import com.esferalia.aon.occam.api.model.MarketingAction.MarketingActionMediaTyp
 import com.esferalia.aon.occam.api.model.MarketingAction.MarketingSellerDistribution;
 import com.esferalia.aon.occam.api.model.MarketingActionParams;
 import com.esferalia.aon.occam.api.model.MarketingActionTarget;
+import com.esferalia.aon.occam.api.model.MarketingActionTargetMassiveParams;
 import com.esferalia.aon.occam.api.model.MarketingActionTargetParams;
 import com.esferalia.aon.occam.api.model.MarketingCampaign;
 import com.esferalia.aon.occam.api.model.MarketingCompaignParams;
 import com.esferalia.aon.occam.api.model.Properties.MarketingCampaignProperties;
 import com.esferalia.aon.occam.api.model.office.Tag;
+import com.esferalia.aon.occam.api.model.registry.Project;
+import com.esferalia.aon.occam.impl.jooq.dao.ProjectActivityDAO.ProjectActivityFiller;
+import com.esferalia.aon.occam.impl.jooq.dao.ProjectDAO.ProjectFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.SecurityDAO.ScopeFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.SurveyDAO.SurveyFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.TargetDAO.TargetFiller;
@@ -50,6 +57,7 @@ import com.esferalia.aon.occam.impl.jooq.dao.WorkgroupDAO.WorkgroupFiller;
 import com.esferalia.aon.occam.impl.jooq.validation.MarketingActionTargetValidation;
 import com.esferalia.aon.occam.impl.jooq.validation.MarketingActionValidation;
 import com.esferalia.aon.occam.impl.jooq.validation.MarketingCampaignValidation;
+import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class MarketingCampaignDAO {
@@ -114,13 +122,30 @@ public class MarketingCampaignDAO {
 	public static List<MarketingCampaign> getList(CloseableAONContext ctx, MarketingCompaignParams params) {
 		Condition condition = paramsToCondition(ctx, params);
 		
-		List<MarketingCampaign> marketingCampaigns = ctx.getDslContext().select().from(MK_CAMPAIGN)
+		SelectConditionStep<Record> select = ctx.getDslContext().select().from(MK_CAMPAIGN)
 			.leftOuterJoin(SCOPE).on(SCOPE.ID.eq(MK_CAMPAIGN.SCOPE))
 			.leftOuterJoin(WORKGROUP).on(WORKGROUP.ID.eq(MK_CAMPAIGN.WORKGROUP))
 			.leftOuterJoin(TASK_HOLDER).on(TASK_HOLDER.REGISTRY.eq(MK_CAMPAIGN.TASK_HOLDER))
 			.leftOuterJoin(TASK_HOLDER_ALIAS).on(TASK_HOLDER_ALIAS.ID.eq(TASK_HOLDER.REGISTRY))
-			.where(condition)
-			.limit(params.getOffset(), params.getLimit())
+			.where(condition);
+		
+		if(params.isAsc()) {
+			if(AonStringUtils.equals(params.getOrderBy(), "name"))
+				select.orderBy(MK_CAMPAIGN.DESCRIPTION);
+			else if(AonStringUtils.equals(params.getOrderBy(), "budget"))
+				select.orderBy(MK_CAMPAIGN.BUDGET);
+			else if(AonStringUtils.equals(params.getOrderBy(), "expense"))
+				select.orderBy(MK_CAMPAIGN.EXPENSE);
+		} else {
+			if(AonStringUtils.equals(params.getOrderBy(), "name"))
+				select.orderBy(MK_CAMPAIGN.DESCRIPTION.desc());
+			else if(AonStringUtils.equals(params.getOrderBy(), "budget"))
+				select.orderBy(MK_CAMPAIGN.BUDGET.desc());
+			else if(AonStringUtils.equals(params.getOrderBy(), "expense"))
+				select.orderBy(MK_CAMPAIGN.EXPENSE.desc());
+		}
+		
+		List<MarketingCampaign> marketingCampaigns = select.limit(params.getOffset(), params.getLimit())
 			.fetch()
 			.stream()
 			.map(new MarketingCampaignFiller())
@@ -163,11 +188,27 @@ public class MarketingCampaignDAO {
 		if(null != params.getActive())
 			condition = condition.and(MK_CAMPAIGN.ACTIVE.eq(params.getActive()));
 		
-		if(null != params.getBudget())
-			condition = condition.and(MK_CAMPAIGN.BUDGET.ge(params.getBudget()));
+		if(params.isBetweenBudgetNumbers()) {
+			if(params.getGTBudget() != null && AonMathUtils.isNotZero(params.getGTBudget()))
+				condition = condition.and(MK_CAMPAIGN.BUDGET.ge(params.getGTBudget()));
+			if(params.getLTBudget() != null && AonMathUtils.isNotZero(params.getLTBudget()))
+				condition = condition.and(MK_CAMPAIGN.BUDGET.le(params.getLTBudget()));
+		} else {
+			if (params.getBudget() != null && AonMathUtils.isNotZero(params.getBudget())) {
+				condition = condition.and(MK_CAMPAIGN.BUDGET.eq(params.getBudget()));	
+			}
+		}
 		
-		if(null != params.getExpense())
-			condition = condition.and(MK_CAMPAIGN.EXPENSE.ge(params.getExpense()));
+		if(params.isBetweenExpenseNumbers()) {
+			if(params.getGTExpense() != null && AonMathUtils.isNotZero(params.getGTExpense()))
+				condition = condition.and(MK_CAMPAIGN.EXPENSE.ge(params.getGTExpense()));
+			if(params.getLTExpense() != null && AonMathUtils.isNotZero(params.getLTExpense()))
+				condition = condition.and(MK_CAMPAIGN.EXPENSE.le(params.getLTExpense()));
+		} else {
+			if (params.getExpense() != null && AonMathUtils.isNotZero(params.getExpense())) {
+				condition = condition.and(MK_CAMPAIGN.EXPENSE.eq(params.getExpense()));	
+			}
+		}
 		
 		return condition;
 	}
@@ -235,15 +276,44 @@ public class MarketingCampaignDAO {
 	public static List<MarketingAction> getActionList(CloseableAONContext ctx, MarketingActionParams params) {
 		Condition condition = actionParamsToCondition(ctx, params);
 		
-		List<MarketingAction> marketingActions = ctx.getDslContext().select().from(MK_ACTION)
+		SelectConditionStep<Record> select = ctx.getDslContext().select().from(MK_ACTION)
 			.leftOuterJoin(SURVEY).on(SURVEY.ID.eq(MK_ACTION.SURVEY))
 			.leftOuterJoin(SCOPE).on(SCOPE.ID.eq(SURVEY.SCOPE))
 			.leftOuterJoin(WORKGROUP).on(WORKGROUP.ID.eq(MK_ACTION.WORKGROUP))
 			.leftOuterJoin(TASK_HOLDER).on(TASK_HOLDER.REGISTRY.eq(MK_ACTION.TASK_HOLDER))
 			.leftOuterJoin(TASK_HOLDER_ALIAS).on(TASK_HOLDER_ALIAS.ID.eq(TASK_HOLDER.REGISTRY))
 			.leftOuterJoin(TAG).on(TAG.ID.eq(MK_ACTION.TAG))
-			.where(condition)
-			.limit(params.getOffset(), params.getLimit())
+			.where(condition);
+		
+		if(params.isAsc()) {
+			if(AonStringUtils.equals(params.getOrderBy(), "name"))
+				select.orderBy(MK_ACTION.DESCRIPTION);
+			else if(AonStringUtils.equals(params.getOrderBy(), "media"))
+				select.orderBy(MK_ACTION.MEDIA_TYPE);
+			else if(AonStringUtils.equals(params.getOrderBy(), "budget"))
+				select.orderBy(MK_ACTION.BUDGET);
+			else if(AonStringUtils.equals(params.getOrderBy(), "expense"))
+				select.orderBy(MK_ACTION.EXPENSE);
+			else if(AonStringUtils.equals(params.getOrderBy(), "start"))
+				select.orderBy(MK_ACTION.START_DATE);
+			else if(AonStringUtils.equals(params.getOrderBy(), "end"))
+				select.orderBy(MK_ACTION.END_DATE);
+		} else {
+			if(AonStringUtils.equals(params.getOrderBy(), "name"))
+				select.orderBy(MK_ACTION.DESCRIPTION.desc());
+			else if(AonStringUtils.equals(params.getOrderBy(), "media"))
+				select.orderBy(MK_ACTION.MEDIA_TYPE.desc());
+			else if(AonStringUtils.equals(params.getOrderBy(), "budget"))
+				select.orderBy(MK_ACTION.BUDGET.desc());
+			else if(AonStringUtils.equals(params.getOrderBy(), "expense"))
+				select.orderBy(MK_ACTION.EXPENSE.desc());
+			else if(AonStringUtils.equals(params.getOrderBy(), "start"))
+				select.orderBy(MK_ACTION.START_DATE.desc());
+			else if(AonStringUtils.equals(params.getOrderBy(), "end"))
+				select.orderBy(MK_ACTION.END_DATE.desc());
+		}
+		
+		List<MarketingAction> marketingActions = select.limit(params.getOffset(), params.getLimit())
 			.fetch()
 			.stream()
 			.map(new MarketingActionFiller(params.getMarketingCampaign()))
@@ -298,11 +368,27 @@ public class MarketingCampaignDAO {
 		if(null != params.getMarketingCampaign())
 			condition = condition.and(MK_ACTION.CAMPAIGN.eq(params.getMarketingCampaign().getId()));
 		
-		if(null != params.getBudget())
-			condition = condition.and(MK_ACTION.BUDGET.ge(params.getBudget()));
+		if(params.isBetweenBudgetNumbers()) {
+			if(params.getGTBudget() != null && AonMathUtils.isNotZero(params.getGTBudget()))
+				condition = condition.and(MK_ACTION.BUDGET.ge(params.getGTBudget()));
+			if(params.getLTBudget() != null && AonMathUtils.isNotZero(params.getLTBudget()))
+				condition = condition.and(MK_ACTION.BUDGET.le(params.getLTBudget()));
+		} else {
+			if (params.getBudget() != null && AonMathUtils.isNotZero(params.getBudget())) {
+				condition = condition.and(MK_ACTION.BUDGET.eq(params.getBudget()));	
+			}
+		}
 		
-		if(null != params.getExpense())
-			condition = condition.and(MK_ACTION.EXPENSE.ge(params.getExpense()));
+		if(params.isBetweenExpenseNumbers()) {
+			if(params.getGTExpense() != null && AonMathUtils.isNotZero(params.getGTExpense()))
+				condition = condition.and(MK_ACTION.EXPENSE.ge(params.getGTExpense()));
+			if(params.getLTExpense() != null && AonMathUtils.isNotZero(params.getLTExpense()))
+				condition = condition.and(MK_ACTION.EXPENSE.le(params.getLTExpense()));
+		} else {
+			if (params.getExpense() != null && AonMathUtils.isNotZero(params.getExpense())) {
+				condition = condition.and(MK_ACTION.EXPENSE.eq(params.getExpense()));	
+			}
+		}
 		
 		return condition;
 	}
@@ -440,10 +526,8 @@ public class MarketingCampaignDAO {
 				.join(SCOPE).on(SCOPE.ID.eq(TARGET.SCOPE))
 				.leftOuterJoin(USER)
 				.on(USER.ID.eq(MK_ACTION_TARGET.USER))
-				.leftOuterJoin(PROJECT_COMMERCIAL)
-				.on(PROJECT_COMMERCIAL.TARGET.eq(TARGET.REGISTRY))
 				.leftOuterJoin(PROJECT)
-				.on(PROJECT.ID.eq(PROJECT_COMMERCIAL.PROJECT).and(PROJECT.NAME.eq(marketingAction.getDescription())))
+				.on(PROJECT.ID.eq(MK_ACTION_TARGET.PROJECT).and(PROJECT.NAME.eq(marketingAction.getDescription())))
 				.where(MK_ACTION_TARGET.DOMAIN.eq(marketingAction.getDomain()))
 				.and(MK_ACTION_TARGET.ACTION.eq(marketingAction.getId()))
 				.fetch()
@@ -457,7 +541,7 @@ public class MarketingCampaignDAO {
 	public static List<MarketingActionTarget> getActionTargetList(CloseableAONContext ctx, MarketingActionTargetParams params) {
 		Condition condition = actionTargetParamsToCondition(ctx, params);
 		
-		List<MarketingActionTarget> marketingActionTargets = ctx.getDslContext().select().from(MK_ACTION_TARGET)
+		SelectConditionStep<Record> select = ctx.getDslContext().select().from(MK_ACTION_TARGET)
 				.join(TARGET)
 				.on(TARGET.REGISTRY.eq(MK_ACTION_TARGET.TARGET))
 				.join(TargetDAO.TARGET_ALIAS).on(TargetDAO.TARGET_ALIAS.ID.eq(TARGET.REGISTRY))
@@ -467,9 +551,22 @@ public class MarketingCampaignDAO {
 				.leftOuterJoin(PROJECT_COMMERCIAL)
 				.on(PROJECT_COMMERCIAL.TARGET.eq(TARGET.REGISTRY))
 				.leftOuterJoin(PROJECT)
-				.on(PROJECT.ID.eq(PROJECT_COMMERCIAL.PROJECT).and(PROJECT.NAME.eq(params.getMarketingAction().getDescription())))
-				.where(condition)
-				.groupBy(TARGET.REGISTRY)
+				.on(PROJECT.ID.eq(MK_ACTION_TARGET.PROJECT).and(PROJECT.NAME.eq(params.getMarketingAction().getDescription())))
+				.where(condition);
+		
+		if(params.isAsc()) {
+			if(AonStringUtils.equals(params.getOrderBy(), "name"))
+				select.orderBy(TargetDAO.TARGET_ALIAS.NAME);
+			else if(AonStringUtils.equals(params.getOrderBy(), "status"))
+				select.orderBy(MK_ACTION_TARGET.STATUS);
+		} else {
+			if(AonStringUtils.equals(params.getOrderBy(), "name"))
+				select.orderBy(TargetDAO.TARGET_ALIAS.NAME.desc());
+			else if(AonStringUtils.equals(params.getOrderBy(), "status"))
+				select.orderBy(MK_ACTION_TARGET.STATUS.desc());
+		}
+		
+		List<MarketingActionTarget> marketingActionTargets = select.groupBy(TARGET.REGISTRY)
 				.orderBy(TargetDAO.TARGET_ALIAS.NAME)
 				.limit(params.getOffset(), params.getLimit())
 				.fetch()
@@ -508,6 +605,7 @@ public class MarketingCampaignDAO {
 				.set(MK_ACTION_TARGET.ACTION, marketingActionTarget.getMarketingAction().getId())
 				.set(MK_ACTION_TARGET.TARGET, marketingActionTarget.getId())
 				.set(MK_ACTION_TARGET.STATUS, marketingActionTarget.getActionTargetStatus())
+				.set(MK_ACTION_TARGET.PROJECT, null == marketingActionTarget.getProject() ? null : marketingActionTarget.getProject().getId())
 				.set(MK_ACTION_TARGET.SURVEY_RESPONSE, marketingActionTarget.getSurveyResponse())
 				.set(MK_ACTION_TARGET.COMMENTS, marketingActionTarget.getComments())
 				.set(MK_ACTION_TARGET.USER, null == marketingActionTarget.getUser() ? null : marketingActionTarget.getUser().getId())
@@ -528,6 +626,7 @@ public class MarketingCampaignDAO {
 			.set(MK_ACTION_TARGET.ACTION, marketingActionTarget.getMarketingAction().getId())
 			.set(MK_ACTION_TARGET.TARGET, marketingActionTarget.getId())
 			.set(MK_ACTION_TARGET.STATUS, marketingActionTarget.getActionTargetStatus())
+			.set(MK_ACTION_TARGET.PROJECT, null == marketingActionTarget.getProject() ? null : marketingActionTarget.getProject().getId())
 			.set(MK_ACTION_TARGET.SURVEY_RESPONSE, marketingActionTarget.getSurveyResponse())
 			.set(MK_ACTION_TARGET.COMMENTS, marketingActionTarget.getComments())
 			.set(MK_ACTION_TARGET.USER, null == marketingActionTarget.getUser() ? null : marketingActionTarget.getUser().getId())
@@ -545,6 +644,106 @@ public class MarketingCampaignDAO {
 		.execute();
 		
 		ctx.log().debug("DELETE MK_ACTION_TARGET id:" + id);
+	}
+	
+	// MASSIVE TARGETS
+	
+	public static List<MarketingActionTarget> getActionTargetList(CloseableAONContext ctx, MarketingActionTargetMassiveParams params) {
+		Condition condition = actionTargetParamsToCondition(ctx, params);
+		
+		SelectOnConditionStep<Record> select = ctx.getDslContext().select().from(TARGET)
+			.join(TargetDAO.TARGET_ALIAS).on(TargetDAO.TARGET_ALIAS.ID.eq(TARGET.REGISTRY))
+			.join(SCOPE).on(SCOPE.ID.eq(TARGET.SCOPE))
+			.leftOuterJoin(PROJECT).on(PROJECT.REGISTRY.eq(TARGET.REGISTRY))
+			.leftOuterJoin(PROJECT_TYPE).on(PROJECT_TYPE.ID.eq(PROJECT.PROJECT_TYPE))
+			.leftOuterJoin(PROJECT_ACTIVITY).on(PROJECT_ACTIVITY.PROJECT.eq(PROJECT.ID))
+			.leftOuterJoin(MK_ACTION_TARGET).on(MK_ACTION_TARGET.TARGET.eq(TARGET.REGISTRY))
+			.leftOuterJoin(MK_ACTION).on(MK_ACTION.ID.eq(MK_ACTION_TARGET.ACTION));
+		
+		if(params.isCustomer())
+			select.join(CUSTOMER).on(CUSTOMER.REGISTRY.eq(TARGET.REGISTRY));
+		
+		select.where(condition);
+		
+		if(params.isAsc()) {
+			if(AonStringUtils.equals(params.getOrderBy(), "name"))
+				select.orderBy(TargetDAO.TARGET_ALIAS.NAME);
+			else if(AonStringUtils.equals(params.getOrderBy(), "scope"))
+				select.orderBy(SCOPE.DESCRIPTION);
+			else if(AonStringUtils.equals(params.getOrderBy(), "entity"))
+				select.orderBy(TargetDAO.TARGET_ALIAS.TYPE.desc());
+			else if(AonStringUtils.equals(params.getOrderBy(), "advertising"))
+				select.orderBy(TARGET.ADVERTISING);
+			else if(AonStringUtils.equals(params.getOrderBy(), "project"))
+				select.orderBy(PROJECT.NAME);
+			else if(AonStringUtils.equals(params.getOrderBy(), "activity"))
+				select.orderBy(PROJECT_ACTIVITY.ACTIVITY_TYPE);
+			else if(AonStringUtils.equals(params.getOrderBy(), "status"))
+				select.orderBy(TARGET.STATUS);
+			else if(AonStringUtils.equals(params.getOrderBy(), "action"))
+				select.orderBy(MK_ACTION.DESCRIPTION);
+		} else {
+			if(AonStringUtils.equals(params.getOrderBy(), "name"))
+				select.orderBy(TargetDAO.TARGET_ALIAS.NAME.desc());
+			else if(AonStringUtils.equals(params.getOrderBy(), "scope"))
+				select.orderBy(TARGET.SCOPE.desc());
+			else if(AonStringUtils.equals(params.getOrderBy(), "entity"))
+				select.orderBy(TargetDAO.TARGET_ALIAS.TYPE);
+			else if(AonStringUtils.equals(params.getOrderBy(), "advertising"))
+				select.orderBy(TARGET.ADVERTISING.desc());
+			else if(AonStringUtils.equals(params.getOrderBy(), "project"))
+				select.orderBy(PROJECT.NAME.desc());
+			else if(AonStringUtils.equals(params.getOrderBy(), "activity"))
+				select.orderBy(PROJECT_ACTIVITY.ACTIVITY_TYPE.desc());
+			else if(AonStringUtils.equals(params.getOrderBy(), "status"))
+				select.orderBy(TARGET.STATUS.desc());
+			else if(AonStringUtils.equals(params.getOrderBy(), "action"))
+				select.orderBy(MK_ACTION.DESCRIPTION.desc());
+		}
+		
+		System.out.println(select.groupBy(TARGET.REGISTRY)
+				.limit(params.getOffset(), params.getLimit()).getSQL().toString());
+		
+		List<MarketingActionTarget> marketingActionTargets = select.groupBy(TARGET.REGISTRY)
+				.limit(params.getOffset(), params.getLimit())
+				.fetch()
+				.stream()
+				.map(new MarketingActionTargetMassiveFiller())
+				.collect(Collectors.toList());
+		
+//		marketingActionTargets.forEach(target -> System.out.println("Target : " + target.getName() + ", Scope : " + (null == target.getScope() ? "N/D" : target.getScope().getDescription()) + ", Entity " + (target.isLegalPerson() ? "Pers. Fisica" : "Pers. Juridica")));
+		
+		return marketingActionTargets;
+	}
+	
+	private static Condition actionTargetParamsToCondition(CloseableAONContext ctx, MarketingActionTargetMassiveParams params) {
+		Condition condition = TARGET.DOMAIN.in(SecurityDAO.getInheritanceDomainIds(ctx));
+		
+		if(AonStringUtils.isNotBlank(params.getDescription()))
+			condition = condition.and(TargetDAO.TARGET_ALIAS.NAME.like("%" + params.getDescription() + "%"));
+		
+		if(null != params.getScope())
+			condition = condition.and(TARGET.SCOPE.eq(params.getScope()));
+		
+		if(null != params.getEntity())
+			condition = condition.and(TargetDAO.TARGET_ALIAS.TYPE.eq(params.getEntity()));
+		
+		if(null != params.getAdvertising())
+			condition = condition.and(TARGET.ADVERTISING.eq(params.getAdvertising()));
+		
+		if(null != params.getProjectType())
+			condition = condition.and(PROJECT.PROJECT_TYPE.eq(params.getProjectType()));
+		
+		if(null != params.getProjectActivity())
+			condition = condition.and(PROJECT_ACTIVITY.ID.eq(params.getProjectActivity()));
+		
+		if(null != params.getMkAction())
+			condition = condition.and(MK_ACTION_TARGET.ACTION.eq(params.getMkAction()));
+		
+		if(null != params.getStatus())
+			condition = condition.and(TARGET.STATUS.eq(params.getStatus()));
+		
+		return condition;
 	}
 	
 	// FILLER
@@ -626,12 +825,40 @@ public class MarketingCampaignDAO {
 					.setActionTargetDomain(r.getValue(MK_ACTION_TARGET.DOMAIN))
 					.setMarketingAction(MarketingActionTargetFiller.marketingAction)
 					.setActionTargetStatus(r.getValue(MK_ACTION_TARGET.STATUS))
+					.setProject(new Project().setId(r.get(MK_ACTION_TARGET.PROJECT)))
 					.setSurveyResponse(r.getValue(MK_ACTION_TARGET.SURVEY_RESPONSE))
 					.setComments(r.getValue(MK_ACTION_TARGET.COMMENTS))
 					.setUser(null == r.getValue(USER.ID) ? null : UserFiller.build(r))
-					.setHasProjectCommercial(null != r.getValue(PROJECT_COMMERCIAL.PROJECT))
-					.setProjectCommercial(r.getValue(PROJECT_COMMERCIAL.PROJECT))
 				;
+		}
+	}
+	
+	public static class MarketingActionTargetMassiveFiller extends Filler implements Function<Record, MarketingActionTarget> {
+
+		@Override
+		public MarketingActionTarget apply(Record r) {
+			return build(r);
+		}
+		
+		public static MarketingActionTarget build(Record r) {
+			MarketingActionTarget marketingActionTarget = new MarketingActionTarget()
+					.copy(TargetFiller.build(r))
+					.setProject(!checkField(r, PROJECT.ID) ? null : ProjectFiller.build(r))
+					.setProjectActivity(!checkField(r, PROJECT_ACTIVITY.ID) || null == r.getValue(PROJECT_ACTIVITY.ID) ? null : ProjectActivityFiller.build(r))
+					.setCustomer(checkField(r, CUSTOMER.REGISTRY) && null != r.getValue(CUSTOMER.REGISTRY))
+					.setMarketingAction(new MarketingAction().setDescription(!checkField(r, MK_ACTION.ID) || null == r.getValue(MK_ACTION.ID) ? null : r.get(MK_ACTION.DESCRIPTION)))
+					;
+					
+			return marketingActionTarget;
+//					.setActionTargetId(r.getValue(MK_ACTION_TARGET.ID))
+//					.setActionTargetDomain(r.getValue(MK_ACTION_TARGET.DOMAIN))
+//					.setMarketingAction(MarketingActionTargetFiller.marketingAction)
+//					.setActionTargetStatus(r.getValue(MK_ACTION_TARGET.STATUS))
+//					
+//					.setSurveyResponse(r.getValue(MK_ACTION_TARGET.SURVEY_RESPONSE))
+//					.setComments(r.getValue(MK_ACTION_TARGET.COMMENTS))
+//					.setUser(null == r.getValue(USER.ID) ? null : UserFiller.build(r))
+				
 		}
 	}
 

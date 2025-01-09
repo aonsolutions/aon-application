@@ -999,12 +999,12 @@ public class SQLContractDelayCalculatorContext extends
 				+ " SUM(" + SalaryPaymentColumns.IRPF+")"
 				+ " FROM " + SALARY_PAYMENT 
 				+ " WHERE " + SalaryPaymentColumns.SALARY + " = " + SALARY +"." + SalaryColumns.ID 
-				+ " AND " + SalaryPaymentColumns.TYPE + " NOT IN( 55 )"
-				+ " AND " + SalaryPaymentColumns.PAYMENT_CONCEPT + " NOT IN( 'PREST_IT', 'GARANTIZADO')"
-				+ " AND " + SalaryPaymentColumns.DESCRIPTION  + " NOT LIKE '%MEJORA%PREST.SS.INCAPACIDAD%TEMPORAL%')"
-				+ ")"
+				+ " AND (" + SalaryPaymentColumns.TYPE + " IS NULL OR " + SalaryPaymentColumns.TYPE + " NOT IN( 55 )" + ")"
+				+ " AND (" + SalaryPaymentColumns.PAYMENT_CONCEPT + " IS NULL OR " + SalaryPaymentColumns.PAYMENT_CONCEPT + " NOT IN( 'PREST_IT', 'GARANTIZADO')" + ")"
+				+ " AND (" + SalaryPaymentColumns.DESCRIPTION + " IS NULL OR " + SalaryPaymentColumns.DESCRIPTION  + " NOT LIKE '%MEJORA%PREST.SS.INCAPACIDAD%TEMPORAL%')" + ")"
 				+", 0.00)";
 				;
+
 
 		private static final String PREST_IT_AMOUNT_SQL = 
 				"IFNULL((SELECT"
@@ -1131,15 +1131,18 @@ public class SQLContractDelayCalculatorContext extends
 				"(IFNULL(GARANTIZADO,IFNULL((GTZDO / ALLITDAYS  * ITDAYS ),0.00)))";
 
 
+		private static final String IRPF = 
+				"(( OTHERSIRPF ) / ALLWORKEDDAYS * ( IF(WORKEDDAYS > 0.00, WORKEDDAYS , IF(DROPDAYS > 0.00, 0.00 ,(DATEDIFF(?, ?) + 1 )) ) ))";
+
 		private static final String AMOUNT = 
 				"(( OTHERSAMOUNT ) / ALLWORKEDDAYS * ( IF(WORKEDDAYS > 0.00, WORKEDDAYS , IF(DROPDAYS > 0.00, 0.00 ,(DATEDIFF(?, ?) + 1 )) ) ))";
 		
-		private static final String PAYMENT = 
+		private static final String PAYMENT_AMOUNT = 
 				"(IFNULL( " + "IFNULL(" + SALARY_PAYMENT +"." + SalaryPaymentColumns.AMOUNT + ",PRESTIT )" + " + " + GTZDO_IT
 				+ ", (" + SalaryColumns.TOTAL_PAYMENT + "- ( PRESTITAMOUNT + GTZDO )) / ALLWORKEDDAYS * WORKEDDAYS )"
 				+ ")";
 
-		private static final String IRPF = 
+		private static final String PAYMENT_IRPF = 
 				"(IFNULL( " + "IFNULL(" + SALARY_PAYMENT +"." + SalaryPaymentColumns.IRPF +", PRESTIT )" + " + " + GTZDO_IT
 				+ ", (" + SalaryColumns.IRPF_BASE + " - ( PRESTITIRPF + GTZDO )) / ALLWORKEDDAYS * WORKEDDAYS )"
 				+ ")";
@@ -1149,8 +1152,8 @@ public class SQLContractDelayCalculatorContext extends
 				+ SalaryPaymentColumns.ID
 				+", ITDAYS"
 				+ ", " + SalaryColumns.CGC_BASE
-				+ ", IF ( DELAYSALARYAMOUNT > 0.00 , DELAYSALARYAMOUNT, IF ( ITDAYS IS NULL , "+ AMOUNT +" , " + IRPF + " )) AS " + SalaryColumns.IRPF_BASE
-				+ ", IF ( DELAYSALARYAMOUNT > 0.00 , DELAYSALARYAMOUNT, IF ( ITDAYS IS NULL , "+ AMOUNT +" , " + PAYMENT + " )) AS " + SalaryColumns.TOTAL_PAYMENT
+				+ ", IF ( DELAYSALARYAMOUNT > 0.00 , DELAYSALARYAMOUNT, IF ( ITDAYS IS NULL , "+ IRPF +" , " + PAYMENT_IRPF + " )) AS " + SalaryColumns.IRPF_BASE
+				+ ", IF ( DELAYSALARYAMOUNT > 0.00 , DELAYSALARYAMOUNT, IF ( ITDAYS IS NULL , "+ AMOUNT +" , " + PAYMENT_AMOUNT + " )) AS " + SalaryColumns.TOTAL_PAYMENT
 
 				+" FROM ("
 					+" SELECT " 
@@ -1192,6 +1195,9 @@ public class SQLContractDelayCalculatorContext extends
 	
 					+ ", (" + OTHERS_AMOUNT_SQL +")" 
 					+ " AS OTHERSAMOUNT" 
+
+					+ ", (" + OTHERS_IRPF_SQL +")" 
+					+ " AS OTHERSIRPF" 
 
 					+ ", SUM(" + DELAY_SALARY_AMOUNT_SQL +")" 
 					+ " AS DELAYSALARYAMOUNT" 
@@ -1731,6 +1737,7 @@ public class SQLContractDelayCalculatorContext extends
 		return resultDays;
 		
 	}
+	
 	
 	
 

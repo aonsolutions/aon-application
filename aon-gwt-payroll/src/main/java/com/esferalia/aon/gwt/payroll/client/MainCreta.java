@@ -10,7 +10,6 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -78,7 +77,6 @@ import com.google.gwt.event.dom.client.ContextMenuEvent;
 import com.google.gwt.event.dom.client.MouseOutEvent;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.i18n.client.DateTimeFormat;
-import com.google.gwt.i18n.client.DateTimeFormat.PredefinedFormat;
 import com.google.gwt.regexp.shared.MatchResult;
 import com.google.gwt.regexp.shared.RegExp;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
@@ -95,6 +93,7 @@ import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.DecoratedPopupPanel;
 import com.google.gwt.user.client.ui.Grid;
+import com.google.gwt.user.client.ui.HasTreeItems;
 import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
@@ -143,10 +142,10 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 	
 	private static class MyEnterprises extends Enterprises {
 
-	    	private static final int INIT_LIMIT = 250;
-	    	private static final int RELOAD_LIMIT = 100;
-		
-	    	private boolean tooManyEnterprises = true; 
+    	private static final int INIT_LIMIT = 250;
+    	private static final int RELOAD_LIMIT = 100;
+	
+    	private boolean tooManyEnterprises = true; 
 	    	
 	    	
 	    	@Override
@@ -184,8 +183,13 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 		}
 		
 		@Override
-		protected void onEnterprise(Enterprise enterprise, TreeItem rootItem) {
+		protected <T extends HasTreeItems>  void onEnterprise(Enterprise enterprise, T rootItem) {
 			filter(enterprise).ifPresent(e -> super.onEnterprise(e, rootItem));
+		}
+		
+		@Override
+		protected void onEnterpriseCCC(Activity activity, CCC ccc, TreeItem enterpriseItem) {
+			filter(ccc, enterpriseItem).ifPresent(e -> super.onEnterpriseCCC(activity, ccc, enterpriseItem));
 		}
 		
 		@Override
@@ -215,6 +219,18 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 	    	    tooManyEnterprises = enterprises.size() == INIT_LIMIT;
 	    	}
 	    	
+		private Optional<CCC> filter(CCC ccc, TreeItem enterpriseItem ) {
+			int count = enterpriseItem.getChildCount();
+			for ( int i = 0; i < count ; i++) {
+				CCC childCCC = (CCC) enterpriseItem.getChild(i).getUserObject();
+				if ( AonStringUtils.equals(childCCC.getCode(),ccc.getCode())
+					&& AonStringUtils.equals(childCCC.getRegime(),ccc.getRegime())
+					&& AonStringUtils.equals(childCCC.getGeozone(),ccc.getGeozone()))
+					return Optional.empty();
+			}
+			return Optional.of(ccc);
+		}
+
 		private Optional<Enterprise> filter(Enterprise enterprise) {
 			
 			Date endDate = getEndDate();
@@ -2689,10 +2705,11 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 
 
 	protected static void sync(final SyncCallback cb, Collection<CCC> cccs) {
-		List<String> cccCodes = cccs.stream().map(ccc -> ccc.getCode()).collect(Collectors.toList());
-		Map<String, Collection<String>> options  = new HashMap<String, Collection<String>>();
+		List<String> cccCodes = cccs.stream().map(CCC::getCode).collect(Collectors.toList());
+		Map<String, Collection<String>> options  = new HashMap<>();
 		options.put(CretaService.Parameter.CCC.name(), cccCodes );
 		options.put(CretaService.Parameter.USER.name(), Collections.singleton(Wnd.getCurrentUser()));
+		options.put(CretaService.Parameter.DOMAIN.name(), Collections.singleton(Wnd.getCurrentDomainNameURL()));
 		sync(cb, options);
 	}
 

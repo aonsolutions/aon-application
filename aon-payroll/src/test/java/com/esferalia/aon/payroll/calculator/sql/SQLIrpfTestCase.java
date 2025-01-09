@@ -23,6 +23,7 @@ import static com.esferalia.aon.watson.util.AonDateUtils.getFirstDayOfMonth;
 import static com.esferalia.aon.watson.util.AonDateUtils.getFirstDayOfYear;
 import static com.esferalia.aon.watson.util.AonDateUtils.getLastDayOfMonth;
 import static java.util.Calendar.DAY_OF_MONTH;
+import static java.util.Calendar.DAY_OF_YEAR;
 import static java.util.Calendar.MONTH;
 import static java.util.Calendar.YEAR;
 import static junit.framework.Assert.assertEquals;
@@ -4460,9 +4461,15 @@ public class SQLIrpfTestCase extends AbstractSQLTestCase {
 		
 		cleanSystemData(aonContext);
 		
+		Calendar calendar = Calendar.getInstance();
+		calendar.set(Calendar.YEAR, 2024);		
+		calendar.set(Calendar.DAY_OF_YEAR, 1);		
+		
+		Date startOf2024 = new Date(calendar.getTimeInMillis());
+		
 		ContractRecord contract = newContract(aonContext, SSRegimeType.GENERAL,
 				CCCType.PRINCIPAL, 
-				getFirstDayOfYear(getToday()),
+				startOf2024,
 				null,
 				new HashMap<String, String>() {
 					{
@@ -4482,7 +4489,7 @@ public class SQLIrpfTestCase extends AbstractSQLTestCase {
 				, null
 				,null);
 
-		Date startDate = getFirstDayOfYear(getToday());
+		Date startDate = startOf2024;
 		Date endDate = getLastDayOfMonth(startDate);
 		
 		ISQLContractSalaryCalculatorContext january2024Ctx =  

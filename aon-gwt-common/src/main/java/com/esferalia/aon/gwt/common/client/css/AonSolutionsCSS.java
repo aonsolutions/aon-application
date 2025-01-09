@@ -658,6 +658,9 @@ public interface AonSolutionsCSS extends CssResource {
 	@ClassName("aon_inline_block")
 	String aonInlineBlock();
 	
+	@ClassName("aon_inline_flex")
+	String aonInlineFlex();
+	
 	@ClassName("aon_display_none")
 	String aonDisplayNone();
 	
@@ -874,6 +877,12 @@ public interface AonSolutionsCSS extends CssResource {
 	@ClassName("aon_custom_table_cell_header")
 	String aonCustomTableCellHeader();
 	
+	@ClassName("aon_custom_table_footer")
+	String aonCustomTableFooter();
+	
+	@ClassName("aon_custom_table_cell_footer")
+	String aonCustomTableCellFooter();
+	
 	@ClassName("aon_utility_option")
 	String aonUtilityOption();
 	
@@ -933,6 +942,9 @@ public interface AonSolutionsCSS extends CssResource {
 	
 	@ClassName("aon_align_items_baseline")
 	String aonAlignItemsBaseline();
+	
+	@ClassName("aon_align_items_center")
+	String aonAlignItemsCenter();
 
 	@ClassName("aon_padding")
 	String aonPadding();

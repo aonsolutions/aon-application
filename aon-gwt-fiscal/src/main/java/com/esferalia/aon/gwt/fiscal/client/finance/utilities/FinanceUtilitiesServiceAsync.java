@@ -31,4 +31,8 @@ public interface FinanceUtilitiesServiceAsync {
 	
 	// Modificación de actividades en facturas.
 	void updateActivity(Occam occam, Integer invoiceId, Integer activity, AsyncCallback<Void> callback) throws AonCoreException;
+
+	//Integridad del dato actividad en facturas y asientos.
+	void activityIntegrity(Occam occam, Integer domain,AsyncCallback<FinanceUtilitiesResult> callback) throws AonCoreException;
+	void activityIntegrityFix(Occam occam, Integer invoiceId, boolean useInvoiceActivity, AsyncCallback<Void> callback) throws AonCoreException;
 }

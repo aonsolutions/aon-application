@@ -120,9 +120,10 @@ public enum Mod303Key implements IFiscalModelKey  {
 	,CT_SA12("303-CTAS12",false,null,"Volumen de ingresos")
 	,CT_SA13("303-CTAS13",false,null,"\u00CDndice de cuota")
 	,CT_SA14("303-CTAS14",false,null,"Cuota devengada")
+	,CT_SA1X("303-CTAS1X",false,null,"DANA 2024")
+	,CT_SA1R("303-CTAS1R",false,null,"Reducción DANA")
 	,CT_SA15("303-CTAS15",false,null,"Porcentaje trimestral (1T/2T/3T)")
 	,CT_SA16("303-CTAS16",false,"A1","Ingreso a cuenta (1T/2T/3T) [A]")
-	
 	,CT_SA1A("303-CTAS1A",false,null,"Cuota soportada (4T)")
 	,CT_SA1B("303-CTAS1B",false,null,"Compensaciones satisfechas a sujetos pasivos en R.E.A.G.P. (4T)")
 	,CT_SA1C("303-CTAS1C",false,null,"1% de la cuota devengada por operaciones corrientes")
@@ -135,6 +136,8 @@ public enum Mod303Key implements IFiscalModelKey  {
 	,CT_SA22("303-CTAS22",false,null,CT_SA12.getDescription())
 	,CT_SA23("303-CTAS23",false,null,CT_SA13.getDescription())
 	,CT_SA24("303-CTAS24",false,null,CT_SA14.getDescription())
+	,CT_SA2X("303-CTAS2X",false,null,CT_SA1X.getDescription())
+	,CT_SA2R("303-CTAS2R",false,null,CT_SA1R.getDescription())
 	,CT_SA25("303-CTAS25",false,null,CT_SA15.getDescription())
 	,CT_SA26("303-CTAS26",false,"A2",CT_SA16.getDescription())
 	,CT_SA2A("303-CTAS2A",false,null,CT_SA1A.getDescription())
@@ -149,6 +152,8 @@ public enum Mod303Key implements IFiscalModelKey  {
 	,CT_SA32("303-CTSA32",false,null,CT_SA12.getDescription())
 	,CT_SA33("303-CTSA33",false,null,CT_SA13.getDescription())
 	,CT_SA34("303-CTSA34",false,null,CT_SA14.getDescription())
+	,CT_SA3X("303-CTAS3X",false,null,CT_SA1X.getDescription())
+	,CT_SA3R("303-CTAS3R",false,null,CT_SA1R.getDescription())
 	,CT_SA35("303-CTSA35",false,null,CT_SA15.getDescription())
 	,CT_SA36("303-CTSA36",false,"A3",CT_SA16.getDescription())
 	,CT_SA3A("303-CTAS3A",false,null,CT_SA1A.getDescription())
@@ -163,6 +168,8 @@ public enum Mod303Key implements IFiscalModelKey  {
 	,CT_SA42("303-CTSA42",false,null,CT_SA12.getDescription())
 	,CT_SA43("303-CTSA43",false,null,CT_SA13.getDescription())
 	,CT_SA44("303-CTSA44",false,null,CT_SA14.getDescription())
+	,CT_SA4X("303-CTAS4X",false,null,CT_SA1X.getDescription())
+	,CT_SA4R("303-CTAS4R",false,null,CT_SA1R.getDescription())
 	,CT_SA45("303-CTSA45",false,null,CT_SA15.getDescription())
 	,CT_SA46("303-CTSA46",false,"A4",CT_SA16.getDescription())
 	,CT_SA4A("303-CTAS4A",false,null,CT_SA1A.getDescription())
@@ -182,6 +189,7 @@ public enum Mod303Key implements IFiscalModelKey  {
 	,CT_S1Y2("303-CTS1Y2",false,null,"N\u00FA m\u00E1ximo de asalariados que han trabajado simult\u00E1neamente durante el ejercicio (4T)")
 	,CT_S1X4("303-CTS1X4",false,null,"Si realiza la actividad en LORCA")
 	,CT_S1X5("303-CTS1X5",false,null,"Reducci\u00F3n extraordinaria de la cuota anual devengada por operaciones corrientes (Reducci\u00F3n extraordinaria por covid-19, art. 9 RD-Ley 35/2020)")
+	,CT_S1X6("303-CTS1X6",false,null,"Realiza la actividad en municipios afectados por la DANA 2024")
 	
 	,CT_S11D("303-CTS11D",false,null,CT_SA1D.getDescription())
 	,CT_S11I("303-CTS11I",false,null,"Importe unidades")
@@ -247,6 +255,8 @@ public enum Mod303Key implements IFiscalModelKey  {
 	,CT_S1D4("303-CTS1D4",false,null,"M\u00F3dulo Mesas - D\u00EDas (4T)")
 	
 	,CT_S117("303-CTS117",false,"C1","Cuota devengada operaciones corrientes")
+	,CT_S1R1("303-CTS1R1",false,"--","Reducci\u00F3n Lorca")
+	,CT_S1R2("303-CTS1R2",false,"--","Reducci\u00F3n DANA")
 	,CT_S118("303-CTS118",false,"D1","Reducciones")
 	,CT_S119("303-CTS119",false,"Z1","\u00CDndice corrector actividades de temporada")
 	,CT_S120("303-CTS120",false,"E1","Porcentaje de ingreso a cuenta")
@@ -273,6 +283,7 @@ public enum Mod303Key implements IFiscalModelKey  {
 	,CT_S2Y2("303-CTS2Y2",false,null,CT_S1Y2.getDescription())
 	,CT_S2X4("303-CTS2X4",false,null,CT_S1X4.getDescription())
 	,CT_S2X5("303-CTS2X5",false,null,CT_S1X5.getDescription())
+	,CT_S2X6("303-CTS2X6",false,null,CT_S1X6.getDescription())
 	
 	,CT_S21D("303-CTS21D",false,null,CT_S11D.getDescription())
 	,CT_S21I("303-CTS21I",false,null,CT_S11I.getDescription())
@@ -338,6 +349,8 @@ public enum Mod303Key implements IFiscalModelKey  {
 	,CT_S2D4("303-CTS2D4",false,null,CT_S1D4.getDescription())
 	
 	,CT_S217("303-CTS217",false,"C2",CT_S117.getDescription())
+	,CT_S2R1("303-CTS2R1",false,"--",CT_S1R1.getDescription())
+	,CT_S2R2("303-CTS2R2",false,"--",CT_S1R2.getDescription())
 	,CT_S218("303-CTS218",false,"D2",CT_S118.getDescription())
 	,CT_S219("303-CTS219",false,"Z2",CT_S119.getDescription())
 	,CT_S220("303-CTS220",false,"E2",CT_S120.getDescription())
@@ -364,6 +377,7 @@ public enum Mod303Key implements IFiscalModelKey  {
 	,CT_S3Y2("303-CTS3Y2",false,null,CT_S1Y2.getDescription())
 	,CT_S3X4("303-CTS3X4",false,null,CT_S1X4.getDescription())
 	,CT_S3X5("303-CTS3X5",false,null,CT_S1X5.getDescription())
+	,CT_S3X6("303-CTS3X6",false,null,CT_S1X6.getDescription())
 	
 	,CT_S31D("303-CTS31D",false,null,CT_S11D.getDescription())
 	,CT_S31I("303-CTS31I",false,null,CT_S11I.getDescription())
@@ -429,6 +443,8 @@ public enum Mod303Key implements IFiscalModelKey  {
 	,CT_S3D4("303-CTS3D4",false,null,CT_S1D4.getDescription())
 
 	,CT_S317("303-CTS317",false,"C3",CT_S117.getDescription())
+	,CT_S3R1("303-CTS3R1",false,"--",CT_S1R1.getDescription())
+	,CT_S3R2("303-CTS3R2",false,"--",CT_S1R2.getDescription())
 	,CT_S318("303-CTS318",false,"D3",CT_S118.getDescription())
 	,CT_S319("303-CTS319",false,"Z3",CT_S119.getDescription())
 	,CT_S320("303-CTS320",false,"E3",CT_S120.getDescription())
@@ -455,6 +471,7 @@ public enum Mod303Key implements IFiscalModelKey  {
 	,CT_S4Y2("303-CTS4Y2",false,null,CT_S1Y2.getDescription())
 	,CT_S4X4("303-CTS4X4",false,null,CT_S1X4.getDescription())
 	,CT_S4X5("303-CTS4X5",false,null,CT_S1X5.getDescription())
+	,CT_S4X6("303-CTS4X6",false,null,CT_S1X6.getDescription())
 	
 	,CT_S41D("303-CTS41D",false,null,CT_S11D.getDescription())
 	,CT_S41I("303-CTS41I",false,null,CT_S11I.getDescription())
@@ -520,6 +537,8 @@ public enum Mod303Key implements IFiscalModelKey  {
 	,CT_S4D4("303-CTS4D4",false,null,CT_S1D4.getDescription())
 
 	,CT_S417("303-CTS417",false,"C4",CT_S117.getDescription())
+	,CT_S4R1("303-CTS4R1",false,"--",CT_S1R1.getDescription())
+	,CT_S4R2("303-CTS4R2",false,"--",CT_S1R2.getDescription())
 	,CT_S418("303-CTS418",false,"D4",CT_S118.getDescription())
 	,CT_S419("303-CTS419",false,"Z4",CT_S119.getDescription())
 	,CT_S420("303-CTS420",false,"E4",CT_S120.getDescription())

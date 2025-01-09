@@ -7,6 +7,11 @@ import com.esferalia.aon.gwt.common.client.CommonService;
 import com.esferalia.aon.gwt.common.client.CommonServiceAsync;
 import com.esferalia.aon.gwt.common.client.CommonServiceAsyncDecorator;
 import com.esferalia.aon.gwt.common.client.widget.AccountEntryListBox;
+import com.esferalia.aon.gwt.common.client.widget.MinimizePanel;
+import com.esferalia.aon.gwt.common.client.widget.MinimizePanel.MaximizeEvent;
+import com.esferalia.aon.gwt.common.client.widget.MinimizePanel.MaximizeHandler;
+import com.esferalia.aon.gwt.common.client.widget.MinimizePanel.MinimizeEvent;
+import com.esferalia.aon.gwt.common.client.widget.MinimizePanel.MinimizeHandler;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonAccountBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDateBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDoubleBox;
@@ -35,6 +40,8 @@ import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
+import com.google.gwt.layout.client.Layout.AnimationCallback;
+import com.google.gwt.layout.client.Layout.Layer;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
@@ -53,7 +60,6 @@ public class JournalPanelReport extends DockLayoutPanel implements Focusable, Ha
 
 	private static CommonServiceAsync commonService;
 
-	private SimpleLayoutPanel northPanel;
 	private SimpleLayoutPanel centerPanel;
 	
 	private FlexTable tab;
@@ -75,6 +81,7 @@ public class JournalPanelReport extends DockLayoutPanel implements Focusable, Ha
 	private ListBox order;
 	private AonSearchPanelButton cleanButton;
 	private AonSearchPanelButton refreshButton;
+	SimpleLayoutPanel filterPanel = new SimpleLayoutPanel();
 
 	private boolean activitiesListBoxEnabled;
 	private AccountingReportModuleOptions options;
@@ -122,9 +129,8 @@ public class JournalPanelReport extends DockLayoutPanel implements Focusable, Ha
 		activitiesListBoxEnabled = (options.getConfiguration() != null && options.getConfiguration().hasActivities());
 		addStyleName(AON.CSS.aonScrollArea());
 		addStyleName(AON.CSS.aonMarginBottom());
-		northPanel = new SimpleLayoutPanel();
 		fillNorthPanel(options);
-		addNorth(northPanel, 100);
+		addNorth(filterPanel, 110);
 		centerPanel = new SimpleLayoutPanel();
 		add(centerPanel);
 		if (!options.isDontRunOnOpen()) {
@@ -354,7 +360,8 @@ public class JournalPanelReport extends DockLayoutPanel implements Focusable, Ha
 		}
 		tab.getCellFormatter().setStyleName(0,6, AON.CSS.aonSearchPanelLabel());
 		
-		cleanButton = new AonSearchPanelButton(AON.MSG.clean(),AON.CSS.aonIconClear());
+		cleanButton = new AonSearchPanelButton(AON.MSG.reset(),AON.CSS.aonIconClear());
+		cleanButton.addStyleName(AON.CSS.aonMarginRight());		
 		cleanButton.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
@@ -378,10 +385,20 @@ public class JournalPanelReport extends DockLayoutPanel implements Focusable, Ha
 		});
 
 		refreshButton = new AonSearchPanelButton(AON.MSG.refresh(),AON.CSS.aonIconRefresh());
+		refreshButton.addStyleName(AON.CSS.aonMarginRight());		
 		refreshButton.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
 				onSearch(options);
+			}
+		});
+		
+		AonSearchPanelButton closeButton = new AonSearchPanelButton(AON.MSG.close(),AON.CSS.aonIconClose());
+		closeButton.addClickHandler(new ClickHandler() {
+			
+			@Override
+			public void onClick(ClickEvent event) {
+				JournalPanelReport.this.closeFilterPanel();
 			}
 		});
 
@@ -434,14 +451,19 @@ public class JournalPanelReport extends DockLayoutPanel implements Focusable, Ha
 		tab.getFlexCellFormatter().setColSpan(2, 5, 2);
 		
 		FlowPanel buttonsPanel = new FlowPanel();
-		buttonsPanel.add( cleanButton );
+		buttonsPanel.setStyleName(AON.CSS.aonTextRight());
+		buttonsPanel.addStyleName(AON.CSS.aonPaddingRight());
+		buttonsPanel.addStyleName(AON.CSS.aonNowrap());
+		buttonsPanel.addStyleName(AON.CSS.aonWidthAll());
+		buttonsPanel.add( cleanButton );     
 		buttonsPanel.add( refreshButton );
-		tab.setWidget(2, 6, buttonsPanel);
+		buttonsPanel.add( closeButton );
+		tab.setWidget(0, 7, buttonsPanel);
 
 		ScrollPanel scrollPanel = new ScrollPanel();
 		scrollPanel.addStyleName(AON.CSS.aonWidthAll());
 		scrollPanel.setWidget(tab);
-		northPanel.setWidget(scrollPanel);
+		filterPanel.setWidget(scrollPanel);
 	}
 
 	@Override
@@ -510,6 +532,52 @@ public class JournalPanelReport extends DockLayoutPanel implements Focusable, Ha
 			.setComments(comments.getValue())
 			.setSecurityLevel(confidential!=null?SecurityLevel.safeValueOf(confidential.getSelectedIndex()):SecurityLevel.OFFICIAL)
 			.setOrder(order.getSelectedIndex());
+	}
+	
+	public void closeFilterPanel() {
+		JournalPanelReport.this.setWidgetSize(filterPanel, 0);
+		JournalPanelReport.this.animate(500, new AnimationCallback() {
+			
+			@Override
+			public void onAnimationComplete() {
+				MinimizeEvent.fire(JournalPanelReport.this);
+			}
+			@Override
+			public void onLayout(Layer arg0, double arg1) {							
+			}
+			
+		});
+	}
+	
+	public void openFilterPanel() {
+		JournalPanelReport.this.setWidgetSize(filterPanel, 110);
+		JournalPanelReport.this.animate(500, new AnimationCallback() {
+			
+			@Override
+			public void onAnimationComplete() {
+				MaximizeEvent.fire(JournalPanelReport.this);
+			}
+			@Override
+			public void onLayout(Layer arg0, double arg1) {							
+			}
+			
+		});
+	}
+	
+	public boolean isFilterPanelOpened() {
+		double filterPanelSize = getWidgetSize(filterPanel);
+		if (Double.compare(filterPanelSize, 0.0) == 0) {
+			return false;
+		}
+		return true;
+	}
+	
+	public HandlerRegistration addFilterMinimizeHandler(MinimizeHandler handler) {
+		return addHandler(handler, MinimizeEvent.getType());
+	}
+
+	public HandlerRegistration addFilterMaximizeHandler(MaximizeHandler handler) {
+		return addHandler(handler, MaximizeEvent.getType());
 	}
 	
 }

@@ -461,6 +461,11 @@ public class SmartContractSalaryCalculator<T extends ISalary> extends GenericCon
 		public Double getAdditionalBase() throws AonException {
 			return delegate.getAdditionalBase();
 		}
+		
+		@Override
+		public Double getLackPeriodBase() throws AonException {
+			return delegate.getLackPeriodBase();
+		}
 
 		public List<ITimedResult<Double>> quote(IContractPayment payment, Date start, Date end, double amount)
 				throws AonException {
@@ -502,7 +507,8 @@ public class SmartContractSalaryCalculator<T extends ISalary> extends GenericCon
 				|| ContextVariable.ERE_FORCE.getName().equals(payment.getName()) 
 				|| ContextVariable.PREST_IT.equals(payment.getName()) 
 				|| ContextVariable.MATERNITY.getName().equals(payment.getName())
-				|| ContextVariable.DIRECT_PAY.getName().equals(payment.getName())) {
+				|| ContextVariable.DIRECT_PAY.getName().equals(payment.getName()) 
+				|| ContextVariable.LACK_PERIOD.getName().equals(payment.getName())) {
 					return delegate.quote(payment, start, end, amount);
 			}
 

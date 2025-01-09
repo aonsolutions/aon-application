@@ -84,7 +84,15 @@ public class AccountJournalReport extends MainEntryPoint {
 		
 		AON.ensureInjected();
 		DockLayoutPanel dockLayoutPanel = new DockLayoutPanel(Unit.PX);
+		final AonToolbarButton filterButton = new AonToolbarButton("", AON.CSS.aonToolbarFilterContainer());
 		JournalPanelReport panel = new JournalPanelReport( options );
+		
+		panel.addFilterMaximizeHandler(event -> {
+        	filterButton.setHTML("<span class='material-icons'>filter_alt_off</span>");
+		});
+		panel.addFilterMinimizeHandler(event -> {
+			filterButton.setHTML("<span class='material-icons'>filter_alt</span>");
+		});
 		
 		AonToolbar toolbar = new AonToolbar(AON.MSG.journalBook());
 		FormPanel diskForm = new FormPanel("_blank");
@@ -180,6 +188,23 @@ public class AccountJournalReport extends MainEntryPoint {
 			}
 		});
 		toolbar.add(excel);
+		
+		filterButton.setHTML("<span class='material-icons'>filter_alt_off</span>");
+				
+		filterButton.addClickHandler(new ClickHandler() {
+	
+		    @Override
+		    public void onClick(ClickEvent event) {
+		        if (panel.isFilterPanelOpened()) {
+		        	panel.closeFilterPanel();
+			    } else {
+		            panel.openFilterPanel();
+	
+		        }
+		    }
+		});
+				
+		toolbar.add(filterButton);
 
 		dockLayoutPanel.addNorth(toolbar, AonToolbar.HEIGTH);
 		dockLayoutPanel.add( panel );

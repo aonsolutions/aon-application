@@ -175,7 +175,10 @@ class Model303AEAT2024T3 extends Model303AEAT {
 		DockLayoutPanel simplifiedTableContainer = new DockLayoutPanel(Unit.PX);
 		
 		simplifiedRegimeActivities = new Model303AEAT2023SimplifiedRegimeActivities(() -> getModel());
-		simplifiedRegimeActivities.addValueChangeHandler(e -> calculateAndRefresh());
+		simplifiedRegimeActivities.addValueChangeHandler(e -> {
+			calculateAndRefresh();
+			markAsDirty();
+		});
 		simplifiedTableContainer.addNorth( simplifiedRegimeActivities, 300);
 		
 		SimpleLayoutPanel layout = new SimpleLayoutPanel();

@@ -10,6 +10,7 @@ public class AonCustomTable extends HTMLPanel {
 
 	private static final String EMPTY_STRING = "";
 	private HTMLPanel header;
+	private HTMLPanel footer;
 	
 	public AonCustomTable() {
 		super(EMPTY_STRING);
@@ -44,6 +45,33 @@ public class AonCustomTable extends HTMLPanel {
 			label.getElement().getStyle().setProperty("width", "-webkit-fill-available");
 		} else label.getElement().getStyle().setProperty("min-width", width);
 		header.add(label);
+		addInlineStyle(label, styles);
+		return label;
+	}
+	
+	public void createFooter() {
+		footer = new HTMLPanel(EMPTY_STRING);
+		addFooterStyle();
+		add(footer);
+	}
+	
+	public Label addFooter(Label label, String width) {
+		addCellFooterStyle(label);
+		if(AonStringUtils.equalsIgnoreCase(width, "-moz-available")) {
+			label.getElement().getStyle().setProperty("width", width);
+			label.getElement().getStyle().setProperty("width", "-webkit-fill-available");
+		} else label.getElement().getStyle().setProperty("min-width", width);
+		footer.add(label);
+		return label;
+	}
+	
+	public Label addFooter(Label label, String width, String styles) {
+		addCellFooterStyle(label);
+		if(AonStringUtils.equalsIgnoreCase(width, "-moz-available")) {
+			label.getElement().getStyle().setProperty("width", width);
+			label.getElement().getStyle().setProperty("width", "-webkit-fill-available");
+		} else label.getElement().getStyle().setProperty("min-width", width);
+		footer.add(label);
 		addInlineStyle(label, styles);
 		return label;
 	}
@@ -91,9 +119,18 @@ public class AonCustomTable extends HTMLPanel {
 		header.addStyleName(AON.CSS.aonItemFlex());
 		header.addStyleName(AON.CSS.aonCustomTableHeader());
 	}
+	
+	public void addFooterStyle() {
+		footer.addStyleName(AON.CSS.aonItemFlex());
+		footer.addStyleName(AON.CSS.aonCustomTableFooter());
+	}
 
 	public void addCellHeaderStyle(Label label) {
 		label.addStyleName(AON.CSS.aonCustomTableCellHeader());
+	}
+	
+	public void addCellFooterStyle(Label label) {
+		label.addStyleName(AON.CSS.aonCustomTableCellFooter());
 	}
 	
 	public HTMLPanel createRow() {

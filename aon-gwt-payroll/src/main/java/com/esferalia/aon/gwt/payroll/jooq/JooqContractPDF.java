@@ -407,7 +407,7 @@ public class JooqContractPDF {
 			extensionInfo.put("Cifra25", "2");
 			extensionInfo.put("Cifra26", "4");
 			
-			if(null != municipalityCode) {
+			if(AonStringUtils.isNotBlank(municipalityCode)) {
 				extensionInfo.put("Texto12", municipality);
 				extensionInfo.put("Cifra27", municipalityCode.substring(0, 1));
 				extensionInfo.put("Cifra28", municipalityCode.substring(1, 2));

@@ -17,6 +17,8 @@ import com.esferalia.aon.gwt.payroll.client.PayrollEmailDialog.Type;
 import com.esferalia.aon.gwt.payroll.shared.AFIChanges;
 import com.esferalia.aon.gwt.payroll.shared.ActivitiesCCC;
 import com.esferalia.aon.gwt.payroll.shared.ActivityInfo;
+import com.esferalia.aon.gwt.payroll.shared.ActivitySummaryObject;
+import com.esferalia.aon.gwt.payroll.shared.ActivitySummaryParams;
 import com.esferalia.aon.gwt.payroll.shared.AgrarianJourney;
 import com.esferalia.aon.gwt.payroll.shared.Agreement;
 import com.esferalia.aon.gwt.payroll.shared.AgreementInfo;
@@ -39,13 +41,13 @@ import com.esferalia.aon.gwt.payroll.shared.EmployeeContractInfo;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeSegSocial;
 import com.esferalia.aon.gwt.payroll.shared.Enterprise;
 import com.esferalia.aon.gwt.payroll.shared.EnterpriseContext;
-import com.esferalia.aon.gwt.payroll.shared.EnterpriseITStatus;
 import com.esferalia.aon.gwt.payroll.shared.EnterpriseITStatus.ItNotExist;
 import com.esferalia.aon.gwt.payroll.shared.EnterpriseStatus;
 import com.esferalia.aon.gwt.payroll.shared.Extra;
 import com.esferalia.aon.gwt.payroll.shared.IT;
 import com.esferalia.aon.gwt.payroll.shared.ITEmployee;
 import com.esferalia.aon.gwt.payroll.shared.ITPart;
+import com.esferalia.aon.gwt.payroll.shared.ItParams;
 import com.esferalia.aon.gwt.payroll.shared.Mail;
 import com.esferalia.aon.gwt.payroll.shared.MainCCCInfo;
 import com.esferalia.aon.gwt.payroll.shared.Payment;
@@ -433,15 +435,15 @@ public class EnterprisesServiceAsyncDecorator implements
 	}
 
 	@Override
-	public void createNewCRA(String domainName, String user, long findingDate, List<String> ccc, ArrayList<Integer> cccIds, Integer cccId, String type, AsyncCallback<Void> callback) throws IllegalArgumentException {
+	public void createNewCRA(String domainName, String user, long findingDate, HashMap<Integer, String> cccs, Integer cccId, String type, AsyncCallback<Void> callback) throws IllegalArgumentException {
 		AON.start();
-		enterprisesServiceAsync.createNewCRA(domainName, user, findingDate, ccc, cccIds, cccId, type, new AsyncCallbackWrapper<Void>(callback));
+		enterprisesServiceAsync.createNewCRA(domainName, user, findingDate, cccs, cccId, type, new AsyncCallbackWrapper<Void>(callback));
 	}
 	
 	@Override
-	public void checkCreateNewCRA(String domainName, long findingDate, ArrayList<Integer> cccList, AsyncCallback<Void> callback) throws IllegalArgumentException {
+	public void checkCreateNewCRA(String domainName, long findingDate, HashMap<Integer, String> cccs, AsyncCallback<Void> callback) throws IllegalArgumentException {
 		AON.start();
-		enterprisesServiceAsync.checkCreateNewCRA(domainName, findingDate, cccList, new AsyncCallbackWrapper<Void>(callback));
+		enterprisesServiceAsync.checkCreateNewCRA(domainName, findingDate, cccs, new AsyncCallbackWrapper<Void>(callback));
 	}
 
 	@Override
@@ -587,23 +589,15 @@ public class EnterprisesServiceAsyncDecorator implements
 	
 	@Override
 	public void getEnterpriseStatus(String domain, String user, Integer enterpriseId,
-			AsyncCallback<EnterpriseStatus> callback) {
+			AsyncCallback<EnterpriseStatus> callback) throws IllegalArgumentException {
 		AON.start();
 		enterprisesServiceAsync.getEnterpriseStatus(domain, user, enterpriseId, new AsyncCallbackWrapper<EnterpriseStatus>(callback));
 	}
 
 	@Override
-	public void getEnterpriseITStatus(String domain, String user, 
-			AsyncCallback<EnterpriseITStatus> callback) {
+	public void getEmployeeItList(String currentDomainName, ItParams params, AsyncCallback<List<ITEmployee>> callback) {
 		AON.start();
-		enterprisesServiceAsync.getEnterpriseITStatus(domain, user, new AsyncCallbackWrapper<EnterpriseITStatus>(callback));
-	}
-
-
-	@Override
-	public void getEmployeesITInfo(String currentDomainName, Boolean allEmployees, AsyncCallback<List<ITEmployee>> callback) {
-		AON.start();
-		enterprisesServiceAsync.getEmployeesITInfo(currentDomainName, allEmployees, new AsyncCallbackWrapper<List<ITEmployee>>(callback));
+		enterprisesServiceAsync.getEmployeeItList(currentDomainName, params, new AsyncCallbackWrapper<List<ITEmployee>>(callback));
 	}
 	
 	@Override
@@ -809,15 +803,6 @@ public class EnterprisesServiceAsyncDecorator implements
 	}
 
 	@Override
-	public void deleteComunicateIT(String currentDomainName, String currentUser, String affiliationNumber,
-			String regime, String contributionAccount, Date dateFrom, Date dateTo, Date startDate,
-			AsyncCallback<Void> callback) throws IllegalArgumentException {
-		AON.start();
-		enterprisesServiceAsync.deleteComunicateIT(currentDomainName, currentUser, affiliationNumber,
-				regime, contributionAccount, dateFrom, dateTo, startDate, new AsyncCallbackWrapper<Void>(callback));
-	}
-	
-	@Override
 	public void syncITs(String currentDomainName, String currentUser, AsyncCallback<Void> callback) throws IllegalArgumentException {
 		AON.start();
 		enterprisesServiceAsync.syncITs(currentDomainName, currentUser, new AsyncCallbackWrapper<Void>(callback));
@@ -849,37 +834,6 @@ public class EnterprisesServiceAsyncDecorator implements
 			AsyncCallback<Boolean> callback) {
 		AON.start();
 		enterprisesServiceAsync.checkIfRectificative(currentDomainName, findingDate, selectedCCCList, new AsyncCallbackWrapper<Boolean>(callback));
-	}
-
-	@Override
-	public void registerITBaja(String domainName, String userLogin, String regime, String ccc, String naf,
-			String contingency, String situation_employee, String licenseNumber,
-			String cias, String occupation, Date startdate, String contractType,
-			float baseCot, int cotDays, Date fATEP, String accidentType, String job, String jobDescription,
-			AsyncCallback<Void> callback) {
-		AON.start();
-		enterprisesServiceAsync.registerITBaja(domainName, userLogin, regime, ccc, naf, contingency, situation_employee, licenseNumber,
-				cias, occupation, startdate, contractType, baseCot, cotDays, fATEP, accidentType, job, jobDescription, new AsyncCallbackWrapper<Void>(callback));
-	}
-
-	@Override
-	public void registerITConfirmation(String domainName, String userLogin, String regime, String ccc, String naf,
-			String contingency, String situation_employee, String licenseNumber,
-			String cias, Date fbaja, Date fconfirmation, String npartConfimation,
-			AsyncCallback<Void> callback) {
-		AON.start();
-		enterprisesServiceAsync.registerITConfirmation(domainName, userLogin, regime, ccc, naf,
-				contingency, situation_employee, licenseNumber, cias, fbaja, fconfirmation, npartConfimation, new AsyncCallbackWrapper<Void>(callback));
-	}
-
-	@Override
-	public void registerITAlta(String domainName, String userLogin, String regime, String ccc, String naf,
-			String contingency, String situation_employee, String licenseNumber,
-			String cias, Date fbaja, Date falta, Date fATEP, String accidentType,
-			String causeType, AsyncCallback<Void> callback) {
-		AON.start();
-		enterprisesServiceAsync.registerITAlta(domainName, userLogin, regime, ccc, naf, contingency, situation_employee, licenseNumber,
-				cias, fbaja, falta, fATEP, accidentType, causeType, new AsyncCallbackWrapper<Void>(callback));
 	}
 
 	@Override
@@ -1025,10 +979,10 @@ public class EnterprisesServiceAsyncDecorator implements
 	}
 
 	@Override
-	public void communicateITPart(String currentDomainName, String currentUser, ITEmployee itEmployee, IT it, ITPart part,
+	public void sendEconomicData(String currentDomainName, String currentUser, ITEmployee itEmployee, IT it, ITPart part,
 			AsyncCallback<Void> asyncCallback) throws IllegalArgumentException {
 		AON.start();
-		enterprisesServiceAsync.communicateITPart(currentDomainName, currentUser, itEmployee, it, part, asyncCallback);
+		enterprisesServiceAsync.sendEconomicData(currentDomainName, currentUser, itEmployee, it, part, asyncCallback);
 	}
 
 	@Override
@@ -1279,6 +1233,14 @@ public class EnterprisesServiceAsyncDecorator implements
 	public void checkPensionPlanAFI(String domainName, String currentUser, long date, List<Integer> cccIdList, AsyncCallback<String> callback) throws IllegalArgumentException {
 		AON.start();
 		enterprisesServiceAsync.checkPensionPlanAFI(domainName, currentUser, date, cccIdList, callback);
+	}
+
+	// ------------------------------------------------ Activity Summary
+	
+	@Override
+	public void getActivitySummary(String domainName, String currentUser, ActivitySummaryParams params, AsyncCallback<List<ActivitySummaryObject>> callback) throws IllegalArgumentException {
+		AON.start();
+		enterprisesServiceAsync.getActivitySummary(domainName, currentUser, params, callback);
 	}
 
 }

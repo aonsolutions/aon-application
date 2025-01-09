@@ -32,6 +32,7 @@ export class AonMobileDeliveryPackaging extends AonElement {
 	packaging;
 
 	ELABORATION_TOOLBAR;
+	DELIVERY_TOOLBAR;
 
 	get id() {
 		return this.getAttribute(CONSTANT.ID);
@@ -49,6 +50,10 @@ export class AonMobileDeliveryPackaging extends AonElement {
 		this.initialize();
 		this.build();
     }
+
+	disconnectedCallback() {
+		this.removeToolbar();
+	}
 
 	initialize() {
 		this.id = this.id || 'aonPackage';
@@ -77,15 +82,39 @@ export class AonMobileDeliveryPackaging extends AonElement {
 		this.appendChild(div);
 		this.buildPackage(div);
 
-		let toolbar = this.getElement(this.ELABORATION_TOOLBAR);		
-		toolbar.removeButton(ACTION.PRINT.id);
-		toolbar.addButtonAfter(ACTION.PRINT, () => this.print());
+		this.buildToolbar();
+	}
+
+	buildToolbar() {
+		if(this.ELABORATION_TOOLBAR) {
+			let elaborationToolbar = this.getElement(this.ELABORATION_TOOLBAR);	
+			elaborationToolbar.removeButton(ACTION.PRINT.id);
+			elaborationToolbar.addButtonAfter(ACTION.PRINT, () => this.print());
+		}	
+
+
+		if(this.DELIVERY_TOOLBAR) {
+			let deliveryToolbar = this.getElement(this.DELIVERY_TOOLBAR);
+			deliveryToolbar.addButtonAfter(ACTION.DELETE, () => this.deleteFromDelivery());
+		}	
+	}
+
+	removeToolbar() {
+		if(this.ELABORATION_TOOLBAR) {
+			let elaborationToolbar = this.getElement(this.ELABORATION_TOOLBAR);	
+			elaborationToolbar.removeButton(ACTION.PRINT.id);
+		}	
+
+		if(this.DELIVERY_TOOLBAR) {
+			let deliveryToolbar = this.getElement(this.DELIVERY_TOOLBAR);	
+			deliveryToolbar.removeButton(ACTION.DELETE.id);
+		}
 	}
 
   	buildPackage(parent){
 		this.buildPackageGeneral(parent);
 		this.buildPackageComposition(parent);
-		if(this.packaging.composition.length === 1)
+		if(this.packaging.composition && this.packaging.composition.length === 1)
 			this.buildTag(parent);
 	}
 
@@ -171,6 +200,10 @@ export class AonMobileDeliveryPackaging extends AonElement {
 		openFileUrl(fileUrl, 'application/pdf');
 	}
 
+	deleteFromDelivery() {
+		this.getApplication().development();
+	}
+
 	
 	setPackaging(packaging) {
 		this.packaging = packaging; //new Package(elaboration);
@@ -178,6 +211,10 @@ export class AonMobileDeliveryPackaging extends AonElement {
 
 	setElaborationToolbar(toolbar) {
 		this.ELABORATION_TOOLBAR = toolbar;
+	}
+
+	setDeliveryToolbar(toolbar) {
+		this.DELIVERY_TOOLBAR = toolbar;
 	}
 }
 

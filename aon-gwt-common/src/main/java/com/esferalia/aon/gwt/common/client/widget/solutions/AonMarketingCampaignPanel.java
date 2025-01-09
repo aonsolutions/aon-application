@@ -15,7 +15,6 @@ import com.esferalia.aon.occam.api.model.task.TaskHolder;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler;
-import com.google.gwt.dom.client.Element;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.KeyCodes;
@@ -24,12 +23,9 @@ import com.google.gwt.event.dom.client.KeyUpHandler;
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
-import com.google.gwt.user.client.ui.InlineLabel;
-import com.google.gwt.user.client.ui.ListBox;
+import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.SimplePanel;
-import com.google.gwt.user.client.ui.TextBox;
 
 public abstract class AonMarketingCampaignPanel extends SimplePanel {
 	
@@ -46,15 +42,16 @@ public abstract class AonMarketingCampaignPanel extends SimplePanel {
 			commonService = new CommonServiceAsyncDecorator(commonServiceRaw);
 		}
 	}
+
+	private HTMLPanel messagePanel = new HTMLPanel(AonStringUtils.EMPTY);
 	
-	private TextBox description = new TextBox();
-	private AonDoubleBox budget = new AonDoubleBox(15, 2);
-	private AonDoubleBox expense = new AonDoubleBox(15, 2);
-	private ListBox scope = new ListBox();
-	private ListBox workgroup = new ListBox();
-	private InlineLabel taskHolderLabel = new InlineLabel("Asignado a");
-	private ListBox taskHolder = new ListBox();
-	private Button active = new Button();
+	private AonCustomTextBox description = new AonCustomTextBox("Descripci\u00f3n");
+	private AonCustomNumberBox budget = new AonCustomNumberBox("Presupuesto");
+	private AonCustomNumberBox expense = new AonCustomNumberBox("Gastos");
+	private AonCustomListBox scope = new AonCustomListBox("Ambito");
+	private AonCustomListBox workgroup = new AonCustomListBox("C. Trabajo");
+	private AonCustomListBox taskHolder = new AonCustomListBox("Asignado a");
+	private AonCustomCheckBox active = new AonCustomCheckBox("Activo");
 	
 	public AonMarketingCampaignPanel(final String domainName,final int domain, final String user, final LinkedList<Scope> aviableScopes, final AonMarketingCampaignPanelCallback callback) {
 		initializeCommonService();
@@ -62,17 +59,13 @@ public abstract class AonMarketingCampaignPanel extends SimplePanel {
 	}
 	
 	public void show(final String domainName, final int domain, final String user, final LinkedList<Scope> aviableScopes, final MarketingCampaign marketingCampaign, final AonMarketingCampaignPanelCallback callback) {
-		getElement().getStyle().setProperty("padding", "1rem 0");
+		getElement().getStyle().setProperty("padding", "1rem");
+		getElement().getStyle().setProperty("min-width", "20rem");
 		
 		FlowPanel rootPanel = new FlowPanel();
 		rootPanel.setStyleName(AON.CSS.aonFlexColumnBetween());
 		
-		final AonErrorPanel errorPanel = new AonErrorPanel();
-		errorPanel.addStyleName(AON.CSS.aonMarginTop());
-		rootPanel.add(errorPanel);
-		
-		FlowPanel tablePanel = new FlowPanel();
-		tablePanel.setStyleName(AON.CSS.aonScrollArea());
+		rootPanel.add(messagePanel);
 		
 		KeyUpHandler keyUpHandler = new KeyUpHandler() {
 			@Override
@@ -83,86 +76,59 @@ public abstract class AonMarketingCampaignPanel extends SimplePanel {
 			}
 		};
 
-		FlexTable table = new FlexTable();
-		table.setStyleName(AON.CSS.aonTable());
-		table.getElement().getStyle().setProperty("width", "30rem");
+		description.getTextBox().setMaxLength(64);
+		rootPanel.add(description);
 		
-		table.setWidget(0, 0, new InlineLabel("Descripci\u00f3n"));
-		table.getCellFormatter().setStyleName(0, 0, AON.CSS.aonTableLabel());
-		description.setMaxLength(64);
-		description.setStyleName(AON.CSS.aonInputText());
-		addInputStyle(description.getElement());
-
-		table.setWidget(0,1,description);
-		table.getFlexCellFormatter().setColSpan(0, 1, 3);
+		HTMLPanel amountsPanel = new HTMLPanel(AonStringUtils.EMPTY);
+		amountsPanel.addStyleName(AON.CSS.aonItemFlex());
 		
-		table.setWidget(1,0,new InlineLabel("Presupuesto"));
-		table.getCellFormatter().setStyleName(1, 0, AON.CSS.aonTableLabel());
-		addInputStyle(budget.getElement());
-		table.setWidget(1,1,budget);
+		budget.hideNearBy();
+		amountsPanel.add(budget);
+		expense.hideNearBy();
+		amountsPanel.add(expense);
 		
-		table.setWidget(1,2,new InlineLabel("Gastos"));
-		table.getCellFormatter().setStyleName(1, 2, AON.CSS.aonTableLabel());
-		addInputStyle(expense.getElement());
-		table.setWidget(1,3,expense);
+		rootPanel.add(amountsPanel);
 		
-		workgroup = new ListBox();
-		addSelectStyle(workgroup.getElement());
+		HTMLPanel holderPanel = new HTMLPanel(AonStringUtils.EMPTY);
+		holderPanel.addStyleName(AON.CSS.aonItemFlex());
+		
 		workgroup.addItem("-", "");
 		workgroup.addChangeHandler(e -> {
-			if(workgroup.getSelectedIndex() == 0) {
-				taskHolder.setSelectedIndex(0);
+			if(workgroup.getListBox().getSelectedIndex() == 0) {
+				taskHolder.getListBox().setSelectedIndex(0);
 				taskHolder.setVisible(false);
-				taskHolderLabel.setVisible(false);
 			} else {
 				taskHolder.setVisible(true);
-				taskHolderLabel.setVisible(true);
-				getAviableTaskHolders(domainName, domain, user, Integer.parseInt(workgroup.getSelectedValue()), taskHolders -> { 
-					taskHolder.clear();
+				getAviableTaskHolders(domainName, domain, user, Integer.parseInt(workgroup.getListBox().getSelectedValue()), taskHolders -> { 
+					taskHolder.clearItems();
 					taskHolder.addItem("-", "");
 					taskHolders.forEach(taskHolderIt -> taskHolder.addItem(taskHolderIt.getName(), taskHolderIt.getRegistry().toString()));
 				});
 			}
 		});
 		
-		taskHolder = new ListBox();
-		addSelectStyle(taskHolder.getElement());
-		taskHolder.addItem("-", "");
+		holderPanel.add(workgroup);
 		
+		taskHolder.addItem("-", "");
 		getAviableWorkgroups(domainName, domain, user, workgroups -> {
 			workgroups.forEach(workgroupIt -> workgroup.addItem(workgroupIt.getDescription(), workgroupIt.getId().toString()));
 			taskHolder.setVisible(false);
-			taskHolderLabel.setVisible(false);
 		});
+
+		holderPanel.add(taskHolder);
 		
-		table.setWidget(3,0,new InlineLabel("Grupo trabajo"));
-		table.getCellFormatter().setStyleName(3, 0, AON.CSS.aonTableLabel());
-		table.setWidget(3,1,workgroup);
+		rootPanel.add(holderPanel);
 		
-		table.setWidget(3,2,taskHolderLabel);
-		table.getCellFormatter().setStyleName(3, 2, AON.CSS.aonTableLabel());
-		table.setWidget(3,3,taskHolder);
+		HTMLPanel scopeActivePanel = new HTMLPanel(AonStringUtils.EMPTY);
+		scopeActivePanel.addStyleName(AON.CSS.aonItemFlex());
 		
-		table.setWidget(4,0,new InlineLabel(AON.MSG.scope()));
-		table.getCellFormatter().setStyleName(4, 0, AON.CSS.aonTableLabel());
-		scope.clear();
-		addSelectStyle(scope.getElement());
+		scope.clearItems();
 		aviableScopes.forEach(as -> scope.addItem(as.getDescription(), as.getId().toString()));
-		scope.setStyleName(AON.CSS.aonInputText());
-		table.setWidget(4,1,scope);
+		active.setValue(true);
+		scopeActivePanel.add(scope);
+		scopeActivePanel.add(active);
 		
-		active = new Button();
-		table.setWidget(5,0,new InlineLabel("Activo"));
-		table.getCellFormatter().setStyleName(5, 0, AON.CSS.aonTableLabel());
-		getEnableDisableButton(active, true);
-		active.addClickHandler(e -> getEnableDisableButton(active, !isActiveToggleButton(active)));
-		table.setWidget(5,1,active);
-		
-		table.getColumnFormatter().getElement(0).getStyle().setProperty("width", "3rem");
-		
-		tablePanel.add( table );
-		
-		rootPanel.add( tablePanel );
+		rootPanel.add(scopeActivePanel);
 		
 		FlowPanel buttons = new FlowPanel();
     	buttons.setStyleName(AON.CSS.aonTextCenter());
@@ -179,13 +145,13 @@ public abstract class AonMarketingCampaignPanel extends SimplePanel {
 				okButton.setEnabled(false);
 				
 				marketingCampaign.setDomain(domain);
-				marketingCampaign.setActive(isActiveToggleButton(active));
+				marketingCampaign.setActive(active.getValue());
 				marketingCampaign.setDescription(description.getValue());
-				marketingCampaign.setScope(new Scope().setId(Integer.parseInt(scope.getSelectedValue())));
+				marketingCampaign.setScope(new Scope().setId(Integer.parseInt(scope.getValue())));
 				marketingCampaign.setBudget(budget.getValue());
 				marketingCampaign.setExpense(expense.getValue());
-				marketingCampaign.setWorkgroup(0 == workgroup.getSelectedIndex() ? null : new Workgroup().setId(Integer.parseInt(workgroup.getSelectedValue())));
-				marketingCampaign.setTaskHolder(0 == taskHolder.getSelectedIndex() ? null : new TaskHolder().setRegistry(Integer.parseInt(taskHolder.getSelectedValue())));
+				marketingCampaign.setWorkgroup(AonStringUtils.isBlank(workgroup.getValue()) ? null : new Workgroup().setId(Integer.parseInt(workgroup.getValue())));
+				marketingCampaign.setTaskHolder(AonStringUtils.isBlank(taskHolder.getValue()) ? null : new TaskHolder().setRegistry(Integer.parseInt(taskHolder.getValue())));
 				
 				commonService.saveMarketingCampaign(domainName, domain, user, marketingCampaign, new AsyncCallback<MarketingCampaign>() {
 
@@ -195,7 +161,7 @@ public abstract class AonMarketingCampaignPanel extends SimplePanel {
 					}
 					@Override
 					public void onFailure(Throwable caught) {
-						errorPanel.showError(caught.getMessage());
+						AonMessagePanel.showError(messagePanel, caught.getMessage());
 						okButton.setEnabled(true);
 					}
 				});
@@ -230,32 +196,6 @@ public abstract class AonMarketingCampaignPanel extends SimplePanel {
 		
 	}
 	
-	private void getEnableDisableButton(Button button, boolean disabled) {
-		button.removeStyleName(disabled ? AON.AON_ICON_DISABLE : AON.AON_ICON_ENABLE);
-		button.removeStyleName(AON.AON_NO_MARGIN);
-		button.removeStyleName(AON.AON_EDIT_DATA_TABLE_BUTTON);
-		
-		button.setStyleName(!disabled ? AON.AON_ICON_DISABLE : AON.AON_ICON_ENABLE );
-		button.setStyleName(AON.AON_NO_MARGIN, true);
-		button.setStyleName(AON.AON_EDIT_DATA_TABLE_BUTTON, true);
-	}
-	
-	private boolean isActiveToggleButton(Button button) {
-		return AonStringUtils.containsIgnoreCase(button.getStyleName(), AON.AON_ICON_ENABLE);
-	}
-	
-	private void addInputStyle(Element el) {
-		el.getStyle().setProperty("width", "-moz-available");
-		el.getStyle().setProperty("width", "-webkit-fill-available");
-		el.getStyle().setProperty("height", "1.1rem");
-	}
-	
-	private void addSelectStyle(Element el) {
-		el.getStyle().setProperty("width", "-moz-available");
-		el.getStyle().setProperty("width", "-webkit-fill-available");
-		el.getStyle().setProperty("height", "1.2rem");
-	}
-	
 	private void getAviableWorkgroups(final String domainName,final int domain, final String user, Consumer<List<Workgroup>> success) {
 		commonService.getAviableWorkgroups(domainName, domain, user, new AsyncCallback<List<Workgroup>>() {
 			
@@ -266,7 +206,7 @@ public abstract class AonMarketingCampaignPanel extends SimplePanel {
 			
 			@Override
 			public void onFailure(Throwable caught) {
-//				errorPanel.showError(caught.getMessage());
+				AonMessagePanel.showError(messagePanel, caught.getMessage());
 			}
 		});
 	}
@@ -281,9 +221,13 @@ public abstract class AonMarketingCampaignPanel extends SimplePanel {
 			
 			@Override
 			public void onFailure(Throwable caught) {
-//				errorPanel.showError(caught.getMessage());
+				AonMessagePanel.showError(messagePanel, caught.getMessage());
 			}
 		});
+	}
+	
+	public void focusDescription() {
+		description.setFocus(true);
 	}
 
 	protected abstract void onResize();

@@ -3870,6 +3870,7 @@ CREATE TABLE `fs_model190_detail` (
   `araba_retention` decimal(15,3) NOT NULL DEFAULT '0.000',
   `bizkaia_retention` decimal(15,3) NOT NULL DEFAULT '0.000',
   `gipuzkoa_retention` decimal(15,3) NOT NULL DEFAULT '0.000',
+  `excesses` tinyint(1) NOT NULL DEFAULT '0' COMMENT 'Excesos entrega acciones empresas emergentes',
   PRIMARY KEY (`id`),
   KEY `IDX_FS_MODEL190_DETAIL_DOMAIN` (`domain`),
   KEY `IDX_FS_MODEL190_DETAIL_FS_MODEL190` (`fs_model190`),

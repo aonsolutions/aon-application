@@ -153,7 +153,7 @@ export class AonTabs extends AonElement {
 
   moveTabIndicator(ev) {
     const indicatorPosition =  ev.currentTarget.getBoundingClientRect().left - this.TABS_MENU.getBoundingClientRect().left;
-    this.INDICATOR.style.width = `${ev.currentTarget.clientWidth}px`;
+    this.INDICATOR.style.width = `${ev.currentTarget.clientWidth - 0.5}px`;
     this.INDICATOR.style.left = `${indicatorPosition}px`;
   }
 

@@ -71,7 +71,7 @@ export const createSpan = (properties)=> newComponent({
   export const setAttributes = (element, attributes) =>{
     if(element && attributes) 
         for (const key in attributes)  
-          element.setAttribute(key,attributes[key]);
+          element.setAttribute(key, attributes[key]);
     return element;
   }
   

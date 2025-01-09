@@ -29,7 +29,8 @@ import org.htmlunit.html.HtmlButton;
 import org.htmlunit.html.HtmlElement;
 import org.htmlunit.html.HtmlInput;
 import org.htmlunit.html.HtmlPage;
-import org.htmlunit.html.HtmlSubmitInput;
+import org.htmlunit.html.HtmlParagraph;
+import org.htmlunit.html.HtmlTable;
 import org.htmlunit.xml.XmlPage;
 import org.xml.sax.SAXException;
 
@@ -116,7 +117,7 @@ public class ServicioREDSecondaryUser extends ServicioREDRegeXML {
 		return list;
 	}
 	
-	public static byte[] getSecondaryUsersPDF(final InputStream certificateInputStream, final String certificatePassword, final String certificateType) throws SegSocialException, IOException{
+	public static byte[] getSecondaryUsersPDF(final InputStream certificateInputStream, final String certificatePassword, final String certificateType, String autorizationCode) throws SegSocialException, IOException{
 		byte[] certificateData = certificateInputStream.readAllBytes();
 		
 		try (WebClient webClient = HtmlUnitToolkit.getWebClient(certificateData, certificatePassword, certificateType)) {
@@ -129,6 +130,16 @@ public class ServicioREDSecondaryUser extends ServicioREDRegeXML {
 			
 			XmlPage xmlPage = webClient.getPage("https://w2.seg-social.es/ProsaInternet/OnlineAccess?ARQ.SPM.ACTION=LOGIN&ARQ.SPM.APPTYPE=SERVICE&ARQ.IDAPP=XV24P003");
 			HtmlPage document = HtmlUnitToolkit.transformXmlPage(xmlPage);
+			
+			// Check if need to find by authCode
+			try {
+				HtmlTable autorizadTable = document.querySelector("#tabla_lisAutorizad");
+				String enlaceSelector = "#enlace_0" + autorizationCode;
+				System.out.println("----- enlaceSelector : " + enlaceSelector);
+				HtmlAnchor targetLink = autorizadTable.querySelector(enlaceSelector);
+				document = HtmlUnitToolkit.transformXmlPage(targetLink.click());
+			} catch (Exception e) {}
+			
 			
 			HtmlInput sitUsuSec = document.querySelector("#sitUsuSec_1");
 			sitUsuSec.click();
@@ -156,19 +167,24 @@ public class ServicioREDSecondaryUser extends ServicioREDRegeXML {
 				
 				if(docButton != null)
 					return getPDFDocument(docButton);
-				else
-					return null;
+				else {
+					String errorSelector = "#dialogoMensajes  li.ERROR.mensaje p.pr_pMensaje";
+					HtmlParagraph error = document.querySelector(errorSelector);
+					throw new SegSocialException(error.asNormalizedText());
+				}
 				
 			} catch (Exception e) {
 				e.printStackTrace();
+				throw new SegSocialException(e.getMessage());
 			}
 			
 		} catch (FailingHttpStatusCodeException e) {
 			HandleStatusCodeException(e);
+			throw new SegSocialException(e.getMessage());
 		} catch (Exception e) {
 			e.printStackTrace();
+			throw new SegSocialException(e.getMessage());
 		}
-		return null;
 	}
 	
 	private static byte[] getPDFDocument(HtmlElement linkElement) throws IllegalArgumentException {

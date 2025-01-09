@@ -108,5 +108,10 @@ public class CampaignController extends BasicController {
 	public void onStartCampaign(ActionEvent event) {
         changeStatus(CampaignStatus.IN_PROGRESS);
     }
+	
+	public String campaignRemoveAction() {
+		onRemoveCampaign(null);
+		return null;
+	}
 
 }

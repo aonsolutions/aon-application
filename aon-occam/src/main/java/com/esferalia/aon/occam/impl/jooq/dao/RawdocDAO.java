@@ -228,6 +228,9 @@ public class RawdocDAO {
 		ctx.checkWrite();
 
 		Rawdoc r = get(ctx, rawdoc.getId());
+		if(r == null || r.getId() == null) {
+			return insert(ctx, rawdoc);
+		}
 
 		RawdocValidation.validateRawdoc(ctx, rawdoc);
 		ctx.getDslContext()
@@ -321,7 +324,7 @@ public class RawdocDAO {
 		RawdocUserData rawdocUserData = new RawdocUserData();
 		
 		ctx.getDslContext()
-			.select(RAWDOC.DOMAIN, RAWDOC.NATURE, RAWDOC.STATUS, COUNT)
+			.select(DOMAIN.NAME, RAWDOC.DOMAIN, RAWDOC.NATURE, RAWDOC.STATUS, COUNT)
 			.from(RAWDOC)
 			.join(DOMAIN).on(RAWDOC.DOMAIN.eq(DOMAIN.ID))
 			.where(DOMAIN.ID.eq(domain))
@@ -334,14 +337,18 @@ public class RawdocDAO {
 					RawdocNotice notice = rawdocUserData.getInvoiceNotice().get(status);
 					notice.setCount(notice.getCount() + record.getValue(COUNT));
 					notice.getDomains().add(record.getValue(RAWDOC.DOMAIN));
+					notice.getDomainCount().put(record.getValue(DOMAIN.NAME), record.getValue(COUNT));
 					rawdocUserData.getInvoiceNotice().put(status, notice);
 				} else {
-					LinkedList<Integer> ds = new LinkedList<Integer>();
+					LinkedList<Integer> ds = new LinkedList<>();
 					ds.add(record.getValue(RAWDOC.DOMAIN));
+					HashMap<String, Integer> domainCount = new HashMap<>();
+					domainCount.put(record.getValue(DOMAIN.NAME), record.getValue(COUNT));
 					rawdocUserData.getInvoiceNotice()
 						.put(status, new RawdocNotice()
 							.setCount(record.getValue(COUNT))
-							.setDomains(ds));
+							.setDomains(ds)
+							.setDomainCount(domainCount));
 				}
 			});
 		return rawdocUserData;
@@ -391,7 +398,7 @@ public class RawdocDAO {
 		RawdocUserData rawdocUserData = new RawdocUserData();
 		
 		ctx.getDslContext()
-			.select(RAWDOC.DOMAIN, RAWDOC.NATURE, RAWDOC.STATUS, COUNT)
+			.select(domain.NAME, RAWDOC.DOMAIN, RAWDOC.NATURE, RAWDOC.STATUS, COUNT)
 			.from(RAWDOC)
 			.join(domain).on(RAWDOC.DOMAIN.eq(domain.ID))
 			.leftOuterJoin(SCOPE).on(domain.SCOPE.eq(SCOPE.ID))
@@ -408,14 +415,18 @@ public class RawdocDAO {
 					RawdocNotice notice = rawdocUserData.getInvoiceNotice().get(status);
 					notice.setCount(notice.getCount() + record.getValue(COUNT));
 					notice.getDomains().add(record.getValue(RAWDOC.DOMAIN));
+					notice.getDomainCount().put(record.getValue(DOMAIN.NAME), record.getValue(COUNT));
 					rawdocUserData.getInvoiceNotice().put(status, notice);
 				} else {
 					LinkedList<Integer> ds = new LinkedList<Integer>();
 					ds.add(record.getValue(RAWDOC.DOMAIN));
+					HashMap<String, Integer> domainCount = new HashMap<>();
+					domainCount.put(record.getValue(DOMAIN.NAME), record.getValue(COUNT));
 					rawdocUserData.getInvoiceNotice()
 						.put(status, new RawdocNotice()
 							.setCount(record.getValue(COUNT))
-							.setDomains(ds));
+							.setDomains(ds)
+							.setDomainCount(domainCount));
 				}
 			});
 		return rawdocUserData;

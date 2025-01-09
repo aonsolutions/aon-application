@@ -125,17 +125,9 @@
 							<aon:div styleClass="aon-direct-access-list">	
 								<!-- Campañas -->
 								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="marketingCampaign"
-										rendered="#{actionDenied.renderedOption('')}"
-										action="marketingCampaign_list"
-										actionListener="#{marketingCampaign.onSearch}"
+									<aon:commandLink id="marketingCampaignModule" 
+										action="gwt_marketingCampaignModule"
 										value="#{bundle.marketing_campaign_module}" />
-								</aon:div>
-								
-								<!-- Campañas -->
-								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="marketingCampaignModule" action="gwt_marketingCampaignModule"
-										value="#{bundle.marketing_campaign_module} [Nuevo]" />
 								</aon:div>
 								
 								<!-- Centro de Comunicaciones -->

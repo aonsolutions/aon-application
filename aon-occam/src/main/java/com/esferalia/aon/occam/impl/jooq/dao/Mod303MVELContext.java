@@ -96,6 +96,16 @@ public class Mod303MVELContext extends ModelMVELContext implements Map<String, O
 		}
 		return red;
 	}
+	
+	// Cálculo reducción (Lorca o DANA), a partir del 4T del 2024
+	public double calculateReduction2024(int type, double percent, double cuota, double reduction) {
+		if (type == 1) // En exclusiva 
+			return AonMathUtils.round(cuota * percent / 100);
+		else if (type == 2) // En municipios de la reducción y otros municipios (se devuelve lo que haya introducido el usuario)
+			return reduction;
+		else 
+			return 0.0; // No aplicable
+	}
 
 	public double calculateIndiceTemporada(Double dias) {
 		if (dias != null) {

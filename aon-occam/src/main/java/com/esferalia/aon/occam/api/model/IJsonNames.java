@@ -617,10 +617,12 @@ public final class IJsonNames {
 	public static final String TAXABLE_BASE = "taxableBase";
 	public static final String TAG = "tag";
 	public static final String TAX_DATE = "taxDate";
+	public static final String TBAI_ID = "tbaiId";
 	public static final String TECHNICAL = "technical";
 	public static final String TEST = "test";
 	public static final String TEXT_COLOR = "textColor";
 	public static final String THEME = "theme";
+	public static final String THIRD_PART = "thirdPart";
 	public static final String THUMB_URL = "thumbUrl";
 	public static final String TITLE = "title";
 	public static final String TITLE_TEXT_COLOR = "titleTextColor";

@@ -35,9 +35,11 @@ import org.jooq.impl.DSL;
 import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.esferalia.aon.gwt.payroll.shared.CCC;
 import com.esferalia.aon.gwt.payroll.shared.CCCInfo;
+import com.esferalia.aon.payroll.Pair;
 import com.esferalia.aon.payroll.enumeration.CCCType;
 import com.esferalia.aon.payroll.enumeration.SSRegimeType;
 import com.esferalia.aon.watson.server.AonDateUtils;
+import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class JooqEnterprise {
 
@@ -260,6 +262,7 @@ public class JooqEnterprise {
 		
 		List<Record> enterpriseCCCActivities = 
 			dslContext.select().from(ENTERPRISE_CCC)
+			.join(DOMAIN).on(DOMAIN.ID.eq(ENTERPRISE_CCC.DOMAIN))
 			.leftJoin(ENTERPRISE_ACTIVITY)
 			.on(ENTERPRISE_CCC.ENTERPRISE_ACTIVITY.eq(ENTERPRISE_ACTIVITY.ID))
 			.leftJoin(CONTRACT)
@@ -290,9 +293,7 @@ public class JooqEnterprise {
 			.fetch();
 		
 		
-		System.err.println("enterpriseCCCActivities START");
-		
-		List<String> visitedCCCs = new ArrayList<>();
+		List<Pair<Integer, String>> visitedCCCs = new ArrayList<>();
 		
 		for(Record enterprise : enterpriseCCCActivities) {
 			Integer enterpriseActivityId = enterprise.get(ENTERPRISE_ACTIVITY.ID);
@@ -305,8 +306,8 @@ public class JooqEnterprise {
 			
 			String completeCCCAccount = regime + cccCode;
 			
-			if(visitedCCCs.contains(completeCCCAccount)) continue;
-			visitedCCCs.add(completeCCCAccount);
+			if(containsCCCDomain(visitedCCCs, enterprise.get(ENTERPRISE_ACTIVITY.DOMAIN), completeCCCAccount)) continue;
+			visitedCCCs.add(new Pair<Integer, String>(enterprise.get(ENTERPRISE_ACTIVITY.DOMAIN), completeCCCAccount));
 			
 			// ---------------------------------- Has CRA emited
 			
@@ -333,7 +334,7 @@ public class JooqEnterprise {
 			String geozoneCode = enterprise.get(GEOZONE.CODE);
 			String geozone = enterprise.get(GEOZONE.NAME);
 			Integer enterpriseId = enterprise.get(REGISTRY.ID);
-			String enterpriseName =  enterprise.get(REGISTRY.NAME);
+			String enterpriseName =  enterprise.get(DOMAIN.DESCRIPTION);
 			
 			CCCInfo cccInfo = new CCCInfo();
 			cccInfo.setCccId(cccId);
@@ -357,6 +358,14 @@ public class JooqEnterprise {
 		System.err.println("enterpriseCCCActivities size : " + enterprisesCCCInfo.size());
 		
 		return enterprisesCCCInfo;
+	}
+
+	private static boolean containsCCCDomain(List<Pair<Integer, String>> visitedCCCs, Integer domain, String completeCCCAccount) {
+		for(Pair<Integer, String> pair : visitedCCCs){
+			if(pair.getFirst().equals(domain) && AonStringUtils.equalsIgnoreCase(completeCCCAccount, pair.getSecond()))
+				return true;
+		}
+		return false;
 	}
 
 	private static List<Integer> getDomainChilds(DSLContext dslContext, Integer domainId, Integer userId) {

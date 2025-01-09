@@ -19,6 +19,9 @@ public class MarketingActionTargetParams implements Serializable{
 	private int limit;
 	private int offset;
 	
+	private String orderBy;
+	private boolean asc = true;
+	
 	public String getDomainName() {
 		return domainName;
 	}
@@ -74,6 +77,20 @@ public class MarketingActionTargetParams implements Serializable{
 	}
 	public MarketingActionTargetParams setOffset(int offset) {
 		this.offset = offset;
+		return this;
+	}
+	public String getOrderBy() {
+		return orderBy;
+	}
+	public MarketingActionTargetParams setOrderBy(String orderBy) {
+		this.orderBy = orderBy;
+		return this;
+	}
+	public boolean isAsc() {
+		return asc;
+	}
+	public MarketingActionTargetParams setAsc(boolean asc) {
+		this.asc = asc;
 		return this;
 	}
 	

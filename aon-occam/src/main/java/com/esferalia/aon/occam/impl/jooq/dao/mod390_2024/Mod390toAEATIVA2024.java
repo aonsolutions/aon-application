@@ -310,6 +310,9 @@ public class Mod390toAEATIVA2024 {
 		if (ac.getAccrualQuota() != 0.0) {
 			act.setCuotaDevengada(ensureBigDecimal( ac.getAccrualQuota()));
 		}
+		if (ac.getDanaReduction() != 0.0) {
+			act.setDana(ensureBigDecimal(ac.getDanaReduction()));
+		}
 		if (ac.getInputQuotas() != 0.0) {
 			act.setCuotasSoportadas(ensureBigDecimal( ac.getInputQuotas()));
 		}
@@ -376,6 +379,9 @@ public class Mod390toAEATIVA2024 {
 		}
 		if ( sr.getBoxC1() != 0.00 ) {
 			actividad.setLorca(ensureBigDecimal(sr.getBoxC1()));
+		}
+		if ( sr.getBoxC2() != 0.00 ) {
+			actividad.setDana(ensureBigDecimal(sr.getBoxC2()));
 		}
 		if ( sr.getBoxD() != 0.00 ) {
 			actividad.setCuotaSoportada(ensureBigDecimal(sr.getBoxD()));

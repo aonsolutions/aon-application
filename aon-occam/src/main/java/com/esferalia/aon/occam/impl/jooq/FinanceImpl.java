@@ -526,6 +526,16 @@ public class FinanceImpl implements IFinance {
 		return ctx.getDslContext().transactionResult(configuration
 				-> FinanceUtilitiesDAO.financeInvoiceIntegrityFix( ctx , finance));
 	}
+	@Override
+	public FinanceUtilitiesResult activityIntegrity(AONContext ctx, Integer domain) {
+		return ctx.getDslContext().transactionResult(configuration
+			-> FinanceUtilitiesDAO.activityIntegrity( ctx , domain));
+	}
+	@Override
+	public void activityIntegrityFix(AONContext ctx, Integer invoiceId, boolean useInvoiceActivity) {
+		ctx.getDslContext().transaction(configuration
+			-> FinanceUtilitiesDAO.activityIntegrityFix( ctx , invoiceId, useInvoiceActivity));
+	}
 	
  	
 	@Override

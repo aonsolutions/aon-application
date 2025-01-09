@@ -131,6 +131,7 @@ public enum ContextVariable implements IResourceable {
 	ERE_BASE_FORCE("BASE_ERE_FZA", VariableType.DOUBLE), 
 	ERE_BASE_FORCE_OFF("BASE_ERE_FZA_EXONERADO", VariableType.DOUBLE), 
 	DIRECT_BASE("BASE_PAGO_DIRECTO", VariableType.DOUBLE),
+	LACK_BASE("BASE_PERIODO_CARENCIA", VariableType.DOUBLE),
 	ADDITIONAL_BASE("BASE_HORAS_COMPL", VariableType.DOUBLE),
 	EXCESS_BASE("BASE_EXCESO", VariableType.DOUBLE, false), 
 	UNPAID_BASE("BASE_UNPAID", VariableType.DOUBLE),
@@ -306,6 +307,7 @@ public enum ContextVariable implements IResourceable {
 
 //	PREST_IT("PREST_IT", VariableType.DOUBLE),
 	DIRECT_PAY("PAGO_DIRECTO", VariableType.BOOLEAN),
+	LACK_PERIOD("PERIODO_CARENCIA", VariableType.BOOLEAN),
 
 	MONTHLY_SALARY("MODALIDAD_MENSUAL", VariableType.BOOLEAN, false),
 
@@ -538,10 +540,10 @@ public enum ContextVariable implements IResourceable {
 	public static String [] LOGS  = { CAUTION, NOTE, INFO};
 	
 	public static ContextVariable [] FREES  =
-	new ContextVariable [] { UNPAID, DIRECT_PAY, MATERNITY} ;
+	new ContextVariable [] { UNPAID, DIRECT_PAY, MATERNITY, LACK_PERIOD} ;
 
 	public static ContextVariable [] FREE_BASES  =
-	new ContextVariable [] { UNPAID_BASE, DIRECT_BASE, MATERNITY_BASE} ;
+	new ContextVariable [] { UNPAID_BASE, DIRECT_BASE, MATERNITY_BASE, LACK_BASE} ;
 
 	private final String name;
 	private VariableType type;

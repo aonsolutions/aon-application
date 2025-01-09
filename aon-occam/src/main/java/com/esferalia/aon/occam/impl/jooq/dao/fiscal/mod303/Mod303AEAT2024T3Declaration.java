@@ -84,16 +84,12 @@ class Mod303AEAT2024T3Declaration extends Mod303AEAT {
 	
 	public static boolean accept(Mod303 mod) {
 		return mod.isAEAT() && 
-			((mod.getYear() > 2024)
-		 || (mod.getYear() == 2024 && 
-		    	(mod.getPeriod() == Period.M09
+				(mod.getYear() == 2024) && 
+				(  mod.getPeriod() == Period.M09
     			|| mod.getPeriod() == Period.M10
-		    	|| mod.getPeriod() == Period.M11 
-		    	|| mod.getPeriod() == Period.M12 
+		    	|| mod.getPeriod() == Period.M11
 		    	|| mod.getPeriod() == Period.T3
-		    	|| mod.getPeriod() == Period.T4
-		    	)
-	    ));		
+		    	);		
 	}
 	
 	private static final Mod303Key[] COMPENSATION_EXPLAIN_KEYS = new Mod303Key[] { Mod303Key.CT_C110 };

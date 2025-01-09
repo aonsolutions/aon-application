@@ -45,10 +45,10 @@ class Model303AEAT2023SimplifiedRegimeActivities extends DockLayoutPanel impleme
 		contentLayoutPanel = new SimpleLayoutPanel();
 		farmerTable = new Model303AEAT2023ActivityFarmerTable(callback);
 		sidebarPanel.add( AonGroupPanel.get(AON.MSG.farmerActivity(), farmerTable ) );
-		farmerTable.addSelectionHandler( e -> selectFarmerActivity(callback, e.getSelectedItem().getIndex() ) );
+		farmerTable.addSelectionHandler( e -> selectFarmerActivity(callback, e.getSelectedItem().getIndex()) );
 		
 		activityTable = new Model303AEAT2023ActivityTable(callback);
-		activityTable.addSelectionHandler( e -> selectActivity(callback, e.getSelectedItem().getIndex() ) );
+		activityTable.addSelectionHandler( e -> selectActivity(callback, e.getSelectedItem().getIndex()) );
 		sidebarPanel.add(AonGroupPanel.get(AON.MSG.simplifieedActivities(), activityTable ));
 		sidebarScrollPanel.setWidget(sidebarPanel);
 		sidebarLayoutPanel.setWidget(sidebarScrollPanel);
@@ -70,6 +70,7 @@ class Model303AEAT2023SimplifiedRegimeActivities extends DockLayoutPanel impleme
 			public void onRemove() {
 				getModel().getActivityFarmerList().get( getActivity().getIndex() ).initialize();
 				ValueChangeEvent.<Mod303>fire(Model303AEAT2023SimplifiedRegimeActivities.this, getModel());
+				selectFarmerActivity(callback, index);
 			}
 	
 			@Override
@@ -82,8 +83,7 @@ class Model303AEAT2023SimplifiedRegimeActivities extends DockLayoutPanel impleme
 				return callback.getModel();
 			}
 		});
-		farmerActivityPanel.addValueChangeHandler(ve -> ValueChangeEvent.<Mod303>fire(
-			Model303AEAT2023SimplifiedRegimeActivities.this, callback.getModel()));
+		farmerActivityPanel.addValueChangeHandler(ve -> ValueChangeEvent.<Mod303>fire(Model303AEAT2023SimplifiedRegimeActivities.this, callback.getModel()));
 		contentLayoutPanel.setWidget(farmerActivityPanel);
 	}
 
@@ -100,6 +100,7 @@ class Model303AEAT2023SimplifiedRegimeActivities extends DockLayoutPanel impleme
 			public void onRemove() {
 				getModel().getActivityList().get( getActivity().getIndex() ).initialize();
 				ValueChangeEvent.<Mod303>fire(Model303AEAT2023SimplifiedRegimeActivities.this, callback.getModel());
+				selectActivity(callback, index);
 			}
 
 			@Override
@@ -113,8 +114,7 @@ class Model303AEAT2023SimplifiedRegimeActivities extends DockLayoutPanel impleme
 			}
 
 		});
-		activityPanel.addValueChangeHandler(ve -> ValueChangeEvent.<Mod303>fire(
-			Model303AEAT2023SimplifiedRegimeActivities.this, callback.getModel()));
+		activityPanel.addValueChangeHandler(ve -> ValueChangeEvent.<Mod303>fire(Model303AEAT2023SimplifiedRegimeActivities.this, callback.getModel()));
 		contentLayoutPanel.setWidget(activityPanel);
 	}
 
@@ -126,11 +126,11 @@ class Model303AEAT2023SimplifiedRegimeActivities extends DockLayoutPanel impleme
 	public void populate(Mod303 mod303) {
 		farmerTable.paint();
 		if (farmerTable.getSelectedIndex() != null) {
-			farmerActivityPanel.populate( mod303.getActivityFarmerList().get( farmerTable.getSelectedIndex() ));
+			farmerActivityPanel.populate(mod303.getActivityFarmerList().get(farmerTable.getSelectedIndex()), mod303.isEditable());
 		}
 		activityTable.paint();
 		if (activityTable.getSelectedIndex() != null) {
-			activityPanel.populate( mod303.getActivityList().get( activityTable.getSelectedIndex() ));
+			activityPanel.populate(mod303.getActivityList().get(activityTable.getSelectedIndex()), mod303.isEditable());
 		}
 	}
 

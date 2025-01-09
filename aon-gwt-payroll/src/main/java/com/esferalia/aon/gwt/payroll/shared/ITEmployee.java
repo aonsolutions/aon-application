@@ -48,5 +48,25 @@ public class ITEmployee extends EmployeeContractInfo implements Serializable {
 	public void addIT(IT it) {
 		this.its.add(it);
 	}
+
+	public String getContractSuggestion() {
+		return this.getEmployeeInfo().getFullName() + " (" + formatDate(this.getContractInfo().getStartDate()) + 
+				(null == this.getContractInfo().getEndDate() ? ")" : (" - " + formatDate(this.getContractInfo().getEndDate()) + ")"));
+	}
+	
+	private static String formatDate(Date date) {
+		if(null == date) return "";
+		
+        // Obtener día, mes y año a partir de la fecha
+        int day = date.getDate(); // Deprecado, pero permitido para este caso
+        int month = date.getMonth() + 1; // Los meses comienzan en 0, así que se suma 1
+        int year = date.getYear() + 1900; // Se suma 1900 al año
+
+        // Formatear los valores en "dd/mm/aaaa"
+        String dayStr = (day < 10) ? "0" + day : String.valueOf(day);
+        String monthStr = (month < 10) ? "0" + month : String.valueOf(month);
+
+        return dayStr + "/" + monthStr + "/" + year;
+    }
 	
 }

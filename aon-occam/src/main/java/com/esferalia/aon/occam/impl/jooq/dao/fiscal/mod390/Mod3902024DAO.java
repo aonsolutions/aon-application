@@ -301,8 +301,9 @@ public class Mod3902024DAO {
 		 ,C0103	 (Mod3902024DetailKey.C0103, ((mod, vc) -> ( vc.isIntracommunitySales() && !vc.isWithoutRightDeductionType())))
 		 // Exportaciones y otras operaciones exentas con derecho a deducción
 		 ,C0104	 (Mod3902024DetailKey.C0104, ((mod, vc) -> (vc.isSales() && !vc.isWithoutRightDeductionType() && vc.isExtracommunity())))
-		 // Operaciones exentas sin derecho a deducción
-		 ,C0105	 (Mod3902024DetailKey.C0105, ((mod, vc) -> (vc.isSales() && !vc.isNational() && vc.isWithoutRightDeductionType())))
+		 // Operaciones exentas sin derecho a deducción (Se añaden tambien las ventas nacionales a porcentaje 0% de actividades exentas)
+		 //,C0105	 (Mod3902024DetailKey.C0105, ((mod, vc) -> (vc.isSales() && !vc.isNational() && vc.isWithoutRightDeductionType())))
+		 ,C0105	 (Mod3902024DetailKey.C0105, ((mod, vc) -> ((vc.isSales() && !vc.isNational() && vc.isWithoutRightDeductionType()) || (vc.isNationalSales() && AonMathUtils.isZero(vc.getPercentage()) && vc.getVatRegime() != null && vc.isActivityVatExempt()))))
 		 // Operaciones no sujetas por reglas de localización (excepto las incluidas en la casilla 126)
 		 ,C0110	 (Mod3902024DetailKey.C0110, ((mod, vc) -> (vc.isSales() && !vc.isWithoutRightDeductionType() && (vc.isOtherISP() || vc.isCanCeuMel()))))
 		 // Operaciones sujetas con inversión del sujeto pasivo
@@ -329,6 +330,8 @@ public class Mod3902024DAO {
 		 ,C0107	 (Mod3902024DetailKey.C0107, ((mod, vc) -> (vc.isNationalSales() && vc.isInvestment())))
 		 // Total volumen de operaciones 
 		 ,C0108	 (Mod3902024DetailKey.C0108, null)
+		 // Operaciones específicas - Adquisiciones interiores de bienes y servicios exentas 
+		 ,C0230	 (Mod3902024DetailKey.C0230, ((mod, vc) -> operacionesInterioresExentasFilter(vc)))
 		 ;		 
 		 
 		private Mod3902024DetailKey key;
@@ -836,6 +839,7 @@ public class Mod3902024DAO {
 			mod390.setBox656(map.get(Mod3902024DetailKey.C0656).getTaxableBase());
 			mod390.setBox657(map.get(Mod3902024DetailKey.C0656).getQuota());
 			mod390.setAccrualRegimeTarget((map.get(Mod3902024DetailKey.C0656).getTaxableBase()  != 0 || map.get(Mod3902024DetailKey.C0656).getQuota() != 0 ));
+			mod390.setBox230(map.get(Mod3902024DetailKey.C0230).getTaxableBase());
 
 			// ----------------------------------------------------------------------------
 			// En el caso de que el declarante este acogido al regimen simplificado
@@ -898,19 +902,38 @@ public class Mod3902024DAO {
 	}
 
 	enum SimplifiedRegimeFiller {
+		
 		CAG1     (Mod303Key.CT_SA11,(src,mod390) -> {mod390.getFarmerRegime1().setCodigo(AonStringUtils.trim(AonStringUtils.substringBefore(src.getDescription(),"-")));return true;}), 
 		CAG1_V1  (Mod303Key.CT_SA12,(src,mod390) -> {mod390.getFarmerRegime1().setIncomes(src.getAmount());return true;}),
 		CAG1_V2  (Mod303Key.CT_SA13,(src,mod390) -> {mod390.getFarmerRegime1().setQuotaIndex( AonMathUtils.round(src.getAmount() / 10000 ,5));return true;}),
 		CAG1_V3  (Mod303Key.CT_SA14,(src,mod390) -> {mod390.getFarmerRegime1().setAccrualQuota(src.getAmount());return true;}),
-		CAG1_V6  (Mod303Key.CT_SA17,(src,mod390) -> {mod390.getFarmerRegime1().setInputQuotas(src.getAmount());return true;}),
+		CAG1_V4  (Mod303Key.CT_SA1R,(src,mod390) -> {mod390.getFarmerRegime1().setDanaReduction(src.getAmount());return true;}),
+		CAG1_V6  (Mod303Key.CT_SA1A,(src,mod390) -> {mod390.getFarmerRegime1().setInputQuotas(src.getAmount());return true;}),
 		CAG1_V7  (Mod303Key.CT_SA18,(src,mod390) -> {mod390.getFarmerRegime1().setQuota(src.getAmount());return true;}),
 		
 		CAG2     (Mod303Key.CT_SA21,(src,mod390) -> {mod390.getFarmerRegime2().setCodigo(AonStringUtils.trim(AonStringUtils.substringBefore(src.getDescription(), "-")));return true;}),
 		CAG2_V1  (Mod303Key.CT_SA22,(src,mod390) -> {mod390.getFarmerRegime2().setIncomes(src.getAmount());return true;}),
 		CAG2_V2  (Mod303Key.CT_SA23,(src,mod390) -> {mod390.getFarmerRegime2().setQuotaIndex(AonMathUtils.round(src.getAmount() / 10000 ,5));return true;}),
 		CAG2_V3  (Mod303Key.CT_SA24,(src,mod390) -> {mod390.getFarmerRegime2().setAccrualQuota(src.getAmount());return true;}),
-		CAG2_V6  (Mod303Key.CT_SA27,(src,mod390) -> {mod390.getFarmerRegime2().setInputQuotas(src.getAmount());return true;}),
+		CAG2_V4  (Mod303Key.CT_SA2R,(src,mod390) -> {mod390.getFarmerRegime2().setDanaReduction(src.getAmount());return true;}),
+		CAG2_V6  (Mod303Key.CT_SA2A,(src,mod390) -> {mod390.getFarmerRegime2().setInputQuotas(src.getAmount());return true;}),
 		CAG2_V7  (Mod303Key.CT_SA28,(src,mod390) -> {mod390.getFarmerRegime2().setQuota(src.getAmount());return true;}),
+		
+		CAG3     (Mod303Key.CT_SA31,(src,mod390) -> {mod390.getFarmerRegime3().setCodigo(AonStringUtils.trim(AonStringUtils.substringBefore(src.getDescription(), "-")));return true;}),
+		CAG3_V1  (Mod303Key.CT_SA32,(src,mod390) -> {mod390.getFarmerRegime3().setIncomes(src.getAmount());return true;}),
+		CAG3_V2  (Mod303Key.CT_SA33,(src,mod390) -> {mod390.getFarmerRegime3().setQuotaIndex(AonMathUtils.round(src.getAmount() / 10000 ,5));return true;}),
+		CAG3_V3  (Mod303Key.CT_SA34,(src,mod390) -> {mod390.getFarmerRegime3().setAccrualQuota(src.getAmount());return true;}),
+		CAG3_V4  (Mod303Key.CT_SA3R,(src,mod390) -> {mod390.getFarmerRegime3().setDanaReduction(src.getAmount());return true;}),
+		CAG3_V6  (Mod303Key.CT_SA3A,(src,mod390) -> {mod390.getFarmerRegime3().setInputQuotas(src.getAmount());return true;}),
+		CAG3_V7  (Mod303Key.CT_SA38,(src,mod390) -> {mod390.getFarmerRegime3().setQuota(src.getAmount());return true;}),
+		
+		CAG4     (Mod303Key.CT_SA41,(src,mod390) -> {mod390.getFarmerRegime4().setCodigo(AonStringUtils.trim(AonStringUtils.substringBefore(src.getDescription(), "-")));return true;}),
+		CAG4_V1  (Mod303Key.CT_SA42,(src,mod390) -> {mod390.getFarmerRegime4().setIncomes(src.getAmount());return true;}),
+		CAG4_V2  (Mod303Key.CT_SA43,(src,mod390) -> {mod390.getFarmerRegime4().setQuotaIndex(AonMathUtils.round(src.getAmount() / 10000 ,5));return true;}),
+		CAG4_V3  (Mod303Key.CT_SA44,(src,mod390) -> {mod390.getFarmerRegime4().setAccrualQuota(src.getAmount());return true;}),
+		CAG4_V4  (Mod303Key.CT_SA4R,(src,mod390) -> {mod390.getFarmerRegime4().setDanaReduction(src.getAmount());return true;}),
+		CAG4_V6  (Mod303Key.CT_SA4A,(src,mod390) -> {mod390.getFarmerRegime4().setInputQuotas(src.getAmount());return true;}),
+		CAG4_V7  (Mod303Key.CT_SA48,(src,mod390) -> {mod390.getFarmerRegime4().setQuota(src.getAmount());return true;}),
 		
 		CAC1     (Mod303Key.CT_S101,(src,mod390) -> {mod390.getSimpRegime1().setEpigrafe(AonStringUtils.trim(AonStringUtils.substringBefore(src.getDescription(), "-")));return true;}),
 		CAC1_M1U (Mod303Key.CT_S11I, (src,mod390) -> {mod390.getSimpRegime1().setUnit1(src.getAmount());return true;}),
@@ -931,7 +954,9 @@ public class Mod3902024DAO {
 			mod390.getSimpRegime1().setBoxC(src.getAmount());
 			mod390.setBox74( AonMathUtils.round(mod390.getBox74() + src.getAmount()));
 			return true;}),
-//		CAC1_C1  (Mod303Key.CT_S117, (src,mod390) -> {mod390.getSimpRegime1().setBoxC1(src.getAmount());return true;}),
+		
+		CAC1_C1  (Mod303Key.CT_S1R1, (src,mod390) -> {mod390.getSimpRegime1().setBoxC1(src.getAmount());return true;}),
+		CAC1_C2  (Mod303Key.CT_S1R2, (src,mod390) -> {mod390.getSimpRegime1().setBoxC2(src.getAmount());return true;}),
 		CAC1_D   (Mod303Key.CT_S118, null),
 		CAC1_Z   (Mod303Key.CT_S119, null),
 //		CAC1_ZA  (Mod303Key.CAC1_ZA , null),
@@ -976,7 +1001,8 @@ public class Mod3902024DAO {
 				mod390.setBox74( AonMathUtils.round(mod390.getBox74() + src.getAmount()));
 				return true;
 														}),
-//		CAC2_C1  (Mod303Key.CAC2_C1 , (src,mod390) -> {mod390.getSimpRegime2().setBoxC1(src.getAmount());return true;}),
+		CAC2_C1  (Mod303Key.CT_S2R1 , (src,mod390) -> {mod390.getSimpRegime2().setBoxC1(src.getAmount());return true;}),
+		CAC2_C2  (Mod303Key.CT_S2R2 , (src,mod390) -> {mod390.getSimpRegime2().setBoxC2(src.getAmount());return true;}),
 		CAC2_D   (Mod303Key.CT_S218, null),
 		CAC2_Z   (Mod303Key.CT_S219 , null),
 //		CAC2_ZA  (Mod303Key.CAC2_ZA , null),
@@ -1320,6 +1346,15 @@ public class Mod3902024DAO {
 					|| (vat.isOtherISPPurchase() || vat.isOtherISPExpenses() || vat.isExtracommunityExpenses()
 						|| vat.isCanCeuMelExpenses() || (vat.isExtracommunityPurchase() && vat.isService())
 						|| (vat.isCanCeuMelPurchase() && vat.isService())));
+	}
+	
+	private static boolean operacionesInterioresExentasFilter(VatContext vat) {
+		return vat.isVatGeneralRegime(VATRegime.GENERAL) 
+			&& !vat.isVatSurchargeRegime() 
+			&& !vat.isRectification() 
+			&& !vat.isFarmerRegime()
+			&& AonMathUtils.isZero(vat.getPercentage())
+			&& (vat.isNationalPurchase() || vat.isNationalExpenses() || isOperacionesISPFilter(vat));
 	}
 
 }

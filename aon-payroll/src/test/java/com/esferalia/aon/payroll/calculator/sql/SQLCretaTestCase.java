@@ -11,7 +11,9 @@ import static com.esferalia.aon.payroll.enumeration.ContextVariable.ERE_DAYS_FOR
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.ERE_DAYS_FORCE_OFF;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.ERE_FACTOR_FORCE_OFF;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.FRIDAY_HOURS;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.MATERNITY_BASE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.MATERNITY_DAYS;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.MATERNITY_FACTOR;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.MONDAY_HOURS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.MONTH_DAYS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.NATURAL_MONTH_DAYS;
@@ -7153,6 +7155,114 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
     }
 
     @Test
+    public void testCretaMaternityPartialAndIT() throws ExpressionException, SQLException, SalaryException,
+	    JAXBException, IOException, EmptyBasesException, XMLStreamException, FactoryConfigurationError {
+	Connection connection = getConnection();
+	AONContext aonContext = new AONContext(connection);
+
+	cleanSalaries(aonContext);
+	cleanSystemPayments(aonContext);
+
+	String ccc = Long.toString(System.currentTimeMillis()).substring(0, 11);
+	ContractRecord contract = newContract(aonContext, ccc, ContractCode.C100, "04");
+
+
+	Date startDate = add(getFirstDayOfMonth(getToday()), MONTH, 1);
+	Date endDate = getLastDayOfMonth(startDate);
+
+	Date startItDate = add(startDate, Calendar.DAY_OF_MONTH, 9);
+	Date endItDate = add(startDate, Calendar.DAY_OF_MONTH, 19);
+
+	//@formatter:off
+	addIT(aonContext, 
+			contract, 
+			MATERNITY, 
+			startDate, 
+			null, 
+			null/*1750.00/30*/);
+	addData(aonContext, 
+			contract, 
+			startDate, 
+			null, 
+			MATERNITY_FACTOR,
+			"0.50");
+	addIT(aonContext, 
+			contract, 
+			COMMON_DISEASE, 
+			startItDate, 
+			endItDate, 
+			null/*1750.00/30*/);
+	//@formatter:on
+
+	PaymentConceptRecord prestIT = addConcept(aonContext, "PREST_IT");
+	addPayment(aonContext, contract, prestIT, 
+		String.format("BASE_REGULADORA * 0.00 * %s_1_3", COMMON_DISEASE_DAYS),
+		String.format("BASE_REGULADORA * 1.00 * %s", QUOTE_DAYS));
+	addPayment(aonContext, contract, prestIT,
+		String.format("BASE_REGULADORA * 0.60 * %s_4_15", COMMON_DISEASE_DAYS),
+		String.format("BASE_REGULADORA * 1.00 * %s", QUOTE_DAYS));
+
+	PaymentConceptRecord mtnad = addConcept(aonContext, "MTNAD");
+	addPayment(aonContext, contract, mtnad, String.format("0.00 * %s", MATERNITY_DAYS), String.format(
+		"%s * (isdef COEFICIENTE_MATERNIDAD ? COEFICIENTE_MATERNIDAD : 1.00) * BASE_REGULADORA", QUOTE_DAYS));
+
+	ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(connection, startDate, endDate,
+			endDate, contract);
+
+	int salaries = calculateAndSave(connection, ctx);
+
+	// Only one salary saved to DB.
+	Assert.assertEquals(1, salaries);
+
+	AON.getSalaryData(aonContext, props -> props.getContractProperty().eq(contract.getId())).forEach(salary -> {
+
+	    int monthDays = AonDateUtils.getMax(startDate, DAY_OF_MONTH);
+
+	    // 500 Base de contingencias comunes.
+	    List<ContextData> datas = salary.getContextData().get(CGC_BASE.getName());
+	    datas.forEach(  d -> System.out.println(CGC_BASE.getName() + " = " + d.getExpression() + "(" + d.getStartDate() + ".." + d.getEndDate() +" )"));
+	
+	});
+	
+	double maternityBase = 
+	AON.getSalaryData(aonContext, props -> props.getContractProperty().eq(contract.getId()))
+	.flatMap(s -> s.getContextData().get(MATERNITY_BASE.getName()).stream().map(ContextData::getExpression))
+	.collect(Collectors.summingDouble(Double::parseDouble));
+
+	net.aonsolutions.core.tgss.creta.jaxb.trabajadorestramos.TrabajadoresTramos trabajadoresTramos = getTrabajadoresTramos(
+			connection, contract, startDate, endDate, ccc, "L00");
+
+	Trabajador trabajador = trabajadoresTramos.getLiquidacion().getLiquidacionMes().get(0).getTrabajadores()
+			.getTrabajador().get(0);
+	
+	assertTramoMaternidadTiempoParcial(trabajador.getTramos().getTramo().get(0));
+	
+	assertTramoIT15PrimerosDias(trabajador.getTramos().getTramo().get(1));
+	assertDatosMaternidadTiempoParcial(trabajador.getTramos().getTramo().get(1));
+	
+	assertTramoIT15PrimerosDias(trabajador.getTramos().getTramo().get(2));
+	assertDatosMaternidadTiempoParcial(trabajador.getTramos().getTramo().get(2));
+
+	Utils.marshal(trabajador.getTramos().getTramo().get(3), System.out);
+	assertTramoMaternidadTiempoParcial(trabajador.getTramos().getTramo().get(3));
+
+	List<net.aonsolutions.core.tgss.creta.jaxb.bases.Tramo> bases = getBases(connection, trabajadoresTramos);
+	org.junit.Assert.assertEquals(4, bases.size());
+	org.junit.Assert.assertEquals(1, Integer.parseInt(bases.get(0).getFechaDesde().getDia()));
+	
+	for ( int i = 0; i < 4 ; i++ ) {
+		List<Dato> datos = bases.get(i).getDatosTramo().getDato();
+		int dias = Integer.parseInt(bases.get(i).getFechaHasta().getDia()) -
+		Integer.parseInt(bases.get(i).getFechaDesde().getDia())  + 1;
+		int valor = (int) Math.round(maternityBase / get(endDate, Calendar.DAY_OF_MONTH) *  dias * 100.00);
+		assertDato(datos, "C", "535", Integer.toString(valor));
+		assertDato(datos, "C", "635", Integer.toString(valor) );
+		
+	}
+
+    }
+
+    @Test
     public void testCretaRegimenArtistasNormal() throws ExpressionException, SQLException, SalaryException,
 	    JAXBException, IOException, EmptyBasesException, XMLStreamException, FactoryConfigurationError {
 	Connection connection = getConnection();
@@ -8945,6 +9055,16 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 	} catch (AssertException e) {
 	    assertDatosSolicitado(datoSolicitados, "C", "613", "B");
 	}
+    }
+    
+    private static void assertDatosMaternidadTiempoParcial(Tramo tramo) {
+    	List<DatoSolicitado> datoSolicitados = tramo.getDatosTramo().getDatoSolicitado();
+    	assertDatosSolicitado(datoSolicitados, "C", "535", "B");
+    	try {
+    	    assertDatosSolicitado(datoSolicitados, "C", "635", "B");
+    	} catch (AssertException e) {
+    	    assertDatosSolicitado(datoSolicitados, "C", "634", "B");
+    	}
     }
 
     private static void assertTramoMaternidadTiempoParcial(Tramo tramo) {

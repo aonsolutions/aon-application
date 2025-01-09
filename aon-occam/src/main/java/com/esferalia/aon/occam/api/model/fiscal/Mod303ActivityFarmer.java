@@ -17,11 +17,13 @@ public class Mod303ActivityFarmer implements Serializable {
 	private double cuo;			// Cuota Devengada
 	private double por;			// Porcentaje de ingreso a a cuenta
 	private double ing;			// Ingreso a cuenta
-	private double tso;			// Cuota soportada (4T)
+	private double sop;			// Cuota soportada (4T)
 	private double com;			// Compensaciones satisfechas a sujetos pasivos en R.E.A.G.P.
 	private double dev;			// 1% de la cuota devengada por operaciones corrientes
-	private double sop;			// Cuota soportada operaciones corrientes
+	private double tso;			// Cuota soportada operaciones corrientes
 	private double cad;			// Cuota anual derivada	del Régimen simplificado
+	private int dana;			// Si en 2024 realiza la actividad en municipios afectados por la DANA (ver anexo del RD-ley 6/2024), seleccione lo que proceda
+	private double danaReduction;  // Importe reducción DANA 2024
 	
 	public int getIndex() {
 		return index;
@@ -129,6 +131,22 @@ public class Mod303ActivityFarmer implements Serializable {
 		this.cad = cad;
 		return this;
 	}
+	
+	public int getDana() {
+		return dana;
+	}
+	public Mod303ActivityFarmer setDana(int dana) {
+		this.dana = dana;
+		return this;
+	}
+
+	public double getDanaReduction() {
+		return danaReduction;
+	}
+	public Mod303ActivityFarmer setDanaReduction(double danaReduction) {
+		this.danaReduction = danaReduction;
+		return this;
+	}
 
 	public boolean isEmpty() {
 		return AonStringUtils.isBlank( getCode() );
@@ -149,8 +167,9 @@ public class Mod303ActivityFarmer implements Serializable {
 		.setCom(0.0)
 		.setDev(0.0)
 		.setTso(0.0)
-		.setCad(0.0);
-		
+		.setCad(0.0)
+		.setDana(0)
+		.setDanaReduction(0.0);		
 	}
 	
 	public static Mod303ActivityFarmer clone (Mod303ActivityFarmer toClone) {
@@ -166,7 +185,9 @@ public class Mod303ActivityFarmer implements Serializable {
 			.setCom(toClone.getCom())
 			.setDev(toClone.getDev())
 			.setTso(toClone.getTso())
-			.setCad(toClone.getCad());
-	}
+			.setCad(toClone.getCad())
+			.setDana(toClone.getDana())
+			.setDanaReduction(toClone.getDanaReduction());
+	}	
 	
 }

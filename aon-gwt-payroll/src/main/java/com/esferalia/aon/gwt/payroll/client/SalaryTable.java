@@ -236,7 +236,8 @@ public abstract class SalaryTable extends ResizeComposite {
 						salaryInfo.getContract(),
 						salaryInfo.getWorkplaceId(), 
 						salaryInfo.getStartDate(),
-						salaryInfo.getEndDate());
+						salaryInfo.getEndDate(),
+						salaryInfo.getChargeDate());
 	    });
 	    
 	    Column<SalaryInfo, SalaryInfo> aeatColumn = new Column<SalaryInfo, SalaryInfo>(draftActionCell) {

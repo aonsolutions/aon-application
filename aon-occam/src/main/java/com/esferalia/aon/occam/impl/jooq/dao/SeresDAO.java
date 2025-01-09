@@ -53,7 +53,7 @@ public class SeresDAO {
 	public static SeresInfo getSeresInfo(AONContext ctx, Delivery delivery) {
 		SeresInfo seresInfo = getSeresInfo(ctx);
 		seresInfo.setEdiCodes(getEdiCodes(ctx, delivery));		
-		seresInfo.setSeresPath(getInvoiceSeresPath(ctx, delivery.getCustomer().getId()));
+		seresInfo.setSeresPath(getDeliverySeresPath(ctx, delivery.getCustomer().getId()));
 		return seresInfo;
 	}
 	
@@ -216,12 +216,12 @@ public class SeresDAO {
 	
 	private static SeresPath getInvoiceSeresPath(AONContext ctx, Integer registry) {
 		String note = getRegistryNoteComments(ctx, "SERES_SEND_INVOICE", registry);
-		return	!AonStringUtils.isBlank(note) ? SeresPath.safeValueOf(note) : SeresPath.ENVIO_INVOIC_D96A;
+		return	!AonStringUtils.isBlank(note) ? SeresPath.safeValueOf(note) : SeresPath.ENVIO_INVOIC_D93A;
 	}
 	
 	private static SeresPath getDeliverySeresPath(AONContext ctx, Integer registry) {
 		String note = getRegistryNoteComments(ctx, "SERES_SEND_DESADV", registry);
-		return	!AonStringUtils.isBlank(note) ? SeresPath.safeValueOf(note) : SeresPath.ENVIO_DESADV_D96A;
+		return !AonStringUtils.isBlank(note) ? SeresPath.safeValueOf(note) : SeresPath.ENVIO_DESADV_D96A;
 	}
 }
 

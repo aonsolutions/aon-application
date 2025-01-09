@@ -39,8 +39,11 @@ public class Model184IncomeTable extends SimpleLayoutPanel implements HasSelecti
 		if (model.getIncomes() == null || model.getIncomes().isEmpty()) {
 			refresh();
 			newPerceptor( );	
-		} else if ( selectedIndex != null) {
-			selectionIndex = selectedIndex;
+		} else if (selectedIndex != null) {
+			if (selectedIndex >= model.getIncomes().size())
+				selectionIndex = model.getIncomes().size() - 1;
+			else
+				selectionIndex = selectedIndex;
 			refresh();
 		} else {
 			selectionIndex = 0;

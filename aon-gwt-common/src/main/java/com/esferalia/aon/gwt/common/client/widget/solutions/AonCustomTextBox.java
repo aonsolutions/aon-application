@@ -18,7 +18,7 @@ public class AonCustomTextBox extends HTMLPanel {
 		addStyleName(AON.CSS.aonCustomTextBox());
 
 		createTitle(title);
-		createInput();
+		createInput(title);
 	}
 
 	private void createTitle(String title) {
@@ -27,13 +27,14 @@ public class AonCustomTextBox extends HTMLPanel {
 		add(titleLabel);
 	}
 
-	private void createInput() {
+	private void createInput(String title) {
 		textBoxPanel.addStyleName(AON.CSS.aonItemFlex());
 		textBoxPanel.addStyleName(AON.CSS.aonFlexBetween());
 		textBoxPanel.getElement().getStyle().setProperty("align-items", "flex-start");
 		
 		textBox = new TextBox();
 		textBox.setStyleName(AON.CSS.aonCustomTextBoxInput());
+		textBox.getElement().setPropertyString("placeholder", AonStringUtils.isBlank(title) ? "Escriba aqui" : title);
 		
 		textBoxPanel.add(textBox);
 		add(textBoxPanel);

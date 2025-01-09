@@ -482,7 +482,7 @@ export const TYPE = 'Tipo';
 export const TYPES = 'Tipos';
 
 // ----- U
-
+export const UNACCOUNT_INVOICES = "Facturas sin Contabilizar";
 export const UNLINK = "Desvincular";
 export const UNLINK_DOMAIN_QUESTION = "¿Desea desvincular este cliente del dominio?";
 export const UNLINK_CLIENT = "Desvincular cliente";

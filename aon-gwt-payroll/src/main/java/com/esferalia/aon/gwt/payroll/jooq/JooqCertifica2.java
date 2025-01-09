@@ -7,6 +7,7 @@ import static com.esferalia.aon.jooq.tables.Cno.CNO;
 import static com.esferalia.aon.jooq.tables.Contract.CONTRACT;
 import static com.esferalia.aon.jooq.tables.ContractData.CONTRACT_DATA;
 import static com.esferalia.aon.jooq.tables.ContractInfo.CONTRACT_INFO;
+import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
 import static com.esferalia.aon.jooq.tables.Enterprise.ENTERPRISE;
 import static com.esferalia.aon.jooq.tables.EnterpriseActivity.ENTERPRISE_ACTIVITY;
 import static com.esferalia.aon.jooq.tables.EnterpriseCcc.ENTERPRISE_CCC;
@@ -46,6 +47,7 @@ import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.esferalia.aon.gwt.payroll.shared.Certifica2Info;
 import com.esferalia.aon.gwt.payroll.shared.Certifica2Info.Certifica2Period;
 import com.esferalia.aon.jooq.tables.records.Certifica2BatchRecord;
+import com.esferalia.aon.jooq.tables.records.DomainRecord;
 import com.esferalia.aon.jooq.tables.records.SalaryDataRecord;
 import com.esferalia.aon.jooq.tables.records.SalaryRecord;
 import com.esferalia.aon.occam.api.AON;
@@ -349,7 +351,8 @@ public class JooqCertifica2 {
 		// Representative Data
 
 		Integer domainId = contractRecord.get(CONTRACT.DOMAIN);
-		getReprensentativeData(dslContext, certifica2Info, domainId, contractRecord);
+		DomainRecord domainRecord = dslContext.selectFrom(DOMAIN).where(DOMAIN.ID.eq(domainId)).fetchOne();
+		getReprensentativeData(dslContext, certifica2Info, domainId, domainRecord.getParent(), contractRecord);
 
 		// Enterprise Data
 
@@ -545,7 +548,7 @@ public class JooqCertifica2 {
 	}
 
 	private static void getReprensentativeData(DSLContext dslContext,
-			com.esferalia.aon.gwt.payroll.shared.Certifica2Info certifica2Info, Integer domainId,
+			com.esferalia.aon.gwt.payroll.shared.Certifica2Info certifica2Info, Integer domainId,  Integer parentDomainId,
 			Record contractRecord) {
 
 		Integer contractId = contractRecord.get(CONTRACT.ID);
@@ -569,38 +572,55 @@ public class JooqCertifica2 {
 			} else
 				representativeName = staffFullname.trim();
 		} else {
-			Integer enterpriseRegisty = dslContext.select(ENTERPRISE.REGISTRY).from(ENTERPRISE)
-					.where(ENTERPRISE.DOMAIN.eq(domainId)).fetchOne(ENTERPRISE.REGISTRY);
-
-			Result<Record> staffRecords = dslContext.select().from(RDIR_STAFF)
-					.where(RDIR_STAFF.REGISTRY.eq(enterpriseRegisty))
-					.and(RDIR_STAFF.REPRESENTATIVE_LABOR.eq((byte)1))
+			Result<Record> representativeRecords = dslContext.select().from(CONTRACT_INFO)
+					.where(CONTRACT_INFO.NAME.in("I_ENTERPRISE_DIR_STAFF_NAME", "T_ENTERPRISE_DIR_STAFF_NAME", "L_ENTERPRISE_DIR_STAFF_NAME", "P_ENTERPRISE_DIR_STAFF_NAME"))
+					.and(CONTRACT_INFO.CONTRACT.isNull())
+					.and(CONTRACT_INFO.DOMAIN.eq(domainId).or(CONTRACT_INFO.DOMAIN.eq(parentDomainId)))
+					.orderBy(CONTRACT_INFO.START_DATE.desc())
 					.fetch();
-
-			// Hay representante de empresa
-			if (staffRecords.isNotEmpty()) {
-				// Cogemos el primer representate
-				Record staffRecord = staffRecords.get(0);
-				representativeDocument = staffRecord.get(RDIR_STAFF.DOCUMENT);
-				representativeCharge = staffRecord.get(RDIR_STAFF.CHARGE_DESCRIPTION);
-				String fullName = staffRecord.get(RDIR_STAFF.NAME);
-
-				if (fullName.contains(",")) {
-					representativeName = fullName.split(",")[1].trim();
-					representativeSurname = fullName.split(",")[0].trim();
+			
+			if(!representativeRecords.isEmpty() && AonStringUtils.isNotBlank(representativeRecords.get(0).get(CONTRACT_INFO.EXPRESSION))) {
+				String representative = representativeRecords.get(0).get(CONTRACT_INFO.EXPRESSION);
+				if (representative.contains(",")) {
+					representativeName = representative.split(",")[1].trim();
+					representativeSurname = representative.split(",")[0].trim();
 				} else
-					representativeName = fullName.trim();
-
-				// No hay representante
+					representativeName = representative.trim();
 			} else {
-				Record enterpriseRegistry = dslContext.select().from(REGISTRY).where(REGISTRY.ID.eq(enterpriseRegisty))
-						.fetchOne();
+				Integer enterpriseRegisty = dslContext.select(ENTERPRISE.REGISTRY).from(ENTERPRISE)
+						.where(ENTERPRISE.DOMAIN.eq(domainId)).fetchOne(ENTERPRISE.REGISTRY);
 
-				representativeDocument = enterpriseRegistry.get(REGISTRY.DOCUMENT);
-				representativeName = enterpriseRegistry.get(REGISTRY.NAME);
+				Result<Record> staffRecords = dslContext.select().from(RDIR_STAFF)
+						.where(RDIR_STAFF.REGISTRY.eq(enterpriseRegisty))
+						.and(RDIR_STAFF.REPRESENTATIVE_LABOR.eq((byte)1))
+						.fetch();
+
+				// Hay representante de empresa
+				if (staffRecords.isNotEmpty()) {
+					// Cogemos el primer representate
+					Record staffRecord = staffRecords.get(0);
+					representativeDocument = staffRecord.get(RDIR_STAFF.DOCUMENT);
+					representativeCharge = staffRecord.get(RDIR_STAFF.CHARGE_DESCRIPTION);
+					String fullName = staffRecord.get(RDIR_STAFF.NAME);
+
+					if (fullName.contains(",")) {
+						representativeName = fullName.split(",")[1].trim();
+						representativeSurname = fullName.split(",")[0].trim();
+					} else
+						representativeName = fullName.trim();
+
+					// No hay representante
+				} else {
+					Record enterpriseRegistry = dslContext.select().from(REGISTRY).where(REGISTRY.ID.eq(enterpriseRegisty))
+							.fetchOne();
+
+					representativeDocument = enterpriseRegistry.get(REGISTRY.DOCUMENT);
+					representativeName = enterpriseRegistry.get(REGISTRY.NAME);
+				}
 			}
 		}
 
+		// Get from contract
 		String staffDocument = dslContext.select(CONTRACT_INFO.EXPRESSION).from(CONTRACT_INFO)
 				.where(CONTRACT_INFO.CONTRACT.eq(contractId))
 				.and(CONTRACT_INFO.NAME.eq("I_ENTERPRISE_DIR_STAFF_NIF")
@@ -612,6 +632,22 @@ public class JooqCertifica2 {
 		if (AonStringUtils.isNotBlank(staffDocument))
 			representativeDocument = staffDocument;
 		
+
+		// Get from domain
+		List<String> staffDocuments = dslContext.select(CONTRACT_INFO.EXPRESSION).from(CONTRACT_INFO)
+				.where(CONTRACT_INFO.NAME.eq("I_ENTERPRISE_DIR_STAFF_NIF")
+						.or(CONTRACT_INFO.NAME.eq("T_ENTERPRISE_DIR_STAFF_NIF"))
+						.or(CONTRACT_INFO.NAME.eq("L_ENTERPRISE_DIR_STAFF_NIF"))
+						.or(CONTRACT_INFO.NAME.eq("P_ENTERPRISE_DIR_STAFF_NIF")))
+				.and(CONTRACT_INFO.CONTRACT.isNull())
+				.and(CONTRACT_INFO.DOMAIN.eq(domainId).or(CONTRACT_INFO.DOMAIN.eq(parentDomainId)))
+				.orderBy(CONTRACT_INFO.START_DATE.desc())
+				.fetch(CONTRACT_INFO.EXPRESSION);
+
+		if (!staffDocuments.isEmpty())
+			representativeDocument = staffDocuments.get(0);
+		
+		// Get from contract
 		String staffCharge = dslContext.select(CONTRACT_INFO.EXPRESSION).from(CONTRACT_INFO)
 				.where(CONTRACT_INFO.CONTRACT.eq(contractId))
 				.and(CONTRACT_INFO.NAME.eq("I_ENTERPRISE_DIR_STAFF_CHARGE")
@@ -622,6 +658,20 @@ public class JooqCertifica2 {
 
 		if (AonStringUtils.isNotBlank(staffCharge))
 			representativeCharge = staffCharge;
+		
+		// Get from domain
+		List<String> staffCharges = dslContext.select(CONTRACT_INFO.EXPRESSION).from(CONTRACT_INFO)
+				.where(CONTRACT_INFO.NAME.eq("I_ENTERPRISE_DIR_STAFF_CHARGE")
+						.or(CONTRACT_INFO.NAME.eq("T_ENTERPRISE_DIR_STAFF_CHARGE"))
+						.or(CONTRACT_INFO.NAME.eq("L_ENTERPRISE_DIR_STAFF_CHARGE"))
+						.or(CONTRACT_INFO.NAME.eq("P_ENTERPRISE_DIR_STAFF_CHARGE")))
+				.and(CONTRACT_INFO.CONTRACT.isNull())
+				.and(CONTRACT_INFO.DOMAIN.eq(domainId).or(CONTRACT_INFO.DOMAIN.eq(parentDomainId)))
+				.orderBy(CONTRACT_INFO.START_DATE.desc())
+				.fetch(CONTRACT_INFO.EXPRESSION);
+
+		if (!staffCharges.isEmpty())
+			representativeCharge = staffCharges.get(0);
 
 		certifica2Info.setRepresentativeDocument(representativeDocument);
 		certifica2Info.setRepresentativeName(representativeName);

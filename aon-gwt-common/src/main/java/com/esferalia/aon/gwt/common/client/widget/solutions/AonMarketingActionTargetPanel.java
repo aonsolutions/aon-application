@@ -21,12 +21,10 @@ import com.google.gwt.event.dom.client.KeyUpHandler;
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
-import com.google.gwt.user.client.ui.InlineLabel;
+import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.MultiWordSuggestOracle;
 import com.google.gwt.user.client.ui.SimplePanel;
-import com.google.gwt.user.client.ui.SuggestBox;
 
 public abstract class AonMarketingActionTargetPanel extends SimplePanel {
 	
@@ -44,7 +42,9 @@ public abstract class AonMarketingActionTargetPanel extends SimplePanel {
 		}
 	}
 
-	private SuggestBox target = new SuggestBox();
+	private HTMLPanel messagePanel = new HTMLPanel(AonStringUtils.EMPTY);
+	
+	private AonCustomSuggestBox target = new AonCustomSuggestBox("Cliente Potencial");
 	private List<Target> targets = new ArrayList<>();
 	
 	public AonMarketingActionTargetPanel(final String domainName,final int domain, final String user, final MarketingAction marketingAction, final AonMarketingActionTargetPanelCallback aonMarketingActionTargetPanelCallback) {
@@ -53,18 +53,13 @@ public abstract class AonMarketingActionTargetPanel extends SimplePanel {
 	}
 
 	public void show(final String domainName, final int domain, final String user, final MarketingActionTarget marketingActionTarget, final AonMarketingActionTargetPanelCallback callback) {
-		setWidth("650px");
-		getElement().getStyle().setProperty("padding", "1rem 0");
+		getElement().getStyle().setProperty("padding", "1rem");
+		getElement().getStyle().setProperty("min-width", "20rem");
 		
 		FlowPanel rootPanel = new FlowPanel();
 		rootPanel.setStyleName(AON.CSS.aonFlexColumnBetween());
 		
-		final AonErrorPanel errorPanel = new AonErrorPanel();
-		errorPanel.addStyleName(AON.CSS.aonMarginTop());
-		rootPanel.add(errorPanel);
-		
-		FlowPanel tablePanel = new FlowPanel();
-		tablePanel.setStyleName(AON.CSS.aonScrollArea());
+		rootPanel.add(messagePanel);
 		
 		KeyUpHandler keyUpHandler = new KeyUpHandler() {
 			@Override
@@ -75,29 +70,16 @@ public abstract class AonMarketingActionTargetPanel extends SimplePanel {
 			}
 		};
 
-		FlexTable table = new FlexTable();
-		table.setStyleName(AON.CSS.aonTable());
-		table.addStyleName(AON.CSS.aonWidthAll());
 		
-		table.setWidget(0, 0, new InlineLabel("Cliente Potencial"));
-		table.getCellFormatter().setStyleName(0, 0, AON.CSS.aonTableLabel());
-		table.getCellFormatter().getElement(0, 0).setPropertyString("min-width", "135px");
-		getTargetSuggestion(domainName, domain, user, errorPanel);
-		target.setStyleName(AON.CSS.aonInputText());
-		target.addStyleName(AON.CSS.aonWidthAll());
+		getTargetSuggestion(domainName, domain, user);
 		target.setAutoSelectEnabled(false);
-		target.getElement().setPropertyString("placeholder", "Cuota: ctrl + espacio para ver sugerencias");
-		target.addKeyUpHandler(e -> {
+		target.getSuggestBox().getElement().setPropertyString("placeholder", "Ctrl + espacio para ver sugerencias");
+		target.getSuggestBox().addKeyUpHandler(e -> {
 			if(e.isControlKeyDown() && e.getNativeKeyCode() == 32) {
 				target.showSuggestionList();
 			}
 		});
-		table.setWidget(0,1,target);
-		table.getCellFormatter().setStyleName(0, 1, AON.CSS.aonWidthAll());
-		
-		tablePanel.add( table );
-		
-		rootPanel.add( tablePanel );
+		rootPanel.add(target);
 		
 		FlowPanel buttons = new FlowPanel();
     	buttons.setStyleName(AON.CSS.aonTextCenter());
@@ -130,7 +112,7 @@ public abstract class AonMarketingActionTargetPanel extends SimplePanel {
 					}
 					@Override
 					public void onFailure(Throwable caught) {
-						errorPanel.showError(caught.getMessage());
+						AonMessagePanel.showError(messagePanel, caught.getMessage());
 						okButton.setEnabled(true);
 					}
 				});
@@ -165,7 +147,7 @@ public abstract class AonMarketingActionTargetPanel extends SimplePanel {
 		
 	}
 	
-	private void getTargetSuggestion(String domainName, int domain, String user, AonErrorPanel errorPanel) {
+	private void getTargetSuggestion(String domainName, int domain, String user) {
 		commonService.getTargetSuggestion(domainName, domain, user, new AsyncCallback<List<Target>>() {
 			
 			@Override
@@ -175,7 +157,7 @@ public abstract class AonMarketingActionTargetPanel extends SimplePanel {
 				List<String> suggestions = new ArrayList<String>();
 				targets.forEach(target -> suggestions.add("[" + target.getId() + "] " + target.getName()));
 				
-				MultiWordSuggestOracle orclSb = (MultiWordSuggestOracle) target.getSuggestOracle();
+				MultiWordSuggestOracle orclSb = (MultiWordSuggestOracle) target.getSuggestBox().getSuggestOracle();
 				orclSb.clear();
 				orclSb.addAll(suggestions);
 				orclSb.setDefaultSuggestionsFromText(suggestions);
@@ -183,7 +165,7 @@ public abstract class AonMarketingActionTargetPanel extends SimplePanel {
 			
 			@Override
 			public void onFailure(Throwable caught) {
-				errorPanel.showError(caught.getMessage());
+				AonMessagePanel.showError(messagePanel, caught.getMessage());
 			}
 			
 		});

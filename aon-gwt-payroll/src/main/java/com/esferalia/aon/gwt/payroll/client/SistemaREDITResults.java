@@ -22,11 +22,11 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.ui.AbstractImagePrototype;
-import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTML;
+import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
@@ -148,6 +148,10 @@ public class SistemaREDITResults extends Composite implements RequiresResize, En
 	@Override
 	public void onResize() {
 		dockLayoutPanel.onResize();
+	}
+	
+	public void hideNorth() {
+		dockLayoutPanel.setWidgetSize(menuBarFlowPanel, 0);
 	}
 	
 	// ------------------------------------------------------ EnterprisesStatus
@@ -525,4 +529,14 @@ public class SistemaREDITResults extends Composite implements RequiresResize, En
     public void unknownErrorAnd(String message) {
         unknownError(message);
     }
+
+	public int getTreeItems() {
+		Integer events = eventsTree.getItemCount();
+		Integer errors = errorsItem.getChildCount();
+		Integer warnings = warningsItem.getChildCount();
+		Integer messages = messagesItem.getChildCount();
+		Integer notFound = notFoundItem.getChildCount();
+		
+		return events + errors + warnings + messages + notFound;
+	}
 }

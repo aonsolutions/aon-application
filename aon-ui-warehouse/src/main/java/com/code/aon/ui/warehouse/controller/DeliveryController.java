@@ -363,6 +363,11 @@ public class DeliveryController extends HeaderObjectController implements IWareh
 		Delivery delivery = (Delivery)this.getTo();
 		return delivery.getStatus() == DeliveryStatus.PENDING;
 	}
+	
+	public boolean isInPreparation(){
+		Delivery delivery = (Delivery)this.getTo();
+		return delivery.getStatus() == DeliveryStatus.IN_PREPARATION;
+	}
 
 	public boolean isInvoiced(){
 		Delivery delivery = (Delivery)this.getTo();
@@ -736,6 +741,12 @@ public class DeliveryController extends HeaderObjectController implements IWareh
 			BasicController invoiceController = (BasicController)AonUtil.getRegisteredBean(SALE_INVOICE_CONTROLLER_NAME);
 			invoiceController.onLoad(event, invoice.getId(), DELIVERY_FORM_NAME, DELIVERY_CONTROLLER_NAME + ".refresh");
 		}
+	}
+	
+	public void onChangeStatusToPreparation(ActionEvent event) throws ManagerBeanException {
+		Delivery delivery = (Delivery)this.getTo();
+		delivery.setStatus(DeliveryStatus.IN_PREPARATION);
+		accept(event);		
 	}
 	
 	public void onWarehouseChangeShow(ActionEvent event) {

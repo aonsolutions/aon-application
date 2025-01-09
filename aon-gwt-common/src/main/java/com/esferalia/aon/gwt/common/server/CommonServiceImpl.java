@@ -9,7 +9,6 @@ import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import com.esferalia.aon.gwt.common.client.AsyncCallbackWrapper;
 import com.esferalia.aon.gwt.common.client.CommonService;
 import com.esferalia.aon.occam.api.ACCOUNTING;
 import com.esferalia.aon.occam.api.AON;
@@ -29,6 +28,7 @@ import com.esferalia.aon.occam.api.model.InvestAssetParams;
 import com.esferalia.aon.occam.api.model.MarketingAction;
 import com.esferalia.aon.occam.api.model.MarketingActionParams;
 import com.esferalia.aon.occam.api.model.MarketingActionTarget;
+import com.esferalia.aon.occam.api.model.MarketingActionTargetMassiveParams;
 import com.esferalia.aon.occam.api.model.MarketingActionTargetParams;
 import com.esferalia.aon.occam.api.model.MarketingCampaign;
 import com.esferalia.aon.occam.api.model.MarketingCompaignParams;
@@ -53,7 +53,9 @@ import com.esferalia.aon.occam.api.model.news.News;
 import com.esferalia.aon.occam.api.model.office.Tag;
 import com.esferalia.aon.occam.api.model.payroll.Activity;
 import com.esferalia.aon.occam.api.model.product.OldProduct;
+import com.esferalia.aon.occam.api.model.project.ProjectActivity;
 import com.esferalia.aon.occam.api.model.project.ProjectCommercial;
+import com.esferalia.aon.occam.api.model.project.ProjectType;
 import com.esferalia.aon.occam.api.model.registry.Category;
 import com.esferalia.aon.occam.api.model.registry.Creditor;
 import com.esferalia.aon.occam.api.model.registry.CreditorFull;
@@ -74,7 +76,6 @@ import com.esferalia.aon.occam.api.model.type.TagType;
 import com.esferalia.aon.occam.impl.jooq.dao.DataResponseDAO;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.util.AonStringUtils;
-import com.google.gwt.user.client.rpc.AsyncCallback;
 
 import jakarta.servlet.annotation.WebServlet;
 
@@ -439,6 +440,12 @@ public class CommonServiceImpl extends AonStatelessRemoteServiceServlet implemen
 		return AON.getMarketingActionTargets(params);
 	}
 	
+
+	@Override
+	public List<MarketingActionTarget> getMarketingActionTargets(MarketingActionTargetMassiveParams params) throws AonCoreException {
+		return AON.getMarketingActionTargets(params);
+	}
+	
 	@Override
 	public void deleteMarketingActionTarget(String domainName, int domain, String user, Integer id) throws AonCoreException {
 		AON.deleteMarketingActionTarget(domainName, domain, user, id);
@@ -475,6 +482,16 @@ public class CommonServiceImpl extends AonStatelessRemoteServiceServlet implemen
 	public List<User> getAviableServiceUsers(String domainName, int domainId, String user) throws AonCoreException {
 		List<User> usersList = AON.getDomainUserStream(domainName, domainId, user, f -> f.getTypeProperty().eq((byte)3)).collect(Collectors.toList());
 		return usersList;
+	}
+	
+	@Override
+	public List<ProjectActivity> getAviableProjectActivity(String domainName, int domain, String user) throws AonCoreException {
+		return AON.getProjectActivityStream(new Domain().setName(domainName).setId(domain), new User().setLogin(user), f -> f.getDomainProperty().eq(domain)).collect(Collectors.toList());
+	}
+	
+	@Override
+	public List<ProjectType> getAviableProjectType(String domainName, int domain, String user) throws AonCoreException {
+		return AON.getProjectTypeStream(new Domain().setName(domainName).setId(domain), new User().setLogin(user), f -> f.getDomainProperty().eq(domain)).collect(Collectors.toList());
 	}
 	
 	// **************************************************
@@ -691,6 +708,5 @@ public class CommonServiceImpl extends AonStatelessRemoteServiceServlet implemen
 		List<Integer> sellersWorkloadFees = AON.getSellersWorkloadFeesIds(params);
 		return sellersWorkloadFees;
 	}
-
 	
 }

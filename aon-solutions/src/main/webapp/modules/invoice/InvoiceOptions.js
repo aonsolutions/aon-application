@@ -320,12 +320,7 @@ import * as GWT from "../../gwt/gwt.js";
       type: CONSTANT.SELECT,
       name: "recorded",
       id: "recorded",
-      title: MSG.STATUS,
-      options: JSON.stringify([
-        { name: "-", value: undefined },
-        { name: MSG.PENDING, value: "PENDING" },
-        { name: MSG.ACCOUNTED, value: "SCORED" },
-      ]),
+      title: MSG.STATUS
     },
   ];
 

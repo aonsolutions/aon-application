@@ -5,6 +5,7 @@ import static com.esferalia.aon.jooq.tables.Contract.CONTRACT;
 import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
 import static com.esferalia.aon.jooq.tables.Enterprise.ENTERPRISE;
 import static com.esferalia.aon.jooq.tables.Finance.FINANCE;
+import static com.esferalia.aon.jooq.tables.FinanceTracking.FINANCE_TRACKING;
 import static com.esferalia.aon.jooq.tables.FsModel.FS_MODEL;
 import static com.esferalia.aon.jooq.tables.Person.PERSON;
 import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
@@ -43,6 +44,7 @@ import com.esferalia.aon.gwt.payroll.shared.SalaryInfo.AlcatrazPeriod;
 import com.esferalia.aon.gwt.payroll.shared.SalaryInfo.AlcatrazTerritory;
 import com.esferalia.aon.gwt.payroll.shared.SalaryInfoFilter;
 import com.esferalia.aon.gwt.payroll.shared.WorkplaceEmployees;
+import com.esferalia.aon.jooq.tables.FinanceTracking;
 import com.esferalia.aon.jooq.tables.records.AlcatrazRecord;
 import com.esferalia.aon.jooq.tables.records.FinanceRecord;
 import com.esferalia.aon.jooq.tables.records.FsModelRecord;
@@ -191,6 +193,7 @@ public class JooqPayrollSalaries {
 			salaryInfo.setContract(salaryRecord.get(SALARY.CONTRACT));
 			salaryInfo.setStartDate(salaryRecord.get(SALARY.START_DATE));
 			salaryInfo.setEndDate(salaryRecord.get(SALARY.END_DATE));
+			salaryInfo.setChargeDate(salaryRecord.get(SALARY.CHARGE_DATE));
 			salaryInfo.setType(Salary.Type.values()[salaryRecord.get(SALARY.TYPE)]);
 			salaryInfo.setEnterpriseName(salaryRecord.get(SALARY.ENTERPRISE_NAME));
 			salaryInfo.setEmployeeName(salaryRecord.get(SALARY.EMPLOYEE_NAME));
@@ -274,6 +277,7 @@ public class JooqPayrollSalaries {
 			salaryInfo.setContract(salaryRecord.get(SALARY.CONTRACT));
 			salaryInfo.setStartDate(salaryRecord.get(SALARY.START_DATE));
 			salaryInfo.setEndDate(salaryRecord.get(SALARY.END_DATE));
+			salaryInfo.setChargeDate(salaryRecord.get(SALARY.CHARGE_DATE));
 			salaryInfo.setType(Salary.Type.values()[salaryRecord.get(SALARY.TYPE)]);
 			salaryInfo.setEnterpriseName(salaryRecord.get(SALARY.ENTERPRISE_NAME));
 			salaryInfo.setEmployeeName(salaryRecord.get(SALARY.EMPLOYEE_NAME));
@@ -343,6 +347,7 @@ public class JooqPayrollSalaries {
 			salaryInfo.setContract(salaryRecord.get(SALARY.CONTRACT));
 			salaryInfo.setStartDate(salaryRecord.get(SALARY.START_DATE));
 			salaryInfo.setEndDate(salaryRecord.get(SALARY.END_DATE));
+			salaryInfo.setChargeDate(salaryRecord.get(SALARY.CHARGE_DATE));
 			salaryInfo.setType(Salary.Type.values()[salaryRecord.get(SALARY.TYPE)]);
 			salaryInfo.setEnterpriseName(salaryRecord.get(SALARY.ENTERPRISE_NAME));
 			salaryInfo.setEmployeeName(salaryRecord.get(SALARY.EMPLOYEE_NAME));
@@ -487,6 +492,8 @@ public class JooqPayrollSalaries {
 		List<Integer> userScopes = dslContext.select(USER_SCOPE.SCOPE).from(USER_SCOPE).where(USER_SCOPE.USER_ID.eq(userId)).fetch(USER_SCOPE.SCOPE);
 		
 		Result<Record> contractRecords = dslContext.select().from(CONTRACT)
+				.join(PERSON).on(PERSON.REGISTRY.eq(CONTRACT.PERSON))
+				.join(REGISTRY).on(REGISTRY.ID.eq(CONTRACT.PERSON))
 				.join(WORKPLACE).on(WORKPLACE.ID.eq(CONTRACT.WORKPLACE))
 				.where(CONTRACT.ID.gt(0))
 				.and(CONTRACT.WORKPLACE.eq(workplaceId))
@@ -494,20 +501,12 @@ public class JooqPayrollSalaries {
 				.fetch();
 		
 		for(Record contractRecord : contractRecords){
-			Record personRecord = dslContext.select().from(PERSON)
-					.where(PERSON.REGISTRY.eq(contractRecord.get(CONTRACT.PERSON)))
-					.fetchOne();
-			
-			Record registryRecord = dslContext.select().from(REGISTRY)
-					.where(REGISTRY.ID.eq(contractRecord.get(CONTRACT.PERSON)))
-					.fetchOne();
-			
 			workplaceEmployees.addEmployee(
 					contractRecord.get(CONTRACT.ID), 
-					personRecord.get(PERSON.NAME), 
-					personRecord.get(PERSON.FIRST_SURNAME) + " " + personRecord.get(PERSON.SECOND_SURNAME), 
-					registryRecord.get(REGISTRY.DOCUMENT), 
-					personRecord.get(PERSON.SOCIAL_SECURITY_NUM));
+					contractRecord.get(PERSON.NAME), 
+					contractRecord.get(PERSON.FIRST_SURNAME) + " " + contractRecord.get(PERSON.SECOND_SURNAME), 
+					contractRecord.get(REGISTRY.DOCUMENT), 
+					contractRecord.get(PERSON.SOCIAL_SECURITY_NUM));
 		}
 		
 		return workplaceEmployees;
@@ -523,6 +522,8 @@ public class JooqPayrollSalaries {
 		List<Integer> userScopes = dslContext.select(USER_SCOPE.SCOPE).from(USER_SCOPE).where(USER_SCOPE.USER_ID.eq(userId)).fetch(USER_SCOPE.SCOPE);
 		
 		Result<Record> contractRecords = dslContext.select().from(CONTRACT)
+				.join(PERSON).on(PERSON.REGISTRY.eq(CONTRACT.PERSON))
+				.join(REGISTRY).on(REGISTRY.ID.eq(CONTRACT.PERSON))
 				.join(WORKPLACE).on(WORKPLACE.ID.eq(CONTRACT.WORKPLACE))
 				.join(ENTERPRISE).on(ENTERPRISE.REGISTRY.eq(WORKPLACE.ENTERPRISE))
 				.where(CONTRACT.ID.gt(0))
@@ -533,21 +534,13 @@ public class JooqPayrollSalaries {
 				.fetch();
 		
 		for(Record contractRecord : contractRecords){
-			Record personRecord = dslContext.select().from(PERSON)
-					.where(PERSON.REGISTRY.eq(contractRecord.get(CONTRACT.PERSON)))
-					.fetchOne();
-			
-			Record registryRecord = dslContext.select().from(REGISTRY)
-					.where(REGISTRY.ID.eq(contractRecord.get(CONTRACT.PERSON)))
-					.fetchOne();
-			
 			EmployeeInfo employee = new EmployeeInfo();
 			employee.setEmployeeId(contractRecord.get(CONTRACT.ID));
 			employee.setContractId(contractRecord.get(CONTRACT.ID));
-			employee.setName(personRecord.get(PERSON.NAME));
-			employee.setSurName(personRecord.get(PERSON.FIRST_SURNAME) + " " + personRecord.get(PERSON.SECOND_SURNAME));
-			employee.setDocument(registryRecord.get(REGISTRY.DOCUMENT));
-			employee.setSsNumber(personRecord.get(PERSON.SOCIAL_SECURITY_NUM));
+			employee.setName(contractRecord.get(PERSON.NAME));
+			employee.setSurName(contractRecord.get(PERSON.FIRST_SURNAME) + " " + contractRecord.get(PERSON.SECOND_SURNAME));
+			employee.setDocument(contractRecord.get(REGISTRY.DOCUMENT));
+			employee.setSsNumber(contractRecord.get(PERSON.SOCIAL_SECURITY_NUM));
 			
 			enterpriseEmployees.add(employee);
 		}
@@ -574,6 +567,7 @@ public class JooqPayrollSalaries {
 					dsl.delete(SALARY_EMBARGO).using(SALARY_EMBARGO.innerJoin(SALARY).onKey()).where(SALARY.ID.eq(id)).and(SALARY.DOMAIN.eq(domainId)).execute();
 					dsl.delete(SALARY_PAYMENT).using(SALARY_PAYMENT.innerJoin(SALARY).onKey()).where(SALARY.ID.eq(id)).and(SALARY.DOMAIN.eq(domainId)).execute();
 					dsl.delete(SALARY_DEDUCTION).using(SALARY_DEDUCTION.innerJoin(SALARY).onKey()).where(SALARY.ID.eq(id)).and(SALARY.DOMAIN.eq(domainId)).execute();
+					dsl.delete(FINANCE_TRACKING).using(FINANCE_TRACKING.innerJoin(FINANCE).onKey()).where(FINANCE.PAYROLL.eq((byte)1)).and(FINANCE.SOURCE_ID.eq(id)).and(FINANCE.STATUS.eq((byte)0)).and(FINANCE.DOMAIN.eq(domainId)).execute();
 					dsl.delete(FINANCE).where(FINANCE.PAYROLL.eq((byte)1)).and(FINANCE.SOURCE_ID.eq(id)).and(FINANCE.STATUS.eq((byte)0)).and(FINANCE.DOMAIN.eq(domainId)).execute();
 					dsl.delete(SALARY).where(SALARY.ID.eq(id)).and(SALARY.DOMAIN.eq(domainId)).execute();
 				});

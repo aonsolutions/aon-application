@@ -519,6 +519,10 @@ public class TrabajadoresTramos {
 							@Override
 							public void visitMaternidadPaternidadTiempoParcialFormacion() {
 							}
+							
+							@Override
+							public void visitMaternidadPaternidadTiempoParcialIT15PrimerosDias() {
+							}
 
 							@Override
 							public void visitIncapacidadTemporalATEPPagoDelegadoFormacion() {
@@ -991,6 +995,33 @@ public class TrabajadoresTramos {
 							}
 
 							@Override
+							public void visitMaternidadPaternidadTiempoParcialIT15PrimerosDias() {
+								// 2.2 Situaciones de Incapacidad Temporal  
+								// 2.2.1 Incapacidad Temporal 15 primeros días 
+								// Base de contingencias comunes en situación de IT
+								dataSolicitadoBuilder.setTipo("C");
+								dataSolicitadoBuilder.setCodigo("500");
+								dataSolicitadoBuilder.setObligatorio(true);
+								tramoBuilder.addDato(dataSolicitadoBuilder.create());
+								// Base de Accidentes de Trabajo en situación de IT
+								dataSolicitadoBuilder.setTipo("C");
+								dataSolicitadoBuilder.setCodigo("603");
+								dataSolicitadoBuilder.setObligatorio(true);
+								tramoBuilder.addDato(dataSolicitadoBuilder.create());
+
+								// Base de contingencias comunes en situación de Maternidad
+								dataSolicitadoBuilder.setTipo("C");
+								dataSolicitadoBuilder.setCodigo("535");
+								dataSolicitadoBuilder.setObligatorio(true);
+								tramoBuilder.addDato(dataSolicitadoBuilder.create());
+								// Base de Accidentes de Trabajo en situación de Maternidad
+								dataSolicitadoBuilder.setTipo("C");
+								dataSolicitadoBuilder.setCodigo("635");
+								dataSolicitadoBuilder.setObligatorio(true);
+								tramoBuilder.addDato(dataSolicitadoBuilder.create());
+							}
+
+							@Override
 							public void visitIncapacidadTemporalATEPPagoDelegadoFormacion() {
 								//3.1.3 Tramo en situación de IT pago delegado AT y EP
 								// Compensación por AT EP 
@@ -1232,6 +1263,11 @@ public class TrabajadoresTramos {
 							}
 
 							@Override
+							public void visitMaternidadPaternidadTiempoParcialIT15PrimerosDias() {
+								salaryVisitor.visitMaternidadPaternidadTiempoParcialIT15PrimerosDias();
+							}
+
+							@Override
 							public void visitIncapacidadTemporalATEPPagoDelegadoFormacion() {
 								salaryVisitor.visitIncapacidadTemporalATEPPagoDelegadoFormacion();
 							}
@@ -1356,7 +1392,7 @@ public class TrabajadoresTramos {
 	}
 	
 
-	private static List<Period> insert(List<Period> periods, Period period) {
+	private static List<Period> __insert(List<Period> periods, Period period) {
 		List<Period> insert = new ArrayList<Period>();
 		for ( Period p : periods )
 			insert.addAll(p.sub(period))   ;
@@ -1369,6 +1405,21 @@ public class TrabajadoresTramos {
 		return insert;
 	}
 	
+	private static List<Period> insert(List<Period> periods, Period period) {
+		List<Period> insert = new ArrayList<Period>();
+		for ( Period p : periods ) {
+			Period intersect = p.intersect(period);
+			if ( intersect != null)
+				insert.add(p.intersect(period));
+			insert.addAll(p.sub(period));
+		}
+		insert.addAll(period.sub(period, periods));
+		
+		Collections.sort(insert);
+		
+		return insert;
+	}
+
 	private static List<Period> merge(Salary salary, List<Period> periods) {
 		LinkedList<Period> cretaPeriods = new LinkedList<Period>();
 		
@@ -1485,6 +1536,11 @@ public class TrabajadoresTramos {
 
 				@Override
 				public void visitMaternidadPaternidadTiempoParcialFormacion() {
+					cretaPeriods.add(new Period(period.getStart(), period.getEnd()));
+				}
+
+				@Override
+				public void visitMaternidadPaternidadTiempoParcialIT15PrimerosDias() {
 					cretaPeriods.add(new Period(period.getStart(), period.getEnd()));
 				}
 
@@ -1618,6 +1674,11 @@ public class TrabajadoresTramos {
 
 				@Override
 				public void visitMaternidadPaternidadTiempoParcialFormacion() {
+					visitOthers();					
+				}
+
+				@Override
+				public void visitMaternidadPaternidadTiempoParcialIT15PrimerosDias() {
 					visitOthers();					
 				}
 
@@ -1758,6 +1819,11 @@ public class TrabajadoresTramos {
 				}
 
 				@Override
+				public void visitMaternidadPaternidadTiempoParcialIT15PrimerosDias() {
+					visitOthers();
+				}
+
+				@Override
 				public void visitIncapacidadTemporalATEPPagoDelegadoFormacion() {
 					visitOthers();
 				}
@@ -1887,6 +1953,10 @@ public class TrabajadoresTramos {
 				@Override
 				public void visitMaternidadPaternidadTiempoParcialFormacion() {
 					visitOthers();					
+				}
+
+				@Override
+				public void visitMaternidadPaternidadTiempoParcialIT15PrimerosDias() {
 				}
 
 				@Override
@@ -2026,7 +2096,12 @@ public class TrabajadoresTramos {
 			public void visitMaternidadPaternidadTiempoParcialFormacion() {
 				state.visitMaternidadPaternidadTiempoParcialFormacion();
 			}
-
+			
+			@Override
+			public void visitMaternidadPaternidadTiempoParcialIT15PrimerosDias() {
+				state.visitMaternidadPaternidadTiempoParcialFormacion();
+			}
+			
 			@Override
 			public void visitIncapacidadTemporalATEPPagoDelegadoFormacion() {
 				state.visitIncapacidadTemporalATEPPagoDelegadoFormacion();
@@ -2135,6 +2210,7 @@ public class TrabajadoresTramos {
 		void visitExpedienteRegulacionEmpleoParcialFormacion();
 		void visitMaternidadPaternidadTiempoParcialFormacion();
 		void visitIncapacidadTemporalATEPPagoDelegadoFormacion();
+		void visitMaternidadPaternidadTiempoParcialIT15PrimerosDias();
 		void visitExpedienteRegulacionEmpleoParcialFormacionEnAlternancia();
 		void visitMaternidadPaternidadTiempoParcialFormacionEnAlternancia();
 		
@@ -2283,7 +2359,13 @@ public class TrabajadoresTramos {
 			else
 				visitor.visitFormacionEnAlternanciaNormal();
 		else if ( iT15primerosDias )
-			visitor.visitIncapacidadTemporal15PrimerosDias();
+			if ( iTMaternity && partialMaternity )
+				visitor.visitMaternidadPaternidadTiempoParcialIT15PrimerosDias();
+			else if ( iTPaternity && partialPaternity )
+				visitor.visitMaternidadPaternidadTiempoParcialIT15PrimerosDias();
+			else 
+				visitor.visitIncapacidadTemporal15PrimerosDias();
+			
 		else if ( iTPagoDelegado )
 			visitor.visitIncapacidadTemporalPagoDelegado();
 		else if ( iTMaternity &&  fullMaternity  )

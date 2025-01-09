@@ -25,6 +25,8 @@ import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
+import com.google.gwt.layout.client.Layout.AnimationCallback;
+import com.google.gwt.layout.client.Layout.Layer;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
@@ -39,6 +41,8 @@ public class BalancePanelReport extends DockLayoutPanel implements HasAccountEnt
 	private SimpleLayoutPanel centerPanel;
 	private TabLayoutPanel tabPanel;
 	private BalancePanelFilter filter;
+	SimpleLayoutPanel filterPanel = new SimpleLayoutPanel();
+
 	
 	public BalancePanelReport(final AccountingReportModuleOptions options) {
 		this(options,null);
@@ -72,8 +76,7 @@ public class BalancePanelReport extends DockLayoutPanel implements HasAccountEnt
 		} else {
 			addStyleName(AON.CSS.aonScrollArea());
 			addStyleName(AON.CSS.aonMarginBottom());
-			SimpleLayoutPanel northPanel = new SimpleLayoutPanel();
-			addNorth(northPanel, 118);
+			addNorth(filterPanel, 150);
 			centerPanel = new SimpleLayoutPanel();
 			centerPanel.setStyleName(AON.CSS.aonSelector());
 			tabPanel = new TabLayoutPanel(30, Unit.PX);
@@ -87,16 +90,40 @@ public class BalancePanelReport extends DockLayoutPanel implements HasAccountEnt
 				
 				@Override
 				public void onMaximize(MaximizeEvent event) {
-					BalancePanelReport.this.setWidgetSize(northPanel, 118 );
-					BalancePanelReport.this.animate(500);
+					BalancePanelReport.this.setWidgetSize(filterPanel, 150 );
+					BalancePanelReport.this.animate(500, new AnimationCallback() {
+						
+						@Override
+						public void onAnimationComplete() {
+							MaximizeEvent.fire(BalancePanelReport.this);
+						}
+
+						@Override
+						public void onLayout(Layer arg0, double arg1) {
+						}
+						
+					});
+					
 				}
 			});
 			filter.addMinimizeHandler(new MinimizeHandler() {
 				
 				@Override
 				public void onMinimize(MinimizeEvent event) {
-					BalancePanelReport.this.setWidgetSize(northPanel, 25);
-					BalancePanelReport.this.animate(500);
+					BalancePanelReport.this.setWidgetSize(filterPanel, 0);
+					BalancePanelReport.this.animate(500, new AnimationCallback() {
+						
+						@Override
+						public void onAnimationComplete() {
+							MinimizeEvent.fire(BalancePanelReport.this);
+						}
+
+						@Override
+						public void onLayout(Layer arg0, double arg1) {
+						}
+						
+					});
+					
 				}
 			});
 			filter.addValueChangeHandler(new ValueChangeHandler<AccountingReportParams>() {
@@ -107,7 +134,7 @@ public class BalancePanelReport extends DockLayoutPanel implements HasAccountEnt
 					onSearch(options,params,0);
 				}
 			});
-			northPanel.setWidget(filter);
+			filterPanel.setWidget(filter);
 			onSearch(options,filter.getWidgetParams(options),0);
 		}
 	}
@@ -227,5 +254,33 @@ public class BalancePanelReport extends DockLayoutPanel implements HasAccountEnt
 			tabPanel.selectTab(tabPanel.getWidgetCount() - 1);
 		}
 	}
+	
+	public void closeFilterPanel() {
+		MinimizeEvent.fire(filter);
+	}
+	
+	public void openFilterPanel() {
+		MaximizeEvent.fire(filter);
+	}
+	
+	public boolean isFilterPanelOpened() {
+		double filterPanelSize = getWidgetSize(filterPanel);
+		if (Double.compare(filterPanelSize, 0.0) == 0) {
+			return false;
+		}
+		return true;
+	}
+
+	public HandlerRegistration addFilterMinimizeHandler(MinimizeHandler handler) {
+//		return filter.addMinimizeHandler(handler);
+		return addHandler(handler, MinimizeEvent.getType());
+	}
+
+	public HandlerRegistration addFilterMaximizeHandler(MaximizeHandler handler) {
+//		return filter.addMaximizeHandler(handler);
+		return addHandler(handler, MaximizeEvent.getType());
+	}
+	
+	
 	
 }

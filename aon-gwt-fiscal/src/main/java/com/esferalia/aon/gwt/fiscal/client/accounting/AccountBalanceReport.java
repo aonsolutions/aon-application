@@ -6,6 +6,7 @@ import com.esferalia.aon.gwt.common.client.CommonServiceAsync;
 import com.esferalia.aon.gwt.common.client.CommonServiceAsyncDecorator;
 import com.esferalia.aon.gwt.common.client.ModuleCallback;
 import com.esferalia.aon.gwt.common.client.RootLayoutPanel;
+import com.esferalia.aon.gwt.common.client.widget.MinimizePanel.MaximizeEvent;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomPopup;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
@@ -14,6 +15,7 @@ import com.esferalia.aon.gwt.fiscal.client.AccountEntrySelectionHandler;
 import com.esferalia.aon.gwt.fiscal.client.MainEntryPoint;
 import com.esferalia.aon.gwt.fiscal.client.accounting.PrintReportDialog.IPrintReportDialogCallback;
 import com.esferalia.aon.gwt.fiscal.client.accounting.panel.BalancePanelReport;
+import com.esferalia.aon.gwt.fiscal.client.accounting.panel.StatementPanelReport;
 import com.esferalia.aon.gwt.fiscal.shared.IRequestParamsNames;
 import com.esferalia.aon.gwt.fiscal.shared.JsonParams;
 import com.esferalia.aon.occam.api.model.AccountEntry;
@@ -74,7 +76,19 @@ public class AccountBalanceReport extends MainEntryPoint {
 	public void loadModule( final AccountingReportModuleOptions options ) {
 		AON.ensureInjected();
 		DockLayoutPanel dockLayoutPanel = new DockLayoutPanel(Unit.PX);
-		BalancePanelReport panel = new BalancePanelReport(options);
+		final AonToolbarButton filterButton = new AonToolbarButton("", AON.CSS.aonToolbarFilterContainer());
+		BalancePanelReport panel = new BalancePanelReport(options) {
+			
+			@Override
+			public void closeFilterPanel() {
+				super.closeFilterPanel();
+			}
+			
+			@Override
+			public void openFilterPanel() {
+				super.openFilterPanel();
+			}
+		};
 		
 		panel.addSelectionHandler(new AccountEntrySelectionHandler() {
 			
@@ -84,6 +98,13 @@ public class AccountBalanceReport extends MainEntryPoint {
 				showEntry(options, entry.getId(), event.getCallback());
 				
 			}
+		});
+		
+		panel.addFilterMaximizeHandler(event -> {
+        	filterButton.setHTML("<span class='material-icons'>filter_alt_off</span>");
+		});
+		panel.addFilterMinimizeHandler(event -> {
+			filterButton.setHTML("<span class='material-icons'>filter_alt</span>");
 		});
 		
 		
@@ -167,6 +188,22 @@ public class AccountBalanceReport extends MainEntryPoint {
 		buttonContainer.add(excelPrint);
 		toolbar.add(buttonContainer);
 		
+		filterButton.setHTML("<span class='material-icons'>filter_alt_off</span>");
+		
+		filterButton.addClickHandler(new ClickHandler() {
+
+		    @Override
+		    public void onClick(ClickEvent event) {
+		    	if (panel.isFilterPanelOpened()) {
+		            panel.closeFilterPanel();
+		        } else {
+		            panel.openFilterPanel();
+
+		        }
+		    }
+		});
+		
+		toolbar.add(filterButton);
 		dockLayoutPanel.addNorth(toolbar, AonToolbar.HEIGTH);
 		dockLayoutPanel.add( panel );
 		

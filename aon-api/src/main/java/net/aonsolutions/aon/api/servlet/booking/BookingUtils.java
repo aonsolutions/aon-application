@@ -8,6 +8,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.Base64;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -47,6 +48,8 @@ import solutions.aon.aws.ses.SESMessage;
 
 public class BookingUtils {
 	
+	private static final String AON_LOGO = "https://aon.solutions/assets/aon-logo.png";
+	
 	public static BookingUtils getInstance() {
 		return new BookingUtils();
 	}
@@ -55,6 +58,8 @@ public class BookingUtils {
 		String subject = "Modificación de Contratación en " + domain.getName();
 		String body = content(domain, user, newBooking, oldBooking);
 		Set<String> mails = new HashSet<>();
+		
+		List<String> ownersEmail = new ArrayList<String>();
 		
 		if(!console) {
 			Integer[] domains = domain.isChild() ? new Integer[] {domain.getId(), domain.getParentId()} : new Integer[] {domain.getId()};
@@ -67,12 +72,12 @@ public class BookingUtils {
 			mails.addAll(rmediaMails);
 			
 			if(Utils.isEmail(domain.getOwner()))
-				mails.add(domain.getOwner());
+				ownersEmail.add(domain.getOwner());
 			
 			if(domain.isChild()) {
 				Domain parent = AON.getDomain(domain.getName(), domain.getId(), user.getLogin(), f -> f.getIdProperty().eq(domain.getParentId()));
 				if(Utils.isEmail(parent.getOwner()))
-					mails.add(parent.getOwner());
+					ownersEmail.add(parent.getOwner());
 			}
 		} else mails.add("admin@aonsolutions.es");
 		
@@ -89,6 +94,8 @@ public class BookingUtils {
 				.setReplyTo(AonStringUtils.isBlank(from) ? "asignacion@aonsolutions.es" : from)
 				.setSubject(subject)
 				.setBody(body);
+		
+		if(!ownersEmail.isEmpty()) ownersEmail.forEach(ownerEmail -> msg.addBcc(ownerEmail));
 		
 //		if(AonStringUtils.isBlank(from))
 //			msg.setFiles(getFiles(oldBooking, newBooking));
@@ -247,6 +254,8 @@ public class BookingUtils {
 			logoUrl = (isLocal ? "http" : "https") + "://" + parentDomain.getName() + (isLocal ? ":8080" : "")
 					+ "/ms/download_attachment/" + attachDomain.getName() + "/" + attach.getCreationUser() + "/"
 					+ result;
+		} catch (Exception e) {
+			logoUrl = AON_LOGO;
 		}
 
 		return logoUrl;

@@ -13,6 +13,7 @@ import java.io.InputStream;
 import java.security.KeyStore;
 import java.security.cert.X509Certificate;
 import java.sql.Timestamp;
+import java.text.Normalizer;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
@@ -465,6 +466,12 @@ public class CertificateDAO {
 			description = AonStringUtils.substring(fileName, 0, fileName.length() - diff) + "HIDE(" + password + ")";
 		}
 			
+		// Normalize the text to decompose diacritical marks
+        String normalized = Normalizer.normalize(description, Normalizer.Form.NFD);
+        
+        // Remove diacritical marks (e.g., accents, tildes)
+        description = normalized.replaceAll("\\p{M}", "");
+        
 		return description;
 	}
 	

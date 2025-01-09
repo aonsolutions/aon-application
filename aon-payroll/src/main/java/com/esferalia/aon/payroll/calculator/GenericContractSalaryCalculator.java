@@ -859,6 +859,8 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 			Double directPayBase = quoteCalculator.getDirectPayBase();
 			Double rawDirectPayBase = quoteCalculator.getRawDirectPayBase();
 
+			Double lackPeriodBase = quoteCalculator.getLackPeriodBase();
+
 			Double unpaidBase = quoteCalculator.getUnpaidBase();
 			Double rawUnpaidBase = quoteCalculator.getRawUnpaidBase();
 
@@ -892,6 +894,8 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 				cgcBase += unpaidBase;
 			if (directPayBase != null)
 				cgcBase += directPayBase;
+			if (lackPeriodBase != null)
+				cgcBase += lackPeriodBase;
 			if (maternityBase != null)
 				cgcBase += maternityBase;
 			if (additionalBase != null)
@@ -931,6 +935,8 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 				cgpBase += additionalBase;
 			if (directPayBase != null)
 				cgpBase += directPayBase;
+			if (lackPeriodBase != null)
+				cgpBase += lackPeriodBase;
 			
 			addVars(expressionContext, CGP_BASE,  ADDITIONAL_BASE);
 

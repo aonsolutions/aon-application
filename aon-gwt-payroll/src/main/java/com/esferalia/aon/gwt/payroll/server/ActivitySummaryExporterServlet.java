@@ -2,19 +2,13 @@ package com.esferalia.aon.gwt.payroll.server;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Types;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
-import jakarta.servlet.ServletOutputStream;
-import jakarta.servlet.annotation.WebServlet;
-import jakarta.servlet.http.HttpServlet;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-
-import org.apache.commons.lang.math.NumberUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -27,10 +21,13 @@ import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.gwt.common.server.AonServletUtils;
 import com.esferalia.aon.gwt.payroll.jooq.JooqActivitySummary;
 import com.esferalia.aon.gwt.payroll.shared.ActivitySummaryObject;
-import com.esferalia.aon.occam.api.AON;
-import com.esferalia.aon.occam.api.model.security.User;
-import com.esferalia.aon.watson.util.AonNumberUtils;
+import com.esferalia.aon.gwt.payroll.shared.ActivitySummaryParams;
 
+import jakarta.servlet.ServletOutputStream;
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import net.aonsolutions.core.pool.AonConnectionException;
 
 @SuppressWarnings("serial")
@@ -52,62 +49,50 @@ public class ActivitySummaryExporterServlet extends HttpServlet {
 	protected void doGet(HttpServletRequest request,
 			HttpServletResponse response) throws IOException {
 
-		String _domainId = request.getParameter("domainId");
 		String _domainName = request.getParameter("domainName");
-		String _parentDomainId = request.getParameter("parentDomainId");
+		String _user = request.getParameter("user");
+		
+		String _description = request.getParameter("description");
+		
 		String _startDate = request.getParameter("startDate");
 		String _endDate = request.getParameter("endDate");
+		
 		String _starts = request.getParameter("starts");
 		String _ends = request.getParameter("ends");
+		
 		String _salary = request.getParameter("salary");
 		String _salaryExtra = request.getParameter("salaryExtra");
 		String _salarySettle = request.getParameter("salarySettle");
 		String _salaryOther = request.getParameter("salaryOther");
+		
 		String _itCommonDisease = request.getParameter("itCommonDisease");
-		String _itOccupationalDisease = request
-				.getParameter("itOccupationalDisease");
+		String _itOccupationalDisease = request.getParameter("itOccupationalDisease");
 		String _itMaternity = request.getParameter("itMaternity");
 		String _itOther = request.getParameter("itOther");
-		String _user = request.getParameter("user");
-
-		Date startDate = null;
-		Date endDate = null;
-		if (NumberUtils.isNumber(_startDate)) {
-			startDate = new Date(Long.parseLong(_startDate));
-		}
-		if (NumberUtils.isNumber(_endDate)) {
-			endDate = new Date(Long.parseLong(_endDate));
-		}
-
 		
-
-		try {
-			String domainName = _domainName;
+		try (Connection connection = AonServletUtils.getConnection(_domainName)) {
+			Integer domainId = AonServletUtils.getDomainID(_domainName);
+			Integer parentDomainId = AonServletUtils.getParentDomainID(_domainName); 
+			Integer userId = AonServletUtils.getUserID(connection, _user, domainId, parentDomainId);
 			
-			boolean isParentDomain = !NumberUtils.isNumber(_parentDomainId);
+			ActivitySummaryParams params = new ActivitySummaryParams()
+					.setDescription(_description)
+					.setStart(new Date(Long.parseLong(_startDate)))
+					.setEnd(new Date(Long.parseLong(_endDate)))
+					.setStartContract(Boolean.parseBoolean(_starts))
+					.setEndContract(Boolean.parseBoolean(_ends))
+					.setSalary(Boolean.parseBoolean(_salary))
+					.setExtra(Boolean.parseBoolean(_salaryExtra))
+					.setSettle(Boolean.parseBoolean(_salarySettle))
+					.setDelay(Boolean.parseBoolean(_salaryOther))
+					.setItCD(Boolean.parseBoolean(_itCommonDisease))
+					.setItOD(Boolean.parseBoolean(_itOccupationalDisease))
+					.setItMP(Boolean.parseBoolean(_itMaternity))
+					.setItOT(Boolean.parseBoolean(_itOther))
+					;
 			
-			Integer user = null;
+			List<ActivitySummaryObject> list = JooqActivitySummary.getActivitySummary(connection, domainId, parentDomainId, userId, params);
 			
-			try {				
-				User usr = AON.getUser(_domainName, AonNumberUtils.toint(_domainId), _user);
-				if (usr != null) {
-					user = usr.getId() > 0 ? usr.getId() : null;
-				}
-			} catch (Exception e) {
-				//user remains null
-			}
-			
-
-			List<ActivitySummaryObject> list = JooqActivitySummary
-					.getActivitySummary(user, domainName, isParentDomain, NumberUtils
-							.toInt(_domainId), startDate, endDate, new Boolean(
-							_starts), new Boolean(_ends), new Boolean(_salary),
-							new Boolean(_salaryExtra), new Boolean(_salarySettle),
-							new Boolean(_salaryOther),
-							new Boolean(_itCommonDisease), new Boolean(
-									_itOccupationalDisease), new Boolean(
-									_itMaternity), new Boolean(_itOther));
-
 			String fileName = "resumen_actividad";
 			dateFormatter.applyPattern("yyyy/MM/dd");
 			response.setContentType(MimeType.MIME_MS_EXCEL_2007.getName());
@@ -115,7 +100,7 @@ public class ActivitySummaryExporterServlet extends HttpServlet {
 					+ fileName + ".xls\"");
 			ServletOutputStream output = response.getOutputStream();
 
-			if (!excelReport(output, list, isParentDomain)) {
+			if (!excelReport(output, list, parentDomainId == null)) {
 				AonUtil.addErrorMessage("No existen datos para generar el informe.");
 			}
 
@@ -125,6 +110,8 @@ public class ActivitySummaryExporterServlet extends HttpServlet {
 		} catch (IOException e) {
 			throw new IllegalArgumentException(e.getMessage(), e);
 		} catch (AonConnectionException e) {
+			throw new IllegalArgumentException(e.getMessage(), e);
+		} catch (SQLException e) {
 			throw new IllegalArgumentException(e.getMessage(), e);
 		}
 	}
@@ -225,7 +212,7 @@ public class ActivitySummaryExporterServlet extends HttpServlet {
 						"Finiquitos", 10));
 		metadata.getColumns().add(
 				new ReportColumnMetadata("SALARY_OTHER", Types.INTEGER,
-						"Otros", 10));
+						"Atrasos", 10));
 		metadata.getColumns().add(
 				new ReportColumnMetadata("IT_EC_AN", Types.INTEGER, "IT EC/AN",
 						10));

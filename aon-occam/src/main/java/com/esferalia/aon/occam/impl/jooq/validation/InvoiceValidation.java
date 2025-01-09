@@ -185,13 +185,16 @@ public class InvoiceValidation {
 	};
 	
 	/**
-	 * Si el año de la factura no es anterior en diez años al actual.
+	 * Si el año de la factura no es anterior en diez años al actual. o posterior 2 años al actual.
 	 */
 	public static final BiConsumer<Invoice,AonConfigurationContext> CHECK_TEN_YEARS  = (inv,ctx) -> {
 		int thisYear = AonDateUtils.getYear(new Date());
 		int invoiceYear = AonDateUtils.getYear(inv.getIssueDate());
-		if (invoiceYear < (thisYear-10) || invoiceYear > (thisYear+1)) {
+		if (invoiceYear < (thisYear-10)) {
 			throw new AonCoreException(AonError.INVOICE_TEN_YEARS.getMessage());
+		}
+		if(invoiceYear > (thisYear+1)) {
+			throw new AonCoreException(AonError.INVOICE_TWO_YEARS.getMessage());
 		}
 	};
 	

@@ -477,6 +477,10 @@
 .aon_inline_block {
 	display: inline-block;
 }
+
+.aon_inline_flex {
+	display: inline-flex;
+}
 .aon_cmd_item{
 	background-position: center left;
 	background-repeat: no-repeat;
@@ -969,7 +973,7 @@
 	background-size: 100% auto;
 }
 .aon_search_panel_button:hover, .aon_search_panel_button:focus {
-	background-color: white !important; 
+	background-color: #eee !important; 
 }
 
 /* GRID */
@@ -1005,6 +1009,10 @@
 }
 .aon_align_items_baseline {
 	align-items: baseline;
+}
+
+.aon_align_items_center {
+	align-items: center;
 }
 
 .aon_flex_column {
@@ -1329,6 +1337,7 @@
 	box-sizing: border-box;
 	border-bottom: solid #c4c4c4 1px;
 	min-height: 37px;
+	justify-content: space-between;
 }
 .aon_toolbar_small_inner {
 	display: flex;
@@ -2283,17 +2292,30 @@
 	min-height : 2rem;
 	background-color : white;
 	position : sticky;
-	top : -1px;
+	top : -10px;
 	z-index : 1;
 	padding : 0 1rem;
 	border-bottom : 1px solid #ddd;
 	gap: 0;
 }
 
+.aon_custom_table_footer{
+	min-height : 2rem;
+	background-color : #ddd;
+	position : sticky;
+	bottom : 0px;
+	z-index : 1;
+	padding : 0 1rem;
+	border-top : 1px solid #ddd;
+	gap: 0;
+}
+
+.aon_custom_table_footer > *,
 .aon_custom_table_header > * {
 	padding: 0 .5rem;
 }
 
+.aon_custom_table_cell_footer,
 .aon_custom_table_cell_header{
 	background : transparent;
 	color : #5f6368;
@@ -2322,4 +2344,10 @@
     background-color: transparent; 
     padding: 10px 20px;     
     text-align: center;
+}
+
+.gwt-viz-container > div {
+	color: red;
+	display: flex;
+	justify-content: center;
 }

@@ -1,7 +1,6 @@
 package com.esferalia.aon.occam.api.model.fiscal;
 
 import java.io.Serializable;
-import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.stream.Collectors;

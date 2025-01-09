@@ -105,22 +105,6 @@ public class ContractLeaveLoader {
 	
 
 
-	// @formatter:off
-	protected static final DaysRange _COMMON_RANGES[] = { new DaysRange(1, 3), new DaysRange(4, 15),
-			new DaysRange(16, 20), new DaysRange(21, 365) {
-				public String getName(ContextVariable variable) {
-					return String.format("%s_%d", variable, start);
-				};
-			}, new DaysRange(366), };
-	// @formatter:on
-	// @formatter:off
-	protected static final DaysRange _PROFESSIONAL_RANGES[] = { new DaysRange(1, 365) {
-		public String getName(ContextVariable variable) {
-			return String.format("%s", variable);
-		};
-	}, new DaysRange(366), };
-	// @formatter:on
-
 	protected static final DaysRange[] getSexHealthRanges(Date start, ExpressionContext ctx, long parentDays) {
 	    	DaysRange [] ranges = new DaysRange[2];
 		ranges[0] = new DaysRange(1, 20);
@@ -138,10 +122,10 @@ public class ContractLeaveLoader {
 		Date directPayStart = getDirectPayStart(ctx, start);//ctx.getVariable(DIRECT_PAY_START, start, null, Date.class);
 		
 		if ( directPayStart == null )
-			ctx.setVariable(ContextVariable.DIRECT_PAY_START, directPayStart = AonDateUtils.addDays(start, 365-(int)parentDays) , start, null);
+			ctx.setVariable(ContextVariable.DIRECT_PAY_START, directPayStart = AonDateUtils.addDays(start, 545 - (int)parentDays) , start, null);
 		
 
-		long delegatePayDays = directPayStart != null ? getDaysBetweenDates(start, Period.max(directPayStart, start)) + parentDays : 365;
+		long delegatePayDays = directPayStart != null ? getDaysBetweenDates(start, Period.max(directPayStart, start)) + parentDays : 545 ;
 
 		DaysRange commonRanges[] = new DaysRange[5];
 		commonRanges[0] = new DaysRange(1, Math.min(delegatePayDays,3));
@@ -167,9 +151,9 @@ public class ContractLeaveLoader {
 	protected static final DaysRange[] getProfessionalRanges(Date start, ExpressionContext ctx, long parentDays) {
 		Date directPayStart = getDirectPayStart(ctx, start);//ctx.getVariable(DIRECT_PAY_START, start, null, Date.class);
 		if ( directPayStart == null )
-			ctx.setVariable(ContextVariable.DIRECT_PAY_START, directPayStart = AonDateUtils.addDays(start, 365 - (int)parentDays) , start, null);
+			ctx.setVariable(ContextVariable.DIRECT_PAY_START, directPayStart = AonDateUtils.addDays(start, 545 - (int)parentDays) , start, null);
 		
-		long delegatePayDays = directPayStart != null ? getDaysBetweenDates(start, Period.max(directPayStart, start)) + parentDays : 365;
+		long delegatePayDays = directPayStart != null ? getDaysBetweenDates(start, Period.max(directPayStart, start)) + parentDays : 545;
 
 		DaysRange professionalRanges[] = new DaysRange[2];
 		professionalRanges[0] = new DaysRange(1, delegatePayDays) {
@@ -553,9 +537,9 @@ public class ContractLeaveLoader {
 								double ctxMonthDays =
 								ExpressionContext.getCurrentBindings()
 								.get(ContextVariable.MONTH_DAYS, value ->  ( value instanceof Number number) ? number.doubleValue() : realMonthDays , realMonthDays );
-								
+																
 								double quoteDays = getQuoteDays(exprCtx, workedPeriod);
-								return Math.min(quoteDays, ctxMonthDays ) * (1.00 - value) * partialFactor;
+								return ( (period.getDays() == realMonthDays) ? ctxMonthDays : quoteDays ) * (1.00 - value) * partialFactor;
 							}
 						});
 						exprCtx.putVariable(ContextVariable.WORKED_FACTOR, new ITimedVariable<Double>() {

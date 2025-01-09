@@ -4,6 +4,7 @@ import java.util.function.Consumer;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.watson.util.AonStringUtils;
+import com.google.gwt.dom.client.Style.Display;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.KeyUpHandler;
 import com.google.gwt.user.client.ui.Button;
@@ -74,6 +75,14 @@ public abstract class AonCustomDockLayout extends DockLayoutPanel {
 		return getToolbar().getButtonContainer();
 	}
 	
+	public void setSearchZIndex(Integer zIndex) {
+		searchFilterComponent.setSearchZIndex(zIndex);
+	}
+	
+	public void setPopupHeight(String height) {
+		searchFilterComponent.setPopupHeight(height);
+	}
+	
 	public TextBox getSearchTextBox() {
 		return searchFilterComponent.getSearchTextBox();
 	}
@@ -98,6 +107,14 @@ public abstract class AonCustomDockLayout extends DockLayoutPanel {
 		searchFilterComponent.addSortWidget(widget);
 	}
 	
+	public void showOrder() {
+		searchFilterComponent.showOrder();
+	}
+	
+	public void hideOrder() {
+		searchFilterComponent.hiderder();
+	}
+	
 	public void addUtilityOption(Button button, String text) {
 		searchFilterComponent.addUtilityOption(button, text);
 	}
@@ -112,6 +129,11 @@ public abstract class AonCustomDockLayout extends DockLayoutPanel {
 		};
 		if(advancedSearch != null) aonToolbarSearchBox.setAdvancedSearch(advancedSearch);
 		getToolbar().showSearchPanel(aonToolbarSearchBox);
+	}
+
+	public void hideToolbarFilterMessages() {
+		toolbar.getMessagePanel().getElement().getStyle().setDisplay(Display.NONE);
+		toolbar.getFilterPanel().getElement().getStyle().setDisplay(Display.NONE);
 	}
 	
 	protected abstract void onClearFilter();

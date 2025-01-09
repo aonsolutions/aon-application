@@ -20,6 +20,10 @@ public class JsSalaryResult extends JavaScriptObject {
 		return this.endDate;
 	}-*/;
 
+	public final native String getChargeDateString() /*-{
+		return this.chargeDate;
+	}-*/;
+
 	public final native int getEmployeeId() /*-{
 		return this.employeeId;
 	}-*/;
@@ -79,6 +83,10 @@ public class JsSalaryResult extends JavaScriptObject {
 
 	public final Date getEndDate() {
 		return getDateTimeFormat().parse(getEndDateString());
+	}
+
+	public final Date getChargeDate() {
+		return getDateTimeFormat().parse(getChargeDateString());
 	}
 
 	private DateTimeFormat getDateTimeFormat() {

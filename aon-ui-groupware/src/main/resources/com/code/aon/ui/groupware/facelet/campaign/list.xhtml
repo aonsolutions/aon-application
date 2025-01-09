@@ -15,6 +15,7 @@
 				<ui:param name="toolbarTitle" value="#{bundle.groupware_campaign_monitor}" />
 				<ui:param name="controller" value="#{campaign}" />
 				<ui:param name="skipResetButton" value="true" />
+				<ui:param name="rowSelectorToggleOnClick" value="#{true}" />
 			</ui:decorate>
 			
 			<aon:div styleClass="aon-scroll-area">
@@ -86,6 +87,29 @@
 							<aon:outputText value="#{bundle.groupware_automatic}" rendered="#{!to.manual}" />
 						</aon:column>							
 
+						<aon:column styleClass="aon-width-20">
+							<f:facet name="header">
+								<aon:outputText value="B" />
+							</f:facet>
+							
+							<aon:div
+								rendered="#{!to.deleted and !to.finished}" 
+								onmouseover="disableRowSelector();" 
+								onmouseup="disableRowSelector();"
+								onmouseout="enableRowSelector();">
+								<aon:confirmButton id="CampaignList-removeButton"
+									title="Borrar"
+									styleClass="aon-icon aon-icon-delete"
+									style="border:none;"
+									value="&#160;"
+									immediate="true" ajaxSingle="true" requestDelay="100" 
+									confirmActionListener="#{rowSelectorActionListener}"
+									confirmAction="#{campaign.campaignRemoveAction}"
+									confirmTitle="#{bundle.aon_confirm_title}"
+									confirmMessage="#{bundle.aon_remove_confirm}"
+								/>
+							</aon:div>
+						</aon:column>
 					</ui:define>
 				</ui:decorate>
 			</aon:div>

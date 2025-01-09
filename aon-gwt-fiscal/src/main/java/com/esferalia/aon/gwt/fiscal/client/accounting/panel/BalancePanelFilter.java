@@ -53,48 +53,18 @@ public class BalancePanelFilter extends SimpleLayoutPanel implements HasValueCha
 	private ListBox previousPeriods;
 	private ListBox balanceType;
 	private CheckBox breakdownEnabled;
+	private FlexTable mainTab;
 	
 	public BalancePanelFilter(final AccountingReportModuleOptions options, AccountingReportParams params) {
 		setStyleName(AON.CSS.aonSelector());
-		FlexTable mainTab = new FlexTable();
+		mainTab = new FlexTable();
 		mainTab.setStyleName(AON.CSS.aonSearchPanel());
 		mainTab.addStyleName(AON.CSS.aonWidthAlmostAll());
 		mainTab.addStyleName(AON.CSS.aonBlockCenter());
 		mainTab.getColumnFormatter().setWidth(0, "auto");
 		mainTab.getColumnFormatter().setWidth(1, "50px");
 		mainTab.setWidget(0, 0, getFilterTab(options,params));
-		mainTab.setWidget(0, 1, getMinMaxButtonsPanel());
 		setWidget(mainTab);
-	}
-
-	private FlowPanel getMinMaxButtonsPanel() {
-		FlowPanel min = new FlowPanel();
-		min.setStyleName(AON.CSS.aonTextRight());
-		min.addStyleName(AON.CSS.aonPaddingRight());
-		min.addStyleName(AON.CSS.aonNowrap());
-		min.addStyleName(AON.CSS.aonWidthAll());
-		
-		AonSearchPanelButton maximize = new AonSearchPanelButton(AON.MSG.maximize(),AON.CSS.aonIconMaximize());
-		maximize.addClickHandler(new ClickHandler() {
-			
-			@Override
-			public void onClick(ClickEvent event) {
-				MaximizeEvent.fire(BalancePanelFilter.this);
-			}
-		});
-
-		min.add(maximize);
-		
-		AonSearchPanelButton minimize = new AonSearchPanelButton(AON.MSG.minimize(),AON.CSS.aonIconMinimize());
-		minimize.addClickHandler(new ClickHandler() {
-			
-			@Override
-			public void onClick(ClickEvent event) {
-				MinimizeEvent.fire(BalancePanelFilter.this);
-			}
-		});
-		min.add(minimize);
-		return min;
 	}
 
 	@Override
@@ -397,11 +367,9 @@ public class BalancePanelFilter extends SimpleLayoutPanel implements HasValueCha
 			}
 		});
 		
-		// ************************************************************************  CLEAN
-		AonSearchPanelButton cleanButton = new AonSearchPanelButton(AON.MSG.clean(),AON.CSS.aonIconClear());
-		cleanButton.setTitle(AON.MSG.clean());
-		tab.setWidget(0, 6, cleanButton);
-		
+		// ************************************************************************  CLEAN, REFRESH AND CLOSE
+		AonSearchPanelButton cleanButton = new AonSearchPanelButton(AON.MSG.reset(),AON.CSS.aonIconClear());
+		cleanButton.addStyleName(AON.CSS.aonMarginRight());		
 		cleanButton.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
@@ -416,6 +384,32 @@ public class BalancePanelFilter extends SimpleLayoutPanel implements HasValueCha
 				ValueChangeEvent.<AccountingReportParams>fire(BalancePanelFilter.this, getWidgetParams(options));
 			}
 		});
+		
+		AonSearchPanelButton refreshButton = new AonSearchPanelButton(AON.MSG.refresh(),AON.CSS.aonIconRefresh());
+		refreshButton.addStyleName(AON.CSS.aonMarginRight());
+		refreshButton.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+//				onSearch(options);
+			}
+		});
+		
+		AonSearchPanelButton closeButton = new AonSearchPanelButton(AON.MSG.close(),AON.CSS.aonWidgetClose());
+		closeButton.addClickHandler(new ClickHandler() {
+			
+			@Override
+			public void onClick(ClickEvent event) {
+				MinimizeEvent.fire(BalancePanelFilter.this);
+			}
+		});
+		FlowPanel buttonContainer = new FlowPanel();
+		buttonContainer.setStyleName(AON.CSS.aonTextRight());
+		buttonContainer.addStyleName(AON.CSS.aonPaddingRight());
+		buttonContainer.addStyleName(AON.CSS.aonNowrap());
+		buttonContainer.addStyleName(AON.CSS.aonWidthAll());		buttonContainer.add(cleanButton);
+		buttonContainer.add(refreshButton);
+		buttonContainer.add(closeButton);
+		tab.setWidget(0,7, buttonContainer);
 		
 		// **********************************************************************  EVENTS
 		period.addChangeHandler(new ChangeHandler() {

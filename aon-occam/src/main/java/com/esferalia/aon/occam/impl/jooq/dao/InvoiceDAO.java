@@ -1,6 +1,8 @@
 package com.esferalia.aon.occam.impl.jooq.dao;
 
 import static com.esferalia.aon.jooq.tables.Account.ACCOUNT;
+import static com.esferalia.aon.jooq.tables.AccountEntry.ACCOUNT_ENTRY;
+import static com.esferalia.aon.jooq.tables.AccountEntryInvoice.ACCOUNT_ENTRY_INVOICE;
 import static com.esferalia.aon.jooq.tables.Brand.BRAND;
 import static com.esferalia.aon.jooq.tables.EnterpriseActivity.ENTERPRISE_ACTIVITY;
 import static com.esferalia.aon.jooq.tables.Geozone.GEOZONE;
@@ -1823,6 +1825,21 @@ public class InvoiceDAO {
 			.where(INVOICE.ID.eq(invoiceId))
 			.execute();
 		ctx.log().info("UPDATE ACTIVITY: Invoice {0}: Activity {1}. {2} filas.",invoiceId, activity, count);
+		ctx.getDslContext().select( ACCOUNT_ENTRY_INVOICE.ACCOUNT_ENTRY )
+			.from( ACCOUNT_ENTRY_INVOICE )
+			.where(ACCOUNT_ENTRY_INVOICE.INVOICE.eq(invoiceId))
+			.fetch()
+			.stream()
+			.map( r -> r.getValue(ACCOUNT_ENTRY_INVOICE.ACCOUNT_ENTRY))
+			.findFirst()
+			.ifPresent( accountEntryId -> {
+				int c = ctx.getDslContext().update(ACCOUNT_ENTRY)
+						.set(ACCOUNT_ENTRY.ACTIVITY, activity)
+						.where(ACCOUNT_ENTRY.ID.eq(accountEntryId))
+						.execute();
+				ctx.log().info("UPDATE ACTIVITY: AccountEntry {0}: Activity {1}. {2} filas.",accountEntryId, activity, c);
+			});
+			
 	}
 	
 	public static Optional<Item> getLastItem( AONContext ctx, Integer registry) {

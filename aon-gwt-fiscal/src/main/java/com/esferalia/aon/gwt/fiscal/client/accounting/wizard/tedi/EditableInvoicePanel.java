@@ -2115,7 +2115,7 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 						&& !invoiceCallback.getInvoice().isService() 
 						&& !invoiceCallback.getInvoice().isInvestment()
 						&& invoiceCallback.getInvoice().getInvoice().getRegistryDocumentCountry() != null
-						&& invoiceCallback.getInvoice().getInvoice().getRegistryDocumentCountry().isEuropeanUnionCountry())
+						&& !invoiceCallback.getInvoice().getInvoice().getRegistryDocumentCountry().isEuropeanUnionCountry())
 					);
 					euossRegime.setVisible(
 						   invoiceCallback.getInvoice().isSales()

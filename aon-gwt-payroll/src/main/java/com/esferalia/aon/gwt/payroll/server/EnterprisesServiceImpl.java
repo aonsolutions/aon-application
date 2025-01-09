@@ -26,7 +26,6 @@ import java.sql.SQLException;
 import java.sql.Types;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Base64;
 import java.util.Calendar;
 import java.util.Collection;
@@ -64,6 +63,7 @@ import com.esferalia.aon.gwt.common.shared.UnknownVariablesWarning;
 import com.esferalia.aon.gwt.payroll.client.AgreementsCleanDialog.AgreementCleanType;
 import com.esferalia.aon.gwt.payroll.client.EnterprisesService;
 import com.esferalia.aon.gwt.payroll.jooq.JooqActivity;
+import com.esferalia.aon.gwt.payroll.jooq.JooqActivitySummary;
 import com.esferalia.aon.gwt.payroll.jooq.JooqAddress;
 import com.esferalia.aon.gwt.payroll.jooq.JooqAgrarian;
 import com.esferalia.aon.gwt.payroll.jooq.JooqAgreement;
@@ -92,6 +92,8 @@ import com.esferalia.aon.gwt.payroll.shared.AFIChanges;
 import com.esferalia.aon.gwt.payroll.shared.ActivitiesCCC;
 import com.esferalia.aon.gwt.payroll.shared.Activity;
 import com.esferalia.aon.gwt.payroll.shared.ActivityInfo;
+import com.esferalia.aon.gwt.payroll.shared.ActivitySummaryObject;
+import com.esferalia.aon.gwt.payroll.shared.ActivitySummaryParams;
 import com.esferalia.aon.gwt.payroll.shared.AgrarianJourney;
 import com.esferalia.aon.gwt.payroll.shared.Agreement;
 import com.esferalia.aon.gwt.payroll.shared.AgreementInfo;
@@ -119,7 +121,6 @@ import com.esferalia.aon.gwt.payroll.shared.EmployeeInfo;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeSegSocial;
 import com.esferalia.aon.gwt.payroll.shared.Enterprise;
 import com.esferalia.aon.gwt.payroll.shared.EnterpriseContext;
-import com.esferalia.aon.gwt.payroll.shared.EnterpriseITStatus;
 import com.esferalia.aon.gwt.payroll.shared.EnterpriseITStatus.ItNotExist;
 import com.esferalia.aon.gwt.payroll.shared.EnterpriseStatus;
 import com.esferalia.aon.gwt.payroll.shared.EnterpriseStatus.AndEnterpriseStatus;
@@ -127,6 +128,7 @@ import com.esferalia.aon.gwt.payroll.shared.Extra;
 import com.esferalia.aon.gwt.payroll.shared.IT;
 import com.esferalia.aon.gwt.payroll.shared.ITEmployee;
 import com.esferalia.aon.gwt.payroll.shared.ITPart;
+import com.esferalia.aon.gwt.payroll.shared.ItParams;
 import com.esferalia.aon.gwt.payroll.shared.Mail;
 import com.esferalia.aon.gwt.payroll.shared.MainCCCInfo;
 import com.esferalia.aon.gwt.payroll.shared.NumberVariable;
@@ -161,6 +163,7 @@ import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.esferalia.aon.occam.api.DOC;
 import com.esferalia.aon.occam.api.PAYROLL;
 import com.esferalia.aon.occam.api.SECURITY;
+import com.esferalia.aon.occam.api.model.ApplicationParameter;
 import com.esferalia.aon.occam.api.model.Certificate;
 import com.esferalia.aon.occam.api.model.CertificateInfo;
 import com.esferalia.aon.occam.api.model.ContractParams;
@@ -177,7 +180,6 @@ import com.esferalia.aon.occam.api.model.security.CertificateNotFoundException;
 import com.esferalia.aon.occam.api.model.security.CertificateType;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.type.ContractLeaveDetailType;
-import com.esferalia.aon.occam.api.model.type.ContractLeaveDischargeCause;
 import com.esferalia.aon.occam.api.model.type.ContractLeaveType;
 import com.esferalia.aon.occam.api.model.type.DeductionType;
 import com.esferalia.aon.occam.api.model.type.DeductionType.Visitor;
@@ -2020,23 +2022,23 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 	}
 
 	@Override
-	public void createNewCRA(String domainName, String user, long findingDate, List<String> cccList, ArrayList<Integer> cccIdList, Integer cccId, String craType) throws IllegalArgumentException {
+	public void createNewCRA(String domainName, String user, long findingDate, HashMap<Integer, String> cccs, Integer cccId, String craType) throws IllegalArgumentException {
 		try (Connection connection = AonServletUtils.getConnection(domainName)) {
 			
 			Integer domainId = AonServletUtils.getDomainID(domainName);
 			Integer parentDomainId = AonServletUtils.getParentDomainID(domainName);
 			Integer userId = AonServletUtils.getUserID(connection, user, domainId, parentDomainId);
 			
-			if(Boolean.FALSE.equals(Cra.existAnySalary(cccList, findingDate, connection)))
+			if(Boolean.FALSE.equals(Cra.existAnySalary(cccs, findingDate, connection)))
 				throw new IllegalArgumentException("No existe n\u00F3minas con valores para notificar en el CRA");
 			
 			java.util.Date fileNameDate = new java.util.Date();
 			String fileName = new SimpleDateFormat("ddHHmmss").format(fileNameDate);
 			
-			JSONObject mainCRAJSON = Cra.getMainCRAByCRA(domainId, parentDomainId, userId, cccList, findingDate, fileName, connection);
+			JSONObject mainCRAJSON = Cra.getMainCRAByCRA(domainId, parentDomainId, userId, cccs, findingDate, fileName, connection);
 			String agrarianAFI = MainCRAGenerator.generateMainCRA(mainCRAJSON);
 			
-			JooqCRA.setMainCra(domainId, cccList, cccIdList, agrarianAFI, findingDate, craType, fileNameDate, fileName, connection);
+			JooqCRA.setMainCra(domainId, cccs, agrarianAFI, findingDate, craType, fileNameDate, fileName, connection);
 			
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -2308,9 +2310,9 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 	// ----------------------------------------------
 
 	@Override
-	public void checkCreateNewCRA(String currentDomainName, long findingDate, ArrayList<Integer> cccList) {
+	public void checkCreateNewCRA(String currentDomainName, long findingDate, HashMap<Integer, String> cccs) {
 		try(Connection connection = AonServletUtils.getConnection(currentDomainName)){
-			JooqCRA.checkCreateNewCRA(connection, findingDate, cccList);
+			JooqCRA.checkCreateNewCRA(connection, findingDate, cccs);
 		} catch (Exception e) {
 			throw new IllegalArgumentException(e.getMessage());
 		} 
@@ -2393,10 +2395,10 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 	}
 
 	@Override
-	public List<ITEmployee> getEmployeesITInfo(String domainName, Boolean allEmployees) {
+	public List<ITEmployee> getEmployeeItList(String domainName, ItParams params) {
 		try(Connection connection = AonServletUtils.getConnection(domainName)) {
 			Integer domainId = AonServletUtils.getDomainID(domainName);
-			return JooqIT.getEmployeesITInfo(connection, domainId, allEmployees);
+			return JooqIT.getEmployeeItList(connection, domainId, params);
 		} catch (SQLException e) {
 			throw new RuntimeException(e);
 		}
@@ -2452,7 +2454,7 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 	}
 	
 	@Override
-	public EnterpriseStatus getEnterpriseStatus(String domainName, String userLogin, Integer enterpriseId) {
+	public EnterpriseStatus getEnterpriseStatus(String domainName, String userLogin, Integer enterpriseId) throws IllegalArgumentException {
 		try(Connection connection = AonServletUtils.getConnection(domainName)) {
 			
 			Integer domainId = AonServletUtils.getDomainID(domainName);
@@ -2546,8 +2548,11 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 			
 			return enterpriseStatus;				
 			
-		} catch (  SQLException e ) {
-			throw new RuntimeException(e);
+		} catch (CertificateNotFoundException e) {
+			throw new IllegalArgumentException("No se ha encontrado un certificado digital para hacer esta gesti\u00f3n. Revise Laboral > Certificados Digitales");
+		}
+		catch (  SQLException e ) {
+			throw new IllegalArgumentException(e.getMessage());
 		} 
 	}
 	
@@ -3222,6 +3227,8 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 			Certificate certificate = null;
 			Integer domainId = AonServletUtils.getDomainID(domainName);
 			
+			Optional<ApplicationParameter> authParam = AON.getApplicationParameterStream(domainName, domainId, userLogin, f -> f.getDomainProperty().eq(domainId).and(f.getNameProperty().eq("PAY_authorization_key_PAY"))).findFirst();
+			
 			if(rattachId == null) {
 				Integer parentDomainId = AonServletUtils.getParentDomainID(domainName); 
 				Integer userId = AonServletUtils.getUserID(connection, userLogin, domainId, parentDomainId);	
@@ -3230,7 +3237,7 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 			} else
 				certificate = parseCertificate(AON.getCertificate(domainName, domainId, userLogin, f -> f.getIdProperty().eq(rattachId)));
 			
-			byte[] data = SistemaRED.getSecondaryUsersPDF(new ByteArrayInputStream(certificate.getData()), certificate.getPassword(), certificate.getType());
+			byte[] data = SistemaRED.getSecondaryUsersPDF(new ByteArrayInputStream(certificate.getData()), certificate.getPassword(), certificate.getType(), authParam.isEmpty() ? null : authParam.get().getValue());
 			String base64Pdf = Base64.getEncoder().encodeToString(data);
 					
 			Writer stringWriter = new StringWriter();
@@ -3254,6 +3261,8 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 			Certificate certificate = null;
 			Integer domainId = AonServletUtils.getDomainID(domainName);
 			
+			Optional<ApplicationParameter> authParam = AON.getApplicationParameterStream(domainName, domainId, userLogin, f -> f.getDomainProperty().eq(domainId).and(f.getNameProperty().eq("PAY_authorization_key_PAY"))).findFirst();
+			
 			if(rattachId == null) {
 				Integer parentDomainId = AonServletUtils.getParentDomainID(domainName); 
 				Integer userId = AonServletUtils.getUserID(connection, userLogin, domainId, parentDomainId);	
@@ -3262,7 +3271,7 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 			} else
 				certificate = parseCertificate(AON.getCertificate(domainName, domainId, userLogin, f -> f.getIdProperty().eq(rattachId)));
 			
-			byte[] data = SistemaRED.getAssignedCCCsPDF(new ByteArrayInputStream(certificate.getData()), certificate.getPassword(), certificate.getType());
+			byte[] data = SistemaRED.getAssignedCCCsPDF(new ByteArrayInputStream(certificate.getData()), certificate.getPassword(), certificate.getType(), authParam.isEmpty() ? null : authParam.get().getValue());
 			String base64Pdf = Base64.getEncoder().encodeToString(data);
 					
 			Writer stringWriter = new StringWriter();
@@ -3391,25 +3400,6 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 			throw new RuntimeException(e);
 		}
 	}
-
-	@Override
-	public void deleteComunicateIT(String domainName, String userLogin, String affiliationNumber,
-			String regime, String contributionAccount, java.util.Date dateFrom, java.util.Date dateTo,
-			java.util.Date startDate) throws IllegalArgumentException {
-		
-		try(Connection connection = AonServletUtils.getConnection(domainName)) {
-			Integer domainId = AonServletUtils.getDomainID(domainName);
-			Integer parentDomainId = AonServletUtils.getParentDomainID(domainName); 
-			Integer userId = AonServletUtils.getUserID(connection, userLogin, domainId, parentDomainId);	
-			
-			Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId, "TGSS");
-			
-			SistemaRED.removePaternity(certificate.getData(), certificate.getPassword(), certificate.getType(), affiliationNumber, regime, contributionAccount, dateFrom, dateTo, Optional.of(startDate));
-		
-		} catch (Exception e) {
-			throw new IllegalArgumentException(e);
-		}
-	}
 	
 	@Override
 	public void syncITs(String domainName, String userLogin) throws IllegalArgumentException {
@@ -3484,113 +3474,6 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 		try(Connection connection = AonServletUtils.getConnection(domainName)) {
 			return JooqCRA.checkIfRectificative(connection, findingDate, selectedCCCList);
 		} catch (SQLException e) {
-			throw new RuntimeException(e);
-		}
-	}
-
-	@Override
-	public void registerITBaja(String domainName, String userLogin, String regime, String ccc, String naf,
-			String contingency, String situation_employee, String licenseNumber,
-			String cias, String occupation, java.util.Date startdate, String contractType,
-			float baseCot, int cotDays, java.util.Date fATEP, String accidentType, String job, String jobDescription) {
-		
-		try(Connection connection = AonServletUtils.getConnection(domainName)) {
-			Integer domainId = AonServletUtils.getDomainID(domainName);
-			Integer parentDomainId = AonServletUtils.getParentDomainID(domainName); 
-			Integer userId = AonServletUtils.getUserID(connection, userLogin, domainId, parentDomainId);	
-			
-			Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId, "TGSS");
-			
-			SistemaRED.registerITBaja(
-					certificate.getData(), 
-					certificate.getPassword(), 
-					certificate.getType(), 
-					regime, 
-					ccc, 
-					naf, 
-					SistemaRED.Contingencies.valueOf(contingency), 
-					SistemaRED.SituationEmployee.valueOf(situation_employee), 
-					startdate, 
-					SistemaRED.ContractType.valueOf(contractType), 
-					baseCot, 
-					cotDays,
-					Optional.of(fATEP), 
-					Optional.of(SistemaRED.AccidentType.valueOf(accidentType)),
-					Optional.of(licenseNumber), 
-					Optional.of(cias),
-					Optional.of(occupation),
-					Optional.of(job),
-					Optional.of(jobDescription));
-			
-		} catch (SQLException | SegSocialException e) {
-			throw new RuntimeException(e);
-		}
-	}
-
-	@Override
-	public void registerITConfirmation(String domainName, String userLogin, String regime, String ccc, String naf,
-			String contingency, String situation_employee, String licenseNumber,
-			String cias, java.util.Date fbaja, java.util.Date fconfirmation,
-			String npartConfimation) {
-		
-		try(Connection connection = AonServletUtils.getConnection(domainName)) {
-			Integer domainId = AonServletUtils.getDomainID(domainName);
-			Integer parentDomainId = AonServletUtils.getParentDomainID(domainName); 
-			Integer userId = AonServletUtils.getUserID(connection, userLogin, domainId, parentDomainId);	
-			
-			Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId, "TGSS");
-			
-			SistemaRED.registerITConfirmation(
-					certificate.getData(), 
-					certificate.getPassword(), 
-					certificate.getType(), 
-					regime, 
-					ccc, 
-					naf, 
-					SistemaRED.Contingencies.values()[Integer.parseInt(contingency)], 
-					SistemaRED.SituationEmployee.values()[Integer.parseInt(situation_employee)], 
-					Optional.of(licenseNumber), 
-					Optional.of(cias), 
-					fbaja, 
-					fconfirmation, 
-					Optional.of(npartConfimation));
-			
-		} catch (SQLException | SegSocialException e) {
-			throw new RuntimeException(e);
-		}
-	}
-
-	@Override
-	public void registerITAlta(String domainName, String userLogin, String regime, String ccc, String naf,
-			String contingency, String situation_employee, String licenseNumber,
-			String cias, java.util.Date fbaja, java.util.Date falta, java.util.Date fATEP,
-			String accidentType, String causeType) {
-		
-		try(Connection connection = AonServletUtils.getConnection(domainName)) {
-			Integer domainId = AonServletUtils.getDomainID(domainName);
-			Integer parentDomainId = AonServletUtils.getParentDomainID(domainName); 
-			Integer userId = AonServletUtils.getUserID(connection, userLogin, domainId, parentDomainId);	
-			
-			Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId, "TGSS");
-			
-			SistemaRED.registerITAlta(
-					certificate.getData(), 
-					certificate.getPassword(), 
-					certificate.getType(), 
-					regime, 
-					ccc, 
-					naf, 
-					SistemaRED.Contingencies.values()[Integer.parseInt(contingency)], 
-					SistemaRED.SituationEmployee.values()[Integer.parseInt(situation_employee)], 
-					fbaja, 
-					falta, 
-					Optional.of(fATEP), 
-					Optional.of(SistemaRED.AccidentType.values()[Integer.parseInt(accidentType)]), 
-					SistemaRED.CauseType.values()[Integer.parseInt(causeType)],
-					Optional.of(licenseNumber), 
-					Optional.of(cias));
-			
-		} catch (SQLException | SegSocialException e) {
 			throw new RuntimeException(e);
 		}
 	}
@@ -4986,7 +4869,7 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 	// ------------------------------------------------ Partes IT
 
 	@Override
-	public void communicateITPart(String domainName, String userLogin, ITEmployee empIt, IT it, ITPart part) throws IllegalArgumentException {
+	public void sendEconomicData(String domainName, String userLogin, ITEmployee empIt, IT it, ITPart part) throws IllegalArgumentException {
 		
 		try(Connection connection = AonServletUtils.getConnection(domainName)) {
 			Integer domainId = AonServletUtils.getDomainID(domainName);
@@ -5020,23 +4903,13 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 			
 			//EXAMPLE IT BAJA
 			EmployeeITPart newPart = parseITPart(part);
-			switch (newPart.getType()) {
-				case BAJA:
-					parseITData(employeeIT, it);
-					employeeIT.setContractType(contractInfo.isPartial() ? EmployeeIT.ContractType.FIJO_DISCONTINUO_Y_TIEMPO_PARCIAL : EmployeeIT.ContractType.RESTO_Y_AUTONOMOS);
-				break;
-				case CONFIRMACION:
-				break;
-				case ALTA:
-					employeeIT.setDischargeCause(ContractLeaveDischargeCause.safeValueOf(it.getTypeHighPart()));
-				break;
-			}
-			
+			parseITData(employeeIT, it);
+			employeeIT.setContractType(contractInfo.isPartial() ? EmployeeIT.ContractType.FIJO_DISCONTINUO_Y_TIEMPO_PARCIAL : EmployeeIT.ContractType.RESTO_Y_AUTONOMOS);
 			employeeIT.addITPart(newPart);
 			
 			System.out.println(employeeIT);
 			
-			List<String> messages = ITComunica.communicateITs(certificate.getData(), certificate.getPassword(), certificate.getType(), employeeIT);
+			List<String> messages = ITComunica.sendEconomicData(certificate.getData(), certificate.getPassword(), certificate.getType(), employeeIT);
 			if(!messages.isEmpty()) {
 				String msg = messages.stream().filter(m-> m!=null && !m.equals("success")).collect(Collectors.joining(", "));
 				if(!msg.isEmpty()) {
@@ -5106,13 +4979,6 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 			    
 			    if(employeeIT.getId()!=null) {
 			    	AON.removeEmployeeIT(domain, new User(), employeeIT.getId(), part.getId());
-			    } else { //DELETE TGSS
-			    	
-				 	employeeIT.setITParts(new ArrayList<>(Arrays.asList(part)));
-				 	
-					Certificate certificate = AON.getCertificate(domainName, domain.getId(), userLogin, userId, "TGSS");
-			    	List<String> msgs = ITComunica.removeITs(certificate.getData(), certificate.getPassword(), certificate.getType(), employeeIT);
-			    	messages.addAll(msgs);
 			    }
 			 }
 			 
@@ -5125,18 +4991,6 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new IllegalArgumentException(e);
-		}
-	}
-
-	@Override
-	public EnterpriseITStatus getEnterpriseITStatus(String domainName, String login) {
-		try  {
-			Domain domain = new Domain().setId(AonServletUtils.getDomainID(domainName)).setName(domainName);
-			User user = AON.getUser(domain.getName(), domain.getId(), login);
-			return ITStatusUtils.getEnterpriseITStatus(domain, user);
-		} catch ( Exception e  ) {
-			e.printStackTrace();
-			return new EnterpriseITStatus.UnknownError().setMessage(e.getMessage());
 		}
 	}
 	
@@ -5169,6 +5023,20 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 		.setCias(part.getCias())
 		.setCollegeNumber(part.getCollegeNumber())
 		.setConfirmOrder(part.getConfirmOrderNumber()!=null ? part.getConfirmOrderNumber(): null);
+	}
+
+	@Override
+	public List<ActivitySummaryObject> getActivitySummary(String domainName, String userLogin, ActivitySummaryParams params) throws IllegalArgumentException {
+		try (Connection connection = AonServletUtils.getConnection(domainName)) {
+			Integer domainId = AonServletUtils.getDomainID(domainName);
+			Integer parentDomainId = AonServletUtils.getParentDomainID(domainName); 
+			Integer userId = AonServletUtils.getUserID(connection, userLogin, domainId, parentDomainId);
+			
+			List<ActivitySummaryObject> list = JooqActivitySummary.getActivitySummary(connection, domainId, parentDomainId, userId, params);
+			return list;
+		} catch (Exception e) {
+			throw new IllegalArgumentException(e);
+		}
 	}
 
 }

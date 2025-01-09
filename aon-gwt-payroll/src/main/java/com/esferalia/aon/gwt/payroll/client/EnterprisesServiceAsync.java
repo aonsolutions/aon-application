@@ -13,6 +13,8 @@ import com.esferalia.aon.gwt.payroll.client.PayrollEmailDialog.Type;
 import com.esferalia.aon.gwt.payroll.shared.AFIChanges;
 import com.esferalia.aon.gwt.payroll.shared.ActivitiesCCC;
 import com.esferalia.aon.gwt.payroll.shared.ActivityInfo;
+import com.esferalia.aon.gwt.payroll.shared.ActivitySummaryObject;
+import com.esferalia.aon.gwt.payroll.shared.ActivitySummaryParams;
 import com.esferalia.aon.gwt.payroll.shared.AgrarianJourney;
 import com.esferalia.aon.gwt.payroll.shared.Agreement;
 import com.esferalia.aon.gwt.payroll.shared.AgreementInfo;
@@ -35,13 +37,13 @@ import com.esferalia.aon.gwt.payroll.shared.EmployeeContractInfo;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeSegSocial;
 import com.esferalia.aon.gwt.payroll.shared.Enterprise;
 import com.esferalia.aon.gwt.payroll.shared.EnterpriseContext;
-import com.esferalia.aon.gwt.payroll.shared.EnterpriseITStatus;
 import com.esferalia.aon.gwt.payroll.shared.EnterpriseITStatus.ItNotExist;
 import com.esferalia.aon.gwt.payroll.shared.EnterpriseStatus;
 import com.esferalia.aon.gwt.payroll.shared.Extra;
 import com.esferalia.aon.gwt.payroll.shared.IT;
 import com.esferalia.aon.gwt.payroll.shared.ITEmployee;
 import com.esferalia.aon.gwt.payroll.shared.ITPart;
+import com.esferalia.aon.gwt.payroll.shared.ItParams;
 import com.esferalia.aon.gwt.payroll.shared.Mail;
 import com.esferalia.aon.gwt.payroll.shared.MainCCCInfo;
 import com.esferalia.aon.gwt.payroll.shared.Payment;
@@ -117,7 +119,7 @@ public interface EnterprisesServiceAsync {
 	void getAgrarianJourney(long findingDate, List<String> cccList, String domain, AsyncCallback<Map<Integer, List<AgrarianJourney>>> asyncCallback);
 	void getCRAs(String domain, String string, long liquidDateTime, AsyncCallback<List<CRA>> asyncCallback) throws IllegalArgumentException;
 	void getMinMaxCraDate(String domain, String string, AsyncCallback<Period> asyncCallback) throws IllegalArgumentException;
-	void createNewCRA(String domainName, String user, long findingDate, List<String> ccc, ArrayList<Integer> cccIdList, Integer cccId, String type, AsyncCallback<Void> asyncCallback) throws IllegalArgumentException;
+	void createNewCRA(String domainName, String user, long findingDate, HashMap<Integer, String> cccs, Integer cccId, String type, AsyncCallback<Void> asyncCallback) throws IllegalArgumentException;
 	void deleteCRA(String currentDomainName, Integer code, AsyncCallback<Void> asyncCallback);
 	void getEmployeePeculiarities(String currentDomainName, Integer contractId, AsyncCallback<Peculiarities> asyncCallback);
 	void setEmployeePeculiarities(String currentDomainName, Integer contractId, Peculiarities peculiarities,
@@ -138,22 +140,19 @@ public interface EnterprisesServiceAsync {
 	void checkEnterprisesEmails(String currentDomainName, HashSet<Integer> enterpriseIds, AsyncCallback<String> asyncCallback);
 	void getSettlePDF(String currentDomainName, String user, Integer settleId, AsyncCallback<String> asyncCallback) throws IllegalArgumentException;
 	void getSalariesPDF(String currentDomainName, String currentUser, Integer enterpriseId, List<Integer> salaryIds, AsyncCallback<String> asyncCallback) throws IllegalArgumentException;
-	void checkCreateNewCRA(String currentDomainName, long findingDate, ArrayList<Integer> cccList, AsyncCallback<Void> asyncCallback) throws IllegalArgumentException;
+	void checkCreateNewCRA(String currentDomainName, long findingDate, HashMap<Integer, String> cccs, AsyncCallback<Void> asyncCallback) throws IllegalArgumentException;
 	void getEnterprisesCCCInfo(String currentDomainName, String user, long findPeriodTime, AsyncCallback<List<CCCInfo>> asyncCallback);
 	void getEmployeesInfo(String currentDomainName, Boolean allEmployees, AsyncCallback<List<EmployeeContractInfo>> asyncCallback);
 	void getEmployees(String currentDomainName, String user, ContractParams params, AsyncCallback<List<EmployeeContractInfo>> asyncCallback) throws IllegalArgumentException;
 	void getContractListCount(String currentDomainName, String user, ContractParams params, AsyncCallback<Integer> asyncCallback) throws IllegalArgumentException;	
 	void getFJEmployeesInfo(String currentDomainName, AsyncCallback<List<EmployeeContractInfo>> asyncCallback);
-	void getEmployeesITInfo(String currentDomainName, Boolean allEmployees,
-			AsyncCallback<List<ITEmployee>> asyncCallback);
+	void getEmployeeItList(String currentDomainName, ItParams params, AsyncCallback<List<ITEmployee>> asyncCallback) throws IllegalArgumentException;	
 	void getEmployeesITInfo(String currentDomainName, Integer ids [],
 			AsyncCallback<List<ITEmployee>> asyncCallback);
 	void deleteIT(String currentDomainName, Integer itId, AsyncCallback<String> asyncCallback);
 	void createUpdateITEmployee(String currentDomainName, ITEmployee employeeITInfo,
 			AsyncCallback<String> asyncCallback);
-	void getEnterpriseStatus(String domain, String user, Integer enterpriseId , AsyncCallback<EnterpriseStatus> callback);
-
-	void getEnterpriseITStatus(String domain, String user, AsyncCallback<EnterpriseITStatus> callback);
+	void getEnterpriseStatus(String domain, String user, Integer enterpriseId , AsyncCallback<EnterpriseStatus> callback) throws IllegalArgumentException;
 
 	// ------------------------------------------------ Contract Attachments
 	
@@ -190,8 +189,6 @@ public interface EnterprisesServiceAsync {
 	void createITCertificate(String currentDomainName, String currentUser, String affiliationNumber, String regime,
 			String contributionAccount, String docType, String docNum, String applicantType, String reason,
 			Date dateFrom, Date dateTo, float baseCC, float baseCP, int days, AsyncCallback<Boolean> asyncCallback);
-	void deleteComunicateIT(String currentDomainName, String currentUser, String affiliationNumber, String regime,
-			String contributionAccount, Date dateFrom, Date dateTo, Date startDate, AsyncCallback<Void> asyncCallback) throws IllegalArgumentException;
 	void syncITs(String currentDomainName, String currentUser, AsyncCallback<Void> asyncCallback) throws IllegalArgumentException;
 	void setComunicationIT(String currentDomainName, String currentUser, ITEmployee itEmployee, IT it,
 			AsyncCallback<Void> asyncCallback);
@@ -199,17 +196,6 @@ public interface EnterprisesServiceAsync {
 	void getServiAgreementDates(String serviAgreementCode, AsyncCallback<List<Integer>> asyncCallback) throws IllegalArgumentException;
 	void checkIfRectificative(String currentDomainName, Date findingDate, ArrayList<Integer> selectedCCCList,
 			AsyncCallback<Boolean> asyncCallback);
-	void registerITBaja(String domainName, String userLogin, String regime, String ccc, String naf, String contingency,
-			String situation_employee, String licenseNumber, String cias,
-			String occupation, Date startdate, String contractType, float baseCot, int cotDays,
-			Date fATEP, String accidentType, String job, String jobDescription, AsyncCallback<Void> asyncCallback);
-	void registerITConfirmation(String domainName, String userLogin, String regime, String ccc, String naf, String contingency,
-			String situation_employee, String licenseNumber, String cias, Date fbaja,
-			Date fconfirmation, String npartConfimation, AsyncCallback<Void> asyncCallback);
-	void registerITAlta(String domainName, String userLogin, String regime, String ccc, String naf, String contingency,
-			String situation_employee, String licenseNumber, String cias, Date fbaja,
-			Date falta, Date fATEP, String accidentType, String causeType,
-			AsyncCallback<Void> asyncCallback);
 	void getEmployeeInfo(String currentDomainName, Integer contractId,
 			AsyncCallback<EmployeeContractInfo> asyncCallback);
 	void getContratoSepe(String currentDomainName, String currentUser, String ipf, Date startDate, Date endDate,
@@ -246,7 +232,7 @@ public interface EnterprisesServiceAsync {
 	void syncSSBonus(String currentDomainName, String currentUser, Integer contractId, AsyncCallback<List<SSBonusData>> asyncCallback) throws IllegalArgumentException;
 	void getEmployeeSSBonuses(String currentDomainName, Integer contractId, AsyncCallback<List<SSBonusData>> asyncCallback) throws IllegalArgumentException;
 	
-	void communicateITPart(String currentDomainName, String currentUser, ITEmployee itEmployee, IT it, ITPart part, AsyncCallback<Void> asyncCallback) throws IllegalArgumentException;	
+	void sendEconomicData(String currentDomainName, String currentUser, ITEmployee itEmployee, IT it, ITPart part, AsyncCallback<Void> asyncCallback) throws IllegalArgumentException;	
 
 	void saveITParts(String currentDomainName, String currentUser, List<ItNotExist> itNotExist, AsyncCallback<Void> asyncCallback) throws IllegalArgumentException;
 
@@ -337,5 +323,9 @@ public interface EnterprisesServiceAsync {
 	// ------------------------------------------------ Pension Plan AFI
 	
 	void checkPensionPlanAFI(String currentDomainName, String currentUser, long date, List<Integer> cccIdList, AsyncCallback<String> asyncCallback) throws IllegalArgumentException;
+	
+	// ------------------------------------------------ Activity Summary
+	
+	void getActivitySummary(String currentDomainName, String currentUser, ActivitySummaryParams params, AsyncCallback<List<ActivitySummaryObject>> asyncCallback) throws IllegalArgumentException;
 	
 }

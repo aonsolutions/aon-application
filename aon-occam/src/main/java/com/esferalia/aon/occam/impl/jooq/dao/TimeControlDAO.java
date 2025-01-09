@@ -147,8 +147,7 @@ public class TimeControlDAO {
 		
 		LinkedList<TimeControl> tcList = new LinkedList<>();
 		LinkedList<TimeControlDetail> list = getTimeControlDetailList(ctx, f -> 
-			f.getDomainProperty().eq(ctx.getDomainId())
-			.and(f.getDateProperty().ge(startTimestamp))
+			f.getDateProperty().ge(startTimestamp)
 			.and(f.getDateProperty().le(endTimestamp))
 			.and(f.getTaskHolderProperty().eq(taskHolderId)));
 		
@@ -357,8 +356,10 @@ public class TimeControlDAO {
 			tc.getDetail().add(r);
 		});
 		
-		TimeControlDetail tcd = getLastTimeControlDetail(ctx, f -> f.getDomainProperty().eq(ctx.getDomainId())
-			.and(f.getTaskHolderProperty().eq(taskHolderId)).and(f.getIdProperty().ge(0)));
+		TimeControlDetail tcd = getLastTimeControlDetail(ctx, 
+			f -> 
+			f.getTaskHolderProperty().eq(taskHolderId)
+			.and(f.getIdProperty().ge(0)));
 
 		if(tc.getDetail().isEmpty() && TimeControlStatus.IN.equals(tcd.getStatus())  
 			&& AonDateUtils.isSameDay(AonDateUtils.addDays(new Date(), -1), tcd.getDate())) {
