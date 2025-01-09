@@ -7,8 +7,11 @@ import com.esferalia.aon.gwt.common.client.widget.PeriodListBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonAccountingRegistryBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDateBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDisplayTable;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonSearchPanelButton;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonTextBox;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
 import com.esferalia.aon.gwt.common.shared.DateUtils;
+import com.esferalia.aon.gwt.fiscal.client.accounting.panel.OperatingPanelReport;
 import com.esferalia.aon.occam.api.model.AccountingReportParams;
 import com.esferalia.aon.occam.api.model.EnterpriseActivity;
 import com.esferalia.aon.occam.api.model.fiscal.VatSummaryType;
@@ -19,10 +22,13 @@ import com.esferalia.aon.occam.api.model.type.RectificationType;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.dom.client.SelectElement;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.logical.shared.HasValueChangeHandlers;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
+import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.ScrollPanel;
@@ -51,6 +57,10 @@ public class VatReportFilterPanel extends ScrollPanel implements HasValueChangeH
 	private ListBox rectificationTypeBox;
 	private AonTextBox percentBox;
 	private AonTextBox surchargePercentBox;
+	
+	private AonSearchPanelButton cleanButton;
+	private AonSearchPanelButton refreshButton;
+	private AonSearchPanelButton closeButton;
 
 	VatReportFilterPanel(VatReportModuleOptions opt) {
 		yearBox = new IntegerBox();
@@ -162,6 +172,24 @@ public class VatReportFilterPanel extends ScrollPanel implements HasValueChangeH
 		surchargePercentBox = new AonTextBox();
 		surchargePercentBox.setVisibleLength(5);
 		surchargePercentBox.addValueChangeHandler(event -> onSearch(opt));
+		
+		cleanButton = new AonSearchPanelButton(AON.MSG.reset(),AON.CSS.aonIconClear());
+		cleanButton.addStyleName(AON.CSS.aonMarginRight());
+		cleanButton.addClickHandler(event -> initialize(opt));
+
+		
+		refreshButton = new AonSearchPanelButton(AON.MSG.refresh(), AON.CSS.aonIconRefresh());
+		refreshButton.addStyleName(AON.CSS.aonMarginRight());
+		refreshButton.addClickHandler(event -> onSearch(opt) );
+
+		
+		closeButton = new AonSearchPanelButton(AON.MSG.close(),AON.CSS.aonIconClose());
+				
+		FlowPanel buttonsPanel = new FlowPanel();
+		buttonsPanel.addStyleName(AON.CSS.aonButtonPanelIVA());
+		buttonsPanel.add( cleanButton );
+		buttonsPanel.add( refreshButton );
+		buttonsPanel.add(closeButton);
 
 		AonDisplayTable mainTab = new AonDisplayTable(
 				 AON.CSS.aonSearchPanel()
@@ -182,6 +210,7 @@ public class VatReportFilterPanel extends ScrollPanel implements HasValueChangeH
 				.addCellIf(hasActivities,new Label(AON.MSG.activity()),AON.CSS.aonItalic())
 				.addCellIf(hasActivities,activityBox)
 				.addCell(new Label(), AON.CSS.aonFlexGrow1())
+				.addCell(buttonsPanel, AON.CSS.aonPositionRelative())
 		);
 		
 		mainTab.addRow().addCell( 
@@ -391,5 +420,9 @@ public class VatReportFilterPanel extends ScrollPanel implements HasValueChangeH
 	public void refreshSurchargePercent(Double surchargePercent) {
 		surchargePercentBox.setValue( AonNumberUtils.toString(surchargePercent), false);
 	}
+	
+	public void addCloseHandler(ClickHandler closeHandler) {
+		closeButton.addClickHandler(closeHandler);
+	}	
 	
 }
