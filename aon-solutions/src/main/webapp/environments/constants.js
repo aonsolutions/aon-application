@@ -128,6 +128,7 @@ export const EDIT_FILE = 'editFile';
 export const ELABORATION = 'elaboration';
 export const EMAIL = 'email';
 export const ENTERPRISE = 'enterprise';
+export const ENTERPRISES = 'enterprises';
 export const ERROR = "error";
 export const EXPENSES = "expenses";
 export const EXPORTED = "exported";

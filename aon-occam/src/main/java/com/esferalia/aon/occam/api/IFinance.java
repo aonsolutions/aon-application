@@ -22,6 +22,7 @@ import com.esferalia.aon.occam.api.model.Filter.ProductFilter;
 import com.esferalia.aon.occam.api.model.Filter.RawdocFilter;
 import com.esferalia.aon.occam.api.model.Filter.RegistryFilter;
 import com.esferalia.aon.occam.api.model.InvoiceCounter;
+import com.esferalia.aon.occam.api.model.InvoiceUserData;
 import com.esferalia.aon.occam.api.model.PayMethodParams;
 import com.esferalia.aon.occam.api.model.Rawdoc;
 import com.esferalia.aon.occam.api.model.RawdocDomainData;
@@ -126,6 +127,7 @@ public interface IFinance {
 	
 	InvoiceCounter getInvoiceCounter(AONContext ctx);
 	
+	public InvoiceUserData getInvoiceUserData(AONContext ctx, byte[] auth);
 	// 	***********************************************
 	// 	*************************** INVOICING GROUP ***
 	// 	***********************************************

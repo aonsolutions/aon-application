@@ -27,6 +27,7 @@ import com.esferalia.aon.occam.api.model.Filter.ProductFilter;
 import com.esferalia.aon.occam.api.model.Filter.RawdocFilter;
 import com.esferalia.aon.occam.api.model.Filter.RegistryFilter;
 import com.esferalia.aon.occam.api.model.InvoiceCounter;
+import com.esferalia.aon.occam.api.model.InvoiceUserData;
 import com.esferalia.aon.occam.api.model.PayMethodParams;
 import com.esferalia.aon.occam.api.model.Rawdoc;
 import com.esferalia.aon.occam.api.model.RawdocDomainData;
@@ -179,6 +180,11 @@ public class FinanceImpl implements IFinance {
 	public InvoiceCounter getInvoiceCounter(AONContext ctx) {
 		return ctx.getDslContext().transactionResult(
 				configuration -> InvoiceDAO.getCounter(ctx));
+	}
+	
+	@Override
+	public InvoiceUserData getInvoiceUserData(AONContext ctx, byte[] auth) {
+		return ctx.getDslContext().transactionResult(configuration -> InvoiceDAO.getUserData(ctx, auth));
 	}
 	
 	
