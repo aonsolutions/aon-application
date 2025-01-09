@@ -4,6 +4,7 @@ import static com.esferalia.aon.jooq.tables.Account.ACCOUNT;
 import static com.esferalia.aon.jooq.tables.AccountEntry.ACCOUNT_ENTRY;
 import static com.esferalia.aon.jooq.tables.AccountEntryInvoice.ACCOUNT_ENTRY_INVOICE;
 import static com.esferalia.aon.jooq.tables.Brand.BRAND;
+import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
 import static com.esferalia.aon.jooq.tables.EnterpriseActivity.ENTERPRISE_ACTIVITY;
 import static com.esferalia.aon.jooq.tables.Geozone.GEOZONE;
 import static com.esferalia.aon.jooq.tables.Iae.IAE;
@@ -35,6 +36,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
@@ -67,6 +69,8 @@ import com.esferalia.aon.occam.api.model.Filter.ProductFilter;
 import com.esferalia.aon.occam.api.model.Filter.Property;
 import com.esferalia.aon.occam.api.model.Filter.RegistryFilter;
 import com.esferalia.aon.occam.api.model.InvoiceCounter;
+import com.esferalia.aon.occam.api.model.InvoiceNotice;
+import com.esferalia.aon.occam.api.model.InvoiceUserData;
 import com.esferalia.aon.occam.api.model.Properties.InvoicingGroupProperties;
 import com.esferalia.aon.occam.api.model.Properties.RegistryProperties;
 import com.esferalia.aon.occam.api.model.Rawdoc;
@@ -1894,10 +1898,56 @@ public class InvoiceDAO {
 			)
 			.stream();
 	}
+	
+	public static InvoiceUserData getUserData(AONContext ctx, byte[] auth){
+		Integer[] userScopes = SecurityDAO.getAuthScopes(ctx, auth);
+		Integer[] domains = SecurityDAO.getAuthDomains(ctx, auth);
+		
+		com.esferalia.aon.jooq.tables.Domain domain = DOMAIN.as("d");
+		com.esferalia.aon.jooq.tables.Domain parent = DOMAIN.as("p");
+		AggregateFunction<Integer> COUNT = DSL.count(INVOICE.ID);
+		
+		InvoiceUserData invoiceUserData = new InvoiceUserData();
+		
+		ctx.getDslContext()
+			.select(domain.NAME, INVOICE.DOMAIN, INVOICE.STATUS, COUNT)
+			.from(INVOICE)
+			.join(domain).on(INVOICE.DOMAIN.eq(domain.ID))
+			.leftOuterJoin(SCOPE).on(domain.SCOPE.eq(SCOPE.ID))
+			.leftOuterJoin(parent).on(domain.PARENT.eq(parent.ID))
+			.where(domain.ID.in(domains)
+					.or(domain.PARENT.in(domains)
+						.and(domain.SCOPE.isNull().or(domain.SCOPE.in(userScopes)))))
+			.groupBy(INVOICE.DOMAIN, INVOICE.STATUS)
+			.fetch()
+			.stream()
+			.forEach(invoiceCountRecord -> {
+				InvoiceStatus status = InvoiceStatus.safeValueOf( invoiceCountRecord.getValue(INVOICE.STATUS));
+
+				LinkedList<Integer> invoiceDomains = new LinkedList<>();
+				invoiceDomains.add(invoiceCountRecord.getValue(INVOICE.DOMAIN));
+				HashMap<String, Integer> invoiceDomainCount = new HashMap<>();
+				invoiceDomainCount.put(invoiceCountRecord.getValue(DOMAIN.NAME), invoiceCountRecord.getValue(COUNT));
+				InvoiceNotice invoiceNotice = new InvoiceNotice();
+				invoiceNotice.setCount(invoiceCountRecord.getValue(COUNT));
+				invoiceNotice.setDomains(invoiceDomains);
+				invoiceNotice.setDomainCount(invoiceDomainCount);
+				invoiceUserData.getInvoiceNotice().merge(status, invoiceNotice , (n1,n2) -> {
+					n1.getDomains().addAll(n2.getDomains());
+					n1.setCount(n1.getCount() + n2.getCount());
+					n1.getDomainCount().putAll(n2.getDomainCount());
+					return n1;
+				});
+				
+			});
+		return invoiceUserData;
+	}
+	
 
 	public static void fillBreakdown(AONContext ctx, Invoice invoice) {
 		fillBreakdown(ctx, invoice, false);
 	}
+	
 	
 	private static void fillBreakdown(AONContext ctx, Invoice invoice, boolean skipVatExempt) {
 		if (invoice.getBreakdown() == null) {
