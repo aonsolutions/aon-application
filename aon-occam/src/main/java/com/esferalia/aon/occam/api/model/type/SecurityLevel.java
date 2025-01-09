@@ -28,4 +28,12 @@ public enum SecurityLevel implements Serializable{
 		return SecurityLevel.values()[i];
 	}
 	
+	public static SecurityLevel safeValueOf( String i ) {
+		if(i == null) return null;
+		for (SecurityLevel rs : values()) {
+			if(rs.name().equalsIgnoreCase(i) || rs.getName().equalsIgnoreCase(i))
+				return rs;
+		}
+		return null;
+	}
 }
