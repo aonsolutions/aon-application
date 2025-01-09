@@ -9,7 +9,11 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonAccountingRegistr
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDateBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDoubleBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonIntegerBox;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonSearchPanelButton;
 import com.esferalia.aon.gwt.common.shared.DateUtils;
+import com.esferalia.aon.gwt.fiscal.client.invoice.vat.VatReportFilterPanel;
+import com.esferalia.aon.gwt.fiscal.client.invoice.vat.VatReportModuleOptions;
+import com.esferalia.aon.occam.api.model.AccountingReportParams;
 import com.esferalia.aon.occam.api.model.EnterpriseActivity;
 import com.esferalia.aon.occam.api.model.fiscal.IRPFParams;
 import com.esferalia.aon.occam.api.model.fiscal.IRPFParamsGroupedBy;
@@ -20,6 +24,8 @@ import com.esferalia.aon.occam.api.model.type.RectificationType;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.dom.client.SelectElement;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.logical.shared.HasValueChangeHandlers;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
@@ -51,6 +57,10 @@ public class IRPFReportFilterPanel extends ScrollPanel implements HasValueChange
 	private ListBox orderByBox;
 	private ListBox groupedByBox;
 	private AonDoubleBox percentBox;
+	
+	private AonSearchPanelButton cleanButton;
+	private AonSearchPanelButton refreshButton;
+	private AonSearchPanelButton closeButton;
 
 	public IRPFReportFilterPanel(IrpfReportModuleOptions options) {
 		this(options, false);
@@ -75,6 +85,7 @@ public class IRPFReportFilterPanel extends ScrollPanel implements HasValueChange
 		// ---------------------------------------------------------------- FIRST ROW
 		FlowPanel firstRowPanel = new FlowPanel();
 		firstRowPanel.addStyleName(AON.CSS.aonMarginTop());
+		firstRowPanel.addStyleName(AON.CSS.aonPositionRelative());
 		filterPanel.add(firstRowPanel);
 		
 		Label yearLabel = new InlineLabel(AON.MSG.fiscalYear());
@@ -131,6 +142,26 @@ public class IRPFReportFilterPanel extends ScrollPanel implements HasValueChange
 		outputBox.addItem(AON.MSG.outputInvoices());
 		outputBox.addChangeHandler(event -> ValueChangeEvent.<IRPFParams>fire(IRPFReportFilterPanel.this, getParams(options)));
 		firstRowPanel.add(outputBox);
+		
+		cleanButton = new AonSearchPanelButton(AON.MSG.reset(),AON.CSS.aonIconClear());
+		cleanButton.addStyleName(AON.CSS.aonMarginRight());
+		cleanButton.addClickHandler(event -> initialize(options));
+
+		
+		refreshButton = new AonSearchPanelButton(AON.MSG.refresh(), AON.CSS.aonIconRefresh());
+		refreshButton.addStyleName(AON.CSS.aonMarginRight());
+		refreshButton.addClickHandler(event -> onSearch(options) );
+
+		
+		closeButton = new AonSearchPanelButton(AON.MSG.close(),AON.CSS.aonIconClose());
+		
+		FlowPanel buttonsPanel = new FlowPanel();
+		buttonsPanel.addStyleName(AON.CSS.aonButtonPanelIRPF());
+		buttonsPanel.add( cleanButton );
+		buttonsPanel.add( refreshButton );
+		buttonsPanel.add(closeButton);
+		
+		firstRowPanel.add(buttonsPanel);
 		
 		// ---------------------------------------------------------------- SECOND ROW
 		FlowPanel secondRowPanel = new FlowPanel();
@@ -249,6 +280,11 @@ public class IRPFReportFilterPanel extends ScrollPanel implements HasValueChange
 		setWidget(tab);
 	}
 
+	protected void onSearch( IrpfReportModuleOptions opt ) {
+		ValueChangeEvent.<IRPFParams>fire( IRPFReportFilterPanel.this, getParams( opt ) );
+	}
+
+
 	protected void fillDates() {
 		Integer y = yearBox.getValue();
 		Period p = periodBox.getValue();
@@ -331,6 +367,10 @@ public class IRPFReportFilterPanel extends ScrollPanel implements HasValueChange
 		if (params.getOutput() == null) outputBox.setSelectedIndex(0);
 		else if (params.isInput() ) outputBox.setSelectedIndex(1);
 		else if (params.isOutput() ) outputBox.setSelectedIndex(2);
+	}
+	
+	public void addCloseHandler(ClickHandler closeHandler) {
+		closeButton.addClickHandler(closeHandler);
 	}
 
 }
