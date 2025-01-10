@@ -51,8 +51,8 @@ public class EnterpriseSite implements EntryPoint, Employees.Listener {
 	private Salary salary;
 	private Statistics stats;
 	private ITEditor it;
-	private WorkplaceSalary workplaceSalary;
-	private EnterpriseSalary enterpriseSalary;
+	private SalaryWidget workplaceSalary;
+	private SalaryWidget enterpriseSalary;
 	private CalendarDraft calendarDraft;
 	private Documents documents;
 	
@@ -194,32 +194,6 @@ public class EnterpriseSite implements EntryPoint, Employees.Listener {
 	}
 	
 	@Override
-	public void onEmployeeSalarySelected(EmployeeSalaryObject employeeSalaryObject) {
-		EmployeeSalary employeeSalary = new EmployeeSalary() {
-
-			@Override
-			protected void fireEnableDisableButtons(boolean isSomethingSelected, boolean hasSettleSelected) {
-				// Nothing to do here
-			}
-
-			@Override
-			protected void onSalaryShow() {
-				// Nothing to do here
-			}
-
-			@Override
-			protected void onPDFShow() {
-				// Nothing to do here
-			}};
-			
-		detailPanel.setWidget(employeeSalary);
-		employeeSalary.setEmployeeSalaryObject(employeeSalaryObject);
-		employeeSalary.hideEnterpriseSiteButtons();
-		
-	}
-
-	
-	@Override
 	public void onSalariesSelected(SalariesDocuments docs) {
 		cost.setTitle("N\u00F3minas");
 		detailPanel.setWidget(cost);
@@ -342,27 +316,6 @@ public class EnterpriseSite implements EntryPoint, Employees.Listener {
 //		// TODO Auto-generated method stub
 //		
 //	}
-
-	@Override
-	public void onWorkplaceSalarySelected(WorkplaceSalaryObject workplaceSalaryObject) {
-		WorkplaceSalary workplaceSalary = new WorkplaceSalary();
-		detailPanel.setWidget(workplaceSalary);
-		workplaceSalary.setWorkplaceSalaryObject(workplaceSalaryObject);
-		workplaceSalary.hideEnterpriseSiteButtons();
-		
-	}
-
-	@Override
-	public void onEnterpriseSalariesSelected(EnterpriseSalaryObject enterpiseSalaryObject) {
-		EnterpriseSalary enterpriseSalary = new EnterpriseSalary() {
-			@Override
-			protected void onBackClick() {}
-		};
-		
-		detailPanel.setWidget(enterpriseSalary);
-		enterpriseSalary.setEnterpriseSalaryObject(enterpiseSalaryObject);
-		enterpriseSalary.hideEnterpriseSiteButtons();			
-	}
 
 	@Override
 	public void onEmployeeNewCalendarSelected(EmployeeCalendarDraftObject calendar) {

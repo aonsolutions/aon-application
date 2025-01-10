@@ -52,6 +52,8 @@ import com.esferalia.aon.gwt.payroll.shared.Period;
 import com.esferalia.aon.gwt.payroll.shared.Result;
 import com.esferalia.aon.gwt.payroll.shared.SSBonusData;
 import com.esferalia.aon.gwt.payroll.shared.SSPECData;
+import com.esferalia.aon.gwt.payroll.shared.SalaryInfo;
+import com.esferalia.aon.gwt.payroll.shared.SalaryParams;
 import com.esferalia.aon.gwt.payroll.shared.SecondaryUserCertificate;
 import com.esferalia.aon.gwt.payroll.shared.Variable;
 import com.esferalia.aon.gwt.payroll.shared.Workplace;
@@ -806,6 +808,15 @@ public class DomainEnterprisesServiceAsync {
 		enterprisesServiceAsync.getActivitySummary(getCurrentDomainName(), getCurrentUser(), params, asyncCallback);
 	}
 	
+	// ------------------------------------------------ Salaries
+	
+	public void getSalaries(SalaryParams params, AsyncCallback<List<SalaryInfo>> asyncCallback) throws IllegalArgumentException {
+		enterprisesServiceAsync.getSalaries(getCurrentDomainName(), getCurrentUser(), params, asyncCallback);
+	}
+	
+	public void deleteSalary(Integer id, AsyncCallback<Void> asyncCallback) throws IllegalArgumentException  {
+		enterprisesServiceAsync.deleteSalary(getCurrentDomainName(), getCurrentUser(), id, asyncCallback);
+	}
 	
 	// ----------------------------------------------------------------- static
 	
@@ -820,7 +831,5 @@ public class DomainEnterprisesServiceAsync {
 	private static String getCurrentDomainName() {
 		return Wnd.getCurrentDomainNameURL();
 	}
-
-	
 
 }

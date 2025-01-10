@@ -126,12 +126,8 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 		
 		void onEnterpriseStatisticsSelected(Statistics stats);
 
-		void onEnterpriseSalariesSelected(EnterpriseSalaryObject enterpiseSalary);
-
 		void onITDataSelected(ITDataObject dataObject);
 		
-		void onWorkplaceSalarySelected(WorkplaceSalaryObject workplaceSalary);
-
 		void onSalariesSelected(SalaryDocuments docs);
 
 		void onSalariesSelected(SalariesDocuments docs);
@@ -166,8 +162,6 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 		
 		void onEmployeeSSBonusSelected(ContractBonusObject contractBonusObject);
 		
-		void onEmployeeSalarySelected(EmployeeSalaryObject employeeSalary);
-
 		void onEmployeeCopy(Employee employee);
 
 		void onEmployeePaste(Workplace workplace);
@@ -486,8 +480,6 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 		final TreeItem enterpriseItem = addEnterpriseItem(enterprise);
 		
 		addEnterpriseCostsItem(enterpriseItem, enterprise);
-		
-		addEnterpriseSalariesItem(enterpriseItem, enterprise);
 
 		addEnterpriseStatsItem(enterpriseItem, enterprise);
 		
@@ -585,12 +577,8 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 			onEnterpriseStatisticsSelected((Statistics) userObject);
 		} else if (userObject instanceof WorkplaceStatistics) {
 			onWorkplaceStatisticsSelected((Statistics) userObject);
-		} else if (userObject instanceof EnterpriseSalaryObject) {
-			onEnterpriseSalariesSelected((EnterpriseSalaryObject) userObject);
 		} else if (userObject instanceof ITDataObject) {
 			onITDataSelected((ITDataObject) userObject);
-		} else if (userObject instanceof WorkplaceSalaryObject) {
-			onWorkplaceSalarySelected((WorkplaceSalaryObject) userObject); 
 		} else if (userObject instanceof CalendarDraftObjectData) {
 			onCalendarSelected((CalendarDraftObjectData) userObject);
 		} else if (userObject instanceof SalaryDocuments) {
@@ -611,8 +599,6 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 			onEmployeeNewCalendarDraftSelected((EmployeeCalendarDraftObject) userObject);
 		} else if (userObject instanceof ContractBonusUI) {
 			onEmployeeSSBonusSelected((ContractBonusObject) userObject);
-		} else if (userObject instanceof EmployeeSalaryObject) {
-			onEmployeeSalarySelected((EmployeeSalaryObject) userObject);
 		} else if (userObject instanceof EmployeeDraftObject) {
 			onEmployeeDraftSelected((EmployeeDraftObject) userObject);
 		} 
@@ -922,17 +908,6 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 		addMaterialIconItem(workplaceItem, "Estad\u00EDsticas", "bar_chart");
 	}
 
-	protected <T extends HasTreeItems> void addEnterpriseSalariesItem(final T enterpriseItem, Enterprise enterprise) {
-		// Nominas Beta Empresa
-		addMaterialIconItem(enterpriseItem, "N\u00F3minas", "payments")
-			.setUserObject(new EnterpriseSalaryObject(enterprise));
-	}
-
-	protected <T extends HasTreeItems> void addWorkplaceSalariesItem(final T workplaceItem, Workplace workplace) {
-		addMaterialIconItem(workplaceItem, "N\u00F3minas", "payments")
-			.setUserObject(new WorkplaceSalaryObject(workplace));
-	}
-
 	protected <T extends HasTreeItems> void addEnterpriseCostsItem(final T enterpriseItem, Enterprise enterprise) {
 		addMaterialIconItem(enterpriseItem, "Costes", "euro");
 	}
@@ -1128,12 +1103,7 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 		loadEmployee(workplaceItem.asTreeItem(), employeeItem, employee);
 	}
 
-	protected void addWorkplaceEmployeeItems(TreeItem workplaceItem, TreeItem employeeItem, Employee employee,
-			EmployeeDraftObject employeeDraftObject) {
-		TreeItem salarytItem = addMaterialIconItem(employeeItem, "N\u00F3minas", "payments");
-		EmployeeSalaryObject employeeSalaryObject = new EmployeeSalaryObject(employee.getId(), employee.getFullname());
-		salarytItem.setUserObject(employeeSalaryObject);
-		salarytItem.ensureDebugId(getId(employee)+"-employeesalary");
+	protected void addWorkplaceEmployeeItems(TreeItem workplaceItem, TreeItem employeeItem, Employee employee, EmployeeDraftObject employeeDraftObject) {
 		
 		//Employee Calendar (BETA)
 		TreeItem calendarNewDraftItem = addMaterialIconItem(employeeItem, "Calendario", "calendar_today");
@@ -1266,8 +1236,6 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 
 		addWorkplaceCostsItem(workplaceItem, workplace);
 		
-		addWorkplaceSalariesItem(workplaceItem, workplace);
-
 		addWorkplaceCalendarItem(workplaceItem, workplace);
 		
 		addWorkplaceStatsItem(workplaceItem, workplace);
@@ -1509,23 +1477,17 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 		}
 	}
 
-	private void onEnterpriseSalariesSelected(EnterpriseSalaryObject enterpriseSalaryObject) {
-		for (Listener listener : listeners) {
-			listener.onEnterpriseSalariesSelected(enterpriseSalaryObject);
-		}
-	}
-
 	private void onITDataSelected(ITDataObject dataObject) {
 		for (Listener listener : listeners) {
 			listener.onITDataSelected(dataObject);
 		}
 	}
 	
-	private void onWorkplaceSalarySelected(WorkplaceSalaryObject dataObject) {
-		for (Listener listener : listeners) {
-			listener.onWorkplaceSalarySelected(dataObject);
-		}
-	}
+//	private void onWorkplaceSalarySelected(WorkplaceSalaryObject dataObject) {
+//		for (Listener listener : listeners) {
+//			listener.onWorkplaceSalarySelected(dataObject);
+//		}
+//	}
 	
 	private void onEmployeeCopy(Employee employee) {
 		for (Listener listener : listeners) {
@@ -1792,11 +1754,11 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 		}
 	}
 	
-	private void onEmployeeSalarySelected(EmployeeSalaryObject employeeSalaryObject) {
-		for (Listener listener : listeners) {
-			listener.onEmployeeSalarySelected(employeeSalaryObject);
-		}
-	}
+//	private void onEmployeeSalarySelected(EmployeeSalaryObject employeeSalaryObject) {
+//		for (Listener listener : listeners) {
+//			listener.onEmployeeSalarySelected(employeeSalaryObject);
+//		}
+//	}
 	
 	private void onEmployeeDraftSelected(EmployeeDraftObject employeeDraftObject) {
 		for (Listener listener : listeners) {
@@ -2313,12 +2275,7 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 	private static boolean isActive(Employee employee) {
 		Date firsDayOfMonth = DateUtils.getFirstDayOfMonth();
 		return DateUtils.isAfterOrEquals(employee.getEndDate(), firsDayOfMonth);
-
 	}
-
-//	private static ITDataObject getITDataObject(TreeItem workplaceItem) {
-//		return (ITDataObject) workplaceItem.getChild(WORKPLACE_PARTSIT_INDEX).getUserObject();
-//	}
 	
 	private static String getId(Enterprise enterprise) {
 		return normalize(enterprise.getName());
@@ -2352,47 +2309,13 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 	}
 	
 	@Override
-	public void onLoad(LoadEvent event) {
-
-	}
-
-//	@Override
-//	public void onNewButtonClick(ClickEvent event) {
-//
-//	}
-//
-//	@Override
-//	public void onPasteButtonClick(ClickEvent event) {
-//		Object object = tree.getSelectedItem().getUserObject();
-//
-//		if (object instanceof Workplace)
-//			onEmployeePaste((Workplace) object);
-//	}
-//
-//	@Override
-//	public void onCopyButtonClick(ClickEvent event) {
-//
-//		Object object = tree.getSelectedItem().getUserObject();
-//
-//		if (object instanceof EmployeeDraftObject)
-//			onEmployeeCopy(((EmployeeDraftObject) object).getEmployee());
-//	}
-//
-//	@Override
-//	public void onDraftButtonClick(ClickEvent event) {
-//		Object object = tree.getSelectedItem().getUserObject();
-//		if (object instanceof EmployeeDraftObject)
-//			onSuprPressed(((EmployeeDraftObject) object).getEmployee());
-//	}
+	public void onLoad(LoadEvent event) {}
 
 	@Override
-	public void onCollapseAllButtonClick(ClickEvent event) {
-//		collapse();
-	}
+	public void onCollapseAllButtonClick(ClickEvent event) {}
 	
 	@Override
 	public void onKeyUpSearchTextBox(KeyUpEvent event) {
-		//filter(toolbar.getSearchTextBox().getValue());
 		searchTimer.schedule(1000);
 	}
 	
@@ -2417,8 +2340,8 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 		consumer.accept(getUserObject(enterprise, null));
 	}
 
-	public void getEnterpriseSalary(Enterprise enterprise, Consumer<EnterpriseSalaryObject> consumer) {
-		consumer.accept(getUserObject(enterprise, EnterpriseSalaryObject.class));
+	public void getEnterpriseSalary(Enterprise enterprise, Consumer<Void> consumer) {
+		consumer.accept(getUserObject(enterprise, null));
 	}
 
 	public void getWorkplaceCost(Workplace workplace, Consumer<CostDocuments> consumer) {
@@ -2454,8 +2377,8 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 		consumer.accept(getUserObject(workplace, CalendarDraftObjectData.class));
 	}
 
-	public void getWorkplaceSalary(Workplace workplace, Consumer<WorkplaceSalaryObject> consumer) {
-		consumer.accept(getUserObject(workplace, WorkplaceSalaryObject.class));
+	public void getWorkplaceSalary(Workplace workplace, Consumer<Void> consumer) {
+		consumer.accept(getUserObject(workplace, null));
 	}
 	
 	public void getWorkplaceIT(Workplace workplace, Consumer<Void> consumer) {
@@ -2474,16 +2397,12 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 		consumer.accept(getUserObject(salaryDraft, ContractBonusObject.class));
 	}
 
-//	public void getEmployeeSalaryDraft(SalaryDraftObject salaryDraft, Consumer<SalaryDraftObject> consumer) {
-//		consumer.accept(getUserObject(salaryDraft, SalaryDraftObject.class));
-//	}
-
 	public void getEmployeeEvents(SalaryDraftObject salaryDraft, Consumer<EmployeeEventsDraftObject> consumer) {
 		consumer.accept(getUserObject(salaryDraft, EmployeeEventsDraftObject.class));
 	}
 	
-	public void getEmployeeSalary(SalaryDraftObject employee, Consumer<EmployeeSalaryObject> consumer) {
-		consumer.accept(getUserObject(employee, EmployeeSalaryObject.class));
+	public void getEmployeeSalary(SalaryDraftObject employee, Consumer<Void> consumer) {
+		consumer.accept(getUserObject(employee, null));
 	}
 	
 	public void getEmployeeDraft(SalaryDraftObject salaryDraft, Consumer<EmployeeDraftObject> consumer) {
