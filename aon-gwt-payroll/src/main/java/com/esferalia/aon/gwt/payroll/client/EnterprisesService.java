@@ -52,6 +52,8 @@ import com.esferalia.aon.gwt.payroll.shared.Period;
 import com.esferalia.aon.gwt.payroll.shared.Result;
 import com.esferalia.aon.gwt.payroll.shared.SSBonusData;
 import com.esferalia.aon.gwt.payroll.shared.SSPECData;
+import com.esferalia.aon.gwt.payroll.shared.SalaryInfo;
+import com.esferalia.aon.gwt.payroll.shared.SalaryParams;
 import com.esferalia.aon.gwt.payroll.shared.SecondaryUserCertificate;
 import com.esferalia.aon.gwt.payroll.shared.Variable;
 import com.esferalia.aon.gwt.payroll.shared.Workplace;
@@ -461,5 +463,12 @@ public interface EnterprisesService extends RemoteService {
 	// ------------------------------------------------ Activity Summary
 	
 	List<ActivitySummaryObject> getActivitySummary(String domain, String user, ActivitySummaryParams params) throws IllegalArgumentException;
+	
+	// ------------------------------------------------ Salaries
+	
+	List<SalaryInfo> getSalaries(String domain, String user, SalaryParams params) throws IllegalArgumentException;
+	
+	void deleteSalary(String domain, String user, Integer id) throws IllegalArgumentException;
+
 
 }

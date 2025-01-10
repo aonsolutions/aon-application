@@ -141,8 +141,7 @@ import net.aonsolutions.gwt.pdfjs.client.FullViewer;
  * Entry point classes define <code>onModuleLoad()</code>.
  */
 
-public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Listener, Cost.Listener, Salary.Listener,
-		EmployeeSalary.Listener, WorkplaceSalary.Listener, EnterpriseSalary.Listener, SalaryDraft.Listener {
+public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Listener, Cost.Listener, Salary.Listener, SalaryWidget.Listener, SalaryDraft.Listener {
 	public static String SHARE_URL = URL.encode(GWT.getModuleBaseURL() + "share");
 	
 	
@@ -2304,8 +2303,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 		}
 
 		void onSalariesSelected() {
-			getEmployeeSalary().setToolbarTitle(getTitle(salaryDraft.getEmployee()));
-			employees.getEmployeeSalary(salaryDraft, o -> getEmployeeSalary().setEmployeeSalaryObject(o));
+			employees.getEmployeeSalary(salaryDraft, o-> getEmployeeSalary().setIsEmployeeTree().setContractId(salaryDraft.getEmployeeId(), salaryDraft.getEndDate()).setIsEmployee().loadSalaries());
 		}
 
 		void onPaymentsSelected() {
@@ -2423,7 +2421,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 		}
 
 		void onSalariesSelected() {
-			employees.getWorkplaceSalary(workplace, o -> getWorkplceSalary().setWorkplaceSalaryObject(o));
+			employees.getWorkplaceSalary(workplace, o-> getWorkplceSalary().setIsEmployeeTree().setWorkplaceId(workplace.getId()).setIsWorkplace().loadSalaries());
 		}
 
 		void onWorkplaceSelected() {
@@ -2490,10 +2488,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 		}
 
 		void onSalariesSelected() {
-			employees.getEnterpriseSalary(enterprise, o -> {
-				getEnterpriseSalary().setEnterpriseSalaryObject(o);
-				getEnterpriseSalary().setEnterpriseView();
-			});
+			employees.getEnterpriseSalary(enterprise, o-> getEnterpriseSalary().setIsEmployeeTree().setIsEnterprise().loadSalaries());
 		}
 
 		void onEnterpriseSelected() {
@@ -2538,10 +2533,10 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 	private Irpf irpf;
 	private Salary salary;
 	private Statistics stats;
-	private EnterpriseSalary enterpriseSalary;
+	private SalaryWidget enterpriseSalary;
 	private ITWidget enterpriseIT;
 	private ITEditor it;
-	private WorkplaceSalary workplaceSalary;
+	private SalaryWidget workplaceSalary;
 	private ITWidget workplaceIT;
 	private CalendarDraft calendarDraft;
 	private SalaryDraft salaryDraft;
@@ -2559,7 +2554,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 	private Mod145 mod145;
 	private EmployeeContractPayments employeeContractPayments; 
 	private EmployeeContractVariables employeeContractVariables; 
-	private EmployeeSalary employeeSalary;
+	private SalaryWidget employeeSalary;
 	private com.esferalia.aon.gwt.payroll.client.CategoryDraft categoryDraft;
 	private AgreementPreview agreementPreview;
 	private AgreementDraft agreementDraft;
@@ -2944,23 +2939,9 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 	}
 
 	@Override
-	public void onEnterpriseSalariesSelected(EnterpriseSalaryObject enterpriseSalaryObject) {
-		employeeDetail.setWidget(getEnterprisePanel());
-		getEnterprisePanel().selectWidget(getEnterpriseSalary());
-		getEnterpriseSalary().setEnterpriseSalaryObject(enterpriseSalaryObject);
-	}
-
-	@Override
 	public void onITDataSelected(ITDataObject dataObject) {
 		employeeDetail.setWidget(getIt());
 		getIt().setITEditor(dataObject);
-	}
-
-	@Override
-	public void onWorkplaceSalarySelected(WorkplaceSalaryObject dataObject) {
-		employeeDetail.setWidget(getWorkplacePanel());
-		getWorkplacePanel().selectWidget(getWorkplceSalary());
-		getWorkplceSalary().setWorkplaceSalaryObject(dataObject);
 	}
 
 	@Override
@@ -2990,14 +2971,6 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 		getEmployeePanel().selectWidget(getEmployeeSSBonus());
 		getEmployeeSSBonus().setContractBonusObject(contractBonusObject);
 		employees.getEmployeeSalaryDraft(contractBonusObject, o -> getEmployeePanel().setSalaryDraft(o));
-	}
-
-	@Override
-	public void onEmployeeSalarySelected(EmployeeSalaryObject employeeSalary) {
-		employeeDetail.setWidget(getEmployeePanel());
-		getEmployeePanel().selectWidget(getEmployeeSalary());
-		getEmployeeSalary().setEmployeeSalaryObject(employeeSalary);
-		employees.getEmployeeSalaryDraft(employeeSalary, o -> getEmployeePanel().setSalaryDraft(o));
 	}
 
 	@Override
@@ -3208,9 +3181,9 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 		return it;
 	}
 
-	private WorkplaceSalary getWorkplceSalary() {
+	private SalaryWidget getWorkplceSalary() {
 		if (workplaceSalary == null)
-			(workplaceSalary = new WorkplaceSalary()).addListener(this);
+			(workplaceSalary = new SalaryWidget()).addListener(this);
 		return workplaceSalary;
 	}
 	
@@ -3239,12 +3212,9 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 		return stats;
 	}
 
-	private EnterpriseSalary getEnterpriseSalary() {
+	private SalaryWidget getEnterpriseSalary() {
 		if (enterpriseSalary == null)
-			(enterpriseSalary = new EnterpriseSalary(){
-				@Override
-				protected void onBackClick() {}
-			}).addListener(this);
+			(enterpriseSalary = new SalaryWidget()).addListener(this);
 		
 		return enterpriseSalary;
 	}
@@ -3662,25 +3632,9 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 		return mod145;
 	}
 
-	private EmployeeSalary getEmployeeSalary() {
+	private SalaryWidget getEmployeeSalary() {
 		if (employeeSalary == null)
-			(employeeSalary = new EmployeeSalary() {
-
-				@Override
-				protected void fireEnableDisableButtons(boolean isSomethingSelected, boolean hasSettleSelected) {
-					// Nothing to do here
-				}
-
-				@Override
-				protected void onSalaryShow() {
-					// Nothing to do here
-				}
-
-				@Override
-				protected void onPDFShow() {
-					// Nothing to do here
-				}})
-			.addListener(this);
+			(employeeSalary = new SalaryWidget()).addListener(this);
 		
 		return employeeSalary;
 	}
@@ -4713,6 +4667,5 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 //		dockLayoutPanel.setWidgetSize(employees, 275);
 //		dockLayoutPanel.animate(500);
 	}
-	
 
 }

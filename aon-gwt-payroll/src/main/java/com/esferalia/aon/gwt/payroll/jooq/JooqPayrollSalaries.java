@@ -31,6 +31,7 @@ import org.jooq.DSLContext;
 import org.jooq.Record;
 import org.jooq.Record1;
 import org.jooq.Result;
+import org.jooq.SelectConditionStep;
 import org.jooq.Table;
 import org.jooq.conf.Settings;
 import org.jooq.impl.DSL;
@@ -43,11 +44,13 @@ import com.esferalia.aon.gwt.payroll.shared.SalaryInfo;
 import com.esferalia.aon.gwt.payroll.shared.SalaryInfo.AlcatrazPeriod;
 import com.esferalia.aon.gwt.payroll.shared.SalaryInfo.AlcatrazTerritory;
 import com.esferalia.aon.gwt.payroll.shared.SalaryInfoFilter;
+import com.esferalia.aon.gwt.payroll.shared.SalaryParams;
 import com.esferalia.aon.gwt.payroll.shared.WorkplaceEmployees;
-import com.esferalia.aon.jooq.tables.FinanceTracking;
 import com.esferalia.aon.jooq.tables.records.AlcatrazRecord;
 import com.esferalia.aon.jooq.tables.records.FinanceRecord;
 import com.esferalia.aon.jooq.tables.records.FsModelRecord;
+import com.esferalia.aon.watson.server.AonDateUtils;
+import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class JooqPayrollSalaries {
 
@@ -75,6 +78,10 @@ public class JooqPayrollSalaries {
 	
 	public static List<SalaryInfo> getSalaries(Connection connection, Integer domainId, Integer userId, SalaryInfoFilter filter) {
 		return getSalariesDB(DSL.using(connection, getDefaultSettings()), domainId, userId, filter);
+	}
+	
+	public static List<SalaryInfo> getSalaries(Connection connection, Integer domainId, Integer parentDomainId, Integer userId, SalaryParams params) {
+		return getSalariesDB(DSL.using(connection, getDefaultSettings()), domainId, parentDomainId, userId, params);
 	}
 	
 	public static SalaryInfo getSalariesDateEnd(Connection connection, Integer domainId, Integer userId, SalaryInfoFilter filter) {
@@ -569,6 +576,185 @@ public class JooqPayrollSalaries {
 					dsl.delete(SALARY).where(SALARY.ID.eq(id)).and(SALARY.DOMAIN.eq(domainId)).execute();
 				});
 		}
+	}
+	
+	// --------------------------------------------------------------------------------------------
+	//									GET SALARYES METHOD IMPL
+	// --------------------------------------------------------------------------------------------
+	
+	private static List<SalaryInfo> getSalariesDB(DSLContext dslContext, Integer domainId, Integer parentDomainId, Integer userId, SalaryParams params) {
+		Condition condition = paramsToCondition(dslContext, domainId, parentDomainId, userId, params);
+		
+		List<SalaryInfo> salaries = new ArrayList<>();
+		
+		// Get salaries
+		Table<FinanceRecord> filteredFinance = DSL.selectFrom(FINANCE)
+			    .where(FINANCE.DOMAIN.eq(domainId)
+			    .and(FINANCE.PAYROLL.eq((byte)1)))
+			    .asTable("filtered_finance");
+		
+		SelectConditionStep<Record> select = dslContext.select().from(SALARY)
+				.join(CONTRACT).on(CONTRACT.ID.eq(SALARY.CONTRACT))
+				.join(WORKPLACE).on(WORKPLACE.ID.eq(CONTRACT.WORKPLACE))
+				.join(ENTERPRISE).on(ENTERPRISE.REGISTRY.eq(WORKPLACE.ENTERPRISE))
+				.leftJoin(filteredFinance).on(filteredFinance.field(FINANCE.SOURCE_ID).eq(SALARY.ID))
+				.where(condition);
+		
+		if(params.isAsc()) {
+			if(AonStringUtils.equalsIgnoreCase(params.getOrderBy(), "enterprise"))
+				select.orderBy(SALARY.ENTERPRISE_NAME);
+			else if(AonStringUtils.equalsIgnoreCase(params.getOrderBy(), "workplace"))
+				select.orderBy(WORKPLACE.DESCRIPTION);
+			else if(AonStringUtils.equalsIgnoreCase(params.getOrderBy(), "employee"))
+				select.orderBy(SALARY.EMPLOYEE_NAME);
+			else if(AonStringUtils.equalsIgnoreCase(params.getOrderBy(), "type"))
+				select.orderBy(SALARY.TYPE);
+			else if(AonStringUtils.equalsIgnoreCase(params.getOrderBy(), "start"))
+				select.orderBy(SALARY.START_DATE);
+			else if(AonStringUtils.equalsIgnoreCase(params.getOrderBy(), "end"))
+				select.orderBy(SALARY.END_DATE);
+		} else {
+			if(AonStringUtils.equalsIgnoreCase(params.getOrderBy(), "enterprise"))
+				select.orderBy(SALARY.ENTERPRISE_NAME.desc());
+			else if(AonStringUtils.equalsIgnoreCase(params.getOrderBy(), "workplace"))
+				select.orderBy(WORKPLACE.DESCRIPTION.desc());
+			else if(AonStringUtils.equalsIgnoreCase(params.getOrderBy(), "employee"))
+				select.orderBy(SALARY.EMPLOYEE_NAME.desc());
+			else if(AonStringUtils.equalsIgnoreCase(params.getOrderBy(), "type"))
+				select.orderBy(SALARY.TYPE.desc());
+			else if(AonStringUtils.equalsIgnoreCase(params.getOrderBy(), "start"))
+				select.orderBy(SALARY.START_DATE.desc());
+			else if(AonStringUtils.equalsIgnoreCase(params.getOrderBy(), "end"))
+				select.orderBy(SALARY.END_DATE.desc());
+		}
+		
+		Result<Record> salaryRecords = select.limit(params.getOffset(), params.getLimit())
+				.fetch();
+		
+		System.out.println("getSalariesDB -> offset : " + params.getOffset() + ", limit : " + params.getLimit() + ", results : " + salaryRecords.size());
+		
+		for(Record salaryRecord : salaryRecords) {
+			
+			SalaryInfo salaryInfo = new SalaryInfo();
+			salaryInfo.setId(salaryRecord.get(SALARY.ID));
+			salaryInfo.setDomain(salaryRecord.get(SALARY.DOMAIN));
+			salaryInfo.setContract(salaryRecord.get(SALARY.CONTRACT));
+			salaryInfo.setStartDate(salaryRecord.get(SALARY.START_DATE));
+			salaryInfo.setEndDate(salaryRecord.get(SALARY.END_DATE));
+			salaryInfo.setType(Salary.Type.values()[salaryRecord.get(SALARY.TYPE)]);
+			salaryInfo.setEnterpriseName(salaryRecord.get(SALARY.ENTERPRISE_NAME));
+			salaryInfo.setEmployeeName(salaryRecord.get(SALARY.EMPLOYEE_NAME));
+			salaryInfo.setTotalPayment(salaryRecord.get(SALARY.TOTAL_PAYMENT));
+			salaryInfo.setTotalDeduction(salaryRecord.get(SALARY.TOTAL_DEDUCTION));
+			salaryInfo.setTotalLiquid(salaryRecord.get(SALARY.TOTAL_LIQUID));
+			
+			Integer contractId = salaryRecord.get(SALARY.CONTRACT);
+
+			Integer enterpriseId = getEnterpriseId(dslContext, contractId);
+			
+			Record workplaceRecord = getWorkplaceRecord(dslContext, contractId);
+			
+			String workplaceName = workplaceRecord.get(WORKPLACE.DESCRIPTION);
+			Integer workplaceId =  workplaceRecord.get(WORKPLACE.ID);
+			
+			// Workplace
+			salaryInfo.setWorkplaceName(workplaceName);
+			salaryInfo.setWorkplaceId(workplaceId);
+			
+			// Enterprise ID
+			salaryInfo.setEnterpriseId(enterpriseId);
+			
+			Byte financeStatus = salaryRecord.get(FINANCE.STATUS);
+			salaryInfo.setFinance(financeStatus != null && financeStatus != (byte) 0);
+			
+			//Is Alcatraz
+			Result<AlcatrazRecord> alcatrazRecords = dslContext.selectFrom(ALCATRAZ).where(ALCATRAZ.SALARY.eq(salaryInfo.getId())).fetch();
+			if(!alcatrazRecords.isEmpty()) {
+				salaryInfo.setAlcatraz(true);
+				
+				FsModelRecord fsModelRecord = dslContext.selectFrom(FS_MODEL).where(FS_MODEL.ID.eq(alcatrazRecords.get(0).getFsModel())).fetchOne();
+				salaryInfo.setAlcatrazYear(fsModelRecord.getYear());
+				salaryInfo.setAlcatrazPeriod(AlcatrazPeriod.values()[fsModelRecord.getPeriod()]);
+				salaryInfo.setAlcatrazTerritory(AlcatrazTerritory.values()[fsModelRecord.getAdministration()]);
+				
+			} else salaryInfo.setAlcatraz(false);
+			
+			// Add to salaries list
+			salaries.add(salaryInfo);
+
+		}
+		
+		return salaries;
+	}
+
+	private static Condition paramsToCondition(DSLContext dslContext, Integer domainId, Integer parentDomainId, Integer userId, SalaryParams params) {
+		Condition condition = DSL.trueCondition();
+		
+		if(AonStringUtils.isNotBlank(params.getDescription()))
+			condition = condition.and(
+					SALARY.EMPLOYEE_NAME.like("%" + params.getDescription() + "%")
+					.or(WORKPLACE.DESCRIPTION.like("%" + params.getDescription() + "%"))
+					.or(SALARY.ENTERPRISE_NAME.like("%" + params.getDescription() + "%"))
+			);
+		
+		List<Byte> salaryTypes = new ArrayList<Byte>();
+		if(params.isSalary()) salaryTypes.add((byte)0);
+		if(params.isExtra()) salaryTypes.add((byte)1);
+		if(params.isDelay()) salaryTypes.add((byte)2);
+		if(params.isSettle()) salaryTypes.add((byte)3);
+		
+		condition = condition.and(
+				SALARY.TYPE.lt((byte)Salary.Type.L00.ordinal())
+				.and(SALARY.TYPE.in(salaryTypes))
+		);
+		
+		List<Integer> userScopes = dslContext
+				.select(USER_SCOPE.SCOPE)
+				.from(USER_SCOPE)
+				.where(USER_SCOPE.USER_ID.eq(userId))
+				.fetch(USER_SCOPE.SCOPE);
+		
+		// DomainFilter
+		if(parentDomainId == null) {
+			// Load scopes for domain. Only if it's a child of user's domain.
+			userScopes.addAll(
+					dslContext
+				.select(SCOPE.ID)
+				.from(SCOPE)
+				.innerJoin(DOMAIN).on(SCOPE.DOMAIN.eq(DOMAIN.ID))
+				.where(SCOPE.DOMAIN.eq(domainId))
+				.and(DOMAIN.PARENT.in( DSL.select(USER.DOMAIN).from(USER).where(USER.ID.eq(userId))))
+				.fetch(SCOPE.ID));
+			
+			List<Integer> domainChilds = dslContext.select(DOMAIN.ID).from(DOMAIN)
+					.leftOuterJoin(SCOPE).on(SCOPE.ID.eq(DOMAIN.SCOPE))
+					.where(DOMAIN.PARENT.eq(domainId))
+					.and(DOMAIN.SCOPE.in(userScopes).or(DOMAIN.SCOPE.isNull()))
+					.fetch(DOMAIN.ID);
+			
+			if(!domainChilds.isEmpty())
+				condition = condition.and( SALARY.DOMAIN.in(domainChilds) );
+			else
+				condition = condition.and( SALARY.DOMAIN.eq(domainId) );
+			
+		} else {
+			condition = condition.and( SALARY.DOMAIN.eq(domainId) );
+		}
+			
+		
+		if(isNumberValid(params.getWorkplace())) {
+			condition = condition.and( WORKPLACE.ID.eq(params.getWorkplace()) );
+		} else if(isNumberValid(params.getContract())) {
+			condition = condition.and( SALARY.CONTRACT.eq(params.getContract()) );
+		}
+		
+		if(null != params.getStart())
+			condition = condition.and( SALARY.END_DATE.ge(AonDateUtils.toSql(params.getStart())) );
+		
+		if(null != params.getEnd())
+			condition = condition.and( SALARY.END_DATE.le(AonDateUtils.toSql(params.getEnd())) );
+		
+		return condition;
 	}
 	
 	

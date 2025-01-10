@@ -56,6 +56,8 @@ import com.esferalia.aon.gwt.payroll.shared.Period;
 import com.esferalia.aon.gwt.payroll.shared.Result;
 import com.esferalia.aon.gwt.payroll.shared.SSBonusData;
 import com.esferalia.aon.gwt.payroll.shared.SSPECData;
+import com.esferalia.aon.gwt.payroll.shared.SalaryInfo;
+import com.esferalia.aon.gwt.payroll.shared.SalaryParams;
 import com.esferalia.aon.gwt.payroll.shared.SecondaryUserCertificate;
 import com.esferalia.aon.gwt.payroll.shared.Variable;
 import com.esferalia.aon.gwt.payroll.shared.Workplace;
@@ -1241,6 +1243,20 @@ public class EnterprisesServiceAsyncDecorator implements
 	public void getActivitySummary(String domainName, String currentUser, ActivitySummaryParams params, AsyncCallback<List<ActivitySummaryObject>> callback) throws IllegalArgumentException {
 		AON.start();
 		enterprisesServiceAsync.getActivitySummary(domainName, currentUser, params, callback);
+	}
+	
+	// ------------------------------------------------ Salaries
+
+	@Override
+	public void getSalaries(String domainName, String currentUser, SalaryParams params, AsyncCallback<List<SalaryInfo>> callback) throws IllegalArgumentException {
+		AON.start();
+		enterprisesServiceAsync.getSalaries(domainName, currentUser, params, callback);
+	}
+
+	@Override
+	public void deleteSalary(String domainName, String currentUser, Integer id, AsyncCallback<Void> callback) throws IllegalArgumentException {
+		AON.start();
+		enterprisesServiceAsync.deleteSalary(domainName, currentUser, id, callback);
 	}
 
 }
