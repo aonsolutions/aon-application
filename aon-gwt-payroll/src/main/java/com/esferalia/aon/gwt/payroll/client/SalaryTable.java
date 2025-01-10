@@ -360,7 +360,8 @@ public abstract class SalaryTable extends ScrollPanel {
 		    			salary.getContract(),
 		    			salary.getWorkplaceId(), 
 		    			salary.getStartDate(),
-		    			salary.getEndDate());
+		    			salary.getEndDate(),
+		    			salary.getChargeDate());
 			});
 			buttonContainer.add(draftButton);
 		}

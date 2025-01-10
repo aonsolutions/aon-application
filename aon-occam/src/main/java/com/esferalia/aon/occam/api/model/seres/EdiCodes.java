@@ -194,7 +194,7 @@ public class EdiCodes implements Serializable {
 
 	public String getShcode() {
 		if(shcode == null) {
-			shcode = getCustomerEdiCode();
+			shcode = getCompanyEdiCode(); // getCustomerEdiCode();
 		}
 		return shcode;
 	}

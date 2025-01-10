@@ -476,7 +476,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 
 		private void onSalaryResultSelected(JsSalaryResult salaryResult) {
 			EmployeeTree.showSalaryDraft(salaryResult.getEmployeeId(), salaryResult.getWorkplaceId(),
-					salaryResult.getStartDate(), salaryResult.getEndDate());
+					salaryResult.getStartDate(), salaryResult.getEndDate(), salaryResult.getChargeDate());
 		}
 
 	}
@@ -600,7 +600,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 
 		private void onSalaryResultSelected(JsSalaryResult salaryResult) {
 			EmployeeTree.showSalaryDraft(salaryResult.getEmployeeId(), salaryResult.getWorkplaceId(),
-					salaryResult.getStartDate(), salaryResult.getEndDate());
+					salaryResult.getStartDate(), salaryResult.getEndDate(), salaryResult.getChargeDate());
 		}
 	}
 
@@ -1383,7 +1383,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 
 		private void onSalaryResultSelected(JsSalaryResult salaryResult) {
 			EmployeeTree.showSalaryDraft(salaryResult.getEmployeeId(), salaryResult.getWorkplaceId(),
-					salaryResult.getStartDate(), salaryResult.getEndDate());
+					salaryResult.getStartDate(), salaryResult.getEndDate(), salaryResult.getChargeDate());
 		}
 	}
 
@@ -4182,9 +4182,9 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 		getEmployeeTree().employees.refresh(getEmployeeTree().enterprise);
 	}
 
-	protected static void showSalaryDraft(int employeeId, int workplaceId, Date startDate, Date endDate) {
+	protected static void showSalaryDraft(int employeeId, int workplaceId, Date startDate, Date endDate, Date chargeDate) {
 		EmployeeTree employeeTree = getEmployeeTree();
-		employeeTree.employees.selectSalaryDraft(employeeId, workplaceId, startDate, endDate, true);
+		employeeTree.employees.selectSalaryDraft(employeeId, workplaceId, startDate, endDate, chargeDate, true);
 	}
 
 	private static EmployeeTree getEmployeeTree() {

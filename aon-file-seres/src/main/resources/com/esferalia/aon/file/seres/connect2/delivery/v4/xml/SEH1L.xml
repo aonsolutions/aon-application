@@ -40,8 +40,8 @@
 	<field name="Peso total neto de la línea (AAI/AAF)" value="bean" bean ="SEH1L" property="pesoTotalNetoDeLaLinea_AAI_AAF_" format="Numeric" pattern="9(14).999" />
 	<field name="Peso total bruto de la línea (AAI/AAB)" value="bean" bean ="SEH1L" property="pesoTotalBrutoDeLaLinea_AAI_AAB_" format="Numeric" pattern="9(14).999" />
 	<field name="Unidad de medida peso" value="bean" bean ="SEH1L" property="unidadDeMedidaPeso" format="AlphaNumeric" pattern="X(3)" />
-	<field name="Dimensión de temperatura 1 (TC)" value="bean" bean ="SEH1L" property="dimensionDeTemperatura1_TC_" format="Numeric" pattern="9(14).999" />
-	<field name="Dimensión de temperatura 2" value="bean" bean ="SEH1L" property="dimensionDeTemperatura2" format="Numeric" pattern="9(14).999" />
+	<field name="Dimensión de temperatura 1 (TC)" value="bean" bean ="SEH1L" property="dimensionDeTemperatura1_TC_" format="AlphaNumeric" pattern="9(14).999" />
+	<field name="Dimensión de temperatura 2" value="bean" bean ="SEH1L" property="dimensionDeTemperatura2" format="AlphaNumeric" pattern="9(14).999" />
 	<field name="Unidad de medida para la temperatura" value="bean" bean ="SEH1L" property="unidadDeMedidaParaLaTemperatura" format="AlphaNumeric" pattern="X(3)" />
 	<field name="Denominación comercial" value="bean" bean ="SEH1L" property="denominacionComercial" format="AlphaNumeric" pattern="X(70)" />
 	<field name="Denominación científica" value="bean" bean ="SEH1L" property="denominacionCientifica" format="AlphaNumeric" pattern="X(70)" />

@@ -625,6 +625,7 @@ public class CalculateServlet extends HttpServlet implements CalculateService {
 				os.print('{');
 				os.printf("\"startDate\":\"%1$tY-%1$tm-%1$td\"", sqlCtx.getStartDate());
 				os.printf(",\"endDate\":\"%1$tY-%1$tm-%1$td\"", sqlCtx.getEndDate());
+				os.printf(",\"chargeDate\":\"%1$tY-%1$tm-%1$td\"", sqlCtx.getChargeDate());
 				os.printf(",\"employeeId\":\"%d\"", sqlCtx.getInt(SQLConstants.CONTRACT, ContractColumns.ID));
 				os.printf(",\"employeeName\":\"%s\"", sqlCtx.getEmployeeName());
 				os.printf(",\"enterpriseId\":\"%s\"",

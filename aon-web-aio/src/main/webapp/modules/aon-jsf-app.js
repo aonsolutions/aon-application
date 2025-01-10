@@ -1132,6 +1132,14 @@ export class AonJsfRemoveDomain extends AonJsfApp {
 	}
 }
 
+export class AonJsfAccountingBook extends AonJsfApp {
+	
+	constructor() {
+		super();
+		this.setViewId('/facelet/app/accountingBook.xhtml');
+	}
+}
+
 if(!window.customElements.get(TAG.AON_JSF_APP)){
 	window.customElements.define(TAG.AON_JSF_APP, AonJsfApp);
 }
@@ -1646,4 +1654,8 @@ if(!window.customElements.get(TAG.AON_JSF_NEW_DOMAIN)){
 
 if(!window.customElements.get(TAG.AON_JSF_REMOVE_DOMAIN)){
 	window.customElements.define(TAG.AON_JSF_REMOVE_DOMAIN, AonJsfRemoveDomain);
+}
+
+if(!window.customElements.get(TAG.AON_JSF_ACCOUNTING_BOOK)){
+	window.customElements.define(TAG.AON_JSF_ACCOUNTING_BOOK, AonJsfAccountingBook);
 }

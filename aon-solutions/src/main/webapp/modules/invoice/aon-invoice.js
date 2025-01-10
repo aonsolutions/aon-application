@@ -3101,7 +3101,7 @@ export class AonInvoice extends AonElement {
 	}
 
 	trashInvoice() {
-		this.updateCounter(this.getTrashFromOption(), OPTION.RAWDOC_DRAFT, 1);
+		this.updateCounter(this.getTrashFromOption(), OPTION.RAWDOC_TRASH, 1);
 		let invofoxRejected = this.isInvofoxInvoice() && this.getInvoice().isOcrStatus(CONSTANT.DISCARDED, CONSTANT.PENDING_DECISSION);
 		if(!this.getInvoice().isRejected() && !invofoxRejected)
 			this.updateCounter(OPTION.INVOICE_PENDINGS, undefined, -1);
@@ -3175,7 +3175,7 @@ export class AonInvoice extends AonElement {
 	getRestoreFromOption() {
 		if(this.getInvoice().isRejected() || (this.isInvofoxInvoice() && this.getInvoice().isOcrStatus(CONSTANT.DISCARDED, CONSTANT.PENDING_DECISSION))) {
 			return OPTION.RAWDOC_REJECT;
-		} else return OPTION.RAWDOC_DRAFT;
+		} else return OPTION.RAWDOC_TRASH;
 	}
 	
 	getRestoreToOption() {
@@ -3194,7 +3194,7 @@ export class AonInvoice extends AonElement {
 			d.setTitle(MSG.DELETE_FOREVER);
 			d.setContentHTML(MSG.DELETE_FOREVER_INVOICE_CONFIRMATION);
 			d.addAcceptAction(() => {
-				this.updateCounter(OPTION.RAWDOC_DRAFT, undefined, -1);
+				this.updateCounter(OPTION.RAWDOC_TRASH, undefined, -1);
 				this.back()
 			});
 			d.open();
@@ -3209,7 +3209,7 @@ export class AonInvoice extends AonElement {
 		d.setContentHTML(MSG.DELETE_CONFIRM);
 		d.addAcceptAction(() => {
 			this.isInvofoxInvoice() && this.setInvofoxState(CONSTANT.ERROR);
-			this.updateCounter(OPTION.RAWDOC_DRAFT, undefined, -1);
+			this.updateCounter(OPTION.RAWDOC_TRASH, undefined, -1);
 			this.back();
 		});
 		d.open();

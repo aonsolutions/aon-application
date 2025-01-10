@@ -27,6 +27,7 @@ public final class IJsonNames {
 	public static final String ACTIVITY = "activity";
 	public static final String ACTIVITY_TYPE = "activity_type";
 	public static final String ACTIVITY_DESCRIPTION = "activityDescription";
+	public static final String ACTIVITY_NAME = "activityName";
 	public static final String ADDRESS = "address";
 	public static final String ADDRESS2 = "address2";
 	public static final String ADJ_ACCOUNT = "adjAccount";
@@ -72,6 +73,8 @@ public final class IJsonNames {
 	public static final String BALANCE_DATE = "balanceDate";
 	public static final String BALANCES = "balances";
 	public static final String BALANCING_ACCOUNT = "balancingAccount";
+	public static final String BALANCING_ACCOUNT_CODE = "balancingAccountCode";
+	public static final String BALANCING_ACCOUNT_DESCRIPTION = "balancingAccountDescription";
 	public static final String BANK = "bank";
 	public static final String BANK_ACCOUNT = "bank_account";
 	public static final String BANK_ALIAS = "bankAlias";
@@ -155,6 +158,7 @@ public final class IJsonNames {
 	public static final String DAYS_TO_FIRST_PYMNT = "daysToFirstPymnt";
 	public static final String DEADLINE = "deadline";
 	public static final String DEBIT = "debit";
+	public static final String DEBIT_BALANCE = "debitBalance";
 	public static final String DEDUCTIBLE_PERCENT = "deductiblePercent";
 	public static final String DEDUCTIBLE_QUOTA = "deductibleQuota";
 	public static final String DEDUCTIBLE_QUOTA_EDITED = "deductibleQuotaEdited";
@@ -175,6 +179,7 @@ public final class IJsonNames {
 	public static final String DETAIL = "detail";
 	public static final String DETAIL2 = "detail2";
 	public static final String DETAIL3 = "detail3";
+	public static final String DETAIL_ID = "detailId";
 	public static final String DETAIL_DESCRIPTION = "detailDescription";
 	public static final String DETAILED = "detailed";
 	public static final String DETAILS = "details";
@@ -215,9 +220,18 @@ public final class IJsonNames {
 	public static final String ENABLE_HEREDITY = "enableHeredity";
 	public static final String END_DATE = "end_date";
 	public static final String ENTERPRISE = "enterprise";
+	public static final String ENTRY_CREATION_DATE = "entryCreationDate";
+	public static final String ENTRY_CREATION_USER = "entryCreationUser";	
 	public static final String ENTRY_DATE = "entryDate";
+	public static final String ENTRY_DOMAIN = "entryDomain";
 	public static final String ENTRY_ENABLED = "entryEnabled";
 	public static final String ENTRY_ID = "entryId";
+	public static final String ENTRY_MODIFICATION_DATE = "entryModificationDate";
+	public static final String ENTRY_MODIFICATION_USER = "entryModificationUser";
+	public static final String ENTRY_PERIOD = "entryPeriod";
+	public static final String ENTRY_PERIOD_NAME = "entryPeriodName";
+	public static final String ENTRY_SECURITY_LEVEL = "entrySecurityLevel";
+	public static final String ENTRY_TYPE = "entryType";
 	public static final String ENVIRONMENT = "environment";
 	public static final String EPIGRAPH = "epigraph";
 	public static final String EPIGRAPH_SECTION = "epigraphSection";
@@ -285,6 +299,8 @@ public final class IJsonNames {
 	public static final String INDEX = "index";
 	public static final String INGENET = "ingenet";
 	public static final String INIT_ACTION = "initAction";
+	public static final String INITIAL_DEBIT_BALANCE = "initialDebitBalance";
+	public static final String INITIAL_UNPAID_BALANCE = "initialUnpaidBalance";
 	public static final String INITIATION_DATE = "initiationDate";
 	public static final String INPUT_ACCOUNT = "inputAccount";
 	public static final String INSIDE_PERIOD = "insidePeriod";
@@ -403,6 +419,7 @@ public final class IJsonNames {
 	public static final String OUTPUT_ACCOUNT = "outputAccount";
 	public static final String OWNER = "owner";
 	// ---------------------------------------------------------------------------------------------	[P] 
+	public static final String PACKAGE = "package";
 	public static final String PACKAGED = "packaged";
 	public static final String PACKAGING = "packaging";
 	public static final String PACK_FORMAT_TAG = "packFormatTag";
@@ -439,6 +456,8 @@ public final class IJsonNames {
 	public static final String PERCENT = "percent";
 	public static final String PERCENTS_ENABLED = "percentsEnabled";
 	public static final String PERIOD = "period";
+	public static final String PERIOD_NAME = "periodName";
+	public static final String PERIOD_STATUS = "periodStatus";
 	public static final String PERISHABLE = "perishable";
 	public static final String PERSON = "person";
 	public static final String PERSONALIZED = "personalized";
@@ -640,6 +659,8 @@ public final class IJsonNames {
 	public static final String TRANSACTION = "transaction";
 	public static final String TYPE = "type";
 	// ---------------------------------------------------------------------------------------------	[U] 
+	public static final String UNDEDUCTIBLE = "undeductible";
+	public static final String UNPAID_BALANCE = "unpaidBalance";
 	public static final String URL = "url";
 	public static final String USER = "user";
 	public static final String USERS = "users";

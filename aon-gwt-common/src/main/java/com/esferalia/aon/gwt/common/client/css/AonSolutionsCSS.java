@@ -1092,6 +1092,9 @@ public interface AonSolutionsCSS extends CssResource {
 
 	@ClassName("aon_loader")
 	String aonLoader();
+	
+	@ClassName("aon_position_relative")
+	String aonPositionRelative();
 
 	/* CUSTOM DIALOG*/
 	@ClassName("aon_custom_dialog")
@@ -1442,6 +1445,11 @@ public interface AonSolutionsCSS extends CssResource {
 
 	@ClassName("aon_search_filter")
 	String aonSearchFilter();
+	
+	@ClassName("aon_button_panel_IVA")
+	String aonButtonPanelIVA();
 
+	@ClassName("aon_button_panel_IRPF")
+	String aonButtonPanelIRPF();
 }
 

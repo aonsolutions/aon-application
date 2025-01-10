@@ -63,6 +63,7 @@ public class SalaryInfo implements Serializable {
 	private Integer contract;
 	private String startDate;
 	private String endDate;
+	private String chargeDate;
 	private Type type;
 	private String enterpriseName;
 	private Integer enterpriseId;
@@ -124,6 +125,14 @@ public class SalaryInfo implements Serializable {
 	public void setEndDate(Date endDate) {
 		this.endDate = format(endDate);
 	}
+
+	public Date getChargeDate() {
+		return parse(chargeDate);
+	}
+	public void setChargeDate(Date chargeDate) {
+		this.chargeDate = format(chargeDate);
+	}
+
 	public Type getType() {
 		return type;
 	}
