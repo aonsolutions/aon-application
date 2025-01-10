@@ -56,18 +56,23 @@
 	  	background-color: #fff !important;
 	}
 	
-	.rich-calendar-boundary-dates {
+	[id$="DateWeekNum1"] > .rich-calendar-boundary-dates {
 		color: #F8F9FA !important;
 		pointer-events: none !important; 
 	}
+
+	[id$="DateWeekNum5"] > .rich-calendar-boundary-dates,
+	[id$="DateWeekNum6"] > .rich-calendar-boundary-dates {
+		display: none !important; 
+	}
 	
 	.rich-calendar-select {
-	  	background-color: #7F91B3 !important;
+	  	background-color: #002469 !important;
 	  	color: #fff !important;
 	  	font-weight: bold;
 	}
 	
-	.rich-bottom-cell {
+	.rich-bottom-cell:empty {
 		display: none !important;
 	}
 	
@@ -172,21 +177,28 @@
 	
 	.rich-calendar-cell:hover {
 	    background-color: #7F91B3 !important;
+	    color: #fff !important;
+	    font-weight: bold !important;
 	}
 	
-	.rich-calendar-cell-selected {
+	/* .rich-calendar-cell-selected {
 	    background-color: #007bff !important;
 	    color: #fff !important;
-	}
+	} */
 	
 	.rich-calendar-today {
-	  background-color: #002469;
-	  color: white !important;
+	  background-color: #fff;
+	  color: #002469;
 	  font-weight: bold;
 	}
 	
+	.rich-calendar-today.rich-calendar-select {
+	    background-color: #002469 !important;
+	    color: #fff !important;
+	}
 	
-/* 	.rich-calendar-holly{
+	
+	/*.rich-calendar-holly{
 		background-color: #B2BCD1 !important;
 	} */
 	
