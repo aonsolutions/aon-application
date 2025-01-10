@@ -66,6 +66,10 @@ public abstract class AonCustomDockLayout extends DockLayoutPanel {
 	public void addToolbarButton(Widget widget) {
 		getToolbar().add(widget);
 	}
+	
+	public void addToolbarButtonStart(Widget widget) {
+		getToolbar().addStart(widget);
+	}
 
 	public int getToolbarButtonCount() {
 		return getToolbar().getButtonContainer().getWidgetCount();
