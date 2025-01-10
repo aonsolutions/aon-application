@@ -213,9 +213,11 @@
 								    	<g:customHeader size='7'>
 								      		<g:Label>Nóminas</g:Label>
 								    	</g:customHeader>
-								    	<g:HTMLPanel styleName="{style.mt10}">
-								    		<g:SimpleLayoutPanel styleName="{style.widthAll} {style.heightAll}">
-								    			<a:EmployeeSalary ui:field="employeeSalary"/>
+								    	<g:HTMLPanel>
+								    		<g:SimpleLayoutPanel ui:field="salaryWidgetPanel" styleName="{style.widthAll} {style.heightAll}">
+								    			<!-- 
+								    			<a:SalaryWidget ui:field="salaryWidget"/>
+								    			 -->
 								    		</g:SimpleLayoutPanel>
 								    	</g:HTMLPanel>
 								  	</g:tab>
@@ -256,11 +258,6 @@
 							 </g:HTMLPanel>
 						</g:DeckPanel>
 					</g:center>
-					<g:south size="17">
-						<aon:AonMinimizePanel ui:field="footPanel" styleName="{aonResources.css.aonSelector} aon-EmployeeTree-Events" >
-							<g:TabLayoutPanel barHeight="26" barUnit="PX" ui:field="footTabPanel" addStyleNames="aon-pointer-events-auto"/>
-						</aon:AonMinimizePanel>
-					</g:south>
 				</g:SplitLayoutPanel>
 			</g:center>
 		</g:DockLayoutPanel>
