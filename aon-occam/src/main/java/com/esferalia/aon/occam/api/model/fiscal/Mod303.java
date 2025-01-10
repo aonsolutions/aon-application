@@ -87,7 +87,8 @@ public class Mod303 extends FiscalModel implements Serializable {
 		return (canBeSent() || isSent()) 
 			&& (getDeclarationResultType() == FiscalModelDeclarationType.DEPOSIT
 			|| getDeclarationResultType() == FiscalModelDeclarationType.BANK
-			|| getDeclarationResultType() == FiscalModelDeclarationType.DEPOSIT_CCT);
+			|| getDeclarationResultType() == FiscalModelDeclarationType.DEPOSIT_CCT
+			|| getDeclarationResultType() == FiscalModelDeclarationType.DEFERRAL);
 	}
 	
 	public boolean isToPayback() {
