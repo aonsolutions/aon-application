@@ -59,13 +59,13 @@ public class VatReport extends MainEntryPoint {
 	private SimpleLayoutPanel vatSummaryContainer;
 	private SimpleLayoutPanel vatPanelContainer;
 	private VatReportFilterPanel filterPanel;
+	private AonToolbarButton filterButton;
 
 	private FormPanel diskForm;
 	private Hidden vatParamsHidden;
 	private Hidden domainIdHidden;
 	private Hidden domainNameHidden;
 	private Hidden userHidden;
-	private AonToolbarButton filterButton;
 	
 	@Override
 	public void onModuleLoad() {
