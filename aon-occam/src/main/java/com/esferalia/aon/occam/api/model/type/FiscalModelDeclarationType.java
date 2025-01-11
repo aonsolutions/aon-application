@@ -64,7 +64,7 @@ public enum FiscalModelDeclarationType {
 	}
 	
 	public static boolean isToDeposit(FiscalModelDeclarationType type ) {
-		return type != null && (type == DEPOSIT || type == BANK || type == DEPOSIT_CCT);
+		return type != null && (type == DEPOSIT || type == BANK || type == DEPOSIT_CCT || type == DEFERRAL);
 	}
 	
 	public static FiscalModelDeclarationType safeNameOf( String name ) {

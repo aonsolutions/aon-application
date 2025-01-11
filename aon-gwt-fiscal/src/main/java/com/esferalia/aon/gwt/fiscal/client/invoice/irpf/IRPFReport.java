@@ -62,13 +62,13 @@ public class IRPFReport extends MainEntryPoint {
 	private SimpleLayoutPanel resultsContent;
 	private SimpleLayoutPanel filterPanelContainer;
 	private IRPFReportFilterPanel filterPanel;
+	private AonToolbarButton filterButton;
 	
 	private FormPanel diskForm;
 	private Hidden irpfParamsHidden;
 	private Hidden domainIdHidden;
 	private Hidden domainNameHidden;
 	private Hidden userHidden;
-	private AonToolbarButton filterButton;
 	
 	@Override
 	public void onModuleLoad() {

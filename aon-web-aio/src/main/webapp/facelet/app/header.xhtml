@@ -56,18 +56,23 @@
 	  	background-color: #fff !important;
 	}
 	
-	.rich-calendar-boundary-dates {
+	[id$="DateWeekNum1"] > .rich-calendar-boundary-dates {
 		color: #F8F9FA !important;
 		pointer-events: none !important; 
 	}
+
+	[id$="DateWeekNum5"] > .rich-calendar-boundary-dates,
+	[id$="DateWeekNum6"] > .rich-calendar-boundary-dates {
+		display: none !important; 
+	}
 	
 	.rich-calendar-select {
-	  	background-color: #7F91B3 !important;
+	  	background-color: #002469 !important;
 	  	color: #fff !important;
 	  	font-weight: bold;
 	}
 	
-	.rich-bottom-cell {
+	.rich-bottom-cell:empty {
 		display: none !important;
 	}
 	
@@ -172,21 +177,28 @@
 	
 	.rich-calendar-cell:hover {
 	    background-color: #7F91B3 !important;
+	    color: #fff !important;
+	    font-weight: bold !important;
 	}
 	
-	.rich-calendar-cell-selected {
+	/* .rich-calendar-cell-selected {
 	    background-color: #007bff !important;
 	    color: #fff !important;
-	}
+	} */
 	
 	.rich-calendar-today {
-	  background-color: #002469;
-	  color: white !important;
+	  background-color: #fff;
+	  color: #002469;
 	  font-weight: bold;
 	}
 	
+	.rich-calendar-today.rich-calendar-select {
+	    background-color: #002469 !important;
+	    color: #fff !important;
+	}
 	
-/* 	.rich-calendar-holly{
+	
+	/*.rich-calendar-holly{
 		background-color: #B2BCD1 !important;
 	} */
 	
@@ -1397,7 +1409,7 @@
 	.aon-icon-big-info {
 		background-size: 32px;
 		background-image: url('data:image/svg+xml;utf-8,&lt;svg xmlns="http://www.w3.org/2000/svg" height="32px" viewBox="0 -960 960 960" width="32px" fill="--var(aonIconColor,black)"&gt;&lt;path d="M466-306h28v-214h-28v214Zm14-264q8.5 0 14.25-5.75T500-590q0-8.5-5.75-14.25T480-610q-8.5 0-14.25 5.75T460-590q0 8.5 5.75 14.25T480-570Zm.17 438q-72.17 0-135.73-27.39-63.56-27.39-110.57-74.35-47.02-46.96-74.44-110.43Q132-407.65 132-479.83q0-72.17 27.39-135.73 27.39-63.56 74.35-110.57 46.96-47.02 110.43-74.44Q407.65-828 479.83-828q72.17 0 135.73 27.39 63.56 27.39 110.57 74.35 47.02 46.96 74.44 110.43Q828-552.35 828-480.17q0 72.17-27.39 135.73-27.39 63.56-74.35 110.57-46.96 47.02-110.43 74.44Q552.35-132 480.17-132Zm-.17-28q134 0 227-93t93-227q0-134-93-227t-227-93q-134 0-227 93t-93 227q0 134 93 227t227 93Zm0-320Z"/&gt;&lt;/svg&gt;') ;
-		height: 32px;
+		height: 22px;
 	}
 	
 	.aon-icon-download {
