@@ -13,6 +13,8 @@ import com.esferalia.aon.gwt.payroll.client.PayrollEmailDialog.Type;
 import com.esferalia.aon.gwt.payroll.shared.AFIChanges;
 import com.esferalia.aon.gwt.payroll.shared.ActivitiesCCC;
 import com.esferalia.aon.gwt.payroll.shared.ActivityInfo;
+import com.esferalia.aon.gwt.payroll.shared.ActivitySummaryObject;
+import com.esferalia.aon.gwt.payroll.shared.ActivitySummaryParams;
 import com.esferalia.aon.gwt.payroll.shared.AgrarianJourney;
 import com.esferalia.aon.gwt.payroll.shared.Agreement;
 import com.esferalia.aon.gwt.payroll.shared.AgreementInfo;
@@ -50,6 +52,8 @@ import com.esferalia.aon.gwt.payroll.shared.Period;
 import com.esferalia.aon.gwt.payroll.shared.Result;
 import com.esferalia.aon.gwt.payroll.shared.SSBonusData;
 import com.esferalia.aon.gwt.payroll.shared.SSPECData;
+import com.esferalia.aon.gwt.payroll.shared.SalaryInfo;
+import com.esferalia.aon.gwt.payroll.shared.SalaryParams;
 import com.esferalia.aon.gwt.payroll.shared.SecondaryUserCertificate;
 import com.esferalia.aon.gwt.payroll.shared.Variable;
 import com.esferalia.aon.gwt.payroll.shared.Workplace;
@@ -798,6 +802,22 @@ public class DomainEnterprisesServiceAsync {
 		enterprisesServiceAsync.checkPensionPlanAFI(getCurrentDomainName(), getCurrentUser(), date, cccIdList, asyncCallback);
 	}
 	
+	// ------------------------------------------------ Activity Summary
+	
+	public void getActivitySummary(ActivitySummaryParams params, AsyncCallback<List<ActivitySummaryObject>> asyncCallback) throws IllegalArgumentException {
+		enterprisesServiceAsync.getActivitySummary(getCurrentDomainName(), getCurrentUser(), params, asyncCallback);
+	}
+	
+	// ------------------------------------------------ Salaries
+	
+	public void getSalaries(SalaryParams params, AsyncCallback<List<SalaryInfo>> asyncCallback) throws IllegalArgumentException {
+		enterprisesServiceAsync.getSalaries(getCurrentDomainName(), getCurrentUser(), params, asyncCallback);
+	}
+	
+	public void deleteSalary(Integer id, AsyncCallback<Void> asyncCallback) throws IllegalArgumentException  {
+		enterprisesServiceAsync.deleteSalary(getCurrentDomainName(), getCurrentUser(), id, asyncCallback);
+	}
+	
 	// ----------------------------------------------------------------- static
 	
 	private static String getToken() {
@@ -811,7 +831,5 @@ public class DomainEnterprisesServiceAsync {
 	private static String getCurrentDomainName() {
 		return Wnd.getCurrentDomainNameURL();
 	}
-
-	
 
 }

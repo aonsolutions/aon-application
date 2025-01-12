@@ -172,8 +172,6 @@ public abstract class Mod145 extends Composite {
 		getElement().getStyle().setHeight(100, Unit.PCT);
 		dockLayoutPanel.addNorth(toolbar, AonToolbar.HEIGTH);
 		
-		scrollPanel.setHeight((Window.getClientHeight() - 260) + "px");
-		
 		familySituationLB.addStyleName(style.fsMaxWidth());
 		
 		createDescendients();

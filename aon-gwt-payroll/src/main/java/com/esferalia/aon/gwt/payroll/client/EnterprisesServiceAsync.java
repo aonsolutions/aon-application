@@ -13,6 +13,8 @@ import com.esferalia.aon.gwt.payroll.client.PayrollEmailDialog.Type;
 import com.esferalia.aon.gwt.payroll.shared.AFIChanges;
 import com.esferalia.aon.gwt.payroll.shared.ActivitiesCCC;
 import com.esferalia.aon.gwt.payroll.shared.ActivityInfo;
+import com.esferalia.aon.gwt.payroll.shared.ActivitySummaryObject;
+import com.esferalia.aon.gwt.payroll.shared.ActivitySummaryParams;
 import com.esferalia.aon.gwt.payroll.shared.AgrarianJourney;
 import com.esferalia.aon.gwt.payroll.shared.Agreement;
 import com.esferalia.aon.gwt.payroll.shared.AgreementInfo;
@@ -35,7 +37,6 @@ import com.esferalia.aon.gwt.payroll.shared.EmployeeContractInfo;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeSegSocial;
 import com.esferalia.aon.gwt.payroll.shared.Enterprise;
 import com.esferalia.aon.gwt.payroll.shared.EnterpriseContext;
-import com.esferalia.aon.gwt.payroll.shared.EnterpriseITStatus;
 import com.esferalia.aon.gwt.payroll.shared.EnterpriseITStatus.ItNotExist;
 import com.esferalia.aon.gwt.payroll.shared.EnterpriseStatus;
 import com.esferalia.aon.gwt.payroll.shared.Extra;
@@ -51,6 +52,8 @@ import com.esferalia.aon.gwt.payroll.shared.Period;
 import com.esferalia.aon.gwt.payroll.shared.Result;
 import com.esferalia.aon.gwt.payroll.shared.SSBonusData;
 import com.esferalia.aon.gwt.payroll.shared.SSPECData;
+import com.esferalia.aon.gwt.payroll.shared.SalaryInfo;
+import com.esferalia.aon.gwt.payroll.shared.SalaryParams;
 import com.esferalia.aon.gwt.payroll.shared.SecondaryUserCertificate;
 import com.esferalia.aon.gwt.payroll.shared.Variable;
 import com.esferalia.aon.gwt.payroll.shared.Workplace;
@@ -323,4 +326,13 @@ public interface EnterprisesServiceAsync {
 	
 	void checkPensionPlanAFI(String currentDomainName, String currentUser, long date, List<Integer> cccIdList, AsyncCallback<String> asyncCallback) throws IllegalArgumentException;
 	
+	// ------------------------------------------------ Activity Summary
+	
+	void getActivitySummary(String currentDomainName, String currentUser, ActivitySummaryParams params, AsyncCallback<List<ActivitySummaryObject>> asyncCallback) throws IllegalArgumentException;
+	// ------------------------------------------------ Salaries
+	
+	void getSalaries(String domain, String user, SalaryParams params, AsyncCallback<List<SalaryInfo>> asyncCallback) throws IllegalArgumentException;
+	
+	void deleteSalary(String domain, String user, Integer id, AsyncCallback<Void> asyncCallback) throws IllegalArgumentException;
+
 }

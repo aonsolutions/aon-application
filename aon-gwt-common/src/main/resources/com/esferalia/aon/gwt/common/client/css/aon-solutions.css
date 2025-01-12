@@ -477,6 +477,10 @@
 .aon_inline_block {
 	display: inline-block;
 }
+
+.aon_inline_flex {
+	display: inline-flex;
+}
 .aon_cmd_item{
 	background-position: center left;
 	background-repeat: no-repeat;
@@ -968,7 +972,7 @@
 	height: 20px;
 	background-size: 100% auto;
 }
-.aon_search_panel_button:hover, .aon_search_panel_button:focus {
+.aon_search_panel_button:hover {
 	background-color: #eee !important; 
 }
 
@@ -1007,6 +1011,10 @@
 	align-items: baseline;
 }
 
+.aon_align_items_center {
+	align-items: center;
+}
+
 .aon_flex_column {
     display: flex;
     flex-direction: column;
@@ -1038,6 +1046,27 @@
 	display: flex;
 	align-items: center;
 	gap: .5rem
+}
+
+.aon_position_relative{
+	position: relative;
+}
+
+/* Estilo para los botones de edicion de Table IVA */
+.aon_button_panel_IVA {
+	display: flex;
+  	align-items: center;
+  	position: absolute;
+  	top: 0px;
+  	left: 930px;
+}
+
+/* Estilo para los botones de edicion de Table IVA */
+.aon_button_panel_IRPF {
+	display: flex;
+  	position: absolute;
+  	top: 0;
+  	right: 0px;
 }
 
 /* Estilo para el contenedor principal */

@@ -17,6 +17,8 @@ import com.esferalia.aon.gwt.payroll.client.PayrollEmailDialog.Type;
 import com.esferalia.aon.gwt.payroll.shared.AFIChanges;
 import com.esferalia.aon.gwt.payroll.shared.ActivitiesCCC;
 import com.esferalia.aon.gwt.payroll.shared.ActivityInfo;
+import com.esferalia.aon.gwt.payroll.shared.ActivitySummaryObject;
+import com.esferalia.aon.gwt.payroll.shared.ActivitySummaryParams;
 import com.esferalia.aon.gwt.payroll.shared.AgrarianJourney;
 import com.esferalia.aon.gwt.payroll.shared.Agreement;
 import com.esferalia.aon.gwt.payroll.shared.AgreementInfo;
@@ -54,6 +56,8 @@ import com.esferalia.aon.gwt.payroll.shared.Period;
 import com.esferalia.aon.gwt.payroll.shared.Result;
 import com.esferalia.aon.gwt.payroll.shared.SSBonusData;
 import com.esferalia.aon.gwt.payroll.shared.SSPECData;
+import com.esferalia.aon.gwt.payroll.shared.SalaryInfo;
+import com.esferalia.aon.gwt.payroll.shared.SalaryParams;
 import com.esferalia.aon.gwt.payroll.shared.SecondaryUserCertificate;
 import com.esferalia.aon.gwt.payroll.shared.Variable;
 import com.esferalia.aon.gwt.payroll.shared.Workplace;
@@ -1231,6 +1235,28 @@ public class EnterprisesServiceAsyncDecorator implements
 	public void checkPensionPlanAFI(String domainName, String currentUser, long date, List<Integer> cccIdList, AsyncCallback<String> callback) throws IllegalArgumentException {
 		AON.start();
 		enterprisesServiceAsync.checkPensionPlanAFI(domainName, currentUser, date, cccIdList, callback);
+	}
+
+	// ------------------------------------------------ Activity Summary
+	
+	@Override
+	public void getActivitySummary(String domainName, String currentUser, ActivitySummaryParams params, AsyncCallback<List<ActivitySummaryObject>> callback) throws IllegalArgumentException {
+		AON.start();
+		enterprisesServiceAsync.getActivitySummary(domainName, currentUser, params, callback);
+	}
+	
+	// ------------------------------------------------ Salaries
+
+	@Override
+	public void getSalaries(String domainName, String currentUser, SalaryParams params, AsyncCallback<List<SalaryInfo>> callback) throws IllegalArgumentException {
+		AON.start();
+		enterprisesServiceAsync.getSalaries(domainName, currentUser, params, callback);
+	}
+
+	@Override
+	public void deleteSalary(String domainName, String currentUser, Integer id, AsyncCallback<Void> callback) throws IllegalArgumentException {
+		AON.start();
+		enterprisesServiceAsync.deleteSalary(domainName, currentUser, id, callback);
 	}
 
 }

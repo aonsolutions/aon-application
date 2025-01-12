@@ -63,6 +63,7 @@ import com.esferalia.aon.gwt.common.shared.UnknownVariablesWarning;
 import com.esferalia.aon.gwt.payroll.client.AgreementsCleanDialog.AgreementCleanType;
 import com.esferalia.aon.gwt.payroll.client.EnterprisesService;
 import com.esferalia.aon.gwt.payroll.jooq.JooqActivity;
+import com.esferalia.aon.gwt.payroll.jooq.JooqActivitySummary;
 import com.esferalia.aon.gwt.payroll.jooq.JooqAddress;
 import com.esferalia.aon.gwt.payroll.jooq.JooqAgrarian;
 import com.esferalia.aon.gwt.payroll.jooq.JooqAgreement;
@@ -85,12 +86,15 @@ import com.esferalia.aon.gwt.payroll.jooq.JooqIT;
 import com.esferalia.aon.gwt.payroll.jooq.JooqMail;
 import com.esferalia.aon.gwt.payroll.jooq.JooqMainCCC;
 import com.esferalia.aon.gwt.payroll.jooq.JooqPayments;
+import com.esferalia.aon.gwt.payroll.jooq.JooqPayrollSalaries;
 import com.esferalia.aon.gwt.payroll.jooq.JooqSSBonus;
 import com.esferalia.aon.gwt.payroll.jooq.JooqWorkplace;
 import com.esferalia.aon.gwt.payroll.shared.AFIChanges;
 import com.esferalia.aon.gwt.payroll.shared.ActivitiesCCC;
 import com.esferalia.aon.gwt.payroll.shared.Activity;
 import com.esferalia.aon.gwt.payroll.shared.ActivityInfo;
+import com.esferalia.aon.gwt.payroll.shared.ActivitySummaryObject;
+import com.esferalia.aon.gwt.payroll.shared.ActivitySummaryParams;
 import com.esferalia.aon.gwt.payroll.shared.AgrarianJourney;
 import com.esferalia.aon.gwt.payroll.shared.Agreement;
 import com.esferalia.aon.gwt.payroll.shared.AgreementInfo;
@@ -141,6 +145,8 @@ import com.esferalia.aon.gwt.payroll.shared.Salary;
 import com.esferalia.aon.gwt.payroll.shared.Salary.Type;
 import com.esferalia.aon.gwt.payroll.shared.SalaryDraft;
 import com.esferalia.aon.gwt.payroll.shared.SalaryDraft.Scope;
+import com.esferalia.aon.gwt.payroll.shared.SalaryInfo;
+import com.esferalia.aon.gwt.payroll.shared.SalaryParams;
 import com.esferalia.aon.gwt.payroll.shared.SecondaryUserCertificate;
 import com.esferalia.aon.gwt.payroll.shared.StringVariable;
 import com.esferalia.aon.gwt.payroll.shared.Variable;
@@ -5020,6 +5026,51 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 		.setCias(part.getCias())
 		.setCollegeNumber(part.getCollegeNumber())
 		.setConfirmOrder(part.getConfirmOrderNumber()!=null ? part.getConfirmOrderNumber(): null);
+	}
+
+	// ------------------------------------------------ Activity Summary
+	
+	@Override
+	public List<ActivitySummaryObject> getActivitySummary(String domainName, String userLogin, ActivitySummaryParams params) throws IllegalArgumentException {
+		try (Connection connection = AonServletUtils.getConnection(domainName)) {
+			Integer domainId = AonServletUtils.getDomainID(domainName);
+			Integer parentDomainId = AonServletUtils.getParentDomainID(domainName); 
+			Integer userId = AonServletUtils.getUserID(connection, userLogin, domainId, parentDomainId);
+			
+			List<ActivitySummaryObject> list = JooqActivitySummary.getActivitySummary(connection, domainId, parentDomainId, userId, params);
+			return list;
+		} catch (Exception e) {
+			throw new IllegalArgumentException(e);
+		}
+	}
+	
+	// ------------------------------------------------ Salaries
+
+	@Override
+	public List<SalaryInfo> getSalaries(String domainName, String userLogin, SalaryParams params) throws IllegalArgumentException {
+		try (Connection connection = AonServletUtils.getConnection(domainName)) {
+			Integer domainId = AonServletUtils.getDomainID(domainName);
+			Integer parentDomainId = AonServletUtils.getParentDomainID(domainName);
+			Integer userId = AonServletUtils.getUserID(connection, userLogin, domainId, parentDomainId);
+			
+			return JooqPayrollSalaries.getSalaries(connection, domainId, parentDomainId, userId, params);
+		} catch (SQLException e) {
+			throw new IllegalArgumentException(e);
+		}
+	}
+
+	@Override
+	public void deleteSalary(String domainName, String userLogin, Integer id) throws IllegalArgumentException {
+		try (Connection connection = AonServletUtils.getConnection(domainName)) {
+			Integer domainId = AonServletUtils.getDomainID(domainName);
+			
+			List<Integer> salaryIds = new ArrayList<Integer>();
+			salaryIds.add(id);
+			
+			JooqPayrollSalaries.deleteSalaries(connection, domainId, salaryIds);
+		} catch (Exception e) {
+			throw new IllegalArgumentException(e);
+		}
 	}
 
 }

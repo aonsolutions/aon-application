@@ -7,16 +7,19 @@ import static com.esferalia.aon.gwt.payroll.shared.CostExcelService.Params.MONTH
 import static com.esferalia.aon.gwt.payroll.shared.CostExcelService.Params.USER;
 import static com.esferalia.aon.gwt.payroll.shared.CostExcelService.Params.WORKPLACE;
 import static com.esferalia.aon.gwt.payroll.shared.CostExcelService.Params.YEAR;
-import static com.esferalia.aon.gwt.payroll.shared.CostExcelService.Params.FILTER;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
+import java.util.Calendar;
 import java.util.Date;
-import java.util.Optional;
+import java.util.List;
 import java.util.stream.Collectors;
+
+import com.esferalia.aon.gwt.payroll.util.Utilities;
+import com.esferalia.aon.in.payroll.excel.EnterprisePayrollExcel;
+import com.esferalia.aon.in.payroll.excel.EnterprisePayrollExcel.EnterprisePayrollExcelParams;
+import com.esferalia.aon.occam.api.model.type.MimeType;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.ServletOutputStream;
@@ -24,11 +27,6 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-
-import com.esferalia.aon.in.payroll.excel.EnterprisePayrollExcel;
-import com.esferalia.aon.in.payroll.excel.EnterprisePayrollExcel.EnterprisePayrollExcelParams;
-import com.esferalia.aon.occam.api.model.type.MimeType;
-import java.util.Calendar;
 
 @SuppressWarnings("serial")
 @WebServlet(
@@ -53,23 +51,25 @@ public class CostExcelServlet extends HttpServlet {
 		Integer year;
 		String domainName;
 		String user;
-		com.esferalia.aon.in.payroll.excel.ExcelType type;
-		Collection<Integer> types;
+		com.esferalia.aon.in.payroll.excel.ExcelType excelType;
+		List<com.esferalia.aon.occam.api.model.type.SalaryType> types = new ArrayList<com.esferalia.aon.occam.api.model.type.SalaryType>() ;
 		
 		//Picking up the parameters
 		{
-			if (req.getParameterValues(FILTER.getName()) != null)
-				types = Arrays.stream(req.getParameterValues(FILTER.getName()))
-				.map(str -> Integer.parseInt(str))
-				.collect(Collectors.toList());
+			if (req.getParameterValues("filter") != null)
+				types = Arrays.stream(req.getParameterValues("filter")).map(str -> {
+					Integer ordinal = Integer.parseInt(str);
+					com.esferalia.aon.occam.api.model.type.SalaryType type = Utilities.typeOf(ordinal.byteValue(), com.esferalia.aon.occam.api.model.type.SalaryType.class);
+					return type;
+				}).collect(Collectors.toList());
 			else
-				types = Collections.unmodifiableList(new ArrayList<Integer>());
+				types.add(com.esferalia.aon.occam.api.model.type.SalaryType.SALARY);
 			
 			enterpriseId = req.getParameter(ENTERPRISE.getName()) != null ? Integer.parseInt(req.getParameter(ENTERPRISE.getName())) : null;
 			workplaceId = req.getParameter(WORKPLACE.getName()) != null ? Integer.parseInt(req.getParameter(WORKPLACE.getName())) : null;
 			month = Integer.parseInt(req.getParameter(MONTH.getName()));
 			year = Integer.parseInt(req.getParameter(YEAR.getName()));
-			type = com.esferalia.aon.in.payroll.excel.ExcelType.valueOf(req.getParameter(EXCEL_TYPE.getName()));
+			excelType = com.esferalia.aon.in.payroll.excel.ExcelType.valueOf(req.getParameter(EXCEL_TYPE.getName()));
 			domainName = req.getParameter(DOMAIN.getName());
 			user = req.getParameter(USER.getName());
 		}
@@ -93,7 +93,7 @@ public class CostExcelServlet extends HttpServlet {
 					.setOs(sos)
 					.setEnterpriseId(enterpriseId)
 					.setWorkplaceId(workplaceId)
-					.setExcelType(type);
+					.setExcelType(excelType);
 			
 			EnterprisePayrollExcel.simpleEnterprisePayrollGenerator(params, startDate, types);
 			resp.getOutputStream().flush();

@@ -352,7 +352,7 @@ public abstract class Model390HFBase extends DockLayoutPanel  {
 				int col = 1;
 				for (Mod390Key key : script.getKeys()) {
 					if (key == null) {
-						col = paintEmptyCol(table,row, col, 2);
+						col = paintEmptyKeyCol(table,row, col, 2);
 					} else {
 						col = paintBox(table, row, col, key );
 						col = paintField(table, row, col, script, key );
@@ -377,9 +377,9 @@ public abstract class Model390HFBase extends DockLayoutPanel  {
 		table.setWidget(row, 0, new Label());
 	}
 	
-	protected int paintEmptyCol(FlexTable table,int row, int col, int colspan) {
+	protected int paintEmptyKeyCol(FlexTable table,int row, int col, int colspan) {
 		table.setWidget(row, col, new Label());
-		table.getFlexCellFormatter().addStyleName(row, col,AON.CSS.aonBorderBottom() );
+		//table.getFlexCellFormatter().addStyleName(row, col,AON.CSS.aonBorderBottom() );
 		table.getFlexCellFormatter().setColSpan(row, col, colspan);
 		return ++col;
 	}

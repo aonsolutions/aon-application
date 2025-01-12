@@ -371,10 +371,22 @@ public class Model390HF extends MainEntryPoint {
 			}
 		},
 
+		ARABA_2024 {
+			@Override
+			public boolean accept(Mod390HF mod390HF) {
+				return (mod390HF.isAraba() && mod390HF.getYear() >= 2024);
+			}
+
+			@Override
+			public Widget getDeclarationWidget(Mod390HF mod390HF, Model390HFCallback cbk) {
+				return new Model390HF2024ARABA(cbk,mod390HF);
+			}
+		},
+		
 		ARABA_2023 {
 			@Override
 			public boolean accept(Mod390HF mod390HF) {
-				return (mod390HF.isAraba() && mod390HF.getYear() >= 2023);
+				return (mod390HF.isAraba() && mod390HF.getYear() == 2023);
 			}
 
 			@Override

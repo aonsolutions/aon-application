@@ -47,7 +47,6 @@ import com.google.gwt.http.client.URL;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.DeckPanel;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.FormPanel;
@@ -143,8 +142,7 @@ public class MainContrataContract extends MainEntryPoint {
 	
 	// Enterprise Salary
 	
-	@UiField(provided = true)
-	EnterpriseSalary enterpriseSalary;
+	SalaryWidget enterpriseSalary;
 	
 	// ------------------------------------------ Variables
 	
@@ -153,7 +151,6 @@ public class MainContrataContract extends MainEntryPoint {
 	private DateTimeFormat formatMonth = DateTimeFormat.getFormat("MMMM");
 	
 	private MainContrataContractObject mainContrataContractObject;
-	private EnterpriseSalaryObject enterpriseSalaryObject;
 	
 	private AonExpandButton tgssExpandButton;
 	private TGSSContextMenu tgssContextMenu;
@@ -161,6 +158,7 @@ public class MainContrataContract extends MainEntryPoint {
 	private HTMLPanel sistemaREDMessagePanel;
 	private SistemaREDResults sistemaREDResults;
 	private AonToolbarButton sistemREDInfoBtn;
+	private AonToolbarButton syncSistemREDBtn;
 	
 	private boolean contextLoaded = false;
 	private boolean fetchingData = false;
@@ -189,13 +187,13 @@ public class MainContrataContract extends MainEntryPoint {
 	
 	private static enum EMPLOYEE_COL {
 		  DES(AON.MSG.name()						,"-moz-available"	,"min-width: 5rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
-		, DOC(AON.MSG.document()					,"5rem"				,"")
-		, NSS("NSS"									,"5rem"				,"")
+		, DOC(AON.MSG.document()					,"6rem"				,"")
+		, NSS("NSS"									,"8rem"				,"")
 		, CON("TC2"									,"3rem"				,"")
-		, WOR(AON.MSG.workplace()					,"7rem"				,"")
-		, CAT("Categoria"							,"7rem"				,"min-width: 7rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
-		, STA("F. Inicio"							,"5rem"				,"")
-		, END("F. Fin"								,"5rem"				,"")
+		, WOR(AON.MSG.workplace()					,"8rem"				,"")
+		, CAT("Categoria"							,"7rem"				,"white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
+		, STA("F. Inicio"							,"5.5rem"			,"")
+		, END("F. Fin"								,"5.5rem"			,"")
 		, BUT(AonStringUtils.EMPTY					,"2rem"				,"")
 		;
 
@@ -275,23 +273,11 @@ public class MainContrataContract extends MainEntryPoint {
 
 	}
 
-	// ------------------------------------------ EnterpriseSalary
-
-	private class EnterpriseSalaryImpl extends EnterpriseSalary {
-
-		@Override
-		protected void onBackClick() {
-			showContracts();
-		}
-
-	}
-
 	// ------------------------------------------ Constructor
 
 	public MainContrataContract() {
 		contrataEmployee = new ContrataEmployeeImpl();
-		enterpriseSalary = new EnterpriseSalaryImpl();
-
+		
 		employeesDockLayoutPanel = new AonCustomDockLayout("Contratos") {
 			@Override
 			protected void onClearFilter() { 
@@ -336,6 +322,13 @@ public class MainContrataContract extends MainEntryPoint {
 		RootLayoutPanel.get(getRootPanel() != null ? getRootPanel() : "rootPanel").add(ui);
 		
 		tgssContextMenu = new TGSSContextMenu();
+		
+		enterpriseSalary = new SalaryWidget();
+		
+		AonToolbarButton backButton = new AonToolbarButton("Volver Contratos", AON.CSS.aonIconBack());
+		backButton.addClickHandler(e -> showContracts());
+		enterpriseSalary.addToolbarButtonStart(backButton);
+		deckPanel.add(enterpriseSalary);
 		
 		// Employees List
 		initEmployeeList();	
@@ -434,6 +427,10 @@ public class MainContrataContract extends MainEntryPoint {
 		AonToolbarButton exportExcelBtn = new AonToolbarButton("Exportar Contratos Empresa", AON.CSS.aonIconExcel());
 		exportExcelBtn.addClickHandler(e -> exportEnterpriseContracts());
 		employeesDockLayoutPanel.addToolbarButton(exportExcelBtn);
+		
+		syncSistemREDBtn = new AonToolbarButton("Consultando SistemaRED...", AON.CSS.aonIconRefresh());
+		syncSistemREDBtn.addStyleName(AON.CSS.aonSpin());
+		employeesDockLayoutPanel.addToolbarButton(syncSistemREDBtn);
 		
 		sistemREDInfoBtn = new AonToolbarButton("Mensajes SistemaRED", AON.CSS.aonIconInfo());
 		sistemREDInfoBtn.setVisible(false);
@@ -728,7 +725,6 @@ public class MainContrataContract extends MainEntryPoint {
 		this.mainContrataContractObject.getContextInfo(
 				s -> {
 					AonMessagePanel.hideMessage(employeesMessagePanel);
-					enterpriseSalary.setBackButtonVisible();
 					initWorkplaceLB();
 					initTC2LB();
 					contextLoaded = true;
@@ -980,18 +976,8 @@ public class MainContrataContract extends MainEntryPoint {
 	}
 	
 	protected void showEnterpriseSalary() {
-		if (null == enterpriseSalaryObject) {
-			mainContrataContractObject.getEnterprise(
-					enterprise -> {
-						enterpriseSalaryObject = new EnterpriseSalaryObject(enterprise);
-						enterpriseSalary.setEnterpriseSalaryObject(enterpriseSalaryObject);
-						enterpriseSalary.hideEditSalaryButton();
-					}, 
-					f -> {}
-			);
-		}
-
 		deckPanel.showWidget(3);
+		enterpriseSalary.setIsEnterprise().loadSalaries();
 	}
 	
 	private void checkPDFToolbar(boolean isLaboralLife) {
@@ -1096,6 +1082,7 @@ public class MainContrataContract extends MainEntryPoint {
 			sistemaREDResults.hideToolbar();
 			
 			enterpriseStatus.visit(sistemaREDResults);
+			syncSistemREDBtn.setVisible(false);
 			sistemREDInfoBtn.setVisible(true);
 			
 			EnterpriseStatus.ifSistemaREDEnabled(

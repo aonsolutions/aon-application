@@ -588,7 +588,7 @@ export class AonMobileDelivery extends AonElement {
 			quantityBox.setQuantityFormat(quantityBox.value);
 		});
 		table.addCell(quantityBox);
-		quantity.setTags(detail.item);
+		quantityBox.setTags(detail.item);
 		
 		let actionButton = new AonIconButton();
 		actionButton.id = this.id + 'ActionButton';
