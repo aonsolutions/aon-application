@@ -7,6 +7,7 @@ export class AonMobileDeliveryPackagingList extends AonMobileList {
     Packages;
     TOOLBAR;
     DELIVERY_TOOLBAR;
+    delivery;
 
     constructor () {
         super();
@@ -42,6 +43,7 @@ export class AonMobileDeliveryPackagingList extends AonMobileList {
         let aonPackage = new AonMobileDeliveryPackaging();
         aonPackage.setElaborationToolbar(this.TOOLBAR);
         aonPackage.setDeliveryToolbar(this.DELIVERY_TOOLBAR);
+        aonPackage.setDelivery(this.delivery);
         aonPackage.setPackaging(packaging);
         let div = this.getElement('aonPackageDiv');
         this.clearElement(div);
@@ -58,6 +60,10 @@ export class AonMobileDeliveryPackagingList extends AonMobileList {
 
     setDeliveryToolbar(toolbar) {
         this.DELIVERY_TOOLBAR = toolbar;
+    }
+
+    setDelivery(delivery) {
+        this.delivery = delivery;
     }
 }
 if(!window.customElements.get(TAG.AON_MOBILE_DELIVERY_PACKAGING_LIST)){
