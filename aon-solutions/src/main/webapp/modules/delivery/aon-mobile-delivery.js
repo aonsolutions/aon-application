@@ -13,7 +13,7 @@ import { AonBasicTable } from '../../components/aon-basic-table.js';
 import { AonIconButton } from '../../components/aon-icon-button.js';
 import { AonTabs } from '../../components/aon-tabs.js';
 import { getDelivery } from '../../services/warehouseService.js';
-import { acceptDeliveryPackaging, deleteDelivery, getDeliveryPackaging, getProducts, saveDeliveryPackaging } from '../../services/productService.js';
+import { acceptDeliveryPackaging, deleteDelivery, deleteDeliveryPackaging, getDeliveryPackaging, getProducts, saveDeliveryPackaging } from '../../services/productService.js';
 import { AonDialog } from '../../components/aon-dialog.js';
 import { getSalesDetails } from '../../services/salesService.js';
 
@@ -28,6 +28,7 @@ export class AonMobileDelivery extends AonElement {
 	DELIVERY_CARD;
 	DETAIL_TABLE;
 	DELIVERY_SAVE_BUTTON;
+	DELIVERY_SUBTRACT_BUTTON;
 	DELIVERY_TABS
 	DELIVERY_TABS_BUTTON;
 	PACKAGING_PRODUCT;
@@ -64,6 +65,7 @@ export class AonMobileDelivery extends AonElement {
 		this.delivery = this.delivery || {};
 		this.packaging = {};
 		this.DELIVERY_SAVE_BUTTON = this.id + 'DeliverySaveButton';
+		this.DELIVERY_SAVE_BUTTON = this.id + 'DeliverySubtractButton';
 		this.PACKAGING_PRODUCT = this.id + 'PackagingProduct';
 		this.PACKAGING_SOURCE_PRODUCT = this.id + 'PackagingSourceProduct';
 		this.PACKAGING_SOURCE_QUANTITY = this.id + 'PackagingSourceQuantity';
@@ -167,6 +169,7 @@ export class AonMobileDelivery extends AonElement {
 		let div = this.createElement(TAG.DIV, "aonPackageDiv")
 		let packagingList = new AonMobileDeliveryPackagingList();
 		packagingList.setDeliveryToolbar(this.DELIVERY_TOOLBAR);
+		packagingList.setDelivery(this.delivery.id);
 		packagingList.setPackages(this.delivery.packaging);
 		div.appendChild(packagingList);
 		parent.appendChild(div);
@@ -230,7 +233,52 @@ export class AonMobileDelivery extends AonElement {
 	}
 
 	subtractPackaging() {
-		this.getApplication().development();
+		this.getApplication().removeFloatOption();
+		this.clear();
+
+		let toolbar = new AonToolbar();
+		toolbar.id = this.DELIVERY_TOOLBAR;
+		toolbar.type = ToolbarType.SECONDARY;
+		toolbar.title = 'Seleccionar Envase'; // this.delivery.reference; 
+		this.appendChild(toolbar);
+		toolbar.addButton2(ACTION.BACK, () => this.backToDelivery());
+
+		let div = this.createDiv();
+		this.appendChild(div);
+	
+		let packagingCard = new AonCard();
+		packagingCard.id = this.id  + 'PackagingCard';
+		packagingCard.title = 'Envase';
+		div.appendChild(packagingCard);
+	
+		let packagingDiv = this.createDiv();
+		packagingCard.setContent(packagingDiv);
+		let table = new AonBasicTable();
+		table.id = this.id + 'Envasesss';
+		packagingDiv.appendChild(table);
+		
+		table.addRow();
+		let product = createInput(this.PACKAGING_PRODUCT, MSG.CONTAINER + ' (SSCC)');
+		table.addCell(product);
+		product.addIcon(MATERIAL_ICONS.QR_CODE_SCANNER, undefined, () => this.openBarcode(product));	
+	
+		let subtractButton = new AonButton();
+		subtractButton.id = this.DELIVERY_SUBTRACT_BUTTON;
+		subtractButton.title = 'Restar del Albarán';
+		subtractButton.style.margin = '10px';	
+		subtractButton.style.right = '0px';
+		subtractButton.style.position = 'absolute';
+	
+		div.appendChild(subtractButton);	
+		subtractButton.addEventListener(EVENT.CLICK, () => {
+			this.packaging.delivery = this.delivery.id;
+			deleteDeliveryPackaging({
+				delivery: this.delivery.id,
+				package: product.value
+			}).then(r =>{
+				this.backToDelivery(this.delivery.id);
+			}).catch(e => this.backToDelivery(this.delivery.id));
+		});
 	}
 
 	addPackaging() {
