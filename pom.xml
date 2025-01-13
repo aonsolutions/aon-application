@@ -56,6 +56,8 @@
     <module>aon-watson</module>
     <module>aon-occam</module>
     <module>aon-occam-mod200</module>
+    <module>aon.occam.api</module>
+    <module>aon.occam.impl</module>
     <!-- FRAMEWORK -->
     <module>aon-audit</module>
     <module>aon-ui-audit</module>
