@@ -22,10 +22,11 @@ public class AonCustomTable extends HTMLPanel {
 		getElement().getStyle().setProperty("max-height", maxHeight);
 	}
 	
-	public void createHeader() {
+	public HTMLPanel createHeader() {
 		header = new HTMLPanel(EMPTY_STRING);
 		addHeaderStyle();
 		add(header);
+		return header;
 	}
 	
 	public Label addHeader(Label label, String width) {

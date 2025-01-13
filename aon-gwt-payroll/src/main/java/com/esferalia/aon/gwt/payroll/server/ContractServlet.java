@@ -251,7 +251,7 @@ public class ContractServlet extends AonApiHttpServlet {
 			String [] endDateArray = Toolkit.dateString(endDate);
 			String endDateStr =  endDateArray[2]+"-"+endDateArray[1]+"-"+endDateArray[0];
 			
-			EnterprisePayrollExcel.getEnterprisePayrolls(ctx, startDate, endDate, company.getId(), workplaceId).forEach(cost->{
+			EnterprisePayrollExcel.getEnterprisePayrolls(ctx, startDate, endDate, company.getId(), workplaceId, null).forEach(cost->{
 				JSONObject json = new JSONObject();
 				json.put("startDate", startDateStr);
 				json.put("endDate", endDateStr);

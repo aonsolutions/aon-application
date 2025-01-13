@@ -52,6 +52,8 @@ import com.esferalia.aon.gwt.payroll.shared.Period;
 import com.esferalia.aon.gwt.payroll.shared.Result;
 import com.esferalia.aon.gwt.payroll.shared.SSBonusData;
 import com.esferalia.aon.gwt.payroll.shared.SSPECData;
+import com.esferalia.aon.gwt.payroll.shared.SalaryInfo;
+import com.esferalia.aon.gwt.payroll.shared.SalaryParams;
 import com.esferalia.aon.gwt.payroll.shared.SecondaryUserCertificate;
 import com.esferalia.aon.gwt.payroll.shared.Variable;
 import com.esferalia.aon.gwt.payroll.shared.Workplace;
@@ -327,5 +329,10 @@ public interface EnterprisesServiceAsync {
 	// ------------------------------------------------ Activity Summary
 	
 	void getActivitySummary(String currentDomainName, String currentUser, ActivitySummaryParams params, AsyncCallback<List<ActivitySummaryObject>> asyncCallback) throws IllegalArgumentException;
+	// ------------------------------------------------ Salaries
 	
+	void getSalaries(String domain, String user, SalaryParams params, AsyncCallback<List<SalaryInfo>> asyncCallback) throws IllegalArgumentException;
+	
+	void deleteSalary(String domain, String user, Integer id, AsyncCallback<Void> asyncCallback) throws IllegalArgumentException;
+
 }

@@ -332,6 +332,8 @@ public class JooqMail {
 		ArrayList<Integer> salaryIds = getSalaryIds(params);
 		HashSet<Integer> enterpriseIds = getEnterpriseIds(params);
 		
+		String mailBody = mail.getBodyHTML();
+		
 		for(Integer enterpriseId : enterpriseIds) {
 			Integer domainId = dslContext.select(ENTERPRISE.DOMAIN).from(ENTERPRISE).where(ENTERPRISE.REGISTRY.eq(enterpriseId)).fetchOne(ENTERPRISE.DOMAIN);
 			
@@ -354,7 +356,7 @@ public class JooqMail {
 					.and(SALARY.ID.in(salaryIds))
 					.fetch();
 			
-			String parseHTMLBody = parseEnterpriseManagementHTMLBody(mail.getBodyHTML(), salariesRecords, params, enterpriseId, enterpriseName, mail.isPassword(), dslContext);
+			String parseHTMLBody = parseEnterpriseManagementHTMLBody(mailBody, salariesRecords, params, enterpriseId, enterpriseName, mail.isPassword(), dslContext);
 			mail.setBodyHTML(parseHTMLBody);
 			
 			if(parseHTMLBody.length() == 0)

@@ -1,12 +1,12 @@
 package com.esferalia.aon.gwt.payroll.server;
 
-import static com.esferalia.aon.gwt.payroll.shared.EnterprisePayrollPDFService.Params.SELECTED_SALARIES;
 import static com.esferalia.aon.gwt.payroll.shared.EnterprisePayrollPDFService.Params.DOMAIN;
-import static com.esferalia.aon.gwt.payroll.shared.EnterprisePayrollPDFService.Params.USER;
-import static com.esferalia.aon.gwt.payroll.shared.EnterprisePayrollPDFService.Params.YEAR;
-import static com.esferalia.aon.gwt.payroll.shared.EnterprisePayrollPDFService.Params.MONTH;
 import static com.esferalia.aon.gwt.payroll.shared.EnterprisePayrollPDFService.Params.ENTERPRISE;
+import static com.esferalia.aon.gwt.payroll.shared.EnterprisePayrollPDFService.Params.MONTH;
+import static com.esferalia.aon.gwt.payroll.shared.EnterprisePayrollPDFService.Params.SELECTED_SALARIES;
+import static com.esferalia.aon.gwt.payroll.shared.EnterprisePayrollPDFService.Params.USER;
 import static com.esferalia.aon.gwt.payroll.shared.EnterprisePayrollPDFService.Params.WORKPLACE;
+import static com.esferalia.aon.gwt.payroll.shared.EnterprisePayrollPDFService.Params.YEAR;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -15,12 +15,15 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
-import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import com.esferalia.aon.gwt.common.server.AonServletUtils;
+import com.esferalia.aon.gwt.payroll.util.Utilities;
+import com.esferalia.aon.in.payroll.pdf.JooqEnterpriseSalaryBuilder;
+import com.esferalia.aon.salary.enumeration.SalaryType;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -28,25 +31,9 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
-import com.code.aon.report.OutputFormat;
-import com.esferalia.aon.gwt.common.bean.GWT;
-import com.esferalia.aon.gwt.common.server.AonServletUtils;
-import com.esferalia.aon.gwt.common.shared.Constants;
-import com.esferalia.aon.gwt.payroll.shared.Salary;
-import com.esferalia.aon.gwt.payroll.shared.Salary.Type;
-import com.esferalia.aon.gwt.payroll.util.Utilities;
-import com.esferalia.aon.in.payroll.pdf.JooqEnterpriseSalaryBuilder;
-import com.esferalia.aon.salary.enumeration.SalaryType;
-
 @SuppressWarnings("serial")
 @WebServlet(name = "Cost-PDF", urlPatterns = { "/aon_gwt_aio/cost_pdf/*", "/aon_gwt_payroll/cost_pdf/*" })
 public class CostPDFServlet extends HttpServlet {
-
-	private static Map<String, OutputFormat> OUTPUT_FORMATS = new HashMap<String, OutputFormat>() {
-		{
-			put("pdf", OutputFormat.PDF);
-		}
-	};
 
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -76,11 +63,6 @@ public class CostPDFServlet extends HttpServlet {
 		com.esferalia.aon.occam.api.model.type.SalaryType[] types = typeList.toArray(new com.esferalia.aon.occam.api.model.type.SalaryType[typeList.size()]);
 
 		if (salaryIds.length > 0) {
-
-//			String domainName = Utilities.getDomainNameByEnterpriseId(req.getServerName(), getEnterpriseId(request)) != null ?
-//					Utilities.getDomainNameByEnterpriseId(req.getServerName(), getEnterpriseId(request)) :
-//					req.getServerName();
-
 			JooqEnterpriseSalaryBuilder.generateEnterprisePayroll(resp.getOutputStream(), domainName, user, salaryIds,
 					getMonth(AonServletUtils.getFileName(req.getRequestURI())), getEnterpriseId(request));
 		} else
@@ -133,10 +115,6 @@ public class CostPDFServlet extends HttpServlet {
 		calendar.set(Calendar.DAY_OF_MONTH, calendar.getActualMaximum(Calendar.DAY_OF_MONTH));
 		Date endDate = calendar.getTime();
 
-//		String domainName = Utilities.getDomainNameByEnterpriseId(req.getServerName(), enterpriseId) != null ?
-//				Utilities.getDomainNameByEnterpriseId(req.getServerName(), enterpriseId) :
-//				req.getServerName();
-
 		JooqEnterpriseSalaryBuilder.generateEnterprisePayroll(resp.getOutputStream(), domainName, user, startDate,
 				endDate, enterpriseId, workplaceId, types);
 
@@ -145,7 +123,6 @@ public class CostPDFServlet extends HttpServlet {
 	private static Date getMonth(String request) {
 		Calendar calendar = Calendar.getInstance();
 		Matcher matcher = MONTH_PATTERN.matcher(request);
-		Integer month = null;
 		if (matcher.matches()) {
 			calendar.set(Calendar.MONTH, Integer.parseInt(matcher.group("month")) + 1);
 			return calendar.getTime();
@@ -215,23 +192,5 @@ public class CostPDFServlet extends HttpServlet {
 			return Integer.parseInt(matcher.group("enterpriseid"));
 		}
 		return null;
-	}
-
-	private static String getEntryPoint(HttpServletRequest request) {
-		return ((GWT) request.getSession().getAttribute("gwt")).getEntryPoint();
-	}
-
-	private static boolean isAtEnterpriseSite(HttpServletRequest request) {
-		return Constants.ENTERPRISE_SITE_ENTRY_POINT.equals(getEntryPoint(request));
-	}
-
-	private static <T extends Enum<?>> T typeOf(Byte ordinal, Class<T> type) {
-		if (ordinal == null)
-			return null;
-		try {
-			return type.getEnumConstants()[ordinal];
-		} catch (Exception e) {
-			return null;
-		}
 	}
 }

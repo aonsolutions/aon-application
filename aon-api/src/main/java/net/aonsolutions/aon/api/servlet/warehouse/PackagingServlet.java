@@ -52,6 +52,11 @@ public class PackagingServlet extends AonApiHttpServlet {
 		put(req, resp);
 	}
 	
+	@Override
+	protected void doDelete(HttpServletRequest req, HttpServletResponse resp) {
+		delete(req, resp);
+	}
+	
 	
 	private void get(HttpServletRequest req, HttpServletResponse resp) {
 		LOGGER.info("[" + req.getMethod() + "] " + req.getRequestURI());
@@ -94,6 +99,22 @@ public class PackagingServlet extends AonApiHttpServlet {
 		}
 	}
 	
+	private void delete(HttpServletRequest req, HttpServletResponse resp) {
+		LOGGER.info("[" + req.getMethod() + "] " + req.getRequestURI());
+		try {
+			AonApiData api = initialize(req);
+			switch (api.getPath()) {
+			case "/deliveryPackaging":
+				response(req, resp, deleteDeliveryPackaging(api));
+				break;
+			default:
+				throw new AonApiException(AonApiError.ROUTE_ERROR.getMessage());
+			}
+		} catch (Exception e) {
+			error(req, resp, e);
+		}
+	}
+	
 	private JSONObject getPackaging(AonApiData api) {
 		String barcode = JsonUtils.getString(api.getData(), IJsonNames.BARCODE);
 		Packaging packaging = AON.getPackaging(api.getDomain(), api.getUser(), barcode);
@@ -126,6 +147,15 @@ public class PackagingServlet extends AonApiHttpServlet {
 		Integer deliveryId = JsonUtils.getInteger(api.getData(), IJsonNames.ID);
 		AON.acceptDeliveryPackaging(api.getDomain(), api.getUser(), deliveryId);
 		seres(api, deliveryId);
+		return new JSONObject();
+	}
+	
+	private JSONObject deleteDeliveryPackaging(AonApiData api) {
+		Integer delivery = JsonUtils.getInteger(api.getData(), IJsonNames.DELIVERY);
+		String sscc = JsonUtils.getString(api.getData(), IJsonNames.PACKAGE);
+		
+		AON.deleteDeliveryPackaging(api.getDomain(), api.getUser(), delivery, sscc);
+		
 		return new JSONObject();
 	}
 	
