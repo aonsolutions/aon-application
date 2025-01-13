@@ -1,9 +1,10 @@
 package com.esferalia.aon.occam.api.model.type;
 
+import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Collection;
 
-public enum SalaryType {
+public enum SalaryType implements Serializable {
 
 	SALARY {
 		@Override

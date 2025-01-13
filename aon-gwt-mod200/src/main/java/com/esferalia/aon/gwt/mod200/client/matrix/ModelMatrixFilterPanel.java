@@ -278,6 +278,11 @@ class ModelMatrixFilterPanel extends AonDisplayTable implements HasValueChangeHa
 				.addCell(new InlineLabel(),AON.CSS.aonFlexGrow1())
 			;
 		} else {
+			// Matrix may be embedded in a FACES environment. form fields must have an NAME
+			year.setName("matrixYear");
+			showConfigurated.setName("matrixShowConfigurated");
+			// ----------------------------------------------------------------------
+			
 			showConfigurated.setValue(true);
 			addRow()
 				.addCell(yearLabel,AON.CSS.aonTableLabel())

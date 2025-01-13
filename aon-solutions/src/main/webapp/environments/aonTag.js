@@ -309,6 +309,7 @@ export const AON_JSF_FEE_PRINT = 'aon-jsf-fee-print' ;
 export const AON_JSF_FEE_ASSIGNMENT = 'aon-jsf-fee-assignment' ;
 export const AON_JSF_FEE_INVOICING = 'aon-jsf-fee-invoicing' ;
 export const AON_JSF_FEE_PRE_INVOICING = 'aon-jsf-fee-pre-invoicing' ;
+export const AON_JSF_ACCOUNTING_BOOK = 'aon-jsf-accounting-book' ;
 
 export const AON_WAREHOUSE_MENU = 'aon-warehouse-menu';
 export const AON_JSF_INCOME = 'aon-jsf-income' ;

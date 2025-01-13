@@ -284,7 +284,7 @@ export class AonRegistrySuggestion extends AonElement {
       div.appendChild(table);
       this.getElement(table.TABLE).style.borderSpacing = '0px';
       table.addRow();
-      if(this.registry.address.id && this.registry.addresses && this.registry.addresses.length > 0 && this.showAddressList) {         
+      if(this.registry.address && this.registry.address.id && this.registry.addresses && this.registry.addresses.length > 0 && this.showAddressList) {         
         let addressList = createSelect(this.ADDRESS_LIST, MSG.ADDRESS);
         addressList.setAlias('id', 'fullAddress');
         addressList.setOptions(this.registry.addresses);

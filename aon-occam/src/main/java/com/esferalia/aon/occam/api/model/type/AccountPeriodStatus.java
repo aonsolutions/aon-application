@@ -52,5 +52,14 @@ public enum AccountPeriodStatus implements Serializable {
 			return null;
 		return AccountPeriodStatus.values()[i];
 	}
+	
+	public static AccountPeriodStatus safeValueOf( String i ) {
+		if(i == null) return null;
+		for (AccountPeriodStatus rs : values()) {
+			if(rs.name().equalsIgnoreCase(i) || rs.getDescription().equalsIgnoreCase(i))
+				return rs;
+		}
+		return null;
+	}
 
 }

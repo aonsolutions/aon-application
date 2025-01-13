@@ -154,6 +154,7 @@ import com.esferalia.aon.occam.api.model.GeoZone;
 import com.esferalia.aon.occam.api.model.InvestAsset;
 import com.esferalia.aon.occam.api.model.InvestAssetParams;
 import com.esferalia.aon.occam.api.model.InvoiceCounter;
+import com.esferalia.aon.occam.api.model.InvoiceUserData;
 import com.esferalia.aon.occam.api.model.MailAccount;
 import com.esferalia.aon.occam.api.model.MailTemplate;
 import com.esferalia.aon.occam.api.model.MarketingAction;
@@ -7681,6 +7682,18 @@ public class AON {
 		return new RawdocUserData();
 	}
 
+	public static InvoiceUserData getInvoiceUserData(String token, String schema) {	
+		AonToken aonToken = SECURITY.getAonToken(token);
+		String domain = AONContext.getSchemaFirstDomain(schema);
+		
+		if(!AonStringUtils.isBlank(domain)) {
+			try (CloseableAONContext ctx = AONContext.getAONContext(domain, 0, "")) {
+				return getFinance().getInvoiceUserData(ctx, aonToken.getAuth());
+			}
+		} 
+		return new InvoiceUserData();
+	}
+
 	public static Rawdoc rawdocSave(Occam occam, Rawdoc rawdoc) {
 		return rawdocSave(occam.getDomainName(), occam.getDomain(), occam.getUser(),rawdoc);
 	}
@@ -8285,6 +8298,12 @@ public class AON {
 	public static void acceptDeliveryPackaging(Domain domain, User user, Integer deliveryId) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(domain, user)) {
 			getWarehouse().acceptDeliveryPackaging(ctx, deliveryId);
+		}
+	}
+	
+	public static void deleteDeliveryPackaging(Domain domain, User user, Integer deliveryId, String sscc) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domain, user)) {
+			getWarehouse().deleteDeliveryPackaging(ctx, deliveryId, sscc);
 		}
 	}
 	

@@ -64,9 +64,14 @@ public class AonToolbar extends FlowPanel {
 	public void add(IsWidget child) {
 		buttonContainer.add(child);
 	}
+	
 	@Override
 	public void add(Widget w) {
 		buttonContainer.add(w);
+	}
+	
+	public void addStart(Widget w) {
+		buttonContainer.insert(w, 0);
 	}
 	
 	public void showInfoMessage( String msg ) {

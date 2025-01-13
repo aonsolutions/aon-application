@@ -86,6 +86,7 @@ import com.esferalia.aon.gwt.payroll.jooq.JooqIT;
 import com.esferalia.aon.gwt.payroll.jooq.JooqMail;
 import com.esferalia.aon.gwt.payroll.jooq.JooqMainCCC;
 import com.esferalia.aon.gwt.payroll.jooq.JooqPayments;
+import com.esferalia.aon.gwt.payroll.jooq.JooqPayrollSalaries;
 import com.esferalia.aon.gwt.payroll.jooq.JooqSSBonus;
 import com.esferalia.aon.gwt.payroll.jooq.JooqWorkplace;
 import com.esferalia.aon.gwt.payroll.shared.AFIChanges;
@@ -144,6 +145,8 @@ import com.esferalia.aon.gwt.payroll.shared.Salary;
 import com.esferalia.aon.gwt.payroll.shared.Salary.Type;
 import com.esferalia.aon.gwt.payroll.shared.SalaryDraft;
 import com.esferalia.aon.gwt.payroll.shared.SalaryDraft.Scope;
+import com.esferalia.aon.gwt.payroll.shared.SalaryInfo;
+import com.esferalia.aon.gwt.payroll.shared.SalaryParams;
 import com.esferalia.aon.gwt.payroll.shared.SecondaryUserCertificate;
 import com.esferalia.aon.gwt.payroll.shared.StringVariable;
 import com.esferalia.aon.gwt.payroll.shared.Variable;
@@ -5025,6 +5028,8 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 		.setConfirmOrder(part.getConfirmOrderNumber()!=null ? part.getConfirmOrderNumber(): null);
 	}
 
+	// ------------------------------------------------ Activity Summary
+	
 	@Override
 	public List<ActivitySummaryObject> getActivitySummary(String domainName, String userLogin, ActivitySummaryParams params) throws IllegalArgumentException {
 		try (Connection connection = AonServletUtils.getConnection(domainName)) {
@@ -5034,6 +5039,35 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 			
 			List<ActivitySummaryObject> list = JooqActivitySummary.getActivitySummary(connection, domainId, parentDomainId, userId, params);
 			return list;
+		} catch (Exception e) {
+			throw new IllegalArgumentException(e);
+		}
+	}
+	
+	// ------------------------------------------------ Salaries
+
+	@Override
+	public List<SalaryInfo> getSalaries(String domainName, String userLogin, SalaryParams params) throws IllegalArgumentException {
+		try (Connection connection = AonServletUtils.getConnection(domainName)) {
+			Integer domainId = AonServletUtils.getDomainID(domainName);
+			Integer parentDomainId = AonServletUtils.getParentDomainID(domainName);
+			Integer userId = AonServletUtils.getUserID(connection, userLogin, domainId, parentDomainId);
+			
+			return JooqPayrollSalaries.getSalaries(connection, domainId, parentDomainId, userId, params);
+		} catch (SQLException e) {
+			throw new IllegalArgumentException(e);
+		}
+	}
+
+	@Override
+	public void deleteSalary(String domainName, String userLogin, Integer id) throws IllegalArgumentException {
+		try (Connection connection = AonServletUtils.getConnection(domainName)) {
+			Integer domainId = AonServletUtils.getDomainID(domainName);
+			
+			List<Integer> salaryIds = new ArrayList<Integer>();
+			salaryIds.add(id);
+			
+			JooqPayrollSalaries.deleteSalaries(connection, domainId, salaryIds);
 		} catch (Exception e) {
 			throw new IllegalArgumentException(e);
 		}

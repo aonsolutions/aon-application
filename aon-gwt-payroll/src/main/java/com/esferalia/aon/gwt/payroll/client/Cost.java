@@ -609,26 +609,27 @@ public class Cost extends ResizeComposite {
 				, Wnd.getCurrentUser()));
 		
 		if (isMenuItemChecked(seeMenu.getSalary()))
-			flowPanel.add(new Hidden(CostExcelService.Params.FILTER.getName()
+			flowPanel.add(new Hidden(EnterprisePayrollPDFService.Params.FILTER.getName()
 					, String.valueOf(Salary.Type.SALARY.ordinal())));
 		if (isMenuItemChecked(seeMenu.getExtra()))
-			flowPanel.add(new Hidden(CostExcelService.Params.FILTER.getName()
+			flowPanel.add(new Hidden(EnterprisePayrollPDFService.Params.FILTER.getName()
 					, String.valueOf(Salary.Type.EXTRA.ordinal())));
 		if (isMenuItemChecked(seeMenu.getSettle()))
-			flowPanel.add(new Hidden(CostExcelService.Params.FILTER.getName()
+			flowPanel.add(new Hidden(EnterprisePayrollPDFService.Params.FILTER.getName()
 					, String.valueOf(Salary.Type.SETTLE.ordinal())));
 		if (isMenuItemChecked(seeMenu.getDelay()))
-			flowPanel.add(new Hidden(CostExcelService.Params.FILTER.getName()
+			flowPanel.add(new Hidden(EnterprisePayrollPDFService.Params.FILTER.getName()
 					, String.valueOf(Salary.Type.DELAY.ordinal())));
+
 		if (isMenuItemChecked(seeMenu.getL00()))
-			flowPanel.add(new Hidden(CostExcelService.Params.FILTER.getName()
+			flowPanel.add(new Hidden(EnterprisePayrollPDFService.Params.FILTER.getName()
 					, String.valueOf(Salary.Type.L00.ordinal())));
-		if (isMenuItemChecked(seeMenu.getL03()))
-			flowPanel.add(new Hidden(CostExcelService.Params.FILTER.getName()
-					, String.valueOf(Salary.Type.L03.ordinal())));
 		if (isMenuItemChecked(seeMenu.getL13()))
-			flowPanel.add(new Hidden(CostExcelService.Params.FILTER.getName()
+			flowPanel.add(new Hidden(EnterprisePayrollPDFService.Params.FILTER.getName()
 					, String.valueOf(Salary.Type.L13.ordinal())));
+		if (isMenuItemChecked(seeMenu.getL03()))
+			flowPanel.add(new Hidden(EnterprisePayrollPDFService.Params.FILTER.getName()
+					, String.valueOf(Salary.Type.L03.ordinal())));
 		
 		formPanel.add(flowPanel);
 		
