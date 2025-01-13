@@ -4,6 +4,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.function.Supplier;
 
+import com.esferalia.aon.watson.util.Pair;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.user.client.ui.TabLayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
@@ -35,6 +36,16 @@ public class AonTabLayoutPanel extends TabLayoutPanel {
    		return super.remove(widget);
     }
     
+    public Widget getOrCreateWidgetWithTab(String label,Supplier<Pair<Widget,Widget>> supplier) {
+    	int i = getWidgetIndex(label);
+    	if (i < 0) {
+    		Pair<Widget,Widget> pair = supplier.get(); 		
+    		this.add(pair.getLeft(), pair.getRight() ,label);
+    		return pair.getLeft();
+    	}
+    	return getWidget( i );
+    }
+
     public Widget getOrCreateWidget(String label,Supplier<Widget> supplier) {
     	int i = getWidgetIndex(label);
     	if (i < 0) {

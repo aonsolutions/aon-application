@@ -4,8 +4,6 @@ import com.esferalia.aon.gwt.common.client.AON;
 import com.google.gwt.dom.client.Style.Cursor;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.dom.client.Style.WhiteSpace;
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.logical.shared.CloseEvent;
 import com.google.gwt.event.logical.shared.CloseHandler;
 import com.google.gwt.event.logical.shared.HasCloseHandlers;
@@ -35,13 +33,7 @@ public class AonCloseTab extends Composite implements HasCloseHandlers<Integer> 
 			closeButton.getElement().getStyle().setCursor(Cursor.POINTER);
 			closeButton.getElement().getStyle().setFloat(com.google.gwt.dom.client.Style.Float.RIGHT);
 
-			closeButton.addClickHandler(new ClickHandler() {
-
-				@Override
-				public void onClick(ClickEvent event) {
-					CloseEvent.fire(AonCloseTab.this, null);
-				}
-			});
+			closeButton.addClickHandler(event -> CloseEvent.fire(AonCloseTab.this, null));
 
 			html.getElement().getStyle().setMarginRight(8, Unit.PX);
 			hPanel.add(closeButton);

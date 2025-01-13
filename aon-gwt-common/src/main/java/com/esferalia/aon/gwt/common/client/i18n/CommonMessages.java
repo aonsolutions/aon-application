@@ -2676,6 +2676,9 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("Facturas")
 	String invoices();
 
+	@DefaultMessage("Facturas pendientes")
+	String pendingInvoices();
+	
 	@DefaultMessage("Factura")
 	String invoice();
 	
@@ -3465,7 +3468,16 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("Asientos contables")
 	String accountEntries();
 
- 	@DefaultMessage("Contabilizar documento")
+	@DefaultMessage("El asiento tiene cambios sin guardar.\n \u00BFDesea salir del asiento?")
+	String confirmCloseTab();
+
+ 	@DefaultMessage("No ha sido posible encontrar el asiento. Id: {0}")
+	String entryNotFound( int accountEntryId);
+ 	
+	@DefaultMessage("Id interno")
+	String internalId();
+
+	@DefaultMessage("Contabilizar documento")
 	String accountingDocument();
 
  	@DefaultMessage("Asiento contable")

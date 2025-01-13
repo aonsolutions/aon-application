@@ -84,6 +84,7 @@ public class AonDisplayGrid extends FlowPanel {
 			setStyleName(AON.CSS.aonDisplayGridRow());
 		}
 		
+		@Override
 		public HandlerRegistration addClickHandler(ClickHandler handler) {
 			if (handler != null) {
 				this.addStyleName(AON.CSS.aonClickable());

@@ -2,8 +2,6 @@ package com.esferalia.aon.gwt.common.client.widget.solutions;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.google.gwt.dom.client.Style.Unit;
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Label;
 
@@ -28,13 +26,7 @@ public class AonErrorPanel extends FlowPanel {
 		AonTableButton hide = new AonTableButton(AON.MSG.hide() ,AON.CSS.aonIconClose());
 		hide.setTitle(AON.MSG.hide());
 		add(hide);
-		hide.addClickHandler(new ClickHandler() {
-			
-			@Override
-			public void onClick(ClickEvent event) {
-				hide();
-			}
-		});
+		hide.addClickHandler(event -> hide());
 		add(hide);
 	}
 	
