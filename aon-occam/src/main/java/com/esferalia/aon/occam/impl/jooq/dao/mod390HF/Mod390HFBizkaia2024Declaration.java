@@ -23,13 +23,13 @@ import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
-class Mod390HFBizkaia2023Declaration extends Mod390HFBizkaiaDeclaration {
+class Mod390HFBizkaia2024Declaration extends Mod390HFBizkaiaDeclaration {
 	
-	Mod390HFBizkaia2023Declaration() {
+	Mod390HFBizkaia2024Declaration() {
 	}
 	
 	static boolean accept(Mod390HF mod) {
-		return  mod.isBizkaia() && mod.getYear() == 2023;
+		return  mod.isBizkaia() && mod.getYear() >= 2024;
 	}
 	
 	private static final Mod390Key[] PRORATE_KEYS = new Mod390Key[]{
@@ -64,10 +64,10 @@ class Mod390HFBizkaia2023Declaration extends Mod390HFBizkaiaDeclaration {
 		,BZ_C001D	(Mod390Key.BZ_C001D)
 		,BZ_C001H	(Mod390Key.BZ_C001H)
 		,BZ_C003	(Mod390Key.BZ_C003,null,null,(ctx,mod) -> add(Mod390Key.BZ_C003,mod,ConfigurationDAO.getConfiguration(ctx).getCompany().isVatAccrualPayment()?1:0),null,null)
-		,BZ_C004	(Mod390Key.BZ_C004)		// Compras Criterio de caja. Se incializa en la casilla 133. Destinatario/a de operaciones a las que se aplica el r\u00E9gimen especial del criterio de caja
-		,BZ_C005	(Mod390Key.BZ_C005)		// Opci贸n por la aplicaci贸n de la prorrata especial		
-		,BZ_C006	(Mod390Key.BZ_C006)		// Revocaci贸n de la opci贸n por la aplicaci贸n de la prorrata especial		
-		,BZ_C007	(Mod390Key.BZ_C007)		// Aplicar el r茅gimen especial art. 163 Sexies. Cinco de la NF del IVA		
+		,BZ_C004	(Mod390Key.BZ_C004)		// Compras Criterio de caja. Se inicializa en la casilla 133. Destinatario/a de operaciones a las que se aplica el r間imen especial del criterio de caja
+		,BZ_C005	(Mod390Key.BZ_C005)		// Opci髇 por la aplicaci髇 de la prorrata especial		
+		,BZ_C006	(Mod390Key.BZ_C006)		// Revocaci髇 de la opci髇 por la aplicaci髇 de la prorrata especial		
+		,BZ_C007	(Mod390Key.BZ_C007)		// Aplicar el r間imen especial art. 163 Sexies. Cinco de la NF del IVA		
 		,BZ_C080	(Mod390Key.BZ_C080) 	// RDM o Grupos de entidades		
 		
 		,BZ_A001	(Mod390Key.BZ_A001) 	// Actividad principal. Epigrafe. 
@@ -77,29 +77,51 @@ class Mod390HFBizkaia2023Declaration extends Mod390HFBizkaiaDeclaration {
 		// ------------------------------------------------- IVA DEVENGADO
 		// ---------------------------------------------------------------
 		
-		// Base imponible, porcentaje y cuota al primer tipo.
+		// Base imponible, porcentaje y cuota al 0%
+		,BZ_C049(Mod390Key.BZ_C049
+			,(mod,vat) -> isCommonNationalSales(vat) && (hasPercent0(vat)) 
+			,(ctx,mod,vat) -> add(Mod390Key.BZ_C049,mod,vat.getBase())
+			,null,null,null)
+		,BZ_X049(Mod390Key.BZ_X049,null,null,(ctx,mod) -> add(Mod390Key.BZ_X049,mod,PERCENT_0),null,null)
+		,BZ_C050(Mod390Key.BZ_C050
+			,(mod,vat) -> isCommonNationalSales(vat) && (hasPercent0(vat))
+			,(ctx,mod,vat) -> add(Mod390Key.BZ_C050,mod,vat.getQuota())
+			,null,null,null)
+		
+		// Base imponible, porcentaje y cuota al 4% y 2%
 		,BZ_C020(Mod390Key.BZ_C020
-			,(mod,vat) -> isCommonNationalSales(vat) && (hasPercent4(vat) || hasPercent5(vat)) 
+			,(mod,vat) -> isCommonNationalSales(vat) && (hasPercent4(vat) || hasPercent2(vat)) 
 			,(ctx,mod,vat) -> add(Mod390Key.BZ_C020,mod,vat.getBase())
 			,null,null,null)
 		,BZ_X020(Mod390Key.BZ_X020,null,null,(ctx,mod) -> add(Mod390Key.BZ_X020,mod,PERCENT_4),null,null)
 		,BZ_C021(Mod390Key.BZ_C021
-			,(mod,vat) -> isCommonNationalSales(vat) && (hasPercent4(vat) || hasPercent5(vat))
+			,(mod,vat) -> isCommonNationalSales(vat) && (hasPercent4(vat) || hasPercent2(vat))
 			,(ctx,mod,vat) -> add(Mod390Key.BZ_C021,mod,vat.getQuota())
 			,null,null,null)
 		
-		// Base imponible, porcentaje y cuota al segundo tipo.
+		// Base imponible, porcentaje y cuota al 5%
+		,BZ_C051(Mod390Key.BZ_C051
+			,(mod,vat) -> isCommonNationalSales(vat) && hasPercent5(vat) 
+			,(ctx,mod,vat) -> add(Mod390Key.BZ_C051,mod,vat.getBase())
+			,null,null,null)
+		,BZ_X051(Mod390Key.BZ_X051,null,null,(ctx,mod) -> add(Mod390Key.BZ_X051,mod,PERCENT_5),null,null)
+		,BZ_C052(Mod390Key.BZ_C052
+			,(mod,vat) -> isCommonNationalSales(vat) && hasPercent5(vat)
+			,(ctx,mod,vat) -> add(Mod390Key.BZ_C052,mod,vat.getQuota())
+			,null,null,null)
+		
+		// Base imponible, porcentaje y cuota al 10% y 7,5%
 		,BZ_C022	(Mod390Key.BZ_C022
-			,(mod,vat) -> isCommonNationalSales(vat) && hasPercent10(vat)
+			,(mod,vat) -> isCommonNationalSales(vat) && (hasPercent10(vat) || hasPercent75(vat))
 			,(ctx,mod,vat) -> add(Mod390Key.BZ_C022,mod,vat.getBase())
 			,null,null,null)
 		,BZ_X022	(Mod390Key.BZ_X022,null,null,(ctx,mod) -> add(Mod390Key.BZ_X022,mod,PERCENT_10),null,null)
 		,BZ_C023	(Mod390Key.BZ_C023
-			,(mod,vat) -> isCommonNationalSales(vat) && hasPercent10(vat)
+			,(mod,vat) -> isCommonNationalSales(vat) && (hasPercent10(vat) || hasPercent75(vat))
 			,(ctx,mod,vat) -> add(Mod390Key.BZ_C023,mod,vat.getQuota())
 			,null,null,null)
 		
-		// Base imponible, porcentaje y cuota al tercer tipo.
+		// Base imponible, porcentaje y cuota al 21%
 		,BZ_C024	(Mod390Key.BZ_C024
 			,(mod,vat) -> isCommonNationalSales(vat) && hasPercent21(vat)
 			,(ctx,mod,vat) -> add(Mod390Key.BZ_C024,mod,vat.getBase())
@@ -110,42 +132,65 @@ class Mod390HFBizkaia2023Declaration extends Mod390HFBizkaiaDeclaration {
 			,(ctx,mod,vat) -> add(Mod390Key.BZ_C025,mod,vat.getQuota())
 			,null,null,null)
 
-		// Operaciones intragrupo. Base imponible, porcentaje y cuota al primer tipo.
+		// Operaciones intragrupo. Base imponible, porcentaje y cuota al 0%
+		,BZ_C053	(Mod390Key.BZ_C053)
+		,BZ_X053	(Mod390Key.BZ_X053,null,null,(ctx,mod) -> add(Mod390Key.BZ_X053,mod,PERCENT_0),null,null)
+		,BZ_C054	(Mod390Key.BZ_C054)
+
+		// Operaciones intragrupo. Base imponible, porcentaje y cuota al 4% y 2%
 		,BZ_C026	(Mod390Key.BZ_C026)
 		,BZ_X026	(Mod390Key.BZ_X026,null,null,(ctx,mod) -> add(Mod390Key.BZ_X026,mod,PERCENT_4),null,null)
 		,BZ_C027	(Mod390Key.BZ_C027)
-		// Operaciones intragrupo. Base imponible, porcentaje y cuota al segundo tipo.
+		
+		// Operaciones intragrupo. Base imponible, porcentaje y cuota al 5%
+		,BZ_C055	(Mod390Key.BZ_C055)
+		,BZ_X055	(Mod390Key.BZ_X055,null,null,(ctx,mod) -> add(Mod390Key.BZ_X055,mod,PERCENT_5),null,null)
+		,BZ_C056	(Mod390Key.BZ_C056)
+		
+		// Operaciones intragrupo. Base imponible, porcentaje y cuota al 10% y 7,5%
 		,BZ_C028	(Mod390Key.BZ_C028)
 		,BZ_X028	(Mod390Key.BZ_X028,null,null,(ctx,mod) -> add(Mod390Key.BZ_X028,mod,PERCENT_10),null,null)
 		,BZ_C029	(Mod390Key.BZ_C029)
-		// Operaciones intragrupo. Base imponible, porcentaje y cuota al tercer tipo.
+		
+		// Operaciones intragrupo. Base imponible, porcentaje y cuota al 21%
 		,BZ_C030	(Mod390Key.BZ_C030)
 		,BZ_X030	(Mod390Key.BZ_X030,null,null,(ctx,mod) -> add(Mod390Key.BZ_X030,mod,PERCENT_21),null,null)
 		,BZ_C031	(Mod390Key.BZ_C031)
 		
-		// Recargo equivalencia al primer  tipo.
+		// Recargo equivalencia al primer 0,5% y 0,26%
 		,BZ_C032	(Mod390Key.BZ_C032
-			,(mod,vat) -> isCommonNationalSales(vat) && vat.isSurcharge() && hasSurchargePercent05(vat)
+			,(mod,vat) -> isCommonNationalSales(vat) && vat.isSurcharge() && (hasSurchargePercent05(vat) || hasSurchargePercent026(vat))
 			,(ctx,mod,vat) -> add(Mod390Key.BZ_C032,mod,vat.getBase())
 			,null,null,null)
 		,BZ_X032	(Mod390Key.BZ_X032,null,null,(ctx,mod) -> add(Mod390Key.BZ_X032,mod,SURCHARGE_PERCENT_05),null,null)
 		,BZ_C033	(Mod390Key.BZ_C033
-			,(mod,vat) -> isCommonNationalSales(vat) && vat.isSurcharge() && hasSurchargePercent05(vat)
+			,(mod,vat) -> isCommonNationalSales(vat) && vat.isSurcharge() && (hasSurchargePercent05(vat) || hasSurchargePercent026(vat))
 			,(ctx,mod,vat) -> add(Mod390Key.BZ_C033,mod,vat.getSurchargeQuota())
 			,null,null,null)
 		
-		// Recargo equivalencia al segundo tipo.
+		// Recargo equivalencia al 0,62%
+		,BZ_C057	(Mod390Key.BZ_C057
+			,(mod,vat) -> isCommonNationalSales(vat) && vat.isSurcharge() && hasSurchargePercent062(vat)
+			,(ctx,mod,vat) -> add(Mod390Key.BZ_C057,mod,vat.getBase())
+			,null,null,null)
+		,BZ_X057	(Mod390Key.BZ_X057,null,null,(ctx,mod) -> add(Mod390Key.BZ_X057,mod,SURCHARGE_PERCENT_062),null,null)
+		,BZ_C058	(Mod390Key.BZ_C058
+			,(mod,vat) -> isCommonNationalSales(vat) && vat.isSurcharge() && hasSurchargePercent062(vat)
+			,(ctx,mod,vat) -> add(Mod390Key.BZ_C058,mod,vat.getSurchargeQuota())
+			,null,null,null)
+		
+		// Recargo equivalencia al 1,4% y 1%
 		,BZ_C034	(Mod390Key.BZ_C034
-			,(mod,vat) -> isCommonNationalSales(vat) && vat.isSurcharge() && hasSurchargePercent14(vat)
+			,(mod,vat) -> isCommonNationalSales(vat) && vat.isSurcharge() && (hasSurchargePercent14(vat) || hasSurchargePercent1(vat)) 
 			,(ctx,mod,vat) -> add(Mod390Key.BZ_C034,mod,vat.getBase())
 			,null,null,null)
 		,BZ_X034	(Mod390Key.BZ_X034,null,null,(ctx,mod) -> add(Mod390Key.BZ_X034,mod,SURCHARGE_PERCENT_14),null,null)
 		,BZ_C035	(Mod390Key.BZ_C035
-			,(mod,vat) -> isCommonNationalSales(vat) && vat.isSurcharge() && hasSurchargePercent14(vat)
+			,(mod,vat) -> isCommonNationalSales(vat) && vat.isSurcharge() && (hasSurchargePercent14(vat) || hasSurchargePercent1(vat))
 			,(ctx,mod,vat) -> add(Mod390Key.BZ_C035,mod,vat.getSurchargeQuota())
 			,null,null,null)
 
-		// Recargo equivalencia al tercer tipo.
+		// Recargo equivalencia al 5,2%
 		,BZ_C036	(Mod390Key.BZ_C036
 			,(mod,vat) -> isCommonNationalSales(vat) && vat.isSurcharge() && hasSurchargePercent52(vat)
 			,(ctx,mod,vat) -> add(Mod390Key.BZ_C036,mod,vat.getBase())
@@ -156,7 +201,7 @@ class Mod390HFBizkaia2023Declaration extends Mod390HFBizkaiaDeclaration {
 			,(ctx,mod,vat) -> add(Mod390Key.BZ_C037,mod,vat.getSurchargeQuota())
 			,null,null,null)
 
-		// Recargo equivalencia al cuarto tipo.
+		// Recargo equivalencia al 1,75%
 		,BZ_C038	(Mod390Key.BZ_C038
 			,(mod,vat) -> isCommonNationalSales(vat) && vat.isSurcharge() && hasSurchargePercent175(vat)
 			,(ctx,mod,vat) -> add(Mod390Key.BZ_C038,mod,vat.getBase())
@@ -177,8 +222,7 @@ class Mod390HFBizkaia2023Declaration extends Mod390HFBizkaiaDeclaration {
 			,(ctx,mod,vat) -> add(Mod390Key.BZ_C041,mod,vat.getQuota())
 			,null,null,null)
 		
-		
-		// IVAS devengado por inversi贸n del sujeto pasivo. Base y cuota
+		// IVAS devengado por inversi髇 del sujeto pasivo. Base y cuota
 		,BZ_C042	(Mod390Key.BZ_C042
 			,(mod,vat) -> operacionesISPDevFilter(vat)
 			,(ctx,mod,vat) -> add(Mod390Key.BZ_C042,mod,vat.getBase())
@@ -188,8 +232,7 @@ class Mod390HFBizkaia2023Declaration extends Mod390HFBizkaiaDeclaration {
 			,(ctx,mod,vat) -> add(Mod390Key.BZ_C043,mod,vat.getQuota())
 			,null,null,null)	
 		
-		
-		// Modificaci贸n bases y cuotas
+		// Modificaci髇 bases y cuotas
 		,BZ_C044	(Mod390Key.BZ_C044
 			,(mod,vat) -> modificacionBasesYCuotasFilter(vat) 
 			,(ctx,mod,vat) -> add(Mod390Key.BZ_C044,mod,vat.getBase())
@@ -199,12 +242,12 @@ class Mod390HFBizkaia2023Declaration extends Mod390HFBizkaiaDeclaration {
 			,(ctx,mod,vat) -> add(Mod390Key.BZ_C045,mod,(vat.getQuota() + vat.getSurchargeQuota()))
 			,null,null,null)
 
-		// Modificaci贸n de bases y cuotas, art铆culo 80.3 y 80.4 NFIVA
+		// Modificaci髇 de bases y cuotas, art韈ulo 80.3 y 80.4 NFIVA
 		,BZ_C046	(Mod390Key.BZ_C046)
 		,BZ_C047	(Mod390Key.BZ_C047)
 		
 		// Total cuota devengada
-		,BZ_C048	(Mod390Key.BZ_C048,null,null,null,"BZ_C021+BZ_C023+BZ_C025+BZ_C027+BZ_C029+BZ_C031+BZ_C033+BZ_C035+BZ_C037+BZ_C039+BZ_C041+BZ_C043+BZ_C045+BZ_C047",null)
+		,BZ_C048	(Mod390Key.BZ_C048,null,null,null,"BZ_C050+BZ_C021+BZ_C052+BZ_C023+BZ_C025+BZ_C054+BZ_C027+BZ_C056+BZ_C029+BZ_C031+BZ_C033+BZ_C058+BZ_C035+BZ_C037+BZ_C039+BZ_C041+BZ_C043+BZ_C045+BZ_C047",null)
 		
 		// ---------------------------------------------------------------
 		// ------------------------------------------------- IVA DEDUCIBLE
@@ -229,13 +272,13 @@ class Mod390HFBizkaia2023Declaration extends Mod390HFBizkaiaDeclaration {
 			,(ctx,mod,vat) -> addProrrated(Mod390Key.BZ_C063,mod,vat)
 			,null,null,null)
 		
-		// Compensaciones R茅gimen Especial A.G. y P .
+		// Compensaciones R間imen Especial A.G. y P .
 		,BZ_C064	(Mod390Key.BZ_C064
 			,(mod,vat) -> compensacionesRegAgrarioFilter(vat)
 			,(ctx,mod,vat) -> addProrrated(Mod390Key.BZ_C064,mod,vat)
 			,null,null,null)
 				
-		// Regularizaci贸n Inversiones
+		// Regularizaci髇 Inversiones
 		,BZ_C065	(Mod390Key.BZ_C065)
 		
 		// Total a deducir
@@ -244,27 +287,27 @@ class Mod390HFBizkaia2023Declaration extends Mod390HFBizkaiaDeclaration {
 		// Diferencia
 		,BZ_C095	(Mod390Key.BZ_C095,null,null,null,"BZ_C048-BZ_C066",null)
 		
-		// Regularizaci贸n de cuotas (art.80.cinco.5a Norma Foral del IVA)
+		// Regularizaci髇 de cuotas (art.80.cinco.5a Norma Foral del IVA)
 		,BZ_C120	(Mod390Key.BZ_C120)
 		
-		// Volumen de operaciones. Porcentaje de tributaci\u00F3n. Territ. com煤n.
+		// Volumen de operaciones. Porcentaje de tributaci髇. Territ. com鷑.
 		,BZ_C081	(Mod390Key.BZ_C081,null,null,(ctx,mod) -> add(Mod390Key.BZ_C081,mod,0.0),null,null)
 		,BZ_C082	(Mod390Key.BZ_C082,null,null,(ctx,mod) -> add(Mod390Key.BZ_C082,mod,0.0),null,null)
-		// Volumen de operaciones. Porcentaje de tributaci\u00F3n. Alava
+		// Volumen de operaciones. Porcentaje de tributaci髇. Alava
 		,BZ_C083	(Mod390Key.BZ_C083,null,null,(ctx,mod) -> add(Mod390Key.BZ_C083,mod,0.0),null,null)
 		,BZ_C084	(Mod390Key.BZ_C084,null,null,(ctx,mod) -> add(Mod390Key.BZ_C084,mod,0.0),null,null)
-		// Volumen de operaciones. Porcentaje de tributaci\u00F3n. Gipuzkoa
+		// Volumen de operaciones. Porcentaje de tributaci髇. Gipuzkoa
 		,BZ_C085	(Mod390Key.BZ_C085,null,null,(ctx,mod) -> add(Mod390Key.BZ_C085,mod,0.0),null,null)
 		,BZ_C086	(Mod390Key.BZ_C086,null,null,(ctx,mod) -> add(Mod390Key.BZ_C086,mod,0.0),null,null)
 
-		// Volumen de operaciones. Porcentaje de tributaci\u00F3n. Bizkaia
+		// Volumen de operaciones. Porcentaje de tributaci髇. Bizkaia
 		,BZ_C087	(Mod390Key.BZ_C087,null,null,null,"BZ_C215",null)		  // TODO Respasar
 
 		,BZ_C088	(Mod390Key.BZ_C088,null,null,(ctx,mod) -> add(Mod390Key.BZ_C088,mod,100.0),null,null)
-		// Volumen de operaciones. Porcentaje de tributaci\u00F3n. Navarra		
+		// Volumen de operaciones. Porcentaje de tributaci髇. Navarra		
 		,BZ_C089	(Mod390Key.BZ_C089,null,null,(ctx,mod) -> add(Mod390Key.BZ_C089,mod,0.0),null,null)
 		,BZ_C090	(Mod390Key.BZ_C090,null,null,(ctx,mod) -> add(Mod390Key.BZ_C090,mod,0.0),null,null)
-		// Volumen de operaciones. Porcentaje de tributaci\u00F3n. Total		
+		// Volumen de operaciones. Porcentaje de tributaci髇. Total		
 		,BZ_C091	(Mod390Key.BZ_C091,null,null,null,"BZ_C081+BZ_C083+BZ_C085+BZ_C087+BZ_C089",null)
 		,BZ_C092	(Mod390Key.BZ_C092,null,null,null,"BZ_C082+BZ_C084+BZ_C086+BZ_C088+BZ_C090",null)
 		
@@ -307,7 +350,7 @@ class Mod390HFBizkaia2023Declaration extends Mod390HFBizkaiaDeclaration {
 		// A ingresar
 		,BZ_C114	(Mod390Key.BZ_C114,null,null,null,"isToDeposit()?BZ_C110:0.0",null)
 		
-		// Cumplimentar s\u00F3lo en caso de que se trate de una autoliquidaci\u00F3n complementaria: ingresado anteriormente
+		// Cumplimentar s髄o en caso de que se trate de una autoliquidaci髇 complementaria: ingresado anteriormente
 		,BZ_C115	(Mod390Key.BZ_C115,null,null,
 			(ctx,mod) -> {
 				if (mod.isComplementary()) {
@@ -321,7 +364,7 @@ class Mod390HFBizkaia2023Declaration extends Mod390HFBizkaiaDeclaration {
 			,null
 			,null
 			)
-		// Cumplimentar s\u00F3lo en caso de que se trate de una autoliquidaci\u00F3n complementaria: devuelto anteriormente
+		// Cumplimentar s髄o en caso de que se trate de una autoliquidaci髇 complementaria: devuelto anteriormente
 		,BZ_C116	(Mod390Key.BZ_C116,null,null,
 			(ctx,mod) -> {
 				if (mod.isComplementary()) {
@@ -339,17 +382,17 @@ class Mod390HFBizkaia2023Declaration extends Mod390HFBizkaiaDeclaration {
 		// Total deuda tributaria
 		,BZ_C117 (Mod390Key.BZ_C117,null,null,null,"BZ_C110-BZ_C115+BZ_C116",null)
 		
-		// Exclusivamente para sujetos pasivos acogidos al r茅gimen especial del criterio de caja y para 
+		// Exclusivamente para sujetos pasivos acogidos al r間imen especial del criterio de caja y para 
 		// destinatarios/as de operaciones afectadas por el mismo
 		
-		// Importes de las entregas de bienes y prestaciones de servicios a las que habi茅ndoles
-		// sido aplicado el r茅gimen especial del criterio de caja hubieran resultado devengadas
-		// conforme a la regla general de devengo contenida en el art铆culo 75 NFIVA
+		// Importes de las entregas de bienes y prestaciones de servicios a las que habi閚doles
+		// sido aplicado el r間imen especial del criterio de caja hubieran resultado devengadas
+		// conforme a la regla general de devengo contenida en el art韈ulo 75 NFIVA
 		,BZ_C130	(Mod390Key.BZ_C130)
 		,BZ_C131	(Mod390Key.BZ_C131)
 		
 		// Importes de las adquisiciones de bienes y servicios a las que sea aplicable o afecte el
-		// r茅gimen especial del criterio de caja
+		// r間imen especial del criterio de caja
 		,BZ_C132	(Mod390Key.BZ_C132)
 		,BZ_C133	(Mod390Key.BZ_C133)
 
@@ -376,6 +419,20 @@ class Mod390HFBizkaia2023Declaration extends Mod390HFBizkaiaDeclaration {
 			,(mod,vat) -> hasPercent4(vat) && !vat.isFarmerRegime() && isCommonPurchase(vat,mod)
 			,(ctx,mod,vat) -> addProrrated(Mod390Key.BZ_C144,mod,vat)
 			,null,null,null)
+		
+		,BZ_C134	(Mod390Key.BZ_C134
+				,(mod,vat) -> hasPercent5(vat) && !vat.isFarmerRegime() && isCommonPurchase(vat,mod)
+				,(ctx,mod,vat) -> add(Mod390Key.BZ_C134,mod,vat.getBase())
+				,null,null,null)
+		,BZ_X134	(Mod390Key.BZ_X134,null,null,(ctx,mod) -> add(Mod390Key.BZ_X134,mod,PERCENT_5),null,null)
+		,BZ_C135	(Mod390Key.BZ_C135
+				,(mod,vat) -> hasPercent5(vat) && !vat.isFarmerRegime() && isCommonPurchase(vat,mod)
+				,(ctx,mod,vat) -> add(Mod390Key.BZ_C135,mod,vat.getQuota())
+				,null,null,null)
+		,BZ_C136	(Mod390Key.BZ_C136
+				,(mod,vat) -> hasPercent5(vat) && !vat.isFarmerRegime() && isCommonPurchase(vat,mod)
+				,(ctx,mod,vat) -> addProrrated(Mod390Key.BZ_C136,mod,vat)
+				,null,null,null)
 		
 		,BZ_C145	(Mod390Key.BZ_C145
 			,(mod,vat) -> hasPercent10(vat) && !vat.isFarmerRegime() && isCommonPurchase(vat,mod)
@@ -431,9 +488,9 @@ class Mod390HFBizkaia2023Declaration extends Mod390HFBizkaiaDeclaration {
 			,(ctx,mod,vat) -> addProrrated(Mod390Key.BZ_C156,mod,vat)
 			,null,null,null)
 		
-		,BZ_C157	(Mod390Key.BZ_C157,null,null,null,"BZ_C142+BZ_C145+BZ_C148+BZ_C151+BZ_C154",null)
-		,BZ_C158	(Mod390Key.BZ_C158,null,null,null,"BZ_C143+BZ_C146+BZ_C149+BZ_C152+BZ_C155",null)
-		,BZ_C159	(Mod390Key.BZ_C159,null,null,null,"BZ_C144+BZ_C147+BZ_C150+BZ_C153+BZ_C156",null)
+		,BZ_C157	(Mod390Key.BZ_C157,null,null,null,"BZ_C142+BZ_C134+BZ_C145+BZ_C148+BZ_C151+BZ_C154",null)
+		,BZ_C158	(Mod390Key.BZ_C158,null,null,null,"BZ_C143+BZ_C135+BZ_C146+BZ_C149+BZ_C152+BZ_C155",null)
+		,BZ_C159	(Mod390Key.BZ_C159,null,null,null,"BZ_C144+BZ_C136+BZ_C147+BZ_C150+BZ_C153+BZ_C156",null)
 
 		// Gastos		
 		,BZ_C160	(Mod390Key.BZ_C160
@@ -449,6 +506,20 @@ class Mod390HFBizkaia2023Declaration extends Mod390HFBizkaiaDeclaration {
 			,(mod,vat) -> isCommonExpense(vat) && hasPercent4(vat)
 			,(ctx,mod,vat) -> addProrrated(Mod390Key.BZ_C162,mod,vat)
 			,null,null,null)
+		
+		,BZ_C196	(Mod390Key.BZ_C196
+				,(mod,vat) -> isCommonExpense(vat) && hasPercent5(vat) 
+				,(ctx,mod,vat) -> add(Mod390Key.BZ_C196,mod,vat.getBase())
+				,null,null,null)
+		,BZ_X196	(Mod390Key.BZ_X196,null,null,(ctx,mod) -> add(Mod390Key.BZ_X196,mod,PERCENT_5),null,null)
+		,BZ_C197	(Mod390Key.BZ_C197
+				,(mod,vat) -> isCommonExpense(vat) && hasPercent5(vat)
+				,(ctx,mod,vat) -> add(Mod390Key.BZ_C197,mod,vat.getQuota())
+				,null,null,null)
+		,BZ_C198	(Mod390Key.BZ_C198
+				,(mod,vat) -> isCommonExpense(vat) && hasPercent5(vat)
+				,(ctx,mod,vat) -> addProrrated(Mod390Key.BZ_C198,mod,vat)
+				,null,null,null)
 		
 		,BZ_C163	(Mod390Key.BZ_C163
 			,(mod,vat) -> isCommonExpense(vat) && hasPercent10(vat)
@@ -491,11 +562,11 @@ class Mod390HFBizkaia2023Declaration extends Mod390HFBizkaiaDeclaration {
 			,(ctx,mod,vat) -> addProrrated(Mod390Key.BZ_C171,mod,vat)
 			,null,null,null)
 
-		,BZ_C172	(Mod390Key.BZ_C172,null,null,null,"BZ_C160+BZ_C163+BZ_C166+BZ_C169",null)
-		,BZ_C173	(Mod390Key.BZ_C173,null,null,null,"BZ_C161+BZ_C164+BZ_C167+BZ_C170",null)
-		,BZ_C174	(Mod390Key.BZ_C174,null,null,null,"BZ_C162+BZ_C165+BZ_C168+BZ_C171",null)
+		,BZ_C172	(Mod390Key.BZ_C172,null,null,null,"BZ_C160+BZ_C196+BZ_C163+BZ_C166+BZ_C169",null)
+		,BZ_C173	(Mod390Key.BZ_C173,null,null,null,"BZ_C161+BZ_C197+BZ_C164+BZ_C167+BZ_C170",null)
+		,BZ_C174	(Mod390Key.BZ_C174,null,null,null,"BZ_C162+BZ_C198+BZ_C165+BZ_C168+BZ_C171",null)
 
-		// Bienes de inversi贸n
+		// Bienes de inversi髇
 		,BZ_C175	(Mod390Key.BZ_C175
 			,(mod,vat) -> vat.isVatGeneralRegime(VATRegime.GENERAL) && !vat.isVatSurchargeRegime() && !vat.isFarmerRegime() && vat.isInvestment() && vat.isInput()  && hasPercent4(vat)
 			,(ctx,mod,vat) -> add(Mod390Key.BZ_C175,mod,vat.getBase())
@@ -509,7 +580,21 @@ class Mod390HFBizkaia2023Declaration extends Mod390HFBizkaiaDeclaration {
 			,(mod,vat) -> vat.isVatGeneralRegime(VATRegime.GENERAL) && !vat.isVatSurchargeRegime() && !vat.isFarmerRegime() && vat.isInvestment() && vat.isInput()  && hasPercent4(vat)
 			,(ctx,mod,vat) -> addProrrated(Mod390Key.BZ_C177,mod,vat)
 			,null,null,null)
-				
+
+		,BZ_C227	(Mod390Key.BZ_C227
+			,(mod,vat) -> vat.isVatGeneralRegime(VATRegime.GENERAL) && !vat.isVatSurchargeRegime() && !vat.isFarmerRegime() && vat.isInvestment() && vat.isInput()  && hasPercent5(vat)
+			,(ctx,mod,vat) -> add(Mod390Key.BZ_C227,mod,vat.getBase())
+			,null,null,null)
+		,BZ_X227	(Mod390Key.BZ_X227,null,null,(ctx,mod) -> add(Mod390Key.BZ_X227,mod,PERCENT_5),null,null)
+		,BZ_C228	(Mod390Key.BZ_C228
+			,(mod,vat) -> vat.isVatGeneralRegime(VATRegime.GENERAL) && !vat.isVatSurchargeRegime() && !vat.isFarmerRegime() && vat.isInvestment() && vat.isInput()  && hasPercent5(vat)
+			,(ctx,mod,vat) -> add(Mod390Key.BZ_C228,mod,vat.getQuota())
+			,null,null,null)
+		,BZ_C229	(Mod390Key.BZ_C229
+			,(mod,vat) -> vat.isVatGeneralRegime(VATRegime.GENERAL) && !vat.isVatSurchargeRegime() && !vat.isFarmerRegime() && vat.isInvestment() && vat.isInput()  && hasPercent5(vat)
+			,(ctx,mod,vat) -> addProrrated(Mod390Key.BZ_C229,mod,vat)
+			,null,null,null)
+		
 		,BZ_C178	(Mod390Key.BZ_C178
 			,(mod,vat) -> vat.isVatGeneralRegime(VATRegime.GENERAL) && !vat.isVatSurchargeRegime() && !vat.isFarmerRegime() && vat.isInvestment() && vat.isInput()  && hasPercent10(vat)
 			,(ctx,mod,vat) -> add(Mod390Key.BZ_C178,mod,vat.getBase())
@@ -551,9 +636,9 @@ class Mod390HFBizkaia2023Declaration extends Mod390HFBizkaiaDeclaration {
 			,(ctx,mod,vat) -> addProrrated(Mod390Key.BZ_C186,mod,vat)
 			,null,null,null)
 		
-		,BZ_C187	(Mod390Key.BZ_C187,null,null,null,"BZ_C175+BZ_C178+BZ_C181+BZ_C184",null)
-		,BZ_C188	(Mod390Key.BZ_C188,null,null,null,"BZ_C176+BZ_C179+BZ_C182+BZ_C185",null)
-		,BZ_C189	(Mod390Key.BZ_C189,null,null,null,"BZ_C177+BZ_C180+BZ_C183+BZ_C186",null)
+		,BZ_C187	(Mod390Key.BZ_C187,null,null,null,"BZ_C175+BZ_C227+BZ_C178+BZ_C181+BZ_C184",null)
+		,BZ_C188	(Mod390Key.BZ_C188,null,null,null,"BZ_C176+BZ_C228+BZ_C179+BZ_C182+BZ_C185",null)
+		,BZ_C189	(Mod390Key.BZ_C189,null,null,null,"BZ_C177+BZ_C229+BZ_C180+BZ_C183+BZ_C186",null)
 		
 		// Totales
 		,BZ_C190	(Mod390Key.BZ_C190,null,null,null,"BZ_C157+BZ_C172+BZ_C187",null)
@@ -571,12 +656,12 @@ class Mod390HFBizkaia2023Declaration extends Mod390HFBizkaiaDeclaration {
 		// ---------------------------------------------------------------
 		// ---------------------------------------- VOLUMEN DE OPERACIONES
 		// ---------------------------------------------------------------
-		// Operaciones en r\u00E9gimen general
+		// Operaciones en r間imen general
 		,BZ_C200	(Mod390Key.BZ_C200
 			,(mod,vat) -> vat.isNationalSales() && !vat.isVatAccrualRegime() && !vat.isInvestment()
 			,(ctx,mod,vat) -> add(Mod390Key.BZ_C200,mod,vat.getBase())
 			,null,null,null)
-		// Operaciones a las que habi\u00E9ndoles sido aplicado el r\u00E9gimen especial del criterio de caja hubieran resultado devengadas conforme a la regla general de devengo contenida en el art. 75 de la NFIVA
+		// Operaciones a las que habi閚doles sido aplicado el r間imen especial del criterio de caja hubieran resultado devengadas conforme a la regla general de devengo contenida en el art. 75 de la NFIVA
 		,BZ_C201	(Mod390Key.BZ_C201
 			,(mod,vat) -> vat.isNationalSales() && vat.isVatAccrualRegime() && !vat.isInvestment()
 			,(ctx,mod,vat) -> add(Mod390Key.BZ_C201,mod,vat.getBase())
@@ -586,35 +671,35 @@ class Mod390HFBizkaia2023Declaration extends Mod390HFBizkaiaDeclaration {
 			,(mod,vat) -> vat.isVatGeneralRegime(VATRegime.GENERAL) && !vat.isVatSurchargeRegime() && vat.isIntracommunitySales()
 			,(ctx,mod,vat) -> add(Mod390Key.BZ_C202,mod,vat.getBase())
 			,null,null,null)
-		// Exportaciones y otras operaciones exentas con derecho a deducci\u00F3n
+		// Exportaciones y otras operaciones exentas con derecho a deducci髇
 		,BZ_C203	(Mod390Key.BZ_C203
 			,(mod,vat) -> vat.isVatGeneralRegime(VATRegime.GENERAL) && !vat.isVatSurchargeRegime() && (vat.isCanCeuMelSales() || vat.isExtracommunitySales())
 			,(ctx,mod,vat) -> add(Mod390Key.BZ_C203,mod,vat.getBase())
 			,null,null,null)
-		// Operaciones exentas sin derecho a deducci\u00F3n
+		// Operaciones exentas sin derecho a deducci髇
 		,BZ_C204	(Mod390Key.BZ_C204)
-		// Operaciones no sujetas por reglas de localizaci\u00F3n
+		// Operaciones no sujetas por reglas de localizaci髇
 		,BZ_C205	(Mod390Key.BZ_C205)
-		// Operaciones con inversi\u00F3n del sujeto pasivo
+		// Operaciones con inversi髇 del sujeto pasivo
 		,BZ_C206	(Mod390Key.BZ_C206
 			,(mod,vat) -> vat.isOtherISPSales() 
 			,(ctx,mod,vat) -> add(Mod390Key.BZ_C206,mod,vat.getBase())
 			,null,null,null)
-		// Entregas de bienes objeto de instalaci\u00F3n o montaje en otros Estados miembros
+		// Entregas de bienes objeto de instalaci髇 o montaje en otros Estados miembros
 		,BZ_C207	(Mod390Key.BZ_C207)
-		// Operaciones en r\u00E9gimen simplificado
+		// Operaciones en r間imen simplificado
 		,BZ_C208	(Mod390Key.BZ_C208)
-		// Operaciones en r\u00E9gimen especial de la agricultura, ganader\u00EDa o pesca
+		// Operaciones en r間imen especial de la agricultura, ganader韆 o pesca
 		,BZ_C209	(Mod390Key.BZ_C209)
-		// Operaciones realizadas por sujetos pasivos acogidos al r\u00E9gimen especial del recargo de equivalencia
+		// Operaciones realizadas por sujetos pasivos acogidos al r間imen especial del recargo de equivalencia
 		,BZ_C210	(Mod390Key.BZ_C210)
-		// Operaciones en r\u00E9gimen especial de bienes usados, objetos de arte, antig眉edades y objetos de colecci\u00F3n
+		// Operaciones en r間imen especial de bienes usados, objetos de arte, antig黣dades y objetos de colecci髇
 		,BZ_C211	(Mod390Key.BZ_C211)
-		// Operaciones en r\u00E9gimen especial de agencias de viajes
+		// Operaciones en r間imen especial de agencias de viajes
 		,BZ_C212	(Mod390Key.BZ_C212)
 		// Entregas de bienes inmuebles y operaciones financieras no habituales
 		,BZ_C213	(Mod390Key.BZ_C213)
-		// Entregas de bienes de inversi\u00F3n
+		// Entregas de bienes de inversi髇
 		,BZ_C214	(Mod390Key.BZ_C214
 			,(mod,vat) -> vat.isNationalSales() && vat.isInvestment()
 			,(ctx,mod,vat) -> add(Mod390Key.BZ_C214,mod,vat.getBase())
@@ -625,11 +710,11 @@ class Mod390HFBizkaia2023Declaration extends Mod390HFBizkaiaDeclaration {
 		// ---------------------------------------------------------------
 		// ---------------------------------------- OPERACIONES ESPECIFICAS
 		// ---------------------------------------------------------------
-		// Otras operaciones no sujetas con derecho a deducci\u00F3n
+		// Otras operaciones no sujetas con derecho a deducci髇
 		,BZ_C220	(Mod390Key.BZ_C214)
-		// Otras operaciones no sujetas sin derecho a deducci\u00F3n
+		// Otras operaciones no sujetas sin derecho a deducci髇
 		,BZ_C221	(Mod390Key.BZ_C214)
-		// Subvenciones a la explotaci\u00F3n
+		// Subvenciones a la explotaci髇
 		,BZ_C222	(Mod390Key.BZ_C214)
 		// Subvenciones de capital percibidas en el ejercicio
 		,BZ_C223	(Mod390Key.BZ_C214)
@@ -796,7 +881,8 @@ class Mod390HFBizkaia2023Declaration extends Mod390HFBizkaiaDeclaration {
 	private static boolean hasNoPercent(VatContext vat) {
 		return vat.getPercentage() !=  PERCENT_4
 			&& vat.getPercentage() !=  PERCENT_10 
-			&& vat.getPercentage() !=  PERCENT_21; 	
+			&& vat.getPercentage() !=  PERCENT_21
+			&& vat.getPercentage() !=  PERCENT_5; 	
 	}
 	
 	private static boolean adqIntracomunitariasFilter(VatContext vat) {
@@ -872,8 +958,6 @@ class Mod390HFBizkaia2023Declaration extends Mod390HFBizkaiaDeclaration {
 				&& (vat.isExpenses() || vat.isPurchase())	
 				;
 	}
-	
-	
 	
 	@Override
 	protected String getCompensationExplain( AONContext ctx, Mod390HF mod, Mod390Key key) {
