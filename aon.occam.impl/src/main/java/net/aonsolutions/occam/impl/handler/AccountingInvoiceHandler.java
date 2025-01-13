@@ -1,16 +1,35 @@
 package net.aonsolutions.occam.impl.handler;
 
 import static com.esferalia.aon.jooq.tables.Account.ACCOUNT;
+import static com.esferalia.aon.jooq.tables.AccountEntryInvoice.ACCOUNT_ENTRY_INVOICE;
 import static com.esferalia.aon.jooq.tables.InvoiceDetailAccount.INVOICE_DETAIL_ACCOUNT;
+import static com.esferalia.aon.jooq.tables.InvoiceDua.INVOICE_DUA;
 
+import java.util.LinkedList;
 import java.util.Optional;
+import java.util.stream.Collectors;
+
+import com.esferalia.aon.watson.error.AonCoreException;
+import com.esferalia.aon.watson.server.AonEnumUtils;
+import com.esferalia.aon.watson.util.AonNumberUtils;
+import com.esferalia.aon.watson.util.AonStringUtils;
 
 import net.aonsolutions.occam.api.model.Account;
+import net.aonsolutions.occam.api.model.AccountEntry;
+import net.aonsolutions.occam.api.model.AccountingDUAInfo;
+import net.aonsolutions.occam.api.model.AccountingDUAInvoice;
+import net.aonsolutions.occam.api.model.AccountingInvoice;
+import net.aonsolutions.occam.api.model.Invoice;
+import net.aonsolutions.occam.api.model.InvoiceDetail;
+import net.aonsolutions.occam.api.model.InvoiceTax;
 import net.aonsolutions.occam.impl.AONContext;
 import net.aonsolutions.occam.impl.handler.AccountHandler.AccountFiller;
 
 class AccountingInvoiceHandler {
 	
+	private static final com.esferalia.aon.jooq.tables.Account DUT_ACCOUNT = ACCOUNT.as("DUT_ACCOUNT");
+	private static final com.esferalia.aon.jooq.tables.Account VAT_ACCOUNT = ACCOUNT.as("VAT_ACCOUNT");
+
 	private AccountingInvoiceHandler() {
 	}
 	
@@ -25,41 +44,212 @@ class AccountingInvoiceHandler {
 			.map(new AccountFiller())
 			.findFirst();
 	}
-/*
-	private static final com.esferalia.aon.jooq.tables.Account DUT_ACCOUNT = ACCOUNT.as("DUT_ACCOUNT");
-	private static final com.esferalia.aon.jooq.tables.Account VAT_ACCOUNT = ACCOUNT.as("VAT_ACCOUNT");
-
-	private AccountingInvoiceHandler() {
-	}
 	
-	public static Optional<AccountingInvoice> getFromAccountEntry(final AONContext ctx, final Integer accountEntryId) {
+	static Optional<AccountingInvoice> getFromAccountEntry(final AONContext ctx, final int domain, final Integer accountEntryId) {
 		return ctx.getDslContext()
 			.select( ACCOUNT_ENTRY_INVOICE.INVOICE )
 			.from( ACCOUNT_ENTRY_INVOICE )
 			.where(ACCOUNT_ENTRY_INVOICE.ACCOUNT_ENTRY.eq(accountEntryId))
+			.and(ACCOUNT_ENTRY_INVOICE.DOMAIN.eq(domain))
 			.fetch()
 			.stream()
 			.map(rec -> rec.getValue(ACCOUNT_ENTRY_INVOICE.INVOICE))
 			.findFirst()
-			.map( invoiceId -> InvoiceDAO.getFull(ctx, invoiceId)
-				.orElseThrow(() -> new AonCoreException("No se pudo encontrar la factura")))
+			.map( invoiceId -> InvoiceHandler.get(ctx, domain, invoiceId).orElseThrow(() -> new AonCoreException("No se pudo encontrar la factura")))
 			.map( invoice -> new AccountingInvoice().setInvoice(invoice))
-			.map( ai -> ai.fillAccountEntry(AccountEntryDAO.getAccountEntry(ctx, accountEntryId)))
-			.map( ai -> fillAccountingInvoice(ctx, ai) )
+			.map( ai -> ai.setAccountEntry(AccountEntryHandler.get(ctx, domain, accountEntryId).orElseThrow(() -> new AonCoreException("No se pudo encontrar en asiento contable"))))
+			.map( ai -> fillAccountingInvoice(ctx, domain, ai) )
 		;
 	}
 	
-	public static Optional<AccountingInvoice> getFromInvoice(final AONContext ctx, final Integer invoiceId) {
-		return getFromInvoice(ctx, InvoiceDAO.getFull(ctx, invoiceId)
-			.orElseThrow(() -> new AonCoreException("No se pudo encontrar la factura")));
+	private static AccountingInvoice fillAccountingInvoice(AONContext ctx, int domain, AccountingInvoice ai) {
+		Invoice invoice = ai.getInvoice();
+		ai
+			.setManualConcept(
+				ai.getAccountEntry()
+					.detailStream()
+					.map( d -> d.getConcept())
+					.map( c -> AonStringUtils.substringBetween(c,"[","]"))
+					.findFirst()
+					.orElse(null))
+			.setRegistry(
+				InvoiceRegistryHandler.get( ctx, invoice.getId() ) 
+					.orElseThrow(() -> new AonCoreException("No se pudo encontrar el titular de la factura"))
+			)
+		;
+		
+		
+		if (invoice.isDUAAllowed()) {
+			fillDUAInfo(ctx, domain, ai);
+		}
+		
+		if (invoice.isDUALinkAllowed()) {
+			ai.setDuaNationalInvoice( 
+				ctx.getDslContext()
+					.select(INVOICE_DUA.INVOICE_NATIONAL)
+					.from(INVOICE_DUA)
+					.where(INVOICE_DUA.INVOICE_IMPORT.equal(ai.getInvoice().getId()))
+					.and(INVOICE_DUA.DOMAIN.eq(invoice.getDomain()))
+					.fetch()
+					.stream()
+					.map( rec -> rec.getValue(INVOICE_DUA.INVOICE_NATIONAL))				
+					.findFirst()
+					.orElse(null)
+			);
+		}
+		
+		if (!invoice.isUndeductible()) {
+			invoice.detailStream()
+				.filter(d -> !d.isPrepayment())
+				.forEach(d -> fillInvoiceTax(ctx, ai, d));
+		}
+		return ai;
 	}
 	
-	public static Optional<AccountingInvoice> getFromInvoice(final AONContext ctx, final Invoice invoice) {
+	private static void fillInvoiceTax(AONContext ctx, AccountingInvoice ai, InvoiceDetail invoiceDetail) {
+		Invoice invoice = ai.getInvoice(); 
+		int domain = invoice.getDomain();
+		// *********************
+		// Al no guardar el porcentaje de imposición directa en BD, se "supone" su activación en función
+		// de la existencia de la cuenta en apuntes.
+		// Si la cuenta ha cambiad, el apunte fallará....
+		// Si el porcentaje de invest_asset ha cambiado, el apunte fallará-
+		boolean directTaxEnabledPre = false;
+		Account directTaxAccount = ctx
+				.getApplicationParameters(domain)
+				.getDirectTaxAdjustAccount()
+				.flatMap( accountId -> AccountHandler.get(ctx, domain, accountId))
+				.orElse(null);
+		if (directTaxAccount != null && ai.getAccountEntry() != null) {
+			directTaxEnabledPre = ai.getAccountEntry().detailStream()
+				.anyMatch( aed -> AonNumberUtils.equals(
+						aed.getAccount()
+							.map(Account::getId)
+							.orElse(null)
+						,directTaxAccount.getId()));
+		}
+		final boolean directTaxEnabled = directTaxEnabledPre;
+		// *********************
+		
+		InvoiceTax vat = invoiceDetail.enableVatTax( );
+		Account vatAccount = invoiceDetail
+			.getVatTax()
+			.flatMap( it -> InvoiceTaxHandler.getInvoiceTaxAccount(ctx, it.getId()))
+			.orElse(null)
+		;
+		
+		Integer investAsset = invoiceDetail.getInvestAsset().map(ia -> ia.getId()).orElse(null);
+
+		Double  directTaxPercent = Double.valueOf(0);
+		if (directTaxEnabled && investAsset != null) {
+			directTaxPercent = ctx
+				.getInvestAssets(domain) 
+				.filter( ia -> AonNumberUtils.equals(ia.getId(),investAsset))
+				.map( ia -> ia.getRetentionPercent())
+				.findFirst()
+				.orElse(Double.valueOf(0));
+		}
+		invoiceDetail.setDirectTaxPercent(directTaxPercent);
+		
+		if (invoice.isSales()) {
+			vat.setOutputAccount(vatAccount);
+		}
+		if (!invoice.isSales()) {
+			vat.setInputAccount(vatAccount);
+			if (invoice.isOutputVatEnabled()) {
+				vat.setOutputAccount( ctx
+					.getApplicationParameters(domain)
+					.getOutputVatDefaultAccount()
+					.orElse(null)
+				);
+			}
+			if (investAsset != null) {
+				vat.setAdjAccount( ctx
+					.getApplicationParameters(domain)
+					.getVatNegativeAdjustAccount()
+					.orElse(null)
+				);
+			}
+			if (investAsset != null && directTaxEnabled) {
+				invoiceDetail.setAdjDirectTaxAccount(directTaxAccount);
+			}
+		}
+	}
+	
+	private static void fillDUAInfo(AONContext ctx, int domain, AccountingInvoice ai) {
+		AccountingDUAInvoice accountingDUAInvoice = ctx.getDslContext()
+			.select()
+			.from(INVOICE_DUA)
+			.leftOuterJoin(DUT_ACCOUNT).on(DUT_ACCOUNT.ID.eq(INVOICE_DUA.DUTY_ACCOUNT))
+			.leftOuterJoin(VAT_ACCOUNT).on(VAT_ACCOUNT.ID.eq(INVOICE_DUA.VAT_ACCOUNT))
+			.where(INVOICE_DUA.INVOICE_NATIONAL.eq(ai.getInvoice().getId()))
+			.and(INVOICE_DUA.DOMAIN.eq(ai.getInvoice().getDomain()))
+			.fetch()
+			.stream()
+			.map( rec ->  new AccountingDUAInvoice()
+				.setInfo( new AccountingDUAInfo()
+					.setId(rec.getValue(INVOICE_DUA.ID))
+					.setDomain(rec.getValue(INVOICE_DUA.DOMAIN))
+					.setCode(rec.getValue(INVOICE_DUA.CODE))
+					.setPrice(rec.getValue(INVOICE_DUA.PRICE))
+					.setAdjust(rec.getValue(INVOICE_DUA.ADJUST))
+					.setStatisticalValue(rec.getValue(INVOICE_DUA.STATISTICAL_VALUE))
+					.setDutyAccount(new Account()
+						.setId(rec.getValue(DUT_ACCOUNT.ID))
+						.setDomain(rec.getValue(DUT_ACCOUNT.DOMAIN))
+						.setCode(rec.getValue(DUT_ACCOUNT.CODE))
+						.setDescription(rec.getValue(DUT_ACCOUNT.DESCRIPTION))
+						.setAlias(rec.getValue(DUT_ACCOUNT.ALIAS))
+						.setEntryEnabled( AonEnumUtils.getBoolean(rec.getValue(DUT_ACCOUNT.ENTRYENABLED)))
+						.setLevel(rec.getValue(DUT_ACCOUNT.LEVEL))
+						.setActive(AonEnumUtils.getBoolean(rec.getValue(DUT_ACCOUNT.ACTIVE)))
+						.setCostCenter(rec.getValue(DUT_ACCOUNT.COST_CENTER))
+					)
+					.setDutyBase(rec.getValue(INVOICE_DUA.DUTY_BASE))
+					.setDutyPercent(rec.getValue(INVOICE_DUA.DUTY_PERCENT))
+					.setDutyTotal(rec.getValue(INVOICE_DUA.DUTY_TOTAL))
+					.setVatAccount(new Account()
+						.setId(rec.getValue(VAT_ACCOUNT.ID))
+						.setDomain(rec.getValue(VAT_ACCOUNT.DOMAIN))
+						.setCode(rec.getValue(VAT_ACCOUNT.CODE))
+						.setDescription(rec.getValue(VAT_ACCOUNT.DESCRIPTION))
+						.setAlias(rec.getValue(VAT_ACCOUNT.ALIAS))
+						.setEntryEnabled( AonEnumUtils.getBoolean(rec.getValue(VAT_ACCOUNT.ENTRYENABLED)))
+						.setLevel(rec.getValue(VAT_ACCOUNT.LEVEL))
+						.setActive(AonEnumUtils.getBoolean(rec.getValue(VAT_ACCOUNT.ACTIVE)))
+						.setCostCenter(rec.getValue(VAT_ACCOUNT.COST_CENTER))
+					)
+				)
+				.setAccountingInvoice( getFromInvoice(ctx, domain, rec.getValue(INVOICE_DUA.INVOICE_IMPORT)).orElse(null) )
+			)
+			.findFirst()
+			.orElse(null);
+		if (accountingDUAInvoice != null ) {
+			ai.setDuaLinked(true);
+			if (accountingDUAInvoice.getAccountingInvoice() != null) {
+				accountingDUAInvoice.getInfo().setDuaDetails(
+						accountingDUAInvoice.getAccountingInvoice().getInvoice().detailStream()
+							.map(ori -> ori.duplicate().setAutoGenerated(true) )
+							.collect(Collectors.toCollection(LinkedList::new))
+				);
+			}
+			ai.setDuaInvoice(accountingDUAInvoice);
+			
+			accountingDUAInvoice.getInfo().setAuthCalcEnabled(false);
+		}
+	}
+	
+	static Optional<AccountingInvoice> getFromInvoice(final AONContext ctx, final int domain,  final Integer invoiceId) {
+		return getFromInvoice(ctx, domain, InvoiceHandler.get(ctx, domain, invoiceId)
+			.orElseThrow(() -> new AonCoreException("No se pudo encontrar la factura")));
+	}
+
+	static Optional<AccountingInvoice> getFromInvoice(final AONContext ctx, final int domain, final Invoice invoice) {
 		if (invoice == null) throw new IllegalArgumentException("Invoice can not be null");
 		AccountingInvoice ai = new AccountingInvoice().setInvoice(invoice);
 		AccountEntry ae = null;
 		if (invoice.getId() == null) {
-			ae = InvoiceRecorder.getInvoiceEntry(ctx, ai.getInvoice()); 
+			ae = InvoiceRecorder.getInvoiceEntry(ctx, domain, ai.getInvoice()); 
 		} else {
 			ae = ctx.getDslContext()
 				.select( ACCOUNT_ENTRY_INVOICE.ACCOUNT_ENTRY)
@@ -69,16 +259,16 @@ class AccountingInvoiceHandler {
 				.stream()
 				.map(rec -> rec.getValue(ACCOUNT_ENTRY_INVOICE.ACCOUNT_ENTRY))
 				.findFirst()
-				.map(accountEntryId -> AccountEntryDAO.getAccountEntry(ctx, accountEntryId))
+				.flatMap(aeId -> AccountEntryHandler.get(ctx, domain, aeId))
 				.orElse(null) 
 				;
 		}
 		ai.setAccountEntry(ae);
-		fillAccountingInvoice(ctx, ai);
+		fillAccountingInvoice(ctx, domain, ai);
 		return Optional.of(ai); 
 	}
-	
 
+	/*
 	public static void saveInvoiceDetailAccount(AONContext ctx, InvoiceDetail invoiceDetail) {
 		ctx.getDslContext()
 			.delete(INVOICE_DETAIL_ACCOUNT)
@@ -112,18 +302,6 @@ class AccountingInvoiceHandler {
 	}
 	
 	
-	public static Optional<Account> getInvoiceTaxAccount(AONContext ctx, Integer invoiceTaxId) {
-		return ctx.getDslContext()
-				.select()
-				.from(ACCOUNT)
-				.join(INVOICE_TAX_ACCOUNT).on(INVOICE_TAX_ACCOUNT.ACCOUNT.eq(ACCOUNT.ID))
-				.where(INVOICE_TAX_ACCOUNT.INVOICE_TAX.eq(invoiceTaxId)).limit(1)
-				.fetch()
-				.stream()
-				.map(new FullAccountFiller())
-				.findFirst();
-	}
-
 	public static AccountingInvoice save(final AONContext ctx, final AccountingInvoice accInvoice) {
 		checkRegistryAccount(ctx,accInvoice);
 		if (accInvoice.getAccountEntry().getId() == null) {
@@ -251,113 +429,6 @@ class AccountingInvoiceHandler {
 	// ************************************************* [PRIVATE] *
 	// *************************************************************
 	
-	private static AccountingInvoice fillAccountingInvoice(AONContext ctx, AccountingInvoice ai) {
-		Invoice invoice = ai.getInvoice();
-		
-		if (AonCollectionUtils.isNotEmpty(ai.getAccountEntry().getDetails())) {
-			String concept = ai.getAccountEntry().getDetails().get(0).getConcept();
-			ai.setManualConcept(AonStringUtils.substringBetween(concept,"[","]"));
-		}
-		
-		AccountingRegistry reg = AccountingRegistryDAO.getAccountingRegistries(ctx
-			,f -> f.getIdProperty().eq(invoice.getRegistry()))
-			.filter(f -> AccountingRegistryType.getFor(invoice.getType()).equals(f.getType()))
-			.findFirst()
-			.orElse(null);
-		ai.setRegistry(reg);
-		
-		
-		if (ai.getInvoice().isDUAAllowed()) {
-			fillDUAInfo(ctx, ai);
-		}
-		
-		if (ai.getInvoice().isDUALinkAllowed()) {
-			ai.setDuaNationalInvoice( 
-				ctx.getDslContext()
-					.select(INVOICE_DUA.INVOICE_NATIONAL)
-					.from(INVOICE_DUA)
-					.where(INVOICE_DUA.INVOICE_IMPORT.equal(ai.getInvoice().getId()))
-					.and(INVOICE_DUA.DOMAIN.eq(invoice.getDomain()))
-					.fetch()
-					.stream()
-					.map( rec -> rec.getValue(INVOICE_DUA.INVOICE_NATIONAL))				
-					.findFirst()
-					.orElse(null)
-			);
-		}
-		
-		if (!ai.isUndeductible()) {
-			AonCollectionUtils.stream(ai.getInvoice().getDetails())
-				.filter(d -> !d.isPrepayment())
-				.forEach(d -> fillInvoiceTax(ctx, ai, d));
-		}
-		return ai;
-	}
-
-	private static void fillDUAInfo(AONContext ctx, AccountingInvoice ai) {
-		AccountingDUAInvoice accountingDUAInvoice = ctx.getDslContext()
-			.select()
-			.from(INVOICE_DUA)
-			.leftOuterJoin(DUT_ACCOUNT).on(DUT_ACCOUNT.ID.eq(INVOICE_DUA.DUTY_ACCOUNT))
-			.leftOuterJoin(VAT_ACCOUNT).on(VAT_ACCOUNT.ID.eq(INVOICE_DUA.VAT_ACCOUNT))
-			.where(INVOICE_DUA.INVOICE_NATIONAL.eq(ai.getInvoice().getId()))
-			.and(INVOICE_DUA.DOMAIN.eq(ai.getInvoice().getDomain()))
-			.fetch()
-			.stream()
-			.map( rec ->  new AccountingDUAInvoice()
-				.setInfo( new AccountingDUAInfo()
-					.setId(rec.getValue(INVOICE_DUA.ID))
-					.setDomain(rec.getValue(INVOICE_DUA.DOMAIN))
-					.setCode(rec.getValue(INVOICE_DUA.CODE))
-					.setPrice(rec.getValue(INVOICE_DUA.PRICE))
-					.setAdjust(rec.getValue(INVOICE_DUA.ADJUST))
-					.setStatisticalValue(rec.getValue(INVOICE_DUA.STATISTICAL_VALUE))
-					.setDutyAccount(new Account()
-						.setId(rec.getValue(DUT_ACCOUNT.ID))
-						.setDomain(rec.getValue(DUT_ACCOUNT.DOMAIN))
-						.setCode(rec.getValue(DUT_ACCOUNT.CODE))
-						.setDescription(rec.getValue(DUT_ACCOUNT.DESCRIPTION))
-						.setAlias(rec.getValue(DUT_ACCOUNT.ALIAS))
-						.setEntryEnabled( AonEnumUtils.getBoolean(rec.getValue(DUT_ACCOUNT.ENTRYENABLED)))
-						.setLevel(rec.getValue(DUT_ACCOUNT.LEVEL))
-						.setActive(AonEnumUtils.getBoolean(rec.getValue(DUT_ACCOUNT.ACTIVE)))
-						.setCostCenter(rec.getValue(DUT_ACCOUNT.COST_CENTER))
-					)
-					.setDutyBase(rec.getValue(INVOICE_DUA.DUTY_BASE))
-					.setDutyPercent(rec.getValue(INVOICE_DUA.DUTY_PERCENT))
-					.setDutyTotal(rec.getValue(INVOICE_DUA.DUTY_TOTAL))
-					.setVatAccount(new Account()
-						.setId(rec.getValue(VAT_ACCOUNT.ID))
-						.setDomain(rec.getValue(VAT_ACCOUNT.DOMAIN))
-						.setCode(rec.getValue(VAT_ACCOUNT.CODE))
-						.setDescription(rec.getValue(VAT_ACCOUNT.DESCRIPTION))
-						.setAlias(rec.getValue(VAT_ACCOUNT.ALIAS))
-						.setEntryEnabled( AonEnumUtils.getBoolean(rec.getValue(VAT_ACCOUNT.ENTRYENABLED)))
-						.setLevel(rec.getValue(VAT_ACCOUNT.LEVEL))
-						.setActive(AonEnumUtils.getBoolean(rec.getValue(VAT_ACCOUNT.ACTIVE)))
-						.setCostCenter(rec.getValue(VAT_ACCOUNT.COST_CENTER))
-					)
-				)
-				.setAccountingInvoice( getFromInvoice(ctx, rec.getValue(INVOICE_DUA.INVOICE_IMPORT)).orElse(null) )
-			)
-			.findFirst()
-			.orElse(null);
-		if (accountingDUAInvoice != null ) {
-			ai.setDuaLinked(true);
-			if (accountingDUAInvoice.getAccountingInvoice() != null) {
-				LinkedList<InvoiceDetail> duaDetails = new LinkedList<>();
-				for (InvoiceDetail ori : accountingDUAInvoice.getAccountingInvoice().getInvoice().getDetails()) {
-					InvoiceDetail vat = ori.copy();
-					vat.setAutoGenerated(true);
-					duaDetails.add(vat);
-				}
-				accountingDUAInvoice.getInfo().setDuaDetails(duaDetails);
-			}
-			ai.setDuaInvoice(accountingDUAInvoice);
-			
-			accountingDUAInvoice.getInfo().setAuthCalcEnabled(false);
-		}
-	}
 
 	private static void checkTBAIForSales( final AONContext ctx, final InvoiceType type ) {
 		TbaiConfiguration tbaiConfig = TbaiConfigurationDAO.get(ctx);
@@ -365,53 +436,7 @@ class AccountingInvoiceHandler {
 			throw new AonCoreException("No se pueden crear facturas emitidas en entornos con TicketBai activado");
 		}
 	}
-	
-	private static void fillInvoiceTax(AONContext ctx, AccountingInvoice ai, InvoiceDetail invoiceDetail) {
-		// *********************
-		// Al no guardar el porcentaje de imposición directa en BD, se "supone" su activación en función
-		// de la existencia de la cuenta en apuntes.
-		// Si la cuenta ha cambiad, el apunte fallará....
-		// Si el porcentaje de invest_asset ha cambiado, el apunte fallará-
-		boolean directTaxEnabledPre = false;
-		Account directTaxAccount = ctx.getConfiguration().accounting().getDirectTaxAdjustAccount();
-		if (directTaxAccount != null && ai.getAccountEntry() != null) {
-			directTaxEnabledPre = AonCollectionUtils.stream(ai.getAccountEntry().getDetails())
-				.anyMatch( aed -> AonNumberUtils.equals(aed.getAccount(),directTaxAccount.getId()));
-		}
-		final boolean directTaxEnabled = directTaxEnabledPre;
-		// *********************
-		
-		InvoiceTax vat = invoiceDetail.ensureVatTax( ai.getInvoice() );
-		Account vatAccount = getInvoiceTaxAccount(ctx, invoiceDetail.getVatTax().get().getId()).orElse(null);
-		
-		Integer investAsset = invoiceDetail.getInvestAsset().map(ia -> ia.getId()).orElse(null);
 
-		Double  directTaxPercent = Double.valueOf(0);
-		if (directTaxEnabled && investAsset != null) {
-			directTaxPercent = AonCollectionUtils.stream( ctx.getConfiguration().getInvestAssets() )
-				.filter( ia -> AonNumberUtils.equals(ia.getId(),investAsset))
-				.map( ia -> ia.getRetentionPercent())
-				.findFirst()
-				.orElse(Double.valueOf(0));
-		}
-		vat.setDirectTaxPercent(directTaxPercent);
-		
-		if (ai.isSales()) {
-			vat.setOutputAccount(vatAccount);
-		}
-		if (!ai.isSales()) {
-			vat.setInputAccount(vatAccount);
-			if (ai.isOutputVatEnabled() && ctx.getConfiguration().accounting().getDefaultChargedVatAccount() != null) {
-				vat.setOutputAccount(ctx.getConfiguration().accounting().getDefaultChargedVatAccount());
-			}
-			if (investAsset != null && ctx.getConfiguration().accounting().getVatNegativeAdjustAccount() != null) {
-				vat.setAdjAccount(ctx.getConfiguration().accounting().getVatNegativeAdjustAccount());
-			}
-			if (investAsset != null && directTaxEnabled && ctx.getConfiguration().accounting().getDirectTaxAdjustAccount() != null) {
-				vat.setAdjDirectTaxAccount(ctx.getConfiguration().accounting().getDirectTaxAdjustAccount());
-			}
-		}
-	}
 	
 	private static void checkRegistryAccount(final AONContext ctx, AccountingInvoice accInvoice) {
 		if (accInvoice.getRegistry().getAccountId() == null) {

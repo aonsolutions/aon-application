@@ -2,11 +2,15 @@ package net.aonsolutions.occam.impl.handler;
 
 import static com.esferalia.aon.jooq.tables.Account.ACCOUNT;
 import static com.esferalia.aon.jooq.tables.AccountEntry.ACCOUNT_ENTRY;
+import static com.esferalia.aon.jooq.tables.AccountEntryBankStatement.ACCOUNT_ENTRY_BANK_STATEMENT;
 import static com.esferalia.aon.jooq.tables.AccountEntryDetail.ACCOUNT_ENTRY_DETAIL;
+import static com.esferalia.aon.jooq.tables.AccountEntryInvoice.ACCOUNT_ENTRY_INVOICE;
 import static com.esferalia.aon.jooq.tables.AccountPeriod.ACCOUNT_PERIOD;
+import static com.esferalia.aon.jooq.tables.BankStatement.BANK_STATEMENT;
 import static com.esferalia.aon.jooq.tables.EnterpriseActivity.ENTERPRISE_ACTIVITY;
 
 import java.sql.Timestamp;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.Objects;
@@ -25,11 +29,12 @@ import org.jooq.impl.DSL;
 import org.jooq.types.UInteger;
 
 import com.esferalia.aon.jooq.tables.records.AccountEntryDetailRecord;
-import com.esferalia.aon.jooq.tables.records.AccountEntryRecord;
 import com.esferalia.aon.watson.AonError;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.mutable.MutableBoolean;
 import com.esferalia.aon.watson.mutable.MutableDouble;
+import com.esferalia.aon.watson.mutable.MutableInt;
+import com.esferalia.aon.watson.mutable.MutableObject;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.server.AonEnumUtils;
 import com.esferalia.aon.watson.util.AonMathUtils;
@@ -38,15 +43,24 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 import net.aonsolutions.occam.api.model.Account;
 import net.aonsolutions.occam.api.model.AccountEntry;
 import net.aonsolutions.occam.api.model.AccountEntryDetail;
+import net.aonsolutions.occam.api.model.AccountEntryParams;
 import net.aonsolutions.occam.api.model.AccountPeriod;
 import net.aonsolutions.occam.api.model.Activity;
+import net.aonsolutions.occam.api.model.Filter;
+import net.aonsolutions.occam.api.model.Filter.AccountEntryDetailFilter;
 import net.aonsolutions.occam.api.model.Filter.AccountEntryFilter;
 import net.aonsolutions.occam.api.model.Filter.Property;
+import net.aonsolutions.occam.api.model.FlatAccountEntryDetail;
+import net.aonsolutions.occam.api.model.Properties.AccountEntryDetailProperties;
 import net.aonsolutions.occam.api.model.Properties.AccountEntryProperties;
+import net.aonsolutions.occam.api.model.type.AccountEntryOrder;
+import net.aonsolutions.occam.api.model.type.AccountEntryOrder.AccountEntryOrderVisitor;
 import net.aonsolutions.occam.api.model.type.AccountEntryType;
+import net.aonsolutions.occam.api.model.type.AccountEntryType.AccountEntryTypeVisitor;
 import net.aonsolutions.occam.api.model.type.AccountPeriodStatus;
 import net.aonsolutions.occam.api.model.type.SecurityLevel;
 import net.aonsolutions.occam.impl.AONContext;
+import net.aonsolutions.occam.impl.IHandlerCallback;
 import net.aonsolutions.occam.impl.handler.AccountHandler.AccountFiller;
 import net.aonsolutions.occam.impl.handler.AccountPeriodHandler.AccountPeriodFiller;
 import net.aonsolutions.occam.impl.handler.ActivityHandler.ActivityFiller;
@@ -83,47 +97,68 @@ class AccountEntryHandler {
 		@Override public Property<String> getModificationUserProperty() {return new FilterImpl.PropertyDAO<>(ACCOUNT_ENTRY.MODIFICATION_USER);}
 	}
 
-//	private static final AccountEntryDetailPropertiesHandler ACCOUNT_ENTRY_DETAIL_PROPERTIES = new AccountEntryDetailPropertiesHandler();
-//	private static class AccountEntryDetailPropertiesHandler extends AccountEntryPropertiesHandler implements AccountEntryDetailProperties {
-//
-//		private Condition getCondition(AccountEntryDetailFilter filter) {
-//			FilterHandler filterHandler = (FilterHandler) filter.filter(this);
-//			if (filterHandler == null) return DSL.trueCondition();
-//			return filterHandler.getCondition();
-//		}
-//
-//		@Override public Property<Integer> getAccountProperty() {return new FilterHandler.PropertyDAO<>(ACCOUNT_ENTRY_DETAIL.ACCOUNT);}
-//		@Override public Property<String> getAccountCodeProperty() {return new FilterHandler.PropertyDAO<>(ACCOUNT.CODE);}
-//		@Override public Property<String> getAccountDescriptionProperty() {return new FilterHandler.PropertyDAO<>(ACCOUNT.DESCRIPTION);}
-//		@Override public Property<String> getConceptProperty() {return new FilterHandler.PropertyDAO<>(ACCOUNT_ENTRY_DETAIL.CONCEPT);}
-//		@Override public Property<Double> getDebitProperty() {return new FilterHandler.PropertyDAO<>(ACCOUNT_ENTRY_DETAIL.DEBIT);}
-//		@Override public Property<Double> getCreditProperty() {return new FilterHandler.PropertyDAO<>(ACCOUNT_ENTRY_DETAIL.CREDIT);}
-//		@Override public Property<String> getDocumentNumber() {return new FilterHandler.PropertyDAO<>(ACCOUNT_ENTRY_DETAIL.DOCUMENT_NUMBER);}
-//		@Override public Property<Integer> getBalancingAccountProperty() {return new FilterHandler.PropertyDAO<>(ACCOUNT_ENTRY_DETAIL.BALANCING_ACCOUNT);}
-//		@Override public Property<String> getBalancingAccountCodeProperty() {return new FilterHandler.PropertyDAO<>(BAL_ACCOUNT.CODE);}
-//		@Override public Property<String> getBalancingAccountDescriptionProperty() {return new FilterHandler.PropertyDAO<>(BAL_ACCOUNT.DESCRIPTION);}
-//	}
+	private static final AccountEntryDetailPropertiesHandler ACCOUNT_ENTRY_DETAIL_PROPERTIES = new AccountEntryDetailPropertiesHandler();
+	private static class AccountEntryDetailPropertiesHandler extends AccountEntryPropertiesHandler implements AccountEntryDetailProperties {
+
+		private Condition getCondition(AccountEntryDetailFilter filter) {
+			FilterImpl filterHandler = (FilterImpl) filter.filter(this);
+			if (filterHandler == null) return DSL.trueCondition();
+			return filterHandler.getCondition();
+		}
+
+		@Override public Property<Integer> getAccountProperty() {return new FilterImpl.PropertyDAO<>(ACCOUNT_ENTRY_DETAIL.ACCOUNT);}
+		@Override public Property<String> getAccountCodeProperty() {return new FilterImpl.PropertyDAO<>(ACCOUNT.CODE);}
+		@Override public Property<String> getAccountDescriptionProperty() {return new FilterImpl.PropertyDAO<>(ACCOUNT.DESCRIPTION);}
+		@Override public Property<String> getConceptProperty() {return new FilterImpl.PropertyDAO<>(ACCOUNT_ENTRY_DETAIL.CONCEPT);}
+		@Override public Property<Double> getDebitProperty() {return new FilterImpl.PropertyDAO<>(ACCOUNT_ENTRY_DETAIL.DEBIT);}
+		@Override public Property<Double> getCreditProperty() {return new FilterImpl.PropertyDAO<>(ACCOUNT_ENTRY_DETAIL.CREDIT);}
+		@Override public Property<String> getDocumentNumberProperty() {return new FilterImpl.PropertyDAO<>(ACCOUNT_ENTRY_DETAIL.DOCUMENT_NUMBER);}
+		@Override public Property<Integer> getBalancingAccountProperty() {return new FilterImpl.PropertyDAO<>(ACCOUNT_ENTRY_DETAIL.BALANCING_ACCOUNT);}
+		@Override public Property<String> getBalancingAccountCodeProperty() {return new FilterImpl.PropertyDAO<>(BAL_ACCOUNT.CODE);}
+		@Override public Property<String> getBalancingAccountDescriptionProperty() {return new FilterImpl.PropertyDAO<>(BAL_ACCOUNT.DESCRIPTION);}
+	}
 	
-	enum AccountEntryOrder {
-		 ORDER_PERIOD_JOURNAL( ACCOUNT_ENTRY.ACCOUNT_PERIOD.asc(),ACCOUNT_ENTRY.JOURNAL.asc(),ACCOUNT_ENTRY.ENTRY_DATE.asc())
-		,ORDER_CREATION_DATE_DESC ( ACCOUNT_ENTRY.ID.desc())
-		,ORDER_MODIFICATION_DATE_DESC ( ACCOUNT_ENTRY.MODIFICATION_DATE.desc(),ACCOUNT_ENTRY.CREATION_DATE.desc())
-		;
-		
-		private SortField<?>[] fields;
-		
-		private AccountEntryOrder( SortField<?> ...fields) {
-			this.fields = fields;
-		}
-		public SortField<?>[] getFields() {
-			return fields;
+	private static class OrderFields implements AccountEntryOrderVisitor<SortField<?>[]> {
+		private boolean orderByDetailAlso;
+		private OrderFields( boolean orderByDetailAlso ) {
+			this.orderByDetailAlso = orderByDetailAlso;
 		}
 		
-		static AccountEntryOrder value(int order) {
-			if (order < 0 || order > AccountEntryOrder.values().length) {
-				return ORDER_PERIOD_JOURNAL;
+		private SortField<?>[] orderByDetailifNeeded(SortField<?>[] sortFields) {
+			if (orderByDetailAlso) {
+				SortField<?>[] details = Arrays.copyOf(sortFields, (sortFields.length + 1));
+				details[ sortFields.length ] = ACCOUNT_ENTRY_DETAIL.LINE.asc();
+				return details;
 			}
-			return AccountEntryOrder.values()[order];
+			return sortFields;
+		}
+		
+		@Override
+		public SortField<?>[] visitPeriodJournal() {
+			return orderByDetailifNeeded(
+				new SortField<?>[]{
+				 ACCOUNT_ENTRY.ACCOUNT_PERIOD.asc()
+				,ACCOUNT_ENTRY.JOURNAL.asc()
+				,ACCOUNT_ENTRY.ENTRY_DATE.asc()}
+			);
+		}
+
+		@Override
+		public SortField<?>[] visitCreationDateDesc() {
+			return orderByDetailifNeeded(
+				new SortField<?>[]{
+				 ACCOUNT_ENTRY.CREATION_DATE.desc()
+				,ACCOUNT_ENTRY.ID.desc(),}
+			);
+		}
+
+		@Override
+		public SortField<?>[] visitModificationDateDesc() {
+			return orderByDetailifNeeded(
+				new SortField<?>[]{
+				 ACCOUNT_ENTRY.MODIFICATION_DATE.desc()
+				,ACCOUNT_ENTRY.CREATION_DATE.desc()}
+			);
 		}
 	}
 	
@@ -149,6 +184,7 @@ class AccountEntryHandler {
 				.setCreationDate(getValue(r, ACCOUNT_ENTRY.CREATION_DATE))
 				.setModificationUser(getValue(r, ACCOUNT_ENTRY.MODIFICATION_USER))
 				.setModificationDate(getValue(r, ACCOUNT_ENTRY.MODIFICATION_DATE))
+				.markAsClean()
 			;
 		}
 	}
@@ -171,7 +207,46 @@ class AccountEntryHandler {
 				.setCredit(getValue(r,ACCOUNT_ENTRY_DETAIL.CREDIT))
 				.setBalancingAccount( AccountFiller.build(r, BAL_ACCOUNT))
 				.setDocumentNumber(getValue(r,ACCOUNT_ENTRY_DETAIL.DOCUMENT_NUMBER))
+				.markAsClean()
 				;
+		}
+	}
+	
+	static class FlatAccountEntryDetailFiller extends Filler<FlatAccountEntryDetail> {
+		@Override
+		public FlatAccountEntryDetail apply(Record r) {
+			return build(r);
+		}
+		
+		static FlatAccountEntryDetail build(Record r) {
+			return new FlatAccountEntryDetail( )
+				.setEntryId(getValue(r, ACCOUNT_ENTRY.ID))
+				.setEntryDomain(getValue(r, ACCOUNT_ENTRY.DOMAIN))
+				.setEntryPeriod(getValue(r, ACCOUNT_ENTRY.ACCOUNT_PERIOD))
+				.setEntryPeriodName(getValue(r, ACCOUNT_PERIOD.NAME))
+				.setEntryDate(getValue(r, ACCOUNT_ENTRY.ENTRY_DATE))
+				.setEntryType(AccountEntryType.value( getValue(r, ACCOUNT_ENTRY.ENTRY_TYPE)).orElse(null))
+				.setActivity(getValue(r, ACCOUNT_ENTRY.ACTIVITY))
+				.setActivityDescription(getValue(r, ENTERPRISE_ACTIVITY.DESCRIPTION))
+				.setJournal(getValue(r, ACCOUNT_ENTRY.JOURNAL))
+				.setComments(getValue(r, ACCOUNT_ENTRY.COMMENTS))
+				.setEntrySecurityLevel(SecurityLevel.value(getValue(r, ACCOUNT_ENTRY.SECURITY_LEVEL)).orElse(null))
+				.setEntryCreationUser(getValue(r, ACCOUNT_ENTRY.CREATION_USER))
+				.setEntryCreationDate(getValue(r, ACCOUNT_ENTRY.CREATION_DATE))
+				.setEntryModificationUser(getValue(r, ACCOUNT_ENTRY.MODIFICATION_USER))
+				.setEntryModificationDate(getValue(r, ACCOUNT_ENTRY.MODIFICATION_DATE))
+				.setDetailId(getValue(r, ACCOUNT_ENTRY_DETAIL.ID) )
+				.setAccount(getValue(r, ACCOUNT_ENTRY_DETAIL.ACCOUNT))
+				.setAccountCode(getValue(r, DET_ACCOUNT.CODE))
+				.setAccountDescription(getValue(r, DET_ACCOUNT.DESCRIPTION))
+				.setConcept(getValue(r, ACCOUNT_ENTRY_DETAIL.CONCEPT))
+				.setDebit(getValue(r, ACCOUNT_ENTRY_DETAIL.DEBIT))
+				.setCredit(getValue(r, ACCOUNT_ENTRY_DETAIL.CREDIT))
+				.setBalancingAccount(getValue(r, ACCOUNT_ENTRY_DETAIL.BALANCING_ACCOUNT))
+				.setBalancingAccountCode(getValue(r, BAL_ACCOUNT.CODE))
+				.setBalancingAccountDescription(getValue(r, BAL_ACCOUNT.DESCRIPTION))
+				.setDocumentNumber(getValue(r, ACCOUNT_ENTRY_DETAIL.DOCUMENT_NUMBER))
+			;
 		}
 	}
 	
@@ -190,7 +265,7 @@ class AccountEntryHandler {
 				.leftOuterJoin(ENTERPRISE_ACTIVITY).on(ACCOUNT_ENTRY.ACTIVITY.eq(ENTERPRISE_ACTIVITY.ID))
 				.where( ACCOUNT_ENTRY.DOMAIN.eq(domain))
 				.and(ACCOUNT_ENTRY_PROPERTIES.getCondition(filter))
-				.orderBy(orderBy.getFields())
+				.orderBy(orderBy.visit(new OrderFields(false)))
 				.limit(offset,numberOfRows)
 				.fetch()
 				.stream()
@@ -205,9 +280,9 @@ class AccountEntryHandler {
 						.fetch()
 						.stream()
 						.map( new AccountEntryDetailFiller() )
-						.forEach( aed -> ae.addDetail(aed))
+						.forEach( ae::addDetail )
 					;
-					return ae;
+					return ae.markAsClean();
 				})
 			;
 	}
@@ -217,7 +292,7 @@ class AccountEntryHandler {
 			, AccountEntryFilter filter
 			, int offset
 			, int numberOfRows) {
-		return stream(ctx, domain, filter, offset, numberOfRows,AccountEntryOrder.ORDER_PERIOD_JOURNAL);
+		return stream(ctx, domain, filter, offset, numberOfRows,AccountEntryOrder.PERIOD_JOURNAL);
 	}
 	
 	static Optional<AccountEntry> get(AONContext ctx, int domain, Integer id) {
@@ -225,6 +300,90 @@ class AccountEntryHandler {
 			.findFirst();
 	}
 
+	static Stream<FlatAccountEntryDetail> flatStream(AONContext ctx, int domain, AccountEntryParams params, int offset, int limit, IHandlerCallback callback) {
+		return params.hasDetailProperties()
+			?flatStreamByLines (ctx, domain, params ,offset, limit)
+			:flatStreamByHeader(ctx, domain, params ,offset, limit)
+			.onClose(() -> {if (callback != null) callback.onFinish(); })
+		;
+	}
+
+	private static Stream<FlatAccountEntryDetail> flatStreamByLines(AONContext ctx, int domain, AccountEntryParams params , int offset, int limit) {
+		return ctx.getDslContext()
+			.selectDistinct(ACCOUNT_ENTRY.ID)
+				.from(ACCOUNT_ENTRY)
+				.join(ACCOUNT_ENTRY_DETAIL).on(ACCOUNT_ENTRY.ID.eq(ACCOUNT_ENTRY_DETAIL.ACCOUNT_ENTRY))
+				.where(ACCOUNT_ENTRY_DETAIL_PROPERTIES.getCondition(p -> getFilterByLines(ctx, domain, p, params)))
+				.orderBy(params.getOrder().orElse(AccountEntryOrder.DEFAULT).visit(new OrderFields(true)))
+				.limit(offset,limit)
+				.fetch()
+				.stream()
+				.map (rec -> new FlatAccountEntryDetail().setEntryId(rec.getValue(ACCOUNT_ENTRY.ID)))
+				.flatMap(flat -> flatStream(ctx
+					, ACCOUNT_ENTRY_PROPERTIES.getCondition(p -> p.getDomainProperty().eq(domain).and(p.getIdProperty().eq(flat.getEntryId() ) ))
+					, params.getOrder().orElse(AccountEntryOrder.DEFAULT)
+					, 0, Integer.MAX_VALUE)
+				)
+		;
+	}
+
+	private static Stream<FlatAccountEntryDetail> flatStreamByHeader(AONContext ctx, int domain, AccountEntryParams params, int offset, int limit) {
+		return flatStream(ctx
+			, ACCOUNT_ENTRY_PROPERTIES.getCondition(p -> getFilterByHeader(ctx, domain,p, params))
+			, params.getOrder().orElse(AccountEntryOrder.DEFAULT)
+			, offset, limit)
+		;
+	}
+	
+	private static Stream<FlatAccountEntryDetail> flatStream(AONContext ctx
+		, Condition condition
+		, AccountEntryOrder orderBy
+		, int offset, int limit) {
+	ctx.checkRead();
+	return  ctx.getDslContext()
+			.select(ACCOUNT_ENTRY.fields())
+			.select(ACCOUNT_PERIOD.fields())
+			.select(ENTERPRISE_ACTIVITY.DESCRIPTION)
+			.select(ACCOUNT_ENTRY_DETAIL.fields())
+			.select(DET_ACCOUNT.CODE,DET_ACCOUNT.DESCRIPTION)
+			.select(BAL_ACCOUNT.CODE,BAL_ACCOUNT.DESCRIPTION)
+			.from(ACCOUNT_ENTRY)
+			.innerJoin(ACCOUNT_PERIOD).on(ACCOUNT_ENTRY.ACCOUNT_PERIOD.eq(ACCOUNT_PERIOD.ID))
+			.innerJoin(ACCOUNT_ENTRY_DETAIL).on(ACCOUNT_ENTRY.ID.eq(ACCOUNT_ENTRY_DETAIL.ACCOUNT_ENTRY))
+			.innerJoin(DET_ACCOUNT).on(DET_ACCOUNT.ID.eq(ACCOUNT_ENTRY_DETAIL.ACCOUNT))
+			.leftOuterJoin(BAL_ACCOUNT).on(BAL_ACCOUNT.ID.eq(ACCOUNT_ENTRY_DETAIL.BALANCING_ACCOUNT))
+			.leftOuterJoin(ENTERPRISE_ACTIVITY).on(ENTERPRISE_ACTIVITY.ID.equal(ACCOUNT_ENTRY.ACTIVITY))
+			.where(condition)
+			.orderBy(orderBy.visit( new OrderFields(true) ))
+			.limit(offset,limit)
+			.fetch()
+			.stream()
+			.map( r -> FlatAccountEntryDetailFiller.build(r))
+		;
+}
+
+	static AccountEntry reset(AONContext ctx, int domain, Optional<AccountEntry> last) {
+		return last
+			.map( l -> 
+				new AccountEntry()
+					.setDomain(domain)
+					.setEntryType(AccountEntryType.MANUAL)
+					.setPeriod( l.getPeriod().orElse(null) )
+					.setEntryDate( l.getEntryDate() )
+					.setActivity( l.getActivity().orElse(null))
+					.setConfidential(l.isConfidential())
+			)
+			.orElse(
+				new AccountEntry()
+					.setDomain(domain)
+					.setEntryType(AccountEntryType.MANUAL)
+					.setPeriod( ctx.getDefaultAccountPeriod(domain).orElse(null))
+					.setEntryDate( new Date() )
+					.setActivity( ctx.getDefaultActivity(domain).orElse(null))
+					.setConfidential(false)
+			)
+		;
+	}
 	// ------------------------------------------------------------- ESCRITURA
 	static Integer save(AONContext ctx, int domain, AccountEntry ae) {
 		if (ae.getId() == null) {
@@ -239,7 +398,7 @@ class AccountEntryHandler {
 		ctx.checkWrite();
 		AccountEntryValidation.validateEntry(ctx, domain, ae);
 		increaseJournal(ctx, ae);
-		AccountEntryRecord record = ctx.getDslContext()
+		Integer id = ctx.getDslContext()
 			.insertInto(ACCOUNT_ENTRY)
 				.set(ACCOUNT_ENTRY.DOMAIN,ae.getDomain())
 				.set(ACCOUNT_ENTRY.ACCOUNT_PERIOD,ae.getPeriod().map(AccountPeriod::getId).orElse(null))
@@ -251,12 +410,13 @@ class AccountEntryHandler {
 				.set(ACCOUNT_ENTRY.COMMENTS,ae.getComments())
 				.set(ACCOUNT_ENTRY.CREATION_USER,ctx.getUser())
 				.set(ACCOUNT_ENTRY.CREATION_DATE, new Timestamp( System.currentTimeMillis()) )
-				.returning(ACCOUNT_ENTRY.ID)
-				.fetchOne();
-		ae.setId(record.getValue(ACCOUNT_ENTRY.ID));
+			.returning(ACCOUNT_ENTRY.ID)
+			.fetchOne()
+			.getValue(ACCOUNT_ENTRY.ID);
+		ae.setId(id);
 		ctx.log().debug("INSERT ACCOUNT_ENTRY asiento: {0}",ae.getId());
 		batchInsert(ctx, domain, ae);
-		return record.getValue(ACCOUNT_ENTRY.ID); 
+		return id; 
 	}
 	
 	private static synchronized void increaseJournal(AONContext ctx,AccountEntry accountEntry) {
@@ -266,10 +426,12 @@ class AccountEntryHandler {
 			.select(maxFunc)
 			.from(ACCOUNT_ENTRY)
 			.where(ACCOUNT_ENTRY.DOMAIN.eq(accountEntry.getDomain()))
-			.and(ACCOUNT_ENTRY.ACCOUNT_PERIOD.eq(accountEntry.getPeriod().map(AccountPeriod::getId).orElse(null)))
+			.and(ACCOUNT_ENTRY.ACCOUNT_PERIOD.eq(accountEntry.getPeriod().map(AccountPeriod::getId)
+				.orElseThrow(() -> new AonCoreException(AonError.ACCOUNT_ENTRY_EMPTY_PERIOD.getMessage()))))
 			.fetch()
 			.stream()
 			.map(r -> r.getValue(maxFunc))
+			.filter( m -> m != null ) 
 			.findFirst()
 			.orElse(0);
 		accountEntry.setJournal(lastJournal + 1);
@@ -326,59 +488,237 @@ class AccountEntryHandler {
 	}
 	
 	private static void updateDetails(AONContext ctx, int domain, AccountEntry ae) {
-		int line = 0;
-		LinkedList<AccountEntryDetail> details = ae.detailStream().collect(Collectors.toCollection(LinkedList::new));
-		for (AccountEntryDetail detail : details) {
-			if (!detail.isDeleted()) {
-				++line;
+		MutableInt line = new MutableInt(0);
+		ae.detailStream().forEach(detail -> {
+			if (detail.isDeleted()) {
+				deleteDetail(ctx, line.getValue(), detail);
+			} else {
+				line.increment();
 				AccountEntryValidation.validateDetail(ctx, domain, detail);
 				if (detail.getId() != null) {
-					if (!detail.isDirty() && line != detail.getLine() ) {
-						detail.setLine(line);	
-					}
+					detail.setLine(line.getValue());	
 					if (detail.isDirty()) {
-						int i = ctx.getDslContext().update(ACCOUNT_ENTRY_DETAIL)
-							.set(ACCOUNT_ENTRY_DETAIL.DOMAIN,ae.getDomain())
-							.set(ACCOUNT_ENTRY_DETAIL.ACCOUNT_ENTRY,ae.getId())
-							.set(ACCOUNT_ENTRY_DETAIL.ACCOUNT,detail.getAccount().map(Account::getId).orElse(null))
-							.set(ACCOUNT_ENTRY_DETAIL.LINE,UInteger.valueOf( line ))
-							.set(ACCOUNT_ENTRY_DETAIL.CONCEPT,detail.getConcept()) 
-							.set(ACCOUNT_ENTRY_DETAIL.DEBIT,detail.getDebit())
-							.set(ACCOUNT_ENTRY_DETAIL.CREDIT,detail.getCredit())
-							.set(ACCOUNT_ENTRY_DETAIL.BALANCING_ACCOUNT,detail.getBalancingAccount().map(Account::getId).orElse(null))
-							.set(ACCOUNT_ENTRY_DETAIL.DOCUMENT_NUMBER,detail.getDocumentNumber())
-							.set(ACCOUNT_ENTRY_DETAIL.MODIFICATION_USER,ctx.getUser())
-							.set(ACCOUNT_ENTRY_DETAIL.MODIFICATION_DATE, new Timestamp( System.currentTimeMillis()) )
-							.where(ACCOUNT_ENTRY_DETAIL.ID.equal( detail.getId()))
-							.execute();
-						ctx.log().debug("UPDATE ACCOUNT_ENTRY_DETAIL  ({0} rows) ({1}) {2}",i,line,detail.getId());
+						updateDetail(ctx, line.getValue(), ae, detail);
 					}
 				} else {
-					ctx.getDslContext().insertInto(ACCOUNT_ENTRY_DETAIL)
-						.set(ACCOUNT_ENTRY_DETAIL.DOMAIN,ae.getDomain())
-						.set(ACCOUNT_ENTRY_DETAIL.ACCOUNT_ENTRY,ae.getId())
-						.set(ACCOUNT_ENTRY_DETAIL.ACCOUNT,detail.getAccount().map(Account::getId).orElse(null))
-						.set(ACCOUNT_ENTRY_DETAIL.LINE,UInteger.valueOf( line ))
-						.set(ACCOUNT_ENTRY_DETAIL.CONCEPT,detail.getConcept()) 
-						.set(ACCOUNT_ENTRY_DETAIL.DEBIT,detail.getDebit())
-						.set(ACCOUNT_ENTRY_DETAIL.CREDIT,detail.getCredit())
-						.set(ACCOUNT_ENTRY_DETAIL.BALANCING_ACCOUNT,detail.getBalancingAccount().map(Account::getId).orElse(null))
-						.set(ACCOUNT_ENTRY_DETAIL.DOCUMENT_NUMBER,detail.getDocumentNumber())
-						.set(ACCOUNT_ENTRY_DETAIL.CREATION_USER,ctx.getUser())
-						.set(ACCOUNT_ENTRY_DETAIL.CREATION_DATE, new Timestamp( System.currentTimeMillis()) )
-						.execute();
-					ctx.log().debug("INSERT ACCOUNT_ENTRY_DETAIL ({0})",line);
+					insertDetail(ctx, line.getValue(), ae, detail);
 				}
-			} else {
-				Integer id = detail.getId() * -1;
-				int i = ctx.getDslContext()
-					.delete(ACCOUNT_ENTRY_DETAIL)
-					.where(ACCOUNT_ENTRY_DETAIL.ID.equal(id))
-					.execute();
-				ctx.log().debug("DELETE ACCOUNT_ENTRY_DETAIL ({0} rows ) ({1}) {2}",i,line,id);
 			}
-		}
+		});
 	}
+	
+	private static void deleteDetail(AONContext ctx, int line, AccountEntryDetail detail) {
+		Integer id = detail.getId() * -1;
+		int i = ctx.getDslContext()
+			.delete(ACCOUNT_ENTRY_DETAIL)
+				.where(ACCOUNT_ENTRY_DETAIL.ID.equal(id))
+			.execute();
+		ctx.log().debug("DELETE ACCOUNT_ENTRY_DETAIL ({0} rows ) ({1}) {2}",i,line,id);
+	}
+
+	private static void insertDetail(AONContext ctx, int line, AccountEntry ae, AccountEntryDetail detail) {
+		ctx.getDslContext()
+			.insertInto(ACCOUNT_ENTRY_DETAIL)
+				.set(ACCOUNT_ENTRY_DETAIL.DOMAIN,ae.getDomain())
+				.set(ACCOUNT_ENTRY_DETAIL.ACCOUNT_ENTRY,ae.getId())
+				.set(ACCOUNT_ENTRY_DETAIL.ACCOUNT,detail.getAccount().map(Account::getId).orElse(null))
+				.set(ACCOUNT_ENTRY_DETAIL.LINE,UInteger.valueOf( line ))
+				.set(ACCOUNT_ENTRY_DETAIL.CONCEPT,detail.getConcept()) 
+				.set(ACCOUNT_ENTRY_DETAIL.DEBIT,detail.getDebit())
+				.set(ACCOUNT_ENTRY_DETAIL.CREDIT,detail.getCredit())
+				.set(ACCOUNT_ENTRY_DETAIL.BALANCING_ACCOUNT,detail.getBalancingAccount().map(Account::getId).orElse(null))
+				.set(ACCOUNT_ENTRY_DETAIL.DOCUMENT_NUMBER,detail.getDocumentNumber())
+				.set(ACCOUNT_ENTRY_DETAIL.CREATION_USER,ctx.getUser())
+				.set(ACCOUNT_ENTRY_DETAIL.CREATION_DATE, new Timestamp( System.currentTimeMillis()) )
+			.execute();
+		ctx.log().debug("INSERT ACCOUNT_ENTRY_DETAIL ({0})",line);
+	}
+
+	private static void updateDetail(AONContext ctx, int line, AccountEntry ae, AccountEntryDetail detail) {
+		int i = ctx.getDslContext()
+			.update(ACCOUNT_ENTRY_DETAIL)
+				.set(ACCOUNT_ENTRY_DETAIL.DOMAIN,ae.getDomain())
+				.set(ACCOUNT_ENTRY_DETAIL.ACCOUNT_ENTRY,ae.getId())
+				.set(ACCOUNT_ENTRY_DETAIL.ACCOUNT,detail.getAccount().map(Account::getId).orElse(null))
+				.set(ACCOUNT_ENTRY_DETAIL.LINE,UInteger.valueOf( line ))
+				.set(ACCOUNT_ENTRY_DETAIL.CONCEPT,detail.getConcept()) 
+				.set(ACCOUNT_ENTRY_DETAIL.DEBIT,detail.getDebit())
+				.set(ACCOUNT_ENTRY_DETAIL.CREDIT,detail.getCredit())
+				.set(ACCOUNT_ENTRY_DETAIL.BALANCING_ACCOUNT,detail.getBalancingAccount().map(Account::getId).orElse(null))
+				.set(ACCOUNT_ENTRY_DETAIL.DOCUMENT_NUMBER,detail.getDocumentNumber())
+				.set(ACCOUNT_ENTRY_DETAIL.MODIFICATION_USER,ctx.getUser())
+				.set(ACCOUNT_ENTRY_DETAIL.MODIFICATION_DATE, new Timestamp( System.currentTimeMillis()) )
+			.where(ACCOUNT_ENTRY_DETAIL.ID.equal( detail.getId()))
+			.execute();
+		ctx.log().debug("UPDATE ACCOUNT_ENTRY_DETAIL  ({0} rows) ({1}) {2}",i,line,detail.getId());
+	}
+
+	static AccountEntry delete(AONContext ctx, int domain, Integer id) {
+		ctx.checkWrite();
+		AccountEntry entry = get(ctx, domain, id)
+			.orElseThrow(() -> new AonCoreException(AonError.ACCOUNT_ENTRY_NOT_FOUND.getMessage()));
+		AccountEntryValidation.validateDeletion(ctx, domain, entry);
+		beforeRemove(ctx, domain, entry);
+		// Se borran las lineas
+		int count = ctx.getDslContext()
+			.delete(ACCOUNT_ENTRY_DETAIL)
+			.where(ACCOUNT_ENTRY_DETAIL.ACCOUNT_ENTRY.equal(id))
+			.execute();
+		ctx.log().debug("DELETE ACCOUNT_ENTRY detalles del asiento: {0} ({1} filas)",id,count);
+		// Se borra la cabecera
+		count = ctx.getDslContext()
+			.delete(ACCOUNT_ENTRY)
+			.where(ACCOUNT_ENTRY.ID.equal(id))
+			.execute();
+		ctx.log().debug("DELETE ACCOUNT_ENTRY asiento: {0} ({1} filas)",id,count);
+		afterRemove(ctx, domain, entry);
+		return entry;
+	}
+	
+	private static void beforeRemove(final AONContext ctx, int domain,final AccountEntry entry) {
+		entry.getEntryType().visit(new AccountEntryTypeVisitor<Void>() {
+
+			@Override
+			public Void visitTax() {
+				FiscalModelHandler.unrecord(ctx, entry.getId());
+				return null;
+			}
+			@Override
+			public Void visitFinance() {
+				FinanceEntryHandler.deleteAccountEntryFinanceTrackings(ctx, domain, entry.getId());
+				return null;
+			}
+
+			@Override public Void visitReturnedPayment() 	{ return visitFinance(); }
+			@Override public Void visitReturnedCollection() { return visitFinance(); }
+			@Override public Void visitCollection() 		{ return visitFinance(); }
+			@Override public Void visitPayment() 			{ return visitFinance(); }
+
+			@Override
+			public Void visitAmortization() {
+				throw new AonCoreException(AonError.ACCOUNT_ENTRY_AUTOMATIC_ENTRY_DELETE.getMessage());
+			}
+			@Override public Void visitExpenseInvoice()		{return removeInvoice();}
+			@Override public Void visitSalesInvoice() 		{return removeInvoice();}
+			@Override public Void visitPurchaseInvoice()	{return removeInvoice();}
+
+			private Void removeInvoice() {
+				Integer invoiceId = ctx.getDslContext()
+						.select( ACCOUNT_ENTRY_INVOICE.INVOICE )
+						.from( ACCOUNT_ENTRY_INVOICE )
+						.where(ACCOUNT_ENTRY_INVOICE.ACCOUNT_ENTRY.eq(entry.getId()))
+						.and(ACCOUNT_ENTRY_INVOICE.DOMAIN.eq(domain))
+						.fetch()
+						.stream()
+						.mapToInt(rec -> rec.getValue(ACCOUNT_ENTRY_INVOICE.INVOICE))
+						.findFirst()
+						.orElse( Integer.MIN_VALUE );
+				if (invoiceId != null && invoiceId != Integer.MIN_VALUE) {
+					int count = ctx.getDslContext()
+						.delete(ACCOUNT_ENTRY_INVOICE)
+						.where(ACCOUNT_ENTRY_INVOICE.ACCOUNT_ENTRY.equal(entry.getId()))
+						.execute();
+					ctx.log().debug("DELETE ACCOUNT_ENTRY_INVOICE ({0} filas.)",count);
+					InvoiceHandler.delete(ctx, domain, invoiceId);
+				}
+				return null;
+			}
+			
+			@Override public Void visitOpening() 				{return null;}
+			@Override public Void visitClosing() 				{return null;}
+			@Override public Void visitOperating() 				{return null;}
+			@Override public Void visitManual() 				{return null;}
+			@Override public Void visitSalary() 				{return null;}
+			@Override public Void visitLoan() 					{return null;}
+			@Override public Void visitSocialInsurance() 		{return null;}
+			@Override public Void visitLoanFee() 				{return null;}
+			@Override public Void visitSocialInsuranceAdjust() 	{return null;}
+		});	
+	}
+	
+	private static void afterRemove(final AONContext ctx, int domain,final AccountEntry entry) {
+		Integer periodId = entry.getPeriod()
+			.map( p -> p.getId())
+			.orElseThrow(() -> new AonCoreException(AonError.ACCOUNT_ENTRY_EMPTY_PERIOD.getMessage()));
+		
+		entry.getEntryType().visit(new AccountEntryTypeVisitor<Void>() {
+			
+			@Override
+			public Void visitOpening() {
+				if (AccountEntryHandler.existsAnyEntry(ctx, periodId,AccountEntryType.OPENING)) {
+					// Si después de borrar apertura, existe otro apertura, se mantiene 
+					// el estado (o se modifica si era errroneo).
+					AccountPeriodHandler.open(ctx,domain,periodId);
+				} else {
+					// Si después de borrar apertura, no existe otro apertura, se activa.
+					AccountPeriodHandler.active(ctx,domain,periodId);
+				}
+				return null;
+			}
+			
+			@Override
+			public Void visitClosing() {
+				if (AccountEntryHandler.existsAnyEntry(ctx, periodId,AccountEntryType.CLOSING)) {
+					// Si después de borrar cierre, existe otro cierre, se mantiene el estado.
+					AccountPeriodHandler.close(ctx,domain,periodId);
+				} else if (AccountEntryHandler.existsAnyEntry(ctx, periodId,AccountEntryType.OPERATING)) {
+					// Si después de borrar cierre, existe explotación.
+					AccountPeriodHandler.operating(ctx,domain,periodId);
+				} else if (AccountEntryHandler.existsAnyEntry(ctx, periodId,AccountEntryType.OPENING)) {
+					// Si después de borrar cierre, no existe explotación y sí apertura.
+					AccountPeriodHandler.open(ctx,domain,periodId);
+				} else {
+					// Si después de borrar cierre, no existe explotación ni apertura. Se activa.
+					AccountPeriodHandler.active(ctx,domain,periodId);
+				}
+				return null;
+			}
+			
+			@Override
+			public Void visitOperating() {
+				if (AccountEntryHandler.existsAnyEntry(ctx, periodId,AccountEntryType.OPERATING)) {
+					// Si después de borrar explotación, existe otro explotación, se mantiene el estado.
+					AccountPeriodHandler.operating(ctx, domain,periodId);
+				} else if (AccountEntryHandler.existsAnyEntry(ctx, periodId,AccountEntryType.OPENING)) {
+					// Si después de borrar explotación, existe apertura.
+					AccountPeriodHandler.open(ctx, domain, periodId);
+				} else {
+					// Si después de borrar cierre, no existe apertura.
+					AccountPeriodHandler.active(ctx, domain, periodId);
+				}
+				return null;
+			}
+			
+			@Override public Void visitManual() 				{return null;}
+			@Override public Void visitSalary() 				{return null;}
+			@Override public Void visitLoan() 					{return null;}
+			@Override public Void visitSocialInsurance() 		{return null;}
+			@Override public Void visitLoanFee() 				{return null;}
+			@Override public Void visitSocialInsuranceAdjust() 	{return null;}
+			@Override public Void visitSalesInvoice() 			{return null;}
+			@Override public Void visitPurchaseInvoice() 		{return null;}
+			@Override public Void visitExpenseInvoice() 		{return null;}
+			@Override public Void visitTax() 					{return null;}
+			@Override public Void visitPayment() 				{return null;}
+			@Override public Void visitCollection() 			{return null;}
+			@Override public Void visitAmortization() 			{return null;}
+			@Override public Void visitReturnedPayment() 		{return null;}
+			@Override public Void visitReturnedCollection() 	{return null;}
+			@Override public Void visitFinance() 				{return null;}
+		});
+	}
+	private static boolean existsAnyEntry(AONContext ctx, Integer period, AccountEntryType accountEntryType) {
+		return ctx.getDslContext().select()
+			.from(ACCOUNT_ENTRY)
+			.where(ACCOUNT_ENTRY.ACCOUNT_PERIOD.equal(period))
+			.and(ACCOUNT_ENTRY.ENTRY_TYPE.equal( AonEnumUtils.getByte( accountEntryType)))
+			.limit(1)
+			.fetch()
+			.stream()
+			.findFirst()
+			.isPresent();
+	}
+	
 	
 /*	
 	
@@ -418,127 +758,6 @@ class AccountEntryHandler {
 				);
 	}
 	
-	
-	public static Stream<FlatAccountEntryDetail> fetchFlatByHeader(AONContext ctx
-			, AccountEntryFilter filter
-			, AccountEntryOrder orderBy
-			, int offset, int limit, IDAOCallback callback) {
-		Condition[] conditions = ACCOUNT_ENTRY_PROPERTIES.getConditions(filter);
-		return fetchFlat(ctx, conditions, orderBy, offset, limit, callback)
-			.onClose(new Runnable() {
-					@Override
-					public void run() {
-						if (callback != null) {
-							callback.onFinish();
-						}
-					}
-				})
-;
-	}
-	
-	public static Stream<FlatAccountEntryDetail> fetchFlatByLines(AONContext ctx
-			, AccountEntryDetailFilter filter
-			, AccountEntryOrder orderBy
-			, int offset, int limit, IDAOCallback callback) {
-		return ctx.getDslContext()
-				.selectDistinct(ACCOUNT_ENTRY.ID)
-					.from(ACCOUNT_ENTRY)
-					.join(ACCOUNT_ENTRY_DETAIL).on(ACCOUNT_ENTRY.ID.eq(ACCOUNT_ENTRY_DETAIL.ACCOUNT_ENTRY))
-					.where(ACCOUNT_ENTRY_DETAIL_PROPERTIES.getConditions(filter))
-					.orderBy(orderBy.getFields())
-					.limit(offset,limit)
-					.fetch()
-					.stream()
-					.onClose(new Runnable() {
-						@Override
-						public void run() {
-							if (callback != null) {
-								callback.onFinish();
-							}
-						}
-					})
-					.map (rec -> new FlatAccountEntryDetail().setEntryId(rec.getValue(ACCOUNT_ENTRY.ID)))
-					.flatMap(flat -> fetchFlat(ctx
-							, ACCOUNT_ENTRY_PROPERTIES.getConditions(p -> p.getDomainProperty().eq(ctx.getDomainId()).and(p.getIdProperty().eq(flat.getEntryId() ) ))
-							, orderBy
-							, 0
-							, Integer.MAX_VALUE
-							, new IDAOCallback() { @Override public void onFinish() {} } )
-								)
-				;
-	}
-	
-	public static Stream<FlatAccountEntryDetail> fetchFlat(AONContext ctx, AccountEntryParams params, int offset, int limit) {
-		Condition[] conditions = AccountEntryHandler.ACCOUNT_ENTRY_DETAIL_PROPERTIES.getConditions(
-				p -> AccountEntryUtils.getFilterByLines(ctx,p, params)
-		);
-		return fetchFlat(ctx
-				,conditions
-				,AccountEntryOrder.safeEnum(params.getOrder())
-				,offset, limit, null
-				);
-	}
-
-	private static Stream<FlatAccountEntryDetail> fetchFlat(AONContext ctx
-			, Condition[] conditions
-			, AccountEntryOrder orderBy
-			, int offset, int limit, IDAOCallback callback) {
-		ctx.checkRead();
-		return  ctx.getDslContext()
-			.select(ACCOUNT_ENTRY.ID,ACCOUNT_ENTRY.DOMAIN,ACCOUNT_ENTRY.ACCOUNT_PERIOD
-					,ACCOUNT_PERIOD.NAME,ACCOUNT_ENTRY.ENTRY_DATE,ACCOUNT_ENTRY.ENTRY_TYPE
-					,ACCOUNT_ENTRY.ACTIVITY,ACCOUNT_ENTRY.JOURNAL,ACCOUNT_ENTRY.SECURITY_LEVEL
-					,ACCOUNT_ENTRY.COMMENTS
-					,ACCOUNT_ENTRY.CREATION_USER,ACCOUNT_ENTRY.CREATION_DATE
-					,ACCOUNT_ENTRY.MODIFICATION_USER,ACCOUNT_ENTRY.MODIFICATION_DATE
-					,ACCOUNT_ENTRY_DETAIL.ID,ACCOUNT_ENTRY_DETAIL.ACCOUNT,DET_ACCOUNT.CODE
-					,DET_ACCOUNT.DESCRIPTION,ACCOUNT_ENTRY_DETAIL.CONCEPT
-					,ACCOUNT_ENTRY_DETAIL.DEBIT,ACCOUNT_ENTRY_DETAIL.CREDIT
-					,ACCOUNT_ENTRY_DETAIL.BALANCING_ACCOUNT,BAL_ACCOUNT.CODE,BAL_ACCOUNT.DESCRIPTION
-					,ACCOUNT_ENTRY_DETAIL.DOCUMENT_NUMBER
-					,ENTERPRISE_ACTIVITY.DESCRIPTION)
-				.from(ACCOUNT_ENTRY)
-				.innerJoin(ACCOUNT_PERIOD).on(ACCOUNT_ENTRY.ACCOUNT_PERIOD.eq(ACCOUNT_PERIOD.ID))
-				.innerJoin(ACCOUNT_ENTRY_DETAIL).on(ACCOUNT_ENTRY.ID.eq(ACCOUNT_ENTRY_DETAIL.ACCOUNT_ENTRY))
-				.innerJoin(DET_ACCOUNT).on(DET_ACCOUNT.ID.eq(ACCOUNT_ENTRY_DETAIL.ACCOUNT))
-				.leftOuterJoin(BAL_ACCOUNT).on(BAL_ACCOUNT.ID.eq(ACCOUNT_ENTRY_DETAIL.BALANCING_ACCOUNT))
-				.leftOuterJoin(ENTERPRISE_ACTIVITY).on(ENTERPRISE_ACTIVITY.ID.equal(ACCOUNT_ENTRY.ACTIVITY))
-				.where(conditions)
-				.orderBy(AccountEntryFlatOrder.safeEnum( orderBy.ordinal() ).getFields())
-				.limit(offset,limit)
-				.fetch()
- 				.stream()
-				.map( record -> new FlatAccountEntryDetail( )
-						.setEntryId(record.getValue(ACCOUNT_ENTRY.ID))
-						.setEntryDomain(record.getValue(ACCOUNT_ENTRY.DOMAIN))
-						.setEntryPperiod(record.getValue(ACCOUNT_ENTRY.ACCOUNT_PERIOD))
-						.setEntryPeriodName(record.getValue(ACCOUNT_PERIOD.NAME))
-						.setEntryDate(record.getValue(ACCOUNT_ENTRY.ENTRY_DATE))
-						.setEntryType(AccountEntryType.safeValueOf( record.getValue(ACCOUNT_ENTRY.ENTRY_TYPE)))
-						.setActivity(record.getValue(ACCOUNT_ENTRY.ACTIVITY))
-						.setActivityName(record.getValue(ENTERPRISE_ACTIVITY.DESCRIPTION))
-						.setJournal(record.getValue(ACCOUNT_ENTRY.JOURNAL))
-						.setComments(record.getValue(ACCOUNT_ENTRY.COMMENTS))
-						.setEntrySecurityLevel(SecurityLevel.safeValueOf(record.getValue(ACCOUNT_ENTRY.SECURITY_LEVEL)))
-						.setEntryCreationUser(record.getValue(ACCOUNT_ENTRY.CREATION_USER))
-						.setEntryCreationDate(record.getValue(ACCOUNT_ENTRY.CREATION_DATE))
-						.setEntryModificationUser(record.getValue(ACCOUNT_ENTRY.MODIFICATION_USER))
-						.setEntryModificationDate(record.getValue(ACCOUNT_ENTRY.MODIFICATION_DATE))
-						.setDetailId(record.getValue(ACCOUNT_ENTRY_DETAIL.ID) )
-						.setAccount(record.getValue(ACCOUNT_ENTRY_DETAIL.ACCOUNT))
-						.setAccountCode(record.getValue(DET_ACCOUNT.CODE))
-						.setAccountDescription(record.getValue(DET_ACCOUNT.DESCRIPTION))
-						.setConcept(record.getValue(ACCOUNT_ENTRY_DETAIL.CONCEPT))
-						.setDebit(record.getValue(ACCOUNT_ENTRY_DETAIL.DEBIT))
-						.setCredit(record.getValue(ACCOUNT_ENTRY_DETAIL.CREDIT))
-						.setBalancingAccount(record.getValue(ACCOUNT_ENTRY_DETAIL.BALANCING_ACCOUNT))
-						.setBalancingAccountCode(record.getValue(BAL_ACCOUNT.CODE))
-						.setBalancingAccountDescription(record.getValue(BAL_ACCOUNT.DESCRIPTION))
-						.setDocumentNumber(record.getValue(ACCOUNT_ENTRY_DETAIL.DOCUMENT_NUMBER))
-					)
-			;
-	}
-
 	public static Stream<AccountEntry> fetchByLines(AONContext ctx
 			, AccountEntryDetailFilter filter
 			, int offset
@@ -623,177 +842,6 @@ class AccountEntryHandler {
 				putAccountBalance(map,type,account, debit,credit);
 			});
 		return map;
-	}
-
-	public static void delete(AONContext ctx, Integer id) {
-		ctx.checkWrite();
-		AccountEntry entry = getAccountEntry(ctx, id);
-		if (entry == null) throw new AonCoreException(AonError.ACCOUNT_ENTRY_NOT_FOUND.getMessage());;
-		AccountEntryValidation.validateRemove(ctx, entry);
-		beforeRemove(ctx,entry);
-		// Se borran las lineas
-		int count = ctx.getDslContext()
-			.delete(ACCOUNT_ENTRY_DETAIL)
-			.where(ACCOUNT_ENTRY_DETAIL.ACCOUNT_ENTRY.equal(id))
-			.execute();
-		ctx.log().debug("DELETE ACCOUNT_ENTRY detalles del asiento: {0} ({1} filas)",id,count);
-		// Se borra la cabecera
-		count = ctx.getDslContext()
-			.delete(ACCOUNT_ENTRY)
-			.where(ACCOUNT_ENTRY.ID.equal(id))
-			.execute();
-		ctx.log().debug("DELETE ACCOUNT_ENTRY asiento: {0} ({1} filas)",id,count);
-		afterRemove(ctx, entry);
-	}
-
-	private static void beforeRemove(final AONContext ctx,final AccountEntry entry) {
-		entry.getEntryType().visit(entry, new AccountEntryTypeVisitorAdapter() {
-			
-			@Override
-			public void visitTax(AccountEntry entry) {
-				FiscalModelDAO.unrecord(ctx, entry.getId());
-			}
-			@Override
-			public void visitReturnedPayment(AccountEntry entry) {
-				removeFinance(entry);
-			}
-			
-			@Override
-			public void visitReturnedCollection(AccountEntry entry) {
-				removeFinance(entry);
-			}
-			
-			@Override
-			public void visitCollection(AccountEntry entry) {
-				removeFinance(entry);
-			}
-			
-			@Override
-			public void visitPayment(AccountEntry entry) {
-				removeFinance(entry);
-			}
-			@Override
-			public void visitFinance(AccountEntry entry) {
-				removeFinance(entry);
-			}
-
-			@Override
-			public void visitLeasingFee(AccountEntry entry) {
-				throw new AonCoreException(AonError.ACCOUNT_ENTRY_AUTOMATIC_ENTRY_DELETE.getMessage());
-			}
-			
-			@Override
-			public void visitLeasing(AccountEntry entry) {
-				throw new AonCoreException(AonError.ACCOUNT_ENTRY_AUTOMATIC_ENTRY_DELETE.getMessage());
-			}
-			
-			@Override
-			public void visitInvestmentInvoice(AccountEntry entry) {
-				throw new AonCoreException(AonError.ACCOUNT_ENTRY_AUTOMATIC_ENTRY_DELETE.getMessage());
-			}
-			
-			
-			@Override
-			public void visitAmortization(AccountEntry entry) {
-				throw new AonCoreException(AonError.ACCOUNT_ENTRY_AUTOMATIC_ENTRY_DELETE.getMessage());
-			}
-			@Override
-			public void visitExpenseInvoice(AccountEntry entry) {
-				removeInvoice(entry);
-			}
-			@Override
-			public void visitSalesInvoice(AccountEntry entry) {
-				removeInvoice(entry);
-			}
-			@Override
-			public void visitPurchaseInvoice(AccountEntry entry) {
-				removeInvoice(entry);
-			}
-
-			private void removeFinance(AccountEntry entry) {
-				FinanceEntryDAO.deleteAccountEntryFinanceTrackings(ctx, entry.getId());
-			}
-
-			
-			private void removeInvoice(AccountEntry entry) {
-				Integer invoiceId = ctx.getDslContext()
-						.select( ACCOUNT_ENTRY_INVOICE.INVOICE )
-						.from( ACCOUNT_ENTRY_INVOICE )
-						.where(ACCOUNT_ENTRY_INVOICE.ACCOUNT_ENTRY.eq(entry.getId()))
-						.and(ACCOUNT_ENTRY_INVOICE.DOMAIN.eq(ctx.getDomainId()))
-						.fetch()
-						.stream()
-						.mapToInt(rec -> rec.getValue(ACCOUNT_ENTRY_INVOICE.INVOICE))
-						.findFirst()
-						.orElse( Integer.MIN_VALUE );
-				if (invoiceId != null && invoiceId != Integer.MIN_VALUE) {
-					int count = ctx.getDslContext()
-						.delete(ACCOUNT_ENTRY_INVOICE)
-						.where(ACCOUNT_ENTRY_INVOICE.ACCOUNT_ENTRY.equal(entry.getId()))
-						.execute();
-					ctx.log().debug("DELETE ACCOUNT_ENTRY_INVOICE ({0} filas.)",count);
-					InvoiceDAO.delete(ctx, invoiceId);
-				}
-			}
-		});	
-	}
-
-	private static void afterRemove(final AONContext ctx,final AccountEntry entry) {
-		entry.getEntryType().visit(entry, new AccountEntryTypeVisitorAdapter() {
-			
-			@Override
-			public void visitOpening(AccountEntry entry) {
-				if (AccountEntryHandler.existsAnyEntry(ctx, entry.getPeriod(),AccountEntryType.OPENING)) {
-					// Si después de borrar apertura, existe otro apertura, se mantiene 
-					// el estado (o se modifica si era errroneo).
-					AccountPeriodDAO.open(ctx,entry.getPeriod());
-				} else {
-					// Si después de borrar apertura, no existe otro apertura, se activa.
-					AccountPeriodDAO.active(ctx,entry.getPeriod());
-				}
-			}
-			
-			@Override
-			public void visitClosing(AccountEntry entry) {
-				if (AccountEntryHandler.existsAnyEntry(ctx, entry.getPeriod(),AccountEntryType.CLOSING)) {
-					// Si después de borrar cierre, existe otro cierre, se mantiene el estado.
-					AccountPeriodDAO.close(ctx,entry.getPeriod());
-				} else if (AccountEntryHandler.existsAnyEntry(ctx, entry.getPeriod(),AccountEntryType.OPERATING)) {
-					// Si después de borrar cierre, existe explotación.
-					AccountPeriodDAO.operating(ctx,entry.getPeriod());
-				} else if (AccountEntryHandler.existsAnyEntry(ctx, entry.getPeriod(),AccountEntryType.OPENING)) {
-					// Si después de borrar cierre, no existe explotación y sí apertura.
-					AccountPeriodDAO.open(ctx,entry.getPeriod());
-				} else {
-					// Si después de borrar cierre, no existe explotación ni apertura. Se activa.
-					AccountPeriodDAO.active(ctx,entry.getPeriod());
-				}
-			}
-			
-			@Override
-			public void visitOperating(AccountEntry entry) {
-				if (AccountEntryHandler.existsAnyEntry(ctx, entry.getPeriod(),AccountEntryType.OPERATING)) {
-					// Si después de borrar explotación, existe otro explotación, se mantiene el estado.
-					AccountPeriodDAO.operating(ctx,entry.getPeriod());
-				} else if (AccountEntryHandler.existsAnyEntry(ctx, entry.getPeriod(),AccountEntryType.OPENING)) {
-					// Si después de borrar explotación, existe apertura.
-					AccountPeriodDAO.open(ctx,entry.getPeriod());
-				} else {
-					// Si después de borrar cierre, no existe apertura.
-					AccountPeriodDAO.active(ctx,entry.getPeriod());
-				}
-			}
-		});
-	}
-
-	public static boolean existsAnyEntry(AONContext ctx, Integer period, AccountEntryType accountEntryType) {
-		ctx.checkRead();
-		Select<Record> select = ctx.getDslContext()
-				.select()
-				.from(ACCOUNT_ENTRY)
-				.where(ACCOUNT_ENTRY.ACCOUNT_PERIOD.equal(period))
-				.and(ACCOUNT_ENTRY.ENTRY_TYPE.equal( AonEnumUtils.getByte( accountEntryType)));
-		return ctx.getDslContext().fetchCount(select) > 0;
 	}
 
 	private static void putAccountBalance(Map<String, AccountBalance> map,int type, String account,double debit, double credit) {
@@ -1338,12 +1386,11 @@ class AccountEntryHandler {
 		/**
 		 * El periodod del asiento es un dato obligatorio.
 		 */
-		private static final Consumer<Context> EMPTY_PERIOD = c -> {
+		private static final Consumer<Context> EMPTY_PERIOD = c -> 
 			c.entry.getPeriod().ifPresentOrElse( 
 				p -> AccountPeriodHandler.get(c.ctx,c.domain, p.getId())
 					.orElseThrow(() -> new AonCoreException(AonError.ACCOUNT_ENTRY_EMPTY_PERIOD.getMessage()))
 				, () -> new AonCoreException(AonError.ACCOUNT_ENTRY_EMPTY_PERIOD.getMessage()));
-		};
 		
 		/**
 		 * El Tipo de asiento no puede ser null.
@@ -1409,7 +1456,7 @@ class AccountEntryHandler {
 					empty.setValue( false );
 				}
 			);
-			if (empty.getValue()) {
+			if (empty.getValue().booleanValue()) {
 				throw new AonCoreException(AonError.ACCOUNT_ENTRY_EMPTY_DETAILS.getMessage());
 			}
 			
@@ -1434,10 +1481,11 @@ class AccountEntryHandler {
 				throw new AonCoreException(AonError.ACCOUNT_ENTRY_OVERFLOW_CONCEPT.getMessage());
 		};
 
-		private static void validateAccount(AONContext ctx, int domain, Optional<Account> acc) {
+		private static void validateAccount(DetailContext c, Optional<Account> acc) {
 			Integer accountId = acc.map(Account::getId)
-				.orElseThrow( () -> new AonCoreException(AonError.ACCOUNT_ENTRY_EMPTY_ACCOUNT.getMessage()));
-			Account account = AccountHandler.get(ctx, domain, accountId)
+				.orElseThrow( () -> new AonCoreException(AonError.ACCOUNT_ENTRY_EMPTY_ACCOUNT.format(c.detail.getLine()
+						,c.detail.getConcept(),c.detail.getDebit(),c.detail.getCredit())));
+			Account account = AccountHandler.get(c.ctx, c.domain, accountId)
 				.orElseThrow( () -> new AonCoreException(AonError.ACCOUNT_ENTRY_ACCOUNT_NOT_FOUND
 								.format(Objects.toString(accountId),"","")));
 			if (!account.isActive())
@@ -1455,9 +1503,8 @@ class AccountEntryHandler {
 		 * La cuenta contable debe ser de último nivel.
 		 * 
 		 */
-		private static final Consumer<DetailContext> VALID_ACCOUNT = c -> {
-			validateAccount(c.ctx, c.domain, c.detail.getAccount());
-		};
+		private static final Consumer<DetailContext> VALID_ACCOUNT = c -> 
+			validateAccount(c, c.detail.getAccount());
 
 		/**
 		 * La contrapartida debe ser una cuenta válida.
@@ -1468,7 +1515,7 @@ class AccountEntryHandler {
 		 */
 		private static final Consumer<DetailContext> VALID_BALANCING_ACCOUNT = c -> {
 			if (c.detail.getBalancingAccount().isPresent()) {
-				validateAccount(c.ctx, c.domain, c.detail.getBalancingAccount());
+				validateAccount(c, c.detail.getBalancingAccount());
 			}
 		};
 
@@ -1496,62 +1543,177 @@ class AccountEntryHandler {
 		}
 
 
-//		/**
-//		 * La cuenta contable del apunte es un dato obligatorio.
-//		 */
-//		private static final Consumer<Context> PERIOD_DELETION_ENABLED = (entry,ctx) -> {
-//			if (entry.getPeriodStatus() == null || !entry.getPeriodStatus().isActive()) {
-//				if (entry.getPeriodStatus() == AccountPeriodStatus.INACTIVE)
-//					throw new AonCoreException(AonError.ACCOUNT_ENTRY_PERIOD_INACTIVE.format(entry.getPeriodName()));
-//				if (entry.getPeriodStatus() == AccountPeriodStatus.OPERATING)
-//					if (entry.getEntryType() != AccountEntryType.OPERATING) {
-//						throw new AonCoreException(AonError.ACCOUNT_ENTRY_PERIOD_OPERATING.format(entry.getPeriodName()));
-//					}
-//				if (entry.getPeriodStatus() == AccountPeriodStatus.CLOSED)
-//					if (entry.getEntryType() != AccountEntryType.CLOSING) {
-//						throw new AonCoreException(AonError.ACCOUNT_ENTRY_PERIOD_CLOSING.format(entry.getPeriodName()));
-//					}
-//			}
-//		};
-//
-//		/**
-//		 * La cuenta contable del apunte es un dato obligatorio.
-//		 */
-//		private static final Consumer<Context> CHECK_BANK_STATEMENT_BIND = (entry,ctx) -> {
-//			Integer bankStatement = ctx.getDslContext().select(ACCOUNT_ENTRY_BANK_STATEMENT.BANK_STATEMENT)
-//					.from(ACCOUNT_ENTRY_BANK_STATEMENT)
-//					.where(ACCOUNT_ENTRY_BANK_STATEMENT.ACCOUNT_ENTRY.eq(entry.getId()))
-//					.fetch()
-//					.stream()
-//					.map( rec -> rec.getValue(ACCOUNT_ENTRY_BANK_STATEMENT.BANK_STATEMENT))
-//					.findFirst()
-//					.orElse(null);
-//			if (bankStatement != null) {
-//				Integer lotNumber = ctx.getDslContext()
-//					.select( BANK_STATEMENT.LOT_NUMBER )
-//					.from(BANK_STATEMENT)
-//					.where(BANK_STATEMENT.ID.eq(bankStatement))
-//					.fetch()
-//					.stream()
-//					.map( rec -> rec.getValue(BANK_STATEMENT.LOT_NUMBER))
-//					.findFirst()
-//					.orElse(null);
-//				String msg = AonError.ACCOUNT_ENTRY_AUTOMATIC_ENTRY_DELETE.getMessage() + " " + AonError.ACCOUNT_ENTRY_BANK_STATEMENT_BOUND.getMessage();
-//				if (lotNumber != null) {
-//					msg =  msg + " [Lote: " + lotNumber + "]";
-//				}
-//				throw new AonCoreException(msg);
-//			}
-//		};
-//		
-//		
-//		public static void validateRemove(AONContext ctx, AccountEntry entry) {
-//				
-//			PERIOD_DELETION_ENABLED
-//				.andThen( CHECK_BANK_STATEMENT_BIND) 
-//				.accept(entry, ctx);
-//			
-//		}
+		/**
+		 * La cuenta contable del apunte es un dato obligatorio.
+		 */
+		private static final Consumer<DeleteContext> PERIOD_DELETION_ENABLED = dc -> {
+			AccountPeriod period =  dc.entry.getPeriod()
+				.orElseThrow( () -> new AonCoreException(AonError.ACCOUNT_ENTRY_EMPTY_PERIOD.getMessage()));
+			int domain = dc.entry.getDomain();
+			if (domain == 0) {
+				throw new AonCoreException(AonError.ACCOUNT_ENTRY_WRONG_DOMAIN.format(period.getName()));
+			}
+			AccountPeriod savedPeriod = AccountPeriodHandler.get(dc.ctx, domain, period.getId())
+				.orElseThrow( () -> new AonCoreException(AonError.ACCOUNT_ENTRY_EMPTY_PERIOD.getMessage()));
+			
+			if ( !savedPeriod.isActive()) {
+				savedPeriod.getStatus().visit( new AccountPeriodStatus.AccountPeriodStatusVisitor<Void>() {
+
+					@Override public Void visitActive()  {return null;}
+					@Override public Void visitOpening() {return null;}
+					@Override
+					public Void visitInactive() {
+						throw new AonCoreException(AonError.ACCOUNT_ENTRY_PERIOD_INACTIVE.format(savedPeriod.getName()));
+					}
+					@Override
+					public Void visitOperating() {
+						if (dc.entry.getEntryType() != AccountEntryType.OPERATING) {
+							throw new AonCoreException(AonError.ACCOUNT_ENTRY_PERIOD_OPERATING.format(savedPeriod.getName()));		
+						}
+						return null;
+					}
+					@Override
+					public Void visitClosed() {
+						if (dc.entry.getEntryType() != AccountEntryType.CLOSING) {
+							throw new AonCoreException(AonError.ACCOUNT_ENTRY_PERIOD_CLOSING.format(savedPeriod.getName()));		
+						}
+						return null;
+					}
+				});
+			}
+		};
+
+		/**
+		 * La cuenta contable del apunte es un dato obligatorio.
+		 */
+		private static final Consumer<DeleteContext> CHECK_BANK_STATEMENT_BIND = dc -> {
+			Integer bankStatement = dc.ctx.getDslContext().select(ACCOUNT_ENTRY_BANK_STATEMENT.BANK_STATEMENT)
+					.from(ACCOUNT_ENTRY_BANK_STATEMENT)
+					.where(ACCOUNT_ENTRY_BANK_STATEMENT.ACCOUNT_ENTRY.eq(dc.entry.getId()))
+					.fetch()
+					.stream()
+					.map( rec -> rec.getValue(ACCOUNT_ENTRY_BANK_STATEMENT.BANK_STATEMENT))
+					.findFirst()
+					.orElse(null);
+			if (bankStatement != null) {
+				Integer lotNumber = dc.ctx.getDslContext()
+					.select( BANK_STATEMENT.LOT_NUMBER )
+					.from(BANK_STATEMENT)
+					.where(BANK_STATEMENT.ID.eq(bankStatement))
+					.fetch()
+					.stream()
+					.map( rec -> rec.getValue(BANK_STATEMENT.LOT_NUMBER))
+					.findFirst()
+					.orElse(null);
+				String msg = AonError.ACCOUNT_ENTRY_AUTOMATIC_ENTRY_DELETE.getMessage() + " " + AonError.ACCOUNT_ENTRY_BANK_STATEMENT_BOUND.getMessage();
+				if (lotNumber != null) {
+					msg =  msg + " [Lote: " + lotNumber + "]";
+				}
+				throw new AonCoreException(msg);
+			}
+		};
+		
+
+		private record DeleteContext ( AONContext ctx, int domain, AccountEntry entry) {}
+		
+		public static void validateDeletion(AONContext ctx, int domain, AccountEntry entry) {
+			PERIOD_DELETION_ENABLED
+				.andThen( CHECK_BANK_STATEMENT_BIND) 
+				.accept( new DeleteContext(ctx,domain,entry) );
+		}
 
 	}
+	
+	
+	private static Filter getFilterByHeader(AONContext ctx, int domain, AccountEntryProperties p, AccountEntryParams params) {
+		MutableObject<Filter> m = new MutableObject<>(p.getDomainProperty().eq(params.getDomain())); 
+		m.setValue( params.getPeriod()
+			.filter(i -> !AonMathUtils.isNullOrZero(i))
+			.map( i -> m.getValue().and(p.getAccountPeriodProperty().eq(i)))
+			.orElse(m.getValue()));
+		m.setValue( params.getAccountEntryId()
+			.filter(i -> !AonMathUtils.isNullOrZero(i))
+			.map( i -> m.getValue().and(p.getIdProperty().eq(i)))
+			.orElse(m.getValue()));
+		m.setValue( params.getJournal()
+			.filter(i -> !AonMathUtils.isNullOrZero(i))
+			.map( i -> m.getValue().and(p.getJournalProperty().eq(i)))
+			.orElse(m.getValue()));
+		m.setValue( params.getActivity()
+			.filter(i -> !AonMathUtils.isNullOrZero(i))
+			.map( i -> i == -1
+				?m.getValue().and(p.getActivityProperty().isNull())
+				:m.getValue().and(p.getActivityProperty().eq(i)))
+			.orElse(m.getValue()));
+		m.setValue( params.getFromDate()
+			.map( d -> m.getValue().and(p.getEntryDateProperty().ge(d)))
+			.orElse(m.getValue()));
+		m.setValue( params.getToDate()
+			.map( d -> m.getValue().and(p.getEntryDateProperty().le(d)))
+			.orElse(m.getValue()));
+		m.setValue( params.getType()
+			.map( t -> m.getValue().and(p.getEntryTypeProperty().eq(t.value())))
+			.orElse(m.getValue()));
+		
+		if (!ctx.hasConfidentialityRole( domain)) {
+			m.setValue( m.getValue().and(p.getConfidentialProperty().eq(SecurityLevel.OFFICIAL.value())));
+		} else {
+			m.setValue( params.getSecurityLevel()
+				.map( t -> m.getValue().and(p.getConfidentialProperty().eq(t.value())))
+				.orElse(m.getValue()));
+		}
+		m.setValue( params.getComments()
+			.filter(AonStringUtils::isNotBlank)
+			.map( s -> m.getValue().and(p.getCommentsProperty().like(AonStringUtils.SQLlike(s))))
+			.orElse(m.getValue()));
+		m.setValue( params.getFromCreationDate()
+			.map( d -> m.getValue().and(p.getCreationDateProperty().ge(new java.sql.Timestamp(d.getTime()))))
+			.orElse(m.getValue()));
+		m.setValue( params.getToCreationDate()
+			.map( d -> m.getValue().and(p.getCreationDateProperty().le(new java.sql.Timestamp(d.getTime()))))
+			.orElse(m.getValue()));
+		m.setValue( params.getCreationUser()
+			.filter(AonStringUtils::isNotBlank)
+			.map( s -> m.getValue().and(p.getCreationUserProperty().like(AonStringUtils.SQLlike(s))))
+			.orElse(m.getValue()));
+		m.setValue( params.getFromModificationDate()
+			.map( d -> m.getValue().and(p.getModificationDateProperty().ge(new java.sql.Timestamp(d.getTime()))))
+			.orElse(m.getValue()));
+		m.setValue( params.getToModificationDate()
+			.map( d -> m.getValue().and(p.getModificationDateProperty().le(new java.sql.Timestamp(d.getTime()))))
+			.orElse(m.getValue()));
+		m.setValue( params.getModificationUser()
+			.filter(AonStringUtils::isNotBlank)
+			.map( s -> m.getValue().and(p.getModificationUserProperty().like(AonStringUtils.SQLlike(s))))
+			.orElse(m.getValue()));
+		return m.getValue();
+	}
+
+	private static Filter getFilterByLines(AONContext ctx, int domain, AccountEntryDetailProperties p, AccountEntryParams params) {
+		MutableObject<Filter> m = new MutableObject<>(getFilterByHeader(ctx, domain, p, params)); 
+		m.setValue( params.getAccount()
+			.filter(i -> !AonMathUtils.isNullOrZero(i))
+			.map( i -> m.getValue().and(p.getAccountProperty().eq(i).or(p.getBalancingAccountProperty().eq(i))))
+			.orElse(m.getValue()));
+		m.setValue( params.getConcept()
+			.filter(AonStringUtils::isNotBlank)
+			.map( s -> m.getValue().and(p.getConceptProperty().like(AonStringUtils.SQLlike(s))))
+			.orElse(m.getValue()));
+		m.setValue( params.getDebit()
+			.filter(i -> i != null )
+			.filter(i -> !AonMathUtils.isNotZero(i))
+			.map( i -> m.getValue().and(p.getDebitProperty().eq(i)))
+			.orElse(m.getValue()));
+		m.setValue( params.getCredit()
+			.filter(i -> i != null )
+			.filter(i -> !AonMathUtils.isNotZero(i))
+			.map( i -> m.getValue().and(p.getCreditProperty().eq(i)))
+			.orElse(m.getValue()));
+		m.setValue( params.getDocument()
+			.filter(AonStringUtils::isNotBlank)
+			.map( s -> m.getValue().and(p.getDocumentNumberProperty().like(AonStringUtils.SQLlike(s))))
+			.orElse(m.getValue()));
+		return m.getValue();
+	}
+	
 }

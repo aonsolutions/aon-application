@@ -6,22 +6,9 @@ import static com.tngtech.archunit.core.domain.properties.HasModifiers.Predicate
 import static com.tngtech.archunit.lang.conditions.ArchConditions.have;
 import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.classes;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Set;
-import java.util.stream.Collectors;
-
-import org.junit.jupiter.api.Disabled;
-
-import com.tngtech.archunit.core.domain.JavaClass;
 import com.tngtech.archunit.core.domain.JavaClasses;
-import com.tngtech.archunit.core.importer.ClassFileImporter;
-import com.tngtech.archunit.core.importer.ImportOption.OnlyIncludeTests;
 import com.tngtech.archunit.junit.AnalyzeClasses;
 import com.tngtech.archunit.junit.ArchTest;
-import com.tngtech.archunit.lang.ArchCondition;
-import com.tngtech.archunit.lang.ConditionEvents;
-import com.tngtech.archunit.lang.SimpleConditionEvent;
 
 @AnalyzeClasses(packages = {
 	"net.aonsolutions.occam.impl.handler"
@@ -60,7 +47,8 @@ class ArchUnitTests {
 					javaClass.getMethods().stream().filter( modifier(PUBLIC) ).count() == 0)
 			)
 		)
-        .check(importedClasses);		
+        .check(importedClasses)
+		;
 	}
 	
 //	@ArchTest

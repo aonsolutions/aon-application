@@ -1,12 +1,16 @@
 package net.aonsolutions.occam.impl.handler;
 
+import static com.esferalia.aon.jooq.tables.Account.ACCOUNT;
 import static com.esferalia.aon.jooq.tables.InvoiceTax.INVOICE_TAX;
+import static com.esferalia.aon.jooq.tables.InvoiceTaxAccount.INVOICE_TAX_ACCOUNT;
 
+import java.util.Optional;
 import java.util.stream.Stream;
 
 import org.jooq.Record;
 import org.jooq.SelectJoinStep;
 
+import net.aonsolutions.occam.api.model.Account;
 import net.aonsolutions.occam.api.model.InvoiceDetail;
 import net.aonsolutions.occam.api.model.InvoiceTax;
 import net.aonsolutions.occam.api.model.type.TaxType;
@@ -32,7 +36,19 @@ class InvoiceTaxHandler {
 			.stream()
 			.map(new InvoiceTaxFiller());
 	}
-	
+
+	static Optional<Account> getInvoiceTaxAccount(AONContext ctx, Integer invoiceTaxId) {
+		return ctx.getDslContext()
+				.select()
+				.from(ACCOUNT)
+				.join(INVOICE_TAX_ACCOUNT).on(INVOICE_TAX_ACCOUNT.ACCOUNT.eq(ACCOUNT.ID))
+				.where(INVOICE_TAX_ACCOUNT.INVOICE_TAX.eq(invoiceTaxId)).limit(1)
+				.fetch()
+				.stream()
+				.map(new AccountHandler.AccountFiller())
+				.findFirst();
+	}
+
 //	static InvoiceDetail save(AONContext ctx, Invoice invoice, InvoiceDetail detail) {
 //		AonCollectionUtils.stream(detail.getInvoiceTaxes())
 //			.forEach(invoiceTax -> save(ctx, invoice, detail, invoiceTax ));

@@ -29,6 +29,7 @@ import com.mchange.v2.c3p0.DataSources;
 import net.aonsolutions.core.pool.AonConnectionException;
 import net.aonsolutions.core.pool.AonDataSource;
 import net.aonsolutions.core.pool.ConnectionInfo;
+import net.aonsolutions.occam.api.model.AccountPeriod;
 import net.aonsolutions.occam.api.model.Activity;
 import net.aonsolutions.occam.api.model.ApplicationParameters;
 import net.aonsolutions.occam.api.model.CompanyFull;
@@ -40,7 +41,7 @@ import net.aonsolutions.occam.api.model.Scope;
 import net.aonsolutions.occam.api.model.TbaiConfiguration;
 import net.aonsolutions.occam.api.model.User;
 import net.aonsolutions.occam.api.model.Workplace;
-import net.aonsolutions.occam.impl.handler.CONFIGURATION;
+import net.aonsolutions.occam.impl.handler.ConfigurationBridge;
 
 public class AONContext {
 	
@@ -273,31 +274,33 @@ public class AONContext {
 	private Configuration configuration;
 	private void checkConfiguration(int domain) {
 		if ( configuration == null) {
-			configuration = CONFIGURATION.getConfiguration( this, domain);
+			System.out.println( "CONFIGURATION SEARCH [NULL]");
+			configuration = ConfigurationBridge.getConfiguration( this, domain);
 		} else if (AonNumberUtils.equals(configuration.getDomainId(), domain) ) {
 			// Ok. Configuration of the same domain. 	
 		} else {
 			// Saved configuration is not from the same domina. New one is created.
-			configuration = CONFIGURATION.getConfiguration( this, domain);
+			System.out.println( "CONFIGURATION SEARCH [CHANGED]");
+			configuration = ConfigurationBridge.getConfiguration( this, domain);
 			log().warn( "*** New AON CONFIGURATION INSTANTIAIED!!");
 		}
 	}
 	
 	public Domain getDomain( int domain ) {
 		checkConfiguration( domain );
-		return CONFIGURATION.getDomain( this, this.configuration);
+		return ConfigurationBridge.getDomain( this, this.configuration);
 	}
 	public User getCurrentUser( int domain ) {
 		checkConfiguration( domain );
-		return CONFIGURATION.getCurrentUser( this, this.configuration);
+		return ConfigurationBridge.getCurrentUser( this, this.configuration);
 	}
 	public CompanyFull getCompany(int domain) {
 		checkConfiguration( domain );
-		return CONFIGURATION.getCompany( this, this.configuration);
+		return ConfigurationBridge.getCompany( this, this.configuration);
 	}
 	public Stream<Activity> getActivities( int domain ) {
 		checkConfiguration( domain );
-		return CONFIGURATION.getActivities( this, this.configuration);
+		return ConfigurationBridge.getActivities( this, this.configuration);
 	}
 	public Optional<Activity> getDefaultActivity( int domain ) {
 		List<Activity> acts = getActivities(domain).toList();
@@ -309,34 +312,49 @@ public class AONContext {
 	
 	public Optional<Workplace> getDefaultWorkplace(int domain) {
 		checkConfiguration( domain );
-		return CONFIGURATION.getDefaultWorkplace( this, this.configuration);
+		return ConfigurationBridge.getDefaultWorkplace( this, this.configuration);
 	}
 	public Optional<Scope> getDefaultScope( int domain ) {
 		checkConfiguration( domain );
-		return CONFIGURATION.getDefaultScope( this, this.configuration);
+		return ConfigurationBridge.getDefaultScope( this, this.configuration);
+	}
+	public Optional<AccountPeriod> getDefaultAccountPeriod( int domain ) {
+		checkConfiguration( domain );
+		return ConfigurationBridge.getDefaultAccountPeriod( this, this.configuration);
 	}
 	public Integer[] getInheritanceDomainIds(int domain) {
 		checkConfiguration( domain );
-		return CONFIGURATION.getInheritanceDomainIds( this, this.configuration);
+		return ConfigurationBridge.getInheritanceDomainIds( this, this.configuration);
 	}
 	public Integer[] getUserScopes(int domain) {
 		checkConfiguration( domain );
-		return CONFIGURATION.getUserScopes( this, this.configuration);
+		return ConfigurationBridge.getUserScopes( this, this.configuration);
 	}
 
 	public Stream<InvestAsset> getInvestAssets(int domain) {
 		checkConfiguration( domain );
-		return CONFIGURATION.getInvestAssets( this, this.configuration);
+		return ConfigurationBridge.getInvestAssets( this, this.configuration);
 	}
-
+	public void resetApplicationParameters(int domain) {
+		checkConfiguration( domain );
+		configuration.setApplicationParameters ( null );
+	}
 	public ApplicationParameters getApplicationParameters(int domain) {
 		checkConfiguration( domain );
-		return CONFIGURATION.getApplicationParameters( this, this.configuration);
+		return ConfigurationBridge.getApplicationParameters( this, this.configuration);
 	}
 	
 	public TbaiConfiguration getTbaiConfig(int domain) {
 		checkConfiguration( domain );
-		return CONFIGURATION.getTbaiConfiguration( this, this.configuration);
+		return ConfigurationBridge.getTbaiConfiguration( this, this.configuration);
 	}
 
+	public boolean hasConfidentialityRole( int domain ) {
+		checkConfiguration( domain );
+		return ConfigurationBridge.hasConfidentialityRole(this, this.configuration);
+	}
+	public boolean hasAccountignRole( int domain ) {
+		checkConfiguration( domain );
+		return ConfigurationBridge.hasAccountingRole(this, this.configuration);
+	}
 }

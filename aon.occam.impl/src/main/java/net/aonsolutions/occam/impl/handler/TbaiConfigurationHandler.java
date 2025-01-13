@@ -1,5 +1,10 @@
 package net.aonsolutions.occam.impl.handler;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Objects;
+
 import net.aonsolutions.occam.api.model.TbaiConfiguration;
 import net.aonsolutions.occam.api.model.type.Administration;
 import net.aonsolutions.occam.impl.AONContext;
@@ -11,13 +16,25 @@ class TbaiConfigurationHandler {
 	
 	static TbaiConfiguration get(AONContext ctx, int domain) {
 		ctx.checkRead();
+		Date includeDate =  ctx.getApplicationParameters(domain).getTbaiIncludeDate()
+			.filter( Objects::nonNull )
+			.map( op -> {
+				try {
+					return  new SimpleDateFormat("dd/MM/yyyy").parse(op);
+				} catch (ParseException e) {
+					return null;
+				}
+			})
+			.orElse(null);
+
+		
 		return new TbaiConfiguration()
 			.setAdministration( ctx.getApplicationParameters(domain)
 				.getDefaultAdministration()
 				.orElse(Administration.UNKNOWN))
 			.setActive(ctx.getApplicationParameters(domain).isTbaiActive())
 			.setTest(ctx.getApplicationParameters(domain).isTbaiTest())
-			.setIncludeDate(ctx.getApplicationParameters(domain).getTbaiIncludeDate().orElse(null))
+			.setIncludeDate(includeDate)
 			.setRegistryDate(ctx.getApplicationParameters(domain).getTbaiRegistryDate().orElse(null))
 		;
 	}

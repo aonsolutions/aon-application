@@ -41,7 +41,7 @@ import net.aonsolutions.occam.api.model.Domain;
 import net.aonsolutions.occam.api.model.Filter.AccountFilter;
 import net.aonsolutions.occam.api.model.Filter.Property;
 import net.aonsolutions.occam.api.model.Properties.AccountProperties;
-import net.aonsolutions.occam.api.model.metadata.AccountMetadata.AccountMetadataVisitor;
+import net.aonsolutions.occam.api.model.metadata.MetadataVisitor.AccountMetadataVisitor;
 import net.aonsolutions.occam.impl.AONContext;
 
 class AccountHandler {

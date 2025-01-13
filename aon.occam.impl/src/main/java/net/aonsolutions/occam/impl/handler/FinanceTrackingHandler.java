@@ -2,13 +2,15 @@ package net.aonsolutions.occam.impl.handler;
 
 import static com.esferalia.aon.jooq.tables.Account.ACCOUNT;
 import static com.esferalia.aon.jooq.tables.AccountEntryFinanceTracking.ACCOUNT_ENTRY_FINANCE_TRACKING;
-import static com.esferalia.aon.jooq.tables.FinanceTracking.FINANCE_TRACKING;
 import static com.esferalia.aon.jooq.tables.Finance.FINANCE;
+import static com.esferalia.aon.jooq.tables.FinanceTracking.FINANCE_TRACKING;
 import static com.esferalia.aon.jooq.tables.PmTypeDetail.PM_TYPE_DETAIL;
 import static com.esferalia.aon.jooq.tables.Rbank.RBANK;
 
 import java.sql.Timestamp;
+import java.text.MessageFormat;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.stream.Collectors;
 
 import org.jooq.Record;
@@ -24,6 +26,7 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 import net.aonsolutions.occam.api.model.AccountEntry;
 import net.aonsolutions.occam.api.model.Finance;
 import net.aonsolutions.occam.api.model.FinanceTracking;
+import net.aonsolutions.occam.api.model.FiscalModel;
 import net.aonsolutions.occam.api.model.PayMethodTypeDetail;
 import net.aonsolutions.occam.api.model.type.FinanceStatus;
 import net.aonsolutions.occam.api.model.type.FinanceTrackingType;
@@ -137,52 +140,52 @@ class FinanceTrackingHandler {
 		ctx.log().debug("UPDATE FINANCE  ("+i+") id: " + financeId + " status: " + financeStatus.getDescription());
 	}
 
-//	static void delete(AONContext ctx, FinanceTracking tracking) {
-//		if (!isLastTracking(ctx,tracking)) {
-//			throw new AonCoreException(AonError.FINANCE_TRACKING_LATER_TRACKINGS.getMessage());
-//		}
-//		
-//		
-//		List<FiscalModel> models = AlcatrazHandler.isTrackingDeclared(ctx, tracking.getId() );
-//		if (models != null && !models.isEmpty()) {
-//			throw new AonCoreException(AonError.TRACKING_CANT_DELETE_MODEL.format(
-//				models
-//					.stream()
-//					.map( fm -> MessageFormat.format("[Mod. {0}] ",fm.getModelFullName()))
-//					.collect(StringBuilder::new, StringBuilder::append , StringBuilder::append )
-//					.toString()
-//					));
-//		}
-//		
-//		
-//		if (tracking.getBankStatementLink() == null ) {
-//			if (tracking.isRecorded()) {
-//				if (SecurityDAO.getUser(ctx).hasAccountingRole()) {
-//					deleteAccountEntryFinanceTracking(ctx,tracking);
-//				} else {
-//					throw new AonCoreException(AonError.FINANCE_TRACKING_RECORDED.getMessage());		
-//				}
-//			}
-//			int i = ctx.getDslContext()
-//				.delete(FINANCE_TRACKING)
-//				.where(FINANCE_TRACKING.ID.equal(tracking.getId()))
-//				.execute();
-//			ctx.log().debug("DELETE FINANCE_TRACKING  ("+i+") id: " + tracking.getId());
-//			FinanceTracking previuosTracking = getLastTracking(ctx, tracking.getFinance().getId());
-//			FinanceStatus newStatus = previuosTracking == null ? FinanceStatus.PENDING : previuosTracking.getType().getFinanceStatus(); 
-//			updateFinanceStatus(ctx, tracking.getFinance().getId(), newStatus );
-//		} else {
-//			// TODO El movimiento viene de extracto bancario.
-//		}
-//	}
+	static void delete(AONContext ctx, int domain, FinanceTracking tracking) {
+		if (!isLastTracking(ctx,tracking)) {
+			throw new AonCoreException(AonError.FINANCE_TRACKING_LATER_TRACKINGS.getMessage());
+		}
+		
+		
+		List<FiscalModel> models = AlcatrazHandler.isTrackingDeclared(ctx, tracking.getId() );
+		if (models != null && !models.isEmpty()) {
+			throw new AonCoreException(AonError.TRACKING_CANT_DELETE_MODEL.format(
+				models
+					.stream()
+					.map( fm -> MessageFormat.format("[Mod. {0}] ",fm.getModelFullName()))
+					.collect(StringBuilder::new, StringBuilder::append , StringBuilder::append )
+					.toString()
+					));
+		}
+		
+		
+		if (tracking.getBankStatementLink() == null ) {
+			if (tracking.isRecorded()) {
+				if (ctx.hasConfidentialityRole(domain)) {
+					deleteAccountEntryFinanceTracking(ctx,tracking);
+				} else {
+					throw new AonCoreException(AonError.FINANCE_TRACKING_RECORDED.getMessage());		
+				}
+			}
+			int i = ctx.getDslContext()
+				.delete(FINANCE_TRACKING)
+				.where(FINANCE_TRACKING.ID.equal(tracking.getId()))
+				.execute();
+			ctx.log().debug("DELETE FINANCE_TRACKING  ("+i+") id: " + tracking.getId());
+			FinanceTracking previuosTracking = getLastTracking(ctx, tracking.getFinance().getId());
+			FinanceStatus newStatus = previuosTracking == null ? FinanceStatus.PENDING : previuosTracking.getType().getFinanceStatus(); 
+			updateFinanceStatus(ctx, tracking.getFinance().getId(), newStatus );
+		} else {
+			// TODO El movimiento viene de extracto bancario.
+		}
+	}
 	
-//	private static void deleteAccountEntryFinanceTracking(AONContext ctx, FinanceTracking ft) {
-//		int i = ctx.getDslContext()
-//			.delete(ACCOUNT_ENTRY_FINANCE_TRACKING)
-//			.where(ACCOUNT_ENTRY_FINANCE_TRACKING.FINANCE_TRACKING.equal(ft.getId()))
-//			.execute();
-//		ctx.log().debug("DELETE ACCOUNT_ENTRY_FINANCE_TRACKING ("+i+") Tracking: " + ft.getId());
-//	}
+	private static void deleteAccountEntryFinanceTracking(AONContext ctx, FinanceTracking ft) {
+		int i = ctx.getDslContext()
+			.delete(ACCOUNT_ENTRY_FINANCE_TRACKING)
+			.where(ACCOUNT_ENTRY_FINANCE_TRACKING.FINANCE_TRACKING.equal(ft.getId()))
+			.execute();
+		ctx.log().debug("DELETE ACCOUNT_ENTRY_FINANCE_TRACKING ("+i+") Tracking: " + ft.getId());
+	}
 	
 	
 	// -------------------------------------------------------------
@@ -310,7 +313,7 @@ class FinanceTrackingHandler {
 				tracking.setDomain(finance.getDomain())
 				  .setRecorded(false);
 				ctx.log().debug(" \t (only pay) ----- ");
-				Integer trackingId = doPay(ctx, tracking);		
+				Integer trackingId = doPay(ctx, domain, tracking);		
 				return getFinanceTracking(ctx, trackingId);
 			}
 		} catch (Throwable t) {
@@ -321,8 +324,8 @@ class FinanceTrackingHandler {
 		}
 	}
 	
-	private static Integer doPay(AONContext ctx,FinanceTracking tracking) {
-		FinanceValidation.validatePay(ctx, tracking);
+	private static Integer doPay(AONContext ctx, int domain, FinanceTracking tracking) {
+		FinanceValidation.validatePay(ctx, domain, tracking);
 		updateFinanceStatus(ctx,tracking.getFinance().getId(),FinanceStatus.PAID);
 		tracking.setType(FinanceTrackingType.PAID);
 		return insert(ctx, tracking);
@@ -333,7 +336,7 @@ class FinanceTrackingHandler {
 		  .setTrackingDate(entry.getEntryDate())
 		  .setRecorded(true)
 		;
-		Integer trackingId = doPay(ctx, tracking); 
+		Integer trackingId = doPay(ctx, domain, tracking); 
 		ctx.getDslContext()
 			.insertInto(ACCOUNT_ENTRY_FINANCE_TRACKING)
 			.set(ACCOUNT_ENTRY_FINANCE_TRACKING.DOMAIN,domain)

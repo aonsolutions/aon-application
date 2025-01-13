@@ -15,6 +15,7 @@ import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
 import static com.esferalia.aon.jooq.tables.Scope.SCOPE;
 
 import java.util.Optional;
+import java.util.function.BiConsumer;
 import java.util.stream.Stream;
 
 import com.esferalia.aon.watson.AonError;
@@ -41,7 +42,7 @@ import net.aonsolutions.occam.impl.handler.FinanceTrackingHandler.FinanceTrackin
 
 class FinanceEntryHandler {
 	
-	private static final com.esferalia.aon.jooq.tables.Account RBANK_ACCOUNT = ACCOUNT.as("rbAcc");;
+	private static final com.esferalia.aon.jooq.tables.Account RBANK_ACCOUNT = ACCOUNT.as("rbAcc");
 	private static final com.esferalia.aon.jooq.tables.Account PM_TYPE_DETAIL_ACCOUNT = ACCOUNT.as("pmAcc");
 	
 	private FinanceEntryHandler() {
@@ -71,10 +72,10 @@ class FinanceEntryHandler {
 		entry.setAccountEntry(accountEntry);
 		accountEntry.detailStream()
 			.forEach(detail -> {
-				if (AonStringUtils.startsWith(detail.getAccountCode(), "5")) {
+				if (detail.getAccountCode().filter( c -> AonStringUtils.startsWith(c, "5")).isPresent()) {
 					entry.setBankAccount(detail.getAccount().orElse(null));
 					entry.setManualConcept(AonStringUtils.substringBetween(detail.getConcept(), AonStringUtils.OPEN_BRACKET, AonStringUtils.CLOSE_BRACKET));
-				} else if (AonStringUtils.startsWith(detail.getAccountCode(), "6")) {
+				} else if (detail.getAccountCode().filter( c -> AonStringUtils.startsWith(c, "6")).isPresent()) {
 					entry.setExpensesAccount(detail.getAccount().orElse(null));
 					entry.setExpenses( AonMathUtils.round(detail.getDebit() - detail.getCredit() ));
 				}
@@ -224,6 +225,16 @@ class FinanceEntryHandler {
 		financeEntry.add(finance);
 		return FinanceRecorder.recordFinanceEntry(financeEntry);
 	}
+	static void deleteAccountEntryFinanceTrackings(AONContext ctx, int domain, Integer accountEntryId) {
+		ctx.checkWrite();
+		FinanceEntry entry = getFinanceEntry(ctx, domain, accountEntryId);
+		FinanceEntryValidation.validateDelete(ctx, entry);
+		for (FinanceTracking ft : entry.getTrackings().values()) {
+			if (ft.getAccountEntry() != null) {
+				FinanceTrackingHandler.delete(ctx, domain, ft);
+			}
+		}
+	}
 
 //	public static FinanceEntry save(AONContext ctx, FinanceEntry financeEntry) {
 //		if (financeEntry.getBankAccount() == null || financeEntry.getBankAccount().getId() == null) {
@@ -310,18 +321,40 @@ class FinanceEntryHandler {
 //			ctx.log().info(" ----- END FINANCE ENTRY INSERT ----- ");
 //		}
 //	}
-//	
-//	public static void deleteAccountEntryFinanceTrackings(AONContext ctx, Integer accountEntryId) {
-//		ctx.checkWrite();
-//		FinanceEntry entry = getFinanceEntry(ctx, accountEntryId);
-//		FinanceValidation.validateDelete(ctx, entry);
-//		for (FinanceTracking ft : entry.getTrackings().values()) {
-//			if (ft.getAccountEntry() != null) {
-//				FinanceTrackingDAO.delete(ctx, ft);
-//			}
-//		}
-//	}
+	private static class FinanceEntryValidation {
+		
+		/**
+		 * Para borrar el asiento, este no puede venir de remesa
+		 */
+		private static BiConsumer<FinanceEntry,AONContext> CHECK_IF_ACCOUNT_ENTRY_IS_FROM_FBATCH = (entry,ctx) -> {
+			if (ctx.getDslContext()
+				.select(ACCOUNT_ENTRY_FBATCH.FBATCH)
+				.from(ACCOUNT_ENTRY_FBATCH)
+				.where(ACCOUNT_ENTRY_FBATCH.ACCOUNT_ENTRY.eq(entry.getAccountEntry().getId()))
+				.fetch()
+				.stream()
+				.findAny()
+				.isPresent())
+				throw new AonCoreException(AonError.FINANCE_ENTRY_FROM_FBATCH.getMessage());
+		};
+		
+		/**
+		 * Para borrar, no puede haber movimientos posteriores
+		 */
+		private static BiConsumer<FinanceEntry,AONContext> CHECK_IF_TRACKINGS_ARE_LAST_TRACKING = (entry,ctx) -> {
+			for (FinanceTracking ft : entry.getTrackings().values()) {
+				if (!ft.isLastTracking())
+					throw new AonCoreException(AonError.FINANCE_ENTRY_LATER_TRACKINGS.getMessage());
+			}
+		};
+		
+		static void validateDelete(AONContext ctx, FinanceEntry entry) {
+			CHECK_IF_ACCOUNT_ENTRY_IS_FROM_FBATCH
+				.andThen(CHECK_IF_TRACKINGS_ARE_LAST_TRACKING)
+				.accept(entry, ctx);
+		}
 
+	}
 }
 
 

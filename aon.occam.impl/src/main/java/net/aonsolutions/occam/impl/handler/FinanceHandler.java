@@ -16,7 +16,6 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.Optional;
-import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.stream.Stream;
 
@@ -182,11 +181,8 @@ class FinanceHandler {
 	// -------------------------------------------------------------
 	private static SelectConditionStep<Record> select(AONContext ctx , int domain) {
 		ctx.checkRead();
-		return  ctx.getDslContext()
-			.select(FINANCE.fields())
-			.select(REGISTRY.fields())
-			.select(PAY_METHOD.fields())
-			.select(INVOICE.fields())
+		return ctx.getDslContext()
+			.select()
 			.from(FINANCE)
 			.join(REGISTRY).on(FINANCE.REGISTRY.equal(REGISTRY.ID))
 			.leftOuterJoin(PAY_METHOD).on(FINANCE.PAY_METHOD.equal(PAY_METHOD.ID))
@@ -264,7 +260,7 @@ class FinanceHandler {
 				if ( AonMathUtils.isNotZero(finance.getAmount()) ) {
 					ctx.log().debug("** FINANCE READY TO SAVE");
 					FinanceAutoComplete.completeFinanceFromInvoice(ctx, domain, invoice, finance);
-					Integer financeId = save(ctx, finance);
+					Integer financeId = save(ctx, domain, finance);
 					finance.setId(financeId);
 				} else {
 					ctx.log().debug("** FINANCE NOT SAVED [AMOUNT 0]");
@@ -272,19 +268,19 @@ class FinanceHandler {
 			});
 	}
 
-	static Integer save(AONContext ctx, Finance finance) {
+	static Integer save(AONContext ctx, int domain, Finance finance) {
 		if (finance.getId() == null) {
-			return insert(ctx, finance);
+			return insert(ctx, domain, finance);
 		} else {
-			update(ctx, finance);
+			update(ctx, domain, finance);
 			return finance.getId();
 		}
 	}
 
-	private static Integer insert(AONContext ctx, Finance finance) {
+	private static Integer insert(AONContext ctx, int domain, Finance finance) {
 		ctx.checkWrite();
-		FinanceAutoComplete.completeFinance(ctx, finance);
-		FinanceValidation.validateSave(ctx, finance);
+		FinanceAutoComplete.completeFinance(ctx, domain, finance);
+		FinanceValidation.validateSave(ctx, domain, finance);
 		FinanceRecord r = ctx.getDslContext()
 			.insertInto(FINANCE)
 				.set(FINANCE.DOMAIN,finance.getDomain())
@@ -322,10 +318,10 @@ class FinanceHandler {
 		return r.getValue(FINANCE.ID); 
 	}
 	
-	private static void update(AONContext ctx, Finance finance) {
+	private static void update(AONContext ctx, int domain, Finance finance) {
 		ctx.checkWrite();
-		FinanceAutoComplete.completeFinance(ctx, finance);
-		FinanceValidation.validateSave(ctx, finance);
+		FinanceAutoComplete.completeFinance(ctx, domain, finance);
+		FinanceValidation.validateSave(ctx, domain, finance);
 		int i = ctx.getDslContext().update(FINANCE)
 			.set(FINANCE.DOMAIN,finance.getDomain())
 			.set(FINANCE.PAYMENT, FinanceType.value(finance.getFinanceType()))
@@ -364,16 +360,25 @@ class FinanceHandler {
 	static void delete(AONContext ctx, int domain, Integer id) {
 		ctx.checkWrite();
 		get(ctx,domain,id)
-			.ifPresent( finance -> {
-				FinanceValidation.validateDelete(ctx, finance);
-				removeFinanceTrackingFractions(ctx,finance);
-				int i = ctx.getDslContext()
-					.delete(FINANCE)
-					.where(FINANCE.ID.equal(id))
-					.execute();
-				ctx.log().debug("DELETE FINANCE ("+i+") id: " + finance.getId());
-			});
+			.ifPresent( finance -> delete(ctx, domain, finance ));
 	}
+	
+	static void deleteInvoiceFinances(AONContext ctx, int domain, Integer invoiceId) {
+		ctx.checkWrite();
+		stream(ctx,domain, f -> f.getDomainProperty().eq(domain).and(f.getInvoiceProperty().eq(invoiceId)))
+			.forEach( finance -> delete(ctx, domain, finance ));
+	}
+
+	private static void delete(AONContext ctx, int domain, Finance finance) {
+		FinanceValidation.validateDelete(ctx, domain, finance);
+		removeFinanceTrackingFractions(ctx,finance);
+		int i = ctx.getDslContext()
+			.delete(FINANCE)
+			.where(FINANCE.ID.equal(finance.getId()))
+			.execute();
+		ctx.log().debug("DELETE FINANCE ("+i+") id: " + finance.getId());
+	}
+
 
 	private static void removeFinanceTrackingFractions(AONContext ctx, Finance finance) {
 		if (finance.isPending()) {
@@ -393,18 +398,18 @@ class FinanceHandler {
 		/**
 		 * Si no hay registry, se rellena con el de invoice (si hay). 
 		 */
-		private static final BiConsumer<Finance,AONContext> COMPLETE_REGISTRY_IF_EMPTY = (finance,ctx) -> {
-			if (finance.getRegistry() == null) {
-				finance.getInvoice().ifPresent( i -> finance.setRegistry( i.getRegistry()));
+		private static final Consumer<FinanceValidationContext> COMPLETE_REGISTRY_IF_EMPTY = c -> {
+			if (c.finance.getRegistry() == null) {
+				c.finance.getInvoice().ifPresent( i -> c.finance.setRegistry( i.getRegistry()));
 			}
 		};
 		
 		/**
 		 * Se rellenan los datos de registry, bien de la factura o del registry. 
 		 */
-		private static final BiConsumer<Finance,AONContext> COMPLETE_REGISTRY_DOCUMENT_IF_EMPTY = (finance,ctx) -> {
-			if (AonStringUtils.isEmpty(finance.getRegistryDocument())) {
-				finance.getInvoice().ifPresent( i -> finance 
+		private static final Consumer<FinanceValidationContext> COMPLETE_REGISTRY_DOCUMENT_IF_EMPTY = c -> {
+			if (AonStringUtils.isEmpty(c.finance.getRegistryDocument())) {
+				c.finance.getInvoice().ifPresent( i -> c.finance 
 					.setRegistryDocument( i.getRegistryDocument() )
 					.setRegistryDocumentType( i.getRegistryDocumentType() )
 					.setRegistryDocumentCountry( i.getRegistryDocumentCountry() )
@@ -415,31 +420,31 @@ class FinanceHandler {
 		/**
 		 * Se rellena el concepto si no existe. 
 		 */
-		private static final BiConsumer<Finance,AONContext> COMPLETE_CONCEPT_IF_EMPTY = (finance,ctx) -> {
-			if (AonStringUtils.isBlank( finance.getConcept() )) {
-				finance.getInvoice().ifPresent( i -> finance.setConcept( i.getDocumentNumber()));
+		private static final Consumer<FinanceValidationContext> COMPLETE_CONCEPT_IF_EMPTY = c -> {
+			if (AonStringUtils.isBlank( c.finance.getConcept() )) {
+				c.finance.getInvoice().ifPresent( i -> c.finance.setConcept( i.getDocumentNumber()));
 			}
 		};
 		
 		/**
 		 * Se rellena el nivel de seguridad. 
 		 */
-		private static final BiConsumer<Finance,AONContext> COMPLETE_SECURITY_LEVEL_IF_EMPTY = (finance,ctx) -> 
-			finance.getInvoice().ifPresent( i -> finance.setConfidential( i.isConfidential()) );
+		private static final Consumer<FinanceValidationContext> COMPLETE_SECURITY_LEVEL_IF_EMPTY = c -> 
+			c.finance.getInvoice().ifPresent( i -> c.finance.setConfidential( i.isConfidential()) );
 		
 		/**
 		 * Se rellena el nivel de seguridad. 
 		 */
-		private static final BiConsumer<Finance,AONContext> COMPLETE_SCOPE_IF_EMPTY = (finance,ctx) -> {
-			if (finance.getScope() == null) {
-				finance.getInvoice().ifPresentOrElse(
-					i    -> finance.setScope( i.getScope())
-					, () -> finance.setScope( 
-						finance.isPayroll()
-							?SecurityHandler.getScopeFromContract(ctx, finance.getRegistry()).orElse(null)
-							:SecurityHandler.getScopeFromRegistry(ctx
-									, finance.getFinanceType() == FinanceType.PAYMENT
-									, finance.getRegistry()).orElse(null)
+		private static final Consumer<FinanceValidationContext> COMPLETE_SCOPE_IF_EMPTY = c -> {
+			if (c.finance.getScope() == null) {
+				c.finance.getInvoice().ifPresentOrElse(
+					i    -> c.finance.setScope( i.getScope())
+					, () -> c.finance.setScope( 
+						c.finance.isPayroll()
+							?SecurityHandler.getScopeFromContract(c.ctx, c.finance.getRegistry()).orElse(null)
+							:SecurityHandler.getScopeFromRegistry(c.ctx
+									, c.finance.getFinanceType() == FinanceType.PAYMENT
+									, c.finance.getRegistry()).orElse(null)
 						)
 					);
 			}
@@ -448,12 +453,12 @@ class FinanceHandler {
 		/**
 		 * Se rellena payment. 
 		 */
-		private static final BiConsumer<Finance,AONContext> COMPLETE_PAYMENT = (finance,ctx) -> 
-			finance.getInvoice().ifPresent( i -> { 
+		private static final Consumer<FinanceValidationContext> COMPLETE_PAYMENT = c -> 
+			c.finance.getInvoice().ifPresent( i -> { 
 				if(i.getType() != null) {
-					finance.setFinanceType( i.isSales() ? FinanceType.COLLECTION : FinanceType.PAYMENT );
+					c.finance.setFinanceType( i.isSales() ? FinanceType.COLLECTION : FinanceType.PAYMENT );
 				} else {
-					InvoiceType invoiceType = ctx.getDslContext()
+					InvoiceType invoiceType = c.ctx.getDslContext()
 						.select(INVOICE.TYPE)
 						.from(INVOICE)
 						.where(INVOICE.ID.eq(i.getId()))
@@ -465,43 +470,44 @@ class FinanceHandler {
 						.findFirst()
 						.orElseThrow( () -> new AonCoreException(AonError.FINANCE_UNKNOWN_PAYMENT.getMessage()))
 					;						
-					finance.setFinanceType( invoiceType == InvoiceType.SALES ? FinanceType.COLLECTION : FinanceType.PAYMENT ); 
+					c.finance.setFinanceType( invoiceType == InvoiceType.SALES ? FinanceType.COLLECTION : FinanceType.PAYMENT ); 
 				}	
 			}
 		);
-		
-		private static void completeFinance(AONContext ctx, Finance finance) throws AonCoreException {
-				COMPLETE_REGISTRY_IF_EMPTY
-				.andThen(COMPLETE_REGISTRY_DOCUMENT_IF_EMPTY)
-				.andThen(COMPLETE_CONCEPT_IF_EMPTY)
-				.andThen(COMPLETE_SECURITY_LEVEL_IF_EMPTY)
-				.andThen(COMPLETE_SCOPE_IF_EMPTY)
-				.andThen(COMPLETE_PAYMENT)
-				.accept(finance, ctx);
+			
+		record FinanceValidationContext(AONContext ctx, int domain, Finance finance) {}
+		private static void completeFinance(AONContext ctx, int domain, Finance finance) throws AonCoreException {
+			COMPLETE_REGISTRY_IF_EMPTY
+			.andThen(COMPLETE_REGISTRY_DOCUMENT_IF_EMPTY)
+			.andThen(COMPLETE_CONCEPT_IF_EMPTY)
+			.andThen(COMPLETE_SECURITY_LEVEL_IF_EMPTY)
+			.andThen(COMPLETE_SCOPE_IF_EMPTY)
+			.andThen(COMPLETE_PAYMENT)
+			.accept(new FinanceValidationContext(ctx,domain,finance));
 		}
 		
-		private static final Consumer<FinanceInvoiceValidationContext> COMPLETE_NEW_FINANCES = ctx -> {
-			if (ctx.finance.getId() == null ) {
-				ctx.finance
-					.setInvoice(ctx.invoice.getHeader())
-					.setDomain(ctx.invoice.getDomain())
-					.setRegistry(ctx.invoice.getHeader().getRegistry())
-					.setRegistryDocument(ctx.invoice.getHeader().getRegistryDocument())
-					.setRegistryDocumentType(ctx.invoice.getHeader().getRegistryDocumentType())
-					.setRegistryDocumentCountry(ctx.invoice.getHeader().getRegistryDocumentCountry())
-					.setRegistryName(ctx.invoice.getHeader().getRegistryName())
-					.setScope(ctx.invoice.getHeader().getScope())
-					.setConfidential(ctx.invoice.getHeader().isConfidential())
-					.setConcept(ctx.invoice.getHeader().getDocumentNumber())
+		private static final Consumer<FinanceInvoiceValidationContext> COMPLETE_NEW_FINANCES = c -> {
+			if (c.finance.getId() == null ) {
+				c.finance
+					.setInvoice(c.invoice.getHeader())
+					.setDomain(c.invoice.getDomain())
+					.setRegistry(c.invoice.getHeader().getRegistry())
+					.setRegistryDocument(c.invoice.getHeader().getRegistryDocument())
+					.setRegistryDocumentType(c.invoice.getHeader().getRegistryDocumentType())
+					.setRegistryDocumentCountry(c.invoice.getHeader().getRegistryDocumentCountry())
+					.setRegistryName(c.invoice.getHeader().getRegistryName())
+					.setScope(c.invoice.getHeader().getScope())
+					.setConfidential(c.invoice.getHeader().isConfidential())
+					.setConcept(c.invoice.getHeader().getDocumentNumber())
 					.setFinanceStatus(FinanceStatus.PENDING);
 			}
 		};
 		
-		private static final Consumer<FinanceInvoiceValidationContext> COMPLETE_SAVED_FINANCES = ctx -> {
-			if (ctx.finance.getId() != null ) {
-				ctx.finance
-					.setConfidential(ctx.invoice.getHeader().isConfidential())
-					.setConcept(ctx.invoice.getHeader().getDocumentNumber());
+		private static final Consumer<FinanceInvoiceValidationContext> COMPLETE_SAVED_FINANCES = c -> {
+			if (c.finance.getId() != null ) {
+				c.finance
+					.setConfidential(c.invoice.getHeader().isConfidential())
+					.setConcept(c.invoice.getHeader().getDocumentNumber());
 			}
 		};
 		

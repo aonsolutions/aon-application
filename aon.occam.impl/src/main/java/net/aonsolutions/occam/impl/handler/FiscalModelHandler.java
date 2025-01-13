@@ -3,6 +3,7 @@ package net.aonsolutions.occam.impl.handler;
 import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
 import static com.esferalia.aon.jooq.tables.FsModel.FS_MODEL;
 
+import java.sql.Timestamp;
 import java.util.function.BiFunction;
 import java.util.function.Supplier;
 
@@ -16,6 +17,7 @@ import net.aonsolutions.occam.api.model.type.FiscalModelDeclarationType;
 import net.aonsolutions.occam.api.model.type.FiscalModelType;
 import net.aonsolutions.occam.api.model.type.FiscalStatus;
 import net.aonsolutions.occam.api.model.type.Period;
+import net.aonsolutions.occam.impl.AONContext;
 import net.aonsolutions.occam.impl.handler.FinanceHandler.FinanceFiller;
 
 
@@ -73,6 +75,24 @@ class FiscalModelHandler {
 			return model; 
 		}
 	}
+
+	static void unrecord(AONContext ctx, Integer accountEntryId) {
+		ctx.getDslContext()
+			.select( FS_MODEL.ID,FS_MODEL.MODEL )
+			.from(FS_MODEL)
+			.where(FS_MODEL.ACCOUNT_ENTRY.eq(accountEntryId))
+			.fetch()
+			.stream()
+			.forEach(rec -> ctx.getDslContext()
+				.update(FS_MODEL)
+				.setNull(FS_MODEL.ACCOUNT_ENTRY)
+				.set(FS_MODEL.MODIFICATION_USER,ctx.getUser())
+				.set(FS_MODEL.MODIFICATION_DATE, new Timestamp( System.currentTimeMillis()) )
+				.where(FS_MODEL.ID.eq(rec.getValue(FS_MODEL.ID )))
+				.execute()
+			);
+	}  
+	 
 /*
 	private static void log(AONContext ctx, String msg, Object ... params ) {
 		ctx.log().debug(msg,params);
@@ -650,23 +670,6 @@ class FiscalModelHandler {
 		return f;
 	}  
 	
-	
-	public static void unrecord(AONContext ctx, Integer accountEntryId) {
-		ctx.getDslContext()
-			.select( FS_MODEL.ID,FS_MODEL.MODEL )
-			.from(FS_MODEL)
-			.where(FS_MODEL.ACCOUNT_ENTRY.eq(accountEntryId))
-			.fetch()
-			.stream()
-			.forEach(rec -> ctx.getDslContext()
-				.update(FS_MODEL)
-				.setNull(FS_MODEL.ACCOUNT_ENTRY)
-				.set(FS_MODEL.MODIFICATION_USER,ctx.getUser())
-				.set(FS_MODEL.MODIFICATION_DATE, new Timestamp( System.currentTimeMillis()) )
-				.where(FS_MODEL.ID.eq(rec.getValue(FS_MODEL.ID )))
-				.execute()
-			);
-	}  
 	
 	public static void doRecord(AONContext ctx, Integer modelId, Integer accountEntryId) {
 		ctx.getDslContext()

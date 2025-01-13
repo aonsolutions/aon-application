@@ -4,8 +4,11 @@ import static com.esferalia.aon.jooq.tables.Invoice.INVOICE;
 import static com.esferalia.aon.jooq.tables.InvoiceDua.INVOICE_DUA;
 
 import java.text.MessageFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 import java.util.function.BiConsumer;
 
 import org.jooq.impl.DSL;
@@ -155,6 +158,14 @@ public class InvoiceValidation {
 	 */
 	private static final BiConsumer<AONContext,Invoice> OPERATIONS_DEADLINE = (ctx,inv) -> {
 		ctx.getApplicationParameters(inv.getHeader().getDomain()).getOperationsDeadline()
+			.filter( Objects::nonNull )
+			.map( op -> {
+				try {
+					return  new SimpleDateFormat("dd/MM/yyyy").parse(op);
+				} catch (ParseException e) {
+					return null;
+				}
+			})
 			.ifPresent( deadline -> {
 				if (AonDateUtils.isAfter(deadline, inv.getHeader().getIssueDate())) {
 					inv.addMessage( InvoiceErrorMessages.C007.err(InvoiceErrorKey.ISSUE_DATE) );

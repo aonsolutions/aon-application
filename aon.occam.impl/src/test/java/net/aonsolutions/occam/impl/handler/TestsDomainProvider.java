@@ -238,7 +238,7 @@ public class TestsDomainProvider {
 		ctx.log().info("EnterpriseActivity created");
 
 		if (AppParamHandler.get(ctx, newDomainId, AppParam.AON_BETA_ENABLED).isEmpty()) {
-			AppParamHandler.save(ctx, 
+			AppParamHandler.save(ctx, newDomainId,
 				new ApplicationParameter()
 				.setDomain(newDomainId )
 				.setParam(AppParam.AON_BETA_ENABLED)
@@ -248,7 +248,7 @@ public class TestsDomainProvider {
 		}
 	
 		if (AppParamHandler.get(ctx, newDomainId, AppParam.AON_ALPHA_ENABLED).isEmpty()) {
-			AppParamHandler.save(ctx, 
+			AppParamHandler.save(ctx, newDomainId, 
 				new ApplicationParameter()
 				.setDomain(newDomainId )
 				.setParam(AppParam.AON_ALPHA_ENABLED)
@@ -276,7 +276,7 @@ public class TestsDomainProvider {
 		CreditorHandler.save(ctx, dfc);
 		ctx.log().info("Default Fiscal Creditor inserted!");
 		
-		AppParamHandler.save(ctx, 
+		AppParamHandler.save(ctx, newDomainId, 
 				new ApplicationParameter()
 				.setDomain(newDomainId )
 				.setParam(AppParam.FS_ADMON_CREDITOR)
@@ -284,7 +284,7 @@ public class TestsDomainProvider {
 			);
 		ctx.log().info("App Param FS_ADMON_CREDITOR set to " + dfc.getId());
 		
-		AppParamHandler.save(ctx, 
+		AppParamHandler.save(ctx, newDomainId, 
 				new ApplicationParameter()
 				.setDomain(newDomainId )
 				.setParam(AppParam.FS_ADMON_RETENTION_CREDITOR)
@@ -292,7 +292,7 @@ public class TestsDomainProvider {
 			);
 		ctx.log().info("App Param FS_ADMON_RETENTION_CREDITOR set to " + dfc.getId());
 
-		AppParamHandler.save(ctx, 
+		AppParamHandler.save(ctx, newDomainId, 
 				new ApplicationParameter()
 				.setDomain(newDomainId )
 				.setParam(AppParam.FS_ADMON_VAT_CREDITOR)

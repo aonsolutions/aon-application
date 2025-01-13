@@ -4,8 +4,10 @@ import static com.esferalia.aon.jooq.tables.Cnae2009.CNAE2009;
 import static com.esferalia.aon.jooq.tables.EnterpriseActivity.ENTERPRISE_ACTIVITY;
 import static com.esferalia.aon.jooq.tables.Iae.IAE;
 import static com.esferalia.aon.jooq.tables.Invoice.INVOICE;
+import static com.esferalia.aon.jooq.tables.InvoiceAttach.INVOICE_ATTACH;
 import static com.esferalia.aon.jooq.tables.InvoiceDetail.INVOICE_DETAIL;
 import static com.esferalia.aon.jooq.tables.InvoiceDetailAccount.INVOICE_DETAIL_ACCOUNT;
+import static com.esferalia.aon.jooq.tables.InvoiceDua.INVOICE_DUA;
 import static com.esferalia.aon.jooq.tables.InvoiceFiscal.INVOICE_FISCAL;
 import static com.esferalia.aon.jooq.tables.InvoiceTax.INVOICE_TAX;
 import static com.esferalia.aon.jooq.tables.InvoiceTaxAccount.INVOICE_TAX_ACCOUNT;
@@ -204,13 +206,6 @@ class InvoiceHandler {
 	}
 	
 	static Invoice save(AONContext ctx, int domain, Invoice invoice) {
-		return save(ctx, domain, invoice, false);
-	}
-	static Invoice saveAndGet(AONContext ctx, int domain, Invoice invoice) {
-		return save(ctx, domain, invoice, true);
-	}
-	
-	private static Invoice save(AONContext ctx, int domain, Invoice invoice, boolean returnFullInvoice) {
 		ctx.checkWrite();
 		validate(ctx, domain, invoice);
 		if (invoice.getId() == null) {
@@ -221,16 +216,17 @@ class InvoiceHandler {
 		saveDetails(ctx, invoice);
 		InvoiceFiscalHandler.save(ctx, invoice);
 		InvoiceAddressHandler.save(ctx, invoice);
-		invoice.financeStream()
-			.forEach( finance -> FinanceHandler.save(ctx, domain, invoice));
-		if (returnFullInvoice) {
-			return get(ctx, invoice.getDomain() , invoice.getId() )
-				.orElseThrow(() -> {
-					invoice.addMessage( InvoiceErrorMessages.C500.err(InvoiceErrorKey.GENERIC));
-					return new AonCoreException( InvoiceErrorMessages.C500.getMessage());
-				});
-		} 
+		FinanceHandler.save(ctx, domain, invoice);
 		return invoice;
+	}
+	
+	static Invoice saveAndGet(AONContext ctx, int domain, Invoice invoice) {
+		save(ctx, domain, invoice);
+		return get(ctx, invoice.getDomain() , invoice.getId() )
+			.orElseThrow(() -> {
+				invoice.addMessage( InvoiceErrorMessages.C500.err(InvoiceErrorKey.GENERIC));
+				return new AonCoreException( InvoiceErrorMessages.C500.getMessage());
+			});
 	}
 
 	private static Invoice update(AONContext ctx, Invoice invoice) {
@@ -339,6 +335,43 @@ class InvoiceHandler {
 		return invoice;
 	}
 
+	static void delete(AONContext ctx, int domain, Integer id) {
+		ctx.checkWrite();
+		Invoice invoice = get(ctx, domain, id)
+			.orElseThrow(() -> new AonCoreException(AonError.INVOICE_NOT_FOUND.getMessage()));
+		InvoiceValidation.validateDeletion(ctx, invoice);
+		InvoiceHandler.onDeleteRectifier(ctx, domain, invoice);
+		InvoiceDetailHandler.deleteInvoice(ctx, invoice.getId());
+		InvoiceHandler.onDeleteDUA(ctx, invoice);
+		
+		int count = ctx.getDslContext()
+			.delete(INVOICE_ATTACH)
+			.where(INVOICE_ATTACH.INVOICE.equal(id))
+			.execute();
+		ctx.log().debug("DELETE INVOICE_ATTACH adjuntos de la factura: {0} ({1} filas)",id,count);
+		
+		FinanceHandler.deleteInvoiceFinances(ctx,domain,id);
+		InvoiceFiscalHandler.delete(ctx, id);
+		InvoiceAddressHandler.delete(ctx, id);
+		
+//		TODO
+//		InvoiceBatchDetailHandler.delete(ctx, f-> f.getInvoiceProperty().eq(id));
+//		InvoiceInfoHandler.delete(ctx, f-> f.getInvoiceProperty().eq(id));
+		
+		count = ctx.getDslContext()
+			.delete(INVOICE)
+			.where(INVOICE.ID.equal(id))
+			.execute();
+		ctx.log().debug("DELETE INVOICE factura: {0} ({1} filas)",id,count);
+
+//		TODO
+// 		//ONLY IF IS TICKET BAI.
+//		TbaiConfiguration tbaiConfiguration = ctx.getTbaiConfig(domain);
+//		if(tbaiConfiguration.isActive() && invoice.getHeader().getNumber() > 0) {
+//			saveInvoiceTracking(ctx, invoice, InvoiceTrackingStatus.DELETED);
+//		}
+	}
+
 	static int getNextNumber(AONContext ctx, int domain, Byte[] types, String series ) {
 		boolean tbaiActive = ctx.getTbaiConfig(domain).isActive();
 		if (tbaiActive && AonCollectionUtils.contains(types, InvoiceType.SALES.value())) {
@@ -390,6 +423,103 @@ class InvoiceHandler {
 			.and(AonStringUtils.isBlank(series)
 				? INVOICE.SERIES.isNull().or(DSL.trim(INVOICE.SERIES).eq(""))
 				: INVOICE.SERIES.eq(series));
+	}
+	
+	private static void onDeleteRectifier(AONContext ctx, int domain, Invoice invoice) {
+		if (invoice.getHeader().isRectifier() && invoice.getHeader().getRectificationInvoiceId() != null) {
+			final InvoiceHeader rectified = InvoiceHeaderHandler.get(ctx, domain, invoice.getHeader().getRectificationInvoiceId())
+				.orElseThrow( () -> new AonCoreException(AonError.INVOICE_RECTIFIED_NOT_FOUND.getMessage()));
+			if (rectified.getRectificationInvoiceId() != null &&
+				AonNumberUtils.equals(invoice.getId(), rectified.getRectificationInvoiceId())) {
+				// La factura rectificada, solo lo esta una vez, y es por la factura que estamos borrando.
+				// Luego marcamos la factura rectificada como "NO RECTIFICADA".
+				ctx.getDslContext().update(INVOICE)
+					.set(INVOICE.RECTIFICATION_TYPE, RectificationType.NONE.value())
+					.set(INVOICE.RECTIFICATION_INVOICE, (Integer) null)
+					.set(INVOICE.MODIFICATION_USER,ctx.getUser())
+					.set(INVOICE.MODIFICATION_DATE, new Timestamp( System.currentTimeMillis()) )
+					.where(INVOICE.ID.equal( rectified.getId() ))
+					.execute();
+				ctx.log().debug("UPDATE INVOICE (factura rectificada, se marca como NO RECTIFICADA - SOLO UNA): {0}",rectified.getId());
+			} else {
+				// En la factura rectificada no hay constancia de cual es la factura que la 
+				// rectifica, por lo tanto puede haber mas de una.
+				
+				rectified.setRectificationType(RectificationType.NONE);  // Si no entra en el buble, no quedan facturas rectificativas.
+				InvoiceHeaderHandler.stream(ctx, domain
+					,p -> p.getDomainProperty().eq(domain)
+					.and(p.getRectificationInvoiceProperty().eq(invoice.getHeader().getRectificationInvoiceId()))
+					.and(p.getIdProperty().ne(invoice.getId()))
+				)
+				.forEach( rectifier -> {
+					if (rectified.getRectificationInvoiceId() == null) {
+						// Primera iteracion.
+						rectified.setRectificationType(RectificationType.RECTIFIED);							
+						rectified.setRectificationInvoiceId(rectifier.getId());
+					} else {
+						// Segunda iteracion y sucesivas. Hay mas de una, debe continuar a null.
+						rectified.setRectificationInvoiceId(null);
+					}
+				});
+				
+				ctx.getDslContext().update(INVOICE)
+					.set(INVOICE.RECTIFICATION_TYPE, rectified.getRectificationType().value())
+					.set(INVOICE.RECTIFICATION_INVOICE, rectified.getRectificationInvoiceId())
+					.set(INVOICE.MODIFICATION_USER,ctx.getUser())
+					.set(INVOICE.MODIFICATION_DATE, new Timestamp( System.currentTimeMillis()) )
+					.where(INVOICE.ID.equal( rectified.getId() ))
+					.execute();
+				ctx.log().debug("UPDATE INVOICE (factura rectificada, se marca como NO RECTIFICADA - MAS DE UNA): {0}",rectified.getId());
+			}
+		}
+	}
+
+	private static void onDeleteDUA(AONContext ctx, Invoice invoice) {
+		if ( invoice.getHeader().isDUAAllowed() ) {
+			 Integer importInvoice = ctx.getDslContext()
+				.select(INVOICE_DUA.INVOICE_IMPORT)
+				.from(INVOICE_DUA)
+				.where(INVOICE_DUA.INVOICE_NATIONAL.equal(invoice.getId()))
+				.and(INVOICE_DUA.DOMAIN.eq(invoice.getDomain()))
+				.fetch()
+				.stream()
+				.map( rec -> rec.getValue(INVOICE_DUA.INVOICE_IMPORT))				
+				.findFirst()
+				.orElse(null);
+			if (importInvoice != null) {
+				ctx.log().debug("\tDUA LINKED");
+				ctx.getDslContext()
+					.select(INVOICE_DETAIL.TAXABLE_BASE, INVOICE_TAX.ID,INVOICE_TAX.PERCENTAGE,INVOICE_TAX.SURCHARGE)
+					.from(INVOICE_DETAIL)
+					.innerJoin(INVOICE_TAX).on(INVOICE_TAX.INVOICE_DETAIL.eq(INVOICE_DETAIL.ID))
+					.where(INVOICE_DETAIL.INVOICE.eq(importInvoice))
+					.and(INVOICE_DETAIL.DOMAIN.eq(invoice.getDomain()))
+					.fetch()
+					.stream()
+					.forEach(rec -> {
+						int taxId = rec.getValue(INVOICE_TAX.ID);
+						double base = rec.getValue(INVOICE_DETAIL.TAXABLE_BASE);
+						double percent = rec.getValue(INVOICE_TAX.PERCENTAGE);
+						double surcharge = rec.getValue(INVOICE_TAX.SURCHARGE);
+						double quota = AonMathUtils.round( base * percent / 100 );
+						double surchargeQuota = AonMathUtils.round( base * surcharge / 100 );
+						int count = ctx.getDslContext().update(INVOICE_TAX)
+								.set(INVOICE_TAX.BASE, base )
+								.set(INVOICE_TAX.QUOTA, quota )
+								.set(INVOICE_TAX.SURCHARGE_QUOTA, surchargeQuota)
+								.set(INVOICE_TAX.DEDUCTIBLE_PERCENT, 100.0)
+								.set(INVOICE_TAX.DEDUCTIBLE_QUOTA, quota)
+								.where(INVOICE_TAX.ID.equal( taxId ))
+								.execute();
+						ctx.log().debug("\tUPDATE INVOICE_TAX (RESTORE PREVIOUS INFO): {0} ({1} filas)",invoice.getId(),count);	
+					});
+				int count = ctx.getDslContext()
+						.delete(INVOICE_DUA)
+						.where(INVOICE_DUA.INVOICE_NATIONAL.equal(invoice.getId()))
+						.execute();
+				ctx.log().debug("\tDELETE INVOICE_DUA: {0} ({1} filas)",invoice.getId(),count);
+			}
+		}
 	}
 	
 	// *************************************************
@@ -947,137 +1077,6 @@ class InvoiceHandler {
 			} 
 		}
 		
-	}
-	
-	public static void delete(AONContext ctx, Integer id) {
-		ctx.checkWrite();
-		Invoice invoice = getFull(ctx, id)
-			.orElseThrow(() -> new AonCoreException(AonError.INVOICE_NOT_FOUND.getMessage()));
-		InvoiceValidation.validateDeletion(ctx, invoice);
-		InvoiceHandler.onDeleteRectifier(ctx, invoice);
-		InvoiceDetailDAO.deleteInvoice(ctx, invoice.getId());
-		InvoiceHandler.onDeleteDUA(ctx, invoice);
-		
-		int count = ctx.getDslContext()
-			.delete(INVOICE_ATTACH)
-			.where(INVOICE_ATTACH.INVOICE.equal(id))
-			.execute();
-		ctx.log().debug("DELETE INVOICE_ATTACH adjuntos de la factura: {0} ({1} filas)",id,count);
-		
-		FinanceDAO.deleteInvoiceFinances(ctx,id);
-		InvoiceFiscalDAO.delete(ctx, id);
-		InvoiceAddressDAO.delete(ctx, id);
-		InvoiceBatchDetailDAO.delete(ctx, f-> f.getInvoiceProperty().eq(id));
-		InvoiceInfoDAO.delete(ctx, f-> f.getInvoiceProperty().eq(id));
-		
-		count = ctx.getDslContext()
-			.delete(INVOICE)
-			.where(INVOICE.ID.equal(id))
-			.execute();
-		ctx.log().debug("DELETE INVOICE factura: {0} ({1} filas)",id,count);
-
-		// ONLY IF IS TICKET BAI.
-		TbaiConfiguration tbaiConfiguration = TbaiConfigurationDAO.get(ctx);
-		if(tbaiConfiguration.isActive() && invoice.getNumber() > 0) {
-			saveInvoiceTracking(ctx, invoice, InvoiceTrackingStatus.DELETED);
-		}
-	}
-	
-	private static void onDeleteRectifier(AONContext ctx, Invoice invoice) {
-		if (invoice.isRectifier() && invoice.getRectificationInvoiceId() != null) {
-			final InvoiceMin rectified = get(ctx, invoice.getRectificationInvoiceId())
-					.orElseThrow( () -> new AonCoreException(AonError.INVOICE_RECTIFIED_NOT_FOUND.getMessage()));
-			if (rectified.getRectificationInvoiceId() != null &&
-				AonNumberUtils.equals(invoice.getId(), rectified.getRectificationInvoiceId())) {
-				// La factura rectificada, solo lo esta una vez, y es por la factura que estamos borrando.
-				// Luego marcamos la factura rectificada como "NO RECTIFICADA".
-				ctx.getDslContext().update(INVOICE)
-					.set(INVOICE.RECTIFICATION_TYPE, RectificationType.NONE.value())
-					.set(INVOICE.RECTIFICATION_INVOICE, (Integer) null)
-					.set(INVOICE.MODIFICATION_USER,ctx.getUser())
-					.set(INVOICE.MODIFICATION_DATE, new Timestamp( System.currentTimeMillis()) )
-					.where(INVOICE.ID.equal( rectified.getId() ))
-					.execute();
-				ctx.log().debug("UPDATE INVOICE (factura rectificada, se marca como NO RECTIFICADA - SOLO UNA): {0}",rectified.getId());
-			} else {
-				// En la factura rectificada no hay constancia de cual es la factura que la 
-				// rectifica, por lo tanto puede haber mas de una.
-				
-				rectified.setRectificationType(RectificationType.NONE);  // Si no entra en el buble, no quedan facturas rectificativas.
-				
-				stream(ctx, p -> p.getDomainProperty().eq(ctx.getDomainId())
-					.and(p.getRectificationInvoiceProperty().eq(invoice.getRectificationInvoiceId()))
-					.and(p.getIdProperty().ne(invoice.getId()))
-				)
-				.forEach( rectifier -> {
-					if (rectified.getRectificationInvoiceId() == null) {
-						// Primera iteracion.
-						rectified.setRectificationType(RectificationType.RECTIFIED);							
-						rectified.setRectificationInvoiceId(rectifier.getId());
-					} else {
-						// Segunda iteracion y sucesivas. Hay mas de una, debe continuar a null.
-						rectified.setRectificationInvoiceId(null);
-					}
-				});
-				
-				ctx.getDslContext().update(INVOICE)
-					.set(INVOICE.RECTIFICATION_TYPE, rectified.getRectificationType().value())
-					.set(INVOICE.RECTIFICATION_INVOICE, rectified.getRectificationInvoiceId())
-					.set(INVOICE.MODIFICATION_USER,ctx.getUser())
-					.set(INVOICE.MODIFICATION_DATE, new Timestamp( System.currentTimeMillis()) )
-					.where(INVOICE.ID.equal( rectified.getId() ))
-					.execute();
-				ctx.log().debug("UPDATE INVOICE (factura rectificada, se marca como NO RECTIFICADA - MAS DE UNA): {0}",rectified.getId());
-			}
-		}
-	}
-	
-	private static void onDeleteDUA(AONContext ctx, Invoice invoice) {
-		if ( invoice.isDUAAllowed() ) {
-			 Integer importInvoice = ctx.getDslContext()
-				.select(INVOICE_DUA.INVOICE_IMPORT)
-				.from(INVOICE_DUA)
-				.where(INVOICE_DUA.INVOICE_NATIONAL.equal(invoice.getId()))
-				.and(INVOICE_DUA.DOMAIN.eq(invoice.getDomain()))
-				.fetch()
-				.stream()
-				.map( rec -> rec.getValue(INVOICE_DUA.INVOICE_IMPORT))				
-				.findFirst()
-				.orElse(null);
-			if (importInvoice != null) {
-				ctx.log().debug("\tDUA LINKED");
-				ctx.getDslContext()
-					.select(INVOICE_DETAIL.TAXABLE_BASE, INVOICE_TAX.ID,INVOICE_TAX.PERCENTAGE,INVOICE_TAX.SURCHARGE)
-					.from(INVOICE_DETAIL)
-					.innerJoin(INVOICE_TAX).on(INVOICE_TAX.INVOICE_DETAIL.eq(INVOICE_DETAIL.ID))
-					.where(INVOICE_DETAIL.INVOICE.eq(importInvoice))
-					.and(INVOICE_DETAIL.DOMAIN.eq(invoice.getDomain()))
-					.fetch()
-					.stream()
-					.forEach(rec -> {
-						int taxId = rec.getValue(INVOICE_TAX.ID);
-						double base = rec.getValue(INVOICE_DETAIL.TAXABLE_BASE);
-						double percent = rec.getValue(INVOICE_TAX.PERCENTAGE);
-						double surcharge = rec.getValue(INVOICE_TAX.SURCHARGE);
-						double quota = AonMathUtils.round( base * percent / 100 );
-						double surchargeQuota = AonMathUtils.round( base * surcharge / 100 );
-						int count = ctx.getDslContext().update(INVOICE_TAX)
-								.set(INVOICE_TAX.BASE, base )
-								.set(INVOICE_TAX.QUOTA, quota )
-								.set(INVOICE_TAX.SURCHARGE_QUOTA, surchargeQuota)
-								.set(INVOICE_TAX.DEDUCTIBLE_PERCENT, 100.0)
-								.set(INVOICE_TAX.DEDUCTIBLE_QUOTA, quota)
-								.where(INVOICE_TAX.ID.equal( taxId ))
-								.execute();
-						ctx.log().debug("\tUPDATE INVOICE_TAX (RESTORE PREVIOUS INFO): {0} ({1} filas)",invoice.getId(),count);	
-					});
-				int count = ctx.getDslContext()
-						.delete(INVOICE_DUA)
-						.where(INVOICE_DUA.INVOICE_NATIONAL.equal(invoice.getId()))
-						.execute();
-				ctx.log().debug("\tDELETE INVOICE_DUA: {0} ({1} filas)",invoice.getId(),count);
-			}
-		}
 	}
 	
 	private static void saveInvoiceTracking(AONContext ctx, Invoice invoice, InvoiceTrackingStatus status) {

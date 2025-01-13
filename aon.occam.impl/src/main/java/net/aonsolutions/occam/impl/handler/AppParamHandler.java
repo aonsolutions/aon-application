@@ -4,12 +4,14 @@ import static com.esferalia.aon.jooq.tables.AppParam.APP_PARAM;
 
 import java.util.EnumMap;
 import java.util.Optional;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import org.jooq.Record;
 import org.jooq.SelectConditionStep;
 
 import com.esferalia.aon.watson.error.AonCoreException;
+import com.esferalia.aon.watson.util.AonCollectionUtils;
 
 import net.aonsolutions.occam.api.model.ApplicationParameter;
 import net.aonsolutions.occam.api.model.ApplicationParameters;
@@ -56,22 +58,37 @@ class AppParamHandler {
 	}
 
 	static ApplicationParameters getApplicationParameters(AONContext ctx, Integer domain) {
-		return new ApplicationParameters()
+		ApplicationParameters params = new ApplicationParameters()
 			.setParams(
 				select( ctx, domain)
 					.fetch()
 					.stream()
 					.map( new ApplicationParameterFiller() )
+					.filter( ap -> ap.getParam() != null)
 					.collect(Collectors.toMap(
 						ap -> ap.getParam(),
 		                ap -> ap,
-		                (l, r) -> l, // No debería sucedre. Se asume el primero.
+		                (l, r) -> l, // No debería sucedee. Se asume el primero.
 		                () -> new EnumMap<>(AppParam.class)))			
 		);
+		params.getParams()
+			.ifPresent( s -> {
+				AonCollectionUtils.stream(s.values())
+					.filter( ap -> Pattern.matches(AppParam.ACCOUNT_PATTERN,ap.getParam().name()))
+					.filter( ap -> ap.getValueInteger() != null)
+					.forEach(ap -> {
+						AccountHandler.get(ctx, domain, ap.getValueInteger())
+							.ifPresent(a -> {
+								params.putAccount(ap.getParam(), a);
+						});	
+					});
+			}
+		);
+		return params;
 	}
 
-	static ApplicationParameter save(AONContext ctx, ApplicationParameter param){
-		get(ctx, param.getDomain(), param.getParam() )
+	static ApplicationParameter save(AONContext ctx, int domain, ApplicationParameter param){
+		get(ctx, domain, param.getParam() )
 			.ifPresentOrElse(
 					a -> ctx.getDslContext()
 						.update(APP_PARAM)
@@ -86,7 +103,8 @@ class AppParamHandler {
 						.set(APP_PARAM.VALUE, param.getValue())
 						.execute() 
 				);
-		return get(ctx, param.getDomain(), param.getParam())
+		ctx.resetApplicationParameters(domain);
+		return get(ctx, domain, param.getParam())
 			.orElseThrow( () -> new AonCoreException("No se pudo recuperar el dato"));
 	}
 	

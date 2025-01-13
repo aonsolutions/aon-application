@@ -148,13 +148,13 @@ class RegistryHandler {
 					
 				if ( AonDocumentUtil.isValidDNI( reg.getDocument() ) && reg.getDocumentType() != DocumentType.NIF) {
 					reg.setDocumentType(DocumentType.NIF);
-					ctx.log().debug(AUTOCOMPLETE_DOCUMENT_TYPE,DocumentType.NIF.getShortName());
+					ctx.log().debug(AUTOCOMPLETE_DOCUMENT_TYPE,DocumentType.NIF.getDescription());
 				} else if ( AonDocumentUtil.isValidCIF( reg.getDocument() ) && reg.getDocumentType() != DocumentType.CIF) {
 					reg.setDocumentType(DocumentType.CIF);
-					ctx.log().debug(AUTOCOMPLETE_DOCUMENT_TYPE,DocumentType.CIF.getShortName());
+					ctx.log().debug(AUTOCOMPLETE_DOCUMENT_TYPE,DocumentType.CIF.getDescription());
 				} else if ( AonDocumentUtil.isValidNIE( reg.getDocument() ) && reg.getDocumentType() != DocumentType.NIE) {
 					reg.setDocumentType(DocumentType.NIE);
-					ctx.log().debug(AUTOCOMPLETE_DOCUMENT_TYPE,DocumentType.NIE.getShortName());
+					ctx.log().debug(AUTOCOMPLETE_DOCUMENT_TYPE,DocumentType.NIE.getDescription());
 				} 
 			}
 		};

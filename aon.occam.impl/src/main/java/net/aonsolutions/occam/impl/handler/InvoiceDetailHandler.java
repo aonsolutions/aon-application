@@ -4,8 +4,8 @@ import static com.esferalia.aon.jooq.tables.Brand.BRAND;
 import static com.esferalia.aon.jooq.tables.InvestAsset.INVEST_ASSET;
 import static com.esferalia.aon.jooq.tables.InvoiceDetail.INVOICE_DETAIL;
 import static com.esferalia.aon.jooq.tables.InvoiceDetailAccount.INVOICE_DETAIL_ACCOUNT;
-import static com.esferalia.aon.jooq.tables.InvoiceTaxAccount.INVOICE_TAX_ACCOUNT;
 import static com.esferalia.aon.jooq.tables.InvoiceTax.INVOICE_TAX;
+import static com.esferalia.aon.jooq.tables.InvoiceTaxAccount.INVOICE_TAX_ACCOUNT;
 import static com.esferalia.aon.jooq.tables.Item.ITEM;
 import static com.esferalia.aon.jooq.tables.Pcategory.PCATEGORY;
 import static com.esferalia.aon.jooq.tables.Product.PRODUCT;
@@ -66,10 +66,12 @@ class InvoiceDetailHandler {
     	invoice.deleteDetails();
 		basicStream(ctx, invoice.getId())
 			.map(id -> {
-				InvoiceTaxHandler.stream(ctx, id.getId()).forEach(id::addTax);
+				InvoiceTaxHandler.stream(ctx, id.getId())
+					.map(it -> it.setAccount(invoice, InvoiceTaxHandler.getInvoiceTaxAccount(ctx, it.getId())))
+					.forEach(id::addTax);
 				return id;
 			})
-			.forEach( id -> invoice.addDetail(id) )
+			.forEach( invoice::addDetail )
 		;
 		return invoice;
 	}    

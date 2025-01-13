@@ -32,7 +32,7 @@ class InvoiceAutoComplete {
 			if (AonStringUtils.isBlank(inv.getHeader().getSeries())) {
 				inv.getHeader().setSeries(null);
 			}
-			if (inv.getHeader().getNumber() == 0) {
+			if (AonMathUtils.isNullOrZero(inv.getHeader().getNumber())) {
 				Byte[] types = new Byte[]{InvoiceType.SALES.value()};
 				int number = InvoiceHandler.getNextNumber(ctx,inv.getDomain(), types, inv.getHeader().getSeries());
 				inv.getHeader().setNumber(number);

@@ -4,12 +4,13 @@ import static com.esferalia.aon.jooq.tables.Finance.FINANCE;
 import static com.esferalia.aon.jooq.tables.Invoice.INVOICE;
 
 import java.sql.Timestamp;
-import java.util.LinkedList;
+import java.util.List;
 import java.util.Optional;
-import java.util.function.BiConsumer;
+import java.util.function.Consumer;
 
 import com.esferalia.aon.watson.AonError;
 import com.esferalia.aon.watson.error.AonCoreException;
+import com.esferalia.aon.watson.util.AonCollectionUtils;
 import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
@@ -21,58 +22,61 @@ import net.aonsolutions.occam.api.model.type.InvoiceType;
 import net.aonsolutions.occam.impl.AONContext;
 
 class FinanceValidation {
+	record FinanceValidationContext(AONContext ctx, int domain, Finance finance) {}
+	record FinanceTrackingValidationContext(AONContext ctx, int domain, FinanceTracking financeTracking) {}
+	
 	private FinanceValidation() {
 	}
 
 	/**
 	 * El dominio del vencimiento  no puede estar vacio.
 	 */
-	private static final BiConsumer<Finance,AONContext> CHECK_EMPTY_DOMAIN = (finance,ctx) -> {
-		if (finance.getDomain() == null) 
+	private static final Consumer<FinanceValidationContext> CHECK_EMPTY_DOMAIN = c -> {
+		if (c.finance.getDomain() == null) 
 			throw new AonCoreException(AonError.EMPTY_DOMAIN.getMessage());
 	};
 	
 	/**
 	 * La importe del vencmiento no puede ser cero.
 	 */
-	private static final BiConsumer<Finance,AONContext> CHECK_AMOUNT_ZERO = (finance,ctx) -> {
-		if (AonMathUtils.isZero(finance.getAmount()))
+	private static final Consumer<FinanceValidationContext> CHECK_AMOUNT_ZERO = c -> {
+		if (AonMathUtils.isZero(c.finance.getAmount()))
 			throw new AonCoreException(AonError.FINANCE_AMOUNT_ZERO.getMessage());
 	};
 	
 	/**
 	 * La importe del vencmiento no puede ser cero.
 	 */
-	private static final BiConsumer<FinanceTracking,AONContext> CHECK_TRACKING_AMOUNT_ZERO = (financeTracking,ctx) -> {
-		if (AonMathUtils.isZero(financeTracking.getAmount()))
+	private static final Consumer<FinanceTrackingValidationContext> CHECK_TRACKING_AMOUNT_ZERO = c -> {
+		if (AonMathUtils.isZero(c.financeTracking.getAmount()))
 			throw new AonCoreException(AonError.FINANCE_AMOUNT_ZERO.getMessage());
 	};
 
 	/**
 	 * El scope del vencimiento no puede estar vacio.
 	 */
-	private static final BiConsumer<Finance,AONContext> CHECK_EMPTY_SCOPE = (finance,ctx) -> {
-		if (finance.getScope() == null) 
+	private static final Consumer<FinanceValidationContext> CHECK_EMPTY_SCOPE = c -> {
+		if (c.finance.getScope() == null) 
 			throw new AonCoreException(AonError.FINANCE_EMPTY_SCOPE.getMessage());
 	};
 
 	/**
 	 * La cuenta bancaria debe ser valida.
 	 */
-	private static final BiConsumer<Finance,AONContext> CHECK_BANK_ACCOUNT = (finance,ctx) -> {
-		if (finance.getBankAccount().isEmpty()) {
-			finance.setBankAccount(null);
-			finance.setBankAlias(null);
-			finance.setBic(null);
+	private static final Consumer<FinanceValidationContext> CHECK_BANK_ACCOUNT = c -> {
+		if (c.finance.getBankAccount().isEmpty()) {
+			c.finance.setBankAccount(null);
+			c.finance.setBankAlias(null);
+			c.finance.setBic(null);
 		}
-		finance.getBankAccount()
+		c.finance.getBankAccount()
 			.filter( b -> AonStringUtils.isEmpty(b.getBban()))
 			.ifPresent(b -> {
-				finance.setBankAccount(null);
-				finance.setBankAlias(null);
-				finance.setBic(null);
+				c.finance.setBankAccount(null);
+				c.finance.setBankAlias(null);
+				c.finance.setBic(null);
 		});
-		finance.getBankAccount()
+		c.finance.getBankAccount()
 			.filter( b -> !b.isValidBankAccount())
 			.ifPresent(b -> {
 				if (!b.isValidIbanLength()) {
@@ -85,12 +89,12 @@ class FinanceValidation {
 		});
 	};
 	
-	private static final BiConsumer<Finance,AONContext> PAYMENT_CHECK = (finance,ctx) -> {
-		finance.getInvoice()
+	private static final Consumer<FinanceValidationContext> PAYMENT_CHECK = c -> {
+		c.finance.getInvoice()
 		.ifPresent(	i ->	{
 			InvoiceType invoiceType = i.getType();
 			if (invoiceType == null) {
-				invoiceType = ctx.getDslContext()
+				invoiceType = c.ctx.getDslContext()
 					.select(INVOICE.TYPE)
 					.from(INVOICE)
 					.where(INVOICE.ID.eq(i.getId()))
@@ -103,35 +107,35 @@ class FinanceValidation {
 			if (invoiceType == null) {
 				throw new AonCoreException(AonError.FINANCE_UNKNOWN_PAYMENT.getMessage());
 			} else {
-				if ((invoiceType == InvoiceType.SALES && finance.getFinanceType() == FinanceType.PAYMENT )
-				||  (invoiceType != InvoiceType.SALES && finance.getFinanceType() != FinanceType.PAYMENT )) {
+				if ((invoiceType == InvoiceType.SALES && c.finance.getFinanceType() == FinanceType.PAYMENT )
+				||  (invoiceType != InvoiceType.SALES && c.finance.getFinanceType() != FinanceType.PAYMENT )) {
 					throw new AonCoreException(AonError.FINANCE_WRONG_PAYMENT.getMessage());		
 				}
 			}
 		});
 	};
 
-	public static void validateSave(AONContext ctx, Finance finance) throws AonCoreException {
+	static void validateSave(AONContext ctx, int domain, Finance finance) throws AonCoreException {
 			CHECK_EMPTY_DOMAIN
 			.andThen(CHECK_AMOUNT_ZERO)
 			.andThen(CHECK_EMPTY_SCOPE)
 			.andThen(CHECK_BANK_ACCOUNT)
 			.andThen(PAYMENT_CHECK)
-			.accept(finance, ctx);
+			.accept(new FinanceValidationContext(ctx, domain, finance));
 	}
 	
 	/**
 	 * Para borrar el status debe ser PENDING
 	 */
-	private static final BiConsumer<Finance,AONContext> CHECK_DELETE_STATUS = (finance,ctx) -> {
-		if (!finance.isPending()) 
+	private static final Consumer<FinanceValidationContext> CHECK_DELETE_STATUS = c -> {
+		if (!c.finance.isPending()) 
 			throw new AonCoreException(AonError.DELETE_STATUS_WRONG.getMessage());
 	};
 	
 
-	public static void validateDelete(AONContext ctx, Finance finance) throws AonCoreException {
+	static void validateDelete(AONContext ctx, int domain, Finance finance) throws AonCoreException {
 		CHECK_DELETE_STATUS
-			.accept(finance, ctx);
+			.accept(new FinanceValidationContext(ctx,domain,finance));
 		
 	}
 
@@ -145,104 +149,105 @@ class FinanceValidation {
 	/**
 	 * El vencimiento debe estar pendiente para ser saldado.
 	 */
-	private static final BiConsumer<Finance,AONContext> CHECK_PENDING_FOR_SETTLING = (finance,ctx) -> {
-		if (!finance.isPending() && !finance.isReturned()) 
+	private static final Consumer<FinanceValidationContext> CHECK_PENDING_FOR_SETTLING = c -> {
+		if (!c.finance.isPending() && !c.finance.isReturned()) 
 			throw new AonCoreException(AonError.FINANCE_CAN_NOT_BE_SETTLED.getMessage());
 	};
 	
 	/**
 	 * El vencimiento debe estar saldado para ser deshacer el movimiento y volver a pendiente.
 	 */
-	private static final BiConsumer<Finance,AONContext> CHECK_SETTLE_FOR_UNSETTLING = (finance,ctx) -> {
-		if (!finance.isSettled()) 
+	private static final Consumer<FinanceValidationContext> CHECK_SETTLE_FOR_UNSETTLING = c -> {
+		if (!c.finance.isSettled()) 
 			throw new AonCoreException("No se puede eleminar el movimiento saldado del vencimiento, no est\u00E1 saldado.");
 	};
 
 	/**
 	 * El vencimiento debe estar pendiente o devuelto para ser pagado.
 	 */
-	private static final BiConsumer<Finance,AONContext> CHECK_PENDING_FOR_PAYING = (finance,ctx) -> {
-		if (!finance.isPending() && !finance.isReturned()) 
+	private static final Consumer<FinanceValidationContext> CHECK_PENDING_FOR_PAYING = c -> {
+		if (!c.finance.isPending() && !c.finance.isReturned()) 
 			throw new AonCoreException(AonError.FINANCE_CAN_NOT_BE_PAID.getMessage());
 	};
 
 	/**
 	 * El vencimiento debe estar pendiente o devuelto para ser pagado.
 	 */
-	private static final BiConsumer<Finance,AONContext> CHECK_PENDING_FOR_FRACTION = (finance,ctx) -> {
-		if (!finance.isPending() && !finance.isReturned()) 
+	private static final Consumer<FinanceValidationContext> CHECK_PENDING_FOR_FRACTION = c -> {
+		if (!c.finance.isPending() && !c.finance.isReturned()) 
 			throw new AonCoreException(AonError.FINANCE_CAN_NOT_BE_FRACTIONED.getMessage());
 	};
 
 	/**
 	 * El vencimiento debe estar pendiente o devuelto para ser pagado.
 	 */
-	private static final BiConsumer<FinanceTracking,AONContext> CHECK_DATE_FOR_PAYING = (tracking,ctx) -> {
-		if (tracking.getTrackingDate() == null) 
+	private static final Consumer<FinanceTrackingValidationContext> CHECK_DATE_FOR_PAYING = c -> {
+		if (c.financeTracking.getTrackingDate() == null) 
 			throw new AonCoreException(AonError.FINANCE_TRACKING_WITHOUT_DATE.getMessage());
 	};
 
 	/**
 	 * El vencimiento debe estar pgado para ser devuelto.
 	 */
-	private static final BiConsumer<Finance,AONContext> CHECK_PENDING_FOR_RETURNING = (finance,ctx) -> {
-		if (!finance.isPaid() && !finance.isBatched()) 
+	private static final Consumer<FinanceValidationContext> CHECK_PENDING_FOR_RETURNING = c -> {
+		if (!c.finance.isPaid() && !c.finance.isBatched()) 
 			throw new AonCoreException(AonError.FINANCE_CAN_NOT_BE_RETURNED.getMessage());
 	};
 
-	public static Finance validateSettleTracking(AONContext ctx, int domain, Integer financeId) {
+	static Finance validateSettleTracking(AONContext ctx, int domain, Integer financeId) {
 		Optional<Finance> opt = FinanceHandler.get(ctx, domain, financeId);
 		if (opt.isEmpty()) {
 			throw new AonCoreException(AonError.FINANCE_NOT_FOUND.getMessage());
 		}
 		Finance finance = opt.get();
 		CHECK_PENDING_FOR_SETTLING
-			.accept(finance, ctx);
+			.accept(new FinanceValidationContext(ctx, domain, finance));
 		return finance;
 	}
 	
-	public static Finance validateUnSettleTracking(AONContext ctx, int domain, Integer financeId) {
+	static Finance validateUnSettleTracking(AONContext ctx, int domain, Integer financeId) {
 		Optional<Finance> opt = FinanceHandler.get(ctx, domain, financeId);
 		if (opt.isEmpty()) {
 			throw new AonCoreException(AonError.FINANCE_NOT_FOUND.getMessage());
 		}
 		Finance finance = opt.get();
 		CHECK_SETTLE_FOR_UNSETTLING
-			.accept(finance, ctx);
+			.accept(new FinanceValidationContext(ctx, domain, finance));
 		return finance;
 	}
 
-	public static Finance validateFractionTracking(AONContext ctx, int domain, Integer financeId) {
+	static Finance validateFractionTracking(AONContext ctx, int domain, Integer financeId) {
 		Optional<Finance> opt = FinanceHandler.get(ctx, domain, financeId);
 		if (opt.isEmpty()) {
 			throw new AonCoreException(AonError.FINANCE_NOT_FOUND.getMessage());
 		}
 		Finance finance = opt.get();
-		CHECK_PENDING_FOR_FRACTION.accept(finance, ctx);
+		CHECK_PENDING_FOR_FRACTION
+			.accept(new FinanceValidationContext(ctx, domain, finance));
 		return finance;
 	}
 
-	private static final BiConsumer<FinanceTracking,AONContext> CHECK_IF_TRACKING_IS_FROM_BATCH_FOR_UNDOING = (financeTracking,ctx) -> {
-		if (financeTracking != null && financeTracking.isBatched()) 
+	private static final Consumer<FinanceTrackingValidationContext> CHECK_IF_TRACKING_IS_FROM_BATCH_FOR_UNDOING = c -> {
+		if (c.financeTracking != null && c.financeTracking.isBatched()) 
 			throw new AonCoreException(AonError.FINANCE_CAN_NOT_BE_UNDOING.format("El último movimiento procede de una remesa"));
 	};
 
-	private static final BiConsumer<FinanceTracking,AONContext> CHECK_IF_TRACKING_IS_FRACTIONED_LINK_FOR_UNDOING = (financeTracking,ctx) -> {
-		if (financeTracking != null && financeTracking.isFractioned()) 
+	private static final Consumer<FinanceTrackingValidationContext> CHECK_IF_TRACKING_IS_FRACTIONED_LINK_FOR_UNDOING = c -> {
+		if (c.financeTracking != null && c.financeTracking.isFractioned()) 
 			throw new AonCoreException(AonError.FINANCE_CAN_NOT_BE_UNDOING.format("El último movimiento procede de un fraccionamiento"));
 	};
 	
-	private static final BiConsumer<FinanceTracking,AONContext> CHECK_IF_TRACKING_IS_FROM_STATEMENT_LINK_FOR_UNDOING = (financeTracking,ctx) -> {
-		if (financeTracking != null && financeTracking.getBankStatementLink() != null) 
+	private static final Consumer<FinanceTrackingValidationContext> CHECK_IF_TRACKING_IS_FROM_STATEMENT_LINK_FOR_UNDOING = c -> {
+		if (c.financeTracking != null && c.financeTracking.getBankStatementLink() != null) 
 			throw new AonCoreException(AonError.FINANCE_CAN_NOT_BE_UNDOING.format("El último movimiento procede de una extracto bancario"));
 	};
 
-	private static final BiConsumer<FinanceTracking,AONContext> CHECK_IF_FINANCE_IS_GROUPED_FOR_UNDOING = (financeTracking,ctx) -> {
-		if (financeTracking != null && financeTracking.getFinance().getFinanceGroup() != null) 
+	private static final Consumer<FinanceTrackingValidationContext> CHECK_IF_FINANCE_IS_GROUPED_FOR_UNDOING = c -> {
+		if (c.financeTracking != null && c.financeTracking.getFinance().getFinanceGroup() != null) 
 			throw new AonCoreException(AonError.FINANCE_CAN_NOT_BE_UNDOING.format("El vencimiento se encuentra agrupado"));
 	};
 
-	public static FinanceTracking validateUndoTracking(AONContext ctx, int domain, Integer financeId) {
+	static FinanceTracking validateUndoTracking(AONContext ctx, int domain, Integer financeId) {
 		Finance finance = FinanceHandler.get(ctx, domain, financeId)
 			.orElseThrow( () -> new AonCoreException(AonError.FINANCE_NOT_FOUND.getMessage()));
 		FinanceTracking tracking = FinanceTrackingHandler.getLastTracking( ctx, finance.getId());
@@ -250,11 +255,11 @@ class FinanceValidation {
 			.andThen(CHECK_IF_TRACKING_IS_FROM_STATEMENT_LINK_FOR_UNDOING)
 			.andThen(CHECK_IF_TRACKING_IS_FRACTIONED_LINK_FOR_UNDOING)
 			.andThen(CHECK_IF_FINANCE_IS_GROUPED_FOR_UNDOING)
-			.accept(tracking, ctx);
+			.accept( new FinanceTrackingValidationContext(ctx, domain, tracking));
 		return tracking;
 	}
 
-	public static void validatePay(AONContext ctx, int domain, Finance finance) {
+	static void validatePay(AONContext ctx, int domain, Finance finance) {
 		Finance original  = FinanceHandler.get(ctx, domain, finance.getId())
 			.orElseThrow( () -> new AonCoreException(AonError.FINANCE_NOT_FOUND.getMessage()));
 		if (!AonNumberUtils.equals( 
@@ -268,28 +273,33 @@ class FinanceValidation {
 					.execute();
 			ctx.log().info("UPDATE FINANCE  ("+i+") id: " + finance.getId() + " PayMethod");
 		}
-		CHECK_PENDING_FOR_PAYING.accept(original, ctx);
-		CHECK_AMOUNT_ZERO.accept(finance, ctx);
+		CHECK_PENDING_FOR_PAYING
+			.accept(new FinanceValidationContext(ctx, domain, original));
+		CHECK_AMOUNT_ZERO
+			.accept(new FinanceValidationContext(ctx, domain, finance));
 	}
-	public static void validatePay(AONContext ctx, FinanceTracking financeTracking) {
-		CHECK_DATE_FOR_PAYING.accept(financeTracking, ctx);
+	static void validatePay(AONContext ctx, int domain, FinanceTracking financeTracking) {
+		CHECK_DATE_FOR_PAYING.accept( new FinanceTrackingValidationContext(ctx, domain, financeTracking));
 	}
 
-	public static void validateReturn(AONContext ctx, int domain, FinanceTracking financeTracking) {
+	static void validateReturn(AONContext ctx, int domain, FinanceTracking financeTracking) {
 		if (financeTracking.getFinance() == null || financeTracking.getFinance().getId( )== null ) {
 			throw new AonCoreException(AonError.FINANCE_TRACKING_WITHOUT_FINANCE.getMessage());
 		}
 		Finance original = FinanceHandler.get(ctx, domain, financeTracking.getFinance().getId())
 			.orElseThrow( () -> new AonCoreException(AonError.FINANCE_NOT_FOUND.getMessage()));
-		CHECK_PENDING_FOR_RETURNING.accept(original, ctx);
-		CHECK_TRACKING_AMOUNT_ZERO.accept(financeTracking, ctx);
+		CHECK_PENDING_FOR_RETURNING
+			.accept(new FinanceValidationContext(ctx, domain, original));
+		CHECK_TRACKING_AMOUNT_ZERO
+			.accept(new FinanceTrackingValidationContext(ctx, domain, financeTracking));
 	}
 
-	public static Finance validateFraction(AONContext ctx, int domain, Finance finance, LinkedList<Finance> fractions) {
+	static Finance validateFraction(AONContext ctx, int domain, Finance finance, List<Finance> fractions) {
 		Finance original = FinanceHandler.get(ctx, domain, finance.getId())
 			.orElseThrow( () -> new AonCoreException(AonError.FINANCE_NOT_FOUND.getMessage()));
-		CHECK_PENDING_FOR_FRACTION.accept(original, ctx);
-		if (fractions == null || fractions.size() == 0) {
+		CHECK_PENDING_FOR_FRACTION
+			.accept(new FinanceValidationContext(ctx, domain, original));
+		if (AonCollectionUtils.isEmpty(fractions)) {
 			throw new AonCoreException(AonError.FINANCE_CAN_NOT_BE_FRACTIONED_LIST.getMessage());
 		}
 		double amount = 0;

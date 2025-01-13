@@ -5,7 +5,7 @@
 		<artifactId>aon.parent</artifactId>
 		<version>9.23-SNAPSHOT</version>
 	</parent>
-	<groupId>net.aonsolutions.occam</groupId>
+	<groupId>net.aonsolutions</groupId>
 	<artifactId>aon.occam.impl</artifactId>
 	<name>AON OCCAM IMPL</name>
 	<description>
@@ -98,7 +98,7 @@
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
-			<groupId>net.aonsolutions.occam</groupId>
+			<groupId>net.aonsolutions</groupId>
 			<artifactId>aon.occam.api</artifactId>
 			<version>${project.version}</version>
 			<scope>compile</scope>
@@ -145,7 +145,7 @@
 		*****************
 		-->
 		<dependency>
-			<groupId>net.aonsolutions.occam</groupId>
+			<groupId>net.aonsolutions</groupId>
 			<artifactId>aon.occam.api</artifactId>
 			<type>test-jar</type>
 			<version>${project.version}</version>
