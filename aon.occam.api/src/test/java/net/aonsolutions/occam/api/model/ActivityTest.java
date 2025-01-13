@@ -12,10 +12,11 @@ import java.util.List;
 import java.util.Set;
 
 import org.junit.jupiter.api.Test;
+
 import com.esferalia.aon.watson.util.AonCollectionUtils;
 
 import net.aonsolutions.occam.api.model.metadata.ActivityMetadata;
-import net.aonsolutions.occam.api.model.metadata.ActivityMetadata.ActivityMetadataVisitor;
+import net.aonsolutions.occam.api.model.metadata.MetadataVisitor.ActivityMetadataVisitor;
 import net.aonsolutions.occam.api.model.type.IRPFRegime;
 import net.aonsolutions.occam.api.model.type.VATExemptionCause;
 import net.aonsolutions.occam.api.model.type.VATRegime;

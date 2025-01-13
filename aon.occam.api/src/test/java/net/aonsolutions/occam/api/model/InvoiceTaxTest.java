@@ -11,10 +11,11 @@ import java.util.List;
 import java.util.Set;
 
 import org.junit.jupiter.api.Test;
+
 import com.esferalia.aon.watson.util.AonCollectionUtils;
 
 import net.aonsolutions.occam.api.model.metadata.InvoiceTaxMetadata;
-import net.aonsolutions.occam.api.model.metadata.InvoiceTaxMetadata.InvoiceTaxMetadataVisitor;
+import net.aonsolutions.occam.api.model.metadata.MetadataVisitor.InvoiceTaxMetadataVisitor;
 import net.aonsolutions.occam.api.model.type.TaxType;
 import net.aonsolutions.occam.api.model.type.VatDeductionType;
 import net.aonsolutions.occam.api.model.type.WithholdingType;

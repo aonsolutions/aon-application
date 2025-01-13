@@ -278,7 +278,9 @@ public enum AppParam {
 	, SIG_LOGIN
 	, TRIAL
 	;
-	
+
+	public static final String ACCOUNT_PATTERN = "^ACC_.+_ACC";
+	 
 	public String value() {
 		return name();
 	}
@@ -292,4 +294,5 @@ public enum AppParam {
 	public static String value( AppParam t) {
 		return t == null ? null : t.value();
 	}
+	
 }

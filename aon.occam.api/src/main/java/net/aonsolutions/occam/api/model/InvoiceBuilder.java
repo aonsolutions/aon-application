@@ -8,7 +8,9 @@ import net.aonsolutions.occam.api.model.type.Country;
 import net.aonsolutions.occam.api.model.type.DocumentType;
 import net.aonsolutions.occam.api.model.type.InvoiceSource;
 import net.aonsolutions.occam.api.model.type.InvoiceTransactionType;
+import net.aonsolutions.occam.api.model.type.InvoiceTransactionType.InvoiceTransactionTypeVisitor;
 import net.aonsolutions.occam.api.model.type.InvoiceType;
+import net.aonsolutions.occam.api.model.type.InvoiceType.InvoiceTypeVisitor;
 import net.aonsolutions.occam.api.model.type.WithholdingType;
 
 public class InvoiceBuilder {
@@ -40,6 +42,10 @@ public class InvoiceBuilder {
 		this.invoice.getHeader().setProject(project);
 		return this;
 	}
+	public InvoiceBuilder setScope(Integer scope) {
+		this.invoice.getHeader().setScope(scope);
+		return this;
+	}
 	public InvoiceBuilder setType(InvoiceType type) {
 		this.invoice.getHeader().setType(type);
 		return this;
@@ -52,6 +58,7 @@ public class InvoiceBuilder {
 		this.invoice.getHeader().setNumber(number);
 		return this;
 	}
+	
 	public InvoiceBuilder setReferenceCode(String referenceCode) {
 		this.invoice.getHeader().setReferenceCode(referenceCode);
 		return this;
@@ -88,6 +95,10 @@ public class InvoiceBuilder {
 		this.invoice.getHeader().setRegistryName(registryName);
 		return this;
 	}
+	public InvoiceBuilder setSeller(Seller seller) {
+		this.invoice.getHeader().setSeller(seller);
+		return this;
+	}
 	public InvoiceBuilder setConfidential(boolean confidential) {
 		this.invoice.getHeader().setConfidential(confidential);
 		return this;
@@ -96,14 +107,35 @@ public class InvoiceBuilder {
 		this.invoice.getHeader().setSurcharge(surcharge);
 		return this;
 	}
+	public InvoiceBuilder setService(boolean service) {
+		this.invoice.getHeader().setService(service);
+		return this;
+	}
+	public InvoiceBuilder setVatAccrualPayment(boolean vatAccrualPayment) {
+		this.invoice.getHeader().setVatAccrualPayment(vatAccrualPayment);
+		return this;
+	}
+	public InvoiceBuilder setVatImportation(boolean vatImportation) {
+		this.invoice.setVatImportation(vatImportation);
+		return this;
+	}
 	public InvoiceBuilder setWithholding(boolean withholding) {
-		if (withholding) {
-			this.invoice.enableWithholding();	
+		return this.setWithholding(withholding, false);
+	}
+	public InvoiceBuilder setWithholdingFarmer(boolean withholding) {
+		return this.setWithholding(true, withholding);
+	}
+	private InvoiceBuilder setWithholding(boolean withholding, boolean withholdingFarmer) {
+		if (withholding || withholdingFarmer) {
+			InvoiceWithholding iw = new InvoiceWithholding()
+				.setWithholdingType(withholdingFarmer?WithholdingType.FARMER : WithholdingType.PROFESSIONAL );
+			this.invoice.enableWithholding(iw);	
 		} else {
 			this.invoice.disableWithholding();
 		}
 		return this;
 	}
+	
 	public InvoiceBuilder setWithholdingPercent(double percent) {
 		InvoiceWithholding iw = this.invoice.getWithholding()
 			.orElse(new InvoiceWithholding()
@@ -120,11 +152,32 @@ public class InvoiceBuilder {
 		return this;
 	}
 	
+	public InvoiceBuilder setInvoiceAddress(InvoiceAddress invoiceAddress) {
+		if (invoiceAddress != null) {
+			invoiceAddress.setInvoice(invoice.getHeader().getId());
+			invoiceAddress.setDomain(invoice.getHeader().getDomain());
+			invoice.setInvoiceAddress(invoiceAddress);
+		}
+		return this;
+	}
+	
+	public InvoiceBuilder ifWithholdingEnabled(Consumer<InvoiceBuilder> consumer) {
+		if (invoice.getHeader().isWithholding()) {
+			consumer.accept(this);
+		}
+		return this;
+	}
+	
 	// *****************************************************************************
 	// ***********************************************************[INVOICE DETAIL] *
 	// *****************************************************************************
 	public InvoiceBuilder addDetail() {
-		return addDetail(new InvoiceDetail());
+		return addDetail(
+			new InvoiceDetail()
+				.setDomain(invoice.getHeader().getDomain())
+				.setInvoice(invoice.getHeader().getId())
+				.setSeller(invoice.getHeader().getSeller().orElse(null))
+		);
 	}
 	public InvoiceBuilder addDetail(InvoiceDetail detail) {
 		this.detail = detail;
@@ -159,7 +212,7 @@ public class InvoiceBuilder {
 		detail.setSource(source);
 		return this;
 	}
-	public InvoiceBuilder setSeller(Seller seller) {
+	public InvoiceBuilder setDetailSeller(Seller seller) {
 		detail.setSeller(seller);
 		return this;
 	}
@@ -171,31 +224,22 @@ public class InvoiceBuilder {
 		detail.setWorkplace(workplace);
 		return this;
 	}
-
-	
-	// *****************************************************************************
-	// ***********************************************************[INVOICE TAX] ****
-	// *****************************************************************************
-	public InvoiceBuilder setVatPercent(double percentage) {
-		detail
-			.getVatTax()
-			.orElse(detail.enableVatTax())
-			.setPercentage(percentage);
-		return this;
+	public InvoiceBuilder visit(InvoiceTypeVisitor<InvoiceBuilder> visitor) {
+		if (invoice.getHeader().getType() == null) {
+			throw new IllegalStateException("Set the invoice type first!");
+		}
+		return invoice.getHeader().getType().visit(visitor);
 	}
-	public InvoiceBuilder setSurchargePercent(double percentage) {
-		Optional<InvoiceTax> o = detail.getVatTax();
-		if (!o.isPresent()) {
-			detail.enableVatTax()
-			.setSurcharge(percentage);
-		} else {
-			o.get().setSurcharge(percentage);
+	
+	public InvoiceBuilder ifDetailTaxEnabled(Consumer<InvoiceBuilder> consumer) {
+		if (detail.isTaxEnabled(invoice)) {
+			consumer.accept(this);
 		}
 		return this;
 	}
 	
-	public InvoiceBuilder ifTaxEnabled(Consumer<InvoiceBuilder> consumer) {
-		if (detail.isTaxEnabled(invoice)) {
+	public InvoiceBuilder ifDetailSurchargeEnabled(Consumer<InvoiceBuilder> consumer) {
+		if (detail.isTaxEnabled(invoice) && invoice.getHeader().isSurcharge()) {
 			consumer.accept(this);
 		}
 		return this;
@@ -208,9 +252,27 @@ public class InvoiceBuilder {
 		return this;
 	}
 
-	public InvoiceBuilder ifWithholdingEnabled(Consumer<InvoiceBuilder> consumer) {
-		if (invoice.getHeader().isWithholding()) {
-			consumer.accept(this);
+	
+	// *****************************************************************************
+	// ***********************************************************[INVOICE TAX] ****
+	// *****************************************************************************
+	public InvoiceBuilder setVatPercent(double percentage) {
+		if ( detail.isTaxEnabled(invoice) ) {
+			if (!invoice.isVatEnabled()) percentage = 0.0;
+			detail
+				.getVatTax()
+				.orElse(detail.enableVatTax())
+				.setPercentage(percentage);
+		}
+		return this;
+	}
+	public InvoiceBuilder setSurchargePercent(double percentage) {
+		if ( detail.isTaxEnabled(invoice) ) {
+			detail.getVatTax()
+				.ifPresentOrElse(
+					v -> v.setSurcharge(percentage)
+					,() -> {throw new IllegalStateException("Agrega primero el porcentaje de IVA.");}
+			);
 		}
 		return this;
 	}
@@ -219,7 +281,47 @@ public class InvoiceBuilder {
 	// ***********************************************************[BUILD] **********
 	// *****************************************************************************
 	public Invoice build() {
-	return InvoiceCalculator.calculate(this.invoice);
+		check();
+		return InvoiceCalculator.calculate(this.invoice);
+	}
+	
+	private void check() {
+		invoice.getHeader().getTransaction().visit( new InvoiceTransactionTypeVisitor<Void>() {
+			
+			@Override
+			public Void visitOtherISP() {
+				setVatImportation(false);
+				setWithholding(false,false);
+				return null;
+			}
+			
+			@Override
+			public Void visitNational() {
+				setVatImportation(false);
+				return null;
+			}
+			
+			@Override
+			public Void visitIntracommunity() {
+				setVatImportation(false);
+				setWithholding(false,false);
+				setVatAccrualPayment(false);
+				return null;
+			}
+			
+			@Override
+			public Void visitExtracommunity() {
+				setWithholding(false,false);
+				setVatAccrualPayment(false);
+				return null;
+			}
+			
+			@Override
+			public Void visitCanCeuMel() {
+				visitExtracommunity();
+				return null;
+			}
+		});
 	}
 
 }

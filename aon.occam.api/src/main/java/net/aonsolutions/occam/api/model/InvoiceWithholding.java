@@ -1,7 +1,6 @@
 package net.aonsolutions.occam.api.model;
 
 import java.io.Serializable;
-import java.util.Objects;
 import java.util.Optional;
 
 import com.esferalia.aon.watson.util.AonMathUtils;
@@ -114,10 +113,19 @@ public class InvoiceWithholding implements Serializable {
 		return this;
 	}
 	
+	public InvoiceWithholding initialize() {
+		return setBase(0.0)
+			.setQuota(0)
+			.setDeductibleQuota(0.0)
+			.setQuotaEdited(false)
+			.setDeductibleQuotaEdited(false);
+	}
+
 	@Override
 	public boolean equals(Object obj) {
 		if (obj == this) return true;
-		if (obj instanceof InvoiceWithholding other) {
+		if (obj instanceof InvoiceWithholding) {
+			InvoiceWithholding other = (InvoiceWithholding) obj;
 			return AonObjectUtils.equals( this.withholdingType,other.withholdingType )
 				&& AonObjectUtils.equals( this.base,other.base )
 				&& AonObjectUtils.equals( this.percentage,other.percentage )
@@ -134,14 +142,14 @@ public class InvoiceWithholding implements Serializable {
 	@Override
 	public int hashCode() {
 	    return 31 * 7 
-    		+ Objects.requireNonNullElse(withholdingType, 0).hashCode()
-    		+ Objects.requireNonNullElse(base, 0).hashCode()
-    		+ Objects.requireNonNullElse(percentage, 0).hashCode()
-    		+ Objects.requireNonNullElse(quota, 0).hashCode()
-    		+ Objects.requireNonNullElse(directTaxPercent, 0).hashCode()
-    		+ Objects.requireNonNullElse(deductibleQuota, 0).hashCode()
-			+ Objects.requireNonNullElse(account, 0).hashCode()
-			+ Objects.requireNonNullElse(adjDirectTaxAccount, 0).hashCode()
+    		+ AonObjectUtils.requireNonNullElse(withholdingType, 0).hashCode()
+    		+ AonObjectUtils.requireNonNullElse(base, 0).hashCode()
+    		+ AonObjectUtils.requireNonNullElse(percentage, 0).hashCode()
+    		+ AonObjectUtils.requireNonNullElse(quota, 0).hashCode()
+    		+ AonObjectUtils.requireNonNullElse(directTaxPercent, 0).hashCode()
+    		+ AonObjectUtils.requireNonNullElse(deductibleQuota, 0).hashCode()
+			+ AonObjectUtils.requireNonNullElse(account, 0).hashCode()
+			+ AonObjectUtils.requireNonNullElse(adjDirectTaxAccount, 0).hashCode()
 		;
 	}
 	

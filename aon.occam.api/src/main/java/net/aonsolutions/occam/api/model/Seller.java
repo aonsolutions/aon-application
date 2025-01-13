@@ -79,4 +79,11 @@ public class Seller extends Registry implements Serializable {
 		super.setConfidential(confidential);
 		return this;
 	}
+	
+	public Seller duplicate() {
+		return super.duplicate(Seller::new)
+			.setScope(scope)
+			.setActive(active)
+		;
+	}
 }

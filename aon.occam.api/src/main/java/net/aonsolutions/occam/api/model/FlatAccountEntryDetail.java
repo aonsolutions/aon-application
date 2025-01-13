@@ -1,0 +1,264 @@
+package net.aonsolutions.occam.api.model;
+
+import java.io.Serializable;
+import java.util.Date;
+
+import net.aonsolutions.occam.api.model.type.AccountEntryType;
+import net.aonsolutions.occam.api.model.type.SecurityLevel;
+
+public class FlatAccountEntryDetail implements Serializable{
+	
+	private static final long serialVersionUID = -3543906096998396626L;
+	
+	private Integer entryId;
+	private Integer entryDomain;
+	private Integer entryPeriod;
+	private String entryPeriodName;
+	private Date entryDate;
+	private AccountEntryType entryType;
+	private Integer activity;
+	private String activityDescription;
+	private Integer journal;
+	private SecurityLevel entrySecurityLevel;
+	private String comments;
+	private String entryCreationUser;
+	private Date entryCreationDate;
+	private String entryModificationUser;
+	private Date entryModificationDate;
+	private Integer detailId;
+	private Integer line;
+	private Integer account;
+	private String accountCode;
+	private String accountDescription;
+	private String concept;
+	private double debit;
+	private double credit;
+	private double debitBalance;
+	private double unpaidBalance;
+	private double initialDebitBalance;
+	private double initialUnpaidBalance;
+	private Integer balancingAccount;
+	private String balancingAccountCode;
+	private String balancingAccountDescription;
+	private String documentNumber;
+	
+	public Integer getEntryId() {
+		return entryId;
+	}
+	public FlatAccountEntryDetail setEntryId(Integer entryId) {
+		this.entryId = entryId;
+		return this;
+	}
+	public Integer getEntryDomain() {
+		return entryDomain;
+	}
+	public FlatAccountEntryDetail setEntryDomain(Integer entryDomain) {
+		this.entryDomain = entryDomain;
+		return this;
+	}
+	public Integer getEntryPeriod() {
+		return entryPeriod;
+	}
+	public FlatAccountEntryDetail setEntryPeriod(Integer entryPeriod) {
+		this.entryPeriod = entryPeriod;
+		return this;
+	}
+	public String getEntryPeriodName() {
+		return entryPeriodName;
+	}
+	public FlatAccountEntryDetail setEntryPeriodName(String entryPeriodName) {
+		this.entryPeriodName = entryPeriodName;
+		return this;
+	}
+	public Date getEntryDate() {
+		return entryDate;
+	}
+	public FlatAccountEntryDetail setEntryDate(Date entryDate) {
+		this.entryDate = entryDate;
+		return this;
+	}
+	public AccountEntryType getEntryType() {
+		return entryType;
+	}
+	public FlatAccountEntryDetail setEntryType(AccountEntryType entryType) {
+		this.entryType = entryType;
+		return this;
+	}
+	public Integer getActivity() {
+		return activity;
+	}
+	public FlatAccountEntryDetail setActivity(Integer activity) {
+		this.activity = activity;
+		return this;
+	}
+	public String getActivityDescription() {
+		return activityDescription;
+	}
+	public FlatAccountEntryDetail setActivityDescription(String activityDescription) {
+		this.activityDescription = activityDescription;
+		return this;
+	}
+	public Integer getJournal() {
+		return journal;
+	}
+	public FlatAccountEntryDetail setJournal(Integer journal) {
+		this.journal = journal;
+		return this;
+	}
+	public SecurityLevel getEntrySecurityLevel() {
+		return entrySecurityLevel;
+	}
+	public FlatAccountEntryDetail setEntrySecurityLevel(SecurityLevel entrySecurityLevel) {
+		this.entrySecurityLevel = entrySecurityLevel;
+		return this;
+	}
+	public String getComments() {
+		return comments;
+	}
+	public FlatAccountEntryDetail setComments(String comments) {
+		this.comments = comments;
+		return this;
+	}
+	public String getEntryCreationUser() {
+		return entryCreationUser;
+	}
+	public FlatAccountEntryDetail setEntryCreationUser(String entryCreationUser) {
+		this.entryCreationUser = entryCreationUser;
+		return this;
+	}
+	public Date getEntryCreationDate() {
+		return entryCreationDate;
+	}
+	public FlatAccountEntryDetail setEntryCreationDate(Date entryCreationDate) {
+		this.entryCreationDate = entryCreationDate;
+		return this;
+	}
+	public String getEntryModificationUser() {
+		return entryModificationUser;
+	}
+	public FlatAccountEntryDetail setEntryModificationUser(String entryModificationUser) {
+		this.entryModificationUser = entryModificationUser;
+		return this;
+	}
+	public Date getEntryModificationDate() {
+		return entryModificationDate;
+	}
+	public FlatAccountEntryDetail setEntryModificationDate(Date entryModificationDate) {
+		this.entryModificationDate = entryModificationDate;
+		return this;
+	}
+	public Integer getDetailId() {
+		return detailId;
+	}
+	public FlatAccountEntryDetail setDetailId(Integer detailId) {
+		this.detailId = detailId;
+		return this;
+	}
+	public Integer getLine() {
+		return line;
+	}
+	public FlatAccountEntryDetail setLine(Integer line) {
+		this.line = line;
+		return this;
+	}
+	public Integer getAccount() {
+		return account;
+	}
+	public FlatAccountEntryDetail setAccount(Integer account) {
+		this.account = account;
+		return this;
+	}
+	public String getAccountCode() {
+		return accountCode;
+	}
+	public FlatAccountEntryDetail setAccountCode(String accountCode) {
+		this.accountCode = accountCode;
+		return this;
+	}
+	public String getAccountDescription() {
+		return accountDescription;
+	}
+	public FlatAccountEntryDetail setAccountDescription(String accountDescription) {
+		this.accountDescription = accountDescription;
+		return this;
+	}
+	public String getConcept() {
+		return concept;
+	}
+	public FlatAccountEntryDetail setConcept(String concept) {
+		this.concept = concept;
+		return this;
+	}
+	public double getDebit() {
+		return debit;
+	}
+	public FlatAccountEntryDetail setDebit(double debit) {
+		this.debit = debit;
+		return this;
+	}
+	public double getCredit() {
+		return credit;
+	}
+	public FlatAccountEntryDetail setCredit(double credit) {
+		this.credit = credit;
+		return this;
+	}
+	public double getDebitBalance() {
+		return debitBalance;
+	}
+	public FlatAccountEntryDetail setDebitBalance(double debitBalance) {
+		this.debitBalance = debitBalance;
+		return this;
+	}
+	public double getUnpaidBalance() {
+		return unpaidBalance;
+	}
+	public FlatAccountEntryDetail setUnpaidBalance(double unpaidBalance) {
+		this.unpaidBalance = unpaidBalance;
+		return this;
+	}
+	public double getInitialDebitBalance() {
+		return initialDebitBalance;
+	}
+	public FlatAccountEntryDetail setInitialDebitBalance(double initialDebitBalance) {
+		this.initialDebitBalance = initialDebitBalance;
+		return this;
+	}
+	public double getInitialUnpaidBalance() {
+		return initialUnpaidBalance;
+	}
+	public FlatAccountEntryDetail setInitialUnpaidBalance(double initialUnpaidBalance) {
+		this.initialUnpaidBalance = initialUnpaidBalance;
+		return this;
+	}
+	public Integer getBalancingAccount() {
+		return balancingAccount;
+	}
+	public FlatAccountEntryDetail setBalancingAccount(Integer balancingAccount) {
+		this.balancingAccount = balancingAccount;
+		return this;
+	}
+	public String getBalancingAccountCode() {
+		return balancingAccountCode;
+	}
+	public FlatAccountEntryDetail setBalancingAccountCode(String balancingAccountCode) {
+		this.balancingAccountCode = balancingAccountCode;
+		return this;
+	}
+	public String getBalancingAccountDescription() {
+		return balancingAccountDescription;
+	}
+	public FlatAccountEntryDetail setBalancingAccountDescription(String balancingAccountDescription) {
+		this.balancingAccountDescription = balancingAccountDescription;
+		return this;
+	}
+	public String getDocumentNumber() {
+		return documentNumber;
+	}
+	public FlatAccountEntryDetail setDocumentNumber(String documentNumber) {
+		this.documentNumber = documentNumber;
+		return this;
+	}
+
+	
+}

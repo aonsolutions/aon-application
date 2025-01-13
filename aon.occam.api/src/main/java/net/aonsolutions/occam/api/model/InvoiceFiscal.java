@@ -1,8 +1,8 @@
 package net.aonsolutions.occam.api.model;
 
+import java.io.Serializable;
 import java.util.Date;
-import java.util.EnumMap;
-import java.util.Objects;
+import java.util.HashMap;
 
 import com.esferalia.aon.watson.util.AonObjectUtils;
 
@@ -10,7 +10,7 @@ import net.aonsolutions.occam.api.model.metadata.InvoiceFiscalMetadata;
 import net.aonsolutions.occam.api.model.type.VATTaxRegime;
 import net.aonsolutions.occam.api.model.type.VATTaxRegime.VATTaxRegimeVisitor;
 
-public class InvoiceFiscal extends AonEntity<InvoiceFiscalMetadata> {
+public class InvoiceFiscal extends AonEntity<InvoiceFiscalMetadata> implements Serializable {
 	
 	private static final long serialVersionUID = -1911682283856222146L;
 	
@@ -19,7 +19,7 @@ public class InvoiceFiscal extends AonEntity<InvoiceFiscalMetadata> {
 	private Date issueDate;
 	private Date taxDate;
 	private Date expDate;
-	private EnumMap<VATTaxRegime,Boolean> vatRegimes = new EnumMap<>(VATTaxRegime.class);
+	private HashMap<VATTaxRegime,Boolean> vatRegimes = new HashMap<>();
 	
 	@Override
 	protected Object getUuid() {
@@ -103,15 +103,16 @@ public class InvoiceFiscal extends AonEntity<InvoiceFiscalMetadata> {
 	@Override
 	public boolean equals(Object obj) {
 		if (obj == this) return true;
-		if (obj instanceof InvoiceFiscal other) {
-			return AonObjectUtils.equals( this.getUuid(),other.getUuid() );
+		if (obj instanceof InvoiceFiscal) {
+			return AonObjectUtils.equals( this.getUuid(),((InvoiceFiscal) obj).getUuid() );
 		}
 	    return false;
 	}
 	
 	@Override
 	public int hashCode() {
-	    return 31 * 7 + Objects.requireNonNullElse(getUuid(), 0).hashCode();
+	    return 31 * 7 + AonObjectUtils.requireNonNullElse(getUuid(), 0).hashCode();
 	}
+
 }
 

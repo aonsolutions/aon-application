@@ -1,8 +1,6 @@
 package net.aonsolutions.occam.api.model;
 
 
-import java.util.Objects;
-
 import com.esferalia.aon.watson.util.AonObjectUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
@@ -138,14 +136,31 @@ public class Account extends AonEntity<AccountMetadata> {
 	@Override
 	public boolean equals(Object obj) {
 		if (obj == this) return true;
-		if (obj instanceof Account other) {
-			return AonObjectUtils.equals( this.getUuid(),other.getUuid() );
+		if (obj instanceof Account) {
+			return AonObjectUtils.equals( this.getUuid(),((Account) obj).getUuid() );
 		}
 	    return false;
 	}
 	
 	@Override
 	public int hashCode() {
-	    return 31 * 7 + Objects.requireNonNullElse(getUuid(), 0).hashCode();
+	    return 31 * 7 + AonObjectUtils.requireNonNullElse(getUuid(), 0).hashCode();
 	}
+	
+	public Account duplicate() {
+		return new Account()
+			.setId(id)
+			.setDomain(domain)
+			.setCode(code)
+			.setDescription(description)
+			.setAlias(alias)
+			.setEntryEnabled(entryEnabled)
+			.setLevel(level)
+			.setActive(active)
+			.setCostCenter(costCenter)
+			.markAsClean()
+		;
+	}
+	
 }
+

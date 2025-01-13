@@ -1,11 +1,11 @@
 package net.aonsolutions.occam.api.model.type;
 
-import static net.aonsolutions.occam.api.model.type.WithholdingTypeGroup.PROFESIONAL;
-import static net.aonsolutions.occam.api.model.type.WithholdingTypeGroup.OTRAS;
+import static net.aonsolutions.occam.api.model.type.WithholdingTypeGroup.CAPITAL_INMOBILIARIO;
+import static net.aonsolutions.occam.api.model.type.WithholdingTypeGroup.CAPITAL_MOBILIARIO;
 import static net.aonsolutions.occam.api.model.type.WithholdingTypeGroup.DERECHOS_IMAGEN;
 import static net.aonsolutions.occam.api.model.type.WithholdingTypeGroup.GANANCIAS_PATRIMONIALES;
-import static net.aonsolutions.occam.api.model.type.WithholdingTypeGroup.CAPITAL_MOBILIARIO;
-import static net.aonsolutions.occam.api.model.type.WithholdingTypeGroup.CAPITAL_INMOBILIARIO;
+import static net.aonsolutions.occam.api.model.type.WithholdingTypeGroup.OTRAS;
+import static net.aonsolutions.occam.api.model.type.WithholdingTypeGroup.PROFESIONAL;
 import static net.aonsolutions.occam.api.model.type.WithholdingTypeGroup.TRABAJO;
 
 import java.io.Serializable;

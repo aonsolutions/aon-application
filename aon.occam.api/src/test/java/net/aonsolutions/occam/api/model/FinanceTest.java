@@ -12,10 +12,11 @@ import java.util.List;
 import java.util.Set;
 
 import org.junit.jupiter.api.Test;
+
 import com.esferalia.aon.watson.util.AonCollectionUtils;
 
 import net.aonsolutions.occam.api.model.metadata.FinanceMetadata;
-import net.aonsolutions.occam.api.model.metadata.FinanceMetadata.FinanceMetadataVisitor;
+import net.aonsolutions.occam.api.model.metadata.MetadataVisitor.FinanceMetadataVisitor;
 import net.aonsolutions.occam.api.model.type.Country;
 import net.aonsolutions.occam.api.model.type.DocumentType;
 import net.aonsolutions.occam.api.model.type.FinanceStatus;

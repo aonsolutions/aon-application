@@ -12,10 +12,11 @@ import java.util.List;
 import java.util.Set;
 
 import org.junit.jupiter.api.Test;
+
 import com.esferalia.aon.watson.util.AonCollectionUtils;
 
 import net.aonsolutions.occam.api.model.metadata.InvoiceFiscalMetadata;
-import net.aonsolutions.occam.api.model.metadata.InvoiceFiscalMetadata.InvoiceFiscalMetadataVisitor;
+import net.aonsolutions.occam.api.model.metadata.MetadataVisitor.InvoiceFiscalMetadataVisitor;
 import net.aonsolutions.occam.api.model.type.VATTaxRegime;
 
 class InvoiceFiscalTest {

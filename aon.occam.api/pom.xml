@@ -5,7 +5,7 @@
 		<artifactId>aon.parent</artifactId>
 		<version>9.23-SNAPSHOT</version>
 	</parent>
-	<groupId>net.aonsolutions.occam</groupId>
+	<groupId>net.aonsolutions</groupId>
 	<artifactId>aon.occam.api</artifactId>
 	<name>AON OCCAM API</name>
 	<description>
@@ -66,12 +66,12 @@
 						<configuration>
 							<rules>
 								<rule>
-									<element>PACKAGE</element>
+									<element>BUNDLE</element>
 									<limits>
 										<limit>
 											<counter>INSTRUCTION</counter>
 											<value>COVEREDRATIO</value>
-											<minimum>58%</minimum>
+											<minimum>60%</minimum>
 										</limit>
 									</limits>
 								</rule>

@@ -25,6 +25,7 @@ class InvoiceTest {
 			.setHeader( expected.getHeader() )
 			.setRectificationInvoice( expected.getRectificationInvoice().orElse(null))
 			.setInvoiceAddress( expected.getInvoiceAddress().orElse(null) )
+			.setInvoiceInfo(expected.getInvoiceInfo().orElse(null))
 			.setFiscal(expected.getFiscal().orElse(null)) 
 			.setAttach(expected.getAttach().orElse(null))
 			.setRawdocId(expected.getRawdocId())

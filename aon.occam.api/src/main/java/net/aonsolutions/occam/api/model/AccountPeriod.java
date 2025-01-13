@@ -3,7 +3,6 @@ package net.aonsolutions.occam.api.model;
 import java.io.Serializable;
 import java.sql.Timestamp;
 import java.util.Date;
-import java.util.Objects;
 
 import com.esferalia.aon.watson.util.AonObjectUtils;
 
@@ -153,14 +152,15 @@ public class AccountPeriod extends AonEntity<AccountPeriodMetadata> implements S
 	@Override
 	public boolean equals(Object obj) {
 		if (obj == this) return true;
-		if (obj instanceof AccountPeriod other) {
-			return AonObjectUtils.equals( this.getUuid(),other.getUuid() );
+		if (obj instanceof AccountPeriod ) {
+			return AonObjectUtils.equals( this.getUuid(),((AccountPeriod) obj).getUuid() );
 		}
 	    return false;
 	}
 	
 	@Override
 	public int hashCode() {
-	    return 31 * 7 + Objects.requireNonNullElse(getUuid(), 0).hashCode();
+	    return 31 * 7 + AonObjectUtils.requireNonNullElse(getUuid(), 0).hashCode();
 	}
+	
 }

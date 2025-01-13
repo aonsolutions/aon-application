@@ -2,7 +2,6 @@ package net.aonsolutions.occam.api.model;
 
 import java.sql.Timestamp;
 import java.util.Date;
-import java.util.Objects;
 import java.util.Optional;
 
 import com.esferalia.aon.watson.util.AonObjectUtils;
@@ -386,15 +385,15 @@ public class Finance extends AonEntity<FinanceMetadata> implements HasAudit {
 	@Override
 	public boolean equals(Object obj) {
 		if (obj == this) return true;
-		if (obj instanceof Finance other) {
-			return AonObjectUtils.equals( this.getUuid(),other.getUuid() );
+		if (obj instanceof Finance) {
+			return AonObjectUtils.equals( this.getUuid(),((Finance ) obj).getUuid() );
 		}
 	    return false;
 	}
 	
 	@Override
 	public int hashCode() {
-	    return 31 * 7 + Objects.requireNonNullElse(getUuid(), 0).hashCode();
+	    return 31 * 7 + AonObjectUtils.requireNonNullElse(getUuid(), 0).hashCode();
 	}
 
 	public boolean isFullPending() {

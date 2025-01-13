@@ -1,7 +1,6 @@
 package net.aonsolutions.occam.api.model;
 
 import java.io.Serializable;
-import java.util.Objects;
 import java.util.Optional;
 
 import com.esferalia.aon.watson.util.AonMathUtils;
@@ -238,7 +237,8 @@ public class InvoiceBreakdown implements Serializable {
 	@Override
 	public boolean equals(Object obj) {
 		if (obj == this) return true;
-		if (obj instanceof InvoiceBreakdown other) {
+		if (obj instanceof InvoiceBreakdown) {
+			InvoiceBreakdown other = (InvoiceBreakdown) obj;
 			return AonObjectUtils.equals( this.taxType,other.taxType) 
 				&& AonObjectUtils.equals( this.base,other.base )
 				&& AonObjectUtils.equals( this.percentage,other.percentage )
@@ -257,16 +257,16 @@ public class InvoiceBreakdown implements Serializable {
 	@Override
 	public int hashCode() {
 	    return 31 * 7
-    		+ Objects.requireNonNullElse(taxType, 0).hashCode()
-    		+ Objects.requireNonNullElse(base, 0).hashCode()
-    		+ Objects.requireNonNullElse(percentage, 0).hashCode()
-    		+ Objects.requireNonNullElse(quota, 0).hashCode()
-    		+ Objects.requireNonNullElse(surcharge, 0).hashCode()
-    		+ Objects.requireNonNullElse(surchargeQuota, 0).hashCode()
-    		+ Objects.requireNonNullElse(deductibleQuota, 0).hashCode()
-			+ Objects.requireNonNullElse(withholdingType, 0).hashCode()
-			+ Objects.requireNonNullElse(vatDeductionType, 0).hashCode()
-			+ Objects.requireNonNullElse(withholdingAccount, 0).hashCode()
+    		+ AonObjectUtils.requireNonNullElse(taxType, 0).hashCode()
+    		+ AonObjectUtils.requireNonNullElse(base, 0).hashCode()
+    		+ AonObjectUtils.requireNonNullElse(percentage, 0).hashCode()
+    		+ AonObjectUtils.requireNonNullElse(quota, 0).hashCode()
+    		+ AonObjectUtils.requireNonNullElse(surcharge, 0).hashCode()
+    		+ AonObjectUtils.requireNonNullElse(surchargeQuota, 0).hashCode()
+    		+ AonObjectUtils.requireNonNullElse(deductibleQuota, 0).hashCode()
+			+ AonObjectUtils.requireNonNullElse(withholdingType, 0).hashCode()
+			+ AonObjectUtils.requireNonNullElse(vatDeductionType, 0).hashCode()
+			+ AonObjectUtils.requireNonNullElse(withholdingAccount, 0).hashCode()
 		;
 	}
 }

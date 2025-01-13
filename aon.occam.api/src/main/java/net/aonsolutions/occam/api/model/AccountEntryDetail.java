@@ -1,7 +1,6 @@
 package net.aonsolutions.occam.api.model;
 
 import java.sql.Timestamp;
-import java.util.Objects;
 import java.util.Optional;
 
 import com.esferalia.aon.watson.util.AonMathUtils;
@@ -89,11 +88,11 @@ public class AccountEntryDetail extends AonEntity<AccountEntryDetailMetadata> im
 		return this;
 	}
 	
-	public String getAccountCode() {
-		return getAccount().map(Account::getCode).orElse(null);
+	public Optional<String> getAccountCode() {
+		return getAccount().map(Account::getCode);
 	}
-	public String getAccountDescription() {
-		return getAccount().map(Account::getDescription).orElse(null);
+	public Optional<String> getAccountDescription() {
+		return getAccount().map(Account::getDescription);
 	}
 
 	public Integer getLine() {
@@ -190,11 +189,11 @@ public class AccountEntryDetail extends AonEntity<AccountEntryDetailMetadata> im
 		return this;
 	}
 	
-	public String getBalancingAccountCode() {
-		return getBalancingAccount().map(Account::getCode).orElse(null);
+	public Optional<String> getBalancingAccountCode() {
+		return getBalancingAccount().map(Account::getCode);
 	}
-	public String getBalancingAccountDescription() {
-		return getBalancingAccount().map(Account::getDescription).orElse(null);
+	public Optional<String> getBalancingAccountDescription() {
+		return getBalancingAccount().map(Account::getDescription);
 	}
 	
 	public String getDocumentNumber() {
@@ -246,15 +245,15 @@ public class AccountEntryDetail extends AonEntity<AccountEntryDetailMetadata> im
 	@Override
 	public boolean equals(Object obj) {
 		if (obj == this) return true;
-		if (obj instanceof AccountEntryDetail other) {
-			return AonObjectUtils.equals( this.getUuid(),other.getUuid() );
+		if (obj instanceof AccountEntryDetail) {
+			return AonObjectUtils.equals( this.getUuid(),((AccountEntryDetail) obj).getUuid() );
 		}
 	    return false;
 	}
 	
 	@Override
 	public int hashCode() {
-	    return 31 * 7 + Objects.requireNonNullElse(getUuid(), 0).hashCode();
+	    return 31 * 7 + AonObjectUtils.requireNonNullElse(getUuid(), 0).hashCode();
 	}
 	
 	static AccountEntryDetail clone(AccountEntryDetail ori) {

@@ -2,33 +2,32 @@ package net.aonsolutions.occam.api.model;
 
 import java.io.Serializable;
 import java.util.HashSet;
-import java.util.Set;
 import java.util.stream.Stream;
 
 import com.esferalia.aon.watson.util.AonCollectionUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 
-public abstract class AonEntity<T extends Enum<?>> implements Serializable {
+public abstract class AonEntity<T extends Serializable> implements Serializable {
 
 	private static final long serialVersionUID = -2298765155655521769L;
 	
-	private HashSet<T> dirtySet;
 	private boolean selected;
 	private boolean deleted;
+	private HashSet<T> dirtySet;
 
+	public HashSet<T> dirtySet() {
+		if (dirtySet == null) dirtySet = new HashSet<>();
+		return dirtySet;
+	}
 	public boolean isDirty() {
 		return !dirtySet().isEmpty();
 	}
 
 	public AonEntity<T> markAsClean() {
-		dirtySet = new HashSet<>();
+		dirtySet().clear();
 		return this;
 	}
 	
-	public Set<T> dirtySet() {
-		if (dirtySet == null) markAsClean();
-		return dirtySet;
-	}
 	public Stream<T> dirtySetStream() {
 		return AonCollectionUtils.stream(dirtySet());
 	}

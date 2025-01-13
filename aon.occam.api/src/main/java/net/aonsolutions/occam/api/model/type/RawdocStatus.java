@@ -24,10 +24,6 @@ public enum RawdocStatus implements Serializable {
 		return description;
 	}
 	
-	public String getName() {
-		return this.name().toLowerCase();
-	}
-	
 	public byte value() {
 		return (byte) this.ordinal();
 	}

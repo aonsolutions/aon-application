@@ -1,13 +1,15 @@
 package net.aonsolutions.occam.api.model;
 
 import java.sql.Timestamp;
+import java.util.Collections;
 import java.util.Date;
 import java.util.LinkedList;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Stream;
 
 import com.esferalia.aon.watson.util.AonCollectionUtils;
+import com.esferalia.aon.watson.util.AonMathUtils;
+import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonObjectUtils;
 
 import net.aonsolutions.occam.api.model.metadata.AccountEntryMetadata;
@@ -53,6 +55,10 @@ public class AccountEntry extends AonEntity<AccountEntryMetadata> implements Has
 		super.setDeleted(selected);
 		return this;
 	}
+	@Override
+	public boolean isDirty() {
+		return super.isDirty() || detailStream().anyMatch(d -> d.isDirty());
+	}
 
 	public Integer getId() {
 		return this.id;
@@ -82,7 +88,7 @@ public class AccountEntry extends AonEntity<AccountEntryMetadata> implements Has
 	}
 
 	public boolean isPeriodActive() {
-		return getPeriod().isEmpty() 
+		return !getPeriod().isPresent() 
 			|| getPeriod().map( p -> p.isActive()).orElse(false);
 	}
 	
@@ -157,18 +163,44 @@ public class AccountEntry extends AonEntity<AccountEntryMetadata> implements Has
 		this.details.add(detail);
 		return this;
 	}
-	
 	public int getDetailsSize() {
 		return (int) detailStream()
 			.filter(aed -> !aed.isDeleted())
 			.count();
 	}
-	
 	public Optional<AccountEntryDetail> getLastDetail() {
 		return detailStream()
 			.filter(aed -> !aed.isDeleted())
 			.reduce( (a,b) -> b);
 	}
+	public void regenerateDetailLineNumbers(AccountEntryDetail aed, Integer line) {
+		if (this.details != null) {
+			aed.setLine( line );
+			this.details.remove( aed );
+			this.details.offerFirst( aed );
+			Collections.sort(this.details, (aed1, aed2) -> AonNumberUtils.compare(aed1.getLine(), aed2.getLine()));
+			for (int i = 0; i < this.details.size(); i++) {
+				this.details.get(i).setLine(i + 1);
+			}
+		}
+	}
+	public void deleteDetail(AccountEntryDetail aed) {
+		if (this.details != null) {
+			this.details.remove( aed ); 
+		}
+	}
+	
+	// ---------------------------------------------------------- BALANCE
+	public double getDebitSum() {
+		return AonMathUtils.round(detailStream().filter( d -> d.isNotDeleted()).mapToDouble(d -> AonMathUtils.round(d.getDebit())).sum());
+	}
+	public double getCreditSum() {
+		return AonMathUtils.round(detailStream().filter( d -> d.isNotDeleted()).mapToDouble(d -> AonMathUtils.round(d.getCredit())).sum());
+	}
+	public boolean isSettled() {
+		return AonMathUtils.equals(getDebitSum(),getCreditSum());
+	}
+	
 	
 	// ---------------------------------------------------------- AUDIT
 	@Override
@@ -210,15 +242,15 @@ public class AccountEntry extends AonEntity<AccountEntryMetadata> implements Has
 	@Override
 	public boolean equals(Object obj) {
 		if (obj == this) return true;
-		if (obj instanceof AccountEntry other) {
-			return AonObjectUtils.equals( this.getUuid(),other.getUuid() );
+		if (obj instanceof AccountEntry) {
+			return AonObjectUtils.equals( this.getUuid(),((AccountEntry) obj).getUuid() );
 		}
 	    return false;
 	}
 	
 	@Override
 	public int hashCode() {
-	    return 31 * 7 + Objects.requireNonNullElse(getUuid(), 0).hashCode();
+	    return 31 * 7 + AonObjectUtils.requireNonNullElse(getUuid(), 0).hashCode();
 	}
 	
 	static AccountEntry clone(AccountEntry ori) {
@@ -246,4 +278,21 @@ public class AccountEntry extends AonEntity<AccountEntryMetadata> implements Has
 		ori.dirtySetStream().forEach(newEntry::markAsDirty); 
 		return newEntry;
 	}
+	
+	public boolean isUpdatable() {
+		return isManual();
+	}
+	
+	@SuppressWarnings("deprecation")
+	public boolean isManual() {
+		return ( entryType == AccountEntryType.MANUAL
+			 || entryType == AccountEntryType.EXPENSES
+			 || entryType == AccountEntryType.SALARY
+			 || entryType == AccountEntryType.SOCIAL_INSURANCE
+			 || entryType == AccountEntryType.SOCIAL_INSURANCE_ADJUST
+			 || entryType == AccountEntryType.LOAN
+			 || entryType == AccountEntryType.TAX
+			 || entryType == AccountEntryType.LOAN_FEE );
+	}
+	
 }

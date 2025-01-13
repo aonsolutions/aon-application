@@ -1,10 +1,13 @@
 package net.aonsolutions.occam.api.model;
 
+import java.io.Serializable;
 import java.util.Date;
 
 import net.aonsolutions.occam.api.model.type.Administration;
 
-public class TbaiConfiguration {
+public class TbaiConfiguration implements Serializable {
+	
+	private static final long serialVersionUID = -4470880720989877659L;
 	
 	private boolean active;
 	private Administration administration;

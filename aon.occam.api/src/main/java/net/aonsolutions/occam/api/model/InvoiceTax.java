@@ -1,8 +1,8 @@
 package net.aonsolutions.occam.api.model;
 
-import java.util.Objects;
 import java.util.Optional;
 
+import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonObjectUtils;
 
 import net.aonsolutions.occam.api.model.metadata.InvoiceTaxMetadata;
@@ -154,6 +154,11 @@ public class InvoiceTax extends AonEntity<InvoiceTaxMetadata> {
 	public double getDeductibleQuota() {
 		return deductibleQuota;
 	}
+	public double getVatNegativeAdjust() {
+		if (!isVatType()) return 0.0;
+		return AonMathUtils.round(getQuota() - getDeductibleQuota());
+	}
+	
 	public InvoiceTax setDeductibleQuota(double deductibleQuota) {
 		checkIfDirty( this.deductibleQuota,deductibleQuota, InvoiceTaxMetadata.DEDUCTIBLE_QUOTA);
 		this.deductibleQuota = deductibleQuota;
@@ -205,6 +210,18 @@ public class InvoiceTax extends AonEntity<InvoiceTaxMetadata> {
 		return this;
 	}
 	
+	public InvoiceTax setAccount(Invoice invoice, Optional<Account> account) {
+		account.ifPresent(a -> {
+			if (invoice.isSales()) {
+				setOutputAccount(a);
+			} else {
+				setInputAccount(a); 
+			}
+		});
+		return this;
+	}
+	
+	
 	public Optional<Account> getAdjAccount() {
 		return Optional.ofNullable(adjAccount);
 	}
@@ -241,22 +258,59 @@ public class InvoiceTax extends AonEntity<InvoiceTaxMetadata> {
 	public boolean isVatType() {
 		return this.getTaxType() == TaxType.VAT;
 	}
+	public boolean isVatSurchargeType() {
+		return isVatType() && AonMathUtils.isNotZero(getSurcharge());
+	}
 	public boolean isWithholdingType() {
 		return this.getTaxType() == TaxType.RETENTION;
 	}
-	
+	public double getVatFullQuota() {
+		if (!isVatType()) return 0.0; 
+		double s = isVatSurchargeType()?getSurchargeQuota():0.0;
+		return AonMathUtils.round(getQuota() + s); 
+	}
+	public boolean hasVatQuota() {
+		return isVatType() && AonMathUtils.isNotZero(getVatFullQuota());
+	}
 	
 	@Override
 	public boolean equals(Object obj) {
 		if (obj == this) return true;
-		if (obj instanceof InvoiceTax other) {
-			return AonObjectUtils.equals( this.getUuid(),other.getUuid() );
+		if (obj instanceof InvoiceTax) {
+			return AonObjectUtils.equals( this.getUuid(),((InvoiceTax) obj).getUuid() );
 		}
 	    return false;
 	}
 	
 	@Override
 	public int hashCode() {
-	    return 31 * 7 + Objects.requireNonNullElse(getUuid(), 0).hashCode();
+	    return 31 * 7 + AonObjectUtils.requireNonNullElse(getUuid(), 0).hashCode();
 	}
+	
+	public InvoiceTax duplicate() {
+		return new InvoiceTax()
+			.setId(id)
+			.setDomain(domain)
+			.setInvoiceDetail(invoiceDetail)
+			.setTaxType(taxType)
+			.setBase(base)
+			.setPercentage(percentage)
+			.setQuota(quota) 
+			.setSurcharge(surcharge)
+			.setSurchargeQuota(surchargeQuota)
+			.setVatDeductionType(vatDeductionType)
+			.setDeductiblePercent(deductiblePercent)
+			.setDeductibleQuota(deductibleQuota)
+			.setWithholdingType(withholdingType)
+			.setWithholdingAccount(getWithholdingAccount().map(a -> a.duplicate() ).orElse(null))
+			.setOutputAccount(getOutputAccount().map(a -> a.duplicate() ).orElse(null))
+			.setInputAccount(getInputAccount().map(a -> a.duplicate() ).orElse(null))
+			.setAdjAccount(getAdjAccount().map(a -> a.duplicate() ).orElse(null))
+			.setQuotaEdited(deductibleQuotaEdited)
+			.setSurchargeQuotaEdited(surchargeQuotaEdited)
+			.setDeductibleQuotaEdited(deductibleQuotaEdited)
+			.markAsClean()
+		;
+	}
+
 }

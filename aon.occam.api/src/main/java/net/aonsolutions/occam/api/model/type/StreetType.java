@@ -91,7 +91,7 @@ public enum StreetType implements Serializable {
 	KH	("C.H. ","CMNO HONDO"),
 	KN	("C.N. ","CMNO NUEVO"),
 	KV	("C.V. ","CMNO VIEJO"),
-	CÑ	("CÑADA","CAÑADA"),
+	CX	("CÑADA","CAÑADA"),
 	CL	("CALLE","CALLE", new StreeTypeI18N[] {
 		new StreeTypeI18N( CATALAN,"CARRE","CARRER"),
 		new StreeTypeI18N( BASQUE,"KALE ","KALEA"),
@@ -174,7 +174,7 @@ public enum StreetType implements Serializable {
 		new StreeTypeI18N( BASQUE,"ALDAP","ALDAPA"),
 	}),
 	CZ	("CZADA","CALZADA"),
-	CÇ	("CZADS","CALZADAS"),
+	CF	("CZADS","CALZADAS"),
 	DM	("DEMAR","DEMARCACION"),
 	DH	("DHSA ","DEHESA"),
 	DS	("DISEM","DISEMINADO", new StreeTypeI18N[] {
@@ -306,7 +306,7 @@ public enum StreetType implements Serializable {
 	PO	("PTO  ","PUERTO", new StreeTypeI18N[] {
 		new StreeTypeI18N( CATALAN,"PORT ","PORT"),
 	}),
-	PÇ	("PZO  ","PASADIZO", new StreeTypeI18N[] {
+	PW	("PZO  ","PASADIZO", new StreeTypeI18N[] {
 		new StreeTypeI18N( CATALAN,"PDIS ","PASSADIS"),
 	}),
 	RM	("RAMAL","RAMAL"),
@@ -371,7 +371,30 @@ public enum StreetType implements Serializable {
 	ZZ	("ZZ","ZZ"),
 	;
 	
-	public static record StreeTypeI18N( AonLanguage language, String ineCode, String description ) {};
+	public static class StreeTypeI18N {
+		private final AonLanguage language;
+		private final String ineCode;
+		private final String description;
+		
+		public  StreeTypeI18N ( AonLanguage language, String ineCode, String description ) {
+			this.language = language;
+			this.ineCode = ineCode;
+			this.description = description;
+		}
+
+		public AonLanguage getLanguage() {
+			return language;
+		}
+
+		public String getIneCode() {
+			return ineCode;
+		}
+
+		public String getDescription() {
+			return description;
+		}
+		
+	}
 	
 	private String ineCode;
 	private String description;
@@ -401,7 +424,12 @@ public enum StreetType implements Serializable {
 	}
 	
 	public static Optional<StreetType> value( String s ) {
-		String code = ("C/".equals(s))?"CL":s; 
+		s = ("C/".equals(s))?"CL":s; 
+		s = ("CÑ".equals(s))?"CX":s;
+		s = ("CÇ".equals(s))?"CF":s;
+		s = ("PÇ".equals(s))?"PW":s;
+		
+		String code = s;
 		return AonCollectionUtils.stream(values())
 			.filter( t -> AonStringUtils.equalsIgnoreCase(t.name(), code))
 			.findFirst();

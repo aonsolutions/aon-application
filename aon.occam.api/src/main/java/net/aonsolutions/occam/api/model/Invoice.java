@@ -1,8 +1,8 @@
 package net.aonsolutions.occam.api.model;
 
 import java.io.Serializable;
+import java.util.Date;
 import java.util.LinkedList;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Stream;
 
@@ -11,6 +11,11 @@ import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonObjectUtils;
 
 import net.aonsolutions.occam.api.model.metadata.InvoiceMetadata;
+import net.aonsolutions.occam.api.model.type.Country;
+import net.aonsolutions.occam.api.model.type.DocumentType;
+import net.aonsolutions.occam.api.model.type.InvoiceTransactionType;
+import net.aonsolutions.occam.api.model.type.InvoiceType;
+import net.aonsolutions.occam.api.model.type.RectificationType;
 import net.aonsolutions.occam.api.model.type.VATTaxRegime;
 import net.aonsolutions.occam.api.model.type.WithholdingType;
 
@@ -26,7 +31,7 @@ public class Invoice extends AonEntity<InvoiceMetadata> implements Serializable 
 	private LinkedList<Finance> finances;
 	private TaxBreakdown taxBreakdown;
 	private InvoiceFiscal fiscal;
-	// private InvoiceInfo invoiceInfo;
+	private InvoiceInfo invoiceInfo;
 	private Attach attach;
 	private LinkedList<InvoiceError> messages;
 	private Integer rawdocId;
@@ -181,13 +186,13 @@ public class Invoice extends AonEntity<InvoiceMetadata> implements Serializable 
 		return this;
 	}
 	
-//	public Optional<InvoiceInfo> getInvoiceInfo() {
-//		return Optional.ofNullable(invoiceInfo);
-//	}
-//	public Invoice setInvoiceInfo(InvoiceInfo invoiceInfo) {
-//		this.invoiceInfo = invoiceInfo;
-//		return this;
-//	}
+	public Optional<InvoiceInfo> getInvoiceInfo() {
+		return Optional.ofNullable(invoiceInfo);
+	}
+	public Invoice setInvoiceInfo(InvoiceInfo invoiceInfo) {
+		this.invoiceInfo = invoiceInfo;
+		return this;
+	}
 	
 	public Stream<InvoiceError> messageStream() {
 	    return AonCollectionUtils.stream(messages);
@@ -207,15 +212,15 @@ public class Invoice extends AonEntity<InvoiceMetadata> implements Serializable 
 	@Override
 	public boolean equals(Object obj) {
 		if (obj == this) return true;
-		if (obj instanceof Invoice other) {
-			return AonObjectUtils.equals( this.getUuid(),other.getUuid() );
+		if (obj instanceof Invoice ) {
+			return AonObjectUtils.equals( this.getUuid(), ((Invoice) obj).getUuid() );
 		}
 	    return false;
 	}
 	
 	@Override
 	public int hashCode() {
-	    return 31 * 7 + Objects.requireNonNullElse(getUuid(), 0).hashCode();
+	    return 31 * 7 + AonObjectUtils.requireNonNullElse(getUuid(), 0).hashCode();
 	}
 	
 	// ----------- VAT REGIMES
@@ -260,6 +265,7 @@ public class Invoice extends AonEntity<InvoiceMetadata> implements Serializable 
 		header.setWithholding(false);
 		header.setWithholdingFarmer(false);
 		ensureTaxBreakdown().setInvoiceWithholding(null);
+		detailStream().forEach(invDet -> invDet.disableWithholding(this));
 		return this;
 	}
 	
@@ -282,8 +288,10 @@ public class Invoice extends AonEntity<InvoiceMetadata> implements Serializable 
 	
 	public boolean isOutputVatEnabled() {
 		return !header.isUndeductible() &&				// No Undeductible 
-			((header.isSales() && header.isNational())	// Venta Nacional
-			|| header.mustApplyISP());					// Aplicar la inversión de sujeto pasivo.	
+			(
+			   (header.isSales() && header.isNational())// Venta Nacional
+			 || header.mustApplyISP()					// Aplicar la inversión de sujeto pasivo.
+			);
 	}
 	public boolean isVatImportationAvailable() {
 		return (header.isExtracommunity() || header.isCanCeuMel()) 
@@ -298,11 +306,12 @@ public class Invoice extends AonEntity<InvoiceMetadata> implements Serializable 
 	
 	public boolean isInputVatEnabled() {
 		return !header.isUndeductible() 
-			&& ((header.isPurchase() && header.isNational())						// Compra nacional 
-			|| (header.isExpenses() && header.isNational())						// Gasto nacional
-			|| (isVatImportationAvailable() && isVatImportation()	// Regimen importacioon
-				&& isVatImportationAmountValid())
-			|| header.mustApplyISP());										// Aplicar la inversión de sujeto pasivo.	
+			&& (
+				(header.isPurchase() && header.isNational())											// Compra nacional 
+			 || (header.isExpenses() && header.isNational())											// Gasto nacional
+			 || (isVatImportationAvailable() && isVatImportation()	&& isVatImportationAmountValid())	// Regimen importacioon
+			 || header.mustApplyISP()																	// Aplicar la inversión de sujeto pasivo.
+				);
 	}
 	
 	public boolean isVatImportationAmountValid() {
@@ -321,6 +330,36 @@ public class Invoice extends AonEntity<InvoiceMetadata> implements Serializable 
 				.sum() 
 			, REG_IMPORT_MAX_VALUE );
 	}
+	
+	
+	public boolean isSales() 			{return header.isSales();}
+	public boolean isPurchase() 		{return header.isPurchase();}
+	public boolean isUndeductible() 	{return header.isUndeductible();}
+	public boolean isSurcharge() 		{return header.isSurcharge();}
+	public boolean isWithholding() 		{return header.isWithholding();}
+	public boolean isWithholdingFarmer(){return header.isWithholdingFarmer();}
+	public boolean isService() 			{return header.isService();}
+	public boolean isInvestment() 		{return header.isInvestment();}
+	public boolean isVatAccrualPayment(){return header.isVatAccrualPayment();}
+	public boolean isDUAAllowed() 		{return header.isDUAAllowed();}
+	public boolean isDUALinkAllowed() 	{return header.isDUALinkAllowed();}
+
+	public InvoiceType getType() 					{return header.getType();}
+	public Date getIssueDate() 						{return header.getIssueDate();}
+	public Date getTaxDate() 						{return header.getTaxDate();}
+	public Integer getRegistry() 					{return header.getRegistry();}
+	public DocumentType getRegistryDocumentType() 	{return header.getRegistryDocumentType();}
+	public Country getRegistryDocumentCountry() 	{return header.getRegistryDocumentCountry();}
+	public String getRegistryDocument() 			{return header.getRegistryDocument();}
+	public String getRegistryName() 				{return header.getRegistryName();}
+	public Optional<Account> getRegistryAccount() 	{return header.getRegistryAccount();}
+	public String getSeries() 						{return header.getSeries();}
+	public Integer getNumber() 						{return header.getNumber();}
+	public String getReferenceCode() 				{return header.getReferenceCode();}
+	public double getTotal()  						{return header.getTotal();}
+	public String getDocumentNumber() 				{return header.getDocumentNumber();}
+	public RectificationType getRectificationType() {return header.getRectificationType();}
+	public InvoiceTransactionType getTransaction() 	{return header.getTransaction();}
 
 }
 

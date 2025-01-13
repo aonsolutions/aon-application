@@ -2,7 +2,6 @@ package net.aonsolutions.occam.api.model;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -16,7 +15,7 @@ import org.junit.jupiter.api.Test;
 import com.esferalia.aon.watson.util.AonCollectionUtils;
 
 import net.aonsolutions.occam.api.model.metadata.AccountEntryDetailMetadata;
-import net.aonsolutions.occam.api.model.metadata.AccountEntryDetailMetadata.AccountEntryDetailMetadataVisitor;
+import net.aonsolutions.occam.api.model.metadata.MetadataVisitor.AccountEntryDetailMetadataVisitor;
 
 class AccountEntryDetailTest {
 
@@ -173,23 +172,23 @@ class AccountEntryDetailTest {
 	@Test
 	void testAccount() {
 		AccountEntryDetail aed = new AccountEntryDetail();
-		assertNull(aed.getAccountCode());
-		assertNull(aed.getAccountDescription());
+		assertTrue(aed.getAccountCode().isEmpty());
+		assertTrue(aed.getAccountDescription().isEmpty());
 		Account account = new Account().setId(1).setCode("CODE").setDescription("DESCRIPTION"); 
 		aed.setAccount( account );
-		assertEquals(account.getCode(), aed.getAccountCode());
-		assertEquals(account.getDescription(), aed.getAccountDescription());
+		assertEquals(account.getCode(), aed.getAccountCode().orElseThrow());
+		assertEquals(account.getDescription(), aed.getAccountDescription().orElseThrow());
 	}
 
 	@Test
 	void testBalancingAccount() {
 		AccountEntryDetail aed = new AccountEntryDetail();
-		assertNull(aed.getBalancingAccountCode());
-		assertNull(aed.getBalancingAccountDescription());
+		assertTrue(aed.getBalancingAccountCode().isEmpty());
+		assertTrue(aed.getBalancingAccountDescription().isEmpty());
 		Account account = new Account().setId(1).setCode("CODE").setDescription("DESCRIPTION"); 
 		aed.setBalancingAccount( account );
-		assertEquals(account.getCode(), aed.getBalancingAccountCode());
-		assertEquals(account.getDescription(), aed.getBalancingAccountDescription());
+		assertEquals(account.getCode(), aed.getBalancingAccountCode().orElseThrow());
+		assertEquals(account.getDescription(), aed.getBalancingAccountDescription().orElseThrow());
 	}
 	
 	@Test

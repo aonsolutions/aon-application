@@ -116,6 +116,7 @@ class AdministrationTest extends AbstractOccamApiTest {
 			@Override public Administration visitGipuzkoa() {return Administration.GIPUZKOA;}
 			@Override public Administration visitCommonTerritory() {return Administration.COMMON_TERRITORY;}
 			@Override public Administration visitBizkaia() {return Administration.BIZKAIA;}
+			@Override public Administration visitCanarias() {return Administration.CANARIAS;}
 			@Override public Administration visitAlava() {return Administration.ALAVA;}
 		}; 
 		AonCollectionUtils.stream(Administration.values())

@@ -75,7 +75,7 @@ public enum AccountEntryType  implements Serializable {
 		return description;
 	}
 	
-	public byte getValue() {
+	public byte value() {
 		return (byte) ordinal();
 	}
 	

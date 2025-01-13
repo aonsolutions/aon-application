@@ -16,7 +16,7 @@ import org.junit.jupiter.api.Test;
 import com.esferalia.aon.watson.util.AonCollectionUtils;
 
 import net.aonsolutions.occam.api.model.metadata.InvoiceHeaderMetadata;
-import net.aonsolutions.occam.api.model.metadata.InvoiceHeaderMetadata.InvoiceHeaderMetadataVisitor;
+import net.aonsolutions.occam.api.model.metadata.MetadataVisitor.InvoiceHeaderMetadataVisitor;
 import net.aonsolutions.occam.api.model.type.Country;
 import net.aonsolutions.occam.api.model.type.DocumentType;
 import net.aonsolutions.occam.api.model.type.InvoiceTransactionType;

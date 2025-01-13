@@ -32,7 +32,7 @@ public interface Properties {
 		Property<String> getConceptProperty();
 		Property<Double> getDebitProperty();
 		Property<Double> getCreditProperty();
-		Property<String> getDocumentNumber();
+		Property<String> getDocumentNumberProperty();
 		Property<Integer> getBalancingAccountProperty();
 		Property<String> getBalancingAccountCodeProperty();
 		Property<String> getBalancingAccountDescriptionProperty();

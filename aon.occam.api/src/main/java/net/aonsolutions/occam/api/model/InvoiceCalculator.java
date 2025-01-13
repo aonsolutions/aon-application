@@ -9,6 +9,8 @@ import com.esferalia.aon.watson.mutable.MutableDouble;
 import com.esferalia.aon.watson.util.AonCollectionUtils;
 import com.esferalia.aon.watson.util.AonMathUtils;
 
+import net.aonsolutions.occam.api.model.util.InvoiceTextPrinter;
+
 public class InvoiceCalculator	 {
 	// private static final Logger LOGGER = Logger.getLogger(InvoiceCalculator.class.getName());
 	
@@ -29,12 +31,15 @@ public class InvoiceCalculator	 {
 			.forEach(det -> {
 				calculateDetail(inv, det );
 				if ( det.isPrepayment() ) {
-					prepayments.setValue(AonMathUtils.round(AonMathUtils.round( prepayments.getValue() + det.getTaxableBase(), 4)));
+					prepayments.setValue(AonMathUtils.round( prepayments.getValue() + det.getTaxableBase(), 4));
 				} else {
-					inv.getHeader().setTaxableBase(AonMathUtils.round(AonMathUtils.round( inv.getHeader().getTaxableBase() + det.getTaxableBase(), 4)));
+					inv.getHeader().setTaxableBase(AonMathUtils.round( inv.getHeader().getTaxableBase() + det.getTaxableBase(), 4));
 					
 				}
 		});
+		prepayments.setValue( AonMathUtils.round(prepayments.getValue()));
+		inv.getHeader().setTaxableBase(AonMathUtils.round( inv.getHeader().getTaxableBase() ));
+		
 		inv.refreshTaxBreakdown();
 		calculateTaxBreakdown( inv );
 
@@ -48,19 +53,20 @@ public class InvoiceCalculator	 {
 			.orElse(0.0)
 
 		);
-		
-		inv.getHeader().setTotal(
-				AonMathUtils.round(inv.getHeader().getTaxableBase() 
-					+ prepayments.getValue() 
-					+ inv.getTaxBreakdown().map( b -> b.getResult()).orElse(0.0)
-				)
-			);
+		double total = (mustAddVatToTotal(inv))
+			?AonMathUtils.round(inv.getHeader().getTaxableBase() + prepayments.getValue() + inv.getTaxBreakdown().map( b -> b.getResult()).orElse(0.0))	
+			:AonMathUtils.round(inv.getHeader().getTaxableBase() + prepayments.getValue() );
+		inv.getHeader().setTotal( total );
 		
 		if (inv.hasFinances() && inv.getFinancesSize() == 1) {
 			inv.financeStream().findFirst().ifPresent( f-> f.setAmount( inv.getHeader().getTotal()));
 		}
 		
 		return inv;
+	}
+	
+	private static boolean mustAddVatToTotal(Invoice inv) {
+		return inv.isVatEnabled();
 	}
 	
 	private static void calculateTaxBreakdown(Invoice inv) {
@@ -168,7 +174,7 @@ public class InvoiceCalculator	 {
 	
 	private static void calculateVatDetail(Invoice inv, InvoiceDetail detail) {
 		InvoiceTax vat = detail.enableVatTax();
-		vat.setBase(detail.getTaxableBase() );
+		vat.setBase(AonMathUtils.round(detail.getTaxableBase(),4));
 		vat.setQuota(AonMathUtils.round(vat.getBase() * vat.getPercentage() / 100 ));
 		if (inv.getHeader().isSurcharge()) {
 			vat.setSurchargeQuota( AonMathUtils.round(vat.getBase() * vat.getSurcharge() / 100 ));	
@@ -215,9 +221,13 @@ public class InvoiceCalculator	 {
 	private static void calculateWithholdingDetail(Invoice inv, InvoiceDetail detail) {
 		if (inv.getHeader().isWithholding() && !inv.getHeader().isWithholdingFarmer()) {
 			InvoiceWithholding wd = inv.getWithholding()
-				.orElseThrow( () -> new AonCoreException(AonError.INVOICE_CALC_NO_WITHHOLDING_INFO.getMessage()));
+				.orElseThrow( () -> {
+					InvoiceTextPrinter.print(inv);
+					System.out.println( detail.getDescription() );
+					return new AonCoreException(AonError.INVOICE_CALC_NO_WITHHOLDING_INFO.getMessage());
+				});
 			InvoiceTax irpf = detail.enableWithholding(inv);
-			irpf.setBase(detail.getTaxableBase());
+			irpf.setBase(AonMathUtils.round(detail.getTaxableBase(),4));
 			irpf.setPercentage( wd.getPercentage() );
 			irpf.setQuota( AonMathUtils.round( irpf.getBase() * irpf.getPercentage() / 100, 2) );
 			irpf.setWithholdingType(wd.getWithholdingType());
@@ -238,7 +248,7 @@ public class InvoiceCalculator	 {
 			InvoiceTax irpf = detail.enableWithholding(inv);
 			InvoiceTax vat = detail.enableVatTax();
 				
-			irpf.setBase(detail.getTaxableBase() + vat.getQuota() + (inv.getHeader().isSurcharge()?vat.getSurchargeQuota():0.0));
+			irpf.setBase(AonMathUtils.round(detail.getTaxableBase() + vat.getQuota() + (inv.getHeader().isSurcharge()?vat.getSurchargeQuota():0.0),4));
 			irpf.setPercentage( wd.getPercentage() );
 			irpf.setQuota( AonMathUtils.round( irpf.getBase() * irpf.getPercentage() / 100, 2) );
 			irpf.setWithholdingType(wd.getWithholdingType());

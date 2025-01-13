@@ -32,6 +32,9 @@ public class AonRandom {
 	public static boolean gt(int i)  {
 		return integer(0, 100) > i;
 	}
+	public static <T> T gt(int i, java.util.function.Supplier<T> supplier)  {
+		return gt(i) ? supplier.get() : null;
+	}
 	
 	public static int integer(int from , int to) {
 		return FAKER.random().nextInt( from, to);

@@ -1,6 +1,7 @@
 package net.aonsolutions.occam.api.model;
 
 import java.io.Serializable;
+import java.util.Optional;
 
 import net.aonsolutions.occam.api.model.type.InvoiceErrorKey;
 import net.aonsolutions.occam.api.model.type.InvoiceErrorLevel;
@@ -16,6 +17,9 @@ public class InvoiceError implements Serializable {
 
 	public InvoiceError() {
 		
+	}
+	public InvoiceError(InvoiceErrorKey key,InvoiceErrorLevel level,String message) {
+		this(key, level, message, null); 
 	}
 	public InvoiceError(InvoiceErrorKey key,InvoiceErrorLevel level,String message, Integer line) {
 		this.key = key; 
@@ -47,8 +51,8 @@ public class InvoiceError implements Serializable {
 		return this;
 	}
 	
-	public Integer getLine() {
-		return line;
+	public Optional<Integer> getLine() {
+		return Optional.ofNullable(line);
 	}
 	public InvoiceError setLine(Integer line) {
 		this.line = line;

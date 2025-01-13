@@ -3,6 +3,8 @@ package net.aonsolutions.occam.api.model.type;
 import java.io.Serializable;
 import java.util.Optional;
 
+import com.esferalia.aon.watson.util.AonCollectionUtils;
+
 public enum Period implements Serializable {
 
 	M01(0,0,"01","Enero"),
@@ -50,42 +52,18 @@ public enum Period implements Serializable {
 		return dueMonth;
 	}
     
-    public String getFormatName(Administration admon) {
-    	if (admon == Administration.GIPUZKOA) {
-    		if (this == T1) return "01";
-    		else if (this == T2) return "02";
-    		else if (this == T3) return "03";
-    		else if (this == T4) return "04";
-    	} else if (admon == Administration.NAVARRA) {
-    		if (this == T1) return "1";
-    		else if (this == T2) return "2";
-    		else if (this == T3) return "3";
-    		else if (this == T4) return "4";
-    	}
-    	return name;
-    }
-    
-	public static Period getMonthlyPeriod(int month) {
-		if (month==0) return M01;
-		else if (month==1) return M02;
-		else if (month==2) return M03;
-		else if (month==3) return M04;
-		else if (month==4) return M05;
-		else if (month==5) return M06;
-		else if (month==6) return M07;
-		else if (month==7) return M08;
-		else if (month==8) return M09;
-		else if (month==9) return M10;
-		else if (month==10) return M11;
-		else if (month==11) return M12;
-		throw new IllegalArgumentException("Invalid month!");
+	public static Optional<Period> getMonthlyPeriod(int month) {
+		return AonCollectionUtils.stream(Period.values())
+			.filter( p -> p.isMonthPeriod())
+			.filter( p -> p.getStartMonth() == month)
+			.findFirst();
 	}
-	public static Period getQuarterlyPeriod(int month) {
-		if (month>=0 && month<3) return T1;
-		else if (month>=3 && month<6) return T2;
-		else if (month>=6 && month<9) return T3;
-		else if (month>=9 && month<12) return T4;
-		throw new IllegalArgumentException("Invalid month!");
+	
+	public static Optional<Period> getQuarterlyPeriod(int month) {
+		return AonCollectionUtils.stream(Period.values())
+			.filter( p -> p.isQuarterPeriod())
+			.filter( p -> (month >= p.getStartMonth() && month < p.getDueMonth()))
+			.findFirst();
 	}
 	
 	public boolean isQuarterPeriod() {

@@ -37,7 +37,9 @@ public enum AccountPeriodStatus implements Serializable {
 	public byte value() {
 		return (byte) this.ordinal();
 	}
-
+	public static Byte value( AccountPeriodStatus s) {
+		return s == null ? null : s.value();
+	}
 
 	public static Optional<AccountPeriodStatus> value( Byte i ) {
 		if (i == null) return Optional.empty();

@@ -2,7 +2,6 @@ package net.aonsolutions.occam.api.model;
 
 import java.io.Serializable;
 import java.util.LinkedList;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Stream;
 
@@ -30,7 +29,8 @@ public class TaxBreakdown implements Serializable {
 	}
 
 	public void refresh(Invoice invoice) {
-		iw = null;
+		getInvoiceWithholding()
+			.ifPresent( iw -> iw.initialize());
 		vats = new LinkedList<>();
 		invoice.detailStream()
 			.flatMap(d -> d.taxStream()) 
@@ -47,11 +47,12 @@ public class TaxBreakdown implements Serializable {
 		}
 		if (ib.isWithholding()) {
 			if (iw == null) {
-				iw = new InvoiceWithholding()
-					.setWithholdingType( ib.getWithholdingType() )
-					.setPercentage( ib.getPercentage())
-					.setAccount( ib.getWithholdingAccount().orElse(null) )
-				;
+				setInvoiceWithholding(
+					new InvoiceWithholding()
+						.setWithholdingType( ib.getWithholdingType() )
+						.setPercentage( ib.getPercentage())
+						.setAccount( ib.getWithholdingAccount().orElse(null) )
+				);
 			}
 			iw.setBase( AonMathUtils.round( iw.getBase() + ib.getBase()) );
 			iw.setQuota( AonMathUtils.round( iw.getQuota() + ib.getQuota()) );
@@ -92,7 +93,8 @@ public class TaxBreakdown implements Serializable {
 	@Override
 	public boolean equals(Object obj) {
 		if (obj == this) return true;
-		if (obj instanceof TaxBreakdown other) {
+		if (obj instanceof TaxBreakdown) {
+			TaxBreakdown other = (TaxBreakdown) obj;
 			return AonObjectUtils.equals( this.iw,other.iw )
 				&& AonObjectUtils.equals( this.vats,other.vats )
 			;
@@ -103,8 +105,8 @@ public class TaxBreakdown implements Serializable {
 	@Override
 	public int hashCode() {
 	    return 31 * 7 
-    		+ Objects.requireNonNullElse(iw, 0).hashCode()
-    		+ Objects.requireNonNullElse(vats, 0).hashCode()
+    		+ AonObjectUtils.requireNonNullElse(iw, 0).hashCode()
+    		+ AonObjectUtils.requireNonNullElse(vats, 0).hashCode()
 		;
 	}
 }

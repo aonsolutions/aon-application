@@ -44,6 +44,10 @@ public class ApplicationParameter implements Serializable {
 	public String getValue() {
 		return value;
 	}
+	public Integer getValueInteger() {
+		if (!AonNumberUtils.isNumber(value)) return null;
+		return AonNumberUtils.toInteger(value);
+	}
 	public ApplicationParameter setValue(String value) {
 		this.value = value;
 		return this;

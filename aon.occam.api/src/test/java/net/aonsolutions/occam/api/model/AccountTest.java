@@ -14,7 +14,7 @@ import org.junit.jupiter.api.Test;
 import com.esferalia.aon.watson.util.AonCollectionUtils;
 
 import net.aonsolutions.occam.api.model.metadata.AccountMetadata;
-import net.aonsolutions.occam.api.model.metadata.AccountMetadata.AccountMetadataVisitor;
+import net.aonsolutions.occam.api.model.metadata.MetadataVisitor.AccountMetadataVisitor;
 
 class AccountTest {
 	

@@ -1,7 +1,6 @@
 package net.aonsolutions.occam.api.model;
 
 import java.util.Date;
-import java.util.Objects;
 import java.util.Optional;
 
 import com.esferalia.aon.watson.util.AonObjectUtils;
@@ -159,14 +158,34 @@ public class Activity extends AonEntity<ActivityMetadata> {
 	@Override
 	public boolean equals(Object obj) {
 		if (obj == this) return true;
-		if (obj instanceof Activity other) {
-			return AonObjectUtils.equals( this.getUuid(),other.getUuid() );
+		if (obj instanceof Activity) {
+			return AonObjectUtils.equals( this.getUuid(),((Activity) obj).getUuid() );
 		}
 	    return false;
 	}
 	
 	@Override
 	public int hashCode() {
-	    return 31 * 7 + Objects.requireNonNullElse(getUuid(), 0).hashCode();
+	    return 31 * 7 + AonObjectUtils.requireNonNullElse(getUuid(), 0).hashCode();
 	}
+	
+	public Activity duplicate() {
+		return new Activity()
+			.setId(id)
+			.setDomain(domain)
+			.setDescription(description)
+			.setMain(main)
+			.setStartDate(startDate)
+			.setEndDate(endDate)
+			.setCnae(cnae)
+			.setIae(iae)
+			.setVatRegime(vatRegime)
+			.setSurcharge(surcharge)
+			.setVatExemptionCause(vatExemptionCause)
+			.setIrpfRegime(irpfRegime)
+			.markAsClean()
+		;
+		
+	}
+
 }

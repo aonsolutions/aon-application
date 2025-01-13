@@ -12,10 +12,11 @@ import java.util.List;
 import java.util.Set;
 
 import org.junit.jupiter.api.Test;
+
 import com.esferalia.aon.watson.util.AonCollectionUtils;
 
 import net.aonsolutions.occam.api.model.metadata.AccountPeriodMetadata;
-import net.aonsolutions.occam.api.model.metadata.AccountPeriodMetadata.AccountPeriodMetadataVisitor;
+import net.aonsolutions.occam.api.model.metadata.MetadataVisitor.AccountPeriodMetadataVisitor;
 import net.aonsolutions.occam.api.model.type.AccountPeriodStatus;
 
 class AccountPeriodTest {

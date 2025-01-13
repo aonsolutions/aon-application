@@ -43,40 +43,26 @@ public interface Filter extends Serializable{
 	public Filter not(Filter filter);
 	
 	// --------------------------------------------------------------------- [A]
-	@FunctionalInterface public interface AccountEntryFilter
-		{Filter filter(AccountEntryProperties properties);}
-	@FunctionalInterface public interface AccountEntryDetailFilter
-		{Filter filter(AccountEntryDetailProperties properties);}
-	@FunctionalInterface public interface AccountPeriodFilter
-		{Filter filter(AccountPeriodProperties properties);}
-	@FunctionalInterface public interface AccountFilter
-		{Filter filter(AccountProperties properties);}
+	@FunctionalInterface public interface AccountEntryFilter		{Filter filter(AccountEntryProperties properties);}
+	@FunctionalInterface public interface AccountEntryDetailFilter	{Filter filter(AccountEntryDetailProperties properties);}
+	@FunctionalInterface public interface AccountPeriodFilter		{Filter filter(AccountPeriodProperties properties);}
+	@FunctionalInterface public interface AccountFilter				{Filter filter(AccountProperties properties);}
 	// --------------------------------------------------------------------- [C]
-	@FunctionalInterface public interface CnaeFilter
-		{Filter filter(CnaeProperties properties);}
-	@FunctionalInterface public interface CreditorFilter
-		{Filter filter(CreditorProperties properties);}
-	@FunctionalInterface public interface CustomerFilter
-		{Filter filter(CustomerProperties properties);}
+	@FunctionalInterface public interface CnaeFilter				{Filter filter(CnaeProperties properties);}
+	@FunctionalInterface public interface CreditorFilter			{Filter filter(CreditorProperties properties);}
+	@FunctionalInterface public interface CustomerFilter			{Filter filter(CustomerProperties properties);}
 	// --------------------------------------------------------------------- [G]
-	@FunctionalInterface public interface FinanceFilter
-		{Filter filter(FinanceProperties properties);}
+	@FunctionalInterface public interface FinanceFilter				{Filter filter(FinanceProperties properties);}
 	// --------------------------------------------------------------------- [G]
-	@FunctionalInterface public interface GeozoneFilter
-		{Filter filter(GeozoneProperties properties);}
+	@FunctionalInterface public interface GeozoneFilter				{Filter filter(GeozoneProperties properties);}
 	// --------------------------------------------------------------------- [I]
-	@FunctionalInterface public interface IaeFilter
-		{Filter filter(IaeProperties properties);}
-	@FunctionalInterface public interface InvoiceFilter
-		{Filter filter(InvoiceProperties properties);}
+	@FunctionalInterface public interface IaeFilter					{Filter filter(IaeProperties properties);}
+	@FunctionalInterface public interface InvoiceFilter				{Filter filter(InvoiceProperties properties);}
 	// --------------------------------------------------------------------- [R]
-	@FunctionalInterface public interface RegistryFilter
-		{Filter filter(RegistryProperties properties);}
+	@FunctionalInterface public interface RegistryFilter			{Filter filter(RegistryProperties properties);}
 	// --------------------------------------------------------------------- [S]
-	@FunctionalInterface public interface SupplierFilter
-		{Filter filter(SupplierProperties properties);}
+	@FunctionalInterface public interface SupplierFilter			{Filter filter(SupplierProperties properties);}
 	// --------------------------------------------------------------------- [T]
-	@FunctionalInterface public interface TariffFilter
-		{Filter filter(TariffProperties properties);}
+	@FunctionalInterface public interface TariffFilter				{Filter filter(TariffProperties properties);}
 	
 }

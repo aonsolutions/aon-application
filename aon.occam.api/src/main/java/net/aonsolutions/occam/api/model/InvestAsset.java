@@ -110,5 +110,21 @@ public class InvestAsset implements Serializable {
 		this.properties = properties;
 		return this;
 	}
+	
+	public InvestAsset duplicate() {
+		return new InvestAsset()
+			.setId(id)
+			.setDomain(domain)
+			.setDescription(description)
+			.setActivity(getActivity().map(a -> a.duplicate()).orElse(null) )
+			.setType(type)
+			.setRegime(regime)
+			.setStartDate(startDate)
+			.setEndDate(endDate)
+			.setVatPercent(vatPercent)
+			.setRetentionPercent(retentionPercent)
+			.setProperties(properties)
+		;
+	}
 
 }

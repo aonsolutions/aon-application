@@ -100,4 +100,19 @@ public class Registry implements Serializable{
 		return this;
 	}
 
+	public <T extends Registry> T duplicate(java.util.function.Supplier<T> supp) {
+		T t = supp.get();
+		t.setId(id);
+		t.setDomain(domain);
+		t.setDocument(document);
+		t.setDocumentType(documentType);
+		t.setDocumentCountry(documentCountry);
+		t.setName(name);
+		t.setAlias(alias);
+		t.setLegalPerson(legalPerson);
+		t.setNationality(nationality);
+		t.setConfidential(confidential);
+		return t;
+	}
+
 }

@@ -2,6 +2,8 @@ package net.aonsolutions.occam.api.model.metadata;
 
 import java.io.Serializable;
 
+import net.aonsolutions.occam.api.model.metadata.MetadataVisitor.InvoiceHeaderMetadataVisitor;
+
 public enum InvoiceHeaderMetadata implements Serializable {
 	 ID { @Override public <T> T visit(InvoiceHeaderMetadataVisitor<T> v) { return v.visitId();} }
 	,DOMAIN { @Override public <T> T visit(InvoiceHeaderMetadataVisitor<T> v) { return v.visitDomain();} }
@@ -44,42 +46,4 @@ public enum InvoiceHeaderMetadata implements Serializable {
 	,	;
 
 	public abstract <T> T visit(InvoiceHeaderMetadataVisitor<T> v);
-	public static interface InvoiceHeaderMetadataVisitor<T> {
-		T visitId();
-		T visitDomain();
-		T visitActivity();
-		T visitProject();
-		T visitSeries();
-		T visitNumber();
-		T visitReferenceCode();
-		T visitRegistry();
-		T visitRdocument();
-		T visitRdocumentType();
-		T visitRdocumentCountry();
-		T visitRname();
-		T visitIssueDate();
-		T visitTaxDate();
-		T visitSecurityLevel();
-		T visitStatus();
-		T visitType();
-		T visitSurcharge();
-		T visitWithholding();
-		T visitWithholdingFarmer();
-		T visitVatAccrualPayment();
-		T visitComments();
-		T visitRemarks();
-		T visitInvestment();
-		T visitTransaction();
-		T visitSigned();
-		T visitScope();
-		T visitService();
-		T visitRectificationType();
-		T visitRectificationInvoice();
-		T visitSeller();
-		T visitTaxableBase();
-		T visitVatQuota();
-		T visitRetentionQuota();
-		T visitTotal();
-		T visitAccount();
-	}
 }

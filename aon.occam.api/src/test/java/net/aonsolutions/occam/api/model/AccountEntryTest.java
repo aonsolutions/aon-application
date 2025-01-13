@@ -7,6 +7,7 @@ import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
@@ -18,11 +19,17 @@ import org.junit.jupiter.api.Test;
 import com.esferalia.aon.watson.util.AonCollectionUtils;
 
 import net.aonsolutions.occam.api.model.metadata.AccountEntryMetadata;
-import net.aonsolutions.occam.api.model.metadata.AccountEntryMetadata.AccountEntryMetadataVisitor;
+import net.aonsolutions.occam.api.model.metadata.MetadataVisitor.AccountEntryMetadataVisitor;
 import net.aonsolutions.occam.api.model.type.AccountEntryType;
 
 class AccountEntryTest {
 
+	@Test
+	void testSerialization() throws IOException, ClassNotFoundException {
+		AccountEntry expected = AonMocker.mock(AccountEntry.class);
+		AonSerializationUtil.test(expected, AccountEntry.class);
+	}
+	
 	@Test
 	void testAccountEntry() {
 		AccountEntry expected = AonMocker.mock(AccountEntry.class);

@@ -11,10 +11,6 @@ public enum InvoiceAttachmentType {
 		return (byte) this.ordinal();
 	}
 	
-	public String getName(){
-		return this.toString();
-	}
-	
 	public static Byte[] drive(){
 		return new Byte[]{INVOICE.value(), RECEIPT.value()};
 	}

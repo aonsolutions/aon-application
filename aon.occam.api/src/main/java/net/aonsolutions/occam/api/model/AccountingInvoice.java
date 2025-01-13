@@ -7,7 +7,7 @@ import java.util.stream.Stream;
 
 import net.aonsolutions.occam.api.model.type.InvoiceErrorLevel;
 
-public class AccountingInvoice implements Serializable, IAccountEntryWrapper {
+public class AccountingInvoice implements Serializable {
 	
 	private static final long serialVersionUID = -4435280253306756102L;
 
@@ -23,26 +23,24 @@ public class AccountingInvoice implements Serializable, IAccountEntryWrapper {
 	private Account payAccount;
 	private boolean authFinanceCalculation;
 
-	@Override
 	public LinkedList<AccountEntry> getAccountEntries() {
 		return accountEntries;
 	}
 
-	@Override
 	public AccountEntry getAccountEntry() {
 		return accountEntries.isEmpty() ? null : accountEntries.get(0) ;
 	}
-	@Override
-	public void setAccountEntry(AccountEntry accountEntry) {
+	public AccountingInvoice setAccountEntry(AccountEntry accountEntry) {
 		if (accountEntries.isEmpty()) {
 			accountEntries.add(accountEntry);
 		} else {
 			accountEntries.set(0, accountEntry);
 		}
+		return this;
 	}
 	
-	public Optional<Invoice> getInvoice() {
-		return Optional.ofNullable(invoice);
+	public Invoice getInvoice() {
+		return invoice;
 	}
 	public AccountingInvoice setInvoice(Invoice invoice) {
 		this.invoice = invoice;
@@ -312,8 +310,8 @@ public class AccountingInvoice implements Serializable, IAccountEntryWrapper {
 
 
 	private Optional<InvoiceErrorLevel> getMoreSeriousLevel() {
-		return InvoiceErrorLevel.value( 
-			getInvoice()
+		return InvoiceErrorLevel.value(
+			Optional.ofNullable(getInvoice())
 				.map(Invoice::messageStream)
 				.orElse( Stream.empty() )
 				.mapToInt(e -> e.getLevel().ordinal())			

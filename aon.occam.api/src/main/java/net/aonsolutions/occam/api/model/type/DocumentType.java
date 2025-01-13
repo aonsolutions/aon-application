@@ -26,14 +26,14 @@ public enum DocumentType implements Serializable {
  		{@Override public <T> T visit(DocumentTypeVisitor<T> v) { return v.visitNotCensused();}}
 	;
 
-	private String shortName;
+	private String description;
 	
-	private DocumentType(String shortName) {
-		this.shortName = shortName;
+	private DocumentType(String description) {
+		this.description = description;
 	}
 	
-	public String getShortName() {
-		return shortName;
+	public String getDescription() {
+		return description;
 	}
 	
 	public byte value() {
@@ -64,7 +64,7 @@ public enum DocumentType implements Serializable {
 		return t == null ? null : t.name();
 	}
 	public static Optional<String> shortName(DocumentType t) {
-		return Optional.ofNullable(t == null ? null : t.getShortName());
+		return Optional.ofNullable(t == null ? null : t.getDescription());
 	}
 	
 	public abstract <T> T visit( DocumentTypeVisitor<T> visitor );

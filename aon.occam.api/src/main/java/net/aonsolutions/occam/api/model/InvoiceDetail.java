@@ -2,12 +2,12 @@ package net.aonsolutions.occam.api.model;
 
 import java.sql.Timestamp;
 import java.util.LinkedList;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Stream;
 
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.util.AonCollectionUtils;
+import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonObjectUtils;
 
 import net.aonsolutions.occam.api.model.metadata.InvoiceDetailMetadata;
@@ -42,7 +42,9 @@ public class InvoiceDetail extends AonEntity<InvoiceDetailMetadata> implements H
 	private InvoiceSource source;
 	private Integer sourceId;
 
+	private double directTaxPercent;
 	private Account expAccount;
+	private Account adjDirectTaxAccount;
 	
 	private String creationUser;
 	private Timestamp creationDate;
@@ -274,6 +276,32 @@ public class InvoiceDetail extends AonEntity<InvoiceDetailMetadata> implements H
 		this.expAccount = expAccount;
 		return this;
 	}
+	
+	public double getDirectTaxPercent() {
+		return directTaxPercent;
+	}
+	public InvoiceDetail setDirectTaxPercent(double directTaxPercent) {
+		checkIfDirty( this.expAccount,expAccount, InvoiceDetailMetadata.DIRECT_TAX_PERCENT);
+		this.directTaxPercent = directTaxPercent;
+		return this;
+	}
+	public double getDirectTaxNoDedExpenses() {
+		double percent = AonMathUtils.round(100 - this.directTaxPercent);
+	    return AonMathUtils.round( getTaxableBase() *  percent / 100);         
+	}
+	public double getDirectTaxDedExpenses() {
+	    return AonMathUtils.round( getTaxableBase() - getDirectTaxNoDedExpenses() );
+	}
+	
+	public Optional<Account> getAdjDirectTaxAccount() {
+		return Optional.ofNullable(adjDirectTaxAccount);
+	}
+	public InvoiceDetail setAdjDirectTaxAccount(Account adjDirectTaxAccount) {
+		checkIfDirty( this.expAccount,expAccount, InvoiceDetailMetadata.ADJ_DIRECT_TAX_ACCOUNT);
+		this.adjDirectTaxAccount = adjDirectTaxAccount;
+		return this;
+	}
+	
 	// ---------------------------------------------------------- AUDIT
 	@Override
 	public String getCreationUser() {
@@ -311,15 +339,15 @@ public class InvoiceDetail extends AonEntity<InvoiceDetailMetadata> implements H
 	@Override
 	public boolean equals(Object obj) {
 		if (obj == this) return true;
-		if (obj instanceof InvoiceDetail other) {
-			return AonObjectUtils.equals( this.getUuid(),other.getUuid() );
+		if (obj instanceof InvoiceDetail) {
+			return AonObjectUtils.equals( this.getUuid(),((InvoiceDetail) obj).getUuid() );
 		}
 	    return false;
 	}
 	
 	@Override
 	public int hashCode() {
-	    return 31 * 7 + Objects.requireNonNullElse(getUuid(), 0).hashCode();
+	    return 31 * 7 + AonObjectUtils.requireNonNullElse(getUuid(), 0).hashCode();
 	}
 	
 	public boolean isAccountSource() {
@@ -400,5 +428,37 @@ public class InvoiceDetail extends AonEntity<InvoiceDetailMetadata> implements H
 			 && !invoice.getHeader().isUndeductible() 
 			 && !this.isPrepayment());
 	}
-	
+
+	public InvoiceDetail duplicate() {
+		InvoiceDetail det = new InvoiceDetail()
+			.setId(id)
+			.setDomain(domain)
+			.setInvoice(invoice)
+			.setInvestAsset(getInvestAsset().map(InvestAsset::duplicate).orElse(null))
+			.setProject(project)
+			.setLine(line)
+			.setItem(item)
+			.setDescription(description)
+			.setQuantity(quantity)
+			.setPrice(price)
+			.setDiscountExpression(discountExpression)
+			.setTaxableBase(taxableBase)
+			.setTaxes(taxes)
+			.setPrepayment(prepayment)
+			.setSeller(getSeller().map(Seller::duplicate).orElse(null))
+			.setWorkplace(workplace)
+			.setWarehouse(warehouse)
+			.setSource(source)
+			.setSourceId(sourceId)
+			.setDirectTaxPercent(directTaxPercent)
+			.setExpAccount(getExpAccount().map(Account::duplicate).orElse(null))
+			.setAdjDirectTaxAccount(getAdjDirectTaxAccount().map(Account::duplicate).orElse(null))
+			.setCreationUser(creationUser)
+			.setCreationDate(creationDate)
+			.setModificationUser(modificationUser)
+			.setModificationDate(modificationDate)
+		;
+		taxStream().map(InvoiceTax::duplicate).forEach(det::addTax);
+		return det.markAsClean();
+	}
 }

@@ -2,6 +2,8 @@ package net.aonsolutions.occam.api.model.metadata;
 
 import java.io.Serializable;
 
+import net.aonsolutions.occam.api.model.metadata.MetadataVisitor.AccountEntryDetailMetadataVisitor;
+
 public enum AccountEntryDetailMetadata implements Serializable {
 	ID { @Override public <T> T visit(AccountEntryDetailMetadataVisitor<T> v) { return v.visitId();} }
 	,DOMAIN { @Override public <T> T visit(AccountEntryDetailMetadataVisitor<T> v) { return v.visitDomain();} }
@@ -16,16 +18,4 @@ public enum AccountEntryDetailMetadata implements Serializable {
 	,	;
 
 	public abstract <T> T visit(AccountEntryDetailMetadataVisitor<T> v);
-	public static interface AccountEntryDetailMetadataVisitor<T> {
-		T visitId();
-		T visitDomain();
-		T visitAccountEntry();
-		T visitLine();
-		T visitAccount();
-		T visitConcept();
-		T visitBalancingAccount();
-		T visitDebit();
-		T visitCredit();
-		T visitDocumentNumber();
-	}
 }

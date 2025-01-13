@@ -1,6 +1,5 @@
 package net.aonsolutions.occam.api.model;
 
-import java.util.Objects;
 import java.util.Optional;
 
 import com.esferalia.aon.watson.util.AonObjectUtils;
@@ -158,15 +157,15 @@ public class InvoiceAddress extends AonEntity<InvoiceAddressMetadata> {
 	@Override
 	public boolean equals(Object obj) {
 		if (obj == this) return true;
-		if (obj instanceof InvoiceAddress other) {
-			return AonObjectUtils.equals( this.getUuid(),other.getUuid() );
+		if (obj instanceof InvoiceAddress) {
+			return AonObjectUtils.equals( this.getUuid(),((InvoiceAddress) obj).getUuid() );
 		}
 	    return false;
 	}
 	
 	@Override
 	public int hashCode() {
-	    return 31 * 7 + Objects.requireNonNullElse(getUuid(), 0).hashCode();
+	    return 31 * 7 + AonObjectUtils.requireNonNullElse(getUuid(), 0).hashCode();
 	}
 
 	public static InvoiceAddress from(RegistryAddress ra) {
@@ -184,4 +183,5 @@ public class InvoiceAddress extends AonEntity<InvoiceAddressMetadata> {
 			.setParent(ra.getParent().orElse(null))
 		;				
 	}
+
 }

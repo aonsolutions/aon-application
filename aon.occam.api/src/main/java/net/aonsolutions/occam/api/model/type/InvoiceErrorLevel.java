@@ -7,9 +7,9 @@ import com.esferalia.aon.watson.util.AonCollectionUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 public enum InvoiceErrorLevel implements Serializable {
-	INF ("INFO."), 
-	WRN ("AVISO"), 
-	ERR ("ERROR")
+	 INF ("INFO.")  { @Override public <T> T visit(InvoiceErrorLevelVisitor<T> visitor) {return visitor.visitINF();} }
+	,WRN ("AVISO") { @Override public <T> T visit(InvoiceErrorLevelVisitor<T> visitor) {return visitor.visitWRN();} }
+	,ERR ("ERROR") { @Override public <T> T visit(InvoiceErrorLevelVisitor<T> visitor) {return visitor.visitERR();} } 
 	;
 	
 	private  String label;
@@ -37,4 +37,12 @@ public enum InvoiceErrorLevel implements Serializable {
 			.filter( t ->  AonStringUtils.equalsIgnoreCase(t.name(), s))
 			.findFirst();
 	}
+	
+	public abstract <T> T visit( InvoiceErrorLevelVisitor<T> visitor );
+	public static interface InvoiceErrorLevelVisitor<T> {
+		T visitINF();
+		T visitWRN();
+		T visitERR();
+	}
+	
 }

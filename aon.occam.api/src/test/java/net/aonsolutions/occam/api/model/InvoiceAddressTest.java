@@ -17,7 +17,7 @@ import org.junit.jupiter.api.Test;
 import com.esferalia.aon.watson.util.AonCollectionUtils;
 
 import net.aonsolutions.occam.api.model.metadata.InvoiceAddressMetadata;
-import net.aonsolutions.occam.api.model.metadata.InvoiceAddressMetadata.InvoiceAddressMetadataVisitor;
+import net.aonsolutions.occam.api.model.metadata.MetadataVisitor.InvoiceAddressMetadataVisitor;
 import net.aonsolutions.occam.api.model.type.StreetType;
 
 class InvoiceAddressTest {

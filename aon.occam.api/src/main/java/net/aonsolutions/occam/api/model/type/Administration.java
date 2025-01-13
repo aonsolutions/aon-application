@@ -18,6 +18,8 @@ public enum Administration implements Serializable {
 		{ @Override public <T> T visit(AdministrationVisitor<T> v){ return v.visitNavarra();} },
 	COMMON_TERRITORY("Territorio Com\u00FAn") 
 		{ @Override public <T> T visit(AdministrationVisitor<T> v){ return v.visitCommonTerritory();} },
+	CANARIAS("A.T. Canaria")
+		{ @Override public <T> T visit(AdministrationVisitor<T> v){ return v.visitCanarias();} },
 	UNKNOWN("Otro")
 		{ @Override public <T> T visit(AdministrationVisitor<T> v){ return v.visitUnknown();} },
 	;
@@ -76,6 +78,7 @@ public enum Administration implements Serializable {
 		T visitGipuzkoa();
 		T visitNavarra();
 		T visitCommonTerritory();
+		T visitCanarias();
 		T visitUnknown();
 	}
 }

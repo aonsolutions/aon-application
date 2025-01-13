@@ -3,6 +3,8 @@ package net.aonsolutions.occam.api.model.metadata;
 
 import java.io.Serializable;
 
+import net.aonsolutions.occam.api.model.metadata.MetadataVisitor.InvoiceTaxMetadataVisitor;
+
 public enum InvoiceTaxMetadata implements Serializable {
 	 ID { @Override public <T> T visit(InvoiceTaxMetadataVisitor<T> v) { return v.visitId();} }
 	,DOMAIN { @Override public <T> T visit(InvoiceTaxMetadataVisitor<T> v) { return v.visitDomain();} }
@@ -24,24 +26,4 @@ public enum InvoiceTaxMetadata implements Serializable {
 	;
 
 	public abstract <T> T visit(InvoiceTaxMetadataVisitor<T> v);
-	public static interface InvoiceTaxMetadataVisitor<T> {
-		T visitId();
-		T visitDomain();
-		T visitInvoiceDetail();
-		T visitTaxType();
-		T visitBase();
-		T visitPercentage();
-		T visitSurcharge();
-		T visitQuota();
-		T visitSurchargeQuota();
-		T visitVatDeductionType();
-		T visitWithholdingType();
-		T visitDeductiblePercent();
-		T visitDeductibleQuota();
-		T visitWithholdingAccount();
-		T visitOutputAccount();
-		T visitInputAccount();
-		T visitAdjAccount();
-	}
-	
 }

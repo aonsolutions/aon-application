@@ -2,6 +2,8 @@ package net.aonsolutions.occam.api.model.metadata;
 
 import java.io.Serializable;
 
+import net.aonsolutions.occam.api.model.metadata.MetadataVisitor.InvoiceDetailMetadataVisitor;
+
 public enum InvoiceDetailMetadata implements Serializable {
 	 ID { @Override public <T> T visit(InvoiceDetailMetadataVisitor<T> v) { return v.visitId();} }
 	,DOMAIN { @Override public <T> T visit(InvoiceDetailMetadataVisitor<T> v) { return v.visitDomain();} }
@@ -24,30 +26,10 @@ public enum InvoiceDetailMetadata implements Serializable {
 	,WAREHOUSE { @Override public <T> T visit(InvoiceDetailMetadataVisitor<T> v) { return v.visitWarehouse();} }
 	,INVOICE_TAXES { @Override public <T> T visit(InvoiceDetailMetadataVisitor<T> v) { return v.visitInvoiceTaxes();} }
 	,EXP_ACCOUNT { @Override public <T> T visit(InvoiceDetailMetadataVisitor<T> v) { return v.visitExpAccount();} }
-	,	;
+	,DIRECT_TAX_PERCENT { @Override public <T> T visit(InvoiceDetailMetadataVisitor<T> v) { return v.visitDirectTaxPercent();} }
+	,ADJ_DIRECT_TAX_ACCOUNT { @Override public <T> T visit(InvoiceDetailMetadataVisitor<T> v) { return v.visitAdjDirectTaxAccount();} }
+	,
+	;
 
 	public abstract <T> T visit(InvoiceDetailMetadataVisitor<T> v);
-	public static interface InvoiceDetailMetadataVisitor<T> {
-		T visitId();
-		T visitDomain();
-		T visitInvoice();
-		T visitInvestAsset();
-		T visitProject();
-		T visitLine();
-		T visitItem();
-		T visitDescription();
-		T visitQuantity();
-		T visitPrice();
-		T visitDiscountExpr();
-		T visitSource();
-		T visitSourceId();
-		T visitTaxableBase();
-		T visitTaxes();
-		T visitPrepayment();
-		T visitSeller();
-		T visitWorkplace();
-		T visitWarehouse();
-		T visitInvoiceTaxes();
-		T visitExpAccount();
-	}
 }
