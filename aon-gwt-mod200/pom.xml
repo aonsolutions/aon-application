@@ -122,6 +122,13 @@
       <scope>provided</scope>
       <classifier>sources</classifier>
     </dependency>
+    <dependency>
+	  <groupId>net.aonsolutions</groupId>
+	  <artifactId>aon.occam.api</artifactId>
+      <version>${project.version}</version>
+      <scope>provided</scope>
+      <classifier>sources</classifier>
+    </dependency>
     
  
     <dependency>
