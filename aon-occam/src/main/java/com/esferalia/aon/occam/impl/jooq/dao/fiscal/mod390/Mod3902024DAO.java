@@ -300,12 +300,12 @@ public class Mod3902024DAO {
 		 // Entregas intracomunitarias de bienes y servicios
 		 ,C0103	 (Mod3902024DetailKey.C0103, ((mod, vc) -> ( vc.isIntracommunitySales() && !vc.isWithoutRightDeductionType())))
 		 // Exportaciones y otras operaciones exentas con derecho a deducción
-		 ,C0104	 (Mod3902024DetailKey.C0104, ((mod, vc) -> (vc.isSales() && !vc.isWithoutRightDeductionType() && vc.isExtracommunity())))
+		 ,C0104	 (Mod3902024DetailKey.C0104, ((mod, vc) -> (vc.isSales() && !vc.isWithoutRightDeductionType() && vc.isExtracommunity() && !vc.isService())))
 		 // Operaciones exentas sin derecho a deducción (Se añaden tambien las ventas nacionales a porcentaje 0% de actividades exentas)
 		 //,C0105	 (Mod3902024DetailKey.C0105, ((mod, vc) -> (vc.isSales() && !vc.isNational() && vc.isWithoutRightDeductionType())))
 		 ,C0105	 (Mod3902024DetailKey.C0105, ((mod, vc) -> ((vc.isSales() && !vc.isNational() && vc.isWithoutRightDeductionType()) || (vc.isNationalSales() && AonMathUtils.isZero(vc.getPercentage()) && vc.getVatRegime() != null && vc.isActivityVatExempt()))))
-		 // Operaciones no sujetas por reglas de localización (excepto las incluidas en la casilla 126)
-		 ,C0110	 (Mod3902024DetailKey.C0110, ((mod, vc) -> (vc.isSales() && !vc.isWithoutRightDeductionType() && (vc.isOtherISP() || vc.isCanCeuMel()))))
+		 // Operaciones no sujetas por reglas de localización (excepto las incluidas en la casilla 126) (Se añaden tambien las extracomunitarias de servicios, que se quitan de la 104)
+		 ,C0110	 (Mod3902024DetailKey.C0110, ((mod, vc) -> (vc.isSales() && !vc.isWithoutRightDeductionType() && (vc.isOtherISP() || vc.isCanCeuMel() || (vc.isExtracommunity() && vc.isService())))))
 		 // Operaciones sujetas con inversión del sujeto pasivo
 		 ,C0125	 (Mod3902024DetailKey.C0125, null)
 		 // Operaciones no sujetas por reglas de localización acogidas a los regímenes especiales de ventanilla única
