@@ -26,6 +26,7 @@ public enum AonError implements Serializable{
 	,INVALID_USER("Usuario no encontrado")
 	,INVALID_COMPANY("Company no encontrado")
 	,NO_SCOPES_DEFINED_FOR_USER("No se han definido \u00E1mbitos para el usuario")
+	,NOT_SAVED("Los datos no se han guardado")
 	,NOT_DIRTY("{0} NOT SAVED! (not dirty) id: {1}")
 
 	// -----------------------------------------------------------
@@ -221,6 +222,15 @@ public enum AonError implements Serializable{
 	,INVOICE_DUA_INFO_EMPTY("No se ha indicado la informaci\u00F3n necesaria en un factura DUA")
 	,INVOICE_DUA_DUTY_ACCOUNT_EMPTY("No se ha indicado una cuenta contable para los aranceles")
 	,INVOICE_DUA_VAT_ACCOUNT_EMPTY("No se ha indicado una cuenta contable para el IVA")
+
+	// --------------------------------------------- RECORDER
+	,INVOICE_RECORDER_INVESTMENT("Factura marcada como inversi\u00F3n")
+	,INVOICE_RECORDER_SURCHARGE("Factura con recargo de equivalencia")
+	,INVOICE_RECORDER_TRANSACTION("Factura de tipo {0}")
+	,INVOICE_RECORDER_WITHHOLDING("Factura con retenci\u00F3n")
+	,INVOICE_RECORDER_PREPAYMENT("Factura con suplidos")
+	,INVOICE_RECORDER_EXPENSE_ACCOUNT("Existen gastos sin cuenta asociada.")
+	
 	// --------------------------------------------- FINANCE
 	,FINANCE_NOT_FOUND("Vencimiento no encontrado.")	
 	,FINANCE_CAN_NOT_BE_SETTLED("El vencimiento no se puede saldar, no est\u00E1 pendiente ni devuelto.")

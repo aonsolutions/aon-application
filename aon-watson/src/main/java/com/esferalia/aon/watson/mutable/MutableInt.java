@@ -111,20 +111,22 @@ public class MutableInt extends Number implements Comparable<MutableInt>, Mutabl
     //-----------------------------------------------------------------------
     /**
      * Increments the value.
+     * @return 
      *
      * @since Commons Lang 2.2
      */
-    public void increment() {
-        value++;
+    public int increment() {
+        return value++;
     }
 
     /**
      * Decrements the value.
+     * @return 
      *
      * @since Commons Lang 2.2
      */
-    public void decrement() {
-        value--;
+    public int decrement() {
+        return value--;
     }
 
     //-----------------------------------------------------------------------
