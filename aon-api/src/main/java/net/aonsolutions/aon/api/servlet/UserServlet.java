@@ -676,7 +676,6 @@ public class UserServlet extends AonApiHttpServlet {
 			.setFrom(from)
 			.setReplyTo(replyTo)
 			.setTo(email)
-			.setBcc("booking@aonsolutions.es")
 			.setSubject(subject)
 			.setBody(authCreateInfoContent(api, user, auth.getFullname(), email, password, from, logoUrl, parent));
 
