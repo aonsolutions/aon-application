@@ -96,7 +96,7 @@ public class IRPFReport extends MainEntryPoint {
 				
 				filterPanelContainer = new SimpleLayoutPanel();
 				initializeFilterPanel(options);
-				dockLayoutPanel.addNorth( filterPanelContainer, 135);
+				dockLayoutPanel.addNorth( filterPanelContainer, 160);
 				filterPanel.addCloseHandler(new ClickHandler() {
 
 				    @Override
@@ -104,6 +104,7 @@ public class IRPFReport extends MainEntryPoint {
 				    	toogleFilterPanel();
 				    }
 				});
+				
 				content = new SimpleLayoutPanel();
 				content.setStyleName(AON.CSS.aonSelector());
 				tabLayout = new TabLayoutPanel(26, Unit.PX);
@@ -267,7 +268,7 @@ public class IRPFReport extends MainEntryPoint {
 	}
 
 	public void openFilterPanel() {
-	    dockLayoutPanel.insertNorth(filterPanelContainer, 135 , content);
+	    dockLayoutPanel.insertNorth(filterPanelContainer, 160 , content);
 	    dockLayoutPanel.animate(500, new AnimationCallback() {
 	        @Override
 	        public void onAnimationComplete() {
