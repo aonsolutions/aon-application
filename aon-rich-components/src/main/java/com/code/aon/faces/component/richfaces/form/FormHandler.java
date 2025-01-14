@@ -44,7 +44,7 @@ public class FormHandler extends AonAjaxComponentHandler {
 		
 		// horrible fix for unnamed form elements. :-( 
 		c.getAttributes().putIfAbsent(ONSUBMIT,
-				"javascript:Array.from(this.elements).filter(el => !el.name).forEach(el => el.name = 'unknown')");
+				"try{ Array.from(this.elements).filter(el => !el.name).forEach(el => el.name = 'unknown');}catch(e){} return true;");
 	}
 	
 	@SuppressWarnings("unchecked")
