@@ -153,7 +153,8 @@
   /*
   false or undefined same effect
   */
-  --aonMenuTopnav: false;
+  --aonMenuTopnav: true;
+  --aonMenuSidenav: true;
   --aonConfigSwitchApps: false;
 
 }
