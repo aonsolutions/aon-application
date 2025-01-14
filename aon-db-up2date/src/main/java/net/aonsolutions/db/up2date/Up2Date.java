@@ -66,6 +66,7 @@ import net.aonsolutions.db.up2date.fiscal.AlterFsMod193Detail2024;
 import net.aonsolutions.db.up2date.fiscal.FsModel369Creation;
 import net.aonsolutions.db.up2date.payroll.Holidays2025Insert;
 import net.aonsolutions.db.up2date.payroll.LackPayInsert;
+import net.aonsolutions.db.up2date.tgss.BasesMax2025Update;
 import net.aonsolutions.db.up2date.tgss.FPPercentage2024Fix;
 import net.aonsolutions.db.up2date.tgss.MEI2025Insert;
 import net.aonsolutions.db.up2date.tgss.SolidarityInsert;
@@ -1000,7 +1001,9 @@ public class Up2Date {
 			// AlterFsMod190Detail2024.ALTER_FS_MODEL_190_DETAIL_2024
 
 			// MEI2025Insert.MEI2025INSERT,
-			Holidays2025Insert.HOLIDAYS2025INSERT
+			// Holidays2025Insert.HOLIDAYS2025INSERT
+			BasesMax2025Update.BASESMAX2025UPDATE
+			
 
 	};
 

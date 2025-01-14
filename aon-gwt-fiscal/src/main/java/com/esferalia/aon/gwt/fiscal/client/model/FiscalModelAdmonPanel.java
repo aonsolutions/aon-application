@@ -536,7 +536,8 @@ public class FiscalModelAdmonPanel<T extends IFiscalModel,O extends FiscalModelM
 
 	public void manageLinks() {
 		modelInfoLinklink.setVisible(true);
-		downloadLink.setVisible( getCallback().getModel().canBeSent() );
+		//downloadLink.setVisible( getCallback().getModel().canBeSent() );
+		downloadLink.setVisible( getCallback().getModel().canBeSent() && AonStringUtils.isNotBlank(getCallback().getDownloadFileAction()) );
 		boeDownloadLink.setVisible( getCallback().isBoeFormatEnabled() && getCallback().getModel().canBeSent() );
 		if ((getCallback().getModel().getYear() > 2021) || 
 			(getCallback().getModel().getYear() == 2021 && getCallback().getModel().getPeriod().isLastSemester()) || 
