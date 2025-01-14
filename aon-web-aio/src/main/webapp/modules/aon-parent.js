@@ -1,5 +1,5 @@
 import {AonElement} from 'aonsolutions/components/AonElement.js';
-import {closeSession, getCompanies, getUserNotice, getUser, getCompaniesBySchemas, getTimeControl} from  'aonsolutions/services/service.js';
+import {closeSession, getCompanies, getUserNotice, getUser, getCompaniesBySchemas, getTimeControl, getContracts} from  'aonsolutions/services/service.js';
 import { CSS, EVENT, MATERIAL_ICONS, MSG, TAG, CONSTANT } from 'aonsolutions/environments/environments.js';
 import { AonDesktop } from 'aonsolutions/modules/company/aon-desktop.js';
 import { AonApplication } from 'aonsolutions/components/aon-application.js';
@@ -24,6 +24,8 @@ export class AonParent extends AonElement {
 	PENDING_INVOICES;
 	REJECTED_INVOICES;
 	COMPANY_FILTER_TAB;
+	
+	searchBoxTimeout;
 
 	setFilter(filter){
 		this.filter = filter;
@@ -50,7 +52,8 @@ export class AonParent extends AonElement {
 		this.init({id:'active', active: true, domainActive:true});
 		let searchBox = this.getElement('aonHeaderSearchBox');
 		searchBox.addEventListener(EVENT.KEYUP, () => {
-			this.select({...this.getFilter(),...{value:searchBox.value}});
+			clearTimeout(this.searchBoxTimeout); 
+			this.searchBoxTimeout = setTimeout(() => this.search(this), 1000);
 		});
 	}
 
@@ -67,6 +70,48 @@ export class AonParent extends AonElement {
 			this.decorateTabs(companies); 
 			this.getApplication().updateSidenavCount(this.ENTERPRISES, companies?.length || 0);
 		} );
+	}
+	
+	search(el) {
+		let searchBox = el.getElement('aonHeaderSearchBox');
+		let searchDialogMenu =  el.getApplication().getOptionDialog();
+		
+		getCompanies().then(companies => {
+			let searchCompanies = el.filterCompanies(companies, {...el.getFilter(),...{value:searchBox.value}});
+			
+			let searchOptions = [];
+			
+			if ( searchCompanies.length > 0 ) {
+				let title = searchCompanies.length == 1 ? `${MSG.ONE} ${MSG.ENTERPRISE}` :`${searchCompanies.length} ${MSG.ENTERPRISES}`;
+				searchOptions.push({
+					icon: MATERIAL_ICONS.BUSINESS,
+					name: `<span style="font-weight: bold; cursor: default" >${title}</span>`,
+				});
+			}
+			
+			searchCompanies.slice(0,10).forEach(company => {
+				searchOptions.push({
+					icon : this.getIcon(company),
+					name : `<span>${company.name}</span><span style="float:right;">${company.document}</span>`,
+					fn: () => {this.companySelection(company, false);},
+				});				
+			});
+			
+			searchDialogMenu.getContent().style.minWidth = `${searchBox.offsetWidth}px`; 
+			
+			const top  = searchBox.getBoundingClientRect().bottom ;
+			const left = searchBox.getBoundingClientRect().left;
+			searchDialogMenu.setMenuOptions(searchOptions, top, left);
+			searchDialogMenu.open();
+			
+/*			getContracts({ page:0, perPage:11, name: searchBox.value})
+			.then(contracts => {
+				contracts.forEach(contract => console.log( JSON.stringify(contract)));	
+			});
+*/			
+		});
+		
+		
 	}
 
 	select(filter, callback) {
@@ -534,12 +579,7 @@ export class AonParent extends AonElement {
 		let companySpan = this.createElement(TAG.SPAN);
 		companySpan.className = 'aonLiSpan';
 
-
-		let icon = "business";
-		if(company.type === 'OFFICE') icon = 'work';
-		else if(company.parent) icon = MATERIAL_ICONS.APARTMENT;
-		else if(company.shared) icon = MATERIAL_ICONS.SHARE;
-		else if(!company.active) icon = 'domain_disabled';
+		let icon = this.getIcon(company);
 
 		let iconI = this.createElement(TAG.I);
 		iconI.className = 'material-icons aonAvatar';
@@ -569,6 +609,17 @@ export class AonParent extends AonElement {
 		sp.appendChild(i2);
 		li.appendChild(sp);
 		return li;
+	}
+	
+	getIcon(company) {
+		let icon = "business";
+		if(company.type === 'OFFICE') icon = 'work';
+		else if(company.parent) icon = MATERIAL_ICONS.APARTMENT;
+		else if(company.shared) icon = MATERIAL_ICONS.SHARE;
+		else if(!company.active) icon = 'domain_disabled';
+		
+		return icon;
+		
 	}
 
 	companySelection(company, onlyOne) {
