@@ -1,5 +1,6 @@
 package com.esferalia.aon.occam.impl.jooq.dao.fiscal.mod390;
 
+import static com.esferalia.aon.jooq.tables.Alcatraz.ALCATRAZ;
 import static com.esferalia.aon.jooq.tables.FsModel.FS_MODEL;
 import static com.esferalia.aon.jooq.tables.FsModel390.FS_MODEL390;
 import static com.esferalia.aon.jooq.tables.FsModelDetail.FS_MODEL_DETAIL;
@@ -368,7 +369,11 @@ public class Mod3902024DAO {
 		VATDAO.getVatBreakdown(ctx, mod390)
 			.flatMap(vt -> Arrays.stream( Mod3902024DetailKeyDAO.values() )
 				.filter(key -> key.accept(mod390, vt))
+				
 				.map( key -> new KeyedVatContext(key, vt)))
+			
+			.map( kvt -> checkProrrated(ctx, mod390, kvt))
+			
 			.map(kvt -> new Pair<KeyedVatContext,Mod390Detail>(kvt, map.computeIfAbsent(kvt.getKey().getKey(), k -> new Mod390Detail().setKey(k).setPercent(kvt.getVatContext().getPercentage()))))
 			.forEach(Mod3902024DAO::add );
 		
@@ -403,7 +408,10 @@ public class Mod3902024DAO {
 		Mod390Detail detail = pair.getRight();
 		double q = key.isSurcharge()?kvt.getVatContext().getSurchargeQuota():kvt.getVatContext().getQuota();
 		if (key.isProrrataEnabled()) {
-			q = kvt.getVatContext().getDeductibleQuota();
+			if (kvt.getVatContext().isProrrated())
+				q = kvt.getVatContext().getProrrateQuota();
+			else
+				q = kvt.getVatContext().getDeductibleQuota();
 		}
 		detail.setQuota( AonMathUtils.round(detail.getQuota()  + q));
 		detail.setTaxableBase( AonMathUtils.round( detail.getTaxableBase() + kvt.getVatContext().getBase()));
@@ -1356,5 +1364,28 @@ public class Mod3902024DAO {
 			&& AonMathUtils.isZero(vat.getPercentage())
 			&& (vat.isNationalPurchase() || vat.isNationalExpenses() || isOperacionesISPFilter(vat));
 	}
+	
+	// Comprobar si la factura esta unida a un modelo 303 con porcentaje de prorrata
+	private static KeyedVatContext checkProrrated(AONContext ctx, Mod390 mod390, KeyedVatContext kvc) {
+		
+		Double prorratePercent = 
+		ctx.getDslContext().select(FS_MODEL_DETAIL.AMOUNT)
+			.from(ALCATRAZ)
+			.leftJoin(FS_MODEL).on(FS_MODEL.ID.equal(ALCATRAZ.FS_MODEL))
+			.leftJoin(FS_MODEL_DETAIL).on(FS_MODEL_DETAIL.FS_MODEL.equal(FS_MODEL.ID))
+			.where(ALCATRAZ.INVOICE.equal(kvc.getVatContext().getInvoice()))
+			.and(FS_MODEL.MODEL.equal("IVA"))
+			.and(FS_MODEL_DETAIL.TYPE.equal("303-CM003"))  // Porcentaje de prorrata
+			.and(FS_MODEL.YEAR.equal(mod390.getYear()))
+			.fetchAny(FS_MODEL_DETAIL.AMOUNT);
+		
+		if (prorratePercent != null && prorratePercent > 0) {
+			kvc.getVatContext().setProrrated(true);
+			kvc.getVatContext().setProrratePercent(prorratePercent);	
+			kvc.getVatContext().setProrrateQuota(AonMathUtils.round(kvc.getVatContext().getDeductibleQuota() * prorratePercent / 100));
+		}
+		return kvc;
+		
+	}	
 
 }
