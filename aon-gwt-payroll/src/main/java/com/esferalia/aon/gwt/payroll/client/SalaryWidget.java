@@ -563,7 +563,7 @@ public class SalaryWidget extends AonCustomDockLayout {
 		pdfButton.setVisible(true);
 		email.setVisible(true);
 		
-		boolean isSomethingSelected = !salaryTable.getSelectedSalaries().isEmpty();
+		boolean isSomethingSelected = null != salaryTable && !salaryTable.getSelectedSalaries().isEmpty();
 		if(null != this.dur && this.dur.isBidoq()){
     		bidoqPublishButton.setVisible(isSomethingSelected && null != this.dur && this.dur.isBidoq());
     		bidoqPublishButton.setEnabled(isSomethingSelected && null != this.dur && this.dur.isBidoq());

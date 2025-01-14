@@ -65,8 +65,8 @@ public abstract class SalaryTable extends ScrollPanel {
 		, STD("F. Inicio"							,"5rem" 			,"")
 		, END("F. Fin"								,"5rem" 			,"")
 		, BRU("Bruto"								,"5rem" 			,"text-align: right;")
-		, NET("Neto"								,"5rem" 			,"text-align: right;")
-		, LIQ("Liquido"								,"5rem" 			,"text-align: right;")
+		, NET("Deducciones"							,"5rem" 			,"text-align: right;")
+		, LIQ("Neto"								,"5rem" 			,"text-align: right;")
 		, BUT(AonStringUtils.EMPTY					,"5rem" 			,"")
 		;
 
@@ -100,8 +100,8 @@ public abstract class SalaryTable extends ScrollPanel {
 		, STD("F. Inicio"							,"5rem" 			,"")
 		, END("F. Fin"								,"5rem" 			,"")
 		, BRU("Bruto"								,"5rem" 			,"text-align: right;")
-		, NET("Neto"								,"5rem" 			,"text-align: right;")
-		, LIQ("Liquido"								,"5rem" 			,"text-align: right;")
+		, NET("Deducciones"								,"5rem" 			,"text-align: right;")
+		, LIQ("Neto"								,"5rem" 			,"text-align: right;")
 		, BUT(AonStringUtils.EMPTY					,"5rem" 			,"")
 		;
 
