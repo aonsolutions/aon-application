@@ -133,7 +133,7 @@ public class JsonParser {
 		// *******************  ALIAS ******************* 
 		String alias = (String) jsonParams.get(IRequestParamsNames.ACCOUNT_ALIAS);
 		if (AonStringUtils.isNotBlank(alias)) {
-			params.setDescription(alias);			
+			params.setAlias(alias);			
 		}
 		// *******************  ACTIVE ******************* 
 		Long active = (Long) jsonParams.get(IRequestParamsNames.ACCOUNT_ACTIVE);
