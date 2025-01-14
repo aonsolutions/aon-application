@@ -16,9 +16,9 @@ on:
     inputs:
       skipTests:
         description: 'Skip running the tests'
-          type: boolean
-          required: true
-          default: false
+        type: boolean
+        required: true
+        default: false
 
 env:
   TZ: Europe/Madrid
