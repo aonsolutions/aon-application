@@ -280,6 +280,7 @@ export const ERROR = 'Error';
 export const ERRORS = MSG.ERRORS;
 export const ERR_EMPTY_VALUE = "Campos sin valor";
 export const ERR_LOW_CONFIDENCE = "Campos con poca confianza";
+export const EXAMPLE = "Example";
 export const EXERCISE = MSG.EXERCISE;
 export const EXPORTED = "Exportadas";
 

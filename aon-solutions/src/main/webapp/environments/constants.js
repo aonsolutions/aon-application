@@ -130,6 +130,7 @@ export const EMAIL = 'email';
 export const ENTERPRISE = 'enterprise';
 export const ENTERPRISES = 'enterprises';
 export const ERROR = "error";
+export const EXAMPLE = "example";
 export const EXPENSES = "expenses";
 export const EXPORTED = "exported";
 
