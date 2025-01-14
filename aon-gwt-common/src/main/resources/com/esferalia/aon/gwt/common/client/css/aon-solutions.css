@@ -2393,3 +2393,15 @@
 	display: flex;
 	justify-content: center;
 }
+
+.aon_button_dialog{
+	background-clip: border-box;
+ 	background-color: inherit;
+  	background-position: 3px 2px;
+  	background-repeat: no-repeat;
+  	border: 1px solid #aaa;
+  	cursor: pointer;
+  	height: 30px;
+  	padding-left: 2rem;
+  	text-transform: uppercase;
+}

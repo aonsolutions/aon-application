@@ -1457,5 +1457,9 @@ public interface AonSolutionsCSS extends CssResource {
 
 	@ClassName("aon_button_panel_IRPF")
 	String aonButtonPanelIRPF();
+	
+	@ClassName("aon_button_dialog")
+	String aonButtonDialog();
+
 }
 
