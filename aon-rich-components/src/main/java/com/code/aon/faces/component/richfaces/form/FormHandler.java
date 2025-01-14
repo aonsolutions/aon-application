@@ -20,6 +20,8 @@ import com.sun.facelets.tag.jsf.ComponentSupport;
 
 public class FormHandler extends AonAjaxComponentHandler {
 
+	private static final String ONSUBMIT = "onsubmit";
+
 	public FormHandler(ComponentConfig config) {
 		super(config);
 	}
@@ -39,6 +41,10 @@ public class FormHandler extends AonAjaxComponentHandler {
 		UIViewRoot root = ComponentSupport.getViewRoot(ctx, c);
 		root.getAttributes().remove( CURRENT_FORM );
 		root.getAttributes().remove( CURRENT_FORM_DATA_TABLE_MAP );
+		
+		// horrible fix for unnamed form elements. :-( 
+		c.getAttributes().putIfAbsent(ONSUBMIT,
+				"try{ Array.from(this.elements).filter(el => !el.name).forEach(el => el.name = 'unknown');}catch(e){} return true;");
 	}
 	
 	@SuppressWarnings("unchecked")

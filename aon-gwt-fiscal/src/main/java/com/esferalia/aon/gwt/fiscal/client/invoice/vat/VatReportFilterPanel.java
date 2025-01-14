@@ -189,7 +189,7 @@ public class VatReportFilterPanel extends ScrollPanel implements HasValueChangeH
 		buttonsPanel.addStyleName(AON.CSS.aonButtonPanelIVA());
 		buttonsPanel.add( cleanButton );
 		buttonsPanel.add( refreshButton );
-		buttonsPanel.add(closeButton);
+		buttonsPanel.add( closeButton );
 
 		AonDisplayTable mainTab = new AonDisplayTable(
 				 AON.CSS.aonSearchPanel()
