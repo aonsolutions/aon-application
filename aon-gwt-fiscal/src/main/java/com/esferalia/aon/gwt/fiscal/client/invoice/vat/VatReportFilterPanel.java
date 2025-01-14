@@ -184,9 +184,8 @@ public class VatReportFilterPanel extends ScrollPanel implements HasValueChangeH
 
 		
 		closeButton = new AonSearchPanelButton(AON.MSG.close(),AON.CSS.aonIconClose());
-				
+
 		FlowPanel buttonsPanel = new FlowPanel();
-		buttonsPanel.addStyleName(AON.CSS.aonButtonPanelIVA());
 		buttonsPanel.add( cleanButton );
 		buttonsPanel.add( refreshButton );
 		buttonsPanel.add( closeButton );
@@ -208,10 +207,10 @@ public class VatReportFilterPanel extends ScrollPanel implements HasValueChangeH
 				.addCell(new Label(AON.MSG.to()),AON.CSS.aonItalic())
 				.addCell(toDateBox)
 				.addCellIf(hasActivities,new Label(AON.MSG.activity()),AON.CSS.aonItalic())
-				.addCellIf(hasActivities,activityBox)
+				.addCellIf(hasActivities,activityBox))
 				.addCell(new Label(), AON.CSS.aonFlexGrow1())
-				.addCell(buttonsPanel, AON.CSS.aonPositionRelative())
-		);
+				.addCell(buttonsPanel, AON.CSS.aonTextRight())
+		;
 		
 		mainTab.addRow().addCell( 
 			new AonDisplayTable().addRow()
