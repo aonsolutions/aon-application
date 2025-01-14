@@ -1,97 +1,279 @@
 package com.esferalia.aon.gwt.payroll.client;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 import com.esferalia.aon.gwt.common.client.AON;
-import com.esferalia.aon.gwt.common.client.widget.CustomDataGrid;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomDialog;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomTable;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonMessagePanel;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonTableButton;
 import com.esferalia.aon.gwt.payroll.shared.ContractClause;
 import com.esferalia.aon.watson.util.AonStringUtils;
-import com.google.gwt.cell.client.ActionCell;
-import com.google.gwt.cell.client.Cell.Context;
-import com.google.gwt.cell.client.CheckboxCell;
-import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler;
-import com.google.gwt.dom.client.Style.Unit;
-import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
-import com.google.gwt.uibinder.client.UiBinder;
-import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.user.cellview.client.Column;
-import com.google.gwt.user.cellview.client.ColumnSortEvent.ListHandler;
-import com.google.gwt.user.cellview.client.DataGrid;
-import com.google.gwt.user.cellview.client.Header;
-import com.google.gwt.user.cellview.client.TextColumn;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTMLPanel;
-import com.google.gwt.user.client.ui.HasHorizontalAlignment;
+import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.Widget;
-import com.google.gwt.view.client.DefaultSelectionEventManager;
-import com.google.gwt.view.client.ListDataProvider;
-import com.google.gwt.view.client.MultiSelectionModel;
+import com.google.gwt.user.client.ui.ScrollPanel;
+import com.google.gwt.user.client.ui.SimplePanel;
 
 public abstract class ImportClauseDialog extends AonCustomDialog {
 	
-	// ------------------------------------------------- UIBinder
-	
-	interface ImportClauseDialogUIBinder extends UiBinder<Widget, ImportClauseDialog> {}
+	private static enum COLUMN {
+		  CHK(AonStringUtils.EMPTY					,"2rem"				,"")
+		, LIN("Linea"								,"5rem"				,"")
+		, NAM("Nombre"								,"10rem"  			,"white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
+		, DES("Descripci\u00f3n"					,"-moz-available"  	,"min-width: 10rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
+		;
 
-	private static final ImportClauseDialogUIBinder binder = GWT.create(ImportClauseDialogUIBinder.class);
+		String headerLabel;
+		String colWidth;
+		String cellStyleClass;
+
+		private COLUMN(String headerLabel,String colWidth) {
+			this(headerLabel, colWidth, null);
+		}
+
+		private COLUMN(String headerLabel,String colWidth,String cellStyleClass) {
+			this.headerLabel = headerLabel;
+			this.colWidth = colWidth;
+			this.cellStyleClass = cellStyleClass;
+		}
+		public String getColWidth() {
+			return colWidth;
+		}
+		public String getHeaderLabel() {
+			return headerLabel;
+		}
+		public String getCellStyleClass() {
+			return cellStyleClass;
+		}
+	}
 	
-	// ------------------------------------------------- UIFileds
+	private FlowPanel clausesContainer;
+	private HTMLPanel messagePanel;
 	
-	@UiField
-	HTMLPanel messagePanel;
+	private ScrollPanel scrollPanel;
+	private SimplePanel container;
+	private AonCustomTable tab;
 	
-	@UiField(provided = true)
-	DataGrid<ContractClause> clausesDG;
+	private Map<Integer, ContractClause> rowClauses = new HashMap<>();
+	private Map<Integer, AonTableButton> selectedItems = new HashMap<>();
 	
-	@UiField
-	HTMLPanel buttonsPanel;
+	private HTMLPanel buttonsPanel;
+	private Button importBtnDialog;
 	
 	// ------------------------------------------------- Variables
 	
 	final DomainEnterprisesServiceAsync impl = DomainEnterprisesServiceAsync.newInstance();
-	private MultiSelectionModel<ContractClause> selectionModel;
-	private List<ContractClause> domainClauses = new ArrayList<>();
-	
-	private Button importBtnDialog;
+	private List<ContractClause> existingClauses = new ArrayList<>();
 	
 	// ------------------------------------------------- Constructor
 	
 	protected ImportClauseDialog(List<ContractClause> existingClauses) {
-		
 		setCaption("Clausulas");
-		provideClausesDataGrid();
-		setWidget(binder.createAndBindUi(this));
-		setGridHeight();
-		getButtonsPanel();
-		enableAcceptButton(false);
 		
+		this.existingClauses = existingClauses;
+		
+		clausesContainer = new FlowPanel();
+		clausesContainer.addStyleName(AON.CSS.aonFlexColumn());
+		
+		messagePanel = new HTMLPanel("");
+		clausesContainer.add(messagePanel);
+		
+		scrollPanel = new ScrollPanel();
+		scrollPanel.setHeight("300px");
+		scrollPanel.setWidth("700px");
+		
+		container = new SimplePanel();
+		container.getElement().getStyle().setProperty("padding", "0 1rem");
+		scrollPanel.setWidget(container);
+		
+		clausesContainer.add(scrollPanel);
+		
+		getButtonsPanel();
+		
+		setWidget(clausesContainer);
+		
+		onSearch();
+		
+		showDialog();
+	}
+	
+	private void onSearch() {
+		search();
+	}
+	
+	private void search() {
+		container.clear();
+		tab = new AonCustomTable();
+		
+		paintHeader();
+		container.setWidget(tab);
+		searchData();
+	}
+	
+	private void paintHeader() {
+		HTMLPanel header = tab.createHeader();
+		header.getElement().getStyle().setProperty("top", "0px");
+		
+		for ( COLUMN col : COLUMN.values()) 
+			if(col == COLUMN.CHK) {
+				AonTableButton checkAllButton = new AonTableButton(AON.MSG.selectAction(), AON.CSS.aonIconCheck());
+				checkAllButton.addClickHandler(e -> {
+					List<AonTableButton> selectedItemList = selectedItems.values().stream().filter(check -> AonStringUtils.containsIgnoreCase(check.getStyleName(), AON.CSS.aonIconChecked())).collect(Collectors.toList());
+					if (selectedItemList.size() == rowClauses.size() || AonStringUtils.containsIgnoreCase(checkAllButton.getStyleName(), AON.CSS.aonIconChecked())) {
+						checkAllButton.addStyleName(AON.CSS.aonIconCheck());
+						checkAllButton.removeStyleName(AON.CSS.aonIconChecked());
+						selectedItems.values().forEach(check ->{
+							check.addStyleName(AON.CSS.aonIconCheck());
+							check.removeStyleName(AON.CSS.aonIconChecked());
+						});
+						importBtnDialog.setEnabled(false);
+					} else {
+						checkAllButton.addStyleName(AON.CSS.aonIconChecked());
+						checkAllButton.removeStyleName(AON.CSS.aonIconCheck());
+						selectedItems.values().forEach(check ->{
+							check.addStyleName(AON.CSS.aonIconChecked());
+							check.removeStyleName(AON.CSS.aonIconCheck());
+						});
+						importBtnDialog.setEnabled(true);
+					}
+				});
+				
+				tab.addHeader(checkAllButton, col.getColWidth());
+			} else 
+				tab.addHeader(new Label(col.getHeaderLabel()), col.getColWidth(), col.getCellStyleClass());
+				
+	}
+	
+	private void searchData() {
+		AonMessagePanel.showLoading(messagePanel, "Obteniendo clausulas ...");
+		getList(clauses -> {
+			AonMessagePanel.hideMessage(messagePanel);
+			
+			boolean something = false;
+			
+			for(ContractClause clause : clauses) {
+				something = true;
+				paintRow(clause);
+			}
+			
+			if (!something) {
+				FlowPanel line = new FlowPanel();
+				InlineLabel label = new InlineLabel(AON.MSG.noData());
+				line.add(label);
+				container.clear();
+				container.add(line);
+			}
+			
+		}, f -> AonMessagePanel.showError(messagePanel, "Obtenci\u00f3n Clausulas: " + f.getMessage()));
+	}
+	
+	private void paintRow(ContractClause clause) {
+		HTMLPanel row = tab.createRow();
+		
+		AonTableButton checkButton = new AonTableButton(AON.MSG.selectAction(), AON.CSS.aonIconCheck());
+		checkButton.addClickHandler(e -> {
+			e.stopPropagation();
+			if (AonStringUtils.containsIgnoreCase(checkButton.getStyleName(), AON.CSS.aonIconChecked())) {
+				checkButton.addStyleName(AON.CSS.aonIconCheck());
+				checkButton.removeStyleName(AON.CSS.aonIconChecked());
+			} else {
+				checkButton.addStyleName(AON.CSS.aonIconChecked());
+				checkButton.removeStyleName(AON.CSS.aonIconCheck());
+			}
+			List<AonTableButton> selectedItemList = selectedItems.values().stream().filter(check -> AonStringUtils.containsIgnoreCase(check.getStyleName(), AON.CSS.aonIconChecked())).collect(Collectors.toList());
+			importBtnDialog.setEnabled(!selectedItemList.isEmpty());
+		});
+		tab.addRow(row, checkButton, COLUMN.CHK.getColWidth());
+		
+		tab.addRow(row, new Label(null == clause.getLineNumber() ? "" : clause.getLineNumber().toString()), COLUMN.LIN.getColWidth());
+		
+		Label name = new Label(clause.getName());
+		name.setTitle(clause.getName());
+		tab.addInlineStyle(name, COLUMN.NAM.getCellStyleClass());
+		tab.addRow(row, name, COLUMN.NAM.getColWidth());
+		
+		Label description = new Label(clause.getDescription());
+		description.setTitle(clause.getDescription());
+		tab.addInlineStyle(description, COLUMN.DES.getCellStyleClass());
+		tab.addRow(row, description, COLUMN.DES.getColWidth());
+		
+		rowClauses.put(clause.getId(), clause);
+		selectedItems.put(clause.getId(), checkButton);
+	}
+
+	// ------------------------------------------------- ShowDialog
+	
+	public void showDialog() {
+		// Show center
+		Scheduler.get().scheduleDeferred(() -> {
+			center();
+			show();
+		});
+	}
+	
+	// ------------------------------------------------- ButtonsPanel
+	
+	private void getButtonsPanel() {
+		buttonsPanel = new HTMLPanel("");
+		buttonsPanel.addStyleName(AON.CSS.aonItemFlex());
+		buttonsPanel.addStyleName(AON.CSS.aonDisplayFlexCenter());
+		buttonsPanel.getElement().getStyle().setProperty("padding", "1rem");
+		
+		Button closeBtnDialog = new Button();
+		closeBtnDialog.setStyleName(AON.CSS.aonCancelButtonSmall());
+		closeBtnDialog.setText("Cerrar");
+		closeBtnDialog.addClickHandler(e -> hide());
+		
+		buttonsPanel.add(closeBtnDialog);
+		
+		importBtnDialog = new Button();
+		importBtnDialog.setStyleName(AON.CSS.aonOkButtonSmall());
+		importBtnDialog.setText("Importar Clausulas");
+		importBtnDialog.setEnabled(false);
+		importBtnDialog.addClickHandler(e -> onClausesImport(getClausesIds()));
+		
+		buttonsPanel.add(importBtnDialog);
+		
+		clausesContainer.add(buttonsPanel);
+	}
+	
+	private List<Integer> getClausesIds() {
+		List<Integer> selectedClauseIds = selectedItems.entrySet().stream().filter(entry -> AonStringUtils.containsIgnoreCase(entry.getValue().getStyleName(), AON.CSS.aonIconChecked())).map(entry -> entry.getKey()).collect(Collectors.toList());
+		return selectedClauseIds;
+	}
+	
+	// ------------------------------------------------- AbstractMethods
+	
+	protected abstract void onClausesImport(List<Integer> clausesIds);
+
+	// ------------------------------------------------- MessagePanel
+	
+	private void getList(Consumer<List<ContractClause>> success, Consumer<Throwable> error) {
 		impl.getDomainClauses(new AsyncCallback<List<ContractClause>>() {
 
 			@Override
 			public void onFailure(Throwable caught) {
-				showError("Clausulas", caught.getMessage());
+				error.accept(caught);
 			}
 
 			@Override
 			public void onSuccess(List<ContractClause> clausesListDB) {
 				List<ContractClause> clausesList = clausesListDB;
-				// Solo se filtra si existe una lista que filtrar
+				
 				if(null != existingClauses && !existingClauses.isEmpty())
 					clausesList = filterClauses(clausesListDB, existingClauses);
 				
-				domainClauses = clausesList;
-				initClausesTable();
-				showDialog();
+				success.accept(clausesList);
 			}
 
 			private List<ContractClause> filterClauses(List<ContractClause> clausesListDB, List<ContractClause> existingClauses) {
@@ -110,231 +292,6 @@ public abstract class ImportClauseDialog extends AonCustomDialog {
 				return false;
 			}
 		});
-		
-	}
-
-	private void setGridHeight() {
-		this.clausesDG.setHeight("300px");
-	}
-
-	// ------------------------------------------ Provied DataGrid
-
-	private void provideClausesDataGrid() {
-		domainClauses = Collections.emptyList();
-		
-		// Resource Style CellTable
-		clausesDG = new CustomDataGrid<>(Integer.MAX_VALUE, ContractClause.KEY_PROVIDER);
-		
-		//Do not refresh the headers every time the dataGrid is updated.
-		clausesDG.setAutoHeaderRefreshDisabled(true);
-		
-		// Set the message to display when the table is empty.
-		clausesDG.setEmptyTableWidget(new Label(("No existen clausulas para importar").toUpperCase()));
-		
-		// Add a selection model so we can select cells.
-	    this.selectionModel = new MultiSelectionModel<>(ContractClause.KEY_PROVIDER);
-	    clausesDG.setSelectionModel(this.selectionModel, DefaultSelectionEventManager.<ContractClause> createCheckboxManager());
-	    
-	    // Initialize the columns.
-	    addColumns(this.selectionModel);
-	    
-	    new ListDataProvider<ContractClause>(Collections.emptyList()).addDataDisplay(clausesDG);
-	    
-	}
-	
-	private void addColumns(MultiSelectionModel<ContractClause> selectionModel) {
-		
-		selectionModel.addSelectionChangeHandler(e -> enableAcceptButton(!selectionModel.getSelectedSet().isEmpty()));
-	    
-		Column<ContractClause, Boolean> checkColumn = new Column<ContractClause, Boolean>(new CheckboxCell(true, false)) {
-			@Override
-			public Boolean getValue(ContractClause contractClause) {
-				return selectionModel.isSelected(contractClause);
-			}
-	    };
-    
-	    CheckboxCell selectAllHeaderCB = new CheckboxCell(true,true);
-	    Header<Boolean> selectAllHeader = new Header<Boolean>(selectAllHeaderCB) {
-	    	@Override
-	    	public Boolean getValue() {
-	    		if(null == domainClauses) return false;
-	    		return selectionModel.getSelectedSet().size() == domainClauses.size();
-	    	}
-	    	
-	    };
-	    
-	    selectAllHeader.setUpdater(value -> domainClauses.forEach(salary -> selectionModel.setSelected(salary, value)));
-	    
-	    clausesDG.addColumn(checkColumn,selectAllHeader);
-	    clausesDG.setColumnWidth(checkColumn, 5, Unit.PCT);
-	    checkColumn.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
-		
-		// Line column.
-	    TextColumn<ContractClause> lineColumn = new TextColumn<ContractClause>() {
-	    	@Override
-	    	public String getValue(ContractClause contractClause) {
-	    		return contractClause.getLineNumber().toString();
-	    	}
-	    };
-
-	    lineColumn.setSortable(true);
-	    lineColumn.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
-	    clausesDG.setColumnWidth(lineColumn, 15, Unit.PCT);
-	    
-	    // Name column.
-	    TextColumn<ContractClause> nameColumn = new TextColumn<ContractClause>() {
-	    	@Override
-	    	public String getValue(ContractClause contractClause) {
-	    		return contractClause.getName();
-	    	}
-	    };
-
-	    nameColumn.setSortable(true);
-	    clausesDG.setColumnWidth(nameColumn, 25, Unit.PCT);
-	    
-	    // Description column.
-	    TextColumn<ContractClause> descriptionColumn = new TextColumn<ContractClause>() {
-	    	@Override
-	    	public String getValue(ContractClause contractClause) {
-	    		return contractClause.getDescription();
-	    	}
-	    };
-
-	    descriptionColumn.setSortable(true);
-	    
-	    // General column.
-	    ActionCell<ContractClause> generalActionCell = new ActionCell<>("", contractClause -> {});
-	    Column<ContractClause, ContractClause> generalColumn = new Column<ContractClause, ContractClause>(generalActionCell) {
-
-			@Override
-			public ContractClause getValue(ContractClause contractClause) {
-				return contractClause;
-			}
-			
-			@Override
-			public void render(Context context, ContractClause object, SafeHtmlBuilder sb) {
-				if(null != object) {
-					if(object.getGeneral() == (byte) 0)
-						sb.appendHtmlConstant("<button type=\"button\" class=\"aon_button aon_table_button aon_icon_lock\" style=\"border: none !important; height: 20px;\" title=\"No general\"></button>");
-					else
-						sb.appendHtmlConstant("<button type=\"button\" class=\"aon_button aon_table_button aon_icon_unlock\" style=\"border: none !important; height: 20px;\" title=\"General\"></button>");
-			
-				}
-			}
-		};
-		
-		generalColumn.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_RIGHT);
-		clausesDG.setColumnWidth(generalColumn, 5, Unit.PCT);
-		
-	    // Add the columns.
-		clausesDG.addColumn(lineColumn, "Linea");
-		clausesDG.addColumn(nameColumn, "Nombre");
-		clausesDG.addColumn(descriptionColumn, "Descripci\u00f3n");
-		clausesDG.addColumn(generalColumn, "");
-	}
-	
-	// ------------------------------------------ Init ClausesDG
-	
-	public void initClausesTable() {		
-		//Reset Selection Model 
-		selectionModel.clear();
-		
-		// Create a data provider.
-	    ListDataProvider<ContractClause> dataProvider = new ListDataProvider<>();
-
-	    // Connect the table to the data provider.
-	    dataProvider.addDataDisplay(clausesDG);
-	    
-	    // Add the data to the data provider, which automatically pushes it to the widget.
-	    List<ContractClause> clausesAuxList = dataProvider.getList();
-	    clausesAuxList.clear();
-	    
-	    for (ContractClause contractClause : this.domainClauses) {
-	    	clausesAuxList.add(contractClause);
-	    }   
-		
-		addSortColums(clausesAuxList);
-	    
-		// Set page size
-		clausesDG.setPageSize(clausesAuxList.size());
-	}
-
-	private void addSortColums(List<ContractClause> domainClauses) {
-		ListHandler<ContractClause> columnSortHandler = new ListHandler<>(domainClauses);
-		
-	    columnSortHandler.setComparator(clausesDG.getColumn(1),
-	    		(o1, o2) -> compareString(o1, o2, o1.getLineNumber()+"", o2.getLineNumber()+""));
-	    
-	    columnSortHandler.setComparator(clausesDG.getColumn(2),
-	    		(o1, o2) -> compareString(o1, o2, o1.getName(), o2.getName()));
-	    
-	    columnSortHandler.setComparator(clausesDG.getColumn(3),
-	    		(o1, o2) -> compareString(o1, o2, o1.getDescription(), o2.getDescription()));
-	    
-	    clausesDG.addColumnSortHandler(columnSortHandler);
-
-	    // We know that the data is sorted alphabetically by default.
-	    clausesDG.getColumn(1).setDefaultSortAscending(false);
-	    clausesDG.getColumnSortList().push(clausesDG.getColumn(1));   
-	}
-	
-	private int compareString(Object o1, Object o2, String s1, String s2) {
-		if (o1 == o2) return 0;
-		else if (o1 == null) return -1;
-		else if (o2 == null) return 1;
-		else
-        	return s1.compareTo(s2);
-	}
-
-	// ------------------------------------------------- ShowDialog
-	
-	public void showDialog() {
-		// Show center
-		Scheduler.get().scheduleDeferred(() -> {
-			center();
-			show();
-		});
-	}
-	
-	// ------------------------------------------------- ButtonsPanel
-	
-	private void getButtonsPanel() {
-		Button closeBtnDialog = new Button();
-		closeBtnDialog.setStyleName(AON.CSS.aonCancelButtonSmall());
-		closeBtnDialog.setText("Cerrar");
-		closeBtnDialog.addClickHandler(e -> hide());
-		
-		buttonsPanel.add(closeBtnDialog);
-		
-		importBtnDialog = new Button();
-		importBtnDialog.setStyleName(AON.CSS.aonOkButtonSmall());
-		importBtnDialog.setText("Importar Clausulas");
-		importBtnDialog.addClickHandler(e -> onClausesImport(getClausesIds()));
-		
-		buttonsPanel.add(importBtnDialog);
-	}
-	
-	private List<Integer> getClausesIds() {
-		return selectionModel.getSelectedSet().stream()
-				.map(ContractClause::getId)
-	            .collect(Collectors.toList());
-	}
-
-	private void enableAcceptButton(boolean enabled) {
-		importBtnDialog.setEnabled(enabled);
-		importBtnDialog.setTitle(enabled ? "Importar clausulas" : "Seleccione al menos una clausula para importar");
-	}
-	
-	// ------------------------------------------------- AbstractMethods
-	
-	protected abstract void onClausesImport(List<Integer> clausesIds);
-
-	// ------------------------------------------------- MessagePanel
-	
-	private void showError(String title, String message) {
-		Map<String, String> errorMap = new HashMap<>();
-		errorMap.put(title, message);
-		AonMessagePanel.showError(messagePanel, errorMap);
 	}
 	
 }
