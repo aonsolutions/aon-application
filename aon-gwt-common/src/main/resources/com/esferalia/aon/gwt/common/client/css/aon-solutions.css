@@ -1053,15 +1053,6 @@
 }
 
 /* Estilo para los botones de edicion de Table IVA */
-.aon_button_panel_IVA {
-	display: flex;
-  	align-items: center;
-  	position: absolute;
-  	top: 0px;
-  	left: 930px;
-}
-
-/* Estilo para los botones de edicion de Table IVA */
 .aon_button_panel_IRPF {
 	display: flex;
   	position: absolute;

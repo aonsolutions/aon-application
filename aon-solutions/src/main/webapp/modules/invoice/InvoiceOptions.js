@@ -158,7 +158,7 @@ import * as GWT from "../../gwt/gwt.js";
 
   export const RAWDOC_INBOX_ISSUED = {
     id: CONSTANT.RAWDOC_INBOX_ISSUED.initCap(),
-    name: MSG.ISSUEDS,
+    name: MSG.ISSUEDS + "/" + MSG.PROFORMA,
     icon: MATERIAL_ICONS.UNARCHIVE,
     fn: () => invoiceList({ status: CONSTANT.INBOX, type: "emitida" })
   }
@@ -209,7 +209,7 @@ import * as GWT from "../../gwt/gwt.js";
 
   export const RAWDOC_REJECT = {
     id: CONSTANT.RAWDOC_REJECT.initCap(),
-    name: MSG.REJECTEDS,
+    name: MSG.REVIEW,
     icon: MATERIAL_ICONS.REPORT,
     fn: () => invoiceList( { status: CONSTANT.REJECTED })
   }
@@ -223,7 +223,7 @@ import * as GWT from "../../gwt/gwt.js";
 
   export const INVOICE_PENDINGS = {
     id: CONSTANT.PENDINGS.initCap(),
-    name: MSG.PENDINGS,
+    name: MSG.DRAFTS,
     icon: MATERIAL_ICONS.INBOX,
     opened: true,
     options: [RAWDOC_INBOX_ISSUED, RAWDOC_INBOX_RECEIVED, RAWDOC_INBOX_TICKET]
@@ -232,28 +232,28 @@ import * as GWT from "../../gwt/gwt.js";
   export const OTHER_INCOMES = {
     id: CONSTANT.OTHER_INCOMES.initCap(),
     name: MSG.OTHER_INCOMES,
-    icon: MATERIAL_ICONS.PERSON,
+    icon: MATERIAL_ICONS.EURO,
     fn: () => alert("EN DESARROLLO")
   }
 
   export const OFFERS = {
     id: CONSTANT.OFFERS.initCap(),
     name: MSG.OFFERS,
-    icon: MATERIAL_ICONS.PERSON,
+    icon: MATERIAL_ICONS.CONTRACT,
     fn: () => alert("EN DESARROLLO")
   }
 
   export const OTHER_EXPENSES = {
     id: CONSTANT.OTHER_EXPENSES.initCap(),
     name: MSG.OTHER_EXPENSES,
-    icon: MATERIAL_ICONS.PERSON,
+    icon: MATERIAL_ICONS.EURO,
     fn: () => alert("EN DESARROLLO")
   }
 
   export const STAFF_EXPENSES = {
     id: CONSTANT.STAFF_EXPENSES.initCap(),
     name: MSG.STAFF_EXPENSES,
-    icon: MATERIAL_ICONS.PERSON,
+    icon: MATERIAL_ICONS.GROUP,
     fn: () => alert("EN DESARROLLO")    
   }
 
@@ -271,21 +271,21 @@ import * as GWT from "../../gwt/gwt.js";
     id: CONSTANT.INCOMES.initCap(),
     title: MSG.INCOMES,
     name: MSG.INCOMES,
-    options: [INVOICE_ISSUED_BETA, PROFORMA_INVOICES, OTHER_INCOMES, OFFERS ]
+    options: [INVOICE_ISSUED_BETA, OTHER_INCOMES, OFFERS ]
   }
 
   export const MAIN_EXPENSES = {
     id: CONSTANT.EXPENSES.initCap(),
     title: MSG.EXPENSES,
     name: MSG.EXPENSES,
-    options: [INVOICE_RECEIVED_BETA, INVOICE_TICKET, RAWDOC_INBOX_RECEIVED_DRAFT, OTHER_EXPENSES, STAFF_EXPENSES]
+    options: [INVOICE_RECEIVED_BETA, INVOICE_TICKET, OTHER_EXPENSES, STAFF_EXPENSES]
   }
 
   export const MAIN_DOCUMENTS = {
     id: CONSTANT.DOCUMENT.initCap(),
-    title: MSG.DOCUMENTS,
-    name: MSG.DOCUMENTS,
-    options: [RAWDOC_PROCESSING, RAWDOC_REJECT, RAWDOC_TRASH]
+    title: MSG.PENDING,
+    name: MSG.PENDING,
+    options: [INVOICE_PENDINGS, RAWDOC_PROCESSING, RAWDOC_REJECT, RAWDOC_TRASH]
   }
 
   // ********************
@@ -315,7 +315,7 @@ import * as GWT from "../../gwt/gwt.js";
 
   export const REGISTRY = {
     id: CONSTANT.HOLDERS.initCap(),
-    name: MSG.HOLDERS,
+    name: MSG.CONTACTS,
     icon: MATERIAL_ICONS.PEOPLE,
     clickable: false,
     options: [REGISTRY_CUSTOMER, REGISTRY_SUPPLIER, REGISTRY_CREDITOR]
@@ -323,7 +323,7 @@ import * as GWT from "../../gwt/gwt.js";
 
   export const PRODUCT = {
     id: CONSTANT.PRODUCT.initCap(),
-    name: MSG.PRODUCTS,
+    name: MSG.PRODUCTS_AND_SERVICES,
     icon: MATERIAL_ICONS.INVENTORY_2,
     fn: () => productList({ expense: false })
   }
@@ -390,7 +390,7 @@ import * as GWT from "../../gwt/gwt.js";
     id: CONSTANT.MANAGEMENT.initCap(),
     title: MSG.MANAGEMENT,
     name: MSG.MANAGEMENT,
-    options:[ REGISTRY, CONCEPTS, CHARGES_PAYMENTS, FISCAL_DRAFT, CLOSING_INVOICE ]
+    options:[ REGISTRY, CONCEPTS, CHARGES_PAYMENTS, FISCAL_DRAFT] //, CLOSING_INVOICE ]
   }
 
 
