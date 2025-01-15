@@ -30,6 +30,7 @@ import { changeUrl } from '../../services/actionService.js';
 import * as UA from '../../services/userAgentService.js';
 import { AonMobileHome } from "../home/aon-mobile-home.js";
 import { AonMobileDesktop } from "../company/aon-mobile-desktop.js";
+import { AonDesktop } from "../company/aon-desktop.js";
 
 export class AonNewLogin extends AonElement {
   tag;
@@ -444,14 +445,21 @@ export class AonNewLogin extends AonElement {
     if(!this.isMobile()){
       let aonMenu = this.getElement('aonMenu');
       aonMenu.clear();
-      aonMenu.init();
+      aonMenu.init().then(() => aonMenu.open());
     } else aonHeader.companyIn(onlyOne);
 
     getUser().then(user => {
       localStorage.setItem('aon_domain_login', user.login);
-      this.rootPanel(UA.isAndroidApp() 
+      if(UA.isMobile()){
+        this.rootPanel(UA.isAndroidApp() 
         ? new AonMobileHome()
         : new AonMobileDesktop());
+      } else {
+        this.rootPanel(new AonDesktop());
+        let portal = LS.isLeftMenu();
+        LS.setPortalChecked(portal);
+      }
+
     });
   }
 

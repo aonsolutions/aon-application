@@ -152,7 +152,7 @@ class CameraActivity : ComponentActivity() {
         lifecycle: androidx.lifecycle.LifecycleOwner,
         modifier: Modifier = Modifier,
     ) {
-        cameraController.bindToLifecycle(lifecycle)
+            cameraController.bindToLifecycle(lifecycle)
         AndroidView(modifier = modifier, factory = { context ->
             val previewView = PreviewView(context).apply {
                 layoutParams = ViewGroup.LayoutParams(
