@@ -294,7 +294,8 @@ public class PackagingDAO {
 			SalesDetail sd = SalesDetailDAO.get(ctx, f -> f.getDeliveryProperty().eq(deliveryId).and(f.getProductProperty().eq(productId)));
 			
 			DeliveryDetail dd = DeliveryDetailDAO.get(ctx, f -> f.getDelivery().eq(deliveryId)
-					.and(f.getItem().eq(ic.getCompositionItemId())));
+					.and(f.getItem().eq(ic.getCompositionItemId()))
+					.and(f.getSalesDetail().eq(sd.getId())));
 			if(dd.getId() != null) {
 				dd.setQuantity(dd.getQuantity() + ic.getQuantity());
 				DeliveryDetailDAO.save(ctx, dd);
@@ -438,8 +439,6 @@ public class PackagingDAO {
 				.and(h.getDeliveryProperty().eq(deliveryId))
 				.and(h.getItemProperty().eq(packaging.getContainer().getItem())));
 
-		Item containerItem = ItemDAO.get(ctx, packaging.getContainer().getItem(), new Options().setFull(true));
-
 		if(!packaging.getContent().isEmpty()) {
 			// DEVOLVER EL CONTENIDO A SU PALET ORIGINAL
 			for (PackagingDeliveryContent content : packaging.getContent()) {
@@ -450,13 +449,8 @@ public class PackagingDAO {
 							.and(k.getDomainProperty().eq(ctx.getDomainId())));
 						
 						double q = itemComposition.getQuantity() - c.getQuantity();
-						if(q == 0) {
-							// delete itemcomposition
-							ItemCompositionDAO.delete(ctx, itemComposition.getId());
-						} else {
-							// update itemcomposition
-							ItemCompositionDAO.save(ctx, itemComposition.setQuantity(q));
-						}
+						if(q == 0) ItemCompositionDAO.delete(ctx, itemComposition.getId());
+						else ItemCompositionDAO.save(ctx, itemComposition.setQuantity(q));
 						
 						ItemComposition ic = ItemCompositionDAO.get(ctx, f -> f.getDomainProperty().eq(ctx.getDomainId())
 							.and(f.getItemProperty().eq(content.getSource()))
@@ -516,49 +510,48 @@ public class PackagingDAO {
 					});		
 				}
 			}
-		} else {
-			containerItem.getItemComposition().stream().forEach(itemComposition -> {
-				Integer productId = itemComposition.getComposition().getProduct().getId();
-				DeliveryDetail dd = DeliveryDetailDAO.get(ctx, f -> f.getDelivery().eq(deliveryId)
-					.and(f.getItem().eq(itemComposition.getCompositionItemId())));
-				double q = dd.getQuantity() - itemComposition.getQuantity();
-				if(q == 0) {
-					DeliveryDetailDAO.delete(ctx, f -> f.getIdProperty().eq(dd.getId()));
-				} else {
-					dd.setQuantity(q);
-					DeliveryDetailDAO.save(ctx, dd);
-				}
-				SalesDetail sd = SalesDetailDAO.get(ctx, f -> f.getIdProperty().eq(dd.getSalesDetail()));
-				sd.setDelivered(sd.getDelivered() - itemComposition.getQuantity());
-				if(bool && sd.getDelivery() != null && sd.getDelivered() == 0.0 && sd.getDelivery().equals(deliveryId))
-					sd.setDelivery(null);
-				sd.setStatus(sd.getDelivered() > 0 ? SalesDetailStatus.PARTIAL_SETTLED : SalesDetailStatus.PENDING);
-				SalesDetailDAO.save(ctx, sd);
-				
-				// TODO FALTA REVISAR PEDIDO!!!
-				List<SalesDetail> list = SalesDetailDAO.getStream(ctx, f -> 
-					f.getSalesProperty().eq(sd.getSales().getId())
-					.and(f.getDomainProperty().eq(sd.getDomain()))
-					.and(f.getDeliveryProperty().isNotNull()))
-					.toList();
-				if(list.isEmpty()) {
-					Sales sales = SalesDAO.get(ctx, sd.getSales().getId());
-					sales.setStatus(SalesStatus.PENDING);
-					SalesDAO.save(ctx, sales);
-				}
+		} 
+		
+		Item containerItem = ItemDAO.get(ctx, packaging.getContainer().getItem(), new Options().setFull(true));
+		containerItem.getItemComposition().stream().forEach(itemComposition -> {
+			Integer productId = itemComposition.getComposition().getProduct().getId();
+			DeliveryDetail dd = DeliveryDetailDAO.get(ctx, f -> f.getDelivery().eq(deliveryId)
+				.and(f.getItem().eq(itemComposition.getCompositionItemId())));
+			double q = dd.getQuantity() - itemComposition.getQuantity();
+			if(q == 0) {
+				DeliveryDetailDAO.delete(ctx, f -> f.getIdProperty().eq(dd.getId()));
+			} else {
+				dd.setQuantity(q);
+				DeliveryDetailDAO.save(ctx, dd);
+			}
+			SalesDetail sd = SalesDetailDAO.get(ctx, f -> f.getIdProperty().eq(dd.getSalesDetail()));
+			sd.setDelivered(sd.getDelivered() - itemComposition.getQuantity());
+			if(bool && sd.getDelivery() != null && sd.getDelivered() == 0.0 && sd.getDelivery().equals(deliveryId))
+				sd.setDelivery(null);
+			sd.setStatus(sd.getDelivered() > 0 ? SalesDetailStatus.PARTIAL_SETTLED : SalesDetailStatus.PENDING);
+			SalesDetailDAO.save(ctx, sd);
 			
-				Stock stock = WarehouseDAO.getStock(ctx, f -> f.getDomainProperty().eq(ctx.getDomainId())
-					.and(f.getItemProperty().eq(itemComposition.getCompositionItemId())));
-				if(stock.getId() != null) {
-					stock.setQuantity(stock.getQuantity() + itemComposition.getQuantity());
-					WarehouseDAO.saveStock(ctx, stock);
-				}
+			// TODO FALTA REVISAR PEDIDO!!!
+			List<SalesDetail> list = SalesDetailDAO.getStream(ctx, f -> 
+				f.getSalesProperty().eq(sd.getSales().getId())
+				.and(f.getDomainProperty().eq(sd.getDomain()))
+				.and(f.getDeliveryProperty().isNotNull()))
+				.toList();
+			if(list.isEmpty()) {
+				Sales sales = SalesDAO.get(ctx, sd.getSales().getId());
+				sales.setStatus(SalesStatus.PENDING);
+				SalesDAO.save(ctx, sales);
+			}
 			
-				deleteItemBox(ctx, deliveryId, productId, itemComposition.getQuantity());
-			});
+			Stock stock = WarehouseDAO.getStock(ctx, f -> f.getDomainProperty().eq(ctx.getDomainId())
+				.and(f.getItemProperty().eq(itemComposition.getCompositionItemId())));
+			if(stock.getId() != null) {
+				stock.setQuantity(stock.getQuantity() + itemComposition.getQuantity());
+				WarehouseDAO.saveStock(ctx, stock);
+			}
 			
-			
-		}
+			deleteItemBox(ctx, deliveryId, productId, itemComposition.getQuantity());
+		});
 		
 		// QUITAR envase en delivery detail.
 		Item containerBase = ItemDAO.get(ctx,  f -> f.getDomainProperty().eq(ctx.getDomainId())
