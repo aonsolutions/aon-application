@@ -326,6 +326,7 @@ export const OPTIONAL = "Optional";
 export const OPTIONS = 'Options';
 export const OR_ACCESS = 'or ACCESS';
 export const OTHER_SERVICES = 'Other Services';
+export const ONE = 'One';
 
 
 // ----- P

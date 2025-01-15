@@ -19,12 +19,6 @@
 		
 		.alignTextCenter { text-align: center; }
 		
-		.container {
-			margin: 1rem 1rem 0;
-			display: flex;
-			flex-direction: column;
-		}
-		
 		.aonEmployeeCardLabel{
 			min-width: 200px;
 			padding: 5px;
@@ -59,8 +53,6 @@
 		}
 		
 		.firstColumnTextStyle { padding: 5px !important; }
-		
-		.heightAll { height: 100%; }
 		
 		.heightTB { height: 1.1rem; }
 		
@@ -142,6 +134,13 @@
 			padding-bottom: 20px;
 		}
 		
+		.heightAll {height: 100%}
+		
+		.container {
+			gap: 1rem;
+  			margin-top: 1rem;
+		}
+		
 		.uploadButtonHidde{
 			
 		}
@@ -155,209 +154,212 @@
 	
 	<ui:import field="com.google.gwt.user.client.ui.FormPanel.*" />
 
-   	<g:HTMLPanel styleName="{style.container}">
+   	<g:ScrollPanel styleName="{style.heightAll}">
    	
-   		<g:HTMLPanel styleName="{style.widthAll} {style.heightAll}" debugId="employeeTablePanel">
-	   		<g:HTMLPanel styleName="{style.aonEmployeeCard}">
-	    		<g:Label styleName='{style.aonEmployeeCardTitle}'>Datos Contrato</g:Label>
-		    	<g:HTMLPanel styleName="{style.widthAll} {style.heightAll} {style.flexColumn}" ui:field="contractDataTable">
-		    		
-		    		<!-- LINEA 0 -->
-		    		<g:HTMLPanel styleName="{style.flex}">
-		    			<g:Label  styleName='{style.aonEmployeeCardLabel}' text="Documento" />
-		    			<g:SuggestBox ui:field="document" debugId="document" styleName='aon-inputText {style.widthAll} {style.heightTB}'/>
-		    			<g:Label styleName='{style.mw}' ui:field="documentType" debugId="document_type" />
-		    			
-		    			<!--  FILEUPLOAD-->
-<!-- 						<g:HTMLPanel > 											 -->
-<!-- 						  <g:FormPanel ui:field="formPanel" visible="true" method="POST" action="DNIServlet" encoding="multipart/form-data"> -->
-<!-- 						    <g:HTMLPanel styleName="{style.flex}"> -->
-<!-- 						       <g:Button ui:field="uploadButton" styleName="{style.iconButton}" > -->
-<!-- 						        <i class="material-icons">publish</i> -->
-<!-- 						      </g:Button> -->
-<!-- 						      <g:FileUpload ui:field="fileUpload" visible= "false" styleName="{style.gwt-fileUpload}"/> -->
-<!-- 						    </g:HTMLPanel> -->
-<!-- 						  </g:FormPanel> -->
-<!-- 						</g:HTMLPanel> -->
-					    <!-- FILEUPLOAD-->
-			
-		    			<g:HTMLPanel styleName="{style.flexItem} {style.widthAll}" ui:field="nationalityPanel">
-		    				<g:Label ui:field="nationalityLabel" debugId="nationalityLabel" styleName='{style.mw}' text="Nacionalidad" />
-		    				<g:SuggestBox ui:field="nationality" debugId="nationality" styleName='aon-inputText {style.widthAll} {style.heightTB}' />
-		    			</g:HTMLPanel>
-		    			<g:Label styleName='{style.mw}' text="Nº S.S." />
-		    			<g:SuggestBox ui:field="securitySocialNum" debugId="security_social_num" styleName='aon-inputText {style.widthAll} {style.heightTB}' />
-					</g:HTMLPanel>
-					<!-- LINEA 1 -->
-		    		<g:HTMLPanel styleName="{style.flex}">
-		    			<g:Label  styleName='{style.aonEmployeeCardLabel}' text="Nombre" />
-		    			<g:SuggestBox ui:field="name" debugId="name" styleName='aon-inputText {style.widthAll} {style.heightTB}' />
-		    			<g:Label ui:field="firstSurnameLabel" styleName='{style.mw}' text="1er Apellido" />
-		    			<g:SuggestBox ui:field="firstSurname" debugId="first_surname" styleName='aon-inputText {style.widthAll} {style.heightTB}' />
-		    			<g:Label styleName='{style.mw}' text="2º Apellido" />
-		    			<g:TextBox ui:field="secondSurname" debugId="second_surname" styleName='aon-inputText {style.widthAll} {style.heightTB}' />
-					</g:HTMLPanel>
-					<!-- LINEA 2 -->
-		    		<g:HTMLPanel styleName="{style.flex}">
-		    			<g:Label  styleName='{style.aonEmployeeCardLabel}' text="Tipo de cotización" />
-		    			<g:ListBox ui:field="ssRegimeType" debugId="ssRegimeType" styleName='aon-selectOneMenu {style.widthAll}' />
-		    			<g:Label styleName='{style.mw}' text="Tipo Tributación" />
-		    			<g:ListBox ui:field="mdTBTLB" debugId="mdTBT" styleName='aon-selectOneMenu {style.widthAll}' />
-					</g:HTMLPanel>
-					<!-- LINEA 3 -->
-		    		<g:HTMLPanel styleName="{style.flex}">
-		    			<g:Label  styleName='{style.aonEmployeeCardLabel}' text="Actividad - Cuenta de cotización" />
-		    			<g:ListBox ui:field="activityCCC" debugId="activityCCC" styleName='aon-selectOneMenu {style.widthAll}' />
-					</g:HTMLPanel>
-					<!-- LINEA 4 -->
-		    		<g:HTMLPanel styleName="{style.flex}">
-		    			<g:Label  styleName='{style.aonEmployeeCardLabel}' text="Modalidad Cotización" />
-		    			<g:ListBox ui:field="mdCTZLB" debugId="mdCTZ" styleName='aon-selectOneMenu {style.widthAll}' />
-					</g:HTMLPanel>
-					<!-- LINEA 5 -->
-		    		<g:HTMLPanel styleName="{style.flex}">
-		    			<g:Label  styleName='{style.aonEmployeeCardLabel}' text="Centro de trabajo" />
-		    			<g:ListBox ui:field="workplace" debugId="workplace" styleName='aon-selectOneMenu {style.widthAll}' />
-					</g:HTMLPanel>
-					<!-- LINEA 6 -->
-		    		<g:HTMLPanel styleName="{style.flex}">
-		    			<g:Label  styleName='{style.aonEmployeeCardLabel}' text="Tipo de contrato" />
-		    			<g:ListBox ui:field="contractTypeLB" debugId="contractType" styleName='aon-selectOneMenu {style.widthAll}' />
-		    			<g:Label ui:field="contractTypeFreelance" debugId="contractTypeFreelance" styleName='{style.mw}' text="Régimen especial de trabajadores autónomos" />
-					</g:HTMLPanel>
-					<!-- LINEA 7 -->
-		    		<g:HTMLPanel styleName="{style.flex}">
-		    			<g:Label  styleName='{style.aonEmployeeCardLabel}' text="Modalidad" />
-		    			<g:ListBox ui:field="modality" debugId="modality" styleName='aon-selectOneMenu {style.widthAll}' />
-					</g:HTMLPanel>
-					<!-- LINEA 8 -->
-		    		<g:HTMLPanel styleName="{style.flex}">
-		    			<g:Label  styleName='{style.aonEmployeeCardLabel}' text="Periodo contratación" />
-		    			<g:Label styleName='{style.aonEmployeeCardRequired} {style.mw}' text="Fecha inicio" />
-		    			<a:DateBoxEx ui:field="startDate" debugId="start_date" styleName='aon-inputText {style.alignTextCenter} {style.widthAll} {style.heightTB}' />
-		    			<g:Label styleName='{style.mw}' text="Fecha fin" />
-		    			<a:DateBoxEx ui:field="endDate" debugId="end_date" styleName='aon-inputText {style.alignTextCenter} {style.widthAll} {style.heightTB}' />
-		    			<g:Label styleName='{style.mw}' text="Fecha antigüedad" />
-		    			<a:DateBoxEx ui:field="seniorityDate" debugId="seniority_date" styleName='aon-inputText {style.alignTextCenter} {style.widthAll} {style.heightTB}' />
-					</g:HTMLPanel>
-					<!-- LINEA 9 -->
-		    		<g:HTMLPanel styleName="{style.flex}">
-	    				<g:Label  styleName='{style.aonEmployeeCardLabel} {style.agreementTitle}' text="Categoría/Nivel retributario" />
-	    				<g:HTMLPanel styleName="{style.flexColumn} {style.widthAll}">
-	    					<g:HTMLPanel styleName="{style.flex}">
-	    						<g:Label styleName='{style.mw}' text="Convenio" />
-	    						<g:SuggestBox ui:field="agreement" debugId="agreement" styleName='aon-inputText {style.widthAll} {style.heightTB}' />
-	    					</g:HTMLPanel>
-	    					<g:HTMLPanel styleName="{style.flex}">
-	    						<g:Label styleName='{style.mw}' text="Nivel/Categoría" />
-				    			<g:ListBox ui:field="level" debugId="level" styleName='aon-selectOneMenu {style.widthAll}' />
-				    			<g:Label styleName='{style.mw}' text="Mostrar como" />
-				    			<g:TextBox ui:field="category" debugId="category" styleName='aon-inputText {style.widthAll} {style.heightTB}' />
-	    					</g:HTMLPanel>
-	    				</g:HTMLPanel>
-					</g:HTMLPanel>
-					<!-- LINEA 10 -->
-		    		<g:HTMLPanel styleName="{style.flex}">
-		    			<g:Label  styleName='{style.aonEmployeeCardLabel}' text="Grupo de cotización" />
-		    			<g:ListBox ui:field="quoteGroup" debugId="quote_group" styleName='aon-selectOneMenu {style.widthAll}' />
-					</g:HTMLPanel>
-					<!-- LINEA 11 -->
-		    		<g:HTMLPanel styleName="{style.flex}">
-		    			<g:Label  styleName='{style.aonEmployeeCardLabel}' text="I. Cotización mensual" />
-		    			<g:Button ui:field="quoteGroupCotizB" />
-					</g:HTMLPanel>
-					<!-- LINEA 12 -->
-		    		<g:HTMLPanel styleName="{style.flex}">
-		    			<g:Label  styleName='{style.aonEmployeeCardLabel}' text="Ocupación" />
-		    			<g:ListBox ui:field="occupation" debugId="occupation" styleName='aon-selectOneMenu {style.widthAll}' />
-					</g:HTMLPanel>
-					<!-- LINEA 13 -->
-		    		<g:HTMLPanel styleName="{style.flex}">
-		    			<g:Label  styleName='{style.aonEmployeeCardLabel}' text="RLCE" />
-		    			<g:ListBox ui:field="rlce" debugId="rlce" styleName='aon-selectOneMenu {style.widthAll}' />
-					</g:HTMLPanel>
-					<!-- LINEA 14 -->
-		    		<g:HTMLPanel styleName="{style.flex}">
-		    			<g:Label  styleName='{style.aonEmployeeCardLabel}' text="Colectivo Trabajadores" />
-		    			<g:ListBox ui:field="employeesColective" debugId="employeesColective" styleName='aon-selectOneMenu {style.widthAll}' />
-					</g:HTMLPanel>
-					<!-- LINEA 15 -->
-		    		<g:HTMLPanel styleName="{style.flex}">
-		    			<g:Label  styleName='{style.aonEmployeeCardLabel}' text="Tipo Jornada" />
-		    			<g:ListBox ui:field="journeyType" debugId="journeyType" styleName='aon-selectOneMenu {style.widthAll}' />
-					</g:HTMLPanel>
-					<!-- LINEA 16 -->
-		    		<g:HTMLPanel styleName="{style.flex}">
-		    			<g:Label  styleName='{style.aonEmployeeCardLabel}' text="Duración Jornada" />
-		    			<g:HTMLPanel styleName="{style.flexBetween} {style.widthAll}">
-							<g:HTMLPanel ui:field="journeyDuration" debugId="journeyDuration" styleName="{style.flexItem}" />
-							<g:HTMLPanel styleName="{style.flexItem}">
-								<g:Label styleName="{style.mw}" text="Coef. Parcialidad:" />
-								<a:DoubleBox ui:field="partialityCoef" debugId="journeyDuration" styleName=" {style.shortTB} {style.alignTextCenter} {style.heightTB}"></a:DoubleBox>
+   		<g:FlowPanel styleName="{style.flexColumn} {style.container}">
+   	
+	   		<g:HTMLPanel styleName="{style.widthAll}" debugId="employeeTablePanel">
+		   		<g:HTMLPanel styleName="{style.aonEmployeeCard}">
+		    		<g:Label styleName='{style.aonEmployeeCardTitle}'>Datos Contrato</g:Label>
+			    	<g:HTMLPanel styleName="{style.widthAll} {style.flexColumn}" ui:field="contractDataTable">
+			    		
+			    		<!-- LINEA 0 -->
+			    		<g:HTMLPanel styleName="{style.flex}">
+			    			<g:Label  styleName='{style.aonEmployeeCardLabel}' text="Documento" />
+			    			<g:SuggestBox ui:field="document" debugId="document" styleName='aon-inputText {style.widthAll} {style.heightTB}'/>
+			    			<g:Label styleName='{style.mw}' ui:field="documentType" debugId="document_type" />
+			    			
+			    			<!--  FILEUPLOAD-->
+	<!-- 						<g:HTMLPanel > 											 -->
+	<!-- 						  <g:FormPanel ui:field="formPanel" visible="true" method="POST" action="DNIServlet" encoding="multipart/form-data"> -->
+	<!-- 						    <g:HTMLPanel styleName="{style.flex}"> -->
+	<!-- 						       <g:Button ui:field="uploadButton" styleName="{style.iconButton}" > -->
+	<!-- 						        <i class="material-icons">publish</i> -->
+	<!-- 						      </g:Button> -->
+	<!-- 						      <g:FileUpload ui:field="fileUpload" visible= "false" styleName="{style.gwt-fileUpload}"/> -->
+	<!-- 						    </g:HTMLPanel> -->
+	<!-- 						  </g:FormPanel> -->
+	<!-- 						</g:HTMLPanel> -->
+						    <!-- FILEUPLOAD-->
+				
+			    			<g:HTMLPanel styleName="{style.flexItem} {style.widthAll}" ui:field="nationalityPanel">
+			    				<g:Label ui:field="nationalityLabel" debugId="nationalityLabel" styleName='{style.mw}' text="Nacionalidad" />
+			    				<g:SuggestBox ui:field="nationality" debugId="nationality" styleName='aon-inputText {style.widthAll} {style.heightTB}' />
+			    			</g:HTMLPanel>
+			    			<g:Label styleName='{style.mw}' text="Nº S.S." />
+			    			<g:SuggestBox ui:field="securitySocialNum" debugId="security_social_num" styleName='aon-inputText {style.widthAll} {style.heightTB}' />
+						</g:HTMLPanel>
+						<!-- LINEA 1 -->
+			    		<g:HTMLPanel styleName="{style.flex}">
+			    			<g:Label  styleName='{style.aonEmployeeCardLabel}' text="Nombre" />
+			    			<g:SuggestBox ui:field="name" debugId="name" styleName='aon-inputText {style.widthAll} {style.heightTB}' />
+			    			<g:Label ui:field="firstSurnameLabel" styleName='{style.mw}' text="1er Apellido" />
+			    			<g:SuggestBox ui:field="firstSurname" debugId="first_surname" styleName='aon-inputText {style.widthAll} {style.heightTB}' />
+			    			<g:Label styleName='{style.mw}' text="2º Apellido" />
+			    			<g:TextBox ui:field="secondSurname" debugId="second_surname" styleName='aon-inputText {style.widthAll} {style.heightTB}' />
+						</g:HTMLPanel>
+						<!-- LINEA 2 -->
+			    		<g:HTMLPanel styleName="{style.flex}">
+			    			<g:Label  styleName='{style.aonEmployeeCardLabel}' text="Tipo de cotización" />
+			    			<g:ListBox ui:field="ssRegimeType" debugId="ssRegimeType" styleName='aon-selectOneMenu {style.widthAll}' />
+			    			<g:Label styleName='{style.mw}' text="Tipo Tributación" />
+			    			<g:ListBox ui:field="mdTBTLB" debugId="mdTBT" styleName='aon-selectOneMenu {style.widthAll}' />
+						</g:HTMLPanel>
+						<!-- LINEA 3 -->
+			    		<g:HTMLPanel styleName="{style.flex}">
+			    			<g:Label  styleName='{style.aonEmployeeCardLabel}' text="Actividad - Cuenta de cotización" />
+			    			<g:ListBox ui:field="activityCCC" debugId="activityCCC" styleName='aon-selectOneMenu {style.widthAll}' />
+						</g:HTMLPanel>
+						<!-- LINEA 4 -->
+			    		<g:HTMLPanel styleName="{style.flex}">
+			    			<g:Label  styleName='{style.aonEmployeeCardLabel}' text="Modalidad Cotización" />
+			    			<g:ListBox ui:field="mdCTZLB" debugId="mdCTZ" styleName='aon-selectOneMenu {style.widthAll}' />
+						</g:HTMLPanel>
+						<!-- LINEA 5 -->
+			    		<g:HTMLPanel styleName="{style.flex}">
+			    			<g:Label  styleName='{style.aonEmployeeCardLabel}' text="Centro de trabajo" />
+			    			<g:ListBox ui:field="workplace" debugId="workplace" styleName='aon-selectOneMenu {style.widthAll}' />
+						</g:HTMLPanel>
+						<!-- LINEA 6 -->
+			    		<g:HTMLPanel styleName="{style.flex}">
+			    			<g:Label  styleName='{style.aonEmployeeCardLabel}' text="Tipo de contrato" />
+			    			<g:ListBox ui:field="contractTypeLB" debugId="contractType" styleName='aon-selectOneMenu {style.widthAll}' />
+			    			<g:Label ui:field="contractTypeFreelance" debugId="contractTypeFreelance" styleName='{style.mw}' text="Régimen especial de trabajadores autónomos" />
+						</g:HTMLPanel>
+						<!-- LINEA 7 -->
+			    		<g:HTMLPanel styleName="{style.flex}">
+			    			<g:Label  styleName='{style.aonEmployeeCardLabel}' text="Modalidad" />
+			    			<g:ListBox ui:field="modality" debugId="modality" styleName='aon-selectOneMenu {style.widthAll}' />
+						</g:HTMLPanel>
+						<!-- LINEA 8 -->
+			    		<g:HTMLPanel styleName="{style.flex}">
+			    			<g:Label  styleName='{style.aonEmployeeCardLabel}' text="Periodo contratación" />
+			    			<g:Label styleName='{style.aonEmployeeCardRequired} {style.mw}' text="Fecha inicio" />
+			    			<a:DateBoxEx ui:field="startDate" debugId="start_date" styleName='aon-inputText {style.alignTextCenter} {style.widthAll} {style.heightTB}' />
+			    			<g:Label styleName='{style.mw}' text="Fecha fin" />
+			    			<a:DateBoxEx ui:field="endDate" debugId="end_date" styleName='aon-inputText {style.alignTextCenter} {style.widthAll} {style.heightTB}' />
+			    			<g:Label styleName='{style.mw}' text="Fecha antigüedad" />
+			    			<a:DateBoxEx ui:field="seniorityDate" debugId="seniority_date" styleName='aon-inputText {style.alignTextCenter} {style.widthAll} {style.heightTB}' />
+						</g:HTMLPanel>
+						<!-- LINEA 9 -->
+			    		<g:HTMLPanel styleName="{style.flex}">
+		    				<g:Label  styleName='{style.aonEmployeeCardLabel} {style.agreementTitle}' text="Categoría/Nivel retributario" />
+		    				<g:HTMLPanel styleName="{style.flexColumn} {style.widthAll}">
+		    					<g:HTMLPanel styleName="{style.flex}">
+		    						<g:Label styleName='{style.mw}' text="Convenio" />
+		    						<g:SuggestBox ui:field="agreement" debugId="agreement" styleName='aon-inputText {style.widthAll} {style.heightTB}' />
+		    					</g:HTMLPanel>
+		    					<g:HTMLPanel styleName="{style.flex}">
+		    						<g:Label styleName='{style.mw}' text="Nivel/Categoría" />
+					    			<g:ListBox ui:field="level" debugId="level" styleName='aon-selectOneMenu {style.widthAll}' />
+					    			<g:Label styleName='{style.mw}' text="Mostrar como" />
+					    			<g:TextBox ui:field="category" debugId="category" styleName='aon-inputText {style.widthAll} {style.heightTB}' />
+		    					</g:HTMLPanel>
+		    				</g:HTMLPanel>
+						</g:HTMLPanel>
+						<!-- LINEA 10 -->
+			    		<g:HTMLPanel styleName="{style.flex}">
+			    			<g:Label  styleName='{style.aonEmployeeCardLabel}' text="Grupo de cotización" />
+			    			<g:ListBox ui:field="quoteGroup" debugId="quote_group" styleName='aon-selectOneMenu {style.widthAll}' />
+						</g:HTMLPanel>
+						<!-- LINEA 11 -->
+			    		<g:HTMLPanel styleName="{style.flex}">
+			    			<g:Label  styleName='{style.aonEmployeeCardLabel}' text="I. Cotización mensual" />
+			    			<g:Button ui:field="quoteGroupCotizB" />
+						</g:HTMLPanel>
+						<!-- LINEA 12 -->
+			    		<g:HTMLPanel styleName="{style.flex}">
+			    			<g:Label  styleName='{style.aonEmployeeCardLabel}' text="Ocupación" />
+			    			<g:ListBox ui:field="occupation" debugId="occupation" styleName='aon-selectOneMenu {style.widthAll}' />
+						</g:HTMLPanel>
+						<!-- LINEA 13 -->
+			    		<g:HTMLPanel styleName="{style.flex}">
+			    			<g:Label  styleName='{style.aonEmployeeCardLabel}' text="RLCE" />
+			    			<g:ListBox ui:field="rlce" debugId="rlce" styleName='aon-selectOneMenu {style.widthAll}' />
+						</g:HTMLPanel>
+						<!-- LINEA 14 -->
+			    		<g:HTMLPanel styleName="{style.flex}">
+			    			<g:Label  styleName='{style.aonEmployeeCardLabel}' text="Colectivo Trabajadores" />
+			    			<g:ListBox ui:field="employeesColective" debugId="employeesColective" styleName='aon-selectOneMenu {style.widthAll}' />
+						</g:HTMLPanel>
+						<!-- LINEA 15 -->
+			    		<g:HTMLPanel styleName="{style.flex}">
+			    			<g:Label  styleName='{style.aonEmployeeCardLabel}' text="Tipo Jornada" />
+			    			<g:ListBox ui:field="journeyType" debugId="journeyType" styleName='aon-selectOneMenu {style.widthAll}' />
+						</g:HTMLPanel>
+						<!-- LINEA 16 -->
+			    		<g:HTMLPanel styleName="{style.flex}">
+			    			<g:Label  styleName='{style.aonEmployeeCardLabel}' text="Duración Jornada" />
+			    			<g:HTMLPanel styleName="{style.flexBetween} {style.widthAll}">
+								<g:HTMLPanel ui:field="journeyDuration" debugId="journeyDuration" styleName="{style.flexItem}" />
+								<g:HTMLPanel styleName="{style.flexItem}">
+									<g:Label styleName="{style.mw}" text="Coef. Parcialidad:" />
+									<a:DoubleBox ui:field="partialityCoef" debugId="journeyDuration" styleName=" {style.shortTB} {style.alignTextCenter} {style.heightTB}"></a:DoubleBox>
+								</g:HTMLPanel>
 							</g:HTMLPanel>
 						</g:HTMLPanel>
-					</g:HTMLPanel>
-					<!-- LINEA 17 -->
-		    		<g:HTMLPanel styleName="{style.flex}">
-		    			<g:Label  styleName='{style.aonEmployeeCardLabel}' text="CNO" />
-		    			<g:SuggestBox ui:field="cnoSB" debugId="cnoSB" styleName='aon-inputText {style.widthAll} {style.heightTB}' />
-					</g:HTMLPanel>
-					
-		    	</g:HTMLPanel>
-		    </g:HTMLPanel>
-	   	</g:HTMLPanel>
-		
-		<g:HTMLPanel styleName="{style.widthAll} {style.heightAll} {style.mt20}" debugId="employeeTablePanel" ui:field="employeeTablePanel">
-	   		<g:HTMLPanel styleName="{style.aonEmployeeCard}">
-	    		<g:Label styleName='{style.aonEmployeeCardTitle}'>Datos Personales</g:Label>
-		    	<g:HTMLPanel styleName="{style.widthAll} {style.heightAll} {style.flexColumn}">
-		    		<g:HTMLPanel styleName="{style.flex}">
-		    			<g:Label  styleName='{style.aonEmployeeCardLabel}' text="Fecha de nacimiento" />
-		    			<a:DateBoxEx ui:field="birthDate" debugId="birth_date" styleName="aon-inputText {style.alignTextCenter} {style.heightTB} {style.widthAll}" />
-		    			<g:Label styleName='{style.mw}' ui:field="age" debugId="age" />
-						<g:Label styleName='{style.mw}' text="Sexo" />
-						<g:ListBox ui:field="gender" debugId="gender" styleName='aon-selectOneMenu {style.widthAll}' />
-						<g:Label styleName="{style.mw}" text="Estado Civil" />
-						<g:ListBox ui:field="civilStatus" debugId="civilStatus" styleName='aon-selectOneMenu {style.widthAll}' />
-					</g:HTMLPanel>
-					<g:HTMLPanel styleName="{style.flex}">
-		    			<g:Label  styleName='{style.aonEmployeeCardLabel}' text="Dirección" />
-		    			<g:ListBox ui:field="streetType" debugId="street_type" styleName='aon-selectOneMenu' />
-		    			<g:SuggestBox ui:field="address" debugId="address" styleName='aon-inputText {style.widthAll} {style.heightTB}' />
-		    			<g:Label styleName='{style.mw}' text="Nº" />
-						<g:TextBox ui:field="addressNum" debugId="addressNum" styleName='aon-inputText {style.shortTB} {style.alignTextCenter} {style.heightTB}' />
-						<g:Label styleName='{style.mw}' text="Rest. Dir" />
-						<g:TextBox ui:field="addressInfo" debugId="addressInfo" styleName='aon-inputText {style.widthAll} {style.heightTB}' />
-					</g:HTMLPanel>
-					<g:HTMLPanel styleName="{style.flex}">
-		    			<g:Label styleName='{style.aonEmployeeCardLabel}' text="C.P." />
-		    			<g:TextBox ui:field="addressZip" debugId="addressZip" styleName='aon-inputText {style.alignTextCenter} {style.heightTB}' />
-		    			<g:Label styleName="{style.mw}" text="Provincia" />
-		    			<g:ListBox ui:field="addressProvince" debugId="addressProvince" styleName='aon-inputText {style.widthAll}' />
-		    			<g:Label styleName='{style.mw}' text="Municipio" />
-		    			<g:ListBox ui:field="addressMunicipality" debugId="addressMunicipality" styleName='aon-inputText {style.widthAll}' />
-					</g:HTMLPanel>
-					<g:HTMLPanel styleName="{style.flex}">
-		    			<g:Label styleName='{style.aonEmployeeCardLabel}' text="Contacto" />
-		    			<g:Label styleName='{style.mw}' text="Móvil" />
-		    			<g:TextBox ui:field="mobile" debugId="mobile" styleName='aon-inputText {style.widthAll} {style.heightTB}' />
-		    			<g:Label styleName='{style.mw}' text="Teléfono" />
-		    			<g:TextBox ui:field="phone" debugId="phone" styleName='aon-inputText {style.widthAll} {style.heightTB}' />
-		    			<g:Label styleName='{style.mw}' text="eMail" />
-		    			<g:TextBox ui:field="email" debugId="email" styleName='aon-inputText {style.widthAll} {style.heightTB}' />
-					</g:HTMLPanel>
-					<g:HTMLPanel styleName="{style.flex}">
-		    			<g:Label styleName='{style.aonEmployeeCardLabel}' text="Forma de pago" />
-		    			<g:ListBox ui:field="payMethod" debugId="payMethod" styleName='' />
-		    			<g:Label styleName='{style.mw}' text="IBAN" />
-		    			<g:SuggestBox ui:field="account" debugId="account" styleName='aon-inputText {style.widthAll} {style.heightTB}' />
-		    			<g:Label styleName='{style.mw}' text="BIC" />
-		    			<g:TextBox ui:field="bic" debugId="bic" styleName='aon-inputText {style.widthAll} {style.heightTB}' />
-					</g:HTMLPanel>
-		    	</g:HTMLPanel>
-		    </g:HTMLPanel>
-	   	</g:HTMLPanel>
+						<!-- LINEA 17 -->
+			    		<g:HTMLPanel styleName="{style.flex}">
+			    			<g:Label  styleName='{style.aonEmployeeCardLabel}' text="CNO" />
+			    			<g:SuggestBox ui:field="cnoSB" debugId="cnoSB" styleName='aon-inputText {style.widthAll} {style.heightTB}' />
+						</g:HTMLPanel>
+						
+			    	</g:HTMLPanel>
+			    </g:HTMLPanel>
+		   	</g:HTMLPanel>
 			
-	</g:HTMLPanel> 
+			<g:HTMLPanel styleName="{style.widthAll}" debugId="employeeTablePanel" ui:field="employeeTablePanel">
+		   		<g:HTMLPanel styleName="{style.aonEmployeeCard}">
+		    		<g:Label styleName='{style.aonEmployeeCardTitle}'>Datos Personales</g:Label>
+			    	<g:HTMLPanel styleName="{style.widthAll} {style.flexColumn}">
+			    		<g:HTMLPanel styleName="{style.flex}">
+			    			<g:Label  styleName='{style.aonEmployeeCardLabel}' text="Fecha de nacimiento" />
+			    			<a:DateBoxEx ui:field="birthDate" debugId="birth_date" styleName="aon-inputText {style.alignTextCenter} {style.heightTB} {style.widthAll}" />
+			    			<g:Label styleName='{style.mw}' ui:field="age" debugId="age" />
+							<g:Label styleName='{style.mw}' text="Sexo" />
+							<g:ListBox ui:field="gender" debugId="gender" styleName='aon-selectOneMenu {style.widthAll}' />
+							<g:Label styleName="{style.mw}" text="Estado Civil" />
+							<g:ListBox ui:field="civilStatus" debugId="civilStatus" styleName='aon-selectOneMenu {style.widthAll}' />
+						</g:HTMLPanel>
+						<g:HTMLPanel styleName="{style.flex}">
+			    			<g:Label  styleName='{style.aonEmployeeCardLabel}' text="Dirección" />
+			    			<g:ListBox ui:field="streetType" debugId="street_type" styleName='aon-selectOneMenu' />
+			    			<g:SuggestBox ui:field="address" debugId="address" styleName='aon-inputText {style.widthAll} {style.heightTB}' />
+			    			<g:Label styleName='{style.mw}' text="Nº" />
+							<g:TextBox ui:field="addressNum" debugId="addressNum" styleName='aon-inputText {style.shortTB} {style.alignTextCenter} {style.heightTB}' />
+							<g:Label styleName='{style.mw}' text="Rest. Dir" />
+							<g:TextBox ui:field="addressInfo" debugId="addressInfo" styleName='aon-inputText {style.widthAll} {style.heightTB}' />
+						</g:HTMLPanel>
+						<g:HTMLPanel styleName="{style.flex}">
+			    			<g:Label styleName='{style.aonEmployeeCardLabel}' text="C.P." />
+			    			<g:TextBox ui:field="addressZip" debugId="addressZip" styleName='aon-inputText {style.alignTextCenter} {style.heightTB}' />
+			    			<g:Label styleName="{style.mw}" text="Provincia" />
+			    			<g:ListBox ui:field="addressProvince" debugId="addressProvince" styleName='aon-inputText {style.widthAll}' />
+			    			<g:Label styleName='{style.mw}' text="Municipio" />
+			    			<g:ListBox ui:field="addressMunicipality" debugId="addressMunicipality" styleName='aon-inputText {style.widthAll}' />
+						</g:HTMLPanel>
+						<g:HTMLPanel styleName="{style.flex}">
+			    			<g:Label styleName='{style.aonEmployeeCardLabel}' text="Contacto" />
+			    			<g:Label styleName='{style.mw}' text="Móvil" />
+			    			<g:TextBox ui:field="mobile" debugId="mobile" styleName='aon-inputText {style.widthAll} {style.heightTB}' />
+			    			<g:Label styleName='{style.mw}' text="Teléfono" />
+			    			<g:TextBox ui:field="phone" debugId="phone" styleName='aon-inputText {style.widthAll} {style.heightTB}' />
+			    			<g:Label styleName='{style.mw}' text="eMail" />
+			    			<g:TextBox ui:field="email" debugId="email" styleName='aon-inputText {style.widthAll} {style.heightTB}' />
+						</g:HTMLPanel>
+						<g:HTMLPanel styleName="{style.flex}">
+			    			<g:Label styleName='{style.aonEmployeeCardLabel}' text="Forma de pago" />
+			    			<g:ListBox ui:field="payMethod" debugId="payMethod" styleName='' />
+			    			<g:Label styleName='{style.mw}' text="IBAN" />
+			    			<g:SuggestBox ui:field="account" debugId="account" styleName='aon-inputText {style.widthAll} {style.heightTB}' />
+			    			<g:Label styleName='{style.mw}' text="BIC" />
+			    			<g:TextBox ui:field="bic" debugId="bic" styleName='aon-inputText {style.widthAll} {style.heightTB}' />
+						</g:HTMLPanel>
+			    	</g:HTMLPanel>
+			    </g:HTMLPanel>
+		   	</g:HTMLPanel>
+		
+		</g:FlowPanel>
+	</g:ScrollPanel>
 </ui:UiBinder> 
 

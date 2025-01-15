@@ -102,11 +102,27 @@
 			align-items: center;
 		}
 		
+		.heightAll {height: 100%}
+		
+		.container {
+			gap: 1rem;
+  			margin-top: 1rem;
+		}
+		
+		.flexColumn{
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			flex-direction: column;
+		}	
+		
 	</ui:style>
+	
+	<g:ScrollPanel styleName="{style.heightAll}">
+	
+		<g:FlowPanel styleName="{style.flexColumn} {style.container}">
 
-   	<g:HTMLPanel> 
-  			<g:HTMLPanel>
-  				<!-- CNO TABLE -->
+  			<!-- CNO TABLE -->
 	   		<g:VerticalPanel ui:field="cnoTable" styleName="{style.styleBorder}"> 
 		    	<g:Label width="105px" styleName='aon-group-title {style.headerStyle}'>CNO</g:Label>
 		    	<g:HTMLPanel>
@@ -1023,7 +1039,8 @@
 					</table>
 				</g:HTMLPanel>
 			</g:VerticalPanel>
-  		</g:HTMLPanel>
-	</g:HTMLPanel> 
+			
+  		</g:FlowPanel>
+	</g:ScrollPanel>
 </ui:UiBinder> 
 
