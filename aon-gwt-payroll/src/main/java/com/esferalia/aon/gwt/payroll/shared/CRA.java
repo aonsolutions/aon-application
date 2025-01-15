@@ -109,6 +109,16 @@ public class CRA implements Serializable{
 		
 		return getIncludeCCCs().get(0).getActivityDescription();
 	}
+	
+	public String getEnterpriseName() {
+		if(getIncludeCCCs().isEmpty())
+			return "EMPTY CCCS";
+		
+		if(getIncludeCCCs().size() > 1)
+			return "REMESA";
+		
+		return getIncludeCCCs().get(0).getEnterpriseDesciption();
+	}
 
 	public String getCccProvince() {
 		if(getIncludeCCCs().isEmpty())

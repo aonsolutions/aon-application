@@ -11,6 +11,7 @@ import java.util.TreeMap;
 
 import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
+import com.google.gwt.user.client.Window;
 
 @SuppressWarnings("serial")
 public class AFIChanges implements Serializable {
@@ -130,7 +131,7 @@ public class AFIChanges implements Serializable {
 			Collections.reverse(datesList);
 			Date date = datesList.get(datesList.size() - 1);
 			for(AFIChange afiChange : afiChanges.get(date)) {
-				if(afiChange.getName().equals(type) && (null != afiChange.getValue() && !value.equals(afiChange.getValue())))
+				if(AonStringUtils.equalsIgnoreCase(afiChange.getName(), type) && null != afiChange.getValue() && !AonStringUtils.equalsIgnoreCase(afiChange.getValue(), value))
 					return true;
 			}		
 		}

@@ -376,7 +376,7 @@ public abstract class MarketingActionTargetPanel extends ScrollPanel {
 	}
 
 	private void deleteProjectCommercial(MarketingActionTarget marketingActionTarget) {
-		COMMON_SERVICE.deleteProjectCommercial(params.getDomainName(), params.getDomain(), params.getUser(), marketingActionTarget.getProject(), new AsyncCallback<Void>() {
+		COMMON_SERVICE.deleteProjectCommercial(params.getDomainName(), params.getDomain(), params.getUser(), marketingActionTarget.getProject().getId(), new AsyncCallback<Void>() {
 			
 			@Override
 			public void onSuccess(Void result) {
@@ -438,7 +438,7 @@ public abstract class MarketingActionTargetPanel extends ScrollPanel {
 							@Override
 							public void onSuccess(ProjectCommercial projectCommercial) {
 								marketingActionTarget.setActionTargetStatus((byte)6); // Enviado
-								marketingActionTarget.setProject(projectCommercial.getId());
+								marketingActionTarget.setProject(new Project().setId(projectCommercial.getId()));
 								COMMON_SERVICE.saveMarketingActionTarget(params.getDomainName(), params.getDomain(), params.getUser(), marketingActionTarget, new AsyncCallback<MarketingActionTarget>() {
 									
 									@Override
@@ -495,7 +495,7 @@ public abstract class MarketingActionTargetPanel extends ScrollPanel {
 					@Override
 					public void onSuccess(ProjectCommercial projectCommercial) {
 						marketingActionTarget.setActionTargetStatus((byte)6); // Enviado
-						marketingActionTarget.setProject(projectCommercial.getId());
+						marketingActionTarget.setProject(new Project().setId(projectCommercial.getId()));
 						COMMON_SERVICE.saveMarketingActionTarget(params.getDomainName(), params.getDomain(), params.getUser(), marketingActionTarget, new AsyncCallback<MarketingActionTarget>() {
 							
 							@Override

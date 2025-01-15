@@ -5,10 +5,12 @@ import { CONSTANT, MATERIAL_ICONS, MSG, TAG } from '../../environments/environme
 import { Elaboration } from '../../models/elaboration/Elaboration.js';
 import { AonBasicTable } from '../../components/aon-basic-table.js';
 import * as LS from '../../services/localStorageService.js';
-import {openFileUrl} from '../../services/service.js';
+import {deleteDelivery, deleteDeliveryPackaging, openFileUrl} from '../../services/service.js';
 
 import * as ACTION from '../actions.js';
 import { createCard, createInput } from '../../components/CreateComponent.js';
+import { getDelivery } from '../../services/warehouseService.js';
+import { AonMobileDelivery } from './aon-mobile-delivery.js';
 
 export class AonMobileDeliveryPackaging extends AonElement {
 
@@ -30,8 +32,10 @@ export class AonMobileDeliveryPackaging extends AonElement {
 	TAG_CARD;
 
 	packaging;
+	delivery;
 
 	ELABORATION_TOOLBAR;
+	DELIVERY_TOOLBAR;
 
 	get id() {
 		return this.getAttribute(CONSTANT.ID);
@@ -49,6 +53,10 @@ export class AonMobileDeliveryPackaging extends AonElement {
 		this.initialize();
 		this.build();
     }
+
+	disconnectedCallback() {
+		this.removeToolbar();
+	}
 
 	initialize() {
 		this.id = this.id || 'aonPackage';
@@ -77,15 +85,38 @@ export class AonMobileDeliveryPackaging extends AonElement {
 		this.appendChild(div);
 		this.buildPackage(div);
 
-		let toolbar = this.getElement(this.ELABORATION_TOOLBAR);		
-		toolbar.removeButton(ACTION.PRINT.id);
-		toolbar.addButtonAfter(ACTION.PRINT, () => this.print());
+		this.buildToolbar();
+	}
+
+	buildToolbar() {
+		if(this.ELABORATION_TOOLBAR) {
+			let elaborationToolbar = this.getElement(this.ELABORATION_TOOLBAR);	
+			elaborationToolbar.removeButton(ACTION.PRINT.id);
+			elaborationToolbar.addButtonAfter(ACTION.PRINT, () => this.print());
+		}	
+
+		if(this.DELIVERY_TOOLBAR) {
+			let deliveryToolbar = this.getElement(this.DELIVERY_TOOLBAR);
+			deliveryToolbar.addButtonAfter(ACTION.DELETE, () => this.deleteFromDelivery());
+		}
+	}
+
+	removeToolbar() {
+		if(this.ELABORATION_TOOLBAR) {
+			let elaborationToolbar = this.getElement(this.ELABORATION_TOOLBAR);	
+			if(elaborationToolbar) elaborationToolbar.removeButton(ACTION.PRINT.id);
+		}	
+
+		if(this.DELIVERY_TOOLBAR) {
+			let deliveryToolbar = this.getElement(this.DELIVERY_TOOLBAR);	
+			if(deliveryToolbar) deliveryToolbar.removeButton(ACTION.DELETE.id);
+		}
 	}
 
   	buildPackage(parent){
 		this.buildPackageGeneral(parent);
 		this.buildPackageComposition(parent);
-		if(this.packaging.composition.length === 1)
+		if(this.packaging.composition && this.packaging.composition.length === 1)
 			this.buildTag(parent);
 	}
 
@@ -171,13 +202,40 @@ export class AonMobileDeliveryPackaging extends AonElement {
 		openFileUrl(fileUrl, 'application/pdf');
 	}
 
+	deleteFromDelivery() {
+		let d = this.getApplication().getDialog();
+		d.clear();
+		if(!this.isMobile()) d.width = '400px';
+		d.setTitle(MSG.ACCEPT);
+		d.setContentHTML(`Estás seguro de restar el palet ${this.packaging.item.serialNumber}`);
+		d.addAcceptAction(() => {
+			deleteDeliveryPackaging({
+				delivery: this.delivery,
+				package: this.packaging.item.serialNumber
+			}).then(() => this.aonDelivery());
+		});
+		d.open();
+	}
+
+
+	aonDelivery() {
+		this.getElement('aonDelivery').backToDelivery(this.delivery);
+	}
 	
 	setPackaging(packaging) {
 		this.packaging = packaging; //new Package(elaboration);
 	}
 
+	setDelivery(delivery) {
+		this.delivery = delivery;
+	}
+
 	setElaborationToolbar(toolbar) {
 		this.ELABORATION_TOOLBAR = toolbar;
+	}
+
+	setDeliveryToolbar(toolbar) {
+		this.DELIVERY_TOOLBAR = toolbar;
 	}
 }
 

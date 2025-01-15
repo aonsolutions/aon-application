@@ -53,10 +53,16 @@ public abstract class Mod390HFDeclaration {
 	static final double PERCENT_21 = 21.0;
 	static final double PERCENT_10 = 10.0;
 	static final double PERCENT_0 = 0.0;
+	static final double PERCENT_2 = 2.0;
 	static final double PERCENT_4 = 4.0;
 	static final double PERCENT_5 = 5.0;
+	static final double PERCENT_75 = 7.5;
 	static final double PERCENT_105 = 10.5;	
 	static final double PERCENT_12 = 12;
+	static final double SURCHARGE_PERCENT_0 = 0.0;
+	static final double SURCHARGE_PERCENT_026 = 0.26;
+	static final double SURCHARGE_PERCENT_062 = 0.62;
+	static final double SURCHARGE_PERCENT_1 = 1.0;
 	static final double SURCHARGE_PERCENT_52 = 5.2;
 	static final double SURCHARGE_PERCENT_14 = 1.4;
 	static final double SURCHARGE_PERCENT_05 = 0.5;
@@ -100,6 +106,10 @@ public abstract class Mod390HFDeclaration {
 	}
 	
 	private enum Declarations {
+		BIZKAIA_2024 {
+			@Override boolean accept(Mod390HF mod) { return Mod390HFBizkaia2024Declaration.accept(mod);}
+			@Override Mod390HFDeclaration get() {return new Mod390HFBizkaia2024Declaration();}
+		},
 		BIZKAIA_2023 {
 			@Override boolean accept(Mod390HF mod) { return Mod390HFBizkaia2023Declaration.accept(mod);}
 			@Override Mod390HFDeclaration get() {return new Mod390HFBizkaia2023Declaration();}
@@ -116,6 +126,11 @@ public abstract class Mod390HFDeclaration {
 			@Override boolean accept(Mod390HF mod) { return Mod390HFBizkaia2017Declaration.accept(mod);}
 			@Override Mod390HFDeclaration get() {return new Mod390HFBizkaia2017Declaration();}
 		},
+		
+		GIPUZKOA_2024 {
+			@Override boolean accept(Mod390HF mod) { return Mod390HFGipuzkoa2024Declaration.accept(mod);}
+			@Override Mod390HFDeclaration get() {return new Mod390HFGipuzkoa2024Declaration();}
+		},
 		GIPUZKOA_2023 {
 			@Override boolean accept(Mod390HF mod) { return Mod390HFGipuzkoa2023Declaration.accept(mod);}
 			@Override Mod390HFDeclaration get() {return new Mod390HFGipuzkoa2023Declaration();}
@@ -131,6 +146,11 @@ public abstract class Mod390HFDeclaration {
 		GIPUZKOA_2017 {
 			@Override boolean accept(Mod390HF mod) { return Mod390HFGipuzkoa2017Declaration.accept(mod);}
 			@Override Mod390HFDeclaration get() {return new Mod390HFGipuzkoa2017Declaration();}
+		},
+		
+		ARABA_2024 {
+			@Override boolean accept(Mod390HF mod) { return Mod390HFAraba2024Declaration.accept(mod);}
+			@Override Mod390HFDeclaration get() {return new Mod390HFAraba2024Declaration();}
 		},
 		ARABA_2023 {
 			@Override boolean accept(Mod390HF mod) { return Mod390HFAraba2023Declaration.accept(mod);}
@@ -296,31 +316,49 @@ public abstract class Mod390HFDeclaration {
 	}
 	
 	static boolean hasPercent0(VatContext vat) {
-		return vat.getPercentage() ==  PERCENT_0;	
+		return vat.getPercentage() == PERCENT_0;	
+	}
+	static boolean hasPercent2(VatContext vat) {
+		return vat.getPercentage() == PERCENT_2;	
 	}
 	static boolean hasPercent4(VatContext vat) {
-		return vat.getPercentage() ==  PERCENT_4;	
+		return vat.getPercentage() == PERCENT_4;	
 	}
 	static boolean hasPercent5(VatContext vat) {
-		return vat.getPercentage() ==  PERCENT_5;	
+		return vat.getPercentage() == PERCENT_5;	
+	}
+	static boolean hasPercent75(VatContext vat) {
+		return vat.getPercentage() == PERCENT_75;	
 	}
 	static boolean hasPercent10(VatContext vat) {
-		return vat.getPercentage() ==  PERCENT_10; 	
+		return vat.getPercentage() == PERCENT_10; 	
 	}
 	static boolean hasPercent21(VatContext vat) {
-		return vat.getPercentage() ==  PERCENT_21; 	
+		return vat.getPercentage() == PERCENT_21; 	
+	}
+	static boolean hasSurchargePercent0(VatContext vat) {
+		return vat.getSurchargePercent() == SURCHARGE_PERCENT_0; 
+	}
+	static boolean hasSurchargePercent026(VatContext vat) {
+		return vat.getSurchargePercent() == SURCHARGE_PERCENT_026; 
+	}
+	static boolean hasSurchargePercent062(VatContext vat) {
+		return vat.getSurchargePercent() == SURCHARGE_PERCENT_062; 
 	}
 	static boolean hasSurchargePercent05(VatContext vat) {
-		return vat.getSurchargePercent() ==  SURCHARGE_PERCENT_05; 
+		return vat.getSurchargePercent() == SURCHARGE_PERCENT_05; 
+	}
+	static boolean hasSurchargePercent1(VatContext vat) {
+		return vat.getSurchargePercent() == SURCHARGE_PERCENT_1; 
 	}
 	static boolean hasSurchargePercent175(VatContext vat) {
-		return vat.getSurchargePercent() ==  SURCHARGE_PERCENT_175; 
+		return vat.getSurchargePercent() == SURCHARGE_PERCENT_175; 
 	}
 	static boolean hasSurchargePercent14(VatContext vat) {
-		return vat.getSurchargePercent() ==  SURCHARGE_PERCENT_14;
+		return vat.getSurchargePercent() == SURCHARGE_PERCENT_14;
 	}
 	static boolean hasSurchargePercent52(VatContext vat) {
-		return vat.getSurchargePercent() ==  SURCHARGE_PERCENT_52;
+		return vat.getSurchargePercent() == SURCHARGE_PERCENT_52;
 	}
 
 	public static boolean mustApplyProrrate(Mod390HF mod,VatContext vat) {

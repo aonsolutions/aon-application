@@ -26,6 +26,7 @@ import com.esferalia.aon.occam.api.model.type.ContractType;
 import com.esferalia.aon.occam.api.model.type.ContractType.ContractTypeRecord;
 import com.esferalia.aon.occam.api.model.type.Occupation;
 import com.esferalia.aon.occam.api.model.type.QuoteGroup;
+import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler;
@@ -731,8 +732,8 @@ public abstract class EmployeeAFIDialog extends AonCustomDialog {
 	}
 
 	public boolean isPartialityCoefContract() {
-//		Window.alert("onPartialityCoefContract : " + afiChangesMap.hasChange("COEFICIENTE_PARCIALIDAD", partialityCoefOriginal == null ? "" : partialityCoefOriginal.toString()));
-		return afiChangesMap.hasChange("COEFICIENTE_PARCIALIDAD", partialityCoefOriginal == null ? "" : partialityCoefOriginal.toString());
+//		Window.alert("isPartialityCoefContract : " + !AonNumberUtils.equals(partialityCoefOriginal, partialityCoef.getValue()));
+		return !AonNumberUtils.equals(partialityCoefOriginal, partialityCoef.getValue());
 	}
 	
 	public boolean isCnoContract() {

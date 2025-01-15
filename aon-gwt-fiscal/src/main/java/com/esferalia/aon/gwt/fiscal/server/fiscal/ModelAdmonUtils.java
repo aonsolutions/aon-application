@@ -305,7 +305,8 @@ public class ModelAdmonUtils {
 	
 	private static String changeCharacters(String fileString) {
 		fileString = fileString.replace("'", " ");
-		fileString = fileString.replace("&", " ");
+		// PROVOCA DOS ESPACIOS Y DA ERROR, CON EL JSON CREO QUE NO HACE FALTA, EN LA VALIDACION LO CODIFICARA URLENCODER
+		//fileString = fileString.replace("&", " ");	
 		fileString = fileString.replace("\n", "");
 		fileString = fileString.replace("\r", "");
 		return fileString;

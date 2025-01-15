@@ -1,70 +1,122 @@
 import {AonElement} from 'aonsolutions/components/AonElement.js';
-import {closeSession, getCompanies, getUserNotice, getUser, getCompaniesBySchemas} from  'aonsolutions/services/service.js';
-import { CSS, EVENT, MATERIAL_ICONS, MSG, TAG } from 'aonsolutions/environments/environments.js';
+import {closeSession, getCompanies, getUserNotice, getUser, getCompaniesBySchemas, getTimeControl, getContracts} from  'aonsolutions/services/service.js';
+import { CSS, EVENT, MATERIAL_ICONS, MSG, TAG, CONSTANT } from 'aonsolutions/environments/environments.js';
 import { AonDesktop } from 'aonsolutions/modules/company/aon-desktop.js';
+import { AonApplication } from 'aonsolutions/components/aon-application.js';
 import * as LS from 'aonsolutions/services/localStorageService.js';
 import { AonDialogMenu } from 'aonsolutions/components/aon-dialog-menu.js';
-import { MenuApps } from '../services/app.js';
-
-import { AonTimeControlCard } from 'aonsolutions/components/aon-timecontrol-card.js';
+import { MenuApps, ClassicApps, Apps } from 'aonsolutions/services/app.js';
+import { AonSign } from "aonsolutions/modules/timecontrol/aon-sign.js";
 
 
 export class AonParent extends AonElement {
 
 	notice;
 	filter;
-	_filter; // NEW FILTER
 	selected;
 	companies;
 
 	more;
-	
+	PARENT;
 	APPS_DIV;
+	ENTERPRISES;
+	INBOX_INVOICES;
+	PENDING_INVOICES;
+	REJECTED_INVOICES;
 	COMPANY_FILTER_TAB;
+	
+	searchBoxTimeout;
 
 	setFilter(filter){
-		if(filter.ids?.length) { 
-			filter.ids = filter.ids.join(",");
-		}
-		this._filter = filter;
+		this.filter = filter;
 	}
 
 	getFilter(){
-		return this._filter;
-	}
-
-	addFilter(filter){
-		this._filter = {...this.getFilter(), ...filter};
+		return this.filter;
 	}
 
 	constructor () {
 		super();
 		this.id = 'aonParent';
-		this.filter = {};
-		this._filter = {};
+		this.PARENT = 'aonParent';
 		this.APPS_DIV = "appsDiv";
 		this.COMPANY_FILTER_TAB = "aonCompanyTabFilter";
+		this.ENTERPRISES = `${CONSTANT.ENTERPRISES.initCap()}All`;
+		this.INBOX_INVOICES = `${CONSTANT.INVOICES.initCap()}Inbox`;
+		this.PENDING_INVOICES = `${CONSTANT.INVOICES.initCap()}Pending`;
+		this.REJECTED_INVOICES = `${CONSTANT.INVOICES.initCap()}Rejected`;
+		this.filter = {	id: 'active', active: true, name: MSG.ACTIVES,};
 	}
 
 	connectedCallback () {
 		this.init({id:'active', active: true, domainActive:true});
 		let searchBox = this.getElement('aonHeaderSearchBox');
 		searchBox.addEventListener(EVENT.KEYUP, () => {
-			this.select({value:searchBox.value});
-			this.addFilter({value:searchBox.value});
+			clearTimeout(this.searchBoxTimeout); 
+			this.searchBoxTimeout = setTimeout(() => this.search(this), 1000);
 		});
 	}
 
 	init(filter) {
 		//TODO: aonParent.startLoader();
+		
+		let aonApplication = new AonApplication();
+		aonApplication.setAttribute("sidenav_width", "300px");
+		this.createApplication(this.PARENT, "", aonApplication);
+
 		this.build();
-		this.select(filter, companies => this.decorateTabs(companies) );
+		this.buildSidenav();
+		this.select(filter, companies =>  { 
+			this.decorateTabs(companies); 
+			this.getApplication().updateSidenavCount(this.ENTERPRISES, companies?.length || 0);
+		} );
+	}
+	
+	search(el) {
+		let searchBox = el.getElement('aonHeaderSearchBox');
+		let searchDialogMenu =  el.getApplication().getOptionDialog();
+		
+		getCompanies().then(companies => {
+			let searchCompanies = el.filterCompanies(companies, {...el.getFilter(),...{value:searchBox.value}});
+			
+			let searchOptions = [];
+			
+			if ( searchCompanies.length > 0 ) {
+				let title = searchCompanies.length == 1 ? `${MSG.ONE} ${MSG.ENTERPRISE}` :`${searchCompanies.length} ${MSG.ENTERPRISES}`;
+				searchOptions.push({
+					icon: MATERIAL_ICONS.BUSINESS,
+					name: `<span style="font-weight: bold; cursor: default" >${title}</span>`,
+				});
+			}
+			
+			searchCompanies.slice(0,10).forEach(company => {
+				searchOptions.push({
+					icon : this.getIcon(company),
+					name : `<span>${company.name}</span><span style="float:right;">${company.document}</span>`,
+					fn: () => {this.companySelection(company, false);},
+				});				
+			});
+			
+			searchDialogMenu.getContent().style.minWidth = `${searchBox.offsetWidth}px`; 
+			
+			const top  = searchBox.getBoundingClientRect().bottom ;
+			const left = searchBox.getBoundingClientRect().left;
+			searchDialogMenu.setMenuOptions(searchOptions, top, left);
+			searchDialogMenu.open();
+			
+/*			getContracts({ page:0, perPage:11, name: searchBox.value})
+			.then(contracts => {
+				contracts.forEach(contract => console.log( JSON.stringify(contract)));	
+			});
+*/			
+		});
+		
+		
 	}
 
 	select(filter, callback) {
-		this.filter = filter;
 		
-		this.clearSelectedTab(this._filter);		
+		this.clearSelectedTab(this.filter);		
 		//TODO: aonParent.startLoader();
 
 		getCompanies().then( companies => {
@@ -93,11 +145,12 @@ export class AonParent extends AonElement {
 				//TODO: aonParent.stopLoader();
 				this.page = 1;
 				this.cleanCompanies();
-				this.buildCompanies(companies.filter(f => this.companyFilter(f, filter)).slice(0, 30));
+				
+				let filteredCompanies = this.filterCompanies(companies, filter);
+				
+				this.buildCompanies(filteredCompanies.slice(0, 30), filter);
 				callback?.(companies);
 
-				this.cleanApps();
-				this.buildApps(aonMenu);
 			}	
 		}, () => closeSession());
 
@@ -106,7 +159,7 @@ export class AonParent extends AonElement {
 		}
 	}
 	
-	decorateTabs(companies) {
+	decorateTabs(companies, filter = {}) {
 		let companyFilterTabs = [{
 				id: 'active',
 				active: true,
@@ -130,12 +183,15 @@ export class AonParent extends AonElement {
 			}
 		];	
 		for( let companyFilterTab of companyFilterTabs ){
-			let companyFilterTabCompanies = companies.filter(f => this.companyFilter(f, companyFilterTab));
+			let companyFilterTabCompanies = companies.filter(f => this.companyFilter(f, { ...companyFilterTab, ...filter }));
 			let companyFilterTabSpan = this.getElement(`${this.COMPANY_FILTER_TAB}-${companyFilterTab.id}`);
-			if ( companyFilterTabCompanies.length === 0 )
+			if ( companyFilterTabCompanies.length === 0 ){
 				companyFilterTabSpan.parentElement.classList.add(CSS.AON_COMPANY_FILTER_EMPTY);
-			else
+			}
+			else {
+				companyFilterTabSpan.parentElement.classList.remove(CSS.AON_COMPANY_FILTER_EMPTY);
 				companyFilterTabSpan.innerHTML = `${companyFilterTab.name} (${companyFilterTabCompanies.length})`;
+			}
 		}
 
 	}
@@ -143,54 +199,52 @@ export class AonParent extends AonElement {
 	selectTab(filter) {
 		this.getElement(`${this.COMPANY_FILTER_TAB}-${filter?.id}`)?.classList.add(CSS.AON_TAB_ITEM_TEXT_SELECTED);
 	}
-
+	
 	clearSelectedTab(filter) {
 		this.getElement(`${this.COMPANY_FILTER_TAB}-${filter?.id}`)?.classList.remove(CSS.AON_TAB_ITEM_TEXT_SELECTED);
 	}
 	
-	companyFilter(f, q) {
-		if(!q) {
-			q = {
+	companyFilter(company, filter) {
+		if(!filter) {
+			filter = {
 				active: true
 			};
 		}
 
 		let value = true;
 
-		if(q){
+		if(filter){
 			
-			if(q.value) {
-				const document = f.document && f.document.toUpperCase().includes(q.value.toUpperCase());
-				const name = f.name && f.name.toUpperCase().includes(q.value.toUpperCase());
-				value = document || name;
+			if(filter.value) {
+				const document = company?.document?.toUpperCase().includes(filter.value.toUpperCase());
+				const name = company?.name?.toUpperCase().includes(filter.value.toUpperCase());
+				value &= document || name;
 			}
 	
-			if(q.active) {
-				value = f.active && (f.parentId || f.type !== 'CONSULTANCY');
+			if(filter.active) {
+				value &= company.active && (company.parentId || company.type !== 'CONSULTANCY');
 			}
 	
-			if(q.inactive) {
-				value = !f.active;
+			if(filter.inactive) {
+				value &= !company.active;
 			}
 	
-			if(q.shared) {
-				value = f.shared;
+			if(filter.shared) {
+				value &= company.shared;
 			}
 	
-			if(q.entorno) {
-				value = !f.parentId && f.type === 'CONSULTANCY';
+			if(filter.entorno) {
+				value &= !company.parentId && company.type === 'CONSULTANCY';
 			}
 	
-			if(q.despacho) {
-				value = f.type === 'OFFICE';
+			if(filter.despacho) {
+				value &= company.type === 'OFFICE';
 			}
 	
-			if(q.ids) {
-				let idFilter;
-				q.ids.split(',').forEach((item, i) => {
-					idFilter = f.id == item || idFilter;
-				});
-				value = idFilter;
+			if(filter.ids) {
+				let found = filter.ids.find(id => company.id == id ) ;
+				console.log( found );
+				value &= found !== undefined;
 			}
 		}
 
@@ -205,25 +259,30 @@ export class AonParent extends AonElement {
 	}
 
 	updateCount(){
-		let application = this.getApplication();
 		let inboxCount = 0;
 		let rejectedCount = 0;
+		let pendingCount = 0;
+		let application = this.getApplication();
 		
-		if(this.notice.invoice && this.notice.invoice.inbox && this.notice.invoice.inbox.count && this.notice.invoice.inbox.count > 0) 
+		if(this.notice?.invoice?.inbox?.count > 0) 
 			inboxCount = this.notice.invoice.inbox.count;
 
-		if(this.notice.invoice && this.notice.invoice.rejected && this.notice.invoice.rejected.count && this.notice.invoice.rejected.count > 0) 
+		if(this.notice?.invoice?.rejected?.count > 0) 
 			rejectedCount = this.notice.invoice.rejected.count;
 
-		application.updateSidenavCount('PendingInvoices', inboxCount);
-		application.updateSidenavCount('RejectedInvoices', rejectedCount);
+		if(this.notice?.invoice?.pending?.count > 0) 
+			pendingCount = this.notice.invoice.pending.count;
+
+		application.updateSidenavCount(this.INBOX_INVOICES, inboxCount);
+		application.updateSidenavCount(this.REJECTED_INVOICES, rejectedCount);
+		application.updateSidenavCount(this.PENDING_INVOICES, pendingCount);
 	}
 	
 	build() {
 
 		let parentDiv = this.createDiv();
 		parentDiv.className = CSS.AON_PARENT_DIV;
-		this.appendChild(parentDiv);
+		this.getApplication().setContent(parentDiv);
 		
 
 		let welcomeDiv = this.createDiv();
@@ -254,38 +313,51 @@ export class AonParent extends AonElement {
 		companyFilterTabDiv.id = this.COMPANY_FILTER_TAB;
 		companyFilterTabDiv.className = CSS.AON_TAB;
 	
-		let filterOptions = [{
+		let defaultFilter = { 
+			type: undefined, 
+			active: undefined, 
+			inactive: undefined, 
+			shared: undefined, 
+			entorno: undefined, 
+			despacho: undefined, 
+			domainActive: undefined, 
+		};
+		
+		let filterOptions = [
+			{
 				id: 'active',
 				name: MSG.ACTIVES,
 				icon: 'domain',
-				fn: () => this.select({id:'active', active: true, domainActive:true})
+				fn: () => this.select({ ...this.getFilter(), ...defaultFilter, ...{id:'active', active: true, domainActive:true, name: MSG.ACTIVES}})
 			}, {
 				id: 'inactive',
 				name: MSG.INACTIVES,
 				icon: 'domain_disabled',
-				fn: () => this.select({id: 'inactive', inactive: true, domainActive:false})
+				fn: () => this.select({ ...this.getFilter(), ...defaultFilter, ...{id: 'inactive', inactive: true, domainActive:false, name: MSG.INACTIVES}})
 			}, {
 				id: 'shared',
 				name: MSG.SHARED,
 				icon: MATERIAL_ICONS.SHARE,
-				fn: () => this.select({id:'shared', shared: true})
+				fn: () => this.select({ ...this.getFilter(), ...defaultFilter, ...{id:'shared', shared: true, name: MSG.SHARED}})
 			}, {
 				id: 'consultancy',
 				name: MSG.ENVIRONMENT,
 				icon: MATERIAL_ICONS.APARTMENT,
-				fn: () => this.select({id:'consultancy', entorno:true, type:"CONSULTANCY"})
+				fn: () => this.select({ ...this.getFilter(), ...defaultFilter, ...{id:'consultancy', entorno:true, type:"CONSULTANCY", name: MSG.ENVIRONMENT}})
 			},{
 				id: 'office',
 				name: MSG.OFFICE,
 				icon: 'work',
-				fn: () => this.select({id: 'office', despacho:true, type:"OFFICE"})
+				fn: () => this.select({ ...this.getFilter(), ...defaultFilter, ...{id: 'office', despacho:true, type:"OFFICE", name: MSG.OFFICE}})
 			}
 		];	
 	
 		for( let filterOption of filterOptions ){
 			let companyFilterTabA = this.createElement(TAG.A);
 			companyFilterTabA.className = CSS.AON_TAB_ITEM;
-			companyFilterTabA.addEventListener(EVENT.CLICK, (ev) => filterOption.fn(ev) );
+			companyFilterTabA.addEventListener(EVENT.CLICK, (ev) => {
+				filterOption.fn(ev)
+			});
 	
 			let companyFilterTabSpan = this.createElement(TAG.SPAN);
 			companyFilterTabSpan.innerHTML = filterOption.name; 
@@ -317,12 +389,7 @@ export class AonParent extends AonElement {
 			}
 		});
 
-		let appsDiv = this.createDiv();
-		appsDiv.id = this.APPS_DIV;
-
-
 		let contentDiv = this.createDiv();
-		contentDiv.appendChild(appsDiv);
 		contentDiv.appendChild(companyDiv);
 	
 		parentDiv.appendChild(welcomeDiv);
@@ -367,7 +434,7 @@ export class AonParent extends AonElement {
 		getCompanies().then( companies => {
 			let first = this.page * 30;
 			this.page = this.page + 1;
-			this.buildCompanies(companies.filter(f => this.companyFilter(f, this.filter)).slice(first, first + 30));	
+			this.buildCompanies(this.filterCompanies(companies, this.filter).slice(first, first + 30), this.filter);	
 		})
 		.finally(()=>{
 			//TODO: this.getApplication().stopLoader();
@@ -377,18 +444,113 @@ export class AonParent extends AonElement {
 		
 	}
 
-	cleanApps(){
-		let appsDiv = this.getElement(this.APPS_DIV);
-		appsDiv.innerHTML = "";
-	}
+	buildSidenav() {
 
-	buildApps(aonMenu){
-		let appsDiv = this.getElement(this.APPS_DIV);
-		appsDiv.className = CSS.AON_APPS_DIV;
-		//aonMenu.isAppEnabled(MenuApps.TIMECONTROL);
-		let aonTimeControlCard = new AonTimeControlCard();
-		aonTimeControlCard.onError = () => appsDiv.removeChild(aonTimeControlCard); 
-		appsDiv.appendChild(aonTimeControlCard);
+		let enterprisesOptions = {
+		  id: CONSTANT.ENTERPRISES.initCap(),
+		  name: MSG.ENTERPRISES.toUpperCase(),
+		  app: ClassicApps.AON_SOLUTIONS,
+		  options: [{
+				id: this.ENTERPRISES,
+				name: MSG.ALL2,
+				icon: MATERIAL_ICONS.BUSINESS,
+				app: ClassicApps.AON_SOLUTIONS,
+				fn: () => {
+					let enterprisesFilter = {ids:undefined, count:undefined};
+					this.select({...this.getFilter(),...enterprisesFilter }, companies => this.decorateTabs(companies, enterprisesFilter));
+				},
+		  	}]
+		};
+
+		this.getApplication().addSidenavOptions3(enterprisesOptions);
+
+		let invoiceOptions = {
+		  id: CONSTANT.INVOICES.initCap(),
+		  name: MSG.ACTIVITY.toUpperCase(),
+		  app: Apps.INVOICE,
+		  options: [{
+			    id: this.INBOX_INVOICES,
+			    name: MSG.PENDING_INVOICES,
+			    icon: MATERIAL_ICONS.INBOX,
+			    app: Apps.INVOICE,
+			    fn: () => {
+					let inboxFilter = {ids:this.notice?.invoice?.inbox?.domains, count:this.notice?.invoice?.inbox?.domainCount};
+					this.select({...this.getFilter(),...inboxFilter }, companies => this.decorateTabs(companies, inboxFilter));
+			    },
+			  },
+			  {
+			    id: this.REJECTED_INVOICES,
+			    name: MSG.REJECTED_INVOICES,
+			    icon: MATERIAL_ICONS.REPORT,
+				app: Apps.INVOICE,
+			    fn: () => {
+					let rejectedFilter = {ids:this.notice?.invoice?.rejected?.domains, count:this.notice?.invoice?.rejected?.domainCount};
+					this.select({...this.getFilter(),...rejectedFilter}, companies => this.decorateTabs(companies, rejectedFilter ));
+			    },
+			  },
+			  {
+			    id: this.PENDING_INVOICES,
+			    name: MSG.UNACCOUNT_INVOICES,
+			    icon: MATERIAL_ICONS.LABEL_IMPORTANT,
+				app: Apps.INVOICE,
+			    fn: () => {
+					let pendingFilter = {ids:this.notice?.invoice?.pending?.domains, count:this.notice?.invoice?.pending?.domainCount}; 
+					this.select({...this.getFilter(),...pendingFilter}, companies => this.decorateTabs(companies, pendingFilter));
+			    },
+			  }]
+		};
+		
+		this.getApplication().addSidenavOptions3(invoiceOptions);
+		
+		let helpOptions = {
+		  id: CONSTANT.HELP.initCap(),
+		  name: MSG.HELP.toUpperCase(),
+		  app: Apps.HOME,
+		  options: [{
+			    id: CONSTANT.HELP.initCap() + "Notifications",
+			    name: MSG.NOTIFICATIONS,
+			    icon: MATERIAL_ICONS.RSS_FEED,
+				app: Apps.HOME,
+			    fn: () => {
+			      // Filter selectOption method
+			    }
+			},{
+  			    id: CONSTANT.HELP.initCap() + "ContentIndex",
+  			    name: MSG.CONTENT_INDEX,
+  			    icon: MATERIAL_ICONS.SCHOOL,
+  				app: Apps.HOME,
+  			    fn: () => {
+  			      // Filter selectOption method
+  			    },
+			},
+		  ]
+		};
+		
+		this.getApplication().addSidenavOptions3(helpOptions);
+
+		let appsDiv = this.createDiv();
+		appsDiv.id = this.APPS_DIV;
+		this.getApplication().getSidenav().appendChild(appsDiv);
+
+		
+		getTimeControl().then(r => {
+			let option = {
+				id: "signing",
+				title: MSG.SIGNING.toUpperCase(),
+				name: MSG.SIGNING.toUpperCase(),
+				app: Apps.TIMECONTROL
+			}
+
+			let aonSign = new AonSign();
+			this.getApplication().addSidenavWidget2(option, aonSign);
+
+			aonSign.buildSignin(r);
+			let aonHeader = this.getElement('aonHeader');
+			aonHeader?.timeControlStatus(r);
+		});
+		
+		this.getNotices();
+		
 	}
 
 	cleanCompanies(){
@@ -398,14 +560,14 @@ export class AonParent extends AonElement {
 		}
 	}
 
-	buildCompanies(companies){
+	buildCompanies(companies, filter){
 		let ul = this.getElement("UlCompanies");
 		for(let company of companies) {
-			ul.appendChild(this.buildLi(company, 'transparent'));
+			ul.appendChild(this.buildLi(company, 'transparent', filter?.count?.[company.domain] ));
 		}
 	}
 
-	buildLi(company, color) {
+	buildLi(company, color, count) {
 		let li = this.createElement(TAG.LI);
 		li.className = 'aonLiBeta' ;
 		li.addEventListener(EVENT.CLICK, () => {
@@ -414,31 +576,31 @@ export class AonParent extends AonElement {
 			LS.setPortalChecked(portal);
 		});
 
-		let span = this.createElement(TAG.SPAN);
-		span.className = 'aonLiSpan';
+		let companySpan = this.createElement(TAG.SPAN);
+		companySpan.className = 'aonLiSpan';
 
+		let icon = this.getIcon(company);
 
-		let icon = "business";
-		if(company.type === 'OFFICE') icon = 'work';
-		else if(company.parent) icon = MATERIAL_ICONS.APARTMENT;
-		else if(company.shared) icon = MATERIAL_ICONS.SHARE;
-		else if(!company.active) icon = 'domain_disabled';
+		let iconI = this.createElement(TAG.I);
+		iconI.className = 'material-icons aonAvatar';
+		iconI.innerHTML = icon;
 
-		let i = this.createElement(TAG.I);
-		i.className = 'material-icons aonAvatar';
-		i.innerHTML = icon;
+		let nameSpan = this.createElement(TAG.SPAN);
+		nameSpan.innerHTML = company.name;
 
-		let span2 = this.createElement(TAG.SPAN);
-		span2.innerHTML = company.name;
+		let docSpan = this.createElement(TAG.SPAN);
+		docSpan.className = 'aonLiSpanSubtitle';
+		docSpan.innerHTML = company.document;
 
-		let span3 = this.createElement(TAG.SPAN);
-		span3.className = 'aonLiSpanSubtitle';
-		span3.innerHTML = company.document;
+		companySpan.appendChild(iconI);
+		companySpan.appendChild(nameSpan);
+		companySpan.appendChild(docSpan);
+		li.appendChild(companySpan);
 
-		span.appendChild(i);
-		span.appendChild(span2);
-		span.appendChild(span3);
-		li.appendChild(span);
+		let countSpan = this.createElement(TAG.SPAN);
+		countSpan.className = 'aonLiSpanSubtitle';
+		countSpan.innerHTML = count || '';
+		li.appendChild(countSpan);
 
 		let sp = this.createElement(TAG.SPAN);
 		let i2 = this.createElement(TAG.I);
@@ -447,6 +609,17 @@ export class AonParent extends AonElement {
 		sp.appendChild(i2);
 		li.appendChild(sp);
 		return li;
+	}
+	
+	getIcon(company) {
+		let icon = "business";
+		if(company.type === 'OFFICE') icon = 'work';
+		else if(company.parent) icon = MATERIAL_ICONS.APARTMENT;
+		else if(company.shared) icon = MATERIAL_ICONS.SHARE;
+		else if(!company.active) icon = 'domain_disabled';
+		
+		return icon;
+		
 	}
 
 	companySelection(company, onlyOne) {
@@ -532,6 +705,11 @@ export class AonParent extends AonElement {
 			totalBottom += parseFloat(style.marginBottom);
 		}
 		return totalBottom;
+	}
+	
+	filterCompanies(companies, filter) {
+		let filteredCompanies = companies.filter(f => this.companyFilter(f, filter));
+		return filteredCompanies.sort( (c1,c2) => ( filter.count?.[c2.domain] || 0 )  -  ( filter.count?.[c1.domain] || 1 ) );
 	}
 }
 

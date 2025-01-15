@@ -343,6 +343,7 @@ export const INCLUDE_COMPANY_DATA = MSG.INCLUDE_COMPANY_DATA;
 export const INCLUDE_LOGO = MSG.INCLUDE_LOGO;
 export const INCLUDE_REGISTRATION_DATA = 'Incluir Datos Registrales';
 export const INCLUDE_CONTACT_DATA = 'Incluir Datos de Contacto';
+export const INCOMES = 'Ingresos';
 export const INFORMATION = MSG.INFORMATION;
 export const INSCRIPTION = 'Inscripción';
 export const INTERNAL = "Interno"; //TODO
@@ -395,6 +396,8 @@ export const IRPF = MSG.IRPF;
 export const IS_REQUIRED = MSG.IS_REQUIRED;
 export const IS_NOT_VALID_EMAIL = MSG.IS_NOT_VALID_EMAIL;
 export const ISSUED = MSG.ISSUED;
+export const ISSUED_BY_THIRD_PART = "Emitida por terceros";
+export const ISSUED_INVOICES = 'Facturas Emitidas';
 export const ISSUEDS = MSG.ISSUEDS;
 export const ISSUE = "Asunto"; //TODO
 
@@ -486,6 +489,7 @@ export const NOTICE = "Noticia"; //TODO
 
 export const OCR = "OCR";
 export const OBSERVATION = MSG.OBSERVATION;
+export const OFFERS = "Presupuestos";
 export const OFFICE = MSG.OFFICE;
 export const ONLY_DOMAINS_WITHOUT_LINKED_CUSTOMER = MSG.ONLY_DOMAINS_WITHOUT_LINKED_CUSTOMER;
 export const ONLY_PORTAL = MSG.ONLY_PORTAL;
@@ -495,8 +499,11 @@ export const OPEN_REQUESTS = MSG.OPEN_REQUESTS;
 export const OPTIONS = MSG.OPTIONS;
 export const OPTIONAL = MSG.OPTIONAL;
 export const OR_ACCESS = MSG.OR_ACCESS;
+export const OTHER_EXPENSES = 'Otros Gastos';
+export const OTHER_INCOMES = 'Otros Ingresos';
 export const OTHER_SERVICES = MSG.OTHER_SERVICES;
 export const OTHERS = "Otros";
+export const ONE = MSG.ONE;
 
 // ----- P
 export const PACKAGES = 'Envases';
@@ -512,6 +519,7 @@ export const PENDING = MSG.PENDING;
 export const PENDING_CORRECTION = "Pendiente de Corrección";
 export const PENDING_DECISSION = "Pendiente de Decisión";
 export const PENDING_DOCUMENTS = MSG.PENDING_DOCUMENTS;
+export const PENDING_DRAFTS = 'Borradores Pendientes';
 export const PENDING_INVOICES = MSG.PENDING_INVOICES;
 export const PENDING_REVIEW = MSG.PENDING_REVIEW;
 export const PENDING_TASKS = MSG.PENDING_TASKS;
@@ -540,7 +548,8 @@ export const PRODUCT_NOT_EMPTY = MSG.PRODUCT_NOT_EMPTY;
 export const PRODUCT_MUST_BE_SELECTED = MSG.PRODUCT_MUST_BE_SELECTED;
 export const PRODUCTS = MSG.PRODUCTS;
 export const PROFIT = "Beneficio"; // TODO
-export const PROFORMA = "Proforma"; 
+export const PROFORMA = "Proforma";
+export const PROFORMA_INVOICES = "Facturas Proforma"; 
 export const PROJECT = "Proyecto"; //TODO
 export const PROJECTS = "Proyectos"; //TODO
 export const PROTOCOL = "Protocolo";
@@ -563,6 +572,7 @@ export const QUOTE_GROUP = "Grupo de cotización";//TODO
 export const RADIO = "Radio"; // TODO
 export const RECEIVED = MSG.RECEIVED;
 export const REGISTER = "Registro"; // TODO
+export const RECEIVED_INVOICES = "Facturas Recibidas";
 export const RECEIVEDS = MSG.RECEIVEDS;
 export const RECENTS = MSG.RECENTS;
 export const RECENTLY_OPENED = MSG.RECENTLY_OPENED;
@@ -618,6 +628,8 @@ export const SCHEDULE = MSG.SCHEDULE;
 export const SEARCH = MSG.SEARCH;
 export const SECTION = 'Sección'; // TODO
 export const SEE_ALL = MSG.SEE_ALL;
+export const SELECT_LANGUAGE = MSG.SELECT_LANGUAGE;
+export const SELECT_COMPANY_TYPE = MSG.SELECT_COMPANY_TYPE;
 export const SEND = MSG.SEND;
 export const SENT = "Enviadas"; // TODO
 export const SEND_FILE = MSG.SEND_FILE;
@@ -652,6 +664,7 @@ export const STREET_TYPE = 'Tipo vía';
 export const SITUATION = "Situación"; // TODO
 export const SUITE_MENU = MSG.SUITE_MENU;
 export const SUMMARIZED = MSG.SUMMARIZED;
+export const SUPERSET = 'Superset' ;
 export const SUPPLIED = MSG.SUPPLIED;
 export const SUPPLIER = MSG.SUPPLIER;
 export const SUPPLIERS = MSG.SUPPLIERS;
@@ -662,12 +675,11 @@ export const SURCHARGE_RE = 'R.E.'; // TODO
 export const SURNAME = MSG.SURNAME;
 export const SURVEY = "Cuestionario"; // TODO
 export const SURVEYS = "Cuestionarios"; // TODO
-export const SYSTEM_MESSAGES = MSG.SYSTEM_MESSAGES;
+export const STAFF_EXPENSES = "Gastos de Personal";
 export const STATUS_NOT_EMPTY = MSG.STATUS_NOT_EMPTY;
 export const STORE = "Archivar"; //TODO
 export const START_DATE = "Fecha inicio";//TODO
-export const SELECT_LANGUAGE = MSG.SELECT_LANGUAGE;
-export const SELECT_COMPANY_TYPE = MSG.SELECT_COMPANY_TYPE;
+export const SYSTEM_MESSAGES = MSG.SYSTEM_MESSAGES;
 
 // ----- T
 
@@ -715,6 +727,7 @@ export const TO_SHOW = "Mostrar";//TODO
 
 // ----- U
 
+export const UNACCOUNT_INVOICES = MSG.UNACCOUNT_INVOICES;
 export const UNLINK = MSG.UNLINK;
 export const UNLINK_DOMAIN_QUESTION = MSG.UNLINK_DOMAIN_QUESTION;
 export const UNLINK_CLIENT = MSG.UNLINK_CLIENT;

@@ -92,13 +92,6 @@
 			background-size: contain;
 		}
 		
-		.flexColumn{
-			width: 100%;
-			height: 100%;
-			display: flex;
-			flex-direction: column;
-		}
-		
 		.flex1{
 			display: flex;
 		}
@@ -134,14 +127,17 @@
 			align-items: center;
 		}
 		
-		.container{
-			margin: 0 10px;
-		}
-		
 		.toolbar {
 			display: flex;
 			flex-direction: column;
 			gap: 5px;
+		}
+		
+		.flexColumn{
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			flex-direction: column;
 		}
 		
 	</ui:Style>
@@ -155,113 +151,73 @@
 				</g:DeckPanel>
 			</g:north>
 			<g:center>
-				<g:SplitLayoutPanel ui:field="splitLayoutPanel">
-					<g:center>
-						<g:DeckPanel ui:field="mainDeckPanel">
-							<g:HTMLPanel styleName="{aonResources.css.aonSelector}">
-								<g:HTMLPanel ui:field="messageContainer" />
-								<g:TabLayoutPanel ui:field="tabLayOutPanel" barUnit='EM' barHeight='3'>
-									<g:tab>
-								    	<g:header size='7'>Datos Afiliación</g:header>
-								    	<g:HTMLPanel styleName="{style.mt10}">
-								    		<g:ScrollPanel ui:field="scrolledPanel" styleName="{style.center}">
-								    			<a:ContractEmployeeUI ui:field="contractEmployeeUI" />
-											</g:ScrollPanel>
-								    	</g:HTMLPanel>
-								  	</g:tab>
-								  	<g:tab>
-								    	<g:customHeader size='7'>
-								      		<g:Label>Datos SEPE</g:Label>
-								    	</g:customHeader>
-								    	<g:HTMLPanel styleName="{style.mt10}">
-								    		<g:ScrollPanel ui:field="scrolledPanelContractSpecificData" styleName="{style.center} {style.widthAll}">
-												<a:ContractSpecificData ui:field="contractSpecificData"/>
-											</g:ScrollPanel>
-								    	</g:HTMLPanel>
-								  	</g:tab>
-								  	<g:tab>
-								    	<g:customHeader size='7'>
-								      		<g:Label>Datos Contrato</g:Label>
-								    	</g:customHeader>
-								    	<g:HTMLPanel styleName="{style.mt10}">
-								    		<g:ScrollPanel ui:field="scrolledPanelContractOtherData" styleName="{style.center}">
-												<a:ContractOtherData ui:field="contractOtherData"/>
-											</g:ScrollPanel>
-								    	</g:HTMLPanel>
-								  	</g:tab>
-								  	<g:tab>
-								    	<g:customHeader size='7'>
-								      		<g:Label>Clausulas</g:Label>
-								    	</g:customHeader>
-								    	<g:HTMLPanel styleName="{style.mt10}">
-								    		<g:ScrollPanel ui:field="scrolledPanelClauses" styleName="{style.center}">
-												<a:ContractClauseUI ui:field="contractClauseUI"/>
-											</g:ScrollPanel>
-								    	</g:HTMLPanel>
-								  	</g:tab>
-								  	<g:tab>
-								    	<g:customHeader size='7'>
-								      		<g:Label>Documentos</g:Label>
-								    	</g:customHeader>
-								    	<g:HTMLPanel styleName="{style.mt10}">
-								    		<g:ScrollPanel ui:field="scrolledPanelAttach" styleName="{style.center}">
-												<a:ContractAttachUI ui:field="contractAttachUI"/>
-											</g:ScrollPanel>
-								    	</g:HTMLPanel>
-								  	</g:tab>
-								  	<g:tab>
-								    	<g:customHeader size='7'>
-								      		<g:Label>Nóminas</g:Label>
-								    	</g:customHeader>
-								    	<g:HTMLPanel styleName="{style.mt10}">
-								    		<g:SimpleLayoutPanel styleName="{style.widthAll} {style.heightAll}">
-								    			<a:EmployeeSalary ui:field="employeeSalary"/>
-								    		</g:SimpleLayoutPanel>
-								    	</g:HTMLPanel>
-								  	</g:tab>
-								  	<g:tab>
-								    	<g:customHeader size='7'>
-								      		<g:Label>Calendario</g:Label>
-								    	</g:customHeader>
-								    	<g:HTMLPanel styleName="{style.mt10}">
-								    		<a:EmployeeCalendarDraftNew ui:field="employeeCalendar" />
-								    	</g:HTMLPanel>
-								  	</g:tab>
-								  	<g:tab>
-								    	<g:customHeader size='7'>
-								      		<g:Label>IRPF</g:Label>
-								    	</g:customHeader>
-								    	<g:HTMLPanel styleName="{style.mt10}">
-								    		<a:EmployeeContractIrpf ui:field="employeeContractIrpf" />
-								    	</g:HTMLPanel>
-								  	</g:tab>
-								  	<g:tab>
-								    	<g:customHeader size='7'>
-								      		<g:Label>Mod 145</g:Label>
-								    	</g:customHeader>
-								    	<g:HTMLPanel styleName="{style.mt10}">
-								    		<a:Mod145 ui:field="mod145" />
-								    	</g:HTMLPanel>
-								  	</g:tab>
-								 </g:TabLayoutPanel>
-							</g:HTMLPanel>
-							
-							<g:HTMLPanel styleName="{aonResources.css.aonSelector}">
-								<g:HTMLPanel ui:field="messagePDFContainer" />
-								<g:SimpleLayoutPanel ui:field="scrolledPDFPanel" styleName="{style.center}">
-									<g:HTMLPanel styleName="{style.mt10} {style.center}">
-								 		<p:FullViewer styleName="reset" ui:field='pdfViewer' />
-							 		</g:HTMLPanel>
-								</g:SimpleLayoutPanel> 
-							 </g:HTMLPanel>
-						</g:DeckPanel>
-					</g:center>
-					<g:south size="17">
-						<aon:AonMinimizePanel ui:field="footPanel" styleName="{aonResources.css.aonSelector} aon-EmployeeTree-Events" >
-							<g:TabLayoutPanel barHeight="26" barUnit="PX" ui:field="footTabPanel" addStyleNames="aon-pointer-events-auto"/>
-						</aon:AonMinimizePanel>
-					</g:south>
-				</g:SplitLayoutPanel>
+				<g:DeckPanel ui:field="mainDeckPanel">
+					<g:HTMLPanel styleName="{aonResources.css.aonSelector}">
+						<g:HTMLPanel ui:field="messageContainer" />
+						<g:TabLayoutPanel ui:field="tabLayOutPanel" barUnit='EM' barHeight='3'>
+							<g:tab>
+						    	<g:header size='7'>Datos Afiliación</g:header>
+						    	<g:HTMLPanel ui:field="employeePanelNew" />
+						  	</g:tab>
+						  	<g:tab>
+						    	<g:header size='7'>Datos SEPE</g:header>
+						    	<g:HTMLPanel ui:field="specificDataPanelNew" />
+						  	</g:tab>
+						  	<g:tab>
+						  		<g:header size='7'>Datos Contrato</g:header>
+						    	<g:HTMLPanel ui:field="otherDataPanelNew" />
+						  	</g:tab>
+						  	<g:tab>
+						  		<g:header size='7'>Clausulas</g:header>
+						    	<g:HTMLPanel ui:field="clausesPanelNew" />
+						  	</g:tab>
+						  	<g:tab>
+						  		<g:header size='7'>Documentos</g:header>
+						    	<g:HTMLPanel ui:field="documentsPanelNew" />
+						  	</g:tab>
+						  	<g:tab>
+						    	<g:customHeader size='7'>
+						      		<g:Label>Nóminas</g:Label>
+						    	</g:customHeader>
+						    	<g:HTMLPanel>
+						    		<g:SimpleLayoutPanel ui:field="salaryWidgetPanel" styleName="{style.widthAll} {style.heightAll}">
+						    			<!-- 
+						    			<a:SalaryWidget ui:field="salaryWidget"/>
+						    			 -->
+						    		</g:SimpleLayoutPanel>
+						    	</g:HTMLPanel>
+						  	</g:tab>
+						  	<g:tab>
+						    	<g:customHeader size='7'>
+						      		<g:Label>Calendario</g:Label>
+						    	</g:customHeader>
+						    	<g:HTMLPanel styleName="{style.mt10}">
+						    		<a:EmployeeCalendarDraftNew ui:field="employeeCalendar" />
+						    	</g:HTMLPanel>
+						  	</g:tab>
+						  	<g:tab>
+						    	<g:customHeader size='7'>
+						      		<g:Label>IRPF</g:Label>
+						    	</g:customHeader>
+						    	<g:HTMLPanel styleName="{style.mt10}">
+						    		<a:EmployeeContractIrpf ui:field="employeeContractIrpf" />
+						    	</g:HTMLPanel>
+						  	</g:tab>
+						  	<g:tab>
+						    	<g:customHeader size='7'>
+						      		<g:Label>Mod 145</g:Label>
+						    	</g:customHeader>
+						    	<g:HTMLPanel styleName="{style.mt10}">
+						    		<a:Mod145 ui:field="mod145" />
+						    	</g:HTMLPanel>
+						  	</g:tab>
+						 </g:TabLayoutPanel>
+					</g:HTMLPanel>
+					
+					
+					<p:FullViewer styleName="reset {style.heightAll}" ui:field='pdfViewer' />
+					
+				</g:DeckPanel>
 			</g:center>
 		</g:DockLayoutPanel>
 	</g:SimpleLayoutPanel>

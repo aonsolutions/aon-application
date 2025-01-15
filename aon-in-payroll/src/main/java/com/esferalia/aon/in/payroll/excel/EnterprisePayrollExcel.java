@@ -388,13 +388,13 @@ public class EnterprisePayrollExcel {
 			
 			List<IEnterprisePayroll> payrolls = new LinkedList<>();
 			
-			List<IEnterprisePayroll> rawPayrollList = getEnterprisePayrolls(aonContext, startDate, endDate, eId, wId).map(IEnterprisePayroll.class::cast).collect(Collectors.toList());
+			List<IEnterprisePayroll> rawPayrollList = getEnterprisePayrolls(aonContext, startDate, endDate, eId, wId, typesList).map(IEnterprisePayroll.class::cast).collect(Collectors.toList());
 			Map<String, Map<Integer, Map<String, List<ContractData>>>> contractDataByWorkplace = getContractDataByWorkplace(aonContext, startDate, endDate, params.getEnterpriseId(), params.getWorkplaceId());
 			manageContractDatas(rawPayrollList, contractDataByWorkplace);
 			
 			rawPayrollList.stream().map(EnterprisePayroll.class::cast)
 				.filter(p -> filteredPersons.isEmpty() || filteredPersons.contains(p.getEmployeeId()))
-				.filter(p -> (p.getSalaryType() == null || typesList.contains(p.getSalaryType())) && p.getEmployeeId() != null)
+				.filter(p -> p.getEmployeeId() != null)
 				.forEach(p -> {
 					Optional<IEnterprisePayroll> optPayroll = payrolls.stream().filter(pa -> pa.getWorkplace().equals(p.workplace) && pa.getEmployeeId().equals(p.getEmployeeId())).findFirst();
 					EnterprisePayroll enterprisePayroll = null;
@@ -452,13 +452,13 @@ public class EnterprisePayrollExcel {
 			
 			List<IEnterprisePayroll> payrolls = new LinkedList<>();
 			
-			List<IEnterprisePayroll> rawPayrolls = getEnterprisePayrolls(aonContext, startDate, endDate, eId, wId).map(IEnterprisePayroll.class::cast).collect(Collectors.toList());
+			List<IEnterprisePayroll> rawPayrolls = getEnterprisePayrolls(aonContext, startDate, endDate, eId, wId, typesList).map(IEnterprisePayroll.class::cast).collect(Collectors.toList());
 			Map<String, Map<Integer, Map<String, List<ContractData>>>> contractDataByWorkplace = getContractDataByWorkplace(aonContext, startDate, endDate, params.getEnterpriseId(), params.getWorkplaceId());
 			manageContractDatas(rawPayrolls, contractDataByWorkplace);
 
 			rawPayrolls.stream().map(EnterprisePayroll.class::cast)
 				.filter(p -> filteredPersons.isEmpty() || filteredPersons.contains(p.getEmployeeId()))
-				.filter(p -> (p.getSalaryType() == null || typesList.contains(p.getSalaryType())) && p.getEmployeeId() != null)
+				.filter(p -> p.getEmployeeId() != null)
 				.forEach(p -> {
 					Optional<IEnterprisePayroll> optPayroll = payrolls.stream().filter(pa -> {
 						String nameKey = EnterprisePayrollExcelUtils.getMonthYearName(p.getEndDate());
@@ -530,11 +530,11 @@ public class EnterprisePayrollExcel {
 			
 			Map<String, Map<String, Map<SalaryType, IEnterprisePayroll>>> completeWorkplaceData = new LinkedHashMap<>();
 			
-			List<IEnterprisePayroll> rawPayrolls = getEnterprisePayrolls(aonContext, startDate, endDate, eId, wId).collect(Collectors.toList());
+			List<IEnterprisePayroll> rawPayrolls = getEnterprisePayrolls(aonContext, startDate, endDate, eId, wId, typesList).collect(Collectors.toList());
 			Map<String, Map<Integer, Map<String, List<ContractData>>>> contractDataByWorkplace = getContractDataByWorkplace(aonContext, startDate, endDate, eId, wId);
 			
 			manageContractDatas(rawPayrolls, contractDataByWorkplace);
-			organizeCompletePayrolls(rawPayrolls, completeWorkplaceData, filteredNafs, typesList);
+			organizeCompletePayrolls(rawPayrolls, completeWorkplaceData, filteredNafs /*, typesList*/);
 			
 			String enterpriseName = getEnterpriseName(aonContext, eId, wId);
 			writeComplete(params.getOs()
@@ -549,10 +549,10 @@ public class EnterprisePayrollExcel {
 
 	private static void organizeCompletePayrolls(List<IEnterprisePayroll> rawPayrolls,
 			Map<String, Map<String, Map<SalaryType, IEnterprisePayroll>>> completeWorkplaceData,
-			List<String> filteredNafs, List<SalaryType> typesList) {
+			List<String> filteredNafs /*, List<SalaryType> typesList*/) {
 		rawPayrolls.stream().map(EnterprisePayroll.class::cast)
 		.filter(p -> filteredNafs.isEmpty() || filteredNafs.contains(p.getEmployeeNaf()))
-		.filter(p -> (p.getSalaryType() == null || typesList.contains(p.getSalaryType())) && p.getEmployeeNaf() != null)
+		.filter(p -> p.getEmployeeNaf() != null)
 		.forEach(p -> {
 			
 			String dateKey = EnterprisePayrollExcelUtils.getMonthYearName(p.getEndDate());
@@ -656,8 +656,7 @@ public class EnterprisePayrollExcel {
 					.getEnterprise();
 			
 			List<IEnterprisePayroll> payrolls =
-					getEnterprisePayrolls(aonContext, startDate, endDate, eId, wId)
-					.filter(p -> p.getSalaryType() == null || p.getSalaryType().ordinal()< SalaryType.L00.ordinal())
+					getEnterprisePayrolls(aonContext, startDate, endDate, eId, wId, null)
 					.collect(Collectors.toList());
 			
 			Map<String, Map<Integer, Map<String, List<ContractData>>>> contractDataByWorkplace = getContractDataByWorkplace(aonContext, startDate, endDate, eId, wId);
@@ -706,8 +705,7 @@ public class EnterprisePayrollExcel {
 					.getEnterprise();
 			
 			List<IEnterprisePayroll> payrolls =
-					getEnterprisePayrolls(aonContext, month, year, eId, wId)
-					.filter(p -> p.getSalaryType() == null || p.getSalaryType().ordinal()< SalaryType.L00.ordinal())
+					getEnterprisePayrolls(aonContext, month, year, eId, wId, null)
 					.collect(Collectors.toList());
 			
 			String enterpriseName = getEnterpriseName(aonContext, eId, wId);
@@ -725,7 +723,7 @@ public class EnterprisePayrollExcel {
 		} catch (IOException e) {}
 	}
 	
-	public static void simpleEnterprisePayrollGenerator (EnterprisePayrollExcelParams params, Date date, Collection<Integer> types) {
+	public static void simpleEnterprisePayrollGenerator (EnterprisePayrollExcelParams params, Date date, List<com.esferalia.aon.occam.api.model.type.SalaryType> types) {
 		
 		Calendar c = Calendar.getInstance();
 		c.setTime(date);
@@ -753,8 +751,7 @@ public class EnterprisePayrollExcel {
 					.getEnterprise();
 			
 			List<IEnterprisePayroll> payrolls =
-					getEnterprisePayrolls(aonContext, month, year, eId, wId)
-					.filter(p -> p.getSalaryType() == null || types.contains(p.getSalaryType().ordinal()))
+					getEnterprisePayrolls(aonContext, month, year, eId, wId, types)
 					.sorted(Comparator.comparing(IEnterprisePayroll::getEmployee))
 					.collect(Collectors.toList());
 			
@@ -984,8 +981,6 @@ public class EnterprisePayrollExcel {
 						rawColumn = CellReference.convertNumToColString(c);
 					else if (key.equals("enterpriseSS"))
 						enterpriseSSColumn = CellReference.convertNumToColString(c);
-//						else if (key.equals("bonuses"))
-//							bonusColumn = CellReference.convertNumToColString(c);
 					else if (key.equals("employeeSS"))
 						employeeSSColumn = CellReference.convertNumToColString(c);
 					else if (key.equals("otherDeductions"))
@@ -1049,7 +1044,6 @@ public class EnterprisePayrollExcel {
 							
 							normalRows.add(row.getRowNum() + 1);
 							//EMPLOYEE NAME
-//							writeEmployee(stylesMap, row, column++, payroll, excelType);
 							column++;
 							column++;
 							column++;
@@ -1164,15 +1158,6 @@ public class EnterprisePayrollExcel {
 					if (!rowsForMonthTotal.isEmpty()) {
 						row = sheet.getRow(monthRowInd);
 						LinkedHashMap<Integer, Double> fixedCells = new LinkedHashMap<>();
-//						if (fundaeCell > 0) {
-//							
-//							if (checks.isFundae()) {
-//								Double value = payroll.getFundae();
-//								fixedCells.put(fundaeCell, value);
-//							} else {
-//								fixedCells.put(fundaeCell, 0d);
-//							}
-//						}
 						int totRow = writeMonthTotals(stylesMap, sheet, joints, importantCells, rowsForMonthTotal, row, month, fixedCells);
 						totalRows.add(totRow + 1);
 					} else {
@@ -1208,8 +1193,6 @@ public class EnterprisePayrollExcel {
 						}
 						otherCell = row.createCell(cellInd);
 						otherCell.setCellStyle(stylesMap.get(PayrollCellStyle.BORDER_LEFT_CELL_STYLE));
-						
-						
 					}
 					
 					
@@ -1239,7 +1222,6 @@ public class EnterprisePayrollExcel {
 				//WORKPLACE'S 2ND HEADER ROW 
 				
 				row = sheet.createRow(1);
-//				sheet.addMergedRegion(new CellRangeAddress(1, 1, 0, entFirstCell-1));
 				sheet.addMergedRegion(new CellRangeAddress(1, 1, entFirstCell, empFirstCell - 2));
 				sheet.addMergedRegion(new CellRangeAddress(1, 1, empFirstCell, tgssCell - 2));
 				
@@ -1289,16 +1271,7 @@ public class EnterprisePayrollExcel {
 					empQuoteCell.setCellValue("COTIZACIÓN EMPLEADO");
 				}
 					
-					LinkedHashMap<Integer, Double> fixedCells = new LinkedHashMap<>(); 
-					
-//					if (fundaeCell > 0 && optWorkplaceContractData.isPresent()) {
-//						Map<String, Double> workplaceContractData = optWorkplaceContractData.get();
-//						if (workplaceContractData.containsKey(FUNDAE)) {
-//							double fundaeValue = workplaceContractData.get(FUNDAE) != null ? workplaceContractData.get(FUNDAE) : 0;
-//							fixedCells.put(fundaeCell, fundaeValue);
-//						}
-//					}
-				
+				LinkedHashMap<Integer, Double> fixedCells = new LinkedHashMap<>(); 
 				
 				
 				//WORKPLACE'S TOTALS
@@ -1463,7 +1436,6 @@ public class EnterprisePayrollExcel {
 				String rawColumn = null;
 				String enterpriseSSColumn = null;
 				String employeeSSColumn = null;
-//				String bonusColumn = null;
 				String otherDecutionsColumn = null;
 				String advancedPaymentsColumn = null;
 				
@@ -1614,8 +1586,6 @@ public class EnterprisePayrollExcel {
 							rawColumn = CellReference.convertNumToColString(c);
 						else if (key.equals("enterpriseSS"))
 							enterpriseSSColumn = CellReference.convertNumToColString(c);
-//						else if (key.equals("bonuses"))
-//							bonusColumn = CellReference.convertNumToColString(c);
 						else if (key.equals("employeeSS"))
 							employeeSSColumn = CellReference.convertNumToColString(c);
 						else if (key.equals("otherDeductions"))
@@ -1684,13 +1654,6 @@ public class EnterprisePayrollExcel {
 					}
 					//TODO:NOT SURE
 					if (checks.isEnterpriseSS()) {
-//						Cell fCell = row.createCell(column++, CellType.FORMULA);
-//						String formula = ""+payroll.getEnterpriseSS()!=null?""+payroll.getEnterpriseSS():"0";
-//						if (thereIsBonuses && excelType == ExcelType.COMPLETE)
-//							formula+="+"+bonusColumn+(row.getRowNum()+1);
-//						else if (thereIsBonuses && excelType == ExcelType.SUMMARY)
-//							formula+="-"+payroll.getBonuses();
-//						fCell.setCellFormula(formula);
 						CellStyle sti = stylesMap.get(style);
 						ssCols.add(column);
 						if (payroll.getOriginalPayroll() != null){
@@ -1854,7 +1817,6 @@ public class EnterprisePayrollExcel {
 				//WORKPLACE'S 2ND HEADER ROW 
 				
 				row = sheet.createRow(1);
-//				sheet.addMergedRegion(new CellRangeAddress(1, 1, 0, entFirstCell-1));
 				sheet.addMergedRegion(new CellRangeAddress(1, 1, entFirstCell, empFirstCell - 2));
 				sheet.addMergedRegion(new CellRangeAddress(1, 1, empFirstCell, tgssCell-2));
 				
@@ -1934,13 +1896,11 @@ public class EnterprisePayrollExcel {
 				//TOTALS' FINAL BORDER
 				if (totals != null) {
 					for (int i = 0; i<=totals.getLastRowNum(); i++) {
-//						if (!totalsSSRows.contains(i)) {
-							Row r = totals.getRow(i);
-							int lCell = excelType.isComplete() ? completeLength + 1 : summaryLength +1;
-							Cell borderCell = r.createCell(lCell);
-							borderCell.setCellStyle(wb.createCellStyle());
-							borderCell.getCellStyle().setBorderLeft(BorderStyle.THIN);							
-//						}
+						Row r = totals.getRow(i);
+						int lCell = excelType.isComplete() ? completeLength + 1 : summaryLength +1;
+						Cell borderCell = r.createCell(lCell);
+						borderCell.setCellStyle(wb.createCellStyle());
+						borderCell.getCellStyle().setBorderLeft(BorderStyle.THIN);							
 					}
 					
 				}
@@ -2177,15 +2137,30 @@ public class EnterprisePayrollExcel {
 		}
 	}
 
-	public static Stream<EnterprisePayroll> getEnterprisePayrolls(AONContext aonContext, Date startDate, Date endDate, Integer enterpriseId, Integer workplaceId) {
+	public static Stream<EnterprisePayroll> getEnterprisePayrolls(AONContext aonContext, Date startDate, Date endDate, Integer enterpriseId, Integer workplaceId, List<com.esferalia.aon.occam.api.model.type.SalaryType> types) {
 
-		Condition condition = SALARY.ISSUE_DATE.ge(new java.sql.Date(startDate.getTime()))
-				.and(SALARY.ISSUE_DATE.le(new java.sql.Date(endDate.getTime())))
-				.and(ENTERPRISE.REGISTRY.eq(enterpriseId))
-				.and(SALARY.TYPE.lt((byte)4)); // Only, salary, extra, delay, settle
+		Condition condition = ENTERPRISE.REGISTRY.eq(enterpriseId);
+		
+		condition = condition.and(
+				(
+						SALARY.TYPE.ne(com.esferalia.aon.occam.api.model.type.SalaryType.DELAY.value()).and(
+						SALARY.ISSUE_DATE.between(new java.sql.Date(startDate.getTime()), new java.sql.Date(endDate.getTime())))
+				).or(
+						SALARY.TYPE.eq(com.esferalia.aon.occam.api.model.type.SalaryType.DELAY.value()).and(
+						SALARY.CHARGE_DATE.between(new java.sql.Date(startDate.getTime()), new java.sql.Date(endDate.getTime())))
+				)
+		);
+		
 		if (workplaceId != null && workplaceId > 0)
 			condition = condition.and(WORKPLACE.ID.eq(workplaceId));
-
+		
+		if(null == types || types.isEmpty())
+			condition = condition.and(SALARY.TYPE.le((byte)4)); // Only, salary, extra, delay, settle
+		else {
+			Collection<Integer> typeInts = types.stream().map(com.esferalia.aon.occam.api.model.type.SalaryType::ordinal).collect(Collectors.toList());	
+			condition = condition.and(SALARY.TYPE.in(typeInts));
+		}
+		
 		Map<Integer, String> workplaces = aonContext.getDslContext().select(SALARY.ID, WORKPLACE.DESCRIPTION)
 				.from(SALARY).innerJoin(CONTRACT).onKey().innerJoin(WORKPLACE).onKey().innerJoin(ENTERPRISE).onKey()
 				.where(condition).fetchStream().collect(HashMap::new,
@@ -2231,16 +2206,9 @@ public class EnterprisePayrollExcel {
 					salaryPerson.put(sr.get(SALARY.ID), sr.get(PERSON.REGISTRY));
 				}
 			});
-
+		
 		Stream<Salary> salaries = AON.getSalaries(aonContext,
 				s -> s.getIdProperty().in(ids.toArray(new Integer[ids.size()])));
-		
-		List<Salary> sl = AON.getSalaries(aonContext,
-				s -> s.getIdProperty().in(ids.toArray(new Integer[ids.size()]))).collect(Collectors.toList());
-		
-		for (Salary sal : sl) {
-			System.out.println(sal.getEmployeeName() + " - " + sal.getTotalIrpf());
-		}
 		
 		return salaries.filter(s -> s.getSalaryType() != null).map(s -> {
 			
@@ -2288,7 +2256,6 @@ public class EnterprisePayrollExcel {
 				enterprisePayroll.employeeSS = dedBonus;
 			
 			enterprisePayroll.enterpriseSS = s.getTotalEnterprise();
-//			enterprisePayroll.enterpriseSS = s.getCosts().stream().mapToDouble(Cost::getAmount).sum();
 
 			enterprisePayroll.totalSS = enterprisePayroll.employeeSS + enterprisePayroll.enterpriseSS;
 			enterprisePayroll.totalCost = enterprisePayroll.enterpriseSS /*+ enterprisePayroll.irpf*/
@@ -2388,7 +2355,7 @@ public class EnterprisePayrollExcel {
 	}
 	
 	public static Stream<EnterprisePayroll> getEnterprisePayrolls(AONContext aonContext, final int month,
-			final int year, Integer enterpriseId, Integer workplaceId) throws IOException {
+			final int year, Integer enterpriseId, Integer workplaceId, List<com.esferalia.aon.occam.api.model.type.SalaryType> types) throws IOException {
 		
 		Calendar calendar = Calendar.getInstance();
 		calendar.set(Calendar.DAY_OF_MONTH, 1);
@@ -2399,7 +2366,7 @@ public class EnterprisePayrollExcel {
 		calendar.set(Calendar.DAY_OF_MONTH, calendar.getActualMaximum(Calendar.DAY_OF_MONTH));
 		Date endDate = calendar.getTime();
 
-		return getEnterprisePayrolls(aonContext, startDate, endDate, enterpriseId, workplaceId);
+		return getEnterprisePayrolls(aonContext, startDate, endDate, enterpriseId, workplaceId, types);
 	}
 	
 	
@@ -2411,20 +2378,6 @@ public class EnterprisePayrollExcel {
 		if (workplaces.size() > 1) {
 			totals = wb.createSheet(WorkbookUtil.createSafeSheetName("TOTALES"));
 			// Sheet of total amounts by workplace
-
-//			LinkedHashMap<String, String> finalHeader = new LinkedHashMap<>();
-//
-//			if (header.isPresent()) {
-//				LinkedHashMap<String, String> customHeader = header.get();
-//				finalHeader.putAll(customHeader);
-//			} else {
-//				if (excelType.isComplete())
-//					finalHeader.putAll(DEFAULT_HEADER);
-//				else
-//					finalHeader.putAll(DEFAULT_HEADER_SUMMARY);
-//			}
-//
-//			finalHeader.put("employee", "CENTRO DE TRABAJO");
 
 			Iterator<String> itHead = totalsHeader.keySet().iterator();
 			
@@ -2755,8 +2708,6 @@ public class EnterprisePayrollExcel {
 		
 		fixedCells = fixedCells != null ? fixedCells : Collections.emptyMap();
 		
-//		int lastColumn = sheet.getRow(sheet.getLastRowNum()).getLastCellNum();
-		
 		int[] numberOfColumns = new int[1];
 		
 		sheet.rowIterator().forEachRemaining(r -> {
@@ -2839,7 +2790,6 @@ public class EnterprisePayrollExcel {
 		Row row;
 		
 		fixedValues = fixedValues != null ? fixedValues : Collections.emptyMap();
-//		int lastColumn = sheet.getRow(sheet.getLastRowNum()).getLastCellNum();
 		
 		int[] numberOfColumns = new int[1];
 		
@@ -3087,9 +3037,6 @@ public class EnterprisePayrollExcel {
 			return row.getRowNum();
 		}
 		return -1;
-//		if (diffRow != null)
-//			return diffRow.getRowNum();
-//		else return -1;
 	}
 
 	

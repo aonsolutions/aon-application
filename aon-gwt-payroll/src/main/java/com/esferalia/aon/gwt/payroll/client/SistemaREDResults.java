@@ -271,12 +271,8 @@ public class SistemaREDResults extends Composite implements RequiresResize, Empl
 		removeAll();
 	}
 	
-	public void hideRunButton() {
-		runButton.setVisible(false);
-	}
-	
-	public void hideClearButton() {
-		clearButton.setVisible(false);
+	public void hideToolbar() {
+		dockLayoutPanel.setWidgetSize(menuBarFlowPanel, 0);
 	}
 
 //	@UiHandler("expandAllButton")

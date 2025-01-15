@@ -4,49 +4,16 @@ import java.util.List;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.css.AonGwtTemplateResources;
+import com.esferalia.aon.gwt.common.client.css.AonResources;
+import com.esferalia.aon.gwt.common.client.css.GWTResources;
 import com.esferalia.aon.gwt.payroll.shared.Enterprise;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.resources.client.CssResource;
-import com.google.gwt.uibinder.client.UiBinder;
-import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.google.gwt.user.client.ui.Widget;
 
 public class MainSalaryPrint extends MainEntryPoint {
-
-	// --------------------------------------------------------------------------------------------
-	// UiBinder
-	// --------------------------------------------------------------------------------------------
 	
-	interface Binder extends UiBinder<Widget, MainSalaryPrint> {}
-
-	private static final Binder binder = GWT.create(Binder.class);
-	
-	// --------------------------------------------------------------------------------------------
-	// EnterpriseSalaryImpl
-	// --------------------------------------------------------------------------------------------
-	
-	private class EnterpriseSalaryImpl extends EnterpriseSalary {
-
-		@Override
-		protected void onBackClick() {
-			// Nothing to do here
-		}
-
-	}
-
-	// --------------------------------------------------------------------------------------------
-	// UiFields
-	// --------------------------------------------------------------------------------------------
-	
-	@UiField
-	MyStyle style;
-
-	interface MyStyle extends CssResource {}
-	
-	@UiField(provided = true)
-	EnterpriseSalary enterpriseSalary;
+	private SalaryWidget enterpriseSalary;
 
 	// --------------------------------------------------------------------------------------------
 	// Variables
@@ -59,14 +26,16 @@ public class MainSalaryPrint extends MainEntryPoint {
 	// --------------------------------------------------------------------------------------------
 	
 	public MainSalaryPrint() {
-		enterpriseSalary = new EnterpriseSalaryImpl();
-		enterpriseSalary.setSalaryPrintView();
-		
-		GWT.<AonGwtTemplateResources>create(AonGwtTemplateResources.class).css().ensureInjected();
+		// Inject rich styles.
 		AON.ensureInjected();
+		GWT.<GWTResources>create(GWTResources.class).css().ensureInjected();
+		GWT.<AonResources>create(AonResources.class).css().ensureInjected();
+		GWT.<MainEntryPoint.CodeMirrorResources>create(MainEntryPoint.CodeMirrorResources.class).css().ensureInjected();
+		GWT.<AonGwtTemplateResources>create(AonGwtTemplateResources.class).css().ensureInjected();
 
-		Widget ui = binder.createAndBindUi(this);
-		RootLayoutPanel.get(getRootPanel() != null ? getRootPanel() : "rootPanel").add(ui);
+		
+		enterpriseSalary = new SalaryWidget();
+		RootLayoutPanel.get(getRootPanel() != null ? getRootPanel() : "rootPanel").add(enterpriseSalary);
 	}
 
 	// --------------------------------------------------------------------------------------------
@@ -87,13 +56,9 @@ public class MainSalaryPrint extends MainEntryPoint {
 			}
 			
 			@Override
-			public void onFailure(Throwable caught) {
-				// TODO Auto-generated method stub
-				
-			}
-		} );
-		
-		
+			public void onFailure(Throwable caught) {}
+			
+		});
 	}
 	
 	private void getEnterprises() {
@@ -101,17 +66,12 @@ public class MainSalaryPrint extends MainEntryPoint {
 			
 			@Override
 			public void onSuccess(List<Enterprise> enterprises) {
-				EnterpriseSalaryObject enterpriseSalaryObject = new EnterpriseSalaryObject(enterprises);
-				enterpriseSalary.setEnterpriseSalaryObject(enterpriseSalaryObject);
-				enterpriseSalary.hideEditSalaryButton();
-				enterpriseSalary.setEnterprisesView();
+				enterpriseSalary.setEnterprisesManagement();
+				enterpriseSalary.loadSalaries();
 			}
 			
 			@Override
-			public void onFailure(Throwable caught) {
-				// TODO Auto-generated method stub
-				
-			}
+			public void onFailure(Throwable caught) {}
 		});
 	}
 	
@@ -122,18 +82,12 @@ public class MainSalaryPrint extends MainEntryPoint {
 			
 			@Override
 			public void onSuccess(Enterprise enterprise) {
-				EnterpriseSalaryObject enterpriseSalaryObject = new EnterpriseSalaryObject(enterprise);
-				enterpriseSalary.setEnterpriseSalaryObject(enterpriseSalaryObject);
-				enterpriseSalary.hideEditSalaryButton();
-				enterpriseSalary.setEnterpriseView();
-				enterpriseSalary.setNewToolbarTitle();
+				enterpriseSalary.setIsEnterprise();
+				enterpriseSalary.loadSalaries();
 			}
 			
 			@Override
-			public void onFailure(Throwable caught) {
-				// TODO Auto-generated method stub
-				
-			}
+			public void onFailure(Throwable caught) {}
 		});
 	}
 

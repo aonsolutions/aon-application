@@ -329,10 +329,11 @@ public class Mod131WriterAEAT2024 implements IMod131Writer{
 		    ,(wr, mod, act, comp) -> wr.append(AonFiscalFileUtils.unsigned(act.getRpa(),10,2))
 			//65	385	2	Num	C	Liquidación (3) - I. Activ. económicas estimac. objetiva - Actividad - Días de ejercicio en el trimestre		2 enteros
 		    ,(wr, mod, act, comp) -> wr.append(AonFiscalFileUtils.unsigned(act.getDia(),2))
-			//66	387	200	An	C	RESERVADO PARA LA A.E.A.T. (Dejar en blanco) 		
-		    ,(wr, mod, act, comp) -> wr.append(AonFiscalFileUtils.spaces(200))
-		    //67	587	12	An	C	Indicador de fin de registro	Obligatorio	Constante "</T131DPA00>"
-		    ,(wr, mod, act, comp) -> wr.append("</T131DPA00>")
+		    
+		    ,(wr, mod, act, comp) -> wr.append((mod.getYear() > 2024 || (mod.getYear() == 2024 && mod.isLastPeriod())) ? AonFiscalFileUtils.unsigned(act.getDana(), 1) : "") // "Liquidación (3) - I. Activ. económicas estimac. objetiva - Actividad - Si la actividad se realizó en alguno de los municipios afectados por la DANA entre el 28 de octubre y el 4 de noviembre de 2024 (RD-l 6/2024), seleccione lo que proceda                                           
+		    ,(wr, mod, act, comp) -> wr.append((mod.getYear() > 2024 || (mod.getYear() == 2024 && mod.isLastPeriod())) ? AonFiscalFileUtils.unsigned(act.getDanaReduction(),10,2) : "")// "Liquidación (3) - I. Activ. económicas estimac. objetiva - Actividad - Reducción para actividades económicas DANA entre 28 de octubre y  4 de noviembre de 2024 (RD-l 6/2024)
+		    ,(wr, mod, act, comp) -> wr.append(AonFiscalFileUtils.spaces((mod.getYear() > 2024 || (mod.getYear() == 2024 && mod.isLastPeriod())) ? 189 : 200)) //66	387	200	An	C	RESERVADO PARA LA A.E.A.T. (Dejar en blanco)
+		    ,(wr, mod, act, comp) -> wr.append("</T131DPA00>")  //67	587	12	An	C	Indicador de fin de registro	Obligatorio	Constante "</T131DPA00>"
 		})
 		;
 		private IActivityPropertyFiller[] propertyFillers;

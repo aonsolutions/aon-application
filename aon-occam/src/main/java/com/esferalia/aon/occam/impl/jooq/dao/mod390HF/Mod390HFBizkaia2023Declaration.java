@@ -29,7 +29,7 @@ class Mod390HFBizkaia2023Declaration extends Mod390HFBizkaiaDeclaration {
 	}
 	
 	static boolean accept(Mod390HF mod) {
-		return  mod.isBizkaia() && mod.getYear() >= 2023;
+		return  mod.isBizkaia() && mod.getYear() == 2023;
 	}
 	
 	private static final Mod390Key[] PRORATE_KEYS = new Mod390Key[]{

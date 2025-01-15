@@ -16,6 +16,7 @@ import com.esferalia.aon.occam.api.model.InvestAssetParams;
 import com.esferalia.aon.occam.api.model.MarketingAction;
 import com.esferalia.aon.occam.api.model.MarketingActionParams;
 import com.esferalia.aon.occam.api.model.MarketingActionTarget;
+import com.esferalia.aon.occam.api.model.MarketingActionTargetMassiveParams;
 import com.esferalia.aon.occam.api.model.MarketingActionTargetParams;
 import com.esferalia.aon.occam.api.model.MarketingCampaign;
 import com.esferalia.aon.occam.api.model.MarketingCompaignParams;
@@ -39,7 +40,9 @@ import com.esferalia.aon.occam.api.model.news.News;
 import com.esferalia.aon.occam.api.model.office.Tag;
 import com.esferalia.aon.occam.api.model.payroll.Activity;
 import com.esferalia.aon.occam.api.model.product.OldProduct;
+import com.esferalia.aon.occam.api.model.project.ProjectActivity;
 import com.esferalia.aon.occam.api.model.project.ProjectCommercial;
+import com.esferalia.aon.occam.api.model.project.ProjectType;
 import com.esferalia.aon.occam.api.model.registry.Category;
 import com.esferalia.aon.occam.api.model.registry.Creditor;
 import com.esferalia.aon.occam.api.model.registry.CreditorFull;
@@ -190,6 +193,7 @@ public interface CommonServiceAsync {
 	// **************************************************
 	
 	void getMarketingActionTargets(MarketingActionTargetParams params, AsyncCallback<List<MarketingActionTarget>> asyncCallback) throws AonCoreException;
+	void getMarketingActionTargets(MarketingActionTargetMassiveParams params, AsyncCallback<List<MarketingActionTarget>> asyncCallback) throws AonCoreException;
 	void deleteMarketingActionTarget(String domainName, int domain, String user, Integer actionTargetId, AsyncCallback<Void> asyncCallback) throws AonCoreException;
 	void saveMarketingActionTarget(String domainName, int domain, String user,MarketingActionTarget marketingActionTarget, AsyncCallback<MarketingActionTarget> asyncCallback) throws AonCoreException;
 	
@@ -199,6 +203,9 @@ public interface CommonServiceAsync {
 	void getAviableTaskHolders(String domainName, int domain, String user, Integer workgroup, AsyncCallback<List<TaskHolder>> asyncCallback) throws AonCoreException;
 
 	void getAviableServiceUsers(String domainName, int domain, String user, AsyncCallback<List<User>> asyncCallback) throws AonCoreException;
+	
+	void getAviableProjectActivity(String domainName, int domain, String user, AsyncCallback<List<ProjectActivity>> asyncCallback) throws AonCoreException;
+	void getAviableProjectType(String domainName, int domain, String user, AsyncCallback<List<ProjectType>> asyncCallback) throws AonCoreException;
 	
 	// **************************************************
 	// ***************************** [PROJECT COMMERCIAL]

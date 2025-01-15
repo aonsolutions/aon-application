@@ -27,6 +27,7 @@ import com.esferalia.aon.occam.api.model.Filter.ProductFilter;
 import com.esferalia.aon.occam.api.model.Filter.RawdocFilter;
 import com.esferalia.aon.occam.api.model.Filter.RegistryFilter;
 import com.esferalia.aon.occam.api.model.InvoiceCounter;
+import com.esferalia.aon.occam.api.model.InvoiceUserData;
 import com.esferalia.aon.occam.api.model.PayMethodParams;
 import com.esferalia.aon.occam.api.model.Rawdoc;
 import com.esferalia.aon.occam.api.model.RawdocDomainData;
@@ -179,6 +180,11 @@ public class FinanceImpl implements IFinance {
 	public InvoiceCounter getInvoiceCounter(AONContext ctx) {
 		return ctx.getDslContext().transactionResult(
 				configuration -> InvoiceDAO.getCounter(ctx));
+	}
+	
+	@Override
+	public InvoiceUserData getInvoiceUserData(AONContext ctx, byte[] auth) {
+		return ctx.getDslContext().transactionResult(configuration -> InvoiceDAO.getUserData(ctx, auth));
 	}
 	
 	
@@ -525,6 +531,16 @@ public class FinanceImpl implements IFinance {
 	public Finance financeInvoiceIntegrityFix(AONContext ctx, Finance finance) {
 		return ctx.getDslContext().transactionResult(configuration
 				-> FinanceUtilitiesDAO.financeInvoiceIntegrityFix( ctx , finance));
+	}
+	@Override
+	public FinanceUtilitiesResult activityIntegrity(AONContext ctx, Integer domain) {
+		return ctx.getDslContext().transactionResult(configuration
+			-> FinanceUtilitiesDAO.activityIntegrity( ctx , domain));
+	}
+	@Override
+	public void activityIntegrityFix(AONContext ctx, Integer invoiceId, boolean useInvoiceActivity) {
+		ctx.getDslContext().transaction(configuration
+			-> FinanceUtilitiesDAO.activityIntegrityFix( ctx , invoiceId, useInvoiceActivity));
 	}
 	
  	

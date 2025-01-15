@@ -260,9 +260,8 @@ public class ContrataEmployeeObject {
 	
 	// ------------------------------------------------- Database Methods (Salaries)
 	
-	public void getEmployeeSalaryObject(Consumer<EmployeeSalaryObject> success) {
-		EmployeeSalaryObject employeeSalaryObject = new EmployeeSalaryObject(contractData.getContractId(), employeeData.getFullName());
-		success.accept(employeeSalaryObject);
+	public void getEmployeeSalaryObject(Consumer<SalaryWidget> success) {
+		success.accept(null);
 	}
 	
 	// ------------------------------------------------- Database Methods (Calendar)

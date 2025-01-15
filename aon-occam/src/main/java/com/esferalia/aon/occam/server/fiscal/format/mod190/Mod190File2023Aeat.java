@@ -55,7 +55,7 @@ enum Mod190File2023Aeat {
 	   ,(wr, mod190,detail) -> wr.append(AonFiscalFileUtils.unsigned(AonMathUtils.round(detail.getInKindDeposit()),13,2))
 	   ,(wr, mod190,detail) -> wr.append(AonFiscalFileUtils.unsigned(AonMathUtils.round(detail.getInKindOutputDeposit()),13,2))
 	   ,(wr, mod190,detail) -> wr.append(AonFiscalFileUtils.unsigned(detail.getAccrualYear(), 4,0))
-	   ,(wr, mod190,detail) -> wr.append(detail.isCeutaMelilla()?"1":"0")
+	   ,(wr, mod190,detail) -> wr.append(AonFiscalFileUtils.unsigned(detail.getCeutaMelillaPalma(),1,0))
 	   ,(wr, mod190,detail) -> wr.append(AonFiscalFileUtils.unsigned(detail.getBirthYear(), 4,0))
 	   ,(wr, mod190,detail) -> wr.append(AonFiscalFileUtils.unsigned(detail.getFamilySituation(), 1,0))
 	   ,(wr, mod190,detail) -> wr.append(AonFiscalFileUtils.text(detail.getSpouseDocument(), 9))

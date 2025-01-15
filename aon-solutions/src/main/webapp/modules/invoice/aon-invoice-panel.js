@@ -315,7 +315,7 @@ export class AonInvoicePanel extends AonElement {
       this.selectOption(e.detail);
     });
 
-    OPTION.getOptions(this.getDur()).forEach((option) => {
+    OPTION.getOptions(this.isBeta()).forEach((option) => {
       option.app = INVOICE;
       if((this.getDur().isTrial())) {
         const itemsToRemove = [OPTION.RAWDOC_PROCESSING, OPTION.RAWDOC_REJECT];
@@ -340,15 +340,18 @@ export class AonInvoicePanel extends AonElement {
   invoiceCounter() {
     getRawdocCount({}).then((r) => {
       this.counterActive = true;
+  
+      let invoiceIssued = this.isBeta() ? OPTION.INVOICE_ISSUED_BETA : OPTION.INVOICE_ISSUED;
       if (r.invoice && r.invoice.emitida && r.invoice.emitida > 0) {
-        addCounter(OPTION.INVOICE_ISSUED, r.invoice.emitida);
+        addCounter(invoiceIssued, r.invoice.emitida);
       }
-      this.updateCounterSpan(OPTION.INVOICE_ISSUED);
+      this.updateCounterSpan(invoiceIssued);
 
+      let invoiceReceived = this.isBeta() ? OPTION.INVOICE_RECEIVED_BETA : OPTION.INVOICE_RECEIVED;
       if (r.invoice && r.invoice.recibida && r.invoice.recibida > 0) {
-        addCounter(OPTION.INVOICE_RECEIVED, r.invoice.recibida);
+        addCounter(invoiceReceived, r.invoice.recibida);
       }
-      this.updateCounterSpan(OPTION.INVOICE_RECEIVED);
+      this.updateCounterSpan(invoiceReceived);
 
       if (r.invoice && r.invoice.ticket && r.invoice.ticket > 0) {
         addCounter(OPTION.INVOICE_TICKET, r.invoice.ticket);
@@ -386,9 +389,9 @@ export class AonInvoicePanel extends AonElement {
       this.updateCounterSpan(OPTION.RAWDOC_REJECT);
 
       if (r && r.rawdoc && r.rawdoc.draft && r.rawdoc.draft.count && r.rawdoc.draft.count > 0) {
-        addCounter(OPTION.RAWDOC_DRAFT, r.rawdoc.draft.count);
+        addCounter(OPTION.RAWDOC_TRASH, r.rawdoc.draft.count);
       }
-      this.updateCounterSpan(OPTION.RAWDOC_DRAFT);
+      this.updateCounterSpan(OPTION.RAWDOC_TRASH);
       this.updateCounterHome();
     });
   }
@@ -459,9 +462,9 @@ export class AonInvoicePanel extends AonElement {
     getInvofoxCount(trashFilter).then((r) => {
       this.counterActive = true;
       if (r && r.count && r.count > 0) {
-        addCounter(OPTION.RAWDOC_DRAFT, r.count);
+        addCounter(OPTION.RAWDOC_TRASH, r.count);
       }
-      this.updateCounterSpan(OPTION.RAWDOC_DRAFT);
+      this.updateCounterSpan(OPTION.RAWDOC_TRASH);
       this.updateCounterHome();
     }).catch( e => this.counterActive = true);
   }
@@ -503,7 +506,7 @@ export class AonInvoicePanel extends AonElement {
     let rejectedNumber = this.getElement("rejectedNumber");
     if (rejectedNumber) rejectedNumber.innerHTML = rejectedCounter;
 
-    let trash = getCounter()[OPTION.RAWDOC_DRAFT.id] || 0;
+    let trash = getCounter()[OPTION.RAWDOC_TRASH.id] || 0;
     let trashNumber = this.getElement("trashNumber");
     if (trashNumber) trashNumber.innerHTML = trash;
   }

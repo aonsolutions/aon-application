@@ -10,27 +10,19 @@ import com.esferalia.aon.gwt.payroll.client.AbstractEventsDraftObject.DecimalEve
 import com.esferalia.aon.gwt.payroll.client.AbstractEventsDraftObject.EventMetaData;
 import com.esferalia.aon.gwt.payroll.shared.Activity;
 import com.esferalia.aon.gwt.payroll.shared.Agreement;
-import com.esferalia.aon.gwt.payroll.shared.Category;
 import com.esferalia.aon.gwt.payroll.shared.Employee;
 import com.esferalia.aon.gwt.payroll.shared.Enterprise;
 import com.esferalia.aon.gwt.payroll.shared.Statistics;
 import com.esferalia.aon.gwt.payroll.shared.Workplace;
 import com.google.gwt.user.client.ui.HasTreeItems;
-import com.google.gwt.user.client.ui.IsTreeItem;
 import com.google.gwt.user.client.ui.TreeItem;
 
 public class Workers extends Employees {
 
-	public Map<Integer, WorkplaceITObject> workplaceITsMap = new HashMap<>();
 	public Map<Integer, WorkplaceCostDocuments> workplaceCostsMap = new HashMap<>();
-	public Map<Integer, WorkplaceSalaryObject> workplaceSalaryMap = new HashMap<>();
 	private Map<Integer, EventsDraftObject> workplaceEventsMap = new HashMap<>();
 	
-	
-
-	public Map<Integer, EnterpriseITObject> enterpriseITsMap = new HashMap<>();
 	public Map<Integer, EnterpriseStatistics> enterpriseStatsMap = new HashMap<>();
-	public Map<Integer, EnterpriseSalaryObject> enterpriseSalaryMap = new HashMap<>();
 	public Map<Integer, EnterpriseCostDocuments> enterpriseCostsMap = new HashMap<>();
 
 	public Workers() {
@@ -45,10 +37,6 @@ public class Workers extends Employees {
 	// -------------------------------------------------------------- Employees
 	
 	@Override
-	protected <T extends HasTreeItems> void addEnterpriseITsItem(T enterpriseItem, Enterprise enterprise) {
-	}
-
-	@Override
 	protected <T extends HasTreeItems> void addEnterpriseStatsItem(T enterpriseItem, Enterprise enterprise) {
 	}
 
@@ -56,10 +44,6 @@ public class Workers extends Employees {
 	protected <T extends HasTreeItems> void addEnterpriseCostsItem(T enterpriseItem, Enterprise enterprise) {
 	}
 	
-	@Override
-	protected <T extends HasTreeItems> void addEnterpriseSalariesItem(T enterpriseItem, Enterprise enterprise) {
-	}
-		
 	@Override
 	protected <T extends HasTreeItems> TreeItem addEnterpriseWorkplaceItem(T enterpriseItem, Enterprise enterprise,
 			Workplace workplace) {
@@ -80,10 +64,6 @@ public class Workers extends Employees {
 	}
 
 	@Override
-	protected <T extends HasTreeItems> void addWorkplaceITsItem(T workplaceItem, Workplace workplace) {
-	}
-	
-	@Override
 	protected <T extends HasTreeItems> void addWorkplaceStatsItem(T workplaceItem, Workplace workplace) {
 	}
 
@@ -93,10 +73,6 @@ public class Workers extends Employees {
 
 	@Override
 	protected <T extends HasTreeItems> void addWorkplaceCalendarItem(T workplaceItem, Workplace workplace) {
-	}
-	
-	@Override
-	protected <T extends HasTreeItems> void addWorkplaceSalariesItem(T workplaceItem, Workplace workplace) {
 	}
 	
 	@Override
@@ -144,20 +120,6 @@ public class Workers extends Employees {
 		}
 	}
 	
-	@Override
-	public void getEnterpriseSalary(Enterprise enterprise, Consumer<EnterpriseSalaryObject> consumer) {
-		EnterpriseSalaryObject enterpriseSalary = 
-		enterpriseSalaryMap.computeIfAbsent(enterprise.getId(), id -> new EnterpriseSalaryObject(enterprise));
-		consumer.accept(enterpriseSalary);
-	}
-	
-	@Override
-	public void getEnterpriseIT(Enterprise enterprise, Consumer<EnterpriseITObject> consumer) {
-		EnterpriseITObject enterpriseITObject = 
-		enterpriseITsMap.computeIfAbsent(enterprise.getId(), id -> new EnterpriseITObject() );
-		consumer.accept(enterpriseITObject);
-	}
-	
 	// -------------------------------------------------------------- Workplace
 	
 	@Override
@@ -171,13 +133,6 @@ public class Workers extends Employees {
 				consumer.accept(costDocuments);
 			});
 		}
-	}
-	
-	@Override
-	public void getWorkplaceSalary(Workplace workplace, Consumer<WorkplaceSalaryObject> consumer) {
-		WorkplaceSalaryObject workplaceSalary = 
-		workplaceSalaryMap.computeIfAbsent(workplace.getId(), id -> new WorkplaceSalaryObject(workplace));
-		consumer.accept(workplaceSalary);
 	}
 
 	@Override
@@ -204,25 +159,8 @@ public class Workers extends Employees {
 		consumer.accept(calendarDraftObjectData);		
 	}
 	
-	@Override
-	public void getWorkplaceIT(Workplace workplace, Consumer<WorkplaceITObject> consumer) {
-		WorkplaceITObject workplaceITObject = 
-		workplaceITsMap.computeIfAbsent(workplace.getId(), WorkplaceITObject::new);
-		consumer.accept(workplaceITObject);
-	}
-	
 	// --------------------------------------------------------------- Employee
 
-	private Map<Integer, EmployeeSalaryObject> employeeSalaryMap = new HashMap<>();
-	
-	@Override
-	public void getEmployeeSalary(SalaryDraftObject employeeDraftObject, Consumer<EmployeeSalaryObject> consumer) {
-		Employee employee = employeeDraftObject.getEmployee();
-		EmployeeSalaryObject employeeSalaryObject = 
-		employeeSalaryMap.computeIfAbsent(employee.getId(), id -> new EmployeeSalaryObject(id, employee.getFullname()));
-		consumer.accept(employeeSalaryObject);
-	}
-	
 	private Map<Integer, EmployeeEventsDraftObject> employeeEventsMap = new HashMap<>();
 
 	@Override

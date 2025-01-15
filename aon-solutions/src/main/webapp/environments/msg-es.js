@@ -331,6 +331,7 @@ export const OPTIONAL = "Opcional";
 export const OPTIONS = 'Opciones';
 export const OR_ACCESS = 'o ACCEDE';
 export const OTHER_SERVICES = 'Otros Servicios';
+export const ONE = 'Una';
 
 // ----- P
 
@@ -482,7 +483,7 @@ export const TYPE = 'Tipo';
 export const TYPES = 'Tipos';
 
 // ----- U
-
+export const UNACCOUNT_INVOICES = "Facturas sin Contabilizar";
 export const UNLINK = "Desvincular";
 export const UNLINK_DOMAIN_QUESTION = "¿Desea desvincular este cliente del dominio?";
 export const UNLINK_CLIENT = "Desvincular cliente";

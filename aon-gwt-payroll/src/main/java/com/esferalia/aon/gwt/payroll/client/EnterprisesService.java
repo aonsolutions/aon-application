@@ -13,6 +13,8 @@ import com.esferalia.aon.gwt.payroll.client.PayrollEmailDialog.Type;
 import com.esferalia.aon.gwt.payroll.shared.AFIChanges;
 import com.esferalia.aon.gwt.payroll.shared.ActivitiesCCC;
 import com.esferalia.aon.gwt.payroll.shared.ActivityInfo;
+import com.esferalia.aon.gwt.payroll.shared.ActivitySummaryObject;
+import com.esferalia.aon.gwt.payroll.shared.ActivitySummaryParams;
 import com.esferalia.aon.gwt.payroll.shared.AgrarianJourney;
 import com.esferalia.aon.gwt.payroll.shared.Agreement;
 import com.esferalia.aon.gwt.payroll.shared.AgreementInfo;
@@ -35,13 +37,13 @@ import com.esferalia.aon.gwt.payroll.shared.EmployeeContractInfo;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeSegSocial;
 import com.esferalia.aon.gwt.payroll.shared.Enterprise;
 import com.esferalia.aon.gwt.payroll.shared.EnterpriseContext;
-import com.esferalia.aon.gwt.payroll.shared.EnterpriseITStatus;
 import com.esferalia.aon.gwt.payroll.shared.EnterpriseITStatus.ItNotExist;
 import com.esferalia.aon.gwt.payroll.shared.EnterpriseStatus;
 import com.esferalia.aon.gwt.payroll.shared.Extra;
 import com.esferalia.aon.gwt.payroll.shared.IT;
 import com.esferalia.aon.gwt.payroll.shared.ITEmployee;
 import com.esferalia.aon.gwt.payroll.shared.ITPart;
+import com.esferalia.aon.gwt.payroll.shared.ItParams;
 import com.esferalia.aon.gwt.payroll.shared.Mail;
 import com.esferalia.aon.gwt.payroll.shared.MainCCCInfo;
 import com.esferalia.aon.gwt.payroll.shared.Payment;
@@ -50,6 +52,8 @@ import com.esferalia.aon.gwt.payroll.shared.Period;
 import com.esferalia.aon.gwt.payroll.shared.Result;
 import com.esferalia.aon.gwt.payroll.shared.SSBonusData;
 import com.esferalia.aon.gwt.payroll.shared.SSPECData;
+import com.esferalia.aon.gwt.payroll.shared.SalaryInfo;
+import com.esferalia.aon.gwt.payroll.shared.SalaryParams;
 import com.esferalia.aon.gwt.payroll.shared.SecondaryUserCertificate;
 import com.esferalia.aon.gwt.payroll.shared.Variable;
 import com.esferalia.aon.gwt.payroll.shared.Workplace;
@@ -173,7 +177,7 @@ public interface EnterprisesService extends RemoteService {
 
 	Period getMinMaxCraDate(String domain, String string) throws IllegalArgumentException;
 
-	void createNewCRA(String domainName, String user, long findingDate, List<String> ccc, ArrayList<Integer> cccIdList, Integer cccId, String type) throws IllegalArgumentException;
+	void createNewCRA(String domainName, String user, long findingDate, HashMap<Integer, String> cccs, Integer cccId, String type) throws IllegalArgumentException;
 
 	void deleteCRA(String currentDomainName, Integer code);
 
@@ -209,7 +213,7 @@ public interface EnterprisesService extends RemoteService {
 	
 	String getSalariesPDF(String currentDomainName, String currentUser, Integer enterpriseId, List<Integer> salaryIds) throws IllegalArgumentException;
 
-	void checkCreateNewCRA(String currentDomainName, long findingDate, ArrayList<Integer> cccList) throws IllegalArgumentException;
+	void checkCreateNewCRA(String currentDomainName, long findingDate, HashMap<Integer, String> cccs) throws IllegalArgumentException;
 
 	List<CCCInfo> getEnterprisesCCCInfo(String currentDomainName, String user, long findPeriodTime);
 
@@ -221,7 +225,7 @@ public interface EnterprisesService extends RemoteService {
 	
 	List<EmployeeContractInfo> getFJEmployeesInfo(String currentDomainName);
 
-	List<ITEmployee> getEmployeesITInfo(String currentDomainName, Boolean allEmployees);
+	List<ITEmployee> getEmployeeItList(String currentDomainName, ItParams params) throws IllegalArgumentException;
 
 	List<ITEmployee> getEmployeesITInfo(String currentDomainName, Integer ids []);
 
@@ -229,9 +233,7 @@ public interface EnterprisesService extends RemoteService {
 
 	String createUpdateITEmployee(String currentDomainName, ITEmployee employeeITInfo);
 	
-	EnterpriseStatus getEnterpriseStatus(String domain, String user, Integer enterpriseId );
-
-	EnterpriseITStatus getEnterpriseITStatus(String domain, String user);
+	EnterpriseStatus getEnterpriseStatus(String domain, String user, Integer enterpriseId ) throws IllegalArgumentException;
 
 	// ------------------------------------------------ Contract Attachments
 	
@@ -251,6 +253,8 @@ public interface EnterprisesService extends RemoteService {
 	List<ContractClause> getContractClauses(String currentDomainName, Integer contractId) throws IllegalArgumentException ;
 
 	void setContractClauses(String currentDomainName, Integer contractId, List<ContractClause> contractClauses) throws IllegalArgumentException ;
+	
+	void saveContractClause(String currentDomainName, String currentUser, ContractClause contractClause) throws IllegalArgumentException ;
 	
 	void deleteContractClause(String currentDomainName, Integer clauseId) throws IllegalArgumentException;
 
@@ -296,12 +300,9 @@ public interface EnterprisesService extends RemoteService {
 			String contributionAccount, String docType, String docNum, String applicantType, String reason,
 			Date dateFrom, Date dateTo, float baseCC, float baseCP, int days);
 
-	void deleteComunicateIT(String currentDomainName, String currentUser, String affiliationNumber, String regime,
-			String contributionAccount, Date dateFrom, Date dateTo, Date startDate) throws IllegalArgumentException;
-
 	void syncITs(String currentDomainName, String currentUser) throws IllegalArgumentException;
 	
-	void communicateITPart(String currentDomainName, String currentUser, ITEmployee itEmployee ,IT it, ITPart part) throws IllegalArgumentException;
+	void sendEconomicData(String currentDomainName, String currentUser, ITEmployee itEmployee ,IT it, ITPart part) throws IllegalArgumentException;
 
 	void saveITParts(String currentDomainName, String currentUser, List<ItNotExist> itNotExist) throws IllegalArgumentException;
 	
@@ -315,18 +316,6 @@ public interface EnterprisesService extends RemoteService {
 	List<Integer> getServiAgreementDates(String serviAgreementCode) throws IllegalArgumentException;
 
 	boolean checkIfRectificative(String currentDomainName, Date findingDate, ArrayList<Integer> selectedCCCList);
-
-	void registerITBaja(String domainName, String userLogin, String regime, String ccc, String naf, String contingency,
-			String situation_employee, String licenseNumber, String cias, String occupation, Date startdate,
-			String contractType, float baseCot, int cotDays, Date fATEP, String accidentType, String job, String jobDescription);
-
-	void registerITConfirmation(String domainName, String userLogin, String regime, String ccc, String naf, String contingency,
-			String situation_employee, String licenseNumber, String cias, Date fbaja,
-			Date fconfirmation, String npartConfimation);
-
-	void registerITAlta(String domainName, String userLogin, String regime, String ccc, String naf, String contingency,
-			String situation_employee, String licenseNumber, String cias, Date fbaja,
-			Date falta, Date fATEP, String accidentType, String causeType);
 
 	EmployeeContractInfo getEmployeeInfo(String currentDomainName, Integer contractId);
 
@@ -472,5 +461,20 @@ public interface EnterprisesService extends RemoteService {
 	// ------------------------------------------------ Pension Plan AFI
 	
 	String checkPensionPlanAFI(String currentDomainName, String currentUser, long date, List<Integer> cccIdList);
+	
+	// ------------------------------------------------ Activity Summary
+	
+	List<ActivitySummaryObject> getActivitySummary(String domain, String user, ActivitySummaryParams params) throws IllegalArgumentException;
+	
+	// ------------------------------------------------ Salaries
+	
+	List<SalaryInfo> getSalaries(String domain, String user, SalaryParams params) throws IllegalArgumentException;
+	
+	void deleteSalary(String domain, String user, Integer id) throws IllegalArgumentException;
+	
+	// ------------------------------------------------ Utils
+	
+	Map<Integer, String> getScopes(String currentDomainName, String currentUser) throws IllegalArgumentException;
+
 
 }

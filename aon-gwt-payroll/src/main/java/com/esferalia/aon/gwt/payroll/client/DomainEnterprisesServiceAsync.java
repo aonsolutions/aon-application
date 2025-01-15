@@ -13,6 +13,8 @@ import com.esferalia.aon.gwt.payroll.client.PayrollEmailDialog.Type;
 import com.esferalia.aon.gwt.payroll.shared.AFIChanges;
 import com.esferalia.aon.gwt.payroll.shared.ActivitiesCCC;
 import com.esferalia.aon.gwt.payroll.shared.ActivityInfo;
+import com.esferalia.aon.gwt.payroll.shared.ActivitySummaryObject;
+import com.esferalia.aon.gwt.payroll.shared.ActivitySummaryParams;
 import com.esferalia.aon.gwt.payroll.shared.AgrarianJourney;
 import com.esferalia.aon.gwt.payroll.shared.Agreement;
 import com.esferalia.aon.gwt.payroll.shared.AgreementInfo;
@@ -35,13 +37,13 @@ import com.esferalia.aon.gwt.payroll.shared.EmployeeContractInfo;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeSegSocial;
 import com.esferalia.aon.gwt.payroll.shared.Enterprise;
 import com.esferalia.aon.gwt.payroll.shared.EnterpriseContext;
-import com.esferalia.aon.gwt.payroll.shared.EnterpriseITStatus;
 import com.esferalia.aon.gwt.payroll.shared.EnterpriseITStatus.ItNotExist;
 import com.esferalia.aon.gwt.payroll.shared.EnterpriseStatus;
 import com.esferalia.aon.gwt.payroll.shared.Extra;
 import com.esferalia.aon.gwt.payroll.shared.IT;
 import com.esferalia.aon.gwt.payroll.shared.ITEmployee;
 import com.esferalia.aon.gwt.payroll.shared.ITPart;
+import com.esferalia.aon.gwt.payroll.shared.ItParams;
 import com.esferalia.aon.gwt.payroll.shared.Mail;
 import com.esferalia.aon.gwt.payroll.shared.MainCCCInfo;
 import com.esferalia.aon.gwt.payroll.shared.Payment;
@@ -50,6 +52,8 @@ import com.esferalia.aon.gwt.payroll.shared.Period;
 import com.esferalia.aon.gwt.payroll.shared.Result;
 import com.esferalia.aon.gwt.payroll.shared.SSBonusData;
 import com.esferalia.aon.gwt.payroll.shared.SSPECData;
+import com.esferalia.aon.gwt.payroll.shared.SalaryInfo;
+import com.esferalia.aon.gwt.payroll.shared.SalaryParams;
 import com.esferalia.aon.gwt.payroll.shared.SecondaryUserCertificate;
 import com.esferalia.aon.gwt.payroll.shared.Variable;
 import com.esferalia.aon.gwt.payroll.shared.Workplace;
@@ -72,11 +76,8 @@ public class DomainEnterprisesServiceAsync {
 	private EnterprisesServiceAsync enterprisesServiceAsync;
 	
 	public static DomainEnterprisesServiceAsync newInstance() {
-		EnterprisesServiceAsync enterprisesServiceASync = GWT
-				.create(EnterprisesService.class);
-		EnterprisesServiceAsync enterprisesServiceAsyncDecorator = 
-				new EnterprisesServiceAsyncDecorator(
-				enterprisesServiceASync);
+		EnterprisesServiceAsync enterprisesServiceASync = GWT.create(EnterprisesService.class);
+		EnterprisesServiceAsync enterprisesServiceAsyncDecorator = new EnterprisesServiceAsyncDecorator(enterprisesServiceASync);
 		return new DomainEnterprisesServiceAsync(enterprisesServiceAsyncDecorator);
 	}
 
@@ -273,12 +274,12 @@ public class DomainEnterprisesServiceAsync {
 		enterprisesServiceAsync.getMinMaxCraDate(getCurrentDomainName(), getCurrentUser(), asyncCallback);
 	}
 	
-	public void createNewCRA(long findingDate, List<String> cccList, ArrayList<Integer> cccIdList, Integer cccId, String type, AsyncCallback<Void> asyncCallback) throws IllegalArgumentException {
-		enterprisesServiceAsync.createNewCRA(getCurrentDomainName(), getCurrentUser(), findingDate, cccList, cccIdList, cccId, type, asyncCallback);
+	public void createNewCRA(long findingDate, HashMap<Integer, String> cccs, Integer cccId, String type, AsyncCallback<Void> asyncCallback) throws IllegalArgumentException {
+		enterprisesServiceAsync.createNewCRA(getCurrentDomainName(), getCurrentUser(), findingDate, cccs, cccId, type, asyncCallback);
 	}
 	
-	public void checkCreateNewCRA(long findingDate, ArrayList<Integer> cccList, AsyncCallback<Void> asyncCallback) throws IllegalArgumentException {
-		enterprisesServiceAsync.checkCreateNewCRA(getCurrentDomainName(), findingDate, cccList, asyncCallback);
+	public void checkCreateNewCRA(long findingDate, HashMap<Integer, String> cccs, AsyncCallback<Void> asyncCallback) throws IllegalArgumentException {
+		enterprisesServiceAsync.checkCreateNewCRA(getCurrentDomainName(), findingDate, cccs, asyncCallback);
 	}
 	
 	public void deleteCRA(Integer code, AsyncCallback<Void> asyncCallback) {
@@ -373,8 +374,8 @@ public class DomainEnterprisesServiceAsync {
 		enterprisesServiceAsync.getEmployeeInfo(getCurrentDomainName(), contractId, asyncCallback);
 	}
 	
-	public void getEmployeesITInfo(Boolean allEmployees, AsyncCallback<List<ITEmployee>> asyncCallback) {
-		enterprisesServiceAsync.getEmployeesITInfo(getCurrentDomainName(), allEmployees, asyncCallback);
+	public void getEmployeeItList(ItParams params, AsyncCallback<List<ITEmployee>> asyncCallback) throws IllegalArgumentException  {
+		enterprisesServiceAsync.getEmployeeItList(getCurrentDomainName(), params, asyncCallback);
 	}
 	
 	public void getWorkplaceEmployeeITInfo(Boolean allEmployees, Integer workplaceId, AsyncCallback<List<ITEmployee>> asyncCallback) {
@@ -396,12 +397,8 @@ public class DomainEnterprisesServiceAsync {
 	public void createUpdateITEmployee(ITEmployee employeeITInfo, AsyncCallback<String> asyncCallback) {
 		enterprisesServiceAsync.createUpdateITEmployee(getCurrentDomainName(), employeeITInfo, asyncCallback);
 	}
-	void getEnterpriseStatus(Integer enterpriseId , AsyncCallback<EnterpriseStatus> asyncCallback) {
+	void getEnterpriseStatus(Integer enterpriseId , AsyncCallback<EnterpriseStatus> asyncCallback) throws IllegalArgumentException {
 		enterprisesServiceAsync.getEnterpriseStatus(getCurrentDomainName(), getCurrentUser(), enterpriseId, asyncCallback);		
-	}
-
-	void getEnterpriseITStatus(AsyncCallback<EnterpriseITStatus> asyncCallback) {
-		enterprisesServiceAsync.getEnterpriseITStatus(getCurrentDomainName(), getCurrentUser(), asyncCallback);		
 	}
 	
 	// ------------------------------------------------ Contract Attachments
@@ -434,6 +431,10 @@ public class DomainEnterprisesServiceAsync {
 	
 	public void setContractClauses(Integer contractId, List<ContractClause> contractClauses, AsyncCallback<Void> asyncCallback) throws IllegalArgumentException  {
 		enterprisesServiceAsync.setContractClauses(getCurrentDomainName(), contractId, contractClauses, asyncCallback);
+	}
+	
+	public void saveContractClause(ContractClause contractClause, AsyncCallback<Void> asyncCallback) throws IllegalArgumentException  {
+		enterprisesServiceAsync.saveContractClause(getCurrentDomainName(), getCurrentUser(), contractClause, asyncCallback);
 	}
 	
 	public void deleteContractClause(Integer clauseId, AsyncCallback<Void> asyncCallback) throws IllegalArgumentException {
@@ -520,12 +521,6 @@ public class DomainEnterprisesServiceAsync {
 				days, asyncCallback);
 	}
 	
-	public void deleteComunicateIT(String affiliationNumber, String regime, String contributionAccount, Date dateFrom,
-			Date dateTo, Date startDate, AsyncCallback<Void> asyncCallback) {
-		enterprisesServiceAsync.deleteComunicateIT(getCurrentDomainName(), getCurrentUser(), affiliationNumber, regime, contributionAccount, dateFrom, dateTo,
-				startDate, asyncCallback);
-	}
-	
 	public void syncITs(AsyncCallback<Void> asyncCallback) throws IllegalArgumentException {
 		enterprisesServiceAsync.syncITs(getCurrentDomainName(), getCurrentUser(), asyncCallback);
 	}
@@ -544,26 +539,6 @@ public class DomainEnterprisesServiceAsync {
 	
 	public void checkIfRectificative(Date findingDate, ArrayList<Integer> selectedCCCList, AsyncCallback<Boolean> asyncCallback) {
 		enterprisesServiceAsync.checkIfRectificative(getCurrentDomainName(), findingDate, selectedCCCList, asyncCallback);
-	}
-	
-	public void registerITBaja(String regime, String ccc, String naf, String contingency, String situation_employee, 
-			String licenseNumber, String cias, String occupation, Date startdate,
-			String contractType, float baseCot , int cotDays, Date fATEP, String accidentType, String job, String jobDescription, AsyncCallback<Void> asyncCallback) {
-		enterprisesServiceAsync.registerITBaja(getCurrentDomainName(), getCurrentUser(), regime, ccc, naf, contingency, situation_employee,  licenseNumber, cias, 
-				occupation, startdate, contractType, baseCot , cotDays, fATEP, accidentType, job, jobDescription, asyncCallback);
-	}
-	
-	public void registerITConfirmation(String regime, String ccc, String naf, String contingency, String situation_employee, 
-			String licenseNumber, String cias, Date fbaja, Date fconfirmation, String npartConfimation, AsyncCallback<Void> asyncCallback) {
-		enterprisesServiceAsync.registerITConfirmation(getCurrentDomainName(), getCurrentUser(), regime, ccc, naf, contingency, situation_employee, licenseNumber, cias, fbaja, 
-				fconfirmation, npartConfimation, asyncCallback);
-	}
-	
-	public void registerITAlta(String regime, String ccc, String naf, String contingency, String situation_employee, 
-			String licenseNumber, String cias, Date fbaja, Date falta, Date fATEP, 
-			String accidentType, String causeType, AsyncCallback<Void> asyncCallback) {
-		enterprisesServiceAsync.registerITAlta(getCurrentDomainName(), getCurrentUser(), regime, ccc, naf, contingency, situation_employee, 
-				licenseNumber, cias, fbaja, falta, fATEP, accidentType, causeType, asyncCallback);
 	}
 	
 	public void getContratoSepe(String ipf, Date startDate, Date endDate, AsyncCallback<String> asyncCallback) {
@@ -665,8 +640,8 @@ public class DomainEnterprisesServiceAsync {
 	}
 	
 
-	public void communicateITPart(ITEmployee itEmployee, IT it, ITPart part, AsyncCallback<Void> asyncCallback) throws IllegalArgumentException{
-		enterprisesServiceAsync.communicateITPart(getCurrentDomainName(), getCurrentUser(),itEmployee, it, part, asyncCallback);
+	public void sendEconomicData(ITEmployee itEmployee, IT it, ITPart part, AsyncCallback<Void> asyncCallback) throws IllegalArgumentException{
+		enterprisesServiceAsync.sendEconomicData(getCurrentDomainName(), getCurrentUser(),itEmployee, it, part, asyncCallback);
 	}
 
 	public void saveITParts(List<ItNotExist>itNotExist, AsyncCallback<Void> asyncCallback) throws IllegalArgumentException{
@@ -831,6 +806,28 @@ public class DomainEnterprisesServiceAsync {
 		enterprisesServiceAsync.checkPensionPlanAFI(getCurrentDomainName(), getCurrentUser(), date, cccIdList, asyncCallback);
 	}
 	
+	// ------------------------------------------------ Activity Summary
+	
+	public void getActivitySummary(ActivitySummaryParams params, AsyncCallback<List<ActivitySummaryObject>> asyncCallback) throws IllegalArgumentException {
+		enterprisesServiceAsync.getActivitySummary(getCurrentDomainName(), getCurrentUser(), params, asyncCallback);
+	}
+	
+	// ------------------------------------------------ Salaries
+	
+	public void getSalaries(SalaryParams params, AsyncCallback<List<SalaryInfo>> asyncCallback) throws IllegalArgumentException {
+		enterprisesServiceAsync.getSalaries(getCurrentDomainName(), getCurrentUser(), params, asyncCallback);
+	}
+	
+	public void deleteSalary(Integer id, AsyncCallback<Void> asyncCallback) throws IllegalArgumentException  {
+		enterprisesServiceAsync.deleteSalary(getCurrentDomainName(), getCurrentUser(), id, asyncCallback);
+	}
+	
+	// ------------------------------------------------ Utils
+	
+	public void getScopes(AsyncCallback<Map<Integer, String>> asyncCallback) throws IllegalArgumentException {
+		enterprisesServiceAsync.getScopes(getCurrentDomainName(), getCurrentUser(), asyncCallback);
+	}
+	
 	// ----------------------------------------------------------------- static
 	
 	private static String getToken() {
@@ -844,7 +841,5 @@ public class DomainEnterprisesServiceAsync {
 	private static String getCurrentDomainName() {
 		return Wnd.getCurrentDomainNameURL();
 	}
-
-	
 
 }

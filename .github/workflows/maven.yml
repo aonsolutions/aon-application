@@ -13,12 +13,18 @@ on:
       - cadizbay
       - macleod
   workflow_dispatch:
+    inputs:
+      skipTests:
+        description: 'Skip running the tests'
+        type: boolean
+        required: true
+        default: false
 
 env:
   TZ: Europe/Madrid
   AWS_REGION: eu-west-1
   BRANCH_NAME: ${{ github.head_ref || github.ref_name }} 
-  SKIP_TESTS: ${{ github.ref_name == 'cadizbay' && true || false }}
+  SKIP_TESTS: ${{ github.ref_name == 'cadizbay' && true || github.event.inputs.skipTests }}
   
 jobs:
   build:
@@ -129,6 +135,7 @@ jobs:
       if: github.ref == 'refs/heads/master'
       run: |
         mvn -B \
+        -DskipTests=${SKIP_TESTS} \
         -Dintegration.test.user=admin \
         -Dintegration.test.password=org \
         -Dintegration.test.payroll.url=http://payroll-test.aonsolutions.org:8080/ \

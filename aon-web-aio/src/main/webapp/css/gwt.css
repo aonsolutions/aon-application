@@ -62,6 +62,10 @@
 	color: rgb(66, 66, 66)
 }
 
+.aon_search_panel {
+	margin: 0 1rem !important;
+}
+
 .aonCardTitle, .aonEmployeeCardTitle, .aonEnterpriseCardTitle,
 	.aonCCCCardTitle, .aonActivityCardTitle, .aonSEPECardTitle,
 	.aonMod145CardTitle {
@@ -110,6 +114,10 @@
 	background-color: #fafafa;
 }
 
+.aon_custom_dialog .aon_custom_table_header{
+	background-color: white;
+}
+
 .aon_custom_row {
 	cursor: pointer;
 	margin-top: 3px;
@@ -119,6 +127,12 @@
 	border: 1px solid rgb(221, 221, 221);
 	color: #5f6368;
 	font-size: 12px;
+}
+
+.aon_custom_table_footer{
+	border-radius: 5px;
+  	padding: 12px 12px 12px 12px;
+  	border: 1px solid rgb(221, 221, 221);
 }
 
 .gwt-Selector .gwt-SplitLayoutPanel-VDragger {
@@ -621,4 +635,14 @@ input[type='checkbox']:checked {
 
 .aon_message_close_panel > button{
 	min-height: 2rem;
+}
+
+.gwt-viz-container > div {
+	color: red;
+	display: flex;
+	justify-content: center;
+}
+
+.aon_custom_row_button.aon_icon_pdf{
+	background-size: 18px;
 }

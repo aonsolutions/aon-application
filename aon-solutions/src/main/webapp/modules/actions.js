@@ -385,3 +385,10 @@ export const UPLOAD_FILE = {
     title: MSG.UPLOAD_FILE,
     icon: MATERIAL_ICONS.FILE_UPLOAD
 };
+
+export const SUBTRACT = {
+    id: 'Subtract',
+    name: 'Restar',
+    title: 'Restar',
+    icon: MATERIAL_ICONS.REMOVE
+}

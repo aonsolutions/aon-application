@@ -128,6 +128,7 @@ export const EDIT_FILE = 'editFile';
 export const ELABORATION = 'elaboration';
 export const EMAIL = 'email';
 export const ENTERPRISE = 'enterprise';
+export const ENTERPRISES = 'enterprises';
 export const ERROR = "error";
 export const EXPENSES = "expenses";
 export const EXPORTED = "exported";
@@ -152,6 +153,7 @@ export const GET_INVOICES = 'getInvoices';
 // ----- H
 
 export const HEADER = 'header';
+export const HELP = 'help';
 export const HIDDEN = 'hidden';
 export const HOLDERS = 'holders';
 export const HOME = 'home';
@@ -165,6 +167,7 @@ export const ICON_BUTTON = 'iconButton';
 export const ID = 'id';
 export const IMAGE = 'image';
 export const IN_PROGRESS = 'inProgress';
+export const INCOMES = 'incomes';
 export const INBOX = 'inbox';
 export const INPUT = 'input';
 export const INVEST_ASSET = 'investAsset';
@@ -236,6 +239,8 @@ export const OPENED = 'opened';
 export const OPTION = 'option';
 export const OPTIONS = 'options';
 export const OTHER = 'other';
+export const OTHER_EXPENSES = 'otherExpenses';
+export const OTHER_INCOMES = 'otherIncomes';
 
 // ----- P
 
@@ -260,6 +265,7 @@ export const PRINT_SECURE = 'printSecure';
 export const PRODUCT = 'product';
 export const PROFESSIONAL = 'professional'
 export const PROCESSING = 'processing'
+export const PROFORMA_INVOICES = 'proformaInvoices';
 
 // ----- Q
 
@@ -268,13 +274,13 @@ export const QUESTION = 'question';
 export const QUOTA = 'quota';
 
 // ----- R
-export const RAWDOC_DRAFT = 'rawdocDraft';
 export const RAWDOC_INBOX = 'rawdocInbox';
 export const RAWDOC_INBOX_ISSUED = 'rawdocInboxIssued';
 export const RAWDOC_INBOX_RECEIVED = 'rawdocInboxReceived';
 export const RAWDOC_INBOX_TICKET = 'rawdocInboxTicket';
 export const RAWDOC_PROCESSING = 'rawdocProcessing';
 export const RAWDOC_REJECT = 'rawdocReject';
+export const RAWDOC_TRASH = 'rawdocTrash';
 export const READONLY = 'readonly';
 export const RECEIVER = 'receiver';
 export const RECORD = 'record';
@@ -331,12 +337,14 @@ export const SHOW_PASSWORD = 'showPassword';
 export const SHOW_TOOLBAR = 'showToolbar';
 export const SPAN = 'span';
 export const SRC = 'src';
+export const STAFF_EXPENSES = 'staffExpenses';
 export const STATUS = 'status';
 export const STRING = 'string';
 export const SUCCESS = "success";
 export const SURCHARGE = 'surcharge';
 export const SURNAME = 'surname';
 export const SURVEY = 'survey';
+export const SUPERSET = 'Superset';
 
 // ----- T
 
@@ -348,6 +356,7 @@ export const TARGET = 'target';
 export const TAXES = 'taxes';
 export const TEXT = 'text';
 export const TEXTAREA = 'textarea';
+export const THIRD_PART = "thirdPart";
 export const TIMECONTROL = 'timecontrol';
 export const TITLE = 'title';
 export const TOOLBAR = 'toolbar';

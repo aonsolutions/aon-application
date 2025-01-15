@@ -232,6 +232,9 @@ public enum Mod3902024DetailKey implements Serializable {
 	 // Regimen especial de criterio de caja.
 	 ,C0654	 (654,   0.00,true ,false)
 	 ,C0656	 (656,   0.00,true ,false)
+	 
+	 // Operaciones especificas, adquisiciones interiores exentas
+	 ,C0230	 (230,   0.00,true ,false)
 	 ;
 	 
 	private int box;

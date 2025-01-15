@@ -197,11 +197,11 @@ export class AonAccountingMenu extends AonSuiteMenu {
 			filter: () => this.isNotDomainManagementAvailable()
 		},{
 			title: 'Movimientos Bancarios',
-			options: [/*{
+			options: [{
 				description: "Conciliador Bancario",
 				title: "Conciliador Bancario",
-				action: () => alert("Conciliador Bancario")
-			},*/{
+				action: () => this.rootPanel(new JSF.AonJsfBankStatement)
+			},{
 				description: "Agregador Bancario",
 				title: "Agregador Bancario",
 				action: () => GWT.iLoad(GWT.NORDIGEN)
@@ -217,11 +217,11 @@ export class AonAccountingMenu extends AonSuiteMenu {
 			filter: () => this.isNotDomainManagementAvailable()
 		},{
 			title: 'Registro Mercantil',
-			options: [/*{
+			options: [{
 				description: "Emisión de libros contables (LEGALIA)",
 				title: "Emisión de libros contables (LEGALIA)",
-				action: () => alert("Emisión de libros contables (LEGALIA)")
-			},*/{
+				action: () => this.rootPanel(new JSF.AonJsfAccountingBook)
+			},{
 				description: "Depósito de cuentas (D2)",
 				title: "Depósito de cuentas (D2)",
 				action: () => GWT.iLoad(GWT.DEPOSIT)

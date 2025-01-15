@@ -477,6 +477,10 @@
 .aon_inline_block {
 	display: inline-block;
 }
+
+.aon_inline_flex {
+	display: inline-flex;
+}
 .aon_cmd_item{
 	background-position: center left;
 	background-repeat: no-repeat;
@@ -968,8 +972,8 @@
 	height: 20px;
 	background-size: 100% auto;
 }
-.aon_search_panel_button:hover, .aon_search_panel_button:focus {
-	background-color: white !important; 
+.aon_search_panel_button:hover {
+	background-color: #eee !important; 
 }
 
 /* GRID */
@@ -1007,6 +1011,10 @@
 	align-items: baseline;
 }
 
+.aon_align_items_center {
+	align-items: center;
+}
+
 .aon_flex_column {
     display: flex;
     flex-direction: column;
@@ -1038,6 +1046,27 @@
 	display: flex;
 	align-items: center;
 	gap: .5rem
+}
+
+.aon_position_relative{
+	position: relative;
+}
+
+/* Estilo para los botones de edicion de Table IVA */
+.aon_button_panel_IVA {
+	display: flex;
+  	align-items: center;
+  	position: absolute;
+  	top: 0px;
+  	left: 930px;
+}
+
+/* Estilo para los botones de edicion de Table IVA */
+.aon_button_panel_IRPF {
+	display: flex;
+  	position: absolute;
+  	top: 0;
+  	right: 0px;
 }
 
 /* Estilo para el contenedor principal */
@@ -1122,6 +1151,15 @@
   	border-bottom: 1px solid #b9b8b8;
 }
 
+.aon_custom_text_area{
+	gap: 0;
+	width: 100%;
+	height: 6.5rem;
+  	justify-content: space-between;
+  	margin-bottom: .5rem;
+  	border-bottom: 1px solid #b9b8b8;
+}
+
 .aon_custom_text_box_no_border{
 	gap: 0;
 	width: 100%;
@@ -1153,6 +1191,18 @@
 	/*border-bottom: 1px solid #b9b8b8;*/	
 }
 
+.aon_custom_text_area_input{
+	text-overflow: ellipsis;
+	font-size: 13px;
+	background: transparent;
+	border: none;
+	width: -moz-available;
+	width: -webkit-fill-available;
+	height: 5rem;
+	padding: .2rem;
+	/*border-bottom: 1px solid #b9b8b8;*/	
+}
+
 .aon_custom_search_box{
 	display: flex;
 	align-items: center;
@@ -1178,7 +1228,7 @@
 }
 
 
-.aon_custom_text_box_input:focus{
+.aon_custom_text_area_input:focus, .aon_custom_text_box_input:focus{
 	border: none !important;
   	box-shadow: none !important;
 	/*border-bottom: 1px solid #b9b8b8 !important;*/
@@ -2291,10 +2341,23 @@
 	gap: 0;
 }
 
+.aon_custom_table_footer{
+	min-height : 2rem;
+	background-color : #ddd;
+	position : sticky;
+	bottom : 0px;
+	z-index : 1;
+	padding : 0 1rem;
+	border-top : 1px solid #ddd;
+	gap: 0;
+}
+
+.aon_custom_table_footer > *,
 .aon_custom_table_header > * {
 	padding: 0 .5rem;
 }
 
+.aon_custom_table_cell_footer,
 .aon_custom_table_cell_header{
 	background : transparent;
 	color : #5f6368;
@@ -2323,4 +2386,22 @@
     background-color: transparent; 
     padding: 10px 20px;     
     text-align: center;
+}
+
+.gwt-viz-container > div {
+	color: red;
+	display: flex;
+	justify-content: center;
+}
+
+.aon_button_dialog{
+	background-clip: border-box;
+ 	background-color: inherit;
+  	background-position: 3px 2px;
+  	background-repeat: no-repeat;
+  	border: 1px solid #aaa;
+  	cursor: pointer;
+  	height: 30px;
+  	padding-left: 2rem;
+  	text-transform: uppercase;
 }

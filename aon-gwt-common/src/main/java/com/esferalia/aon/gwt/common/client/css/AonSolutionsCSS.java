@@ -658,6 +658,9 @@ public interface AonSolutionsCSS extends CssResource {
 	@ClassName("aon_inline_block")
 	String aonInlineBlock();
 	
+	@ClassName("aon_inline_flex")
+	String aonInlineFlex();
+	
 	@ClassName("aon_display_none")
 	String aonDisplayNone();
 	
@@ -874,6 +877,12 @@ public interface AonSolutionsCSS extends CssResource {
 	@ClassName("aon_custom_table_cell_header")
 	String aonCustomTableCellHeader();
 	
+	@ClassName("aon_custom_table_footer")
+	String aonCustomTableFooter();
+	
+	@ClassName("aon_custom_table_cell_footer")
+	String aonCustomTableCellFooter();
+	
 	@ClassName("aon_utility_option")
 	String aonUtilityOption();
 	
@@ -892,6 +901,9 @@ public interface AonSolutionsCSS extends CssResource {
 	@ClassName("aon_custom_text_box")
 	String aonCustomTextBox();
 	
+	@ClassName("aon_custom_text_area")
+	String aonCustomTextArea();
+	
 	@ClassName("aon_custom_text_box_no_border")
 	String aonCustomTextBoxNoBorder();
 	
@@ -900,6 +912,9 @@ public interface AonSolutionsCSS extends CssResource {
 	
 	@ClassName("aon_custom_text_box_input")
 	String aonCustomTextBoxInput();
+	
+	@ClassName("aon_custom_text_area_input")
+	String aonCustomTextAreaInput();
 	
 	@ClassName("aon_between_input")
 	String aonBetweenInput();
@@ -933,6 +948,9 @@ public interface AonSolutionsCSS extends CssResource {
 	
 	@ClassName("aon_align_items_baseline")
 	String aonAlignItemsBaseline();
+	
+	@ClassName("aon_align_items_center")
+	String aonAlignItemsCenter();
 
 	@ClassName("aon_padding")
 	String aonPadding();
@@ -1080,6 +1098,9 @@ public interface AonSolutionsCSS extends CssResource {
 
 	@ClassName("aon_loader")
 	String aonLoader();
+	
+	@ClassName("aon_position_relative")
+	String aonPositionRelative();
 
 	/* CUSTOM DIALOG*/
 	@ClassName("aon_custom_dialog")
@@ -1430,6 +1451,15 @@ public interface AonSolutionsCSS extends CssResource {
 
 	@ClassName("aon_search_filter")
 	String aonSearchFilter();
+	
+	@ClassName("aon_button_panel_IVA")
+	String aonButtonPanelIVA();
+
+	@ClassName("aon_button_panel_IRPF")
+	String aonButtonPanelIRPF();
+	
+	@ClassName("aon_button_dialog")
+	String aonButtonDialog();
 
 }
 

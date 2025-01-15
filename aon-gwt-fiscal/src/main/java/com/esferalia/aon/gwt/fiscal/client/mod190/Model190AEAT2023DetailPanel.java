@@ -213,7 +213,7 @@ public class Model190AEAT2023DetailPanel extends SimpleLayoutPanel implements Fo
 		tab2.setWidget(2, 1, new Model190SmallerLabel(AON.MSG.inKindPerception()));
 		tab2.setWidget(2, 2, new Model190SmallerLabel(AON.MSG.inKindDeposit()));
 		tab2.setWidget(2, 3, new Model190SmallerLabel(AON.MSG.inKindOutputDeposit()));
-		tab2.setWidget(2, 4, new Label());
+		tab2.setWidget(2, 4, new Model190SmallerLabel("Ceuta o Melilla / Isla de la Palma"));
 
 		AonDoubleBox inKindPerception = new AonDoubleBox();
 		inKindPerception.setValue(detail.getInKindPerception());
@@ -239,13 +239,24 @@ public class Model190AEAT2023DetailPanel extends SimpleLayoutPanel implements Fo
 		});
 		tab2.setWidget(3, 2, inKindOutputDeposit);
 
-		CheckBox ceutaMelilla = new CheckBox(AON.MSG.ceutaMelillaAbbrv());
-		ceutaMelilla.setValue(detail.isCeutaMelilla());
-		ceutaMelilla.addClickHandler(event -> {
-			detail.setCeutaMelilla(ceutaMelilla.getValue());
+//		CheckBox ceutaMelilla = new CheckBox(AON.MSG.ceutaMelillaAbbrv());
+//		ceutaMelilla.setValue(detail.isCeutaMelilla());
+//		ceutaMelilla.addClickHandler(event -> {
+//			detail.setCeutaMelilla(ceutaMelilla.getValue());
+//			callback.onValueChanged(detail);
+//		});
+		// Ceuta o Melilla / Isla de la Palma
+		ListBox ceutaMelillaPalma = new ListBox();
+		ceutaMelillaPalma.setWidth("140px");
+		ceutaMelillaPalma.addItem("-");
+		ceutaMelillaPalma.addItem("1 - Ceuta o Melilla");
+		ceutaMelillaPalma.addItem("2 - Isla de La Palma");
+		ceutaMelillaPalma.setSelectedIndex(detail.getCeutaMelillaPalma());
+		ceutaMelillaPalma.addChangeHandler( event -> {
+			detail.setCeutaMelillaPalma((byte) ceutaMelillaPalma.getSelectedIndex());
 			callback.onValueChanged(detail);
 		});
-		tab2.setWidget(3, 3, ceutaMelilla);
+		tab2.setWidget(3, 3, ceutaMelillaPalma);
 
 		FlexTable tab3 = new FlexTable();
 		tab3.getColumnFormatter().setWidth(0, "160px");
@@ -260,7 +271,7 @@ public class Model190AEAT2023DetailPanel extends SimpleLayoutPanel implements Fo
 		tab3.getCellFormatter().addStyleName(0, 0, AON.CSS.aonBold());
 		tab3.getFlexCellFormatter().setColSpan(0, 0, 5);
 		tab3.setWidget(0, 0, new InlineLabel(
-				"Percepciones derivadas de incapacidad laboral (s\u00F3lo para percepciones de las claves A)"));
+				"Percepciones derivadas de incapacidad laboral (s\u00F3lo para percepciones de la clave A)"));
 
 		tab3.setWidget(1, 0, new Label());
 		tab3.setWidget(1, 1, new Model190SmallerLabel(AON.MSG.perceptionValoration()));
@@ -334,7 +345,7 @@ public class Model190AEAT2023DetailPanel extends SimpleLayoutPanel implements Fo
 		tab31.setWidget(0, 0,
 				new InlineLabel("Retenciones e ingresos a cuenta ingresados en el Estado, "
 						+ "en las Diputaciones Forales del Pa\u00EDs Vasco y en la Comunidad Foral de "
-						+ "Navarra (s\u00F3lo en percepciones de la Cclave E)"));
+						+ "Navarra (s\u00F3lo en percepciones de la clave E)"));
 		
 		tab31.setWidget(1, 0, new Model190SmallerLabel("Hacienda Estatal"));
 		tab31.setWidget(1, 1, new Model190SmallerLabel("Com. Foral Navarra"));

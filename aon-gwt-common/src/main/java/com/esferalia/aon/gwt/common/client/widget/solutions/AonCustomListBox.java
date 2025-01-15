@@ -42,6 +42,10 @@ public class AonCustomListBox extends HTMLPanel {
 	public void addItem(String item, String value) {
 		this.listBox.addItem(item, value);
 	}
+	
+	public void addItem(String item) {
+		this.listBox.addItem(item);
+	}
 
 	public void setValue(String value) {
 		setSelectedValueLB(listBox, value);

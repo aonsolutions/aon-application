@@ -75,7 +75,7 @@ public abstract class Mod190Declaration {
 			throw new AonCoreException("No se ha indicado administraci\u00F3n para la declaraci\u00F3n");
 		}
 		if (mod.getYear() < 2010 && mod.getYear() > 2025) {
-			throw new AonCoreException("No se ha indicado una ejercicio vÃ¡lido para la declaraci\u00F3n");
+			throw new AonCoreException("No se ha indicado un ejercicio v\u00E1lido para la declaraci\u00F3n");
 		}
 		if (mod.getPeriod() == null) {
 			throw new AonCoreException("No se ha indicado periodo para la declaraci\u00F3n");	
@@ -85,7 +85,7 @@ public abstract class Mod190Declaration {
 			.map(Declarations::get)
 			.findFirst()
 			.orElseThrow( () -> new AonCoreException(MessageFormat.format(
-				"No existe una declaración para el modelo solicitado ({0} - {1})", mod.getAdministration().getDescription(),mod.getYear())));
+				"No existe una declaraci\u00F3n para el modelo solicitado ({0} - {1})", mod.getAdministration().getDescription(),mod.getYear())));
 	}
 	
 	abstract Mod190 insertDetailsFromInvoice(AONContext ctx, final Mod190 mod190);

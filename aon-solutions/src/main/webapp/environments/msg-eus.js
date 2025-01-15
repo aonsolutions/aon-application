@@ -324,6 +324,8 @@ export const OPTIONAL = "Aukerako";
 export const OPTIONS = 'Aukerak';
 export const OR_ACCESS = 'edo SARTU';
 export const OTHER_SERVICES = 'Beste Zerbitzuak';
+export const ONE = 'Bat';
+
 
 // ----- P
 

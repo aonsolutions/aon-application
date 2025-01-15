@@ -99,6 +99,33 @@ public class JooqContractClauses {
 		}
 	}
 	
+	public static void saveContractClause(Connection conn, ContractClause contractClause) {
+		saveContractClause(DSL.using(conn, getDefaultSettings()), contractClause);
+	}
+	
+	private static void saveContractClause(DSLContext dslContext, ContractClause contractClause) {
+		
+		if(null == contractClause.getContract()) throw new IllegalArgumentException("El contrato no esta definido para esta clausula");
+		if(null == contractClause.getLineNumber()) throw new IllegalArgumentException("La linea no esta definida para esta clausula");
+		if(AonStringUtils.isBlank(contractClause.getName())) throw new IllegalArgumentException("El campo nombre es requerido");
+		
+		if(contractClause.getId() == null)
+			dslContext.insertInto(CONTRACT_CLAUSE)
+				.set(CONTRACT_CLAUSE.DOMAIN, contractClause.getDomain())
+				.set(CONTRACT_CLAUSE.CONTRACT, contractClause.getContract())
+				.set(CONTRACT_CLAUSE.LINE, contractClause.getLineNumber())
+				.set(CONTRACT_CLAUSE.NAME, contractClause.getName())
+				.set(CONTRACT_CLAUSE.DESCRIPTION, contractClause.getDescription())
+				.execute();
+		else
+			dslContext.update(CONTRACT_CLAUSE)
+				.set(CONTRACT_CLAUSE.LINE, contractClause.getLineNumber())
+				.set(CONTRACT_CLAUSE.NAME, contractClause.getName())
+				.set(CONTRACT_CLAUSE.DESCRIPTION, contractClause.getDescription())
+				.where(CONTRACT_CLAUSE.ID.eq(contractClause.getId()))
+				.execute();
+	}
+	
 	public static void deleteContractClause(Connection conn, Integer clauseId) {
 		deleteContractClauseDB(DSL.using(conn, getDefaultSettings()), clauseId);
 	}

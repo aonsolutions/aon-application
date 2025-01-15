@@ -40,11 +40,9 @@ import com.esferalia.aon.gwt.payroll.shared.StatisticYears;
 import com.esferalia.aon.gwt.payroll.shared.Statistics;
 import com.esferalia.aon.gwt.payroll.shared.Workplace;
 import com.esferalia.aon.watson.util.AonStringUtils;
-import com.esferalia.aon.watson.util.AonWordUtils;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.Style.Overflow;
-import com.google.gwt.dom.client.Style.TextTransform;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.BlurEvent;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -128,16 +126,8 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 		
 		void onEnterpriseStatisticsSelected(Statistics stats);
 
-		void onEnterpriseSalariesSelected(EnterpriseSalaryObject enterpiseSalary);
-		
-		void onEnterpriseITSelected(EnterpriseITObject enterpiseITObject);
-
 		void onITDataSelected(ITDataObject dataObject);
 		
-		void onWorkplaceSalarySelected(WorkplaceSalaryObject workplaceSalary);
-		
-		void onWorkplaceITSelected(WorkplaceITObject workplaceSalary);
-
 		void onSalariesSelected(SalaryDocuments docs);
 
 		void onSalariesSelected(SalariesDocuments docs);
@@ -172,8 +162,6 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 		
 		void onEmployeeSSBonusSelected(ContractBonusObject contractBonusObject);
 		
-		void onEmployeeSalarySelected(EmployeeSalaryObject employeeSalary);
-
 		void onEmployeeCopy(Employee employee);
 
 		void onEmployeePaste(Workplace workplace);
@@ -492,12 +480,8 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 		final TreeItem enterpriseItem = addEnterpriseItem(enterprise);
 		
 		addEnterpriseCostsItem(enterpriseItem, enterprise);
-		
-		addEnterpriseSalariesItem(enterpriseItem, enterprise);
 
 		addEnterpriseStatsItem(enterpriseItem, enterprise);
-		
-		addEnterpriseITsItem(enterpriseItem, enterprise);
 		
 		if (extended) {
 			List<Activity> activities = enterprise.getActivities();
@@ -593,16 +577,8 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 			onEnterpriseStatisticsSelected((Statistics) userObject);
 		} else if (userObject instanceof WorkplaceStatistics) {
 			onWorkplaceStatisticsSelected((Statistics) userObject);
-		} else if (userObject instanceof EnterpriseSalaryObject) {
-			onEnterpriseSalariesSelected((EnterpriseSalaryObject) userObject);
-		} else if (userObject instanceof EnterpriseITObject) {
-			onEnterpriseITSelected((EnterpriseITObject) userObject);
 		} else if (userObject instanceof ITDataObject) {
 			onITDataSelected((ITDataObject) userObject);
-		} else if (userObject instanceof WorkplaceSalaryObject) {
-			onWorkplaceSalarySelected((WorkplaceSalaryObject) userObject); 
-		} else if (userObject instanceof WorkplaceITObject) {
-			onWorkplaceITSelected((WorkplaceITObject) userObject); 
 		} else if (userObject instanceof CalendarDraftObjectData) {
 			onCalendarSelected((CalendarDraftObjectData) userObject);
 		} else if (userObject instanceof SalaryDocuments) {
@@ -623,8 +599,6 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 			onEmployeeNewCalendarDraftSelected((EmployeeCalendarDraftObject) userObject);
 		} else if (userObject instanceof ContractBonusUI) {
 			onEmployeeSSBonusSelected((ContractBonusObject) userObject);
-		} else if (userObject instanceof EmployeeSalaryObject) {
-			onEmployeeSalarySelected((EmployeeSalaryObject) userObject);
 		} else if (userObject instanceof EmployeeDraftObject) {
 			onEmployeeDraftSelected((EmployeeDraftObject) userObject);
 		} 
@@ -855,7 +829,7 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 		return treeItem == null ? null : (SalaryDraftObject) treeItem.getUserObject();
 	}
 
-	public void selectSalaryDraft(final int employeeId, int workplaceId, Date startDate, Date endDate, boolean fireEvents) {
+	public void selectSalaryDraft(final int employeeId, int workplaceId, Date startDate, Date endDate, Date chargeDate, boolean fireEvents) {
 
 		class SalaryDraftPredicate implements Predicate<TreeItem> {
 			public boolean test(TreeItem t) {
@@ -877,6 +851,7 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 			salaryDraft.setStartDate(startDate);
 			salaryDraft.setEndDate(endDate);
 			salaryDraft.setIssueDate(endDate);
+			salaryDraft.setChargeDate(chargeDate);
 			
 			tree.setSelectedItem(draftItem, fireEvents);
 			tree.ensureSelectedItemVisible();
@@ -925,33 +900,12 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 		return enterpriseItem;
 	}
 
-	protected <T extends HasTreeItems> void addEnterpriseITsItem(final T enterpriseItem, Enterprise enterprise) {
-		addMaterialIconItem(enterpriseItem, "Partes IT", "medication")
-			.setUserObject(new EnterpriseITObject());
-	}
-
 	protected <T extends HasTreeItems> void addEnterpriseStatsItem(final T enterpriseItem, Enterprise enterprise) {
 		addMaterialIconItem(enterpriseItem, "Estad\u00EDsticas", "bar_chart");
 	}
 
 	protected <T extends HasTreeItems> void addWorkplaceStatsItem(final T workplaceItem, Workplace workplace) {
 		addMaterialIconItem(workplaceItem, "Estad\u00EDsticas", "bar_chart");
-	}
-
-	protected <T extends HasTreeItems> void addEnterpriseSalariesItem(final T enterpriseItem, Enterprise enterprise) {
-		// Nominas Beta Empresa
-		addMaterialIconItem(enterpriseItem, "N\u00F3minas", "payments")
-			.setUserObject(new EnterpriseSalaryObject(enterprise));
-	}
-
-	protected <T extends HasTreeItems> void addWorkplaceITsItem(final T workplaceItem, Workplace workplace) {
-		addMaterialIconItem(workplaceItem, "Partes IT", "medication")
-			.setUserObject(new WorkplaceITObject(workplace.getId()));
-	}
-
-	protected <T extends HasTreeItems> void addWorkplaceSalariesItem(final T workplaceItem, Workplace workplace) {
-		addMaterialIconItem(workplaceItem, "N\u00F3minas", "payments")
-			.setUserObject(new WorkplaceSalaryObject(workplace));
 	}
 
 	protected <T extends HasTreeItems> void addEnterpriseCostsItem(final T enterpriseItem, Enterprise enterprise) {
@@ -1149,12 +1103,7 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 		loadEmployee(workplaceItem.asTreeItem(), employeeItem, employee);
 	}
 
-	protected void addWorkplaceEmployeeItems(TreeItem workplaceItem, TreeItem employeeItem, Employee employee,
-			EmployeeDraftObject employeeDraftObject) {
-		TreeItem salarytItem = addMaterialIconItem(employeeItem, "N\u00F3minas", "payments");
-		EmployeeSalaryObject employeeSalaryObject = new EmployeeSalaryObject(employee.getId(), employee.getFullname());
-		salarytItem.setUserObject(employeeSalaryObject);
-		salarytItem.ensureDebugId(getId(employee)+"-employeesalary");
+	protected void addWorkplaceEmployeeItems(TreeItem workplaceItem, TreeItem employeeItem, Employee employee, EmployeeDraftObject employeeDraftObject) {
 		
 		//Employee Calendar (BETA)
 		TreeItem calendarNewDraftItem = addMaterialIconItem(employeeItem, "Calendario", "calendar_today");
@@ -1287,13 +1236,9 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 
 		addWorkplaceCostsItem(workplaceItem, workplace);
 		
-		addWorkplaceSalariesItem(workplaceItem, workplace);
-
 		addWorkplaceCalendarItem(workplaceItem, workplace);
 		
 		addWorkplaceStatsItem(workplaceItem, workplace);
-		
-		addWorkplaceITsItem(workplaceItem, workplace);
 		
 		if (extended) {
 
@@ -1532,35 +1477,17 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 		}
 	}
 
-	private void onEnterpriseSalariesSelected(EnterpriseSalaryObject enterpriseSalaryObject) {
-		for (Listener listener : listeners) {
-			listener.onEnterpriseSalariesSelected(enterpriseSalaryObject);
-		}
-	}
-	
-	private void onEnterpriseITSelected(EnterpriseITObject enterpriseITObject) {
-		for (Listener listener : listeners) {
-			listener.onEnterpriseITSelected(enterpriseITObject);
-		}
-	}
-
 	private void onITDataSelected(ITDataObject dataObject) {
 		for (Listener listener : listeners) {
 			listener.onITDataSelected(dataObject);
 		}
 	}
 	
-	private void onWorkplaceSalarySelected(WorkplaceSalaryObject dataObject) {
-		for (Listener listener : listeners) {
-			listener.onWorkplaceSalarySelected(dataObject);
-		}
-	}
-	
-	private void onWorkplaceITSelected(WorkplaceITObject workplaceITObject) {
-		for (Listener listener : listeners) {
-			listener.onWorkplaceITSelected(workplaceITObject);
-		}
-	}
+//	private void onWorkplaceSalarySelected(WorkplaceSalaryObject dataObject) {
+//		for (Listener listener : listeners) {
+//			listener.onWorkplaceSalarySelected(dataObject);
+//		}
+//	}
 	
 	private void onEmployeeCopy(Employee employee) {
 		for (Listener listener : listeners) {
@@ -1827,11 +1754,11 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 		}
 	}
 	
-	private void onEmployeeSalarySelected(EmployeeSalaryObject employeeSalaryObject) {
-		for (Listener listener : listeners) {
-			listener.onEmployeeSalarySelected(employeeSalaryObject);
-		}
-	}
+//	private void onEmployeeSalarySelected(EmployeeSalaryObject employeeSalaryObject) {
+//		for (Listener listener : listeners) {
+//			listener.onEmployeeSalarySelected(employeeSalaryObject);
+//		}
+//	}
 	
 	private void onEmployeeDraftSelected(EmployeeDraftObject employeeDraftObject) {
 		for (Listener listener : listeners) {
@@ -2348,12 +2275,7 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 	private static boolean isActive(Employee employee) {
 		Date firsDayOfMonth = DateUtils.getFirstDayOfMonth();
 		return DateUtils.isAfterOrEquals(employee.getEndDate(), firsDayOfMonth);
-
 	}
-
-//	private static ITDataObject getITDataObject(TreeItem workplaceItem) {
-//		return (ITDataObject) workplaceItem.getChild(WORKPLACE_PARTSIT_INDEX).getUserObject();
-//	}
 	
 	private static String getId(Enterprise enterprise) {
 		return normalize(enterprise.getName());
@@ -2387,47 +2309,13 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 	}
 	
 	@Override
-	public void onLoad(LoadEvent event) {
-
-	}
-
-//	@Override
-//	public void onNewButtonClick(ClickEvent event) {
-//
-//	}
-//
-//	@Override
-//	public void onPasteButtonClick(ClickEvent event) {
-//		Object object = tree.getSelectedItem().getUserObject();
-//
-//		if (object instanceof Workplace)
-//			onEmployeePaste((Workplace) object);
-//	}
-//
-//	@Override
-//	public void onCopyButtonClick(ClickEvent event) {
-//
-//		Object object = tree.getSelectedItem().getUserObject();
-//
-//		if (object instanceof EmployeeDraftObject)
-//			onEmployeeCopy(((EmployeeDraftObject) object).getEmployee());
-//	}
-//
-//	@Override
-//	public void onDraftButtonClick(ClickEvent event) {
-//		Object object = tree.getSelectedItem().getUserObject();
-//		if (object instanceof EmployeeDraftObject)
-//			onSuprPressed(((EmployeeDraftObject) object).getEmployee());
-//	}
+	public void onLoad(LoadEvent event) {}
 
 	@Override
-	public void onCollapseAllButtonClick(ClickEvent event) {
-//		collapse();
-	}
+	public void onCollapseAllButtonClick(ClickEvent event) {}
 	
 	@Override
 	public void onKeyUpSearchTextBox(KeyUpEvent event) {
-		//filter(toolbar.getSearchTextBox().getValue());
 		searchTimer.schedule(1000);
 	}
 	
@@ -2448,12 +2336,12 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 		consumer.accept(getUserObject(enterprise, EnterpriseStatistics.class));
 	}
 	
-	public void getEnterpriseIT(Enterprise enterprise, Consumer<EnterpriseITObject> consumer) {
-		consumer.accept(getUserObject(enterprise, EnterpriseITObject.class));
+	public void getEnterpriseIT(Enterprise enterprise, Consumer<Void> consumer) {
+		consumer.accept(getUserObject(enterprise, null));
 	}
 
-	public void getEnterpriseSalary(Enterprise enterprise, Consumer<EnterpriseSalaryObject> consumer) {
-		consumer.accept(getUserObject(enterprise, EnterpriseSalaryObject.class));
+	public void getEnterpriseSalary(Enterprise enterprise, Consumer<Void> consumer) {
+		consumer.accept(getUserObject(enterprise, null));
 	}
 
 	public void getWorkplaceCost(Workplace workplace, Consumer<CostDocuments> consumer) {
@@ -2489,12 +2377,12 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 		consumer.accept(getUserObject(workplace, CalendarDraftObjectData.class));
 	}
 
-	public void getWorkplaceSalary(Workplace workplace, Consumer<WorkplaceSalaryObject> consumer) {
-		consumer.accept(getUserObject(workplace, WorkplaceSalaryObject.class));
+	public void getWorkplaceSalary(Workplace workplace, Consumer<Void> consumer) {
+		consumer.accept(getUserObject(workplace, null));
 	}
 	
-	public void getWorkplaceIT(Workplace workplace, Consumer<WorkplaceITObject> consumer) {
-		consumer.accept(getUserObject(workplace, WorkplaceITObject.class));
+	public void getWorkplaceIT(Workplace workplace, Consumer<Void> consumer) {
+		consumer.accept(getUserObject(workplace, null));
 	}
 
 	public void getWorkplaceEvents(Workplace workplace, Consumer<EventsDraftObject> consumer) {
@@ -2509,16 +2397,12 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 		consumer.accept(getUserObject(salaryDraft, ContractBonusObject.class));
 	}
 
-//	public void getEmployeeSalaryDraft(SalaryDraftObject salaryDraft, Consumer<SalaryDraftObject> consumer) {
-//		consumer.accept(getUserObject(salaryDraft, SalaryDraftObject.class));
-//	}
-
 	public void getEmployeeEvents(SalaryDraftObject salaryDraft, Consumer<EmployeeEventsDraftObject> consumer) {
 		consumer.accept(getUserObject(salaryDraft, EmployeeEventsDraftObject.class));
 	}
 	
-	public void getEmployeeSalary(SalaryDraftObject employee, Consumer<EmployeeSalaryObject> consumer) {
-		consumer.accept(getUserObject(employee, EmployeeSalaryObject.class));
+	public void getEmployeeSalary(SalaryDraftObject employee, Consumer<Void> consumer) {
+		consumer.accept(getUserObject(employee, null));
 	}
 	
 	public void getEmployeeDraft(SalaryDraftObject salaryDraft, Consumer<EmployeeDraftObject> consumer) {

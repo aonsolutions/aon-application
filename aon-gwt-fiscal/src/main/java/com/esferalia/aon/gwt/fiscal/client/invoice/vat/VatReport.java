@@ -5,6 +5,8 @@ import java.util.LinkedList;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.RootLayoutPanel;
+import com.esferalia.aon.gwt.common.client.widget.MinimizePanel.MaximizeEvent;
+import com.esferalia.aon.gwt.common.client.widget.MinimizePanel.MinimizeEvent;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonCloseTab;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonTabLayoutPanel;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
@@ -13,6 +15,7 @@ import com.esferalia.aon.gwt.fiscal.client.MainEntryPoint;
 import com.esferalia.aon.gwt.fiscal.client.accounting.PrintReportDialog;
 import com.esferalia.aon.gwt.fiscal.client.accounting.PrintReportDialog.IPrintReportDialogCallback;
 import com.esferalia.aon.gwt.fiscal.client.invoice.vat.VatReportSummaryPanel.VatReportSummaryPanelCallback;
+import com.esferalia.aon.gwt.fiscal.client.registry.RegistryModuleSearchPanel;
 import com.esferalia.aon.gwt.fiscal.shared.IRequestParamsNames;
 import com.esferalia.aon.gwt.fiscal.shared.JsonParams;
 import com.esferalia.aon.occam.api.model.AccountingReportParams;
@@ -22,6 +25,10 @@ import com.esferalia.aon.occam.api.model.fiscal.VatSummaryContext;
 import com.esferalia.aon.occam.api.model.fiscal.VatSummaryType;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Unit;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.layout.client.Layout.AnimationCallback;
+import com.google.gwt.layout.client.Layout.Layer;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
@@ -52,6 +59,7 @@ public class VatReport extends MainEntryPoint {
 	private SimpleLayoutPanel vatSummaryContainer;
 	private SimpleLayoutPanel vatPanelContainer;
 	private VatReportFilterPanel filterPanel;
+	private AonToolbarButton filterButton;
 
 	private FormPanel diskForm;
 	private Hidden vatParamsHidden;
@@ -83,8 +91,15 @@ public class VatReport extends MainEntryPoint {
 					options.setConfiguration(result);
 					
 					filterPanel = new VatReportFilterPanel( options );
+					filterPanel.addCloseHandler(new ClickHandler() {
+
+					    @Override
+					    public void onClick(ClickEvent event) {
+					    	toogleFilterPanel();
+					    }
+					});
 					getFilterPanel().addValueChangeHandler( params -> onSearch(options, params.getValue()));
-					dockLayoutPanel.addNorth(getFilterPanel(), 135);
+					dockLayoutPanel.addNorth(getFilterPanel(), 150);
 					content = new SimpleLayoutPanel();
 					content.setStyleName(AON.CSS.aonSelector());
 					tabLayout = new AonTabLayoutPanel(26, Unit.PX);
@@ -123,10 +138,6 @@ public class VatReport extends MainEntryPoint {
 	
 	private Widget getToolbarPanel(VatReportModuleOptions options) {
 		AonToolbar toolbarPanel = new AonToolbar("Tabla I.V.A.");
-		
-		final AonToolbarButton clean = new AonToolbarButton(AON.MSG.clean(), AON.CSS.aonIconClear());
-		clean.addClickHandler(event -> initialize(options));
-		toolbarPanel.add(clean);
 	
 		final AonToolbarButton pdf = new AonToolbarButton(AON.MSG.print(), AON.CSS.aonIconPdf());
 		pdf.addClickHandler(event -> {
@@ -173,6 +184,19 @@ public class VatReport extends MainEntryPoint {
 		final AonToolbarButton excel = new AonToolbarButton(AON.MSG.export(), AON.CSS.aonIconExcel());
 		excel.addClickHandler(event -> submitForm(options, VAT_EXCEL_REPORT_PRINT));
 		toolbarPanel.add(excel);
+		
+		filterButton = new AonToolbarButton("", AON.CSS.aonToolbarFilterContainer());
+		filterButton.setHTML("<span class='material-icons'>filter_alt_off</span>");
+		
+		filterButton.addClickHandler(new ClickHandler() {
+
+		    @Override
+		    public void onClick(ClickEvent event) {
+		    	toogleFilterPanel();
+		    }
+		});
+		
+		toolbarPanel.add(filterButton);
 
 		diskForm = new FormPanel("_blank");
 		diskForm.setMethod(FormPanel.METHOD_POST);
@@ -189,6 +213,7 @@ public class VatReport extends MainEntryPoint {
 		toolbarPanel.add(diskForm);
 		
 		return toolbarPanel;
+		
 	}
 	
 	private void submitForm(VatReportModuleOptions options, String action) {
@@ -260,5 +285,42 @@ public class VatReport extends MainEntryPoint {
 
 	private VatReportFilterPanel getFilterPanel() {
 		return this.filterPanel;
+	}
+	
+	public void closeFilterPanel() {
+		dockLayoutPanel.remove(filterPanel);	
+		dockLayoutPanel.animate(500, new AnimationCallback() {
+			
+			public void onAnimationComplete() {
+				MinimizeEvent.fire(dockLayoutPanel);
+	            filterButton.setHTML("<span class='material-icons'>filter_alt</span>");
+			}
+			@Override
+			public void onLayout(Layer arg0, double arg1) {							
+			}
+		});
+	}
+
+	public void openFilterPanel() {
+	    dockLayoutPanel.insertNorth(filterPanel, 150 , content);
+	    dockLayoutPanel.animate(500, new AnimationCallback() {
+	        @Override
+	        public void onAnimationComplete() {
+	            MaximizeEvent.fire(dockLayoutPanel);
+				filterButton.setHTML("<span class='material-icons'>filter_alt_off</span>");
+	        }
+
+	        @Override
+	        public void onLayout(Layer layer, double progress) {
+	        }
+	    });
+	}
+	
+	public void toogleFilterPanel() {
+		if (dockLayoutPanel.getWidgetIndex(filterPanel) != -1) {
+            closeFilterPanel();
+        } else {
+            openFilterPanel();
+        }
 	}
 }

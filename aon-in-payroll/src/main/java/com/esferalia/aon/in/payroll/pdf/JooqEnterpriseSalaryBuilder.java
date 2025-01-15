@@ -11,7 +11,6 @@ import static com.esferalia.aon.jooq.tables.SalaryDeduction.SALARY_DEDUCTION;
 import static com.esferalia.aon.jooq.tables.SalaryPayment.SALARY_PAYMENT;
 import static com.esferalia.aon.jooq.tables.Workplace.WORKPLACE;
 import static com.esferalia.aon.watson.util.AonNumberUtils.zeroIfNull;
-import static com.esferalia.aon.watson.util.AonStringUtils.isEmpty;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -41,6 +40,7 @@ import org.jooq.Condition;
 import org.jooq.DSLContext;
 import org.jooq.Record;
 import org.jooq.SelectConditionStep;
+import org.jooq.conf.ParamType;
 
 import com.code.aon.person.Person;
 import com.esferalia.aon.in.payroll.pdf.maker.PdfMaker;
@@ -603,7 +603,7 @@ public class JooqEnterpriseSalaryBuilder {
 			double amount = AonNumberUtils.zeroIfNull(inKindDeductions.getOrDefault(sp.getSalary(), 0d)) + AonNumberUtils.zeroIfNull(sp.getQuote());
 			inKindDeductions.compute(sp.getSalary(), ( k, v ) -> v == null ? amount : amount + v);
 		});
-
+		
 		Map<Integer, Map<Integer, Double>> deductions = new HashMap<>();
 		ctx.select()
 		.from(SALARY)

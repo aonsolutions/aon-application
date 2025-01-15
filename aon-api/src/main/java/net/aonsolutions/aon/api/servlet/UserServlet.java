@@ -36,6 +36,7 @@ import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Filter;
 import com.esferalia.aon.occam.api.model.IJsonNames;
+import com.esferalia.aon.occam.api.model.InvoiceUserData;
 import com.esferalia.aon.occam.api.model.Person;
 import com.esferalia.aon.occam.api.model.Properties.UserProperties;
 import com.esferalia.aon.occam.api.model.RawdocUserData;
@@ -55,6 +56,7 @@ import com.esferalia.aon.occam.api.model.security.UserType;
 import com.esferalia.aon.occam.api.model.security.UserWorkgroup;
 import com.esferalia.aon.occam.api.model.task.TaskHolder;
 import com.esferalia.aon.occam.api.model.type.AppParam;
+import com.esferalia.aon.occam.api.model.type.RawdocNature;
 import com.esferalia.aon.occam.impl.jooq.dao.DomainDAO;
 import com.esferalia.aon.watson.util.AonDocumentUtil;
 import com.esferalia.aon.watson.util.AonStringUtils;
@@ -101,7 +103,18 @@ public class UserServlet extends AonApiHttpServlet {
 				for(String schema : schemas) {
 					rawdocUserData.append(AON.getRawdocUserData(api.getToken(), schema));
 				}
-				response(req, resp, rawdocUserData.toJSON());
+				InvoiceUserData invoiceUserData = new InvoiceUserData();
+				for(String schema : schemas) {
+					invoiceUserData.append(AON.getInvoiceUserData(api.getToken(), schema));
+				}
+				
+				JSONObject noticeJson = rawdocUserData.toJSON();
+
+				JSONObject invoiceJson = noticeJson.getJSONObject(RawdocNature.INVOICE.name().toLowerCase());
+				invoiceUserData.toJSON().toMap().forEach( invoiceJson::put);
+				
+				response(req, resp, noticeJson);
+				
 				break;
 			case "/info":
 				response(req, resp, getDomainUser(api));
@@ -663,7 +676,6 @@ public class UserServlet extends AonApiHttpServlet {
 			.setFrom(from)
 			.setReplyTo(replyTo)
 			.setTo(email)
-			.setBcc("booking@aonsolutions.es")
 			.setSubject(subject)
 			.setBody(authCreateInfoContent(api, user, auth.getFullname(), email, password, from, logoUrl, parent));
 

@@ -11,7 +11,6 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.regex.Pattern;
 
@@ -20,8 +19,6 @@ import org.htmlunit.html.HtmlButton;
 import org.htmlunit.html.HtmlCheckBoxInput;
 import org.htmlunit.html.HtmlDivision;
 import org.htmlunit.html.HtmlInput;
-import org.htmlunit.html.HtmlPage;
-import org.htmlunit.html.HtmlSpan;
 import org.htmlunit.html.HtmlTable;
 import org.htmlunit.html.HtmlTableDataCell;
 import org.htmlunit.html.HtmlTableRow;
@@ -530,6 +527,10 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 		assertValue("cgcBaseLabel", 4720.50);
 		assertValue("cgpBaseLabel", 4720.50);
 		assertNotElement("editor-bases_provisonales");
+		calculate(Calendar.JANUARY,2025);
+		assertValue("cgcBaseLabel", 4909.50);
+		assertValue("cgpBaseLabel", 4909.50);
+		assertNotElement("editor-bases_provisonales");
 
 		draft("BASE, MÁXIMA ( GRUPO 10 )");
 		calculate(Calendar.JANUARY,2022);
@@ -548,6 +549,10 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 		calculate(Calendar.FEBRUARY,2024);
 		assertValue("cgcBaseLabel", 4720.50 / 30.00 * 29);
 		assertValue("cgpBaseLabel", 4720.50 / 30.00 * 29);
+		assertNotElement("editor-bases_provisonales");
+		calculate(Calendar.FEBRUARY,2025);
+		assertValue("cgcBaseLabel", 4909.50 / 30.00 * 28);
+		assertValue("cgpBaseLabel", 4909.50 / 30.00 * 28);
 		assertNotElement("editor-bases_provisonales");
 
 		draft("BASE, MÍNIMA ( GRUPO 01 )");
@@ -2759,6 +2764,15 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 		click("costsCheck-input");
 		assertText("mei_cost", cgpBase*0.58/100.00);
 		click("costsCheck-input");
+		
+		calculate(Calendar.JANUARY,2025);
+		cgcBase = getValue("cgcBaseLabel");
+		cgpBase = getValue("cgpBaseLabel");
+		assertText("mei", cgcBase*0.13/100.00);
+		click("costsCheck-input");
+		assertText("mei_cost", cgpBase*0.67/100.00);
+		click("costsCheck-input");
+		
 	}
 
 	@Test

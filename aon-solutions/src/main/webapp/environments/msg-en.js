@@ -326,6 +326,7 @@ export const OPTIONAL = "Optional";
 export const OPTIONS = 'Options';
 export const OR_ACCESS = 'or ACCESS';
 export const OTHER_SERVICES = 'Other Services';
+export const ONE = 'One';
 
 
 // ----- P
@@ -478,6 +479,7 @@ export const TYPES = 'Types';
 
 // ----- U
 
+export const UNACCOUNT_INVOICES = "Unaccount Invoices";
 export const UNLINK = "Unlink";
 export const UNLINK_DOMAIN_QUESTION = "Do you want to unlink this client from the domain?";
 export const UNLINK_CLIENT = "Unlink client";

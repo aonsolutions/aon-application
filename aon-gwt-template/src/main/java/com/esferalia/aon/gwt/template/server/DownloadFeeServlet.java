@@ -11,7 +11,6 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
@@ -597,7 +596,7 @@ public class DownloadFeeServlet extends HttpServlet {
 		params.setDomain(domain.getId());
 		
 		params.setPeriod(Byte.parseByte(filterJSON.optString("period")));
-		params.setScope(Integer.parseInt(filterJSON.optString("scope")));
+		params.setScope(AonStringUtils.isBlank(filterJSON.optString("scope")) ? null : Integer.parseInt(filterJSON.optString("scope")));
 		params.setActive(Byte.parseByte(filterJSON.optString("active")));
 		params.setCustomers(Byte.parseByte(filterJSON.optString("customer")));
 		params.setDescription(filterJSON.optString("description"));

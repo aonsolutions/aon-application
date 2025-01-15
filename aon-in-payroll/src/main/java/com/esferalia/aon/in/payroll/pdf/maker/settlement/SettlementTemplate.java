@@ -409,7 +409,7 @@ public class SettlementTemplate extends PdfFile {
 			values[0]	   = "En " + AonStringUtils.replace(settlement.location().get(),"'","''") + " a ";
 		}
 //		String[] values	   = { safeString(settlement.location()) };
-		String	 dateTxt   = formatDate(new Date(), replaceVariables(variables, values, text("DATE"))).orElse("");
+		String	 dateTxt   = formatDate(settlement.date(), replaceVariables(variables, values, text("DATE"))).orElse("");
 
 		PdfTextBuilder builder = new PdfTextBuilder();
 		builder.stream(contents).x(x()).width(480).y(y()).font(HELVETICA).fontSize(9f).content(legalTxt).lineSpacing(6f)

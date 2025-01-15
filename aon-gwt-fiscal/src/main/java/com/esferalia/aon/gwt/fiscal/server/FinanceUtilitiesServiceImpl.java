@@ -70,4 +70,15 @@ public class FinanceUtilitiesServiceImpl extends AonStatelessRemoteServiceServle
 	public void updateActivity(Occam occam, Integer invoiceId, Integer activity) throws AonCoreException {
 		FINANCE.updateActivity(occam, invoiceId, activity);
 	}
+	
+	//Integridad del dato actividad en facturas y asientos.
+	@Override
+	public FinanceUtilitiesResult activityIntegrity(Occam occam, Integer domain) throws AonCoreException {
+		return FINANCE.activityIntegrity(occam, domain);
+	}
+	@Override
+	public void activityIntegrityFix(Occam occam, Integer invoiceId, boolean useInvoiceActivity) throws AonCoreException {
+		FINANCE.activityIntegrityFix(occam, invoiceId, useInvoiceActivity);
+	}
+	
 }

@@ -64,9 +64,10 @@ class Model1312024Activities extends DockLayoutPanel implements HasValueChangeHa
 			}
 			
 			@Override
-			public void onRemove() {
+			public void onRemove() {				
 				getModel().getActivities().get( getActivity().getIndex() ).initialize();
 				ValueChangeEvent.<Mod131>fire(Model1312024Activities.this, callback.getModel());
+				selectActivity(options, callback, index);
 			}
 
 			@Override

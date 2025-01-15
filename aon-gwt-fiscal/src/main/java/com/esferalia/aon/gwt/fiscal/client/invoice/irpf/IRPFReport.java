@@ -6,6 +6,8 @@ import com.esferalia.aon.gwt.common.client.CommonService;
 import com.esferalia.aon.gwt.common.client.CommonServiceAsync;
 import com.esferalia.aon.gwt.common.client.CommonServiceAsyncDecorator;
 import com.esferalia.aon.gwt.common.client.RootLayoutPanel;
+import com.esferalia.aon.gwt.common.client.widget.MinimizePanel.MaximizeEvent;
+import com.esferalia.aon.gwt.common.client.widget.MinimizePanel.MinimizeEvent;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonCloseTab;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
@@ -18,6 +20,10 @@ import com.esferalia.aon.occam.api.model.fiscal.IrpfSummary;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.RunAsyncCallback;
 import com.google.gwt.dom.client.Style.Unit;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.layout.client.Layout.AnimationCallback;
+import com.google.gwt.layout.client.Layout.Layer;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
@@ -50,11 +56,13 @@ public class IRPFReport extends MainEntryPoint {
 	}
 	
 	private DockLayoutPanel dockLayoutPanel;
+	private SimpleLayoutPanel content;
 	private TabLayoutPanel tabLayout;
 	private SimpleLayoutPanel summaryContent;
 	private SimpleLayoutPanel resultsContent;
 	private SimpleLayoutPanel filterPanelContainer;
 	private IRPFReportFilterPanel filterPanel;
+	private AonToolbarButton filterButton;
 	
 	private FormPanel diskForm;
 	private Hidden irpfParamsHidden;
@@ -88,8 +96,15 @@ public class IRPFReport extends MainEntryPoint {
 				
 				filterPanelContainer = new SimpleLayoutPanel();
 				initializeFilterPanel(options);
-				dockLayoutPanel.addNorth( filterPanelContainer, 115);
-				SimpleLayoutPanel content = new SimpleLayoutPanel();
+				dockLayoutPanel.addNorth( filterPanelContainer, 135);
+				filterPanel.addCloseHandler(new ClickHandler() {
+
+				    @Override
+				    public void onClick(ClickEvent event) {
+				    	toogleFilterPanel();
+				    }
+				});
+				content = new SimpleLayoutPanel();
 				content.setStyleName(AON.CSS.aonSelector());
 				tabLayout = new TabLayoutPanel(26, Unit.PX);
 				tabLayout.setWidth("100%");
@@ -130,17 +145,19 @@ public class IRPFReport extends MainEntryPoint {
 		final AonToolbarButton excel = new AonToolbarButton(AON.MSG.export(), AON.CSS.aonIconExcel());
 		excel.addClickHandler(event -> submitForm(options, IRPF_EXCEL_REPORT_PRINT));
 		toolbarPanel.add(excel);
+		
+		filterButton = new AonToolbarButton("", AON.CSS.aonToolbarFilterContainer());
+		filterButton.setHTML("<span class='material-icons'>filter_alt_off</span>");
+		
+		filterButton.addClickHandler(new ClickHandler() {
 
-		final AonToolbarButton clean = new AonToolbarButton(AON.MSG.clean(), AON.CSS.aonIconClear());
-		clean.addClickHandler(event -> {
-			initializeFilterPanel(options);
-			onSearch( options );
+		    @Override
+		    public void onClick(ClickEvent event) {
+		    	toogleFilterPanel();
+		    }
 		});
-		toolbarPanel.add(clean);
-	
-		final AonToolbarButton refresh = new AonToolbarButton(AON.MSG.refresh(), AON.CSS.aonIconRefresh());
-		refresh.addClickHandler(event -> onSearch( options ) );
-		toolbarPanel.add(refresh);
+		
+		toolbarPanel.add(filterButton);
 
 		diskForm = new FormPanel("_blank");
 		diskForm.setMethod(FormPanel.METHOD_POST);
@@ -233,6 +250,43 @@ public class IRPFReport extends MainEntryPoint {
 			}
 			
 		});
+	}
+	
+	public void closeFilterPanel() {
+		dockLayoutPanel.remove(filterPanelContainer);	
+		dockLayoutPanel.animate(500, new AnimationCallback() {
+			
+			public void onAnimationComplete() {
+				MinimizeEvent.fire(dockLayoutPanel);
+	            filterButton.setHTML("<span class='material-icons'>filter_alt</span>");
+			}
+			@Override
+			public void onLayout(Layer arg0, double arg1) {							
+			}
+		});
+	}
+
+	public void openFilterPanel() {
+	    dockLayoutPanel.insertNorth(filterPanelContainer, 135 , content);
+	    dockLayoutPanel.animate(500, new AnimationCallback() {
+	        @Override
+	        public void onAnimationComplete() {
+	            MaximizeEvent.fire(dockLayoutPanel);
+				filterButton.setHTML("<span class='material-icons'>filter_alt_off</span>");
+	        }
+
+	        @Override
+	        public void onLayout(Layer layer, double progress) {
+	        }
+	    });
+	}
+	
+	public void toogleFilterPanel() {
+		if (dockLayoutPanel.getWidgetIndex(filterPanelContainer) != -1) {
+            closeFilterPanel();
+        } else {
+            openFilterPanel();
+        }
 	}
 	
 }
