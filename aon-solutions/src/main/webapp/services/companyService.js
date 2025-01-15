@@ -2,9 +2,9 @@ import { request, put, get, getDefaultSessionData} from "./request.js";
 import { API } from "../environments/environments.js";
 import * as LS from './localStorageService.js';
 
-let companies;
-let company;
 let durum;
+let company;
+let companies;
 
 export const clearCompanyService = () => {
   clearCompanies();
@@ -18,26 +18,27 @@ export const clearDurum = () => durum = undefined;
 
 export const getDomainCompanies = (filter) => get(API.COMPANY, filter);
 
-export const getCompanies = () => {
-  return new Promise((resolve, reject) => {
-    if (companies) {
-      resolve(companies);
-    } else {
-      request("GET", API.COMPANY, getDefaultSessionData(), undefined, (r, error) => {
-          if (error) {
-            reject(error);
-          } else {
-            let result = JSON.parse(r);
-            if (result) {
-              result.sort(sortCompanies);
-              companies = result;
-            }
-            resolve(companies ? companies : []);
-          }
-        }
-      );
-    }
-  });
+export const getCompanies = (data = { limit: 2147483647 }) => {
+	return new Promise((resolve, reject) => {
+		if (companies?.limit >= data.limit ) {
+			resolve(companies.result.slice(0, Math.min(data.limit,companies.result.length)));
+		} else {
+			request("GET", API.COMPANY, getDefaultSessionData(), data, (r, error) => {
+				if (error) {
+					reject(error);
+				} else {
+					let limit = data?.limit;
+					let result = JSON.parse(r);
+					if (result) {
+						result.sort(sortCompanies);
+						companies = { result, limit };
+					}
+					resolve(result ? result : []);
+				}
+			}
+			);
+		}
+	});
 };
 
 const typePriority = {

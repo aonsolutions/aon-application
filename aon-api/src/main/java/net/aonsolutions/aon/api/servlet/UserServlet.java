@@ -110,9 +110,13 @@ public class UserServlet extends AonApiHttpServlet {
 				
 				JSONObject noticeJson = rawdocUserData.toJSON();
 
-				JSONObject invoiceJson = noticeJson.getJSONObject(RawdocNature.INVOICE.name().toLowerCase());
+				JSONObject invoiceJson = noticeJson.optJSONObject(RawdocNature.INVOICE.name().toLowerCase());
+				if ( invoiceJson == null ) {
+					invoiceJson = new JSONObject(); 
+					noticeJson.put (RawdocNature.INVOICE.name().toLowerCase(), invoiceJson);
+				}
 				invoiceUserData.toJSON().toMap().forEach( invoiceJson::put);
-				
+
 				response(req, resp, noticeJson);
 				
 				break;
