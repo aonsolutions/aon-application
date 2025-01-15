@@ -84,7 +84,7 @@ public class JooqEmployeeIrpf {
 					.where(SALARY.ISSUE_DATE.between(parseDateToSQL(iteratorDate), parseDateToSQL(endDate)).or(SALARY.ISSUE_DATE.eq(parseDateToSQL(iteratorDate)).or(SALARY.ISSUE_DATE.eq( parseDateToSQL(endDate)))))
 					.and(SALARY.SOCIAL_SECURITY_NUMBER.eq(ssNumber).or(SALARY.EMPLOYEE_DOCUMENT.eq(document)))
 					.and(SALARY.DOMAIN.eq(domainId))
-					.orderBy(SALARY.TYPE)
+					.orderBy(SALARY.START_DATE, SALARY.TYPE)
 					.fetch();
 			
 			if(salaryRecords.isNotEmpty()) {
@@ -187,16 +187,20 @@ public class JooqEmployeeIrpf {
 					}
 					
 					// Acumulate
-					if(AonStringUtils.equalsIgnoreCase(salaryType, "L00") || AonStringUtils.equalsIgnoreCase(salaryType, "L13"))
+					if(AonStringUtils.equalsIgnoreCase(salaryType, "L00") || AonStringUtils.equalsIgnoreCase(salaryType, "L13")) {
+						inkindBaseAcumulate = inkindBase;
 						employeeSSQuoteAcumulate = employeeSSQuote;
-					else
+						
+					} else {
+						inkindBaseAcumulate += inkindBase;
 						employeeSSQuoteAcumulate += employeeSSQuote;
-					totalIrpfAcumulate += totalIrpf;
-					inkindBaseAcumulate += inkindBase;
-					moneyBaseAcumulate += moneyBase;
+					}
+
 					irpfPercentAcumulate += irpfPercent;
+					moneyBaseAcumulate += moneyBase;
 					moneyQuoteAcumulate += moneyQuote;
 					inkindQuoteAcumulate += inkindQuote;
+					totalIrpfAcumulate += totalIrpf;
 					
 					employeeIrpf.setDate(iteratorDate)
 								.setSalaryId(salaryId)
@@ -218,6 +222,8 @@ public class JooqEmployeeIrpf {
 			iteratorCalendar.add(Calendar.MONTH, 1);
 			iteratorDate = iteratorCalendar.getTime();
 		}
+		
+		employeeIrpfList.forEach(employeeIrpf -> System.out.println(employeeIrpf.getDate() + " --> " + employeeIrpf.getSalaryType()));
 		
 		return employeeIrpfList;
 	}
