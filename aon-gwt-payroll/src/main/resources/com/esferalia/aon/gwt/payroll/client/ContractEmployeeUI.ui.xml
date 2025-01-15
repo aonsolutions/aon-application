@@ -9,8 +9,7 @@
 
 	</ui:style>
 
-   	<g:HTMLPanel> 
-        <a:Employee ui:field="employee"/>
-	</g:HTMLPanel> 
+    <a:Employee ui:field="employee"/>
+     
 </ui:UiBinder> 
 

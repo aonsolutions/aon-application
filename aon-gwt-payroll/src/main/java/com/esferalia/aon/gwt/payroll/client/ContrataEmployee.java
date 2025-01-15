@@ -47,7 +47,6 @@ import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.Timer;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.DeckPanel;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.HTML;
@@ -57,9 +56,7 @@ import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.MenuItem;
 import com.google.gwt.user.client.ui.MenuItemSeparator;
 import com.google.gwt.user.client.ui.ResizeComposite;
-import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SimpleLayoutPanel;
-import com.google.gwt.user.client.ui.SplitLayoutPanel;
 import com.google.gwt.user.client.ui.TabLayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -82,18 +79,8 @@ public abstract class ContrataEmployee extends ResizeComposite {
 	public class ContractEmployeeUIImpl extends ContractEmployeeUI {
 
 		@Override
-		protected ScrollPanel getScrollPanel() {
-			return scrolledPanel;
-		}
-
-		@Override
 		protected TabLayoutPanel getTabLayoutPanel() {
 			return tabLayOutPanel;
-		}
-
-		@Override
-		protected SplitLayoutPanel getSplitLayoutPanel() {
-			return splitLayoutPanel;
 		}
 
 		@Override
@@ -225,6 +212,11 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		@Override
 		protected void showLoadingMessage(String message) {
 			showLoading(message);
+		}
+
+		@Override
+		protected void onHideMessage() {
+			hideMessage();
 		}
 	}
 
@@ -358,6 +350,11 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		@Override
 		protected void onSelectionAttachChange(boolean isSomethingSelected) {
 			sendAttachEmail.setEnabled(isSomethingSelected);
+		}
+
+		@Override
+		protected void onHideMessage() {
+			hideMessage();
 		}
 	}
 	
@@ -1071,7 +1068,6 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		String flex();
 		String cmdBtn();
 		String loadingPanel();
-		String container();
 	}
 
 	@UiField
@@ -1090,24 +1086,6 @@ public abstract class ContrataEmployee extends ResizeComposite {
 	HTMLPanel messageContainer;
 	
 	@UiField
-	HTMLPanel messagePDFContainer;
-
-	@UiField(provided = true)
-	ContractEmployeeUI contractEmployeeUI;
-
-	@UiField(provided = true)
-	ContractSpecificData contractSpecificData;
-
-	@UiField(provided = true)
-	ContractOtherData contractOtherData;
-
-	@UiField(provided = true)
-	ContractClauseUI contractClauseUI;
-
-	@UiField(provided = true)
-	ContractAttachUI contractAttachUI;
-	
-	@UiField
 	SimpleLayoutPanel salaryWidgetPanel;
 
 	@UiField(provided = true)
@@ -1123,28 +1101,7 @@ public abstract class ContrataEmployee extends ResizeComposite {
 	DockLayoutPanel dockLayoutPanel;
 
 	@UiField
-	SplitLayoutPanel splitLayoutPanel;
-
-	@UiField
 	TabLayoutPanel tabLayOutPanel;
-
-	@UiField
-	ScrollPanel scrolledPanel;
-
-	@UiField
-	ScrollPanel scrolledPanelContractSpecificData;
-
-	@UiField
-	ScrollPanel scrolledPanelContractOtherData;
-
-	@UiField
-	ScrollPanel scrolledPanelClauses;
-
-	@UiField
-	ScrollPanel scrolledPanelAttach;
-
-	@UiField
-	SimpleLayoutPanel scrolledPDFPanel;
 
 	@UiField
 	FullViewer pdfViewer;
@@ -1200,13 +1157,6 @@ public abstract class ContrataEmployee extends ResizeComposite {
 
 	// EmployeeSalary
 	private SalaryWidget salaryWidget = new SalaryWidget();
-//	private HTMLPanel employeeSalaryButtons;
-//	private AonToolbarButton closeSalaryPDF = new AonToolbarButton("");
-//	private AonToolbarButton deleteSalaryButton = new AonToolbarButton("");
-//	private AonToolbarButton pdfSalaryButton = new AonToolbarButton("");
-//	private AonToolbarButton pdfSalarySettleButton = new AonToolbarButton("");
-//	private AonToolbarButton bidoqSalaryPublishButton = new AonToolbarButton("");
-//	private AonToolbarButton emailSalary = new AonToolbarButton("");
 
 	// EmployeeCalendar
 	private HTMLPanel employeeCalendarButtons;
@@ -1229,6 +1179,31 @@ public abstract class ContrataEmployee extends ResizeComposite {
 	Integer attachId;
 	String dataURI;
 
+	@UiField
+	HTMLPanel employeePanelNew;
+
+	private ContractEmployeeUI contractEmployeeUI;
+	
+	@UiField
+	HTMLPanel specificDataPanelNew;
+	
+	private ContractSpecificData contractSpecificData;
+	
+	@UiField
+	HTMLPanel otherDataPanelNew;
+	
+	private ContractOtherData contractOtherData;
+	
+	@UiField
+	HTMLPanel clausesPanelNew;
+	
+	private ContractClauseUI contractClauseUI;
+	
+	@UiField
+	HTMLPanel documentsPanelNew;
+	
+	private ContractAttachUI contractAttachUI;
+
 	// ------------------------------------------------- Constructor
 
 	protected ContrataEmployee() {
@@ -1239,10 +1214,6 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		contractOtherData = new ContractOtherDataImpl();
 		contractClauseUI = new ContractClauseUIImpl();
 		contractAttachUI = new ContractAttachUIImpl();
-
-//		employeeSalary = new EmployeeSalaryImpl();
-//		employeeSalary.hideToolbar();
-//		employeeSalary.setContrataView();
 
 		employeeCalendar = new EmployeeCalendarDraftNew();
 		employeeCalendar.hideToolbar();
@@ -1259,6 +1230,12 @@ public abstract class ContrataEmployee extends ResizeComposite {
 
 		// Init Widget
 		initWidget(uiBinder.createAndBindUi(this));
+		
+		employeePanelNew.add(contractEmployeeUI);
+		specificDataPanelNew.add(contractSpecificData);
+		otherDataPanelNew.add(contractOtherData);
+		clausesPanelNew.add(contractClauseUI);
+		documentsPanelNew.add(contractAttachUI);
 
 		// Init toolbar
 		getToolbarPanel();
@@ -1273,7 +1250,6 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		attachContextMenu = new AttachContextMenu();
 
 		// Init view
-		setScrollPanelsHeight();
 		initTabLayOutPanel();
 		showEmployee();
 	}
@@ -1307,18 +1283,8 @@ public abstract class ContrataEmployee extends ResizeComposite {
 
 	// ------------------------------------------------- Initialize View
 	
-	private void setScrollPanelsHeight() {
-		scrolledPanel.getElement().getStyle().setHeight(Window.getClientHeight() - 210.00, Unit.PX);
-		scrolledPanelContractSpecificData.getElement().getStyle().setHeight(Window.getClientHeight() - 210.00, Unit.PX);
-		scrolledPanelContractOtherData.getElement().getStyle().setHeight(Window.getClientHeight() - 210.00, Unit.PX);
-		scrolledPanelClauses.getElement().getStyle().setHeight(Window.getClientHeight() - 190.00, Unit.PX);
-		scrolledPanelAttach.getElement().getStyle().setHeight(Window.getClientHeight() - 190.00, Unit.PX);
-		scrolledPDFPanel.getElement().getStyle().setHeight(Window.getClientHeight() - 190.00, Unit.PX);
-	}
-
 	private void initTabLayOutPanel() {
 		tabLayOutPanel.selectTab(0, false);
-		tabLayOutPanel.addStyleName(style.container());
 
 		addSelectionHandler();
 	}
@@ -1525,11 +1491,11 @@ public abstract class ContrataEmployee extends ResizeComposite {
 	
 	private void showMessageContainer() {
 		messageContainer.setVisible(true);
-		messagePDFContainer.setVisible(false);
+//		messagePDFContainer.setVisible(false);
 	}
 
 	private void showMessagePDFContainer() {
-		messagePDFContainer.setVisible(true);
+//		messagePDFContainer.setVisible(true);
 		messageContainer.setVisible(false);
 	}
 
@@ -2638,56 +2604,6 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		return hPanel;
 	}
 
-	// ------------------------------------------------- EmployeeSalaryButtons
-
-	private HTMLPanel initEmployeeSalaryButtons() {
-		HTMLPanel hPanel = new HTMLPanel("");
-		hPanel.addStyleName(style.flex());
-		
-//		closeSalaryPDF = new AonToolbarButton("Cerrar visor PDF", AON.CSS.aonIconClose());
-//		closeSalaryPDF.addClickHandler(e -> employeeSalary.onClosePDF());
-//		hPanel.add(closeSalaryPDF);
-//
-//		deleteSalaryButton = new AonToolbarButton("Borrar N\u00F3mina", AON.CSS.aonIconDeleteList());
-//		deleteSalaryButton.addClickHandler(e -> employeeSalary.onDelete());
-//		hPanel.add(deleteSalaryButton);
-//
-//		pdfSalaryButton = new AonToolbarButton(AON.MSG.printPDF() + " N\u00F3mina", AON.CSS.aonIconPdf());
-//		pdfSalaryButton.addClickHandler(e -> employeeSalary.onPDF());
-//		hPanel.add(pdfSalaryButton);
-//
-//		pdfSalarySettleButton = new AonToolbarButton("Carta Finiquito", AON.CSS.aonIconPdf());
-//		pdfSalarySettleButton.addClickHandler(e -> employeeSalary.onPDFSettle());
-//		hPanel.add(pdfSalarySettleButton);
-//
-////		AonToolbarButton publishButton = new AonToolbarButton("Drive", AON.CSS.aonIconDrive());
-////		publishButton.addClickHandler(e -> employeeSalary.onPublish());
-////		hPanel.add(publishButton);
-//
-//		bidoqSalaryPublishButton = new AonToolbarButton("Bidow", "aon-icon-bidoq");
-//		bidoqSalaryPublishButton.addClickHandler(e -> employeeSalary.onBidoqPublish());
-//		bidoqSalaryPublishButton.setVisible(Wnd.getCurrentDomainNameURL().contains("ayudat"));
-//		hPanel.add(bidoqSalaryPublishButton);
-//
-//		emailSalary = new AonToolbarButton(AON.MSG.email() + " N\u00F3mina", AON.CSS.aonIconEmail());
-//		emailSalary.addClickHandler(e -> employeeSalary.onEmail(e));
-//		hPanel.add(emailSalary);
-//		
-//		closeSalaryPDF.setVisible(false);
-//		deleteSalaryButton.setVisible(true);
-//		pdfSalaryButton.setVisible(true);
-//		pdfSalarySettleButton.setVisible(true);
-//		emailSalary.setVisible(true);
-//		
-//		deleteSalaryButton.setEnabled(false);
-//		pdfSalaryButton.setEnabled(false);
-//		pdfSalarySettleButton.setEnabled(false);
-//		bidoqSalaryPublishButton.setEnabled(false);
-//		emailSalary.setEnabled(false);
-
-		return hPanel;
-	}
-
 	// ------------------------------------------------- EmployeeCalendarButtons
 
 	private HTMLPanel initEmployeeCalendarButtons() {
@@ -3011,21 +2927,21 @@ public abstract class ContrataEmployee extends ResizeComposite {
 	private void showSuccessPDF(String title, String message) {
 		Map<String, String> successMap = new HashMap<>();
 		successMap.put(title, message);
-		AonMessagePanel.showSuccess(messagePDFContainer, successMap);
+		AonMessagePanel.showSuccess(messageContainer, successMap);
 	}
 
 	private void showErrorPDF(String title, String message) {
 		Map<String, String> errorMap = new HashMap<>();
 		errorMap.put(title, message);
-		AonMessagePanel.showError(messagePDFContainer, errorMap);
+		AonMessagePanel.showError(messageContainer, errorMap);
 	}
 
 	private void showLoadingPDF(String message) {
-		AonMessagePanel.showLoading(messagePDFContainer, message);
+		AonMessagePanel.showLoading(messageContainer, message);
 	}
 
 	private void hideMessagePDF() {
-		AonMessagePanel.hideMessage(messagePDFContainer);
+		AonMessagePanel.hideMessage(messageContainer);
 	}
 
 }

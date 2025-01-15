@@ -751,11 +751,28 @@ public class JooqPayrollSalaries {
 			condition = condition.and( SALARY.CONTRACT.eq(params.getContract()) );
 		}
 		
+		
 		if(null != params.getStart())
-			condition = condition.and( SALARY.END_DATE.ge(AonDateUtils.toSql(params.getStart())) );
+			condition = condition.and(
+					(
+							SALARY.TYPE.ne(com.esferalia.aon.occam.api.model.type.SalaryType.DELAY.value()).and(
+							SALARY.ISSUE_DATE.ge(AonDateUtils.toSql(params.getStart())))
+					).or(
+							SALARY.TYPE.eq(com.esferalia.aon.occam.api.model.type.SalaryType.DELAY.value()).and(
+							SALARY.CHARGE_DATE.ge(AonDateUtils.toSql(params.getStart())))
+					)
+			);
 		
 		if(null != params.getEnd())
-			condition = condition.and( SALARY.END_DATE.le(AonDateUtils.toSql(params.getEnd())) );
+			condition = condition.and(
+					(
+							SALARY.TYPE.ne(com.esferalia.aon.occam.api.model.type.SalaryType.DELAY.value()).and(
+							SALARY.ISSUE_DATE.le(AonDateUtils.toSql(params.getEnd())))
+					).or(
+							SALARY.TYPE.eq(com.esferalia.aon.occam.api.model.type.SalaryType.DELAY.value()).and(
+							SALARY.CHARGE_DATE.le(AonDateUtils.toSql(params.getEnd())))
+					)
+			);
 		
 		return condition;
 	}

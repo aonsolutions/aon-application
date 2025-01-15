@@ -642,3 +642,7 @@ input[type='checkbox']:checked {
 	display: flex;
 	justify-content: center;
 }
+
+.aon_custom_row_button.aon_icon_pdf{
+	background-size: 18px;
+}
