@@ -901,6 +901,9 @@ public interface AonSolutionsCSS extends CssResource {
 	@ClassName("aon_custom_text_box")
 	String aonCustomTextBox();
 	
+	@ClassName("aon_custom_text_area")
+	String aonCustomTextArea();
+	
 	@ClassName("aon_custom_text_box_no_border")
 	String aonCustomTextBoxNoBorder();
 	
@@ -909,6 +912,9 @@ public interface AonSolutionsCSS extends CssResource {
 	
 	@ClassName("aon_custom_text_box_input")
 	String aonCustomTextBoxInput();
+	
+	@ClassName("aon_custom_text_area_input")
+	String aonCustomTextAreaInput();
 	
 	@ClassName("aon_between_input")
 	String aonBetweenInput();
@@ -1092,9 +1098,6 @@ public interface AonSolutionsCSS extends CssResource {
 
 	@ClassName("aon_loader")
 	String aonLoader();
-	
-	@ClassName("aon_position_relative")
-	String aonPositionRelative();
 
 	/* CUSTOM DIALOG*/
 	@ClassName("aon_custom_dialog")
@@ -1445,11 +1448,14 @@ public interface AonSolutionsCSS extends CssResource {
 
 	@ClassName("aon_search_filter")
 	String aonSearchFilter();
-	
-	@ClassName("aon_button_panel_IVA")
-	String aonButtonPanelIVA();
 
 	@ClassName("aon_button_panel_IRPF")
 	String aonButtonPanelIRPF();
+	
+	@ClassName("aon_position_relative")
+	String aonPositionRelative();
+
+	@ClassName("aon_button_dialog")
+	String aonButtonDialog();
 }
 

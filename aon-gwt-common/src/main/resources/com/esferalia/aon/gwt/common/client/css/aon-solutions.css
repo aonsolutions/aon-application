@@ -1053,15 +1053,6 @@
 }
 
 /* Estilo para los botones de edicion de Table IVA */
-.aon_button_panel_IVA {
-	display: flex;
-  	align-items: center;
-  	position: absolute;
-  	top: 0px;
-  	left: 930px;
-}
-
-/* Estilo para los botones de edicion de Table IVA */
 .aon_button_panel_IRPF {
 	display: flex;
   	position: absolute;
@@ -1151,6 +1142,15 @@
   	border-bottom: 1px solid #b9b8b8;
 }
 
+.aon_custom_text_area{
+	gap: 0;
+	width: 100%;
+	height: 6.5rem;
+  	justify-content: space-between;
+  	margin-bottom: .5rem;
+  	border-bottom: 1px solid #b9b8b8;
+}
+
 .aon_custom_text_box_no_border{
 	gap: 0;
 	width: 100%;
@@ -1159,7 +1159,7 @@
   	margin-bottom: .5rem;
 }
 
-.aon_utility_option:hover, .aon_custom_text_box:hover{
+.aon_utility_option:hover, .aon_custom_text_box:hover, .aon_custom_text_area:hover{
 	background-color: #eaf1fb;
 }
 
@@ -1178,6 +1178,18 @@
 	width: -moz-available;
 	width: -webkit-fill-available;
 	height: 1.5rem;
+	padding: .2rem;
+	/*border-bottom: 1px solid #b9b8b8;*/	
+}
+
+.aon_custom_text_area_input{
+	text-overflow: ellipsis;
+	font-size: 13px;
+	background: transparent;
+	border: none;
+	width: -moz-available;
+	width: -webkit-fill-available;
+	height: 5rem;
 	padding: .2rem;
 	/*border-bottom: 1px solid #b9b8b8;*/	
 }
@@ -1207,7 +1219,7 @@
 }
 
 
-.aon_custom_text_box_input:focus{
+.aon_custom_text_area_input:focus, .aon_custom_text_box_input:focus{
 	border: none !important;
   	box-shadow: none !important;
 	/*border-bottom: 1px solid #b9b8b8 !important;*/
@@ -1220,11 +1232,12 @@
 	/*border-bottom: 1px solid #b9b8b8 !important;*/
 }
 
-.aon_custom_text_box:focus{
+.aon_custom_text_box:focus, aon_custom_text_area:focus{
 	border-bottom: 1px solid #b9b8b8 !important;
 }
 
-.aon_custom_text_box:hover > .aon_custom_text_box_title{
+.aon_custom_text_box:hover > .aon_custom_text_box_title,
+.aon_custom_text_area:hover > .aon_custom_text_box_title{
 	color: #2152a5;
 }
 
@@ -2371,4 +2384,16 @@
 	color: red;
 	display: flex;
 	justify-content: center;
+}
+
+.aon_button_dialog{
+	background-clip: border-box;
+ 	background-color: inherit;
+  	background-position: 3px 2px;
+  	background-repeat: no-repeat;
+  	border: 1px solid #aaa;
+  	cursor: pointer;
+  	height: 30px;
+  	padding-left: 2rem;
+  	text-transform: uppercase;
 }

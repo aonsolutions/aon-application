@@ -506,6 +506,7 @@ export const OTHER_EXPENSES = 'Otros Gastos';
 export const OTHER_INCOMES = 'Otros Ingresos';
 export const OTHER_SERVICES = MSG.OTHER_SERVICES;
 export const OTHERS = "Otros";
+export const ONE = MSG.ONE;
 
 // ----- P
 export const PACKAGES = 'Envases';

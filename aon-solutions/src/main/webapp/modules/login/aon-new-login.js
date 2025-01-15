@@ -403,8 +403,8 @@ export class AonNewLogin extends AonElement {
         LS.removeDomain();
         this.getModule().buildHome();
         this.getModule().startLoading();
-		
-        getCompanies().then(companies => {
+		let limit = 100;
+        getCompanies({limit}).then(companies => {
           this.getModule().stopLoading();
           
           if(companies.length === 1){
@@ -414,6 +414,7 @@ export class AonNewLogin extends AonElement {
            	this.rootPanel(this.isMobile()
               ? new AonMobileParent()
               : new AonParent());
+			  
           }
         });
       })

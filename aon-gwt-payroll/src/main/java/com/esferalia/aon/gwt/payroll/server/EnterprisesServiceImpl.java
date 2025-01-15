@@ -2676,6 +2676,15 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 	}
 	
 	@Override
+	public void saveContractClause(String currentDomainName, String currentUser, ContractClause contractClause) throws IllegalArgumentException {
+		try(Connection connection = AonServletUtils.getConnection(currentDomainName)) {
+			JooqContractClauses.saveContractClause(connection, contractClause);
+		} catch (SQLException e) {
+			throw new IllegalArgumentException(e);
+		}
+	}
+	
+	@Override
 	public void deleteContractClause(String domainName, Integer clauseId) throws IllegalArgumentException {
 		try(Connection connection = AonServletUtils.getConnection(domainName)) {
 			JooqContractClauses.deleteContractClause(connection, clauseId);
@@ -5071,6 +5080,18 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 		} catch (Exception e) {
 			throw new IllegalArgumentException(e);
 		}
+	}
+	
+	// ------------------------------------------------ Utils
+
+	@Override
+	public Map<Integer, String> getScopes(String domainName, String currentUser) throws IllegalArgumentException {
+		try(Connection connection = AonServletUtils.getConnection(domainName)) {
+			Integer domainId = AonServletUtils.getDomainID(domainName);
+			return JooqWorkplace.getScopes(connection, domainId);
+		} catch (Exception e) {
+			throw new IllegalArgumentException(e.getMessage());
+		} 
 	}
 
 }

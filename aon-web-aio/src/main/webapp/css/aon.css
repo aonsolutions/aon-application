@@ -153,7 +153,8 @@
   /*
   false or undefined same effect
   */
-  --aonMenuTopnav: false;
+  --aonMenuTopnav: true;
+  --aonMenuSidenav: true;
   --aonConfigSwitchApps: false;
 
 }
@@ -1051,6 +1052,15 @@ background-color: var(--aonLightGray);
 .aonCompanyFilterEmpty {
 	display: none;	
 }
+
+.aonCompanyFilterLoading {
+	padding-right: 24px;
+	background-repeat: no-repeat;
+	background-position-x: right;
+	background-position-y: center;
+	background-image: url("../html/pdfjs/images/loading.svg");
+}
+
 
 .aonSidenavDiv {
   padding-left: 25px;

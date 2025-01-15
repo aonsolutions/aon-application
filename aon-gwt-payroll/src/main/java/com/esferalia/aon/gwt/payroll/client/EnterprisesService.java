@@ -254,6 +254,8 @@ public interface EnterprisesService extends RemoteService {
 
 	void setContractClauses(String currentDomainName, Integer contractId, List<ContractClause> contractClauses) throws IllegalArgumentException ;
 	
+	void saveContractClause(String currentDomainName, String currentUser, ContractClause contractClause) throws IllegalArgumentException ;
+	
 	void deleteContractClause(String currentDomainName, Integer clauseId) throws IllegalArgumentException;
 
 	void importContractClauses(String currentDomainName, List<Integer> clausesIds, Integer contractId) throws IllegalArgumentException;
@@ -469,6 +471,10 @@ public interface EnterprisesService extends RemoteService {
 	List<SalaryInfo> getSalaries(String domain, String user, SalaryParams params) throws IllegalArgumentException;
 	
 	void deleteSalary(String domain, String user, Integer id) throws IllegalArgumentException;
+	
+	// ------------------------------------------------ Utils
+	
+	Map<Integer, String> getScopes(String currentDomainName, String currentUser) throws IllegalArgumentException;
 
 
 }

@@ -14,6 +14,8 @@ import com.esferalia.aon.occam.api.model.fiscal.mod390hf.Model3902022BIZKAIAAddi
 import com.esferalia.aon.occam.api.model.fiscal.mod390hf.Model3902022BIZKAIAScript1;
 import com.esferalia.aon.occam.api.model.fiscal.mod390hf.Model3902022BIZKAIAScript2;
 import com.esferalia.aon.occam.api.model.fiscal.mod390hf.Model3902022BIZKAIASpecificOperationsScript;
+import com.esferalia.aon.occam.api.model.fiscal.mod390hf.Model3902024BIZKAIAAdditionalDataScript;
+import com.esferalia.aon.occam.api.model.fiscal.mod390hf.Model3902024BIZKAIAScript1;
 import com.esferalia.aon.occam.api.model.type.Mod390Key;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
@@ -80,7 +82,10 @@ public class Model390HF2022BIZKAIA extends Model390HFBase {
 		container.add(table);
 		additionalDataScrollPanel.setWidget(container);
 		tabPanel.add(additionalDataScrollPanel, "Inf. Adicional");
-		paintDeclaration(table,Model3902022BIZKAIAAdditionalDataScript.values(),10);
+		if (getModel().getYear() >= 2024)
+			paintDeclaration(table,Model3902024BIZKAIAAdditionalDataScript.values(),10);
+		else
+			paintDeclaration(table,Model3902022BIZKAIAAdditionalDataScript.values(),10);
 	}
 
 	private FlexTable getExistenciasTable() {
@@ -188,7 +193,10 @@ public class Model390HF2022BIZKAIA extends Model390HFBase {
 		table.getColumnFormatter().setWidth(6, WIDTH_140PX);
 		
 		table.getColumnFormatter().setWidth(7, "50px");
-		paintDeclaration(table,Model3902022BIZKAIAScript1.values(),8);
+		if (getModel().getYear() >= 2024)
+			paintDeclaration(table,Model3902024BIZKAIAScript1.values(),8);
+		else
+			paintDeclaration(table,Model3902022BIZKAIAScript1.values(),8);
 		container.add(table);
 		
 		table = new FlexTable();
@@ -337,7 +345,9 @@ public class Model390HF2022BIZKAIA extends Model390HFBase {
 
 					@Override
 					public String getDownloadFileAction() {
-						return Model390HFBase.MODEL390HF_FILE;
+						// NO EXISTE EL WRITER 
+						//return Model390HFBase.MODEL390HF_FILE;
+						return null;
 					}
 
 					@Override

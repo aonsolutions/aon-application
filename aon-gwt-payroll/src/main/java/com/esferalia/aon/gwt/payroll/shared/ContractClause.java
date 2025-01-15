@@ -2,8 +2,6 @@ package com.esferalia.aon.gwt.payroll.shared;
 
 import java.io.Serializable;
 
-import com.google.gwt.view.client.ProvidesKey;
-
 public class ContractClause implements Serializable {
 
 	private static final long serialVersionUID = 1L;
@@ -16,11 +14,6 @@ public class ContractClause implements Serializable {
 	private String description;
 	private Byte general;
 	
-	/**
-     * The key provider that provides the unique ID of a contract clause.
-     */
-    public static final ProvidesKey<ContractClause> KEY_PROVIDER = item -> item == null ? null : item.getId();
-	
 	public ContractClause() {
 		super();
 	}
@@ -29,56 +22,63 @@ public class ContractClause implements Serializable {
 		return id;
 	}
 
-	public void setId(Integer id) {
+	public ContractClause setId(Integer id) {
 		this.id = id;
+		return this;
 	}
 
 	public Integer getDomain() {
 		return domain;
 	}
 
-	public void setDomain(Integer domain) {
+	public ContractClause setDomain(Integer domain) {
 		this.domain = domain;
+		return this;
 	}
 
 	public Integer getContract() {
 		return contract;
 	}
 
-	public void setContract(Integer contract) {
+	public ContractClause setContract(Integer contract) {
 		this.contract = contract;
+		return this;
 	}
 
 	public Short getLineNumber() {
 		return lineNumber;
 	}
 
-	public void setLineNumber(Short lineNumber) {
+	public ContractClause setLineNumber(Short lineNumber) {
 		this.lineNumber = lineNumber;
+		return this;
 	}
 
 	public String getName() {
 		return null == name ? "" : name;
 	}
 
-	public void setName(String name) {
+	public ContractClause setName(String name) {
 		this.name = name;
+		return this;
 	}
 
 	public String getDescription() {
 		return description;
 	}
 
-	public void setDescription(String description) {
+	public ContractClause setDescription(String description) {
 		this.description = description;
+		return this;
 	}
 
 	public Byte getGeneral() {
 		return general;
 	}
 
-	public void setGeneral(Byte general) {
+	public ContractClause setGeneral(Byte general) {
 		this.general = general;
+		return this;
 	}
 	
 }

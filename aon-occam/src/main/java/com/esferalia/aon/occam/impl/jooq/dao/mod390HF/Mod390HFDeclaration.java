@@ -106,6 +106,10 @@ public abstract class Mod390HFDeclaration {
 	}
 	
 	private enum Declarations {
+		BIZKAIA_2024 {
+			@Override boolean accept(Mod390HF mod) { return Mod390HFBizkaia2024Declaration.accept(mod);}
+			@Override Mod390HFDeclaration get() {return new Mod390HFBizkaia2024Declaration();}
+		},
 		BIZKAIA_2023 {
 			@Override boolean accept(Mod390HF mod) { return Mod390HFBizkaia2023Declaration.accept(mod);}
 			@Override Mod390HFDeclaration get() {return new Mod390HFBizkaia2023Declaration();}

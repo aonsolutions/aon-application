@@ -851,15 +851,15 @@ public class Mod390HFAraba2024Declaration extends Mod390HFArabaDeclaration {
 		// Entregas de bienes obj. de instal. o montaje en otros Estados miembros
 		,AR_C210	(Mod390Key.AR_C210)
 		// Operaciones con inversi\u00F3n del sujeto pasivo
-		,AR_C211	(Mod390Key.AR_C211
+		,AR_C215	(Mod390Key.AR_C215
 			,(mod,vat) -> vat.isOtherISPSales() 
-			,(ctx,mod,vat) -> add(Mod390Key.AR_C211,mod,vat.getBase())
+			,(ctx,mod,vat) -> add(Mod390Key.AR_C215,mod,vat.getBase())
 			,null,null,null)
 		// Entregas de bienes inmuebles y operaciones financieras no habituales
 		,AR_C212	(Mod390Key.AR_C212)
 		
 		,AR_C214	(Mod390Key.AR_C214)	
-		,AR_C215	(Mod390Key.AR_C215)
+//		,AR_C215	(Mod390Key.AR_C215)
 		,AR_C216	(Mod390Key.AR_C216)
 		,AR_C217	(Mod390Key.AR_C217)
 		,AR_C218	(Mod390Key.AR_C218)

@@ -396,7 +396,7 @@
 	height: 3rem;
 }
 
-.aon_custom_row:hover, .aon_utility_option:hover, .aon_custom_text_box:hover
+.aon_custom_row:hover, .aon_utility_option:hover, .aon_custom_text_box:hover, .aon_custom_text_area:hover
 	{
 	background-color: #f1f1f1;
 }
@@ -641,4 +641,8 @@ input[type='checkbox']:checked {
 	color: red;
 	display: flex;
 	justify-content: center;
+}
+
+.aon_custom_row_button.aon_icon_pdf{
+	background-size: 18px;
 }

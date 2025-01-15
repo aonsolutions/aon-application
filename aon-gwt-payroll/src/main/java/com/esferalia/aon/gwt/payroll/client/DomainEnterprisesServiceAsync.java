@@ -433,6 +433,10 @@ public class DomainEnterprisesServiceAsync {
 		enterprisesServiceAsync.setContractClauses(getCurrentDomainName(), contractId, contractClauses, asyncCallback);
 	}
 	
+	public void saveContractClause(ContractClause contractClause, AsyncCallback<Void> asyncCallback) throws IllegalArgumentException  {
+		enterprisesServiceAsync.saveContractClause(getCurrentDomainName(), getCurrentUser(), contractClause, asyncCallback);
+	}
+	
 	public void deleteContractClause(Integer clauseId, AsyncCallback<Void> asyncCallback) throws IllegalArgumentException {
 		enterprisesServiceAsync.deleteContractClause(getCurrentDomainName(), clauseId, asyncCallback);
 	}
@@ -816,6 +820,12 @@ public class DomainEnterprisesServiceAsync {
 	
 	public void deleteSalary(Integer id, AsyncCallback<Void> asyncCallback) throws IllegalArgumentException  {
 		enterprisesServiceAsync.deleteSalary(getCurrentDomainName(), getCurrentUser(), id, asyncCallback);
+	}
+	
+	// ------------------------------------------------ Utils
+	
+	public void getScopes(AsyncCallback<Map<Integer, String>> asyncCallback) throws IllegalArgumentException {
+		enterprisesServiceAsync.getScopes(getCurrentDomainName(), getCurrentUser(), asyncCallback);
 	}
 	
 	// ----------------------------------------------------------------- static

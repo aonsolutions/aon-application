@@ -679,6 +679,12 @@ public class EnterprisesServiceAsyncDecorator implements
 	}
 	
 	@Override
+	public void saveContractClause(String currentDomainName, String currentUser, ContractClause contractClause, AsyncCallback<Void> callback) throws IllegalArgumentException {
+		AON.start();
+		enterprisesServiceAsync.saveContractClause(currentDomainName, currentUser, contractClause, new AsyncCallbackWrapper<Void>(callback));
+	}
+	
+	@Override
 	public void deleteContractClause(String currentDomainName, Integer clauseId, AsyncCallback<Void> callback) throws IllegalArgumentException {
 		AON.start();
 		enterprisesServiceAsync.deleteContractClause(currentDomainName, clauseId, new AsyncCallbackWrapper<Void>(callback));
@@ -1257,6 +1263,14 @@ public class EnterprisesServiceAsyncDecorator implements
 	public void deleteSalary(String domainName, String currentUser, Integer id, AsyncCallback<Void> callback) throws IllegalArgumentException {
 		AON.start();
 		enterprisesServiceAsync.deleteSalary(domainName, currentUser, id, callback);
+	}
+	
+	// ------------------------------------------------ Utils
+
+	@Override
+	public void getScopes(String domainName, String currentUser, AsyncCallback<Map<Integer, String>> callback) throws IllegalArgumentException {
+		AON.start();
+		enterprisesServiceAsync.getScopes(domainName, currentUser, callback);
 	}
 
 }
