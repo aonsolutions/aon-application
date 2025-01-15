@@ -105,6 +105,7 @@ export const COMPARE_ARROWS = 'compare_arrows';
 export const CONTACT_PAGE = 'contact_page';
 export const CONTACT_SUPPORT = 'contact_support';
 export const CONTACTLESS = 'contactless';
+export const CONTRACT = 'contract';
 export const CREDIT_CARD = 'credit_card';
 
 // ----- D

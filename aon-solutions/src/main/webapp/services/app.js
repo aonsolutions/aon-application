@@ -309,8 +309,8 @@ export const WAREHOUSE = {
 
 export const INVOICE = {
   app: CONSTANT.INVOICE,
-  title: MSG.INVOICES,
-  description: MSG.INVOICES,
+  title: MSG.BILLING, //MSG.INVOICES,
+  description: MSG.BILLING,
   tag: MSG_ES.INVOICES,
   icon: LS.isNewTheme() ? AON_ICONS.AON_NEW_INVOICE : AON_ICONS.AON_INVOICE,
   newIcon: AON_ICONS.AON_NEW_INVOICE,
