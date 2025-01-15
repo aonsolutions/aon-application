@@ -94,7 +94,9 @@ export class AonMobileDelivery extends AonElement {
 		// if(this.delivery.status != 'INVOICED') toolbar.addButton2(ACTION.DELETE, () => this.delete());
 		if(this.delivery.status == 'IN_PREPARATION') {
 			toolbar.addButton2(ACTION.ACCEPT, () => this.accept());
-			this.getApplication().addFloatOption(ACTION.SUBTRACT, () => this.subtractPackaging());
+			let subtractButton = this.getApplication().addFloatOption(ACTION.SUBTRACT, () => this.subtractPackaging());
+			subtractButton.style.left = '0px';
+			subtractButton.style.position = 'fixed';
 			this.getApplication().addFloatOption(ACTION.ADD, () => this.addPackaging());
 		}
 		toolbar.addButton2(ACTION.BACK, () => this.back());
@@ -389,9 +391,11 @@ export class AonMobileDelivery extends AonElement {
 					let saveButton = this.getElement(this.DELIVERY_SAVE_BUTTON);
 					saveButton.setDisabled(false);
 					if(!r.delivery || !r.delivery.id) {	
+						let quantity = i.quantity;
 						for(let j = 0; j < this.salesDetails.length; j++) {
 							if(this.salesDetails[j].item.product.id === i.composition.product.id) {
-								this.salesDetails[j].delivered = this.salesDetails[j].delivered + i.quantity;
+								this.salesDetails[j].delivered = this.salesDetails[j].delivered + quantity;
+								quantity = quantity - i.quantity;
 							}
 						}						
 					}
