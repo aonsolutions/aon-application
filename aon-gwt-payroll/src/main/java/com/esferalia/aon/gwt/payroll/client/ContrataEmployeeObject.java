@@ -271,13 +271,6 @@ public class ContrataEmployeeObject {
 		success.accept(employeeCalendarDraftObject);
 	}
 	
-	// ------------------------------------------------- Database Methods (IRPF)
-	
-	public void getEmployeeContractIrpfObject(Consumer<EmployeeContractIrpfObject> success) {
-		EmployeeContractIrpfObject employeeContractIrpfObject = new EmployeeContractIrpfObject(contractData.getContractId(), employeeData.getFullName(), employeeData.getDocument(), employeeData.getSsNumber(), contractData.getStartDate());
-		success.accept(employeeContractIrpfObject);
-	}
-	
 	// ------------------------------------------------- Database Methods (Mod145)
 	
 	public void getMod145Object(Consumer<Mod145Object> success) {

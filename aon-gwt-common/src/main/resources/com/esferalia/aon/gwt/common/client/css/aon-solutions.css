@@ -1159,7 +1159,7 @@
   	margin-bottom: .5rem;
 }
 
-.aon_utility_option:hover, .aon_custom_text_box:hover{
+.aon_utility_option:hover, .aon_custom_text_box:hover, .aon_custom_text_area:hover{
 	background-color: #eaf1fb;
 }
 
@@ -1232,11 +1232,12 @@
 	/*border-bottom: 1px solid #b9b8b8 !important;*/
 }
 
-.aon_custom_text_box:focus{
+.aon_custom_text_box:focus, aon_custom_text_area:focus{
 	border-bottom: 1px solid #b9b8b8 !important;
 }
 
-.aon_custom_text_box:hover > .aon_custom_text_box_title{
+.aon_custom_text_box:hover > .aon_custom_text_box_title,
+.aon_custom_text_area:hover > .aon_custom_text_box_title{
 	color: #2152a5;
 }
 

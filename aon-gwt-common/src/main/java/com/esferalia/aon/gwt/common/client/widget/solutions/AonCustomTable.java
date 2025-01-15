@@ -77,7 +77,7 @@ public class AonCustomTable extends HTMLPanel {
 		return label;
 	}
 	
-	public void addInlineStyle(Label label, String styleString) {
+	public void addInlineStyle(Widget label, String styleString) {
 	    // Split the style string into individual properties (e.g., "text-align: right;")
 	    String[] styleProperties = styleString.split(";");
 	    

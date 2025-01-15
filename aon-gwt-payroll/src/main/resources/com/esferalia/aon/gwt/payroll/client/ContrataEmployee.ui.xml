@@ -145,79 +145,64 @@
 	<g:SimpleLayoutPanel>
 		<g:DockLayoutPanel ui:field="dockLayoutPanel" unit="PX">
 			<g:north size="50">
-				<g:DeckPanel ui:field="toolbarDeckPanel">
-					<aon:AonToolbar ui:field="toolbar" />
-					<aon:AonToolbar ui:field="toolbarPDFViewer" />
-				</g:DeckPanel>
+				<aon:AonToolbar ui:field="toolbar" />
 			</g:north>
 			<g:center>
-				<g:DeckPanel ui:field="mainDeckPanel">
-					<g:HTMLPanel styleName="{aonResources.css.aonSelector}">
-						<g:HTMLPanel ui:field="messageContainer" />
-						<g:TabLayoutPanel ui:field="tabLayOutPanel" barUnit='EM' barHeight='3'>
-							<g:tab>
-						    	<g:header size='7'>Datos Afiliación</g:header>
-						    	<g:HTMLPanel ui:field="employeePanelNew" />
-						  	</g:tab>
-						  	<g:tab>
-						    	<g:header size='7'>Datos SEPE</g:header>
-						    	<g:HTMLPanel ui:field="specificDataPanelNew" />
-						  	</g:tab>
-						  	<g:tab>
-						  		<g:header size='7'>Datos Contrato</g:header>
-						    	<g:HTMLPanel ui:field="otherDataPanelNew" />
-						  	</g:tab>
-						  	<g:tab>
-						  		<g:header size='7'>Clausulas</g:header>
-						    	<g:HTMLPanel ui:field="clausesPanelNew" />
-						  	</g:tab>
-						  	<g:tab>
-						  		<g:header size='7'>Documentos</g:header>
-						    	<g:HTMLPanel ui:field="documentsPanelNew" />
-						  	</g:tab>
-						  	<g:tab>
-						    	<g:customHeader size='7'>
-						      		<g:Label>Nóminas</g:Label>
-						    	</g:customHeader>
-						    	<g:HTMLPanel>
-						    		<g:SimpleLayoutPanel ui:field="salaryWidgetPanel" styleName="{style.widthAll} {style.heightAll}">
-						    			<!-- 
-						    			<a:SalaryWidget ui:field="salaryWidget"/>
-						    			 -->
-						    		</g:SimpleLayoutPanel>
-						    	</g:HTMLPanel>
-						  	</g:tab>
-						  	<g:tab>
-						    	<g:customHeader size='7'>
-						      		<g:Label>Calendario</g:Label>
-						    	</g:customHeader>
-						    	<g:HTMLPanel styleName="{style.mt10}">
-						    		<a:EmployeeCalendarDraftNew ui:field="employeeCalendar" />
-						    	</g:HTMLPanel>
-						  	</g:tab>
-						  	<g:tab>
-						    	<g:customHeader size='7'>
-						      		<g:Label>IRPF</g:Label>
-						    	</g:customHeader>
-						    	<g:HTMLPanel styleName="{style.mt10}">
-						    		<a:EmployeeContractIrpf ui:field="employeeContractIrpf" />
-						    	</g:HTMLPanel>
-						  	</g:tab>
-						  	<g:tab>
-						    	<g:customHeader size='7'>
-						      		<g:Label>Mod 145</g:Label>
-						    	</g:customHeader>
-						    	<g:HTMLPanel styleName="{style.mt10}">
-						    		<a:Mod145 ui:field="mod145" />
-						    	</g:HTMLPanel>
-						  	</g:tab>
-						 </g:TabLayoutPanel>
-					</g:HTMLPanel>
+				
+				<g:FlowPanel styleName="{style.widthAll} {style.heightAll} {style.flexColumn}">
+				
+					<g:HTMLPanel ui:field="messageContainer" styleName="{style.widthAll}" />
 					
+					<g:DeckPanel ui:field="mainDeckPanel" styleName="{style.widthAll} {style.heightAll}">
 					
-					<p:FullViewer styleName="reset {style.heightAll}" ui:field='pdfViewer' />
-					
-				</g:DeckPanel>
+						<g:HTMLPanel styleName="{aonResources.css.aonSelector}">
+							
+							<g:TabLayoutPanel ui:field="tabLayOutPanel" barUnit='EM' barHeight='3'>
+								<g:tab>
+							    	<g:header size='7'>Datos Afiliación</g:header>
+							    	<g:HTMLPanel ui:field="employeePanelNew" />
+							  	</g:tab>
+							  	<g:tab>
+							    	<g:header size='7'>Datos SEPE</g:header>
+							    	<g:HTMLPanel ui:field="specificDataPanelNew" />
+							  	</g:tab>
+							  	<g:tab>
+							  		<g:header size='7'>Datos Contrato</g:header>
+							    	<g:HTMLPanel ui:field="otherDataPanelNew" />
+							  	</g:tab>
+							  	<g:tab>
+							  		<g:header size='7'>Clausulas</g:header>
+							    	<g:HTMLPanel ui:field="clausesPanelNew" />
+							  	</g:tab>
+							  	<g:tab>
+							  		<g:header size='7'>Documentos</g:header>
+							    	<g:HTMLPanel ui:field="documentsPanelNew" />
+							  	</g:tab>
+							  	<g:tab>
+							  		<g:header size='7'>Nóminas</g:header>
+							  		<g:SimpleLayoutPanel ui:field="salaryWidgetPanel" styleName="{style.widthAll} {style.heightAll}" />
+							  	</g:tab>
+							  	<g:tab>
+							  		<g:header size='7'>Calendario</g:header>
+							    	<a:EmployeeCalendarDraftNew ui:field="employeeCalendar" />
+							  	</g:tab>
+							  	<g:tab>
+							  		<g:header size='7'>IRPF</g:header>
+							    	<a:EmployeeContractIrpf ui:field="employeeContractIrpf" />
+							  	</g:tab>
+							  	<g:tab>
+							  		<g:header size='7'>Mod 145</g:header>
+							    	<a:Mod145 ui:field="mod145" />
+							  	</g:tab>
+							 </g:TabLayoutPanel>
+						</g:HTMLPanel>
+							
+						<p:FullViewer styleName="reset {style.heightAll}" ui:field='pdfViewer' />
+						
+					</g:DeckPanel>
+						
+				</g:FlowPanel>
+			
 			</g:center>
 		</g:DockLayoutPanel>
 	</g:SimpleLayoutPanel>
