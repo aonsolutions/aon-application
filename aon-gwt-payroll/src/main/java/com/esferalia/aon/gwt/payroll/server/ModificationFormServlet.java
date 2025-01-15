@@ -3,15 +3,9 @@ package com.esferalia.aon.gwt.payroll.server;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.io.UnsupportedEncodingException;
 import java.sql.SQLException;
 import java.util.Date;
 import java.util.logging.Logger;
-
-import jakarta.servlet.annotation.MultipartConfig;
-import jakarta.servlet.annotation.WebServlet;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 
 import org.json.JSONObject;
 
@@ -27,6 +21,10 @@ import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 
+import jakarta.servlet.annotation.MultipartConfig;
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import net.aonsolutions.aon.api.error.AonApiError;
 import net.aonsolutions.aon.api.error.AonApiException;
 import net.aonsolutions.aon.api.servlet.AonApiHttpServlet;
@@ -37,8 +35,6 @@ import net.aonsolutions.aon.api.servlet.AonApiHttpServlet;
 public class ModificationFormServlet extends AonApiHttpServlet {
 	
 	private static final Logger LOGGER  = Logger.getLogger(ModificationFormServlet.class.getName());
-	
-	private static String PDF_TEXT_ENCODING = "ISO-8859-1";
 	
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) {
@@ -74,7 +70,6 @@ public class ModificationFormServlet extends AonApiHttpServlet {
 	}
 	
 	private JSONObject generatePDF(HttpServletRequest req) {
-//		setEncodings(req, null);
 		String login = req.getParameter("currentUser");
 		String domainName = req.getParameter("currentDomain");
 		int contractId = AonNumberUtils.toint(req.getParameter("contractId"));
@@ -114,7 +109,6 @@ public class ModificationFormServlet extends AonApiHttpServlet {
 	}
 
 	private void exportPDF(HttpServletRequest req, HttpServletResponse resp) {
-//		setEncodings(req, resp);
 		String login = req.getParameter("currentUser");
 		String domainName = req.getParameter("currentDomain");
 		int contractId = AonNumberUtils.toint(req.getParameter("contractId"));
@@ -137,18 +131,6 @@ public class ModificationFormServlet extends AonApiHttpServlet {
 			e.printStackTrace();
 		}
 		
-	}
-
-	private static void setEncodings(HttpServletRequest req, HttpServletResponse resp) {
-        try {
-        	if (req != null) {        		
-        		req.setCharacterEncoding(PDF_TEXT_ENCODING);
-        	}
-        	if (resp != null) {        		
-        		resp.setCharacterEncoding(PDF_TEXT_ENCODING);
-        	}
-		} catch (UnsupportedEncodingException e) {
-		}
 	}
 
 	private String parseDescription(String description) {
